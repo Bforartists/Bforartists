@@ -1,11 +1,11 @@
 ;
 ;
-; Blender Self-Installer for Windows (NSIS - http://nsis.sourceforge.net)
+; Bforartists Self-Installer for Windows (NSIS - http://nsis.sourceforge.net)
 ;
 
 SetCompressor /SOLID lzma
 
-Name "Blender [VERSION]" 
+Name "Bforartists [VERSION]" 
 
 RequestExecutionLevel admin
 
@@ -67,11 +67,11 @@ UninstallIcon "[RELDIR]\00.installer.ico"
 Caption "Blender [VERSION] Installer"
 OutFile "[DISTDIR]\..\blender-[VERSION]-windows[BITNESS].exe"
 InstallDir $INSTDIR ; $INSTDIR is set inside .onInit
-BrandingText "Blender Foundation | http://www.blender.org"
+BrandingText "Bforartists | http://www.blender.org"
 ComponentText "This will install Blender [VERSION] on your computer."
 
 VIAddVersionKey "ProductName" "Blender"
-VIAddVersionKey "CompanyName" "http://www.blender.org"
+VIAddVersionKey "CompanyName" "http://www.bforartists.de"
 VIAddVersionKey "FileDescription" "Free open source 3D content creation suite."
 VIAddVersionKey "FileVersion" "[SHORTVERSION].0.0"
 
@@ -97,18 +97,18 @@ Function .onInit
 
   ${If} ${RunningX64}
     ${If} "[BITNESS]" == "32"
-      StrCpy $INSTDIR "$PROGRAMFILES32\Blender Foundation\Blender" ; Can't use InstallDir inside Section
+      StrCpy $INSTDIR "$PROGRAMFILES32\bforartists\bforartists" ; Can't use InstallDir inside Section
     ${ElseIf} "[BITNESS]" == "64"
-      StrCpy $INSTDIR "$PROGRAMFILES64\Blender Foundation\Blender"
+      StrCpy $INSTDIR "$PROGRAMFILES64\bforartists\bforartists"
     ${EndIf}
   ${Else}
-    StrCpy $INSTDIR "$PROGRAMFILES\Blender Foundation\Blender"
+    StrCpy $INSTDIR "$PROGRAMFILES\bforartists\bforartists"
   ${EndIf}
 FunctionEnd
 
 Function un.onInit
   SetShellVarContext current
-  StrCpy $BLENDERCONFIG "$APPDATA\Blender Foundation\Blender"
+  StrCpy $BLENDERCONFIG "$APPDATA\bforartists\bforartists"
   SetShellVarContext all
 FunctionEnd
 
@@ -160,11 +160,11 @@ Section "Blender [VERSION] (required)" InstallFiles
   WriteRegStr HKLM "SOFTWARE\BlenderFoundation" "Install_Dir" "$INSTDIR"
   WriteRegStr HKLM "SOFTWARE\BlenderFoundation" "ShortVersion" "[SHORTVERSION]"
   ; Write the uninstall keys for Windows
-  WriteRegStr   HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Blender" "DisplayName" "Blender"
-  WriteRegStr   HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Blender" "Publisher" "Blender Foundation"
-  WriteRegStr   HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Blender" "URLInfoAbout" "http://www.blender.org/"
+  WriteRegStr   HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Blender" "DisplayName" "Bforartists"
+  WriteRegStr   HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Blender" "Publisher" "Bforartists"
+  WriteRegStr   HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Blender" "URLInfoAbout" "http://www.bforartists.de"
   WriteRegStr   HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Blender" "DisplayVersion" "[VERSION]"
-  WriteRegStr   HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Blender" "DisplayIcon" "$INSTDIR\blender.exe"
+  WriteRegStr   HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Blender" "DisplayIcon" "$INSTDIR\bforartists.exe"
   WriteRegStr   HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Blender" "UninstallString" '"$INSTDIR\uninstall.exe"'
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Blender" "NoModify" 1
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Blender" "NoRepair " 1
@@ -176,7 +176,7 @@ Section "Add Start Menu Shortcuts" StartMenu
   SetShellVarContext all
   CreateDirectory "$SMPROGRAMS\Blender Foundation\Blender\"
   CreateShortCut "$SMPROGRAMS\Blender Foundation\Blender\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
-  CreateShortCut "$SMPROGRAMS\Blender Foundation\Blender\Blender.lnk" "$INSTDIR\Blender.exe" "" "$INSTDIR\blender.exe" 0
+  CreateShortCut "$SMPROGRAMS\Blender Foundation\Blender\Blender.lnk" "$INSTDIR\Blender.exe" "" "$INSTDIR\bforartists.exe" 0
   CreateShortCut "$SMPROGRAMS\Blender Foundation\Blender\Readme.lnk" "$INSTDIR\readme.html" "" "" 0
   CreateShortCut "$SMPROGRAMS\Blender Foundation\Blender\Copyright.lnk" "$INSTDIR\Copyright.txt" "" "$INSTDIR\copyright.txt" 0
   CreateShortCut "$SMPROGRAMS\Blender Foundation\Blender\GPL-license.lnk" "$INSTDIR\GPL-license.txt" "" "$INSTDIR\GPL-license.txt" 0
@@ -184,7 +184,7 @@ Section "Add Start Menu Shortcuts" StartMenu
 SectionEnd
 
 Section "Add Desktop Shortcut" DesktopShortcut
-  CreateShortCut "$DESKTOP\Blender.lnk" "$INSTDIR\blender.exe" "" "$INSTDIR\blender.exe" 0
+  CreateShortCut "$DESKTOP\Blender.lnk" "$INSTDIR\bforartists.exe" "" "$INSTDIR\bforartists.exe" 0
   System::Call 'shell32.dll::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)' ; refresh icons
 SectionEnd
 
@@ -192,7 +192,7 @@ Section "Open .blend files with Blender" BlendRegister
   ExecWait '"$INSTDIR\blender.exe" -r'
 SectionEnd
 
-UninstallText "This will uninstall Blender [VERSION], and all installed files. Hit 'Uninstall' to continue."
+UninstallText "This will uninstall Bforartists [VERSION], and all installed files. Hit 'Uninstall' to continue."
 
 Section "Uninstall"
   ; Remove registry keys
@@ -222,11 +222,11 @@ Section "Uninstall"
   ; Remove install directory if it's empty
   RMDir $INSTDIR
   ; Remove shortcuts
-  Delete "$SMPROGRAMS\Blender Foundation\Blender\*.*"
+  Delete "$SMPROGRAMS\bforartists\bforartists\*.*"
   Delete "$DESKTOP\Blender.lnk"
   ; Remove all link related directories and files
-  RMDir "$SMPROGRAMS\Blender Foundation\Blender"
-  RMDir "$SMPROGRAMS\Blender Foundation"
+  RMDir "$SMPROGRAMS\bforartists\bforartists"
+  RMDir "$SMPROGRAMS\bforartists"
   
   System::Call 'shell32.dll::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)' ; Refresh icons
 SectionEnd

@@ -24,7 +24,7 @@
  */
 
 /* Binary name to launch. */
-#define BLENDER_BINARY L"blender-app.exe"
+#define BLENDER_BINARY L"bforartists-app.exe"
 
 #define WIN32_LEAN_AND_MEAN
 #include <stdio.h>
