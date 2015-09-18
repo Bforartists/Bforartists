@@ -67,8 +67,7 @@ class INFO_HT_header(Header):
             # include last so text doesn't push buttons out of the header
             row.label(bpy.app.autoexec_fail_message)
             return
-
-        row.operator("wm.splash", text="", icon='BLENDER', emboss=False)
+        #row.operator("wm.splash", text="", icon='BLENDER', emboss=False)# bfa - commented out the splash icon in the toolbar
         row.label(text=scene.statistics(), translate=False)
 
 
