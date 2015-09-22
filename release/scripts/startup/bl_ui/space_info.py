@@ -41,7 +41,7 @@ class INFO_HT_header(Header):
             layout.separator()
         else:
             layout.template_ID(context.window, "screen", new="screen.new", unlink="screen.delete")
-            layout.template_ID(context.screen, "scene", new="scene.new", unlink="scene.delete")
+           # layout.template_ID(context.screen, "scene", new="scene.new", unlink="scene.delete") # bfa - removed the scene drodpown box
 
         layout.separator()
 
@@ -70,6 +70,7 @@ class INFO_HT_header(Header):
         #row.operator("wm.splash", text="", icon='BLENDER', emboss=False)# bfa - commented out the splash icon in the toolbar
         row.label(text=scene.statistics(), translate=False)
 
+# --------------------------------menu items, down to line 310
 
 class INFO_MT_editor_menus(Menu):
     bl_idname = "INFO_MT_editor_menus"
@@ -195,6 +196,7 @@ class INFO_MT_file_external_data(Menu):
         layout.operator("file.find_missing_files")
 
 
+
 class INFO_MT_file_previews(Menu):
     bl_label = "Data Previews"
 
@@ -284,7 +286,6 @@ class INFO_MT_window(Menu):
         if context.scene.render.use_multiview:
             layout.separator()
             layout.operator("wm.set_stereo_3d", icon='CAMERA_STEREO')
-
 
 class INFO_MT_help(Menu):
     bl_label = "Help"
