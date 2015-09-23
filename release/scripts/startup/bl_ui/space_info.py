@@ -45,8 +45,8 @@ class INFO_HT_header(Header):
 
         layout.separator()
 
-        if rd.has_multiple_engines:
-            layout.prop(rd, "engine", text="")
+        #if rd.has_multiple_engines: # bfa - removed the renderer drodpown box, and moved it to Properties editor.
+        #    layout.prop(rd, "engine", text="")
 
         layout.separator()
 
