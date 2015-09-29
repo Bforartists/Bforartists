@@ -59,7 +59,7 @@ class SCENE_PT_scene(SceneButtonsPanel, Panel):
         layout = self.layout
 
         scene = context.scene
-
+        layout.template_ID(context.screen, "scene", new="scene.new", unlink="scene.delete") # bfa - the scene drodpown box from the info menu bar
         layout.prop(scene, "camera")
         layout.prop(scene, "background_set", text="Background")
         if context.scene.render.engine != 'BLENDER_GAME':

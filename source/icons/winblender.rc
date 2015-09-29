@@ -4,9 +4,9 @@
 #ifdef WINDRES
 	#include "winresrc.h"
 	#define IDC_STATIC (-1)
-	#define STRINGIFY_(x) #x
-	#define STRINGIFY(x) STRINGIFY_(x)
-	#define BLEN_VER_RC_STR STRINGIFY(BLEN_VER_RC_STR_M)
+	//#define STRINGIFY_(x) #x // bfa - stringify defines becomes obsolete
+	//#define STRINGIFY(x) STRINGIFY_(x)
+	//#define BLEN_VER_RC_STR STRINGIFY(BLEN_VER_RC_STR_M)
 	1 RT_MANIFEST "blender.exe.manifest"
 #endif
 
@@ -14,8 +14,11 @@ APPICON ICON DISCARDABLE "winblender.ico"
 BLENDERFILE ICON DISCARDABLE "winblenderfile.ico"
 
 IDR_VERSION1 VERSIONINFO
-FILEVERSION BLEN_VER_RC_1, BLEN_VER_RC_2, BLEN_VER_RC_3, BLEN_VER_RC_4
-PRODUCTVERSION BLEN_VER_RC_1, BLEN_VER_RC_2, BLEN_VER_RC_3, BLEN_VER_RC_4
+//FILEVERSION BLEN_VER_RC_1, BLEN_VER_RC_2, BLEN_VER_RC_3, BLEN_VER_RC_4
+//PRODUCTVERSION BLEN_VER_RC_1, BLEN_VER_RC_2, BLEN_VER_RC_3, BLEN_VER_RC_4
+
+FILEVERSION 0,2,0 // bfa - don't separate by dots, but commas here.
+PRODUCTVERSION 0,2,0 // bfa - don't separate by dots, but commas here.
 FILEOS 0x00000004
 FILETYPE 0x00000001
 BEGIN
@@ -23,13 +26,22 @@ BEGIN
   BEGIN
     BLOCK "04090000"
     BEGIN
-      VALUE "FileVersion", BLEN_VER_RC_STR
-      VALUE "ProductVersion", BLEN_VER_RC_STR
-      VALUE "CompanyName", "Blender Foundation"
-      VALUE "FileDescription", "Blender"
-      VALUE "LegalCopyright", "GPLv2 (Blender Foundation)"
-      VALUE "OriginalFilename", "blender.exe"
-      VALUE "ProductName", "Blender"
+      //VALUE "FileVersion", BLEN_VER_RC_STR
+      //VALUE "ProductVersion", BLEN_VER_RC_STR
+      //VALUE "CompanyName", "Blender Foundation"
+      //VALUE "FileDescription", "Blender"
+      //VALUE "LegalCopyright", "GPLv2 (Blender Foundation)"
+      //VALUE "OriginalFilename", "blender.exe"
+      //VALUE "ProductName", "Blender"
+
+	  // bfa - changed the detail settings
+	  VALUE "FileVersion", "0.2.0"
+	  VALUE "ProductVersion", "0.2.0"
+	  VALUE "CompanyName", "Bforartists"
+	  VALUE "FileDescription", "Bforartists"
+	  VALUE "LegalCopyright", "GPLv2"
+	  VALUE "OriginalFilename", "bforartists.exe"
+	  VALUE "ProductName", "Bforartists"
     END
   END
   BLOCK "VarFileInfo"

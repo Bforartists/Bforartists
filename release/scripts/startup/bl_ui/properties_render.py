@@ -64,6 +64,9 @@ class RENDER_PT_render(RenderButtonsPanel, Panel):
 
         rd = context.scene.render
 
+        if rd.has_multiple_engines: # bfa - the renderer drodpown box from the info menu bar.
+            layout.prop(rd, "engine", text="")
+
         row = layout.row(align=True)
         row.operator("render.render", text="Render", icon='RENDER_STILL')
         row.operator("render.render", text="Animation", icon='RENDER_ANIMATION').animation = True
