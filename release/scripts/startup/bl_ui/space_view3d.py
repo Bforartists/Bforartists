@@ -1153,9 +1153,9 @@ class VIEW3D_MT_object(Menu):
 
         layout.menu("VIEW3D_MT_object_quick_effects")
 
-        layout.separator()
+        #layout.separator() 
 
-        layout.menu("VIEW3D_MT_object_game")
+        #layout.menu("VIEW3D_MT_object_game") # bfa - disabled the game menu item
 
         layout.separator()
 
