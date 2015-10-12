@@ -1381,7 +1381,7 @@ PointDensityTextureNode::~PointDensityTextureNode()
 		image_manager->remove_image(filename,
 		                            builtin_data,
 		                            interpolation,
-		                            EXTENSION_REPEAT);
+		                            EXTENSION_CLIP);
 	}
 }
 
@@ -1425,7 +1425,7 @@ void PointDensityTextureNode::compile(SVMCompiler& compiler)
 			                                false, 0,
 			                                is_float, is_linear,
 			                                interpolation,
-			                                EXTENSION_REPEAT,
+			                                EXTENSION_CLIP,
 			                                true);
 		}
 
@@ -1473,7 +1473,7 @@ void PointDensityTextureNode::compile(OSLCompiler& compiler)
 			                                false, 0,
 			                                is_float, is_linear,
 			                                interpolation,
-			                                EXTENSION_REPEAT,
+			                                EXTENSION_CLIP,
 			                                true);
 		}
 
@@ -1675,7 +1675,7 @@ void ConvertNode::compile(SVMCompiler& compiler)
 			compiler.stack_assign(in);
 			compiler.stack_assign(out);
 
-			compiler.add_node(NODE_VALUE_V, in->stack_offset);
+			compiler.add_node(NODE_VALUE_V, out->stack_offset);
 			compiler.add_node(NODE_VALUE_V, in->value);
 		}
 	}

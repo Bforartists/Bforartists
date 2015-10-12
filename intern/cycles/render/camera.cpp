@@ -53,6 +53,7 @@ Camera::Camera()
 	longitude_min = -M_PI_F;
 	longitude_max = M_PI_F;
 	fov = M_PI_4_F;
+	fov_pre = fov_post = fov;
 
 	sensorwidth = 0.036f;
 	sensorheight = 0.024f;
@@ -91,19 +92,26 @@ Camera::~Camera()
 
 void Camera::compute_auto_viewplane()
 {
-	float aspect = (float)width/(float)height;
-
-	if(width >= height) {
-		viewplane.left = -aspect;
-		viewplane.right = aspect;
-		viewplane.bottom = -1.0f;
+	if(type == CAMERA_PANORAMA) {
+		viewplane.left = 0.0f;
+		viewplane.right = 1.0f;
+		viewplane.bottom = 0.0f;
 		viewplane.top = 1.0f;
 	}
 	else {
-		viewplane.left = -1.0f;
-		viewplane.right = 1.0f;
-		viewplane.bottom = -1.0f/aspect;
-		viewplane.top = 1.0f/aspect;
+		float aspect = (float)width/(float)height;
+		if(width >= height) {
+			viewplane.left = -aspect;
+			viewplane.right = aspect;
+			viewplane.bottom = -1.0f;
+			viewplane.top = 1.0f;
+		}
+		else {
+			viewplane.left = -1.0f;
+			viewplane.right = 1.0f;
+			viewplane.bottom = -1.0f/aspect;
+			viewplane.top = 1.0f/aspect;
+		}
 	}
 }
 
@@ -417,9 +425,9 @@ BoundBox Camera::viewplane_bounds_get()
 	BoundBox bounds = BoundBox::empty;
 
 	if(type == CAMERA_PANORAMA) {
-		bounds.grow(make_float3(cameratoworld.w.x,
-		                        cameratoworld.w.y,
-		                        cameratoworld.w.z));
+		bounds.grow(make_float3(cameratoworld.x.w,
+		                        cameratoworld.y.w,
+		                        cameratoworld.z.w));
 	}
 	else {
 		bounds.grow(transform_raster_to_world(0.0f, 0.0f));

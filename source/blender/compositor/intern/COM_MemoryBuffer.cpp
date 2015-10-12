@@ -195,59 +195,30 @@ void MemoryBuffer::addPixel(int x, int y, const float color[4])
 	}
 }
 
-typedef struct ReadEWAData {
-	MemoryBuffer *buffer;
-	PixelSampler sampler;
-	float ufac, vfac;
-} ReadEWAData;
-
 static void read_ewa_pixel_sampled(void *userdata, int x, int y, float result[4])
 {
-	ReadEWAData *data = (ReadEWAData *) userdata;
-	switch (data->sampler) {
-		case COM_PS_NEAREST:
-			data->buffer->read(result, x, y);
-			break;
-		case COM_PS_BILINEAR:
-			data->buffer->readBilinear(result,
-			                           (float)x + data->ufac,
-			                           (float)y + data->vfac);
-			break;
-		case COM_PS_BICUBIC:
-			/* TOOD(sergey): no readBicubic method yet */
-			data->buffer->readBilinear(result,
-			                           (float)x + data->ufac,
-			                           (float)y + data->vfac);
-			break;
-		default:
-			zero_v4(result);
-			break;
-	}
+	MemoryBuffer *buffer = (MemoryBuffer *) userdata;
+	buffer->read(result, x, y);
 }
 
-void MemoryBuffer::readEWA(float *result, const float uv[2], const float derivatives[2][2], PixelSampler sampler)
+void MemoryBuffer::readEWA(float *result, const float uv[2], const float derivatives[2][2])
 {
 	BLI_assert(this->m_datatype == COM_DT_COLOR);
-	ReadEWAData data;
-	data.buffer = this;
-	data.sampler = sampler;
-	data.ufac = uv[0] - floorf(uv[0]);
-	data.vfac = uv[1] - floorf(uv[1]);
-
-	int width = this->getWidth(), height = this->getHeight();
+	float inv_width = 1.0f / (float)this->getWidth(),
+	      inv_height = 1.0f / (float)this->getHeight();
 	/* TODO(sergey): Render pipeline uses normalized coordinates and derivatives,
 	 * but compositor uses pixel space. For now let's just divide the values and
 	 * switch compositor to normalized space for EWA later.
 	 */
-	float uv_normal[2] = {uv[0] / width, uv[1] / height};
-	float du_normal[2] = {derivatives[0][0] / width, derivatives[0][1] / height};
-	float dv_normal[2] = {derivatives[1][0] / width, derivatives[1][1] / height};
+	float uv_normal[2] = {uv[0] * inv_width, uv[1] * inv_height};
+	float du_normal[2] = {derivatives[0][0] * inv_width, derivatives[0][1] * inv_height};
+	float dv_normal[2] = {derivatives[1][0] * inv_width, derivatives[1][1] * inv_height};
 
 	BLI_ewa_filter(this->getWidth(), this->getHeight(),
 	               false,
 	               true,
 	               uv_normal, du_normal, dv_normal,
 	               read_ewa_pixel_sampled,
-	               &data,
+	               this,
 	               result);
 }

@@ -1143,9 +1143,12 @@ void dag_add_relation(DagForest *forest, DagNode *fob1, DagNode *fob2, short rel
 	if ((rel & DAG_RL_DATA_DATA) != 0) {
 		if (fob1->type == ID_OB) {
 			if ((fob1->eval_flags & DAG_EVAL_NEED_CPU) == 0) {
-				Object *object = fob1->ob;
-				/* Make sure object has all the data on CPU. */
-				object->recalc |= OB_RECALC_DATA;
+				Object *ob2 = fob2->ob;
+				if (ob2->recalc & OB_RECALC_ALL) {
+					/* Make sure object has all the data on CPU. */
+					Object *ob1 = fob1->ob;
+					ob1->recalc |= OB_RECALC_DATA;
+				}
 				fob1->eval_flags |= DAG_EVAL_NEED_CPU;
 			}
 		}
@@ -1349,16 +1352,32 @@ void graph_print_adj_list(DagForest *dag)
  * to do their own updates based on changes... */
 static void (*EditorsUpdateIDCb)(Main *bmain, ID *id) = NULL;
 static void (*EditorsUpdateSceneCb)(Main *bmain, Scene *scene, int updated) = NULL;
+static void (*EditorsUpdateScenePreCb)(Main *bmain, Scene *scene, bool time) = NULL;
 
-void DAG_editors_update_cb(void (*id_func)(Main *bmain, ID *id), void (*scene_func)(Main *bmain, Scene *scene, int updated))
+void DAG_editors_update_cb(void (*id_func)(Main *bmain, ID *id),
+                           void (*scene_func)(Main *bmain, Scene *scene, int updated),
+                           void (*scene_pre_func)(Main *bmain, Scene *scene, bool time))
 {
 	if (DEG_depsgraph_use_legacy()) {
 		EditorsUpdateIDCb = id_func;
 		EditorsUpdateSceneCb = scene_func;
+		EditorsUpdateScenePreCb = scene_pre_func;
 	}
 	else {
 		/* New dependency graph. */
-		DEG_editors_set_update_cb(id_func, scene_func);
+		DEG_editors_set_update_cb(id_func, scene_func, scene_pre_func);
+	}
+}
+
+void DAG_editors_update_pre(Main *bmain, Scene *scene, bool time)
+{
+	if (DEG_depsgraph_use_legacy()) {
+		if (EditorsUpdateScenePreCb != NULL) {
+			EditorsUpdateScenePreCb(bmain, scene, time);
+		}
+	}
+	else {
+		DEG_editors_update_pre(bmain, scene, time);
 	}
 }
 
@@ -2000,25 +2019,50 @@ void DAG_scene_flush_update(Main *bmain, Scene *sce, unsigned int lay, const sho
 	dag_tag_renderlayers(sce, lay);
 }
 
-static int object_modifiers_use_time(Object *ob)
+static bool modifier_nlastrips_use_time(ListBase *strips)
+{
+	NlaStrip *strip;
+	
+	if (strips) {
+		for (strip = strips->first; strip; strip = strip->next) {
+			if (modifier_nlastrips_use_time(&strip->strips)) {
+				return true;
+			}
+			else if (strip->act) {
+				FCurve *fcu;
+				
+				for (fcu = strip->act->curves.first; fcu; fcu = fcu->next) {
+					if (fcu->rna_path && strstr(fcu->rna_path, "modifiers["))
+						return true;
+				}
+			}
+		}
+	}
+	
+	return false;
+}
+
+static bool object_modifiers_use_time(Object *ob)
 {
 	ModifierData *md;
 	
 	/* check if a modifier in modifier stack needs time input */
-	for (md = ob->modifiers.first; md; md = md->next)
+	for (md = ob->modifiers.first; md; md = md->next) {
 		if (modifier_dependsOnTime(md))
-			return 1;
+			return true;
+	}
 	
 	/* check whether any modifiers are animated */
 	if (ob->adt) {
 		AnimData *adt = ob->adt;
+		NlaTrack *nlt;
 		FCurve *fcu;
 		
 		/* action - check for F-Curves with paths containing 'modifiers[' */
 		if (adt->action) {
 			for (fcu = adt->action->curves.first; fcu; fcu = fcu->next) {
 				if (fcu->rna_path && strstr(fcu->rna_path, "modifiers["))
-					return 1;
+					return true;
 			}
 		}
 		
@@ -2030,14 +2074,17 @@ static int object_modifiers_use_time(Object *ob)
 		 */
 		for (fcu = adt->drivers.first; fcu; fcu = fcu->next) {
 			if (fcu->rna_path && strstr(fcu->rna_path, "modifiers["))
-				return 1;
+				return true;
 		}
 		
-		/* XXX: also, should check NLA strips, though for now assume that nobody uses
-		 * that and we can omit that for performance reasons... */
+		/* Also check NLA Strips... [#T45938] */
+		for (nlt = adt->nla_tracks.first; nlt; nlt = nlt->next) {
+			if (modifier_nlastrips_use_time(&nlt->strips))
+				return true;
+		}
 	}
 	
-	return 0;
+	return false;
 }
 
 static short animdata_use_time(AnimData *adt)
@@ -3485,9 +3532,15 @@ void DAG_exit(void)
 /* ************************ API *********************** */
 
 void DAG_editors_update_cb(DEG_EditorUpdateIDCb id_func,
-                           DEG_EditorUpdateSceneCb scene_func)
+                           DEG_EditorUpdateSceneCb scene_func,
+                           DEG_EditorUpdateScenePreCb scene_func_pre)
 {
-	DEG_editors_set_update_cb(id_func, scene_func);
+	DEG_editors_set_update_cb(id_func, scene_func, scene_func_pre);
+}
+
+void DAG_editors_update_pre(Main *bmain, Scene *scene, bool time)
+{
+	DEG_editors_update_pre(bmain, scene, time);
 }
 
 /* Tag all relations for update. */

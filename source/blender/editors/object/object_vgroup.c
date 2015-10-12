@@ -246,7 +246,7 @@ bool ED_vgroup_parray_alloc(ID *id, MDeformVert ***dvert_arr, int *dvert_tot, co
 
 /**
  * For use with tools that use ED_vgroup_parray_alloc with \a use_vert_sel == true.
- * This finds the unselected mirror deform verts and copys the weights to them from the selected.
+ * This finds the unselected mirror deform verts and copies the weights to them from the selected.
  *
  * \note \a dvert_array has mirrored weights filled in, incase cleanup operations are needed on both.
  */
@@ -1213,8 +1213,8 @@ static void getVerticalAndHorizontalChange(const float norm[3], float d, const f
 
 	plane_from_point_normal_v3(plane, coord, norm);
 
-	closest_to_plane_v3(projA, plane, start);
-	closest_to_plane_v3(projB, plane, end);
+	closest_to_plane_normalized_v3(projA, plane, start);
+	closest_to_plane_normalized_v3(projB, plane, end);
 	/* (vertical and horizontal refer to the plane's y and xz respectively)
 	 * vertical distance */
 	dists[index] = dot_v3v3(norm, end) + d;

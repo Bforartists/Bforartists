@@ -157,7 +157,6 @@ static SpaceLink *image_new(const bContext *UNUSED(C))
 	simage->iuser.fie_ima = 2;
 	simage->iuser.frames = 100;
 	simage->iuser.flag = IMA_SHOW_STEREO;
-	simage->iuser.passtype = SCE_PASS_COMBINED;
 
 	scopes_new(&simage->scopes);
 	simage->sample_line_hist.height = 100;
@@ -920,7 +919,8 @@ static void image_tools_area_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa), 
 				ED_region_tag_redraw(ar);
 			break;
 		case NC_BRUSH:
-			if (wmn->action == NA_EDITED)
+			/* NA_SELECTED is used on brush changes */
+			if (ELEM(wmn->action, NA_EDITED, NA_SELECTED))
 				ED_region_tag_redraw(ar);
 			break;
 		case NC_SCENE:

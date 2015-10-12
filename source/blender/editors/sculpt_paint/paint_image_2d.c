@@ -1601,6 +1601,7 @@ void paint_2d_gradient_fill(
 						break;
 					}
 					case BRUSH_GRADIENT_RADIAL:
+					default:
 					{
 						f = len_v2(p) / line_len;
 						break;
@@ -1629,6 +1630,7 @@ void paint_2d_gradient_fill(
 						break;
 					}
 					case BRUSH_GRADIENT_RADIAL:
+					default:
 					{
 						f = len_v2(p) / line_len;
 						break;

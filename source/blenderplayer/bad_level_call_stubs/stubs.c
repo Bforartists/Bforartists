@@ -353,9 +353,9 @@ struct ListBase *get_constraint_lb(struct Object *ob, struct bConstraint *con, s
 bool ED_space_image_show_uvedit(struct SpaceImage *sima, struct Object *obedit) RET_ZERO
 bool ED_space_image_show_render(struct SpaceImage *sima) RET_ZERO
 bool ED_space_image_show_paint(struct SpaceImage *sima) RET_ZERO
-void ED_space_image_paint_update(struct wmWindowManager *wm, struct ToolSettings *settings) RET_NONE
+void ED_space_image_paint_update(struct wmWindowManager *wm, struct Scene *scene) RET_NONE
 void ED_space_image_set(struct SpaceImage *sima, struct Scene *scene, struct Object *obedit, struct Image *ima) RET_NONE
-void ED_space_image_uv_sculpt_update(struct wmWindowManager *wm, struct ToolSettings *settings) RET_NONE
+void ED_space_image_uv_sculpt_update(struct wmWindowManager *wm, struct Scene *scene) RET_NONE
 void ED_space_image_scopes_update(const struct bContext *C, struct SpaceImage *sima, struct ImBuf *ibuf, bool use_view_settings) RET_NONE
 
 void ED_uvedit_get_aspect(struct Scene *scene, struct Object *ob, struct BMesh *em, float *aspx, float *aspy) RET_NONE
@@ -627,8 +627,9 @@ void RE_engine_update_memory_stats(struct RenderEngine *engine, float mem_used, 
 struct RenderEngine *RE_engine_create(struct RenderEngineType *type) RET_NULL
 void RE_engine_frame_set(struct RenderEngine *engine, int frame, float subframe) RET_NONE
 void RE_FreePersistentData(void) RET_NONE
-void RE_sample_point_density(struct Scene *scene, struct PointDensity *pd, int resolution, float *values) RET_NONE;
+void RE_sample_point_density(struct Scene *scene, struct PointDensity *pd, int resolution, const bool use_render_params, float *values) RET_NONE;
 void RE_instance_get_particle_info(struct ObjectInstanceRen *obi, float *index, float *age, float *lifetime, float co[3], float *size, float vel[3], float angvel[3]) RET_NONE
+void RE_FreeAllPersistentData(void) RET_NONE
 
 /* python */
 struct wmOperatorType *WM_operatortype_find(const char *idname, bool quiet) RET_NULL

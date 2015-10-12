@@ -156,7 +156,7 @@ EnumPropertyItem mesh_select_mode_items[] = {
 };
 
 EnumPropertyItem snap_element_items[] = {
-	{SCE_SNAP_MODE_INCREMENT, "INCREMENT", ICON_ALIGN, "Increment", "Snap to increments of grid"},
+	{SCE_SNAP_MODE_INCREMENT, "INCREMENT", ICON_SNAP_INCREMENT, "Increment", "Snap to increments of grid"},
 	{SCE_SNAP_MODE_VERTEX, "VERTEX", ICON_SNAP_VERTEX, "Vertex", "Snap to vertices"},
 	{SCE_SNAP_MODE_EDGE, "EDGE", ICON_SNAP_EDGE, "Edge", "Snap to edges"},
 	{SCE_SNAP_MODE_FACE, "FACE", ICON_SNAP_FACE, "Face", "Snap to faces"},
@@ -165,7 +165,7 @@ EnumPropertyItem snap_element_items[] = {
 };
 
 EnumPropertyItem snap_node_element_items[] = {
-	{SCE_SNAP_MODE_GRID, "GRID", ICON_SNAP_INCREMENT, "Grid", "Snap to grid"},
+	{SCE_SNAP_MODE_GRID, "GRID", ICON_SNAP_GRID, "Grid", "Snap to grid"},
 	{SCE_SNAP_MODE_NODE_X, "NODE_X", ICON_SNAP_EDGE, "Node X", "Snap to left/right node border"},
 	{SCE_SNAP_MODE_NODE_Y, "NODE_Y", ICON_SNAP_EDGE, "Node Y", "Snap to top/bottom node border"},
 	{SCE_SNAP_MODE_NODE_XY, "NODE_XY", ICON_SNAP_EDGE, "Node X / Y", "Snap to any node border"},
@@ -432,7 +432,7 @@ EnumPropertyItem stereo3d_interlace_type_items[] = {
 
 static void rna_SpaceImageEditor_uv_sculpt_update(Main *bmain, Scene *scene, PointerRNA *UNUSED(ptr))
 {
-	ED_space_image_uv_sculpt_update(bmain->wm.first, scene->toolsettings);
+	ED_space_image_uv_sculpt_update(bmain->wm.first, scene);
 }
 
 static int rna_Scene_object_bases_lookup_string(PointerRNA *ptr, const char *key, PointerRNA *r_ptr)
@@ -2219,7 +2219,7 @@ static void rna_def_tool_settings(BlenderRNA  *brna)
 	RNA_def_property_boolean_sdna(prop, NULL, "snap_flag", SCE_SNAP_ABS_GRID);
 	RNA_def_property_ui_text(prop, "Absolute Grid Snap",
 	                         "Absolute grid alignment while translating (based on the pivot center)");
-	RNA_def_property_ui_icon(prop, ICON_SNAP_INCREMENT, 0);
+	RNA_def_property_ui_icon(prop, ICON_SNAP_GRID, 0);
 	RNA_def_property_update(prop, NC_SCENE | ND_TOOLSETTINGS, NULL); /* header redraw */
 
 	prop = RNA_def_property(srna, "snap_element", PROP_ENUM, PROP_NONE);
@@ -2550,7 +2550,7 @@ static void rna_def_statvis(BlenderRNA  *brna)
 	RNA_def_property_float_sdna(prop, NULL, "overhang_max");
 	RNA_def_property_float_default(prop, 0.5f);
 	RNA_def_property_range(prop, 0.0f, DEG2RADF(180.0f));
-	RNA_def_property_ui_range(prop, 0.0f, DEG2RADF(180.0f), 0.001, 3);
+	RNA_def_property_ui_range(prop, 0.0f, DEG2RADF(180.0f), 10, 3);
 	RNA_def_property_ui_text(prop, "Overhang Max", "Maximum angle to display");
 	RNA_def_property_update(prop, 0, "rna_EditMesh_update");
 
@@ -2589,7 +2589,7 @@ static void rna_def_statvis(BlenderRNA  *brna)
 	RNA_def_property_float_sdna(prop, NULL, "distort_min");
 	RNA_def_property_float_default(prop, 0.5f);
 	RNA_def_property_range(prop, 0.0f, DEG2RADF(180.0f));
-	RNA_def_property_ui_range(prop, 0.0f, DEG2RADF(180.0f), 0.001, 3);
+	RNA_def_property_ui_range(prop, 0.0f, DEG2RADF(180.0f), 10, 3);
 	RNA_def_property_ui_text(prop, "Distort Min", "Minimum angle to display");
 	RNA_def_property_update(prop, 0, "rna_EditMesh_update");
 
@@ -2597,7 +2597,7 @@ static void rna_def_statvis(BlenderRNA  *brna)
 	RNA_def_property_float_sdna(prop, NULL, "distort_max");
 	RNA_def_property_float_default(prop, 0.5f);
 	RNA_def_property_range(prop, 0.0f, DEG2RADF(180.0f));
-	RNA_def_property_ui_range(prop, 0.0f, DEG2RADF(180.0f), 0.001, 3);
+	RNA_def_property_ui_range(prop, 0.0f, DEG2RADF(180.0f), 10, 3);
 	RNA_def_property_ui_text(prop, "Distort Max", "Maximum angle to display");
 	RNA_def_property_update(prop, 0, "rna_EditMesh_update");
 
@@ -2606,7 +2606,7 @@ static void rna_def_statvis(BlenderRNA  *brna)
 	RNA_def_property_float_sdna(prop, NULL, "sharp_min");
 	RNA_def_property_float_default(prop, 0.5f);
 	RNA_def_property_range(prop, -DEG2RADF(180.0f), DEG2RADF(180.0f));
-	RNA_def_property_ui_range(prop, -DEG2RADF(180.0f), DEG2RADF(180.0f), 0.001, 3);
+	RNA_def_property_ui_range(prop, -DEG2RADF(180.0f), DEG2RADF(180.0f), 10, 3);
 	RNA_def_property_ui_text(prop, "Distort Min", "Minimum angle to display");
 	RNA_def_property_update(prop, 0, "rna_EditMesh_update");
 
@@ -2614,7 +2614,7 @@ static void rna_def_statvis(BlenderRNA  *brna)
 	RNA_def_property_float_sdna(prop, NULL, "sharp_max");
 	RNA_def_property_float_default(prop, 0.5f);
 	RNA_def_property_range(prop, -DEG2RADF(180.0f), DEG2RADF(180.0f));
-	RNA_def_property_ui_range(prop, -DEG2RADF(180.0f), DEG2RADF(180.0f), 0.001, 3);
+	RNA_def_property_ui_range(prop, -DEG2RADF(180.0f), DEG2RADF(180.0f), 10, 3);
 	RNA_def_property_ui_text(prop, "Distort Max", "Maximum angle to display");
 	RNA_def_property_update(prop, 0, "rna_EditMesh_update");
 }

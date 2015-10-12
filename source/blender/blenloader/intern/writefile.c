@@ -2079,7 +2079,7 @@ static void write_meshes(WriteData *wd, ListBase *idbase)
 
 				/* now fill in polys to mfaces */
 				/* XXX This breaks writing desing, by using temp allocated memory, which will likely generate
-				 *     doublons in stored 'old' addresses.
+				 *     duplicates in stored 'old' addresses.
 				 *     This is very bad, but do not see easy way to avoid this, aside from generating those data
 				 *     outside of save process itself.
 				 *     Maybe we can live with this, though?
@@ -3688,10 +3688,11 @@ static void write_global(WriteData *wd, int fileflags, Main *mainvar)
  * second are an RGBA image (unsigned char)
  * note, this uses 'TEST' since new types will segfault on file load for older blender versions.
  */
-static void write_thumb(WriteData *wd, const int *img)
+static void write_thumb(WriteData *wd, const BlendThumbnail *thumb)
 {
-	if (img)
-		writedata(wd, TEST, (2 + img[0] * img[1]) * sizeof(int), img);
+	if (thumb) {
+		writedata(wd, TEST, BLEN_THUMB_MEMSIZE_FILE(thumb->width, thumb->height), thumb);
+	}
 }
 
 /* if MemFile * there's filesave to memory */
@@ -3699,7 +3700,7 @@ static int write_file_handle(
         Main *mainvar,
         WriteWrap *ww,
         MemFile *compare, MemFile *current,
-        int write_user_block, int write_flags, const int *thumb)
+        int write_user_block, int write_flags, const BlendThumbnail *thumb)
 {
 	BHead bhead;
 	ListBase mainlist;
@@ -3831,7 +3832,8 @@ static bool do_history(const char *name, ReportList *reports)
 }
 
 /* return: success (1) */
-int BLO_write_file(Main *mainvar, const char *filepath, int write_flags, ReportList *reports, const int *thumb)
+int BLO_write_file(
+        Main *mainvar, const char *filepath, int write_flags, ReportList *reports, const BlendThumbnail *thumb)
 {
 	char tempname[FILE_MAX+1];
 	int err, write_user_block;

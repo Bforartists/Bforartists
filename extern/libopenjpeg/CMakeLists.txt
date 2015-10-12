@@ -31,9 +31,7 @@ set(INC_SYS
 
 )
 
-if(WIN32)
-	add_definitions(-DOPJ_STATIC)
-endif()
+add_definitions(${OPENJPEG_DEFINES})
 
 set(SRC
 	bio.c

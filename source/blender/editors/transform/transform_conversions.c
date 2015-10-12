@@ -1252,7 +1252,18 @@ static void createTransArmatureVerts(TransInfo *t)
 			else {
 				if (ebo->flag & BONE_TIPSEL) {
 					copy_v3_v3(td->iloc, ebo->tail);
-					copy_v3_v3(td->center, (t->around == V3D_LOCAL) ? ebo->head : td->iloc);
+
+					/* Don't allow single selected tips to have a modified center,
+					 * causes problem with snapping (see T45974).
+					 * However, in rotation mode, we want to keep that 'rotate bone around root with
+					 * only its tip selected' behavior (see T46325). */
+					if ((t->around == V3D_LOCAL) && ((t->mode == TFM_ROTATION) || (ebo->flag & BONE_ROOTSEL))) {
+						copy_v3_v3(td->center, ebo->head);
+					}
+					else {
+						copy_v3_v3(td->center, td->iloc);
+					}
+
 					td->loc = ebo->tail;
 					td->flag = TD_SELECTED;
 					if (ebo->flag & BONE_EDITMODE_LOCKED)
@@ -1655,7 +1666,7 @@ static void createTransCurveVerts(TransInfo *t)
 
 			/* TODO - in the case of tilt and radius we can also avoid allocating the initTransDataCurveHandles
 			 * but for now just don't change handle types */
-			if (ELEM(t->mode, TFM_CURVE_SHRINKFATTEN, TFM_TILT) == 0) {
+			if (ELEM(t->mode, TFM_CURVE_SHRINKFATTEN, TFM_TILT, TFM_DUMMY) == 0) {
 				/* sets the handles based on their selection, do this after the data is copied to the TransData */
 				BKE_nurb_handles_test(nu, !hide_handles);
 			}

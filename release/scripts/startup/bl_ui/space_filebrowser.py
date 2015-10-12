@@ -69,8 +69,8 @@ class FILEBROWSER_HT_header(Header):
             row.prop(params, "use_filter_folder", text="")
 
             if params.filter_glob:
-                #if st.active_operator and hasattr(st.active_operator, "filter_glob"):
-                #    row.prop(params, "filter_glob", text="")
+                # if st.active_operator and hasattr(st.active_operator, "filter_glob"):
+                #     row.prop(params, "filter_glob", text="")
                 row.label(params.filter_glob)
             else:
                 row.prop(params, "use_filter_blender", text="")
@@ -228,6 +228,11 @@ class FILEBROWSER_PT_advanced_filter(Panel):
     bl_region_type = 'TOOLS'
     bl_category = "Filter"
     bl_label = "Advanced Filter"
+
+    @classmethod
+    def poll(cls, context):
+        # only useful in append/link (library) context currently...
+        return context.space_data.params.use_library_browsing
 
     def draw(self, context):
         layout = self.layout
