@@ -41,12 +41,12 @@ class INFO_HT_header(Header):
             layout.separator()
         else:
             layout.template_ID(context.window, "screen", new="screen.new", unlink="screen.delete")
-            layout.template_ID(context.screen, "scene", new="scene.new", unlink="scene.delete")
+           # layout.template_ID(context.screen, "scene", new="scene.new", unlink="scene.delete") # bfa - removed the scene drodpown box
 
         layout.separator()
 
-        if rd.has_multiple_engines:
-            layout.prop(rd, "engine", text="")
+        #if rd.has_multiple_engines: # bfa - removed the renderer drodpown box, and moved it to Properties editor.
+        #    layout.prop(rd, "engine", text="")
 
         layout.separator()
 
@@ -67,10 +67,10 @@ class INFO_HT_header(Header):
             # include last so text doesn't push buttons out of the header
             row.label(bpy.app.autoexec_fail_message)
             return
-
-        row.operator("wm.splash", text="", icon='BLENDER', emboss=False)
+        #row.operator("wm.splash", text="", icon='BLENDER', emboss=False)# bfa - commented out the splash icon in the toolbar
         row.label(text=scene.statistics(), translate=False)
 
+# --------------------------------menu items, down to line 310
 
 class INFO_MT_editor_menus(Menu):
     bl_idname = "INFO_MT_editor_menus"
@@ -196,6 +196,7 @@ class INFO_MT_file_external_data(Menu):
         layout.operator("file.find_missing_files")
 
 
+
 class INFO_MT_file_previews(Menu):
     bl_label = "Data Previews"
 
@@ -203,12 +204,6 @@ class INFO_MT_file_previews(Menu):
         layout = self.layout
 
         layout.operator("wm.previews_ensure")
-        layout.operator("wm.previews_batch_generate")
-
-        layout.separator()
-
-        layout.operator("wm.previews_clear")
-        layout.operator("wm.previews_batch_clear")
 
 
 class INFO_MT_game(Menu):
@@ -292,23 +287,19 @@ class INFO_MT_window(Menu):
             layout.separator()
             layout.operator("wm.set_stereo_3d", icon='CAMERA_STEREO')
 
-
 class INFO_MT_help(Menu):
     bl_label = "Help"
 
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("wm.url_open", text="Manual", icon='HELP').url = "http://www.blender.org/manual"
-        layout.operator("wm.url_open", text="Release Log", icon='URL').url = "http://wiki.blender.org/index.php/Dev:Ref/Release_Notes/%d.%d" % bpy.app.version[:2]
+        layout.operator("wm.url_open", text="Manual", icon='HELP').url = "http://www.bforartists.de/wiki/Manual"
+        layout.operator("wm.url_open", text="Release notes", icon='URL').url = "http://www.bforartists.de/wiki/release-notes"
         layout.separator()
 
-        layout.operator("wm.url_open", text="Blender Website", icon='URL').url = "http://www.blender.org"
-        layout.operator("wm.url_open", text="Blender e-Shop", icon='URL').url = "http://www.blender.org/e-shop"
-        layout.operator("wm.url_open", text="Developer Community", icon='URL').url = "http://www.blender.org/get-involved/"
-        layout.operator("wm.url_open", text="User Community", icon='URL').url = "http://www.blender.org/community/user-community"
+        layout.operator("wm.url_open", text="Bforartists Website", icon='URL').url = "http://www.bforartists.de"
         layout.separator()
-        layout.operator("wm.url_open", text="Report a Bug", icon='URL').url = "http://developer.blender.org/maniphest/task/create/?project=2&type=Bug"
+        layout.operator("wm.url_open", text="Report a Bug", icon='URL').url = "http://www.bforartists.de/node/add/project-issue/bforartists_bugtracker"
         layout.separator()
 
         layout.operator("wm.url_open", text="Python API Reference", icon='URL').url = bpy.types.WM_OT_doc_view._prefix
