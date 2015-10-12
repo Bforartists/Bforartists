@@ -867,6 +867,7 @@ static void cdDM_drawMappedFacesGLSL(
 	const float (*nors)[3] = dm->getPolyDataArray(dm, CD_NORMAL);
 	const float (*lnors)[3] = dm->getLoopDataArray(dm, CD_NORMAL);
 	const int totpoly = dm->getNumPolys(dm);
+	const short dm_totmat = dm->totmat;
 	int a, b, matnr, new_matnr;
 	bool do_draw;
 	int orig;
@@ -1047,8 +1048,9 @@ static void cdDM_drawMappedFacesGLSL(
 			}
 
 			for (a = 0; a < totpoly; a++, mpoly++) {
+				const short mat_nr = ME_MAT_NR_TEST(mpoly->mat_nr, dm_totmat);
 				int j;
-				int i = mat_orig_to_new[mpoly->mat_nr];
+				int i = mat_orig_to_new[mat_nr];
 				offset = tot_loops * max_element_size;
 
 				if (matconv[i].numdata != 0) {
@@ -1075,12 +1077,10 @@ static void cdDM_drawMappedFacesGLSL(
 						}
 					}
 					if (matconv[i].attribs.tottang && matconv[i].attribs.tang.array) {
-						if (matconv[i].attribs.tface[b].array) {
-							const float (*looptang)[4] = (const float (*)[4])matconv[i].attribs.tang.array;
-							for (j = 0; j < mpoly->totloop; j++)
-								copy_v4_v4((float *)&varray[offset + j * max_element_size], looptang[mpoly->loopstart + j]);
-							offset += sizeof(float) * 4;
-						}
+						const float (*looptang)[4] = (const float (*)[4])matconv[i].attribs.tang.array;
+						for (j = 0; j < mpoly->totloop; j++)
+							copy_v4_v4((float *)&varray[offset + j * max_element_size], looptang[mpoly->loopstart + j]);
+						offset += sizeof(float) * 4;
 					}
 				}
 
@@ -1258,14 +1258,15 @@ static void cdDM_buffer_copy_triangles(
 	GPUBufferMaterial *gpumat, *gpumaterials = dm->drawObject->materials;
 	int i, j, start;
 
-	const int totmat = dm->drawObject->totmaterial;
+	const int gpu_totmat = dm->drawObject->totmaterial;
+	const short dm_totmat = dm->totmat;
 	const MPoly *mpoly = dm->getPolyArray(dm);
 	const MLoopTri *lt = dm->getLoopTriArray(dm);
 	const int totpoly = dm->getNumPolys(dm);
 
-	FaceCount *fc = MEM_mallocN(sizeof(*fc) * totmat, "gpumaterial.facecount");
+	FaceCount *fc = MEM_mallocN(sizeof(*fc) * gpu_totmat, "gpumaterial.facecount");
 
-	for (i = 0; i < totmat; i++) {
+	for (i = 0; i < gpu_totmat; i++) {
 		fc[i].i_visible = 0;
 		fc[i].i_tri_visible = 0;
 		fc[i].i_hidden = gpumaterials[i].totpolys - 1;
@@ -1273,8 +1274,9 @@ static void cdDM_buffer_copy_triangles(
 	}
 
 	for (i = 0; i < totpoly; i++) {
+		const short mat_nr = ME_MAT_NR_TEST(mpoly[i].mat_nr, dm_totmat);
 		int tottri = ME_POLY_TRI_TOT(&mpoly[i]);
-		int mati = mat_orig_to_new[mpoly[i].mat_nr];
+		int mati = mat_orig_to_new[mat_nr];
 		gpumat = gpumaterials + mati;
 
 		if (mpoly[i].flag & ME_HIDE) {
@@ -1302,7 +1304,7 @@ static void cdDM_buffer_copy_triangles(
 	}
 
 	/* set the visible polygons */
-	for (i = 0; i < totmat; i++) {
+	for (i = 0; i < gpu_totmat; i++) {
 		gpumaterials[i].totvisiblepolys = fc[i].i_visible;
 	}
 
@@ -1695,12 +1697,12 @@ static GPUDrawObject *cdDM_GPUobject_new(DerivedMesh *dm)
 	GPUDrawObject *gdo;
 	const MPoly *mpoly;
 	const MLoop *mloop;
-	int totmat = dm->totmat;
+	const short dm_totmat = dm->totmat;
 	GPUBufferMaterial *mat_info;
 	int i, totloops, totpolys;
 
 	/* object contains at least one material (default included) so zero means uninitialized dm */
-	BLI_assert(totmat != 0);
+	BLI_assert(dm_totmat != 0);
 
 	mpoly = dm->getPolyArray(dm);
 	mloop = dm->getLoopArray(dm);
@@ -1710,10 +1712,10 @@ static GPUDrawObject *cdDM_GPUobject_new(DerivedMesh *dm)
 
 	/* get the number of points used by each material, treating
 	 * each quad as two triangles */
-	mat_info = MEM_callocN(sizeof(*mat_info) * totmat, "GPU_drawobject_new.mat_orig_to_new");
+	mat_info = MEM_callocN(sizeof(*mat_info) * dm_totmat, "GPU_drawobject_new.mat_orig_to_new");
 
 	for (i = 0; i < totpolys; i++) {
-		const int mat_nr = mpoly[i].mat_nr;
+		const short mat_nr = ME_MAT_NR_TEST(mpoly[i].mat_nr, dm_totmat);
 		mat_info[mat_nr].totpolys++;
 		mat_info[mat_nr].totelements += 3 * ME_POLY_TRI_TOT(&mpoly[i]);
 		mat_info[mat_nr].totloops += mpoly[i].totloop;
@@ -1723,7 +1725,7 @@ static GPUDrawObject *cdDM_GPUobject_new(DerivedMesh *dm)
 	gdo->totvert = dm->getNumVerts(dm);
 	gdo->totedge = dm->getNumEdges(dm);
 
-	GPU_buffer_material_finalize(gdo, mat_info, totmat);
+	GPU_buffer_material_finalize(gdo, mat_info, dm_totmat);
 
 	gdo->tot_loop_verts = totloops;
 
@@ -2419,10 +2421,11 @@ DerivedMesh *CDDM_copy_from_tessface(DerivedMesh *source)
 
 /* note, the CD_ORIGINDEX layers are all 0, so if there is a direct
  * relationship between mesh data this needs to be set by the caller. */
-DerivedMesh *CDDM_from_template(
+DerivedMesh *CDDM_from_template_ex(
         DerivedMesh *source,
         int numVerts, int numEdges, int numTessFaces,
-        int numLoops, int numPolys)
+        int numLoops, int numPolys,
+        CustomDataMask mask)
 {
 	CDDerivedMesh *cddm = cdDM_create("CDDM_from_template dest");
 	DerivedMesh *dm = &cddm->dm;
@@ -2434,7 +2437,11 @@ DerivedMesh *CDDM_from_template(
 	source->getPolyDataArray(source, CD_ORIGINDEX);
 
 	/* this does a copy of all non mvert/medge/mface layers */
-	DM_from_template(dm, source, DM_TYPE_CDDM, numVerts, numEdges, numTessFaces, numLoops, numPolys);
+	DM_from_template_ex(
+	        dm, source, DM_TYPE_CDDM,
+	        numVerts, numEdges, numTessFaces,
+	        numLoops, numPolys,
+	        mask);
 
 	/* now add mvert/medge/mface layers */
 	CustomData_add_layer(&dm->vertData, CD_MVERT, CD_CALLOC, NULL, numVerts);
@@ -2457,6 +2464,16 @@ DerivedMesh *CDDM_from_template(
 	cddm->mpoly = CustomData_get_layer(&dm->polyData, CD_MPOLY);
 
 	return dm;
+}
+DerivedMesh *CDDM_from_template(
+        DerivedMesh *source,
+        int numVerts, int numEdges, int numTessFaces,
+        int numLoops, int numPolys)
+{
+	return CDDM_from_template_ex(
+	        source, numVerts, numEdges, numTessFaces,
+	        numLoops, numPolys,
+	        CD_MASK_DERIVEDMESH);
 }
 
 void CDDM_apply_vert_coords(DerivedMesh *dm, float (*vertCoords)[3])

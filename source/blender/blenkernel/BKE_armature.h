@@ -80,6 +80,8 @@ struct bArmature *BKE_armature_copy(struct bArmature *arm);
 /* Bounding box. */
 struct BoundBox *BKE_armature_boundbox_get(struct Object *ob);
 
+bool BKE_pose_minmax(struct Object *ob, float r_min[3], float r_max[3], bool use_hidden, bool use_select);
+
 int bone_autoside_name(char name[64], int strip_number, short axis, float head, float tail);
 
 struct Bone *BKE_armature_find_bone_name(struct bArmature *arm, const char *name);
@@ -89,7 +91,7 @@ bool         BKE_armature_bone_flag_test_recursive(const struct Bone *bone, int 
 float distfactor_to_bone(const float vec[3], const float b1[3], const float b2[3], float r1, float r2, float rdist);
 
 void BKE_armature_where_is(struct bArmature *arm);
-void BKE_armature_where_is_bone(struct Bone *bone, struct Bone *prevbone);
+void BKE_armature_where_is_bone(struct Bone *bone, struct Bone *prevbone, const bool use_recursion);
 void BKE_pose_rebuild(struct Object *ob, struct bArmature *arm);
 void BKE_pose_where_is(struct Scene *scene, struct Object *ob);
 void BKE_pose_where_is_bone(struct Scene *scene, struct Object *ob, struct bPoseChannel *pchan, float ctime, bool do_extra);

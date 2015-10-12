@@ -1002,6 +1002,7 @@ static void CalcSnapGeometry(TransInfo *t, float *UNUSED(vec))
 			BLI_freelistN(&depth_peels);
 		}
 		else {
+			zero_v3(no);  /* objects won't set this */
 			found = snapObjectsTransform(t, mval, &dist_px, loc, no, t->tsnap.modeSelect);
 		}
 		
@@ -1526,8 +1527,17 @@ static bool snapDerivedMesh(short snap_mode, ARegion *ar, Object *ob, DerivedMes
 
 		if (do_bb) {
 			BoundBox *bb = BKE_object_boundbox_get(ob);
-			if (!BKE_boundbox_ray_hit_check(bb, ray_start_local, ray_normal_local, &len_diff)) {
-				return retval;
+
+			if (bb) {
+				BoundBox bb_temp;
+
+				/* We cannot aford a bbox with some null dimension, which may happen in some cases...
+				 * Threshold is rather high, but seems to be needed to get good behavior, see T46099. */
+				bb = BKE_boundbox_ensure_minimum_dimensions(bb, &bb_temp, 1e-1f);
+
+				if (!BKE_boundbox_ray_hit_check(bb, ray_start_local, ray_normal_local, &len_diff)) {
+					return retval;
+				}
 			}
 		}
 		else if (do_ray_start_correction) {
@@ -1539,6 +1549,7 @@ static bool snapDerivedMesh(short snap_mode, ARegion *ar, Object *ob, DerivedMes
 			len_diff = 0.0f;  /* In case BVHTree would fail for some reason... */
 
 			treeData.em_evil = em;
+			treeData.em_evil_all = false;
 			bvhtree_from_mesh_looptri(&treeData, dm, 0.0f, 2, 6);
 			if (treeData.tree != NULL) {
 				nearest.index = -1;
@@ -1581,6 +1592,7 @@ static bool snapDerivedMesh(short snap_mode, ARegion *ar, Object *ob, DerivedMes
 				}
 
 				treeData.em_evil = em;
+				treeData.em_evil_all = false;
 				bvhtree_from_mesh_looptri(&treeData, dm, 0.0f, 4, 6);
 
 				hit.index = -1;
@@ -1853,8 +1865,16 @@ static bool snapObject(Scene *scene, short snap_mode, ARegion *ar, Object *ob, f
 			do_bb = false;
 		}
 		else {
+			/* in this case we want the mesh from the editmesh, avoids stale data. see: T45978.
+			 * still set the 'em' to NULL, since we only want the 'dm'. */
+			em = BKE_editmesh_from_object(ob);
+			if (em) {
+				editbmesh_get_derived_cage_and_final(scene, ob, em, CD_MASK_BAREMESH, &dm);
+			}
+			else {
+				dm = mesh_get_derived_final(scene, ob, CD_MASK_BAREMESH);
+			}
 			em = NULL;
-			dm = mesh_get_derived_final(scene, ob, CD_MASK_BAREMESH);
 		}
 		
 		retval = snapDerivedMesh(snap_mode, ar, ob, dm, em, obmat, ray_start, ray_normal, ray_origin, mval, r_loc, r_no, r_dist_px, r_depth, do_bb);
@@ -1974,8 +1994,20 @@ static bool snapObjects(Scene *scene, short snap_mode, Base *base_act, View3D *v
 bool snapObjectsTransform(TransInfo *t, const float mval[2], float *r_dist_px, float r_loc[3], float r_no[3], SnapMode mode)
 {
 	float ray_dist = TRANSFORM_DIST_MAX_RAY;
-	return snapObjects(t->scene, t->scene->toolsettings->snap_mode, t->scene->basact, t->view, t->ar, t->obedit,
-	                   mval, r_dist_px, r_loc, r_no, &ray_dist, mode);
+	Object *obedit = NULL;
+	Base *base_act = NULL;
+
+	if (t->flag & T_EDIT) {
+		obedit = t->obedit;
+	}
+
+	if ((t->options & CTX_GPENCIL_STROKES) == 0) {
+		base_act = t->scene->basact;
+	}
+
+	return snapObjects(
+	        t->scene, t->scene->toolsettings->snap_mode, base_act, t->view, t->ar, obedit,
+	        mval, r_dist_px, r_loc, r_no, &ray_dist, mode);
 }
 
 bool snapObjectsContext(bContext *C, const float mval[2], float *r_dist_px, float r_loc[3], float r_no[3], SnapMode mode)
@@ -2130,20 +2162,30 @@ static bool peelDerivedMesh(
 		 * test against boundbox first
 		 * */
 		if (looptri_num > 16) {
-			struct BoundBox *bb = BKE_object_boundbox_get(ob);
-			test = BKE_boundbox_ray_hit_check(bb, ray_start_local, ray_normal_local, NULL);
+			BoundBox *bb = BKE_object_boundbox_get(ob);
+
+			if (bb) {
+				BoundBox bb_temp;
+
+				/* We cannot aford a bbox with some null dimension, which may happen in some cases...
+				 * Threshold is rather high, but seems to be needed to get good behavior, see T46099. */
+				bb = BKE_boundbox_ensure_minimum_dimensions(bb, &bb_temp, 1e-1f);
+
+				test = BKE_boundbox_ray_hit_check(bb, ray_start_local, ray_normal_local, NULL);
+			}
 		}
 		
 		if (test == true) {
 			struct PeelRayCast_Data data;
 
 			data.bvhdata.em_evil = em;
+			data.bvhdata.em_evil_all = false;
 			bvhtree_from_mesh_looptri(&data.bvhdata, dm, 0.0f, 4, 6);
 
 			if (data.bvhdata.tree != NULL) {
 				data.ob = ob;
-				data.obmat = obmat;
-				data.timat = timat;
+				data.obmat = (const float (*)[4])obmat;
+				data.timat = (const float (*)[3])timat;
 				data.ray_start = ray_start;
 				data.looptri = looptri;
 				data.polynors = dm->getPolyDataArray(dm, CD_NORMAL);  /* can be NULL */

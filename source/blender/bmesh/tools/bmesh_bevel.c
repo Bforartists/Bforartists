@@ -348,7 +348,7 @@ static EdgeHalf *next_bev(BevVert *bv, EdgeHalf *from_e)
 /* Return a good representative face (for materials, etc.) for faces
  * created around/near BoundVert v.
  * Sometimes care about a second choice, if there is one.
- * If r_fother paramenter is non-NULL and there is another, different,
+ * If r_fother parameter is non-NULL and there is another, different,
  * possible frep, return the other one in that parameter. */
 static BMFace *boundvert_rep_face(BoundVert *v, BMFace **r_fother)
 {
@@ -823,7 +823,7 @@ static void offset_meet(EdgeHalf *e1, EdgeHalf *e2, BMVert *v, BMFace *f, bool e
 					if (!ff)
 						continue;
 					plane_from_point_normal_v3(plane, v->co, ff->no);
-					closest_to_plane_v3(dropco, plane, meetco);
+					closest_to_plane_normalized_v3(dropco, plane, meetco);
 					if (point_between_edges(dropco, v, ff, e, e->next)) {
 						copy_v3_v3(meetco, dropco);
 						break;
@@ -2947,7 +2947,7 @@ static void bevel_build_rings(BevelParams *bp, BMesh *bm, BevVert *bv)
 				BLI_array_append(ve, v == vm->boundstart ? NULL : frep_e);
 			}
 			else {
-				BLI_array_append(vf, frep);
+				BLI_array_append(vf, boundvert_rep_face(v, NULL));
 				BLI_array_append(ve, NULL);
 			}
 		} while ((v = v->next) != vm->boundstart);
@@ -4032,7 +4032,7 @@ static float find_superellipse_chord_u(float u0, float d2goal, float r)
  * Return the u's in *r_params, which should point to an array of size n+1. */
 static void find_even_superellipse_params(int n, float r, float *r_params)
 {
-	float d2low, d2high, d2, d2final, u;
+	float d2low, d2high, d2 = 0.0f, d2final, u;
 	int i, j, n2;
 	const int maxiters = 40;
 	const float d2tol = 1e-6f;

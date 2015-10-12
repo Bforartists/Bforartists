@@ -538,7 +538,7 @@ BVHTree *bvhtree_from_mesh_edges(BVHTreeFromMesh *data, DerivedMesh *dm, float e
 				tree = BLI_bvhtree_new(numEdges, epsilon, tree_type, axis);
 				if (tree != NULL) {
 					for (i = 0; i < numEdges; i++) {
-						float co[4][3];
+						float co[2][3];
 						copy_v3_v3(co[0], vert[edge[i].v1].co);
 						copy_v3_v3(co[1], vert[edge[i].v2].co);
 
@@ -597,7 +597,8 @@ BVHTree *bvhtree_from_mesh_edges(BVHTreeFromMesh *data, DerivedMesh *dm, float e
 
 static BVHTree *bvhtree_from_mesh_faces_create_tree(
         float epsilon, int tree_type, int axis,
-        BMEditMesh *em, MVert *vert, MFace *face, const int numFaces,
+        BMEditMesh *em, const bool em_all,
+        MVert *vert, MFace *face, const int numFaces,
         BLI_bitmap *mask, int numFaces_active)
 {
 	BVHTree *tree = NULL;
@@ -646,7 +647,10 @@ static BVHTree *bvhtree_from_mesh_faces_create_tree(
 						insert = insert_prev;
 					}
 					else if (insert) {
-						if (BM_elem_flag_test(f, BM_ELEM_SELECT) || BM_elem_flag_test(f, BM_ELEM_HIDDEN)) {
+						if (em_all) {
+							/* pass */
+						}
+						else if (BM_elem_flag_test(f, BM_ELEM_SELECT) || BM_elem_flag_test(f, BM_ELEM_HIDDEN)) {
 							/* Don't insert triangles tessellated from faces that are hidden or selected */
 							insert = false;
 						}
@@ -746,7 +750,9 @@ static void bvhtree_from_mesh_faces_setup_data(
 BVHTree *bvhtree_from_mesh_faces(BVHTreeFromMesh *data, DerivedMesh *dm, float epsilon, int tree_type, int axis)
 {
 	BMEditMesh *em = data->em_evil;
-	const int bvhcache_type = em ? BVHTREE_FROM_FACES_EDITMESH : BVHTREE_FROM_FACES;
+	const int bvhcache_type = em ?
+	        (data->em_evil_all ? BVHTREE_FROM_FACES_EDITMESH_ALL : BVHTREE_FROM_FACES_EDITMESH_SNAP) :
+	        BVHTREE_FROM_FACES;
 	BVHTree *tree;
 	MVert *vert = NULL;
 	MFace *face = NULL;
@@ -781,7 +787,10 @@ BVHTree *bvhtree_from_mesh_faces(BVHTreeFromMesh *data, DerivedMesh *dm, float e
 				BLI_assert(!(numFaces == 0 && dm->getNumPolys(dm) != 0));
 			}
 
-			tree = bvhtree_from_mesh_faces_create_tree(epsilon, tree_type, axis, em, vert, face, numFaces, NULL, -1);
+			tree = bvhtree_from_mesh_faces_create_tree(
+			        epsilon, tree_type, axis,
+			        em, (bvhcache_type == BVHTREE_FROM_FACES_EDITMESH_ALL),
+			        vert, face, numFaces, NULL, -1);
 			if (tree) {
 				/* Save on cache for later use */
 				/* printf("BVHTree built and saved on cache\n"); */
@@ -813,7 +822,9 @@ BVHTree *bvhtree_from_mesh_faces_ex(
         BLI_bitmap *mask, int numFaces_active, float epsilon, int tree_type, int axis)
 {
 	BVHTree *tree = bvhtree_from_mesh_faces_create_tree(
-	        epsilon, tree_type, axis, NULL, vert, face, numFaces,
+	        epsilon, tree_type, axis,
+	        NULL, false,
+	        vert, face, numFaces,
 	        mask, numFaces_active);
 
 	/* Setup BVHTreeFromMesh */
@@ -832,7 +843,8 @@ BVHTree *bvhtree_from_mesh_faces_ex(
 
 static BVHTree *bvhtree_from_mesh_looptri_create_tree(
         float epsilon, int tree_type, int axis,
-        BMEditMesh *em, const MVert *vert, const MLoop *mloop, const MLoopTri *looptri, const int looptri_num,
+        BMEditMesh *em, const bool em_all,
+        const MVert *vert, const MLoop *mloop, const MLoopTri *looptri, const int looptri_num,
         BLI_bitmap *mask, int looptri_num_active)
 {
 	BVHTree *tree = NULL;
@@ -881,7 +893,10 @@ static BVHTree *bvhtree_from_mesh_looptri_create_tree(
 						insert = insert_prev;
 					}
 					else if (insert) {
-						if (BM_elem_flag_test(f, BM_ELEM_SELECT) || BM_elem_flag_test(f, BM_ELEM_HIDDEN)) {
+						if (em_all) {
+							/* pass */
+						}
+						else if (BM_elem_flag_test(f, BM_ELEM_SELECT) || BM_elem_flag_test(f, BM_ELEM_HIDDEN)) {
 							/* Don't insert triangles tessellated from faces that are hidden or selected */
 							insert = false;
 						}
@@ -916,7 +931,7 @@ static BVHTree *bvhtree_from_mesh_looptri_create_tree(
 			else {
 				if (vert && looptri) {
 					for (i = 0; i < looptri_num; i++) {
-						float co[4][3];
+						float co[3][3];
 						if (mask && !BLI_BITMAP_TEST_BOOL(mask, i)) {
 							continue;
 						}
@@ -972,6 +987,9 @@ static void bvhtree_from_mesh_looptri_setup_data(
 		if (vert_allocated) {
 			MEM_freeN((void *)vert);
 		}
+		if (loop_allocated) {
+			MEM_freeN((void *)mloop);
+		}
 		if (looptri_allocated) {
 			MEM_freeN((void *)looptri);
 		}
@@ -986,7 +1004,9 @@ static void bvhtree_from_mesh_looptri_setup_data(
 BVHTree *bvhtree_from_mesh_looptri(BVHTreeFromMesh *data, DerivedMesh *dm, float epsilon, int tree_type, int axis)
 {
 	BMEditMesh *em = data->em_evil;
-	const int bvhcache_type = em ? BVHTREE_FROM_FACES_EDITMESH : BVHTREE_FROM_LOOPTRI;
+	const int bvhcache_type = em ?
+	        (data->em_evil_all ? BVHTREE_FROM_FACES_EDITMESH_ALL : BVHTREE_FROM_FACES_EDITMESH_SNAP) :
+	        BVHTREE_FROM_LOOPTRI;
 	BVHTree *tree;
 	MVert *mvert = NULL;
 	MLoop *mloop = NULL;
@@ -1041,7 +1061,8 @@ BVHTree *bvhtree_from_mesh_looptri(BVHTreeFromMesh *data, DerivedMesh *dm, float
 			}
 
 			tree = bvhtree_from_mesh_looptri_create_tree(
-			        epsilon, tree_type, axis, em,
+			        epsilon, tree_type, axis,
+			        em, (bvhcache_type == BVHTREE_FROM_FACES_EDITMESH_ALL),
 			        mvert, mloop, looptri, looptri_num, NULL, -1);
 			if (tree) {
 				/* Save on cache for later use */
@@ -1074,7 +1095,9 @@ BVHTree *bvhtree_from_mesh_looptri_ex(
         float epsilon, int tree_type, int axis)
 {
 	BVHTree *tree = bvhtree_from_mesh_looptri_create_tree(
-	        epsilon, tree_type, axis, NULL, vert, mloop, looptri, looptri_num,
+	        epsilon, tree_type, axis,
+	        NULL, false,
+	        vert, mloop, looptri, looptri_num,
 	        mask, looptri_num_active);
 
 	/* Setup BVHTreeFromMesh */

@@ -30,6 +30,7 @@
 #  include "iso646.h"
 #endif
 
+#include <stdlib.h>
 #include <GL/glew.h>
 
 #include <opensubdiv/osd/glMesh.h>
@@ -158,8 +159,6 @@ struct OpenSubdiv_GLMesh *openSubdiv_createOsdGLMeshFromTopologyRefiner(
 	bits.set(OpenSubdiv::Osd::MeshInterleaveVarying, 1);
 	bits.set(OpenSubdiv::Osd::MeshFVarData, 1);
 	bits.set(OpenSubdiv::Osd::MeshEndCapBSplineBasis, 1);
-	// bits.set(Osd::MeshEndCapGregoryBasis, 1);
-	// bits.set(Osd::MeshEndCapLegacyGregory, 1);
 
 	const int num_vertex_elements = 3;
 	const int num_varying_elements = 3;
@@ -296,8 +295,29 @@ const struct OpenSubdiv_TopologyRefinerDescr *openSubdiv_getGLMeshTopologyRefine
 
 int openSubdiv_supportGPUDisplay(void)
 {
-	return GL_EXT_geometry_shader4 &&
-	       GL_ARB_gpu_shader5 &&
-	       GL_ARB_uniform_buffer_object &&
-	       glProgramParameteriEXT;
+	{
+		/* Currently Intel GPUs has hard time working on Windows.
+		 *
+		 * For until we've got access to a hardware which demonstrates
+		 * the issue we disable OpenSubdiv on Intel GPUs.
+		 */
+		static bool vendor_checked = false;
+		static bool is_intel = false;
+		if (!vendor_checked) {
+			vendor_checked = true;
+			const char *vendor = (const char *)glGetString(GL_VENDOR);
+			if (vendor != NULL && strstr(vendor, "Intel")) {
+				if(getenv("OPENSUBDIV_ALLOW_INTEL") == NULL) {
+					is_intel = true;
+				}
+			}
+		}
+		if (is_intel) {
+			return false;
+		}
+	}
+
+	return GLEW_EXT_geometry_shader4 &&
+	       GLEW_ARB_gpu_shader5 &&
+	       GLEW_ARB_uniform_buffer_object;
 }

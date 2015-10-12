@@ -725,6 +725,16 @@ void curvemapping_changed(CurveMapping *cumap, const bool rem_doubles)
 				cmp[a].y -= dy;
 			}
 		}
+
+		/* ensure zoom-level respects clipping */
+		if (BLI_rctf_size_x(&cumap->curr) > BLI_rctf_size_x(&cumap->clipr)) {
+			cumap->curr.xmin = cumap->clipr.xmin;
+			cumap->curr.xmax = cumap->clipr.xmax;
+		}
+		if (BLI_rctf_size_y(&cumap->curr) > BLI_rctf_size_y(&cumap->clipr)) {
+			cumap->curr.ymin = cumap->clipr.ymin;
+			cumap->curr.ymax = cumap->clipr.ymax;
+		}
 	}
 	
 	
@@ -975,7 +985,6 @@ void BKE_histogram_update_sample_line(Histogram *hist, ImBuf *ibuf, const ColorM
 {
 	int i, x, y;
 	const float *fp;
-	float rgb[3];
 	unsigned char *cp;
 
 	int x1 = 0.5f + hist->co[0][0] * ibuf->x;
@@ -1004,16 +1013,36 @@ void BKE_histogram_update_sample_line(Histogram *hist, ImBuf *ibuf, const ColorM
 		}
 		else {
 			if (ibuf->rect_float) {
+				float rgba[4];
 				fp = (ibuf->rect_float + (ibuf->channels) * (y * ibuf->x + x));
 
-				copy_v3_v3(rgb, fp);
-				IMB_colormanagement_processor_apply_v3(cm_processor, rgb);
+				switch (ibuf->channels) {
+					case 4:
+						copy_v4_v4(rgba, fp);
+						IMB_colormanagement_processor_apply_v4(cm_processor, rgba);
+						break;
+					case 3:
+						copy_v3_v3(rgba, fp);
+						IMB_colormanagement_processor_apply_v3(cm_processor, rgba);
+						rgba[3] = 1.0f;
+						break;
+					case 2:
+						copy_v3_fl(rgba, fp[0]);
+						rgba[3] = fp[1];
+						break;
+					case 1:
+						copy_v3_fl(rgba, fp[0]);
+						rgba[3] = 1.0f;
+						break;
+					default:
+						BLI_assert(0);
+				}
 
-				hist->data_luma[i]  = IMB_colormanagement_get_luminance(rgb);
-				hist->data_r[i]     = rgb[0];
-				hist->data_g[i]     = rgb[1];
-				hist->data_b[i]     = rgb[2];
-				hist->data_a[i]     = fp[3];
+				hist->data_luma[i]  = IMB_colormanagement_get_luminance(rgba);
+				hist->data_r[i]     = rgba[0];
+				hist->data_g[i]     = rgba[1];
+				hist->data_b[i]     = rgba[2];
+				hist->data_a[i]     = rgba[3];
 			}
 			else if (ibuf->rect) {
 				cp = (unsigned char *)(ibuf->rect + y * ibuf->x + x);
@@ -1148,8 +1177,28 @@ void scopes_update(Scopes *scopes, ImBuf *ibuf, const ColorManagedViewSettings *
 		for (x = 0; x < ibuf->x; x++) {
 			float rgba[4], ycc[3], luma;
 			if (is_float) {
-				copy_v4_v4(rgba, rf);
-				IMB_colormanagement_processor_apply_v4(cm_processor, rgba);
+
+				switch (ibuf->channels) {
+					case 4:
+						copy_v4_v4(rgba, rf);
+						IMB_colormanagement_processor_apply_v4(cm_processor, rgba);
+						break;
+					case 3:
+						copy_v3_v3(rgba, rf);
+						IMB_colormanagement_processor_apply_v3(cm_processor, rgba);
+						rgba[3] = 1.0f;
+						break;
+					case 2:
+						copy_v3_fl(rgba, rf[0]);
+						rgba[3] = rf[1];
+						break;
+					case 1:
+						copy_v3_fl(rgba, rf[0]);
+						rgba[3] = 1.0f;
+						break;
+					default:
+						BLI_assert(0);
+				}
 			}
 			else {
 				for (c = 0; c < 4; c++)

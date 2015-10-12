@@ -2655,6 +2655,76 @@ void BKE_boundbox_calc_size_aabb(const BoundBox *bb, float r_size[3])
 	r_size[2] = 0.5f * fabsf(bb->vec[0][2] - bb->vec[1][2]);
 }
 
+void BKE_boundbox_minmax(const BoundBox *bb, float obmat[4][4], float r_min[3], float r_max[3])
+{
+	int i;
+	for (i = 0; i < 8; i++) {
+		float vec[3];
+		mul_v3_m4v3(vec, obmat, bb->vec[i]);
+		minmax_v3v3_v3(r_min, r_max, vec);
+	}
+}
+
+/**
+ * Returns a BBox which each dimensions are at least epsilon.
+ * \note In case a given dimension needs to be enlarged, its final value will be in [epsilon, 3 * epsilon] range.
+ *
+ * \param bb the input bbox to check.
+ * \param bb_temp the temp bbox to modify (\a bb content is never changed).
+ * \param epsilon the minimum dimension to ensure.
+ * \return either bb (if nothing needed to be changed) or bb_temp.
+ */
+BoundBox *BKE_boundbox_ensure_minimum_dimensions(BoundBox *bb, BoundBox *bb_temp, const float epsilon)
+{
+	if (fabsf(bb->vec[0][0] - bb->vec[4][0]) < epsilon) {
+		/* Flat along X axis... */
+		*bb_temp = *bb;
+		bb = bb_temp;
+		bb->vec[0][0] -= epsilon;
+		bb->vec[1][0] -= epsilon;
+		bb->vec[2][0] -= epsilon;
+		bb->vec[3][0] -= epsilon;
+		bb->vec[4][0] += epsilon;
+		bb->vec[5][0] += epsilon;
+		bb->vec[6][0] += epsilon;
+		bb->vec[7][0] += epsilon;
+	}
+
+	if (fabsf(bb->vec[0][1] - bb->vec[3][1]) < epsilon) {
+		/* Flat along Y axis... */
+		if (bb != bb_temp) {
+			*bb_temp = *bb;
+			bb = bb_temp;
+		}
+		bb->vec[0][1] -= epsilon;
+		bb->vec[1][1] -= epsilon;
+		bb->vec[4][1] -= epsilon;
+		bb->vec[5][1] -= epsilon;
+		bb->vec[2][1] += epsilon;
+		bb->vec[3][1] += epsilon;
+		bb->vec[6][1] += epsilon;
+		bb->vec[7][1] += epsilon;
+	}
+
+	if (fabsf(bb->vec[0][2] - bb->vec[1][2]) < epsilon) {
+		/* Flat along Z axis... */
+		if (bb != bb_temp) {
+			*bb_temp = *bb;
+			bb = bb_temp;
+		}
+		bb->vec[0][2] -= epsilon;
+		bb->vec[3][2] -= epsilon;
+		bb->vec[4][2] -= epsilon;
+		bb->vec[7][2] -= epsilon;
+		bb->vec[1][2] += epsilon;
+		bb->vec[2][2] += epsilon;
+		bb->vec[5][2] += epsilon;
+		bb->vec[6][2] += epsilon;
+	}
+
+	return bb;
+}
+
 BoundBox *BKE_object_boundbox_get(Object *ob)
 {
 	BoundBox *bb = NULL;
@@ -2730,7 +2800,6 @@ void BKE_object_minmax(Object *ob, float min_r[3], float max_r[3], const bool us
 {
 	BoundBox bb;
 	float vec[3];
-	int a;
 	bool changed = false;
 	
 	switch (ob->type) {
@@ -2739,11 +2808,7 @@ void BKE_object_minmax(Object *ob, float min_r[3], float max_r[3], const bool us
 		case OB_SURF:
 		{
 			bb = *BKE_curve_boundbox_get(ob);
-
-			for (a = 0; a < 8; a++) {
-				mul_m4_v3(ob->obmat, bb.vec[a]);
-				minmax_v3v3_v3(min_r, max_r, bb.vec[a]);
-			}
+			BKE_boundbox_minmax(&bb, ob->obmat, min_r, max_r);
 			changed = true;
 			break;
 		}
@@ -2766,23 +2831,7 @@ void BKE_object_minmax(Object *ob, float min_r[3], float max_r[3], const bool us
 		}
 		case OB_ARMATURE:
 		{
-			if (ob->pose) {
-				bArmature *arm = ob->data;
-				bPoseChannel *pchan;
-
-				for (pchan = ob->pose->chanbase.first; pchan; pchan = pchan->next) {
-					/* XXX pchan->bone may be NULL for duplicated bones, see duplicateEditBoneObjects() comment
-					 *     (editarmature.c:2592)... Skip in this case too! */
-					if (pchan->bone && !((use_hidden == false) && (PBONE_VISIBLE(arm, pchan->bone) == false))) {
-						mul_v3_m4v3(vec, ob->obmat, pchan->pose_head);
-						minmax_v3v3_v3(min_r, max_r, vec);
-						mul_v3_m4v3(vec, ob->obmat, pchan->pose_tail);
-						minmax_v3v3_v3(min_r, max_r, vec);
-
-						changed = true;
-					}
-				}
-			}
+			changed = BKE_pose_minmax(ob, min_r, max_r, use_hidden, false);
 			break;
 		}
 		case OB_MESH:
@@ -2791,11 +2840,7 @@ void BKE_object_minmax(Object *ob, float min_r[3], float max_r[3], const bool us
 
 			if (me) {
 				bb = *BKE_mesh_boundbox_get(ob);
-
-				for (a = 0; a < 8; a++) {
-					mul_m4_v3(ob->obmat, bb.vec[a]);
-					minmax_v3v3_v3(min_r, max_r, bb.vec[a]);
-				}
+				BKE_boundbox_minmax(&bb, ob->obmat, min_r, max_r);
 				changed = true;
 			}
 			break;

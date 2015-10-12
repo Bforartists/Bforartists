@@ -283,7 +283,7 @@ static ShaderNode *add_node(Scene *scene,
 	else if(b_node.is_a(&RNA_ShaderNodeVectorTransform)) {
 		BL::ShaderNodeVectorTransform b_vector_transform_node(b_node);
 		VectorTransformNode *vtransform = new VectorTransformNode();
-		vtransform->type = VectorTransformNode::type_enum[b_vector_transform_node.type()];
+		vtransform->type = VectorTransformNode::type_enum[b_vector_transform_node.vector_type()];
 		vtransform->convert_from = VectorTransformNode::convert_space_enum[b_vector_transform_node.convert_from()];
 		vtransform->convert_to = VectorTransformNode::convert_space_enum[b_vector_transform_node.convert_to()];
 		node = vtransform;
@@ -767,7 +767,7 @@ static ShaderNode *add_node(Scene *scene,
 			        point_density->filename,
 			        point_density->builtin_data,
 			        point_density->interpolation,
-			        EXTENSION_REPEAT);
+			        EXTENSION_CLIP);
 		}
 		node = point_density;
 	}
@@ -1176,7 +1176,7 @@ void BlenderSync::sync_world(bool update_all)
 	PointerRNA cscene = RNA_pointer_get(&b_scene.ptr, "cycles");
 
 	/* when doing preview render check for BI's transparency settings,
-	 * this is so because bledner's preview render routines are not able
+	 * this is so because Blender's preview render routines are not able
 	 * to tweak all cycles's settings depending on different circumstances
 	 */
 	if(b_engine.is_preview() == false)

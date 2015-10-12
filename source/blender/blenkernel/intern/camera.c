@@ -169,15 +169,15 @@ float BKE_camera_object_dof_distance(Object *ob)
 	if (ob->type != OB_CAMERA)
 		return 0.0f;
 	if (cam->dof_ob) {
-		/* too simple, better to return the distance on the view axis only
-		 * return len_v3v3(ob->obmat[3], cam->dof_ob->obmat[3]); */
-		float mat[4][4], imat[4][4], obmat[4][4];
-		
-		copy_m4_m4(obmat, ob->obmat);
-		normalize_m4(obmat);
-		invert_m4_m4(imat, obmat);
-		mul_m4_m4m4(mat, imat, cam->dof_ob->obmat);
-		return fabsf(mat[3][2]);
+#if 0
+		/* too simple, better to return the distance on the view axis only */
+		return len_v3v3(ob->obmat[3], cam->dof_ob->obmat[3]);
+#else
+		float view_dir[3], dof_dir[3];
+		normalize_v3_v3(view_dir, ob->obmat[2]);
+		sub_v3_v3v3(dof_dir, ob->obmat[3], cam->dof_ob->obmat[3]);
+		return fabsf(dot_v3v3(view_dir, dof_dir));
+#endif
 	}
 	return cam->YF_dofdist;
 }
@@ -442,8 +442,8 @@ void BKE_camera_view_frame_ex(
 			*r_drawsize = 1.0f;
 			depth = -(camera->clipsta + 0.1f) * scale[2];
 			fac = depth / (camera->lens / (-half_sensor));
-			scale_x = 1.0f;
-			scale_y = 1.0f;
+			scale_x = scale[0] / scale[2];
+			scale_y = scale[1] / scale[2];
 		}
 		else {
 			/* fixed size, variable depth (stays a reasonable size in the 3D view) */
@@ -565,7 +565,7 @@ static void camera_frame_fit_data_init(
 static bool camera_frame_fit_calc_from_data(
         CameraParams *params, CameraViewFrameData *data, float r_co[3], float *r_scale)
 {
-	float plane_tx[CAMERA_VIEWFRAME_NUM_PLANES][3];
+	float plane_tx[CAMERA_VIEWFRAME_NUM_PLANES][4];
 	unsigned int i;
 
 	if (data->tot <= 1) {
@@ -609,15 +609,13 @@ static bool camera_frame_fit_calc_from_data(
 
 		/* apply the dist-from-plane's to the transformed plane points */
 		for (i = 0; i < CAMERA_VIEWFRAME_NUM_PLANES; i++) {
-			mul_v3_v3fl(plane_tx[i], data->normal_tx[i], sqrtf_signed(data->dist_vals_sq[i]));
+			float co[3];
+			mul_v3_v3fl(co, data->normal_tx[i], sqrtf_signed(data->dist_vals_sq[i]));
+			plane_from_point_normal_v3(plane_tx[i], co, data->normal_tx[i]);
 		}
 
-		if ((!isect_plane_plane_v3(plane_isect_1, plane_isect_1_no,
-		                           plane_tx[0], data->normal_tx[0],
-		                           plane_tx[2], data->normal_tx[2])) ||
-		    (!isect_plane_plane_v3(plane_isect_2, plane_isect_2_no,
-		                           plane_tx[1], data->normal_tx[1],
-		                           plane_tx[3], data->normal_tx[3])))
+		if ((!isect_plane_plane_v3(plane_tx[0], plane_tx[2], plane_isect_1, plane_isect_1_no)) ||
+		    (!isect_plane_plane_v3(plane_tx[1], plane_tx[3], plane_isect_2, plane_isect_2_no)))
 		{
 			return false;
 		}
@@ -960,11 +958,6 @@ void BKE_camera_to_gpu_dof(struct Object *camera, struct GPUFXSettings *r_fx_set
 		r_fx_settings->dof = &cam->gpu_dof;
 		r_fx_settings->dof->focal_length = cam->lens;
 		r_fx_settings->dof->sensor = BKE_camera_sensor_size(cam->sensor_fit, cam->sensor_x, cam->sensor_y);
-		if (cam->dof_ob) {
-			r_fx_settings->dof->focus_distance = len_v3v3(cam->dof_ob->obmat[3], camera->obmat[3]);
-		}
-		else {
-			r_fx_settings->dof->focus_distance = cam->YF_dofdist;
-		}
+		r_fx_settings->dof->focus_distance = BKE_camera_object_dof_distance(camera);
 	}
 }

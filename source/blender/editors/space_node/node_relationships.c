@@ -1436,7 +1436,7 @@ static void node_parent_offset_apply(NodeInsertOfsData *data, bNode *parent, con
 #define NODE_INSOFS_ANIM_DURATION 0.25f
 
 /**
- * Callback that applies NodeInsertOfsData.offset_x to a node or its parent, similiar
+ * Callback that applies NodeInsertOfsData.offset_x to a node or its parent, similar
  * to node_link_insert_offset_output_chain_cb below, but with slightly different logic
  */
 static bool node_link_insert_offset_frame_chain_cb(
@@ -1600,7 +1600,7 @@ static void node_link_insert_offset_ntree(
 				node_offset_apply(offs_node, addval);
 			}
 			else if (!insert->parent && offs_node->parent) {
-				node_offset_apply(offs_node->parent, addval);
+				node_offset_apply(nodeFindRootParent(offs_node), addval);
 			}
 			margin = addval;
 		}
@@ -1634,12 +1634,36 @@ static int node_insert_offset_modal(bContext *C, wmOperator *UNUSED(op), const w
 	NodeInsertOfsData *iofsd = snode->iofsd;
 	bNode *node;
 	float duration;
+	bool redraw = false;
 
 	if (!snode || event->type != TIMER || iofsd->anim_timer != event->customdata)
 		return OPERATOR_PASS_THROUGH;
 
-	/* end timer + free insert offset data */
 	duration = (float)iofsd->anim_timer->duration;
+
+	/* handle animation - do this before possibly aborting due to duration, since
+	 * main thread might be so busy that node hasn't reached final position yet */
+	for (node = snode->edittree->nodes.first; node; node = node->next) {
+		if (UNLIKELY(node->anim_ofsx)) {
+			const float endval = node->anim_init_locx + node->anim_ofsx;
+			if (IS_EQF(node->locx, endval) == false) {
+				node->locx = BLI_easing_cubic_ease_in_out(duration, node->anim_init_locx, node->anim_ofsx,
+				                                          NODE_INSOFS_ANIM_DURATION);
+				if (node->anim_ofsx < 0) {
+					CLAMP_MIN(node->locx, endval);
+				}
+				else {
+					CLAMP_MAX(node->locx, endval);
+				}
+				redraw = true;
+			}
+		}
+	}
+	if (redraw) {
+		ED_region_tag_redraw(CTX_wm_region(C));
+	}
+
+	/* end timer + free insert offset data */
 	if (duration > NODE_INSOFS_ANIM_DURATION) {
 		WM_event_remove_timer(CTX_wm_manager(C), NULL, iofsd->anim_timer);
 
@@ -1652,15 +1676,6 @@ static int node_insert_offset_modal(bContext *C, wmOperator *UNUSED(op), const w
 
 		return (OPERATOR_FINISHED | OPERATOR_PASS_THROUGH);
 	}
-
-	/* handle animation */
-	for (node = snode->edittree->nodes.first; node; node = node->next) {
-		if (node->anim_ofsx) {
-			node->locx = BLI_easing_cubic_ease_in_out(duration, node->anim_init_locx, node->anim_ofsx,
-			                                          NODE_INSOFS_ANIM_DURATION);
-		}
-	}
-	ED_region_tag_redraw(CTX_wm_region(C));
 
 	return OPERATOR_RUNNING_MODAL;
 }

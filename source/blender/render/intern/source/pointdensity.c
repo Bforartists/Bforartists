@@ -121,7 +121,8 @@ static void pointdensity_cache_psys(Scene *scene,
                                     ParticleSystem *psys,
                                     float viewmat[4][4],
                                     float winmat[4][4],
-                                    int winx, int winy)
+                                    int winx, int winy,
+                                    const bool use_render_params)
 {
 	DerivedMesh *dm;
 	ParticleKey state;
@@ -140,9 +141,20 @@ static void pointdensity_cache_psys(Scene *scene,
 	}
 
 	/* Just to create a valid rendering context for particles */
-	psys_render_set(ob, psys, viewmat, winmat, winx, winy, 0);
+	if (use_render_params) {
+		psys_render_set(ob, psys, viewmat, winmat, winx, winy, 0);
+	}
 
-	dm = mesh_create_derived_render(scene, ob, CD_MASK_BAREMESH | CD_MASK_MTFACE | CD_MASK_MCOL);
+	if (use_render_params) {
+		dm = mesh_create_derived_render(scene,
+		                                ob,
+		                                CD_MASK_BAREMESH | CD_MASK_MTFACE | CD_MASK_MCOL);
+	}
+	else {
+		dm = mesh_get_derived_final(scene,
+		                            ob,
+		                            CD_MASK_BAREMESH | CD_MASK_MTFACE | CD_MASK_MCOL);
+	}
 
 	if ( !psys_check_enabled(ob, psys)) {
 		psys_render_restore(ob, psys);
@@ -240,17 +252,32 @@ static void pointdensity_cache_psys(Scene *scene,
 		psys->lattice_deform_data = NULL;
 	}
 
-	psys_render_restore(ob, psys);
+	if (use_render_params) {
+		psys_render_restore(ob, psys);
+	}
 }
 
 
-static void pointdensity_cache_object(Scene *scene, PointDensity *pd, Object *ob)
+static void pointdensity_cache_object(Scene *scene,
+                                      PointDensity *pd,
+                                      Object *ob,
+                                      const bool use_render_params)
 {
 	int i;
 	DerivedMesh *dm;
 	MVert *mvert = NULL;
 
-	dm = mesh_create_derived_render(scene, ob, CD_MASK_BAREMESH | CD_MASK_MTFACE | CD_MASK_MCOL);
+	if (use_render_params) {
+		dm = mesh_create_derived_render(scene,
+		                                ob,
+		                                CD_MASK_BAREMESH | CD_MASK_MTFACE | CD_MASK_MCOL);
+	}
+	else {
+		dm = mesh_get_derived_final(scene,
+		                            ob,
+		                            CD_MASK_BAREMESH | CD_MASK_MTFACE | CD_MASK_MCOL);
+
+	}
 	mvert = dm->getVertArray(dm);	/* local object space */
 
 	pd->totpoints = dm->getNumVerts(dm);
@@ -290,7 +317,8 @@ static void cache_pointdensity_ex(Scene *scene,
                                   PointDensity *pd,
                                   float viewmat[4][4],
                                   float winmat[4][4],
-                                  int winx, int winy)
+                                  int winx, int winy,
+                                  const bool use_render_params)
 {
 	if (pd == NULL) {
 		return;
@@ -314,18 +342,28 @@ static void cache_pointdensity_ex(Scene *scene,
 			return;
 		}
 
-		pointdensity_cache_psys(scene, pd, ob, psys, viewmat, winmat, winx, winy);
+		pointdensity_cache_psys(scene,
+		                        pd,
+		                        ob,
+		                        psys,
+		                        viewmat, winmat,
+		                        winx, winy,
+		                        use_render_params);
 	}
 	else if (pd->source == TEX_PD_OBJECT) {
 		Object *ob = pd->object;
 		if (ob && ob->type == OB_MESH)
-			pointdensity_cache_object(scene, pd, ob);
+			pointdensity_cache_object(scene, pd, ob, use_render_params);
 	}
 }
 
 void cache_pointdensity(Render *re, PointDensity *pd)
 {
-	cache_pointdensity_ex(re->scene, pd, re->viewmat, re->winmat, re->winx, re->winy);
+	cache_pointdensity_ex(re->scene,
+	                      pd,
+	                      re->viewmat, re->winmat,
+	                      re->winx, re->winy,
+	                      true);
 }
 
 void free_pointdensity(PointDensity *pd)
@@ -597,6 +635,9 @@ int pointdensitytex(Tex *tex, const float texvec[3], TexResult *texres)
 
 	BRICONT;
 
+	if (pd->color_source == TEX_PD_COLOR_CONSTANT)
+		return retval;
+
 	retval |= pointdensity_color(pd, texres, age, vec);
 	BRICONTRGB;
 
@@ -614,33 +655,71 @@ static void sample_dummy_point_density(int resolution, float *values)
 	memset(values, 0, sizeof(float) * 4 * resolution * resolution * resolution);
 }
 
-static void particle_system_minmax(Object *object,
+static void particle_system_minmax(Scene *scene,
+                                   Object *object,
                                    ParticleSystem *psys,
                                    float radius,
+                                   const bool use_render_params,
                                    float min[3], float max[3])
 {
+	const float size[3] = {radius, radius, radius};
+	const float cfra = BKE_scene_frame_get(scene);
 	ParticleSettings *part = psys->part;
-	float imat[4][4];
-	float size[3] = {radius, radius, radius};
-	PARTICLE_P;
+	ParticleSimulationData sim = {NULL};
+	ParticleData *pa = NULL;
+	int i;
+	int total_particles;
+	float mat[4][4], imat[4][4];
+
 	INIT_MINMAX(min, max);
 	if (part->type == PART_HAIR) {
 		/* TOOD(sergey): Not supported currently. */
 		return;
 	}
+
+	unit_m4(mat);
+	if (use_render_params) {
+		psys_render_set(object, psys, mat, mat, 1, 1, 0);
+	}
+
+	sim.scene = scene;
+	sim.ob = object;
+	sim.psys = psys;
+	sim.psmd = psys_get_modifier(object, psys);
+
 	invert_m4_m4(imat, object->obmat);
-	LOOP_PARTICLES {
+	total_particles = psys->totpart + psys->totchild;
+	psys->lattice_deform_data = psys_create_lattice_deform_data(&sim);
+
+	for (i = 0, pa = psys->particles; i < total_particles; i++, pa++) {
 		float co_object[3], co_min[3], co_max[3];
-		mul_v3_m4v3(co_object, imat, pa->state.co);
+		ParticleKey state;
+		state.time = cfra;
+		if (!psys_get_particle_state(&sim, i, &state, 0)) {
+			continue;
+		}
+		mul_v3_m4v3(co_object, imat, state.co);
 		sub_v3_v3v3(co_min, co_object, size);
 		add_v3_v3v3(co_max, co_object, size);
 		minmax_v3v3_v3(min, max, co_min);
 		minmax_v3v3_v3(min, max, co_max);
 	}
+
+	if (psys->lattice_deform_data) {
+		end_latt_deform(psys->lattice_deform_data);
+		psys->lattice_deform_data = NULL;
+	}
+
+	if (use_render_params) {
+		psys_render_restore(object, psys);
+	}
 }
 
-void RE_sample_point_density(Scene *scene, PointDensity *pd,
-                             int resolution, float *values)
+void RE_sample_point_density(Scene *scene,
+                             PointDensity *pd,
+                             const int resolution,
+                             const bool use_render_params,
+                             float *values)
 {
 	const size_t resolution2 = resolution * resolution;
 	Object *object = pd->object;
@@ -663,7 +742,12 @@ void RE_sample_point_density(Scene *scene, PointDensity *pd,
 			sample_dummy_point_density(resolution, values);
 			return;
 		}
-		particle_system_minmax(object, psys, pd->radius, min, max);
+		particle_system_minmax(scene,
+		                       object,
+		                       psys,
+		                       pd->radius,
+		                       use_render_params,
+		                       min, max);
 	}
 	else {
 		float radius[3] = {pd->radius, pd->radius, pd->radius};
@@ -686,7 +770,7 @@ void RE_sample_point_density(Scene *scene, PointDensity *pd,
 	unit_m4(mat);
 
 	BLI_mutex_lock(&sample_mutex);
-	cache_pointdensity_ex(scene, pd, mat, mat, 1, 1);
+	cache_pointdensity_ex(scene, pd, mat, mat, 1, 1, use_render_params);
 	for (z = 0; z < resolution; ++z) {
 		for (y = 0; y < resolution; ++y) {
 			for (x = 0; x < resolution; ++x) {

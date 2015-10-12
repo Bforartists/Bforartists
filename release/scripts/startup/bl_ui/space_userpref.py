@@ -493,7 +493,8 @@ class USERPREF_PT_system(Panel):
         col.separator()
 
         col.label(text="Sequencer / Clip Editor:")
-        col.prop(system, "prefetch_frames")
+        # currently disabled in the code
+        # col.prop(system, "prefetch_frames")
         col.prop(system, "memory_cache_limit")
 
         # 3. Column
@@ -1179,7 +1180,7 @@ class USERPREF_MT_addons_dev_guides(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("wm.url_open", text="API Concepts", icon='URL').url = "http://wiki.blender.org/index.php/Dev:2.5/Py/API/Intro"
+        layout.operator("wm.url_open", text="API Concepts", icon='URL').url = bpy.types.WM_OT_doc_view._prefix + "/info_quickstart.html"
         layout.operator("wm.url_open", text="Addon Guidelines", icon='URL').url = "http://wiki.blender.org/index.php/Dev:2.5/Py/Scripts/Guidelines/Addons"
         layout.operator("wm.url_open", text="How to share your addon", icon='URL').url = "http://wiki.blender.org/index.php/Dev:Py/Sharing"
 
