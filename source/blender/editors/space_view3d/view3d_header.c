@@ -380,7 +380,8 @@ void uiTemplateHeader3D(uiLayout *layout, struct bContext *C)
 		unsigned int ob_lay = ob ? ob->lay : 0;
 
 		/* Layers */
-		uiTemplateLayers(layout, v3d->scenelock ? &sceneptr : &v3dptr, "layers", &v3dptr, "layers_used", ob_lay);
+		// bfa - turned off the layers in the menu bar.It's a double entry.
+		//uiTemplateLayers(layout, v3d->scenelock ? &sceneptr : &v3dptr, "layers", &v3dptr, "layers_used", ob_lay);
 
 		/* Scene lock */
 		uiItemR(layout, &v3dptr, "lock_camera_and_layers", UI_ITEM_R_ICON_ONLY, "", ICON_NONE);
