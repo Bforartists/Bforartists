@@ -64,6 +64,9 @@ class RENDER_PT_render(RenderButtonsPanel, Panel):
 
         rd = context.scene.render
 
+        if rd.has_multiple_engines: # bfa - the renderer drodpown box from the info menu bar.
+            layout.prop(rd, "engine", text="")
+
         row = layout.row(align=True)
         row.operator("render.render", text="Render", icon='RENDER_STILL')
         row.operator("render.render", text="Animation", icon='RENDER_ANIMATION').animation = True
@@ -461,10 +464,6 @@ class RENDER_PT_encoding(RenderButtonsPanel, Panel):
         split.prop(rd.ffmpeg, "format")
         if ffmpeg.format in {'AVI', 'QUICKTIME', 'MKV', 'OGG', 'MPEG4'}:
             split.prop(ffmpeg, "codec")
-            if ffmpeg.codec == 'H264':
-                row = layout.row()
-                row.label()
-                row.prop(ffmpeg, "use_lossless_output")
         elif rd.ffmpeg.format == 'H264':
             split.prop(ffmpeg, "use_lossless_output")
         else:
