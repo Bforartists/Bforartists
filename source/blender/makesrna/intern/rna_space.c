@@ -75,7 +75,7 @@ EnumPropertyItem space_type_items[] = {
 	{SPACE_CLIP, "CLIP_EDITOR", ICON_CLIP, "Movie Clip Editor", "Motion tracking tools"},
 	{SPACE_TEXT, "TEXT_EDITOR", ICON_TEXT, "Text Editor", "Edit scripts and in-file documentation"},
 	{SPACE_NODE, "NODE_EDITOR", ICON_NODETREE, "Node Editor", "Editor for node-based shading and compositing tools"},
-	{SPACE_LOGIC, "LOGIC_EDITOR", ICON_LOGIC, "Logic Editor", "Game logic editing"},
+	//{SPACE_LOGIC, "LOGIC_EDITOR", ICON_LOGIC, "Logic Editor", "Game logic editing"}, // bfa - disabled the logic editor in the menu since the Game engine is off. See also space_logic.py
 	{0, "", ICON_NONE, NULL, NULL},
 	{SPACE_BUTS, "PROPERTIES", ICON_BUTS, "Properties", "Edit properties of active object and related datablocks"},
 	{SPACE_OUTLINER, "OUTLINER", ICON_OOPS, "Outliner", "Overview of scene graph and all available datablocks"},
