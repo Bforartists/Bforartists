@@ -439,7 +439,7 @@ static void stats_string(Scene *scene)
 	s = stats->infostr;
 	ofs = 0;
 
-	ofs += BLI_snprintf(s + ofs, MAX_INFO_LEN - ofs, "%s | ", versionstr);
+	// ofs += BLI_snprintf(s + ofs, MAX_INFO_LEN - ofs, "%s | ", versionstr); // bfa - this prints the version number to the title bar.
 
 	if (scene->obedit) {
 		if (BKE_keyblock_from_object(scene->obedit))
