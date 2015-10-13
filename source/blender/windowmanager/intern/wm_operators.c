@@ -2010,30 +2010,16 @@ static uiBlock *wm_block_create_splash(bContext *C, ARegion *ar, void *UNUSED(ar
 	split = uiLayoutSplit(layout, 0.0f, false);
 	col = uiLayoutColumn(split, false);
 	uiItemL(col, IFACE_("Links"), ICON_NONE);
-#if 0
-	uiItemStringO(col, IFACE_("Support an Open Animation Movie"), ICON_URL, "WM_OT_url_open", "url",
-	              "https://cloud.blender.org/join");
-#endif
-	uiItemStringO(col, IFACE_("Donations"), ICON_URL, "WM_OT_url_open", "url",
-	              "http://www.blender.org/foundation/donation-payment/");
-	uiItemStringO(col, IFACE_("Credits"), ICON_URL, "WM_OT_url_open", "url",
-	              "http://www.blender.org/about/credits/");
-	BLI_snprintf(url, sizeof(url), "http://wiki.blender.org/index.php/Dev:Ref/Release_Notes/%d.%d",
-	             BLENDER_VERSION / 100, BLENDER_VERSION % 100);
-	uiItemStringO(col, IFACE_("Release Log"), ICON_URL, "WM_OT_url_open", "url", url);
-	uiItemStringO(col, IFACE_("Manual"), ICON_URL, "WM_OT_url_open", "url",
-	              "http://www.blender.org/manual");
-	uiItemStringO(col, IFACE_("Blender Website"), ICON_URL, "WM_OT_url_open", "url", "http://www.blender.org");
-	if (STREQ(STRINGIFY(BLENDER_VERSION_CYCLE), "release")) {
-		BLI_snprintf(url, sizeof(url), "http://www.blender.org/documentation/blender_python_api_%d_%d"
-		                               STRINGIFY(BLENDER_VERSION_CHAR) "_release",
-		             BLENDER_VERSION / 100, BLENDER_VERSION % 100);
-	}
-	else {
-		BLI_snprintf(url, sizeof(url), "http://www.blender.org/documentation/blender_python_api_%d_%d_%d",
-		             BLENDER_VERSION / 100, BLENDER_VERSION % 100, BLENDER_SUBVERSION);
-	}
-	uiItemStringO(col, IFACE_("Python API Reference"), ICON_URL, "WM_OT_url_open", "url", url);
+
+	// bfa - changed the menu itemas to link ot bforartists page
+	uiItemStringO(col, IFACE_("Credits Bforartists"), ICON_URL, "WM_OT_url_open", "url", "http://www.bforartists.de/wiki/credits-page-bforartists");
+	uiItemStringO(col, IFACE_("Release notes"), ICON_URL, "WM_OT_url_open", "url", "http://www.bforartists.de/wiki/release-notes");
+	uiItemStringO(col, IFACE_("Manual"), ICON_URL, "WM_OT_url_open", "url", "http://www.bforartists.de/wiki/Manual");
+	uiItemStringO(col, IFACE_("Bforartists Website"), ICON_URL, "WM_OT_url_open", "url", "http://www.bforartists.de/");
+	uiItemStringO(col, IFACE_("Report a bug"), ICON_URL, "WM_OT_url_open", "url", "http://www.bforartists.de/node/add/project-issue/bforartists_bugtracker");
+
+	uiItemStringO(col, IFACE_("Python API Reference"), ICON_URL, "WM_OT_url_open", "url", "http://www.blender.org/api/blender_python_api_2_75a_release/"); // bfa - changed the url to link to the 2.75 api page
+	uiItemL(col, "", ICON_NONE);
 	uiItemL(col, "", ICON_NONE);
 
 	col = uiLayoutColumn(split, false);

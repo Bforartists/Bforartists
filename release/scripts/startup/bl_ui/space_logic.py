@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -20,65 +20,65 @@
 import bpy
 from bpy.types import Header, Menu, Panel
 
+# bfa - disabling this class as part of disabling the logic editor. See rna_space.c
+#class LOGIC_PT_properties(Panel):
+#    bl_space_type = 'LOGIC_EDITOR'
+#    bl_region_type = 'UI'
+#    bl_label = "Properties"
 
-class LOGIC_PT_properties(Panel):
-    bl_space_type = 'LOGIC_EDITOR'
-    bl_region_type = 'UI'
-    bl_label = "Properties"
+#    @classmethod
+#    def poll(cls, context):
+#        ob = context.active_object
+#        return ob and ob.game
 
-    @classmethod
-    def poll(cls, context):
-        ob = context.active_object
-        return ob and ob.game
+#    def draw(self, context):
+#        layout = self.layout
 
-    def draw(self, context):
-        layout = self.layout
+#        ob = context.active_object
+#        game = ob.game
+#        is_font = (ob.type == 'FONT')
 
-        ob = context.active_object
-        game = ob.game
-        is_font = (ob.type == 'FONT')
+#        if is_font:
+#            prop_index = game.properties.find("Text")
+#            if prop_index != -1:
+#                layout.operator("object.game_property_remove", text="Remove Text Game Property", icon='X').index = prop_index
+#                row = layout.row()
+#                sub = row.row()
+#                sub.enabled = 0
+#                prop = game.properties[prop_index]
+#                sub.prop(prop, "name", text="")
+#                row.prop(prop, "type", text="")
+#                # get the property from the body, not the game property
+#                # note, don't do this - it's too slow and body can potentially be a really long string.
+#                #~ row.prop(ob.data, "body", text="")
+#                row.label("See Text Object")
+#            else:
+#                props = layout.operator("object.game_property_new", text="Add Text Game Property", icon='ZOOMIN')
+#                props.name = "Text"
+#                props.type = 'STRING'
 
-        if is_font:
-            prop_index = game.properties.find("Text")
-            if prop_index != -1:
-                layout.operator("object.game_property_remove", text="Remove Text Game Property", icon='X').index = prop_index
-                row = layout.row()
-                sub = row.row()
-                sub.enabled = 0
-                prop = game.properties[prop_index]
-                sub.prop(prop, "name", text="")
-                row.prop(prop, "type", text="")
-                # get the property from the body, not the game property
-                # note, don't do this - it's too slow and body can potentially be a really long string.
-                #~ row.prop(ob.data, "body", text="")
-                row.label("See Text Object")
-            else:
-                props = layout.operator("object.game_property_new", text="Add Text Game Property", icon='ZOOMIN')
-                props.name = "Text"
-                props.type = 'STRING'
+#        props = layout.operator("object.game_property_new", text="Add Game Property", icon='ZOOMIN')
+#        props.name = ""
 
-        props = layout.operator("object.game_property_new", text="Add Game Property", icon='ZOOMIN')
-        props.name = ""
+#        for i, prop in enumerate(game.properties):
 
-        for i, prop in enumerate(game.properties):
+#            if is_font and i == prop_index:
+#                continue
 
-            if is_font and i == prop_index:
-                continue
-
-            box = layout.box()
-            row = box.row()
-            row.prop(prop, "name", text="")
-            row.prop(prop, "type", text="")
-            row.prop(prop, "value", text="")
-            row.prop(prop, "show_debug", text="", toggle=True, icon='INFO')
-            sub = row.row(align=True)
-            props = sub.operator("object.game_property_move", text="", icon='TRIA_UP')
-            props.index = i
-            props.direction = 'UP'
-            props = sub.operator("object.game_property_move", text="", icon='TRIA_DOWN')
-            props.index = i
-            props.direction = 'DOWN'
-            row.operator("object.game_property_remove", text="", icon='X', emboss=False).index = i
+#            box = layout.box()
+#            row = box.row()
+#            row.prop(prop, "name", text="")
+#            row.prop(prop, "type", text="")
+#            row.prop(prop, "value", text="")
+#            row.prop(prop, "show_debug", text="", toggle=True, icon='INFO')
+#            sub = row.row(align=True)
+#            props = sub.operator("object.game_property_move", text="", icon='TRIA_UP')
+#            props.index = i
+#            props.direction = 'UP'
+#            props = sub.operator("object.game_property_move", text="", icon='TRIA_DOWN')
+#            props.index = i
+#            props.direction = 'DOWN'
+#            row.operator("object.game_property_remove", text="", icon='X', emboss=False).index = i
 
 
 class LOGIC_MT_logicbricks_add(Menu):
@@ -91,16 +91,16 @@ class LOGIC_MT_logicbricks_add(Menu):
         layout.operator_menu_enum("logic.controller_add", "type", text="Controller")
         layout.operator_menu_enum("logic.actuator_add", "type", text="Actuator")
 
+# bfa - disabling this class as part of disabling the logic editor. See rna_space.c
+#class LOGIC_HT_header(Header):
+#    bl_space_type = 'LOGIC_EDITOR'
 
-class LOGIC_HT_header(Header):
-    bl_space_type = 'LOGIC_EDITOR'
+#    def draw(self, context):
+#        layout = self.layout.row(align=True)
 
-    def draw(self, context):
-        layout = self.layout.row(align=True)
+#        layout.template_header()
 
-        layout.template_header()
-
-        LOGIC_MT_editor_menus.draw_collapsible(context, layout)
+#        LOGIC_MT_editor_menus.draw_collapsible(context, layout)
 
 
 class LOGIC_MT_editor_menus(Menu):

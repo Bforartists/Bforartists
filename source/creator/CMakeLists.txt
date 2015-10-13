@@ -211,7 +211,7 @@ if(WITH_PYTHON_MODULE)
 	# but not OSX which _must_ be 'MODULE'
 	add_library(blender MODULE ${SRC})
 	set_target_properties(
-		blender
+		bforartists
 		PROPERTIES
 			PREFIX ""
 			OUTPUT_NAME bpy
@@ -221,7 +221,7 @@ if(WITH_PYTHON_MODULE)
 
 	if(APPLE)
 		set_target_properties(
-			blender
+			bforartists
 			PROPERTIES
 				MACOSX_BUNDLE
 				LINK_FLAGS_RELEASE "${PLATFORM_LINKFLAGS}"
@@ -232,19 +232,19 @@ if(WITH_PYTHON_MODULE)
 	if(WIN32)
 		# python modules use this
 		set_target_properties(
-			blender
+			bforartists
 			PROPERTIES
 			SUFFIX ".pyd"
 		)
 	endif()
 
 else()
-	add_executable(blender ${EXETYPE} ${SRC})
+	add_executable(bforartists ${EXETYPE} ${SRC})
 endif()
 
 if(WITH_BUILDINFO)
 	# explicitly say that the executable depends on the buildinfo
-	add_dependencies(blender buildinfo)
+	add_dependencies(bforartists buildinfo)
 endif()
 
 
@@ -357,7 +357,7 @@ if(WITH_INTERNATIONAL)
 		locales
 		DEPENDS ${_all_mo_files})
 
-	add_dependencies(blender locales)
+	add_dependencies(bforartists locales)
 
 	# Generate INSTALL rules
 	install(
@@ -396,7 +396,7 @@ endif()
 if("${CMAKE_GENERATOR}" MATCHES ".*Makefiles.*")
 	# message after building.
 	add_custom_command(
-		TARGET blender POST_BUILD MAIN_DEPENDENCY blender
+		TARGET bforartists POST_BUILD MAIN_DEPENDENCY bforartists
 		COMMAND ${CMAKE_COMMAND} -E echo 'now run: \"make install\" to copy runtime files and scripts to ${TARGETDIR_VER}'
 	)
 endif()
@@ -422,19 +422,19 @@ if(UNIX AND NOT APPLE)
 	if(WITH_PYTHON_MODULE)
 		if(WITH_INSTALL_PORTABLE)
 			install(
-				TARGETS blender
+				TARGETS bforartists
 				DESTINATION "."
 			)
 		else()
 			install(
-				TARGETS blender
+				TARGETS bforartists
 				LIBRARY DESTINATION ${PYTHON_SITE_PACKAGES}
 			)
 		endif()
 		# none of the other files are needed currently
 	elseif(WITH_INSTALL_PORTABLE)
 		install(
-			TARGETS blender
+			TARGETS bforartists
 			DESTINATION "."
 		)
 
@@ -461,7 +461,7 @@ if(UNIX AND NOT APPLE)
 	else()
 		# main blender binary
 		install(
-			TARGETS blender
+			TARGETS bforartists
 			DESTINATION bin
 		)
 		if(WITH_DOC_MANPAGE)
@@ -865,7 +865,7 @@ elseif(APPLE)
 	                OUTPUT_VARIABLE BLENDER_DATE
 	                OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-	set_target_properties(blender PROPERTIES
+	set_target_properties(bforartists PROPERTIES
 		MACOSX_BUNDLE_INFO_PLIST ${OSX_APP_SOURCEDIR}/Contents/Info.plist
 		MACOSX_BUNDLE_SHORT_VERSION_STRING ${BLENDER_VERSION}
 		MACOSX_BUNDLE_LONG_VERSION_STRING "${BLENDER_VERSION} ${BLENDER_DATE}")
@@ -879,7 +879,7 @@ elseif(APPLE)
 	execute_process(COMMAND SetFile -d ${SETFILE_DATE} -m ${SETFILE_DATE} ${EXECUTABLE_OUTPUT_PATH}/blender.app)
 
 	install(
-		TARGETS blender
+		TARGETS bforartists
 		DESTINATION "."
 	)
 
@@ -1045,12 +1045,12 @@ unset(BLENDER_TEXT_FILES_DESTINATION)
 # -----------------------------------------------------------------------------
 # Setup link libs
 
-add_dependencies(blender makesdna)
+add_dependencies(bforartists makesdna)
 
 setup_blender_sorted_libs()
-target_link_libraries(blender ${BLENDER_SORTED_LIBS})
+target_link_libraries(bforartists ${BLENDER_SORTED_LIBS})
 
-setup_liblinks(blender)
+setup_liblinks(bforartists)
 
 # -----------------------------------------------------------------------------
 # Setup launcher
@@ -1060,14 +1060,14 @@ if(WIN32 AND NOT WITH_PYTHON_MODULE)
 		creator_launch_win.c
 		../icons/winblender.rc
 	)
-	add_executable(blender-launcher ${LAUNCHER_SRC})
-	target_link_libraries(blender-launcher bf_intern_utfconv ${PLATFORM_LINKLIBS})
+	add_executable(bforartists-launcher ${LAUNCHER_SRC})
+	target_link_libraries(bforartists-launcher bf_intern_utfconv ${PLATFORM_LINKLIBS})
 
-	set_target_properties(blender PROPERTIES OUTPUT_NAME blender-app)
-	set_target_properties(blender-launcher PROPERTIES OUTPUT_NAME blender)
+	set_target_properties(bforartists PROPERTIES OUTPUT_NAME bforartists-app)
+	set_target_properties(bforartists-launcher PROPERTIES OUTPUT_NAME bforartists)
 
-	install(TARGETS blender blender-launcher
-			COMPONENT Blender
+	install(TARGETS bforartists bforartists-launcher
+			COMPONENT bforartists
 			DESTINATION ".")
 
 	if(MSVC12_REDIST_DIR)

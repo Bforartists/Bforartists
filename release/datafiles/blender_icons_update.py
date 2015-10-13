@@ -24,8 +24,8 @@ run(cmd)
 
 
 # For testing it can be good to clear all old
-# rm ./blender_icons16/*.dat
-# rm ./blender_icons32/*.dat
+#rm ./blender_icons16/*.dat
+#rm ./blender_icons32/*.dat
 
 datatoc_icon_split_py = os.path.join(BASEDIR, "..", "..", "source", "blender", "datatoc", "datatoc_icon_split.py")
 
@@ -61,8 +61,8 @@ cmd = (
     )
 run(cmd)
 
-os.remove(BASEDIR + "blender_icons16.png")
-os.remove(BASEDIR + "blender_icons32.png")
+#os.remove(BASEDIR + "blender_icons16.png")
+#os.remove(BASEDIR + "blender_icons32.png")
 
 # For testing, if we want the PNG of each image
 # ./datatoc_icon_split_to_png.py ./blender_icons16/*.dat
