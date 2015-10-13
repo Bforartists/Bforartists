@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<material view_color="rgb(0.60382, 0.60382, 0.77582)" sample_lamp="True">
+	<nodes>
+		<node type="FRESNEL" ior="1.79999" loc="-676, 464" />
+		<node type="BSDF_GLASS" distribution="BECKMANN" color="rgba(1.0, 1.0, 1.0, 1.0)" roughness="0.05000" ior="1.45000" loc="-123, 104" />
+		<node type="MIX_SHADER" fac="0.34999" loc="104, 214" />
+		<node type="ADD_SHADER" loc="-1113, 55" />
+		<node type="BSDF_TRANSLUCENT" color="rgba(0.77942, 0.86935, 1.0, 1.0)" loc="-636, 364" />
+		<node type="BSDF_TRANSLUCENT" color="rgba(1.0, 0.90754, 0.99431, 1.0)" loc="-626, 274" />
+		<node type="MIX_SHADER" fac="0.5" loc="-384, 439" />
+		<node type="ADD_SHADER" loc="-121, 453" />
+		<node type="BSDF_TRANSLUCENT" color="rgba(0.31400, 0.31400, 0.31400, 1.0)" loc="-784, 87" />
+		<node type="OUTPUT_MATERIAL" loc="386, 181" />
+	</nodes>
+	<links>
+		<link to="9" input="0" from="2" output="0" />
+		<link to="6" input="0" from="0" output="0" />
+		<link to="2" input="2" from="1" output="0" />
+		<link to="6" input="1" from="4" output="0" />
+		<link to="6" input="2" from="5" output="0" />
+		<link to="7" input="0" from="6" output="0" />
+		<link to="2" input="1" from="7" output="0" />
+		<link to="7" input="1" from="8" output="0" />
+	</links>
+</material>

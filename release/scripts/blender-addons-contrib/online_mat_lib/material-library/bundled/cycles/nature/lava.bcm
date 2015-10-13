@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<material view_color="rgb(0.80000, 0.80000, 0.80000)" sample_lamp="True">
+	<nodes>
+		<node type="MIX_SHADER" fac="0.5" loc="87, 374" />
+		<node type="EMISSION" color="rgba(0.54981, 0.25838, 0.0, 1.0)" strength="1.0" loc="-100, 422" />
+		<node type="GAMMA" color="rgba(1.0, 1.0, 1.0, 1.0)" gamma="3.0" loc="-315, 423" />
+		<node type="BSDF_GLOSSY" distribution="GGX" color="rgba(0.80000, 0.80000, 0.80000, 1.0)" roughness="0.25" loc="-321, 208" />
+		<node type="MIX_SHADER" fac="0.25" loc="-98, 291" />
+		<node type="MIX_RGB" blend_type="MIX" use_clamp="False" fac="0.75" color1="rgba(0.5, 0.5, 0.5, 1.0)" color2="rgba(0.5, 0.5, 0.5, 1.0)" loc="-317, 68" />
+		<node type="INVERT" fac="1.0" color="rgba(0.0, 0.0, 0.0, 1.0)" loc="-511, 26" />
+		<node type="TEX_VORONOI" coloring="INTENSITY" scale="5.0" loc="-709, 153" />
+		<node type="TEX_COORD" loc="-941, 183" />
+		<node type="TEX_VORONOI" coloring="INTENSITY" scale="50.0" loc="-709, 316" />
+		<node type="OUTPUT_MATERIAL" loc="285, 296" />
+		<node type="BSDF_DIFFUSE" color="rgba(0.10000, 0.10000, 0.10000, 1.0)" roughness="0.0" loc="-317, 319" />
+	</nodes>
+	<links>
+		<link to="2" input="0" from="7" output="1" />
+		<link to="4" input="1" from="11" output="0" />
+		<link to="0" input="1" from="1" output="0" />
+		<link to="1" input="1" from="2" output="0" />
+		<link to="0" input="2" from="4" output="0" />
+		<link to="4" input="2" from="3" output="0" />
+		<link to="7" input="0" from="8" output="3" />
+		<link to="9" input="0" from="8" output="3" />
+		<link to="6" input="1" from="7" output="1" />
+		<link to="5" input="2" from="6" output="0" />
+		<link to="5" input="1" from="9" output="1" />
+		<link to="10" input="2" from="5" output="0" />
+		<link to="10" input="0" from="0" output="0" />
+	</links>
+</material>

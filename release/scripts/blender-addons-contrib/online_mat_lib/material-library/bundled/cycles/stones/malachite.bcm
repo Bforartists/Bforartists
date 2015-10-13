@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<material view_color="rgb(0.08228, 0.33245, 0.09529)" sample_lamp="True">
+	<nodes>
+		<node type="MIX_SHADER" fac="0.05000" loc="382, 116" />
+		<node type="MIX_SHADER" fac="0.5" loc="105, 116" />
+		<node type="BSDF_GLOSSY" distribution="BECKMANN" color="rgba(0.80000, 0.80000, 0.80000, 1.0)" roughness="0.0" loc="105, -14" />
+		<node type="LAYER_WEIGHT" blend="0.10000" loc="105, 258" />
+		<node type="GAMMA" color="rgba(1.0, 1.0, 1.0, 1.0)" gamma="0.5" loc="-105, 301" />
+		<node type="BSDF_DIFFUSE" color="rgba(0.08229, 0.33015, 0.09638, 1.0)" roughness="0.0" loc="-324, 116" />
+		<node type="BSDF_DIFFUSE" color="rgba(0.0, 0.0, 0.0, 1.0)" roughness="0.25" loc="-324, -14" />
+		<node type="TEX_VORONOI" coloring="INTENSITY" scale="5.0" loc="-324, 301" />
+		<node type="MATH" operation="DIVIDE" use_clamp="False" value1="200.0" value2="4.0" loc="-613, 116" />
+		<node type="OUTPUT_MATERIAL" loc="590, 116" />
+		<node type="TEX_VORONOI" coloring="INTENSITY" scale="200.0" loc="-613, 301" />
+		<node type="VALUE" value="1.79999" loc="-791, 101" />
+		<node type="TEX_COORD" loc="-988, 301" />
+	</nodes>
+	<links>
+		<link to="9" input="0" from="0" output="0" />
+		<link to="1" input="1" from="5" output="0" />
+		<link to="0" input="1" from="1" output="0" />
+		<link to="1" input="2" from="6" output="0" />
+		<link to="4" input="0" from="7" output="0" />
+		<link to="1" input="0" from="4" output="0" />
+		<link to="0" input="2" from="2" output="0" />
+		<link to="0" input="0" from="3" output="0" />
+		<link to="7" input="0" from="10" output="1" />
+		<link to="7" input="1" from="8" output="0" />
+		<link to="10" input="1" from="11" output="0" />
+		<link to="8" input="0" from="11" output="0" />
+		<link to="10" input="0" from="12" output="0" />
+	</links>
+</material>

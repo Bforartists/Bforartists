@@ -1,0 +1,495 @@
+
+msgid ""
+msgstr ""
+"Project-Id-Version: Blender 2.76 (sub 0) (b'fb78f6d')\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-10-05 20:13:42\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: nl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit"
+
+
+msgid "Select"
+msgstr "Selecteer"
+
+
+msgid "Play"
+msgstr "Afspelen"
+
+
+msgid "Add"
+msgstr "Toevoegen"
+
+
+msgid "Material"
+msgstr "Materiaal"
+
+
+msgid "File"
+msgstr "Bestand"
+
+
+msgid "Text"
+msgstr "Tekst"
+
+
+msgid "X"
+msgstr "X"
+
+
+msgid "Y"
+msgstr "Y"
+
+
+msgid "Line"
+msgstr "Lijn"
+
+
+msgid "Scale"
+msgstr "Schaal"
+
+
+msgid "World"
+msgstr "Wereld"
+
+
+msgid "Cube"
+msgstr "Kubus"
+
+
+msgid "Save"
+msgstr "Opslaan"
+
+
+msgid "Render"
+msgstr "Render"
+
+
+msgid "Draw"
+msgstr "Potlood"
+
+
+msgid "View"
+msgstr "Weergave"
+
+
+msgid "Arrows"
+msgstr "Pijlen"
+
+
+msgid "Display"
+msgstr "Weegave"
+
+
+msgid "Animation"
+msgstr "Animatie"
+
+
+msgid "Window"
+msgstr "Scherm"
+
+
+msgid "Delete"
+msgstr "Verwijder"
+
+
+msgid "Insert"
+msgstr "Invoegen"
+
+
+msgid "Help"
+msgstr "Hulp"
+
+
+msgid "Interface"
+msgstr "Interface"
+
+
+msgid "Render Layers"
+msgstr "Render Lagen"
+
+
+msgid "Translate"
+msgstr "Verplaats"
+
+
+msgctxt "Operator"
+msgid "Delete Keyframe"
+msgstr "Verwijder Sleutelframe"
+
+
+msgid "Remove keyframes on current frame for selected objects"
+msgstr "Verwijder sleutel frames op de huidige frame voor geselecteerde objecten"
+
+
+msgctxt "Operator"
+msgid "Insert Keyframe Menu"
+msgstr "Invoegen Sleutelframe Menu"
+
+
+msgid "Translate (move) selected items"
+msgstr "Verplaats geselecteerde items"
+
+
+msgctxt "Operator"
+msgid "Delete"
+msgstr "Verwijder"
+
+
+msgid "Language"
+msgstr "Taal"
+
+
+msgctxt "Operator"
+msgid "Cancel File Load"
+msgstr "Annuleer Bestand Laden"
+
+
+msgid "Cancel loading of selected file"
+msgstr "Annulerer Landen van geslecteerd bestand"
+
+
+msgctxt "Operator"
+msgid "Create New Directory"
+msgstr "Creeer nieuwe map"
+
+
+msgid "Create a new directory"
+msgstr "Creeer een nieuwe map"
+
+
+msgid "Make annotations on the active data"
+msgstr "Maak annotaties op de actieve data"
+
+
+msgid "Draw Freehand"
+msgstr "Vrij tekenen"
+
+
+msgid "Draw Straight Lines"
+msgstr "Teken rechte lijnen"
+
+
+msgid "Eraser"
+msgstr "Gummen"
+
+
+msgctxt "Operator"
+msgid "Add Cube"
+msgstr "Voeg Kubus toe"
+
+
+msgid "Construct a cube mesh"
+msgstr "Creeer een kubus mesh"
+
+
+msgid "Delete selected objects"
+msgstr "Verwijder geselecteerde objecten"
+
+
+msgctxt "Operator"
+msgid "Add Empty"
+msgstr "Voeg leeg object toe"
+
+
+msgid "Add an empty object to the scene"
+msgstr "Voegt een leeg object toe aan de scene"
+
+
+msgctxt "Operator"
+msgid "Join"
+msgstr "Samenvoegen"
+
+
+msgid "Join selected objects into active object"
+msgstr "Voeg geslecteerde obecten samen in actief object"
+
+
+msgctxt "Operator"
+msgid "Calculate Object Paths"
+msgstr "Bereken Object paden"
+
+
+msgctxt "Operator"
+msgid "Add Text"
+msgstr "Voeg tekst toe"
+
+
+msgid "Add a text object to the scene"
+msgstr "Voeg een tekst object toe in de scene"
+
+
+msgctxt "Operator"
+msgid "Play Rendered Animation"
+msgstr "Speel gerenderde Animatie"
+
+
+msgid "Play back rendered frames/movies using an external player"
+msgstr "Speel gerenderde frames af in een externe speler"
+
+
+msgctxt "Operator"
+msgid "Render"
+msgstr "Render"
+
+
+msgid "Render active scene"
+msgstr "Render actieve scene"
+
+
+msgctxt "Operator"
+msgid "Show/Hide Render View"
+msgstr "Render scherm weergeven/verbergen"
+
+
+msgid "Toggle show render view"
+msgstr "Render scherm aan/uit"
+
+
+msgid "New"
+msgstr "Nieuw"
+
+
+msgctxt "Operator"
+msgid "Back to Previous Screen"
+msgstr "Terug naar vorig scherm"
+
+
+msgctxt "Operator"
+msgid "Repeat History"
+msgstr "Herhaal geschiedenis"
+
+
+msgid "Display menu for previous actions performed"
+msgstr "Geef overzicht van vorige acties"
+
+
+msgctxt "Operator"
+msgid "Repeat Last"
+msgstr "Herhaal laatste"
+
+
+msgid "Repeat last action"
+msgstr "Herhaal laatste actie"
+
+
+msgctxt "Operator"
+msgid "Make Screencast"
+msgstr "Maak Screencast"
+
+
+msgid "Capture a video of the active area or whole Blender window"
+msgstr "Maak een video van het actieve gedeelte of het hele Blender scherm"
+
+
+msgctxt "Operator"
+msgid "Save Screenshot"
+msgstr "Sla screenshot op"
+
+
+msgid "Capture a picture of the active area or whole Blender window"
+msgstr "Maak een afbeelding van het actieve gedeelte of het hele Blender scherm"
+
+
+msgctxt "Operator"
+msgid "Show User Preferences"
+msgstr "Toon Gebruikers instellingen"
+
+
+msgid "Show user preferences"
+msgstr "Toon Gebruikers instellingen"
+
+
+msgid "Reload"
+msgstr "Herlaad"
+
+
+msgctxt "Operator"
+msgid "Resize"
+msgstr "Wijzig formaat"
+
+
+msgid "Scale (resize) selected items"
+msgstr "Schaal geselecteerde items"
+
+
+msgctxt "Operator"
+msgid "Translate"
+msgstr "Verplaats"
+
+
+msgctxt "Operator"
+msgid "Open Blender File"
+msgstr "Open Blender Bestand"
+
+
+msgid "Open a Blender file"
+msgstr "Open een Blender Bestand"
+
+
+msgctxt "Operator"
+msgid "Quit Blender"
+msgstr "Blender Afsluiten"
+
+
+msgid "Quit Blender"
+msgstr "Blender Afsluiten"
+
+
+msgctxt "Operator"
+msgid "Reload Start-Up File"
+msgstr "Herlaad Opstart Bestand"
+
+
+msgid "Open the default file (doesn't save the current file)"
+msgstr "Open Opstart Bestand (huidige bestand wordt niet opgelsagen)"
+
+
+msgctxt "Operator"
+msgid "Save As Blender File"
+msgstr "Opslaan als Blender bestand"
+
+
+msgid "Save the current file in the desired location"
+msgstr "Sla het huidige bestand op in de gewenste locatie"
+
+
+msgctxt "Operator"
+msgid "Save Blender File"
+msgstr "Sla Blender Bestand op"
+
+
+msgid "Save the current Blender file"
+msgstr "Sla het huidige Blender bestand op"
+
+
+msgctxt "Operator"
+msgid "System Info"
+msgstr "Systeem informatie"
+
+
+msgid "Generate System Info"
+msgstr "Genereer systeem informatie"
+
+
+msgid "Open a website in the web-browser"
+msgstr "Opent een website in  de web-browser"
+
+
+msgctxt "Operator"
+msgid "Duplicate Window"
+msgstr "Kopieer Scherm"
+
+
+msgid "Duplicate the current Blender window"
+msgstr "Kopieer het huidige Blender Scherm"
+
+
+msgid "Toggle the current window fullscreen"
+msgstr "Schakel Fullscreen in/uit"
+
+
+msgid "Resolution X"
+msgstr "X resolutie"
+
+
+msgid "Number of horizontal pixels in the rendered image"
+msgstr "Aantal horizontale pixels in the gerenderde afbeelding"
+
+
+msgid "Resolution Y"
+msgstr "Y resolutie"
+
+
+msgid "Number of vertical pixels in the rendered image"
+msgstr "Aantal verticale pixels in de gerenderde afbeelding"
+
+
+msgid "Resolution %"
+msgstr "Resolutie %"
+
+
+msgid "Percentage scale for render resolution"
+msgstr "Grootte in percentage van de gerenderde resolutie"
+
+
+msgid "Frame Map Old"
+msgstr "Frame map Oud"
+
+
+msgid "Old mapping value in frames"
+msgstr "Oude mapping waarde in frames"
+
+
+msgid "Select where rendered images will be displayed"
+msgstr "Selecteer waar gerenderde afbeeldingen worden weergegeven"
+
+
+msgid "Image Editor"
+msgstr "Afbeelding Editor"
+
+
+msgid "Images are rendered in Image Editor"
+msgstr "Afbeeldingen worden in de Abeelding Editor weergegeven"
+
+
+msgid "Engine"
+msgstr "Engine"
+
+
+msgid "Engine to use for rendering"
+msgstr "Engine gebruikt voor renderen"
+
+
+msgid "Blender Render"
+msgstr "Blender Render"
+
+
+msgid "Manual"
+msgstr "Handleiding"
+
+
+msgid "Language used for translation"
+msgstr "Taal gebruikt voor vertaling"
+
+
+msgid "Default (Default)"
+msgstr "Standaard (Default)"
+
+
+msgid "Translate Interface"
+msgstr "Vertaal de Interface"
+
+
+msgid "Translate interface"
+msgstr "Vertaal de Interface"
+
+
+msgid "Old"
+msgstr "Oud"
+
+
+msgid "Calculate"
+msgstr "Bereken"
+
+
+msgid "Cancel"
+msgstr "Annuleren"
+
+
+msgid "Remove"
+msgstr "Verwijder"
+
+
+msgid "Toggle System Console"
+msgstr "Systeem Console aan/uit"
+
+
+msgctxt "Operator"
+msgid "Toggle System Console"
+msgstr "Systeem Console aan/uit"
+

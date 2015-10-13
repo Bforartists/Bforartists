@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<material view_color="rgb(0.80000, 0.80000, 0.80000)" sample_lamp="True">
+	<nodes>
+		<node type="BSDF_DIFFUSE" color="rgba(0.07457, 0.07457, 0.07457, 1.0)" roughness="0.0" loc="653, 127" />
+		<node type="TEX_VORONOI" coloring="CELLS" scale="300.0" loc="655, 6" />
+		<node type="OUTPUT_MATERIAL" loc="3169, 115" />
+		<node type="BSDF_DIFFUSE" color="rgba(0.0, 0.15665, 0.0, 1.0)" roughness="1.0" loc="-358, 276" />
+		<node type="BSDF_DIFFUSE" color="rgba(0.01193, 0.02232, 0.0, 1.0)" roughness="0.0" loc="-364, 166" />
+		<node type="MIX_SHADER" fac="0.5" loc="76, 296" />
+		<node type="MIX_SHADER" fac="0.5" loc="142, -51" />
+		<node type="MIX_SHADER" fac="0.5" loc="362, 387" />
+		<node type="TEX_NOISE" scale="75.0" detail="2.0" distortion="0.0" loc="-366, 464" />
+		<node type="BSDF_DIFFUSE" color="rgba(0.01066, 0.02866, 0.00134, 1.0)" roughness="1.0" loc="-282, -179" />
+		<node type="MIX_RGB" blend_type="MIX" use_clamp="False" fac="0.5" color1="rgba(1.0, 1.0, 1.0, 1.0)" color2="rgba(0.0, 0.0, 0.0, 1.0)" loc="952, 303" />
+		<node type="BRIGHTCONTRAST" color="rgba(1.0, 1.0, 1.0, 1.0)" bright="0.19999" contrast="1.0" loc="769, 417" />
+		<node type="TEX_NOISE" scale="10.0" detail="5.0" distortion="1.0" loc="530, 545" />
+		<node type="TEX_VORONOI" coloring="INTENSITY" scale="250.0" loc="1103, -226" />
+		<node type="BSDF_DIFFUSE" color="rgba(0.08599, 0.19126, 0.00800, 1.0)" roughness="1.0" loc="-285, -301" />
+		<node type="MIX_SHADER" fac="0.5" loc="1355, 217" />
+		<node type="TEX_NOISE" scale="15.0" detail="5.0" distortion="0.0" loc="1386, 54" />
+		<node type="BRIGHTCONTRAST" color="rgba(1.0, 1.0, 1.0, 1.0)" bright="0.0" contrast="1.0" loc="1574, -19" />
+		<node type="MIX_RGB" blend_type="MIX" use_clamp="False" fac="0.5" color1="rgba(0.0, 0.0, 0.0, 1.0)" color2="rgba(1.0, 1.0, 1.0, 1.0)" loc="1735, 547" />
+		<node type="MIX_RGB" blend_type="MIX" use_clamp="False" fac="0.5" color1="rgba(0.5, 0.5, 0.5, 1.0)" color2="rgba(0.5, 0.5, 0.5, 1.0)" loc="1765, -133" />
+		<node type="MIX_RGB" blend_type="MIX" use_clamp="False" fac="0.5" color1="rgba(0.0, 0.0, 0.0, 1.0)" color2="rgba(1.0, 1.0, 1.0, 1.0)" loc="2217, 3" />
+		<node type="BSDF_DIFFUSE" color="rgba(0.01405, 0.03752, 0.01255, 1.0)" roughness="1.0" loc="64, 137" />
+		<node type="TEX_NOISE" scale="100.0" detail="2.0" distortion="5.0" loc="74, 532" />
+		<node type="MIX_SHADER" fac="0.5" loc="1956, 336" />
+		<node type="TEX_NOISE" scale="10.0" detail="5.0" distortion="0.5" loc="1296, 683" />
+		<node type="BRIGHTCONTRAST" color="rgba(1.0, 1.0, 1.0, 1.0)" bright="2.0" contrast="20.0" loc="1523, 638" />
+		<node type="BRIGHTCONTRAST" color="rgba(1.0, 1.0, 1.0, 1.0)" bright="2.0" contrast="20.0" loc="2054, 46" />
+		<node type="TEX_NOISE" scale="10.0" detail="5.0" distortion="0.5" loc="1880, 138" />
+		<node type="HUE_SAT" hue="0.5" saturation="1.0" value="500.0" fac="1.0" color="rgba(0.80000, 0.80000, 0.80000, 1.0)" loc="1961, -95" />
+		<node type="TEX_NOISE" scale="300.0" detail="5.0" distortion="0.0" loc="1092, -25" />
+		<node type="INVERT" fac="1.0" color="rgba(0.0, 0.0, 0.0, 1.0)" loc="2494, -41" />
+		<node type="MIX_RGB" blend_type="MIX" use_clamp="False" fac="0.5" color1="rgba(0.0, 0.0, 0.0, 1.0)" color2="rgba(1.0, 1.0, 1.0, 1.0)" loc="2370, -135" />
+		<node type="TEX_NOISE" scale="50.0" detail="5.0" distortion="0.0" loc="-355, 15" />
+	</nodes>
+	<links>
+		<link to="2" input="0" from="23" output="0" />
+		<link to="2" input="2" from="30" output="0" />
+		<link to="5" input="1" from="3" output="0" />
+		<link to="5" input="2" from="4" output="0" />
+		<link to="7" input="1" from="5" output="0" />
+		<link to="7" input="2" from="21" output="0" />
+		<link to="6" input="1" from="9" output="0" />
+		<link to="6" input="2" from="14" output="0" />
+		<link to="15" input="1" from="7" output="0" />
+		<link to="15" input="2" from="6" output="0" />
+		<link to="11" input="0" from="12" output="1" />
+		<link to="15" input="0" from="10" output="0" />
+		<link to="10" input="0" from="11" output="0" />
+		<link to="5" input="0" from="8" output="1" />
+		<link to="7" input="0" from="22" output="1" />
+		<link to="6" input="0" from="32" output="1" />
+		<link to="19" input="1" from="29" output="1" />
+		<link to="19" input="2" from="13" output="1" />
+		<link to="28" input="4" from="19" output="0" />
+		<link to="17" input="0" from="16" output="1" />
+		<link to="19" input="0" from="17" output="0" />
+		<link to="23" input="2" from="15" output="0" />
+		<link to="25" input="0" from="24" output="1" />
+		<link to="23" input="0" from="18" output="0" />
+		<link to="18" input="0" from="25" output="0" />
+		<link to="26" input="0" from="27" output="1" />
+		<link to="20" input="0" from="26" output="0" />
+		<link to="31" input="0" from="20" output="0" />
+		<link to="30" input="1" from="31" output="0" />
+		<link to="31" input="2" from="28" output="0" />
+		<link to="23" input="1" from="0" output="0" />
+		<link to="31" input="1" from="1" output="1" />
+	</links>
+</material>

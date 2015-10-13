@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<group>
+	<groupnodes>
+		<groupnode type="MIX_RGB" blend_type="MIX" use_clamp="False" fac="0.5" color1="rgba(0.62394, 0.61712, 0.67723, 1.0)" color2="rgba(0.67032, 0.66959, 0.62479, 1.0)" loc="127, 159" />
+		<groupnode type="MIX_SHADER" fac="0.5" loc="473, -48" />
+		<groupnode type="TEX_MUSGRAVE" musgrave="FBM" scale="5.0" detail="2.0" dimension="2.0" lacunarity="1.0" offset="0.0" gain="1.0" loc="-79, 240" />
+		<groupnode type="MIX_SHADER" fac="0.5" loc="671, -82" />
+		<groupnode type="LAYER_WEIGHT" blend="0.25" loc="481, 79" />
+		<groupnode type="TEX_BRICK" label="Pattern Brick" offset="1.0" offset_freq="1" squash="1.0" squash_freq="1" color1="rgba(1.0, 1.0, 1.0, 1.0)" color2="rgba(0.99999, 1.0, 0.99999, 1.0)" mortar="rgba(0.0, 0.0, 0.0, 1.0)" scale="5.0" mortar_size="0.10000" bias="3.72529" width="1.0" height="1.0" loc="-500, -70" />
+		<groupnode type="INVERT" fac="1.0" color="rgba(0.0, 0.0, 0.0, 1.0)" loc="-299, -202" />
+		<groupnode type="BSDF_DIFFUSE" color="rgba(0.82242, 0.84451, 0.85430, 1.0)" roughness="0.0" loc="267, 43" />
+		<groupnode type="BSDF_GLOSSY" distribution="BECKMANN" color="rgba(0.80000, 0.80000, 0.80000, 1.0)" roughness="0.03500" loc="111, -266" />
+		<groupnode type="MIX_SHADER" fac="0.10000" loc="303, -160" />
+		<groupnode type="BUMP" strength="0.10000" loc="-180, -209" />
+		<groupnode type="BSDF_DIFFUSE" color="rgba(1.0, 1.0, 1.0, 1.0)" roughness="0.0" loc="113, -143" />
+		<groupnode type="TEX_BRICK" label="Color Brick" offset="1.0" offset_freq="1" squash="1.0" squash_freq="1" color1="rgba(0.80000, 0.80000, 0.80000, 1.0)" color2="rgba(0.20000, 0.20000, 0.20000, 1.0)" mortar="rgba(0.61442, 0.64262, 0.68360, 1.0)" scale="5.0" mortar_size="0.10000" bias="0.40000" width="1.0" height="1.0" loc="-285, 263" />
+	</groupnodes>
+	<groupinputs>
+		<groupinput name="Color1" type="RGBA" value="rgba(0.80000, 0.80000, 0.80000, 1.0)" />
+		<groupinput name="Color2" type="RGBA" value="rgba(0.20000, 0.20000, 0.20000, 1.0)" />
+		<groupinput name="Vector" type="VECTOR" value="Vector(0.0, 0.0, 0.0)" />
+		<groupinput name="Scale" type="VALUE" value="5.0" />
+		<groupinput name="Bump Strength" type="VALUE" value="0.10000" />
+	</groupinputs>
+	<groupoutputs>
+		<groupoutput name="Shader" type="SHADER" />
+	</groupoutputs>
+	<grouplinks>
+		<grouplink to="12" input="1" from="i" output="0" />
+		<grouplink to="12" input="0" from="i" output="2" />
+		<grouplink to="5" input="0" from="i" output="2" />
+		<grouplink to="12" input="4" from="i" output="3" />
+		<grouplink to="5" input="4" from="i" output="3" />
+		<grouplink to="3" input="1" from="1" output="0" />
+		<grouplink to="9" input="2" from="8" output="0" />
+		<grouplink to="1" input="0" from="5" output="0" />
+		<grouplink to="1" input="2" from="9" output="0" />
+		<grouplink to="9" input="1" from="11" output="0" />
+		<grouplink to="11" input="0" from="12" output="0" />
+		<grouplink to="6" input="1" from="5" output="1" />
+		<grouplink to="1" input="1" from="7" output="0" />
+		<grouplink to="7" input="0" from="0" output="0" />
+		<grouplink to="0" input="0" from="2" output="1" />
+		<grouplink to="2" input="0" from="i" output="2" />
+		<grouplink to="2" input="1" from="i" output="3" />
+		<grouplink to="12" input="2" from="i" output="1" />
+		<grouplink to="o" input="0" from="3" output="0" />
+		<grouplink to="3" input="0" from="4" output="0" />
+		<grouplink to="3" input="2" from="8" output="0" />
+		<grouplink to="10" input="1" from="6" output="0" />
+		<grouplink to="10" input="0" from="i" output="4" />
+		<grouplink to="7" input="2" from="10" output="0" />
+		<grouplink to="8" input="2" from="10" output="0" />
+		<grouplink to="11" input="2" from="10" output="0" />
+	</grouplinks>
+</group>

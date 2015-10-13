@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<material view_color="rgb(0.80000, 0.80000, 0.80000)" sample_lamp="True">
+	<nodes>
+		<node type="MIX_SHADER" fac="0.02999" loc="1649, 550" />
+		<node type="BSDF_GLOSSY" distribution="BECKMANN" color="rgba(0.79909, 0.67243, 0.60382, 1.0)" roughness="0.40000" loc="1451, 489" />
+		<node type="MIX_SHADER" fac="0.69999" loc="1452, 608" />
+		<node type="BSDF_VELVET" color="rgba(0.79909, 0.67243, 0.60382, 1.0)" sigma="0.89999" loc="1243, 532" />
+		<node type="BSDF_DIFFUSE" color="rgba(0.79909, 0.67058, 0.60566, 1.0)" roughness="0.69998" loc="1239, 630" />
+		<node type="MIX_RGB" blend_type="MIX" use_clamp="False" fac="0.5" color1="rgba(0.79909, 0.51714, 0.32036, 1.0)" color2="rgba(0.0, 0.0, 0.0, 1.0)" loc="1011, 555" />
+		<node type="MATH" operation="MINIMUM" use_clamp="False" value1="0.5" value2="0.5" loc="434, 428" />
+		<node type="VALTORGB" interpolation="EASE" fac="0.5" stops="12" stop1="0.0|rgba(1.0, 1.0, 1.0, 0.0)" stop2="0.11362|rgba(1.0, 1.0, 1.0, 0.50182)" stop3="0.18181|rgba(1.0, 1.0, 1.0, 0.00234)" stop4="0.21363|rgba(1.0, 1.0, 1.0, 0.02219)" stop5="0.27272|rgba(1.0, 1.0, 1.0, 0.0)" stop6="0.34545|rgba(1.0, 1.0, 1.0, 0.58626)" stop7="0.41817|rgba(1.0, 1.0, 1.0, 0.02921)" stop8="0.51362|rgba(1.0, 1.0, 1.0, 0.0)" stop9="0.64090|rgba(1.0, 1.0, 1.0, 0.03826)" stop10="0.74545|rgba(1.0, 1.0, 1.0, 1.0)" stop11="0.85453|rgba(1.0, 1.0, 1.0, 0.02249)" stop12="1.0|rgba(1.0, 1.0, 1.0, 0.0)" loc="-140, 400" />
+		<node type="VALTORGB" interpolation="EASE" fac="0.5" stops="10" stop1="0.0|rgba(1.0, 1.0, 1.0, 0.0)" stop2="0.17272|rgba(1.0, 1.0, 1.0, 0.73825)" stop3="0.29998|rgba(1.0, 1.0, 1.0, 0.0)" stop4="0.34999|rgba(1.0, 1.0, 1.0, 0.02642)" stop5="0.43180|rgba(1.0, 1.0, 1.0, 0.05547)" stop6="0.57271|rgba(1.0, 1.0, 1.0, 0.72980)" stop7="0.72272|rgba(1.0, 1.0, 1.0, 0.03361)" stop8="0.81818|rgba(1.0, 1.0, 1.0, 0.0)" stop9="0.91817|rgba(1.0, 1.0, 1.0, 0.32451)" stop10="1.0|rgba(1.0, 1.0, 1.0, 0.0)" loc="-140, 196" />
+		<node type="MATH" operation="MULTIPLY" use_clamp="False" value1="0.5" value2="-2.0" loc="150, 222" />
+		<node type="MATH" operation="ADD" use_clamp="False" value1="0.5" value2="0.5" loc="291, 322" />
+		<node type="MATH" operation="DIVIDE" use_clamp="False" value1="0.5" value2="3.0" loc="838, 562" />
+		<node type="MATH" operation="ADD" use_clamp="False" value1="0.5" value2="2.0" loc="645, 522" />
+		<node type="MATH" operation="MULTIPLY" use_clamp="False" value1="0.5" value2="0.20000" loc="1049, 184" />
+		<node type="OUTPUT_MATERIAL" loc="1966, 237" />
+		<node type="MATH" operation="SUBTRACT" use_clamp="False" value1="0.5" value2="0.5" loc="-236, 531" />
+		<node type="MATH" operation="MULTIPLY" use_clamp="False" value1="0.5" value2="30.09999" loc="-913, 464" />
+		<node type="TEX_NOISE" scale="5.0" detail="0.99998" distortion="0.0" loc="-1531, 185" />
+		<node type="TEX_COORD" loc="-1720, 315" />
+		<node type="MATH" operation="MULTIPLY" use_clamp="False" value1="30.09999" value2="10.0" loc="-1712, 109" />
+		<node type="MIX_RGB" blend_type="MULTIPLY" use_clamp="False" fac="0.99000" color1="rgba(0.5, 0.5, 0.5, 1.0)" color2="rgba(0.0, 0.0, 0.0, 1.0)" loc="-1350, 220" />
+		<node type="SEPRGB" image="rgba(0.80000, 0.80000, 0.80000, 1.0)" loc="-1068, 269" />
+		<node type="VECT_MATH" operation="ADD" vector1="Vector(0.5, 0.5, 0.5)" vector2="Vector(0.5, 0.5, 0.5)" loc="-1212, 292" />
+		<node type="MATH" operation="ROUND" use_clamp="False" value1="0.5" value2="0.0" loc="-641, 604" />
+		<node type="MATH" operation="ADD" use_clamp="False" value1="0.5" value2="0.5" loc="-787, 602" />
+		<node type="MATH" operation="SUBTRACT" use_clamp="False" value1="0.5" value2="0.5" loc="-279, 176" />
+		<node type="MATH" operation="ROUND" use_clamp="False" value1="0.5" value2="0.0" loc="-433, 323" />
+		<node type="MATH" operation="ADD" use_clamp="False" value1="0.5" value2="0.5" loc="-600, 341" />
+		<node type="MATH" operation="MULTIPLY" use_clamp="False" value1="0.5" value2="30.09999" loc="-753, 159" />
+		<node type="MATH" operation="ADD" use_clamp="False" value1="0.5" value2="0.5" loc="-902, 159" />
+		<node type="VALUE" custom_color="rgb(1.0, 0.10000, 0.10000)" label="Scale" value="10.0" loc="-1945, 425" />
+	</nodes>
+	<links>
+		<link to="14" input="0" from="0" output="0" />
+		<link to="14" input="2" from="13" output="0" />
+		<link to="9" input="0" from="8" output="1" />
+		<link to="2" input="2" from="3" output="0" />
+		<link to="2" input="1" from="4" output="0" />
+		<link to="10" input="0" from="7" output="1" />
+		<link to="10" input="1" from="9" output="0" />
+		<link to="13" input="0" from="6" output="0" />
+		<link to="6" input="1" from="10" output="0" />
+		<link to="6" input="0" from="7" output="1" />
+		<link to="0" input="2" from="1" output="0" />
+		<link to="17" input="0" from="18" output="2" />
+		<link to="20" input="1" from="17" output="0" />
+		<link to="22" input="0" from="18" output="2" />
+		<link to="22" input="1" from="20" output="0" />
+		<link to="21" input="0" from="22" output="0" />
+		<link to="17" input="1" from="19" output="0" />
+		<link to="0" input="1" from="2" output="0" />
+		<link to="7" input="0" from="15" output="0" />
+		<link to="8" input="0" from="25" output="0" />
+		<link to="29" input="1" from="21" output="1" />
+		<link to="4" input="0" from="5" output="0" />
+		<link to="3" input="0" from="5" output="0" />
+		<link to="1" input="0" from="5" output="0" />
+		<link to="11" input="0" from="12" output="0" />
+		<link to="5" input="0" from="11" output="0" />
+		<link to="12" input="0" from="6" output="0" />
+		<link to="16" input="0" from="21" output="0" />
+		<link to="15" input="0" from="23" output="0" />
+		<link to="15" input="1" from="16" output="0" />
+		<link to="23" input="0" from="24" output="0" />
+		<link to="24" input="0" from="16" output="0" />
+		<link to="28" input="0" from="29" output="0" />
+		<link to="25" input="0" from="26" output="0" />
+		<link to="25" input="1" from="28" output="0" />
+		<link to="26" input="0" from="27" output="0" />
+		<link to="27" input="0" from="28" output="0" />
+		<link to="19" input="0" from="30" output="0" />
+		<link to="16" input="1" from="30" output="0" />
+		<link to="29" input="0" from="21" output="0" />
+	</links>
+</material>

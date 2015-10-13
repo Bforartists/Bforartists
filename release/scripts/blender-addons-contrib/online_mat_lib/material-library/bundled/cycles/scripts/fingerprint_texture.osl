@@ -1,0 +1,34 @@
+
+#include "stdosl.h"
+#include "node_texture.h"
+
+shader fingerprint_texture(
+        point Vector = P,
+        float Scale = 1.0,
+        int Ridges = 5,
+        int Seed = 42,
+        output float Fac = 0.0 )
+{
+    float da;
+    point pa;
+    float d;
+
+    vector up   = vector(0,0,1);
+    vector tdir = 0;
+
+    int pi;
+
+    for(pi=0; pi< Ridges; pi++){
+        pa = Scale * point(
+        cellnoise(point(pi,pi,pi)),
+        cellnoise(point(pi,pi+Seed,pi)),
+        cellnoise(point(pi,pi,pi+Seed)));
+        da = pa[2];
+        vector v = pa - Vector;
+        float d = length(v);
+        v[2]=0;
+        v = normalize(v);
+        tdir += cross(v,up)*da*d;
+    }
+    Fac = sqrt(dot(tdir,tdir));
+}

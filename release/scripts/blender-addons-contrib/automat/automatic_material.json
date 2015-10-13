@@ -1,0 +1,81 @@
+{
+	"NodeSetup":[
+
+		{
+			"type": "ShaderNodeTexImage",
+			"label": "Color Image",
+			"location": [-450, 100]
+
+		},
+		{
+			"type": "ShaderNodeBump",
+			"label": "Convert to Bump Map",
+			"location": [200, 70],
+			"inputs[0].default_value": 0.595,
+			"in": [
+			["Color Image", "\"Color\"", "\"Height\""]
+			]
+
+		},
+		{
+			"type": "ShaderNodeBsdfDiffuse",
+			"label": "Diffuse Component",
+			"location": [480, 270],
+			"in": [
+			["Color Image", "\"Color\"", "\"Color\""],
+			["Convert to Bump Map", "\"Normal\"", "\"Normal\""]
+			]
+
+		},
+		{
+			"type": "ShaderNodeMath",
+			"label": "Adjust reflectivity",
+			"location": [480, 70],
+			"in": [
+			["Color Image", "\"Color\"", 0]
+			],
+			"operation": "\"MULTIPLY\"",
+			"inputs[1].default_value": 0.6,
+			"use_clamp": "True"
+		},
+		{
+			"type": "ShaderNodeMixRGB",
+			"label": "Adjust reflections",
+			"location": [200, -130],
+			"in": [
+			["Color Image", "\"Color\"", "\"Color1\""]
+			],
+			"inputs[0].default_value": 0.15,
+			"inputs[2].default_value": "(1, 1, 1, 1)"
+		},
+		{
+			"type": "ShaderNodeBsdfGlossy",
+			"label": "Glossy Component",
+			"location": [480, -130],
+			"in": [
+			["Adjust reflections", "\"Color\"", "\"Color\""],
+			["Convert to Bump Map", "\"Normal\"", "\"Normal\""]
+			]
+
+		},
+		{
+			"type": "ShaderNodeMixShader",
+			"label": "Mix Shaders",
+			"location": [720, 70],
+			"in": [
+			["Adjust reflectivity", "\"Value\"", "\"Fac\""],
+			["Diffuse Component", "\"BSDF\"", 1],
+			["Glossy Component", "\"BSDF\"", 2]
+			]
+
+		},
+		{
+			"type": "ShaderNodeOutputMaterial",
+			"label": "Output",
+			"location": [920, 70],
+			"in": [
+			["Mix Shaders", "\"Shader\""]
+			]
+		}
+	]
+}
