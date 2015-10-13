@@ -1,0 +1,299 @@
+
+msgid ""
+msgstr ""
+"Project-Id-Version: Blender 2.76 (sub 0) (b'fb78f6d')\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-10-05 20:13:42\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: eo\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit"
+
+
+msgid "Select"
+msgstr "Elektas"
+
+
+msgid "Add"
+msgstr "Aldonia"
+
+
+msgid "File"
+msgstr "Dosiero"
+
+
+msgid "Render"
+msgstr "Por Kapitulacigi"
+
+
+msgid "View"
+msgstr "Rigardi"
+
+
+msgid "Links"
+msgstr "Ligiloj"
+
+
+msgid "Object Mode"
+msgstr "Objekto Modo"
+
+
+msgid "Edit Mode"
+msgstr "Prilaborado Modo"
+
+
+msgid "Sculpt Mode"
+msgstr "Skulptaĵo Modo"
+
+
+msgid "Window"
+msgstr "Fenestro"
+
+
+msgid "Help"
+msgstr "Helpo"
+
+
+msgctxt "Operator"
+msgid "Select"
+msgstr "Elektas"
+
+
+msgid "Timing Mode"
+msgstr "Prilaborado Modo"
+
+
+msgid "Interpolation method"
+msgstr "Interago:"
+
+
+msgid "Toggle Select"
+msgstr "Elektas"
+
+
+msgctxt "Operator"
+msgid "Select Mode"
+msgstr "Objekto Modo"
+
+
+msgid "View Z Axis"
+msgstr "Montri Z Axis"
+
+
+msgid "View X Axis"
+msgstr "Montri X Axis"
+
+
+msgctxt "Operator"
+msgid "Render"
+msgstr "Por Kapitulacigi"
+
+
+msgid "New"
+msgstr "Nova"
+
+
+msgid "Operation Mode"
+msgstr "Objekto Modo"
+
+
+msgctxt "Operator"
+msgid "Recover Last Session"
+msgstr "Restaŭri lasta kunsido"
+
+
+msgid "Recent"
+msgstr "Freŝaj"
+
+
+msgid "Auto Select"
+msgstr "Elektas"
+
+
+msgid "Immediate Mode"
+msgstr "Prilaborado Modo"
+
+
+msgid "Keep Session"
+msgstr "Restaŭri lasta kunsido"
+
+
+msgid "Final Render:"
+msgstr "Por Kapitulacigi"
+
+
+msgctxt "Operator"
+msgid "Add"
+msgstr "Aldonia"
+
+
+msgid "Object Children:"
+msgstr "Objekto Modo"
+
+
+msgid "UV Axis:"
+msgstr "Montri Z Axis"
+
+
+msgctxt "Operator"
+msgid "Recenter"
+msgstr "Freŝaj"
+
+
+msgctxt "Operator"
+msgid "New"
+msgstr "Nova"
+
+
+msgctxt "Operator"
+msgid "Set X Axis"
+msgstr "Montri X Axis"
+
+
+msgctxt "Operator"
+msgid "Interpolation Mode"
+msgstr "Interago:"
+
+
+msgctxt "Operator"
+msgid "Link"
+msgstr "Ligiloj"
+
+
+msgid "Interaction:"
+msgstr "Interago:"
+
+
+msgid "Not supported in sculpt mode"
+msgstr "Ne estas subtenata en skulptaĵo modo"
+
+
+msgctxt "Scene"
+msgid "New"
+msgstr "Nova"
+
+
+msgctxt "Object"
+msgid "New"
+msgstr "Nova"
+
+
+msgctxt "Mesh"
+msgid "New"
+msgstr "Nova"
+
+
+msgctxt "Curve"
+msgid "New"
+msgstr "Nova"
+
+
+msgctxt "Metaball"
+msgid "New"
+msgstr "Nova"
+
+
+msgctxt "Material"
+msgid "New"
+msgstr "Nova"
+
+
+msgctxt "Texture"
+msgid "New"
+msgstr "Nova"
+
+
+msgctxt "Image"
+msgid "New"
+msgstr "Nova"
+
+
+msgctxt "Lattice"
+msgid "New"
+msgstr "Nova"
+
+
+msgctxt "Lamp"
+msgid "New"
+msgstr "Nova"
+
+
+msgctxt "Camera"
+msgid "New"
+msgstr "Nova"
+
+
+msgctxt "World"
+msgid "New"
+msgstr "Nova"
+
+
+msgctxt "Screen"
+msgid "New"
+msgstr "Nova"
+
+
+msgctxt "Text"
+msgid "New"
+msgstr "Nova"
+
+
+msgctxt "Speaker"
+msgid "New"
+msgstr "Nova"
+
+
+msgctxt "Sound"
+msgid "New"
+msgstr "Nova"
+
+
+msgctxt "Armature"
+msgid "New"
+msgstr "Nova"
+
+
+msgctxt "Action"
+msgid "New"
+msgstr "Nova"
+
+
+msgctxt "NodeTree"
+msgid "New"
+msgstr "Nova"
+
+
+msgctxt "Brush"
+msgid "New"
+msgstr "Nova"
+
+
+msgctxt "ParticleSettings"
+msgid "New"
+msgstr "Nova"
+
+
+msgctxt "GPencil"
+msgid "New"
+msgstr "Nova"
+
+
+msgid "Sel"
+msgstr "Elektas"
+
+
+msgid "view"
+msgstr "Rigardi"
+
+
+msgid "Intercept"
+msgstr "Interago:"
+
+
+msgctxt "Operator"
+msgid "Toggle System Console"
+msgstr "Elektas"
+

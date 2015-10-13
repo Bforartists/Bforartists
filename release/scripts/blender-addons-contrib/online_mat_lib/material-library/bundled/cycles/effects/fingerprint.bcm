@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<material view_color="rgb(0.80000, 0.80000, 0.80000)" sample_lamp="True">
+	<nodes>
+		<node type="VALTORGB" interpolation="LINEAR" fac="0.5" stops="2" stop1="0.0|rgba(0.0, 0.0, 0.0, 1.0)" stop2="1.0|rgba(1.0, 1.0, 1.0, 1.0)" loc="8, 456" />
+		<node type="TEX_NOISE" scale="5.0" detail="2.0" distortion="0.0" loc="-195, 467" />
+		<node type="MATH" operation="GREATER_THAN" use_clamp="False" value1="0.5" value2="0.0" loc="-129, -8" />
+		<node type="MATH" operation="MULTIPLY" use_clamp="False" value1="0.5" value2="0.5" loc="20, 118" />
+		<node type="MATH" operation="MULTIPLY" use_clamp="False" value1="0.5" value2="0.5" loc="163, 242" />
+		<node type="MATH" operation="MULTIPLY" use_clamp="False" value1="0.5" value2="0.5" loc="303, 403" />
+		<node type="MATH" operation="LESS_THAN" use_clamp="False" value1="0.5" value2="0.20000" loc="451, 326" />
+		<node type="BSDF_DIFFUSE" color="rgba(1.0, 1.0, 1.0, 1.0)" roughness="0.0" loc="180, 83" />
+		<node type="MIX_SHADER" fac="0.79999" loc="373, 95" />
+		<node type="MIX_SHADER" fac="0.5" loc="606, 201" />
+		<node type="BSDF_GLOSSY" distribution="BECKMANN" color="rgba(0.80000, 0.80000, 0.80000, 1.0)" roughness="0.10000" loc="178, -39" />
+		<node type="BSDF_TRANSPARENT" color="rgba(1.0, 1.0, 1.0, 1.0)" loc="376, -48" />
+		<node type="MATH" operation="SINE" use_clamp="False" value1="0.5" value2="1.0" loc="-272, 138" />
+		<node type="MATH" operation="MULTIPLY" use_clamp="False" value1="0.5" value2="24.0" loc="-419, 137" />
+		<node type="SCRIPT" mode="EXTERNAL" script="fingerprint_texture.osl" vector="Vector(0.0, 0.0, 0.0)" scale="1.0" ridges="50" seed="42" loc="-588, 137" />
+		<node type="SCRIPT" mode="EXTERNAL" script="ellipse_mask.osl" vector="Vector(0.0, 0.0, 0.0)" center="Vector(0.5, 0.5, 0.5)" radius="0.15000" ellipse="0.90000" rotation="10.0" blur="1.0" loc="-593, 388" />
+		<node type="TEX_COORD" dupli="False" loc="-1050, 186" />
+		<node type="MAPPING" translation="Vector(-0.49999, 0.09999, 0.0)" rotation="Vector(0.08726, 0.10471, 0.03490)" scale="Vector(1.89999, 1.89999, 1.89999)" use_min="False" use_max="False" vector="Vector(0.0, 0.0, 0.0)" loc="-865, 265" />
+		<node type="OUTPUT_MATERIAL" loc="811, 307" />
+	</nodes>
+	<links>
+		<link to="18" input="0" from="9" output="0" />
+		<link to="0" input="0" from="1" output="1" />
+		<link to="5" input="0" from="0" output="0" />
+		<link to="6" input="0" from="5" output="0" />
+		<link to="5" input="1" from="4" output="0" />
+		<link to="4" input="0" from="15" output="0" />
+		<link to="13" input="0" from="14" output="0" />
+		<link to="12" input="0" from="13" output="0" />
+		<link to="3" input="0" from="12" output="0" />
+		<link to="2" input="0" from="12" output="0" />
+		<link to="3" input="1" from="2" output="0" />
+		<link to="4" input="1" from="3" output="0" />
+		<link to="9" input="2" from="11" output="0" />
+		<link to="9" input="1" from="8" output="0" />
+		<link to="8" input="2" from="10" output="0" />
+		<link to="8" input="1" from="7" output="0" />
+		<link to="18" input="2" from="5" output="0" />
+		<link to="17" input="0" from="16" output="2" />
+		<link to="9" input="0" from="6" output="0" />
+		<link to="14" input="0" from="17" output="0" />
+		<link to="15" input="0" from="17" output="0" />
+	</links>
+</material>

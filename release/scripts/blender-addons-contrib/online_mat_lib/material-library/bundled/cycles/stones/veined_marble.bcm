@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<material view_color="rgb(0.80000, 0.80000, 0.80000)" sample_lamp="True">
+	<nodes>
+		<node type="OUTPUT_MATERIAL" loc="191, 353" />
+		<node type="MIX_SHADER" fac="0.5" loc="-40, 356" />
+		<node type="SCRIPT" mode="INTERNAL" script="0" vector="Vector(0.0, 0.0, 0.0)" diffuseamt="0.80000" diffusecolor="rgba(1.0, 1.0, 1.0, 1.0)" specularamt="0.20000" roughness="0.00499" specularcolor="rgba(1.0, 1.0, 1.0, 1.0)" veinfreq="1.0" veinlevels="2.0" veincolor="rgba(0.20000, 0.15000, 0.07999, 1.0)" warpfreq="1.0" warping="0.5" sharpness="8.0" loc="-1048, 442" />
+		<node type="TEX_NOISE" scale="20.0" detail="2.0" distortion="50.0" loc="-552, 240" />
+		<node type="MAPPING" translation="Vector(1.0, 0.0, 1.0)" rotation="Vector(0.0, 0.0, 0.0)" scale="Vector(1.0, 1.0, 1.0)" use_min="False" use_max="False" vector="Vector(0.0, 0.0, 0.0)" loc="-1157, 30" />
+		<node type="TEX_COORD" dupli="False" loc="-1406, -1" />
+		<node type="TEX_WAVE" wave="RINGS" scale="0.5" distortion="0.10000" detail="2.0" detail_scale="1.0" loc="-752, -30" />
+		<node type="TEX_MUSGRAVE" musgrave="FBM" scale="1.0" detail="2.0" dimension="2.0" lacunarity="1.0" offset="0.0" gain="1.0" loc="-531, -23" />
+		<node type="SCRIPT" mode="INTERNAL" script="0" vector="Vector(0.0, 0.0, 0.0)" diffuseamt="0.89999" diffusecolor="rgba(0.0, 0.0, 0.0, 1.0)" specularamt="0.20000" roughness="0.10000" specularcolor="rgba(0.56471, 0.56471, 0.56471, 1.0)" veinfreq="0.69998" veinlevels="1.60000" veincolor="rgba(0.65837, 0.61720, 0.0, 1.0)" warpfreq="0.60000" warping="0.69998" sharpness="6.0" loc="-255, 252" />
+	</nodes>
+	<links>
+		<link to="1" input="1" from="2" output="0" />
+		<link to="0" input="0" from="1" output="0" />
+		<link to="1" input="2" from="8" output="0" />
+		<link to="7" input="0" from="6" output="0" />
+		<link to="3" input="0" from="6" output="0" />
+		<link to="8" input="2" from="3" output="1" />
+		<link to="8" input="1" from="3" output="0" />
+		<link to="6" input="0" from="4" output="0" />
+		<link to="8" input="0" from="4" output="0" />
+		<link to="4" input="0" from="5" output="3" />
+		<link to="2" input="0" from="5" output="3" />
+		<link to="8" input="8" from="7" output="0" />
+	</links>
+	<scripts>
+		<script name="LGVeinedMarble.osl" id="0">
+<br />/*<br /> * veinedmarble.sl -- surface shader for a nice veined marble.<br /> *<br /> * DESCRIPTION:<br /> *   Makes solid marble texture with strong veins.  The &quot;veincolor&quot; parameter<br /> *   controls the color of the veins.  The background color is given by the<br /> *   surface color (Cs).<br /> * <br /> * PARAMETERS:<br /> *   Ka, Kd, Ks, roughness, specularcolor - same as plastic<br /> *   veinfreq - controls fhe lowest frequency of the color veins<br /> *   veinlevels - how many &quot;levels&quot; of vein tendrills it has<br /> *   warpfreq - lowest frequency of the turbulent warping in the marble<br /> *   warping - controls how much turbulent warping there will be<br /> *   veincolor - the color of the veins<br /> *   sharpness - controls how sharp or fuzzy the veins are (higher = sharper)<br /> *<br /> *<br /> * AUTHOR: Larry Gritz, the George Washington University<br /> *         email: gritz AT seas DOT gwu DOT edu <br /> *<br /> * HISTORY:<br /> *<br /> * last modified  29 Jun 1994 by Larry Gritz<br /> * 2012-12-19 converted to blender osl shader by Shane Ambler<br /> *<br /> */<br /><br /><br />#include &quot;stdosl.h&quot;<br /><br /><br />shader LGVeinedMarble (<br />        point Vector = P,<br />        float DiffuseAmt = 0.8,<br />        color DiffuseColor = color(1.0),<br />        float SpecularAmt = 0.2,<br />        float Roughness = 0.005,<br />        color SpecularColor = color(1.0),<br />        float VeinFreq = 1.0,<br />        float VeinLevels = 2.0,<br />        color VeinColor = color(0.2, 0.15, 0.08),<br />        float WarpFreq = 1.0,<br />        float Warping = 0.5,<br />        float Sharpness = 8.0,<br />        output closure color BSDF = diffuse(N) )<br />{<br />#define snoise(x) (2*noise(x)-1)<br />    color Ct;<br />    point Nf;<br />    point PP, offset;<br />    float i, turb, freq, j;<br />    float turbsum;<br /><br />    PP = transform (&quot;shader&quot;, Vector);<br /><br />    /* perturb the lookup */<br />    freq = 1;<br />    offset = 0;<br />    for (i = 0;  i &lt; 6;  i += 1) {<br />        offset += 2 * Warping * ( noise (WarpFreq * freq * PP) - 0.5)  / freq;<br />        freq *= 2;<br />    }<br />    PP += offset;<br /><br />    /* Now calculate the veining function for the lookup area */<br />    turbsum = 0;  freq = 1;<br />    PP *= VeinFreq;<br />    for (i = 0;  i &lt; VeinLevels;  i += 1) {<br />        turb = abs (snoise (PP));<br />        turb = pow (smoothstep (0.8, 1, 1 - turb), Sharpness) / freq;<br />        turbsum += (1-turbsum) * turb;<br />        freq *= 3;<br />        PP *= 3;<br />    }<br /><br />    Ct = mix (DiffuseColor, VeinColor, turbsum);<br /><br />    Nf = normalize(N);<br />    BSDF = Ct * DiffuseAmt * diffuse(Nf);<br />    BSDF += SpecularColor * SpecularAmt * microfacet_beckmann(Nf,Roughness);<br />}<br /><br /><br />		
+		</script>
+	</scripts>
+</material>

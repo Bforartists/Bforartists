@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<material view_color="rgb(0.75489, 0.68663, 0.79909)" sample_lamp="True">
+	<nodes>
+		<node type="LAYER_WEIGHT" blend="0.89999" loc="-651, 778" />
+		<node type="BSDF_GLOSSY" distribution="BECKMANN" color="rgba(1.0, 0.0, 0.0, 1.0)" roughness="0.0" loc="-655, 631" />
+		<node type="BSDF_GLOSSY" distribution="BECKMANN" color="rgba(0.0, 1.0, 0.0, 1.0)" roughness="0.0" loc="-651, 471" />
+		<node type="LAYER_WEIGHT" blend="0.30000" loc="-201, 737" />
+		<node type="MIX_SHADER" fac="0.5" loc="-184, 520" />
+		<node type="BSDF_GLOSSY" distribution="BECKMANN" color="rgba(0.0, 0.0, 1.0, 1.0)" roughness="0.0" loc="-188, 341" />
+		<node type="LAYER_WEIGHT" blend="0.39998" loc="123, 733" />
+		<node type="MIX_SHADER" fac="0.5" loc="123, 516" />
+		<node type="MIX_SHADER" fac="0.5" loc="469, 321" />
+		<node type="BSDF_TRANSPARENT" color="rgba(1.0, 1.0, 1.0, 1.0)" loc="486, 76" />
+		<node type="MIX_SHADER" fac="0.5" loc="797, 265" />
+		<node type="BSDF_GLASS" distribution="BECKMANN" color="rgba(1.0, 1.0, 1.0, 1.0)" roughness="0.0" ior="1.45000" loc="808, 486" />
+		<node type="FRESNEL" ior="1.45000" loc="864, 676" />
+		<node type="BSDF_GLOSSY" distribution="BECKMANN" color="rgba(0.48350, 0.0, 0.80000, 1.0)" roughness="0.0" loc="131, 217" />
+		<node type="OUTPUT_MATERIAL" loc="1790, 301" />
+		<node type="MIX_SHADER" fac="0.89999" loc="1232, 271" />
+		<node type="MIX_SHADER" fac="0.89999" loc="1570, 333" />
+		<node type="LIGHT_PATH" loc="1364, 592" />
+		<node type="BSDF_TRANSPARENT" color="rgba(0.80000, 0.80000, 0.80000, 1.0)" loc="1254, 128" />
+	</nodes>
+	<links>
+		<link to="16" input="1" from="15" output="0" />
+		<link to="4" input="0" from="0" output="1" />
+		<link to="7" input="1" from="4" output="0" />
+		<link to="7" input="0" from="3" output="1" />
+		<link to="8" input="1" from="7" output="0" />
+		<link to="4" input="1" from="1" output="0" />
+		<link to="4" input="2" from="2" output="0" />
+		<link to="7" input="2" from="5" output="0" />
+		<link to="8" input="2" from="13" output="0" />
+		<link to="8" input="0" from="6" output="0" />
+		<link to="10" input="1" from="8" output="0" />
+		<link to="10" input="2" from="9" output="0" />
+		<link to="15" input="1" from="11" output="0" />
+		<link to="15" input="2" from="10" output="0" />
+		<link to="15" input="0" from="12" output="0" />
+		<link to="14" input="0" from="16" output="0" />
+		<link to="16" input="0" from="17" output="1" />
+		<link to="16" input="2" from="18" output="0" />
+	</links>
+</material>

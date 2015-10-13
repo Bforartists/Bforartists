@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<material view_color="rgb(0.85013, 1.0, 0.80923)" sample_lamp="True">
+	<nodes>
+		<node type="BSDF_GLASS" distribution="BECKMANN" color="rgba(0.96069, 1.0, 0.94998, 1.0)" roughness="0.00999" ior="1.51800" loc="62, 412" />
+		<node type="BSDF_TRANSPARENT" color="rgba(1.0, 1.0, 1.0, 1.0)" loc="95, 230" />
+		<node type="OUTPUT_MATERIAL" loc="520, 292" />
+		<node type="MIX_SHADER" fac="0.0" loc="317, 296" />
+		<node type="LIGHT_PATH" loc="-189, 325" />
+	</nodes>
+	<links>
+		<link to="3" input="2" from="1" output="0" />
+		<link to="3" input="0" from="4" output="1" />
+		<link to="3" input="1" from="0" output="0" />
+		<link to="2" input="0" from="3" output="0" />
+	</links>
+</material>

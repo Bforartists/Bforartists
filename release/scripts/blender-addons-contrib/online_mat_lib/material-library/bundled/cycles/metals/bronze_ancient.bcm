@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<material view_color="rgb(0.30153, 0.11162, 0.05403)" sample_lamp="True">
+	<nodes>
+		<node type="OUTPUT_MATERIAL" loc="633, 386" />
+		<node type="NEW_GEOMETRY" loc="-202, 555" />
+		<node type="BSDF_GLOSSY" distribution="BECKMANN" color="rgba(0.80000, 0.80000, 0.80000, 1.0)" roughness="0.10000" loc="182, 374" />
+		<node type="LAYER_WEIGHT" blend="0.46500" loc="-12, 235" />
+		<node type="BSDF_GLOSSY" distribution="BECKMANN" color="rgba(0.04357, 0.04357, 0.04357, 1.0)" roughness="0.03999" loc="-33, 129" />
+		<node type="MIX_SHADER" fac="0.5" loc="214, 171" />
+		<node type="MIX_SHADER" fac="0.5" loc="429, 338" />
+		<node type="BSDF_GLOSSY" distribution="BECKMANN" color="rgba(0.80000, 0.80000, 0.80000, 1.0)" roughness="0.06498" loc="-33, -2" />
+		<node type="RGB" color="rgba(0.85499, 0.28891, 0.15745, 1.0)" loc="-414, 435" />
+		<node type="RGB" color="rgba(0.79909, 0.43415, 0.07225, 1.0)" loc="-414, 228" />
+		<node type="RGB" color="rgba(0.09000, 0.04159, 0.01396, 1.0)" loc="-414, 39" />
+		<node type="VECT_MATH" operation="DOT_PRODUCT" vector1="Vector(0.5, 0.5, 0.5)" vector2="Vector(0.5, 0.5, 0.5)" loc="-39, 565" />
+		<node type="MATH" operation="POWER" use_clamp="False" value1="0.5" value2="4.0" loc="159, 548" />
+	</nodes>
+	<links>
+		<link to="0" input="0" from="6" output="0" />
+		<link to="11" input="0" from="1" output="1" />
+		<link to="11" input="1" from="1" output="4" />
+		<link to="12" input="0" from="11" output="1" />
+		<link to="6" input="0" from="12" output="0" />
+		<link to="6" input="1" from="2" output="0" />
+		<link to="5" input="1" from="4" output="0" />
+		<link to="5" input="2" from="7" output="0" />
+		<link to="6" input="2" from="5" output="0" />
+		<link to="5" input="0" from="3" output="1" />
+		<link to="4" input="0" from="8" output="0" />
+		<link to="7" input="0" from="9" output="0" />
+		<link to="2" input="0" from="10" output="0" />
+	</links>
+</material>

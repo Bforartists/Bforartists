@@ -1,0 +1,20 @@
+
+#include "stdosl.h"
+
+shader ellipse_mask(
+        point Vector = P,
+        point Center = 0.5,
+        float Radius = 0.5,
+        float Ellipse = 1.0,
+        float Rotation = 0.0,
+        float Blur = 0.0,
+        output float Fac = 0.0 )
+{
+    point p = rotate(Vector,radians(Rotation),Center,Center+vector(0,0,1));
+    vector d = p - Center;
+    d[0] *= Ellipse;
+    float r2 = d[0]*d[0]+d[1]*d[1];
+    if (r2 <= Radius*Radius) {
+        Fac = 1-Blur*sqrt(r2/(Radius*Radius));
+    }
+}

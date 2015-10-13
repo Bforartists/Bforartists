@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<material view_color="rgb(0.37983, 0.37828, 0.79909)" sample_lamp="True">
+	<nodes>
+		<node type="OUTPUT_MATERIAL" loc="300, 300" />
+		<node type="BSDF_TRANSPARENT" color="rgba(1.0, 1.0, 1.0, 1.0)" loc="-180, 225" />
+		<node type="LIGHT_PATH" loc="-742, 566" />
+		<node type="EMISSION" color="rgba(0.11494, 0.11202, 0.80000, 1.0)" strength="2.35998" loc="-351, 321" />
+		<node type="MIX_SHADER" fac="0.5" loc="40, 322" />
+		<node type="MATH" operation="ADD" use_clamp="False" value1="0.5" value2="1.0" loc="-271, 490" />
+	</nodes>
+	<links>
+		<link to="4" input="1" from="3" output="0" />
+		<link to="0" input="0" from="4" output="0" />
+		<link to="4" input="2" from="1" output="0" />
+		<link to="5" input="1" from="2" output="1" />
+		<link to="5" input="0" from="2" output="0" />
+		<link to="4" input="0" from="5" output="0" />
+	</links>
+</material>
