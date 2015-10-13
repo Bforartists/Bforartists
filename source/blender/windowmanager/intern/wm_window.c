@@ -351,12 +351,12 @@ void wm_window_title(wmWindowManager *wm, wmWindow *win)
 		/* this is set to 1 if you don't have startup.blend open */
 		if (G.save_over && G.main->name[0]) {
 			char str[sizeof(G.main->name) + 24];
-			BLI_snprintf(str, sizeof(str), "Blender%s [%s%s]", wm->file_saved ? "" : "*", G.main->name,
+			BLI_snprintf(str, sizeof(str), "Bforartists%s [%s%s]", wm->file_saved ? "" : "*", G.main->name, //bfa - changed from blender to bforartists
 			             G.main->recovered ? " (Recovered)" : "");
 			GHOST_SetTitle(win->ghostwin, str);
 		}
 		else
-			GHOST_SetTitle(win->ghostwin, "Blender");
+			GHOST_SetTitle(win->ghostwin, "Bforartists"); //bfa - changed from blender to bforartists
 
 		/* Informs GHOST of unsaved changes, to set window modified visual indicator (MAC OS X)
 		 * and to give hint of unsaved changes for a user warning mechanism
@@ -521,7 +521,7 @@ void wm_window_add_ghostwindows(wmWindowManager *wm)
 				win->cursor = CURSOR_STD;
 			}
 
-			wm_window_add_ghostwindow(wm, "Blender", win);
+			wm_window_add_ghostwindow(wm, "Bforartists", win); //bfa - changed from blender to bforartists
 		}
 		/* happens after fileread */
 		if (win->eventstate == NULL)
@@ -630,13 +630,13 @@ void WM_window_open_temp(bContext *C, rcti *position, int type)
 	ED_screen_refresh(CTX_wm_manager(C), win); /* test scale */
 	
 	if (sa->spacetype == SPACE_IMAGE)
-		GHOST_SetTitle(win->ghostwin, IFACE_("Blender Render"));
+		GHOST_SetTitle(win->ghostwin, IFACE_("Bforartists Render"));//bfa - changed from blender to bforartists
 	else if (ELEM(sa->spacetype, SPACE_OUTLINER, SPACE_USERPREF))
-		GHOST_SetTitle(win->ghostwin, IFACE_("Blender User Preferences"));
+		GHOST_SetTitle(win->ghostwin, IFACE_("Bforartists User Preferences"));//bfa - changed from blender to bforartists
 	else if (sa->spacetype == SPACE_FILE)
-		GHOST_SetTitle(win->ghostwin, IFACE_("Blender File View"));
+		GHOST_SetTitle(win->ghostwin, IFACE_("Bforartists File View"));//bfa - changed from blender to bforartists
 	else
-		GHOST_SetTitle(win->ghostwin, "Blender");
+		GHOST_SetTitle(win->ghostwin, "Bforartists");//bfa - changed from blender to bforartists
 }
 
 

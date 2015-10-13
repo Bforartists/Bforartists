@@ -1527,7 +1527,7 @@ static bool isStartedFromCommandPrompt()
 		if (getProcessName(ppid, parent_name, sizeof(parent_name))) {
 			char *filename = strrchr(parent_name, '\\');
 			if (filename != NULL) {
-				start_from_launcher = strstr(filename, "blender.exe") != NULL;
+				start_from_launcher = strstr(filename, "bforartists.exe") != NULL; // bfa - we start from bforartists.exe. not from blender.exe
 			}
 		}
 
@@ -1572,5 +1572,5 @@ int GHOST_SystemWin32::toggleConsole(int action)
 int GHOST_SystemWin32::confirmQuit(GHOST_IWindow *window) const
 {
 	return (MessageBox(window ? ((GHOST_WindowWin32 *)window)->getHWND() : 0, "Some changes have not been saved.\nDo you really want to quit?",
-	                   "Exit Blender", MB_OKCANCEL | MB_ICONWARNING | MB_TOPMOST) == IDOK);
+						"Exit Bforartists", MB_OKCANCEL | MB_ICONWARNING | MB_TOPMOST) == IDOK); //bfa - changed exit message
 }
