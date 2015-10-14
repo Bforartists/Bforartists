@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<material view_color="rgb(0.27171, 0.51361, 0.98764)" sample_lamp="True">
+	<nodes>
+		<node type="RGB" custom_color="rgb(0.66071, 0.73312, 1.0)" label="Denim Color" color="rgba(0.03543, 0.15026, 0.37318, 1.0)" loc="-732, 193" />
+		<node type="TEX_COORD" hide="True" loc="-528, 124" />
+		<node type="VALUE" custom_color="rgb(1.0, 0.30000, 0.30000)" label="Denim Scale" value="40.0" loc="-710, -60" />
+		<node type="TEX_WAVE" hide="True" wave="BANDS" scale="100.0" distortion="0.0" detail="0.0" detail_scale="1.0" loc="-129, -52" />
+		<node type="BSDF_DIFFUSE" color="rgba(0.80000, 0.80000, 0.80000, 1.0)" roughness="0.0" loc="447, 60" />
+		<node type="OUTPUT_MATERIAL" loc="738, 0" />
+		<node type="BRIGHTCONTRAST" hide="True" color="rgba(1.0, 1.0, 1.0, 1.0)" bright="0.40000" contrast="-0.40000" loc="-202, 146" />
+		<node type="TEX_NOISE" hide="True" scale="100.0" detail="2.0" distortion="0.0" loc="-246, 90" />
+		<node type="MIX_RGB" hide="True" blend_type="MIX" use_clamp="False" fac="0.80000" color1="rgba(0.82981, 0.86596, 1.0, 1.0)" color2="rgba(0.06378, 0.15115, 0.47318, 1.0)" loc="36, 135" />
+		<node type="MIX_RGB" hide="True" blend_type="MIX" use_clamp="False" fac="0.80000" color1="rgba(0.52075, 0.62256, 1.0, 1.0)" color2="rgba(0.06378, 0.15115, 0.47318, 1.0)" loc="259, 92" />
+		<node type="MATH" hide="True" operation="MULTIPLY" use_clamp="False" value1="0.5" value2="2.0" loc="-398, 18" />
+	</nodes>
+	<links>
+		<link to="3" input="0" from="1" output="2" />
+		<link to="5" input="0" from="4" output="0" />
+		<link to="7" input="0" from="1" output="2" />
+		<link to="8" input="2" from="0" output="0" />
+		<link to="6" input="0" from="0" output="0" />
+		<link to="10" input="0" from="2" output="0" />
+		<link to="3" input="1" from="2" output="0" />
+		<link to="7" input="1" from="10" output="0" />
+		<link to="4" input="0" from="9" output="0" />
+		<link to="5" input="2" from="3" output="1" />
+		<link to="9" input="2" from="8" output="0" />
+		<link to="8" input="1" from="6" output="0" />
+		<link to="9" input="1" from="0" output="0" />
+		<link to="9" input="0" from="7" output="1" />
+		<link to="8" input="0" from="3" output="1" />
+	</links>
+</material>

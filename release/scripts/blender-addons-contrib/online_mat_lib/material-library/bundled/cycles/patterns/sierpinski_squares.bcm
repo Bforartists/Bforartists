@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<material view_color="rgb(0.80000, 0.80000, 0.80000)" sample_lamp="True">
+	<nodes>
+		<node type="BRIGHTCONTRAST" color="rgba(1.0, 1.0, 1.0, 1.0)" bright="-0.05000" contrast="0.30000" loc="223, 395" />
+		<node type="TANGENT" direction="RADIAL" axis="Y" loc="199, 258" />
+		<node type="MAPPING" translation="Vector(0.0, 0.0, 0.0)" rotation="Vector(0.0, 0.0, 0.0)" scale="Vector(1.0, 0.89999, 1.0)" use_min="False" use_max="False" vector="Vector(0.0, 0.0, 0.0)" loc="-659, 401" />
+		<node type="TEX_COORD" dupli="False" loc="-889, 332" />
+		<node type="VALTORGB" interpolation="LINEAR" fac="0.5" stops="8" stop1="0.0|rgba(0.42573, 0.38247, 0.05731, 1.0)" stop2="0.25|rgba(0.25, 0.20410, 0.0, 1.0)" stop3="0.5|rgba(0.5, 0.0, 0.05438, 1.0)" stop4="0.625|rgba(0.0, 0.17271, 0.02292, 1.0)" stop5="0.75|rgba(0.50702, 0.0, 0.52719, 1.0)" stop6="0.875|rgba(0.17083, 0.14998, 0.16761, 1.0)" stop7="0.9375|rgba(0.08121, 0.42573, 0.0, 1.0)" stop8="1.0|rgba(0.14220, 0.14909, 0.44060, 1.0)" loc="-67, 357" />
+		<node type="OUTPUT_MATERIAL" loc="733, 388" />
+		<node type="BSDF_ANISOTROPIC" color="rgba(0.80000, 0.80000, 0.80000, 1.0)" roughness="0.09999" anisotropy="0.80000" rotation="0.49999" loc="411, 402" />
+		<node type="SCRIPT" mode="EXTERNAL" script="sierpinski_squares.osl" zoom="0.05000" vector="Vector(0.0, 0.0, 0.0)" maxiterations="6.0" loc="-379, 400" />
+	</nodes>
+	<links>
+		<link to="0" input="0" from="4" output="0" />
+		<link to="4" input="0" from="7" output="1" />
+		<link to="6" input="0" from="0" output="0" />
+		<link to="7" input="1" from="2" output="0" />
+		<link to="2" input="0" from="3" output="0" />
+		<link to="5" input="0" from="6" output="0" />
+		<link to="6" input="5" from="1" output="0" />
+	</links>
+</material>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<material view_color="rgb(0.04379, 0.60201, 0.04091)" sample_lamp="True">
+	<nodes>
+		<node type="OUTPUT_MATERIAL" loc="250, 128" />
+		<node type="LAYER_WEIGHT" blend="0.15000" loc="-248, 328" />
+		<node type="BSDF_GLOSSY" distribution="BECKMANN" color="rgba(0.80000, 0.80000, 0.80000, 1.0)" roughness="0.00999" loc="-233, -65" />
+		<node type="MIX_SHADER" fac="0.02999" loc="43, 125" />
+		<node type="GAMMA" color="rgba(1.0, 1.0, 1.0, 1.0)" gamma="5.0" loc="-489, 280" />
+		<node type="BSDF_GLOSSY" distribution="BECKMANN" color="rgba(0.80000, 0.80000, 0.80000, 1.0)" roughness="0.39999" loc="-501, 175" />
+		<node type="BSDF_GLOSSY" distribution="BECKMANN" color="rgba(0.80000, 0.80000, 0.80000, 1.0)" roughness="0.29999" loc="-503, 40" />
+		<node type="MIX_SHADER" fac="0.5" loc="-314, 177" />
+		<node type="TEX_VORONOI" coloring="CELLS" scale="500.0" loc="-673, 291" />
+		<node type="BRIGHTCONTRAST" hide="True" color="rgba(1.0, 1.0, 1.0, 1.0)" bright="-0.20000" contrast="0.0" loc="-668, 35" />
+		<node type="VALUE" custom_color="rgb(1.0, 0.10000, 0.10000)" label="Scale" value="500.0" loc="-997, 303" />
+		<node type="RGB" custom_color="rgb(0.89999, 0.89999, 0.89999)" color="rgba(0.10972, 0.5, 0.09735, 1.0)" loc="-1151, 127" />
+		<node type="HUE_SAT" label="Color Repeater" hue="0.5" saturation="1.0" value="1.0" fac="1.0" color="rgba(0.80000, 0.80000, 0.80000, 1.0)" loc="-877, 134" />
+	</nodes>
+	<links>
+		<link to="0" input="0" from="3" output="0" />
+		<link to="3" input="2" from="2" output="0" />
+		<link to="3" input="1" from="7" output="0" />
+		<link to="3" input="0" from="1" output="1" />
+		<link to="7" input="1" from="6" output="0" />
+		<link to="6" input="0" from="9" output="0" />
+		<link to="4" input="0" from="8" output="0" />
+		<link to="7" input="0" from="4" output="0" />
+		<link to="7" input="2" from="5" output="0" />
+		<link to="12" input="4" from="11" output="0" />
+		<link to="5" input="0" from="12" output="0" />
+		<link to="9" input="0" from="12" output="0" />
+		<link to="8" input="1" from="10" output="0" />
+	</links>
+</material>

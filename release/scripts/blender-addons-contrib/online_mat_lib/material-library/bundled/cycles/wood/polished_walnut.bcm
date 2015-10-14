@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<material view_color="rgb(0.14084, 0.05520, 0.03290)" sample_lamp="True">
+	<nodes>
+		<node type="MIX_RGB" blend_type="MULTIPLY" use_clamp="False" fac="1.0" color1="rgba(1.0, 1.0, 1.0, 1.0)" color2="rgba(0.0, 0.0, 0.0, 1.0)" loc="-131, 606" />
+		<node type="MIX_RGB" blend_type="MIX" use_clamp="False" fac="0.5" color1="rgba(1.0, 1.0, 1.0, 1.0)" color2="rgba(0.23573, 0.23573, 0.23573, 1.0)" loc="-266, 606" />
+		<node type="LAYER_WEIGHT" blend="0.02999" loc="7, 606" />
+		<node type="MIX_SHADER" fac="0.64398" loc="263, 447" />
+		<node type="BSDF_GLOSSY" distribution="BECKMANN" color="rgba(1.0, 1.0, 1.0, 1.0)" roughness="0.75" loc="7, 447" />
+		<node type="MIX_RGB" blend_type="MIX" use_clamp="False" fac="0.5" color1="rgba(0.13197, 0.04244, 0.02085, 1.0)" color2="rgba(0.04010, 0.01503, 0.00737, 1.0)" loc="-266, 447" />
+		<node type="BSDF_GLOSSY" distribution="BECKMANN" color="rgba(1.0, 0.88691, 0.84328, 1.0)" roughness="0.34999" loc="7, 298" />
+		<node type="MATH" operation="MULTIPLY" use_clamp="False" value1="0.5" value2="0.00200" loc="7, 162" />
+		<node type="TEX_WAVE" wave="RINGS" scale="0.69998" distortion="700.0" detail="4.0" detail_scale="0.25" loc="-474, 672" />
+		<node type="MATH" operation="MULTIPLY" use_clamp="False" value1="0.5" value2="0.25" loc="-635, 505" />
+		<node type="MATH" operation="MULTIPLY" use_clamp="False" value1="0.5" value2="0.69998" loc="-771, 557" />
+		<node type="MATH" operation="MULTIPLY" use_clamp="False" value1="0.5" value2="5.0" loc="-809, 281" />
+		<node type="VALUE" custom_color="rgb(1.0, 0.10000, 0.10000)" label="Scale" value="1.0" loc="-1140, 300" />
+		<node type="TEX_COORD" loc="-1490, 554" />
+		<node type="OUTPUT_MATERIAL" loc="460, 390" />
+		<node type="MAPPING" translation="Vector(0.0, 0.0, 0.0)" rotation="Vector(0.0, 0.0, 1.74532)" scale="Vector(2.0, 0.40000, 10.0)" use_min="False" use_max="False" vector="Vector(0.0, 0.0, 0.0)" loc="-1266, 611" />
+		<node type="TEX_WAVE" wave="BANDS" scale="5.0" distortion="30.0" detail="4.42378" detail_scale="5.0" loc="-563, 348" />
+	</nodes>
+	<links>
+		<link to="5" input="0" from="16" output="1" />
+		<link to="7" input="0" from="16" output="1" />
+		<link to="16" input="0" from="15" output="0" />
+		<link to="15" input="0" from="13" output="0" />
+		<link to="3" input="2" from="6" output="0" />
+		<link to="14" input="0" from="3" output="0" />
+		<link to="3" input="1" from="4" output="0" />
+		<link to="3" input="0" from="2" output="1" />
+		<link to="14" input="2" from="7" output="0" />
+		<link to="8" input="0" from="15" output="0" />
+		<link to="1" input="0" from="8" output="1" />
+		<link to="4" input="0" from="0" output="0" />
+		<link to="0" input="2" from="5" output="0" />
+		<link to="9" input="0" from="12" output="0" />
+		<link to="8" input="4" from="9" output="0" />
+		<link to="10" input="0" from="12" output="0" />
+		<link to="8" input="1" from="10" output="0" />
+		<link to="11" input="0" from="12" output="0" />
+		<link to="16" input="4" from="11" output="0" />
+		<link to="16" input="1" from="11" output="0" />
+		<link to="0" input="1" from="1" output="0" />
+	</links>
+</material>

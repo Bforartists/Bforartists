@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<material view_color="rgb(0.80000, 0.80000, 0.80000)" sample_lamp="True">
+	<nodes>
+		<node type="OUTPUT_MATERIAL" loc="572, 314" />
+		<node type="VALTORGB" interpolation="B_SPLINE" fac="0.5" stops="3" stop1="0.0|rgba(1.0, 1.0, 1.0, 1.0)" stop2="0.09772|rgba(0.0, 0.0, 0.0, 1.0)" stop3="0.15454|rgba(0.0, 0.0, 0.0, 1.0)" loc="-1016, 194" />
+		<node type="BSDF_DIFFUSE" color="rgba(0.86315, 0.73791, 0.65140, 1.0)" roughness="0.0" loc="-817, 539" />
+		<node type="BSDF_DIFFUSE" color="rgba(0.80000, 0.13812, 0.12151, 1.0)" roughness="0.30000" loc="-474, 186" />
+		<node type="RGBTOBW" color="rgba(0.5, 0.5, 0.5, 1.0)" loc="-119, 17" />
+		<node type="MIX_SHADER" fac="0.20000" loc="-212, 252" />
+		<node type="MIX_SHADER" fac="0.5" loc="-14, 419" />
+		<node type="MATH" operation="MULTIPLY" use_clamp="False" value1="0.5" value2="0.30000" loc="34, 69" />
+		<node type="TEX_VORONOI" coloring="INTENSITY" scale="10.0" loc="-1255, 93" />
+		<node type="BSDF_GLOSSY" distribution="BECKMANN" color="rgba(0.86315, 0.73791, 0.65140, 1.0)" roughness="0.30000" loc="-864, 409" />
+		<node type="MIX_SHADER" fac="0.10000" loc="-397, 491" />
+		<node type="BSDF_GLOSSY" distribution="BECKMANN" color="rgba(0.80000, 0.13812, 0.12151, 1.0)" roughness="0.10000" loc="-598, 23" />
+	</nodes>
+	<links>
+		<link to="0" input="0" from="6" output="0" />
+		<link to="0" input="2" from="7" output="0" />
+		<link to="1" input="0" from="8" output="0" />
+		<link to="4" input="0" from="1" output="0" />
+		<link to="6" input="0" from="1" output="0" />
+		<link to="10" input="1" from="2" output="0" />
+		<link to="6" input="1" from="10" output="0" />
+		<link to="10" input="2" from="9" output="0" />
+		<link to="7" input="0" from="4" output="0" />
+		<link to="5" input="1" from="3" output="0" />
+		<link to="6" input="2" from="5" output="0" />
+		<link to="5" input="2" from="11" output="0" />
+	</links>
+</material>

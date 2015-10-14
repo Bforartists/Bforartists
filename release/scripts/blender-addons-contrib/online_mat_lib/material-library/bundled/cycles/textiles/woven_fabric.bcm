@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<material view_color="rgb(0.80000, 0.80000, 0.80000)" sample_lamp="True">
+	<nodes>
+		<node type="MIX_RGB" blend_type="SCREEN" use_clamp="False" fac="0.15000" color1="rgba(0.29999, 0.11030, 0.09969, 1.0)" color2="rgba(0.5, 0.5, 0.5, 1.0)" loc="-245, 168" />
+		<node type="MIX_RGB" blend_type="SCREEN" use_clamp="False" fac="0.15000" color1="rgba(0.5, 0.39131, 0.19054, 1.0)" color2="rgba(0.5, 0.5, 0.5, 1.0)" loc="-244, 364" />
+		<node type="MAPPING" translation="Vector(0.0, 0.0, 0.0)" rotation="Vector(0.0, 0.0, 0.0)" scale="Vector(50.0, 50.0, 50.0)" use_min="False" use_max="False" vector="Vector(0.0, 0.0, 0.0)" loc="-541, 439" />
+		<node type="BSDF_DIFFUSE" color="rgba(0.80000, 0.80000, 0.80000, 1.0)" roughness="0.0" loc="232, 423" />
+		<node type="OUTPUT_MATERIAL" loc="843, 297" />
+		<node type="MIX_SHADER" fac="0.5" loc="634, 332" />
+		<node type="MIX_SHADER" fac="0.15999" loc="424, 408" />
+		<node type="BSDF_GLOSSY" distribution="BECKMANN" color="rgba(0.80000, 0.61282, 0.55566, 1.0)" roughness="0.20000" loc="396, 264" />
+		<node type="MATH" operation="POWER" use_clamp="False" value1="0.5" value2="0.5" loc="475, 107" />
+		<node type="MATH" operation="SUBTRACT" use_clamp="False" value1="0.5" value2="0.5" loc="311, 102" />
+		<node type="MATH" operation="ADD" use_clamp="False" value1="0.5" value2="0.5" loc="650, 142" />
+		<node type="TEX_COORD" dupli="False" loc="-764, 427" />
+		<node type="TEX_NOISE" scale="545.0" detail="2.0" distortion="5.0" loc="-477, 122" />
+		<node type="SCRIPT" mode="EXTERNAL" script="weave_shader.osl" warpcolor="rgba(0.80000, 0.0, 0.0, 1.0)" weftcolor="rgba(0.0, 0.80000, 0.0, 1.0)" skip="1" underrun="2" overrun="1" warpwidth="0.80000" weftwidth="0.79999" coordinates="Vector(0.0, 0.0, 0.0)" loc="-37, 410" />
+	</nodes>
+	<links>
+		<link to="2" input="0" from="11" output="0" />
+		<link to="0" input="2" from="12" output="1" />
+		<link to="1" input="2" from="12" output="1" />
+		<link to="13" input="1" from="0" output="0" />
+		<link to="13" input="0" from="1" output="0" />
+		<link to="13" input="7" from="2" output="0" />
+		<link to="4" input="0" from="5" output="0" />
+		<link to="5" input="1" from="6" output="0" />
+		<link to="6" input="1" from="3" output="0" />
+		<link to="3" input="0" from="13" output="0" />
+		<link to="5" input="2" from="7" output="0" />
+		<link to="4" input="2" from="10" output="0" />
+		<link to="10" input="0" from="8" output="0" />
+		<link to="8" input="0" from="9" output="0" />
+		<link to="10" input="1" from="12" output="1" />
+		<link to="9" input="1" from="13" output="2" />
+	</links>
+</material>

@@ -1,0 +1,75 @@
+
+#include "stdosl.h"
+
+// greatest common divisor
+int gcd(int A, int B){
+    int a=A, b=B;
+    if (a == 0) { return b; }
+    while (b != 0) {
+        if (a > b) {
+            a = a - b;
+        } else {
+            b = b - a;
+        }
+    }
+    return a;
+}
+
+// smallest common multiple (assumes a, b > 0 )
+int scm(int a, int b){ return a*b/gcd(a,b); }
+
+shader weave(
+        color WarpColor = color(0.8,0,0),
+        color WeftColor = color(0,0.8,0),
+        int skip = 1,
+        int underrun = 1,
+        int overrun = 1,
+        float WarpWidth = 0.8,
+        float WeftWidth = 0.8,
+        vector Coordinates = 0,
+        output color Color = 0,
+        output int Index = 0,
+        output float Dist = 0)
+{
+    int ny = underrun + overrun;
+    int nx = scm(skip,ny);
+    
+    float x = mod(Coordinates[0],1.0);
+    float y = mod(Coordinates[1],1.0);
+    
+    int ix = int(floor(x*nx));
+    int iy = int(floor(y*ny));
+    
+    float cx = mod(x*nx,1.0);
+    float cy = mod(y*ny,1.0);
+    
+    int top;
+    top = ((iy+skip*ix)%ny) < overrun;
+    
+    float lx = (1-WarpWidth)/2;
+    float hx = 1-lx;
+    float ly = (1-WeftWidth)/2;
+    float hy = 1-lx;
+    
+    if (top) {
+        if ( cx > lx && cx < hx ){
+            Index = 1;
+            Color = WarpColor;
+            Dist = abs(0.5-cx);
+        } else if (cy > ly && cy < hy ){
+            Index = 2;
+            Color = WeftColor;
+            Dist = abs(0.5-cy);
+        }
+    } else {
+        if (cy > ly && cy < hy ){
+            Index = 2;
+            Color = WeftColor;
+            Dist = abs(0.5-cy); 
+        } else if ( cx > lx && cx < hx ){
+            Index = 1;
+            Color = WarpColor;
+            Dist = abs(0.5-cx); 
+        }
+    }
+}

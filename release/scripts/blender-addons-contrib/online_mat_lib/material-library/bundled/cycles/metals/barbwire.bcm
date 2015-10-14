@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<material view_color="rgb(0.80000, 0.80000, 0.80000)" sample_lamp="True">
+	<nodes>
+		<node type="SCRIPT" mode="EXTERNAL" script="barbwire_texture.osl" width="0.05000" turns="2" spiketurns="2" xscale="1.0" pos="Vector(0.0, 0.0, 0.0)" loc="-219, 356" />
+		<node type="BSDF_TRANSPARENT" color="rgba(1.0, 1.0, 1.0, 1.0)" loc="-224, 120" />
+		<node type="BSDF_GLOSSY" distribution="BECKMANN" color="rgba(0.48658, 0.48658, 0.48658, 1.0)" roughness="0.20000" loc="-222, 41" />
+		<node type="MAPPING" translation="Vector(0.0, 0.0, 0.0)" rotation="Vector(0.0, 0.0, 0.0)" scale="Vector(15.0, 15.0, 15.0)" use_min="False" use_max="False" vector="Vector(0.0, 0.0, 0.0)" loc="-503, 315" />
+		<node type="TEX_COORD" dupli="False" loc="-702, 259" />
+		<node type="MIX_SHADER" fac="0.5" loc="-31, 231" />
+		<node type="OUTPUT_MATERIAL" loc="165, 323" />
+	</nodes>
+	<links>
+		<link to="6" input="0" from="5" output="0" />
+		<link to="6" input="2" from="0" output="1" />
+		<link to="5" input="0" from="0" output="0" />
+		<link to="0" input="4" from="3" output="0" />
+		<link to="3" input="0" from="4" output="0" />
+		<link to="5" input="1" from="1" output="0" />
+		<link to="5" input="2" from="2" output="0" />
+	</links>
+</material>

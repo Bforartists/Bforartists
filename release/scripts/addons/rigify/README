@@ -1,0 +1,244 @@
+INTRODUCTION
+------------
+Rigify is an auto-rigging system based on a "building blocks" paradigm.  The
+user can create a rig by putting together any combination of rig types, in any
+configuration that they want.
+
+A rig type is something like "biped arm" or "spine" or "finger".
+
+The input to the Rigify system is something called a "metarig".  It is an
+armature that contains data about how to construct the rig.  In particular, it
+contains bones in the basic configuration of the rig, with some bones tagged
+to indicate the rig type.
+
+For example, a metarig might contain a chain of three bones, the root-most of
+which is tagged as being a biped arm.  When given as input to Rigify, Rigify
+will then generate a fully-featured biped arm rig in the same position and
+proportions as the 3-bone chain.
+
+One could also have another chain of bones, the root-most of which is tagged as
+being a spine.  And the root-most bone of the arm chain could be the child of
+any of those spine bones.  Then the rig that Rigify generates would be a
+spine rig with an arm rig attached to it.
+
+
+THE GUTS OF RIGIFY, SUMMARIZED
+------------------------------
+The concept behind rigify is fairly simple.  It recieves an armature as input
+with some of the bones tagged as being certain rig types (arm, leg, etc.)
+
+When Rigify recieves that armature as input, the first thing it does is
+duplicate the armature.  From here on out, the original armature is totally
+ignored.  Only the duplicate is used.  And this duplicate armature object will
+become the generated rig.
+
+Rigify next prepends "ORG-" to all of the bones.  These are the "original"
+bones of the metarig, and they are used as the glue between rig types, as I
+will explain later.
+
+Rigify then generates the rig in two passes.  The first pass is the
+"information gathering" stage.
+
+The information gathering stage doesn't modify the armature at all.  It simply
+gathers information about it.  Or, rather, it lets the rig types gather
+information about it.
+It traverses the bones in a root-most to leaf-most order, and whenever it
+stumbles upon a bone that has a rig type tagged on it, it creates a rig-type
+python object (rig types will be explained further down) for that rig type,
+and executes the resulting python object's information gathering code.
+
+At the end of the information gathering stage, Rigify has a collection of
+python objects, each of which know all the information they need to generate
+their own bit of the rig.
+
+The next stage is the rig generation stage.  This part is pretty simple.  All
+Rigify does is it loops over all of the rig-type python objects that it created
+in the previous stage (also in root-most to leaf-most order), and executes
+their rig-generate code.  All of the actual rig generation happens in the
+rig-type python objects.
+
+And that's pretty much it.  As you can see, most of the important code is
+actually in the rig types themselves, not in Rigify.  Rigify is pretty sparse
+when it comes right down to it.
+
+There is one final stage to rig generation.  Rigify checks all of the bones
+for "DEF-", "MCH-", and "ORG-" prefixes, and moves those bones to their own
+layers. It also sets all of the "DEF-" bones to deform, and sets all other
+bones to _not_ deform.  And finally, it looks for any bone that does not have
+a parent, and sets the root bone (which Rigify creates) as their parent.
+
+
+THE GUTS OF A RIG TYPE, BASIC
+-----------------------------
+A rig type is simply a python module containing a class named "Rig", and some
+optional module functions.  The Rig class has only two methods:
+__init__() and generate()
+
+__init__() is the "information gathering" code for the rig type.  When Rigify
+loops through the bones and finds a tagged bone, it will create a python
+object from the Rig class, executing this method.
+In addition to the default "self" parameter, __init__() needs to take the
+armature object, the name of the bone that was tagged, and a parameters object.
+
+A proper rig-type __init__() will look like this:
+
+    def __init__(self, obj, bone_name, params):
+        # code goes here
+
+At the bare minimum, you are going to want to store the object and bone name
+in the rig type object for later reference in the generate() method.  So:
+
+    def __init__(self, obj, bone_name, params):
+        self.obj = obj
+        self.org_bone = bone_name
+
+Most rig types involve more than just that one bone, though, so you will also
+want to store the names of any other relevant bones.  For example, maybe the
+parent of the tagged bone is important to the rig type:
+
+    def __init__(self, obj, bone_name, params):
+        self.obj = obj
+        self.org_bone = bone_name
+        self.org_parent = obj.data.bones[bone_name].parent.name
+
+It is important that you store the _names_ of the bones, and not direct
+references.  Due to the inner workings of Blender's armature system, direct
+edit-bone and pose-bone references are lost when flipping in and out of
+armature edit mode. (Arg...)
+
+Remember that it is critical that the information-gathering method does _not_
+modify the armature in any way.  This way all of the rig type's info-gathering
+methods can execute on a clean armature.  Many rig types depend on traversing
+parent-child relationships to figure out what bones are relevant to them, for
+example.
+
+
+Next is the generate() method.  This is the method that Rigify calls to
+actually generate the rig.  It takes the form:
+
+    def generate(self):
+        # code goes here
+
+It doesn't take any parameters beyond "self".  So you have to store any
+information you need with the __init__() method.
+
+generate() pretty much has free reign to do whatever it wants, with the exception
+of two simple rules:
+1. Other than the "ORG-" bones, do not touch anything that is not created by
+the rig type (this prevents rig types from messing each other up).
+2. Even with "ORG-" bones, the only thing you are allowed to do is add children
+and add constraints.  Do not rename them, do not remove children or
+constraints, and especially do not change their parents.  (Adding constraints
+and adding children are encouraged, though. ;-))  This is because the "ORG-"
+bones are the glue that holds everything together, and changing them beyond
+adding children/constraints ruins the glue, so to speak.
+
+In short: with the exception of adding children/constraints to "ORG-"
+bones, only mess with things that you yourself create.
+
+It is also generally a good idea (though not strictly required) that the rig
+type add constraints to the "ORG-" bones it was generated from so that the
+"ORG-" bones move with the animation controls.
+For example, if I make a simple arm rig type, the controls that the animator
+uses should also move the "ORG-" bones.  That way, any other rig-types that are
+children of those "ORG-" bones will move along with them.  For example, any
+fingers on the end of the arm.
+
+Also, any bones that the animator should not directly animate with should have
+their names prefixed with "DEF-" or "MCH-".  The former if it is a bone that
+is intended to deform the mesh, the latter if it is not.
+It should be obvious, then, that a bone cannot be both an animation control and
+a deforming bone in Rigify.  This is on purpose.
+
+Also note that there are convenience functions in utils.py for prepending
+"DEF-" and "MCH-" to bone names: deformer() and mch()
+There is also a convenience function for stripping "ORG-" from a bone name:
+strip_org()
+Which is useful for removing "ORG-" from bones you create by duplicating
+the "ORG-" bones.
+I recommend you use these functions instead of manually adding/stripping
+these prefixes.  That way if the prefixes are changed, it can be changed in
+one place (those functions) and all the rig types will still work.
+
+
+THE GUTS OF A RIG TYPE, ADVANCED
+--------------------------------
+If you look at any of the rig types included with Rigify, you'll note that they
+have several functions outside of the Rig class.
+THESE ADDITIONAL FUNCTIONS ARE _NOT_ REQUIRED for a rig type to function.  But
+they can add some nifty functionality to your rig.
+
+Here are the additional functions relevant to Rigify, with brief decriptions of
+what they are for:
+
+
+RIG PARAMETERS
+--------------
+For many rig types, it is handy for the user to be able to tweak how they are
+generated.  For example, the included biped arm rig allows the user to specify
+the axis of rotation for the elbow.
+
+There are two functions necessary to give a rig type user-tweakable parameters:
+add_parameters()
+parameters_ui()
+
+add_parameters() takes an IDPropertyGroup as input, and adds its parameters
+to that group as RNA properties.  For example:
+
+    def add_parameters(params):
+        params.toggle_param = bpy.props.BoolProperty(name="Test toggle:", default=False, description="Just a test, not really used for anything.")
+
+parameters_ui() recieves a Blender UILayout object and an IDPropertyGroup
+containing the parameters added by add_parameters().  It creates a GUI in the
+UILayout for the user to tweak those parameters.  For example:
+
+    def parameters_ui(layout, params):
+        r = layout.row()
+        r.prop(params, "toggle_param")
+
+
+SAMPLE METARIG
+--------------
+It is a good idea for all rig types to have a sample metarig that the user can
+add to their own metarig.  This is what the create_sample() function is for.
+
+create_sample() takes the current armature object as input, and adds the bones
+for its rig-type's metarig.  For example:
+
+    def create_sample(obj):
+        bpy.ops.object.mode_set(mode='EDIT')
+        arm = obj.data
+
+        bone = arm.edit_bones.new('Bone')
+        bone.head[:] = 0.0000, 0.0000, 0.0000
+        bone.tail[:] = 0.0000, 0.0000, 1.0000
+        bone.roll = 0.0000
+        bone.use_connect = False
+
+        bpy.ops.object.mode_set(mode='OBJECT')
+        pbone = obj.pose.bones[bone]
+        pbone.rigify_type = 'copy'
+        pbone.rigify_parameters.add()
+
+Obviously, this isn't something that you generally want to hand-code,
+especially with more complex samples.  When in edit-mode on an armature,
+there is a "Rigify Dev Tools" panel in the View3d tools panel containing a
+button labeled "Encode Sample to Python".  This button will generate the python
+code for create_sample() from the armature you are editing.  The generated code
+appears in a text block called "metarig_sample.py"
+
+
+GENERATING A PYTHON UI
+----------------------
+The generate() method can also, optionally, return python code as a single
+string.  This python code is added to the "rig properties" panel that gets
+auto-generated along with the rig.  This is useful for exposing things like
+IK/FK switches in a nice way to the animator.
+
+The string must be returned in a list, e.g.:
+
+return ["my python code"]
+
+The reason it needs to be put in a list is to leave room for expanding the API
+in the future, for returning additional information.
+

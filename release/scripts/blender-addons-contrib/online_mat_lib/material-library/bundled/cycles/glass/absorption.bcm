@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<material view_color="rgb(0.10572, 0.13248, 0.47976)" sample_lamp="True">
+	<nodes>
+		<node type="NEW_GEOMETRY" loc="-247, 217" />
+		<node type="LIGHT_PATH" loc="-451, 561" />
+		<node type="MATH" operation="MULTIPLY" use_clamp="False" value1="0.5" value2="-0.68007" loc="-263, 461" />
+		<node type="MATH" operation="POWER" use_clamp="False" value1="2.71798" value2="0.5" loc="-78, 429" />
+		<node type="MATH" operation="ADD" use_clamp="False" value1="0.5" value2="0.5" loc="128, 489" />
+		<node type="MATH" operation="ADD" use_clamp="False" value1="0.5" value2="0.5" loc="345, 357" />
+		<node type="MATH" operation="MINIMUM" use_clamp="False" value1="0.5" value2="1.0" loc="528, 370" />
+		<node type="BSDF_GLASS" distribution="BECKMANN" color="rgba(0.80000, 0.80000, 0.80000, 1.0)" roughness="0.0" ior="1.45000" loc="834, 341" />
+		<node type="MIX_RGB" blend_type="MIX" use_clamp="False" fac="0.5" color1="rgba(0.0, 0.08540, 1.0, 1.0)" color2="rgba(0.97188, 1.0, 0.97017, 1.0)" loc="692, 378" />
+		<node type="OUTPUT_MATERIAL" loc="1037, 349" />
+		<node type="MATH" operation="SUBTRACT" use_clamp="False" value1="1.0" value2="0.5" loc="-61, 201" />
+	</nodes>
+	<links>
+		<link to="3" input="1" from="2" output="0" />
+		<link to="10" input="1" from="0" output="6" />
+		<link to="4" input="0" from="3" output="0" />
+		<link to="4" input="1" from="1" output="0" />
+		<link to="9" input="0" from="7" output="0" />
+		<link to="5" input="0" from="4" output="0" />
+		<link to="5" input="1" from="10" output="0" />
+		<link to="6" input="0" from="5" output="0" />
+		<link to="8" input="0" from="6" output="0" />
+		<link to="7" input="0" from="8" output="0" />
+		<link to="2" input="0" from="1" output="7" />
+	</links>
+</material>

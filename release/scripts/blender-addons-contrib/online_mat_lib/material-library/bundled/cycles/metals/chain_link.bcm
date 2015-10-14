@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<material view_color="rgb(0.80000, 0.80000, 0.80000)" sample_lamp="True">
+	<nodes>
+		<node type="MAPPING" translation="Vector(0.0, 0.0, 0.0)" rotation="Vector(0.0, 0.0, 0.0)" scale="Vector(30.0, 30.0, 30.0)" use_min="False" use_max="False" vector="Vector(0.0, 0.0, 0.0)" loc="-718, 291" />
+		<node type="SCRIPT" mode="EXTERNAL" script="chain_link_texture.osl" vector="Vector(0.0, 0.0, 0.0)" width="0.05000" loc="-417, 331" />
+		<node type="BSDF_TRANSPARENT" color="rgba(1.0, 1.0, 1.0, 1.0)" loc="-415, 151" />
+		<node type="BSDF_GLOSSY" distribution="GGX" color="rgba(0.47248, 0.47248, 0.47248, 1.0)" roughness="0.30000" loc="-423, 64" />
+		<node type="TEX_COORD" dupli="False" loc="-942, 196" />
+		<node type="OUTPUT_MATERIAL" loc="-58, 331" />
+		<node type="MIX_SHADER" fac="0.5" loc="-233, 233" />
+	</nodes>
+	<links>
+		<link to="5" input="2" from="1" output="1" />
+		<link to="5" input="0" from="6" output="0" />
+		<link to="6" input="0" from="1" output="0" />
+		<link to="6" input="1" from="2" output="0" />
+		<link to="1" input="0" from="0" output="0" />
+		<link to="0" input="0" from="4" output="0" />
+		<link to="6" input="2" from="3" output="0" />
+	</links>
+</material>

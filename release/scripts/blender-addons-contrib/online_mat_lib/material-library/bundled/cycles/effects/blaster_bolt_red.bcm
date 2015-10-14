@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<material view_color="rgb(1.0, 0.0, 0.0)" sample_lamp="True">
+	<nodes>
+		<node type="OUTPUT_MATERIAL" loc="300, 300" />
+		<node type="EMISSION" color="rgba(1.0, 0.0, 0.0, 1.0)" strength="30.0" loc="-189, 219" />
+		<node type="MIX_SHADER" fac="0.5" loc="70, 302" />
+		<node type="LAYER_WEIGHT" blend="0.89999" loc="-195, 431" />
+		<node type="EMISSION" color="rgba(0.80000, 0.80000, 0.80000, 1.0)" strength="30.0" loc="-190, 326" />
+	</nodes>
+	<links>
+		<link to="0" input="0" from="2" output="0" />
+		<link to="2" input="0" from="3" output="1" />
+		<link to="2" input="1" from="4" output="0" />
+		<link to="2" input="2" from="1" output="0" />
+	</links>
+</material>

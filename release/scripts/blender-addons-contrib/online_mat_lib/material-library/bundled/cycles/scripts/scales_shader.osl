@@ -1,0 +1,68 @@
+
+#include "stdosl.h"
+
+shader scales(
+    color Diffuse_Color1 = color(0.2, 0.8, 0.2),
+    color Diffuse_Color2 = color(0.8, 0.2, 0.2),
+    vector Coordinates = 0,
+    float n = 0,
+    output color Color = 0,
+    output int Index = 1,
+    output float Distance = 0,
+    output vector Vindex = 0)
+{
+    float sx = mod(Coordinates[0],1);
+    float sy = mod(Coordinates[1],1);
+    
+    vector p  = vector(sx,sy,0);
+    vector p0 = vector(0.5,0,0);
+    vector p1 = vector(0.5,1,0);
+    vector p2 = vector(0,0.5,0);
+    vector p3 = vector(1,0.5,0);
+    
+    vector cell = vector(floor(Coordinates[0]),floor(Coordinates[1]),0);
+    int oddx = int(cell[0])%2;
+    int oddy = int(cell[1])%2;
+    
+    float dist(vector a, vector b, float n){
+        float x = b[0]-a[0];
+     float y = b[1]-a[1];
+     float r2 = x*x+y*y;
+     if ( n != 0.0 ) {
+            float theta = atan2(y,x);
+         float cost, sint;
+            sincos(theta, sint, cost);
+         float cost2= cos(theta*2);
+         float Y = pow(abs(sint),1+n*(1-cost2*cost2));
+         r2 /= cost*cost+Y*Y;
+        }
+        return sqrt(r2);
+    }
+    
+    float d1 = dist(p,p0,n);
+    if ( d1<=0.5 ){
+        Color = Diffuse_Color1;
+        Index = 0 ;
+        Distance = d1;
+        Vindex = cell + p0;
+    } else {
+        float d2 = dist(p,p2,n);
+        float d3 = dist(p,p3,n);
+        if ( d2 <= 0.5 ) {
+            Color = Diffuse_Color2;
+            Index = 1;
+            Distance = d2;
+            Vindex = cell + p2;
+        } else if ( d3 <= 0.5 ) {
+            Color = Diffuse_Color2;
+            Index = 1;
+            Distance = d3;
+            Vindex = cell + p3;
+        } else {
+            Color = Diffuse_Color1;
+            Index = 0;
+            Distance = dist(p,p1,n);
+            Vindex = cell + p1;
+       }
+    }
+}
