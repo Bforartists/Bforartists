@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<material view_color="rgb(0.57112, 0.02518, 0.37123)" sample_lamp="True">
+	<nodes>
+		<node type="LAYER_WEIGHT" blend="0.32499" loc="170, 224" />
+		<node type="MIX_SHADER" fac="0.5" loc="172, 110" />
+		<node type="BSDF_GLOSSY" distribution="BECKMANN" color="rgba(0.80000, 0.80000, 0.80000, 1.0)" roughness="0.29998" loc="-250, -24" />
+		<node type="BSDF_GLOSSY" distribution="BECKMANN" color="rgba(0.80000, 0.80000, 0.80000, 1.0)" roughness="0.29998" loc="-248, 118" />
+		<node type="GAMMA" color="rgba(1.0, 1.0, 1.0, 1.0)" gamma="5.0" loc="-199, 237" />
+		<node type="TEX_VORONOI" coloring="CELLS" scale="500.0" loc="-380, 289" />
+		<node type="BRIGHTCONTRAST" color="rgba(1.0, 1.0, 1.0, 1.0)" bright="-0.20000" contrast="0.0" loc="-405, 111" />
+		<node type="BRIGHTCONTRAST" color="rgba(1.0, 1.0, 1.0, 1.0)" bright="-0.20000" contrast="0.0" loc="-409, -25" />
+		<node type="MATH" operation="MULTIPLY" use_clamp="False" value1="1.0" value2="0.20000" loc="-697, -19" />
+		<node type="MATH" operation="SUBTRACT" use_clamp="False" value1="1.0" value2="0.5" loc="-832, -18" />
+		<node type="BSDF_GLOSSY" distribution="BECKMANN" color="rgba(0.80000, 0.80000, 0.80000, 1.0)" roughness="0.07500" loc="-832, 161" />
+		<node type="HOLDOUT" loc="-811, 220" />
+		<node type="FRESNEL" ior="1.95000" loc="-813, 302" />
+		<node type="MIX_SHADER" fac="0.5" loc="-617, 238" />
+		<node type="LAYER_WEIGHT" blend="0.89999" loc="-1001, -43" />
+		<node type="MIX_SHADER" fac="0.5" loc="-13, 76" />
+		<node type="BSDF_GLOSSY" distribution="BECKMANN" color="rgba(0.80000, 0.80000, 0.80000, 1.0)" roughness="0.00999" loc="153, -19" />
+		<node type="MIX_SHADER" fac="0.03999" loc="346, 113" />
+		<node type="OUTPUT_MATERIAL" loc="513, 107" />
+		<node type="MATH" operation="ADD" use_clamp="False" value1="1.0" value2="-0.19999" loc="-559, -18" />
+		<node type="RGB" color="rgba(0.86887, 0.22238, 0.61303, 1.0)" loc="-777, -164" />
+		<node type="RGB" color="rgba(0.5, 0.13597, 0.45640, 1.0)" loc="-592, -162" />
+	</nodes>
+	<links>
+		<link to="15" input="1" from="3" output="0" />
+		<link to="3" input="0" from="6" output="0" />
+		<link to="4" input="0" from="5" output="0" />
+		<link to="15" input="0" from="4" output="0" />
+		<link to="15" input="2" from="2" output="0" />
+		<link to="17" input="2" from="16" output="0" />
+		<link to="17" input="0" from="0" output="0" />
+		<link to="13" input="1" from="11" output="0" />
+		<link to="13" input="2" from="10" output="0" />
+		<link to="13" input="0" from="12" output="0" />
+		<link to="1" input="1" from="15" output="0" />
+		<link to="1" input="2" from="13" output="0" />
+		<link to="1" input="0" from="4" output="0" />
+		<link to="17" input="1" from="1" output="0" />
+		<link to="2" input="0" from="7" output="0" />
+		<link to="9" input="1" from="14" output="1" />
+		<link to="8" input="0" from="9" output="0" />
+		<link to="19" input="0" from="8" output="0" />
+		<link to="7" input="1" from="19" output="0" />
+		<link to="18" input="0" from="17" output="0" />
+		<link to="7" input="0" from="21" output="0" />
+		<link to="6" input="0" from="20" output="0" />
+	</links>
+</material>

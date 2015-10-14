@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<material view_color="rgb(0.80000, 0.80000, 0.80000)" sample_lamp="True">
+	<nodes>
+		<node type="OUTPUT_MATERIAL" loc="300, 300" />
+		<node type="MIX_SHADER" fac="0.5" loc="75, 304" />
+		<node type="BSDF_DIFFUSE" color="rgba(0.0, 0.0, 0.0, 1.0)" roughness="0.0" loc="-149, 133" />
+		<node type="BSDF_DIFFUSE" color="rgba(0.14667, 0.26590, 0.39998, 0.0)" roughness="0.0" loc="-299, 265" />
+		<node type="SCRIPT" mode="EXTERNAL" script="wireframe.osl" line_width="0.99998" raster="1" loc="-142, 435" />
+		<node type="BSDF_TRANSPARENT" color="rgba(1.0, 1.0, 1.0, 1.0)" loc="-115, 257" />
+	</nodes>
+	<links>
+		<link to="0" input="0" from="1" output="0" />
+		<link to="1" input="0" from="4" output="0" />
+		<link to="1" input="2" from="2" output="0" />
+		<link to="5" input="0" from="3" output="0" />
+		<link to="1" input="1" from="5" output="0" />
+	</links>
+</material>

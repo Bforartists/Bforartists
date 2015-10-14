@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<material view_color="rgb(0.14995, 0.41788, 0.96468)" sample_lamp="True">
+	<nodes>
+		<node type="OUTPUT_MATERIAL" loc="430, 191" />
+		<node type="RGB" color="rgba(0.17798, 0.87590, 1.0, 1.0)" loc="-181, 369" />
+		<node type="RGB" color="rgba(0.05106, 0.25651, 1.0, 1.0)" loc="-470, 228" />
+		<node type="MAPPING" translation="Vector(0.0, 0.0, 0.0)" rotation="Vector(0.0, 0.0, 0.0)" scale="Vector(1.0, 1.0, 1.0)" use_min="False" use_max="False" vector="Vector(0.0, 0.0, 0.0)" loc="-286, 131" />
+		<node type="TEX_COORD" dupli="False" loc="-537, 8" />
+		<node type="GROUP" group="square_tiles.bcg" color1="rgba(0.80000, 0.80000, 0.80000, 1.0)" color2="rgba(0.20000, 0.20000, 0.20000, 1.0)" vector="Vector(0.0, 0.0, 0.0)" scale="20.0" bump_strength="0.5" loc="105, 232" />
+	</nodes>
+	<links>
+		<link to="0" input="0" from="5" output="0" />
+		<link to="5" input="0" from="1" output="0" />
+		<link to="5" input="1" from="2" output="0" />
+		<link to="5" input="2" from="3" output="0" />
+		<link to="3" input="0" from="4" output="0" />
+	</links>
+</material>

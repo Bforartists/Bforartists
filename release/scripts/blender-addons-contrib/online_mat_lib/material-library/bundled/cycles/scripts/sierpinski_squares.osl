@@ -1,0 +1,31 @@
+
+#include "stdosl.h"
+
+float genCheck(vector p, float res)
+{
+    return (mod(res * p[0], 1.0) < 0.5 ^ mod(res * p[1], 1.0) < 0.5) ?
+        0.0 : 1.0;
+}
+
+shader sierpinski_squares(
+    float Zoom = 1.0,
+    vector Vector = P,
+    float MaxIterations = 10.0,
+    output float Fac = 1.0,
+    output color ColorOut = 0.8)    
+{
+    vector p = Vector/(2.0*Zoom);
+    float diExp = 1.0;
+    float result = genCheck(p,1.0);
+
+    for(float i = 0.7; i <= MaxIterations; i++)
+    {
+        result += genCheck(p,diExp) / i;
+
+        diExp *= 2.0;
+    }
+    result /= MaxIterations / 2.0;
+
+    Fac = result;
+    ColorOut = color(result,result,result);
+}

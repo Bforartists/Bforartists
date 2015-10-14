@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<material view_color="rgb(1.0, 0.46594, 0.03595)" sample_lamp="True">
+	<nodes>
+		<node type="MIX_SHADER" fac="0.5" loc="92, 119" />
+		<node type="MIX_SHADER" fac="0.5" loc="427, 123" />
+		<node type="MIX_SHADER" fac="0.5" loc="756, 116" />
+		<node type="MATH" operation="ADD" use_clamp="False" value1="0.5" value2="0.5" loc="65, 385" />
+		<node type="MATH" operation="DIVIDE" use_clamp="False" value1="0.5" value2="2.0" loc="246, 351" />
+		<node type="TEX_VORONOI" coloring="INTENSITY" scale="1000.0" loc="-732, 197" />
+		<node type="INVERT" fac="1.0" color="rgba(0.0, 0.0, 0.0, 1.0)" loc="-548, 149" />
+		<node type="GAMMA" color="rgba(1.0, 1.0, 1.0, 1.0)" gamma="7.0" loc="-426, 136" />
+		<node type="MATH" operation="MULTIPLY" use_clamp="False" value1="0.5" value2="0.5" loc="-230, 141" />
+		<node type="FRESNEL" ior="1.20000" loc="-197, 436" />
+		<node type="LAYER_WEIGHT" blend="0.01999" loc="-194, 325" />
+		<node type="BSDF_GLOSSY" distribution="BECKMANN" color="rgba(1.0, 1.0, 1.0, 1.0)" roughness="0.0" loc="91, -33" />
+		<node type="LAYER_WEIGHT" blend="0.5" loc="-447, 242" />
+		<node type="BSDF_GLOSSY" distribution="GGX" color="rgba(0.80000, 0.80000, 0.80000, 1.0)" roughness="0.10000" loc="-433, -164" />
+		<node type="BSDF_GLOSSY" distribution="GGX" color="rgba(1.0, 1.0, 1.0, 1.0)" roughness="0.20000" loc="446, -70" />
+		<node type="FRESNEL" ior="1.10000" loc="465, 245" />
+		<node type="BSDF_DIFFUSE" color="rgba(1.0, 0.03999, 0.0, 1.0)" roughness="0.0" loc="-423, -11" />
+		<node type="RGB" custom_color="rgb(1.0, 0.80000, 0.5)" label="Gloss Color" color="rgba(1.0, 0.73231, 0.0, 1.0)" loc="-1138, 470" />
+		<node type="RGB" custom_color="rgb(1.0, 0.80000, 0.5)" label="Paint Color" color="rgba(1.0, 0.44275, 0.0, 1.0)" loc="-1127, 657" />
+		<node type="VALUE" custom_color="rgb(0.89999, 0.89999, 0.89999)" label="Roughness" value="0.0" loc="-1142, 265" />
+		<node type="VALUE" custom_color="rgb(0.89999, 0.89999, 0.89999)" label="Fresnel" value="1.29999" loc="-1142, 176" />
+		<node type="VALUE" custom_color="rgb(0.89999, 0.89999, 0.89999)" label="Flake Size" value="1000.0" loc="-1142, -165" />
+		<node type="VALUE" custom_color="rgb(0.89999, 0.89999, 0.89999)" label="Flake Spread" value="0.10000" loc="-1142, -342" />
+		<node type="VALUE" custom_color="rgb(0.89999, 0.89999, 0.89999)" label="Flake Intensity" value="0.60000" loc="-1142, -254" />
+		<node type="VALUE" custom_color="rgb(0.89999, 0.89999, 0.89999)" label="Blend" value="0.01999" loc="-1142, 94" />
+		<node type="TEX_VORONOI" coloring="CELLS" scale="1000.0" loc="-736, -4" />
+		<node type="OUTPUT_MATERIAL" loc="957, 98" />
+		<node type="VALUE" custom_color="rgb(0.89999, 0.89999, 0.89999)" label="Gloss Roughness" value="0.0" loc="-1142, 8" />
+		<node type="VALUE" custom_color="rgb(0.89999, 0.89999, 0.89999)" label="Gloss Spread" value="2.0" loc="-1142, -78" />
+	</nodes>
+	<links>
+		<link to="26" input="0" from="2" output="0" />
+		<link to="0" input="2" from="13" output="0" />
+		<link to="1" input="1" from="0" output="0" />
+		<link to="0" input="1" from="16" output="0" />
+		<link to="1" input="2" from="11" output="0" />
+		<link to="13" input="0" from="25" output="0" />
+		<link to="0" input="0" from="8" output="0" />
+		<link to="8" input="1" from="7" output="0" />
+		<link to="8" input="0" from="12" output="0" />
+		<link to="6" input="1" from="5" output="1" />
+		<link to="7" input="0" from="6" output="0" />
+		<link to="2" input="2" from="14" output="0" />
+		<link to="2" input="1" from="1" output="0" />
+		<link to="2" input="0" from="15" output="0" />
+		<link to="3" input="1" from="10" output="1" />
+		<link to="4" input="0" from="3" output="0" />
+		<link to="3" input="0" from="9" output="0" />
+		<link to="1" input="0" from="4" output="0" />
+		<link to="16" input="0" from="18" output="0" />
+		<link to="11" input="0" from="17" output="0" />
+		<link to="11" input="1" from="19" output="0" />
+		<link to="9" input="0" from="20" output="0" />
+		<link to="10" input="0" from="24" output="0" />
+		<link to="5" input="1" from="21" output="0" />
+		<link to="25" input="1" from="21" output="0" />
+		<link to="12" input="0" from="23" output="0" />
+		<link to="13" input="1" from="22" output="0" />
+		<link to="14" input="1" from="27" output="0" />
+		<link to="15" input="0" from="28" output="0" />
+	</links>
+</material>

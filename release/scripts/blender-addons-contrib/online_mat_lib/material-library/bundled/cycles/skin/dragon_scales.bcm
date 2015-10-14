@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<material view_color="rgb(0.80000, 0.80000, 0.80000)" sample_lamp="True">
+	<nodes>
+		<node type="VALTORGB" interpolation="EASE" fac="0.5" stops="4" stop1="0.00454|rgba(0.00891, 0.04817, 0.00561, 1.0)" stop2="0.11817|rgba(1.0, 1.0, 1.0, 1.0)" stop3="0.81362|rgba(0.79909, 0.43964, 0.13562, 1.0)" stop4="1.0|rgba(0.00903, 0.06681, 0.0, 1.0)" loc="424, 643" />
+		<node type="BSDF_GLOSSY" distribution="BECKMANN" color="rgba(0.80000, 0.80000, 0.80000, 1.0)" roughness="0.20000" loc="727, 475" />
+		<node type="BSDF_DIFFUSE" color="rgba(0.80000, 0.80000, 0.80000, 1.0)" roughness="0.0" loc="729, 610" />
+		<node type="MIX_SHADER" fac="0.11998" loc="927, 553" />
+		<node type="OUTPUT_MATERIAL" loc="1102, 446" />
+		<node type="TEX_MAGIC" depth="2" scale="0.5" distortion="1.0" loc="472, 427" />
+		<node type="TEX_MUSGRAVE" musgrave="FBM" scale="0.48800" detail="4.80000" dimension="2.0" lacunarity="1.0" offset="0.0" gain="1.0" loc="233, 619" />
+		<node type="INVERT" fac="1.0" color="rgba(0.0, 0.0, 0.0, 1.0)" loc="133, 359" />
+		<node type="SCRIPT" mode="EXTERNAL" script="scales_shader.osl" diffuse_color1="rgba(0.20000, 0.80000, 0.20000, 1.0)" diffuse_color2="rgba(0.80000, 0.20000, 0.20000, 1.0)" coordinates="Vector(0.0, 0.0, 0.0)" n="0.09999" loc="-67, 618" />
+		<node type="MAPPING" hide="True" translation="Vector(0.0, 0.0, 0.0)" rotation="Vector(0.0, 0.0, 0.0)" scale="Vector(60.0, 60.0, 60.0)" use_min="False" use_max="False" vector="Vector(0.0, 0.0, 0.0)" loc="-234, 567" />
+		<node type="TEX_COORD" dupli="False" loc="-468, 574" />
+	</nodes>
+	<links>
+		<link to="8" input="2" from="9" output="0" />
+		<link to="6" input="0" from="8" output="3" />
+		<link to="4" input="0" from="3" output="0" />
+		<link to="3" input="1" from="2" output="0" />
+		<link to="3" input="2" from="1" output="0" />
+		<link to="2" input="0" from="0" output="0" />
+		<link to="0" input="0" from="6" output="1" />
+		<link to="4" input="2" from="7" output="0" />
+		<link to="6" input="1" from="8" output="1" />
+		<link to="7" input="1" from="8" output="2" />
+		<link to="1" input="0" from="5" output="0" />
+		<link to="9" input="0" from="10" output="0" />
+	</links>
+</material>

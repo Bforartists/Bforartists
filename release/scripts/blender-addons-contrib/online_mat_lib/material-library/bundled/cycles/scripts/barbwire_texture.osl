@@ -1,0 +1,75 @@
+
+#include "stdosl.h"
+
+float arc(float r){ return sqrt(0.25-(r-0.5)*(r-0.5)); }
+
+shader barbwire(
+        float Width = 0.05,
+        int Turns = 2,
+        int Spiketurns = 2,
+        float Xscale = 1,
+        point Pos = P,
+        output float Fac = 0,
+        output float Displacement = 0 )
+{
+    float x = mod(Pos[0],1);
+    float y = mod(Pos[1],1);
+
+    if ( x > 0.5 ) {
+        x = 1 - x;
+        y = 1 - y;
+    }
+
+    float w = Width/2;
+    float t = M_2PI*x*Turns;
+
+    float c = cos(t);
+    float h = c*w+w;
+    float l = c*w-w;
+
+    y -= 0.5;
+    // the barb part
+    float BWidth = Width*Xscale;
+    float Lw = BWidth*(Spiketurns-1);
+    float Hw = BWidth*Spiketurns;
+    if ( x > Lw && x < Hw && y > 1.5*Width && y<4*Width ) { // the spikey part
+        if( y<3*Width || y-3*Width < x-Width){
+            Fac = 1;
+            Displacement = arc(mod(x,BWidth)/BWidth);
+        }
+    } else if ( x < Hw && abs(y) < 2*Width ){
+        if ( abs(y) > 1.5*Width) { // the rounded top and bottom parts
+            if ( abs(y) - 1.5*Width < w*arc(mod(x,BWidth)/BWidth) ){
+                Fac = 1;
+                Displacement = arc(mod(x,BWidth)/BWidth);
+            }
+        } else { // the main part
+            Fac = 1;
+            Displacement = arc(mod(x,BWidth)/BWidth);
+        }
+    }
+    // the wire part
+    else {
+        // alternating top/bottom checks to get correct crossings
+        if ( (int)(t/M_PI) % 2 == 1 ){
+
+            if ( y > l && y < h ) {
+                Fac = 1;
+                Displacement = arc((y-l)/Width);
+            } else if ( -y > l && -y < h ) {
+                Fac = 1;
+                Displacement = arc((-y-l)/Width);
+            }
+
+        } else {
+
+            if ( -y > l && -y < h ) {
+                Fac = 1;
+                Displacement = arc((-y-l)/Width);
+            } else if ( y > l && y < h ) {
+                Fac = 1;
+                Displacement = arc((y-l)/Width);
+            }
+        }
+    }
+}

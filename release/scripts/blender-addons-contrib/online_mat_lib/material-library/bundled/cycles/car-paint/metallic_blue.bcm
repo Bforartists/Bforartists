@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<material view_color="rgb(0.20428, 0.26886, 0.36288)" sample_lamp="True">
+	<nodes>
+		<node type="MIX_SHADER" fac="0.85000" loc="455, 102" />
+		<node type="OUTPUT_MATERIAL" loc="660, 96" />
+		<node type="LAYER_WEIGHT" blend="0.89999" loc="-615, 152" />
+		<node type="VALUE" custom_color="rgb(0.89999, 0.89999, 0.89999)" label="Spread" value="0.70000" loc="-883, 468" />
+		<node type="VALUE" custom_color="rgb(0.89999, 0.89999, 0.89999)" label="Flake Size" value="600.0" loc="-921, 351" />
+		<node type="BSDF_GLOSSY" distribution="BECKMANN" color="rgba(1.0, 1.0, 1.0, 1.0)" roughness="0.00499" loc="44, 203" />
+		<node type="RGB" custom_color="rgb(0.89999, 0.89999, 0.89999)" color="rgba(0.0, 0.04970, 0.50288, 1.0)" loc="-987, 248" />
+		<node type="RGB" custom_color="rgb(0.89999, 0.89999, 0.89999)" color="rgba(0.0, 0.0, 0.09989, 1.0)" loc="-987, 46" />
+		<node type="RGB" custom_color="rgb(0.89999, 0.89999, 0.89999)" color="rgba(0.0, 1.0, 1.0, 1.0)" loc="-906, -174" />
+		<node type="GAMMA" hide="True" color="rgba(1.0, 1.0, 1.0, 1.0)" gamma="3.5" loc="-392, 240" />
+		<node type="MIX_SHADER" fac="0.75" loc="-415, 155" />
+		<node type="MIX_SHADER" fac="0.75" loc="-200, 157" />
+		<node type="LAYER_WEIGHT" blend="0.69999" loc="260, 317" />
+		<node type="TEX_VORONOI" coloring="CELLS" scale="600.0" loc="-615, 310" />
+		<node type="BSDF_DIFFUSE" color="rgba(0.0, 0.04970, 0.50288, 1.0)" roughness="1.0" loc="-615, 47" />
+		<node type="BSDF_DIFFUSE" color="rgba(0.0, 0.0, 0.09989, 1.0)" roughness="1.0" loc="-615, -70" />
+		<node type="BSDF_GLOSSY" distribution="GGX" color="rgba(0.0, 1.0, 1.0, 1.0)" roughness="0.30000" loc="-418, -74" />
+		<node type="BSDF_GLOSSY" distribution="GGX" color="rgba(0.0, 0.0, 0.00972, 1.0)" roughness="0.64999" loc="-211, -73" />
+		<node type="MIX_SHADER" fac="0.25" loc="44, 43" />
+		<node type="MIX_SHADER" fac="0.49999" loc="260, 105" />
+	</nodes>
+	<links>
+		<link to="9" input="0" from="13" output="1" />
+		<link to="1" input="0" from="0" output="0" />
+		<link to="0" input="0" from="12" output="1" />
+		<link to="19" input="2" from="18" output="0" />
+		<link to="0" input="1" from="19" output="0" />
+		<link to="0" input="2" from="17" output="0" />
+		<link to="10" input="2" from="15" output="0" />
+		<link to="10" input="1" from="14" output="0" />
+		<link to="10" input="0" from="2" output="1" />
+		<link to="11" input="2" from="16" output="0" />
+		<link to="11" input="1" from="10" output="0" />
+		<link to="11" input="0" from="9" output="0" />
+		<link to="19" input="1" from="5" output="0" />
+		<link to="14" input="0" from="6" output="0" />
+		<link to="12" input="0" from="3" output="0" />
+		<link to="13" input="1" from="4" output="0" />
+		<link to="16" input="0" from="8" output="0" />
+		<link to="15" input="0" from="7" output="0" />
+		<link to="18" input="1" from="11" output="0" />
+		<link to="18" input="2" from="17" output="0" />
+	</links>
+</material>

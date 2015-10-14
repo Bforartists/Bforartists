@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<material view_color="rgb(0.84148, 0.74040, 0.00749)" sample_lamp="True">
+	<nodes>
+		<node type="OUTPUT_MATERIAL" loc="545, 173" />
+		<node type="NEW_GEOMETRY" loc="-759, 221" />
+		<node type="LIGHT_PATH" loc="-464, -35" />
+		<node type="MATH" operation="MULTIPLY" use_clamp="False" value1="0.5" value2="1.0" loc="103, 86" />
+		<node type="EMISSION" color="rgba(0.80000, 0.80000, 0.80000, 1.0)" strength="10.13210" loc="290, 179" />
+		<node type="MATH" operation="MAXIMUM" use_clamp="False" value1="0.5" value2="0.5" loc="-130, 30" />
+		<node type="VECT_MATH" operation="ADD" vector1="Vector(0.5, 0.5, 0.5)" vector2="Vector(0.5, 0.5, 0.5)" loc="-386, 202" />
+		<node type="MIX_RGB" blend_type="MIX" use_clamp="False" fac="0.5" color1="rgba(0.47510, 0.01064, 0.00834, 1.0)" color2="rgba(0.88760, 0.81437, 0.00747, 1.0)" loc="-13, 254" />
+		<node type="TEX_COORD" loc="-776, 30" />
+	</nodes>
+	<links>
+		<link to="0" input="0" from="4" output="0" />
+		<link to="5" input="1" from="2" output="3" />
+		<link to="4" input="1" from="3" output="0" />
+		<link to="3" input="0" from="5" output="0" />
+		<link to="5" input="0" from="2" output="0" />
+		<link to="6" input="0" from="1" output="4" />
+		<link to="7" input="0" from="6" output="1" />
+		<link to="4" input="0" from="7" output="0" />
+		<link to="6" input="1" from="8" output="6" />
+	</links>
+</material>
