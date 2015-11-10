@@ -2458,6 +2458,11 @@ static void rna_def_space_view3d(BlenderRNA *brna)
 	RNA_def_property_boolean_sdna(prop, NULL, "gridflag", V3D_SHOW_FLOOR);
 	RNA_def_property_ui_text(prop, "Display Grid Floor", "Show the ground plane grid in perspective view");
 	RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
+
+	prop = RNA_def_property(srna, "show_cursor", PROP_BOOLEAN, PROP_NONE); // bfa - show hide 3d cursor
+	RNA_def_property_boolean_negative_sdna(prop, NULL, "flag3", V3D_HIDE_CURSOR);
+	RNA_def_property_ui_text(prop, "Display 3D Cursor", "Show the 3D Cursor");
+	RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 	
 	prop = RNA_def_property(srna, "show_axis_x", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_sdna(prop, NULL, "gridflag", V3D_SHOW_X);
