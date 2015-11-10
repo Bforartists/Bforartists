@@ -3858,7 +3858,11 @@ static void view3d_main_area_draw_info(const bContext *C, Scene *scene,
 
 		/* 3d cursor */
 		if (is_cursor_visible(scene)) {
-			drawcursor(scene, ar, v3d);
+			//drawcursor(scene, ar, v3d);
+			if ((v3d->flag3 & V3D_HIDE_CURSOR) == 0) { // bfa - show hide 3d cursor
+				drawcursor(scene, ar, v3d);
+			}
+
 		}
 
 		if (U.uiflag & USER_SHOW_ROTVIEWICON)
