@@ -84,8 +84,8 @@ static ImBuf *ibJpegImageFromCinfo(struct jpeg_decompress_struct *cinfo, int fla
  * 4. jmax - no scaling in the components
  */
 
-static int jpeg_default_quality;
-static int ibuf_foptions;
+static const uchar jpeg_default_quality = 75;
+static uchar ibuf_quality;
 
 int imb_is_a_jpeg(const unsigned char *mem)
 {
