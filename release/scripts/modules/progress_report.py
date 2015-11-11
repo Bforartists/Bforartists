@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -99,7 +99,7 @@ class ProgressReport:
     def enter_substeps(self, nbr, msg=""):
         if msg:
             self.update(msg)
-        self.steps.append(self.steps[-1] / nbr)
+        self.steps.append(self.steps[-1] / max(nbr, 1))
         self.curr_step.append(0)
         self.start_time.append(time.time())
 
