@@ -54,12 +54,6 @@
 #include "IMB_colormanagement.h"
 #include "IMB_colormanagement_intern.h"
 
-// #define IS_jpg(x)       (x->ftype & JPG) // UNUSED
-#define IS_stdjpg(x)    ((x->foptions.flag & JPG_MSK) == JPG_STD)
-// #define IS_vidjpg(x)    ((x->foptions & JPG_MSK) == JPG_VID) // UNUSED
-#define IS_jstjpg(x)    ((x->foptions.flag & JPG_MSK) == JPG_JST)
-#define IS_maxjpg(x)    ((x->foptions.flag & JPG_MSK) == JPG_MAX)
-
 /* the types are from the jpeg lib */
 static void jpeg_error(j_common_ptr cinfo) ATTR_NORETURN;
 static void init_source(j_decompress_ptr cinfo);
@@ -69,20 +63,6 @@ static void term_source(j_decompress_ptr cinfo);
 static void memory_source(j_decompress_ptr cinfo, const unsigned char *buffer, size_t size);
 static boolean handle_app1(j_decompress_ptr cinfo);
 static ImBuf *ibJpegImageFromCinfo(struct jpeg_decompress_struct *cinfo, int flags);
-
-
-/*
- * In principle there are 4 jpeg formats.
- *
- * 1. jpeg - standard printing, u & v at quarter of resolution
- * 2. jvid - standard video, u & v half resolution, frame not interlaced
- *
- * type 3 is unsupported as of jul 05 2000 Frank.
- *
- * 3. jstr - as 2, but written in 2 separate fields
- *
- * 4. jmax - no scaling in the components
- */
 
 static const uchar jpeg_default_quality = 75;
 static uchar ibuf_quality;
@@ -254,6 +234,13 @@ static void memory_source(j_decompress_ptr cinfo, const unsigned char *buffer, s
 	      bytes_in_buffer--; \
 	      V += GETJOCTET(*next_input_byte++); )
 
+struct NeoGeo_Word {
+	uchar pad1;
+	uchar pad2;
+	uchar pad3;
+	uchar quality;
+} ;
+BLI_STATIC_ASSERT(sizeof(struct NeoGeo_Word) == 4, "Must be 4 bytes");
 
 static boolean handle_app1(j_decompress_ptr cinfo)
 {
@@ -267,13 +254,19 @@ static boolean handle_app1(j_decompress_ptr cinfo)
 	length -= 2;
 	
 	if (length < 16) {
-		for (i = 0; i < length; i++) INPUT_BYTE(cinfo, neogeo[i], return false);
+		for (i = 0; i < length; i++) {
+			INPUT_BYTE(cinfo, neogeo[i], return false);
+		}
 		length = 0;
-		if (STREQLEN(neogeo, "NeoGeo", 6)) memcpy(&ibuf_foptions, neogeo + 6, 4);
-		ibuf_foptions = BIG_LONG(ibuf_foptions);
+		if (STREQLEN(neogeo, "NeoGeo", 6)) {
+			struct NeoGeo_Word *neogeo_word = (struct NeoGeo_Word *)(neogeo + 6);
+			ibuf_quality = neogeo_word->quality;
+		}
 	}
 	INPUT_SYNC(cinfo);  /* do before skip_input_data */
-	if (length > 0) (*cinfo->src->skip_input_data)(cinfo, length);
+	if (length > 0) {
+		(*cinfo->src->skip_input_data)(cinfo, length);
+	}
 	return true;
 }
 
@@ -290,7 +283,7 @@ static ImBuf *ibJpegImageFromCinfo(struct jpeg_decompress_struct *cinfo, int fla
 	char *str, *key, *value;
 
 	/* install own app1 handler */
-	ibuf_foptions = 0;
+	ibuf_quality = jpeg_default_quality;
 	jpeg_set_marker_processor(cinfo, 0xe1, handle_app1);
 	cinfo->dct_method = JDCT_FLOAT;
 	jpeg_save_markers(cinfo, JPEG_COM, 0xffff);
@@ -303,14 +296,6 @@ static ImBuf *ibJpegImageFromCinfo(struct jpeg_decompress_struct *cinfo, int fla
 		if (cinfo->jpeg_color_space == JCS_YCCK) cinfo->out_color_space = JCS_CMYK;
 
 		jpeg_start_decompress(cinfo);
-
-		if (ibuf_foptions == 0) {
-			ibuf_foptions = JPG_STD;
-			if (cinfo->max_v_samp_factor == 1) {
-				if (cinfo->max_h_samp_factor == 1) ibuf_foptions = JPG_MAX;
-				else ibuf_foptions = JPG_VID;
-			}
-		}
 
 		if (flags & IB_test) {
 			jpeg_abort_decompress(cinfo);
@@ -436,7 +421,7 @@ next_stamp_marker:
 		jpeg_destroy((j_common_ptr) cinfo);
 		if (ibuf) {
 			ibuf->ftype = IMB_FTYPE_JPG;
-			ibuf->foptions.flag = ibuf_foptions;
+			ibuf->foptions.quality = MIN2(ibuf_quality, 100);
 		}
 	}
 
@@ -481,16 +466,16 @@ static void write_jpeg(struct jpeg_compress_struct *cinfo, struct ImBuf *ibuf)
 	uchar *rect;
 	int x, y;
 	char neogeo[128];
+	struct NeoGeo_Word *neogeo_word;
 	char *text;
 
 	jpeg_start_compress(cinfo, true);
 
 	strcpy(neogeo, "NeoGeo");
-	ibuf_foptions = BIG_LONG((((int)ibuf->foptions.flag) << 8) | (int)ibuf->foptions.quality);
-	
-	memcpy(neogeo + 6, &ibuf_foptions, 4);
+	neogeo_word = (struct NeoGeo_Word *)(neogeo + 6);
+	memset(neogeo_word, 0, sizeof(*neogeo_word));
+	neogeo_word->quality = ibuf->foptions.quality;
 	jpeg_write_marker(cinfo, 0xe1, (JOCTET *) neogeo, 10);
-
 	if (ibuf->metadata) {
 		IDProperty *prop;
 		/* key + max value + "Blender" */
@@ -613,8 +598,8 @@ static int save_stdjpeg(const char *name, struct ImBuf *ibuf)
 	struct jpeg_compress_struct _cinfo, *cinfo = &_cinfo;
 	struct my_error_mgr jerr;
 
-	if ((outfile = BLI_fopen(name, "wb")) == NULL) return 0;
-	jpeg_default_quality = 75;
+	if ((outfile = BLI_fopen(name, "wb")) == NULL)
+		return 0;
 
 	cinfo->err = jpeg_std_error(&jerr.pub);
 	jerr.pub.error_exit = jpeg_error;
@@ -631,117 +616,6 @@ static int save_stdjpeg(const char *name, struct ImBuf *ibuf)
 	}
 
 	init_jpeg(outfile, cinfo, ibuf);
-
-	write_jpeg(cinfo, ibuf);
-
-	fclose(outfile);
-	jpeg_destroy_compress(cinfo);
-
-	return 1;
-}
-
-
-static int save_vidjpeg(const char *name, struct ImBuf *ibuf)
-{
-	FILE *outfile;
-	struct jpeg_compress_struct _cinfo, *cinfo = &_cinfo;
-	struct my_error_mgr jerr;
-
-	if ((outfile = BLI_fopen(name, "wb")) == NULL) return 0;
-	jpeg_default_quality = 90;
-
-	cinfo->err = jpeg_std_error(&jerr.pub);
-	jerr.pub.error_exit = jpeg_error;
-
-	/* Establish the setjmp return context for jpeg_error to use. */
-	if (setjmp(jerr.setjmp_buffer)) {
-		/* If we get here, the JPEG code has signaled an error.
-		 * We need to clean up the JPEG object, close the input file, and return.
-		 */
-		jpeg_destroy_compress(cinfo);
-		fclose(outfile);
-		remove(name);
-		return 0;
-	}
-
-	init_jpeg(outfile, cinfo, ibuf);
-
-	/* adjust scaling factors */
-	if (cinfo->in_color_space == JCS_RGB) {
-		cinfo->comp_info[0].h_samp_factor = 2;
-		cinfo->comp_info[0].v_samp_factor = 1;
-	}
-
-	write_jpeg(cinfo, ibuf);
-
-	fclose(outfile);
-	jpeg_destroy_compress(cinfo);
-
-	return 1;
-}
-
-static int save_jstjpeg(const char *name, struct ImBuf *ibuf)
-{
-	char fieldname[1024];
-	struct ImBuf *tbuf;
-	int oldy, returnval;
-
-	tbuf = IMB_allocImBuf(ibuf->x, ibuf->y / 2, 24, IB_rect);
-	tbuf->ftype = ibuf->ftype;
-	tbuf->foptions = ibuf->foptions;
-	tbuf->flags = ibuf->flags;
-	
-	oldy = ibuf->y;
-	ibuf->x *= 2;
-	ibuf->y /= 2;
-
-	IMB_rectcpy(tbuf, ibuf, 0, 0, 0, 0, ibuf->x, ibuf->y);
-	sprintf(fieldname, "%s.jf0", name);
-
-	returnval = save_vidjpeg(fieldname, tbuf);
-	if (returnval == 1) {
-		IMB_rectcpy(tbuf, ibuf, 0, 0, tbuf->x, 0, ibuf->x, ibuf->y);
-		sprintf(fieldname, "%s.jf1", name);
-		returnval = save_vidjpeg(fieldname, tbuf);
-	}
-
-	ibuf->y = oldy;
-	ibuf->x /= 2;
-	IMB_freeImBuf(tbuf);
-
-	return returnval;
-}
-
-static int save_maxjpeg(const char *name, struct ImBuf *ibuf)
-{
-	FILE *outfile;
-	struct jpeg_compress_struct _cinfo, *cinfo = &_cinfo;
-	struct my_error_mgr jerr;
-
-	if ((outfile = BLI_fopen(name, "wb")) == NULL) return 0;
-	jpeg_default_quality = 100;
-
-	cinfo->err = jpeg_std_error(&jerr.pub);
-	jerr.pub.error_exit = jpeg_error;
-
-	/* Establish the setjmp return context for jpeg_error to use. */
-	if (setjmp(jerr.setjmp_buffer)) {
-		/* If we get here, the JPEG code has signaled an error.
-		 * We need to clean up the JPEG object, close the input file, and return.
-		 */
-		jpeg_destroy_compress(cinfo);
-		fclose(outfile);
-		remove(name);
-		return 0;
-	}
-
-	init_jpeg(outfile, cinfo, ibuf);
-
-	/* adjust scaling factors */
-	if (cinfo->in_color_space == JCS_RGB) {
-		cinfo->comp_info[0].h_samp_factor = 1;
-		cinfo->comp_info[0].v_samp_factor = 1;
-	}
 
 	write_jpeg(cinfo, ibuf);
 
@@ -755,9 +629,5 @@ int imb_savejpeg(struct ImBuf *ibuf, const char *name, int flags)
 {
 	
 	ibuf->flags = flags;
-	if (IS_stdjpg(ibuf)) return save_stdjpeg(name, ibuf);
-	if (IS_jstjpg(ibuf)) return save_jstjpeg(name, ibuf);
-	if (IS_maxjpg(ibuf)) return save_maxjpeg(name, ibuf);
-	return save_vidjpeg(name, ibuf);
+	return save_stdjpeg(name, ibuf);
 }
-
