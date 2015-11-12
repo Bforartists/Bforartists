@@ -67,32 +67,34 @@ typedef struct DDSData {
  */
 
 /* ibuf->ftype flag, main image types */
+/* Warning: Keep explicit value assignements here, this file is included in areas where not all format defines
+ *          are set (e.g. intern/dds only get WITH_DDS, even if TIFF, HDR etc are also defined). See T46524. */
 enum eImbTypes {
-	IMB_FTYPE_PNG = 1,
-	IMB_FTYPE_TGA,
-	IMB_FTYPE_JPG,
-	IMB_FTYPE_BMP,
-	IMB_FTYPE_OPENEXR,
-	IMB_FTYPE_IMAGIC,
+	IMB_FTYPE_PNG       = 1,
+	IMB_FTYPE_TGA       = 2,
+	IMB_FTYPE_JPG       = 3,
+	IMB_FTYPE_BMP       = 4,
+	IMB_FTYPE_OPENEXR   = 5,
+	IMB_FTYPE_IMAGIC    = 6,
 #ifdef WITH_OPENIMAGEIO
-	IMB_FTYPE_PSD,
+	IMB_FTYPE_PSD       = 7,
 #endif
 #ifdef WITH_OPENJPEG
-	IMB_FTYPE_JP2,
+	IMB_FTYPE_JP2       = 8,
 #endif
 #ifdef WITH_HDR
-	IMB_FTYPE_RADHDR,
+	IMB_FTYPE_RADHDR    = 9,
 #endif
 #ifdef WITH_TIFF
-	IMB_FTYPE_TIF,
+	IMB_FTYPE_TIF       = 10,
 #endif
 #ifdef WITH_CINEON
-	IMB_FTYPE_CINEON,
-	IMB_FTYPE_DPX,
+	IMB_FTYPE_CINEON    = 11,
+	IMB_FTYPE_DPX       = 12,
 #endif
 
 #ifdef WITH_DDS
-	IMB_FTYPE_DDS,
+	IMB_FTYPE_DDS       = 13,
 #endif
 };
 
@@ -123,12 +125,6 @@ enum eImbTypes {
 #define PNG_16BIT			(1 << 10)
 
 #define RAWTGA	        1
-
-#define JPG_STD	        0
-#define JPG_VID	        1
-#define JPG_JST	        2
-#define JPG_MAX	        3
-#define JPG_MSK	        0x03
 
 #ifdef WITH_TIFF
 #define TIF_16BIT		(1 << 8 )
