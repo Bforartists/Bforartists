@@ -1618,7 +1618,7 @@ exit:
 
 static void view3d_stereo_bgpic_setup(Scene *scene, View3D *v3d, Image *ima, ImageUser *iuser)
 {
-	if ((ima->flag & IMA_IS_STEREO)) {
+	if (BKE_image_is_stereo(ima)) {
 		iuser->flag |= IMA_SHOW_STEREO;
 
 		if ((scene->r.scemode & R_MULTIVIEW) == 0) {
@@ -3858,11 +3858,7 @@ static void view3d_main_area_draw_info(const bContext *C, Scene *scene,
 
 		/* 3d cursor */
 		if (is_cursor_visible(scene)) {
-			//drawcursor(scene, ar, v3d);
-			if ((v3d->flag3 & V3D_HIDE_CURSOR) == 0) { // bfa - show hide 3d cursor
-				drawcursor(scene, ar, v3d);
-			}
-
+			drawcursor(scene, ar, v3d);
 		}
 
 		if (U.uiflag & USER_SHOW_ROTVIEWICON)
