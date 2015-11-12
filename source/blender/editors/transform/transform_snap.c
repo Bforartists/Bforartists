@@ -85,6 +85,8 @@
 
 #define TRANSFORM_DIST_MAX_PX 1000.0f
 #define TRANSFORM_SNAP_MAX_PX 100.0f
+#define TRANSFORM_DIST_INVALID -FLT_MAX
+
 /* use half of flt-max so we can scale up without an exception */
 
 /********************* PROTOTYPES ***********************/
@@ -887,17 +889,20 @@ static float ResizeBetween(TransInfo *t, const float p1[3], const float p2[3])
 
 	sub_v3_v3v3(d1, p1, t->center_global);
 	sub_v3_v3v3(d2, p2, t->center_global);
-	
-	project_v3_v3v3(d1, d1, d2);
 
 	if (t->con.applyRot != NULL && (t->con.mode & CON_APPLY)) {
 		mul_m3_v3(t->con.pmtx, d1);
 		mul_m3_v3(t->con.pmtx, d2);
 	}
+
+	project_v3_v3v3(d1, d1, d2);
 	
 	len_d1 = len_v3(d1);
 
-	return len_d1 != 0.0f ? len_v3(d2) / len_d1 : 1;
+	/* Use 'invalid' dist when `center == p1` (after projecting),
+	 * in this case scale will _never_ move the point in relation to the center,
+	 * so it makes no sense to take it into account when scaling. see: T46503 */
+	return len_d1 != 0.0f ? len_v3(d2) / len_d1 : TRANSFORM_DIST_INVALID;
 }
 
 /********************** CALC **************************/
@@ -1177,8 +1182,10 @@ static void TargetSnapClosest(TransInfo *t)
 						mul_m4_v3(td->ext->obmat, loc);
 						
 						dist = t->tsnap.distance(t, loc, t->tsnap.snapPoint);
-						
-						if (closest == NULL || fabsf(dist) < fabsf(t->tsnap.dist)) {
+
+						if ((dist != TRANSFORM_DIST_INVALID) &&
+						    (closest == NULL || fabsf(dist) < fabsf(t->tsnap.dist)))
+						{
 							copy_v3_v3(t->tsnap.snapTarget, loc);
 							closest = td;
 							t->tsnap.dist = dist; 
@@ -1193,8 +1200,10 @@ static void TargetSnapClosest(TransInfo *t)
 					copy_v3_v3(loc, td->center);
 					
 					dist = t->tsnap.distance(t, loc, t->tsnap.snapPoint);
-					
-					if (closest == NULL || fabsf(dist) < fabsf(t->tsnap.dist)) {
+
+					if ((dist != TRANSFORM_DIST_INVALID) &&
+					    (closest == NULL || fabsf(dist) < fabsf(t->tsnap.dist)))
+					{
 						copy_v3_v3(t->tsnap.snapTarget, loc);
 						closest = td;
 						t->tsnap.dist = dist; 
@@ -1217,7 +1226,9 @@ static void TargetSnapClosest(TransInfo *t)
 				
 				dist = t->tsnap.distance(t, loc, t->tsnap.snapPoint);
 				
-				if (closest == NULL || fabsf(dist) < fabsf(t->tsnap.dist)) {
+				if ((dist != TRANSFORM_DIST_INVALID) &&
+				    (closest == NULL || fabsf(dist) < fabsf(t->tsnap.dist)))
+				{
 					copy_v3_v3(t->tsnap.snapTarget, loc);
 					closest = td;
 					t->tsnap.dist = dist; 
