@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -220,7 +220,7 @@ class BONE_PT_display(BoneButtonsPanel, Panel):
             col = split.column()
             col.prop(bone, "hide", text="Hide")
             sub = col.column()
-            sub.active = bool(pchan.custom_shape)
+            sub.active = bool(pchan and pchan.custom_shape)
             sub.prop(bone, "show_wire", text="Wireframe")
 
             if pchan:
