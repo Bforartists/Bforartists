@@ -407,12 +407,9 @@ static Brush *brush_tool_toggle(Main *bmain, Brush *brush_orig, const int tool, 
 		
 		return br;
 	}
-	else if (brush_orig->toggle_brush &&
-	         BLI_findindex(bmain->brush.first, brush_orig->toggle_brush) != -1)
-	{
+	else if (brush_orig->toggle_brush) {
 		/* if current brush is using the desired tool, try to toggle
-		 * back to the previously selected brush (if it was set, and
-		 * if it still exists) */
+		 * back to the previously selected brush. */
 		return brush_orig->toggle_brush;
 	}
 	else
@@ -1487,7 +1484,7 @@ void ED_keymap_paint(wmKeyConfig *keyconf)
 	RNA_boolean_set(kmi->ptr, "deselect", true);
 
 	keymap = WM_keymap_find(keyconf, "UV Sculpt", 0, 0);
-	keymap->poll = uv_sculpt_keymap_poll;
+	keymap->poll = uv_sculpt_poll;
 
 	kmi = WM_keymap_add_item(keymap, "WM_OT_context_toggle", QKEY, KM_PRESS, 0, 0);
 	RNA_string_set(kmi->ptr, "data_path", "tool_settings.use_uv_sculpt");
