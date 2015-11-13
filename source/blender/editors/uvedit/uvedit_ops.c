@@ -4126,6 +4126,7 @@ static int uv_seams_from_islands_exec(bContext *C, wmOperator *op)
 		me->drawflag |= ME_DRAWSHARP;
 	}
 
+
 	BM_uv_vert_map_free(vmap);
 
 	DAG_id_tag_update(&me->id, 0);
