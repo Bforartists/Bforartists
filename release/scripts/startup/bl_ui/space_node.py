@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -187,7 +187,7 @@ class NODE_MT_view(Menu):
             layout.operator("node.backimage_move", text="Backdrop move")
             layout.operator("node.backimage_zoom", text="Backdrop zoom in").factor = 1.2
             layout.operator("node.backimage_zoom", text="Backdrop zoom out").factor = 0.83333
-            layout.operator("node.backimage_fit", text="Fit backdrop to available space")
+            layout.operator("node.backimage_fit", text="Fit Backdrop")
 
         layout.separator()
 
@@ -394,9 +394,9 @@ class NODE_PT_backdrop(Panel):
         col.label(text="Offset:")
         col.prop(snode, "backdrop_x", text="X")
         col.prop(snode, "backdrop_y", text="Y")
-        col.operator("node.backimage_move", text="Move")
+       # col.operator("node.backimage_move", text="Move") # bfa-disabled the two buttons in the properties sidebar
 
-        layout.operator("node.backimage_fit", text="Fit")
+       # layout.operator("node.backimage_fit", text="Fit") # bfa-disabled the two buttons in the properties sidebar
 
 
 class NODE_PT_quality(bpy.types.Panel):
