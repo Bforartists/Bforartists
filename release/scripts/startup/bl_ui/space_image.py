@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -250,20 +250,6 @@ class IMAGE_MT_uvs_showhide(Menu):
         layout.operator("uv.hide", text="Hide Selected").unselected = False
         layout.operator("uv.hide", text="Hide Unselected").unselected = True
 
-
-class IMAGE_MT_uvs_transform(Menu):
-    bl_label = "Transform"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("transform.translate")
-        layout.operator("transform.rotate")
-        layout.operator("transform.resize")
-
-        layout.separator()
-
-        layout.operator("transform.shear")
 
 
 class IMAGE_MT_uvs_snap(Menu):
