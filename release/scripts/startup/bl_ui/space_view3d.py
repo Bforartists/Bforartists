@@ -197,15 +197,6 @@ class VIEW3D_MT_transform_base(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("transform.translate", text="Grab/Move")
-        # TODO: sub-menu for grab per axis
-        layout.operator("transform.rotate", text="Rotate")
-        # TODO: sub-menu for rot per axis
-        layout.operator("transform.resize", text="Scale")
-        # TODO: sub-menu for scale per axis
-
-        layout.separator()
-
         layout.operator("transform.tosphere", text="To Sphere")
         layout.operator("transform.shear", text="Shear")
         layout.operator("transform.bend", text="Bend")
