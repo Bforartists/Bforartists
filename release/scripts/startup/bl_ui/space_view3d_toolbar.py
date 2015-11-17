@@ -76,10 +76,6 @@ class VIEW3D_PT_tools_object(View3DPanel, Panel):
         layout = self.layout
 
         col = layout.column(align=True)
-        col.operator("object.duplicate_move", text="Duplicate")
-        col.operator("object.duplicate_move_linked", text="Duplicate Linked")
-
-        col.operator("object.delete")
 
         obj = context.active_object
         if obj:
