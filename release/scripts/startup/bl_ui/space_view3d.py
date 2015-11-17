@@ -2041,7 +2041,6 @@ class VIEW3D_MT_edit_mesh(Menu):
         layout.separator()
 
         layout.operator("mesh.duplicate_move")
-        layout.menu("VIEW3D_MT_edit_mesh_extrude")
         layout.menu("VIEW3D_MT_edit_mesh_delete")
 
         layout.separator()
