@@ -2256,7 +2256,6 @@ class VIEW3D_MT_edit_mesh_edges(Menu):
 
         layout.separator()
 
-        layout.operator("transform.edge_slide")
         layout.operator("mesh.loop_multi_select", text="Edge Loops").ring = False
         layout.operator("mesh.loop_multi_select", text="Edge Rings").ring = True
         layout.operator("mesh.loop_to_region")
