@@ -308,7 +308,7 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
         col.label(text="Deform:")
         row = col.row(align=True)
         row.operator("transform.edge_slide", text="Slide Edge")
-        row.operator("transform.vert_slide", text="Vertex")
+        row.operator("transform.vert_slide", text="Silde Vertex")
         col.operator("mesh.noise")
         col.operator("mesh.vertices_smooth")
         col.operator("transform.vertex_random")
