@@ -146,16 +146,7 @@ class VIEW3D_MT_editor_menus(Menu):
 
         if mode_string == 'OBJECT':
             layout.menu("INFO_MT_add", text="Add")
-        #elif mode_string == 'EDIT_MESH': # bfa - add meshes in edit mode also exists in the tool shelf. Commented out this menu
-            #layout.menu("INFO_MT_mesh_add", text="Add")
-        #elif mode_string == 'EDIT_CURVE': # bfa - add text in edit mode also exists in the tool shelf. Commented out this menu
-        #    layout.menu("INFO_MT_curve_add", text="Add")
-        #elif mode_string == 'EDIT_SURFACE': # bfa - add text in edit mode also exists in the tool shelf. Commented out this menu
-            #layout.menu("INFO_MT_surface_add", text="Add")
-        #elif mode_string == 'EDIT_METABALL': # bfa - add metaball in edit mode also exists in the tool shelf. Commented out this menu
-            #layout.menu("INFO_MT_metaball_add", text="Add")
-        #elif mode_string == 'EDIT_ARMATURE': # bfa - add armature in edit mode also exists in the tool shelf. Commented out this menu
-            #layout.menu("INFO_MT_edit_armature_add", text="Add")
+
 
         if edit_object:
             layout.menu("VIEW3D_MT_edit_%s" % edit_object.type.lower())
@@ -168,9 +159,6 @@ class VIEW3D_MT_editor_menus(Menu):
                 layout.menu("VIEW3D_MT_hide_mask")
         else:
             layout.menu("VIEW3D_MT_object")
-
-
-# ********** Menu **********
 
 
 # ********** Utilities **********
@@ -946,37 +934,6 @@ class VIEW3D_MT_angle_control(Menu):
                 layout.prop(tex_slot, "use_random", text="Random")
 
 
-# ********** Add menu **********
-
-# XXX: INFO_MT_ names used to keep backwards compatibility (Addons etc that hook into the menu)
-
-
-#class INFO_MT_mesh_add(Menu): # bfa - menu double entries removed. This menu item also exists in the tool shelf.
-#    bl_idname = "INFO_MT_mesh_add"
-#    bl_label = "Mesh"
-
-#    def draw(self, context):
-#        from .space_view3d_toolbar import VIEW3D_PT_tools_add_object
-
-#        layout = self.layout
-
-#        layout.operator_context = 'INVOKE_REGION_WIN'
-
-#        VIEW3D_PT_tools_add_object.draw_add_mesh(layout)
-
-
-#class INFO_MT_curve_add(Menu):  # bfa - menu double entries removed. This menu item also exists in the tool shelf.
-#    bl_idname = "INFO_MT_curve_add"
-#    bl_label = "Curve"
-
-#    def draw(self, context):
-#        from .space_view3d_toolbar import VIEW3D_PT_tools_add_object
-#        layout = self.layout
-
-#        layout.operator_context = 'INVOKE_REGION_WIN'
-
-#        VIEW3D_PT_tools_add_object.draw_add_curve(layout)
-
 
 class INFO_MT_surface_add(Menu):
     bl_idname = "INFO_MT_surface_add"
@@ -1029,27 +986,6 @@ class INFO_MT_edit_armature_add(Menu):
         layout.operator("armature.bone_primitive_add", text="Single Bone", icon='BONE_DATA')
 
 
-#class INFO_MT_armature_add(Menu): # bfa - menu double entries removed. This menu item also exists in the tool shelf.
-#    bl_idname = "INFO_MT_armature_add"
-#    bl_label = "Armature"
-
-#    def draw(self, context):
-#        layout = self.layout
-
-#        layout.operator_context = 'EXEC_REGION_WIN'
-#        layout.operator("object.armature_add", text="Single Bone", icon='BONE_DATA')
-
-
-#class INFO_MT_lamp_add(Menu): # bfa - menu double entries removed. This menu item also exists in the tool shelf.
-#    bl_idname = "INFO_MT_lamp_add"
-#    bl_label = "Lamp"
-
-#    def draw(self, context):
-#        layout = self.layout
-
-#        layout.operator_context = 'INVOKE_REGION_WIN'
-#        layout.operator_enum("object.lamp_add", "type")
-
 
 class INFO_MT_add(Menu):
     bl_label = "Add"
@@ -1062,29 +998,14 @@ class INFO_MT_add(Menu):
         # Note: was EXEC_AREA, but this context does not have the 'rv3d', which prevents
         #       "align_view" to work on first call (see [#32719]).
         layout.operator_context = 'EXEC_REGION_WIN'
-
-        #layout.operator_menu_enum("object.mesh_add", "type", text="Mesh", icon='OUTLINER_OB_MESH')
         layout.menu("INFO_MT_mesh_add", icon='OUTLINER_OB_MESH')
-
-        #layout.operator_menu_enum("object.curve_add", "type", text="Curve", icon='OUTLINER_OB_CURVE')
         layout.menu("INFO_MT_curve_add", icon='OUTLINER_OB_CURVE')
-        #layout.operator_menu_enum("object.surface_add", "type", text="Surface", icon='OUTLINER_OB_SURFACE')
         layout.menu("INFO_MT_surface_add", icon='OUTLINER_OB_SURFACE')
         layout.menu("INFO_MT_metaball_add", text="Metaball", icon='OUTLINER_OB_META')
-        #layout.operator("object.text_add", text="Text", icon='OUTLINER_OB_FONT') # bfa - menu double entries removed. This menu item also exists in the tool shelf.
         layout.separator()
 
-        #layout.menu("INFO_MT_armature_add", icon='OUTLINER_OB_ARMATURE') # bfa - menu double entries removed. This menu item also exists in the tool shelf.
-        #layout.operator("object.add", text="Lattice", icon='OUTLINER_OB_LATTICE').type = 'LATTICE' # bfa - menu double entries removed. This menu item also exists in the tool shelf.
         layout.operator_menu_enum("object.empty_add", "type", text="Empty", icon='OUTLINER_OB_EMPTY')
         layout.separator()
-
-        #layout.operator("object.speaker_add", text="speaker", icon='outliner_ob_speaker') # bfa - menu double entries removed. This menu item also exists in the tool shelf.
-        #layout.separator()
-
-        #layout.operator("object.camera_add", text="Camera", icon='OUTLINER_OB_CAMERA') # bfa - menu double entries removed. This menu item also exists in the tool shelf.
-        #layout.menu("INFO_MT_lamp_add", icon='OUTLINER_OB_LAMP')
-        #layout.separator()
 
         layout.operator_menu_enum("object.effector_add", "type", text="Force Field", icon='OUTLINER_OB_EMPTY')
         layout.separator()
@@ -1143,10 +1064,6 @@ class VIEW3D_MT_object(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_object_quick_effects")
-
-        #layout.separator() 
-
-        #layout.menu("VIEW3D_MT_object_game") # bfa - disabled the game menu item
 
         layout.separator()
 
@@ -1394,7 +1311,6 @@ class VIEW3D_MT_object_group(Menu):
         layout = self.layout
 
         layout.operator("group.create")
-        # layout.operator_menu_enum("group.objects_remove", "group")  # BUGGY
         layout.operator("group.objects_remove")
         layout.operator("group.objects_remove_all")
 
