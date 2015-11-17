@@ -343,8 +343,6 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
         col.operator("mesh.bisect")
 
         col = layout.column(align=True)
-        col.label(text="Remove:")
-        col.menu("VIEW3D_MT_edit_mesh_delete")
         col.operator_menu_enum("mesh.merge", "type")
         col.operator("mesh.remove_doubles")
 
