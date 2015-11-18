@@ -311,6 +311,7 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
         row.operator("transform.vert_slide", text="Silde Vertex")
         col.operator("mesh.noise")
         col.operator("mesh.vertices_smooth")
+        col.operator("mesh.vertices_smooth_laplacian")
         col.operator("transform.vertex_random")
 
         col = layout.column(align=True)
