@@ -2196,7 +2196,6 @@ class VIEW3D_MT_edit_mesh_vertices(Menu):
 
         layout.operator("mesh.bevel").vertex_only = True
         layout.operator("mesh.convex_hull")
-        layout.operator("mesh.vertices_smooth")
         layout.operator("mesh.blend_from_shape")
         layout.operator("object.vertex_group_smooth")
         layout.operator("mesh.shape_propagate_to_all")
