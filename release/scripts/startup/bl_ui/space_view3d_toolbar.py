@@ -493,7 +493,6 @@ class VIEW3D_PT_tools_curveedit(View3DPanel, Panel):
 
         col = layout.column(align=True)
         col.label(text="Curve:")
-        col.operator("curve.duplicate_move", text="Duplicate")
         col.operator("curve.delete")
         col.operator("curve.cyclic_toggle")
         col.operator("curve.switch_direction")
