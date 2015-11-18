@@ -2253,11 +2253,6 @@ class VIEW3D_MT_edit_mesh_edges(Menu):
         layout.operator("mesh.edge_split")
         layout.operator("mesh.bridge_edge_loops")
 
-        layout.separator()
-
-        layout.operator("mesh.loop_to_region")
-        layout.operator("mesh.region_to_loop")
-
 
 class VIEW3D_MT_edit_mesh_faces(Menu):
     bl_label = "Faces"
