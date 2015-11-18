@@ -2216,7 +2216,6 @@ class VIEW3D_MT_edit_mesh_edges(Menu):
 
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        layout.operator("mesh.edge_face_add")
         layout.operator("mesh.subdivide")
         layout.operator("mesh.unsubdivide")
 
