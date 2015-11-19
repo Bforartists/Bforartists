@@ -1696,47 +1696,6 @@ class VIEW3D_MT_particle(Menu):
         layout.menu("VIEW3D_MT_particle_showhide")
 
 
-class VIEW3D_MT_particle_specials(Menu):
-    bl_label = "Specials"
-
-    def draw(self, context):
-        layout = self.layout
-
-        particle_edit = context.tool_settings.particle_edit
-
-        layout.operator("particle.rekey")
-        layout.operator("particle.delete")
-        layout.operator("particle.remove_doubles")
-
-        if particle_edit.select_mode == 'POINT':
-            layout.operator("particle.subdivide")
-
-        layout.operator("particle.weight_set")
-        layout.separator()
-
-        layout.operator("particle.mirror")
-
-        if particle_edit.select_mode == 'POINT':
-            layout.separator()
-            layout.operator("particle.select_roots")
-            layout.operator("particle.select_tips")
-
-            layout.separator()
-
-            layout.operator("particle.select_random")
-
-            layout.separator()
-
-            layout.operator("particle.select_more")
-            layout.operator("particle.select_less")
-
-            layout.separator()
-
-            layout.operator("particle.select_all").action = 'TOGGLE'
-            layout.operator("particle.select_linked")
-            layout.operator("particle.select_all", text="Inverse").action = 'INVERT'
-
-
 class VIEW3D_MT_particle_showhide(ShowHideMenu, Menu):
     _operator_name = "particle"
 
