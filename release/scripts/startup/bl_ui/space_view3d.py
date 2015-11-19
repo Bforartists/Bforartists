@@ -2585,27 +2585,6 @@ class VIEW3D_MT_edit_armature(Menu):
         layout.menu("VIEW3D_MT_bone_options_toggle", text="Bone Settings")
 
 
-class VIEW3D_MT_armature_specials(Menu):
-    bl_label = "Specials"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator_context = 'INVOKE_REGION_WIN'
-
-        layout.operator("armature.subdivide", text="Subdivide")
-        layout.operator("armature.switch_direction", text="Switch Direction")
-
-        layout.separator()
-
-        layout.operator_context = 'EXEC_REGION_WIN'
-        layout.operator("armature.autoside_names", text="AutoName Left/Right").type = 'XAXIS'
-        layout.operator("armature.autoside_names", text="AutoName Front/Back").type = 'YAXIS'
-        layout.operator("armature.autoside_names", text="AutoName Top/Bottom").type = 'ZAXIS'
-        layout.operator("armature.flip_names", text="Flip Names")
-        layout.operator("armature.symmetrize")
-
-
 class VIEW3D_MT_edit_armature_parent(Menu):
     bl_label = "Parent"
 
