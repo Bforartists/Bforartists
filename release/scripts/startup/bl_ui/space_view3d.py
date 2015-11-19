@@ -2350,6 +2350,13 @@ def draw_curve(self, context):
 
     layout.separator()
 
+    layout.operator("curve.smooth_tilt")
+    layout.operator("curve.smooth_radius")
+    layout.operator("curve.smooth_weight")
+    layout.operator("curve.spline_weight_set")
+    
+    layout.separator()
+
     layout.menu("VIEW3D_MT_edit_curve_ctrlpoints")
 
     layout.separator()
@@ -2383,22 +2390,6 @@ class VIEW3D_MT_edit_curve_ctrlpoints(Menu):
             layout.separator()
 
         layout.menu("VIEW3D_MT_hook")
-
-
-class VIEW3D_MT_edit_curve_specials(Menu):
-    bl_label = "Specials"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("curve.subdivide")
-        layout.operator("curve.switch_direction")
-        layout.operator("curve.spline_weight_set")
-        layout.operator("curve.radius_set")
-        layout.operator("curve.smooth")
-        layout.operator("curve.smooth_weight")
-        layout.operator("curve.smooth_radius")
-        layout.operator("curve.smooth_tilt")
 
 
 class VIEW3D_MT_edit_curve_showhide(ShowHideMenu, Menu):
