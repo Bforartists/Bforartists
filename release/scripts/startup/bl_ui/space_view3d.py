@@ -395,6 +395,14 @@ class VIEW3D_MT_view(Menu):
 
         layout.operator_context = 'INVOKE_REGION_WIN'
 
+        # restrict render and clear restrict render. I would love to simply disable it, 
+        # means grey out when there are no objects selected. But that's ways too much hassle. 
+        # So for now we simply hide the two menu items when there is no object selected.
+
+        if context.object :
+            props = layout.operator("object.isolate_type_render")
+            props = layout.operator("object.hide_render_clear_all")
+
         layout.operator("view3d.clip_border", text="Clipping Border...")
         layout.operator("view3d.zoom_border", text="Zoom Border...")
         layout.operator("view3d.render_border", text="Render Border...").camera_only = False
@@ -1017,6 +1025,7 @@ class INFO_MT_add(Menu):
             layout.operator_menu_enum("object.group_instance_add", "group", text="Group Instance", icon='OUTLINER_OB_EMPTY')
 
 
+
 # ********** Object menu **********
 
 
@@ -1026,10 +1035,153 @@ class VIEW3D_MT_object(Menu):
 
     def draw(self, context):
         layout = self.layout
+        scene = context.scene
+        obj = context.object
 
         layout.operator("ed.undo")
         layout.operator("ed.redo")
         layout.operator("ed.undo_history")
+
+        # The former Specials menu content. Special settings for Camera, Curve, Font, Empty and Lamp
+        if context.object :
+
+            if obj.type == 'CAMERA':
+                layout.operator_context = 'INVOKE_REGION_WIN'
+                layout.separator()
+
+                if obj.data.type == 'PERSP':
+                    props = layout.operator("wm.context_modal_mouse", text="Camera Lens Angle")
+                    props.data_path_iter = "selected_editable_objects"
+                    props.data_path_item = "data.lens"
+                    props.input_scale = 0.1
+                    if obj.data.lens_unit == 'MILLIMETERS':
+                        props.header_text = "Camera Lens Angle: %.1fmm"
+                    else:
+                        props.header_text = "Camera Lens Angle: %.1f\u00B0"
+
+                else:
+                    props = layout.operator("wm.context_modal_mouse", text="Camera Lens Scale")
+                    props.data_path_iter = "selected_editable_objects"
+                    props.data_path_item = "data.ortho_scale"
+                    props.input_scale = 0.01
+                    props.header_text = "Camera Lens Scale: %.3f"
+
+                if not obj.data.dof_object:
+                    view = context.space_data
+                    if view and view.camera == obj and view.region_3d.view_perspective == 'CAMERA':
+                        props = layout.operator("ui.eyedropper_depth", text="DOF Distance (Pick)")
+                    else:
+                        props = layout.operator("wm.context_modal_mouse", text="DOF Distance")
+                        props.data_path_iter = "selected_editable_objects"
+                        props.data_path_item = "data.dof_distance"
+                        props.input_scale = 0.02
+                        props.header_text = "DOF Distance: %.3f"
+                    del view
+
+            if obj.type in {'CURVE', 'FONT'}:
+                layout.operator_context = 'INVOKE_REGION_WIN'
+                layout.separator()
+
+                props = layout.operator("wm.context_modal_mouse", text="Extrude Size")
+                props.data_path_iter = "selected_editable_objects"
+                props.data_path_item = "data.extrude"
+                props.input_scale = 0.01
+                props.header_text = "Extrude Size: %.3f"
+
+                props = layout.operator("wm.context_modal_mouse", text="Width Size")
+                props.data_path_iter = "selected_editable_objects"
+                props.data_path_item = "data.offset"
+                props.input_scale = 0.01
+                props.header_text = "Width Size: %.3f"
+
+            if obj.type == 'EMPTY':
+                layout.operator_context = 'INVOKE_REGION_WIN'
+                layout.separator()
+
+                props = layout.operator("wm.context_modal_mouse", text="Empty Draw Size")
+                props.data_path_iter = "selected_editable_objects"
+                props.data_path_item = "empty_draw_size"
+                props.input_scale = 0.01
+                props.header_text = "Empty Draw Size: %.3f"
+
+            if obj.type == 'LAMP':
+                lamp = obj.data
+
+                layout.operator_context = 'INVOKE_REGION_WIN'
+                layout.separator()
+
+                if scene.render.use_shading_nodes:
+                    try:
+                        value = lamp.node_tree.nodes["Emission"].inputs["Strength"].default_value
+                    except AttributeError:
+                        value = None
+
+                    if value is not None:
+                        props = layout.operator("wm.context_modal_mouse", text="Strength")
+                        props.data_path_iter = "selected_editable_objects"
+                        props.data_path_item = "data.node_tree.nodes[\"Emission\"].inputs[\"Strength\"].default_value"
+                        props.header_text = "Lamp Strength: %.3f"
+                        props.input_scale = 0.1
+                    del value
+
+                    if lamp.type == 'AREA':
+                        props = layout.operator("wm.context_modal_mouse", text="Size X")
+                        props.data_path_iter = "selected_editable_objects"
+                        props.data_path_item = "data.size"
+                        props.header_text = "Lamp Size X: %.3f"
+
+                        if lamp.shape == 'RECTANGLE':
+                            props = layout.operator("wm.context_modal_mouse", text="Size Y")
+                            props.data_path_iter = "selected_editable_objects"
+                            props.data_path_item = "data.size_y"
+                            props.header_text = "Lamp Size Y: %.3f"
+
+                    elif lamp.type in {'SPOT', 'POINT', 'SUN'}:
+                        props = layout.operator("wm.context_modal_mouse", text="Size")
+                        props.data_path_iter = "selected_editable_objects"
+                        props.data_path_item = "data.shadow_soft_size"
+                        props.header_text = "Lamp Size: %.3f"
+                else:
+                    props = layout.operator("wm.context_modal_mouse", text="Energy")
+                    props.data_path_iter = "selected_editable_objects"
+                    props.data_path_item = "data.energy"
+                    props.header_text = "Lamp Energy: %.3f"
+
+                    if lamp.type in {'SPOT', 'AREA', 'POINT'}:
+                        props = layout.operator("wm.context_modal_mouse", text="Falloff Distance")
+                        props.data_path_iter = "selected_editable_objects"
+                        props.data_path_item = "data.distance"
+                        props.input_scale = 0.1
+                        props.header_text = "Lamp Falloff Distance: %.1f"
+
+                if lamp.type == 'SPOT':
+                    layout.separator()
+                    props = layout.operator("wm.context_modal_mouse", text="Spot Size")
+                    props.data_path_iter = "selected_editable_objects"
+                    props.data_path_item = "data.spot_size"
+                    props.input_scale = 0.01
+                    props.header_text = "Spot Size: %.2f"
+
+                    props = layout.operator("wm.context_modal_mouse", text="Spot Blend")
+                    props.data_path_iter = "selected_editable_objects"
+                    props.data_path_item = "data.spot_blend"
+                    props.input_scale = -0.01
+                    props.header_text = "Spot Blend: %.2f"
+
+                    if not scene.render.use_shading_nodes:
+                        props = layout.operator("wm.context_modal_mouse", text="Clip Start")
+                        props.data_path_iter = "selected_editable_objects"
+                        props.data_path_item = "data.shadow_buffer_clip_start"
+                        props.input_scale = 0.05
+                        props.header_text = "Clip Start: %.2f"
+
+                        props = layout.operator("wm.context_modal_mouse", text="Clip End")
+                        props.data_path_iter = "selected_editable_objects"
+                        props.data_path_item = "data.shadow_buffer_clip_end"
+                        props.input_scale = 0.05
+                        props.header_text = "Clip End: %.2f"
+
+        # End former Specials menu content.
 
         layout.separator()
 
@@ -1040,7 +1192,7 @@ class VIEW3D_MT_object(Menu):
         layout.menu("VIEW3D_MT_snap")
 
         layout.separator()
-
+        
         layout.menu("VIEW3D_MT_object_animation")
 
         layout.separator()
@@ -1105,158 +1257,6 @@ class VIEW3D_MT_object_clear(Menu):
         layout.operator("object.rotation_clear", text="Rotation")
         layout.operator("object.scale_clear", text="Scale")
         layout.operator("object.origin_clear", text="Origin")
-
-
-class VIEW3D_MT_object_specials(Menu):
-    bl_label = "Specials"
-
-    @classmethod
-    def poll(cls, context):
-        # add more special types
-        return context.object
-
-    def draw(self, context):
-        layout = self.layout
-
-        scene = context.scene
-        obj = context.object
-
-        if obj.type == 'CAMERA':
-            layout.operator_context = 'INVOKE_REGION_WIN'
-
-            if obj.data.type == 'PERSP':
-                props = layout.operator("wm.context_modal_mouse", text="Camera Lens Angle")
-                props.data_path_iter = "selected_editable_objects"
-                props.data_path_item = "data.lens"
-                props.input_scale = 0.1
-                if obj.data.lens_unit == 'MILLIMETERS':
-                    props.header_text = "Camera Lens Angle: %.1fmm"
-                else:
-                    props.header_text = "Camera Lens Angle: %.1f\u00B0"
-
-            else:
-                props = layout.operator("wm.context_modal_mouse", text="Camera Lens Scale")
-                props.data_path_iter = "selected_editable_objects"
-                props.data_path_item = "data.ortho_scale"
-                props.input_scale = 0.01
-                props.header_text = "Camera Lens Scale: %.3f"
-
-            if not obj.data.dof_object:
-                view = context.space_data
-                if view and view.camera == obj and view.region_3d.view_perspective == 'CAMERA':
-                    props = layout.operator("ui.eyedropper_depth", text="DOF Distance (Pick)")
-                else:
-                    props = layout.operator("wm.context_modal_mouse", text="DOF Distance")
-                    props.data_path_iter = "selected_editable_objects"
-                    props.data_path_item = "data.dof_distance"
-                    props.input_scale = 0.02
-                    props.header_text = "DOF Distance: %.3f"
-                del view
-
-        if obj.type in {'CURVE', 'FONT'}:
-            layout.operator_context = 'INVOKE_REGION_WIN'
-
-            props = layout.operator("wm.context_modal_mouse", text="Extrude Size")
-            props.data_path_iter = "selected_editable_objects"
-            props.data_path_item = "data.extrude"
-            props.input_scale = 0.01
-            props.header_text = "Extrude Size: %.3f"
-
-            props = layout.operator("wm.context_modal_mouse", text="Width Size")
-            props.data_path_iter = "selected_editable_objects"
-            props.data_path_item = "data.offset"
-            props.input_scale = 0.01
-            props.header_text = "Width Size: %.3f"
-
-        if obj.type == 'EMPTY':
-            layout.operator_context = 'INVOKE_REGION_WIN'
-
-            props = layout.operator("wm.context_modal_mouse", text="Empty Draw Size")
-            props.data_path_iter = "selected_editable_objects"
-            props.data_path_item = "empty_draw_size"
-            props.input_scale = 0.01
-            props.header_text = "Empty Draw Size: %.3f"
-
-        if obj.type == 'LAMP':
-            lamp = obj.data
-
-            layout.operator_context = 'INVOKE_REGION_WIN'
-
-            if scene.render.use_shading_nodes:
-                try:
-                    value = lamp.node_tree.nodes["Emission"].inputs["Strength"].default_value
-                except AttributeError:
-                    value = None
-
-                if value is not None:
-                    props = layout.operator("wm.context_modal_mouse", text="Strength")
-                    props.data_path_iter = "selected_editable_objects"
-                    props.data_path_item = "data.node_tree.nodes[\"Emission\"].inputs[\"Strength\"].default_value"
-                    props.header_text = "Lamp Strength: %.3f"
-                    props.input_scale = 0.1
-                del value
-
-                if lamp.type == 'AREA':
-                    props = layout.operator("wm.context_modal_mouse", text="Size X")
-                    props.data_path_iter = "selected_editable_objects"
-                    props.data_path_item = "data.size"
-                    props.header_text = "Lamp Size X: %.3f"
-
-                    if lamp.shape == 'RECTANGLE':
-                        props = layout.operator("wm.context_modal_mouse", text="Size Y")
-                        props.data_path_iter = "selected_editable_objects"
-                        props.data_path_item = "data.size_y"
-                        props.header_text = "Lamp Size Y: %.3f"
-
-                elif lamp.type in {'SPOT', 'POINT', 'SUN'}:
-                    props = layout.operator("wm.context_modal_mouse", text="Size")
-                    props.data_path_iter = "selected_editable_objects"
-                    props.data_path_item = "data.shadow_soft_size"
-                    props.header_text = "Lamp Size: %.3f"
-            else:
-                props = layout.operator("wm.context_modal_mouse", text="Energy")
-                props.data_path_iter = "selected_editable_objects"
-                props.data_path_item = "data.energy"
-                props.header_text = "Lamp Energy: %.3f"
-
-                if lamp.type in {'SPOT', 'AREA', 'POINT'}:
-                    props = layout.operator("wm.context_modal_mouse", text="Falloff Distance")
-                    props.data_path_iter = "selected_editable_objects"
-                    props.data_path_item = "data.distance"
-                    props.input_scale = 0.1
-                    props.header_text = "Lamp Falloff Distance: %.1f"
-
-            if lamp.type == 'SPOT':
-                layout.separator()
-                props = layout.operator("wm.context_modal_mouse", text="Spot Size")
-                props.data_path_iter = "selected_editable_objects"
-                props.data_path_item = "data.spot_size"
-                props.input_scale = 0.01
-                props.header_text = "Spot Size: %.2f"
-
-                props = layout.operator("wm.context_modal_mouse", text="Spot Blend")
-                props.data_path_iter = "selected_editable_objects"
-                props.data_path_item = "data.spot_blend"
-                props.input_scale = -0.01
-                props.header_text = "Spot Blend: %.2f"
-
-                if not scene.render.use_shading_nodes:
-                    props = layout.operator("wm.context_modal_mouse", text="Clip Start")
-                    props.data_path_iter = "selected_editable_objects"
-                    props.data_path_item = "data.shadow_buffer_clip_start"
-                    props.input_scale = 0.05
-                    props.header_text = "Clip Start: %.2f"
-
-                    props = layout.operator("wm.context_modal_mouse", text="Clip End")
-                    props.data_path_iter = "selected_editable_objects"
-                    props.data_path_item = "data.shadow_buffer_clip_end"
-                    props.input_scale = 0.05
-                    props.header_text = "Clip End: %.2f"
-
-        layout.separator()
-
-        props = layout.operator("object.isolate_type_render")
-        props = layout.operator("object.hide_render_clear_all")
 
 
 class VIEW3D_MT_object_apply(Menu):
