@@ -292,6 +292,10 @@ class INFO_MT_window(Menu):
         layout.menu("WM_OT_redraw_timer", icon='BLENDER') #Redraw timer sub menu - Debug stuff
         layout.operator("wm.debug_menu") # debug menu
 
+        layout.separator()
+
+        layout.operator("wm.search_menu") # The search menu. Note that this just calls the pure search menu, and not the whole search menu addon.
+
 
 class INFO_MT_help(Menu):
     bl_label = "Help"
