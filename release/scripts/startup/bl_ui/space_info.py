@@ -290,6 +290,8 @@ class INFO_MT_window(Menu):
         layout.separator()
 
         layout.menu("WM_OT_redraw_timer", icon='BLENDER') #Redraw timer sub menu - Debug stuff
+        layout.operator("wm.debug_menu") # debug menu
+
 
 class INFO_MT_help(Menu):
     bl_label = "Help"
