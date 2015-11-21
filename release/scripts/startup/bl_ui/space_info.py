@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -287,6 +287,10 @@ class INFO_MT_window(Menu):
             layout.separator()
             layout.operator("wm.set_stereo_3d", icon='CAMERA_STEREO')
 
+        layout.separator()
+
+        layout.menu("WM_OT_redraw_timer", icon='BLENDER') #Redraw timer sub menu - Debug stuff
+
 class INFO_MT_help(Menu):
     bl_label = "Help"
 
@@ -308,6 +312,22 @@ class INFO_MT_help(Menu):
         layout.separator()
 
         layout.operator("wm.splash", icon='BLENDER')
+
+#Redraw timer sub menu - Debug stuff
+class WM_OT_redraw_timer(Menu):
+    bl_label = "Redraw Timer"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("wm.redraw_timer", text = 'Draw Region').type ='DRAW'
+        layout.operator("wm.redraw_timer", text = 'Draw Region + Swap').type ='DRAW_SWAP'
+        layout.operator("wm.redraw_timer", text = 'Draw Window').type ='DRAW_WIN'
+        layout.operator("wm.redraw_timer", text = 'Draw Window + Swap').type ='DRAW_WIN_SWAP'
+        layout.operator("wm.redraw_timer", text = 'Anim Step').type ='ANIM_STEP'
+        layout.operator("wm.redraw_timer", text = 'Anim Play').type ='ANIM_PLAY'
+        layout.operator("wm.redraw_timer", text = 'Undo/Redo').type ='UNDO'
+
 
 if __name__ == "__main__":  # only for live edit.
     bpy.utils.register_module(__name__)
