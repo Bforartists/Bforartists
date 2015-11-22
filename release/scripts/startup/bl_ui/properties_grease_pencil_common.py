@@ -151,6 +151,10 @@ class GreasePencilStrokeEditPanel:
         subcol.operator("transform.rotate").gpencil_strokes = True      # icon='MAN_ROT'
         subcol.operator("transform.resize", text="Scale").gpencil_strokes = True      # icon='MAN_SCALE'
 
+        myvar = subcol.operator("transform.transform", text="Shrinkfatten") # scale the pencil stroke thickness. Needs two parameters ...
+        myvar.gpencil_strokes = True
+        myvar.mode = 'GPENCIL_SHRINKFATTEN'
+
         col.separator()
 
         subcol = col.column(align=True)
