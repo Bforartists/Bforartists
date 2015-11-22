@@ -139,6 +139,7 @@ class GreasePencilStrokeEditPanel:
         subcol = col.column(align=True)
         subcol.active = edit_ok
         subcol.operator("gpencil.delete", text="Delete")
+        subcol.operator("gpencil.dissolve", text="Dissolve")
         subcol.operator("gpencil.duplicate_move", text="Duplicate")
         subcol.operator("transform.mirror", text="Mirror").gpencil_strokes = True
 
