@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -116,6 +116,7 @@ class GreasePencilStrokeEditPanel:
         subcol = col.column(align=True)
         subcol.active = edit_ok
         subcol.operator("gpencil.select_all", text="Select All")
+        subcol.operator("gpencil.select_all", text="Inverse").action = 'INVERT'
         subcol.operator("gpencil.select_border")
         subcol.operator("gpencil.select_circle")
 
