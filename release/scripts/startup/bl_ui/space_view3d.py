@@ -1244,6 +1244,7 @@ class VIEW3D_MT_object(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_object_quick_effects")
+        layout.menu("VIEW3D_subdivision_set")
 
         layout.separator()
 
@@ -1316,6 +1317,7 @@ class VIEW3D_MT_object_parent(Menu):
     def draw(self, context):
         layout = self.layout
 
+        ###layout.operator_enum("object.subdivision_set", "level")
         layout.operator_enum("object.parent_set", "type")
         layout.separator()
         layout.operator_enum("object.parent_clear", "type")
@@ -1370,6 +1372,20 @@ class VIEW3D_MT_object_quick_effects(Menu):
         layout.operator("object.quick_explode")
         layout.operator("object.quick_smoke")
         layout.operator("object.quick_fluid")
+
+
+class VIEW3D_subdivision_set(Menu):
+    bl_label = "Subdivide"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("object.subdivision_set").level = 0
+        layout.operator("object.subdivision_set").level = 1
+        layout.operator("object.subdivision_set").level = 2
+        layout.operator("object.subdivision_set").level = 3
+        layout.operator("object.subdivision_set").level = 4
+        layout.operator("object.subdivision_set").level = 5
 
 
 class VIEW3D_MT_object_showhide(Menu):
