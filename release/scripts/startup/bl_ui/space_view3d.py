@@ -561,6 +561,22 @@ class VIEW3D_MT_select_object(Menu):
         layout.operator_menu_enum("object.select_linked", "type", text="Linked")
         layout.operator("object.select_pattern", text="Select Pattern...")
 
+        layout.separator()
+
+        myvar = layout.operator("object.select_hierarchy", text="Parent")
+        myvar.direction = 'PARENT'
+        myvar.extend = False
+        myvar = layout.operator("object.select_hierarchy", text="Child")
+        myvar.direction = 'CHILD'
+        myvar.extend = False
+
+        myvar = layout.operator("object.select_hierarchy", text="Parent Extended")
+        myvar.direction = 'PARENT'
+        myvar.extend = True
+        myvar = layout.operator("object.select_hierarchy", text="Child Extended")
+        myvar.direction = 'CHILD'
+        myvar.extend = True
+
 
 class VIEW3D_MT_select_pose(Menu):
     bl_label = "Select"
