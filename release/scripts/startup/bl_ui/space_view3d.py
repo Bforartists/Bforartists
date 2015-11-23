@@ -1226,6 +1226,7 @@ class VIEW3D_MT_object(Menu):
         layout.operator("view3d.pastebuffer", text = "Paste")
         layout.operator("object.duplicate_move")
         layout.operator("object.duplicate_move_linked")
+        layout.operator("object.delete", text="Delete Global").use_global = True
         layout.operator("object.delete", text="Delete...").use_global = False
         layout.operator("object.proxy_make", text="Make Proxy...")
         layout.menu("VIEW3D_MT_make_links", text="Make Links...")
