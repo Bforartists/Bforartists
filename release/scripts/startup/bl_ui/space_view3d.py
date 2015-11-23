@@ -414,6 +414,10 @@ class VIEW3D_MT_view(Menu):
 
         layout.separator()
 
+        
+        myvar= layout.operator("transform.create_orientation", text="Create Orientation")
+        myvar.use_view = True
+        myvar.use = True
         layout.operator("view3d.localview", text="View Global/Local")
         layout.operator("view3d.view_selected").use_all_regions = False
         layout.operator("view3d.view_all").center = False
