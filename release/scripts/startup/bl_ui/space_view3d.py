@@ -2347,6 +2347,7 @@ def draw_curve(self, context):
     layout.operator("curve.smooth_radius")
     layout.operator("curve.smooth_weight")
     layout.operator("curve.spline_weight_set")
+    layout.operator("object.vertex_parent_set")
     
     layout.separator()
 
