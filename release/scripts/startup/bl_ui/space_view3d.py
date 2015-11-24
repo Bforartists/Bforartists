@@ -2270,7 +2270,7 @@ class VIEW3D_MT_edit_mesh_clean(Menu):
         layout.operator("mesh.vert_connect_concave")
         layout.operator("mesh.fill_holes")
 
-
+# Delete menu quiz
 class VIEW3D_MT_edit_mesh_delete(Menu):
     bl_label = "Delete"
 
@@ -2288,6 +2288,7 @@ class VIEW3D_MT_edit_mesh_delete(Menu):
         layout.separator()
 
         layout.operator("mesh.dissolve_limited")
+        layout.operator("mesh.dissolve_mode")
 
         layout.separator()
 
