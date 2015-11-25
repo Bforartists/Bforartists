@@ -2515,6 +2515,7 @@ class VIEW3D_MT_edit_lattice(Menu):
         layout.separator()
 
         layout.operator("lattice.make_regular")
+        layout.operator("object.vertex_parent_set")
 
         layout.separator()
 
