@@ -856,6 +856,11 @@ class VIEW3D_MT_select_edit_lattice(Menu):
 
         layout.operator("lattice.select_ungrouped", text="Ungrouped Verts")
 
+        layout.separator()
+
+        layout.operator("lattice.select_more")
+        layout.operator("lattice.select_less")
+
 
 class VIEW3D_MT_select_edit_armature(Menu):
     bl_label = "Select"
