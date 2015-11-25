@@ -2534,6 +2534,7 @@ class VIEW3D_MT_edit_armature(Menu):
         layout.separator()
 
         layout.operator("armature.extrude_move")
+        layout.operator("armature.extrude_forked")
 
         if arm.use_mirror_x:
             layout.operator("armature.extrude_forked")
