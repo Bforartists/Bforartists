@@ -896,6 +896,47 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
         elif context.sculpt_object and brush:
             capabilities = brush.sculpt_capabilities
 
+            # Radial Control buttons
+            col = layout.column()
+            col.label(text="Radial Control:")
+            row = col.row(align=True)
+
+            #Size button
+            myvar = row.operator("wm.radial_control", text = "Size")
+            myvar.color_path = 'tool_settings.sculpt.brush.cursor_color_add'
+            myvar.data_path_primary = 'tool_settings.sculpt.brush.size'
+            myvar.fill_color_path = ''
+            myvar.data_path_secondary = 'tool_settings.unified_paint_settings.size'
+            myvar.zoom_path = ''
+            myvar.use_secondary = 'tool_settings.unified_paint_settings.use_unified_size'
+            myvar.image_id = 'tool_settings.sculpt.brush'
+            myvar.rotation_path = 'tool_settings.sculpt.brush.texture_slot.angle'
+            myvar.secondary_tex = False
+
+            #Strength button
+            myvar = row.operator("wm.radial_control", text = "Strength")
+            myvar.color_path = 'tool_settings.sculpt.brush.cursor_color_add'
+            myvar.data_path_primary = 'tool_settings.sculpt.brush.strength'
+            myvar.fill_color_path = ''
+            myvar.data_path_secondary = 'tool_settings.unified_paint_settings.strength'
+            myvar.zoom_path = ''
+            myvar.use_secondary = 'tool_settings.unified_paint_settings.use_unified_strength'
+            myvar.image_id = 'tool_settings.sculpt.brush'
+            myvar.rotation_path = 'tool_settings.sculpt.brush.texture_slot.angle'
+            myvar.secondary_tex = False
+
+            #Angle texture
+            myvar = row.operator("wm.radial_control", text = "Angle")
+            myvar.color_path = 'tool_settings.sculpt.brush.cursor_color_add'
+            myvar.data_path_primary = 'tool_settings.sculpt.brush.texture_slot.angle'
+            myvar.fill_color_path = ''
+            myvar.data_path_secondary = ''
+            myvar.zoom_path = ''
+            myvar.use_secondary = ''
+            myvar.image_id = 'tool_settings.sculpt.brush'
+            myvar.rotation_path = 'tool_settings.sculpt.brush.texture_slot.angle'
+            myvar.secondary_tex = False
+
             col = layout.column()
 
             col.separator()
