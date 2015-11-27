@@ -1460,9 +1460,12 @@ class VIEW3D_PT_sculpt_dyntopo(Panel, View3DPaintPanel):
         else:
             layout.operator("sculpt.dynamic_topology_toggle", icon='SCULPT_DYNTOPO', text="Enable Dyntopo")
 
+        layout.operator("sculpt.set_detail_size", text="Set detail size")
+
         col = layout.column()
         col.active = context.sculpt_object.use_dynamic_topology_sculpting
         sub = col.column(align=True)
+        
         sub.active = (brush and brush.sculpt_tool != 'MASK')
         if (sculpt.detail_type_method == 'CONSTANT'):
             row = sub.row(align=True)
@@ -1474,7 +1477,10 @@ class VIEW3D_PT_sculpt_dyntopo(Panel, View3DPaintPanel):
             sub.prop(sculpt, "detail_size")
         sub.prop(sculpt, "detail_refine_method", text="")
         sub.prop(sculpt, "detail_type_method", text="")
+        
+
         col.separator()
+
         col.prop(sculpt, "use_smooth_shading")
         col.operator("sculpt.optimize")
         if (sculpt.detail_type_method == 'CONSTANT'):
