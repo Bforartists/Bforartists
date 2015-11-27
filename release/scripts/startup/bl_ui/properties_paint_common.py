@@ -141,6 +141,58 @@ def brush_texpaint_common(panel, context, layout, brush, settings, projpaint=Fal
                     row.operator("paint.brush_colors_flip", icon='FILE_REFRESH', text="")
                     row.operator("paint.sample_color", icon='EYEDROPPER', text="")
 
+                    col = layout.column()
+                    col.label(text="Radial Control:")
+                    row = col.row(align=True)
+
+                    #Size button
+                    myvar = row.operator("wm.radial_control", text = "Size")
+                    myvar.color_path = 'tool_settings.image_paint.brush.cursor_color_add'
+                    myvar.data_path_primary = 'tool_settings.image_paint.brush.size'
+                    myvar.fill_color_path = 'tool_settings.image_paint.brush.color'
+                    myvar.data_path_secondary = 'tool_settings.unified_paint_settings.size'
+                    myvar.zoom_path = 'space_data.zoom'
+                    myvar.use_secondary = 'tool_settings.unified_paint_settings.use_unified_size'
+                    myvar.image_id = 'tool_settings.image_paint.brush'
+                    myvar.rotation_path = 'tool_settings.image_paint.brush.mask_texture_slot.angle'
+                    myvar.secondary_tex = True
+
+                    #Strength button
+                    myvar = row.operator("wm.radial_control", text = "Strength")
+                    myvar.color_path = 'tool_settings.image_paint.brush.cursor_color_add'
+                    myvar.data_path_primary = 'tool_settings.image_paint.brush.strength'
+                    myvar.fill_color_path = 'tool_settings.image_paint.brush.color'
+                    myvar.data_path_secondary = 'tool_settings.unified_paint_settings.strength'
+                    myvar.zoom_path = ''
+                    myvar.use_secondary = 'tool_settings.unified_paint_settings.use_unified_strength'
+                    myvar.image_id = 'tool_settings.image_paint.brush'
+                    myvar.rotation_path = 'tool_settings.image_paint.brush.mask_texture_slot.angle'
+                    myvar.secondary_tex = True
+
+                    #Angle Primary texture
+                    myvar = row.operator("wm.radial_control", text = "Angle Prim")
+                    myvar.color_path = 'tool_settings.image_paint.brush.cursor_color_add'
+                    myvar.data_path_primary = 'tool_settings.image_paint.brush.texture_slot.angle'
+                    myvar.fill_color_path = 'tool_settings.image_paint.brush.color'
+                    myvar.data_path_secondary = ''
+                    myvar.zoom_path = ''
+                    myvar.use_secondary = ''
+                    myvar.image_id = 'tool_settings.image_paint.brush'
+                    myvar.rotation_path = 'tool_settings.image_paint.brush.texture_slot.angle'
+                    myvar.secondary_tex = False
+
+                    #Angle Secondary texture
+                    myvar = row.operator("wm.radial_control", text = "Angle Sec")
+                    myvar.color_path = 'tool_settings.image_paint.brush.cursor_color_add'
+                    myvar.data_path_primary = 'tool_settings.image_paint.brush.mask_texture_slot.angle'
+                    myvar.fill_color_path = 'tool_settings.image_paint.brush.color'
+                    myvar.data_path_secondary = ''
+                    myvar.zoom_path = ''
+                    myvar.use_secondary = ''
+                    myvar.image_id = 'tool_settings.image_paint.brush'
+                    myvar.rotation_path = 'tool_settings.image_paint.brush.mask_texture_slot.angle'
+                    myvar.secondary_tex = True
+
     elif brush.image_tool == 'SOFTEN':
         col = layout.column(align=True)
         col.row().prop(brush, "direction", expand=True)
