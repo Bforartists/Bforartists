@@ -1330,7 +1330,6 @@ class VIEW3D_MT_object_parent(Menu):
     def draw(self, context):
         layout = self.layout
 
-        ###layout.operator_enum("object.subdivision_set", "level")
         layout.operator_enum("object.parent_set", "type")
         layout.separator()
         layout.operator_enum("object.parent_clear", "type")
@@ -1688,11 +1687,16 @@ class VIEW3D_MT_sculpt(Menu):
         layout.prop(sculpt, "lock_z")
 
         layout.separator()
+
         layout.prop(sculpt, "use_threaded", text="Threaded Sculpt")
         layout.prop(sculpt, "show_low_resolution")
         layout.prop(sculpt, "show_brush")
         layout.prop(sculpt, "use_deform_only")
         layout.prop(sculpt, "show_diffuse_color")
+
+        layout.separator()
+
+        layout.menu("VIEW3D_subdivision_set")
 
 
 class VIEW3D_MT_hide_mask(Menu):
