@@ -297,6 +297,27 @@ def brush_texture_settings(layout, brush, sculpt):
             layout.operator("brush.stencil_fit_image_aspect")
         layout.operator("brush.stencil_reset_transform")
 
+            # stencil brush controls hotkeys.
+        col = layout.column()
+        col.label(text="Stencil Brush Control:")
+        row = col.row(align=True)
+        row.operator("brush.stencil_control", text = "Trans").mode = 'TRANSLATION'
+        row.operator("brush.stencil_control", text = "Rotate").mode = 'ROTATION'
+        row.operator("brush.stencil_control", text = "Scale").mode = 'SCALE'
+
+        col = layout.column()
+        col.label(text="Stencil Brush Control Secondary:")
+        row = col.row(align=True)
+        myvar = row.operator("brush.stencil_control", text = "Trans")
+        myvar.mode = 'TRANSLATION'
+        myvar.texmode = 'SECONDARY'
+        myvar = row.operator("brush.stencil_control", text = "Rotate")
+        myvar.mode = 'ROTATION'
+        myvar.texmode = 'SECONDARY'
+        myvar = row.operator("brush.stencil_control", text = "Scale")
+        myvar.mode = 'SCALE'
+        myvar.texmode = 'SECONDARY'
+
     # angle and texture_angle_source
     if tex_slot.has_texture_angle:
         col = layout.column()
