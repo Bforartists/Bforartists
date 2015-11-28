@@ -1045,8 +1045,6 @@ class INFO_MT_add(Menu):
         # Note: was EXEC_AREA, but this context does not have the 'rv3d', which prevents
         #       "align_view" to work on first call (see [#32719]).
         layout.operator_context = 'EXEC_REGION_WIN'
-        layout.menu("INFO_MT_mesh_add", icon='OUTLINER_OB_MESH')
-        layout.menu("INFO_MT_curve_add", icon='OUTLINER_OB_CURVE')
         layout.menu("INFO_MT_surface_add", icon='OUTLINER_OB_SURFACE')
         layout.menu("INFO_MT_metaball_add", text="Metaball", icon='OUTLINER_OB_META')
         layout.separator()
