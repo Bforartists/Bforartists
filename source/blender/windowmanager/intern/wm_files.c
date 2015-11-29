@@ -740,6 +740,11 @@ int wm_homefile_read_exec(bContext *C, wmOperator *op)
 		}
 	}
 
+	else {
+		/* always load UI for factory settings (prefs will re-init) */
+		G.fileflags &= ~G_FILE_NO_UI;
+	}
+
 	return wm_homefile_read(C, op->reports, from_memory, filepath) ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
 }
 
