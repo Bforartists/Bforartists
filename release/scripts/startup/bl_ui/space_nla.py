@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -174,6 +174,14 @@ class NLA_MT_edit(Menu):
             layout.operator("nla.tweakmode_enter", text="Start Editing Stashed Action").isolate_action = True
             layout.operator("nla.tweakmode_enter", text="Start Tweaking Strip Actions")
 
+class NLA_OT_fmodifier_add(Menu):
+    bl_label = "Add F-Modifier"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator_enum("nla.fmodifier_add", "type")
+
 
 class NLA_MT_add(Menu):
     bl_label = "Add"
@@ -195,6 +203,7 @@ class NLA_MT_add(Menu):
 
         layout.separator()
         layout.operator("nla.selected_objects_add")
+        layout.menu("NLA_OT_fmodifier_add")
 
 
 class NLA_MT_edit_transform(Menu):
