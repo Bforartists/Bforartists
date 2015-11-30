@@ -153,6 +153,9 @@ class GRAPH_MT_select(Menu):
         props = layout.operator("graph.select_border", text="Border (Include Handles)")
         props.axis_range = False
         props.include_handles = True
+        props = layout.operator("graph.select_border", text="Border (Axis + Handles)")
+        props.axis_range = True
+        props.include_handles = True
 
         layout.separator()
         layout.operator("graph.select_column", text="Columns on Selected Keys").mode = 'KEYS'
