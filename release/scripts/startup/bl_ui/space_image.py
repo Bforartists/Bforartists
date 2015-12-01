@@ -142,7 +142,11 @@ class IMAGE_MT_select(Menu):
         layout.separator()
 
         layout.operator("uv.select_pinned")
-        layout.operator("uv.select_linked").extend = False
+        layout.operator("uv.select_linked", text="Linked").extend = False
+        layout.operator("uv.select_linked", text="Linked Extend").extend = True
+        layout.operator("uv.select_linked_pick", text="Linked Pick").extend = False
+        layout.operator("uv.select_linked_pick", text="Linked Pick Extend").extend = True
+
 
         layout.separator()
 
@@ -152,6 +156,7 @@ class IMAGE_MT_select(Menu):
         layout.separator()
 
         layout.operator("uv.select_split")
+
 
 
 class IMAGE_MT_brush(Menu):
