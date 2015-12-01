@@ -2211,37 +2211,42 @@ void NLA_OT_snap(wmOperatorType *ot)
 /* *********************************************** */
 /* NLA Modifiers */
 
+// --------------------------------------------------------------------------------------------------------
+// BFA - add fmodifier popup menu disabled. See also void NLA_OT_fmodifier_add(wmOperatorType *ot)
+
 /* ******************** Add F-Modifier Operator *********************** */
 
 /* present a special customised popup menu for this, with some filtering */
-static int nla_fmodifier_add_invoke(bContext *C, wmOperator *UNUSED(op), const wmEvent *UNUSED(event))
-{
-	uiPopupMenu *pup;
-	uiLayout *layout;
-	int i;
-	
-	pup = UI_popup_menu_begin(C, IFACE_("Add F-Modifier"), ICON_NONE);
-	layout = UI_popup_menu_layout(pup);
-	
-	/* start from 1 to skip the 'Invalid' modifier type */
-	for (i = 1; i < FMODIFIER_NUM_TYPES; i++) {
-		const FModifierTypeInfo *fmi = get_fmodifier_typeinfo(i);
-		
-		/* check if modifier is valid for this context */
-		if (fmi == NULL)
-			continue;
-		if (i == FMODIFIER_TYPE_CYCLES) /* we already have repeat... */
-			continue;
-		
-		/* add entry to add this type of modifier */
-		uiItemEnumO(layout, "NLA_OT_fmodifier_add", fmi->name, 0, "type", i);
-	}
-	uiItemS(layout);
-	
-	UI_popup_menu_end(C, pup);
-	
-	return OPERATOR_INTERFACE;
-}
+//static int nla_fmodifier_add_invoke(bContext *C, wmOperator *UNUSED(op), const wmEvent *UNUSED(event))
+//{
+//	uiPopupMenu *pup;
+//	uiLayout *layout;
+//	int i;
+//	
+//	pup = UI_popup_menu_begin(C, IFACE_("Add F-Modifier"), ICON_NONE);
+//	layout = UI_popup_menu_layout(pup);
+//	
+//	/* start from 1 to skip the 'Invalid' modifier type */
+//	for (i = 1; i < FMODIFIER_NUM_TYPES; i++) {
+//		const FModifierTypeInfo *fmi = get_fmodifier_typeinfo(i);
+//		
+//		/* check if modifier is valid for this context */
+//		if (fmi == NULL)
+//			continue;
+//		if (i == FMODIFIER_TYPE_CYCLES) /* we already have repeat... */
+//			continue;
+//		
+//		/* add entry to add this type of modifier */
+//		uiItemEnumO(layout, "NLA_OT_fmodifier_add", fmi->name, 0, "type", i);
+//	}
+//	uiItemS(layout);
+//	
+//	UI_popup_menu_end(C, pup);
+//	
+//	return OPERATOR_INTERFACE;
+//}
+// --------------------------------------------------------------------------------------------------------
+
 
 static int nla_fmodifier_add_exec(bContext *C, wmOperator *op)
 {
@@ -2319,7 +2324,7 @@ void NLA_OT_fmodifier_add(wmOperatorType *ot)
 	ot->description = "Add a F-Modifier of the specified type to the selected NLA-Strips";
 	
 	/* api callbacks */
-	ot->invoke = nla_fmodifier_add_invoke;
+	//ot->invoke = nla_fmodifier_add_invoke; // BFA - add f-modifier popup menu disabled.
 	ot->exec = nla_fmodifier_add_exec;
 	ot->poll = nlaop_poll_tweakmode_off; 
 	
