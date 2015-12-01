@@ -1048,6 +1048,34 @@ class IMAGE_UV_sculpt(Panel, ImagePaintPanel):
             self.prop_unified_strength(row, context, brush, "strength", slider=True, text="Strength")
             self.prop_unified_strength(row, context, brush, "use_pressure_strength")
 
+            col = layout.column()
+            col.label(text="Radial Control:")
+            row = col.row(align=True)
+
+            #Size button
+            myvar = row.operator("wm.radial_control", text = "Size")
+            myvar.color_path = 'tool_settings.uv_sculpt.brush.cursor_color_add'
+            myvar.data_path_primary = 'tool_settings.uv_sculpt.brush.size'
+            myvar.fill_color_path = ''
+            myvar.data_path_secondary = 'tool_settings.unified_paint_settings.size'
+            myvar.zoom_path = ''
+            myvar.use_secondary = 'tool_settings.unified_paint_settings.use_unified_size'
+            myvar.image_id = 'tool_settings.uv_sculpt.brush'
+            myvar.rotation_path = 'tool_settings.uv_sculpt.brush.texture_slot.angle'
+            myvar.secondary_tex = False
+
+            #Strength button
+            myvar = row.operator("wm.radial_control", text = "Strength")
+            myvar.color_path = 'tool_settings.uv_sculpt.brush.cursor_color_add'
+            myvar.data_path_primary = 'tool_settings.uv_sculpt.brush.strength'
+            myvar.fill_color_path = ''
+            myvar.data_path_secondary = 'tool_settings.unified_paint_settings.strength'
+            myvar.zoom_path = ''
+            myvar.use_secondary = 'tool_settings.unified_paint_settings.use_unified_strength'
+            myvar.image_id = 'tool_settings.uv_sculpt.brush'
+            myvar.rotation_path = 'tool_settings.uv_sculpt.brush.texture_slot.angle'
+            myvar.secondary_tex = False
+
         col = layout.column()
         col.prop(toolsettings, "uv_sculpt_lock_borders")
         col.prop(toolsettings, "uv_sculpt_all_islands")
