@@ -174,13 +174,21 @@ class NLA_MT_edit(Menu):
             layout.operator("nla.tweakmode_enter", text="Start Editing Stashed Action").isolate_action = True
             layout.operator("nla.tweakmode_enter", text="Start Tweaking Strip Actions")
 
+#Add F-Modifier submenu
 class NLA_OT_fmodifier_add(Menu):
     bl_label = "Add F-Modifier"
 
     def draw(self, context):
         layout = self.layout
 
-        layout.operator_enum("nla.fmodifier_add", "type")
+        layout.operator("nla.fmodifier_add", text = "Generator" ).type = 'GENERATOR'
+        layout.operator("nla.fmodifier_add", text = "Built-In Function" ).type = 'FNGENERATOR'
+        layout.operator("nla.fmodifier_add", text = "Envelope" ).type = 'ENVELOPE'
+        layout.operator("nla.fmodifier_add", text = "Cycles" ).type = 'CYCLES'
+        layout.operator("nla.fmodifier_add", text = "Noise" ).type = 'NOISE'
+        layout.operator("nla.fmodifier_add", text = "Python" ).type = 'PYTHON'
+        layout.operator("nla.fmodifier_add", text = "Limits" ).type = 'LIMITS'
+        layout.operator("nla.fmodifier_add", text = "Stepped Interpolation" ).type = 'STEPPED'
 
 
 class NLA_MT_add(Menu):
@@ -203,7 +211,7 @@ class NLA_MT_add(Menu):
 
         layout.separator()
         layout.operator("nla.selected_objects_add")
-        layout.menu("NLA_OT_fmodifier_add")
+        layout.menu("NLA_OT_fmodifier_add") #Add F-Modifier submenu
 
 
 class NLA_MT_edit_transform(Menu):
