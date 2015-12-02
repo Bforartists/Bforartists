@@ -234,6 +234,7 @@ class NODE_MT_node(Menu):
 
         layout.separator()
 
+        layout.operator("node.duplicate_move_keep_inputs", text = "Duplicate Keep Input")
         layout.operator("node.duplicate_move")
         layout.operator("node.delete")
         layout.operator("node.delete_reconnect")
