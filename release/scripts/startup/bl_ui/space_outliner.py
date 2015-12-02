@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -73,7 +73,6 @@ class OUTLINER_MT_editor_menus(Menu):
         space = context.space_data
 
         layout.menu("OUTLINER_MT_view")
-        layout.menu("OUTLINER_MT_search")
 
         if space.display_mode == 'DATABLOCKS':
             layout.menu("OUTLINER_MT_edit_datablocks")
@@ -86,6 +85,8 @@ class OUTLINER_MT_view(Menu):
         layout = self.layout
 
         space = context.space_data
+
+        layout.menu("OUTLINER_MT_search")
 
         if space.display_mode not in {'DATABLOCKS', 'USER_PREFERENCES', 'KEYMAPS'}:
             layout.prop(space, "use_sort_alpha")
@@ -104,7 +105,7 @@ class OUTLINER_MT_view(Menu):
 
 
 class OUTLINER_MT_search(Menu):
-    bl_label = "Search"
+    bl_label = "Search Options"
 
     def draw(self, context):
         layout = self.layout
