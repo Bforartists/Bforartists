@@ -125,10 +125,6 @@ class NODE_HT_header(Header):
         if toolsettings.snap_node_element != 'GRID':
             row.prop(toolsettings, "snap_target", text="")
 
-        row = layout.row(align=True)
-        row.operator("node.clipboard_copy", text="", icon='COPYDOWN')
-        row.operator("node.clipboard_paste", text="", icon='PASTEDOWN')
-
         layout.template_running_jobs()
 
 
@@ -240,6 +236,11 @@ class NODE_MT_node(Menu):
         layout.operator("transform.translate")
         layout.operator("transform.rotate")
         layout.operator("transform.resize")
+
+        layout.separator()
+
+        layout.operator("node.clipboard_copy", text="Copy", icon='COPYDOWN')
+        layout.operator("node.clipboard_paste", text="Paste", icon='PASTEDOWN')
 
         layout.separator()
 
