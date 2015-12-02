@@ -213,7 +213,8 @@ class NODE_MT_select(Menu):
 
         layout.separator()
 
-        layout.operator("node.select_grouped").extend = False
+        layout.operator("node.select_grouped", text = "Grouped Extend").extend = True
+        layout.operator("node.select_grouped", text = "Grouped").extend = False
         layout.operator("node.select_same_type_step", text="Activate Same Type Previous").prev = True
         layout.operator("node.select_same_type_step", text="Activate Same Type Next").prev = False
 
