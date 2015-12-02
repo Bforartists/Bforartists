@@ -222,6 +222,14 @@ class NODE_MT_select(Menu):
 
         layout.operator("node.find_node")
 
+class NODE_OT_group_separate(Menu):
+    bl_label = "Separate"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("node.group_separate", text = "Copy").type = 'COPY'
+        layout.operator("node.group_separate", text = "Move").type = 'MOVE'
 
 class NODE_MT_node(Menu):
     bl_label = "Node"
@@ -252,6 +260,7 @@ class NODE_MT_node(Menu):
         layout.operator("node.links_cut")
         layout.operator("node.links_detach")
         layout.operator("node.parent_set")
+        layout.menu("NODE_OT_group_separate")
 
         layout.separator()
 
