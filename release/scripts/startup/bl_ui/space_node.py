@@ -283,6 +283,7 @@ class NODE_MT_node(Menu):
 
         layout.operator("node.read_renderlayers")
         layout.operator("node.read_fullsamplelayers")
+        layout.operator("node.render_changed")
 
 
 class NODE_MT_node_color_presets(Menu):
