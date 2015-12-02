@@ -99,6 +99,10 @@ class OUTLINER_MT_view(Menu):
 
         layout.separator()
 
+        layout.operator("outliner.select_border")
+
+        layout.separator()
+
         layout.operator("screen.area_dupli")
         layout.operator("screen.screen_full_area", text="Toggle Maximize Area")
         layout.operator("screen.screen_full_area").use_hide_panels = True
