@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -60,7 +60,8 @@ class FILEBROWSER_HT_header(Header):
 
             layout.prop(params, "sort_method", expand=True, text="")
 
-            layout.prop(params, "show_hidden", text="", icon='FILE_HIDDEN')
+            #layout.prop(params, "show_hidden", text="", icon='FILE_HIDDEN')
+            layout.operator("file.hidedot", text="", icon='FILE_HIDDEN')
             layout.prop(params, "use_filter", text="", icon='FILTER')
 
             row = layout.row(align=True)
