@@ -184,6 +184,8 @@ class NODE_MT_view(Menu):
             layout.operator("node.backimage_zoom", text="Backdrop zoom in").factor = 1.2
             layout.operator("node.backimage_zoom", text="Backdrop zoom out").factor = 0.83333
             layout.operator("node.backimage_fit", text="Fit Backdrop")
+            layout.operator("node.clear_viewer_border")
+            layout.operator("node.viewer_border")
 
         layout.separator()
 
