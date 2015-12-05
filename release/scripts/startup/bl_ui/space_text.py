@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -240,16 +240,6 @@ class TEXT_MT_templates(Menu):
         layout.menu("TEXT_MT_templates_osl")
 
 
-class TEXT_MT_edit_select(Menu):
-    bl_label = "Select"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("text.select_all")
-        layout.operator("text.select_line")
-
-
 class TEXT_MT_format(Menu):
     bl_label = "Format"
 
@@ -312,7 +302,10 @@ class TEXT_MT_edit(Menu):
 
         layout.separator()
 
-        layout.menu("TEXT_MT_edit_select")
+        layout.operator("text.select_all")
+        layout.operator("text.select_line")
+
+        layout.operator_menu_enum("text.delete", "type")
 
         layout.separator()
 

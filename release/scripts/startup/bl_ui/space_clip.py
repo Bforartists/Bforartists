@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -269,9 +269,13 @@ class CLIP_PT_tools_marker(CLIP_PT_tracking_panel, Panel):
 
         col = layout.column(align=True)
         row = col.row(align=True)
-        row.operator("clip.add_marker_at_click", text="Add")
+        row.operator("clip.disable_markers", text="Enable Markers").action = 'ENABLE'
+        row.operator("clip.disable_markers", text="Disable markers").action = 'DISABLE'
+        row = col.row(align=True)
+        row.operator("clip.add_marker_at_click", text="Add Marker")
         row.operator("clip.delete_track", text="Delete")
         col.operator("clip.detect_features")
+
 
 
 class CLIP_PT_tracking_settings(CLIP_PT_tracking_panel, Panel):
@@ -1240,6 +1244,10 @@ class CLIP_MT_track(Menu):
         layout.operator("clip.clean_tracks")
 
         layout.separator()
+        layout.operator("clip.lock_tracks", text="Lock Tracks").action = 'LOCK'
+        layout.operator("clip.lock_tracks", text="Unlock Tracks").action = 'UNLOCK'
+
+        layout.separator()
         layout.operator("clip.copy_tracks")
         layout.operator("clip.paste_tracks")
 
@@ -1340,36 +1348,6 @@ class CLIP_MT_select_grouped(Menu):
         layout = self.layout
 
         layout.operator_enum("clip.select_grouped", "group")
-
-
-class CLIP_MT_tracking_specials(Menu):
-    bl_label = "Specials"
-
-    @classmethod
-    def poll(cls, context):
-        return context.space_data.clip
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("clip.disable_markers",
-                        text="Enable Markers").action = 'ENABLE'
-
-        layout.operator("clip.disable_markers",
-                        text="Disable markers").action = 'DISABLE'
-
-        layout.separator()
-        layout.operator("clip.set_origin")
-
-        layout.separator()
-        layout.operator("clip.hide_tracks")
-        layout.operator("clip.hide_tracks_clear", text="Show Tracks")
-
-        layout.separator()
-        layout.operator("clip.lock_tracks", text="Lock Tracks").action = 'LOCK'
-
-        layout.operator("clip.lock_tracks",
-                        text="Unlock Tracks").action = 'UNLOCK'
 
 
 class CLIP_MT_camera_presets(Menu):

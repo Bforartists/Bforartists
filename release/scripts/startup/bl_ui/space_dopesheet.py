@@ -150,12 +150,6 @@ class DOPESHEET_HT_header(Header):
         if st.mode != 'GPENCIL':
             layout.prop(st, "auto_snap", text="")
 
-        row = layout.row(align=True)
-        row.operator("action.copy", text="", icon='COPYDOWN')
-        row.operator("action.paste", text="", icon='PASTEDOWN')
-        if st.mode not in ('GPENCIL', 'MASK'):
-            row.operator("action.paste", text="", icon='PASTEFLIPDOWN').flipped = True
-
 
 class DOPESHEET_MT_editor_menus(Menu):
     bl_idname = "DOPESHEET_MT_editor_menus"
@@ -344,8 +338,9 @@ class DOPESHEET_MT_key(Menu):
         layout.operator("action.sample")
 
         layout.separator()
-        layout.operator("action.copy")
-        layout.operator("action.paste")
+        layout.operator("action.copy", text="Copy Keyframes", icon='COPYDOWN')
+        layout.operator("action.paste", text="Paste Keyframes", icon='PASTEDOWN')
+        layout.operator("action.paste", text="Paste Flipped", icon='PASTEFLIPDOWN').flipped = True
 
 
 class DOPESHEET_MT_key_transform(Menu):
@@ -410,20 +405,6 @@ class DOPESHEET_MT_gpencil_frame(Menu):
         #layout.separator()
         #layout.operator("action.copy")
         #layout.operator("action.paste")
-
-
-class DOPESHEET_MT_delete(Menu):
-    bl_label = "Delete"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("action.delete")
-
-        layout.separator()
-
-        layout.operator("action.clean")
-        layout.operator("action.clean", text="Clean Channels").channels = True
 
 
 if __name__ == "__main__":  # only for live edit.

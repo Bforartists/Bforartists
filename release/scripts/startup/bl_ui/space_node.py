@@ -125,10 +125,6 @@ class NODE_HT_header(Header):
         if toolsettings.snap_node_element != 'GRID':
             row.prop(toolsettings, "snap_target", text="")
 
-        row = layout.row(align=True)
-        row.operator("node.clipboard_copy", text="", icon='COPYDOWN')
-        row.operator("node.clipboard_paste", text="", icon='PASTEDOWN')
-
         layout.template_running_jobs()
 
 
@@ -188,6 +184,8 @@ class NODE_MT_view(Menu):
             layout.operator("node.backimage_zoom", text="Backdrop zoom in").factor = 1.2
             layout.operator("node.backimage_zoom", text="Backdrop zoom out").factor = 0.83333
             layout.operator("node.backimage_fit", text="Fit Backdrop")
+            layout.operator("node.clear_viewer_border")
+            layout.operator("node.viewer_border")
 
         layout.separator()
 
@@ -213,7 +211,8 @@ class NODE_MT_select(Menu):
 
         layout.separator()
 
-        layout.operator("node.select_grouped").extend = False
+        layout.operator("node.select_grouped", text = "Grouped Extend").extend = True
+        layout.operator("node.select_grouped", text = "Grouped").extend = False
         layout.operator("node.select_same_type_step", text="Activate Same Type Previous").prev = True
         layout.operator("node.select_same_type_step", text="Activate Same Type Next").prev = False
 
@@ -221,6 +220,14 @@ class NODE_MT_select(Menu):
 
         layout.operator("node.find_node")
 
+class NODE_OT_group_separate(Menu):
+    bl_label = "Separate"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("node.group_separate", text = "Copy").type = 'COPY'
+        layout.operator("node.group_separate", text = "Move").type = 'MOVE'
 
 class NODE_MT_node(Menu):
     bl_label = "Node"
@@ -234,6 +241,12 @@ class NODE_MT_node(Menu):
 
         layout.separator()
 
+        layout.operator("node.clipboard_copy", text="Copy", icon='COPYDOWN')
+        layout.operator("node.clipboard_paste", text="Paste", icon='PASTEDOWN')
+
+        layout.separator()
+
+        layout.operator("node.duplicate_move_keep_inputs", text = "Duplicate Keep Input")
         layout.operator("node.duplicate_move")
         layout.operator("node.delete")
         layout.operator("node.delete_reconnect")
@@ -249,10 +262,14 @@ class NODE_MT_node(Menu):
         layout.operator("node.link_make", text="Make and Replace Links").replace = True
         layout.operator("node.links_cut")
         layout.operator("node.links_detach")
+        layout.operator("node.move_detach_links", text = "Detach Links Move")
+        layout.operator("node.parent_set")
+        layout.menu("NODE_OT_group_separate")
 
         layout.separator()
 
         layout.operator("node.group_edit").exit = False
+        layout.operator("node.group_edit", text = "Exit Edit Group" ).exit = True
         layout.operator("node.group_ungroup")
         layout.operator("node.group_make")
         layout.operator("node.group_insert")
@@ -270,6 +287,7 @@ class NODE_MT_node(Menu):
 
         layout.operator("node.read_renderlayers")
         layout.operator("node.read_fullsamplelayers")
+        layout.operator("node.render_changed")
 
 
 class NODE_MT_node_color_presets(Menu):

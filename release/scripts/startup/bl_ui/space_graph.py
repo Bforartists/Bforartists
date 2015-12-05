@@ -59,11 +59,6 @@ class GRAPH_HT_header(Header):
         layout.prop(st, "pivot_point", icon_only=True)
 
         row = layout.row(align=True)
-        row.operator("graph.copy", text="", icon='COPYDOWN')
-        row.operator("graph.paste", text="", icon='PASTEDOWN')
-        row.operator("graph.paste", text="", icon='PASTEFLIPDOWN').flipped = True
-
-        row = layout.row(align=True)
         if st.has_ghost_curves:
             row.operator("graph.ghost_curves_clear", text="", icon='GHOST_DISABLED')
         else:
@@ -152,6 +147,9 @@ class GRAPH_MT_select(Menu):
         props.include_handles = False
         props = layout.operator("graph.select_border", text="Border (Include Handles)")
         props.axis_range = False
+        props.include_handles = True
+        props = layout.operator("graph.select_border", text="Border (Axis + Handles)")
+        props.axis_range = True
         props.include_handles = True
 
         layout.separator()
@@ -264,8 +262,9 @@ class GRAPH_MT_key(Menu):
         layout.operator("graph.bake")
 
         layout.separator()
-        layout.operator("graph.copy")
-        layout.operator("graph.paste")
+        layout.operator("graph.copy", text="Copy Keyframes", icon='COPYDOWN')
+        layout.operator("graph.paste", text="Paste Keyframes", icon='PASTEDOWN')
+        layout.operator("graph.paste", text="Paste Flipped", icon='PASTEFLIPDOWN').flipped = True
 
         layout.separator()
         layout.operator("graph.euler_filter", text="Discontinuity (Euler) Filter")
@@ -281,20 +280,6 @@ class GRAPH_MT_key_transform(Menu):
         layout.operator("transform.transform", text="Extend").mode = 'TIME_EXTEND'
         layout.operator("transform.rotate", text="Rotate")
         layout.operator("transform.resize", text="Scale")
-
-
-class GRAPH_MT_delete(Menu):
-    bl_label = "Delete"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("graph.delete")
-
-        layout.separator()
-
-        layout.operator("graph.clean")
-        layout.operator("graph.clean", text="Clean Channels").channels = True
 
 
 if __name__ == "__main__":  # only for live edit.
