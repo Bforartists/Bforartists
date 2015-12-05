@@ -114,7 +114,10 @@ class IMAGE_MT_view(Menu):
         if show_render:
             layout.operator("image.cycle_render_slot", text="Render Slot Cycle Next")
             layout.operator("image.cycle_render_slot", text="Render Slot Cycle Previous").reverse = True
+            layout.operator("image.clear_render_border", text = "Clear Render Border")
+            layout.operator("image.render_border", text = "Render Border")
             layout.separator()
+
 
         layout.operator("screen.area_dupli")
         layout.operator("screen.screen_full_area", text="Toggle Maximize Area")
@@ -139,7 +142,11 @@ class IMAGE_MT_select(Menu):
         layout.separator()
 
         layout.operator("uv.select_pinned")
-        layout.operator("uv.select_linked").extend = False
+        layout.operator("uv.select_linked", text="Linked").extend = False
+        layout.operator("uv.select_linked", text="Linked Extend").extend = True
+        layout.operator("uv.select_linked_pick", text="Linked Pick").extend = False
+        layout.operator("uv.select_linked_pick", text="Linked Pick Extend").extend = True
+
 
         layout.separator()
 
@@ -149,6 +156,7 @@ class IMAGE_MT_select(Menu):
         layout.separator()
 
         layout.operator("uv.select_split")
+
 
 
 class IMAGE_MT_brush(Menu):
@@ -331,7 +339,6 @@ class IMAGE_MT_uvs(Menu):
 
         layout.separator()
 
-        layout.menu("IMAGE_MT_uvs_transform")
         layout.menu("IMAGE_MT_uvs_mirror")
         layout.menu("IMAGE_MT_uvs_snap")
         layout.menu("IMAGE_MT_uvs_weldalign")
@@ -1039,6 +1046,34 @@ class IMAGE_UV_sculpt(Panel, ImagePaintPanel):
             row = col.row(align=True)
             self.prop_unified_strength(row, context, brush, "strength", slider=True, text="Strength")
             self.prop_unified_strength(row, context, brush, "use_pressure_strength")
+
+            col = layout.column()
+            col.label(text="Radial Control:")
+            row = col.row(align=True)
+
+            #Size button
+            myvar = row.operator("wm.radial_control", text = "Size")
+            myvar.color_path = 'tool_settings.uv_sculpt.brush.cursor_color_add'
+            myvar.data_path_primary = 'tool_settings.uv_sculpt.brush.size'
+            myvar.fill_color_path = ''
+            myvar.data_path_secondary = 'tool_settings.unified_paint_settings.size'
+            myvar.zoom_path = ''
+            myvar.use_secondary = 'tool_settings.unified_paint_settings.use_unified_size'
+            myvar.image_id = 'tool_settings.uv_sculpt.brush'
+            myvar.rotation_path = 'tool_settings.uv_sculpt.brush.texture_slot.angle'
+            myvar.secondary_tex = False
+
+            #Strength button
+            myvar = row.operator("wm.radial_control", text = "Strength")
+            myvar.color_path = 'tool_settings.uv_sculpt.brush.cursor_color_add'
+            myvar.data_path_primary = 'tool_settings.uv_sculpt.brush.strength'
+            myvar.fill_color_path = ''
+            myvar.data_path_secondary = 'tool_settings.unified_paint_settings.strength'
+            myvar.zoom_path = ''
+            myvar.use_secondary = 'tool_settings.unified_paint_settings.use_unified_strength'
+            myvar.image_id = 'tool_settings.uv_sculpt.brush'
+            myvar.rotation_path = 'tool_settings.uv_sculpt.brush.texture_slot.angle'
+            myvar.secondary_tex = False
 
         col = layout.column()
         col.prop(toolsettings, "uv_sculpt_lock_borders")

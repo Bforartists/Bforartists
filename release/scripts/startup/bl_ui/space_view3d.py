@@ -210,6 +210,10 @@ class VIEW3D_MT_transform(VIEW3D_MT_transform_base):
         layout.operator("transform.translate", text="Move Texture Space").texture_space = True
         layout.operator("transform.resize", text="Scale Texture Space").texture_space = True
 
+        layout.separator()
+
+        layout.operator("transform.skin_resize", text="Skin Resize")
+
 
 # Object-specific extensions to Transform menu
 class VIEW3D_MT_transform_object(VIEW3D_MT_transform_base):
@@ -395,8 +399,17 @@ class VIEW3D_MT_view(Menu):
 
         layout.operator_context = 'INVOKE_REGION_WIN'
 
+        # restrict render and clear restrict render. I would love to simply disable it, 
+        # means grey out when there are no objects selected. But that's ways too much hassle. 
+        # So for now we simply hide the two menu items when there is no object selected.
+
+        if context.object :
+            props = layout.operator("object.isolate_type_render")
+            props = layout.operator("object.hide_render_clear_all")
+
         layout.operator("view3d.clip_border", text="Clipping Border...")
         layout.operator("view3d.zoom_border", text="Zoom Border...")
+        layout.operator("view3d.clear_render_border", text="Clear Render Border...")
         layout.operator("view3d.render_border", text="Render Border...").camera_only = False
 
         layout.separator()
@@ -405,6 +418,10 @@ class VIEW3D_MT_view(Menu):
 
         layout.separator()
 
+        
+        myvar= layout.operator("transform.create_orientation", text="Create Orientation")
+        myvar.use_view = True
+        myvar.use = True
         layout.operator("view3d.localview", text="View Global/Local")
         layout.operator("view3d.view_selected").use_all_regions = False
         layout.operator("view3d.view_all").center = False
@@ -544,6 +561,22 @@ class VIEW3D_MT_select_object(Menu):
         layout.operator_menu_enum("object.select_linked", "type", text="Linked")
         layout.operator("object.select_pattern", text="Select Pattern...")
 
+        layout.separator()
+
+        myvar = layout.operator("object.select_hierarchy", text="Parent")
+        myvar.direction = 'PARENT'
+        myvar.extend = False
+        myvar = layout.operator("object.select_hierarchy", text="Child")
+        myvar.direction = 'CHILD'
+        myvar.extend = False
+
+        myvar = layout.operator("object.select_hierarchy", text="Parent Extended")
+        myvar.direction = 'PARENT'
+        myvar.extend = True
+        myvar = layout.operator("object.select_hierarchy", text="Child Extended")
+        myvar.direction = 'CHILD'
+        myvar.extend = True
+
 
 class VIEW3D_MT_select_pose(Menu):
     bl_label = "Select"
@@ -599,8 +632,9 @@ class VIEW3D_MT_select_particle(Menu):
         layout.separator()
 
         layout.operator("particle.select_all").action = 'TOGGLE'
-        layout.operator("particle.select_linked")
         layout.operator("particle.select_all", text="Inverse").action = 'INVERT'
+        layout.operator("particle.select_linked").deselect = False
+        layout.operator("particle.select_linked", text="Deselect Linked").deselect = True
 
         layout.separator()
 
@@ -683,6 +717,8 @@ class VIEW3D_MT_select_edit_mesh(Menu):
         layout.operator("mesh.select_axis", text="Side of Active")
 
         layout.operator("mesh.select_linked", text="Linked")
+        layout.operator("mesh.select_linked_pick", text="Linked Pick Select").deselect = False
+        layout.operator("mesh.select_linked_pick", text="Linked Pick Deselect").deselect = True
         layout.operator("mesh.shortest_path_select", text="Shortest Path")
         layout.operator("mesh.loop_multi_select", text="Edge Loops").ring = False
         layout.operator("mesh.loop_multi_select", text="Edge Rings").ring = True
@@ -708,7 +744,9 @@ class VIEW3D_MT_select_edit_curve(Menu):
         layout.operator("curve.select_all", text="Inverse").action = 'INVERT'
         layout.operator("curve.select_random")
         layout.operator("curve.select_nth")
-        layout.operator("curve.select_linked", text="Select Linked")
+        layout.operator("curve.select_linked", text="Linked")
+        layout.operator("curve.select_linked_pick", text="Linked Pick Select").deselect = False
+        layout.operator("curve.select_linked_pick", text="Linked Pick Deselect").deselect = True
         layout.operator("curve.select_similar", text="Select Similar")
 
         layout.separator()
@@ -740,6 +778,8 @@ class VIEW3D_MT_select_edit_surface(Menu):
         layout.operator("curve.select_random")
         layout.operator("curve.select_nth")
         layout.operator("curve.select_linked", text="Select Linked")
+        layout.operator("curve.select_linked_pick", text="Linked Pick Select").deselect = False
+        layout.operator("curve.select_linked_pick", text="Linked Pick Deselect").deselect = True
         layout.operator("curve.select_similar", text="Select Similar")
 
         layout.separator()
@@ -817,6 +857,11 @@ class VIEW3D_MT_select_edit_lattice(Menu):
 
         layout.operator("lattice.select_ungrouped", text="Ungrouped Verts")
 
+        layout.separator()
+
+        layout.operator("lattice.select_more")
+        layout.operator("lattice.select_less")
+
 
 class VIEW3D_MT_select_edit_armature(Menu):
     bl_label = "Select"
@@ -879,6 +924,8 @@ class VIEW3D_MT_select_paint_mask(Menu):
         layout.separator()
 
         layout.operator("paint.face_select_linked", text="Linked")
+        layout.operator("paint.face_select_linked_pick", text="Linked Pick Select").deselect = False
+        layout.operator("paint.face_select_linked_pick", text="Linked Pick Deselect").deselect = True
 
 
 class VIEW3D_MT_select_paint_mask_vertex(Menu):
@@ -998,8 +1045,6 @@ class INFO_MT_add(Menu):
         # Note: was EXEC_AREA, but this context does not have the 'rv3d', which prevents
         #       "align_view" to work on first call (see [#32719]).
         layout.operator_context = 'EXEC_REGION_WIN'
-        layout.menu("INFO_MT_mesh_add", icon='OUTLINER_OB_MESH')
-        layout.menu("INFO_MT_curve_add", icon='OUTLINER_OB_CURVE')
         layout.menu("INFO_MT_surface_add", icon='OUTLINER_OB_SURFACE')
         layout.menu("INFO_MT_metaball_add", text="Metaball", icon='OUTLINER_OB_META')
         layout.separator()
@@ -1017,6 +1062,7 @@ class INFO_MT_add(Menu):
             layout.operator_menu_enum("object.group_instance_add", "group", text="Group Instance", icon='OUTLINER_OB_EMPTY')
 
 
+
 # ********** Object menu **********
 
 
@@ -1026,10 +1072,153 @@ class VIEW3D_MT_object(Menu):
 
     def draw(self, context):
         layout = self.layout
+        scene = context.scene
+        obj = context.object
 
         layout.operator("ed.undo")
         layout.operator("ed.redo")
         layout.operator("ed.undo_history")
+
+        # The former Specials menu content. Special settings for Camera, Curve, Font, Empty and Lamp
+        if context.object :
+
+            if obj.type == 'CAMERA':
+                layout.operator_context = 'INVOKE_REGION_WIN'
+                layout.separator()
+
+                if obj.data.type == 'PERSP':
+                    props = layout.operator("wm.context_modal_mouse", text="Camera Lens Angle")
+                    props.data_path_iter = "selected_editable_objects"
+                    props.data_path_item = "data.lens"
+                    props.input_scale = 0.1
+                    if obj.data.lens_unit == 'MILLIMETERS':
+                        props.header_text = "Camera Lens Angle: %.1fmm"
+                    else:
+                        props.header_text = "Camera Lens Angle: %.1f\u00B0"
+
+                else:
+                    props = layout.operator("wm.context_modal_mouse", text="Camera Lens Scale")
+                    props.data_path_iter = "selected_editable_objects"
+                    props.data_path_item = "data.ortho_scale"
+                    props.input_scale = 0.01
+                    props.header_text = "Camera Lens Scale: %.3f"
+
+                if not obj.data.dof_object:
+                    view = context.space_data
+                    if view and view.camera == obj and view.region_3d.view_perspective == 'CAMERA':
+                        props = layout.operator("ui.eyedropper_depth", text="DOF Distance (Pick)")
+                    else:
+                        props = layout.operator("wm.context_modal_mouse", text="DOF Distance")
+                        props.data_path_iter = "selected_editable_objects"
+                        props.data_path_item = "data.dof_distance"
+                        props.input_scale = 0.02
+                        props.header_text = "DOF Distance: %.3f"
+                    del view
+
+            if obj.type in {'CURVE', 'FONT'}:
+                layout.operator_context = 'INVOKE_REGION_WIN'
+                layout.separator()
+
+                props = layout.operator("wm.context_modal_mouse", text="Extrude Size")
+                props.data_path_iter = "selected_editable_objects"
+                props.data_path_item = "data.extrude"
+                props.input_scale = 0.01
+                props.header_text = "Extrude Size: %.3f"
+
+                props = layout.operator("wm.context_modal_mouse", text="Width Size")
+                props.data_path_iter = "selected_editable_objects"
+                props.data_path_item = "data.offset"
+                props.input_scale = 0.01
+                props.header_text = "Width Size: %.3f"
+
+            if obj.type == 'EMPTY':
+                layout.operator_context = 'INVOKE_REGION_WIN'
+                layout.separator()
+
+                props = layout.operator("wm.context_modal_mouse", text="Empty Draw Size")
+                props.data_path_iter = "selected_editable_objects"
+                props.data_path_item = "empty_draw_size"
+                props.input_scale = 0.01
+                props.header_text = "Empty Draw Size: %.3f"
+
+            if obj.type == 'LAMP':
+                lamp = obj.data
+
+                layout.operator_context = 'INVOKE_REGION_WIN'
+                layout.separator()
+
+                if scene.render.use_shading_nodes:
+                    try:
+                        value = lamp.node_tree.nodes["Emission"].inputs["Strength"].default_value
+                    except AttributeError:
+                        value = None
+
+                    if value is not None:
+                        props = layout.operator("wm.context_modal_mouse", text="Strength")
+                        props.data_path_iter = "selected_editable_objects"
+                        props.data_path_item = "data.node_tree.nodes[\"Emission\"].inputs[\"Strength\"].default_value"
+                        props.header_text = "Lamp Strength: %.3f"
+                        props.input_scale = 0.1
+                    del value
+
+                    if lamp.type == 'AREA':
+                        props = layout.operator("wm.context_modal_mouse", text="Size X")
+                        props.data_path_iter = "selected_editable_objects"
+                        props.data_path_item = "data.size"
+                        props.header_text = "Lamp Size X: %.3f"
+
+                        if lamp.shape == 'RECTANGLE':
+                            props = layout.operator("wm.context_modal_mouse", text="Size Y")
+                            props.data_path_iter = "selected_editable_objects"
+                            props.data_path_item = "data.size_y"
+                            props.header_text = "Lamp Size Y: %.3f"
+
+                    elif lamp.type in {'SPOT', 'POINT', 'SUN'}:
+                        props = layout.operator("wm.context_modal_mouse", text="Size")
+                        props.data_path_iter = "selected_editable_objects"
+                        props.data_path_item = "data.shadow_soft_size"
+                        props.header_text = "Lamp Size: %.3f"
+                else:
+                    props = layout.operator("wm.context_modal_mouse", text="Energy")
+                    props.data_path_iter = "selected_editable_objects"
+                    props.data_path_item = "data.energy"
+                    props.header_text = "Lamp Energy: %.3f"
+
+                    if lamp.type in {'SPOT', 'AREA', 'POINT'}:
+                        props = layout.operator("wm.context_modal_mouse", text="Falloff Distance")
+                        props.data_path_iter = "selected_editable_objects"
+                        props.data_path_item = "data.distance"
+                        props.input_scale = 0.1
+                        props.header_text = "Lamp Falloff Distance: %.1f"
+
+                if lamp.type == 'SPOT':
+                    layout.separator()
+                    props = layout.operator("wm.context_modal_mouse", text="Spot Size")
+                    props.data_path_iter = "selected_editable_objects"
+                    props.data_path_item = "data.spot_size"
+                    props.input_scale = 0.01
+                    props.header_text = "Spot Size: %.2f"
+
+                    props = layout.operator("wm.context_modal_mouse", text="Spot Blend")
+                    props.data_path_iter = "selected_editable_objects"
+                    props.data_path_item = "data.spot_blend"
+                    props.input_scale = -0.01
+                    props.header_text = "Spot Blend: %.2f"
+
+                    if not scene.render.use_shading_nodes:
+                        props = layout.operator("wm.context_modal_mouse", text="Clip Start")
+                        props.data_path_iter = "selected_editable_objects"
+                        props.data_path_item = "data.shadow_buffer_clip_start"
+                        props.input_scale = 0.05
+                        props.header_text = "Clip Start: %.2f"
+
+                        props = layout.operator("wm.context_modal_mouse", text="Clip End")
+                        props.data_path_iter = "selected_editable_objects"
+                        props.data_path_item = "data.shadow_buffer_clip_end"
+                        props.input_scale = 0.05
+                        props.header_text = "Clip End: %.2f"
+
+        # End former Specials menu content.
 
         layout.separator()
 
@@ -1040,13 +1229,16 @@ class VIEW3D_MT_object(Menu):
         layout.menu("VIEW3D_MT_snap")
 
         layout.separator()
-
+        
         layout.menu("VIEW3D_MT_object_animation")
 
         layout.separator()
 
+        layout.operator("view3d.copybuffer", text = "Copy")
+        layout.operator("view3d.pastebuffer", text = "Paste")
         layout.operator("object.duplicate_move")
         layout.operator("object.duplicate_move_linked")
+        layout.operator("object.delete", text="Delete Global").use_global = True
         layout.operator("object.delete", text="Delete...").use_global = False
         layout.operator("object.proxy_make", text="Make Proxy...")
         layout.menu("VIEW3D_MT_make_links", text="Make Links...")
@@ -1064,6 +1256,7 @@ class VIEW3D_MT_object(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_object_quick_effects")
+        layout.menu("VIEW3D_subdivision_set")
 
         layout.separator()
 
@@ -1107,158 +1300,6 @@ class VIEW3D_MT_object_clear(Menu):
         layout.operator("object.origin_clear", text="Origin")
 
 
-class VIEW3D_MT_object_specials(Menu):
-    bl_label = "Specials"
-
-    @classmethod
-    def poll(cls, context):
-        # add more special types
-        return context.object
-
-    def draw(self, context):
-        layout = self.layout
-
-        scene = context.scene
-        obj = context.object
-
-        if obj.type == 'CAMERA':
-            layout.operator_context = 'INVOKE_REGION_WIN'
-
-            if obj.data.type == 'PERSP':
-                props = layout.operator("wm.context_modal_mouse", text="Camera Lens Angle")
-                props.data_path_iter = "selected_editable_objects"
-                props.data_path_item = "data.lens"
-                props.input_scale = 0.1
-                if obj.data.lens_unit == 'MILLIMETERS':
-                    props.header_text = "Camera Lens Angle: %.1fmm"
-                else:
-                    props.header_text = "Camera Lens Angle: %.1f\u00B0"
-
-            else:
-                props = layout.operator("wm.context_modal_mouse", text="Camera Lens Scale")
-                props.data_path_iter = "selected_editable_objects"
-                props.data_path_item = "data.ortho_scale"
-                props.input_scale = 0.01
-                props.header_text = "Camera Lens Scale: %.3f"
-
-            if not obj.data.dof_object:
-                view = context.space_data
-                if view and view.camera == obj and view.region_3d.view_perspective == 'CAMERA':
-                    props = layout.operator("ui.eyedropper_depth", text="DOF Distance (Pick)")
-                else:
-                    props = layout.operator("wm.context_modal_mouse", text="DOF Distance")
-                    props.data_path_iter = "selected_editable_objects"
-                    props.data_path_item = "data.dof_distance"
-                    props.input_scale = 0.02
-                    props.header_text = "DOF Distance: %.3f"
-                del view
-
-        if obj.type in {'CURVE', 'FONT'}:
-            layout.operator_context = 'INVOKE_REGION_WIN'
-
-            props = layout.operator("wm.context_modal_mouse", text="Extrude Size")
-            props.data_path_iter = "selected_editable_objects"
-            props.data_path_item = "data.extrude"
-            props.input_scale = 0.01
-            props.header_text = "Extrude Size: %.3f"
-
-            props = layout.operator("wm.context_modal_mouse", text="Width Size")
-            props.data_path_iter = "selected_editable_objects"
-            props.data_path_item = "data.offset"
-            props.input_scale = 0.01
-            props.header_text = "Width Size: %.3f"
-
-        if obj.type == 'EMPTY':
-            layout.operator_context = 'INVOKE_REGION_WIN'
-
-            props = layout.operator("wm.context_modal_mouse", text="Empty Draw Size")
-            props.data_path_iter = "selected_editable_objects"
-            props.data_path_item = "empty_draw_size"
-            props.input_scale = 0.01
-            props.header_text = "Empty Draw Size: %.3f"
-
-        if obj.type == 'LAMP':
-            lamp = obj.data
-
-            layout.operator_context = 'INVOKE_REGION_WIN'
-
-            if scene.render.use_shading_nodes:
-                try:
-                    value = lamp.node_tree.nodes["Emission"].inputs["Strength"].default_value
-                except AttributeError:
-                    value = None
-
-                if value is not None:
-                    props = layout.operator("wm.context_modal_mouse", text="Strength")
-                    props.data_path_iter = "selected_editable_objects"
-                    props.data_path_item = "data.node_tree.nodes[\"Emission\"].inputs[\"Strength\"].default_value"
-                    props.header_text = "Lamp Strength: %.3f"
-                    props.input_scale = 0.1
-                del value
-
-                if lamp.type == 'AREA':
-                    props = layout.operator("wm.context_modal_mouse", text="Size X")
-                    props.data_path_iter = "selected_editable_objects"
-                    props.data_path_item = "data.size"
-                    props.header_text = "Lamp Size X: %.3f"
-
-                    if lamp.shape == 'RECTANGLE':
-                        props = layout.operator("wm.context_modal_mouse", text="Size Y")
-                        props.data_path_iter = "selected_editable_objects"
-                        props.data_path_item = "data.size_y"
-                        props.header_text = "Lamp Size Y: %.3f"
-
-                elif lamp.type in {'SPOT', 'POINT', 'SUN'}:
-                    props = layout.operator("wm.context_modal_mouse", text="Size")
-                    props.data_path_iter = "selected_editable_objects"
-                    props.data_path_item = "data.shadow_soft_size"
-                    props.header_text = "Lamp Size: %.3f"
-            else:
-                props = layout.operator("wm.context_modal_mouse", text="Energy")
-                props.data_path_iter = "selected_editable_objects"
-                props.data_path_item = "data.energy"
-                props.header_text = "Lamp Energy: %.3f"
-
-                if lamp.type in {'SPOT', 'AREA', 'POINT'}:
-                    props = layout.operator("wm.context_modal_mouse", text="Falloff Distance")
-                    props.data_path_iter = "selected_editable_objects"
-                    props.data_path_item = "data.distance"
-                    props.input_scale = 0.1
-                    props.header_text = "Lamp Falloff Distance: %.1f"
-
-            if lamp.type == 'SPOT':
-                layout.separator()
-                props = layout.operator("wm.context_modal_mouse", text="Spot Size")
-                props.data_path_iter = "selected_editable_objects"
-                props.data_path_item = "data.spot_size"
-                props.input_scale = 0.01
-                props.header_text = "Spot Size: %.2f"
-
-                props = layout.operator("wm.context_modal_mouse", text="Spot Blend")
-                props.data_path_iter = "selected_editable_objects"
-                props.data_path_item = "data.spot_blend"
-                props.input_scale = -0.01
-                props.header_text = "Spot Blend: %.2f"
-
-                if not scene.render.use_shading_nodes:
-                    props = layout.operator("wm.context_modal_mouse", text="Clip Start")
-                    props.data_path_iter = "selected_editable_objects"
-                    props.data_path_item = "data.shadow_buffer_clip_start"
-                    props.input_scale = 0.05
-                    props.header_text = "Clip Start: %.2f"
-
-                    props = layout.operator("wm.context_modal_mouse", text="Clip End")
-                    props.data_path_iter = "selected_editable_objects"
-                    props.data_path_item = "data.shadow_buffer_clip_end"
-                    props.input_scale = 0.05
-                    props.header_text = "Clip End: %.2f"
-
-        layout.separator()
-
-        props = layout.operator("object.isolate_type_render")
-        props = layout.operator("object.hide_render_clear_all")
-
-
 class VIEW3D_MT_object_apply(Menu):
     bl_label = "Apply"
 
@@ -1291,6 +1332,7 @@ class VIEW3D_MT_object_parent(Menu):
         layout.operator_enum("object.parent_set", "type")
         layout.separator()
         layout.operator_enum("object.parent_clear", "type")
+        layout.operator("object.parent_no_inverse_set", text = "Make Parent no Inverse" )
 
 
 class VIEW3D_MT_object_track(Menu):
@@ -1341,6 +1383,20 @@ class VIEW3D_MT_object_quick_effects(Menu):
         layout.operator("object.quick_explode")
         layout.operator("object.quick_smoke")
         layout.operator("object.quick_fluid")
+
+
+class VIEW3D_subdivision_set(Menu):
+    bl_label = "Subdivide"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("object.subdivision_set").level = 0
+        layout.operator("object.subdivision_set").level = 1
+        layout.operator("object.subdivision_set").level = 2
+        layout.operator("object.subdivision_set").level = 3
+        layout.operator("object.subdivision_set").level = 4
+        layout.operator("object.subdivision_set").level = 5
 
 
 class VIEW3D_MT_object_showhide(Menu):
@@ -1419,6 +1475,17 @@ class VIEW3D_MT_object_game(Menu):
 
         layout.operator("object.game_property_clear")
 
+# Show hide menu for face selection masking
+class VIEW3D_MT_facemask_showhide(Menu):
+    bl_label = "Show/Hide"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("paint.face_select_reveal", text="Show Hidden")
+        layout.operator("paint.face_select_hide", text="Hide Selected").unselected = False
+        layout.operator("paint.face_select_hide", text="Hide Unselected").unselected = True
+
 
 # ********** Brush menu **********
 class VIEW3D_MT_brush(Menu):
@@ -1473,6 +1540,10 @@ class VIEW3D_MT_brush(Menu):
                 if sculpt_tool == 'LAYER':
                     layout.prop(brush, "use_persistent")
                     layout.operator("sculpt.set_persistent_base")
+
+        layout.separator()
+
+        layout.menu("VIEW3D_MT_facemask_showhide") ### show hide for face mask tool
 
 
 class VIEW3D_MT_brush_paint_modes(Menu):
@@ -1615,11 +1686,16 @@ class VIEW3D_MT_sculpt(Menu):
         layout.prop(sculpt, "lock_z")
 
         layout.separator()
+
         layout.prop(sculpt, "use_threaded", text="Threaded Sculpt")
         layout.prop(sculpt, "show_low_resolution")
         layout.prop(sculpt, "show_brush")
         layout.prop(sculpt, "use_deform_only")
         layout.prop(sculpt, "show_diffuse_color")
+
+        layout.separator()
+
+        layout.menu("VIEW3D_subdivision_set")
 
 
 class VIEW3D_MT_hide_mask(Menu):
@@ -1694,47 +1770,6 @@ class VIEW3D_MT_particle(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_particle_showhide")
-
-
-class VIEW3D_MT_particle_specials(Menu):
-    bl_label = "Specials"
-
-    def draw(self, context):
-        layout = self.layout
-
-        particle_edit = context.tool_settings.particle_edit
-
-        layout.operator("particle.rekey")
-        layout.operator("particle.delete")
-        layout.operator("particle.remove_doubles")
-
-        if particle_edit.select_mode == 'POINT':
-            layout.operator("particle.subdivide")
-
-        layout.operator("particle.weight_set")
-        layout.separator()
-
-        layout.operator("particle.mirror")
-
-        if particle_edit.select_mode == 'POINT':
-            layout.separator()
-            layout.operator("particle.select_roots")
-            layout.operator("particle.select_tips")
-
-            layout.separator()
-
-            layout.operator("particle.select_random")
-
-            layout.separator()
-
-            layout.operator("particle.select_more")
-            layout.operator("particle.select_less")
-
-            layout.separator()
-
-            layout.operator("particle.select_all").action = 'TOGGLE'
-            layout.operator("particle.select_linked")
-            layout.operator("particle.select_all", text="Inverse").action = 'INVERT'
 
 
 class VIEW3D_MT_particle_showhide(ShowHideMenu, Menu):
@@ -1828,7 +1863,10 @@ class VIEW3D_MT_pose_transform(Menu):
 
         layout.separator()
 
+        layout.operator("pose.user_transforms_clear", text="Clear User Transforms (All)").only_selected = False
         layout.operator("pose.user_transforms_clear", text="Reset unkeyed")
+
+
 
 
 class VIEW3D_MT_pose_slide(Menu):
@@ -1930,9 +1968,13 @@ class VIEW3D_MT_pose_constraints(Menu):
         layout.operator("pose.constraints_copy")
         layout.operator("pose.constraints_clear")
 
-
+# the ShowHideMenu class as a class, so that you can use it in different modes with different hotkeys
 class VIEW3D_MT_pose_showhide(ShowHideMenu, Menu):
-    _operator_name = "pose"
+    _operator_name = "pose" # the name in the user preferences. Important for the hotkey
+
+# the ShowHideMenu class as a class, so that you can use it in different modes with different hotkeys
+class VIEW3D_MT_armature_showhide(ShowHideMenu, Menu):
+    _operator_name = "armature" # the name in the user preferences. Important for the hotkey
 
 
 class VIEW3D_MT_pose_apply(Menu):
@@ -1943,30 +1985,6 @@ class VIEW3D_MT_pose_apply(Menu):
 
         layout.operator("pose.armature_apply")
         layout.operator("pose.visual_transform_apply")
-
-
-class VIEW3D_MT_pose_specials(Menu):
-    bl_label = "Specials"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("paint.weight_from_bones", text="Assign Automatic from Bones").type = 'AUTOMATIC'
-        layout.operator("paint.weight_from_bones", text="Assign from Bone Envelopes").type = 'ENVELOPES'
-
-        layout.separator()
-
-        layout.operator("pose.select_constraint_target")
-        layout.operator("pose.flip_names")
-        layout.operator("pose.paths_calculate")
-        layout.operator("pose.paths_clear")
-        layout.operator("pose.user_transforms_clear")
-        layout.operator("pose.user_transforms_clear", text="Clear User Transforms (All)").only_selected = False
-        layout.operator("pose.relax")
-
-        layout.separator()
-
-        layout.operator_menu_enum("pose.autoside_names", "axis")
 
 
 class BoneOptions:
@@ -2041,11 +2059,11 @@ class VIEW3D_MT_edit_mesh(Menu):
         layout.separator()
 
         layout.operator("mesh.duplicate_move")
-        layout.menu("VIEW3D_MT_edit_mesh_extrude")
-        layout.menu("VIEW3D_MT_edit_mesh_delete")
+        layout.menu("VIEW3D_MT_edit_mesh_delete")   
 
         layout.separator()
 
+        layout.menu("VIEW3D_MT_edit_mesh_select_mode")
         layout.menu("VIEW3D_MT_edit_mesh_vertices")
         layout.menu("VIEW3D_MT_edit_mesh_edges")
         layout.menu("VIEW3D_MT_edit_mesh_faces")
@@ -2054,6 +2072,7 @@ class VIEW3D_MT_edit_mesh(Menu):
 
         layout.separator()
 
+        layout.menu("VIEW3D_subdivision_set")
         layout.operator("mesh.symmetrize")
         layout.operator("mesh.symmetry_snap")
         layout.operator("mesh.bisect")
@@ -2068,55 +2087,6 @@ class VIEW3D_MT_edit_mesh(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_edit_mesh_showhide")
-
-
-class VIEW3D_MT_edit_mesh_specials(Menu):
-    bl_label = "Specials"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator_context = 'INVOKE_REGION_WIN'
-
-        layout.operator("mesh.subdivide", text="Subdivide").smoothness = 0.0
-        layout.operator("mesh.subdivide", text="Subdivide Smooth").smoothness = 1.0
-
-        layout.separator()
-
-        layout.operator("mesh.merge", text="Merge...")
-        layout.operator("mesh.remove_doubles")
-
-        layout.separator()
-
-        layout.operator("mesh.hide", text="Hide").unselected = False
-        layout.operator("mesh.reveal", text="Reveal")
-        layout.operator("mesh.select_all", text="Select Inverse").action = 'INVERT'
-
-        layout.separator()
-
-        layout.operator("mesh.flip_normals")
-        layout.operator("mesh.vertices_smooth", text="Smooth")
-        layout.operator("mesh.vertices_smooth_laplacian", text="Laplacian Smooth")
-
-        layout.separator()
-
-        layout.operator("mesh.inset")
-        layout.operator("mesh.bevel", text="Bevel")
-        layout.operator("mesh.bridge_edge_loops")
-
-        layout.separator()
-
-        layout.operator("mesh.faces_shade_smooth")
-        layout.operator("mesh.faces_shade_flat")
-
-        layout.separator()
-
-        layout.operator("mesh.blend_from_shape")
-        layout.operator("mesh.shape_propagate_to_all")
-        layout.operator("mesh.shortest_path_select")
-        layout.operator("mesh.sort_elements")
-        layout.operator("mesh.symmetrize")
-        layout.operator("mesh.symmetry_snap")
 
 
 class VIEW3D_MT_edit_mesh_select_mode(Menu):
@@ -2178,7 +2148,6 @@ class VIEW3D_MT_edit_mesh_vertices(Menu):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        layout.operator("mesh.merge")
         layout.operator("mesh.rip_move")
         layout.operator("mesh.rip_move_fill")
         layout.operator("mesh.rip_edge_move")
@@ -2186,7 +2155,6 @@ class VIEW3D_MT_edit_mesh_vertices(Menu):
         layout.operator_menu_enum("mesh.separate", "type")
         layout.operator("mesh.vert_connect_path", text="Connect Vertex Path")
         layout.operator("mesh.vert_connect", text="Connect Vertices")
-        layout.operator("transform.vert_slide", text="Slide")
 
         layout.separator()
 
@@ -2199,16 +2167,13 @@ class VIEW3D_MT_edit_mesh_vertices(Menu):
 
         layout.operator("mesh.bevel").vertex_only = True
         layout.operator("mesh.convex_hull")
-        layout.operator("mesh.vertices_smooth")
-        layout.operator("mesh.remove_doubles")
-
         layout.operator("mesh.blend_from_shape")
-
         layout.operator("object.vertex_group_smooth")
         layout.operator("mesh.shape_propagate_to_all")
 
         layout.separator()
 
+        layout.operator("object.vertex_parent_set")
         layout.menu("VIEW3D_MT_vertex_group")
         layout.menu("VIEW3D_MT_hook")
 
@@ -2223,8 +2188,6 @@ class VIEW3D_MT_edit_mesh_edges(Menu):
 
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        layout.operator("mesh.edge_face_add")
-        layout.operator("mesh.subdivide")
         layout.operator("mesh.unsubdivide")
 
         layout.separator()
@@ -2258,14 +2221,6 @@ class VIEW3D_MT_edit_mesh_edges(Menu):
         layout.operator("mesh.edge_split")
         layout.operator("mesh.bridge_edge_loops")
 
-        layout.separator()
-
-        layout.operator("transform.edge_slide")
-        layout.operator("mesh.loop_multi_select", text="Edge Loops").ring = False
-        layout.operator("mesh.loop_multi_select", text="Edge Rings").ring = True
-        layout.operator("mesh.loop_to_region")
-        layout.operator("mesh.region_to_loop")
-
 
 class VIEW3D_MT_edit_mesh_faces(Menu):
     bl_label = "Faces"
@@ -2279,11 +2234,9 @@ class VIEW3D_MT_edit_mesh_faces(Menu):
         layout.operator_context = 'INVOKE_REGION_WIN'
 
         layout.operator("mesh.flip_normals")
-        layout.operator("mesh.edge_face_add")
         layout.operator("mesh.fill")
         layout.operator("mesh.fill_grid")
         layout.operator("mesh.beautify_fill")
-        layout.operator("mesh.inset")
         layout.operator("mesh.bevel").vertex_only = False
         layout.operator("mesh.solidify")
         layout.operator("mesh.intersect")
@@ -2352,7 +2305,7 @@ class VIEW3D_MT_edit_mesh_clean(Menu):
         layout.operator("mesh.vert_connect_concave")
         layout.operator("mesh.fill_holes")
 
-
+# Delete menu quiz
 class VIEW3D_MT_edit_mesh_delete(Menu):
     bl_label = "Delete"
 
@@ -2370,6 +2323,7 @@ class VIEW3D_MT_edit_mesh_delete(Menu):
         layout.separator()
 
         layout.operator("mesh.dissolve_limited")
+        layout.operator("mesh.dissolve_mode")
 
         layout.separator()
 
@@ -2409,19 +2363,24 @@ def draw_curve(self, context):
 
     layout.separator()
 
-    layout.operator("curve.extrude_move")
     layout.operator("curve.spin")
     layout.operator("curve.duplicate_move")
     layout.operator("curve.split")
     layout.operator("curve.separate")
     layout.operator("curve.make_segment")
-    layout.operator("curve.cyclic_toggle")
     layout.operator("curve.delete", text="Delete...")
 
     layout.separator()
 
+    layout.operator("curve.smooth_tilt")
+    layout.operator("curve.smooth_radius")
+    layout.operator("curve.smooth_weight")
+    layout.operator("curve.spline_weight_set")
+    layout.operator("object.vertex_parent_set")
+    
+    layout.separator()
+
     layout.menu("VIEW3D_MT_edit_curve_ctrlpoints")
-    layout.menu("VIEW3D_MT_edit_curve_segments")
 
     layout.separator()
 
@@ -2453,38 +2412,7 @@ class VIEW3D_MT_edit_curve_ctrlpoints(Menu):
 
             layout.separator()
 
-            layout.operator_menu_enum("curve.handle_type_set", "type")
-            layout.operator("curve.normals_make_consistent")
-
-            layout.separator()
-
         layout.menu("VIEW3D_MT_hook")
-
-
-class VIEW3D_MT_edit_curve_segments(Menu):
-    bl_label = "Segments"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("curve.subdivide")
-        layout.operator("curve.switch_direction")
-
-
-class VIEW3D_MT_edit_curve_specials(Menu):
-    bl_label = "Specials"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("curve.subdivide")
-        layout.operator("curve.switch_direction")
-        layout.operator("curve.spline_weight_set")
-        layout.operator("curve.radius_set")
-        layout.operator("curve.smooth")
-        layout.operator("curve.smooth_weight")
-        layout.operator("curve.smooth_radius")
-        layout.operator("curve.smooth_tilt")
 
 
 class VIEW3D_MT_edit_curve_showhide(ShowHideMenu, Menu):
@@ -2511,6 +2439,12 @@ class VIEW3D_MT_edit_font(Menu):
         layout.operator("font.style_toggle", text="Toggle Italic").style = 'ITALIC'
         layout.operator("font.style_toggle", text="Toggle Underline").style = 'UNDERLINE'
         layout.operator("font.style_toggle", text="Toggle Small Caps").style = 'SMALL_CAPS'
+
+        layout.separator()
+
+        layout.operator("font.delete").type = 'NEXT_OR_SELECTION'
+
+
 
 
 class VIEW3D_MT_edit_text_chars(Menu):
@@ -2607,6 +2541,7 @@ class VIEW3D_MT_edit_lattice(Menu):
         layout.separator()
 
         layout.operator("lattice.make_regular")
+        layout.operator("object.vertex_parent_set")
 
         layout.separator()
 
@@ -2631,6 +2566,7 @@ class VIEW3D_MT_edit_armature(Menu):
         layout.separator()
 
         layout.operator("armature.extrude_move")
+        layout.operator("armature.extrude_forked")
 
         if arm.use_mirror_x:
             layout.operator("armature.extrude_forked")
@@ -2668,28 +2604,10 @@ class VIEW3D_MT_edit_armature(Menu):
 
         layout.separator()
 
+        layout.menu("VIEW3D_MT_armature_showhide")
         layout.menu("VIEW3D_MT_bone_options_toggle", text="Bone Settings")
 
 
-class VIEW3D_MT_armature_specials(Menu):
-    bl_label = "Specials"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator_context = 'INVOKE_REGION_WIN'
-
-        layout.operator("armature.subdivide", text="Subdivide")
-        layout.operator("armature.switch_direction", text="Switch Direction")
-
-        layout.separator()
-
-        layout.operator_context = 'EXEC_REGION_WIN'
-        layout.operator("armature.autoside_names", text="AutoName Left/Right").type = 'XAXIS'
-        layout.operator("armature.autoside_names", text="AutoName Front/Back").type = 'YAXIS'
-        layout.operator("armature.autoside_names", text="AutoName Top/Bottom").type = 'ZAXIS'
-        layout.operator("armature.flip_names", text="Flip Names")
-        layout.operator("armature.symmetrize")
 
 
 class VIEW3D_MT_edit_armature_parent(Menu):

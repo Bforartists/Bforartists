@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -116,6 +116,7 @@ class GreasePencilStrokeEditPanel:
         subcol = col.column(align=True)
         subcol.active = edit_ok
         subcol.operator("gpencil.select_all", text="Select All")
+        subcol.operator("gpencil.select_all", text="Inverse").action = 'INVERT'
         subcol.operator("gpencil.select_border")
         subcol.operator("gpencil.select_circle")
 
@@ -138,6 +139,7 @@ class GreasePencilStrokeEditPanel:
         subcol = col.column(align=True)
         subcol.active = edit_ok
         subcol.operator("gpencil.delete", text="Delete")
+        subcol.operator("gpencil.dissolve", text="Dissolve")
         subcol.operator("gpencil.duplicate_move", text="Duplicate")
         subcol.operator("transform.mirror", text="Mirror").gpencil_strokes = True
 
@@ -148,6 +150,10 @@ class GreasePencilStrokeEditPanel:
         subcol.operator("transform.translate").gpencil_strokes = True   # icon='MAN_TRANS'
         subcol.operator("transform.rotate").gpencil_strokes = True      # icon='MAN_ROT'
         subcol.operator("transform.resize", text="Scale").gpencil_strokes = True      # icon='MAN_SCALE'
+
+        myvar = subcol.operator("transform.transform", text="Shrinkfatten") # scale the pencil stroke thickness. Needs two parameters ...
+        myvar.gpencil_strokes = True
+        myvar.mode = 'GPENCIL_SHRINKFATTEN'
 
         col.separator()
 

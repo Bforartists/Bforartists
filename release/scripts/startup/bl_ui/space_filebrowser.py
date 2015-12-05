@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -32,7 +32,10 @@ class FILEBROWSER_HT_header(Header):
         layout.template_header()
 
         row = layout.row()
-        row.separator()
+
+        # collapsible text menus. Everything in the FILEBROWSER_MT_editor_menus class can 
+        # be collapsed by this line
+        FILEBROWSER_MT_editor_menus.draw_collapsible(context, layout)
 
         row = layout.row(align=True)
         row.operator("file.previous", text="", icon='BACK')
@@ -40,10 +43,8 @@ class FILEBROWSER_HT_header(Header):
         row.operator("file.parent", text="", icon='FILE_PARENT')
         row.operator("file.refresh", text="", icon='FILE_REFRESH')
 
-        layout.separator()
         layout.operator_context = 'EXEC_DEFAULT'
         layout.operator("file.directory_new", icon='NEWFOLDER', text="")
-        layout.separator()
 
         layout.operator_context = 'INVOKE_DEFAULT'
         params = st.params
@@ -60,7 +61,8 @@ class FILEBROWSER_HT_header(Header):
 
             layout.prop(params, "sort_method", expand=True, text="")
 
-            layout.prop(params, "show_hidden", text="", icon='FILE_HIDDEN')
+            #layout.prop(params, "show_hidden", text="", icon='FILE_HIDDEN')
+            layout.operator("file.hidedot", text="", icon='FILE_HIDDEN')
             layout.prop(params, "use_filter", text="", icon='FILTER')
 
             row = layout.row(align=True)
@@ -246,6 +248,32 @@ class FILEBROWSER_PT_advanced_filter(Panel):
                 col = layout.column()
                 col.prop(params, "filter_id")
 
+# collapsible text menus. Everything in the FILEBROWSER_MT_editor_menus class can be collapsed
+# This is one of the text menus.
+class FILEBROWSER_MT_select(Menu):
+    bl_label = "Select"
+
+    def draw(self, context):
+        layout = self.layout
+
+        space = context.space_data
+
+        layout.operator("file.select_all_toggle")
+        layout.operator("file.select_border", text = "Border Select")
+
+# collapsible text menus. This is the master class
+class FILEBROWSER_MT_editor_menus(Menu):
+    bl_idname = "FILEBROWSER_MT_editor_menus"
+    bl_label = ""
+
+    def draw(self, context):
+        self.draw_menus(self.layout, context)
+
+    @staticmethod
+    def draw_menus(layout, context):
+        space = context.space_data
+
+        layout.menu("FILEBROWSER_MT_select")# Our actual text menu
 
 if __name__ == "__main__":  # only for live edit.
     bpy.utils.register_module(__name__)

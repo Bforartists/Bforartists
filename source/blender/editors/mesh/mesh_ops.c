@@ -233,7 +233,7 @@ void ED_operatormacros_mesh(void)
 	RNA_boolean_set(otmacro->ptr, "release_confirm", false);
 	RNA_boolean_set(otmacro->ptr, "single_side", true);
 
-	ot = WM_operatortype_append_macro("MESH_OT_duplicate_move", "Add Duplicate", "Duplicate mesh and move",
+	ot = WM_operatortype_append_macro("MESH_OT_duplicate_move", "Duplicate", "Duplicate mesh and move",
 	                                  OPTYPE_UNDO | OPTYPE_REGISTER);
 	WM_operatortype_macro_define(ot, "MESH_OT_duplicate");
 	otmacro = WM_operatortype_macro_define(ot, "TRANSFORM_OT_translate");

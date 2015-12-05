@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -76,10 +76,6 @@ class VIEW3D_PT_tools_object(View3DPanel, Panel):
         layout = self.layout
 
         col = layout.column(align=True)
-        col.operator("object.duplicate_move", text="Duplicate")
-        col.operator("object.duplicate_move_linked", text="Duplicate Linked")
-
-        col.operator("object.delete")
 
         obj = context.active_object
         if obj:
@@ -312,9 +308,10 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
         col.label(text="Deform:")
         row = col.row(align=True)
         row.operator("transform.edge_slide", text="Slide Edge")
-        row.operator("transform.vert_slide", text="Vertex")
+        row.operator("transform.vert_slide", text="Silde Vertex")
         col.operator("mesh.noise")
         col.operator("mesh.vertices_smooth")
+        col.operator("mesh.vertices_smooth_laplacian")
         col.operator("transform.vertex_random")
 
         col = layout.column(align=True)
@@ -328,7 +325,9 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
         col.operator("mesh.subdivide")
         col.operator("mesh.loopcut_slide")
         col.operator("mesh.offset_edge_loops_slide")
-        col.operator("mesh.duplicate_move", text="Duplicate")
+        row = col.row(align=True)
+        row.operator("mesh.dupli_extrude_cursor" , text = 'DupliEx').rotate_source = False
+        row.operator("mesh.dupli_extrude_cursor", text = 'DupliExRot').rotate_source = True
         row = col.row(align=True)
         row.operator("mesh.spin")
         row.operator("mesh.screw")
@@ -344,8 +343,6 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
         col.operator("mesh.bisect")
 
         col = layout.column(align=True)
-        col.label(text="Remove:")
-        col.menu("VIEW3D_MT_edit_mesh_delete")
         col.operator_menu_enum("mesh.merge", "type")
         col.operator("mesh.remove_doubles")
 
@@ -500,8 +497,6 @@ class VIEW3D_PT_tools_curveedit(View3DPanel, Panel):
 
         col = layout.column(align=True)
         col.label(text="Curve:")
-        col.operator("curve.duplicate_move", text="Duplicate")
-        col.operator("curve.delete")
         col.operator("curve.cyclic_toggle")
         col.operator("curve.switch_direction")
         col.operator("curve.spline_type_set")
@@ -881,8 +876,16 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
             if tool != 'NONE':
                 col = layout.column()
                 col.prop(brush, "size", slider=True)
+
+                myvar = layout.operator("wm.radial_control", text = "Radial Control Size")
+                myvar.data_path_primary = 'tool_settings.particle_edit.brush.size'
+
                 if tool != 'ADD':
                     col.prop(brush, "strength", slider=True)
+
+                    myvar = layout.operator("wm.radial_control", text = "Radial Control Strength")
+                    myvar.data_path_primary = 'tool_settings.particle_edit.brush.strength'
+
 
             if tool == 'ADD':
                 col.prop(brush, "count")
@@ -900,6 +903,47 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
 
         elif context.sculpt_object and brush:
             capabilities = brush.sculpt_capabilities
+
+            # Radial Control buttons
+            col = layout.column()
+            col.label(text="Radial Control:")
+            row = col.row(align=True)
+
+            #Size button
+            myvar = row.operator("wm.radial_control", text = "Size")
+            myvar.color_path = 'tool_settings.sculpt.brush.cursor_color_add'
+            myvar.data_path_primary = 'tool_settings.sculpt.brush.size'
+            myvar.fill_color_path = ''
+            myvar.data_path_secondary = 'tool_settings.unified_paint_settings.size'
+            myvar.zoom_path = ''
+            myvar.use_secondary = 'tool_settings.unified_paint_settings.use_unified_size'
+            myvar.image_id = 'tool_settings.sculpt.brush'
+            myvar.rotation_path = 'tool_settings.sculpt.brush.texture_slot.angle'
+            myvar.secondary_tex = False
+
+            #Strength button
+            myvar = row.operator("wm.radial_control", text = "Strength")
+            myvar.color_path = 'tool_settings.sculpt.brush.cursor_color_add'
+            myvar.data_path_primary = 'tool_settings.sculpt.brush.strength'
+            myvar.fill_color_path = ''
+            myvar.data_path_secondary = 'tool_settings.unified_paint_settings.strength'
+            myvar.zoom_path = ''
+            myvar.use_secondary = 'tool_settings.unified_paint_settings.use_unified_strength'
+            myvar.image_id = 'tool_settings.sculpt.brush'
+            myvar.rotation_path = 'tool_settings.sculpt.brush.texture_slot.angle'
+            myvar.secondary_tex = False
+
+            #Angle texture
+            myvar = row.operator("wm.radial_control", text = "Angle")
+            myvar.color_path = 'tool_settings.sculpt.brush.cursor_color_add'
+            myvar.data_path_primary = 'tool_settings.sculpt.brush.texture_slot.angle'
+            myvar.fill_color_path = ''
+            myvar.data_path_secondary = ''
+            myvar.zoom_path = ''
+            myvar.use_secondary = ''
+            myvar.image_id = 'tool_settings.sculpt.brush'
+            myvar.rotation_path = 'tool_settings.sculpt.brush.texture_slot.angle'
+            myvar.secondary_tex = False
 
             col = layout.column()
 
@@ -1465,9 +1509,12 @@ class VIEW3D_PT_sculpt_dyntopo(Panel, View3DPaintPanel):
         else:
             layout.operator("sculpt.dynamic_topology_toggle", icon='SCULPT_DYNTOPO', text="Enable Dyntopo")
 
+        layout.operator("sculpt.set_detail_size", text="Set detail size")
+
         col = layout.column()
         col.active = context.sculpt_object.use_dynamic_topology_sculpting
         sub = col.column(align=True)
+        
         sub.active = (brush and brush.sculpt_tool != 'MASK')
         if (sculpt.detail_type_method == 'CONSTANT'):
             row = sub.row(align=True)
@@ -1479,7 +1526,10 @@ class VIEW3D_PT_sculpt_dyntopo(Panel, View3DPaintPanel):
             sub.prop(sculpt, "detail_size")
         sub.prop(sculpt, "detail_refine_method", text="")
         sub.prop(sculpt, "detail_type_method", text="")
+        
+
         col.separator()
+
         col.prop(sculpt, "use_smooth_shading")
         col.operator("sculpt.optimize")
         if (sculpt.detail_type_method == 'CONSTANT'):
