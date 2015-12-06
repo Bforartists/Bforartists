@@ -168,11 +168,11 @@ class GRAPH_MT_select(Menu):
         props.mode = 'RIGHT'
 
         layout.separator()
-        layout.operator("graph.select_more")
-        layout.operator("graph.select_less")
+        layout.operator("graph.select_more",text = "More")
+        layout.operator("graph.select_less",text = "Less")
 
         layout.separator()
-        layout.operator("graph.select_linked")
+        layout.operator("graph.select_linked",text = "Linked")
 
 
 class GRAPH_MT_marker(Menu):

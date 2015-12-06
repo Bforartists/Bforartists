@@ -551,15 +551,15 @@ class VIEW3D_MT_select_object(Menu):
         layout.operator("object.select_all", text="Inverse").action = 'INVERT'
         layout.operator("object.select_random", text="Random")
         layout.operator("object.select_mirror", text="Mirror")
-        layout.operator("object.select_by_layer", text="Select All by Layer")
-        layout.operator_menu_enum("object.select_by_type", "type", text="Select All by Type...")
-        layout.operator("object.select_camera", text="Select Camera")
+        layout.operator("object.select_by_layer", text="All by Layer")
+        layout.operator_menu_enum("object.select_by_type", "type", text="All by Type ...")
+        layout.operator("object.select_camera", text="Camera")
 
         layout.separator()
 
         layout.operator_menu_enum("object.select_grouped", "type", text="Grouped")
         layout.operator_menu_enum("object.select_linked", "type", text="Linked")
-        layout.operator("object.select_pattern", text="Select Pattern...")
+        layout.operator("object.select_pattern", text="By Pattern...")
 
         layout.separator()
 
@@ -618,7 +618,7 @@ class VIEW3D_MT_select_pose(Menu):
         layout.separator()
 
         layout.operator_menu_enum("pose.select_grouped", "type", text="Grouped")
-        layout.operator("object.select_pattern", text="Select Pattern...")
+        layout.operator("object.select_pattern", text="Pattern...")
 
 
 class VIEW3D_MT_select_particle(Menu):
@@ -643,7 +643,7 @@ class VIEW3D_MT_select_particle(Menu):
 
         layout.separator()
 
-        layout.operator("particle.select_random")
+        layout.operator("particle.select_random", text="Random")
 
         layout.separator()
 
@@ -698,7 +698,7 @@ class VIEW3D_MT_select_edit_mesh(Menu):
         if context.scene.tool_settings.mesh_select_mode[2] is False:
             layout.operator("mesh.select_non_manifold", text="Non Manifold")
         layout.operator("mesh.select_interior_faces", text="Interior Faces")
-        layout.operator("mesh.select_face_by_sides")
+        layout.operator("mesh.select_face_by_sides", text = "Faces by Side")
 
         layout.separator()
 
@@ -725,8 +725,8 @@ class VIEW3D_MT_select_edit_mesh(Menu):
 
         layout.separator()
 
-        layout.operator("mesh.loop_to_region")
-        layout.operator("mesh.region_to_loop")
+        layout.operator("mesh.loop_to_region", text = "Loop Inner-Region")
+        layout.operator("mesh.region_to_loop", text = "Boundary Loop")
 
 
 class VIEW3D_MT_select_edit_curve(Menu):
@@ -742,12 +742,12 @@ class VIEW3D_MT_select_edit_curve(Menu):
 
         layout.operator("curve.select_all").action = 'TOGGLE'
         layout.operator("curve.select_all", text="Inverse").action = 'INVERT'
-        layout.operator("curve.select_random")
+        layout.operator("curve.select_random", text="Random")
         layout.operator("curve.select_nth")
         layout.operator("curve.select_linked", text="Linked")
         layout.operator("curve.select_linked_pick", text="Linked Pick Select").deselect = False
         layout.operator("curve.select_linked_pick", text="Linked Pick Deselect").deselect = True
-        layout.operator("curve.select_similar", text="Select Similar")
+        layout.operator("curve.select_similar", text="Similar")
 
         layout.separator()
 
@@ -775,12 +775,12 @@ class VIEW3D_MT_select_edit_surface(Menu):
 
         layout.operator("curve.select_all").action = 'TOGGLE'
         layout.operator("curve.select_all", text="Inverse").action = 'INVERT'
-        layout.operator("curve.select_random")
+        layout.operator("curve.select_random", text="Random")
         layout.operator("curve.select_nth")
         layout.operator("curve.select_linked", text="Select Linked")
         layout.operator("curve.select_linked_pick", text="Linked Pick Select").deselect = False
         layout.operator("curve.select_linked_pick", text="Linked Pick Deselect").deselect = True
-        layout.operator("curve.select_similar", text="Select Similar")
+        layout.operator("curve.select_similar", text="Similar")
 
         layout.separator()
 
@@ -830,7 +830,7 @@ class VIEW3D_MT_select_edit_metaball(Menu):
 
         layout.separator()
 
-        layout.operator("mball.select_random_metaelems")
+        layout.operator("mball.select_random_metaelems", text="Random")
 
         layout.separator()
 
@@ -849,7 +849,7 @@ class VIEW3D_MT_select_edit_lattice(Menu):
         layout.separator()
 
         layout.operator("lattice.select_mirror")
-        layout.operator("lattice.select_random")
+        layout.operator("lattice.select_random", text="Random")
         layout.operator("lattice.select_all").action = 'TOGGLE'
         layout.operator("lattice.select_all", text="Inverse").action = 'INVERT'
 
@@ -904,7 +904,7 @@ class VIEW3D_MT_select_edit_armature(Menu):
         props.direction = 'CHILD'
 
         layout.operator_menu_enum("armature.select_similar", "type", text="Similar")
-        layout.operator("object.select_pattern", text="Select Pattern...")
+        layout.operator("object.select_pattern", text="Pattern...")
 
 
 class VIEW3D_MT_select_paint_mask(Menu):
