@@ -3432,7 +3432,8 @@ void VIEW3D_OT_render_border(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Set Render Border";
-	ot->description = "Set the boundaries of the border render and enable border render";
+	//ot->description = "Set the boundaries of the border render and enable border render"; // It is called Tooltip, not Confusetip
+	ot->description = "Draw a rectangle to render a portion of the Viewport / Cameraview";
 	ot->idname = "VIEW3D_OT_render_border";
 
 	/* api callbacks */
@@ -3490,7 +3491,8 @@ void VIEW3D_OT_clear_render_border(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Clear Render Border";
-	ot->description = "Clear the boundaries of the border render and disable border render";
+	//ot->description = "Clear the boundaries of the border render and disable border render"; // It is called Tooltip, not Confusetip
+	ot->description = "Removes an existing Render border"; // Short, pregnant, working. And UNDERSTANDABLE! That's how a tooltip should look like.
 	ot->idname = "VIEW3D_OT_clear_render_border";
 
 	/* api callbacks */
