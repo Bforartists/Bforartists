@@ -315,6 +315,7 @@ typedef struct View3D {
 /* View3d->flag3 (short) */
 #define V3D_SHOW_WORLD			(1 << 0)
 #define V3D_HIDE_CURSOR         (1 << 1) // bfa - show hide 3d cursor
+#define V3D_HIDE_GROUNDGRID     (1 << 2) // bfa - show hide the whole groundgrid. Also in 2d view orthographic
 
 /* View3D->around */
 #define V3D_CENTER		 0
