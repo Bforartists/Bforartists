@@ -38,6 +38,16 @@ kmi = km.keymap_items.new('wm.context_scale_float', 'NDOF_BUTTON_MINUS', 'PRESS'
 kmi_props_setattr(kmi.properties, 'data_path', 'user_preferences.inputs.ndof_sensitivity')
 kmi_props_setattr(kmi.properties, 'value', 0.6666666865348816)
 kmi = km.keymap_items.new('info.reports_display_update', 'TIMER_REPORT', 'ANY', any=True)
+
+# Map UV Sculpt
+km = kc.keymaps.new('UV Sculpt', space_type='EMPTY', region_type='WINDOW', modal=False)
+
+kmi = km.keymap_items.new('sculpt.uv_sculpt_stroke', 'LEFTMOUSE', 'PRESS')
+kmi_props_setattr(kmi.properties, 'mode', 'NORMAL')
+kmi = km.keymap_items.new('sculpt.uv_sculpt_stroke', 'LEFTMOUSE', 'PRESS', ctrl=True)
+kmi_props_setattr(kmi.properties, 'mode', 'INVERT')
+kmi = km.keymap_items.new('sculpt.uv_sculpt_stroke', 'LEFTMOUSE', 'PRESS', shift=True)
+kmi_props_setattr(kmi.properties, 'mode', 'RELAX')
 kmi = km.keymap_items.new('wm.radial_control', 'F', 'PRESS')
 kmi_props_setattr(kmi.properties, 'data_path_primary', 'tool_settings.uv_sculpt.brush.size')
 kmi_props_setattr(kmi.properties, 'data_path_secondary', 'tool_settings.unified_paint_settings.size')
@@ -490,6 +500,9 @@ kmi_props_setattr(kmi.properties, 'deselect', True)
 # Map 3D View
 km = kc.keymaps.new('3D View', space_type='VIEW_3D', region_type='WINDOW', modal=False)
 
+kmi = km.keymap_items.new('wm.call_menu', 'SPACE', 'PRESS')
+kmi_props_setattr(kmi.properties, 'name', 'VIEW3D_MT_Space_Dynamic_Menu')
+kmi = km.keymap_items.new('view.reset_3d_view', 'NUMPAD_ASTERIX', 'PRESS')
 kmi = km.keymap_items.new('view.reset_3d_view', 'NUMPAD_ASTERIX', 'PRESS')
 kmi = km.keymap_items.new('wm.call_menu', 'SPACE', 'PRESS')
 kmi_props_setattr(kmi.properties, 'name', 'VIEW3D_MT_Space_Dynamic_Menu')
@@ -797,16 +810,6 @@ kmi = km.keymap_items.new('transform.translate', 'EVT_TWEAK_S', 'ANY')
 kmi = km.keymap_items.new('transform.rotate', 'E', 'PRESS')
 kmi = km.keymap_items.new('transform.resize', 'R', 'PRESS')
 kmi = km.keymap_items.new('transform.mirror', 'M', 'PRESS', ctrl=True)
-
-# Map UV Sculpt
-km = kc.keymaps.new('UV Sculpt', space_type='EMPTY', region_type='WINDOW', modal=False)
-
-kmi = km.keymap_items.new('sculpt.uv_sculpt_stroke', 'LEFTMOUSE', 'PRESS')
-kmi_props_setattr(kmi.properties, 'mode', 'NORMAL')
-kmi = km.keymap_items.new('sculpt.uv_sculpt_stroke', 'LEFTMOUSE', 'PRESS', ctrl=True)
-kmi_props_setattr(kmi.properties, 'mode', 'INVERT')
-kmi = km.keymap_items.new('sculpt.uv_sculpt_stroke', 'LEFTMOUSE', 'PRESS', shift=True)
-kmi_props_setattr(kmi.properties, 'mode', 'RELAX')
 
 # Map Mask Editing
 km = kc.keymaps.new('Mask Editing', space_type='EMPTY', region_type='WINDOW', modal=False)
@@ -1640,7 +1643,7 @@ kmi_props_setattr(kmi.properties, 'mode', 'WEIGHT_PAINT')
 kmi = km.keymap_items.new('object.mode_set', 'SIX', 'PRESS')
 kmi_props_setattr(kmi.properties, 'mode', 'TEXTURE_PAINT')
 kmi = km.keymap_items.new('object.mode_set', 'SEVEN', 'PRESS')
-kmi_props_setattr(kmi.properties, 'mode', 'POSE')
+kmi_props_setattr(kmi.properties, 'mode', 'OBJECT')
 
 # Map Animation
 km = kc.keymaps.new('Animation', space_type='EMPTY', region_type='WINDOW', modal=False)
