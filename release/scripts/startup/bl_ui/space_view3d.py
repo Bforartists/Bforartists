@@ -36,7 +36,7 @@ class VIEW3D_HT_header(Header):
         toolsettings = context.tool_settings
 
         row = layout.row(align=True)
-        row.template_header()
+        row.template_header() # editor type menus
         sub = row.row(align=True)
 
         VIEW3D_MT_editor_menus.draw_collapsible(context, layout)
@@ -1075,16 +1075,11 @@ class VIEW3D_MT_object(Menu):
         scene = context.scene
         obj = context.object
 
-        layout.operator("ed.undo")
-        layout.operator("ed.redo")
-        layout.operator("ed.undo_history")
-
         # The former Specials menu content. Special settings for Camera, Curve, Font, Empty and Lamp
         if context.object :
 
             if obj.type == 'CAMERA':
                 layout.operator_context = 'INVOKE_REGION_WIN'
-                layout.separator()
 
                 if obj.data.type == 'PERSP':
                     props = layout.operator("wm.context_modal_mouse", text="Camera Lens Angle")
@@ -1115,9 +1110,10 @@ class VIEW3D_MT_object(Menu):
                         props.header_text = "DOF Distance: %.3f"
                     del view
 
+                layout.separator()
+
             if obj.type in {'CURVE', 'FONT'}:
                 layout.operator_context = 'INVOKE_REGION_WIN'
-                layout.separator()
 
                 props = layout.operator("wm.context_modal_mouse", text="Extrude Size")
                 props.data_path_iter = "selected_editable_objects"
@@ -1131,9 +1127,10 @@ class VIEW3D_MT_object(Menu):
                 props.input_scale = 0.01
                 props.header_text = "Width Size: %.3f"
 
+                layout.separator()
+
             if obj.type == 'EMPTY':
                 layout.operator_context = 'INVOKE_REGION_WIN'
-                layout.separator()
 
                 props = layout.operator("wm.context_modal_mouse", text="Empty Draw Size")
                 props.data_path_iter = "selected_editable_objects"
@@ -1141,11 +1138,12 @@ class VIEW3D_MT_object(Menu):
                 props.input_scale = 0.01
                 props.header_text = "Empty Draw Size: %.3f"
 
+                layout.separator()
+
             if obj.type == 'LAMP':
                 lamp = obj.data
 
                 layout.operator_context = 'INVOKE_REGION_WIN'
-                layout.separator()
 
                 if scene.render.use_shading_nodes:
                     try:
@@ -1218,9 +1216,9 @@ class VIEW3D_MT_object(Menu):
                         props.input_scale = 0.05
                         props.header_text = "Clip End: %.2f"
 
-        # End former Specials menu content.
+                layout.separator()
 
-        layout.separator()
+        # End former Specials menu content.
 
         layout.menu("VIEW3D_MT_transform_object")
         layout.menu("VIEW3D_MT_mirror")
@@ -1612,12 +1610,6 @@ class VIEW3D_MT_paint_weight(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("ed.undo")
-        layout.operator("ed.redo")
-        layout.operator("ed.undo_history")
-
-        layout.separator()
-
         layout.operator("paint.weight_from_bones", text="Assign Automatic From Bones").type = 'AUTOMATIC'
         layout.operator("paint.weight_from_bones", text="Assign From Bone Envelopes").type = 'ENVELOPES'
 
@@ -1729,12 +1721,6 @@ class VIEW3D_MT_particle(Menu):
 
         particle_edit = context.tool_settings.particle_edit
 
-        layout.operator("ed.undo")
-        layout.operator("ed.redo")
-        layout.operator("ed.undo_history")
-
-        layout.separator()
-
         layout.operator("particle.mirror")
 
         layout.separator()
@@ -1764,12 +1750,6 @@ class VIEW3D_MT_pose(Menu):
 
     def draw(self, context):
         layout = self.layout
-
-        layout.operator("ed.undo")
-        layout.operator("ed.redo")
-        layout.operator("ed.undo_history")
-
-        layout.separator()
 
         layout.menu("VIEW3D_MT_transform_armature")
 
@@ -2022,12 +2002,6 @@ class VIEW3D_MT_edit_mesh(Menu):
         layout = self.layout
 
         toolsettings = context.tool_settings
-
-        layout.operator("ed.undo")
-        layout.operator("ed.redo")
-        layout.operator("ed.undo_history")
-
-        layout.separator()
 
         layout.menu("VIEW3D_MT_transform")
         layout.menu("VIEW3D_MT_mirror")
@@ -2452,12 +2426,6 @@ class VIEW3D_MT_edit_meta(Menu):
         layout = self.layout
 
         toolsettings = context.tool_settings
-
-        layout.operator("ed.undo")
-        layout.operator("ed.redo")
-        layout.operator("ed.undo_history")
-
-        layout.separator()
 
         layout.menu("VIEW3D_MT_transform")
         layout.menu("VIEW3D_MT_mirror")
