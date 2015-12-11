@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -93,7 +93,7 @@ class ExportX3D(bpy.types.Operator, ExportHelper, IOX3DOrientationHelper):
     use_selection = BoolProperty(
             name="Selection Only",
             description="Export selected objects only",
-            default=False,
+            default=True,
             )
     use_mesh_modifiers = BoolProperty(
             name="Apply Modifiers",

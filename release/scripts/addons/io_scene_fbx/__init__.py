@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -269,7 +269,7 @@ class ExportFBX(bpy.types.Operator, ExportHelper, IOFBXOrientationHelper):
     use_selection = BoolProperty(
             name="Selected Objects",
             description="Export selected objects on visible layers",
-            default=False,
+            default=True,
             )
     global_scale = FloatProperty(
             name="Scale",
