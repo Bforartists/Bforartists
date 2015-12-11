@@ -1456,25 +1456,6 @@ class VIEW3D_MT_make_links(Menu):
         layout.operator("object.join_uvs")  # stupid place to add this!
 
 
-class VIEW3D_MT_object_game(Menu):
-    bl_label = "Game"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("object.logic_bricks_copy", text="Copy Logic Bricks")
-        layout.operator("object.game_physics_copy", text="Copy Physics Properties")
-
-        layout.separator()
-
-        layout.operator("object.game_property_copy", text="Replace Properties").operation = 'REPLACE'
-        layout.operator("object.game_property_copy", text="Merge Properties").operation = 'MERGE'
-        layout.operator_menu_enum("object.game_property_copy", "property", text="Copy Properties...")
-
-        layout.separator()
-
-        layout.operator("object.game_property_clear")
-
 # Show hide menu for face selection masking
 class VIEW3D_MT_facemask_showhide(Menu):
     bl_label = "Show/Hide"
