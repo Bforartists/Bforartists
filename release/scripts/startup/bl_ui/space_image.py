@@ -570,47 +570,6 @@ class IMAGE_PT_image_properties(Panel):
         layout.template_image(sima, "image", iuser, multiview=True)
 
 
-class IMAGE_PT_game_properties(Panel):
-    bl_space_type = 'IMAGE_EDITOR'
-    bl_region_type = 'UI'
-    bl_label = "Game Properties"
-
-    @classmethod
-    def poll(cls, context):
-        sima = context.space_data
-        # display even when not in game mode because these settings effect the 3d view
-        return (sima and sima.image and not sima.show_maskedit)  # and (rd.engine == 'BLENDER_GAME')
-
-    def draw(self, context):
-        layout = self.layout
-
-        sima = context.space_data
-        ima = sima.image
-
-        split = layout.split()
-
-        col = split.column()
-        col.prop(ima, "use_animation")
-        sub = col.column(align=True)
-        sub.active = ima.use_animation
-        sub.prop(ima, "frame_start", text="Start")
-        sub.prop(ima, "frame_end", text="End")
-        sub.prop(ima, "fps", text="Speed")
-
-        col.prop(ima, "use_tiles")
-        sub = col.column(align=True)
-        sub.active = ima.use_tiles or ima.use_animation
-        sub.prop(ima, "tiles_x", text="X")
-        sub.prop(ima, "tiles_y", text="Y")
-
-        col = split.column()
-        col.label(text="Clamp:")
-        col.prop(ima, "use_clamp_x", text="X")
-        col.prop(ima, "use_clamp_y", text="Y")
-        col.separator()
-        col.prop(ima, "mapping", expand=True)
-
-
 class IMAGE_PT_view_properties(Panel):
     bl_space_type = 'IMAGE_EDITOR'
     bl_region_type = 'UI'
