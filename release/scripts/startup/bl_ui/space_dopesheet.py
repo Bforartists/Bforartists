@@ -112,9 +112,7 @@ class DOPESHEET_HT_header(Header):
         st = context.space_data
         toolsettings = context.tool_settings
 
-        row = layout.row(align=True)
-        row.template_header()
-
+        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
         DOPESHEET_MT_editor_menus.draw_collapsible(context, layout)
 
         layout.prop(st, "mode", text="")
@@ -150,6 +148,14 @@ class DOPESHEET_HT_header(Header):
         if st.mode != 'GPENCIL':
             layout.prop(st, "auto_snap", text="")
 
+# bfa - show hide the editormenu
+class ALL_MT_editormenu(Menu):
+
+    @staticmethod
+    def draw_menus(layout, context):
+
+        row = layout.row(align=True)
+        row.template_header() # editor type menus
 
 class DOPESHEET_MT_editor_menus(Menu):
     bl_idname = "DOPESHEET_MT_editor_menus"

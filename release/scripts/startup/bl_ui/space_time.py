@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -32,9 +32,7 @@ class TIME_HT_header(Header):
         screen = context.screen
         userprefs = context.user_preferences
 
-        row = layout.row(align=True)
-        row.template_header()
-
+        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
         TIME_MT_editor_menus.draw_collapsible(context, layout)
 
         row = layout.row(align=True)
@@ -91,6 +89,15 @@ class TIME_HT_header(Header):
         row.prop_search(scene.keying_sets_all, "active", scene, "keying_sets_all", text="")
         row.operator("anim.keyframe_insert", text="", icon='KEY_HLT')
         row.operator("anim.keyframe_delete", text="", icon='KEY_DEHLT')
+
+# bfa - show hide the editormenu
+class ALL_MT_editormenu(Menu):
+
+    @staticmethod
+    def draw_menus(layout, context):
+
+        row = layout.row(align=True)
+        row.template_header() # editor type menus
 
 
 class TIME_MT_editor_menus(Menu):

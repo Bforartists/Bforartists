@@ -31,9 +31,7 @@ class INFO_HT_header(Header):
         scene = context.scene
         rd = scene.render
 
-        row = layout.row(align=True)
-        row.template_header()
-
+        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
         INFO_MT_editor_menus.draw_collapsible(context, layout)
 
         if window.screen.show_fullscreen:
@@ -69,6 +67,15 @@ class INFO_HT_header(Header):
             return
         #row.operator("wm.splash", text="", icon='BLENDER', emboss=False)# bfa - commented out the splash icon in the toolbar
         row.label(text=scene.statistics(), translate=False)
+
+# bfa - show hide the editormenu
+class ALL_MT_editormenu(Menu):
+
+    @staticmethod
+    def draw_menus(layout, context):
+
+        row = layout.row(align=True)
+        row.template_header() # editor type menus
 
 # --------------------------------menu items, down to line 310
 

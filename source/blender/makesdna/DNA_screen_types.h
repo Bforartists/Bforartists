@@ -284,6 +284,8 @@ enum {
 	AREA_FLAG_STACKED_FULLSCREEN = (1 << 7),
 	/* update action zones (even if the mouse is not intersecting them) */
 	AREA_FLAG_ACTIONZONES_UPDATE = (1 << 8),
+	// bfa - show hide the editorsmenu
+	HEADER_NO_EDITORTYPEMENU = (1 << 9),
 };
 
 #define EDGEWIDTH	1
