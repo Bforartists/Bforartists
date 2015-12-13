@@ -31,9 +31,7 @@ class OUTLINER_HT_header(Header):
         scene = context.scene
         ks = context.scene.keying_sets.active
 
-        row = layout.row(align=True)
-        row.template_header()
-
+        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
         OUTLINER_MT_editor_menus.draw_collapsible(context, layout)
 
         layout.prop(space, "display_mode", text="")
@@ -60,6 +58,14 @@ class OUTLINER_HT_header(Header):
         elif space.display_mode == 'ORPHAN_DATA':
             layout.operator("outliner.orphans_purge")
 
+# bfa - show hide the editormenu
+class ALL_MT_editormenu(Menu):
+
+    @staticmethod
+    def draw_menus(layout, context):
+
+        row = layout.row(align=True)
+        row.template_header() # editor type menus
 
 class OUTLINER_MT_editor_menus(Menu):
     bl_idname = "OUTLINER_MT_editor_menus"

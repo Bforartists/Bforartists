@@ -35,10 +35,7 @@ class VIEW3D_HT_header(Header):
         obj = context.active_object
         toolsettings = context.tool_settings
 
-        row = layout.row(align=True)
-        row.template_header() # editor type menus
-        sub = row.row(align=True)
-
+        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
         VIEW3D_MT_editor_menus.draw_collapsible(context, layout)
 
         # Contains buttons like Mode, Pivot, Manipulator, Layer, Mesh Select Mode...
@@ -118,7 +115,16 @@ class VIEW3D_HT_header(Header):
             row.operator("pose.paste", text="", icon='PASTEDOWN').flipped = False
             row.operator("pose.paste", text="", icon='PASTEFLIPDOWN').flipped = True
 
+# bfa - show hide the editormenu
+class ALL_MT_editormenu(Menu):
 
+    @staticmethod
+    def draw_menus(layout, context):
+
+        row = layout.row(align=True)
+        row.template_header() # editor type menus
+
+# the normal text menus 
 class VIEW3D_MT_editor_menus(Menu):
     bl_space_type = 'VIEW3D_MT_editor_menus'
     bl_label = ""

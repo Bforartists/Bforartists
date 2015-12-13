@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -63,9 +63,7 @@ class SEQUENCER_HT_header(Header):
         st = context.space_data
         scene = context.scene
 
-        row = layout.row(align=True)
-        row.template_header()
-
+        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
         SEQUENCER_MT_editor_menus.draw_collapsible(context, layout)
 
         row = layout.row(align=True)
@@ -122,6 +120,15 @@ class SEQUENCER_HT_header(Header):
         props.sequencer = True
 
         layout.template_running_jobs()
+
+# bfa - show hide the editormenu
+class ALL_MT_editormenu(Menu):
+
+    @staticmethod
+    def draw_menus(layout, context):
+
+        row = layout.row(align=True)
+        row.template_header() # editor type menus
 
 
 class SEQUENCER_MT_editor_menus(Menu):

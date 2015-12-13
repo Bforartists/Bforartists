@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -779,6 +779,14 @@ class Menu(StructRNA, _GenericUI, metaclass=RNAMeta):
             cls.draw_menus(layout, context)
         else:
             layout.menu(cls.__name__, icon='COLLAPSEMENU')
+
+    # bfa - show hide the editortypemenu
+    @classmethod
+    def draw_hidden(cls, context, layout):
+        # helper function for (optionally) hidden editortype menu
+        # only usable within headers
+        if context.area.show_editortypemenu:
+            cls.draw_menus(layout, context)
 
 
 class NodeTree(bpy_types.ID, metaclass=RNAMetaPropGroup):

@@ -32,15 +32,21 @@ class NLA_HT_header(Header):
 
         st = context.space_data
 
-        row = layout.row(align=True)
-        row.template_header()
-
+        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
         NLA_MT_editor_menus.draw_collapsible(context, layout)
 
         dopesheet_filter(layout, context)
 
         layout.prop(st, "auto_snap", text="")
 
+# bfa - show hide the editormenu
+class ALL_MT_editormenu(Menu):
+
+    @staticmethod
+    def draw_menus(layout, context):
+
+        row = layout.row(align=True)
+        row.template_header() # editor type menus
 
 class NLA_MT_editor_menus(Menu):
     bl_idname = "NLA_MT_editor_menus"

@@ -53,9 +53,7 @@ class CLIP_HT_header(Header):
         sc = context.space_data
         clip = sc.clip
 
-        row = layout.row(align=True)
-        row.template_header()
-
+        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
         CLIP_MT_tracking_editor_menus.draw_collapsible(context, layout)
 
         row = layout.row()
@@ -154,6 +152,14 @@ class CLIP_HT_header(Header):
 
         layout.template_running_jobs()
 
+# bfa - show hide the editormenu
+class ALL_MT_editormenu(Menu):
+
+    @staticmethod
+    def draw_menus(layout, context):
+
+        row = layout.row(align=True)
+        row.template_header() # editor type menus
 
 class CLIP_MT_tracking_editor_menus(Menu):
     bl_idname = "CLIP_MT_tracking_editor_menus"

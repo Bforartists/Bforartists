@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -18,7 +18,7 @@
 
 # <pep8 compliant>
 import bpy
-from bpy.types import Header
+from bpy.types import Header, Menu
 
 
 class PROPERTIES_HT_header(Header):
@@ -29,10 +29,19 @@ class PROPERTIES_HT_header(Header):
 
         view = context.space_data
 
+        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
+
         row = layout.row()
-        row.template_header()
         row.prop(view, "context", expand=True, icon_only=True)
 
+# bfa - show hide the editormenu
+class ALL_MT_editormenu(Menu):
+
+    @staticmethod
+    def draw_menus(layout, context):
+
+        row = layout.row(align=True)
+        row.template_header() # editor type menus
 
 def register():
     bpy.utils.register_module(__name__)

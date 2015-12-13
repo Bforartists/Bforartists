@@ -29,7 +29,7 @@ class FILEBROWSER_HT_header(Header):
 
         st = context.space_data
 
-        layout.template_header()
+        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
 
         row = layout.row()
 
@@ -95,6 +95,14 @@ class FILEBROWSER_HT_header(Header):
 
         layout.template_running_jobs()
 
+# bfa - show hide the editormenu
+class ALL_MT_editormenu(Menu):
+
+    @staticmethod
+    def draw_menus(layout, context):
+
+        row = layout.row(align=True)
+        row.template_header() # editor type menus
 
 class FILEBROWSER_UL_dir(bpy.types.UIList):
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):

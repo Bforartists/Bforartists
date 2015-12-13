@@ -31,9 +31,7 @@ class TEXT_HT_header(Header):
         st = context.space_data
         text = st.text
 
-        row = layout.row(align=True)
-        row.template_header()
-
+        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
         TEXT_MT_editor_menus.draw_collapsible(context, layout)
 
         if text and text.is_modified:
@@ -76,6 +74,14 @@ class TEXT_HT_header(Header):
                           if text.library
                           else "Text: Internal")
 
+# bfa - show hide the editormenu
+class ALL_MT_editormenu(Menu):
+
+    @staticmethod
+    def draw_menus(layout, context):
+
+        row = layout.row(align=True)
+        row.template_header() # editor type menus
 
 class TEXT_MT_editor_menus(Menu):
     bl_idname = "TEXT_MT_editor_menus"
