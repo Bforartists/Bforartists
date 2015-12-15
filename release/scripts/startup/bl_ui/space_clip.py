@@ -154,6 +154,10 @@ class CLIP_HT_header(Header):
 
 # bfa - show hide the editormenu
 class ALL_MT_editormenu(Menu):
+    bl_label = ""
+
+    def draw(self, context):
+        self.draw_menus(self.layout, context)
 
     @staticmethod
     def draw_menus(layout, context):
