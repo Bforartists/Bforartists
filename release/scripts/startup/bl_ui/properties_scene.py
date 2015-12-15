@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -68,6 +68,7 @@ class SCENE_PT_scene(SceneButtonsPanel, Panel):
 
 class SCENE_PT_unit(SceneButtonsPanel, Panel):
     bl_label = "Units"
+    bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
 
     def draw(self, context):
@@ -283,6 +284,7 @@ class SCENE_PT_audio(SceneButtonsPanel, Panel):
 
 class SCENE_PT_physics(SceneButtonsPanel, Panel):
     bl_label = "Gravity"
+    bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {'BLENDER_RENDER'}
 
     def draw_header(self, context):
@@ -300,6 +302,7 @@ class SCENE_PT_physics(SceneButtonsPanel, Panel):
 
 class SCENE_PT_rigid_body_world(SceneButtonsPanel, Panel):
     bl_label = "Rigid Body World"
+    bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {'BLENDER_RENDER'}
 
     @classmethod
@@ -382,8 +385,9 @@ class SCENE_PT_rigid_body_field_weights(SceneButtonsPanel, Panel):
 
 class SCENE_PT_simplify(SceneButtonsPanel, Panel):
     bl_label = "Simplify"
+    bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {'BLENDER_RENDER'}
-
+    
     def draw_header(self, context):
         rd = context.scene.render
         self.layout.prop(rd, "use_simplify", text="")

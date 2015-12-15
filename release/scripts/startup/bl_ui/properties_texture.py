@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -247,38 +247,6 @@ class TEXTURE_PT_preview(TextureButtonsPanel, Panel):
             layout.prop(tex, "use_preview_alpha")
 
 
-class TEXTURE_PT_colors(TextureButtonsPanel, Panel):
-    bl_label = "Colors"
-    bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
-
-    def draw(self, context):
-        layout = self.layout
-
-        tex = context.texture
-
-        layout.prop(tex, "use_color_ramp", text="Ramp")
-        if tex.use_color_ramp:
-            layout.template_color_ramp(tex, "color_ramp", expand=True)
-
-        split = layout.split()
-
-        col = split.column()
-        col.label(text="RGB Multiply:")
-        sub = col.column(align=True)
-        sub.prop(tex, "factor_red", text="R")
-        sub.prop(tex, "factor_green", text="G")
-        sub.prop(tex, "factor_blue", text="B")
-
-        col = split.column()
-        col.label(text="Adjust:")
-        col.prop(tex, "intensity")
-        col.prop(tex, "contrast")
-        col.prop(tex, "saturation")
-
-        col = layout.column()
-        col.prop(tex, "use_clamp", text="Clamp")
-
 # Texture Slot Panels #
 
 
@@ -308,6 +276,7 @@ class TextureTypePanel(TextureButtonsPanel):
 
 class TEXTURE_PT_clouds(TextureTypePanel, Panel):
     bl_label = "Clouds"
+    bl_options = {'DEFAULT_CLOSED'}
     tex_type = 'CLOUDS'
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
 
@@ -463,6 +432,38 @@ def texture_filter_common(tex, layout):
 
     layout.prop(tex, "filter_size")
     layout.prop(tex, "use_filter_size_min")
+
+class TEXTURE_PT_colors(TextureButtonsPanel, Panel):
+    bl_label = "Colors"
+    bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+
+    def draw(self, context):
+        layout = self.layout
+
+        tex = context.texture
+
+        layout.prop(tex, "use_color_ramp", text="Ramp")
+        if tex.use_color_ramp:
+            layout.template_color_ramp(tex, "color_ramp", expand=True)
+
+        split = layout.split()
+
+        col = split.column()
+        col.label(text="RGB Multiply:")
+        sub = col.column(align=True)
+        sub.prop(tex, "factor_red", text="R")
+        sub.prop(tex, "factor_green", text="G")
+        sub.prop(tex, "factor_blue", text="B")
+
+        col = split.column()
+        col.label(text="Adjust:")
+        col.prop(tex, "intensity")
+        col.prop(tex, "contrast")
+        col.prop(tex, "saturation")
+
+        col = layout.column()
+        col.prop(tex, "use_clamp", text="Clamp")
 
 
 class TEXTURE_PT_image_sampling(TextureTypePanel, Panel):
@@ -911,6 +912,7 @@ class TEXTURE_PT_ocean(TextureTypePanel, Panel):
 
 class TEXTURE_PT_mapping(TextureSlotPanel, Panel):
     bl_label = "Mapping"
+    bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
 
     @classmethod
@@ -1014,6 +1016,7 @@ class TEXTURE_PT_mapping(TextureSlotPanel, Panel):
 
 class TEXTURE_PT_influence(TextureSlotPanel, Panel):
     bl_label = "Influence"
+    bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
 
     @classmethod

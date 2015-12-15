@@ -2590,10 +2590,36 @@ class VIEW3D_MT_edit_armature_delete(Menu):
 
 # ********** Panel **********
 
+class VIEW3D_PT_view3d_name(Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    bl_label = "Item"
+
+    @classmethod
+    def poll(cls, context):
+        return (context.space_data and context.active_object)
+
+    def draw(self, context):
+        layout = self.layout
+
+        ob = context.active_object
+        row = layout.row()
+        row.label(text="", icon='OBJECT_DATA')
+        row.prop(ob, "name", text="")
+
+        if ob.type == 'ARMATURE' and ob.mode in {'EDIT', 'POSE'}:
+            bone = context.active_bone
+            if bone:
+                row = layout.row()
+                row.label(text="", icon='BONE_DATA')
+                row.prop(bone, "name", text="")
+
+
 
 class VIEW3D_PT_grease_pencil(GreasePencilDataPanel, Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
+    bl_options = {'DEFAULT_CLOSED'}
 
     # NOTE: this is just a wrapper around the generic GP Panel
 
@@ -2602,6 +2628,7 @@ class VIEW3D_PT_view3d_properties(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_label = "View"
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -2650,6 +2677,7 @@ class VIEW3D_PT_view3d_cursor(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_label = "3D Cursor"
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -2661,31 +2689,6 @@ class VIEW3D_PT_view3d_cursor(Panel):
 
         view = context.space_data
         layout.column().prop(view, "cursor_location", text="Location")
-
-
-class VIEW3D_PT_view3d_name(Panel):
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'UI'
-    bl_label = "Item"
-
-    @classmethod
-    def poll(cls, context):
-        return (context.space_data and context.active_object)
-
-    def draw(self, context):
-        layout = self.layout
-
-        ob = context.active_object
-        row = layout.row()
-        row.label(text="", icon='OBJECT_DATA')
-        row.prop(ob, "name", text="")
-
-        if ob.type == 'ARMATURE' and ob.mode in {'EDIT', 'POSE'}:
-            bone = context.active_bone
-            if bone:
-                row = layout.row()
-                row.label(text="", icon='BONE_DATA')
-                row.prop(bone, "name", text="")
 
 
 class VIEW3D_PT_view3d_display(Panel):
@@ -2798,6 +2801,7 @@ class VIEW3D_PT_view3d_shading(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_label = "Shading"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -2879,6 +2883,7 @@ class VIEW3D_PT_view3d_meshdisplay(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_label = "Mesh Display"
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -2946,6 +2951,7 @@ class VIEW3D_PT_view3d_meshstatvis(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_label = "Mesh Analysis"
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):

@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -77,6 +77,7 @@ class WORLD_PT_preview(WorldButtonsPanel, Panel):
 
 class WORLD_PT_world(WorldButtonsPanel, Panel):
     bl_label = "World"
+    bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {'BLENDER_RENDER'}
 
     def draw(self, context):
@@ -103,6 +104,7 @@ class WORLD_PT_world(WorldButtonsPanel, Panel):
 
 class WORLD_PT_ambient_occlusion(WorldButtonsPanel, Panel):
     bl_label = "Ambient Occlusion"
+    bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {'BLENDER_RENDER'}
 
     def draw_header(self, context):
@@ -123,6 +125,7 @@ class WORLD_PT_ambient_occlusion(WorldButtonsPanel, Panel):
 
 class WORLD_PT_environment_lighting(WorldButtonsPanel, Panel):
     bl_label = "Environment Lighting"
+    bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {'BLENDER_RENDER'}
 
     def draw_header(self, context):
@@ -143,6 +146,7 @@ class WORLD_PT_environment_lighting(WorldButtonsPanel, Panel):
 
 class WORLD_PT_indirect_lighting(WorldButtonsPanel, Panel):
     bl_label = "Indirect Lighting"
+    bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {'BLENDER_RENDER'}
 
     def draw_header(self, context):
@@ -166,6 +170,7 @@ class WORLD_PT_indirect_lighting(WorldButtonsPanel, Panel):
 
 class WORLD_PT_gather(WorldButtonsPanel, Panel):
     bl_label = "Gather"
+    bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {'BLENDER_RENDER'}
 
     def draw(self, context):

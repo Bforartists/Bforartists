@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -521,7 +521,6 @@ class SCENE_PT_namedlayer_groups(bpy.types.Panel):
     bl_region_type = 'TOOLS'
     bl_category = "Layers"
     bl_label = "Layer Groups"
-    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(self, context):
