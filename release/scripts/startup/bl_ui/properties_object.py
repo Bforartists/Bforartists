@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -127,6 +127,7 @@ class OBJECT_PT_transform_locks(ObjectButtonsPanel, Panel):
 
 class OBJECT_PT_relations(ObjectButtonsPanel, Panel):
     bl_label = "Relations"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -154,6 +155,7 @@ class OBJECT_PT_relations(ObjectButtonsPanel, Panel):
 
 class GROUP_MT_specials(Menu):
     bl_label = "Group Specials"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -165,6 +167,7 @@ class GROUP_MT_specials(Menu):
 
 class OBJECT_PT_groups(ObjectButtonsPanel, Panel):
     bl_label = "Groups"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -205,6 +208,7 @@ class OBJECT_PT_groups(ObjectButtonsPanel, Panel):
 
 class OBJECT_PT_display(ObjectButtonsPanel, Panel):
     bl_label = "Display"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -261,6 +265,7 @@ class OBJECT_PT_display(ObjectButtonsPanel, Panel):
 
 class OBJECT_PT_duplication(ObjectButtonsPanel, Panel):
     bl_label = "Duplication"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout

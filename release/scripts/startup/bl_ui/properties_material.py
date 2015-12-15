@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -243,6 +243,7 @@ class MATERIAL_PT_pipeline(MaterialButtonsPanel, Panel):
 
 class MATERIAL_PT_diffuse(MaterialButtonsPanel, Panel):
     bl_label = "Diffuse"
+    bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
 
     @classmethod
@@ -300,6 +301,7 @@ class MATERIAL_PT_diffuse(MaterialButtonsPanel, Panel):
 
 class MATERIAL_PT_specular(MaterialButtonsPanel, Panel):
     bl_label = "Specular"
+    bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
 
     @classmethod
@@ -353,6 +355,7 @@ class MATERIAL_PT_specular(MaterialButtonsPanel, Panel):
 
 class MATERIAL_PT_shading(MaterialButtonsPanel, Panel):
     bl_label = "Shading"
+    bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
 
     @classmethod
@@ -387,6 +390,7 @@ class MATERIAL_PT_shading(MaterialButtonsPanel, Panel):
 
 class MATERIAL_PT_transp(MaterialButtonsPanel, Panel):
     bl_label = "Transparency"
+    bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {'BLENDER_RENDER'}
 
     @classmethod
@@ -757,6 +761,7 @@ class MATERIAL_PT_strand(MaterialButtonsPanel, Panel):
 
 class MATERIAL_PT_options(MaterialButtonsPanel, Panel):
     bl_label = "Options"
+    bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
 
     @classmethod

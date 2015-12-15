@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 
 #
 #  This program is free software; you can redistribute it and/or
@@ -57,6 +57,7 @@ class RenderButtonsPanel:
 
 class RENDER_PT_render(RenderButtonsPanel, Panel):
     bl_label = "Render"
+    bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {'BLENDER_RENDER'}
 
     def draw(self, context):
@@ -82,6 +83,7 @@ class RENDER_PT_render(RenderButtonsPanel, Panel):
 
 class RENDER_PT_dimensions(RenderButtonsPanel, Panel):
     bl_label = "Dimensions"
+    bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {'BLENDER_RENDER'}
 
     _frame_rate_args_prev = None
@@ -178,6 +180,7 @@ class RENDER_PT_dimensions(RenderButtonsPanel, Panel):
 
 class RENDER_PT_antialiasing(RenderButtonsPanel, Panel):
     bl_label = "Anti-Aliasing"
+    bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {'BLENDER_RENDER'}
 
     def draw_header(self, context):
@@ -384,6 +387,7 @@ class RENDER_PT_stamp(RenderButtonsPanel, Panel):
 
 class RENDER_PT_output(RenderButtonsPanel, Panel):
     bl_label = "Output"
+    bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {'BLENDER_RENDER'}
 
     def draw(self, context):
