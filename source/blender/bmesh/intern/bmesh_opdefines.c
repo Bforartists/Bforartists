@@ -1566,6 +1566,7 @@ static BMOpDefine bmo_create_grid_def = {
 	 {"y_segments",      BMO_OP_SLOT_INT},  /* number of y segments */
 	 {"size",            BMO_OP_SLOT_FLT},  /* size of the grid */
 	 {"matrix",          BMO_OP_SLOT_MAT},  /* matrix to multiply the new geometry with */
+	 { "calc_uvs", BMO_OP_SLOT_BOOL }, /* calculate default UVs */
 	 {{'\0'}},
 	},
 	/* slots_out */
@@ -1589,6 +1590,7 @@ static BMOpDefine bmo_create_uvsphere_def = {
 	 {"v_segments",      BMO_OP_SLOT_INT}, /* number of v segment */
 	 {"diameter",        BMO_OP_SLOT_FLT}, /* diameter */
 	 {"matrix",          BMO_OP_SLOT_MAT}, /* matrix to multiply the new geometry with */
+	 { "calc_uvs", BMO_OP_SLOT_BOOL }, /* calculate default UVs */
 	 {{'\0'}},
 	},
 	/* slots_out */
@@ -1611,6 +1613,7 @@ static BMOpDefine bmo_create_icosphere_def = {
 	{{"subdivisions",    BMO_OP_SLOT_INT}, /* how many times to recursively subdivide the sphere */
 	 {"diameter",        BMO_OP_SLOT_FLT}, /* diameter */
 	 {"matrix",          BMO_OP_SLOT_MAT}, /* matrix to multiply the new geometry with */
+	 { "calc_uvs", BMO_OP_SLOT_BOOL }, /* calculate default UVs */
 	 {{'\0'}},
 	},
 	/* slots_out */
@@ -1657,6 +1660,7 @@ static BMOpDefine bmo_create_cone_def = {
 	 {"diameter2",       BMO_OP_SLOT_FLT},  /* diameter of the opposite */
 	 {"depth",           BMO_OP_SLOT_FLT},  /* distance between ends */
 	 {"matrix",          BMO_OP_SLOT_MAT},  /* matrix to multiply the new geometry with */
+	 { "calc_uvs", BMO_OP_SLOT_BOOL }, /* calculate default UVs */
 	 {{'\0'}},
 	},
 	/* slots_out */
@@ -1679,6 +1683,7 @@ static BMOpDefine bmo_create_circle_def = {
 	 {"segments",        BMO_OP_SLOT_INT},
 	 {"diameter",        BMO_OP_SLOT_FLT},  /* diameter of one end */
 	 {"matrix",          BMO_OP_SLOT_MAT},  /* matrix to multiply the new geometry with */
+	 { "calc_uvs", BMO_OP_SLOT_BOOL }, /* calculate default UVs */
 	 {{'\0'}},
 	},
 	/* slots_out */
@@ -1700,6 +1705,7 @@ static BMOpDefine bmo_create_cube_def = {
 	/* slots_in */
 	{{"size",            BMO_OP_SLOT_FLT},  /* size of the cube */
 	 {"matrix",          BMO_OP_SLOT_MAT},  /* matrix to multiply the new geometry with */
+	 { "calc_uvs", BMO_OP_SLOT_BOOL }, /* calculate default UVs */
 	 {{'\0'}},
 	},
 	/* slots_out */
