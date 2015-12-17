@@ -71,7 +71,6 @@ EnumPropertyItem space_type_items[] = {
 	{SPACE_NLA, "NLA_EDITOR", ICON_NLA, "NLA Editor", "Combine and layer Actions"},
 	{0, "", ICON_NONE, NULL, NULL},
 	{SPACE_IMAGE, "IMAGE_EDITOR", ICON_IMAGE_COL, "UV/Image Editor", "View and edit images and UV Maps"},
-	{SPACE_SEQ, "SEQUENCE_EDITOR", ICON_SEQUENCE, "Video Sequence Editor", "Video editing tools"},
 	{SPACE_CLIP, "CLIP_EDITOR", ICON_CLIP, "Movie Clip Editor", "Motion tracking tools"},
 	{SPACE_TEXT, "TEXT_EDITOR", ICON_TEXT, "Text Editor", "Edit scripts and in-file documentation"},
 	{SPACE_NODE, "NODE_EDITOR", ICON_NODETREE, "Node Editor", "Editor for node-based shading and compositing tools"},
@@ -85,7 +84,9 @@ EnumPropertyItem space_type_items[] = {
 	{SPACE_FILE, "FILE_BROWSER", ICON_FILESEL, "File Browser", "Browse for files and assets"},
 	{0, "", ICON_NONE, NULL, NULL},
 	{SPACE_CONSOLE, "CONSOLE", ICON_CONSOLE, "Python Console", "Interactive programmatic console for advanced editing and script development"},
-	{0, NULL, 0, NULL, NULL}
+	{ 0, "", ICON_NONE, NULL, NULL },
+	{SPACE_SEQ, "SEQUENCE_EDITOR", ICON_SEQUENCE, "DEPRECATED - VSE", "Video editing tools. DEPRECATED. USE AT OWN RISK."}, // Deprecated video sequence editor
+	{ 0, NULL, 0, NULL, NULL }
 };
 
 #define V3D_S3D_CAMERA_LEFT        {STEREO_LEFT_ID, "LEFT", ICON_RESTRICT_RENDER_OFF, "Left", ""},
