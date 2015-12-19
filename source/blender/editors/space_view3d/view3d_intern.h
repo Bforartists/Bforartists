@@ -133,6 +133,7 @@ void draw_motion_paths_cleanup(View3D *v3d);
 
 
 /* drawobject.c */
+bool set_wire_colorset(Scene *scene, Base *base, unsigned char r_ob_wire_col[4]); // bfa - custom wireframe colors
 void draw_object(Scene *scene, struct ARegion *ar, View3D *v3d, Base *base, const short dflag);
 bool draw_glsl_material(Scene *scene, struct Object *ob, View3D *v3d, const char dt);
 void draw_object_instance(Scene *scene, View3D *v3d, RegionView3D *rv3d, struct Object *ob, const char dt, int outline);
