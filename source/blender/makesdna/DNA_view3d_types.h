@@ -296,6 +296,7 @@ typedef struct View3D {
 	((view >= RV3D_VIEW_FRONT) && (view <= RV3D_VIEW_BOTTOM))
 
 /* View3d->flag2 (short) */
+#define V3D_WIRE_COLOR_NOCUSTOM	(1 << 1) // bfa - custom wireframe colors
 #define V3D_RENDER_OVERRIDE		(1 << 2)
 #define V3D_SOLID_TEX			(1 << 3)
 #define V3D_SHOW_GPENCIL		(1 << 4)
@@ -378,6 +379,11 @@ enum {
 };
 
 #define V3D_BGPIC_EXPANDED (V3D_BGPIC_EXPANDED | V3D_BGPIC_CAMERACLIP)
+
+// bfa - custom wireframe colors
+#define V3D_IS_WIRECOLOR(scene, v3d) \
+	(((v3d)->drawtype <= OB_SOLID) && \
+	 (((v3d)->flag2 & V3D_WIRE_COLOR_NOCUSTOM) == 0))
 
 /* BGPic->source */
 /* may want to use 1 for select ?*/
