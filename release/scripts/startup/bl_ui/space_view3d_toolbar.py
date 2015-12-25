@@ -1910,7 +1910,6 @@ class VIEW3D_PT_tools_history(View3DPanel, Panel):
     bl_category = "Tools"
     # No bl_context, we are always available!
     bl_label = "History"
-    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
