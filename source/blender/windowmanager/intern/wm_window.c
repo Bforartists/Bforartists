@@ -781,7 +781,7 @@ static int ghost_event_proc(GHOST_EventHandle evt, GHOST_TUserDataPtr C_void_ptr
 		else if (!GHOST_ValidWindow(g_system, ghostwin)) {
 			/* XXX - should be checked, why are we getting an event here, and */
 			/* what is it? */
-			puts("<!> event has invalid window");
+			//puts("<!> event has invalid window"); // bfa - Turned off this message since it fired every time when you closed the User Preferences
 			return 1;
 		}
 		else {
