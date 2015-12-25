@@ -99,14 +99,13 @@ class TEXT_MT_editor_menus(Menu):
         st = context.space_data
         text = st.text
 
+        layout.menu("TEXT_MT_File")
         layout.menu("TEXT_MT_view")
-        layout.menu("TEXT_MT_text")
+        
 
         if text:
             layout.menu("TEXT_MT_edit")
             layout.menu("TEXT_MT_format")
-
-        layout.menu("TEXT_MT_templates")
 
 
 class TEXT_PT_properties(Panel):
@@ -195,8 +194,8 @@ class TEXT_MT_view(Menu):
         layout.operator("screen.screen_full_area").use_hide_panels = True
 
 
-class TEXT_MT_text(Menu):
-    bl_label = "Text"
+class TEXT_MT_File(Menu):
+    bl_label = "File"
 
     def draw(self, context):
         layout = self.layout
@@ -204,8 +203,8 @@ class TEXT_MT_text(Menu):
         st = context.space_data
         text = st.text
 
-        layout.operator("text.new")
-        layout.operator("text.open")
+        layout.operator("text.new", text = "New Text")
+        layout.operator("text.open", text = "Open Text")
 
         if text:
             layout.operator("text.reload")
@@ -219,6 +218,10 @@ class TEXT_MT_text(Menu):
 
             layout.column()
             layout.operator("text.run_script")
+
+        layout.separator()
+
+        layout.menu("TEXT_MT_templates")
 
 
 class TEXT_MT_templates_py(Menu):
