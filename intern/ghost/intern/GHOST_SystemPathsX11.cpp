@@ -64,7 +64,7 @@ const GHOST_TUns8 *GHOST_SystemPathsX11::getSystemDir(int, const char *versionst
 {
 	/* no prefix assumes a portable build which only uses bundled scripts */
 	if (static_path) {
-		static string system_path = string(static_path) + "/blender/" + versionstr;
+		static string system_path = string(static_path) + "/bforartists/" + versionstr;
 		return (GHOST_TUns8 *)system_path.c_str();
 	}
 
@@ -85,7 +85,7 @@ const GHOST_TUns8 *GHOST_SystemPathsX11::getUserDir(int version, const char *ver
 			last_version = version;
 
 			if (home) {
-				user_path = string(home) + "/.blender/" + versionstr;
+				user_path = string(home) + "/.bforartists/" + versionstr;
 			}
 			else {
 				return NULL;
@@ -100,7 +100,7 @@ const GHOST_TUns8 *GHOST_SystemPathsX11::getUserDir(int version, const char *ver
 			last_version = version;
 
 			if (home) {
-				user_path = string(home) + "/blender/" + versionstr;
+				user_path = string(home) + "/bforartists/" + versionstr;
 			}
 			else {
 				home = getenv("HOME");
@@ -108,7 +108,7 @@ const GHOST_TUns8 *GHOST_SystemPathsX11::getUserDir(int version, const char *ver
 				if (home == NULL)
 					home = getpwuid(getuid())->pw_dir;
 
-				user_path = string(home) + "/.config/blender/" + versionstr;
+				user_path = string(home) + "/.config/bforartists/" + versionstr;
 			}
 		}
 
