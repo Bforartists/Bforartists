@@ -501,6 +501,7 @@ class VIEW3D_MT_view_align(Menu):
         layout.separator()
 
         layout.operator("view3d.view_lock_to_active")
+        layout.operator("view3d.view_center_lock")
         layout.operator("view3d.view_lock_clear")
 
 
@@ -543,6 +544,12 @@ class VIEW3D_MT_view_cameras(Menu):
 
         layout.operator("view3d.object_as_camera")
         layout.operator("view3d.viewnumpad", text="Active Camera").type = 'CAMERA'
+
+        layout.separator()
+
+        layout.operator("view3d.view_center_camera")
+        
+
 
 # ********** Select menus, suffix from context.mode **********
 
