@@ -143,16 +143,6 @@ def brush_texpaint_common(panel, context, layout, brush, settings, projpaint=Fal
 
                     col = layout.column()
 
-                    # bfa - Radial Control hotkeys.
-                    col.label(text="Radial Control keys:")
-
-                    col.label(text="Radius: F")
-                    col.label(text="Strength: Shift F")
-                    col.label(text="Angle Primary: Ctrl F")
-                    col.label(text="Angle Secondary: Ctrl Alt F")
-
-
-
     elif brush.image_tool == 'SOFTEN':
         col = layout.column(align=True)
         col.row().prop(brush, "direction", expand=True)
