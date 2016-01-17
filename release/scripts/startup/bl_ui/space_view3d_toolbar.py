@@ -917,14 +917,6 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
         elif context.sculpt_object and brush:
             capabilities = brush.sculpt_capabilities
 
-            # bfa - Radial Control hotkeys.
-            col = layout.column()
-            col.label(text="Radial Control keys:")
-
-            col.label(text="Radius: F")
-            col.label(text="Strength: Shift F")
-            col.label(text="Angle: Ctrl F")
-
             col = layout.column()
 
             col.separator()
