@@ -1062,14 +1062,12 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
             self.prop_unified_color_picker(col, context, brush, "color", value_slider=True)
             if settings.palette:
                 col.template_palette(settings, "palette", color=True)
-            #self.prop_unified_color(col, context, brush, "color", text="") ################### bfa - color picker fpr vertex paint
-            #################################################################################
 
-            row = col.row(align=True)
-            self.prop_unified_color(row, context, brush, "color", text="")
-            row.separator()
-            row.operator("paint.sample_color", icon='EYEDROPPER', text="")
-
+            #self.prop_unified_color(col, context, brush, "color", text="") # bfa - The original prop_unified_color
+            row = col.row(align=True) # We need a row to add our eyedropper besides the color field.
+            self.prop_unified_color(row, context, brush, "color", text="") # Here now with row instead of col
+            row.separator() # A separator
+            row.operator("paint.sample_color", icon='EYEDROPPER', text="") # And finally the eyedropper
 
             col.separator()
             row = col.row(align=True)
