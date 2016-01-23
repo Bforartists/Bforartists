@@ -433,8 +433,9 @@ class VIEW3D_MT_view(Menu):
         myvar.use_view = True
         myvar.use = True
         layout.operator("view3d.localview", text="View Global/Local")
-        layout.operator("view3d.view_selected").use_all_regions = False
         layout.operator("view3d.view_selected", text = "View Selected all Regions" ).use_all_regions = True
+        layout.operator("view3d.view_selected").use_all_regions = False
+        layout.operator("view3d.view_all", text = "View All all Regions" ).use_all_regions = True
         layout.operator("view3d.view_all").center = False
 
         layout.separator()
