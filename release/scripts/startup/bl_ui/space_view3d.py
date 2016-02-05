@@ -2740,6 +2740,12 @@ class VIEW3D_PT_view3d_display(Panel):
         view = context.space_data
         scene = context.scene
 
+        # bfa - Our checkbox for icon or text buttons.
+        # The prop is defined in the __init__.py. When we define it in this file
+        # then we get an error that the scene has no UITweaks attribute. 
+        # Most probably a order of registration problem.
+        layout.prop(scene.UItweaks, "icon_or_text")
+
         col = layout.column()
         col.prop(view, "show_only_render")
         col.prop(view, "show_world")
@@ -3246,13 +3252,14 @@ class VIEW3D_PT_context_properties(Panel):
             # Draw with no edit button
             rna_prop_ui.draw(self.layout, context, member, object, False)
 
+#-----------------------------------------------------------------------------
 
 def register():
     bpy.utils.register_module(__name__)
 
-
 def unregister():
     bpy.utils.unregister_module(__name__)
+
 
 if __name__ == "__main__":
     register()

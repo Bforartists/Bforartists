@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -89,8 +89,18 @@ _namespace = globals()
 _modules_loaded = {name: _namespace[name] for name in _modules if name != "bpy"}
 del _namespace
 
+# bfa - text or icon buttons, the prop
+class UITweaksData(bpy.types.PropertyGroup):
+    icon_or_text = bpy.props.BoolProperty(name="Icon / Text Buttons", description="Displays some buttons as text or iconbuttons", default = True) # Our prop
+
 
 def register():
+    
+
+    # bfa - Our data block for icon or text buttons
+    bpy.utils.register_class(UITweaksData) # Our data block
+    bpy.types.Scene.UItweaks = bpy.props.PointerProperty(type=UITweaksData) # Bind reference of type of our data block to type Scene objects
+
     bpy.utils.register_module(__name__)
 
     # space_userprefs.py
@@ -140,8 +150,13 @@ def register():
 
 
 def unregister():
-    bpy.utils.unregister_module(__name__)
+    
 
+    # bfa - Our data block for icon or text buttons
+    bpy.utils.unregister_class(UITweaksData) # Our data block
+    del bpy.types.Scene.UItweaks # Unregister our data block when unregister.
+
+    bpy.utils.unregister_module(__name__)
 
 # Define a default UIList, when a list does not need any custom drawing...
 # Keep in sync with its #defined name in UI_interface.h
