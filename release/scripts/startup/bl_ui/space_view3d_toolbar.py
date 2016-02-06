@@ -130,76 +130,7 @@ class VIEW3D_PT_tools_add_object(View3DPanel, Panel):
         layout.operator("mesh.primitive_monkey_add", text="Monkey", icon='MESH_MONKEY')
 
     @staticmethod
-    def draw_add_curve(layout, label=False):
-        if label:
-            layout.label(text="Bezier:")
-        layout.operator("curve.primitive_bezier_curve_add", text="Bezier", icon='CURVE_BEZCURVE')
-        layout.operator("curve.primitive_bezier_circle_add", text="Circle", icon='CURVE_BEZCIRCLE')
-
-        if label:
-            layout.label(text="Nurbs:")
-        else:
-            layout.separator()
-        layout.operator("curve.primitive_nurbs_curve_add", text="Nurbs Curve", icon='CURVE_NCURVE')
-        layout.operator("curve.primitive_nurbs_circle_add", text="Nurbs Circle", icon='CURVE_NCIRCLE')
-        layout.operator("curve.primitive_nurbs_path_add", text="Path", icon='CURVE_PATH')
-
-    @staticmethod
-    def draw_add_surface(layout):
-        layout.operator("surface.primitive_nurbs_surface_curve_add", text="Nurbs Curve", icon='SURFACE_NCURVE')
-        layout.operator("surface.primitive_nurbs_surface_circle_add", text="Nurbs Circle", icon='SURFACE_NCIRCLE')
-        layout.operator("surface.primitive_nurbs_surface_surface_add", text="Nurbs Surface", icon='SURFACE_NSURFACE')
-        layout.operator("surface.primitive_nurbs_surface_cylinder_add", text="Nurbs Cylinder", icon='SURFACE_NCYLINDER')
-        layout.operator("surface.primitive_nurbs_surface_sphere_add", text="Nurbs Sphere", icon='SURFACE_NSPHERE')
-        layout.operator("surface.primitive_nurbs_surface_torus_add", text="Nurbs Torus", icon='SURFACE_NTORUS')
-
-    @staticmethod
-    def draw_add_mball(layout):
-        layout.operator_enum("object.metaball_add", "type")
-
-    @staticmethod
-    def draw_add_lamp(layout):
-        layout.operator_enum("object.lamp_add", "type")
-
-    @staticmethod
-    def draw_add_other(layout):
-        layout.operator("object.text_add", text="Text", icon='OUTLINER_OB_FONT')
-        layout.operator("object.armature_add", text="Armature", icon='OUTLINER_OB_ARMATURE')
-        layout.operator("object.add", text="Lattice", icon='OUTLINER_OB_LATTICE').type = 'LATTICE'
-        layout.operator("object.empty_add", text="Empty", icon='OUTLINER_OB_EMPTY').type = 'PLAIN_AXES'
-        layout.operator("object.speaker_add", text="Speaker", icon='OUTLINER_OB_SPEAKER')
-        layout.operator("object.camera_add", text="Camera", icon='OUTLINER_OB_CAMERA')
-
-    def draw(self, context):
-        layout = self.layout
-
-        col = layout.column(align=True)
-        col.label(text="Mesh:")
-        self.draw_add_mesh(col)
-
-        col = layout.column(align=True)
-        col.label(text="Curve:")
-        self.draw_add_curve(col)
-
-        # not used here:
-        # draw_add_surface
-        # draw_add_mball
-
-        col = layout.column(align=True)
-        col.label(text="Lamp:")
-        self.draw_add_lamp(col)
-
-        col = layout.column(align=True)
-        col.label(text="Other:")
-        self.draw_add_other(col)
-
-class VIEW3D_PT_tools_add_object_iconbuttons(View3DPanel, Panel):
-    bl_category = "Create"
-    bl_context = "objectmode"
-    bl_label = "Add Primitive"
-
-    @staticmethod
-    def draw_add_mesh(layout, label=False):
+    def draw_add_mesh_icons(layout, label=False):
         if label:
             layout.label(text="Primitives:")
         row = layout.row(align=False)
@@ -208,19 +139,20 @@ class VIEW3D_PT_tools_add_object_iconbuttons(View3DPanel, Panel):
         row.operator("mesh.primitive_cube_add", text="", icon='MESH_CUBE')
         row.operator("mesh.primitive_circle_add", text="", icon='MESH_CIRCLE')
         row.operator("mesh.primitive_uv_sphere_add", text="", icon='MESH_UVSPHERE')
-        row.operator("mesh.primitive_ico_sphere_add", text="", icon='MESH_ICOSPHERE')
+        layout.separator()
         row = layout.row(align=False)
+        row.operator("mesh.primitive_ico_sphere_add", text="", icon='MESH_ICOSPHERE')       
         row.operator("mesh.primitive_cylinder_add", text="", icon='MESH_CYLINDER')
         row.operator("mesh.primitive_cone_add", text="", icon='MESH_CONE')
         row.operator("mesh.primitive_torus_add", text="", icon='MESH_TORUS')
-
 
         if label:
             layout.label(text="Special:")
         else:
             layout.separator()
-        layout.operator("mesh.primitive_grid_add", text="Grid", icon='MESH_GRID')
-        layout.operator("mesh.primitive_monkey_add", text="Monkey", icon='MESH_MONKEY')
+        row = layout.row(align=False)
+        row.operator("mesh.primitive_grid_add", text="", icon='MESH_GRID')
+        row.operator("mesh.primitive_monkey_add", text="", icon='MESH_MONKEY')
 
     @staticmethod
     def draw_add_curve(layout, label=False):
@@ -238,6 +170,25 @@ class VIEW3D_PT_tools_add_object_iconbuttons(View3DPanel, Panel):
         layout.operator("curve.primitive_nurbs_path_add", text="Path", icon='CURVE_PATH')
 
     @staticmethod
+    def draw_add_curve_icons(layout, label=False):
+        if label:
+            layout.label(text="Bezier:")
+        row = layout.row(align=False)
+        row.alignment = 'LEFT'
+        row.operator("curve.primitive_bezier_curve_add", text="", icon='CURVE_BEZCURVE')
+        row.operator("curve.primitive_bezier_circle_add", text="", icon='CURVE_BEZCIRCLE')
+
+        if label:
+            layout.label(text="Nurbs:")
+        else:
+            layout.separator()
+        row = layout.row(align=False)
+        row.alignment = 'LEFT'
+        row.operator("curve.primitive_nurbs_curve_add", text="", icon='CURVE_NCURVE')
+        row.operator("curve.primitive_nurbs_circle_add", text="", icon='CURVE_NCIRCLE')
+        row.operator("curve.primitive_nurbs_path_add", text="", icon='CURVE_PATH')
+
+    @staticmethod
     def draw_add_surface(layout):
         layout.operator("surface.primitive_nurbs_surface_curve_add", text="Nurbs Curve", icon='SURFACE_NCURVE')
         layout.operator("surface.primitive_nurbs_surface_circle_add", text="Nurbs Circle", icon='SURFACE_NCIRCLE')
@@ -247,12 +198,49 @@ class VIEW3D_PT_tools_add_object_iconbuttons(View3DPanel, Panel):
         layout.operator("surface.primitive_nurbs_surface_torus_add", text="Nurbs Torus", icon='SURFACE_NTORUS')
 
     @staticmethod
+    def draw_add_surface_icons(layout):
+        row = layout.row(align=False)
+        row.alignment = 'LEFT'
+        row.operator("surface.primitive_nurbs_surface_curve_add", text="", icon='SURFACE_NCURVE')
+        row.operator("surface.primitive_nurbs_surface_circle_add", text="", icon='SURFACE_NCIRCLE')
+        row.operator("surface.primitive_nurbs_surface_surface_add", text="", icon='SURFACE_NSURFACE')
+        row.operator("surface.primitive_nurbs_surface_cylinder_add", text="", icon='SURFACE_NCYLINDER')
+        layout.separator()
+        row = layout.row(align=False)
+        row.operator("surface.primitive_nurbs_surface_sphere_add", text="", icon='SURFACE_NSPHERE')
+        row.operator("surface.primitive_nurbs_surface_torus_add", text="", icon='SURFACE_NTORUS')
+
+    @staticmethod
     def draw_add_mball(layout):
         layout.operator_enum("object.metaball_add", "type")
 
     @staticmethod
+    def draw_add_mball_icons(layout):
+        row = layout.row(align=False)
+        row.alignment = 'LEFT'
+        row.operator("object.metaball_add", text="", icon='META_BALL').type= 'BALL'
+        row.operator("object.metaball_add", text="", icon='META_CAPSULE').type= 'CAPSULE'
+        row.operator("object.metaball_add", text="", icon='META_PLANE').type= 'PLANE'
+        row.operator("object.metaball_add", text="", icon='META_ELLIPSOID').type= 'ELLIPSOID'
+        layout.separator()
+        row = layout.row(align=False)
+        row.operator("object.metaball_add", text="", icon='META_CUBE').type= 'CUBE'
+
+    @staticmethod
     def draw_add_lamp(layout):
         layout.operator_enum("object.lamp_add", "type")
+
+    @staticmethod
+    def draw_add_lamp_icons(layout):
+        row = layout.row(align=False)
+        row.alignment = 'LEFT'
+        row.operator("object.lamp_add", text="", icon='LAMP_POINT').type= 'POINT'
+        row.operator("object.lamp_add", text="", icon='LAMP_SUN').type= 'SUN' 
+        row.operator("object.lamp_add", text="", icon='LAMP_SPOT').type= 'SPOT' 
+        row.operator("object.lamp_add", text="", icon='LAMP_HEMI').type= 'HEMI' 
+        layout.separator()
+        row = layout.row(align=False)
+        row.operator("object.lamp_add", text="", icon='LAMP_AREA').type= 'AREA' 
 
     @staticmethod
     def draw_add_other(layout):
@@ -263,16 +251,37 @@ class VIEW3D_PT_tools_add_object_iconbuttons(View3DPanel, Panel):
         layout.operator("object.speaker_add", text="Speaker", icon='OUTLINER_OB_SPEAKER')
         layout.operator("object.camera_add", text="Camera", icon='OUTLINER_OB_CAMERA')
 
+    @staticmethod
+    def draw_add_other_icons(layout):
+        row = layout.row(align=False)
+        row.alignment = 'LEFT'
+        row.operator("object.text_add", text="", icon='OUTLINER_OB_FONT')
+        row.operator("object.armature_add", text="", icon='OUTLINER_OB_ARMATURE')
+        row.operator("object.add", text="", icon='OUTLINER_OB_LATTICE').type = 'LATTICE'
+        row.operator("object.empty_add", text="", icon='OUTLINER_OB_EMPTY').type = 'PLAIN_AXES'
+        layout.separator()
+        row = layout.row(align=False)
+        row.operator("object.speaker_add", text="", icon='OUTLINER_OB_SPEAKER')
+        row.operator("object.camera_add", text="", icon='OUTLINER_OB_CAMERA')
+
     def draw(self, context):
         layout = self.layout
-
+        scene = context.scene # Our data is in the current scene
         col = layout.column(align=True)
+
         col.label(text="Mesh:")
-        self.draw_add_mesh(col)
+        if not scene.UItweaks.icon_or_text: 
+            self.draw_add_mesh(col)
+        else:
+            self.draw_add_mesh_icons(col)
+
 
         col = layout.column(align=True)
         col.label(text="Curve:")
-        self.draw_add_curve(col)
+        if not scene.UItweaks.icon_or_text: 
+            self.draw_add_curve(col)
+        else:
+            self.draw_add_curve_icons(col)
 
         # not used here:
         # draw_add_surface
@@ -280,11 +289,17 @@ class VIEW3D_PT_tools_add_object_iconbuttons(View3DPanel, Panel):
 
         col = layout.column(align=True)
         col.label(text="Lamp:")
-        self.draw_add_lamp(col)
+        if not scene.UItweaks.icon_or_text: 
+            self.draw_add_lamp(col)
+        else:
+            self.draw_add_lamp_icons(col)
 
         col = layout.column(align=True)
         col.label(text="Other:")
-        self.draw_add_other(col)
+        if not scene.UItweaks.icon_or_text:
+            self.draw_add_other(col)
+        else:
+            self.draw_add_other_icons(col)
 
 
 class VIEW3D_PT_tools_relations(View3DPanel, Panel):
@@ -495,7 +510,7 @@ class VIEW3D_PT_tools_add_mesh_edit(View3DPanel, Panel):
         if not scene.UItweaks.icon_or_text: 
             VIEW3D_PT_tools_add_object.draw_add_mesh(col, label=True) # the original class
         else:
-            VIEW3D_PT_tools_add_object_iconbuttons.draw_add_mesh(col, label=True) # the modified class with icon buttons
+            VIEW3D_PT_tools_add_object.draw_add_mesh_icons(col, label=True) # the modified class with icon buttons
 
 
 class VIEW3D_PT_tools_shading(View3DPanel, Panel):
@@ -641,10 +656,14 @@ class VIEW3D_PT_tools_add_curve_edit(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-
+        scene = context.scene # Our data is in the current scene
         col = layout.column(align=True)
 
-        VIEW3D_PT_tools_add_object.draw_add_curve(col, label=True)
+        # bfa - icon or text buttons
+        if not scene.UItweaks.icon_or_text: 
+            VIEW3D_PT_tools_add_object.draw_add_curve(col, label=True) # the original class
+        else:
+            VIEW3D_PT_tools_add_object.draw_add_curve_icons(col, label=True) # the modified class with icon buttons
 
 # ********** default tools for editmode_surface ****************
 
@@ -696,10 +715,14 @@ class VIEW3D_PT_tools_add_surface_edit(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-
+        scene = context.scene # Our data is in the current scene
         col = layout.column(align=True)
 
-        VIEW3D_PT_tools_add_object.draw_add_surface(col)
+        # bfa - icon or text buttons
+        if not scene.UItweaks.icon_or_text: 
+            VIEW3D_PT_tools_add_object.draw_add_surface(col, label=True) # the original class
+        else:
+            VIEW3D_PT_tools_add_object.draw_add_surface_icons(col, label=True) # the modified class with icon buttons
 
 
 # ********** default tools for editmode_text ****************
@@ -804,10 +827,14 @@ class VIEW3D_PT_tools_add_mball_edit(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-
+        scene = context.scene # Our data is in the current scene
         col = layout.column(align=True)
 
-        VIEW3D_PT_tools_add_object.draw_add_mball(col)
+        # bfa - icon or text buttons
+        if not scene.UItweaks.icon_or_text: 
+            VIEW3D_PT_tools_add_object.draw_add_mball(col) # the original class
+        else:
+            VIEW3D_PT_tools_add_object.draw_add_mball_icons(col) # the modified class with icon buttons
 
 
 # ********** default tools for editmode_lattice ****************
