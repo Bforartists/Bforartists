@@ -266,7 +266,7 @@ class VIEW3D_PT_tools_add_object(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        scene = context.scene # Our data is in the current scene
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
         col = layout.column(align=True)
 
         col.label(text="Mesh:")
@@ -275,7 +275,6 @@ class VIEW3D_PT_tools_add_object(View3DPanel, Panel):
         else:
             self.draw_add_mesh_icons(col)
 
-
         col = layout.column(align=True)
         col.label(text="Curve:")
         if not scene.UItweaks.icon_or_text: 
@@ -283,9 +282,19 @@ class VIEW3D_PT_tools_add_object(View3DPanel, Panel):
         else:
             self.draw_add_curve_icons(col)
 
-        # not used here:
-        # draw_add_surface
-        # draw_add_mball
+        col = layout.column(align=True)
+        col.label(text="Surface:")
+        if not scene.UItweaks.icon_or_text: 
+            self.draw_add_surface(col)
+        else:
+            self.draw_add_surface_icons(col)
+
+        col = layout.column(align=True)
+        col.label(text="Metaball:")
+        if not scene.UItweaks.icon_or_text: 
+            self.draw_add_mball(col)
+        else:
+            self.draw_add_mball_icons(col)
 
         col = layout.column(align=True)
         col.label(text="Lamp:")
