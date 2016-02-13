@@ -415,13 +415,27 @@ class VIEW3D_PT_tools_transform_mesh(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
-        col = layout.column(align=True)
-        col.operator("transform.translate")
-        col.operator("transform.rotate")
-        col.operator("transform.resize", text="Scale")
-        col.operator("transform.shrink_fatten", text="Shrink/Fatten")
-        col.operator("transform.push_pull", text="Push/Pull")
+        if not scene.UItweaks.icon_or_text: 
+            col = layout.column(align=True)
+            col.operator("transform.translate", icon='TRANSFORM_MOVE')
+            col.operator("transform.rotate", icon='TRANSFORM_ROTATE')
+            col.operator("transform.resize", icon='TRANSFORM_SCALE', text="Scale")
+            col.operator("transform.shrink_fatten", icon = 'SHRINK_FATTEN', text="Shrink/Fatten")
+            col.operator("transform.push_pull",icon = 'PUSH_PULL', text="Push/Pull")
+
+        else:
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("transform.translate", icon='TRANSFORM_MOVE', text="")
+            row.operator("transform.rotate", icon='TRANSFORM_ROTATE', text="")
+            row.operator("transform.resize", icon='TRANSFORM_SCALE', text="")
+            row = layout.row(align=False)
+            row.operator("transform.shrink_fatten", icon = 'SHRINK_FATTEN', text="")
+            row.operator("transform.push_pull",icon = 'PUSH_PULL', text="")
+
+            
 
 
 class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
