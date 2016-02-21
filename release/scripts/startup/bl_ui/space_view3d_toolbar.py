@@ -445,16 +445,30 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
-        col = layout.column(align=True)
-        col.label(text="Deform:")
-        row = col.row(align=True)
-        row.operator("transform.edge_slide", text="Slide Edge")
-        row.operator("transform.vert_slide", text="Silde Vertex")
-        col.operator("mesh.noise")
-        col.operator("mesh.vertices_smooth")
-        col.operator("mesh.vertices_smooth_laplacian")
-        col.operator("transform.vertex_random")
+        if not scene.UItweaks.icon_or_text: 
+            col = layout.column(align=True)
+            col.label(text="Deform:")
+            col.operator("transform.edge_slide", icon='SLIDE_EDGE', text="Slide Edge")
+            col.operator("transform.vert_slide", icon='SLIDE_VERTEX', text="Silde Vertex")
+            col.operator("mesh.noise", icon='NOISE')
+            col.operator("mesh.vertices_smooth", icon='SMOOTH_VERTEX')
+            col.operator("mesh.vertices_smooth_laplacian", icon='LAPLACIAN_SMOOTH_VERTEX')
+            col.operator("transform.vertex_random", icon='RANDOMIZE')
+        else:
+            col = layout.column(align=True)
+            col.label(text="Deform:")
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("transform.edge_slide", icon='SLIDE_EDGE', text="")
+            row.operator("transform.vert_slide", icon='SLIDE_VERTEX', text="")
+            row.operator("mesh.noise", icon='NOISE', text="")
+            row.operator("mesh.vertices_smooth", icon='SMOOTH_VERTEX', text="")
+            row = layout.row(align=False)
+            row.operator("mesh.vertices_smooth_laplacian", icon='LAPLACIAN_SMOOTH_VERTEX', text="")
+            row.operator("transform.vertex_random", icon='RANDOMIZE', text="")
+
 
         col = layout.column(align=True)
         col.label(text="Add:")
