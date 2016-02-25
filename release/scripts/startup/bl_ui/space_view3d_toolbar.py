@@ -456,6 +456,55 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
             col.operator("mesh.vertices_smooth", icon='SMOOTH_VERTEX')
             col.operator("mesh.vertices_smooth_laplacian", icon='LAPLACIAN_SMOOTH_VERTEX')
             col.operator("transform.vertex_random", icon='RANDOMIZE')
+
+            col = layout.column(align=True)
+            col.label(text="Add:")
+
+            col.menu("VIEW3D_MT_edit_mesh_extrude")
+            col.operator("view3d.edit_mesh_extrude_move_normal", icon='EXTRUDE_REGION', text="Extrude Region")
+            col.operator("view3d.edit_mesh_extrude_individual_move", icon='EXTRUDE_INDIVIDUAL', text="Extrude Individual")
+            col.operator("mesh.dupli_extrude_cursor" , icon='DUPLI_EXTRUDE',  text = " DupliExtr").rotate_source = False
+            col.operator("mesh.dupli_extrude_cursor", icon='DUPLI_EXTRUDE_ROTATE', text = " DupliExtrRot").rotate_source = True
+           
+            row = col.row(align=True)
+            row.operator("mesh.spin", icon='SPIN')
+            row.operator("mesh.screw", icon='SCREW')
+            layout.separator()
+            col.operator("mesh.inset", icon='INSET_FACES', text="Inset Faces")
+            col.operator("mesh.edge_face_add", icon='MAKE_EDGEFACE')
+            col.operator("mesh.subdivide", icon='SUBDIVIDE_EDGES')
+            col.operator("mesh.loopcut_slide", icon='LOOP_CUT_AND_SLIDE')
+            col.operator("mesh.offset_edge_loops_slide", icon='OFFSET_EDGE_SLIDE')
+
+
+            row = col.row(align=True)
+            props = row.operator("mesh.knife_tool", icon='KNIFE', text="Knife")
+            props.use_occlude_geometry = True
+            props.only_selected = False
+            props = row.operator("mesh.knife_tool", icon='KNIFE_SELECT', text="Select")
+            props.use_occlude_geometry = False
+            props.only_selected = True
+            col.operator("mesh.knife_project", icon='KNIFE_PROJECT')
+            col.operator("mesh.bisect", icon='BISECT')
+
+            col = layout.column(align=True)
+            col.operator_menu_enum("mesh.merge", "type")
+            
+            col.label(text="Dissolve:")
+            col.operator("mesh.dissolve_verts", icon='DISSOLVE_VERTS')
+            col.operator("mesh.dissolve_edges", icon='DISSOLVE_EDGES')
+            col.operator("mesh.dissolve_faces", icon='DISSOLVE_FACES')
+            col.operator("mesh.remove_doubles", icon='REMOVE_DOUBLES')
+
+            layout.separator()
+
+            col.operator("mesh.dissolve_limited", icon='DISSOLVE_LIMITED') 
+            col.operator("mesh.dissolve_mode", icon='DISSOLVE_SELECTION')
+
+            layout.separator()
+
+            col.operator("mesh.edge_collapse", icon='EDGE_COLLAPSE')
+
         else:
             col = layout.column(align=True)
             col.label(text="Deform:")
@@ -469,52 +518,55 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
             row.operator("mesh.vertices_smooth_laplacian", icon='LAPLACIAN_SMOOTH_VERTEX', text="")
             row.operator("transform.vertex_random", icon='RANDOMIZE', text="")
 
+            col = layout.column(align=False)
+            col.label(text="Add:")
+            col.menu("VIEW3D_MT_edit_mesh_extrude")
+            
+            row = layout.row(align=False)
+            row.alignment = 'LEFT' 
+            row.operator("view3d.edit_mesh_extrude_move_normal", icon='EXTRUDE_REGION', text="")
+            row.operator("view3d.edit_mesh_extrude_individual_move", icon='EXTRUDE_INDIVIDUAL', text="")
+            row.operator("mesh.dupli_extrude_cursor" , icon='DUPLI_EXTRUDE',  text = "").rotate_source = False
+            row.operator("mesh.dupli_extrude_cursor", icon='DUPLI_EXTRUDE_ROTATE', text = "").rotate_source = True
+            
+            row = layout.row(align=False)  
+            row.operator("mesh.spin", icon='SPIN', text="")
+            row.operator("mesh.screw", icon='SCREW', text="")
+            row.operator("mesh.inset", icon='INSET_FACES', text="")
+            row.operator("mesh.edge_face_add", icon='MAKE_EDGEFACE', text="")   
 
-        col = layout.column(align=True)
-        col.label(text="Add:")
+            row = layout.row(align=False)
+            row.operator("mesh.subdivide", icon='SUBDIVIDE_EDGES', text="")
+            row.operator("mesh.loopcut_slide", icon='LOOP_CUT_AND_SLIDE', text="")
+            row.operator("mesh.offset_edge_loops_slide", icon='OFFSET_EDGE_SLIDE', text="")
 
-        col.menu("VIEW3D_MT_edit_mesh_extrude")
-        col.operator("view3d.edit_mesh_extrude_move_normal", text="Extrude Region")
-        col.operator("view3d.edit_mesh_extrude_individual_move", text="Extrude Individual")
-        col.operator("mesh.inset", text="Inset Faces")
-        col.operator("mesh.edge_face_add")
-        col.operator("mesh.subdivide")
-        col.operator("mesh.loopcut_slide")
-        col.operator("mesh.offset_edge_loops_slide")
-        row = col.row(align=True)
-        row.operator("mesh.dupli_extrude_cursor" , text = 'DupliExtr').rotate_source = False
-        row.operator("mesh.dupli_extrude_cursor", text = 'DupliExtrRot').rotate_source = True
-        layout.separator()
-        row = col.row(align=True)
-        row.operator("mesh.spin")
-        row.operator("mesh.screw")
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            props = row.operator("mesh.knife_tool", icon='KNIFE', text="")
+            props.use_occlude_geometry = True
+            props.only_selected = False
+            props = row.operator("mesh.knife_tool", icon='KNIFE_SELECT', text="")
+            props.use_occlude_geometry = False
+            props.only_selected = True
+            row.operator("mesh.knife_project", icon='KNIFE_PROJECT', text="")
+            row.operator("mesh.bisect", icon='BISECT', text="")
 
-        row = col.row(align=True)
-        props = row.operator("mesh.knife_tool", text="Knife")
-        props.use_occlude_geometry = True
-        props.only_selected = False
-        props = row.operator("mesh.knife_tool", text="Select")
-        props.use_occlude_geometry = False
-        props.only_selected = True
-        col.operator("mesh.knife_project")
-        col.operator("mesh.bisect")
+            col = layout.column(align=False)
+            col.operator_menu_enum("mesh.merge", "type")
 
-        col = layout.column(align=True)
-        col.operator_menu_enum("mesh.merge", "type")
-        col.operator("mesh.remove_doubles")
-        col.label(text="Dissolve:")
-        col.operator("mesh.dissolve_verts")
-        col.operator("mesh.dissolve_edges")
-        col.operator("mesh.dissolve_faces")
-
-        layout.separator()
-
-        col.operator("mesh.dissolve_limited")
-        col.operator("mesh.dissolve_mode")
-
-        layout.separator()
-
-        col.operator("mesh.edge_collapse")
+            
+            
+            col.label(text="Dissolve:")
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("mesh.dissolve_verts", icon='DISSOLVE_VERTS', text="")
+            row.operator("mesh.dissolve_edges", icon='DISSOLVE_EDGES', text="")
+            row.operator("mesh.dissolve_faces", icon='DISSOLVE_FACES', text="")
+            row.operator("mesh.remove_doubles", icon='REMOVE_DOUBLES', text="")
+            row = layout.row(align=False)
+            row.operator("mesh.dissolve_limited", icon='DISSOLVE_LIMITED', text="")
+            row.operator("mesh.dissolve_mode", icon='DISSOLVE_SELECTION', text="")
+            row.operator("mesh.edge_collapse", icon='EDGE_COLLAPSE', text="")
         
 
 
