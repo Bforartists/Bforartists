@@ -126,7 +126,7 @@ class VIEW3D_PT_tools_object(View3DPanel, Panel):
 
                 if obj_type in {'MESH', 'CURVE', 'SURFACE', 'ARMATURE', 'FONT', 'LATTICE'}:
                     col = layout.column(align=True)
-                    col.label(text="Origin:")
+                    col.label(text="Set Origin:")
                     row = layout.row(align=False)
                     row.alignment = 'LEFT'
                     #col.operator_menu_enum("object.origin_set", "type", text="Set Origin")
@@ -367,31 +367,70 @@ class VIEW3D_PT_tools_relations(View3DPanel, Panel):
     def draw(self, context):
         layout = self.layout
 
-        col = layout.column(align=True)
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
-        col.label(text="Group:")
-        col.operator("group.create", text="New Group")
-        col.operator("group.objects_add_active", text="Add to Active")
-        col.operator("group.objects_remove", text="Remove from Group")
+        if not scene.UItweaks.icon_or_text: 
 
-        col.separator()
+            col = layout.column(align=True)
 
-        col.label(text="Parent:")
-        row = col.row(align=True)
-        row.operator("object.parent_set", text="Set")
-        row.operator("object.parent_clear", text="Clear")
+            col.label(text="Group:")
+            col.operator("group.create", icon='NEW_GROUP', text="New Group")
+            col.operator("group.objects_add_active", icon='ADD_TO_ACTIVE', text="Add to Active")
+            col.operator("group.objects_remove", icon='REMOVE_FROM_GROUP', text="Remove from Group")
 
-        col.separator()
+            col.separator()
 
-        col.label(text="Object Data:")
-        col.operator("object.make_links_data")
-        col.operator("object.make_single_user")
+            col.label(text="Parent:")
+            row = col.row(align=True)
+            row.operator("object.parent_set", icon='PARENT_SET', text="Set")
+            row.operator("object.parent_clear", icon='PARENT_CLEAR', text="Clear")
 
-        col.separator()
+            col.separator()
 
-        col.label(text="Linked Objects:")
-        col.operator("object.make_local")
-        col.operator("object.proxy_make")
+            col.label(text="Object Data:")
+            col.operator("object.make_links_data", icon='LINK_DATA')
+            col.operator("object.make_single_user", icon='MAKE_SINGLE_USER')
+
+            col.separator()
+
+            col.label(text="Linked Objects:")
+            col.operator("object.make_local", icon='MAKE_LOCAL')
+            col.operator("object.proxy_make", icon='MAKE_PROXY')
+
+        else:
+            col = layout.column(align=True)
+            col.label(text="Group:")
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("group.create", icon='NEW_GROUP', text="")
+            row.operator("group.objects_add_active", icon='ADD_TO_ACTIVE', text="")
+            row.operator("group.objects_remove", icon='REMOVE_FROM_GROUP', text="")
+
+            col = layout.column(align=True)
+            col.label(text="Parent:")
+
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("object.parent_set", icon='PARENT_SET', text="")
+            row.operator("object.parent_clear", icon='PARENT_CLEAR', text="")
+
+            col = layout.column(align=True)
+            col.label(text="Object Data:")
+
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("object.make_links_data", icon='LINK_DATA', text="")
+            row.operator("object.make_single_user", icon='MAKE_SINGLE_USER', text="")
+
+            col = layout.column(align=True)
+            col.label(text="Linked Objects:")
+
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("object.make_local", icon='MAKE_LOCAL', text="")
+            row.operator("object.proxy_make", icon='MAKE_PROXY', text="")
+
+
 
 
 class VIEW3D_PT_tools_animation(View3DPanel, Panel):
