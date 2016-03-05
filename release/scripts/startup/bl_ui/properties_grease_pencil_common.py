@@ -51,17 +51,28 @@ class GreasePencilDrawingToolsPanel:
     @staticmethod
     def draw(self, context):
         layout = self.layout
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
         col = layout.column(align=True)
 
         col.label(text="Draw:")
-        row = col.row(align=True)
-        row.operator("gpencil.draw", text="Draw").mode = 'DRAW'
-        row.operator("gpencil.draw", text="Erase").mode = 'ERASER'
 
-        row = col.row(align=True)
-        row.operator("gpencil.draw", text="Line").mode = 'DRAW_STRAIGHT'
-        row.operator("gpencil.draw", text="Poly").mode = 'DRAW_POLY'
+        if not scene.UItweaks.icon_or_text: 
+            row = col.row(align=True)
+            row.operator("gpencil.draw", icon='GREASEPENCIL',text="Draw").mode = 'DRAW'
+            row.operator("gpencil.draw", icon= 'ERASE',  text="Erase").mode = 'ERASER'
+
+            row = col.row(align=True)
+            row.operator("gpencil.draw", icon= 'GREASEPENCIL_LINE', text="Line").mode = 'DRAW_STRAIGHT'
+            row.operator("gpencil.draw", icon= 'GREASEPENCIL_POLY', text="Poly").mode = 'DRAW_POLY'
+        else:
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("gpencil.draw", icon='GREASEPENCIL',text="").mode = 'DRAW'
+            row.operator("gpencil.draw", icon= 'ERASE',  text="").mode = 'ERASER'
+            row.operator("gpencil.draw", icon= 'GREASEPENCIL_LINE', text="").mode = 'DRAW_STRAIGHT'
+            row.operator("gpencil.draw", icon= 'GREASEPENCIL_POLY', text="").mode = 'DRAW_POLY'
+            col.separator()
 
         row = col.row(align=True)
         row.prop(context.tool_settings, "use_grease_pencil_sessions", text="Continuous Drawing")
@@ -83,10 +94,16 @@ class GreasePencilDrawingToolsPanel:
         if context.space_data.type == 'VIEW_3D':
             col.separator()
             col.separator()
-
             col.label(text="Tools:")
-            col.operator("gpencil.convert", text="Convert...")
-            col.operator("view3d.ruler")
+
+            if not scene.UItweaks.icon_or_text:      
+                col.operator("gpencil.convert", icon= 'GREASEPENCIL_CONVERT', text="Convert...")
+                col.operator("view3d.ruler", icon= 'RULER')
+            else:
+                row = layout.row(align=False)
+                row.alignment = 'LEFT'
+                row.operator("gpencil.convert", icon= 'GREASEPENCIL_CONVERT', text="")
+                row.operator("view3d.ruler", icon= 'RULER', text = "")
 
 
 class GreasePencilStrokeEditPanel:
