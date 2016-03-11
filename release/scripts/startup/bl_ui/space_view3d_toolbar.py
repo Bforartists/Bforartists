@@ -43,8 +43,17 @@ def draw_keyframing_tools(context, layout):
     col = layout.column(align=True)
     col.label(text="Keyframes:")
     row = col.row(align=True)
-    row.operator("anim.keyframe_insert_menu", text="Insert")
-    row.operator("anim.keyframe_delete_v3d", text="Remove")
+    row.operator("anim.keyframe_insert_menu", icon= 'KEYFRAMES_INSERT', text="Insert")
+    row.operator("anim.keyframe_delete_v3d", icon= 'KEYFRAMES_REMOVE',text="Remove")
+
+# Keyframing tools just icons
+def draw_keyframing_tools_icons(context, layout):
+    col = layout.column(align=True)
+    col.label(text="Keyframes:")
+    row = col.row(align=False)
+    row.alignment = 'LEFT'
+    row.operator("anim.keyframe_insert_menu", icon= 'KEYFRAMES_INSERT',text="")
+    row.operator("anim.keyframe_delete_v3d", icon= 'KEYFRAMES_REMOVE',text="")
 
 
 # ********** default tools for object-mode ****************
@@ -440,19 +449,40 @@ class VIEW3D_PT_tools_animation(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
-        draw_keyframing_tools(context, layout)
+        if not scene.UItweaks.icon_or_text: 
 
-        col = layout.column(align=True)
-        col.label(text="Motion Paths:")
-        row = col.row(align=True)
-        row.operator("object.paths_calculate", text="Calculate")
-        row.operator("object.paths_clear", text="Clear")
+            draw_keyframing_tools(context, layout)
 
-        col.separator()
+            col = layout.column(align=True)
+            col.label(text="Motion Paths:")
+            row = col.row(align=True)
+            row.operator("object.paths_calculate", icon ='MOTIONPATHS_CALCULATE', text="Calculate")
+            row.operator("object.paths_clear", icon ='MOTIONPATHS_CLEAR',  text="Clear")
 
-        col.label(text="Action:")
-        col.operator("nla.bake", text="Bake Action")
+            col.separator()
+
+            col.label(text="Action:")
+            col.operator("nla.bake", icon = 'BAKE_ACTION', text="Bake Action")
+
+        else:
+            draw_keyframing_tools_icons(context, layout)
+
+            col = layout.column(align=True)
+            col.label(text="Motion Paths:")
+
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("object.paths_calculate", icon ='MOTIONPATHS_CALCULATE',  text="")
+            row.operator("object.paths_clear", icon ='MOTIONPATHS_CLEAR',  text="")
+
+            col.separator()
+
+            col.label(text="Action:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("nla.bake", icon = 'BAKE_ACTION', text="")
 
 
 class VIEW3D_PT_tools_rigid_body(View3DPanel, Panel):
