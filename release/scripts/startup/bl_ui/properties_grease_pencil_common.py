@@ -100,7 +100,7 @@ class GreasePencilDrawingToolsPanel:
                 col.operator("gpencil.convert", icon= 'GREASEPENCIL_CONVERT', text="Convert...")
                 col.operator("view3d.ruler", icon= 'RULER')
             else:
-                row = layout.row(align=False)
+                row = col.row(align=False)
                 row.alignment = 'LEFT'
                 row.operator("gpencil.convert", icon= 'GREASEPENCIL_CONVERT', text="")
                 row.operator("view3d.ruler", icon= 'RULER', text = "")

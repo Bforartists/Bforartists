@@ -136,7 +136,7 @@ class VIEW3D_PT_tools_object(View3DPanel, Panel):
                 if obj_type in {'MESH', 'CURVE', 'SURFACE', 'ARMATURE', 'FONT', 'LATTICE'}:
                     col = layout.column(align=True)
                     col.label(text="Set Origin:")
-                    row = layout.row(align=False)
+                    row = col.row(align=False)
                     row.alignment = 'LEFT'
                     #col.operator_menu_enum("object.origin_set", "type", text="Set Origin")
                     row.operator("object.origin_set", icon ='GEOMETRY_TO_ORIGIN', text="").type='GEOMETRY_ORIGIN'
@@ -147,7 +147,7 @@ class VIEW3D_PT_tools_object(View3DPanel, Panel):
                 if obj_type in {'MESH', 'CURVE', 'SURFACE'}:
                     col = layout.column(align=True)
                     col.label(text="Shading:")
-                    row = layout.row(align=False)
+                    row = col.row(align=False)
                     row.alignment = 'LEFT'
                     row.operator("object.shade_smooth", icon ='SHADING_SMOOTH', text="")
                     row.operator("object.shade_flat", icon ='SHADING_FLAT', text="")
@@ -155,7 +155,7 @@ class VIEW3D_PT_tools_object(View3DPanel, Panel):
                 if obj_type == 'MESH':
                     col = layout.column(align=True)
                     col.label(text="Data Transfer:")
-                    row = layout.row(align=False)
+                    row = col.row(align=False)
                     row.alignment = 'LEFT'
                     row.operator("object.data_transfer", icon ='TRANSFER_DATA', text="")
                     row.operator("object.datalayout_transfer", icon ='TRANSFER_DATA_LAYOUT', text="")
@@ -409,7 +409,7 @@ class VIEW3D_PT_tools_relations(View3DPanel, Panel):
         else:
             col = layout.column(align=True)
             col.label(text="Group:")
-            row = layout.row(align=False)
+            row = col.row(align=False)
             row.alignment = 'LEFT'
             row.operator("group.create", icon='NEW_GROUP', text="")
             row.operator("group.objects_add_active", icon='ADD_TO_ACTIVE', text="")
@@ -418,7 +418,7 @@ class VIEW3D_PT_tools_relations(View3DPanel, Panel):
             col = layout.column(align=True)
             col.label(text="Parent:")
 
-            row = layout.row(align=False)
+            row = col.row(align=False)
             row.alignment = 'LEFT'
             row.operator("object.parent_set", icon='PARENT_SET', text="")
             row.operator("object.parent_clear", icon='PARENT_CLEAR', text="")
@@ -426,7 +426,7 @@ class VIEW3D_PT_tools_relations(View3DPanel, Panel):
             col = layout.column(align=True)
             col.label(text="Object Data:")
 
-            row = layout.row(align=False)
+            row = col.row(align=False)
             row.alignment = 'LEFT'
             row.operator("object.make_links_data", icon='LINK_DATA', text="")
             row.operator("object.make_single_user", icon='MAKE_SINGLE_USER', text="")
@@ -434,7 +434,7 @@ class VIEW3D_PT_tools_relations(View3DPanel, Panel):
             col = layout.column(align=True)
             col.label(text="Linked Objects:")
 
-            row = layout.row(align=False)
+            row = col.row(align=False)
             row.alignment = 'LEFT'
             row.operator("object.make_local", icon='MAKE_LOCAL', text="")
             row.operator("object.proxy_make", icon='MAKE_PROXY', text="")
@@ -516,7 +516,7 @@ class VIEW3D_PT_tools_rigid_body(View3DPanel, Panel):
         else:
             col = layout.column(align=True)
             col.label(text="Add/Remove:")
-            row = layout.row(align=False)
+            row = col.row(align=False)
             row.alignment = 'LEFT'
             row.operator("rigidbody.objects_add", icon='RIGID_ADD_ACTIVE', text="").type = 'ACTIVE'
             row.operator("rigidbody.objects_add", icon='RIGID_ADD_PASSIVE', text="").type = 'PASSIVE'
@@ -524,19 +524,22 @@ class VIEW3D_PT_tools_rigid_body(View3DPanel, Panel):
 
             col = layout.column(align=True)
             col.label(text="Object Tools:")
-            row = layout.row(align=False)
+            row = col.row(align=False)
             row.alignment = 'LEFT'
             row.operator("rigidbody.shape_change", icon='RIGID_CHANGE_SHAPE', text="")
             row.operator("rigidbody.mass_calculate", icon='RIGID_CALCULATE_MASS', text="")
             row.operator("rigidbody.object_settings_copy", icon='RIGID_COPY_FROM_ACTIVE', text="")
             row.operator("object.visual_transform_apply", icon='RIGID_APPLY_TRANS', text="")
-            row = layout.row(align=False)
+
+            col.separator()
+
+            row = col.row(align=False)
             row.alignment = 'LEFT'
             row.operator("rigidbody.bake_to_keyframes", icon='RIGID_BAKE_TO_KEYFRAME', text="")
 
             col = layout.column(align=True)
             col.label(text="Constraints:")
-            row = layout.row(align=False)
+            row = col.row(align=False)
             row.alignment = 'LEFT'
             row.operator("rigidbody.connect", icon='RIGID_CONSTRAINTS_CONNECT', text="")
 
@@ -604,7 +607,9 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
             row = col.row(align=True)
             row.operator("mesh.spin", icon='SPIN')
             row.operator("mesh.screw", icon='SCREW')
+
             layout.separator()
+
             col.operator("mesh.inset", icon='INSET_FACES', text="Inset Faces")
             col.operator("mesh.edge_face_add", icon='MAKE_EDGEFACE')
             col.operator("mesh.subdivide", icon='SUBDIVIDE_EDGES')
@@ -643,12 +648,15 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
         else:
             col = layout.column(align=True)
             col.label(text="Deform:")
-            row = layout.row(align=False)
+            row = col.row(align=False)
             row.alignment = 'LEFT'
             row.operator("transform.edge_slide", icon='SLIDE_EDGE', text="")
             row.operator("transform.vert_slide", icon='SLIDE_VERTEX', text="")
             row.operator("mesh.noise", icon='NOISE', text="")
             row.operator("mesh.vertices_smooth", icon='SMOOTH_VERTEX', text="")
+
+            col.separator()
+
             row = layout.row(align=False)
             row.operator("mesh.vertices_smooth_laplacian", icon='LAPLACIAN_SMOOTH_VERTEX', text="")
             row.operator("transform.vertex_random", icon='RANDOMIZE', text="")
@@ -656,26 +664,34 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
             col = layout.column(align=False)
             col.label(text="Add:")
             col.menu("VIEW3D_MT_edit_mesh_extrude")
+
+            col.separator()
             
-            row = layout.row(align=False)
+            row = col.row(align=False)
             row.alignment = 'LEFT' 
             row.operator("view3d.edit_mesh_extrude_move_normal", icon='EXTRUDE_REGION', text="")
             row.operator("view3d.edit_mesh_extrude_individual_move", icon='EXTRUDE_INDIVIDUAL', text="")
             row.operator("mesh.dupli_extrude_cursor" , icon='DUPLI_EXTRUDE',  text = "").rotate_source = False
             row.operator("mesh.dupli_extrude_cursor", icon='DUPLI_EXTRUDE_ROTATE', text = "").rotate_source = True
             
-            row = layout.row(align=False)  
+            col.separator()
+
+            row = col.row(align=False)  
             row.operator("mesh.spin", icon='SPIN', text="")
             row.operator("mesh.screw", icon='SCREW', text="")
             row.operator("mesh.inset", icon='INSET_FACES', text="")
             row.operator("mesh.edge_face_add", icon='MAKE_EDGEFACE', text="")   
 
-            row = layout.row(align=False)
+            col.separator()
+
+            row = col.row(align=False)
             row.operator("mesh.subdivide", icon='SUBDIVIDE_EDGES', text="")
             row.operator("mesh.loopcut_slide", icon='LOOP_CUT_AND_SLIDE', text="")
             row.operator("mesh.offset_edge_loops_slide", icon='OFFSET_EDGE_SLIDE', text="")
 
-            row = layout.row(align=False)
+            col.separator()
+
+            row = col.row(align=False)
             row.alignment = 'LEFT'
             props = row.operator("mesh.knife_tool", icon='KNIFE', text="")
             props.use_occlude_geometry = True
@@ -689,16 +705,17 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
             col = layout.column(align=False)
             col.operator_menu_enum("mesh.merge", "type")
 
-            
-            
             col.label(text="Dissolve:")
-            row = layout.row(align=False)
+            row = col.row(align=False)
             row.alignment = 'LEFT'
             row.operator("mesh.dissolve_verts", icon='DISSOLVE_VERTS', text="")
             row.operator("mesh.dissolve_edges", icon='DISSOLVE_EDGES', text="")
             row.operator("mesh.dissolve_faces", icon='DISSOLVE_FACES', text="")
             row.operator("mesh.remove_doubles", icon='REMOVE_DOUBLES', text="")
-            row = layout.row(align=False)
+
+            col.separator()
+
+            row = col.row(align=False)
             row.operator("mesh.dissolve_limited", icon='DISSOLVE_LIMITED', text="")
             row.operator("mesh.dissolve_mode", icon='DISSOLVE_SELECTION', text="")
             row.operator("mesh.edge_collapse", icon='EDGE_COLLAPSE', text="")
@@ -2329,16 +2346,19 @@ class VIEW3D_PT_tools_history(View3DPanel, Panel):
 
         # Flag is on, draw buttons as icons.
         else:
-            row = layout.row(align=False)
-            row.alignment = 'LEFT'
+            col = layout.column(align=True)
+            row = col.row(align=False)
             row.operator("ed.undo", icon='UNDO',text="")
             row.operator("ed.redo", icon='REDO',text="")
-            row.operator("ed.undo_history", icon='UNDO_HISTORY',text="")
+            if obj is None or obj.mode != 'SCULPT':
+                # Sculpt mode does not generate an undo menu it seems...
+                row.operator("ed.undo_history", icon='UNDO_HISTORY',text="")
 
-            layout.label(text="Repeat:")
-            row = layout.row(align=False)
-            row.operator("screen.repeat_last", icon='REPEAT',text="")
-            row.operator("screen.repeat_history", icon='REDO_HISTORY',text="")
+            col = layout.column(align=True)
+            col.label(text="Repeat:")
+            row = col.row(align=False)
+            row.operator("screen.repeat_last", icon='REPEAT', text="")
+            row.operator("screen.repeat_history", icon='REDO_HISTORY', text="")
 
 
 if __name__ == "__main__":  # only for live edit.
