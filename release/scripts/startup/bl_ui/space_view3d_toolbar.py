@@ -1091,13 +1091,13 @@ class VIEW3D_PT_tools_mballedit(View3DPanel, Panel):
         if not scene.UItweaks.icon_or_text: 
             col = layout.column(align=True)
             col.label(text="Transform:")
-            col.operator("transform.translate")
-            col.operator("transform.rotate")
-            col.operator("transform.resize", text="Scale")
+            col.operator("transform.translate", icon ='TRANSFORM_MOVE')
+            col.operator("transform.rotate", icon ='TRANSFORM_ROTATE')
+            col.operator("transform.resize", icon ='TRANSFORM_SCALE', text="Scale")
 
             col = layout.column(align=True)
             col.label(text="Deform:")
-            col.operator("transform.vertex_random")
+            col.operator("transform.vertex_random", icon = 'RANDOMIZE')
 
         else:
             col = layout.column(align=True)
