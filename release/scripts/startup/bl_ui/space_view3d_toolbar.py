@@ -1086,16 +1086,34 @@ class VIEW3D_PT_tools_mballedit(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
-        col = layout.column(align=True)
-        col.label(text="Transform:")
-        col.operator("transform.translate")
-        col.operator("transform.rotate")
-        col.operator("transform.resize", text="Scale")
+        if not scene.UItweaks.icon_or_text: 
+            col = layout.column(align=True)
+            col.label(text="Transform:")
+            col.operator("transform.translate")
+            col.operator("transform.rotate")
+            col.operator("transform.resize", text="Scale")
 
-        col = layout.column(align=True)
-        col.label(text="Deform:")
-        col.operator("transform.vertex_random")
+            col = layout.column(align=True)
+            col.label(text="Deform:")
+            col.operator("transform.vertex_random")
+
+        else:
+            col = layout.column(align=True)
+            col.label(text="Transform:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("transform.translate", icon ='TRANSFORM_MOVE', text = "")
+            row.operator("transform.rotate", icon ='TRANSFORM_ROTATE', text = "")
+            row.operator("transform.resize", icon ='TRANSFORM_SCALE', text = "")
+
+            col = layout.column(align=True)
+            col.label(text="Deform:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("transform.vertex_random", icon = 'RANDOMIZE', text = "")
+
 
 
 class VIEW3D_PT_tools_add_mball_edit(View3DPanel, Panel):
