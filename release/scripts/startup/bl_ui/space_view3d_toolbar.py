@@ -954,11 +954,22 @@ class VIEW3D_PT_tools_transform_surface(View3DPanel, Panel):
     def draw(self, context):
         layout = self.layout
 
-        col = layout.column(align=True)
-        col.operator("transform.translate")
-        col.operator("transform.rotate")
-        col.operator("transform.resize", text="Scale")
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
+        if not scene.UItweaks.icon_or_text: 
+            col = layout.column(align=True)
+            col.operator("transform.translate", icon='TRANSFORM_MOVE')
+            col.operator("transform.rotate", icon='TRANSFORM_ROTATE')
+            col.operator("transform.resize", icon='TRANSFORM_SCALE', text="Scale")
+
+        else:
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("transform.translate", icon='TRANSFORM_MOVE', text="")
+            row.operator("transform.rotate", icon='TRANSFORM_ROTATE', text="")
+            row.operator("transform.resize", icon='TRANSFORM_SCALE', text="")
+
+# xxx - surface
 
 class VIEW3D_PT_tools_surfaceedit(View3DPanel, Panel):
     bl_category = "Tools"
@@ -968,22 +979,51 @@ class VIEW3D_PT_tools_surfaceedit(View3DPanel, Panel):
     def draw(self, context):
         layout = self.layout
 
-        col = layout.column(align=True)
-        col.label(text="Curve:")
-        col.operator("curve.duplicate_move", text="Duplicate")
-        col.operator("curve.delete")
-        col.operator("curve.cyclic_toggle")
-        col.operator("curve.switch_direction")
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
-        col = layout.column(align=True)
-        col.label(text="Modeling:")
-        col.operator("curve.extrude", text="Extrude")
-        col.operator("curve.spin")
-        col.operator("curve.subdivide")
+        if not scene.UItweaks.icon_or_text: 
 
-        col = layout.column(align=True)
-        col.label(text="Deform:")
-        col.operator("transform.vertex_random")
+            col = layout.column(align=True)
+            col.label(text="Curve:")
+            col.operator("curve.duplicate_move", icon = 'DUPLICATE', text="Duplicate")
+            col.operator("curve.delete", icon = 'DELETE')
+            col.operator("curve.cyclic_toggle", icon = 'TOGGLE_CYCLIC')
+            col.operator("curve.switch_direction", icon = 'SWITCH_DIRECTION')
+
+            col = layout.column(align=True)
+            col.label(text="Modeling:")
+            col.operator("curve.extrude", icon='EXTRUDE_REGION', text="Extrude")
+            col.operator("curve.spin", icon = 'SPIN')
+            col.operator("curve.subdivide", icon='SUBDIVIDE_EDGES')
+
+            col = layout.column(align=True)
+            col.label(text="Deform:")
+            col.operator("transform.vertex_random", icon = 'RANDOMIZE')
+
+        else:
+
+            col = layout.column(align=True)
+            col.label(text="Curve:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("curve.duplicate_move", icon = 'DUPLICATE', text="")
+            row.operator("curve.delete", icon = 'DELETE', text = "")
+            row.operator("curve.cyclic_toggle", icon = 'TOGGLE_CYCLIC', text = "")
+            row.operator("curve.switch_direction", icon = 'SWITCH_DIRECTION', text = "")
+
+            col = layout.column(align=True)
+            col.label(text="Modeling:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("curve.extrude", icon='EXTRUDE_REGION', text="")
+            row.operator("curve.spin", icon = 'SPIN', text = "")
+            row.operator("curve.subdivide", icon='SUBDIVIDE_EDGES', text = "")
+
+            col = layout.column(align=True)
+            col.label(text="Deform:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("transform.vertex_random", icon = 'RANDOMIZE', text = "")
 
 
 class VIEW3D_PT_tools_add_surface_edit(View3DPanel, Panel):
