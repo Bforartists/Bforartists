@@ -798,27 +798,56 @@ class VIEW3D_PT_tools_shading(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
-        col = layout.column(align=True)
-        col.label(text="Faces:")
-        row = col.row(align=True)
-        row.operator("mesh.faces_shade_smooth", text="Smooth")
-        row.operator("mesh.faces_shade_flat", text="Flat")
-        col.label(text="Edges:")
-        row = col.row(align=True)
-        row.operator("mesh.mark_sharp", text="Smooth").clear = True
-        row.operator("mesh.mark_sharp", text="Sharp")
-        col.label(text="Vertices:")
-        row = col.row(align=True)
-        props = row.operator("mesh.mark_sharp", text="Smooth")
-        props.use_verts = True
-        props.clear = True
-        row.operator("mesh.mark_sharp", text="Sharp").use_verts = True
+        if not scene.UItweaks.icon_or_text: 
+            col = layout.column(align=True)
+            col.label(text="Faces:")
+            row = col.row(align=True)
+            row.operator("mesh.faces_shade_smooth", icon = 'SHADING_SMOOTH', text="Smooth")
+            row.operator("mesh.faces_shade_flat", icon = 'SHADING_FLAT',  text="Flat")
+            col.label(text="Edges:")
+            row = col.row(align=True)
+            row.operator("mesh.mark_sharp", icon = 'SHADING_SMOOTH', text="Smooth").clear = True
+            row.operator("mesh.mark_sharp", icon = 'SHADING_FLAT', text="Sharp")
+            col.label(text="Vertices:")
+            row = col.row(align=True)
+            props = row.operator("mesh.mark_sharp", icon = 'SHADING_SMOOTH', text="Smooth")
+            props.use_verts = True
+            props.clear = True
+            row.operator("mesh.mark_sharp", icon = 'SHADING_FLAT', text="Sharp").use_verts = True
 
-        col = layout.column(align=True)
-        col.label(text="Normals:")
-        col.operator("mesh.normals_make_consistent", text="Recalculate")
-        col.operator("mesh.flip_normals", text="Flip Direction")
+            col = layout.column(align=True)
+            col.label(text="Normals:")
+            col.operator("mesh.normals_make_consistent", icon = 'RECALC_NORMALS', text="Recalculate")
+            col.operator("mesh.flip_normals", icon = 'FLIP_NORMALS', text="Flip Direction")
+
+        else:
+            col = layout.column(align=True)
+            col.label(text="Faces:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("mesh.faces_shade_smooth", icon = 'SHADING_SMOOTH', text="")
+            row.operator("mesh.faces_shade_flat", icon = 'SHADING_FLAT',  text="")
+            col.label(text="Edges:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("mesh.mark_sharp", icon = 'SHADING_SMOOTH', text="").clear = True
+            row.operator("mesh.mark_sharp", icon = 'SHADING_FLAT', text="")
+            col.label(text="Vertices:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            props = row.operator("mesh.mark_sharp", icon = 'SHADING_SMOOTH', text="")
+            props.use_verts = True
+            props.clear = True
+            row.operator("mesh.mark_sharp", icon = 'SHADING_FLAT', text="").use_verts = True
+
+            col = layout.column(align=True)
+            col.label(text="Normals:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("mesh.normals_make_consistent", icon = 'RECALC_NORMALS', text="")
+            row.operator("mesh.flip_normals", icon = 'FLIP_NORMALS', text="")
 
 
 class VIEW3D_PT_tools_uvs(View3DPanel, Panel):
@@ -828,12 +857,21 @@ class VIEW3D_PT_tools_uvs(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
         col = layout.column(align=True)
         col.label(text="UV Mapping:")
         col.menu("VIEW3D_MT_uv_map", text="Unwrap")
-        col.operator("mesh.mark_seam").clear = False
-        col.operator("mesh.mark_seam", text="Clear Seam").clear = True
+
+        if not scene.UItweaks.icon_or_text:          
+            col.operator("mesh.mark_seam", icon = 'MARK_SEAM').clear = False
+            col.operator("mesh.mark_seam", icon = 'CLEAR_SEAM', text="Clear Seam").clear = True
+
+        else:
+            col.separator()
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("mesh.mark_seam", icon = 'MARK_SEAM', text = "").clear = False
+            row.operator("mesh.mark_seam", icon = 'CLEAR_SEAM', text="").clear = True
 
 
 class VIEW3D_PT_tools_meshedit_options(View3DPanel, Panel):
