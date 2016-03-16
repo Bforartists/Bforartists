@@ -1332,40 +1332,79 @@ class VIEW3D_PT_tools_posemode(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
-        col = layout.column(align=True)
-        col.label(text="Transform:")
-        col.operator("transform.translate")
-        col.operator("transform.rotate")
-        col.operator("transform.resize", text="Scale")
+        if not scene.UItweaks.icon_or_text: 
+            col = layout.column(align=True)
+            col.label(text="Transform:")
+            col.operator("transform.translate", icon ='TRANSFORM_MOVE')
+            col.operator("transform.rotate", icon ='TRANSFORM_ROTATE')
+            col.operator("transform.resize", icon ='TRANSFORM_SCALE', text="Scale")
 
-        col = layout.column(align=True)
-        col.label(text="In-Between:")
-        row = col.row(align=True)
-        row.operator("pose.push", text="Push")
-        row.operator("pose.relax", text="Relax")
-        col.operator("pose.breakdown", text="Breakdowner")
+            col = layout.column(align=True)
+            col.label(text="In-Between:")
+            row = col.row(align=True)
+            row.operator("pose.push", icon = 'PUSH_POSE', text="Push")
+            row.operator("pose.relax", icon = 'RELAX_POSE',text="Relax")
+            col.operator("pose.breakdown", icon = 'BREAKDOWNER_POSE',text="Breakdowner")
 
-        col = layout.column(align=True)
-        col.label(text="Pose:")
-        row = col.row(align=True)
-        row.operator("pose.copy", text="Copy")
-        row.operator("pose.paste", text="Paste")
+            col = layout.column(align=True)
+            col.label(text="Pose:")
+            row = col.row(align=True)
+            row.operator("pose.copy", icon = 'COPYDOWN', text="Copy")
+            row.operator("pose.paste", icon = 'PASTEDOWN', text="Paste")
 
-        row = layout.row(align=True)
-        row.operator("pose.propagate", text="Propagate")
-        row.menu("VIEW3D_MT_pose_propagate", icon='TRIA_RIGHT', text="")
+            row = layout.row(align=True)
+            row.operator("pose.propagate", text="Propagate")
+            row.menu("VIEW3D_MT_pose_propagate", icon='TRIA_RIGHT', text="")
 
-        col = layout.column(align=True)
-        col.operator("poselib.pose_add", text="Add To Library")
+            col = layout.column(align=True)
+            col.operator("poselib.pose_add", icon = 'ADD_TO_LIBRARY', text="Add To Library")
 
-        draw_keyframing_tools(context, layout)
+            draw_keyframing_tools(context, layout)
 
-        col = layout.column(align=True)
-        col.label(text="Motion Paths:")
-        row = col.row(align=True)
-        row.operator("pose.paths_calculate", text="Calculate")
-        row.operator("pose.paths_clear", text="Clear")
+            col = layout.column(align=True)
+            col.label(text="Motion Paths:")
+            row = col.row(align=True)
+            row.operator("pose.paths_calculate", icon ='MOTIONPATHS_CALCULATE', text="Calculate")
+            row.operator("pose.paths_clear", icon ='MOTIONPATHS_CLEAR', text="Clear")
+
+        else:
+            col = layout.column(align=True)
+            col.label(text="Transform:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("transform.translate", icon ='TRANSFORM_MOVE', text="")
+            row.operator("transform.rotate", icon ='TRANSFORM_ROTATE', text="")
+            row.operator("transform.resize", icon ='TRANSFORM_SCALE', text="")
+
+            col = layout.column(align=True)
+            col.label(text="In-Between:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("pose.push", icon = 'PUSH_POSE', text="")
+            row.operator("pose.relax", icon = 'RELAX_POSE',text="")
+            row.operator("pose.breakdown", icon = 'BREAKDOWNER_POSE',text="")
+
+            col = layout.column(align=True)
+            col.label(text="Pose:")
+            row = col.row(align=False)
+            row.operator("pose.copy", icon = 'COPYDOWN', text="")
+            row.operator("pose.paste", icon = 'PASTEDOWN', text="")
+            row.operator("poselib.pose_add", icon = 'ADD_TO_LIBRARY', text="")
+
+            row = layout.row(align=True)
+            row.operator("pose.propagate", text="Propagate")
+            row.menu("VIEW3D_MT_pose_propagate", icon='TRIA_RIGHT', text="")
+
+            draw_keyframing_tools_icons(context, layout)
+
+            col = layout.column(align=True)
+            col.label(text="Motion Paths:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("pose.paths_calculate", icon ='MOTIONPATHS_CALCULATE', text="")
+            row.operator("pose.paths_clear", icon ='MOTIONPATHS_CLEAR', text="")
 
 
 class VIEW3D_PT_tools_posemode_options(View3DPanel, Panel):
