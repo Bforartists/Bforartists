@@ -780,11 +780,11 @@ DEF_ICON(DUPLI_EXTRUDE)
 DEF_ICON(DUPLI_EXTRUDE_ROTATE)
 DEF_ICON(SPIN)
 DEF_ICON(SCREW)
+/*bfa - new icons. Tool Shelf - Edit Mode - Tools - Lattice Tools section  */
+DEF_ICON(MAKE_REGULAR)
+
 // -----------------
-#ifndef DEF_ICON_BLANK_SKIP
-	DEF_ICON(BLANK247b)
-#endif
-	
+
 	/* 3D VIEW */
 DEF_ICON(BBOX)
 DEF_ICON(WIRE)
