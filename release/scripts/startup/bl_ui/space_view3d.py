@@ -1023,59 +1023,6 @@ class VIEW3D_MT_angle_control(Menu):
                 layout.prop(tex_slot, "use_random", text="Random")
 
 
-
-class INFO_MT_surface_add(Menu):
-    bl_idname = "INFO_MT_surface_add"
-    bl_label = "Surface"
-
-    def draw(self, context):
-        from .space_view3d_toolbar import VIEW3D_PT_tools_add_object
-        layout = self.layout
-
-        layout.operator_context = 'INVOKE_REGION_WIN'
-
-        VIEW3D_PT_tools_add_object.draw_add_surface(layout)
-
-
-class INFO_MT_metaball_add(Menu):
-    bl_idname = "INFO_MT_metaball_add"
-    bl_label = "Metaball"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator_context = 'INVOKE_REGION_WIN'
-        layout.operator_enum("object.metaball_add", "type")
-
-
-class INFO_MT_edit_curve_add(Menu):
-    bl_idname = "INFO_MT_edit_curve_add"
-    bl_label = "Add"
-
-    def draw(self, context):
-        is_surf = context.active_object.type == 'SURFACE'
-
-        layout = self.layout
-        layout.operator_context = 'EXEC_REGION_WIN'
-
-        if is_surf:
-            INFO_MT_surface_add.draw(self, context)
-        else:
-            INFO_MT_curve_add.draw(self, context)
-
-
-class INFO_MT_edit_armature_add(Menu):
-    bl_idname = "INFO_MT_edit_armature_add"
-    bl_label = "Armature"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator_context = 'EXEC_REGION_WIN'
-        layout.operator("armature.bone_primitive_add", text="Single Bone", icon='BONE_DATA')
-
-
-
 class INFO_MT_add(Menu):
     bl_label = "Add"
 
@@ -1087,9 +1034,6 @@ class INFO_MT_add(Menu):
         # Note: was EXEC_AREA, but this context does not have the 'rv3d', which prevents
         #       "align_view" to work on first call (see [#32719]).
         layout.operator_context = 'EXEC_REGION_WIN'
-        layout.menu("INFO_MT_surface_add", icon='OUTLINER_OB_SURFACE')
-        layout.menu("INFO_MT_metaball_add", text="Metaball", icon='OUTLINER_OB_META')
-        layout.separator()
 
         layout.operator_menu_enum("object.empty_add", "type", text="Empty", icon='OUTLINER_OB_EMPTY')
         layout.separator()
@@ -2740,6 +2684,12 @@ class VIEW3D_PT_view3d_display(Panel):
         view = context.space_data
         scene = context.scene
 
+        # bfa - Our checkbox for icon or text buttons.
+        # The prop is defined in the __init__.py. When we define it in this file
+        # then we get an error that the scene has no UITweaks attribute. 
+        # Most probably a order of registration problem.
+        layout.prop(scene.UItweaks, "icon_or_text")
+
         col = layout.column()
         col.prop(view, "show_only_render")
         col.prop(view, "show_world")
@@ -3246,13 +3196,14 @@ class VIEW3D_PT_context_properties(Panel):
             # Draw with no edit button
             rna_prop_ui.draw(self.layout, context, member, object, False)
 
+#-----------------------------------------------------------------------------
 
 def register():
     bpy.utils.register_module(__name__)
 
-
 def unregister():
     bpy.utils.unregister_module(__name__)
+
 
 if __name__ == "__main__":
     register()
