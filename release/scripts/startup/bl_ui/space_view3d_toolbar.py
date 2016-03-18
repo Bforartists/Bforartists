@@ -43,8 +43,17 @@ def draw_keyframing_tools(context, layout):
     col = layout.column(align=True)
     col.label(text="Keyframes:")
     row = col.row(align=True)
-    row.operator("anim.keyframe_insert_menu", text="Insert")
-    row.operator("anim.keyframe_delete_v3d", text="Remove")
+    row.operator("anim.keyframe_insert_menu", icon= 'KEYFRAMES_INSERT', text="Insert")
+    row.operator("anim.keyframe_delete_v3d", icon= 'KEYFRAMES_REMOVE',text="Remove")
+
+# Keyframing tools just icons
+def draw_keyframing_tools_icons(context, layout):
+    col = layout.column(align=True)
+    col.label(text="Keyframes:")
+    row = col.row(align=False)
+    row.alignment = 'LEFT'
+    row.operator("anim.keyframe_insert_menu", icon= 'KEYFRAMES_INSERT',text="")
+    row.operator("anim.keyframe_delete_v3d", icon= 'KEYFRAMES_REMOVE',text="")
 
 
 # ********** default tools for object-mode ****************
@@ -57,14 +66,25 @@ class VIEW3D_PT_tools_transform(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
-        col = layout.column(align=True)
-        col.operator("transform.translate")
-        col.operator("transform.rotate")
-        col.operator("transform.resize", text="Scale")
+        if not scene.UItweaks.icon_or_text: 
+            col = layout.column(align=True)
+            col.operator("transform.translate", icon='TRANSFORM_MOVE')
+            col.operator("transform.rotate", icon='TRANSFORM_ROTATE')
+            col.operator("transform.resize", icon='TRANSFORM_SCALE', text="Scale")
 
-        col = layout.column(align=True)
-        col.operator("transform.mirror", text="Mirror")
+            col = layout.column(align=True)
+            col.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="Mirror")
+
+        else:
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("transform.translate", icon='TRANSFORM_MOVE', text="")
+            row.operator("transform.rotate", icon='TRANSFORM_ROTATE', text="")
+            row.operator("transform.resize", icon='TRANSFORM_SCALE', text="")
+            row.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="")
+
 
 
 class VIEW3D_PT_tools_object(View3DPanel, Panel):
@@ -81,27 +101,64 @@ class VIEW3D_PT_tools_object(View3DPanel, Panel):
         if obj:
             obj_type = obj.type
 
-            if obj_type in {'MESH', 'CURVE', 'SURFACE', 'ARMATURE'}:
-                col = layout.column(align=True)
-                col.operator("object.join")
+            scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
-            if obj_type in {'MESH', 'CURVE', 'SURFACE', 'ARMATURE', 'FONT', 'LATTICE'}:
-                col = layout.column(align=True)
-                col.operator_menu_enum("object.origin_set", "type", text="Set Origin")
+            if not scene.UItweaks.icon_or_text: 
 
-            if obj_type in {'MESH', 'CURVE', 'SURFACE'}:
-                col = layout.column(align=True)
-                col.label(text="Shading:")
-                row = col.row(align=True)
-                row.operator("object.shade_smooth", text="Smooth")
-                row.operator("object.shade_flat", text="Flat")
+                if obj_type in {'MESH', 'CURVE', 'SURFACE', 'ARMATURE'}:
+                    col = layout.column(align=True)
+                    col.operator("object.join", icon ='JOIN')
 
-            if obj_type == 'MESH':
-                col = layout.column(align=True)
-                col.label(text="Data Transfer:")
-                row = col.row(align=True)
-                row.operator("object.data_transfer", text="Data")
-                row.operator("object.datalayout_transfer", text="Data Layout")
+                if obj_type in {'MESH', 'CURVE', 'SURFACE', 'ARMATURE', 'FONT', 'LATTICE'}:
+                    col = layout.column(align=True)
+                    col.operator_menu_enum("object.origin_set", "type", text="Set Origin")
+
+                if obj_type in {'MESH', 'CURVE', 'SURFACE'}:
+                    col = layout.column(align=True)
+                    col.label(text="Shading:")
+                    row = col.row(align=True)
+                    row.operator("object.shade_smooth", text="Smooth", icon ='SHADING_SMOOTH')
+                    row.operator("object.shade_flat", text="Flat", icon ='SHADING_FLAT')
+
+                if obj_type == 'MESH':
+                    col = layout.column(align=True)
+                    col.label(text="Data Transfer:")
+                    row = col.row(align=True)
+                    row.operator("object.data_transfer", icon ='TRANSFER_DATA', text="Data")
+                    row.operator("object.datalayout_transfer", icon ='TRANSFER_DATA_LAYOUT', text="Data Layout")
+
+            else:
+                if obj_type in {'MESH', 'CURVE', 'SURFACE', 'ARMATURE'}:
+                    row = layout.row(align=False)
+                    row.alignment = 'LEFT'
+                    row.operator("object.join", icon ='JOIN', text= "" )
+
+                if obj_type in {'MESH', 'CURVE', 'SURFACE', 'ARMATURE', 'FONT', 'LATTICE'}:
+                    col = layout.column(align=True)
+                    col.label(text="Set Origin:")
+                    row = col.row(align=False)
+                    row.alignment = 'LEFT'
+                    #col.operator_menu_enum("object.origin_set", "type", text="Set Origin")
+                    row.operator("object.origin_set", icon ='GEOMETRY_TO_ORIGIN', text="").type='GEOMETRY_ORIGIN'
+                    row.operator("object.origin_set", icon ='ORIGIN_TO_GEOMETRY', text="").type='ORIGIN_GEOMETRY'
+                    row.operator("object.origin_set", icon ='ORIGIN_TO_CURSOR', text="").type='ORIGIN_CURSOR'
+                    row.operator("object.origin_set", icon ='ORIGIN_TO_CENTEROFMASS', text="").type='ORIGIN_CENTER_OF_MASS'
+
+                if obj_type in {'MESH', 'CURVE', 'SURFACE'}:
+                    col = layout.column(align=True)
+                    col.label(text="Shading:")
+                    row = col.row(align=False)
+                    row.alignment = 'LEFT'
+                    row.operator("object.shade_smooth", icon ='SHADING_SMOOTH', text="")
+                    row.operator("object.shade_flat", icon ='SHADING_FLAT', text="")
+
+                if obj_type == 'MESH':
+                    col = layout.column(align=True)
+                    col.label(text="Data Transfer:")
+                    row = col.row(align=False)
+                    row.alignment = 'LEFT'
+                    row.operator("object.data_transfer", icon ='TRANSFER_DATA', text="")
+                    row.operator("object.datalayout_transfer", icon ='TRANSFER_DATA_LAYOUT', text="")
 
 
 class VIEW3D_PT_tools_add_object(View3DPanel, Panel):
@@ -130,6 +187,31 @@ class VIEW3D_PT_tools_add_object(View3DPanel, Panel):
         layout.operator("mesh.primitive_monkey_add", text="Monkey", icon='MESH_MONKEY')
 
     @staticmethod
+    def draw_add_mesh_icons(layout, label=False):
+        if label:
+            layout.label(text="Primitives:")
+        row = layout.row(align=False)
+        row.alignment = 'LEFT'
+        row.operator("mesh.primitive_plane_add", text="", icon='MESH_PLANE')
+        row.operator("mesh.primitive_cube_add", text="", icon='MESH_CUBE')
+        row.operator("mesh.primitive_circle_add", text="", icon='MESH_CIRCLE')
+        row.operator("mesh.primitive_uv_sphere_add", text="", icon='MESH_UVSPHERE')
+        layout.separator()
+        row = layout.row(align=False)
+        row.operator("mesh.primitive_ico_sphere_add", text="", icon='MESH_ICOSPHERE')       
+        row.operator("mesh.primitive_cylinder_add", text="", icon='MESH_CYLINDER')
+        row.operator("mesh.primitive_cone_add", text="", icon='MESH_CONE')
+        row.operator("mesh.primitive_torus_add", text="", icon='MESH_TORUS')
+
+        if label:
+            layout.label(text="Special:")
+        else:
+            layout.separator()
+        row = layout.row(align=False)
+        row.operator("mesh.primitive_grid_add", text="", icon='MESH_GRID')
+        row.operator("mesh.primitive_monkey_add", text="", icon='MESH_MONKEY')
+
+    @staticmethod
     def draw_add_curve(layout, label=False):
         if label:
             layout.label(text="Bezier:")
@@ -145,6 +227,25 @@ class VIEW3D_PT_tools_add_object(View3DPanel, Panel):
         layout.operator("curve.primitive_nurbs_path_add", text="Path", icon='CURVE_PATH')
 
     @staticmethod
+    def draw_add_curve_icons(layout, label=False):
+        if label:
+            layout.label(text="Bezier:")
+        row = layout.row(align=False)
+        row.alignment = 'LEFT'
+        row.operator("curve.primitive_bezier_curve_add", text="", icon='CURVE_BEZCURVE')
+        row.operator("curve.primitive_bezier_circle_add", text="", icon='CURVE_BEZCIRCLE')
+
+        if label:
+            layout.label(text="Nurbs:")
+        else:
+            layout.separator()
+        row = layout.row(align=False)
+        row.alignment = 'LEFT'
+        row.operator("curve.primitive_nurbs_curve_add", text="", icon='CURVE_NCURVE')
+        row.operator("curve.primitive_nurbs_circle_add", text="", icon='CURVE_NCIRCLE')
+        row.operator("curve.primitive_nurbs_path_add", text="", icon='CURVE_PATH')
+
+    @staticmethod
     def draw_add_surface(layout):
         layout.operator("surface.primitive_nurbs_surface_curve_add", text="Nurbs Curve", icon='SURFACE_NCURVE')
         layout.operator("surface.primitive_nurbs_surface_circle_add", text="Nurbs Circle", icon='SURFACE_NCIRCLE')
@@ -154,12 +255,49 @@ class VIEW3D_PT_tools_add_object(View3DPanel, Panel):
         layout.operator("surface.primitive_nurbs_surface_torus_add", text="Nurbs Torus", icon='SURFACE_NTORUS')
 
     @staticmethod
+    def draw_add_surface_icons(layout):
+        row = layout.row(align=False)
+        row.alignment = 'LEFT'
+        row.operator("surface.primitive_nurbs_surface_curve_add", text="", icon='SURFACE_NCURVE')
+        row.operator("surface.primitive_nurbs_surface_circle_add", text="", icon='SURFACE_NCIRCLE')
+        row.operator("surface.primitive_nurbs_surface_surface_add", text="", icon='SURFACE_NSURFACE')
+        row.operator("surface.primitive_nurbs_surface_cylinder_add", text="", icon='SURFACE_NCYLINDER')
+        layout.separator()
+        row = layout.row(align=False)
+        row.operator("surface.primitive_nurbs_surface_sphere_add", text="", icon='SURFACE_NSPHERE')
+        row.operator("surface.primitive_nurbs_surface_torus_add", text="", icon='SURFACE_NTORUS')
+
+    @staticmethod
     def draw_add_mball(layout):
         layout.operator_enum("object.metaball_add", "type")
 
     @staticmethod
+    def draw_add_mball_icons(layout):
+        row = layout.row(align=False)
+        row.alignment = 'LEFT'
+        row.operator("object.metaball_add", text="", icon='META_BALL').type= 'BALL'
+        row.operator("object.metaball_add", text="", icon='META_CAPSULE').type= 'CAPSULE'
+        row.operator("object.metaball_add", text="", icon='META_PLANE').type= 'PLANE'
+        row.operator("object.metaball_add", text="", icon='META_ELLIPSOID').type= 'ELLIPSOID'
+        layout.separator()
+        row = layout.row(align=False)
+        row.operator("object.metaball_add", text="", icon='META_CUBE').type= 'CUBE'
+
+    @staticmethod
     def draw_add_lamp(layout):
         layout.operator_enum("object.lamp_add", "type")
+
+    @staticmethod
+    def draw_add_lamp_icons(layout):
+        row = layout.row(align=False)
+        row.alignment = 'LEFT'
+        row.operator("object.lamp_add", text="", icon='LAMP_POINT').type= 'POINT'
+        row.operator("object.lamp_add", text="", icon='LAMP_SUN').type= 'SUN' 
+        row.operator("object.lamp_add", text="", icon='LAMP_SPOT').type= 'SPOT' 
+        row.operator("object.lamp_add", text="", icon='LAMP_HEMI').type= 'HEMI' 
+        layout.separator()
+        row = layout.row(align=False)
+        row.operator("object.lamp_add", text="", icon='LAMP_AREA').type= 'AREA' 
 
     @staticmethod
     def draw_add_other(layout):
@@ -170,28 +308,64 @@ class VIEW3D_PT_tools_add_object(View3DPanel, Panel):
         layout.operator("object.speaker_add", text="Speaker", icon='OUTLINER_OB_SPEAKER')
         layout.operator("object.camera_add", text="Camera", icon='OUTLINER_OB_CAMERA')
 
+    @staticmethod
+    def draw_add_other_icons(layout):
+        row = layout.row(align=False)
+        row.alignment = 'LEFT'
+        row.operator("object.text_add", text="", icon='OUTLINER_OB_FONT')
+        row.operator("object.armature_add", text="", icon='OUTLINER_OB_ARMATURE')
+        row.operator("object.add", text="", icon='OUTLINER_OB_LATTICE').type = 'LATTICE'
+        row.operator("object.empty_add", text="", icon='OUTLINER_OB_EMPTY').type = 'PLAIN_AXES'
+        layout.separator()
+        row = layout.row(align=False)
+        row.operator("object.speaker_add", text="", icon='OUTLINER_OB_SPEAKER')
+        row.operator("object.camera_add", text="", icon='OUTLINER_OB_CAMERA')
+
     def draw(self, context):
         layout = self.layout
-
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
         col = layout.column(align=True)
+
         col.label(text="Mesh:")
-        self.draw_add_mesh(col)
+        if not scene.UItweaks.icon_or_text: 
+            self.draw_add_mesh(col)
+        else:
+            self.draw_add_mesh_icons(col)
 
         col = layout.column(align=True)
         col.label(text="Curve:")
-        self.draw_add_curve(col)
+        if not scene.UItweaks.icon_or_text: 
+            self.draw_add_curve(col)
+        else:
+            self.draw_add_curve_icons(col)
 
-        # not used here:
-        # draw_add_surface
-        # draw_add_mball
+        col = layout.column(align=True)
+        col.label(text="Surface:")
+        if not scene.UItweaks.icon_or_text: 
+            self.draw_add_surface(col)
+        else:
+            self.draw_add_surface_icons(col)
+
+        col = layout.column(align=True)
+        col.label(text="Metaball:")
+        if not scene.UItweaks.icon_or_text: 
+            self.draw_add_mball(col)
+        else:
+            self.draw_add_mball_icons(col)
 
         col = layout.column(align=True)
         col.label(text="Lamp:")
-        self.draw_add_lamp(col)
+        if not scene.UItweaks.icon_or_text: 
+            self.draw_add_lamp(col)
+        else:
+            self.draw_add_lamp_icons(col)
 
         col = layout.column(align=True)
         col.label(text="Other:")
-        self.draw_add_other(col)
+        if not scene.UItweaks.icon_or_text:
+            self.draw_add_other(col)
+        else:
+            self.draw_add_other_icons(col)
 
 
 class VIEW3D_PT_tools_relations(View3DPanel, Panel):
@@ -202,31 +376,70 @@ class VIEW3D_PT_tools_relations(View3DPanel, Panel):
     def draw(self, context):
         layout = self.layout
 
-        col = layout.column(align=True)
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
-        col.label(text="Group:")
-        col.operator("group.create", text="New Group")
-        col.operator("group.objects_add_active", text="Add to Active")
-        col.operator("group.objects_remove", text="Remove from Group")
+        if not scene.UItweaks.icon_or_text: 
 
-        col.separator()
+            col = layout.column(align=True)
 
-        col.label(text="Parent:")
-        row = col.row(align=True)
-        row.operator("object.parent_set", text="Set")
-        row.operator("object.parent_clear", text="Clear")
+            col.label(text="Group:")
+            col.operator("group.create", icon='NEW_GROUP', text="New Group")
+            col.operator("group.objects_add_active", icon='ADD_TO_ACTIVE', text="Add to Active")
+            col.operator("group.objects_remove", icon='REMOVE_FROM_GROUP', text="Remove from Group")
 
-        col.separator()
+            col.separator()
 
-        col.label(text="Object Data:")
-        col.operator("object.make_links_data")
-        col.operator("object.make_single_user")
+            col.label(text="Parent:")
+            row = col.row(align=True)
+            row.operator("object.parent_set", icon='PARENT_SET', text="Set")
+            row.operator("object.parent_clear", icon='PARENT_CLEAR', text="Clear")
 
-        col.separator()
+            col.separator()
 
-        col.label(text="Linked Objects:")
-        col.operator("object.make_local")
-        col.operator("object.proxy_make")
+            col.label(text="Object Data:")
+            col.operator("object.make_links_data", icon='LINK_DATA')
+            col.operator("object.make_single_user", icon='MAKE_SINGLE_USER')
+
+            col.separator()
+
+            col.label(text="Linked Objects:")
+            col.operator("object.make_local", icon='MAKE_LOCAL')
+            col.operator("object.proxy_make", icon='MAKE_PROXY')
+
+        else:
+            col = layout.column(align=True)
+            col.label(text="Group:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("group.create", icon='NEW_GROUP', text="")
+            row.operator("group.objects_add_active", icon='ADD_TO_ACTIVE', text="")
+            row.operator("group.objects_remove", icon='REMOVE_FROM_GROUP', text="")
+
+            col = layout.column(align=True)
+            col.label(text="Parent:")
+
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("object.parent_set", icon='PARENT_SET', text="")
+            row.operator("object.parent_clear", icon='PARENT_CLEAR', text="")
+
+            col = layout.column(align=True)
+            col.label(text="Object Data:")
+
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("object.make_links_data", icon='LINK_DATA', text="")
+            row.operator("object.make_single_user", icon='MAKE_SINGLE_USER', text="")
+
+            col = layout.column(align=True)
+            col.label(text="Linked Objects:")
+
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("object.make_local", icon='MAKE_LOCAL', text="")
+            row.operator("object.proxy_make", icon='MAKE_PROXY', text="")
+
+
 
 
 class VIEW3D_PT_tools_animation(View3DPanel, Panel):
@@ -236,19 +449,40 @@ class VIEW3D_PT_tools_animation(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
-        draw_keyframing_tools(context, layout)
+        if not scene.UItweaks.icon_or_text: 
 
-        col = layout.column(align=True)
-        col.label(text="Motion Paths:")
-        row = col.row(align=True)
-        row.operator("object.paths_calculate", text="Calculate")
-        row.operator("object.paths_clear", text="Clear")
+            draw_keyframing_tools(context, layout)
 
-        col.separator()
+            col = layout.column(align=True)
+            col.label(text="Motion Paths:")
+            row = col.row(align=True)
+            row.operator("object.paths_calculate", icon ='MOTIONPATHS_CALCULATE', text="Calculate")
+            row.operator("object.paths_clear", icon ='MOTIONPATHS_CLEAR',  text="Clear")
 
-        col.label(text="Action:")
-        col.operator("nla.bake", text="Bake Action")
+            col.separator()
+
+            col.label(text="Action:")
+            col.operator("nla.bake", icon = 'BAKE_ACTION', text="Bake Action")
+
+        else:
+            draw_keyframing_tools_icons(context, layout)
+
+            col = layout.column(align=True)
+            col.label(text="Motion Paths:")
+
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("object.paths_calculate", icon ='MOTIONPATHS_CALCULATE',  text="")
+            row.operator("object.paths_clear", icon ='MOTIONPATHS_CLEAR',  text="")
+
+            col.separator()
+
+            col.label(text="Action:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("nla.bake", icon = 'BAKE_ACTION', text="")
 
 
 class VIEW3D_PT_tools_rigid_body(View3DPanel, Panel):
@@ -258,24 +492,56 @@ class VIEW3D_PT_tools_rigid_body(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
-        col = layout.column(align=True)
-        col.label(text="Add/Remove:")
-        row = col.row(align=True)
-        row.operator("rigidbody.objects_add", text="Add Active").type = 'ACTIVE'
-        row.operator("rigidbody.objects_add", text="Add Passive").type = 'PASSIVE'
-        row = col.row(align=True)
-        row.operator("rigidbody.objects_remove", text="Remove")
+        if not scene.UItweaks.icon_or_text:
 
-        col = layout.column(align=True)
-        col.label(text="Object Tools:")
-        col.operator("rigidbody.shape_change", text="Change Shape")
-        col.operator("rigidbody.mass_calculate", text="Calculate Mass")
-        col.operator("rigidbody.object_settings_copy", text="Copy from Active")
-        col.operator("object.visual_transform_apply", text="Apply Transformation")
-        col.operator("rigidbody.bake_to_keyframes", text="Bake To Keyframes")
-        col.label(text="Constraints:")
-        col.operator("rigidbody.connect", text="Connect")
+            col = layout.column(align=True)
+            col.label(text="Add/Remove:")
+            row = col.row(align=True)
+            row.operator("rigidbody.objects_add", icon='RIGID_ADD_ACTIVE', text="Add Active").type = 'ACTIVE'
+            row.operator("rigidbody.objects_add", icon='RIGID_ADD_PASSIVE', text="Add Passive").type = 'PASSIVE'
+            row = col.row(align=True)
+            row.operator("rigidbody.objects_remove", icon='RIGID_REMOVE', text="Remove")
+
+            col = layout.column(align=True)
+            col.label(text="Object Tools:")
+            col.operator("rigidbody.shape_change", icon='RIGID_CHANGE_SHAPE', text="Change Shape")
+            col.operator("rigidbody.mass_calculate", icon='RIGID_CALCULATE_MASS', text="Calculate Mass")
+            col.operator("rigidbody.object_settings_copy", icon='RIGID_COPY_FROM_ACTIVE', text="Copy from Active")
+            col.operator("object.visual_transform_apply", icon='RIGID_APPLY_TRANS', text="Apply Transformation")
+            col.operator("rigidbody.bake_to_keyframes", icon='RIGID_BAKE_TO_KEYFRAME', text="Bake To Keyframes")
+            col.label(text="Constraints:")
+            col.operator("rigidbody.connect", icon='RIGID_CONSTRAINTS_CONNECT', text="Connect")
+        else:
+            col = layout.column(align=True)
+            col.label(text="Add/Remove:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("rigidbody.objects_add", icon='RIGID_ADD_ACTIVE', text="").type = 'ACTIVE'
+            row.operator("rigidbody.objects_add", icon='RIGID_ADD_PASSIVE', text="").type = 'PASSIVE'
+            row.operator("rigidbody.objects_remove", icon='RIGID_REMOVE', text="")
+
+            col = layout.column(align=True)
+            col.label(text="Object Tools:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("rigidbody.shape_change", icon='RIGID_CHANGE_SHAPE', text="")
+            row.operator("rigidbody.mass_calculate", icon='RIGID_CALCULATE_MASS', text="")
+            row.operator("rigidbody.object_settings_copy", icon='RIGID_COPY_FROM_ACTIVE', text="")
+            row.operator("object.visual_transform_apply", icon='RIGID_APPLY_TRANS', text="")
+
+            col.separator()
+
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("rigidbody.bake_to_keyframes", icon='RIGID_BAKE_TO_KEYFRAME', text="")
+
+            col = layout.column(align=True)
+            col.label(text="Constraints:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("rigidbody.connect", icon='RIGID_CONSTRAINTS_CONNECT', text="")
 
 
 # ********** default tools for editmode_mesh ****************
@@ -287,13 +553,27 @@ class VIEW3D_PT_tools_transform_mesh(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
-        col = layout.column(align=True)
-        col.operator("transform.translate")
-        col.operator("transform.rotate")
-        col.operator("transform.resize", text="Scale")
-        col.operator("transform.shrink_fatten", text="Shrink/Fatten")
-        col.operator("transform.push_pull", text="Push/Pull")
+        if not scene.UItweaks.icon_or_text: 
+            col = layout.column(align=True)
+            col.operator("transform.translate", icon='TRANSFORM_MOVE')
+            col.operator("transform.rotate", icon='TRANSFORM_ROTATE')
+            col.operator("transform.resize", icon='TRANSFORM_SCALE', text="Scale")
+            col.operator("transform.shrink_fatten", icon = 'SHRINK_FATTEN', text="Shrink/Fatten")
+            col.operator("transform.push_pull",icon = 'PUSH_PULL', text="Push/Pull")
+
+        else:
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("transform.translate", icon='TRANSFORM_MOVE', text="")
+            row.operator("transform.rotate", icon='TRANSFORM_ROTATE', text="")
+            row.operator("transform.resize", icon='TRANSFORM_SCALE', text="")
+            row = layout.row(align=False)
+            row.operator("transform.shrink_fatten", icon = 'SHRINK_FATTEN', text="")
+            row.operator("transform.push_pull",icon = 'PUSH_PULL', text="")
+
+            
 
 
 class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
@@ -303,62 +583,142 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
-        col = layout.column(align=True)
-        col.label(text="Deform:")
-        row = col.row(align=True)
-        row.operator("transform.edge_slide", text="Slide Edge")
-        row.operator("transform.vert_slide", text="Silde Vertex")
-        col.operator("mesh.noise")
-        col.operator("mesh.vertices_smooth")
-        col.operator("mesh.vertices_smooth_laplacian")
-        col.operator("transform.vertex_random")
+        if not scene.UItweaks.icon_or_text: 
+            col = layout.column(align=True)
+            col.label(text="Deform:")
+            col.operator("transform.edge_slide", icon='SLIDE_EDGE', text="Slide Edge")
+            col.operator("transform.vert_slide", icon='SLIDE_VERTEX', text="Silde Vertex")
+            col.operator("mesh.noise", icon='NOISE')
+            col.operator("mesh.vertices_smooth", icon='SMOOTH_VERTEX')
+            col.operator("mesh.vertices_smooth_laplacian", icon='LAPLACIAN_SMOOTH_VERTEX')
+            col.operator("transform.vertex_random", icon='RANDOMIZE')
 
-        col = layout.column(align=True)
-        col.label(text="Add:")
+            col = layout.column(align=True)
+            col.label(text="Add:")
 
-        col.menu("VIEW3D_MT_edit_mesh_extrude")
-        col.operator("view3d.edit_mesh_extrude_move_normal", text="Extrude Region")
-        col.operator("view3d.edit_mesh_extrude_individual_move", text="Extrude Individual")
-        col.operator("mesh.inset", text="Inset Faces")
-        col.operator("mesh.edge_face_add")
-        col.operator("mesh.subdivide")
-        col.operator("mesh.loopcut_slide")
-        col.operator("mesh.offset_edge_loops_slide")
-        row = col.row(align=True)
-        row.operator("mesh.dupli_extrude_cursor" , text = 'DupliExtr').rotate_source = False
-        row.operator("mesh.dupli_extrude_cursor", text = 'DupliExtrRot').rotate_source = True
-        layout.separator()
-        row = col.row(align=True)
-        row.operator("mesh.spin")
-        row.operator("mesh.screw")
+            col.menu("VIEW3D_MT_edit_mesh_extrude")
+            col.operator("view3d.edit_mesh_extrude_move_normal", icon='EXTRUDE_REGION', text="Extrude Region")
+            col.operator("view3d.edit_mesh_extrude_individual_move", icon='EXTRUDE_INDIVIDUAL', text="Extrude Individual")
+            col.operator("mesh.dupli_extrude_cursor" , icon='DUPLI_EXTRUDE',  text = " DupliExtr").rotate_source = False
+            col.operator("mesh.dupli_extrude_cursor", icon='DUPLI_EXTRUDE_ROTATE', text = " DupliExtrRot").rotate_source = True
+           
+            row = col.row(align=True)
+            row.operator("mesh.spin", icon='SPIN')
+            row.operator("mesh.screw", icon='SCREW')
 
-        row = col.row(align=True)
-        props = row.operator("mesh.knife_tool", text="Knife")
-        props.use_occlude_geometry = True
-        props.only_selected = False
-        props = row.operator("mesh.knife_tool", text="Select")
-        props.use_occlude_geometry = False
-        props.only_selected = True
-        col.operator("mesh.knife_project")
-        col.operator("mesh.bisect")
+            layout.separator()
 
-        col = layout.column(align=True)
-        col.operator_menu_enum("mesh.merge", "type")
-        col.operator("mesh.remove_doubles")
-        col.label(text="Dissolve:")
-        col.operator("mesh.dissolve_verts")
-        col.operator("mesh.dissolve_edges")
-        col.operator("mesh.dissolve_faces")
+            col.operator("mesh.inset", icon='INSET_FACES', text="Inset Faces")
+            col.operator("mesh.edge_face_add", icon='MAKE_EDGEFACE')
+            col.operator("mesh.subdivide", icon='SUBDIVIDE_EDGES')
+            col.operator("mesh.loopcut_slide", icon='LOOP_CUT_AND_SLIDE')
+            col.operator("mesh.offset_edge_loops_slide", icon='OFFSET_EDGE_SLIDE')
 
-        layout.separator()
 
-        col.operator("mesh.dissolve_limited")
-        col.operator("mesh.dissolve_mode")
+            row = col.row(align=True)
+            props = row.operator("mesh.knife_tool", icon='KNIFE', text="Knife")
+            props.use_occlude_geometry = True
+            props.only_selected = False
+            props = row.operator("mesh.knife_tool", icon='KNIFE_SELECT', text="Select")
+            props.use_occlude_geometry = False
+            props.only_selected = True
+            col.operator("mesh.knife_project", icon='KNIFE_PROJECT')
+            col.operator("mesh.bisect", icon='BISECT')
 
-        layout.separator()
+            col = layout.column(align=True)
+            col.operator_menu_enum("mesh.merge", "type")
+            
+            col.label(text="Dissolve:")
+            col.operator("mesh.dissolve_verts", icon='DISSOLVE_VERTS')
+            col.operator("mesh.dissolve_edges", icon='DISSOLVE_EDGES')
+            col.operator("mesh.dissolve_faces", icon='DISSOLVE_FACES')
+            col.operator("mesh.remove_doubles", icon='REMOVE_DOUBLES')
 
-        col.operator("mesh.edge_collapse")
+            layout.separator()
+
+            col.operator("mesh.dissolve_limited", icon='DISSOLVE_LIMITED') 
+            col.operator("mesh.dissolve_mode", icon='DISSOLVE_SELECTION')
+
+            layout.separator()
+
+            col.operator("mesh.edge_collapse", icon='EDGE_COLLAPSE')
+
+        else:
+            col = layout.column(align=True)
+            col.label(text="Deform:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("transform.edge_slide", icon='SLIDE_EDGE', text="")
+            row.operator("transform.vert_slide", icon='SLIDE_VERTEX', text="")
+            row.operator("mesh.noise", icon='NOISE', text="")
+            row.operator("mesh.vertices_smooth", icon='SMOOTH_VERTEX', text="")
+
+            col.separator()
+
+            row = layout.row(align=False)
+            row.operator("mesh.vertices_smooth_laplacian", icon='LAPLACIAN_SMOOTH_VERTEX', text="")
+            row.operator("transform.vertex_random", icon='RANDOMIZE', text="")
+
+            col = layout.column(align=False)
+            col.label(text="Add:")
+            col.menu("VIEW3D_MT_edit_mesh_extrude")
+
+            col.separator()
+            
+            row = col.row(align=False)
+            row.alignment = 'LEFT' 
+            row.operator("view3d.edit_mesh_extrude_move_normal", icon='EXTRUDE_REGION', text="")
+            row.operator("view3d.edit_mesh_extrude_individual_move", icon='EXTRUDE_INDIVIDUAL', text="")
+            row.operator("mesh.dupli_extrude_cursor" , icon='DUPLI_EXTRUDE',  text = "").rotate_source = False
+            row.operator("mesh.dupli_extrude_cursor", icon='DUPLI_EXTRUDE_ROTATE', text = "").rotate_source = True
+            
+            col.separator()
+
+            row = col.row(align=False)  
+            row.operator("mesh.spin", icon='SPIN', text="")
+            row.operator("mesh.screw", icon='SCREW', text="")
+            row.operator("mesh.inset", icon='INSET_FACES', text="")
+            row.operator("mesh.edge_face_add", icon='MAKE_EDGEFACE', text="")   
+
+            col.separator()
+
+            row = col.row(align=False)
+            row.operator("mesh.subdivide", icon='SUBDIVIDE_EDGES', text="")
+            row.operator("mesh.loopcut_slide", icon='LOOP_CUT_AND_SLIDE', text="")
+            row.operator("mesh.offset_edge_loops_slide", icon='OFFSET_EDGE_SLIDE', text="")
+
+            col.separator()
+
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            props = row.operator("mesh.knife_tool", icon='KNIFE', text="")
+            props.use_occlude_geometry = True
+            props.only_selected = False
+            props = row.operator("mesh.knife_tool", icon='KNIFE_SELECT', text="")
+            props.use_occlude_geometry = False
+            props.only_selected = True
+            row.operator("mesh.knife_project", icon='KNIFE_PROJECT', text="")
+            row.operator("mesh.bisect", icon='BISECT', text="")
+
+            col = layout.column(align=False)
+            col.operator_menu_enum("mesh.merge", "type")
+
+            col.label(text="Dissolve:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("mesh.dissolve_verts", icon='DISSOLVE_VERTS', text="")
+            row.operator("mesh.dissolve_edges", icon='DISSOLVE_EDGES', text="")
+            row.operator("mesh.dissolve_faces", icon='DISSOLVE_FACES', text="")
+            row.operator("mesh.remove_doubles", icon='REMOVE_DOUBLES', text="")
+
+            col.separator()
+
+            row = col.row(align=False)
+            row.operator("mesh.dissolve_limited", icon='DISSOLVE_LIMITED', text="")
+            row.operator("mesh.dissolve_mode", icon='DISSOLVE_SELECTION', text="")
+            row.operator("mesh.edge_collapse", icon='EDGE_COLLAPSE', text="")
         
 
 
@@ -371,21 +731,47 @@ class VIEW3D_PT_tools_meshweight(View3DPanel, Panel):
     # Used for Weight-Paint mode and Edit-Mode
     @staticmethod
     def draw_generic(layout):
+
         col = layout.column()
-        col.operator("object.vertex_group_normalize_all", text="Normalize All")
-        col.operator("object.vertex_group_normalize", text="Normalize")
-        col.operator("object.vertex_group_mirror", text="Mirror")
-        col.operator("object.vertex_group_invert", text="Invert")
-        col.operator("object.vertex_group_clean", text="Clean")
-        col.operator("object.vertex_group_quantize", text="Quantize")
-        col.operator("object.vertex_group_levels", text="Levels")
-        col.operator("object.vertex_group_smooth", text="Smooth")
-        col.operator("object.vertex_group_limit_total", text="Limit Total")
-        col.operator("object.vertex_group_fix", text="Fix Deforms")
+        col.operator("object.vertex_group_normalize_all", icon='WEIGHT_NORMALIZE_ALL', text="Normalize All")
+        col.operator("object.vertex_group_normalize",icon='WEIGHT_NORMALIZE', text="Normalize")
+        col.operator("object.vertex_group_mirror",icon='WEIGHT_MIRROR', text="Mirror")
+        col.operator("object.vertex_group_invert", icon='WEIGHT_INVERT',text="Invert")
+        col.operator("object.vertex_group_clean", icon='WEIGHT_CLEAN',text="Clean")
+        col.operator("object.vertex_group_quantize", icon='WEIGHT_QUANTIZE',text="Quantize")
+        col.operator("object.vertex_group_levels", icon='WEIGHT_LEVELS',text="Levels")
+        col.operator("object.vertex_group_smooth", icon='WEIGHT_SMOOTH',text="Smooth")
+        col.operator("object.vertex_group_limit_total", icon='WEIGHT_LIMIT_TOTAL',text="Limit Total")
+        col.operator("object.vertex_group_fix", icon='WEIGHT_FIX_DEFORMS',text="Fix Deforms")
+
+    # Used for Weight-Paint mode and Edit-Mode
+    @staticmethod
+    def draw_generic_icons(layout):
+
+        row = layout.row(align=False)
+        row.alignment = 'LEFT'
+        row.operator("object.vertex_group_normalize_all", icon='WEIGHT_NORMALIZE_ALL', text="")
+        row.operator("object.vertex_group_normalize",icon='WEIGHT_NORMALIZE', text="")
+        row.operator("object.vertex_group_mirror",icon='WEIGHT_MIRROR', text="")
+        row.operator("object.vertex_group_invert", icon='WEIGHT_INVERT',text="")
+        row = layout.row(align=False)
+        row.operator("object.vertex_group_clean", icon='WEIGHT_CLEAN',text="")
+        row.operator("object.vertex_group_quantize", icon='WEIGHT_QUANTIZE',text="")
+        row.operator("object.vertex_group_levels", icon='WEIGHT_LEVELS',text="")
+        row.operator("object.vertex_group_smooth", icon='WEIGHT_SMOOTH',text="")
+        row = layout.row(align=False)
+        row.operator("object.vertex_group_limit_total", icon='WEIGHT_LIMIT_TOTAL',text="")
+        row.operator("object.vertex_group_fix", icon='WEIGHT_FIX_DEFORMS',text="")
+
 
     def draw(self, context):
         layout = self.layout
-        self.draw_generic(layout)
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+
+        if not scene.UItweaks.icon_or_text: 
+            self.draw_generic(layout)
+        else:
+            self.draw_generic_icons(layout)
 
 
 class VIEW3D_PT_tools_add_mesh_edit(View3DPanel, Panel):
@@ -395,10 +781,14 @@ class VIEW3D_PT_tools_add_mesh_edit(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-
+        scene = context.scene # Our data is in the current scene
         col = layout.column(align=True)
-
-        VIEW3D_PT_tools_add_object.draw_add_mesh(col, label=True)
+        
+        # bfa - icon or text buttons
+        if not scene.UItweaks.icon_or_text: 
+            VIEW3D_PT_tools_add_object.draw_add_mesh(col, label=True) # the original class
+        else:
+            VIEW3D_PT_tools_add_object.draw_add_mesh_icons(col, label=True) # the modified class with icon buttons
 
 
 class VIEW3D_PT_tools_shading(View3DPanel, Panel):
@@ -408,27 +798,56 @@ class VIEW3D_PT_tools_shading(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
-        col = layout.column(align=True)
-        col.label(text="Faces:")
-        row = col.row(align=True)
-        row.operator("mesh.faces_shade_smooth", text="Smooth")
-        row.operator("mesh.faces_shade_flat", text="Flat")
-        col.label(text="Edges:")
-        row = col.row(align=True)
-        row.operator("mesh.mark_sharp", text="Smooth").clear = True
-        row.operator("mesh.mark_sharp", text="Sharp")
-        col.label(text="Vertices:")
-        row = col.row(align=True)
-        props = row.operator("mesh.mark_sharp", text="Smooth")
-        props.use_verts = True
-        props.clear = True
-        row.operator("mesh.mark_sharp", text="Sharp").use_verts = True
+        if not scene.UItweaks.icon_or_text: 
+            col = layout.column(align=True)
+            col.label(text="Faces:")
+            row = col.row(align=True)
+            row.operator("mesh.faces_shade_smooth", icon = 'SHADING_SMOOTH', text="Smooth")
+            row.operator("mesh.faces_shade_flat", icon = 'SHADING_FLAT',  text="Flat")
+            col.label(text="Edges:")
+            row = col.row(align=True)
+            row.operator("mesh.mark_sharp", icon = 'SHADING_SMOOTH', text="Smooth").clear = True
+            row.operator("mesh.mark_sharp", icon = 'SHADING_FLAT', text="Sharp")
+            col.label(text="Vertices:")
+            row = col.row(align=True)
+            props = row.operator("mesh.mark_sharp", icon = 'SHADING_SMOOTH', text="Smooth")
+            props.use_verts = True
+            props.clear = True
+            row.operator("mesh.mark_sharp", icon = 'SHADING_FLAT', text="Sharp").use_verts = True
 
-        col = layout.column(align=True)
-        col.label(text="Normals:")
-        col.operator("mesh.normals_make_consistent", text="Recalculate")
-        col.operator("mesh.flip_normals", text="Flip Direction")
+            col = layout.column(align=True)
+            col.label(text="Normals:")
+            col.operator("mesh.normals_make_consistent", icon = 'RECALC_NORMALS', text="Recalculate")
+            col.operator("mesh.flip_normals", icon = 'FLIP_NORMALS', text="Flip Direction")
+
+        else:
+            col = layout.column(align=True)
+            col.label(text="Faces:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("mesh.faces_shade_smooth", icon = 'SHADING_SMOOTH', text="")
+            row.operator("mesh.faces_shade_flat", icon = 'SHADING_FLAT',  text="")
+            col.label(text="Edges:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("mesh.mark_sharp", icon = 'SHADING_SMOOTH', text="").clear = True
+            row.operator("mesh.mark_sharp", icon = 'SHADING_FLAT', text="")
+            col.label(text="Vertices:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            props = row.operator("mesh.mark_sharp", icon = 'SHADING_SMOOTH', text="")
+            props.use_verts = True
+            props.clear = True
+            row.operator("mesh.mark_sharp", icon = 'SHADING_FLAT', text="").use_verts = True
+
+            col = layout.column(align=True)
+            col.label(text="Normals:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("mesh.normals_make_consistent", icon = 'RECALC_NORMALS', text="")
+            row.operator("mesh.flip_normals", icon = 'FLIP_NORMALS', text="")
 
 
 class VIEW3D_PT_tools_uvs(View3DPanel, Panel):
@@ -438,12 +857,21 @@ class VIEW3D_PT_tools_uvs(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
         col = layout.column(align=True)
         col.label(text="UV Mapping:")
         col.menu("VIEW3D_MT_uv_map", text="Unwrap")
-        col.operator("mesh.mark_seam").clear = False
-        col.operator("mesh.mark_seam", text="Clear Seam").clear = True
+
+        if not scene.UItweaks.icon_or_text:          
+            col.operator("mesh.mark_seam", icon = 'MARK_SEAM').clear = False
+            col.operator("mesh.mark_seam", icon = 'CLEAR_SEAM', text="Clear Seam").clear = True
+
+        else:
+            col.separator()
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("mesh.mark_seam", icon = 'MARK_SEAM', text = "").clear = False
+            row.operator("mesh.mark_seam", icon = 'CLEAR_SEAM', text="").clear = True
 
 
 class VIEW3D_PT_tools_meshedit_options(View3DPanel, Panel):
@@ -491,15 +919,31 @@ class VIEW3D_PT_tools_transform_curve(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
-        col = layout.column(align=True)
-        col.operator("transform.translate")
-        col.operator("transform.rotate")
-        col.operator("transform.resize", text="Scale")
+        if not scene.UItweaks.icon_or_text: 
 
-        col = layout.column(align=True)
-        col.operator("transform.tilt", text="Tilt")
-        col.operator("transform.transform", text="Shrink/Fatten").mode = 'CURVE_SHRINKFATTEN'
+            col = layout.column(align=True)
+            col.operator("transform.translate", icon = 'TRANSFORM_MOVE' )
+            col.operator("transform.rotate", icon = 'TRANSFORM_ROTATE')
+            col.operator("transform.resize", text="Scale", icon = 'TRANSFORM_SCALE')
+
+            col = layout.column(align=True)
+            col.operator("transform.tilt", icon = 'TILT', text="Tilt")
+            col.operator("transform.transform", icon = 'SHRINK_FATTEN', text="Shrink/Fatten").mode = 'CURVE_SHRINKFATTEN'
+
+        else:
+
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("transform.translate", icon='TRANSFORM_MOVE', text="")
+            row.operator("transform.rotate", icon='TRANSFORM_ROTATE', text="")
+            row.operator("transform.resize", icon='TRANSFORM_SCALE', text="")
+
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("transform.tilt", icon = 'TILT', text="")
+            row.operator("transform.transform", icon = 'SHRINK_FATTEN', text="").mode = 'CURVE_SHRINKFATTEN'
 
 
 class VIEW3D_PT_tools_curveedit(View3DPanel, Panel):
@@ -510,31 +954,69 @@ class VIEW3D_PT_tools_curveedit(View3DPanel, Panel):
     def draw(self, context):
         layout = self.layout
 
-        col = layout.column(align=True)
-        col.label(text="Curve:")
-        col.operator("curve.cyclic_toggle")
-        col.operator("curve.switch_direction")
-        col.operator("curve.spline_type_set")
-        col.operator("curve.radius_set")
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
-        col = layout.column(align=True)
-        col.label(text="Handles:")
-        row = col.row(align=True)
-        row.operator("curve.handle_type_set", text="Auto").type = 'AUTOMATIC'
-        row.operator("curve.handle_type_set", text="Vector").type = 'VECTOR'
-        row = col.row(align=True)
-        row.operator("curve.handle_type_set", text="Align").type = 'ALIGNED'
-        row.operator("curve.handle_type_set", text="Free").type = 'FREE_ALIGN'
+        if not scene.UItweaks.icon_or_text: 
 
-        col = layout.column(align=True)
-        col.operator("curve.normals_make_consistent")
+            col = layout.column(align=True)
+            col.label(text="Curve:")
+            col.operator("curve.cyclic_toggle", icon = 'TOGGLE_CYCLIC')
+            col.operator("curve.switch_direction", icon = 'SWITCH_DIRECTION')
+            col.operator("curve.spline_type_set", icon = 'CURVE_DATA')
+            col.operator("curve.radius_set", icon = 'RADIUS')
 
-        col = layout.column(align=True)
-        col.label(text="Modeling:")
-        col.operator("curve.extrude_move", text="Extrude")
-        col.operator("curve.subdivide")
-        col.operator("curve.smooth")
-        col.operator("transform.vertex_random")
+            col = layout.column(align=True)
+            col.label(text="Handles:")
+            row = col.row(align=True)
+            row.operator("curve.handle_type_set", icon = 'HANDLE_AUTO', text="Auto").type = 'AUTOMATIC'
+            row.operator("curve.handle_type_set", icon = 'HANDLE_VECTOR',text="Vector").type = 'VECTOR'
+            row = col.row(align=True)
+            row.operator("curve.handle_type_set", icon = 'HANDLE_ALIGN',text="Align").type = 'ALIGNED'
+            row.operator("curve.handle_type_set", icon = 'HANDLE_FREE',text="Free").type = 'FREE_ALIGN'
+
+            col = layout.column(align=True)
+            col.operator("curve.normals_make_consistent", icon = 'RECALC_NORMALS')
+
+            col = layout.column(align=True)
+            col.label(text="Modeling:")
+            col.operator("curve.extrude_move", icon = 'EXTRUDE_REGION', text="Extrude")
+            col.operator("curve.subdivide", icon = 'SUBDIVIDE_EDGES')
+            col.operator("curve.smooth", icon = 'SHADING_SMOOTH')
+            col.operator("transform.vertex_random", icon = 'RANDOMIZE')
+
+        else:
+            col = layout.column(align=True)
+            col.label(text="Curve:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("curve.cyclic_toggle", icon = 'TOGGLE_CYCLIC', text = "")
+            row.operator("curve.switch_direction", icon = 'SWITCH_DIRECTION', text = "")
+            row.operator("curve.spline_type_set", icon = 'CURVE_DATA', text = "")
+            row.operator("curve.radius_set", icon = 'RADIUS', text = "")
+
+            col = layout.column(align=True)
+            col.label(text="Handles:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("curve.handle_type_set", icon = 'HANDLE_AUTO', text="").type = 'AUTOMATIC'
+            row.operator("curve.handle_type_set", icon = 'HANDLE_VECTOR',text="").type = 'VECTOR'
+            row.operator("curve.handle_type_set", icon = 'HANDLE_ALIGN',text="").type = 'ALIGNED'
+            row.operator("curve.handle_type_set", icon = 'HANDLE_FREE',text="").type = 'FREE_ALIGN'
+
+            col.separator()
+
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("curve.normals_make_consistent", icon = 'RECALC_NORMALS', text = "")
+
+            col = layout.column(align=True)
+            col.label(text="Modeling:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("curve.extrude_move", icon = 'EXTRUDE_REGION', text = "")
+            row.operator("curve.subdivide", icon = 'SUBDIVIDE_EDGES', text = "")
+            row.operator("curve.smooth", icon = 'SHADING_SMOOTH', text = "")
+            row.operator("transform.vertex_random", icon = 'RANDOMIZE', text = "")
 
 
 class VIEW3D_PT_tools_add_curve_edit(View3DPanel, Panel):
@@ -544,10 +1026,14 @@ class VIEW3D_PT_tools_add_curve_edit(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-
+        scene = context.scene # Our data is in the current scene
         col = layout.column(align=True)
 
-        VIEW3D_PT_tools_add_object.draw_add_curve(col, label=True)
+        # bfa - icon or text buttons
+        if not scene.UItweaks.icon_or_text: 
+            VIEW3D_PT_tools_add_object.draw_add_curve(col, label=True) # the original class
+        else:
+            VIEW3D_PT_tools_add_object.draw_add_curve_icons(col, label=True) # the modified class with icon buttons
 
 # ********** default tools for editmode_surface ****************
 
@@ -560,11 +1046,22 @@ class VIEW3D_PT_tools_transform_surface(View3DPanel, Panel):
     def draw(self, context):
         layout = self.layout
 
-        col = layout.column(align=True)
-        col.operator("transform.translate")
-        col.operator("transform.rotate")
-        col.operator("transform.resize", text="Scale")
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
+        if not scene.UItweaks.icon_or_text: 
+            col = layout.column(align=True)
+            col.operator("transform.translate", icon='TRANSFORM_MOVE')
+            col.operator("transform.rotate", icon='TRANSFORM_ROTATE')
+            col.operator("transform.resize", icon='TRANSFORM_SCALE', text="Scale")
+
+        else:
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("transform.translate", icon='TRANSFORM_MOVE', text="")
+            row.operator("transform.rotate", icon='TRANSFORM_ROTATE', text="")
+            row.operator("transform.resize", icon='TRANSFORM_SCALE', text="")
+
+# xxx - surface
 
 class VIEW3D_PT_tools_surfaceedit(View3DPanel, Panel):
     bl_category = "Tools"
@@ -574,22 +1071,51 @@ class VIEW3D_PT_tools_surfaceedit(View3DPanel, Panel):
     def draw(self, context):
         layout = self.layout
 
-        col = layout.column(align=True)
-        col.label(text="Curve:")
-        col.operator("curve.duplicate_move", text="Duplicate")
-        col.operator("curve.delete")
-        col.operator("curve.cyclic_toggle")
-        col.operator("curve.switch_direction")
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
-        col = layout.column(align=True)
-        col.label(text="Modeling:")
-        col.operator("curve.extrude", text="Extrude")
-        col.operator("curve.spin")
-        col.operator("curve.subdivide")
+        if not scene.UItweaks.icon_or_text: 
 
-        col = layout.column(align=True)
-        col.label(text="Deform:")
-        col.operator("transform.vertex_random")
+            col = layout.column(align=True)
+            col.label(text="Curve:")
+            col.operator("curve.duplicate_move", icon = 'DUPLICATE', text="Duplicate")
+            col.operator("curve.delete", icon = 'DELETE')
+            col.operator("curve.cyclic_toggle", icon = 'TOGGLE_CYCLIC')
+            col.operator("curve.switch_direction", icon = 'SWITCH_DIRECTION')
+
+            col = layout.column(align=True)
+            col.label(text="Modeling:")
+            col.operator("curve.extrude", icon='EXTRUDE_REGION', text="Extrude")
+            col.operator("curve.spin", icon = 'SPIN')
+            col.operator("curve.subdivide", icon='SUBDIVIDE_EDGES')
+
+            col = layout.column(align=True)
+            col.label(text="Deform:")
+            col.operator("transform.vertex_random", icon = 'RANDOMIZE')
+
+        else:
+
+            col = layout.column(align=True)
+            col.label(text="Curve:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("curve.duplicate_move", icon = 'DUPLICATE', text="")
+            row.operator("curve.delete", icon = 'DELETE', text = "")
+            row.operator("curve.cyclic_toggle", icon = 'TOGGLE_CYCLIC', text = "")
+            row.operator("curve.switch_direction", icon = 'SWITCH_DIRECTION', text = "")
+
+            col = layout.column(align=True)
+            col.label(text="Modeling:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("curve.extrude", icon='EXTRUDE_REGION', text="")
+            row.operator("curve.spin", icon = 'SPIN', text = "")
+            row.operator("curve.subdivide", icon='SUBDIVIDE_EDGES', text = "")
+
+            col = layout.column(align=True)
+            col.label(text="Deform:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("transform.vertex_random", icon = 'RANDOMIZE', text = "")
 
 
 class VIEW3D_PT_tools_add_surface_edit(View3DPanel, Panel):
@@ -599,10 +1125,14 @@ class VIEW3D_PT_tools_add_surface_edit(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-
+        scene = context.scene # Our data is in the current scene
         col = layout.column(align=True)
 
-        VIEW3D_PT_tools_add_object.draw_add_surface(col)
+        # bfa - icon or text buttons
+        if not scene.UItweaks.icon_or_text: 
+            VIEW3D_PT_tools_add_object.draw_add_surface(col, label=True) # the original class
+        else:
+            VIEW3D_PT_tools_add_object.draw_add_surface_icons(col, label=True) # the modified class with icon buttons
 
 
 # ********** default tools for editmode_text ****************
@@ -616,16 +1146,35 @@ class VIEW3D_PT_tools_textedit(View3DPanel, Panel):
     def draw(self, context):
         layout = self.layout
 
-        col = layout.column(align=True)
-        col.label(text="Set Case:")
-        col.operator("font.case_set", text="To Upper").case = 'UPPER'
-        col.operator("font.case_set", text="To Lower").case = 'LOWER'
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
-        col = layout.column(align=True)
-        col.label(text="Style:")
-        col.operator("font.style_toggle", text="Bold").style = 'BOLD'
-        col.operator("font.style_toggle", text="Italic").style = 'ITALIC'
-        col.operator("font.style_toggle", text="Underline").style = 'UNDERLINE'
+        if not scene.UItweaks.icon_or_text: 
+            col = layout.column(align=True)
+            col.label(text="Set Case:")
+            col.operator("font.case_set", icon = 'SET_UPPERCASE', text="To Upper").case = 'UPPER'
+            col.operator("font.case_set", icon = 'SET_LOWERCASE', text="To Lower").case = 'LOWER'
+
+            col = layout.column(align=True)
+            col.label(text="Style:")
+            col.operator("font.style_toggle", icon = 'BOLD', text="Bold").style = 'BOLD'
+            col.operator("font.style_toggle", icon = 'ITALIC', text="Italic").style = 'ITALIC'
+            col.operator("font.style_toggle", icon = 'UNDERLINED', text="Underline").style = 'UNDERLINE'
+
+        else: 
+            col = layout.column(align=True)
+            col.label(text="Set Case:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("font.case_set", icon = 'SET_UPPERCASE', text="").case = 'UPPER'
+            row.operator("font.case_set", icon = 'SET_LOWERCASE', text="").case = 'LOWER'
+
+            col = layout.column(align=True)
+            col.label(text="Style:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("font.style_toggle", icon = 'BOLD', text="").style = 'BOLD'
+            row.operator("font.style_toggle", icon = 'ITALIC', text="").style = 'ITALIC'
+            row.operator("font.style_toggle", icon = 'UNDERLINED', text="").style = 'UNDERLINE'
 
 
 # ********** default tools for editmode_armature ****************
@@ -639,10 +1188,20 @@ class VIEW3D_PT_tools_armatureedit_transform(View3DPanel, Panel):
     def draw(self, context):
         layout = self.layout
 
-        col = layout.column(align=True)
-        col.operator("transform.translate")
-        col.operator("transform.rotate")
-        col.operator("transform.resize", text="Scale")
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+
+        if not scene.UItweaks.icon_or_text: 
+            col = layout.column(align=True)
+            col.operator("transform.translate", icon='TRANSFORM_MOVE')
+            col.operator("transform.rotate", icon='TRANSFORM_ROTATE')
+            col.operator("transform.resize", icon='TRANSFORM_SCALE', text="Scale")
+
+        else:
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("transform.translate", icon='TRANSFORM_MOVE', text="")
+            row.operator("transform.rotate", icon='TRANSFORM_ROTATE', text="")
+            row.operator("transform.resize", icon='TRANSFORM_SCALE', text="")
 
 
 class VIEW3D_PT_tools_armatureedit(View3DPanel, Panel):
@@ -652,19 +1211,41 @@ class VIEW3D_PT_tools_armatureedit(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
-        col = layout.column(align=True)
-        col.label(text="Bones:")
-        col.operator("armature.bone_primitive_add", text="Add")
+        if not scene.UItweaks.icon_or_text: 
+            col = layout.column(align=True)
+            col.label(text="Bones:")
+            col.operator("armature.bone_primitive_add", icon = 'BONE_DATA', text="Add")
 
-        col = layout.column(align=True)
-        col.label(text="Modeling:")
-        col.operator("armature.extrude_move")
-        col.operator("armature.subdivide", text="Subdivide")
+            col = layout.column(align=True)
+            col.label(text="Modeling:")
+            col.operator("armature.extrude_move", icon = 'EXTRUDE_REGION')
+            col.operator("armature.subdivide", icon = 'SUBDIVIDE_EDGES', text="Subdivide")
 
-        col = layout.column(align=True)
-        col.label(text="Deform:")
-        col.operator("transform.vertex_random")
+            col = layout.column(align=True)
+            col.label(text="Deform:")
+            col.operator("transform.vertex_random", icon = 'RANDOMIZE')
+
+        else:
+            col = layout.column(align=True)
+            col.label(text="Bones:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("armature.bone_primitive_add", icon = 'BONE_DATA', text="")
+
+            col = layout.column(align=True)
+            col.label(text="Modeling:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("armature.extrude_move", icon = 'EXTRUDE_REGION', text="")
+            row.operator("armature.subdivide", icon = 'SUBDIVIDE_EDGES', text="")
+
+            col = layout.column(align=True)
+            col.label(text="Deform:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("transform.vertex_random", icon = 'RANDOMIZE', text="")
 
 
 class VIEW3D_PT_tools_armatureedit_options(View3DPanel, Panel):
@@ -688,16 +1269,34 @@ class VIEW3D_PT_tools_mballedit(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
-        col = layout.column(align=True)
-        col.label(text="Transform:")
-        col.operator("transform.translate")
-        col.operator("transform.rotate")
-        col.operator("transform.resize", text="Scale")
+        if not scene.UItweaks.icon_or_text: 
+            col = layout.column(align=True)
+            col.label(text="Transform:")
+            col.operator("transform.translate", icon ='TRANSFORM_MOVE')
+            col.operator("transform.rotate", icon ='TRANSFORM_ROTATE')
+            col.operator("transform.resize", icon ='TRANSFORM_SCALE', text="Scale")
 
-        col = layout.column(align=True)
-        col.label(text="Deform:")
-        col.operator("transform.vertex_random")
+            col = layout.column(align=True)
+            col.label(text="Deform:")
+            col.operator("transform.vertex_random", icon = 'RANDOMIZE')
+
+        else:
+            col = layout.column(align=True)
+            col.label(text="Transform:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("transform.translate", icon ='TRANSFORM_MOVE', text = "")
+            row.operator("transform.rotate", icon ='TRANSFORM_ROTATE', text = "")
+            row.operator("transform.resize", icon ='TRANSFORM_SCALE', text = "")
+
+            col = layout.column(align=True)
+            col.label(text="Deform:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("transform.vertex_random", icon = 'RANDOMIZE', text = "")
+
 
 
 class VIEW3D_PT_tools_add_mball_edit(View3DPanel, Panel):
@@ -707,10 +1306,14 @@ class VIEW3D_PT_tools_add_mball_edit(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-
+        scene = context.scene # Our data is in the current scene
         col = layout.column(align=True)
 
-        VIEW3D_PT_tools_add_object.draw_add_mball(col)
+        # bfa - icon or text buttons
+        if not scene.UItweaks.icon_or_text: 
+            VIEW3D_PT_tools_add_object.draw_add_mball(col) # the original class
+        else:
+            VIEW3D_PT_tools_add_object.draw_add_mball_icons(col) # the modified class with icon buttons
 
 
 # ********** default tools for editmode_lattice ****************
@@ -723,19 +1326,37 @@ class VIEW3D_PT_tools_latticeedit(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
-        col = layout.column(align=True)
-        col.label(text="Transform:")
-        col.operator("transform.translate")
-        col.operator("transform.rotate")
-        col.operator("transform.resize", text="Scale")
+        if not scene.UItweaks.icon_or_text: 
+            col = layout.column(align=True)
+            col.label(text="Transform:")
+            col.operator("transform.translate", icon ='TRANSFORM_MOVE')
+            col.operator("transform.rotate", icon ='TRANSFORM_ROTATE')
+            col.operator("transform.resize", icon ='TRANSFORM_SCALE', text="Scale")
 
-        col = layout.column(align=True)
-        col.operator("lattice.make_regular")
+            col = layout.column(align=True)
+            col.operator("lattice.make_regular", icon = 'MAKE_REGULAR')
 
-        col = layout.column(align=True)
-        col.label(text="Deform:")
-        col.operator("transform.vertex_random")
+            col = layout.column(align=True)
+            col.label(text="Deform:")
+            col.operator("transform.vertex_random", icon = 'RANDOMIZE')
+        else:
+            col = layout.column(align=True)
+            col.label(text="Transform:")
+
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("transform.translate", icon ='TRANSFORM_MOVE', text = "")
+            row.operator("transform.rotate", icon ='TRANSFORM_ROTATE', text = "")
+            row.operator("transform.resize", icon ='TRANSFORM_SCALE', text="")
+            row.operator("lattice.make_regular", icon = 'MAKE_REGULAR', text = "")
+
+            col = layout.column(align=True)
+            col.label(text="Deform:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("transform.vertex_random", icon = 'RANDOMIZE', text = "")
 
 
 # ********** default tools for pose-mode ****************
@@ -748,40 +1369,79 @@ class VIEW3D_PT_tools_posemode(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
-        col = layout.column(align=True)
-        col.label(text="Transform:")
-        col.operator("transform.translate")
-        col.operator("transform.rotate")
-        col.operator("transform.resize", text="Scale")
+        if not scene.UItweaks.icon_or_text: 
+            col = layout.column(align=True)
+            col.label(text="Transform:")
+            col.operator("transform.translate", icon ='TRANSFORM_MOVE')
+            col.operator("transform.rotate", icon ='TRANSFORM_ROTATE')
+            col.operator("transform.resize", icon ='TRANSFORM_SCALE', text="Scale")
 
-        col = layout.column(align=True)
-        col.label(text="In-Between:")
-        row = col.row(align=True)
-        row.operator("pose.push", text="Push")
-        row.operator("pose.relax", text="Relax")
-        col.operator("pose.breakdown", text="Breakdowner")
+            col = layout.column(align=True)
+            col.label(text="In-Between:")
+            row = col.row(align=True)
+            row.operator("pose.push", icon = 'PUSH_POSE', text="Push")
+            row.operator("pose.relax", icon = 'RELAX_POSE',text="Relax")
+            col.operator("pose.breakdown", icon = 'BREAKDOWNER_POSE',text="Breakdowner")
 
-        col = layout.column(align=True)
-        col.label(text="Pose:")
-        row = col.row(align=True)
-        row.operator("pose.copy", text="Copy")
-        row.operator("pose.paste", text="Paste")
+            col = layout.column(align=True)
+            col.label(text="Pose:")
+            row = col.row(align=True)
+            row.operator("pose.copy", icon = 'COPYDOWN', text="Copy")
+            row.operator("pose.paste", icon = 'PASTEDOWN', text="Paste")
 
-        row = layout.row(align=True)
-        row.operator("pose.propagate", text="Propagate")
-        row.menu("VIEW3D_MT_pose_propagate", icon='TRIA_RIGHT', text="")
+            row = layout.row(align=True)
+            row.operator("pose.propagate", text="Propagate")
+            row.menu("VIEW3D_MT_pose_propagate", icon='TRIA_RIGHT', text="")
 
-        col = layout.column(align=True)
-        col.operator("poselib.pose_add", text="Add To Library")
+            col = layout.column(align=True)
+            col.operator("poselib.pose_add", icon = 'ADD_TO_LIBRARY', text="Add To Library")
 
-        draw_keyframing_tools(context, layout)
+            draw_keyframing_tools(context, layout)
 
-        col = layout.column(align=True)
-        col.label(text="Motion Paths:")
-        row = col.row(align=True)
-        row.operator("pose.paths_calculate", text="Calculate")
-        row.operator("pose.paths_clear", text="Clear")
+            col = layout.column(align=True)
+            col.label(text="Motion Paths:")
+            row = col.row(align=True)
+            row.operator("pose.paths_calculate", icon ='MOTIONPATHS_CALCULATE', text="Calculate")
+            row.operator("pose.paths_clear", icon ='MOTIONPATHS_CLEAR', text="Clear")
+
+        else:
+            col = layout.column(align=True)
+            col.label(text="Transform:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("transform.translate", icon ='TRANSFORM_MOVE', text="")
+            row.operator("transform.rotate", icon ='TRANSFORM_ROTATE', text="")
+            row.operator("transform.resize", icon ='TRANSFORM_SCALE', text="")
+
+            col = layout.column(align=True)
+            col.label(text="In-Between:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("pose.push", icon = 'PUSH_POSE', text="")
+            row.operator("pose.relax", icon = 'RELAX_POSE',text="")
+            row.operator("pose.breakdown", icon = 'BREAKDOWNER_POSE',text="")
+
+            col = layout.column(align=True)
+            col.label(text="Pose:")
+            row = col.row(align=False)
+            row.operator("pose.copy", icon = 'COPYDOWN', text="")
+            row.operator("pose.paste", icon = 'PASTEDOWN', text="")
+            row.operator("poselib.pose_add", icon = 'ADD_TO_LIBRARY', text="")
+
+            row = layout.row(align=True)
+            row.operator("pose.propagate", text="Propagate")
+            row.menu("VIEW3D_MT_pose_propagate", icon='TRIA_RIGHT', text="")
+
+            draw_keyframing_tools_icons(context, layout)
+
+            col = layout.column(align=True)
+            col.label(text="Motion Paths:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("pose.paths_calculate", icon ='MOTIONPATHS_CALCULATE', text="")
+            row.operator("pose.paths_clear", icon ='MOTIONPATHS_CLEAR', text="")
 
 
 class VIEW3D_PT_tools_posemode_options(View3DPanel, Panel):
@@ -1641,13 +2301,27 @@ class VIEW3D_PT_tools_weightpaint(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        VIEW3D_PT_tools_meshweight.draw_generic(layout)
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
-        col = layout.column()
-        col.operator("paint.weight_gradient")
-        props = col.operator("object.data_transfer", text="Transfer Weights")
-        props.use_reverse_transfer = True
-        props.data_type = 'VGROUP_WEIGHTS'
+        if not scene.UItweaks.icon_or_text: 
+            VIEW3D_PT_tools_meshweight.draw_generic(layout)
+
+            col = layout.column()
+            col.operator("paint.weight_gradient", icon = 'WEIGHT_GRADIENT')
+            props = col.operator("object.data_transfer", icon = 'WEIGHT_TRANSFER_WEIGHTS', text="Transfer Weights")
+            props.use_reverse_transfer = True
+            props.data_type = 'VGROUP_WEIGHTS'
+            
+        else:
+            VIEW3D_PT_tools_meshweight.draw_generic_icons(layout)
+
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("paint.weight_gradient", icon = 'WEIGHT_GRADIENT', text = "")
+            props = row.operator("object.data_transfer", icon = 'WEIGHT_TRANSFER_WEIGHTS', text="")
+            props.use_reverse_transfer = True
+            props.data_type = 'VGROUP_WEIGHTS'
+
 
 
 class VIEW3D_PT_tools_weightpaint_options(Panel, View3DPaintPanel):
@@ -1912,18 +2586,37 @@ class VIEW3D_PT_tools_history(View3DPanel, Panel):
         layout = self.layout
         obj = context.object
 
-        col = layout.column(align=True)
-        row = col.row(align=True)
-        row.operator("ed.undo")
-        row.operator("ed.redo")
-        if obj is None or obj.mode != 'SCULPT':
-            # Sculpt mode does not generate an undo menu it seems...
-            col.operator("ed.undo_history")
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+        # Flag is off, draw buttons as text
+        if not scene.UItweaks.icon_or_text: 
+            col = layout.column(align=True)
+            row = col.row(align=True)
+            row.operator("ed.undo", icon='UNDO')
+            row.operator("ed.redo", icon='REDO')
+            if obj is None or obj.mode != 'SCULPT':
+                # Sculpt mode does not generate an undo menu it seems...
+                col.operator("ed.undo_history", icon='UNDO_HISTORY')
 
-        col = layout.column(align=True)
-        col.label(text="Repeat:")
-        col.operator("screen.repeat_last")
-        col.operator("screen.repeat_history", text="History...")
+            col = layout.column(align=True)
+            col.label(text="Repeat:")
+            col.operator("screen.repeat_last", icon='REPEAT')
+            col.operator("screen.repeat_history", icon='REDO_HISTORY', text="History...")
+
+        # Flag is on, draw buttons as icons.
+        else:
+            col = layout.column(align=True)
+            row = col.row(align=False)
+            row.operator("ed.undo", icon='UNDO',text="")
+            row.operator("ed.redo", icon='REDO',text="")
+            if obj is None or obj.mode != 'SCULPT':
+                # Sculpt mode does not generate an undo menu it seems...
+                row.operator("ed.undo_history", icon='UNDO_HISTORY',text="")
+
+            col = layout.column(align=True)
+            col.label(text="Repeat:")
+            row = col.row(align=False)
+            row.operator("screen.repeat_last", icon='REPEAT', text="")
+            row.operator("screen.repeat_history", icon='REDO_HISTORY', text="")
 
 
 if __name__ == "__main__":  # only for live edit.
