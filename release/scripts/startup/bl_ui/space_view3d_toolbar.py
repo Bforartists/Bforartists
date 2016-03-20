@@ -562,6 +562,8 @@ class VIEW3D_PT_tools_transform_mesh(View3DPanel, Panel):
             col.operator("transform.resize", icon='TRANSFORM_SCALE', text="Scale")
             col.operator("transform.shrink_fatten", icon = 'SHRINK_FATTEN', text="Shrink/Fatten")
             col.operator("transform.push_pull",icon = 'PUSH_PULL', text="Push/Pull")
+            col = layout.column(align=True)
+            col.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="Mirror")
 
         else:
             row = layout.row(align=False)
@@ -572,6 +574,7 @@ class VIEW3D_PT_tools_transform_mesh(View3DPanel, Panel):
             row = layout.row(align=False)
             row.operator("transform.shrink_fatten", icon = 'SHRINK_FATTEN', text="")
             row.operator("transform.push_pull",icon = 'PUSH_PULL', text="")
+            row.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="")
 
             
 
