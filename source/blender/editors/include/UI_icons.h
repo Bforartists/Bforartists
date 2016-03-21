@@ -796,8 +796,9 @@ DEF_ICON(POTATO)
 #endif
 DEF_ICON(ORTHO)
 // Bfa, new icons Tool Shelf - Tools - Transform in Edit mode
-DEF_ICON(SHRINK_FATTEN)
 DEF_ICON(PUSH_PULL)
+DEF_ICON(SHRINK_FATTEN)
+
 // -----------
 DEF_ICON(LOCKVIEW_OFF)
 DEF_ICON(LOCKVIEW_ON)
