@@ -1391,15 +1391,14 @@ class VIEW3D_PT_tools_posemode(View3DPanel, Panel):
             col = layout.column(align=True)
             col.label(text="Pose:")
             row = col.row(align=True)
-            row.operator("pose.copy", icon = 'COPYDOWN', text="Copy")
-            row.operator("pose.paste", icon = 'PASTEDOWN', text="Paste")
 
             row = layout.row(align=True)
             row.operator("pose.propagate", text="Propagate")
             row.menu("VIEW3D_MT_pose_propagate", icon='TRIA_RIGHT', text="")
 
-            col = layout.column(align=True)
-            col.operator("poselib.pose_add", icon = 'ADD_TO_LIBRARY', text="Add To Library")
+            # bfa - Double menu entry. But stays available for further modifications
+            #col = layout.column(align=True)
+            #col.operator("poselib.pose_add", icon = 'ADD_TO_LIBRARY', text="Add To Library")
 
             draw_keyframing_tools(context, layout)
 
@@ -1428,10 +1427,9 @@ class VIEW3D_PT_tools_posemode(View3DPanel, Panel):
 
             col = layout.column(align=True)
             col.label(text="Pose:")
-            row = col.row(align=False)
-            row.operator("pose.copy", icon = 'COPYDOWN', text="")
-            row.operator("pose.paste", icon = 'PASTEDOWN', text="")
-            row.operator("poselib.pose_add", icon = 'ADD_TO_LIBRARY', text="")
+            # bfa - Double menu entry. But stays available for further modifications
+            #row = col.row(align=False)
+            #row.operator("poselib.pose_add", icon = 'ADD_TO_LIBRARY', text="")
 
             row = layout.row(align=True)
             row.operator("pose.propagate", text="Propagate")
