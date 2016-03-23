@@ -1984,7 +1984,6 @@ class VIEW3D_MT_edit_mesh(Menu):
         layout.menu("VIEW3D_MT_edit_mesh_vertices")
         layout.menu("VIEW3D_MT_edit_mesh_edges")
         layout.menu("VIEW3D_MT_edit_mesh_faces")
-        layout.menu("VIEW3D_MT_edit_mesh_normals")
         layout.menu("VIEW3D_MT_edit_mesh_clean")
 
         layout.separator()
@@ -2144,8 +2143,7 @@ class VIEW3D_MT_edit_mesh_faces(Menu):
         with_freestyle = bpy.app.build_options.freestyle
 
         layout.operator_context = 'INVOKE_REGION_WIN'
-
-        layout.operator("mesh.flip_normals")
+    
         layout.operator("mesh.fill")
         layout.operator("mesh.fill_grid")
         layout.operator("mesh.beautify_fill")
@@ -2171,8 +2169,6 @@ class VIEW3D_MT_edit_mesh_faces(Menu):
 
         layout.operator("mesh.faces_shade_smooth")
         layout.operator("mesh.faces_shade_flat")
-
-        layout.operator("mesh.normals_make_consistent", text="Recalculate Normals").inside = False
 
         layout.separator()
 

@@ -823,6 +823,7 @@ class VIEW3D_PT_tools_shading(View3DPanel, Panel):
             col = layout.column(align=True)
             col.label(text="Normals:")
             col.operator("mesh.normals_make_consistent", icon = 'RECALC_NORMALS', text="Recalculate")
+            col.operator("mesh.normals_make_consistent", icon = 'RECALC_NORMALS_INSIDE', text="Recalculate Inside").inside = True
             col.operator("mesh.flip_normals", icon = 'FLIP_NORMALS', text="Flip Direction")
 
         else:
@@ -850,6 +851,7 @@ class VIEW3D_PT_tools_shading(View3DPanel, Panel):
             row = col.row(align=False)
             row.alignment = 'LEFT'
             row.operator("mesh.normals_make_consistent", icon = 'RECALC_NORMALS', text="")
+            row.operator("mesh.normals_make_consistent", icon = 'RECALC_NORMALS_INSIDE', text="").inside = True
             row.operator("mesh.flip_normals", icon = 'FLIP_NORMALS', text="")
 
 
