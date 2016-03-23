@@ -2167,11 +2167,6 @@ class VIEW3D_MT_edit_mesh_faces(Menu):
 
         layout.separator()
 
-        layout.operator("mesh.faces_shade_smooth")
-        layout.operator("mesh.faces_shade_flat")
-
-        layout.separator()
-
         layout.operator("mesh.edge_rotate", text="Rotate Edge CW").use_ccw = False
 
         layout.separator()
