@@ -42,9 +42,20 @@ class View3DPanel:
 def draw_keyframing_tools(context, layout):
     col = layout.column(align=True)
     col.label(text="Keyframes:")
+    col.operator("anim.keyframe_insert_menu", icon= 'KEYFRAMES_INSERT', text="Insert")
+    col.operator("anim.keyframe_delete_v3d", icon= 'KEYFRAMES_REMOVE',text="Remove")
+    col.operator("nla.bake", icon= 'BAKE_ACTION',text="Bake Action")  
+    col.operator("anim.keyframe_clear_v3d", icon= 'KEYFRAMES_CLEAR',text="Clear")
+
+    col = layout.column(align=True)
+    col.label(text="Set Keying Set:")
     row = col.row(align=True)
-    row.operator("anim.keyframe_insert_menu", icon= 'KEYFRAMES_INSERT', text="Insert")
-    row.operator("anim.keyframe_delete_v3d", icon= 'KEYFRAMES_REMOVE',text="Remove")
+    row.alignment = 'RIGHT'
+    #TODO
+    #row.operator("anim.keying_set_active_set", text="LocRotScale").type = 'LocRotScale'
+    #row.operator("anim.keying_set_active_set", icon='TRIA_RIGHT', text="")
+    col.operator("anim.keying_set_active_set", icon='TRIA_RIGHT', text="Set Keying Set")
+    
 
 # Keyframing tools just icons
 def draw_keyframing_tools_icons(context, layout):
@@ -54,7 +65,20 @@ def draw_keyframing_tools_icons(context, layout):
     row.alignment = 'LEFT'
     row.operator("anim.keyframe_insert_menu", icon= 'KEYFRAMES_INSERT',text="")
     row.operator("anim.keyframe_delete_v3d", icon= 'KEYFRAMES_REMOVE',text="")
+    row.operator("nla.bake", icon= 'BAKE_ACTION',text="")
+    row.operator("anim.keyframe_clear_v3d", icon= 'KEYFRAMES_CLEAR',text="")
 
+    col = layout.column(align=True)
+    col.label(text="Set Keying Set:")
+    #row = col.row(align=True)
+    #row.alignment = 'RIGHT'
+    #TODO
+    #row.operator("anim.keying_set_active_set", text="LocRotScale").type = 'LocRotScale'
+    #row.operator("anim.keying_set_active_set", icon='TRIA_RIGHT', text="")
+    col.operator("anim.keying_set_active_set", icon='TRIA_RIGHT', text="Set Keying Set")
+
+
+    
 
 # ********** default tools for object-mode ****************
 
@@ -1433,7 +1457,7 @@ class VIEW3D_PT_tools_posemode(View3DPanel, Panel):
             #row = col.row(align=False)
             #row.operator("poselib.pose_add", icon = 'ADD_TO_LIBRARY', text="")
 
-            row = layout.row(align=True)
+            row = col.row(align=True)
             row.operator("pose.propagate", text="Propagate")
             row.menu("VIEW3D_MT_pose_propagate", icon='TRIA_RIGHT', text="")
 
