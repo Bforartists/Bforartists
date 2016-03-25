@@ -211,7 +211,7 @@ if(APPLE)
 	option(WITH_PYTHON_FRAMEWORK "Enable building using the Python available in the framework (OSX only)" OFF)
 endif()
 
-option(WITH_BUILDINFO     "Include extra build details (only disable for development & faster builds)" ${_init_BUILDINFO})
+option(WITH_BUILDINFO     "Include extra build details (only disable for development & faster builds)" OFF)
 if(${CMAKE_VERSION} VERSION_LESS 2.8.8)
 	# add_library OBJECT arg unsupported
 	set(WITH_BUILDINFO OFF)
