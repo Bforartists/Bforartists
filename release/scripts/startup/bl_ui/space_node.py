@@ -230,6 +230,10 @@ class NODE_MT_select(Menu):
 
         layout.operator("node.find_node")
 
+        layout.separator()
+
+        layout.operator("node.select_link_viewer")
+
 class NODE_OT_group_separate(Menu):
     bl_label = "Separate"
 
