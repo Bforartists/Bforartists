@@ -1000,7 +1000,7 @@ void RENDER_OT_render(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Render";
-	ot->description = "Render active scene";
+	ot->description = "Render active scene\nRenders the active scene";
 	ot->idname = "RENDER_OT_render";
 
 	/* api callbacks */
