@@ -544,38 +544,6 @@ class VIEW3D_PT_tools_rigid_body(View3DPanel, Panel):
 
 # ********** default tools for editmode_mesh ****************
 
-class VIEW3D_PT_tools_transform_mesh(View3DPanel, Panel):
-    bl_category = "Tools"
-    bl_context = "mesh_edit"
-    bl_label = "Transform"
-
-    def draw(self, context):
-        layout = self.layout
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
-
-        if not scene.UItweaks.icon_or_text: 
-            col = layout.column(align=True)
-            col.operator("transform.translate", icon='TRANSFORM_MOVE')
-            col.operator("transform.rotate", icon='TRANSFORM_ROTATE')
-            col.operator("transform.resize", icon='TRANSFORM_SCALE', text="Scale")
-            col.operator("transform.shrink_fatten", icon = 'SHRINK_FATTEN', text="Shrink/Fatten")
-            col.operator("transform.push_pull",icon = 'PUSH_PULL', text="Push/Pull")
-            col = layout.column(align=True)
-            col.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="Mirror")
-
-        else:
-            row = layout.row(align=False)
-            row.alignment = 'LEFT'
-            row.operator("transform.translate", icon='TRANSFORM_MOVE', text="")
-            row.operator("transform.rotate", icon='TRANSFORM_ROTATE', text="")
-            row.operator("transform.resize", icon='TRANSFORM_SCALE', text="")
-            row = layout.row(align=False)
-            row.operator("transform.shrink_fatten", icon = 'SHRINK_FATTEN', text="")
-            row.operator("transform.push_pull",icon = 'PUSH_PULL', text="")
-            row.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="")
-
-            
-
 
 class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
     bl_category = "Tools"
@@ -587,6 +555,14 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
         scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
         if not scene.UItweaks.icon_or_text: 
+
+            col = layout.column(align=True)
+            col.operator("transform.shrink_fatten", icon = 'SHRINK_FATTEN', text="Shrink/Fatten")
+            col.operator("transform.push_pull",icon = 'PUSH_PULL', text="Push/Pull")
+            col = layout.column(align=True)
+            col.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="Mirror")
+
+
             col = layout.column(align=True)
             col.label(text="Deform:")
             col.operator("transform.edge_slide", icon='SLIDE_EDGE', text="Slide Edge")
@@ -647,6 +623,14 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
             col.operator("mesh.edge_collapse", icon='EDGE_COLLAPSE')
 
         else:
+
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("transform.shrink_fatten", icon = 'SHRINK_FATTEN', text="")
+            row.operator("transform.push_pull",icon = 'PUSH_PULL', text="")
+            row.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="")
+
+
             col = layout.column(align=True)
             col.label(text="Deform:")
             row = col.row(align=False)
@@ -914,41 +898,6 @@ class VIEW3D_PT_tools_meshedit_options(View3DPanel, Panel):
 
 # ********** default tools for editmode_curve ****************
 
-
-class VIEW3D_PT_tools_transform_curve(View3DPanel, Panel):
-    bl_category = "Tools"
-    bl_context = "curve_edit"
-    bl_label = "Transform"
-
-    def draw(self, context):
-        layout = self.layout
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
-
-        if not scene.UItweaks.icon_or_text: 
-
-            col = layout.column(align=True)
-            col.operator("transform.translate", icon = 'TRANSFORM_MOVE' )
-            col.operator("transform.rotate", icon = 'TRANSFORM_ROTATE')
-            col.operator("transform.resize", text="Scale", icon = 'TRANSFORM_SCALE')
-
-            col = layout.column(align=True)
-            col.operator("transform.tilt", icon = 'TILT', text="Tilt")
-            col.operator("transform.transform", icon = 'SHRINK_FATTEN', text="Shrink/Fatten").mode = 'CURVE_SHRINKFATTEN'
-
-        else:
-
-            row = layout.row(align=False)
-            row.alignment = 'LEFT'
-            row.operator("transform.translate", icon='TRANSFORM_MOVE', text="")
-            row.operator("transform.rotate", icon='TRANSFORM_ROTATE', text="")
-            row.operator("transform.resize", icon='TRANSFORM_SCALE', text="")
-
-            row = layout.row(align=False)
-            row.alignment = 'LEFT'
-            row.operator("transform.tilt", icon = 'TILT', text="")
-            row.operator("transform.transform", icon = 'SHRINK_FATTEN', text="").mode = 'CURVE_SHRINKFATTEN'
-
-
 class VIEW3D_PT_tools_curveedit(View3DPanel, Panel):
     bl_category = "Tools"
     bl_context = "curve_edit"
@@ -960,6 +909,10 @@ class VIEW3D_PT_tools_curveedit(View3DPanel, Panel):
         scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
         if not scene.UItweaks.icon_or_text: 
+
+            col = layout.column(align=True)
+            col.operator("transform.tilt", icon = 'TILT', text="Tilt")
+            col.operator("transform.transform", icon = 'SHRINK_FATTEN', text="Shrink/Fatten").mode = 'CURVE_SHRINKFATTEN'
 
             col = layout.column(align=True)
             col.label(text="Curve:")
@@ -988,6 +941,12 @@ class VIEW3D_PT_tools_curveedit(View3DPanel, Panel):
             col.operator("transform.vertex_random", icon = 'RANDOMIZE')
 
         else:
+
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("transform.tilt", icon = 'TILT', text="")
+            row.operator("transform.transform", icon = 'SHRINK_FATTEN', text="").mode = 'CURVE_SHRINKFATTEN'
+
             col = layout.column(align=True)
             col.label(text="Curve:")
             row = col.row(align=False)
@@ -1039,30 +998,6 @@ class VIEW3D_PT_tools_add_curve_edit(View3DPanel, Panel):
             VIEW3D_PT_tools_add_object.draw_add_curve_icons(col, label=True) # the modified class with icon buttons
 
 # ********** default tools for editmode_surface ****************
-
-
-class VIEW3D_PT_tools_transform_surface(View3DPanel, Panel):
-    bl_category = "Tools"
-    bl_context = "surface_edit"
-    bl_label = "Transform"
-
-    def draw(self, context):
-        layout = self.layout
-
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
-
-        if not scene.UItweaks.icon_or_text: 
-            col = layout.column(align=True)
-            col.operator("transform.translate", icon='TRANSFORM_MOVE')
-            col.operator("transform.rotate", icon='TRANSFORM_ROTATE')
-            col.operator("transform.resize", icon='TRANSFORM_SCALE', text="Scale")
-
-        else:
-            row = layout.row(align=False)
-            row.alignment = 'LEFT'
-            row.operator("transform.translate", icon='TRANSFORM_MOVE', text="")
-            row.operator("transform.rotate", icon='TRANSFORM_ROTATE', text="")
-            row.operator("transform.resize", icon='TRANSFORM_SCALE', text="")
 
 # xxx - surface
 
@@ -1183,30 +1118,6 @@ class VIEW3D_PT_tools_textedit(View3DPanel, Panel):
 # ********** default tools for editmode_armature ****************
 
 
-class VIEW3D_PT_tools_armatureedit_transform(View3DPanel, Panel):
-    bl_category = "Tools"
-    bl_context = "armature_edit"
-    bl_label = "Transform"
-
-    def draw(self, context):
-        layout = self.layout
-
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
-
-        if not scene.UItweaks.icon_or_text: 
-            col = layout.column(align=True)
-            col.operator("transform.translate", icon='TRANSFORM_MOVE')
-            col.operator("transform.rotate", icon='TRANSFORM_ROTATE')
-            col.operator("transform.resize", icon='TRANSFORM_SCALE', text="Scale")
-
-        else:
-            row = layout.row(align=False)
-            row.alignment = 'LEFT'
-            row.operator("transform.translate", icon='TRANSFORM_MOVE', text="")
-            row.operator("transform.rotate", icon='TRANSFORM_ROTATE', text="")
-            row.operator("transform.resize", icon='TRANSFORM_SCALE', text="")
-
-
 class VIEW3D_PT_tools_armatureedit(View3DPanel, Panel):
     bl_category = "Tools"
     bl_context = "armature_edit"
@@ -1225,7 +1136,7 @@ class VIEW3D_PT_tools_armatureedit(View3DPanel, Panel):
             col.label(text="Modeling:")
             col.operator("armature.extrude_move", icon = 'EXTRUDE_REGION')
             col.operator("armature.subdivide", icon = 'SUBDIVIDE_EDGES', text="Subdivide")
-
+            1
             col = layout.column(align=True)
             col.label(text="Deform:")
             col.operator("transform.vertex_random", icon = 'RANDOMIZE')
@@ -1275,24 +1186,12 @@ class VIEW3D_PT_tools_mballedit(View3DPanel, Panel):
         scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
         if not scene.UItweaks.icon_or_text: 
-            col = layout.column(align=True)
-            col.label(text="Transform:")
-            col.operator("transform.translate", icon ='TRANSFORM_MOVE')
-            col.operator("transform.rotate", icon ='TRANSFORM_ROTATE')
-            col.operator("transform.resize", icon ='TRANSFORM_SCALE', text="Scale")
 
             col = layout.column(align=True)
             col.label(text="Deform:")
             col.operator("transform.vertex_random", icon = 'RANDOMIZE')
 
         else:
-            col = layout.column(align=True)
-            col.label(text="Transform:")
-            row = col.row(align=False)
-            row.alignment = 'LEFT'
-            row.operator("transform.translate", icon ='TRANSFORM_MOVE', text = "")
-            row.operator("transform.rotate", icon ='TRANSFORM_ROTATE', text = "")
-            row.operator("transform.resize", icon ='TRANSFORM_SCALE', text = "")
 
             col = layout.column(align=True)
             col.label(text="Deform:")
@@ -1332,11 +1231,6 @@ class VIEW3D_PT_tools_latticeedit(View3DPanel, Panel):
         scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
         if not scene.UItweaks.icon_or_text: 
-            col = layout.column(align=True)
-            col.label(text="Transform:")
-            col.operator("transform.translate", icon ='TRANSFORM_MOVE')
-            col.operator("transform.rotate", icon ='TRANSFORM_ROTATE')
-            col.operator("transform.resize", icon ='TRANSFORM_SCALE', text="Scale")
 
             col = layout.column(align=True)
             col.operator("lattice.make_regular", icon = 'MAKE_REGULAR')
@@ -1350,9 +1244,6 @@ class VIEW3D_PT_tools_latticeedit(View3DPanel, Panel):
 
             row = col.row(align=False)
             row.alignment = 'LEFT'
-            row.operator("transform.translate", icon ='TRANSFORM_MOVE', text = "")
-            row.operator("transform.rotate", icon ='TRANSFORM_ROTATE', text = "")
-            row.operator("transform.resize", icon ='TRANSFORM_SCALE', text="")
             row.operator("lattice.make_regular", icon = 'MAKE_REGULAR', text = "")
 
             col = layout.column(align=True)
@@ -1375,11 +1266,6 @@ class VIEW3D_PT_tools_posemode(View3DPanel, Panel):
         scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
         if not scene.UItweaks.icon_or_text: 
-            col = layout.column(align=True)
-            col.label(text="Transform:")
-            col.operator("transform.translate", icon ='TRANSFORM_MOVE')
-            col.operator("transform.rotate", icon ='TRANSFORM_ROTATE')
-            col.operator("transform.resize", icon ='TRANSFORM_SCALE', text="Scale")
 
             col = layout.column(align=True)
             col.label(text="In-Between:")
@@ -1410,14 +1296,6 @@ class VIEW3D_PT_tools_posemode(View3DPanel, Panel):
 
         else:
             col = layout.column(align=True)
-            col.label(text="Transform:")
-            row = col.row(align=False)
-            row.alignment = 'LEFT'
-            row.operator("transform.translate", icon ='TRANSFORM_MOVE', text="")
-            row.operator("transform.rotate", icon ='TRANSFORM_ROTATE', text="")
-            row.operator("transform.resize", icon ='TRANSFORM_SCALE', text="")
-
-            col = layout.column(align=True)
             col.label(text="In-Between:")
             row = col.row(align=False)
             row.alignment = 'LEFT'
@@ -1427,6 +1305,7 @@ class VIEW3D_PT_tools_posemode(View3DPanel, Panel):
 
             col = layout.column(align=True)
             col.label(text="Pose:")
+
             # bfa - Double menu entry. But stays available for further modifications
             #row = col.row(align=False)
             #row.operator("poselib.pose_add", icon = 'ADD_TO_LIBRARY', text="")
