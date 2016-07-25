@@ -76,40 +76,9 @@ def draw_keyframing_tools_icons(context, layout):
     #row.operator("anim.keying_set_active_set", text="LocRotScale").type = 'LocRotScale'
     #row.operator("anim.keying_set_active_set", icon='TRIA_RIGHT', text="")
     col.operator("anim.keying_set_active_set", icon='TRIA_RIGHT', text="Set Keying Set")
-
-
-    
+     
 
 # ********** default tools for object-mode ****************
-
-
-class VIEW3D_PT_tools_transform(View3DPanel, Panel):
-    bl_category = "Tools"
-    bl_context = "objectmode"
-    bl_label = "Transform"
-
-    def draw(self, context):
-        layout = self.layout
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
-
-        if not scene.UItweaks.icon_or_text: 
-            col = layout.column(align=True)
-            col.operator("transform.translate", icon='TRANSFORM_MOVE')
-            col.operator("transform.rotate", icon='TRANSFORM_ROTATE')
-            col.operator("transform.resize", icon='TRANSFORM_SCALE', text="Scale")
-
-            col = layout.column(align=True)
-            col.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="Mirror")
-
-        else:
-            row = layout.row(align=False)
-            row.alignment = 'LEFT'
-            row.operator("transform.translate", icon='TRANSFORM_MOVE', text="")
-            row.operator("transform.rotate", icon='TRANSFORM_ROTATE', text="")
-            row.operator("transform.resize", icon='TRANSFORM_SCALE', text="")
-            row.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="")
-
-
 
 class VIEW3D_PT_tools_object(View3DPanel, Panel):
     bl_category = "Tools"
@@ -126,12 +95,14 @@ class VIEW3D_PT_tools_object(View3DPanel, Panel):
             obj_type = obj.type
 
             scene = context.scene # Our data for the icon_or_text flag is in the current scene
-
+            # text
             if not scene.UItweaks.icon_or_text: 
 
                 if obj_type in {'MESH', 'CURVE', 'SURFACE', 'ARMATURE'}:
                     col = layout.column(align=True)
+                    col.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="Mirror")
                     col.operator("object.join", icon ='JOIN')
+                    
 
                 if obj_type in {'MESH', 'CURVE', 'SURFACE', 'ARMATURE', 'FONT', 'LATTICE'}:
                     col = layout.column(align=True)
@@ -150,11 +121,14 @@ class VIEW3D_PT_tools_object(View3DPanel, Panel):
                     row = col.row(align=True)
                     row.operator("object.data_transfer", icon ='TRANSFER_DATA', text="Data")
                     row.operator("object.datalayout_transfer", icon ='TRANSFER_DATA_LAYOUT', text="Data Layout")
-
+            
+            # icons
             else:
+
+                row = layout.row(align=False)
+                row.alignment = 'LEFT'
+                row.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="")
                 if obj_type in {'MESH', 'CURVE', 'SURFACE', 'ARMATURE'}:
-                    row = layout.row(align=False)
-                    row.alignment = 'LEFT'
                     row.operator("object.join", icon ='JOIN', text= "" )
 
                 if obj_type in {'MESH', 'CURVE', 'SURFACE', 'ARMATURE', 'FONT', 'LATTICE'}:
