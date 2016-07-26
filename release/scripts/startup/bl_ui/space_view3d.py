@@ -137,6 +137,7 @@ class VIEW3D_MT_editor_menus(Menu):
         edit_object = context.edit_object
 
         layout.menu("VIEW3D_MT_view")
+        layout.menu("VIEW3D_MT_view_navigation")
 
         # Select Menu
         if mode_string in {'PAINT_WEIGHT', 'PAINT_VERTEX', 'PAINT_TEXTURE'}:
@@ -368,24 +369,12 @@ class VIEW3D_MT_view(Menu):
 
         layout.separator()
 
-        layout.operator("view3d.viewnumpad", text="Camera").type = 'CAMERA'
-        layout.operator("view3d.viewnumpad", text="Top").type = 'TOP'
-        layout.operator("view3d.viewnumpad", text="Bottom").type = 'BOTTOM'
-        layout.operator("view3d.viewnumpad", text="Front").type = 'FRONT'
-        layout.operator("view3d.viewnumpad", text="Back").type = 'BACK'
-        layout.operator("view3d.viewnumpad", text="Right").type = 'RIGHT'
-        layout.operator("view3d.viewnumpad", text="Left").type = 'LEFT'
-
         layout.menu("VIEW3D_MT_view_cameras", text="Cameras")
 
         layout.separator()
 
-        layout.operator("view3d.view_persportho")
-
-        layout.separator()
-
-        layout.menu("VIEW3D_MT_view_navigation")
         layout.menu("VIEW3D_MT_view_align")
+        layout.menu("VIEW3D_MT_view_align_selected")
 
         layout.separator()
 
@@ -414,15 +403,15 @@ class VIEW3D_MT_view(Menu):
         myvar= layout.operator("transform.create_orientation", text="Create Orientation")
         myvar.use_view = True
         myvar.use = True
+
+        layout.separator()
+
         layout.operator("view3d.localview", text="View Global/Local")
         layout.operator("view3d.view_selected", text = "View Selected all Regions" ).use_all_regions = True
         layout.operator("view3d.view_selected").use_all_regions = False
         layout.operator("view3d.view_all", text = "View All all Regions" ).use_all_regions = True
+        layout.operator("view3d.view_all", text="Center Cursor and View All").center = True
         layout.operator("view3d.view_all").center = False
-
-        layout.separator()
-
-        layout.operator("screen.animation_play", text="Playback Animation")
 
         layout.separator()
 
@@ -433,7 +422,7 @@ class VIEW3D_MT_view(Menu):
 
 
 class VIEW3D_MT_view_navigation(Menu):
-    bl_label = "Navigation"
+    bl_label = "Navi"
 
     def draw(self, context):
         from math import pi
@@ -468,6 +457,10 @@ class VIEW3D_MT_view_navigation(Menu):
 
         layout.separator()
 
+        layout.operator("screen.animation_play", text="Playback Animation")
+
+        layout.separator()
+
         layout.operator("transform.translate", icon='TRANSFORM_MOVE')
         layout.operator("transform.rotate", icon='TRANSFORM_ROTATE')
         layout.operator("transform.resize", icon='TRANSFORM_SCALE', text="Scale")
@@ -479,11 +472,6 @@ class VIEW3D_MT_view_align(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.menu("VIEW3D_MT_view_align_selected")
-
-        layout.separator()
-
-        layout.operator("view3d.view_all", text="Center Cursor and View All").center = True
         layout.operator("view3d.camera_to_view", text="Align Active Camera to View")
         layout.operator("view3d.camera_to_view_selected", text="Align Active Camera to Selected")
         layout.operator("view3d.view_center_cursor")
@@ -493,6 +481,21 @@ class VIEW3D_MT_view_align(Menu):
         layout.operator("view3d.view_lock_to_active")
         layout.operator("view3d.view_center_lock")
         layout.operator("view3d.view_lock_clear")
+
+        layout.separator()
+
+        # Rest of align
+
+        layout.operator("view3d.view_persportho")
+
+        layout.separator()
+
+        layout.operator("view3d.viewnumpad", text="Top").type = 'TOP'
+        layout.operator("view3d.viewnumpad", text="Bottom").type = 'BOTTOM'
+        layout.operator("view3d.viewnumpad", text="Front").type = 'FRONT'
+        layout.operator("view3d.viewnumpad", text="Back").type = 'BACK'
+        layout.operator("view3d.viewnumpad", text="Right").type = 'RIGHT'
+        layout.operator("view3d.viewnumpad", text="Left").type = 'LEFT'
 
 
 class VIEW3D_MT_view_align_selected(Menu):
