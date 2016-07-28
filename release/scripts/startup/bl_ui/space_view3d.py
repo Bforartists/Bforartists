@@ -1180,10 +1180,6 @@ class VIEW3D_MT_object(Menu):
         layout.menu("VIEW3D_MT_snap")
 
         layout.separator()
-        
-        layout.menu("VIEW3D_MT_object_animation")
-
-        layout.separator()
 
         layout.operator("view3d.copybuffer", text = "Copy")
         layout.operator("view3d.pastebuffer", text = "Paste")
@@ -1221,22 +1217,6 @@ class VIEW3D_MT_object(Menu):
         layout.menu("VIEW3D_MT_object_showhide")
 
         layout.operator_menu_enum("object.convert", "target")
-
-
-class VIEW3D_MT_object_animation(Menu):
-    bl_label = "Animation"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("anim.keyframe_insert_menu", text="Insert Keyframe...")
-        layout.operator("anim.keyframe_delete_v3d", text="Delete Keyframes...")
-        layout.operator("anim.keyframe_clear_v3d", text="Clear Keyframes...")
-        layout.operator("anim.keying_set_active_set", text="Change Keying Set...")
-
-        layout.separator()
-
-        layout.operator("nla.bake", text="Bake Action...")
 
 
 class VIEW3D_MT_object_clear(Menu):
@@ -1710,10 +1690,6 @@ class VIEW3D_MT_pose(Menu):
         layout.menu("VIEW3D_MT_pose_apply")
 
         layout.menu("VIEW3D_MT_snap")
-
-        layout.separator()
-
-        layout.menu("VIEW3D_MT_object_animation")
 
         layout.separator()
 
