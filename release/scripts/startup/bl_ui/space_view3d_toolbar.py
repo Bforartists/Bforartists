@@ -542,9 +542,6 @@ class VIEW3D_PT_tools_relations(View3DPanel, Panel):
             row.operator("object.make_local", icon='MAKE_LOCAL', text="")
             row.operator("object.proxy_make", icon='MAKE_PROXY', text="")
 
-
-
-
 class VIEW3D_PT_tools_animation(View3DPanel, Panel):
     bl_category = "Animation"
     bl_context = "objectmode"
@@ -560,14 +557,8 @@ class VIEW3D_PT_tools_animation(View3DPanel, Panel):
 
             col = layout.column(align=True)
             col.label(text="Motion Paths:")
-            row = col.row(align=True)
-            row.operator("object.paths_calculate", icon ='MOTIONPATHS_CALCULATE', text="Calculate")
-            row.operator("object.paths_clear", icon ='MOTIONPATHS_CLEAR',  text="Clear")
-
-            col.separator()
-
-            col.label(text="Action:")
-            col.operator("nla.bake", icon = 'BAKE_ACTION', text="Bake Action")
+            col.operator("object.paths_calculate", icon ='MOTIONPATHS_CALCULATE', text="Calculate")
+            col.operator("object.paths_clear", icon ='MOTIONPATHS_CLEAR',  text="Clear")
 
         else:
             draw_keyframing_tools_icons(context, layout)
@@ -579,13 +570,6 @@ class VIEW3D_PT_tools_animation(View3DPanel, Panel):
             row.alignment = 'LEFT'
             row.operator("object.paths_calculate", icon ='MOTIONPATHS_CALCULATE',  text="")
             row.operator("object.paths_clear", icon ='MOTIONPATHS_CLEAR',  text="")
-
-            col.separator()
-
-            col.label(text="Action:")
-            row = col.row(align=False)
-            row.alignment = 'LEFT'
-            row.operator("nla.bake", icon = 'BAKE_ACTION', text="")
 
 
 class VIEW3D_PT_tools_rigid_body(View3DPanel, Panel):
