@@ -1014,30 +1014,6 @@ class VIEW3D_MT_angle_control(Menu):
                 layout.prop(tex_slot, "use_random", text="Random")
 
 
-class INFO_MT_add(Menu):
-    bl_label = "Add"
-
-    def draw(self, context):
-        layout = self.layout
-
-        # note, don't use 'EXEC_SCREEN' or operators wont get the 'v3d' context.
-
-        # Note: was EXEC_AREA, but this context does not have the 'rv3d', which prevents
-        #       "align_view" to work on first call (see [#32719]).
-        layout.operator_context = 'EXEC_REGION_WIN'
-
-        layout.operator_menu_enum("object.empty_add", "type", text="Empty", icon='OUTLINER_OB_EMPTY')
-        layout.separator()
-
-        layout.operator_menu_enum("object.effector_add", "type", text="Force Field", icon='OUTLINER_OB_EMPTY')
-        layout.separator()
-
-        if len(bpy.data.groups) > 10:
-            layout.operator_context = 'INVOKE_REGION_WIN'
-            layout.operator("object.group_instance_add", text="Group Instance...", icon='OUTLINER_OB_EMPTY')
-        else:
-            layout.operator_menu_enum("object.group_instance_add", "group", text="Group Instance", icon='OUTLINER_OB_EMPTY')
-
 
 
 # ********** Object menu **********
