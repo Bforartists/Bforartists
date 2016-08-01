@@ -137,6 +137,7 @@ class VIEW3D_MT_editor_menus(Menu):
         edit_object = context.edit_object
 
         layout.menu("VIEW3D_MT_view")
+        layout.menu("VIEW3D_MT_view_navigation")
 
         # Select Menu
         if mode_string in {'PAINT_WEIGHT', 'PAINT_VERTEX', 'PAINT_TEXTURE'}:
@@ -147,10 +148,6 @@ class VIEW3D_MT_editor_menus(Menu):
                 layout.menu("VIEW3D_MT_select_paint_mask_vertex")
         elif mode_string != 'SCULPT':
             layout.menu("VIEW3D_MT_select_%s" % mode_string.lower())
-
-        if mode_string == 'OBJECT':
-            layout.menu("INFO_MT_add", text="Add")
-
 
         if edit_object:
             layout.menu("VIEW3D_MT_edit_%s" % edit_object.type.lower())
@@ -368,24 +365,12 @@ class VIEW3D_MT_view(Menu):
 
         layout.separator()
 
-        layout.operator("view3d.viewnumpad", text="Camera").type = 'CAMERA'
-        layout.operator("view3d.viewnumpad", text="Top").type = 'TOP'
-        layout.operator("view3d.viewnumpad", text="Bottom").type = 'BOTTOM'
-        layout.operator("view3d.viewnumpad", text="Front").type = 'FRONT'
-        layout.operator("view3d.viewnumpad", text="Back").type = 'BACK'
-        layout.operator("view3d.viewnumpad", text="Right").type = 'RIGHT'
-        layout.operator("view3d.viewnumpad", text="Left").type = 'LEFT'
-
         layout.menu("VIEW3D_MT_view_cameras", text="Cameras")
 
         layout.separator()
 
-        layout.operator("view3d.view_persportho")
-
-        layout.separator()
-
-        layout.menu("VIEW3D_MT_view_navigation")
         layout.menu("VIEW3D_MT_view_align")
+        layout.menu("VIEW3D_MT_view_align_selected")
 
         layout.separator()
 
@@ -414,15 +399,15 @@ class VIEW3D_MT_view(Menu):
         myvar= layout.operator("transform.create_orientation", text="Create Orientation")
         myvar.use_view = True
         myvar.use = True
+
+        layout.separator()
+
         layout.operator("view3d.localview", text="View Global/Local")
         layout.operator("view3d.view_selected", text = "View Selected all Regions" ).use_all_regions = True
         layout.operator("view3d.view_selected").use_all_regions = False
         layout.operator("view3d.view_all", text = "View All all Regions" ).use_all_regions = True
+        layout.operator("view3d.view_all", text="Center Cursor and View All").center = True
         layout.operator("view3d.view_all").center = False
-
-        layout.separator()
-
-        layout.operator("screen.animation_play", text="Playback Animation")
 
         layout.separator()
 
@@ -433,7 +418,7 @@ class VIEW3D_MT_view(Menu):
 
 
 class VIEW3D_MT_view_navigation(Menu):
-    bl_label = "Navigation"
+    bl_label = "Navi"
 
     def draw(self, context):
         from math import pi
@@ -466,6 +451,16 @@ class VIEW3D_MT_view_navigation(Menu):
         layout.operator("view3d.fly")
         layout.operator("view3d.walk")
 
+        layout.separator()
+
+        layout.operator("screen.animation_play", text="Playback Animation")
+
+        layout.separator()
+
+        layout.operator("transform.translate", icon='TRANSFORM_MOVE')
+        layout.operator("transform.rotate", icon='TRANSFORM_ROTATE')
+        layout.operator("transform.resize", icon='TRANSFORM_SCALE', text="Scale")
+
 
 class VIEW3D_MT_view_align(Menu):
     bl_label = "Align View"
@@ -473,11 +468,6 @@ class VIEW3D_MT_view_align(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.menu("VIEW3D_MT_view_align_selected")
-
-        layout.separator()
-
-        layout.operator("view3d.view_all", text="Center Cursor and View All").center = True
         layout.operator("view3d.camera_to_view", text="Align Active Camera to View")
         layout.operator("view3d.camera_to_view_selected", text="Align Active Camera to Selected")
         layout.operator("view3d.view_center_cursor")
@@ -487,6 +477,21 @@ class VIEW3D_MT_view_align(Menu):
         layout.operator("view3d.view_lock_to_active")
         layout.operator("view3d.view_center_lock")
         layout.operator("view3d.view_lock_clear")
+
+        layout.separator()
+
+        # Rest of align
+
+        layout.operator("view3d.view_persportho")
+
+        layout.separator()
+
+        layout.operator("view3d.viewnumpad", text="Top").type = 'TOP'
+        layout.operator("view3d.viewnumpad", text="Bottom").type = 'BOTTOM'
+        layout.operator("view3d.viewnumpad", text="Front").type = 'FRONT'
+        layout.operator("view3d.viewnumpad", text="Back").type = 'BACK'
+        layout.operator("view3d.viewnumpad", text="Right").type = 'RIGHT'
+        layout.operator("view3d.viewnumpad", text="Left").type = 'LEFT'
 
 
 class VIEW3D_MT_view_align_selected(Menu):
@@ -1005,30 +1010,6 @@ class VIEW3D_MT_angle_control(Menu):
                 layout.prop(tex_slot, "use_random", text="Random")
 
 
-class INFO_MT_add(Menu):
-    bl_label = "Add"
-
-    def draw(self, context):
-        layout = self.layout
-
-        # note, don't use 'EXEC_SCREEN' or operators wont get the 'v3d' context.
-
-        # Note: was EXEC_AREA, but this context does not have the 'rv3d', which prevents
-        #       "align_view" to work on first call (see [#32719]).
-        layout.operator_context = 'EXEC_REGION_WIN'
-
-        layout.operator_menu_enum("object.empty_add", "type", text="Empty", icon='OUTLINER_OB_EMPTY')
-        layout.separator()
-
-        layout.operator_menu_enum("object.effector_add", "type", text="Force Field", icon='OUTLINER_OB_EMPTY')
-        layout.separator()
-
-        if len(bpy.data.groups) > 10:
-            layout.operator_context = 'INVOKE_REGION_WIN'
-            layout.operator("object.group_instance_add", text="Group Instance...", icon='OUTLINER_OB_EMPTY')
-        else:
-            layout.operator_menu_enum("object.group_instance_add", "group", text="Group Instance", icon='OUTLINER_OB_EMPTY')
-
 
 
 # ********** Object menu **********
@@ -1195,10 +1176,6 @@ class VIEW3D_MT_object(Menu):
         layout.menu("VIEW3D_MT_snap")
 
         layout.separator()
-        
-        layout.menu("VIEW3D_MT_object_animation")
-
-        layout.separator()
 
         layout.operator("view3d.copybuffer", text = "Copy")
         layout.operator("view3d.pastebuffer", text = "Paste")
@@ -1226,7 +1203,6 @@ class VIEW3D_MT_object(Menu):
 
         layout.separator()
 
-        layout.operator("object.join")
         layout.operator("object.data_transfer")
         layout.operator("object.datalayout_transfer")
 
@@ -1236,22 +1212,6 @@ class VIEW3D_MT_object(Menu):
         layout.menu("VIEW3D_MT_object_showhide")
 
         layout.operator_menu_enum("object.convert", "target")
-
-
-class VIEW3D_MT_object_animation(Menu):
-    bl_label = "Animation"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("anim.keyframe_insert_menu", text="Insert Keyframe...")
-        layout.operator("anim.keyframe_delete_v3d", text="Delete Keyframes...")
-        layout.operator("anim.keyframe_clear_v3d", text="Clear Keyframes...")
-        layout.operator("anim.keying_set_active_set", text="Change Keying Set...")
-
-        layout.separator()
-
-        layout.operator("nla.bake", text="Bake Action...")
 
 
 class VIEW3D_MT_object_clear(Menu):
@@ -1725,10 +1685,6 @@ class VIEW3D_MT_pose(Menu):
         layout.menu("VIEW3D_MT_pose_apply")
 
         layout.menu("VIEW3D_MT_snap")
-
-        layout.separator()
-
-        layout.menu("VIEW3D_MT_object_animation")
 
         layout.separator()
 
