@@ -31,7 +31,7 @@ bl_info = {
     'description' : "Stroke Select - Enables selection by mouse strokes",
     'category'    : "Mesh",
     'blender'     : (2, 76),
-    'version'     : (1, 0),
+    'version'     : (1, 0, 1),
     'wiki_url'    : 'http://www.reinerstilesets.de',
 }
 
@@ -136,10 +136,10 @@ def register():
         km = wm.keyconfigs.addon.keymaps.new(name='3D View', space_type='VIEW_3D')
         
         # the paint select hotkey
-        kmi = km.keymap_items.new("view3d.stroke_select", type = 'LEFTMOUSE', value = 'PRESS', key_modifier='I')
+        kmi = km.keymap_items.new("view3d.stroke_select", type = 'SELECTMOUSE', value = 'PRESS', key_modifier='I')
         
         # the hotkey to toggle select/deselect painting     
-        kmi = km.keymap_items.new("wm.context_toggle", type='RIGHTMOUSE', value='PRESS', key_modifier='I')
+        kmi = km.keymap_items.new("wm.context_toggle", type='ACTIONMOUSE', value='PRESS', key_modifier='I')
         kmi.properties.data_path = "window_manager.stroke_select_bool"
         
         addon_keymaps.append((km, kmi))
