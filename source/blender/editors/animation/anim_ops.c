@@ -253,7 +253,7 @@ static void ANIM_OT_change_frame(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Change Frame";
 	ot->idname = "ANIM_OT_change_frame";
-	ot->description = "Interactively change the current frame number";
+	ot->description = "Change Frame\nInteractively change the current frame number";
 	
 	/* api callbacks */
 	ot->exec = change_frame_exec;
@@ -310,7 +310,7 @@ static void ANIM_OT_previewrange_set(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Set Preview Range";
 	ot->idname = "ANIM_OT_previewrange_set";
-	ot->description = "Interactively define frame range used for playback";
+	ot->description = "Set Preview Range\nInteractively define frame range used for playback";
 	
 	/* api callbacks */
 	ot->invoke = WM_border_select_invoke;
@@ -360,7 +360,7 @@ static void ANIM_OT_previewrange_clear(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Clear Preview Range";
 	ot->idname = "ANIM_OT_previewrange_clear";
-	ot->description = "Clear Preview Range";
+	ot->description = "Clear Preview Range\Clear Preview Range";
 	
 	/* api callbacks */
 	ot->exec = previewrange_clear_exec;
