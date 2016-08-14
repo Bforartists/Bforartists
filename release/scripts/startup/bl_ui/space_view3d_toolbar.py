@@ -1157,9 +1157,9 @@ class VIEW3D_PT_tools_add_surface_edit(View3DPanel, Panel):
 
         # bfa - icon or text buttons
         if not scene.UItweaks.icon_or_text: 
-            VIEW3D_PT_tools_add_object.draw_add_surface(col, label=True) # the original class
+            VIEW3D_PT_tools_add_object.draw_add_surface(col) # the original class
         else:
-            VIEW3D_PT_tools_add_object.draw_add_surface_icons(col, label=True) # the modified class with icon buttons
+            VIEW3D_PT_tools_add_object.draw_add_surface_icons(col) # the modified class with icon buttons
 
 
 # ********** default tools for editmode_text ****************
