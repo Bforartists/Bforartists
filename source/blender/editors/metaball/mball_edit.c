@@ -163,7 +163,7 @@ void MBALL_OT_select_all(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "(De)select All";
-	ot->description = "Change selection of all meta elements";
+	ot->description = "(De)select All\nChange selection of all meta elements";
 	ot->idname = "MBALL_OT_select_all";
 
 	/* callback functions */
@@ -351,7 +351,7 @@ void MBALL_OT_select_similar(wmOperatorType *ot)
 	ot->invoke = WM_menu_invoke;
 	ot->exec = mball_select_similar_exec;
 	ot->poll = ED_operator_editmball;
-	ot->description = "Select similar metaballs by property types";
+	ot->description = "Select Similar\nSelect similar metaballs by property types";
 
 	/* flags */
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
@@ -393,7 +393,7 @@ void MBALL_OT_select_random_metaelems(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Select Random";
-	ot->description = "Randomly select metaelements";
+	ot->description = "Select Random\nRandomly select metaelements";
 	ot->idname = "MBALL_OT_select_random_metaelems";
 	
 	/* callback functions */
@@ -440,7 +440,7 @@ void MBALL_OT_duplicate_metaelems(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Duplicate Metaelements";
-	ot->description = "Duplicate selected metaelement(s)";
+	ot->description = "Duplicate Metaelements\nDuplicate selected metaelement(s)";
 	ot->idname = "MBALL_OT_duplicate_metaelems";
 
 	/* callback functions */
@@ -482,7 +482,7 @@ void MBALL_OT_delete_metaelems(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Delete";
-	ot->description = "Delete selected metaelement(s)";
+	ot->description = "Delete\nDelete selected metaelement(s)";
 	ot->idname = "MBALL_OT_delete_metaelems";
 
 	/* callback functions */
@@ -522,7 +522,7 @@ void MBALL_OT_hide_metaelems(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Hide";
-	ot->description = "Hide (un)selected metaelement(s)";
+	ot->description = "Hide\nHide (un)selected metaelement(s)";
 	ot->idname = "MBALL_OT_hide_metaelems";
 
 	/* callback functions */
@@ -563,7 +563,7 @@ void MBALL_OT_reveal_metaelems(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Reveal";
-	ot->description = "Reveal all hidden metaelements";
+	ot->description = "Reveal\nReveal all hidden metaelements";
 	ot->idname = "MBALL_OT_reveal_metaelems";
 	
 	/* callback functions */

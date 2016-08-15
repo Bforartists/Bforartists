@@ -165,7 +165,7 @@ void OBJECT_OT_hide_view_clear(wmOperatorType *ot)
 	
 	/* identifiers */
 	ot->name = "Clear Restrict View";
-	ot->description = "Reveal the object by setting the hide flag";
+	ot->description = "Clear Restrict View\nReveal the object by setting the hide flag";
 	ot->idname = "OBJECT_OT_hide_view_clear";
 	
 	/* api callbacks */
@@ -223,7 +223,7 @@ void OBJECT_OT_hide_view_set(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Set Restrict View";
-	ot->description = "Hide the object by setting the hide flag";
+	ot->description = "Set Restrict View\nHide the object by setting the hide flag";
 	ot->idname = "OBJECT_OT_hide_view_set";
 	
 	/* api callbacks */
@@ -263,7 +263,7 @@ void OBJECT_OT_hide_render_clear(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Clear Restrict Render";
-	ot->description = "Reveal the render object by setting the hide render flag";
+	ot->description = "Clear Restrict Render\nReveal the render object by setting the hide render flag";
 	ot->idname = "OBJECT_OT_hide_render_clear";
 
 	/* api callbacks */
@@ -300,7 +300,7 @@ void OBJECT_OT_hide_render_set(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Set Restrict Render";
-	ot->description = "Hide the render object by setting the hide render flag";
+	ot->description = "Set Restrict Render\nHide the render object by setting the hide render flag";
 	ot->idname = "OBJECT_OT_hide_render_set";
 
 	/* api callbacks */
@@ -614,7 +614,7 @@ void OBJECT_OT_editmode_toggle(wmOperatorType *ot)
 	
 	/* identifiers */
 	ot->name = "Toggle Editmode";
-	ot->description = "Toggle object's editmode";
+	ot->description = "Toggle Editmode\nToggle object's editmode";
 	ot->idname = "OBJECT_OT_editmode_toggle";
 	
 	/* api callbacks */
@@ -661,7 +661,7 @@ void OBJECT_OT_posemode_toggle(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Toggle Pose Mode";
 	ot->idname = "OBJECT_OT_posemode_toggle";
-	ot->description = "Enable or disable posing/selecting bones";
+	ot->description = "Toggle Pose Mode\nEnable or disable posing/selecting bones";
 	
 	/* api callbacks */
 	ot->exec = posemode_exec;
@@ -1163,7 +1163,7 @@ void OBJECT_OT_forcefield_toggle(wmOperatorType *ot)
 	
 	/* identifiers */
 	ot->name = "Toggle Force Field";
-	ot->description = "Toggle object's force field";
+	ot->description = "Toggle Force Field\nToggle object's force field";
 	ot->idname = "OBJECT_OT_forcefield_toggle";
 	
 	/* api callbacks */
@@ -1257,7 +1257,7 @@ void OBJECT_OT_paths_calculate(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Calculate Object Paths";
 	ot->idname = "OBJECT_OT_paths_calculate";
-	ot->description = "Calculate motion paths for the selected objects";
+	ot->description = "Calculate Object Paths\nCalculate motion paths for the selected objects";
 	
 	/* api callbacks */
 	ot->invoke = object_calculate_paths_invoke;
@@ -1297,7 +1297,7 @@ void OBJECT_OT_paths_update(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Update Object Paths";
 	ot->idname = "OBJECT_OT_paths_update";
-	ot->description = "Recalculate paths for selected objects";
+	ot->description = "Update Object Paths\nRecalculate paths for selected objects";
 	
 	/* api callbakcs */
 	ot->exec = object_update_paths_exec;
@@ -1341,7 +1341,7 @@ void OBJECT_OT_paths_clear(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Clear Object Paths";
 	ot->idname = "OBJECT_OT_paths_clear";
-	ot->description = "Clear path caches for selected objects";
+	ot->description = "Clear Object Paths\nClear path caches for selected objects";
 	
 	/* api callbacks */
 	ot->exec = object_clear_paths_exec;
@@ -1410,7 +1410,7 @@ void OBJECT_OT_shade_flat(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Shade Flat";
-	ot->description = "Render and display faces uniform, using Face Normals";
+	ot->description = "Shade Flat\nRender and display faces uniform, using Face Normals";
 	ot->idname = "OBJECT_OT_shade_flat";
 	
 	/* api callbacks */
@@ -1425,7 +1425,7 @@ void OBJECT_OT_shade_smooth(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Shade Smooth";
-	ot->description = "Render and display faces smooth, using interpolated Vertex Normals";
+	ot->description = "Shade Smooth\nRender and display faces smooth, using interpolated Vertex Normals";
 	ot->idname = "OBJECT_OT_shade_smooth";
 	
 	/* api callbacks */
@@ -1665,7 +1665,7 @@ void OBJECT_OT_mode_set(wmOperatorType *ot)
 	
 	/* identifiers */
 	ot->name = "Set Object Mode";
-	ot->description = "Sets the object interaction mode";
+	ot->description = "Set Object Mode\nSets the object interaction mode";
 	ot->idname = "OBJECT_OT_mode_set";
 	
 	/* api callbacks */
@@ -1724,7 +1724,7 @@ void OBJECT_OT_game_property_new(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "New Game Property";
-	ot->description = "Create a new property available to the game engine";
+	ot->description = "New Game Property\nCreate a new property available to the game engine";
 	ot->idname = "OBJECT_OT_game_property_new";
 
 	/* api callbacks */
@@ -1765,7 +1765,7 @@ void OBJECT_OT_game_property_remove(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Remove Game Property";
-	ot->description = "Remove game property";
+	ot->description = "Remove Game Property\nRemove game property";
 	ot->idname = "OBJECT_OT_game_property_remove";
 
 	/* api callbacks */
@@ -1829,7 +1829,7 @@ void OBJECT_OT_game_property_move(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Move Game Property";
-	ot->description = "Move game property";
+	ot->description = "Move Game Property\nMove game property";
 	ot->idname = "OBJECT_OT_game_property_move";
 
 	/* api callbacks */
@@ -1930,7 +1930,7 @@ void OBJECT_OT_game_property_copy(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Copy Game Property";
 	ot->idname = "OBJECT_OT_game_property_copy";
-	ot->description = "Copy/merge/replace a game property from active object to all selected objects";
+	ot->description = "Copy Game Property\nCopy/merge/replace a game property from active object to all selected objects";
 
 	/* api callbacks */
 	ot->exec = game_property_copy_exec;
@@ -1962,7 +1962,7 @@ void OBJECT_OT_game_property_clear(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Clear Game Properties";
 	ot->idname = "OBJECT_OT_game_property_clear";
-	ot->description = "Remove all game properties from all selected objects";
+	ot->description = "Clear Game Properties\nRemove all game properties from all selected objects";
 
 	/* api callbacks */
 	ot->exec = game_property_clear_exec;
@@ -2020,7 +2020,7 @@ void OBJECT_OT_logic_bricks_copy(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Copy Logic Bricks to Selected";
-	ot->description = "Copy logic bricks to other selected objects";
+	ot->description = "Copy Logic Bricks to Selected\nCopy logic bricks to other selected objects";
 	ot->idname = "OBJECT_OT_logic_bricks_copy";
 
 	/* api callbacks */
@@ -2072,7 +2072,7 @@ void OBJECT_OT_game_physics_copy(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Copy Game Physics Properties to Selected";
-	ot->description = "Copy game physics properties to other selected objects";
+	ot->description = "Copy Game Physics Properties to Selected\nCopy game physics properties to other selected objects";
 	ot->idname = "OBJECT_OT_game_physics_copy";
 	
 	/* api callbacks */

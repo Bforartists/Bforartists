@@ -67,7 +67,7 @@ void OBJECT_OT_lod_add(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Add Level of Detail";
-	ot->description = "Add a level of detail to this object";
+	ot->description = "Add Level of Detail\nAdd a level of detail to this object";
 	ot->idname = "OBJECT_OT_lod_add";
 
 	/* api callbacks */
@@ -99,7 +99,7 @@ void OBJECT_OT_lod_remove(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Remove Level of Detail";
-	ot->description = "Remove a level of detail from this object";
+	ot->description = "Remove Level of Detail\nRemove a level of detail from this object";
 	ot->idname = "OBJECT_OT_lod_remove";
 
 	/* api callbacks */

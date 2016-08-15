@@ -475,7 +475,7 @@ void OBJECT_OT_add(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Add Object";
-	ot->description = "Add an object to the scene";
+	ot->description = "Add Object\nAdd an object to the scene";
 	ot->idname = "OBJECT_OT_add";
 
 	/* api callbacks */
@@ -544,7 +544,7 @@ void OBJECT_OT_effector_add(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Add Effector";
-	ot->description = "Add an empty object with a physics effector to the scene";
+	ot->description = "Add Effector\nAdd an empty object with a physics effector to the scene";
 	ot->idname = "OBJECT_OT_effector_add";
 
 	/* api callbacks */
@@ -601,7 +601,7 @@ void OBJECT_OT_camera_add(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Add Camera";
-	ot->description = "Add a camera object to the scene";
+	ot->description = "Add Camera\nAdd a camera object to the scene";
 	ot->idname = "OBJECT_OT_camera_add";
 
 	/* api callbacks */
@@ -662,7 +662,7 @@ void OBJECT_OT_metaball_add(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Add Metaball";
-	ot->description = "Add an metaball object to the scene";
+	ot->description = "Add Metaball\nAdd an metaball object to the scene";
 	ot->idname = "OBJECT_OT_metaball_add";
 
 	/* api callbacks */
@@ -707,7 +707,7 @@ void OBJECT_OT_text_add(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Add Text";
-	ot->description = "Add a text object to the scene";
+	ot->description = "Add Text\nAdd a text object to the scene";
 	ot->idname = "OBJECT_OT_text_add";
 
 	/* api callbacks */
@@ -768,7 +768,7 @@ void OBJECT_OT_armature_add(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Add Armature";
-	ot->description = "Add an armature object to the scene";
+	ot->description = "Add Armature\nAdd an armature object to the scene";
 	ot->idname = "OBJECT_OT_armature_add";
 
 	/* api callbacks */
@@ -808,7 +808,7 @@ void OBJECT_OT_empty_add(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Add Empty";
-	ot->description = "Add an empty object to the scene";
+	ot->description = "Add Empty\nAdd an empty object to the scene";
 	ot->idname = "OBJECT_OT_empty_add";
 
 	/* api callbacks */
@@ -878,7 +878,7 @@ void OBJECT_OT_drop_named_image(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Add Empty Image/Drop Image To Empty";
-	ot->description = "Add an empty image type to scene with data";
+	ot->description = "Add Empty Image/Drop Image To Empty\nAdd an empty image type to scene with data";
 	ot->idname = "OBJECT_OT_drop_named_image";
 
 	/* api callbacks */
@@ -944,7 +944,7 @@ void OBJECT_OT_lamp_add(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Add Lamp";
-	ot->description = "Add a lamp object to the scene";
+	ot->description = "Add Lamp\nAdd a lamp object to the scene";
 	ot->idname = "OBJECT_OT_lamp_add";
 
 	/* api callbacks */
@@ -1019,7 +1019,7 @@ void OBJECT_OT_group_instance_add(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Add Group Instance";
-	ot->description = "Add a dupligroup instance";
+	ot->description = "Add Group Instance\nAdd a dupligroup instance";
 	ot->idname = "OBJECT_OT_group_instance_add";
 
 	/* api callbacks */
@@ -1081,7 +1081,7 @@ void OBJECT_OT_speaker_add(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Add Speaker";
-	ot->description = "Add a speaker object to the scene";
+	ot->description = "Add Speaker\nAdd a speaker object to the scene";
 	ot->idname = "OBJECT_OT_speaker_add";
 
 	/* api callbacks */
@@ -1183,7 +1183,7 @@ void OBJECT_OT_delete(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Delete";
-	ot->description = "Delete selected objects";
+	ot->description = "Delete\nDelete selected objects";
 	ot->idname = "OBJECT_OT_delete";
 
 	/* api callbacks */
@@ -1510,7 +1510,7 @@ void OBJECT_OT_duplicates_make_real(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Make Duplicates Real";
-	ot->description = "Make dupli objects attached to this object real";
+	ot->description = "Make Duplicates Real\nMake dupli objects attached to this object real";
 	ot->idname = "OBJECT_OT_duplicates_make_real";
 
 	/* api callbacks */
@@ -1922,7 +1922,7 @@ void OBJECT_OT_convert(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Convert to";
-	ot->description = "Convert selected objects to another type";
+	ot->description = "Convert to\nConvert selected objects to another type";
 	ot->idname = "OBJECT_OT_convert";
 
 	/* api callbacks */
@@ -2255,7 +2255,7 @@ void OBJECT_OT_duplicate(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Duplicate Objects";
-	ot->description = "Duplicate selected objects";
+	ot->description = "Duplicate Objects\nDuplicate selected objects";
 	ot->idname = "OBJECT_OT_duplicate";
 
 	/* api callbacks */
@@ -2340,7 +2340,7 @@ void OBJECT_OT_add_named(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Add Named Object";
-	ot->description = "Add named object";
+	ot->description = "Add Named Object\nAdd named object";
 	ot->idname = "OBJECT_OT_add_named";
 
 	/* api callbacks */
@@ -2396,7 +2396,7 @@ void OBJECT_OT_join(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Join";
-	ot->description = "Join selected objects into active object";
+	ot->description = "Join\nJoin selected objects into active object";
 	ot->idname = "OBJECT_OT_join";
 
 	/* api callbacks */
@@ -2446,7 +2446,7 @@ void OBJECT_OT_join_shapes(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Join as Shapes";
-	ot->description = "Merge selected objects to shapes of active object";
+	ot->description = "Join as Shapes\nMerge selected objects to shapes of active object";
 	ot->idname = "OBJECT_OT_join_shapes";
 
 	/* api callbacks */
