@@ -123,7 +123,7 @@ void MESH_OT_subdivide(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Subdivide";
-	ot->description = "Subdivide selected edges";
+	ot->description = "Subdivide\nSubdivide selected edges";
 	ot->idname = "MESH_OT_subdivide";
 
 	/* api callbacks */
@@ -233,7 +233,7 @@ void MESH_OT_subdivide_edgering(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Subdivide Edge-Ring";
-	ot->description = "";
+	ot->description = "Subdivide Edge-Ring";
 	ot->idname = "MESH_OT_subdivide_edgering";
 
 	/* api callbacks */
@@ -279,7 +279,7 @@ void MESH_OT_unsubdivide(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Un-Subdivide";
-	ot->description = "UnSubdivide selected edges & faces";
+	ot->description = "Un-Subdivide\nUnSubdivide selected edges & faces";
 	ot->idname = "MESH_OT_unsubdivide";
 
 	/* api callbacks */
@@ -385,7 +385,7 @@ void MESH_OT_delete(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Delete";
-	ot->description = "Delete selected vertices, edges or faces";
+	ot->description = "Delete\nDelete selected vertices, edges or faces";
 	ot->idname = "MESH_OT_delete";
 	
 	/* api callbacks */
@@ -483,7 +483,7 @@ void MESH_OT_delete_loose(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Delete Loose";
-	ot->description = "Delete loose vertices, edges or faces";
+	ot->description = "Delete Loose\nDelete loose vertices, edges or faces";
 	ot->idname = "MESH_OT_delete_loose";
 
 	/* api callbacks */
@@ -518,7 +518,7 @@ void MESH_OT_edge_collapse(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Edge Collapse";
-	ot->description = "Collapse selected edges";
+	ot->description = "Edge Collapse\nCollapse selected edges";
 	ot->idname = "MESH_OT_edge_collapse";
 
 	/* api callbacks */
@@ -757,7 +757,7 @@ void MESH_OT_edge_face_add(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Make Edge/Face";
-	ot->description = "Add an edge or face to selected";
+	ot->description = "Make Edge/Face\nAdd an edge or face to selected";
 	ot->idname = "MESH_OT_edge_face_add";
 	
 	/* api callbacks */
@@ -815,7 +815,7 @@ void MESH_OT_mark_seam(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Mark Seam";
 	ot->idname = "MESH_OT_mark_seam";
-	ot->description = "(Un)mark selected edges as a seam";
+	ot->description = "Mark Seam\n(Un)mark selected edges as a seam";
 	
 	/* api callbacks */
 	ot->exec = edbm_mark_seam_exec;
@@ -869,7 +869,7 @@ void MESH_OT_mark_sharp(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Mark Sharp";
 	ot->idname = "MESH_OT_mark_sharp";
-	ot->description = "(Un)mark selected edges as sharp";
+	ot->description = "Mark Sharp\n(Un)mark selected edges as sharp";
 	
 	/* api callbacks */
 	ot->exec = edbm_mark_sharp_exec;
@@ -967,7 +967,7 @@ void MESH_OT_vert_connect(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Vertex Connect";
 	ot->idname = "MESH_OT_vert_connect";
-	ot->description = "Connect selected vertices of faces, splitting the face";
+	ot->description = "Vertex Connect\nConnect selected vertices of faces, splitting the face";
 	
 	/* api callbacks */
 	ot->exec = edbm_vert_connect_exec;
@@ -1235,7 +1235,7 @@ void MESH_OT_vert_connect_path(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Vertex Connect Path";
 	ot->idname = "MESH_OT_vert_connect_path";
-	ot->description = "Connect vertices by their selection order, creating edges, splitting faces";
+	ot->description = "Vertex Connect Path\nConnect vertices by their selection order, creating edges, splitting faces";
 
 	/* api callbacks */
 	ot->exec = edbm_vert_connect_path_exec;
@@ -1269,7 +1269,7 @@ void MESH_OT_vert_connect_concave(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Split Concave Faces";
 	ot->idname = "MESH_OT_vert_connect_concave";
-	ot->description = "Make all faces convex";
+	ot->description = "Split Concave Faces\nMake all faces convex";
 
 	/* api callbacks */
 	ot->exec = edbm_vert_connect_concave_exec;
@@ -1308,7 +1308,7 @@ void MESH_OT_vert_connect_nonplanar(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Split Non-Planar Faces";
 	ot->idname = "MESH_OT_vert_connect_nonplanar";
-	ot->description = "Split non-planar faces that exceed the angle threshold";
+	ot->description = "Split Non-Planar Faces\nSplit non-planar faces that exceed the angle threshold";
 
 	/* api callbacks */
 	ot->exec = edbm_vert_connect_nonplaner_exec;
@@ -1346,7 +1346,7 @@ void MESH_OT_face_make_planar(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Make Planar Faces";
 	ot->idname = "MESH_OT_face_make_planar";
-	ot->description = "Flatten selected faces";
+	ot->description = "Make Planar Faces\nFlatten selected faces";
 
 	/* api callbacks */
 	ot->exec = edbm_face_make_planar_exec;
@@ -1389,7 +1389,7 @@ void MESH_OT_edge_split(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Edge Split";
 	ot->idname = "MESH_OT_edge_split";
-	ot->description = "Split selected edges so that each neighbor face gets its own copy";
+	ot->description = "Edge Split\nSplit selected edges so that each neighbor face gets its own copy";
 	
 	/* api callbacks */
 	ot->exec = edbm_edge_split_exec;
@@ -1447,7 +1447,7 @@ void MESH_OT_duplicate(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Duplicate";
-	ot->description = "Duplicate selected vertices, edges or faces";
+	ot->description = "Duplicate\nDuplicate selected vertices, edges or faces";
 	ot->idname = "MESH_OT_duplicate";
 	
 	/* api callbacks */
@@ -1477,7 +1477,7 @@ void MESH_OT_flip_normals(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Flip Normals";
-	ot->description = "Flip the direction of selected faces' normals (and of their vertices)";
+	ot->description = "Flip Normals\nFlip the direction of selected faces' normals (and of their vertices)";
 	ot->idname = "MESH_OT_flip_normals";
 	
 	/* api callbacks */
@@ -1552,7 +1552,7 @@ void MESH_OT_edge_rotate(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Rotate Selected Edge";
-	ot->description = "Rotate selected edge or adjoining faces";
+	ot->description = "Rotate Selected Edge\nRotate selected edge or adjoining faces";
 	ot->idname = "MESH_OT_edge_rotate";
 
 	/* api callbacks */
@@ -1584,7 +1584,7 @@ void MESH_OT_hide(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Hide Selection";
 	ot->idname = "MESH_OT_hide";
-	ot->description = "Hide (un)selected vertices, edges or faces";
+	ot->description = "Hide Selection\nHide (un)selected vertices, edges or faces";
 	
 	/* api callbacks */
 	ot->exec = edbm_hide_exec;
@@ -1614,7 +1614,7 @@ void MESH_OT_reveal(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Reveal Hidden";
 	ot->idname = "MESH_OT_reveal";
-	ot->description = "Reveal all hidden vertices, edges and faces";
+	ot->description = "Reveal Hidden\nReveal all hidden vertices, edges and faces";
 	
 	/* api callbacks */
 	ot->exec = edbm_reveal_exec;
@@ -1646,7 +1646,7 @@ void MESH_OT_normals_make_consistent(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Make Normals Consistent";
-	ot->description = "Make face and vertex normals point either outside or inside the mesh";
+	ot->description = "Make Normals Consistent\nMake face and vertex normals point either outside or inside the mesh";
 	ot->idname = "MESH_OT_normals_make_consistent";
 	
 	/* api callbacks */
@@ -1731,7 +1731,7 @@ void MESH_OT_vertices_smooth(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Smooth Vertex";
-	ot->description = "Flatten angles of selected vertices";
+	ot->description = "Smooth Vertex\nFlatten angles of selected vertices";
 	ot->idname = "MESH_OT_vertices_smooth";
 	
 	/* api callbacks */
@@ -1810,7 +1810,7 @@ void MESH_OT_vertices_smooth_laplacian(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Laplacian Smooth Vertex";
-	ot->description = "Laplacian smooth of selected vertices";
+	ot->description = "Laplacian Smooth Vertex\nLaplacian smooth of selected vertices";
 	ot->idname = "MESH_OT_vertices_smooth_laplacian";
 	
 	/* api callbacks */
@@ -1864,7 +1864,7 @@ void MESH_OT_faces_shade_smooth(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Shade Smooth";
-	ot->description = "Display faces smooth (using vertex normals)";
+	ot->description = "Shade Smooth\nDisplay faces smooth (using vertex normals)";
 	ot->idname = "MESH_OT_faces_shade_smooth";
 
 	/* api callbacks */
@@ -1891,7 +1891,7 @@ void MESH_OT_faces_shade_flat(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Shade Flat";
-	ot->description = "Display faces flat";
+	ot->description = "Shade Flat\nDisplay faces flat";
 	ot->idname = "MESH_OT_faces_shade_flat";
 
 	/* api callbacks */
@@ -2006,7 +2006,7 @@ void MESH_OT_uvs_rotate(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Rotate UVs";
 	ot->idname = "MESH_OT_uvs_rotate";
-	ot->description = "Rotate UV coordinates inside faces";
+	ot->description = "Rotate UVs\nRotate UV coordinates inside faces";
 
 	/* api callbacks */
 	ot->exec = edbm_rotate_uvs_exec;
@@ -2024,7 +2024,7 @@ void MESH_OT_uvs_reverse(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Reverse UVs";
 	ot->idname = "MESH_OT_uvs_reverse";
-	ot->description = "Flip direction of UV coordinates inside faces";
+	ot->description = "Reverse UVs\nFlip direction of UV coordinates inside faces";
 
 	/* api callbacks */
 	ot->exec = edbm_reverse_uvs_exec;
@@ -2042,7 +2042,7 @@ void MESH_OT_colors_rotate(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Rotate Colors";
 	ot->idname = "MESH_OT_colors_rotate";
-	ot->description = "Rotate vertex colors inside faces";
+	ot->description = "Rotate Colors\nRotate vertex colors inside faces";
 
 	/* api callbacks */
 	ot->exec = edbm_rotate_colors_exec;
@@ -2060,7 +2060,7 @@ void MESH_OT_colors_reverse(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Reverse Colors";
 	ot->idname = "MESH_OT_colors_reverse";
-	ot->description = "Flip direction of vertex colors inside faces";
+	ot->description = "Reverse Colors\nFlip direction of vertex colors inside faces";
 
 	/* api callbacks */
 	ot->exec = edbm_reverse_colors_exec;
@@ -2267,7 +2267,7 @@ void MESH_OT_merge(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Merge";
-	ot->description = "Merge selected vertices";
+	ot->description = "Merge\nMerge selected vertices";
 	ot->idname = "MESH_OT_merge";
 
 	/* api callbacks */
@@ -2347,7 +2347,7 @@ void MESH_OT_remove_doubles(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Remove Doubles";
-	ot->description = "Remove duplicate vertices";
+	ot->description = "Remove Doubles\nRemove duplicate vertices";
 	ot->idname = "MESH_OT_remove_doubles";
 
 	/* api callbacks */
@@ -2417,7 +2417,7 @@ void MESH_OT_shape_propagate_to_all(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Shape Propagate";
-	ot->description = "Apply selected vertex locations to all other shape keys";
+	ot->description = "Shape Propagate\nApply selected vertex locations to all other shape keys";
 	ot->idname = "MESH_OT_shape_propagate_to_all";
 
 	/* api callbacks */
@@ -2538,7 +2538,7 @@ void MESH_OT_blend_from_shape(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Blend From Shape";
-	ot->description = "Blend in shape from a shape key";
+	ot->description = "Blend From Shape\nBlend in shape from a shape key";
 	ot->idname = "MESH_OT_blend_from_shape";
 
 	/* api callbacks */
@@ -2598,7 +2598,7 @@ void MESH_OT_solidify(wmOperatorType *ot)
 	PropertyRNA *prop;
 	/* identifiers */
 	ot->name = "Solidify";
-	ot->description = "Create a solid skin by extruding, compensating for sharp angles";
+	ot->description = "Solidify\nCreate a solid skin by extruding, compensating for sharp angles";
 	ot->idname = "MESH_OT_solidify";
 
 	/* api callbacks */
@@ -2925,7 +2925,7 @@ void MESH_OT_knife_cut(wmOperatorType *ot)
 	PropertyRNA *prop;
 	
 	ot->name = "Knife Cut";
-	ot->description = "Cut selected edges and faces into parts";
+	ot->description = "Knife Cut\nCut selected edges and faces into parts";
 	ot->idname = "MESH_OT_knife_cut";
 	
 	ot->invoke = WM_gesture_lines_invoke;
@@ -3326,7 +3326,7 @@ void MESH_OT_separate(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Separate";
-	ot->description = "Separate selected geometry into a new mesh";
+	ot->description = "Separate\nSeparate selected geometry into a new mesh";
 	ot->idname = "MESH_OT_separate";
 	
 	/* api callbacks */
@@ -3389,7 +3389,7 @@ void MESH_OT_fill(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Fill";
 	ot->idname = "MESH_OT_fill";
-	ot->description = "Fill a selected edge loop with faces";
+	ot->description = "Fill\nFill a selected edge loop with faces";
 
 	/* api callbacks */
 	ot->exec = edbm_fill_exec;
@@ -3629,7 +3629,7 @@ void MESH_OT_fill_grid(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Grid Fill";
-	ot->description = "Fill grid from two loops";
+	ot->description = "Grid Fill\nFill grid from two loops";
 	ot->idname = "MESH_OT_fill_grid";
 
 	/* api callbacks */
@@ -3673,7 +3673,7 @@ void MESH_OT_fill_holes(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Fill Holes";
 	ot->idname = "MESH_OT_fill_holes";
-	ot->description = "Fill in holes (boundary edge loops)";
+	ot->description = "Fill Holes\nFill in holes (boundary edge loops)";
 
 	/* api callbacks */
 	ot->exec = edbm_fill_holes_exec;
@@ -3732,7 +3732,7 @@ void MESH_OT_beautify_fill(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Beautify Faces";
 	ot->idname = "MESH_OT_beautify_fill";
-	ot->description = "Rearrange some faces to try to get less degenerated geometry";
+	ot->description = "Beautify Faces\nRearrange some faces to try to get less degenerated geometry";
 
 	/* api callbacks */
 	ot->exec = edbm_beautify_fill_exec;
@@ -3794,7 +3794,7 @@ void MESH_OT_poke(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Poke Faces";
 	ot->idname = "MESH_OT_poke";
-	ot->description = "Split a face into a fan";
+	ot->description = "Poke Faces\nSplit a face into a fan";
 
 	/* api callbacks */
 	ot->exec = edbm_poke_face_exec;
@@ -3841,7 +3841,7 @@ void MESH_OT_quads_convert_to_tris(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Triangulate Faces";
 	ot->idname = "MESH_OT_quads_convert_to_tris";
-	ot->description = "Triangulate selected faces";
+	ot->description = "Triangulate Faces\nTriangulate selected faces";
 
 	/* api callbacks */
 	ot->exec = edbm_quads_convert_to_tris_exec;
@@ -3934,7 +3934,7 @@ void MESH_OT_tris_convert_to_quads(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Tris to Quads";
 	ot->idname = "MESH_OT_tris_convert_to_quads";
-	ot->description = "Join triangles into quads";
+	ot->description = "Tris to Quads\nJoin triangles into quads";
 
 	/* api callbacks */
 	ot->exec = edbm_tris_convert_to_quads_exec;
@@ -3995,7 +3995,7 @@ void MESH_OT_dissolve_verts(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Dissolve Vertices";
-	ot->description = "Dissolve verts, merge edges and faces";
+	ot->description = "Dissolve Vertices\nDissolve verts, merge edges and faces";
 	ot->idname = "MESH_OT_dissolve_verts";
 
 	/* api callbacks */
@@ -4033,7 +4033,7 @@ void MESH_OT_dissolve_edges(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Dissolve Edges";
-	ot->description = "Dissolve edges, merging faces";
+	ot->description = "Dissolve Edges\nDissolve edges, merging faces";
 	ot->idname = "MESH_OT_dissolve_edges";
 
 	/* api callbacks */
@@ -4072,7 +4072,7 @@ void MESH_OT_dissolve_faces(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Dissolve Faces";
-	ot->description = "Dissolve faces";
+	ot->description = "Dissolve Faces\nDissolve faces";
 	ot->idname = "MESH_OT_dissolve_faces";
 
 	/* api callbacks */
@@ -4115,7 +4115,7 @@ void MESH_OT_dissolve_mode(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Dissolve Selection";
-	ot->description = "Dissolve geometry based on the selection mode";
+	ot->description = "Dissolve Selection\nDissolve geometry based on the selection mode";
 	ot->idname = "MESH_OT_dissolve_mode";
 
 	/* api callbacks */
@@ -4189,7 +4189,7 @@ void MESH_OT_dissolve_limited(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Limited Dissolve";
 	ot->idname = "MESH_OT_dissolve_limited";
-	ot->description = "Dissolve selected edges and verts, limited by the angle of surrounding geometry";
+	ot->description = "Limited Dissolve\nDissolve selected edges and verts, limited by the angle of surrounding geometry";
 
 	/* api callbacks */
 	ot->exec = edbm_dissolve_limited_exec;
@@ -4238,7 +4238,7 @@ void MESH_OT_dissolve_degenerate(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Degenerate Dissolve";
 	ot->idname = "MESH_OT_dissolve_degenerate";
-	ot->description = "Dissolve zero area faces and zero length edges";
+	ot->description = "Degenerate Dissolve\nDissolve zero area faces and zero length edges";
 
 	/* api callbacks */
 	ot->exec = edbm_dissolve_degenerate_exec;
@@ -4297,7 +4297,7 @@ void MESH_OT_delete_edgeloop(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Delete Edge Loop";
-	ot->description = "Delete an edge loop by merging the faces on each side";
+	ot->description = "Delete Edge Loop\nDelete an edge loop by merging the faces on each side";
 	ot->idname = "MESH_OT_delete_edgeloop";
 
 	/* api callbacks */
@@ -4338,7 +4338,7 @@ void MESH_OT_split(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Split";
 	ot->idname = "MESH_OT_split";
-	ot->description = "Split off selected geometry from connected unselected geometry";
+	ot->description = "Split\nSplit off selected geometry from connected unselected geometry";
 
 	/* api callbacks */
 	ot->exec = edbm_split_exec;
@@ -4914,7 +4914,7 @@ void MESH_OT_sort_elements(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Sort Mesh Elements";
-	ot->description = "The order of selected vertices/edges/faces is modified, based on a given method";
+	ot->description = "Sort Mesh Elements\nThe order of selected vertices/edges/faces is modified, based on a given method";
 	ot->idname = "MESH_OT_sort_elements";
 
 	/* api callbacks */
@@ -4994,7 +4994,7 @@ void MESH_OT_noise(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Noise";
-	ot->description = "Use vertex coordinate as texture coordinate";
+	ot->description = "Noise\nUse vertex coordinate as texture coordinate";
 	ot->idname = "MESH_OT_noise";
 
 	/* api callbacks */
@@ -5169,7 +5169,7 @@ void MESH_OT_bridge_edge_loops(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Bridge Edge Loops";
-	ot->description = "Make faces between two or more edge loops";
+	ot->description = "Bridge Edge Loops\nMake faces between two or more edge loops";
 	ot->idname = "MESH_OT_bridge_edge_loops";
 	
 	/* api callbacks */
@@ -5230,7 +5230,7 @@ void MESH_OT_wireframe(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Wire Frame";
 	ot->idname = "MESH_OT_wireframe";
-	ot->description = "Create a solid wire-frame from faces";
+	ot->description = "Wire Frame\nCreate a solid wire-frame from faces";
 
 	/* api callbacks */
 	ot->exec = edbm_wireframe_exec;
@@ -5293,7 +5293,7 @@ void MESH_OT_offset_edge_loops(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Offset Edge Loop";
 	ot->idname = "MESH_OT_offset_edge_loops";
-	ot->description = "Create offset edge loop from the current selection";
+	ot->description = "Offset Edge Loop\nCreate offset edge loop from the current selection";
 
 	/* api callbacks */
 	ot->exec = edbm_offset_edgeloop_exec;
@@ -5380,7 +5380,7 @@ void MESH_OT_convex_hull(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Convex Hull";
-	ot->description = "Enclose selected vertices in a convex polyhedron";
+	ot->description = "Convex Hull\nEnclose selected vertices in a convex polyhedron";
 	ot->idname = "MESH_OT_convex_hull";
 
 	/* api callbacks */
@@ -5442,7 +5442,7 @@ void MESH_OT_symmetrize(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Symmetrize";
-	ot->description = "Enforce symmetry (both form and topological) across an axis";
+	ot->description = "Symmetrize\nEnforce symmetry (both form and topological) across an axis";
 	ot->idname = "MESH_OT_symmetrize";
 
 	/* api callbacks */
@@ -5566,7 +5566,7 @@ void MESH_OT_symmetry_snap(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Snap to Symmetry";
-	ot->description = "Snap vertex pairs to their mirrored locations";
+	ot->description = "Snap to Symmetry\nSnap vertex pairs to their mirrored locations";
 	ot->idname = "MESH_OT_symmetry_snap";
 
 	/* api callbacks */
@@ -5637,7 +5637,7 @@ void MESH_OT_mark_freestyle_edge(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Mark Freestyle Edge";
-	ot->description = "(Un)mark selected edges as Freestyle feature edges";
+	ot->description = "Mark Freestyle Edge\n(Un)mark selected edges as Freestyle feature edges";
 	ot->idname = "MESH_OT_mark_freestyle_edge";
 
 	/* api callbacks */
@@ -5701,7 +5701,7 @@ void MESH_OT_mark_freestyle_face(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Mark Freestyle Face";
-	ot->description = "(Un)mark selected faces for exclusion from Freestyle feature edge detection";
+	ot->description = "Mark Freestyle Face\n(Un)mark selected faces for exclusion from Freestyle feature edge detection";
 	ot->idname = "MESH_OT_mark_freestyle_face";
 
 	/* api callbacks */
