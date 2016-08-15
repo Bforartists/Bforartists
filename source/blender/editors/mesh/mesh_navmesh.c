@@ -490,7 +490,7 @@ void MESH_OT_navmesh_make(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Create Navigation Mesh";
-	ot->description = "Create navigation mesh for selected objects";
+	ot->description = "Create Navigation Mesh\nCreate navigation mesh for selected objects";
 	ot->idname = "MESH_OT_navmesh_make";
 
 	/* api callbacks */
@@ -540,7 +540,7 @@ void MESH_OT_navmesh_face_copy(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "NavMesh Copy Face Index";
-	ot->description = "Copy the index from the active face";
+	ot->description = "NavMesh Copy Face Index\nCopy the index from the active face";
 	ot->idname = "MESH_OT_navmesh_face_copy";
 
 	/* api callbacks */
@@ -621,7 +621,7 @@ void MESH_OT_navmesh_face_add(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "NavMesh New Face Index";
-	ot->description = "Add a new index and assign it to selected faces";
+	ot->description = "NavMesh New Face Index\nAdd a new index and assign it to selected faces";
 	ot->idname = "MESH_OT_navmesh_face_add";
 
 	/* api callbacks */
@@ -670,7 +670,7 @@ void MESH_OT_navmesh_reset(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "NavMesh Reset Index Values";
-	ot->description = "Assign a new index to every face";
+	ot->description = "NavMesh Reset Index Values\nAssign a new index to every face";
 	ot->idname = "MESH_OT_navmesh_reset";
 
 	/* api callbacks */
@@ -698,7 +698,7 @@ void MESH_OT_navmesh_clear(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "NavMesh Clear Data";
-	ot->description = "Remove navmesh data from this mesh";
+	ot->description = "NavMesh Clear Data\nRemove navmesh data from this mesh";
 	ot->idname = "MESH_OT_navmesh_clear";
 
 	/* api callbacks */

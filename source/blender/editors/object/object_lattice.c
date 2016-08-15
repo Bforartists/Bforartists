@@ -222,7 +222,7 @@ void LATTICE_OT_select_random(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Select Random";
-	ot->description = "Randomly select UVW control points";
+	ot->description = "Select Random\nRandomly select UVW control points";
 	ot->idname = "LATTICE_OT_select_random";
 
 	/* api callbacks */
@@ -293,7 +293,7 @@ void LATTICE_OT_select_mirror(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Select Mirror";
-	ot->description = "Select mirrored lattice points";
+	ot->description = "Select Mirror\nSelect mirrored lattice points";
 	ot->idname = "LATTICE_OT_select_mirror";
 
 	/* api callbacks */
@@ -383,7 +383,7 @@ void LATTICE_OT_select_more(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Select More";
-	ot->description = "Select vertex directly linked to already selected ones";
+	ot->description = "Select More\nSelect vertex directly linked to already selected ones";
 	ot->idname = "LATTICE_OT_select_more";
 
 	/* api callbacks */
@@ -398,7 +398,7 @@ void LATTICE_OT_select_less(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Select Less";
-	ot->description = "Deselect vertices at the boundary of each selection region";
+	ot->description = "Select Less\nDeselect vertices at the boundary of each selection region";
 	ot->idname = "LATTICE_OT_select_less";
 
 	/* api callbacks */
@@ -485,7 +485,7 @@ void LATTICE_OT_select_all(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "(De)select All";
-	ot->description = "Change selection of all UVW control points";
+	ot->description = "(De)select All\nChange selection of all UVW control points";
 	ot->idname = "LATTICE_OT_select_all";
 	
 	/* api callbacks */
@@ -538,7 +538,7 @@ void LATTICE_OT_select_ungrouped(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select Ungrouped";
 	ot->idname = "LATTICE_OT_select_ungrouped";
-	ot->description = "Select vertices without a group";
+	ot->description = "Select Ungrouped\nSelect vertices without a group";
 
 	/* api callbacks */
 	ot->exec = lattice_select_ungrouped_exec;
@@ -587,7 +587,7 @@ void LATTICE_OT_make_regular(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Make Regular";
-	ot->description = "Set UVW control points a uniform distance apart";
+	ot->description = "Make Regular\nSet UVW control points a uniform distance apart";
 	ot->idname = "LATTICE_OT_make_regular";
 	
 	/* api callbacks */
@@ -813,7 +813,7 @@ void LATTICE_OT_flip(wmOperatorType *ot)
 	
 	/* identifiers */
 	ot->name = "Flip (Distortion Free)";
-	ot->description = "Mirror all control points without inverting the lattice deform";
+	ot->description = "Flip (Distortion Free)\nMirror all control points without inverting the lattice deform";
 	ot->idname = "LATTICE_OT_flip";
 	
 	/* api callbacks */
