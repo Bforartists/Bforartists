@@ -168,7 +168,7 @@ void OBJECT_OT_select_by_type(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Select By Type";
-	ot->description = "Select all visible objects that are of a type";
+	ot->description = "Select By Type\nSelect all visible objects that are of a type";
 	ot->idname = "OBJECT_OT_select_by_type";
 	
 	/* api callbacks */
@@ -492,7 +492,7 @@ void OBJECT_OT_select_linked(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Select Linked";
-	ot->description = "Select all visible objects that are linked";
+	ot->description = "Select Linked\nSelect all visible objects that are linked";
 	ot->idname = "OBJECT_OT_select_linked";
 	
 	/* api callbacks */
@@ -912,7 +912,7 @@ void OBJECT_OT_select_grouped(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Select Grouped";
-	ot->description = "Select all visible objects grouped by various properties";
+	ot->description = "Select Grouped\nSelect all visible objects grouped by various properties";
 	ot->idname = "OBJECT_OT_select_grouped";
 	
 	/* api callbacks */
@@ -990,7 +990,7 @@ void OBJECT_OT_select_by_layer(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Select by Layer";
-	ot->description = "Select all visible objects on a layer";
+	ot->description = "Select by Layer\nSelect all visible objects on a layer";
 	ot->idname = "OBJECT_OT_select_by_layer";
 	
 	/* api callbacks */
@@ -1059,7 +1059,7 @@ void OBJECT_OT_select_all(wmOperatorType *ot)
 	
 	/* identifiers */
 	ot->name = "(De)select All";
-	ot->description = "Change selection of all visible objects in scene";
+	ot->description = "(De)select All\nChange selection of all visible objects in scene";
 	ot->idname = "OBJECT_OT_select_all";
 	
 	/* api callbacks */
@@ -1107,7 +1107,7 @@ void OBJECT_OT_select_same_group(wmOperatorType *ot)
 	
 	/* identifiers */
 	ot->name = "Select Same Group";
-	ot->description = "Select object in the same group";
+	ot->description = "Select Same Group\nSelect object in the same group";
 	ot->idname = "OBJECT_OT_select_same_group";
 	
 	/* api callbacks */
@@ -1161,7 +1161,7 @@ void OBJECT_OT_select_mirror(wmOperatorType *ot)
 	
 	/* identifiers */
 	ot->name = "Select Mirror";
-	ot->description = "Select the Mirror objects of the selected object eg. L.sword -> R.sword";
+	ot->description = "Select Mirror\nSelect the Mirror objects of the selected object eg. L.sword -> R.sword";
 	ot->idname = "OBJECT_OT_select_mirror";
 	
 	/* api callbacks */
@@ -1201,7 +1201,7 @@ void OBJECT_OT_select_random(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Select Random";
-	ot->description = "Set select on random visible objects";
+	ot->description = "Select Random\nSet select on random visible objects";
 	ot->idname = "OBJECT_OT_select_random";
 	
 	/* api callbacks */

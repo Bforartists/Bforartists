@@ -128,7 +128,7 @@ void TRANSFORM_OT_vertex_random(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Randomize";
-	ot->description = "Randomize vertices";
+	ot->description = "Randomize\nRandomize vertices";
 	ot->idname = "TRANSFORM_OT_vertex_random";
 
 	/* api callbacks */
