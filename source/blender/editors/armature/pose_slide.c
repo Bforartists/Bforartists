@@ -825,7 +825,7 @@ void POSE_OT_push(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Push Pose";
 	ot->idname = "POSE_OT_push";
-	ot->description = "Exaggerate the current pose";
+	ot->description = "Push Pose\nExaggerate the current pose";
 	
 	/* callbacks */
 	ot->exec = pose_slide_push_exec;
@@ -882,7 +882,7 @@ void POSE_OT_relax(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Relax Pose";
 	ot->idname = "POSE_OT_relax";
-	ot->description = "Make the current pose more similar to its surrounding ones";
+	ot->description = "Relax Pose\nMake the current pose more similar to its surrounding ones";
 	
 	/* callbacks */
 	ot->exec = pose_slide_relax_exec;
@@ -939,7 +939,7 @@ void POSE_OT_breakdown(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Pose Breakdowner";
 	ot->idname = "POSE_OT_breakdown";
-	ot->description = "Create a suitable breakdown pose on the current frame";
+	ot->description = "Pose Breakdowner\nCreate a suitable breakdown pose on the current frame";
 	
 	/* callbacks */
 	ot->exec = pose_slide_breakdown_exec;
@@ -1325,7 +1325,7 @@ void POSE_OT_propagate(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Propagate Pose";
 	ot->idname = "POSE_OT_propagate";
-	ot->description = "Copy selected aspects of the current pose to subsequent poses already keyframed";
+	ot->description = "Propagate Pose\nCopy selected aspects of the current pose to subsequent poses already keyframed";
 	
 	/* callbacks */
 	ot->exec = pose_propagate_exec;
