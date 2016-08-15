@@ -88,7 +88,7 @@ void MASK_OT_shape_key_insert(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Insert Shape Key";
-	ot->description = "";
+	ot->description = "Insert Shape Key";
 	ot->idname = "MASK_OT_shape_key_insert";
 
 	/* api callbacks */
@@ -137,7 +137,7 @@ void MASK_OT_shape_key_clear(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Clear Shape Key";
-	ot->description = "";
+	ot->description = "Clear Shape Key";
 	ot->idname = "MASK_OT_shape_key_clear";
 
 	/* api callbacks */
@@ -229,7 +229,7 @@ void MASK_OT_shape_key_feather_reset(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Feather Reset Animation";
-	ot->description = "Reset feather weights on all selected points animation values";
+	ot->description = "Feather Reset Animation\nReset feather weights on all selected points animation values";
 	ot->idname = "MASK_OT_shape_key_feather_reset";
 
 	/* api callbacks */
@@ -399,7 +399,7 @@ void MASK_OT_shape_key_rekey(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Re-Key Points of Selected Shapes";
-	ot->description = "Recalculate animation data on selected points for frames selected in the dopesheet";
+	ot->description = "Re-Key Points of Selected Shapes\nRecalculate animation data on selected points for frames selected in the dopesheet";
 	ot->idname = "MASK_OT_shape_key_rekey";
 
 	/* api callbacks */

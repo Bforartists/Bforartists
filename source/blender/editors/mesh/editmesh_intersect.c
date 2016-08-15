@@ -155,7 +155,7 @@ void MESH_OT_intersect(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Intersect";
-	ot->description = "Cut an intersection into faces";
+	ot->description = "Intersect\nCut an intersection into faces";
 	ot->idname = "MESH_OT_intersect";
 
 	/* api callbacks */
@@ -385,7 +385,7 @@ void MESH_OT_face_split_by_edges(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Split by Edges";
-	ot->description = "Split faces by loose edges";
+	ot->description = "Split by Edges\nSplit faces by loose edges";
 	ot->idname = "MESH_OT_face_split_by_edges";
 
 	/* api callbacks */

@@ -3345,7 +3345,7 @@ void MESH_OT_knife_tool(wmOperatorType *ot)
 	/* description */
 	ot->name = "Knife Topology Tool";
 	ot->idname = "MESH_OT_knife_tool";
-	ot->description = "Cut new topology";
+	ot->description = "Knife Topology Tool\nCut new topology";
 
 	/* callbacks */
 	ot->invoke = knifetool_invoke;

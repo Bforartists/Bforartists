@@ -227,7 +227,7 @@ void MASK_OT_select_all(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "(De)select All";
-	ot->description = "Change selection of all curve points";
+	ot->description = "(De)select All\nChange selection of all curve points";
 	ot->idname = "MASK_OT_select_all";
 
 	/* api callbacks */
@@ -375,7 +375,7 @@ void MASK_OT_select(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Select";
-	ot->description = "Select spline points";
+	ot->description = "Select\nSelect spline points";
 	ot->idname = "MASK_OT_select";
 
 	/* api callbacks */
@@ -467,7 +467,7 @@ void MASK_OT_select_border(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Border Select";
-	ot->description = "Select curve points using border selection";
+	ot->description = "Border Select\nSelect curve points using border selection";
 	ot->idname = "MASK_OT_select_border";
 
 	/* api callbacks */
@@ -566,7 +566,7 @@ void MASK_OT_select_lasso(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Lasso Select";
-	ot->description = "Select curve points using lasso selection";
+	ot->description = "Lasso Select\nSelect curve points using lasso selection";
 	ot->idname = "MASK_OT_select_lasso";
 
 	/* api callbacks */
@@ -668,7 +668,7 @@ void MASK_OT_select_circle(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Circle Select";
-	ot->description = "Select curve points using circle selection";
+	ot->description = "Circle Select\nSelect curve points using circle selection";
 	ot->idname = "MASK_OT_select_circle";
 
 	/* api callbacks */
@@ -729,7 +729,7 @@ void MASK_OT_select_linked_pick(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select Linked";
 	ot->idname = "MASK_OT_select_linked_pick";
-	ot->description = "(De)select all points linked to the curve under the mouse cursor";
+	ot->description = "Select Linked\n(De)select all points linked to the curve under the mouse cursor";
 
 	/* api callbacks */
 	ot->invoke = mask_select_linked_pick_invoke;
@@ -780,7 +780,7 @@ void MASK_OT_select_linked(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select Linked All";
 	ot->idname = "MASK_OT_select_linked";
-	ot->description = "Select all curve points linked to already selected ones";
+	ot->description = "Select Linked All\nSelect all curve points linked to already selected ones";
 
 	/* api callbacks */
 	ot->exec = mask_select_linked_exec;
@@ -877,7 +877,7 @@ void MASK_OT_select_more(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select More";
 	ot->idname = "MASK_OT_select_more";
-	ot->description = "Select more spline points connected to initial selection";
+	ot->description = "Select More\nSelect more spline points connected to initial selection";
 
 	/* api callbacks */
 	ot->exec = mask_select_more_exec;
@@ -897,7 +897,7 @@ void MASK_OT_select_less(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select Less";
 	ot->idname = "MASK_OT_select_less";
-	ot->description = "Deselect spline points at the boundary of each selection region";
+	ot->description = "Select Less\nDeselect spline points at the boundary of each selection region";
 
 	/* api callbacks */
 	ot->exec = mask_select_less_exec;
