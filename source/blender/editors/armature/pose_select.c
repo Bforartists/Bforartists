@@ -332,7 +332,7 @@ void POSE_OT_select_linked(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select Connected";
 	ot->idname = "POSE_OT_select_linked";
-	ot->description = "Select bones related to selected ones by parent/child relationships";
+	ot->description = "Select Connected\nSelect bones related to selected ones by parent/child relationships";
 	
 	/* api callbacks */
 	/* leave 'exec' unset */
@@ -383,7 +383,7 @@ void POSE_OT_select_all(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "(De)select All";
 	ot->idname = "POSE_OT_select_all";
-	ot->description = "Toggle selection status of all bones";
+	ot->description = "(De)select All\nToggle selection status of all bones";
 	
 	/* api callbacks */
 	ot->exec = pose_de_select_all_exec;
@@ -435,7 +435,7 @@ void POSE_OT_select_parent(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select Parent Bone";
 	ot->idname = "POSE_OT_select_parent";
-	ot->description = "Select bones that are parents of the currently selected bones";
+	ot->description = "Select Parent Bone\nSelect bones that are parents of the currently selected bones";
 
 	/* api callbacks */
 	ot->exec = pose_select_parent_exec;
@@ -502,7 +502,7 @@ void POSE_OT_select_constraint_target(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select Constraint Target";
 	ot->idname = "POSE_OT_select_constraint_target";
-	ot->description = "Select bones used as targets for the currently selected bones";
+	ot->description = "Select Constraint Target\nSelect bones used as targets for the currently selected bones";
 	
 	/* api callbacks */
 	ot->exec = pose_select_constraint_target_exec;
@@ -602,7 +602,7 @@ void POSE_OT_select_hierarchy(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select Hierarchy";
 	ot->idname = "POSE_OT_select_hierarchy";
-	ot->description = "Select immediate parent/children of selected bones";
+	ot->description = "Select Hierarchy\nSelect immediate parent/children of selected bones";
 	
 	/* api callbacks */
 	ot->exec = pose_select_hierarchy_exec;
@@ -851,7 +851,7 @@ void POSE_OT_select_grouped(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Select Grouped";
-	ot->description = "Select all visible bones grouped by similar properties";
+	ot->description = "Select Grouped\nSelect all visible bones grouped by similar properties";
 	ot->idname = "POSE_OT_select_grouped";
 	
 	/* api callbacks */
@@ -937,7 +937,7 @@ void POSE_OT_select_mirror(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Flip Active/Selected Bone";
 	ot->idname = "POSE_OT_select_mirror";
-	ot->description = "Mirror the bone selection";
+	ot->description = "Flip Active/Selected Bone\nMirror the bone selection";
 	
 	/* api callbacks */
 	ot->exec = pose_select_mirror_exec;
