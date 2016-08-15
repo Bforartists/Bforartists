@@ -315,7 +315,7 @@ void MESH_OT_extrude_repeat(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Extrude Repeat Mesh";
-	ot->description = "Extrude selected vertices, edges or faces repeatedly";
+	ot->description = "Extrude Repeat Mesh\nExtrude selected vertices, edges or faces repeatedly";
 	ot->idname = "MESH_OT_extrude_repeat";
 	
 	/* api callbacks */
@@ -399,7 +399,7 @@ void MESH_OT_extrude_region(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Extrude Region";
 	ot->idname = "MESH_OT_extrude_region";
-	ot->description = "Extrude region of faces";
+	ot->description = "Extrude Region\nExtrude region of faces";
 	
 	/* api callbacks */
 	//ot->invoke = mesh_extrude_region_invoke;
@@ -429,7 +429,7 @@ void MESH_OT_extrude_verts_indiv(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Extrude Only Vertices";
 	ot->idname = "MESH_OT_extrude_verts_indiv";
-	ot->description = "Extrude individual vertices only";
+	ot->description = "Extrude Only Vertices\nExtrude individual vertices only";
 	
 	/* api callbacks */
 	ot->exec = edbm_extrude_verts_exec;
@@ -459,7 +459,7 @@ void MESH_OT_extrude_edges_indiv(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Extrude Only Edges";
 	ot->idname = "MESH_OT_extrude_edges_indiv";
-	ot->description = "Extrude individual edges only";
+	ot->description = "Extrude Only Edges\nExtrude individual edges only";
 	
 	/* api callbacks */
 	ot->exec = edbm_extrude_edges_exec;
@@ -489,7 +489,7 @@ void MESH_OT_extrude_faces_indiv(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Extrude Individual Faces";
 	ot->idname = "MESH_OT_extrude_faces_indiv";
-	ot->description = "Extrude individual faces only";
+	ot->description = "Extrude Individual Faces\nExtrude individual faces only";
 	
 	/* api callbacks */
 	ot->exec = edbm_extrude_faces_exec;
@@ -669,7 +669,7 @@ void MESH_OT_dupli_extrude_cursor(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Duplicate or Extrude to Cursor";
 	ot->idname = "MESH_OT_dupli_extrude_cursor";
-	ot->description = "Duplicate and extrude selected vertices, edges or faces towards the mouse cursor";
+	ot->description = "Duplicate or Extrude to Cursor\nDuplicate and extrude selected vertices, edges or faces towards the mouse cursor";
 	
 	/* api callbacks */
 	ot->invoke = edbm_dupli_extrude_cursor_invoke;
@@ -744,7 +744,7 @@ void MESH_OT_spin(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Spin";
-	ot->description = "Extrude selected vertices in a circle around the cursor in indicated viewport";
+	ot->description = "Spin\nExtrude selected vertices in a circle around the cursor in indicated viewport";
 	ot->idname = "MESH_OT_spin";
 
 	/* api callbacks */
@@ -869,7 +869,7 @@ void MESH_OT_screw(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Screw";
-	ot->description = "Extrude selected vertices in screw-shaped rotation around the cursor in indicated viewport";
+	ot->description = "Screw\nExtrude selected vertices in screw-shaped rotation around the cursor in indicated viewport";
 	ot->idname = "MESH_OT_screw";
 
 	/* api callbacks */
