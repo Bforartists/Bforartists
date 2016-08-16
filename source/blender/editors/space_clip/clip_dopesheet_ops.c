@@ -140,7 +140,7 @@ void CLIP_OT_dopesheet_select_channel(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Select Channel";
-	ot->description = "Select movie tracking channel";
+	ot->description = "Select Channel\nSelect movie tracking channel";
 	ot->idname = "CLIP_OT_dopesheet_select_channel";
 
 	/* api callbacks */
@@ -198,7 +198,7 @@ void CLIP_OT_dopesheet_view_all(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "View All";
-	ot->description = "Reset viewable area to show full keyframe range";
+	ot->description = "View All\nReset viewable area to show full keyframe range";
 	ot->idname = "CLIP_OT_dopesheet_view_all";
 
 	/* api callbacks */

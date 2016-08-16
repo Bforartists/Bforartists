@@ -381,7 +381,7 @@ void CONSOLE_OT_move(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Move Cursor";
-	ot->description = "Move cursor position";
+	ot->description = "Move Cursor\nMove cursor position";
 	ot->idname = "CONSOLE_OT_move";
 	
 	/* api callbacks */
@@ -464,7 +464,7 @@ void CONSOLE_OT_insert(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Insert";
-	ot->description = "Insert text at cursor position";
+	ot->description = "Insert\nInsert text at cursor position";
 	ot->idname = "CONSOLE_OT_insert";
 	
 	/* api callbacks */
@@ -513,7 +513,7 @@ void CONSOLE_OT_indent(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Indent";
-	ot->description = "Add 4 spaces at line beginning";
+	ot->description = "Indent\nAdd 4 spaces at line beginning";
 	ot->idname = "CONSOLE_OT_indent";
 
 	/* api callbacks */
@@ -562,7 +562,7 @@ void CONSOLE_OT_unindent(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Unindent";
-	ot->description = "Delete 4 spaces from line beginning";
+	ot->description = "Unindent\nDelete 4 spaces from line beginning";
 	ot->idname = "CONSOLE_OT_unindent";
 
 	/* api callbacks */
@@ -649,7 +649,7 @@ void CONSOLE_OT_delete(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Delete";
-	ot->description = "Delete text by cursor position";
+	ot->description = "Delete\nDelete text by cursor position";
 	ot->idname = "CONSOLE_OT_delete";
 	
 	/* api callbacks */
@@ -687,7 +687,7 @@ void CONSOLE_OT_clear_line(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Clear Line";
-	ot->description = "Clear the line and store in history";
+	ot->description = "Clear Line\nClear the line and store in history";
 	ot->idname = "CONSOLE_OT_clear_line";
 
 	/* api callbacks */
@@ -727,7 +727,7 @@ void CONSOLE_OT_clear(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Clear";
-	ot->description = "Clear text by type";
+	ot->description = "Clear\nClear text by type";
 	ot->idname = "CONSOLE_OT_clear";
 	
 	/* api callbacks */
@@ -795,7 +795,7 @@ void CONSOLE_OT_history_cycle(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "History Cycle";
-	ot->description = "Cycle through history";
+	ot->description = "History Cycle\nCycle through history";
 	ot->idname = "CONSOLE_OT_history_cycle";
 	
 	/* api callbacks */
@@ -850,7 +850,7 @@ void CONSOLE_OT_history_append(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "History Append";
-	ot->description = "Append history at cursor position";
+	ot->description = "History Append\nAppend history at cursor position";
 	ot->idname = "CONSOLE_OT_history_append";
 	
 	/* api callbacks */
@@ -905,7 +905,7 @@ void CONSOLE_OT_scrollback_append(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Scrollback Append";
-	ot->description = "Append scrollback text by type";
+	ot->description = "Scrollback Append\nAppend scrollback text by type";
 	ot->idname = "CONSOLE_OT_scrollback_append";
 	
 	/* api callbacks */
@@ -981,7 +981,7 @@ void CONSOLE_OT_copy(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Copy to Clipboard";
-	ot->description = "Copy selected text to clipboard";
+	ot->description = "Copy to Clipboard\nCopy selected text to clipboard";
 	ot->idname = "CONSOLE_OT_copy";
 
 	/* api callbacks */
@@ -1035,7 +1035,7 @@ void CONSOLE_OT_paste(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Paste from Clipboard";
-	ot->description = "Paste text from clipboard";
+	ot->description = "Paste from Clipboard\nPaste text from clipboard";
 	ot->idname = "CONSOLE_OT_paste";
 
 	/* api callbacks */
@@ -1160,7 +1160,7 @@ void CONSOLE_OT_select_set(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Set Selection";
 	ot->idname = "CONSOLE_OT_select_set";
-	ot->description = "Set the console selection";
+	ot->description = "Set Selection\nSet the console selection";
 
 	/* api callbacks */
 	ot->invoke = console_modal_select_invoke;
@@ -1215,7 +1215,7 @@ void CONSOLE_OT_select_word(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Select Word";
-	ot->description = "Select word at cursor position";
+	ot->description = "Select Word\nSelect word at cursor position";
 	ot->idname = "CONSOLE_OT_select_word";
 
 	/* api callbacks */

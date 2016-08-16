@@ -1021,7 +1021,7 @@ void PAINT_OT_weight_sample(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Weight Paint Sample Weight";
 	ot->idname = "PAINT_OT_weight_sample";
-	ot->description = "Use the mouse to sample a weight in the 3D view";
+	ot->description = "Weight Paint Sample Weight\nUse the mouse to sample a weight in the 3D view";
 
 	/* api callbacks */
 	ot->invoke = weight_sample_invoke;
@@ -1141,7 +1141,7 @@ void PAINT_OT_weight_sample_group(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Weight Paint Sample Group";
 	ot->idname = "PAINT_OT_weight_sample_group";
-	ot->description = "Select one of the vertex groups available under current mouse position";
+	ot->description = "Weight Paint Sample Group\nSelect one of the vertex groups available under current mouse position";
 
 	/* api callbacks */
 	ot->exec = weight_sample_group_exec;
@@ -1994,7 +1994,7 @@ void PAINT_OT_weight_paint_toggle(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Weight Paint Mode";
 	ot->idname = "PAINT_OT_weight_paint_toggle";
-	ot->description = "Toggle weight paint mode in 3D view";
+	ot->description = "Weight Paint Mode\nToggle weight paint mode in 3D view";
 	
 	/* api callbacks */
 	ot->exec = wpaint_mode_toggle_exec;
@@ -2469,7 +2469,7 @@ void PAINT_OT_weight_paint(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Weight Paint";
 	ot->idname = "PAINT_OT_weight_paint";
-	ot->description = "Paint a stroke in the current vertex group's weights";
+	ot->description = "Weight Paint\nPaint a stroke in the current vertex group's weights";
 	
 	/* api callbacks */
 	ot->invoke = wpaint_invoke;
@@ -2510,7 +2510,7 @@ void PAINT_OT_weight_set(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Set Weight";
 	ot->idname = "PAINT_OT_weight_set";
-	ot->description = "Fill the active vertex group with the current paint weight";
+	ot->description = "Set Weight\nFill the active vertex group with the current paint weight";
 
 	/* api callbacks */
 	ot->exec = weight_paint_set_exec;
@@ -2581,7 +2581,7 @@ void PAINT_OT_vertex_paint_toggle(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Vertex Paint Mode";
 	ot->idname = "PAINT_OT_vertex_paint_toggle";
-	ot->description = "Toggle the vertex paint mode in 3D view";
+	ot->description = "Vertex Paint Mode\nToggle the vertex paint mode in 3D view";
 	
 	/* api callbacks */
 	ot->exec = vpaint_mode_toggle_exec;
@@ -2911,7 +2911,7 @@ void PAINT_OT_vertex_paint(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Vertex Paint";
 	ot->idname = "PAINT_OT_vertex_paint";
-	ot->description = "Paint a stroke in the active vertex color layer";
+	ot->description = "Vertex Paint\nPaint a stroke in the active vertex color layer";
 	
 	/* api callbacks */
 	ot->invoke = vpaint_invoke;
@@ -2961,7 +2961,7 @@ void PAINT_OT_weight_from_bones(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Weight from Bones";
 	ot->idname = "PAINT_OT_weight_from_bones";
-	ot->description = "Set the weights of the groups matching the attached armature's selected bones, "
+	ot->description = "Weight from Bones\nSet the weights of the groups matching the attached armature's selected bones, "
 	                  "using the distance between the vertices and the bones";
 	
 	/* api callbacks */
@@ -3273,7 +3273,7 @@ void PAINT_OT_weight_gradient(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Weight Gradient";
 	ot->idname = "PAINT_OT_weight_gradient";
-	ot->description = "Draw a line to apply a weight gradient to selected vertices";
+	ot->description = "Weight Gradient\nDraw a line to apply a weight gradient to selected vertices";
 
 	/* api callbacks */
 	ot->invoke = paint_weight_gradient_invoke;

@@ -262,7 +262,7 @@ void PAINTCURVE_OT_new(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Add New Paint Curve";
-	ot->description = "Add new paint curve";
+	ot->description = "Add New Paint Curve\nAdd new paint curve";
 	ot->idname = "PAINTCURVE_OT_new";
 
 	/* api callbacks */
@@ -358,7 +358,7 @@ void PAINTCURVE_OT_add_point(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Add New Paint Curve Point";
-	ot->description = ot->name;
+	ot->description = "Add New Paint Curve Point\nAdd New Paint Curve Point";
 	ot->idname = "PAINTCURVE_OT_add_point";
 
 	/* api callbacks */
@@ -440,7 +440,7 @@ void PAINTCURVE_OT_delete_point(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Remove Paint Curve Point";
-	ot->description = ot->name;
+	ot->description = "Remove Paint Curve Point\nRemove Paint Curve Point";
 	ot->idname = "PAINTCURVE_OT_delete_point";
 
 	/* api callbacks */
@@ -577,7 +577,7 @@ void PAINTCURVE_OT_select(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Select Paint Curve Point";
-	ot->description = "Select a paint curve point";
+	ot->description = "Select Paint Curve Point\nSelect a paint curve point";
 	ot->idname = "PAINTCURVE_OT_select";
 
 	/* api callbacks */
@@ -715,7 +715,7 @@ void PAINTCURVE_OT_slide(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Slide Paint Curve Point";
-	ot->description = "Select and slide paint curve point";
+	ot->description = "Slide Paint Curve Point\nSelect and slide paint curve point";
 	ot->idname = "PAINTCURVE_OT_slide";
 
 	/* api callbacks */
@@ -761,7 +761,7 @@ void PAINTCURVE_OT_draw(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Draw Curve";
-	ot->description = "Draw curve";
+	ot->description = "Draw Curve\nDraw a curve";
 	ot->idname = "PAINTCURVE_OT_draw";
 
 	/* api callbacks */
@@ -803,7 +803,7 @@ void PAINTCURVE_OT_cursor(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Place Cursor";
-	ot->description = "Place cursor";
+	ot->description = "Place Cursor\nPlace cursor";
 	ot->idname = "PAINTCURVE_OT_cursor";
 
 	/* api callbacks */
