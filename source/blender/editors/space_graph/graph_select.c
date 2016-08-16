@@ -191,7 +191,7 @@ void GRAPH_OT_select_all_toggle(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select All";
 	ot->idname = "GRAPH_OT_select_all_toggle";
-	ot->description = "Toggle selection of all keyframes";
+	ot->description = "Select All\nToggle selection of all keyframes";
 	
 	/* api callbacks */
 	ot->exec = graphkeys_deselectall_exec;
@@ -386,7 +386,7 @@ void GRAPH_OT_select_border(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Border Select";
 	ot->idname = "GRAPH_OT_select_border";
-	ot->description = "Select all keyframes within the specified region";
+	ot->description = "Border Select\nSelect all keyframes within the specified region";
 	
 	/* api callbacks */
 	ot->invoke = WM_border_select_invoke;
@@ -473,7 +473,7 @@ void GRAPH_OT_select_lasso(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Lasso Select";
-	ot->description = "Select keyframe points using lasso selection";
+	ot->description = "Lasso Select\nSelect keyframe points using lasso selection";
 	ot->idname = "GRAPH_OT_select_lasso";
 
 	/* api callbacks */
@@ -549,7 +549,7 @@ static int graph_circle_select_exec(bContext *C, wmOperator *op)
 void GRAPH_OT_select_circle(wmOperatorType *ot)
 {
 	ot->name = "Circle Select";
-	ot->description = "Select keyframe points using circle selection";
+	ot->description = "Circle Select\nSelect keyframe points using circle selection";
 	ot->idname = "GRAPH_OT_select_circle";
 	
 	ot->invoke = WM_gesture_circle_invoke;
@@ -737,7 +737,7 @@ void GRAPH_OT_select_column(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select All";
 	ot->idname = "GRAPH_OT_select_column";
-	ot->description = "Select all keyframes on the specified frame(s)";
+	ot->description = "Select All\nSelect all keyframes on the specified frame(s)";
 	
 	/* api callbacks */
 	ot->exec = graphkeys_columnselect_exec;
@@ -795,7 +795,7 @@ void GRAPH_OT_select_linked(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select Linked";
 	ot->idname = "GRAPH_OT_select_linked";
-	ot->description = "Select keyframes occurring in the same F-Curves as selected ones";
+	ot->description = "Select Linked\nSelect keyframes occurring in the same F-Curves as selected ones";
 	
 	/* api callbacks */
 	ot->exec = graphkeys_select_linked_exec;
@@ -873,7 +873,7 @@ void GRAPH_OT_select_more(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select More";
 	ot->idname = "GRAPH_OT_select_more";
-	ot->description = "Select keyframes beside already selected ones";
+	ot->description = "Select More\nSelect keyframes beside already selected ones";
 	
 	/* api callbacks */
 	ot->exec = graphkeys_select_more_exec;
@@ -907,7 +907,7 @@ void GRAPH_OT_select_less(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select Less";
 	ot->idname = "GRAPH_OT_select_less";
-	ot->description = "Deselect keyframes on ends of selection islands";
+	ot->description = "Select Less\nDeselect keyframes on ends of selection islands";
 	
 	/* api callbacks */
 	ot->exec = graphkeys_select_less_exec;
@@ -1050,7 +1050,7 @@ void GRAPH_OT_select_leftright(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select Left/Right";
 	ot->idname = "GRAPH_OT_select_leftright";
-	ot->description = "Select keyframes to the left or the right of the current frame";
+	ot->description = "Select Left/Right\nSelect keyframes to the left or the right of the current frame";
 	
 	/* api callbacks  */
 	ot->invoke = graphkeys_select_leftright_invoke;
