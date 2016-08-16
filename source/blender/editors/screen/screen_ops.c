@@ -827,7 +827,7 @@ static void SCREEN_OT_actionzone(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Handle Area Action Zones";
-	ot->description = "Handle Area Action Zones\nHandle area action zones for mouse actions/gestures";
+	ot->description = "Handle Area Action Zones\nHandle Area Action Zones\nHandle area action zones for mouse actions/gestures";
 	ot->idname = "SCREEN_OT_actionzone";
 	
 	ot->invoke = actionzone_invoke;

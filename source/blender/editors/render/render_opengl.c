@@ -949,7 +949,7 @@ void RENDER_OT_opengl(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "OpenGL Render";
-	ot->description = "OpenGL render active viewport";
+	ot->description = "OpenGL Render\nOpenGL render active viewport";
 	ot->idname = "RENDER_OT_opengl";
 
 	/* api callbacks */

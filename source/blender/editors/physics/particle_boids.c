@@ -84,7 +84,7 @@ void BOID_OT_rule_add(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Add Boid Rule";
-	ot->description = "Add a boid rule to the current boid state";
+	ot->description = "Add Boid Rule\nAdd a boid rule to the current boid state";
 	ot->idname = "BOID_OT_rule_add";
 	
 	/* api callbacks */
@@ -132,7 +132,7 @@ void BOID_OT_rule_del(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Remove Boid Rule";
 	ot->idname = "BOID_OT_rule_del";
-	ot->description = "Delete current boid rule";
+	ot->description = "Remove Boid Rule\nDelete current boid rule";
 	
 	/* api callbacks */
 	ot->exec = rule_del_exec;
@@ -169,7 +169,7 @@ static int rule_move_up_exec(bContext *C, wmOperator *UNUSED(op))
 void BOID_OT_rule_move_up(wmOperatorType *ot)
 {
 	ot->name = "Move Up Boid Rule";
-	ot->description = "Move boid rule up in the list";
+	ot->description = "Move Up Boid Rule\nMove boid rule up in the list";
 	ot->idname = "BOID_OT_rule_move_up";
 
 	ot->exec = rule_move_up_exec;
@@ -205,7 +205,7 @@ static int rule_move_down_exec(bContext *C, wmOperator *UNUSED(op))
 void BOID_OT_rule_move_down(wmOperatorType *ot)
 {
 	ot->name = "Move Down Boid Rule";
-	ot->description = "Move boid rule down in the list";
+	ot->description = "Move Down Boid Rule\nMove boid rule down in the list";
 	ot->idname = "BOID_OT_rule_move_down";
 
 	ot->exec = rule_move_down_exec;
@@ -240,7 +240,7 @@ void BOID_OT_state_add(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Add Boid State";
-	ot->description = "Add a boid state to the particle system";
+	ot->description = "Add Boid State\nAdd a boid state to the particle system";
 	ot->idname = "BOID_OT_state_add";
 	
 	/* api callbacks */
@@ -288,7 +288,7 @@ void BOID_OT_state_del(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Remove Boid State";
 	ot->idname = "BOID_OT_state_del";
-	ot->description = "Delete current boid state";
+	ot->description = "Remove Boid State\nDelete current boid state";
 	
 	/* api callbacks */
 	ot->exec = state_del_exec;
@@ -324,7 +324,7 @@ static int state_move_up_exec(bContext *C, wmOperator *UNUSED(op))
 void BOID_OT_state_move_up(wmOperatorType *ot)
 {
 	ot->name = "Move Up Boid State";
-	ot->description = "Move boid state up in the list";
+	ot->description = "Move Up Boid State\nMove boid state up in the list";
 	ot->idname = "BOID_OT_state_move_up";
 
 	ot->exec = state_move_up_exec;
@@ -360,7 +360,7 @@ static int state_move_down_exec(bContext *C, wmOperator *UNUSED(op))
 void BOID_OT_state_move_down(wmOperatorType *ot)
 {
 	ot->name = "Move Down Boid State";
-	ot->description = "Move boid state down in the list";
+	ot->description = "Move Down Boid State\nMove boid state down in the list";
 	ot->idname = "BOID_OT_state_move_down";
 
 	ot->exec = state_move_down_exec;

@@ -122,7 +122,7 @@ void OBJECT_OT_material_slot_add(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Add Material Slot";
 	ot->idname = "OBJECT_OT_material_slot_add";
-	ot->description = "Add a new material slot";
+	ot->description = "Add Material Slo\nAdd a new material slot";
 	
 	/* api callbacks */
 	ot->exec = material_slot_add_exec;
@@ -166,7 +166,7 @@ void OBJECT_OT_material_slot_remove(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Remove Material Slot";
 	ot->idname = "OBJECT_OT_material_slot_remove";
-	ot->description = "Remove the selected material slot";
+	ot->description = "Remove Material Slot\nRemove the selected material slot";
 	
 	/* api callbacks */
 	ot->exec = material_slot_remove_exec;
@@ -230,7 +230,7 @@ void OBJECT_OT_material_slot_assign(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Assign Material Slot";
 	ot->idname = "OBJECT_OT_material_slot_assign";
-	ot->description = "Assign active material slot to selection";
+	ot->description = "Assign Material Slot\nAssign active material slot to selection";
 	
 	/* api callbacks */
 	ot->exec = material_slot_assign_exec;
@@ -314,7 +314,7 @@ void OBJECT_OT_material_slot_select(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select Material Slot";
 	ot->idname = "OBJECT_OT_material_slot_select";
-	ot->description = "Select by active material slot";
+	ot->description = "Select Material Slot\nSelect by active material slot";
 	
 	/* api callbacks */
 	ot->exec = material_slot_select_exec;
@@ -333,7 +333,7 @@ void OBJECT_OT_material_slot_deselect(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Deselect Material Slot";
 	ot->idname = "OBJECT_OT_material_slot_deselect";
-	ot->description = "Deselect by active material slot";
+	ot->description = "Deselect Material Slot\nDeselect by active material slot";
 	
 	/* api callbacks */
 	ot->exec = material_slot_deselect_exec;
@@ -375,7 +375,7 @@ void OBJECT_OT_material_slot_copy(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Copy Material to Others";
 	ot->idname = "OBJECT_OT_material_slot_copy";
-	ot->description = "Copies materials to other selected objects";
+	ot->description = "Copy Material to Others\nCopies materials to other selected objects";
 
 	/* api callbacks */
 	ot->exec = material_slot_copy_exec;
@@ -441,7 +441,7 @@ void OBJECT_OT_material_slot_move(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Move Material";
 	ot->idname = "OBJECT_OT_material_slot_move";
-	ot->description = "Move the active material up/down in the list";
+	ot->description = "Move Material\nMove the active material up/down in the list";
 
 	/* api callbacks */
 	ot->exec = material_slot_move_exec;
@@ -498,7 +498,7 @@ void MATERIAL_OT_new(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "New Material";
 	ot->idname = "MATERIAL_OT_new";
-	ot->description = "Add a new material";
+	ot->description = "New Material\nAdd a new material";
 	
 	/* api callbacks */
 	ot->exec = new_material_exec;
@@ -555,7 +555,7 @@ void TEXTURE_OT_new(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "New Texture";
 	ot->idname = "TEXTURE_OT_new";
-	ot->description = "Add a new texture";
+	ot->description = "New Texture\nAdd a new texture";
 	
 	/* api callbacks */
 	ot->exec = new_texture_exec;
@@ -610,7 +610,7 @@ void WORLD_OT_new(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "New World";
 	ot->idname = "WORLD_OT_new";
-	ot->description = "Add a new world";
+	ot->description = "New World\nAdd a new world";
 	
 	/* api callbacks */
 	ot->exec = new_world_exec;
@@ -639,7 +639,7 @@ void SCENE_OT_render_layer_add(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Add Render Layer";
 	ot->idname = "SCENE_OT_render_layer_add";
-	ot->description = "Add a render layer";
+	ot->description = "Add Render Layer\nAdd a render layer";
 	
 	/* api callbacks */
 	ot->exec = render_layer_add_exec;
@@ -667,7 +667,7 @@ void SCENE_OT_render_layer_remove(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Remove Render Layer";
 	ot->idname = "SCENE_OT_render_layer_remove";
-	ot->description = "Remove the selected render layer";
+	ot->description = "Remove Render Layer\nRemove the selected render layer";
 	
 	/* api callbacks */
 	ot->exec = render_layer_remove_exec;
@@ -703,7 +703,7 @@ void SCENE_OT_render_view_add(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Add Render View";
 	ot->idname = "SCENE_OT_render_view_add";
-	ot->description = "Add a render view";
+	ot->description = "Add Render View\nAdd a render view";
 
 	/* api callbacks */
 	ot->exec = render_view_add_exec;
@@ -730,7 +730,7 @@ void SCENE_OT_render_view_remove(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Remove Render View";
 	ot->idname = "SCENE_OT_render_view_remove";
-	ot->description = "Remove the selected render view";
+	ot->description = "Remove Render View\nRemove the selected render view";
 
 	/* api callbacks */
 	ot->exec = render_view_remove_exec;
@@ -781,7 +781,7 @@ void SCENE_OT_freestyle_module_add(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Add Freestyle Module";
 	ot->idname = "SCENE_OT_freestyle_module_add";
-	ot->description = "Add a style module into the list of modules";
+	ot->description = "Add Freestyle Module\nAdd a style module into the list of modules";
 
 	/* api callbacks */
 	ot->exec = freestyle_module_add_exec;
@@ -810,7 +810,7 @@ void SCENE_OT_freestyle_module_remove(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Remove Freestyle Module";
 	ot->idname = "SCENE_OT_freestyle_module_remove";
-	ot->description = "Remove the style module from the stack";
+	ot->description = "Remove Freestyle Module\nRemove the style module from the stack";
 
 	/* api callbacks */
 	ot->poll = freestyle_active_module_poll;
@@ -851,7 +851,7 @@ void SCENE_OT_freestyle_module_move(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Move Freestyle Module";
 	ot->idname = "SCENE_OT_freestyle_module_move";
-	ot->description = "Change the position of the style module within in the list of style modules";
+	ot->description = "Move Freestyle Module\nChange the position of the style module within in the list of style modules";
 
 	/* api callbacks */
 	ot->poll = freestyle_active_module_poll;
@@ -883,7 +883,7 @@ void SCENE_OT_freestyle_lineset_add(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Add Line Set";
 	ot->idname = "SCENE_OT_freestyle_lineset_add";
-	ot->description = "Add a line set into the list of line sets";
+	ot->description = "Add Line Set\nAdd a line set into the list of line sets";
 
 	/* api callbacks */
 	ot->exec = freestyle_lineset_add_exec;
@@ -919,7 +919,7 @@ void SCENE_OT_freestyle_lineset_copy(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Copy Line Set";
 	ot->idname = "SCENE_OT_freestyle_lineset_copy";
-	ot->description = "Copy the active line set to a buffer";
+	ot->description = "Copy Line Set\nCopy the active line set to a buffer";
 
 	/* api callbacks */
 	ot->exec = freestyle_lineset_copy_exec;
@@ -947,7 +947,7 @@ void SCENE_OT_freestyle_lineset_paste(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Paste Line Set";
 	ot->idname = "SCENE_OT_freestyle_lineset_paste";
-	ot->description = "Paste the buffer content to the active line set";
+	ot->description = "Paste Line Set\nPaste the buffer content to the active line set";
 
 	/* api callbacks */
 	ot->exec = freestyle_lineset_paste_exec;
@@ -975,7 +975,7 @@ void SCENE_OT_freestyle_lineset_remove(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Remove Line Set";
 	ot->idname = "SCENE_OT_freestyle_lineset_remove";
-	ot->description = "Remove the active line set from the list of line sets";
+	ot->description = "Remove Line Set\nRemove the active line set from the list of line sets";
 
 	/* api callbacks */
 	ot->exec = freestyle_lineset_remove_exec;
@@ -1014,7 +1014,7 @@ void SCENE_OT_freestyle_lineset_move(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Move Line Set";
 	ot->idname = "SCENE_OT_freestyle_lineset_move";
-	ot->description = "Change the position of the active line set within the list of line sets";
+	ot->description = "Move Line Set\nChange the position of the active line set within the list of line sets";
 
 	/* api callbacks */
 	ot->exec = freestyle_lineset_move_exec;
@@ -1056,7 +1056,7 @@ void SCENE_OT_freestyle_linestyle_new(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "New Line Style";
 	ot->idname = "SCENE_OT_freestyle_linestyle_new";
-	ot->description = "Create a new line style, reusable by multiple line sets";
+	ot->description = "New Line Style\nCreate a new line style, reusable by multiple line sets";
 
 	/* api callbacks */
 	ot->exec = freestyle_linestyle_new_exec;
@@ -1092,7 +1092,7 @@ void SCENE_OT_freestyle_color_modifier_add(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Add Line Color Modifier";
 	ot->idname = "SCENE_OT_freestyle_color_modifier_add";
-	ot->description = "Add a line color modifier to the line style associated with the active lineset";
+	ot->description = "Add Line Color Modifier\nAdd a line color modifier to the line style associated with the active lineset";
 
 	/* api callbacks */
 	ot->invoke = WM_menu_invoke;
@@ -1132,7 +1132,7 @@ void SCENE_OT_freestyle_alpha_modifier_add(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Add Alpha Transparency Modifier";
 	ot->idname = "SCENE_OT_freestyle_alpha_modifier_add";
-	ot->description = "Add an alpha transparency modifier to the line style associated with the active lineset";
+	ot->description = "Add Alpha Transparency Modifier\nAdd an alpha transparency modifier to the line style associated with the active lineset";
 
 	/* api callbacks */
 	ot->invoke = WM_menu_invoke;
@@ -1172,7 +1172,7 @@ void SCENE_OT_freestyle_thickness_modifier_add(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Add Line Thickness Modifier";
 	ot->idname = "SCENE_OT_freestyle_thickness_modifier_add";
-	ot->description = "Add a line thickness modifier to the line style associated with the active lineset";
+	ot->description = "Add Line Thickness Modifier\nAdd a line thickness modifier to the line style associated with the active lineset";
 
 	/* api callbacks */
 	ot->invoke = WM_menu_invoke;
@@ -1212,7 +1212,7 @@ void SCENE_OT_freestyle_geometry_modifier_add(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Add Stroke Geometry Modifier";
 	ot->idname = "SCENE_OT_freestyle_geometry_modifier_add";
-	ot->description = "Add a stroke geometry modifier to the line style associated with the active lineset";
+	ot->description = "Add Stroke Geometry Modifier\nAdd a stroke geometry modifier to the line style associated with the active lineset";
 
 	/* api callbacks */
 	ot->invoke = WM_menu_invoke;
@@ -1279,7 +1279,7 @@ void SCENE_OT_freestyle_modifier_remove(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Remove Modifier";
 	ot->idname = "SCENE_OT_freestyle_modifier_remove";
-	ot->description = "Remove the modifier from the list of modifiers";
+	ot->description = "Remove Modifier\nRemove the modifier from the list of modifiers";
 
 	/* api callbacks */
 	ot->exec = freestyle_modifier_remove_exec;
@@ -1329,7 +1329,7 @@ void SCENE_OT_freestyle_modifier_copy(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Copy Modifier";
 	ot->idname = "SCENE_OT_freestyle_modifier_copy";
-	ot->description = "Duplicate the modifier within the list of modifiers";
+	ot->description = "Copy Modifier\nDuplicate the modifier within the list of modifiers";
 
 	/* api callbacks */
 	ot->exec = freestyle_modifier_copy_exec;
@@ -1386,7 +1386,7 @@ void SCENE_OT_freestyle_modifier_move(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Move Modifier";
 	ot->idname = "SCENE_OT_freestyle_modifier_move";
-	ot->description = "Move the modifier within the list of modifiers";
+	ot->description = "Move Modifier\nMove the modifier within the list of modifiers";
 
 	/* api callbacks */
 	ot->exec = freestyle_modifier_move_exec;
@@ -1420,7 +1420,7 @@ void SCENE_OT_freestyle_stroke_material_create(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Create Freestyle Stroke Material";
 	ot->idname = "SCENE_OT_freestyle_stroke_material_create";
-	ot->description = "Create Freestyle stroke material for testing";
+	ot->description = "Create Freestyle Stroke Material\nCreate Freestyle stroke material for testing";
 
 	/* api callbacks */
 	ot->exec = freestyle_stroke_material_create_exec;
@@ -1506,7 +1506,7 @@ void TEXTURE_OT_slot_move(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Move Texture Slot";
 	ot->idname = "TEXTURE_OT_slot_move";
-	ot->description = "Move texture slots up and down";
+	ot->description = "Move Texture Slot\nMove texture slots up and down";
 
 	/* api callbacks */
 	ot->exec = texture_slot_move_exec;
@@ -1601,7 +1601,7 @@ void TEXTURE_OT_envmap_save(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Save Environment Map";
 	ot->idname = "TEXTURE_OT_envmap_save";
-	ot->description = "Save the current generated Environment map to an image file";
+	ot->description = "Save Environment Map\nSave the current generated Environment map to an image file";
 	
 	/* api callbacks */
 	ot->exec = envmap_save_exec;
@@ -1653,7 +1653,7 @@ void TEXTURE_OT_envmap_clear(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Clear Environment Map";
 	ot->idname = "TEXTURE_OT_envmap_clear";
-	ot->description = "Discard the environment map and free it from memory";
+	ot->description = "Clear Environment Map\nDiscard the environment map and free it from memory";
 	
 	/* api callbacks */
 	ot->exec = envmap_clear_exec;
@@ -1682,7 +1682,7 @@ void TEXTURE_OT_envmap_clear_all(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Clear All Environment Maps";
 	ot->idname = "TEXTURE_OT_envmap_clear_all";
-	ot->description = "Discard all environment maps in the .blend file and free them from memory";
+	ot->description = "Clear All Environment Maps\nDiscard all environment maps in the .blend file and free them from memory";
 	
 	/* api callbacks */
 	ot->exec = envmap_clear_all_exec;
@@ -1712,7 +1712,7 @@ void MATERIAL_OT_copy(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Copy Material";
 	ot->idname = "MATERIAL_OT_copy";
-	ot->description = "Copy the material settings and nodes";
+	ot->description = "Copy Material\nCopy the material settings and nodes";
 
 	/* api callbacks */
 	ot->exec = copy_material_exec;
@@ -1740,7 +1740,7 @@ void MATERIAL_OT_paste(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Paste Material";
 	ot->idname = "MATERIAL_OT_paste";
-	ot->description = "Paste the material settings and nodes";
+	ot->description = "Paste Material\nPaste the material settings and nodes";
 
 	/* api callbacks */
 	ot->exec = paste_material_exec;
@@ -1863,7 +1863,7 @@ void TEXTURE_OT_slot_copy(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Copy Texture Slot Settings";
 	ot->idname = "TEXTURE_OT_slot_copy";
-	ot->description = "Copy the material texture settings and nodes";
+	ot->description = "Copy Texture Slot Settings\nCopy the material texture settings and nodes";
 
 	/* api callbacks */
 	ot->exec = copy_mtex_exec;
@@ -1911,7 +1911,7 @@ void TEXTURE_OT_slot_paste(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Paste Texture Slot Settings";
 	ot->idname = "TEXTURE_OT_slot_paste";
-	ot->description = "Copy the texture settings and nodes";
+	ot->description = "Paste Texture Slot Settings\nCopy the texture settings and nodes";
 
 	/* api callbacks */
 	ot->exec = paste_mtex_exec;

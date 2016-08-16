@@ -91,7 +91,7 @@ void RIGIDBODY_OT_world_add(wmOperatorType *ot)
 	/* identifiers */
 	ot->idname = "RIGIDBODY_OT_world_add";
 	ot->name = "Add Rigid Body World";
-	ot->description = "Add Rigid Body simulation world to the current scene";
+	ot->description = "Add Rigid Body World\nAdd Rigid Body simulation world to the current scene";
 
 	/* callbacks */
 	ot->exec = rigidbody_world_add_exec;
@@ -126,7 +126,7 @@ void RIGIDBODY_OT_world_remove(wmOperatorType *ot)
 	/* identifiers */
 	ot->idname = "RIGIDBODY_OT_world_remove";
 	ot->name = "Remove Rigid Body World";
-	ot->description = "Remove Rigid Body simulation world from the current scene";
+	ot->description = "Remove Rigid Body World\nRemove Rigid Body simulation world from the current scene";
 
 	/* callbacks */
 	ot->exec = rigidbody_world_remove_exec;
@@ -184,7 +184,7 @@ void RIGIDBODY_OT_world_export(wmOperatorType *ot)
 	/* identifiers */
 	ot->idname = "RIGIDBODY_OT_world_export";
 	ot->name = "Export Rigid Body World";
-	ot->description = "Export Rigid Body world to simulator's own fileformat (i.e. '.bullet' for Bullet Physics)";
+	ot->description = "Export Rigid Body World\nExport Rigid Body world to simulator's own fileformat (i.e. '.bullet' for Bullet Physics)";
 
 	/* callbacks */
 	ot->invoke = rigidbody_world_export_invoke;
