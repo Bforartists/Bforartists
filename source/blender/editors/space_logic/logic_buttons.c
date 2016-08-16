@@ -63,7 +63,7 @@ static int logic_properties_toggle_exec(bContext *C, wmOperator *UNUSED(op))
 void LOGIC_OT_properties(wmOperatorType *ot)
 {
 	ot->name = "Properties";
-	ot->description = "Toggle display properties panel";
+	ot->description = "Properties\nToggle display properties panel";
 	ot->idname = "LOGIC_OT_properties";
 	
 	ot->exec = logic_properties_toggle_exec;
@@ -146,7 +146,7 @@ void LOGIC_OT_links_cut(wmOperatorType *ot)
 	
 	ot->name = "Cut Links";
 	ot->idname = "LOGIC_OT_links_cut";
-	ot->description = "Remove logic brick connections";
+	ot->description = "Cut Links\nRemove logic brick connections";
 	
 	ot->invoke = WM_gesture_lines_invoke;
 	ot->modal = WM_gesture_lines_modal;

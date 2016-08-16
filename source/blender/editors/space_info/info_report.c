@@ -98,7 +98,7 @@ void INFO_OT_report_replay(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Replay Operators";
-	ot->description = "Replay selected reports";
+	ot->description = "Replay Operators\nReplay selected reports";
 	ot->idname = "INFO_OT_report_replay";
 
 	/* api callbacks */
@@ -148,7 +148,7 @@ void INFO_OT_select_pick(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Select Report";
-	ot->description = "Select reports by index";
+	ot->description = "Select Report\nSelect reports by index";
 	ot->idname = "INFO_OT_select_pick";
 
 	/* api callbacks */
@@ -202,7 +202,7 @@ void INFO_OT_select_all_toggle(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "(De)select All";
-	ot->description = "Select or deselect all reports";
+	ot->description = "(De)select All\nSelect or deselect all reports";
 	ot->idname = "INFO_OT_select_all_toggle";
 
 	/* api callbacks */
@@ -294,7 +294,7 @@ void INFO_OT_select_border(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Border Select";
-	ot->description = "Toggle border selection";
+	ot->description = "Border Select\nToggle border selection";
 	ot->idname = "INFO_OT_select_border";
 
 	/* api callbacks */
@@ -345,7 +345,7 @@ void INFO_OT_report_delete(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Delete Reports";
-	ot->description = "Delete selected reports";
+	ot->description = "Delete Reports\nDelete selected reports";
 	ot->idname = "INFO_OT_report_delete";
 
 	/* api callbacks */
@@ -390,7 +390,7 @@ void INFO_OT_report_copy(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Copy Reports to Clipboard";
-	ot->description = "Copy selected reports to Clipboard";
+	ot->description = "Copy Reports to Clipboard\nCopy selected reports to Clipboard";
 	ot->idname = "INFO_OT_report_copy";
 
 	/* api callbacks */

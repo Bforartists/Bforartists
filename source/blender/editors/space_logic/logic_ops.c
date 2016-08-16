@@ -258,7 +258,7 @@ static int sensor_remove_invoke(bContext *C, wmOperator *op, const wmEvent *UNUS
 static void LOGIC_OT_sensor_remove(wmOperatorType *ot)
 {
 	ot->name = "Remove Sensor";
-	ot->description = "Remove a sensor from the active object";
+	ot->description = "Remove Sensor\nRemove a sensor from the active object";
 	ot->idname = "LOGIC_OT_sensor_remove";
 	
 	ot->invoke = sensor_remove_invoke;
@@ -314,7 +314,7 @@ static void LOGIC_OT_sensor_add(wmOperatorType *ot)
 	
 	/* identifiers */
 	ot->name = "Add Sensor";
-	ot->description = "Add a sensor to the active object";
+	ot->description = "Add Sensor\nAdd a sensor to the active object";
 	ot->idname = "LOGIC_OT_sensor_add";
 	
 	/* api callbacks */
@@ -364,7 +364,7 @@ static int controller_remove_invoke(bContext *C, wmOperator *op, const wmEvent *
 static void LOGIC_OT_controller_remove(wmOperatorType *ot)
 {
 	ot->name = "Remove Controller";
-	ot->description = "Remove a controller from the active object";
+	ot->description = "Remove Controller\nRemove a controller from the active object";
 	ot->idname = "LOGIC_OT_controller_remove";
 	
 	ot->invoke = controller_remove_invoke;
@@ -435,7 +435,7 @@ static void LOGIC_OT_controller_add(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Add Controller";
-	ot->description = "Add a controller to the active object";
+	ot->description = "Add Controller\nAdd a controller to the active object";
 	ot->idname = "LOGIC_OT_controller_add";
 	
 	/* api callbacks */
@@ -484,7 +484,7 @@ static int actuator_remove_invoke(bContext *C, wmOperator *op, const wmEvent *UN
 static void LOGIC_OT_actuator_remove(wmOperatorType *ot)
 {
 	ot->name = "Remove Actuator";
-	ot->description = "Remove an actuator from the active object";
+	ot->description = "Remove Actuator\nRemove an actuator from the active object";
 	ot->idname = "LOGIC_OT_actuator_remove";
 	
 	ot->invoke = actuator_remove_invoke;
@@ -540,7 +540,7 @@ static void LOGIC_OT_actuator_add(wmOperatorType *ot)
 	
 	/* identifiers */
 	ot->name = "Add Actuator";
-	ot->description = "Add an actuator to the active object";
+	ot->description = "Add Actuator\nAdd an actuator to the active object";
 	ot->idname = "LOGIC_OT_actuator_add";
 	
 	/* api callbacks */
@@ -597,7 +597,7 @@ static void LOGIC_OT_sensor_move(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Move Sensor";
-	ot->description = "Move Sensor";
+	ot->description = "Move Sensor\nMove Sensor";
 	ot->idname = "LOGIC_OT_sensor_move";
 	
 	/* api callbacks */
@@ -642,7 +642,7 @@ static void LOGIC_OT_controller_move(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Move Controller";
-	ot->description = "Move Controller";
+	ot->description = "Move Controller\nMove Controller";
 	ot->idname = "LOGIC_OT_controller_move";
 	
 	/* api callbacks */
@@ -687,7 +687,7 @@ static void LOGIC_OT_actuator_move(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Move Actuator";
-	ot->description = "Move Actuator";
+	ot->description = "Move Actuator\nMove Actuator";
 	ot->idname = "LOGIC_OT_actuator_move";
 	
 	/* api callbacks */
@@ -725,7 +725,7 @@ static void LOGIC_OT_view_all(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "View All";
 	ot->idname = "LOGIC_OT_view_all";
-	ot->description = "Resize view so you can see all logic bricks";
+	ot->description = "View All\nResize view so you can see all logic bricks";
 	
 	/* api callbacks */
 	ot->exec = logic_view_all_exec;
