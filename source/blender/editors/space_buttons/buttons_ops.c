@@ -84,7 +84,7 @@ void BUTTONS_OT_toolbox(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Toolbox";
-	ot->description = "Display button panel toolbox";
+	ot->description = "Toolbox\nDisplay button panel toolbox";
 	ot->idname = "BUTTONS_OT_toolbox";
 	
 	/* api callbacks */
@@ -240,7 +240,7 @@ void BUTTONS_OT_file_browse(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Accept";
-	ot->description = "Open a file browser, Hold Shift to open the file, Alt to browse containing directory";
+	ot->description = "Accept\nOpen a file browser, Hold Shift to open the file, Alt to browse containing directory";
 	ot->idname = "BUTTONS_OT_file_browse";
 	
 	/* api callbacks */
@@ -261,7 +261,7 @@ void BUTTONS_OT_directory_browse(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Accept";
-	ot->description = "Open a directory browser, Hold Shift to open the file, Alt to browse containing directory";
+	ot->description = "Accept\nOpen a directory browser, Hold Shift to open the file, Alt to browse containing directory";
 	ot->idname = "BUTTONS_OT_directory_browse";
 
 	/* api callbacks */

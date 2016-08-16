@@ -5364,7 +5364,7 @@ void PAINT_OT_project_image(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Project Image";
 	ot->idname = "PAINT_OT_project_image";
-	ot->description = "Project an edited render from the active camera back onto the object";
+	ot->description = "Project Image\nProject an edited render from the active camera back onto the object";
 
 	/* api callbacks */
 	ot->invoke = WM_enum_search_invoke;
@@ -5447,7 +5447,7 @@ void PAINT_OT_image_from_view(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Image from View";
 	ot->idname = "PAINT_OT_image_from_view";
-	ot->description = "Make an image from the current 3D view for re-projection";
+	ot->description = "Image from View\nMake an image from the current 3D view for re-projection";
 
 	/* api callbacks */
 	ot->exec = texture_paint_image_from_view_exec;
@@ -5743,7 +5743,7 @@ void PAINT_OT_add_texture_paint_slot(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Add Texture Paint Slot";
-	ot->description = "Add a texture paint slot";
+	ot->description = "Add Texture Paint Slot\nAdd a texture paint slot";
 	ot->idname = "PAINT_OT_add_texture_paint_slot";
 
 	/* api callbacks */
@@ -5813,7 +5813,7 @@ void PAINT_OT_delete_texture_paint_slot(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Delete Texture Paint Slot";
-	ot->description = "Delete selected texture paint slot";
+	ot->description = "Delete Texture Paint Slot\nDelete selected texture paint slot";
 	ot->idname = "PAINT_OT_delete_texture_paint_slot";
 
 	/* api callbacks */
@@ -5875,7 +5875,7 @@ void PAINT_OT_add_simple_uvs(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Add simple UVs";
-	ot->description = "Add cube map uvs on mesh";
+	ot->description = "Add simple UVs\nAdd cube map uvs on mesh";
 	ot->idname = "PAINT_OT_add_simple_uvs";
 
 	/* api callbacks */

@@ -914,7 +914,7 @@ void SCULPT_OT_uv_sculpt_stroke(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Sculpt UVs";
-	ot->description = "Sculpt UVs using a brush";
+	ot->description = "Sculpt UVs\nSculpt UVs using a brush";
 	ot->idname = "SCULPT_OT_uv_sculpt_stroke";
 
 	/* api callbacks */

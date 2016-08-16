@@ -280,7 +280,7 @@ void ACTION_OT_new(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "New Action";
 	ot->idname = "ACTION_OT_new";
-	ot->description = "Create new action";
+	ot->description = "New Action\nCreate new action";
 	
 	/* api callbacks */
 	ot->exec = action_new_exec;
@@ -353,7 +353,7 @@ void ACTION_OT_push_down(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Push Down Action";
 	ot->idname = "ACTION_OT_push_down";
-	ot->description = "Push action down on to the NLA stack as a new strip";
+	ot->description = "Push Down Action\nPush action down on to the NLA stack as a new strip";
 	
 	/* callbacks */
 	ot->exec = action_pushdown_exec;
@@ -408,7 +408,7 @@ void ACTION_OT_stash(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Stash Action";
 	ot->idname = "ACTION_OT_stash";
-	ot->description = "Store this action in the NLA stack as a non-contributing strip for later use";
+	ot->description = "Stash Action\nStore this action in the NLA stack as a non-contributing strip for later use";
 	
 	/* callbacks */
 	ot->exec = action_stash_exec;
@@ -510,7 +510,7 @@ void ACTION_OT_stash_and_create(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Stash Action";
 	ot->idname = "ACTION_OT_stash_and_create";
-	ot->description = "Store this action in the NLA stack as a non-contributing strip for later use, and create a new action";
+	ot->description = "Stash Action\nStore this action in the NLA stack as a non-contributing strip for later use, and create a new action";
 	
 	/* callbacks */
 	ot->exec = action_stash_create_exec;
@@ -664,7 +664,7 @@ void ACTION_OT_unlink(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Unlink Action";
 	ot->idname = "ACTION_OT_unlink";
-	ot->description = "Unlink this action from the active action slot (and/or exit Tweak Mode)";
+	ot->description = "Unlink Action\nUnlink this action from the active action slot (and/or exit Tweak Mode)";
 	
 	/* callbacks */
 	ot->invoke = action_unlink_invoke;
@@ -853,7 +853,7 @@ void ACTION_OT_layer_next(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Next Layer";
 	ot->idname = "ACTION_OT_layer_next";
-	ot->description = "Switch to editing action in animation layer above the current action in the NLA Stack";
+	ot->description = "Next Layer\nSwitch to editing action in animation layer above the current action in the NLA Stack";
 	
 	/* callbacks */
 	ot->exec = action_layer_next_exec;
@@ -950,7 +950,7 @@ void ACTION_OT_layer_prev(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Previous Layer";
 	ot->idname = "ACTION_OT_layer_prev";
-	ot->description = "Switch to editing action in animation layer below the current action in the NLA Stack";
+	ot->description = "Previous Layer\nSwitch to editing action in animation layer below the current action in the NLA Stack";
 	
 	/* callbacks */
 	ot->exec = action_layer_prev_exec;

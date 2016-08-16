@@ -172,7 +172,7 @@ void ACTION_OT_select_all_toggle(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select All";
 	ot->idname = "ACTION_OT_select_all_toggle";
-	ot->description = "Toggle selection of all keyframes";
+	ot->description = "Select All\nToggle selection of all keyframes";
 	
 	/* api callbacks */
 	ot->exec = actkeys_deselectall_exec;
@@ -354,7 +354,7 @@ void ACTION_OT_select_border(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Border Select";
 	ot->idname = "ACTION_OT_select_border";
-	ot->description = "Select all keyframes within the specified region";
+	ot->description = "Border Select\nSelect all keyframes within the specified region";
 	
 	/* api callbacks */
 	ot->invoke = WM_border_select_invoke;
@@ -567,7 +567,7 @@ void ACTION_OT_select_column(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select All";
 	ot->idname = "ACTION_OT_select_column";
-	ot->description = "Select all keyframes on the specified frame(s)";
+	ot->description = "Select All\nSelect all keyframes on the specified frame(s)";
 	
 	/* api callbacks */
 	ot->exec = actkeys_columnselect_exec;
@@ -625,7 +625,7 @@ void ACTION_OT_select_linked(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select Linked";
 	ot->idname = "ACTION_OT_select_linked";
-	ot->description = "Select keyframes occurring in the same F-Curves as selected ones";
+	ot->description = "Select Linked\nSelect keyframes occurring in the same F-Curves as selected ones";
 	
 	/* api callbacks */
 	ot->exec = actkeys_select_linked_exec;
@@ -702,7 +702,7 @@ void ACTION_OT_select_more(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select More";
 	ot->idname = "ACTION_OT_select_more";
-	ot->description = "Select keyframes beside already selected ones";
+	ot->description = "Select More\nSelect keyframes beside already selected ones";
 	
 	/* api callbacks */
 	ot->exec = actkeys_select_more_exec;
@@ -736,7 +736,7 @@ void ACTION_OT_select_less(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select Less";
 	ot->idname = "ACTION_OT_select_less";
-	ot->description = "Deselect keyframes on ends of selection islands";
+	ot->description = "Select Less\nDeselect keyframes on ends of selection islands";
 	
 	/* api callbacks */
 	ot->exec = actkeys_select_less_exec;
@@ -907,7 +907,7 @@ void ACTION_OT_select_leftright(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select Left/Right";
 	ot->idname = "ACTION_OT_select_leftright";
-	ot->description = "Select keyframes to the left or the right of the current frame";
+	ot->description = "Select Left/Right\nSelect keyframes to the left or the right of the current frame";
 	
 	/* api callbacks  */
 	ot->invoke = actkeys_select_leftright_invoke;
@@ -1323,7 +1323,7 @@ void ACTION_OT_clickselect(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Mouse Select Keys";
 	ot->idname = "ACTION_OT_clickselect";
-	ot->description = "Select keyframes by clicking on them";
+	ot->description = "Mouse Select Keys\nSelect keyframes by clicking on them";
 	
 	/* callbacks */
 	ot->invoke = actkeys_clickselect_invoke;

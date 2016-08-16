@@ -173,7 +173,7 @@ static void SOUND_OT_open(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Open Sound";
-	ot->description = "Load a sound file";
+	ot->description = "Open Sound\nLoad a sound file";
 	ot->idname = "SOUND_OT_open";
 
 	/* api callbacks */
@@ -195,7 +195,7 @@ static void SOUND_OT_open_mono(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Open Sound Mono";
-	ot->description = "Load a sound file as mono";
+	ot->description = "Open Sound Mono\nLoad a sound file as mono";
 	ot->idname = "SOUND_OT_open_mono";
 
 	/* api callbacks */
@@ -264,7 +264,7 @@ static void SOUND_OT_update_animation_flags(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Update Animation";
-	ot->description = "Update animation flags";
+	ot->description = "Update Animation\nUpdate animation flags";
 	ot->idname = "SOUND_OT_update_animation_flags";
 
 	/* api callbacks */
@@ -300,7 +300,7 @@ static void SOUND_OT_bake_animation(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Update Animation Cache";
-	ot->description = "Update the audio animation cache";
+	ot->description = "Update Animation Cache\nUpdate the audio animation cache";
 	ot->idname = "SOUND_OT_bake_animation";
 
 	/* api callbacks */
@@ -637,7 +637,7 @@ static void SOUND_OT_mixdown(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Mixdown";
-	ot->description = "Mixes the scene's audio to a sound file";
+	ot->description = "Mixdown\nMixes the scene's audio to a sound file";
 	ot->idname = "SOUND_OT_mixdown";
 
 	/* api callbacks */
@@ -701,7 +701,7 @@ static void SOUND_OT_pack(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Pack Sound";
-	ot->description = "Pack the sound into the current blend file";
+	ot->description = "Pack Sound\nPack the sound into the current blend file";
 	ot->idname = "SOUND_OT_pack";
 
 	/* api callbacks */
@@ -766,7 +766,7 @@ static void SOUND_OT_unpack(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Unpack Sound";
-	ot->description = "Unpack the sound to the samples filename";
+	ot->description = "Unpack Sound\nUnpack the sound to the samples filename";
 	ot->idname = "SOUND_OT_unpack";
 
 	/* api callbacks */
