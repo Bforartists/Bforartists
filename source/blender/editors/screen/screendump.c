@@ -275,7 +275,7 @@ void SCREEN_OT_screenshot(wmOperatorType *ot)
 {
 	ot->name = "Save Screenshot"; /* weak: opname starting with 'save' makes filewindow give save-over */
 	ot->idname = "SCREEN_OT_screenshot";
-	ot->description = "Capture a picture of the active area or whole Blender window";
+	ot->description = "Save Screenshot\nCapture a picture of the active area or whole Blender window";
 	
 	ot->invoke = screenshot_invoke;
 	ot->check = screenshot_check;
@@ -531,7 +531,7 @@ void SCREEN_OT_screencast(wmOperatorType *ot)
 {
 	ot->name = "Make Screencast";
 	ot->idname = "SCREEN_OT_screencast";
-	ot->description = "Capture a video of the active area or whole Blender window";
+	ot->description = "Make Screencast\nCapture a video of the active area or whole Blender window";
 	
 	ot->invoke = WM_operator_confirm;
 	ot->exec = screencast_exec;

@@ -1434,7 +1434,7 @@ void PARTICLE_OT_select_all(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "(De)select All";
 	ot->idname = "PARTICLE_OT_select_all";
-	ot->description = "(De)select all particles' keys";
+	ot->description = "(De)select All\n(De)select all particles' keys";
 	
 	/* api callbacks */
 	ot->exec = pe_select_all_exec;
@@ -1532,7 +1532,7 @@ void PARTICLE_OT_select_roots(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select Roots";
 	ot->idname = "PARTICLE_OT_select_roots";
-	ot->description = "Select roots of all visible particles";
+	ot->description = "Select Roots\nSelect roots of all visible particles";
 	
 	/* api callbacks */
 	ot->exec = select_roots_exec;
@@ -1597,7 +1597,7 @@ void PARTICLE_OT_select_tips(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select Tips";
 	ot->idname = "PARTICLE_OT_select_tips";
-	ot->description = "Select tips of all visible particles";
+	ot->description = "Select Tips\nSelect tips of all visible particles";
 
 	/* api callbacks */
 	ot->exec = select_tips_exec;
@@ -1674,7 +1674,7 @@ void PARTICLE_OT_select_random(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select Random";
 	ot->idname = "PARTICLE_OT_select_random";
-	ot->description = "Select a randomly distributed set of hair or points";
+	ot->description = "Select Random\nSelect a randomly distributed set of hair or points";
 
 	/* api callbacks */
 	ot->exec = select_random_exec;
@@ -1726,7 +1726,7 @@ void PARTICLE_OT_select_linked(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select Linked";
 	ot->idname = "PARTICLE_OT_select_linked";
-	ot->description = "Select nearest particle from mouse pointer";
+	ot->description = "Select Linked\nSelect nearest particle from mouse pointer";
 	
 	/* api callbacks */
 	ot->exec = select_linked_exec;
@@ -1931,7 +1931,7 @@ void PARTICLE_OT_hide(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Hide Selected";
 	ot->idname = "PARTICLE_OT_hide";
-	ot->description = "Hide selected particles";
+	ot->description = "Hide Selected\nHide selected particles";
 	
 	/* api callbacks */
 	ot->exec = hide_exec;
@@ -1974,7 +1974,7 @@ void PARTICLE_OT_reveal(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Reveal";
 	ot->idname = "PARTICLE_OT_reveal";
-	ot->description = "Show hidden particles";
+	ot->description = "Reveal\nShow hidden particles";
 	
 	/* api callbacks */
 	ot->exec = reveal_exec;
@@ -2033,7 +2033,7 @@ void PARTICLE_OT_select_less(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select Less";
 	ot->idname = "PARTICLE_OT_select_less";
-	ot->description = "Deselect boundary selected keys of each particle";
+	ot->description = "Select Less\nDeselect boundary selected keys of each particle";
 	
 	/* api callbacks */
 	ot->exec = select_less_exec;
@@ -2095,7 +2095,7 @@ void PARTICLE_OT_select_more(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select More";
 	ot->idname = "PARTICLE_OT_select_more";
-	ot->description = "Select keys linked to boundary selected keys of each particle";
+	ot->description = "Select More\nSelect keys linked to boundary selected keys of each particle";
 	
 	/* api callbacks */
 	ot->exec = select_more_exec;
@@ -2192,7 +2192,7 @@ void PARTICLE_OT_rekey(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Rekey";
 	ot->idname = "PARTICLE_OT_rekey";
-	ot->description = "Change the number of keys of selected particles (root and tip keys included)";
+	ot->description = "Rekey\nChange the number of keys of selected particles (root and tip keys included)";
 	
 	/* api callbacks */
 	ot->exec = rekey_exec;
@@ -2523,7 +2523,7 @@ void PARTICLE_OT_subdivide(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Subdivide";
 	ot->idname = "PARTICLE_OT_subdivide";
-	ot->description = "Subdivide selected particles segments (adds keys)";
+	ot->description = "Subdivide\nSubdivide selected particles segments (adds keys)";
 	
 	/* api callbacks */
 	ot->exec = subdivide_exec;
@@ -2612,7 +2612,7 @@ void PARTICLE_OT_remove_doubles(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Remove Doubles";
 	ot->idname = "PARTICLE_OT_remove_doubles";
-	ot->description = "Remove selected particles close enough of others";
+	ot->description = "Remove Doubles\nRemove selected particles close enough of others";
 	
 	/* api callbacks */
 	ot->exec = remove_doubles_exec;
@@ -2664,7 +2664,7 @@ void PARTICLE_OT_weight_set(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Weight Set";
 	ot->idname = "PARTICLE_OT_weight_set";
-	ot->description = "Set the weight of selected keys";
+	ot->description = "Weight Set\nSet the weight of selected keys";
 
 	/* api callbacks */
 	ot->exec = weight_set_exec;
@@ -2770,7 +2770,7 @@ void PARTICLE_OT_delete(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Delete";
 	ot->idname = "PARTICLE_OT_delete";
-	ot->description = "Delete selected particles or keys";
+	ot->description = "Delete\nDelete selected particles or keys";
 	
 	/* api callbacks */
 	ot->exec = delete_exec;
@@ -2941,7 +2941,7 @@ void PARTICLE_OT_mirror(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Mirror";
 	ot->idname = "PARTICLE_OT_mirror";
-	ot->description = "Duplicate and mirror the selected particles along the local X axis";
+	ot->description = "Mirror\nDuplicate and mirror the selected particles along the local X axis";
 	
 	/* api callbacks */
 	ot->exec = mirror_exec;
@@ -4038,7 +4038,7 @@ void PARTICLE_OT_brush_edit(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Brush Edit";
 	ot->idname = "PARTICLE_OT_brush_edit";
-	ot->description = "Apply a stroke of brush to the particles";
+	ot->description = "Brush Edit\nApply a stroke of brush to the particles";
 	
 	/* api callbacks */
 	ot->exec = brush_edit_exec;
@@ -4222,7 +4222,7 @@ void PARTICLE_OT_shape_cut(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Shape Cut";
 	ot->idname = "PARTICLE_OT_shape_cut";
-	ot->description = "Cut hair to conform to the set shape object";
+	ot->description = "Shape Cut\nCut hair to conform to the set shape object";
 	
 	/* api callbacks */
 	ot->exec = shape_cut_exec;
@@ -4727,7 +4727,7 @@ void PARTICLE_OT_particle_edit_toggle(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Particle Edit Toggle";
 	ot->idname = "PARTICLE_OT_particle_edit_toggle";
-	ot->description = "Toggle particle edit mode";
+	ot->description = "Particle Edit Toggle\nToggle particle edit mode";
 	
 	/* api callbacks */
 	ot->exec = particle_edit_toggle_exec;
@@ -4782,7 +4782,7 @@ void PARTICLE_OT_edited_clear(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Clear Edited";
 	ot->idname = "PARTICLE_OT_edited_clear";
-	ot->description = "Undo all edition performed on the particle system";
+	ot->description = "Clear Edited\nUndo all edition performed on the particle system";
 	
 	/* api callbacks */
 	ot->exec = clear_edited_exec;

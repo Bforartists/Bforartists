@@ -143,7 +143,7 @@ void RIGIDBODY_OT_constraint_add(wmOperatorType *ot)
 	/* identifiers */
 	ot->idname = "RIGIDBODY_OT_constraint_add";
 	ot->name = "Add Rigid Body Constraint";
-	ot->description = "Add Rigid Body Constraint to active object";
+	ot->description = "RIGIDBODY_OT_constraint_add\nAdd Rigid Body Constraint to active object";
 
 	/* callbacks */
 	ot->exec = rigidbody_con_add_exec;
@@ -188,7 +188,7 @@ void RIGIDBODY_OT_constraint_remove(wmOperatorType *ot)
 	/* identifiers */
 	ot->idname = "RIGIDBODY_OT_constraint_remove";
 	ot->name = "Remove Rigid Body Constraint";
-	ot->description = "Remove Rigid Body Constraint from Object";
+	ot->description = "RIGIDBODY_OT_constraint_remove\nRemove Rigid Body Constraint from Object";
 
 	/* callbacks */
 	ot->exec = rigidbody_con_remove_exec;

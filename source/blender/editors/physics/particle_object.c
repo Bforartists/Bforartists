@@ -119,7 +119,7 @@ void OBJECT_OT_particle_system_add(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Add Particle System Slot";
 	ot->idname = "OBJECT_OT_particle_system_add";
-	ot->description = "Add a particle system";
+	ot->description = "Add Particle System Slot\nAdd a particle system";
 	
 	/* api callbacks */
 	ot->poll = ED_operator_object_active_editable;
@@ -163,7 +163,7 @@ void OBJECT_OT_particle_system_remove(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Remove Particle System Slot";
 	ot->idname = "OBJECT_OT_particle_system_remove";
-	ot->description = "Remove the selected particle system";
+	ot->description = "Remove Particle System Slot\nRemove the selected particle system";
 	
 	/* api callbacks */
 	ot->poll = ED_operator_object_active_editable;
@@ -221,7 +221,7 @@ void PARTICLE_OT_new(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "New Particle Settings";
 	ot->idname = "PARTICLE_OT_new";
-	ot->description = "Add new particle settings";
+	ot->description = "New Particle Settings\nAdd new particle settings";
 	
 	/* api callbacks */
 	ot->exec = new_particle_settings_exec;
@@ -269,7 +269,7 @@ void PARTICLE_OT_new_target(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "New Particle Target";
 	ot->idname = "PARTICLE_OT_new_target";
-	ot->description = "Add a new particle target";
+	ot->description = "New Particle Target\nAdd a new particle target";
 	
 	/* api callbacks */
 	ot->exec = new_particle_target_exec;
@@ -317,7 +317,7 @@ void PARTICLE_OT_target_remove(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Remove Particle Target";
 	ot->idname = "PARTICLE_OT_target_remove";
-	ot->description = "Remove the selected particle target";
+	ot->description = "Remove Particle Target\nRemove the selected particle target";
 	
 	/* api callbacks */
 	ot->exec = remove_particle_target_exec;
@@ -357,7 +357,7 @@ void PARTICLE_OT_target_move_up(wmOperatorType *ot)
 {
 	ot->name = "Move Up Target";
 	ot->idname = "PARTICLE_OT_target_move_up";
-	ot->description = "Move particle target up in the list";
+	ot->description = "Move Up Target\nMove particle target up in the list";
 	
 	ot->exec = target_move_up_exec;
 	
@@ -395,7 +395,7 @@ void PARTICLE_OT_target_move_down(wmOperatorType *ot)
 {
 	ot->name = "Move Down Target";
 	ot->idname = "PARTICLE_OT_target_move_down";
-	ot->description = "Move particle target down in the list";
+	ot->description = "Move Down Target\nMove particle target down in the list";
 	
 	ot->exec = target_move_down_exec;
 	
@@ -433,7 +433,7 @@ void PARTICLE_OT_dupliob_move_up(wmOperatorType *ot)
 {
 	ot->name = "Move Up Dupli Object";
 	ot->idname = "PARTICLE_OT_dupliob_move_up";
-	ot->description = "Move dupli object up in the list";
+	ot->description = "Move Up Dupli Object\nMove dupli object up in the list";
 	
 	ot->exec = dupliob_move_up_exec;
 	
@@ -473,7 +473,7 @@ void PARTICLE_OT_dupliob_copy(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Copy Particle Dupliob";
 	ot->idname = "PARTICLE_OT_dupliob_copy";
-	ot->description = "Duplicate the current dupliobject";
+	ot->description = "Copy Particle Dupliob\nDuplicate the current dupliobject";
 	
 	/* api callbacks */
 	ot->exec = copy_particle_dupliob_exec;
@@ -516,7 +516,7 @@ void PARTICLE_OT_dupliob_remove(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Remove Particle Dupliobject";
 	ot->idname = "PARTICLE_OT_dupliob_remove";
-	ot->description = "Remove the selected dupliobject";
+	ot->description = "Remove Particle Dupliobject\nRemove the selected dupliobject";
 	
 	/* api callbacks */
 	ot->exec = remove_particle_dupliob_exec;
@@ -555,7 +555,7 @@ void PARTICLE_OT_dupliob_move_down(wmOperatorType *ot)
 {
 	ot->name = "Move Down Dupli Object";
 	ot->idname = "PARTICLE_OT_dupliob_move_down";
-	ot->description = "Move dupli object down in the list";
+	ot->description = "Move Down Dupli Object\nMove dupli object down in the list";
 	
 	ot->exec = dupliob_move_down_exec;
 	
@@ -644,7 +644,7 @@ static int disconnect_hair_exec(bContext *C, wmOperator *op)
 void PARTICLE_OT_disconnect_hair(wmOperatorType *ot)
 {
 	ot->name = "Disconnect Hair";
-	ot->description = "Disconnect hair from the emitter mesh";
+	ot->description = "Disconnect Hair\nDisconnect hair from the emitter mesh";
 	ot->idname = "PARTICLE_OT_disconnect_hair";
 	
 	ot->exec = disconnect_hair_exec;
@@ -896,7 +896,7 @@ static int connect_hair_exec(bContext *C, wmOperator *op)
 void PARTICLE_OT_connect_hair(wmOperatorType *ot)
 {
 	ot->name = "Connect Hair";
-	ot->description = "Connect hair to the emitter mesh";
+	ot->description = "Connect Hair\nConnect hair to the emitter mesh";
 	ot->idname = "PARTICLE_OT_connect_hair";
 	
 	ot->exec = connect_hair_exec;
@@ -1175,7 +1175,7 @@ void PARTICLE_OT_copy_particle_systems(wmOperatorType *ot)
 	};
 	
 	ot->name = "Copy Particle Systems";
-	ot->description = "Copy particle systems from the active object to selected objects";
+	ot->description = "Copy Particle Systems\nCopy particle systems from the active object to selected objects";
 	ot->idname = "PARTICLE_OT_copy_particle_systems";
 	
 	ot->poll = copy_particle_systems_poll;

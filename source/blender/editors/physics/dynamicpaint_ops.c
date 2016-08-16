@@ -96,7 +96,7 @@ void DPAINT_OT_surface_slot_add(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Add Surface Slot";
 	ot->idname = "DPAINT_OT_surface_slot_add";
-	ot->description = "Add a new Dynamic Paint surface slot";
+	ot->description = "Add Surface Slot\nAdd a new Dynamic Paint surface slot";
 	
 	/* api callbacks */
 	ot->exec = surface_slot_add_exec;
@@ -144,7 +144,7 @@ void DPAINT_OT_surface_slot_remove(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Remove Surface Slot";
 	ot->idname = "DPAINT_OT_surface_slot_remove";
-	ot->description = "Remove the selected surface slot";
+	ot->description = "Remove Surface Slot\nRemove the selected surface slot";
 	
 	/* api callbacks */
 	ot->exec = surface_slot_remove_exec;
@@ -192,7 +192,7 @@ void DPAINT_OT_type_toggle(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Toggle Type Active";
 	ot->idname = "DPAINT_OT_type_toggle";
-	ot->description = "Toggle whether given type is active or not";
+	ot->description = "Toggle Type Active\nToggle whether given type is active or not";
 	
 	/* api callbacks */
 	ot->exec = type_toggle_exec;
@@ -259,7 +259,7 @@ void DPAINT_OT_output_toggle(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Toggle Output Layer";
 	ot->idname = "DPAINT_OT_output_toggle";
-	ot->description = "Add or remove Dynamic Paint output data layer";
+	ot->description = "Toggle Output Layer\nAdd or remove Dynamic Paint output data layer";
 	
 	/* api callbacks */
 	ot->exec = output_toggle_exec;
@@ -424,7 +424,7 @@ void DPAINT_OT_bake(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Dynamic Paint Bake";
-	ot->description = "Bake dynamic paint image sequence surface";
+	ot->description = "Dynamic Paint Bake\nBake dynamic paint image sequence surface";
 	ot->idname = "DPAINT_OT_bake";
 	
 	/* api callbacks */
