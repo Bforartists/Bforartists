@@ -222,7 +222,7 @@ static int node_properties_poll(bContext *C)
 void NODE_OT_properties(wmOperatorType *ot)
 {
 	ot->name = "Properties";
-	ot->description = "Toggles the properties panel display";
+	ot->description = "Properties\nToggles the properties panel display";
 	ot->idname = "NODE_OT_properties";
 	
 	ot->exec = node_properties_toggle_exec;

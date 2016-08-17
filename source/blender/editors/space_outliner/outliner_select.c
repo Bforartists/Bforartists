@@ -1045,7 +1045,7 @@ void OUTLINER_OT_item_activate(wmOperatorType *ot)
 {
 	ot->name = "Activate Item";
 	ot->idname = "OUTLINER_OT_item_activate";
-	ot->description = "Handle mouse clicks to activate/select items";
+	ot->description = "Activate Item\nHandle mouse clicks to activate/select items";
 	
 	ot->invoke = outliner_item_activate;
 	
@@ -1106,7 +1106,7 @@ void OUTLINER_OT_select_border(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Border Select";
 	ot->idname = "OUTLINER_OT_select_border";
-	ot->description = "Use box selection to select tree elements";
+	ot->description = "Border Select\nUse box selection to select tree elements";
 
 	/* api callbacks */
 	ot->invoke = WM_border_select_invoke;

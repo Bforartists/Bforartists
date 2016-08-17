@@ -335,7 +335,7 @@ void OUTLINER_OT_scene_operation(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Outliner Scene Operation";
 	ot->idname = "OUTLINER_OT_scene_operation";
-	ot->description = "Context menu for scene operations";
+	ot->description = "Outliner Scene Operation\nContext menu for scene operations";
 
 	/* callbacks */
 	ot->invoke = WM_menu_invoke;
@@ -967,7 +967,7 @@ void OUTLINER_OT_object_operation(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Outliner Object Operation";
 	ot->idname = "OUTLINER_OT_object_operation";
-	ot->description = "";
+	ot->description = "Outliner Object Operation";
 	
 	/* callbacks */
 	ot->invoke = WM_menu_invoke;
@@ -1062,7 +1062,7 @@ void OUTLINER_OT_group_operation(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Outliner Group Operation";
 	ot->idname = "OUTLINER_OT_group_operation";
-	ot->description = "";
+	ot->description = "Outliner Group Operation";
 	
 	/* callbacks */
 	ot->invoke = WM_menu_invoke;
@@ -1236,7 +1236,7 @@ void OUTLINER_OT_id_operation(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Outliner ID data Operation";
 	ot->idname = "OUTLINER_OT_id_operation";
-	ot->description = "";
+	ot->description = "OUTLINER_OT_id_operation";
 	
 	/* callbacks */
 	ot->invoke = WM_menu_invoke;
@@ -1341,7 +1341,7 @@ void OUTLINER_OT_action_set(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Outliner Set Action";
 	ot->idname = "OUTLINER_OT_action_set";
-	ot->description = "Change the active action used";
+	ot->description = "Outliner Set Action\nChange the active action used";
 	
 	/* api callbacks */
 	ot->invoke = WM_enum_search_invoke;
@@ -1462,7 +1462,7 @@ void OUTLINER_OT_animdata_operation(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Outliner Animation Data Operation";
 	ot->idname = "OUTLINER_OT_animdata_operation";
-	ot->description = "";
+	ot->description = "Outliner Animation Data Operation";
 	
 	/* callbacks */
 	ot->invoke = WM_menu_invoke;
@@ -1508,7 +1508,7 @@ void OUTLINER_OT_constraint_operation(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Outliner Constraint Operation";
 	ot->idname = "OUTLINER_OT_constraint_operation";
-	ot->description = "";
+	ot->description = "Outliner Constraint Operation";
 
 	/* callbacks */
 	ot->invoke = WM_menu_invoke;
@@ -1554,7 +1554,7 @@ void OUTLINER_OT_modifier_operation(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Outliner Modifier Operation";
 	ot->idname = "OUTLINER_OT_modifier_operation";
-	ot->description = "";
+	ot->description = "Outliner Modifier Operation";
 
 	/* callbacks */
 	ot->invoke = WM_menu_invoke;
@@ -1652,7 +1652,7 @@ void OUTLINER_OT_data_operation(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Outliner Data Operation";
 	ot->idname = "OUTLINER_OT_data_operation";
-	ot->description = "";
+	ot->description = "Outliner Data Operation";
 	
 	/* callbacks */
 	ot->invoke = WM_menu_invoke;
@@ -1781,7 +1781,7 @@ void OUTLINER_OT_operation(wmOperatorType *ot)
 {
 	ot->name = "Execute Operation";
 	ot->idname = "OUTLINER_OT_operation";
-	ot->description = "Context menu for item operations";
+	ot->description = "Execute Operation\nContext menu for item operations";
 	
 	ot->invoke = outliner_operation;
 	

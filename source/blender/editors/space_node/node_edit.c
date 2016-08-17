@@ -1033,7 +1033,7 @@ void NODE_OT_resize(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Resize Node";
 	ot->idname = "NODE_OT_resize";
-	ot->description = "Resize a node";
+	ot->description = "Resize Node\nResize a node";
 	
 	/* api callbacks */
 	ot->invoke = node_resize_invoke;
@@ -1273,7 +1273,7 @@ void NODE_OT_duplicate(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Duplicate Nodes";
-	ot->description = "Duplicate selected nodes";
+	ot->description = "Duplicate Nodes\nDuplicate selected nodes";
 	ot->idname = "NODE_OT_duplicate";
 	
 	/* api callbacks */
@@ -1341,7 +1341,7 @@ void NODE_OT_read_renderlayers(wmOperatorType *ot)
 	
 	ot->name = "Read Render Layers";
 	ot->idname = "NODE_OT_read_renderlayers";
-	ot->description = "Read all render layers of all used scenes";
+	ot->description = "Read Render Layers\nRead all render layers of all used scenes";
 	
 	ot->exec = node_read_renderlayers_exec;
 	
@@ -1375,7 +1375,7 @@ void NODE_OT_read_fullsamplelayers(wmOperatorType *ot)
 	
 	ot->name = "Read Full Sample Layers";
 	ot->idname = "NODE_OT_read_fullsamplelayers";
-	ot->description = "Read all render layers of current scene, in full sample";
+	ot->description = "Read Full Sample Layers\nRead all render layers of current scene, in full sample";
 	
 	ot->exec = node_read_fullsamplelayers_exec;
 	
@@ -1422,7 +1422,7 @@ void NODE_OT_render_changed(wmOperatorType *ot)
 {
 	ot->name = "Render Changed Layer";
 	ot->idname = "NODE_OT_render_changed";
-	ot->description = "Render current scene, when input node's layer has been changed";
+	ot->description = "Render Changed Layer\nRender current scene, when input node's layer has been changed";
 	
 	ot->exec = node_render_changed_exec;
 	
@@ -1493,7 +1493,7 @@ void NODE_OT_hide_toggle(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Hide";
-	ot->description = "Toggle hiding of selected nodes";
+	ot->description = "Hide\nToggle hiding of selected nodes";
 	ot->idname = "NODE_OT_hide_toggle";
 	
 	/* callbacks */
@@ -1525,7 +1525,7 @@ void NODE_OT_preview_toggle(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Toggle Node Preview";
-	ot->description = "Toggle preview display for selected nodes";
+	ot->description = "Toggle Node Preview\nToggle preview display for selected nodes";
 	ot->idname = "NODE_OT_preview_toggle";
 
 	/* callbacks */
@@ -1555,7 +1555,7 @@ void NODE_OT_options_toggle(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Toggle Node Options";
-	ot->description = "Toggle option buttons display for selected nodes";
+	ot->description = "Toggle Node Options\nToggle option buttons display for selected nodes";
 	ot->idname = "NODE_OT_options_toggle";
 
 	/* callbacks */
@@ -1606,7 +1606,7 @@ void NODE_OT_hide_socket_toggle(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Toggle Hidden Node Sockets";
-	ot->description = "Toggle unused node socket display";
+	ot->description = "Toggle Hidden Node Sockets\nToggle unused node socket display";
 	ot->idname = "NODE_OT_hide_socket_toggle";
 
 	/* callbacks */
@@ -1644,7 +1644,7 @@ void NODE_OT_mute_toggle(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Toggle Node Mute";
-	ot->description = "Toggle muting of the nodes";
+	ot->description = "Toggle Node Mute\nToggle muting of the nodes";
 	ot->idname = "NODE_OT_mute_toggle";
 	
 	/* callbacks */
@@ -1686,7 +1686,7 @@ void NODE_OT_delete(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Delete";
-	ot->description = "Delete selected nodes";
+	ot->description = "Delete\nDelete selected nodes";
 	ot->idname = "NODE_OT_delete";
 	
 	/* api callbacks */
@@ -1734,7 +1734,7 @@ void NODE_OT_switch_view_update(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Update Views";
-	ot->description = "Update views of selected node";
+	ot->description = "Update Views\nUpdate views of selected node";
 	ot->idname = "NODE_OT_switch_view_update";
 
 	/* api callbacks */
@@ -1777,7 +1777,7 @@ void NODE_OT_delete_reconnect(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Delete with Reconnect";
-	ot->description = "Delete nodes; will reconnect nodes as if deletion was muted";
+	ot->description = "Delete with Reconnect\nDelete nodes; will reconnect nodes as if deletion was muted";
 	ot->idname = "NODE_OT_delete_reconnect";
 
 	/* api callbacks */
@@ -1824,7 +1824,7 @@ void NODE_OT_output_file_add_socket(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Add File Node Socket";
-	ot->description = "Add a new input to a file output node";
+	ot->description = "Add File Node Socket\nAdd a new input to a file output node";
 	ot->idname = "NODE_OT_output_file_add_socket";
 
 	/* callbacks */
@@ -1870,7 +1870,7 @@ void NODE_OT_output_file_remove_active_socket(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Remove File Node Socket";
-	ot->description = "Remove active input from a file output node";
+	ot->description = "Remove File Node Socket\nRemove active input from a file output node";
 	ot->idname = "NODE_OT_output_file_remove_active_socket";
 	
 	/* callbacks */
@@ -1940,7 +1940,7 @@ void NODE_OT_output_file_move_active_socket(wmOperatorType *ot)
 	
 	/* identifiers */
 	ot->name = "Move File Node Socket";
-	ot->description = "Move the active input of a file output node up or down the list";
+	ot->description = "Move File Node Socket\nMove the active input of a file output node up or down the list";
 	ot->idname = "NODE_OT_output_file_move_active_socket";
 	
 	/* callbacks */
@@ -1988,7 +1988,7 @@ void NODE_OT_node_copy_color(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Copy Color";
-	ot->description = "Copy color to all selected nodes";
+	ot->description = "Copy Color\nCopy color to all selected nodes";
 	ot->idname = "NODE_OT_node_copy_color";
 
 	/* api callbacks */
@@ -2065,7 +2065,7 @@ void NODE_OT_clipboard_copy(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Copy to Clipboard";
-	ot->description = "Copies selected nodes to the clipboard";
+	ot->description = "Copy to Clipboard\nCopies selected nodes to the clipboard";
 	ot->idname = "NODE_OT_clipboard_copy";
 
 	/* api callbacks */
@@ -2169,7 +2169,7 @@ void NODE_OT_clipboard_paste(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Paste from Clipboard";
-	ot->description = "Pastes nodes from the clipboard to the active node tree";
+	ot->description = "Paste from Clipboard\nPastes nodes from the clipboard to the active node tree";
 	ot->idname = "NODE_OT_clipboard_paste";
 
 	/* api callbacks */
@@ -2241,7 +2241,7 @@ void NODE_OT_tree_socket_add(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Add Node Tree Interface Socket";
-	ot->description = "Add an input or output socket to the current node tree";
+	ot->description = "Add Node Tree Interface Socket\nAdd an input or output socket to the current node tree";
 	ot->idname = "NODE_OT_tree_socket_add";
 	
 	/* api callbacks */
@@ -2287,7 +2287,7 @@ void NODE_OT_tree_socket_remove(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Remove Node Tree Interface Socket";
-	ot->description = "Remove an input or output socket to the current node tree";
+	ot->description = "Remove Node Tree Interface Socket\nRemove an input or output socket to the current node tree";
 	ot->idname = "NODE_OT_tree_socket_remove";
 	
 	/* api callbacks */
@@ -2357,7 +2357,7 @@ void NODE_OT_tree_socket_move(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Move Node Tree Socket";
-	ot->description = "Move a socket up or down in the current node tree's sockets stack";
+	ot->description = "Move Node Tree Socket\nMove a socket up or down in the current node tree's sockets stack";
 	ot->idname = "NODE_OT_tree_socket_move";
 	
 	/* api callbacks */
@@ -2497,7 +2497,7 @@ void NODE_OT_shader_script_update(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Script Node Update";
-	ot->description = "Update shader script node with new sockets and options from the script";
+	ot->description = "Script Node Update\nUpdate shader script node with new sockets and options from the script";
 	ot->idname = "NODE_OT_shader_script_update";
 
 	/* api callbacks */
@@ -2586,7 +2586,7 @@ void NODE_OT_viewer_border(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Viewer Border";
-	ot->description = "Set the boundaries for viewer operations";
+	ot->description = "Viewer Border\nSet the boundaries for viewer operations";
 	ot->idname = "NODE_OT_viewer_border";
 
 	/* api callbacks */
@@ -2619,7 +2619,7 @@ void NODE_OT_clear_viewer_border(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Clear Viewer Border";
-	ot->description = "Clear the boundaries for viewer operations";
+	ot->description = "Clear Viewer Border\nClear the boundaries for viewer operations";
 	ot->idname = "NODE_OT_clear_viewer_border";
 
 	/* api callbacks */

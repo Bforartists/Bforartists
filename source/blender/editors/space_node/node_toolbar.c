@@ -72,7 +72,7 @@ static int node_toolbar_poll(bContext *C)
 void NODE_OT_toolbar(wmOperatorType *ot)
 {
 	ot->name = "Tool Shelf";
-	ot->description = "Toggles tool shelf display";
+	ot->description = "Tool Shelf\nToggles tool shelf display";
 	ot->idname = "NODE_OT_toolbar";
 	
 	ot->exec = node_toolbar_toggle_exec;
