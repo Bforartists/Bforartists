@@ -191,7 +191,7 @@ void VIEW3D_OT_snap_selected_to_grid(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Snap Selection to Grid";
-	ot->description = "Snap selected item(s) to nearest grid division";
+	ot->description = "Snap Selection to Grid\nSnap selected item(s) to nearest grid division";
 	ot->idname = "VIEW3D_OT_snap_selected_to_grid";
 	
 	/* api callbacks */
@@ -405,7 +405,7 @@ void VIEW3D_OT_snap_selected_to_cursor(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Snap Selection to Cursor";
-	ot->description = "Snap selected item(s) to cursor";
+	ot->description = "Snap Selection to Cursor\nSnap selected item(s) to cursor";
 	ot->idname = "VIEW3D_OT_snap_selected_to_cursor";
 	
 	/* api callbacks */
@@ -448,7 +448,7 @@ void VIEW3D_OT_snap_cursor_to_grid(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Snap Cursor to Grid";
-	ot->description = "Snap cursor to nearest grid division";
+	ot->description = "Snap Cursor to Grid\nSnap cursor to nearest grid division";
 	ot->idname = "VIEW3D_OT_snap_cursor_to_grid";
 	
 	/* api callbacks */
@@ -636,7 +636,7 @@ void VIEW3D_OT_snap_cursor_to_selected(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Snap Cursor to Selected";
-	ot->description = "Snap cursor to center of selected item(s)";
+	ot->description = "Snap Cursor to Selected\nSnap cursor to center of selected item(s)";
 	ot->idname = "VIEW3D_OT_snap_cursor_to_selected";
 	
 	/* api callbacks */
@@ -713,7 +713,7 @@ void VIEW3D_OT_snap_cursor_to_active(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Snap Cursor to Active";
-	ot->description = "Snap cursor to active item";
+	ot->description = "Snap Cursor to Active\nSnap cursor to active item";
 	ot->idname = "VIEW3D_OT_snap_cursor_to_active";
 	
 	/* api callbacks */
@@ -749,7 +749,7 @@ void VIEW3D_OT_snap_cursor_to_center(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Snap Cursor to Center";
-	ot->description = "Snap cursor to the Center";
+	ot->description = "Snap Cursor to Center\nSnap cursor to the Center";
 	ot->idname = "VIEW3D_OT_snap_cursor_to_center";
 	
 	/* api callbacks */

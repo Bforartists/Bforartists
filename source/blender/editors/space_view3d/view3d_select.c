@@ -896,7 +896,7 @@ static int view3d_lasso_select_exec(bContext *C, wmOperator *op)
 void VIEW3D_OT_select_lasso(wmOperatorType *ot)
 {
 	ot->name = "Lasso Select";
-	ot->description = "Select items using lasso selection";
+	ot->description = "Lasso Select\nSelect items using lasso selection";
 	ot->idname = "VIEW3D_OT_select_lasso";
 	
 	ot->invoke = WM_gesture_lasso_invoke;
@@ -1051,7 +1051,7 @@ void VIEW3D_OT_select_menu(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Select Menu";
-	ot->description = "Menu object selection";
+	ot->description = "Select Menu\nMenu object selection";
 	ot->idname = "VIEW3D_OT_select_menu";
 
 	/* api callbacks */
@@ -2182,7 +2182,7 @@ void VIEW3D_OT_select_border(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Border Select";
-	ot->description = "Select items using border selection";
+	ot->description = "Border Select\nSelect items using border selection";
 	ot->idname = "VIEW3D_OT_select_border";
 	
 	/* api callbacks */
@@ -2325,7 +2325,7 @@ void VIEW3D_OT_select(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Activate/Select";
-	ot->description = "Activate/select item(s)";
+	ot->description = "Activate/Select\nActivate/select item(s)";
 	ot->idname = "VIEW3D_OT_select";
 	
 	/* api callbacks */
@@ -2854,7 +2854,7 @@ static int view3d_circle_select_exec(bContext *C, wmOperator *op)
 void VIEW3D_OT_select_circle(wmOperatorType *ot)
 {
 	ot->name = "Circle Select";
-	ot->description = "Select items using circle selection";
+	ot->description = "Circle Select\nSelect items using circle selection";
 	ot->idname = "VIEW3D_OT_select_circle";
 	
 	ot->invoke = WM_gesture_circle_invoke;
