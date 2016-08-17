@@ -74,7 +74,7 @@ void SCRIPT_OT_python_file_run(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Run Python File";
-	ot->description = "Run Python file";
+	ot->description = "Run Python File\nRun Python file";
 	ot->idname = "SCRIPT_OT_python_file_run";
 	ot->flag = OPTYPE_UNDO;
 
@@ -139,7 +139,7 @@ void SCRIPT_OT_reload(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Reload Scripts";
-	ot->description = "Reload Scripts";
+	ot->description = "Reload Scripts\nReload all Python Scripts";
 	ot->idname = "SCRIPT_OT_reload";
 
 	/* api callbacks */
@@ -156,7 +156,7 @@ void SCRIPT_OT_autoexec_warn_clear(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Continue Untrusted";
-	ot->description = "Ignore autoexec warning";
+	ot->description = "Continue Untrusted\nIgnore autoexec warning";
 	ot->idname = "SCRIPT_OT_autoexec_warn_clear";
 
 	/* flags */

@@ -339,7 +339,7 @@ void SEQUENCER_OT_scene_strip_add(struct wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Add Scene Strip";
 	ot->idname = "SEQUENCER_OT_scene_strip_add";
-	ot->description = "Add a strip to the sequencer using a blender scene as a source";
+	ot->description = "Add Scene Strip\nAdd a strip to the sequencer using a blender scene as a source";
 
 	/* api callbacks */
 	ot->invoke = sequencer_add_scene_strip_invoke;
@@ -425,7 +425,7 @@ void SEQUENCER_OT_movieclip_strip_add(struct wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Add MovieClip Strip";
 	ot->idname = "SEQUENCER_OT_movieclip_strip_add";
-	ot->description = "Add a movieclip strip to the sequencer";
+	ot->description = "Add MovieClip Strip\nAdd a movieclip strip to the sequencer";
 
 	/* api callbacks */
 	ot->invoke = sequencer_add_movieclip_strip_invoke;
@@ -511,7 +511,7 @@ void SEQUENCER_OT_mask_strip_add(struct wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Add Mask Strip";
 	ot->idname = "SEQUENCER_OT_mask_strip_add";
-	ot->description = "Add a mask strip to the sequencer";
+	ot->description = "Add Mask Strip\nAdd a mask strip to the sequencer";
 
 	/* api callbacks */
 	ot->invoke = sequencer_add_mask_strip_invoke;
@@ -684,7 +684,7 @@ void SEQUENCER_OT_movie_strip_add(struct wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Add Movie Strip";
 	ot->idname = "SEQUENCER_OT_movie_strip_add";
-	ot->description = "Add a movie strip to the sequencer";
+	ot->description = "Add Movie Strip\nAdd a movie strip to the sequencer";
 
 	/* api callbacks */
 	ot->invoke = sequencer_add_movie_strip_invoke;
@@ -735,7 +735,7 @@ void SEQUENCER_OT_sound_strip_add(struct wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Add Sound Strip";
 	ot->idname = "SEQUENCER_OT_sound_strip_add";
-	ot->description = "Add a sound strip to the sequencer";
+	ot->description = "Add Sound Strip\nAdd a sound strip to the sequencer";
 
 	/* api callbacks */
 	ot->invoke = sequencer_add_sound_strip_invoke;
@@ -919,7 +919,7 @@ void SEQUENCER_OT_image_strip_add(struct wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Add Image Strip";
 	ot->idname = "SEQUENCER_OT_image_strip_add";
-	ot->description = "Add an image or image sequence to the sequencer";
+	ot->description = "Add Image Strip\nAdd an image or image sequence to the sequencer";
 
 	/* api callbacks */
 	ot->invoke = sequencer_add_image_strip_invoke;
@@ -1071,7 +1071,7 @@ void SEQUENCER_OT_effect_strip_add(struct wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Add Effect Strip";
 	ot->idname = "SEQUENCER_OT_effect_strip_add";
-	ot->description = "Add an effect to the sequencer, most are applied on top of existing strips";
+	ot->description = "Add Effect Strip\nAdd an effect to the sequencer, most are applied on top of existing strips";
 
 	/* api callbacks */
 	ot->invoke = sequencer_add_effect_strip_invoke;

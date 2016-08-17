@@ -80,7 +80,7 @@ static void TIME_OT_start_frame_set(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Set Start Frame";
 	ot->idname = "TIME_OT_start_frame_set";
-	ot->description = "Set the start frame";
+	ot->description = "Set Start Frame\nSet the start frame";
 	
 	/* api callbacks */
 	ot->exec = time_set_sfra_exec;
@@ -124,7 +124,7 @@ static void TIME_OT_end_frame_set(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Set End Frame";
 	ot->idname = "TIME_OT_end_frame_set";
-	ot->description = "Set the end frame";
+	ot->description = "Set End Frame\nSet the end frame";
 	
 	/* api callbacks */
 	ot->exec = time_set_efra_exec;
@@ -166,7 +166,7 @@ static void TIME_OT_view_all(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "View All";
 	ot->idname = "TIME_OT_view_all";
-	ot->description = "Show the entire playable frame range";
+	ot->description = "View All\nShow the entire playable frame range";
 	
 	/* api callbacks */
 	ot->exec = time_view_all_exec;
