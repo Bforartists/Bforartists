@@ -86,7 +86,7 @@ void SEQUENCER_OT_strip_modifier_add(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Add Strip Modifier";
 	ot->idname = "SEQUENCER_OT_strip_modifier_add";
-	ot->description = "Add a modifier to the strip";
+	ot->description = "Add Strip Modifier\nAdd a modifier to the strip";
 
 	/* api callbacks */
 	ot->exec = strip_modifier_add_exec;
@@ -129,7 +129,7 @@ void SEQUENCER_OT_strip_modifier_remove(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Remove Strip Modifier";
 	ot->idname = "SEQUENCER_OT_strip_modifier_remove";
-	ot->description = "Remove a modifier from the strip";
+	ot->description = "Remove Strip Modifier\nRemove a modifier from the strip";
 
 	/* api callbacks */
 	ot->exec = strip_modifier_remove_exec;
@@ -194,7 +194,7 @@ void SEQUENCER_OT_strip_modifier_move(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Move Strip Modifier";
 	ot->idname = "SEQUENCER_OT_strip_modifier_move";
-	ot->description = "Move modifier up and down in the stack";
+	ot->description = "Move Strip Modifier\nMove modifier up and down in the stack";
 
 	/* api callbacks */
 	ot->exec = strip_modifier_move_exec;
@@ -252,7 +252,7 @@ void SEQUENCER_OT_strip_modifier_copy(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Copy to Selected Strips";
 	ot->idname = "SEQUENCER_OT_strip_modifier_copy";
-	ot->description = "Copy modifiers of the active strip to all selected strips";
+	ot->description = "Copy to Selected Strips\nCopy modifiers of the active strip to all selected strips";
 
 	/* api callbacks */
 	ot->exec = strip_modifier_copy_exec;
