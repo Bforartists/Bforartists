@@ -1056,7 +1056,7 @@ void VIEW3D_OT_ruler(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Ruler/Protractor";
-	ot->description = "Interactive ruler";
+	ot->description = "Ruler/Protractor\nInteractive ruler";
 	ot->idname = "VIEW3D_OT_ruler";
 
 	/* api callbacks */

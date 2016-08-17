@@ -1814,7 +1814,7 @@ static void WM_OT_debug_menu(wmOperatorType *ot)
 {
 	ot->name = "Debug Menu";
 	ot->idname = "WM_OT_debug_menu";
-	ot->description = "Open a popup to set the debug level";
+	ot->description = "Debug Menu\nOpen a popup to set the debug level";
 	
 	ot->invoke = wm_debug_menu_invoke;
 	ot->exec = wm_debug_menu_exec;
@@ -1842,7 +1842,7 @@ static void WM_OT_operator_defaults(wmOperatorType *ot)
 {
 	ot->name = "Restore Defaults";
 	ot->idname = "WM_OT_operator_defaults";
-	ot->description = "Set the active operator to its default values";
+	ot->description = "Restore Defaults\nSet the active operator to its default values";
 
 	ot->exec = wm_operator_defaults_exec;
 
@@ -2065,7 +2065,7 @@ static void WM_OT_splash(wmOperatorType *ot)
 {
 	ot->name = "Splash Screen";
 	ot->idname = "WM_OT_splash";
-	ot->description = "Open the splash screen with release info";
+	ot->description = "Splash Screen\nOpen the splash screen with release info";
 	
 	ot->invoke = wm_splash_invoke;
 	ot->poll = WM_operator_winactive;
@@ -2138,7 +2138,7 @@ static void WM_OT_search_menu(wmOperatorType *ot)
 {
 	ot->name = "Search Menu";
 	ot->idname = "WM_OT_search_menu";
-	ot->description = "Pop-up a search menu over all available operators in current context";
+	ot->description = "Search Menu\nPop-up a search menu over all available operators in current context";
 	
 	ot->invoke = wm_search_menu_invoke;
 	ot->exec = wm_search_menu_exec;
@@ -2157,7 +2157,7 @@ static void WM_OT_call_menu(wmOperatorType *ot)
 {
 	ot->name = "Call Menu";
 	ot->idname = "WM_OT_call_menu";
-	ot->description = "Call (draw) a pre-defined menu";
+	ot->description = "Call Menu\nCall (draw) a pre-defined menu";
 
 	ot->exec = wm_call_menu_exec;
 	ot->poll = WM_operator_winactive;
@@ -2187,7 +2187,7 @@ static void WM_OT_call_menu_pie(wmOperatorType *ot)
 {
 	ot->name = "Call Pie Menu";
 	ot->idname = "WM_OT_call_menu_pie";
-	ot->description = "Call (draw) a pre-defined pie menu";
+	ot->description = "Call Pie Menu\nCall (draw) a pre-defined pie menu";
 
 	ot->invoke = wm_call_pie_menu_invoke;
 	ot->exec = wm_call_pie_menu_exec;
@@ -2216,7 +2216,7 @@ static void WM_OT_window_duplicate(wmOperatorType *ot)
 {
 	ot->name = "Duplicate Window";
 	ot->idname = "WM_OT_window_duplicate";
-	ot->description = "Duplicate the current Blender window";
+	ot->description = "Duplicate Window\nDuplicate the current Bforartists window";
 		
 	ot->exec = wm_window_duplicate_exec;
 	ot->poll = wm_operator_winactive_normal;
@@ -2226,7 +2226,7 @@ static void WM_OT_save_homefile(wmOperatorType *ot)
 {
 	ot->name = "Save Startup File";
 	ot->idname = "WM_OT_save_homefile";
-	ot->description = "Make the current file the default .blend file, includes preferences";
+	ot->description = "Save Startup File\nMake the current file the default .blend file, includes preferences";
 		
 	ot->invoke = WM_operator_confirm;
 	ot->exec = wm_homefile_write_exec;
@@ -2243,7 +2243,7 @@ static void WM_OT_userpref_autoexec_path_add(wmOperatorType *ot)
 {
 	ot->name = "Add Autoexec Path";
 	ot->idname = "WM_OT_userpref_autoexec_path_add";
-	ot->description = "Add path to exclude from autoexecution";
+	ot->description = "Add Autoexec Path\nAdd path to exclude from autoexecution";
 
 	ot->exec = wm_userpref_autoexec_add_exec;
 
@@ -2264,7 +2264,7 @@ static void WM_OT_userpref_autoexec_path_remove(wmOperatorType *ot)
 {
 	ot->name = "Remove Autoexec Path";
 	ot->idname = "WM_OT_userpref_autoexec_path_remove";
-	ot->description = "Remove path to exclude from autoexecution";
+	ot->description = "Remove Autoexec Path\nRemove path to exclude from autoexecution";
 
 	ot->exec = wm_userpref_autoexec_remove_exec;
 
@@ -2277,7 +2277,7 @@ static void WM_OT_save_userpref(wmOperatorType *ot)
 {
 	ot->name = "Save User Settings";
 	ot->idname = "WM_OT_save_userpref";
-	ot->description = "Save user preferences separately, overrides startup file preferences";
+	ot->description = "Save User Settings\nSave user preferences separately, overrides startup file preferences";
 	
 	ot->invoke = WM_operator_confirm;
 	ot->exec = wm_userpref_write_exec;
@@ -2287,7 +2287,7 @@ static void WM_OT_read_history(wmOperatorType *ot)
 {
 	ot->name = "Reload History File";
 	ot->idname = "WM_OT_read_history";
-	ot->description = "Reloads history and bookmarks";
+	ot->description = "Reload History Fil\nReloads history and bookmarks";
 
 	ot->invoke = WM_operator_confirm;
 	ot->exec = wm_history_file_read_exec;
@@ -2301,7 +2301,7 @@ static void WM_OT_read_homefile(wmOperatorType *ot)
 	PropertyRNA *prop;
 	ot->name = "Reload Start-Up File";
 	ot->idname = "WM_OT_read_homefile";
-	ot->description = "Open the default file (doesn't save the current file)";
+	ot->description = "Reload Start-Up File\nOpen the default file (doesn't save the current file)";
 	
 	ot->invoke = WM_operator_confirm;
 	ot->exec = wm_homefile_read_exec;
@@ -2323,7 +2323,7 @@ static void WM_OT_read_factory_settings(wmOperatorType *ot)
 {
 	ot->name = "Load Factory Settings";
 	ot->idname = "WM_OT_read_factory_settings";
-	ot->description = "Load default file and user preferences";
+	ot->description = "Load Factory Settings\nLoad default file and user preferences";
 	
 	ot->invoke = WM_operator_confirm;
 	ot->exec = wm_homefile_read_exec;
@@ -2472,9 +2472,9 @@ static void wm_open_mainfile_ui(bContext *UNUSED(C), wmOperator *op)
 
 static void WM_OT_open_mainfile(wmOperatorType *ot)
 {
-	ot->name = "Open Blender File";
+	ot->name = "Open blend File";
 	ot->idname = "WM_OT_open_mainfile";
-	ot->description = "Open a Blender file";
+	ot->description = "Open blend File\nOpen a blend file";
 
 	ot->invoke = wm_open_mainfile_invoke;
 	ot->exec = wm_open_mainfile_exec;
@@ -2523,7 +2523,7 @@ static void WM_OT_revert_mainfile(wmOperatorType *ot)
 {
 	ot->name = "Revert";
 	ot->idname = "WM_OT_revert_mainfile";
-	ot->description = "Reload the saved file";
+	ot->description = "Revert\nReload the saved file";
 	ot->invoke = WM_operator_confirm;
 
 	RNA_def_boolean(ot->srna, "use_scripts", true, "Trusted Source",
@@ -2807,7 +2807,7 @@ static void WM_OT_link(wmOperatorType *ot)
 {
 	ot->name = "Link from Library";
 	ot->idname = "WM_OT_link";
-	ot->description = "Link from a Library .blend file";
+	ot->description = "Link from Library\nLink from a Library .blend file";
 	
 	ot->invoke = wm_link_append_invoke;
 	ot->exec = wm_link_append_exec;
@@ -2827,7 +2827,7 @@ static void WM_OT_append(wmOperatorType *ot)
 {
 	ot->name = "Append from Library";
 	ot->idname = "WM_OT_append";
-	ot->description = "Append from a Library .blend file";
+	ot->description = "Append from Library\nAppend from a Library .blend file";
 
 	ot->invoke = wm_link_append_invoke;
 	ot->exec = wm_link_append_exec;
@@ -2879,7 +2879,7 @@ static void WM_OT_recover_last_session(wmOperatorType *ot)
 {
 	ot->name = "Recover Last Session";
 	ot->idname = "WM_OT_recover_last_session";
-	ot->description = "Open the last closed file (\"" BLENDER_QUIT_FILE "\")";
+	ot->description = "Recover Last Session\nOpen the last closed file (\"" BLENDER_QUIT_FILE "\")";
 	ot->invoke = WM_operator_confirm;
 	
 	ot->exec = wm_recover_last_session_exec;
@@ -2923,7 +2923,7 @@ static void WM_OT_recover_auto_save(wmOperatorType *ot)
 {
 	ot->name = "Recover Auto Save";
 	ot->idname = "WM_OT_recover_auto_save";
-	ot->description = "Open an automatically saved file to recover it";
+	ot->description = "Recover Auto Save\nOpen an automatically saved file to recover it";
 	
 	ot->exec = wm_recover_auto_save_exec;
 	ot->invoke = wm_recover_auto_save_invoke;
@@ -3052,9 +3052,9 @@ static void WM_OT_save_as_mainfile(wmOperatorType *ot)
 {
 	PropertyRNA *prop;
 
-	ot->name = "Save As Blender File";
+	ot->name = "Save As blend File";
 	ot->idname = "WM_OT_save_as_mainfile";
-	ot->description = "Save the current file in the desired location";
+	ot->description = "Save As blend File\nSave the current file in the desired location";
 	
 	ot->invoke = wm_save_as_mainfile_invoke;
 	ot->exec = wm_save_as_mainfile_exec;
@@ -3119,9 +3119,9 @@ static int wm_save_mainfile_invoke(bContext *C, wmOperator *op, const wmEvent *U
 
 static void WM_OT_save_mainfile(wmOperatorType *ot)
 {
-	ot->name = "Save Blender File";
+	ot->name = "Save blend File";
 	ot->idname = "WM_OT_save_mainfile";
-	ot->description = "Save the current Blender file";
+	ot->description = "Save blend File\nSave the current blend file";
 	
 	ot->invoke = wm_save_mainfile_invoke;
 	ot->exec = wm_save_as_mainfile_exec;
@@ -3139,7 +3139,7 @@ static void WM_OT_window_fullscreen_toggle(wmOperatorType *ot)
 {
 	ot->name = "Toggle Window Fullscreen";
 	ot->idname = "WM_OT_window_fullscreen_toggle";
-	ot->description = "Toggle the current window fullscreen";
+	ot->description = "Toggle Window Fullscreen\nToggle the current window fullscreen";
 
 	ot->exec = wm_window_fullscreen_toggle_exec;
 	ot->poll = WM_operator_winactive;
@@ -3156,9 +3156,9 @@ static int wm_exit_blender_exec(bContext *C, wmOperator *op)
 
 static void WM_OT_quit_blender(wmOperatorType *ot)
 {
-	ot->name = "Quit Blender";
+	ot->name = "Quit Bforartists";
 	ot->idname = "WM_OT_quit_blender";
-	ot->description = "Quit Blender";
+	ot->description = "Quit Bforartists\nQuit Bforartists";
 
 	ot->invoke = WM_operator_confirm;
 	ot->exec = wm_exit_blender_exec;
@@ -3483,7 +3483,7 @@ void WM_OT_circle_gesture(wmOperatorType *ot)
 {
 	ot->name = "Circle Gesture";
 	ot->idname = "WM_OT_circle_gesture";
-	ot->description = "Enter rotate mode with a circular gesture";
+	ot->description = "Circle Gesture\nEnter rotate mode with a circular gesture";
 	
 	ot->invoke = WM_gesture_circle_invoke;
 	ot->modal = WM_gesture_circle_modal;
@@ -3782,7 +3782,7 @@ void WM_OT_lasso_gesture(wmOperatorType *ot)
 	
 	ot->name = "Lasso Gesture";
 	ot->idname = "WM_OT_lasso_gesture";
-	ot->description = "Select objects within the lasso as you move the pointer";
+	ot->description = "Lasso Gesture\nSelect objects within the lasso as you move the pointer";
 	
 	ot->invoke = WM_gesture_lasso_invoke;
 	ot->modal = WM_gesture_lasso_modal;
@@ -3898,7 +3898,7 @@ void WM_OT_straightline_gesture(wmOperatorType *ot)
 	
 	ot->name = "Straight Line Gesture";
 	ot->idname = "WM_OT_straightline_gesture";
-	ot->description = "Draw a straight line as you move the pointer";
+	ot->description = "Straight Line Gesture\nDraw a straight line as you move the pointer";
 	
 	ot->invoke = WM_gesture_straightline_invoke;
 	ot->modal = WM_gesture_straightline_modal;
@@ -4632,7 +4632,7 @@ static void WM_OT_radial_control(wmOperatorType *ot)
 {
 	ot->name = "Radial Control";
 	ot->idname = "WM_OT_radial_control";
-	ot->description = "Set some size property (like e.g. brush size) with mouse wheel";
+	ot->description = "Radial Control\nSet some size property (like e.g. brush size) with mouse wheel";
 
 	ot->invoke = radial_control_invoke;
 	ot->modal = radial_control_modal;
@@ -4816,7 +4816,7 @@ static void WM_OT_redraw_timer(wmOperatorType *ot)
 {
 	ot->name = "Redraw Timer";
 	ot->idname = "WM_OT_redraw_timer";
-	ot->description = "Simple redraw timer to test the speed of updating the interface";
+	ot->description = "Redraw Timer\nSimple redraw timer to test the speed of updating the interface";
 
 	ot->invoke = WM_menu_invoke;
 	ot->exec = redraw_timer_exec;
@@ -4841,7 +4841,7 @@ static void WM_OT_memory_statistics(wmOperatorType *ot)
 {
 	ot->name = "Memory Statistics";
 	ot->idname = "WM_OT_memory_statistics";
-	ot->description = "Print memory statistics to the console";
+	ot->description = "Memory Statistics\nPrint memory statistics to the console";
 	
 	ot->exec = memory_statistics_exec;
 }
@@ -4863,7 +4863,7 @@ static void WM_OT_dependency_relations(wmOperatorType *ot)
 {
 	ot->name = "Dependency Relations";
 	ot->idname = "WM_OT_dependency_relations";
-	ot->description = "Print dependency graph relations to the console";
+	ot->description = "Dependency Relations\nPrint dependency graph relations to the console";
 	
 	ot->exec = dependency_relations_exec;
 }
@@ -4948,7 +4948,7 @@ static void WM_OT_previews_ensure(wmOperatorType *ot)
 {
 	ot->name = "Refresh DataBlock Previews";
 	ot->idname = "WM_OT_previews_ensure";
-	ot->description = "Ensure datablock previews are available and up-to-date "
+	ot->description = "Refresh DataBlock Previews\nEnsure datablock previews are available and up-to-date "
 	                  "(to be saved in .blend file, only for some types like materials, textures, etc.)";
 
 	ot->exec = previews_ensure_exec;
@@ -5007,7 +5007,7 @@ static void WM_OT_previews_clear(wmOperatorType *ot)
 {
 	ot->name = "Clear DataBlock Previews";
 	ot->idname = "WM_OT_previews_clear";
-	ot->description = "Clear datablock previews (only for some types like objects, materials, textures, etc.)";
+	ot->description = "Clear DataBlock Previews\nClear datablock previews (only for some types like objects, materials, textures, etc.)";
 
 	ot->exec = previews_clear_exec;
 	ot->invoke = WM_menu_invoke;
@@ -5045,7 +5045,7 @@ static void WM_OT_doc_view_manual_ui_context(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "View Online Manual";
 	ot->idname = "WM_OT_doc_view_manual_ui_context";
-	ot->description = "View a context based online manual in a web browser";
+	ot->description = "View Online Manual\nView a context based online manual in a web browser";
 
 	/* callbacks */
 	ot->poll = ED_operator_regionactive;
@@ -5078,7 +5078,7 @@ static void WM_OT_stereo3d_set(wmOperatorType *ot)
 
 	ot->name = "Set Stereo 3D";
 	ot->idname = "WM_OT_set_stereo_3d";
-	ot->description = "Toggle 3D stereo support for current window (or change the display mode)";
+	ot->description = "Set Stereo 3D\nToggle 3D stereo support for current window (or change the display mode)";
 
 	ot->exec = wm_stereo3d_set_exec;
 	ot->invoke = wm_stereo3d_set_invoke;

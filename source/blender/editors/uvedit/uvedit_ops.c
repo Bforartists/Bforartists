@@ -1445,7 +1445,7 @@ static void UV_OT_select_more(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Select More";
-	ot->description = "Select more UV vertices connected to initial selection";
+	ot->description = "Select More\nSelect more UV vertices connected to initial selection";
 	ot->idname = "UV_OT_select_more";
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
@@ -1463,7 +1463,7 @@ static void UV_OT_select_less(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Select Less";
-	ot->description = "Deselect UV vertices at the boundary of each selection region";
+	ot->description = "Select Less\nDeselect UV vertices at the boundary of each selection region";
 	ot->idname = "UV_OT_select_less";
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
@@ -1722,7 +1722,7 @@ static void UV_OT_align(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Align";
-	ot->description = "Align selected UV vertices to an axis";
+	ot->description = "Align\nAlign selected UV vertices to an axis";
 	ot->idname = "UV_OT_align";
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 	
@@ -1886,7 +1886,7 @@ static void UV_OT_remove_doubles(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Remove Doubles UV";
-	ot->description = "Selected UV vertices that are within a radius of each other are welded together";
+	ot->description = "Remove Doubles UV\nSelected UV vertices that are within a radius of each other are welded together";
 	ot->idname = "UV_OT_remove_doubles";
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
@@ -1911,7 +1911,7 @@ static void UV_OT_weld(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Weld";
-	ot->description = "Weld selected UV vertices together";
+	ot->description = "Weld\nWeld selected UV vertices together";
 	ot->idname = "UV_OT_weld";
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 	
@@ -2019,7 +2019,7 @@ static void UV_OT_select_all(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "(De)select All";
-	ot->description = "Change selection of all UV vertices";
+	ot->description = "(De)select All\nChange selection of all UV vertices";
 	ot->idname = "UV_OT_select_all";
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 	
@@ -2341,7 +2341,7 @@ static void UV_OT_select(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Select";
-	ot->description = "Select UV vertices";
+	ot->description = "Select\nSelect UV vertices";
 	ot->idname = "UV_OT_select";
 	ot->flag = OPTYPE_UNDO;
 	
@@ -2386,7 +2386,7 @@ static void UV_OT_select_loop(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Loop Select";
-	ot->description = "Select a loop of connected UV vertices";
+	ot->description = "Loop Select\nSelect a loop of connected UV vertices";
 	ot->idname = "UV_OT_select_loop";
 	ot->flag = OPTYPE_UNDO;
 	
@@ -2462,7 +2462,7 @@ static void UV_OT_select_linked(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Select Linked";
-	ot->description = "Select all UV vertices linked to the active UV map";
+	ot->description = "Select Linked\nSelect all UV vertices linked to the active UV map";
 	ot->idname = "UV_OT_select_linked";
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 	
@@ -2489,7 +2489,7 @@ static void UV_OT_select_linked_pick(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Select Linked Pick";
-	ot->description = "Select all UV vertices linked under the mouse";
+	ot->description = "Select Linked Pick\nSelect all UV vertices linked under the mouse";
 	ot->idname = "UV_OT_select_linked_pick";
 	ot->flag = OPTYPE_UNDO;
 
@@ -2584,7 +2584,7 @@ static void UV_OT_select_split(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Select Split";
-	ot->description = "Select only entirely selected faces";
+	ot->description = "Select Split\nSelect only entirely selected faces";
 	ot->idname = "UV_OT_select_split";
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
@@ -2947,7 +2947,7 @@ static void UV_OT_select_border(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Border Select";
-	ot->description = "Select UV vertices using border selection";
+	ot->description = "Border Select\nSelect UV vertices using border selection";
 	ot->idname = "UV_OT_select_border";
 	
 	/* api callbacks */
@@ -3071,7 +3071,7 @@ static void UV_OT_circle_select(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Circle Select";
-	ot->description = "Select UV vertices using circle selection";
+	ot->description = "Circle Select\nSelect UV vertices using circle selection";
 	ot->idname = "UV_OT_circle_select";
 	
 	/* api callbacks */
@@ -3207,7 +3207,7 @@ static int uv_lasso_select_exec(bContext *C, wmOperator *op)
 static void UV_OT_select_lasso(wmOperatorType *ot)
 {
 	ot->name = "Lasso Select UV";
-	ot->description = "Select UVs using lasso selection";
+	ot->description = "Lasso Select UV\nSelect UVs using lasso selection";
 	ot->idname = "UV_OT_select_lasso";
 
 	ot->invoke = WM_gesture_lasso_invoke;
@@ -3282,7 +3282,7 @@ static void UV_OT_snap_cursor(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Snap Cursor";
-	ot->description = "Snap cursor to target type";
+	ot->description = "Snap Cursor\nSnap cursor to target type";
 	ot->idname = "UV_OT_snap_cursor";
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 	
@@ -3503,7 +3503,7 @@ static void UV_OT_snap_selected(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Snap Selection";
-	ot->description = "Snap selected UV vertices to target type";
+	ot->description = "Snap Selection\nSnap selected UV vertices to target type";
 	ot->idname = "UV_OT_snap_selected";
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 	
@@ -3561,7 +3561,7 @@ static void UV_OT_pin(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Pin";
-	ot->description = "Set/clear selected UV vertices as anchored between multiple unwrap operations";
+	ot->description = "Pin\nSet/clear selected UV vertices as anchored between multiple unwrap operations";
 	ot->idname = "UV_OT_pin";
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 	
@@ -3612,7 +3612,7 @@ static void UV_OT_select_pinned(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Selected Pinned";
-	ot->description = "Select all pinned UV vertices";
+	ot->description = "Selected Pinned\nSelect all pinned UV vertices";
 	ot->idname = "UV_OT_select_pinned";
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 	
@@ -3747,7 +3747,7 @@ static void UV_OT_hide(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Hide Selected";
-	ot->description = "Hide (un)selected UV vertices";
+	ot->description = "Hide Selected\nHide (un)selected UV vertices";
 	ot->idname = "UV_OT_hide";
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 	
@@ -3881,7 +3881,7 @@ static void UV_OT_reveal(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Reveal Hidden";
-	ot->description = "Reveal all hidden UV vertices";
+	ot->description = "Reveal Hidden\nReveal all hidden UV vertices";
 	ot->idname = "UV_OT_reveal";
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 	
@@ -3937,7 +3937,7 @@ static void UV_OT_cursor_set(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Set 2D Cursor";
-	ot->description = "Set 2D cursor location";
+	ot->description = "Set 2D Cursor\nSet 2D cursor location";
 	ot->idname = "UV_OT_cursor_set";
 	
 	/* api callbacks */
@@ -4004,7 +4004,7 @@ static void UV_OT_tile_set(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Set Tile";
-	ot->description = "Set UV image tile coordinates";
+	ot->description = "Set Tile\nSet UV image tile coordinates";
 	ot->idname = "UV_OT_tile_set";
 	
 	/* api callbacks */
@@ -4140,7 +4140,7 @@ static void UV_OT_seams_from_islands(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Seams From Islands";
-	ot->description = "Set mesh seams according to island setup in the UV editor";
+	ot->description = "Seams From Islands\nSet mesh seams according to island setup in the UV editor";
 	ot->idname = "UV_OT_seams_from_islands";
 
 	/* flags */
@@ -4215,7 +4215,7 @@ static void UV_OT_mark_seam(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Mark Seam";
-	ot->description = "Mark selected UV edges as seams";
+	ot->description = "Mark Seam\nMark selected UV edges as seams";
 	ot->idname = "UV_OT_mark_seam";
 
 	/* flags */

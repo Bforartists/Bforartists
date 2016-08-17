@@ -188,7 +188,7 @@ static void TRANSFORM_OT_select_orientation(struct wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name   = "Select Orientation";
-	ot->description = "Select transformation orientation";
+	ot->description = "Select Orientation\nSelect transformation orientation";
 	ot->idname = "TRANSFORM_OT_select_orientation";
 	ot->flag   = OPTYPE_UNDO;
 
@@ -241,7 +241,7 @@ static void TRANSFORM_OT_delete_orientation(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name   = "Delete Orientation";
-	ot->description = "Delete transformation orientation";
+	ot->description = "Delete Orientation\nDelete transformation orientation";
 	ot->idname = "TRANSFORM_OT_delete_orientation";
 	ot->flag   = OPTYPE_UNDO;
 
@@ -278,7 +278,7 @@ static void TRANSFORM_OT_create_orientation(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name   = "Create Orientation";
-	ot->description = "Create transformation orientation from selection";
+	ot->description = "Create Orientation\nCreate transformation orientation from selection";
 	ot->idname = "TRANSFORM_OT_create_orientation";
 	ot->flag   = OPTYPE_REGISTER | OPTYPE_UNDO;
 
@@ -575,7 +575,7 @@ static void TRANSFORM_OT_translate(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name   = "Translate";
-	ot->description = "Translate (move) selected items";
+	ot->description = "Translate\nTranslate (move) selected items";
 	ot->idname = OP_TRANSLATION;
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 
@@ -595,7 +595,7 @@ static void TRANSFORM_OT_resize(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name   = "Resize";
-	ot->description = "Scale (resize) selected items"; 
+	ot->description = "Resize\nScale (resize) selected items"; 
 	ot->idname = OP_RESIZE;
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 
@@ -625,7 +625,7 @@ static void TRANSFORM_OT_skin_resize(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name   = "Skin Resize";
-	ot->description = "Scale selected vertices' skin radii"; 
+	ot->description = "Skin Resize\nScale selected vertices' skin radii"; 
 	ot->idname = OP_SKIN_RESIZE;
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 
@@ -645,7 +645,7 @@ static void TRANSFORM_OT_trackball(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name   = "Trackball";
-	ot->description = "Trackball style rotation of selected items";
+	ot->description = "Trackball\nTrackball style rotation of selected items";
 	ot->idname = OP_TRACKBALL;
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 
@@ -666,7 +666,7 @@ static void TRANSFORM_OT_rotate(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Rotate";
-	ot->description = "Rotate selected items";
+	ot->description = "Rotate\nRotate selected items";
 	ot->idname = OP_ROTATION;
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 
@@ -691,7 +691,7 @@ static void TRANSFORM_OT_tilt(struct wmOperatorType *ot)
 	/* optionals - 
 	 * "Tilt selected vertices"
 	 * "Specify an extra axis rotation for selected vertices of 3D curve" */
-	ot->description = "Tilt selected control vertices of 3D curve"; 
+	ot->description = "Tilt\nTilt selected control vertices of 3D curve"; 
 	ot->idname = OP_TILT;
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 
@@ -712,7 +712,7 @@ static void TRANSFORM_OT_bend(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name   = "Bend";
-	ot->description = "Bend selected items between the 3D cursor and the mouse";
+	ot->description = "Bend\nBend selected items between the 3D cursor and the mouse";
 	ot->idname = OP_BEND;
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 
@@ -732,7 +732,7 @@ static void TRANSFORM_OT_shear(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name   = "Shear";
-	ot->description = "Shear selected items along the horizontal screen axis";
+	ot->description = "Shear\nShear selected items along the horizontal screen axis";
 	ot->idname = OP_SHEAR;
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 
@@ -753,7 +753,7 @@ static void TRANSFORM_OT_push_pull(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name   = "Push/Pull";
-	ot->description = "Push/Pull selected items";
+	ot->description = "Push/Pull\nPush/Pull selected items";
 	ot->idname = OP_PUSH_PULL;
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 
@@ -773,7 +773,7 @@ static void TRANSFORM_OT_shrink_fatten(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name   = "Shrink/Fatten";
-	ot->description = "Shrink/fatten selected vertices along normals";
+	ot->description = "Shrink/Fatten\nShrink/fatten selected vertices along normals";
 	ot->idname = OP_SHRINK_FATTEN;
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 
@@ -796,7 +796,7 @@ static void TRANSFORM_OT_tosphere(struct wmOperatorType *ot)
 	/* identifiers */
 	ot->name   = "To Sphere";
 	//added "around mesh center" to differentiate between "MESH_OT_vertices_to_sphere()" 
-	ot->description = "Move selected vertices outward in a spherical shape around mesh center";
+	ot->description = "To Sphere\nMove selected vertices outward in a spherical shape around mesh center";
 	ot->idname = OP_TOSPHERE;
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 
@@ -816,7 +816,7 @@ static void TRANSFORM_OT_mirror(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name   = "Mirror";
-	ot->description = "Mirror selected geometry around one or more axes";
+	ot->description = "Mirror\nMirror selected geometry around one or more axes";
 	ot->idname = OP_MIRROR;
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 
@@ -836,7 +836,7 @@ static void TRANSFORM_OT_edge_slide(struct wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name   = "Edge Slide";
-	ot->description = "Slide an edge loop along a mesh"; 
+	ot->description = "Edge Slide\nSlide an edge loop along a mesh"; 
 	ot->idname = OP_EDGE_SLIDE;
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 
@@ -859,7 +859,7 @@ static void TRANSFORM_OT_vert_slide(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name   = "Vertex Slide";
-	ot->description = "Slide a vertex along a mesh";
+	ot->description = "Vertex Slide\nSlide a vertex along a mesh";
 	ot->idname = OP_VERT_SLIDE;
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 
@@ -879,7 +879,7 @@ static void TRANSFORM_OT_edge_crease(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name   = "Edge Crease";
-	ot->description = "Change the crease of edges";
+	ot->description = "Edge Crease\nChange the crease of edges";
 	ot->idname = OP_EDGE_CREASE;
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 
@@ -920,7 +920,7 @@ static void TRANSFORM_OT_edge_bevelweight(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name   = "Edge Bevel Weight";
-	ot->description = "Change the bevel weight of edges";
+	ot->description = "Edge Bevel Weight\nChange the bevel weight of edges";
 	ot->idname = OP_EDGE_BWEIGHT;
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 
@@ -940,7 +940,7 @@ static void TRANSFORM_OT_seq_slide(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name   = "Sequence Slide";
-	ot->description = "Slide a sequence strip in time";
+	ot->description = "Sequence Slide\nSlide a sequence strip in time";
 	ot->idname = OP_SEQ_SLIDE;
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 
@@ -962,7 +962,7 @@ static void TRANSFORM_OT_transform(struct wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name   = "Transform";
-	ot->description = "Transform selected items by mode type";
+	ot->description = "Transform\nTransform selected items by mode type";
 	ot->idname = "TRANSFORM_OT_transform";
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
 

@@ -92,7 +92,7 @@ static void VIEW3D_OT_copybuffer(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Copy Selection to Buffer";
 	ot->idname = "VIEW3D_OT_copybuffer";
-	ot->description = "Selected objects are saved in a temp file";
+	ot->description = "Copy Selection to Buffer\nSelected objects are saved in a temp file";
 	
 	/* api callbacks */
 	ot->exec = view3d_copybuffer_exec;
@@ -123,7 +123,7 @@ static void VIEW3D_OT_pastebuffer(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Paste Selection from Buffer";
 	ot->idname = "VIEW3D_OT_pastebuffer";
-	ot->description = "Contents of copy buffer gets pasted";
+	ot->description = "Paste Selection from Buffer\nContents of copy buffer gets pasted";
 	
 	/* api callbacks */
 	ot->exec = view3d_pastebuffer_exec;
