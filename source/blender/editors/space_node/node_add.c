@@ -277,7 +277,7 @@ void NODE_OT_add_reroute(wmOperatorType *ot)
 
 	ot->name = "Add Reroute";
 	ot->idname = "NODE_OT_add_reroute";
-	ot->description = "Add a reroute node";
+	ot->description = "Add Reroute\nAdd a reroute node";
 
 	ot->invoke = WM_gesture_lines_invoke;
 	ot->modal = WM_gesture_lines_modal;
@@ -368,7 +368,7 @@ void NODE_OT_add_file(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Add File Node";
-	ot->description = "Add a file node to the current node editor";
+	ot->description = "Add File Node\nAdd a file node to the current node editor";
 	ot->idname = "NODE_OT_add_file";
 
 	/* callbacks */
@@ -430,7 +430,7 @@ void NODE_OT_add_mask(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Add Mask Node";
-	ot->description = "Add a mask node to the current node editor";
+	ot->description = "Add Mask Node\nAdd a mask node to the current node editor";
 	ot->idname = "NODE_OT_add_mask";
 
 	/* callbacks */
@@ -514,7 +514,7 @@ void NODE_OT_new_node_tree(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "New Node Tree";
 	ot->idname = "NODE_OT_new_node_tree";
-	ot->description = "Create a new node tree";
+	ot->description = "New Node Tree\nCreate a new node tree";
 	
 	/* api callbacks */
 	ot->exec = new_node_tree_exec;
