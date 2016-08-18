@@ -474,8 +474,8 @@ static int object_add_exec(bContext *C, wmOperator *op)
 void OBJECT_OT_add(wmOperatorType *ot)
 {
 	/* identifiers */
-	ot->name = "Add Object";
-	ot->description = "Add Object\nAdd an object to the scene";
+	ot->name = "Add Lattice Object"; // bfa - Original was Add Object. But is used to create a Lattice object. Not sure if this gets reused somewhere. 
+	ot->description = "Add Lattice Object\nAdd an Lattice object to the scene";
 	ot->idname = "OBJECT_OT_add";
 
 	/* api callbacks */
