@@ -573,7 +573,7 @@ void OBJECT_OT_grouped_select(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select Grouped";
 	ot->idname = "OBJECT_OT_grouped_select";
-	ot->description = "Select Grouped\nSelect all objects in group";
+	ot->description = "Select Grouped, Select all objects in group";
 
 	/* api callbacks */
 	ot->exec = select_grouped_exec;

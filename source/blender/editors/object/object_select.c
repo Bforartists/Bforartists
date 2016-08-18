@@ -168,7 +168,7 @@ void OBJECT_OT_select_by_type(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Select By Type";
-	ot->description = "Select By Type\nSelect all visible objects that are of a type";
+	ot->description = "Select By Type, all visible objects of type:";
 	ot->idname = "OBJECT_OT_select_by_type";
 	
 	/* api callbacks */
@@ -912,7 +912,7 @@ void OBJECT_OT_select_grouped(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Select Grouped";
-	ot->description = "Select Grouped\nSelect all visible objects grouped by various properties";
+	ot->description = "Select Grouped by type: ";
 	ot->idname = "OBJECT_OT_select_grouped";
 	
 	/* api callbacks */

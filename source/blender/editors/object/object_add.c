@@ -544,7 +544,7 @@ void OBJECT_OT_effector_add(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Add Effector";
-	ot->description = "Add Effector\nAdd an empty object with a physics effector to the scene";
+	ot->description = "Add Physics Effector of type";
 	ot->idname = "OBJECT_OT_effector_add";
 
 	/* api callbacks */
@@ -662,7 +662,7 @@ void OBJECT_OT_metaball_add(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Add Metaball";
-	ot->description = "Add Metaball\nAdd an metaball object to the scene";
+	ot->description = "Add Metaball of type:";
 	ot->idname = "OBJECT_OT_metaball_add";
 
 	/* api callbacks */
@@ -808,7 +808,7 @@ void OBJECT_OT_empty_add(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Add Empty";
-	ot->description = "Add Empty\nAdd an empty object to the scene";
+	ot->description = "Add Empty of type:";
 	ot->idname = "OBJECT_OT_empty_add";
 
 	/* api callbacks */
@@ -944,7 +944,7 @@ void OBJECT_OT_lamp_add(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Add Lamp";
-	ot->description = "Add Lamp\nAdd a lamp object to the scene";
+	ot->description = "Add Lamp of type:";
 	ot->idname = "OBJECT_OT_lamp_add";
 
 	/* api callbacks */
@@ -1019,7 +1019,7 @@ void OBJECT_OT_group_instance_add(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Add Group Instance";
-	ot->description = "Add Group Instance\nAdd a dupligroup instance";
+	ot->description = "Add Group Instance: ";
 	ot->idname = "OBJECT_OT_group_instance_add";
 
 	/* api callbacks */
@@ -1922,7 +1922,7 @@ void OBJECT_OT_convert(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Convert to";
-	ot->description = "Convert to\nConvert selected objects to another type";
+	ot->description = "Convert to, Convert selected objects:";
 	ot->idname = "OBJECT_OT_convert";
 
 	/* api callbacks */

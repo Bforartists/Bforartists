@@ -1026,7 +1026,7 @@ void OBJECT_OT_origin_set(wmOperatorType *ot)
 	
 	/* identifiers */
 	ot->name = "Set Origin";
-	ot->description = "Set Origin\nSet the object's origin, by either moving the data, or set to center of data, or use 3D cursor";
+	ot->description = "Set Object Origin: ";
 	ot->idname = "OBJECT_OT_origin_set";
 	
 	/* api callbacks */

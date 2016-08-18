@@ -1014,7 +1014,7 @@ void NODE_OT_parent_set(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Make Parent";
-	ot->description = "Make Parent\nAttach selected nodes";
+	ot->description = "Make Parent, Attach selected nodes";
 	ot->idname = "NODE_OT_parent_set";
 
 	/* api callbacks */
