@@ -3940,8 +3940,8 @@ void VIEW3D_OT_viewnumpad(wmOperatorType *ot)
 	PropertyRNA *prop;
 
 	/* identifiers */
-	ot->name = "View Numpad"; // bfa - Originally View Numpad. But Numpad is the hotkey. Not the tool.
-	ot->description = "View Numpad, aligns the view to:";
+	ot->name = "Align View"; // bfa - Originally View Numpad. But Numpad is the hotkey. Not the tool.
+	ot->description = "Align View, aligns the view to:";
 	ot->idname = "VIEW3D_OT_viewnumpad";
 
 	/* api callbacks */
