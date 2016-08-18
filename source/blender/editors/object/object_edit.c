@@ -1665,7 +1665,7 @@ void OBJECT_OT_mode_set(wmOperatorType *ot)
 	
 	/* identifiers */
 	ot->name = "Set Object Mode";
-	ot->description = "Set Object interaction Mode to:";
+	ot->description = "Set Object interaction Mode to";
 	ot->idname = "OBJECT_OT_mode_set";
 	
 	/* api callbacks */

@@ -662,7 +662,7 @@ void OBJECT_OT_metaball_add(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Add Metaball";
-	ot->description = "Add Metaball of type:";
+	ot->description = "Add Metaball of type";
 	ot->idname = "OBJECT_OT_metaball_add";
 
 	/* api callbacks */
@@ -808,7 +808,7 @@ void OBJECT_OT_empty_add(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Add Empty";
-	ot->description = "Add Empty of type:";
+	ot->description = "Add Empty of type";
 	ot->idname = "OBJECT_OT_empty_add";
 
 	/* api callbacks */
@@ -944,7 +944,7 @@ void OBJECT_OT_lamp_add(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Add Lamp";
-	ot->description = "Add Lamp of type:";
+	ot->description = "Add Lamp of type";
 	ot->idname = "OBJECT_OT_lamp_add";
 
 	/* api callbacks */
@@ -1019,7 +1019,7 @@ void OBJECT_OT_group_instance_add(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Add Group Instance";
-	ot->description = "Add Group Instance: ";
+	ot->description = "Add Group Instance ";
 	ot->idname = "OBJECT_OT_group_instance_add";
 
 	/* api callbacks */

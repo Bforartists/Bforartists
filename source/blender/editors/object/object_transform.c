@@ -1026,7 +1026,7 @@ void OBJECT_OT_origin_set(wmOperatorType *ot)
 	
 	/* identifiers */
 	ot->name = "Set Origin";
-	ot->description = "Set Object Origin: ";
+	ot->description = "Set Object Origin";
 	ot->idname = "OBJECT_OT_origin_set";
 	
 	/* api callbacks */
