@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -1043,9 +1043,15 @@ from bpy.props import FloatProperty, BoolProperty
 
 
 class SmartProject(Operator):
-    """This script projection unwraps the selected faces of a mesh """ \
-    """(it operates on all selected mesh objects, and can be used """ \
-    """to unwrap selected faces, or all faces)"""
+    # bfa - Original tooltip is confusing and simply wrong. Project is no unwrapping.
+    # The only real unwrapping methods in the available list of UV mapping methods is abf and lscm.
+
+    #"""This script projection unwraps the selected faces of a mesh """ \
+    #"""(it operates on all selected mesh objects, and can be used """ \
+    #"""to unwrap selected faces, or all faces)"""
+
+    """Smart UV Project\nThis uv mapping method projects the UV mapping from as much sides as defined by the angle."""
+
     bl_idname = "uv.smart_project"
     bl_label = "Smart UV Project"
     bl_options = {'REGISTER', 'UNDO'}
