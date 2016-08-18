@@ -851,7 +851,7 @@ void POSE_OT_select_grouped(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Select Grouped";
-	ot->description = "Select Grouped\nSelect all visible bones grouped by similar properties";
+	ot->description = "Select Grouped, Select all visible bones grouped by similar properties";
 	ot->idname = "POSE_OT_select_grouped";
 	
 	/* api callbacks */

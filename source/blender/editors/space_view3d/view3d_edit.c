@@ -3940,8 +3940,8 @@ void VIEW3D_OT_viewnumpad(wmOperatorType *ot)
 	PropertyRNA *prop;
 
 	/* identifiers */
-	ot->name = "View Numpad";
-	ot->description = "View Numpad\nUse a preset viewpoint";
+	ot->name = "View Numpad"; // bfa - Originally View Numpad. But Numpad is the hotkey. Not the tool.
+	ot->description = "View Numpad, aligns the view to:";
 	ot->idname = "VIEW3D_OT_viewnumpad";
 
 	/* api callbacks */
@@ -4067,7 +4067,7 @@ void VIEW3D_OT_view_orbit(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "View Orbit";
-	ot->description = "View Orbit\nOrbit the view";
+	ot->description = "View Orbit, Orbits the view";
 	ot->idname = "VIEW3D_OT_view_orbit";
 
 	/* api callbacks */
@@ -4349,7 +4349,7 @@ void VIEW3D_OT_view_pan(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "View Pan";
-	ot->description = "View Pan\nPan the view";
+	ot->description = "View Pan, Pan the view";
 	ot->idname = "VIEW3D_OT_view_pan";
 
 	/* api callbacks */

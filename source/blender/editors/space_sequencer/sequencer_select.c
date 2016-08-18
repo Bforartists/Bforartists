@@ -1225,7 +1225,7 @@ void SEQUENCER_OT_select_grouped(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Select Grouped";
-	ot->description = "Select all strips grouped by various properties";
+	ot->description = "Select Grouped, Select all strips grouped by various properties";
 	ot->idname = "SEQUENCER_OT_select_grouped";
 	
 	/* api callbacks */

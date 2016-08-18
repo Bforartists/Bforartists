@@ -260,7 +260,7 @@ void RIGIDBODY_OT_objects_add(wmOperatorType *ot)
 	/* identifiers */
 	ot->idname = "RIGIDBODY_OT_objects_add";
 	ot->name = "Add Rigid Bodies";
-	ot->description = "Add Rigid Bodies\nAdd selected objects as Rigid Bodies";
+	ot->description = "Add Rigid Bodies, Add selected objects as Rigid Bodies";
 
 	/* callbacks */
 	ot->exec = rigidbody_objects_add_exec;
@@ -363,7 +363,7 @@ void RIGIDBODY_OT_shape_change(wmOperatorType *ot)
 	/* identifiers */
 	ot->idname = "RIGIDBODY_OT_shape_change";
 	ot->name = "Change Collision Shape";
-	ot->description = "Change Collision Shape\nChange collision shapes for selected Rigid Body Objects";
+	ot->description = "Change Collision Shape, Change the collision shapes for selected Rigid Body Objects";
 
 	/* callbacks */
 	ot->invoke = WM_menu_invoke;

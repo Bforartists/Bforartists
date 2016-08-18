@@ -1750,7 +1750,7 @@ void OUTLINER_OT_parent_clear(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Drop to Clear Parent";
-	ot->description = "Drop to Clear Parent\nDrag to clear parent in Outliner";
+	ot->description = "Drop to Clear Parent, Drag to clear parent in Outliner";
 	ot->idname = "OUTLINER_OT_parent_clear";
 
 	/* api callbacks */

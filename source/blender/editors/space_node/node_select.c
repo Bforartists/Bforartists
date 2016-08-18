@@ -343,7 +343,7 @@ void NODE_OT_select_grouped(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Select Grouped";
-	ot->description = "Select Grouped\nSelect nodes with similar properties";
+	ot->description = "Select Grouped, Select nodes with similar properties";
 	ot->idname = "NODE_OT_select_grouped";
 
 	/* api callbacks */

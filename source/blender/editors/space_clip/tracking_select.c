@@ -987,7 +987,7 @@ void CLIP_OT_select_grouped(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Select Grouped";
-	ot->description = "Select Grouped\nSelect all tracks from specified group";
+	ot->description = "Select Grouped, Select all tracks from specified group";
 	ot->idname = "CLIP_OT_select_grouped";
 
 	/* api callbacks */

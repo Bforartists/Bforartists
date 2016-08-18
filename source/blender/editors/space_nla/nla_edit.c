@@ -1890,7 +1890,7 @@ void NLA_OT_make_single_user(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Make Single User";
 	ot->idname = "NLA_OT_make_single_user";
-	ot->description = "Make Single User\nEnsure that each action is only used once in the set of strips selected";
+	ot->description = "Make Single User, Ensure that each action is only used once in the set of strips selected";
 	
 	/* api callbacks */
 	ot->invoke = WM_operator_confirm;

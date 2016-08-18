@@ -3730,7 +3730,7 @@ static void SCREEN_OT_animation_play(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Play Animation";
-	ot->description = "Play Animation\Play animation";
+	ot->description = "Play Animation\nPlays the animation";
 	ot->idname = "SCREEN_OT_animation_play";
 	
 	/* api callbacks */
