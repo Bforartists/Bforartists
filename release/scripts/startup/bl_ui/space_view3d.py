@@ -549,15 +549,15 @@ class VIEW3D_MT_select_object(Menu):
     def draw(self, context):
         layout = self.layout
 
-        myvar = layout.operator("view3d.select_lasso")
+        myvar = layout.operator("view3d.select_lasso", icon='SELECT_LASSO')
         myvar.deselect = False
-        layout.operator("view3d.select_border")
-        layout.operator("view3d.select_circle")
+        layout.operator("view3d.select_border", icon='SELECT_BORDER')
+        layout.operator("view3d.select_circle", icon = 'SELECT_CIRCLE')
 
         layout.separator()
 
-        layout.operator("object.select_all").action = 'TOGGLE'
-        layout.operator("object.select_all", text="Inverse").action = 'INVERT'
+        layout.operator("object.select_all", icon='SELECT_ALL').action = 'TOGGLE'
+        layout.operator("object.select_all", text="Inverse", icon='SELECT_INVERSE').action = 'INVERT'
         layout.operator("object.select_random", text="Random")
         layout.operator("object.select_mirror", text="Mirror")
         layout.operator("object.select_by_layer", text="All by Layer")
@@ -593,15 +593,15 @@ class VIEW3D_MT_select_pose(Menu):
     def draw(self, context):
         layout = self.layout
 
-        myvar = layout.operator("view3d.select_lasso")
+        myvar = layout.operator("view3d.select_lasso", icon='SELECT_LASSO')
         myvar.deselect = False
         layout.operator("view3d.select_border")
-        layout.operator("view3d.select_circle")
+        layout.operator("view3d.select_circle", icon = 'SELECT_CIRCLE')
 
         layout.separator()
 
-        layout.operator("pose.select_all").action = 'TOGGLE'
-        layout.operator("pose.select_all", text="Inverse").action = 'INVERT'
+        layout.operator("pose.select_all", icon='SELECT_ALL').action = 'TOGGLE'
+        layout.operator("pose.select_all", text="Inverse", icon='SELECT_INVERSE').action = 'INVERT'
         layout.operator("pose.select_mirror", text="Flip Active")
         layout.operator("pose.select_constraint_target", text="Constraint Target")
         layout.operator("pose.select_linked", text="Linked")
@@ -638,14 +638,14 @@ class VIEW3D_MT_select_particle(Menu):
     def draw(self, context):
         layout = self.layout
 
-        myvar = layout.operator("view3d.select_lasso")
+        myvar = layout.operator("view3d.select_lasso", icon='SELECT_LASSO')
         myvar.deselect = False
-        layout.operator("view3d.select_border")
+        layout.operator("view3d.select_border", icon='SELECT_BORDER')
 
         layout.separator()
 
-        layout.operator("particle.select_all").action = 'TOGGLE'
-        layout.operator("particle.select_all", text="Inverse").action = 'INVERT'
+        layout.operator("particle.select_all", icon='SELECT_ALL').action = 'TOGGLE'
+        layout.operator("particle.select_all", text="Inverse", icon='SELECT_INVERSE').action = 'INVERT'
         layout.operator("particle.select_linked").deselect = False
         layout.operator("particle.select_linked", text="Deselect Linked").deselect = True
 
@@ -683,16 +683,16 @@ class VIEW3D_MT_select_edit_mesh(Menu):
     def draw(self, context):
         layout = self.layout
 
-        myvar = layout.operator("view3d.select_lasso")
+        myvar = layout.operator("view3d.select_lasso", icon='SELECT_LASSO')
         myvar.deselect = False
-        layout.operator("view3d.select_border")
-        layout.operator("view3d.select_circle")
+        layout.operator("view3d.select_border", icon='SELECT_BORDER')
+        layout.operator("view3d.select_circle", icon = 'SELECT_CIRCLE')
 
         layout.separator()
 
         # primitive
-        layout.operator("mesh.select_all").action = 'TOGGLE'
-        layout.operator("mesh.select_all", text="Inverse").action = 'INVERT'
+        layout.operator("mesh.select_all", icon='SELECT_ALL').action = 'TOGGLE'
+        layout.operator("mesh.select_all", text="Inverse", icon='SELECT_INVERSE').action = 'INVERT'
 
         layout.separator()
 
@@ -750,15 +750,15 @@ class VIEW3D_MT_select_edit_curve(Menu):
     def draw(self, context):
         layout = self.layout
 
-        myvar = layout.operator("view3d.select_lasso")
+        myvar = layout.operator("view3d.select_lasso", icon='SELECT_LASSO')
         myvar.deselect = False
-        layout.operator("view3d.select_border")
-        layout.operator("view3d.select_circle")
+        layout.operator("view3d.select_border", icon='SELECT_BORDER')
+        layout.operator("view3d.select_circle", icon = 'SELECT_CIRCLE')
 
         layout.separator()
 
-        layout.operator("curve.select_all").action = 'TOGGLE'
-        layout.operator("curve.select_all", text="Inverse").action = 'INVERT'
+        layout.operator("curve.select_all", icon='SELECT_ALL').action = 'TOGGLE'
+        layout.operator("curve.select_all", text="Inverse", icon='SELECT_INVERSE').action = 'INVERT'
         layout.operator("curve.select_random", text="Random")
         layout.operator("curve.select_nth")
         layout.operator("curve.select_linked", text="Linked")
@@ -780,20 +780,21 @@ class VIEW3D_MT_select_edit_curve(Menu):
 
 
 class VIEW3D_MT_select_edit_surface(Menu):
+
     bl_label = "Select"
 
     def draw(self, context):
         layout = self.layout
 
-        myvar = layout.operator("view3d.select_lasso")
+        myvar = layout.operator("view3d.select_lasso", icon='SELECT_LASSO')
         myvar.deselect = False
-        layout.operator("view3d.select_border")
-        layout.operator("view3d.select_circle")
+        layout.operator("view3d.select_border", icon='SELECT_BORDER')
+        layout.operator("view3d.select_circle", icon = 'SELECT_CIRCLE')
 
         layout.separator()
 
-        layout.operator("curve.select_all").action = 'TOGGLE'
-        layout.operator("curve.select_all", text="Inverse").action = 'INVERT'
+        layout.operator("curve.select_all", icon='SELECT_ALL').action = 'TOGGLE'
+        layout.operator("curve.select_all", text="Inverse", icon='SELECT_INVERSE').action = 'INVERT'
         layout.operator("curve.select_random", text="Random")
         layout.operator("curve.select_nth")
         layout.operator("curve.select_linked", text="Select Linked")
@@ -839,15 +840,15 @@ class VIEW3D_MT_select_edit_metaball(Menu):
     def draw(self, context):
         layout = self.layout
 
-        myvar = layout.operator("view3d.select_lasso")
+        myvar = layout.operator("view3d.select_lasso", icon='SELECT_LASSO')
         myvar.deselect = False
-        layout.operator("view3d.select_border")
-        layout.operator("view3d.select_circle")
+        layout.operator("view3d.select_border", icon='SELECT_BORDER')
+        layout.operator("view3d.select_circle", icon = 'SELECT_CIRCLE')
 
         layout.separator()
 
-        layout.operator("mball.select_all").action = 'TOGGLE'
-        layout.operator("mball.select_all", text="Inverse").action = 'INVERT'
+        layout.operator("mball.select_all", icon='SELECT_ALL').action = 'TOGGLE'
+        layout.operator("mball.select_all", text="Inverse", icon='SELECT_INVERSE').action = 'INVERT'
 
         layout.separator()
 
@@ -864,17 +865,17 @@ class VIEW3D_MT_select_edit_lattice(Menu):
     def draw(self, context):
         layout = self.layout
 
-        myvar = layout.operator("view3d.select_lasso")
+        myvar = layout.operator("view3d.select_lasso", icon='SELECT_LASSO')
         myvar.deselect = False
-        layout.operator("view3d.select_border")
-        layout.operator("view3d.select_circle")
+        layout.operator("view3d.select_border", icon='SELECT_BORDER')
+        layout.operator("view3d.select_circle", icon = 'SELECT_CIRCLE')
 
         layout.separator()
 
         layout.operator("lattice.select_mirror")
         layout.operator("lattice.select_random", text="Random")
-        layout.operator("lattice.select_all").action = 'TOGGLE'
-        layout.operator("lattice.select_all", text="Inverse").action = 'INVERT'
+        layout.operator("lattice.select_all", icon='SELECT_ALL').action = 'TOGGLE'
+        layout.operator("lattice.select_all", text="Inverse", icon='SELECT_INVERSE').action = 'INVERT'
 
         layout.separator()
 
@@ -892,15 +893,15 @@ class VIEW3D_MT_select_edit_armature(Menu):
     def draw(self, context):
         layout = self.layout
 
-        myvar = layout.operator("view3d.select_lasso")
+        myvar = layout.operator("view3d.select_lasso", icon='SELECT_LASSO')
         myvar.deselect = False
-        layout.operator("view3d.select_border")
-        layout.operator("view3d.select_circle")
+        layout.operator("view3d.select_border", icon='SELECT_BORDER')
+        layout.operator("view3d.select_circle", icon = 'SELECT_CIRCLE')
 
         layout.separator()
 
-        layout.operator("armature.select_all").action = 'TOGGLE'
-        layout.operator("armature.select_all", text="Inverse").action = 'INVERT'
+        layout.operator("armature.select_all", icon='SELECT_ALL').action = 'TOGGLE'
+        layout.operator("armature.select_all", text="Inverse", icon='SELECT_INVERSE').action = 'INVERT'
         layout.operator("armature.select_mirror", text="Mirror").extend = False
 
         layout.separator()
@@ -938,15 +939,15 @@ class VIEW3D_MT_select_paint_mask(Menu):
     def draw(self, context):
         layout = self.layout
 
-        myvar = layout.operator("view3d.select_lasso")
+        myvar = layout.operator("view3d.select_lasso", icon='SELECT_LASSO')
         myvar.deselect = False
-        layout.operator("view3d.select_border")
-        layout.operator("view3d.select_circle")
+        layout.operator("view3d.select_border", icon='SELECT_BORDER')
+        layout.operator("view3d.select_circle", icon = 'SELECT_CIRCLE')
 
         layout.separator()
 
-        layout.operator("paint.face_select_all").action = 'TOGGLE'
-        layout.operator("paint.face_select_all", text="Inverse").action = 'INVERT'
+        layout.operator("paint.face_select_all", icon='SELECT_ALL').action = 'TOGGLE'
+        layout.operator("paint.face_select_all", text="Inverse", icon='SELECT_INVERSE').action = 'INVERT'
 
         layout.separator()
 
@@ -961,15 +962,15 @@ class VIEW3D_MT_select_paint_mask_vertex(Menu):
     def draw(self, context):
         layout = self.layout
 
-        myvar = layout.operator("view3d.select_lasso")
+        myvar = layout.operator("view3d.select_lasso", icon='SELECT_LASSO')
         myvar.deselect = False
-        layout.operator("view3d.select_border")
-        layout.operator("view3d.select_circle")
+        layout.operator("view3d.select_border", icon='SELECT_BORDER')
+        layout.operator("view3d.select_circle", icon = 'SELECT_CIRCLE')
 
         layout.separator()
 
-        layout.operator("paint.vert_select_all").action = 'TOGGLE'
-        layout.operator("paint.vert_select_all", text="Inverse").action = 'INVERT'
+        layout.operator("paint.vert_select_all", icon='SELECT_ALL').action = 'TOGGLE'
+        layout.operator("paint.vert_select_all", text="Inverse", icon='SELECT_INVERSE').action = 'INVERT'
 
         layout.separator()
 
