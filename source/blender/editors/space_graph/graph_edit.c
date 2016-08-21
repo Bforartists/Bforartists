@@ -2066,7 +2066,7 @@ void GRAPH_OT_snap(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Snap Keys";
 	ot->idname = "GRAPH_OT_snap";
-	ot->description = "Snap Keys\nSnap selected keyframes to the chosen times/values";
+	ot->description = "Snap Keys, Snap selected keyframes to";
 	
 	/* api callbacks */
 	ot->invoke = WM_menu_invoke;
@@ -2194,7 +2194,7 @@ void GRAPH_OT_mirror(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Mirror Keys";
 	ot->idname = "GRAPH_OT_mirror";
-	ot->description = "Mirror Keys\nFlip selected keyframes over the selected mirror line";
+	ot->description = "Mirror Keys, Flip selected keyframes over the selected mirror line";
 	
 	/* api callbacks */
 	ot->invoke = WM_menu_invoke;
