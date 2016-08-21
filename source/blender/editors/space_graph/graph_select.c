@@ -737,7 +737,7 @@ void GRAPH_OT_select_column(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select All";
 	ot->idname = "GRAPH_OT_select_column";
-	ot->description = "Select All\nSelect all keyframes on the specified frame(s)";
+	ot->description = "Select All, Select all keyframes on the specified frame(s)";
 	
 	/* api callbacks */
 	ot->exec = graphkeys_columnselect_exec;
