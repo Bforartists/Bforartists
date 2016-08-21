@@ -1864,7 +1864,7 @@ static void ANIM_OT_channels_setting_enable(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Enable Channel Setting";
 	ot->idname = "ANIM_OT_channels_setting_enable";
-	ot->description = "Enable Channel Setting\nEnable specified setting on all selected animation channels";
+	ot->description = "Enable Channel Setting, Enable specified setting on all selected animation channels";
 	
 	/* api callbacks */
 	ot->invoke = WM_menu_invoke;
@@ -1889,7 +1889,7 @@ static void ANIM_OT_channels_setting_disable(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Disable Channel Setting";
 	ot->idname = "ANIM_OT_channels_setting_disable";
-	ot->description = "Disable Channel Setting\nDisable specified setting on all selected animation channels";
+	ot->description = "Disable Channel Setting, Disable specified setting on all selected animation channels";
 	
 	/* api callbacks */
 	ot->invoke = WM_menu_invoke;
@@ -1914,7 +1914,7 @@ static void ANIM_OT_channels_setting_toggle(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Toggle Channel Setting";
 	ot->idname = "ANIM_OT_channels_setting_toggle";
-	ot->description = "Toggle Channel Setting\nToggle specified setting on all selected animation channels";
+	ot->description = "Toggle Channel Setting, Toggle specified setting on all selected animation channels";
 	
 	/* api callbacks */
 	ot->invoke = WM_menu_invoke;
