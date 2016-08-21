@@ -1210,9 +1210,9 @@ static int actkeys_ipo_exec(bContext *C, wmOperator *op)
 void ACTION_OT_interpolation_type(wmOperatorType *ot)
 {
 	/* identifiers */
-	ot->name = "Set Keyframe Interpolation";
+	ot->name = "Keyframe Interpolation";
 	ot->idname = "ACTION_OT_interpolation_type";
-	ot->description = "Set Keyframe Interpolation\nSet interpolation mode for the F-Curve segments starting from the selected keyframes";
+	ot->description = "Keyframe Interpolation, Set interpolation mode for the F-Curve segments starting from the selected keyframes";
 	
 	/* api callbacks */
 	ot->invoke = WM_menu_invoke;
@@ -1292,9 +1292,9 @@ static int actkeys_handletype_exec(bContext *C, wmOperator *op)
 void ACTION_OT_handle_type(wmOperatorType *ot)
 {
 	/* identifiers */
-	ot->name = "Set Keyframe Handle Type";
+	ot->name = "Keyframe Handle Type";
 	ot->idname = "ACTION_OT_handle_type";
-	ot->description = "Set Keyframe Handle Type\nSet type of handle for selected keyframes";
+	ot->description = "Keyframe Handle Type, Set type of handle to";
 	
 	/* api callbacks */
 	ot->invoke = WM_menu_invoke;
@@ -1394,9 +1394,9 @@ static int actkeys_keytype_exec(bContext *C, wmOperator *op)
 void ACTION_OT_keyframe_type(wmOperatorType *ot)
 {
 	/* identifiers */
-	ot->name = "Set Keyframe Type";
+	ot->name = "Keyframe Type";
 	ot->idname = "ACTION_OT_keyframe_type";
-	ot->description = "Set Keyframe Type\nSet type of keyframe for the selected keyframes";
+	ot->description = "Keyframe Type, Set type of keyframe to";
 	
 	/* api callbacks */
 	ot->invoke = WM_menu_invoke;
@@ -1578,7 +1578,7 @@ void ACTION_OT_snap(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Snap Keys";
 	ot->idname = "ACTION_OT_snap";
-	ot->description = "Snap Keys\nSnap selected keyframes to the times specified";
+	ot->description = "Snap Keys, Snap selected keyframes to";
 	
 	/* api callbacks */
 	ot->invoke = WM_menu_invoke;
@@ -1691,7 +1691,7 @@ void ACTION_OT_mirror(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Mirror Keys";
 	ot->idname = "ACTION_OT_mirror";
-	ot->description = "Mirror Keys\nFlip selected keyframes over the selected mirror line";
+	ot->description = "Mirror Keys, Flip selected keyframes over the selected mirror line";
 	
 	/* api callbacks */
 	ot->invoke = WM_menu_invoke;
