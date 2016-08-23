@@ -246,6 +246,7 @@ class INFO_MT_render(Menu):
 
         layout.operator("render.render", text="Render Image", icon='RENDER_STILL').use_viewport = True
         props = layout.operator("render.render", text="Render Animation", icon='RENDER_ANIMATION')
+        layout.operator("sound.mixdown", text="Mixdown Audio", icon='PLAY_AUDIO')
         props.animation = True
         props.use_viewport = True
 

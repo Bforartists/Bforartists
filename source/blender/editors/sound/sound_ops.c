@@ -636,8 +636,8 @@ static void SOUND_OT_mixdown(wmOperatorType *ot)
 #endif // WITH_AUDASPACE
 
 	/* identifiers */
-	ot->name = "Mixdown";
-	ot->description = "Mixdown\nMixes the scene's audio to a sound file";
+	ot->name = "Mixdown Audio";
+	ot->description = "Mixdown Audio\nMixdown and export the scene's audio to a sound file";
 	ot->idname = "SOUND_OT_mixdown";
 
 	/* api callbacks */

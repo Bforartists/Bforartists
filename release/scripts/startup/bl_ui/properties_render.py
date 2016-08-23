@@ -68,11 +68,6 @@ class RENDER_PT_render(RenderButtonsPanel, Panel):
         if rd.has_multiple_engines: # bfa - the renderer drodpown box from the info menu bar.
             layout.prop(rd, "engine", text="")
 
-        row = layout.row(align=True)
-        row.operator("render.render", text="Render", icon='RENDER_STILL')
-        row.operator("render.render", text="Animation", icon='RENDER_ANIMATION').animation = True
-        row.operator("sound.mixdown", text="Audio", icon='PLAY_AUDIO')
-
         split = layout.split(percentage=0.33)
 
         split.label(text="Display:")
