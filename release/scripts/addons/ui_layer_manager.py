@@ -397,6 +397,11 @@ class SCENE_PT_namedlayer_layers(bpy.types.Panel):
             use_spacecheck = True
 
         layout = self.layout
+        
+        
+        col = layout.column(align=True)
+        col.operator("object.move_to_layer", text="Move to Layer")
+        
         row = layout.row()
         col = row.column()
         col.prop(view_3d, "lock_camera_and_layers", text="")
