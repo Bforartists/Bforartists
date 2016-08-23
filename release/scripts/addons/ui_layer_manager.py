@@ -370,7 +370,6 @@ class SCENE_PT_namedlayer_layers(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
     bl_label = "Layer Management"
-    bl_options = {'DEFAULT_CLOSED'}
     bl_category = "Layers"
 
     @classmethod
