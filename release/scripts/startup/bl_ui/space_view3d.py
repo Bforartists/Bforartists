@@ -1194,7 +1194,6 @@ class VIEW3D_MT_object(Menu):
 
         layout.menu("VIEW3D_MT_object_parent")
         layout.menu("VIEW3D_MT_object_track")
-        layout.menu("VIEW3D_MT_object_group")
         layout.menu("VIEW3D_MT_object_constraints")
 
         layout.separator()
@@ -1271,23 +1270,6 @@ class VIEW3D_MT_object_track(Menu):
         layout.operator_enum("object.track_set", "type")
         layout.separator()
         layout.operator_enum("object.track_clear", "type")
-
-
-class VIEW3D_MT_object_group(Menu):
-    bl_label = "Group"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("group.create")
-        layout.operator("group.objects_remove")
-        layout.operator("group.objects_remove_all")
-
-        layout.separator()
-
-        layout.operator("group.objects_add_active")
-        layout.operator("group.objects_remove_active")
-
 
 class VIEW3D_MT_object_constraints(Menu):
     bl_label = "Constraints"

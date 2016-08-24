@@ -489,6 +489,9 @@ class VIEW3D_PT_tools_relations(View3DPanel, Panel):
             col.operator("group.create", icon='NEW_GROUP', text="New Group")
             col.operator("group.objects_add_active", icon='ADD_TO_ACTIVE', text="Add to Active")
             col.operator("group.objects_remove", icon='REMOVE_FROM_GROUP', text="Remove from Group")
+            col.separator()
+            col.operator("group.objects_remove_active", icon='REMOVE_SELECTED_FROM_ACTIVE_GROUP', text="Remove from Active")
+            col.operator("group.objects_remove_all", icon='REMOVE_FROM_ALL_GROUPS', text="Remove from All")
 
             col.separator()
 
@@ -517,6 +520,12 @@ class VIEW3D_PT_tools_relations(View3DPanel, Panel):
             row.operator("group.create", icon='NEW_GROUP', text="")
             row.operator("group.objects_add_active", icon='ADD_TO_ACTIVE', text="")
             row.operator("group.objects_remove", icon='REMOVE_FROM_GROUP', text="")
+
+            layout.separator()
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("group.objects_remove_active", icon='REMOVE_SELECTED_FROM_ACTIVE_GROUP', text="")
+            row.operator("group.objects_remove_all", icon='REMOVE_FROM_ALL_GROUPS', text="")
 
             col = layout.column(align=True)
             col.label(text="Parent:")
