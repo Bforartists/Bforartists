@@ -1184,15 +1184,12 @@ class VIEW3D_MT_object(Menu):
         layout.operator("object.duplicate_move_linked")
         layout.operator("object.delete", text="Delete Global").use_global = True
         layout.operator("object.delete", text="Delete...").use_global = False
-        layout.operator("object.proxy_make", text="Make Proxy...")
         layout.menu("VIEW3D_MT_make_links", text="Make Links...")
         layout.operator("object.make_dupli_face")
-        layout.operator_menu_enum("object.make_local", "type", text="Make Local...")
         layout.menu("VIEW3D_MT_make_single_user")
 
         layout.separator()
 
-        #layout.menu("VIEW3D_MT_object_parent")
         layout.menu("VIEW3D_MT_object_track")
         layout.menu("VIEW3D_MT_object_constraints")
 
@@ -1247,18 +1244,6 @@ class VIEW3D_MT_object_apply(Menu):
 
         layout.operator("object.visual_transform_apply", text="Visual Transform", text_ctxt=i18n_contexts.default)
         layout.operator("object.duplicates_make_real")
-
-
-#class VIEW3D_MT_object_parent(Menu):
-#    bl_label = "Parent"
-
-#    def draw(self, context):
-#        layout = self.layout
-
-#        layout.operator_enum("object.parent_set", "type")
-#        layout.separator()
-#        layout.operator_enum("object.parent_clear", "type")
-#        layout.operator("object.parent_no_inverse_set", text = "Make Parent no Inverse" )
 
 
 class VIEW3D_MT_object_track(Menu):
@@ -1678,12 +1663,10 @@ class VIEW3D_MT_pose(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_pose_library")
-        #layout.menu("VIEW3D_MT_pose_motion")
         layout.menu("VIEW3D_MT_pose_group")
 
         layout.separator()
 
-        #layout.menu("VIEW3D_MT_object_parent")
         layout.menu("VIEW3D_MT_pose_ik")
         layout.menu("VIEW3D_MT_pose_constraints")
 
@@ -2423,27 +2406,10 @@ class VIEW3D_MT_edit_armature(Menu):
         layout.operator("armature.armature_layers")
         layout.operator("armature.bone_layers")
 
-        #layout.separator()
-
-        #layout.menu("VIEW3D_MT_edit_armature_parent")
-
         layout.separator()
 
         layout.menu("VIEW3D_MT_armature_showhide")
         layout.menu("VIEW3D_MT_bone_options_toggle", text="Bone Settings")
-
-
-
-
-#class VIEW3D_MT_edit_armature_parent(Menu):
-#    bl_label = "Parent"
-
-#    def draw(self, context):
-#        layout = self.layout
-
-#        layout.operator("armature.parent_set", text="Make")
-#        layout.operator("armature.parent_clear", text="Clear")
-
 
 class VIEW3D_MT_edit_armature_roll(Menu):
     bl_label = "Bone Roll"
