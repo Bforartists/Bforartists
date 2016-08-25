@@ -1192,7 +1192,7 @@ class VIEW3D_MT_object(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_object_parent")
+        #layout.menu("VIEW3D_MT_object_parent")
         layout.menu("VIEW3D_MT_object_track")
         layout.menu("VIEW3D_MT_object_constraints")
 
@@ -1249,16 +1249,16 @@ class VIEW3D_MT_object_apply(Menu):
         layout.operator("object.duplicates_make_real")
 
 
-class VIEW3D_MT_object_parent(Menu):
-    bl_label = "Parent"
+#class VIEW3D_MT_object_parent(Menu):
+#    bl_label = "Parent"
 
-    def draw(self, context):
-        layout = self.layout
+#    def draw(self, context):
+#        layout = self.layout
 
-        layout.operator_enum("object.parent_set", "type")
-        layout.separator()
-        layout.operator_enum("object.parent_clear", "type")
-        layout.operator("object.parent_no_inverse_set", text = "Make Parent no Inverse" )
+#        layout.operator_enum("object.parent_set", "type")
+#        layout.separator()
+#        layout.operator_enum("object.parent_clear", "type")
+#        layout.operator("object.parent_no_inverse_set", text = "Make Parent no Inverse" )
 
 
 class VIEW3D_MT_object_track(Menu):
@@ -1683,7 +1683,7 @@ class VIEW3D_MT_pose(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_object_parent")
+        #layout.menu("VIEW3D_MT_object_parent")
         layout.menu("VIEW3D_MT_pose_ik")
         layout.menu("VIEW3D_MT_pose_constraints")
 
@@ -2423,9 +2423,9 @@ class VIEW3D_MT_edit_armature(Menu):
         layout.operator("armature.armature_layers")
         layout.operator("armature.bone_layers")
 
-        layout.separator()
+        #layout.separator()
 
-        layout.menu("VIEW3D_MT_edit_armature_parent")
+        #layout.menu("VIEW3D_MT_edit_armature_parent")
 
         layout.separator()
 
@@ -2435,14 +2435,14 @@ class VIEW3D_MT_edit_armature(Menu):
 
 
 
-class VIEW3D_MT_edit_armature_parent(Menu):
-    bl_label = "Parent"
+#class VIEW3D_MT_edit_armature_parent(Menu):
+#    bl_label = "Parent"
 
-    def draw(self, context):
-        layout = self.layout
+#    def draw(self, context):
+#        layout = self.layout
 
-        layout.operator("armature.parent_set", text="Make")
-        layout.operator("armature.parent_clear", text="Clear")
+#        layout.operator("armature.parent_set", text="Make")
+#        layout.operator("armature.parent_clear", text="Clear")
 
 
 class VIEW3D_MT_edit_armature_roll(Menu):
@@ -2608,8 +2608,8 @@ class VIEW3D_PT_view3d_display(Panel):
         col.prop(view, "show_all_objects_origin")
         col.prop(view, "show_relationship_lines")
         col.prop(view, "show_cursor", text="3D Cursor") # bfa - show hide cursor checkbox
-        col.prop(view, "lock_3d_cursor", text="Lock 3D Cursor") # bfa - show hide cursor checkbox
-        col.prop(view, "hide_groundgrid", text="Groundgrid") # bfa - show hide cursor checkbox
+        col.prop(view, "lock_3d_cursor", text="Lock 3D Cursor") # bfa - show hide lock 3d cursor checkbox
+        col.prop(view, "hide_groundgrid", text="Groundgrid") # bfa - show hide groundgrid checkbox
 
         if view.hide_groundgrid:
             col = layout.column()
