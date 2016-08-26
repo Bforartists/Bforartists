@@ -382,7 +382,6 @@ class VIEW3D_MT_view(Menu):
             props = layout.operator("object.hide_render_clear_all")
 
         layout.operator("view3d.clip_border", text="Clipping Border")
-        layout.operator("view3d.zoom_border", text="Zoom Border")
         layout.operator("view3d.clear_render_border", text="Clear Render Border")
         layout.operator("view3d.render_border", text="Render Border").camera_only = False
 
@@ -437,6 +436,7 @@ class VIEW3D_MT_view_navigation(Menu):
 
         layout.separator()
 
+        layout.operator("view3d.zoom_border", text="Zoom Border")
         layout.operator("view3d.zoom", text="Zoom In").delta = 1
         layout.operator("view3d.zoom", text="Zoom Out").delta = -1
         layout.operator("view3d.zoom_camera_1_to_1", text="Zoom Camera 1:1")
