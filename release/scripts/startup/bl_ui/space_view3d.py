@@ -1187,7 +1187,6 @@ class VIEW3D_MT_object(Menu):
 
         layout.separator()
 
-        layout.operator("object.move_to_layer", text="Move to Layer...")
         layout.menu("VIEW3D_MT_object_showhide")
 
         layout.operator_menu_enum("object.convert", "target")
