@@ -559,10 +559,13 @@ class VIEW3D_PT_tools_relations(View3DPanel, Panel):
 
         if mode == 'EDIT':
 
+            col = layout.column(align=True)
+            col.label(text="Parent:")
+            layout.operator("object.vertex_parent_set")
+
             if obj.type == 'ARMATURE':
 
                 col = layout.column(align=True)
-                col.label(text="Parent:")
 
                 if not scene.UItweaks.icon_or_text: 
                     col = layout.column(align=True)

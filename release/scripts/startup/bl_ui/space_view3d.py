@@ -2007,7 +2007,6 @@ class VIEW3D_MT_edit_mesh_vertices(Menu):
 
         layout.separator()
 
-        layout.operator("object.vertex_parent_set")
         layout.menu("VIEW3D_MT_vertex_group")
         layout.menu("VIEW3D_MT_hook")
 
@@ -2185,7 +2184,6 @@ def draw_curve(self, context):
     layout.operator("curve.smooth_radius")
     layout.operator("curve.smooth_weight")
     layout.operator("curve.spline_weight_set")
-    layout.operator("object.vertex_parent_set")
     
     layout.separator()
 
@@ -2344,7 +2342,6 @@ class VIEW3D_MT_edit_lattice(Menu):
         layout.separator()
 
         layout.operator("lattice.make_regular")
-        layout.operator("object.vertex_parent_set")
 
         layout.separator()
 
