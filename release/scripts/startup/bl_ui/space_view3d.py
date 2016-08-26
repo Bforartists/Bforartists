@@ -360,7 +360,9 @@ class VIEW3D_MT_view(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_view_cameras", text="Cameras")
+        layout.operator("view3d.object_as_camera")
+        layout.operator("view3d.viewnumpad", text="Active Camera").type = 'CAMERA'
+        layout.operator("view3d.view_center_camera")
 
         layout.separator()
 
@@ -518,21 +520,6 @@ class VIEW3D_MT_view_align_selected(Menu):
         props = layout.operator("view3d.viewnumpad", text="Left")
         props.align_active = True
         props.type = 'LEFT'
-
-
-class VIEW3D_MT_view_cameras(Menu):
-    bl_label = "Cameras"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("view3d.object_as_camera")
-        layout.operator("view3d.viewnumpad", text="Active Camera").type = 'CAMERA'
-
-        layout.separator()
-
-        layout.operator("view3d.view_center_camera")
-        
 
 
 # ********** Select menus, suffix from context.mode **********
