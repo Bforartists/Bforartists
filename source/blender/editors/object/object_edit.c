@@ -164,8 +164,8 @@ void OBJECT_OT_hide_view_clear(wmOperatorType *ot)
 {
 	
 	/* identifiers */
-	ot->name = "Clear Restrict View";
-	ot->description = "Clear Restrict View\nReveal the object by setting the hide flag";
+	ot->name = "Show Hidden";
+	ot->description = "Shiw Hidden\nReveals the hidden object(s)";
 	ot->idname = "OBJECT_OT_hide_view_clear";
 	
 	/* api callbacks */
@@ -222,8 +222,8 @@ static int object_hide_view_set_exec(bContext *C, wmOperator *op)
 void OBJECT_OT_hide_view_set(wmOperatorType *ot)
 {
 	/* identifiers */
-	ot->name = "Set Restrict View";
-	ot->description = "Set Restrict View\nHide the object by setting the hide flag";
+	ot->name = "Hide Selected";
+	ot->description = "Hide Selected \nHide the object";
 	ot->idname = "OBJECT_OT_hide_view_set";
 	
 	/* api callbacks */
