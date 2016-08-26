@@ -1969,8 +1969,8 @@ void MASK_OT_hide_view_clear(wmOperatorType *ot)
 {
 
 	/* identifiers */
-	ot->name = "Clear Restrict View";
-	ot->description = "Clear Restrict View\nReveal the layer by setting the hide flag";
+	ot->name = "Show hidden Layer";
+	ot->description = "Show hidden Layer\nReveals the hidden layer(s)";
 	ot->idname = "MASK_OT_hide_view_clear";
 
 	/* api callbacks */
@@ -2030,8 +2030,8 @@ static int mask_hide_view_set_exec(bContext *C, wmOperator *op)
 void MASK_OT_hide_view_set(wmOperatorType *ot)
 {
 	/* identifiers */
-	ot->name = "Set Restrict View";
-	ot->description = "Set Restrict View\nHide the layer by setting the hide flag";
+	ot->name = "Hide Layer";
+	ot->description = "Hide Layer\nHide the layer";
 	ot->idname = "MASK_OT_hide_view_set";
 
 	/* api callbacks */
