@@ -268,7 +268,7 @@ void OBJECT_OT_vertex_parent_set(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Make Vertex Parent";
-	ot->description = "Make Vertex Parent\nParent selected objects to the selected vertices";
+	ot->description = "Make Vertex Parent\nParent selected objects to the selected vertices\nCan be used at Mesh, Lattice and Curve Objects\nSelect vertice(s), select object to parent with strg+lmb, then perform Make Vertex Parent";
 	ot->idname = "OBJECT_OT_vertex_parent_set";
 
 	/* api callbacks */
