@@ -815,7 +815,7 @@ void MESH_OT_mark_seam(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Mark Seam";
 	ot->idname = "MESH_OT_mark_seam";
-	ot->description = "Mark Seam\n(Un)mark selected edges as a seam";
+	ot->description = "Mark Seam\nMark selected edges as a UV seam";
 	
 	/* api callbacks */
 	ot->exec = edbm_mark_seam_exec;
