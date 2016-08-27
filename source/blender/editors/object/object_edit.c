@@ -165,7 +165,7 @@ void OBJECT_OT_hide_view_clear(wmOperatorType *ot)
 	
 	/* identifiers */
 	ot->name = "Show Hidden";
-	ot->description = "Shiw Hidden\nReveals the hidden object(s)";
+	ot->description = "Show Hidden\nReveals the hidden object(s)";
 	ot->idname = "OBJECT_OT_hide_view_clear";
 	
 	/* api callbacks */
