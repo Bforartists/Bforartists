@@ -924,6 +924,16 @@ class VIEW3D_PT_tools_add_mesh_edit(View3DPanel, Panel):
         else:
             VIEW3D_PT_tools_add_object.draw_add_mesh_icons(col, label=True) # the modified class with icon buttons
 
+# Workaround to separate the tooltips for Recalculate Outside and Recalculate Inside
+class VIEW3D_normals_make_consistent_inside(bpy.types.Operator):
+    """Recalculate Normals Inside\nMake selected faces and normals point inside the mesh"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "mesh.normals_recalculate_inside"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Recalculate Inside"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.mesh.normals_make_consistent(inside=True)
+        return {'FINISHED'}  
 
 class VIEW3D_PT_tools_shading(View3DPanel, Panel):
     bl_category = "Shading / UVs"
@@ -953,8 +963,8 @@ class VIEW3D_PT_tools_shading(View3DPanel, Panel):
 
             col = layout.column(align=True)
             col.label(text="Normals:")
-            col.operator("mesh.normals_make_consistent", icon = 'RECALC_NORMALS', text="Recalculate")
-            col.operator("mesh.normals_make_consistent", icon = 'RECALC_NORMALS_INSIDE', text="Recalculate Inside").inside = True
+            col.operator("mesh.normals_make_consistent", icon = 'RECALC_NORMALS', text="Recalculate Outside")
+            col.operator("mesh.normals_recalculate_inside", icon = 'RECALC_NORMALS_INSIDE', text="Recalculate Inside")
             col.operator("mesh.flip_normals", icon = 'FLIP_NORMALS', text="Flip Direction")
 
         else:
@@ -982,7 +992,7 @@ class VIEW3D_PT_tools_shading(View3DPanel, Panel):
             row = col.row(align=False)
             row.alignment = 'LEFT'
             row.operator("mesh.normals_make_consistent", icon = 'RECALC_NORMALS', text="")
-            row.operator("mesh.normals_make_consistent", icon = 'RECALC_NORMALS_INSIDE', text="").inside = True
+            row.operator("mesh.normals_recalculate_inside", icon = 'RECALC_NORMALS_INSIDE', text="")
             row.operator("mesh.flip_normals", icon = 'FLIP_NORMALS', text="")
 
 # Tooltip and operator for Clear Seam.
