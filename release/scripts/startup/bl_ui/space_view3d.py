@@ -1273,6 +1273,17 @@ class VIEW3D_subdivision_set(Menu):
         layout.operator("object.subdivision_set").level = 4
         layout.operator("object.subdivision_set").level = 5
 
+# Workaround to separate the tooltips for Show Hide
+class VIEW3D_hide_view_set_unselected(bpy.types.Operator):
+    """Hide Unselected\nHides the unselected Object(s)"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "object.hide_unselected"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Hide Unselected"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.object.hide_view_set(unselected = True)
+        return {'FINISHED'}  
+
 
 class VIEW3D_MT_object_showhide(Menu):
     bl_label = "Show/Hide"
@@ -1282,7 +1293,7 @@ class VIEW3D_MT_object_showhide(Menu):
 
         layout.operator("object.hide_view_clear", text="Show Hidden")
         layout.operator("object.hide_view_set", text="Hide Selected").unselected = False
-        layout.operator("object.hide_view_set", text="Hide Unselected").unselected = True
+        layout.operator("object.hide_unselected", text="Hide Unselected")
 
 
 class VIEW3D_MT_make_single_user(Menu):
