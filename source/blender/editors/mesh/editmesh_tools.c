@@ -1645,8 +1645,8 @@ static int edbm_normals_make_consistent_exec(bContext *C, wmOperator *op)
 void MESH_OT_normals_make_consistent(wmOperatorType *ot)
 {
 	/* identifiers */
-	ot->name = "Make Normals Consistent";
-	ot->description = "Make Normals Consistent\nMake face and vertex normals point either outside or inside the mesh";
+	ot->name = "Recalculate Normals Outside";
+	ot->description = "Recalculate Normals Outside\nMake selected face and vertex normals point outside the mesh";
 	ot->idname = "MESH_OT_normals_make_consistent";
 	
 	/* api callbacks */
