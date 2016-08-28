@@ -13,6 +13,20 @@ def kmi_props_setattr(kmi_props, attr, value):
 wm = bpy.context.window_manager
 kc = wm.keyconfigs.new(os.path.splitext(os.path.basename(__file__))[0])
 
+# Map Metaball
+km = kc.keymaps.new('Metaball', space_type='EMPTY', region_type='WINDOW', modal=False)
+
+kmi = km.keymap_items.new('mball.reveal_metaelems', 'H', 'PRESS', alt=True)
+kmi = km.keymap_items.new('mball.hide_metaelems', 'H', 'PRESS')
+kmi_props_setattr(kmi.properties, 'unselected', False)
+kmi = km.keymap_items.new('mball.delete_metaelems', 'DEL', 'PRESS')
+kmi = km.keymap_items.new('mball.duplicate_move', 'D', 'PRESS', shift=True)
+kmi = km.keymap_items.new('mball.select_all', 'A', 'PRESS')
+kmi_props_setattr(kmi.properties, 'action', 'TOGGLE')
+kmi = km.keymap_items.new('mball.select_all', 'I', 'PRESS', ctrl=True)
+kmi_props_setattr(kmi.properties, 'action', 'INVERT')
+kmi = km.keymap_items.new('mball.hide_metaelems_unselected', 'H', 'PRESS', shift=True)
+
 # Map Pose
 km = kc.keymaps.new('Pose', space_type='EMPTY', region_type='WINDOW', modal=False)
 
@@ -340,6 +354,10 @@ kmi_props_setattr(kmi.properties, 'type', 'PREVIOUS_CHARACTER')
 # Map 3D View
 km = kc.keymaps.new('3D View', space_type='VIEW_3D', region_type='WINDOW', modal=False)
 
+kmi = km.keymap_items.new('wm.context_toggle', 'ACTIONMOUSE', 'PRESS', key_modifier='I')
+kmi_props_setattr(kmi.properties, 'data_path', 'window_manager.stroke_select_bool')
+kmi = km.keymap_items.new('view3d.stroke_select', 'SELECTMOUSE', 'PRESS', key_modifier='I')
+kmi = km.keymap_items.new('view.reset_3d_view', 'NUMPAD_ASTERIX', 'PRESS')
 kmi = km.keymap_items.new('wm.context_toggle', 'ACTIONMOUSE', 'PRESS', key_modifier='I')
 kmi_props_setattr(kmi.properties, 'data_path', 'window_manager.stroke_select_bool')
 kmi = km.keymap_items.new('view3d.stroke_select', 'SELECTMOUSE', 'PRESS', key_modifier='I')
@@ -1700,21 +1718,6 @@ kmi_props_setattr(kmi.properties, 'texmode', 'SECONDARY')
 kmi = km.keymap_items.new('brush.stencil_control', 'RIGHTMOUSE', 'PRESS', ctrl=True, alt=True)
 kmi_props_setattr(kmi.properties, 'mode', 'ROTATION')
 kmi_props_setattr(kmi.properties, 'texmode', 'SECONDARY')
-
-# Map Metaball
-km = kc.keymaps.new('Metaball', space_type='EMPTY', region_type='WINDOW', modal=False)
-
-kmi = km.keymap_items.new('mball.reveal_metaelems', 'H', 'PRESS', alt=True)
-kmi = km.keymap_items.new('mball.hide_metaelems', 'H', 'PRESS')
-kmi_props_setattr(kmi.properties, 'unselected', False)
-kmi = km.keymap_items.new('mball.hide_metaelems', 'H', 'PRESS', shift=True)
-kmi_props_setattr(kmi.properties, 'unselected', True)
-kmi = km.keymap_items.new('mball.delete_metaelems', 'DEL', 'PRESS')
-kmi = km.keymap_items.new('mball.duplicate_move', 'D', 'PRESS', shift=True)
-kmi = km.keymap_items.new('mball.select_all', 'A', 'PRESS')
-kmi_props_setattr(kmi.properties, 'action', 'TOGGLE')
-kmi = km.keymap_items.new('mball.select_all', 'I', 'PRESS', ctrl=True)
-kmi_props_setattr(kmi.properties, 'action', 'INVERT')
 
 # Map Lattice
 km = kc.keymaps.new('Lattice', space_type='EMPTY', region_type='WINDOW', modal=False)

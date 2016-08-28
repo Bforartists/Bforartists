@@ -522,7 +522,7 @@ void MBALL_OT_hide_metaelems(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Hide";
-	ot->description = "Hide\nHide (un)selected metaelement(s)";
+	ot->description = "Hide\nHide selected metaelement(s)";
 	ot->idname = "MBALL_OT_hide_metaelems";
 
 	/* callback functions */
