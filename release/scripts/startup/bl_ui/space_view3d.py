@@ -2194,6 +2194,28 @@ class VIEW3D_MT_edit_gpencil_delete(Menu):
 # Edit Curve
 # draw_curve is used by VIEW3D_MT_edit_curve and VIEW3D_MT_edit_surface
 
+# Workaround to separate the tooltips for Show Hide for Curve in Edit Mode
+class VIEW3D_curve_hide_unselected(bpy.types.Operator):
+    """Hide Unselected\nHide unselected Control Points"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "curve.hide_unselected"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Hide Unselected"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.curve.hide(unselected = True)
+        return {'FINISHED'}  
+
+
+class VIEW3D_MT_edit_curve_show_hide(Menu):
+    bl_label = "Show/Hide"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("curve.reveal", text="Show Hidden")
+        layout.operator("curve.hide", text="Hide Selected").unselected = False
+        layout.operator("curve.hide_unselected", text="Hide Unselected")
+
 
 def draw_curve(self, context):
     layout = self.layout
@@ -2231,7 +2253,7 @@ def draw_curve(self, context):
 
     layout.separator()
 
-    layout.menu("VIEW3D_MT_edit_curve_showhide")
+    layout.menu("VIEW3D_MT_edit_curve_show_hide")# bfa - the new show hide menu with separated tooltips
 
 
 class VIEW3D_MT_edit_curve(Menu):
@@ -2255,10 +2277,6 @@ class VIEW3D_MT_edit_curve_ctrlpoints(Menu):
             layout.separator()
 
         layout.menu("VIEW3D_MT_hook")
-
-
-class VIEW3D_MT_edit_curve_showhide(ShowHideMenu, Menu):
-    _operator_name = "curve"
 
 
 class VIEW3D_MT_edit_surface(Menu):

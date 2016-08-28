@@ -2783,7 +2783,7 @@ void CURVE_OT_hide(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Hide Selected";
 	ot->idname = "CURVE_OT_hide";
-	ot->description = "Hide Selected\nHide (un)selected control points";
+	ot->description = "Hide Selected\nHide selected control points";
 	
 	/* api callbacks */
 	ot->exec = hide_exec;
