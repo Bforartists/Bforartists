@@ -378,8 +378,11 @@ class VIEW3D_MT_view(Menu):
         # So for now we simply hide the two menu items when there is no object selected.
 
         if context.object :
+            props = layout.operator("object.hide_render_set")
             props = layout.operator("object.isolate_type_render")
             props = layout.operator("object.hide_render_clear_all")
+
+        layout.separator()
 
         layout.operator("view3d.clip_border", text="Clipping Border")
         layout.operator("view3d.clear_render_border", text="Clear Render Border")
