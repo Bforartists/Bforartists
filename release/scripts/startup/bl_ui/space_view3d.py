@@ -160,18 +160,6 @@ class VIEW3D_MT_editor_menus(Menu):
 # ********** Utilities **********
 
 
-class ShowHideMenu:
-    bl_label = "Show/Hide"
-    _operator_name = ""
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("%s.reveal" % self._operator_name, text="Show Hidden")
-        layout.operator("%s.hide" % self._operator_name, text="Hide Selected").unselected = False
-        layout.operator("%s.hide" % self._operator_name, text="Hide Unselected").unselected = True
-
-
 # Standard transforms which apply to all cases
 # NOTE: this doesn't seem to be able to be used directly
 class VIEW3D_MT_transform_base(Menu):
@@ -1654,6 +1642,27 @@ class VIEW3D_MT_particle(Menu):
 
 # ********** Pose Menu **********
 
+# Workaround to separate the tooltips for Show Hide for Armature in Pose mode
+class VIEW3D_pose_hide_unselected(bpy.types.Operator):
+    """Hide Unselected\nHide unselected Bones"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "pose.hide_unselected"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Hide Unselected"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.pose.hide(unselected = True)
+        return {'FINISHED'}  
+
+
+class VIEW3D_MT_pose_show_hide(Menu):
+    bl_label = "Show/Hide"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("pose.reveal", text="Show Hidden")
+        layout.operator("pose.hide", text="Hide Selected").unselected = False
+        layout.operator("pose.hide_unselected", text="Hide Unselected")
 
 class VIEW3D_MT_pose(Menu):
     bl_label = "Pose"
@@ -1703,7 +1712,7 @@ class VIEW3D_MT_pose(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_pose_showhide")
+        layout.menu("VIEW3D_MT_pose_show_hide") # bfa - new show hide menu with separated tooltips
         layout.menu("VIEW3D_MT_bone_options_toggle", text="Bone Settings")
 
 
@@ -1827,11 +1836,6 @@ class VIEW3D_MT_pose_constraints(Menu):
         layout.operator("pose.constraint_add_with_targets", text="Add (With Targets)...")
         layout.operator("pose.constraints_copy")
         layout.operator("pose.constraints_clear")
-
-# the ShowHideMenu class as a class, so that you can use it in different modes with different hotkeys
-class VIEW3D_MT_pose_showhide(ShowHideMenu, Menu):
-    _operator_name = "pose" # the name in the user preferences. Important for the hotkey
-
 
 
 class VIEW3D_MT_pose_apply(Menu):
