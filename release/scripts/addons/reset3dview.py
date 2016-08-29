@@ -1,4 +1,4 @@
-# Big Thanks for the help with the code goes to pink vertex and CoDEmanX at the Blenderartists forum, and to Tobain at the german Blendpolis forum
+﻿# Big Thanks for the help with the code goes to pink vertex and CoDEmanX at the Blenderartists forum, and to Tobain at the german Blendpolis forum
 # This script is under apache license
 
 bl_info = {
@@ -78,32 +78,16 @@ class Reset3dView(bpy.types.Operator):
     
 def menu_func(self, context):
     self.layout.operator(Reset3dView.bl_idname)
-    
-# store keymaps here to access after registration
-addon_keymaps = []
    
 
 def register():
     bpy.utils.register_class(Reset3dView)
     bpy.types.VIEW3D_MT_view.append(menu_func)
-    
-    # handle the keymap
-    wm = bpy.context.window_manager
-    km = wm.keyconfigs.addon.keymaps.new(name='3D View', space_type='VIEW_3D')
-    kmi = km.keymap_items.new(Reset3dView.bl_idname, 'NUMPAD_ASTERIX', 'PRESS', ctrl=False, shift=False)
-    addon_keymaps.append((km))
 
 def unregister():
     bpy.utils.unregister_class(Reset3dView)
     bpy.types.VIEW3D_MT_view.remove(menu_func)
     
-    # handle the keymap
-    wm = bpy.context.window_manager
-    for km in addon_keymaps:
-        wm.keyconfigs.addon.keymaps.remove(km)
-    # clear the list
-    del addon_keymaps[:]
-
 
 if __name__ == "__main__":
     register()
