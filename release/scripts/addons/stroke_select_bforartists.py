@@ -109,10 +109,7 @@ def menu_func(self, context):
     self.layout.operator("view3d.stroke_select")
     
 
-# ------------------------------ register unregister --------------------------------------------------------
-
-# store keymaps here to access after registration
-addon_keymaps = []      
+# ------------------------------ register unregister --------------------------------------------------------  
 
 def register():
     # Our bool. The checkbox. Note the update=area_UI_update part in the bool. This is updating the display when the bool gets toggled by hotkey.
@@ -129,27 +126,12 @@ def register():
     bpy.types.VIEW3D_MT_select_edit_armature.append(menu_func)
     bpy.types.VIEW3D_MT_select_pose.append(menu_func)
     
-    # handle the keymap
-    wm = bpy.context.window_manager
-    kc = wm.keyconfigs.addon
-    if kc:
-        km = wm.keyconfigs.addon.keymaps.new(name='3D View', space_type='VIEW_3D')
-        
-        # the paint select hotkey
-        kmi = km.keymap_items.new("view3d.stroke_select", type = 'SELECTMOUSE', value = 'PRESS', key_modifier='I')
-        
-        # the hotkey to toggle select/deselect painting     
-        kmi = km.keymap_items.new("wm.context_toggle", type='ACTIONMOUSE', value='PRESS', key_modifier='I')
-        kmi.properties.data_path = "window_manager.stroke_select_bool"
-        
-        addon_keymaps.append((km, kmi))
                
 def unregister():
     bpy.types.VIEW3D_MT_view.remove(menu_func)
     del bpy.types.WindowManager.stroke_select_bool # Unregister our flag when unregister.
     bpy.utils.unregister_module(__name__)
-    
-    
+        
 if __name__ == "__main__":
     register()
 
