@@ -87,6 +87,16 @@ class OUTLINER_MT_editor_menus(Menu):
         if space.display_mode == 'DATABLOCKS':
             layout.menu("OUTLINER_MT_edit_datablocks")
 
+# Workaround to separate the tooltips for Hide one level
+class OUTLINER_MT_view_hide_one_level(bpy.types.Operator):
+    """Hide one level\nCollapse all entries by one level """      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "outliner.hide_one_level"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Hide one level"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.outliner.show_one_level(open = False)
+        return {'FINISHED'}  
 
 class OUTLINER_MT_view(Menu):
     bl_label = "View"
@@ -105,7 +115,7 @@ class OUTLINER_MT_view(Menu):
             layout.operator("outliner.show_active")
 
         layout.operator("outliner.show_one_level", text = "Show one level").open = True
-        layout.operator("outliner.show_one_level", text = "Hide one level").open = False
+        layout.operator("outliner.hide_one_level", text = "Hide one level")
         layout.operator("outliner.show_hierarchy")
 
         layout.separator()

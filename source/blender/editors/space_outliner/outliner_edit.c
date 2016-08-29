@@ -883,9 +883,9 @@ void OUTLINER_OT_show_one_level(wmOperatorType *ot)
 	PropertyRNA *prop;
 
 	/* identifiers */
-	ot->name = "Show/Hide One Level";
+	ot->name = "Show One Level";
 	ot->idname = "OUTLINER_OT_show_one_level";
-	ot->description = "Show/Hide One Level\nExpand/collapse all entries by one level";
+	ot->description = "Show One Level\nExpand all entries by one level";
 	
 	/* callbacks */
 	ot->exec = outliner_one_level_exec;
