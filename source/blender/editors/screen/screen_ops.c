@@ -2338,8 +2338,8 @@ static int marker_jump_exec(bContext *C, wmOperator *op)
 
 static void SCREEN_OT_marker_jump(wmOperatorType *ot)
 {
-	ot->name = "Jump to Marker";
-	ot->description = "Jump to Marker\nJump to previous/next marker";
+	ot->name = "Jump to next Marker";
+	ot->description = "Jump to next Marker\nJumps to next marker";
 	ot->idname = "SCREEN_OT_marker_jump";
 
 	ot->exec = marker_jump_exec;
