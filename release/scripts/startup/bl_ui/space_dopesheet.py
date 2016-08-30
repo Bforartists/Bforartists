@@ -315,6 +315,16 @@ class DOPESHEET_MT_channel(Menu):
         layout.separator()
         layout.operator("anim.channels_fcurves_enable")
 
+# Workaround to separate the tooltips for Show Hide for Curve in Edit Mode
+class DOPESHEET_MT_key_clean_channels(bpy.types.Operator):
+    """Clean Channels\nSimplify F-Curves by removing closely spaced keyframes in selected channels"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "action.clean_channels"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Clean Channels"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.action.clean(channels = True)
+        return {'FINISHED'}  
 
 class DOPESHEET_MT_key(Menu):
     bl_label = "Key"
@@ -344,7 +354,7 @@ class DOPESHEET_MT_key(Menu):
 
         layout.separator()
         layout.operator("action.clean").channels = False
-        layout.operator("action.clean", text="Clean Channels").channels = True
+        layout.operator("action.clean_channels", text="Clean Channels")
         layout.operator("action.sample")
 
         layout.separator()
