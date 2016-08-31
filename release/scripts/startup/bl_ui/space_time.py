@@ -157,7 +157,8 @@ class TIME_MT_view(Menu):
         layout.separator()
 
         layout.operator("screen.area_dupli")
-        layout.operator("screen.screen_full_area", text="Toggle Maximize Area")
+        #layout.operator("screen.screen_full_area", text="Toggle Maximize Area")
+        layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area") # bfa - the separated tooltip. Class is in space_text.py
         layout.operator("screen.screen_full_area").use_hide_panels = True
 
 
