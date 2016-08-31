@@ -13,6 +13,15 @@ def kmi_props_setattr(kmi_props, attr, value):
 wm = bpy.context.window_manager
 kc = wm.keyconfigs.new(os.path.splitext(os.path.basename(__file__))[0])
 
+# Map Graph Editor Generic
+km = kc.keymaps.new('Graph Editor Generic', space_type='GRAPH_EDITOR', region_type='WINDOW', modal=False)
+
+kmi = km.keymap_items.new('graph.properties', 'N', 'PRESS')
+kmi = km.keymap_items.new('graph.hide', 'H', 'PRESS')
+kmi_props_setattr(kmi.properties, 'unselected', False)
+kmi = km.keymap_items.new('graph.hide_unselected_curves', 'H', 'PRESS', shift=True)
+kmi = km.keymap_items.new('graph.reveal', 'H', 'PRESS', alt=True)
+
 # Map Screen
 km = kc.keymaps.new('Screen', space_type='EMPTY', region_type='WINDOW', modal=False)
 
@@ -1246,16 +1255,6 @@ kmi = km.keymap_items.new('anim.channels_move', 'PAGE_UP', 'PRESS', shift=True)
 kmi_props_setattr(kmi.properties, 'direction', 'TOP')
 kmi = km.keymap_items.new('anim.channels_move', 'PAGE_DOWN', 'PRESS', shift=True)
 kmi_props_setattr(kmi.properties, 'direction', 'BOTTOM')
-
-# Map Graph Editor Generic
-km = kc.keymaps.new('Graph Editor Generic', space_type='GRAPH_EDITOR', region_type='WINDOW', modal=False)
-
-kmi = km.keymap_items.new('graph.properties', 'N', 'PRESS')
-kmi = km.keymap_items.new('graph.hide', 'H', 'PRESS')
-kmi_props_setattr(kmi.properties, 'unselected', False)
-kmi = km.keymap_items.new('graph.hide', 'H', 'PRESS', shift=True)
-kmi_props_setattr(kmi.properties, 'unselected', True)
-kmi = km.keymap_items.new('graph.reveal', 'H', 'PRESS', alt=True)
 
 # Map Image
 km = kc.keymaps.new('Image', space_type='IMAGE_EDITOR', region_type='WINDOW', modal=False)
