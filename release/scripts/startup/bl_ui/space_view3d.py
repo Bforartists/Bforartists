@@ -515,6 +515,17 @@ class VIEW3D_MT_view_align_selected(Menu):
 
 # ********** Select menus, suffix from context.mode **********
 
+# Workaround to separate the tooltips
+class VIEW3D_MT_select_object_inverse(bpy.types.Operator):
+    """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "object.select_all_inverse"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Inverse"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.object.select_all(action = 'INVERT')
+        return {'FINISHED'}  
+
 
 class VIEW3D_MT_select_object(Menu):
     bl_label = "Select"
@@ -530,7 +541,9 @@ class VIEW3D_MT_select_object(Menu):
         layout.separator()
 
         layout.operator("object.select_all", icon='SELECT_ALL').action = 'TOGGLE'
-        layout.operator("object.select_all", text="Inverse", icon='SELECT_INVERSE').action = 'INVERT'
+        #layout.operator("object.select_all", text="Inverse", icon='SELECT_INVERSE').action = 'INVERT'
+        layout.operator("object.select_all_inverse", text="Inverse", icon='SELECT_INVERSE')
+
         layout.operator("object.select_random", text="Random")
         layout.operator("object.select_mirror", text="Mirror")
         layout.operator("object.select_by_layer", text="All by Layer")
@@ -559,6 +572,17 @@ class VIEW3D_MT_select_object(Menu):
         myvar.direction = 'CHILD'
         myvar.extend = True
 
+# Workaround to separate the tooltips
+class VIEW3D_MT_select_pose_inverse(bpy.types.Operator):
+    """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "pose.select_all_inverse"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Inverse"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.pose.select_all(action = 'INVERT')
+        return {'FINISHED'}  
+
 
 class VIEW3D_MT_select_pose(Menu):
     bl_label = "Select"
@@ -574,7 +598,10 @@ class VIEW3D_MT_select_pose(Menu):
         layout.separator()
 
         layout.operator("pose.select_all", icon='SELECT_ALL').action = 'TOGGLE'
-        layout.operator("pose.select_all", text="Inverse", icon='SELECT_INVERSE').action = 'INVERT'
+        #layout.operator("pose.select_all", text="Inverse", icon='SELECT_INVERSE').action = 'INVERT'
+        layout.operator("pose.select_all_inverse", text="Inverse", icon='SELECT_INVERSE')
+
+
         layout.operator("pose.select_mirror", text="Flip Active")
         layout.operator("pose.select_constraint_target", text="Constraint Target")
         layout.operator("pose.select_linked", text="Linked")
@@ -604,6 +631,16 @@ class VIEW3D_MT_select_pose(Menu):
         layout.operator_menu_enum("pose.select_grouped", "type", text="Grouped")
         layout.operator("object.select_pattern", text="Pattern...")
 
+# Workaround to separate the tooltips
+class VIEW3D_MT_select_particle_inverse(bpy.types.Operator):
+    """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "particle.select_all_inverse"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Inverse"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.particle.select_all(action = 'INVERT')
+        return {'FINISHED'}  
 
 class VIEW3D_MT_select_particle(Menu):
     bl_label = "Select"
@@ -618,7 +655,10 @@ class VIEW3D_MT_select_particle(Menu):
         layout.separator()
 
         layout.operator("particle.select_all", icon='SELECT_ALL').action = 'TOGGLE'
-        layout.operator("particle.select_all", text="Inverse", icon='SELECT_INVERSE').action = 'INVERT'
+        #layout.operator("particle.select_all", text="Inverse", icon='SELECT_INVERSE').action = 'INVERT'
+        layout.operator("particle.select_all_inverse", text="Inverse", icon='SELECT_INVERSE')
+
+
         layout.operator("particle.select_linked").deselect = False
         layout.operator("particle.select_linked", text="Deselect Linked").deselect = True
 
@@ -649,6 +689,16 @@ class VIEW3D_MT_edit_mesh_select_similar(Menu):
 
         layout.operator("mesh.select_similar_region", text="Face Regions")
 
+# Workaround to separate the tooltips
+class VIEW3D_MT_select_edit_mesh_inverse(bpy.types.Operator):
+    """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "mesh.select_all_inverse"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Inverse"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.mesh.select_all(action = 'INVERT')
+        return {'FINISHED'}  
 
 class VIEW3D_MT_select_edit_mesh(Menu):
     bl_label = "Select"
@@ -665,7 +715,8 @@ class VIEW3D_MT_select_edit_mesh(Menu):
 
         # primitive
         layout.operator("mesh.select_all", icon='SELECT_ALL').action = 'TOGGLE'
-        layout.operator("mesh.select_all", text="Inverse", icon='SELECT_INVERSE').action = 'INVERT'
+        #layout.operator("mesh.select_all", text="Inverse", icon='SELECT_INVERSE').action = 'INVERT'
+        layout.operator("mesh.select_all_inverse", text="Inverse", icon='SELECT_INVERSE')
 
         layout.separator()
 
@@ -716,6 +767,16 @@ class VIEW3D_MT_select_edit_mesh(Menu):
         layout.operator("mesh.loop_to_region", text = "Loop Inner-Region")
         layout.operator("mesh.region_to_loop", text = "Boundary Loop")
 
+# Workaround to separate the tooltips
+class VIEW3D_MT_select_edit_curve_inverse(bpy.types.Operator):
+    """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "curve.select_all_inverse"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Inverse"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.curve.select_all(action = 'INVERT')
+        return {'FINISHED'}  
 
 class VIEW3D_MT_select_edit_curve(Menu):
     bl_label = "Select"
@@ -731,7 +792,9 @@ class VIEW3D_MT_select_edit_curve(Menu):
         layout.separator()
 
         layout.operator("curve.select_all", icon='SELECT_ALL').action = 'TOGGLE'
-        layout.operator("curve.select_all", text="Inverse", icon='SELECT_INVERSE').action = 'INVERT'
+        #layout.operator("curve.select_all", text="Inverse", icon='SELECT_INVERSE').action = 'INVERT'
+        layout.operator("curve.select_all_inverse", text="Inverse", icon='SELECT_INVERSE')
+
         layout.operator("curve.select_random", text="Random")
         layout.operator("curve.select_nth")
         layout.operator("curve.select_linked", text="Linked")
@@ -751,7 +814,6 @@ class VIEW3D_MT_select_edit_curve(Menu):
         layout.operator("curve.select_more")
         layout.operator("curve.select_less")
 
-
 class VIEW3D_MT_select_edit_surface(Menu):
 
     bl_label = "Select"
@@ -767,7 +829,9 @@ class VIEW3D_MT_select_edit_surface(Menu):
         layout.separator()
 
         layout.operator("curve.select_all", icon='SELECT_ALL').action = 'TOGGLE'
-        layout.operator("curve.select_all", text="Inverse", icon='SELECT_INVERSE').action = 'INVERT'
+        #layout.operator("curve.select_all", text="Inverse", icon='SELECT_INVERSE').action = 'INVERT'
+        layout.operator("curve.select_all_inverse", text="Inverse", icon='SELECT_INVERSE')
+
         layout.operator("curve.select_random", text="Random")
         layout.operator("curve.select_nth")
         layout.operator("curve.select_linked", text="Select Linked")
@@ -806,6 +870,16 @@ class VIEW3D_MT_select_edit_text(Menu):
 
         layout.operator("font.select_all")
 
+# Workaround to separate the tooltips
+class VIEW3D_MT_select_edit_metaball_inverse(bpy.types.Operator):
+    """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "mball.select_all_inverse"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Inverse"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.mball.select_all(action = 'INVERT')
+        return {'FINISHED'}  
 
 class VIEW3D_MT_select_edit_metaball(Menu):
     bl_label = "Select"
@@ -821,7 +895,8 @@ class VIEW3D_MT_select_edit_metaball(Menu):
         layout.separator()
 
         layout.operator("mball.select_all", icon='SELECT_ALL').action = 'TOGGLE'
-        layout.operator("mball.select_all", text="Inverse", icon='SELECT_INVERSE').action = 'INVERT'
+        #layout.operator("mball.select_all", text="Inverse", icon='SELECT_INVERSE').action = 'INVERT'
+        layout.operator("mball.select_all_inverse", text="Inverse", icon='SELECT_INVERSE')
 
         layout.separator()
 
@@ -830,6 +905,17 @@ class VIEW3D_MT_select_edit_metaball(Menu):
         layout.separator()
 
         layout.operator_menu_enum("mball.select_similar", "type", text="Similar")
+
+# Workaround to separate the tooltips
+class VIEW3D_MT_select_edit_lattice_inverse(bpy.types.Operator):
+    """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "lattice.select_all_inverse"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Inverse"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.lattice.select_all(action = 'INVERT')
+        return {'FINISHED'}  
 
 
 class VIEW3D_MT_select_edit_lattice(Menu):
@@ -848,7 +934,8 @@ class VIEW3D_MT_select_edit_lattice(Menu):
         layout.operator("lattice.select_mirror")
         layout.operator("lattice.select_random", text="Random")
         layout.operator("lattice.select_all", icon='SELECT_ALL').action = 'TOGGLE'
-        layout.operator("lattice.select_all", text="Inverse", icon='SELECT_INVERSE').action = 'INVERT'
+        #layout.operator("lattice.select_all", text="Inverse", icon='SELECT_INVERSE').action = 'INVERT'
+        layout.operator("uv.select_all_inverse", text="Inverse", icon='SELECT_INVERSE')
 
         layout.separator()
 
@@ -858,6 +945,17 @@ class VIEW3D_MT_select_edit_lattice(Menu):
 
         layout.operator("lattice.select_more")
         layout.operator("lattice.select_less")
+
+# Workaround to separate the tooltips
+class VIEW3D_MT_select_edit_armature_inverse(bpy.types.Operator):
+    """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "armature.select_all_inverse"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Inverse"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.armature.select_all(action = 'INVERT')
+        return {'FINISHED'}  
 
 
 class VIEW3D_MT_select_edit_armature(Menu):
@@ -874,7 +972,9 @@ class VIEW3D_MT_select_edit_armature(Menu):
         layout.separator()
 
         layout.operator("armature.select_all", icon='SELECT_ALL').action = 'TOGGLE'
-        layout.operator("armature.select_all", text="Inverse", icon='SELECT_INVERSE').action = 'INVERT'
+        #layout.operator("armature.select_all", text="Inverse", icon='SELECT_INVERSE').action = 'INVERT'
+        layout.operator("armature.select_all_inverse", text="Inverse", icon='SELECT_INVERSE')
+
         layout.operator("armature.select_mirror", text="Mirror").extend = False
 
         layout.separator()
@@ -905,6 +1005,16 @@ class VIEW3D_MT_select_edit_armature(Menu):
         layout.operator_menu_enum("armature.select_similar", "type", text="Similar")
         layout.operator("object.select_pattern", text="Pattern...")
 
+# Workaround to separate the tooltips
+class VIEW3D_MT_select_paint_mask_inverse(bpy.types.Operator):
+    """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "paint.face_select_all_inverse"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Inverse"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.paint.face_select_all(action = 'INVERT')
+        return {'FINISHED'}  
 
 class VIEW3D_MT_select_paint_mask(Menu):
     bl_label = "Select"
@@ -920,7 +1030,8 @@ class VIEW3D_MT_select_paint_mask(Menu):
         layout.separator()
 
         layout.operator("paint.face_select_all", icon='SELECT_ALL').action = 'TOGGLE'
-        layout.operator("paint.face_select_all", text="Inverse", icon='SELECT_INVERSE').action = 'INVERT'
+        #layout.operator("paint.face_select_all", text="Inverse", icon='SELECT_INVERSE').action = 'INVERT'
+        layout.operator("paint.face_select_all_inverse", text="Inverse", icon='SELECT_INVERSE')
 
         layout.separator()
 
@@ -928,6 +1039,16 @@ class VIEW3D_MT_select_paint_mask(Menu):
         layout.operator("paint.face_select_linked_pick", text="Linked Pick Select").deselect = False
         layout.operator("paint.face_select_linked_pick", text="Linked Pick Deselect").deselect = True
 
+# Workaround to separate the tooltips
+class VIEW3D_MT_select_paint_mask_vertex_inverse(bpy.types.Operator):
+    """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "paint.vert_select_all_inverse"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Inverse"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.paint.vert_select_all(action = 'INVERT')
+        return {'FINISHED'}  
 
 class VIEW3D_MT_select_paint_mask_vertex(Menu):
     bl_label = "Select"
@@ -943,7 +1064,8 @@ class VIEW3D_MT_select_paint_mask_vertex(Menu):
         layout.separator()
 
         layout.operator("paint.vert_select_all", icon='SELECT_ALL').action = 'TOGGLE'
-        layout.operator("paint.vert_select_all", text="Inverse", icon='SELECT_INVERSE').action = 'INVERT'
+        #layout.operator("paint.vert_select_all", text="Inverse", icon='SELECT_INVERSE').action = 'INVERT'
+        layout.operator("paint.vert_select_all_inverse", text="Inverse", icon='SELECT_INVERSE')
 
         layout.separator()
 
