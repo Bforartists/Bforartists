@@ -2489,7 +2489,7 @@ static void UV_OT_select_linked_pick(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Select Linked Pick";
-	ot->description = "Select Linked Pick\nSelect all UV vertices linked under the mouse";
+	ot->description = "Select Linked Pick\nSelect all UV vertices linked under the mouse\nHotkey only tool!";
 	ot->idname = "UV_OT_select_linked_pick";
 	ot->flag = OPTYPE_UNDO;
 
