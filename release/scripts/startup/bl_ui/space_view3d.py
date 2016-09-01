@@ -370,7 +370,7 @@ class VIEW3D_MT_view(Menu):
             props = layout.operator("object.isolate_type_render")
             props = layout.operator("object.hide_render_clear_all")
 
-        layout.separator()
+            layout.separator()
 
         layout.operator("view3d.clip_border", text="Clipping Border")
         layout.operator("view3d.clear_render_border", text="Clear Render Border")
