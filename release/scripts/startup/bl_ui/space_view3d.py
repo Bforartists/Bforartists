@@ -1111,6 +1111,17 @@ class VIEW3D_MT_angle_control(Menu):
 
 # ********** Object menu **********
 
+# Workaround to separate the tooltips
+class VIEW3D_MT_object_delete_global(bpy.types.Operator):
+    """Delete global\nDeletes the selected object(s) globally in all opened scenes"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "object.delete_global"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Delete Global"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.object.delete(use_global = True)
+        return {'FINISHED'}  
+
 
 class VIEW3D_MT_object(Menu):
     bl_context = "objectmode"
@@ -1278,7 +1289,8 @@ class VIEW3D_MT_object(Menu):
         layout.operator("view3d.pastebuffer", text = "Paste")
         layout.operator("object.duplicate_move")
         layout.operator("object.duplicate_move_linked")
-        layout.operator("object.delete", text="Delete Global").use_global = True
+        #layout.operator("object.delete", text="Delete Global").use_global = True
+        layout.operator("object.delete_global", text="Delete Global") # bfa - separated tooltip
         layout.operator("object.delete", text="Delete...").use_global = False
         layout.menu("VIEW3D_MT_make_links", text="Make Links...")
         layout.operator("object.make_dupli_face")
