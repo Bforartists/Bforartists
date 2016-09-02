@@ -336,6 +336,27 @@ class VIEW3D_MT_uv_map(Menu):
 
 # ********** View menus **********
 
+# Workaround to separate the tooltips
+class VIEW3D_MT_view_all_all_regions(bpy.types.Operator):
+    """View All all Regions\nView all objects in scene in all four Quad View views\nJust relevant for Quad View """      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "view3d.view_all_all_regions"        # unique identifier for buttons and menu items to reference.
+    bl_label = "View All all Regionsa"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.view3d.view_all(use_all_regions = True)
+        return {'FINISHED'}  
+
+    # Workaround to separate the tooltips
+class VIEW3D_MT_view_center_cursor_and_view_all(bpy.types.Operator):
+    """Center Cursor and View All\nViews all objects in scene and centers the 3D cursor"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "view3d.view_all_center_cursor"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Center Cursor and View All"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.view3d.view_all(center = True)
+        return {'FINISHED'}  
 
 class VIEW3D_MT_view(Menu):
     bl_label = "View"
@@ -392,8 +413,10 @@ class VIEW3D_MT_view(Menu):
         layout.operator("view3d.localview", text="View Global/Local")
         layout.operator("view3d.view_selected", text = "View Selected all Regions" ).use_all_regions = True
         layout.operator("view3d.view_selected").use_all_regions = False
-        layout.operator("view3d.view_all", text = "View All all Regions" ).use_all_regions = True
-        layout.operator("view3d.view_all", text="Center Cursor and View All").center = True
+        #layout.operator("view3d.view_all", text = "View All all Regions" ).use_all_regions = True
+        #layout.operator("view3d.view_all", text="Center Cursor and View All").center = True
+        layout.operator("view3d.view_all_all_regions", text = "View All all Regions" ) # bfa - separated tooltip
+        layout.operator("view3d.view_all_center_cursor", text="Center Cursor and View All") # bfa - separated tooltip
         layout.operator("view3d.view_all").center = False
 
         layout.separator()
