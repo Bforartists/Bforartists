@@ -13,6 +13,22 @@ def kmi_props_setattr(kmi_props, attr, value):
 wm = bpy.context.window_manager
 kc = wm.keyconfigs.new(os.path.splitext(os.path.basename(__file__))[0])
 
+# Map Object Non-modal
+km = kc.keymaps.new('Object Non-modal', space_type='EMPTY', region_type='WINDOW', modal=False)
+
+kmi = km.keymap_items.new('object.mode_set', 'ONE', 'PRESS')
+kmi_props_setattr(kmi.properties, 'mode', 'OBJECT')
+kmi = km.keymap_items.new('object.mode_set', 'TWO', 'PRESS')
+kmi_props_setattr(kmi.properties, 'mode', 'EDIT')
+kmi = km.keymap_items.new('object.mode_set', 'THREE', 'PRESS')
+kmi_props_setattr(kmi.properties, 'mode', 'SCULPT')
+kmi = km.keymap_items.new('object.mode_set', 'FOUR', 'PRESS')
+kmi_props_setattr(kmi.properties, 'mode', 'VERTEX_PAINT')
+kmi = km.keymap_items.new('object.mode_set', 'FIVE', 'PRESS')
+kmi_props_setattr(kmi.properties, 'mode', 'WEIGHT_PAINT')
+kmi = km.keymap_items.new('object.mode_set', 'SIX', 'PRESS')
+kmi_props_setattr(kmi.properties, 'mode', 'TEXTURE_PAINT')
+
 # Map 3D View
 km = kc.keymaps.new('3D View', space_type='VIEW_3D', region_type='WINDOW', modal=False)
 
@@ -1108,22 +1124,6 @@ kmi_props_setattr(kmi.properties, 'data_path', 'user_preferences.inputs.ndof_sen
 kmi_props_setattr(kmi.properties, 'value', 0.6666666865348816)
 kmi = km.keymap_items.new('info.reports_display_update', 'TIMER_REPORT', 'ANY', any=True)
 kmi = km.keymap_items.new('wm.console_toggle', 'F2', 'PRESS')
-
-# Map Object Non-modal
-km = kc.keymaps.new('Object Non-modal', space_type='EMPTY', region_type='WINDOW', modal=False)
-
-kmi = km.keymap_items.new('object.mode_set', 'ONE', 'PRESS')
-kmi_props_setattr(kmi.properties, 'mode', 'OBJECT')
-kmi = km.keymap_items.new('object.mode_set', 'TWO', 'PRESS')
-kmi_props_setattr(kmi.properties, 'mode', 'EDIT')
-kmi = km.keymap_items.new('object.mode_set', 'THREE', 'PRESS')
-kmi_props_setattr(kmi.properties, 'mode', 'OBJECT')
-kmi = km.keymap_items.new('object.mode_set', 'FOUR', 'PRESS')
-kmi_props_setattr(kmi.properties, 'mode', 'OBJECT')
-kmi = km.keymap_items.new('object.mode_set', 'FIVE', 'PRESS')
-kmi_props_setattr(kmi.properties, 'mode', 'OBJECT')
-kmi = km.keymap_items.new('object.mode_set', 'SIX', 'PRESS')
-kmi_props_setattr(kmi.properties, 'mode', 'OBJECT')
 
 # Map UV Sculpt
 km = kc.keymaps.new('UV Sculpt', space_type='EMPTY', region_type='WINDOW', modal=False)
