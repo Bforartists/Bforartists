@@ -948,8 +948,8 @@ void RENDER_OT_opengl(wmOperatorType *ot)
 	PropertyRNA *prop;
 
 	/* identifiers */
-	ot->name = "OpenGL Render";
-	ot->description = "OpenGL Render\nOpenGL render active viewport";
+	ot->name = "OpenGL Render Image / Animation";
+	ot->description = "OpenGL Render Image / Animation\nOpenGL render Image renders the active viewport as an Image\nOpenGL render Animation renders the active viewport as an Animation";
 	ot->idname = "RENDER_OT_opengl";
 
 	/* api callbacks */
