@@ -2026,7 +2026,7 @@ void IMAGE_OT_save_as(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Save As Image";
 	ot->idname = "IMAGE_OT_save_as";
-	ot->description = "Save As Image\nSave the image with another name and/or settings";
+	ot->description = "Save As Image / a Copy\nSace as Image saves the image with another name and/or settings\n Save a Copy saves a copy of the current Image";
 	
 	/* api callbacks */
 	ot->exec = image_save_as_exec;
