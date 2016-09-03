@@ -999,8 +999,8 @@ void RENDER_OT_render(wmOperatorType *ot)
 	PropertyRNA *prop;
 
 	/* identifiers */
-	ot->name = "Render";
-	ot->description = "Render\nRender active scene\nRenders the active scene";
+	ot->name = "Render Image / Animation";
+	ot->description = "Render Image / Animation\nRender Image renders the active scene as an image\nRender Animation renders the active scene as an animation";
 	ot->idname = "RENDER_OT_render";
 
 	/* api callbacks */
