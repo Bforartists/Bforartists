@@ -3054,7 +3054,7 @@ static void WM_OT_save_as_mainfile(wmOperatorType *ot)
 
 	ot->name = "Save As blend File";
 	ot->idname = "WM_OT_save_as_mainfile";
-	ot->description = "Save As blend File\nSave the current file in the desired location";
+	ot->description = "Save As blend File\nSave As saves the current file in the desired location\nSave Copy saves a copy of the current file in the desired location";
 	
 	ot->invoke = wm_save_as_mainfile_invoke;
 	ot->exec = wm_save_as_mainfile_exec;
