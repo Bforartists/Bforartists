@@ -2946,8 +2946,8 @@ static int uv_border_select_exec(bContext *C, wmOperator *op)
 static void UV_OT_select_border(wmOperatorType *ot)
 {
 	/* identifiers */
-	ot->name = "Border Select";
-	ot->description = "Border Select\nSelect UV vertices using border selection";
+	ot->name = "Border Select / Pinned";
+	ot->description = "Border Select / Pinned\nBorder Select select UV vertices using border selection\nBorder Select Pinned selects the pinned UV Vertices";
 	ot->idname = "UV_OT_select_border";
 	
 	/* api callbacks */

@@ -176,7 +176,7 @@ class IMAGE_MT_select(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("uv.select_border").pinned = False
+        layout.operator("uv.select_border", text="Border Select").pinned = False
         layout.operator("uv.select_border", text="Border Select Pinned").pinned = True
         layout.operator("uv.circle_select")
 
