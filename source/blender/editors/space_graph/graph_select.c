@@ -386,7 +386,7 @@ void GRAPH_OT_select_border(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Border Select";
 	ot->idname = "GRAPH_OT_select_border";
-	ot->description = "Border Select\nSelect all keyframes within the specified region";
+	ot->description = "Border Select\nBorder select selects all keyframes within the specified region\nBorder Axis range -  no idea. Fix me!\nBorder Include handles selects Keyframes with handlers\nBorder Axis + Handles handles selects Keyframes with handlers +  no idea. Fix me!";
 	
 	/* api callbacks */
 	ot->invoke = WM_border_select_invoke;
