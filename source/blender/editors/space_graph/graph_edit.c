@@ -822,9 +822,9 @@ void GRAPH_OT_paste(wmOperatorType *ot)
 	PropertyRNA *prop;
 	
 	/* identifiers */
-	ot->name = "Paste Keyframes";
+	ot->name = "Paste Keyframes / Flipped";
 	ot->idname = "GRAPH_OT_paste";
-	ot->description = "Paste Keyframes\nPaste keyframes from copy/paste buffer for the selected channels, starting on the current frame";
+	ot->description = "Paste Keyframes / Flipped \nPaste Keyframes pastes keyframes into the selected channels, starting on the current frame\nPaste Flipped pastes keyframes flipped into the selected channels, starting on the current frame";
 	
 	/* api callbacks */
 //	ot->invoke = WM_operator_props_popup; // better wait for graph redo panel
