@@ -1032,7 +1032,7 @@ void GRAPH_OT_clean(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Clean Keyframes";
 	ot->idname = "GRAPH_OT_clean";
-	ot->description = "Clean Keyframes\nSimplify F-Curves by removing closely spaced keyframes";
+	ot->description = "Clean Keyframes / Channels\nClean Keyframes simplifies F-Curves by removing closely spaced keyframes in all channels\nClean Channels simplifies F-Curves by removing closely spaced keyframes in selected channels";
 	
 	/* api callbacks */
 	//ot->invoke =  // XXX we need that number popup for this! 
