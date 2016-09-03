@@ -712,7 +712,7 @@ static int face_select_hide_exec(bContext *C, wmOperator *op)
 void PAINT_OT_face_select_hide(wmOperatorType *ot)
 {
 	ot->name = "Face Select Hide";
-	ot->description = "Face Select Hide\nHide selected faces";
+	ot->description = "Face Select Hide\nHide selected hides the selected geometry\nHide unselected hides the unselected geometry";
 	ot->idname = "PAINT_OT_face_select_hide";
 
 	ot->exec = face_select_hide_exec;
