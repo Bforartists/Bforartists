@@ -247,14 +247,14 @@ def brush_texture_settings(layout, brush, sculpt):
             layout.operator("brush.stencil_fit_image_aspect")
         layout.operator("brush.stencil_reset_transform")
 
-        # bfa - stencil brush controls hotkeys.
+        # bfa - stencil brush control buttons
         col = layout.column()
-        col.label(text="Stencil Brush Control keys:")
-
-        col.label(text="Move: Shift Ctrl Alt RMB")
-        col.label(text="Rotate: Shift RMB")
-        col.label(text="Scale: Ctrl RMB")
-
+        col.label(text="Stencil Brush Controls:")
+        row = layout.row(align=False)
+        row.alignment = 'LEFT'
+        row.operator("brush.stencil_control", text = '', icon ='TRANSFORM_MOVE').mode = 'TRANSLATION'
+        row.operator("brush.stencil_control", text = '', icon ='TRANSFORM_ROTATE').mode = 'ROTATION'
+        row.operator("brush.stencil_control", text = '', icon ='TRANSFORM_SCALE').mode = 'SCALE'
 
     # angle and texture_angle_source
     if tex_slot.has_texture_angle:
@@ -301,20 +301,33 @@ def brush_mask_texture_settings(layout, brush):
             layout.operator("brush.stencil_fit_image_aspect").mask = True
         layout.operator("brush.stencil_reset_transform").mask = True
 
-
-        # bfa - stencil brush controls hotkeys.
+        # bfa - stencil brush control buttons
         col = layout.column()
-        col.label(text="Stencil Brush Control keys:")
+        col.label(text="Stencil Brush Controls:")
+        row = layout.row(align=False)
+        row.alignment = 'LEFT'
+        row.operator("brush.stencil_control", text = '', icon ='TRANSFORM_MOVE').mode = 'TRANSLATION'
+        row.operator("brush.stencil_control", text = '', icon ='TRANSFORM_ROTATE').mode = 'ROTATION'
+        row.operator("brush.stencil_control", text = '', icon ='TRANSFORM_SCALE').mode = 'SCALE'
+        #prop.mode = 'TRANSLATION'
+        #prop.texmode = 'PRIMARY'
 
-        col.label(text="Move: Shift Ctrl Alt RMB")
-        col.label(text="Rotate: Shift RMB")
-        col.label(text="Scale: Ctrl RMB")
+        col = layout.column()
+        col.label(text="Secondary Stencil Brush Controls:")
 
-        col.label(text="Stencil Brush Control Secondary keys:")
+        row = layout.row(align=False)
+        row.alignment = 'LEFT'
+        prop = row.operator("brush.stencil_control", text = '', icon ='TRANSFORM_MOVE')
+        prop.mode = 'TRANSLATION'
+        prop.texmode = 'SECONDARY'
+        prop = row.operator("brush.stencil_control", text = '', icon ='TRANSFORM_ROTATE')
+        prop.mode = 'ROTATION'
+        prop.texmode = 'SECONDARY'
+        prop = row.operator("brush.stencil_control", text = '', icon ='TRANSFORM_SCALE')
+        prop.mode = 'SCALE'
+        prop.texmode = 'SECONDARY'
 
-        col.label(text="Move: Alt RMB")
-        col.label(text="Rotate: Shift Alt RMB")
-        col.label(text="Scale:Ctrl Alt RMB")
+        layout.separator()
 
     col = layout.column()
     col.prop(brush, "use_pressure_masking", text="")
