@@ -863,7 +863,7 @@ static void BRUSH_OT_stencil_control(wmOperatorType *ot)
 	};
 	/* identifiers */
 	ot->name = "Stencil Brush Control";
-	ot->description = "Stencil Brush Control\nControl the stencil brush";
+	ot->description = "Stencil Brush Control\nMove, Rotate or Scale the stencil image\nHotkey Tools!\nUse the Hotkeys that you can read in this tooltip.";
 	ot->idname = "BRUSH_OT_stencil_control";
 
 	/* api callbacks */
