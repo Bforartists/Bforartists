@@ -45,7 +45,7 @@ class GreasePencilDrawingToolsPanel:
     # subclass must set
     # bl_space_type = 'IMAGE_EDITOR'
     bl_label = "Grease Pencil"
-    bl_category = "Grease Pencil"
+    bl_category = "G-Pencil"
     bl_region_type = 'TOOLS'
 
     @staticmethod
@@ -110,7 +110,7 @@ class GreasePencilStrokeEditPanel:
     # subclass must set
     # bl_space_type = 'IMAGE_EDITOR'
     bl_label = "Edit Strokes"
-    bl_category = "Grease Pencil"
+    bl_category = "G-Pencil"
     bl_region_type = 'TOOLS'
 
     @classmethod
