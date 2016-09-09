@@ -42,10 +42,10 @@ class View3DPanel:
 def draw_keyframing_tools(context, layout):
     col = layout.column(align=True)
     col.label(text="Keyframes:")
-    col.operator("anim.keyframe_insert_menu", icon= 'KEYFRAMES_INSERT', text="Insert")
-    col.operator("anim.keyframe_delete_v3d", icon= 'KEYFRAMES_REMOVE',text="Remove")
-    col.operator("nla.bake", icon= 'BAKE_ACTION',text="Bake Action")  
-    col.operator("anim.keyframe_clear_v3d", icon= 'KEYFRAMES_CLEAR',text="Clear")
+    col.operator("anim.keyframe_insert_menu", icon= 'KEYFRAMES_INSERT', text="Insert              ")
+    col.operator("anim.keyframe_delete_v3d", icon= 'KEYFRAMES_REMOVE',text="Remove          ")
+    col.operator("nla.bake", icon= 'BAKE_ACTION',text="Bake Action    ")  
+    col.operator("anim.keyframe_clear_v3d", icon= 'KEYFRAMES_CLEAR',text="Clear               ")
 
     col = layout.column(align=True)
     col.label(text="Set Keying Set:")
@@ -100,8 +100,8 @@ class VIEW3D_PT_tools_object(View3DPanel, Panel):
 
                 if obj_type in {'MESH', 'CURVE', 'SURFACE', 'ARMATURE'}:
                     col = layout.column(align=True)
-                    col.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="Mirror")
-                    col.operator("object.join", icon ='JOIN')
+                    col.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="Mirror                   ")
+                    col.operator("object.join", icon ='JOIN', text="Join                      ")
                     
 
                 if obj_type in {'MESH', 'CURVE', 'SURFACE', 'ARMATURE', 'FONT', 'LATTICE'}:
@@ -111,16 +111,16 @@ class VIEW3D_PT_tools_object(View3DPanel, Panel):
                 if obj_type in {'MESH', 'CURVE', 'SURFACE'}:
                     col = layout.column(align=True)
                     col.label(text="Shading:")
-                    row = col.row(align=True)
-                    row.operator("object.shade_smooth", text="Smooth", icon ='SHADING_SMOOTH')
-                    row.operator("object.shade_flat", text="Flat", icon ='SHADING_FLAT')
+                    #row = col.row(align=True)
+                    col.operator("object.shade_smooth", text="Smooth                ", icon ='SHADING_SMOOTH')
+                    col.operator("object.shade_flat", text="Flat                       ", icon ='SHADING_FLAT')
 
                 if obj_type == 'MESH':
                     col = layout.column(align=True)
                     col.label(text="Data Transfer:")
-                    row = col.row(align=True)
-                    row.operator("object.data_transfer", icon ='TRANSFER_DATA', text="Data")
-                    row.operator("object.datalayout_transfer", icon ='TRANSFER_DATA_LAYOUT', text="Data Layout")
+                    #row = col.row(align=True)
+                    col.operator("object.data_transfer", icon ='TRANSFER_DATA', text="Data                     ")
+                    col.operator("object.datalayout_transfer", icon ='TRANSFER_DATA_LAYOUT', text="Data Layout         ")
             
             # icons
             else:
@@ -168,21 +168,21 @@ class VIEW3D_PT_tools_add_object(View3DPanel, Panel):
     def draw_add_mesh(layout, label=False):
         if label:
             layout.label(text="Primitives:")
-        layout.operator("mesh.primitive_plane_add", text="Plane", icon='MESH_PLANE')
-        layout.operator("mesh.primitive_cube_add", text="Cube", icon='MESH_CUBE')
-        layout.operator("mesh.primitive_circle_add", text="Circle", icon='MESH_CIRCLE')
-        layout.operator("mesh.primitive_uv_sphere_add", text="UV Sphere", icon='MESH_UVSPHERE')
-        layout.operator("mesh.primitive_ico_sphere_add", text="Ico Sphere", icon='MESH_ICOSPHERE')
-        layout.operator("mesh.primitive_cylinder_add", text="Cylinder", icon='MESH_CYLINDER')
-        layout.operator("mesh.primitive_cone_add", text="Cone", icon='MESH_CONE')
-        layout.operator("mesh.primitive_torus_add", text="Torus", icon='MESH_TORUS')
+        layout.operator("mesh.primitive_plane_add", text="Plane             ", icon='MESH_PLANE')
+        layout.operator("mesh.primitive_cube_add", text="Cube             ", icon='MESH_CUBE')
+        layout.operator("mesh.primitive_circle_add", text="Circle            ", icon='MESH_CIRCLE')
+        layout.operator("mesh.primitive_uv_sphere_add", text=" UV Sphere     ", icon='MESH_UVSPHERE')
+        layout.operator("mesh.primitive_ico_sphere_add", text="Ico Sphere    ", icon='MESH_ICOSPHERE')
+        layout.operator("mesh.primitive_cylinder_add", text="Cylinder        ", icon='MESH_CYLINDER')
+        layout.operator("mesh.primitive_cone_add", text="Cone             ", icon='MESH_CONE')
+        layout.operator("mesh.primitive_torus_add", text="Torus              ", icon='MESH_TORUS')
 
         if label:
             layout.label(text="Special:")
         else:
             layout.separator()
-        layout.operator("mesh.primitive_grid_add", text="Grid", icon='MESH_GRID')
-        layout.operator("mesh.primitive_monkey_add", text="Monkey", icon='MESH_MONKEY')
+        layout.operator("mesh.primitive_grid_add", text="Grid               ", icon='MESH_GRID')
+        layout.operator("mesh.primitive_monkey_add", text="Monkey         ", icon='MESH_MONKEY')
 
     @staticmethod
     def draw_add_mesh_icons(layout, label=False):
@@ -213,16 +213,16 @@ class VIEW3D_PT_tools_add_object(View3DPanel, Panel):
     def draw_add_curve(layout, label=False):
         if label:
             layout.label(text="Bezier:")
-        layout.operator("curve.primitive_bezier_curve_add", text="Bezier", icon='CURVE_BEZCURVE')
-        layout.operator("curve.primitive_bezier_circle_add", text="Circle", icon='CURVE_BEZCIRCLE')
+        layout.operator("curve.primitive_bezier_curve_add", text="Bezier            ", icon='CURVE_BEZCURVE')
+        layout.operator("curve.primitive_bezier_circle_add", text="Circle             ", icon='CURVE_BEZCIRCLE')
 
         if label:
             layout.label(text="Nurbs:")
         else:
             layout.separator()
-        layout.operator("curve.primitive_nurbs_curve_add", text="Nurbs Curve", icon='CURVE_NCURVE')
-        layout.operator("curve.primitive_nurbs_circle_add", text="Nurbs Circle", icon='CURVE_NCIRCLE')
-        layout.operator("curve.primitive_nurbs_path_add", text="Path", icon='CURVE_PATH')
+        layout.operator("curve.primitive_nurbs_curve_add", text="Nurbs Curve  ", icon='CURVE_NCURVE')
+        layout.operator("curve.primitive_nurbs_circle_add", text="Nurbs Circle  ", icon='CURVE_NCIRCLE')
+        layout.operator("curve.primitive_nurbs_path_add", text="Path               ", icon='CURVE_PATH')
 
     @staticmethod
     def draw_add_curve_icons(layout, label=False):
@@ -245,12 +245,12 @@ class VIEW3D_PT_tools_add_object(View3DPanel, Panel):
 
     @staticmethod
     def draw_add_surface(layout):
-        layout.operator("surface.primitive_nurbs_surface_curve_add", text="Nurbs Curve", icon='SURFACE_NCURVE')
-        layout.operator("surface.primitive_nurbs_surface_circle_add", text="Nurbs Circle", icon='SURFACE_NCIRCLE')
-        layout.operator("surface.primitive_nurbs_surface_surface_add", text="Nurbs Surface", icon='SURFACE_NSURFACE')
+        layout.operator("surface.primitive_nurbs_surface_curve_add", text="Nurbs Curve    ", icon='SURFACE_NCURVE')
+        layout.operator("surface.primitive_nurbs_surface_circle_add", text="Nurbs Circle    ", icon='SURFACE_NCIRCLE')
+        layout.operator("surface.primitive_nurbs_surface_surface_add", text="Nurbs Surface ", icon='SURFACE_NSURFACE')
         layout.operator("surface.primitive_nurbs_surface_cylinder_add", text="Nurbs Cylinder", icon='SURFACE_NCYLINDER')
-        layout.operator("surface.primitive_nurbs_surface_sphere_add", text="Nurbs Sphere", icon='SURFACE_NSPHERE')
-        layout.operator("surface.primitive_nurbs_surface_torus_add", text="Nurbs Torus", icon='SURFACE_NTORUS')
+        layout.operator("surface.primitive_nurbs_surface_sphere_add", text="Nurbs Sphere  ", icon='SURFACE_NSPHERE')
+        layout.operator("surface.primitive_nurbs_surface_torus_add", text="Nurbs Torus     ", icon='SURFACE_NTORUS')
 
     @staticmethod
     def draw_add_surface_icons(layout):
@@ -267,8 +267,13 @@ class VIEW3D_PT_tools_add_object(View3DPanel, Panel):
 
     @staticmethod
     def draw_add_mball(layout):
-        layout.operator_enum("object.metaball_add", "type")
-
+        #layout.operator_enum("object.metaball_add", "type")
+        layout.operator("object.metaball_add", text="Ball                 ", icon='META_BALL').type= 'BALL'
+        layout.operator("object.metaball_add", text="Capsule          ", icon='META_CAPSULE').type= 'CAPSULE'
+        layout.operator("object.metaball_add", text="Plane              ", icon='META_PLANE').type= 'PLANE'
+        layout.operator("object.metaball_add", text="Ellipsoid         ", icon='META_ELLIPSOID').type= 'ELLIPSOID'
+        layout.operator("object.metaball_add", text="Cube              ", icon='META_CUBE').type= 'CUBE'
+ 
     @staticmethod
     def draw_add_mball_icons(layout):
         row = layout.row(align=False)
@@ -283,7 +288,14 @@ class VIEW3D_PT_tools_add_object(View3DPanel, Panel):
 
     @staticmethod
     def draw_add_lamp(layout):
-        layout.operator_enum("object.lamp_add", "type")
+        #layout.operator_enum("object.lamp_add", "type")
+
+        layout.operator("object.lamp_add", text="Point               ", icon='LAMP_POINT').type= 'POINT'
+        layout.operator("object.lamp_add", text="Sun                 ", icon='LAMP_SUN').type= 'SUN' 
+        layout.operator("object.lamp_add", text="Spot                ", icon='LAMP_SPOT').type= 'SPOT' 
+        layout.operator("object.lamp_add", text="Hemi              ", icon='LAMP_HEMI').type= 'HEMI' 
+        layout.operator("object.lamp_add", text="Area               ", icon='LAMP_AREA').type= 'AREA' 
+  
 
     @staticmethod
     def draw_add_lamp_icons(layout):
@@ -358,11 +370,11 @@ class VIEW3D_PT_tools_add_misc(View3DPanel, Panel):
 
     @staticmethod
     def draw_add_other(layout):
-        layout.operator("object.text_add", text="Text", icon='OUTLINER_OB_FONT')
-        layout.operator("object.armature_add", text="Armature", icon='OUTLINER_OB_ARMATURE')
-        layout.operator("object.add", text="Lattice", icon='OUTLINER_OB_LATTICE').type = 'LATTICE'
-        layout.operator("object.camera_add", text="Camera", icon='OUTLINER_OB_CAMERA')
-        layout.operator("object.speaker_add", text="Speaker", icon='OUTLINER_OB_SPEAKER')
+        layout.operator("object.text_add", text="Text                ", icon='OUTLINER_OB_FONT')
+        layout.operator("object.armature_add", text="Armature       ", icon='OUTLINER_OB_ARMATURE')
+        layout.operator("object.add", text="Lattice           ", icon='OUTLINER_OB_LATTICE').type = 'LATTICE'
+        layout.operator("object.camera_add", text="Camera          ", icon='OUTLINER_OB_CAMERA')
+        layout.operator("object.speaker_add", text="Speaker         ", icon='OUTLINER_OB_SPEAKER')
         
 
     @staticmethod
@@ -380,14 +392,14 @@ class VIEW3D_PT_tools_add_misc(View3DPanel, Panel):
 
     @staticmethod
     def draw_add_empties(layout):
-        layout.operator("object.empty_add", text="Plain Axes", icon='OUTLINER_OB_EMPTY').type = 'PLAIN_AXES'
-        layout.operator("object.empty_add", text="Sphere", icon='EMPTY_SPHERE').type = 'SPHERE'
-        layout.operator("object.empty_add", text="Circle", icon='EMPTY_CIRCLE').type = 'CIRCLE'
-        layout.operator("object.empty_add", text="Cone", icon='EMPTY_CONE').type = 'CONE'
-        layout.operator("object.empty_add", text="Cube", icon='EMPTY_CUBE').type = 'CUBE'       
-        layout.operator("object.empty_add", text="Single Arrow", icon='EMPTY_SINGLEARROW').type = 'SINGLE_ARROW'
-        layout.operator("object.empty_add", text="Arrows", icon='EMPTY_ARROWS').type = 'ARROWS'       
-        layout.operator("object.empty_add", text="Image", icon='EMPTY_IMAGE').type = 'IMAGE'
+        layout.operator("object.empty_add", text="Plain Axes      ", icon='OUTLINER_OB_EMPTY').type = 'PLAIN_AXES'
+        layout.operator("object.empty_add", text="Sphere            ", icon='EMPTY_SPHERE').type = 'SPHERE'
+        layout.operator("object.empty_add", text="Circle             ", icon='EMPTY_CIRCLE').type = 'CIRCLE'
+        layout.operator("object.empty_add", text="Cone               ", icon='EMPTY_CONE').type = 'CONE'
+        layout.operator("object.empty_add", text="Cube               ", icon='EMPTY_CUBE').type = 'CUBE'       
+        layout.operator("object.empty_add", text="Single Arrow  ", icon='EMPTY_SINGLEARROW').type = 'SINGLE_ARROW'
+        layout.operator("object.empty_add", text="Arrows           ", icon='EMPTY_ARROWS').type = 'ARROWS'       
+        layout.operator("object.empty_add", text="Image             ", icon='EMPTY_IMAGE').type = 'IMAGE'
 
     @staticmethod
     def draw_add_empties_icons(layout):
@@ -406,19 +418,19 @@ class VIEW3D_PT_tools_add_misc(View3DPanel, Panel):
 
     @staticmethod
     def draw_add_force_field(layout):
-        layout.operator("object.effector_add", text="Boid", icon='FORCE_BOID').type='BOID'
-        layout.operator("object.effector_add", text="Charge", icon='FORCE_CHARGE').type='CHARGE'
-        layout.operator("object.effector_add", text="Curve Guide", icon='FORCE_CURVE').type='GUIDE'
-        layout.operator("object.effector_add", text="Drag", icon='FORCE_DRAG').type='DRAG'
-        layout.operator("object.effector_add", text="Force", icon='FORCE_FORCE').type='FORCE'
-        layout.operator("object.effector_add", text="Harmonic", icon='FORCE_HARMONIC').type='HARMONIC'
+        layout.operator("object.effector_add", text="Boid                ", icon='FORCE_BOID').type='BOID'
+        layout.operator("object.effector_add", text="Charge           ", icon='FORCE_CHARGE').type='CHARGE'
+        layout.operator("object.effector_add", text="Curve Guide   ", icon='FORCE_CURVE').type='GUIDE'
+        layout.operator("object.effector_add", text="Drag                ", icon='FORCE_DRAG').type='DRAG'
+        layout.operator("object.effector_add", text="Force              ", icon='FORCE_FORCE').type='FORCE'
+        layout.operator("object.effector_add", text="Harmonic       ", icon='FORCE_HARMONIC').type='HARMONIC'
         layout.operator("object.effector_add", text="Lennard-Jones", icon='FORCE_LENNARDJONES').type='LENNARDJ'
-        layout.operator("object.effector_add", text="Magnetic", icon='FORCE_MAGNETIC').type='MAGNET'
-        layout.operator("object.effector_add", text="Smoke flow", icon='FORCE_SMOKEFLOW').type='SMOKE'
-        layout.operator("object.effector_add", text="Texture", icon='FORCE_TEXTURE').type='TEXTURE'
-        layout.operator("object.effector_add", text="Turbulence", icon='FORCE_TURBULENCE').type='TURBULENCE'
-        layout.operator("object.effector_add", text="Vortex", icon='FORCE_VORTEX').type='VORTEX'
-        layout.operator("object.effector_add", text="Wind", icon='FORCE_WIND').type='WIND'
+        layout.operator("object.effector_add", text="Magnetic        ", icon='FORCE_MAGNETIC').type='MAGNET'
+        layout.operator("object.effector_add", text="Smoke flow    ", icon='FORCE_SMOKEFLOW').type='SMOKE'
+        layout.operator("object.effector_add", text="Texture           ", icon='FORCE_TEXTURE').type='TEXTURE'
+        layout.operator("object.effector_add", text="Turbulence     ", icon='FORCE_TURBULENCE').type='TURBULENCE'
+        layout.operator("object.effector_add", text="Vortex            ", icon='FORCE_VORTEX').type='VORTEX'
+        layout.operator("object.effector_add", text="Wind               ", icon='FORCE_WIND').type='WIND'
 
     @staticmethod
     def draw_add_force_field_icons(layout):
@@ -492,12 +504,12 @@ class VIEW3D_PT_tools_relations(View3DPanel, Panel):
                 col = layout.column(align=True)
 
                 col.label(text="Group:")
-                col.operator("group.create", icon='NEW_GROUP', text="New Group")
-                col.operator("group.objects_add_active", icon='ADD_TO_ACTIVE', text="Add to Active")
+                col.operator("group.create", icon='NEW_GROUP', text="New Group           ")
+                col.operator("group.objects_add_active", icon='ADD_TO_ACTIVE', text="Add to Active       ")
                 col.operator("group.objects_remove", icon='REMOVE_FROM_GROUP', text="Remove from Group")
                 col.separator()
                 col.operator("group.objects_remove_active", icon='REMOVE_SELECTED_FROM_ACTIVE_GROUP', text="Remove from Active")
-                col.operator("group.objects_remove_all", icon='REMOVE_FROM_ALL_GROUPS', text="Remove from All")
+                col.operator("group.objects_remove_all", icon='REMOVE_FROM_ALL_GROUPS', text="Remove from All  ")
 
                 col.separator()
 
@@ -509,14 +521,14 @@ class VIEW3D_PT_tools_relations(View3DPanel, Panel):
                 col.separator()
 
                 col.label(text="Object Data:")
-                col.operator("object.make_links_data", icon='LINK_DATA')
-                col.operator("object.make_single_user", icon='MAKE_SINGLE_USER')
+                col.operator("object.make_links_data", icon='LINK_DATA', text = "Link Data             ")
+                col.operator("object.make_single_user", icon='MAKE_SINGLE_USER', text = "Make Single User ")
 
                 col.separator()
 
                 col.label(text="Linked Objects:")
-                col.operator("object.make_local", icon='MAKE_LOCAL')
-                col.operator("object.proxy_make", icon='MAKE_PROXY')
+                col.operator("object.make_local", icon='MAKE_LOCAL', text = "Make Local          ")
+                col.operator("object.proxy_make", icon='MAKE_PROXY', text = "Make Proxy          ")
 
             else:
                 col = layout.column(align=True)
@@ -617,8 +629,8 @@ class VIEW3D_PT_tools_animation(View3DPanel, Panel):
 
             col = layout.column(align=True)
             col.label(text="Motion Paths:")
-            col.operator("object.paths_calculate", icon ='MOTIONPATHS_CALCULATE', text="Calculate")
-            col.operator("object.paths_clear", icon ='MOTIONPATHS_CLEAR',  text="Clear")
+            col.operator("object.paths_calculate", icon ='MOTIONPATHS_CALCULATE', text="Calculate        ")
+            col.operator("object.paths_clear", icon ='MOTIONPATHS_CLEAR',  text="Clear               ")
 
         else:
             draw_keyframing_tools_icons(context, layout)
@@ -645,21 +657,21 @@ class VIEW3D_PT_tools_rigid_body(View3DPanel, Panel):
 
             col = layout.column(align=True)
             col.label(text="Add/Remove:")
-            row = col.row(align=True)
-            row.operator("rigidbody.objects_add", icon='RIGID_ADD_ACTIVE', text="Add Active").type = 'ACTIVE'
-            row.operator("rigidbody.objects_add", icon='RIGID_ADD_PASSIVE', text="Add Passive").type = 'PASSIVE'
-            row = col.row(align=True)
-            row.operator("rigidbody.objects_remove", icon='RIGID_REMOVE', text="Remove")
+            #row = col.row(align=True)
+            col.operator("rigidbody.objects_add", icon='RIGID_ADD_ACTIVE', text="Add Active          ").type = 'ACTIVE'
+            col.operator("rigidbody.objects_add", icon='RIGID_ADD_PASSIVE', text="Add Passive         ").type = 'PASSIVE'
+            #row = col.row(align=True)
+            col.operator("rigidbody.objects_remove", icon='RIGID_REMOVE', text="Remove               ")
 
             col = layout.column(align=True)
             col.label(text="Object Tools:")
-            col.operator("rigidbody.shape_change", icon='RIGID_CHANGE_SHAPE', text="Change Shape")
-            col.operator("rigidbody.mass_calculate", icon='RIGID_CALCULATE_MASS', text="Calculate Mass")
+            col.operator("rigidbody.shape_change", icon='RIGID_CHANGE_SHAPE', text="Change Shape      ")
+            col.operator("rigidbody.mass_calculate", icon='RIGID_CALCULATE_MASS', text="Calculate Mass    ")
             col.operator("rigidbody.object_settings_copy", icon='RIGID_COPY_FROM_ACTIVE', text="Copy from Active")
-            col.operator("object.visual_transform_apply", icon='RIGID_APPLY_TRANS', text="Apply Transformation")
+            col.operator("object.visual_transform_apply", icon='RIGID_APPLY_TRANS', text="Apply Visual Trans")
             col.operator("rigidbody.bake_to_keyframes", icon='RIGID_BAKE_TO_KEYFRAME', text="Bake To Keyframes")
             col.label(text="Constraints:")
-            col.operator("rigidbody.connect", icon='RIGID_CONSTRAINTS_CONNECT', text="Connect")
+            col.operator("rigidbody.connect", icon='RIGID_CONSTRAINTS_CONNECT', text="Connect               ")
         else:
             col = layout.column(align=True)
             col.label(text="Add/Remove:")
@@ -706,20 +718,20 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
         if not scene.UItweaks.icon_or_text: 
 
             col = layout.column(align=True)
-            col.operator("transform.shrink_fatten", icon = 'SHRINK_FATTEN', text="Shrink/Fatten")
-            col.operator("transform.push_pull",icon = 'PUSH_PULL', text="Push/Pull")
+            col.operator("transform.shrink_fatten", icon = 'SHRINK_FATTEN', text="Shrink/Fatten   ")
+            col.operator("transform.push_pull",icon = 'PUSH_PULL', text="Push/Pull          ")
             col = layout.column(align=True)
-            col.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="Mirror")
-
+            col.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="Mirror              ")
+ 
 
             col = layout.column(align=True)
             col.label(text="Deform:")
-            col.operator("transform.edge_slide", icon='SLIDE_EDGE', text="Slide Edge")
-            col.operator("transform.vert_slide", icon='SLIDE_VERTEX', text="Silde Vertex")
-            col.operator("mesh.noise", icon='NOISE')
+            col.operator("transform.edge_slide", icon='SLIDE_EDGE', text="Slide Edge       ")
+            col.operator("transform.vert_slide", icon='SLIDE_VERTEX', text="Silde Vertex    ")
+            col.operator("mesh.noise", icon='NOISE', text="Noise               ")
             col.operator("mesh.vertices_smooth", icon='SMOOTH_VERTEX')
             col.operator("mesh.vertices_smooth_laplacian", icon='LAPLACIAN_SMOOTH_VERTEX')
-            col.operator("transform.vertex_random", icon='RANDOMIZE')
+            col.operator("transform.vertex_random", icon='RANDOMIZE', text="Randomize      ")
 
             col = layout.column(align=True)
             col.label(text="Add:")
@@ -727,8 +739,8 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
             col.menu("VIEW3D_MT_edit_mesh_extrude")
             col.operator("view3d.edit_mesh_extrude_move_normal", icon='EXTRUDE_REGION', text="Extrude Region")
             col.operator("view3d.edit_mesh_extrude_individual_move", icon='EXTRUDE_INDIVIDUAL', text="Extrude Individual")
-            col.operator("mesh.dupli_extrude_cursor" , icon='DUPLI_EXTRUDE',  text = " DupliExtr").rotate_source = False
-            col.operator("mesh.dupli_extrude_cursor", icon='DUPLI_EXTRUDE_ROTATE', text = " DupliExtrRot").rotate_source = True
+            col.operator("mesh.dupli_extrude_cursor" , icon='DUPLI_EXTRUDE',  text = " DupliExtrude    ").rotate_source = False
+            col.operator("mesh.dupli_extrude_cursor", icon='DUPLI_EXTRUDE_ROTATE', text = " DupliExRotate  ").rotate_source = True
            
             row = col.row(align=True)
             row.operator("mesh.spin", icon='SPIN')
@@ -736,10 +748,10 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
 
             layout.separator()
 
-            col.operator("mesh.inset", icon='INSET_FACES', text="Inset Faces")
-            col.operator("mesh.edge_face_add", icon='MAKE_EDGEFACE')
-            col.operator("mesh.subdivide", icon='SUBDIVIDE_EDGES')
-            col.operator("mesh.loopcut_slide", icon='LOOP_CUT_AND_SLIDE')
+            col.operator("mesh.inset", icon='INSET_FACES', text="Inset Faces      ")
+            col.operator("mesh.edge_face_add", icon='MAKE_EDGEFACE', text="Make Edge/Face   ")
+            col.operator("mesh.subdivide", icon='SUBDIVIDE_EDGES', text="Subdivide        ")
+            col.operator("mesh.loopcut_slide", icon='LOOP_CUT_AND_SLIDE', text="Loop Cut n Slide  ")
             col.operator("mesh.offset_edge_loops_slide", icon='OFFSET_EDGE_SLIDE')
 
 
@@ -750,8 +762,8 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
             props = row.operator("mesh.knife_tool", icon='KNIFE_SELECT', text="Select")
             props.use_occlude_geometry = False
             props.only_selected = True
-            col.operator("mesh.knife_project", icon='KNIFE_PROJECT')
-            col.operator("mesh.bisect", icon='BISECT')
+            col.operator("mesh.knife_project", icon='KNIFE_PROJECT', text="Knife Project   ")
+            col.operator("mesh.bisect", icon='BISECT', text="Bisect              ")
 
             col = layout.column(align=True)
             col.operator_menu_enum("mesh.merge", "type")
@@ -867,16 +879,16 @@ class VIEW3D_PT_tools_meshweight(View3DPanel, Panel):
     def draw_generic(layout):
 
         col = layout.column()
-        col.operator("object.vertex_group_normalize_all", icon='WEIGHT_NORMALIZE_ALL', text="Normalize All")
-        col.operator("object.vertex_group_normalize",icon='WEIGHT_NORMALIZE', text="Normalize")
-        col.operator("object.vertex_group_mirror",icon='WEIGHT_MIRROR', text="Mirror")
-        col.operator("object.vertex_group_invert", icon='WEIGHT_INVERT',text="Invert")
-        col.operator("object.vertex_group_clean", icon='WEIGHT_CLEAN',text="Clean")
-        col.operator("object.vertex_group_quantize", icon='WEIGHT_QUANTIZE',text="Quantize")
-        col.operator("object.vertex_group_levels", icon='WEIGHT_LEVELS',text="Levels")
-        col.operator("object.vertex_group_smooth", icon='WEIGHT_SMOOTH',text="Smooth")
-        col.operator("object.vertex_group_limit_total", icon='WEIGHT_LIMIT_TOTAL',text="Limit Total")
-        col.operator("object.vertex_group_fix", icon='WEIGHT_FIX_DEFORMS',text="Fix Deforms")
+        col.operator("object.vertex_group_normalize_all", icon='WEIGHT_NORMALIZE_ALL', text="Normalize All  ")
+        col.operator("object.vertex_group_normalize",icon='WEIGHT_NORMALIZE', text="Normalize       ")
+        col.operator("object.vertex_group_mirror",icon='WEIGHT_MIRROR', text="Mirror              ")
+        col.operator("object.vertex_group_invert", icon='WEIGHT_INVERT',text="Invert              ")
+        col.operator("object.vertex_group_clean", icon='WEIGHT_CLEAN',text="Clean               ")
+        col.operator("object.vertex_group_quantize", icon='WEIGHT_QUANTIZE',text="Quantize         ")
+        col.operator("object.vertex_group_levels", icon='WEIGHT_LEVELS',text="Levels             ")
+        col.operator("object.vertex_group_smooth", icon='WEIGHT_SMOOTH',text="Smooth           ")
+        col.operator("object.vertex_group_limit_total", icon='WEIGHT_LIMIT_TOTAL',text="Limit Total       ")
+        col.operator("object.vertex_group_fix", icon='WEIGHT_FIX_DEFORMS',text="Fix Deforms    ")
 
     # Used for Weight-Paint mode and Edit-Mode
     @staticmethod
@@ -963,9 +975,9 @@ class VIEW3D_PT_tools_shading(View3DPanel, Panel):
 
             col = layout.column(align=True)
             col.label(text="Normals:")
-            col.operator("mesh.normals_make_consistent", icon = 'RECALC_NORMALS', text="Recalculate Outside")
-            col.operator("mesh.normals_recalculate_inside", icon = 'RECALC_NORMALS_INSIDE', text="Recalculate Inside")
-            col.operator("mesh.flip_normals", icon = 'FLIP_NORMALS', text="Flip Direction")
+            col.operator("mesh.normals_make_consistent", icon = 'RECALC_NORMALS', text="Recalc Outside      ")
+            col.operator("mesh.normals_recalculate_inside", icon = 'RECALC_NORMALS_INSIDE', text="Recalc Inside        ")
+            col.operator("mesh.flip_normals", icon = 'FLIP_NORMALS', text="Flip Direction        ")
 
         else:
             col = layout.column(align=True)
@@ -1020,8 +1032,8 @@ class VIEW3D_PT_tools_uvs(View3DPanel, Panel):
         col.menu("VIEW3D_MT_uv_map", text="Unwrap")
 
         if not scene.UItweaks.icon_or_text:          
-            col.operator("mesh.mark_seam", icon = 'MARK_SEAM').clear = False
-            col.operator("mesh.clear_seam", icon = 'CLEAR_SEAM', text="Clear Seam")
+            col.operator("mesh.mark_seam", icon = 'MARK_SEAM', text="Mark Seam            ").clear = False
+            col.operator("mesh.clear_seam", icon = 'CLEAR_SEAM', text="Clear Seam           ")
 
         else:
             col.separator()
@@ -1080,35 +1092,35 @@ class VIEW3D_PT_tools_curveedit(View3DPanel, Panel):
 
         if not scene.UItweaks.icon_or_text: 
 
-            col = layout.column(align=True)
-            col.operator("transform.tilt", icon = 'TILT', text="Tilt")
-            col.operator("transform.transform", icon = 'SHRINK_FATTEN', text="Shrink/Fatten").mode = 'CURVE_SHRINKFATTEN'
+            col = layout.column(align=True) 
+            col.operator("transform.tilt", icon = 'TILT', text="Tilt                  ")
+            col.operator("transform.transform", icon = 'SHRINK_FATTEN', text="Shrink/Fatten  ").mode = 'CURVE_SHRINKFATTEN'
 
             col = layout.column(align=True)
             col.label(text="Curve:")
-            col.operator("curve.cyclic_toggle", icon = 'TOGGLE_CYCLIC')
-            col.operator("curve.switch_direction", icon = 'SWITCH_DIRECTION')
-            col.operator("curve.spline_type_set", icon = 'CURVE_DATA')
-            col.operator("curve.radius_set", icon = 'RADIUS')
+            col.operator("curve.cyclic_toggle", icon = 'TOGGLE_CYCLIC', text="Toggle Cyclic  ")
+            col.operator("curve.switch_direction", icon = 'SWITCH_DIRECTION', text="Switch Direction")
+            col.operator("curve.spline_type_set", icon = 'CURVE_DATA', text="Set Spline Type")
+            col.operator("curve.radius_set", icon = 'RADIUS', text="Set Curve Radius")
 
             col = layout.column(align=True)
             col.label(text="Handles:")
             row = col.row(align=True)
             row.operator("curve.handle_type_set", icon = 'HANDLE_AUTO', text="Auto").type = 'AUTOMATIC'
-            row.operator("curve.handle_type_set", icon = 'HANDLE_VECTOR',text="Vector").type = 'VECTOR'
+            row.operator("curve.handle_type_set", icon = 'HANDLE_VECTOR', text="Vector").type = 'VECTOR'
             row = col.row(align=True)
             row.operator("curve.handle_type_set", icon = 'HANDLE_ALIGN',text="Align").type = 'ALIGNED'
-            row.operator("curve.handle_type_set", icon = 'HANDLE_FREE',text="Free").type = 'FREE_ALIGN'
+            row.operator("curve.handle_type_set", icon = 'HANDLE_FREE', text="Free   ").type = 'FREE_ALIGN'
 
             col = layout.column(align=True)
-            col.operator("curve.normals_make_consistent", icon = 'RECALC_NORMALS')
+            col.operator("curve.normals_make_consistent", icon = 'RECALC_NORMALS', text="Recalc Normals")
 
             col = layout.column(align=True)
             col.label(text="Modeling:")
-            col.operator("curve.extrude_move", icon = 'EXTRUDE_REGION', text="Extrude")
-            col.operator("curve.subdivide", icon = 'SUBDIVIDE_EDGES')
-            col.operator("curve.smooth", icon = 'SHADING_SMOOTH')
-            col.operator("transform.vertex_random", icon = 'RANDOMIZE')
+            col.operator("curve.extrude_move", icon = 'EXTRUDE_REGION', text="Extrude            ")
+            col.operator("curve.subdivide", icon = 'SUBDIVIDE_EDGES', text="Subdivide        ")
+            col.operator("curve.smooth", icon = 'SHADING_SMOOTH', text="Smooth           ")
+            col.operator("transform.vertex_random", icon = 'RANDOMIZE', text="Randomize      ")
 
         else:
 
@@ -1185,20 +1197,20 @@ class VIEW3D_PT_tools_surfaceedit(View3DPanel, Panel):
 
             col = layout.column(align=True)
             col.label(text="Curve:")
-            col.operator("curve.duplicate_move", icon = 'DUPLICATE', text="Duplicate")
-            col.operator("curve.delete", icon = 'DELETE')
-            col.operator("curve.cyclic_toggle", icon = 'TOGGLE_CYCLIC')
-            col.operator("curve.switch_direction", icon = 'SWITCH_DIRECTION')
+            col.operator("curve.duplicate_move", icon = 'DUPLICATE', text="Duplicate        ")
+            col.operator("curve.delete", icon = 'DELETE', text="Delete             ")
+            col.operator("curve.cyclic_toggle", icon = 'TOGGLE_CYCLIC', text="Toggle Cyclic  ")
+            col.operator("curve.switch_direction", icon = 'SWITCH_DIRECTION', text="Switch Direction")
 
             col = layout.column(align=True)
             col.label(text="Modeling:")
-            col.operator("curve.extrude", icon='EXTRUDE_REGION', text="Extrude")
-            col.operator("curve.spin", icon = 'SPIN')
-            col.operator("curve.subdivide", icon='SUBDIVIDE_EDGES')
+            col.operator("curve.extrude", icon='EXTRUDE_REGION', text="Extrude           ")
+            col.operator("curve.spin", icon = 'SPIN', text="Spin                 ")  
+            col.operator("curve.subdivide", icon='SUBDIVIDE_EDGES', text="Subdivide        ")
 
             col = layout.column(align=True)
             col.label(text="Deform:")
-            col.operator("transform.vertex_random", icon = 'RANDOMIZE')
+            col.operator("transform.vertex_random", icon = 'RANDOMIZE', text="Randomize      ")
 
         else:
 
@@ -1259,14 +1271,14 @@ class VIEW3D_PT_tools_textedit(View3DPanel, Panel):
         if not scene.UItweaks.icon_or_text: 
             col = layout.column(align=True)
             col.label(text="Set Case:")
-            col.operator("font.case_set", icon = 'SET_UPPERCASE', text="To Upper").case = 'UPPER'
-            col.operator("font.case_set", icon = 'SET_LOWERCASE', text="To Lower").case = 'LOWER'
+            col.operator("font.case_set", icon = 'SET_UPPERCASE', text="To Upper          ").case = 'UPPER'
+            col.operator("font.case_set", icon = 'SET_LOWERCASE', text="To Lower         ").case = 'LOWER'
 
             col = layout.column(align=True)
             col.label(text="Style:")
-            col.operator("font.style_toggle", icon = 'BOLD', text="Bold").style = 'BOLD'
-            col.operator("font.style_toggle", icon = 'ITALIC', text="Italic").style = 'ITALIC'
-            col.operator("font.style_toggle", icon = 'UNDERLINED', text="Underline").style = 'UNDERLINE'
+            col.operator("font.style_toggle", icon = 'BOLD', text="Bold                 ").style = 'BOLD'
+            col.operator("font.style_toggle", icon = 'ITALIC', text="Italic                ").style = 'ITALIC'
+            col.operator("font.style_toggle", icon = 'UNDERLINED', text="Underline         ").style = 'UNDERLINE'
 
         else: 
             col = layout.column(align=True)
@@ -1300,16 +1312,16 @@ class VIEW3D_PT_tools_armatureedit(View3DPanel, Panel):
         if not scene.UItweaks.icon_or_text: 
             col = layout.column(align=True)
             col.label(text="Bones:")
-            col.operator("armature.bone_primitive_add", icon = 'BONE_DATA', text="Add")
+            col.operator("armature.bone_primitive_add", icon = 'BONE_DATA', text="Add                  ")
 
             col = layout.column(align=True)
             col.label(text="Modeling:")
-            col.operator("armature.extrude_move", icon = 'EXTRUDE_REGION')
-            col.operator("armature.subdivide", icon = 'SUBDIVIDE_EDGES', text="Subdivide")
+            col.operator("armature.extrude_move", icon = 'EXTRUDE_REGION', text="Extrude            ")
+            col.operator("armature.subdivide", icon = 'SUBDIVIDE_EDGES', text="Subdivide        ")
             1
             col = layout.column(align=True)
             col.label(text="Deform:")
-            col.operator("transform.vertex_random", icon = 'RANDOMIZE')
+            col.operator("transform.vertex_random", icon = 'RANDOMIZE', text="Randomize      ")
 
         else:
             col = layout.column(align=True)
@@ -1359,7 +1371,7 @@ class VIEW3D_PT_tools_mballedit(View3DPanel, Panel):
 
             col = layout.column(align=True)
             col.label(text="Deform:")
-            col.operator("transform.vertex_random", icon = 'RANDOMIZE')
+            col.operator("transform.vertex_random", icon = 'RANDOMIZE', text = "Randomize       ")
 
         else:
 
@@ -1403,11 +1415,11 @@ class VIEW3D_PT_tools_latticeedit(View3DPanel, Panel):
         if not scene.UItweaks.icon_or_text: 
 
             col = layout.column(align=True)
-            col.operator("lattice.make_regular", icon = 'MAKE_REGULAR')
+            col.operator("lattice.make_regular", icon = 'MAKE_REGULAR', text = "Make Regular  ")
 
             col = layout.column(align=True)
             col.label(text="Deform:")
-            col.operator("transform.vertex_random", icon = 'RANDOMIZE')
+            col.operator("transform.vertex_random", icon = 'RANDOMIZE', text = "Randomize      ")
         else:
             col = layout.column(align=True)
             col.label(text="Transform:")
@@ -1442,7 +1454,7 @@ class VIEW3D_PT_tools_posemode(View3DPanel, Panel):
             row = col.row(align=True)
             row.operator("pose.push", icon = 'PUSH_POSE', text="Push")
             row.operator("pose.relax", icon = 'RELAX_POSE',text="Relax")
-            col.operator("pose.breakdown", icon = 'BREAKDOWNER_POSE',text="Breakdowner")
+            col.operator("pose.breakdown", icon = 'BREAKDOWNER_POSE',text="Breakdowner  ")
 
             col = layout.column(align=True)
             col.label(text="Pose:")
@@ -2645,12 +2657,12 @@ class VIEW3D_PT_tools_history(View3DPanel, Panel):
             row.operator("ed.redo", icon='REDO')
             if obj is None or obj.mode != 'SCULPT':
                 # Sculpt mode does not generate an undo menu it seems...
-                col.operator("ed.undo_history", icon='UNDO_HISTORY')
+                col.operator("ed.undo_history", icon='UNDO_HISTORY', text = "Undo History   ")
 
             col = layout.column(align=True)
             col.label(text="Repeat:")
-            col.operator("screen.repeat_last", icon='REPEAT')
-            col.operator("screen.repeat_history", icon='REDO_HISTORY', text="History...")
+            col.operator("screen.repeat_last", icon='REPEAT', text = "Repeat Last     ")
+            col.operator("screen.repeat_history", icon='REDO_HISTORY', text="Repeat History")
 
         # Flag is on, draw buttons as icons.
         else:
