@@ -670,6 +670,8 @@ class VIEW3D_MT_select_pose(Menu):
         layout.operator_menu_enum("pose.select_grouped", "type", text="Grouped")
         layout.operator("object.select_pattern", text="Pattern...")
 
+        layout.separator()
+
 # Workaround to separate the tooltips
 class VIEW3D_MT_select_particle_inverse(bpy.types.Operator):
     """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
@@ -715,6 +717,7 @@ class VIEW3D_MT_select_particle(Menu):
         layout.operator("particle.select_roots", text="Roots")
         layout.operator("particle.select_tips", text="Tips")
 
+        layout.separator()
 
 class VIEW3D_MT_edit_mesh_select_similar(Menu):
     bl_label = "Select Similar"
@@ -806,6 +809,8 @@ class VIEW3D_MT_select_edit_mesh(Menu):
         layout.operator("mesh.loop_to_region", text = "Loop Inner-Region")
         layout.operator("mesh.region_to_loop", text = "Boundary Loop")
 
+        layout.separator()
+
 # Workaround to separate the tooltips
 class VIEW3D_MT_select_edit_curve_inverse(bpy.types.Operator):
     """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
@@ -887,6 +892,8 @@ class VIEW3D_MT_select_edit_surface(Menu):
         layout.operator("curve.select_more")
         layout.operator("curve.select_less")
 
+        layout.separator()
+
 
 class VIEW3D_MT_select_edit_text(Menu):
     # intentional name mis-match
@@ -945,6 +952,8 @@ class VIEW3D_MT_select_edit_metaball(Menu):
 
         layout.operator_menu_enum("mball.select_similar", "type", text="Similar")
 
+        layout.separator()
+
 # Workaround to separate the tooltips
 class VIEW3D_MT_select_edit_lattice_inverse(bpy.types.Operator):
     """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
@@ -984,6 +993,8 @@ class VIEW3D_MT_select_edit_lattice(Menu):
 
         layout.operator("lattice.select_more")
         layout.operator("lattice.select_less")
+
+        layout.separator()
 
 # Workaround to separate the tooltips
 class VIEW3D_MT_select_edit_armature_inverse(bpy.types.Operator):
@@ -1044,6 +1055,8 @@ class VIEW3D_MT_select_edit_armature(Menu):
         layout.operator_menu_enum("armature.select_similar", "type", text="Similar")
         layout.operator("object.select_pattern", text="Pattern...")
 
+        layout.separator()
+
 # Workaround to separate the tooltips
 class VIEW3D_MT_select_paint_mask_inverse(bpy.types.Operator):
     """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
@@ -1078,6 +1091,8 @@ class VIEW3D_MT_select_paint_mask(Menu):
         layout.operator("paint.face_select_linked_pick", text="Linked Pick Select").deselect = False
         layout.operator("paint.face_select_linked_pick", text="Linked Pick Deselect").deselect = True
 
+        layout.separator()
+
 # Workaround to separate the tooltips
 class VIEW3D_MT_select_paint_mask_vertex_inverse(bpy.types.Operator):
     """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
@@ -1109,6 +1124,8 @@ class VIEW3D_MT_select_paint_mask_vertex(Menu):
         layout.separator()
 
         layout.operator("paint.vert_select_ungrouped", text="Ungrouped Verts")
+
+        layout.separator()
 
 
 class VIEW3D_MT_angle_control(Menu):
