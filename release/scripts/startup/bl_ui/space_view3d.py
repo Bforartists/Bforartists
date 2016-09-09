@@ -609,6 +609,8 @@ class VIEW3D_MT_select_object(Menu):
         myvar.direction = 'CHILD'
         myvar.extend = True
 
+        layout.separator()
+
 # Workaround to separate the tooltips
 class VIEW3D_MT_select_pose_inverse(bpy.types.Operator):
     """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
