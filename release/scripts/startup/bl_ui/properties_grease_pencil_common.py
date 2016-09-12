@@ -99,11 +99,21 @@ class GreasePencilDrawingToolsPanel:
             if not scene.UItweaks.icon_or_text:      
                 col.operator("gpencil.convert", icon= 'GREASEPENCIL_CONVERT', text="Convert...        ")
                 col.operator("view3d.ruler", icon= 'RULER')
+                
             else:
                 row = col.row(align=False)
                 row.alignment = 'LEFT'
                 row.operator("gpencil.convert", icon= 'GREASEPENCIL_CONVERT', text="")
-                row.operator("view3d.ruler", icon= 'RULER', text = "")
+                row.operator("view3d.ruler", icon= 'RULER', text = "")             
+                
+            layout.separator()
+            
+            gpd = context.gpencil_data
+
+            if gpd:
+                
+                col = layout.column(align=True)  
+                col.prop(gpd, "use_stroke_edit_mode", text="Enable Editing", icon='EDIT', toggle=True)
 
 
 class GreasePencilStrokeEditPanel:
@@ -115,6 +125,10 @@ class GreasePencilStrokeEditPanel:
 
     @classmethod
     def poll(cls, context):
+        if context.gpencil_data is None:
+            return False
+        gpd = context.gpencil_data
+        return bool(context.editable_gpencil_strokes) and bool(gpd.use_stroke_edit_mode)       
         return (context.gpencil_data is not None)
 
     @staticmethod
@@ -124,18 +138,12 @@ class GreasePencilStrokeEditPanel:
         scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
         if not scene.UItweaks.icon_or_text: 
-
-            gpd = context.gpencil_data
-            edit_ok = bool(context.editable_gpencil_strokes) and bool(gpd.use_stroke_edit_mode)
-
+            
             col = layout.column(align=True)
-            col.prop(gpd, "use_stroke_edit_mode", text="Enable Editing" , icon='EDIT', toggle=True)
-
-            col.separator()
 
             col.label(text="Select:")
+            
             subcol = col.column(align=True)
-            subcol.active = edit_ok
             subcol.operator("gpencil.select_all", icon = 'SELECT_ALL', text="Select All        ")
             subcol.operator("gpencil.select_all", icon = 'SELECT_INVERSE', text="Inverse           ").action = 'INVERT'
             subcol.operator("gpencil.select_border", icon = 'SELECT_BORDER', text="Border Select ")
@@ -144,7 +152,6 @@ class GreasePencilStrokeEditPanel:
             col.separator()
 
             subcol = col.column(align=True)
-            subcol.active = edit_ok
             subcol.operator("gpencil.select_linked", icon = 'SELECT_LINKED', text="Select Linked ")
             subcol.operator("gpencil.select_more", icon = 'SELECT_MORE', text="Select More    ")
             subcol.operator("gpencil.select_less", icon = 'SELECT_LESS', text="Select Less     ")
@@ -153,12 +160,10 @@ class GreasePencilStrokeEditPanel:
 
             col.label(text="Edit:")
             row = col.row(align=True)
-            row.active = edit_ok
             row.operator("gpencil.copy", icon = 'COPYDOWN', text="Copy")
             row.operator("gpencil.paste", icon = 'PASTEDOWN', text="Paste")
 
             subcol = col.column(align=True)
-            subcol.active = edit_ok
             subcol.operator("gpencil.delete", icon = 'DELETE', text="Delete             ")
             subcol.operator("gpencil.dissolve", icon = 'GREASEPENCIL_DISSOLVE', text="Dissolve          ")
             subcol.operator("gpencil.duplicate_move", icon = 'DUPLICATE', text="Duplicate        ")
@@ -167,7 +172,6 @@ class GreasePencilStrokeEditPanel:
             col.separator()
 
             subcol = col.column(align=True)
-            subcol.active = edit_ok
             subcol.operator("transform.translate", icon ='TRANSFORM_MOVE', text="Translate        ").gpencil_strokes = True   # icon='MAN_TRANS'
             subcol.operator("transform.rotate", icon ='TRANSFORM_ROTATE', text="Rotate            ").gpencil_strokes = True      # icon='MAN_ROT'
             subcol.operator("transform.resize", icon ='TRANSFORM_SCALE', text="Scale              ").gpencil_strokes = True      # icon='MAN_SCALE'
@@ -179,26 +183,19 @@ class GreasePencilStrokeEditPanel:
             col.separator()
 
             subcol = col.column(align=True)
-            subcol.active = edit_ok
             subcol.operator("transform.bend", icon = 'BEND', text="Bend               ").gpencil_strokes = True
             subcol.operator("transform.shear", icon = 'SHEAR', text="Shear              ").gpencil_strokes = True
             subcol.operator("transform.tosphere", icon = 'TO_SPHERE', text="To Sphere       ").gpencil_strokes = True
 
 
         else:
-            gpd = context.gpencil_data
-            edit_ok = bool(context.editable_gpencil_strokes) and bool(gpd.use_stroke_edit_mode)
-
+            
             col = layout.column(align=True)
-            col.prop(gpd, "use_stroke_edit_mode", text="Enable Editing", icon='EDIT', toggle=True)
-
-            col.separator()
 
             col.label(text="Select:")
 
             subrow = col.row(align=False)
             subrow.alignment = 'LEFT'
-            subrow.active = edit_ok
             subrow.operator("gpencil.select_all", icon = 'SELECT_ALL', text="")
             subrow.operator("gpencil.select_all", icon = 'SELECT_INVERSE', text="").action = 'INVERT'
             subrow.operator("gpencil.select_border", icon = 'SELECT_BORDER', text="")
@@ -208,7 +205,6 @@ class GreasePencilStrokeEditPanel:
 
             subrow = col.row(align=False)
             subrow.alignment = 'LEFT'
-            subrow.active = edit_ok
             subrow.operator("gpencil.select_linked", icon = 'SELECT_LINKED', text="")
             subrow.operator("gpencil.select_more", icon = 'SELECT_MORE', text="")
             subrow.operator("gpencil.select_less", icon = 'SELECT_LESS', text="")
@@ -219,7 +215,6 @@ class GreasePencilStrokeEditPanel:
 
             subrow = col.row(align=False)
             subrow.alignment = 'LEFT'
-            subrow.active = edit_ok
             subrow.operator("gpencil.copy", icon = 'COPYDOWN', text="")
             subrow.operator("gpencil.paste", icon = 'PASTEDOWN', text="")
             subrow.operator("gpencil.delete", icon = 'DELETE', text="")
@@ -229,7 +224,6 @@ class GreasePencilStrokeEditPanel:
 
             subrow = col.row(align=False)
             subrow.alignment = 'LEFT'
-            subrow.active = edit_ok
             subrow.operator("gpencil.duplicate_move", icon = 'DUPLICATE', text="")
             subrow.operator("transform.mirror", icon = 'TRANSFORM_MIRROR', text="").gpencil_strokes = True
 
@@ -237,7 +231,6 @@ class GreasePencilStrokeEditPanel:
 
             subrow = col.row(align=False)
             subrow.alignment = 'LEFT'
-            subrow.active = edit_ok
             subrow.operator("transform.translate", icon ='TRANSFORM_MOVE', text="").gpencil_strokes = True   # icon='MAN_TRANS'
             subrow.operator("transform.rotate", icon ='TRANSFORM_ROTATE', text="").gpencil_strokes = True      # icon='MAN_ROT'
             subrow.operator("transform.resize", icon ='TRANSFORM_SCALE', text="").gpencil_strokes = True      # icon='MAN_SCALE'
@@ -250,7 +243,6 @@ class GreasePencilStrokeEditPanel:
 
             subrow = col.row(align=False)
             subrow.alignment = 'LEFT'
-            subrow.active = edit_ok
             subrow.operator("transform.bend", icon = 'BEND', text="").gpencil_strokes = True
             subrow.operator("transform.shear", icon = 'SHEAR', text="").gpencil_strokes = True
             subrow.operator("transform.tosphere", icon = 'TO_SPHERE', text="").gpencil_strokes = True
