@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -30,7 +30,7 @@ from bpy.props import (
 
 
 class SelectPattern(Operator):
-    """Select objects matching a naming pattern"""
+    """Select by Pattern\nSelect objects matching a naming pattern"""
     bl_idname = "object.select_pattern"
     bl_label = "Select Pattern"
     bl_options = {'REGISTER', 'UNDO'}
@@ -108,7 +108,7 @@ class SelectPattern(Operator):
 
 
 class SelectCamera(Operator):
-    """Select the active camera"""
+    """Select Camera\nSelect the active camera"""
     bl_idname = "object.select_camera"
     bl_label = "Select Camera"
     bl_options = {'REGISTER', 'UNDO'}
@@ -143,7 +143,7 @@ class SelectCamera(Operator):
 
 
 class SelectHierarchy(Operator):
-    """Select object relative to the active object's position """ \
+    """Select Hierarchy\nSelect object relative to the active object's position"""
     """in the hierarchy"""
     bl_idname = "object.select_hierarchy"
     bl_label = "Select Hierarchy"
@@ -211,7 +211,7 @@ class SelectHierarchy(Operator):
 
 
 class SubdivisionSet(Operator):
-    """Sets a Subdivision Surface Level (1-5)"""
+    """Subdivision Set\Sets a Subdivision Surface Level (1-5)"""
 
     bl_idname = "object.subdivision_set"
     bl_label = "Subdivision Set"
@@ -301,7 +301,7 @@ class SubdivisionSet(Operator):
 
 
 class ShapeTransfer(Operator):
-    """Copy another selected objects active shape to this one by """ \
+    """Shape Transfer\nCopy another selected objects active shape to this one by """ \
     """applying the relative offsets"""
 
     bl_idname = "object.shape_key_transfer"
@@ -493,7 +493,7 @@ class ShapeTransfer(Operator):
 
 
 class JoinUVs(Operator):
-    """Transfer UV Maps from active to selected objects """ \
+    """Join UV's\nTransfer UV Maps from active to selected objects """ \
     """(needs matching geometry)"""
     bl_idname = "object.join_uvs"
     bl_label = "Transfer UV Maps"
@@ -574,7 +574,7 @@ class JoinUVs(Operator):
 
 
 class MakeDupliFace(Operator):
-    """Convert objects into dupli-face instanced"""
+    """Make Dupli Face\nConvert objects into dupli-face instanced"""
     bl_idname = "object.make_dupli_face"
     bl_label = "Make Dupli-Face"
     bl_options = {'REGISTER', 'UNDO'}
@@ -653,7 +653,7 @@ class MakeDupliFace(Operator):
 
 
 class IsolateTypeRender(Operator):
-    """Hide unselected render objects of same type as active """ \
+    """Restrict Render unselected\nHide unselected render objects of same type as active """ \
     """by setting the hide render flag"""
     bl_idname = "object.isolate_type_render"
     bl_label = "Restrict Render Unselected"
@@ -674,7 +674,7 @@ class IsolateTypeRender(Operator):
 
 
 class ClearAllRestrictRender(Operator):
-    """Reveal all render objects by setting the hide render flag"""
+    """Clear all restrict Render\nReveal all render objects by setting the hide render flag"""
     bl_idname = "object.hide_render_clear_all"
     bl_label = "Clear All Restrict Render"
     bl_options = {'REGISTER', 'UNDO'}
@@ -686,7 +686,7 @@ class ClearAllRestrictRender(Operator):
 
 
 class TransformsToDeltasAnim(Operator):
-    """Convert object animation for normal transforms to delta transforms"""
+    """Transforms to Delta Anim\nConvert object animation for normal transforms to delta transforms"""
     bl_idname = "object.anim_transforms_to_deltas"
     bl_label = "Animated Transforms to Deltas"
     bl_options = {'REGISTER', 'UNDO'}
@@ -776,7 +776,7 @@ class TransformsToDeltasAnim(Operator):
 
 
 class DupliOffsetFromCursor(Operator):
-    """Set offset used for DupliGroup based on cursor position"""
+    """Dupli Offset from Cursor\nSet offset used for DupliGroup based on cursor position"""
     bl_idname = "object.dupli_offset_from_cursor"
     bl_label = "Set Offset From Cursor"
     bl_options = {'REGISTER', 'UNDO'}
@@ -795,7 +795,7 @@ class DupliOffsetFromCursor(Operator):
 
 
 class LodByName(Operator):
-    """Add levels of detail to this object based on object names"""
+    """Lod by Name\nAdd levels of detail to this object based on object names"""
     bl_idname = "object.lod_by_name"
     bl_label = "Setup Levels of Detail By Name"
     bl_options = {'REGISTER', 'UNDO'}
@@ -845,7 +845,7 @@ class LodByName(Operator):
 
 
 class LodClearAll(Operator):
-    """Remove all levels of detail from this object"""
+    """Lod Clear All\nRemove all levels of detail from this object"""
     bl_idname = "object.lod_clear_all"
     bl_label = "Clear All Levels of Detail"
     bl_options = {'REGISTER', 'UNDO'}
@@ -865,7 +865,7 @@ class LodClearAll(Operator):
 
 
 class LodGenerate(Operator):
-    """Generate levels of detail using the decimate modifier"""
+    """Lod Generate\nGenerate levels of detail using the decimate modifier"""
     bl_idname = "object.lod_generate"
     bl_label = "Generate Levels of Detail"
     bl_options = {'REGISTER', 'UNDO'}
