@@ -950,7 +950,7 @@ class VIEW3D_normals_make_consistent_inside(bpy.types.Operator):
         return {'FINISHED'}  
 
 class VIEW3D_PT_tools_shading(View3DPanel, Panel):
-    bl_category = "Shading / UVs"
+    bl_category = "Shade / UVs"
     bl_context = "mesh_edit"
     bl_label = "Shading"
 
@@ -1022,7 +1022,7 @@ class VIEW3D_markseam_clear(bpy.types.Operator):
 
 
 class VIEW3D_PT_tools_uvs(View3DPanel, Panel):
-    bl_category = "Shading / UVs"
+    bl_category = "Shade / UVs"
     bl_context = "mesh_edit"
     bl_label = "UVs"
 
