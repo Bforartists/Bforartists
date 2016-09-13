@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -24,7 +24,7 @@ from bpy.props import BoolProperty
 
 
 class VIEW3D_OT_edit_mesh_extrude_individual_move(Operator):
-    "Extrude individual elements and move"
+    "Extrude Individual\nExtrude individual elements and move"
     bl_label = "Extrude Individual and Move"
     bl_idname = "view3d.edit_mesh_extrude_individual_move"
 
@@ -62,7 +62,7 @@ class VIEW3D_OT_edit_mesh_extrude_individual_move(Operator):
 
 
 class VIEW3D_OT_edit_mesh_extrude_move(Operator):
-    "Extrude and move along normals"
+    "Extrude Region\nExtrude and move along normals"
     bl_label = "Extrude and Move on Normals"
     bl_idname = "view3d.edit_mesh_extrude_move_normal"
 
@@ -111,7 +111,7 @@ class VIEW3D_OT_edit_mesh_extrude_move(Operator):
 
 
 class VIEW3D_OT_edit_mesh_extrude_shrink_fatten(Operator):
-    "Extrude and move along individual normals"
+    "Extrude Region Vertex Normals\nExtrude and move along individual normals"
     bl_label = "Extrude and Move on Individual Normals"
     bl_idname = "view3d.edit_mesh_extrude_move_shrink_fatten"
 
