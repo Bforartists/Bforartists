@@ -740,7 +740,6 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
 
             col.menu("VIEW3D_MT_edit_mesh_extrude")
             col.operator("view3d.edit_mesh_extrude_move_normal", icon='EXTRUDE_REGION', text="Extrude Region")
-            col.operator("view3d.edit_mesh_extrude_individual_move", icon='EXTRUDE_INDIVIDUAL', text="Extrude Individual")
             col.operator("mesh.dupli_extrude_cursor" , icon='DUPLI_EXTRUDE',  text = " DupliExtrude    ").rotate_source = False
             col.operator("mesh.dupli_extrude_cursor", icon='DUPLI_EXTRUDE_ROTATE', text = " DupliExRotate  ").rotate_source = True
            
@@ -818,7 +817,6 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
             row = col.row(align=False)
             row.alignment = 'LEFT' 
             row.operator("view3d.edit_mesh_extrude_move_normal", icon='EXTRUDE_REGION', text="")
-            row.operator("view3d.edit_mesh_extrude_individual_move", icon='EXTRUDE_INDIVIDUAL', text="")
             row.operator("mesh.dupli_extrude_cursor" , icon='DUPLI_EXTRUDE',  text = "").rotate_source = False
             row.operator("mesh.dupli_extrude_cursor", icon='DUPLI_EXTRUDE_ROTATE', text = "").rotate_source = True
             

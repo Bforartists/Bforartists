@@ -62,7 +62,7 @@ class VIEW3D_OT_edit_mesh_extrude_individual_move(Operator):
 
 
 class VIEW3D_OT_edit_mesh_extrude_move(Operator):
-    "Extrude Region\nExtrude and move along normals"
+    "Extrude Region\nExtrude and move along normals\nHotkey Tool! Please use the hotkey to use this tool"
     bl_label = "Extrude and Move on Normals"
     bl_idname = "view3d.edit_mesh_extrude_move_normal"
 
