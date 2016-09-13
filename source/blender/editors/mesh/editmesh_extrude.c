@@ -669,7 +669,7 @@ void MESH_OT_dupli_extrude_cursor(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Duplicate or Extrude to Cursor";
 	ot->idname = "MESH_OT_dupli_extrude_cursor";
-	ot->description = "Duplicate or Extrude to Cursor\nDuplicate and extrude selected vertices, edges or faces towards the mouse cursor";
+	ot->description = "Duplicate or Extrude to Cursor\nDuplicate and extrude selected vertices, edges or faces towards the mouse cursor\nWith the Rotate flag on the target object gets randomly rotated\nHotkey Tool! Please use the hotkey to use this tool.";
 	
 	/* api callbacks */
 	ot->invoke = edbm_dupli_extrude_cursor_invoke;
