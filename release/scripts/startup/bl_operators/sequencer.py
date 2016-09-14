@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -25,7 +25,7 @@ from bpy.props import IntProperty
 
 
 class SequencerCrossfadeSounds(Operator):
-    """Do cross-fading volume animation of two selected sound strips"""
+    """Crossfade sounds\nDo cross-fading volume animation of two selected sound strips"""
 
     bl_idname = "sequencer.crossfade_sounds"
     bl_label = "Crossfade sounds"
@@ -76,7 +76,7 @@ class SequencerCrossfadeSounds(Operator):
 
 
 class SequencerCutMulticam(Operator):
-    """Cut multi-cam strip and select camera"""
+    """Cut multicam\nCut multi-cam strip and select camera"""
 
     bl_idname = "sequencer.cut_multicam"
     bl_label = "Cut multicam"
@@ -118,7 +118,7 @@ class SequencerCutMulticam(Operator):
 
 
 class SequencerDeinterlaceSelectedMovies(Operator):
-    """Deinterlace all selected movie sources"""
+    """Deinterlace Movies\nDeinterlace all selected movie sources"""
 
     bl_idname = "sequencer.deinterlace_selected_movies"
     bl_label = "Deinterlace Movies"

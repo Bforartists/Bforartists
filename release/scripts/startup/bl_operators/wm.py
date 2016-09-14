@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -125,7 +125,7 @@ def execute_context_assign(self, context):
 
 
 class BRUSH_OT_active_index_set(Operator):
-    """Set active sculpt/paint brush from it's number"""
+    """Set Brush Number\nSet active sculpt/paint brush from it's number"""
     bl_idname = "brush.active_index_set"
     bl_label = "Set Brush Number"
 
@@ -160,7 +160,7 @@ class BRUSH_OT_active_index_set(Operator):
 
 
 class WM_OT_context_set_boolean(Operator):
-    """Set a context value"""
+    """Context Set Boolean\nSet a context value"""
     bl_idname = "wm.context_set_boolean"
     bl_label = "Context Set Boolean"
     bl_options = {'UNDO', 'INTERNAL'}
@@ -176,7 +176,7 @@ class WM_OT_context_set_boolean(Operator):
 
 
 class WM_OT_context_set_int(Operator):  # same as enum
-    """Set a context value"""
+    """Context Set\nSet a context value"""
     bl_idname = "wm.context_set_int"
     bl_label = "Context Set"
     bl_options = {'UNDO', 'INTERNAL'}
@@ -193,7 +193,7 @@ class WM_OT_context_set_int(Operator):  # same as enum
 
 
 class WM_OT_context_scale_float(Operator):
-    """Scale a float context value"""
+    """Context Scale Floa\nScale a float context value"""
     bl_idname = "wm.context_scale_float"
     bl_label = "Context Scale Float"
     bl_options = {'UNDO', 'INTERNAL'}
@@ -221,7 +221,7 @@ class WM_OT_context_scale_float(Operator):
 
 
 class WM_OT_context_scale_int(Operator):
-    """Scale an int context value"""
+    """Context Scale Int\nScale an int context value"""
     bl_idname = "wm.context_scale_int"
     bl_label = "Context Scale Int"
     bl_options = {'UNDO', 'INTERNAL'}
@@ -264,7 +264,7 @@ class WM_OT_context_scale_int(Operator):
 
 
 class WM_OT_context_set_float(Operator):  # same as enum
-    """Set a context value"""
+    """Context Set Float\nSet a context value"""
     bl_idname = "wm.context_set_float"
     bl_label = "Context Set Float"
     bl_options = {'UNDO', 'INTERNAL'}
@@ -281,7 +281,7 @@ class WM_OT_context_set_float(Operator):  # same as enum
 
 
 class WM_OT_context_set_string(Operator):  # same as enum
-    """Set a context value"""
+    """Context Set String\nSet a context value"""
     bl_idname = "wm.context_set_string"
     bl_label = "Context Set String"
     bl_options = {'UNDO', 'INTERNAL'}
@@ -297,7 +297,7 @@ class WM_OT_context_set_string(Operator):  # same as enum
 
 
 class WM_OT_context_set_enum(Operator):
-    """Set a context value"""
+    """Context Set Enum\nSet a context value"""
     bl_idname = "wm.context_set_enum"
     bl_label = "Context Set Enum"
     bl_options = {'UNDO', 'INTERNAL'}
@@ -313,7 +313,7 @@ class WM_OT_context_set_enum(Operator):
 
 
 class WM_OT_context_set_value(Operator):
-    """Set a context value"""
+    """Context Set Value\nSet a context value"""
     bl_idname = "wm.context_set_value"
     bl_label = "Context Set Value"
     bl_options = {'UNDO', 'INTERNAL'}
@@ -334,7 +334,7 @@ class WM_OT_context_set_value(Operator):
 
 
 class WM_OT_context_toggle(Operator):
-    """Toggle a context value"""
+    """Context Toggle\nToggle a context value"""
     bl_idname = "wm.context_toggle"
     bl_label = "Context Toggle"
     bl_options = {'UNDO', 'INTERNAL'}
@@ -353,7 +353,7 @@ class WM_OT_context_toggle(Operator):
 
 
 class WM_OT_context_toggle_enum(Operator):
-    """Toggle a context value"""
+    """Context Toggle Values\nToggle a context value"""
     bl_idname = "wm.context_toggle_enum"
     bl_label = "Context Toggle Values"
     bl_options = {'UNDO', 'INTERNAL'}
@@ -391,7 +391,7 @@ class WM_OT_context_toggle_enum(Operator):
 
 
 class WM_OT_context_cycle_int(Operator):
-    """Set a context value (useful for cycling active material, """ \
+    """Context Int Cycle\nSet a context value (useful for cycling active material, """ \
     """vertex keys, groups, etc.)"""
     bl_idname = "wm.context_cycle_int"
     bl_label = "Context Int Cycle"
@@ -426,7 +426,7 @@ class WM_OT_context_cycle_int(Operator):
 
 
 class WM_OT_context_cycle_enum(Operator):
-    """Toggle a context value"""
+    """Context Enum Cycle\nToggle a context value"""
     bl_idname = "wm.context_cycle_enum"
     bl_label = "Context Enum Cycle"
     bl_options = {'UNDO', 'INTERNAL'}
@@ -478,7 +478,7 @@ class WM_OT_context_cycle_enum(Operator):
 
 
 class WM_OT_context_cycle_array(Operator):
-    """Set a context array value """ \
+    """Context Array Cycle\nSet a context array value """ \
     """(useful for cycling the active mesh edit mode)"""
     bl_idname = "wm.context_cycle_array"
     bl_label = "Context Array Cycle"
@@ -601,7 +601,7 @@ class WM_OT_operator_pie_enum(Operator):
 
 
 class WM_OT_context_set_id(Operator):
-    """Set a context value to an ID data-block"""
+    """Set Library ID\nSet a context value to an ID data-block"""
     bl_idname = "wm.context_set_id"
     bl_label = "Set Library ID"
     bl_options = {'UNDO', 'INTERNAL'}
@@ -657,7 +657,7 @@ data_path_item = StringProperty(
 
 
 class WM_OT_context_collection_boolean_set(Operator):
-    """Set boolean values for a collection of items"""
+    """Context Collection Boolean Set\nSet boolean values for a collection of items"""
     bl_idname = "wm.context_collection_boolean_set"
     bl_label = "Context Collection Boolean Set"
     bl_options = {'UNDO', 'REGISTER', 'INTERNAL'}
@@ -716,7 +716,7 @@ class WM_OT_context_collection_boolean_set(Operator):
 
 
 class WM_OT_context_modal_mouse(Operator):
-    """Adjust arbitrary values with mouse input"""
+    """Context Modal Mouse\nAdjust arbitrary values with mouse input"""
     bl_idname = "wm.context_modal_mouse"
     bl_label = "Context Modal Mouse"
     bl_options = {'GRAB_CURSOR', 'BLOCKING', 'UNDO', 'INTERNAL'}
@@ -938,7 +938,7 @@ def _wm_doc_get_id(doc_id, do_url=True, url_prefix=""):
 
 
 class WM_OT_doc_view_manual(Operator):
-    """Load online manual"""
+    """View Manual\nLoad online manual"""
     bl_idname = "wm.doc_view_manual"
     bl_label = "View Manual"
 
@@ -988,7 +988,7 @@ class WM_OT_doc_view_manual(Operator):
 
 
 class WM_OT_doc_view(Operator):
-    """Load online reference docs"""
+    """View Documentation\nLoad online reference docs"""
     bl_idname = "wm.doc_view"
     bl_label = "View Documentation"
 
@@ -1300,7 +1300,7 @@ class WM_OT_properties_context_change(Operator):
 
 
 class WM_OT_properties_remove(Operator):
-    """Internal use (edit a property data_path)"""
+    """Remove Property\nInternal use (edit a property data_path)"""
     bl_idname = "wm.properties_remove"
     bl_label = "Remove Property"
     bl_options = {'UNDO', 'INTERNAL'}
@@ -1376,7 +1376,7 @@ class WM_OT_appconfig_activate(Operator):
 
 
 class WM_OT_sysinfo(Operator):
-    """Generate System Info"""
+    """System Info\nGenerate System Info"""
     bl_idname = "wm.sysinfo"
     bl_label = "System Info"
 
@@ -1387,7 +1387,7 @@ class WM_OT_sysinfo(Operator):
 
 
 class WM_OT_copy_prev_settings(Operator):
-    """Copy settings from previous version"""
+    """Copy Previous Settings\nCopy settings from previous version"""
     bl_idname = "wm.copy_prev_settings"
     bl_label = "Copy Previous Settings"
 
@@ -1421,7 +1421,7 @@ class WM_OT_copy_prev_settings(Operator):
 
 
 class WM_OT_blenderplayer_start(Operator):
-    """Launch the blender-player with the current blend-file"""
+    """Start Game In Player\nLaunch the blender-player with the current blend-file"""
     bl_idname = "wm.blenderplayer_start"
     bl_label = "Start Game In Player"
 

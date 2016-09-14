@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -33,7 +33,7 @@ def _lang_module_get(sc):
 
 
 class ConsoleExec(Operator):
-    """Execute the current console line as a python expression"""
+    """Console Execute\nExecute the current console line as a python expression"""
     bl_idname = "console.execute"
     bl_label = "Console Execute"
 
@@ -60,7 +60,7 @@ class ConsoleExec(Operator):
 
 
 class ConsoleAutocomplete(Operator):
-    """Evaluate the namespace up until the cursor and give a list of """ \
+    """Console Autocomplete\nEvaluate the namespace up until the cursor and give a list of """ \
     """options or complete the name if there is only one"""
     bl_idname = "console.autocomplete"
     bl_label = "Console Autocomplete"
@@ -83,7 +83,7 @@ class ConsoleAutocomplete(Operator):
 
 
 class ConsoleCopyAsScript(Operator):
-    """Copy the console contents for use in a script"""
+    """Copy to Clipboard (as script\nCopy the console contents for use in a script"""
     bl_idname = "console.copy_as_script"
     bl_label = "Copy to Clipboard (as script)"
 
@@ -106,7 +106,7 @@ class ConsoleCopyAsScript(Operator):
 
 
 class ConsoleBanner(Operator):
-    """Print a message when the terminal initializes"""
+    """Console Banner\nPrint a message when the terminal initializes"""
     bl_idname = "console.banner"
     bl_label = "Console Banner"
 
@@ -133,7 +133,7 @@ class ConsoleBanner(Operator):
 
 
 class ConsoleLanguage(Operator):
-    """Set the current language for this console"""
+    """Console Language\nSet the current language for this console"""
     bl_idname = "console.language"
     bl_label = "Console Language"
 

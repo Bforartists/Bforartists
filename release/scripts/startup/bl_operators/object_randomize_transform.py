@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -96,7 +96,7 @@ from bpy.props import (IntProperty,
 
 
 class RandomizeLocRotSize(Operator):
-    """Randomize objects loc/rot/scale"""
+    """Randomize Transform\nRandomize objects loc/rot/scale"""
     bl_idname = "object.randomize_transform"
     bl_label = "Randomize Transform"
     bl_options = {'REGISTER', 'UNDO'}

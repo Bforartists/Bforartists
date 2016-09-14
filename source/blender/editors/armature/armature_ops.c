@@ -168,14 +168,14 @@ void ED_operatormacros_armature(void)
 	wmOperatorTypeMacro *otmacro;
 
 	ot = WM_operatortype_append_macro("ARMATURE_OT_duplicate_move", "Duplicate",
-	                                  "Make copies of the selected bones within the same armature and move them",
+	                                  "Duplicate\nMake copies of the selected bones within the same armature and move them",
 	                                  OPTYPE_UNDO | OPTYPE_REGISTER);
 	WM_operatortype_macro_define(ot, "ARMATURE_OT_duplicate");
 	otmacro = WM_operatortype_macro_define(ot, "TRANSFORM_OT_translate");
 	RNA_enum_set(otmacro->ptr, "proportional", 0);
 
 	ot = WM_operatortype_append_macro("ARMATURE_OT_extrude_move", "Extrude",
-	                                  "Create new bones from the selected joints and move them",
+	                                  "Extrude\nCreate new bones from the selected joints and move them",
 	                                  OPTYPE_UNDO | OPTYPE_REGISTER);
 	otmacro = WM_operatortype_macro_define(ot, "ARMATURE_OT_extrude");
 	RNA_boolean_set(otmacro->ptr, "forked", false);
@@ -185,7 +185,7 @@ void ED_operatormacros_armature(void)
 	/* XXX would it be nicer to just be able to have standard extrude_move, but set the forked property separate?
 	 * that would require fixing a properties bug 19733 */
 	ot = WM_operatortype_append_macro("ARMATURE_OT_extrude_forked", "Extrude Forked",
-	                                  "Create new bones from the selected joints and move them",
+	                                  "Extrude Forked\nCreate new bones from the selected joints and move them",
 	                                  OPTYPE_UNDO | OPTYPE_REGISTER);
 	otmacro = WM_operatortype_macro_define(ot, "ARMATURE_OT_extrude");
 	RNA_boolean_set(otmacro->ptr, "forked", true);

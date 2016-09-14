@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -198,7 +198,7 @@ class AddPresetBase:
 
 
 class ExecutePreset(Operator):
-    """Execute a preset"""
+    """Execute a Python Preset\nExecute a Python preset"""
     bl_idname = "script.execute_preset"
     bl_label = "Execute a Python Preset"
 
@@ -238,7 +238,7 @@ class ExecutePreset(Operator):
 
 
 class AddPresetRender(AddPresetBase, Operator):
-    """Add or remove a Render Preset"""
+    """Add Render Preset\nAdd or remove a Render Preset"""
     bl_idname = "render.preset_add"
     bl_label = "Add Render Preset"
     preset_menu = "RENDER_MT_presets"
@@ -264,7 +264,7 @@ class AddPresetRender(AddPresetBase, Operator):
 
 
 class AddPresetCamera(AddPresetBase, Operator):
-    """Add or remove a Camera Preset"""
+    """Add Camera Preset\nAdd or remove a Camera Preset"""
     bl_idname = "camera.preset_add"
     bl_label = "Add Camera Preset"
     preset_menu = "CAMERA_MT_presets"
@@ -295,7 +295,7 @@ class AddPresetCamera(AddPresetBase, Operator):
 
 
 class AddPresetSafeAreas(AddPresetBase, Operator):
-    """Add or remove a Safe Areas Preset"""
+    """Add Safe Area Preset\nAdd or remove a Safe Areas Preset"""
     bl_idname = "safe_areas.preset_add"
     bl_label = "Add Safe Area Preset"
     preset_menu = "SAFE_AREAS_MT_presets"
@@ -315,7 +315,7 @@ class AddPresetSafeAreas(AddPresetBase, Operator):
 
 
 class AddPresetSSS(AddPresetBase, Operator):
-    """Add or remove a Subsurface Scattering Preset"""
+    """Add SSS Preset\nAdd or remove a Subsurface Scattering Preset"""
     bl_idname = "material.sss_preset_add"
     bl_label = "Add SSS Preset"
     preset_menu = "MATERIAL_MT_sss_presets"
@@ -343,7 +343,7 @@ class AddPresetSSS(AddPresetBase, Operator):
 
 
 class AddPresetCloth(AddPresetBase, Operator):
-    """Add or remove a Cloth Preset"""
+    """Add Cloth Preset\nAdd or remove a Cloth Preset"""
     bl_idname = "cloth.preset_add"
     bl_label = "Add Cloth Preset"
     preset_menu = "CLOTH_MT_presets"
@@ -365,7 +365,7 @@ class AddPresetCloth(AddPresetBase, Operator):
 
 
 class AddPresetFluid(AddPresetBase, Operator):
-    """Add or remove a Fluid Preset"""
+    """Add Fluid Preset\nAdd or remove a Fluid Preset"""
     bl_idname = "fluid.preset_add"
     bl_label = "Add Fluid Preset"
     preset_menu = "FLUID_MT_presets"
@@ -383,7 +383,7 @@ class AddPresetFluid(AddPresetBase, Operator):
 
 
 class AddPresetHairDynamics(AddPresetBase, Operator):
-    """Add or remove a Hair Dynamics Preset"""
+    """Add Hair Dynamics Preset\nAdd or remove a Hair Dynamics Preset"""
     bl_idname = "particle.hair_dynamics_preset_add"
     bl_label = "Add Hair Dynamics Preset"
     preset_menu = "PARTICLE_MT_hair_dynamics_presets"
@@ -413,7 +413,7 @@ class AddPresetHairDynamics(AddPresetBase, Operator):
 
 
 class AddPresetSunSky(AddPresetBase, Operator):
-    """Add or remove a Sky & Atmosphere Preset"""
+    """Add Sunsky Preset\nAdd or remove a Sky & Atmosphere Preset"""
     bl_idname = "lamp.sunsky_preset_add"
     bl_label = "Add Sunsky Preset"
     preset_menu = "LAMP_MT_sunsky_presets"
@@ -442,7 +442,7 @@ class AddPresetSunSky(AddPresetBase, Operator):
 
 
 class AddPresetInteraction(AddPresetBase, Operator):
-    """Add or remove an Application Interaction Preset"""
+    """Add Interaction Preset\nAdd or remove an Application Interaction Preset"""
     bl_idname = "wm.interaction_preset_add"
     bl_label = "Add Interaction Preset"
     preset_menu = "USERPREF_MT_interaction_presets"
@@ -468,7 +468,7 @@ class AddPresetInteraction(AddPresetBase, Operator):
 
 
 class AddPresetTrackingCamera(AddPresetBase, Operator):
-    """Add or remove a Tracking Camera Intrinsics Preset"""
+    """Add Camera Preset\nAdd or remove a Tracking Camera Intrinsics Preset"""
     bl_idname = "clip.camera_preset_add"
     bl_label = "Add Camera Preset"
     preset_menu = "CLIP_MT_camera_presets"
@@ -502,7 +502,7 @@ class AddPresetTrackingCamera(AddPresetBase, Operator):
 
 
 class AddPresetTrackingTrackColor(AddPresetBase, Operator):
-    """Add or remove a Clip Track Color Preset"""
+    """Add Track Color Preset\nAdd or remove a Clip Track Color Preset"""
     bl_idname = "clip.track_color_preset_add"
     bl_label = "Add Track Color Preset"
     preset_menu = "CLIP_MT_track_color_presets"
@@ -520,7 +520,7 @@ class AddPresetTrackingTrackColor(AddPresetBase, Operator):
 
 
 class AddPresetTrackingSettings(AddPresetBase, Operator):
-    """Add or remove a motion tracking settings preset"""
+    """Add Tracking Settings Preset\nAdd or remove a motion tracking settings preset"""
     bl_idname = "clip.tracking_settings_preset_add"
     bl_label = "Add Tracking Settings Preset"
     preset_menu = "CLIP_MT_tracking_settings_presets"
@@ -550,7 +550,7 @@ class AddPresetTrackingSettings(AddPresetBase, Operator):
 
 
 class AddPresetNodeColor(AddPresetBase, Operator):
-    """Add or remove a Node Color Preset"""
+    """Add Node Color Preset\nAdd or remove a Node Color Preset"""
     bl_idname = "node.node_color_preset_add"
     bl_label = "Add Node Color Preset"
     preset_menu = "NODE_MT_node_color_presets"
@@ -568,7 +568,7 @@ class AddPresetNodeColor(AddPresetBase, Operator):
 
 
 class AddPresetInterfaceTheme(AddPresetBase, Operator):
-    """Add or remove a theme preset"""
+    """Add Theme Preset\nAdd or remove a theme preset"""
     bl_idname = "wm.interface_theme_preset_add"
     bl_label = "Add Theme Preset"
     preset_menu = "USERPREF_MT_interface_theme_presets"
@@ -576,7 +576,7 @@ class AddPresetInterfaceTheme(AddPresetBase, Operator):
 
 
 class AddPresetKeyconfig(AddPresetBase, Operator):
-    """Add or remove a Key-config Preset"""
+    """Add Keyconfig Preset\nAdd or remove a Key-config Preset"""
     bl_idname = "wm.keyconfig_preset_add"
     bl_label = "Add Keyconfig Preset"
     preset_menu = "USERPREF_MT_keyconfigs"
@@ -599,7 +599,7 @@ class AddPresetKeyconfig(AddPresetBase, Operator):
 
 
 class AddPresetOperator(AddPresetBase, Operator):
-    """Add or remove an Operator Preset"""
+    """Operator Preset\nAdd or remove an Operator Preset"""
     bl_idname = "wm.operator_preset_add"
     bl_label = "Operator Preset"
     preset_menu = "WM_MT_operator_presets"

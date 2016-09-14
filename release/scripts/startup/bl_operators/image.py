@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -24,7 +24,7 @@ from bpy.props import StringProperty
 
 
 class EditExternally(Operator):
-    """Edit image in an external application"""
+    """Image Edit Externally\nEdit image in an external application"""
     bl_idname = "image.external_edit"
     bl_label = "Image Edit Externally"
     bl_options = {'REGISTER'}
@@ -116,7 +116,7 @@ class EditExternally(Operator):
 
 
 class SaveDirty(Operator):
-    """Save all modified textures"""
+    """Save Dirty\nSave all modified textures"""
     bl_idname = "image.save_dirty"
     bl_label = "Save Dirty"
     bl_options = {'REGISTER', 'UNDO'}
@@ -149,7 +149,7 @@ class SaveDirty(Operator):
 
 
 class ProjectEdit(Operator):
-    """Edit a snapshot of the view-port in an external image editor"""
+    """Project Edit\nEdit a snapshot of the view-port in an external image editor"""
     bl_idname = "image.project_edit"
     bl_label = "Project Edit"
     bl_options = {'REGISTER'}
@@ -222,7 +222,7 @@ class ProjectEdit(Operator):
 
 
 class ProjectApply(Operator):
-    """Project edited image back onto the object"""
+    """Project Apply\nProject edited image back onto the object"""
     bl_idname = "image.project_apply"
     bl_label = "Project Apply"
     bl_options = {'REGISTER'}

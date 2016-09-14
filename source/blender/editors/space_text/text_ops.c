@@ -1851,7 +1851,7 @@ void TEXT_OT_move(wmOperatorType *ot)
 	ot->poll = text_edit_poll;
 
 	/* properties */
-	RNA_def_enum(ot->srna, "type", move_type_items, LINE_BEGIN, "Type", "Where to move cursor to");
+	RNA_def_enum(ot->srna, "type", move_type_items, LINE_BEGIN, "Type", "Type\nWhere to move cursor to");
 }
 
 /******************* move select operator ********************/
@@ -1875,7 +1875,7 @@ void TEXT_OT_move_select(wmOperatorType *ot)
 	ot->poll = text_space_edit_poll;
 
 	/* properties */
-	RNA_def_enum(ot->srna, "type", move_type_items, LINE_BEGIN, "Type", "Where to move cursor to, to make a selection");
+	RNA_def_enum(ot->srna, "type", move_type_items, LINE_BEGIN, "Type", "Type\nWhere to move cursor to, to make a selection");
 }
 
 /******************* jump operator *********************/
@@ -1991,7 +1991,7 @@ void TEXT_OT_delete(wmOperatorType *ot)
 	ot->poll = text_edit_poll;
 
 	/* properties */
-	RNA_def_enum(ot->srna, "type", delete_type_items, DEL_NEXT_CHAR, "Type", "Which part of the text to delete");
+	RNA_def_enum(ot->srna, "type", delete_type_items, DEL_NEXT_CHAR, "Type", "Type\nWhich part of the text to delete");
 }
 
 /******************* toggle overwrite operator **********************/
@@ -2327,7 +2327,7 @@ void TEXT_OT_scroll_bar(wmOperatorType *ot)
 	ot->flag = OPTYPE_BLOCKING | OPTYPE_INTERNAL;
 
 	/* properties */
-	RNA_def_int(ot->srna, "lines", 1, INT_MIN, INT_MAX, "Lines", "Number of lines to scroll", -100, 100);
+	RNA_def_int(ot->srna, "lines", 1, INT_MIN, INT_MAX, "Lines", "Lines\nNumber of lines to scroll", -100, 100);
 }
 
 /******************* set selection operator **********************/
@@ -2697,7 +2697,7 @@ void TEXT_OT_selection_set(wmOperatorType *ot)
 	ot->poll = text_region_edit_poll;
 
 	/* properties */
-	RNA_def_boolean(ot->srna, "select", 0, "Select", "Set selection end rather than cursor");
+	RNA_def_boolean(ot->srna, "select", 0, "Select", "Select\nSet selection end rather than cursor");
 }
 
 /******************* set cursor operator **********************/
@@ -2893,7 +2893,7 @@ void TEXT_OT_insert(wmOperatorType *ot)
 	ot->poll = text_edit_poll;
 
 	/* properties */
-	prop = RNA_def_string(ot->srna, "text", NULL, 0, "Text", "Text to insert at the cursor position");
+	prop = RNA_def_string(ot->srna, "text", NULL, 0, "Text", "Text\nText to insert at the cursor position");
 	RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 }
 
@@ -3142,7 +3142,7 @@ void TEXT_OT_resolve_conflict(wmOperatorType *ot)
 	ot->poll = text_save_poll;
 
 	/* properties */
-	RNA_def_enum(ot->srna, "resolution", resolution_items, RESOLVE_IGNORE, "Resolution", "How to solve conflict due to differences in internal and external text");
+	RNA_def_enum(ot->srna, "resolution", resolution_items, RESOLVE_IGNORE, "Resolution", "Resolution\nHow to solve conflict due to differences in internal and external text");
 }
 
 /********************** to 3d object operator *****************/
@@ -3172,7 +3172,7 @@ void TEXT_OT_to_3d_object(wmOperatorType *ot)
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
 	/* properties */
-	RNA_def_boolean(ot->srna, "split_lines", 0, "Split Lines", "Create one object per line in the text");
+	RNA_def_boolean(ot->srna, "split_lines", 0, "Split Lines", "Split Lines\nCreate one object per line in the text");
 }
 
 

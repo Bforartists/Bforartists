@@ -408,7 +408,7 @@ void IMAGE_OT_view_pan(wmOperatorType *ot)
 	
 	/* properties */
 	RNA_def_float_vector(ot->srna, "offset", 2, NULL, -FLT_MAX, FLT_MAX,
-	                     "Offset", "Offset in floating point units, 1.0 is the width and height of the image", -FLT_MAX, FLT_MAX);
+	                     "Offset", "Offset\nOffset in floating point units, 1.0 is the width and height of the image", -FLT_MAX, FLT_MAX);
 }
 
 /********************** view zoom operator *********************/
@@ -624,7 +624,7 @@ void IMAGE_OT_view_zoom(wmOperatorType *ot)
 	
 	/* properties */
 	prop = RNA_def_float(ot->srna, "factor", 0.0f, -FLT_MAX, FLT_MAX, "Factor",
-	                     "Zoom factor, values higher than 1.0 zoom in, lower values zoom out", -FLT_MAX, FLT_MAX);
+	                     "Factor\nZoom factor, values higher than 1.0 zoom in, lower values zoom out", -FLT_MAX, FLT_MAX);
 	RNA_def_property_flag(prop, PROP_HIDDEN);
 }
 
@@ -750,7 +750,7 @@ void IMAGE_OT_view_all(wmOperatorType *ot)
 	ot->flag = OPTYPE_LOCK_BYPASS;
 
 	/* properties */
-	prop = RNA_def_boolean(ot->srna, "fit_view", 0, "Fit View", "Fit frame to the viewport");
+	prop = RNA_def_boolean(ot->srna, "fit_view", 0, "Fit View", "Fit View\nFit frame to the viewport");
 	RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 }
 
@@ -870,7 +870,7 @@ void IMAGE_OT_view_zoom_in(wmOperatorType *ot)
 
 	/* properties */
 	prop = RNA_def_float_vector(ot->srna, "location", 2, NULL, -FLT_MAX, FLT_MAX,
-	                            "Location", "Cursor location in screen coordinates", -10.0f, 10.0f);
+	                            "Location", "Location\nCursor location in screen coordinates", -10.0f, 10.0f);
 	RNA_def_property_flag(prop, PROP_HIDDEN);
 }
 
@@ -919,7 +919,7 @@ void IMAGE_OT_view_zoom_out(wmOperatorType *ot)
 
 	/* properties */
 	prop = RNA_def_float_vector(ot->srna, "location", 2, NULL, -FLT_MAX, FLT_MAX,
-	                            "Location", "Cursor location in screen coordinates", -10.0f, 10.0f);
+	                            "Location", "Location\nCursor location in screen coordinates", -10.0f, 10.0f);
 	RNA_def_property_flag(prop, PROP_HIDDEN);
 }
 
@@ -966,7 +966,7 @@ void IMAGE_OT_view_zoom_ratio(wmOperatorType *ot)
 
 	/* properties */
 	RNA_def_float(ot->srna, "ratio", 0.0f, -FLT_MAX, FLT_MAX,
-	              "Ratio", "Zoom ratio, 1.0 is 1:1, higher is zoomed in, lower is zoomed out", -FLT_MAX, FLT_MAX);
+	              "Ratio", "Ratio\nZoom ratio, 1.0 is 1:1, higher is zoomed in, lower is zoomed out", -FLT_MAX, FLT_MAX);
 }
 
 /**************** load/replace/save callbacks ******************/
@@ -2418,21 +2418,21 @@ void IMAGE_OT_new(wmOperatorType *ot)
 	ot->flag = OPTYPE_UNDO;
 
 	/* properties */
-	RNA_def_string(ot->srna, "name", IMA_DEF_NAME, MAX_ID_NAME - 2, "Name", "Image datablock name");
-	prop = RNA_def_int(ot->srna, "width", 1024, 1, INT_MAX, "Width", "Image width", 1, 16384);
+	RNA_def_string(ot->srna, "name", IMA_DEF_NAME, MAX_ID_NAME - 2, "Name", "Name\nImage datablock name");
+	prop = RNA_def_int(ot->srna, "width", 1024, 1, INT_MAX, "Width", "Width\nImage width", 1, 16384);
 	RNA_def_property_subtype(prop, PROP_PIXEL);
-	prop = RNA_def_int(ot->srna, "height", 1024, 1, INT_MAX, "Height", "Image height", 1, 16384);
+	prop = RNA_def_int(ot->srna, "height", 1024, 1, INT_MAX, "Height", "Height\nImage height", 1, 16384);
 	RNA_def_property_subtype(prop, PROP_PIXEL);
-	prop = RNA_def_float_color(ot->srna, "color", 4, NULL, 0.0f, FLT_MAX, "Color", "Default fill color", 0.0f, 1.0f);
+	prop = RNA_def_float_color(ot->srna, "color", 4, NULL, 0.0f, FLT_MAX, "Color", "Color\nDefault fill color", 0.0f, 1.0f);
 	RNA_def_property_subtype(prop, PROP_COLOR_GAMMA);
 	RNA_def_property_float_array_default(prop, default_color);
-	RNA_def_boolean(ot->srna, "alpha", 1, "Alpha", "Create an image with an alpha channel");
+	RNA_def_boolean(ot->srna, "alpha", 1, "Alpha", "Alpha\nCreate an image with an alpha channel");
 	RNA_def_enum(ot->srna, "generated_type", image_generated_type_items, IMA_GENTYPE_BLANK,
-	             "Generated Type", "Fill the image with a grid for UV map testing");
-	RNA_def_boolean(ot->srna, "float", 0, "32 bit Float", "Create image with 32 bit floating point bit depth");
-	prop = RNA_def_enum(ot->srna, "gen_context", gen_context_items, 0, "Gen Context", "Generation context");
+	             "Generated Type", "Generated Type\nFill the image with a grid for UV map testing");
+	RNA_def_boolean(ot->srna, "float", 0, "32 bit Float", "32 bit Float\nCreate image with 32 bit floating point bit depth");
+	prop = RNA_def_enum(ot->srna, "gen_context", gen_context_items, 0, "Gen Context", "Gen Context\nGeneration context");
 	RNA_def_property_flag(prop, PROP_HIDDEN);
-	prop = RNA_def_boolean(ot->srna, "use_stereo_3d", 0, "Stereo 3D", "Create an image with left and right views");
+	prop = RNA_def_boolean(ot->srna, "use_stereo_3d", 0, "Stereo 3D", "Stereo 3D\nCreate an image with left and right views");
 	RNA_def_property_flag(prop, PROP_SKIP_SAVE | PROP_HIDDEN);
 }
 
@@ -3111,7 +3111,7 @@ void IMAGE_OT_curves_point_set(wmOperatorType *ot)
 	ot->poll = space_image_main_area_not_uv_brush_poll;
 
 	/* properties */
-	RNA_def_enum(ot->srna, "point", point_items, 0, "Point", "Set black point or white point for curves");
+	RNA_def_enum(ot->srna, "point", point_items, 0, "Point", "Point\nSet black point or white point for curves");
 }
 
 #if 0 /* Not ported to 2.5x yet */

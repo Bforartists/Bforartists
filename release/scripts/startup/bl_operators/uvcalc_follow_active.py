@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -221,7 +221,7 @@ def main(context, operator):
 
 
 class FollowActiveQuads(Operator):
-    """Follow UVs from active quads along continuous face loops"""
+    """Follow Active Quads\nFollow UVs from active quads along continuous face loops"""
     bl_idname = "uv.follow_active_quads"
     bl_label = "Follow Active Quads"
     bl_options = {'REGISTER', 'UNDO'}

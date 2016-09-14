@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -125,7 +125,7 @@ def CLIP_default_settings_from_track(clip, track, framenr):
 
 
 class CLIP_OT_filter_tracks(bpy.types.Operator):
-    """Filter tracks which has weirdly looking spikes in motion curves"""
+    """Filter Tracks\nFilter tracks which has weirdly looking spikes in motion curves"""
     bl_label = "Filter Tracks"
     bl_idname = "clip.filter_tracks"
     bl_options = {'UNDO', 'REGISTER'}
@@ -219,7 +219,7 @@ class CLIP_OT_set_active_clip(bpy.types.Operator):
 
 
 class CLIP_OT_track_to_empty(Operator):
-    """Create an Empty object which will be copying movement of active track"""
+    """Link Empty to Track\nCreate an Empty object which will be copying movement of active track"""
 
     bl_idname = "clip.track_to_empty"
     bl_label = "Link Empty to Track"
@@ -264,7 +264,7 @@ class CLIP_OT_track_to_empty(Operator):
 
 
 class CLIP_OT_bundles_to_mesh(Operator):
-    """Create vertex cloud using coordinates of reconstructed tracks"""
+    """3D Markers to Mesh\nCreate vertex cloud using coordinates of reconstructed tracks"""
 
     bl_idname = "clip.bundles_to_mesh"
     bl_label = "3D Markers to Mesh"
@@ -312,7 +312,7 @@ class CLIP_OT_bundles_to_mesh(Operator):
 
 
 class CLIP_OT_delete_proxy(Operator):
-    """Delete movie clip proxy files from the hard drive"""
+    """Delete Proxy\nDelete movie clip proxy files from the hard drive"""
 
     bl_idname = "clip.delete_proxy"
     bl_label = "Delete Proxy"
@@ -389,7 +389,7 @@ class CLIP_OT_delete_proxy(Operator):
 
 
 class CLIP_OT_set_viewport_background(Operator):
-    """Set current movie clip as a camera background in 3D view-port """ \
+    """Set as Background\nSet current movie clip as a camera background in 3D view-port """ \
     """(works only when a 3D view-port is visible)"""
 
     bl_idname = "clip.set_viewport_background"
@@ -413,7 +413,7 @@ class CLIP_OT_set_viewport_background(Operator):
 
 
 class CLIP_OT_constraint_to_fcurve(Operator):
-    """Create F-Curves for object which will copy \
+    """Constraint to F-Curve\nCreate F-Curves for object which will copy \
 object's movement caused by this constraint"""
 
     bl_idname = "clip.constraint_to_fcurve"
@@ -513,7 +513,7 @@ object's movement caused by this constraint"""
 
 
 class CLIP_OT_setup_tracking_scene(Operator):
-    """Prepare scene for compositing 3D objects into this footage"""
+    """Setup Tracking Scene\nPrepare scene for compositing 3D objects into this footage"""
 
     bl_idname = "clip.setup_tracking_scene"
     bl_label = "Setup Tracking Scene"
@@ -989,7 +989,7 @@ class CLIP_OT_setup_tracking_scene(Operator):
 
 
 class CLIP_OT_track_settings_as_default(Operator):
-    """Copy tracking settings from active track to default settings"""
+    """Track Settings As Default\nCopy tracking settings from active track to default settings"""
 
     bl_idname = "clip.track_settings_as_default"
     bl_label = "Track Settings As Default"
@@ -1019,7 +1019,7 @@ class CLIP_OT_track_settings_as_default(Operator):
 
 
 class CLIP_OT_track_settings_to_track(bpy.types.Operator):
-    """Copy tracking settings from active track to selected tracks"""
+    """Copy Track Settings\nCopy tracking settings from active track to selected tracks"""
 
     bl_label = "Copy Track Settings"
     bl_idname = "clip.track_settings_to_track"

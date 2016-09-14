@@ -467,11 +467,11 @@ void FILE_OT_select(wmOperatorType *ot)
 	ot->poll = ED_operator_file_active;
 
 	/* properties */
-	prop = RNA_def_boolean(ot->srna, "extend", false, "Extend", "Extend selection instead of deselecting everything first");
+	prop = RNA_def_boolean(ot->srna, "extend", false, "Extend", "Extend\nExtend selection instead of deselecting everything first");
 	RNA_def_property_flag(prop, PROP_SKIP_SAVE);
-	prop = RNA_def_boolean(ot->srna, "fill", false, "Fill", "Select everything beginning with the last selection");
+	prop = RNA_def_boolean(ot->srna, "fill", false, "Fill", "Fill\nSelect everything beginning with the last selection");
 	RNA_def_property_flag(prop, PROP_SKIP_SAVE);
-	prop = RNA_def_boolean(ot->srna, "open", true, "Open", "Open a directory when selecting it");
+	prop = RNA_def_boolean(ot->srna, "open", true, "Open", "Open\nOpen a directory when selecting it");
 	RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 }
 
@@ -689,12 +689,12 @@ void FILE_OT_select_walk(wmOperatorType *ot)
 
 	/* properties */
 	prop = RNA_def_enum(ot->srna, "direction", direction_items, 0, "Walk Direction",
-	                    "Select/Deselect file in this direction");
+	                    "Walk Direction\nSelect/Deselect file in this direction");
 	RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 	prop = RNA_def_boolean(ot->srna, "extend", false, "Extend",
-	                       "Extend selection instead of deselecting everything first");
+	                       "Extend\nExtend selection instead of deselecting everything first");
 	RNA_def_property_flag(prop, PROP_SKIP_SAVE);
-	prop = RNA_def_boolean(ot->srna, "fill", false, "Fill", "Select everything beginning with the last selection");
+	prop = RNA_def_boolean(ot->srna, "fill", false, "Fill", "Fill\nSelect everything beginning with the last selection");
 	RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 }
 
@@ -1000,7 +1000,7 @@ void FILE_OT_bookmark_move(wmOperatorType *ot)
 	/* flags */
 	ot->flag = OPTYPE_REGISTER;  /* No undo! */
 
-	RNA_def_enum(ot->srna, "direction", slot_move, 0, "Direction", "Direction to move, UP or DOWN");
+	RNA_def_enum(ot->srna, "direction", slot_move, 0, "Direction", "Direction\nDirection to move, UP or DOWN");
 }
 
 static int reset_recent_exec(bContext *C, wmOperator *UNUSED(op))
@@ -1347,7 +1347,7 @@ void FILE_OT_execute(struct wmOperatorType *ot)
 
 	/* properties */
 	prop = RNA_def_boolean(ot->srna, "need_active", 0, "Need Active",
-	                       "Only execute if there's an active selected file in the file list");
+	                       "Need Active\nOnly execute if there's an active selected file in the file list");
 	RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 }
 

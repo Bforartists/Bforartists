@@ -539,7 +539,7 @@ static void PAINT_OT_brush_select(wmOperatorType *ot)
 
 	prop = RNA_def_boolean(ot->srna, "toggle", 0, "Toggle", "Toggle between two brushes rather than cycling");
 	RNA_def_property_flag(prop, PROP_SKIP_SAVE);
-	prop = RNA_def_boolean(ot->srna, "create_missing", 0, "Create Missing", "If the requested brush type does not exist, create a new brush");
+	prop = RNA_def_boolean(ot->srna, "create_missing", 0, "Create Missing", "Create Missing\nIf the requested brush type does not exist, create a new brush");
 	RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 }
 
@@ -952,9 +952,9 @@ static void BRUSH_OT_stencil_fit_image_aspect(wmOperatorType *ot)
 	/* flags */
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
-	RNA_def_boolean(ot->srna, "use_repeat", 1, "Use Repeat", "Use repeat mapping values");
-	RNA_def_boolean(ot->srna, "use_scale", 1, "Use Scale", "Use texture scale values");
-	RNA_def_boolean(ot->srna, "mask", 0, "Modify Mask Stencil", "Modify either the primary or mask stencil");
+	RNA_def_boolean(ot->srna, "use_repeat", 1, "Use Repeat", "Use Repeat\nUse repeat mapping values");
+	RNA_def_boolean(ot->srna, "use_scale", 1, "Use Scale", "Use Scale\nUse texture scale values");
+	RNA_def_boolean(ot->srna, "mask", 0, "Modify Mask Stencil", "Modify Mask Stencil\nModify either the primary or mask stencil");
 }
 
 
@@ -1006,7 +1006,7 @@ static void BRUSH_OT_stencil_reset_transform(wmOperatorType *ot)
 	/* flags */
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
-	RNA_def_boolean(ot->srna, "mask", 0, "Modify Mask Stencil", "Modify either the primary or mask stencil");
+	RNA_def_boolean(ot->srna, "mask", 0, "Modify Mask Stencil", "Modify Mask Stencil\nModify either the primary or mask stencil");
 }
 
 
@@ -1040,7 +1040,7 @@ void ED_operatormacros_paint(void)
 	wmOperatorTypeMacro *otmacro;
 
 	ot = WM_operatortype_append_macro("PAINTCURVE_OT_add_point_slide", "Add Curve Point and Slide",
-	                                  "Add new curve point and slide it", OPTYPE_UNDO);
+	                                  "Add Curve Point and Slide\nAdd new curve point and slide it", OPTYPE_UNDO);
 	ot->description = "Add Curve Point\nAdd new curve point and slide it";
 	WM_operatortype_macro_define(ot, "PAINTCURVE_OT_add_point");
 	otmacro = WM_operatortype_macro_define(ot, "PAINTCURVE_OT_slide");

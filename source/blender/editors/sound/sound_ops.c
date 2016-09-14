@@ -655,12 +655,12 @@ static void SOUND_OT_mixdown(wmOperatorType *ot)
 	WM_operator_properties_filesel(ot, FILE_TYPE_FOLDER | FILE_TYPE_SOUND, FILE_SPECIAL, FILE_SAVE,
 	                               WM_FILESEL_FILEPATH | WM_FILESEL_RELPATH, FILE_DEFAULTDISPLAY, FILE_SORT_ALPHA);
 #ifdef WITH_AUDASPACE
-	RNA_def_int(ot->srna, "accuracy", 1024, 1, 16777216, "Accuracy", "Sample accuracy, important for animation data (the lower the value, the more accurate)", 1, 16777216);
+	RNA_def_int(ot->srna, "accuracy", 1024, 1, 16777216, "Accuracy", "Accuracy\nSample accuracy, important for animation data (the lower the value, the more accurate)", 1, 16777216);
 	RNA_def_enum(ot->srna, "container", container_items, AUD_CONTAINER_FLAC, "Container", "File format");
 	RNA_def_enum(ot->srna, "codec", codec_items, AUD_CODEC_FLAC, "Codec", "Audio Codec");
 	RNA_def_enum(ot->srna, "format", format_items, AUD_FORMAT_S16, "Format", "Sample format");
 	RNA_def_int(ot->srna, "bitrate", 192, 32, 512, "Bitrate", "Bitrate in kbit/s", 32, 512);
-	RNA_def_boolean(ot->srna, "split_channels", 0, "Split channels", "Each channel will be rendered into a mono file");
+	RNA_def_boolean(ot->srna, "split_channels", 0, "Split channels", "Split channels\nEach channel will be rendered into a mono file");
 #endif // WITH_AUDASPACE
 }
 
@@ -779,7 +779,7 @@ static void SOUND_OT_unpack(wmOperatorType *ot)
 
 	/* properties */
 	RNA_def_enum(ot->srna, "method", unpack_method_items, PF_USE_LOCAL, "Method", "How to unpack");
-	RNA_def_string(ot->srna, "id", NULL, MAX_ID_NAME - 2, "Sound Name", "Sound datablock name to unpack"); /* XXX, weark!, will fail with library, name collisions */
+	RNA_def_string(ot->srna, "id", NULL, MAX_ID_NAME - 2, "Sound Name", "Sound Name\nSound datablock name to unpack"); /* XXX, weark!, will fail with library, name collisions */
 }
 
 /* ******************************************************* */
