@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -167,7 +167,7 @@ class ANIM_OT_keying_set_export(Operator):
 
 
 class BakeAction(Operator):
-    """Bake object/pose loc/scale/rotation animation to a new action"""
+    """Bake Action\nBake object/pose loc/scale/rotation animation to a new action"""
     bl_idname = "nla.bake"
     bl_label = "Bake Action"
     bl_options = {'REGISTER', 'UNDO'}
@@ -266,7 +266,7 @@ class BakeAction(Operator):
 
 
 class ClearUselessActions(Operator):
-    """Mark actions with no F-Curves for deletion after save & reload of """ \
+    """Clear Useless Actions\nMark actions with no F-Curves for deletion after save & reload of """ \
     """file preserving \"action libraries\""""
     bl_idname = "anim.clear_useless_actions"
     bl_label = "Clear Useless Actions"
@@ -302,7 +302,7 @@ class ClearUselessActions(Operator):
 
 
 class UpdateAnimatedTransformConstraint(Operator):
-    """Update fcurves/drivers affecting Transform constraints (use it with files from 2.70 and earlier)"""
+    """Update Animated Transform Constraints\nUpdate fcurves/drivers affecting Transform constraints (use it with files from 2.70 and earlier)"""
     bl_idname = "anim.update_animated_transform_constraints"
     bl_label = "Update Animated Transform Constraints"
     bl_options = {'REGISTER', 'UNDO'}

@@ -313,7 +313,7 @@ static void GRAPH_OT_hide(wmOperatorType *ot)
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 	
 	/* props */
-	RNA_def_boolean(ot->srna, "unselected", 0, "Unselected", "Hide unselected rather than selected curves");
+	RNA_def_boolean(ot->srna, "unselected", 0, "Unselected", "Unselected\nHide unselected rather than selected curves");
 }
 
 /* ........ */
@@ -451,7 +451,7 @@ void ED_operatormacros_graph(void)
 	wmOperatorTypeMacro *otmacro;
 	
 	ot = WM_operatortype_append_macro("GRAPH_OT_duplicate_move", "Duplicate",
-	                                  "Make a copy of all selected keyframes and move them",
+	                                  "Duplicate\nMake a copy of all selected keyframes and move them",
 	                                  OPTYPE_UNDO | OPTYPE_REGISTER);
 	WM_operatortype_macro_define(ot, "GRAPH_OT_duplicate");
 	otmacro = WM_operatortype_macro_define(ot, "TRANSFORM_OT_transform");

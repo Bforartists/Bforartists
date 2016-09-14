@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -68,7 +68,7 @@ def guess_player_path(preset):
 
 
 class PlayRenderedAnim(Operator):
-    """Play back rendered frames/movies using an external player"""
+    """Play Rendered Animation\nPlay back rendered frames/movies using an external player"""
     bl_idname = "render.play_rendered_anim"
     bl_label = "Play Rendered Animation"
     bl_options = {'REGISTER'}

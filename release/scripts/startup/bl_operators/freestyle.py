@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -26,7 +26,7 @@ from bpy.props import (
 
 
 class SCENE_OT_freestyle_fill_range_by_selection(bpy.types.Operator):
-    """Fill the Range Min/Max entries by the min/max distance between selected mesh objects and the source object """
+    """Fill Range by Selection\nFill the Range Min/Max entries by the min/max distance between selected mesh objects and the source object """
     """(either a user-specified object or the active camera)"""
     bl_idname = "scene.freestyle_fill_range_by_selection"
     bl_label = "Fill Range by Selection"
@@ -153,7 +153,7 @@ class SCENE_OT_freestyle_add_face_marks_to_keying_set(bpy.types.Operator):
 
 
 class SCENE_OT_freestyle_module_open(bpy.types.Operator):
-    """Open a style module file"""
+    """Open Style Module File\nOpen a style module file"""
     bl_idname = "scene.freestyle_module_open"
     bl_label = "Open Style Module File"
     bl_options = {'INTERNAL'}

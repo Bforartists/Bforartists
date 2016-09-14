@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -586,7 +586,7 @@ from bpy.props import BoolProperty, FloatProperty, IntProperty
 
 
 class LightMapPack(Operator):
-    """Pack each faces UV's into the UV bounds"""
+    """Lightmap Pack\nPack each faces UV's into the UV bounds"""
     bl_idname = "uv.lightmap_pack"
     bl_label = "Lightmap Pack"
 

@@ -102,7 +102,7 @@ void ED_operatormacros_action(void)
 	wmOperatorTypeMacro *otmacro;
 	
 	ot = WM_operatortype_append_macro("ACTION_OT_duplicate_move", "Duplicate",
-	                                  "Make a copy of all selected keyframes and move them",
+	                                  "Duplicate\nMake a copy of all selected keyframes and move them",
 	                                  OPTYPE_UNDO | OPTYPE_REGISTER);
 	WM_operatortype_macro_define(ot, "ACTION_OT_duplicate");
 	otmacro = WM_operatortype_macro_define(ot, "TRANSFORM_OT_transform");

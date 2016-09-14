@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -30,7 +30,7 @@ from bpy.props import (
 
 
 class WM_OT_previews_batch_generate(Operator):
-    """Generate selected .blend file's previews"""
+    """Batch-Generate Previews\nGenerate selected .blend file's previews"""
     bl_idname = "wm.previews_batch_generate"
     bl_label = "Batch-Generate Previews"
     bl_options = {'REGISTER'}
@@ -137,7 +137,7 @@ class WM_OT_previews_batch_generate(Operator):
 
 
 class WM_OT_previews_batch_clear(Operator):
-    """Clear selected .blend file's previews"""
+    """Batch-Clear Previews\nClear selected .blend file's previews"""
     bl_idname = "wm.previews_batch_clear"
     bl_label = "Batch-Clear Previews"
     bl_options = {'REGISTER'}

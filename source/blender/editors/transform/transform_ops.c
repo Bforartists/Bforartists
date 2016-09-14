@@ -198,7 +198,7 @@ static void TRANSFORM_OT_select_orientation(struct wmOperatorType *ot)
 	ot->poll   = ED_operator_view3d_active;
 
 	prop = RNA_def_property(ot->srna, "orientation", PROP_ENUM, PROP_NONE);
-	RNA_def_property_ui_text(prop, "Orientation", "Transformation orientation");
+	RNA_def_property_ui_text(prop, "Orientation", "Orientation\nTransformation orientation");
 	RNA_def_enum_funcs(prop, rna_TransformOrientation_itemf);
 }
 
@@ -286,12 +286,12 @@ static void TRANSFORM_OT_create_orientation(struct wmOperatorType *ot)
 	ot->exec   = create_orientation_exec;
 	ot->poll   = ED_operator_areaactive;
 
-	RNA_def_string(ot->srna, "name", NULL, MAX_NAME, "Name", "Name of the new custom orientation");
+	RNA_def_string(ot->srna, "name", NULL, MAX_NAME, "Name", "Name\nName of the new custom orientation");
 	RNA_def_boolean(ot->srna, "use_view", false, "Use View",
-	                "Use the current view instead of the active object to create the new orientation");
-	RNA_def_boolean(ot->srna, "use", false, "Use after creation", "Select orientation after its creation");
+	                "Use View\nUse the current view instead of the active object to create the new orientation");
+	RNA_def_boolean(ot->srna, "use", false, "Use after creation", "Use after creation\nSelect orientation after its creation");
 	RNA_def_boolean(ot->srna, "overwrite", false, "Overwrite previous",
-	                "Overwrite previously created orientation with same name");
+	                "Overwrite previous\nOverwrite previously created orientation with same name");
 }
 
 
@@ -510,7 +510,7 @@ void Transform_Properties(struct wmOperatorType *ot, int flags)
 	if (flags & P_CONSTRAINT) {
 		RNA_def_boolean_vector(ot->srna, "constraint_axis", 3, NULL, "Constraint Axis", "");
 		prop = RNA_def_property(ot->srna, "constraint_orientation", PROP_ENUM, PROP_NONE);
-		RNA_def_property_ui_text(prop, "Orientation", "Transformation orientation");
+		RNA_def_property_ui_text(prop, "Orientation", "Orientation\nTransformation orientation");
 		RNA_def_enum_funcs(prop, rna_TransformOrientation_itemf);
 	}
 
@@ -526,7 +526,7 @@ void Transform_Properties(struct wmOperatorType *ot, int flags)
 	if (flags & P_PROPORTIONAL) {
 		RNA_def_enum(ot->srna, "proportional", proportional_editing_items, 0, "Proportional Editing", "");
 		prop = RNA_def_enum(ot->srna, "proportional_edit_falloff", proportional_falloff_items, 0,
-		                    "Proportional Editing Falloff", "Falloff type for proportional editing mode");
+		                    "Proportional Editing Falloff", "Proportional Editing Falloff\nFalloff type for proportional editing mode");
 		RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_ID_CURVE); /* Abusing id_curve :/ */
 		RNA_def_float(ot->srna, "proportional_size", 1, 0.00001f, FLT_MAX, "Proportional Size", "", 0.001, 100);
 	}
@@ -551,22 +551,22 @@ void Transform_Properties(struct wmOperatorType *ot, int flags)
 	}
 	
 	if (flags & P_GPENCIL_EDIT) {
-		RNA_def_boolean(ot->srna, "gpencil_strokes", 0, "Edit Grease Pencil", "Edit selected Grease Pencil strokes");
+		RNA_def_boolean(ot->srna, "gpencil_strokes", 0, "Edit Grease Pencil", "Edit Grease Pencil\nEdit selected Grease Pencil strokes");
 	}
 	
 	if ((flags & P_OPTIONS) && !(flags & P_NO_TEXSPACE)) {
 		RNA_def_boolean(ot->srna, "texture_space", 0, "Edit Texture Space", "Edit Object data texture space");
-		prop = RNA_def_boolean(ot->srna, "remove_on_cancel", 0, "Remove on Cancel", "Remove elements on cancel");
+		prop = RNA_def_boolean(ot->srna, "remove_on_cancel", 0, "Remove on Cancel", "Remove on Cancel\nRemove elements on cancel");
 		RNA_def_property_flag(prop, PROP_HIDDEN);
 	}
 
 	if (flags & P_CORRECT_UV) {
-		RNA_def_boolean(ot->srna, "correct_uv", 0, "Correct UVs", "Correct UV coordinates when transforming");
+		RNA_def_boolean(ot->srna, "correct_uv", 0, "Correct UVs", "Correct UVs\nCorrect UV coordinates when transforming");
 	}
 
 	if ((flags & P_NO_DEFAULTS) == 0) {
 		// Add confirm method all the time. At the end because it's not really that important and should be hidden only in log, not in keymap edit
-		/*prop =*/ RNA_def_boolean(ot->srna, "release_confirm", 0, "Confirm on Release", "Always confirm operation when releasing button");
+		/*prop =*/ RNA_def_boolean(ot->srna, "release_confirm", 0, "Confirm on Release", "Confirm on Release\nAlways confirm operation when releasing button");
 		//RNA_def_property_flag(prop, PROP_HIDDEN);
 	}
 }
@@ -786,7 +786,7 @@ static void TRANSFORM_OT_shrink_fatten(struct wmOperatorType *ot)
 
 	RNA_def_float(ot->srna, "value", 0, -FLT_MAX, FLT_MAX, "Offset", "", -FLT_MAX, FLT_MAX);
 
-	RNA_def_boolean(ot->srna, "use_even_offset", true, "Offset Even", "Scale the offset to give more even thickness");
+	RNA_def_boolean(ot->srna, "use_even_offset", true, "Offset Even", "Offset Even\nScale the offset to give more even thickness");
 
 	Transform_Properties(ot, P_PROPORTIONAL | P_MIRROR | P_SNAP);
 }

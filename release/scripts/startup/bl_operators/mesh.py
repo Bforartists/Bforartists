@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -25,7 +25,7 @@ from bpy.props import EnumProperty, IntProperty
 
 
 class MeshMirrorUV(Operator):
-    """Copy mirror UV coordinates on the X axis based on a mirrored mesh"""
+    """Copy Mirrored UV coords\nCopy mirror UV coordinates on the X axis based on a mirrored mesh"""
     bl_idname = "mesh.faces_mirror_uv"
     bl_label = "Copy Mirrored UV coords"
     bl_options = {'REGISTER', 'UNDO'}

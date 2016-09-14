@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -82,7 +82,7 @@ def add_torus(major_rad, minor_rad, major_seg, minor_seg):
 
 
 class AddTorus(Operator, object_utils.AddObjectHelper):
-    """Add a torus mesh"""
+    """Add Torus\nAdd a torus mesh"""
     bl_idname = "mesh.primitive_torus_add"
     bl_label = "Add Torus"
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}

@@ -478,7 +478,7 @@ void CLIP_OT_view_pan(wmOperatorType *ot)
 
 	/* properties */
 	RNA_def_float_vector(ot->srna, "offset", 2, NULL, -FLT_MAX, FLT_MAX,
-	                     "Offset", "Offset in floating point units, 1.0 is the width and height of the image", -FLT_MAX, FLT_MAX);
+	                     "Offset", "Offset\nOffset in floating point units, 1.0 is the width and height of the image", -FLT_MAX, FLT_MAX);
 }
 
 /********************** view zoom operator *********************/
@@ -859,7 +859,7 @@ void CLIP_OT_view_all(wmOperatorType *ot)
 	ot->poll = ED_space_clip_view_clip_poll;
 
 	/* properties */
-	prop = RNA_def_boolean(ot->srna, "fit_view", 0, "Fit View", "Fit frame to the viewport");
+	prop = RNA_def_boolean(ot->srna, "fit_view", 0, "Fit View", "Fit View\nFit frame to the viewport");
 	RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 }
 
@@ -1586,13 +1586,13 @@ void ED_operatormacros_clip(void)
 	wmOperatorTypeMacro *otmacro;
 
 	ot = WM_operatortype_append_macro("CLIP_OT_add_marker_move", "Add Marker and Move",
-	                                  "Add new marker and move it on movie", OPTYPE_UNDO | OPTYPE_REGISTER);
+	                                  "Add Marker and Move\nAdd new marker and move it on movie", OPTYPE_UNDO | OPTYPE_REGISTER);
 	WM_operatortype_macro_define(ot, "CLIP_OT_add_marker");
 	otmacro = WM_operatortype_macro_define(ot, "TRANSFORM_OT_translate");
 	RNA_struct_idprops_unset(otmacro->ptr, "release_confirm");
 
 	ot = WM_operatortype_append_macro("CLIP_OT_add_marker_slide", "Add Marker and Slide",
-	                                  "Add new marker and slide it with mouse until mouse button release",
+	                                  "Add Marker and Slide\nAdd new marker and slide it with mouse until mouse button release",
 	                                  OPTYPE_UNDO | OPTYPE_REGISTER);
 	WM_operatortype_macro_define(ot, "CLIP_OT_add_marker");
 	otmacro = WM_operatortype_macro_define(ot, "TRANSFORM_OT_translate");
