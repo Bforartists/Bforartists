@@ -5,7 +5,7 @@ The project page can be found here: http://www.bforartists.de/
 
 Please use the tracker at the bforartists page to add issues, bug reports and requests. The tracker can be found here: http://www.bforartists.de/project/issues/bforartists_bugtracker
 
-To give you an idea what it is about, here you can find the initial UI design doc.  http://www.bforartists.de/data/Bforartists_UI_redesign_Designdoc_Part%201_-_general.pdf
+To give you an idea what it is about, here you can find the initial UI design doc from autumn 2015.  http://www.bforartists.de/data/Bforartists_UI_redesign_Designdoc_Part%201_-_general.pdf
 
 Note that it is in big parts outdated already. Some things turned out to be unmanageable. Like implementing Qt as the new UI solution. But lots of things have already made their way into Bforartists. And more will follow. The goal is to get as close as possible to the rough goal of this document.
 
