@@ -282,14 +282,6 @@ class NODE_MT_node(Menu):
 
         layout.separator()
 
-        layout.operator("node.group_edit").exit = False
-        layout.operator("node.group_edit", text = "Exit Edit Group" ).exit = True
-        layout.operator("node.group_ungroup")
-        layout.operator("node.group_make")
-        layout.operator("node.group_insert")
-
-        layout.separator()
-
         layout.operator("node.hide_toggle")
         layout.operator("node.mute_toggle")
         layout.operator("node.preview_toggle")
