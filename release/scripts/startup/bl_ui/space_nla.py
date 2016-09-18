@@ -22,6 +22,22 @@ import bpy
 from bpy.types import Header, Menu
 
 
+################################ Switch between the editors ##########################################
+
+
+class switch_editors_in_nla(bpy.types.Operator):
+    """You are in NLA editor"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "wm.switch_editor_in_nla"        # unique identifier for buttons and menu items to reference.
+    bl_label = "NLA Editor"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    #def execute(self, context):        # execute() is called by blender when running the operator.
+    #    bpy.ops.wm.context_set_enum(data_path="area.type", value="NLA_EDITOR")
+    #    return {'FINISHED'}  
+
+##########################################################################
+
+
 class NLA_HT_header(Header):
     bl_space_type = 'NLA_EDITOR'
 
@@ -33,6 +49,14 @@ class NLA_HT_header(Header):
         st = context.space_data
 
         ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
+
+        # bfa - The tabs to switch between the four animation editors. The classes are in space_time.py
+        row = layout.row(align=True)
+        row.operator("wm.switch_editor_to_timeline", text="", icon='TIME')
+        row.operator("wm.switch_editor_to_graph", text="", icon='IPO')
+        row.operator("wm.switch_editor_to_dopesheet", text="", icon='ACTION')     
+        row.operator("wm.switch_editor_in_nla", text="", icon='NLA_ACTIVE')
+  
         NLA_MT_editor_menus.draw_collapsible(context, layout)
 
         dopesheet_filter(layout, context)
