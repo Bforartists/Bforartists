@@ -2018,7 +2018,7 @@ static uiBlock *wm_block_create_splash(bContext *C, ARegion *ar, void *UNUSED(ar
 	uiItemStringO(col, IFACE_("Bforartists Website"), ICON_URL, "WM_OT_url_open", "url", "http://www.bforartists.de/");
 	uiItemStringO(col, IFACE_("Report a bug"), ICON_URL, "WM_OT_url_open", "url", "http://www.bforartists.de/node/add/project-issue/bforartists_bugtracker");
 
-	uiItemStringO(col, IFACE_("Python API Reference"), ICON_URL, "WM_OT_url_open", "url", "http://www.blender.org/api/blender_python_api_2_75a_release/"); // bfa - changed the url to link to the 2.75 api page
+	uiItemStringO(col, IFACE_("Python API Reference"), ICON_URL, "WM_OT_url_open", "url", "http://www.bforartists.de/pythonapi/contents.html"); // bfa - link to new api page
 	uiItemL(col, "", ICON_NONE);
 	uiItemL(col, "", ICON_NONE);
 
