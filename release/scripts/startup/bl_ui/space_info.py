@@ -20,6 +20,70 @@
 import bpy
 from bpy.types import Header, Menu
 
+############################### Tabs to switch between layouts ###################################################
+
+class switch_layout_to_default(bpy.types.Operator):
+    """Switch to Default theme\nWARNING! This Button relies at the layouts in the layout dropdown box\nDon't rename or remove the layout Default in the dropdown list\nThis will make the button disfunctional"""     # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "wm.switch_layout_to_default"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Switch to Default layout"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+ 
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.context.window.screen = bpy.data.screens['Default']
+        return {'FINISHED'}
+
+class switch_layout_to_animation(bpy.types.Operator):
+    """Switch to Animation layout\nWARNING! This Button relies at the layouts in the layout dropdown box\nDon't rename or remove the layout Animation in the dropdown list\nThis will make the button disfunctional"""  
+    bl_idname = "wm.switch_layout_to_animation"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Switch to Animation layout"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.context.window.screen = bpy.data.screens['Animation']
+        return {'FINISHED'}
+
+class switch_layout_to_uv(bpy.types.Operator):
+    """Switch to UV Editing layout\nWARNING! This Button relies at the layouts in the layout dropdown box\nDon't rename or remove the layout UV Editing in the dropdown list\nThis will make the button disfunctional"""  
+    bl_idname = "wm.switch_layout_to_uv"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Switch to UV Editing layout"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.context.window.screen = bpy.data.screens['UV Editing']
+        return {'FINISHED'}
+
+class switch_layout_to_compositing(bpy.types.Operator):
+    """Switch to Compositing layout\nWARNING! This Button relies at the layouts in the layout dropdown box\nDon't rename or remove the layout Compositing in the dropdown list\nThis will make the button disfunctional"""  
+    bl_idname = "wm.switch_layout_to_compositing"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Switch to Compositing layout"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.context.window.screen = bpy.data.screens['Compositing']
+        return {'FINISHED'}
+
+class switch_layout_to_scripting(bpy.types.Operator):
+    """Switch to Scripting layout\nWARNING! This Button relies at the layouts in the layout dropdown box\nDon't rename or remove the layout Scripting in the dropdown list\nThis will make the button disfunctional"""  
+    bl_idname = "wm.switch_layout_to_scripting"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Switch to Scripting layout"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.context.window.screen = bpy.data.screens['Scripting']
+        return {'FINISHED'}
+
+class switch_layout_to_motiontracking(bpy.types.Operator):
+    """Switch to Motion Tracking layout\nWARNING! This Button relies at the layouts in the layout dropdown box\nDon't rename or remove the layout Motion Tracking in the dropdown list\nThis will make the button disfunctional"""  
+    bl_idname = "wm.switch_layout_to_motiontracking"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Switch to Motion Tracking layout"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.context.window.screen = bpy.data.screens['Motion Tracking']
+        return {'FINISHED'}
+
+###########################################################################################################
 
 class INFO_HT_header(Header):
     bl_space_type = 'INFO'
@@ -43,6 +107,7 @@ class INFO_HT_header(Header):
 
         layout.separator()
 
+
         #if rd.has_multiple_engines: # bfa - removed the renderer drodpown box, and moved it to Properties editor.
         #    layout.prop(rd, "engine", text="")
 
@@ -65,7 +130,14 @@ class INFO_HT_header(Header):
             # include last so text doesn't push buttons out of the header
             row.label(bpy.app.autoexec_fail_message)
             return
-        #row.operator("wm.splash", text="", icon='BLENDER', emboss=False)# bfa - commented out the splash icon in the toolbar
+
+        row.operator("wm.switch_layout_to_default", text="Def")
+        row.operator("wm.switch_layout_to_animation", text="Ani")
+        row.operator("wm.switch_layout_to_uv", text="UV")
+        row.operator("wm.switch_layout_to_compositing", text="Com")
+        row.operator("wm.switch_layout_to_scripting", text="Scr")
+        row.operator("wm.switch_layout_to_motiontracking", text="MoT")
+
         row.label(text=scene.statistics(), translate=False)
 
 # bfa - show hide the editormenu
