@@ -20,6 +20,42 @@
 import bpy
 from bpy.types import Header, Menu
 
+################################ Switch between the editors ##########################################
+
+# Editor types: 
+# ('VIEW_3D', 'TIMELINE', 'GRAPH_EDITOR', 'DOPESHEET_EDITOR', 'NLA_EDITOR', 'IMAGE_EDITOR', 
+# 'CLIP_EDITOR', 'TEXT_EDITOR', 'NODE_EDITOR', 'PROPERTIES', 'OUTLINER', 'USER_PREFERENCES', 'INFO', 'FILE_BROWSE)
+
+class switch_editors_to_properties(bpy.types.Operator):
+    """Switch to Properties editor"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "wm.switch_editor_to_properties"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Switch to Properties Editor"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.wm.context_set_enum(data_path="area.type", value="PROPERTIES")
+        return {'FINISHED'}
+
+class switch_editors_to_outliner(bpy.types.Operator):
+    """Switch to Outliner Editor"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "wm.switch_editor_to_outliner"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Switch to Outliner Editor"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.wm.context_set_enum(data_path="area.type", value="OUTLINER")
+        return {'FINISHED'} 
+
+################################ Switch between the editors ##########################################
+
+
+class switch_editors_in_outliner(bpy.types.Operator):
+    """You are in Outliner Editor"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "wm.switch_editor_in_outliner"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Outliner Editor"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+
 
 class OUTLINER_HT_header(Header):
     bl_space_type = 'OUTLINER'
@@ -32,6 +68,12 @@ class OUTLINER_HT_header(Header):
         ks = context.scene.keying_sets.active
 
         ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
+
+        # bfa - The tabs to switch between the four animation editors. The classes are here above
+        row = layout.row(align=True)
+        row.operator("wm.switch_editor_in_outliner", text="", icon='OOPS_ACTIVE')
+        row.operator("wm.switch_editor_to_properties", text="", icon='BUTS')
+
         OUTLINER_MT_editor_menus.draw_collapsible(context, layout)
 
         layout.prop(space, "display_mode", text="")
