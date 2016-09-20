@@ -994,7 +994,7 @@ class WM_OT_doc_view(Operator):
 
     doc_id = doc_id
     #if bpy.app.version_cycle == "release":
-    _prefix = "http://www.bforartists.de/pythonapi/contents.html"
+    _prefix = "http://www.bforartists.de/pythonapi/"
         
         #("http://www.blender.org/documentation/blender_python_api_%s%s_release" %
         #           ("_".join(str(v) for v in bpy.app.version[:2]), bpy.app.version_char))

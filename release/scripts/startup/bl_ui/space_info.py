@@ -397,8 +397,7 @@ class INFO_MT_help(Menu):
         layout.operator("wm.url_open", text="Report a Bug", icon='URL').url = "http://www.bforartists.de/node/add/project-issue/bforartists_bugtracker"
         layout.separator()
 
-        layout.operator("wm.url_open", text="Python API Reference", icon='URL').url = bpy.types.WM_OT_doc_view._prefix
-        layout.operator("wm.operator_cheat_sheet", icon='TEXT')
+        layout.operator("wm.url_open", text="Python API Reference", icon='URL').url = "http://www.bforartists.de/pythonapi/contents.html"
         layout.operator("wm.sysinfo", icon='TEXT')
         layout.separator()
 
