@@ -1645,9 +1645,9 @@ void ED_uvedit_unwrap_cube_project(Object *ob, BMesh *bm, float cube_size, bool 
 				first = 0;
 			}
 
-
-			luv->uv[0] -= dx;
-			luv->uv[1] -= dy;
+			// bfa - turned off. Puts the UV for those faces outside of the UV space for no reason
+			//luv->uv[0] += dx;
+			//luv->uv[1] += dy;
 		}
 	}
 
