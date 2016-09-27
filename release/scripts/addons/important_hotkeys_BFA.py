@@ -136,10 +136,13 @@ def draw_modetext(self, context, obj):
                 # ------------- Mark Seam
                 if km.properties.clear == False:
                     self.mesh_mark_seam = handle_keys(km, self.mesh_mark_seam)
-                # ------------- Clear Seam  
-                elif km.properties.clear == True:
-                    self.mesh_clear_seam = handle_keys(km, self.mesh_clear_seam)
-            
+                ## ------------- Clear Seam  - not longer valid, made new class for tooltip in bfa. See below
+                #elif km.properties.clear == True:
+                #    self.mesh_clear_seam = handle_keys(km, self.mesh_clear_seam)
+
+            elif item == 'mesh.clear_seam':
+                self.clear_seam = handle_keys(km, self.clear_seam)
+
             elif item == 'mesh.loop_select':
                 # ------------- Loop select
                 if km.properties.toggle == False:
@@ -489,7 +492,7 @@ def draw_modetext(self, context, obj):
                 "Select Edgering - " + self.mesh_edgering_select,
                 "Add Edgering to selection - " + self.mesh_edgering_select_add,
                 "Mark Seam - " + self.mesh_mark_seam,
-                "Clear Seam - " + self.mesh_clear_seam,
+                "Clear Seam - " + self.clear_seam,
                 ]))
         elif obj.type == 'CURVE':
             texts.append(([
@@ -821,7 +824,7 @@ class ModalDrawOperator(bpy.types.Operator):
         self.mesh_edgering_select = "Not found"
         self.mesh_edgering_select_add = "Not found"
         self.mesh_mark_seam = "Not found"
-        self.mesh_clear_seam = "Not found"
+        self.clear_seam = "Not found"
         # Pose
         self.pose_parent_set = "Not found"
         # Sculpt
