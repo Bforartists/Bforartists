@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -18,12 +18,14 @@
 
 # <pep8-80 compliant>
 
+# fixed for Bforartists. Shows in Tool Shelf now.
+
 bl_info = {
     "name": "IvyGen",
     "author": "testscreenings, PKHG, TrumanBlending",
     "version": (0, 1, 1),
     "blender": (2, 59, 0),
-    "location": "View3D > Add > Curve",
+    "location": "View3D > Tool Shelf > Create > Add Misc",
     "description": "Adds generated ivy to a mesh object starting "
                    "at the 3D cursor",
     "warning": "",
@@ -31,6 +33,7 @@ bl_info = {
                 "Scripts/Curve/Ivy_Gen",
     "category": "Add Curve",
 }
+
 
 
 import bpy
@@ -667,11 +670,16 @@ def menu_func(self, context):
 
 def register():
     bpy.utils.register_module(__name__)
-    bpy.types.INFO_MT_curve_add.append(menu_func)
+    #bpy.types.INFO_MT_curve_add.append(menu_func)
+    bpy.types.VIEW3D_PT_tools_add_misc.append(menu_func)
+
+    
 
 
 def unregister():
-    bpy.types.INFO_MT_curve_add.remove(menu_func)
+    #bpy.types.INFO_MT_curve_add.remove(menu_func)
+    bpy.types.VIEW3D_PT_tools_add_misc.remove(menu_func)
+
     bpy.utils.unregister_module(__name__)
 
 
