@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and / or
 #  modify it under the terms of the GNU General Public License
@@ -16,12 +16,14 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+# Menu location fixed for Bforartists.
+
 bl_info = {
     'name': 'Dimension',
     'author': 'Spivak Vladimir (http://cwolf3d.korostyshev.net)',
     'version': (3, 9, 4),
     'blender': (2, 7, 4),
-    'location': 'View3D > Add > Curve',
+    'location': 'View3D > Toolbar > Create > Add Misc',
     'description': 'Adds Dimension',
     'warning': '', # used for warning icon and text in addons panel
     'wiki_url': 'http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Curve/Dimension',
@@ -3144,7 +3146,9 @@ def Dimension_button(self, context):
 def register():
     bpy.utils.register_module(__name__)
 
-    bpy.types.INFO_MT_curve_add.append(Dimension_button)
+    #bpy.types.INFO_MT_curve_add.append(Dimension_button)
+    bpy.types.VIEW3D_PT_tools_add_misc.append(Dimension_button)
+    
 
     DimensionVariables()
 
@@ -3152,6 +3156,7 @@ def unregister():
     bpy.utils.unregister_module(__name__)
 
     bpy.types.INFO_MT_curve_add.remove(Dimension_button)
+    bpy.types.VIEW3D_PT_tools_add_misc.remove(Dimension_button)
 
 if __name__ == "__main__":
     register()
