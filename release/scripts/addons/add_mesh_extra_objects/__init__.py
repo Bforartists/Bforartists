@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -20,12 +20,14 @@
 # liero, Kayo Phoenix, sugiany, dommetysk, Phymec, Anthony D'Agostino, Pablo Vazquez, Richard Wilks #
 # xyz presets by elfnor
 
+# fixed for Bforartists. Shows in Tool Shelf now.
+
 bl_info = {
     "name": "Extra Objects",
     "author": "Multiple Authors",
     "version": (0, 3, 0),
     "blender": (2, 74, 5),
-    "location": "View3D > Add > Mesh",
+    "location": "View3D > Tool Shelf > Create > Add Misc",
     "description": "Add extra mesh object types",
     "warning": "",
     "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Add_Mesh/Add_Extra",
@@ -215,12 +217,12 @@ def register():
     bpy.utils.register_module(__name__)
 
     # Add "Extras" menu to the "Add Mesh" menu
-    bpy.types.INFO_MT_mesh_add.append(menu_func)
+    bpy.types.VIEW3D_PT_tools_add_misc.append(menu_func)
 
 
 def unregister():
     # Remove "Extras" menu from the "Add Mesh" menu.
-    bpy.types.INFO_MT_mesh_add.remove(menu_func)
+    bpy.types.VIEW3D_PT_tools_add_misc.remove(menu_func)
 
     bpy.utils.unregister_module(__name__)
 
