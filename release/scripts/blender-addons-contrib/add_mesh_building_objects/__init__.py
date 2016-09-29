@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -18,12 +18,14 @@
 # Contributed to by
 # SAYproductions, meta-androcto, jambay, brikbot#
 
+# fixed for Bforartists. Shows in Tool Shelf now.
+
 bl_info = {
     "name": "Building Objects",
     "author": "Multiple Authors",
     "version": (0, 2),
     "blender": (2, 71, 0),
-    "location": "View3D > Add > Mesh > Cad Objects",
+    "location": "View3D > Tool Shelf > Create > Add Misc",
     "description": "Add building object types",
     "warning": "",
     "wiki_url": "",
@@ -84,14 +86,14 @@ def register():
     bpy.utils.register_module(__name__)
 
     # Add "Extras" menu to the "Add Mesh" menu
-    bpy.types.INFO_MT_mesh_add.append(menu_func)
+    bpy.types.VIEW3D_PT_tools_add_misc.append(menu_func)
 
 
 def unregister():
     bpy.utils.unregister_module(__name__)
 
     # Remove "Extras" menu from the "Add Mesh" menu.
-    bpy.types.INFO_MT_mesh_add.remove(menu_func)
+    bpy.types.VIEW3D_PT_tools_add_misc.remove(menu_func)
 
 if __name__ == "__main__":
     register()
