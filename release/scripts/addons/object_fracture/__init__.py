@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -16,12 +16,14 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+# fixed for Bforartists. Shows in Tool Shelf now.
+
 bl_info = {
     "name": "Fracture Tools",
     "author": "pildanovak",
     "version": (2, 0, 1),
     "blender": (2, 72, 0),
-    "location": "Search > Fracture Object & Add > Fracture Helper Objects",
+    "location": "View3D > Tool Shelf > Create > Add Misc",
     "description": "Fractured Object, Bomb, Projectile, Recorder",
     "warning": "",
     "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Object/Fracture",
@@ -64,14 +66,14 @@ def register():
     bpy.utils.register_module(__name__)
 
     # Add the "add fracture objects" menu to the "Add" menu
-    bpy.types.INFO_MT_add.append(menu_func)
+    bpy.types.VIEW3D_PT_tools_add_misc.append(menu_func)
 
 
 def unregister():
     bpy.utils.unregister_module(__name__)
 
     # Remove "add fracture objects" menu from the "Add" menu.
-    bpy.types.INFO_MT_add.remove(menu_func)
+    bpy.types.VIEW3D_PT_tools_add_misc.remove(menu_func)
 
 
 if __name__ == "__main__":
