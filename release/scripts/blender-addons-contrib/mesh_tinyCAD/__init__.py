@@ -1,4 +1,4 @@
-'''
+﻿'''
 BEGIN GPL LICENSE BLOCK
 
 This program is free software; you can redistribute it and/or
@@ -18,13 +18,15 @@ Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 END GPL LICENCE BLOCK
 '''
 
+# fixed for Bforartists. Shows in Tool Shelf now.
+
 bl_info = {
     "name": "tinyCAD Mesh tools",
     "author": "zeffii (aka Dealga McArdle)",
     "version": (1, 0, 7),
     "blender": (2, 7, 3),
     "category": "Mesh",
-    "location": "View3D > EditMode > (w) Specials",
+    "location": "View3D > Tool Shelf > Edit Mode > Tools > Mesh Tools",
     "wiki_url": "",
     "tracker_url": ""
 }
@@ -72,11 +74,11 @@ def register():
     for i, _ in vtx_classes:
         bpy.utils.register_class(i)
     bpy.utils.register_class(VIEW3D_MT_edit_mesh_tinycad)
-    bpy.types.VIEW3D_MT_edit_mesh_specials.prepend(menu_func)
+    bpy.types.VIEW3D_PT_tools_meshedit.prepend(menu_func)
 
 
 def unregister():
     for i, _ in vtx_classes:
         bpy.utils.unregister_class(i)
     bpy.utils.unregister_class(VIEW3D_MT_edit_mesh_tinycad)
-    bpy.types.VIEW3D_MT_edit_mesh_specials.remove(menu_func)
+    bpy.types.VIEW3D_PT_tools_meshedit.remove(menu_func)
