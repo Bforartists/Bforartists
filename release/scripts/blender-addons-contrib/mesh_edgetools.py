@@ -1,4 +1,4 @@
-# Blender EdgeTools
+﻿# Blender EdgeTools
 #
 # This is a toolkit for edge manipulation based on several of mesh manipulation
 # abilities of several CAD/CAE packages, notably CATIA's Geometric Workbench
@@ -68,12 +68,15 @@
 # <pep8 compliant>
 # ^^ Maybe. . . . :P
 
+# fixed for Bforartists. Shows in Tool Shelf now.
+
+
 bl_info = {
     "name": "EdgeTools",
     "author": "Paul Marshall",
     "version": (0, 8),
     "blender": (2, 68, 0),
-    "location": "View3D > Toolbar and View3D > Specials (W-key)",
+    "location": "View3D > Tool Shelf > Create > Add Misc",
     "warning": "",
     "description": "CAD style edge manipulation tools",
     "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
@@ -1960,7 +1963,7 @@ def register():
         print("EdgeTools UI integration test - TinyCAD VTX Found")
         integrated = True
 
-    bpy.types.VIEW3D_MT_edit_mesh_specials.prepend(menu_func)
+    bpy.types.VIEW3D_PT_tools_add_misc.prepend(menu_func)
 
 
 # unregistering and removing menus
@@ -1968,7 +1971,7 @@ def unregister():
     for c in classes:
         bpy.utils.unregister_class(c)
 
-    bpy.types.VIEW3D_MT_edit_mesh_specials.remove(menu_func)
+    bpy.types.VIEW3D_PT_tools_add_misc.remove(menu_func)
 
 
 if __name__ == "__main__":
