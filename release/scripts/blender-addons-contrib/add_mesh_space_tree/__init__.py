@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  SCA Tree Generator, a Blender addon
 #  (c) 2013 Michel J. Anders (varkenvarken)
@@ -21,12 +21,14 @@
 
 # <pep8 compliant>
 
+# fixed for Bforartists. Shows in Tool Shelf now.
+
 bl_info = {
     "name": "SCA Tree Generator",
     "author": "michel anders (varkenvarken)",
     "version": (0, 1, 2),
     "blender": (2, 66, 0),
-    "location": "View3D > Add > Mesh",
+    "location": "View3D > Tool Shelf > Create > Add Misc",
     "description": "Adds a tree created with the space colonization algorithm starting at the 3D cursor",
     "warning": "",
     "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Add_Mesh/Add_Space_Tree",
@@ -962,11 +964,11 @@ def menu_func(self, context):
 
 def register():
     bpy.utils.register_module(__name__)
-    bpy.types.INFO_MT_mesh_add.append(menu_func)
+    bpy.types.VIEW3D_PT_tools_add_misc.append(menu_func)
 
 
 def unregister():
-    bpy.types.INFO_MT_mesh_add.remove(menu_func)
+    bpy.types.VIEW3D_PT_tools_add_misc.remove(menu_func)
     bpy.utils.unregister_module(__name__)
 
 
