@@ -1,4 +1,4 @@
-# Paul "BrikBot" Marshall
+﻿# Paul "BrikBot" Marshall
 # Created: July 1, 2011
 # Last Modified: September 26, 2013
 # Homepage (blog): http://post.darkarsenic.com/
@@ -32,12 +32,14 @@
 
 # <pep8 compliant>
 
+# fixed for Bforartists. Shows in Tool Shelf now.
+
 bl_info = {
     "name": "Rock Generator",
     "author": "Paul Marshall (brikbot)",
     "version": (1, 4),
     "blender": (2, 68, 0),
-    "location": "View3D > Add > Rock Generator",
+    "location": "View3D > Tool Shelf > Create > Add Misc",
     "description": "Adds a mesh rock to the Add Mesh menu",
     "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
         "Scripts/Add_Mesh/Rock_Generator",
@@ -64,13 +66,13 @@ def menu_func_rocks(self, context):
 def register():
     bpy.utils.register_module(__name__)
 
-    bpy.types.INFO_MT_mesh_add.append(menu_func_rocks)
+    bpy.types.VIEW3D_PT_tools_add_misc.append(menu_func_rocks)
 
 
 def unregister():
     bpy.utils.unregister_module(__name__)
 
-    bpy.types.INFO_MT_mesh_add.remove(menu_func_rocks)
+    bpy.types.VIEW3D_PT_tools_add_misc.remove(menu_func_rocks)
 
 
 if __name__ == "__main__":
