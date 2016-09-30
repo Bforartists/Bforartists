@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -16,12 +16,14 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+# fixed for Bforartists. Shows in Tool Shelf now.
+
 bl_info = {
     "name": "LoopTools",
     "author": "Bart Crouch",
     "version": (4, 6, 6),
     "blender": (2, 72, 2),
-    "location": "View3D > Toolbar and View3D > Specials (W-key)",
+    "location": "View3D > Tool Shelf > Create > Add Misc",
     "warning": "",
     "description": "Mesh modelling toolkit. Several tools to aid modelling",
     "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
@@ -4796,7 +4798,7 @@ classes = [VIEW3D_MT_edit_mesh_looptools,
 def register():
     for c in classes:
         bpy.utils.register_class(c)
-    bpy.types.VIEW3D_MT_edit_mesh_specials.prepend(menu_func)
+    bpy.types.VIEW3D_PT_tools_add_misc.prepend(menu_func)
     bpy.types.WindowManager.looptools = bpy.props.PointerProperty(\
         type = LoopToolsProps)
 
@@ -4805,7 +4807,7 @@ def register():
 def unregister():
     for c in classes:
         bpy.utils.unregister_class(c)
-    bpy.types.VIEW3D_MT_edit_mesh_specials.remove(menu_func)
+    bpy.types.VIEW3D_PT_tools_add_misc.remove(menu_func)
     try:
         del bpy.types.WindowManager.looptools
     except:
