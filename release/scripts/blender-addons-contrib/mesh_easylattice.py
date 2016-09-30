@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -16,13 +16,15 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+# fixed for Bforartists. Shows in Tool Shelf now.
+
 
 bl_info = {
     "name": "Easy Lattice Object",
     "author": "Kursad Karatas",
     "version": (0, 5),
     "blender": (2, 66, 0),
-    "location": "View3D > Easy Lattice",
+    "location": "View3D > Tool Shelf > Create > Add Misc",
     "description": "Create a lattice for shape editing",
     "warning": "",
     "wiki_url": "http://wiki.blender.org/index.php/Easy_Lattice_Editing_Addon",
@@ -410,13 +412,13 @@ def register():
     # bpy.utils.register
     # menu_func = (lambda self, context: self.layout.operator('EasyLattice'))
     # bpy.types.VIEW3D_PT_tools_objectmode.append(menu_draw)
-    bpy.types.VIEW3D_MT_edit_mesh_specials.append( menu_draw )
+    bpy.types.VIEW3D_PT_tools_add_misc.append( menu_draw )
 
 
 def unregister():
     bpy.utils.unregister_class( EasyLattice )
     # bpy.types.VIEW3D_PT_tools_objectmode.remove(menu_draw)
-    bpy.types.VIEW3D_MT_edit_mesh_specials.remove( menu_draw )
+    bpy.types.VIEW3D_PT_tools_add_misc.remove( menu_draw )
 
 if __name__ == "__main__":
     register()
