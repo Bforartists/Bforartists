@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -16,12 +16,14 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+# fixed for Bforartists. Shows in Tool Shelf now.
+
 bl_info = {
     "name": "Import Images as Planes",
     "author": "Florian Meyer (tstscr), mont29, matali",
     "version": (2, 0, 2),
     "blender": (2, 74, 0),
-    "location": "File > Import > Images as Planes or Add > Mesh > Images as Planes",
+    "location": "File > Import > Images as Planes or 3dView > Tool Shelf > Create > Add Misc",
     "description": "Imports images and creates planes with the appropriate aspect ratio. "
                    "The images are mapped to the planes.",
     "warning": "",
@@ -543,13 +545,13 @@ def import_images_button(self, context):
 def register():
     bpy.utils.register_module(__name__)
     bpy.types.INFO_MT_file_import.append(import_images_button)
-    bpy.types.INFO_MT_mesh_add.append(import_images_button)
+    bpy.types.VIEW3D_PT_tools_add_misc.append(import_images_button)
 
 
 def unregister():
     bpy.utils.unregister_module(__name__)
     bpy.types.INFO_MT_file_import.remove(import_images_button)
-    bpy.types.INFO_MT_mesh_add.remove(import_images_button)
+    bpy.types.VIEW3D_PT_tools_add_misc.remove(import_images_button)
 
 
 if __name__ == "__main__":
