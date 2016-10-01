@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -17,6 +17,8 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
+
+#fixed for Bforartists. Shows in Tool Shelf now.
 
 import os
 from string import capwords
@@ -114,7 +116,7 @@ def register():
         bpy.utils.register_class(mop)
 
     for mf in menu_funcs:
-        bpy.types.INFO_MT_armature_add.append(mf)
+        bpy.types.VIEW3D_PT_tools_add_misc.prepend(mf)
 
 
 def unregister():
@@ -122,4 +124,4 @@ def unregister():
         bpy.utils.unregister_class(mop)
 
     for mf in menu_funcs:
-        bpy.types.INFO_MT_armature_add.remove(mf)
+        bpy.types.VIEW3D_PT_tools_add_misc.remove(mf)
