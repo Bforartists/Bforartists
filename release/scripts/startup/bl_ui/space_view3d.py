@@ -2950,9 +2950,13 @@ class VIEW3D_PT_view3d_properties(Panel):
         col.label(text="Clip:")
         col.prop(view, "clip_start", text="Start")
         col.prop(view, "clip_end", text="End")
+        
+        col = layout.column()
+        col.prop(view, "lock_camera_and_layers")
 
         subcol = col.column(align=True)
         subcol.enabled = not view.lock_camera_and_layers
+        
         subcol.label(text="Local Camera:")
         subcol.prop(view, "camera", text="")
 
