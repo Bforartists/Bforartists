@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -135,6 +135,7 @@ def create_materials(filepath, relpath,
             mtex.texture = texture
             mtex.texture_coords = 'UV'
             mtex.use_map_normal = True
+            mtex.texture.use_normal_map = True  # bfa - import normalmaps as normalmaps
 
         elif type == 'D':
             mtex = blender_material.texture_slots.add()
