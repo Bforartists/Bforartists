@@ -97,13 +97,11 @@ class VIEW3D_PT_tools_object(View3DPanel, Panel):
             scene = context.scene # Our data for the icon_or_text flag is in the current scene
             # text
             if not scene.UItweaks.icon_or_text: 
-
+                col.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="Mirror                   ")
                 if obj_type in {'MESH', 'CURVE', 'SURFACE', 'ARMATURE'}:
-                    col = layout.column(align=True)
-                    col.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="Mirror                   ")
+                    col = layout.column(align=True)                    
                     col.operator("object.join", icon ='JOIN', text="Join                      ")
                     
-
                 if obj_type in {'MESH', 'CURVE', 'SURFACE', 'ARMATURE', 'FONT', 'LATTICE'}:
                     col = layout.column(align=True)
                     col.operator_menu_enum("object.origin_set", "type", text="Set Origin")
