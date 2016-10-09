@@ -161,11 +161,11 @@ class NODE_MT_add(bpy.types.Menu):
         layout = self.layout
 
         layout.operator_context = 'INVOKE_DEFAULT'
-        props = layout.operator("node.add_search", text="Search ...")
+        props = layout.operator("node.add_search", text="Search and add")
         props.use_transform = True
 
         # actual node submenus are defined by draw functions from node categories
-        nodeitems_utils.draw_node_categories_menu(self, context)
+        #nodeitems_utils.draw_node_categories_menu(self, context) # bfa -  double menu entry
 
 
 class NODE_MT_view(Menu):
