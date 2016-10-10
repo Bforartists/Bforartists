@@ -389,3 +389,40 @@ void uiTemplateHeader3D(uiLayout *layout, struct bContext *C)
 	
 	uiTemplateEditModeSelection(layout, C);
 }
+
+// bfa - the layer widget as a single template
+void uiTemplateLayer3D(uiLayout *layout, struct bContext *C)
+{
+	bScreen *screen = CTX_wm_screen(C);
+	ScrArea *sa = CTX_wm_area(C);
+	View3D *v3d = sa->spacedata.first;
+	Scene *scene = CTX_data_scene(C);
+	ToolSettings *ts = CTX_data_tool_settings(C);
+	PointerRNA v3dptr, toolsptr, sceneptr;
+	Object *ob = OBACT;
+	Object *obedit = CTX_data_edit_object(C);
+	uiBlock *block;
+	uiLayout *row;
+	bool is_paint = false;
+	int modeselect;
+
+	RNA_pointer_create(&screen->id, &RNA_SpaceView3D, v3d, &v3dptr);
+	RNA_pointer_create(&scene->id, &RNA_ToolSettings, ts, &toolsptr);
+	RNA_pointer_create(&scene->id, &RNA_Scene, scene, &sceneptr);
+
+	block = uiLayoutGetBlock(layout);
+	UI_block_func_handle_set(block, do_view3d_header_buttons, NULL);
+
+	if (obedit == NULL && v3d->localvd == NULL) {
+		unsigned int ob_lay = ob ? ob->lay : 0;
+
+		/* Layers */
+		// bfa - turned off the layers in the menu bar.It's a double entry.
+		uiTemplateLayers(layout, v3d->scenelock ? &sceneptr : &v3dptr, "layers", &v3dptr, "layers_used", ob_lay);
+
+		/* Scene lock */ // bfa -turned off this rascal too. Is now in the properties sidebarin the view panel
+		//uiItemR(layout, &v3dptr, "lock_camera_and_layers", UI_ITEM_R_ICON_ONLY, "", ICON_NONE);
+	}
+
+	uiTemplateEditModeSelection(layout, C);
+}

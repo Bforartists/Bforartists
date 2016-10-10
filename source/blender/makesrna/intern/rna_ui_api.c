@@ -854,6 +854,9 @@ void RNA_api_ui_layout(StructRNA *srna)
 	func = RNA_def_function(srna, "template_header_3D", "uiTemplateHeader3D");
 	RNA_def_function_flag(func, FUNC_USE_CONTEXT);
 
+	func = RNA_def_function(srna, "template_layer_3D", "uiTemplateLayer3D"); // bfa - the layer widget as a single template
+	RNA_def_function_flag(func, FUNC_USE_CONTEXT);
+
 	func = RNA_def_function(srna, "template_edit_mode_selection", "uiTemplateEditModeSelection");
 	RNA_def_function_flag(func, FUNC_USE_CONTEXT);
 	

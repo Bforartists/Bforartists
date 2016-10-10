@@ -16,6 +16,8 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+# Modified BFA Version with Move to Layer button and the layer widget from the 3d view header.
+
 # <pep8 compliant>
 #
 bl_info = {
@@ -399,7 +401,11 @@ class SCENE_PT_namedlayer_layers(bpy.types.Panel):
         
         
         col = layout.column(align=True)
-        col.operator("object.move_to_layer", text="Move to Layer")
+        col.operator("object.move_to_layer", text="Move to Layer") # bfa - move to layer button
+       
+        row = layout.row()
+        row.alignment = 'LEFT'
+        row.template_layer_3D() # bfa - layer widget
         
         row = layout.row()
         col = row.column()
