@@ -31,7 +31,7 @@ bl_info = {
     'description' : "Stroke Select - Enables selection by mouse strokes",
     'category'    : "Mesh",
     'blender'     : (2, 76),
-    'version'     : (1, 0, 1),
+    'version'     : (1, 0, 2),
     'wiki_url'    : 'http://www.reinerstilesets.de',
 }
 
@@ -118,13 +118,13 @@ def register():
     bpy.utils.register_module(__name__)
     
     # The menu entry in the Select menu. The locations.
-    bpy.types.VIEW3D_MT_select_object.append(menu_func)
-    bpy.types.VIEW3D_MT_select_edit_mesh.append(menu_func)
-    bpy.types.VIEW3D_MT_select_edit_curve.append(menu_func)
-    bpy.types.VIEW3D_MT_select_edit_surface.append(menu_func)
-    bpy.types.VIEW3D_MT_select_edit_lattice.append(menu_func)
-    bpy.types.VIEW3D_MT_select_edit_armature.append(menu_func)
-    bpy.types.VIEW3D_MT_select_pose.append(menu_func)
+    bpy.types.VIEW3D_MT_select_object.prepend(menu_func)
+    bpy.types.VIEW3D_MT_select_edit_mesh.prepend(menu_func)
+    bpy.types.VIEW3D_MT_select_edit_curve.prepend(menu_func)
+    bpy.types.VIEW3D_MT_select_edit_surface.prepend(menu_func)
+    bpy.types.VIEW3D_MT_select_edit_lattice.prepend(menu_func)
+    bpy.types.VIEW3D_MT_select_edit_armature.prepend(menu_func)
+    bpy.types.VIEW3D_MT_select_pose.prepend(menu_func)
     
                
 def unregister():
