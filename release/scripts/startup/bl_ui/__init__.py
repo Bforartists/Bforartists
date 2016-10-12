@@ -98,6 +98,7 @@ def register():
     
     # Subtab bools
     bpy.types.WindowManager.subtab_3dview_properties_view_lock = bpy.props.BoolProperty(name="Lock", description="Contains the Lock Items", default = False)
+    bpy.types.WindowManager.subtab_3dview_properties_display_misc = bpy.props.BoolProperty(name="Miscellaneous", description="Contains miscellaneous settings", default = False)
 
     # bfa - Our data block for icon or text buttons
     bpy.utils.register_class(UITweaksData) # Our data block
@@ -154,7 +155,10 @@ def register():
 def unregister():
 
     # Subtab Bools
-    del bpy.types.WindowManager.subtab_3dview_properties_view_lock # Unregister our flag when unregister.       
+    del bpy.types.WindowManager.subtab_3dview_properties_view_lock # Unregister our flag when unregister.    
+    del bpy.types.WindowManager.subtab_3dview_properties_display_misc # Unregister our flag when unregister.  
+    
+       
 
     # bfa - Our data block for icon or text buttons
     bpy.utils.unregister_class(UITweaksData) # Our data block

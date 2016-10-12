@@ -2945,10 +2945,10 @@ class VIEW3D_PT_view3d_properties(Panel):
         # The subtab is closed by default.
         # When the click at it then it opens. And shows the hidden ui elements.
         if not wm.subtab_3dview_properties_view_lock:
-            layout.prop(wm,"subtab_3dview_properties_view_lock", emboss=False, icon="TRIA_RIGHT", text="Lock")
+            layout.prop(wm,"subtab_3dview_properties_view_lock", emboss=False, icon="TRIA_RIGHT", text="- Lock -")
 
         else:
-            layout.prop(wm,"subtab_3dview_properties_view_lock", emboss=False, icon="TRIA_DOWN", text="Lock")
+            layout.prop(wm,"subtab_3dview_properties_view_lock", emboss=False, icon="TRIA_DOWN", text="+ Lock +")
             
             col = layout.column()
             col.prop(view, "lock_camera_and_layers")
@@ -3018,19 +3018,12 @@ class VIEW3D_PT_view3d_display(Panel):
         # then we get an error that the scene has no UITweaks attribute. 
         # Most probably a order of registration problem.
         layout.prop(scene.UItweaks, "icon_or_text")
-
         col = layout.column()
-        col.prop(view, "show_only_render")
-        col.prop(view, "show_world")
-
+        col.prop(view, "show_cursor", text="3D Cursor") # bfa - show hide cursor checkbox
+  
         col = layout.column()
         display_all = not view.show_only_render
         col.active = display_all
-        col.prop(view, "show_outline_selected")
-        col.prop(view, "show_all_objects_origin")
-        col.prop(view, "show_relationship_lines")
-        col.prop(view, "show_cursor", text="3D Cursor") # bfa - show hide cursor checkbox
-        col.prop(view, "lock_3d_cursor", text="Lock 3D Cursor") # bfa - show hide lock 3d cursor checkbox
         col.prop(view, "hide_groundgrid", text="Groundgrid") # bfa - show hide groundgrid checkbox
 
         if view.hide_groundgrid:
@@ -3063,6 +3056,24 @@ class VIEW3D_PT_view3d_display(Panel):
             row.enabled = region.lock_rotation and region.show_sync_view
             row.prop(region, "use_box_clip")
 
+        wm = context.window_manager # Our bool is in the windows_manager
+        # The subtab is closed by default.
+        # When the click at it then it opens. And shows the hidden ui elements.
+        if not wm.subtab_3dview_properties_display_misc:
+            layout.prop(wm,"subtab_3dview_properties_display_misc", emboss=False, icon="TRIA_RIGHT", text="- Miscellaneous -")
+
+        else:
+            layout.prop(wm,"subtab_3dview_properties_display_misc", emboss=False, icon="TRIA_DOWN", text="+ Miscellaneous +")
+
+            col = layout.column()
+            col.prop(view, "show_only_render")
+            col.prop(view, "show_world")
+            col.prop(view, "show_outline_selected")
+            col.prop(view, "show_all_objects_origin")
+            col.prop(view, "show_relationship_lines")
+            
+            col.prop(view, "lock_3d_cursor", text="Lock 3D Cursor") # bfa - show hide lock 3d cursor checkbox
+            
 
 class VIEW3D_PT_view3d_stereo(Panel):
     bl_space_type = 'VIEW_3D'
