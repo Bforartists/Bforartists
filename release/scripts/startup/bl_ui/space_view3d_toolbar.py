@@ -284,29 +284,6 @@ class VIEW3D_PT_tools_add_object(View3DPanel, Panel):
         row = layout.row(align=False)
         row.operator("object.metaball_add", text="", icon='META_CUBE').type= 'CUBE'
 
-    @staticmethod
-    def draw_add_lamp(layout):
-        #layout.operator_enum("object.lamp_add", "type")
-
-        layout.operator("object.lamp_add", text="Point               ", icon='LAMP_POINT').type= 'POINT'
-        layout.operator("object.lamp_add", text="Sun                 ", icon='LAMP_SUN').type= 'SUN' 
-        layout.operator("object.lamp_add", text="Spot                ", icon='LAMP_SPOT').type= 'SPOT' 
-        layout.operator("object.lamp_add", text="Hemi              ", icon='LAMP_HEMI').type= 'HEMI' 
-        layout.operator("object.lamp_add", text="Area               ", icon='LAMP_AREA').type= 'AREA' 
-  
-
-    @staticmethod
-    def draw_add_lamp_icons(layout):
-        row = layout.row(align=False)
-        row.alignment = 'LEFT'
-        row.operator("object.lamp_add", text="", icon='LAMP_POINT').type= 'POINT'
-        row.operator("object.lamp_add", text="", icon='LAMP_SUN').type= 'SUN' 
-        row.operator("object.lamp_add", text="", icon='LAMP_SPOT').type= 'SPOT' 
-        row.operator("object.lamp_add", text="", icon='LAMP_HEMI').type= 'HEMI' 
-        layout.separator()
-        row = layout.row(align=False)
-        row.operator("object.lamp_add", text="", icon='LAMP_AREA').type= 'AREA' 
-
     def draw(self, context):
         layout = self.layout
         scene = context.scene # Our data for the icon_or_text flag is in the current scene
@@ -339,13 +316,6 @@ class VIEW3D_PT_tools_add_object(View3DPanel, Panel):
         else:
             self.draw_add_mball_icons(col)
 
-        col = layout.column(align=True)
-        col.label(text="Lamp:")
-        if not scene.UItweaks.icon_or_text: 
-            self.draw_add_lamp(col)
-        else:
-            self.draw_add_lamp_icons(col)
-
         layout.separator()
 
         # note, don't use 'EXEC_SCREEN' or operators wont get the 'v3d' context.
@@ -365,6 +335,29 @@ class VIEW3D_PT_tools_add_misc(View3DPanel, Panel):
     bl_category = "Create"
     bl_context = "objectmode"
     bl_label = "Add Misc"
+
+    @staticmethod
+    def draw_add_lamp(layout):
+        #layout.operator_enum("object.lamp_add", "type")
+
+        layout.operator("object.lamp_add", text="Point               ", icon='LAMP_POINT').type= 'POINT'
+        layout.operator("object.lamp_add", text="Sun                 ", icon='LAMP_SUN').type= 'SUN' 
+        layout.operator("object.lamp_add", text="Spot                ", icon='LAMP_SPOT').type= 'SPOT' 
+        layout.operator("object.lamp_add", text="Hemi              ", icon='LAMP_HEMI').type= 'HEMI' 
+        layout.operator("object.lamp_add", text="Area               ", icon='LAMP_AREA').type= 'AREA' 
+  
+
+    @staticmethod
+    def draw_add_lamp_icons(layout):
+        row = layout.row(align=False)
+        row.alignment = 'LEFT'
+        row.operator("object.lamp_add", text="", icon='LAMP_POINT').type= 'POINT'
+        row.operator("object.lamp_add", text="", icon='LAMP_SUN').type= 'SUN' 
+        row.operator("object.lamp_add", text="", icon='LAMP_SPOT').type= 'SPOT' 
+        row.operator("object.lamp_add", text="", icon='LAMP_HEMI').type= 'HEMI' 
+        layout.separator()
+        row = layout.row(align=False)
+        row.operator("object.lamp_add", text="", icon='LAMP_AREA').type= 'AREA' 
 
     @staticmethod
     def draw_add_other(layout):
@@ -458,6 +451,13 @@ class VIEW3D_PT_tools_add_misc(View3DPanel, Panel):
     def draw(self, context):
         layout = self.layout
         scene = context.scene # Our data for the icon_or_text flag is in the current scene
+
+        col = layout.column(align=True)
+        col.label(text="Lamp:")
+        if not scene.UItweaks.icon_or_text: 
+            self.draw_add_lamp(col)
+        else:
+            self.draw_add_lamp_icons(col)
 
         col = layout.column(align=True)
         col.label(text="Other:")
