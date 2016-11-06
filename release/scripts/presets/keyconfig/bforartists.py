@@ -244,9 +244,8 @@ kmi = km.keymap_items.new('view3d.view_roll', 'NUMPAD_6', 'PRESS', shift=True, c
 kmi_props_setattr(kmi.properties, 'angle', 0.2617993950843811)
 kmi = km.keymap_items.new('wm.context_toggle', 'BACK_SLASH', 'PRESS')
 kmi_props_setattr(kmi.properties, 'data_path', 'space_data.show_manipulator')
-kmi = km.keymap_items.new('view3d.view_all', 'HOME', 'PRESS', ctrl=True)
-kmi_props_setattr(kmi.properties, 'use_all_regions', True)
 kmi = km.keymap_items.new('view3d.object_as_camera', 'NUMPAD_PERIOD', 'PRESS', ctrl=True)
+kmi = km.keymap_items.new('view3d.view_all_all_regions', 'HOME', 'PRESS', ctrl=True)
 
 # Map Screen
 km = kc.keymaps.new('Screen', space_type='EMPTY', region_type='WINDOW', modal=False)
