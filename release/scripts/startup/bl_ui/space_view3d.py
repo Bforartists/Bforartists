@@ -479,7 +479,7 @@ class VIEW3D_MT_uv_map(Menu):
 class VIEW3D_MT_view_all_all_regions(bpy.types.Operator):
     """View All all Regions\nView all objects in scene in all four Quad View views\nJust relevant for Quad View """      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "view3d.view_all_all_regions"        # unique identifier for buttons and menu items to reference.
-    bl_label = "View All all Regionsa"         # display name in the interface.
+    bl_label = "View All all Regions"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
 
     def execute(self, context):        # execute() is called by blender when running the operator.
