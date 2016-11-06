@@ -366,13 +366,52 @@ class SCENE_OT_namedlayer_show_all(bpy.types.Operator):
             layer_cont.layers[:] = layers
 
         return {'FINISHED'}
+    
+    
+class SCENE_PT_layer_manager(bpy.types.Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'TOOLS'
+    bl_label = "Layer Manager"
+    bl_category = "Layers"
+
+    @classmethod
+    def poll(self, context):
+        return ((getattr(context, "mode", 'EDIT_MESH') not in EDIT_MODES) and
+                (context.area.spaces.active.type == 'VIEW_3D'))
+
+    def draw(self, context):
+        scene = context.scene
+        view_3d = context.area.spaces.active
+
+        # Check for lock camera and layer is active
+        if view_3d.lock_camera_and_layers:
+            layer_cont = scene
+            use_spacecheck = False
+        else:
+            layer_cont = view_3d
+            use_spacecheck = True
+
+        layout = self.layout
+        
+        
+        col = layout.column(align=True)
+        col.operator("object.move_to_layer", text="Move to Layer") # bfa - move to layer button
+       
+        row = layout.row()
+        row.alignment = 'LEFT'
+        row.template_layer_3D() # bfa - layer widget
+        
+        row = layout.row()
+        col = row.column()
+        col.prop(view_3d, "lock_camera_and_layers", text="")
 
 
 class SCENE_PT_namedlayer_layers(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
-    bl_label = "Layer Management"
+    bl_label = "Named Layers"
     bl_category = "Layers"
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(self, context):
@@ -400,16 +439,10 @@ class SCENE_PT_namedlayer_layers(bpy.types.Panel):
         layout = self.layout
         
         
-        col = layout.column(align=True)
-        col.operator("object.move_to_layer", text="Move to Layer") # bfa - move to layer button
-       
-        row = layout.row()
-        row.alignment = 'LEFT'
-        row.template_layer_3D() # bfa - layer widget
+
         
         row = layout.row()
         col = row.column()
-        col.prop(view_3d, "lock_camera_and_layers", text="")
         # Check if there is a layer off
         show = (False in {layer for layer in layer_cont.layers})
         icon = 'RESTRICT_VIEW_ON' if show else 'RESTRICT_VIEW_OFF'
