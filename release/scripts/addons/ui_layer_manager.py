@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # Modified BFA Version with Move to Layer button and the layer widget from the 3d view header.
+# And hidable options
 
 # <pep8 compliant>
 #
@@ -404,6 +405,14 @@ class SCENE_PT_layer_manager(bpy.types.Panel):
         row = layout.row()
         col = row.column()
         col.prop(view_3d, "lock_camera_and_layers", text="")
+        
+        col = row.column()
+        # Check if there is a layer off
+        show = (False in {layer for layer in layer_cont.layers})
+        icon = 'RESTRICT_VIEW_ON' if show else 'RESTRICT_VIEW_OFF'
+        
+        #col = row.column()
+        col.operator("scene.namedlayer_show_all", emboss=False, icon=icon, text="").show = show
 
 
 class SCENE_PT_namedlayer_layers(bpy.types.Panel):
@@ -438,23 +447,21 @@ class SCENE_PT_namedlayer_layers(bpy.types.Panel):
 
         layout = self.layout
         
+      
+        ################ Options ############################################
         
-
-        
-        row = layout.row()
-        col = row.column()
-        # Check if there is a layer off
-        show = (False in {layer for layer in layer_cont.layers})
-        icon = 'RESTRICT_VIEW_ON' if show else 'RESTRICT_VIEW_OFF'
-        col.operator("scene.namedlayer_show_all", emboss=False, icon=icon, text="").show = show
-
-        col = row.column()
-        col.prop(namedlayers, "use_classic")
-        col.prop(namedlayers, "use_extra_options", text="Options")
-
-        col = row.column()
-        col.prop(namedlayers, "use_layer_indices", text="Indices")
-        col.prop(namedlayers, "use_hide_empty_layers", text="Hide Empty")
+        if not context.scene.WT_Named_Layers_Options:
+            layout.prop(context.scene,"WT_Named_Layers_Options", emboss=False, icon="TRIA_RIGHT", text="Options")
+        else:
+            layout.prop(context.scene,"WT_Named_Layers_Options", emboss=False, icon="TRIA_DOWN", text="Options")
+            
+            layout.prop(namedlayers, "use_classic")
+            layout.prop(namedlayers, "use_extra_options", text="Options")
+            layout.prop(namedlayers, "use_layer_indices", text="Indices")
+            layout.prop(namedlayers, "use_hide_empty_layers", text="Hide Empty")
+            
+        # ---------------------------------------------------------------------------------------
+            
 
         col = layout.column()
         for layer_idx in range(NUM_LAYERS):
@@ -594,6 +601,8 @@ def register():
     bpy.types.Scene.layergroups_index = IntProperty(default=-1)
     bpy.types.Scene.namedlayers = PointerProperty(type=NamedLayers)
     bpy.app.handlers.scene_update_post.append(check_init_data)
+    
+    bpy.types.Scene.WT_Named_Layers_Options = bpy.props.BoolProperty(name="Display WireTools paramaters", default=False)
 
 
 def unregister():
