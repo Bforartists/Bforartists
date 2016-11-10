@@ -1503,14 +1503,17 @@ def draw_device(self, context):
         from . import engine
         cscene = scene.cycles
 
-        layout.prop(cscene, "feature_set")
+        wm = context.window_manager # Our bool is in the windows_manager
+        if  wm.SP_render_render_options:
 
-        device_type = context.user_preferences.system.compute_device_type
-        if device_type in {'CUDA', 'OPENCL', 'NETWORK'}:
-            layout.prop(cscene, "device")
+            layout.prop(cscene, "feature_set")
 
-        if engine.with_osl() and use_cpu(context):
-            layout.prop(cscene, "shading_system")
+            device_type = context.user_preferences.system.compute_device_type
+            if device_type in {'CUDA', 'OPENCL', 'NETWORK'}:
+                layout.prop(cscene, "device")
+
+            if engine.with_osl() and use_cpu(context):
+                layout.prop(cscene, "shading_system")
 
 
 def draw_pause(self, context):
