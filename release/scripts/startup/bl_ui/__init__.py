@@ -101,8 +101,10 @@ def register():
     bpy.types.WindowManager.subtab_3dview_properties_display_misc = bpy.props.BoolProperty(name="Miscellaneous", description="Contains miscellaneous settings", default = False)
     bpy.types.WindowManager.subtab_3dview_properties_bgimg_settings = bpy.props.BoolProperty(name="Settings", description="Contains Settings", default = False)
     bpy.types.WindowManager.subtab_3dview_properties_bgimg_align = bpy.props.BoolProperty(name="Align", description="Contains Align Tools", default = False)
+
     # Subtab bools Renderpanel
     bpy.types.WindowManager.SP_render_render_options = bpy.props.BoolProperty(name="Options", description="Contains Options", default = False)
+    bpy.types.WindowManager.SP_render_output_options = bpy.props.BoolProperty(name="Options", description="Contains Options", default = False)
 
     # bfa - Our data block for icon or text buttons
     bpy.utils.register_class(UITweaksData) # Our data block
@@ -165,6 +167,7 @@ def unregister():
     del bpy.types.WindowManager.subtab_3dview_properties_bgimg_align
     # Subtab bools Renderpanel
     del bpy.types.WindowManager.SP_render_render_options
+    del bpy.types.WindowManager.SP_render_output_options
        
 
     # bfa - Our data block for icon or text buttons
