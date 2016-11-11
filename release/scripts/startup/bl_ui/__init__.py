@@ -107,6 +107,7 @@ def register():
     bpy.types.WindowManager.SP_render_output_options = bpy.props.BoolProperty(name="Options", description="Contains Options", default = False)
     bpy.types.WindowManager.SP_render_metadata_stampoptions = bpy.props.BoolProperty(name="Stamp Options", description="Contains Options for Stamp output", default = False)
     bpy.types.WindowManager.SP_render_metadata_enabled = bpy.props.BoolProperty(name="Enabled Metadata", description="Contains the enabled / disabled Metadata Options", default = False)
+    bpy.types.WindowManager.SP_render_dimensions_options = bpy.props.BoolProperty(name="Advanced", description="Contains advanced Options", default = False)
 
     # bfa - Our data block for icon or text buttons
     bpy.utils.register_class(UITweaksData) # Our data block
@@ -172,6 +173,7 @@ def unregister():
     del bpy.types.WindowManager.SP_render_output_options
     del bpy.types.WindowManager.SP_render_metadata_stampoptions
     del bpy.types.WindowManager.SP_render_metadata_enabled
+    del bpy.types.WindowManager.SP_render_dimensions_options
        
 
     # bfa - Our data block for icon or text buttons
