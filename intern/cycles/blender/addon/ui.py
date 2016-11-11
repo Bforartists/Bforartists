@@ -135,46 +135,89 @@ class CyclesRender_PT_sampling(CyclesButtonsPanel, Panel):
         sub.prop(cscene, "progressive", text="")
         row.prop(cscene, "use_square_samples")
 
-        split = layout.split()
-
-        col = split.column()
-        sub = col.column(align=True)
-        sub.label("Settings:")
-
-        seed_sub = sub.row(align=True)
-        seed_sub.prop(cscene, "seed")
-        seed_sub.prop(cscene, "use_animated_seed", text="", icon="TIME")
-
-        sub.prop(cscene, "sample_clamp_direct")
-        sub.prop(cscene, "sample_clamp_indirect")
-
         if cscene.progressive == 'PATH' or use_branched_path(context) == False:
-            col = split.column()
-            sub = col.column(align=True)
-            sub.label(text="Samples:")
-            sub.prop(cscene, "samples", text="Render")
-            sub.prop(cscene, "preview_samples", text="Preview")
-        else:
-            sub.label(text="AA Samples:")
-            sub.prop(cscene, "aa_samples", text="Render")
-            sub.prop(cscene, "preview_aa_samples", text="Preview")
-            sub.separator()
-            sub.prop(cscene, "sample_all_lights_direct")
-            sub.prop(cscene, "sample_all_lights_indirect")
 
+            row = layout.row()
+            row.label("Samples:")
+            row = layout.row()
+            row.prop(cscene, "samples", text="Render")
+            row.prop(cscene, "preview_samples", text="Preview")
+
+        else:
+
+            row = layout.row()
+            row.label("Samples:")
+
+            split = layout.split()
             col = split.column()
             sub = col.column(align=True)
-            sub.label(text="Samples:")
             sub.prop(cscene, "diffuse_samples", text="Diffuse")
             sub.prop(cscene, "glossy_samples", text="Glossy")
             sub.prop(cscene, "transmission_samples", text="Transmission")
             sub.prop(cscene, "ao_samples", text="AO")
+
+            col = split.column()
+            sub = col.column(align=True)  
             sub.prop(cscene, "mesh_light_samples", text="Mesh Light")
             sub.prop(cscene, "subsurface_samples", text="Subsurface")
             sub.prop(cscene, "volume_samples", text="Volume")
 
-        if use_cpu(context) or cscene.feature_set == 'EXPERIMENTAL':
-            layout.row().prop(cscene, "sampling_pattern", text="Pattern")
+        wm = context.window_manager # Our bool is in the windows_manager
+  
+        # The subtab is closed by default.
+        # When the click at it then it opens. And shows the hidden ui elements.
+        if not wm.SP_render_sampling_options:
+            layout.prop(wm,"SP_render_sampling_options", emboss=False, icon="TRIA_RIGHT", text="- Options -")
+
+        else:
+            layout.prop(wm,"SP_render_sampling_options", emboss=False, icon="TRIA_DOWN", text="+ Options +")
+
+
+            split = layout.split()
+
+            if cscene.progressive == 'PATH' or use_branched_path(context) == False:
+
+                col = split.column()
+                sub = col.column(align=True)
+
+                seed_sub = sub.row(align=True)
+                seed_sub.prop(cscene, "seed")
+                seed_sub.prop(cscene, "use_animated_seed", text="", icon="TIME")
+
+                col = split.column()
+                sub = col.column(align=True)
+                sub.prop(cscene, "sample_clamp_direct")
+                sub.prop(cscene, "sample_clamp_indirect")
+
+            else:
+
+                col = split.column()
+                sub = col.column(align=True)
+
+                seed_sub = sub.row(align=True)
+                seed_sub.prop(cscene, "seed")
+                seed_sub.prop(cscene, "use_animated_seed", text="", icon="TIME")
+
+                sub.separator()
+
+                sub.label(text="AA Samples:")
+                sub.prop(cscene, "aa_samples", text="Render")
+                sub.prop(cscene, "preview_aa_samples", text="Preview")
+
+                col = split.column()
+                sub = col.column(align=True)
+                sub.prop(cscene, "sample_clamp_direct")
+                sub.prop(cscene, "sample_clamp_indirect")
+               
+                sub.separator()
+
+                sub.prop(cscene, "sample_all_lights_direct")
+                sub.prop(cscene, "sample_all_lights_indirect")
+
+
+
+            if use_cpu(context) or cscene.feature_set == 'EXPERIMENTAL':
+                layout.row().prop(cscene, "sampling_pattern", text="Pattern")
 
         for rl in scene.render.layers:
             if rl.samples > 0:
