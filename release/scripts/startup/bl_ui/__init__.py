@@ -102,9 +102,11 @@ def register():
     bpy.types.WindowManager.subtab_3dview_properties_bgimg_settings = bpy.props.BoolProperty(name="Settings", description="Contains Settings", default = False)
     bpy.types.WindowManager.subtab_3dview_properties_bgimg_align = bpy.props.BoolProperty(name="Align", description="Contains Align Tools", default = False)
 
-    # Subtab bools Renderpanel
+    # Subtab bools Rendertab panels
     bpy.types.WindowManager.SP_render_render_options = bpy.props.BoolProperty(name="Options", description="Contains Options", default = False)
     bpy.types.WindowManager.SP_render_output_options = bpy.props.BoolProperty(name="Options", description="Contains Options", default = False)
+    bpy.types.WindowManager.SP_render_metadata_stampoptions = bpy.props.BoolProperty(name="Stamp Options", description="Contains Options for Stamp output", default = False)
+    bpy.types.WindowManager.SP_render_metadata_enabled = bpy.props.BoolProperty(name="Enabled Metadata", description="Contains the enabled / disabled Metadata Options", default = False)
 
     # bfa - Our data block for icon or text buttons
     bpy.utils.register_class(UITweaksData) # Our data block
@@ -165,9 +167,11 @@ def unregister():
     del bpy.types.WindowManager.subtab_3dview_properties_display_misc # Unregister our flag when unregister.  
     del bpy.types.WindowManager.subtab_3dview_properties_bgimg_settings
     del bpy.types.WindowManager.subtab_3dview_properties_bgimg_align
-    # Subtab bools Renderpanel
+    # Subtab bools Rendertab panels
     del bpy.types.WindowManager.SP_render_render_options
     del bpy.types.WindowManager.SP_render_output_options
+    del bpy.types.WindowManager.SP_render_metadata_stampoptions
+    del bpy.types.WindowManager.SP_render_metadata_enabled
        
 
     # bfa - Our data block for icon or text buttons
