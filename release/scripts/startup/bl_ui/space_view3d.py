@@ -2358,11 +2358,11 @@ class VIEW3D_MT_edit_mesh_extrude(Menu):
 
         menu = []
         if mesh.total_face_sel:
-            menu += ['INDIVIDUAL', 'REGION_VERT_NORMAL', 'FACE']
+            menu += ['INDIVIDUAL', 'REGION_VERT_NORMAL', 'FACE', 'DUPLI_EXTRUDE', 'DUPLI_EX_ROTATE']
         if mesh.total_edge_sel and (select_mode[0] or select_mode[1]):
             menu += ['EDGE']
         if mesh.total_vert_sel and select_mode[0]:
-            menu += ['VERT', 'DUPLI_EXTRUDE', 'DUPLI_EX_ROTATE']
+            menu += ['VERT']
 
         # should never get here
         return menu
