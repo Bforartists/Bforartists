@@ -110,6 +110,7 @@ def register():
     bpy.types.WindowManager.SP_render_dimensions_options = bpy.props.BoolProperty(name="Advanced", description="Contains advanced Options", default = False)
     bpy.types.WindowManager.SP_render_sampling_options = bpy.props.BoolProperty(name="Options", description="Contains Options", default = False)
     bpy.types.WindowManager.SP_render_light_paths_options = bpy.props.BoolProperty(name="Options", description="Contains Options", default = False)
+    bpy.types.WindowManager.SP_render_sampling_vomume = bpy.props.BoolProperty(name="Options", description="Contains Volume Sampling Settings", default = False)
 
     # bfa - Our data block for icon or text buttons
     bpy.utils.register_class(UITweaksData) # Our data block
@@ -178,6 +179,7 @@ def unregister():
     del bpy.types.WindowManager.SP_render_dimensions_options
     del bpy.types.WindowManager.SP_render_sampling_options
     del bpy.types.WindowManager.SP_render_light_paths_options
+    del bpy.types.WindowManager.SP_render_sampling_vomume
        
 
     # bfa - Our data block for icon or text buttons

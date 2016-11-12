@@ -219,6 +219,21 @@ class CyclesRender_PT_sampling(CyclesButtonsPanel, Panel):
             if use_cpu(context) or cscene.feature_set == 'EXPERIMENTAL':
                 layout.row().prop(cscene, "sampling_pattern", text="Pattern")
 
+        if not wm.SP_render_sampling_vomume:
+            layout.prop(wm,"SP_render_sampling_vomume", emboss=False, icon="TRIA_RIGHT", text="- Volume Sampling -")
+
+        else:
+            layout.prop(wm,"SP_render_sampling_vomume", emboss=False, icon="TRIA_DOWN", text="+ Volume Sampling +")
+
+            #scene = context.scene
+            cscene = scene.cycles
+
+            row = layout.row()
+            row.label("Heterogeneous:")
+            row = layout.row()
+            row.prop(cscene, "volume_step_size")
+            row.prop(cscene, "volume_max_steps")
+
         for rl in scene.render.layers:
             if rl.samples > 0:
                 layout.separator()
@@ -226,23 +241,6 @@ class CyclesRender_PT_sampling(CyclesButtonsPanel, Panel):
                 break
 
         draw_samples_info(layout, context)
-
-
-class CyclesRender_PT_volume_sampling(CyclesButtonsPanel, Panel):
-    bl_label = "Volume Sampling"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    def draw(self, context):
-        layout = self.layout
-
-        scene = context.scene
-        cscene = scene.cycles
-
-        row = layout.row()
-        row.label("Heterogeneous:")
-        row = layout.row()
-        row.prop(cscene, "volume_step_size")
-        row.prop(cscene, "volume_max_steps")
 
 
 class CyclesRender_PT_light_paths(CyclesButtonsPanel, Panel):
