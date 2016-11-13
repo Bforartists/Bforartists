@@ -115,6 +115,7 @@ def register():
 
     #Subtab Bools Scene Panel
     bpy.types.WindowManager.SP_scene_colmanagement_render = bpy.props.BoolProperty(name="Render", description="Contains Color Management Render Settings", default = False)
+    bpy.types.WindowManager.SP_scene_audio_options = bpy.props.BoolProperty(name="Options", description="Contains Audio Options", default = False)
 
 
     # bfa - Our data block for icon or text buttons
@@ -189,6 +190,7 @@ def unregister():
 
     #Subtab Bools Scene Panel
     del bpy.types.WindowManager.SP_scene_colmanagement_render
+    del bpy.types.WindowManager.SP_scene_audio_options
        
 
     # bfa - Our data block for icon or text buttons
