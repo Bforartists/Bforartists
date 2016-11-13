@@ -236,20 +236,27 @@ class SCENE_PT_color_management(SceneButtonsPanel, Panel):
         layout = self.layout
 
         scene = context.scene
+     
+        row = layout.row() 
+        row.label(text="Display Device:")
+        row.prop(scene.display_settings, "display_device", text = "")
+        
+        row = layout.row()      
+        row.label(text="Sequencer Color Space:")
+        row.prop(scene.sequencer_colorspace_settings, "name", text = "")
 
-        col = layout.column()
-        col.label(text="Display:")
-        col.prop(scene.display_settings, "display_device")
+        wm = context.window_manager # Our bool is in the windows_manager
+  
+        # The subtab is closed by default.
+        # When the click at it then it opens. And shows the hidden ui elements.
+        if not wm.SP_scene_colmanagement_render:
+            layout.prop(wm,"SP_scene_colmanagement_render", emboss=False, icon="TRIA_RIGHT", text="- Render -")
 
-        col = layout.column()
-        col.separator()
-        col.label(text="Render:")
-        col.template_colormanaged_view_settings(scene, "view_settings")
+        else:
+            layout.prop(wm,"SP_scene_colmanagement_render", emboss=False, icon="TRIA_DOWN", text="+ Render +")
 
-        col = layout.column()
-        col.separator()
-        col.label(text="Sequencer:")
-        col.prop(scene.sequencer_colorspace_settings, "name")
+            col = layout.column()
+            col.template_colormanaged_view_settings(scene, "view_settings")
 
 
 class SCENE_PT_audio(SceneButtonsPanel, Panel):

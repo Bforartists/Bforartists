@@ -113,6 +113,9 @@ def register():
     bpy.types.WindowManager.SP_render_sampling_vomume = bpy.props.BoolProperty(name="Options", description="Contains Volume Sampling Settings", default = False)
     bpy.types.WindowManager.SP_render_postpro_BI_options = bpy.props.BoolProperty(name="Advanced", description="Contains more settings", default = False)
 
+    #Subtab Bools Scene Panel
+    bpy.types.WindowManager.SP_scene_colmanagement_render = bpy.props.BoolProperty(name="Render", description="Contains Color Management Render Settings", default = False)
+
 
     # bfa - Our data block for icon or text buttons
     bpy.utils.register_class(UITweaksData) # Our data block
@@ -183,6 +186,9 @@ def unregister():
     del bpy.types.WindowManager.SP_render_light_paths_options
     del bpy.types.WindowManager.SP_render_sampling_vomume
     del bpy.types.WindowManager.SP_render_postpro_BI_options
+
+    #Subtab Bools Scene Panel
+    del bpy.types.WindowManager.SP_scene_colmanagement_render
        
 
     # bfa - Our data block for icon or text buttons
