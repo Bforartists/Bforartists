@@ -248,7 +248,7 @@ class SCENE_PT_color_management(SceneButtonsPanel, Panel):
         wm = context.window_manager # Our bool is in the windows_manager
   
         # The subtab is closed by default.
-        # When the click at it then it opens. And shows the hidden ui elements.
+        # When the click at it then it opens. And shows the hidden elements.
         if not wm.SP_scene_colmanagement_render:
             layout.prop(wm,"SP_scene_colmanagement_render", emboss=False, icon="TRIA_RIGHT", text="- Render -")
 
@@ -273,20 +273,30 @@ class SCENE_PT_audio(SceneButtonsPanel, Panel):
 
         layout.prop(scene, "audio_volume")
         layout.operator("sound.bake_animation")
+        
+        wm = context.window_manager # Our bool is in the windows_manager
+  
+        # The subtab is closed by default.
+        # When the click at it then it opens. And shows the hidden elements.
+        if not wm.SP_scene_audio_options:
+            layout.prop(wm,"SP_scene_audio_options", emboss=False, icon="TRIA_RIGHT", text="- Options -")
 
-        split = layout.split()
+        else:
+            layout.prop(wm,"SP_scene_audio_options", emboss=False, icon="TRIA_DOWN", text="+ Options +")      
 
-        col = split.column()
-        col.label("Distance Model:")
-        col.prop(scene, "audio_distance_model", text="")
-        sub = col.column(align=True)
-        sub.prop(scene, "audio_doppler_speed", text="Speed")
-        sub.prop(scene, "audio_doppler_factor", text="Doppler")
+            split = layout.split()
 
-        col = split.column()
-        col.label("Format:")
-        col.prop(ffmpeg, "audio_channels", text="")
-        col.prop(ffmpeg, "audio_mixrate", text="Rate")
+            col = split.column()
+            col.label("Distance Model:")
+            col.prop(scene, "audio_distance_model", text="")
+            sub = col.column(align=True)
+            sub.prop(scene, "audio_doppler_speed", text="Speed")
+            sub.prop(scene, "audio_doppler_factor", text="Doppler")
+
+            col = split.column()
+            col.label("Format:")
+            col.prop(ffmpeg, "audio_channels", text="")
+            col.prop(ffmpeg, "audio_mixrate", text="Rate")
 
 
 class SCENE_PT_physics(SceneButtonsPanel, Panel):
