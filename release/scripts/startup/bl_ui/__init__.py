@@ -123,6 +123,9 @@ def register():
     #Subtab Bools Data Panel
     bpy.types.WindowManager.SP_data_texspace_manual = bpy.props.BoolProperty(name="Manual Transform", description="Contains the transform edit boxes for manual Texture space", default = False)
 
+    #Subtab Bools Material Panel
+    bpy.types.WindowManager.SP_material_options = bpy.props.BoolProperty(name="Options", description="Contains some more options", default = False)
+
 
     # bfa - Our data block for icon or text buttons
     bpy.utils.register_class(UITweaksData) # Our data block
@@ -203,7 +206,9 @@ def unregister():
 
     #Subtab Bools Data Panel
     del bpy.types.WindowManager.SP_data_texspace_manual
-       
+
+    #Subtab Bools Material Panel
+    del bpy.types.WindowManager.SP_material_options   
 
     # bfa - Our data block for icon or text buttons
     bpy.utils.unregister_class(UITweaksData) # Our data block
