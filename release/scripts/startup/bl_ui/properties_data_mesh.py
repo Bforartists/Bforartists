@@ -175,9 +175,20 @@ class DATA_PT_texture_space(MeshButtonsPanel, Panel):
         layout.separator()
 
         layout.prop(mesh, "use_auto_texspace")
-        row = layout.row()
-        row.column().prop(mesh, "texspace_location", text="Location")
-        row.column().prop(mesh, "texspace_size", text="Size")
+        
+        wm = context.window_manager # Our bool is in the windows_manager
+  
+        # The subtab is closed by default.
+        # When the click at it then it opens. And shows the hidden elements.
+        if not wm.SP_data_texspace_manual:
+            layout.prop(wm,"SP_data_texspace_manual", emboss=False, icon="TRIA_RIGHT", text="- Manual Transform -")
+
+        else:
+            layout.prop(wm,"SP_data_texspace_manual", emboss=False, icon="TRIA_DOWN", text="+ Manual Transform +")       
+        
+            row = layout.row()
+            row.column().prop(mesh, "texspace_location", text="Location")
+            row.column().prop(mesh, "texspace_size", text="Size")
 
 
 class DATA_PT_vertex_groups(MeshButtonsPanel, Panel):
