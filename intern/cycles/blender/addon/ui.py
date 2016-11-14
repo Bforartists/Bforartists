@@ -1217,25 +1217,34 @@ class CyclesMaterial_PT_settings(CyclesButtonsPanel, Panel):
         sub.prop(cmat, "volume_interpolation", text="")
         col.prop(cmat, "homogeneous_volume", text="Homogeneous")
 
-        layout.separator()
-        split = layout.split()
+        wm = context.window_manager # Our bool is in the windows_manager
+  
+        # The subtab is closed by default.
+        # When the click at it then it opens. And shows the hidden ui elements.
+        if not wm.SP_material_settings_options:
+            layout.prop(wm,"SP_material_settings_options", emboss=False, icon="TRIA_RIGHT", text="- Viewport Options -")
 
-        col = split.column(align=True)
-        col.label("Viewport Color:")
-        col.prop(mat, "diffuse_color", text="")
-        col.prop(mat, "alpha")
+        else:
+            layout.prop(wm,"SP_material_settings_options", emboss=False, icon="TRIA_DOWN", text="+ Viewport Options +")
 
-        col.separator()
-        col.label("Viewport Alpha:")
-        col.prop(mat.game_settings, "alpha_blend", text="")
+            split = layout.split()
 
-        col = split.column(align=True)
-        col.label("Viewport Specular:")
-        col.prop(mat, "specular_color", text="")
-        col.prop(mat, "specular_hardness", text="Hardness")
+            col = split.column(align=True)
+            col.label("Viewport Color:")
+            col.prop(mat, "diffuse_color", text="")
+            col.prop(mat, "alpha")
 
-        col.separator()
-        col.prop(mat, "pass_index")
+            col.separator()
+            col.label("Viewport Alpha:")
+            col.prop(mat.game_settings, "alpha_blend", text="")
+
+            col = split.column(align=True)
+            col.label("Viewport Specular:")
+            col.prop(mat, "specular_color", text="")
+            col.prop(mat, "specular_hardness", text="Hardness")
+
+            col.separator()
+            col.prop(mat, "pass_index")
 
 
 class CyclesTexture_PT_context(CyclesButtonsPanel, Panel):
