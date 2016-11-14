@@ -125,6 +125,7 @@ def register():
 
     #Subtab Bools Material Panel
     bpy.types.WindowManager.SP_material_options = bpy.props.BoolProperty(name="Options", description="Contains some more options", default = False)
+    bpy.types.WindowManager.SP_material_settings_options = bpy.props.BoolProperty(name="Viewport Options", description="Contains some Viewport options", default = False)
 
 
     # bfa - Our data block for icon or text buttons
@@ -209,6 +210,7 @@ def unregister():
 
     #Subtab Bools Material Panel
     del bpy.types.WindowManager.SP_material_options   
+    del bpy.types.WindowManager.SP_material_settings_options   
 
     # bfa - Our data block for icon or text buttons
     bpy.utils.unregister_class(UITweaksData) # Our data block
