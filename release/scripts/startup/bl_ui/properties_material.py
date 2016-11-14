@@ -139,6 +139,7 @@ class MATERIAL_PT_context_material(MaterialButtonsPanel, Panel):
             col.operator("object.material_slot_remove", icon='ZOOMOUT', text="")
 
             col.menu("MATERIAL_MT_specials", icon='DOWNARROW_HLT', text="")
+                     
 
             if is_sortable:
                 col.separator()
@@ -151,32 +152,43 @@ class MATERIAL_PT_context_material(MaterialButtonsPanel, Panel):
                 row.operator("object.material_slot_assign", text="Assign")
                 row.operator("object.material_slot_select", text="Select")
                 row.operator("object.material_slot_deselect", text="Deselect")
+                
+            split = layout.split(percentage=0.65)
 
-        split = layout.split(percentage=0.65)
+            if ob:
+                split.template_ID(ob, "active_material", new="material.new")
+                row = split.row()
+                if mat:
+                    row.prop(mat, "use_nodes", icon='NODETREE', text="")
 
-        if ob:
-            split.template_ID(ob, "active_material", new="material.new")
-            row = split.row()
-            if mat:
-                row.prop(mat, "use_nodes", icon='NODETREE', text="")
-
-            if slot:
-                row.prop(slot, "link", text="")
-            else:
-                row.label()
-        elif mat:
-            split.template_ID(space, "pin_id")
-            split.separator()
-
-        if mat:
-            layout.prop(mat, "type", expand=True)
-            if mat.use_nodes:
-                row = layout.row()
-                row.label(text="", icon='NODETREE')
-                if mat.active_node_material:
-                    row.prop(mat.active_node_material, "name", text="")
+                if slot:
+                    row.prop(slot, "link", text="")
                 else:
-                    row.label(text="No material node selected")
+                    row.label()
+            elif mat:
+                split.template_ID(space, "pin_id")
+                split.separator()
+                
+            if mat:
+                
+                wm = context.window_manager # Our bool is in the windows_manager
+          
+                # The subtab is closed by default.
+                # When the click at it then it opens. And shows the hidden ui elements.
+                if not wm.SP_material_options:
+                    layout.prop(wm,"SP_material_options", emboss=False, icon="TRIA_RIGHT", text="- Options -")
+
+                else:
+                    layout.prop(wm,"SP_material_options", emboss=False, icon="TRIA_DOWN", text="+ Options +")               
+            
+                    layout.prop(mat, "type", expand=True)
+                    if mat.use_nodes:
+                        row = layout.row()
+                        row.label(text="", icon='NODETREE')
+                        if mat.active_node_material:
+                            row.prop(mat.active_node_material, "name", text="")
+                        else:
+                            row.label(text="No material node selected")
 
 
 class MATERIAL_PT_preview(MaterialButtonsPanel, Panel):
