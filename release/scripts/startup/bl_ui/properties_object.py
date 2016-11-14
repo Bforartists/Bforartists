@@ -245,33 +245,43 @@ class OBJECT_PT_display(ObjectButtonsPanel, Panel):
         if obj_type == 'MESH' or is_empty_image:
             col.prop(obj, "show_transparent", text="Transparency")
 
-        split = layout.split()
+        wm = context.window_manager # Our bool is in the windows_manager
+  
+        # The subtab is closed by default.
+        # When the click at it then it opens. And shows the hidden ui elements.
+        if not wm.SP_object_display_options:
+            layout.prop(wm,"SP_object_display_options", emboss=False, icon="TRIA_RIGHT", text="- Options -")
 
-        col = split.column()
-        if is_wire:
-            # wire objects only use the max. draw type for duplis
-            col.active = is_dupli
-            col.label(text="Maximum Dupli Draw Type:")
         else:
-            col.label(text="Maximum Draw Type:")
-        col.prop(obj, "draw_type", text="")
+            layout.prop(wm,"SP_object_display_options", emboss=False, icon="TRIA_DOWN", text="+ Options +")
 
-        col = split.column()
-        if is_geometry or is_empty_image:
-            # Only useful with object having faces/materials...
-            col.label(text="Object Color:")
-            col.prop(obj, "color", text="")
+            split = layout.split()
 
-        # Custom wire color sets
-        col = layout.column()
-        col.prop(obj, "wire_color_set")
-        if obj.wire_color_set:
+            col = split.column()
+            if is_wire:
+                # wire objects only use the max. draw type for duplis
+                col.active = is_dupli
+                col.label(text="Maximum Dupli Draw Type:")
+            else:
+                col.label(text="Maximum Draw Type:")
+            col.prop(obj, "draw_type", text="")
+
+            col = split.column()
+            if is_geometry or is_empty_image:
+                # Only useful with object having faces/materials...
+                col.label(text="Object Color:")
+                col.prop(obj, "color", text="")
+
+            # Custom wire color sets
             col = layout.column()
-            sub = col.row(align=True)
-            sub.enabled = obj.is_custom_wire_color_set  # only custom colors are editable
-            sub.prop(obj.wire_colors, "normal", text="")
-            sub.prop(obj.wire_colors, "select", text="")
-            sub.prop(obj.wire_colors, "active", text="")
+            col.prop(obj, "wire_color_set")
+            if obj.wire_color_set:
+                col = layout.column()
+                sub = col.row(align=True)
+                sub.enabled = obj.is_custom_wire_color_set  # only custom colors are editable
+                sub.prop(obj.wire_colors, "normal", text="")
+                sub.prop(obj.wire_colors, "select", text="")
+                sub.prop(obj.wire_colors, "active", text="")
 
 class OBJECT_PT_duplication(ObjectButtonsPanel, Panel):
     bl_label = "Duplication"
