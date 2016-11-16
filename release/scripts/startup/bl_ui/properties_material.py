@@ -360,18 +360,27 @@ class MATERIAL_PT_shading(MaterialButtonsPanel, Panel):
             row.prop(mat, "specular_toon_smooth", text="Smooth")
 
         if mat.use_specular_ramp:
-            layout.separator()
             layout.template_color_ramp(mat, "specular_ramp", expand=True)
-            layout.separator()
-
-            row = layout.row()
-            row.prop(mat, "specular_ramp_input", text="Input")
-            row.prop(mat, "specular_ramp_blend", text="Blend")
-
-            layout.prop(mat, "specular_ramp_factor", text="Factor")
             
-        layout.separator()
-        
+            wm = context.window_manager # Our bool is in the windows_manager
+      
+            # The subtab is closed by default.
+            # When the click at it then it opens. And shows the hidden ui elements.
+            if not wm.SP_material_shading_specularramp:
+                layout.prop(wm,"SP_material_shading_specularramp", emboss=False, icon="TRIA_RIGHT", text="- Ramp Options -")
+
+            else:
+                layout.prop(wm,"SP_material_shading_specularramp", emboss=False, icon="TRIA_DOWN", text="+ Ramp Options +")
+                col = layout.column()   
+                row = layout.row()
+                row.prop(mat, "specular_ramp_input", text="Input")
+                row.prop(mat, "specular_ramp_blend", text="Blend")
+
+                layout.prop(mat, "specular_ramp_factor", text="Factor")
+                
+                col.separator()
+            
+        layout.separator()    
         
         ############### Misc shading ##################
 

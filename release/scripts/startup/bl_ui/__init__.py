@@ -127,6 +127,7 @@ def register():
     bpy.types.WindowManager.SP_material_options = bpy.props.BoolProperty(name="Options", description="Contains some more options", default = False)
     bpy.types.WindowManager.SP_material_settings_options = bpy.props.BoolProperty(name="Viewport Options", description="Contains some Viewport options", default = False)
     bpy.types.WindowManager.SP_material_shading_diffuseramp = bpy.props.BoolProperty(name="Ramp Options", description="Contains some Ramp options", default = False)
+    bpy.types.WindowManager.SP_material_shading_specularramp = bpy.props.BoolProperty(name="Ramp Options", description="Contains some Ramp options", default = False)
 
 
     # bfa - Our data block for icon or text buttons
@@ -213,6 +214,7 @@ def unregister():
     del bpy.types.WindowManager.SP_material_options   
     del bpy.types.WindowManager.SP_material_settings_options   
     del bpy.types.WindowManager.SP_material_shading_diffuseramp
+    del bpy.types.WindowManager.SP_material_shading_specularramp
 
     # bfa - Our data block for icon or text buttons
     bpy.utils.unregister_class(UITweaksData) # Our data block
