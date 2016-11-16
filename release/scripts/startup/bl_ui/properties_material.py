@@ -307,13 +307,24 @@ class MATERIAL_PT_shading(MaterialButtonsPanel, Panel):
             col.active = (not mat.use_shadeless)
             col.separator()
             col.template_color_ramp(mat, "diffuse_ramp", expand=True)
-            col.separator()
+            
+            wm = context.window_manager # Our bool is in the windows_manager
+      
+            # The subtab is closed by default.
+            # When the click at it then it opens. And shows the hidden ui elements.
+            if not wm.SP_material_shading_diffuseramp:
+                layout.prop(wm,"SP_material_shading_diffuseramp", emboss=False, icon="TRIA_RIGHT", text="- Ramp Options -")
 
-            row = col.row()
-            row.prop(mat, "diffuse_ramp_input", text="Input")
-            row.prop(mat, "diffuse_ramp_blend", text="Blend")
+            else:
+                layout.prop(wm,"SP_material_shading_diffuseramp", emboss=False, icon="TRIA_DOWN", text="+ Ramp Options +")
+                col = layout.column()
+                row = col.row()               
+                row.prop(mat, "diffuse_ramp_input", text="Input")
+                row.prop(mat, "diffuse_ramp_blend", text="Blend")
 
-            col.prop(mat, "diffuse_ramp_factor", text="Factor")
+                col.prop(mat, "diffuse_ramp_factor", text="Factor")
+
+                col.separator()
         
         ############################## Specular
         
