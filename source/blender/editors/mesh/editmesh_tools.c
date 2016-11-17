@@ -4994,7 +4994,7 @@ void MESH_OT_noise(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Noise";
-	ot->description = "Noise\nUse vertex coordinate as texture coordinate";
+	ot->description = "Noise\nUse vertex coordinate as texture coordinate\nNeeds Material and Texture applied.\nDoes NOT work with Cycles. Just with Blender render";
 	ot->idname = "MESH_OT_noise";
 
 	/* api callbacks */
