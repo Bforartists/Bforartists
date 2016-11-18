@@ -101,6 +101,8 @@ def register():
     bpy.types.WindowManager.subtab_3dview_properties_display_misc = bpy.props.BoolProperty(name="Miscellaneous", description="Contains miscellaneous settings", default = False)
     bpy.types.WindowManager.subtab_3dview_properties_bgimg_settings = bpy.props.BoolProperty(name="Settings", description="Contains Settings", default = False)
     bpy.types.WindowManager.subtab_3dview_properties_bgimg_align = bpy.props.BoolProperty(name="Align", description="Contains Align Tools", default = False)
+    bpy.types.WindowManager.subtab_3dview_properties_meshdisplay_overlay = bpy.props.BoolProperty(name="Overlay Options", description="Contains Overlay Settings", default = False)
+    bpy.types.WindowManager.subtab_3dview_properties_meshdisplay_info = bpy.props.BoolProperty(name="Info Options", description="Contains Info Settings", default = False)
 
     # Subtab bools Rendertab panels
     bpy.types.WindowManager.SP_render_render_options = bpy.props.BoolProperty(name="Options", description="Contains Options", default = False)
@@ -189,6 +191,9 @@ def unregister():
     del bpy.types.WindowManager.subtab_3dview_properties_display_misc # Unregister our flag when unregister.  
     del bpy.types.WindowManager.subtab_3dview_properties_bgimg_settings
     del bpy.types.WindowManager.subtab_3dview_properties_bgimg_align
+    del bpy.types.WindowManager.subtab_3dview_properties_meshdisplay_overlay
+    del bpy.types.WindowManager.subtab_3dview_properties_meshdisplay_info
+
     # Subtab bools Rendertab panels
     del bpy.types.WindowManager.SP_render_render_options
     del bpy.types.WindowManager.SP_render_output_options
