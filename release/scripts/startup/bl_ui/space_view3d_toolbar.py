@@ -726,8 +726,8 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
 
             col = layout.column(align=True)
             col.label(text="Deform:")
-            col.operator("transform.edge_slide", icon='SLIDE_EDGE', text="Slide Edge       ")
-            col.operator("transform.vert_slide", icon='SLIDE_VERTEX', text="Silde Vertex    ")
+            col.operator("transform.edge_slide", icon='SLIDE_EDGE', text="Edge Slide       ")
+            col.operator("transform.vert_slide", icon='SLIDE_VERTEX', text="Vertex Slide    ")
             col.operator("mesh.noise", icon='NOISE', text="Noise               ")
             col.operator("mesh.vertices_smooth", icon='SMOOTH_VERTEX')
             col.operator("mesh.vertices_smooth_laplacian", icon='LAPLACIAN_SMOOTH_VERTEX')
