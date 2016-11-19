@@ -238,23 +238,7 @@ class TEXTURE_PT_preview(TextureButtonsPanel, Panel):
         idblock = context_tex_datablock(context)
 
         if idblock:
-
-            # Note that this option button shows below the content. 
-            # Since we deal with a c prop here that cannot be split by python. 
-            # It's unfortunately all or nothing. But this solution is better than before.
-            
-            wm = context.window_manager # Our bool is in the windows_manager
-  
-            # The subtab is closed by default.
-            # When the click at it then it opens. And shows the hidden ui elements.
-            if not wm.SP_texture_image_options:
-                layout.template_preview(tex, slot=slot)
-                layout.prop(wm,"SP_texture_image_options", emboss=False, icon="TRIA_RIGHT", text="- Options -")                
-
-            else:
-                layout.template_preview(tex, parent=idblock, slot=slot)
-                layout.prop(wm,"SP_texture_image_options", emboss=False, icon="TRIA_UP", text="+ Options +")
-                
+            layout.template_preview(tex, parent=idblock, slot=slot)
         else:
             layout.template_preview(tex, slot=slot)
 
