@@ -63,7 +63,6 @@ class USERPREF_HT_header(Header):
         elif userpref.active_section == 'ADDONS':
             layout.operator("wm.addon_install", icon='FILESEL')
             layout.operator("wm.addon_refresh", icon='FILE_REFRESH')
-            layout.menu("USERPREF_MT_addons_dev_guides")
         elif userpref.active_section == 'THEMES':
             #layout.operator("ui.reset_default_theme") # bfa - obsolete, themes are now in the themes dropdown box.
             layout.operator("wm.theme_install")
@@ -1184,18 +1183,6 @@ class USERPREF_PT_input(Panel):
         draw_keymaps(context, split)
 
         #print("runtime", time.time() - start)
-
-
-class USERPREF_MT_addons_dev_guides(Menu):
-    bl_label = "Development Guides"
-
-    # menu to open web-pages with addons development guides
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("wm.url_open", text="API Concepts", icon='URL').url = bpy.types.WM_OT_doc_view._prefix + "/info_quickstart.html"
-        layout.operator("wm.url_open", text="Addon Guidelines", icon='URL').url = "http://wiki.blender.org/index.php/Dev:2.5/Py/Scripts/Guidelines/Addons"
-        layout.operator("wm.url_open", text="How to share your addon", icon='URL').url = "http://wiki.blender.org/index.php/Dev:Py/Sharing"
 
 
 class USERPREF_PT_addons(Panel):
