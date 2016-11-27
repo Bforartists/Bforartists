@@ -765,6 +765,7 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
 
             col = layout.column(align=True)
             col.operator_menu_enum("mesh.merge", "type")
+            col.operator_menu_enum("mesh.separate", "type")
             
             col.label(text="Dissolve:")
             col.operator("mesh.dissolve_verts", icon='DISSOLVE_VERTS')
@@ -847,6 +848,7 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
 
             col = layout.column(align=False)
             col.operator_menu_enum("mesh.merge", "type")
+            col.operator_menu_enum("mesh.separate", "type")
 
             col.label(text="Dissolve:")
             row = col.row(align=False)
