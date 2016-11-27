@@ -728,7 +728,6 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
             col.label(text="Deform:")
             col.operator("transform.edge_slide", icon='SLIDE_EDGE', text="Edge Slide       ")
             col.operator("transform.vert_slide", icon='SLIDE_VERTEX', text="Vertex Slide    ")
-            col.operator("mesh.noise", icon='NOISE', text="Noise               ")
             col.operator("mesh.vertices_smooth", icon='SMOOTH_VERTEX')
             col.operator("mesh.vertices_smooth_laplacian", icon='LAPLACIAN_SMOOTH_VERTEX')
             col.operator("transform.vertex_random", icon='RANDOMIZE', text="Randomize      ")
@@ -797,7 +796,6 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
             row.alignment = 'LEFT'
             row.operator("transform.edge_slide", icon='SLIDE_EDGE', text="")
             row.operator("transform.vert_slide", icon='SLIDE_VERTEX', text="")
-            row.operator("mesh.noise", icon='NOISE', text="")
             row.operator("mesh.vertices_smooth", icon='SMOOTH_VERTEX', text="")
 
             col.separator()
