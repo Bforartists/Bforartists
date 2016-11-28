@@ -2400,7 +2400,6 @@ class VIEW3D_MT_edit_mesh_vertices(Menu):
 
         layout.separator()
 
-        layout.operator("mesh.bevel").vertex_only = True
         layout.operator("mesh.convex_hull")
         layout.operator("mesh.blend_from_shape")
         layout.operator("object.vertex_group_smooth")
@@ -2446,7 +2445,6 @@ class VIEW3D_MT_edit_mesh_edges(Menu):
 
         layout.separator()
 
-        layout.operator("mesh.bevel").vertex_only = False
         layout.operator("mesh.edge_split")
         layout.operator("mesh.bridge_edge_loops")
 
@@ -2465,7 +2463,6 @@ class VIEW3D_MT_edit_mesh_faces(Menu):
         layout.operator("mesh.fill")
         layout.operator("mesh.fill_grid")
         layout.operator("mesh.beautify_fill")
-        layout.operator("mesh.bevel").vertex_only = False
         layout.operator("mesh.solidify")
         layout.operator("mesh.intersect")
         layout.operator("mesh.wireframe")
