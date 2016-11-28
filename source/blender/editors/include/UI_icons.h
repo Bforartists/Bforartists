@@ -754,10 +754,9 @@ DEF_ICON(REDO)
 DEF_ICON(REPEAT)
 DEF_ICON(UNDO_HISTORY)
 DEF_ICON(REDO_HISTORY)
+DEF_ICON(BEVEL)
 
-#ifndef DEF_ICON_BLANK_SKIP
-	DEF_ICON(BLANK226b)
-#endif
+/*########################## end of row / next row ########################################*/
 
 	/* EDITING */
 DEF_ICON(PASTEDOWN)

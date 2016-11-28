@@ -739,9 +739,12 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
             col.operator("view3d.edit_mesh_extrude_move_normal", icon='EXTRUDE_REGION', text="Extrude Region")
             col.operator("view3d.edit_mesh_extrude_individual_move", icon='EXTRUDE_INDIVIDUAL', text="Individual        "),
            
-            row = col.row(align=True)
-            row.operator("mesh.spin", icon='SPIN')
-            row.operator("mesh.screw", icon='SCREW')
+            #row = col.row(align=True)
+            #col = layout.column(align=True)
+            layout.separator()
+            col.operator("mesh.spin", icon='SPIN', text="Spin                 ")
+            col.operator("mesh.screw", icon='SCREW', text="Screw              ")
+            col.operator("mesh.bevel", icon='BEVEL', text="Bevel               ")
 
             layout.separator()
 
@@ -824,6 +827,7 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
             
             row.operator("mesh.inset", icon='INSET_FACES', text="")
             row.operator("mesh.edge_face_add", icon='MAKE_EDGEFACE', text="")   
+            row.operator("mesh.bevel", icon='BEVEL', text="")
 
             col.separator()
 
