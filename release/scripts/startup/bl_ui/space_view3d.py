@@ -2342,8 +2342,8 @@ class VIEW3D_MT_edit_mesh_extrude(Menu):
             layout.operator("mesh.extrude_edges_move", text="Edges Only"),
         'FACE': lambda layout:
             layout.operator("mesh.extrude_faces_move", text="Individual Faces"),
-        'INDIVIDUAL': lambda layout:
-            layout.operator("view3d.edit_mesh_extrude_individual_move", icon='EXTRUDE_INDIVIDUAL', text="Individual"),
+        #'INDIVIDUAL': lambda layout:
+        #    layout.operator("view3d.edit_mesh_extrude_individual_move", icon='EXTRUDE_INDIVIDUAL', text="Individual"),
         'REGION_VERT_NORMAL': lambda layout:
             layout.operator("view3d.edit_mesh_extrude_move_shrink_fatten", text="Region (Vertex Normals)"),
         'DUPLI_EXTRUDE': lambda layout:
@@ -2359,7 +2359,7 @@ class VIEW3D_MT_edit_mesh_extrude(Menu):
 
         menu = []
         if mesh.total_face_sel:
-            menu += ['INDIVIDUAL', 'REGION_VERT_NORMAL', 'FACE']
+            menu += ['REGION_VERT_NORMAL', 'FACE']
         if mesh.total_edge_sel and (select_mode[0] or select_mode[1]):
             menu += ['EDGE']
         if mesh.total_vert_sel and select_mode[0]:
