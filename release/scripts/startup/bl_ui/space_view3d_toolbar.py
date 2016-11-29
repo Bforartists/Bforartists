@@ -1198,6 +1198,7 @@ class VIEW3D_PT_tools_surfaceedit(View3DPanel, Panel):
         if not scene.UItweaks.icon_or_text: 
 
             col = layout.column(align=True)
+            col.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="Mirror              ")
             col.label(text="Curve:")
             col.operator("curve.duplicate_move", icon = 'DUPLICATE', text="Duplicate        ")
             col.operator("curve.delete", icon = 'DELETE', text="Delete             ")
@@ -1217,6 +1218,8 @@ class VIEW3D_PT_tools_surfaceedit(View3DPanel, Panel):
         else:
 
             col = layout.column(align=True)
+            row = col.row(align=False)
+            row.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="")
             col.label(text="Curve:")
             row = col.row(align=False)
             row.alignment = 'LEFT'
