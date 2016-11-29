@@ -481,7 +481,7 @@ void MESH_OT_bevel(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Bevel";
-	ot->description = "Bevel\nEdge Bevel";
+	ot->description = "Bevel\nEdge Bevel bevels the selected geometry\nActivate the tool, then type in a value for the amount\nFiner adjustments can be done in the Last operator panel then";
 	ot->idname = "MESH_OT_bevel";
 
 	/* api callbacks */
