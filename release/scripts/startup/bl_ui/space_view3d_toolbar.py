@@ -1097,6 +1097,7 @@ class VIEW3D_PT_tools_curveedit(View3DPanel, Panel):
             col = layout.column(align=True) 
             col.operator("transform.tilt", icon = 'TILT', text="Tilt                  ")
             col.operator("transform.transform", icon = 'SHRINK_FATTEN', text="Shrink/Fatten  ").mode = 'CURVE_SHRINKFATTEN'
+            col.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="Mirror              ")
 
             col = layout.column(align=True)
             col.label(text="Curve:")
@@ -1130,6 +1131,7 @@ class VIEW3D_PT_tools_curveedit(View3DPanel, Panel):
             row.alignment = 'LEFT'
             row.operator("transform.tilt", icon = 'TILT', text="")
             row.operator("transform.transform", icon = 'SHRINK_FATTEN', text="").mode = 'CURVE_SHRINKFATTEN'
+            row.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="")
 
             col = layout.column(align=True)
             col.label(text="Curve:")
