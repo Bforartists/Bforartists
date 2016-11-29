@@ -2708,7 +2708,7 @@ class VIEW3D_MT_edit_meta(Menu):
         toolsettings = context.tool_settings
 
         layout.menu("VIEW3D_MT_transform")
-        layout.menu("VIEW3D_MT_mirror")
+        layout.operator("object.vertex_group_mirror")
         layout.menu("VIEW3D_MT_snap")
 
         layout.separator()
@@ -2758,6 +2758,7 @@ class VIEW3D_MT_edit_lattice(Menu):
 
         layout.menu("VIEW3D_MT_transform")
         layout.menu("VIEW3D_MT_mirror")
+
         layout.menu("VIEW3D_MT_snap")
         layout.operator_menu_enum("lattice.flip", "axis")
 

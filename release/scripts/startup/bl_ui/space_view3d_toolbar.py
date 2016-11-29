@@ -1372,16 +1372,21 @@ class VIEW3D_PT_tools_mballedit(View3DPanel, Panel):
         if not scene.UItweaks.icon_or_text: 
 
             col = layout.column(align=True)
+            col.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="Mirror                ")
             col.label(text="Deform:")
             col.operator("transform.vertex_random", icon = 'RANDOMIZE', text = "Randomize       ")
 
         else:
-
+            
             col = layout.column(align=True)
+            row = col.row(align=False)
+            row.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="")
+            
             col.label(text="Deform:")
             row = col.row(align=False)
             row.alignment = 'LEFT'
             row.operator("transform.vertex_random", icon = 'RANDOMIZE', text = "")
+            
 
 
 
