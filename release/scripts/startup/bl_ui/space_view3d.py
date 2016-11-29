@@ -2263,7 +2263,7 @@ class VIEW3D_MT_edit_mesh(Menu):
         toolsettings = context.tool_settings
 
         layout.menu("VIEW3D_MT_transform")
-        layout.menu("VIEW3D_MT_mirror")
+        layout.operator("object.vertex_group_mirror")
         layout.menu("VIEW3D_MT_snap")
 
         layout.separator()
