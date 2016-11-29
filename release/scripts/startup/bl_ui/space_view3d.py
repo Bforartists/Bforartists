@@ -1479,7 +1479,6 @@ class VIEW3D_MT_object(Menu):
         # End former Specials menu content.
 
         layout.menu("VIEW3D_MT_transform_object")
-        layout.menu("VIEW3D_MT_mirror")
         layout.menu("VIEW3D_MT_object_clear")
         layout.menu("VIEW3D_MT_object_apply")
         layout.menu("VIEW3D_MT_snap")
