@@ -888,18 +888,18 @@ elseif(APPLE)
 
 	install(
 		FILES ${OSX_APP_SOURCEDIR}/Contents/PkgInfo
-		DESTINATION blender.app/Contents
+		DESTINATION bforartists.app/Contents
 	)
 
 	install_dir(
 		${OSX_APP_SOURCEDIR}/Contents/Resources
-		blender.app/Contents/
+		bforartists.app/Contents/
 	)
 
 	if(WITH_OPENMP AND CMAKE_C_COMPILER_ID MATCHES "Clang" AND NOT ${CMAKE_C_COMPILER_VERSION} VERSION_LESS '3.4')
 		install(
 			FILES ${LIBDIR}/openmp/lib/libiomp5.dylib
-			DESTINATION blender.app/Contents/Resources/lib/
+			DESTINATION bforartists.app/Contents/Resources/lib/
 		)
 		install(
 			FILES ${LIBDIR}/openmp/LICENSE.txt
@@ -911,7 +911,7 @@ elseif(APPLE)
 	if(WITH_LLVM AND NOT LLVM_STATIC)
 		install(
 			FILES ${LIBDIR}/llvm/lib/libLLVM-3.4.dylib
-			DESTINATION blender.app/Contents/MacOS
+			DESTINATION bforartists.app/Contents/MacOS
 		)
 	endif()
 
@@ -935,7 +935,7 @@ elseif(APPLE)
 			        ${CMAKE_COMMAND} -E tar xzfv "${LIBDIR}/release/${PYTHON_ZIP}"
 			DEPENDS ${LIBDIR}/release/${PYTHON_ZIP})
 
-		add_dependencies(blender extractpyzip)
+		add_dependencies(bforartists extractpyzip)
 
 		# copy extracted python files
 		install_dir(
@@ -954,7 +954,7 @@ elseif(APPLE)
 		)
 	endif()
 	
-	# install blenderplayer bundle - copy of blender.app above. re-using macros et al
+	# install blenderplayer bundle - copy of bforartists.app above. re-using macros et al
 	# note we are using OSX Bundle as base and copying Blender dummy bundle on top of it
 	if(WITH_GAMEENGINE AND WITH_PLAYER)
 		set(OSX_APP_PLAYER_SOURCEDIR ${CMAKE_SOURCE_DIR}/release/darwin/blenderplayer.app)
