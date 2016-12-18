@@ -1324,6 +1324,18 @@ typedef enum eSpaceClip_GPencil_Source {
 	SC_GPENCIL_SRC_TRACK = 1,
 } eSpaceClip_GPencil_Source;
 
+
+/* Toolbar Editor */ 
+typedef struct SpaceToolbar {
+	SpaceLink *next, *prev;
+	ListBase regionbase;
+	int spacetype;
+	char pad[4];
+	
+} SpaceToolbar;
+
+
+
 /* **************** SPACE DEFINES ********************* */
 
 /* space types, moved from DNA_screen_types.h */
@@ -1353,8 +1365,9 @@ typedef enum eSpace_Type {
 	SPACE_CONSOLE  = 18,
 	SPACE_USERPREF = 19,
 	SPACE_CLIP     = 20,
+	SPACE_TOOLBAR  = 21,
 	
-	SPACEICONMAX = SPACE_CLIP
+	SPACEICONMAX = SPACE_TOOLBAR
 } eSpace_Type;
 
 /* use for function args */
