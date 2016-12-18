@@ -516,6 +516,8 @@ function(SETUP_BLENDER_SORTED_LIBS)
 		bf_editor_space_userpref
 		bf_editor_space_view3d
 		bf_editor_space_clip
+		bf_editor_space_toolbar
+		
 
 		bf_editor_transform
 		bf_editor_util

@@ -85,6 +85,8 @@ EnumPropertyItem space_type_items[] = {
 	{0, "", ICON_NONE, NULL, NULL},
 	{SPACE_CONSOLE, "CONSOLE", ICON_CONSOLE, "Python Console", "Interactive programmatic console for advanced editing and script development"},
 	{ 0, "", ICON_NONE, NULL, NULL },
+	{ SPACE_TOOLBAR, "TOOLBAR", ICON_CONSOLE, "Toolbar", "Contains tools" },
+	{ 0, "", ICON_NONE, NULL, NULL },
 	{SPACE_SEQ, "SEQUENCE_EDITOR", ICON_SEQUENCE, "DEPRECATED - VSE", "Video editing tools. DEPRECATED. USE AT OWN RISK."}, // Deprecated video sequence editor
 	{ 0, NULL, 0, NULL, NULL }
 };
@@ -297,6 +299,8 @@ static StructRNA *rna_Space_refine(struct PointerRNA *ptr)
 			return &RNA_SpaceSequenceEditor;
 		case SPACE_TEXT:
 			return &RNA_SpaceTextEditor;
+		case SPACE_TOOLBAR: // bfa - toolbar editor
+			return &RNA_SpaceToolbarEditor;
 		case SPACE_ACTION:
 			return &RNA_SpaceDopeSheetEditor;
 		case SPACE_NLA:
@@ -3333,6 +3337,18 @@ static void rna_def_space_text(BlenderRNA *brna)
 	RNA_api_space_text(srna);
 }
 
+// bfa - toolbar editor
+static void rna_def_space_toolbar(BlenderRNA *brna)
+{
+	StructRNA *srna;
+	//PropertyRNA *prop;
+
+	srna = RNA_def_struct(brna, "SpaceToolbarEditor", "Space");
+	RNA_def_struct_sdna(srna, "SpaceToolbar");
+	RNA_def_struct_ui_text(srna, "Space Toolbar Editor", "Toolbar editor space data");
+	
+}
+
 static void rna_def_space_dopesheet(BlenderRNA *brna)
 {
 	StructRNA *srna;
@@ -4728,6 +4744,7 @@ void RNA_def_space(BlenderRNA *brna)
 	rna_def_space_graph(brna);
 	rna_def_space_nla(brna);
 	rna_def_space_time(brna);
+	rna_def_space_toolbar(brna);
 	rna_def_space_console(brna);
 	rna_def_console_line(brna);
 	rna_def_space_info(brna);
