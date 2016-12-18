@@ -85,7 +85,7 @@ EnumPropertyItem space_type_items[] = {
 	{0, "", ICON_NONE, NULL, NULL},
 	{SPACE_CONSOLE, "CONSOLE", ICON_CONSOLE, "Python Console", "Interactive programmatic console for advanced editing and script development"},
 	{ 0, "", ICON_NONE, NULL, NULL },
-	{ SPACE_TOOLBAR, "TOOLBAR", ICON_CONSOLE, "Toolbar", "Contains tools" },
+	{ SPACE_TOOLBAR, "TOOLBAR", ICON_TOOLBAR, "Toolbar", "A toolbar. Here you can display various button menus" },
 	{ 0, "", ICON_NONE, NULL, NULL },
 	{SPACE_SEQ, "SEQUENCE_EDITOR", ICON_SEQUENCE, "DEPRECATED - VSE", "Video editing tools. DEPRECATED. USE AT OWN RISK."}, // Deprecated video sequence editor
 	{ 0, NULL, 0, NULL, NULL }
