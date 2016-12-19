@@ -21,7 +21,7 @@ import bpy
 from bpy.types import Header, Menu
 
 
-class Toolbar_HT_header(Header):
+class TOOLBAR_HT_header(Header):
     bl_space_type = 'TOOLBAR'
 
     def draw(self, context):
@@ -31,7 +31,23 @@ class Toolbar_HT_header(Header):
         scene = context.scene
 
         ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
-        Toolbar_MT_editor_menus.draw_collapsible(context, layout)
+        TOOLBAR_MT_editor_menus.draw_collapsible(context, layout)
+
+        ############## menu parts ##########################################################################
+
+        ## ------------------ Load / Save
+
+        if scene.toolbar_loadsave.loadsave_bool: 
+
+            row = layout.row(align=True)
+
+            row.operator("wm.read_homefile", text="", icon='NEW')
+
+            row = layout.row(align=True)
+
+            row.operator("wm.open_mainfile", text="", icon='FILE_FOLDER')
+            row.operator("wm.save_mainfile", text="", icon='FILE_TICK')
+            row.operator("wm.save_as_mainfile", text="", icon='SAVE_AS')
 
 # bfa - show hide the editormenu
 class ALL_MT_editormenu(Menu):
@@ -48,7 +64,7 @@ class ALL_MT_editormenu(Menu):
 
 # --------------------------------menu items
 # Everything menu in this class is collapsible. See line 35.
-class Toolbar_MT_editor_menus(Menu):
+class TOOLBAR_MT_editor_menus(Menu):
     bl_idname = "TOOLBAR_MT_editor_menus"
     bl_label = ""
 
@@ -60,16 +76,17 @@ class Toolbar_MT_editor_menus(Menu):
         scene = context.scene
         rd = scene.render
 
-        layout.menu("Toolbar_MT_file") # see class TOOLBAR_MT_file below
+        layout.menu("TOOLBAR_MT_file") # see class TOOLBAR_MT_file below
 
-class Toolbar_MT_file(Menu):
-    bl_label = "File"
+class TOOLBAR_MT_file(Menu):
+    bl_label = "Toolbars"
 
     def draw(self, context):
         layout = self.layout
 
-        layout.operator_context = 'INVOKE_AREA'
-        layout.operator("wm.read_homefile", text="New", icon='NEW')
+        scene = context.scene
+        layout.prop(scene.toolbar_loadsave, "loadsave_bool") # Our checkbox
+
 
 if __name__ == "__main__":  # only for live edit.
     bpy.utils.register_module(__name__)

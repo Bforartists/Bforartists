@@ -94,6 +94,14 @@ del _namespace
 class UITweaksData(bpy.types.PropertyGroup):
     icon_or_text = bpy.props.BoolProperty(name="Icon / Text Buttons", description="Displays some buttons as text or iconbuttons", default = True) # Our prop
 
+############################ Toolbar props #################################
+
+# bfa - Load Save
+class UIToolbarLoadsave(bpy.types.PropertyGroup):
+    loadsave_bool = bpy.props.BoolProperty(name="Load / Save", description="Display the Load / Save Toolbar", default = True) # Our prop
+
+#################################
+
 
 def register():
     
@@ -136,6 +144,14 @@ def register():
     # bfa - Our data block for icon or text buttons
     bpy.utils.register_class(UITweaksData) # Our data block
     bpy.types.Scene.UItweaks = bpy.props.PointerProperty(type=UITweaksData) # Bind reference of type of our data block to type Scene objects
+
+    ############################ Toolbar props #################################
+
+    # bfa - Load Save
+    bpy.utils.register_class(UIToolbarLoadsave) # Our data block
+    bpy.types.Scene.toolbar_loadsave = bpy.props.PointerProperty(type=UIToolbarLoadsave) # Bind reference of type of our data block to type Scene objects
+
+    #######################################################################
 
     bpy.utils.register_module(__name__)
 
@@ -225,6 +241,12 @@ def unregister():
     # bfa - Our data block for icon or text buttons
     bpy.utils.unregister_class(UITweaksData) # Our data block
     del bpy.types.Scene.UItweaks # Unregister our data block when unregister.
+
+    ############################ Toolbar props #################################
+
+    bpy.utils.unregister_class(UIToolbarLoadsave) # Our data block
+
+    ############################################################################
 
     bpy.utils.unregister_module(__name__)
 
