@@ -790,10 +790,10 @@ class Menu(StructRNA, _GenericUI, metaclass=RNAMeta):
 
             # bfa - show hide the editortypemenu
     @classmethod
-    def hide_loadsave(cls, context, layout):
+    def hide_file_toolbar(cls, context, layout):
         # helper function for (optionally) hidden editortype menu
         # only usable within headers
-        if context.area.load_save_toolbars:
+        if context.area.file_toolbars:
             cls.draw_menus(layout, context)
 
 

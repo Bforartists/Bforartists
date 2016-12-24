@@ -327,6 +327,7 @@ int ED_operator_console_active(bContext *C)
 }
 
 static int ed_object_hidden(Object *ob)
+
 {
 	/* if hidden but in edit mode, we still display, can happen with animation */
 	return ((ob->restrictflag & OB_RESTRICT_VIEW) && !(ob->mode & OB_MODE_EDIT));
@@ -3301,26 +3302,26 @@ static void SCREEN_OT_header_toggle_editortypemenu(wmOperatorType *ot)
 }
 
 // bfa - show hide the toolbar menus
-static int header_toolbar_loadsave_exec(bContext *C, wmOperator *UNUSED(op))
+static int header_toolbar_file_exec(bContext *C, wmOperator *UNUSED(op))
 {
 	ScrArea *sa = CTX_wm_area(C);
 
-	sa->flag = sa->flag ^ HEADER_TOOLBAR_LOADSAVE;
+	sa->flag = sa->flag ^ HEADER_TOOLBAR_FILE;
 
 	ED_area_tag_redraw(sa);
 	WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, NULL);
 
 	return OPERATOR_FINISHED;
 }
-static void SCREEN_OT_header_toolbar_loadsave(wmOperatorType *ot)
+static void SCREEN_OT_header_toolbar_file(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Toolbar File";
-	ot->idname = "SCREEN_OT_header_toolbar_loadsave";
-	ot->description = "Show or Hide the load save toolbars";
+	ot->idname = "SCREEN_OT_header_toolbar_file";
+	ot->description = "Show or Hide the File toolbars";
 
 	/* api callbacks */
-	ot->exec = header_toolbar_loadsave_exec;
+	ot->exec = header_toolbar_file_exec;
 	ot->poll = ED_operator_areaactive;
 	ot->flag = 0;
 }
@@ -4244,7 +4245,7 @@ void ED_operatortypes_screen(void)
 	WM_operatortype_append(SCREEN_OT_header);
 	WM_operatortype_append(SCREEN_OT_header_toggle_menus);
 	WM_operatortype_append(SCREEN_OT_header_toggle_editortypemenu); // bfa - show hide the editorsmenu
-	WM_operatortype_append(SCREEN_OT_header_toolbar_loadsave); // bfa - show hide the loadsave toolbar
+	WM_operatortype_append(SCREEN_OT_header_toolbar_file); // bfa - show hide the loadsave toolbar
 	WM_operatortype_append(SCREEN_OT_header_toolbox);
 	WM_operatortype_append(SCREEN_OT_screen_set);
 	WM_operatortype_append(SCREEN_OT_screen_full_area);
