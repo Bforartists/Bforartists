@@ -788,6 +788,14 @@ class Menu(StructRNA, _GenericUI, metaclass=RNAMeta):
         if context.area.show_editortypemenu:
             cls.draw_menus(layout, context)
 
+            # bfa - show hide the editortypemenu
+    @classmethod
+    def hide_loadsave(cls, context, layout):
+        # helper function for (optionally) hidden editortype menu
+        # only usable within headers
+        if context.area.load_save_toolbars:
+            cls.draw_menus(layout, context)
+
 
 class NodeTree(bpy_types.ID, metaclass=RNAMetaPropGroup):
     __slots__ = ()
