@@ -242,6 +242,11 @@ static void rna_def_area(BlenderRNA *brna)
 	RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_NO_EDITORTYPEMENU);
 	RNA_def_property_ui_text(prop, "Show Editortype menu", "Shows or hides the Editortype menu to change the editor type");
 
+	// bfa - show hide the load save toolbars
+	prop = RNA_def_property(srna, "load_save_toolbars", PROP_BOOLEAN, PROP_NONE);
+	RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_TOOLBAR_LOADSAVE);
+	RNA_def_property_ui_text(prop, "Load Save Toolbars", "Shows or hides the Load Save Toolbars");
+
 	prop = RNA_def_property(srna, "type", PROP_ENUM, PROP_NONE);
 	RNA_def_property_enum_sdna(prop, NULL, "spacetype");
 	RNA_def_property_enum_items(prop, space_type_items);

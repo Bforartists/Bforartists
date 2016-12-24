@@ -286,6 +286,8 @@ enum {
 	AREA_FLAG_ACTIONZONES_UPDATE = (1 << 8),
 	// bfa - show hide the editorsmenu
 	HEADER_NO_EDITORTYPEMENU = (1 << 9),
+	// bfa - show hide the load save toolbars
+	HEADER_TOOLBAR_LOADSAVE = (1 << 10),
 };
 
 #define EDGEWIDTH	1

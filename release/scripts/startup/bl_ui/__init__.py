@@ -94,7 +94,7 @@ del _namespace
 class UITweaksData(bpy.types.PropertyGroup):
     icon_or_text = bpy.props.BoolProperty(name="Icon / Text Buttons", description="Displays some buttons as text or iconbuttons", default = True) # Our prop
 
-############################ Toolbar props #################################
+############################ Toolbar props File #################################
 
 # bfa - Load Save
 class UIToolbarLoadsave(bpy.types.PropertyGroup):
@@ -165,7 +165,7 @@ def register():
     bpy.utils.register_class(UITweaksData) # Our data block
     bpy.types.Scene.UItweaks = bpy.props.PointerProperty(type=UITweaksData) # Bind reference of type of our data block to type Scene objects
 
-    ############################ Toolbar props #################################
+    ############################ Toolbar props File #################################
 
     # bfa - Load Save
     bpy.utils.register_class(UIToolbarLoadsave) # Our data block
@@ -282,7 +282,7 @@ def unregister():
     bpy.utils.unregister_class(UITweaksData) # Our data block
     del bpy.types.Scene.UItweaks # Unregister our data block when unregister.
 
-    ############################ Toolbar props #################################
+    ############################ Toolbar props File #################################
 
     bpy.utils.unregister_class(UIToolbarLoadsave) # Our data block
     bpy.utils.unregister_class(UIToolbarLinkappend) # Our data block
