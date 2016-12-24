@@ -35,7 +35,7 @@ class TOOLBAR_HT_header(Header):
 
         ############## toolbars ##########################################################################
 
-        TOOLBAR_MT_loadsave.hide_loadsave(context, layout) # bfa - show hide the complete load save toolbar container
+        TOOLBAR_MT_file.hide_file_toolbar(context, layout) # bfa - show hide the complete load save toolbar container
 
 ########################################################################
 
@@ -89,7 +89,7 @@ class TOOLBAR_MT_type(Menu):
         #rd = context.scene.render
         #layout.prop(rd, "use_stamp") # This one works. Why not the prop in the screen?
 
-        layout.operator("screen.header_toolbar_loadsave") 
+        layout.operator("screen.header_toolbar_file") 
 
         # layout.prop(screen,"header_toggle_menus") # why does this not work?
 
@@ -115,12 +115,12 @@ class TOOLBAR_MT_menu_loadsave(Menu):
         scene = context.scene
         rd = scene.render
 
-        layout.menu("TOOLBAR_MT_file") # see class TOOLBAR_MT_file below
+        layout.menu("TOOLBAR_MT_toolbars_file_menu") # see class TOOLBAR_MT_file below
 
 
 ##################### Load Save sub toolbars menu
 
-class TOOLBAR_MT_file(Menu):
+class TOOLBAR_MT_toolbars_file_menu(Menu):
     bl_label = "Toolbars File"
 
     def draw(self, context):
@@ -139,8 +139,8 @@ class TOOLBAR_MT_file(Menu):
             
 ############### bfa - Load Save menu hidable by the flag in the right click menu
 
-class TOOLBAR_MT_loadsave(Menu):
-    bl_idname = "TOOLBAR_MT_loadsave"
+class TOOLBAR_MT_file(Menu):
+    bl_idname = "TOOLBAR_MT_file"
     bl_label = ""
 
     def draw(self, context):
