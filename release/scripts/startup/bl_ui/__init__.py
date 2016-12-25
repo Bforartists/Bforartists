@@ -98,27 +98,27 @@ class UITweaksData(bpy.types.PropertyGroup):
 
 # bfa - Load Save
 class UIToolbarLoadsave(bpy.types.PropertyGroup):
-    loadsave_bool = bpy.props.BoolProperty(name="Load / Save", description="Display the Load / Save Toolbar", default = True) # Our prop
+    bool = bpy.props.BoolProperty(name="Load / Save", description="Display the Load / Save Toolbar", default = True) # Our prop
 
 # bfa - Load Save
 class UIToolbarLinkappend(bpy.types.PropertyGroup):
-    linkappend_bool = bpy.props.BoolProperty(name="Link Append", description="Display the Link Append Toolbar", default = True) # Our prop
+    bool = bpy.props.BoolProperty(name="Link Append", description="Display the Link Append Toolbar", default = True) # Our prop
 
 # bfa - Import common
 class UIToolbarImportCommon(bpy.types.PropertyGroup):
-    importcommon_bool = bpy.props.BoolProperty(name="Import common", description="Display the Import common Toolbar", default = True) # Our prop
+    bool = bpy.props.BoolProperty(name="Import common", description="Display the Import common Toolbar", default = True) # Our prop
 
 # bfa - Import uncommon
 class UIToolbarImportUncommon(bpy.types.PropertyGroup):
-    importuncommon_bool = bpy.props.BoolProperty(name="Import uncommon", description="Display the Import uncommon Toolbar", default = True) # Our prop
+    bool = bpy.props.BoolProperty(name="Import uncommon", description="Display the Import uncommon Toolbar", default = True) # Our prop
 
-# bfa - Import common
+# bfa - Export common
 class UIToolbarExportCommon(bpy.types.PropertyGroup):
-    exportcommon_bool = bpy.props.BoolProperty(name="Export common", description="Display the Export common Toolbar", default = True) # Our prop
+    bool = bpy.props.BoolProperty(name="Export common", description="Display the Export common Toolbar", default = True) # Our prop
 
-# bfa - Import uncommon
+# bfa - Export uncommon
 class UIToolbarExportUncommon(bpy.types.PropertyGroup):
-    exportuncommon_bool = bpy.props.BoolProperty(name="Export uncommon", description="Display the Export uncommon Toolbar", default = True) # Our prop
+    bool = bpy.props.BoolProperty(name="Export uncommon", description="Display the Export uncommon Toolbar", default = True) # Our prop
 
 #################################
 
@@ -169,27 +169,27 @@ def register():
 
     # bfa - Load Save
     bpy.utils.register_class(UIToolbarLoadsave) # Our data block
-    bpy.types.Scene.toolbar_loadsave = bpy.props.PointerProperty(type=UIToolbarLoadsave) # Bind reference of type of our data block to type Scene objects
+    bpy.types.Scene.toolbar_file_loadsave = bpy.props.PointerProperty(type=UIToolbarLoadsave) # Bind reference of type of our data block to type Scene objects
 
     # bfa - Link Append
     bpy.utils.register_class(UIToolbarLinkappend) # Our data block
-    bpy.types.Scene.toolbar_linkappend = bpy.props.PointerProperty(type=UIToolbarLinkappend) # Bind reference of type of our data block to type Scene objects
+    bpy.types.Scene.toolbar_file_linkappend = bpy.props.PointerProperty(type=UIToolbarLinkappend) # Bind reference of type of our data block to type Scene objects
 
     # bfa - Import common
     bpy.utils.register_class(UIToolbarImportCommon) # Our data block
-    bpy.types.Scene.toolbar_importcommon = bpy.props.PointerProperty(type=UIToolbarImportCommon)
+    bpy.types.Scene.toolbar_file_importcommon = bpy.props.PointerProperty(type=UIToolbarImportCommon)
 
     # bfa - Import uncommon
     bpy.utils.register_class(UIToolbarImportUncommon) # Our data block
-    bpy.types.Scene.toolbar_importuncommon = bpy.props.PointerProperty(type=UIToolbarImportUncommon)
+    bpy.types.Scene.toolbar_file_importuncommon = bpy.props.PointerProperty(type=UIToolbarImportUncommon)
 
     # bfa - Export common
     bpy.utils.register_class(UIToolbarExportCommon) # Our data block
-    bpy.types.Scene.toolbar_exportcommon = bpy.props.PointerProperty(type=UIToolbarExportCommon)
+    bpy.types.Scene.toolbar_file_exportcommon = bpy.props.PointerProperty(type=UIToolbarExportCommon)
 
     # bfa - Export uncommon
     bpy.utils.register_class(UIToolbarExportUncommon) # Our data block
-    bpy.types.Scene.toolbar_exportuncommon = bpy.props.PointerProperty(type=UIToolbarExportUncommon)
+    bpy.types.Scene.toolbar_file_exportuncommon = bpy.props.PointerProperty(type=UIToolbarExportUncommon)
 
     #######################################################################
 

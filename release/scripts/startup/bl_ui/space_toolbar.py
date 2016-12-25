@@ -127,15 +127,15 @@ class TOOLBAR_MT_toolbars_file_menu(Menu):
         layout = self.layout
 
         scene = context.scene
-        layout.prop(scene.toolbar_loadsave, "loadsave_bool") # Our checkbox
+        layout.prop(scene.toolbar_file_loadsave, "bool") # Our checkbox
 
-        layout.prop(scene.toolbar_linkappend, "linkappend_bool") # Our checkbox
+        layout.prop(scene.toolbar_file_linkappend, "bool") # Our checkbox
 
-        layout.prop(scene.toolbar_importcommon, "importcommon_bool") # Our checkbox
-        layout.prop(scene.toolbar_importuncommon, "importuncommon_bool") # Our checkbox
-        layout.prop(scene.toolbar_exportcommon, "exportcommon_bool") # Our checkbox
-        layout.prop(scene.toolbar_exportuncommon, "exportuncommon_bool") # Our checkbox
-        
+        layout.prop(scene.toolbar_file_importcommon, "bool") # Our checkbox
+        layout.prop(scene.toolbar_file_importuncommon, "bool") # Our checkbox
+        layout.prop(scene.toolbar_file_exportcommon, "bool") # Our checkbox
+        layout.prop(scene.toolbar_file_exportuncommon, "bool") # Our checkbox
+        layout.prop(scene.toolbar_file_render, "bool") # Our checkbox  
             
 ############### bfa - Load Save menu hidable by the flag in the right click menu
 
@@ -155,7 +155,7 @@ class TOOLBAR_MT_file(Menu):
 
         ## ------------------ Load / Save sub toolbars
 
-        if scene.toolbar_loadsave.loadsave_bool: 
+        if scene.toolbar_file_loadsave.bool: 
 
             row = layout.row(align=True)
 
@@ -174,7 +174,7 @@ class TOOLBAR_MT_file(Menu):
 
         ## ------------------ Link Append
 
-        if scene.toolbar_linkappend.linkappend_bool: 
+        if scene.toolbar_file_linkappend.bool: 
 
             row = layout.row(align=True)
 
@@ -183,7 +183,7 @@ class TOOLBAR_MT_file(Menu):
 
         ## ------------------ Import common
 
-        if scene.toolbar_importcommon.importcommon_bool:
+        if scene.toolbar_file_importcommon.bool:
 
             row = layout.row(align=True)
 
@@ -195,7 +195,7 @@ class TOOLBAR_MT_file(Menu):
 
         ## ------------------ Import uncommon
 
-        if scene.toolbar_importuncommon.importuncommon_bool:
+        if scene.toolbar_file_importuncommon.bool:
 
             row = layout.row(align=True)
 
@@ -206,7 +206,7 @@ class TOOLBAR_MT_file(Menu):
             
         ## ------------------ Export common
 
-        if scene.toolbar_exportcommon.exportcommon_bool:
+        if scene.toolbar_file_exportcommon.bool:
 
             row = layout.row(align=True)
 
@@ -218,7 +218,7 @@ class TOOLBAR_MT_file(Menu):
 
         ## ------------------ Export uncommon
 
-        if scene.toolbar_exportuncommon.exportuncommon_bool:
+        if scene.toolbar_file_exportuncommon.bool:
 
             row = layout.row(align=True)
 
