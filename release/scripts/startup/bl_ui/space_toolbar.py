@@ -136,6 +136,8 @@ class TOOLBAR_MT_toolbars_file_menu(Menu):
         layout.prop(scene.toolbar_file_exportcommon, "bool") # Our checkbox
         layout.prop(scene.toolbar_file_exportuncommon, "bool") # Our checkbox
         layout.prop(scene.toolbar_file_render, "bool") # Our checkbox  
+        layout.prop(scene.toolbar_file_render_view, "bool") # Our checkbox  
+        layout.prop(scene.toolbar_file_render_misc, "bool") # Our checkbox  
             
 ############### bfa - Load Save menu hidable by the flag in the right click menu
 
@@ -224,7 +226,41 @@ class TOOLBAR_MT_file(Menu):
 
             row.operator("export_mesh.stl", text="", icon='SAVE_STL')
             row.operator("export_mesh.ply", text="", icon='SAVE_PLY')
-            row.operator("export_scene.x3d", text="", icon='SAVE_WRL')      
+            row.operator("export_scene.x3d", text="", icon='SAVE_WRL') 
+
+        ## ------------------ Render
+
+        if scene.toolbar_file_render.bool:
+
+            row = layout.row(align=True)
+
+            row.operator("render.render", text="", icon='RENDER_STILL').use_viewport = True
+            props = row.operator("render.render", text="", icon='RENDER_ANIMATION')
+            props.animation = True
+            props.use_viewport = True
+
+        ## ------------------ Render
+
+        if scene.toolbar_file_render_view.bool:
+
+            row = layout.row(align=True)
+
+            row.operator("render.opengl", text="", icon = 'RENDER_STILL_VIEW')
+            row.operator("render.opengl", text="", icon = 'RENDER_ANI_VIEW').animation = True
+            row.menu("INFO_MT_opengl_render", text = "", icon='TRIA_UP')
+
+        ## ------------------ Render
+
+        if scene.toolbar_file_render_misc.bool:
+
+            row = layout.row(align=True)
+
+            row.operator("sound.mixdown", text="", icon='PLAY_AUDIO')
+
+            row = layout.row(align=True)
+
+            row.operator("render.view_show", text="")
+            row.operator("render.play_rendered_anim", icon='PLAY', text="")
 
 
 if __name__ == "__main__":  # only for live edit.

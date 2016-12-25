@@ -120,6 +120,18 @@ class UIToolbarExportCommon(bpy.types.PropertyGroup):
 class UIToolbarExportUncommon(bpy.types.PropertyGroup):
     bool = bpy.props.BoolProperty(name="Export uncommon", description="Display the Export uncommon Toolbar", default = True) # Our prop
 
+# bfa - Render
+class UIToolbarFileRender(bpy.types.PropertyGroup):
+    bool = bpy.props.BoolProperty(name="Render", description="Display the Render Toolbar", default = True) # Our prop
+
+# bfa - Render Víew
+class UIToolbarFileRenderView(bpy.types.PropertyGroup):
+    bool = bpy.props.BoolProperty(name="Render Open GL", description="Display the Render View Toolbar", default = True) # Our prop#
+
+# bfa - Render
+class UIToolbarFileRenderMisc(bpy.types.PropertyGroup):
+    bool = bpy.props.BoolProperty(name="Render Misc", description="Display the Render Misc Toolbar", default = True) # Our prop
+
 #################################
 
 
@@ -190,6 +202,19 @@ def register():
     # bfa - Export uncommon
     bpy.utils.register_class(UIToolbarExportUncommon) # Our data block
     bpy.types.Scene.toolbar_file_exportuncommon = bpy.props.PointerProperty(type=UIToolbarExportUncommon)
+
+    # bfa - Render
+    bpy.utils.register_class(UIToolbarFileRender) # Our data block
+    bpy.types.Scene.toolbar_file_render = bpy.props.PointerProperty(type=UIToolbarFileRender)
+
+    # bfa - Render view
+    bpy.utils.register_class(UIToolbarFileRenderView) # Our data block
+    bpy.types.Scene.toolbar_file_render_view = bpy.props.PointerProperty(type=UIToolbarFileRenderView)
+
+    # bfa - Render misc
+    bpy.utils.register_class(UIToolbarFileRenderMisc) # Our data block
+    bpy.types.Scene.toolbar_file_render_misc = bpy.props.PointerProperty(type=UIToolbarFileRenderMisc)
+
 
     #######################################################################
 
@@ -285,11 +310,12 @@ def unregister():
     ############################ Toolbar props File #################################
 
     bpy.utils.unregister_class(UIToolbarLoadsave) # Our data block
-    bpy.utils.unregister_class(UIToolbarLinkappend) # Our data block
-    bpy.utils.unregister_class(UIToolbarImportCommon) # Our data block
-    bpy.utils.unregister_class(UIToolbarImportUncommon) # Our data block
-    bpy.utils.unregister_class(UIToolbarExportCommon) # Our data block
-    bpy.utils.unregister_class(UIToolbarExportUncommon) # Our data block
+    bpy.utils.unregister_class(UIToolbarLinkappend)
+    bpy.utils.unregister_class(UIToolbarImportCommon)
+    bpy.utils.unregister_class(UIToolbarImportUncommon)
+    bpy.utils.unregister_class(UIToolbarExportCommon)
+    bpy.utils.unregister_class(UIToolbarExportUncommon)
+    bpy.utils.unregister_class(UIToolbarFileRender)
 
     ############################################################################
 
