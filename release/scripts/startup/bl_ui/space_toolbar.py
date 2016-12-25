@@ -259,7 +259,7 @@ class TOOLBAR_MT_file(Menu):
 
             row = layout.row(align=True)
 
-            row.operator("render.view_show", text="")
+            row.operator("render.view_show", text="", icon = 'HIDE_RENDERVIEW')
             row.operator("render.play_rendered_anim", icon='PLAY', text="")
 
 
