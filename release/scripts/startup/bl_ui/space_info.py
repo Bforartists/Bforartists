@@ -324,8 +324,8 @@ class INFO_MT_render(Menu):
 
         layout.separator()
 
-        layout.operator("render.opengl", text="OpenGL Render Image")
-        layout.operator("render.opengl", text="OpenGL Render Animation").animation = True
+        layout.operator("render.opengl", text="OpenGL Render Image", icon = 'RENDER_STILL_VIEW')
+        layout.operator("render.opengl", text="OpenGL Render Animation", icon = 'RENDER_ANI_VIEW').animation = True
         layout.menu("INFO_MT_opengl_render")
 
         layout.separator()
