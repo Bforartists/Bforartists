@@ -77,7 +77,7 @@ class Reset3dView(bpy.types.Operator):
         return {'FINISHED'}
     
 def menu_func(self, context):
-    self.layout.operator(Reset3dView.bl_idname)
+    self.layout.operator(Reset3dView.bl_idname, icon ="VIEW_RESET")
    
 
 def register():

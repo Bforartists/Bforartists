@@ -383,6 +383,20 @@ class VIEW3D_MT_toright(bpy.types.Operator):
                 bpy.ops.view3d.viewnumpad(override, type='RIGHT', align_active=False)
         return {'FINISHED'} 
 
+class VIEW3D_MT_reset3dview(bpy.types.Operator):
+    """Reset 3D View \nThis button is global, and changes all available 3D views\nUse the View menu to change the view just in selected 3d view"""
+    bl_idname = "view3d.rese3dtview"
+    bl_label = "view from right"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context): 
+        for area in bpy.context.screen.areas:
+            if area.type == 'VIEW_3D':
+                override = bpy.context.copy()
+                override['area'] = area
+                bpy.ops.view.reset_3d_view()
+        return {'FINISHED'} 
+
             
 ############### bfa - Load Save menu hidable by the flag in the right click menu
 
@@ -406,12 +420,15 @@ class TOOLBAR_MT_view(Menu):
 
             row = layout.row(align=True)
 
-            row.operator("view3d.totop", text="Top")
-            row.operator("view3d.tobottom", text="Bottom")
-            row.operator("view3d.tofront", text="Front")
-            row.operator("view3d.toback", text="Back")
-            row.operator("view3d.toright", text="Right")
-            row.operator("view3d.toleft", text="Left")
+            
+            row.operator("view3d.tofront", text="", icon ="VIEW_FRONT")
+            row.operator("view3d.toback", text="", icon ="VIEW_BACK")
+            row.operator("view3d.toleft", text="", icon ="VIEW_LEFT")
+            row.operator("view3d.toright", text="", icon ="VIEW_RIGHT")
+            row.operator("view3d.totop", text="", icon ="VIEW_TOP")
+            row.operator("view3d.tobottom", text="", icon ="VIEW_BOTTOM")
+            row.operator("view3d.rese3dtview", text="", icon ="VIEW_RESET")
+            
 
 
 
