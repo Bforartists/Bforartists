@@ -288,6 +288,8 @@ enum {
 	HEADER_NO_EDITORTYPEMENU = (1 << 9),
 	// bfa - show hide the file toolbars
 	HEADER_TOOLBAR_FILE = (1 << 10),
+	// bfa - show hide the view toolbars
+	HEADER_TOOLBAR_VIEW = (1 << 11),
 };
 
 #define EDGEWIDTH	1

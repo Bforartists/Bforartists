@@ -788,12 +788,16 @@ class Menu(StructRNA, _GenericUI, metaclass=RNAMeta):
         if context.area.show_editortypemenu:
             cls.draw_menus(layout, context)
 
-            # bfa - show hide the editortypemenu
+    # bfa - show hide the file toolbar
     @classmethod
     def hide_file_toolbar(cls, context, layout):
-        # helper function for (optionally) hidden editortype menu
-        # only usable within headers
         if context.area.file_toolbars:
+            cls.draw_menus(layout, context)
+
+    # bfa - show hide the view toolbar
+    @classmethod
+    def hide_view_toolbar(cls, context, layout):
+        if context.area.view_toolbars:
             cls.draw_menus(layout, context)
 
 

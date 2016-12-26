@@ -35,7 +35,8 @@ class TOOLBAR_HT_header(Header):
 
         ############## toolbars ##########################################################################
 
-        TOOLBAR_MT_file.hide_file_toolbar(context, layout) # bfa - show hide the complete load save toolbar container
+        TOOLBAR_MT_file.hide_file_toolbar(context, layout) # bfa - show hide the complete file toolbar container
+        TOOLBAR_MT_view.hide_view_toolbar(context, layout) # bfa - show hide the complete view toolbar container
 
 ########################################################################
 
@@ -90,6 +91,7 @@ class TOOLBAR_MT_type(Menu):
         #layout.prop(rd, "use_stamp") # This one works. Why not the prop in the screen?
 
         layout.operator("screen.header_toolbar_file") 
+        layout.operator("screen.header_toolbar_view") 
 
         # layout.prop(screen,"header_toggle_menus") # why does this not work?
 
@@ -100,7 +102,7 @@ class TOOLBAR_MT_type(Menu):
 ######################################## LoadSave ##############################################
 
 
-#################### Holds the Toolbars menu for Load Save, collapsible
+#################### Holds the Toolbars menu for file, collapsible
 
 class TOOLBAR_MT_menu_loadsave(Menu):
     bl_idname = "TOOLBAR_MT_menu_loadsave"
@@ -261,6 +263,156 @@ class TOOLBAR_MT_file(Menu):
 
             row.operator("render.view_show", text="", icon = 'HIDE_RENDERVIEW')
             row.operator("render.play_rendered_anim", icon='PLAY', text="")
+
+######################################## View ##############################################
+
+
+#################### Holds the Toolbars menu for view, collapsible
+
+class TOOLBAR_MT_menu_view(Menu):
+    bl_idname = "TOOLBAR_MT_menu_view"
+    bl_label = ""
+
+    def draw(self, context):
+        self.draw_menus(self.layout, context)
+        
+
+    @staticmethod
+    def draw_menus(layout, context):
+        scene = context.scene
+        rd = scene.render
+
+        layout.menu("TOOLBAR_MT_toolbars_view_menu") # see class TOOLBAR_MT_file below
+
+
+##################### Load Save sub toolbars menu
+
+class TOOLBAR_MT_toolbars_view_menu(Menu):
+    bl_label = "Toolbars View"
+
+    def draw(self, context):
+        layout = self.layout
+
+        scene = context.scene
+        layout.prop(scene.toolbar_view_align, "bool") # Our checkbox
+
+
+############### Change view classes
+
+class VIEW3D_MT_totop(bpy.types.Operator):
+    """Change view to Top\nThis button is global, and changes all available 3D views\nUse the View menu to change the view just in selected 3d view"""
+    bl_idname = "view3d.totop"
+    bl_label = "view from top"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context): 
+        for area in bpy.context.screen.areas:
+            if area.type == 'VIEW_3D':
+                override = bpy.context.copy()
+                override['area'] = area
+                bpy.ops.view3d.viewnumpad(override, type='TOP', align_active=False)
+        return {'FINISHED'} 
+
+class VIEW3D_MT_tobottom(bpy.types.Operator):
+    """Change view to Bottom\nThis button is global, and changes all available 3D views\nUse the View menu to change the view just in selected 3d view"""
+    bl_idname = "view3d.tobottom"
+    bl_label = "view from bottom"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        for area in bpy.context.screen.areas:
+            if area.type == 'VIEW_3D':
+                override = bpy.context.copy()
+                override['area'] = area
+                bpy.ops.view3d.viewnumpad(override, type='BOTTOM', align_active=False)
+        return {'FINISHED'} 
+
+class VIEW3D_MT_tofront(bpy.types.Operator):
+    """Change view to Top\nThis button is global, and changes all available 3D views\nUse the View menu to change the view just in selected 3d view"""
+    bl_idname = "view3d.tofront"
+    bl_label = "view from front"
+    bl_options = {'REGISTER', 'UNDO'}
+    def execute(self, context):
+
+        for area in bpy.context.screen.areas:
+            if area.type == 'VIEW_3D':
+                override = bpy.context.copy()
+                override['area'] = area
+                bpy.ops.view3d.viewnumpad(override, type='FRONT', align_active=False)
+        return {'FINISHED'} 
+
+class VIEW3D_MT_tobback(bpy.types.Operator):
+    """Change view to Bottom\nThis button is global, and changes all available 3D views\nUse the View menu to change the view just in selected 3d view"""
+    bl_idname = "view3d.toback"
+    bl_label = "view from back"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        for area in bpy.context.screen.areas:
+            if area.type == 'VIEW_3D':
+                override = bpy.context.copy()
+                override['area'] = area
+                bpy.ops.view3d.viewnumpad(override, type='BACK', align_active=False)
+        return {'FINISHED'} 
+
+class VIEW3D_MT_toleft(bpy.types.Operator):
+    """Change view to Left\nThis button is global, and changes all available 3D views\nUse the View menu to change the view just in selected 3d view"""
+    bl_idname = "view3d.toleft"
+    bl_label = "view from left"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        for area in bpy.context.screen.areas:
+            if area.type == 'VIEW_3D':
+                override = bpy.context.copy()
+                override['area'] = area
+                bpy.ops.view3d.viewnumpad(override, type='LEFT', align_active=False)
+        return {'FINISHED'} 
+
+class VIEW3D_MT_toright(bpy.types.Operator):
+    """Change view to Right\nThis button is global, and changes all available 3D views\nUse the View menu to change the view just in selected 3d view"""
+    bl_idname = "view3d.toright"
+    bl_label = "view from right"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context): 
+        for area in bpy.context.screen.areas:
+            if area.type == 'VIEW_3D':
+                override = bpy.context.copy()
+                override['area'] = area
+                bpy.ops.view3d.viewnumpad(override, type='RIGHT', align_active=False)
+        return {'FINISHED'} 
+
+            
+############### bfa - Load Save menu hidable by the flag in the right click menu
+
+class TOOLBAR_MT_view(Menu):
+    bl_idname = "TOOLBAR_MT_view"
+    bl_label = ""
+
+    def draw(self, context):
+        self.draw_menus(self.layout, context)     
+
+    @staticmethod
+    def draw_menus(layout, context):
+        scene = context.scene
+        #rd = scene.render
+
+        TOOLBAR_MT_menu_view.draw_collapsible(context, layout)
+
+        ## ------------------ Load / Save sub toolbars
+
+        if scene.toolbar_view_align.bool: 
+
+            row = layout.row(align=True)
+
+            row.operator("view3d.totop", text="Top")
+            row.operator("view3d.tobottom", text="Bottom")
+            row.operator("view3d.tofront", text="Front")
+            row.operator("view3d.toback", text="Back")
+            row.operator("view3d.toright", text="Right")
+            row.operator("view3d.toleft", text="Left")
+
 
 
 if __name__ == "__main__":  # only for live edit.

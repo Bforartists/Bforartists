@@ -3301,7 +3301,7 @@ static void SCREEN_OT_header_toggle_editortypemenu(wmOperatorType *ot)
 	ot->flag = 0;
 }
 
-// bfa - show hide the toolbar menus
+// bfa - show hide the file toolbar menus
 static int header_toolbar_file_exec(bContext *C, wmOperator *UNUSED(op))
 {
 	ScrArea *sa = CTX_wm_area(C);
@@ -3322,6 +3322,31 @@ static void SCREEN_OT_header_toolbar_file(wmOperatorType *ot)
 
 	/* api callbacks */
 	ot->exec = header_toolbar_file_exec;
+	ot->poll = ED_operator_areaactive;
+	ot->flag = 0;
+}
+
+// bfa - show hide the view toolbar menus
+static int header_toolbar_view_exec(bContext *C, wmOperator *UNUSED(op))
+{
+	ScrArea *sa = CTX_wm_area(C);
+
+	sa->flag = sa->flag ^ HEADER_TOOLBAR_VIEW;
+
+	ED_area_tag_redraw(sa);
+	WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, NULL);
+
+	return OPERATOR_FINISHED;
+}
+static void SCREEN_OT_header_toolbar_view(wmOperatorType *ot)
+{
+	/* identifiers */
+	ot->name = "Toolbar View";
+	ot->idname = "SCREEN_OT_header_toolbar_view";
+	ot->description = "Show or Hide the View toolbars";
+
+	/* api callbacks */
+	ot->exec = header_toolbar_view_exec;
 	ot->poll = ED_operator_areaactive;
 	ot->flag = 0;
 }
@@ -4245,7 +4270,8 @@ void ED_operatortypes_screen(void)
 	WM_operatortype_append(SCREEN_OT_header);
 	WM_operatortype_append(SCREEN_OT_header_toggle_menus);
 	WM_operatortype_append(SCREEN_OT_header_toggle_editortypemenu); // bfa - show hide the editorsmenu
-	WM_operatortype_append(SCREEN_OT_header_toolbar_file); // bfa - show hide the loadsave toolbar
+	WM_operatortype_append(SCREEN_OT_header_toolbar_file); // bfa - show hide the file toolbar
+	WM_operatortype_append(SCREEN_OT_header_toolbar_view); // bfa - show hide the view toolbar
 	WM_operatortype_append(SCREEN_OT_header_toolbox);
 	WM_operatortype_append(SCREEN_OT_screen_set);
 	WM_operatortype_append(SCREEN_OT_screen_full_area);
