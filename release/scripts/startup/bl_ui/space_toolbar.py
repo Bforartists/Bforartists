@@ -37,6 +37,7 @@ class TOOLBAR_HT_header(Header):
 
         TOOLBAR_MT_file.hide_file_toolbar(context, layout) # bfa - show hide the complete file toolbar container
         TOOLBAR_MT_view.hide_view_toolbar(context, layout) # bfa - show hide the complete view toolbar container
+        TOOLBAR_MT_primitives.hide_primitives_toolbar(context, layout) # bfa - show hide the complete view toolbar container
 
 ########################################################################
 
@@ -91,7 +92,8 @@ class TOOLBAR_MT_type(Menu):
         #layout.prop(rd, "use_stamp") # This one works. Why not the prop in the screen?
 
         layout.operator("screen.header_toolbar_file") 
-        layout.operator("screen.header_toolbar_view") 
+        layout.operator("screen.header_toolbar_view")
+        layout.operator("screen.header_toolbar_primitives") 
 
         # layout.prop(screen,"header_toggle_menus") # why does this not work?
 
@@ -468,6 +470,62 @@ class TOOLBAR_MT_view(Menu):
             row.operator("view3d.switchactivecam", text="", icon ="VIEW_SWITCHACTIVECAM")
             
 
+######################################## Primitives ##############################################
+
+
+#################### Holds the Toolbars menu for Primitives, collapsible
+
+class TOOLBAR_MT_menu_primitives(Menu):
+    bl_idname = "TOOLBAR_MT_menu_primitives"
+    bl_label = ""
+
+    def draw(self, context):
+        self.draw_menus(self.layout, context)
+        
+
+    @staticmethod
+    def draw_menus(layout, context):
+        scene = context.scene
+        rd = scene.render
+
+        layout.menu("TOOLBAR_MT_toolbars_primitives_menu") # see class below
+
+
+##################### Primitives toolbars menu
+
+class TOOLBAR_MT_toolbars_primitives_menu(Menu):
+    bl_label = "Toolbars Primitives"
+
+    def draw(self, context):
+        layout = self.layout
+
+        scene = context.scene
+        layout.prop(scene.toolbar_primitives_mesh, "bool") # Our checkbox
+
+            
+############### bfa - Load Save menu hidable by the flag in the right click menu
+
+class TOOLBAR_MT_primitives(Menu):
+    bl_idname = "TOOLBAR_MT_primitives"
+    bl_label = ""
+
+    def draw(self, context):
+        self.draw_menus(self.layout, context)     
+
+    @staticmethod
+    def draw_menus(layout, context):
+        scene = context.scene
+        #rd = scene.render
+
+        TOOLBAR_MT_menu_primitives.draw_collapsible(context, layout)
+
+        ## ------------------ primitives sub toolbars
+
+        if scene.toolbar_primitives_mesh.bool: 
+
+            row = layout.row(align=True)
+
+            row.operator("wm.save_mainfile", text="", icon='FILE_TICK') # placeholder
 
 
 if __name__ == "__main__":  # only for live edit.
