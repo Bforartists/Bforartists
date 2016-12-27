@@ -134,7 +134,6 @@ class UIToolbarFileRenderMisc(bpy.types.PropertyGroup):
 
 ############################ Toolbar props View #################################
 
-
 # bfa - Align
 class UIToolbarViewAlign(bpy.types.PropertyGroup):
     bool = bpy.props.BoolProperty(name="Align", description="Display the Align Toolbar", default = True) # Our prop
@@ -142,6 +141,12 @@ class UIToolbarViewAlign(bpy.types.PropertyGroup):
 # bfa - Camera
 class UIToolbarViewCamera(bpy.types.PropertyGroup):
     bool = bpy.props.BoolProperty(name="Camera", description="Display the Camera Toolbar", default = True) # Our prop
+
+############################ Toolbar props Primitives #################################
+
+# bfa - Mesh
+class UIToolbarPrimitivesMesh(bpy.types.PropertyGroup):
+    bool = bpy.props.BoolProperty(name="Mesh", description="Display the Mesh Toolbar", default = True) # Our prop
 
 #################################
 
@@ -236,6 +241,12 @@ def register():
     # bfa - Camera
     bpy.utils.register_class(UIToolbarViewCamera) # Our data block
     bpy.types.Scene.toolbar_view_camera = bpy.props.PointerProperty(type=UIToolbarViewCamera) # Bind reference of type of our data block to type Scene objects
+
+    ############################ Toolbar props Primitives #################################
+
+    # bfa - Mesh
+    bpy.utils.register_class(UIToolbarPrimitivesMesh) # Our data block
+    bpy.types.Scene.toolbar_primitives_mesh = bpy.props.PointerProperty(type=UIToolbarPrimitivesMesh) # Bind reference of type of our data block to type Scene objects
 
     #######################################################################
 
@@ -342,6 +353,10 @@ def unregister():
 
     bpy.utils.unregister_class(UIToolbarViewAlign)
     bpy.utils.unregister_class(UIToolbarViewCamera)
+
+    ############################ Toolbar props Primitives #################################
+
+    bpy.utils.unregister_class(UIToolbarPrimitivesMesh)
 
     ############################################################################
 
