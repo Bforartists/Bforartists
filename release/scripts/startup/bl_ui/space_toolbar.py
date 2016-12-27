@@ -295,6 +295,7 @@ class TOOLBAR_MT_toolbars_view_menu(Menu):
 
         scene = context.scene
         layout.prop(scene.toolbar_view_align, "bool") # Our checkbox
+        layout.prop(scene.toolbar_view_camera, "bool") # Our checkbox
 
 
 ############### Change view classes
@@ -397,6 +398,35 @@ class VIEW3D_MT_reset3dview(bpy.types.Operator):
                 bpy.ops.view.reset_3d_view()
         return {'FINISHED'} 
 
+class VIEW3D_MT_tocam(bpy.types.Operator):
+    """Switch to / from Camera view\nSwitches the scene display between active camera and world camera\nThis button is global, and changes all available 3D views\nUse the View menu to change the view just in selected 3d view"""
+    bl_idname = "view3d.tocam"
+    bl_label = "view from active camera"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context): 
+        for area in bpy.context.screen.areas:
+            if area.type == 'VIEW_3D':
+                override = bpy.context.copy()
+                override['area'] = area
+                bpy.ops.view3d.viewnumpad(override, type='CAMERA', align_active=False)
+        return {'FINISHED'} 
+
+class VIEW3D_MT_switchactivecam(bpy.types.Operator):
+    """Set Active Camera\nBe careful, you can also set objects as the active camera, not only other cameras.\nSo make sure that a camera is selected."""
+    bl_idname = "view3d.switchactivecam"
+    bl_label = "Set active Camera"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context): 
+
+        context = bpy.context
+        scene = context.scene
+        if context.active_object is not None:
+            currentCameraObj = bpy.data.objects[bpy.context.active_object.name]
+            scene.camera = currentCameraObj     
+        return {'FINISHED'} 
+
             
 ############### bfa - Load Save menu hidable by the flag in the right click menu
 
@@ -419,7 +449,6 @@ class TOOLBAR_MT_view(Menu):
         if scene.toolbar_view_align.bool: 
 
             row = layout.row(align=True)
-
             
             row.operator("view3d.tofront", text="", icon ="VIEW_FRONT")
             row.operator("view3d.toback", text="", icon ="VIEW_BACK")
@@ -428,6 +457,15 @@ class TOOLBAR_MT_view(Menu):
             row.operator("view3d.totop", text="", icon ="VIEW_TOP")
             row.operator("view3d.tobottom", text="", icon ="VIEW_BOTTOM")
             row.operator("view3d.rese3dtview", text="", icon ="VIEW_RESET")
+
+        ## ------------------ Load / Save sub toolbars
+
+        if scene.toolbar_view_camera.bool: 
+
+            row = layout.row(align=True)
+            
+            row.operator("view3d.tocam", text="", icon ="VIEW_SWITCHTOCAM")
+            row.operator("view3d.switchactivecam", text="", icon ="VIEW_SWITCHACTIVECAM")
             
 
 

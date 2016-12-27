@@ -139,6 +139,10 @@ class UIToolbarFileRenderMisc(bpy.types.PropertyGroup):
 class UIToolbarViewAlign(bpy.types.PropertyGroup):
     bool = bpy.props.BoolProperty(name="Align", description="Display the Align Toolbar", default = True) # Our prop
 
+# bfa - Camera
+class UIToolbarViewCamera(bpy.types.PropertyGroup):
+    bool = bpy.props.BoolProperty(name="Camera", description="Display the Camera Toolbar", default = True) # Our prop
+
 #################################
 
 
@@ -229,6 +233,9 @@ def register():
     bpy.utils.register_class(UIToolbarViewAlign) # Our data block
     bpy.types.Scene.toolbar_view_align = bpy.props.PointerProperty(type=UIToolbarViewAlign) # Bind reference of type of our data block to type Scene objects
 
+    # bfa - Camera
+    bpy.utils.register_class(UIToolbarViewCamera) # Our data block
+    bpy.types.Scene.toolbar_view_camera = bpy.props.PointerProperty(type=UIToolbarViewCamera) # Bind reference of type of our data block to type Scene objects
 
     #######################################################################
 
@@ -334,6 +341,7 @@ def unregister():
     ############################ Toolbar props File #################################
 
     bpy.utils.unregister_class(UIToolbarViewAlign)
+    bpy.utils.unregister_class(UIToolbarViewCamera)
 
     ############################################################################
 
