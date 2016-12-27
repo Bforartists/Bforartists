@@ -490,7 +490,7 @@ class SCENE_PT_namedlayer_layers(bpy.types.Panel):
                 row.prop(layer_cont, "layers", index=layer_idx, emboss=True, icon=icon, toggle=True, text="")
 
             # Name (use special icon for active layer)
-            icon = 'FILE_TICK' if (getattr(layer_cont, "active_layer", -1) == layer_idx) else 'NONE'
+            icon = 'HAND' if (getattr(layer_cont, "active_layer", -1) == layer_idx) else 'NONE'
             row.prop(namedlayer, "name", text="", icon=icon)
 
             if use_extra:
