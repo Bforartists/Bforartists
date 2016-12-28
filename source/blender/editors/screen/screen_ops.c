@@ -4297,7 +4297,7 @@ void ED_operatortypes_screen(void)
 	WM_operatortype_append(SCREEN_OT_header_toggle_editortypemenu); // bfa - show hide the editorsmenu
 	WM_operatortype_append(SCREEN_OT_header_toolbar_file); // bfa - show hide the file toolbar
 	WM_operatortype_append(SCREEN_OT_header_toolbar_view); // bfa - show hide the view toolbar
-	WM_operatortype_append(SCREEN_OT_header_toolbar_primitives); // bfa - show hide the view toolbar
+	WM_operatortype_append(SCREEN_OT_header_toolbar_primitives); // bfa - show hide the primitives toolbar
 	WM_operatortype_append(SCREEN_OT_header_toolbox);
 	WM_operatortype_append(SCREEN_OT_screen_set);
 	WM_operatortype_append(SCREEN_OT_screen_full_area);
