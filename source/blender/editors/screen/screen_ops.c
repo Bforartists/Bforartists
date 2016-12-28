@@ -3439,6 +3439,56 @@ static void SCREEN_OT_header_toolbox(wmOperatorType *ot)
 	ot->invoke = header_toolbox_invoke;
 }
 
+
+/* ************** toolbar tools operator ***************************** */
+void ED_screens_toolbar_tools_menu_create(bContext *C, uiLayout *layout, void *UNUSED(arg))
+{
+	ScrArea *sa = CTX_wm_area(C);
+	ARegion *ar = CTX_wm_region(C);
+
+	// bfa - show hide the file toolbar
+	uiItemO(layout, IFACE_("Toolbar File"),
+		(sa->flag & HEADER_TOOLBAR_FILE) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
+		"SCREEN_OT_header_toolbar_file");
+
+	// bfa - show hide the file toolbar
+	uiItemO(layout, IFACE_("Toolbar View"),
+		(sa->flag & HEADER_TOOLBAR_VIEW) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
+		"SCREEN_OT_header_toolbar_view");
+
+	// bfa - show hide the file toolbar
+	uiItemO(layout, IFACE_("Toolbar Primitives"),
+		(sa->flag & HEADER_TOOLBAR_PRIMITIVES) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
+		"SCREEN_OT_header_toolbar_primitives");
+
+}
+
+static int toolbar_toolbox_invoke(bContext *C, wmOperator *UNUSED(op), const wmEvent *UNUSED(event))
+{
+	uiPopupMenu *pup;
+	uiLayout *layout;
+
+	pup = UI_popup_menu_begin(C, IFACE_("Toolbar"), ICON_NONE);
+	layout = UI_popup_menu_layout(pup);
+
+	ED_screens_toolbar_tools_menu_create(C, layout, NULL);
+
+	UI_popup_menu_end(C, pup);
+
+	return OPERATOR_INTERFACE;
+}
+
+static void SCREEN_OT_toolbar_toolbox(wmOperatorType *ot)
+{
+	/* identifiers */
+	ot->name = "Toolbar Toolbox";
+	ot->description = "Toolbar Toolbox\nDisplay Toolbar type menu";
+	ot->idname = "SCREEN_OT_toolbar_toolbox";
+
+	/* api callbacks */
+	ot->invoke = toolbar_toolbox_invoke;
+}
+
 /* ****************** anim player, with timer ***************** */
 
 static int match_area_with_refresh(int spacetype, int refresh)
@@ -4299,6 +4349,7 @@ void ED_operatortypes_screen(void)
 	WM_operatortype_append(SCREEN_OT_header_toolbar_view); // bfa - show hide the view toolbar
 	WM_operatortype_append(SCREEN_OT_header_toolbar_primitives); // bfa - show hide the primitives toolbar
 	WM_operatortype_append(SCREEN_OT_header_toolbox);
+	WM_operatortype_append(SCREEN_OT_toolbar_toolbox); // bfa - toolbar types menu
 	WM_operatortype_append(SCREEN_OT_screen_set);
 	WM_operatortype_append(SCREEN_OT_screen_full_area);
 	WM_operatortype_append(SCREEN_OT_back_to_previous);
