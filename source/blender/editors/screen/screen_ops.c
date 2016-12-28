@@ -3366,9 +3366,9 @@ static int header_toolbar_primitives_exec(bContext *C, wmOperator *UNUSED(op))
 static void SCREEN_OT_header_toolbar_primitives(wmOperatorType *ot)
 {
 	/* identifiers */
-	ot->name = "Toolbar Primtives";
+	ot->name = "Toolbar Primitives";
 	ot->idname = "SCREEN_OT_header_toolbar_primitives";
-	ot->description = "Show or Hide the Primtives toolbars";
+	ot->description = "Show or Hide the Primitives toolbars";
 
 	/* api callbacks */
 	ot->exec = header_toolbar_primitives_exec;
