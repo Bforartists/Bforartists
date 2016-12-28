@@ -791,19 +791,19 @@ class Menu(StructRNA, _GenericUI, metaclass=RNAMeta):
     # bfa - show hide the file toolbar
     @classmethod
     def hide_file_toolbar(cls, context, layout):
-        if context.area.file_toolbars:
+        if not context.area.file_toolbars:
             cls.draw_menus(layout, context)
 
     # bfa - show hide the view toolbar
     @classmethod
     def hide_view_toolbar(cls, context, layout):
-        if context.area.view_toolbars:
+        if not context.area.view_toolbars:
             cls.draw_menus(layout, context)
 
     # bfa - show hide the primitives toolbar
     @classmethod
     def hide_primitives_toolbar(cls, context, layout):
-        if context.area.primitives_toolbars:
+        if not context.area.primitives_toolbars:
             cls.draw_menus(layout, context)
 
 

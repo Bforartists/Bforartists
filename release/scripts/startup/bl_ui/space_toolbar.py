@@ -71,31 +71,7 @@ class TOOLBAR_MT_toolbar_type(Menu):
         scene = context.scene
         rd = scene.render
 
-        layout.menu("TOOLBAR_MT_type") #see below
-
-################## Toolbar Type menu
-
-class TOOLBAR_MT_type(Menu):
-    bl_label = "Type"
-
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return (view)
-
-    def draw(self, context):
-        layout = self.layout
-
-        screen = context.screen
-
-        #rd = context.scene.render
-        #layout.prop(rd, "use_stamp") # This one works. Why not the prop in the screen?
-
-        layout.operator("screen.header_toolbar_file") 
-        layout.operator("screen.header_toolbar_view")
-        layout.operator("screen.header_toolbar_primitives") 
-
-        # layout.prop(screen,"header_toggle_menus") # why does this not work?
+        layout.operator("screen.toolbar_toolbox", text="Type")
 
 
 ######################################## Toolbars ##############################################
