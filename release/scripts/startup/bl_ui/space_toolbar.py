@@ -37,7 +37,7 @@ class TOOLBAR_HT_header(Header):
 
         TOOLBAR_MT_file.hide_file_toolbar(context, layout) # bfa - show hide the complete file toolbar container
         TOOLBAR_MT_view.hide_view_toolbar(context, layout) # bfa - show hide the complete view toolbar container
-        TOOLBAR_MT_primitives.hide_primitives_toolbar(context, layout) # bfa - show hide the complete view toolbar container
+        TOOLBAR_MT_primitives.hide_primitives_toolbar(context, layout) # bfa - show hide the complete primitives toolbar container
 
 ########################################################################
 

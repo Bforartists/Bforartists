@@ -290,7 +290,7 @@ enum {
 	HEADER_TOOLBAR_FILE = (1 << 10),
 	// bfa - show hide the view toolbars
 	HEADER_TOOLBAR_VIEW = (1 << 11),
-	// bfa - show hide the view toolbars
+	// bfa - show hide the primitives toolbars
 	HEADER_TOOLBAR_PRIMITIVES = (1 << 12),
 };
 
