@@ -117,6 +117,49 @@ static void toolbar_header_area_draw(const bContext *C, ARegion *ar)
 	ED_region_header(C, ar);
 }
 
+static void toolbar_main_area_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa), ARegion *ar, wmNotifier *wmn)
+{
+	// SpaceInfo *sinfo = sa->spacedata.first;
+
+	/* context changes */
+	switch (wmn->category) {
+	case NC_SPACE:
+		if (wmn->data == ND_SPACE_INFO_REPORT) {
+			/* redraw also but only for report view, could do less redraws by checking the type */
+			ED_region_tag_redraw(ar);
+		}
+		break;
+	}
+}
+
+static void toolbar_header_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa), ARegion *ar, wmNotifier *wmn)
+{
+	/* context changes */
+	switch (wmn->category) {
+	case NC_SCREEN:
+		if (ELEM(wmn->data, ND_SCREENCAST, ND_ANIMPLAY))
+			ED_region_tag_redraw(ar);
+		break;
+	case NC_WM:
+		if (wmn->data == ND_JOB)
+			ED_region_tag_redraw(ar);
+		break;
+	case NC_SCENE:
+		if (wmn->data == ND_RENDER_RESULT)
+			ED_region_tag_redraw(ar);
+		break;
+	case NC_SPACE:
+		if (wmn->data == ND_SPACE_INFO)
+			ED_region_tag_redraw(ar);
+		break;
+	case NC_ID:
+		if (wmn->action == NA_RENAME)
+			ED_region_tag_redraw(ar);
+		break;
+	}
+
+}
+
 /********************* registration ********************/
 
 /* only called once, from space/spacetypes.c */
@@ -136,6 +179,7 @@ void ED_spacetype_toolbar(void)
 
 	art->init = toolbar_main_area_init;
 	art->draw = toolbar_main_area_draw;
+	art->listener = toolbar_main_area_listener;
 
 	BLI_addhead(&st->regiontypes, art);
 
@@ -144,6 +188,7 @@ void ED_spacetype_toolbar(void)
 	art->regionid = RGN_TYPE_HEADER;
 	art->prefsizey = HEADERY;
 	art->keymapflag = ED_KEYMAP_UI | ED_KEYMAP_VIEW2D | ED_KEYMAP_HEADER;
+	art->listener = toolbar_header_listener;
 	art->init = toolbar_header_area_init;
 	art->draw = toolbar_header_area_draw;
 
