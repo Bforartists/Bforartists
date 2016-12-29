@@ -148,6 +148,34 @@ class UIToolbarViewCamera(bpy.types.PropertyGroup):
 class UIToolbarPrimitivesMesh(bpy.types.PropertyGroup):
     bool = bpy.props.BoolProperty(name="Mesh", description="Display the Mesh Toolbar", default = True) # Our prop
 
+# bfa - Curve
+class UIToolbarPrimitivesCurve(bpy.types.PropertyGroup):
+    bool = bpy.props.BoolProperty(name="Curve", description="Display the Curve Toolbar", default = True) # Our prop
+
+# bfa - Surface
+class UIToolbarPrimitivesSurface(bpy.types.PropertyGroup):
+    bool = bpy.props.BoolProperty(name="Surface", description="Display the Surface Toolbar", default = True) # Our prop
+
+# bfa - Metaball
+class UIToolbarPrimitivesMetaball(bpy.types.PropertyGroup):
+    bool = bpy.props.BoolProperty(name="Metaball", description="Display the Metaball Toolbar", default = True) # Our prop
+
+# bfa - Lamp
+class UIToolbarPrimitivesLamp(bpy.types.PropertyGroup):
+    bool = bpy.props.BoolProperty(name="Lamp", description="Display the Lamp Toolbar", default = True) # Our prop
+
+# bfa - Other
+class UIToolbarPrimitivesOther(bpy.types.PropertyGroup):
+    bool = bpy.props.BoolProperty(name="Other", description="Display the Other Toolbar", default = True) # Our prop
+
+# bfa - Empties
+class UIToolbarPrimitivesEmpties(bpy.types.PropertyGroup):
+    bool = bpy.props.BoolProperty(name="Empties", description="Display the Empties Toolbar", default = True) # Our prop
+
+# bfa - Force Field
+class UIToolbarPrimitivesForcefield(bpy.types.PropertyGroup):
+    bool = bpy.props.BoolProperty(name="Force Field", description="Display the Force Field Toolbar", default = True) # Our prop
+
 #################################
 
 
@@ -247,6 +275,34 @@ def register():
     # bfa - Mesh
     bpy.utils.register_class(UIToolbarPrimitivesMesh) # Our data block
     bpy.types.Scene.toolbar_primitives_mesh = bpy.props.PointerProperty(type=UIToolbarPrimitivesMesh) # Bind reference of type of our data block to type Scene objects
+
+    # bfa - Curve
+    bpy.utils.register_class(UIToolbarPrimitivesCurve) # Our data block
+    bpy.types.Scene.toolbar_primitives_curve = bpy.props.PointerProperty(type=UIToolbarPrimitivesCurve) # Bind reference of type of our data block to type Scene objects
+
+    # bfa - Surface
+    bpy.utils.register_class(UIToolbarPrimitivesSurface) # Our data block
+    bpy.types.Scene.toolbar_primitives_surface = bpy.props.PointerProperty(type=UIToolbarPrimitivesSurface) # Bind reference of type of our data block to type Scene objects
+
+    # bfa - Metaball
+    bpy.utils.register_class(UIToolbarPrimitivesMetaball) # Our data block
+    bpy.types.Scene.toolbar_primitives_metaball = bpy.props.PointerProperty(type=UIToolbarPrimitivesMetaball) # Bind reference of type of our data block to type Scene objects
+
+    # bfa - Lamp
+    bpy.utils.register_class(UIToolbarPrimitivesLamp) # Our data block
+    bpy.types.Scene.toolbar_primitives_lamp = bpy.props.PointerProperty(type=UIToolbarPrimitivesLamp) # Bind reference of type of our data block to type Scene objects
+
+    # bfa - Other
+    bpy.utils.register_class(UIToolbarPrimitivesOther) # Our data block
+    bpy.types.Scene.toolbar_primitives_other = bpy.props.PointerProperty(type=UIToolbarPrimitivesOther) # Bind reference of type of our data block to type Scene objects
+
+    # bfa - Empties
+    bpy.utils.register_class(UIToolbarPrimitivesEmpties) # Our data block
+    bpy.types.Scene.toolbar_primitives_empties = bpy.props.PointerProperty(type=UIToolbarPrimitivesEmpties) # Bind reference of type of our data block to type Scene objects
+
+    # bfa - Force Field
+    bpy.utils.register_class(UIToolbarPrimitivesForcefield) # Our data block
+    bpy.types.Scene.toolbar_primitives_forcefield = bpy.props.PointerProperty(type=UIToolbarPrimitivesForcefield) # Bind reference of type of our data block to type Scene objects
 
     #######################################################################
 
@@ -357,6 +413,13 @@ def unregister():
     ############################ Toolbar props Primitives #################################
 
     bpy.utils.unregister_class(UIToolbarPrimitivesMesh)
+    bpy.utils.unregister_class(UIToolbarPrimitivesCurve)
+    bpy.utils.unregister_class(UIToolbarPrimitivesSurface)
+    bpy.utils.unregister_class(UIToolbarPrimitivesMetaball)
+    bpy.utils.unregister_class(UIToolbarPrimitivesLamp)
+    bpy.utils.unregister_class(UIToolbarPrimitivesOther)
+    bpy.utils.unregister_class(UIToolbarPrimitivesEmpties)
+    bpy.utils.unregister_class(UIToolbarPrimitivesForcefield)
 
     ############################################################################
 
