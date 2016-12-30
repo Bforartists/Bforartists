@@ -655,14 +655,14 @@ class TOOLBAR_MT_image(Menu):
 
             row = layout.row(align=True)
 
-            row.operator("uv.pack_islands")
-            row.operator("uv.average_islands_scale")
-            row.operator("uv.minimize_stretch")
-            row.operator("uv.stitch")
-            row.operator("uv.mark_seam").clear = False
-            row.operator("uv.mark_seam", text="Clear Seam").clear = True
-            row.operator("uv.seams_from_islands")
-            row.operator("mesh.faces_mirror_uv")
+            row.operator("uv.pack_islands", text="", icon ="PACKISLAND")
+            row.operator("uv.average_islands_scale", text="", icon ="AVERAGEISLANDSCALE")
+            #row.operator("uv.minimize_stretch") # doesn't work in toolbar editor, needs to be performed in image editor where the uv mesh is.
+            #row.operator("uv.stitch") # doesn't work in toolbar editor, needs to be performed in image editor where the uv mesh is.
+            row.operator("uv.mark_seam", text="", icon ="MARK_SEAM").clear = False
+            row.operator("uv.mark_seam", text="", icon ="CLEAR_SEAM").clear = True
+            row.operator("uv.seams_from_islands", text="", icon ="SEAMSFROMISLAND")
+            row.operator("mesh.faces_mirror_uv", text="", icon ="COPYMIRRORED")
 
 if __name__ == "__main__":  # only for live edit.
     bpy.utils.register_module(__name__)

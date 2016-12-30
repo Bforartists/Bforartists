@@ -378,14 +378,14 @@ class IMAGE_MT_uvs(Menu):
 
         layout.separator()
 
-        layout.operator("uv.pack_islands")
-        layout.operator("uv.average_islands_scale")
-        layout.operator("uv.minimize_stretch")
+        layout.operator("uv.pack_islands", icon ="PACKISLAND")
+        layout.operator("uv.average_islands_scale", icon ="AVERAGEISLANDSCALE")
+        layout.operator("uv.minimize_stretch", icon = "MINIMIZESTRETCH")
         layout.operator("uv.stitch")
-        layout.operator("uv.mark_seam").clear = False
-        layout.operator("uv.mark_seam", text="Clear Seam").clear = True
-        layout.operator("uv.seams_from_islands")
-        layout.operator("mesh.faces_mirror_uv")
+        layout.operator("uv.mark_seam", icon ="MARK_SEAM").clear = False
+        layout.operator("uv.mark_seam", text="Clear Seam", icon ="CLEAR_SEAM").clear = True
+        layout.operator("uv.seams_from_islands", icon ="SEAMSFROMISLAND")
+        layout.operator("mesh.faces_mirror_uv", icon ="COPYMIRRORED")
 
         layout.separator()
 
