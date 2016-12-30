@@ -38,6 +38,7 @@ class TOOLBAR_HT_header(Header):
         TOOLBAR_MT_file.hide_file_toolbar(context, layout) # bfa - show hide the complete file toolbar container
         TOOLBAR_MT_view.hide_view_toolbar(context, layout) # bfa - show hide the complete view toolbar container
         TOOLBAR_MT_primitives.hide_primitives_toolbar(context, layout) # bfa - show hide the complete primitives toolbar container
+        TOOLBAR_MT_image.hide_image_toolbar(context, layout) # bfa - show hide the complete image toolbar container
 
 ########################################################################
 
@@ -598,8 +599,70 @@ class TOOLBAR_MT_primitives(Menu):
             row.operator("object.effector_add", text="", icon='FORCE_TURBULENCE').type='TURBULENCE'
             row.operator("object.effector_add", text="", icon='FORCE_VORTEX').type='VORTEX'
             row.operator("object.effector_add", text="", icon='FORCE_WIND').type='WIND'
-            
 
+######################################## Primitives ##############################################
+
+
+#################### Holds the Toolbars menu for Primitives, collapsible
+
+class TOOLBAR_MT_menu_image(Menu):
+    bl_idname = "TOOLBAR_MT_menu_image"
+    bl_label = ""
+
+    def draw(self, context):
+        self.draw_menus(self.layout, context)
+        
+
+    @staticmethod
+    def draw_menus(layout, context):
+        scene = context.scene
+        rd = scene.render
+
+        layout.menu("TOOLBAR_MT_toolbars_image_menu") # see class below
+
+
+##################### Primitives toolbars menu
+
+class TOOLBAR_MT_toolbars_image_menu(Menu):
+    bl_label = "Toolbars Image"
+
+    def draw(self, context):
+        layout = self.layout
+
+        scene = context.scene
+        layout.prop(scene.toolbar_image_uvcommon, "bool") # Our checkbox
+
+
+            
+############### bfa - Load Save menu hidable by the flag in the right click menu
+
+class TOOLBAR_MT_image(Menu):
+    bl_idname = "TOOLBAR_MT_image"
+    bl_label = ""
+
+    def draw(self, context):
+        self.draw_menus(self.layout, context)     
+
+    @staticmethod
+    def draw_menus(layout, context):
+        scene = context.scene
+
+        TOOLBAR_MT_menu_image.draw_collapsible(context, layout)
+
+        ## ------------------ image sub toolbars
+
+        if scene.toolbar_image_uvcommon.bool: 
+
+            row = layout.row(align=True)
+
+            row.operator("uv.pack_islands")
+            row.operator("uv.average_islands_scale")
+            row.operator("uv.minimize_stretch")
+            row.operator("uv.stitch")
+            row.operator("uv.mark_seam").clear = False
+            row.operator("uv.mark_seam", text="Clear Seam").clear = True
+            row.operator("uv.seams_from_islands")
+            row.operator("mesh.faces_mirror_uv")
 
 if __name__ == "__main__":  # only for live edit.
     bpy.utils.register_module(__name__)

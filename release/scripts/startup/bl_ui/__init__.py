@@ -176,6 +176,13 @@ class UIToolbarPrimitivesEmpties(bpy.types.PropertyGroup):
 class UIToolbarPrimitivesForcefield(bpy.types.PropertyGroup):
     bool = bpy.props.BoolProperty(name="Force Field", description="Display the Force Field Toolbar", default = True) # Our prop
 
+
+############################ Toolbar props image #################################
+
+# bfa - File
+class UIToolbarImageUVCommon(bpy.types.PropertyGroup):
+    bool = bpy.props.BoolProperty(name="UV Common", description="Display the UV Common Toolbar", default = True) # Our prop
+
 #################################
 
 
@@ -304,6 +311,12 @@ def register():
     bpy.utils.register_class(UIToolbarPrimitivesForcefield) # Our data block
     bpy.types.Scene.toolbar_primitives_forcefield = bpy.props.PointerProperty(type=UIToolbarPrimitivesForcefield) # Bind reference of type of our data block to type Scene objects
 
+    ############################ Toolbar props Image #################################
+
+    # bfa - File
+    bpy.utils.register_class(UIToolbarImageUVCommon) # Our data block
+    bpy.types.Scene.toolbar_image_uvcommon = bpy.props.PointerProperty(type=UIToolbarImageUVCommon) # Bind reference of type of our data block to type Scene objects
+
     #######################################################################
 
     bpy.utils.register_module(__name__)
@@ -420,6 +433,10 @@ def unregister():
     bpy.utils.unregister_class(UIToolbarPrimitivesOther)
     bpy.utils.unregister_class(UIToolbarPrimitivesEmpties)
     bpy.utils.unregister_class(UIToolbarPrimitivesForcefield)
+
+    ############################ Toolbar props Image #################################
+
+    bpy.utils.unregister_class(UIToolbarImageUVCommon)
 
     ############################################################################
 

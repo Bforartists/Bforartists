@@ -806,6 +806,12 @@ class Menu(StructRNA, _GenericUI, metaclass=RNAMeta):
         if not context.area.primitives_toolbars:
             cls.draw_menus(layout, context)
 
+    # bfa - show hide the primitives toolbar
+    @classmethod
+    def hide_image_toolbar(cls, context, layout):
+        if not context.area.image_toolbars:
+            cls.draw_menus(layout, context)
+
 
 class NodeTree(bpy_types.ID, metaclass=RNAMetaPropGroup):
     __slots__ = ()
