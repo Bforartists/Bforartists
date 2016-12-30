@@ -3376,6 +3376,31 @@ static void SCREEN_OT_header_toolbar_primitives(wmOperatorType *ot)
 	ot->flag = 0;
 }
 
+// bfa - show hide the image toolbar menus
+static int header_toolbar_image_exec(bContext *C, wmOperator *UNUSED(op))
+{
+	ScrArea *sa = CTX_wm_area(C);
+
+	sa->flag = sa->flag ^ HEADER_TOOLBAR_IMAGE;
+
+	ED_area_tag_redraw(sa);
+	WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, NULL);
+
+	return OPERATOR_FINISHED;
+}
+static void SCREEN_OT_header_toolbar_image(wmOperatorType *ot)
+{
+	/* identifiers */
+	ot->name = "Toolbar IMAGE";
+	ot->idname = "SCREEN_OT_header_toolbar_image";
+	ot->description = "Show or Hide the Image toolbars";
+
+	/* api callbacks */
+	ot->exec = header_toolbar_image_exec;
+	ot->poll = ED_operator_areaactive;
+	ot->flag = 0;
+}
+
 /* ************** header tools operator ***************************** */
 void ED_screens_header_tools_menu_create(bContext *C, uiLayout *layout, void *UNUSED(arg))
 {
@@ -3451,15 +3476,20 @@ void ED_screens_toolbar_tools_menu_create(bContext *C, uiLayout *layout, void *U
 		(sa->flag & HEADER_TOOLBAR_FILE) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
 		"SCREEN_OT_header_toolbar_file");
 
-	// bfa - show hide the file toolbar
+	// bfa - show hide the view toolbar
 	uiItemO(layout, IFACE_("Toolbar View"),
 		(sa->flag & HEADER_TOOLBAR_VIEW) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
 		"SCREEN_OT_header_toolbar_view");
 
-	// bfa - show hide the file toolbar
+	// bfa - show hide the primitives toolbar
 	uiItemO(layout, IFACE_("Toolbar Primitives"),
 		(sa->flag & HEADER_TOOLBAR_PRIMITIVES) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
 		"SCREEN_OT_header_toolbar_primitives");
+
+	// bfa - show hide the image toolbar
+	uiItemO(layout, IFACE_("Toolbar Image"),
+		(sa->flag & HEADER_TOOLBAR_IMAGE) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
+		"SCREEN_OT_header_toolbar_image");
 
 }
 
@@ -4348,8 +4378,9 @@ void ED_operatortypes_screen(void)
 	WM_operatortype_append(SCREEN_OT_header_toolbar_file); // bfa - show hide the file toolbar
 	WM_operatortype_append(SCREEN_OT_header_toolbar_view); // bfa - show hide the view toolbar
 	WM_operatortype_append(SCREEN_OT_header_toolbar_primitives); // bfa - show hide the primitives toolbar
+	WM_operatortype_append(SCREEN_OT_header_toolbar_image); // bfa - show hide the primitives toolbar
 	WM_operatortype_append(SCREEN_OT_header_toolbox);
-	WM_operatortype_append(SCREEN_OT_toolbar_toolbox); // bfa - toolbar types menu
+	WM_operatortype_append(SCREEN_OT_toolbar_toolbox); // bfa - toolbar types menu in the toolbar editor
 	WM_operatortype_append(SCREEN_OT_screen_set);
 	WM_operatortype_append(SCREEN_OT_screen_full_area);
 	WM_operatortype_append(SCREEN_OT_back_to_previous);
