@@ -294,6 +294,8 @@ enum {
 	HEADER_TOOLBAR_PRIMITIVES = (1 << 12),
 	// bfa - show hide the image toolbars
 	HEADER_TOOLBAR_IMAGE = (1 << 13),
+	// bfa - show hide the tools toolbars
+	HEADER_TOOLBAR_TOOLS = (1 << 14),
 };
 
 #define EDGEWIDTH	1

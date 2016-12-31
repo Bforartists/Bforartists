@@ -3401,6 +3401,31 @@ static void SCREEN_OT_header_toolbar_image(wmOperatorType *ot)
 	ot->flag = 0;
 }
 
+// bfa - show hide the tools toolbar menus
+static int header_toolbar_tools_exec(bContext *C, wmOperator *UNUSED(op))
+{
+	ScrArea *sa = CTX_wm_area(C);
+
+	sa->flag = sa->flag ^ HEADER_TOOLBAR_TOOLS;
+
+	ED_area_tag_redraw(sa);
+	WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, NULL);
+
+	return OPERATOR_FINISHED;
+}
+static void SCREEN_OT_header_toolbar_tools(wmOperatorType *ot)
+{
+	/* identifiers */
+	ot->name = "Toolbar Tools";
+	ot->idname = "SCREEN_OT_header_toolbar_tools";
+	ot->description = "Show or Hide the Tools toolbars";
+
+	/* api callbacks */
+	ot->exec = header_toolbar_tools_exec;
+	ot->poll = ED_operator_areaactive;
+	ot->flag = 0;
+}
+
 /* ************** header tools operator ***************************** */
 void ED_screens_header_tools_menu_create(bContext *C, uiLayout *layout, void *UNUSED(arg))
 {
@@ -3490,6 +3515,11 @@ void ED_screens_toolbar_tools_menu_create(bContext *C, uiLayout *layout, void *U
 	uiItemO(layout, IFACE_("Toolbar Image"),
 		(sa->flag & HEADER_TOOLBAR_IMAGE) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
 		"SCREEN_OT_header_toolbar_image");
+
+	// bfa - show hide the tools toolbar
+	uiItemO(layout, IFACE_("Toolbar Tools"),
+		(sa->flag & HEADER_TOOLBAR_TOOLS) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
+		"SCREEN_OT_header_toolbar_tools");
 
 }
 
@@ -4379,6 +4409,7 @@ void ED_operatortypes_screen(void)
 	WM_operatortype_append(SCREEN_OT_header_toolbar_view); // bfa - show hide the view toolbar
 	WM_operatortype_append(SCREEN_OT_header_toolbar_primitives); // bfa - show hide the primitives toolbar
 	WM_operatortype_append(SCREEN_OT_header_toolbar_image); // bfa - show hide the primitives toolbar
+	WM_operatortype_append(SCREEN_OT_header_toolbar_tools); // bfa - show hide the primitives toolbar
 	WM_operatortype_append(SCREEN_OT_header_toolbox);
 	WM_operatortype_append(SCREEN_OT_toolbar_toolbox); // bfa - toolbar types menu in the toolbar editor
 	WM_operatortype_append(SCREEN_OT_screen_set);

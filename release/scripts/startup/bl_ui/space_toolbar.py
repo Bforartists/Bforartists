@@ -39,6 +39,7 @@ class TOOLBAR_HT_header(Header):
         TOOLBAR_MT_view.hide_view_toolbar(context, layout) # bfa - show hide the complete view toolbar container
         TOOLBAR_MT_primitives.hide_primitives_toolbar(context, layout) # bfa - show hide the complete primitives toolbar container
         TOOLBAR_MT_image.hide_image_toolbar(context, layout) # bfa - show hide the complete image toolbar container
+        TOOLBAR_MT_tools.hide_tools_toolbar(context, layout) # bfa - show hide the complete tools toolbar container
 
 ########################################################################
 
@@ -708,6 +709,71 @@ class TOOLBAR_MT_image(Menu):
             # Code remains here for now. Maybe we find a solution at a later point.
             #row.operator("image.uv_straighten", text= "straighten")
 
+######################################## Tools ##############################################
+
+#################### Holds the Toolbars menu for Tools, collapsible
+
+class TOOLBAR_MT_menu_tools(Menu):
+    bl_idname = "TOOLBAR_MT_menu_tools"
+    bl_label = ""
+
+    def draw(self, context):
+        self.draw_menus(self.layout, context)
+        
+
+    @staticmethod
+    def draw_menus(layout, context):
+        scene = context.scene
+        rd = scene.render
+
+        layout.menu("TOOLBAR_MT_toolbars_tools_menu") # see class below
+
+
+##################### Tools toolbars menu
+
+class TOOLBAR_MT_toolbars_tools_menu(Menu):
+    bl_label = "Toolbars Tools"
+
+    def draw(self, context):
+        layout = self.layout
+
+        scene = context.scene
+        layout.prop(scene.toolbar_tools_history, "bool") # Our checkbox
+
+            
+############### bfa - menu hidable by the flag in the right click menu
+
+class TOOLBAR_MT_tools(Menu):
+    bl_idname = "TOOLBAR_MT_tools"
+    bl_label = ""
+
+    def draw(self, context):
+        self.draw_menus(self.layout, context)     
+
+    @staticmethod
+    def draw_menus(layout, context):
+        scene = context.scene
+
+        TOOLBAR_MT_menu_tools.draw_collapsible(context, layout)
+
+        ## ------------------ Tools sub toolbars
+
+        if scene.toolbar_tools_history.bool: 
+
+            obj = context.object
+
+            row = layout.row(align=True)
+
+            row.operator("ed.undo", icon='UNDO',text="")
+            row.operator("ed.redo", icon='REDO',text="")
+            if obj is None or obj.mode != 'SCULPT':
+                # Sculpt mode does not generate an undo menu it seems...
+                row.operator("ed.undo_history", icon='UNDO_HISTORY',text="")
+
+            row = layout.row(align=True)
+
+            row.operator("screen.repeat_last", icon='REPEAT', text="")
+            row.operator("screen.repeat_history", icon='REDO_HISTORY', text="")
 
 
 if __name__ == "__main__":  # only for live edit.
