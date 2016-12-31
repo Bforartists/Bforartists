@@ -191,6 +191,12 @@ class UIToolbarImageUVMisc(bpy.types.PropertyGroup):
 class UIToolbarImageUVAlign(bpy.types.PropertyGroup):
     bool = bpy.props.BoolProperty(name="UV Align", description="Display the UV Align Toolbar", default = True) # Our prop
 
+############################ Toolbar props Tools #################################
+
+# bfa - History
+class UIToolbarToolsHistory(bpy.types.PropertyGroup):
+    bool = bpy.props.BoolProperty(name="History", description="Display the History Toolbar", default = True) # Our prop
+
 #################################
 
 
@@ -325,13 +331,19 @@ def register():
     bpy.utils.register_class(UIToolbarImageUVCommon) # Our data block
     bpy.types.Scene.toolbar_image_uvcommon = bpy.props.PointerProperty(type=UIToolbarImageUVCommon) # Bind reference of type of our data block to type Scene objects
 
-    # bfa - File
+    # bfa - Misc
     bpy.utils.register_class(UIToolbarImageUVMisc) # Our data block
     bpy.types.Scene.toolbar_image_uvmisc = bpy.props.PointerProperty(type=UIToolbarImageUVMisc) # Bind reference of type of our data block to type Scene objects
 
-    # bfa - File
+    # bfa - Align
     bpy.utils.register_class(UIToolbarImageUVAlign) # Our data block
     bpy.types.Scene.toolbar_image_uvalign = bpy.props.PointerProperty(type=UIToolbarImageUVAlign) # Bind reference of type of our data block to type Scene objects
+
+    ############################ Toolbar props Tools #################################
+
+    # bfa - History
+    bpy.utils.register_class(UIToolbarToolsHistory) # Our data block
+    bpy.types.Scene.toolbar_tools_history = bpy.props.PointerProperty(type=UIToolbarToolsHistory) # Bind reference of type of our data block to type Scene objects
 
     #######################################################################
 
@@ -455,6 +467,10 @@ def unregister():
     bpy.utils.unregister_class(UIToolbarImageUVCommon)
     bpy.utils.unregister_class(UIToolbarImageUVMisc)
     bpy.utils.unregister_class(UIToolbarImageUVAlign)
+
+    ############################ Toolbar props Tools #################################
+
+    bpy.utils.unregister_class(UIToolbarToolsHistory)
 
     ############################################################################
 

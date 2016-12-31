@@ -262,6 +262,11 @@ static void rna_def_area(BlenderRNA *brna)
 	RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_TOOLBAR_IMAGE);
 	RNA_def_property_ui_text(prop, "Image Toolbars", "Shows or hides the Image Toolbars");
 
+	// bfa - show hide the Tools toolbars
+	prop = RNA_def_property(srna, "tools_toolbars", PROP_BOOLEAN, PROP_NONE);
+	RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_TOOLBAR_TOOLS);
+	RNA_def_property_ui_text(prop, "Tools Toolbars", "Shows or hides the Tools Toolbars");
+
 	prop = RNA_def_property(srna, "type", PROP_ENUM, PROP_NONE);
 	RNA_def_property_enum_sdna(prop, NULL, "spacetype");
 	RNA_def_property_enum_items(prop, space_type_items);
