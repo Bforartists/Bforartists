@@ -179,9 +179,17 @@ class UIToolbarPrimitivesForcefield(bpy.types.PropertyGroup):
 
 ############################ Toolbar props image #################################
 
-# bfa - File
+# bfa - Common
 class UIToolbarImageUVCommon(bpy.types.PropertyGroup):
     bool = bpy.props.BoolProperty(name="UV Common", description="Display the UV Common Toolbar", default = True) # Our prop
+
+# bfa - Misc
+class UIToolbarImageUVMisc(bpy.types.PropertyGroup):
+    bool = bpy.props.BoolProperty(name="UV Misc", description="Display the UV Misc Toolbar", default = True) # Our prop
+
+# bfa - Align
+class UIToolbarImageUVAlign(bpy.types.PropertyGroup):
+    bool = bpy.props.BoolProperty(name="UV Align", description="Display the UV Align Toolbar", default = True) # Our prop
 
 #################################
 
@@ -317,6 +325,14 @@ def register():
     bpy.utils.register_class(UIToolbarImageUVCommon) # Our data block
     bpy.types.Scene.toolbar_image_uvcommon = bpy.props.PointerProperty(type=UIToolbarImageUVCommon) # Bind reference of type of our data block to type Scene objects
 
+    # bfa - File
+    bpy.utils.register_class(UIToolbarImageUVMisc) # Our data block
+    bpy.types.Scene.toolbar_image_uvmisc = bpy.props.PointerProperty(type=UIToolbarImageUVMisc) # Bind reference of type of our data block to type Scene objects
+
+    # bfa - File
+    bpy.utils.register_class(UIToolbarImageUVAlign) # Our data block
+    bpy.types.Scene.toolbar_image_uvalign = bpy.props.PointerProperty(type=UIToolbarImageUVAlign) # Bind reference of type of our data block to type Scene objects
+
     #######################################################################
 
     bpy.utils.register_module(__name__)
@@ -437,6 +453,8 @@ def unregister():
     ############################ Toolbar props Image #################################
 
     bpy.utils.unregister_class(UIToolbarImageUVCommon)
+    bpy.utils.unregister_class(UIToolbarImageUVMisc)
+    bpy.utils.unregister_class(UIToolbarImageUVAlign)
 
     ############################################################################
 

@@ -600,10 +600,26 @@ class TOOLBAR_MT_primitives(Menu):
             row.operator("object.effector_add", text="", icon='FORCE_VORTEX').type='VORTEX'
             row.operator("object.effector_add", text="", icon='FORCE_WIND').type='WIND'
 
-######################################## Primitives ##############################################
+######################################## Image ##############################################
+
+# Try to give unique tooltip fails at wrong context issue. Code remains for now. Maybe we find a solution here.
+
+#class VIEW3D_MT_uv_straighten(bpy.types.Operator):
+#    """Straighten\nStraightens the selected geometry"""
+#    bl_idname = "image.uv_straighten"
+#    bl_label = "straighten"
+#    bl_options = {'REGISTER', 'UNDO'}
+
+#    def execute(self, context):
+#        for area in bpy.context.screen.areas:
+#            if area.type == 'IMAGE_EDITOR':
+#                override = bpy.context.copy()
+#                override['area'] = area
+#                bpy.ops.uv.align(axis = 'ALIGN_S')
+#        return {'FINISHED'}
 
 
-#################### Holds the Toolbars menu for Primitives, collapsible
+#################### Holds the Toolbars menu for Image, collapsible
 
 class TOOLBAR_MT_menu_image(Menu):
     bl_idname = "TOOLBAR_MT_menu_image"
@@ -621,7 +637,7 @@ class TOOLBAR_MT_menu_image(Menu):
         layout.menu("TOOLBAR_MT_toolbars_image_menu") # see class below
 
 
-##################### Primitives toolbars menu
+##################### Image toolbars menu
 
 class TOOLBAR_MT_toolbars_image_menu(Menu):
     bl_label = "Toolbars Image"
@@ -631,10 +647,10 @@ class TOOLBAR_MT_toolbars_image_menu(Menu):
 
         scene = context.scene
         layout.prop(scene.toolbar_image_uvcommon, "bool") # Our checkbox
-
-
+        layout.prop(scene.toolbar_image_uvmisc, "bool") # Our checkbox
+        layout.prop(scene.toolbar_image_uvalign, "bool") # Our checkbox
             
-############### bfa - Load Save menu hidable by the flag in the right click menu
+############### bfa - menu hidable by the flag in the right click menu
 
 class TOOLBAR_MT_image(Menu):
     bl_idname = "TOOLBAR_MT_image"
@@ -663,6 +679,36 @@ class TOOLBAR_MT_image(Menu):
             row.operator("uv.mark_seam", text="", icon ="CLEAR_SEAM").clear = True
             row.operator("uv.seams_from_islands", text="", icon ="SEAMSFROMISLAND")
             row.operator("mesh.faces_mirror_uv", text="", icon ="COPYMIRRORED")
+
+        if scene.toolbar_image_uvmisc.bool: 
+
+            row = layout.row(align=True)
+
+            row.operator("uv.unwrap", text = "", icon='UNWRAP_ABF').method='ANGLE_BASED'
+            row.operator("uv.unwrap", text = "", icon='UNWRAP_LSCM').method='CONFORMAL'   
+            row.operator("uv.pin", text= "", icon = "PINNED").clear = False
+            row.operator("uv.pin", text="", icon = "UNPINNED").clear = True
+
+        if scene.toolbar_image_uvalign.bool: 
+
+            row = layout.row(align=True)
+
+            row.operator("uv.weld", text="", icon='WELD')
+            row.operator("uv.remove_doubles", text="", icon='REMOVE_DOUBLES')
+            #row.operator_enum("uv.align", "axis")  # W, 2/3/4 # bfa - enum is no good idea in header. It enums below each other. And the header just shows besides ...
+
+            row.operator("uv.align", text= "", icon = "STRAIGHTEN").axis = 'ALIGN_S'
+            row.operator("uv.align", text= "", icon = "STRAIGHTEN_X").axis = 'ALIGN_T'
+            row.operator("uv.align", text= "", icon = "STRAIGHTEN_Y").axis = 'ALIGN_U'
+            row.operator("uv.align", text= "", icon = "ALIGNAUTO").axis = 'ALIGN_AUTO'
+            row.operator("uv.align", text= "", icon = "ALIGNHORIZONTAL").axis = 'ALIGN_X'
+            row.operator("uv.align", text= "", icon = "ALIGNVERTICAL").axis = 'ALIGN_Y'
+
+            # Try to give unique tooltip fails at wrong context issue. It throws an error when you are not in edit mode, have no uv editor open, and there is no mesh selected.
+            # Code remains here for now. Maybe we find a solution at a later point.
+            #row.operator("image.uv_straighten", text= "straighten")
+
+
 
 if __name__ == "__main__":  # only for live edit.
     bpy.utils.register_module(__name__)
