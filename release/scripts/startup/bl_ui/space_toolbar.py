@@ -489,7 +489,7 @@ class TOOLBAR_MT_toolbars_primitives_menu(Menu):
         layout.prop(scene.toolbar_primitives_forcefield, "bool") # Our checkbox
 
             
-############### bfa - Load Save menu hidable by the flag in the right click menu
+############### bfa - menu hidable by the flag in the right click menu
 
 class TOOLBAR_MT_primitives(Menu):
     bl_idname = "TOOLBAR_MT_primitives"
@@ -505,101 +505,264 @@ class TOOLBAR_MT_primitives(Menu):
 
         TOOLBAR_MT_menu_primitives.draw_collapsible(context, layout)
 
-        ## ------------------ primitives sub toolbars
+        obj = context.object 
 
-        if scene.toolbar_primitives_mesh.bool: 
+        if obj is None:
 
-            row = layout.row(align=True)
+            ## ------------------ primitives sub toolbars
 
-            row.operator("mesh.primitive_plane_add", text="", icon='MESH_PLANE')
-            row.operator("mesh.primitive_cube_add", text="", icon='MESH_CUBE')
-            row.operator("mesh.primitive_circle_add", text="", icon='MESH_CIRCLE')
-            row.operator("mesh.primitive_uv_sphere_add", text="", icon='MESH_UVSPHERE')
-            row.operator("mesh.primitive_ico_sphere_add", text="", icon='MESH_ICOSPHERE')       
-            row.operator("mesh.primitive_cylinder_add", text="", icon='MESH_CYLINDER')
-            row.operator("mesh.primitive_cone_add", text="", icon='MESH_CONE')
-            row.operator("mesh.primitive_torus_add", text="", icon='MESH_TORUS')
+            if scene.toolbar_primitives_mesh.bool: 
 
-        if scene.toolbar_primitives_curve.bool: 
+                row = layout.row(align=True)
 
-            row = layout.row(align=True)
+                row.operator("mesh.primitive_plane_add", text="", icon='MESH_PLANE')
+                row.operator("mesh.primitive_cube_add", text="", icon='MESH_CUBE')
+                row.operator("mesh.primitive_circle_add", text="", icon='MESH_CIRCLE')
+                row.operator("mesh.primitive_uv_sphere_add", text="", icon='MESH_UVSPHERE')
+                row.operator("mesh.primitive_ico_sphere_add", text="", icon='MESH_ICOSPHERE')       
+                row.operator("mesh.primitive_cylinder_add", text="", icon='MESH_CYLINDER')
+                row.operator("mesh.primitive_cone_add", text="", icon='MESH_CONE')
+                row.operator("mesh.primitive_torus_add", text="", icon='MESH_TORUS')
 
-            row.operator("curve.primitive_bezier_curve_add", text="", icon='CURVE_BEZCURVE')
-            row.operator("curve.primitive_bezier_circle_add", text="", icon='CURVE_BEZCIRCLE')
-            row.operator("curve.primitive_nurbs_curve_add", text="", icon='CURVE_NCURVE')
-            row.operator("curve.primitive_nurbs_circle_add", text="", icon='CURVE_NCIRCLE')
-            row.operator("curve.primitive_nurbs_path_add", text="", icon='CURVE_PATH')
+            if scene.toolbar_primitives_curve.bool: 
 
-        if scene.toolbar_primitives_surface.bool: 
+                row = layout.row(align=True)
 
-            row = layout.row(align=True)
+                row.operator("curve.primitive_bezier_curve_add", text="", icon='CURVE_BEZCURVE')
+                row.operator("curve.primitive_bezier_circle_add", text="", icon='CURVE_BEZCIRCLE')
+                row.operator("curve.primitive_nurbs_curve_add", text="", icon='CURVE_NCURVE')
+                row.operator("curve.primitive_nurbs_circle_add", text="", icon='CURVE_NCIRCLE')
+                row.operator("curve.primitive_nurbs_path_add", text="", icon='CURVE_PATH')
 
-            row.operator("surface.primitive_nurbs_surface_curve_add", text="", icon='SURFACE_NCURVE')
-            row.operator("surface.primitive_nurbs_surface_circle_add", text="", icon='SURFACE_NCIRCLE')
-            row.operator("surface.primitive_nurbs_surface_surface_add", text="", icon='SURFACE_NSURFACE')
-            row.operator("surface.primitive_nurbs_surface_cylinder_add", text="", icon='SURFACE_NCYLINDER')
-            row.operator("surface.primitive_nurbs_surface_sphere_add", text="", icon='SURFACE_NSPHERE')
-            row.operator("surface.primitive_nurbs_surface_torus_add", text="", icon='SURFACE_NTORUS')
+            if scene.toolbar_primitives_surface.bool: 
 
-        if scene.toolbar_primitives_metaball.bool: 
-            row = layout.row(align=True)
+                row = layout.row(align=True)
 
-            row.operator("object.metaball_add", text="", icon='META_BALL').type= 'BALL'
-            row.operator("object.metaball_add", text="", icon='META_CAPSULE').type= 'CAPSULE'
-            row.operator("object.metaball_add", text="", icon='META_PLANE').type= 'PLANE'
-            row.operator("object.metaball_add", text="", icon='META_ELLIPSOID').type= 'ELLIPSOID'
-            row.operator("object.metaball_add", text="", icon='META_CUBE').type= 'CUBE'
+                row.operator("surface.primitive_nurbs_surface_curve_add", text="", icon='SURFACE_NCURVE')
+                row.operator("surface.primitive_nurbs_surface_circle_add", text="", icon='SURFACE_NCIRCLE')
+                row.operator("surface.primitive_nurbs_surface_surface_add", text="", icon='SURFACE_NSURFACE')
+                row.operator("surface.primitive_nurbs_surface_cylinder_add", text="", icon='SURFACE_NCYLINDER')
+                row.operator("surface.primitive_nurbs_surface_sphere_add", text="", icon='SURFACE_NSPHERE')
+                row.operator("surface.primitive_nurbs_surface_torus_add", text="", icon='SURFACE_NTORUS')
 
-        if scene.toolbar_primitives_lamp.bool: 
+            if scene.toolbar_primitives_metaball.bool: 
+                row = layout.row(align=True)
 
-            row = layout.row(align=True)
+                row.operator("object.metaball_add", text="", icon='META_BALL').type= 'BALL'
+                row.operator("object.metaball_add", text="", icon='META_CAPSULE').type= 'CAPSULE'
+                row.operator("object.metaball_add", text="", icon='META_PLANE').type= 'PLANE'
+                row.operator("object.metaball_add", text="", icon='META_ELLIPSOID').type= 'ELLIPSOID'
+                row.operator("object.metaball_add", text="", icon='META_CUBE').type= 'CUBE'
 
-            row.operator("object.lamp_add", text="", icon='LAMP_POINT').type= 'POINT'
-            row.operator("object.lamp_add", text="", icon='LAMP_SUN').type= 'SUN' 
-            row.operator("object.lamp_add", text="", icon='LAMP_SPOT').type= 'SPOT' 
-            row.operator("object.lamp_add", text="", icon='LAMP_HEMI').type= 'HEMI' 
-            row.operator("object.lamp_add", text="", icon='LAMP_AREA').type= 'AREA' 
+            if scene.toolbar_primitives_lamp.bool: 
 
-        if scene.toolbar_primitives_other.bool: 
+                row = layout.row(align=True)
 
-            row = layout.row(align=True)
+                row.operator("object.lamp_add", text="", icon='LAMP_POINT').type= 'POINT'
+                row.operator("object.lamp_add", text="", icon='LAMP_SUN').type= 'SUN' 
+                row.operator("object.lamp_add", text="", icon='LAMP_SPOT').type= 'SPOT' 
+                row.operator("object.lamp_add", text="", icon='LAMP_HEMI').type= 'HEMI' 
+                row.operator("object.lamp_add", text="", icon='LAMP_AREA').type= 'AREA' 
 
-            row.operator("object.text_add", text="", icon='OUTLINER_OB_FONT')
-            row.operator("object.armature_add", text="", icon='OUTLINER_OB_ARMATURE')
-            row.operator("object.add", text="", icon='OUTLINER_OB_LATTICE').type = 'LATTICE'
-            row.operator("object.camera_add", text="", icon='OUTLINER_OB_CAMERA')
-            row.operator("object.speaker_add", text="", icon='OUTLINER_OB_SPEAKER')
+            if scene.toolbar_primitives_other.bool: 
 
-        if scene.toolbar_primitives_empties.bool: 
+                row = layout.row(align=True)
 
-            row = layout.row(align=True)
+                row.operator("object.text_add", text="", icon='OUTLINER_OB_FONT')
+                row.operator("object.armature_add", text="", icon='OUTLINER_OB_ARMATURE')
+                row.operator("object.add", text="", icon='OUTLINER_OB_LATTICE').type = 'LATTICE'
+                row.operator("object.camera_add", text="", icon='OUTLINER_OB_CAMERA')
+                row.operator("object.speaker_add", text="", icon='OUTLINER_OB_SPEAKER')
 
-            row.operator("object.empty_add", text="", icon='OUTLINER_OB_EMPTY').type = 'PLAIN_AXES'
-            row.operator("object.empty_add", text="", icon='EMPTY_SPHERE').type = 'SPHERE'
-            row.operator("object.empty_add", text="", icon='EMPTY_CIRCLE').type = 'CIRCLE'
-            row.operator("object.empty_add", text="", icon='EMPTY_CONE').type = 'CONE'
-            row.operator("object.empty_add", text="", icon='EMPTY_CUBE').type = 'CUBE'      
-            row.operator("object.empty_add", text="", icon='EMPTY_SINGLEARROW').type = 'SINGLE_ARROW'       
-            row.operator("object.empty_add", text="", icon='EMPTY_ARROWS').type = 'ARROWS'
-            row.operator("object.empty_add", text="", icon='EMPTY_IMAGE').type = 'IMAGE'
+            if scene.toolbar_primitives_empties.bool: 
 
-        if scene.toolbar_primitives_forcefield.bool: 
+                row = layout.row(align=True)
 
-            row = layout.row(align=True)
+                row.operator("object.empty_add", text="", icon='OUTLINER_OB_EMPTY').type = 'PLAIN_AXES'
+                row.operator("object.empty_add", text="", icon='EMPTY_SPHERE').type = 'SPHERE'
+                row.operator("object.empty_add", text="", icon='EMPTY_CIRCLE').type = 'CIRCLE'
+                row.operator("object.empty_add", text="", icon='EMPTY_CONE').type = 'CONE'
+                row.operator("object.empty_add", text="", icon='EMPTY_CUBE').type = 'CUBE'      
+                row.operator("object.empty_add", text="", icon='EMPTY_SINGLEARROW').type = 'SINGLE_ARROW'       
+                row.operator("object.empty_add", text="", icon='EMPTY_ARROWS').type = 'ARROWS'
+                row.operator("object.empty_add", text="", icon='EMPTY_IMAGE').type = 'IMAGE'
 
-            row.operator("object.effector_add", text="", icon='FORCE_BOID').type='BOID'
-            row.operator("object.effector_add", text="", icon='FORCE_CHARGE').type='CHARGE'
-            row.operator("object.effector_add", text="", icon='FORCE_CURVE').type='GUIDE'
-            row.operator("object.effector_add", text="", icon='FORCE_DRAG').type='DRAG'
-            row.operator("object.effector_add", text="", icon='FORCE_FORCE').type='FORCE'
-            row.operator("object.effector_add", text="", icon='FORCE_HARMONIC').type='HARMONIC'
-            row.operator("object.effector_add", text="", icon='FORCE_LENNARDJONES').type='LENNARDJ'
-            row.operator("object.effector_add", text="", icon='FORCE_MAGNETIC').type='MAGNET'
-            row.operator("object.effector_add", text="", icon='FORCE_SMOKEFLOW').type='SMOKE'
-            row.operator("object.effector_add", text="", icon='FORCE_TEXTURE').type='TEXTURE'
-            row.operator("object.effector_add", text="", icon='FORCE_TURBULENCE').type='TURBULENCE'
-            row.operator("object.effector_add", text="", icon='FORCE_VORTEX').type='VORTEX'
-            row.operator("object.effector_add", text="", icon='FORCE_WIND').type='WIND'
+            if scene.toolbar_primitives_forcefield.bool: 
+
+                row = layout.row(align=True)
+
+                row.operator("object.effector_add", text="", icon='FORCE_BOID').type='BOID'
+                row.operator("object.effector_add", text="", icon='FORCE_CHARGE').type='CHARGE'
+                row.operator("object.effector_add", text="", icon='FORCE_CURVE').type='GUIDE'
+                row.operator("object.effector_add", text="", icon='FORCE_DRAG').type='DRAG'
+                row.operator("object.effector_add", text="", icon='FORCE_FORCE').type='FORCE'
+                row.operator("object.effector_add", text="", icon='FORCE_HARMONIC').type='HARMONIC'
+                row.operator("object.effector_add", text="", icon='FORCE_LENNARDJONES').type='LENNARDJ'
+                row.operator("object.effector_add", text="", icon='FORCE_MAGNETIC').type='MAGNET'
+                row.operator("object.effector_add", text="", icon='FORCE_SMOKEFLOW').type='SMOKE'
+                row.operator("object.effector_add", text="", icon='FORCE_TEXTURE').type='TEXTURE'
+                row.operator("object.effector_add", text="", icon='FORCE_TURBULENCE').type='TURBULENCE'
+                row.operator("object.effector_add", text="", icon='FORCE_VORTEX').type='VORTEX'
+                row.operator("object.effector_add", text="", icon='FORCE_WIND').type='WIND'
+
+        elif obj is not None:
+
+            mode = obj.mode
+
+            if mode == 'OBJECT':
+
+                ## ------------------ primitives sub toolbars
+
+                if scene.toolbar_primitives_mesh.bool: 
+
+                    row = layout.row(align=True)
+
+                    row.operator("mesh.primitive_plane_add", text="", icon='MESH_PLANE')
+                    row.operator("mesh.primitive_cube_add", text="", icon='MESH_CUBE')
+                    row.operator("mesh.primitive_circle_add", text="", icon='MESH_CIRCLE')
+                    row.operator("mesh.primitive_uv_sphere_add", text="", icon='MESH_UVSPHERE')
+                    row.operator("mesh.primitive_ico_sphere_add", text="", icon='MESH_ICOSPHERE')       
+                    row.operator("mesh.primitive_cylinder_add", text="", icon='MESH_CYLINDER')
+                    row.operator("mesh.primitive_cone_add", text="", icon='MESH_CONE')
+                    row.operator("mesh.primitive_torus_add", text="", icon='MESH_TORUS')
+
+                if scene.toolbar_primitives_curve.bool: 
+
+                    row = layout.row(align=True)
+
+                    row.operator("curve.primitive_bezier_curve_add", text="", icon='CURVE_BEZCURVE')
+                    row.operator("curve.primitive_bezier_circle_add", text="", icon='CURVE_BEZCIRCLE')
+                    row.operator("curve.primitive_nurbs_curve_add", text="", icon='CURVE_NCURVE')
+                    row.operator("curve.primitive_nurbs_circle_add", text="", icon='CURVE_NCIRCLE')
+                    row.operator("curve.primitive_nurbs_path_add", text="", icon='CURVE_PATH')
+
+                if scene.toolbar_primitives_surface.bool: 
+
+                    row = layout.row(align=True)
+
+                    row.operator("surface.primitive_nurbs_surface_curve_add", text="", icon='SURFACE_NCURVE')
+                    row.operator("surface.primitive_nurbs_surface_circle_add", text="", icon='SURFACE_NCIRCLE')
+                    row.operator("surface.primitive_nurbs_surface_surface_add", text="", icon='SURFACE_NSURFACE')
+                    row.operator("surface.primitive_nurbs_surface_cylinder_add", text="", icon='SURFACE_NCYLINDER')
+                    row.operator("surface.primitive_nurbs_surface_sphere_add", text="", icon='SURFACE_NSPHERE')
+                    row.operator("surface.primitive_nurbs_surface_torus_add", text="", icon='SURFACE_NTORUS')
+
+                if scene.toolbar_primitives_metaball.bool: 
+                    row = layout.row(align=True)
+
+                    row.operator("object.metaball_add", text="", icon='META_BALL').type= 'BALL'
+                    row.operator("object.metaball_add", text="", icon='META_CAPSULE').type= 'CAPSULE'
+                    row.operator("object.metaball_add", text="", icon='META_PLANE').type= 'PLANE'
+                    row.operator("object.metaball_add", text="", icon='META_ELLIPSOID').type= 'ELLIPSOID'
+                    row.operator("object.metaball_add", text="", icon='META_CUBE').type= 'CUBE'
+
+                if scene.toolbar_primitives_lamp.bool: 
+
+                    row = layout.row(align=True)
+
+                    row.operator("object.lamp_add", text="", icon='LAMP_POINT').type= 'POINT'
+                    row.operator("object.lamp_add", text="", icon='LAMP_SUN').type= 'SUN' 
+                    row.operator("object.lamp_add", text="", icon='LAMP_SPOT').type= 'SPOT' 
+                    row.operator("object.lamp_add", text="", icon='LAMP_HEMI').type= 'HEMI' 
+                    row.operator("object.lamp_add", text="", icon='LAMP_AREA').type= 'AREA' 
+
+                if scene.toolbar_primitives_other.bool: 
+
+                    row = layout.row(align=True)
+
+                    row.operator("object.text_add", text="", icon='OUTLINER_OB_FONT')
+                    row.operator("object.armature_add", text="", icon='OUTLINER_OB_ARMATURE')
+                    row.operator("object.add", text="", icon='OUTLINER_OB_LATTICE').type = 'LATTICE'
+                    row.operator("object.camera_add", text="", icon='OUTLINER_OB_CAMERA')
+                    row.operator("object.speaker_add", text="", icon='OUTLINER_OB_SPEAKER')
+
+                if scene.toolbar_primitives_empties.bool: 
+
+                    row = layout.row(align=True)
+
+                    row.operator("object.empty_add", text="", icon='OUTLINER_OB_EMPTY').type = 'PLAIN_AXES'
+                    row.operator("object.empty_add", text="", icon='EMPTY_SPHERE').type = 'SPHERE'
+                    row.operator("object.empty_add", text="", icon='EMPTY_CIRCLE').type = 'CIRCLE'
+                    row.operator("object.empty_add", text="", icon='EMPTY_CONE').type = 'CONE'
+                    row.operator("object.empty_add", text="", icon='EMPTY_CUBE').type = 'CUBE'      
+                    row.operator("object.empty_add", text="", icon='EMPTY_SINGLEARROW').type = 'SINGLE_ARROW'       
+                    row.operator("object.empty_add", text="", icon='EMPTY_ARROWS').type = 'ARROWS'
+                    row.operator("object.empty_add", text="", icon='EMPTY_IMAGE').type = 'IMAGE'
+
+                if scene.toolbar_primitives_forcefield.bool: 
+
+                    row = layout.row(align=True)
+
+                    row.operator("object.effector_add", text="", icon='FORCE_BOID').type='BOID'
+                    row.operator("object.effector_add", text="", icon='FORCE_CHARGE').type='CHARGE'
+                    row.operator("object.effector_add", text="", icon='FORCE_CURVE').type='GUIDE'
+                    row.operator("object.effector_add", text="", icon='FORCE_DRAG').type='DRAG'
+                    row.operator("object.effector_add", text="", icon='FORCE_FORCE').type='FORCE'
+                    row.operator("object.effector_add", text="", icon='FORCE_HARMONIC').type='HARMONIC'
+                    row.operator("object.effector_add", text="", icon='FORCE_LENNARDJONES').type='LENNARDJ'
+                    row.operator("object.effector_add", text="", icon='FORCE_MAGNETIC').type='MAGNET'
+                    row.operator("object.effector_add", text="", icon='FORCE_SMOKEFLOW').type='SMOKE'
+                    row.operator("object.effector_add", text="", icon='FORCE_TEXTURE').type='TEXTURE'
+                    row.operator("object.effector_add", text="", icon='FORCE_TURBULENCE').type='TURBULENCE'
+                    row.operator("object.effector_add", text="", icon='FORCE_VORTEX').type='VORTEX'
+                    row.operator("object.effector_add", text="", icon='FORCE_WIND').type='WIND'
+
+            if mode == 'EDIT':
+
+                if obj.type == 'MESH':
+
+                    if scene.toolbar_primitives_mesh.bool: 
+
+                        row = layout.row(align=True)
+
+                        row.operator("mesh.primitive_plane_add", text="", icon='MESH_PLANE')
+                        row.operator("mesh.primitive_cube_add", text="", icon='MESH_CUBE')
+                        row.operator("mesh.primitive_circle_add", text="", icon='MESH_CIRCLE')
+                        row.operator("mesh.primitive_uv_sphere_add", text="", icon='MESH_UVSPHERE')
+                        row.operator("mesh.primitive_ico_sphere_add", text="", icon='MESH_ICOSPHERE')       
+                        row.operator("mesh.primitive_cylinder_add", text="", icon='MESH_CYLINDER')
+                        row.operator("mesh.primitive_cone_add", text="", icon='MESH_CONE')
+                        row.operator("mesh.primitive_torus_add", text="", icon='MESH_TORUS')
+
+                if obj.type == 'CURVE':
+
+                    if scene.toolbar_primitives_curve.bool: 
+
+                        row = layout.row(align=True)
+
+                        row.operator("curve.primitive_bezier_curve_add", text="", icon='CURVE_BEZCURVE')
+                        row.operator("curve.primitive_bezier_circle_add", text="", icon='CURVE_BEZCIRCLE')
+                        row.operator("curve.primitive_nurbs_curve_add", text="", icon='CURVE_NCURVE')
+                        row.operator("curve.primitive_nurbs_circle_add", text="", icon='CURVE_NCIRCLE')
+                        row.operator("curve.primitive_nurbs_path_add", text="", icon='CURVE_PATH')
+
+                if obj.type == 'SURFACE':
+
+                    if scene.toolbar_primitives_surface.bool: 
+
+                        row = layout.row(align=True)
+
+                        row.operator("surface.primitive_nurbs_surface_curve_add", text="", icon='SURFACE_NCURVE')
+                        row.operator("surface.primitive_nurbs_surface_circle_add", text="", icon='SURFACE_NCIRCLE')
+                        row.operator("surface.primitive_nurbs_surface_surface_add", text="", icon='SURFACE_NSURFACE')
+                        row.operator("surface.primitive_nurbs_surface_cylinder_add", text="", icon='SURFACE_NCYLINDER')
+                        row.operator("surface.primitive_nurbs_surface_sphere_add", text="", icon='SURFACE_NSPHERE')
+                        row.operator("surface.primitive_nurbs_surface_torus_add", text="", icon='SURFACE_NTORUS')
+
+                if obj.type == 'META':
+
+                    if scene.toolbar_primitives_metaball.bool: 
+
+                        row = layout.row(align=True)
+
+                        row.operator("object.metaball_add", text="", icon='META_BALL').type= 'BALL'
+                        row.operator("object.metaball_add", text="", icon='META_CAPSULE').type= 'CAPSULE'
+                        row.operator("object.metaball_add", text="", icon='META_PLANE').type= 'PLANE'
+                        row.operator("object.metaball_add", text="", icon='META_ELLIPSOID').type= 'ELLIPSOID'
+                        row.operator("object.metaball_add", text="", icon='META_CUBE').type= 'CUBE'
+
+
+
 
 ######################################## Image ##############################################
 
@@ -739,6 +902,8 @@ class TOOLBAR_MT_toolbars_tools_menu(Menu):
 
         scene = context.scene
         layout.prop(scene.toolbar_tools_history, "bool") # Our checkbox
+        layout.prop(scene.toolbar_tools_relations, "bool") # Our checkbox
+        layout.prop(scene.toolbar_tools_edit, "bool") # Our checkbox
 
             
 ############### bfa - menu hidable by the flag in the right click menu
@@ -756,11 +921,11 @@ class TOOLBAR_MT_tools(Menu):
 
         TOOLBAR_MT_menu_tools.draw_collapsible(context, layout)
 
+        obj = context.object 
+
         ## ------------------ Tools sub toolbars
 
-        if scene.toolbar_tools_history.bool: 
-
-            obj = context.object
+        if scene.toolbar_tools_history.bool:
 
             row = layout.row(align=True)
 
@@ -774,6 +939,92 @@ class TOOLBAR_MT_tools(Menu):
 
             row.operator("screen.repeat_last", icon='REPEAT', text="")
             row.operator("screen.repeat_history", icon='REDO_HISTORY', text="")
+
+        if obj is not None:
+
+            mode = obj.mode
+
+            if mode == 'OBJECT':
+
+                if scene.toolbar_tools_relations.bool:
+
+                    row = layout.row(align=True)
+
+                    row.operator("group.create", icon='NEW_GROUP', text="")
+                    row.operator("group.objects_add_active", icon='ADD_TO_ACTIVE', text="")
+                    row.operator("group.objects_remove", icon='REMOVE_FROM_GROUP', text="")
+
+                    row = layout.row(align=True)
+                    row.operator("group.objects_remove_active", icon='REMOVE_SELECTED_FROM_ACTIVE_GROUP', text="")
+                    row.operator("group.objects_remove_all", icon='REMOVE_FROM_ALL_GROUPS', text="")
+
+                    row = layout.row(align=True)
+
+                    row.operator("object.parent_set", icon='PARENT_SET', text="")
+                    row.operator("object.parent_clear", icon='PARENT_CLEAR', text="")
+
+                    row = layout.row(align=True)
+
+                    row.operator("object.make_links_data", icon='LINK_DATA', text="")
+                    row.operator("object.make_single_user", icon='MAKE_SINGLE_USER', text="")
+
+                    row = layout.row(align=True)
+
+                    row.operator("object.make_local", icon='MAKE_LOCAL', text="")
+                    row.operator("object.proxy_make", icon='MAKE_PROXY', text="")
+
+
+                if scene.toolbar_tools_edit.bool:
+
+                    obj_type = obj.type
+
+                    row = layout.row(align=True)
+
+                    row.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="")
+                    if obj_type in {'MESH', 'CURVE', 'SURFACE', 'ARMATURE'}:
+                        row.operator("object.join", icon ='JOIN', text= "" )
+
+                    if obj_type in {'MESH', 'CURVE', 'SURFACE', 'ARMATURE', 'FONT', 'LATTICE'}:
+                        
+                        row = layout.row(align=True)
+
+                        row.operator("object.origin_set", icon ='GEOMETRY_TO_ORIGIN', text="").type='GEOMETRY_ORIGIN'
+                        row.operator("object.origin_set", icon ='ORIGIN_TO_GEOMETRY', text="").type='ORIGIN_GEOMETRY'
+                        row.operator("object.origin_set", icon ='ORIGIN_TO_CURSOR', text="").type='ORIGIN_CURSOR'
+                        row.operator("object.origin_set", icon ='ORIGIN_TO_CENTEROFMASS', text="").type='ORIGIN_CENTER_OF_MASS'
+
+                    if obj_type in {'MESH', 'CURVE', 'SURFACE'}:
+                        
+                        row = layout.row(align=True)
+
+                        row.operator("object.shade_smooth", icon ='SHADING_SMOOTH', text="")
+                        row.operator("object.shade_flat", icon ='SHADING_FLAT', text="")
+
+                    if obj_type == 'MESH':
+                        
+                        row = layout.row(align=True)
+
+                        row.operator("object.data_transfer", icon ='TRANSFER_DATA', text="")
+                        row.operator("object.datalayout_transfer", icon ='TRANSFER_DATA_LAYOUT', text="")
+
+            if mode == 'EDIT':
+
+                if scene.toolbar_tools_relations.bool:
+
+                    row = layout.row(align=True)
+
+                    row.operator("object.vertex_parent_set")
+
+                    if obj.type == 'ARMATURE':
+
+                        row = layout.row(align=True)
+
+                        row.operator("armature.parent_set", icon='PARENT_SET', text="")
+                        row.operator("armature.parent_clear", icon='PARENT_CLEAR', text="")
+
+
+
+
 
 
 if __name__ == "__main__":  # only for live edit.

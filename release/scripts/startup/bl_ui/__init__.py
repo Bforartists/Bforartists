@@ -197,6 +197,14 @@ class UIToolbarImageUVAlign(bpy.types.PropertyGroup):
 class UIToolbarToolsHistory(bpy.types.PropertyGroup):
     bool = bpy.props.BoolProperty(name="History", description="Display the History Toolbar", default = True) # Our prop
 
+# bfa - relations
+class UIToolbarToolsRelations(bpy.types.PropertyGroup):
+    bool = bpy.props.BoolProperty(name="Relations", description="Display the Relations Toolbar", default = True) # Our prop
+
+# bfa - edit
+class UIToolbarToolsEdit(bpy.types.PropertyGroup):
+    bool = bpy.props.BoolProperty(name="Edit", description="Display the Edit Toolbar", default = True) # Our prop
+
 #################################
 
 
@@ -345,6 +353,14 @@ def register():
     bpy.utils.register_class(UIToolbarToolsHistory) # Our data block
     bpy.types.Scene.toolbar_tools_history = bpy.props.PointerProperty(type=UIToolbarToolsHistory) # Bind reference of type of our data block to type Scene objects
 
+    # bfa - Relations
+    bpy.utils.register_class(UIToolbarToolsRelations) # Our data block
+    bpy.types.Scene.toolbar_tools_relations = bpy.props.PointerProperty(type=UIToolbarToolsRelations) # Bind reference of type of our data block to type Scene objects
+
+    # bfa - Edit
+    bpy.utils.register_class(UIToolbarToolsEdit) # Our data block
+    bpy.types.Scene.toolbar_tools_edit = bpy.props.PointerProperty(type=UIToolbarToolsEdit) # Bind reference of type of our data block to type Scene objects
+
     #######################################################################
 
     bpy.utils.register_module(__name__)
@@ -471,6 +487,8 @@ def unregister():
     ############################ Toolbar props Tools #################################
 
     bpy.utils.unregister_class(UIToolbarToolsHistory)
+    bpy.utils.unregister_class(UIToolbarToolsRelations)
+    bpy.utils.unregister_class(UIToolbarToolsEdit)
 
     ############################################################################
 
