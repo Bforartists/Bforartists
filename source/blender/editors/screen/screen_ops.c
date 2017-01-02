@@ -3522,11 +3522,6 @@ void ED_screens_header_tools_menu_create(bContext *C, uiLayout *layout, void *UN
 		(sa->flag & HEADER_NO_EDITORTYPEMENU) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
 		"SCREEN_OT_header_toggle_editortypemenu");
 
-	//// bfa - show hide the file toolbar
-	//uiItemO(layout, IFACE_("Toolbar File"),
-	//	(sa->flag & HEADER_TOOLBAR_LOADSAVE) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
-	//	"SCREEN_OT_header_toolbar_loadsave");
-
 	uiItemS(layout);
 
 	/* file browser should be fullscreen all the time, but other regions can be maximized/restored... */
@@ -3566,52 +3561,51 @@ static void SCREEN_OT_header_toolbox(wmOperatorType *ot)
 
 
 /* ************** toolbar tools operator ***************************** */
+/* ************** This menu is called in the toolbar editor to choose the toolbar type ***************************** */
 void ED_screens_toolbar_tools_menu_create(bContext *C, uiLayout *layout, void *UNUSED(arg))
 {
 	ScrArea *sa = CTX_wm_area(C);
 	ARegion *ar = CTX_wm_region(C);
 
-	// bfa - show hide the file toolbar
+	// bfa - show hide the File toolbar
 	uiItemO(layout, IFACE_("Toolbar File"),
 		(sa->flag & HEADER_TOOLBAR_FILE) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
 		"SCREEN_OT_header_toolbar_file");
 
-	// bfa - show hide the view toolbar
+	// bfa - show hide the View toolbar
 	uiItemO(layout, IFACE_("Toolbar View"),
 		(sa->flag & HEADER_TOOLBAR_VIEW) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
 		"SCREEN_OT_header_toolbar_view");
 
-	// bfa - show hide the primitives toolbar
+	// bfa - show hide the Primitives toolbar
 	uiItemO(layout, IFACE_("Toolbar Primitives"),
 		(sa->flag & HEADER_TOOLBAR_PRIMITIVES) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
 		"SCREEN_OT_header_toolbar_primitives");
 
-	// bfa - show hide the image toolbar
+	// bfa - show hide the Image toolbar
 	uiItemO(layout, IFACE_("Toolbar Image"),
 		(sa->flag & HEADER_TOOLBAR_IMAGE) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
 		"SCREEN_OT_header_toolbar_image");
 
-	// bfa - show hide the tools toolbar
+	// bfa - show hide the Tools toolbar
 	uiItemO(layout, IFACE_("Toolbar Tools"),
 		(sa->flag & HEADER_TOOLBAR_TOOLS) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
 		"SCREEN_OT_header_toolbar_tools");
 
-	// bfa - show hide the animation toolbar
+	// bfa - show hide the Animation toolbar
 	uiItemO(layout, IFACE_("Toolbar Animation"),
 		(sa->flag & HEADER_TOOLBAR_ANIMATION) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
 		"SCREEN_OT_header_toolbar_animation");
 
-	// bfa - show hide the edit toolbar
+	// bfa - show hide the Edit toolbar
 	uiItemO(layout, IFACE_("Toolbar Edit"),
 		(sa->flag & HEADER_TOOLBAR_EDIT) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
 		"SCREEN_OT_header_toolbar_edit");
 
-	// bfa - show hide the misc toolbar
+	// bfa - show hide the Misc toolbar
 	uiItemO(layout, IFACE_("Toolbar Misc"),
 		(sa->flag & HEADER_TOOLBAR_MISC) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
 		"SCREEN_OT_header_toolbar_misc");
-
-
 }
 
 static int toolbar_toolbox_invoke(bContext *C, wmOperator *UNUSED(op), const wmEvent *UNUSED(event))
