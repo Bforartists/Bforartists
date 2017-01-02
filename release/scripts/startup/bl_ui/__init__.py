@@ -98,150 +98,150 @@ class UITweaksData(bpy.types.PropertyGroup):
 
 # bfa - Load Save
 class UIToolbarLoadsave(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="Load / Save", description="Display the Load / Save Toolbar", default = True) # Our prop
+    bool = bpy.props.BoolProperty(name="Load / Save", description="Display the Load / Save Toolbar", default = True)
 
-# bfa - Load Save
+# bfa - Link Append
 class UIToolbarLinkappend(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="Link Append", description="Display the Link Append Toolbar", default = True) # Our prop
+    bool = bpy.props.BoolProperty(name="Link Append", description="Display the Link Append Toolbar", default = True)
 
 # bfa - Import common
 class UIToolbarImportCommon(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="Import common", description="Display the Import common Toolbar", default = True) # Our prop
+    bool = bpy.props.BoolProperty(name="Import common", description="Display the Import common Toolbar", default = True)
 
 # bfa - Import uncommon
 class UIToolbarImportUncommon(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="Import uncommon", description="Display the Import uncommon Toolbar", default = True) # Our prop
+    bool = bpy.props.BoolProperty(name="Import uncommon", description="Display the Import uncommon Toolbar", default = True)
 
 # bfa - Export common
 class UIToolbarExportCommon(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="Export common", description="Display the Export common Toolbar", default = True) # Our prop
+    bool = bpy.props.BoolProperty(name="Export common", description="Display the Export common Toolbar", default = True)
 
 # bfa - Export uncommon
 class UIToolbarExportUncommon(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="Export uncommon", description="Display the Export uncommon Toolbar", default = True) # Our prop
+    bool = bpy.props.BoolProperty(name="Export uncommon", description="Display the Export uncommon Toolbar", default = True)
 
 # bfa - Render
 class UIToolbarFileRender(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="Render", description="Display the Render Toolbar", default = True) # Our prop
+    bool = bpy.props.BoolProperty(name="Render", description="Display the Render Toolbar", default = True)
 
 # bfa - Render Víew
 class UIToolbarFileRenderView(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="Render Open GL", description="Display the Render View Toolbar", default = True) # Our prop#
+    bool = bpy.props.BoolProperty(name="Render Open GL", description="Display the Render View Toolbar", default = True)
 
-# bfa - Render
+# bfa - Render Misc
 class UIToolbarFileRenderMisc(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="Render Misc", description="Display the Render Misc Toolbar", default = True) # Our prop
+    bool = bpy.props.BoolProperty(name="Render Misc", description="Display the Render Misc Toolbar", default = True)
 
 ############################ Toolbar props View #################################
 
 # bfa - Align
 class UIToolbarViewAlign(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="Align", description="Display the Align Toolbar", default = True) # Our prop
+    bool = bpy.props.BoolProperty(name="Align", description="Display the Align Toolbar", default = True)
 
 # bfa - Camera
 class UIToolbarViewCamera(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="Camera", description="Display the Camera Toolbar", default = True) # Our prop
+    bool = bpy.props.BoolProperty(name="Camera", description="Display the Camera Toolbar", default = True)
 
 ############################ Toolbar props Primitives #################################
 
 # bfa - Mesh
 class UIToolbarPrimitivesMesh(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="Mesh", description="Display the Mesh Toolbar", default = True) # Our prop
+    bool = bpy.props.BoolProperty(name="Mesh", description="Display the Mesh Toolbar", default = True)
 
 # bfa - Curve
 class UIToolbarPrimitivesCurve(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="Curve", description="Display the Curve Toolbar", default = True) # Our prop
+    bool = bpy.props.BoolProperty(name="Curve", description="Display the Curve Toolbar", default = True)
 
 # bfa - Surface
 class UIToolbarPrimitivesSurface(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="Surface", description="Display the Surface Toolbar", default = True) # Our prop
+    bool = bpy.props.BoolProperty(name="Surface", description="Display the Surface Toolbar", default = True)
 
 # bfa - Metaball
 class UIToolbarPrimitivesMetaball(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="Metaball", description="Display the Metaball Toolbar", default = True) # Our prop
+    bool = bpy.props.BoolProperty(name="Metaball", description="Display the Metaball Toolbar", default = True)
 
 # bfa - Lamp
 class UIToolbarPrimitivesLamp(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="Lamp", description="Display the Lamp Toolbar", default = True) # Our prop
+    bool = bpy.props.BoolProperty(name="Lamp", description="Display the Lamp Toolbar", default = True)
 
 # bfa - Other
 class UIToolbarPrimitivesOther(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="Other", description="Display the Other Toolbar", default = True) # Our prop
+    bool = bpy.props.BoolProperty(name="Other", description="Display the Other Toolbar", default = True)
 
 # bfa - Empties
 class UIToolbarPrimitivesEmpties(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="Empties", description="Display the Empties Toolbar", default = True) # Our prop
+    bool = bpy.props.BoolProperty(name="Empties", description="Display the Empties Toolbar", default = True)
 
 # bfa - Force Field
 class UIToolbarPrimitivesForcefield(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="Force Field", description="Display the Force Field Toolbar", default = True) # Our prop
+    bool = bpy.props.BoolProperty(name="Force Field", description="Display the Force Field Toolbar", default = True)
 
 
 ############################ Toolbar props image #################################
 
 # bfa - Common
 class UIToolbarImageUVCommon(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="UV Common", description="Display the UV Common Toolbar", default = True) # Our prop
+    bool = bpy.props.BoolProperty(name="UV Common", description="Display the UV Common Toolbar", default = True)
 
 # bfa - Misc
 class UIToolbarImageUVMisc(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="UV Misc", description="Display the UV Misc Toolbar", default = True) # Our prop
+    bool = bpy.props.BoolProperty(name="UV Misc", description="Display the UV Misc Toolbar", default = True)
 
 # bfa - Align
 class UIToolbarImageUVAlign(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="UV Align", description="Display the UV Align Toolbar", default = True) # Our prop
+    bool = bpy.props.BoolProperty(name="UV Align", description="Display the UV Align Toolbar", default = True)
 
 ############################ Toolbar props Tools #################################
 
 # bfa - History
 class UIToolbarToolsHistory(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="History", description="Display the History Toolbar", default = True) # Our prop
+    bool = bpy.props.BoolProperty(name="History", description="Display the History Toolbar", default = True)
 
-# bfa - relations
+# bfa - Relations
 class UIToolbarToolsRelations(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="Relations", description="Display the Relations Toolbar", default = True) # Our prop
+    bool = bpy.props.BoolProperty(name="Relations", description="Display the Relations Toolbar", default = True)
 
-# bfa - edit
+# bfa - Edit
 class UIToolbarToolsEdit(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="Edit", description="Display the Edit Toolbar", default = True) # Our prop
+    bool = bpy.props.BoolProperty(name="Edit", description="Display the Edit Toolbar", default = True)
 
 ############################ Toolbar props animation #################################
 
 # bfa - Keyframes
 class UIToolbarAnimationKeyframes(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="Keyframes", description="Display the Keyframes Toolbar", default = True) # Our prop
+    bool = bpy.props.BoolProperty(name="Keyframes", description="Display the Keyframes Toolbar", default = True)
 
 # bfa - Range
 class UIToolbarAnimationRange(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="Range", description="Display the Range Toolbar", default = True) # Our prop
+    bool = bpy.props.BoolProperty(name="Range", description="Display the Range Toolbar", default = True)
 
 # bfa - Play
 class UIToolbarAnimationPlay(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="Play", description="Display the Play Toolbar", default = True) # Our prop
+    bool = bpy.props.BoolProperty(name="Play", description="Display the Play Toolbar", default = True)
 
 # bfa - Sync
 class UIToolbarAnimationSync(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="Sync", description="Display the Sync Toolbar", default = True) # Our prop
+    bool = bpy.props.BoolProperty(name="Sync", description="Display the Sync Toolbar", default = True)
 
  # bfa - Keyingset
 class UIToolbarAnimationKeyingset(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="Keyingset", description="Display the Keyingset Toolbar", default = True) # Our prop
+    bool = bpy.props.BoolProperty(name="Keyingset", description="Display the Keyingset Toolbar", default = True)
 
 ############################ Toolbar props edit #################################
 
 # bfa - Edit
 class UIToolbarEditEdit(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="Edit", description="Display the Edit Toolbar", default = True) # Our prop
+    bool = bpy.props.BoolProperty(name="Edit", description="Display the Edit Toolbar", default = True)
 
 # bfa - Weight in Edit
 class UIToolbarEditWeight(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="Weigth in Edit", description="Display the Weight in Edit Toolbar", default = True) # Our prop
+    bool = bpy.props.BoolProperty(name="Weigth in Edit", description="Display the Weight in Edit Toolbar", default = True)
 
 ############################ Toolbar props misc #################################
 
 # bfa - Misc
 class UIToolbarMiscMisc(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="Misc", description="Display the Misc Toolbar", default = True) # Our prop
+    bool = bpy.props.BoolProperty(name="Misc", description="Display the Misc Toolbar", default = True)
 
 
 #################################
@@ -297,7 +297,7 @@ def register():
 
     # bfa - Link Append
     bpy.utils.register_class(UIToolbarLinkappend) # Our data block
-    bpy.types.Scene.toolbar_file_linkappend = bpy.props.PointerProperty(type=UIToolbarLinkappend) # Bind reference of type of our data block to type Scene objects
+    bpy.types.Scene.toolbar_file_linkappend = bpy.props.PointerProperty(type=UIToolbarLinkappend)
 
     # bfa - Import common
     bpy.utils.register_class(UIToolbarImportCommon) # Our data block
@@ -332,111 +332,111 @@ def register():
 
     # bfa - Align
     bpy.utils.register_class(UIToolbarViewAlign) # Our data block
-    bpy.types.Scene.toolbar_view_align = bpy.props.PointerProperty(type=UIToolbarViewAlign) # Bind reference of type of our data block to type Scene objects
+    bpy.types.Scene.toolbar_view_align = bpy.props.PointerProperty(type=UIToolbarViewAlign) 
 
     # bfa - Camera
     bpy.utils.register_class(UIToolbarViewCamera) # Our data block
-    bpy.types.Scene.toolbar_view_camera = bpy.props.PointerProperty(type=UIToolbarViewCamera) # Bind reference of type of our data block to type Scene objects
+    bpy.types.Scene.toolbar_view_camera = bpy.props.PointerProperty(type=UIToolbarViewCamera)
 
     ############################ Toolbar props Primitives #################################
 
     # bfa - Mesh
     bpy.utils.register_class(UIToolbarPrimitivesMesh) # Our data block
-    bpy.types.Scene.toolbar_primitives_mesh = bpy.props.PointerProperty(type=UIToolbarPrimitivesMesh) # Bind reference of type of our data block to type Scene objects
+    bpy.types.Scene.toolbar_primitives_mesh = bpy.props.PointerProperty(type=UIToolbarPrimitivesMesh)
 
     # bfa - Curve
     bpy.utils.register_class(UIToolbarPrimitivesCurve) # Our data block
-    bpy.types.Scene.toolbar_primitives_curve = bpy.props.PointerProperty(type=UIToolbarPrimitivesCurve) # Bind reference of type of our data block to type Scene objects
+    bpy.types.Scene.toolbar_primitives_curve = bpy.props.PointerProperty(type=UIToolbarPrimitivesCurve)
 
     # bfa - Surface
     bpy.utils.register_class(UIToolbarPrimitivesSurface) # Our data block
-    bpy.types.Scene.toolbar_primitives_surface = bpy.props.PointerProperty(type=UIToolbarPrimitivesSurface) # Bind reference of type of our data block to type Scene objects
+    bpy.types.Scene.toolbar_primitives_surface = bpy.props.PointerProperty(type=UIToolbarPrimitivesSurface)
 
     # bfa - Metaball
     bpy.utils.register_class(UIToolbarPrimitivesMetaball) # Our data block
-    bpy.types.Scene.toolbar_primitives_metaball = bpy.props.PointerProperty(type=UIToolbarPrimitivesMetaball) # Bind reference of type of our data block to type Scene objects
+    bpy.types.Scene.toolbar_primitives_metaball = bpy.props.PointerProperty(type=UIToolbarPrimitivesMetaball)
 
     # bfa - Lamp
     bpy.utils.register_class(UIToolbarPrimitivesLamp) # Our data block
-    bpy.types.Scene.toolbar_primitives_lamp = bpy.props.PointerProperty(type=UIToolbarPrimitivesLamp) # Bind reference of type of our data block to type Scene objects
+    bpy.types.Scene.toolbar_primitives_lamp = bpy.props.PointerProperty(type=UIToolbarPrimitivesLamp)
 
     # bfa - Other
     bpy.utils.register_class(UIToolbarPrimitivesOther) # Our data block
-    bpy.types.Scene.toolbar_primitives_other = bpy.props.PointerProperty(type=UIToolbarPrimitivesOther) # Bind reference of type of our data block to type Scene objects
+    bpy.types.Scene.toolbar_primitives_other = bpy.props.PointerProperty(type=UIToolbarPrimitivesOther)
 
     # bfa - Empties
     bpy.utils.register_class(UIToolbarPrimitivesEmpties) # Our data block
-    bpy.types.Scene.toolbar_primitives_empties = bpy.props.PointerProperty(type=UIToolbarPrimitivesEmpties) # Bind reference of type of our data block to type Scene objects
+    bpy.types.Scene.toolbar_primitives_empties = bpy.props.PointerProperty(type=UIToolbarPrimitivesEmpties)
 
     # bfa - Force Field
     bpy.utils.register_class(UIToolbarPrimitivesForcefield) # Our data block
-    bpy.types.Scene.toolbar_primitives_forcefield = bpy.props.PointerProperty(type=UIToolbarPrimitivesForcefield) # Bind reference of type of our data block to type Scene objects
+    bpy.types.Scene.toolbar_primitives_forcefield = bpy.props.PointerProperty(type=UIToolbarPrimitivesForcefield)
 
     ############################ Toolbar props Image #################################
 
     # bfa - File
     bpy.utils.register_class(UIToolbarImageUVCommon) # Our data block
-    bpy.types.Scene.toolbar_image_uvcommon = bpy.props.PointerProperty(type=UIToolbarImageUVCommon) # Bind reference of type of our data block to type Scene objects
+    bpy.types.Scene.toolbar_image_uvcommon = bpy.props.PointerProperty(type=UIToolbarImageUVCommon)
 
     # bfa - Misc
     bpy.utils.register_class(UIToolbarImageUVMisc) # Our data block
-    bpy.types.Scene.toolbar_image_uvmisc = bpy.props.PointerProperty(type=UIToolbarImageUVMisc) # Bind reference of type of our data block to type Scene objects
+    bpy.types.Scene.toolbar_image_uvmisc = bpy.props.PointerProperty(type=UIToolbarImageUVMisc)
 
     # bfa - Align
     bpy.utils.register_class(UIToolbarImageUVAlign) # Our data block
-    bpy.types.Scene.toolbar_image_uvalign = bpy.props.PointerProperty(type=UIToolbarImageUVAlign) # Bind reference of type of our data block to type Scene objects
+    bpy.types.Scene.toolbar_image_uvalign = bpy.props.PointerProperty(type=UIToolbarImageUVAlign)
 
     ############################ Toolbar props Tools #################################
 
     # bfa - History
     bpy.utils.register_class(UIToolbarToolsHistory) # Our data block
-    bpy.types.Scene.toolbar_tools_history = bpy.props.PointerProperty(type=UIToolbarToolsHistory) # Bind reference of type of our data block to type Scene objects
+    bpy.types.Scene.toolbar_tools_history = bpy.props.PointerProperty(type=UIToolbarToolsHistory)
 
     # bfa - Relations
     bpy.utils.register_class(UIToolbarToolsRelations) # Our data block
-    bpy.types.Scene.toolbar_tools_relations = bpy.props.PointerProperty(type=UIToolbarToolsRelations) # Bind reference of type of our data block to type Scene objects
+    bpy.types.Scene.toolbar_tools_relations = bpy.props.PointerProperty(type=UIToolbarToolsRelations)
 
     # bfa - Edit
     bpy.utils.register_class(UIToolbarToolsEdit) # Our data block
-    bpy.types.Scene.toolbar_tools_edit = bpy.props.PointerProperty(type=UIToolbarToolsEdit) # Bind reference of type of our data block to type Scene objects
+    bpy.types.Scene.toolbar_tools_edit = bpy.props.PointerProperty(type=UIToolbarToolsEdit)
 
     ############################ Toolbar props animation #################################
 
     # bfa - Keyframes
     bpy.utils.register_class(UIToolbarAnimationKeyframes) # Our data block
-    bpy.types.Scene.toolbar_animation_keyframes = bpy.props.PointerProperty(type=UIToolbarAnimationKeyframes) # Bind reference of type of our data block to type Scene objects
+    bpy.types.Scene.toolbar_animation_keyframes = bpy.props.PointerProperty(type=UIToolbarAnimationKeyframes)
     
     # bfa - Range
     bpy.utils.register_class(UIToolbarAnimationRange) # Our data block
-    bpy.types.Scene.toolbar_animation_range = bpy.props.PointerProperty(type=UIToolbarAnimationRange) # Bind reference of type of our data block to type Scene objects
+    bpy.types.Scene.toolbar_animation_range = bpy.props.PointerProperty(type=UIToolbarAnimationRange)
     
     # bfa - Play
     bpy.utils.register_class(UIToolbarAnimationPlay) # Our data block
-    bpy.types.Scene.toolbar_animation_play = bpy.props.PointerProperty(type=UIToolbarAnimationPlay) # Bind reference of type of our data block to type Scene objects
+    bpy.types.Scene.toolbar_animation_play = bpy.props.PointerProperty(type=UIToolbarAnimationPlay)
     
     # bfa - Animation
     bpy.utils.register_class(UIToolbarAnimationSync) # Our data block
-    bpy.types.Scene.toolbar_animation_sync = bpy.props.PointerProperty(type=UIToolbarAnimationSync) # Bind reference of type of our data block to type Scene objects
+    bpy.types.Scene.toolbar_animation_sync = bpy.props.PointerProperty(type=UIToolbarAnimationSync)
     
     # bfa - Animation
     bpy.utils.register_class(UIToolbarAnimationKeyingset) # Our data block
-    bpy.types.Scene.toolbar_animation_keyingset = bpy.props.PointerProperty(type=UIToolbarAnimationKeyingset) # Bind reference of type of our data block to type Scene objects
+    bpy.types.Scene.toolbar_animation_keyingset = bpy.props.PointerProperty(type=UIToolbarAnimationKeyingset)
 
     ############################ Toolbar props edit #################################
 
     # bfa - Edit
     bpy.utils.register_class(UIToolbarEditEdit) # Our data block
-    bpy.types.Scene.toolbar_edit_edit= bpy.props.PointerProperty(type=UIToolbarEditEdit) # Bind reference of type of our data block to type Scene objects
+    bpy.types.Scene.toolbar_edit_edit= bpy.props.PointerProperty(type=UIToolbarEditEdit)
 
     # bfa - Weight in Edit
     bpy.utils.register_class(UIToolbarEditWeight) # Our data block
-    bpy.types.Scene.toolbar_edit_weight= bpy.props.PointerProperty(type=UIToolbarEditWeight) # Bind reference of type of our data block to type Scene objects
+    bpy.types.Scene.toolbar_edit_weight= bpy.props.PointerProperty(type=UIToolbarEditWeight)
 
     ############################ Toolbar props misc #################################
 
     # bfa - Misc
     bpy.utils.register_class(UIToolbarMiscMisc) # Our data block
-    bpy.types.Scene.toolbar_misc_misc = bpy.props.PointerProperty(type=UIToolbarMiscMisc) # Bind reference of type of our data block to type Scene objects
+    bpy.types.Scene.toolbar_misc_misc = bpy.props.PointerProperty(type=UIToolbarMiscMisc)
 
     #######################################################################
 

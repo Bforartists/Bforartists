@@ -35,14 +35,14 @@ class TOOLBAR_HT_header(Header):
 
         ############## toolbars ##########################################################################
 
-        TOOLBAR_MT_file.hide_file_toolbar(context, layout) # bfa - show hide the complete file toolbar container
-        TOOLBAR_MT_view.hide_view_toolbar(context, layout) # bfa - show hide the complete view toolbar container
-        TOOLBAR_MT_primitives.hide_primitives_toolbar(context, layout) # bfa - show hide the complete primitives toolbar container
-        TOOLBAR_MT_image.hide_image_toolbar(context, layout) # bfa - show hide the complete image toolbar container
-        TOOLBAR_MT_tools.hide_tools_toolbar(context, layout) # bfa - show hide the complete tools toolbar container
-        TOOLBAR_MT_animation.hide_animation_toolbar(context, layout) # bfa - show hide the complete animation toolbar container
-        TOOLBAR_MT_edit.hide_edit_toolbar(context, layout) # bfa - show hide the complete edit toolbar container
-        TOOLBAR_MT_misc.hide_misc_toolbar(context, layout) # bfa - show hide the complete misc toolbar container
+        TOOLBAR_MT_file.hide_file_toolbar(context, layout) # bfa - show hide the complete toolbar container
+        TOOLBAR_MT_view.hide_view_toolbar(context, layout)
+        TOOLBAR_MT_primitives.hide_primitives_toolbar(context, layout)
+        TOOLBAR_MT_image.hide_image_toolbar(context, layout)
+        TOOLBAR_MT_tools.hide_tools_toolbar(context, layout)
+        TOOLBAR_MT_animation.hide_animation_toolbar(context, layout)
+        TOOLBAR_MT_edit.hide_edit_toolbar(context, layout)
+        TOOLBAR_MT_misc.hide_misc_toolbar(context, layout)
 
 ########################################################################
 
@@ -63,7 +63,7 @@ class ALL_MT_editormenu(Menu):
 
 ################ Toolbar type
 
-# Everything menu in this class is collapsible. See line 35.
+# Everything menu in this class is collapsible.
 class TOOLBAR_MT_toolbar_type(Menu):
     bl_idname = "TOOLBAR_MT_toolbar_type"
     bl_label = ""
@@ -87,8 +87,8 @@ class TOOLBAR_MT_toolbar_type(Menu):
 
 #################### Holds the Toolbars menu for file, collapsible
 
-class TOOLBAR_MT_menu_loadsave(Menu):
-    bl_idname = "TOOLBAR_MT_menu_loadsave"
+class TOOLBAR_MT_menu_file(Menu):
+    bl_idname = "TOOLBAR_MT_menu_file"
     bl_label = ""
 
     def draw(self, context):
@@ -112,17 +112,17 @@ class TOOLBAR_MT_toolbars_file_menu(Menu):
         layout = self.layout
 
         scene = context.scene
-        layout.prop(scene.toolbar_file_loadsave, "bool") # Our checkbox
+        layout.prop(scene.toolbar_file_loadsave, "bool")
 
-        layout.prop(scene.toolbar_file_linkappend, "bool") # Our checkbox
+        layout.prop(scene.toolbar_file_linkappend, "bool")
 
-        layout.prop(scene.toolbar_file_importcommon, "bool") # Our checkbox
-        layout.prop(scene.toolbar_file_importuncommon, "bool") # Our checkbox
-        layout.prop(scene.toolbar_file_exportcommon, "bool") # Our checkbox
-        layout.prop(scene.toolbar_file_exportuncommon, "bool") # Our checkbox
-        layout.prop(scene.toolbar_file_render, "bool") # Our checkbox  
-        layout.prop(scene.toolbar_file_render_view, "bool") # Our checkbox  
-        layout.prop(scene.toolbar_file_render_misc, "bool") # Our checkbox  
+        layout.prop(scene.toolbar_file_importcommon, "bool")
+        layout.prop(scene.toolbar_file_importuncommon, "bool")
+        layout.prop(scene.toolbar_file_exportcommon, "bool")
+        layout.prop(scene.toolbar_file_exportuncommon, "bool")
+        layout.prop(scene.toolbar_file_render, "bool")  
+        layout.prop(scene.toolbar_file_render_view, "bool")  
+        layout.prop(scene.toolbar_file_render_misc, "bool")  
             
 ############### bfa - Load Save menu hidable by the flag in the right click menu
 
@@ -136,9 +136,8 @@ class TOOLBAR_MT_file(Menu):
     @staticmethod
     def draw_menus(layout, context):
         scene = context.scene
-        #rd = scene.render
 
-        TOOLBAR_MT_menu_loadsave.draw_collapsible(context, layout)
+        TOOLBAR_MT_menu_file.draw_collapsible(context, layout)
 
         ## ------------------ Load / Save sub toolbars
 
@@ -277,8 +276,8 @@ class TOOLBAR_MT_toolbars_view_menu(Menu):
         layout = self.layout
 
         scene = context.scene
-        layout.prop(scene.toolbar_view_align, "bool") # Our checkbox
-        layout.prop(scene.toolbar_view_camera, "bool") # Our checkbox
+        layout.prop(scene.toolbar_view_align, "bool")
+        layout.prop(scene.toolbar_view_camera, "bool")
 
 
 ############### Change view classes
@@ -481,15 +480,15 @@ class TOOLBAR_MT_toolbars_primitives_menu(Menu):
         layout = self.layout
 
         scene = context.scene
-        layout.prop(scene.toolbar_primitives_mesh, "bool") # Our checkbox
-        layout.prop(scene.toolbar_primitives_curve, "bool") # Our checkbox
-        layout.prop(scene.toolbar_primitives_surface, "bool") # Our checkbox
-        layout.prop(scene.toolbar_primitives_metaball, "bool") # Our checkbox
+        layout.prop(scene.toolbar_primitives_mesh, "bool")
+        layout.prop(scene.toolbar_primitives_curve, "bool")
+        layout.prop(scene.toolbar_primitives_surface, "bool")
+        layout.prop(scene.toolbar_primitives_metaball, "bool")
 
-        layout.prop(scene.toolbar_primitives_lamp, "bool") # Our checkbox
-        layout.prop(scene.toolbar_primitives_other, "bool") # Our checkbox
-        layout.prop(scene.toolbar_primitives_empties, "bool") # Our checkbox
-        layout.prop(scene.toolbar_primitives_forcefield, "bool") # Our checkbox
+        layout.prop(scene.toolbar_primitives_lamp, "bool")
+        layout.prop(scene.toolbar_primitives_other, "bool")
+        layout.prop(scene.toolbar_primitives_empties, "bool")
+        layout.prop(scene.toolbar_primitives_forcefield, "bool")
 
             
 ############### bfa - menu hidable by the flag in the right click menu
@@ -764,9 +763,6 @@ class TOOLBAR_MT_primitives(Menu):
                         row.operator("object.metaball_add", text="", icon='META_ELLIPSOID').type= 'ELLIPSOID'
                         row.operator("object.metaball_add", text="", icon='META_CUBE').type= 'CUBE'
 
-
-
-
 ######################################## Image ##############################################
 
 # Try to give unique tooltip fails at wrong context issue. Code remains for now. Maybe we find a solution here.
@@ -813,9 +809,9 @@ class TOOLBAR_MT_toolbars_image_menu(Menu):
         layout = self.layout
 
         scene = context.scene
-        layout.prop(scene.toolbar_image_uvcommon, "bool") # Our checkbox
-        layout.prop(scene.toolbar_image_uvmisc, "bool") # Our checkbox
-        layout.prop(scene.toolbar_image_uvalign, "bool") # Our checkbox
+        layout.prop(scene.toolbar_image_uvcommon, "bool")
+        layout.prop(scene.toolbar_image_uvmisc, "bool")
+        layout.prop(scene.toolbar_image_uvalign, "bool")
             
 ############### bfa - menu hidable by the flag in the right click menu
 
@@ -904,10 +900,9 @@ class TOOLBAR_MT_toolbars_tools_menu(Menu):
         layout = self.layout
 
         scene = context.scene
-        layout.prop(scene.toolbar_tools_history, "bool") # Our checkbox
-        layout.prop(scene.toolbar_tools_relations, "bool") # Our checkbox
-        layout.prop(scene.toolbar_tools_edit, "bool") # Our checkbox
-
+        layout.prop(scene.toolbar_tools_history, "bool")
+        layout.prop(scene.toolbar_tools_relations, "bool")
+        layout.prop(scene.toolbar_tools_edit, "bool")
             
 ############### bfa - menu hidable by the flag in the right click menu
 
@@ -976,7 +971,6 @@ class TOOLBAR_MT_tools(Menu):
                     row.operator("object.make_local", icon='MAKE_LOCAL', text="")
                     row.operator("object.proxy_make", icon='MAKE_PROXY', text="")
 
-
                 if scene.toolbar_tools_edit.bool:
 
                     obj_type = obj.type
@@ -1035,7 +1029,6 @@ class TOOLBAR_MT_menu_animation(Menu):
 
     def draw(self, context):
         self.draw_menus(self.layout, context)
-        
 
     @staticmethod
     def draw_menus(layout, context):
@@ -1043,7 +1036,6 @@ class TOOLBAR_MT_menu_animation(Menu):
         rd = scene.render
 
         layout.menu("TOOLBAR_MT_toolbars_animation_menu") # see class below
-
 
 ##################### Animation toolbars menu
 
@@ -1054,11 +1046,11 @@ class TOOLBAR_MT_toolbars_animation_menu(Menu):
         layout = self.layout
 
         scene = context.scene
-        layout.prop(scene.toolbar_animation_keyframes, "bool") # Our checkbox
-        layout.prop(scene.toolbar_animation_range, "bool") # Our checkbox
-        layout.prop(scene.toolbar_animation_play, "bool") # Our checkbox
-        layout.prop(scene.toolbar_animation_sync, "bool") # Our checkbox
-        layout.prop(scene.toolbar_animation_keyingset, "bool") # Our checkbox
+        layout.prop(scene.toolbar_animation_keyframes, "bool")
+        layout.prop(scene.toolbar_animation_range, "bool")
+        layout.prop(scene.toolbar_animation_play, "bool")
+        layout.prop(scene.toolbar_animation_sync, "bool")
+        layout.prop(scene.toolbar_animation_keyingset, "bool")
          
 ############### bfa - menu hidable by the flag in the right click menu
 
@@ -1075,7 +1067,6 @@ class TOOLBAR_MT_animation(Menu):
         screen = context.screen
         toolsettings = context.tool_settings
         userprefs = context.user_preferences
-        
 
         TOOLBAR_MT_menu_animation.draw_collapsible(context, layout)
 
@@ -1127,7 +1118,6 @@ class TOOLBAR_MT_animation(Menu):
 
                     row.operator("object.paths_calculate", icon ='MOTIONPATHS_CALCULATE',  text="")
                     row.operator("object.paths_clear", icon ='MOTIONPATHS_CLEAR',  text="")
-
 
         if scene.toolbar_animation_range.bool: 
 
@@ -1207,7 +1197,6 @@ class TOOLBAR_MT_menu_edit(Menu):
     def draw(self, context):
         self.draw_menus(self.layout, context)
         
-
     @staticmethod
     def draw_menus(layout, context):
         scene = context.scene
@@ -1224,8 +1213,8 @@ class TOOLBAR_MT_toolbars_edit_menu(Menu):
         layout = self.layout
 
         scene = context.scene
-        layout.prop(scene.toolbar_edit_edit, "bool") # Our checkbox
-        layout.prop(scene.toolbar_edit_weight, "bool") # Our checkbox
+        layout.prop(scene.toolbar_edit_edit, "bool")
+        layout.prop(scene.toolbar_edit_weight, "bool")
             
 ############### bfa - menu hidable by the flag in the right click menu
 
@@ -1240,7 +1229,6 @@ class TOOLBAR_MT_edit(Menu):
     def draw_menus(layout, context):
         scene = context.scene
         obj = context.object
-        
 
         TOOLBAR_MT_menu_edit.draw_collapsible(context, layout)
 
@@ -1293,12 +1281,6 @@ class TOOLBAR_MT_edit(Menu):
                     row.operator("object.vertex_group_limit_total", icon='WEIGHT_LIMIT_TOTAL',text="")
                     row.operator("object.vertex_group_fix", icon='WEIGHT_FIX_DEFORMS',text="")
 
-           
-
-
-
-
-
 ######################################## Misc ##############################################
 
 #################### Holds the Toolbars menu for Misc, collapsible
@@ -1309,7 +1291,6 @@ class TOOLBAR_MT_menu_misc(Menu):
 
     def draw(self, context):
         self.draw_menus(self.layout, context)
-        
 
     @staticmethod
     def draw_menus(layout, context):
@@ -1327,7 +1308,7 @@ class TOOLBAR_MT_toolbars_misc_menu(Menu):
         layout = self.layout
 
         scene = context.scene
-        layout.prop(scene.toolbar_misc_misc, "bool") # Our checkbox
+        layout.prop(scene.toolbar_misc_misc, "bool")
             
 ############### bfa - menu hidable by the flag in the right click menu
 
@@ -1352,7 +1333,7 @@ class TOOLBAR_MT_misc(Menu):
 
             row.label(text=" - Misc Toolbar - ")
 
-
+# -------------------- Register -------------------------------------------------------------------
 
 if __name__ == "__main__":  # only for live edit.
     bpy.utils.register_module(__name__)

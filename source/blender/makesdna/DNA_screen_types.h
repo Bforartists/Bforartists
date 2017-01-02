@@ -286,22 +286,22 @@ enum {
 	AREA_FLAG_ACTIONZONES_UPDATE = (1 << 8),
 	// bfa - show hide the editorsmenu
 	HEADER_NO_EDITORTYPEMENU = (1 << 9),
-	// bfa - show hide the file toolbars
+	// bfa - show hide the File toolbars
 	HEADER_TOOLBAR_FILE = (1 << 10),
-	// bfa - show hide the view toolbars
+	// bfa - show hide the View toolbars
 	HEADER_TOOLBAR_VIEW = (1 << 11),
-	// bfa - show hide the primitives toolbars
+	// bfa - show hide the Primitives toolbars
 	HEADER_TOOLBAR_PRIMITIVES = (1 << 12),
-	// bfa - show hide the image toolbars
+	// bfa - show hide the Image toolbars
 	HEADER_TOOLBAR_IMAGE = (1 << 13),
-	// bfa - show hide the tools toolbars
+	// bfa - show hide the Tools toolbars
 	HEADER_TOOLBAR_TOOLS = (1 << 14),
-	// bfa - show hide the animation toolbars
+	// bfa - show hide the Animation toolbars
 	HEADER_TOOLBAR_ANIMATION = (1 << 15),
-	// 2<<0 is something with  the tooltip
-	// bfa - show hide the edit toolbars
+	// 2<<0 is already in use by something else. It changes the background color of the tooltip.
+	// bfa - show hide the Edit toolbars
 	HEADER_TOOLBAR_EDIT = (2 << 1),
-	// bfa - show hide the misc toolbars
+	// bfa - show hide the Misc toolbars
 	HEADER_TOOLBAR_MISC = (2 << 2),
 };
 
