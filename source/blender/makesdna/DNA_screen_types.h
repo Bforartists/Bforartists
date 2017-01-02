@@ -268,7 +268,7 @@ typedef struct ARegion {
 /* swap */
 #define WIN_BACK_OK		1
 #define WIN_FRONT_OK	2
-// #define WIN_EQUAL		3  // UNUSED
+//#define WIN_EQUAL		3  // UNUSED
 
 /* area->flag */
 enum {
@@ -296,6 +296,13 @@ enum {
 	HEADER_TOOLBAR_IMAGE = (1 << 13),
 	// bfa - show hide the tools toolbars
 	HEADER_TOOLBAR_TOOLS = (1 << 14),
+	// bfa - show hide the animation toolbars
+	HEADER_TOOLBAR_ANIMATION = (1 << 15),
+	// 2<<0 is something with  the tooltip
+	// bfa - show hide the edit toolbars
+	HEADER_TOOLBAR_EDIT = (2 << 1),
+	// bfa - show hide the misc toolbars
+	HEADER_TOOLBAR_MISC = (2 << 2),
 };
 
 #define EDGEWIDTH	1

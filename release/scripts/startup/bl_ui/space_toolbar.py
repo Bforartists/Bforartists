@@ -40,6 +40,9 @@ class TOOLBAR_HT_header(Header):
         TOOLBAR_MT_primitives.hide_primitives_toolbar(context, layout) # bfa - show hide the complete primitives toolbar container
         TOOLBAR_MT_image.hide_image_toolbar(context, layout) # bfa - show hide the complete image toolbar container
         TOOLBAR_MT_tools.hide_tools_toolbar(context, layout) # bfa - show hide the complete tools toolbar container
+        TOOLBAR_MT_animation.hide_animation_toolbar(context, layout) # bfa - show hide the complete animation toolbar container
+        TOOLBAR_MT_edit.hide_edit_toolbar(context, layout) # bfa - show hide the complete edit toolbar container
+        TOOLBAR_MT_misc.hide_misc_toolbar(context, layout) # bfa - show hide the complete misc toolbar container
 
 ########################################################################
 
@@ -1022,8 +1025,165 @@ class TOOLBAR_MT_tools(Menu):
                         row.operator("armature.parent_set", icon='PARENT_SET', text="")
                         row.operator("armature.parent_clear", icon='PARENT_CLEAR', text="")
 
+######################################## Animation ##############################################
+
+#################### Holds the Toolbars menu for Animation, collapsible
+
+class TOOLBAR_MT_menu_animation(Menu):
+    bl_idname = "TOOLBAR_MT_menu_animation"
+    bl_label = ""
+
+    def draw(self, context):
+        self.draw_menus(self.layout, context)
+        
+
+    @staticmethod
+    def draw_menus(layout, context):
+        scene = context.scene
+        rd = scene.render
+
+        layout.menu("TOOLBAR_MT_toolbars_animation_menu") # see class below
 
 
+##################### Animation toolbars menu
+
+class TOOLBAR_MT_toolbars_animation_menu(Menu):
+    bl_label = "Toolbars Animation"
+
+    def draw(self, context):
+        layout = self.layout
+
+        scene = context.scene
+        layout.prop(scene.toolbar_animation_animation, "bool") # Our checkbox
+         
+############### bfa - menu hidable by the flag in the right click menu
+
+class TOOLBAR_MT_animation(Menu):
+    bl_idname = "TOOLBAR_MT_animation"
+    bl_label = ""
+
+    def draw(self, context):
+        self.draw_menus(self.layout, context)     
+
+    @staticmethod
+    def draw_menus(layout, context):
+        scene = context.scene
+
+        TOOLBAR_MT_menu_animation.draw_collapsible(context, layout)
+
+        ## ------------------ Load / Save sub toolbars
+
+        if scene.toolbar_animation_animation.bool: 
+
+            row = layout.row(align=True)
+
+            row.label(text=" - Animation Toolbar - ")
+
+######################################## Edit ##############################################
+
+#################### Holds the Toolbars menu for Edit, collapsible
+
+class TOOLBAR_MT_menu_edit(Menu):
+    bl_idname = "TOOLBAR_MT_menu_edit"
+    bl_label = ""
+
+    def draw(self, context):
+        self.draw_menus(self.layout, context)
+        
+
+    @staticmethod
+    def draw_menus(layout, context):
+        scene = context.scene
+        rd = scene.render
+
+        layout.menu("TOOLBAR_MT_toolbars_edit_menu") # see class below
+
+##################### Tools toolbars menu
+
+class TOOLBAR_MT_toolbars_edit_menu(Menu):
+    bl_label = "Toolbars Edit"
+
+    def draw(self, context):
+        layout = self.layout
+
+        scene = context.scene
+        layout.prop(scene.toolbar_edit_edit, "bool") # Our checkbox
+            
+############### bfa - menu hidable by the flag in the right click menu
+
+class TOOLBAR_MT_edit(Menu):
+    bl_idname = "TOOLBAR_MT_edit"
+    bl_label = ""
+
+    def draw(self, context):
+        self.draw_menus(self.layout, context)     
+
+    @staticmethod
+    def draw_menus(layout, context):
+        scene = context.scene
+
+        TOOLBAR_MT_menu_edit.draw_collapsible(context, layout)
+
+        ## ------------------ Load / Save sub toolbars
+
+        if scene.toolbar_edit_edit.bool: 
+
+            row = layout.row(align=True)
+            
+            row.label(text=" - Edit Toolbar - ")
+
+######################################## Misc ##############################################
+
+#################### Holds the Toolbars menu for Misc, collapsible
+
+class TOOLBAR_MT_menu_misc(Menu):
+    bl_idname = "TOOLBAR_MT_menu_misc"
+    bl_label = ""
+
+    def draw(self, context):
+        self.draw_menus(self.layout, context)
+        
+
+    @staticmethod
+    def draw_menus(layout, context):
+        scene = context.scene
+        rd = scene.render
+
+        layout.menu("TOOLBAR_MT_toolbars_misc_menu") # see class below
+
+##################### Tools toolbars menu
+
+class TOOLBAR_MT_toolbars_misc_menu(Menu):
+    bl_label = "Toolbars Misc"
+
+    def draw(self, context):
+        layout = self.layout
+
+        scene = context.scene
+        layout.prop(scene.toolbar_misc_misc, "bool") # Our checkbox
+            
+############### bfa - menu hidable by the flag in the right click menu
+
+class TOOLBAR_MT_misc(Menu):
+    bl_idname = "TOOLBAR_MT_misc"
+    bl_label = ""
+
+    def draw(self, context):
+        self.draw_menus(self.layout, context)     
+
+    @staticmethod
+    def draw_menus(layout, context):
+        scene = context.scene
+
+        TOOLBAR_MT_menu_misc.draw_collapsible(context, layout)
+
+        ## ------------------ Load / Save sub toolbars
+
+        if scene.toolbar_misc_misc.bool: 
+
+            row = layout.row(align=True)
+
+            row.label(text=" - Misc Toolbar - ")
 
 
 

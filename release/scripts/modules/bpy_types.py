@@ -818,6 +818,23 @@ class Menu(StructRNA, _GenericUI, metaclass=RNAMeta):
         if not context.area.tools_toolbars:
             cls.draw_menus(layout, context)
 
+    # bfa - show hide the animation toolbar
+    @classmethod
+    def hide_animation_toolbar(cls, context, layout):
+        if not context.area.animation_toolbars:
+            cls.draw_menus(layout, context)
+
+    # bfa - show hide the edit toolbar
+    @classmethod
+    def hide_edit_toolbar(cls, context, layout):
+        if not context.area.edit_toolbars:
+            cls.draw_menus(layout, context)
+
+    # bfa - show hide the misc toolbar
+    @classmethod
+    def hide_misc_toolbar(cls, context, layout):
+        if not context.area.misc_toolbars:
+            cls.draw_menus(layout, context)
 
 class NodeTree(bpy_types.ID, metaclass=RNAMetaPropGroup):
     __slots__ = ()

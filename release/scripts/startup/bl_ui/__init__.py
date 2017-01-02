@@ -205,6 +205,25 @@ class UIToolbarToolsRelations(bpy.types.PropertyGroup):
 class UIToolbarToolsEdit(bpy.types.PropertyGroup):
     bool = bpy.props.BoolProperty(name="Edit", description="Display the Edit Toolbar", default = True) # Our prop
 
+############################ Toolbar props animation #################################
+
+# bfa - Animation
+class UIToolbarAnimationAnimation(bpy.types.PropertyGroup):
+    bool = bpy.props.BoolProperty(name="Animation", description="Display the Animation Toolbar", default = True) # Our prop
+
+############################ Toolbar props edit #################################
+
+# bfa - Edit
+class UIToolbarEditEdit(bpy.types.PropertyGroup):
+    bool = bpy.props.BoolProperty(name="Edit", description="Display the Edit Toolbar", default = True) # Our prop
+
+############################ Toolbar props misc #################################
+
+# bfa - Misc
+class UIToolbarMiscMisc(bpy.types.PropertyGroup):
+    bool = bpy.props.BoolProperty(name="Misc", description="Display the Misc Toolbar", default = True) # Our prop
+
+
 #################################
 
 
@@ -361,6 +380,24 @@ def register():
     bpy.utils.register_class(UIToolbarToolsEdit) # Our data block
     bpy.types.Scene.toolbar_tools_edit = bpy.props.PointerProperty(type=UIToolbarToolsEdit) # Bind reference of type of our data block to type Scene objects
 
+    ############################ Toolbar props animation #################################
+
+    # bfa - Animation
+    bpy.utils.register_class(UIToolbarAnimationAnimation) # Our data block
+    bpy.types.Scene.toolbar_animation_animation = bpy.props.PointerProperty(type=UIToolbarAnimationAnimation) # Bind reference of type of our data block to type Scene objects
+
+    ############################ Toolbar props edit #################################
+
+    # bfa - Edit
+    bpy.utils.register_class(UIToolbarEditEdit) # Our data block
+    bpy.types.Scene.toolbar_edit_edit= bpy.props.PointerProperty(type=UIToolbarEditEdit) # Bind reference of type of our data block to type Scene objects
+
+    ############################ Toolbar props misc #################################
+
+    # bfa - Misc
+    bpy.utils.register_class(UIToolbarMiscMisc) # Our data block
+    bpy.types.Scene.toolbar_misc_misc = bpy.props.PointerProperty(type=UIToolbarMiscMisc) # Bind reference of type of our data block to type Scene objects
+
     #######################################################################
 
     bpy.utils.register_module(__name__)
@@ -489,6 +526,18 @@ def unregister():
     bpy.utils.unregister_class(UIToolbarToolsHistory)
     bpy.utils.unregister_class(UIToolbarToolsRelations)
     bpy.utils.unregister_class(UIToolbarToolsEdit)
+
+    ############################ Toolbar props Animation #################################
+
+    bpy.utils.unregister_class(UIToolbarAnimationAnimation)
+
+    ############################ Toolbar props Edit #################################
+
+    bpy.utils.unregister_class(UIToolbarEditEdit)
+
+    ############################ Toolbar props Misc #################################
+
+    bpy.utils.unregister_class(UIToolbarMiscMisc)
 
     ############################################################################
 
