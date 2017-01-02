@@ -1225,6 +1225,7 @@ class TOOLBAR_MT_toolbars_edit_menu(Menu):
 
         scene = context.scene
         layout.prop(scene.toolbar_edit_edit, "bool") # Our checkbox
+        layout.prop(scene.toolbar_edit_weight, "bool") # Our checkbox
             
 ############### bfa - menu hidable by the flag in the right click menu
 
@@ -1238,6 +1239,8 @@ class TOOLBAR_MT_edit(Menu):
     @staticmethod
     def draw_menus(layout, context):
         scene = context.scene
+        obj = context.object
+        
 
         TOOLBAR_MT_menu_edit.draw_collapsible(context, layout)
 
@@ -1245,9 +1248,56 @@ class TOOLBAR_MT_edit(Menu):
 
         if scene.toolbar_edit_edit.bool: 
 
-            row = layout.row(align=True)
-            
-            row.label(text=" - Edit Toolbar - ")
+            if obj is not None:
+
+                mode = obj.mode
+
+                if mode == 'EDIT':
+
+                    row = layout.row(align=True)
+
+                    row.operator("mesh.dissolve_verts", icon='DISSOLVE_VERTS', text="")
+                    row.operator("mesh.dissolve_edges", icon='DISSOLVE_EDGES', text="")
+                    row.operator("mesh.dissolve_faces", icon='DISSOLVE_FACES', text="")
+                    row.operator("mesh.dissolve_limited", icon='DISSOLVE_LIMITED', text="")
+                    row.operator("mesh.dissolve_mode", icon='DISSOLVE_SELECTION', text="")
+                    row.operator("mesh.edge_collapse", icon='EDGE_COLLAPSE', text="")
+
+                    row = layout.row(align=True)
+
+                    row.operator("mesh.remove_doubles", icon='REMOVE_DOUBLES', text="")
+
+                    row = layout.row(align=True)
+
+                    row.operator_menu_enum("mesh.merge", "type")
+                    row.operator_menu_enum("mesh.separate", "type")
+
+        if scene.toolbar_edit_weight.bool:
+
+            if obj is not None:
+
+                mode = obj.mode
+
+                if mode in ( 'EDIT', 'WEIGHT_PAINT'):
+
+                    row = layout.row(align=True)
+
+                    row.operator("object.vertex_group_normalize_all", icon='WEIGHT_NORMALIZE_ALL', text="")
+                    row.operator("object.vertex_group_normalize",icon='WEIGHT_NORMALIZE', text="")
+                    row.operator("object.vertex_group_mirror",icon='WEIGHT_MIRROR', text="")
+                    row.operator("object.vertex_group_invert", icon='WEIGHT_INVERT',text="")
+                    row.operator("object.vertex_group_clean", icon='WEIGHT_CLEAN',text="")
+                    row.operator("object.vertex_group_quantize", icon='WEIGHT_QUANTIZE',text="")
+                    row.operator("object.vertex_group_levels", icon='WEIGHT_LEVELS',text="")
+                    row.operator("object.vertex_group_smooth", icon='WEIGHT_SMOOTH',text="")
+                    row.operator("object.vertex_group_limit_total", icon='WEIGHT_LIMIT_TOTAL',text="")
+                    row.operator("object.vertex_group_fix", icon='WEIGHT_FIX_DEFORMS',text="")
+
+           
+
+
+
+
 
 ######################################## Misc ##############################################
 

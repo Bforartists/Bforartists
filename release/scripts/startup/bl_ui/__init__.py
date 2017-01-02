@@ -233,6 +233,10 @@ class UIToolbarAnimationKeyingset(bpy.types.PropertyGroup):
 class UIToolbarEditEdit(bpy.types.PropertyGroup):
     bool = bpy.props.BoolProperty(name="Edit", description="Display the Edit Toolbar", default = True) # Our prop
 
+# bfa - Weight in Edit
+class UIToolbarEditWeight(bpy.types.PropertyGroup):
+    bool = bpy.props.BoolProperty(name="Weigth in Edit", description="Display the Weight in Edit Toolbar", default = True) # Our prop
+
 ############################ Toolbar props misc #################################
 
 # bfa - Misc
@@ -424,6 +428,10 @@ def register():
     bpy.utils.register_class(UIToolbarEditEdit) # Our data block
     bpy.types.Scene.toolbar_edit_edit= bpy.props.PointerProperty(type=UIToolbarEditEdit) # Bind reference of type of our data block to type Scene objects
 
+    # bfa - Weight in Edit
+    bpy.utils.register_class(UIToolbarEditWeight) # Our data block
+    bpy.types.Scene.toolbar_edit_weight= bpy.props.PointerProperty(type=UIToolbarEditWeight) # Bind reference of type of our data block to type Scene objects
+
     ############################ Toolbar props misc #################################
 
     # bfa - Misc
@@ -570,6 +578,7 @@ def unregister():
     ############################ Toolbar props Edit #################################
 
     bpy.utils.unregister_class(UIToolbarEditEdit)
+    bpy.utils.unregister_class(UIToolbarEditWeight)
 
     ############################ Toolbar props Misc #################################
 
