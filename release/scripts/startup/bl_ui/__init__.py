@@ -146,36 +146,35 @@ class UIToolbarViewCamera(bpy.types.PropertyGroup):
 
 # bfa - Mesh
 class UIToolbarPrimitivesMesh(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="Mesh", description="Display the Mesh Toolbar", default = True)
+    bool = bpy.props.BoolProperty(name="Mesh", description="Display the Mesh Toolbar\nThis toolbar is just visible in Object and Edit mode", default = True)
 
 # bfa - Curve
 class UIToolbarPrimitivesCurve(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="Curve", description="Display the Curve Toolbar", default = True)
+    bool = bpy.props.BoolProperty(name="Curve", description="Display the Curve Toolbar\nThis toolbar is just visible in Object and Edit mode", default = True)
 
 # bfa - Surface
 class UIToolbarPrimitivesSurface(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="Surface", description="Display the Surface Toolbar", default = True)
+    bool = bpy.props.BoolProperty(name="Surface", description="Display the Surface Toolbar\nThis toolbar is just visible in Object and Edit mode", default = True)
 
 # bfa - Metaball
 class UIToolbarPrimitivesMetaball(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="Metaball", description="Display the Metaball Toolbar", default = True)
+    bool = bpy.props.BoolProperty(name="Metaball", description="Display the Metaball Toolbar\nThis toolbar is just visible in Object and Edit mode", default = True)
 
 # bfa - Lamp
 class UIToolbarPrimitivesLamp(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="Lamp", description="Display the Lamp Toolbar", default = True)
+    bool = bpy.props.BoolProperty(name="Lamp", description="Display the Lamp Toolbar\nThis toolbar is just visible in Object mode", default = True)
 
 # bfa - Other
 class UIToolbarPrimitivesOther(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="Other", description="Display the Other Toolbar", default = True)
+    bool = bpy.props.BoolProperty(name="Other", description="Display the Other Toolbar\nThis toolbar is just visible in Object mode", default = True)
 
 # bfa - Empties
 class UIToolbarPrimitivesEmpties(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="Empties", description="Display the Empties Toolbar", default = True)
+    bool = bpy.props.BoolProperty(name="Empties", description="Display the Empties Toolbar\nThis toolbar is just visible in Object mode", default = True)
 
 # bfa - Force Field
 class UIToolbarPrimitivesForcefield(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="Force Field", description="Display the Force Field Toolbar", default = True)
-
+    bool = bpy.props.BoolProperty(name="Force Field", description="Display the Force Field Toolbar\nThis toolbar is just visible in Object mode", default = True)
 
 ############################ Toolbar props image #################################
 
@@ -199,17 +198,17 @@ class UIToolbarToolsHistory(bpy.types.PropertyGroup):
 
 # bfa - Relations
 class UIToolbarToolsRelations(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="Relations", description="Display the Relations Toolbar", default = True)
+    bool = bpy.props.BoolProperty(name="Relations", description="Display the Relations Toolbar\nThis tools are just visible in Object mode", default = True)
 
 # bfa - Edit
 class UIToolbarToolsEdit(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="Edit", description="Display the Edit Toolbar", default = True)
+    bool = bpy.props.BoolProperty(name="Edit", description="Display the Edit Toolbar\nThis tools are just visible in Object and Edit mode", default = True)
 
 ############################ Toolbar props animation #################################
 
 # bfa - Keyframes
 class UIToolbarAnimationKeyframes(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="Keyframes", description="Display the Keyframes Toolbar", default = True)
+    bool = bpy.props.BoolProperty(name="Keyframes", description="Display the Keyframes Toolbar\nThis tools are just visible in Object and Pose mode", default = True)
 
 # bfa - Range
 class UIToolbarAnimationRange(bpy.types.PropertyGroup):
@@ -231,11 +230,11 @@ class UIToolbarAnimationKeyingset(bpy.types.PropertyGroup):
 
 # bfa - Edit
 class UIToolbarEditEdit(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="Edit", description="Display the Edit Toolbar", default = True)
+    bool = bpy.props.BoolProperty(name="Edit", description="Display the Edit Toolbar\nThis tools are just visible in Edit mode", default = True)
 
 # bfa - Weight in Edit
 class UIToolbarEditWeight(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="Weigth in Edit", description="Display the Weight in Edit Toolbar", default = True)
+    bool = bpy.props.BoolProperty(name="Weigth in Edit", description="Display the Weight in Edit Toolbar\nThis tools are just visible in Edit and Weightpaint mode", default = True)
 
 ############################ Toolbar props misc #################################
 
