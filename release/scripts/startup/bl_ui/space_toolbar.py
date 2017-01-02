@@ -1054,7 +1054,11 @@ class TOOLBAR_MT_toolbars_animation_menu(Menu):
         layout = self.layout
 
         scene = context.scene
-        layout.prop(scene.toolbar_animation_animation, "bool") # Our checkbox
+        layout.prop(scene.toolbar_animation_keyframes, "bool") # Our checkbox
+        layout.prop(scene.toolbar_animation_range, "bool") # Our checkbox
+        layout.prop(scene.toolbar_animation_play, "bool") # Our checkbox
+        layout.prop(scene.toolbar_animation_sync, "bool") # Our checkbox
+        layout.prop(scene.toolbar_animation_keyingset, "bool") # Our checkbox
          
 ############### bfa - menu hidable by the flag in the right click menu
 
@@ -1068,16 +1072,129 @@ class TOOLBAR_MT_animation(Menu):
     @staticmethod
     def draw_menus(layout, context):
         scene = context.scene
+        screen = context.screen
+        toolsettings = context.tool_settings
+        userprefs = context.user_preferences
+        
 
         TOOLBAR_MT_menu_animation.draw_collapsible(context, layout)
 
         ## ------------------ Load / Save sub toolbars
 
-        if scene.toolbar_animation_animation.bool: 
+        if scene.toolbar_animation_keyframes.bool: 
+
+            obj = context.object
+
+            if obj is not None:
+
+                mode = obj.mode
+
+                if mode == 'OBJECT':
+
+                    row = layout.row(align=True)
+
+                    row.operator("anim.keyframe_insert_menu", icon= 'KEYFRAMES_INSERT',text="")
+                    row.operator("anim.keyframe_delete_v3d", icon= 'KEYFRAMES_REMOVE',text="")
+                    row.operator("nla.bake", icon= 'BAKE_ACTION',text="")
+                    row.operator("anim.keyframe_clear_v3d", icon= 'KEYFRAMES_CLEAR',text="")
+
+                    row = layout.row(align=True)
+
+                    row.operator("object.paths_calculate", icon ='MOTIONPATHS_CALCULATE',  text="")
+                    row.operator("object.paths_clear", icon ='MOTIONPATHS_CLEAR',  text="")                  
+
+                if mode == 'POSE':
+
+                    row = layout.row(align=True)
+
+                    row.operator("pose.push", icon = 'PUSH_POSE', text="")
+                    row.operator("pose.relax", icon = 'RELAX_POSE',text="")
+                    row.operator("pose.breakdown", icon = 'BREAKDOWNER_POSE',text="")
+
+                    row = layout.row(align=True)
+
+                    row.operator("pose.propagate", text="Propagate")
+                    row.menu("VIEW3D_MT_pose_propagate", icon='TRIA_RIGHT', text="")
+
+                    row = layout.row(align=True)
+
+                    row.operator("anim.keyframe_insert_menu", icon= 'KEYFRAMES_INSERT',text="")
+                    row.operator("anim.keyframe_delete_v3d", icon= 'KEYFRAMES_REMOVE',text="")
+                    row.operator("nla.bake", icon= 'BAKE_ACTION',text="")
+                    row.operator("anim.keyframe_clear_v3d", icon= 'KEYFRAMES_CLEAR',text="")
+
+                    row = layout.row(align=True)
+
+                    row.operator("object.paths_calculate", icon ='MOTIONPATHS_CALCULATE',  text="")
+                    row.operator("object.paths_clear", icon ='MOTIONPATHS_CLEAR',  text="")
+
+
+        if scene.toolbar_animation_range.bool: 
 
             row = layout.row(align=True)
 
-            row.label(text=" - Animation Toolbar - ")
+            row.prop(scene, "use_preview_range", text="", toggle=True)
+            row.prop(scene, "lock_frame_selection_to_range", text="", toggle=True)
+
+            row = layout.row(align=True)
+            if not scene.use_preview_range:
+                row.prop(scene, "frame_start", text="Start")
+                row.prop(scene, "frame_end", text="End")
+            else:
+                row.prop(scene, "frame_preview_start", text="Start")
+                row.prop(scene, "frame_preview_end", text="End")
+
+        if scene.toolbar_animation_play.bool: 
+
+            row = layout.row(align=True)
+
+            layout.prop(scene, "frame_current", text="")
+
+            layout.separator()
+
+            row = layout.row(align=True)
+            row.operator("screen.frame_jump", text="", icon='REW').end = False
+            row.operator("screen.keyframe_jump", text="", icon='PREV_KEYFRAME').next = False
+            if not screen.is_animation_playing:
+                # if using JACK and A/V sync:
+                #   hide the play-reversed button
+                #   since JACK transport doesn't support reversed playback
+                if scene.sync_mode == 'AUDIO_SYNC' and context.user_preferences.system.audio_device == 'JACK':
+                    sub = row.row(align=True)
+                    sub.scale_x = 2.0
+                    sub.operator("screen.animation_play", text="", icon='PLAY')
+                else:
+                    row.operator("screen.animation_play", text="", icon='PLAY_REVERSE').reverse = True
+                    row.operator("screen.animation_play", text="", icon='PLAY')
+            else:
+                sub = row.row(align=True)
+                sub.scale_x = 2.0
+                sub.operator("screen.animation_play", text="", icon='PAUSE')
+            row.operator("screen.keyframe_jump", text="", icon='NEXT_KEYFRAME').next = True
+            row.operator("screen.frame_jump", text="", icon='FF').end = True
+
+        if scene.toolbar_animation_sync.bool: 
+
+            row = layout.row(align=True)
+
+            layout.prop(scene, "sync_mode", text="")
+
+        if scene.toolbar_animation_keyingset.bool: 
+
+            row = layout.row(align=True)
+
+            row.prop(toolsettings, "use_keyframe_insert_auto", text="", toggle=True)
+            if toolsettings.use_keyframe_insert_auto:
+                row.prop(toolsettings, "use_keyframe_insert_keyingset", text="", toggle=True)
+
+                if screen.is_animation_playing and not userprefs.edit.use_keyframe_insert_available:
+                    subsub = row.row(align=True)
+                    subsub.prop(toolsettings, "use_record_with_nla", toggle=True)
+
+            row = layout.row(align=True)
+            row.prop_search(scene.keying_sets_all, "active", scene, "keying_sets_all", text="")
+            row.operator("anim.keyframe_insert", text="", icon='KEY_HLT')
+            row.operator("anim.keyframe_delete", text="", icon='KEY_DEHLT')
 
 ######################################## Edit ##############################################
 
