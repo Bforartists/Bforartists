@@ -3426,6 +3426,81 @@ static void SCREEN_OT_header_toolbar_tools(wmOperatorType *ot)
 	ot->flag = 0;
 }
 
+// bfa - show hide the animation toolbar menus
+static int header_toolbar_animation_exec(bContext *C, wmOperator *UNUSED(op))
+{
+	ScrArea *sa = CTX_wm_area(C);
+
+	sa->flag = sa->flag ^ HEADER_TOOLBAR_ANIMATION;
+
+	ED_area_tag_redraw(sa);
+	WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, NULL);
+
+	return OPERATOR_FINISHED;
+}
+static void SCREEN_OT_header_toolbar_animation(wmOperatorType *ot)
+{
+	/* identifiers */
+	ot->name = "Toolbar Animation";
+	ot->idname = "SCREEN_OT_header_toolbar_animation";
+	ot->description = "Show or Hide the Animation toolbars";
+
+	/* api callbacks */
+	ot->exec = header_toolbar_animation_exec;
+	ot->poll = ED_operator_areaactive;
+	ot->flag = 0;
+}
+
+// bfa - show hide the edit toolbar menus
+static int header_toolbar_edit_exec(bContext *C, wmOperator *UNUSED(op))
+{
+	ScrArea *sa = CTX_wm_area(C);
+
+	sa->flag = sa->flag ^ HEADER_TOOLBAR_EDIT;
+
+	ED_area_tag_redraw(sa);
+	WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, NULL);
+
+	return OPERATOR_FINISHED;
+}
+static void SCREEN_OT_header_toolbar_edit(wmOperatorType *ot)
+{
+	/* identifiers */
+	ot->name = "Toolbar Edit";
+	ot->idname = "SCREEN_OT_header_toolbar_edit";
+	ot->description = "Show or Hide the Edit toolbars";
+
+	/* api callbacks */
+	ot->exec = header_toolbar_edit_exec;
+	ot->poll = ED_operator_areaactive;
+	ot->flag = 0;
+}
+
+// bfa - show hide the misc toolbar menus
+static int header_toolbar_misc_exec(bContext *C, wmOperator *UNUSED(op))
+{
+	ScrArea *sa = CTX_wm_area(C);
+
+	sa->flag = sa->flag ^ HEADER_TOOLBAR_MISC;
+
+	ED_area_tag_redraw(sa);
+	WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, NULL);
+
+	return OPERATOR_FINISHED;
+}
+static void SCREEN_OT_header_toolbar_misc(wmOperatorType *ot)
+{
+	/* identifiers */
+	ot->name = "Toolbar Misc";
+	ot->idname = "SCREEN_OT_header_toolbar_misc";
+	ot->description = "Show or Hide the Misc toolbars";
+
+	/* api callbacks */
+	ot->exec = header_toolbar_misc_exec;
+	ot->poll = ED_operator_areaactive;
+	ot->flag = 0;
+}
+
 /* ************** header tools operator ***************************** */
 void ED_screens_header_tools_menu_create(bContext *C, uiLayout *layout, void *UNUSED(arg))
 {
@@ -3520,6 +3595,22 @@ void ED_screens_toolbar_tools_menu_create(bContext *C, uiLayout *layout, void *U
 	uiItemO(layout, IFACE_("Toolbar Tools"),
 		(sa->flag & HEADER_TOOLBAR_TOOLS) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
 		"SCREEN_OT_header_toolbar_tools");
+
+	// bfa - show hide the animation toolbar
+	uiItemO(layout, IFACE_("Toolbar Animation"),
+		(sa->flag & HEADER_TOOLBAR_ANIMATION) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
+		"SCREEN_OT_header_toolbar_animation");
+
+	// bfa - show hide the edit toolbar
+	uiItemO(layout, IFACE_("Toolbar Edit"),
+		(sa->flag & HEADER_TOOLBAR_EDIT) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
+		"SCREEN_OT_header_toolbar_edit");
+
+	// bfa - show hide the misc toolbar
+	uiItemO(layout, IFACE_("Toolbar Misc"),
+		(sa->flag & HEADER_TOOLBAR_MISC) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
+		"SCREEN_OT_header_toolbar_misc");
+
 
 }
 
@@ -4410,6 +4501,9 @@ void ED_operatortypes_screen(void)
 	WM_operatortype_append(SCREEN_OT_header_toolbar_primitives); // bfa - show hide the primitives toolbar
 	WM_operatortype_append(SCREEN_OT_header_toolbar_image); // bfa - show hide the primitives toolbar
 	WM_operatortype_append(SCREEN_OT_header_toolbar_tools); // bfa - show hide the primitives toolbar
+	WM_operatortype_append(SCREEN_OT_header_toolbar_animation); // bfa - show hide the primitives toolbar
+	WM_operatortype_append(SCREEN_OT_header_toolbar_edit); // bfa - show hide the primitives toolbar
+	WM_operatortype_append(SCREEN_OT_header_toolbar_misc); // bfa - show hide the primitives toolbar
 	WM_operatortype_append(SCREEN_OT_header_toolbox);
 	WM_operatortype_append(SCREEN_OT_toolbar_toolbox); // bfa - toolbar types menu in the toolbar editor
 	WM_operatortype_append(SCREEN_OT_screen_set);
