@@ -236,6 +236,14 @@ class UIToolbarEditEdit(bpy.types.PropertyGroup):
 class UIToolbarEditWeight(bpy.types.PropertyGroup):
     bool = bpy.props.BoolProperty(name="Weigth in Edit", description="Display the Weight in Edit Toolbar\nThis tools are just visible in Edit and Weightpaint mode", default = True)
 
+# bfa - Apply
+class UIToolbarEditObjApply(bpy.types.PropertyGroup):
+    bool = bpy.props.BoolProperty(name="Object Apply", description="Display the Apply Toolbar\nThis tools are just visible Object mode", default = True)
+
+# bfa - Clear
+class UIToolbarEditObjClear(bpy.types.PropertyGroup):
+    bool = bpy.props.BoolProperty(name="Object Clear", description="Display the Clear Toolbar\nThis tools are just visible Object mode", default = True)
+
 ############################ Toolbar props misc #################################
 
 # bfa - Misc
@@ -425,11 +433,19 @@ def register():
 
     # bfa - Edit
     bpy.utils.register_class(UIToolbarEditEdit) # Our data block
-    bpy.types.Scene.toolbar_edit_edit= bpy.props.PointerProperty(type=UIToolbarEditEdit)
+    bpy.types.Scene.toolbar_edit_edit = bpy.props.PointerProperty(type=UIToolbarEditEdit)
 
     # bfa - Weight in Edit
     bpy.utils.register_class(UIToolbarEditWeight) # Our data block
-    bpy.types.Scene.toolbar_edit_weight= bpy.props.PointerProperty(type=UIToolbarEditWeight)
+    bpy.types.Scene.toolbar_edit_weight = bpy.props.PointerProperty(type=UIToolbarEditWeight)
+
+    # bfa - Object Apply
+    bpy.utils.register_class(UIToolbarEditObjApply) # Our data block
+    bpy.types.Scene.toolbar_edit_object_apply = bpy.props.PointerProperty(type=UIToolbarEditObjApply)
+
+    # bfa - Object Clear
+    bpy.utils.register_class(UIToolbarEditObjClear) # Our data block
+    bpy.types.Scene.toolbar_edit_object_clear = bpy.props.PointerProperty(type=UIToolbarEditObjClear)
 
     ############################ Toolbar props misc #################################
 
@@ -578,6 +594,8 @@ def unregister():
 
     bpy.utils.unregister_class(UIToolbarEditEdit)
     bpy.utils.unregister_class(UIToolbarEditWeight)
+    bpy.utils.unregister_class(UIToolbarEditObjApply)
+    bpy.utils.unregister_class(UIToolbarEditObjClear)
 
     ############################ Toolbar props Misc #################################
 
