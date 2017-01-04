@@ -298,11 +298,13 @@ enum {
 	HEADER_TOOLBAR_TOOLS = (1 << 14),
 	// bfa - show hide the Animation toolbars
 	HEADER_TOOLBAR_ANIMATION = (1 << 15),
-	// 2<<0 is already in use by something else. It changes the background color of the tooltip.
-	// bfa - show hide the Edit toolbars
-	HEADER_TOOLBAR_EDIT = (2 << 1),
-	// bfa - show hide the Misc toolbars
-	HEADER_TOOLBAR_MISC = (2 << 2),
+
+	//// bfa- This below does not work, it just fucks up things. It's a short. 15 is end of road. 
+	////So the next flags for our editors are in the Panel->flag enums
+	//// bfa - show hide the Edit toolbars
+	//HEADER_TOOLBAR_EDIT = (2 << 11),
+	//// bfa - show hide the Misc toolbars
+	//HEADER_TOOLBAR_MISC = (2 << 12),
 };
 
 #define EDGEWIDTH	1
@@ -330,6 +332,12 @@ enum {
 	/*PNL_TABBED    = (1 << 3), */ /*UNUSED*/
 	PNL_OVERLAP     = (1 << 4),
 	PNL_PIN         = (1 << 5),
+
+	/*Other flags see above in the area->flag enum*/
+	// bfa - show hide the Edit toolbars
+	HEADER_TOOLBAR_EDIT = (1 << 6),
+	// bfa - show hide the Misc toolbars
+	HEADER_TOOLBAR_MISC = (1 << 7),
 };
 
 /* Panel->snap - for snapping to screen edges */
