@@ -19,6 +19,7 @@
 # <pep8 compliant>
 import bpy
 from bpy.types import Header, Menu
+from bpy.app.translations import contexts as i18n_contexts
 
 
 class TOOLBAR_HT_header(Header):
@@ -1187,6 +1188,46 @@ class TOOLBAR_MT_animation(Menu):
 
 ######################################## Edit ##############################################
 
+class VIEW3D_MT_object_apply_location(bpy.types.Operator):
+    """Apply Location\nApplies the current location"""
+    bl_idname = "3dview.tb_apply_location"
+    bl_label = "Apply Move"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        bpy.ops.object.transform_apply(location=True, rotation=False, scale=False)
+        return {'FINISHED'}
+
+class VIEW3D_MT_object_apply_rotate(bpy.types.Operator):
+    """Apply Rotation\nApplies the current rotation"""
+    bl_idname = "3dview.tb_apply_rotate"
+    bl_label = "Apply Rotate"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
+        return {'FINISHED'}
+
+class VIEW3D_MT_object_apply_scale(bpy.types.Operator):
+    """Apply Scale\nApplies the current scale"""
+    bl_idname = "3dview.tb_apply_scale"
+    bl_label = "Apply Scale"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        bpy.ops.object.transform_apply(location=True, rotation=False, scale=True)
+        return {'FINISHED'}
+
+class VIEW3D_MT_object_apply_all(bpy.types.Operator):
+    """Apply All\nApplies the current location, rotation and scale"""
+    bl_idname = "3dview.tb_apply_all"
+    bl_label = "Apply All"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    def execute(self, context):
+        bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
+        return {'FINISHED'}
+
 #################### Holds the Toolbars menu for Edit, collapsible
 
 class TOOLBAR_MT_menu_edit(Menu):
@@ -1214,6 +1255,8 @@ class TOOLBAR_MT_toolbars_edit_menu(Menu):
         scene = context.scene
         layout.prop(scene.toolbar_edit_edit, "bool")
         layout.prop(scene.toolbar_edit_weight, "bool")
+        layout.prop(scene.toolbar_edit_object_apply, "bool")
+        layout.prop(scene.toolbar_edit_object_clear, "bool")
             
 ############### bfa - menu hidable by the flag in the right click menu
 
@@ -1233,9 +1276,9 @@ class TOOLBAR_MT_edit(Menu):
 
         ## ------------------ Load / Save sub toolbars
 
-        if scene.toolbar_edit_edit.bool: 
+        if obj is not None:
 
-            if obj is not None:
+            if scene.toolbar_edit_edit.bool: 
 
                 mode = obj.mode
 
@@ -1259,9 +1302,7 @@ class TOOLBAR_MT_edit(Menu):
                     row.operator_menu_enum("mesh.merge", "type")
                     row.operator_menu_enum("mesh.separate", "type")
 
-        if scene.toolbar_edit_weight.bool:
-
-            if obj is not None:
+            if scene.toolbar_edit_weight.bool:
 
                 mode = obj.mode
 
@@ -1279,6 +1320,37 @@ class TOOLBAR_MT_edit(Menu):
                     row.operator("object.vertex_group_smooth", icon='WEIGHT_SMOOTH',text="")
                     row.operator("object.vertex_group_limit_total", icon='WEIGHT_LIMIT_TOTAL',text="")
                     row.operator("object.vertex_group_fix", icon='WEIGHT_FIX_DEFORMS',text="")
+
+            if scene.toolbar_edit_object_apply.bool:
+
+                mode = obj.mode
+
+                if mode == 'OBJECT':
+
+                    row = layout.row(align=True)
+
+                    row.operator("3dview.tb_apply_location", text="", icon = "APPLYMOVE") # needed a tooltip, so see above ...
+                    row.operator("3dview.tb_apply_rotate", text="", icon = "APPLYROTATE")
+                    row.operator("3dview.tb_apply_scale", text="", icon = "APPLYSCALE")
+                    row.operator("3dview.tb_apply_all", text="", icon = "APPLYALL")
+
+                    row = layout.row(align=True)
+
+                    row.operator("object.visual_transform_apply", text = "", text_ctxt=i18n_contexts.default, icon = "VISUALTRANSFORM")
+                    row.operator("object.duplicates_make_real", text = "", icon = "MAKEDUPLIREAL")
+
+            if scene.toolbar_edit_object_clear.bool:
+
+                mode = obj.mode
+
+                if mode == 'OBJECT':
+
+                    row = layout.row(align=True)
+
+                    row.operator("object.location_clear", text="", icon = "CLEARMOVE")
+                    row.operator("object.rotation_clear", text="", icon = "CLEARROTATE")
+                    row.operator("object.scale_clear", text="", icon = "CLEARSCALE")
+                    row.operator("object.origin_clear", text="", icon = "CLEARORIGIN")
 
 ######################################## Misc ##############################################
 
@@ -1321,6 +1393,7 @@ class TOOLBAR_MT_misc(Menu):
     @staticmethod
     def draw_menus(layout, context):
         scene = context.scene
+        obj = context.object
 
         TOOLBAR_MT_menu_misc.draw_collapsible(context, layout)
 
@@ -1331,6 +1404,9 @@ class TOOLBAR_MT_misc(Menu):
             row = layout.row(align=True)
 
             row.label(text=" - Misc Toolbar - ")
+
+            
+
 
 # -------------------- Register -------------------------------------------------------------------
 
