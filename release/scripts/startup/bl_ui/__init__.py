@@ -192,10 +192,6 @@ class UIToolbarImageUVAlign(bpy.types.PropertyGroup):
 
 ############################ Toolbar props Tools #################################
 
-# bfa - History
-class UIToolbarToolsHistory(bpy.types.PropertyGroup):
-    bool = bpy.props.BoolProperty(name="History", description="Display the History Toolbar", default = True)
-
 # bfa - Relations
 class UIToolbarToolsRelations(bpy.types.PropertyGroup):
     bool = bpy.props.BoolProperty(name="Relations", description="Display the Relations Toolbar\nThis tools are just visible in Object mode", default = True)
@@ -245,6 +241,10 @@ class UIToolbarEditObjClear(bpy.types.PropertyGroup):
     bool = bpy.props.BoolProperty(name="Object Clear", description="Display the Clear Toolbar\nThis tools are just visible Object mode", default = True)
 
 ############################ Toolbar props misc #################################
+
+# bfa - History
+class UIToolbarToolsHistory(bpy.types.PropertyGroup):
+    bool = bpy.props.BoolProperty(name="History", description="Display the History Toolbar", default = True)
 
 # bfa - Misc
 class UIToolbarMiscMisc(bpy.types.PropertyGroup):
@@ -395,10 +395,6 @@ def register():
 
     ############################ Toolbar props Tools #################################
 
-    # bfa - History
-    bpy.utils.register_class(UIToolbarToolsHistory) # Our data block
-    bpy.types.Scene.toolbar_tools_history = bpy.props.PointerProperty(type=UIToolbarToolsHistory)
-
     # bfa - Relations
     bpy.utils.register_class(UIToolbarToolsRelations) # Our data block
     bpy.types.Scene.toolbar_tools_relations = bpy.props.PointerProperty(type=UIToolbarToolsRelations)
@@ -448,6 +444,10 @@ def register():
     bpy.types.Scene.toolbar_edit_object_clear = bpy.props.PointerProperty(type=UIToolbarEditObjClear)
 
     ############################ Toolbar props misc #################################
+
+      # bfa - History
+    bpy.utils.register_class(UIToolbarToolsHistory) # Our data block
+    bpy.types.Scene.toolbar_misc_history = bpy.props.PointerProperty(type=UIToolbarToolsHistory)
 
     # bfa - Misc
     bpy.utils.register_class(UIToolbarMiscMisc) # Our data block
@@ -578,7 +578,6 @@ def unregister():
 
     ############################ Toolbar props Tools #################################
 
-    bpy.utils.unregister_class(UIToolbarToolsHistory)
     bpy.utils.unregister_class(UIToolbarToolsRelations)
     bpy.utils.unregister_class(UIToolbarToolsEdit)
 
@@ -599,6 +598,7 @@ def unregister():
 
     ############################ Toolbar props Misc #################################
 
+    bpy.utils.unregister_class(UIToolbarToolsHistory)
     bpy.utils.unregister_class(UIToolbarMiscMisc)
 
     ############################################################################

@@ -448,6 +448,9 @@ class TOOLBAR_MT_view(Menu):
             row = layout.row(align=True)
             
             row.operator("view3d.tocam", text="", icon ="VIEW_SWITCHTOCAM")
+
+            row = layout.row(align=True)
+
             row.operator("view3d.switchactivecam", text="", icon ="VIEW_SWITCHACTIVECAM")
             
 
@@ -900,7 +903,7 @@ class TOOLBAR_MT_toolbars_tools_menu(Menu):
         layout = self.layout
 
         scene = context.scene
-        layout.prop(scene.toolbar_tools_history, "bool")
+        
         layout.prop(scene.toolbar_tools_relations, "bool")
         layout.prop(scene.toolbar_tools_edit, "bool")
             
@@ -922,21 +925,6 @@ class TOOLBAR_MT_tools(Menu):
         obj = context.object 
 
         ## ------------------ Tools sub toolbars
-
-        if scene.toolbar_tools_history.bool:
-
-            row = layout.row(align=True)
-
-            row.operator("ed.undo", icon='UNDO',text="")
-            row.operator("ed.redo", icon='REDO',text="")
-            if obj is None or obj.mode != 'SCULPT':
-                # Sculpt mode does not generate an undo menu it seems...
-                row.operator("ed.undo_history", icon='UNDO_HISTORY',text="")
-
-            row = layout.row(align=True)
-
-            row.operator("screen.repeat_last", icon='REPEAT', text="")
-            row.operator("screen.repeat_history", icon='REDO_HISTORY', text="")
 
         if obj is not None:
 
@@ -1070,7 +1058,7 @@ class TOOLBAR_MT_animation(Menu):
 
         TOOLBAR_MT_menu_animation.draw_collapsible(context, layout)
 
-        ## ------------------ Load / Save sub toolbars
+        ## ------------------ Animation sub toolbars
 
         if scene.toolbar_animation_keyframes.bool: 
 
@@ -1274,7 +1262,7 @@ class TOOLBAR_MT_edit(Menu):
 
         TOOLBAR_MT_menu_edit.draw_collapsible(context, layout)
 
-        ## ------------------ Load / Save sub toolbars
+        ## ------------------ Edit sub toolbars
 
         if obj is not None:
 
@@ -1379,6 +1367,7 @@ class TOOLBAR_MT_toolbars_misc_menu(Menu):
         layout = self.layout
 
         scene = context.scene
+        layout.prop(scene.toolbar_misc_history, "bool")
         layout.prop(scene.toolbar_misc_misc, "bool")
             
 ############### bfa - menu hidable by the flag in the right click menu
@@ -1397,7 +1386,22 @@ class TOOLBAR_MT_misc(Menu):
 
         TOOLBAR_MT_menu_misc.draw_collapsible(context, layout)
 
-        ## ------------------ Load / Save sub toolbars
+        ## ------------------ Misc sub toolbars
+
+        if scene.toolbar_misc_history.bool:
+
+            row = layout.row(align=True)
+
+            row.operator("ed.undo", icon='UNDO',text="")
+            row.operator("ed.redo", icon='REDO',text="")
+            if obj is None or obj.mode != 'SCULPT':
+                # Sculpt mode does not generate an undo menu it seems...
+                row.operator("ed.undo_history", icon='UNDO_HISTORY',text="")
+
+            row = layout.row(align=True)
+
+            row.operator("screen.repeat_last", icon='REPEAT', text="")
+            row.operator("screen.repeat_history", icon='REDO_HISTORY', text="")
 
         if scene.toolbar_misc_misc.bool: 
 
