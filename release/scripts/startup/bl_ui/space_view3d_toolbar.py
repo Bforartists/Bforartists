@@ -114,6 +114,18 @@ class VIEW3D_PT_tools_object(View3DPanel, Panel):
                     col.operator("object.shade_flat", text="Flat                       ", icon ='SHADING_FLAT')
 
                 if obj_type == 'MESH':
+                    
+                    mesh = context.active_object.data
+
+                    col = layout.column()
+
+                    # bfa - autosmooth below shading.
+                    col.prop(mesh, "use_auto_smooth")
+                    sub = col.column()
+                    sub.active = mesh.use_auto_smooth and not mesh.has_custom_normals
+                    sub.prop(mesh, "auto_smooth_angle", text="Angle")
+                    col.prop(mesh, "show_double_sided")
+                    
                     col = layout.column(align=True)
                     col.label(text="Data Transfer:")
                     #row = col.row(align=True)
@@ -149,13 +161,24 @@ class VIEW3D_PT_tools_object(View3DPanel, Panel):
                     row.operator("object.shade_flat", icon ='SHADING_FLAT', text="")
 
                 if obj_type == 'MESH':
+
+                    mesh = context.active_object.data
+
+                    col = layout.column()
+
+                    # bfa - autosmooth below shading.
+                    col.prop(mesh, "use_auto_smooth")
+                    sub = col.column()
+                    sub.active = mesh.use_auto_smooth and not mesh.has_custom_normals
+                    sub.prop(mesh, "auto_smooth_angle", text="Angle")
+
+                    # data transfer
                     col = layout.column(align=True)
                     col.label(text="Data Transfer:")
                     row = col.row(align=False)
                     row.alignment = 'LEFT'
                     row.operator("object.data_transfer", icon ='TRANSFER_DATA', text="")
                     row.operator("object.datalayout_transfer", icon ='TRANSFER_DATA_LAYOUT', text="")
-
 
 class VIEW3D_PT_tools_add_object(View3DPanel, Panel):
     bl_category = "Create"
