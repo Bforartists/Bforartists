@@ -240,7 +240,7 @@ class INFO_MT_file_import(Menu):
 
     def draw(self, context):
         if bpy.app.build_options.collada:
-            self.layout.operator("wm.collada_import", text="Collada (Default) (.dae)")
+            self.layout.operator("wm.collada_import", text="Collada (Default) (.dae)", icon ="LOAD_DAE")
 
 
 class INFO_MT_file_export(Menu):
@@ -249,7 +249,7 @@ class INFO_MT_file_export(Menu):
 
     def draw(self, context):
         if bpy.app.build_options.collada:
-            self.layout.operator("wm.collada_export", text="Collada (Default) (.dae)")
+            self.layout.operator("wm.collada_export", text="Collada (Default) (.dae)", icon ="SAVE_DAE")
 
 
 class INFO_MT_file_external_data(Menu):
@@ -324,13 +324,13 @@ class INFO_MT_render(Menu):
 
         layout.separator()
 
-        layout.operator("render.opengl", text="OpenGL Render Image")
-        layout.operator("render.opengl", text="OpenGL Render Animation").animation = True
+        layout.operator("render.opengl", text="OpenGL Render Image", icon = 'RENDER_STILL_VIEW')
+        layout.operator("render.opengl", text="OpenGL Render Animation", icon = 'RENDER_ANI_VIEW').animation = True
         layout.menu("INFO_MT_opengl_render")
 
         layout.separator()
 
-        layout.operator("render.view_show")
+        layout.operator("render.view_show", icon = 'HIDE_RENDERVIEW')
         layout.operator("render.play_rendered_anim", icon='PLAY')
 
 

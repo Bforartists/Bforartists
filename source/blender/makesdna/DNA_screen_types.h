@@ -268,7 +268,7 @@ typedef struct ARegion {
 /* swap */
 #define WIN_BACK_OK		1
 #define WIN_FRONT_OK	2
-// #define WIN_EQUAL		3  // UNUSED
+//#define WIN_EQUAL		3  // UNUSED
 
 /* area->flag */
 enum {
@@ -286,6 +286,25 @@ enum {
 	AREA_FLAG_ACTIONZONES_UPDATE = (1 << 8),
 	// bfa - show hide the editorsmenu
 	HEADER_NO_EDITORTYPEMENU = (1 << 9),
+	// bfa - show hide the File toolbars
+	HEADER_TOOLBAR_FILE = (1 << 10),
+	// bfa - show hide the View toolbars
+	HEADER_TOOLBAR_VIEW = (1 << 11),
+	// bfa - show hide the Primitives toolbars
+	HEADER_TOOLBAR_PRIMITIVES = (1 << 12),
+	// bfa - show hide the Image toolbars
+	HEADER_TOOLBAR_IMAGE = (1 << 13),
+	// bfa - show hide the Tools toolbars
+	HEADER_TOOLBAR_TOOLS = (1 << 14),
+	// bfa - show hide the Animation toolbars
+	HEADER_TOOLBAR_ANIMATION = (1 << 15),
+
+	//// bfa- This below does not work, it just fucks up things. It's a short. 15 is end of road. 
+	////So the next flags for our editors are in the Panel->flag enums
+	//// bfa - show hide the Edit toolbars
+	//HEADER_TOOLBAR_EDIT = (2 << 11),
+	//// bfa - show hide the Misc toolbars
+	//HEADER_TOOLBAR_MISC = (2 << 12),
 };
 
 #define EDGEWIDTH	1
@@ -313,6 +332,12 @@ enum {
 	/*PNL_TABBED    = (1 << 3), */ /*UNUSED*/
 	PNL_OVERLAP     = (1 << 4),
 	PNL_PIN         = (1 << 5),
+
+	/*Other flags see above in the area->flag enum*/
+	// bfa - show hide the Edit toolbars
+	HEADER_TOOLBAR_EDIT = (1 << 6),
+	// bfa - show hide the Misc toolbars
+	HEADER_TOOLBAR_MISC = (1 << 7),
 };
 
 /* Panel->snap - for snapping to screen edges */

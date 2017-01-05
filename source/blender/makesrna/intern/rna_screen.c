@@ -242,6 +242,46 @@ static void rna_def_area(BlenderRNA *brna)
 	RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_NO_EDITORTYPEMENU);
 	RNA_def_property_ui_text(prop, "Show Editortype menu", "Shows or hides the Editortype menu to change the editor type");
 
+	// bfa - show hide the File toolbars
+	prop = RNA_def_property(srna, "file_toolbars", PROP_BOOLEAN, PROP_NONE);
+	RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_TOOLBAR_FILE);
+	RNA_def_property_ui_text(prop, "File Toolbars", "Shows or hides the File Toolbars");
+
+	// bfa - show hide the View toolbars
+	prop = RNA_def_property(srna, "view_toolbars", PROP_BOOLEAN, PROP_NONE);
+	RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_TOOLBAR_VIEW);
+	RNA_def_property_ui_text(prop, "View Toolbars", "Shows or hides the View Toolbars");
+
+	// bfa - show hide the Primitives toolbars
+	prop = RNA_def_property(srna, "primitives_toolbars", PROP_BOOLEAN, PROP_NONE);
+	RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_TOOLBAR_PRIMITIVES);
+	RNA_def_property_ui_text(prop, "Primitives Toolbars", "Shows or hides the Primitives Toolbars");
+
+	// bfa - show hide the Image toolbars
+	prop = RNA_def_property(srna, "image_toolbars", PROP_BOOLEAN, PROP_NONE);
+	RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_TOOLBAR_IMAGE);
+	RNA_def_property_ui_text(prop, "Image Toolbars", "Shows or hides the Image Toolbars");
+
+	// bfa - show hide the Tools toolbars
+	prop = RNA_def_property(srna, "tools_toolbars", PROP_BOOLEAN, PROP_NONE);
+	RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_TOOLBAR_TOOLS);
+	RNA_def_property_ui_text(prop, "Tools Toolbars", "Shows or hides the Tools Toolbars");
+
+	// bfa - show hide the Animation toolbars
+	prop = RNA_def_property(srna, "animation_toolbars", PROP_BOOLEAN, PROP_NONE);
+	RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_TOOLBAR_ANIMATION);
+	RNA_def_property_ui_text(prop, "Animation Toolbars", "Shows or hides the Animation Toolbars");
+
+	// bfa - show hide the Edit toolbars
+	prop = RNA_def_property(srna, "edit_toolbars", PROP_BOOLEAN, PROP_NONE);
+	RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_TOOLBAR_EDIT);
+	RNA_def_property_ui_text(prop, "Edit Toolbars", "Shows or hides the Edit Toolbars");
+
+	// bfa - show hide the Misc toolbars
+	prop = RNA_def_property(srna, "misc_toolbars", PROP_BOOLEAN, PROP_NONE);
+	RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_TOOLBAR_MISC);
+	RNA_def_property_ui_text(prop, "Misc Toolbars", "Shows or hides the Misc Toolbars");
+
 	prop = RNA_def_property(srna, "type", PROP_ENUM, PROP_NONE);
 	RNA_def_property_enum_sdna(prop, NULL, "spacetype");
 	RNA_def_property_enum_items(prop, space_type_items);
