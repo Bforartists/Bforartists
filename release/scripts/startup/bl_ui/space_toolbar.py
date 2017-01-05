@@ -396,7 +396,7 @@ class VIEW3D_MT_tocam(bpy.types.Operator):
         return {'FINISHED'} 
 
 class VIEW3D_MT_switchactivecam(bpy.types.Operator):
-    """Set Active Camera\nBe careful, you can also set objects as the active camera, not only other cameras.\nSo make sure that a camera is selected."""
+    """Set Active Camera\nSets the current selected camera as the active camera to render from.\nYou need to have a camera object selected."""
     bl_idname = "view3d.switchactivecam"
     bl_label = "Set active Camera"
     bl_options = {'REGISTER', 'UNDO'}
@@ -423,7 +423,6 @@ class TOOLBAR_MT_view(Menu):
     @staticmethod
     def draw_menus(layout, context):
         scene = context.scene
-        #rd = scene.render
 
         TOOLBAR_MT_menu_view.draw_collapsible(context, layout)
 
@@ -446,12 +445,32 @@ class TOOLBAR_MT_view(Menu):
         if scene.toolbar_view_camera.bool: 
 
             row = layout.row(align=True)
-            
+
+            obj = context.object 
+
             row.operator("view3d.tocam", text="", icon ="VIEW_SWITCHTOCAM")
 
             row = layout.row(align=True)
 
-            row.operator("view3d.switchactivecam", text="", icon ="VIEW_SWITCHACTIVECAM")
+            # Set active camera. Just enabled when a camera object is selected.
+            if obj is not None:
+
+                obj_type = obj.type
+
+                if obj_type == 'CAMERA':
+
+                    row.operator("view3d.switchactivecam", text="", icon ="VIEW_SWITCHACTIVECAM")
+   
+                else:
+                    
+                    row.enabled = False
+                    row.operator("view3d.switchactivecam", text="", icon ="VIEW_SWITCHACTIVECAM")
+
+            else:
+                row.enabled = False
+                row.operator("view3d.switchactivecam", text="", icon ="VIEW_SWITCHACTIVECAM")
+
+            
             
 
 ######################################## Primitives ##############################################
