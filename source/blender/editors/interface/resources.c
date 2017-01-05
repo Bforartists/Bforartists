@@ -165,8 +165,11 @@ const unsigned char *UI_ThemeGetColorPtr(bTheme *btheme, int spacetype, int colo
 				case SPACE_CLIP:
 					ts = &btheme->tclip;
 					break;
-				default:
+				case SPACE_TOOLBAR:
 					ts = &btheme->tv3d;
+					break;
+				default:
+					ts = &btheme->tv3d; // hacky workaround so that we don' thave to implement the theming. It uses the colors from 3d view now.
 					break;
 			}
 

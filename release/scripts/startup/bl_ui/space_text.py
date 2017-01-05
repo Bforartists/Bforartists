@@ -223,15 +223,15 @@ class TEXT_MT_File(Menu):
         st = context.space_data
         text = st.text
 
-        layout.operator("text.new", text = "New Text")
-        layout.operator("text.open", text = "Open Text")
+        layout.operator("text.new", text = "New Text", icon='NEW')
+        layout.operator("text.open", text = "Open Text", icon='FILE_FOLDER')
 
         if text:
             layout.operator("text.reload")
 
             layout.column()
-            layout.operator("text.save")
-            layout.operator("text.save_as")
+            layout.operator("text.save", icon='FILE_TICK')
+            layout.operator("text.save_as", icon='SAVE_AS')
 
             if text.filepath:
                 layout.operator("text.make_internal")
