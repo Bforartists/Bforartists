@@ -762,8 +762,6 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
             col.operator("view3d.edit_mesh_extrude_move_normal", icon='EXTRUDE_REGION', text="Extrude Region")
             col.operator("view3d.edit_mesh_extrude_individual_move", icon='EXTRUDE_INDIVIDUAL', text="Individual        "),
            
-            #row = col.row(align=True)
-            #col = layout.column(align=True)
             layout.separator()
             col.operator("mesh.spin", icon='SPIN', text="Spin                 ")
             col.operator("mesh.screw", icon='SCREW', text="Screw              ")
@@ -777,12 +775,10 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
             col.operator("mesh.loopcut_slide", icon='LOOP_CUT_AND_SLIDE', text="Loop Cut n Slide  ")
             col.operator("mesh.offset_edge_loops_slide", icon='OFFSET_EDGE_SLIDE')
 
-
-            row = col.row(align=True)
-            props = row.operator("mesh.knife_tool", icon='KNIFE', text="Knife")
+            props = col.operator("mesh.knife_tool", icon='KNIFE', text="Knife                ")
             props.use_occlude_geometry = True
             props.only_selected = False
-            props = row.operator("mesh.knife_tool", icon='KNIFE_SELECT', text="Select")
+            props = col.operator("mesh.knife_tool", icon='KNIFE_SELECT', text="Knife Select    ")
             props.use_occlude_geometry = False
             props.only_selected = True
             col.operator("mesh.knife_project", icon='KNIFE_PROJECT', text="Knife Project   ")
