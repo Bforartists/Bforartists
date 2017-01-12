@@ -312,7 +312,7 @@ class VIEW3D_MT_tobottom(bpy.types.Operator):
         return {'FINISHED'} 
 
 class VIEW3D_MT_tofront(bpy.types.Operator):
-    """Change view to Top\nThis button is global, and changes all available 3D views\nUse the View menu to change the view just in selected 3d view"""
+    """Change view to Front\nThis button is global, and changes all available 3D views\nUse the View menu to change the view just in selected 3d view"""
     bl_idname = "view3d.tofront"
     bl_label = "view from front"
     bl_options = {'REGISTER', 'UNDO'}
@@ -326,7 +326,7 @@ class VIEW3D_MT_tofront(bpy.types.Operator):
         return {'FINISHED'} 
 
 class VIEW3D_MT_tobback(bpy.types.Operator):
-    """Change view to Bottom\nThis button is global, and changes all available 3D views\nUse the View menu to change the view just in selected 3d view"""
+    """Change view to Back\nThis button is global, and changes all available 3D views\nUse the View menu to change the view just in selected 3d view"""
     bl_idname = "view3d.toback"
     bl_label = "view from back"
     bl_options = {'REGISTER', 'UNDO'}
