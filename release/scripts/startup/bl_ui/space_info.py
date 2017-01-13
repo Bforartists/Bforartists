@@ -23,65 +23,88 @@ from bpy.types import Header, Menu
 ############################### Tabs to switch between layouts ###################################################
 
 class switch_layout_to_default(bpy.types.Operator):
-    """Switch to Default theme\nWARNING! This Button relies at the layouts in the layout dropdown box\nDon't rename or remove the layout Default in the dropdown list\nThis will make the button disfunctional"""     # blender will use this as a tooltip for menu items and buttons.
+    """Switch to Default theme\nWARNING! Don't rename or remove the layout Default in the dropdown list\nThis will make the button disfunctional\nWarning! You cannot switch to another layout as long as a file browser is open"""     # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "wm.switch_layout_to_default"        # unique identifier for buttons and menu items to reference.
     bl_label = "Switch to Default layout"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
  
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.context.window.screen = bpy.data.screens['Default']
-        return {'FINISHED'}
+    def execute(self, context):        # execute() is called by blender when running the operator.       
+        for area in bpy.context.screen.areas:
+            if area.type == 'FILE_BROWSER': # Switching layouts with a file browser open can lead to a crash to desktop. So we need to check if a file browser is open.
+                return {'FINISHED'}
+            else:
+                bpy.context.window.screen = bpy.data.screens['Default']
+                return {'FINISHED'}
 
 class switch_layout_to_animation(bpy.types.Operator):
-    """Switch to Animation layout\nWARNING! This Button relies at the layouts in the layout dropdown box\nDon't rename or remove the layout Animation in the dropdown list\nThis will make the button disfunctional"""  
+    """Switch to Animation layout\nWARNING! Don't rename or remove the layout Animation in the dropdown list\nThis will make the button disfunctional\nWarning! You cannot switch to another layout as long as a file browser is open"""  
     bl_idname = "wm.switch_layout_to_animation"        # unique identifier for buttons and menu items to reference.
     bl_label = "Switch to Animation layout"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
 
     def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.context.window.screen = bpy.data.screens['Animation']
-        return {'FINISHED'}
+        for area in bpy.context.screen.areas:
+            if area.type == 'FILE_BROWSER':
+                return {'FINISHED'}
+            else:
+                bpy.context.window.screen = bpy.data.screens['Animation']
+                return {'FINISHED'}
 
 class switch_layout_to_uv(bpy.types.Operator):
-    """Switch to UV Editing layout\nWARNING! This Button relies at the layouts in the layout dropdown box\nDon't rename or remove the layout UV Editing in the dropdown list\nThis will make the button disfunctional"""  
+    """Switch to UV Editing layout\nWARNING! Don't rename or remove the layout UV Editing in the dropdown list\nThis will make the button disfunctional\nWarning! You cannot switch to another layout as long as a file browser is open"""  
     bl_idname = "wm.switch_layout_to_uv"        # unique identifier for buttons and menu items to reference.
     bl_label = "Switch to UV Editing layout"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
 
     def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.context.window.screen = bpy.data.screens['UV Editing']
-        return {'FINISHED'}
+        for area in bpy.context.screen.areas:
+            if area.type == 'FILE_BROWSER':
+                return {'FINISHED'}
+            else:
+                bpy.context.window.screen = bpy.data.screens['UV Editing']
+                return {'FINISHED'}
 
 class switch_layout_to_compositing(bpy.types.Operator):
-    """Switch to Compositing layout\nWARNING! This Button relies at the layouts in the layout dropdown box\nDon't rename or remove the layout Compositing in the dropdown list\nThis will make the button disfunctional"""  
+    """Switch to Compositing layout\nWARNING! Don't rename or remove the layout Compositing in the dropdown list\nThis will make the button disfunctional\nWarning! You cannot switch to another layout as long as a file browser is open"""  
     bl_idname = "wm.switch_layout_to_compositing"        # unique identifier for buttons and menu items to reference.
     bl_label = "Switch to Compositing layout"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
 
     def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.context.window.screen = bpy.data.screens['Compositing']
-        return {'FINISHED'}
+        for area in bpy.context.screen.areas:
+            if area.type == 'FILE_BROWSER':
+                return {'FINISHED'}
+            else:
+                bpy.context.window.screen = bpy.data.screens['Compositing']
+                return {'FINISHED'}
 
 class switch_layout_to_scripting(bpy.types.Operator):
-    """Switch to Scripting layout\nWARNING! This Button relies at the layouts in the layout dropdown box\nDon't rename or remove the layout Scripting in the dropdown list\nThis will make the button disfunctional"""  
+    """Switch to Scripting layout\nWARNING! Don't rename or remove the layout Scripting in the dropdown list\nThis will make the button disfunctional\nWarning! You cannot switch to another layout as long as a file browser is open"""  
     bl_idname = "wm.switch_layout_to_scripting"        # unique identifier for buttons and menu items to reference.
     bl_label = "Switch to Scripting layout"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
 
     def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.context.window.screen = bpy.data.screens['Scripting']
-        return {'FINISHED'}
+        for area in bpy.context.screen.areas:
+            if area.type == 'FILE_BROWSER':
+                return {'FINISHED'}
+            else:
+                bpy.context.window.screen = bpy.data.screens['Scripting']
+                return {'FINISHED'}
 
 class switch_layout_to_motiontracking(bpy.types.Operator):
-    """Switch to Motion Tracking layout\nWARNING! This Button relies at the layouts in the layout dropdown box\nDon't rename or remove the layout Motion Tracking in the dropdown list\nThis will make the button disfunctional"""  
+    """Switch to Motion Tracking layout\nWARNING! Don't rename or remove the layout Motion Tracking in the dropdown list\nThis will make the button disfunctional\nWarning! You cannot switch to another layout as long as a file browser is open"""  
     bl_idname = "wm.switch_layout_to_motiontracking"        # unique identifier for buttons and menu items to reference.
     bl_label = "Switch to Motion Tracking layout"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
 
     def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.context.window.screen = bpy.data.screens['Motion Tracking']
-        return {'FINISHED'}
+        for area in bpy.context.screen.areas:
+            if area.type == 'FILE_BROWSER':
+                return {'FINISHED'}
+            else:
+                bpy.context.window.screen = bpy.data.screens['Motion Tracking']
+                return {'FINISHED'}
 
 ###########################################################################################################
 
