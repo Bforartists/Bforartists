@@ -595,25 +595,32 @@ class VIEW3D_PT_tools_relations(View3DPanel, Panel):
             if mode == 'EDIT':
 
                 col = layout.column(align=True)
-                col.label(text="Parent:")
-                layout.operator("object.vertex_parent_set")
-
-                if obj.type == 'ARMATURE':
-
-                    col = layout.column(align=True)
-
-                    if not scene.UItweaks.icon_or_text: 
+                
+                
+                if not scene.UItweaks.icon_or_text: 
                         col = layout.column(align=True)
                         row = col.row(align=True)
-                        row.operator("armature.parent_set", icon='PARENT_SET', text="Make")
-                        row.operator("armature.parent_clear", icon='PARENT_CLEAR', text="Clear")
-
-                    else:
+                
+                        col.label(text="Parent:")
+                        layout.operator("object.vertex_parent_set", icon = "VERTEX_PARENT")
+                        
+                        if obj.type == 'ARMATURE':
+                            col = layout.column(align=True)
+                            row = col.row(align=True)
+                            row.operator("armature.parent_set", icon='PARENT_SET', text="Make")
+                            row.operator("armature.parent_clear", icon='PARENT_CLEAR', text="Clear")
+                        
+                else:
                         col = layout.column(align=True)
+                        col.label(text="Parent:")
+                        
                         row = col.row(align=False)
                         row.alignment = 'LEFT'
-                        row.operator("armature.parent_set", icon='PARENT_SET', text="")
-                        row.operator("armature.parent_clear", icon='PARENT_CLEAR', text="")
+                        row.operator("object.vertex_parent_set", text= "", icon = "VERTEX_PARENT")
+                        
+                        if obj.type == 'ARMATURE':
+                            row.operator("armature.parent_set", icon='PARENT_SET', text="")
+                            row.operator("armature.parent_clear", icon='PARENT_CLEAR', text="")
 
             if mode == 'POSE':
 

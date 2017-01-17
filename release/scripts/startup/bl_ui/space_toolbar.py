@@ -1017,7 +1017,7 @@ class TOOLBAR_MT_tools(Menu):
 
                     row = layout.row(align=True)
 
-                    row.operator("object.vertex_parent_set")
+                    row.operator("object.vertex_parent_set", text = "", icon = "VERTEX_PARENT" )
 
                     if obj.type == 'ARMATURE':
 
