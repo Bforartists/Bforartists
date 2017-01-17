@@ -549,11 +549,12 @@ DEF_ICON(GREASEPENCIL_POLY)
 DEF_ICON(GREASEPENCIL_CONVERT)
 DEF_ICON(RULER)
 
-#ifndef DEF_ICON_BLANK_SKIP
-	/* EMPTY */	
+DEF_ICON(VERTEX_PARENT)
 
-	DEF_ICON(BLANK755)
-#endif
+
+	/* ---------------------------- Newline -------------------------- */
+
+
 /*bfa - new icons. Tool Shelf - Edit Mode - Tools - Mesh Tools - Add section  */
 DEF_ICON(INSET_FACES)
 DEF_ICON(MAKE_EDGEFACE)
