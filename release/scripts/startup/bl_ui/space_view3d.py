@@ -381,7 +381,7 @@ class VIEW3D_MT_view(Menu):
         layout.separator()
 
         layout.operator("view3d.object_as_camera", icon = 'VIEW_SWITCHACTIVECAM')
-        layout.operator("view3d.viewnumpad", text="Active Camera", icon = 'VIEW_SWITCHTOCAM').type = 'CAMERA'
+        layout.operator("view3d.viewnumpad", text="Camera View", icon = 'VIEW_SWITCHTOCAM').type = 'CAMERA'
         layout.operator("view3d.view_center_camera")
 
         layout.separator()
