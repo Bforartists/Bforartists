@@ -66,7 +66,6 @@ void ED_operatortypes_curve(void)
 	WM_operatortype_append(FONT_OT_text_cut);
 	WM_operatortype_append(FONT_OT_text_paste);
 	WM_operatortype_append(FONT_OT_text_paste_from_file);
-	WM_operatortype_append(FONT_OT_text_paste_from_clipboard);
 
 	WM_operatortype_append(FONT_OT_move);
 	WM_operatortype_append(FONT_OT_move_select);
@@ -88,6 +87,7 @@ void ED_operatortypes_curve(void)
 	WM_operatortype_append(CURVE_OT_split);
 	WM_operatortype_append(CURVE_OT_duplicate);
 	WM_operatortype_append(CURVE_OT_delete);
+	WM_operatortype_append(CURVE_OT_dissolve_verts);
 
 	WM_operatortype_append(CURVE_OT_spline_type_set);
 	WM_operatortype_append(CURVE_OT_radius_set);
@@ -136,6 +136,7 @@ void ED_operatortypes_curve(void)
 	WM_operatortype_append(CURVE_OT_make_segment);
 	WM_operatortype_append(CURVE_OT_spin);
 	WM_operatortype_append(CURVE_OT_vertex_add);
+	WM_operatortype_append(CURVE_OT_draw);
 	WM_operatortype_append(CURVE_OT_extrude);
 	WM_operatortype_append(CURVE_OT_cyclic_toggle);
 
@@ -214,6 +215,7 @@ void ED_keymap_curve(wmKeyConfig *keyconf)
 	WM_keymap_add_item(keymap, "FONT_OT_text_cut", XKEY, KM_PRESS, KM_CTRL, 0);
 	WM_keymap_add_item(keymap, "FONT_OT_text_paste", VKEY, KM_PRESS, KM_CTRL, 0);
 #ifdef __APPLE__
+	WM_keymap_add_item(keymap, "FONT_OT_select_all", AKEY, KM_PRESS, KM_OSKEY, 0);
 	WM_keymap_add_item(keymap, "FONT_OT_text_copy", CKEY, KM_PRESS, KM_OSKEY, 0);
 	WM_keymap_add_item(keymap, "FONT_OT_text_cut", XKEY, KM_PRESS, KM_OSKEY, 0);
 	WM_keymap_add_item(keymap, "FONT_OT_text_paste", VKEY, KM_PRESS, KM_OSKEY, 0);
@@ -233,6 +235,9 @@ void ED_keymap_curve(wmKeyConfig *keyconf)
 	WM_keymap_add_item(keymap, "CURVE_OT_handle_type_set", VKEY, KM_PRESS, 0, 0);
 
 	WM_keymap_add_item(keymap, "CURVE_OT_vertex_add", ACTIONMOUSE, KM_CLICK, KM_CTRL, 0);
+
+	kmi = WM_keymap_add_item(keymap, "CURVE_OT_draw", ACTIONMOUSE, KM_PRESS, KM_SHIFT, 0);
+	RNA_boolean_set(kmi->ptr, "wait_for_input", false);
 
 	kmi = WM_keymap_add_item(keymap, "CURVE_OT_select_all", AKEY, KM_PRESS, 0, 0);
 	RNA_enum_set(kmi->ptr, "action", SEL_TOGGLE);
@@ -258,8 +263,12 @@ void ED_keymap_curve(wmKeyConfig *keyconf)
 	WM_keymap_add_item(keymap, "CURVE_OT_duplicate_move", DKEY, KM_PRESS, KM_SHIFT, 0);
 	WM_keymap_add_item(keymap, "CURVE_OT_make_segment", FKEY, KM_PRESS, 0, 0);
 	WM_keymap_add_item(keymap, "CURVE_OT_cyclic_toggle", CKEY, KM_PRESS, KM_ALT, 0);
-	WM_keymap_add_item(keymap, "CURVE_OT_delete", XKEY, KM_PRESS, 0, 0);
-	WM_keymap_add_item(keymap, "CURVE_OT_delete", DELKEY, KM_PRESS, 0, 0);
+
+	WM_keymap_add_menu(keymap, "VIEW3D_MT_edit_curve_delete", XKEY, KM_PRESS, 0, 0);
+	WM_keymap_add_menu(keymap, "VIEW3D_MT_edit_curve_delete", DELKEY, KM_PRESS, 0, 0);
+
+	WM_keymap_add_item(keymap, "CURVE_OT_dissolve_verts", XKEY, KM_PRESS, KM_CTRL, 0);
+	WM_keymap_add_item(keymap, "CURVE_OT_dissolve_verts", DELKEY, KM_PRESS, KM_CTRL, 0);
 
 	WM_keymap_add_item(keymap, "CURVE_OT_tilt_clear", TKEY, KM_PRESS, KM_ALT, 0);
 	WM_keymap_add_item(keymap, "TRANSFORM_OT_tilt", TKEY, KM_PRESS, KM_CTRL, 0);

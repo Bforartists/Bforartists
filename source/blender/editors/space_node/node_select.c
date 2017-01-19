@@ -531,7 +531,15 @@ static int node_borderselect_exec(bContext *C, wmOperator *op)
 	UI_view2d_region_to_view_rctf(&ar->v2d, &rectf, &rectf);
 	
 	for (node = snode->edittree->nodes.first; node; node = node->next) {
-		if (BLI_rctf_isect(&rectf, &node->totr, NULL)) {
+		bool select;
+		if (node->type == NODE_FRAME) {
+			select = BLI_rctf_inside_rctf(&rectf, &node->totr);
+		}
+		else {
+			select = BLI_rctf_isect(&rectf, &node->totr, NULL);
+		}
+
+		if (select) {
 			nodeSetSelected(node, (gesture_mode == GESTURE_MODAL_SELECT));
 		}
 		else if (!extend) {
@@ -1010,7 +1018,7 @@ static uiBlock *node_find_menu(bContext *C, ARegion *ar, void *arg_op)
 	UI_block_flag_enable(block, UI_BLOCK_LOOP | UI_BLOCK_MOVEMOUSE_QUIT | UI_BLOCK_SEARCH_MENU);
 	
 	but = uiDefSearchBut(block, search, 0, ICON_VIEWZOOM, sizeof(search), 10, 10, 9 * UI_UNIT_X, UI_UNIT_Y, 0, 0, "");
-	UI_but_func_search_set(but, node_find_cb, op->type, node_find_call_cb, NULL);
+	UI_but_func_search_set(but, NULL, node_find_cb, op->type, node_find_call_cb, NULL);
 	
 	/* fake button, it holds space for search items */
 	uiDefBut(block, UI_BTYPE_LABEL, 0, "", 10, 10 - UI_searchbox_size_y(), UI_searchbox_size_x(), UI_searchbox_size_y(), NULL, 0, 0, 0, 0, NULL);

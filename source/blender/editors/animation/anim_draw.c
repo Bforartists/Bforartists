@@ -111,31 +111,23 @@ static void draw_cfra_number(Scene *scene, View2D *v2d, const float cfra, const 
 void ANIM_draw_cfra(const bContext *C, View2D *v2d, short flag)
 {
 	Scene *scene = CTX_data_scene(C);
-	float vec[2];
-	
+
 	/* Draw a light green line to indicate current frame */
-	vec[0] = (float)(scene->r.cfra * scene->r.framelen);
-	
 	UI_ThemeColor(TH_CFRAME);
-	if (flag & DRAWCFRA_WIDE)
-		glLineWidth(3.0);
-	else
-		glLineWidth(2.0);
-	
-	glBegin(GL_LINE_STRIP);
-	vec[1] = v2d->cur.ymin - 500.0f;    /* XXX arbitrary... want it go to bottom */
-	glVertex2fv(vec);
-		
-	vec[1] = v2d->cur.ymax;
-	glVertex2fv(vec);
+
+	const float x = (float)(scene->r.cfra * scene->r.framelen);
+
+	glLineWidth((flag & DRAWCFRA_WIDE) ? 3.0 : 2.0);
+
+	glBegin(GL_LINES);
+	glVertex2f(x, v2d->cur.ymin - 500.0f); /* XXX arbitrary... want it go to bottom */
+	glVertex2f(x, v2d->cur.ymax);
 	glEnd();
-	
-	glLineWidth(1.0);
-	
+
 	/* Draw current frame number in a little box */
 	if (flag & DRAWCFRA_SHOW_NUMBOX) {
 		UI_view2d_view_orthoSpecial(CTX_wm_region(C), v2d, 1);
-		draw_cfra_number(scene, v2d, vec[0], (flag & DRAWCFRA_UNIT_SECONDS) != 0);
+		draw_cfra_number(scene, v2d, x, (flag & DRAWCFRA_UNIT_SECONDS) != 0);
 	}
 }
 
@@ -181,11 +173,17 @@ AnimData *ANIM_nla_mapping_get(bAnimContext *ac, bAnimListElem *ale)
 	/* abort if rendering - we may get some race condition issues... */
 	if (G.is_rendering) return NULL;
 	
-	/* handling depends on the type of animation-context we've got */
-	if (ale) {
-		/* NLA Control Curves occur on NLA strips, and shouldn't be subjected to this kind of mapping */
-		if (ale->type != ANIMTYPE_NLACURVE)
-			return ale->adt;
+	/* apart from strictly keyframe-related contexts, this shouldn't even happen */
+	// XXX: nla and channel here may not be necessary...
+	if (ELEM(ac->datatype, ANIMCONT_ACTION, ANIMCONT_SHAPEKEY, ANIMCONT_DOPESHEET,
+	                       ANIMCONT_FCURVES, ANIMCONT_NLA, ANIMCONT_CHANNEL))
+	{
+		/* handling depends on the type of animation-context we've got */
+		if (ale) {
+			/* NLA Control Curves occur on NLA strips, and shouldn't be subjected to this kind of mapping */
+			if (ale->type != ANIMTYPE_NLACURVE)
+				return ale->adt;
+		}
 	}
 	
 	/* cannot handle... */
@@ -345,12 +343,17 @@ static float normalization_factor_get(Scene *scene, FCurve *fcu, short flag, flo
 			}
 		}
 
-		range = max_coord - min_coord;
-
-		if (range > FLT_EPSILON) {
-			factor = 2.0f / range;
+		if (max_coord > min_coord) {
+			range = max_coord - min_coord;
+			if (range > FLT_EPSILON) {
+				factor = 2.0f / range;
+			}
+			offset = -min_coord - range / 2.0f;
 		}
-		offset = -min_coord - range / 2.0f;
+		else if (max_coord == min_coord) {
+			factor = 1.0f;
+			offset = -min_coord;
+		}
 	}
 	BLI_assert(factor != 0.0f);
 	if (r_offset) {
@@ -403,7 +406,6 @@ static bool find_prev_next_keyframes(struct bContext *C, int *nextfra, int *prev
 {
 	Scene *scene = CTX_data_scene(C);
 	Object *ob = CTX_data_active_object(C);
-	bGPdata *gpd = CTX_data_gpencil_data(C);
 	Mask *mask = CTX_data_edit_mask(C);
 	bDopeSheet ads = {NULL};
 	DLRBT_Tree keys;
@@ -425,11 +427,12 @@ static bool find_prev_next_keyframes(struct bContext *C, int *nextfra, int *prev
 
 	/* populate tree with keyframe nodes */
 	scene_to_keylist(&ads, scene, &keys, NULL);
+	gpencil_to_keylist(&ads, scene->gpd, &keys);
 
-	if (ob)
+	if (ob) {
 		ob_to_keylist(&ads, ob, &keys, NULL);
-
-	gpencil_to_keylist(&ads, gpd, &keys);
+		gpencil_to_keylist(&ads, ob->gpd, &keys);
+	}
 
 	if (mask) {
 		MaskLayer *masklay = BKE_mask_layer_active(mask);

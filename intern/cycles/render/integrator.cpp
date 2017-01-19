@@ -16,8 +16,10 @@
 
 #include "device.h"
 #include "integrator.h"
+#include "film.h"
 #include "light.h"
 #include "scene.h"
+#include "shader.h"
 #include "sobol.h"
 
 #include "util_foreach.h"
@@ -25,48 +27,62 @@
 
 CCL_NAMESPACE_BEGIN
 
-Integrator::Integrator()
+NODE_DEFINE(Integrator)
 {
-	min_bounce = 2;
-	max_bounce = 7;
+	NodeType *type = NodeType::add("integrator", create);
 
-	max_diffuse_bounce = max_bounce;
-	max_glossy_bounce = max_bounce;
-	max_transmission_bounce = max_bounce;
-	max_volume_bounce = max_bounce;
+	SOCKET_INT(min_bounce, "Min Bounce", 2);
+	SOCKET_INT(max_bounce, "Max Bounce", 7);
 
-	transparent_min_bounce = min_bounce;
-	transparent_max_bounce = max_bounce;
-	transparent_shadows = false;
+	SOCKET_INT(max_diffuse_bounce, "Max Diffuse Bounce", 7);
+	SOCKET_INT(max_glossy_bounce, "Max Glossy Bounce", 7);
+	SOCKET_INT(max_transmission_bounce, "Max Transmission Bounce", 7);
+	SOCKET_INT(max_volume_bounce, "Max Volume Bounce", 7);
 
-	volume_max_steps = 1024;
-	volume_step_size = 0.1f;
+	SOCKET_INT(transparent_min_bounce, "Transparent Min Bounce", 2);
+	SOCKET_INT(transparent_max_bounce, "Transparent Max Bounce", 7);
+	SOCKET_BOOLEAN(transparent_shadows, "Transparent Shadows", false);
 
-	caustics_reflective = true;
-	caustics_refractive = true;
-	filter_glossy = 0.0f;
-	seed = 0;
-	layer_flag = ~0;
-	sample_clamp_direct = 0.0f;
-	sample_clamp_indirect = 0.0f;
-	motion_blur = false;
+	SOCKET_INT(volume_max_steps, "Volume Max Steps", 1024);
+	SOCKET_FLOAT(volume_step_size, "Volume Step Size", 0.1f);
 
-	aa_samples = 0;
-	diffuse_samples = 1;
-	glossy_samples = 1;
-	transmission_samples = 1;
-	ao_samples = 1;
-	mesh_light_samples = 1;
-	subsurface_samples = 1;
-	volume_samples = 1;
+	SOCKET_BOOLEAN(caustics_reflective, "Reflective Caustics", true);
+	SOCKET_BOOLEAN(caustics_refractive, "Refractive Caustics", true);
+	SOCKET_FLOAT(filter_glossy, "Filter Glossy", 0.0f);
+	SOCKET_INT(seed, "Seed", 0);
+	SOCKET_FLOAT(sample_clamp_direct, "Sample Clamp Direct", 0.0f);
+	SOCKET_FLOAT(sample_clamp_indirect, "Sample Clamp Indirect", 0.0f);
+	SOCKET_BOOLEAN(motion_blur, "Motion Blur", false);
 
-	sample_all_lights_direct = true;
-	sample_all_lights_indirect = true;
+	SOCKET_INT(aa_samples, "AA Samples", 0);
+	SOCKET_INT(diffuse_samples, "Diffuse Samples", 1);
+	SOCKET_INT(glossy_samples, "Glossy Samples", 1);
+	SOCKET_INT(transmission_samples, "Transmission Samples", 1);
+	SOCKET_INT(ao_samples, "AO Samples", 1);
+	SOCKET_INT(mesh_light_samples, "Mesh Light Samples", 1);
+	SOCKET_INT(subsurface_samples, "Subsurface Samples", 1);
+	SOCKET_INT(volume_samples, "Volume Samples", 1);
 
-	method = PATH;
+	SOCKET_BOOLEAN(sample_all_lights_direct, "Sample All Lights Direct", true);
+	SOCKET_BOOLEAN(sample_all_lights_indirect, "Sample All Lights Indirect", true);
+	SOCKET_FLOAT(light_sampling_threshold, "Light Sampling Threshold", 0.05f);
 
-	sampling_pattern = SAMPLING_PATTERN_SOBOL;
+	static NodeEnum method_enum;
+	method_enum.insert("path", PATH);
+	method_enum.insert("branched_path", BRANCHED_PATH);
+	SOCKET_ENUM(method, "Method", method_enum, PATH);
 
+	static NodeEnum sampling_pattern_enum;
+	sampling_pattern_enum.insert("sobol", SAMPLING_PATTERN_SOBOL);
+	sampling_pattern_enum.insert("cmj", SAMPLING_PATTERN_CMJ);
+	SOCKET_ENUM(sampling_pattern, "Sampling Pattern", sampling_pattern_enum, SAMPLING_PATTERN_SOBOL);
+
+	return type;
+}
+
+Integrator::Integrator()
+: Node(node_type)
+{
 	need_update = true;
 }
 
@@ -121,10 +137,9 @@ void Integrator::device_update(Device *device, DeviceScene *dscene, Scene *scene
 	kintegrator->filter_glossy = (filter_glossy == 0.0f)? FLT_MAX: 1.0f/filter_glossy;
 
 	kintegrator->seed = hash_int(seed);
-	kintegrator->layer_flag = layer_flag << PATH_RAY_LAYER_SHIFT;
 
 	kintegrator->use_ambient_occlusion =
-		((dscene->data.film.pass_flag & PASS_AO) || dscene->data.background.ao_factor != 0.0f);
+		((Pass::contains(scene->film->passes, PASS_AO)) || dscene->data.background.ao_factor != 0.0f);
 	
 	kintegrator->sample_clamp_direct = (sample_clamp_direct == 0.0f)? FLT_MAX: sample_clamp_direct*3.0f;
 	kintegrator->sample_clamp_indirect = (sample_clamp_indirect == 0.0f)? FLT_MAX: sample_clamp_indirect*3.0f;
@@ -150,6 +165,13 @@ void Integrator::device_update(Device *device, DeviceScene *dscene, Scene *scene
 	kintegrator->sampling_pattern = sampling_pattern;
 	kintegrator->aa_samples = aa_samples;
 
+	if(light_sampling_threshold > 0.0f) {
+		kintegrator->light_inv_rr_threshold = 1.0f / light_sampling_threshold;
+	}
+	else {
+		kintegrator->light_inv_rr_threshold = 0.0f;
+	}
+
 	/* sobol directions table */
 	int max_samples = 1;
 
@@ -162,7 +184,7 @@ void Integrator::device_update(Device *device, DeviceScene *dscene, Scene *scene
 		max_samples = max(max_samples, volume_samples);
 	}
 
-	max_samples *= (max_bounce + transparent_max_bounce + 3);
+	max_samples *= (max_bounce + transparent_max_bounce + 3 + BSSRDF_MAX_HITS);
 
 	int dimensions = PRNG_BASE_NUM + max_samples*PRNG_BOUNCE_NUM;
 	dimensions = min(dimensions, SOBOL_MAX_DIMENSIONS);
@@ -172,6 +194,14 @@ void Integrator::device_update(Device *device, DeviceScene *dscene, Scene *scene
 	sobol_generate_direction_vectors((uint(*)[SOBOL_BITS])directions, dimensions);
 
 	device->tex_alloc("__sobol_directions", dscene->sobol_directions);
+
+	/* Clamping. */
+	bool use_sample_clamp = (sample_clamp_direct != 0.0f ||
+	                         sample_clamp_indirect != 0.0f);
+	if(use_sample_clamp != scene->film->use_sample_clamp) {
+		scene->film->use_sample_clamp = use_sample_clamp;
+		scene->film->tag_update(scene);
+	}
 
 	need_update = false;
 }
@@ -184,41 +214,17 @@ void Integrator::device_free(Device *device, DeviceScene *dscene)
 
 bool Integrator::modified(const Integrator& integrator)
 {
-	return !(min_bounce == integrator.min_bounce &&
-		max_bounce == integrator.max_bounce &&
-		max_diffuse_bounce == integrator.max_diffuse_bounce &&
-		max_glossy_bounce == integrator.max_glossy_bounce &&
-		max_transmission_bounce == integrator.max_transmission_bounce &&
-		max_volume_bounce == integrator.max_volume_bounce &&
-		transparent_min_bounce == integrator.transparent_min_bounce &&
-		transparent_max_bounce == integrator.transparent_max_bounce &&
-		transparent_shadows == integrator.transparent_shadows &&
-		volume_max_steps == integrator.volume_max_steps &&
-		volume_step_size == integrator.volume_step_size &&
-		caustics_reflective == integrator.caustics_reflective &&
-		caustics_refractive == integrator.caustics_refractive &&
-		filter_glossy == integrator.filter_glossy &&
-		layer_flag == integrator.layer_flag &&
-		seed == integrator.seed &&
-		sample_clamp_direct == integrator.sample_clamp_direct &&
-		sample_clamp_indirect == integrator.sample_clamp_indirect &&
-		method == integrator.method &&
-		aa_samples == integrator.aa_samples &&
-		diffuse_samples == integrator.diffuse_samples &&
-		glossy_samples == integrator.glossy_samples &&
-		transmission_samples == integrator.transmission_samples &&
-		ao_samples == integrator.ao_samples &&
-		mesh_light_samples == integrator.mesh_light_samples &&
-		subsurface_samples == integrator.subsurface_samples &&
-		volume_samples == integrator.volume_samples &&
-		motion_blur == integrator.motion_blur &&
-		sampling_pattern == integrator.sampling_pattern &&
-		sample_all_lights_direct == integrator.sample_all_lights_direct &&
-		sample_all_lights_indirect == integrator.sample_all_lights_indirect);
+	return !Node::equals(integrator);
 }
 
-void Integrator::tag_update(Scene * /*scene*/)
+void Integrator::tag_update(Scene *scene)
 {
+	foreach(Shader *shader, scene->shaders) {
+		if(shader->has_integrator_dependency) {
+			scene->shader_manager->need_update = true;
+			break;
+		}
+	}
 	need_update = true;
 }
 

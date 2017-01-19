@@ -39,6 +39,14 @@
 extern "C" {
 #endif
 
+#define _GHASH_INTERNAL_ATTR
+#ifndef GHASH_INTERNAL_API
+#  ifdef __GNUC__
+#    undef  _GHASH_INTERNAL_ATTR
+#    define _GHASH_INTERNAL_ATTR __attribute__ ((deprecated))
+#  endif
+#endif
+
 typedef unsigned int  (*GHashHashFP)     (const void *key);
 /** returns false when equal */
 typedef bool          (*GHashCmpFP)      (const void *a, const void *b);
@@ -54,6 +62,12 @@ typedef struct GHashIterator {
 	struct Entry *curEntry;
 	unsigned int curBucket;
 } GHashIterator;
+
+typedef struct GHashIterState {
+	unsigned int curr_bucket _GHASH_INTERNAL_ATTR;
+} GHashIterState;
+
+
 
 enum {
 	GHASH_FLAG_ALLOW_DUPES  = (1 << 0),  /* Only checked for in debug mode */
@@ -80,13 +94,14 @@ void  *BLI_ghash_lookup(GHash *gh, const void *key) ATTR_WARN_UNUSED_RESULT;
 void  *BLI_ghash_lookup_default(GHash *gh, const void *key, void *val_default) ATTR_WARN_UNUSED_RESULT;
 void **BLI_ghash_lookup_p(GHash *gh, const void *key) ATTR_WARN_UNUSED_RESULT;
 bool   BLI_ghash_ensure_p(GHash *gh, void *key, void ***r_val) ATTR_WARN_UNUSED_RESULT;
-bool   BLI_ghash_ensure_p_ex(GHash *gh, const void *key, void ***r_val, GHashKeyCopyFP keycopyfp) ATTR_WARN_UNUSED_RESULT;
+bool   BLI_ghash_ensure_p_ex(GHash *gh, const void *key, void ***r_key, void ***r_val) ATTR_WARN_UNUSED_RESULT;
 bool   BLI_ghash_remove(GHash *gh, const void *key, GHashKeyFreeFP keyfreefp, GHashValFreeFP valfreefp);
 void   BLI_ghash_clear(GHash *gh, GHashKeyFreeFP keyfreefp, GHashValFreeFP valfreefp);
 void   BLI_ghash_clear_ex(GHash *gh, GHashKeyFreeFP keyfreefp, GHashValFreeFP valfreefp,
                           const unsigned int nentries_reserve);
 void  *BLI_ghash_popkey(GHash *gh, const void *key, GHashKeyFreeFP keyfreefp) ATTR_WARN_UNUSED_RESULT;
 bool   BLI_ghash_haskey(GHash *gh, const void *key) ATTR_WARN_UNUSED_RESULT;
+bool   BLI_ghash_pop(GHash *gh, GHashIterState *state, void **r_key, void **r_val) ATTR_WARN_UNUSED_RESULT ATTR_NONNULL();
 unsigned int BLI_ghash_size(GHash *gh) ATTR_WARN_UNUSED_RESULT;
 void   BLI_ghash_flag_set(GHash *gh, unsigned int flag);
 void   BLI_ghash_flag_clear(GHash *gh, unsigned int flag);
@@ -116,14 +131,14 @@ BLI_INLINE bool   BLI_ghashIterator_done(GHashIterator *ghi)       { return !ghi
 #  define _gh_Entry void
 #endif
 
-#define GHASH_ITER(gh_iter_, ghash_)                                          \
-	for (BLI_ghashIterator_init(&gh_iter_, ghash_);                           \
-	     BLI_ghashIterator_done(&gh_iter_) == false;                          \
+#define GHASH_ITER(gh_iter_, ghash_) \
+	for (BLI_ghashIterator_init(&gh_iter_, ghash_); \
+	     BLI_ghashIterator_done(&gh_iter_) == false; \
 	     BLI_ghashIterator_step(&gh_iter_))
 
-#define GHASH_ITER_INDEX(gh_iter_, ghash_, i_)                                \
-	for (BLI_ghashIterator_init(&gh_iter_, ghash_), i_ = 0;                   \
-	     BLI_ghashIterator_done(&gh_iter_) == false;                          \
+#define GHASH_ITER_INDEX(gh_iter_, ghash_, i_) \
+	for (BLI_ghashIterator_init(&gh_iter_, ghash_), i_ = 0; \
+	     BLI_ghashIterator_done(&gh_iter_) == false; \
 	     BLI_ghashIterator_step(&gh_iter_), i_++)
 
 /** \name Callbacks for GHash
@@ -208,6 +223,8 @@ typedef GHashCmpFP GSetCmpFP;
 typedef GHashKeyFreeFP GSetKeyFreeFP;
 typedef GHashKeyCopyFP GSetKeyCopyFP;
 
+typedef GHashIterState GSetIterState;
+
 /* so we can cast but compiler sees as different */
 typedef struct GSetIterator {
 	GHashIterator _ghi
@@ -227,8 +244,10 @@ void   BLI_gset_flag_clear(GSet *gs, unsigned int flag);
 void   BLI_gset_free(GSet *gs, GSetKeyFreeFP keyfreefp);
 void   BLI_gset_insert(GSet *gh, void *key);
 bool   BLI_gset_add(GSet *gs, void *key);
+bool   BLI_gset_ensure_p_ex(GSet *gs, const void *key, void ***r_key);
 bool   BLI_gset_reinsert(GSet *gh, void *key, GSetKeyFreeFP keyfreefp);
 bool   BLI_gset_haskey(GSet *gs, const void *key) ATTR_WARN_UNUSED_RESULT;
+bool   BLI_gset_pop(GSet *gs, GSetIterState *state, void **r_key) ATTR_WARN_UNUSED_RESULT ATTR_NONNULL();
 bool   BLI_gset_remove(GSet *gs, const void *key, GSetKeyFreeFP keyfreefp);
 void   BLI_gset_clear_ex(GSet *gs, GSetKeyFreeFP keyfreefp,
                          const unsigned int nentries_reserve);
@@ -249,14 +268,14 @@ BLI_INLINE void *BLI_gsetIterator_getKey(GSetIterator *gsi) { return BLI_ghashIt
 BLI_INLINE void BLI_gsetIterator_step(GSetIterator *gsi) { BLI_ghashIterator_step((GHashIterator *)gsi); }
 BLI_INLINE bool BLI_gsetIterator_done(GSetIterator *gsi) { return BLI_ghashIterator_done((GHashIterator *)gsi); }
 
-#define GSET_ITER(gs_iter_, gset_)                                            \
-	for (BLI_gsetIterator_init(&gs_iter_, gset_);                             \
-	     BLI_gsetIterator_done(&gs_iter_) == false;                           \
+#define GSET_ITER(gs_iter_, gset_) \
+	for (BLI_gsetIterator_init(&gs_iter_, gset_); \
+	     BLI_gsetIterator_done(&gs_iter_) == false; \
 	     BLI_gsetIterator_step(&gs_iter_))
 
-#define GSET_ITER_INDEX(gs_iter_, gset_, i_)                                  \
-	for (BLI_gsetIterator_init(&gs_iter_, gset_), i_ = 0;                     \
-	     BLI_gsetIterator_done(&gs_iter_) == false;                           \
+#define GSET_ITER_INDEX(gs_iter_, gset_, i_) \
+	for (BLI_gsetIterator_init(&gs_iter_, gset_), i_ = 0; \
+	     BLI_gsetIterator_done(&gs_iter_) == false; \
 	     BLI_gsetIterator_step(&gs_iter_), i_++)
 
 

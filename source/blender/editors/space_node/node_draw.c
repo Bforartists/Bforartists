@@ -45,6 +45,7 @@
 
 #include "BKE_context.h"
 #include "BKE_depsgraph.h"
+#include "BKE_library.h"
 #include "BKE_main.h"
 #include "BKE_node.h"
 
@@ -85,9 +86,7 @@ void ED_node_tree_update(const bContext *C)
 	if (snode) {
 		snode_set_context(C);
 
-		if (snode->nodetree && snode->nodetree->id.us == 0) {
-			snode->nodetree->id.us = 1;
-		}
+		id_us_ensure_real(&snode->nodetree->id);
 	}
 }
 
@@ -154,18 +153,27 @@ void ED_node_tag_update_id(ID *id)
 	}
 }
 
-void ED_node_tag_update_nodetree(Main *bmain, bNodeTree *ntree)
+void ED_node_tag_update_nodetree(Main *bmain, bNodeTree *ntree, bNode *node)
 {
 	if (!ntree)
 		return;
-	
+
+	bool do_tag_update = true;
+	if (node != NULL) {
+		if (!node_connected_to_output(ntree, node)) {
+			do_tag_update = false;
+		}
+	}
+
 	/* look through all datablocks, to support groups */
-	FOREACH_NODETREE(bmain, tntree, id) {
-		/* check if nodetree uses the group */
-		if (ntreeHasTree(tntree, ntree))
-			ED_node_tag_update_id(id);
-	} FOREACH_NODETREE_END
-	
+	if (do_tag_update) {
+		FOREACH_NODETREE(bmain, tntree, id) {
+			/* check if nodetree uses the group */
+			if (ntreeHasTree(tntree, ntree))
+				ED_node_tag_update_id(id);
+		} FOREACH_NODETREE_END
+	}
+
 	if (ntree->type == NTREE_TEXTURE)
 		ntreeTexCheckCyclics(ntree);
 }
@@ -652,7 +660,6 @@ static void node_circle_draw(float x, float y, float size, const float col[4], i
 	glEnd();
 	glDisable(GL_LINE_SMOOTH);
 	glDisable(GL_BLEND);
-	glLineWidth(1.0f);
 }
 
 void node_socket_circle_draw(const bContext *C, bNodeTree *ntree, bNode *node, bNodeSocket *sock, float size, int highlight)
@@ -820,6 +827,8 @@ static void node_draw_basis(const bContext *C, ARegion *ar, SpaceNode *snode, bN
 		}
 	}
 #endif
+
+	glLineWidth(1.0f);
 
 	UI_draw_roundbox_corner_set(UI_CNR_TOP_LEFT | UI_CNR_TOP_RIGHT);
 	UI_draw_roundbox(rct->xmin, rct->ymax - NODE_DY, rct->xmax, rct->ymax, BASIS_RAD);
@@ -1057,7 +1066,7 @@ static void node_draw_hidden(const bContext *C, ARegion *ar, SpaceNode *snode, b
 		//	BLI_snprintf(showname, sizeof(showname), "[%s]", showname); /* XXX - don't print into self! */
 
 		uiDefBut(node->block, UI_BTYPE_LABEL, 0, showname,
-		         (int)(rct->xmin + (NODE_MARGIN_X)), (int)(centy - 10),
+		         iroundf(rct->xmin + NODE_MARGIN_X), iroundf(centy - NODE_DY * 0.5f),
 		         (short)(BLI_rctf_size_x(rct) - 18.0f - 12.0f), (short)NODE_DY,
 		         NULL, 0, 0, 0, 0, "");
 	}
@@ -1318,8 +1327,10 @@ void drawnodespace(const bContext *C, ARegion *ar)
 		path = snode->treepath.last;
 		
 		/* update tree path name (drawn in the bottom left) */
-		if (snode->id && UNLIKELY(!STREQ(path->node_name, snode->id->name + 2))) {
-			BLI_strncpy(path->node_name, snode->id->name + 2, sizeof(path->node_name));
+		ID *name_id = (path->nodetree && path->nodetree != snode->nodetree) ? &path->nodetree->id : snode->id;
+
+		if (name_id && UNLIKELY(!STREQ(path->node_name, name_id->name + 2))) {
+			BLI_strncpy(path->node_name, name_id->name + 2, sizeof(path->node_name));
 		}
 		
 		/* current View2D center, will be set temporarily for parent node trees */

@@ -51,97 +51,8 @@
  * The number of elements in the queues is initialized to 0;
  */
 ccl_device void kernel_data_init(
-        ccl_global char *globals,
-        ccl_global char *shader_data_sd,                  /* Arguments related to ShaderData */
-        ccl_global char *shader_data_sd_DL_shadow,        /* Arguments related to ShaderData */
-
-        ccl_global float3 *P_sd,
-        ccl_global float3 *P_sd_DL_shadow,
-
-        ccl_global float3 *N_sd,
-        ccl_global float3 *N_sd_DL_shadow,
-
-        ccl_global float3 *Ng_sd,
-        ccl_global float3 *Ng_sd_DL_shadow,
-
-        ccl_global float3 *I_sd,
-        ccl_global float3 *I_sd_DL_shadow,
-
-        ccl_global int *shader_sd,
-        ccl_global int *shader_sd_DL_shadow,
-
-        ccl_global int *flag_sd,
-        ccl_global int *flag_sd_DL_shadow,
-
-        ccl_global int *prim_sd,
-        ccl_global int *prim_sd_DL_shadow,
-
-        ccl_global int *type_sd,
-        ccl_global int *type_sd_DL_shadow,
-
-        ccl_global float *u_sd,
-        ccl_global float *u_sd_DL_shadow,
-
-        ccl_global float *v_sd,
-        ccl_global float *v_sd_DL_shadow,
-
-        ccl_global int *object_sd,
-        ccl_global int *object_sd_DL_shadow,
-
-        ccl_global float *time_sd,
-        ccl_global float *time_sd_DL_shadow,
-
-        ccl_global float *ray_length_sd,
-        ccl_global float *ray_length_sd_DL_shadow,
-
-        ccl_global int *ray_depth_sd,
-        ccl_global int *ray_depth_sd_DL_shadow,
-
-        ccl_global int *transparent_depth_sd,
-        ccl_global int *transparent_depth_sd_DL_shadow,
-
-        /* Ray differentials. */
-        ccl_global differential3 *dP_sd,
-        ccl_global differential3 *dP_sd_DL_shadow,
-
-        ccl_global differential3 *dI_sd,
-        ccl_global differential3 *dI_sd_DL_shadow,
-
-        ccl_global differential *du_sd,
-        ccl_global differential *du_sd_DL_shadow,
-
-        ccl_global differential *dv_sd,
-        ccl_global differential *dv_sd_DL_shadow,
-
-        /* Dp/Du */
-        ccl_global float3 *dPdu_sd,
-        ccl_global float3 *dPdu_sd_DL_shadow,
-
-        ccl_global float3 *dPdv_sd,
-        ccl_global float3 *dPdv_sd_DL_shadow,
-
-        /* Object motion. */
-        ccl_global Transform *ob_tfm_sd,
-        ccl_global Transform *ob_tfm_sd_DL_shadow,
-
-        ccl_global Transform *ob_itfm_sd,
-        ccl_global Transform *ob_itfm_sd_DL_shadow,
-
-        ShaderClosure *closure_sd,
-        ShaderClosure *closure_sd_DL_shadow,
-
-        ccl_global int *num_closure_sd,
-        ccl_global int *num_closure_sd_DL_shadow,
-
-        ccl_global float *randb_closure_sd,
-        ccl_global float *randb_closure_sd_DL_shadow,
-
-        ccl_global float3 *ray_P_sd,
-        ccl_global float3 *ray_P_sd_DL_shadow,
-
-        ccl_global differential3 *ray_dP_sd,
-        ccl_global differential3 *ray_dP_sd_DL_shadow,
-
+        KernelGlobals *kg,
+        ShaderData *sd_DL_shadow,
         ccl_constant KernelData *data,
         ccl_global float *per_sample_output_buffers,
         ccl_global uint *rng_state,
@@ -151,6 +62,7 @@ ccl_device void kernel_data_init(
         PathRadiance *PathRadiance_coop,             /* PathRadiance array to store PathRadiance values for all rays */
         ccl_global Ray *Ray_coop,                    /* Ray array to store Ray information for all rays */
         ccl_global PathState *PathState_coop,        /* PathState array to store PathState information for all rays */
+        Intersection *Intersection_coop_shadow,
         ccl_global char *ray_state,                  /* Stores information on current state of a ray */
 
 #define KERNEL_TEX(type, ttype, name)                                   \
@@ -175,107 +87,12 @@ ccl_device void kernel_data_init(
 #endif
         int parallel_samples)                        /* Number of samples to be processed in parallel */
 {
-
-	/* Load kernel globals structure */
-	KernelGlobals *kg = (KernelGlobals *)globals;
-
 	kg->data = data;
+	kg->sd_input = sd_DL_shadow;
+	kg->isect_shadow = Intersection_coop_shadow;
 #define KERNEL_TEX(type, ttype, name) \
 	kg->name = name;
 #include "../kernel_textures.h"
-
-	/* Load ShaderData structure */
-	ShaderData *sd = (ShaderData *)shader_data_sd;
-	ShaderData *sd_DL_shadow = (ShaderData *)shader_data_sd_DL_shadow;
-
-	sd->P = P_sd;
-	sd_DL_shadow->P = P_sd_DL_shadow;
-
-	sd->N = N_sd;
-	sd_DL_shadow->N = N_sd_DL_shadow;
-
-	sd->Ng = Ng_sd;
-	sd_DL_shadow->Ng = Ng_sd_DL_shadow;
-
-	sd->I = I_sd;
-	sd_DL_shadow->I = I_sd_DL_shadow;
-
-	sd->shader = shader_sd;
-	sd_DL_shadow->shader = shader_sd_DL_shadow;
-
-	sd->flag = flag_sd;
-	sd_DL_shadow->flag = flag_sd_DL_shadow;
-
-	sd->prim = prim_sd;
-	sd_DL_shadow->prim = prim_sd_DL_shadow;
-
-	sd->type = type_sd;
-	sd_DL_shadow->type = type_sd_DL_shadow;
-
-	sd->u = u_sd;
-	sd_DL_shadow->u = u_sd_DL_shadow;
-
-	sd->v = v_sd;
-	sd_DL_shadow->v = v_sd_DL_shadow;
-
-	sd->object = object_sd;
-	sd_DL_shadow->object = object_sd_DL_shadow;
-
-	sd->time = time_sd;
-	sd_DL_shadow->time = time_sd_DL_shadow;
-
-	sd->ray_length = ray_length_sd;
-	sd_DL_shadow->ray_length = ray_length_sd_DL_shadow;
-
-	sd->ray_depth = ray_depth_sd;
-	sd_DL_shadow->ray_depth = ray_depth_sd_DL_shadow;
-
-	sd->transparent_depth = transparent_depth_sd;
-	sd_DL_shadow->transparent_depth = transparent_depth_sd_DL_shadow;
-
-#ifdef __RAY_DIFFERENTIALS__
-	sd->dP = dP_sd;
-	sd_DL_shadow->dP = dP_sd_DL_shadow;
-
-	sd->dI = dI_sd;
-	sd_DL_shadow->dI = dI_sd_DL_shadow;
-
-	sd->du = du_sd;
-	sd_DL_shadow->du = du_sd_DL_shadow;
-
-	sd->dv = dv_sd;
-	sd_DL_shadow->dv = dv_sd_DL_shadow;
-#ifdef __DPDU__
-	sd->dPdu = dPdu_sd;
-	sd_DL_shadow->dPdu = dPdu_sd_DL_shadow;
-
-	sd->dPdv = dPdv_sd;
-	sd_DL_shadow->dPdv = dPdv_sd_DL_shadow;
-#endif
-#endif
-
-#ifdef __OBJECT_MOTION__
-	sd->ob_tfm = ob_tfm_sd;
-	sd_DL_shadow->ob_tfm = ob_tfm_sd_DL_shadow;
-
-	sd->ob_itfm = ob_itfm_sd;
-	sd_DL_shadow->ob_itfm = ob_itfm_sd_DL_shadow;
-#endif
-
-	sd->closure = closure_sd;
-	sd_DL_shadow->closure = closure_sd_DL_shadow;
-
-	sd->num_closure = num_closure_sd;
-	sd_DL_shadow->num_closure = num_closure_sd_DL_shadow;
-
-	sd->randb_closure = randb_closure_sd;
-	sd_DL_shadow->randb_closure = randb_closure_sd_DL_shadow;
-
-	sd->ray_P = ray_P_sd;
-	sd_DL_shadow->ray_P = ray_P_sd_DL_shadow;
-
-	sd->ray_dP = ray_dP_sd;
-	sd_DL_shadow->ray_dP = ray_dP_sd_DL_shadow;
 
 	int thread_index = get_global_id(1) * get_global_size(0) + get_global_id(0);
 
@@ -390,6 +207,7 @@ ccl_device void kernel_data_init(
 			L_transparent_coop[ray_index] = 0.0f;
 			path_radiance_init(&PathRadiance_coop[ray_index], kernel_data.film.use_light_pass);
 			path_state_init(kg,
+			                kg->sd_input,
 			                &PathState_coop[ray_index],
 			                &rng_coop[ray_index],
 			                my_sample,
@@ -397,7 +215,8 @@ ccl_device void kernel_data_init(
 #ifdef __KERNEL_DEBUG__
 			debug_data_init(&debugdata_coop[ray_index]);
 #endif
-		} else {
+		}
+		else {
 			/* These rays do not participate in path-iteration. */
 			float4 L_rad = make_float4(0.0f, 0.0f, 0.0f, 0.0f);
 			/* Accumulate result in output buffer. */

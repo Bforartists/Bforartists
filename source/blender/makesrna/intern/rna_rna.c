@@ -36,7 +36,7 @@
 
 #include "rna_internal.h"
 
-EnumPropertyItem property_type_items[] = {
+EnumPropertyItem rna_enum_property_type_items[] = {
 	{PROP_BOOLEAN, "BOOLEAN", 0, "Boolean", ""},
 	{PROP_INT, "INT", 0, "Integer", ""},
 	{PROP_FLOAT, "FLOAT", 0, "Float", ""},
@@ -50,7 +50,7 @@ EnumPropertyItem property_type_items[] = {
 /* XXX Keep in sync with bpy_props.c's property_subtype_xxx_items ???
  *     Currently it is not...
  */
-EnumPropertyItem property_subtype_items[] = {
+EnumPropertyItem rna_enum_property_subtype_items[] = {
 	{PROP_NONE, "NONE", 0, "None", ""},
 
 	/* strings */
@@ -90,7 +90,7 @@ EnumPropertyItem property_subtype_items[] = {
 	{0, NULL, 0, NULL, NULL}
 };
 
-EnumPropertyItem property_unit_items[] = {
+EnumPropertyItem rna_enum_property_unit_items[] = {
 	{PROP_UNIT_NONE, "NONE", 0, "None", ""},
 	{PROP_UNIT_LENGTH, "LENGTH", 0, "Length", ""},
 	{PROP_UNIT_AREA, "AREA", 0, "Area", ""},
@@ -178,7 +178,7 @@ static int rna_idproperty_known(CollectionPropertyIterator *iter, void *data)
 	 * for the second loop where we go over unknown id properties */
 	do {
 		for (prop = ptype->cont.properties.first; prop; prop = prop->next)
-			if ((prop->flag & PROP_BUILTIN) == 0 && STREQ(prop->identifier, idprop->name))
+			if ((prop->flag_internal & PROP_INTERN_BUILTIN) == 0 && STREQ(prop->identifier, idprop->name))
 				return 1;
 	} while ((ptype = ptype->base));
 
@@ -191,7 +191,7 @@ static int rna_property_builtin(CollectionPropertyIterator *UNUSED(iter), void *
 
 	/* function to skip builtin rna properties */
 
-	return (prop->flag & PROP_BUILTIN);
+	return (prop->flag_internal & PROP_INTERN_BUILTIN);
 }
 
 static int rna_function_builtin(CollectionPropertyIterator *UNUSED(iter), void *data)
@@ -385,7 +385,7 @@ int rna_builtin_properties_lookup_string(PointerRNA *ptr, const char *key, Point
 		}
 		else {
 			for (prop = srna->cont.properties.first; prop; prop = prop->next) {
-				if (!(prop->flag & PROP_BUILTIN) && STREQ(prop->identifier, key)) {
+				if (!(prop->flag_internal & PROP_INTERN_BUILTIN) && STREQ(prop->identifier, key)) {
 					propptr.type = &RNA_Property;
 					propptr.data = prop;
 
@@ -557,19 +557,19 @@ static int rna_Property_animatable_get(PointerRNA *ptr)
 static int rna_Property_use_output_get(PointerRNA *ptr)
 {
 	PropertyRNA *prop = (PropertyRNA *)ptr->data;
-	return (prop->flag & PROP_OUTPUT) != 0;
+	return (prop->flag_parameter & PARM_OUTPUT) != 0;
 }
 
 static int rna_Property_is_required_get(PointerRNA *ptr)
 {
 	PropertyRNA *prop = (PropertyRNA *)ptr->data;
-	return (prop->flag & PROP_REQUIRED) != 0;
+	return (prop->flag_parameter & PARM_REQUIRED) != 0;
 }
 
 static int rna_Property_is_argument_optional_get(PointerRNA *ptr)
 {
 	PropertyRNA *prop = (PropertyRNA *)ptr->data;
-	return (prop->flag & PROP_PYFUNC_OPTIONAL) != 0;
+	return (prop->flag_parameter & PARM_PYFUNC_OPTIONAL) != 0;
 }
 
 static int rna_Property_is_never_none_get(PointerRNA *ptr)
@@ -625,7 +625,7 @@ static int rna_Property_is_registered_optional_get(PointerRNA *ptr)
 static int rna_Property_is_runtime_get(PointerRNA *ptr)
 {
 	PropertyRNA *prop = (PropertyRNA *)ptr->data;
-	return (prop->flag & PROP_RUNTIME) != 0;
+	return (prop->flag_internal & PROP_INTERN_RUNTIME) != 0;
 }
 
 
@@ -652,6 +652,13 @@ static int rna_NumberProperty_default_array_get_length(PointerRNA *ptr, int leng
 
 	return length[0];
 }
+static int rna_NumberProperty_is_array_get(PointerRNA *ptr)
+{
+	PropertyRNA *prop = (PropertyRNA *)ptr->data;
+
+	return RNA_property_array_check(prop);
+}
+
 static void rna_IntProperty_default_array_get(PointerRNA *ptr, int *values)
 {
 	PropertyRNA *prop = (PropertyRNA *)ptr->data;
@@ -854,7 +861,8 @@ static void rna_EnumProperty_items_begin(CollectionPropertyIterator *iter, Point
 	rna_idproperty_check(&prop, ptr);
 	/* eprop = (EnumPropertyRNA *)prop; */
 	
-	RNA_property_enum_items(NULL, ptr, prop, &item, &totitem, &free);
+	RNA_property_enum_items_ex(
+	            NULL, ptr, prop, STREQ(iter->prop->identifier, "enum_items_static"), &item, &totitem, &free);
 	rna_iterator_array_begin(iter, (void *)item, sizeof(EnumPropertyItem), totitem, free, rna_enum_check_separator);
 }
 
@@ -952,13 +960,13 @@ static void rna_Function_parameters_begin(CollectionPropertyIterator *iter, Poin
 static int rna_Function_registered_get(PointerRNA *ptr)
 {
 	FunctionRNA *func = (FunctionRNA *)ptr->data;
-	return func->flag & FUNC_REGISTER;
+	return 0 != (func->flag & FUNC_REGISTER);
 }
 
 static int rna_Function_registered_optional_get(PointerRNA *ptr)
 {
 	FunctionRNA *func = (FunctionRNA *)ptr->data;
-	return func->flag & (FUNC_REGISTER_OPTIONAL & ~FUNC_REGISTER);
+	return 0 != (func->flag & (FUNC_REGISTER_OPTIONAL & ~FUNC_REGISTER));
 }
 
 static int rna_Function_no_self_get(PointerRNA *ptr)
@@ -970,7 +978,7 @@ static int rna_Function_no_self_get(PointerRNA *ptr)
 static int rna_Function_use_self_type_get(PointerRNA *ptr)
 {
 	FunctionRNA *func = (FunctionRNA *)ptr->data;
-	return (func->flag & FUNC_USE_SELF_TYPE);
+	return 0 != (func->flag & FUNC_USE_SELF_TYPE);
 }
 
 /* Blender RNA */
@@ -1138,7 +1146,7 @@ static void rna_def_property(BlenderRNA *brna)
 
 	prop = RNA_def_property(srna, "type", PROP_ENUM, PROP_NONE);
 	RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-	RNA_def_property_enum_items(prop, property_type_items);
+	RNA_def_property_enum_items(prop, rna_enum_property_type_items);
 	RNA_def_property_enum_funcs(prop, "rna_Property_type_get", NULL, NULL);
 	RNA_def_property_ui_text(prop, "Type", "Data type of the property");
 
@@ -1156,13 +1164,13 @@ static void rna_def_property(BlenderRNA *brna)
 
 	prop = RNA_def_property(srna, "unit", PROP_ENUM, PROP_NONE);
 	RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-	RNA_def_property_enum_items(prop, property_unit_items);
+	RNA_def_property_enum_items(prop, rna_enum_property_unit_items);
 	RNA_def_property_enum_funcs(prop, "rna_Property_unit_get", NULL, NULL);
 	RNA_def_property_ui_text(prop, "Unit", "Type of units for this property");
 
 	prop = RNA_def_property(srna, "icon", PROP_ENUM, PROP_NONE);
 	RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-	RNA_def_property_enum_items(prop, icon_items);
+	RNA_def_property_enum_items(prop, rna_enum_icon_items);
 	RNA_def_property_enum_funcs(prop, "rna_Property_icon_get", NULL, NULL);
 	RNA_def_property_ui_text(prop, "Icon", "Icon of the item");
 
@@ -1336,6 +1344,11 @@ static void rna_def_number_property(StructRNA *srna, PropertyType type)
 	RNA_def_property_int_funcs(prop, "rna_Property_array_length_get", NULL, NULL);
 	RNA_def_property_ui_text(prop, "Array Length", "Maximum length of the array, 0 means unlimited");
 
+	prop = RNA_def_property(srna, "is_array", PROP_BOOLEAN, PROP_NONE);
+	RNA_def_property_clear_flag(prop, PROP_EDITABLE);
+	RNA_def_property_boolean_funcs(prop, "rna_NumberProperty_is_array_get", NULL);
+	RNA_def_property_ui_text(prop, "Is Array", "");
+
 	if (type == PROP_BOOLEAN)
 		return;
 
@@ -1423,6 +1436,14 @@ static void rna_def_enum_property(BlenderRNA *brna, StructRNA *srna)
 	                                  "rna_iterator_array_end", "rna_iterator_array_get", NULL, NULL, NULL, NULL);
 	RNA_def_property_ui_text(prop, "Items", "Possible values for the property");
 
+	prop = RNA_def_property(srna, "enum_items_static", PROP_COLLECTION, PROP_NONE);
+	RNA_def_property_clear_flag(prop, PROP_EDITABLE);
+	RNA_def_property_struct_type(prop, "EnumPropertyItem");
+	RNA_def_property_collection_funcs(prop, "rna_EnumProperty_items_begin", "rna_iterator_array_next",
+	                                  "rna_iterator_array_end", "rna_iterator_array_get", NULL, NULL, NULL, NULL);
+	RNA_def_property_ui_text(prop, "Static Items",
+	                         "Possible values for the property (never calls optional dynamic generation of those)");
+
 	srna = RNA_def_struct(brna, "EnumPropertyItem", NULL);
 	RNA_def_struct_ui_text(srna, "Enum Item Definition", "Definition of a choice in an RNA enum property");
 	RNA_def_struct_ui_icon(srna, ICON_RNA);
@@ -1452,7 +1473,7 @@ static void rna_def_enum_property(BlenderRNA *brna, StructRNA *srna)
 
 	prop = RNA_def_property(srna, "icon", PROP_ENUM, PROP_NONE);
 	RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-	RNA_def_property_enum_items(prop, icon_items);
+	RNA_def_property_enum_items(prop, rna_enum_icon_items);
 	RNA_def_property_enum_funcs(prop, "rna_EnumPropertyItem_icon_get", NULL, NULL);
 	RNA_def_property_ui_text(prop, "Icon", "Icon of the item");
 }

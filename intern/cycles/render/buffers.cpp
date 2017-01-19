@@ -66,8 +66,8 @@ int BufferParams::get_passes_size()
 {
 	int size = 0;
 
-	foreach(Pass& pass, passes)
-		size += pass.components;
+	for(size_t i = 0; i < passes.size(); i++)
+		size += passes[i].components;
 	
 	return align_up(size, 4);
 }
@@ -135,15 +135,7 @@ void RenderBuffers::reset(Device *device, BufferParams& params_)
 	/* allocate rng state */
 	rng_state.resize(params.width, params.height);
 
-	uint *init_state = rng_state.resize(params.width, params.height);
-	int x, y, width = params.width, height = params.height;
-	
-	for(x = 0; x < width; x++)
-		for(y = 0; y < height; y++)
-			init_state[x + y*width] = hash_int_2d(params.full_x+x, params.full_y+y);
-
 	device->mem_alloc(rng_state, MEM_READ_WRITE);
-	device->mem_copy_to(rng_state);
 }
 
 bool RenderBuffers::copy_from_device()
@@ -160,7 +152,9 @@ bool RenderBuffers::get_pass_rect(PassType type, float exposure, int sample, int
 {
 	int pass_offset = 0;
 
-	foreach(Pass& pass, params.passes) {
+	for(size_t j = 0; j < params.passes.size(); j++) {
+		Pass& pass = params.passes[j];
+
 		if(pass.type != type) {
 			pass_offset += pass.components;
 			continue;
@@ -191,16 +185,14 @@ bool RenderBuffers::get_pass_rect(PassType type, float exposure, int sample, int
 				}
 			}
 #ifdef WITH_CYCLES_DEBUG
-			else if(type == PASS_BVH_TRAVERSAL_STEPS) {
+			else if(type == PASS_BVH_TRAVERSED_NODES ||
+			        type == PASS_BVH_TRAVERSED_INSTANCES ||
+			        type == PASS_BVH_INTERSECTIONS ||
+			        type == PASS_RAY_BOUNCES)
+			{
 				for(int i = 0; i < size; i++, in += pass_stride, pixels++) {
 					float f = *in;
-					pixels[0] = f;
-				}
-			}
-			else if(type == PASS_RAY_BOUNCES) {
-				for(int i = 0; i < size; i++, in += pass_stride, pixels++) {
-					float f = *in;
-					pixels[0] = f;
+					pixels[0] = f*scale;
 				}
 			}
 #endif
@@ -228,7 +220,8 @@ bool RenderBuffers::get_pass_rect(PassType type, float exposure, int sample, int
 			else if(pass.divide_type != PASS_NONE) {
 				/* RGB lighting passes that need to divide out color */
 				pass_offset = 0;
-				foreach(Pass& color_pass, params.passes) {
+				for(size_t k = 0; k < params.passes.size(); k++) {
+					Pass& color_pass = params.passes[k];
 					if(color_pass.type == pass.divide_type)
 						break;
 					pass_offset += color_pass.components;
@@ -276,7 +269,8 @@ bool RenderBuffers::get_pass_rect(PassType type, float exposure, int sample, int
 			else if(type == PASS_MOTION) {
 				/* need to normalize by number of samples accumulated for motion */
 				pass_offset = 0;
-				foreach(Pass& color_pass, params.passes) {
+				for(size_t k = 0; k < params.passes.size(); k++) {
+					Pass& color_pass = params.passes[k];
 					if(color_pass.type == PASS_MOTION_WEIGHT)
 						break;
 					pass_offset += color_pass.components;

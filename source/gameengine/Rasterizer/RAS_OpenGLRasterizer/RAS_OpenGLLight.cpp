@@ -59,7 +59,7 @@ RAS_OpenGLLight::~RAS_OpenGLLight()
 	if ((lamp = GetGPULamp())) {
 		float obmat[4][4] = {{0}};
 		GPU_lamp_update(lamp, 0, 0, obmat);
-		GPU_lamp_update_distance(lamp, la->dist, la->att1, la->att2);
+		GPU_lamp_update_distance(lamp, la->dist, la->att1, la->att2, la->coeff_const, la->coeff_lin, la->coeff_quad);
 		GPU_lamp_update_spot(lamp, la->spotsize, la->spotblend);
 	}
 }
@@ -100,13 +100,13 @@ bool RAS_OpenGLLight::ApplyFixedFunctionLighting(KX_Scene *kxscene, int oblayer,
 		//vec[0] = base->object->obmat[2][0];
 		//vec[1] = base->object->obmat[2][1];
 		//vec[2] = base->object->obmat[2][2];
-		vec[3] = 0.0;
+		vec[3] = 0.0f;
 		glLightfv((GLenum)(GL_LIGHT0+slot), GL_POSITION, vec);
 	}
 	else {
-		//vec[3] = 1.0;
+		//vec[3] = 1.0f;
 		glLightfv((GLenum)(GL_LIGHT0+slot), GL_POSITION, vec);
-		glLightf((GLenum)(GL_LIGHT0+slot), GL_CONSTANT_ATTENUATION, 1.0);
+		glLightf((GLenum)(GL_LIGHT0+slot), GL_CONSTANT_ATTENUATION, 1.0f);
 		glLightf((GLenum)(GL_LIGHT0+slot), GL_LINEAR_ATTENUATION, m_att1/m_distance);
 		// without this next line it looks backward compatible.
 		//attennuation still is acceptable
@@ -124,30 +124,30 @@ bool RAS_OpenGLLight::ApplyFixedFunctionLighting(KX_Scene *kxscene, int oblayer,
 			glLightf((GLenum)(GL_LIGHT0+slot), GL_SPOT_EXPONENT, 128.0f * m_spotblend);
 		}
 		else {
-			glLightf((GLenum)(GL_LIGHT0+slot), GL_SPOT_CUTOFF, 180.0);
+			glLightf((GLenum)(GL_LIGHT0+slot), GL_SPOT_CUTOFF, 180.0f);
 		}
 	}
 
 	if (m_nodiffuse) {
-		vec[0] = vec[1] = vec[2] = vec[3] = 0.0;
+		vec[0] = vec[1] = vec[2] = vec[3] = 0.0f;
 	}
 	else {
 		vec[0] = m_energy*m_color[0];
 		vec[1] = m_energy*m_color[1];
 		vec[2] = m_energy*m_color[2];
-		vec[3] = 1.0;
+		vec[3] = 1.0f;
 	}
 
 	glLightfv((GLenum)(GL_LIGHT0+slot), GL_DIFFUSE, vec);
 	if (m_nospecular)
 	{
-		vec[0] = vec[1] = vec[2] = vec[3] = 0.0;
+		vec[0] = vec[1] = vec[2] = vec[3] = 0.0f;
 	}
 	else if (m_nodiffuse) {
 		vec[0] = m_energy*m_color[0];
 		vec[1] = m_energy*m_color[1];
 		vec[2] = m_energy*m_color[2];
-		vec[3] = 1.0;
+		vec[3] = 1.0f;
 	}
 
 	glLightfv((GLenum)(GL_LIGHT0+slot), GL_SPECULAR, vec);
@@ -175,6 +175,26 @@ bool RAS_OpenGLLight::HasShadowBuffer()
 		return GPU_lamp_has_shadow_buffer(lamp);
 	else
 		return false;
+}
+
+int RAS_OpenGLLight::GetShadowBindCode()
+{
+	GPULamp *lamp;
+	
+	if ((lamp = GetGPULamp()))
+		return GPU_lamp_shadow_bind_code(lamp);
+	return -1;
+}
+
+MT_Matrix4x4 RAS_OpenGLLight::GetShadowMatrix()
+{
+	GPULamp *lamp;
+
+	if ((lamp = GetGPULamp()))
+		return MT_Matrix4x4(GPU_lamp_dynpersmat(lamp));
+	MT_Matrix4x4 mat;
+	mat.setIdentity();
+	return mat;
 }
 
 int RAS_OpenGLLight::GetShadowLayer()
@@ -222,7 +242,7 @@ void RAS_OpenGLLight::BindShadowBuffer(RAS_ICanvas *canvas, KX_Camera *cam, MT_T
 	RAS_IRasterizer::StereoMode stereomode = m_rasterizer->GetStereoMode();
 	m_rasterizer->SetStereoMode(RAS_IRasterizer::RAS_STEREO_NOSTEREO);
 	m_rasterizer->SetProjectionMatrix(projectionmat);
-	m_rasterizer->SetViewMatrix(modelviewmat, cam->NodeGetWorldOrientation(), cam->NodeGetWorldPosition(), cam->GetCameraData()->m_perspective);
+	m_rasterizer->SetViewMatrix(modelviewmat, cam->NodeGetWorldOrientation(), cam->NodeGetWorldPosition(), cam->NodeGetLocalScaling(), cam->GetCameraData()->m_perspective);
 	m_rasterizer->SetStereoMode(stereomode);
 }
 
@@ -262,16 +282,16 @@ void RAS_OpenGLLight::Update()
 		// lights don't get their openGL matrix updated, do it now
 		if (kxlight->GetSGNode()->IsDirty())
 			kxlight->GetOpenGLMatrix();
-		double *dobmat = kxlight->GetOpenGLMatrixPtr()->getPointer();
+		float *dobmat = kxlight->GetOpenGLMatrixPtr()->getPointer();
 
 		for (int i=0; i<4; i++)
 			for (int j=0; j<4; j++, dobmat++)
 				obmat[i][j] = (float)*dobmat;
-
-		GPU_lamp_update(lamp, m_layer, 0, obmat);
+		int hide = kxlight->GetVisible() ? 0 : 1;
+		GPU_lamp_update(lamp, m_layer, hide, obmat);
 		GPU_lamp_update_colors(lamp, m_color[0], m_color[1],
 			m_color[2], m_energy);
-		GPU_lamp_update_distance(lamp, m_distance, m_att1, m_att2);
+		GPU_lamp_update_distance(lamp, m_distance, m_att1, m_att2, m_coeff_const, m_coeff_lin, m_coeff_quad);
 		GPU_lamp_update_spot(lamp, m_spotsize, m_spotblend);
 	}
 }

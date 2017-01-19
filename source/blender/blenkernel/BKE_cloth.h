@@ -115,7 +115,7 @@ typedef struct ClothVertex {
 	float 	mass;		/* mass / weight of the vertex		*/
 	float 	goal;		/* goal, from SB			*/
 	float	impulse[3];	/* used in collision.c */
-	float	*xrest;		/* temporary valid for building springs */
+	float	xrest[3];   /* rest position of the vertex */
 	unsigned int impulse_count; /* same as above */
 	float 	avg_spring_len; /* average length of connected springs */
 	float 	struct_stiff;
@@ -171,6 +171,7 @@ typedef enum {
 	CLOTH_SIMSETTINGS_FLAG_CCACHE_EDIT = (1 << 12),	/* edit cache in editmode */
 	CLOTH_SIMSETTINGS_FLAG_NO_SPRING_COMPRESS = (1 << 13), /* don't allow spring compression */
 	CLOTH_SIMSETTINGS_FLAG_SEW = (1 << 14), /* pull ends of loose edges together */
+	CLOTH_SIMSETTINGS_FLAG_DYNAMIC_BASEMESH = (1 << 15), /* make simulation respect deformations in the base object */
 } CLOTH_SIMSETTINGS_FLAGS;
 
 /* COLLISION FLAGS */

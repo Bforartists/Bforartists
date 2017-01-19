@@ -50,15 +50,15 @@
 #include "BKE_global.h"
 #include "BKE_lamp.h"
 #include "BKE_library.h"
+#include "BKE_library_query.h"
+#include "BKE_library_remap.h"
 #include "BKE_main.h"
 #include "BKE_node.h"
 
-Lamp *BKE_lamp_add(Main *bmain, const char *name)
+void BKE_lamp_init(Lamp *la)
 {
-	Lamp *la;
-	
-	la =  BKE_libblock_alloc(bmain, ID_LA, name);
-	
+	BLI_assert(MEMCMP_STRUCT_OFS_IS_ZERO(la, id));
+
 	la->r = la->g = la->b = la->k = 1.0f;
 	la->haint = la->energy = 1.0f;
 	la->dist = 25.0f;
@@ -81,6 +81,9 @@ Lamp *BKE_lamp_add(Main *bmain, const char *name)
 	la->adapt_thresh = 0.001f;
 	la->preview = NULL;
 	la->falloff_type = LA_FALLOFF_INVSQUARE;
+	la->coeff_const = 1.0f;
+	la->coeff_lin = 0.0f;
+	la->coeff_quad = 0.0f;
 	la->curfalloff = curvemapping_add(1, 0.0f, 1.0f, 1.0f, 0.0f);
 	la->sun_effect_type = 0;
 	la->horizon_brightness = 1.0;
@@ -100,15 +103,25 @@ Lamp *BKE_lamp_add(Main *bmain, const char *name)
 	la->shadow_frustum_size = 10.0f;
 	
 	curvemapping_initialize(la->curfalloff);
+}
+
+Lamp *BKE_lamp_add(Main *bmain, const char *name)
+{
+	Lamp *la;
+
+	la =  BKE_libblock_alloc(bmain, ID_LA, name);
+
+	BKE_lamp_init(la);
+
 	return la;
 }
 
-Lamp *BKE_lamp_copy(Lamp *la)
+Lamp *BKE_lamp_copy(Main *bmain, Lamp *la)
 {
 	Lamp *lan;
 	int a;
 	
-	lan = BKE_libblock_copy(&la->id);
+	lan = BKE_libblock_copy(bmain, &la->id);
 
 	for (a = 0; a < MAX_MTEX; a++) {
 		if (lan->mtex[a]) {
@@ -121,14 +134,11 @@ Lamp *BKE_lamp_copy(Lamp *la)
 	lan->curfalloff = curvemapping_copy(la->curfalloff);
 
 	if (la->nodetree)
-		lan->nodetree = ntreeCopyTree(la->nodetree);
-	
-	if (la->preview)
-		lan->preview = BKE_previewimg_copy(la->preview);
-	
-	if (la->id.lib) {
-		BKE_id_lib_local_paths(G.main, la->id.lib, &lan->id);
-	}
+		lan->nodetree = ntreeCopyTree(bmain, la->nodetree);
+
+	BKE_previewimg_id_copy(&lan->id, &la->id);
+
+	BKE_id_copy_ensure_local(bmain, &la->id, &lan->id);
 
 	return lan;
 }
@@ -144,8 +154,6 @@ Lamp *localize_lamp(Lamp *la)
 		if (lan->mtex[a]) {
 			lan->mtex[a] = MEM_mallocN(sizeof(MTex), "localize_lamp");
 			memcpy(lan->mtex[a], la->mtex[a], sizeof(MTex));
-			/* free lamp decrements */
-			id_us_plus((ID *)lan->mtex[a]->tex);
 		}
 	}
 	
@@ -155,59 +163,13 @@ Lamp *localize_lamp(Lamp *la)
 		lan->nodetree = ntreeLocalize(la->nodetree);
 	
 	lan->preview = NULL;
-	
+
 	return lan;
 }
 
-void BKE_lamp_make_local(Lamp *la)
+void BKE_lamp_make_local(Main *bmain, Lamp *la, const bool lib_local)
 {
-	Main *bmain = G.main;
-	Object *ob;
-	bool is_local = false, is_lib = false;
-
-	/* - only lib users: do nothing
-	 * - only local users: set flag
-	 * - mixed: make copy
-	 */
-	
-	if (la->id.lib == NULL) return;
-	if (la->id.us == 1) {
-		id_clear_lib_data(bmain, &la->id);
-		return;
-	}
-	
-	ob = bmain->object.first;
-	while (ob) {
-		if (ob->data == la) {
-			if (ob->id.lib) is_lib = true;
-			else is_local = true;
-		}
-		ob = ob->id.next;
-	}
-	
-	if (is_local && is_lib == false) {
-		id_clear_lib_data(bmain, &la->id);
-	}
-	else if (is_local && is_lib) {
-		Lamp *la_new = BKE_lamp_copy(la);
-		la_new->id.us = 0;
-
-		/* Remap paths of new ID using old library as base. */
-		BKE_id_lib_local_paths(bmain, la->id.lib, &la_new->id);
-
-		ob = bmain->object.first;
-		while (ob) {
-			if (ob->data == la) {
-				
-				if (ob->id.lib == NULL) {
-					ob->data = la_new;
-					la_new->id.us++;
-					la->id.us--;
-				}
-			}
-			ob = ob->id.next;
-		}
-	}
+	BKE_id_make_local_generic(bmain, &la->id, true, lib_local);
 }
 
 void BKE_lamp_free(Lamp *la)
@@ -217,11 +179,13 @@ void BKE_lamp_free(Lamp *la)
 
 	for (a = 0; a < MAX_MTEX; a++) {
 		mtex = la->mtex[a];
-		if (mtex && mtex->tex) mtex->tex->id.us--;
-		if (mtex) MEM_freeN(mtex);
+		if (mtex && mtex->tex)
+			id_us_min(&mtex->tex->id);
+		if (mtex)
+			MEM_freeN(mtex);
 	}
 	
-	BKE_animdata_free((ID *)la);
+	BKE_animdata_free((ID *)la, false);
 
 	curvemapping_free(la->curfalloff);
 
@@ -255,12 +219,12 @@ static void lamp_node_drivers_update(Scene *scene, bNodeTree *ntree, float ctime
 void lamp_drivers_update(Scene *scene, Lamp *la, float ctime)
 {
 	/* Prevent infinite recursion by checking (and tagging the lamp) as having been visited already
-	 * (see BKE_scene_update_tagged()). This assumes la->id.flag & LIB_DOIT isn't set by anything else
+	 * (see BKE_scene_update_tagged()). This assumes la->id.tag & LIB_TAG_DOIT isn't set by anything else
 	 * in the meantime... [#32017] */
-	if (la->id.flag & LIB_DOIT)
+	if (la->id.tag & LIB_TAG_DOIT)
 		return;
 
-	la->id.flag |= LIB_DOIT;
+	la->id.tag |= LIB_TAG_DOIT;
 	
 	/* lamp itself */
 	if (la->adt && la->adt->drivers.first)
@@ -270,6 +234,6 @@ void lamp_drivers_update(Scene *scene, Lamp *la, float ctime)
 	if (la->nodetree)
 		lamp_node_drivers_update(scene, la->nodetree, ctime);
 
-	la->id.flag &= ~LIB_DOIT;
+	la->id.tag &= ~LIB_TAG_DOIT;
 }
 

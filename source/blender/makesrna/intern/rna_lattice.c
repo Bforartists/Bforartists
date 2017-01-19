@@ -171,11 +171,11 @@ static void rna_Lattice_use_outside_set(PointerRNA *ptr, int value)
 	}
 }
 
-static int rna_Lattice_size_editable(PointerRNA *ptr)
+static int rna_Lattice_size_editable(PointerRNA *ptr, const char **UNUSED(r_info))
 {
 	Lattice *lt = (Lattice *)ptr->data;
 
-	return lt->key == NULL;
+	return (lt->key == NULL) ? PROP_EDITABLE : 0;
 }
 
 static void rna_Lattice_points_u_set(PointerRNA *ptr, int value)
@@ -291,7 +291,7 @@ static void rna_def_lattice(BlenderRNA *brna)
 	PropertyRNA *prop;
 
 	srna = RNA_def_struct(brna, "Lattice", "ID");
-	RNA_def_struct_ui_text(srna, "Lattice", "Lattice datablock defining a grid for deforming other objects");
+	RNA_def_struct_ui_text(srna, "Lattice", "Lattice data-block defining a grid for deforming other objects");
 	RNA_def_struct_ui_icon(srna, ICON_LATTICE_DATA);
 
 	prop = RNA_def_property(srna, "points_u", PROP_INT, PROP_NONE);
@@ -323,19 +323,19 @@ static void rna_def_lattice(BlenderRNA *brna)
 
 	prop = RNA_def_property(srna, "interpolation_type_u", PROP_ENUM, PROP_NONE);
 	RNA_def_property_enum_sdna(prop, NULL, "typeu");
-	RNA_def_property_enum_items(prop, keyblock_type_items);
+	RNA_def_property_enum_items(prop, rna_enum_keyblock_type_items);
 	RNA_def_property_ui_text(prop, "Interpolation Type U", "");
 	RNA_def_property_update(prop, 0, "rna_Lattice_update_data_editlatt");
 
 	prop = RNA_def_property(srna, "interpolation_type_v", PROP_ENUM, PROP_NONE);
 	RNA_def_property_enum_sdna(prop, NULL, "typev");
-	RNA_def_property_enum_items(prop, keyblock_type_items);
+	RNA_def_property_enum_items(prop, rna_enum_keyblock_type_items);
 	RNA_def_property_ui_text(prop, "Interpolation Type V", "");
 	RNA_def_property_update(prop, 0, "rna_Lattice_update_data_editlatt");
 
 	prop = RNA_def_property(srna, "interpolation_type_w", PROP_ENUM, PROP_NONE);
 	RNA_def_property_enum_sdna(prop, NULL, "typew");
-	RNA_def_property_enum_items(prop, keyblock_type_items);
+	RNA_def_property_enum_items(prop, rna_enum_keyblock_type_items);
 	RNA_def_property_ui_text(prop, "Interpolation Type W", "");
 	RNA_def_property_update(prop, 0, "rna_Lattice_update_data_editlatt");
 

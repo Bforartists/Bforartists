@@ -28,6 +28,7 @@
  *  \ingroup spnode
  */
 
+#include "DNA_gpencil_types.h"
 #include "DNA_lamp_types.h"
 #include "DNA_material_types.h"
 #include "DNA_node_types.h"
@@ -333,8 +334,8 @@ static SpaceLink *node_new(const bContext *UNUSED(C))
 
 	ar->flag = RGN_FLAG_HIDDEN;
 
-	/* main area */
-	ar = MEM_callocN(sizeof(ARegion), "main area for node");
+	/* main region */
+	ar = MEM_callocN(sizeof(ARegion), "main region for node");
 
 	BLI_addtail(&snode->regionbase, ar);
 	ar->regiontype = RGN_TYPE_WINDOW;
@@ -586,7 +587,7 @@ static SpaceLink *node_duplicate(SpaceLink *sl)
 
 
 /* add handlers, stuff you only do once or on area/region changes */
-static void node_buttons_area_init(wmWindowManager *wm, ARegion *ar)
+static void node_buttons_region_init(wmWindowManager *wm, ARegion *ar)
 {
 	wmKeyMap *keymap;
 
@@ -596,13 +597,13 @@ static void node_buttons_area_init(wmWindowManager *wm, ARegion *ar)
 	WM_event_add_keymap_handler(&ar->handlers, keymap);
 }
 
-static void node_buttons_area_draw(const bContext *C, ARegion *ar)
+static void node_buttons_region_draw(const bContext *C, ARegion *ar)
 {
 	ED_region_panels(C, ar, NULL, -1, true);
 }
 
 /* add handlers, stuff you only do once or on area/region changes */
-static void node_toolbar_area_init(wmWindowManager *wm, ARegion *ar)
+static void node_toolbar_region_init(wmWindowManager *wm, ARegion *ar)
 {
 	wmKeyMap *keymap;
 
@@ -612,7 +613,7 @@ static void node_toolbar_area_init(wmWindowManager *wm, ARegion *ar)
 	WM_event_add_keymap_handler(&ar->handlers, keymap);
 }
 
-static void node_toolbar_area_draw(const bContext *C, ARegion *ar)
+static void node_toolbar_region_draw(const bContext *C, ARegion *ar)
 {
 	ED_region_panels(C, ar, NULL, -1, true);
 }
@@ -634,8 +635,8 @@ static void node_cursor(wmWindow *win, ScrArea *sa, ARegion *ar)
 	
 }
 
-/* Initialize main area, setting handlers. */
-static void node_main_area_init(wmWindowManager *wm, ARegion *ar)
+/* Initialize main region, setting handlers. */
+static void node_main_region_init(wmWindowManager *wm, ARegion *ar)
 {
 	wmKeyMap *keymap;
 	ListBase *lb;
@@ -655,7 +656,7 @@ static void node_main_area_init(wmWindowManager *wm, ARegion *ar)
 	WM_event_add_dropbox_handler(&ar->handlers, lb);
 }
 
-static void node_main_area_draw(const bContext *C, ARegion *ar)
+static void node_main_region_draw(const bContext *C, ARegion *ar)
 {
 	drawnodespace(C, ar);
 }
@@ -722,12 +723,12 @@ static void node_dropboxes(void)
 
 
 /* add handlers, stuff you only do once or on area/region changes */
-static void node_header_area_init(wmWindowManager *UNUSED(wm), ARegion *ar)
+static void node_header_region_init(wmWindowManager *UNUSED(wm), ARegion *ar)
 {
 	ED_region_header_init(ar);
 }
 
-static void node_header_area_draw(const bContext *C, ARegion *ar)
+static void node_header_region_draw(const bContext *C, ARegion *ar)
 {
 	/* find and set the context */
 	snode_set_context(C);
@@ -735,7 +736,7 @@ static void node_header_area_draw(const bContext *C, ARegion *ar)
 	ED_region_header(C, ar);
 }
 
-/* used for header + main area */
+/* used for header + main region */
 static void node_region_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa), ARegion *ar, wmNotifier *wmn)
 {
 	/* context changes */
@@ -821,6 +822,77 @@ static int node_context(const bContext *C, const char *member, bContextDataResul
 	return 0;
 }
 
+static void node_id_remap(ScrArea *UNUSED(sa), SpaceLink *slink, ID *old_id, ID *new_id)
+{
+	SpaceNode *snode = (SpaceNode *)slink;
+
+	if (GS(old_id->name) == ID_SCE) {
+		if (snode->id == old_id) {
+			/* nasty DNA logic for SpaceNode:
+			 * ideally should be handled by editor code, but would be bad level call
+			 */
+			BLI_freelistN(&snode->treepath);
+
+			/* XXX Untested in case new_id != NULL... */
+			snode->id = new_id;
+			snode->from = NULL;
+			snode->nodetree = NULL;
+			snode->edittree = NULL;
+		}
+	}
+	else if (GS(old_id->name) == ID_OB) {
+		if (snode->from == old_id) {
+			if (new_id == NULL) {
+				snode->flag &= ~SNODE_PIN;
+			}
+			snode->from = new_id;
+		}
+	}
+	else if (GS(old_id->name) == ID_GD) {
+		if ((ID *)snode->gpd == old_id) {
+			snode->gpd = (bGPdata *)new_id;
+			id_us_min(old_id);
+			id_us_plus(new_id);
+		}
+	}
+	else if (GS(old_id->name) == ID_NT) {
+		bNodeTreePath *path, *path_next;
+
+		for (path = snode->treepath.first; path; path = path->next) {
+			if ((ID *)path->nodetree == old_id) {
+				path->nodetree = (bNodeTree *)new_id;
+				id_us_min(old_id);
+				id_us_plus(new_id);
+			}
+			if (path == snode->treepath.first) {
+				/* first nodetree in path is same as snode->nodetree */
+				snode->nodetree = path->nodetree;
+			}
+			if (path->nodetree == NULL) {
+				break;
+			}
+		}
+
+		/* remaining path entries are invalid, remove */
+		for (; path; path = path_next) {
+			path_next = path->next;
+
+			BLI_remlink(&snode->treepath, path);
+			MEM_freeN(path);
+		}
+
+		/* edittree is just the last in the path,
+		 * set this directly since the path may have been shortened above */
+		if (snode->treepath.last) {
+			path = snode->treepath.last;
+			snode->edittree = path->nodetree;
+		}
+		else {
+			snode->edittree = NULL;
+		}
+	}
+}
+
 /* only called once, from space/spacetypes.c */
 void ED_spacetype_node(void)
 {
@@ -840,12 +912,13 @@ void ED_spacetype_node(void)
 	st->refresh = node_area_refresh;
 	st->context = node_context;
 	st->dropboxes = node_dropboxes;
+	st->id_remap = node_id_remap;
 
 	/* regions: main window */
 	art = MEM_callocN(sizeof(ARegionType), "spacetype node region");
 	art->regionid = RGN_TYPE_WINDOW;
-	art->init = node_main_area_init;
-	art->draw = node_main_area_draw;
+	art->init = node_main_region_init;
+	art->draw = node_main_region_draw;
 	art->listener = node_region_listener;
 	art->cursor = node_cursor;
 	art->event_cursor = true;
@@ -859,8 +932,8 @@ void ED_spacetype_node(void)
 	art->prefsizey = HEADERY;
 	art->keymapflag = ED_KEYMAP_UI | ED_KEYMAP_VIEW2D | ED_KEYMAP_FRAMES | ED_KEYMAP_HEADER;
 	art->listener = node_region_listener;
-	art->init = node_header_area_init;
-	art->draw = node_header_area_draw;
+	art->init = node_header_region_init;
+	art->draw = node_header_region_draw;
 
 	BLI_addhead(&st->regiontypes, art);
 
@@ -870,8 +943,8 @@ void ED_spacetype_node(void)
 	art->prefsizex = 180; // XXX
 	art->keymapflag = ED_KEYMAP_UI | ED_KEYMAP_FRAMES;
 	art->listener = node_region_listener;
-	art->init = node_buttons_area_init;
-	art->draw = node_buttons_area_draw;
+	art->init = node_buttons_region_init;
+	art->draw = node_buttons_region_draw;
 	BLI_addhead(&st->regiontypes, art);
 
 	node_buttons_register(art);
@@ -883,8 +956,8 @@ void ED_spacetype_node(void)
 	art->prefsizey = 50; /* XXX */
 	art->keymapflag = ED_KEYMAP_UI | ED_KEYMAP_FRAMES;
 	art->listener = node_region_listener;
-	art->init = node_toolbar_area_init;
-	art->draw = node_toolbar_area_draw;
+	art->init = node_toolbar_region_init;
+	art->draw = node_toolbar_region_draw;
 	BLI_addhead(&st->regiontypes, art);
 	
 	node_toolbar_register(art);

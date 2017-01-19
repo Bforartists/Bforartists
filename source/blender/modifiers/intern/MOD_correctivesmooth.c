@@ -1,29 +1,29 @@
 /*
-* ***** BEGIN GPL LICENSE BLOCK *****
-*
-* This program is free software; you can redistribute it and/or
-* modify it under the terms of the GNU General Public License
-* as published by the Free Software Foundation; either version 2
-* of the License, or (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software  Foundation,
-* Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-*
-* The Original Code is Copyright (C) 2015 by the Blender Foundation.
-* All rights reserved.
-*
-* Contributor(s): Jack Simpson,
-*                 Campbell Barton
-*
-* ***** END GPL LICENSE BLOCK *****
-*
-*/
+ * ***** BEGIN GPL LICENSE BLOCK *****
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software  Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * The Original Code is Copyright (C) 2005 by the Blender Foundation.
+ * All rights reserved.
+ *
+ * Contributor(s): Jack Simpson,
+ *                 Campbell Barton
+ *
+ * ***** END GPL LICENSE BLOCK *****
+ *
+ */
 
 /** \file blender/modifiers/intern/MOD_correctivesmooth.c
  *  \ingroup modifiers
@@ -319,7 +319,7 @@ static void smooth_iter__length_weight(
 			/* fast-path */
 			for (i = 0; i < numVerts; i++) {
 				struct SmoothingData_Weighted *sd = &smooth_data[i];
-				/* divide by sum of all neighbour distances (weighted) and amount of neighbours, (mean average) */
+				/* divide by sum of all neighbour distances (weighted) and amount of neighbors, (mean average) */
 				const float div = sd->edge_length_sum * vertex_edge_count[i];
 				if (div > eps) {
 #if 0
@@ -575,7 +575,7 @@ static void correctivesmooth_modifier_do(
 	const bool force_delta_cache_update =
 	        /* XXX, take care! if mesh data its self changes we need to forcefully recalculate deltas */
 	        ((csmd->rest_source == MOD_CORRECTIVESMOOTH_RESTSOURCE_ORCO) &&
-	         (((ID *)ob->data)->flag & LIB_ID_RECALC));
+	         (((ID *)ob->data)->tag & LIB_TAG_ID_RECALC));
 
 	bool use_only_smooth = (csmd->flag & MOD_CORRECTIVESMOOTH_ONLY_SMOOTH) != 0;
 	MDeformVert *dvert = NULL;

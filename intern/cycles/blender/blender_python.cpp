@@ -26,6 +26,7 @@
 #include "util_md5.h"
 #include "util_opengl.h"
 #include "util_path.h"
+#include "util_string.h"
 #include "util_types.h"
 
 #ifdef WITH_OSL
@@ -37,12 +38,91 @@
 
 CCL_NAMESPACE_BEGIN
 
-static void *pylong_as_voidptr_typesafe(PyObject *object)
+namespace {
+
+/* Flag describing whether debug flags were synchronized from scene. */
+bool debug_flags_set = false;
+
+void *pylong_as_voidptr_typesafe(PyObject *object)
 {
 	if(object == Py_None)
 		return NULL;
 	return PyLong_AsVoidPtr(object);
 }
+
+/* Synchronize debug flags from a given Blender scene.
+ * Return truth when device list needs invalidation.
+ */
+bool debug_flags_sync_from_scene(BL::Scene b_scene)
+{
+	DebugFlagsRef flags = DebugFlags();
+	PointerRNA cscene = RNA_pointer_get(&b_scene.ptr, "cycles");
+	/* Backup some settings for comparison. */
+	DebugFlags::OpenCL::DeviceType opencl_device_type = flags.opencl.device_type;
+	DebugFlags::OpenCL::KernelType opencl_kernel_type = flags.opencl.kernel_type;
+	/* Synchronize CPU flags. */
+	flags.cpu.avx2 = get_boolean(cscene, "debug_use_cpu_avx2");
+	flags.cpu.avx = get_boolean(cscene, "debug_use_cpu_avx");
+	flags.cpu.sse41 = get_boolean(cscene, "debug_use_cpu_sse41");
+	flags.cpu.sse3 = get_boolean(cscene, "debug_use_cpu_sse3");
+	flags.cpu.sse2 = get_boolean(cscene, "debug_use_cpu_sse2");
+	flags.cpu.qbvh = get_boolean(cscene, "debug_use_qbvh");
+	/* Synchronize CUDA flags. */
+	flags.cuda.adaptive_compile = get_boolean(cscene, "debug_use_cuda_adaptive_compile");
+	/* Synchronize OpenCL kernel type. */
+	switch(get_enum(cscene, "debug_opencl_kernel_type")) {
+		case 0:
+			flags.opencl.kernel_type = DebugFlags::OpenCL::KERNEL_DEFAULT;
+			break;
+		case 1:
+			flags.opencl.kernel_type = DebugFlags::OpenCL::KERNEL_MEGA;
+			break;
+		case 2:
+			flags.opencl.kernel_type = DebugFlags::OpenCL::KERNEL_SPLIT;
+			break;
+	}
+	/* Synchronize OpenCL device type. */
+	switch(get_enum(cscene, "debug_opencl_device_type")) {
+		case 0:
+			flags.opencl.device_type = DebugFlags::OpenCL::DEVICE_NONE;
+			break;
+		case 1:
+			flags.opencl.device_type = DebugFlags::OpenCL::DEVICE_ALL;
+			break;
+		case 2:
+			flags.opencl.device_type = DebugFlags::OpenCL::DEVICE_DEFAULT;
+			break;
+		case 3:
+			flags.opencl.device_type = DebugFlags::OpenCL::DEVICE_CPU;
+			break;
+		case 4:
+			flags.opencl.device_type = DebugFlags::OpenCL::DEVICE_GPU;
+			break;
+		case 5:
+			flags.opencl.device_type = DebugFlags::OpenCL::DEVICE_ACCELERATOR;
+			break;
+	}
+	/* Synchronize other OpenCL flags. */
+	flags.opencl.debug = get_boolean(cscene, "debug_use_opencl_debug");
+	return flags.opencl.device_type != opencl_device_type ||
+	       flags.opencl.kernel_type != opencl_kernel_type;
+}
+
+/* Reset debug flags to default values.
+ * Return truth when device list needs invalidation.
+ */
+bool debug_flags_reset()
+{
+	DebugFlagsRef flags = DebugFlags();
+	/* Backup some settings for comparison. */
+	DebugFlags::OpenCL::DeviceType opencl_device_type = flags.opencl.device_type;
+	DebugFlags::OpenCL::KernelType opencl_kernel_type = flags.opencl.kernel_type;
+	flags.reset();
+	return flags.opencl.device_type != opencl_device_type ||
+	       flags.opencl.kernel_type != opencl_kernel_type;
+}
+
+}  /* namespace */
 
 void python_thread_state_save(void **python_thread_state)
 {
@@ -57,19 +137,29 @@ void python_thread_state_restore(void **python_thread_state)
 
 static const char *PyC_UnicodeAsByte(PyObject *py_str, PyObject **coerce)
 {
-#ifdef WIN32
-	/* bug [#31856] oddly enough, Python3.2 --> 3.3 on Windows will throw an
-	 * exception here this needs to be fixed in python:
-	 * see: bugs.python.org/issue15859 */
-	if(!PyUnicode_Check(py_str)) {
-		PyErr_BadArgument();
-		return "";
+	const char *result = _PyUnicode_AsString(py_str);
+	if(result) {
+		/* 99% of the time this is enough but we better support non unicode
+		 * chars since blender doesnt limit this.
+		 */
+		return result;
 	}
-#endif
-	if((*coerce = PyUnicode_EncodeFSDefault(py_str))) {
-		return PyBytes_AS_STRING(*coerce);
+	else {
+		PyErr_Clear();
+		if(PyBytes_Check(py_str)) {
+			return PyBytes_AS_STRING(py_str);
+		}
+		else if((*coerce = PyUnicode_EncodeFSDefault(py_str))) {
+			return PyBytes_AS_STRING(*coerce);
+		}
+		else {
+			/* Clear the error, so Cycles can be at leadt used without
+			 * GPU and OSL support,
+			 */
+			PyErr_Clear();
+			return "";
+		}
 	}
-	return "";
 }
 
 static PyObject *init_func(PyObject * /*self*/, PyObject *args)
@@ -89,6 +179,18 @@ static PyObject *init_func(PyObject * /*self*/, PyObject *args)
 
 	BlenderSession::headless = headless;
 
+	VLOG(2) << "Debug flags initialized to:\n"
+	        << DebugFlags();
+
+	Py_RETURN_NONE;
+}
+
+
+static PyObject *exit_func(PyObject * /*self*/, PyObject * /*args*/)
+{
+	ShaderManager::free_memory();
+	TaskScheduler::free_memory();
+	Device::free_memory();
 	Py_RETURN_NONE;
 }
 
@@ -190,9 +292,9 @@ static PyObject *bake_func(PyObject * /*self*/, PyObject *args)
 	PyObject *pysession, *pyobject;
 	PyObject *pypixel_array, *pyresult;
 	const char *pass_type;
-	int num_pixels, depth, object_id;
+	int num_pixels, depth, object_id, pass_filter;
 
-	if(!PyArg_ParseTuple(args, "OOsiOiiO", &pysession, &pyobject, &pass_type, &object_id, &pypixel_array, &num_pixels, &depth, &pyresult))
+	if(!PyArg_ParseTuple(args, "OOsiiOiiO", &pysession, &pyobject, &pass_type, &pass_filter, &object_id, &pypixel_array, &num_pixels, &depth, &pyresult))
 		return NULL;
 
 	BlenderSession *session = (BlenderSession*)PyLong_AsVoidPtr(pysession);
@@ -209,7 +311,7 @@ static PyObject *bake_func(PyObject * /*self*/, PyObject *args)
 
 	python_thread_state_save(&session->python_thread_state);
 
-	session->bake(b_object, pass_type, object_id, b_bake_pixel, (size_t)num_pixels, depth, (float *)b_result);
+	session->bake(b_object, pass_type, pass_filter, object_id, b_bake_pixel, (size_t)num_pixels, depth, (float *)b_result);
 
 	python_thread_state_restore(&session->python_thread_state);
 
@@ -282,7 +384,12 @@ static PyObject *available_devices_func(PyObject * /*self*/, PyObject * /*args*/
 
 	for(size_t i = 0; i < devices.size(); i++) {
 		DeviceInfo& device = devices[i];
-		PyTuple_SET_ITEM(ret, i, PyUnicode_FromString(device.description.c_str()));
+		string type_name = Device::string_from_type(device.type);
+		PyObject *device_tuple = PyTuple_New(3);
+		PyTuple_SET_ITEM(device_tuple, 0, PyUnicode_FromString(device.description.c_str()));
+		PyTuple_SET_ITEM(device_tuple, 1, PyUnicode_FromString(type_name.c_str()));
+		PyTuple_SET_ITEM(device_tuple, 2, PyUnicode_FromString(device.id.c_str()));
+		PyTuple_SET_ITEM(ret, i, device_tuple);
 	}
 
 	return ret;
@@ -331,13 +438,13 @@ static PyObject *osl_update_node_func(PyObject * /*self*/, PyObject *args)
 			continue;
 
 		/* determine socket type */
-		std::string socket_type;
+		string socket_type;
 		BL::NodeSocket::type_enum data_type = BL::NodeSocket::type_VALUE;
 		float4 default_float4 = make_float4(0.0f, 0.0f, 0.0f, 1.0f);
 		float default_float = 0.0f;
 		int default_int = 0;
-		std::string default_string = "";
-		
+		string default_string = "";
+
 		if(param->isclosure) {
 			socket_type = "NodeSocketShader";
 			data_type = BL::NodeSocket::type_SHADER;
@@ -491,17 +598,101 @@ static PyObject *system_info_func(PyObject * /*self*/, PyObject * /*value*/)
 static PyObject *opencl_disable_func(PyObject * /*self*/, PyObject * /*value*/)
 {
 	VLOG(2) << "Disabling OpenCL platform.";
-#ifdef WIN32
-	putenv("CYCLES_OPENCL_TEST=NONE");
-#else
-	setenv("CYCLES_OPENCL_TEST", "NONE", 1);
-#endif
+	DebugFlags().opencl.device_type = DebugFlags::OpenCL::DEVICE_NONE;
 	Py_RETURN_NONE;
 }
 #endif
 
+static PyObject *debug_flags_update_func(PyObject * /*self*/, PyObject *args)
+{
+	PyObject *pyscene;
+	if(!PyArg_ParseTuple(args, "O", &pyscene)) {
+		return NULL;
+	}
+
+	PointerRNA sceneptr;
+	RNA_id_pointer_create((ID*)PyLong_AsVoidPtr(pyscene), &sceneptr);
+	BL::Scene b_scene(sceneptr);
+
+	if(debug_flags_sync_from_scene(b_scene)) {
+		VLOG(2) << "Tagging device list for update.";
+		Device::tag_update();
+	}
+
+	VLOG(2) << "Debug flags set to:\n"
+	        << DebugFlags();
+
+	debug_flags_set = true;
+
+	Py_RETURN_NONE;
+}
+
+static PyObject *debug_flags_reset_func(PyObject * /*self*/, PyObject * /*args*/)
+{
+	if(debug_flags_reset()) {
+		VLOG(2) << "Tagging device list for update.";
+		Device::tag_update();
+	}
+	if(debug_flags_set) {
+		VLOG(2) << "Debug flags reset to:\n"
+		        << DebugFlags();
+		debug_flags_set = false;
+	}
+	Py_RETURN_NONE;
+}
+
+static PyObject *set_resumable_chunks_func(PyObject * /*self*/, PyObject *args)
+{
+	int num_resumable_chunks, current_resumable_chunk;
+	if(!PyArg_ParseTuple(args, "ii",
+	                     &num_resumable_chunks,
+	                     &current_resumable_chunk)) {
+		Py_RETURN_NONE;
+	}
+
+	if(num_resumable_chunks <= 0) {
+		fprintf(stderr, "Cycles: Bad value for number of resumable chunks.\n");
+		abort();
+		Py_RETURN_NONE;
+	}
+	if(current_resumable_chunk < 1 ||
+	   current_resumable_chunk > num_resumable_chunks)
+	{
+		fprintf(stderr, "Cycles: Bad value for current resumable chunk number.\n");
+		abort();
+		Py_RETURN_NONE;
+	}
+
+	VLOG(1) << "Initialized resumable render: "
+	        << "num_resumable_chunks=" << num_resumable_chunks << ", "
+	        << "current_resumable_chunk=" << current_resumable_chunk;
+	BlenderSession::num_resumable_chunks = num_resumable_chunks;
+	BlenderSession::current_resumable_chunk = current_resumable_chunk;
+
+	printf("Cycles: Will render chunk %d of %d\n",
+	       current_resumable_chunk,
+	       num_resumable_chunks);
+
+	Py_RETURN_NONE;
+}
+
+static PyObject *get_device_types_func(PyObject * /*self*/, PyObject * /*args*/)
+{
+	vector<DeviceInfo>& devices = Device::available_devices();
+	bool has_cuda = false, has_opencl = false;
+	for(int i = 0; i < devices.size(); i++) {
+		has_cuda   |= (devices[i].type == DEVICE_CUDA);
+		has_opencl |= (devices[i].type == DEVICE_OPENCL);
+	}
+	PyObject *list = PyTuple_New(2);
+	PyTuple_SET_ITEM(list, 0, PyBool_FromLong(has_cuda));
+	PyTuple_SET_ITEM(list, 1, PyBool_FromLong(has_opencl));
+	return list;
+}
+
 static PyMethodDef methods[] = {
 	{"init", init_func, METH_VARARGS, ""},
+	{"exit", exit_func, METH_VARARGS, ""},
 	{"create", create_func, METH_VARARGS, ""},
 	{"free", free_func, METH_O, ""},
 	{"render", render_func, METH_O, ""},
@@ -518,6 +709,17 @@ static PyMethodDef methods[] = {
 #ifdef WITH_OPENCL
 	{"opencl_disable", opencl_disable_func, METH_NOARGS, ""},
 #endif
+
+	/* Debugging routines */
+	{"debug_flags_update", debug_flags_update_func, METH_VARARGS, ""},
+	{"debug_flags_reset", debug_flags_reset_func, METH_NOARGS, ""},
+
+	/* Resumable render */
+	{"set_resumable_chunks", set_resumable_chunks_func, METH_VARARGS, ""},
+
+	/* Compute Device selection */
+	{"get_device_types", get_device_types_func, METH_VARARGS, ""},
+
 	{NULL, NULL, 0, NULL},
 };
 
@@ -529,51 +731,6 @@ static struct PyModuleDef module = {
 	methods,
 	NULL, NULL, NULL, NULL
 };
-
-static CCLDeviceInfo *compute_device_list(DeviceType type)
-{
-	/* device list stored static */
-	static ccl::vector<CCLDeviceInfo> device_list;
-	static ccl::DeviceType device_type = DEVICE_NONE;
-
-	/* create device list if it's not already done */
-	if(type != device_type) {
-		ccl::vector<DeviceInfo>& devices = ccl::Device::available_devices();
-
-		device_type = type;
-		device_list.clear();
-
-		/* add devices */
-		int i = 0;
-
-		foreach(DeviceInfo& info, devices) {
-			if(info.type == type ||
-			   (info.type == DEVICE_MULTI && info.multi_devices[0].type == type))
-			{
-				CCLDeviceInfo cinfo;
-
-				strncpy(cinfo.identifier, info.id.c_str(), sizeof(cinfo.identifier));
-				cinfo.identifier[info.id.length()] = '\0';
-
-				strncpy(cinfo.name, info.description.c_str(), sizeof(cinfo.name));
-				cinfo.name[info.description.length()] = '\0';
-
-				cinfo.value = i++;
-
-				device_list.push_back(cinfo);
-			}
-		}
-
-		/* null terminate */
-		if(!device_list.empty()) {
-			CCLDeviceInfo cinfo = {"", "", 0};
-			device_list.push_back(cinfo);
-		}
-	}
-
-	return (device_list.empty())? NULL: &device_list[0];
-}
-
 
 CCL_NAMESPACE_END
 
@@ -613,24 +770,3 @@ void *CCL_python_module_init()
 
 	return (void*)mod;
 }
-
-CCLDeviceInfo *CCL_compute_device_list(int device_type)
-{
-	ccl::DeviceType type;
-	switch(device_type) {
-		case 0:
-			type = ccl::DEVICE_CUDA;
-			break;
-		case 1:
-			type = ccl::DEVICE_OPENCL;
-			break;
-		case 2:
-			type = ccl::DEVICE_NETWORK;
-			break;
-		default:
-			type = ccl::DEVICE_NONE;
-			break;
-	}
-	return ccl::compute_device_list(type);
-}
-

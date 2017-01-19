@@ -23,6 +23,7 @@
 
 #include "util_set.h"
 #include "util_string.h"
+#include "util_thread.h"
 
 CCL_NAMESPACE_BEGIN
 
@@ -46,26 +47,77 @@ public:
 
 	void device_update(Device *device, DeviceScene *dscene, Scene *scene, Progress& progress);
 	void device_free(Device *device, DeviceScene *dscene, Scene *scene);
+
+protected:
+	/* Lock used to synchronize threaded nodes compilation. */
+	thread_spin_lock nodes_lock_;
+
+	void device_update_shader(Scene *scene,
+	                          Shader *shader,
+	                          Progress *progress,
+	                          vector<int4> *global_svm_nodes);
 };
 
 /* Graph Compiler */
 
 class SVMCompiler {
 public:
-	SVMCompiler(ShaderManager *shader_manager, ImageManager *image_manager);
-	void compile(Shader *shader, vector<int4>& svm_nodes, int index);
+	struct Summary {
+		Summary();
 
-	void stack_assign(ShaderOutput *output);
-	void stack_assign(ShaderInput *input);
-	int stack_find_offset(ShaderSocketType type);
-	void stack_clear_offset(ShaderSocketType type, int offset);
+		/* Number of SVM nodes shader was compiled into. */
+		int num_svm_nodes;
+
+		/* Peak stack usage during shader evaluation. */
+		int peak_stack_usage;
+
+		/* Time spent on surface graph finalization. */
+		double time_finalize;
+
+		/* Time spent on bump graph finalization. */
+		double time_finalize_bump;
+
+		/* Time spent on generating SVM nodes for surface shader. */
+		double time_generate_surface;
+
+		/* Time spent on generating SVM nodes for bump shader. */
+		double time_generate_bump;
+
+		/* Time spent on generating SVM nodes for volume shader. */
+		double time_generate_volume;
+
+		/* Time spent on generating SVM nodes for displacement shader. */
+		double time_generate_displacement;
+
+		/* Total time spent on all routines. */
+		double time_total;
+
+		/* A full multiline description of the state of the compiler after
+		 * compilation.
+		 */
+		string full_report() const;
+	};
+
+	SVMCompiler(ShaderManager *shader_manager, ImageManager *image_manager);
+	void compile(Scene *scene,
+	             Shader *shader,
+	             vector<int4>& svm_nodes,
+	             int index,
+	             Summary *summary = NULL);
+
+	int stack_assign(ShaderOutput *output);
+	int stack_assign(ShaderInput *input);
+	int stack_assign_if_linked(ShaderInput *input);
+	int stack_assign_if_linked(ShaderOutput *output);
+	int stack_find_offset(int size);
+	int stack_find_offset(SocketType::Type type);
+	void stack_clear_offset(SocketType::Type type, int offset);
 	void stack_link(ShaderInput *input, ShaderOutput *output);
 
-	void add_node(NodeType type, int a = 0, int b = 0, int c = 0);
+	void add_node(ShaderNodeType type, int a = 0, int b = 0, int c = 0);
 	void add_node(int a = 0, int b = 0, int c = 0, int d = 0);
-	void add_node(NodeType type, const float3& f);
+	void add_node(ShaderNodeType type, const float3& f);
 	void add_node(const float4& f);
-	void add_array(float4 *f, int num);
 	uint attribute(ustring name);
 	uint attribute(AttributeStandard std);
 	uint encode_uchar4(uint x, uint y = 0, uint z = 0, uint w = 0);
@@ -106,43 +158,59 @@ protected:
 		int users[SVM_STACK_SIZE];
 	};
 
-	struct StackBackup {
-		Stack stack;
-		vector<int> offsets;
-		set<ShaderNode*> done;
+	/* Global state of the compiler accessible from the compilation routines. */
+	struct CompilerState {
+		explicit CompilerState(ShaderGraph *graph);
+
+		/* ** Global state, used by various compilation steps. ** */
+
+		/* Set of nodes which were already compiled. */
+		ShaderNodeSet nodes_done;
+
+		/* Set of closures which were already compiled. */
+		ShaderNodeSet closure_done;
+
+		/* ** SVM nodes generation state ** */
+
+		/* Flag whether the node with corresponding ID was already compiled or
+		 * not. Array element with index i corresponds to a node with such if.
+		 *
+		 * TODO(sergey): This is actually a copy of nodes_done just in another
+		 * notation. We can de-duplicate this storage actually after switching
+		 * all areas to use this flags array.
+		 */
+		vector<bool> nodes_done_flag;
 	};
 
-	void stack_backup(StackBackup& backup, set<ShaderNode*>& done);
-	void stack_restore(StackBackup& backup, set<ShaderNode*>& done);
-
 	void stack_clear_temporary(ShaderNode *node);
-	int stack_size(ShaderSocketType type);
-	void stack_clear_users(ShaderNode *node, set<ShaderNode*>& done);
+	int stack_size(SocketType::Type type);
+	void stack_clear_users(ShaderNode *node, ShaderNodeSet& done);
 
 	bool node_skip_input(ShaderNode *node, ShaderInput *input);
 
 	/* single closure */
-	void find_dependencies(set<ShaderNode*>& dependencies,
-	                       const set<ShaderNode*>& done,
+	void find_dependencies(ShaderNodeSet& dependencies,
+	                       const ShaderNodeSet& done,
 	                       ShaderInput *input,
 	                       ShaderNode *skip_node = NULL);
-	void generate_node(ShaderNode *node, set<ShaderNode*>& done);
-	void generate_closure_node(ShaderNode *node, set<ShaderNode*>& done);
-	void generated_shared_closure_nodes(ShaderNode *root_node, ShaderNode *node,
-	                                    set<ShaderNode*>& done,
-		set<ShaderNode*>& closure_done, const set<ShaderNode*>& shared);
-	void generate_svm_nodes(const set<ShaderNode*>& nodes, set<ShaderNode*>& done);
+	void generate_node(ShaderNode *node, ShaderNodeSet& done);
+	void generate_closure_node(ShaderNode *node, CompilerState *state);
+	void generated_shared_closure_nodes(ShaderNode *root_node,
+	                                    ShaderNode *node,
+	                                    CompilerState *state,
+	                                    const ShaderNodeSet& shared);
+	void generate_svm_nodes(const ShaderNodeSet& nodes,
+	                        CompilerState *state);
 
 	/* multi closure */
 	void generate_multi_closure(ShaderNode *root_node,
 	                            ShaderNode *node,
-	                            set<ShaderNode*>& done,
-	                            set<ShaderNode*>& closure_done);
+	                            CompilerState *state);
 
 	/* compile */
 	void compile_type(Shader *shader, ShaderGraph *graph, ShaderType type);
 
-	vector<int4> svm_nodes;
+	vector<int4> current_svm_nodes;
 	ShaderType current_type;
 	Shader *current_shader;
 	ShaderGraph *current_graph;

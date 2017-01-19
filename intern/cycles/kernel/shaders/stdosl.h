@@ -433,6 +433,35 @@ normal step (normal edge, normal x) BUILTIN;
 float step (float edge, float x) BUILTIN;
 float smoothstep (float edge0, float edge1, float x) BUILTIN;
 
+float linearstep (float edge0, float edge1, float x) {
+    float result;
+    if (edge0 != edge1) {
+        float xclamped = clamp (x, edge0, edge1);
+        result = (xclamped - edge0) / (edge1 - edge0);
+    } else {  // special case: edges coincide
+        result = step (edge0, x);
+    }
+    return result;
+}
+
+float smooth_linearstep (float edge0, float edge1, float x_, float eps_) {
+    float result;
+    if (edge0 != edge1) {
+        float rampup (float x, float r) { return 0.5/r * x*x; }
+        float width_inv = 1.0 / (edge1 - edge0);
+        float eps = eps_ * width_inv;
+        float x = (x_ - edge0) * width_inv;
+        if      (x <= -eps)                result = 0;
+        else if (x >= eps && x <= 1.0-eps) result = x;
+        else if (x >= 1.0+eps)             result = 1;
+        else if (x < eps)                  result = rampup (x+eps, 2.0*eps);
+        else /* if (x < 1.0+eps) */        result = 1.0 - rampup (1.0+eps - x, 2.0*eps);
+    } else {
+        result = step (edge0, x_);
+    }
+    return result;
+}
+
 float aastep (float edge, float s, float dedge, float ds) {
     // Box filtered AA step
     float width = fabs(dedge) + fabs(ds);
@@ -455,8 +484,9 @@ float aastep (float edge, float s) {
 
 
 // String functions
-
 int strlen (string s) BUILTIN;
+int hash (string s) BUILTIN;
+int getchar (string s, int index) BUILTIN;
 int startswith (string s, string prefix) BUILTIN;
 int endswith (string s, string suffix) BUILTIN;
 string substr (string s, int start, int len) BUILTIN;
@@ -497,6 +527,9 @@ closure color transparent() BUILTIN;
 closure color microfacet_ggx(normal N, float ag) BUILTIN;
 closure color microfacet_ggx_aniso(normal N, vector T, float ax, float ay) BUILTIN;
 closure color microfacet_ggx_refraction(normal N, float ag, float eta) BUILTIN;
+closure color microfacet_multi_ggx(normal N, float ag, color C) BUILTIN;
+closure color microfacet_multi_ggx_aniso(normal N, vector T, float ax, float ay, color C) BUILTIN;
+closure color microfacet_multi_ggx_glass(normal N, float ag, float eta, color C) BUILTIN;
 closure color microfacet_beckmann(normal N, float ab) BUILTIN;
 closure color microfacet_beckmann_aniso(normal N, vector T, float ax, float ay) BUILTIN;
 closure color microfacet_beckmann_refraction(normal N, float ab, float eta) BUILTIN;
@@ -510,6 +543,7 @@ closure color ambient_occlusion() BUILTIN;
 // BSSRDF
 closure color bssrdf_cubic(normal N, vector radius, float texture_blur, float sharpness) BUILTIN;
 closure color bssrdf_gaussian(normal N, vector radius, float texture_blur) BUILTIN;
+closure color bssrdf_burley(normal N, vector radius, float texture_blur, color albedo) BUILTIN;
 
 // Hair
 closure color hair_reflection(normal N, float roughnessu, float roughnessv, vector T, float offset) BUILTIN;

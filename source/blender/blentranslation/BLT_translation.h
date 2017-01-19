@@ -54,6 +54,7 @@ const char *BLT_translate_do_iface(const char *msgctxt, const char *msgid);
 const char *BLT_translate_do_tooltip(const char *msgctxt, const char *msgid);
 const char *BLT_translate_do_new_dataname(const char *msgctxt, const char *msgid);
 
+bool BLT_lang_is_ime_supported(void);
 
 /* The "translation-marker" macro. */
 #define N_(msgid) msgid
@@ -106,7 +107,11 @@ const char *BLT_translate_do_new_dataname(const char *msgctxt, const char *msgid
 /* Default context for operator names/labels. */
 #define BLT_I18NCONTEXT_OPERATOR_DEFAULT "Operator"
 
-/* Mark the msgid applies to several elements (needed in some cases, as english adjectives have no plural mark. :( */
+/* Context for events/keymaps (necessary, since those often use one or two letters,
+ * easy to get collisions with other areas...). */
+#define BLT_I18NCONTEXT_UI_EVENTS "UI_Events_KeyMaps"
+
+/* Mark the msgid applies to several elements (needed in some cases, as english adjectives have no plural mark :( ). */
 #define BLT_I18NCONTEXT_PLURAL "Plural"
 
 /* ID-types contexts. */
@@ -115,6 +120,7 @@ const char *BLT_translate_do_new_dataname(const char *msgctxt, const char *msgid
 #define BLT_I18NCONTEXT_ID_ARMATURE             "Armature"
 #define BLT_I18NCONTEXT_ID_BRUSH                "Brush"
 #define BLT_I18NCONTEXT_ID_CAMERA               "Camera"
+#define BLT_I18NCONTEXT_ID_CACHEFILE            "CacheFile"
 #define BLT_I18NCONTEXT_ID_CURVE                "Curve"
 #define BLT_I18NCONTEXT_ID_FREESTYLELINESTYLE   "FreestyleLineStyle"
 #define BLT_I18NCONTEXT_ID_GPENCIL              "GPencil"
@@ -160,11 +166,13 @@ typedef struct {
 	BLT_I18NCONTEXTS_ITEM(BLT_I18NCONTEXT_DEFAULT, "default_real"),                                                    \
 	BLT_I18NCONTEXTS_ITEM(BLT_I18NCONTEXT_DEFAULT_BPYRNA, "default"),                                                  \
 	BLT_I18NCONTEXTS_ITEM(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "operator_default"),                                       \
+	BLT_I18NCONTEXTS_ITEM(BLT_I18NCONTEXT_UI_EVENTS, "ui_events_keymaps"),                                             \
 	BLT_I18NCONTEXTS_ITEM(BLT_I18NCONTEXT_PLURAL, "plural"),                                                           \
 	BLT_I18NCONTEXTS_ITEM(BLT_I18NCONTEXT_ID_ACTION, "id_action"),                                                     \
 	BLT_I18NCONTEXTS_ITEM(BLT_I18NCONTEXT_ID_ARMATURE, "id_armature"),                                                 \
 	BLT_I18NCONTEXTS_ITEM(BLT_I18NCONTEXT_ID_BRUSH, "id_brush"),                                                       \
 	BLT_I18NCONTEXTS_ITEM(BLT_I18NCONTEXT_ID_CAMERA, "id_camera"),                                                     \
+	BLT_I18NCONTEXTS_ITEM(BLT_I18NCONTEXT_ID_CACHEFILE, "id_cachefile"),                                               \
 	BLT_I18NCONTEXTS_ITEM(BLT_I18NCONTEXT_ID_CURVE, "id_curve"),                                                       \
 	BLT_I18NCONTEXTS_ITEM(BLT_I18NCONTEXT_ID_FREESTYLELINESTYLE, "id_fs_linestyle"),                                   \
 	BLT_I18NCONTEXTS_ITEM(BLT_I18NCONTEXT_ID_GPENCIL, "id_gpencil"),                                                   \

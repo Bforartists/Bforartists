@@ -55,6 +55,7 @@ class PHYSICS_PT_game_physics(PhysicsButtonsPanel, Panel):
             layout.prop(game, "step_height", slider=True)
             layout.prop(game, "jump_speed")
             layout.prop(game, "fall_speed")
+            layout.prop(game, "jump_max")
 
         elif physics_type in {'DYNAMIC', 'RIGID_BODY'}:
             split = layout.split()
@@ -306,7 +307,6 @@ class RENDER_PT_embedded(RenderButtonsPanel, Panel):
 
         row = layout.row()
         row.operator("view3d.game_start", text="Start")
-        row.label()
         row = layout.row()
         row.label(text="Resolution:")
         row = layout.row(align=True)
@@ -326,8 +326,6 @@ class RENDER_PT_game_player(RenderButtonsPanel, Panel):
 
         row = layout.row()
         row.operator("wm.blenderplayer_start", text="Start")
-        row.label()
-
         row = layout.row()
         row.label(text="Resolution:")
         row = layout.row(align=True)
@@ -420,6 +418,7 @@ class RENDER_PT_game_shading(RenderButtonsPanel, Panel):
             col.prop(gs, "use_glsl_lights", text="Lights")
             col.prop(gs, "use_glsl_shaders", text="Shaders")
             col.prop(gs, "use_glsl_shadows", text="Shadows")
+            col.prop(gs, "use_glsl_environment_lighting", text="Environment Lighting")
 
             col = split.column()
             col.prop(gs, "use_glsl_ramps", text="Ramps")
@@ -526,7 +525,11 @@ class SCENE_PT_game_navmesh(SceneButtonsPanel, Panel):
         col.label(text="Region:")
         row = col.row()
         row.prop(rd, "region_min_size")
-        row.prop(rd, "region_merge_size")
+        if rd.partitioning != 'LAYERS':
+            row.prop(rd, "region_merge_size")
+
+        col = layout.column()
+        col.prop(rd, "partitioning")
 
         col = layout.column()
         col.label(text="Polygonization:")
@@ -579,7 +582,7 @@ class WORLD_PT_game_context_world(WorldButtonsPanel, Panel):
     @classmethod
     def poll(cls, context):
         rd = context.scene.render
-        return (context.scene) and (rd.use_game_engine)
+        return (context.scene) and (rd.engine in cls.COMPAT_ENGINES)
 
     def draw(self, context):
         layout = self.layout
@@ -611,7 +614,33 @@ class WORLD_PT_game_world(WorldButtonsPanel, Panel):
 
         row = layout.row()
         row.column().prop(world, "horizon_color")
+        row.column().prop(world, "zenith_color")
         row.column().prop(world, "ambient_color")
+
+
+class WORLD_PT_game_environment_lighting(WorldButtonsPanel, Panel):
+    bl_label = "Environment Lighting"
+    COMPAT_ENGINES = {'BLENDER_GAME'}
+
+    @classmethod
+    def poll(cls, context):
+        scene = context.scene
+        return (scene.world and scene.render.engine in cls.COMPAT_ENGINES)
+
+    def draw_header(self, context):
+        light = context.world.light_settings
+        self.layout.prop(light, "use_environment_light", text="")
+
+    def draw(self, context):
+        layout = self.layout
+
+        light = context.world.light_settings
+
+        layout.active = light.use_environment_light
+
+        split = layout.split()
+        split.prop(light, "environment_energy", text="Energy")
+        split.prop(light, "environment_color", text="")
 
 
 class WORLD_PT_game_mist(WorldButtonsPanel, Panel):
@@ -702,7 +731,7 @@ class WORLD_PT_game_physics(WorldButtonsPanel, Panel):
 
 
 class WORLD_PT_game_physics_obstacles(WorldButtonsPanel, Panel):
-    bl_label = "Obstacle simulation"
+    bl_label = "Obstacle Simulation"
     COMPAT_ENGINES = {'BLENDER_GAME'}
 
     @classmethod

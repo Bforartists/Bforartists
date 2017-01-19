@@ -39,7 +39,15 @@
 
 #include "glew-mx.h"
 
+#ifdef _MSC_VER
+#  pragma warning(push)
+#  pragma warning(disable : 4251 4275)
+#endif
 #include <OpenColorIO/OpenColorIO.h>
+#ifdef _MSC_VER
+#  pragma warning(pop)
+#endif
+
 
 using namespace OCIO_NAMESPACE;
 
@@ -221,8 +229,8 @@ static bool ensureCurveMappingAllocated(OCIO_GLSLDrawState *state, OCIO_CurveMap
 /* Detect if we can support GLSL drawing */
 bool OCIOImpl::supportGLSLDraw()
 {
-	/* GLSL and GL_RGB16F_ARB */
-	return GLEW_VERSION_2_0 && (GLEW_VERSION_3_0 || GLEW_ARB_texture_float);
+	/* uses GL_RGB16F_ARB */
+	return GLEW_VERSION_3_0 || GLEW_ARB_texture_float;
 }
 
 static bool supportGLSL13()

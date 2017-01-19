@@ -43,18 +43,12 @@
 #include "BKE_modifier.h"
 #include "BKE_mesh.h"
 
-#ifdef RIGID_DEFORM
-#include "BLI_polardecomp.h"
-#endif
-
 #include "ED_mesh.h"
 #include "ED_armature.h"
 
+#include "eigen_capi.h"
+
 #include "meshlaplacian.h"
-
-#ifdef WITH_OPENNL
-
-#include "ONL_opennl.h"
 
 /* ************* XXX *************** */
 static void waitcursor(int UNUSED(val)) {}
@@ -68,7 +62,7 @@ static void error(const char *str) { printf("error: %s\n", str); }
 /************************** Laplacian System *****************************/
 
 struct LaplacianSystem {
-	NLContext context;  /* opennl context */
+	LinearSolver *context;  /* linear solver */
 
 	int totvert, totface;
 
@@ -80,7 +74,7 @@ struct LaplacianSystem {
 
 	int areaweights;        /* use area in cotangent weights? */
 	int storeweights;       /* store cotangent weights in fweights */
-	int nlbegun;            /* nlBegin(NL_SYSTEM/NL_MATRIX) done */
+	bool variablesdone;     /* variables set in linear system */
 
 	EdgeHash *edgehash;     /* edge hash for construction */
 
@@ -104,17 +98,6 @@ struct LaplacianSystem {
 		BVHTree   *bvhtree; /* ray tracing acceleration structure */
 		const MLoopTri **vltree;  /* a looptri that the vertex belongs to */
 	} heat;
-
-#ifdef RIGID_DEFORM
-	struct RigidDeformation {
-		EditMesh *mesh;
-
-		float (*R)[3][3];
-		float (*rhs)[3];
-		float (*origco)[3];
-		int thrownerror;
-	} rigid;
-#endif
 };
 
 /* Laplacian matrix construction */
@@ -197,18 +180,18 @@ static void laplacian_triangle_weights(LaplacianSystem *sys, int f, int i1, int 
 	t2 = cotangent_tri_weight_v3(v2, v3, v1) / laplacian_edge_count(sys->edgehash, i3, i1);
 	t3 = cotangent_tri_weight_v3(v3, v1, v2) / laplacian_edge_count(sys->edgehash, i1, i2);
 
-	nlMatrixAdd(i1, i1, (t2 + t3) * varea[i1]);
-	nlMatrixAdd(i2, i2, (t1 + t3) * varea[i2]);
-	nlMatrixAdd(i3, i3, (t1 + t2) * varea[i3]);
+	EIG_linear_solver_matrix_add(sys->context, i1, i1, (t2 + t3) * varea[i1]);
+	EIG_linear_solver_matrix_add(sys->context, i2, i2, (t1 + t3) * varea[i2]);
+	EIG_linear_solver_matrix_add(sys->context, i3, i3, (t1 + t2) * varea[i3]);
 
-	nlMatrixAdd(i1, i2, -t3 * varea[i1]);
-	nlMatrixAdd(i2, i1, -t3 * varea[i2]);
+	EIG_linear_solver_matrix_add(sys->context, i1, i2, -t3 * varea[i1]);
+	EIG_linear_solver_matrix_add(sys->context, i2, i1, -t3 * varea[i2]);
 
-	nlMatrixAdd(i2, i3, -t1 * varea[i2]);
-	nlMatrixAdd(i3, i2, -t1 * varea[i3]);
+	EIG_linear_solver_matrix_add(sys->context, i2, i3, -t1 * varea[i2]);
+	EIG_linear_solver_matrix_add(sys->context, i3, i2, -t1 * varea[i3]);
 
-	nlMatrixAdd(i3, i1, -t2 * varea[i3]);
-	nlMatrixAdd(i1, i3, -t2 * varea[i1]);
+	EIG_linear_solver_matrix_add(sys->context, i3, i1, -t2 * varea[i3]);
+	EIG_linear_solver_matrix_add(sys->context, i1, i3, -t2 * varea[i1]);
 
 	if (sys->storeweights) {
 		sys->fweights[f][0] = t1 * varea[i1];
@@ -233,13 +216,11 @@ static LaplacianSystem *laplacian_system_construct_begin(int totvert, int totfac
 	sys->areaweights = 1;
 	sys->storeweights = 0;
 
-	/* create opennl context */
-	nlNewContext();
-	nlSolverParameteri(NL_NB_VARIABLES, totvert);
+	/* create linear solver */
 	if (lsq)
-		nlSolverParameteri(NL_LEAST_SQUARES, NL_TRUE);
-
-	sys->context = nlGetCurrent();
+		sys->context = EIG_linear_least_squares_solver_new(0, totvert, 1);
+	else
+		sys->context = EIG_linear_solver_new(0, totvert, 1);
 
 	return sys;
 }
@@ -289,7 +270,7 @@ static void laplacian_system_construct_end(LaplacianSystem *sys)
 
 		/* for heat weighting */
 		if (sys->heat.H)
-			nlMatrixAdd(a, a, sys->heat.H[a]);
+			EIG_linear_solver_matrix_add(sys->context, a, a, sys->heat.H[a]);
 	}
 
 	if (sys->storeweights)
@@ -318,7 +299,7 @@ static void laplacian_system_delete(LaplacianSystem *sys)
 	if (sys->faces) MEM_freeN(sys->faces);
 	if (sys->fweights) MEM_freeN(sys->fweights);
 
-	nlDeleteContext(sys->context);
+	EIG_linear_solver_delete(sys->context);
 	MEM_freeN(sys);
 }
 
@@ -326,42 +307,37 @@ void laplacian_begin_solve(LaplacianSystem *sys, int index)
 {
 	int a;
 
-	if (!sys->nlbegun) {
-		nlBegin(NL_SYSTEM);
-
+	if (!sys->variablesdone) {
 		if (index >= 0) {
 			for (a = 0; a < sys->totvert; a++) {
 				if (sys->vpinned[a]) {
-					nlSetVariable(0, a, sys->verts[a][index]);
-					nlLockVariable(a);
+					EIG_linear_solver_variable_set(sys->context, 0, a, sys->verts[a][index]);
+					EIG_linear_solver_variable_lock(sys->context, a);
 				}
 			}
 		}
 
-		nlBegin(NL_MATRIX);
-		sys->nlbegun = 1;
+		sys->variablesdone = true;
 	}
 }
 
-void laplacian_add_right_hand_side(LaplacianSystem *UNUSED(sys), int v, float value)
+void laplacian_add_right_hand_side(LaplacianSystem *sys, int v, float value)
 {
-	nlRightHandSideAdd(0, v, value);
+	EIG_linear_solver_right_hand_side_add(sys->context, 0, v, value);
 }
 
 int laplacian_system_solve(LaplacianSystem *sys)
 {
-	nlEnd(NL_MATRIX);
-	nlEnd(NL_SYSTEM);
-	sys->nlbegun = 0;
+	sys->variablesdone = false;
 
-	//nlPrintMatrix();
+	//EIG_linear_solver_print_matrix(sys->context, );
 
-	return nlSolveAdvanced(NULL, NL_TRUE);
+	return EIG_linear_solver_solve(sys->context);
 }
 
-float laplacian_system_get_solution(int v)
+float laplacian_system_get_solution(LaplacianSystem *sys, int v)
 {
-	return nlGetVariable(0, v);
+	return EIG_linear_solver_variable_get(sys->context, 0, v);
 }
 
 /************************* Heat Bone Weighting ******************************/
@@ -463,11 +439,7 @@ static int heat_ray_source_visible(LaplacianSystem *sys, int vertex, int source)
 	data.sys = sys;
 	copy_v3_v3(data.start, sys->heat.verts[vertex]);
 
-	if (sys->heat.root) /* bone */
-		closest_to_line_segment_v3(end, data.start,
-		                           sys->heat.root[source], sys->heat.tip[source]);
-	else /* vertex */
-		copy_v3_v3(end, sys->heat.source[source]);
+	closest_to_line_segment_v3(end, data.start, sys->heat.root[source], sys->heat.tip[source]);
 
 	sub_v3_v3v3(data.vec, end, data.start);
 	madd_v3_v3v3fl(data.start, data.start, data.vec, 1e-5);
@@ -487,11 +459,7 @@ static float heat_source_distance(LaplacianSystem *sys, int vertex, int source)
 	float closest[3], d[3], dist, cosine;
 	
 	/* compute euclidian distance */
-	if (sys->heat.root) /* bone */
-		closest_to_line_segment_v3(closest, sys->heat.verts[vertex],
-		                           sys->heat.root[source], sys->heat.tip[source]);
-	else /* vertex */
-		copy_v3_v3(closest, sys->heat.source[source]);
+	closest_to_line_segment_v3(closest, sys->heat.verts[vertex], sys->heat.root[source], sys->heat.tip[source]);
 
 	sub_v3_v3v3(d, sys->heat.verts[vertex], closest);
 	dist = normalize_v3(d);
@@ -608,7 +576,7 @@ static void heat_laplacian_create(LaplacianSystem *sys)
 static void heat_system_free(LaplacianSystem *sys)
 {
 	BLI_bvhtree_free(sys->heat.bvhtree);
-	MEM_freeN(sys->heat.vltree);
+	MEM_freeN((void *)sys->heat.vltree);
 	MEM_freeN((void *)sys->heat.mlooptri);
 
 	MEM_freeN(sys->heat.mindist);
@@ -707,7 +675,7 @@ void heat_bone_weighting(Object *ob, Mesh *me, float (*verts)[3], int numsource,
 	if (dgroupflip) {
 		vertsflipped = MEM_callocN(sizeof(int) * me->totvert, "vertsflipped");
 		for (a = 0; a < me->totvert; a++)
-			vertsflipped[a] = mesh_get_x_mirror_vert(ob, a, use_topology);
+			vertsflipped[a] = mesh_get_x_mirror_vert(ob, NULL, a, use_topology);
 	}
 	
 	/* compute weights per bone */
@@ -746,7 +714,7 @@ void heat_bone_weighting(Object *ob, Mesh *me, float (*verts)[3], int numsource,
 				if (mask && !mask[a])
 					continue;
 
-				solution = laplacian_system_get_solution(a);
+				solution = laplacian_system_get_solution(sys, a);
 				
 				if (bbone) {
 					if (solution > 0.0f)
@@ -814,232 +782,6 @@ void heat_bone_weighting(Object *ob, Mesh *me, float (*verts)[3], int numsource,
 
 	laplacian_system_delete(sys);
 }
-
-#ifdef RIGID_DEFORM
-/********************** As-Rigid-As-Possible Deformation ******************/
-/* From "As-Rigid-As-Possible Surface Modeling",
- * Olga Sorkine and Marc Alexa, ESGP 2007. */
-
-/* investigate:
- * - transpose R in orthogonal
- * - flipped normals and per face adding
- * - move canceling to transform, make origco pointer
- */
-
-static LaplacianSystem *RigidDeformSystem = NULL;
-
-static void rigid_add_half_edge_to_R(LaplacianSystem *sys, EditVert *v1, EditVert *v2, float w)
-{
-	float e[3], e_[3];
-	int i;
-
-	sub_v3_v3v3(e, sys->rigid.origco[v1->tmp.l], sys->rigid.origco[v2->tmp.l]);
-	sub_v3_v3v3(e_, v1->co, v2->co);
-
-	/* formula (5) */
-	for (i = 0; i < 3; i++) {
-		sys->rigid.R[v1->tmp.l][i][0] += w * e[0] * e_[i];
-		sys->rigid.R[v1->tmp.l][i][1] += w * e[1] * e_[i];
-		sys->rigid.R[v1->tmp.l][i][2] += w * e[2] * e_[i];
-	}
-}
-
-static void rigid_add_edge_to_R(LaplacianSystem *sys, EditVert *v1, EditVert *v2, float w)
-{
-	rigid_add_half_edge_to_R(sys, v1, v2, w);
-	rigid_add_half_edge_to_R(sys, v2, v1, w);
-}
-
-static void rigid_orthogonalize_R(float R[3][3])
-{
-	HMatrix M, Q, S;
-
-	copy_m4_m3(M, R);
-	polar_decomp(M, Q, S);
-	copy_m3_m4(R, Q);
-}
-
-static void rigid_add_half_edge_to_rhs(LaplacianSystem *sys, EditVert *v1, EditVert *v2, float w)
-{
-	/* formula (8) */
-	float Rsum[3][3], rhs[3];
-
-	if (sys->vpinned[v1->tmp.l])
-		return;
-
-	add_m3_m3m3(Rsum, sys->rigid.R[v1->tmp.l], sys->rigid.R[v2->tmp.l]);
-	transpose_m3(Rsum);
-
-	sub_v3_v3v3(rhs, sys->rigid.origco[v1->tmp.l], sys->rigid.origco[v2->tmp.l]);
-	mul_m3_v3(Rsum, rhs);
-	mul_v3_fl(rhs, 0.5f);
-	mul_v3_fl(rhs, w);
-
-	add_v3_v3(sys->rigid.rhs[v1->tmp.l], rhs);
-}
-
-static void rigid_add_edge_to_rhs(LaplacianSystem *sys, EditVert *v1, EditVert *v2, float w)
-{
-	rigid_add_half_edge_to_rhs(sys, v1, v2, w);
-	rigid_add_half_edge_to_rhs(sys, v2, v1, w);
-}
-
-void rigid_deform_iteration()
-{
-	LaplacianSystem *sys = RigidDeformSystem;
-	EditMesh *em;
-	EditVert *eve;
-	EditFace *efa;
-	int a, i;
-
-	if (!sys)
-		return;
-	
-	nlMakeCurrent(sys->context);
-	em = sys->rigid.mesh;
-
-	/* compute R */
-	memset(sys->rigid.R, 0, sizeof(float) * 3 * 3 * sys->totvert);
-	memset(sys->rigid.rhs, 0, sizeof(float) * 3 * sys->totvert);
-
-	for (a = 0, efa = em->faces.first; efa; efa = efa->next, a++) {
-		rigid_add_edge_to_R(sys, efa->v1, efa->v2, sys->fweights[a][2]);
-		rigid_add_edge_to_R(sys, efa->v2, efa->v3, sys->fweights[a][0]);
-		rigid_add_edge_to_R(sys, efa->v3, efa->v1, sys->fweights[a][1]);
-
-		if (efa->v4) {
-			a++;
-			rigid_add_edge_to_R(sys, efa->v1, efa->v3, sys->fweights[a][2]);
-			rigid_add_edge_to_R(sys, efa->v3, efa->v4, sys->fweights[a][0]);
-			rigid_add_edge_to_R(sys, efa->v4, efa->v1, sys->fweights[a][1]);
-		}
-	}
-
-	for (a = 0, eve = em->verts.first; eve; eve = eve->next, a++) {
-		rigid_orthogonalize_R(sys->rigid.R[a]);
-		eve->tmp.l = a;
-	}
-	
-	/* compute right hand sides for solving */
-	for (a = 0, efa = em->faces.first; efa; efa = efa->next, a++) {
-		rigid_add_edge_to_rhs(sys, efa->v1, efa->v2, sys->fweights[a][2]);
-		rigid_add_edge_to_rhs(sys, efa->v2, efa->v3, sys->fweights[a][0]);
-		rigid_add_edge_to_rhs(sys, efa->v3, efa->v1, sys->fweights[a][1]);
-
-		if (efa->v4) {
-			a++;
-			rigid_add_edge_to_rhs(sys, efa->v1, efa->v3, sys->fweights[a][2]);
-			rigid_add_edge_to_rhs(sys, efa->v3, efa->v4, sys->fweights[a][0]);
-			rigid_add_edge_to_rhs(sys, efa->v4, efa->v1, sys->fweights[a][1]);
-		}
-	}
-
-	/* solve for positions, for X, Y and Z separately */
-	for (i = 0; i < 3; i++) {
-		laplacian_begin_solve(sys, i);
-
-		for (a = 0; a < sys->totvert; a++)
-			if (!sys->vpinned[a])
-				laplacian_add_right_hand_side(sys, a, sys->rigid.rhs[a][i]);
-
-		if (laplacian_system_solve(sys)) {
-			for (a = 0, eve = em->verts.first; eve; eve = eve->next, a++)
-				eve->co[i] = laplacian_system_get_solution(a);
-		}
-		else {
-			if (!sys->rigid.thrownerror) {
-				error("RigidDeform: failed to find solution");
-				sys->rigid.thrownerror = 1;
-			}
-			break;
-		}
-	}
-}
-
-static void rigid_laplacian_create(LaplacianSystem *sys)
-{
-	EditMesh *em = sys->rigid.mesh;
-	EditVert *eve;
-	EditFace *efa;
-	int a;
-
-	/* add verts and faces to laplacian */
-	for (a = 0, eve = em->verts.first; eve; eve = eve->next, a++) {
-		laplacian_add_vertex(sys, eve->co, eve->pinned);
-		eve->tmp.l = a;
-	}
-
-	for (efa = em->faces.first; efa; efa = efa->next) {
-		laplacian_add_triangle(sys,
-		                       efa->v1->tmp.l, efa->v2->tmp.l, efa->v3->tmp.l);
-		if (efa->v4)
-			laplacian_add_triangle(sys,
-			                       efa->v1->tmp.l, efa->v3->tmp.l, efa->v4->tmp.l);
-	}
-}
-
-void rigid_deform_begin(EditMesh *em)
-{
-	LaplacianSystem *sys;
-	EditVert *eve;
-	EditFace *efa;
-	int a, totvert, totface;
-
-	/* count vertices, triangles */
-	for (totvert = 0, eve = em->verts.first; eve; eve = eve->next)
-		totvert++;
-
-	for (totface = 0, efa = em->faces.first; efa; efa = efa->next) {
-		totface++;
-		if (efa->v4) totface++;
-	}
-
-	/* create laplacian */
-	sys = laplacian_system_construct_begin(totvert, totface, 0);
-
-	sys->rigid.mesh = em;
-	sys->rigid.R = MEM_callocN(sizeof(float) * 3 * 3 * totvert, "RigidDeformR");
-	sys->rigid.rhs = MEM_callocN(sizeof(float) * 3 * totvert, "RigidDeformRHS");
-	sys->rigid.origco = MEM_callocN(sizeof(float) * 3 * totvert, "RigidDeformCo");
-
-	for (a = 0, eve = em->verts.first; eve; eve = eve->next, a++)
-		copy_v3_v3(sys->rigid.origco[a], eve->co);
-
-	sys->areaweights = 0;
-	sys->storeweights = 1;
-
-	rigid_laplacian_create(sys);
-
-	laplacian_system_construct_end(sys);
-
-	RigidDeformSystem = sys;
-}
-
-void rigid_deform_end(int cancel)
-{
-	LaplacianSystem *sys = RigidDeformSystem;
-
-	if (sys) {
-		EditMesh *em = sys->rigid.mesh;
-		EditVert *eve;
-		int a;
-
-		if (cancel)
-			for (a = 0, eve = em->verts.first; eve; eve = eve->next, a++)
-				if (!eve->pinned)
-					copy_v3_v3(eve->co, sys->rigid.origco[a]);
-
-		if (sys->rigid.R) MEM_freeN(sys->rigid.R);
-		if (sys->rigid.rhs) MEM_freeN(sys->rigid.rhs);
-		if (sys->rigid.origco) MEM_freeN(sys->rigid.origco);
-
-		/* free */
-		laplacian_system_delete(sys);
-	}
-
-	RigidDeformSystem = NULL;
-}
-#endif
 
 /************************** Harmonic Coordinates ****************************/
 /* From "Harmonic Coordinates for Character Articulation",
@@ -1251,7 +993,6 @@ static MDefBoundIsect *meshdeform_ray_tree_intersect(MeshDeformBind *mdb, const 
 		&isect_mdef,
 	};
 	float end[3], vec_normal[3];
-	// static float epsilon[3] = {1e-4, 1e-4, 1e-4};
 
 	/* happens binding when a cage has no faces */
 	if (UNLIKELY(mdb->bvhtree == NULL))
@@ -1261,18 +1002,13 @@ static MDefBoundIsect *meshdeform_ray_tree_intersect(MeshDeformBind *mdb, const 
 	memset(&isect_mdef, 0, sizeof(isect_mdef));
 	isect_mdef.lambda = 1e10f;
 
-#if 0
-	add_v3_v3v3(isect_mdef.start, co1, epsilon);
-	add_v3_v3v3(end, co2, epsilon);
-#else
 	copy_v3_v3(isect_mdef.start, co1);
 	copy_v3_v3(end, co2);
-#endif
 	sub_v3_v3v3(isect_mdef.vec, end, isect_mdef.start);
 	isect_mdef.vec_length = normalize_v3_v3(vec_normal, isect_mdef.vec);
 
 	hit.index = -1;
-	hit.dist = FLT_MAX;
+	hit.dist = BVH_RAYCAST_DIST_MAX;
 	if (BLI_bvhtree_ray_cast(mdb->bvhtree, isect_mdef.start, vec_normal,
 	                         0.0, &hit, harmonic_ray_callback, &data) != -1)
 	{
@@ -1541,7 +1277,7 @@ static float meshdeform_boundary_total_weight(MeshDeformBind *mdb, int x, int y,
 	return totweight;
 }
 
-static void meshdeform_matrix_add_cell(MeshDeformBind *mdb, int x, int y, int z)
+static void meshdeform_matrix_add_cell(MeshDeformBind *mdb, LinearSolver *context, int x, int y, int z)
 {
 	MDefBoundIsect *isect;
 	float weight, totweight;
@@ -1551,7 +1287,7 @@ static void meshdeform_matrix_add_cell(MeshDeformBind *mdb, int x, int y, int z)
 	if (mdb->tag[acenter] == MESHDEFORM_TAG_EXTERIOR)
 		return;
 
-	nlMatrixAdd(mdb->varidx[acenter], mdb->varidx[acenter], 1.0f);
+	EIG_linear_solver_matrix_add(context, mdb->varidx[acenter], mdb->varidx[acenter], 1.0f);
 	
 	totweight = meshdeform_boundary_total_weight(mdb, x, y, z);
 	for (i = 1; i <= 6; i++) {
@@ -1562,12 +1298,12 @@ static void meshdeform_matrix_add_cell(MeshDeformBind *mdb, int x, int y, int z)
 		isect = mdb->boundisect[acenter][i - 1];
 		if (!isect) {
 			weight = (1.0f / mdb->width[0]) / totweight;
-			nlMatrixAdd(mdb->varidx[acenter], mdb->varidx[a], -weight);
+			EIG_linear_solver_matrix_add(context, mdb->varidx[acenter], mdb->varidx[a], -weight);
 		}
 	}
 }
 
-static void meshdeform_matrix_add_rhs(MeshDeformBind *mdb, int x, int y, int z, int cagevert)
+static void meshdeform_matrix_add_rhs(MeshDeformBind *mdb, LinearSolver *context, int x, int y, int z, int cagevert)
 {
 	MDefBoundIsect *isect;
 	float rhs, weight, totweight;
@@ -1588,7 +1324,7 @@ static void meshdeform_matrix_add_rhs(MeshDeformBind *mdb, int x, int y, int z, 
 		if (isect) {
 			weight = (1.0f / isect->len) / totweight;
 			rhs = weight * meshdeform_boundary_phi(mdb, isect, cagevert);
-			nlRightHandSideAdd(0, mdb->varidx[acenter], rhs);
+			EIG_linear_solver_right_hand_side_add(context, 0, mdb->varidx[acenter], rhs);
 		}
 	}
 }
@@ -1643,7 +1379,7 @@ static void meshdeform_matrix_add_exterior_phi(MeshDeformBind *mdb, int x, int y
 
 static void meshdeform_matrix_solve(MeshDeformModifierData *mmd, MeshDeformBind *mdb)
 {
-	NLContext *context;
+	LinearSolver *context;
 	float vec[3], gridvec[3];
 	int a, b, x, y, z, totvar;
 	char message[256];
@@ -1660,44 +1396,24 @@ static void meshdeform_matrix_solve(MeshDeformModifierData *mmd, MeshDeformBind 
 
 	progress_bar(0, "Starting mesh deform solve");
 
-	/* setup opennl solver */
-	nlNewContext();
-	context = nlGetCurrent();
-
-	nlSolverParameteri(NL_NB_VARIABLES, totvar);
-	nlSolverParameteri(NL_NB_ROWS, totvar);
-	nlSolverParameteri(NL_NB_RIGHT_HAND_SIDES, 1);
-
-	nlBegin(NL_SYSTEM);
-	nlBegin(NL_MATRIX);
+	/* setup linear solver */
+	context = EIG_linear_solver_new(totvar, totvar, 1);
 
 	/* build matrix */
 	for (z = 0; z < mdb->size; z++)
 		for (y = 0; y < mdb->size; y++)
 			for (x = 0; x < mdb->size; x++)
-				meshdeform_matrix_add_cell(mdb, x, y, z);
+				meshdeform_matrix_add_cell(mdb, context, x, y, z);
 
 	/* solve for each cage vert */
 	for (a = 0; a < mdb->totcagevert; a++) {
-		if (a != 0) {
-			nlBegin(NL_SYSTEM);
-			nlBegin(NL_MATRIX);
-		}
-
 		/* fill in right hand side and solve */
 		for (z = 0; z < mdb->size; z++)
 			for (y = 0; y < mdb->size; y++)
 				for (x = 0; x < mdb->size; x++)
-					meshdeform_matrix_add_rhs(mdb, x, y, z, a);
+					meshdeform_matrix_add_rhs(mdb, context, x, y, z, a);
 
-		nlEnd(NL_MATRIX);
-		nlEnd(NL_SYSTEM);
-
-#if 0
-		nlPrintMatrix();
-#endif
-
-		if (nlSolveAdvanced(NULL, NL_TRUE)) {
+		if (EIG_linear_solver_solve(context)) {
 			for (z = 0; z < mdb->size; z++)
 				for (y = 0; y < mdb->size; y++)
 					for (x = 0; x < mdb->size; x++)
@@ -1710,7 +1426,7 @@ static void meshdeform_matrix_solve(MeshDeformModifierData *mmd, MeshDeformBind 
 
 			for (b = 0; b < mdb->size3; b++) {
 				if (mdb->tag[b] != MESHDEFORM_TAG_EXTERIOR)
-					mdb->phi[b] = nlGetVariable(0, mdb->varidx[b]);
+					mdb->phi[b] = EIG_linear_solver_variable_get(context, 0, mdb->varidx[b]);
 				mdb->totalphi[b] += mdb->phi[b];
 			}
 
@@ -1764,7 +1480,7 @@ static void meshdeform_matrix_solve(MeshDeformModifierData *mmd, MeshDeformBind 
 	/* free */
 	MEM_freeN(mdb->varidx);
 
-	nlDeleteContext(context);
+	EIG_linear_solver_delete(context);
 }
 
 static void harmonic_coordinates_bind(Scene *UNUSED(scene), MeshDeformModifierData *mmd, MeshDeformBind *mdb)
@@ -1917,77 +1633,9 @@ static void harmonic_coordinates_bind(Scene *UNUSED(scene), MeshDeformModifierDa
 	free_bvhtree_from_mesh(&mdb->bvhdata);
 }
 
-#if 0
-static void heat_weighting_bind(Scene *scene, DerivedMesh *dm, MeshDeformModifierData *mmd, MeshDeformBind *mdb)
-{
-	LaplacianSystem *sys;
-	MFace *mface = dm->getTessFaceArray(dm), *mf;
-	int totvert = dm->getNumVerts(dm);
-	int totface = dm->getNumTessFaces(dm);
-	float solution, weight;
-	int a, tottri, j, thrownerror = 0;
-
-	mdb->weights = MEM_callocN(sizeof(float) * mdb->totvert * mdb->totcagevert, "MDefWeights");
-
-	/* count triangles */
-	for (tottri = 0, a = 0, mf = mface; a < totface; a++, mf++) {
-		tottri++;
-		if (mf->v4) tottri++;
-	}
-
-	/* create laplacian */
-	sys = laplacian_system_construct_begin(totvert, tottri, 1);
-
-	sys->heat.mface = mface;
-	sys->heat.totface = totface;
-	sys->heat.totvert = totvert;
-	sys->heat.verts = mdb->vertexcos;
-	sys->heat.source = mdb->cagecos;
-	sys->heat.numsource = mdb->totcagevert;
-
-	heat_ray_tree_create(sys);
-	heat_laplacian_create(sys);
-
-	laplacian_system_construct_end(sys);
-
-	/* compute weights per bone */
-	for (j = 0; j < mdb->totcagevert; j++) {
-		/* fill right hand side */
-		laplacian_begin_solve(sys, -1);
-
-		for (a = 0; a < totvert; a++)
-			if (heat_source_closest(sys, a, j))
-				laplacian_add_right_hand_side(sys, a,
-				                              sys->heat.H[a] * sys->heat.p[a]);
-
-		/* solve */
-		if (laplacian_system_solve(sys)) {
-			/* load solution into vertex groups */
-			for (a = 0; a < totvert; a++) {
-				solution = laplacian_system_get_solution(a);
-				
-				weight = heat_limit_weight(solution);
-				if (weight > 0.0f)
-					mdb->weights[a * mdb->totcagevert + j] = weight;
-			}
-		}
-		else if (!thrownerror) {
-			error("Mesh Deform Heat Weighting:"
-			      " failed to find solution for one or more vertices");
-			thrownerror = 1;
-			break;
-		}
-	}
-
-	/* free */
-	heat_system_free(sys);
-	laplacian_system_delete(sys);
-
-	mmd->bindweights = mdb->weights;
-}
-#endif
-
-void mesh_deform_bind(Scene *scene, MeshDeformModifierData *mmd, float *vertexcos, int totvert, float cagemat[4][4])
+void mesh_deform_bind(
+        Scene *scene, MeshDeformModifierData *mmd, DerivedMesh *cagedm,
+        float *vertexcos, int totvert, float cagemat[4][4])
 {
 	MeshDeformBind mdb;
 	MVert *mvert;
@@ -2002,7 +1650,7 @@ void mesh_deform_bind(Scene *scene, MeshDeformModifierData *mmd, float *vertexco
 	mdb.vertexcos = MEM_callocN(sizeof(float) * 3 * totvert, "MeshDeformCos");
 	mdb.totvert = totvert;
 	
-	mdb.cagedm = mesh_create_derived_no_deform(scene, mmd->object, NULL, CD_MASK_BAREMESH);
+	mdb.cagedm = cagedm;
 	mdb.totcagevert = mdb.cagedm->getNumVerts(mdb.cagedm);
 	mdb.cagecos = MEM_callocN(sizeof(*mdb.cagecos) * mdb.totcagevert, "MeshDeformBindCos");
 	copy_m4_m4(mdb.cagemat, cagemat);
@@ -2014,14 +1662,7 @@ void mesh_deform_bind(Scene *scene, MeshDeformModifierData *mmd, float *vertexco
 		mul_v3_m4v3(mdb.vertexcos[a], mdb.cagemat, vertexcos + a * 3);
 
 	/* solve */
-#if 0
-	if (mmd->mode == MOD_MDEF_VOLUME)
-		harmonic_coordinates_bind(scene, mmd, &mdb);
-	else
-		heat_weighting_bind(scene, dm, mmd, &mdb);
-#else
 	harmonic_coordinates_bind(scene, mmd, &mdb);
-#endif
 
 	/* assign bind variables */
 	mmd->bindcagecos = (float *)mdb.cagecos;
@@ -2034,7 +1675,6 @@ void mesh_deform_bind(Scene *scene, MeshDeformModifierData *mmd, float *vertexco
 		mul_m4_v3(mmd->object->obmat, mmd->bindcagecos + a * 3);
 
 	/* free */
-	mdb.cagedm->release(mdb.cagedm);
 	MEM_freeN(mdb.vertexcos);
 
 	/* compact weights */
@@ -2043,14 +1683,3 @@ void mesh_deform_bind(Scene *scene, MeshDeformModifierData *mmd, float *vertexco
 	end_progress_bar();
 	waitcursor(0);
 }
-
-#else  /* WITH_OPENNL */
-
-#ifdef __GNUC__
-#  pragma GCC diagnostic ignored "-Wunused-parameter"
-#endif
-
-void mesh_deform_bind(Scene *scene, MeshDeformModifierData *mmd, float *vertexcos, int totvert, float cagemat[4][4]) {}
-void *modifier_mdef_compact_influences_link_kludge = modifier_mdef_compact_influences;
-
-#endif  /* WITH_OPENNL */

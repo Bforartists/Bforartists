@@ -55,6 +55,7 @@
 
 #include "BKE_action.h"
 #include "BKE_fcurve.h"
+#include "BKE_gpencil.h"
 #include "BKE_global.h"
 #include "BKE_library.h"
 #include "BKE_key.h"
@@ -153,7 +154,7 @@ void ACTION_OT_markers_make_local(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Make Markers Local";
 	ot->idname = "ACTION_OT_markers_make_local";
-	ot->description = "Make Markers Local\nMove selected scene markers to the active Action as local 'pose' markers";
+	ot->description = "Move selected scene markers to the active Action as local 'pose' markers";
 	
 	/* callbacks */
 	ot->exec = act_markers_make_local_exec;
@@ -238,6 +239,11 @@ static bool get_keyframe_extents(bAnimContext *ac, float *min, float *max, const
 			}
 		}
 
+		if (fabsf(*max - *min) < 0.001f) {
+			*min -= 0.0005f;
+			*max += 0.0005f;
+		}
+
 		/* free memory */
 		ANIM_animdata_freelist(&anim_data);
 	}
@@ -294,7 +300,7 @@ void ACTION_OT_previewrange_set(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Auto-Set Preview Range";
 	ot->idname = "ACTION_OT_previewrange_set";
-	ot->description = "Auto-Set Preview Range\nSet Preview Range based on extents of selected Keyframes";
+	ot->description = "Set Preview Range based on extents of selected Keyframes";
 	
 	/* api callbacks */
 	ot->exec = actkeys_previewrange_exec;
@@ -327,7 +333,7 @@ static bool actkeys_channels_get_selected_extents(bAnimContext *ac, float *min, 
 	ANIM_animdata_filter(ac, &anim_data, filter, ac->data, ac->datatype);
 	
 	/* loop through all channels, finding the first one that's selected */
-	y = (float)ACHANNEL_FIRST;
+	y = (float)ACHANNEL_FIRST(ac);
 	
 	for (ale = anim_data.first; ale; ale = ale->next) {
 		const bAnimChannelType *acf = ANIM_channel_get_typeinfo(ale);
@@ -337,8 +343,8 @@ static bool actkeys_channels_get_selected_extents(bAnimContext *ac, float *min, 
 		    ANIM_channel_setting_get(ac, ale, ACHANNEL_SETTING_SELECT))
 		{
 			/* update best estimate */
-			*min = (float)(y - ACHANNEL_HEIGHT_HALF);
-			*max = (float)(y + ACHANNEL_HEIGHT_HALF);
+			*min = (float)(y - ACHANNEL_HEIGHT_HALF(ac));
+			*max = (float)(y + ACHANNEL_HEIGHT_HALF(ac));
 			
 			/* is this high enough priority yet? */
 			found = acf->channel_role;
@@ -352,7 +358,7 @@ static bool actkeys_channels_get_selected_extents(bAnimContext *ac, float *min, 
 		}
 		
 		/* adjust y-position for next one */
-		y -= ACHANNEL_STEP;
+		y -= ACHANNEL_STEP(ac);
 	}
 	
 	/* free all temp data */
@@ -430,20 +436,14 @@ static int actkeys_viewsel_exec(bContext *C, wmOperator *UNUSED(op))
 	return actkeys_viewall(C, true);
 }
 
-static int actkeys_view_frame_exec(bContext *C, wmOperator *op)
-{
-	const int smooth_viewtx = WM_operator_smooth_viewtx_get(op);
-	ANIM_center_frame(C, smooth_viewtx);
-
-	return OPERATOR_FINISHED;
-}
+/* ......... */
 
 void ACTION_OT_view_all(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "View All";
 	ot->idname = "ACTION_OT_view_all";
-	ot->description = "View All\nReset viewable area to show full keyframe range";
+	ot->description = "Reset viewable area to show full keyframe range";
 	
 	/* api callbacks */
 	ot->exec = actkeys_viewall_exec;
@@ -458,7 +458,7 @@ void ACTION_OT_view_selected(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "View Selected";
 	ot->idname = "ACTION_OT_view_selected";
-	ot->description = "View Selected\nReset viewable area to show selected keyframes range";
+	ot->description = "Reset viewable area to show selected keyframes range";
 	
 	/* api callbacks */
 	ot->exec = actkeys_viewsel_exec;
@@ -468,17 +468,27 @@ void ACTION_OT_view_selected(wmOperatorType *ot)
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
 
+/* ****************** View-All Operator ****************** */
+
+static int actkeys_view_frame_exec(bContext *C, wmOperator *op)
+{
+	const int smooth_viewtx = WM_operator_smooth_viewtx_get(op);
+	ANIM_center_frame(C, smooth_viewtx);
+	
+	return OPERATOR_FINISHED;
+}
+
 void ACTION_OT_view_frame(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "View Frame";
 	ot->idname = "ACTION_OT_view_frame";
-	ot->description = "View Frame\nReset viewable area to show range around current frame";
-
+	ot->description = "Reset viewable area to show range around current frame";
+	
 	/* api callbacks */
 	ot->exec = actkeys_view_frame_exec;
-	ot->poll = ED_operator_action_active; /* XXX: unchecked poll to get fsamples working too, but makes modifier damage trickier... */
-
+	ot->poll = ED_operator_action_active;
+	
 	/* flags */
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
@@ -495,7 +505,7 @@ static short copy_action_keys(bAnimContext *ac)
 	int filter, ok = 0;
 	
 	/* clear buffer first */
-	free_anim_copybuf();
+	ANIM_fcurves_copybuf_free();
 	
 	/* filter data */
 	filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE /*| ANIMFILTER_CURVESONLY*/ | ANIMFILTER_NODUPLIS);
@@ -549,9 +559,10 @@ static int actkeys_copy_exec(bContext *C, wmOperator *op)
 
 	/* copy keyframes */
 	if (ac.datatype == ANIMCONT_GPENCIL) {
-		/* FIXME... */
-		BKE_report(op->reports, RPT_ERROR, "Keyframe pasting is not available for grease pencil mode");
-		return OPERATOR_CANCELLED;
+		if (ED_gpencil_anim_copybuf_copy(&ac) == false) {
+			/* Nothing got copied - An error about this should be been logged already */
+			return OPERATOR_CANCELLED;
+		}
 	}
 	else if (ac.datatype == ANIMCONT_MASK) {
 		/* FIXME... */
@@ -573,7 +584,7 @@ void ACTION_OT_copy(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Copy Keyframes";
 	ot->idname = "ACTION_OT_copy";
-	ot->description = "Copy Keyframes\nCopy selected keyframes to the copy/paste buffer";
+	ot->description = "Copy selected keyframes to the copy/paste buffer";
 	
 	/* api callbacks */
 	ot->exec = actkeys_copy_exec;
@@ -599,7 +610,13 @@ static int actkeys_paste_exec(bContext *C, wmOperator *op)
 	ac.reports = op->reports;
 	
 	/* paste keyframes */
-	if (ELEM(ac.datatype, ANIMCONT_GPENCIL, ANIMCONT_MASK)) {
+	if (ac.datatype == ANIMCONT_GPENCIL) {
+		if (ED_gpencil_anim_copybuf_paste(&ac, offset_mode) == false) {
+			/* An error occurred - Reports should have been fired already */
+			return OPERATOR_CANCELLED;
+		}
+	}
+	else if (ac.datatype == ANIMCONT_MASK) {
 		/* FIXME... */
 		BKE_report(op->reports, RPT_ERROR, "Keyframe pasting is not available for grease pencil or mask mode");
 		return OPERATOR_CANCELLED;
@@ -621,9 +638,9 @@ void ACTION_OT_paste(wmOperatorType *ot)
 {
 	PropertyRNA *prop;
 	/* identifiers */
-	ot->name = "Paste Keyframes / Flipped";
+	ot->name = "Paste Keyframes";
 	ot->idname = "ACTION_OT_paste";
-	ot->description = "Paste Keyframes / Flipped \nPaste Keyframes pastes keyframes into the selected channels, starting on the current frame\nPaste Flipped pastes keyframes flipped into the selected channels, starting on the current frame";
+	ot->description = "Paste keyframes from copy/paste buffer for the selected channels, starting on the current frame";
 	
 	/* api callbacks */
 //	ot->invoke = WM_operator_props_popup; // better wait for action redo panel
@@ -634,8 +651,8 @@ void ACTION_OT_paste(wmOperatorType *ot)
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 	
 	/* props */
-	RNA_def_enum(ot->srna, "offset", keyframe_paste_offset_items, KEYFRAME_PASTE_OFFSET_CFRA_START, "Offset", "Paste time offset of keys");
-	RNA_def_enum(ot->srna, "merge", keyframe_paste_merge_items, KEYFRAME_PASTE_MERGE_MIX, "Type", "Method of merging pasted keys and existing");
+	RNA_def_enum(ot->srna, "offset", rna_enum_keyframe_paste_offset_items, KEYFRAME_PASTE_OFFSET_CFRA_START, "Offset", "Paste time offset of keys");
+	RNA_def_enum(ot->srna, "merge", rna_enum_keyframe_paste_merge_items, KEYFRAME_PASTE_MERGE_MIX, "Type", "Method of merging pasted keys and existing");
 	prop = RNA_def_boolean(ot->srna, "flipped", false, "Flipped", "Paste keyframes from mirrored bones if they exist");
 	RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 }
@@ -650,7 +667,7 @@ static EnumPropertyItem prop_actkeys_insertkey_types[] = {
 	{0, NULL, 0, NULL, NULL}
 };
 
-/* this function is responsible for snapping keyframes to frame-times */
+/* this function is responsible for inserting new keyframes */
 static void insert_action_keys(bAnimContext *ac, short mode) 
 {
 	ListBase anim_data = {NULL, NULL};
@@ -659,6 +676,7 @@ static void insert_action_keys(bAnimContext *ac, short mode)
 	
 	ReportList *reports = ac->reports;
 	Scene *scene = ac->scene;
+	ToolSettings *ts = scene->toolsettings;
 	short flag = 0;
 	
 	/* filter data */
@@ -689,14 +707,52 @@ static void insert_action_keys(bAnimContext *ac, short mode)
 		 *                       so it's easier for now to just read the F-Curve directly.
 		 *                       (TODO: add the full-blown PointerRNA relative parsing case here...)
 		 */
-		if (ale->id && !ale->owner)
-			insert_keyframe(reports, ale->id, NULL, ((fcu->grp) ? (fcu->grp->name) : (NULL)), fcu->rna_path, fcu->array_index, cfra, flag);
-		else
-			insert_vert_fcurve(fcu, cfra, fcu->curval, 0);
-
+		if (ale->id && !ale->owner) {
+			insert_keyframe(reports, ale->id, NULL, ((fcu->grp) ? (fcu->grp->name) : (NULL)), fcu->rna_path, fcu->array_index, cfra, ts->keyframe_type, flag);
+		}
+		else {
+			const float curval = evaluate_fcurve(fcu, cfra);
+			insert_vert_fcurve(fcu, cfra, curval, ts->keyframe_type, 0);
+		}
+		
 		ale->update |= ANIM_UPDATE_DEFAULT;
 	}
+	
+	ANIM_animdata_update(ac, &anim_data);
+	ANIM_animdata_freelist(&anim_data);
+}
 
+/* this function is for inserting new grease pencil frames */
+static void insert_gpencil_keys(bAnimContext *ac, short mode)
+{
+	ListBase anim_data = {NULL, NULL};
+	bAnimListElem *ale;
+	int filter;
+	
+	Scene *scene = ac->scene;
+	ToolSettings *ts = scene->toolsettings;
+	eGP_GetFrame_Mode add_frame_mode;
+	
+	/* filter data */
+	filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_FOREDIT | ANIMFILTER_NODUPLIS);
+	if (mode == 2) filter |= ANIMFILTER_SEL;
+	
+	ANIM_animdata_filter(ac, &anim_data, filter, ac->data, ac->datatype);
+	
+	
+	/* add a copy or a blank frame? */
+	if (ts->gpencil_flags & GP_TOOL_FLAG_RETAIN_LAST)
+		add_frame_mode = GP_GETFRAME_ADD_COPY; /* XXX: actframe may not be what we want? */
+	else
+		add_frame_mode = GP_GETFRAME_ADD_NEW;
+	
+	
+	/* insert gp frames */
+	for (ale = anim_data.first; ale; ale = ale->next) {
+		bGPDlayer *gpl = (bGPDlayer *)ale->data;
+		BKE_gpencil_layer_getframe(gpl, CFRA, add_frame_mode);
+	}
+	
 	ANIM_animdata_update(ac, &anim_data);
 	ANIM_animdata_freelist(&anim_data);
 }
@@ -711,14 +767,22 @@ static int actkeys_insertkey_exec(bContext *C, wmOperator *op)
 	/* get editor data */
 	if (ANIM_animdata_get_context(C, &ac) == 0)
 		return OPERATOR_CANCELLED;
-	if (ELEM(ac.datatype, ANIMCONT_GPENCIL, ANIMCONT_MASK))
+		
+	if (ac.datatype == ANIMCONT_MASK) {
+		BKE_report(op->reports, RPT_ERROR, "Insert Keyframes is not yet implemented for this mode");
 		return OPERATOR_CANCELLED;
+	}
 		
 	/* what channels to affect? */
 	mode = RNA_enum_get(op->ptr, "type");
 	
 	/* insert keyframes */
-	insert_action_keys(&ac, mode);
+	if (ac.datatype == ANIMCONT_GPENCIL) {
+		insert_gpencil_keys(&ac, mode);
+	}
+	else {
+		insert_action_keys(&ac, mode);
+	}
 
 	/* set notifier that keyframes have changed */
 	WM_event_add_notifier(C, NC_ANIMATION | ND_KEYFRAME | NA_ADDED, NULL);
@@ -731,7 +795,7 @@ void ACTION_OT_keyframe_insert(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Insert Keyframes";
 	ot->idname = "ACTION_OT_keyframe_insert";
-	ot->description = "Insert Keyframes\nInsert keyframes for the specified channels";
+	ot->description = "Insert keyframes for the specified channels";
 	
 	/* api callbacks */
 	ot->invoke = WM_menu_invoke;
@@ -802,7 +866,7 @@ void ACTION_OT_duplicate(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Duplicate Keyframes";
 	ot->idname = "ACTION_OT_duplicate";
-	ot->description = "Duplicate Keyframes\nMake a copy of all selected keyframes";
+	ot->description = "Make a copy of all selected keyframes";
 	
 	/* api callbacks */
 	ot->exec = actkeys_duplicate_exec;
@@ -851,16 +915,16 @@ static bool delete_action_keys(bAnimContext *ac)
 				ale->key_data = NULL;
 			}
 		}
-
+		
 		if (changed) {
 			ale->update |= ANIM_UPDATE_DEFAULT;
 			changed_final = true;
 		}
 	}
-
+	
 	ANIM_animdata_update(ac, &anim_data);
 	ANIM_animdata_freelist(&anim_data);
-
+	
 	return changed_final;
 }
 
@@ -889,10 +953,10 @@ void ACTION_OT_delete(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Delete Keyframes";
 	ot->idname = "ACTION_OT_delete";
-	ot->description = "Delete Keyframes\nRemove all selected keyframes";
+	ot->description = "Remove all selected keyframes";
 	
 	/* api callbacks */
-	//ot->invoke = WM_operator_confirm; // bfa, turned off the confirm delete dialogue
+	ot->invoke = WM_operator_confirm;
 	ot->exec = actkeys_delete_exec;
 	ot->poll = ED_operator_action_active;
 	
@@ -958,7 +1022,7 @@ void ACTION_OT_clean(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Clean Keyframes";
 	ot->idname = "ACTION_OT_clean";
-	ot->description = "Clean Keyframes\nSimplify F-Curves by removing closely spaced keyframes";
+	ot->description = "Simplify F-Curves by removing closely spaced keyframes";
 	
 	/* api callbacks */
 	//ot->invoke =  // XXX we need that number popup for this! 
@@ -1026,7 +1090,7 @@ void ACTION_OT_sample(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Sample Keyframes";
 	ot->idname = "ACTION_OT_sample";
-	ot->description = "Sample Keyframes\nAdd keyframes on every frame between the selected keyframes";
+	ot->description = "Add keyframes on every frame between the selected keyframes";
 	
 	/* api callbacks */
 	ot->exec = actkeys_sample_exec;
@@ -1136,9 +1200,9 @@ static int actkeys_expo_exec(bContext *C, wmOperator *op)
 void ACTION_OT_extrapolation_type(wmOperatorType *ot)
 {
 	/* identifiers */
-	ot->name = "Keyframe Extrapolation";
+	ot->name = "Set Keyframe Extrapolation";
 	ot->idname = "ACTION_OT_extrapolation_type";
-	ot->description = "Keyframe Extrapolation, Set extrapolation mode for selected F-Curves to";
+	ot->description = "Set extrapolation mode for selected F-Curves";
 	
 	/* api callbacks */
 	ot->invoke = WM_menu_invoke;
@@ -1210,9 +1274,9 @@ static int actkeys_ipo_exec(bContext *C, wmOperator *op)
 void ACTION_OT_interpolation_type(wmOperatorType *ot)
 {
 	/* identifiers */
-	ot->name = "Keyframe Interpolation";
+	ot->name = "Set Keyframe Interpolation";
 	ot->idname = "ACTION_OT_interpolation_type";
-	ot->description = "Keyframe Interpolation, Set interpolation mode for the F-Curve segments starting from the selected keyframes";
+	ot->description = "Set interpolation mode for the F-Curve segments starting from the selected keyframes";
 	
 	/* api callbacks */
 	ot->invoke = WM_menu_invoke;
@@ -1223,7 +1287,7 @@ void ACTION_OT_interpolation_type(wmOperatorType *ot)
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 	
 	/* id-props */
-	ot->prop = RNA_def_enum(ot->srna, "type", beztriple_interpolation_mode_items, 0, "Type", "");
+	ot->prop = RNA_def_enum(ot->srna, "type", rna_enum_beztriple_interpolation_mode_items, 0, "Type", "");
 }
 
 /* ******************** Set Handle-Type Operator *********************** */
@@ -1292,9 +1356,9 @@ static int actkeys_handletype_exec(bContext *C, wmOperator *op)
 void ACTION_OT_handle_type(wmOperatorType *ot)
 {
 	/* identifiers */
-	ot->name = "Keyframe Handle Type";
+	ot->name = "Set Keyframe Handle Type";
 	ot->idname = "ACTION_OT_handle_type";
-	ot->description = "Keyframe Handle Type, Set type of handle to";
+	ot->description = "Set type of handle for selected keyframes";
 	
 	/* api callbacks */
 	ot->invoke = WM_menu_invoke;
@@ -1305,7 +1369,7 @@ void ACTION_OT_handle_type(wmOperatorType *ot)
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 	
 	/* id-props */
-	ot->prop = RNA_def_enum(ot->srna, "type", keyframe_handle_type_items, 0, "Type", "");
+	ot->prop = RNA_def_enum(ot->srna, "type", rna_enum_keyframe_handle_type_items, 0, "Type", "");
 }
 
 /* ******************** Set Keyframe-Type Operator *********************** */
@@ -1394,9 +1458,9 @@ static int actkeys_keytype_exec(bContext *C, wmOperator *op)
 void ACTION_OT_keyframe_type(wmOperatorType *ot)
 {
 	/* identifiers */
-	ot->name = "Keyframe Type";
+	ot->name = "Set Keyframe Type";
 	ot->idname = "ACTION_OT_keyframe_type";
-	ot->description = "Keyframe Type, Set type of keyframe to";
+	ot->description = "Set type of keyframe for the selected keyframes";
 	
 	/* api callbacks */
 	ot->invoke = WM_menu_invoke;
@@ -1407,7 +1471,7 @@ void ACTION_OT_keyframe_type(wmOperatorType *ot)
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 	
 	/* id-props */
-	ot->prop = RNA_def_enum(ot->srna, "type", beztriple_keyframe_type_items, 0, "Type", "");
+	ot->prop = RNA_def_enum(ot->srna, "type", rna_enum_beztriple_keyframe_type_items, 0, "Type", "");
 }
 
 /* ************************************************************************** */
@@ -1473,7 +1537,7 @@ void ACTION_OT_frame_jump(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Jump to Keyframes";
 	ot->idname = "ACTION_OT_frame_jump";
-	ot->description = "Jump to Keyframes\nSet the current frame to the average frame value of selected keyframes";
+	ot->description = "Set the current frame to the average frame value of selected keyframes";
 	
 	/* api callbacks */
 	ot->exec = actkeys_framejump_exec;
@@ -1535,9 +1599,9 @@ static void snap_action_keys(bAnimContext *ac, short mode)
 			ED_masklayer_snap_frames(ale->data, ac->scene, mode);
 		}
 		else if (adt) {
-			ANIM_nla_mapping_apply_fcurve(adt, ale->key_data, 0, 1); 
+			ANIM_nla_mapping_apply_fcurve(adt, ale->key_data, 0, 0); 
 			ANIM_fcurve_keyframes_loop(&ked, ale->key_data, NULL, edit_cb, calchandles_fcurve);
-			ANIM_nla_mapping_apply_fcurve(adt, ale->key_data, 1, 1);
+			ANIM_nla_mapping_apply_fcurve(adt, ale->key_data, 1, 0);
 		}
 		else {
 			ANIM_fcurve_keyframes_loop(&ked, ale->key_data, NULL, edit_cb, calchandles_fcurve);
@@ -1578,7 +1642,7 @@ void ACTION_OT_snap(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Snap Keys";
 	ot->idname = "ACTION_OT_snap";
-	ot->description = "Snap Keys, Snap selected keyframes to";
+	ot->description = "Snap selected keyframes to the times specified";
 	
 	/* api callbacks */
 	ot->invoke = WM_menu_invoke;
@@ -1642,16 +1706,21 @@ static void mirror_action_keys(bAnimContext *ac, short mode)
 	for (ale = anim_data.first; ale; ale = ale->next) {
 		AnimData *adt = ANIM_nla_mapping_get(ac, ale);
 		
-		if (adt) {
-			ANIM_nla_mapping_apply_fcurve(adt, ale->key_data, 0, 1); 
-			ANIM_fcurve_keyframes_loop(&ked, ale->key_data, NULL, edit_cb, calchandles_fcurve);
-			ANIM_nla_mapping_apply_fcurve(adt, ale->key_data, 1, 1);
+		if (ale->type == ANIMTYPE_GPLAYER) {
+			ED_gplayer_mirror_frames(ale->data, ac->scene, mode);
 		}
-		//else if (ale->type == ACTTYPE_GPLAYER)
-		//	snap_gplayer_frames(ale->data, mode);
-		else 
+		else if (ale->type == ANIMTYPE_MASKLAYER) {
+			/* TODO */
+		}
+		else if (adt) {
+			ANIM_nla_mapping_apply_fcurve(adt, ale->key_data, 0, 0); 
 			ANIM_fcurve_keyframes_loop(&ked, ale->key_data, NULL, edit_cb, calchandles_fcurve);
-
+			ANIM_nla_mapping_apply_fcurve(adt, ale->key_data, 1, 0);
+		}
+		else {
+			ANIM_fcurve_keyframes_loop(&ked, ale->key_data, NULL, edit_cb, calchandles_fcurve);
+		}
+		
 		ale->update |= ANIM_UPDATE_DEFAULT;
 	}
 
@@ -1670,10 +1739,6 @@ static int actkeys_mirror_exec(bContext *C, wmOperator *op)
 	if (ANIM_animdata_get_context(C, &ac) == 0)
 		return OPERATOR_CANCELLED;
 		
-	/* XXX... */
-	if (ELEM(ac.datatype, ANIMCONT_GPENCIL, ANIMCONT_MASK))
-		return OPERATOR_PASS_THROUGH;
-		
 	/* get mirroring mode */
 	mode = RNA_enum_get(op->ptr, "type");
 	
@@ -1691,7 +1756,7 @@ void ACTION_OT_mirror(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Mirror Keys";
 	ot->idname = "ACTION_OT_mirror";
-	ot->description = "Mirror Keys, Flip selected keyframes over the selected mirror line";
+	ot->description = "Flip selected keyframes over the selected mirror line";
 	
 	/* api callbacks */
 	ot->invoke = WM_menu_invoke;

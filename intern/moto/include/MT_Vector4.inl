@@ -17,7 +17,7 @@ GEN_INLINE MT_Vector4& MT_Vector4::operator*=(MT_Scalar s) {
 
 GEN_INLINE MT_Vector4& MT_Vector4::operator/=(MT_Scalar s) {
     MT_assert(!MT_fuzzyZero(s));
-    return *this *= MT_Scalar(1.0) / s;
+    return *this *= MT_Scalar(1.0f) / s;
 }
 
 GEN_INLINE MT_Vector4 operator+(const MT_Vector4& v1, const MT_Vector4& v2) {
@@ -40,7 +40,7 @@ GEN_INLINE MT_Vector4 operator*(MT_Scalar s, const MT_Vector4& v) { return v * s
 
 GEN_INLINE MT_Vector4 operator/(const MT_Vector4& v, MT_Scalar s) {
     MT_assert(!MT_fuzzyZero(s));
-    return v * (MT_Scalar(1.0) / s);
+    return v * (MT_Scalar(1.0f) / s);
 }
 
 GEN_INLINE MT_Scalar MT_Vector4::dot(const MT_Vector4& v) const {
@@ -48,7 +48,7 @@ GEN_INLINE MT_Scalar MT_Vector4::dot(const MT_Vector4& v) const {
 }
 
 GEN_INLINE MT_Scalar MT_Vector4::length2() const { return MT_dot(*this, *this); }
-GEN_INLINE MT_Scalar MT_Vector4::length() const { return sqrt(length2()); }
+GEN_INLINE MT_Scalar MT_Vector4::length() const { return sqrtf(length2()); }
 
 GEN_INLINE MT_Vector4 MT_Vector4::absolute() const {
     return MT_Vector4(MT_abs(m_co[0]), MT_abs(m_co[1]), MT_abs(m_co[2]), MT_abs(m_co[3]));

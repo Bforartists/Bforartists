@@ -45,7 +45,7 @@
 #include "ED_keyframing.h"
 
 /* exported for use in API */
-EnumPropertyItem keyingset_path_grouping_items[] = {
+EnumPropertyItem rna_enum_keyingset_path_grouping_items[] = {
 	{KSP_GROUP_NAMED, "NAMED", 0, "Named Group", ""},
 	{KSP_GROUP_NONE, "NONE", 0, "None", ""},
 	{KSP_GROUP_KSNAME, "KEYINGSET", 0, "Keying Set Name", ""},
@@ -55,7 +55,7 @@ EnumPropertyItem keyingset_path_grouping_items[] = {
 /* It would be cool to get rid of this 'INSERTKEY_' prefix in 'py strings' values, but it would break existing
  * exported keyingset... :/
  */
-EnumPropertyItem keying_flag_items[] = {
+EnumPropertyItem rna_enum_keying_flag_items[] = {
 	{INSERTKEY_NEEDED, "INSERTKEY_NEEDED", 0, "Only Needed",
 	                   "Only insert keyframes where they're needed in the relevant F-Curves"},
 	{INSERTKEY_MATRIX, "INSERTKEY_VISUAL", 0, "Visual Keying",
@@ -89,7 +89,7 @@ static void rna_AnimData_update(Main *UNUSED(bmain), Scene *UNUSED(scene), Point
 	DAG_id_tag_update(id, OB_RECALC_OB | OB_RECALC_DATA);
 }
 
-static int rna_AnimData_action_editable(PointerRNA *ptr)
+static int rna_AnimData_action_editable(PointerRNA *ptr, const char **UNUSED(r_info))
 {
 	AnimData *adt = (AnimData *)ptr->data;
 	
@@ -97,7 +97,7 @@ static int rna_AnimData_action_editable(PointerRNA *ptr)
 	if ((adt->flag & ADT_NLA_EDIT_ON) || (adt->actstrip) || (adt->tmpact))
 		return 0;
 	else
-		return 1;
+		return PROP_EDITABLE;
 }
 
 static void rna_AnimData_action_set(PointerRNA *ptr, PointerRNA value)
@@ -113,6 +113,23 @@ static void rna_AnimData_action_set(PointerRNA *ptr, PointerRNA value)
 	if (adt) {
 		adt->recalc |= ADT_RECALC_ANIM;
 		DAG_id_tag_update(ownerId, OB_RECALC_TIME);
+	}
+}
+
+static void rna_AnimData_tweakmode_set(PointerRNA *ptr, const int value)
+{
+	AnimData *adt = (AnimData *)ptr->data;
+
+	/* NOTE: technically we should also set/unset SCE_NLA_EDIT_ON flag on the
+	 * scene which is used to make polling tests faster, but this flag is weak
+	 * and can easily break e.g. by changing layer visibility. This needs to be
+	 * dealt with at some point. */
+
+	if (value) {
+		BKE_nla_tweakmode_enter(adt);
+	}
+	else {
+		BKE_nla_tweakmode_exit(adt);
 	}
 }
 
@@ -288,7 +305,7 @@ static StructRNA *rna_ksPath_id_typef(PointerRNA *ptr)
 	return ID_code_to_RNA_type(ksp->idtype);
 }
 
-static int rna_ksPath_id_editable(PointerRNA *ptr)
+static int rna_ksPath_id_editable(PointerRNA *ptr, const char **UNUSED(r_info))
 {
 	KS_Path *ksp = (KS_Path *)ptr->data;
 	return (ksp->idtype) ? PROP_EDITABLE : 0;
@@ -376,12 +393,12 @@ static void rna_KeyingSet_name_set(PointerRNA *ptr, const char *value)
 }
 
 
-static int rna_KeyingSet_active_ksPath_editable(PointerRNA *ptr)
+static int rna_KeyingSet_active_ksPath_editable(PointerRNA *ptr, const char **UNUSED(r_info))
 {
 	KeyingSet *ks = (KeyingSet *)ptr->data;
 	
 	/* only editable if there are some paths to change to */
-	return (BLI_listbase_is_empty(&ks->paths) == false);
+	return (BLI_listbase_is_empty(&ks->paths) == false) ? PROP_EDITABLE : 0;
 }
 
 static PointerRNA rna_KeyingSet_active_ksPath_get(PointerRNA *ptr)
@@ -552,6 +569,17 @@ static FCurve *rna_Driver_from_existing(AnimData *adt, bContext *C, FCurve *src_
 	}
 }
 
+static FCurve *rna_Driver_find(AnimData *adt, ReportList *reports, const char *data_path, int index)
+{
+	if (data_path[0] == '\0') {
+		BKE_report(reports, RPT_ERROR, "F-Curve data path empty, invalid argument");
+		return NULL;
+	}
+
+	/* Returns NULL if not found. */
+	return list_find_fcurve(&adt->drivers, data_path, index);
+}
+
 #else
 
 /* helper function for Keying Set -> keying settings */
@@ -652,7 +680,7 @@ static void rna_def_keyingset_info(BlenderRNA *brna)
 	 */
 	prop = RNA_def_property(srna, "bl_options", PROP_ENUM, PROP_NONE);
 	RNA_def_property_enum_sdna(prop, NULL, "keyingflag");
-	RNA_def_property_enum_items(prop, keying_flag_items);
+	RNA_def_property_enum_items(prop, rna_enum_keying_flag_items);
 	RNA_def_property_flag(prop, PROP_REGISTER_OPTIONAL | PROP_ENUM_FLAG);
 	RNA_def_property_ui_text(prop, "Options",  "Keying Set options to use when inserting keyframes");
 	
@@ -665,27 +693,27 @@ static void rna_def_keyingset_info(BlenderRNA *brna)
 	RNA_def_function_flag(func, FUNC_REGISTER);
 	RNA_def_function_return(func, RNA_def_boolean(func, "ok", 1, "", ""));
 	parm = RNA_def_pointer(func, "context", "Context", "", "");
-	RNA_def_property_flag(parm, PROP_REQUIRED);
+	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
 	
 	/* iterator */
 	func = RNA_def_function(srna, "iterator", NULL);
 	RNA_def_function_ui_description(func, "Call generate() on the structs which have properties to be keyframed");
 	RNA_def_function_flag(func, FUNC_REGISTER);
 	parm = RNA_def_pointer(func, "context", "Context", "", "");
-	RNA_def_property_flag(parm, PROP_REQUIRED);
+	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
 	parm = RNA_def_pointer(func, "ks", "KeyingSet", "", "");
-	RNA_def_property_flag(parm, PROP_REQUIRED);
+	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
 	
 	/* generate */
 	func = RNA_def_function(srna, "generate", NULL);
 	RNA_def_function_ui_description(func, "Add Paths to the Keying Set to keyframe the properties of the given data");
 	RNA_def_function_flag(func, FUNC_REGISTER);
 	parm = RNA_def_pointer(func, "context", "Context", "", "");
-	RNA_def_property_flag(parm, PROP_REQUIRED);
+	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
 	parm = RNA_def_pointer(func, "ks", "KeyingSet", "", "");
-	RNA_def_property_flag(parm, PROP_REQUIRED);
+	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
 	parm = RNA_def_pointer(func, "data", "AnyType", "", "");
-	RNA_def_property_flag(parm, PROP_REQUIRED | PROP_RNAPTR | PROP_NEVER_NULL);
+	RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED | PARM_RNAPTR);
 }
 
 static void rna_def_keyingset_path(BlenderRNA *brna)
@@ -710,7 +738,7 @@ static void rna_def_keyingset_path(BlenderRNA *brna)
 	
 	prop = RNA_def_property(srna, "id_type", PROP_ENUM, PROP_NONE);
 	RNA_def_property_enum_sdna(prop, NULL, "idtype");
-	RNA_def_property_enum_items(prop, id_type_items);
+	RNA_def_property_enum_items(prop, rna_enum_id_type_items);
 	RNA_def_property_enum_default(prop, ID_OB);
 	RNA_def_property_enum_funcs(prop, NULL, "rna_ksPath_id_type_set", NULL);
 	RNA_def_property_ui_text(prop, "ID Type", "Type of ID-block that can be used");
@@ -724,7 +752,7 @@ static void rna_def_keyingset_path(BlenderRNA *brna)
 	/* Grouping */
 	prop = RNA_def_property(srna, "group_method", PROP_ENUM, PROP_NONE);
 	RNA_def_property_enum_sdna(prop, NULL, "groupmode");
-	RNA_def_property_enum_items(prop, keyingset_path_grouping_items);
+	RNA_def_property_enum_items(prop, rna_enum_keyingset_path_grouping_items);
 	RNA_def_property_ui_text(prop, "Grouping Method", "Method used to define which Group-name to use");
 	RNA_def_property_update(prop, NC_SCENE | ND_KEYINGSET | NA_EDITED, NULL); /* XXX: maybe a bit too noisy */
 	
@@ -778,18 +806,18 @@ static void rna_def_keyingset_paths(BlenderRNA *brna, PropertyRNA *cprop)
 	parm = RNA_def_pointer(func, "ksp", "KeyingSetPath", "New Path", "Path created and added to the Keying Set");
 	RNA_def_function_return(func, parm);
 	/* ID-block for target */
-	parm = RNA_def_pointer(func, "target_id", "ID", "Target ID", "ID-Datablock for the destination");
-	RNA_def_property_flag(parm, PROP_REQUIRED);
+	parm = RNA_def_pointer(func, "target_id", "ID", "Target ID", "ID data-block for the destination");
+	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
 	/* rna-path */
 	/* XXX hopefully this is long enough */
 	parm = RNA_def_string(func, "data_path", NULL, 256, "Data-Path", "RNA-Path to destination property");
-	RNA_def_property_flag(parm, PROP_REQUIRED);
+	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
 	/* index (defaults to -1 for entire array) */
 	RNA_def_int(func, "index", -1, -1, INT_MAX, "Index",
 	            "The index of the destination property (i.e. axis of Location/Rotation/etc.), "
 	            "or -1 for the entire array", 0, INT_MAX);
 	/* grouping */
-	RNA_def_enum(func, "group_method", keyingset_path_grouping_items, KSP_GROUP_KSNAME,
+	RNA_def_enum(func, "group_method", rna_enum_keyingset_path_grouping_items, KSP_GROUP_KSNAME,
 	             "Grouping Method", "Method used to define which Group-name to use");
 	RNA_def_string(func, "group_name", NULL, 64, "Group Name",
 	               "Name of Action Group to assign destination to (only if grouping mode is to use this name)");
@@ -801,8 +829,8 @@ static void rna_def_keyingset_paths(BlenderRNA *brna, PropertyRNA *cprop)
 	RNA_def_function_flag(func, FUNC_USE_REPORTS);
 	/* path to remove */
 	parm = RNA_def_pointer(func, "path", "KeyingSetPath", "Path", "");
-	RNA_def_property_flag(parm, PROP_REQUIRED | PROP_NEVER_NULL | PROP_RNAPTR);
-	RNA_def_property_clear_flag(parm, PROP_THICK_WRAP);
+	RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED | PARM_RNAPTR);
+	RNA_def_parameter_clear_flags(parm, PROP_THICK_WRAP, 0);
 
 
 	/* Remove All Paths */
@@ -911,8 +939,8 @@ static void rna_api_animdata_nla_tracks(BlenderRNA *brna, PropertyRNA *cprop)
 	RNA_def_function_flag(func, FUNC_USE_REPORTS | FUNC_USE_CONTEXT);
 	RNA_def_function_ui_description(func, "Remove a NLA Track");
 	parm = RNA_def_pointer(func, "track", "NlaTrack", "", "NLA Track to remove");
-	RNA_def_property_flag(parm, PROP_REQUIRED | PROP_NEVER_NULL | PROP_RNAPTR);
-	RNA_def_property_clear_flag(parm, PROP_THICK_WRAP);
+	RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED | PARM_RNAPTR);
+	RNA_def_parameter_clear_flags(parm, PROP_THICK_WRAP, 0);
 
 	prop = RNA_def_property(srna, "active", PROP_POINTER, PROP_NONE);
 	RNA_def_property_struct_type(prop, "NlaTrack");
@@ -936,12 +964,25 @@ static void rna_api_animdata_drivers(BlenderRNA *brna, PropertyRNA *cprop)
 	RNA_def_struct_sdna(srna, "AnimData");
 	RNA_def_struct_ui_text(srna, "Drivers", "Collection of Driver F-Curves");
 	
+	/* AnimData.drivers.from_existing(...) */
 	func = RNA_def_function(srna, "from_existing", "rna_Driver_from_existing");
 	RNA_def_function_flag(func, FUNC_USE_CONTEXT);
 	RNA_def_function_ui_description(func, "Add a new driver given an existing one");
 	RNA_def_pointer(func, "src_driver", "FCurve", "", "Existing Driver F-Curve to use as template for a new one");
 	/* return type */
 	parm = RNA_def_pointer(func, "driver", "FCurve", "", "New Driver F-Curve");
+	RNA_def_function_return(func, parm);
+	
+	/* AnimData.drivers.find(...) */
+	func = RNA_def_function(srna, "find", "rna_Driver_find");
+	RNA_def_function_ui_description(func, "Find a driver F-Curve. Note that this function performs a linear scan "
+	                                "of all driver F-Curves.");
+	RNA_def_function_flag(func, FUNC_USE_REPORTS);
+	parm = RNA_def_string(func, "data_path", NULL, 0, "Data Path", "F-Curve data path");
+	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
+	RNA_def_int(func, "index", 0, 0, INT_MAX, "Index", "Array index", 0, INT_MAX);
+	/* return type */
+	parm = RNA_def_pointer(func, "fcurve", "FCurve", "", "The found F-Curve, or None if it doesn't exist");
 	RNA_def_function_return(func, parm);
 }
 
@@ -952,7 +993,7 @@ void rna_def_animdata_common(StructRNA *srna)
 	prop = RNA_def_property(srna, "animation_data", PROP_POINTER, PROP_NONE);
 	RNA_def_property_pointer_sdna(prop, NULL, "adt");
 	RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-	RNA_def_property_ui_text(prop, "Animation Data", "Animation data for this datablock");
+	RNA_def_property_ui_text(prop, "Animation Data", "Animation data for this data-block");
 }
 
 static void rna_def_animdata(BlenderRNA *brna)
@@ -961,7 +1002,7 @@ static void rna_def_animdata(BlenderRNA *brna)
 	PropertyRNA *prop;
 	
 	srna = RNA_def_struct(brna, "AnimData", NULL);
-	RNA_def_struct_ui_text(srna, "Animation Data", "Animation data for datablock");
+	RNA_def_struct_ui_text(srna, "Animation Data", "Animation data for data-block");
 	RNA_def_struct_ui_icon(srna, ICON_ANIM_DATA);
 	
 	/* NLA */
@@ -978,20 +1019,20 @@ static void rna_def_animdata(BlenderRNA *brna)
 	RNA_def_property_flag(prop, PROP_EDITABLE | PROP_ID_REFCOUNT);
 	RNA_def_property_pointer_funcs(prop, NULL, "rna_AnimData_action_set", NULL, "rna_Action_id_poll");
 	RNA_def_property_editable_func(prop, "rna_AnimData_action_editable");
-	RNA_def_property_ui_text(prop, "Action", "Active Action for this datablock");
+	RNA_def_property_ui_text(prop, "Action", "Active Action for this data-block");
 	RNA_def_property_update(prop, NC_ANIMATION | ND_NLA_ACTCHANGE, "rna_AnimData_update");
 
 	/* Active Action Settings */
 	prop = RNA_def_property(srna, "action_extrapolation", PROP_ENUM, PROP_NONE);
 	RNA_def_property_enum_sdna(prop, NULL, "act_extendmode");
-	RNA_def_property_enum_items(prop, nla_mode_extend_items);
+	RNA_def_property_enum_items(prop, rna_enum_nla_mode_extend_items);
 	RNA_def_property_ui_text(prop, "Action Extrapolation",
 	                         "Action to take for gaps past the Active Action's range (when evaluating with NLA)");
 	RNA_def_property_update(prop, NC_ANIMATION | ND_NLA, NULL);
 	
 	prop = RNA_def_property(srna, "action_blend_type", PROP_ENUM, PROP_NONE);
 	RNA_def_property_enum_sdna(prop, NULL, "act_blendmode");
-	RNA_def_property_enum_items(prop, nla_mode_blend_items);
+	RNA_def_property_enum_items(prop, rna_enum_nla_mode_blend_items);
 	RNA_def_property_ui_text(prop, "Action Blending",
 	                         "Method used for combining Active Action's result with result of NLA stack");
 	RNA_def_property_update(prop, NC_ANIMATION | ND_NLA, NULL); /* this will do? */
@@ -1008,7 +1049,7 @@ static void rna_def_animdata(BlenderRNA *brna)
 	prop = RNA_def_property(srna, "drivers", PROP_COLLECTION, PROP_NONE);
 	RNA_def_property_collection_sdna(prop, NULL, "drivers", NULL);
 	RNA_def_property_struct_type(prop, "FCurve");
-	RNA_def_property_ui_text(prop, "Drivers", "The Drivers/Expressions for this datablock");
+	RNA_def_property_ui_text(prop, "Drivers", "The Drivers/Expressions for this data-block");
 	
 	rna_api_animdata_drivers(brna, prop);
 	
@@ -1017,6 +1058,12 @@ static void rna_def_animdata(BlenderRNA *brna)
 	RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", ADT_NLA_EVAL_OFF);
 	RNA_def_property_ui_text(prop, "NLA Evaluation Enabled", "NLA stack is evaluated when evaluating this block");
 	RNA_def_property_update(prop, NC_ANIMATION | ND_NLA, NULL); /* this will do? */
+
+	prop = RNA_def_property(srna, "use_tweak_mode", PROP_BOOLEAN, PROP_NONE);
+	RNA_def_property_boolean_sdna(prop, NULL, "flag", ADT_NLA_EDIT_ON);
+	RNA_def_property_boolean_funcs(prop, NULL, "rna_AnimData_tweakmode_set");
+	RNA_def_property_ui_text(prop, "Use NLA Tweak Mode", "Whether to enable or disable tweak mode in NLA");
+	RNA_def_property_update(prop, NC_ANIMATION | ND_NLA, NULL);
 }
 
 /* --- */

@@ -29,54 +29,84 @@ CCL_NAMESPACE_BEGIN
 
 /* Return position normalized to 0..1 in mesh bounds */
 
-ccl_device float3 volume_normalized_position(KernelGlobals *kg, const ShaderData *sd, float3 P)
+#if defined(__KERNEL_CUDA__) && __CUDA_ARCH__ < 300
+ccl_device float4 volume_image_texture_3d(int id, float x, float y, float z)
+{
+	float4 r;
+	switch(id) {
+		case 0: r = kernel_tex_image_interp_3d(__tex_image_float4_3d_000, x, y, z); break;
+		case 1: r = kernel_tex_image_interp_3d(__tex_image_float4_3d_001, x, y, z); break;
+		case 2: r = kernel_tex_image_interp_3d(__tex_image_float4_3d_002, x, y, z); break;
+		case 3: r = kernel_tex_image_interp_3d(__tex_image_float4_3d_003, x, y, z); break;
+		case 4: r = kernel_tex_image_interp_3d(__tex_image_float4_3d_004, x, y, z); break;
+	}
+	return r;
+}
+#endif  /* __KERNEL_CUDA__ */
+
+ccl_device_inline float3 volume_normalized_position(KernelGlobals *kg,
+                                                    const ShaderData *sd,
+                                                    float3 P)
 {
 	/* todo: optimize this so it's just a single matrix multiplication when
 	 * possible (not motion blur), or perhaps even just translation + scale */
-	AttributeElement attr_elem;
-	int attr_offset = find_attribute(kg, sd, ATTR_STD_GENERATED_TRANSFORM, &attr_elem);
+	const AttributeDescriptor desc = find_attribute(kg, sd, ATTR_STD_GENERATED_TRANSFORM);
 
 	object_inverse_position_transform(kg, sd, &P);
 
-	if(attr_offset != ATTR_STD_NOT_FOUND) {
-		Transform tfm = primitive_attribute_matrix(kg, sd, attr_offset);
+	if(desc.offset != ATTR_STD_NOT_FOUND) {
+		Transform tfm = primitive_attribute_matrix(kg, sd, desc);
 		P = transform_point(&tfm, P);
 	}
 
 	return P;
 }
 
-ccl_device float volume_attribute_float(KernelGlobals *kg, const ShaderData *sd, AttributeElement elem, int id, float *dx, float *dy)
+ccl_device float volume_attribute_float(KernelGlobals *kg, const ShaderData *sd, const AttributeDescriptor desc, float *dx, float *dy)
 {
-	float3 P = volume_normalized_position(kg, sd, sd->P);
-#ifdef __KERNEL_GPU__
-	float4 r = make_float4(0.0f, 0.0f, 0.0f, 0.0f);
+	float3 P = volume_normalized_position(kg, sd, ccl_fetch(sd, P));
+#ifdef __KERNEL_CUDA__
+#  if __CUDA_ARCH__ >= 300
+	CUtexObject tex = kernel_tex_fetch(__bindless_mapping, desc.offset);
+	float f = kernel_tex_image_interp_3d_float(tex, P.x, P.y, P.z);
+	float4 r = make_float4(f, f, f, 1.0f);
+#  else
+	float4 r = volume_image_texture_3d(desc.offset, P.x, P.y, P.z);
+#  endif
+#elif defined(__KERNEL_OPENCL__)
+	float4 r = kernel_tex_image_interp_3d(kg, desc.offset, P.x, P.y, P.z);
 #else
 	float4 r;
 	if(sd->flag & SD_VOLUME_CUBIC)
-		r = kernel_tex_image_interp_3d_ex(id, P.x, P.y, P.z, INTERPOLATION_CUBIC);
+		r = kernel_tex_image_interp_3d_ex(desc.offset, P.x, P.y, P.z, INTERPOLATION_CUBIC);
 	else
-		r = kernel_tex_image_interp_3d(id, P.x, P.y, P.z);
+		r = kernel_tex_image_interp_3d(desc.offset, P.x, P.y, P.z);
 #endif
 
 	if(dx) *dx = 0.0f;
 	if(dy) *dy = 0.0f;
 
-	/* todo: support float textures to lower memory usage for single floats */
 	return average(float4_to_float3(r));
 }
 
-ccl_device float3 volume_attribute_float3(KernelGlobals *kg, const ShaderData *sd, AttributeElement elem, int id, float3 *dx, float3 *dy)
+ccl_device float3 volume_attribute_float3(KernelGlobals *kg, const ShaderData *sd, const AttributeDescriptor desc, float3 *dx, float3 *dy)
 {
-	float3 P = volume_normalized_position(kg, sd, sd->P);
-#ifdef __KERNEL_GPU__
-	float4 r = make_float4(0.0f, 0.0f, 0.0f, 0.0f);
+	float3 P = volume_normalized_position(kg, sd, ccl_fetch(sd, P));
+#ifdef __KERNEL_CUDA__
+#  if __CUDA_ARCH__ >= 300
+	CUtexObject tex = kernel_tex_fetch(__bindless_mapping, desc.offset);
+	float4 r = kernel_tex_image_interp_3d_float4(tex, P.x, P.y, P.z);
+#  else
+	float4 r = volume_image_texture_3d(desc.offset, P.x, P.y, P.z);
+#  endif
+#elif defined(__KERNEL_OPENCL__)
+	float4 r = kernel_tex_image_interp_3d(kg, desc.offset, P.x, P.y, P.z);
 #else
 	float4 r;
 	if(sd->flag & SD_VOLUME_CUBIC)
-		r = kernel_tex_image_interp_3d_ex(id, P.x, P.y, P.z, INTERPOLATION_CUBIC);
+		r = kernel_tex_image_interp_3d_ex(desc.offset, P.x, P.y, P.z, INTERPOLATION_CUBIC);
 	else
-		r = kernel_tex_image_interp_3d(id, P.x, P.y, P.z);
+		r = kernel_tex_image_interp_3d(desc.offset, P.x, P.y, P.z);
 #endif
 
 	if(dx) *dx = make_float3(0.0f, 0.0f, 0.0f);

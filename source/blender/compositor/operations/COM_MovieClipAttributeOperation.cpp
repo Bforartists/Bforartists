@@ -31,12 +31,14 @@ MovieClipAttributeOperation::MovieClipAttributeOperation() : NodeOperation()
 	this->m_valueSet = false;
 	this->m_framenumber = 0;
 	this->m_attribute = MCA_X;
+	this->m_invert = false;
 }
 
 void MovieClipAttributeOperation::executePixelSampled(float output[4],
                                                       float /*x*/, float /*y*/,
                                                       PixelSampler /*sampler*/)
 {
+	/* TODO(sergey): This code isn't really thread-safe. */
 	if (!this->m_valueSet) {
 		float loc[2], scale, angle;
 		loc[0] = 0.0f;
@@ -45,7 +47,7 @@ void MovieClipAttributeOperation::executePixelSampled(float output[4],
 		angle = 0.0f;
 		if (this->m_clip) {
 			int clip_framenr = BKE_movieclip_remap_scene_to_clip_frame(this->m_clip, this->m_framenumber);
-			BKE_tracking_stabilization_data_get(&this->m_clip->tracking, clip_framenr, getWidth(), getHeight(), loc, &scale, &angle);
+			BKE_tracking_stabilization_data_get(this->m_clip, clip_framenr, getWidth(), getHeight(), loc, &scale, &angle);
 		}
 		switch (this->m_attribute) {
 			case MCA_SCALE:
@@ -60,6 +62,14 @@ void MovieClipAttributeOperation::executePixelSampled(float output[4],
 			case MCA_Y:
 				this->m_value = loc[1];
 				break;
+		}
+		if (this->m_invert) {
+			if (this->m_attribute != MCA_SCALE) {
+				this->m_value = -this->m_value;
+			}
+			else {
+				this->m_value = 1.0f / this->m_value;
+			}
 		}
 		this->m_valueSet = true;
 	}

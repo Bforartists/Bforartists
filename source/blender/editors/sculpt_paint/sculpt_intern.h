@@ -118,17 +118,12 @@ typedef struct SculptUndoNode {
 SculptUndoNode *sculpt_undo_push_node(Object *ob, PBVHNode *node, SculptUndoType type);
 SculptUndoNode *sculpt_undo_get_node(PBVHNode *node);
 void sculpt_undo_push_begin(const char *name);
-void sculpt_undo_push_end(void);
+void sculpt_undo_push_end(const struct bContext *C);
 
 void sculpt_vertcos_to_key(Object *ob, KeyBlock *kb, float (*vertCos)[3]);
 
 void sculpt_update_object_bounding_box(struct Object *ob);
 
-/* Setting zero so we can catch bugs in OpenMP/sculpt. */
-#ifdef DEBUG
-#  define SCULPT_OMP_LIMIT 0
-#else
-#  define SCULPT_OMP_LIMIT 4
-#endif
+#define SCULPT_THREADED_LIMIT 4
 
 #endif

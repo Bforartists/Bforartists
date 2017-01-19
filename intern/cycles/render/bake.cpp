@@ -131,24 +131,20 @@ void BakeManager::set_shader_limit(const size_t x, const size_t y)
 	m_shader_limit = (size_t)pow(2, ceil(log(m_shader_limit)/log(2)));
 }
 
-bool BakeManager::bake(Device *device, DeviceScene *dscene, Scene *scene, Progress& progress, ShaderEvalType shader_type, BakeData *bake_data, float result[])
+bool BakeManager::bake(Device *device, DeviceScene *dscene, Scene *scene, Progress& progress, ShaderEvalType shader_type, const int pass_filter, BakeData *bake_data, float result[])
 {
 	size_t num_pixels = bake_data->size();
 
-	progress.reset_sample();
-	this->num_parts = 0;
+	int num_samples = is_aa_pass(shader_type)? scene->integrator->aa_samples : 1;
 
-	/* calculate the total parts for the progress bar */
+	/* calculate the total pixel samples for the progress bar */
+	total_pixel_samples = 0;
 	for(size_t shader_offset = 0; shader_offset < num_pixels; shader_offset += m_shader_limit) {
 		size_t shader_size = (size_t)fminf(num_pixels - shader_offset, m_shader_limit);
-
-		DeviceTask task(DeviceTask::SHADER);
-		task.shader_w = shader_size;
-
-		this->num_parts += device->get_split_task_count(task);
+		total_pixel_samples += shader_size * num_samples;
 	}
-
-	this->num_samples = is_aa_pass(shader_type)? scene->integrator->aa_samples : 1;
+	progress.reset_sample();
+	progress.set_total_pixel_samples(total_pixel_samples);
 
 	for(size_t shader_offset = 0; shader_offset < num_pixels; shader_offset += m_shader_limit) {
 		size_t shader_size = (size_t)fminf(num_pixels - shader_offset, m_shader_limit);
@@ -177,18 +173,19 @@ bool BakeManager::bake(Device *device, DeviceScene *dscene, Scene *scene, Progre
 
 		device->mem_alloc(d_input, MEM_READ_ONLY);
 		device->mem_copy_to(d_input);
-		device->mem_alloc(d_output, MEM_WRITE_ONLY);
+		device->mem_alloc(d_output, MEM_READ_WRITE);
 
 		DeviceTask task(DeviceTask::SHADER);
 		task.shader_input = d_input.device_pointer;
 		task.shader_output = d_output.device_pointer;
 		task.shader_eval_type = shader_type;
+		task.shader_filter = pass_filter;
 		task.shader_x = 0;
 		task.offset = shader_offset;
 		task.shader_w = d_output.size();
-		task.num_samples = this->num_samples;
+		task.num_samples = num_samples;
 		task.get_cancel = function_bind(&Progress::get_cancel, &progress);
-		task.update_progress_sample = function_bind(&Progress::increment_sample_update, &progress);
+		task.update_progress_sample = function_bind(&Progress::add_samples_update, &progress, _1, _2);
 
 		device->task_add(task);
 		device->task_wait();
@@ -254,23 +251,28 @@ bool BakeManager::is_aa_pass(ShaderEvalType type)
 	}
 }
 
-bool BakeManager::is_light_pass(ShaderEvalType type)
+/* Keep it synced with kernel_bake.h logic */
+int BakeManager::shader_type_to_pass_filter(ShaderEvalType type, const int pass_filter)
 {
+	const int component_flags = pass_filter & (BAKE_FILTER_DIRECT | BAKE_FILTER_INDIRECT | BAKE_FILTER_COLOR);
+
 	switch(type) {
 		case SHADER_EVAL_AO:
-		case SHADER_EVAL_COMBINED:
+			return BAKE_FILTER_AO;
 		case SHADER_EVAL_SHADOW:
-		case SHADER_EVAL_DIFFUSE_DIRECT:
-		case SHADER_EVAL_GLOSSY_DIRECT:
-		case SHADER_EVAL_TRANSMISSION_DIRECT:
-		case SHADER_EVAL_SUBSURFACE_DIRECT:
-		case SHADER_EVAL_DIFFUSE_INDIRECT:
-		case SHADER_EVAL_GLOSSY_INDIRECT:
-		case SHADER_EVAL_TRANSMISSION_INDIRECT:
-		case SHADER_EVAL_SUBSURFACE_INDIRECT:
-			return true;
+			return BAKE_FILTER_DIRECT;
+		case SHADER_EVAL_DIFFUSE:
+			return BAKE_FILTER_DIFFUSE | component_flags;
+		case SHADER_EVAL_GLOSSY:
+			return BAKE_FILTER_GLOSSY | component_flags;
+		case SHADER_EVAL_TRANSMISSION:
+			return BAKE_FILTER_TRANSMISSION | component_flags;
+		case SHADER_EVAL_SUBSURFACE:
+			return BAKE_FILTER_SUBSURFACE | component_flags;
+		case SHADER_EVAL_COMBINED:
+			return pass_filter;
 		default:
-			return false;
+			return 0;
 	}
 }
 

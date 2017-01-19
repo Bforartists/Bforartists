@@ -42,6 +42,7 @@
 
 #include "BKE_deform.h"
 #include "BKE_DerivedMesh.h"
+#include "BKE_library_query.h"
 #include "BKE_modifier.h"
 
 
@@ -97,12 +98,11 @@ static CustomDataMask requiredDataMask(Object *UNUSED(ob), ModifierData *md)
 
 static void foreachObjectLink(
         ModifierData *md, Object *ob,
-        void (*walk)(void *userData, Object *ob, Object **obpoin),
-        void *userData)
+        ObjectWalkFunc walk, void *userData)
 {
 	CastModifierData *cmd = (CastModifierData *) md;
 
-	walk(userData, ob, &cmd->object);
+	walk(userData, ob, &cmd->object, IDWALK_NOP);
 }
 
 static void updateDepgraph(ModifierData *md, DagForest *forest,
@@ -124,12 +124,13 @@ static void updateDepgraph(ModifierData *md, DagForest *forest,
 static void updateDepsgraph(ModifierData *md,
                             struct Main *UNUSED(bmain),
                             struct Scene *UNUSED(scene),
-                            Object *UNUSED(ob),
+                            Object *object,
                             struct DepsNodeHandle *node)
 {
 	CastModifierData *cmd = (CastModifierData *)md;
 	if (cmd->object != NULL) {
 		DEG_add_object_relation(node, cmd->object, DEG_OB_COMP_TRANSFORM, "Cast Modifier");
+		DEG_add_object_relation(node, object, DEG_OB_COMP_TRANSFORM, "Cast Modifier");
 	}
 }
 
@@ -498,6 +499,7 @@ ModifierTypeInfo modifierType_Cast = {
 	/* structSize */        sizeof(CastModifierData),
 	/* type */              eModifierTypeType_OnlyDeform,
 	/* flags */             eModifierTypeFlag_AcceptsCVs |
+	                        eModifierTypeFlag_AcceptsLattice |
 	                        eModifierTypeFlag_SupportsEditmode,
 
 	/* copyData */          copyData,

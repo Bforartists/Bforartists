@@ -100,6 +100,8 @@ void ED_operatortypes_object(void)
 	WM_operatortype_append(OBJECT_OT_select_linked);
 	WM_operatortype_append(OBJECT_OT_select_grouped);
 	WM_operatortype_append(OBJECT_OT_select_mirror);
+	WM_operatortype_append(OBJECT_OT_select_more);
+	WM_operatortype_append(OBJECT_OT_select_less);
 
 	WM_operatortype_append(GROUP_OT_create);
 	WM_operatortype_append(GROUP_OT_objects_remove_all);
@@ -331,24 +333,27 @@ void ED_keymap_object(wmKeyConfig *keyconf)
 	kmi = WM_keymap_add_item(keymap, "OBJECT_OT_select_all", IKEY, KM_PRESS, KM_CTRL, 0);
 	RNA_enum_set(kmi->ptr, "action", SEL_INVERT);
 
+	WM_keymap_add_item(keymap, "OBJECT_OT_select_more", PADPLUSKEY, KM_PRESS, KM_CTRL, 0);
+	WM_keymap_add_item(keymap, "OBJECT_OT_select_less", PADMINUS, KM_PRESS, KM_CTRL, 0);
+
 	WM_keymap_add_item(keymap, "OBJECT_OT_select_linked", LKEY, KM_PRESS, KM_SHIFT, 0);
 	WM_keymap_add_item(keymap, "OBJECT_OT_select_grouped", GKEY, KM_PRESS, KM_SHIFT, 0);
 	WM_keymap_add_item(keymap, "OBJECT_OT_select_mirror", MKEY, KM_PRESS, KM_CTRL | KM_SHIFT, 0);
 	
 	kmi = WM_keymap_add_item(keymap, "OBJECT_OT_select_hierarchy", LEFTBRACKETKEY, KM_PRESS, 0, 0);
-	RNA_enum_set_identifier(kmi->ptr, "direction", "PARENT");
+	RNA_enum_set_identifier(NULL, kmi->ptr, "direction", "PARENT");
 	RNA_boolean_set(kmi->ptr, "extend", false);
 
 	kmi = WM_keymap_add_item(keymap, "OBJECT_OT_select_hierarchy", LEFTBRACKETKEY, KM_PRESS, KM_SHIFT, 0);
-	RNA_enum_set_identifier(kmi->ptr, "direction", "PARENT");
+	RNA_enum_set_identifier(NULL, kmi->ptr, "direction", "PARENT");
 	RNA_boolean_set(kmi->ptr, "extend", true);
 
 	kmi = WM_keymap_add_item(keymap, "OBJECT_OT_select_hierarchy", RIGHTBRACKETKEY, KM_PRESS, 0, 0);
-	RNA_enum_set_identifier(kmi->ptr, "direction", "CHILD");
+	RNA_enum_set_identifier(NULL, kmi->ptr, "direction", "CHILD");
 	RNA_boolean_set(kmi->ptr, "extend", false);
 
 	kmi = WM_keymap_add_item(keymap, "OBJECT_OT_select_hierarchy", RIGHTBRACKETKEY, KM_PRESS, KM_SHIFT, 0);
-	RNA_enum_set_identifier(kmi->ptr, "direction", "CHILD");
+	RNA_enum_set_identifier(NULL, kmi->ptr, "direction", "CHILD");
 	RNA_boolean_set(kmi->ptr, "extend", true);
 
 	WM_keymap_verify_item(keymap, "OBJECT_OT_parent_set", PKEY, KM_PRESS, KM_CTRL, 0);
@@ -360,9 +365,21 @@ void ED_keymap_object(wmKeyConfig *keyconf)
 	WM_keymap_verify_item(keymap, "OBJECT_OT_constraint_add_with_targets", CKEY, KM_PRESS, KM_CTRL | KM_SHIFT, 0);
 	WM_keymap_verify_item(keymap, "OBJECT_OT_constraints_clear", CKEY, KM_PRESS, KM_CTRL | KM_ALT, 0);
 	
-	WM_keymap_verify_item(keymap, "OBJECT_OT_location_clear", GKEY, KM_PRESS, KM_ALT, 0);
-	WM_keymap_verify_item(keymap, "OBJECT_OT_rotation_clear", RKEY, KM_PRESS, KM_ALT, 0);
-	WM_keymap_verify_item(keymap, "OBJECT_OT_scale_clear", SKEY, KM_PRESS, KM_ALT, 0);
+	
+	kmi = WM_keymap_add_item(keymap, "OBJECT_OT_location_clear", GKEY, KM_PRESS, KM_ALT, 0);
+	RNA_boolean_set(kmi->ptr, "clear_delta", false);
+	kmi = WM_keymap_add_item(keymap, "OBJECT_OT_rotation_clear", RKEY, KM_PRESS, KM_ALT, 0);
+	RNA_boolean_set(kmi->ptr, "clear_delta", false);
+	kmi = WM_keymap_add_item(keymap, "OBJECT_OT_scale_clear", SKEY, KM_PRESS, KM_ALT, 0);
+	RNA_boolean_set(kmi->ptr, "clear_delta", false);
+	
+	kmi = WM_keymap_add_item(keymap, "OBJECT_OT_location_clear", GKEY, KM_PRESS, KM_ALT | KM_SHIFT, 0);
+	RNA_boolean_set(kmi->ptr, "clear_delta", true);
+	kmi = WM_keymap_add_item(keymap, "OBJECT_OT_rotation_clear", RKEY, KM_PRESS, KM_ALT | KM_SHIFT, 0);
+	RNA_boolean_set(kmi->ptr, "clear_delta", true);
+	kmi = WM_keymap_add_item(keymap, "OBJECT_OT_scale_clear", SKEY, KM_PRESS, KM_ALT | KM_SHIFT, 0);
+	RNA_boolean_set(kmi->ptr, "clear_delta", true);
+	
 	WM_keymap_verify_item(keymap, "OBJECT_OT_origin_clear", OKEY, KM_PRESS, KM_ALT, 0);
 	
 	WM_keymap_add_item(keymap, "OBJECT_OT_hide_view_clear", HKEY, KM_PRESS, KM_ALT, 0);
@@ -464,6 +481,7 @@ void ED_keymap_proportional_cycle(struct wmKeyConfig *UNUSED(keyconf), struct wm
 
 	kmi = WM_keymap_add_item(keymap, "WM_OT_context_cycle_enum", OKEY, KM_PRESS, KM_SHIFT, 0);
 	RNA_string_set(kmi->ptr, "data_path", "tool_settings.proportional_edit_falloff");
+	RNA_boolean_set(kmi->ptr, "wrap", true);
 }
 
 void ED_keymap_proportional_obmode(struct wmKeyConfig *UNUSED(keyconf), struct wmKeyMap *keymap)

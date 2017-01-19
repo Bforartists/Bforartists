@@ -25,9 +25,10 @@ extern "C" {
 #include "BKE_node.h"
 #include "BLI_threads.h"
 }
-#include "BKE_main.h"
+
+#include "BLT_translation.h"
+
 #include "BKE_scene.h"
-#include "BKE_global.h"
 
 #include "COM_compositor.h"
 #include "COM_ExecutionSystem.h"
@@ -37,11 +38,6 @@ extern "C" {
 
 static ThreadMutex s_compositorMutex;
 static bool is_compositorMutex_init = false;
-
-static void intern_freeCompositorCaches()
-{
-	deintializeDistortionCache();
-}
 
 void COM_execute(RenderData *rd, Scene *scene, bNodeTree *editingtree, int rendering,
                  const ColorManagedViewSettings *viewSettings,
@@ -78,7 +74,7 @@ void COM_execute(RenderData *rd, Scene *scene, bNodeTree *editingtree, int rende
 
 	/* set progress bar to 0% and status to init compositing */
 	editingtree->progress(editingtree->prh, 0.0);
-	editingtree->stats_draw(editingtree->sdh, (char *)"Compositing");
+	editingtree->stats_draw(editingtree->sdh, IFACE_("Compositing"));
 
 	bool twopass = (editingtree->flag & NTREE_TWO_PASS) > 0 && !rendering;
 	/* initialize execution system */
@@ -103,20 +99,10 @@ void COM_execute(RenderData *rd, Scene *scene, bNodeTree *editingtree, int rende
 	BLI_mutex_unlock(&s_compositorMutex);
 }
 
-static void UNUSED_FUNCTION(COM_freeCaches)()
-{
-	if (is_compositorMutex_init) {
-		BLI_mutex_lock(&s_compositorMutex);
-		intern_freeCompositorCaches();
-		BLI_mutex_unlock(&s_compositorMutex);
-	}
-}
-
 void COM_deinitialize()
 {
 	if (is_compositorMutex_init) {
 		BLI_mutex_lock(&s_compositorMutex);
-		intern_freeCompositorCaches();
 		WorkScheduler::deinitialize();
 		is_compositorMutex_init = false;
 		BLI_mutex_unlock(&s_compositorMutex);

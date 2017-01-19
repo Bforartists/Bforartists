@@ -1,4 +1,4 @@
-﻿# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -27,25 +27,11 @@ class CONSOLE_HT_header(Header):
     def draw(self, context):
         layout = self.layout.row()
 
-        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
+        layout.template_header()
+
         CONSOLE_MT_editor_menus.draw_collapsible(context, layout)
 
         layout.operator("console.autocomplete", text="Autocomplete")
-
-# bfa - show hide the editormenu
-class ALL_MT_editormenu(Menu):
-    bl_label = ""
-
-    def draw(self, context):
-        self.draw_menus(self.layout, context)
-
-    @staticmethod
-    def draw_menus(layout, context):
-
-        row = layout.row(align=True)
-        row.template_header() # editor type menus
-
-
 
 
 class CONSOLE_MT_editor_menus(Menu):
@@ -84,8 +70,8 @@ class CONSOLE_MT_console(Menu):
         layout.separator()
 
         layout.operator("screen.area_dupli")
-        layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area") # bfa - the separated tooltip. Class is in space_text.py
-        layout.operator("screen.screen_full_area").use_hide_panels = True
+        layout.operator("screen.screen_full_area")
+        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area").use_hide_panels = True
 
 
 class CONSOLE_MT_language(Menu):

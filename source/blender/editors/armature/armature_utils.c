@@ -34,6 +34,7 @@
 
 #include "BLI_blenlib.h"
 #include "BLI_math.h"
+#include "BLI_string_utils.h"
 
 #include "BKE_armature.h"
 #include "BKE_context.h"
@@ -179,7 +180,6 @@ EditBone *ED_armature_bone_find_shared_parent(EditBone *ebone_child[], const uns
 
 	/* accumulate */
 	for (i = 0; i < ebone_child_tot; i++) {
-		ebone_iter = ebone_child[i];
 		for (ebone_iter = ebone_child[i]->parent; ebone_iter; ebone_iter = ebone_iter->parent) {
 			EBONE_TEMP_UINT(ebone_iter) += 1;
 		}
@@ -263,7 +263,7 @@ EditBone *ED_armature_bone_get_mirrored(const ListBase *edbo, EditBone *ebo)
 	if (ebo == NULL)
 		return NULL;
 	
-	BKE_deform_flip_side_name(name_flip, ebo->name, false);
+	BLI_string_flip_side_name(name_flip, ebo->name, false, sizeof(name_flip));
 	
 	if (!STREQ(name_flip, ebo->name)) {
 		return ED_armature_bone_find_name(edbo, name_flip);
@@ -368,6 +368,8 @@ void transform_armature_mirror_update(Object *obedit)
 					eboflip->tail[2] = ebo->tail[2];
 					eboflip->rad_tail = ebo->rad_tail;
 					eboflip->roll = -ebo->roll;
+					eboflip->curveOutX = -ebo->curveOutX;
+					eboflip->roll2 = -ebo->roll2;
 					
 					/* Also move connected children, in case children's name aren't mirrored properly */
 					for (children = arm->edbo->first; children; children = children->next) {
@@ -383,6 +385,8 @@ void transform_armature_mirror_update(Object *obedit)
 					eboflip->head[2] = ebo->head[2];
 					eboflip->rad_head = ebo->rad_head;
 					eboflip->roll = -ebo->roll;
+					eboflip->curveInX = -ebo->curveInX;
+					eboflip->roll1 = -ebo->roll1;
 					
 					/* Also move connected parent, in case parent's name isn't mirrored properly */
 					if (eboflip->parent && eboflip->flag & BONE_CONNECTED) {
@@ -396,6 +400,11 @@ void transform_armature_mirror_update(Object *obedit)
 					eboflip->roll = -ebo->roll;
 					eboflip->xwidth = ebo->xwidth;
 					eboflip->zwidth = ebo->zwidth;
+					
+					eboflip->curveInX = -ebo->curveInX;
+					eboflip->curveOutX = -ebo->curveOutX;
+					eboflip->roll1 = -ebo->roll1;
+					eboflip->roll2 = -ebo->roll2;
 				}
 			}
 		}
@@ -416,7 +425,9 @@ EditBone *make_boneList(ListBase *edbo, ListBase *bones, EditBone *parent, Bone 
 	for (curBone = bones->first; curBone; curBone = curBone->next) {
 		eBone = MEM_callocN(sizeof(EditBone), "make_editbone");
 		
-		/*	Copy relevant data from bone to eBone */
+		/* Copy relevant data from bone to eBone
+		 * Keep selection logic in sync with ED_armature_sync_selection.
+		 */
 		eBone->parent = parent;
 		BLI_strncpy(eBone->name, curBone->name, sizeof(eBone->name));
 		eBone->flag = curBone->flag;
@@ -427,11 +438,11 @@ EditBone *make_boneList(ListBase *edbo, ListBase *bones, EditBone *parent, Bone 
 			eBone->flag |= BONE_TIPSEL;
 			if (eBone->parent && (eBone->flag & BONE_CONNECTED)) {
 				eBone->parent->flag |= BONE_TIPSEL;
-				eBone->flag &= ~BONE_ROOTSEL; /* this is ignored when there is a connected parent, so unset it */
 			}
-			else {
-				eBone->flag |= BONE_ROOTSEL;
-			}
+
+			/* For connected bones, take care when changing the selection when we have a connected parent,
+			 * this flag is a copy of '(eBone->parent->flag & BONE_TIPSEL)'. */
+			eBone->flag |= BONE_ROOTSEL;
 		}
 		else {
 			/* if the bone is not selected, but connected to its parent
@@ -457,7 +468,16 @@ EditBone *make_boneList(ListBase *edbo, ListBase *bones, EditBone *parent, Bone 
 		eBone->rad_tail = curBone->rad_tail;
 		eBone->segments = curBone->segments;
 		eBone->layer = curBone->layer;
-		
+
+		eBone->roll1 = curBone->roll1;
+		eBone->roll2 = curBone->roll2;
+		eBone->curveInX = curBone->curveInX;
+		eBone->curveInY = curBone->curveInY;
+		eBone->curveOutX = curBone->curveOutX;
+		eBone->curveOutY = curBone->curveOutY;
+		eBone->scaleIn = curBone->scaleIn;
+		eBone->scaleOut = curBone->scaleOut;
+
 		if (curBone->prop)
 			eBone->prop = IDP_CopyProperty(curBone->prop);
 		
@@ -565,9 +585,9 @@ void ED_armature_from_edit(bArmature *arm)
 	
 	/* remove zero sized bones, this gives unstable restposes */
 	for (eBone = arm->edbo->first; eBone; eBone = neBone) {
-		float len = len_v3v3(eBone->head, eBone->tail);
+		float len_sq = len_squared_v3v3(eBone->head, eBone->tail);
 		neBone = eBone->next;
-		if (len <= 0.000001f) {  /* FLT_EPSILON is too large? */
+		if (len_sq <= SQUARE(0.000001f)) {  /* FLT_EPSILON is too large? */
 			EditBone *fBone;
 			
 			/*	Find any bones that refer to this bone	*/
@@ -612,7 +632,17 @@ void ED_armature_from_edit(bArmature *arm)
 		newBone->rad_tail = eBone->rad_tail;
 		newBone->segments = eBone->segments;
 		newBone->layer = eBone->layer;
-		
+
+		newBone->roll1 = eBone->roll1;
+		newBone->roll2 = eBone->roll2;
+		newBone->curveInX = eBone->curveInX;
+		newBone->curveInY = eBone->curveInY;
+		newBone->curveOutX = eBone->curveOutX;
+		newBone->curveOutY = eBone->curveOutY;
+		newBone->scaleIn = eBone->scaleIn;
+		newBone->scaleOut = eBone->scaleOut;
+
+
 		if (eBone->prop)
 			newBone->prop = IDP_CopyProperty(eBone->prop);
 	}

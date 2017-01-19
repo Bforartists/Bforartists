@@ -27,7 +27,7 @@ There are 3 main uses for the terminal, these are:
 
 .. note::
 
-   For Linux and OSX users this means starting the terminal first, then running Blender from within it.
+   For Linux and macOS users this means starting the terminal first, then running Blender from within it.
    On Windows the terminal can be enabled from the help menu.
 
 
@@ -114,9 +114,9 @@ This example shows loading a script in as a module and executing a module functi
 .. code-block:: python
 
    import myscript
-   import imp
+   import importlib
 
-   imp.reload(myscript)
+   importlib.reload(myscript)
    myscript.main()
 
 
@@ -143,8 +143,8 @@ this example adds the current blend files directory to the search path, then loa
       sys.path.append(blend_dir)
 
    import myscript
-   import imp
-   imp.reload(myscript)
+   import importlib
+   importlib.reload(myscript)
    myscript.main()
 
 
@@ -213,12 +213,21 @@ this has the disadvantage that any extensions you have installed in your systems
 
 There are 2 ways around this:
 
-- remove Blender Python sub-directory, Blender will then fallback on the systems Python and use that instead
+- Remove Blender Python sub-directory, Blender will then fallback on the systems Python and use that instead.
+
+  Depending on your platform,
+  you may need to explicitly reference the location of your Python installation using the
+  ``PYTHONPATH`` environment variable, eg:
+
+  .. code-block:: sh
+
+     PYTHONPATH=/usr/lib/python3.5 ./blender
+
   .. warning::
 
      The Python version must match the one that Blender comes with.
 
-- copy the extensions into Blender's Python sub-directory so Blender can access them,
+- Copy or link the extensions into Blender's Python sub-directory so Blender can access them,
   you could also copy the entire Python installation into Blenders sub-directory,
   replacing the one Blender comes with.
   This works as long as the Python versions match and the paths are created in the same relative locations.
@@ -297,7 +306,7 @@ Advantages include:
 This is marked advanced because to run Blender as a Python module requires a special build option.
 
 For instructions on building see
-`Building Blender as a Python module <http://wiki.blender.org/index.php/User:Ideasman42/BlenderAsPyModule>`_
+`Building Blender as a Python module <https://wiki.blender.org/index.php/User:Ideasman42/BlenderAsPyModule>`_
 
 
 Python Safety (Build Option)
@@ -307,7 +316,7 @@ Since it's possible to access data which has been removed (see Gotcha's),
 this can be hard to track down the cause of crashes.
 
 To raise Python exceptions on accessing freed data (rather than crashing),
-enable the CMake build option WITH_PYTHON_SAFETY.
+enable the CMake build option ``WITH_PYTHON_SAFETY``.
 
 This enables data tracking which makes data access about 2x slower
 which is why the option isn't enabled in release builds.

@@ -41,6 +41,8 @@
 struct OCIO_ConstProcessorRcPtr;
 struct ImBuf;
 
+extern float imbuf_luma_coefficients[3];
+
 #define MAX_COLORSPACE_NAME          64
 #define MAX_COLORSPACE_DESCRIPTION  512
 
@@ -61,7 +63,7 @@ typedef struct ColorManagedDisplay {
 	struct ColorManagedDisplay *next, *prev;
 	int index;
 	char name[MAX_COLORSPACE_NAME];
-	ListBase views;
+	ListBase views;  /* LinkData.data -> ColorManagedView */
 
 	struct OCIO_ConstProcessorRcPtr *to_scene_linear;
 	struct OCIO_ConstProcessorRcPtr *from_scene_linear;

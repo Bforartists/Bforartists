@@ -100,8 +100,96 @@ def mapping_node_order_flip(node):
         node.rotation = quat.to_euler('XYZ')
 
 
+def vector_curve_node_remap(node):
+    """
+    Remap values of vector curve node from normalized to absolute values
+    """
+    if node.bl_idname == 'ShaderNodeVectorCurve':
+        node.mapping.use_clip = False
+        for curve in node.mapping.curves:
+            for point in curve.points:
+                point.location.x = (point.location.x * 2.0) - 1.0
+                point.location.y = (point.location.y - 0.5) * 2.0
+        node.mapping.update()
+
+
+def custom_bake_remap(scene):
+    """
+    Remap bake types into the new types and set the flags accordingly
+    """
+    bake_lookup = (
+        'COMBINED',
+        'AO',
+        'SHADOW',
+        'NORMAL',
+        'UV',
+        'EMIT',
+        'ENVIRONMENT',
+        'DIFFUSE_DIRECT',
+        'DIFFUSE_INDIRECT',
+        'DIFFUSE_COLOR',
+        'GLOSSY_DIRECT',
+        'GLOSSY_INDIRECT',
+        'GLOSSY_COLOR',
+        'TRANSMISSION_DIRECT',
+        'TRANSMISSION_INDIRECT',
+        'TRANSMISSION_COLOR',
+        'SUBSURFACE_DIRECT',
+        'SUBSURFACE_INDIRECT',
+        'SUBSURFACE_COLOR')
+
+    diffuse_direct_idx = bake_lookup.index('DIFFUSE_DIRECT')
+
+    cscene = scene.cycles
+
+    # Old bake type
+    bake_type_idx = cscene.get("bake_type")
+
+    if bake_type_idx is None:
+        cscene.bake_type = 'COMBINED'
+        return
+
+    # File doesn't need versioning
+    if bake_type_idx < diffuse_direct_idx:
+        return
+
+    # File needs versioning
+    bake_type = bake_lookup[bake_type_idx]
+    cscene.bake_type, end = bake_type.split('_')
+
+    if end == 'DIRECT':
+        scene.render.bake.use_pass_indirect = False
+        scene.render.bake.use_pass_color = False
+
+    elif end == 'INDIRECT':
+        scene.render.bake.use_pass_direct = False
+        scene.render.bake.use_pass_color = False
+
+    elif end == 'COLOR':
+        scene.render.bake.use_pass_direct = False
+        scene.render.bake.use_pass_indirect = False
+
+
 @persistent
 def do_versions(self):
+    if bpy.context.user_preferences.version <= (2, 78, 1):
+        prop = bpy.context.user_preferences.addons[__package__].preferences
+        system = bpy.context.user_preferences.system
+        if not prop.is_property_set("compute_device_type"):
+            # Device might not currently be available so this can fail
+            try:
+                if system.legacy_compute_device_type == 1:
+                    prop.compute_device_type = 'OPENCL'
+                elif system.legacy_compute_device_type == 2:
+                    prop.compute_device_type = 'CUDA'
+                else:
+                    prop.compute_device_type = 'NONE'
+            except:
+                pass
+
+            # Init device list for UI
+            prop.get_devices()
+
     # We don't modify startup file because it assumes to
     # have all the default values only.
     if not bpy.data.is_saved:
@@ -140,3 +228,77 @@ def do_versions(self):
     # Euler order was ZYX in previous versions.
     if bpy.data.version <= (2, 73, 4):
         foreach_cycles_node(mapping_node_order_flip)
+
+    if bpy.data.version <= (2, 76, 5):
+        foreach_cycles_node(vector_curve_node_remap)
+
+    # Baking types changed
+    if bpy.data.version <= (2, 76, 6):
+        for scene in bpy.data.scenes:
+            custom_bake_remap(scene)
+
+    # Several default changes for 2.77
+    if bpy.data.version <= (2, 76, 8):
+        for scene in bpy.data.scenes:
+            cscene = scene.cycles
+
+            # Samples
+            if not cscene.is_property_set("samples"):
+                cscene.samples = 10
+
+            # Preview Samples
+            if not cscene.is_property_set("preview_samples"):
+                cscene.preview_samples = 10
+
+            # Filter
+            if not cscene.is_property_set("filter_type"):
+                cscene.pixel_filter_type = 'GAUSSIAN'
+
+            # Tile Order
+            if not cscene.is_property_set("tile_order"):
+                cscene.tile_order = 'CENTER'
+
+        for lamp in bpy.data.lamps:
+            clamp = lamp.cycles
+
+            # MIS
+            if not clamp.is_property_set("use_multiple_importance_sampling"):
+                clamp.use_multiple_importance_sampling = False
+
+        for mat in bpy.data.materials:
+            cmat = mat.cycles
+
+            # Volume Sampling
+            if not cmat.is_property_set("volume_sampling"):
+                cmat.volume_sampling = 'DISTANCE'
+
+    if bpy.data.version <= (2, 76, 9):
+        for world in bpy.data.worlds:
+            cworld = world.cycles
+
+            # World MIS
+            if not cworld.is_property_set("sample_as_light"):
+                cworld.sample_as_light = False
+
+            # World MIS Samples
+            if not cworld.is_property_set("samples"):
+                cworld.samples = 4
+
+            # World MIS Resolution
+            if not cworld.is_property_set("sample_map_resolution"):
+                cworld.sample_map_resolution = 256
+
+    if bpy.data.version <= (2, 76, 10):
+        for scene in bpy.data.scenes:
+            cscene = scene.cycles
+            if cscene.is_property_set("filter_type"):
+                if not cscene.is_property_set("pixel_filter_type"):
+                    cscene.pixel_filter_type = cscene.filter_type
+                if cscene.filter_type == 'BLACKMAN_HARRIS':
+                    cscene.filter_type = 'GAUSSIAN'
+
+    if bpy.data.version <= (2, 78, 2):
+        for scene in bpy.data.scenes:
+            cscene = scene.cycles
+            if not cscene.is_property_set("light_sampling_threshold"):
+                cscene.light_sampling_threshold = 0.0

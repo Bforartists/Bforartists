@@ -25,6 +25,9 @@
  */
 
 #include "BLI_rect.h"
+#include "BLI_fileops.h"
+
+#include "BLO_readfile.h"
 
 #include "BKE_context.h"
 

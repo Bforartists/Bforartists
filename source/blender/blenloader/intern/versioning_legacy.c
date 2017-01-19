@@ -589,7 +589,7 @@ void blo_do_versions_pre250(FileData *fd, Library *lib, Main *main)
 		/* tex->extend and tex->imageflag have changed: */
 		Tex *tex = main->tex.first;
 		while (tex) {
-			if (tex->id.flag & LIB_NEED_LINK) {
+			if (tex->id.tag & LIB_TAG_NEED_LINK) {
 
 				if (tex->extend == 0) {
 					if (tex->xrepeat || tex->yrepeat) {
@@ -1418,7 +1418,7 @@ void blo_do_versions_pre250(FileData *fd, Library *lib, Main *main)
 		}
 
 		for (sce = main->scene.first; sce; sce = sce->id.next) {
-			sce->audio.mixrate = 44100;
+			sce->audio.mixrate = 48000;
 			sce->audio.flag |= AUDIO_SCRUB;
 			sce->r.mode |= R_ENVMAP;
 		}
@@ -1787,14 +1787,6 @@ void blo_do_versions_pre250(FileData *fd, Library *lib, Main *main)
 			ma = ma->id.next;
 		}
 
-		/* this should have been done loooong before! */
-#if 0   /* deprecated in 2.5+ */
-		while (ob) {
-			if (ob->ipowin == 0)
-				ob->ipowin = ID_OB;
-			ob = ob->id.next;
-		}
-#endif
 		for (sc = main->screen.first; sc; sc = sc->id.next) {
 			ScrArea *sa;
 			for (sa = sc->areabase.first; sa; sa = sa->next) {
@@ -2219,7 +2211,7 @@ void blo_do_versions_pre250(FileData *fd, Library *lib, Main *main)
 		}
 		for (sce = main->scene.first; sce; sce = sce->id.next) {
 			if (sce->audio.mixrate == 0)
-				sce->audio.mixrate = 44100;
+				sce->audio.mixrate = 48000;
 
 			if (sce->r.xparts <2 )
 				sce->r.xparts = 4;
@@ -3043,7 +3035,7 @@ void blo_do_versions_pre250(FileData *fd, Library *lib, Main *main)
 				part->id.lib = ob->id.lib;
 
 				part->id.us--;
-				part->id.flag |= (ob->id.flag & LIB_NEED_LINK);
+				part->id.tag |= (ob->id.tag & LIB_TAG_NEED_LINK);
 
 				psys->totpart = 0;
 				psys->flag = PSYS_CURRENT;
@@ -3246,7 +3238,6 @@ void blo_do_versions_pre250(FileData *fd, Library *lib, Main *main)
 		idproperties_fix_group_lengths(main->key);
 		idproperties_fix_group_lengths(main->world);
 		idproperties_fix_group_lengths(main->screen);
-		idproperties_fix_group_lengths(main->script);
 		idproperties_fix_group_lengths(main->vfont);
 		idproperties_fix_group_lengths(main->text);
 		idproperties_fix_group_lengths(main->sound);

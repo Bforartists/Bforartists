@@ -173,7 +173,7 @@ bool BLI_rcti_inside_rcti(rcti *rct_a, const rcti *rct_b)
 }
 
 
-/* based closely on 'isect_line_line_v2_int', but in modified so corner cases are treated as intersections */
+/* based closely on 'isect_seg_seg_v2_int', but in modified so corner cases are treated as intersections */
 static int isect_segments_i(const int v1[2], const int v2[2], const int v3[2], const int v4[2])
 {
 	const double div = (double)((v2[0] - v1[0]) * (v4[1] - v3[1]) - (v2[1] - v1[1]) * (v4[0] - v3[0]));
@@ -420,20 +420,16 @@ void BLI_rctf_recenter(rctf *rect, float x, float y)
 /* change width & height around the central location */
 void BLI_rcti_resize(rcti *rect, int x, int y)
 {
-	rect->xmin = rect->xmax = BLI_rcti_cent_x(rect);
-	rect->ymin = rect->ymax = BLI_rcti_cent_y(rect);
-	rect->xmin -= x / 2;
-	rect->ymin -= y / 2;
+	rect->xmin = BLI_rcti_cent_x(rect) - (x / 2);
+	rect->ymin = BLI_rcti_cent_y(rect) - (y / 2);
 	rect->xmax = rect->xmin + x;
 	rect->ymax = rect->ymin + y;
 }
 
 void BLI_rctf_resize(rctf *rect, float x, float y)
 {
-	rect->xmin = rect->xmax = BLI_rctf_cent_x(rect);
-	rect->ymin = rect->ymax = BLI_rctf_cent_y(rect);
-	rect->xmin -= x * 0.5f;
-	rect->ymin -= y * 0.5f;
+	rect->xmin = BLI_rctf_cent_x(rect) - (x * 0.5f);
+	rect->ymin = BLI_rctf_cent_y(rect) - (y * 0.5f);
 	rect->xmax = rect->xmin + x;
 	rect->ymax = rect->ymin + y;
 }
@@ -474,7 +470,7 @@ void BLI_rctf_interp(rctf *rect, const rctf *rect_a, const rctf *rect_b, const f
 /* BLI_rcti_interp() not needed yet */
 
 
-bool BLI_rctf_clamp_pt_v(const struct rctf *rect, float xy[2])
+bool BLI_rctf_clamp_pt_v(const rctf *rect, float xy[2])
 {
 	bool changed = false;
 	if (xy[0] < rect->xmin) { xy[0] = rect->xmin; changed = true; }
@@ -484,7 +480,7 @@ bool BLI_rctf_clamp_pt_v(const struct rctf *rect, float xy[2])
 	return changed;
 }
 
-bool BLI_rcti_clamp_pt_v(const struct rcti *rect, int xy[2])
+bool BLI_rcti_clamp_pt_v(const rcti *rect, int xy[2])
 {
 	bool changed = false;
 	if (xy[0] < rect->xmin) { xy[0] = rect->xmin; changed = true; }
@@ -494,7 +490,96 @@ bool BLI_rcti_clamp_pt_v(const struct rcti *rect, int xy[2])
 	return changed;
 }
 
-bool BLI_rctf_compare(const struct rctf *rect_a, const struct rctf *rect_b, const float limit)
+/**
+ * Clamp \a rect within \a rect_bounds, setting \a r_xy to the offset.
+ *
+ * \return true if a change is made.
+ */
+bool BLI_rctf_clamp(rctf *rect, const rctf *rect_bounds, float r_xy[2])
+{
+	bool changed = false;
+
+	r_xy[0] = 0.0f;
+	r_xy[1] = 0.0f;
+
+	if (rect->xmin < rect_bounds->xmin) {
+		float ofs = rect_bounds->xmin - rect->xmin;
+		rect->xmin += ofs;
+		rect->xmax += ofs;
+		r_xy[0] += ofs;
+		changed = true;
+	}
+
+	if (rect->xmax > rect_bounds->xmax) {
+		float ofs = rect_bounds->xmax - rect->xmax;
+		rect->xmin += ofs;
+		rect->xmax += ofs;
+		r_xy[0] += ofs;
+		changed = true;
+	}
+
+	if (rect->ymin < rect_bounds->ymin) {
+		float ofs = rect_bounds->ymin - rect->ymin;
+		rect->ymin += ofs;
+		rect->ymax += ofs;
+		r_xy[1] += ofs;
+		changed = true;
+	}
+
+	if (rect->ymax > rect_bounds->ymax) {
+		float ofs = rect_bounds->ymax - rect->ymax;
+		rect->ymin += ofs;
+		rect->ymax += ofs;
+		r_xy[1] += ofs;
+		changed = true;
+	}
+
+	return changed;
+}
+
+bool BLI_rcti_clamp(rcti *rect, const rcti *rect_bounds, int r_xy[2])
+{
+	bool changed = false;
+
+	r_xy[0] = 0;
+	r_xy[1] = 0;
+
+	if (rect->xmin < rect_bounds->xmin) {
+		int ofs = rect_bounds->xmin - rect->xmin;
+		rect->xmin += ofs;
+		rect->xmax += ofs;
+		r_xy[0] += ofs;
+		changed = true;
+	}
+
+	if (rect->xmax > rect_bounds->xmax) {
+		int ofs = rect_bounds->xmax - rect->xmax;
+		rect->xmin += ofs;
+		rect->xmax += ofs;
+		r_xy[0] += ofs;
+		changed = true;
+	}
+
+	if (rect->ymin < rect_bounds->ymin) {
+		int ofs = rect_bounds->ymin - rect->ymin;
+		rect->ymin += ofs;
+		rect->ymax += ofs;
+		r_xy[1] += ofs;
+		changed = true;
+	}
+
+	if (rect->ymax > rect_bounds->ymax) {
+		int ofs = rect_bounds->ymax - rect->ymax;
+		rect->ymin += ofs;
+		rect->ymax += ofs;
+		r_xy[1] += ofs;
+		changed = true;
+	}
+
+	return changed;
+}
+
+bool BLI_rctf_compare(const rctf *rect_a, const rctf *rect_b, const float limit)
 {
 	if (fabsf(rect_a->xmin - rect_b->xmin) < limit)
 		if (fabsf(rect_a->xmax - rect_b->xmax) < limit)
@@ -505,7 +590,7 @@ bool BLI_rctf_compare(const struct rctf *rect_a, const struct rctf *rect_b, cons
 	return false;
 }
 
-bool BLI_rcti_compare(const struct rcti *rect_a, const struct rcti *rect_b)
+bool BLI_rcti_compare(const rcti *rect_a, const rcti *rect_b)
 {
 	if (rect_a->xmin == rect_b->xmin)
 		if (rect_a->xmax == rect_b->xmax)

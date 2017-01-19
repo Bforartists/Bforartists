@@ -316,7 +316,9 @@ static bool object_hook_index_array(Scene *scene, Object *obedit,
 			BMEditMesh *em;
 
 			EDBM_mesh_load(obedit);
-			EDBM_mesh_make(scene->toolsettings, obedit);
+			EDBM_mesh_make(scene->toolsettings, obedit, true);
+
+			DAG_id_tag_update(obedit->data, 0);
 
 			em = me->edit_btmesh;
 
@@ -331,8 +333,8 @@ static bool object_hook_index_array(Scene *scene, Object *obedit,
 		}
 		case OB_CURVE:
 		case OB_SURF:
-			load_editNurb(obedit);
-			make_editNurb(obedit);
+			ED_curve_editnurb_load(obedit);
+			ED_curve_editnurb_make(obedit);
 			return return_editcurve_indexar(obedit, r_tot, r_indexar, r_cent);
 		case OB_LATTICE:
 		{

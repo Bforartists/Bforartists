@@ -160,21 +160,27 @@ void UI_fontstyle_draw_ex(
 	/* set the flag */
 	if (fs->shadow) {
 		font_flag |= BLF_SHADOW;
-		BLF_shadow(fs->uifont_id, fs->shadow, fs->shadowcolor, fs->shadowcolor, fs->shadowcolor, fs->shadowalpha);
+		const float shadow_color[4] = {fs->shadowcolor, fs->shadowcolor, fs->shadowcolor, fs->shadowalpha};
+		BLF_shadow(fs->uifont_id, fs->shadow, shadow_color);
 		BLF_shadow_offset(fs->uifont_id, fs->shadx, fs->shady);
 	}
 	if (fs->kerning == 1) {
 		font_flag |= BLF_KERNING_DEFAULT;
 	}
-
 	if (fs->word_wrap == 1) {
 		font_flag |= BLF_WORD_WRAP;
 	}
 
 	BLF_enable(fs->uifont_id, font_flag);
 
-	yofs = BLI_rcti_size_y(rect) - BLF_height_max(fs->uifont_id);
-
+	if (fs->word_wrap == 1) {
+		/* draw from boundbox top */
+		yofs = BLI_rcti_size_y(rect) - BLF_height_max(fs->uifont_id);
+	}
+	else {
+		/* draw from boundbox center */
+		yofs = ceil(0.5f * (BLI_rcti_size_y(rect) - BLF_ascender(fs->uifont_id)));
+	}
 
 	if (fs->align == UI_STYLE_TEXT_CENTER) {
 		xofs = floor(0.5f * (BLI_rcti_size_x(rect) - BLF_width(fs->uifont_id, str, len)));
@@ -246,7 +252,8 @@ void UI_fontstyle_draw_rotated(const uiFontStyle *fs, const rcti *rect, const ch
 
 	if (fs->shadow) {
 		BLF_enable(fs->uifont_id, BLF_SHADOW);
-		BLF_shadow(fs->uifont_id, fs->shadow, fs->shadowcolor, fs->shadowcolor, fs->shadowcolor, fs->shadowalpha);
+		const float shadow_color[4] = {fs->shadowcolor, fs->shadowcolor, fs->shadowcolor, fs->shadowalpha};
+		BLF_shadow(fs->uifont_id, fs->shadow, shadow_color);
 		BLF_shadow_offset(fs->uifont_id, fs->shadx, fs->shady);
 	}
 
@@ -405,6 +412,16 @@ void uiStyleInit(void)
 		BLF_unload_id(font->blf_id);
 	}
 
+	if (blf_mono_font != -1) {
+		BLF_unload_id(blf_mono_font);
+		blf_mono_font = -1;
+	}
+
+	if (blf_mono_font_render != -1) {
+		BLF_unload_id(blf_mono_font_render);
+		blf_mono_font_render = -1;
+	}
+
 	font = U.uifonts.first;
 
 	/* default builtin */
@@ -491,20 +508,25 @@ void uiStyleInit(void)
 			monofont_ttf = (unsigned char *)datatoc_bmonofont_ttf;
 		}
 	}
-
-	/* reload */
-	BLF_unload("monospace");
-	blf_mono_font = -1;
-	blf_mono_font_render = -1;
 #endif
 
 	/* XXX, this should be moved into a style, but for now best only load the monospaced font once. */
-	if (blf_mono_font == -1)
+	BLI_assert(blf_mono_font == -1);
+	if (U.font_path_ui_mono[0]) {
+		blf_mono_font = BLF_load_unique(U.font_path_ui_mono);
+	}
+	if (blf_mono_font == -1) {
 		blf_mono_font = BLF_load_mem_unique("monospace", monofont_ttf, monofont_size);
+	}
 
 	BLF_size(blf_mono_font, 12 * U.pixelsize, 72);
 	
-	/* second for rendering else we get threading problems */
+	/**
+	 * Second for rendering else we get threading problems,
+	 *
+	 * \note This isn't good that the render font depends on the preferences,
+	 * keep for now though, since without this there is no way to display many unicode chars.
+	 */
 	if (blf_mono_font_render == -1)
 		blf_mono_font_render = BLF_load_mem_unique("monospace", monofont_ttf, monofont_size);
 

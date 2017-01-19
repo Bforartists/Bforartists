@@ -32,6 +32,7 @@
 #ifndef __BPY_EXTERN_H__
 #define __BPY_EXTERN_H__
 
+struct PathResolvedRNA;
 struct Text; /* defined in DNA_text_types.h */
 struct ID; /* DNA_ID.h */
 struct Object; /* DNA_object_types.h */
@@ -72,10 +73,12 @@ void BPY_thread_restore(BPy_ThreadStatePtr tstate);
 #define BPy_BEGIN_ALLOW_THREADS { BPy_ThreadStatePtr _bpy_saved_tstate = BPY_thread_save(); (void)0
 #define BPy_END_ALLOW_THREADS BPY_thread_restore(_bpy_saved_tstate); } (void)0
 
+bool	BPY_execute_filepath(struct bContext *C, const char *filepath, struct ReportList *reports);
+bool	BPY_execute_text(struct bContext *C, struct Text *text, struct ReportList *reports, const bool do_jump);
+bool	BPY_execute_string_as_number(struct bContext *C, const char *expr, double *value, const bool verbose);
+bool	BPY_execute_string_ex(struct bContext *C, const char *expr, bool use_eval);
+bool	BPY_execute_string(struct bContext *C, const char *expr);
 
-/* 2.5 UI Scripts */
-int		BPY_filepath_exec(struct bContext *C, const char *filepath, struct ReportList *reports);
-int		BPY_text_exec(struct bContext *C, struct Text *text, struct ReportList *reports, const bool do_jump);
 void	BPY_text_free_code(struct Text *text);
 void	BPY_modules_update(struct bContext *C); // XXX - annoying, need this for pointers that get out of date
 void	BPY_modules_load_user(struct bContext *C);
@@ -83,11 +86,7 @@ void	BPY_modules_load_user(struct bContext *C);
 void	BPY_app_handlers_reset(const short do_all);
 
 void	BPY_driver_reset(void);
-float	BPY_driver_exec(struct ChannelDriver *driver, const float evaltime);
-
-int		BPY_button_exec(struct bContext *C, const char *expr, double *value, const bool verbose);
-int		BPY_string_exec_ex(struct bContext *C, const char *expr, bool use_eval);
-int		BPY_string_exec(struct bContext *C, const char *expr);
+float	BPY_driver_exec(struct PathResolvedRNA *anim_rna, struct ChannelDriver *driver, const float evaltime);
 
 void	BPY_DECREF(void *pyob_ptr);	/* Py_DECREF() */
 void	BPY_DECREF_RNA_INVALIDATE(void *pyob_ptr);
@@ -96,6 +95,8 @@ void	BPY_context_set(struct bContext *C);
 void	BPY_context_update(struct bContext *C);
 
 void	BPY_id_release(struct ID *id);
+
+bool	BPY_string_is_keyword(const char *str);
 
 /* I18n for addons */
 #ifdef WITH_INTERNATIONAL

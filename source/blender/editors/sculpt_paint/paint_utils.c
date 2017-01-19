@@ -177,7 +177,7 @@ float paint_get_tex_pixel(MTex *mtex, float u, float v, struct ImagePool *pool, 
 	float co[3] = {u, v, 0.0f};
 
 	externtex(mtex, co, &intensity,
-	          rgba, rgba + 1, rgba + 2, rgba + 3, thread, pool, false);
+	          rgba, rgba + 1, rgba + 2, rgba + 3, thread, pool, false, false);
 
 	return intensity;
 }
@@ -189,7 +189,7 @@ void paint_get_tex_pixel_col(MTex *mtex, float u, float v, float rgba[4], struct
 	float intensity;
 
 	hasrgb = externtex(mtex, co, &intensity,
-	                   rgba, rgba + 1, rgba + 2, rgba + 3, thread, pool, false);
+	                   rgba, rgba + 1, rgba + 2, rgba + 3, thread, pool, false, false);
 	if (!hasrgb) {
 		rgba[0] = intensity;
 		rgba[1] = intensity;
@@ -395,6 +395,29 @@ void flip_v3_v3(float out[3], const float in[3], const char symm)
 		out[2] = -in[2];
 	else
 		out[2] = in[2];
+}
+
+void flip_qt_qt(float out[4], const float in[4], const char symm)
+{
+	float axis[3], angle;
+
+	quat_to_axis_angle(axis, &angle, in);
+	normalize_v3(axis);
+
+	if (symm & PAINT_SYMM_X) {
+		axis[0] *= -1.0f;
+		angle *= -1.0f;
+	}
+	if (symm & PAINT_SYMM_Y) {
+		axis[1] *= -1.0f;
+		angle *= -1.0f;
+	}
+	if (symm & PAINT_SYMM_Z) {
+		axis[2] *= -1.0f;
+		angle *= -1.0f;
+	}
+
+	axis_angle_normalized_to_quat(out, axis, angle);
 }
 
 /* used for both 3d view and image window */

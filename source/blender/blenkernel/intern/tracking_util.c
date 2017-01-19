@@ -42,8 +42,8 @@
 #include "BLI_math.h"
 #include "BLI_listbase.h"
 #include "BLI_ghash.h"
-#include "BLI_path_util.h"
 #include "BLI_string.h"
+#include "BLI_string_utils.h"
 
 #include "BLT_translation.h"
 
@@ -482,7 +482,18 @@ MovieTrackingMarker *tracking_get_keyframed_marker(MovieTrackingTrack *track,
 			 * fallback to the first marker in current tracked segment
 			 * as a keyframe.
 			 */
-			if (next_marker && next_marker->flag & MARKER_DISABLED) {
+			if (next_marker == NULL) {
+				/* Could happen when trying to get reference marker for the fist
+				 * one on the segment which isn't surrounded by disabled markers.
+				 *
+				 * There's no really good choice here, just use the reference
+				 * marker which looks correct..
+				 */
+				if (marker_keyed_fallback == NULL) {
+					marker_keyed_fallback = cur_marker;
+				}
+			}
+			else if (next_marker->flag & MARKER_DISABLED) {
 				if (marker_keyed_fallback == NULL)
 					marker_keyed_fallback = cur_marker;
 			}
@@ -518,7 +529,7 @@ typedef struct AccessCacheKey {
 static unsigned int accesscache_hashhash(const void *key_v)
 {
 	const AccessCacheKey *key = (const AccessCacheKey *) key_v;
-	/* TODP(sergey): Need better hasing here for faster frame access. */
+	/* TODP(sergey): Need better hashing here for faster frame access. */
 	return key->clip_index << 16 | key->frame;
 }
 
@@ -751,8 +762,8 @@ static ImBuf *accessor_get_ibuf(TrackingImageAccessor *accessor,
 			final_ibuf = IMB_dupImBuf(orig_ibuf);
 		}
 		IMB_scaleImBuf(final_ibuf,
-		               ibuf->x / (1 << downscale),
-		               ibuf->y / (1 << downscale));
+		               orig_ibuf->x / (1 << downscale),
+		               orig_ibuf->y / (1 << downscale));
 	}
 
 	if (transform != NULL) {
@@ -769,7 +780,7 @@ static ImBuf *accessor_get_ibuf(TrackingImageAccessor *accessor,
 	}
 
 	if (input_mode == LIBMV_IMAGE_MODE_RGBA) {
-		BLI_assert(ibuf->channels == 3 || ibuf->channels == 4);
+		BLI_assert(orig_ibuf->channels == 3 || orig_ibuf->channels == 4);
 		/* pass */
 	}
 	else /* if (input_mode == LIBMV_IMAGE_MODE_MONO) */ {

@@ -59,6 +59,8 @@
 #include "BKE_key.h"
 #include "BKE_lattice.h"
 #include "BKE_library.h"
+#include "BKE_library_query.h"
+#include "BKE_library_remap.h"
 #include "BKE_main.h"
 #include "BKE_modifier.h"
 #include "BKE_object.h"
@@ -251,12 +253,10 @@ void BKE_lattice_resize(Lattice *lt, int uNew, int vNew, int wNew, Object *ltOb)
 	MEM_freeN(vertexCos);
 }
 
-Lattice *BKE_lattice_add(Main *bmain, const char *name)
+void BKE_lattice_init(Lattice *lt)
 {
-	Lattice *lt;
-	
-	lt = BKE_libblock_alloc(bmain, ID_LT, name);
-	
+	BLI_assert(MEMCMP_STRUCT_OFS_IS_ZERO(lt, id));
+
 	lt->flag = LT_GRID;
 	
 	lt->typeu = lt->typev = lt->typew = KEY_BSPLINE;
@@ -264,19 +264,30 @@ Lattice *BKE_lattice_add(Main *bmain, const char *name)
 	lt->def = MEM_callocN(sizeof(BPoint), "lattvert"); /* temporary */
 	BKE_lattice_resize(lt, 2, 2, 2, NULL);  /* creates a uniform lattice */
 	lt->actbp = LT_ACTBP_NONE;
-		
+}
+
+Lattice *BKE_lattice_add(Main *bmain, const char *name)
+{
+	Lattice *lt;
+
+	lt = BKE_libblock_alloc(bmain, ID_LT, name);
+
+	BKE_lattice_init(lt);
+
 	return lt;
 }
 
-Lattice *BKE_lattice_copy(Lattice *lt)
+Lattice *BKE_lattice_copy(Main *bmain, Lattice *lt)
 {
 	Lattice *ltn;
 
-	ltn = BKE_libblock_copy(&lt->id);
+	ltn = BKE_libblock_copy(bmain, &lt->id);
 	ltn->def = MEM_dupallocN(lt->def);
 
-	ltn->key = BKE_key_copy(ltn->key);
-	if (ltn->key) ltn->key->from = (ID *)ltn;
+	if (lt->key) {
+		ltn->key = BKE_key_copy(bmain, ltn->key);
+		ltn->key->from = (ID *)ltn;
+	}
 	
 	if (lt->dvert) {
 		int tot = lt->pntsu * lt->pntsv * lt->pntsw;
@@ -286,79 +297,39 @@ Lattice *BKE_lattice_copy(Lattice *lt)
 
 	ltn->editlatt = NULL;
 
-	if (lt->id.lib) {
-		BKE_id_lib_local_paths(G.main, lt->id.lib, &ltn->id);
-	}
+	BKE_id_copy_ensure_local(bmain, &lt->id, &ltn->id);
 
 	return ltn;
 }
 
+/** Free (or release) any data used by this lattice (does not free the lattice itself). */
 void BKE_lattice_free(Lattice *lt)
 {
-	if (lt->def) MEM_freeN(lt->def);
-	if (lt->dvert) BKE_defvert_array_free(lt->dvert, lt->pntsu * lt->pntsv * lt->pntsw);
+	BKE_animdata_free(&lt->id, false);
+
+	MEM_SAFE_FREE(lt->def);
+	if (lt->dvert) {
+		BKE_defvert_array_free(lt->dvert, lt->pntsu * lt->pntsv * lt->pntsw);
+		lt->dvert = NULL;
+	}
 	if (lt->editlatt) {
 		Lattice *editlt = lt->editlatt->latt;
 
-		if (editlt->def) MEM_freeN(editlt->def);
-		if (editlt->dvert) BKE_defvert_array_free(editlt->dvert, lt->pntsu * lt->pntsv * lt->pntsw);
+		if (editlt->def)
+			MEM_freeN(editlt->def);
+		if (editlt->dvert)
+			BKE_defvert_array_free(editlt->dvert, lt->pntsu * lt->pntsv * lt->pntsw);
 
 		MEM_freeN(editlt);
 		MEM_freeN(lt->editlatt);
-	}
-	
-	/* free animation data */
-	if (lt->adt) {
-		BKE_animdata_free(&lt->id);
-		lt->adt = NULL;
+		lt->editlatt = NULL;
 	}
 }
 
 
-void BKE_lattice_make_local(Lattice *lt)
+void BKE_lattice_make_local(Main *bmain, Lattice *lt, const bool lib_local)
 {
-	Main *bmain = G.main;
-	Object *ob;
-	bool is_local = false, is_lib = false;
-
-	/* - only lib users: do nothing
-	 * - only local users: set flag
-	 * - mixed: make copy
-	 */
-	
-	if (lt->id.lib == NULL) return;
-	if (lt->id.us == 1) {
-		id_clear_lib_data(bmain, &lt->id);
-		return;
-	}
-	
-	for (ob = bmain->object.first; ob && ELEM(false, is_lib, is_local); ob = ob->id.next) {
-		if (ob->data == lt) {
-			if (ob->id.lib) is_lib = true;
-			else is_local = true;
-		}
-	}
-	
-	if (is_local && is_lib == false) {
-		id_clear_lib_data(bmain, &lt->id);
-	}
-	else if (is_local && is_lib) {
-		Lattice *lt_new = BKE_lattice_copy(lt);
-		lt_new->id.us = 0;
-
-		/* Remap paths of new ID using old library as base. */
-		BKE_id_lib_local_paths(bmain, lt->id.lib, &lt_new->id);
-
-		for (ob = bmain->object.first; ob; ob = ob->id.next) {
-			if (ob->data == lt) {
-				if (ob->id.lib == NULL) {
-					ob->data = lt_new;
-					lt_new->id.us++;
-					lt->id.us--;
-				}
-			}
-		}
-	}
+	BKE_id_make_local_generic(bmain, &lt->id, true, lib_local);
 }
 
 typedef struct LatticeDeformData {
@@ -1075,6 +1046,7 @@ void BKE_lattice_modifiers_calc(Scene *scene, Object *ob)
 
 		md->scene = scene;
 		
+		if (!(mti->flags & eModifierTypeFlag_AcceptsLattice)) continue;
 		if (!(md->mode & eModifierMode_Realtime)) continue;
 		if (editmode && !(md->mode & eModifierMode_Editmode)) continue;
 		if (mti->isDisabled && mti->isDisabled(md, 0)) continue;
@@ -1145,8 +1117,9 @@ static void boundbox_lattice(Object *ob)
 	Lattice *lt;
 	float min[3], max[3];
 
-	if (ob->bb == NULL)
-		ob->bb = MEM_mallocN(sizeof(BoundBox), "Lattice boundbox");
+	if (ob->bb == NULL) {
+		ob->bb = MEM_callocN(sizeof(BoundBox), "Lattice boundbox");
+	}
 
 	bb = ob->bb;
 	lt = ob->data;
@@ -1154,6 +1127,8 @@ static void boundbox_lattice(Object *ob)
 	INIT_MINMAX(min, max);
 	BKE_lattice_minmax_dl(ob, lt, min, max);
 	BKE_boundbox_init_from_minmax(bb, min, max);
+
+	bb->flag &= ~BOUNDBOX_DIRTY;
 }
 
 BoundBox *BKE_lattice_boundbox_get(Object *ob)

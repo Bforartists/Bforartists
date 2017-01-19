@@ -48,14 +48,16 @@ void bmo_triangulate_exec(BMesh *bm, BMOperator *op)
 	const int ngon_method = BMO_slot_int_get(op->slots_in, "ngon_method");
 
 	BMOpSlot *slot_facemap_out = BMO_slot_get(op->slots_out, "face_map.out");
+	BMOpSlot *slot_facemap_double_out = BMO_slot_get(op->slots_out, "face_map_double.out");
 
 	BM_mesh_elem_hflag_disable_all(bm, BM_FACE | BM_EDGE, BM_ELEM_TAG, false);
 	BMO_slot_buffer_hflag_enable(bm, op->slots_in, "faces", BM_FACE, BM_ELEM_TAG, false);
 
-	BM_mesh_triangulate(bm, quad_method, ngon_method, true, op, slot_facemap_out);
+	BM_mesh_triangulate(bm, quad_method, ngon_method, true, op, slot_facemap_out, slot_facemap_double_out);
 
 	BMO_slot_buffer_from_enabled_hflag(bm, op, op->slots_out, "edges.out", BM_EDGE, BM_ELEM_TAG);
 	BMO_slot_buffer_from_enabled_hflag(bm, op, op->slots_out, "faces.out", BM_FACE, BM_ELEM_TAG);
+
 }
 
 struct SortNormal {
@@ -89,7 +91,7 @@ void bmo_triangle_fill_exec(BMesh *bm, BMOperator *op)
 		BMVert **e_verts = &e->v1;
 		unsigned int i;
 
-		BMO_elem_flag_enable(bm, e, EDGE_MARK);
+		BMO_edge_flag_enable(bm, e, EDGE_MARK);
 
 		calc_winding = (calc_winding || BM_edge_is_boundary(e));
 
@@ -121,7 +123,7 @@ void bmo_triangle_fill_exec(BMesh *bm, BMOperator *op)
 		for (sf_vert = sf_ctx.fillvertbase.first, i = 0; sf_vert; sf_vert = sf_vert->next, i++) {
 			BMVert *v = sf_vert->tmp.p;
 			BMIter eiter;
-			BMEdge *e, *e_pair[2];
+			BMEdge *e_pair[2];
 			unsigned int e_index = 0;
 
 			nors[i].value = -1.0f;
@@ -130,7 +132,7 @@ void bmo_triangle_fill_exec(BMesh *bm, BMOperator *op)
 			add_v3_v3(normal, v->no);
 
 			BM_ITER_ELEM (e, &eiter, v, BM_EDGES_OF_VERT) {
-				if (BMO_elem_flag_test(bm, e, EDGE_MARK)) {
+				if (BMO_edge_flag_test(bm, e, EDGE_MARK)) {
 					if (e_index == 2) {
 						e_index = 0;
 						break;
@@ -201,7 +203,7 @@ void bmo_triangle_fill_exec(BMesh *bm, BMOperator *op)
 
 			for (i = 0, i_prev = 2; i < 3; i_prev = i++) {
 				e = BM_edge_exists(v_tri[i], v_tri[i_prev]);
-				if (e && BM_edge_is_boundary(e) && BMO_elem_flag_test(bm, e, EDGE_MARK)) {
+				if (e && BM_edge_is_boundary(e) && BMO_edge_flag_test(bm, e, EDGE_MARK)) {
 					winding_votes += (e->l->v == v_tri[i]) ? 1 : -1;
 				}
 			}
@@ -224,10 +226,10 @@ void bmo_triangle_fill_exec(BMesh *bm, BMOperator *op)
 		                            sf_tri->v1->tmp.p, sf_tri->v2->tmp.p, sf_tri->v3->tmp.p, NULL,
 		                            NULL, BM_CREATE_NO_DOUBLE);
 		
-		BMO_elem_flag_enable(bm, f, ELE_NEW);
+		BMO_face_flag_enable(bm, f, ELE_NEW);
 		BM_ITER_ELEM (l, &liter, f, BM_LOOPS_OF_FACE) {
-			if (!BMO_elem_flag_test(bm, l->e, EDGE_MARK)) {
-				BMO_elem_flag_enable(bm, l->e, ELE_NEW);
+			if (!BMO_edge_flag_test(bm, l->e, EDGE_MARK)) {
+				BMO_edge_flag_enable(bm, l->e, ELE_NEW);
 			}
 		}
 	}
@@ -242,29 +244,30 @@ void bmo_triangle_fill_exec(BMesh *bm, BMOperator *op)
 		BMO_slot_buffer_flag_enable(bm, bmop.slots_out, "geom.out", BM_FACE | BM_EDGE, ELE_NEW);
 		BMO_op_finish(bm, &bmop);
 	}
-	
-	BMO_slot_buffer_from_enabled_flag(bm, op, op->slots_out, "geom.out", BM_EDGE | BM_FACE, ELE_NEW);
 
 	if (use_dissolve) {
-		BMO_ITER (e, &siter, op->slots_out, "geom.out", BM_EDGE) {
-			if (LIKELY(e->l)) {  /* in rare cases the edges face will have already been removed from the edge */
-				BMFace *f_new;
-				f_new = BM_faces_join_pair(bm, e->l->f,
-				                           e->l->radial_next->f, e,
-				                           false); /* join faces */
-				if (f_new) {
-					BMO_elem_flag_enable(bm, f_new, ELE_NEW);
-					BM_edge_kill(bm, e);
+		BMEdge *e_next;
+		BMIter iter;
+
+		BM_ITER_MESH_MUTABLE (e, e_next, &iter, bm, BM_EDGES_OF_MESH) {
+			if (BMO_edge_flag_test(bm, e, ELE_NEW)) {
+				/* in rare cases the edges face will have already been removed from the edge */
+				if (LIKELY(e->l)) {
+					BMFace *f_new = BM_faces_join_pair(bm, e->l, e->l->radial_next, false);
+					if (f_new) {
+						BMO_face_flag_enable(bm, f_new, ELE_NEW);
+						BM_edge_kill(bm, e);
+					}
+					else {
+						BMO_error_clear(bm);
+					}
 				}
 				else {
-					BMO_error_clear(bm);
+					BM_edge_kill(bm, e);
 				}
 			}
-			else {
-				BM_edge_kill(bm, e);
-			}
 		}
-
-		BMO_slot_buffer_from_enabled_flag(bm, op, op->slots_out, "geom.out", BM_EDGE | BM_FACE, ELE_NEW);
 	}
+
+	BMO_slot_buffer_from_enabled_flag(bm, op, op->slots_out, "geom.out", BM_EDGE | BM_FACE, ELE_NEW);
 }

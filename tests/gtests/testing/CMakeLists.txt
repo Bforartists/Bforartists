@@ -24,17 +24,17 @@
 set(INC
 	.
 	..
-	../../../extern/libmv/third_party/gflags
+	../../../extern/gflags/src
 	../../../extern/gtest/include
 )
 
 if(WIN32)
 	list(APPEND INC
-		../../../extern/libmv/third_party/glog/src/windows
+		../../../extern/glog/src/windows
 	)
 else()
 	list(APPEND INC
-		../../../extern/libmv/third_party/glog/src
+		../../../extern/glog/src
 	)
 endif()
 
@@ -46,5 +46,8 @@ set(SRC
 
 	testing.h
 )
+
+add_definitions(${GFLAGS_DEFINES})
+add_definitions(${GLOG_DEFINES})
 
 blender_add_lib(bf_testing_main "${SRC}" "${INC}" "${INC_SYS}")

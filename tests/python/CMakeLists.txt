@@ -73,6 +73,16 @@ if(USE_EXPERIMENTAL_TESTS)
 	)
 endif()
 
+# ------------------------------------------------------------------------------
+# PY API TESTS
+add_test(script_pyapi_bpy_path ${TEST_BLENDER_EXE}
+	--python ${CMAKE_CURRENT_LIST_DIR}/bl_pyapi_bpy_path.py
+)
+
+add_test(script_pyapi_bpy_utils_units ${TEST_BLENDER_EXE}
+	--python ${CMAKE_CURRENT_LIST_DIR}/bl_pyapi_bpy_utils_units.py
+)
+
 # test running mathutils testing script
 add_test(script_pyapi_mathutils ${TEST_BLENDER_EXE}
 	--python ${CMAKE_CURRENT_LIST_DIR}/bl_pyapi_mathutils.py
@@ -120,7 +130,7 @@ add_test(export_obj_cube ${TEST_BLENDER_EXE}
 	--run={'FINISHED'}&bpy.ops.export_scene.obj\(filepath='${TEST_OUT_DIR}/export_obj_cube.obj',use_selection=False\)
 	--md5_source=${TEST_OUT_DIR}/export_obj_cube.obj
 	--md5_source=${TEST_OUT_DIR}/export_obj_cube.mtl
-	--md5=e776c6f8e9e0afba346e85bcd10b8e99 --md5_method=FILE
+	--md5=e80660437ad9bfe082849641c361a233 --md5_method=FILE
 )
 
 add_test(export_obj_nurbs ${TEST_BLENDER_EXE}

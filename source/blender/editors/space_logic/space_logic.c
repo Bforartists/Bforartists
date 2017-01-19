@@ -38,7 +38,10 @@
 #include "BLI_blenlib.h"
 #include "BLI_utildefines.h"
 
+#include "DNA_gpencil_types.h"
+
 #include "BKE_context.h"
+#include "BKE_library.h"
 #include "BKE_screen.h"
 
 #include "ED_space_api.h"
@@ -113,8 +116,8 @@ static SpaceLink *logic_new(const bContext *C)
 	ar->regiontype= RGN_TYPE_UI;
 	ar->alignment= RGN_ALIGN_RIGHT;
 	
-	/* main area */
-	ar= MEM_callocN(sizeof(ARegion), "main area for logic");
+	/* main region */
+	ar= MEM_callocN(sizeof(ARegion), "main region for logic");
 	
 	BLI_addtail(&slogic->regionbase, ar);
 	ar->regiontype= RGN_TYPE_WINDOW;
@@ -183,7 +186,9 @@ static void logic_keymap(struct wmKeyConfig *keyconf)
 	WM_keymap_add_menu(keymap, "LOGIC_MT_logicbricks_add", AKEY, KM_PRESS, KM_SHIFT, 0);
 	
 	WM_keymap_add_item(keymap, "LOGIC_OT_view_all", HOMEKEY, KM_PRESS, 0, 0);
+#ifdef WITH_INPUT_NDOF
 	WM_keymap_add_item(keymap, "LOGIC_OT_view_all", NDOF_BUTTON_FIT, KM_PRESS, 0, 0);
+#endif
 }
 
 static void logic_refresh(const bContext *UNUSED(C), ScrArea *UNUSED(sa))
@@ -230,7 +235,7 @@ static int logic_context(const bContext *UNUSED(C), const char *UNUSED(member), 
 
 
 /* add handlers, stuff you only do once or on area/region changes */
-static void logic_main_area_init(wmWindowManager *wm, ARegion *ar)
+static void logic_main_region_init(wmWindowManager *wm, ARegion *ar)
 {
 	wmKeyMap *keymap;
 	
@@ -241,7 +246,7 @@ static void logic_main_area_init(wmWindowManager *wm, ARegion *ar)
 	WM_event_add_keymap_handler(&ar->handlers, keymap);
 }
 
-static void logic_main_area_draw(const bContext *C, ARegion *ar)
+static void logic_main_region_draw(const bContext *C, ARegion *ar)
 {
 	/* draw entirely, view changes should be handled here */
 //	SpaceLogic *slogic= CTX_wm_space_logic(C);
@@ -270,7 +275,7 @@ static void logic_main_area_draw(const bContext *C, ARegion *ar)
 /* *********************** buttons region ************************ */
 
 /* add handlers, stuff you only do once or on area/region changes */
-static void logic_buttons_area_init(wmWindowManager *wm, ARegion *ar)
+static void logic_buttons_region_init(wmWindowManager *wm, ARegion *ar)
 {
 	wmKeyMap *keymap;
 
@@ -280,7 +285,7 @@ static void logic_buttons_area_init(wmWindowManager *wm, ARegion *ar)
 	WM_event_add_keymap_handler(&ar->handlers, keymap);
 }
 
-static void logic_buttons_area_draw(const bContext *C, ARegion *ar)
+static void logic_buttons_region_draw(const bContext *C, ARegion *ar)
 {
 	ED_region_panels(C, ar, NULL, -1, true);
 }
@@ -288,17 +293,32 @@ static void logic_buttons_area_draw(const bContext *C, ARegion *ar)
 /************************* header region **************************/
 
 /* add handlers, stuff you only do once or on area/region changes */
-static void logic_header_area_init(wmWindowManager *UNUSED(wm), ARegion *ar)
+static void logic_header_region_init(wmWindowManager *UNUSED(wm), ARegion *ar)
 {
 	ED_region_header_init(ar);
 }
 
-static void logic_header_area_draw(const bContext *C, ARegion *ar)
+static void logic_header_region_draw(const bContext *C, ARegion *ar)
 {
 	ED_region_header(C, ar);
 }
 
 /**************************** spacetype *****************************/
+
+static void logic_id_remap(ScrArea *UNUSED(sa), SpaceLink *slink, ID *old_id, ID *new_id)
+{
+	SpaceLogic *slog = (SpaceLogic *)slink;
+
+	if (!ELEM(GS(old_id->name), ID_GD)) {
+		return;
+	}
+
+	if ((ID *)slog->gpd == old_id) {
+		slog->gpd = (bGPdata *)new_id;
+		id_us_min(old_id);
+		id_us_plus(new_id);
+	}
+}
 
 /* only called once, from space/spacetypes.c */
 void ED_spacetype_logic(void)
@@ -317,13 +337,14 @@ void ED_spacetype_logic(void)
 	st->keymap = logic_keymap;
 	st->refresh = logic_refresh;
 	st->context = logic_context;
-	
+	st->id_remap = logic_id_remap;
+
 	/* regions: main window */
 	art = MEM_callocN(sizeof(ARegionType), "spacetype logic region");
 	art->regionid = RGN_TYPE_WINDOW;
 	art->keymapflag = ED_KEYMAP_UI | ED_KEYMAP_FRAMES | ED_KEYMAP_VIEW2D;
-	art->init = logic_main_area_init;
-	art->draw = logic_main_area_draw;
+	art->init = logic_main_region_init;
+	art->draw = logic_main_region_draw;
 	art->listener = logic_listener;
 
 	BLI_addhead(&st->regiontypes, art);
@@ -334,8 +355,8 @@ void ED_spacetype_logic(void)
 	art->prefsizex= 220; // XXX
 	art->keymapflag = ED_KEYMAP_UI | ED_KEYMAP_FRAMES;
 	art->listener = logic_listener;
-	art->init = logic_buttons_area_init;
-	art->draw = logic_buttons_area_draw;
+	art->init = logic_buttons_region_init;
+	art->draw = logic_buttons_region_draw;
 	BLI_addhead(&st->regiontypes, art);
 
 	/* regions: header */
@@ -343,8 +364,8 @@ void ED_spacetype_logic(void)
 	art->regionid = RGN_TYPE_HEADER;
 	art->prefsizey = HEADERY;
 	art->keymapflag = ED_KEYMAP_UI | ED_KEYMAP_VIEW2D | ED_KEYMAP_FRAMES | ED_KEYMAP_HEADER;
-	art->init = logic_header_area_init;
-	art->draw = logic_header_area_draw;
+	art->init = logic_header_region_init;
+	art->draw = logic_header_region_draw;
 	
 	BLI_addhead(&st->regiontypes, art);
 	

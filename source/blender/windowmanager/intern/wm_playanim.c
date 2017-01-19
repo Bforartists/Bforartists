@@ -897,6 +897,7 @@ static int ghost_event_proc(GHOST_EventHandle evt, GHOST_TUserDataPtr ps_void)
 					}
 					break;
 				case GHOST_kKeyEqual:
+				case GHOST_kKeyPlus:
 				case GHOST_kKeyNumpadPlus:
 				{
 					if (val == 0) break;
@@ -1209,8 +1210,8 @@ static char *wm_main_playanim_intern(int argc, const char **argv)
 		BLI_strncpy(filepath, argv[1], sizeof(filepath));
 	}
 	else {
-		BLI_current_working_dir(filepath, sizeof(filepath));
-		BLI_add_slash(filepath);
+		printf("%s: no filepath argument given\n", __func__);
+		exit(1);
 	}
 
 	if (IMB_isanim(filepath)) {
@@ -1237,12 +1238,6 @@ static char *wm_main_playanim_intern(int argc, const char **argv)
 		printf("%s: '%s' couldn't open\n", __func__, filepath);
 		exit(1);
 	}
-
-#if 0 //XXX25
-#if !defined(WIN32) && !defined(__APPLE__)
-	if (fork()) exit(0);
-#endif
-#endif //XXX25
 
 	{
 
@@ -1528,15 +1523,11 @@ static char *wm_main_playanim_intern(int argc, const char **argv)
 	AUD_Sound_free(source);
 	source = NULL;
 #endif
-
-#if 0 // XXX25
-	free_blender();
-#else
 	/* we still miss freeing a lot!,
 	 * but many areas could skip initialization too for anim play */
 	
 	BLF_exit();
-#endif
+
 	GHOST_DisposeWindow(g_WS.ghost_system, g_WS.ghost_window);
 
 	/* early exit, IMB and BKE should be exited only in end */
@@ -1571,7 +1562,7 @@ void WM_main_playanim(int argc, const char **argv)
 	{
 		AUD_DeviceSpecs specs;
 
-		specs.rate = AUD_RATE_44100;
+		specs.rate = AUD_RATE_48000;
 		specs.format = AUD_FORMAT_S16;
 		specs.channels = AUD_CHANNELS_STEREO;
 

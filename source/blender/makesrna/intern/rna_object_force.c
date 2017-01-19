@@ -34,6 +34,7 @@
 #include "DNA_smoke_types.h"
 
 #include "RNA_define.h"
+#include "RNA_enum_types.h"
 
 #include "rna_internal.h"
 
@@ -163,7 +164,7 @@ static void rna_Cache_idname_change(Main *UNUSED(bmain), Scene *UNUSED(scene), P
 	PointCache *cache = (PointCache *)ptr->data;
 	PTCacheID *pid = NULL, *pid2 = NULL;
 	ListBase pidlist;
-	int new_name = 1;
+	bool use_new_name = true;
 
 	if (!ob)
 		return;
@@ -193,11 +194,13 @@ static void rna_Cache_idname_change(Main *UNUSED(bmain), Scene *UNUSED(scene), P
 			else if (cache->name[0] != '\0' && STREQ(cache->name, pid->cache->name)) {
 				/*TODO: report "name exists" to user */
 				BLI_strncpy(cache->name, cache->prev_name, sizeof(cache->name));
-				new_name = 0;
+				use_new_name = false;
 			}
 		}
 
-		if (new_name) {
+		if (use_new_name) {
+			BLI_filename_make_safe(cache->name);
+
 			if (pid2 && cache->flag & PTCACHE_DISK_CACHE) {
 				char old_name[80];
 				char new_name[80];
@@ -487,12 +490,12 @@ static void rna_FieldSettings_update(Main *UNUSED(bmain), Scene *UNUSED(scene), 
 		ParticleSettings *part = (ParticleSettings *)ptr->id.data;
 
 		if (part->pd->forcefield != PFIELD_TEXTURE && part->pd->tex) {
-			part->pd->tex->id.us--;
+			id_us_min(&part->pd->tex->id);
 			part->pd->tex = NULL;
 		}
 
 		if (part->pd2 && part->pd2->forcefield != PFIELD_TEXTURE && part->pd2->tex) {
-			part->pd2->tex->id.us--;
+			id_us_min(&part->pd2->tex->id);
 			part->pd2->tex = NULL;
 		}
 
@@ -504,7 +507,7 @@ static void rna_FieldSettings_update(Main *UNUSED(bmain), Scene *UNUSED(scene), 
 		Object *ob = (Object *)ptr->id.data;
 
 		if (ob->pd->forcefield != PFIELD_TEXTURE && ob->pd->tex) {
-			ob->pd->tex->id.us--;
+			id_us_min(&ob->pd->tex->id);
 			ob->pd->tex = NULL;
 		}
 
@@ -727,6 +730,11 @@ static void rna_softbody_update(Main *UNUSED(bmain), Scene *UNUSED(scene), Point
 	WM_main_add_notifier(NC_OBJECT | ND_MODIFIER, ob);
 }
 
+static void rna_softbody_dependency_update(Main *bmain, Scene *scene, PointerRNA *ptr)
+{
+	DAG_relations_tag_update(bmain);
+	rna_softbody_update(bmain, scene, ptr);
+}
 
 static EnumPropertyItem *rna_Effector_shape_itemf(bContext *UNUSED(C), PointerRNA *ptr,
                                                   PropertyRNA *UNUSED(prop), bool *UNUSED(r_free))
@@ -1169,13 +1177,6 @@ static void rna_def_field(BlenderRNA *brna)
 		{6, "ROLL", 0, "Roll", ""},
 		{0, NULL, 0, NULL, NULL}
 	};
-		
-	static EnumPropertyItem guide_kink_axis_items[] = {
-		{0, "X", 0, "X", ""},
-		{1, "Y", 0, "Y", ""},
-		{2, "Z", 0, "Z", ""},
-		{0, NULL, 0, NULL, NULL}
-	};
 
 	srna = RNA_def_struct(brna, "FieldSettings", NULL);
 	RNA_def_struct_sdna(srna, "PartDeflect");
@@ -1382,7 +1383,7 @@ static void rna_def_field(BlenderRNA *brna)
 	prop = RNA_def_property(srna, "use_absorption", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_sdna(prop, NULL, "flag", PFIELD_VISIBILITY);
 	RNA_def_property_ui_text(prop, "Absorption", "Force gets absorbed by collision objects");
-	RNA_def_property_update(prop, 0, "rna_FieldSettings_update");
+	RNA_def_property_update(prop, 0, "rna_FieldSettings_dependency_update");
 
 	prop = RNA_def_property(srna, "use_multiple_springs", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_sdna(prop, NULL, "flag", PFIELD_MULTIPLE_SPRINGS);
@@ -1456,7 +1457,7 @@ static void rna_def_field(BlenderRNA *brna)
 	
 	prop = RNA_def_property(srna, "guide_kink_axis", PROP_ENUM, PROP_NONE);
 	RNA_def_property_enum_sdna(prop, NULL, "kink_axis");
-	RNA_def_property_enum_items(prop, guide_kink_axis_items);
+	RNA_def_property_enum_items(prop, rna_enum_axis_xyz_items);
 	RNA_def_property_ui_text(prop, "Axis", "Which axis to use for offset");
 	RNA_def_property_update(prop, 0, "rna_FieldSettings_update");
 
@@ -1639,7 +1640,7 @@ static void rna_def_softbody(BlenderRNA *brna)
 	RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
 	RNA_def_property_range(prop, 0.0f, 1.0f);
 	RNA_def_property_ui_text(prop, "Goal Default",
-	                         "Default Goal (vertex target position) value, when no Vertex Group used");
+	                         "Default Goal (vertex target position) value");
 	RNA_def_property_update(prop, 0, "rna_softbody_update");
 	
 	prop = RNA_def_property(srna, "goal_spring", PROP_FLOAT, PROP_NONE);
@@ -1855,6 +1856,11 @@ static void rna_def_softbody(BlenderRNA *brna)
 	RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
 	RNA_def_property_ui_text(prop, "Self Collision", "Enable naive vertex ball self collision");
 	RNA_def_property_update(prop, 0, "rna_softbody_update");
+
+	prop = RNA_def_property(srna, "collision_group", PROP_POINTER, PROP_NONE);
+	RNA_def_property_flag(prop, PROP_EDITABLE);
+	RNA_def_property_ui_text(prop, "Collision Group", "Limit colliders to this Group");
+	RNA_def_property_update(prop, 0, "rna_softbody_dependency_update");
 
 	prop = RNA_def_property(srna, "effector_weights", PROP_POINTER, PROP_NONE);
 	RNA_def_property_pointer_sdna(prop, NULL, "effector_weights");

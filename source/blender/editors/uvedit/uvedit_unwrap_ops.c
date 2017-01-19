@@ -49,6 +49,8 @@
 #include "BLI_uvproject.h"
 #include "BLI_string.h"
 
+#include "BLT_translation.h"
+
 #include "BKE_cdderivedmesh.h"
 #include "BKE_subsurf.h"
 #include "BKE_context.h"
@@ -61,6 +63,8 @@
 #include "BKE_editmesh.h"
 
 #include "PIL_time.h"
+
+#include "UI_interface.h"
 
 #include "ED_image.h"
 #include "ED_mesh.h"
@@ -145,9 +149,15 @@ static bool ED_uvedit_ensure_uvs(bContext *C, Scene *scene, Object *obedit)
 	if (ima)
 		ED_uvedit_assign_image(bmain, scene, obedit, ima, NULL);
 	
-	/* select new UV's */
+	/* select new UV's (ignore UV_SYNC_SELECTION in this case) */
 	BM_ITER_MESH (efa, &iter, em->bm, BM_FACES_OF_MESH) {
-		uvedit_face_select_enable(scene, em, efa, false, cd_loop_uv_offset);
+		BMIter liter;
+		BMLoop *l;
+
+		BM_ITER_ELEM (l, &liter, efa, BM_LOOPS_OF_FACE) {
+			MLoopUV *luv = BM_ELEM_CD_GET_VOID_P(l, cd_loop_uv_offset);
+			luv->flag |= MLOOPUV_VERTSEL;
+		}
 	}
 
 	return 1;
@@ -217,7 +227,7 @@ void ED_uvedit_get_aspect(Scene *scene, Object *ob, BMesh *bm, float *aspx, floa
 }
 
 static void construct_param_handle_face_add(ParamHandle *handle, Scene *scene,
-                                            BMFace *efa, const int cd_loop_uv_offset)
+                                            BMFace *efa, int face_index, const int cd_loop_uv_offset)
 {
 	ParamKey key;
 	ParamKey *vkeys = BLI_array_alloca(vkeys, efa->len);
@@ -230,7 +240,7 @@ static void construct_param_handle_face_add(ParamHandle *handle, Scene *scene,
 	BMIter liter;
 	BMLoop *l;
 
-	key = (ParamKey)efa;
+	key = (ParamKey)face_index;
 
 	/* let parametrizer split the ngon, it can make better decisions
 	 * about which split is best for unwrapping than scanfill */
@@ -256,6 +266,7 @@ static ParamHandle *construct_param_handle(Scene *scene, Object *ob, BMesh *bm,
 	BMLoop *l;
 	BMEdge *eed;
 	BMIter iter, liter;
+	int i;
 	
 	const int cd_loop_uv_offset = CustomData_get_offset(&bm->ldata, CD_MLOOPUV);
 
@@ -273,7 +284,7 @@ static ParamHandle *construct_param_handle(Scene *scene, Object *ob, BMesh *bm,
 	/* we need the vert indices */
 	BM_mesh_elem_index_ensure(bm, BM_VERT);
 	
-	BM_ITER_MESH (efa, &iter, bm, BM_FACES_OF_MESH) {
+	BM_ITER_MESH_INDEX (efa, &iter, bm, BM_FACES_OF_MESH, i) {
 
 		if ((BM_elem_flag_test(efa, BM_ELEM_HIDDEN)) || (sel && BM_elem_flag_test(efa, BM_ELEM_SELECT) == 0)) {
 			continue;
@@ -293,7 +304,7 @@ static ParamHandle *construct_param_handle(Scene *scene, Object *ob, BMesh *bm,
 			}
 		}
 
-		construct_param_handle_face_add(handle, scene, efa, cd_loop_uv_offset);
+		construct_param_handle_face_add(handle, scene, efa, i, cd_loop_uv_offset);
 	}
 
 	if (!implicit) {
@@ -449,7 +460,7 @@ static ParamHandle *construct_param_handle_subsurfed(Scene *scene, Object *ob, B
 
 		/* We will not check for v4 here. Subsurfed mfaces always have 4 vertices. */
 		BLI_assert(mpoly->totloop == 4);
-		key = (ParamKey)mpoly;
+		key = (ParamKey)i;
 		vkeys[0] = (ParamKey)mloop[0].v;
 		vkeys[1] = (ParamKey)mloop[1].v;
 		vkeys[2] = (ParamKey)mloop[2].v;
@@ -547,12 +558,13 @@ static void minimize_stretch_iteration(bContext *C, wmOperator *op, bool interac
 	RNA_int_set(op->ptr, "iterations", ms->i);
 
 	if (interactive && (PIL_check_seconds_timer() - ms->lasttime > 0.5)) {
-		char str[100];
+		char str[UI_MAX_DRAW_STR];
 
 		param_flush(ms->handle);
 
 		if (sa) {
-			BLI_snprintf(str, sizeof(str), "Minimize Stretch. Blend %.2f (Press + and -, or scroll wheel to set)", ms->blend);
+			BLI_snprintf(str, sizeof(str),
+			             IFACE_("Minimize Stretch. Blend %.2f (Press + and -, or scroll wheel to set)"), ms->blend);
 			ED_area_headerprint(sa, str);
 		}
 
@@ -685,7 +697,7 @@ void UV_OT_minimize_stretch(wmOperatorType *ot)
 	ot->name = "Minimize Stretch";
 	ot->idname = "UV_OT_minimize_stretch";
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_GRAB_CURSOR | OPTYPE_BLOCKING;
-	ot->description = "Minimize Stretch\nReduce UV stretching by relaxing angles";
+	ot->description = "Reduce UV stretching by relaxing angles";
 	
 	/* api callbacks */
 	ot->exec = minimize_stretch_exec;
@@ -740,7 +752,7 @@ void UV_OT_pack_islands(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Pack Islands";
 	ot->idname = "UV_OT_pack_islands";
-	ot->description = "Pack Islands\nTransform all islands so that they fill up the UV space as much as possible";
+	ot->description = "Transform all islands so that they fill up the UV space as much as possible";
 
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 	
@@ -783,7 +795,7 @@ void UV_OT_average_islands_scale(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Average Islands Scale";
 	ot->idname = "UV_OT_average_islands_scale";
-	ot->description = "Average Islands Scale\nAverage the size of separate UV islands, based on their area in 3D space";
+	ot->description = "Average the size of separate UV islands, based on their area in 3D space";
 
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 	
@@ -859,12 +871,12 @@ void ED_uvedit_live_unwrap(Scene *scene, Object *obedit)
 static void uv_map_transform_center(Scene *scene, View3D *v3d, float *result, 
                                     Object *ob, BMEditMesh *em)
 {
-	int around = (v3d) ? v3d->around : V3D_CENTER;
+	const int around = (v3d) ? v3d->around : V3D_AROUND_CENTER_BOUNDS;
 
 	/* only operates on the edit object - this is all that's needed now */
 
 	switch (around) {
-		case V3D_CENTER: /* bounding box center */
+		case V3D_AROUND_CENTER_BOUNDS: /* bounding box center */
 		{
 			BMFace *efa;
 			BMLoop *l;
@@ -883,15 +895,15 @@ static void uv_map_transform_center(Scene *scene, View3D *v3d, float *result,
 			mid_v3_v3v3(result, min, max);
 			break;
 		}
-		case V3D_CURSOR:  /* cursor center */
+		case V3D_AROUND_CURSOR:  /* cursor center */
 		{
 			const float *curs = ED_view3d_cursor3d_get(scene, v3d);
 			/* shift to objects world */
 			sub_v3_v3v3(result, curs, ob->obmat[3]);
 			break;
 		}
-		case V3D_LOCAL:     /* object center */
-		case V3D_CENTROID:  /* multiple objects centers, only one object here*/
+		case V3D_AROUND_LOCAL_ORIGINS:  /* object center */
+		case V3D_AROUND_CENTER_MEAN:    /* multiple objects centers, only one object here*/
 		default:
 			zero_v3(result);
 			break;
@@ -1210,7 +1222,7 @@ static int unwrap_exec(bContext *C, wmOperator *op)
 	 * pass operator for warning append */
 	modifier_unwrap_state(obedit, scene, &use_subsurf_final);
 	if (use_subsurf != use_subsurf_final)
-		BKE_report(op->reports, RPT_INFO, "Subsurf modifier needs to be first to work with unwrap");
+		BKE_report(op->reports, RPT_INFO, "Subdivision Surface modifier needs to be first to work with unwrap");
 
 	/* execute unwrap */
 	ED_unwrap_lscm(scene, obedit, true);
@@ -1231,7 +1243,7 @@ void UV_OT_unwrap(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Unwrap";
-	ot->description = "Unwrap\nUnwrap the mesh of the object being edited";
+	ot->description = "Unwrap the mesh of the object being edited";
 	ot->idname = "UV_OT_unwrap";
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 	
@@ -1241,13 +1253,13 @@ void UV_OT_unwrap(wmOperatorType *ot)
 
 	/* properties */
 	RNA_def_enum(ot->srna, "method", method_items, 0, "Method",
-	             "Unwrapping method");
+	             "Unwrapping method (Angle Based usually gives better results than Conformal, while being somewhat slower)");
 	RNA_def_boolean(ot->srna, "fill_holes", 1, "Fill Holes",
 	                "Virtual fill holes in mesh before unwrapping, to better avoid overlaps and preserve symmetry");
 	RNA_def_boolean(ot->srna, "correct_aspect", 1, "Correct Aspect",
 	                "Map UVs taking image aspect ratio into account");
 	RNA_def_boolean(ot->srna, "use_subsurf_data", 0, "Use Subsurf Modifier",
-	                "Map UVs taking vertex position after subsurf into account");
+	                "Map UVs taking vertex position after Subdivision Surface modifier has been applied");
 	RNA_def_float_factor(ot->srna, "margin", 0.001f, 0.0f, 1.0f, "Margin", "Space between islands", 0.0f, 1.0f);
 }
 
@@ -1363,7 +1375,7 @@ void UV_OT_project_from_view(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Project From View";
 	ot->idname = "UV_OT_project_from_view";
-	ot->description = "Project From View\nProject the UV vertices of the mesh as seen in current 3D view";
+	ot->description = "Project the UV vertices of the mesh as seen in current 3D view";
 
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 	
@@ -1406,7 +1418,7 @@ void UV_OT_reset(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Reset";
 	ot->idname = "UV_OT_reset";
-	ot->description = "Reset\nReset UV projection";
+	ot->description = "Reset UV projection";
 
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 	
@@ -1510,7 +1522,7 @@ void UV_OT_sphere_project(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Sphere Projection";
 	ot->idname = "UV_OT_sphere_project";
-	ot->description = "Sphere Projection\nProject the UV vertices of the mesh over the curved surface of a sphere";
+	ot->description = "Project the UV vertices of the mesh over the curved surface of a sphere";
 
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 	
@@ -1589,7 +1601,7 @@ void UV_OT_cylinder_project(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Cylinder Projection";
 	ot->idname = "UV_OT_cylinder_project";
-	ot->description = "Cylinder Projection\nProject the UV vertices of the mesh over the curved wall of a cylinder";
+	ot->description = "Project the UV vertices of the mesh over the curved wall of a cylinder";
 
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 	
@@ -1645,9 +1657,9 @@ void ED_uvedit_unwrap_cube_project(Object *ob, BMesh *bm, float cube_size, bool 
 				first = 0;
 			}
 
-			// bfa - turned off. Puts the UV for those faces outside of the UV space for no reason
-			//luv->uv[0] += dx;
-			//luv->uv[1] += dy;
+
+			luv->uv[0] -= dx;
+			luv->uv[1] -= dy;
 		}
 	}
 
@@ -1679,7 +1691,7 @@ void UV_OT_cube_project(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Cube Projection";
 	ot->idname = "UV_OT_cube_project";
-	ot->description = "Cube Projection\nProject the UV vertices of the mesh over the six faces of a cube";
+	ot->description = "Project the UV vertices of the mesh over the six faces of a cube";
 
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 	

@@ -51,6 +51,7 @@
 #include "BKE_curve.h"
 #include "BKE_depsgraph.h"
 #include "BKE_font.h"
+#include "BKE_library.h"
 #include "BKE_main.h"
 #include "BKE_object.h"
 #include "BKE_report.h"
@@ -344,50 +345,18 @@ static bool font_paste_utf8(bContext *C, const char *str, const size_t str_len)
 static int paste_from_file(bContext *C, ReportList *reports, const char *filename)
 {
 	Object *obedit = CTX_data_edit_object(C);
-	FILE *fp;
 	char *strp;
-	int filelen;
+	size_t filelen;
 	int retval;
 
-	fp = BLI_fopen(filename, "r");
-
-	if (!fp) {
+	strp = BLI_file_read_text_as_mem(filename, 1, &filelen);
+	if (strp == NULL) {
 		BKE_reportf(reports, RPT_ERROR, "Failed to open file '%s'", filename);
 		return OPERATOR_CANCELLED;
 	}
+	strp[filelen] = 0;
 
-	fseek(fp, 0L, SEEK_END);
-
-	errno = 0;
-	filelen = ftell(fp);
-	if (filelen == -1) {
-		goto fail;
-	}
-
-	if (filelen <= MAXTEXT) {
-		strp = MEM_mallocN(filelen + 4, "tempstr");
-
-		fseek(fp, 0L, SEEK_SET);
-
-		/* fread() instead of read(), because windows read() converts text
-		 * to DOS \r\n linebreaks, causing double linebreaks in the 3d text */
-		errno = 0;
-		filelen = fread(strp, 1, filelen, fp);
-		if (filelen == -1) {
-			MEM_freeN(strp);
-			goto fail;
-		}
-
-		strp[filelen] = 0;
-	}
-	else {
-		strp = NULL;
-	}
-
-	fclose(fp);
-
-
-	if (strp && font_paste_utf8(C, strp, filelen)) {
+	if (font_paste_utf8(C, strp, filelen)) {
 		text_update_edited(C, obedit, FO_EDIT);
 		retval = OPERATOR_FINISHED;
 
@@ -397,18 +366,9 @@ static int paste_from_file(bContext *C, ReportList *reports, const char *filenam
 		retval = OPERATOR_CANCELLED;
 	}
 
-	if (strp) {
-		MEM_freeN(strp);
-	}
+	MEM_freeN(strp);
 
 	return retval;
-
-
-	/* failed to seek or read */
-fail:
-	BKE_reportf(reports, RPT_ERROR, "Failed to read file '%s', %s", filename, strerror(errno));
-	fclose(fp);
-	return OPERATOR_CANCELLED;
 }
 
 static int paste_from_file_exec(bContext *C, wmOperator *op)
@@ -437,7 +397,7 @@ void FONT_OT_text_paste_from_file(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Paste File";
-	ot->description = "Paste File\nPaste contents from file";
+	ot->description = "Paste contents from file";
 	ot->idname = "FONT_OT_text_paste_from_file";
 	
 	/* api callbacks */
@@ -449,66 +409,9 @@ void FONT_OT_text_paste_from_file(wmOperatorType *ot)
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
 	/* properties */
-	WM_operator_properties_filesel(ot, FILE_TYPE_FOLDER | FILE_TYPE_TEXT, FILE_SPECIAL, FILE_OPENFILE,
-	                               WM_FILESEL_FILEPATH, FILE_DEFAULTDISPLAY, FILE_SORT_ALPHA);
-}
-
-
-/* -------------------------------------------------------------------- */
-/* Paste From Clipboard */
-
-static int paste_from_clipboard(bContext *C, ReportList *reports)
-{
-	Object *obedit = CTX_data_edit_object(C);
-	char *strp;
-	int filelen;
-	int retval;
-
-	strp = WM_clipboard_text_get(false, &filelen);
-	if (strp == NULL) {
-		BKE_report(reports, RPT_ERROR, "Clipboard empty");
-		return OPERATOR_CANCELLED;
-	}
-
-	if ((filelen <= MAXTEXT) && font_paste_utf8(C, strp, filelen)) {
-		text_update_edited(C, obedit, FO_EDIT);
-		retval = OPERATOR_FINISHED;
-	}
-	else {
-		BKE_report(reports, RPT_ERROR, "Clipboard too long");
-		retval = OPERATOR_CANCELLED;
-	}
-	MEM_freeN(strp);
-
-	return retval;
-}
-
-static int paste_from_clipboard_exec(bContext *C, wmOperator *op)
-{
-	int retval;
-
-	retval = paste_from_clipboard(C, op->reports);
-
-	return retval;
-}
-
-void FONT_OT_text_paste_from_clipboard(wmOperatorType *ot)
-{
-	/* identifiers */
-	ot->name = "Paste Clipboard";
-	ot->description = "Paste Clipboard\nPaste contents from system clipboard";
-	ot->idname = "FONT_OT_text_paste_from_clipboard";
-
-	/* api callbacks */
-	ot->exec = paste_from_clipboard_exec;
-	ot->poll = ED_operator_editfont;
-
-	/* flags */
-	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
-
-	/* properties */
-	WM_operator_properties_filesel(ot, FILE_TYPE_FOLDER | FILE_TYPE_TEXT, FILE_SPECIAL, FILE_OPENFILE,
-	                               WM_FILESEL_FILEPATH, FILE_DEFAULTDISPLAY, FILE_SORT_ALPHA);
+	WM_operator_properties_filesel(
+	        ot, FILE_TYPE_FOLDER | FILE_TYPE_TEXT, FILE_SPECIAL, FILE_OPENFILE,
+	        WM_FILESEL_FILEPATH, FILE_DEFAULTDISPLAY, FILE_SORT_ALPHA);
 }
 
 /******************* text to object operator ********************/
@@ -538,7 +441,7 @@ static void txt_add_object(bContext *C, TextLine *firstline, int totline, const 
 
 	cu = obedit->data;
 	cu->vfont = BKE_vfont_builtin_get();
-	cu->vfont->id.us++;
+	id_us_plus(&cu->vfont->id);
 
 	for (tmp = firstline, a = 0; nbytes < MAXTEXT && a < totline; tmp = tmp->next, a++) {
 		size_t nchars_line, nbytes_line;
@@ -697,7 +600,7 @@ void FONT_OT_style_set(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Set Style";
-	ot->description = "Set Style\nSet font style";
+	ot->description = "Set font style";
 	ot->idname = "FONT_OT_style_set";
 	
 	/* api callbacks */
@@ -735,7 +638,7 @@ void FONT_OT_style_toggle(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Toggle Style";
-	ot->description = "Toggle Style\nToggle font style";
+	ot->description = "Toggle font style";
 	ot->idname = "FONT_OT_style_toggle";
 	
 	/* api callbacks */
@@ -778,7 +681,7 @@ void FONT_OT_select_all(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Select All";
-	ot->description = "Select All\nSelect all text";
+	ot->description = "Select all text";
 	ot->idname = "FONT_OT_select_all";
 
 	/* api callbacks */
@@ -799,10 +702,21 @@ static void copy_selection(Object *obedit)
 	if (BKE_vfont_select_get(obedit, &selstart, &selend)) {
 		Curve *cu = obedit->data;
 		EditFont *ef = cu->editfont;
-		
-		memcpy(ef->copybuf, ef->textbuf + selstart, ((selend - selstart) + 1) * sizeof(wchar_t));
-		ef->copybuf[(selend - selstart) + 1] = 0;
-		memcpy(ef->copybufinfo, ef->textbufinfo + selstart, ((selend - selstart) + 1) * sizeof(CharInfo));
+		char *buf = NULL;
+		wchar_t *text_buf;
+		size_t len_utf8;
+
+		/* internal clipboard (for style) */
+		BKE_vfont_clipboard_set(ef->textbuf + selstart, ef->textbufinfo + selstart, selend - selstart + 1);
+		BKE_vfont_clipboard_get(&text_buf, NULL, &len_utf8, NULL);
+
+		/* system clipboard */
+		buf = MEM_mallocN(len_utf8 + 1, __func__);
+		if (buf) {
+			BLI_strncpy_wchar_as_utf8(buf, text_buf, len_utf8 + 1);
+			WM_clipboard_text_set(buf, false);
+			MEM_freeN(buf);
+		}
 	}
 }
 
@@ -819,7 +733,7 @@ void FONT_OT_text_copy(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Copy Text";
-	ot->description = "Copy Text\nCopy selected text to clipboard";
+	ot->description = "Copy selected text to clipboard";
 	ot->idname = "FONT_OT_text_copy";
 	
 	/* api callbacks */
@@ -849,7 +763,7 @@ void FONT_OT_text_cut(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Cut Text";
-	ot->description = "Cut Text\nCut selected text to clipboard";
+	ot->description = "Cut selected text to clipboard";
 	ot->idname = "FONT_OT_text_cut";
 	
 	/* api callbacks */
@@ -864,11 +778,13 @@ void FONT_OT_text_cut(wmOperatorType *ot)
 
 static bool paste_selection(Object *obedit, ReportList *reports)
 {
-	Curve *cu = obedit->data;
-	EditFont *ef = cu->editfont;
-	int len = wcslen(ef->copybuf);
+	wchar_t *text_buf;
+	CharInfo *info_buf;
+	size_t len;
 
-	if (font_paste_wchar(obedit, ef->copybuf, len, ef->copybufinfo)) {
+	BKE_vfont_clipboard_get(&text_buf, &info_buf, NULL, &len);
+
+	if (font_paste_wchar(obedit, text_buf, len, info_buf)) {
 		return true;
 	}
 	else {
@@ -880,20 +796,75 @@ static bool paste_selection(Object *obedit, ReportList *reports)
 static int paste_text_exec(bContext *C, wmOperator *op)
 {
 	Object *obedit = CTX_data_edit_object(C);
+	int retval;
+	size_t len_utf8;
+	wchar_t *text_buf;
 
-	if (!paste_selection(obedit, op->reports))
+	/* Store both clipboards as utf8 for comparison,
+	 * Give priority to the internal 'vfont' clipboard with its 'CharInfo' text styles
+	 * as long as its synchronized with the systems clipboard. */
+	struct {
+	    char *buf;
+	    int len;
+	} clipboard_system = {NULL}, clipboard_vfont =  {NULL};
+
+	clipboard_system.buf = WM_clipboard_text_get(false, &clipboard_system.len);
+
+	if (clipboard_system.buf == NULL) {
 		return OPERATOR_CANCELLED;
+	}
 
-	text_update_edited(C, obedit, FO_EDIT);
+	BKE_vfont_clipboard_get(&text_buf, NULL, &len_utf8, NULL);
 
-	return OPERATOR_FINISHED;
+	if (text_buf) {
+		clipboard_vfont.buf = MEM_mallocN(len_utf8 + 1, __func__);
+
+		if (clipboard_vfont.buf == NULL) {
+			MEM_freeN(clipboard_system.buf);
+			return OPERATOR_CANCELLED;
+		}
+
+		BLI_strncpy_wchar_as_utf8(clipboard_vfont.buf, text_buf, len_utf8 + 1);
+	}
+
+	if (clipboard_vfont.buf && STREQ(clipboard_vfont.buf, clipboard_system.buf)) {
+		retval = paste_selection(obedit, op->reports) ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
+	}
+	else {
+		if ((clipboard_system.len <= MAXTEXT) &&
+		    font_paste_utf8(C, clipboard_system.buf, clipboard_system.len))
+		{
+			text_update_edited(C, obedit, FO_EDIT);
+			retval = OPERATOR_FINISHED;
+		}
+		else {
+			BKE_report(op->reports, RPT_ERROR, "Clipboard too long");
+			retval = OPERATOR_CANCELLED;
+		}
+
+		/* free the existent clipboard buffer */
+		BKE_vfont_clipboard_free();
+	}
+
+	if (retval != OPERATOR_CANCELLED) {
+		text_update_edited(C, obedit, FO_EDIT);
+	}
+
+	/* cleanup */
+	if (clipboard_vfont.buf) {
+		MEM_freeN(clipboard_vfont.buf);
+	}
+
+	MEM_freeN(clipboard_system.buf);
+
+	return retval;
 }
 
 void FONT_OT_text_paste(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Paste Text";
-	ot->description = "Paste Text\nPaste text from clipboard";
+	ot->description = "Paste text from clipboard";
 	ot->idname = "FONT_OT_text_paste";
 	
 	/* api callbacks */
@@ -1038,7 +1009,7 @@ void FONT_OT_move(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Move Cursor";
-	ot->description = "Move Cursor\nMove cursor to position type";
+	ot->description = "Move cursor to position type";
 	ot->idname = "FONT_OT_move";
 	
 	/* api callbacks */
@@ -1065,7 +1036,7 @@ void FONT_OT_move_select(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Move Select";
-	ot->description = "Move Select\nMove the cursor while selecting";
+	ot->description = "Move the cursor while selecting";
 	ot->idname = "FONT_OT_move_select";
 	
 	/* api callbacks */
@@ -1106,7 +1077,7 @@ void FONT_OT_change_spacing(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Change Spacing";
-	ot->description = "Change Spacing\nChange font spacing";
+	ot->description = "Change font spacing";
 	ot->idname = "FONT_OT_change_spacing";
 	
 	/* api callbacks */
@@ -1150,7 +1121,7 @@ void FONT_OT_change_character(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Change Character";
-	ot->description = "Change Character\nChange font character code";
+	ot->description = "Change font character code";
 	ot->idname = "FONT_OT_change_character";
 	
 	/* api callbacks */
@@ -1185,7 +1156,7 @@ void FONT_OT_line_break(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Line Break";
-	ot->description = "Line Break\nInsert line break at cursor position";
+	ot->description = "Insert line break at cursor position";
 	ot->idname = "FONT_OT_line_break";
 	
 	/* api callbacks */
@@ -1271,7 +1242,7 @@ void FONT_OT_delete(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Delete";
-	ot->description = "Delete\nDelete text by cursor position";
+	ot->description = "Delete text by cursor position";
 	ot->idname = "FONT_OT_delete";
 	
 	/* api callbacks */
@@ -1410,7 +1381,7 @@ void FONT_OT_text_insert(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Insert Text";
-	ot->description = "Insert Text\nInsert text at cursor position";
+	ot->description = "Insert text at cursor position";
 	ot->idname = "FONT_OT_text_insert";
 	
 	/* api callbacks */
@@ -1449,7 +1420,7 @@ void FONT_OT_textbox_add(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Add Textbox";
-	ot->description = "Add Textbox\nAdd a new text box";
+	ot->description = "Add a new text box";
 	ot->idname = "FONT_OT_textbox_add";
 	
 	/* api callbacks */
@@ -1492,7 +1463,7 @@ void FONT_OT_textbox_remove(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Remove Textbox";
-	ot->description = "Remove Textbox\nRemove the textbox";
+	ot->description = "Remove the textbox";
 	ot->idname = "FONT_OT_textbox_remove";
 	
 	/* api callbacks */
@@ -1509,7 +1480,7 @@ void FONT_OT_textbox_remove(wmOperatorType *ot)
 
 /***************** editmode enter/exit ********************/
 
-void make_editText(Object *obedit)
+void ED_curve_editfont_make(Object *obedit)
 {
 	Curve *cu = obedit->data;
 	EditFont *ef = cu->editfont;
@@ -1520,8 +1491,6 @@ void make_editText(Object *obedit)
 	
 		ef->textbuf = MEM_callocN((MAXTEXT + 4) * sizeof(wchar_t), "texteditbuf");
 		ef->textbufinfo = MEM_callocN((MAXTEXT + 4) * sizeof(CharInfo), "texteditbufinfo");
-		ef->copybuf = MEM_callocN((MAXTEXT + 4) * sizeof(wchar_t), "texteditcopybuf");
-		ef->copybufinfo = MEM_callocN((MAXTEXT + 4) * sizeof(CharInfo), "texteditcopybufinfo");
 	}
 	
 	/* Convert the original text to wchar_t */
@@ -1545,7 +1514,7 @@ void make_editText(Object *obedit)
 	BKE_vfont_select_clamp(obedit);
 }
 
-void load_editText(Object *obedit)
+void ED_curve_editfont_load(Object *obedit)
 {
 	Curve *cu = obedit->data;
 	EditFont *ef = cu->editfont;
@@ -1574,7 +1543,7 @@ void load_editText(Object *obedit)
 	cu->selend = ef->selend;
 }
 
-void free_editText(Object *obedit)
+void ED_curve_editfont_free(Object *obedit)
 {
 	BKE_curve_editfont_free((Curve *)obedit->data);
 }
@@ -1632,7 +1601,7 @@ void FONT_OT_case_set(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Set Case";
-	ot->description = "Set Case\nSet font case";
+	ot->description = "Set font case";
 	ot->idname = "FONT_OT_case_set";
 	
 	/* api callbacks */
@@ -1675,7 +1644,7 @@ void FONT_OT_case_toggle(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Toggle Case";
-	ot->description = "Toggle Case\nToggle font case";
+	ot->description = "Toggle font case";
 	ot->idname = "FONT_OT_case_toggle";
 	
 	/* api callbacks */
@@ -1726,8 +1695,8 @@ static int font_open_exec(bContext *C, wmOperator *op)
 
 	if (pprop->prop) {
 		/* when creating new ID blocks, use is already 1, but RNA
-		 * pointer se also increases user, so this compensates it */
-		font->id.us--;
+		 * pointer use also increases user, so this compensates it */
+		id_us_min(&font->id);
 	
 		RNA_id_pointer_create(&font->id, &idptr);
 		RNA_property_pointer_set(&pprop->ptr, pprop->prop, idptr);
@@ -1773,7 +1742,7 @@ void FONT_OT_open(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Open Font";
 	ot->idname = "FONT_OT_open";
-	ot->description = "Open Font\nLoad a new font from a file";
+	ot->description = "Load a new font from a file";
 	
 	/* api callbacks */
 	ot->exec = font_open_exec;
@@ -1784,8 +1753,9 @@ void FONT_OT_open(wmOperatorType *ot)
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 	
 	/* properties */
-	WM_operator_properties_filesel(ot, FILE_TYPE_FOLDER | FILE_TYPE_FTFONT, FILE_SPECIAL, FILE_OPENFILE,
-	                               WM_FILESEL_FILEPATH | WM_FILESEL_RELPATH, FILE_DEFAULTDISPLAY, FILE_SORT_ALPHA);
+	WM_operator_properties_filesel(
+	        ot, FILE_TYPE_FOLDER | FILE_TYPE_FTFONT, FILE_SPECIAL, FILE_OPENFILE,
+	        WM_FILESEL_FILEPATH | WM_FILESEL_RELPATH, FILE_DEFAULTDISPLAY, FILE_SORT_ALPHA);
 }
 
 /******************* delete operator *********************/
@@ -1818,74 +1788,16 @@ void FONT_OT_unlink(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Unlink";
 	ot->idname = "FONT_OT_unlink";
-	ot->description = "Unlink\nUnlink active font data block";
+	ot->description = "Unlink active font data-block";
 	
 	/* api callbacks */
 	ot->exec = font_unlink_exec;
 }
 
-
-/* **************** undo for font object ************** */
-
-static void undoFont_to_editFont(void *strv, void *ecu, void *UNUSED(obdata))
-{
-	Curve *cu = (Curve *)ecu;
-	EditFont *ef = cu->editfont;
-	const char *str = strv;
-
-	ef->pos = *((const short *)str);
-	ef->len = *((const short *)(str + 2));
-
-	memcpy(ef->textbuf, str + 4, (ef->len + 1) * sizeof(wchar_t));
-	memcpy(ef->textbufinfo, str + 4 + (ef->len + 1) * sizeof(wchar_t), ef->len * sizeof(CharInfo));
-	
-	ef->selstart = ef->selend = 0;
-
-}
-
-static void *editFont_to_undoFont(void *ecu, void *UNUSED(obdata))
-{
-	Curve *cu = (Curve *)ecu;
-	EditFont *ef = cu->editfont;
-	char *str;
-	
-	/* The undo buffer includes [MAXTEXT+6]=actual string and [MAXTEXT+4]*sizeof(CharInfo)=charinfo */
-	str = MEM_callocN((MAXTEXT + 6) * sizeof(wchar_t) + (MAXTEXT + 4) * sizeof(CharInfo), "string undo");
-
-	/* Copy the string and string information */
-	memcpy(str + 4, ef->textbuf, (ef->len + 1) * sizeof(wchar_t));
-	memcpy(str + 4 + (ef->len + 1) * sizeof(wchar_t), ef->textbufinfo, ef->len * sizeof(CharInfo));
-
-	*((short *)(str + 0)) = ef->pos;
-	*((short *)(str + 2)) = ef->len;
-	
-	return str;
-}
-
-static void free_undoFont(void *strv)
-{
-	MEM_freeN(strv);
-}
-
-static void *get_undoFont(bContext *C)
-{
-	Object *obedit = CTX_data_edit_object(C);
-	if (obedit && obedit->type == OB_FONT) {
-		return obedit->data;
-	}
-	return NULL;
-}
-
-/* and this is all the undo system needs to know */
-void undo_push_font(bContext *C, const char *name)
-{
-	undo_editmode_push(C, name, get_undoFont, free_undoFont, undoFont_to_editFont, editFont_to_undoFont, NULL);
-}
-
 /**
  * TextBox selection
  */
-bool mouse_font(bContext *C, const int mval[2], bool extend, bool deselect, bool toggle)
+bool ED_curve_editfont_select_pick(bContext *C, const int mval[2], bool extend, bool deselect, bool toggle)
 {
 	Object *obedit = CTX_data_edit_object(C);
 	Curve *cu = obedit->data;

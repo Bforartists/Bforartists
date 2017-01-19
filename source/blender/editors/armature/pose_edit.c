@@ -86,7 +86,7 @@ void ED_armature_enter_posemode(bContext *C, Base *base)
 	ReportList *reports = CTX_wm_reports(C);
 	Object *ob = base->object;
 	
-	if (ob->id.lib) {
+	if (ID_IS_LINKED_DATABLOCK(ob)) {
 		BKE_report(reports, RPT_WARNING, "Cannot pose libdata");
 		return;
 	}
@@ -239,7 +239,7 @@ void POSE_OT_paths_calculate(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Calculate Bone Paths";
 	ot->idname = "POSE_OT_paths_calculate";
-	ot->description = "Calculate Bone Paths\nCalculate paths for the selected bones";
+	ot->description = "Calculate paths for the selected bones";
 	
 	/* api callbacks */
 	ot->invoke = pose_calculate_paths_invoke;
@@ -255,12 +255,22 @@ void POSE_OT_paths_calculate(wmOperatorType *ot)
 	RNA_def_int(ot->srna, "end_frame", 250, MINAFRAME, MAXFRAME, "End", 
 	            "Last frame to calculate bone paths on", MINFRAME, MAXFRAME / 2.0);
 	
-	RNA_def_enum(ot->srna, "bake_location", motionpath_bake_location_items, 0, 
+	RNA_def_enum(ot->srna, "bake_location", rna_enum_motionpath_bake_location_items, 0, 
 	             "Bake Location", 
 	             "Which point on the bones is used when calculating paths");
 }
 
 /* --------- */
+
+static int pose_update_paths_poll(bContext *C)
+{
+	if (ED_operator_posemode_exclusive(C)) {
+		bPoseChannel *pchan = CTX_data_active_pose_bone(C);
+		return (pchan && pchan->mpath);
+	}
+	
+	return false;
+}
 
 static int pose_update_paths_exec(bContext *C, wmOperator *UNUSED(op))
 {
@@ -285,11 +295,11 @@ void POSE_OT_paths_update(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Update Bone Paths";
 	ot->idname = "POSE_OT_paths_update";
-	ot->description = "Update Bone Path\nRecalculate paths for bones that already have them";
+	ot->description = "Recalculate paths for bones that already have them";
 	
 	/* api callbakcs */
 	ot->exec = pose_update_paths_exec;
-	ot->poll = ED_operator_posemode_exclusive; /* TODO: this should probably check for active bone and/or existing paths */
+	ot->poll = pose_update_paths_poll;
 	
 	/* flags */
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
@@ -298,42 +308,44 @@ void POSE_OT_paths_update(wmOperatorType *ot)
 /* --------- */
 
 /* for the object with pose/action: clear path curves for selected bones only */
-static void ED_pose_clear_paths(Object *ob)
+static void ED_pose_clear_paths(Object *ob, bool only_selected)
 {
 	bPoseChannel *pchan;
-	short skipped = 0;
+	bool skipped = false;
 	
 	if (ELEM(NULL, ob, ob->pose))
 		return;
 	
-	/* free the motionpath blocks, but also take note of whether we skipped some... */
+	/* free the motionpath blocks for all bones - This is easier for users to quickly clear all */
 	for (pchan = ob->pose->chanbase.first; pchan; pchan = pchan->next) {
 		if (pchan->mpath) {
-			if ((pchan->bone) && (pchan->bone->flag & BONE_SELECTED)) {
+			if ((only_selected == false) || ((pchan->bone) && (pchan->bone->flag & BONE_SELECTED))) {
 				animviz_free_motionpath(pchan->mpath);
 				pchan->mpath = NULL;
 			}
-			else 
-				skipped = 1;
+			else {
+				skipped = true;
+			}
 		}
 	}
 	
-	/* if we didn't skip any, we shouldn't have any paths left */
-	if (skipped == 0)
+	/* if nothing was skipped, there should be no paths left! */
+	if (skipped == false)
 		ob->pose->avs.path_bakeflag &= ~MOTIONPATH_BAKE_HAS_PATHS;
 }
 
-/* operator callback for this */
-static int pose_clear_paths_exec(bContext *C, wmOperator *UNUSED(op))
+/* operator callback - wrapper for the backend function  */
+static int pose_clear_paths_exec(bContext *C, wmOperator *op)
 {
 	Object *ob = BKE_object_pose_armature_get(CTX_data_active_object(C));
-		
+	bool only_selected = RNA_boolean_get(op->ptr, "only_selected");
+	
 	/* only continue if there's an object */
 	if (ELEM(NULL, ob, ob->pose))
 		return OPERATOR_CANCELLED;
 	
 	/* use the backend function for this */
-	ED_pose_clear_paths(ob);
+	ED_pose_clear_paths(ob, only_selected);
 	
 	/* notifiers for updates */
 	WM_event_add_notifier(C, NC_OBJECT | ND_POSE, ob);
@@ -341,19 +353,34 @@ static int pose_clear_paths_exec(bContext *C, wmOperator *UNUSED(op))
 	return OPERATOR_FINISHED; 
 }
 
+/* operator callback/wrapper */
+static int pose_clear_paths_invoke(bContext *C, wmOperator *op, const wmEvent *evt)
+{
+	if ((evt->shift) && !RNA_struct_property_is_set(op->ptr, "only_selected")) {
+		RNA_boolean_set(op->ptr, "only_selected", true);
+	}
+	return pose_clear_paths_exec(C, op);
+}
+
 void POSE_OT_paths_clear(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Clear Bone Paths";
 	ot->idname = "POSE_OT_paths_clear";
-	ot->description = "Clear Bone Paths\nClear path caches for selected bones";
+	ot->description = "Clear path caches for all bones, hold Shift key for selected bones only";
 	
 	/* api callbacks */
+	ot->invoke = pose_clear_paths_invoke;
 	ot->exec = pose_clear_paths_exec;
 	ot->poll = ED_operator_posemode_exclusive;
 	
 	/* flags */
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+	
+	/* properties */
+	ot->prop = RNA_def_boolean(ot->srna, "only_selected", false, "Only Selected", 
+	                           "Only clear paths from selected bones");
+	RNA_def_property_flag(ot->prop, PROP_SKIP_SAVE);
 }
 
 /* ********************************************** */
@@ -566,20 +593,24 @@ static int pose_flip_names_exec(bContext *C, wmOperator *UNUSED(op))
 {
 	Object *ob = BKE_object_pose_armature_get(CTX_data_active_object(C));
 	bArmature *arm;
-	
+
 	/* paranoia checks */
 	if (ELEM(NULL, ob, ob->pose)) 
 		return OPERATOR_CANCELLED;
+
 	arm = ob->data;
-	
-	/* loop through selected bones, auto-naming them */
+
+	ListBase bones_names = {NULL};
+
 	CTX_DATA_BEGIN (C, bPoseChannel *, pchan, selected_pose_bones)
 	{
-		char name_flip[MAXBONENAME];
-		BKE_deform_flip_side_name(name_flip, pchan->name, true);
-		ED_armature_bone_rename(arm, pchan->name, name_flip);
+		BLI_addtail(&bones_names, BLI_genericNodeN(pchan->name));
 	}
 	CTX_DATA_END;
+
+	ED_armature_bones_flip_names(arm, &bones_names);
+
+	BLI_freelistN(&bones_names);
 	
 	/* since we renamed stuff... */
 	DAG_id_tag_update(&ob->id, OB_RECALC_DATA);
@@ -595,11 +626,11 @@ void POSE_OT_flip_names(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Flip Names";
 	ot->idname = "POSE_OT_flip_names";
-	ot->description = "Flip Names\nFlips (and corrects) the axis suffixes of the names of selected bones";
+	ot->description = "Flips (and corrects) the axis suffixes of the names of selected bones";
 	
 	/* api callbacks */
 	ot->exec = pose_flip_names_exec;
-	ot->poll = ED_operator_posemode;
+	ot->poll = ED_operator_posemode_local;
 	
 	/* flags */
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
@@ -649,7 +680,7 @@ void POSE_OT_autoside_names(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "AutoName by Axis";
 	ot->idname = "POSE_OT_autoside_names";
-	ot->description = "AutoName by Axis\nAutomatically renames the selected bones according to which side of the target axis they fall on";
+	ot->description = "Automatically renames the selected bones according to which side of the target axis they fall on";
 	
 	/* api callbacks */
 	ot->invoke = WM_menu_invoke;
@@ -689,7 +720,7 @@ void POSE_OT_rotation_mode_set(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Set Rotation Mode";
 	ot->idname = "POSE_OT_rotation_mode_set";
-	ot->description = "Set Rotation Mode\nSet the rotation representation used by selected bones";
+	ot->description = "Set the rotation representation used by selected bones";
 	
 	/* callbacks */
 	ot->invoke = WM_menu_invoke;
@@ -700,7 +731,7 @@ void POSE_OT_rotation_mode_set(wmOperatorType *ot)
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 	
 	/* properties */
-	ot->prop = RNA_def_enum(ot->srna, "type", posebone_rotmode_items, 0, "Rotation Mode", "");
+	ot->prop = RNA_def_enum(ot->srna, "type", rna_enum_posebone_rotmode_items, 0, "Rotation Mode", "");
 }
 
 /* ********************************************** */
@@ -768,7 +799,7 @@ void ARMATURE_OT_layers_show_all(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Show All Layers";
 	ot->idname = "ARMATURE_OT_layers_show_all";
-	ot->description = "Show All Layers\nMake all armature layers visible";
+	ot->description = "Make all armature layers visible";
 	
 	/* callbacks */
 	ot->exec = pose_armature_layers_showall_exec;
@@ -834,7 +865,7 @@ void ARMATURE_OT_armature_layers(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Change Armature Layers";
 	ot->idname = "ARMATURE_OT_armature_layers";
-	ot->description = "Change Armature Layers\nChange the visible armature layers";
+	ot->description = "Change the visible armature layers";
 	
 	/* callbacks */
 	ot->invoke = armature_layers_invoke;
@@ -908,7 +939,7 @@ void POSE_OT_bone_layers(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Change Bone Layers";
 	ot->idname = "POSE_OT_bone_layers";
-	ot->description = "Change Bone Layers\nChange the layers that the selected bones belong to";
+	ot->description = "Change the layers that the selected bones belong to";
 	
 	/* callbacks */
 	ot->invoke = pose_bone_layers_invoke;
@@ -981,7 +1012,7 @@ void ARMATURE_OT_bone_layers(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Change Bone Layers";
 	ot->idname = "ARMATURE_OT_bone_layers";
-	ot->description = "Change Bone Layers\nChange the layers that the selected bones belong to";
+	ot->description = "Change the layers that the selected bones belong to";
 	
 	/* callbacks */
 	ot->invoke = armature_bone_layers_invoke;
@@ -1054,7 +1085,7 @@ void POSE_OT_hide(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Hide Selected";
 	ot->idname = "POSE_OT_hide";
-	ot->description = "Hide Selected\nTag selected bones to not be visible in Pose Mode";
+	ot->description = "Tag selected bones to not be visible in Pose Mode";
 	
 	/* api callbacks */
 	ot->exec = pose_hide_exec;
@@ -1102,7 +1133,7 @@ void POSE_OT_reveal(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Reveal Selected";
 	ot->idname = "POSE_OT_reveal";
-	ot->description = "Reveal Selected\nUnhide all bones that have been tagged to be hidden in Pose Mode";
+	ot->description = "Unhide all bones that have been tagged to be hidden in Pose Mode";
 	
 	/* api callbacks */
 	ot->exec = pose_reveal_exec;
@@ -1146,7 +1177,7 @@ void POSE_OT_quaternions_flip(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Flip Quats";
 	ot->idname = "POSE_OT_quaternions_flip";
-	ot->description = "Flip Quats\nFlip quaternion values to achieve desired rotations, while maintaining the same orientations";
+	ot->description = "Flip quaternion values to achieve desired rotations, while maintaining the same orientations";
 	
 	/* callbacks */
 	ot->exec = pose_flip_quats_exec;

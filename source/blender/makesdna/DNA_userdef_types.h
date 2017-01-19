@@ -74,7 +74,7 @@ typedef struct uiFontStyle {
 	short uifont_id;		/* saved in file, 0 is default */
 	short points;			/* actual size depends on 'global' dpi */
 	short kerning;			/* unfitted or default kerning value. */
-	char word_wrap;            /* enable word-wrap when drawing */
+	char word_wrap;			/* enable word-wrap when drawing */
 	char pad[5];
 	short italic, bold;		/* style hint */
 	short shadow;			/* value is amount of pixels blur */
@@ -240,9 +240,9 @@ typedef struct ThemeSpace {
 	char wire[4], wire_edit[4], select[4];
 	char lamp[4], speaker[4], empty[4], camera[4];
 	char active[4], group[4], group_active[4], transform[4];
-	char vertex[4], vertex_select[4], vertex_unreferenced[4];
+	char vertex[4], vertex_select[4], vertex_bevel[4], vertex_unreferenced[4];
 	char edge[4], edge_select[4];
-	char edge_seam[4], edge_sharp[4], edge_facesel[4], edge_crease[4];
+	char edge_seam[4], edge_sharp[4], edge_facesel[4], edge_crease[4], edge_bevel[4];
 	char face[4], face_select[4];	/* solid faces */
 	char face_dot[4];				/*  selected color */
 	char extra_edge_len[4], extra_edge_angle[4], extra_face_angle[4], extra_face_area[4];
@@ -284,7 +284,10 @@ typedef struct ThemeSpace {
 	char nodeclass_pattern[4], nodeclass_layout[4];
 	
 	char movie[4], movieclip[4], mask[4], image[4], scene[4], audio[4];		/* for sequence editor */
-	char effect[4], transition[4], meta[4];
+	char effect[4], transition[4], meta[4], text_strip[4];
+	
+	float keyframe_scale_fac; /* for dopesheet - scale factor for size of keyframes (i.e. height of channels) */
+	
 	char editmesh_active[4]; 
 
 	char handle_vertex[4];
@@ -386,9 +389,8 @@ typedef struct bTheme {
 	ThemeSpace tlogic;
 	ThemeSpace tuserpref;
 	ThemeSpace tconsole;
-	ThemeSpace ttoolbar;
 	ThemeSpace tclip;
-		
+	
 	/* 20 sets of bone colors for this theme */
 	ThemeWireColor tarm[20];
 	/*ThemeWireColor tobj[20];*/
@@ -546,6 +548,7 @@ typedef struct UserDef {
 	char author[80];	/* author name for file formats supporting it */
 
 	char font_path_ui[1024];
+	char font_path_ui_mono[1024];
 
 	int compute_device_type;
 	int compute_device_id;
@@ -684,7 +687,6 @@ typedef enum eUserpref_UI_Flag2 {
 	USER_KEEP_SESSION			= (1 << 0),
 	USER_REGION_OVERLAP			= (1 << 1),
 	USER_TRACKPAD_NATURAL		= (1 << 2),
-	USER_OPENGL_NO_WARN_SUPPORT	= (1 << 3)
 } eUserpref_UI_Flag2;
 	
 /* Auto-Keying mode */
@@ -755,7 +757,7 @@ typedef enum eOpenGL_RenderingOptions {
 	/* USER_DISABLE_SOUND		= (1 << 1), */ /* deprecated, don't use without checking for */
 	                                     /* backwards compatibilty in do_versions! */
 	USER_DISABLE_MIPMAP		= (1 << 2),
-	USER_DISABLE_VBO		= (1 << 3),
+	/* USER_DISABLE_VBO		= (1 << 3), */ /* DEPRECATED we always use vertex buffers now */
 	/* USER_DISABLE_AA			= (1 << 4), */ /* DEPRECATED */
 } eOpenGL_RenderingOptions;
 
@@ -865,14 +867,6 @@ typedef enum eNdof_Flag {
 
 #define NDOF_PIXELS_PER_SECOND 600.0f
 
-/* compute_device_type */
-typedef enum eCompute_Device_Type {
-	USER_COMPUTE_DEVICE_NONE	= 0,
-	USER_COMPUTE_DEVICE_OPENCL	= 1,
-	USER_COMPUTE_DEVICE_CUDA	= 2,
-} eCompute_Device_Type;
-
-	
 typedef enum eMultiSample_Type {
 	USER_MULTISAMPLE_NONE	= 0,
 	USER_MULTISAMPLE_2	= 2,

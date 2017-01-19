@@ -32,6 +32,7 @@
 #include "util_string.h"
 #include "util_time.h"
 #include "util_transform.h"
+#include "util_version.h"
 
 #ifdef WITH_CYCLES_STANDALONE_GUI
 #include "util_view.h"
@@ -71,20 +72,17 @@ static void session_print(const string& str)
 
 static void session_print_status()
 {
-	int sample, tile;
-	double total_time, sample_time, render_time;
 	string status, substatus;
 
 	/* get status */
-	sample = options.session->progress.get_sample();
-	options.session->progress.get_tile(tile, total_time, sample_time, render_time);
+	float progress = options.session->progress.get_progress();
 	options.session->progress.get_status(status, substatus);
 
 	if(substatus != "")
 		status += ": " + substatus;
 
 	/* print status */
-	status = string_printf("Sample %d   %s", sample, status.c_str());
+	status = string_printf("Progress %05.2f   %s", (double) progress*100, status.c_str());
 	session_print(status);
 }
 
@@ -166,13 +164,12 @@ static void display_info(Progress& progress)
 	latency = (elapsed - last);
 	last = elapsed;
 
-	int sample, tile;
-	double total_time, sample_time, render_time;
+	double total_time, sample_time;
 	string status, substatus;
 
-	sample = progress.get_sample();
-	progress.get_tile(tile, total_time, sample_time, render_time);
+	progress.get_time(total_time, sample_time);
 	progress.get_status(status, substatus);
+	float progress_val = progress.get_progress();
 
 	if(substatus != "")
 		status += ": " + substatus;
@@ -183,10 +180,10 @@ static void display_info(Progress& progress)
 	        "%s"
 	        "        Time: %.2f"
 	        "        Latency: %.4f"
-	        "        Sample: %d"
+	        "        Progress: %05.2f"
 	        "        Average: %.4f"
 	        "        Interactive: %s",
-	        status.c_str(), total_time, latency, sample, sample_time, interactive.c_str());
+	        status.c_str(), total_time, latency, (double) progress_val*100, sample_time, interactive.c_str());
 
 	view_display_info(str.c_str());
 
@@ -336,7 +333,7 @@ static void options_parse(int argc, const char **argv)
 
 	/* device names */
 	string device_names = "";
-	string devicename = "cpu";
+	string devicename = "CPU";
 	bool list = false;
 
 	vector<DeviceType>& types = Device::available_types();
@@ -358,7 +355,7 @@ static void options_parse(int argc, const char **argv)
 
 	/* parse options */
 	ArgParse ap;
-	bool help = false, debug = false;
+	bool help = false, debug = false, version = false;
 	int verbosity = 1;
 
 	ap.options ("Usage: cycles [options] file.xml",
@@ -374,12 +371,15 @@ static void options_parse(int argc, const char **argv)
 		"--threads %d", &options.session_params.threads, "CPU Rendering Threads",
 		"--width  %d", &options.width, "Window width in pixel",
 		"--height %d", &options.height, "Window height in pixel",
+		"--tile-width %d", &options.session_params.tile_size.x, "Tile width in pixels",
+		"--tile-height %d", &options.session_params.tile_size.y, "Tile height in pixels",
 		"--list-devices", &list, "List information about all available devices",
 #ifdef WITH_CYCLES_LOGGING
 		"--debug", &debug, "Enable debug logging",
 		"--verbose %d", &verbosity, "Set verbosity of the logger",
 #endif
 		"--help", &help, "Print help message",
+		"--version", &version, "Print version number",
 		NULL);
 
 	if(ap.parse(argc, argv) < 0) {
@@ -404,6 +404,10 @@ static void options_parse(int argc, const char **argv)
 				(info.display_device)? " (display)": "");
 		}
 
+		exit(EXIT_SUCCESS);
+	}
+	else if(version) {
+		printf("%s\n", CYCLES_VERSION_STRING);
 		exit(EXIT_SUCCESS);
 	}
 	else if(help || options.filepath == "") {

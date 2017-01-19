@@ -49,10 +49,11 @@
 #include "DNA_object_types.h"
 
 #include "BLI_utildefines.h"
-#include "BLI_path_util.h"
 #include "BLI_listbase.h"
 #include "BLI_linklist.h"
+#include "BLI_path_util.h"
 #include "BLI_string.h"
+#include "BLI_string_utils.h"
 
 #include "BLT_translation.h"
 
@@ -215,8 +216,7 @@ void modifiers_clearErrors(Object *ob)
 	}
 }
 
-void modifiers_foreachObjectLink(Object *ob, ObjectWalkFunc walk,
-                                 void *userData)
+void modifiers_foreachObjectLink(Object *ob, ObjectWalkFunc walk, void *userData)
 {
 	ModifierData *md = ob->modifiers.first;
 
@@ -708,7 +708,7 @@ void test_object_modifiers(Object *ob)
  */
 const char *modifier_path_relbase(Object *ob)
 {
-	if (G.relbase_valid || ob->id.lib) {
+	if (G.relbase_valid || ID_IS_LINKED_DATABLOCK(ob)) {
 		return ID_BLEND_PATH(G.main, &ob->id);
 	}
 	else {

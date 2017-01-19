@@ -43,6 +43,7 @@
 #include "BKE_depsgraph.h"
 #include "BKE_group.h"
 #include "BKE_library.h"
+#include "BKE_library_remap.h"
 #include "BKE_main.h"
 #include "BKE_report.h"
 #include "BKE_object.h"
@@ -439,7 +440,7 @@ static int group_link_exec(bContext *C, wmOperator *op)
 		return OPERATOR_CANCELLED;
 
 	/* Early return check, if the object is already in group
-	 * we could sckip all the dependency check and just consider
+	 * we could skip all the dependency check and just consider
 	 * operator is finished.
 	 */
 	if (BKE_group_object_exists(group, ob)) {
@@ -521,12 +522,14 @@ void OBJECT_OT_group_remove(wmOperatorType *ot)
 
 static int group_unlink_exec(bContext *C, wmOperator *UNUSED(op))
 {
+	Main *bmain = CTX_data_main(C);
 	Group *group = CTX_data_pointer_get_type(C, "group", &RNA_Group).data;
 
 	if (!group)
 		return OPERATOR_CANCELLED;
 
-	BKE_group_unlink(group);
+	BKE_libblock_unlink(bmain, group, false, false);
+	BKE_libblock_free(bmain, group);
 
 	WM_event_add_notifier(C, NC_OBJECT | ND_DRAW, NULL);
 

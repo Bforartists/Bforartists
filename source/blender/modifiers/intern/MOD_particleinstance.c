@@ -46,6 +46,7 @@
 #include "BKE_effect.h"
 #include "BKE_global.h"
 #include "BKE_lattice.h"
+#include "BKE_library_query.h"
 #include "BKE_modifier.h"
 #include "BKE_particle.h"
 #include "BKE_pointcache.h"
@@ -144,7 +145,7 @@ static void foreachObjectLink(ModifierData *md, Object *ob,
 {
 	ParticleInstanceModifierData *pimd = (ParticleInstanceModifierData *) md;
 
-	walk(userData, ob, &pimd->ob);
+	walk(userData, ob, &pimd->ob, IDWALK_NOP);
 }
 
 static int particle_skip(ParticleInstanceModifierData *pimd, ParticleSystem *psys, int p)
@@ -350,7 +351,7 @@ static DerivedMesh *applyModifier(ModifierData *md, Object *ob,
 						ChildParticle *cpa = psys->child + (p - psys->totpart);
 						pa = psys->particles + cpa->parent;
 					}
-					psys_mat_hair_to_global(sim.ob, sim.psmd->dm, sim.psys->part->from, pa, hairmat);
+					psys_mat_hair_to_global(sim.ob, sim.psmd->dm_final, sim.psys->part->from, pa, hairmat);
 					copy_m3_m4(mat, hairmat);
 					/* to quaternion */
 					mat3_to_quat(frame, mat);

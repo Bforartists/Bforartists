@@ -31,55 +31,67 @@
 
 /* 2.0 and 2.1 */
 #if __CUDA_ARCH__ == 200 || __CUDA_ARCH__ == 210
-#define CUDA_MULTIPRESSOR_MAX_REGISTERS 32768
-#define CUDA_MULTIPROCESSOR_MAX_BLOCKS 8
-#define CUDA_BLOCK_MAX_THREADS 1024
-#define CUDA_THREAD_MAX_REGISTERS 63
+#  define CUDA_MULTIPRESSOR_MAX_REGISTERS 32768
+#  define CUDA_MULTIPROCESSOR_MAX_BLOCKS 8
+#  define CUDA_BLOCK_MAX_THREADS 1024
+#  define CUDA_THREAD_MAX_REGISTERS 63
 
 /* tunable parameters */
-#define CUDA_THREADS_BLOCK_WIDTH 16
-#define CUDA_KERNEL_MAX_REGISTERS 32
-#define CUDA_KERNEL_BRANCHED_MAX_REGISTERS 40
+#  define CUDA_THREADS_BLOCK_WIDTH 16
+#  define CUDA_KERNEL_MAX_REGISTERS 32
+#  define CUDA_KERNEL_BRANCHED_MAX_REGISTERS 40
 
 /* 3.0 and 3.5 */
 #elif __CUDA_ARCH__ == 300 || __CUDA_ARCH__ == 350
-#define CUDA_MULTIPRESSOR_MAX_REGISTERS 65536
-#define CUDA_MULTIPROCESSOR_MAX_BLOCKS 16
-#define CUDA_BLOCK_MAX_THREADS 1024
-#define CUDA_THREAD_MAX_REGISTERS 63
+#  define CUDA_MULTIPRESSOR_MAX_REGISTERS 65536
+#  define CUDA_MULTIPROCESSOR_MAX_BLOCKS 16
+#  define CUDA_BLOCK_MAX_THREADS 1024
+#  define CUDA_THREAD_MAX_REGISTERS 63
 
 /* tunable parameters */
-#define CUDA_THREADS_BLOCK_WIDTH 16
-#define CUDA_KERNEL_MAX_REGISTERS 63
-#define CUDA_KERNEL_BRANCHED_MAX_REGISTERS 63
+#  define CUDA_THREADS_BLOCK_WIDTH 16
+#  define CUDA_KERNEL_MAX_REGISTERS 63
+#  define CUDA_KERNEL_BRANCHED_MAX_REGISTERS 63
 
 /* 3.2 */
 #elif __CUDA_ARCH__ == 320
-#define CUDA_MULTIPRESSOR_MAX_REGISTERS 32768
-#define CUDA_MULTIPROCESSOR_MAX_BLOCKS 16
-#define CUDA_BLOCK_MAX_THREADS 1024
-#define CUDA_THREAD_MAX_REGISTERS 63
+#  define CUDA_MULTIPRESSOR_MAX_REGISTERS 32768
+#  define CUDA_MULTIPROCESSOR_MAX_BLOCKS 16
+#  define CUDA_BLOCK_MAX_THREADS 1024
+#  define CUDA_THREAD_MAX_REGISTERS 63
 
 /* tunable parameters */
-#define CUDA_THREADS_BLOCK_WIDTH 16
-#define CUDA_KERNEL_MAX_REGISTERS 63
-#define CUDA_KERNEL_BRANCHED_MAX_REGISTERS 63
+#  define CUDA_THREADS_BLOCK_WIDTH 16
+#  define CUDA_KERNEL_MAX_REGISTERS 63
+#  define CUDA_KERNEL_BRANCHED_MAX_REGISTERS 63
 
-/* 5.0 and 5.2 */
-#elif __CUDA_ARCH__ == 500 || __CUDA_ARCH__ == 520
-#define CUDA_MULTIPRESSOR_MAX_REGISTERS 65536
-#define CUDA_MULTIPROCESSOR_MAX_BLOCKS 32
-#define CUDA_BLOCK_MAX_THREADS 1024
-#define CUDA_THREAD_MAX_REGISTERS 255
+/* 3.7 */
+#elif __CUDA_ARCH__ == 370
+#  define CUDA_MULTIPRESSOR_MAX_REGISTERS 65536
+#  define CUDA_MULTIPROCESSOR_MAX_BLOCKS 16
+#  define CUDA_BLOCK_MAX_THREADS 1024
+#  define CUDA_THREAD_MAX_REGISTERS 255
 
 /* tunable parameters */
-#define CUDA_THREADS_BLOCK_WIDTH 16
-#define CUDA_KERNEL_MAX_REGISTERS 40
-#define CUDA_KERNEL_BRANCHED_MAX_REGISTERS 63
+#  define CUDA_THREADS_BLOCK_WIDTH 16
+#  define CUDA_KERNEL_MAX_REGISTERS 63
+#  define CUDA_KERNEL_BRANCHED_MAX_REGISTERS 63
+
+/* 5.0, 5.2, 5.3, 6.0, 6.1 */
+#elif __CUDA_ARCH__ >= 500
+#  define CUDA_MULTIPRESSOR_MAX_REGISTERS 65536
+#  define CUDA_MULTIPROCESSOR_MAX_BLOCKS 32
+#  define CUDA_BLOCK_MAX_THREADS 1024
+#  define CUDA_THREAD_MAX_REGISTERS 255
+
+/* tunable parameters */
+#  define CUDA_THREADS_BLOCK_WIDTH 16
+#  define CUDA_KERNEL_MAX_REGISTERS 48
+#  define CUDA_KERNEL_BRANCHED_MAX_REGISTERS 63
 
 /* unknown architecture */
 #else
-#error "Unknown or unsupported CUDA architecture, can't determine launch bounds"
+#  error "Unknown or unsupported CUDA architecture, can't determine launch bounds"
 #endif
 
 /* compute number of threads per block and minimum blocks per multiprocessor
@@ -94,19 +106,19 @@
 /* sanity checks */
 
 #if CUDA_THREADS_BLOCK_WIDTH*CUDA_THREADS_BLOCK_WIDTH > CUDA_BLOCK_MAX_THREADS
-#error "Maximum number of threads per block exceeded"
+#  error "Maximum number of threads per block exceeded"
 #endif
 
 #if CUDA_MULTIPRESSOR_MAX_REGISTERS/(CUDA_THREADS_BLOCK_WIDTH*CUDA_THREADS_BLOCK_WIDTH*CUDA_KERNEL_MAX_REGISTERS) > CUDA_MULTIPROCESSOR_MAX_BLOCKS
-#error "Maximum number of blocks per multiprocessor exceeded"
+#  error "Maximum number of blocks per multiprocessor exceeded"
 #endif
 
 #if CUDA_KERNEL_MAX_REGISTERS > CUDA_THREAD_MAX_REGISTERS
-#error "Maximum number of registers per thread exceeded"
+#  error "Maximum number of registers per thread exceeded"
 #endif
 
 #if CUDA_KERNEL_BRANCHED_MAX_REGISTERS > CUDA_THREAD_MAX_REGISTERS
-#error "Maximum number of registers per thread exceeded"
+#  error "Maximum number of registers per thread exceeded"
 #endif
 
 /* kernels */
@@ -159,23 +171,39 @@ kernel_cuda_convert_to_half_float(uchar4 *rgba, float *buffer, float sample_scal
 
 extern "C" __global__ void
 CUDA_LAUNCH_BOUNDS(CUDA_THREADS_BLOCK_WIDTH, CUDA_KERNEL_MAX_REGISTERS)
-kernel_cuda_shader(uint4 *input, float4 *output, int type, int sx, int sw, int offset, int sample)
+kernel_cuda_shader(uint4 *input,
+                   float4 *output,
+                   float *output_luma,
+                   int type,
+                   int sx,
+                   int sw,
+                   int offset,
+                   int sample)
 {
 	int x = sx + blockDim.x*blockIdx.x + threadIdx.x;
 
-	if(x < sx + sw)
-		kernel_shader_evaluate(NULL, input, output, (ShaderEvalType)type, x, sample);
+	if(x < sx + sw) {
+		kernel_shader_evaluate(NULL,
+		                       input,
+		                       output,
+		                       output_luma,
+		                       (ShaderEvalType)type, 
+		                       x,
+		                       sample);
+	}
 }
 
+#ifdef __BAKING__
 extern "C" __global__ void
 CUDA_LAUNCH_BOUNDS(CUDA_THREADS_BLOCK_WIDTH, CUDA_KERNEL_MAX_REGISTERS)
-kernel_cuda_bake(uint4 *input, float4 *output, int type, int sx, int sw, int offset, int sample)
+kernel_cuda_bake(uint4 *input, float4 *output, int type, int filter, int sx, int sw, int offset, int sample)
 {
 	int x = sx + blockDim.x*blockIdx.x + threadIdx.x;
 
 	if(x < sx + sw)
-		kernel_bake_evaluate(NULL, input, output, (ShaderEvalType)type, x, offset, sample);
+		kernel_bake_evaluate(NULL, input, output, (ShaderEvalType)type, filter, x, offset, sample);
 }
+#endif
 
 #endif
 

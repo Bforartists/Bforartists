@@ -55,11 +55,8 @@
 
 #include "PIL_time.h"
 
-#include "WM_api.h"
-
 #include "BKE_appdir.h"
 #include "BKE_anim.h"
-#include "BKE_blender.h"
 #include "BKE_cloth.h"
 #include "BKE_dynamicpaint.h"
 #include "BKE_global.h"
@@ -81,6 +78,10 @@
 /* both in intern */
 #ifdef WITH_SMOKE
 #include "smoke_API.h"
+#endif
+
+#ifdef WITH_OPENVDB
+#include "openvdb_capi.h"
 #endif
 
 #ifdef WITH_LZO
@@ -385,9 +386,9 @@ static void ptcache_particle_interpolate(int index, void *psys_v, void **data, f
 		}
 	}
 
-	/* determine rotation from velocity */
+	/* default to no rotation */
 	if (data[BPHYS_DATA_LOCATION] && !data[BPHYS_DATA_ROTATION]) {
-		vec_to_quat(keys[2].rot, keys[2].vel, OB_NEGX, OB_POSZ);
+		unit_qt(keys[2].rot);
 	}
 
 	if (cfra > pa->time)
@@ -691,10 +692,10 @@ static int ptcache_smoke_read_old(PTCacheFile *pf, void *smoke_v)
 	SmokeDomainSettings *sds = smd->domain;
 	
 	if (sds->fluid) {
-		size_t res = sds->res[0]*sds->res[1]*sds->res[2];
+		const size_t res = sds->res[0] * sds->res[1] * sds->res[2];
+		const unsigned int out_len = (unsigned int)res * sizeof(float);
 		float dt, dx, *dens, *heat, *heatold, *vx, *vy, *vz;
 		unsigned char *obstacles;
-		unsigned int out_len = (unsigned int)res * sizeof(float);
 		float *tmp_array = MEM_callocN(out_len, "Smoke old cache tmp");
 
 		int fluid_fields = smoke_get_data_flags(sds);
@@ -733,13 +734,10 @@ static int ptcache_smoke_read_old(PTCacheFile *pf, void *smoke_v)
 		MEM_freeN(tmp_array);
 
 		if (pf->data_types & (1<<BPHYS_DATA_SMOKE_HIGH) && sds->wt) {
-			int res = sds->res[0]*sds->res[1]*sds->res[2];
 			int res_big, res_big_array[3];
-			float *dens, *tcu, *tcv, *tcw;
-			unsigned int out_len = sizeof(float)*(unsigned int)res;
+			float *tcu, *tcv, *tcw;
 			unsigned int out_len_big;
 			unsigned char *tmp_array_big;
-
 			smoke_turbulence_get_res(sds->wt, res_big_array);
 			res_big = res_big_array[0]*res_big_array[1]*res_big_array[2];
 			out_len_big = sizeof(float) * (unsigned int)res_big;
@@ -890,12 +888,294 @@ static int ptcache_smoke_read(PTCacheFile *pf, void *smoke_v)
 	return 1;
 }
 
+#ifdef WITH_OPENVDB
+/**
+ * Construct matrices which represent the fluid object, for low and high res:
+ * <pre>
+ * vs 0  0  0
+ * 0  vs 0  0
+ * 0  0  vs 0
+ * px py pz 1
+ * </pre>
+ *
+ * with `vs` = voxel size, and `px, py, pz`,
+ * the min position of the domain's bounding box.
+ */
+static void compute_fluid_matrices(SmokeDomainSettings *sds)
+{
+	float bbox_min[3];
+
+	copy_v3_v3(bbox_min, sds->p0);
+
+	if (sds->flags & MOD_SMOKE_ADAPTIVE_DOMAIN) {
+		bbox_min[0] += (sds->cell_size[0] * (float)sds->res_min[0]);
+		bbox_min[1] += (sds->cell_size[1] * (float)sds->res_min[1]);
+		bbox_min[2] += (sds->cell_size[2] * (float)sds->res_min[2]);
+		add_v3_v3(bbox_min, sds->obj_shift_f);
+	}
+
+	/* construct low res matrix */
+	size_to_mat4(sds->fluidmat, sds->cell_size);
+	copy_v3_v3(sds->fluidmat[3], bbox_min);
+
+	/* The smoke simulator stores voxels cell-centered, whilst VDB is node
+	 * centered, so we offset the matrix by half a voxel to compensate. */
+	madd_v3_v3fl(sds->fluidmat[3], sds->cell_size, 0.5f);
+
+	mul_m4_m4m4(sds->fluidmat, sds->obmat, sds->fluidmat);
+
+	if (sds->wt) {
+		float voxel_size_high[3];
+		/* construct high res matrix */
+		mul_v3_v3fl(voxel_size_high, sds->cell_size, 1.0f / (float)(sds->amplify + 1));
+		size_to_mat4(sds->fluidmat_wt, voxel_size_high);
+		copy_v3_v3(sds->fluidmat_wt[3], bbox_min);
+
+		/* Same here, add half a voxel to adjust the position of the fluid. */
+		madd_v3_v3fl(sds->fluidmat_wt[3], voxel_size_high, 0.5f);
+
+		mul_m4_m4m4(sds->fluidmat_wt, sds->obmat, sds->fluidmat_wt);
+	}
+}
+
+static int ptcache_smoke_openvdb_write(struct OpenVDBWriter *writer, void *smoke_v)
+{
+	SmokeModifierData *smd = (SmokeModifierData *)smoke_v;
+	SmokeDomainSettings *sds = smd->domain;
+
+	OpenVDBWriter_set_flags(writer, sds->openvdb_comp, (sds->data_depth == 16));
+
+	OpenVDBWriter_add_meta_int(writer, "blender/smoke/active_fields", sds->active_fields);
+	OpenVDBWriter_add_meta_v3_int(writer, "blender/smoke/resolution", sds->res);
+	OpenVDBWriter_add_meta_v3_int(writer, "blender/smoke/min_resolution", sds->res_min);
+	OpenVDBWriter_add_meta_v3_int(writer, "blender/smoke/max_resolution", sds->res_max);
+	OpenVDBWriter_add_meta_v3_int(writer, "blender/smoke/base_resolution", sds->base_res);
+	OpenVDBWriter_add_meta_v3(writer, "blender/smoke/min_bbox", sds->p0);
+	OpenVDBWriter_add_meta_v3(writer, "blender/smoke/max_bbox", sds->p1);
+	OpenVDBWriter_add_meta_v3(writer, "blender/smoke/dp0", sds->dp0);
+	OpenVDBWriter_add_meta_v3_int(writer, "blender/smoke/shift", sds->shift);
+	OpenVDBWriter_add_meta_v3(writer, "blender/smoke/obj_shift_f", sds->obj_shift_f);
+	OpenVDBWriter_add_meta_v3(writer, "blender/smoke/active_color", sds->active_color);
+	OpenVDBWriter_add_meta_mat4(writer, "blender/smoke/obmat", sds->obmat);
+
+	int fluid_fields = smoke_get_data_flags(sds);
+
+	struct OpenVDBFloatGrid *clip_grid = NULL;
+
+	compute_fluid_matrices(sds);
+
+	OpenVDBWriter_add_meta_int(writer, "blender/smoke/fluid_fields", fluid_fields);
+
+	if (sds->wt) {
+		struct OpenVDBFloatGrid *wt_density_grid;
+		float *dens, *react, *fuel, *flame, *tcu, *tcv, *tcw, *r, *g, *b;
+
+		smoke_turbulence_export(sds->wt, &dens, &react, &flame, &fuel, &r, &g, &b, &tcu, &tcv, &tcw);
+
+		wt_density_grid = OpenVDB_export_grid_fl(writer, "density", dens, sds->res_wt, sds->fluidmat_wt, NULL);
+		clip_grid = wt_density_grid;
+
+		if (fluid_fields & SM_ACTIVE_FIRE) {
+			OpenVDB_export_grid_fl(writer, "flame", flame, sds->res_wt, sds->fluidmat_wt, wt_density_grid);
+			OpenVDB_export_grid_fl(writer, "fuel", fuel, sds->res_wt, sds->fluidmat_wt, wt_density_grid);
+			OpenVDB_export_grid_fl(writer, "react", react, sds->res_wt, sds->fluidmat_wt, wt_density_grid);
+		}
+
+		if (fluid_fields & SM_ACTIVE_COLORS) {
+			OpenVDB_export_grid_vec(writer, "color", r, g, b, sds->res_wt, sds->fluidmat_wt, VEC_INVARIANT, true, wt_density_grid);
+		}
+
+		OpenVDB_export_grid_vec(writer, "texture coordinates", tcu, tcv, tcw, sds->res, sds->fluidmat, VEC_INVARIANT, false, wt_density_grid);
+	}
+
+	if (sds->fluid) {
+		struct OpenVDBFloatGrid *density_grid;
+		float dt, dx, *dens, *react, *fuel, *flame, *heat, *heatold, *vx, *vy, *vz, *r, *g, *b;
+		unsigned char *obstacles;
+
+		smoke_export(sds->fluid, &dt, &dx, &dens, &react, &flame, &fuel, &heat,
+		             &heatold, &vx, &vy, &vz, &r, &g, &b, &obstacles);
+
+		OpenVDBWriter_add_meta_fl(writer, "blender/smoke/dx", dx);
+		OpenVDBWriter_add_meta_fl(writer, "blender/smoke/dt", dt);
+
+		const char *name = (!sds->wt) ? "density" : "density low";
+		density_grid = OpenVDB_export_grid_fl(writer, name, dens, sds->res, sds->fluidmat, NULL);
+		clip_grid = sds->wt ? clip_grid : density_grid;
+
+		OpenVDB_export_grid_fl(writer, "shadow", sds->shadow, sds->res, sds->fluidmat, NULL);
+
+		if (fluid_fields & SM_ACTIVE_HEAT) {
+			OpenVDB_export_grid_fl(writer, "heat", heat, sds->res, sds->fluidmat, clip_grid);
+			OpenVDB_export_grid_fl(writer, "heat old", heatold, sds->res, sds->fluidmat, clip_grid);
+		}
+
+		if (fluid_fields & SM_ACTIVE_FIRE) {
+			name = (!sds->wt) ? "flame" : "flame low";
+			OpenVDB_export_grid_fl(writer, name, flame, sds->res, sds->fluidmat, density_grid);
+			name = (!sds->wt) ? "fuel" : "fuel low";
+			OpenVDB_export_grid_fl(writer, name, fuel, sds->res, sds->fluidmat, density_grid);
+			name = (!sds->wt) ? "react" : "react low";
+			OpenVDB_export_grid_fl(writer, name, react, sds->res, sds->fluidmat, density_grid);
+		}
+
+		if (fluid_fields & SM_ACTIVE_COLORS) {
+			name = (!sds->wt) ? "color" : "color low";
+			OpenVDB_export_grid_vec(writer, name, r, g, b, sds->res, sds->fluidmat, VEC_INVARIANT, true, density_grid);
+		}
+
+		OpenVDB_export_grid_vec(writer, "velocity", vx, vy, vz, sds->res, sds->fluidmat, VEC_CONTRAVARIANT_RELATIVE, false, clip_grid);
+		OpenVDB_export_grid_ch(writer, "obstacles", obstacles, sds->res, sds->fluidmat, NULL);
+	}
+
+	return 1;
+}
+
+static int ptcache_smoke_openvdb_read(struct OpenVDBReader *reader, void *smoke_v)
+{
+	SmokeModifierData *smd = (SmokeModifierData *)smoke_v;
+
+	if (!smd) {
+		return 0;
+	}
+
+	SmokeDomainSettings *sds = smd->domain;
+
+	int fluid_fields = smoke_get_data_flags(sds);
+	int active_fields, cache_fields = 0;
+	int cache_res[3];
+	float cache_dx;
+	bool reallocate = false;
+
+	OpenVDBReader_get_meta_v3_int(reader, "blender/smoke/min_resolution", sds->res_min);
+	OpenVDBReader_get_meta_v3_int(reader, "blender/smoke/max_resolution", sds->res_max);
+	OpenVDBReader_get_meta_v3_int(reader, "blender/smoke/base_resolution", sds->base_res);
+	OpenVDBReader_get_meta_v3(reader, "blender/smoke/min_bbox", sds->p0);
+	OpenVDBReader_get_meta_v3(reader, "blender/smoke/max_bbox", sds->p1);
+	OpenVDBReader_get_meta_v3(reader, "blender/smoke/dp0", sds->dp0);
+	OpenVDBReader_get_meta_v3_int(reader, "blender/smoke/shift", sds->shift);
+	OpenVDBReader_get_meta_v3(reader, "blender/smoke/obj_shift_f", sds->obj_shift_f);
+	OpenVDBReader_get_meta_v3(reader, "blender/smoke/active_color", sds->active_color);
+	OpenVDBReader_get_meta_mat4(reader, "blender/smoke/obmat", sds->obmat);
+	OpenVDBReader_get_meta_int(reader, "blender/smoke/fluid_fields", &cache_fields);
+	OpenVDBReader_get_meta_int(reader, "blender/smoke/active_fields", &active_fields);
+	OpenVDBReader_get_meta_fl(reader, "blender/smoke/dx", &cache_dx);
+	OpenVDBReader_get_meta_v3_int(reader, "blender/smoke/resolution", cache_res);
+
+	/* check if resolution has changed */
+	if (sds->res[0] != cache_res[0] ||
+		sds->res[1] != cache_res[1] ||
+		sds->res[2] != cache_res[2])
+	{
+		if (sds->flags & MOD_SMOKE_ADAPTIVE_DOMAIN) {
+			reallocate = true;
+		}
+		else {
+			return 0;
+		}
+	}
+
+	/* check if active fields have changed */
+	if ((fluid_fields != cache_fields) || (active_fields != sds->active_fields)) {
+		reallocate = true;
+	}
+
+	/* reallocate fluid if needed*/
+	if (reallocate) {
+		sds->active_fields = active_fields | cache_fields;
+		smoke_reallocate_fluid(sds, cache_dx, cache_res, 1);
+		sds->dx = cache_dx;
+		copy_v3_v3_int(sds->res, cache_res);
+		sds->total_cells = cache_res[0] * cache_res[1] * cache_res[2];
+
+		if (sds->flags & MOD_SMOKE_HIGHRES) {
+			smoke_reallocate_highres_fluid(sds, cache_dx, cache_res, 1);
+		}
+	}
+
+	if (sds->fluid) {
+		float dt, dx, *dens, *react, *fuel, *flame, *heat, *heatold, *vx, *vy, *vz, *r, *g, *b;
+		unsigned char *obstacles;
+
+		smoke_export(sds->fluid, &dt, &dx, &dens, &react, &flame, &fuel, &heat,
+		             &heatold, &vx, &vy, &vz, &r, &g, &b, &obstacles);
+
+		OpenVDBReader_get_meta_fl(reader, "blender/smoke/dt", &dt);
+
+		OpenVDB_import_grid_fl(reader, "shadow", &sds->shadow, sds->res);
+
+		const char *name = (!sds->wt) ? "density" : "density low";
+		OpenVDB_import_grid_fl(reader, name, &dens, sds->res);
+
+		if (cache_fields & SM_ACTIVE_HEAT) {
+			OpenVDB_import_grid_fl(reader, "heat", &heat, sds->res);
+			OpenVDB_import_grid_fl(reader, "heat old", &heatold, sds->res);
+		}
+
+		if (cache_fields & SM_ACTIVE_FIRE) {
+			name = (!sds->wt) ? "flame" : "flame low";
+			OpenVDB_import_grid_fl(reader, name, &flame, sds->res);
+			name = (!sds->wt) ? "fuel" : "fuel low";
+			OpenVDB_import_grid_fl(reader, name, &fuel, sds->res);
+			name = (!sds->wt) ? "react" : "react low";
+			OpenVDB_import_grid_fl(reader, name, &react, sds->res);
+		}
+
+		if (cache_fields & SM_ACTIVE_COLORS) {
+			name = (!sds->wt) ? "color" : "color low";
+			OpenVDB_import_grid_vec(reader, name, &r, &g, &b, sds->res);
+		}
+
+		OpenVDB_import_grid_vec(reader, "velocity", &vx, &vy, &vz, sds->res);
+		OpenVDB_import_grid_ch(reader, "obstacles", &obstacles, sds->res);
+	}
+
+	if (sds->wt) {
+		float *dens, *react, *fuel, *flame, *tcu, *tcv, *tcw, *r, *g, *b;
+
+		smoke_turbulence_export(sds->wt, &dens, &react, &flame, &fuel, &r, &g, &b, &tcu, &tcv, &tcw);
+
+		OpenVDB_import_grid_fl(reader, "density", &dens, sds->res_wt);
+
+		if (cache_fields & SM_ACTIVE_FIRE) {
+			OpenVDB_import_grid_fl(reader, "flame", &flame, sds->res_wt);
+			OpenVDB_import_grid_fl(reader, "fuel", &fuel, sds->res_wt);
+			OpenVDB_import_grid_fl(reader, "react", &react, sds->res_wt);
+		}
+
+		if (cache_fields & SM_ACTIVE_COLORS) {
+			OpenVDB_import_grid_vec(reader, "color", &r, &g, &b, sds->res_wt);
+		}
+
+		OpenVDB_import_grid_vec(reader, "texture coordinates", &tcu, &tcv, &tcw, sds->res);
+	}
+
+	OpenVDBReader_free(reader);
+
+	return 1;
+}
+#endif
+
 #else // WITH_SMOKE
 static int  ptcache_smoke_totpoint(void *UNUSED(smoke_v), int UNUSED(cfra)) { return 0; }
 static void ptcache_smoke_error(void *UNUSED(smoke_v), const char *UNUSED(message)) { }
 static int  ptcache_smoke_read(PTCacheFile *UNUSED(pf), void *UNUSED(smoke_v)) { return 0; }
 static int  ptcache_smoke_write(PTCacheFile *UNUSED(pf), void *UNUSED(smoke_v)) { return 0; }
 #endif // WITH_SMOKE
+
+#if !defined(WITH_SMOKE) || !defined(WITH_OPENVDB)
+static int ptcache_smoke_openvdb_write(struct OpenVDBWriter *writer, void *smoke_v)
+{
+	UNUSED_VARS(writer, smoke_v);
+	return 0;
+}
+
+static int ptcache_smoke_openvdb_read(struct OpenVDBReader *reader, void *smoke_v)
+{
+	UNUSED_VARS(reader, smoke_v);
+	return 0;
+}
+#endif
 
 static int ptcache_dynamicpaint_totpoint(void *sd, int UNUSED(cfra))
 {
@@ -1116,6 +1396,9 @@ void BKE_ptcache_id_from_softbody(PTCacheID *pid, Object *ob, SoftBody *sb)
 	pid->write_stream			= NULL;
 	pid->read_stream			= NULL;
 
+	pid->write_openvdb_stream	= NULL;
+	pid->read_openvdb_stream	= NULL;
+
 	pid->write_extra_data		= NULL;
 	pid->read_extra_data		= NULL;
 	pid->interpolate_extra_data	= NULL;
@@ -1130,6 +1413,7 @@ void BKE_ptcache_id_from_softbody(PTCacheID *pid, Object *ob, SoftBody *sb)
 
 	pid->default_step = 10;
 	pid->max_step = 20;
+	pid->file_type = PTCACHE_FILE_PTCACHE;
 }
 void BKE_ptcache_id_from_particles(PTCacheID *pid, Object *ob, ParticleSystem *psys)
 {
@@ -1156,6 +1440,9 @@ void BKE_ptcache_id_from_particles(PTCacheID *pid, Object *ob, ParticleSystem *p
 
 	pid->write_stream			= NULL;
 	pid->read_stream			= NULL;
+
+	pid->write_openvdb_stream	= NULL;
+	pid->read_openvdb_stream	= NULL;
 
 	pid->write_extra_data		= NULL;
 	pid->read_extra_data		= NULL;
@@ -1188,6 +1475,7 @@ void BKE_ptcache_id_from_particles(PTCacheID *pid, Object *ob, ParticleSystem *p
 
 	pid->default_step = 10;
 	pid->max_step = 20;
+	pid->file_type = PTCACHE_FILE_PTCACHE;
 }
 void BKE_ptcache_id_from_cloth(PTCacheID *pid, Object *ob, ClothModifierData *clmd)
 {
@@ -1207,6 +1495,9 @@ void BKE_ptcache_id_from_cloth(PTCacheID *pid, Object *ob, ClothModifierData *cl
 	pid->read_point				= ptcache_cloth_read;
 	pid->interpolate_point		= ptcache_cloth_interpolate;
 
+	pid->write_openvdb_stream	= NULL;
+	pid->read_openvdb_stream	= NULL;
+
 	pid->write_stream			= NULL;
 	pid->read_stream			= NULL;
 
@@ -1222,6 +1513,7 @@ void BKE_ptcache_id_from_cloth(PTCacheID *pid, Object *ob, ClothModifierData *cl
 
 	pid->default_step = 1;
 	pid->max_step = 1;
+	pid->file_type = PTCACHE_FILE_PTCACHE;
 }
 void BKE_ptcache_id_from_smoke(PTCacheID *pid, struct Object *ob, struct SmokeModifierData *smd)
 {
@@ -1249,6 +1541,9 @@ void BKE_ptcache_id_from_smoke(PTCacheID *pid, struct Object *ob, struct SmokeMo
 	pid->read_stream			= ptcache_smoke_read;
 	pid->write_stream			= ptcache_smoke_write;
 
+	pid->write_openvdb_stream	= ptcache_smoke_openvdb_write;
+	pid->read_openvdb_stream	= ptcache_smoke_openvdb_read;
+
 	pid->write_extra_data		= NULL;
 	pid->read_extra_data		= NULL;
 	pid->interpolate_extra_data	= NULL;
@@ -1266,6 +1561,7 @@ void BKE_ptcache_id_from_smoke(PTCacheID *pid, struct Object *ob, struct SmokeMo
 
 	pid->default_step = 1;
 	pid->max_step = 1;
+	pid->file_type = smd->domain->cache_file_format;
 }
 
 void BKE_ptcache_id_from_dynamicpaint(PTCacheID *pid, Object *ob, DynamicPaintSurface *surface)
@@ -1289,6 +1585,9 @@ void BKE_ptcache_id_from_dynamicpaint(PTCacheID *pid, Object *ob, DynamicPaintSu
 	pid->write_stream			= ptcache_dynamicpaint_write;
 	pid->read_stream			= ptcache_dynamicpaint_read;
 
+	pid->write_openvdb_stream	= NULL;
+	pid->read_openvdb_stream	= NULL;
+
 	pid->write_extra_data		= NULL;
 	pid->read_extra_data		= NULL;
 	pid->interpolate_extra_data	= NULL;
@@ -1303,6 +1602,7 @@ void BKE_ptcache_id_from_dynamicpaint(PTCacheID *pid, Object *ob, DynamicPaintSu
 
 	pid->default_step = 1;
 	pid->max_step = 1;
+	pid->file_type = PTCACHE_FILE_PTCACHE;
 }
 
 void BKE_ptcache_id_from_rigidbody(PTCacheID *pid, Object *ob, RigidBodyWorld *rbw)
@@ -1325,6 +1625,9 @@ void BKE_ptcache_id_from_rigidbody(PTCacheID *pid, Object *ob, RigidBodyWorld *r
 	
 	pid->write_stream			= NULL;
 	pid->read_stream			= NULL;
+
+	pid->write_openvdb_stream	= NULL;
+	pid->read_openvdb_stream	= NULL;
 	
 	pid->write_extra_data		= NULL;
 	pid->read_extra_data		= NULL;
@@ -1340,6 +1643,7 @@ void BKE_ptcache_id_from_rigidbody(PTCacheID *pid, Object *ob, RigidBodyWorld *r
 	
 	pid->default_step = 1;
 	pid->max_step = 1;
+	pid->file_type = PTCACHE_FILE_PTCACHE;
 }
 
 void BKE_ptcache_ids_from_object(ListBase *lb, Object *ob, Scene *scene, int duplis)
@@ -1432,6 +1736,38 @@ void BKE_ptcache_ids_from_object(ListBase *lb, Object *ob, Scene *scene, int dup
 
 /* File handling */
 
+static const char *ptcache_file_extension(const PTCacheID *pid)
+{
+	switch (pid->file_type) {
+		default:
+		case PTCACHE_FILE_PTCACHE:
+			return PTCACHE_EXT;
+		case PTCACHE_FILE_OPENVDB:
+			return ".vdb";
+	}
+}
+
+/**
+ * Similar to #BLI_path_frame_get, but takes into account the stack-index which is after the frame.
+ */
+static int ptcache_frame_from_filename(const char *filename, const char *ext)
+{
+	const int frame_len = 6;
+	const int ext_len = frame_len + strlen(ext);
+	const int len = strlen(filename);
+
+	/* could crash if trying to copy a string out of this range */
+	if (len > ext_len) {
+		/* using frame_len here gives compile error (vla) */
+		char num[/* frame_len */6 + 1];
+		BLI_strncpy(num, filename + len - ext_len, sizeof(num));
+
+		return atoi(num);
+	}
+
+	return -1;
+}
+
 /* Takes an Object ID and returns a unique name
  * - id: object id
  * - cfra: frame for the cache, can be negative
@@ -1510,18 +1846,19 @@ static int ptcache_filename(PTCacheID *pid, char *filename, int cfra, short do_p
 	}
 
 	if (do_ext) {
-
 		if (pid->cache->index < 0)
 			pid->cache->index =  pid->stack_index = BKE_object_insert_ptcache(pid->ob);
 
+		const char *ext = ptcache_file_extension(pid);
+
 		if (pid->cache->flag & PTCACHE_EXTERNAL) {
 			if (pid->cache->index >= 0)
-				BLI_snprintf(newname, MAX_PTCACHE_FILE, "_%06d_%02u"PTCACHE_EXT, cfra, pid->stack_index); /* always 6 chars */
+				BLI_snprintf(newname, MAX_PTCACHE_FILE, "_%06d_%02u%s", cfra, pid->stack_index, ext); /* always 6 chars */
 			else
-				BLI_snprintf(newname, MAX_PTCACHE_FILE, "_%06d"PTCACHE_EXT, cfra); /* always 6 chars */
+				BLI_snprintf(newname, MAX_PTCACHE_FILE, "_%06d%s", cfra, ext); /* always 6 chars */
 		}
 		else {
-			BLI_snprintf(newname, MAX_PTCACHE_FILE, "_%06d_%02u"PTCACHE_EXT, cfra, pid->stack_index); /* always 6 chars */
+			BLI_snprintf(newname, MAX_PTCACHE_FILE, "_%06d_%02u%s", cfra, pid->stack_index, ext); /* always 6 chars */
 		}
 		len += 16;
 	}
@@ -1546,9 +1883,6 @@ static PTCacheFile *ptcache_file_open(PTCacheID *pid, int mode, int cfra)
 	ptcache_filename(pid, filename, cfra, 1, 1);
 
 	if (mode==PTCACHE_FILE_READ) {
-		if (!BLI_exists(filename)) {
-			return NULL;
-		}
 		fp = BLI_fopen(filename, "rb");
 	}
 	else if (mode==PTCACHE_FILE_WRITE) {
@@ -2159,6 +2493,36 @@ static int ptcache_read_stream(PTCacheID *pid, int cfra)
 	
 	return error == 0;
 }
+
+static int ptcache_read_openvdb_stream(PTCacheID *pid, int cfra)
+{
+#ifdef WITH_OPENVDB
+	char filename[FILE_MAX * 2];
+
+	/* save blend file before using disk pointcache */
+	if (!G.relbase_valid && (pid->cache->flag & PTCACHE_EXTERNAL) == 0)
+		return 0;
+
+	ptcache_filename(pid, filename, cfra, 1, 1);
+
+	if (!BLI_exists(filename)) {
+		return 0;
+	}
+
+	struct OpenVDBReader *reader = OpenVDBReader_create();
+	OpenVDBReader_open(reader, filename);
+
+	if (!pid->read_openvdb_stream(reader, pid->calldata)) {
+		return 0;
+	}
+
+	return 1;
+#else
+	UNUSED_VARS(pid, cfra);
+	return 0;
+#endif
+}
+
 static int ptcache_read(PTCacheID *pid, int cfra)
 {
 	PTCacheMem *pm = NULL;
@@ -2268,7 +2632,7 @@ static int ptcache_interpolate(PTCacheID *pid, float cfra, int cfra1, int cfra2)
 }
 /* reads cache from disk or memory */
 /* possible to get old or interpolated result */
-int BKE_ptcache_read(PTCacheID *pid, float cfra)
+int BKE_ptcache_read(PTCacheID *pid, float cfra, bool no_extrapolate_old)
 {
 	int cfrai = (int)floor(cfra), cfra1=0, cfra2=0;
 	int ret = 0;
@@ -2294,14 +2658,25 @@ int BKE_ptcache_read(PTCacheID *pid, float cfra)
 		return 0;
 
 	/* don't read old cache if already simulated past cached frame */
-	if (cfra1 == 0 && cfra2 && cfra2 <= pid->cache->simframe)
-		return 0;
-	if (cfra1 && cfra1 == cfra2)
-		return 0;
+	if (no_extrapolate_old) {
+		if (cfra1 == 0 && cfra2 && cfra2 <= pid->cache->simframe)
+			return 0;
+		if (cfra1 && cfra1 == cfra2)
+			return 0;
+	}
+	else {
+		/* avoid calling interpolate between the same frame values */
+		if (cfra1 && cfra1 == cfra2)
+			cfra1 = 0;
+	}
 
 	if (cfra1) {
-		
-		if (pid->read_stream) {
+		if (pid->file_type == PTCACHE_FILE_OPENVDB && pid->read_openvdb_stream) {
+			if (!ptcache_read_openvdb_stream(pid, cfra1)) {
+				return 0;
+			}
+		}
+		else if (pid->read_stream) {
 			if (!ptcache_read_stream(pid, cfra1))
 				return 0;
 		}
@@ -2310,8 +2685,12 @@ int BKE_ptcache_read(PTCacheID *pid, float cfra)
 	}
 
 	if (cfra2) {
-		
-		if (pid->read_stream) {
+		if (pid->file_type == PTCACHE_FILE_OPENVDB && pid->read_openvdb_stream) {
+			if (!ptcache_read_openvdb_stream(pid, cfra2)) {
+				return 0;
+			}
+		}
+		else if (pid->read_stream) {
 			if (!ptcache_read_stream(pid, cfra2))
 				return 0;
 		}
@@ -2376,6 +2755,28 @@ static int ptcache_write_stream(PTCacheID *pid, int cfra, int totpoint)
 		printf("Error writing to disk cache\n");
 
 	return error == 0;
+}
+static int ptcache_write_openvdb_stream(PTCacheID *pid, int cfra)
+{
+#ifdef WITH_OPENVDB
+	struct OpenVDBWriter *writer = OpenVDBWriter_create();
+	char filename[FILE_MAX * 2];
+
+	BKE_ptcache_id_clear(pid, PTCACHE_CLEAR_FRAME, cfra);
+
+	ptcache_filename(pid, filename, cfra, 1, 1);
+	BLI_make_existing_file(filename);
+
+	int error = pid->write_openvdb_stream(writer, pid->calldata);
+
+	OpenVDBWriter_write(writer, filename);
+	OpenVDBWriter_free(writer);
+
+	return error == 0;
+#else
+	UNUSED_VARS(pid, cfra);
+	return 0;
+#endif
 }
 static int ptcache_write(PTCacheID *pid, int cfra, int overwrite)
 {
@@ -2508,7 +2909,10 @@ int BKE_ptcache_write(PTCacheID *pid, unsigned int cfra)
 	if (ptcache_write_needed(pid, cfra, &overwrite)==0)
 		return 0;
 
-	if (pid->write_stream) {
+	if (pid->file_type == PTCACHE_FILE_OPENVDB && pid->write_openvdb_stream) {
+		ptcache_write_openvdb_stream(pid, cfra);
+	}
+	else if (pid->write_stream) {
 		ptcache_write_stream(pid, cfra, totpoint);
 	}
 	else if (pid->write_point) {
@@ -2566,7 +2970,9 @@ void BKE_ptcache_id_clear(PTCacheID *pid, int mode, unsigned int cfra)
 #endif
 
 	/*if (!G.relbase_valid) return; *//* save blend file before using pointcache */
-	
+
+	const char *fext = ptcache_file_extension(pid);
+
 	/* clear all files in the temp dir with the prefix of the ID and the ".bphys" suffix */
 	switch (mode) {
 	case PTCACHE_CLEAR_ALL:
@@ -2588,7 +2994,7 @@ void BKE_ptcache_id_clear(PTCacheID *pid, int mode, unsigned int cfra)
 				len += 1;
 			}
 			
-			BLI_snprintf(ext, sizeof(ext), "_%02u"PTCACHE_EXT, pid->stack_index);
+			BLI_snprintf(ext, sizeof(ext), "_%02u%s", pid->stack_index, fext);
 			
 			while ((de = readdir(dir)) != NULL) {
 				if (strstr(de->d_name, ext)) { /* do we have the right extension?*/
@@ -2600,13 +3006,9 @@ void BKE_ptcache_id_clear(PTCacheID *pid, int mode, unsigned int cfra)
 						}
 						else {
 							/* read the number of the file */
-							unsigned int frame, len2 = (int)strlen(de->d_name);
-							char num[7];
+							const int frame = ptcache_frame_from_filename(de->d_name, ext);
 
-							if (len2 > 15) { /* could crash if trying to copy a string out of this range*/
-								BLI_strncpy(num, de->d_name + (strlen(de->d_name) - 15), sizeof(num));
-								frame = atoi(num);
-								
+							if (frame != -1) {
 								if ((mode == PTCACHE_CLEAR_BEFORE && frame < cfra) ||
 								    (mode == PTCACHE_CLEAR_AFTER && frame > cfra))
 								{
@@ -2794,21 +3196,18 @@ void BKE_ptcache_id_time(PTCacheID *pid, Scene *scene, float cfra, int *startfra
 			if (dir==NULL)
 				return;
 
-			BLI_snprintf(ext, sizeof(ext), "_%02u"PTCACHE_EXT, pid->stack_index);
+			const char *fext = ptcache_file_extension(pid);
+
+			BLI_snprintf(ext, sizeof(ext), "_%02u%s", pid->stack_index, fext);
 			
 			while ((de = readdir(dir)) != NULL) {
 				if (strstr(de->d_name, ext)) { /* do we have the right extension?*/
 					if (STREQLEN(filename, de->d_name, len)) { /* do we have the right prefix */
 						/* read the number of the file */
-						unsigned int frame, len2 = (int)strlen(de->d_name);
-						char num[7];
+						const int frame = ptcache_frame_from_filename(de->d_name, ext);
 
-						if (len2 > 15) { /* could crash if trying to copy a string out of this range*/
-							BLI_strncpy(num, de->d_name + (strlen(de->d_name) - 15), sizeof(num));
-							frame = atoi(num);
-							
-							if (frame >= sta && frame <= end)
-								cache->cached_frames[frame-sta] = 1;
+						if ((frame != -1) && (frame >= sta && frame <= end)) {
+							cache->cached_frames[frame-sta] = 1;
 						}
 					}
 				}
@@ -3113,33 +3512,16 @@ void BKE_ptcache_quick_cache_all(Main *bmain, Scene *scene)
 {
 	PTCacheBaker baker;
 
-	baker.bake=0;
-	baker.break_data=NULL;
-	baker.break_test=NULL;
-	baker.pid=NULL;
-	baker.progressbar=NULL;
-	baker.progressend=NULL;
-	baker.progresscontext=NULL;
-	baker.render=0;
+	memset(&baker, 0, sizeof(baker));
+	baker.main = bmain;
+	baker.scene = scene;
+	baker.bake = 0;
+	baker.render = 0;
 	baker.anim_init = 0;
-	baker.main=bmain;
-	baker.scene=scene;
-	baker.quick_step=scene->physics_settings.quick_cache_step;
+	baker.quick_step = scene->physics_settings.quick_cache_step;
 
 	BKE_ptcache_bake(&baker);
 }
-
-/* Simulation thread, no need for interlocks as data written in both threads
- * are only unitary integers (I/O assumed to be atomic for them) */
-typedef struct {
-	int break_operation;
-	int thread_ended;
-	int endframe;
-	int step;
-	int *cfra_ptr;
-	Main *main;
-	Scene *scene;
-} ptcache_bake_data;
 
 static void ptcache_dt_to_str(char *str, double dtime)
 {
@@ -3153,52 +3535,6 @@ static void ptcache_dt_to_str(char *str, double dtime)
 		sprintf(str, "%is", ((int)dtime) % 60);
 }
 
-static void *ptcache_bake_thread(void *ptr)
-{
-	bool use_timer = false;
-	int sfra, efra;
-	double stime, ptime, ctime, fetd;
-	char run[32], cur[32], etd[32];
-
-	ptcache_bake_data *data = (ptcache_bake_data*)ptr;
-
-	stime = ptime = PIL_check_seconds_timer();
-	sfra = *data->cfra_ptr;
-	efra = data->endframe;
-
-	for (; (*data->cfra_ptr <= data->endframe) && !data->break_operation; *data->cfra_ptr+=data->step) {
-		BKE_scene_update_for_newframe(G.main->eval_ctx, data->main, data->scene, data->scene->lay);
-		if (G.background) {
-			printf("bake: frame %d :: %d\n", (int)*data->cfra_ptr, data->endframe);
-		}
-		else {
-			ctime = PIL_check_seconds_timer();
-
-			fetd = (ctime-ptime)*(efra-*data->cfra_ptr)/data->step;
-
-			if (use_timer || fetd > 60.0) {
-				use_timer = true;
-
-				ptcache_dt_to_str(cur, ctime-ptime);
-				ptcache_dt_to_str(run, ctime-stime);
-				ptcache_dt_to_str(etd, fetd);
-
-				printf("Baked for %s, current frame: %i/%i (%.3fs), ETC: %s\r", run, *data->cfra_ptr-sfra+1, efra-sfra+1, ctime-ptime, etd);
-			}
-			ptime = ctime;
-		}
-	}
-
-	if (use_timer) {
-		/* start with newline because of \r above */
-		ptcache_dt_to_str(run, PIL_check_seconds_timer()-stime);
-		printf("\nBake %s %s (%i frames simulated).\n", (data->break_operation ? "canceled after" : "finished in"), run, *data->cfra_ptr-sfra);
-	}
-
-	data->thread_ended = true;
-	return NULL;
-}
-
 /* if bake is not given run simulations to current frame */
 void BKE_ptcache_bake(PTCacheBaker *baker)
 {
@@ -3207,27 +3543,18 @@ void BKE_ptcache_bake(PTCacheBaker *baker)
 	Scene *sce_iter; /* SETLOOPER macro only */
 	Base *base;
 	ListBase pidlist;
-	PTCacheID *pid = baker->pid;
+	PTCacheID *pid = &baker->pid;
 	PointCache *cache = NULL;
 	float frameleno = scene->r.framelen;
 	int cfrao = CFRA;
-	int startframe = MAXFRAME;
+	int startframe = MAXFRAME, endframe = baker->anim_init ? scene->r.sfra : CFRA;
 	int bake = baker->bake;
 	int render = baker->render;
-	ListBase threads;
-	ptcache_bake_data thread_data;
-	int progress, old_progress;
 	
-	thread_data.endframe = baker->anim_init ? scene->r.sfra : CFRA;
-	thread_data.step = baker->quick_step;
-	thread_data.cfra_ptr = &CFRA;
-	thread_data.scene = baker->scene;
-	thread_data.main = baker->main;
-
 	G.is_break = false;
 
 	/* set caches to baking mode and figure out start frame */
-	if (pid) {
+	if (pid->ob) {
 		/* cache/bake a single object */
 		cache = pid->cache;
 		if ((cache->flag & PTCACHE_BAKED)==0) {
@@ -3264,11 +3591,11 @@ void BKE_ptcache_bake(PTCacheBaker *baker)
 			startframe = MAX2(cache->last_exact, cache->startframe);
 
 			if (bake) {
-				thread_data.endframe = cache->endframe;
+				endframe = cache->endframe;
 				cache->flag |= PTCACHE_BAKING;
 			}
 			else {
-				thread_data.endframe = MIN2(thread_data.endframe, cache->endframe);
+				endframe = MIN2(endframe, cache->endframe);
 			}
 
 			cache->flag &= ~PTCACHE_BAKED;
@@ -3303,7 +3630,7 @@ void BKE_ptcache_bake(PTCacheBaker *baker)
 						cache->flag |= PTCACHE_BAKING;
 
 						if (bake)
-							thread_data.endframe = MAX2(thread_data.endframe, cache->endframe);
+							endframe = MAX2(endframe, cache->endframe);
 					}
 
 					cache->flag &= ~PTCACHE_BAKED;
@@ -3316,46 +3643,60 @@ void BKE_ptcache_bake(PTCacheBaker *baker)
 
 	CFRA = startframe;
 	scene->r.framelen = 1.0;
-	thread_data.break_operation = false;
-	thread_data.thread_ended = false;
-	old_progress = -1;
 
-	WM_cursor_wait(1);
-	
-	if (G.background) {
-		ptcache_bake_thread((void*)&thread_data);
-	}
-	else {
-		BLI_init_threads(&threads, ptcache_bake_thread, 1);
-		BLI_insert_thread(&threads, (void*)&thread_data);
+	/* bake */
 
-		while (thread_data.thread_ended == false) {
+	bool use_timer = false;
+	double stime, ptime, ctime, fetd;
+	char run[32], cur[32], etd[32];
+	int cancel = 0;
 
-			if (bake)
-				progress = (int)(100.0f * (float)(CFRA - startframe)/(float)(thread_data.endframe-startframe));
-			else
-				progress = CFRA;
+	stime = ptime = PIL_check_seconds_timer();
 
-			/* NOTE: baking should not redraw whole ui as this slows things down */
-			if ((baker->progressbar) && (progress != old_progress)) {
-				baker->progressbar(baker->progresscontext, progress);
-				old_progress = progress;
-			}
+	for (int fr = CFRA; fr <= endframe; fr += baker->quick_step, CFRA = fr) {
+		BKE_scene_update_for_newframe(G.main->eval_ctx, bmain, scene, scene->lay);
 
-			/* Delay to lessen CPU load from UI thread */
-			PIL_sleep_ms(200);
-
-			/* NOTE: breaking baking should leave calculated frames in cache, not clear it */
-			if (blender_test_break() && !thread_data.break_operation) {
-				thread_data.break_operation = true;
-				if (baker->progressend)
-					baker->progressend(baker->progresscontext);
-				WM_cursor_wait(1);
-			}
+		if (baker->update_progress) {
+			float progress = ((float)(CFRA - startframe)/(float)(endframe - startframe));
+			baker->update_progress(baker->bake_job, progress, &cancel);
 		}
 
-		BLI_end_threads(&threads);
+		if (G.background) {
+			printf("bake: frame %d :: %d\n", CFRA, endframe);
+		}
+		else {
+			ctime = PIL_check_seconds_timer();
+
+			fetd = (ctime - ptime) * (endframe - CFRA) / baker->quick_step;
+
+			if (use_timer || fetd > 60.0) {
+				use_timer = true;
+
+				ptcache_dt_to_str(cur, ctime - ptime);
+				ptcache_dt_to_str(run, ctime - stime);
+				ptcache_dt_to_str(etd, fetd);
+
+				printf("Baked for %s, current frame: %i/%i (%.3fs), ETC: %s\r",
+				       run, CFRA - startframe + 1, endframe - startframe + 1, ctime - ptime, etd);
+			}
+
+			ptime = ctime;
+		}
+
+		/* NOTE: breaking baking should leave calculated frames in cache, not clear it */
+		if ((cancel || G.is_break)) {
+			break;
+		}
+
+		CFRA += 1;
 	}
+
+	if (use_timer) {
+		/* start with newline because of \r above */
+		ptcache_dt_to_str(run, PIL_check_seconds_timer()-stime);
+		printf("\nBake %s %s (%i frames simulated).\n", (cancel ? "canceled after" : "finished in"), run, CFRA - startframe);
+	}
+
 	/* clear baking flag */
 	if (pid) {
 		cache->flag &= ~(PTCACHE_BAKING|PTCACHE_REDO_NEEDED);
@@ -3378,7 +3719,7 @@ void BKE_ptcache_bake(PTCacheBaker *baker)
 
 				cache = pid->cache;
 
-				if (thread_data.step > 1)
+				if (baker->quick_step > 1)
 					cache->flag &= ~(PTCACHE_BAKING|PTCACHE_OUTDATED);
 				else
 					cache->flag &= ~(PTCACHE_BAKING|PTCACHE_REDO_NEEDED);
@@ -3401,13 +3742,6 @@ void BKE_ptcache_bake(PTCacheBaker *baker)
 	if (bake) { /* already on cfra unless baking */
 		BKE_scene_update_for_newframe(bmain->eval_ctx, bmain, scene, scene->lay);
 	}
-
-	if (thread_data.break_operation)
-		WM_cursor_wait(0);
-	else if (baker->progressend)
-		baker->progressend(baker->progresscontext);
-
-	WM_cursor_wait(0);
 
 	/* TODO: call redraw all windows somehow */
 }
@@ -3529,7 +3863,9 @@ void BKE_ptcache_disk_cache_rename(PTCacheID *pid, const char *name_src, const c
 		return;
 	}
 
-	BLI_snprintf(ext, sizeof(ext), "_%02u"PTCACHE_EXT, pid->stack_index);
+	const char *fext = ptcache_file_extension(pid);
+
+	BLI_snprintf(ext, sizeof(ext), "_%02u%s", pid->stack_index, fext);
 
 	/* put new name into cache */
 	BLI_strncpy(pid->cache->name, name_dst, sizeof(pid->cache->name));
@@ -3538,13 +3874,9 @@ void BKE_ptcache_disk_cache_rename(PTCacheID *pid, const char *name_src, const c
 		if (strstr(de->d_name, ext)) { /* do we have the right extension?*/
 			if (STREQLEN(old_filename, de->d_name, len)) { /* do we have the right prefix */
 				/* read the number of the file */
-				int frame, len2 = (int)strlen(de->d_name);
-				char num[7];
+				const int frame = ptcache_frame_from_filename(de->d_name, ext);
 
-				if (len2 > 15) { /* could crash if trying to copy a string out of this range*/
-					BLI_strncpy(num, de->d_name + (strlen(de->d_name) - 15), sizeof(num));
-					frame = atoi(num);
-
+				if (frame != -1) {
 					BLI_join_dirfile(old_path_full, sizeof(old_path_full), path, de->d_name);
 					ptcache_filename(pid, new_path_full, frame, 1, 1);
 					BLI_rename(old_path_full, new_path_full);
@@ -3584,22 +3916,20 @@ void BKE_ptcache_load_external(PTCacheID *pid)
 	if (dir==NULL)
 		return;
 
+	const char *fext = ptcache_file_extension(pid);
+
 	if (cache->index >= 0)
-		BLI_snprintf(ext, sizeof(ext), "_%02d"PTCACHE_EXT, cache->index);
+		BLI_snprintf(ext, sizeof(ext), "_%02d%s", cache->index, fext);
 	else
-		BLI_strncpy(ext, PTCACHE_EXT, sizeof(ext));
+		BLI_strncpy(ext, fext, sizeof(ext));
 	
 	while ((de = readdir(dir)) != NULL) {
 		if (strstr(de->d_name, ext)) { /* do we have the right extension?*/
 			if (STREQLEN(filename, de->d_name, len)) { /* do we have the right prefix */
 				/* read the number of the file */
-				int frame, len2 = (int)strlen(de->d_name);
-				char num[7];
+				const int frame = ptcache_frame_from_filename(de->d_name, ext);
 
-				if (len2 > 15) { /* could crash if trying to copy a string out of this range*/
-					BLI_strncpy(num, de->d_name + (strlen(de->d_name) - 15), sizeof(num));
-					frame = atoi(num);
-
+				if (frame != -1) {
 					if (frame) {
 						start = MIN2(start, frame);
 						end = MAX2(end, frame);

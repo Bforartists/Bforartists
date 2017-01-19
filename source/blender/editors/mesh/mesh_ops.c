@@ -106,6 +106,7 @@ void ED_operatortypes_mesh(void)
 	WM_operatortype_append(MESH_OT_beautify_fill);
 	WM_operatortype_append(MESH_OT_quads_convert_to_tris);
 	WM_operatortype_append(MESH_OT_tris_convert_to_quads);
+	WM_operatortype_append(MESH_OT_decimate);
 	WM_operatortype_append(MESH_OT_dissolve_verts);
 	WM_operatortype_append(MESH_OT_dissolve_edges);
 	WM_operatortype_append(MESH_OT_dissolve_faces);
@@ -173,12 +174,11 @@ void ED_operatortypes_mesh(void)
 
 	WM_operatortype_append(MESH_OT_bevel);
 
-	WM_operatortype_append(MESH_OT_select_next_loop);
-
 	WM_operatortype_append(MESH_OT_bridge_edge_loops);
 	WM_operatortype_append(MESH_OT_inset);
 	WM_operatortype_append(MESH_OT_offset_edge_loops);
 	WM_operatortype_append(MESH_OT_intersect);
+	WM_operatortype_append(MESH_OT_intersect_boolean);
 	WM_operatortype_append(MESH_OT_face_split_by_edges);
 	WM_operatortype_append(MESH_OT_poke);
 	WM_operatortype_append(MESH_OT_wireframe);
@@ -339,7 +339,11 @@ void ED_keymap_mesh(wmKeyConfig *keyconf)
 	RNA_boolean_set(kmi->ptr, "deselect", false);
 	RNA_boolean_set(kmi->ptr, "toggle", true);
 
-	WM_keymap_add_item(keymap, "MESH_OT_shortest_path_pick", SELECTMOUSE, KM_PRESS, KM_CTRL, 0);
+	kmi = WM_keymap_add_item(keymap, "MESH_OT_shortest_path_pick", SELECTMOUSE, KM_PRESS, KM_CTRL, 0);
+	RNA_boolean_set(kmi->ptr, "use_fill", false);
+
+	kmi = WM_keymap_add_item(keymap, "MESH_OT_shortest_path_pick", SELECTMOUSE, KM_PRESS, KM_CTRL | KM_SHIFT, 0);
+	RNA_boolean_set(kmi->ptr, "use_fill", true);
 
 	kmi = WM_keymap_add_item(keymap, "MESH_OT_select_all", AKEY, KM_PRESS, 0, 0);
 	RNA_enum_set(kmi->ptr, "action", SEL_TOGGLE);
@@ -348,6 +352,10 @@ void ED_keymap_mesh(wmKeyConfig *keyconf)
 
 	WM_keymap_add_item(keymap, "MESH_OT_select_more", PADPLUSKEY, KM_PRESS, KM_CTRL, 0);
 	WM_keymap_add_item(keymap, "MESH_OT_select_less", PADMINUS, KM_PRESS, KM_CTRL, 0);
+
+	WM_keymap_add_item(keymap, "MESH_OT_select_next_item", PADPLUSKEY, KM_PRESS, KM_CTRL | KM_SHIFT, 0);
+	WM_keymap_add_item(keymap, "MESH_OT_select_prev_item", PADMINUS, KM_PRESS, KM_CTRL | KM_SHIFT, 0);
+
 	WM_keymap_add_item(keymap, "MESH_OT_select_non_manifold", MKEY, KM_PRESS, (KM_CTRL | KM_SHIFT | KM_ALT), 0);
 	
 	WM_keymap_add_item(keymap, "MESH_OT_select_linked", LKEY, KM_PRESS, KM_CTRL, 0);

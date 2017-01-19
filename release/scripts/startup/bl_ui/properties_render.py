@@ -1,4 +1,4 @@
-﻿# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE BLOCK #####
 
 #
 #  This program is free software; you can redistribute it and/or
@@ -57,7 +57,6 @@ class RenderButtonsPanel:
 
 class RENDER_PT_render(RenderButtonsPanel, Panel):
     bl_label = "Render"
-    bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {'BLENDER_RENDER'}
 
     def draw(self, context):
@@ -65,30 +64,21 @@ class RENDER_PT_render(RenderButtonsPanel, Panel):
 
         rd = context.scene.render
 
-        if rd.has_multiple_engines: # bfa - the renderer drodpown box from the info menu bar.
-            layout.prop(rd, "engine", text="")
-            
-        wm = context.window_manager # Our bool is in the windows_manager
-  
-        # The subtab is closed by default.
-        # When the click at it then it opens. And shows the hidden ui elements.
-        if not wm.SP_render_render_options:
-            layout.prop(wm,"SP_render_render_options", emboss=False, icon="TRIA_RIGHT", text="- Options -")
+        row = layout.row(align=True)
+        row.operator("render.render", text="Render", icon='RENDER_STILL')
+        row.operator("render.render", text="Animation", icon='RENDER_ANIMATION').animation = True
+        row.operator("sound.mixdown", text="Audio", icon='PLAY_AUDIO')
 
-        else:
-            layout.prop(wm,"SP_render_render_options", emboss=False, icon="TRIA_DOWN", text="+ Options +")
+        split = layout.split(percentage=0.33)
 
-            split = layout.split(percentage=0.33)
-
-            split.label(text="Display:")
-            row = split.row(align=True)
-            row.prop(rd, "display_mode", text="")
-            row.prop(rd, "use_lock_interface", icon_only=True)
+        split.label(text="Display:")
+        row = split.row(align=True)
+        row.prop(rd, "display_mode", text="")
+        row.prop(rd, "use_lock_interface", icon_only=True)
 
 
 class RENDER_PT_dimensions(RenderButtonsPanel, Panel):
     bl_label = "Dimensions"
-    bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {'BLENDER_RENDER'}
 
     _frame_rate_args_prev = None
@@ -155,55 +145,36 @@ class RENDER_PT_dimensions(RenderButtonsPanel, Panel):
         sub.prop(rd, "resolution_y", text="Y")
         sub.prop(rd, "resolution_percentage", text="")
 
+        sub.label(text="Aspect Ratio:")
+        sub.prop(rd, "pixel_aspect_x", text="X")
+        sub.prop(rd, "pixel_aspect_y", text="Y")
+
+        row = col.row()
+        row.prop(rd, "use_border", text="Border")
+        sub = row.row()
+        sub.active = rd.use_border
+        sub.prop(rd, "use_crop_to_border", text="Crop")
+
         col = split.column()
         sub = col.column(align=True)
         sub.label(text="Frame Range:")
         sub.prop(scene, "frame_start")
         sub.prop(scene, "frame_end")
-        
+        sub.prop(scene, "frame_step")
+
+        sub.label(text="Frame Rate:")
+
         self.draw_framerate(sub, rd)
 
-        
-        wm = context.window_manager # Our bool is in the windows_manager
-  
-        # The subtab is closed by default.
-        # When the click at it then it opens. And shows the hidden ui elements.
-        if not wm.SP_render_dimensions_options:
-            layout.prop(wm,"SP_render_dimensions_options", emboss=False, icon="TRIA_RIGHT", text="- Advanced -")
-
-        else:
-            layout.prop(wm,"SP_render_dimensions_options", emboss=False, icon="TRIA_DOWN", text="+ Advanced +")
-            
-            split = layout.split()
-
-            col = split.column()
-            sub = col.column(align=True)
-            sub.label(text="Aspect Ratio:")
-            sub.prop(rd, "pixel_aspect_x", text="X")
-            sub.prop(rd, "pixel_aspect_y", text="Y")
-
-            row = col.row()
-            row.prop(rd, "use_border", text="Border")
-            sub = row.row()
-            sub.active = rd.use_border
-            sub.prop(rd, "use_crop_to_border", text="Crop")
-
-            col = split.column()
-            sub = col.column(align=True)
-            sub.prop(scene, "frame_step")         
-
-            subrow = sub.row(align=True)
-            subrow.label(text="Time Remapping:")
-            subrow = sub.row(align=True)
-            subrow.prop(rd, "frame_map_old", text="Old")
-            subrow.prop(rd, "frame_map_new", text="New")
-        
-        
+        subrow = sub.row(align=True)
+        subrow.label(text="Time Remapping:")
+        subrow = sub.row(align=True)
+        subrow.prop(rd, "frame_map_old", text="Old")
+        subrow.prop(rd, "frame_map_new", text="New")
 
 
 class RENDER_PT_antialiasing(RenderButtonsPanel, Panel):
     bl_label = "Anti-Aliasing"
-    bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {'BLENDER_RENDER'}
 
     def draw_header(self, context):
@@ -222,7 +193,6 @@ class RENDER_PT_antialiasing(RenderButtonsPanel, Panel):
         col = split.column()
         col.row().prop(rd, "antialiasing_samples", expand=True)
         sub = col.row()
-        sub.enabled = not rd.use_border
         sub.prop(rd, "use_full_sample")
 
         col = split.column()
@@ -277,6 +247,7 @@ class RENDER_PT_shading(RenderButtonsPanel, Panel):
         col = split.column()
         col.prop(rd, "use_raytrace", text="Ray Tracing")
         col.prop(rd, "alpha_mode", text="Alpha")
+        col.prop(rd, "use_world_space_shading", text="World Space Shading")
 
 
 class RENDER_PT_performance(RenderButtonsPanel, Panel):
@@ -308,12 +279,11 @@ class RENDER_PT_performance(RenderButtonsPanel, Panel):
         col = split.column()
         col.label(text="Memory:")
         sub = col.column()
-        sub.enabled = not (rd.use_border or rd.use_full_sample)
+        sub.enabled = not rd.use_full_sample
         sub.prop(rd, "use_save_buffers")
         sub = col.column()
         sub.active = rd.use_compositing
         sub.prop(rd, "use_free_image_textures")
-        sub.prop(rd, "use_free_unused_nodes")
         sub = col.column()
         sub.active = rd.use_raytrace
         sub.label(text="Acceleration structure:")
@@ -343,32 +313,23 @@ class RENDER_PT_post_processing(RenderButtonsPanel, Panel):
 
         split.prop(rd, "dither_intensity", text="Dither", slider=True)
 
-        
-        wm = context.window_manager # Our bool is in the windows_manager
-  
-        # The subtab is closed by default.
-        # When the click at it then it opens. And shows the hidden ui elements.
-        if not wm.SP_render_postpro_BI_options:
-            layout.prop(wm,"SP_render_postpro_BI_options", emboss=False, icon="TRIA_RIGHT", text="- Advanced -")
+        layout.separator()
 
-        else:
-            layout.prop(wm,"SP_render_postpro_BI_options", emboss=False, icon="TRIA_DOWN", text="+ Advanced +")
+        split = layout.split()
 
-            split = layout.split()
+        col = split.column()
+        col.prop(rd, "use_fields", text="Fields")
+        sub = col.column()
+        sub.active = rd.use_fields
+        sub.row().prop(rd, "field_order", expand=True)
+        sub.prop(rd, "use_fields_still", text="Still")
 
-            col = split.column()
-            col.prop(rd, "use_fields", text="Fields")
-            sub = col.column()
-            sub.active = rd.use_fields
-            sub.row().prop(rd, "field_order", expand=True)
-            sub.prop(rd, "use_fields_still", text="Still")
-
-            col = split.column()
-            col.prop(rd, "use_edge_enhance")
-            sub = col.column()
-            sub.active = rd.use_edge_enhance
-            sub.prop(rd, "edge_threshold", text="Threshold", slider=True)
-            sub.prop(rd, "edge_color", text="")
+        col = split.column()
+        col.prop(rd, "use_edge_enhance")
+        sub = col.column()
+        sub.active = rd.use_edge_enhance
+        sub.prop(rd, "edge_threshold", text="Threshold", slider=True)
+        sub.prop(rd, "edge_color", text="")
 
 
 class RENDER_PT_stamp(RenderButtonsPanel, Panel):
@@ -382,51 +343,33 @@ class RENDER_PT_stamp(RenderButtonsPanel, Panel):
         rd = context.scene.render
 
         layout.prop(rd, "use_stamp")
-        
-        wm = context.window_manager # Our bool is in the windows_manager
-  
-        # The subtab is closed by default.
-        # When the click at it then it opens. And shows the hidden ui elements.
-        if not wm.SP_render_metadata_stampoptions:
-            layout.prop(wm,"SP_render_metadata_stampoptions", emboss=False, icon="TRIA_RIGHT", text="- Stamp Options -")
+        col = layout.column()
+        col.active = rd.use_stamp
+        row = col.row()
+        row.prop(rd, "stamp_font_size", text="Font Size")
+        row.prop(rd, "use_stamp_labels", text="Draw labels")
 
-        else:
-            layout.prop(wm,"SP_render_metadata_stampoptions", emboss=False, icon="TRIA_DOWN", text="+ Stamp Options +")      
-        
-            col = layout.column()
-            col.active = rd.use_stamp
-            col.prop(rd, "stamp_font_size", text="Font Size")
+        row = col.row()
+        row.column().prop(rd, "stamp_foreground", slider=True)
+        row.column().prop(rd, "stamp_background", slider=True)
 
-            row = col.row()
-            row.column().prop(rd, "stamp_foreground", slider=True)
-            row.column().prop(rd, "stamp_background", slider=True)
-        
-        #------------------------------------------------------------
-  
-        # The subtab is closed by default.
-        # When the click at it then it opens. And shows the hidden ui elements.
-        if not wm.SP_render_metadata_enabled:
-            layout.prop(wm,"SP_render_metadata_enabled", emboss=False, icon="TRIA_RIGHT", text="- Enabled Metadata -")
+        layout.label("Enabled Metadata")
+        split = layout.split()
 
-        else:
-            layout.prop(wm,"SP_render_metadata_enabled", emboss=False, icon="TRIA_DOWN", text="+ Enabled Metadata +")        
+        col = split.column()
+        col.prop(rd, "use_stamp_time", text="Time")
+        col.prop(rd, "use_stamp_date", text="Date")
+        col.prop(rd, "use_stamp_render_time", text="RenderTime")
+        col.prop(rd, "use_stamp_frame", text="Frame")
+        col.prop(rd, "use_stamp_scene", text="Scene")
+        col.prop(rd, "use_stamp_memory", text="Memory")
 
-            layout.label("Enabled Metadata")
-            split = layout.split()
-
-            col = split.column()
-            col.prop(rd, "use_stamp_time", text="Time")
-            col.prop(rd, "use_stamp_date", text="Date")
-            col.prop(rd, "use_stamp_render_time", text="RenderTime")
-            col.prop(rd, "use_stamp_frame", text="Frame")
-            col.prop(rd, "use_stamp_scene", text="Scene")
-
-            col = split.column()
-            col.prop(rd, "use_stamp_camera", text="Camera")
-            col.prop(rd, "use_stamp_lens", text="Lens")
-            col.prop(rd, "use_stamp_filename", text="Filename")
-            col.prop(rd, "use_stamp_marker", text="Marker")
-            col.prop(rd, "use_stamp_sequencer_strip", text="Seq. Strip")
+        col = split.column()
+        col.prop(rd, "use_stamp_camera", text="Camera")
+        col.prop(rd, "use_stamp_lens", text="Lens")
+        col.prop(rd, "use_stamp_filename", text="Filename")
+        col.prop(rd, "use_stamp_marker", text="Marker")
+        col.prop(rd, "use_stamp_sequencer_strip", text="Seq. Strip")
 
         row = layout.split(percentage=0.2)
         row.prop(rd, "use_stamp_note", text="Note")
@@ -440,7 +383,6 @@ class RENDER_PT_stamp(RenderButtonsPanel, Panel):
 
 class RENDER_PT_output(RenderButtonsPanel, Panel):
     bl_label = "Output"
-    bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {'BLENDER_RENDER'}
 
     def draw(self, context):
@@ -451,31 +393,19 @@ class RENDER_PT_output(RenderButtonsPanel, Panel):
         file_format = image_settings.file_format
 
         layout.prop(rd, "filepath", text="")
-        
-        wm = context.window_manager # Our bool is in the windows_manager
-  
-        # The subtab is closed by default.
-        # When the click at it then it opens. And shows the hidden ui elements.
-        if not wm.SP_render_output_options:
-            layout.prop(wm,"SP_render_output_options", emboss=False, icon="TRIA_RIGHT", text="- Options -")
 
-        else:
-            layout.prop(wm,"SP_render_output_options", emboss=False, icon="TRIA_DOWN", text="+ Options +")
+        split = layout.split()
 
-            split = layout.split()
+        col = split.column()
+        col.active = not rd.is_movie_format
+        col.prop(rd, "use_overwrite")
+        col.prop(rd, "use_placeholder")
 
-            col = split.column()
-            col.active = not rd.is_movie_format
-            col.prop(rd, "use_overwrite")
-            col.prop(rd, "use_placeholder")
-
-            col = split.column()
-            col.prop(rd, "use_file_extension")
-            col.prop(rd, "use_render_cache")
+        col = split.column()
+        col.prop(rd, "use_file_extension")
+        col.prop(rd, "use_render_cache")
 
         layout.template_image_settings(image_settings, color_management=False)
-        
-        
         if rd.use_multiview:
             layout.template_image_views(image_settings)
 
@@ -531,27 +461,42 @@ class RENDER_PT_encoding(RenderButtonsPanel, Panel):
 
         split = layout.split()
         split.prop(rd.ffmpeg, "format")
-        if ffmpeg.format in {'AVI', 'QUICKTIME', 'MKV', 'OGG', 'MPEG4'}:
-            split.prop(ffmpeg, "codec")
-        elif rd.ffmpeg.format == 'H264':
-            split.prop(ffmpeg, "use_lossless_output")
-        else:
-            split.label()
+        split.prop(ffmpeg, "use_autosplit")
 
+        layout.separator()
+
+        needs_codec = ffmpeg.format in {'AVI', 'QUICKTIME', 'MKV', 'OGG', 'MPEG4'}
+        if needs_codec:
+            layout.prop(ffmpeg, "codec")
+
+        if ffmpeg.codec in {'DNXHD'}:
+            layout.prop(ffmpeg, "use_lossless_output")
+
+        # Output quality
+        if needs_codec and ffmpeg.codec in {'H264', 'MPEG4'}:
+            layout.prop(ffmpeg, "constant_rate_factor")
+
+        # Encoding speed
+        layout.prop(ffmpeg, "ffmpeg_preset")
+        # I-frames
+        layout.prop(ffmpeg, "gopsize")
+        # B-Frames
         row = layout.row()
-        row.prop(ffmpeg, "video_bitrate")
-        row.prop(ffmpeg, "gopsize")
+        row.prop(ffmpeg, "use_max_b_frames", text='Max B-frames')
+        pbox = row.split()
+        pbox.prop(ffmpeg, "max_b_frames", text='')
+        pbox.enabled = ffmpeg.use_max_b_frames
 
         split = layout.split()
-
+        split.enabled = ffmpeg.constant_rate_factor == 'NONE'
         col = split.column()
         col.label(text="Rate:")
+        col.prop(ffmpeg, "video_bitrate")
         col.prop(ffmpeg, "minrate", text="Minimum")
         col.prop(ffmpeg, "maxrate", text="Maximum")
         col.prop(ffmpeg, "buffersize", text="Buffer")
 
         col = split.column()
-        col.prop(ffmpeg, "use_autosplit")
         col.label(text="Mux:")
         col.prop(ffmpeg, "muxrate", text="Rate")
         col.prop(ffmpeg, "packetsize", text="Packet Size")
@@ -563,8 +508,80 @@ class RENDER_PT_encoding(RenderButtonsPanel, Panel):
             layout.prop(ffmpeg, "audio_codec", text="Audio Codec")
 
         row = layout.row()
+        row.enabled = ffmpeg.audio_codec != 'NONE'
         row.prop(ffmpeg, "audio_bitrate")
         row.prop(ffmpeg, "audio_volume", slider=True)
+
+
+class RENDER_PT_bake(RenderButtonsPanel, Panel):
+    bl_label = "Bake"
+    bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+
+    def draw(self, context):
+        layout = self.layout
+
+        rd = context.scene.render
+
+        layout.operator("object.bake_image", icon='RENDER_STILL')
+
+        layout.prop(rd, "bake_type")
+
+        multires_bake = False
+        if rd.bake_type in ['NORMALS', 'DISPLACEMENT', 'DERIVATIVE', 'AO']:
+            layout.prop(rd, "use_bake_multires")
+            multires_bake = rd.use_bake_multires
+
+        if not multires_bake:
+            if rd.bake_type == 'NORMALS':
+                layout.prop(rd, "bake_normal_space")
+            elif rd.bake_type in {'DISPLACEMENT', 'AO'}:
+                layout.prop(rd, "use_bake_normalize")
+
+            # col.prop(rd, "bake_aa_mode")
+            # col.prop(rd, "use_bake_antialiasing")
+
+            layout.separator()
+
+            split = layout.split()
+
+            col = split.column()
+            col.prop(rd, "use_bake_to_vertex_color")
+            sub = col.column()
+            sub.active = not rd.use_bake_to_vertex_color
+            sub.prop(rd, "use_bake_clear")
+            sub.prop(rd, "bake_margin")
+            sub.prop(rd, "bake_quad_split", text="Split")
+
+            col = split.column()
+            col.prop(rd, "use_bake_selected_to_active")
+            sub = col.column()
+            sub.active = rd.use_bake_selected_to_active
+            sub.prop(rd, "bake_distance")
+            sub.prop(rd, "bake_bias")
+        else:
+            split = layout.split()
+
+            col = split.column()
+            col.prop(rd, "use_bake_clear")
+            col.prop(rd, "bake_margin")
+
+            if rd.bake_type == 'DISPLACEMENT':
+                col = split.column()
+                col.prop(rd, "use_bake_lores_mesh")
+
+            if rd.bake_type == 'AO':
+                col = split.column()
+                col.prop(rd, "bake_bias")
+                col.prop(rd, "bake_samples")
+
+        if rd.bake_type == 'DERIVATIVE':
+            row = layout.row()
+            row.prop(rd, "use_bake_user_scale", text="")
+
+            sub = row.column()
+            sub.active = rd.use_bake_user_scale
+            sub.prop(rd, "bake_user_scale", text="User Scale")
 
 
 if __name__ == "__main__":  # only for live edit.

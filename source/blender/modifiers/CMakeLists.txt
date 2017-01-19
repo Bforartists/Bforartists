@@ -37,6 +37,7 @@ set(INC
 	../render/extern/include
 	../../../intern/elbeem/extern
 	../../../intern/guardedalloc
+	../../../intern/eigen
 )
 
 set(INC_SYS
@@ -72,6 +73,7 @@ set(SRC
 	intern/MOD_meshcache_pc2.c
 	intern/MOD_meshcache_util.c
 	intern/MOD_meshdeform.c
+	intern/MOD_meshsequencecache.c
 	intern/MOD_mirror.c
 	intern/MOD_multires.c
 	intern/MOD_none.c
@@ -111,6 +113,13 @@ set(SRC
 	intern/MOD_weightvg_util.h
 )
 
+if(WITH_ALEMBIC)
+	add_definitions(-DWITH_ALEMBIC)
+	list(APPEND INC
+		../alembic
+	)
+endif()
+
 if(WITH_MOD_BOOLEAN)
 	add_definitions(-DWITH_MOD_BOOLEAN)
 	list(APPEND SRC
@@ -142,13 +151,6 @@ endif()
 
 if(WITH_INTERNATIONAL)
 	add_definitions(-DWITH_INTERNATIONAL)
-endif()
-
-if(WITH_OPENNL)
-	add_definitions(-DWITH_OPENNL)
-	list(APPEND INC_SYS
-		../../../intern/opennl/extern
-	)
 endif()
 
 if(WITH_OPENSUBDIV)

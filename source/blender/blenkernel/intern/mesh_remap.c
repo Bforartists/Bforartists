@@ -296,6 +296,8 @@ void BKE_mesh_remap_find_best_match_from_dm(
 	}
 
 	BLI_space_transform_global_from_matrices(r_space_transform, best_mat_dst, mat_src);
+
+	MEM_freeN(vcos_src);
 }
 
 /** \} */
@@ -583,7 +585,7 @@ void BKE_mesh_remap_calc_verts_from_dm(
 					}
 
 					if (mesh_remap_bvhtree_query_nearest(&treedata, &nearest, tmp_co, max_dist_sq, &hit_dist)) {
-						const MLoopTri *lt = &treedata.looptri[rayhit.index];
+						const MLoopTri *lt = &treedata.looptri[nearest.index];
 						MPoly *mp = &polys_src[lt->poly];
 
 						if (mode == MREMAP_MODE_VERT_POLY_NEAREST) {
@@ -812,7 +814,7 @@ void BKE_mesh_remap_calc_edges_from_dm(
 				}
 
 				if (mesh_remap_bvhtree_query_nearest(&treedata, &nearest, tmp_co, max_dist_sq, &hit_dist)) {
-					const MLoopTri *lt = &treedata.looptri[rayhit.index];
+					const MLoopTri *lt = &treedata.looptri[nearest.index];
 					MPoly *mp_src = &polys_src[lt->poly];
 					MLoop *ml_src = &loops_src[mp_src->loopstart];
 					int nloops = mp_src->totloop;
@@ -1223,7 +1225,7 @@ void BKE_mesh_remap_calc_loops_from_dm(
 					CustomData_set_layer_flag(pdata_dst, CD_NORMAL, CD_FLAG_TEMPORARY);
 				}
 				if (dirty_nors_dst) {
-					BKE_mesh_calc_normals_poly(verts_dst, numverts_dst, loops_dst, polys_dst,
+					BKE_mesh_calc_normals_poly(verts_dst, NULL, numverts_dst, loops_dst, polys_dst,
 					                           numloops_dst, numpolys_dst, poly_nors_dst, true);
 				}
 			}
@@ -1438,7 +1440,9 @@ void BKE_mesh_remap_calc_loops_from_dm(
 
 			if (mode == MREMAP_MODE_LOOP_NEAREST_POLYNOR) {
 				copy_v3_v3(pnor_dst, poly_nors_dst[pidx_dst]);
-				BLI_space_transform_apply_normal(space_transform, pnor_dst);
+				if (space_transform) {
+					BLI_space_transform_apply_normal(space_transform, pnor_dst);
+				}
 			}
 
 			if ((size_t)mp_dst->totloop > islands_res_buff_size) {
@@ -1473,7 +1477,9 @@ void BKE_mesh_remap_calc_loops_from_dm(
 
 							if (mode == MREMAP_MODE_LOOP_NEAREST_LOOPNOR) {
 								copy_v3_v3(tmp_no, loop_nors_dst[plidx_dst + mp_dst->loopstart]);
-								BLI_space_transform_apply_normal(space_transform, tmp_no);
+								if (space_transform) {
+									BLI_space_transform_apply_normal(space_transform, tmp_no);
+								}
 								nor_dst = &tmp_no;
 								nors_src = loop_nors_src;
 								vert_to_refelem_map_src = vert_to_loop_map_src;
@@ -1989,7 +1995,7 @@ void BKE_mesh_remap_calc_polys_from_dm(
 			CustomData_set_layer_flag(pdata_dst, CD_NORMAL, CD_FLAG_TEMPORARY);
 		}
 		if (dirty_nors_dst) {
-			BKE_mesh_calc_normals_poly(verts_dst, numverts_dst, loops_dst, polys_dst, numloops_dst, numpolys_dst,
+			BKE_mesh_calc_normals_poly(verts_dst, NULL, numverts_dst, loops_dst, polys_dst, numloops_dst, numpolys_dst,
 			                           poly_nors_dst, true);
 		}
 	}

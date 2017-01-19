@@ -36,8 +36,10 @@
  */
 
 #include "BLI_sys_types.h"
+#include "BLI_compiler_compat.h"
 
 #define BCM_CONFIG_FILE "config.ocio"
+
 
 struct bContext;
 struct ColorManagedColorspaceSettings;
@@ -67,8 +69,8 @@ void IMB_colormanagement_assign_rect_colorspace(struct ImBuf *ibuf, const char *
 const char *IMB_colormanagement_get_float_colorspace(struct ImBuf *ibuf);
 const char *IMB_colormanagement_get_rect_colorspace(struct ImBuf *ibuf);
 
-float IMB_colormanagement_get_luminance(const float rgb[3]);
-unsigned char IMB_colormanagement_get_luminance_byte(const unsigned char[3]);
+BLI_INLINE float IMB_colormanagement_get_luminance(const float rgb[3]);
+BLI_INLINE unsigned char IMB_colormanagement_get_luminance_byte(const unsigned char[3]);
 
 /* ** Color space transformation functions ** */
 void IMB_colormanagement_transform(float *buffer, int width, int height, int channels,
@@ -161,6 +163,16 @@ void IMB_partial_display_buffer_update(struct ImBuf *ibuf, const float *linear_b
                                        int xmin, int ymin, int xmax, int ymax,
                                        bool copy_display_to_byte_buffer);
 
+void IMB_partial_display_buffer_update_threaded(struct ImBuf *ibuf,
+                                                const float *linear_buffer,
+                                                const unsigned char *buffer_byte,
+                                                int stride,
+                                                int offset_x, int offset_y,
+                                                const struct ColorManagedViewSettings *view_settings,
+                                                const struct ColorManagedDisplaySettings *display_settings,
+                                                int xmin, int ymin, int xmax, int ymax,
+                                                bool copy_display_to_byte_buffer);
+
 void IMB_partial_display_buffer_update_delayed(struct ImBuf *ibuf, int xmin, int ymin, int xmax, int ymax);
 
 /* ** Pixel processor functions ** */
@@ -205,5 +217,7 @@ enum {
 	COLOR_ROLE_DEFAULT_BYTE,
 	COLOR_ROLE_DEFAULT_FLOAT,
 };
+
+#include "intern/colormanagement_inline.c"
 
 #endif  /* __IMB_COLORMANAGEMENT_H__ */

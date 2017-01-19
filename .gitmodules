@@ -1,1 +1,4 @@
-
+[submodule "source/tools"]
+	path = source/tools
+	url = ../blender-dev-tools.git
+	ignore = all

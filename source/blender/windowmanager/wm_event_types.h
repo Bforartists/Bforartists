@@ -92,6 +92,10 @@ enum {
 	WM_IME_COMPOSITE_EVENT      = 0x0015,
 /* IME event, GHOST_kEventImeCompositionEnd in ghost */
 	WM_IME_COMPOSITE_END   = 0x0016,
+	
+	/* Tablet/Pen Specific Events */
+	TABLET_STYLUS       = 0x001a,
+	TABLET_ERASER       = 0x001b,
 
 	/* *** Start of keyboard codes. *** */
 
@@ -163,6 +167,7 @@ enum {
 	QUOTEKEY        = 0x00e4,  /* 228 */
 	ACCENTGRAVEKEY  = 0x00e5,  /* 229 */
 	MINUSKEY        = 0x00e6,  /* 230 */
+	PLUSKEY         = 0x00e7,  /* 231 */
 	SLASHKEY        = 0x00e8,  /* 232 */
 	BACKSLASHKEY    = 0x00e9,  /* 233 */
 	EQUALKEY        = 0x00ea,  /* 234 */
@@ -306,14 +311,17 @@ enum {
 	TIMERNOTIFIER         = 0x0118,  /* timer event, notifier sender */
 	TIMERF                = 0x011F,  /* last timer */
 
-	/* Tweak, gestures: 0x500x, 0x501x */
+	/* Actionzones, tweak, gestures: 0x500x, 0x501x */
 	EVT_ACTIONZONE_AREA   = 0x5000,
 	EVT_ACTIONZONE_REGION = 0x5001,
 	EVT_ACTIONZONE_FULLSCREEN = 0x5011,
 
 	/* NOTE: these values are saved in keymap files, do not change them but just add new ones */
 
-	/* tweak events, for L M R mousebuttons */
+	/* Tweak events:
+	 * Sent as additional event with the mouse coordinates from where the initial click was placed. */
+
+	/* tweak events for L M R mousebuttons */
 	EVT_TWEAK_L           = 0x5002,
 	EVT_TWEAK_M           = 0x5003,
 	EVT_TWEAK_R           = 0x5004,
@@ -338,37 +346,38 @@ enum {
 /* *********** wmEvent.type helpers. ********** */
 
 /* test whether the event is timer event */
-#define ISTIMER(event_type)	(event_type >= TIMER && event_type <= TIMERF)
+#define ISTIMER(event_type)	((event_type) >= TIMER && (event_type) <= TIMERF)
 
 /* for event checks */
 /* only used for KM_TEXTINPUT, so assume that we want all user-inputtable ascii codes included */
 /* UNUSED - see wm_eventmatch - BUG [#30479] */
-/* #define ISTEXTINPUT(event_type)  (event_type >= ' ' && event_type <= 255) */
+/* #define ISTEXTINPUT(event_type)  ((event_type) >= ' ' && (event_type) <= 255) */
 /* note, an alternative could be to check 'event->utf8_buf' */
 
 /* test whether the event is a key on the keyboard */
 #define ISKEYBOARD(event_type)                          \
-	((event_type >= 0x0020 && event_type <= 0x00ff) ||  \
-	 (event_type >= 0x012c && event_type <= 0x013f))
+	(((event_type) >= 0x0020 && (event_type) <= 0x00ff) ||  \
+	 ((event_type) >= 0x012c && (event_type) <= 0x013f))
 
 /* test whether the event is a modifier key */
-#define ISKEYMODIFIER(event_type)  ((event_type >= LEFTCTRLKEY && event_type <= LEFTSHIFTKEY) || event_type == OSKEY)
+#define ISKEYMODIFIER(event_type) \
+	(((event_type) >= LEFTCTRLKEY && (event_type) <= LEFTSHIFTKEY) || (event_type) == OSKEY)
 
 /* test whether the event is a mouse button */
-#define ISMOUSE(event_type)  (event_type >= LEFTMOUSE && event_type <= BUTTON7MOUSE)
+#define ISMOUSE(event_type)  ((event_type) >= LEFTMOUSE && (event_type) <= BUTTON7MOUSE)
 
 /* test whether the event is tweak event */
-#define ISTWEAK(event_type)  (event_type >= EVT_TWEAK_L && event_type <= EVT_GESTURE)
+#define ISTWEAK(event_type)  ((event_type) >= EVT_TWEAK_L && (event_type) <= EVT_GESTURE)
 
 /* test whether the event is a NDOF event */
-#define ISNDOF(event_type)  (event_type >= NDOF_MOTION && event_type < NDOF_LAST)
+#define ISNDOF(event_type)  ((event_type) >= NDOF_MOTION && (event_type) < NDOF_LAST)
 
 /* test whether event type is acceptable as hotkey, excluding modifiers */
 #define ISHOTKEY(event_type)                                                  \
 	((ISKEYBOARD(event_type) || ISMOUSE(event_type) || ISNDOF(event_type)) && \
-	 (event_type != ESCKEY) &&                                                \
-	 (event_type >= LEFTCTRLKEY && event_type <= LEFTSHIFTKEY) == false &&    \
-	 (event_type >= UNKNOWNKEY  && event_type <= GRLESSKEY) == false)
+	 ((event_type) != ESCKEY) &&                                                \
+	 ((event_type) >= LEFTCTRLKEY && (event_type) <= LEFTSHIFTKEY) == false &&    \
+	 ((event_type) >= UNKNOWNKEY  && (event_type) <= GRLESSKEY) == false)
 
 /* internal helpers*/
 #define _VA_IS_EVENT_MOD2(v, a) (CHECK_TYPE_INLINE(v, wmEvent *), \

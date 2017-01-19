@@ -32,6 +32,7 @@
 #include "MEM_guardedalloc.h"
 
 #include "BLI_bitmap.h"
+#include "BLI_bitmap_draw_2d.h"
 #include "BLI_listbase.h"
 #include "BLI_linklist.h"
 #include "BLI_linklist_stack.h"
@@ -74,8 +75,9 @@
 
 /* ****************************** MIRROR **************** */
 
-void EDBM_select_mirrored(BMEditMesh *em, bool extend,
-                          int *r_totmirr, int *r_totfail)
+void EDBM_select_mirrored(
+        BMEditMesh *em, const int axis, const bool extend,
+        int *r_totmirr, int *r_totfail)
 {
 	Mesh *me = (Mesh *)em->ob->data;
 	BMesh *bm = em->bm;
@@ -106,7 +108,7 @@ void EDBM_select_mirrored(BMEditMesh *em, bool extend,
 		}
 	}
 
-	EDBM_verts_mirror_cache_begin(em, 0, true, true, use_topology);
+	EDBM_verts_mirror_cache_begin(em, axis, true, true, use_topology);
 
 	if (!extend)
 		EDBM_flag_disable_all(em, BM_ELEM_SELECT);
@@ -248,10 +250,14 @@ struct LassoMaskData {
 	int width;
 };
 
-static void edbm_mask_lasso_px_cb(int x, int y, void *user_data)
+static void edbm_mask_lasso_px_cb(int x, int x_end, int y, void *user_data)
 {
 	struct LassoMaskData *data = user_data;
-	data->px[(y * data->width) + x] = true;
+	unsigned int *px = &data->px[(y * data->width) + x];
+	do {
+		*px = true;
+		px++;
+	} while (++x != x_end);
 }
 
 
@@ -289,7 +295,7 @@ bool EDBM_backbuf_border_mask_init(ViewContext *vc, const int mcords[][2], short
 	lasso_mask_data.px = dr_mask;
 	lasso_mask_data.width = (xmax - xmin) + 1;
 
-	fill_poly_v2i_n(
+	BLI_bitmap_draw_2d_poly_v2i_n(
 	       xmin, ymin, xmax + 1, ymax + 1,
 	       mcords, tot,
 	       edbm_mask_lasso_px_cb, &lasso_mask_data);
@@ -1186,7 +1192,7 @@ void MESH_OT_select_similar(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select Similar";
 	ot->idname = "MESH_OT_select_similar";
-	ot->description = "Select Similar\nSelect similar vertices, edges or faces by property types";
+	ot->description = "Select similar vertices, edges or faces by property types";
 	
 	/* api callbacks */
 	ot->invoke = WM_menu_invoke;
@@ -1256,11 +1262,10 @@ static int edbm_select_similar_region_exec(bContext *C, wmOperator *op)
 			LinkData *link;
 			while ((link = BLI_pophead(&faces_regions))) {
 				BMFace *f, **faces = link->data;
-				unsigned int i = 0;
-				while ((f = faces[i++])) {
+				while ((f = *(faces++))) {
 					BM_face_select_set(bm, f, true);
 				}
-				MEM_freeN(faces);
+				MEM_freeN(link->data);
 				MEM_freeN(link);
 
 				changed = true;
@@ -1286,7 +1291,7 @@ void MESH_OT_select_similar_region(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select Similar Regions";
 	ot->idname = "MESH_OT_select_similar_region";
-	ot->description = "Select Similar Regions\nSelect similar face regions to the current selection";
+	ot->description = "Select similar face regions to the current selection";
 
 	/* api callbacks */
 	ot->exec = edbm_select_similar_region_exec;
@@ -1347,7 +1352,7 @@ void MESH_OT_select_mode(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select Mode";
 	ot->idname = "MESH_OT_select_mode";
-	ot->description = "Select Mode\nChange selection mode";
+	ot->description = "Change selection mode";
 
 	/* api callbacks */
 	ot->invoke = edbm_select_mode_invoke;
@@ -1475,7 +1480,7 @@ void MESH_OT_loop_multi_select(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Multi Select Loops";
 	ot->idname = "MESH_OT_loop_multi_select";
-	ot->description = "Multi Select Loops\nSelect a loop of connected edges by connection type";
+	ot->description = "Select a loop of connected edges by connection type";
 	
 	/* api callbacks */
 	ot->exec = edbm_loop_multiselect_exec;
@@ -1692,7 +1697,7 @@ void MESH_OT_loop_select(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Loop Select";
 	ot->idname = "MESH_OT_loop_select";
-	ot->description = "Loop Select\nSelect a loop of connected edges";
+	ot->description = "Select a loop of connected edges";
 	
 	/* api callbacks */
 	ot->invoke = edbm_select_loop_invoke;
@@ -1713,7 +1718,7 @@ void MESH_OT_edgering_select(wmOperatorType *ot)
 	/* description */
 	ot->name = "Edge Ring Select";
 	ot->idname = "MESH_OT_edgering_select";
-	ot->description = "Edge Ring Select\nSelect an edge ring";
+	ot->description = "Select an edge ring";
 	
 	/* callbacks */
 	ot->invoke = edbm_select_loop_invoke;
@@ -1761,7 +1766,7 @@ void MESH_OT_select_all(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "(De)select All";
 	ot->idname = "MESH_OT_select_all";
-	ot->description = "(De)select All\n(De)select all vertices, edges or faces";
+	ot->description = "(De)select all vertices, edges or faces";
 
 	/* api callbacks */
 	ot->exec = edbm_select_all_exec;
@@ -1794,7 +1799,7 @@ void MESH_OT_select_interior_faces(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select Interior Faces";
 	ot->idname = "MESH_OT_select_interior_faces";
-	ot->description = "Select Interior Faces\nSelect faces where all edges have more than 2 face users";
+	ot->description = "Select faces where all edges have more than 2 face users";
 
 	/* api callbacks */
 	ot->exec = edbm_faces_select_interior_exec;
@@ -2339,6 +2344,9 @@ bool EDBM_select_interior_faces(BMEditMesh *em)
 
 /************************ Select Linked Operator *************************/
 
+/* so we can have last-used default depend on selection mode (rare exception!) */
+#define USE_LINKED_SELECT_DEFAULT_HACK
+
 struct DelimitData {
 	int cd_loop_type;
 	int cd_loop_offset;
@@ -2389,6 +2397,31 @@ static bool select_linked_delimit_test(
 	return false;
 }
 
+#ifdef USE_LINKED_SELECT_DEFAULT_HACK
+/**
+ * Gets the default from the operator fallback to own last-used value
+ * (selected based on mode)
+ */
+static int select_linked_delimit_default_from_op(wmOperator *op, BMEditMesh *em)
+{
+	static char delimit_last_store[2] = {0, BMO_DELIM_SEAM};
+	int delimit_last_index = (em->selectmode & (SCE_SELECT_VERTEX | SCE_SELECT_EDGE)) == 0;
+	char *delimit_last = &delimit_last_store[delimit_last_index];
+	PropertyRNA *prop_delimit = RNA_struct_find_property(op->ptr, "delimit");
+	int delimit;
+
+	if (RNA_property_is_set(op->ptr, prop_delimit)) {
+		delimit = RNA_property_enum_get(op->ptr, prop_delimit);
+		*delimit_last = delimit;
+	}
+	else {
+		delimit = *delimit_last;
+		RNA_property_enum_set(op->ptr, prop_delimit, delimit);
+	}
+	return delimit;
+}
+#endif
+
 static void select_linked_delimit_validate(BMesh *bm, int *delimit)
 {
 	if ((*delimit) & BMO_DELIM_UV) {
@@ -2398,12 +2431,9 @@ static void select_linked_delimit_validate(BMesh *bm, int *delimit)
 	}
 }
 
-static void select_linked_delimit_begin(BMesh *bm, short selectmode, int delimit)
+static void select_linked_delimit_begin(BMesh *bm, int delimit)
 {
 	struct DelimitData delimit_data = {0};
-
-	BMIter iter;
-	BMEdge *e;
 
 	if (delimit & BMO_DELIM_UV) {
 		delimit_data.cd_loop_type = CD_MLOOPUV;
@@ -2415,22 +2445,16 @@ static void select_linked_delimit_begin(BMesh *bm, short selectmode, int delimit
 
 	/* grr, shouldn't need to alloc BMO flags here */
 	BM_mesh_elem_toolflags_ensure(bm);
-	if (selectmode ==  SCE_SELECT_FACE) {
+
+	{
+		BMIter iter;
+		BMEdge *e;
+
 		BM_ITER_MESH (e, &iter, bm, BM_EDGES_OF_MESH) {
 			const bool is_walk_ok = (
 			        (select_linked_delimit_test(e, delimit, &delimit_data) == false));
 
-			BMO_elem_flag_set(bm, e, BMO_ELE_TAG, is_walk_ok);
-		}
-	}
-	else {
-		/* don't delimit selected edges in vert/edge mode */
-		BM_ITER_MESH (e, &iter, bm, BM_EDGES_OF_MESH) {
-			const bool is_walk_ok = (
-			        BM_elem_flag_test(e, BM_ELEM_SELECT) ||
-			        (select_linked_delimit_test(e, delimit, &delimit_data) == false));
-
-			BMO_elem_flag_set(bm, e, BMO_ELE_TAG, is_walk_ok);
+			BMO_edge_flag_set(bm, e, BMO_ELE_TAG, is_walk_ok);
 		}
 	}
 }
@@ -2450,12 +2474,16 @@ static int edbm_select_linked_exec(bContext *C, wmOperator *op)
 	BMIter iter;
 	BMWalker walker;
 
+#ifdef USE_LINKED_SELECT_DEFAULT_HACK
+	int delimit = select_linked_delimit_default_from_op(op, em);
+#else
 	int delimit = RNA_enum_get(op->ptr, "delimit");
+#endif
 
 	select_linked_delimit_validate(bm, &delimit);
 
 	if (delimit) {
-		select_linked_delimit_begin(em->bm, em->selectmode, delimit);
+		select_linked_delimit_begin(em->bm, delimit);
 	}
 
 	if (em->selectmode & SCE_SELECT_VERTEX) {
@@ -2463,6 +2491,17 @@ static int edbm_select_linked_exec(bContext *C, wmOperator *op)
 
 		BM_ITER_MESH (v, &iter, em->bm, BM_VERTS_OF_MESH) {
 			BM_elem_flag_set(v, BM_ELEM_TAG, BM_elem_flag_test(v, BM_ELEM_SELECT));
+		}
+
+		/* exclude all delimited verts */
+		if (delimit) {
+			BMEdge *e;
+			BM_ITER_MESH (e, &iter, em->bm, BM_EDGES_OF_MESH) {
+				if (!BMO_edge_flag_test(bm, e, BMO_ELE_TAG)) {
+					BM_elem_flag_disable(e->v1, BM_ELEM_TAG);
+					BM_elem_flag_disable(e->v2, BM_ELEM_TAG);
+				}
+			}
 		}
 
 		BMW_init(&walker, em->bm, delimit ? BMW_LOOP_SHELL_WIRE : BMW_VERT_SHELL,
@@ -2510,8 +2549,17 @@ static int edbm_select_linked_exec(bContext *C, wmOperator *op)
 	else if (em->selectmode & SCE_SELECT_EDGE) {
 		BMEdge *e;
 
-		BM_ITER_MESH (e, &iter, em->bm, BM_EDGES_OF_MESH) {
-			BM_elem_flag_set(e, BM_ELEM_TAG, BM_elem_flag_test(e, BM_ELEM_SELECT));
+		if (delimit) {
+			BM_ITER_MESH (e, &iter, em->bm, BM_EDGES_OF_MESH) {
+				BM_elem_flag_set(
+				        e, BM_ELEM_TAG,
+				        (BM_elem_flag_test(e, BM_ELEM_SELECT) && BMO_edge_flag_test(bm, e, BMO_ELE_TAG)));
+			}
+		}
+		else {
+			BM_ITER_MESH (e, &iter, em->bm, BM_EDGES_OF_MESH) {
+				BM_elem_flag_set(e, BM_ELEM_TAG, BM_elem_flag_test(e, BM_ELEM_SELECT));
+			}
 		}
 
 		BMW_init(&walker, em->bm, delimit ? BMW_LOOP_SHELL_WIRE : BMW_VERT_SHELL,
@@ -2592,10 +2640,12 @@ static int edbm_select_linked_exec(bContext *C, wmOperator *op)
 
 void MESH_OT_select_linked(wmOperatorType *ot)
 {
+	PropertyRNA *prop;
+
 	/* identifiers */
 	ot->name = "Select Linked All";
 	ot->idname = "MESH_OT_select_linked";
-	ot->description = "Select Linked All\nSelect all vertices linked to the active mesh";
+	ot->description = "Select all vertices linked to the active mesh";
 
 	/* api callbacks */
 	ot->exec = edbm_select_linked_exec;
@@ -2604,16 +2654,18 @@ void MESH_OT_select_linked(wmOperatorType *ot)
 	/* flags */
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
-	RNA_def_enum_flag(ot->srna, "delimit", mesh_delimit_mode_items, BMO_DELIM_SEAM, "Delimit",
-	                  "Delimit selected region");
+	prop = RNA_def_enum_flag(ot->srna, "delimit", rna_enum_mesh_delimit_mode_items, BMO_DELIM_SEAM, "Delimit",
+	                         "Delimit selected region");
+#ifdef USE_LINKED_SELECT_DEFAULT_HACK
+	RNA_def_property_flag(prop, PROP_SKIP_SAVE);
+#else
+	UNUSED_VARS(prop);
+#endif
 }
 
 static int edbm_select_linked_pick_exec(bContext *C, wmOperator *op);
 
-static void edbm_select_linked_pick_ex(
-        BMEditMesh *em,
-        BMVert *eve, BMEdge *eed, BMFace *efa,
-        bool sel, int delimit)
+static void edbm_select_linked_pick_ex(BMEditMesh *em, BMElem *ele, bool sel, int delimit)
 {
 	BMesh *bm = em->bm;
 	BMWalker walker;
@@ -2621,12 +2673,13 @@ static void edbm_select_linked_pick_ex(
 	select_linked_delimit_validate(bm, &delimit);
 
 	if (delimit) {
-		select_linked_delimit_begin(bm, em->selectmode, delimit);
+		select_linked_delimit_begin(bm, delimit);
 	}
 
 	/* Note: logic closely matches 'edbm_select_linked_exec', keep in sync */
 
-	if ((em->selectmode & SCE_SELECT_VERTEX) && eve) {
+	if (ele->head.htype == BM_VERT) {
+		BMVert *eve = (BMVert *)ele;
 
 		BMW_init(&walker, bm, delimit ? BMW_LOOP_SHELL_WIRE : BMW_VERT_SHELL,
 		         BMW_MASK_NOP, delimit ? BMO_ELE_TAG : BMW_MASK_NOP, BMW_MASK_NOP,
@@ -2658,7 +2711,8 @@ static void edbm_select_linked_pick_ex(
 
 		EDBM_selectmode_flush(em);
 	}
-	else if ((em->selectmode & SCE_SELECT_EDGE) && eed) {
+	else if (ele->head.htype == BM_EDGE) {
+		BMEdge *eed = (BMEdge *)ele;
 
 		BMW_init(&walker, bm, delimit ? BMW_LOOP_SHELL_WIRE : BMW_VERT_SHELL,
 		         BMW_MASK_NOP, delimit ? BMO_ELE_TAG : BMW_MASK_NOP, BMW_MASK_NOP,
@@ -2690,7 +2744,8 @@ static void edbm_select_linked_pick_ex(
 
 		EDBM_selectmode_flush(em);
 	}
-	else if ((em->selectmode & SCE_SELECT_FACE) && efa) {
+	else if (ele->head.htype == BM_FACE) {
+		BMFace *efa = (BMFace *)ele;
 
 		BMW_init(&walker, bm, BMW_ISLAND,
 		         BMW_MASK_NOP, delimit ? BMO_ELE_TAG : BMW_MASK_NOP, BMW_MASK_NOP,
@@ -2723,7 +2778,6 @@ static int edbm_select_linked_pick_invoke(bContext *C, wmOperator *op, const wmE
 	BMEdge *eed;
 	BMFace *efa;
 	const bool sel = !RNA_boolean_get(op->ptr, "deselect");
-	const int delimit = RNA_enum_get(op->ptr, "delimit");
 	int index;
 
 	if (RNA_struct_property_is_set(op->ptr, "index")) {
@@ -2752,24 +2806,19 @@ static int edbm_select_linked_pick_invoke(bContext *C, wmOperator *op, const wmE
 		return OPERATOR_CANCELLED;
 	}
 
-	edbm_select_linked_pick_ex(em, eve, eed, efa, sel, delimit);
+#ifdef USE_LINKED_SELECT_DEFAULT_HACK
+	int delimit = select_linked_delimit_default_from_op(op, em);
+#else
+	int delimit = RNA_enum_get(op->ptr, "delimit");
+#endif
+
+	BMElem *ele = EDBM_elem_from_selectmode(em, eve, eed, efa);
+
+	edbm_select_linked_pick_ex(em, ele, sel, delimit);
 
 	/* to support redo */
-	if ((em->selectmode & SCE_SELECT_VERTEX) && eve) {
-		BM_mesh_elem_index_ensure(bm, BM_VERT);
-		index = BM_elem_index_get(eve);
-	}
-	else if ((em->selectmode & SCE_SELECT_EDGE) && eed) {
-		BM_mesh_elem_index_ensure(bm, BM_EDGE);
-		index = BM_elem_index_get(eed) + bm->totvert;
-	}
-	else if ((em->selectmode & SCE_SELECT_FACE) && efa) {
-		BM_mesh_elem_index_ensure(bm, BM_FACE);
-		index = BM_elem_index_get(efa) + bm->totvert + bm->totedge;
-	}
-	else {
-		index = -1;
-	}
+	BM_mesh_elem_index_ensure(bm, ele->head.htype);
+	index = EDBM_elem_to_index_any(em, ele);
 
 	RNA_int_set(op->ptr, "index", index);
 
@@ -2785,30 +2834,22 @@ static int edbm_select_linked_pick_exec(bContext *C, wmOperator *op)
 	BMEditMesh *em = BKE_editmesh_from_object(obedit);
 	BMesh *bm = em->bm;
 	int index;
-	BMVert *eve = NULL;
-	BMEdge *eed = NULL;
-	BMFace *efa = NULL;
 	const bool sel = !RNA_boolean_get(op->ptr, "deselect");
-	const int delimit = RNA_enum_get(op->ptr, "delimit");
 
 	index = RNA_int_get(op->ptr, "index");
 	if (index < 0 || index >= (bm->totvert + bm->totedge + bm->totface)) {
 		return OPERATOR_CANCELLED;
 	}
 
-	if (index < bm->totvert) {
-		eve = BM_vert_at_index_find_or_table(bm, index);
-	}
-	else if (index < (bm->totvert + bm->totedge)) {
-		index -= bm->totvert;
-		eed = BM_edge_at_index_find_or_table(bm, index);
-	}
-	else if (index < (bm->totvert + bm->totedge + bm->totface)) {
-		index -= (bm->totvert + bm->totedge);
-		efa = BM_face_at_index_find_or_table(bm, index);
-	}
+	BMElem *ele = EDBM_elem_from_index_any(em, index);
 
-	edbm_select_linked_pick_ex(em, eve, eed, efa, sel, delimit);
+#ifdef USE_LINKED_SELECT_DEFAULT_HACK
+	int delimit = select_linked_delimit_default_from_op(op, em);
+#else
+	int delimit = RNA_enum_get(op->ptr, "delimit");
+#endif
+
+	edbm_select_linked_pick_ex(em, ele, sel, delimit);
 
 	WM_event_add_notifier(C, NC_GEOM | ND_SELECT, obedit);
 
@@ -2822,7 +2863,7 @@ void MESH_OT_select_linked_pick(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select Linked";
 	ot->idname = "MESH_OT_select_linked_pick";
-	ot->description = "Select Linked\n(De)select all vertices linked to the edge under the mouse cursor";
+	ot->description = "(De)select all vertices linked to the edge under the mouse cursor";
 	
 	/* api callbacks */
 	ot->invoke = edbm_select_linked_pick_invoke;
@@ -2833,8 +2874,11 @@ void MESH_OT_select_linked_pick(wmOperatorType *ot)
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 	
 	RNA_def_boolean(ot->srna, "deselect", 0, "Deselect", "");
-	RNA_def_enum_flag(ot->srna, "delimit", mesh_delimit_mode_items, BMO_DELIM_SEAM, "Delimit",
-	                  "Delimit selected region");
+	prop = RNA_def_enum_flag(ot->srna, "delimit", rna_enum_mesh_delimit_mode_items, BMO_DELIM_SEAM, "Delimit",
+	                         "Delimit selected region");
+#ifdef USE_LINKED_SELECT_DEFAULT_HACK
+	RNA_def_property_flag(prop, PROP_SKIP_SAVE);
+#endif
 
 	/* use for redo */
 	prop = RNA_def_int(ot->srna, "index", -1, -1, INT_MAX, "", "", 0, INT_MAX);
@@ -2900,7 +2944,7 @@ void MESH_OT_select_face_by_sides(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Select Faces by Sides";
-	ot->description = "Select Faces by Sides\nSelect vertices or faces by the number of polygon sides";
+	ot->description = "Select vertices or faces by the number of polygon sides";
 	ot->idname = "MESH_OT_select_face_by_sides";
 
 	/* api callbacks */
@@ -2973,7 +3017,7 @@ void MESH_OT_select_loose(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Select Loose Geometry";
-	ot->description = "Select Loose Geometry\nSelect loose geometry based on the selection mode";
+	ot->description = "Select loose geometry based on the selection mode";
 	ot->idname = "MESH_OT_select_loose";
 
 	/* api callbacks */
@@ -2992,12 +3036,18 @@ static int edbm_select_mirror_exec(bContext *C, wmOperator *op)
 {
 	Object *obedit = CTX_data_edit_object(C);
 	BMEditMesh *em = BKE_editmesh_from_object(obedit);
-	bool extend = RNA_boolean_get(op->ptr, "extend");
+	const int axis_flag = RNA_enum_get(op->ptr, "axis");
+	const bool extend = RNA_boolean_get(op->ptr, "extend");
 
 	if (em->bm->totvert && em->bm->totvertsel) {
 		int totmirr, totfail;
 
-		EDBM_select_mirrored(em, extend, &totmirr, &totfail);
+		for (int axis = 0; axis < 3; axis++) {
+			if ((1 << axis) & axis_flag) {
+				EDBM_select_mirrored(em, axis, extend, &totmirr, &totfail);
+			}
+		}
+
 		if (totmirr) {
 			EDBM_selectmode_flush(em);
 			WM_event_add_notifier(C, NC_GEOM | ND_SELECT, obedit->data);
@@ -3013,7 +3063,7 @@ void MESH_OT_select_mirror(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Select Mirror";
-	ot->description = "Select Mirror\nSelect mesh items at mirrored locations";
+	ot->description = "Select mesh items at mirrored locations";
 	ot->idname = "MESH_OT_select_mirror";
 
 	/* api callbacks */
@@ -3024,6 +3074,8 @@ void MESH_OT_select_mirror(wmOperatorType *ot)
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
 	/* props */
+	RNA_def_enum_flag(ot->srna, "axis", rna_enum_axis_flag_xyz_items, (1 << 0), "Axis", "");
+
 	RNA_def_boolean(ot->srna, "extend", 0, "Extend", "Extend the existing selection");
 }
 
@@ -3046,7 +3098,7 @@ void MESH_OT_select_more(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select More";
 	ot->idname = "MESH_OT_select_more";
-	ot->description = "Select More\nSelect more vertices, edges or faces connected to initial selection";
+	ot->description = "Select more vertices, edges or faces connected to initial selection";
 
 	/* api callbacks */
 	ot->exec = edbm_select_more_exec;
@@ -3075,7 +3127,7 @@ void MESH_OT_select_less(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select Less";
 	ot->idname = "MESH_OT_select_less";
-	ot->description = "Select Less\nDeselect vertices, edges or faces at the boundary of each selection region";
+	ot->description = "Deselect vertices, edges or faces at the boundary of each selection region";
 
 	/* api callbacks */
 	ot->exec = edbm_select_less_exec;
@@ -3111,7 +3163,9 @@ static bool bm_edge_is_select_isolated(BMEdge *e)
 /* Walk all reachable elements of the same type as h_act in breadth-first
  * order, starting from h_act. Deselects elements if the depth when they
  * are reached is not a multiple of "nth". */
-static void walker_deselect_nth(BMEditMesh *em, int nth, int skip, int offset, BMHeader *h_act)
+static void walker_deselect_nth(
+        BMEditMesh *em, const struct CheckerIntervalParams *op_params,
+        BMHeader *h_act)
 {
 	BMElem *ele;
 	BMesh *bm = em->bm;
@@ -3178,7 +3232,7 @@ static void walker_deselect_nth(BMEditMesh *em, int nth, int skip, int offset, B
 		if (!BM_elem_flag_test(ele, BM_ELEM_TAG)) {
 			/* Deselect elements that aren't at "nth" depth from active */
 			const int depth = BMW_current_depth(&walker) - 1;
-			if ((offset + depth) % (skip + nth) >= skip) {
+			if (WM_operator_properties_checker_interval_test(op_params, depth)) {
 				BM_elem_select_set(bm, ele, false);
 			}
 			BM_elem_flag_enable(ele, BM_ELEM_TAG);
@@ -3245,7 +3299,7 @@ static void deselect_nth_active(BMEditMesh *em, BMVert **r_eve, BMEdge **r_eed, 
 	}
 }
 
-static bool edbm_deselect_nth(BMEditMesh *em, int nth, int skip, int offset)
+static bool edbm_deselect_nth(BMEditMesh *em, const struct CheckerIntervalParams *op_params)
 {
 	BMVert *v;
 	BMEdge *e;
@@ -3254,15 +3308,15 @@ static bool edbm_deselect_nth(BMEditMesh *em, int nth, int skip, int offset)
 	deselect_nth_active(em, &v, &e, &f);
 
 	if (v) {
-		walker_deselect_nth(em, nth, skip, offset, &v->head);
+		walker_deselect_nth(em, op_params, &v->head);
 		return true;
 	}
 	else if (e) {
-		walker_deselect_nth(em, nth, skip, offset, &e->head);
+		walker_deselect_nth(em, op_params, &e->head);
 		return true;
 	}
 	else if (f) {
-		walker_deselect_nth(em, nth, skip, offset, &f->head);
+		walker_deselect_nth(em, op_params, &f->head);
 		return true;
 	}
 
@@ -3273,14 +3327,11 @@ static int edbm_select_nth_exec(bContext *C, wmOperator *op)
 {
 	Object *obedit = CTX_data_edit_object(C);
 	BMEditMesh *em = BKE_editmesh_from_object(obedit);
-	const int nth = RNA_int_get(op->ptr, "nth") - 1;
-	const int skip = RNA_int_get(op->ptr, "skip");
-	int offset = RNA_int_get(op->ptr, "offset");
+	struct CheckerIntervalParams op_params;
 
-	/* so input of offset zero ends up being (nth - 1) */
-	offset = mod_i(offset, nth + skip);
+	WM_operator_properties_checker_interval_from_op(op, &op_params);
 
-	if (edbm_deselect_nth(em, nth, skip, offset) == false) {
+	if (edbm_deselect_nth(em, &op_params) == false) {
 		BKE_report(op->reports, RPT_ERROR, "Mesh has no active vert/edge/face");
 		return OPERATOR_CANCELLED;
 	}
@@ -3296,7 +3347,7 @@ void MESH_OT_select_nth(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Checker Deselect";
 	ot->idname = "MESH_OT_select_nth";
-	ot->description = "Checker Deselect\nDeselect every Nth element starting from the active vertex, edge or face";
+	ot->description = "Deselect every Nth element starting from the active vertex, edge or face";
 
 	/* api callbacks */
 	ot->exec = edbm_select_nth_exec;
@@ -3305,9 +3356,7 @@ void MESH_OT_select_nth(wmOperatorType *ot)
 	/* flags */
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
-	RNA_def_int(ot->srna, "nth", 2, 2, INT_MAX, "Nth Selection", "", 2, 100);
-	RNA_def_int(ot->srna, "skip", 1, 1, INT_MAX, "Skip", "", 1, 100);
-	RNA_def_int(ot->srna, "offset", 0, INT_MIN, INT_MAX, "Offset", "", -100, 100);
+	WM_operator_properties_checker_interval(ot, false);
 }
 
 void em_setup_viewcontext(bContext *C, ViewContext *vc)
@@ -3331,16 +3380,16 @@ static int edbm_select_sharp_edges_exec(bContext *C, wmOperator *op)
 	BMIter iter;
 	BMEdge *e;
 	BMLoop *l1, *l2;
-	const float sharp = RNA_float_get(op->ptr, "sharpness");
+	const float angle_limit_cos = cosf(RNA_float_get(op->ptr, "sharpness"));
 
 	BM_ITER_MESH (e, &iter, em->bm, BM_EDGES_OF_MESH) {
 		if (BM_elem_flag_test(e, BM_ELEM_HIDDEN) == false &&
 		    BM_edge_loop_pair(e, &l1, &l2))
 		{
 			/* edge has exactly two neighboring faces, check angle */
-			const float angle = angle_normalized_v3v3(l1->f->no, l2->f->no);
+			const float angle_cos = dot_v3v3(l1->f->no, l2->f->no);
 
-			if (fabsf(angle) > sharp) {
+			if (angle_cos < angle_limit_cos) {
 				BM_edge_select_set(em->bm, e, true);
 			}
 		}
@@ -3357,7 +3406,7 @@ void MESH_OT_edges_select_sharp(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Select Sharp Edges";
-	ot->description = "Select Sharp Edges\nSelect all sharp-enough edges";
+	ot->description = "Select all sharp-enough edges";
 	ot->idname = "MESH_OT_edges_select_sharp";
 	
 	/* api callbacks */
@@ -3384,7 +3433,7 @@ static int edbm_select_linked_flat_faces_exec(bContext *C, wmOperator *op)
 	BMIter iter, liter, liter2;
 	BMFace *f;
 	BMLoop *l, *l2;
-	const float angle_limit = RNA_float_get(op->ptr, "sharpness");
+	const float angle_limit_cos = cosf(RNA_float_get(op->ptr, "sharpness"));
 
 	BM_mesh_elem_hflag_disable_all(bm, BM_FACE, BM_ELEM_TAG, false);
 
@@ -3407,7 +3456,7 @@ static int edbm_select_linked_flat_faces_exec(bContext *C, wmOperator *op)
 
 			BM_ITER_ELEM (l, &liter, f, BM_LOOPS_OF_FACE) {
 				BM_ITER_ELEM (l2, &liter2, l, BM_LOOPS_OF_LOOP) {
-					float angle;
+					float angle_cos;
 
 					if (BM_elem_flag_test(l2->f, BM_ELEM_TAG) ||
 					    BM_elem_flag_test(l2->f, BM_ELEM_HIDDEN))
@@ -3415,9 +3464,9 @@ static int edbm_select_linked_flat_faces_exec(bContext *C, wmOperator *op)
 						continue;
 					}
 
-					angle = angle_normalized_v3v3(f->no, l2->f->no);
+					angle_cos = dot_v3v3(f->no, l2->f->no);
 
-					if (angle < angle_limit) {
+					if (angle_cos > angle_limit_cos) {
 						BLI_LINKSTACK_PUSH(stack, l2->f);
 					}
 				}
@@ -3438,7 +3487,7 @@ void MESH_OT_faces_select_linked_flat(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Select Linked Flat Faces";
-	ot->description = "Select Linked Flat Faces\nSelect linked faces by angle";
+	ot->description = "Select linked faces by angle";
 	ot->idname = "MESH_OT_faces_select_linked_flat";
 	
 	/* api callbacks */
@@ -3519,7 +3568,7 @@ void MESH_OT_select_non_manifold(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Select Non Manifold";
-	ot->description = "Select Non Manifold\nSelect all non-manifold vertices or edges";
+	ot->description = "Select all non-manifold vertices or edges";
 	ot->idname = "MESH_OT_select_non_manifold";
 	
 	/* api callbacks */
@@ -3551,13 +3600,16 @@ static int edbm_select_random_exec(bContext *C, wmOperator *op)
 	BMEditMesh *em = BKE_editmesh_from_object(obedit);
 	const bool select = (RNA_enum_get(op->ptr, "action") == SEL_SELECT);
 	const float randfac =  RNA_float_get(op->ptr, "percent") / 100.0f;
+	const int seed = WM_operator_properties_select_random_seed_increment_get(op);
 
 	BMIter iter;
+
+	RNG *rng = BLI_rng_new_srandom(seed);
 
 	if (em->selectmode & SCE_SELECT_VERTEX) {
 		BMVert *eve;
 		BM_ITER_MESH (eve, &iter, em->bm, BM_VERTS_OF_MESH) {
-			if (!BM_elem_flag_test(eve, BM_ELEM_HIDDEN) && BLI_frand() < randfac) {
+			if (!BM_elem_flag_test(eve, BM_ELEM_HIDDEN) && BLI_rng_get_float(rng) < randfac) {
 				BM_vert_select_set(em->bm, eve, select);
 			}
 		}
@@ -3565,7 +3617,7 @@ static int edbm_select_random_exec(bContext *C, wmOperator *op)
 	else if (em->selectmode & SCE_SELECT_EDGE) {
 		BMEdge *eed;
 		BM_ITER_MESH (eed, &iter, em->bm, BM_EDGES_OF_MESH) {
-			if (!BM_elem_flag_test(eed, BM_ELEM_HIDDEN) && BLI_frand() < randfac) {
+			if (!BM_elem_flag_test(eed, BM_ELEM_HIDDEN) && BLI_rng_get_float(rng) < randfac) {
 				BM_edge_select_set(em->bm, eed, select);
 			}
 		}
@@ -3573,11 +3625,13 @@ static int edbm_select_random_exec(bContext *C, wmOperator *op)
 	else {
 		BMFace *efa;
 		BM_ITER_MESH (efa, &iter, em->bm, BM_FACES_OF_MESH) {
-			if (!BM_elem_flag_test(efa, BM_ELEM_HIDDEN) && BLI_frand() < randfac) {
+			if (!BM_elem_flag_test(efa, BM_ELEM_HIDDEN) && BLI_rng_get_float(rng) < randfac) {
 				BM_face_select_set(em->bm, efa, select);
 			}
 		}
 	}
+
+	BLI_rng_free(rng);
 
 	if (select) {
 		/* was EDBM_select_flush, but it over select in edge/face mode */
@@ -3596,7 +3650,7 @@ void MESH_OT_select_random(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Select Random";
-	ot->description = "Select Random\nRandomly select vertices";
+	ot->description = "Randomly select vertices";
 	ot->idname = "MESH_OT_select_random";
 
 	/* api callbacks */
@@ -3607,9 +3661,7 @@ void MESH_OT_select_random(wmOperatorType *ot)
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 	
 	/* props */
-	RNA_def_float_percentage(ot->srna, "percent", 50.0f, 0.0f, 100.0f,
-	                         "Percent", "Percentage of elements to select randomly", 0.0f, 100.0f);
-	WM_operator_properties_select_action_simple(ot, SEL_SELECT);
+	WM_operator_properties_select_random(ot);
 }
 
 static int edbm_select_ungrouped_poll(bContext *C)
@@ -3666,7 +3718,7 @@ void MESH_OT_select_ungrouped(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select Ungrouped";
 	ot->idname = "MESH_OT_select_ungrouped";
-	ot->description = "elect Ungrouped\nSelect vertices without a group";
+	ot->description = "Select vertices without a group";
 
 	/* api callbacks */
 	ot->exec = edbm_select_ungrouped_exec;
@@ -3748,7 +3800,7 @@ void MESH_OT_select_axis(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Select Axis";
-	ot->description = "Select Axis\nSelect all data in the mesh on a single axis";
+	ot->description = "Select all data in the mesh on a single axis";
 	ot->idname = "MESH_OT_select_axis";
 
 	/* api callbacks */
@@ -3763,57 +3815,6 @@ void MESH_OT_select_axis(wmOperatorType *ot)
 	RNA_def_enum(ot->srna, "axis", axis_items_xyz, 0, "Axis", "Select the axis to compare each vertex on");
 	RNA_def_float(ot->srna, "threshold", 0.0001f, 0.000001f, 50.0f,  "Threshold", "", 0.00001f, 10.0f);
 }
-
-
-static int edbm_select_next_loop_exec(bContext *C, wmOperator *UNUSED(op))
-{
-	Object *obedit = CTX_data_edit_object(C);
-	BMEditMesh *em = BKE_editmesh_from_object(obedit);
-	BMFace *f;
-	BMVert *v;
-	BMIter iter;
-	
-	BM_ITER_MESH (v, &iter, em->bm, BM_VERTS_OF_MESH) {
-		BM_elem_flag_disable(v, BM_ELEM_TAG);
-	}
-	
-	BM_ITER_MESH (f, &iter, em->bm, BM_FACES_OF_MESH) {
-		BMLoop *l;
-		BMIter liter;
-		
-		BM_ITER_ELEM (l, &liter, f, BM_LOOPS_OF_FACE) {
-			if (BM_elem_flag_test(l->v, BM_ELEM_SELECT)) {
-				BM_elem_flag_enable(l->next->v, BM_ELEM_TAG);
-				BM_vert_select_set(em->bm, l->v, false);
-			}
-		}
-	}
-
-	BM_ITER_MESH (v, &iter, em->bm, BM_VERTS_OF_MESH) {
-		if (BM_elem_flag_test(v, BM_ELEM_TAG)) {
-			BM_vert_select_set(em->bm, v, true);
-		}
-	}
-
-	WM_event_add_notifier(C, NC_GEOM | ND_SELECT, obedit);
-	return OPERATOR_FINISHED;
-}
-
-void MESH_OT_select_next_loop(wmOperatorType *ot)
-{
-	/* identifiers */
-	ot->name = "Select Next Loop";
-	ot->idname = "MESH_OT_select_next_loop";
-	ot->description = "Select Next Loop\nSelect next edge loop adjacent to a selected loop";
-
-	/* api callbacks */
-	ot->exec = edbm_select_next_loop_exec;
-	ot->poll = ED_operator_editmesh;
-	
-	/* flags */
-	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
-}
-
 
 static int edbm_region_to_loop_exec(bContext *C, wmOperator *UNUSED(op))
 {
@@ -3868,7 +3869,7 @@ void MESH_OT_region_to_loop(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select Boundary Loop";
 	ot->idname = "MESH_OT_region_to_loop";
-	ot->description = "Select Boundary Loop\nSelect boundary edges around the selected faces";
+	ot->description = "Select boundary edges around the selected faces";
 
 	/* api callbacks */
 	ot->exec = edbm_region_to_loop_exec;
@@ -4058,7 +4059,7 @@ void MESH_OT_loop_to_region(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select Loop Inner-Region";
 	ot->idname = "MESH_OT_loop_to_region";
-	ot->description = "Select Loop Inner-Region\nSelect region of faces inside of a selected loop of edges";
+	ot->description = "Select region of faces inside of a selected loop of edges";
 
 	/* api callbacks */
 	ot->exec = edbm_loop_to_region_exec;

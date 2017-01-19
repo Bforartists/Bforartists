@@ -17,6 +17,8 @@
 #ifndef __BLENDER_UTIL_H__
 #define __BLENDER_UTIL_H__
 
+#include "mesh.h"
+
 #include "util_map.h"
 #include "util_path.h"
 #include "util_set.h"
@@ -40,41 +42,140 @@ CCL_NAMESPACE_BEGIN
 void python_thread_state_save(void **python_thread_state);
 void python_thread_state_restore(void **python_thread_state);
 
-static inline BL::Mesh object_to_mesh(BL::BlendData data, BL::Object object, BL::Scene scene, bool apply_modifiers, bool render, bool calc_undeformed)
+static inline BL::Mesh object_to_mesh(BL::BlendData& data,
+                                      BL::Object& object,
+                                      BL::Scene& scene,
+                                      bool apply_modifiers,
+                                      bool render,
+                                      bool calc_undeformed,
+                                      Mesh::SubdivisionType subdivision_type)
 {
+	bool subsurf_mod_show_render;
+	bool subsurf_mod_show_viewport;
+
+	if(subdivision_type != Mesh::SUBDIVISION_NONE) {
+		BL::Modifier subsurf_mod = object.modifiers[object.modifiers.length()-1];
+
+		subsurf_mod_show_render = subsurf_mod.show_render();
+		subsurf_mod_show_viewport = subsurf_mod.show_viewport();
+
+		subsurf_mod.show_render(false);
+		subsurf_mod.show_viewport(false);
+	}
+
 	BL::Mesh me = data.meshes.new_from_object(scene, object, apply_modifiers, (render)? 2: 1, false, calc_undeformed);
+
+	if(subdivision_type != Mesh::SUBDIVISION_NONE) {
+		BL::Modifier subsurf_mod = object.modifiers[object.modifiers.length()-1];
+
+		subsurf_mod.show_render(subsurf_mod_show_render);
+		subsurf_mod.show_viewport(subsurf_mod_show_viewport);
+	}
+
 	if((bool)me) {
 		if(me.use_auto_smooth()) {
-			me.calc_normals_split();
+			if(subdivision_type == Mesh::SUBDIVISION_CATMULL_CLARK) {
+				me.calc_normals_split();
+			}
+			else {
+				me.split_faces();
+			}
 		}
-		me.calc_tessface(true);
+		if(subdivision_type == Mesh::SUBDIVISION_NONE) {
+			me.calc_tessface(true);
+		}
 	}
 	return me;
 }
 
-static inline void colorramp_to_array(BL::ColorRamp ramp, float4 *data, int size)
+static inline void colorramp_to_array(BL::ColorRamp& ramp,
+                                      array<float3>& ramp_color,
+                                      array<float>& ramp_alpha,
+                                      int size)
 {
+	ramp_color.resize(size);
+	ramp_alpha.resize(size);
+
 	for(int i = 0; i < size; i++) {
 		float color[4];
 
 		ramp.evaluate((float)i/(float)(size-1), color);
-		data[i] = make_float4(color[0], color[1], color[2], color[3]);
+		ramp_color[i] = make_float3(color[0], color[1], color[2]);
+		ramp_alpha[i] = color[3];
 	}
 }
 
-static inline void curvemapping_color_to_array(BL::CurveMapping cumap, float4 *data, int size, bool rgb_curve)
+static inline void curvemap_minmax_curve(/*const*/ BL::CurveMap& curve,
+                                         float *min_x,
+                                         float *max_x)
 {
+	*min_x = min(*min_x, curve.points[0].location()[0]);
+	*max_x = max(*max_x, curve.points[curve.points.length() - 1].location()[0]);
+}
+
+static inline void curvemapping_minmax(/*const*/ BL::CurveMapping& cumap,
+                                       bool rgb_curve,
+                                       float *min_x,
+                                       float *max_x)
+{
+	/* const int num_curves = cumap.curves.length(); */  /* Gives linking error so far. */
+	const int num_curves = rgb_curve? 4: 3;
+	*min_x = FLT_MAX;
+	*max_x = -FLT_MAX;
+	for(int i = 0; i < num_curves; ++i) {
+		BL::CurveMap map(cumap.curves[i]);
+		curvemap_minmax_curve(map, min_x, max_x);
+	}
+}
+
+static inline void curvemapping_to_array(BL::CurveMapping& cumap,
+                                         array<float>& data,
+                                         int size)
+{
+	cumap.update();
+	BL::CurveMap curve = cumap.curves[0];
+	data.resize(size);
+	for(int i = 0; i < size; i++) {
+		float t = (float)i/(float)(size-1);
+		data[i] = curve.evaluate(t);
+	}
+}
+
+static inline void curvemapping_color_to_array(BL::CurveMapping& cumap,
+                                               array<float3>& data,
+                                               int size,
+                                               bool rgb_curve)
+{
+	float min_x = 0.0f, max_x = 1.0f;
+
+	/* TODO(sergey): There is no easy way to automatically guess what is
+	 * the range to be used here for the case when mapping is applied on
+	 * top of another mapping (i.e. R curve applied on top of common
+	 * one).
+	 *
+	 * Using largest possible range form all curves works correct for the
+	 * cases like vector curves and should be good enough heuristic for
+	 * the color curves as well.
+	 *
+	 * There might be some better estimations here tho.
+	 */
+	curvemapping_minmax(cumap, rgb_curve, &min_x, &max_x);
+
+	const float range_x = max_x - min_x;
+
 	cumap.update();
 
 	BL::CurveMap mapR = cumap.curves[0];
 	BL::CurveMap mapG = cumap.curves[1];
 	BL::CurveMap mapB = cumap.curves[2];
 
+	data.resize(size);
+
 	if(rgb_curve) {
 		BL::CurveMap mapI = cumap.curves[3];
 
 		for(int i = 0; i < size; i++) {
-			float t = (float)i/(float)(size-1);
+			float t = min_x + (float)i/(float)(size-1) * range_x;
 
 			data[i][0] = mapR.evaluate(mapI.evaluate(t));
 			data[i][1] = mapG.evaluate(mapI.evaluate(t));
@@ -83,7 +184,7 @@ static inline void curvemapping_color_to_array(BL::CurveMapping cumap, float4 *d
 	}
 	else {
 		for(int i = 0; i < size; i++) {
-			float t = (float)i/(float)(size-1);
+			float t = min_x + (float)i/(float)(size-1) * range_x;
 
 			data[i][0] = mapR.evaluate(t);
 			data[i][1] = mapG.evaluate(t);
@@ -92,27 +193,33 @@ static inline void curvemapping_color_to_array(BL::CurveMapping cumap, float4 *d
 	}
 }
 
-static inline bool BKE_object_is_modified(BL::Object self, BL::Scene scene, bool preview)
+static inline bool BKE_object_is_modified(BL::Object& self,
+                                          BL::Scene& scene,
+                                          bool preview)
 {
 	return self.is_modified(scene, (preview)? (1<<0): (1<<1))? true: false;
 }
 
-static inline bool BKE_object_is_deform_modified(BL::Object self, BL::Scene scene, bool preview)
+static inline bool BKE_object_is_deform_modified(BL::Object& self,
+                                                 BL::Scene& scene,
+                                                 bool preview)
 {
 	return self.is_deform_modified(scene, (preview)? (1<<0): (1<<1))? true: false;
 }
 
-static inline int render_resolution_x(BL::RenderSettings b_render)
+static inline int render_resolution_x(BL::RenderSettings& b_render)
 {
 	return b_render.resolution_x()*b_render.resolution_percentage()/100;
 }
 
-static inline int render_resolution_y(BL::RenderSettings b_render)
+static inline int render_resolution_y(BL::RenderSettings& b_render)
 {
 	return b_render.resolution_y()*b_render.resolution_percentage()/100;
 }
 
-static inline string image_user_file_path(BL::ImageUser iuser, BL::Image ima, int cfra)
+static inline string image_user_file_path(BL::ImageUser& iuser,
+                                          BL::Image& ima,
+                                          int cfra)
 {
 	char filepath[1024];
 	BKE_image_user_frame_calc(iuser.ptr.data, cfra, 0);
@@ -120,25 +227,27 @@ static inline string image_user_file_path(BL::ImageUser iuser, BL::Image ima, in
 	return string(filepath);
 }
 
-static inline int image_user_frame_number(BL::ImageUser iuser, int cfra)
+static inline int image_user_frame_number(BL::ImageUser& iuser, int cfra)
 {
 	BKE_image_user_frame_calc(iuser.ptr.data, cfra, 0);
 	return iuser.frame_current();
 }
 
-static inline unsigned char *image_get_pixels_for_frame(BL::Image image, int frame)
+static inline unsigned char *image_get_pixels_for_frame(BL::Image& image,
+                                                        int frame)
 {
 	return BKE_image_get_pixels_for_frame(image.ptr.data, frame);
 }
 
-static inline float *image_get_float_pixels_for_frame(BL::Image image, int frame)
+static inline float *image_get_float_pixels_for_frame(BL::Image& image,
+                                                      int frame)
 {
 	return BKE_image_get_float_pixels_for_frame(image.ptr.data, frame);
 }
 
 /* Utilities */
 
-static inline Transform get_transform(BL::Array<float, 16> array)
+static inline Transform get_transform(const BL::Array<float, 16>& array)
 {
 	Transform tfm;
 
@@ -150,42 +259,42 @@ static inline Transform get_transform(BL::Array<float, 16> array)
 	return tfm;
 }
 
-static inline float2 get_float2(BL::Array<float, 2> array)
+static inline float2 get_float2(const BL::Array<float, 2>& array)
 {
 	return make_float2(array[0], array[1]);
 }
 
-static inline float3 get_float3(BL::Array<float, 2> array)
+static inline float3 get_float3(const BL::Array<float, 2>& array)
 {
 	return make_float3(array[0], array[1], 0.0f);
 }
 
-static inline float3 get_float3(BL::Array<float, 3> array)
+static inline float3 get_float3(const BL::Array<float, 3>& array)
 {
 	return make_float3(array[0], array[1], array[2]);
 }
 
-static inline float3 get_float3(BL::Array<float, 4> array)
+static inline float3 get_float3(const BL::Array<float, 4>& array)
 {
 	return make_float3(array[0], array[1], array[2]);
 }
 
-static inline float4 get_float4(BL::Array<float, 4> array)
+static inline float4 get_float4(const BL::Array<float, 4>& array)
 {
 	return make_float4(array[0], array[1], array[2], array[3]);
 }
 
-static inline int3 get_int3(BL::Array<int, 3> array)
+static inline int3 get_int3(const BL::Array<int, 3>& array)
 {
 	return make_int3(array[0], array[1], array[2]);
 }
 
-static inline int4 get_int4(BL::Array<int, 4> array)
+static inline int4 get_int4(const BL::Array<int, 4>& array)
 {
 	return make_int4(array[0], array[1], array[2], array[3]);
 }
 
-static inline uint get_layer(BL::Array<int, 20> array)
+static inline uint get_layer(const BL::Array<int, 20>& array)
 {
 	uint layer = 0;
 
@@ -196,7 +305,10 @@ static inline uint get_layer(BL::Array<int, 20> array)
 	return layer;
 }
 
-static inline uint get_layer(BL::Array<int, 20> array, BL::Array<int, 8> local_array, bool use_local, bool is_light = false)
+static inline uint get_layer(const BL::Array<int, 20>& array,
+                             const BL::Array<int, 8>& local_array,
+                             bool is_light = false,
+                             uint scene_layers = (1 << 20) - 1)
 {
 	uint layer = 0;
 
@@ -205,22 +317,19 @@ static inline uint get_layer(BL::Array<int, 20> array, BL::Array<int, 8> local_a
 			layer |= (1 << i);
 
 	if(is_light) {
-		/* consider lamps on all local view layers */
-		for(uint i = 0; i < 8; i++)
-			layer |= (1 << (20+i));
+		/* Consider light is visible if it was visible without layer
+		 * override, which matches behavior of Blender Internal.
+		 */
+		if(layer & scene_layers) {
+			for(uint i = 0; i < 8; i++)
+				layer |= (1 << (20+i));
+		}
 	}
 	else {
 		for(uint i = 0; i < 8; i++)
 			if(local_array[i])
 				layer |= (1 << (20+i));
 	}
-
-	/* we don't have spare bits for localview (normally 20-28) because
-	 * PATH_RAY_LAYER_SHIFT uses 20-32. So - check if we have localview and if
-	 * so, shift local view bits down to 1-8, since this is done for the view
-	 * port only - it should be OK and not conflict with render layers. */
-	if(use_local)
-		layer >>= 20;
 
 	return layer;
 }
@@ -279,9 +388,24 @@ static inline void set_int(PointerRNA& ptr, const char *name, int value)
 	RNA_int_set(&ptr, name, value);
 }
 
-static inline int get_enum(PointerRNA& ptr, const char *name)
+/* Get a RNA enum value with sanity check: if the RNA value is above num_values
+ * the function will return a fallback default value.
+ *
+ * NOTE: This function assumes that RNA enum values are a continuous sequence
+ * from 0 to num_values-1. Be careful to use it with enums where some values are
+ * deprecated!
+ */
+static inline int get_enum(PointerRNA& ptr,
+                           const char *name,
+                           int num_values = -1,
+                           int default_value = -1)
 {
-	return RNA_enum_get(&ptr, name);
+	int value = RNA_enum_get(&ptr, name);
+	if(num_values != -1 && value >= num_values) {
+		assert(default_value != -1);
+		value = default_value;
+	}
+	return value;
 }
 
 static inline string get_enum_identifier(PointerRNA& ptr, const char *name)
@@ -302,7 +426,7 @@ static inline void set_enum(PointerRNA& ptr, const char *name, int value)
 
 static inline void set_enum(PointerRNA& ptr, const char *name, const string &identifier)
 {
-	RNA_enum_set_identifier(&ptr, name, identifier.c_str());
+	RNA_enum_set_identifier(NULL, &ptr, name, identifier.c_str());
 }
 
 static inline string get_string(PointerRNA& ptr, const char *name)
@@ -323,13 +447,19 @@ static inline void set_string(PointerRNA& ptr, const char *name, const string &v
 
 /* Relative Paths */
 
-static inline string blender_absolute_path(BL::BlendData b_data, BL::ID b_id, const string& path)
+static inline string blender_absolute_path(BL::BlendData& b_data,
+                                           BL::ID& b_id,
+                                           const string& path)
 {
 	if(path.size() >= 2 && path[0] == '/' && path[1] == '/') {
 		string dirname;
 		
-		if(b_id.library())
-			dirname = blender_absolute_path(b_data, b_id.library(), b_id.library().filepath());
+		if(b_id.library()) {
+			BL::ID b_library_id(b_id.library());
+			dirname = blender_absolute_path(b_data,
+			                                b_library_id,
+			                                b_id.library().filepath());
+		}
 		else
 			dirname = b_data.filepath();
 
@@ -341,7 +471,9 @@ static inline string blender_absolute_path(BL::BlendData b_data, BL::ID b_id, co
 
 /* Texture Space */
 
-static inline void mesh_texture_space(BL::Mesh b_mesh, float3& loc, float3& size)
+static inline void mesh_texture_space(BL::Mesh& b_mesh,
+                                      float3& loc,
+                                      float3& size)
 {
 	loc = get_float3(b_mesh.texspace_location());
 	size = get_float3(b_mesh.texspace_size());
@@ -354,7 +486,7 @@ static inline void mesh_texture_space(BL::Mesh b_mesh, float3& loc, float3& size
 }
 
 /* object used for motion blur */
-static inline bool object_use_motion(BL::Object b_parent, BL::Object b_ob)
+static inline bool object_use_motion(BL::Object& b_parent, BL::Object& b_ob)
 {
 	PointerRNA cobject = RNA_pointer_get(&b_ob.ptr, "cycles");
 	bool use_motion = get_boolean(cobject, "use_motion_blur");
@@ -372,7 +504,7 @@ static inline bool object_use_motion(BL::Object b_parent, BL::Object b_ob)
 }
 
 /* object motion steps */
-static inline uint object_motion_steps(BL::Object b_ob)
+static inline uint object_motion_steps(BL::Object& b_ob)
 {
 	PointerRNA cobject = RNA_pointer_get(&b_ob.ptr, "cycles");
 	uint steps = get_int(cobject, "motion_steps");
@@ -384,7 +516,8 @@ static inline uint object_motion_steps(BL::Object b_ob)
 }
 
 /* object uses deformation motion blur */
-static inline bool object_use_deform_motion(BL::Object b_parent, BL::Object b_ob)
+static inline bool object_use_deform_motion(BL::Object& b_parent,
+                                            BL::Object& b_ob)
 {
 	PointerRNA cobject = RNA_pointer_get(&b_ob.ptr, "cycles");
 	bool use_deform_motion = get_boolean(cobject, "use_deform_motion");
@@ -401,7 +534,7 @@ static inline bool object_use_deform_motion(BL::Object b_parent, BL::Object b_ob
 	return use_deform_motion;
 }
 
-static inline BL::SmokeDomainSettings object_smoke_domain_find(BL::Object b_ob)
+static inline BL::SmokeDomainSettings object_smoke_domain_find(BL::Object& b_ob)
 {
 	BL::Object::modifiers_iterator b_mod;
 
@@ -417,6 +550,46 @@ static inline BL::SmokeDomainSettings object_smoke_domain_find(BL::Object b_ob)
 	return BL::SmokeDomainSettings(PointerRNA_NULL);
 }
 
+static inline BL::DomainFluidSettings object_fluid_domain_find(BL::Object b_ob)
+{
+	BL::Object::modifiers_iterator b_mod;
+
+	for(b_ob.modifiers.begin(b_mod); b_mod != b_ob.modifiers.end(); ++b_mod) {
+		if(b_mod->is_a(&RNA_FluidSimulationModifier)) {
+			BL::FluidSimulationModifier b_fmd(*b_mod);
+			BL::FluidSettings fss = b_fmd.settings();
+
+			if(fss.type() == BL::FluidSettings::type_DOMAIN)
+				return (BL::DomainFluidSettings)b_fmd.settings();
+		}
+	}
+
+	return BL::DomainFluidSettings(PointerRNA_NULL);
+}
+
+static inline Mesh::SubdivisionType object_subdivision_type(BL::Object& b_ob, bool preview, bool experimental)
+{
+	PointerRNA cobj = RNA_pointer_get(&b_ob.ptr, "cycles");
+
+	if(cobj.data && b_ob.modifiers.length() > 0 && experimental) {
+		BL::Modifier mod = b_ob.modifiers[b_ob.modifiers.length()-1];
+		bool enabled = preview ? mod.show_viewport() : mod.show_render();
+
+		if(enabled && mod.type() == BL::Modifier::type_SUBSURF && RNA_boolean_get(&cobj, "use_adaptive_subdivision")) {
+			BL::SubsurfModifier subsurf(mod);
+
+			if(subsurf.subdivision_type() == BL::SubsurfModifier::subdivision_type_CATMULL_CLARK) {
+				return Mesh::SUBDIVISION_CATMULL_CLARK;
+			}
+			else {
+				return Mesh::SUBDIVISION_LINEAR;
+			}
+		}
+	}
+
+	return Mesh::SUBDIVISION_NONE;
+}
+
 /* ID Map
  *
  * Utility class to keep in sync with blender data.
@@ -430,7 +603,7 @@ public:
 		scene_data = scene_data_;
 	}
 
-	T *find(BL::ID id)
+	T *find(const BL::ID& id)
 	{
 		return find(id.ptr.id.data);
 	}
@@ -445,7 +618,7 @@ public:
 		return NULL;
 	}
 
-	void set_recalc(BL::ID id)
+	void set_recalc(const BL::ID& id)
 	{
 		b_recalc.insert(id.ptr.data);
 	}
@@ -460,12 +633,12 @@ public:
 		used_set.clear();
 	}
 
-	bool sync(T **r_data, BL::ID id)
+	bool sync(T **r_data, const BL::ID& id)
 	{
 		return sync(r_data, id, id, id.ptr.id.data);
 	}
 
-	bool sync(T **r_data, BL::ID id, BL::ID parent, const K& key)
+	bool sync(T **r_data, const BL::ID& id, const BL::ID& parent, const K& key)
 	{
 		T *data = find(key);
 		bool recalc;
@@ -554,7 +727,7 @@ protected:
 
 /* Object Key */
 
-enum { OBJECT_PERSISTENT_ID_SIZE = 8 };
+enum { OBJECT_PERSISTENT_ID_SIZE = 16 };
 
 struct ObjectKey {
 	void *parent;

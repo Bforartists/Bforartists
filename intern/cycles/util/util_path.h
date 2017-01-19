@@ -35,6 +35,7 @@ CCL_NAMESPACE_BEGIN
 void path_init(const string& path = "", const string& user_path = "");
 string path_get(const string& sub = "");
 string path_user_get(const string& sub = "");
+string path_cache_get(const string& sub = "");
 
 /* path string manipulation */
 string path_filename(const string& path);
@@ -44,7 +45,9 @@ string path_escape(const string& path);
 bool path_is_relative(const string& path);
 
 /* file info */
+size_t path_file_size(const string& path);
 bool path_exists(const string& path);
+bool path_is_directory(const string& path);
 string path_files_md5_hash(const string& dir);
 uint64_t path_modified_time(const string& path);
 
@@ -59,8 +62,13 @@ bool path_write_text(const string& path, string& text);
 bool path_read_binary(const string& path, vector<uint8_t>& binary);
 bool path_read_text(const string& path, string& text);
 
+/* File manipulation. */
+bool path_remove(const string& path);
+
 /* source code utility */
-string path_source_replace_includes(const string& source, const string& path);
+string path_source_replace_includes(const string& source,
+                                    const string& path,
+                                    const string& source_filename="");
 
 /* cache utility */
 void path_cache_clear_except(const string& name, const set<string>& except);

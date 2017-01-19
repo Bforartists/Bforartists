@@ -62,6 +62,7 @@ struct AnimData;
 struct Editing;
 struct SceneStats;
 struct bGPdata;
+struct bGPDbrush;
 struct MovieClip;
 struct ColorSpace;
 
@@ -134,6 +135,37 @@ typedef struct QuicktimeCodecSettings {
 	int pad1;
 } QuicktimeCodecSettings;
 
+typedef enum FFMpegPreset {
+	FFM_PRESET_NONE,
+	FFM_PRESET_ULTRAFAST,
+	FFM_PRESET_SUPERFAST,
+	FFM_PRESET_VERYFAST,
+	FFM_PRESET_FASTER,
+	FFM_PRESET_FAST,
+	FFM_PRESET_MEDIUM,
+	FFM_PRESET_SLOW,
+	FFM_PRESET_SLOWER,
+	FFM_PRESET_VERYSLOW,
+} FFMpegPreset;
+
+
+/* Mapping from easily-understandable descriptions to CRF values.
+ * Assumes we output 8-bit video. Needs to be remapped if 10-bit
+ * is output.
+ * We use a slightly wider than "subjectively sane range" according
+ * to https://trac.ffmpeg.org/wiki/Encode/H.264#a1.ChooseaCRFvalue
+ */
+typedef enum FFMpegCrf {
+	FFM_CRF_NONE = -1,
+	FFM_CRF_LOSSLESS = 0,
+	FFM_CRF_PERC_LOSSLESS = 17,
+	FFM_CRF_HIGH = 20,
+	FFM_CRF_MEDIUM = 23,
+	FFM_CRF_LOW = 26,
+	FFM_CRF_VERYLOW = 29,
+	FFM_CRF_LOWEST = 32,
+} FFMpegCrf;
+
 typedef struct FFMpegCodecData {
 	int type;
 	int codec;
@@ -145,13 +177,18 @@ typedef struct FFMpegCodecData {
 	int audio_pad;
 	float audio_volume;
 	int gop_size;
+	int max_b_frames; /* only used if FFMPEG_USE_MAX_B_FRAMES flag is set. */
 	int flags;
+	int constant_rate_factor;
+	int ffmpeg_preset; /* see FFMpegPreset */
 
 	int rc_min_rate;
 	int rc_max_rate;
 	int rc_buffer_size;
 	int mux_packet_size;
 	int mux_rate;
+	int pad1;
+
 	IDProperty *properties;
 } FFMpegCodecData;
 
@@ -204,7 +241,8 @@ typedef struct SceneRenderLayer {
 #define SCE_LAY_SKY		16
 #define SCE_LAY_STRAND	32
 #define SCE_LAY_FRS		64
-	/* flags between 128 and 0x8000 are set to 1 already, for future options */
+#define SCE_LAY_AO		128
+	/* flags between 256 and 0x8000 are set to 1 already, for future options */
 
 #define SCE_LAY_ALL_Z		0x8000
 #define SCE_LAY_XOR			0x10000
@@ -354,7 +392,10 @@ typedef struct ImageFormatData {
 	char  jp2_flag;
 	char jp2_codec;
 
-	char pad[5];
+	/* TIFF */
+	char tiff_codec;
+
+	char pad[4];
 
 	/* Multiview */
 	char views_format;
@@ -441,6 +482,14 @@ typedef struct ImageFormatData {
 /* ImageFormatData.cineon_flag */
 #define R_IMF_CINEON_FLAG_LOG (1<<0)  /* was R_CINEON_LOG */
 
+/* ImageFormatData.tiff_codec */
+enum {
+	R_IMF_TIFF_CODEC_DEFLATE   = 0,
+	R_IMF_TIFF_CODEC_LZW       = 1,
+	R_IMF_TIFF_CODEC_PACKBITS  = 2,
+	R_IMF_TIFF_CODEC_NONE      = 3,
+};
+
 typedef struct BakeData {
 	struct ImageFormatData im_format;
 
@@ -450,7 +499,7 @@ typedef struct BakeData {
 	short margin, flag;
 
 	float cage_extrusion;
-	float pad2;
+	int pass_filter;
 
 	char normal_swizzle[3];
 	char normal_space;
@@ -476,6 +525,22 @@ typedef enum BakeSaveMode {
 	R_BAKE_SAVE_INTERNAL = 0,
 	R_BAKE_SAVE_EXTERNAL = 1,
 } BakeSaveMode;
+
+/* bake->pass_filter */
+typedef enum BakePassFilter {
+	R_BAKE_PASS_FILTER_NONE           = 0,
+	R_BAKE_PASS_FILTER_AO             = (1 << 0),
+	R_BAKE_PASS_FILTER_EMIT           = (1 << 1),
+	R_BAKE_PASS_FILTER_DIFFUSE        = (1 << 2),
+	R_BAKE_PASS_FILTER_GLOSSY         = (1 << 3),
+	R_BAKE_PASS_FILTER_TRANSM         = (1 << 4),
+	R_BAKE_PASS_FILTER_SUBSURFACE     = (1 << 5),
+	R_BAKE_PASS_FILTER_DIRECT         = (1 << 6),
+	R_BAKE_PASS_FILTER_INDIRECT       = (1 << 7),
+	R_BAKE_PASS_FILTER_COLOR          = (1 << 8),
+} BakePassFilter;
+
+#define R_BAKE_PASS_FILTER_ALL (~0)
 
 /* *************************************************************** */
 /* Render Data */
@@ -698,10 +763,13 @@ typedef struct RenderData {
 	short pad;
 
 	/* MultiView */
-	ListBase views;
+	ListBase views;  /* SceneRenderView */
 	short actview;
 	short views_format;
 	short pad8[2];
+
+	/* Motion blur shutter */
+	struct CurveMapping mblur_shutter_curve;
 } RenderData;
 
 /* *************************************************************** */
@@ -764,12 +832,18 @@ typedef struct RecastData {
 	int vertsperpoly;
 	float detailsampledist;
 	float detailsamplemaxerror;
-	short pad1, pad2;
+	char partitioning;
+	char pad1;
+	short pad2;
 } RecastData;
+
+#define RC_PARTITION_WATERSHED 0
+#define RC_PARTITION_MONOTONE 1
+#define RC_PARTITION_LAYERS 2
 
 typedef struct GameData {
 
-	/*  standalone player */
+	/* standalone player */
 	struct GameFraming framing;
 	short playerflag, xplay, yplay, freqplay;
 	short depth, attrib, rt1, rt2;
@@ -792,7 +866,7 @@ typedef struct GameData {
 
 	/*
 	 * bit 3: (gameengine): Activity culling is enabled.
-	 * bit 5: (gameengine) : enable Bullet DBVT tree for view frustrum culling
+	 * bit 5: (gameengine) : enable Bullet DBVT tree for view frustum culling
 	 */
 	int flag;
 	short mode, matmode;
@@ -865,6 +939,7 @@ typedef struct GameData {
 #define GAME_GLSL_NO_COLOR_MANAGEMENT		(1 << 15)
 #define GAME_SHOW_OBSTACLE_SIMULATION		(1 << 16)
 #define GAME_NO_MATERIAL_CACHING			(1 << 17)
+#define GAME_GLSL_NO_ENV_LIGHTING			(1 << 18)
 /* Note: GameData.flag is now an int (max 32 flags). A short could only take 16 flags */
 
 /* GameData.playerflag */
@@ -907,6 +982,7 @@ typedef enum StereoViews {
 	STEREO_MONO_ID = 3,
 } StereoViews;
 
+/* *************************************************************** */
 /* Markers */
 
 typedef struct TimeMarker {	
@@ -1027,7 +1103,7 @@ typedef struct Sculpt {
 	float gravity_factor;
 
 	/* scale for constant detail size */
-	float constant_detail;
+	float constant_detail; /* Constant detail resolution (Blender unit / constant_detail) */
 	float detail_percent;
 	float pad;
 
@@ -1037,6 +1113,7 @@ typedef struct Sculpt {
 typedef struct UvSculpt {
 	Paint paint;
 } UvSculpt;
+
 /* ------------------------------------------- */
 /* Vertex Paint */
 
@@ -1061,6 +1138,125 @@ enum {
 	// VP_MIRROR_X  = (1 << 5),  /* deprecated in 2.5x use (me->editflag & ME_EDIT_MIRROR_X) */
 	VP_ONLYVGROUP   = (1 << 7)   /* weight paint only */
 };
+
+/* ------------------------------------------- */
+/* GPencil Stroke Sculpting */
+
+/* Brush types */
+typedef enum eGP_EditBrush_Types {
+	GP_EDITBRUSH_TYPE_SMOOTH    = 0,
+	GP_EDITBRUSH_TYPE_THICKNESS = 1,
+	GP_EDITBRUSH_TYPE_GRAB      = 2,
+	GP_EDITBRUSH_TYPE_PUSH      = 3,
+	GP_EDITBRUSH_TYPE_TWIST     = 4,
+	GP_EDITBRUSH_TYPE_PINCH     = 5,
+	GP_EDITBRUSH_TYPE_RANDOMIZE = 6,
+	GP_EDITBRUSH_TYPE_SUBDIVIDE = 7,
+	GP_EDITBRUSH_TYPE_SIMPLIFY  = 8,
+	GP_EDITBRUSH_TYPE_CLONE     = 9,
+	GP_EDITBRUSH_TYPE_STRENGTH  = 10,
+
+	/* !!! Update GP_EditBrush_Data brush[###]; below !!! */
+	TOT_GP_EDITBRUSH_TYPES
+} eGP_EditBrush_Types;
+
+/* Lock axis options */
+typedef enum eGP_Lockaxis_Types {
+	GP_LOCKAXIS_NONE = 0,
+	GP_LOCKAXIS_X = 1,
+	GP_LOCKAXIS_Y = 2,
+	GP_LOCKAXIS_Z = 3
+} eGP_Lockaxis_Types;
+
+/* Settings for a GPencil Stroke Sculpting Brush */
+typedef struct GP_EditBrush_Data {
+	short size;             /* radius of brush */
+	short flag;             /* eGP_EditBrush_Flag */
+	float strength;         /* strength of effect */
+} GP_EditBrush_Data;
+
+/* GP_EditBrush_Data.flag */
+typedef enum eGP_EditBrush_Flag {
+	/* invert the effect of the brush */
+	GP_EDITBRUSH_FLAG_INVERT       = (1 << 0),
+	/* adjust strength using pen pressure */
+	GP_EDITBRUSH_FLAG_USE_PRESSURE = (1 << 1),
+	
+	/* strength of brush falls off with distance from cursor */
+	GP_EDITBRUSH_FLAG_USE_FALLOFF  = (1 << 2),
+	
+	/* smooth brush affects pressure values as well */
+	GP_EDITBRUSH_FLAG_SMOOTH_PRESSURE  = (1 << 3)
+} eGP_EditBrush_Flag;
+
+
+
+/* GPencil Stroke Sculpting Settings */
+typedef struct GP_BrushEdit_Settings {
+	GP_EditBrush_Data brush[11];  /* TOT_GP_EDITBRUSH_TYPES */
+	void *paintcursor;            /* runtime */
+	
+	int brushtype;                /* eGP_EditBrush_Types */
+	int flag;                     /* eGP_BrushEdit_SettingsFlag */
+	int lock_axis;                /* lock drawing to one axis */
+	float alpha;                  /* alpha factor for selection color */
+} GP_BrushEdit_Settings;
+
+/* GP_BrushEdit_Settings.flag */
+typedef enum eGP_BrushEdit_SettingsFlag {
+	/* only affect selected points */
+	GP_BRUSHEDIT_FLAG_SELECT_MASK = (1 << 0),
+	/* apply brush to position */
+	GP_BRUSHEDIT_FLAG_APPLY_POSITION = (1 << 1),
+	/* apply brush to strength */
+	GP_BRUSHEDIT_FLAG_APPLY_STRENGTH = (1 << 2),
+	/* apply brush to thickness */
+	GP_BRUSHEDIT_FLAG_APPLY_THICKNESS = (1 << 3),
+} eGP_BrushEdit_SettingsFlag;
+
+
+/* Settings for GP Interpolation Operators */
+typedef struct GP_Interpolate_Settings {
+	short flag;                        /* eGP_Interpolate_SettingsFlag */
+	
+	char type;                         /* eGP_Interpolate_Type - Interpolation Mode */ 
+	char easing;                       /* eBezTriple_Easing - Easing mode (if easing equation used) */
+	
+	float back;                        /* BEZT_IPO_BACK */
+	float amplitude, period;           /* BEZT_IPO_ELASTIC */
+	
+	struct CurveMapping *custom_ipo;   /* custom interpolation curve (for use with GP_IPO_CURVEMAP) */
+} GP_Interpolate_Settings;
+
+/* GP_Interpolate_Settings.flag */
+typedef enum eGP_Interpolate_SettingsFlag {
+	/* apply interpolation to all layers */
+	GP_TOOLFLAG_INTERPOLATE_ALL_LAYERS    = (1 << 0),
+	/* apply interpolation to only selected */
+	GP_TOOLFLAG_INTERPOLATE_ONLY_SELECTED = (1 << 1),
+} eGP_Interpolate_SettingsFlag;
+
+/* GP_Interpolate_Settings.type */
+typedef enum eGP_Interpolate_Type {
+	/* Traditional Linear Interpolation */
+	GP_IPO_LINEAR   = 0,
+	
+	/* CurveMap Defined Interpolation */
+	GP_IPO_CURVEMAP = 1,
+	
+	/* Easing Equations */
+	GP_IPO_BACK = 3,
+	GP_IPO_BOUNCE = 4,
+	GP_IPO_CIRC = 5,
+	GP_IPO_CUBIC = 6,
+	GP_IPO_ELASTIC = 7,
+	GP_IPO_EXPO = 8,
+	GP_IPO_QUAD = 9,
+	GP_IPO_QUART = 10,
+	GP_IPO_QUINT = 11,
+	GP_IPO_SINE = 12,
+} eGP_Interpolate_Type;
+
 
 /* *************************************************************** */
 /* Transform Orientations */
@@ -1129,6 +1325,10 @@ typedef struct UnifiedPaintSettings {
 	char draw_anchored;
 	char do_linear_conversion;
 
+	/* store last location of stroke or whether the mesh was hit. Valid only while stroke is active */
+	float last_location[3];
+	int last_hit;
+
 	float anchored_initial_mouse[2];
 
 	/* radius of brush, premultiplied with pressure.
@@ -1164,6 +1364,53 @@ typedef enum {
 	UNIFIED_PAINT_BRUSH_ALPHA_PRESSURE  = (1 << 4)
 } UnifiedPaintSettingsFlags;
 
+
+typedef struct CurvePaintSettings {
+	char curve_type;
+	char flag;
+	char depth_mode;
+	char surface_plane;
+	char fit_method;
+	char pad;
+	short error_threshold;
+	float radius_min, radius_max;
+	float radius_taper_start, radius_taper_end;
+	float surface_offset;
+	float corner_angle;
+} CurvePaintSettings;
+
+/* CurvePaintSettings.flag */
+enum {
+	CURVE_PAINT_FLAG_CORNERS_DETECT             = (1 << 0),
+	CURVE_PAINT_FLAG_PRESSURE_RADIUS            = (1 << 1),
+	CURVE_PAINT_FLAG_DEPTH_STROKE_ENDPOINTS     = (1 << 2),
+	CURVE_PAINT_FLAG_DEPTH_STROKE_OFFSET_ABS    = (1 << 3),
+};
+
+/* CurvePaintSettings.fit_method */
+enum {
+	CURVE_PAINT_FIT_METHOD_REFIT            = 0,
+	CURVE_PAINT_FIT_METHOD_SPLIT            = 1,
+};
+
+/* CurvePaintSettings.depth_mode */
+enum {
+	CURVE_PAINT_PROJECT_CURSOR              = 0,
+	CURVE_PAINT_PROJECT_SURFACE             = 1,
+};
+
+/* CurvePaintSettings.surface_plane */
+enum {
+	CURVE_PAINT_SURFACE_PLANE_NORMAL_VIEW           = 0,
+	CURVE_PAINT_SURFACE_PLANE_NORMAL_SURFACE        = 1,
+	CURVE_PAINT_SURFACE_PLANE_VIEW                  = 2,
+};
+
+
+/* *************************************************************** */
+/* Stats */
+
+/* Stats for Meshes */
 typedef struct MeshStatVis {
 	char type;
 	char _pad1[2];
@@ -1220,7 +1467,19 @@ typedef struct ToolSettings {
 	char gpencil_flags;		/* flags/options for how the tool works */
 	char gpencil_src;		/* for main 3D view Grease Pencil, where data comes from */
 
-	char pad[4];
+	char gpencil_v3d_align; /* stroke placement settings: 3D View */
+	char gpencil_v2d_align; /*                          : General 2D Editor */
+	char gpencil_seq_align; /*                          : Sequencer Preview */
+	char gpencil_ima_align; /*                          : Image Editor */
+	
+	/* Grease Pencil Sculpt */
+	struct GP_BrushEdit_Settings gp_sculpt;
+	
+	/* Grease Pencil Interpolation Tool(s) */
+	struct GP_Interpolate_Settings gp_interpolate;
+	
+	/* Grease Pencil Drawing Brushes (bGPDbrush) */
+	ListBase gp_brushes; 
 
 	/* Image Paint (8 byttse aligned please!) */
 	struct ImagePaintSettings imapaint;
@@ -1236,10 +1495,10 @@ typedef struct ToolSettings {
 
 	/* Auto-Keying Mode */
 	short autokey_mode, autokey_flag;	/* defines in DNA_userdef_types.h */
+	char keyframe_type;                 /* keyframe type (see DNA_curve_types.h) */
 
 	/* Multires */
 	char multires_subdiv_type;
-	char pad3[1];
 
 	/* Skeleton generation */
 	short skgen_resolution;
@@ -1304,6 +1563,8 @@ typedef struct ToolSettings {
 
 	/* Unified Paint Settings */
 	struct UnifiedPaintSettings unified_paint_settings;
+
+	struct CurvePaintSettings curve_paint_settings;
 
 	struct MeshStatVis statvis;
 } ToolSettings;
@@ -1411,7 +1672,7 @@ typedef struct Scene {
 	void *pad1;
 	struct  DagForest *theDag;
 	short dagflags;
-	short recalc;				/* recalc = counterpart of ob->recalc */
+	short pad3;
 
 	/* User-Defined KeyingSets */
 	int active_keyingset;			/* index of the active KeyingSet. first KeyingSet has index 1, 'none' active is 0, 'add new' is -1 */
@@ -1490,6 +1751,7 @@ typedef struct Scene {
 #define R_SIMPLIFY			0x1000000
 #define R_EDGE_FRS			0x2000000 /* R_EDGE reserved for Freestyle */
 #define R_PERSISTENT_DATA	0x4000000 /* keep data around for re-render */
+#define R_USE_WS_SHADING	0x8000000 /* use world space interpretation of lighting data */
 
 /* seq_flag */
 #define R_SEQ_GL_PREV 1
@@ -1539,7 +1801,7 @@ typedef struct Scene {
 #define R_FREE_IMAGE		0x0100
 #define R_SINGLE_LAYER		0x0200
 #define R_EXR_TILE_FILE		0x0400
-#define R_COMP_FREE			0x0800
+/* #define R_COMP_FREE			0x0800 */
 #define R_NO_IMAGE_LOAD		0x1000
 #define R_NO_TEX			0x2000
 #define R_NO_FRAME_UPDATE	0x4000
@@ -1565,9 +1827,12 @@ typedef struct Scene {
 #define R_STAMP_RENDERTIME	0x0400
 #define R_STAMP_CAMERALENS	0x0800
 #define R_STAMP_STRIPMETA	0x1000
+#define R_STAMP_MEMORY		0x2000
+#define R_STAMP_HIDE_LABELS	0x4000
 #define R_STAMP_ALL (R_STAMP_TIME|R_STAMP_FRAME|R_STAMP_DATE|R_STAMP_CAMERA|R_STAMP_SCENE| \
                      R_STAMP_NOTE|R_STAMP_MARKER|R_STAMP_FILENAME|R_STAMP_SEQSTRIP|        \
-                     R_STAMP_RENDERTIME|R_STAMP_CAMERALENS)
+                     R_STAMP_RENDERTIME|R_STAMP_CAMERALENS|R_STAMP_MEMORY|                 \
+                     R_STAMP_HIDE_LABELS)
 
 /* alphamode */
 #define R_ADDSKY		0
@@ -1633,16 +1898,17 @@ extern const char *RE_engine_id_CYCLES;
 
 /* **************** SCENE ********************* */
 
+/* note that much higher maxframes give imprecise sub-frames, see: T46859 */
 /* for general use */
-#define MAXFRAME	300000
-#define MAXFRAMEF	300000.0f
+#define MAXFRAME	500000
+#define MAXFRAMEF	500000.0f
 
 #define MINFRAME	0
 #define MINFRAMEF	0.0f
 
 /* (minimum frame number for current-frame) */
-#define MINAFRAME	-300000
-#define MINAFRAMEF	-300000.0f
+#define MINAFRAME	-500000
+#define MINAFRAMEF	-500000.0f
 
 /* depricate this! */
 #define TESTBASE(v3d, base)  (                                                \
@@ -1735,9 +2001,6 @@ extern const char *RE_engine_id_CYCLES;
 #define SCE_SELECT_POINT	2
 #define SCE_SELECT_END		4
 
-/* sce->recalc (now in use by previewrender) */
-#define SCE_PRV_CHANGED		1
-
 /* toolsettings->prop_mode (proportional falloff) */
 #define PROP_SMOOTH            0
 #define PROP_SPHERE            1
@@ -1805,6 +2068,7 @@ enum {
 #endif
 	FFMPEG_AUTOSPLIT_OUTPUT = 2,
 	FFMPEG_LOSSLESS_OUTPUT  = 4,
+	FFMPEG_USE_MAX_B_FRAMES = (1 << 3),
 };
 
 /* Paint.flags */
@@ -1912,13 +2176,36 @@ typedef enum ImagePaintMode {
 #define EDGE_MODE_TAG_FREESTYLE			5
 
 /* toolsettings->gpencil_flags */
-#define GP_TOOL_FLAG_PAINTSESSIONS_ON	(1<<0)
+typedef enum eGPencil_Flags {
+	/* "Continuous Drawing" - The drawing operator enters a mode where multiple strokes can be drawn */
+	GP_TOOL_FLAG_PAINTSESSIONS_ON       = (1 << 0),
+	/* When creating new frames, the last frame gets used as the basis for the new one */
+	GP_TOOL_FLAG_RETAIN_LAST            = (1 << 1),
+	/* Add the strokes below all strokes in the layer */
+	GP_TOOL_FLAG_PAINT_ONBACK = (1 << 2)
+} eGPencil_Flags;
 
 /* toolsettings->gpencil_src */
 typedef enum eGPencil_Source_3D {
 	GP_TOOL_SOURCE_SCENE    = 0,
 	GP_TOOL_SOURCE_OBJECT   = 1
 } eGPencil_Source_3d;
+
+/* toolsettings->gpencil_*_align - Stroke Placement mode flags */
+typedef enum eGPencil_Placement_Flags {
+	/* New strokes are added in viewport/data space (i.e. not screen space) */
+	GP_PROJECT_VIEWSPACE    = (1 << 0),
+	
+	/* Viewport space, but relative to render canvas (Sequencer Preview Only) */
+	GP_PROJECT_CANVAS       = (1 << 1),
+	
+	/* Project into the screen's Z values */
+	GP_PROJECT_DEPTH_VIEW	= (1 << 2),
+	GP_PROJECT_DEPTH_STROKE = (1 << 3),
+	
+	/* "Use Endpoints" */
+	GP_PROJECT_DEPTH_STROKE_ENDPOINTS = (1 << 4),
+} eGPencil_Placement_Flags;
 
 /* toolsettings->particle flag */
 #define PE_KEEP_LENGTHS			1

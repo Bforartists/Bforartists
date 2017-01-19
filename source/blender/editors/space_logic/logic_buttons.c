@@ -63,7 +63,7 @@ static int logic_properties_toggle_exec(bContext *C, wmOperator *UNUSED(op))
 void LOGIC_OT_properties(wmOperatorType *ot)
 {
 	ot->name = "Properties";
-	ot->description = "Properties\nToggle display properties panel";
+	ot->description = "Toggle the properties region visibility";
 	ot->idname = "LOGIC_OT_properties";
 	
 	ot->exec = logic_properties_toggle_exec;
@@ -91,7 +91,7 @@ static int cut_links_intersect(uiLinkLine *line, float mcoords[][2], int tot)
 	if (ui_link_bezier_points(&rectlink, coord_array, LINK_RESOL)) {
 		for (i=0; i<tot-1; i++)
 			for (b=0; b<LINK_RESOL-1; b++)
-				if (isect_line_line_v2(mcoords[i], mcoords[i+1], coord_array[b], coord_array[b+1]) > 0)
+				if (isect_seg_seg_v2(mcoords[i], mcoords[i + 1], coord_array[b], coord_array[b + 1]) > 0)
 					return 1;
 	}
 	return 0;
@@ -146,7 +146,7 @@ void LOGIC_OT_links_cut(wmOperatorType *ot)
 	
 	ot->name = "Cut Links";
 	ot->idname = "LOGIC_OT_links_cut";
-	ot->description = "Cut Links\nRemove logic brick connections";
+	ot->description = "Remove logic brick connections";
 	
 	ot->invoke = WM_gesture_lines_invoke;
 	ot->modal = WM_gesture_lines_modal;

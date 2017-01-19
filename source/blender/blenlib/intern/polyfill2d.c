@@ -516,18 +516,6 @@ static void pf_triangulate(PolyFill *pf)
 #endif
 		        );
 
-#ifdef USE_CLIP_SWEEP
-#ifdef USE_CLIP_EVEN
-		if (pi_ear != pi_ear_init) {
-			reverse = !reverse;
-		}
-#else
-		if (pi_ear != pf->indices) {
-			reverse = !reverse;
-		}
-#endif
-#endif
-
 #ifdef USE_CONVEX_SKIP
 		if (pi_ear->sign != CONVEX) {
 			pf->coords_tot_concave -= 1;
@@ -574,6 +562,20 @@ static void pf_triangulate(PolyFill *pf)
 #else
 		pi_ear_init = pi_next->next;
 #endif
+#endif
+
+#ifdef USE_CLIP_EVEN
+#ifdef USE_CLIP_SWEEP
+		if (pi_ear_init->sign != CONVEX) {
+			/* take the extra step since this ear isn't a good candidate */
+			pi_ear_init = reverse ? pi_ear_init->prev : pi_ear_init->next;
+			reverse = !reverse;
+		}
+#endif
+#else
+		if ((reverse ? pi_prev->prev : pi_next->next)->sign != CONVEX) {
+			reverse = !reverse;
+		}
 #endif
 
 	}
@@ -766,11 +768,7 @@ static void pf_ear_tip_cut(PolyFill *pf, PolyIndex *pi_ear_tip)
 }
 
 /**
- * Triangulates the given (convex or concave) simple polygon to a list of triangle vertices.
- *
- * \param coords pairs describing vertices of the polygon, in either clockwise or counterclockwise order.
- * \return triples of triangle indices in clockwise order.
- *         Note the returned array is reused for later calls to the same method.
+ * Initializes the #PolyFill structure before tessellating with #polyfill_calc.
  */
 static void polyfill_prepare(
         PolyFill *pf,
@@ -799,7 +797,7 @@ static void polyfill_prepare(
 		coords_sign = (cross_poly_v2(coords, coords_tot) >= 0.0f) ? 1 : -1;
 	}
 	else {
-		/* chech we're passing in correcty args */
+		/* check we're passing in correcty args */
 #ifdef USE_STRICT_ASSERT
 #ifndef NDEBUG
 		if (coords_sign == 1) {
@@ -860,6 +858,9 @@ static void polyfill_calc(
 	pf_triangulate(pf);
 }
 
+/**
+ * A version of #BLI_polyfill_calc that uses a memory arena to avoid re-allocations.
+ */
 void BLI_polyfill_calc_arena(
         const float (*coords)[2],
         const unsigned int coords_tot,
@@ -903,6 +904,19 @@ void BLI_polyfill_calc_arena(
 #endif
 }
 
+/**
+ * Triangulates the given (convex or concave) simple polygon to a list of triangle vertices.
+ *
+ * \param coords: 2D coordinates describing vertices of the polygon,
+ * in either clockwise or counterclockwise order.
+ * \param coords_tot: Total points in the array.
+ * \param coords_sign: Pass this when we know the sign in advance to avoid extra calculations.
+ *
+ * \param r_tris: This array is filled in with triangle indices in clockwise order.
+ * The length of the array must be ``coords_tot - 2``.
+ * Indices are guaranteed to be assigned to unique triangles, with valid indices,
+ * even in the case of degenerate input (self intersecting polygons, zero area ears... etc).
+ */
 void BLI_polyfill_calc(
         const float (*coords)[2],
         const unsigned int coords_tot,

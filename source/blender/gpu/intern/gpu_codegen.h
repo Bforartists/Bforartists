@@ -63,7 +63,8 @@ typedef enum GPUDataSource {
 typedef enum {
 	GPU_NODE_LINK_IMAGE_NONE = 0,
 	GPU_NODE_LINK_IMAGE_BLENDER = 1,
-	GPU_NODE_LINK_IMAGE_PREVIEW = 2
+	GPU_NODE_LINK_IMAGE_PREVIEW = 2,
+	GPU_NODE_LINK_IMAGE_CUBE_MAP = 3
 } GPUNodeLinkImage;
 
 struct GPUNode {
@@ -171,7 +172,9 @@ typedef struct GPUPass GPUPass;
 
 GPUPass *GPU_generate_pass(ListBase *nodes, struct GPUNodeLink *outlink,
                            struct GPUVertexAttribs *attribs, int *builtin,
-                           const GPUMatType type, const char *name, const bool use_opensubdiv);
+                           const GPUMatType type, const char *name,
+                           const bool use_opensubdiv,
+                           const bool use_new_shading);
 
 struct GPUShader *GPU_pass_shader(GPUPass *pass);
 
@@ -180,6 +183,7 @@ void GPU_pass_update_uniforms(GPUPass *pass);
 void GPU_pass_unbind(GPUPass *pass);
 
 void GPU_pass_free(GPUPass *pass);
+void GPU_pass_free_nodes(ListBase *nodes);
 
 void gpu_codegen_init(void);
 void gpu_codegen_exit(void);

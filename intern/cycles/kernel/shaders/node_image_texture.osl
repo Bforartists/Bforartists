@@ -62,9 +62,9 @@ color image_texture_lookup(string filename,
                            int use_alpha,
                            int is_float,
                            string interpolation,
-                           string wrap)
+                           string extension)
 {
-	color rgb = (color)texture(filename, u, 1.0 - v, "wrap", wrap, "interp", interpolation, "alpha", Alpha);
+	color rgb = (color)texture(filename, u, 1.0 - v, "wrap", extension, "interp", interpolation, "alpha", Alpha);
 
 	if (use_alpha) {
 		rgb = color_unpremultiply(rgb, Alpha);
@@ -86,9 +86,9 @@ shader node_image_texture(
 	point Vector = P,
 	string filename = "",
 	string color_space = "sRGB",
-	string projection = "Flat",
+	string projection = "flat",
 	string interpolation = "smartcubic",
-	string wrap = "periodic",
+	string extension = "periodic",
 	float projection_blend = 0.0,
 	int is_float = 1,
 	int use_alpha = 1,
@@ -100,7 +100,7 @@ shader node_image_texture(
 	if (use_mapping)
 		p = transform(mapping, p);
 	
-	if (projection == "Flat") {
+	if (projection == "flat") {
 		Color = image_texture_lookup(filename,
 		                             color_space,
 		                             p[0], p[1],
@@ -108,9 +108,9 @@ shader node_image_texture(
 		                             use_alpha,
 		                             is_float,
 		                             interpolation,
-		                             wrap);
+		                             extension);
 	}
-	else if (projection == "Box") {
+	else if (projection == "box") {
 		/* object space normal */
 		vector Nob = transform("world", "object", N);
 
@@ -184,7 +184,7 @@ shader node_image_texture(
 			                                          use_alpha,
 			                                          is_float,
 			                                          interpolation,
-			                                          wrap);
+			                                          extension);
 			Alpha += weight[0] * tmp_alpha;
 		}
 		if (weight[1] > 0.0) {
@@ -195,7 +195,7 @@ shader node_image_texture(
 			                                          use_alpha,
 			                                          is_float,
 			                                          interpolation,
-			                                          wrap);
+			                                          extension);
 			Alpha += weight[1] * tmp_alpha;
 		}
 		if (weight[2] > 0.0) {
@@ -206,11 +206,11 @@ shader node_image_texture(
 			                                          use_alpha,
 			                                          is_float,
 			                                          interpolation,
-			                                          wrap);
+			                                          extension);
 			Alpha += weight[2] * tmp_alpha;
 		}
 	}
-	else if (projection == "Sphere") {
+	else if (projection == "sphere") {
 		point projected = map_to_sphere(texco_remap_square(p));
 		Color = image_texture_lookup(filename,
 		                             color_space,
@@ -219,9 +219,9 @@ shader node_image_texture(
 		                             use_alpha,
 		                             is_float,
 		                             interpolation,
-		                             wrap);
+		                             extension);
 	}
-	else if (projection == "Tube") {
+	else if (projection == "tube") {
 		point projected = map_to_tube(texco_remap_square(p));
 		Color = image_texture_lookup(filename,
 		                             color_space,
@@ -230,6 +230,6 @@ shader node_image_texture(
 		                             use_alpha,
 		                             is_float,
 		                             interpolation,
-		                             wrap);
+		                             extension);
 	}
 }

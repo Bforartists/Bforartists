@@ -39,7 +39,6 @@
 #include "COLLADAFWPolygons.h"
 
 extern "C" {
-	#include "BKE_blender.h"
 	#include "BKE_customdata.h"
 	#include "BKE_displist.h"
 	#include "BKE_global.h"
@@ -173,8 +172,7 @@ void UVDataWrapper::getUV(int uv_index, float *uv)
 	}
 }
 
-VCOLDataWrapper::VCOLDataWrapper(COLLADAFW::MeshVertexData& vdata) : mVData(&vdata){
-}
+VCOLDataWrapper::VCOLDataWrapper(COLLADAFW::MeshVertexData& vdata) : mVData(&vdata) {}
 
 void VCOLDataWrapper::get_vcol(int v_index, MLoopCol *mloopcol)
 {
@@ -212,15 +210,27 @@ void VCOLDataWrapper::get_vcol(int v_index, MLoopCol *mloopcol)
 MeshImporter::MeshImporter(UnitConverter *unitconv, ArmatureImporter *arm, Scene *sce) : unitconverter(unitconv), scene(sce), armature_importer(arm) {
 }
 
-void MeshImporter::set_poly_indices(MPoly *mpoly, MLoop *mloop, int loop_index, unsigned int *indices, int loop_count)
+bool MeshImporter::set_poly_indices(MPoly *mpoly, MLoop *mloop, int loop_index, unsigned int *indices, int loop_count)
 {
 	mpoly->loopstart = loop_index;
 	mpoly->totloop   = loop_count;
-
+	bool broken_loop = false;
 	for (int index=0; index < loop_count; index++) {
+
+		/* Test if loop defines a hole */
+		if (!broken_loop) {
+			for (int i = 0; i < index; i++) {
+				if (indices[i] == indices[index]) {
+					// duplicate index -> not good
+					broken_loop = true;
+				}
+			}
+		}
+
 		mloop->v = indices[index];
 		mloop++;
 	}
+	return broken_loop;
 }
 
 void MeshImporter::set_vcol(MLoopCol *mlc, VCOLDataWrapper &vob, int loop_index, COLLADAFW::IndexList &index_list, int count)
@@ -260,29 +270,41 @@ bool MeshImporter::is_nice_mesh(COLLADAFW::Mesh *mesh)  // checks if mesh has su
 	COLLADAFW::MeshPrimitiveArray& prim_arr = mesh->getMeshPrimitives();
 
 	const std::string &name = bc_get_dae_name(mesh);
-	
+
 	for (unsigned i = 0; i < prim_arr.getCount(); i++) {
-		
+
 		COLLADAFW::MeshPrimitive *mp = prim_arr[i];
 		COLLADAFW::MeshPrimitive::PrimitiveType type = mp->getPrimitiveType();
 
 		const char *type_str = bc_primTypeToStr(type);
-		
+
 		// OpenCollada passes POLYGONS type for <polylist>
 		if (type == COLLADAFW::MeshPrimitive::POLYLIST || type == COLLADAFW::MeshPrimitive::POLYGONS) {
 
 			COLLADAFW::Polygons *mpvc = (COLLADAFW::Polygons *)mp;
 			COLLADAFW::Polygons::VertexCountArray& vca = mpvc->getGroupedVerticesVertexCountArray();
-			
+
+			int hole_count = 0;
+			int nonface_count = 0;
+
 			for (unsigned int j = 0; j < vca.getCount(); j++) {
 				int count = vca[j];
-				if (count < 3) {
-					fprintf(stderr, "Primitive %s in %s has at least one face with vertex count < 3\n",
-					        type_str, name.c_str());
-					return false;
+				if (abs(count) < 3) {
+					nonface_count++;
+				}
+
+				if (count < 0) {
+					hole_count ++;
 				}
 			}
-				
+
+			if (hole_count > 0) {
+				fprintf(stderr, "WARNING: Primitive %s in %s: %d holes not imported (unsupported)\n", type_str, name.c_str(), hole_count);
+			}
+
+			if (nonface_count > 0) {
+				fprintf(stderr, "WARNING: Primitive %s in %s: %d faces with vertex count < 3 (rejected)\n", type_str, name.c_str(), nonface_count);
+			}
 		}
 
 		else if (type == COLLADAFW::MeshPrimitive::LINES) {
@@ -290,16 +312,11 @@ bool MeshImporter::is_nice_mesh(COLLADAFW::Mesh *mesh)  // checks if mesh has su
 		}
 
 		else if (type != COLLADAFW::MeshPrimitive::TRIANGLES && type != COLLADAFW::MeshPrimitive::TRIANGLE_FANS) {
-			fprintf(stderr, "Primitive type %s is not supported.\n", type_str);
+			fprintf(stderr, "ERROR: Primitive type %s is not supported.\n", type_str);
 			return false;
 		}
 	}
 	
-	if (mesh->getPositions().empty()) {
-		fprintf(stderr, "Mesh %s has no vertices.\n", name.c_str());
-		return false;
-	}
-
 	return true;
 }
 
@@ -307,11 +324,15 @@ void MeshImporter::read_vertices(COLLADAFW::Mesh *mesh, Mesh *me)
 {
 	// vertices
 	COLLADAFW::MeshVertexData& pos = mesh->getPositions();
+	if (pos.empty()) {
+		return;
+	}
+
 	int stride = pos.getStride(0);
 	if (stride == 0) stride = 3;
-	
-	me->totvert = mesh->getPositions().getFloatValues()->getCount() / stride;
-	me->mvert = (MVert *)CustomData_add_layer(&me->vdata, CD_MVERT, CD_CALLOC, NULL, me->totvert);
+
+	me->totvert = pos.getFloatValues()->getCount() / stride;
+	me->mvert   = (MVert *)CustomData_add_layer(&me->vdata, CD_MVERT, CD_CALLOC, NULL, me->totvert);
 
 	MVert *mvert;
 	int i;
@@ -410,11 +431,18 @@ void MeshImporter::allocate_poly_data(COLLADAFW::Mesh *collada_mesh, Mesh *me)
 				size_t prim_poly_count    = mpvc->getFaceCount();
 
 				size_t prim_loop_count    = 0;
-				for (int index=0; index < prim_poly_count; index++) {
-					prim_loop_count += get_vertex_count(mpvc, index);
+				for (int index=0; index < prim_poly_count; index++) 
+				{
+					int vcount = get_vertex_count(mpvc, index);
+					if (vcount > 0) {
+						prim_loop_count += vcount;
+						total_poly_count++;
+					}
+					else {
+						// TODO: this is a hole and not another polygon!
+					}
 				}
 
-				total_poly_count += prim_poly_count;
 				total_loop_count += prim_loop_count;
 
 				break;
@@ -683,12 +711,20 @@ void MeshImporter::read_polys(COLLADAFW::Mesh *collada_mesh, Mesh *me)
 			COLLADAFW::IndexListArray& index_list_array_uvcoord = mp->getUVCoordIndicesArray();
 			COLLADAFW::IndexListArray& index_list_array_vcolor  = mp->getColorIndicesArray();
 
+			int invalid_loop_holes = 0;
 			for (unsigned int j = 0; j < prim_totpoly; j++) {
-				
+
 				// Vertices in polygon:
 				int vcount = get_vertex_count(mpvc, j);
-				set_poly_indices(mpoly, mloop, loop_index, position_indices, vcount);
+				if (vcount < 0) {
+					continue; // TODO: add support for holes
+				}
 
+				bool broken_loop = set_poly_indices(mpoly, mloop, loop_index, position_indices, vcount);
+				if (broken_loop)
+				{
+					invalid_loop_holes += 1;
+				}
 
 				for (unsigned int uvset_index = 0; uvset_index < index_list_array_uvcoord.getCount(); uvset_index++) {
 					// get mtface by face index and uv set index
@@ -735,6 +771,11 @@ void MeshImporter::read_polys(COLLADAFW::Mesh *collada_mesh, Mesh *me)
 					normal_indices += vcount;
 
 				position_indices += vcount;
+			}
+
+			if (invalid_loop_holes > 0)
+			{
+				fprintf(stderr, "Collada import: Mesh [%s] : contains %d unsupported loops (holes).\n", me->id.name, invalid_loop_holes);
 			}
 		}
 
@@ -1176,7 +1217,7 @@ bool MeshImporter::write_geometry(const COLLADAFW::Geometry *geom)
 	
 	const std::string& str_geom_id = mesh->getName().size() ? mesh->getName() : mesh->getOriginalId();
 	Mesh *me = BKE_mesh_add(G.main, (char *)str_geom_id.c_str());
-	me->id.us--; // is already 1 here, but will be set later in BKE_mesh_assign_object
+	id_us_min(&me->id); // is already 1 here, but will be set later in BKE_mesh_assign_object
 
 	// store the Mesh pointer to link it later with an Object
 	// mesh_geom_map needed to map mesh to its geometry name (for shape key naming)

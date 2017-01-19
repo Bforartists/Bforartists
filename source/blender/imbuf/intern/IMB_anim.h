@@ -72,35 +72,21 @@
 #  endif /* _WIN32 || __APPLE__ */
 #endif /* WITH_QUICKTIME */
 
+#include "IMB_imbuf_types.h"
+#include "IMB_imbuf.h"
+
+#include "IMB_allocimbuf.h"
+
 #ifdef WITH_FFMPEG
 #  include <libavformat/avformat.h>
 #  include <libavcodec/avcodec.h>
 #  include <libswscale/swscale.h>
 #endif
 
-#ifdef WITH_REDCODE
-#  include "libredcode/format.h"
-#endif
-
-#include "IMB_imbuf_types.h"
-#include "IMB_imbuf.h"
-
-#include "IMB_allocimbuf.h"
-
-
-
-/* actually hard coded endianness */
-#define GET_BIG_LONG(x) (((uchar *) (x))[0] << 24 | ((uchar *) (x))[1] << 16 | ((uchar *) (x))[2] << 8 | ((uchar *) (x))[3])
-#define GET_LITTLE_LONG(x) (((uchar *) (x))[3] << 24 | ((uchar *) (x))[2] << 16 | ((uchar *) (x))[1] << 8 | ((uchar *) (x))[0])
-#define SWAP_L(x) (((x << 24) & 0xff000000) | ((x << 8) & 0xff0000) | ((x >> 8) & 0xff00) | ((x >> 24) & 0xff))
-#define SWAP_S(x) (((x << 8) & 0xff00) | ((x >> 8) & 0xff))
-
 /* more endianness... should move to a separate file... */
 #ifdef __BIG_ENDIAN__
-#  define GET_ID GET_BIG_LONG
 #  define LITTLE_LONG SWAP_LONG
 #else
-#  define GET_ID GET_LITTLE_LONG
 #  define LITTLE_LONG ENDIAN_NOP
 #endif
 
@@ -111,7 +97,6 @@
 #define ANIM_AVI        (1 << 6)
 #define ANIM_QTIME      (1 << 7)
 #define ANIM_FFMPEG     (1 << 8)
-#define ANIM_REDCODE    (1 << 9)
 
 #define MAXNUMSTREAMS       50
 
@@ -175,10 +160,6 @@ struct anim {
 	int64_t last_pts;
 	int64_t next_pts;
 	AVPacket next_packet;
-#endif
-
-#ifdef WITH_REDCODE
-	struct redcode_handle *redcodeCtx;
 #endif
 
 	char index_dir[768];

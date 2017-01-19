@@ -36,6 +36,9 @@
  * \date	May 7, 2001
  */
 
+
+#include <stdio.h> /* just for NULL */
+
 #include "GHOST_ISystemPaths.h"
 
 #ifdef WIN32
@@ -44,12 +47,12 @@
 #  ifdef __APPLE__
 #      include "GHOST_SystemPathsCocoa.h"
 #  else
-#    include "GHOST_SystemPathsX11.h"
+#    include "GHOST_SystemPathsUnix.h"
 #  endif
 #endif
 
 
-GHOST_ISystemPaths *GHOST_ISystemPaths::m_systemPaths = 0;
+GHOST_ISystemPaths *GHOST_ISystemPaths::m_systemPaths = NULL;
 
 
 GHOST_TSuccess GHOST_ISystemPaths::create()
@@ -62,10 +65,10 @@ GHOST_TSuccess GHOST_ISystemPaths::create()
 #  ifdef __APPLE__
 		m_systemPaths = new GHOST_SystemPathsCocoa();
 #  else
-		m_systemPaths = new GHOST_SystemPathsX11();
+		m_systemPaths = new GHOST_SystemPathsUnix();
 #  endif
 #endif 
-		success = m_systemPaths != 0 ? GHOST_kSuccess : GHOST_kFailure;
+		success = m_systemPaths != NULL ? GHOST_kSuccess : GHOST_kFailure;
 	}
 	else {
 		success = GHOST_kFailure;
@@ -78,7 +81,7 @@ GHOST_TSuccess GHOST_ISystemPaths::dispose()
 	GHOST_TSuccess success = GHOST_kSuccess;
 	if (m_systemPaths) {
 		delete m_systemPaths;
-		m_systemPaths = 0;
+		m_systemPaths = NULL;
 	}
 	else {
 		success = GHOST_kFailure;

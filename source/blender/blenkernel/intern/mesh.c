@@ -31,10 +31,11 @@
 
 #include "DNA_scene_types.h"
 #include "DNA_material_types.h"
+#include "DNA_meta_types.h"
 #include "DNA_object_types.h"
 #include "DNA_key_types.h"
 #include "DNA_mesh_types.h"
-#include "DNA_ipo_types.h"
+#include "DNA_curve_types.h"
 
 #include "BLI_utildefines.h"
 #include "BLI_math.h"
@@ -49,6 +50,8 @@
 #include "BKE_mesh.h"
 #include "BKE_displist.h"
 #include "BKE_library.h"
+#include "BKE_library_query.h"
+#include "BKE_library_remap.h"
 #include "BKE_material.h"
 #include "BKE_modifier.h"
 #include "BKE_multires.h"
@@ -141,13 +144,15 @@ static int customdata_compare(CustomData *c1, CustomData *c2, Mesh *m1, Mesh *m2
 		while (i1 < c1->totlayer && !ELEM(l1->type, CD_MVERT, CD_MEDGE, CD_MPOLY,
 		                                  CD_MLOOPUV, CD_MLOOPCOL, CD_MTEXPOLY, CD_MDEFORMVERT))
 		{
-			i1++, l1++;
+			i1++;
+			l1++;
 		}
 
 		while (i2 < c2->totlayer && !ELEM(l2->type, CD_MVERT, CD_MEDGE, CD_MPOLY,
 		                                  CD_MLOOPUV, CD_MLOOPCOL, CD_MTEXPOLY, CD_MDEFORMVERT))
 		{
-			i2++, l2++;
+			i2++;
+			l2++;
 		}
 		
 		if (l1->type == CD_MVERT) {
@@ -425,37 +430,10 @@ bool BKE_mesh_has_custom_loop_normals(Mesh *me)
 	}
 }
 
-/* Note: unlinking is called when me->id.us is 0, question remains how
- * much unlinking of Library data in Mesh should be done... probably
- * we need a more generic method, like the expand() functions in
- * readfile.c */
-
-void BKE_mesh_unlink(Mesh *me)
+/** Free (or release) any data used by this mesh (does not free the mesh itself). */
+void BKE_mesh_free(Mesh *me)
 {
-	int a;
-	
-	if (me == NULL) return;
-
-	if (me->mat) {
-		for (a = 0; a < me->totcol; a++) {
-			if (me->mat[a]) me->mat[a]->id.us--;
-			me->mat[a] = NULL;
-		}
-	}
-
-	if (me->key) {
-		me->key->id.us--;
-	}
-	me->key = NULL;
-	
-	if (me->texcomesh) me->texcomesh = NULL;
-}
-
-/* do not free mesh itself */
-void BKE_mesh_free(Mesh *me, int unlink)
-{
-	if (unlink)
-		BKE_mesh_unlink(me);
+	BKE_animdata_free(&me->id, false);
 
 	CustomData_free(&me->vdata, me->totvert);
 	CustomData_free(&me->edata, me->totedge);
@@ -463,16 +441,10 @@ void BKE_mesh_free(Mesh *me, int unlink)
 	CustomData_free(&me->ldata, me->totloop);
 	CustomData_free(&me->pdata, me->totpoly);
 
-	if (me->adt) {
-		BKE_animdata_free(&me->id);
-		me->adt = NULL;
-	}
-	
-	if (me->mat) MEM_freeN(me->mat);
-	
-	if (me->bb) MEM_freeN(me->bb);
-	if (me->mselect) MEM_freeN(me->mselect);
-	if (me->edit_btmesh) MEM_freeN(me->edit_btmesh);
+	MEM_SAFE_FREE(me->mat);
+	MEM_SAFE_FREE(me->bb);
+	MEM_SAFE_FREE(me->mselect);
+	MEM_SAFE_FREE(me->edit_btmesh);
 }
 
 static void mesh_tessface_clear_intern(Mesh *mesh, int free_customdata)
@@ -490,14 +462,12 @@ static void mesh_tessface_clear_intern(Mesh *mesh, int free_customdata)
 	mesh->totface = 0;
 }
 
-Mesh *BKE_mesh_add(Main *bmain, const char *name)
+void BKE_mesh_init(Mesh *me)
 {
-	Mesh *me;
-	
-	me = BKE_libblock_alloc(bmain, ID_ME, name);
-	
+	BLI_assert(MEMCMP_STRUCT_OFS_IS_ZERO(me, id));
+
 	me->size[0] = me->size[1] = me->size[2] = 1.0;
-	me->smoothresh = 30;
+	me->smoothresh = DEG2RADF(30);
 	me->texflag = ME_AUTOSPACE;
 
 	/* disable because its slow on many GPU's, see [#37518] */
@@ -511,19 +481,26 @@ Mesh *BKE_mesh_add(Main *bmain, const char *name)
 	CustomData_reset(&me->fdata);
 	CustomData_reset(&me->pdata);
 	CustomData_reset(&me->ldata);
+}
+
+Mesh *BKE_mesh_add(Main *bmain, const char *name)
+{
+	Mesh *me;
+
+	me = BKE_libblock_alloc(bmain, ID_ME, name);
+
+	BKE_mesh_init(me);
 
 	return me;
 }
 
-Mesh *BKE_mesh_copy_ex(Main *bmain, Mesh *me)
+Mesh *BKE_mesh_copy(Main *bmain, Mesh *me)
 {
 	Mesh *men;
-	MTFace *tface;
-	MTexPoly *txface;
-	int a, i;
+	int a;
 	const int do_tessface = ((me->totface != 0) && (me->totpoly == 0)); /* only do tessface if we have no polys */
 	
-	men = BKE_libblock_copy_ex(bmain, &me->id);
+	men = BKE_libblock_copy(bmain, &me->id);
 	
 	men->mat = MEM_dupallocN(me->mat);
 	for (a = 0; a < men->totcol; a++) {
@@ -544,143 +521,41 @@ Mesh *BKE_mesh_copy_ex(Main *bmain, Mesh *me)
 
 	BKE_mesh_update_customdata_pointers(men, do_tessface);
 
-	/* ensure indirect linked data becomes lib-extern */
-	for (i = 0; i < me->fdata.totlayer; i++) {
-		if (me->fdata.layers[i].type == CD_MTFACE) {
-			tface = (MTFace *)me->fdata.layers[i].data;
-
-			for (a = 0; a < me->totface; a++, tface++)
-				if (tface->tpage)
-					id_lib_extern((ID *)tface->tpage);
-		}
-	}
-	
-	for (i = 0; i < me->pdata.totlayer; i++) {
-		if (me->pdata.layers[i].type == CD_MTEXPOLY) {
-			txface = (MTexPoly *)me->pdata.layers[i].data;
-
-			for (a = 0; a < me->totpoly; a++, txface++)
-				if (txface->tpage)
-					id_lib_extern((ID *)txface->tpage);
-		}
-	}
-
 	men->edit_btmesh = NULL;
 
 	men->mselect = MEM_dupallocN(men->mselect);
 	men->bb = MEM_dupallocN(men->bb);
-	
-	men->key = BKE_key_copy(me->key);
-	if (men->key) men->key->from = (ID *)men;
 
-	if (me->id.lib) {
-		BKE_id_lib_local_paths(bmain, me->id.lib, &men->id);
+	if (me->key) {
+		men->key = BKE_key_copy(bmain, me->key);
+		men->key->from = (ID *)men;
 	}
+
+	BKE_id_copy_ensure_local(bmain, &me->id, &men->id);
 
 	return men;
 }
 
-Mesh *BKE_mesh_copy(Mesh *me)
-{
-	return BKE_mesh_copy_ex(G.main, me);
-}
-
-BMesh *BKE_mesh_to_bmesh(Mesh *me, Object *ob)
+BMesh *BKE_mesh_to_bmesh(
+        Mesh *me, Object *ob,
+        const bool add_key_index, const struct BMeshCreateParams *params)
 {
 	BMesh *bm;
 	const BMAllocTemplate allocsize = BMALLOC_TEMPLATE_FROM_ME(me);
 
-	bm = BM_mesh_create(&allocsize);
+	bm = BM_mesh_create(&allocsize, params);
 
-	BM_mesh_bm_from_me(bm, me, false, true, ob->shapenr);
+	BM_mesh_bm_from_me(
+	        bm, me, (&(struct BMeshFromMeshParams){
+	            .add_key_index = add_key_index, .use_shapekey = true, .active_shapekey = ob->shapenr,
+	        }));
 
 	return bm;
 }
 
-static void expand_local_mesh(Mesh *me)
+void BKE_mesh_make_local(Main *bmain, Mesh *me, const bool lib_local)
 {
-	id_lib_extern((ID *)me->texcomesh);
-
-	if (me->mtface || me->mtpoly) {
-		int a, i;
-
-		for (i = 0; i < me->pdata.totlayer; i++) {
-			if (me->pdata.layers[i].type == CD_MTEXPOLY) {
-				MTexPoly *txface = (MTexPoly *)me->pdata.layers[i].data;
-
-				for (a = 0; a < me->totpoly; a++, txface++) {
-					/* special case: ima always local immediately */
-					if (txface->tpage) {
-						id_lib_extern((ID *)txface->tpage);
-					}
-				}
-			}
-		}
-
-		for (i = 0; i < me->fdata.totlayer; i++) {
-			if (me->fdata.layers[i].type == CD_MTFACE) {
-				MTFace *tface = (MTFace *)me->fdata.layers[i].data;
-
-				for (a = 0; a < me->totface; a++, tface++) {
-					/* special case: ima always local immediately */
-					if (tface->tpage) {
-						id_lib_extern((ID *)tface->tpage);
-					}
-				}
-			}
-		}
-	}
-
-	if (me->mat) {
-		extern_local_matarar(me->mat, me->totcol);
-	}
-}
-
-void BKE_mesh_make_local(Mesh *me)
-{
-	Main *bmain = G.main;
-	Object *ob;
-	bool is_local = false, is_lib = false;
-
-	/* - only lib users: do nothing
-	 * - only local users: set flag
-	 * - mixed: make copy
-	 */
-
-	if (me->id.lib == NULL) return;
-	if (me->id.us == 1) {
-		id_clear_lib_data(bmain, &me->id);
-		expand_local_mesh(me);
-		return;
-	}
-
-	for (ob = bmain->object.first; ob && ELEM(0, is_lib, is_local); ob = ob->id.next) {
-		if (me == ob->data) {
-			if (ob->id.lib) is_lib = true;
-			else is_local = true;
-		}
-	}
-
-	if (is_local && is_lib == false) {
-		id_clear_lib_data(bmain, &me->id);
-		expand_local_mesh(me);
-	}
-	else if (is_local && is_lib) {
-		Mesh *me_new = BKE_mesh_copy(me);
-		me_new->id.us = 0;
-
-
-		/* Remap paths of new ID using old library as base. */
-		BKE_id_lib_local_paths(bmain, me->id.lib, &me_new->id);
-
-		for (ob = bmain->object.first; ob; ob = ob->id.next) {
-			if (me == ob->data) {
-				if (ob->id.lib == NULL) {
-					BKE_mesh_assign_object(ob, me_new);
-				}
-			}
-		}
-	}
+	BKE_id_make_local_generic(bmain, &me->id, true, lib_local);
 }
 
 bool BKE_mesh_uv_cdlayer_rename_index(Mesh *me, const int poly_index, const int loop_index, const int face_index,
@@ -987,7 +862,7 @@ int test_index_face(MFace *mface, CustomData *fdata, int mfindex, int nr)
 			SWAP(unsigned int, mface->v2, mface->v3);
 
 			if (fdata)
-				CustomData_swap(fdata, mfindex, corner_indices);
+				CustomData_swap_corners(fdata, mfindex, corner_indices);
 		}
 	}
 	else if (nr == 4) {
@@ -998,7 +873,7 @@ int test_index_face(MFace *mface, CustomData *fdata, int mfindex, int nr)
 			SWAP(unsigned int, mface->v2, mface->v4);
 
 			if (fdata)
-				CustomData_swap(fdata, mfindex, corner_indices);
+				CustomData_swap_corners(fdata, mfindex, corner_indices);
 		}
 	}
 
@@ -1024,12 +899,12 @@ void BKE_mesh_assign_object(Object *ob, Mesh *me)
 	if (ob->type == OB_MESH) {
 		old = ob->data;
 		if (old)
-			old->id.us--;
+			id_us_min(&old->id);
 		ob->data = me;
 		id_us_plus((ID *)me);
 	}
 	
-	test_object_materials(G.main, (ID *)me);
+	test_object_materials(ob, (ID *)me);
 
 	test_object_modifiers(ob);
 }
@@ -1484,7 +1359,7 @@ void BKE_mesh_from_nurbs_displist(Object *ob, ListBase *dispbase, const bool use
 		}
 
 		/* make mesh */
-		me = BKE_mesh_add(G.main, "Mesh");
+		me = BKE_mesh_add(bmain, "Mesh");
 		me->totvert = totvert;
 		me->totedge = totedge;
 		me->totloop = totloop;
@@ -1504,7 +1379,7 @@ void BKE_mesh_from_nurbs_displist(Object *ob, ListBase *dispbase, const bool use
 		BKE_mesh_calc_normals(me);
 	}
 	else {
-		me = BKE_mesh_add(G.main, "Mesh");
+		me = BKE_mesh_add(bmain, "Mesh");
 		DM_to_mesh(dm, me, ob, CD_MASK_MESH, false);
 	}
 
@@ -1721,7 +1596,7 @@ void BKE_mesh_to_curve(Scene *scene, Object *ob)
 
 		cu->nurb = nurblist;
 
-		((Mesh *)ob->data)->id.us--;
+		id_us_min(&((Mesh *)ob->data)->id);
 		ob->data = cu;
 		ob->type = OB_CURVE;
 
@@ -2199,8 +2074,9 @@ void BKE_mesh_calc_normals_split(Mesh *mesh)
 	}
 	else {
 		polynors = MEM_mallocN(sizeof(float[3]) * mesh->totpoly, __func__);
-		BKE_mesh_calc_normals_poly(mesh->mvert, mesh->totvert, mesh->mloop, mesh->mpoly, mesh->totloop, mesh->totpoly,
-		                           polynors, false);
+		BKE_mesh_calc_normals_poly(
+		            mesh->mvert, NULL, mesh->totvert,
+		            mesh->mloop, mesh->mpoly, mesh->totloop, mesh->totpoly, polynors, false);
 		free_polynors = true;
 	}
 
@@ -2321,9 +2197,10 @@ Mesh *BKE_mesh_new_from_object(
 {
 	Mesh *tmpmesh;
 	Curve *tmpcu = NULL, *copycu;
-	Object *tmpobj = NULL;
-	int render = settings == eModifierMode_Render, i;
-	int cage = !apply_modifiers;
+	int i;
+	const bool render = (settings == eModifierMode_Render);
+	const bool cage = !apply_modifiers;
+	bool do_mat_id_data_us = true;
 
 	/* perform the mesh extraction based on type */
 	switch (ob->type) {
@@ -2336,9 +2213,22 @@ Mesh *BKE_mesh_new_from_object(
 			int uv_from_orco;
 
 			/* copies object and modifiers (but not the data) */
-			tmpobj = BKE_object_copy_ex(bmain, ob, true);
+			Object *tmpobj = BKE_object_copy_ex(bmain, ob, true);
 			tmpcu = (Curve *)tmpobj->data;
-			tmpcu->id.us--;
+			id_us_min(&tmpcu->id);
+
+			/* Copy cached display list, it might be needed by the stack evaluation.
+			 * Ideally stack should be able to use render-time display list, but doing
+			 * so is quite tricky and not safe so close to the release.
+			 *
+			 * TODO(sergey): Look into more proper solution.
+			 */
+			if (ob->curve_cache != NULL) {
+				if (tmpobj->curve_cache == NULL) {
+					tmpobj->curve_cache = MEM_callocN(sizeof(CurveCache), "CurveCache for curve types");
+				}
+				BKE_displist_copy(&tmpobj->curve_cache->disp, &ob->curve_cache->disp);
+			}
 
 			/* Copy cached display list, it might be needed by the stack evaluation.
 			 * Ideally stack should be able to use render-time display list, but doing
@@ -2358,7 +2248,7 @@ Mesh *BKE_mesh_new_from_object(
 				BKE_object_free_modifiers(tmpobj);
 
 			/* copies the data */
-			copycu = tmpobj->data = BKE_curve_copy((Curve *) ob->data);
+			copycu = tmpobj->data = BKE_curve_copy(bmain, (Curve *) ob->data);
 
 			/* temporarily set edit so we get updates from edit mode, but
 			 * also because for text datablocks copying it while in edit
@@ -2393,6 +2283,12 @@ Mesh *BKE_mesh_new_from_object(
 			BKE_mesh_texspace_copy_from_object(tmpmesh, ob);
 
 			BKE_libblock_free_us(bmain, tmpobj);
+
+			/* XXX The curve to mesh conversion is convoluted... But essentially, BKE_mesh_from_nurbs_displist()
+			 *     already transfers the ownership of materials from the temp copy of the Curve ID to the new
+			 *     Mesh ID, so we do not want to increase materials' usercount later. */
+			do_mat_id_data_us = false;
+
 			break;
 		}
 
@@ -2408,7 +2304,7 @@ Mesh *BKE_mesh_new_from_object(
 
 			tmpmesh = BKE_mesh_add(bmain, "Mesh");
 			/* BKE_mesh_add gives us a user count we don't need */
-			tmpmesh->id.us--;
+			id_us_min(&tmpmesh->id);
 
 			if (render) {
 				ListBase disp = {NULL, NULL};
@@ -2439,15 +2335,18 @@ Mesh *BKE_mesh_new_from_object(
 			/* copies object and modifiers (but not the data) */
 			if (cage) {
 				/* copies the data */
-				tmpmesh = BKE_mesh_copy_ex(bmain, ob->data);
-				/* if not getting the original caged mesh, get final derived mesh */
+				tmpmesh = BKE_mesh_copy(bmain, ob->data);
+
+				/* XXX BKE_mesh_copy() already handles materials usercount. */
+				do_mat_id_data_us = false;
 			}
+			/* if not getting the original caged mesh, get final derived mesh */
 			else {
 				/* Make a dummy mesh, saves copying */
 				DerivedMesh *dm;
 				/* CustomDataMask mask = CD_MASK_BAREMESH|CD_MASK_MTFACE|CD_MASK_MCOL; */
 				CustomDataMask mask = CD_MASK_MESH; /* this seems more suitable, exporter,
-			                                         * for example, needs CD_MASK_MDEFORMVERT */
+				                                     * for example, needs CD_MASK_MDEFORMVERT */
 
 				if (calc_undeformed)
 					mask |= CD_MASK_ORCO;
@@ -2460,10 +2359,15 @@ Mesh *BKE_mesh_new_from_object(
 
 				tmpmesh = BKE_mesh_add(bmain, "Mesh");
 				DM_to_mesh(dm, tmpmesh, ob, mask, true);
+
+				/* Copy autosmooth settings from original mesh. */
+				Mesh *me = (Mesh *)ob->data;
+				tmpmesh->flag |= (me->flag & ME_AUTOSMOOTH);
+				tmpmesh->smoothresh = me->smoothresh;
 			}
 
 			/* BKE_mesh_add/copy gives us a user count we don't need */
-			tmpmesh->id.us--;
+			id_us_min(&tmpmesh->id);
 
 			break;
 		default:
@@ -2482,33 +2386,34 @@ Mesh *BKE_mesh_new_from_object(
 			if (tmpcu->mat) {
 				for (i = tmpcu->totcol; i-- > 0; ) {
 					/* are we an object material or data based? */
+					tmpmesh->mat[i] = give_current_material(ob, i + 1);
 
-					tmpmesh->mat[i] = ob->matbits[i] ? ob->mat[i] : tmpcu->mat[i];
-
-					if (tmpmesh->mat[i]) {
-						tmpmesh->mat[i]->id.us++;
+					if (((ob->matbits && ob->matbits[i]) || do_mat_id_data_us)  && tmpmesh->mat[i]) {
+						id_us_plus(&tmpmesh->mat[i]->id);
 					}
 				}
 			}
 			break;
 
-#if 0
-		/* Crashes when assigning the new material, not sure why */
 		case OB_MBALL:
-			tmpmb = (MetaBall *)ob->data;
+		{
+			MetaBall *tmpmb = (MetaBall *)ob->data;
+			tmpmesh->mat = MEM_dupallocN(tmpmb->mat);
 			tmpmesh->totcol = tmpmb->totcol;
 
 			/* free old material list (if it exists) and adjust user counts */
 			if (tmpmb->mat) {
 				for (i = tmpmb->totcol; i-- > 0; ) {
-					tmpmesh->mat[i] = tmpmb->mat[i]; /* CRASH HERE ??? */
-					if (tmpmesh->mat[i]) {
-						tmpmb->mat[i]->id.us++;
+					/* are we an object material or data based? */
+					tmpmesh->mat[i] = give_current_material(ob, i + 1);
+
+					if (((ob->matbits && ob->matbits[i]) || do_mat_id_data_us) && tmpmesh->mat[i]) {
+						id_us_plus(&tmpmesh->mat[i]->id);
 					}
 				}
 			}
 			break;
-#endif
+		}
 
 		case OB_MESH:
 			if (!cage) {
@@ -2520,10 +2425,10 @@ Mesh *BKE_mesh_new_from_object(
 				if (origmesh->mat) {
 					for (i = origmesh->totcol; i-- > 0; ) {
 						/* are we an object material or data based? */
-						tmpmesh->mat[i] = ob->matbits[i] ? ob->mat[i] : origmesh->mat[i];
+						tmpmesh->mat[i] = give_current_material(ob, i + 1);
 
-						if (tmpmesh->mat[i]) {
-							tmpmesh->mat[i]->id.us++;
+						if (((ob->matbits && ob->matbits[i]) || do_mat_id_data_us)  && tmpmesh->mat[i]) {
+							id_us_plus(&tmpmesh->mat[i]->id);
 						}
 					}
 				}
@@ -2535,9 +2440,6 @@ Mesh *BKE_mesh_new_from_object(
 		/* cycles and exporters rely on this still */
 		BKE_mesh_tessface_ensure(tmpmesh);
 	}
-
-	/* make sure materials get updated in objects */
-	test_object_materials(bmain, &tmpmesh->id);
 
 	return tmpmesh;
 }

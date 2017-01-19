@@ -65,7 +65,6 @@ void BKE_object_free_curve_cache(struct Object *ob);
 void BKE_object_update_base_layer(struct Scene *scene, struct Object *ob);
 
 void BKE_object_free(struct Object *ob);
-void BKE_object_free_ex(struct Object *ob, bool do_id_user);
 void BKE_object_free_derived_caches(struct Object *ob);
 void BKE_object_free_caches(struct Object *object);
 
@@ -79,12 +78,12 @@ void BKE_object_free_modifiers(struct Object *ob);
 void BKE_object_make_proxy(struct Object *ob, struct Object *target, struct Object *gob);
 void BKE_object_copy_proxy_drivers(struct Object *ob, struct Object *target);
 
-void BKE_object_unlink(struct Object *ob);
 bool BKE_object_exists_check(struct Object *obtest);
 bool BKE_object_is_in_editmode(struct Object *ob);
 bool BKE_object_is_in_editmode_vgroup(struct Object *ob);
 bool BKE_object_is_in_wpaint_select_vert(struct Object *ob);
 
+void BKE_object_init(struct Object *ob);
 struct Object *BKE_object_add_only_object(
         struct Main *bmain,
         int type, const char *name)
@@ -107,8 +106,9 @@ struct Object *BKE_object_lod_meshob_get(struct Object *ob, struct Scene *scene)
 struct Object *BKE_object_lod_matob_get(struct Object *ob, struct Scene *scene);
 
 struct Object *BKE_object_copy_ex(struct Main *bmain, struct Object *ob, bool copy_caches);
-struct Object *BKE_object_copy(struct Object *ob);
-void BKE_object_make_local(struct Object *ob);
+struct Object *BKE_object_copy(struct Main *bmain, struct Object *ob);
+void BKE_object_make_local(struct Main *bmain, struct Object *ob, const bool lib_local);
+void BKE_object_make_local_ex(struct Main *bmain, struct Object *ob, const bool lib_local, const bool clear_proxy);
 bool BKE_object_is_libdata(struct Object *ob);
 bool BKE_object_obdata_is_libdata(struct Object *ob);
 
@@ -143,6 +143,7 @@ bool BKE_boundbox_ray_hit_check(
 void BKE_boundbox_calc_center_aabb(const struct BoundBox *bb, float r_cent[3]);
 void BKE_boundbox_calc_size_aabb(const struct BoundBox *bb, float r_size[3]);
 void BKE_boundbox_minmax(const struct BoundBox *bb, float obmat[4][4], float r_min[3], float r_max[3]);
+void BKE_boundbox_scale(struct BoundBox *bb_dst, const struct BoundBox *bb_src, float scale);
 struct BoundBox *BKE_boundbox_ensure_minimum_dimensions(
         struct BoundBox *bb, struct BoundBox *bb_temp, const float epsilon);
 
@@ -234,6 +235,7 @@ int BKE_object_is_modified(struct Scene *scene, struct Object *ob);
 int BKE_object_is_deform_modified(struct Scene *scene, struct Object *ob);
 
 void BKE_object_relink(struct Object *ob);
+void BKE_object_data_relink(struct Object *ob);
 
 struct MovieClip *BKE_object_movieclip_get(struct Scene *scene, struct Object *ob, bool use_default);
 
@@ -261,9 +263,11 @@ void             BKE_object_groups_clear(struct Scene *scene, struct Base *base,
 
 struct KDTree *BKE_object_as_kdtree(struct Object *ob, int *r_tot);
 
-void BKE_object_wire_colors_sync(struct Object *ob); // bfa -  custom wireframe colors
-
 bool BKE_object_modifier_use_time(struct Object *ob, struct ModifierData *md);
+
+bool BKE_object_modifier_update_subframe(struct Scene *scene, struct Object *ob, bool update_mesh,
+                                         int parent_recursion, float frame,
+                                         int type);
 
 #ifdef __cplusplus
 }
