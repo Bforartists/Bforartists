@@ -172,7 +172,7 @@ int join_mesh_exec(bContext *C, wmOperator *op)
 	 */
 	if (key) {
 		/* make a duplicate copy that will only be used here... (must remember to free it!) */
-		nkey = BKE_key_copy(key);
+		nkey = BKE_key_copy(bmain, key);
 		
 		/* for all keys in old block, clear data-arrays */
 		for (kb = key->block.first; kb; kb = kb->next) {
@@ -513,11 +513,13 @@ int join_mesh_exec(bContext *C, wmOperator *op)
 	/* old material array */
 	for (a = 1; a <= ob->totcol; a++) {
 		ma = ob->mat[a - 1];
-		if (ma) ma->id.us--;
+		if (ma)
+			id_us_min(&ma->id);
 	}
 	for (a = 1; a <= me->totcol; a++) {
 		ma = me->mat[a - 1];
-		if (ma) ma->id.us--;
+		if (ma)
+			id_us_min(&ma->id);
 	}
 	if (ob->mat) MEM_freeN(ob->mat);
 	if (ob->matbits) MEM_freeN(ob->matbits);
@@ -538,7 +540,7 @@ int join_mesh_exec(bContext *C, wmOperator *op)
 	if (matmap) MEM_freeN(matmap);
 	
 	/* other mesh users */
-	test_object_materials(bmain, (ID *)me);
+	test_all_objects_materials(bmain, (ID *)me);
 	
 	/* free temp copy of destination shapekeys (if applicable) */
 	if (nkey) {
@@ -562,21 +564,10 @@ int join_mesh_exec(bContext *C, wmOperator *op)
 		BKE_key_sort(key);
 	}
 
-
 	DAG_relations_tag_update(bmain);   // removed objects, need to rebuild dag
 
-#if 0
-	ED_object_editmode_enter(C, EM_WAITCURSOR);
-	ED_object_editmode_exit(C, EM_FREEDATA | EM_WAITCURSOR | EM_DO_UNDO);
-#else
-	/* toggle editmode using lower level functions so this can be called from python */
-	EDBM_mesh_make(scene->toolsettings, ob);
-	EDBM_mesh_load(ob);
-	EDBM_mesh_free(me->edit_btmesh);
-	MEM_freeN(me->edit_btmesh);
-	me->edit_btmesh = NULL;
 	DAG_id_tag_update(&ob->id, OB_RECALC_OB | OB_RECALC_DATA);
-#endif
+
 	WM_event_add_notifier(C, NC_SCENE | ND_OB_ACTIVE, scene);
 
 	return OPERATOR_FINISHED;
@@ -670,18 +661,15 @@ static struct { void *tree; } MirrKdStore = {NULL};
 
 /* mode is 's' start, or 'e' end, or 'u' use */
 /* if end, ob can be NULL */
-int ED_mesh_mirror_spatial_table(Object *ob, BMEditMesh *em, const float co[3], char mode)
+int ED_mesh_mirror_spatial_table(Object *ob, BMEditMesh *em, DerivedMesh *dm, const float co[3], char mode)
 {
 	if (mode == 'u') {        /* use table */
 		if (MirrKdStore.tree == NULL)
-			ED_mesh_mirror_spatial_table(ob, em, NULL, 's');
+			ED_mesh_mirror_spatial_table(ob, em, dm, NULL, 's');
 
 		if (MirrKdStore.tree) {
 			KDTreeNearest nearest;
-
-			int i;
-
-			i = BLI_kdtree_find_nearest(MirrKdStore.tree, co, &nearest);
+			const int i = BLI_kdtree_find_nearest(MirrKdStore.tree, co, &nearest);
 
 			if (i != -1) {
 				if (nearest.dist < KD_THRESH) {
@@ -693,22 +681,15 @@ int ED_mesh_mirror_spatial_table(Object *ob, BMEditMesh *em, const float co[3], 
 	}
 	else if (mode == 's') {   /* start table */
 		Mesh *me = ob->data;
-		int totvert;
+		const bool use_em = (!dm && em && me->edit_btmesh == em);
+		const int totvert = use_em ? em->bm->totvert : dm ? dm->getNumVerts(dm) : me->totvert;
 
 		if (MirrKdStore.tree) /* happens when entering this call without ending it */
-			ED_mesh_mirror_spatial_table(ob, em, co, 'e');
-
-		if (em && me->edit_btmesh == em) {
-			totvert = em->bm->totvert;
-		}
-		else {
-			totvert = me->totvert;
-		}
+			ED_mesh_mirror_spatial_table(ob, em, dm, co, 'e');
 
 		MirrKdStore.tree = BLI_kdtree_new(totvert);
 
-		if (em && me->edit_btmesh == em) {
-
+		if (use_em) {
 			BMVert *eve;
 			BMIter iter;
 			int i;
@@ -721,10 +702,10 @@ int ED_mesh_mirror_spatial_table(Object *ob, BMEditMesh *em, const float co[3], 
 			}
 		}
 		else {
-			MVert *mvert;
+			MVert *mvert = dm ? dm->getVertArray(dm) : me->mvert;
 			int i;
 			
-			for (i = 0, mvert = me->mvert; i < me->totvert; i++, mvert++) {
+			for (i = 0; i < totvert; i++, mvert++) {
 				BLI_kdtree_insert(MirrKdStore.tree, i, mvert->co);
 			}
 		}
@@ -758,15 +739,15 @@ static MirrTopoStore_t mesh_topo_store = {NULL, -1. - 1, -1};
 /* mode is 's' start, or 'e' end, or 'u' use */
 /* if end, ob can be NULL */
 /* note, is supposed return -1 on error, which callers are currently checking for, but is not used so far */
-int ED_mesh_mirror_topo_table(Object *ob, char mode)
+int ED_mesh_mirror_topo_table(Object *ob, DerivedMesh *dm, char mode)
 {
 	if (mode == 'u') {        /* use table */
-		if (ED_mesh_mirrtopo_recalc_check(ob->data, ob->mode, &mesh_topo_store)) {
-			ED_mesh_mirror_topo_table(ob, 's');
+		if (ED_mesh_mirrtopo_recalc_check(ob->data, dm, ob->mode, &mesh_topo_store)) {
+			ED_mesh_mirror_topo_table(ob, dm, 's');
 		}
 	}
 	else if (mode == 's') { /* start table */
-		ED_mesh_mirrtopo_init(ob->data, ob->mode, &mesh_topo_store, false);
+		ED_mesh_mirrtopo_init(ob->data, dm, ob->mode, &mesh_topo_store, false);
 	}
 	else if (mode == 'e') { /* end table */
 		ED_mesh_mirrtopo_free(&mesh_topo_store);
@@ -781,35 +762,35 @@ int ED_mesh_mirror_topo_table(Object *ob, char mode)
 /** \} */
 
 
-static int mesh_get_x_mirror_vert_spatial(Object *ob, int index)
+static int mesh_get_x_mirror_vert_spatial(Object *ob, DerivedMesh *dm, int index)
 {
 	Mesh *me = ob->data;
-	MVert *mvert;
+	MVert *mvert = dm ? dm->getVertArray(dm) : me->mvert;
 	float vec[3];
 	
-	mvert = me->mvert + index;
+	mvert = &mvert[index];
 	vec[0] = -mvert->co[0];
 	vec[1] = mvert->co[1];
 	vec[2] = mvert->co[2];
 	
-	return ED_mesh_mirror_spatial_table(ob, NULL, vec, 'u');
+	return ED_mesh_mirror_spatial_table(ob, NULL, dm, vec, 'u');
 }
 
-static int mesh_get_x_mirror_vert_topo(Object *ob, int index)
+static int mesh_get_x_mirror_vert_topo(Object *ob, DerivedMesh *dm, int index)
 {
-	if (ED_mesh_mirror_topo_table(ob, 'u') == -1)
+	if (ED_mesh_mirror_topo_table(ob, dm, 'u') == -1)
 		return -1;
 
 	return mesh_topo_store.index_lookup[index];
 }
 
-int mesh_get_x_mirror_vert(Object *ob, int index, const bool use_topology)
+int mesh_get_x_mirror_vert(Object *ob, DerivedMesh *dm, int index, const bool use_topology)
 {
 	if (use_topology) {
-		return mesh_get_x_mirror_vert_topo(ob, index);
+		return mesh_get_x_mirror_vert_topo(ob, dm, index);
 	}
 	else {
-		return mesh_get_x_mirror_vert_spatial(ob, index);
+		return mesh_get_x_mirror_vert_spatial(ob, dm, index);
 	}
 }
 
@@ -819,9 +800,9 @@ static BMVert *editbmesh_get_x_mirror_vert_spatial(Object *ob, BMEditMesh *em, c
 	int i;
 	
 	/* ignore nan verts */
-	if ((finite(co[0]) == false) ||
-	    (finite(co[1]) == false) ||
-	    (finite(co[2]) == false))
+	if ((isfinite(co[0]) == false) ||
+	    (isfinite(co[1]) == false) ||
+	    (isfinite(co[2]) == false))
 	{
 		return NULL;
 	}
@@ -830,7 +811,7 @@ static BMVert *editbmesh_get_x_mirror_vert_spatial(Object *ob, BMEditMesh *em, c
 	vec[1] = co[1];
 	vec[2] = co[2];
 	
-	i = ED_mesh_mirror_spatial_table(ob, em, vec, 'u');
+	i = ED_mesh_mirror_spatial_table(ob, em, NULL, vec, 'u');
 	if (i != -1) {
 		return BM_vert_at_index(em->bm, i);
 	}
@@ -840,7 +821,7 @@ static BMVert *editbmesh_get_x_mirror_vert_spatial(Object *ob, BMEditMesh *em, c
 static BMVert *editbmesh_get_x_mirror_vert_topo(Object *ob, struct BMEditMesh *em, BMVert *eve, int index)
 {
 	intptr_t poinval;
-	if (ED_mesh_mirror_topo_table(ob, 'u') == -1)
+	if (ED_mesh_mirror_topo_table(ob, NULL, 'u') == -1)
 		return NULL;
 
 	if (index == -1) {
@@ -895,7 +876,7 @@ int ED_mesh_mirror_get_vert(Object *ob, int index)
 		index_mirr = eve_mirr ? BM_elem_index_get(eve_mirr) : -1;
 	}
 	else {
-		index_mirr = mesh_get_x_mirror_vert(ob, index, use_topology);
+		index_mirr = mesh_get_x_mirror_vert(ob, NULL, index, use_topology);
 	}
 
 	return index_mirr;
@@ -910,10 +891,12 @@ static float *editmesh_get_mirror_uv(BMEditMesh *em, int axis, float *uv, float 
 	float cent[2];
 
 	/* ignore nan verts */
-	if (isnan(uv[0]) || !finite(uv[0]) ||
-	    isnan(uv[1]) || !finite(uv[1])
+	if (isnan(uv[0]) || !isfinite(uv[0]) ||
+	    isnan(uv[1]) || !isfinite(uv[1])
 	    )
+	{
 		return NULL;
+	}
 
 	if (axis) {
 		vec[0] = uv[0];
@@ -1005,31 +988,39 @@ static bool mirror_facecmp(const void *a, const void *b)
 }
 
 /* BMESH_TODO, convert to MPoly (functions above also) */
-int *mesh_get_x_mirror_faces(Object *ob, BMEditMesh *em)
+int *mesh_get_x_mirror_faces(Object *ob, BMEditMesh *em, DerivedMesh *dm)
 {
 	Mesh *me = ob->data;
-	MVert *mv, *mvert = me->mvert;
-	MFace mirrormf, *mf, *hashmf, *mface = me->mface;
+	MVert *mv, *mvert;
+	MFace mirrormf, *mf, *hashmf, *mface;
 	GHash *fhash;
-	const bool use_topology = (me->editflag & ME_EDIT_MIRROR_TOPO) != 0;
 	int *mirrorverts, *mirrorfaces;
+
+	BLI_assert(em == NULL);  /* Does not work otherwise, currently... */
+
+	const bool use_topology = (me->editflag & ME_EDIT_MIRROR_TOPO) != 0;
+	const int totvert = dm ? dm->getNumVerts(dm) : me->totvert;
+	const int totface = dm ? dm->getNumTessFaces(dm) : me->totface;
 	int a;
 
-	mirrorverts = MEM_callocN(sizeof(int) * me->totvert, "MirrorVerts");
-	mirrorfaces = MEM_callocN(sizeof(int) * 2 * me->totface, "MirrorFaces");
+	mirrorverts = MEM_callocN(sizeof(int) * totvert, "MirrorVerts");
+	mirrorfaces = MEM_callocN(sizeof(int) * 2 * totface, "MirrorFaces");
 
-	ED_mesh_mirror_spatial_table(ob, em, NULL, 's');
+	mvert = dm ? dm->getVertArray(dm) : me->mvert;
+	mface = dm ? dm->getTessFaceArray(dm) : me->mface;
 
-	for (a = 0, mv = mvert; a < me->totvert; a++, mv++)
-		mirrorverts[a] = mesh_get_x_mirror_vert(ob, a, use_topology);
+	ED_mesh_mirror_spatial_table(ob, em, dm, NULL, 's');
 
-	ED_mesh_mirror_spatial_table(ob, em, NULL, 'e');
+	for (a = 0, mv = mvert; a < totvert; a++, mv++)
+		mirrorverts[a] = mesh_get_x_mirror_vert(ob, dm, a, use_topology);
+
+	ED_mesh_mirror_spatial_table(ob, em, dm, NULL, 'e');
 
 	fhash = BLI_ghash_new_ex(mirror_facehash, mirror_facecmp, "mirror_facehash gh", me->totface);
-	for (a = 0, mf = mface; a < me->totface; a++, mf++)
+	for (a = 0, mf = mface; a < totface; a++, mf++)
 		BLI_ghash_insert(fhash, mf, mf);
 
-	for (a = 0, mf = mface; a < me->totface; a++, mf++) {
+	for (a = 0, mf = mface; a < totface; a++, mf++) {
 		mirrormf.v1 = mirrorverts[mf->v3];
 		mirrormf.v2 = mirrorverts[mf->v2];
 		mirrormf.v3 = mirrorverts[mf->v1];

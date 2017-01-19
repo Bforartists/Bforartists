@@ -32,7 +32,10 @@
 #include <string.h>
 #include <stdio.h>
 
+#include "DNA_cachefile_types.h"
+#include "DNA_constraint_types.h"
 #include "DNA_gpencil_types.h"
+#include "DNA_modifier_types.h"
 #include "DNA_object_types.h"
 #include "DNA_scene_types.h"
 
@@ -42,7 +45,10 @@
 #include "BLI_dlrbTree.h"
 #include "BLI_utildefines.h"
 
+#include "BKE_constraint.h"
 #include "BKE_context.h"
+#include "BKE_main.h"
+#include "BKE_modifier.h"
 #include "BKE_screen.h"
 #include "BKE_pointcache.h"
 
@@ -320,6 +326,9 @@ static void time_draw_idblock_keyframes(View2D *v2d, ID *id, short onlysel)
 		case ID_GD:
 			gpencil_to_keylist(&ads, (bGPdata *)id, &keys);
 			break;
+		case ID_CF:
+			cachefile_to_keylist(&ads, (CacheFile *)id, &keys, NULL);
+			break;
 	}
 		
 	/* build linked-list for searching */
@@ -344,19 +353,78 @@ static void time_draw_idblock_keyframes(View2D *v2d, ID *id, short onlysel)
 	BLI_dlrbTree_free(&keys);
 }
 
+static void time_draw_caches_keyframes(Main *bmain, Scene *scene, View2D *v2d, bool onlysel)
+{
+	CacheFile *cache_file;
+
+	for (cache_file = bmain->cachefiles.first;
+	     cache_file;
+	     cache_file = cache_file->id.next)
+	{
+		cache_file->draw_flag &= ~CACHEFILE_KEYFRAME_DRAWN;
+	}
+
+	for (Base *base = scene->base.first; base; base = base->next) {
+		Object *ob = base->object;
+
+		ModifierData *md = modifiers_findByType(ob, eModifierType_MeshSequenceCache);
+
+		if (md) {
+			MeshSeqCacheModifierData *mcmd = (MeshSeqCacheModifierData *)md;
+
+			cache_file = mcmd->cache_file;
+
+			if (!cache_file || (cache_file->draw_flag & CACHEFILE_KEYFRAME_DRAWN) != 0) {
+				continue;
+			}
+
+			cache_file->draw_flag |= CACHEFILE_KEYFRAME_DRAWN;
+
+			time_draw_idblock_keyframes(v2d, (ID *)cache_file, onlysel);
+		}
+
+		for (bConstraint *con = ob->constraints.first; con; con = con->next) {
+			if (con->type != CONSTRAINT_TYPE_TRANSFORM_CACHE) {
+				continue;
+			}
+
+			bTransformCacheConstraint *data = con->data;
+
+			cache_file = data->cache_file;
+
+			if (!cache_file || (cache_file->draw_flag & CACHEFILE_KEYFRAME_DRAWN) != 0) {
+				continue;
+			}
+
+			cache_file->draw_flag |= CACHEFILE_KEYFRAME_DRAWN;
+
+			time_draw_idblock_keyframes(v2d, (ID *)cache_file, onlysel);
+		}
+	}
+}
+
 /* draw keyframe lines for timeline */
 static void time_draw_keyframes(const bContext *C, ARegion *ar)
 {
 	Scene *scene = CTX_data_scene(C);
 	Object *ob = CTX_data_active_object(C);
-	bGPdata *gpd = CTX_data_gpencil_data(C);
 	View2D *v2d = &ar->v2d;
 	bool onlysel = ((scene->flag & SCE_KEYS_NO_SELONLY) == 0);
 	
-	/* draw grease pencil keyframes (if available) */
-	if (gpd) {
-		UI_ThemeColor(TH_TIME_GP_KEYFRAME);
-		time_draw_idblock_keyframes(v2d, (ID *)gpd, onlysel);
+	/* set this for all keyframe lines once and for all */
+	glLineWidth(1.0);
+
+	/* draw cache files keyframes (if available) */
+	UI_ThemeColor(TH_TIME_KEYFRAME);
+	time_draw_caches_keyframes(CTX_data_main(C), scene, v2d, onlysel);
+
+	/* draw grease pencil keyframes (if available) */	
+	UI_ThemeColor(TH_TIME_GP_KEYFRAME);
+	if (scene->gpd) {
+		time_draw_idblock_keyframes(v2d, (ID *)scene->gpd, onlysel);
+	}
+	if (ob && ob->gpd) {
+		time_draw_idblock_keyframes(v2d, (ID *)ob->gpd, onlysel);
 	}
 	
 	/* draw scene keyframes first 
@@ -485,7 +553,7 @@ static void time_listener(bScreen *UNUSED(sc), ScrArea *sa, wmNotifier *wmn)
 /* ---------------- */
 
 /* add handlers, stuff you only do once or on area/region changes */
-static void time_main_area_init(wmWindowManager *wm, ARegion *ar)
+static void time_main_region_init(wmWindowManager *wm, ARegion *ar)
 {
 	wmKeyMap *keymap;
 	
@@ -496,7 +564,7 @@ static void time_main_area_init(wmWindowManager *wm, ARegion *ar)
 	WM_event_add_keymap_handler_bb(&ar->handlers, keymap, &ar->v2d.mask, &ar->winrct);
 }
 
-static void time_main_area_draw(const bContext *C, ARegion *ar)
+static void time_main_region_draw(const bContext *C, ARegion *ar)
 {
 	/* draw entirely, view changes should be handled here */
 	Scene *scene = CTX_data_scene(C);
@@ -555,7 +623,7 @@ static void time_main_area_draw(const bContext *C, ARegion *ar)
 	UI_view2d_scrollers_free(scrollers);
 }
 
-static void time_main_area_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa), ARegion *ar, wmNotifier *wmn)
+static void time_main_region_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa), ARegion *ar, wmNotifier *wmn)
 {
 	/* context changes */
 	switch (wmn->category) {
@@ -580,23 +648,27 @@ static void time_main_area_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa), AR
 					break;
 			}
 			break;
+		case NC_GPENCIL:
+			if (wmn->data == ND_DATA)
+				ED_region_tag_redraw(ar);
+			break;
 	}
 }
 
 /* ************************ header time area region *********************** */
 
 /* add handlers, stuff you only do once or on area/region changes */
-static void time_header_area_init(wmWindowManager *UNUSED(wm), ARegion *ar)
+static void time_header_region_init(wmWindowManager *UNUSED(wm), ARegion *ar)
 {
 	ED_region_header_init(ar);
 }
 
-static void time_header_area_draw(const bContext *C, ARegion *ar)
+static void time_header_region_draw(const bContext *C, ARegion *ar)
 {
 	ED_region_header(C, ar);
 }
 
-static void time_header_area_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa), ARegion *ar, wmNotifier *wmn)
+static void time_header_region_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa), ARegion *ar, wmNotifier *wmn)
 {
 	/* context changes */
 	switch (wmn->category) {
@@ -649,8 +721,8 @@ static SpaceLink *time_new(const bContext *C)
 	ar->regiontype = RGN_TYPE_HEADER;
 	ar->alignment = RGN_ALIGN_BOTTOM;
 	
-	/* main area */
-	ar = MEM_callocN(sizeof(ARegion), "main area for time");
+	/* main region */
+	ar = MEM_callocN(sizeof(ARegion), "main region for time");
 	
 	BLI_addtail(&stime->regionbase, ar);
 	ar->regiontype = RGN_TYPE_WINDOW;
@@ -737,10 +809,11 @@ void ED_spacetype_time(void)
 	art->regionid = RGN_TYPE_WINDOW;
 	art->keymapflag = ED_KEYMAP_VIEW2D | ED_KEYMAP_MARKERS | ED_KEYMAP_ANIMATION | ED_KEYMAP_FRAMES;
 	
-	art->init = time_main_area_init;
-	art->draw = time_main_area_draw;
-	art->listener = time_main_area_listener;
+	art->init = time_main_region_init;
+	art->draw = time_main_region_draw;
+	art->listener = time_main_region_listener;
 	art->keymap = time_keymap;
+	art->lock = 1;   /* Due to pointcache, see T4960. */
 	BLI_addhead(&st->regiontypes, art);
 	
 	/* regions: header */
@@ -749,9 +822,9 @@ void ED_spacetype_time(void)
 	art->prefsizey = HEADERY;
 	art->keymapflag = ED_KEYMAP_UI | ED_KEYMAP_VIEW2D | ED_KEYMAP_FRAMES | ED_KEYMAP_HEADER;
 	
-	art->init = time_header_area_init;
-	art->draw = time_header_area_draw;
-	art->listener = time_header_area_listener;
+	art->init = time_header_region_init;
+	art->draw = time_header_region_draw;
+	art->listener = time_header_region_listener;
 	BLI_addhead(&st->regiontypes, art);
 		
 	BKE_spacetype_register(st);

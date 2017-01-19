@@ -46,6 +46,7 @@
 
 #include "BKE_action.h" /* BKE_pose_channel_find_name */
 #include "BKE_cdderivedmesh.h"
+#include "BKE_library_query.h"
 #include "BKE_modifier.h"
 #include "BKE_deform.h"
 
@@ -70,11 +71,10 @@ static CustomDataMask requiredDataMask(Object *UNUSED(ob), ModifierData *UNUSED(
 
 static void foreachObjectLink(
         ModifierData *md, Object *ob,
-        void (*walk)(void *userData, Object *ob, Object **obpoin),
-        void *userData)
+        ObjectWalkFunc walk, void *userData)
 {
 	MaskModifierData *mmd = (MaskModifierData *)md;
-	walk(userData, ob, &mmd->ob_arm);
+	walk(userData, ob, &mmd->ob_arm, IDWALK_NOP);
 }
 
 static void updateDepgraph(ModifierData *md, DagForest *forest,

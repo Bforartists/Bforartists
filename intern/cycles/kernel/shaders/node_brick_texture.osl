@@ -28,7 +28,7 @@ float brick_noise(int n) /* fast integer noise */
 	return 0.5 * ((float)nn / 1073741824.0);
 }
 
-float brick(point p, float mortar_size, float bias,
+float brick(point p, float mortar_size, float mortar_smooth, float bias,
 	float BrickWidth, float row_height, float offset_amount, int offset_frequency,
 	float squash_amount, int squash_frequency, float tint)
 {
@@ -51,24 +51,33 @@ float brick(point p, float mortar_size, float bias,
 
 	tint = clamp((brick_noise((rownum << 16) + (bricknum & 65535)) + bias), 0.0, 1.0);
 
-	return (x < mortar_size || y < mortar_size ||
-	        x > (brick_width - mortar_size) ||
-	        y > (row_height - mortar_size)) ? 1.0 : 0.0;
+	float min_dist = min(min(x, y), min(brick_width - x, row_height - y));
+	if(min_dist >= mortar_size) {
+		return 0.0;
+	}
+	else if(mortar_smooth == 0.0) {
+		return 1.0;
+	}
+	else {
+		min_dist = 1.0 - min_dist/mortar_size;
+		return smoothstep(0.0, mortar_smooth, min_dist);
+	}
 }
 
 shader node_brick_texture(
 	int use_mapping = 0,
 	matrix mapping = matrix(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-	float Offset = 0.5,
-	int OffsetFrequency = 2,
-	float Squash = 1.0,
-	int SquashFrequency = 1,
+	float offset = 0.5,
+	int offset_frequency = 2,
+	float squash = 1.0,
+	int squash_frequency = 1,
 	point Vector = P,
 	color Color1 = 0.2,
 	color Color2 = 0.8,
 	color Mortar = 0.0,
 	float Scale = 5.0,
 	float MortarSize = 0.02,
+	float MortarSmooth = 0.0,
 	float Bias = 0.0,
 	float BrickWidth = 0.5,
 	float RowHeight = 0.25,
@@ -83,14 +92,14 @@ shader node_brick_texture(
 	float tint = 0.0;
 	color Col = Color1;
 	
-	Fac = brick(p * Scale, MortarSize, Bias, BrickWidth, RowHeight,
-		Offset, OffsetFrequency, Squash, SquashFrequency, tint);
+	Fac = brick(p * Scale, MortarSize, MortarSmooth, Bias, BrickWidth, RowHeight,
+		offset, offset_frequency, squash, squash_frequency, tint);
 		
 	if (Fac != 1.0) {
 		float facm = 1.0 - tint;
 		Col = facm * Color1 + tint * Color2;
 	}
 	
-	Color = (Fac == 1.0) ? Mortar : Col;
+	Color = mix(Col, Mortar, Fac);
 }
 

@@ -113,19 +113,33 @@ static int copy_data_path_button_poll(bContext *C)
 	return 0;
 }
 
-static int copy_data_path_button_exec(bContext *C, wmOperator *UNUSED(op))
+static int copy_data_path_button_exec(bContext *C, wmOperator *op)
 {
 	PointerRNA ptr;
 	PropertyRNA *prop;
 	char *path;
 	int index;
 
+	const bool full_path = RNA_boolean_get(op->ptr, "full_path");
+
 	/* try to create driver using property retrieved from UI */
 	UI_context_active_but_prop_get(C, &ptr, &prop, &index);
 
-	if (ptr.id.data && ptr.data && prop) {
-		path = RNA_path_from_ID_to_property(&ptr, prop);
-		
+	if (ptr.id.data != NULL) {
+
+		if (full_path) {
+
+			if (prop) {
+				path = RNA_path_full_property_py_ex(&ptr, prop, index, true);
+			}
+			else {
+				path = RNA_path_full_struct_py(&ptr);
+			}
+		}
+		else {
+			path = RNA_path_from_ID_to_property(&ptr, prop);
+		}
+
 		if (path) {
 			WM_clipboard_text_set(path, false);
 			MEM_freeN(path);
@@ -138,6 +152,8 @@ static int copy_data_path_button_exec(bContext *C, wmOperator *UNUSED(op))
 
 static void UI_OT_copy_data_path_button(wmOperatorType *ot)
 {
+	PropertyRNA *prop;
+
 	/* identifiers */
 	ot->name = "Copy Data Path";
 	ot->idname = "UI_OT_copy_data_path_button";
@@ -146,6 +162,57 @@ static void UI_OT_copy_data_path_button(wmOperatorType *ot)
 	/* callbacks */
 	ot->exec = copy_data_path_button_exec;
 	ot->poll = copy_data_path_button_poll;
+
+	/* flags */
+	ot->flag = OPTYPE_REGISTER;
+
+	/* properties */
+	prop = RNA_def_boolean(ot->srna, "full_path", false, "full_path", "Copy full data path");
+	RNA_def_property_flag(prop, PROP_SKIP_SAVE);
+}
+
+static int copy_python_command_button_poll(bContext *C)
+{
+	uiBut *but = UI_context_active_but_get(C);
+
+	if (but && (but->optype != NULL)) {
+		return 1;
+	}
+
+	return 0;
+}
+
+static int copy_python_command_button_exec(bContext *C, wmOperator *UNUSED(op))
+{
+	uiBut *but = UI_context_active_but_get(C);
+
+	if (but && (but->optype != NULL)) {
+		PointerRNA *opptr;
+		char *str;
+		opptr = UI_but_operator_ptr_get(but); /* allocated when needed, the button owns it */
+
+		str = WM_operator_pystring_ex(C, NULL, false, true, but->optype, opptr);
+
+		WM_clipboard_text_set(str, 0);
+
+		MEM_freeN(str);
+
+		return OPERATOR_FINISHED;
+	}
+
+	return OPERATOR_CANCELLED;
+}
+
+static void UI_OT_copy_python_command_button(wmOperatorType *ot)
+{
+	/* identifiers */
+	ot->name = "Copy Python Command";
+	ot->idname = "UI_OT_copy_python_command_button";
+	ot->description = "Copy the Python command matching this button";
+
+	/* callbacks */
+	ot->exec = copy_python_command_button_exec;
+	ot->poll = copy_python_command_button_poll;
 
 	/* flags */
 	ot->flag = OPTYPE_REGISTER;
@@ -358,7 +425,7 @@ bool UI_context_copy_to_selected_list(
 					Object *ob = link->ptr.id.data;
 					if (ob->data) {
 						ID *id_data = ob->data;
-						id_data->flag |= LIB_DOIT;
+						id_data->tag |= LIB_TAG_DOIT;
 					}
 				}
 
@@ -368,8 +435,8 @@ bool UI_context_copy_to_selected_list(
 					link_next = link->next;
 
 					if ((id_data == NULL) ||
-					    (id_data->flag & LIB_DOIT) == 0 ||
-					    (id_data->lib) ||
+					    (id_data->tag & LIB_TAG_DOIT) == 0 ||
+					    ID_IS_LINKED_DATABLOCK(id_data) ||
 					    (GS(id_data->name) != id_code))
 					{
 						BLI_remlink(&lb, link);
@@ -381,7 +448,7 @@ bool UI_context_copy_to_selected_list(
 					}
 
 					if (id_data) {
-						id_data->flag &= ~LIB_DOIT;
+						id_data->tag &= ~LIB_TAG_DOIT;
 					}
 				}
 			}
@@ -510,7 +577,7 @@ static void UI_OT_copy_to_selected_button(wmOperatorType *ot)
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
 	/* properties */
-	RNA_def_boolean(ot->srna, "all", 1, "All", "Reset to default values all elements of the array");
+	RNA_def_boolean(ot->srna, "all", true, "All", "Copy to selected all elements of the array");
 }
 
 /* Reports to Textblock Operator ------------------------ */
@@ -850,7 +917,7 @@ static int edittranslation_exec(bContext *C, wmOperator *op)
 		}
 		ot = WM_operatortype_find(EDTSRC_I18N_OP_NAME, 0);
 		if (ot == NULL) {
-			BKE_reportf(op->reports, RPT_ERROR, "Could not find operator '%s'! Please enable ui_translate addon "
+			BKE_reportf(op->reports, RPT_ERROR, "Could not find operator '%s'! Please enable ui_translate add-on "
 			                                    "in the User Preferences", EDTSRC_I18N_OP_NAME);
 			return OPERATOR_CANCELLED;
 		}
@@ -1036,14 +1103,14 @@ static void UI_OT_drop_color(wmOperatorType *ot)
 }
 
 
-
 /* ********************************************************* */
 /* Registration */
 
-void ED_button_operatortypes(void)
+void ED_operatortypes_ui(void)
 {
 	WM_operatortype_append(UI_OT_reset_default_theme);
 	WM_operatortype_append(UI_OT_copy_data_path_button);
+	WM_operatortype_append(UI_OT_copy_python_command_button);
 	WM_operatortype_append(UI_OT_reset_default_button);
 	WM_operatortype_append(UI_OT_unset_property_button);
 	WM_operatortype_append(UI_OT_copy_to_selected_button);
@@ -1059,4 +1126,40 @@ void ED_button_operatortypes(void)
 	WM_operatortype_append(UI_OT_eyedropper_color);
 	WM_operatortype_append(UI_OT_eyedropper_id);
 	WM_operatortype_append(UI_OT_eyedropper_depth);
+	WM_operatortype_append(UI_OT_eyedropper_driver);
+}
+
+/**
+ * \brief User Interface Keymap
+ */
+void ED_keymap_ui(wmKeyConfig *keyconf)
+{
+	wmKeyMap *keymap = WM_keymap_find(keyconf, "User Interface", 0, 0);
+	wmKeyMapItem *kmi;
+
+	/* eyedroppers - notice they all have the same shortcut, but pass the event
+	 * through until a suitable eyedropper for the active button is found */
+	WM_keymap_add_item(keymap, "UI_OT_eyedropper_color", EKEY, KM_PRESS, 0, 0);
+	WM_keymap_add_item(keymap, "UI_OT_eyedropper_id", EKEY, KM_PRESS, 0, 0);
+	WM_keymap_add_item(keymap, "UI_OT_eyedropper_depth", EKEY, KM_PRESS, 0, 0);
+
+	/* Copy Data Path */
+	WM_keymap_add_item(keymap, "UI_OT_copy_data_path_button", CKEY, KM_PRESS, KM_CTRL | KM_SHIFT, 0);
+	kmi = WM_keymap_add_item(keymap, "UI_OT_copy_data_path_button", CKEY, KM_PRESS, KM_CTRL | KM_SHIFT | KM_ALT, 0);
+	RNA_boolean_set(kmi->ptr, "full_path", true);
+
+	/* keyframes */
+	WM_keymap_add_item(keymap, "ANIM_OT_keyframe_insert_button", IKEY, KM_PRESS, 0, 0);
+	WM_keymap_add_item(keymap, "ANIM_OT_keyframe_delete_button", IKEY, KM_PRESS, KM_ALT, 0);
+	WM_keymap_add_item(keymap, "ANIM_OT_keyframe_clear_button", IKEY, KM_PRESS, KM_SHIFT | KM_ALT, 0);
+
+	/* drivers */
+	WM_keymap_add_item(keymap, "ANIM_OT_driver_button_add", DKEY, KM_PRESS, KM_CTRL, 0);
+	WM_keymap_add_item(keymap, "ANIM_OT_driver_button_remove", DKEY, KM_PRESS, KM_CTRL | KM_ALT, 0);
+
+	/* keyingsets */
+	WM_keymap_add_item(keymap, "ANIM_OT_keyingset_button_add", KKEY, KM_PRESS, 0, 0);
+	WM_keymap_add_item(keymap, "ANIM_OT_keyingset_button_remove", KKEY, KM_PRESS, KM_ALT, 0);
+
+	eyedropper_modal_keymap(keyconf);
 }

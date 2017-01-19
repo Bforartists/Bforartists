@@ -498,23 +498,49 @@ void BM_face_select_set(BMesh *bm, BMFace *f, const bool select)
 			BM_elem_flag_disable(f, BM_ELEM_SELECT);
 			bm->totfacesel -= 1;
 		}
-
-		/* flush down to edges */
-		l_iter = l_first = BM_FACE_FIRST_LOOP(f);
-		do {
-			/* vertex flushing is handled below */
-			if (bm_edge_is_face_select_any_other(l_iter) == false) {
-				BM_edge_select_set_noflush(bm, l_iter->e, false);
-			}
-		} while ((l_iter = l_iter->next) != l_first);
-
-		/* flush down to verts */
-		l_iter = l_first = BM_FACE_FIRST_LOOP(f);
-		do {
-			if (bm_vert_is_edge_select_any_other(l_iter->v, l_iter->e) == false) {
+		/**
+		 * \note This allows a temporarily invalid state - where for eg
+		 * an edge bay be de-selected, but an adjacent face remains selected.
+		 *
+		 * Rely on #BM_mesh_select_mode_flush to correct these cases.
+		 *
+		 * \note flushing based on mode, see T46494
+		 */
+		if (bm->selectmode & SCE_SELECT_VERTEX) {
+			l_iter = l_first = BM_FACE_FIRST_LOOP(f);
+			do {
 				BM_vert_select_set(bm, l_iter->v, false);
+				BM_edge_select_set_noflush(bm, l_iter->e, false);
+			} while ((l_iter = l_iter->next) != l_first);
+		}
+		else {
+			/**
+			 * \note use #BM_edge_select_set_noflush,
+			 * vertex flushing is handled last.
+			 */
+			if (bm->selectmode & SCE_SELECT_EDGE) {
+				l_iter = l_first = BM_FACE_FIRST_LOOP(f);
+				do {
+					BM_edge_select_set_noflush(bm, l_iter->e, false);
+				} while ((l_iter = l_iter->next) != l_first);
 			}
-		} while ((l_iter = l_iter->next) != l_first);
+			else {
+				l_iter = l_first = BM_FACE_FIRST_LOOP(f);
+				do {
+					if (bm_edge_is_face_select_any_other(l_iter) == false) {
+						BM_edge_select_set_noflush(bm, l_iter->e, false);
+					}
+				} while ((l_iter = l_iter->next) != l_first);
+			}
+
+			/* flush down to verts */
+			l_iter = l_first = BM_FACE_FIRST_LOOP(f);
+			do {
+				if (bm_vert_is_edge_select_any_other(l_iter->v, l_iter->e) == false) {
+					BM_vert_select_set(bm, l_iter->v, false);
+				}
+			} while ((l_iter = l_iter->next) != l_first);
+		}
 	}
 }
 
@@ -816,7 +842,7 @@ void BM_editselection_normal(BMEditSelection *ese, float r_normal[3])
 		
 		/* the 2 vertex normals will be close but not at rightangles to the edge
 		 * for rotate about edge we want them to be at right angles, so we need to
-		 * do some extra colculation to correct the vert normals,
+		 * do some extra calculation to correct the vert normals,
 		 * we need the plane for this */
 		cross_v3_v3v3(vec, r_normal, plane);
 		cross_v3_v3v3(r_normal, plane, vec);
@@ -878,7 +904,7 @@ void BM_editselection_plane(BMEditSelection *ese, float r_plane[3])
 	}
 	else if (ese->htype == BM_FACE) {
 		BMFace *efa = (BMFace *)ese->ele;
-		BM_face_calc_plane(efa, r_plane);
+		BM_face_calc_tangent_auto(efa, r_plane);
 	}
 }
 

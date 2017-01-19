@@ -28,6 +28,7 @@
  *  \ingroup spview3d
  */
 
+#include "DNA_camera_types.h"
 #include "DNA_object_types.h"
 #include "DNA_screen_types.h"
 #include "DNA_scene_types.h"
@@ -40,6 +41,7 @@
 
 #include "BLI_math_vector.h"
 
+#include "BKE_camera.h"
 #include "BKE_screen.h"
 
 #include "ED_view3d.h"  /* own include */
@@ -217,8 +219,8 @@ eV3DProjStatus ED_view3d_project_float_ex(const ARegion *ar, float perspmat[4][4
 	float tvec[2];
 	eV3DProjStatus ret = ed_view3d_project__internal(ar, perspmat, is_local, co, tvec, flag);
 	if (ret == V3D_PROJ_RET_OK) {
-		if (finite(tvec[0]) &&
-		    finite(tvec[1]))
+		if (isfinite(tvec[0]) &&
+		    isfinite(tvec[1]))
 		{
 			copy_v2_v2(r_co, tvec);
 		}
@@ -302,8 +304,9 @@ float ED_view3d_calc_zfac(const RegionView3D *rv3d, const float co[3], bool *r_f
 	return zfac;
 }
 
-static void view3d_win_to_ray_segment(const ARegion *ar, View3D *v3d, const float mval[2],
-                                      float r_ray_co[3], float r_ray_dir[3], float r_ray_start[3], float r_ray_end[3])
+static void view3d_win_to_ray_segment(
+        const ARegion *ar, const View3D *v3d, const float mval[2],
+        float r_ray_co[3], float r_ray_dir[3], float r_ray_start[3], float r_ray_end[3])
 {
 	RegionView3D *rv3d = ar->regiondata;
 	float _ray_co[3], _ray_dir[3], start_offset, end_offset;
@@ -311,24 +314,8 @@ static void view3d_win_to_ray_segment(const ARegion *ar, View3D *v3d, const floa
 	if (!r_ray_co) r_ray_co = _ray_co;
 	if (!r_ray_dir) r_ray_dir = _ray_dir;
 
+	ED_view3d_win_to_origin(ar, mval, r_ray_co);
 	ED_view3d_win_to_vector(ar, mval, r_ray_dir);
-
-	if (rv3d->is_persp) {
-		copy_v3_v3(r_ray_co, rv3d->viewinv[3]);
-	}
-	else {
-		r_ray_co[0] = 2.0f * mval[0] / ar->winx - 1.0f;
-		r_ray_co[1] = 2.0f * mval[1] / ar->winy - 1.0f;
-
-		if (rv3d->persp == RV3D_CAMOB) {
-			r_ray_co[2] = -1.0f;
-		}
-		else {
-			r_ray_co[2] = 0.0f;
-		}
-
-		mul_project_m4_v3(rv3d->persinv, r_ray_co);
-	}
 
 	if ((rv3d->is_persp == false) && (rv3d->persp != RV3D_CAMOB)) {
 		end_offset = v3d->far / 2.0f;
@@ -346,9 +333,12 @@ static void view3d_win_to_ray_segment(const ARegion *ar, View3D *v3d, const floa
 	}
 }
 
-BLI_INLINE bool view3d_clip_segment(RegionView3D *rv3d, float ray_start[3], float ray_end[3])
+bool ED_view3d_clip_segment(const RegionView3D *rv3d, float ray_start[3], float ray_end[3])
 {
-	if ((rv3d->rflag & RV3D_CLIPPING) && !clip_segment_v3_plane_n(ray_start, ray_end, rv3d->clip, 6)) {
+	if ((rv3d->rflag & RV3D_CLIPPING) &&
+	    (clip_segment_v3_plane_n(ray_start, ray_end, rv3d->clip, 6,
+	                             ray_start, ray_end) == false))
+	{
 		return false;
 	}
 	return true;
@@ -370,8 +360,9 @@ BLI_INLINE bool view3d_clip_segment(RegionView3D *rv3d, float ray_start[3], floa
  * \param do_clip Optionally clip the start of the ray by the view clipping planes.
  * \return success, false if the ray is totally clipped.
  */
-bool ED_view3d_win_to_ray_ex(const ARegion *ar, View3D *v3d, const float mval[2],
-                             float r_ray_co[3], float r_ray_normal[3], float r_ray_start[3], bool do_clip)
+bool ED_view3d_win_to_ray_ex(
+        const ARegion *ar, const View3D *v3d, const float mval[2],
+        float r_ray_co[3], float r_ray_normal[3], float r_ray_start[3], bool do_clip)
 {
 	float ray_end[3];
 
@@ -379,7 +370,7 @@ bool ED_view3d_win_to_ray_ex(const ARegion *ar, View3D *v3d, const float mval[2]
 
 	/* bounds clipping */
 	if (do_clip) {
-		return view3d_clip_segment((RegionView3D *)ar->regiondata, r_ray_start, ray_end);
+		return ED_view3d_clip_segment(ar->regiondata, r_ray_start, ray_end);
 	}
 
 	return true;
@@ -398,8 +389,9 @@ bool ED_view3d_win_to_ray_ex(const ARegion *ar, View3D *v3d, const float mval[2]
  * \param do_clip Optionally clip the start of the ray by the view clipping planes.
  * \return success, false if the ray is totally clipped.
  */
-bool ED_view3d_win_to_ray(const ARegion *ar, View3D *v3d, const float mval[2],
-                          float r_ray_start[3], float r_ray_normal[3], const bool do_clip)
+bool ED_view3d_win_to_ray(
+        const ARegion *ar, const View3D *v3d, const float mval[2],
+        float r_ray_start[3], float r_ray_normal[3], const bool do_clip)
 {
 	return ED_view3d_win_to_ray_ex(ar, v3d, mval, NULL, r_ray_normal, r_ray_start, do_clip);
 }
@@ -472,48 +464,67 @@ bool view3d_get_view_aligned_coordinate(ARegion *ar, float fp[3], const int mval
  * \param ar The region (used for the window width and height).
  * \param depth_pt The reference location used to calculate the Z depth.
  * \param mval The area relative location (such as event->mval converted to floats).
- * \param out The resulting world-space location.
+ * \param r_out The resulting world-space location.
  */
-void ED_view3d_win_to_3d(const ARegion *ar, const float depth_pt[3], const float mval[2], float out[3])
+void ED_view3d_win_to_3d(
+        const View3D *v3d, const ARegion *ar,
+        const float depth_pt[3], const float mval[2],
+        float r_out[3])
 {
 	RegionView3D *rv3d = ar->regiondata;
 
-	float line_sta[3];
-	float line_end[3];
+	float ray_origin[3];
+	float ray_direction[3];
+	float lambda;
 
 	if (rv3d->is_persp) {
-		float mousevec[3], lambda;
-		copy_v3_v3(line_sta, rv3d->viewinv[3]);
-		ED_view3d_win_to_vector(ar, mval, mousevec);
-		add_v3_v3v3(line_end, line_sta, mousevec);
+		float plane[4];
+
+		copy_v3_v3(ray_origin, rv3d->viewinv[3]);
+		ED_view3d_win_to_vector(ar, mval, ray_direction);
 
 		/* note, we could use isect_line_plane_v3() however we want the intersection to be infront of the
 		 * view no matter what, so apply the unsigned factor instead */
-		lambda = line_plane_factor_v3(depth_pt, rv3d->viewinv[2], line_sta, line_end);
-		interp_v3_v3v3(out, line_sta, line_end, fabsf(lambda));
+		plane_from_point_normal_v3(plane, depth_pt, rv3d->viewinv[2]);
+
+		isect_ray_plane_v3(ray_origin, ray_direction, plane, &lambda, false);
+		lambda = fabsf(lambda);
 	}
 	else {
 		float dx = (2.0f * mval[0] / (float)ar->winx) - 1.0f;
 		float dy = (2.0f * mval[1] / (float)ar->winy) - 1.0f;
+
 		if (rv3d->persp == RV3D_CAMOB) {
 			/* ortho camera needs offset applied */
+			const Camera *cam = v3d->camera->data;
+			const int sensor_fit = BKE_camera_sensor_fit(cam->sensor_fit, ar->winx, ar->winy);
 			const float zoomfac = BKE_screen_view3d_zoom_to_fac(rv3d->camzoom) * 4.0f;
-			dx += rv3d->camdx * zoomfac;
-			dy += rv3d->camdy * zoomfac;
-		}
-		line_sta[0] = (rv3d->persinv[0][0] * dx) + (rv3d->persinv[1][0] * dy) + rv3d->viewinv[3][0];
-		line_sta[1] = (rv3d->persinv[0][1] * dx) + (rv3d->persinv[1][1] * dy) + rv3d->viewinv[3][1];
-		line_sta[2] = (rv3d->persinv[0][2] * dx) + (rv3d->persinv[1][2] * dy) + rv3d->viewinv[3][2];
+			const float aspx = ar->winx / (float)ar->winy;
+			const float aspy = ar->winy / (float)ar->winx;
+			const float shiftx = cam->shiftx * 0.5f * (sensor_fit == CAMERA_SENSOR_FIT_HOR ? 1.0f : aspy);
+			const float shifty = cam->shifty * 0.5f * (sensor_fit == CAMERA_SENSOR_FIT_HOR ? aspx : 1.0f);
 
-		add_v3_v3v3(line_end, line_sta, rv3d->viewinv[2]);
-		closest_to_line_v3(out, depth_pt, line_sta, line_end);
+			dx += (rv3d->camdx + shiftx) * zoomfac;
+			dy += (rv3d->camdy + shifty) * zoomfac;
+		}
+		ray_origin[0] = (rv3d->persinv[0][0] * dx) + (rv3d->persinv[1][0] * dy) + rv3d->viewinv[3][0];
+		ray_origin[1] = (rv3d->persinv[0][1] * dx) + (rv3d->persinv[1][1] * dy) + rv3d->viewinv[3][1];
+		ray_origin[2] = (rv3d->persinv[0][2] * dx) + (rv3d->persinv[1][2] * dy) + rv3d->viewinv[3][2];
+
+		copy_v3_v3(ray_direction, rv3d->viewinv[2]);
+		lambda = ray_point_factor_v3(depth_pt, ray_origin, ray_direction);
 	}
+
+	madd_v3_v3v3fl(r_out, ray_origin, ray_direction, lambda);
 }
 
-void ED_view3d_win_to_3d_int(const ARegion *ar, const float depth_pt[3], const int mval[2], float out[3])
+void ED_view3d_win_to_3d_int(
+        const View3D *v3d, const ARegion *ar,
+        const float depth_pt[3], const int mval[2],
+        float r_out[3])
 {
 	const float mval_fl[2] = {mval[0], mval[1]};
-	ED_view3d_win_to_3d(ar, depth_pt, mval_fl, out);
+	ED_view3d_win_to_3d(v3d, ar, depth_pt, mval_fl, r_out);
 }
 
 /**
@@ -535,6 +546,37 @@ void ED_view3d_win_to_delta(const ARegion *ar, const float mval[2], float out[3]
 	out[0] = (rv3d->persinv[0][0] * dx + rv3d->persinv[1][0] * dy);
 	out[1] = (rv3d->persinv[0][1] * dx + rv3d->persinv[1][1] * dy);
 	out[2] = (rv3d->persinv[0][2] * dx + rv3d->persinv[1][2] * dy);
+}
+
+/**
+ * Calculate a 3d origin from 2d window coordinates.
+ * \note Orthographic views have a less obvious origin,
+ * Since far clip can be a very large value resulting in numeric precision issues,
+ * the origin in this case is close to zero coordinate.
+ *
+ * \param ar The region (used for the window width and height).
+ * \param mval The area relative 2d location (such as event->mval converted to floats).
+ * \param out The resulting normalized world-space direction vector.
+ */
+void ED_view3d_win_to_origin(const ARegion *ar, const float mval[2], float out[3])
+{
+	RegionView3D *rv3d = ar->regiondata;
+	if (rv3d->is_persp) {
+		copy_v3_v3(out, rv3d->viewinv[3]);
+	}
+	else {
+		out[0] = 2.0f * mval[0] / ar->winx - 1.0f;
+		out[1] = 2.0f * mval[1] / ar->winy - 1.0f;
+
+		if (rv3d->persp == RV3D_CAMOB) {
+			out[2] = -1.0f;
+		}
+		else {
+			out[2] = 0.0f;
+		}
+
+		mul_project_m4_v3(rv3d->persinv, out);
+	}
 }
 
 /**
@@ -588,7 +630,7 @@ bool ED_view3d_win_to_segment(const ARegion *ar, View3D *v3d, const float mval[2
 
 	/* bounds clipping */
 	if (do_clip) {
-		return view3d_clip_segment((RegionView3D *)ar->regiondata, r_ray_start, r_ray_end);
+		return ED_view3d_clip_segment((RegionView3D *)ar->regiondata, r_ray_start, r_ray_end);
 	}
 
 	return true;

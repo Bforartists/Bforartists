@@ -32,6 +32,7 @@
 #define __ED_UTIL_H__
 
 struct bContext;
+struct SpaceLink;
 struct wmOperator;
 struct wmOperatorType;
 
@@ -42,19 +43,24 @@ void    ED_editors_exit(struct bContext *C);
 
 bool    ED_editors_flush_edits(const struct bContext *C, bool for_render);
 
-void ED_spacedata_id_unref(struct SpaceLink *sl, const struct ID *id);
+void    ED_spacedata_id_remap(struct ScrArea *sa, struct SpaceLink *sl, struct ID *old_id, struct ID *new_id);
+
+void    ED_OT_flush_edits(struct wmOperatorType *ot);
 
 /* ************** Undo ************************ */
 
 /* undo.c */
 void    ED_undo_push(struct bContext *C, const char *str);
 void    ED_undo_push_op(struct bContext *C, struct wmOperator *op);
+void    ED_undo_grouped_push(struct bContext *C, const char *str);
+void    ED_undo_grouped_push_op(struct bContext *C, struct wmOperator *op);
 void    ED_undo_pop_op(struct bContext *C, struct wmOperator *op);
 void    ED_undo_pop(struct bContext *C);
 void    ED_undo_redo(struct bContext *C);
 void    ED_OT_undo(struct wmOperatorType *ot);
 void    ED_OT_undo_push(struct wmOperatorType *ot);
 void    ED_OT_redo(struct wmOperatorType *ot);
+void    ED_OT_undo_redo(struct wmOperatorType *ot);
 void    ED_OT_undo_history(struct wmOperatorType *ot);
 
 int     ED_undo_operator_repeat(struct bContext *C, struct wmOperator *op);
@@ -74,9 +80,6 @@ void undo_editmode_push(struct bContext *C, const char *name,
 
 
 void    undo_editmode_clear(void);
-
-/* cut-paste buffer free */
-void ED_clipboard_posebuf_free(void);
 
 /* ************** XXX OLD CRUFT WARNING ************* */
 

@@ -320,7 +320,7 @@ static void bake_shade(void *handle, Object *ob, ShadeInput *shi, int UNUSED(qua
 		}
 		else {
 			unsigned char *imcol = (unsigned char *)(bs->rect + bs->rectx * y + x);
-			copy_v4_v4_char((char *)imcol, (char *)col);
+			copy_v4_v4_uchar(imcol, col);
 		}
 
 	}
@@ -375,8 +375,8 @@ static void bake_displacement(void *handle, ShadeInput *UNUSED(shi), float dist,
 			bs->vcol->b = col[2];
 		}
 		else {
-			char *imcol = (char *)(bs->rect + bs->rectx * y + x);
-			copy_v4_v4_char(imcol, (char *)col);
+			unsigned char *imcol = (unsigned char *)(bs->rect + bs->rectx * y + x);
+			copy_v4_v4_uchar(imcol, col);
 		}
 	}
 	if (bs->rect_mask) {
@@ -656,7 +656,7 @@ static int get_next_bake_face(BakeShade *bs)
 					bs->mloop = me->mloop + bs->mpoly->loopstart;
 
 					/* Tag mesh for reevaluation. */
-					me->id.flag |= LIB_DOIT;
+					me->id.tag |= LIB_TAG_DOIT;
 				}
 				else {
 					Image *ima = NULL;
@@ -690,14 +690,14 @@ static int get_next_bake_face(BakeShade *bs)
 					}
 					
 					if (ima->flag & IMA_USED_FOR_RENDER) {
-						ima->id.flag &= ~LIB_DOIT;
+						ima->id.tag &= ~LIB_TAG_DOIT;
 						BKE_image_release_ibuf(ima, ibuf, NULL);
 						continue;
 					}
 					
 					/* find the image for the first time? */
-					if (ima->id.flag & LIB_DOIT) {
-						ima->id.flag &= ~LIB_DOIT;
+					if (ima->id.tag & LIB_TAG_DOIT) {
+						ima->id.tag &= ~LIB_TAG_DOIT;
 						
 						/* we either fill in float or char, this ensures things go fine */
 						if (ibuf->rect_float)
@@ -926,7 +926,7 @@ static void *do_bake_thread(void *bs_v)
 void RE_bake_ibuf_filter(ImBuf *ibuf, char *mask, const int filter)
 {
 	/* must check before filtering */
-	const short is_new_alpha = (ibuf->planes != R_IMF_PLANES_RGBA) && BKE_imbuf_alpha_test(ibuf);
+	const bool is_new_alpha = (ibuf->planes != R_IMF_PLANES_RGBA) && BKE_imbuf_alpha_test(ibuf);
 
 	/* Margin */
 	if (filter) {
@@ -1026,7 +1026,7 @@ int RE_bake_shade_all_selected(Render *re, int type, Object *actob, short *do_up
 	if ((R.r.bake_flag & R_BAKE_VCOL) == 0) {
 		for (ima = G.main->image.first; ima; ima = ima->id.next) {
 			ImBuf *ibuf = BKE_image_acquire_ibuf(ima, NULL, NULL);
-			ima->id.flag |= LIB_DOIT;
+			ima->id.tag |= LIB_TAG_DOIT;
 			ima->flag &= ~IMA_USED_FOR_RENDER;
 			if (ibuf) {
 				ibuf->userdata = NULL; /* use for masking if needed */
@@ -1037,7 +1037,7 @@ int RE_bake_shade_all_selected(Render *re, int type, Object *actob, short *do_up
 
 	if (R.r.bake_flag & R_BAKE_VCOL) {
 		/* untag all meshes */
-		BKE_main_id_tag_listbase(&G.main->mesh, false);
+		BKE_main_id_tag_listbase(&G.main->mesh, LIB_TAG_DOIT, false);
 	}
 
 	BLI_init_threads(&threads, do_bake_thread, re->r.threads);
@@ -1110,7 +1110,7 @@ int RE_bake_shade_all_selected(Render *re, int type, Object *actob, short *do_up
 		}
 
 		for (ima = G.main->image.first; ima; ima = ima->id.next) {
-			if ((ima->id.flag & LIB_DOIT) == 0) {
+			if ((ima->id.tag & LIB_TAG_DOIT) == 0) {
 				ImBuf *ibuf = BKE_image_acquire_ibuf(ima, NULL, NULL);
 				BakeImBufuserData *userdata;
 

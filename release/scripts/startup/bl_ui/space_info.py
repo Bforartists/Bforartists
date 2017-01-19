@@ -1,4 +1,4 @@
-﻿# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -20,93 +20,6 @@
 import bpy
 from bpy.types import Header, Menu
 
-############################### Tabs to switch between layouts ###################################################
-
-class switch_layout_to_default(bpy.types.Operator):
-    """Switch to Default theme\nWARNING! Don't rename or remove the layout Default in the dropdown list\nThis will make the button disfunctional\nWarning! You cannot switch to another layout as long as a file browser is open"""     # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "wm.switch_layout_to_default"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Switch to Default layout"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
- 
-    def execute(self, context):        # execute() is called by blender when running the operator.       
-        for area in bpy.context.screen.areas:
-            if area.type == 'FILE_BROWSER': # Switching layouts with a file browser open can lead to a crash to desktop. So we need to check if a file browser is open.
-                return {'FINISHED'}
-            else:
-                bpy.context.window.screen = bpy.data.screens['Default']
-                return {'FINISHED'}
-
-class switch_layout_to_animation(bpy.types.Operator):
-    """Switch to Animation layout\nWARNING! Don't rename or remove the layout Animation in the dropdown list\nThis will make the button disfunctional\nWarning! You cannot switch to another layout as long as a file browser is open"""  
-    bl_idname = "wm.switch_layout_to_animation"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Switch to Animation layout"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        for area in bpy.context.screen.areas:
-            if area.type == 'FILE_BROWSER':
-                return {'FINISHED'}
-            else:
-                bpy.context.window.screen = bpy.data.screens['Animation']
-                return {'FINISHED'}
-
-class switch_layout_to_uv(bpy.types.Operator):
-    """Switch to UV Editing layout\nWARNING! Don't rename or remove the layout UV Editing in the dropdown list\nThis will make the button disfunctional\nWarning! You cannot switch to another layout as long as a file browser is open"""  
-    bl_idname = "wm.switch_layout_to_uv"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Switch to UV Editing layout"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        for area in bpy.context.screen.areas:
-            if area.type == 'FILE_BROWSER':
-                return {'FINISHED'}
-            else:
-                bpy.context.window.screen = bpy.data.screens['UV Editing']
-                return {'FINISHED'}
-
-class switch_layout_to_compositing(bpy.types.Operator):
-    """Switch to Compositing layout\nWARNING! Don't rename or remove the layout Compositing in the dropdown list\nThis will make the button disfunctional\nWarning! You cannot switch to another layout as long as a file browser is open"""  
-    bl_idname = "wm.switch_layout_to_compositing"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Switch to Compositing layout"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        for area in bpy.context.screen.areas:
-            if area.type == 'FILE_BROWSER':
-                return {'FINISHED'}
-            else:
-                bpy.context.window.screen = bpy.data.screens['Compositing']
-                return {'FINISHED'}
-
-class switch_layout_to_scripting(bpy.types.Operator):
-    """Switch to Scripting layout\nWARNING! Don't rename or remove the layout Scripting in the dropdown list\nThis will make the button disfunctional\nWarning! You cannot switch to another layout as long as a file browser is open"""  
-    bl_idname = "wm.switch_layout_to_scripting"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Switch to Scripting layout"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        for area in bpy.context.screen.areas:
-            if area.type == 'FILE_BROWSER':
-                return {'FINISHED'}
-            else:
-                bpy.context.window.screen = bpy.data.screens['Scripting']
-                return {'FINISHED'}
-
-class switch_layout_to_motiontracking(bpy.types.Operator):
-    """Switch to Motion Tracking layout\nWARNING! Don't rename or remove the layout Motion Tracking in the dropdown list\nThis will make the button disfunctional\nWarning! You cannot switch to another layout as long as a file browser is open"""  
-    bl_idname = "wm.switch_layout_to_motiontracking"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Switch to Motion Tracking layout"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        for area in bpy.context.screen.areas:
-            if area.type == 'FILE_BROWSER':
-                return {'FINISHED'}
-            else:
-                bpy.context.window.screen = bpy.data.screens['Motion Tracking']
-                return {'FINISHED'}
-
-###########################################################################################################
 
 class INFO_HT_header(Header):
     bl_space_type = 'INFO'
@@ -118,7 +31,9 @@ class INFO_HT_header(Header):
         scene = context.scene
         rd = scene.render
 
-        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
+        row = layout.row(align=True)
+        row.template_header()
+
         INFO_MT_editor_menus.draw_collapsible(context, layout)
 
         if window.screen.show_fullscreen:
@@ -126,13 +41,12 @@ class INFO_HT_header(Header):
             layout.separator()
         else:
             layout.template_ID(context.window, "screen", new="screen.new", unlink="screen.delete")
-           # layout.template_ID(context.screen, "scene", new="scene.new", unlink="scene.delete") # bfa - removed the scene drodpown box
+            layout.template_ID(context.screen, "scene", new="scene.new", unlink="scene.delete")
 
         layout.separator()
 
-
-        #if rd.has_multiple_engines: # bfa - removed the renderer drodpown box, and moved it to Properties editor.
-        #    layout.prop(rd, "engine", text="")
+        if rd.has_multiple_engines:
+            layout.prop(rd, "engine", text="")
 
         layout.separator()
 
@@ -154,29 +68,9 @@ class INFO_HT_header(Header):
             row.label(bpy.app.autoexec_fail_message)
             return
 
-        row.operator("wm.switch_layout_to_default", text="Def")
-        row.operator("wm.switch_layout_to_animation", text="Ani")
-        row.operator("wm.switch_layout_to_uv", text="UV")
-        row.operator("wm.switch_layout_to_compositing", text="Com")
-        row.operator("wm.switch_layout_to_scripting", text="Scr")
-        row.operator("wm.switch_layout_to_motiontracking", text="MoT")
-
+        row.operator("wm.splash", text="", icon='BLENDER', emboss=False)
         row.label(text=scene.statistics(), translate=False)
 
-# bfa - show hide the editormenu
-class ALL_MT_editormenu(Menu):
-    bl_label = ""
-
-    def draw(self, context):
-        self.draw_menus(self.layout, context)
-
-    @staticmethod
-    def draw_menus(layout, context):
-
-        row = layout.row(align=True)
-        row.template_header() # editor type menus
-
-# --------------------------------menu items, down to line 310
 
 class INFO_MT_editor_menus(Menu):
     bl_idname = "INFO_MT_editor_menus"
@@ -263,7 +157,9 @@ class INFO_MT_file_import(Menu):
 
     def draw(self, context):
         if bpy.app.build_options.collada:
-            self.layout.operator("wm.collada_import", text="Collada (Default) (.dae)", icon ="LOAD_DAE")
+            self.layout.operator("wm.collada_import", text="Collada (Default) (.dae)")
+        if bpy.app.build_options.alembic:
+            self.layout.operator("wm.alembic_import", text="Alembic (.abc)")
 
 
 class INFO_MT_file_export(Menu):
@@ -272,7 +168,9 @@ class INFO_MT_file_export(Menu):
 
     def draw(self, context):
         if bpy.app.build_options.collada:
-            self.layout.operator("wm.collada_export", text="Collada (Default) (.dae)", icon ="SAVE_DAE")
+            self.layout.operator("wm.collada_export", text="Collada (Default) (.dae)")
+        if bpy.app.build_options.alembic:
+            self.layout.operator("wm.alembic_export", text="Alembic (.abc)")
 
 
 class INFO_MT_file_external_data(Menu):
@@ -302,7 +200,6 @@ class INFO_MT_file_external_data(Menu):
         layout.operator("file.find_missing_files")
 
 
-
 class INFO_MT_file_previews(Menu):
     bl_label = "Data Previews"
 
@@ -310,6 +207,12 @@ class INFO_MT_file_previews(Menu):
         layout = self.layout
 
         layout.operator("wm.previews_ensure")
+        layout.operator("wm.previews_batch_generate")
+
+        layout.separator()
+
+        layout.operator("wm.previews_clear")
+        layout.operator("wm.previews_batch_clear")
 
 
 class INFO_MT_game(Menu):
@@ -341,19 +244,18 @@ class INFO_MT_render(Menu):
 
         layout.operator("render.render", text="Render Image", icon='RENDER_STILL').use_viewport = True
         props = layout.operator("render.render", text="Render Animation", icon='RENDER_ANIMATION')
-        layout.operator("sound.mixdown", text="Mixdown Audio", icon='PLAY_AUDIO')
         props.animation = True
         props.use_viewport = True
 
         layout.separator()
 
-        layout.operator("render.opengl", text="OpenGL Render Image", icon = 'RENDER_STILL_VIEW')
-        layout.operator("render.opengl", text="OpenGL Render Animation", icon = 'RENDER_ANI_VIEW').animation = True
+        layout.operator("render.opengl", text="OpenGL Render Image")
+        layout.operator("render.opengl", text="OpenGL Render Animation").animation = True
         layout.menu("INFO_MT_opengl_render")
 
         layout.separator()
 
-        layout.operator("render.view_show", icon = 'HIDE_RENDERVIEW')
+        layout.operator("render.view_show")
         layout.operator("render.play_rendered_anim", icon='PLAY')
 
 
@@ -364,8 +266,9 @@ class INFO_MT_opengl_render(Menu):
         layout = self.layout
 
         rd = context.scene.render
-
         layout.prop(rd, "use_antialiasing")
+        layout.prop(rd, "use_full_sample")
+
         layout.prop_menu_enum(rd, "antialiasing_samples")
         layout.prop_menu_enum(rd, "alpha_mode")
 
@@ -394,16 +297,6 @@ class INFO_MT_window(Menu):
             layout.separator()
             layout.operator("wm.set_stereo_3d", icon='CAMERA_STEREO')
 
-        layout.separator()
-
-        layout.menu("WM_OT_redraw_timer", icon='BLENDER') #Redraw timer sub menu - Debug stuff
-        layout.operator("wm.debug_menu") # debug menu
-        layout.operator("script.reload") # Reload all python scripts. Mainly meant for the UI scripts.
-
-        layout.separator()
-
-        layout.operator("wm.search_menu") # The search menu. Note that this just calls the pure search menu, and not the whole search menu addon.
-
 
 class INFO_MT_help(Menu):
     bl_label = "Help"
@@ -411,36 +304,41 @@ class INFO_MT_help(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("wm.url_open", text="Manual", icon='HELP').url = "http://www.bforartists.de/wiki/Manual"
-        layout.operator("wm.url_open", text="Release notes", icon='URL').url = "http://www.bforartists.de/wiki/release-notes"
+        layout.operator(
+                "wm.url_open", text="Manual", icon='HELP',
+                ).url = "https://www.blender.org/manual"
+        layout.operator(
+                "wm.url_open", text="Release Log", icon='URL',
+                ).url = "http://wiki.blender.org/index.php/Dev:Ref/Release_Notes/%d.%d" % bpy.app.version[:2]
         layout.separator()
 
-        layout.operator("wm.url_open", text="Bforartists Website", icon='URL').url = "http://www.bforartists.de"
+        layout.operator(
+                "wm.url_open", text="Blender Website", icon='URL',
+                ).url = "https://www.blender.org"
+        layout.operator(
+                "wm.url_open", text="Blender Store", icon='URL',
+                ).url = "https://store.blender.org"
+        layout.operator(
+                "wm.url_open", text="Developer Community", icon='URL',
+                ).url = "https://www.blender.org/get-involved/"
+        layout.operator(
+                "wm.url_open", text="User Community", icon='URL',
+                ).url = "https://www.blender.org/support/user-community"
         layout.separator()
-        layout.operator("wm.url_open", text="Report a Bug", icon='URL').url = "http://www.bforartists.de/node/add/project-issue/bforartists_bugtracker"
+        layout.operator(
+                "wm.url_open", text="Report a Bug", icon='URL',
+                ).url = "https://developer.blender.org/maniphest/task/edit/form/1"
         layout.separator()
 
-        layout.operator("wm.url_open", text="Python API Reference", icon='URL').url = "http://www.bforartists.de/pythonapi/contents.html"
+        layout.operator(
+                "wm.url_open", text="Python API Reference", icon='URL',
+                ).url = bpy.types.WM_OT_doc_view._prefix
+
+        layout.operator("wm.operator_cheat_sheet", icon='TEXT')
         layout.operator("wm.sysinfo", icon='TEXT')
         layout.separator()
 
         layout.operator("wm.splash", icon='BLENDER')
-
-#Redraw timer sub menu - Debug stuff
-class WM_OT_redraw_timer(Menu):
-    bl_label = "Redraw Timer"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("wm.redraw_timer", text = 'Draw Region').type ='DRAW'
-        layout.operator("wm.redraw_timer", text = 'Draw Region + Swap').type ='DRAW_SWAP'
-        layout.operator("wm.redraw_timer", text = 'Draw Window').type ='DRAW_WIN'
-        layout.operator("wm.redraw_timer", text = 'Draw Window + Swap').type ='DRAW_WIN_SWAP'
-        layout.operator("wm.redraw_timer", text = 'Anim Step').type ='ANIM_STEP'
-        layout.operator("wm.redraw_timer", text = 'Anim Play').type ='ANIM_PLAY'
-        layout.operator("wm.redraw_timer", text = 'Undo/Redo').type ='UNDO'
-
 
 if __name__ == "__main__":  # only for live edit.
     bpy.utils.register_module(__name__)

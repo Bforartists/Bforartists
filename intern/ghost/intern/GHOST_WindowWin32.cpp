@@ -43,7 +43,9 @@
 #else
 #  include "GHOST_ContextWGL.h"
 #endif
-
+#ifdef WIN32_COMPOSITING
+#include <Dwmapi.h>
+#endif
 
 #include <math.h>
 #include <string.h>
@@ -70,7 +72,8 @@ GHOST_WindowWin32::GHOST_WindowWin32(GHOST_SystemWin32 *system,
         GHOST_TUns32 height,
         GHOST_TWindowState state,
         GHOST_TDrawingContextType type,
-        bool wantStereoVisual, bool warnOld,
+	bool wantStereoVisual,
+	bool alphaBackground,
         GHOST_TUns16 wantNumOfAASamples,
         GHOST_TEmbedderWindowID parentwindowhwnd,
         bool is_debug)
@@ -83,6 +86,7 @@ GHOST_WindowWin32::GHOST_WindowWin32(GHOST_SystemWin32 *system,
       m_hasGrabMouse(false),
       m_nPressedButtons(0),
       m_customCursor(0),
+      m_wantAlphaBackground(alphaBackground),
       m_wintab(NULL),
       m_tabletData(NULL),
       m_tablet(0),
@@ -91,38 +95,6 @@ GHOST_WindowWin32::GHOST_WindowWin32(GHOST_SystemWin32 *system,
       m_parentWindowHwnd(parentwindowhwnd),
       m_debug_context(is_debug)
 {
-	OSVERSIONINFOEX versionInfo;
-	bool hasMinVersionForTaskbar = false;
-	
-	ZeroMemory(&versionInfo, sizeof(OSVERSIONINFOEX));
-	
-	versionInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
-	
-#if !defined(WITH_GL_EGL)
-	if (!warnOld)
-		GHOST_ContextWGL::unSetWarningOld();
-#else
-	(void)(warnOld);
-#endif
-
-	if (!GetVersionEx((OSVERSIONINFO *)&versionInfo)) {
-		versionInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-		if (GetVersionEx((OSVERSIONINFO *)&versionInfo)) {
-			if ((versionInfo.dwMajorVersion == 6 && versionInfo.dwMinorVersion >= 1) ||
-			    (versionInfo.dwMajorVersion >= 7))
-			{
-				hasMinVersionForTaskbar = true;
-			}
-		}
-	}
-	else {
-		if ((versionInfo.dwMajorVersion == 6 && versionInfo.dwMinorVersion >= 1) ||
-		    (versionInfo.dwMajorVersion >= 7))
-		{
-			hasMinVersionForTaskbar = true;
-		}
-	}
-
 	if (state != GHOST_kWindowStateFullScreen) {
 		RECT rect;
 		MONITORINFO monitor;
@@ -188,17 +160,17 @@ GHOST_WindowWin32::GHOST_WindowWin32(GHOST_SystemWin32 *system,
 		
 		wchar_t *title_16 = alloc_utf16_from_8((char *)(const char *)title, 0);
 		m_hWnd = ::CreateWindowW(
-		    s_windowClassName,          // pointer to registered class name
-		    title_16,                   // pointer to window name
-		    wintype,                    // window style
-		    left,                       // horizontal position of window
-		    top,                        // vertical position of window
-		    width,                      // window width
-		    height,                     // window height
-		    (HWND) m_parentWindowHwnd,  // handle to parent or owner window
-		    0,                          // handle to menu or child-window identifier
-		    ::GetModuleHandle(0),       // handle to application instance
-		    0);                         // pointer to window-creation data
+			s_windowClassName,          // pointer to registered class name
+			title_16,                   // pointer to window name
+			wintype,                    // window style
+			left,                       // horizontal position of window
+			top,                        // vertical position of window
+			width,                      // window width
+			height,                     // window height
+			(HWND)m_parentWindowHwnd,  // handle to parent or owner window
+			0,                          // handle to menu or child-window identifier
+			::GetModuleHandle(0),       // handle to application instance
+			0);                         // pointer to window-creation data
 		free(title_16);
 	}
 	else {
@@ -250,6 +222,24 @@ GHOST_WindowWin32::GHOST_WindowWin32(GHOST_SystemWin32 *system,
 			}
 
 			::ShowWindow(m_hWnd, nCmdShow);
+#ifdef WIN32_COMPOSITING
+			if (alphaBackground && parentwindowhwnd == 0) {
+				
+				HRESULT hr = S_OK;
+
+				// Create and populate the Blur Behind structure
+				DWM_BLURBEHIND bb = { 0 };
+
+				// Enable Blur Behind and apply to the entire client area
+				bb.dwFlags = DWM_BB_ENABLE | DWM_BB_BLURREGION;
+				bb.fEnable = true;
+				bb.hRgnBlur = CreateRectRgn(0, 0, -1, -1);
+
+				// Apply Blur Behind
+				hr = DwmEnableBlurBehindWindow(m_hWnd, &bb);
+				DeleteObject(bb.hRgnBlur);
+			}
+#endif
 			// Force an initial paint of the window
 			::UpdateWindow(m_hWnd);
 		}
@@ -326,11 +316,7 @@ GHOST_WindowWin32::GHOST_WindowWin32(GHOST_SystemWin32 *system,
 			}
 		}
 	}
-
-	if (hasMinVersionForTaskbar)
-		CoCreateInstance(CLSID_TaskbarList, NULL, CLSCTX_INPROC_SERVER, IID_ITaskbarList, (LPVOID *)&m_Bar);
-	else
-		m_Bar = NULL;
+	CoCreateInstance(CLSID_TaskbarList, NULL, CLSCTX_INPROC_SERVER, IID_ITaskbarList3, (LPVOID *)&m_Bar);
 }
 
 
@@ -346,8 +332,7 @@ GHOST_WindowWin32::~GHOST_WindowWin32()
 		if (fpWTClose) {
 			if (m_tablet)
 				fpWTClose(m_tablet);
-			if (m_tabletData)
-				delete m_tabletData;
+			delete m_tabletData;
 			m_tabletData = NULL;
 		}
 	}
@@ -368,7 +353,7 @@ GHOST_WindowWin32::~GHOST_WindowWin32()
 			// Release our reference of the DropTarget and it will delete itself eventually.
 			m_dropTarget->Release();
 		}
-
+		::SetWindowLongPtr(m_hWnd, GWLP_USERDATA, NULL);
 		::DestroyWindow(m_hWnd);
 		m_hWnd = 0;
 	}
@@ -630,16 +615,18 @@ GHOST_Context *GHOST_WindowWin32::newDrawingContext(GHOST_TDrawingContextType ty
 #if defined(WITH_GL_PROFILE_CORE)
 		GHOST_Context *context = new GHOST_ContextWGL(
 		        m_wantStereoVisual,
+		        m_wantAlphaBackground,
 		        m_wantNumOfAASamples,
 		        m_hWnd,
 		        m_hDC,
-		        WGL_CONTEXT_OPENGL_CORE_PROFILE_BIT,
+		        WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
 		        3, 2,
 		        GHOST_OPENGL_WGL_CONTEXT_FLAGS,
 		        GHOST_OPENGL_WGL_RESET_NOTIFICATION_STRATEGY);
 #elif defined(WITH_GL_PROFILE_ES20)
 		GHOST_Context *context = new GHOST_ContextWGL(
 		        m_wantStereoVisual,
+		        m_wantAlphaBackground,
 		        m_wantNumOfAASamples,
 		        m_hWnd,
 		        m_hDC,
@@ -650,12 +637,19 @@ GHOST_Context *GHOST_WindowWin32::newDrawingContext(GHOST_TDrawingContextType ty
 #elif defined(WITH_GL_PROFILE_COMPAT)
 		GHOST_Context *context = new GHOST_ContextWGL(
 		        m_wantStereoVisual,
+		        m_wantAlphaBackground,
 		        m_wantNumOfAASamples,
 		        m_hWnd,
 		        m_hDC,
+#if 1
 		        0, // profile bit
-		        0, 0,
-		        GHOST_OPENGL_WGL_CONTEXT_FLAGS,
+		        2, 1, // GL version requested
+#else
+		        // switch to this for Blender 2.8 development
+		        WGL_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB,
+		        3, 2,
+#endif
+		        (m_debug_context ? WGL_CONTEXT_DEBUG_BIT_ARB : 0),
 		        GHOST_OPENGL_WGL_RESET_NOTIFICATION_STRATEGY);
 #else
 #  error
@@ -691,8 +685,14 @@ GHOST_Context *GHOST_WindowWin32::newDrawingContext(GHOST_TDrawingContextType ty
 		        m_wantNumOfAASamples,
 		        m_hWnd,
 		        m_hDC,
+#if 1
 		        0, // profile bit
-		        0, 0,
+		        2, 1, // GL version requested
+#else
+		        // switch to this for Blender 2.8 development
+		        EGL_CONTEXT_OPENGL_COMPATIBILITY_PROFILE_BIT,
+		        3, 2,
+#endif
 		        GHOST_OPENGL_EGL_CONTEXT_FLAGS,
 		        GHOST_OPENGL_EGL_RESET_NOTIFICATION_STRATEGY,
 		        EGL_OPENGL_API);

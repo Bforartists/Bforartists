@@ -103,16 +103,19 @@ private:
 	bool				m_bInitialized;
 	int					m_activecam;
 	bool				m_bFixedTime;
+	bool				m_useExternalClock;
 	
 	
 	bool				m_firstframe;
 	int					m_currentFrame;
 
-	double				m_frameTime;//discrete timestamp of the 'game logic frame'
-	double				m_clockTime;//current time
-	double				m_previousClockTime;//previous clock time
-	double				m_previousAnimTime; //the last time animations were updated
+	double				m_frameTime; // current logic game time
+	double				m_clockTime; // game time for the next rendering step
+	double				m_previousClockTime; // game time of the previous rendering step
+	double				m_previousAnimTime; //game time when the animations were last updated
 	double				m_remainingTime;
+	double				m_timescale; // time scaling parameter. if > 1.0, time goes faster than real-time. If < 1.0, times goes slower than real-time.
+	double				m_previousRealTime;
 
 	static int				m_maxLogicFrame;	/* maximum number of consecutive logic frame */
 	static int				m_maxPhysicsFrame;	/* maximum number of consecutive physics frame */
@@ -125,6 +128,8 @@ private:
 	static double			m_suspendeddelta;
 
 	static short			m_exitkey; /* Key used to exit the BGE */
+
+	static bool				m_doRender;  /* whether or not the scene should be rendered after the logic frame */
 
 	int					m_exitcode;
 	STR_String			m_exitstring;
@@ -140,6 +145,8 @@ private:
 	float			m_overrideCamNear;
 	float			m_overrideCamFar;
 	float			m_overrideCamLens;
+	/// Default camera zoom.
+	float m_overrideCamZoom;
 
 	bool m_stereo;
 	int m_curreye;
@@ -194,6 +201,8 @@ private:
 	float					m_overrideFrameColorG;
 	/** Blue component of framing bar color. */
 	float					m_overrideFrameColorB;
+	/** alpha component of framing bar color. */
+	float					m_overrideFrameColorA;
 
 	/** Settings that doesn't go away with Game Actuator */
 	GlobalSettings m_globalsettings;
@@ -204,7 +213,6 @@ private:
 	void					RenderFrame(KX_Scene* scene, KX_Camera* cam);
 	void					PostRenderScene(KX_Scene* scene);
 	void					RenderDebugProperties();
-	void					RenderShadowBuffers(KX_Scene *scene);
 
 public:
 	KX_KetsjiEngine(class KX_ISystem* system);
@@ -244,6 +252,7 @@ public:
 	///returns true if an update happened to indicate -> Render
 	bool			NextFrame();
 	void			Render();
+	void			RenderShadowBuffers(KX_Scene *scene);
 	
 	void			StartEngine(bool clearIpo);
 	void			StopEngine();
@@ -266,6 +275,7 @@ public:
 
 	void			GetSceneViewport(KX_Scene* scene, KX_Camera* cam, RAS_Rect& area, RAS_Rect& viewport);
 
+	/// Sets zoom for camera objects, useful only with extend and scale framing mode.
 	void SetCameraZoom(float camzoom);
 	
 	void EnableCameraOverride(const STR_String& forscene);
@@ -275,6 +285,8 @@ public:
 	void SetCameraOverrideViewMatrix(const MT_CmMatrix4x4& mat);
 	void SetCameraOverrideClipping(float near, float far);
 	void SetCameraOverrideLens(float lens);
+	/// Sets zoom for default camera, = 2 in embedded mode.
+	void SetCameraOverrideZoom(float camzoom);
 
 	// Update animations for object in this scene
 	void UpdateAnimations(KX_Scene *scene);
@@ -292,15 +304,37 @@ public:
 	bool GetUseFixedTime(void) const;
 
 	/**
-	 * Returns current render frame clock time
+	 * Sets if the BGE relies on a external clock or its own internal clock
+	 */
+	void SetUseExternalClock(bool bUseExternalClock);
+
+	/**
+	 * Returns if we rely on an external clock
+	 * \return Current setting
+	 */
+	bool GetUseExternalClock(void) const;
+
+	/**
+	 * Returns next render frame game time
 	 */
 	double GetClockTime(void) const;
+
 	/**
-	 * Returns current logic frame clock time
+	 * Set the next render frame game time. It will impact also frame time, as
+	 * this one is derived from clocktime
+	 */
+	void SetClockTime(double externalClockTime);
+
+	/**
+	 * Returns current logic frame game time
 	 */
 	double GetFrameTime(void) const;
 
+	/**
+	 * Returns the real (system) time
+	 */
 	double GetRealTime(void) const;
+
 	/**
 	 * Returns the difference between the local time of the scene (when it
 	 * was running and not suspended) and the "curtime"
@@ -356,9 +390,29 @@ public:
 	 */
 	static double GetAverageFrameRate();
 
+	/**
+	 * Gets the time scale multiplier 
+	 */
+	double GetTimeScale() const;
+
+	/**
+	 * Sets the time scale multiplier
+	 */
+	void SetTimeScale(double scale);
+
 	static void SetExitKey(short key);
 
 	static short GetExitKey();
+
+	/**
+	 * Activate or deactivates the render of the scene after the logic frame
+	 * \param render	true (render) or false (do not render)
+	 */
+	static void SetRender(bool render);
+	/**
+	 * Get the current render flag value
+	 */
+	static bool GetRender();
 
 	/**
 	 * \Sets the display for frame rate on or off.
@@ -445,7 +499,7 @@ public:
 	 * \param g Green component of the override color.
 	 * \param b Blue component of the override color.
 	 */
-	void SetOverrideFrameColor(float r, float g, float b);
+	void SetOverrideFrameColor(float r, float g, float b, float a);
 
 	/** 
 	 * Returns the color used for framing bar color instead of the one in the Blender file's scenes.
@@ -453,7 +507,7 @@ public:
 	 * \param g Green component of the override color.
 	 * \param b Blue component of the override color.
 	 */
-	void GetOverrideFrameColor(float& r, float& g, float& b) const;
+	void GetOverrideFrameColor(float& r, float& g, float& b, float& a) const;
 
 	KX_Scene*		CreateScene(const STR_String& scenename);
 	KX_Scene*		CreateScene(Scene *scene, bool libloading=false);

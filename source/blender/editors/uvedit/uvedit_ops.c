@@ -170,7 +170,7 @@ void ED_object_assign_active_image(Main *bmain, Object *ob, int mat_nr, Image *i
 
 	if (node && is_image_texture_node(node)) {
 		node->id = &ima->id;
-		ED_node_tag_update_nodetree(bmain, ma->nodetree);
+		ED_node_tag_update_nodetree(bmain, ma->nodetree, node);
 	}
 }
 
@@ -727,7 +727,7 @@ static bool uvedit_center(Scene *scene, Image *ima, Object *obedit, float cent[2
 {
 	bool changed = false;
 	
-	if (mode == V3D_CENTER) {  /* bounding box */
+	if (mode == V3D_AROUND_CENTER_BOUNDS) {  /* bounding box */
 		float min[2], max[2];
 		if (ED_uvedit_minmax(scene, ima, obedit, min, max)) {
 			mid_v2_v2v2(cent, min, max);
@@ -4302,7 +4302,7 @@ void ED_keymap_uvedit(wmKeyConfig *keyconf)
 	/* border/circle selection */
 	kmi = WM_keymap_add_item(keymap, "UV_OT_select_border", BKEY, KM_PRESS, 0, 0);
 	RNA_boolean_set(kmi->ptr, "pinned", false);
-	kmi = WM_keymap_add_item(keymap, "UV_OT_select_border", BKEY, KM_PRESS, KM_SHIFT, 0);
+	kmi = WM_keymap_add_item(keymap, "UV_OT_select_border", BKEY, KM_PRESS, KM_CTRL, 0);
 	RNA_boolean_set(kmi->ptr, "pinned", true);
 
 	WM_keymap_add_item(keymap, "UV_OT_circle_select", CKEY, KM_PRESS, 0, 0);

@@ -92,7 +92,7 @@ void TEXT_OT_properties(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Properties";
-	ot->description = "Properties\nToggle text properties panel";
+	ot->description = "Toggle the properties region visibility";
 	ot->idname = "TEXT_OT_properties";
 	
 	/* api callbacks */
@@ -124,7 +124,7 @@ void TEXT_OT_start_find(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Find";
-	ot->description = "Find\nStart searching text";
+	ot->description = "Start searching text";
 	ot->idname = "TEXT_OT_start_find";
 	
 	/* api callbacks */

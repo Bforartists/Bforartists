@@ -106,13 +106,12 @@ void multires_customdata_delete(Mesh *me)
 }
 
 /** Grid hiding **/
-static BLI_bitmap *multires_mdisps_upsample_hidden(BLI_bitmap *lo_hidden,
-                                                   int lo_level,
-                                                   int hi_level,
+static BLI_bitmap *multires_mdisps_upsample_hidden(
+        BLI_bitmap *lo_hidden,
+        int lo_level, int hi_level,
 
-                                                   /* assumed to be at hi_level (or
-                                                    *  null) */
-                                                   const BLI_bitmap *prev_hidden)
+        /* assumed to be at hi_level (or null) */
+        const BLI_bitmap *prev_hidden)
 {
 	BLI_bitmap *subd;
 	int hi_gridsize = BKE_ccg_gridsize(hi_level);
@@ -1415,7 +1414,7 @@ void multires_stitch_grids(Object *ob)
 		int totface;
 
 		if (ccgdm->pbvh) {
-			BKE_pbvh_get_grid_updates(ccgdm->pbvh, 0, (void ***)&faces, &totface);
+			BKE_pbvh_get_grid_updates(ccgdm->pbvh, false, (void ***)&faces, &totface);
 
 			if (totface) {
 				ccgSubSurf_stitchFaces(ccgdm->ss, 0, faces, totface);
@@ -1464,10 +1463,10 @@ DerivedMesh *multires_make_derived_from_derived(DerivedMesh *dm,
 	gridData = result->getGridData(result);
 	result->getGridKey(result, &key);
 
-	subGridData = MEM_callocN(sizeof(CCGElem *) * numGrids, "subGridData*");
+	subGridData = MEM_mallocN(sizeof(CCGElem *) * numGrids, "subGridData*");
 
 	for (i = 0; i < numGrids; i++) {
-		subGridData[i] = MEM_callocN(key.elem_size * gridSize * gridSize, "subGridData");
+		subGridData[i] = MEM_mallocN(key.elem_size * gridSize * gridSize, "subGridData");
 		memcpy(subGridData[i], gridData[i], key.elem_size * gridSize * gridSize);
 	}
 
@@ -1855,7 +1854,7 @@ static void multires_load_old_dm(DerivedMesh *dm, Mesh *me, int totlvl)
 	Multires *mr = me->mr;
 	MVert *vsrc, *vdst;
 	unsigned int src, dst;
-	int st = multires_side_tot[totlvl - 1] - 1;
+	int st_last = multires_side_tot[totlvl - 1] - 1;
 	int extedgelen = multires_side_tot[totlvl] - 2;
 	int *vvmap; // inorder for dst, map to src
 	int crossedgelen;
@@ -1901,7 +1900,7 @@ static void multires_load_old_dm(DerivedMesh *dm, Mesh *me, int totlvl)
 		int sides = lvl1->faces[i].v[3] ? 4 : 3;
 
 		vvmap[dst] = src + lvl1->totedge + i;
-		dst += 1 + sides * (st - 1) * st;
+		dst += 1 + sides * (st_last - 1) * st_last;
 	}
 
 
@@ -1943,7 +1942,7 @@ static void multires_load_old_dm(DerivedMesh *dm, Mesh *me, int totlvl)
 				lvl = lvl->next;
 			}
 
-			dst += sides * (st - 1) * st;
+			dst += sides * (st_last - 1) * st_last;
 
 			if (sides == 4) ++totquad;
 			else ++tottri;
@@ -1967,7 +1966,7 @@ static void multires_load_old_dm(DerivedMesh *dm, Mesh *me, int totlvl)
 		dst = 0;
 		for (j = 0; j < lvl1->totface; ++j) {
 			int sides = lvl1->faces[j].v[3] ? 4 : 3;
-			int ldst = dst + 1 + sides * (st - 1);
+			int ldst = dst + 1 + sides * (st_last - 1);
 
 			for (s = 0; s < sides; ++s) {
 				int st2 = multires_side_tot[totlvl - 1] - 2;
@@ -1984,7 +1983,7 @@ static void multires_load_old_dm(DerivedMesh *dm, Mesh *me, int totlvl)
 				                        find_old_edge(emap[0], lvl1->edges, cv, nv)->mid,
 				                        st2, st4);
 
-				ldst += (st - 1) * (st - 1);
+				ldst += (st_last - 1) * (st_last - 1);
 			}
 
 
@@ -2227,7 +2226,7 @@ static void multires_apply_smat(Scene *scene, Object *ob, float smat[3][3])
 	dGridSize = multires_side_tot[high_mmd.totlvl];
 	dSkip = (dGridSize - 1) / (gridSize - 1);
 
-#pragma omp parallel for private(i) if (me->totface * gridSize * gridSize * 4 >= CCG_OMP_LIMIT)
+#pragma omp parallel for private(i) if (me->totloop * gridSize * gridSize >= CCG_OMP_LIMIT)
 	for (i = 0; i < me->totpoly; ++i) {
 		const int numVerts = mpoly[i].totloop;
 		MDisps *mdisp = &mdisps[mpoly[i].loopstart];

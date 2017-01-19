@@ -41,6 +41,7 @@
 
 #include "BLI_blenlib.h"
 #include "BLI_math.h"
+#include "BLI_string_utils.h"
 #include "BLI_utildefines.h"
 
 #include "BKE_context.h"
@@ -80,8 +81,10 @@ static const char *modifier_name[LS_MODIFIER_NUM] = {
 	"3D Curvature",
 };
 
-static void default_linestyle_settings(FreestyleLineStyle *linestyle)
+void BKE_linestyle_init(FreestyleLineStyle *linestyle)
 {
+	BLI_assert(MEMCMP_STRUCT_OFS_IS_ZERO(linestyle, id));
+
 	linestyle->panel = LS_PANEL_STROKES;
 	linestyle->r = linestyle->g = linestyle->b = 0.0f;
 	linestyle->alpha = 1.0f;
@@ -118,29 +121,30 @@ FreestyleLineStyle *BKE_linestyle_new(struct Main *bmain, const char *name)
 
 	linestyle = (FreestyleLineStyle *)BKE_libblock_alloc(bmain, ID_LS, name);
 
-	default_linestyle_settings(linestyle);
+	BKE_linestyle_init(linestyle);
 
 	return linestyle;
 }
 
+/** Free (or release) any data used by this linestyle (does not free the linestyle itself). */
 void BKE_linestyle_free(FreestyleLineStyle *linestyle)
 {
 	LineStyleModifier *m;
-
-	MTex *mtex;
 	int a;
 
+	BKE_animdata_free(&linestyle->id, false);
+
 	for (a = 0; a < MAX_MTEX; a++) {
-		mtex = linestyle->mtex[a];
-		if (mtex && mtex->tex) mtex->tex->id.us--;
-		if (mtex) MEM_freeN(mtex);
+		MEM_SAFE_FREE(linestyle->mtex[a]);
 	}
+
+	/* is no lib link block, but linestyle extension */
 	if (linestyle->nodetree) {
 		ntreeFreeTree(linestyle->nodetree);
 		MEM_freeN(linestyle->nodetree);
+		linestyle->nodetree = NULL;
 	}
 
-	BKE_animdata_free(&linestyle->id);
 	while ((m = (LineStyleModifier *)linestyle->color_modifiers.first))
 		BKE_linestyle_color_modifier_remove(linestyle, m);
 	while ((m = (LineStyleModifier *)linestyle->alpha_modifiers.first))
@@ -168,7 +172,7 @@ FreestyleLineStyle *BKE_linestyle_copy(struct Main *bmain, FreestyleLineStyle *l
 		}
 	}
 	if (linestyle->nodetree) {
-		new_linestyle->nodetree = ntreeCopyTree(linestyle->nodetree);
+		new_linestyle->nodetree = ntreeCopyTree(bmain, linestyle->nodetree);
 	}
 
 	new_linestyle->r = linestyle->r;
@@ -215,11 +219,14 @@ FreestyleLineStyle *BKE_linestyle_copy(struct Main *bmain, FreestyleLineStyle *l
 	for (m = (LineStyleModifier *)linestyle->geometry_modifiers.first; m; m = m->next)
 		BKE_linestyle_geometry_modifier_copy(new_linestyle, m);
 
-	if (linestyle->id.lib) {
-		BKE_id_lib_local_paths(G.main, linestyle->id.lib, &new_linestyle->id);
-	}
+	BKE_id_copy_ensure_local(bmain, &linestyle->id, &new_linestyle->id);
 
 	return new_linestyle;
+}
+
+void BKE_linestyle_make_local(struct Main *bmain, FreestyleLineStyle *linestyle, const bool lib_local)
+{
+	BKE_id_make_local_generic(bmain, &linestyle->id, true, lib_local);
 }
 
 FreestyleLineStyle *BKE_linestyle_active_from_scene(Scene *scene)
@@ -382,7 +389,7 @@ LineStyleModifier *BKE_linestyle_color_modifier_copy(FreestyleLineStyle *linesty
 			LineStyleColorModifier_DistanceFromObject *p = (LineStyleColorModifier_DistanceFromObject *)m;
 			LineStyleColorModifier_DistanceFromObject *q = (LineStyleColorModifier_DistanceFromObject *)new_m;
 			if (p->target)
-				p->target->id.us++;
+				id_us_plus(&p->target->id);
 			q->target = p->target;
 			q->color_ramp = MEM_dupallocN(p->color_ramp);
 			q->range_min = p->range_min;
@@ -620,7 +627,7 @@ LineStyleModifier *BKE_linestyle_alpha_modifier_copy(FreestyleLineStyle *linesty
 			LineStyleAlphaModifier_DistanceFromObject *p = (LineStyleAlphaModifier_DistanceFromObject *)m;
 			LineStyleAlphaModifier_DistanceFromObject *q = (LineStyleAlphaModifier_DistanceFromObject *)new_m;
 			if (p->target)
-				p->target->id.us++;
+				id_us_plus(&p->target->id);
 			q->target = p->target;
 			q->curve = curvemapping_copy(p->curve);
 			q->flags = p->flags;
@@ -895,7 +902,7 @@ LineStyleModifier *BKE_linestyle_thickness_modifier_copy(FreestyleLineStyle *lin
 			LineStyleThicknessModifier_DistanceFromObject *p = (LineStyleThicknessModifier_DistanceFromObject *)m;
 			LineStyleThicknessModifier_DistanceFromObject *q = (LineStyleThicknessModifier_DistanceFromObject *)new_m;
 			if (p->target)
-				p->target->id.us++;
+				id_us_plus(&p->target->id);
 			q->target = p->target;
 			q->curve = curvemapping_copy(p->curve);
 			q->flags = p->flags;
@@ -1337,33 +1344,25 @@ int BKE_linestyle_geometry_modifier_remove(FreestyleLineStyle *linestyle, LineSt
 	return 0;
 }
 
-static void move_modifier(ListBase *lb, LineStyleModifier *modifier, int direction)
+/**
+ * Reinsert \a modifier in modifier list with an offset of \a direction.
+ * \return if position of \a modifier has changed.
+ */
+bool BKE_linestyle_color_modifier_move(FreestyleLineStyle *linestyle, LineStyleModifier *modifier, int direction)
 {
-	BLI_remlink(lb, modifier);
-	if (direction > 0)
-		BLI_insertlinkbefore(lb, modifier->prev, modifier);
-	else
-		BLI_insertlinkafter(lb, modifier->next, modifier);
+	return BLI_listbase_link_move(&linestyle->color_modifiers, modifier, direction);
 }
-
-void BKE_linestyle_color_modifier_move(FreestyleLineStyle *linestyle, LineStyleModifier *modifier, int direction)
+bool BKE_linestyle_alpha_modifier_move(FreestyleLineStyle *linestyle, LineStyleModifier *modifier, int direction)
 {
-	move_modifier(&linestyle->color_modifiers, modifier, direction);
+	return BLI_listbase_link_move(&linestyle->alpha_modifiers, modifier, direction);
 }
-
-void BKE_linestyle_alpha_modifier_move(FreestyleLineStyle *linestyle, LineStyleModifier *modifier, int direction)
+bool BKE_linestyle_thickness_modifier_move(FreestyleLineStyle *linestyle, LineStyleModifier *modifier, int direction)
 {
-	move_modifier(&linestyle->alpha_modifiers, modifier, direction);
+	return BLI_listbase_link_move(&linestyle->thickness_modifiers, modifier, direction);
 }
-
-void BKE_linestyle_thickness_modifier_move(FreestyleLineStyle *linestyle, LineStyleModifier *modifier, int direction)
+bool BKE_linestyle_geometry_modifier_move(FreestyleLineStyle *linestyle, LineStyleModifier *modifier, int direction)
 {
-	move_modifier(&linestyle->thickness_modifiers, modifier, direction);
-}
-
-void BKE_linestyle_geometry_modifier_move(FreestyleLineStyle *linestyle, LineStyleModifier *modifier, int direction)
-{
-	move_modifier(&linestyle->geometry_modifiers, modifier, direction);
+	return BLI_listbase_link_move(&linestyle->geometry_modifiers, modifier, direction);
 }
 
 void BKE_linestyle_modifier_list_color_ramps(FreestyleLineStyle *linestyle, ListBase *listbase)
@@ -1446,33 +1445,6 @@ char *BKE_linestyle_path_to_color_ramp(FreestyleLineStyle *linestyle, ColorBand 
 	}
 	printf("BKE_linestyle_path_to_color_ramp: No color ramps correspond to the given pointer.\n");
 	return NULL;
-}
-
-void BKE_linestyle_target_object_unlink(FreestyleLineStyle *linestyle, struct Object *ob)
-{
-	LineStyleModifier *m;
-
-	for (m = (LineStyleModifier *)linestyle->color_modifiers.first; m; m = m->next) {
-		if (m->type == LS_MODIFIER_DISTANCE_FROM_OBJECT) {
-			if (((LineStyleColorModifier_DistanceFromObject *)m)->target == ob) {
-				((LineStyleColorModifier_DistanceFromObject *)m)->target = NULL;
-			}
-		}
-	}
-	for (m = (LineStyleModifier *)linestyle->alpha_modifiers.first; m; m = m->next) {
-		if (m->type == LS_MODIFIER_DISTANCE_FROM_OBJECT) {
-			if (((LineStyleAlphaModifier_DistanceFromObject *)m)->target == ob) {
-				((LineStyleAlphaModifier_DistanceFromObject *)m)->target = NULL;
-			}
-		}
-	}
-	for (m = (LineStyleModifier *)linestyle->thickness_modifiers.first; m; m = m->next) {
-		if (m->type == LS_MODIFIER_DISTANCE_FROM_OBJECT) {
-			if (((LineStyleThicknessModifier_DistanceFromObject *)m)->target == ob) {
-				((LineStyleThicknessModifier_DistanceFromObject *)m)->target = NULL;
-			}
-		}
-	}
 }
 
 bool BKE_linestyle_use_textures(FreestyleLineStyle *linestyle, const bool use_shading_nodes)

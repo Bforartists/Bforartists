@@ -39,111 +39,62 @@
 
 #include "MEM_guardedalloc.h" 
 
-struct InputTrackBall_Data {
-	float value_accum[2];
-	float value_prev[2];
-};
-
 /* ************************** INPUT FROM MOUSE *************************** */
 
-static void InputVector(TransInfo *t, MouseInput *mi, const int mval[2], float output[3])
+static void InputVector(TransInfo *t, MouseInput *mi, const double mval[2], float output[3])
 {
-	float vec[3], dvec[3];
-	if (mi->precision) {
-		/* calculate the main translation and the precise one separate */
-		convertViewVec(t, dvec, (mval[0] - mi->precision_mval[0]), (mval[1] - mi->precision_mval[1]));
-		mul_v3_fl(dvec, 0.1f);
-		convertViewVec(t, vec, (mi->precision_mval[0] - t->imval[0]), (mi->precision_mval[1] - t->imval[1]));
-		add_v3_v3v3(output, vec, dvec);
-	}
-	else {
-		convertViewVec(t, output, (mval[0] - t->imval[0]), (mval[1] - t->imval[1]));
-	}
-
+	convertViewVec(t, output, mval[0] - mi->imval[0], mval[1] - mi->imval[1]);
 }
 
-static void InputSpring(TransInfo *UNUSED(t), MouseInput *mi, const int mval[2], float output[3])
+static void InputSpring(TransInfo *UNUSED(t), MouseInput *mi, const double mval[2], float output[3])
 {
-	float ratio, precise_ratio, dx, dy;
-	if (mi->precision) {
-		/* calculate ratio for shiftkey pos, and for total, and blend these for precision */
-		dx = (float)(mi->center[0] - mi->precision_mval[0]);
-		dy = (float)(mi->center[1] - mi->precision_mval[1]);
-		ratio = hypotf(dx, dy);
+	double dx, dy;
+	float ratio;
 
-		dx = (float)(mi->center[0] - mval[0]);
-		dy = (float)(mi->center[1] - mval[1]);
-		precise_ratio = hypotf(dx, dy);
-
-		ratio = (ratio + (precise_ratio - ratio) / 10.0f) / mi->factor;
-	}
-	else {
-		dx = (float)(mi->center[0] - mval[0]);
-		dy = (float)(mi->center[1] - mval[1]);
-		ratio = hypotf(dx, dy) / mi->factor;
-	}
+	dx = ((double)mi->center[0] - mval[0]);
+	dy = ((double)mi->center[1] - mval[1]);
+	ratio = hypot(dx, dy) / (double)mi->factor;
 
 	output[0] = ratio;
 }
 
-static void InputSpringFlip(TransInfo *t, MouseInput *mi, const int mval[2], float output[3])
+static void InputSpringFlip(TransInfo *t, MouseInput *mi, const double mval[2], float output[3])
 {
 	InputSpring(t, mi, mval, output);
 
 	/* flip scale */
 	/* values can become really big when zoomed in so use longs [#26598] */
-	if ((long long int)(mi->center[0] - mval[0]) * (long long int)(mi->center[0] - mi->imval[0]) +
-	    (long long int)(mi->center[1] - mval[1]) * (long long int)(mi->center[1] - mi->imval[1]) < 0)
+	if ((int64_t)((int)mi->center[0] - mval[0]) * (int64_t)((int)mi->center[0] - mi->imval[0]) +
+	    (int64_t)((int)mi->center[1] - mval[1]) * (int64_t)((int)mi->center[1] - mi->imval[1]) < 0)
 	{
 		output[0] *= -1.0f;
 	}
 }
 
-static void InputSpringDelta(TransInfo *t, MouseInput *mi, const int mval[2], float output[3])
+static void InputSpringDelta(TransInfo *t, MouseInput *mi, const double mval[2], float output[3])
 {
 	InputSpring(t, mi, mval, output);
 	output[0] -= 1.0f;
 }
 
-static void InputTrackBall(TransInfo *UNUSED(t), MouseInput *mi, const int mval[2], float output[3])
+static void InputTrackBall(TransInfo *UNUSED(t), MouseInput *mi, const double mval[2], float output[3])
 {
-	struct InputTrackBall_Data *data = mi->data;
-	float dxy[2];
-	float dxy_accum[2];
+	output[0] = (float)(mi->imval[1] - mval[1]);
+	output[1] = (float)(mval[0] - mi->imval[0]);
 
-	dxy[0] = (mi->imval[1] - mval[1]);
-	dxy[1] = (mval[0] - mi->imval[0]);
-
-	sub_v2_v2v2(dxy_accum, dxy, data->value_prev);
-
-	add_v2_v2(data->value_prev, dxy_accum);
-
-	if (mi->precision) {
-		mul_v2_fl(dxy_accum, 1.0f / 30.0f);
-	}
-
-	add_v2_v2(data->value_accum, dxy_accum);
-	mul_v2_v2fl(output, data->value_accum, mi->factor);
+	output[0] *= mi->factor;
+	output[1] *= mi->factor;
 }
 
-static void InputHorizontalRatio(TransInfo *t, MouseInput *mi, const int mval[2], float output[3])
+static void InputHorizontalRatio(TransInfo *t, MouseInput *UNUSED(mi), const double mval[2], float output[3])
 {
-	float x, pad;
+	const int winx = t->ar ? t->ar->winx : 1;
+	const double pad = winx / 10;
 
-	pad = t->ar->winx / 10;
-
-	if (mi->precision) {
-		/* deal with Shift key by adding motion / 10 to motion before shift press */
-		x = mi->precision_mval[0] + (float)(mval[0] - mi->precision_mval[0]) / 10.0f;
-	}
-	else {
-		x = mval[0];
-	}
-
-	output[0] = (x - pad) / (t->ar->winx - 2 * pad);
+	output[0] = (mval[0] - pad) / (winx - 2 * pad);
 }
 
-static void InputHorizontalAbsolute(TransInfo *t, MouseInput *mi, const int mval[2], float output[3])
+static void InputHorizontalAbsolute(TransInfo *t, MouseInput *mi, const double mval[2], float output[3])
 {
 	float vec[3];
 
@@ -153,24 +104,15 @@ static void InputHorizontalAbsolute(TransInfo *t, MouseInput *mi, const int mval
 	output[0] = dot_v3v3(t->viewinv[0], vec) * 2.0f;
 }
 
-static void InputVerticalRatio(TransInfo *t, MouseInput *mi, const int mval[2], float output[3])
+static void InputVerticalRatio(TransInfo *t, MouseInput *UNUSED(mi), const double mval[2], float output[3])
 {
-	float y, pad;
+	const int winy = t->ar ? t->ar->winy : 1;
+	const double pad = winy / 10;
 
-	pad = t->ar->winy / 10;
-
-	if (mi->precision) {
-		/* deal with Shift key by adding motion / 10 to motion before shift press */
-		y = mi->precision_mval[1] + (float)(mval[1] - mi->precision_mval[1]) / 10.0f;
-	}
-	else {
-		y = mval[0];
-	}
-
-	output[0] = (y - pad) / (t->ar->winy - 2 * pad);
+	output[0] = (mval[1] - pad) / (winy - 2 * pad);
 }
 
-static void InputVerticalAbsolute(TransInfo *t, MouseInput *mi, const int mval[2], float output[3])
+static void InputVerticalAbsolute(TransInfo *t, MouseInput *mi, const double mval[2], float output[3])
 {
 	float vec[3];
 
@@ -194,7 +136,7 @@ void setCustomPoints(TransInfo *UNUSED(t), MouseInput *mi, const int mval_start[
 	data[3] = mval_end[1];
 }
 
-static void InputCustomRatioFlip(TransInfo *UNUSED(t), MouseInput *mi, const int mval[2], float output[3])
+static void InputCustomRatioFlip(TransInfo *UNUSED(t), MouseInput *mi, const double mval[2], float output[3])
 {
 	double length;
 	double distance;
@@ -202,51 +144,45 @@ static void InputCustomRatioFlip(TransInfo *UNUSED(t), MouseInput *mi, const int
 	const int *data = mi->data;
 	
 	if (data) {
+		int mdx, mdy;
 		dx = data[2] - data[0];
 		dy = data[3] - data[1];
-		
+
 		length = hypot(dx, dy);
-		
-		if (mi->precision) {
-			/* deal with Shift key by adding motion / 10 to motion before shift press */
-			int mdx, mdy;
-			mdx = (mi->precision_mval[0] + (float)(mval[0] - mi->precision_mval[0]) / 10.0f) - data[2];
-			mdy = (mi->precision_mval[1] + (float)(mval[1] - mi->precision_mval[1]) / 10.0f) - data[3];
 
-			distance = (length != 0.0) ? (mdx * dx + mdy * dy) / length : 0.0;
-		}
-		else {
-			int mdx, mdy;
-			mdx = mval[0] - data[2];
-			mdy = mval[1] - data[3];
+		mdx = mval[0] - data[2];
+		mdy = mval[1] - data[3];
 
-			distance = (length != 0.0) ? (mdx * dx + mdy * dy) / length : 0.0;
-		}
+		distance = (length != 0.0) ? (mdx * dx + mdy * dy) / length : 0.0;
 
 		output[0] = (length != 0.0) ? (double)(distance / length) : 0.0;
 	}
 }
 
-static void InputCustomRatio(TransInfo *t, MouseInput *mi, const int mval[2], float output[3])
+static void InputCustomRatio(TransInfo *t, MouseInput *mi, const double mval[2], float output[3])
 {
 	InputCustomRatioFlip(t, mi, mval, output);
 	output[0] = -output[0];
 }
 
-static void InputAngle(TransInfo *UNUSED(t), MouseInput *mi, const int mval[2], float output[3])
+struct InputAngle_Data {
+	double angle;
+	double mval_prev[2];
+};
+
+static void InputAngle(TransInfo *UNUSED(t), MouseInput *mi, const double mval[2], float output[3])
 {
-	double dx2 = mval[0] - mi->center[0];
-	double dy2 = mval[1] - mi->center[1];
+	struct InputAngle_Data *data = mi->data;
+	double dx2 = mval[0] - (double)mi->center[0];
+	double dy2 = mval[1] - (double)mi->center[1];
 	double B = sqrt(dx2 * dx2 + dy2 * dy2);
 
-	double dx1 = mi->imval[0] - mi->center[0];
-	double dy1 = mi->imval[1] - mi->center[1];
+	double dx1 = data->mval_prev[0] - (double)mi->center[0];
+	double dy1 = data->mval_prev[1] - (double)mi->center[1];
 	double A = sqrt(dx1 * dx1 + dy1 * dy1);
 
-	double dx3 = mval[0] - mi->imval[0];
-	double dy3 = mval[1] - mi->imval[1];
-
-	double *angle = mi->data;
+	double dx3 = mval[0] - data->mval_prev[0];
+	double dy3 = mval[1] - data->mval_prev[1];
 
 	/* use doubles here, to make sure a "1.0" (no rotation) doesn't become 9.999999e-01, which gives 0.02 for acos */
 	double deler = (((dx1 * dx1 + dy1 * dy1) +
@@ -280,22 +216,15 @@ static void InputAngle(TransInfo *UNUSED(t), MouseInput *mi, const int mval[2], 
 		if ((dx1 * dy2 - dx2 * dy1) > 0.0) dphi = -dphi;
 	}
 
-	if (mi->precision) {
-		dphi = dphi / 30.0f;
-	}
+	data->angle += ((double)dphi) * (mi->precision ? (double)mi->precision_factor : 1.0);
 
-	/* if no delta angle, don't update initial position */
-	if (dphi != 0) {
-		mi->imval[0] = mval[0];
-		mi->imval[1] = mval[1];
-	}
+	data->mval_prev[0] = mval[0];
+	data->mval_prev[1] = mval[1];
 
-	*angle += (double)dphi;
-
-	output[0] = *angle;
+	output[0] = data->angle;
 }
 
-static void InputAngleSpring(TransInfo *t, MouseInput *mi, const int mval[2], float output[3])
+static void InputAngleSpring(TransInfo *t, MouseInput *mi, const double mval[2], float output[3])
 {
 	float toutput[3];
 
@@ -305,10 +234,10 @@ static void InputAngleSpring(TransInfo *t, MouseInput *mi, const int mval[2], fl
 	output[1] = toutput[0];
 }
 
-void initMouseInput(TransInfo *UNUSED(t), MouseInput *mi, const float center[2], const int mval[2])
+void initMouseInput(TransInfo *UNUSED(t), MouseInput *mi, const float center[2], const int mval[2], const bool precision)
 {
 	mi->factor = 0;
-	mi->precision = 0;
+	mi->precision = precision;
 
 	mi->center[0] = center[0];
 	mi->center[1] = center[1];
@@ -334,6 +263,9 @@ void initMouseInputMode(TransInfo *t, MouseInput *mi, MouseInputMode mode)
 	/* incase we allocate a new value */
 	void *mi_data_prev = mi->data;
 
+	mi->use_virtual_mval = true;
+	mi->precision_factor = 1.0f / 10.0f;
+
 	switch (mode) {
 		case INPUT_VECTOR:
 			mi->apply = InputVector;
@@ -355,20 +287,29 @@ void initMouseInputMode(TransInfo *t, MouseInput *mi, MouseInputMode mode)
 			t->helpline = HLP_SPRING;
 			break;
 		case INPUT_ANGLE:
-			mi->data = MEM_callocN(sizeof(double), "angle accumulator");
-			mi->apply = InputAngle;
-			t->helpline = HLP_ANGLE;
-			break;
 		case INPUT_ANGLE_SPRING:
-			calcSpringFactor(mi);
-			mi->data = MEM_callocN(sizeof(double), "angle accumulator");
-			mi->apply = InputAngleSpring;
+		{
+			struct InputAngle_Data *data;
+			mi->use_virtual_mval = false;
+			mi->precision_factor = 1.0f / 30.0f;
+			data = MEM_callocN(sizeof(struct InputAngle_Data), "angle accumulator");
+			data->mval_prev[0] = mi->imval[0];
+			data->mval_prev[1] = mi->imval[1];
+			mi->data = data;
+			if (mode == INPUT_ANGLE) {
+				mi->apply = InputAngle;
+			}
+			else {
+				calcSpringFactor(mi);
+				mi->apply = InputAngleSpring;
+			}
 			t->helpline = HLP_ANGLE;
 			break;
+		}
 		case INPUT_TRACKBALL:
+			mi->precision_factor = 1.0f / 30.0f;
 			/* factor has to become setting or so */
 			mi->factor = 0.01f;
-			mi->data = MEM_callocN(sizeof(struct InputTrackBall_Data), "angle accumulator");
 			mi->apply = InputTrackBall;
 			t->helpline = HLP_TRACKBALL;
 			break;
@@ -420,8 +361,37 @@ void setInputPostFct(MouseInput *mi, void (*post)(struct TransInfo *t, float val
 
 void applyMouseInput(TransInfo *t, MouseInput *mi, const int mval[2], float output[3])
 {
+	double mval_db[2];
+
+	if (mi->use_virtual_mval) {
+		/* update accumulator */
+		double mval_delta[2];
+
+		mval_delta[0] = (mval[0] - mi->imval[0]) - mi->virtual_mval.prev[0];
+		mval_delta[1] = (mval[1] - mi->imval[1]) - mi->virtual_mval.prev[1];
+
+		mi->virtual_mval.prev[0] += mval_delta[0];
+		mi->virtual_mval.prev[1] += mval_delta[1];
+
+		if (mi->precision) {
+			mval_delta[0] *= (double)mi->precision_factor;
+			mval_delta[1] *= (double)mi->precision_factor;
+		}
+
+		mi->virtual_mval.accum[0] += mval_delta[0];
+		mi->virtual_mval.accum[1] += mval_delta[1];
+
+		mval_db[0] = mi->imval[0] + mi->virtual_mval.accum[0];
+		mval_db[1] = mi->imval[1] + mi->virtual_mval.accum[1];
+	}
+	else {
+		mval_db[0] = mval[0];
+		mval_db[1] = mval[1];
+	}
+
+
 	if (mi->apply != NULL) {
-		mi->apply(t, mi, mval, output);
+		mi->apply(t, mi, mval_db, output);
 	}
 
 	if (mi->post) {
@@ -438,9 +408,7 @@ eRedrawFlag handleMouseInput(TransInfo *t, MouseInput *mi, const wmEvent *event)
 		case RIGHTSHIFTKEY:
 			if (event->val == KM_PRESS) {
 				t->modifiers |= MOD_PRECISION;
-				/* shift is modifier for higher precision transform
-				 * store the mouse position where the normal movement ended */
-				copy_v2_v2_int(mi->precision_mval, event->mval);
+				/* shift is modifier for higher precision transforn */
 				mi->precision = 1;
 				redraw = TREDRAW_HARD;
 			}

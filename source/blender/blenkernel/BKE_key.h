@@ -39,6 +39,7 @@ struct ListBase;
 struct Curve;
 struct Object;
 struct Lattice;
+struct Main;
 struct Mesh;
 struct WeightsArrayCache;
 
@@ -50,9 +51,8 @@ extern "C" {
 void        BKE_key_free(struct Key *sc);
 void        BKE_key_free_nolib(struct Key *key);
 struct Key *BKE_key_add(struct ID *id);
-struct Key *BKE_key_copy(struct Key *key);
+struct Key *BKE_key_copy(struct Main *bmain, struct Key *key);
 struct Key *BKE_key_copy_nolib(struct Key *key);
-void        BKE_key_make_local(struct Key *key);
 void        BKE_key_sort(struct Key *key);
 
 void key_curve_position_weights(float t, float data[4], int type);
@@ -65,6 +65,8 @@ float *BKE_key_evaluate_object_ex(
 float *BKE_key_evaluate_object(
         struct Object *ob, int *r_totelem);
 
+struct Key     **BKE_key_from_id_p(struct ID *id);
+struct Key      *BKE_key_from_id(struct ID *id);
 struct Key     **BKE_key_from_object_p(struct Object *ob);
 struct Key      *BKE_key_from_object(struct Object *ob);
 struct KeyBlock *BKE_keyblock_from_object(struct Object *ob);
@@ -101,6 +103,8 @@ void    BKE_keyblock_convert_to_curve(struct KeyBlock *kb, struct Curve  *cu, st
 void    BKE_keyblock_update_from_mesh(struct Mesh *me, struct KeyBlock *kb);
 void    BKE_keyblock_convert_from_mesh(struct Mesh *me, struct KeyBlock *kb);
 void    BKE_keyblock_convert_to_mesh(struct KeyBlock *kb, struct Mesh *me);
+void    BKE_keyblock_mesh_calc_normals(
+        struct KeyBlock *kb, struct Mesh *mesh, float (*r_vertnors)[3], float (*r_polynors)[3], float (*r_loopnors)[3]);
 
 void    BKE_keyblock_update_from_vertcos(struct Object *ob, struct KeyBlock *kb, float (*vertCos)[3]);
 void    BKE_keyblock_convert_from_vertcos(struct Object *ob, struct KeyBlock *kb, float (*vertCos)[3]);

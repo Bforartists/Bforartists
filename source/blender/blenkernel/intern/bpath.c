@@ -48,6 +48,7 @@
 #include "MEM_guardedalloc.h"
 
 #include "DNA_brush_types.h"
+#include "DNA_cachefile_types.h"
 #include "DNA_image_types.h"
 #include "DNA_mesh_types.h"
 #include "DNA_modifier_types.h"
@@ -424,7 +425,7 @@ void BKE_bpath_traverse_id(Main *bmain, ID *id, BPathVisitor visit_cb, const int
 {
 	const char *absbase = (flag & BKE_BPATH_TRAVERSE_ABS) ? ID_BLEND_PATH(bmain, id) : NULL;
 
-	if ((flag & BKE_BPATH_TRAVERSE_SKIP_LIBRARY) && id->lib) {
+	if ((flag & BKE_BPATH_TRAVERSE_SKIP_LIBRARY) && ID_IS_LINKED_DATABLOCK(id)) {
 		return;
 	}
 
@@ -651,6 +652,12 @@ void BKE_bpath_traverse_id(Main *bmain, ID *id, BPathVisitor visit_cb, const int
 		{
 			MovieClip *clip = (MovieClip *)id;
 			rewrite_path_fixed(clip->name, visit_cb, absbase, bpath_user_data);
+			break;
+		}
+		case ID_CF:
+		{
+			CacheFile *cache_file = (CacheFile *)id;
+			rewrite_path_fixed(cache_file->filepath, visit_cb, absbase, bpath_user_data);
 			break;
 		}
 		default:

@@ -41,11 +41,13 @@
 #include "BLI_math.h"
 #include "BLI_utildefines.h"
 #include "BLI_ghash.h"
+#include "BLI_string_utils.h"
 
 #include "BLT_translation.h"
 
 #include "DNA_armature_types.h"
 #include "DNA_curve_types.h"
+#include "DNA_gpencil_types.h"
 #include "DNA_group_types.h"
 #include "DNA_material_types.h"
 #include "DNA_meta_types.h"
@@ -164,8 +166,8 @@ void OBJECT_OT_hide_view_clear(wmOperatorType *ot)
 {
 	
 	/* identifiers */
-	ot->name = "Show Hidden";
-	ot->description = "Show Hidden\nReveals the hidden object(s)";
+	ot->name = "Clear Restrict View";
+	ot->description = "Reveal the object by setting the hide flag";
 	ot->idname = "OBJECT_OT_hide_view_clear";
 	
 	/* api callbacks */
@@ -222,8 +224,8 @@ static int object_hide_view_set_exec(bContext *C, wmOperator *op)
 void OBJECT_OT_hide_view_set(wmOperatorType *ot)
 {
 	/* identifiers */
-	ot->name = "Hide Selected";
-	ot->description = "Hide Selected \nHide the object";
+	ot->name = "Set Restrict View";
+	ot->description = "Hide the object by setting the hide flag";
 	ot->idname = "OBJECT_OT_hide_view_set";
 	
 	/* api callbacks */
@@ -263,7 +265,7 @@ void OBJECT_OT_hide_render_clear(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Clear Restrict Render";
-	ot->description = "Clear Restrict Render\nReveal the render object by setting the hide render flag";
+	ot->description = "Reveal the render object by setting the hide render flag";
 	ot->idname = "OBJECT_OT_hide_render_clear";
 
 	/* api callbacks */
@@ -300,7 +302,7 @@ void OBJECT_OT_hide_render_set(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Set Restrict Render";
-	ot->description = "Set Restrict Render\nHide the render object by setting the hide render flag";
+	ot->description = "Hide the render object by setting the hide render flag";
 	ot->idname = "OBJECT_OT_hide_render_set";
 
 	/* api callbacks */
@@ -314,6 +316,27 @@ void OBJECT_OT_hide_render_set(wmOperatorType *ot)
 }
 
 /* ******************* toggle editmode operator  ***************** */
+
+static bool mesh_needs_keyindex(const Mesh *me)
+{
+	if (me->key) {
+		return false;  /* will be added */
+	}
+
+	for (const Object *ob = G.main->object.first; ob; ob = ob->id.next) {
+		if ((ob->parent) && (ob->parent->data == me) && ELEM(ob->partype, PARVERT1, PARVERT3)) {
+			return true;
+		}
+		if (ob->data == me) {
+			for (const ModifierData *md = ob->modifiers.first; md; md = md->next) {
+				if (md->type == eModifierType_Hook) {
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
 
 /**
  * Load EditMode data back into the object,
@@ -341,8 +364,8 @@ static bool ED_object_editmode_load_ex(Main *bmain, Object *obedit, const bool f
 			me->edit_btmesh = NULL;
 		}
 		if (obedit->restore_mode & OB_MODE_WEIGHT_PAINT) {
-			ED_mesh_mirror_spatial_table(NULL, NULL, NULL, 'e');
-			ED_mesh_mirror_topo_table(NULL, 'e');
+			ED_mesh_mirror_spatial_table(NULL, NULL, NULL, NULL, 'e');
+			ED_mesh_mirror_topo_table(NULL, NULL, 'e');
 		}
 	}
 	else if (obedit->type == OB_ARMATURE) {
@@ -356,20 +379,20 @@ static bool ED_object_editmode_load_ex(Main *bmain, Object *obedit, const bool f
 		DAG_relations_tag_update(bmain);
 	}
 	else if (ELEM(obedit->type, OB_CURVE, OB_SURF)) {
-		load_editNurb(obedit);
-		if (freedata) free_editNurb(obedit);
+		ED_curve_editnurb_load(obedit);
+		if (freedata) ED_curve_editnurb_free(obedit);
 	}
 	else if (obedit->type == OB_FONT) {
-		load_editText(obedit);
-		if (freedata) free_editText(obedit);
+		ED_curve_editfont_load(obedit);
+		if (freedata) ED_curve_editfont_free(obedit);
 	}
 	else if (obedit->type == OB_LATTICE) {
-		load_editLatt(obedit);
-		if (freedata) free_editLatt(obedit);
+		ED_lattice_editlatt_load(obedit);
+		if (freedata) ED_lattice_editlatt_free(obedit);
 	}
 	else if (obedit->type == OB_MBALL) {
-		load_editMball(obedit);
-		if (freedata) free_editMball(obedit);
+		ED_mball_editmball_load(obedit);
+		if (freedata) ED_mball_editmball_free(obedit);
 	}
 
 	/* Tag update so no access to freed data referenced from
@@ -448,7 +471,7 @@ void ED_object_editmode_enter(bContext *C, int flag)
 	View3D *v3d = NULL;
 	bool ok = false;
 
-	if (scene->id.lib) return;
+	if (ID_IS_LINKED_DATABLOCK(scene)) return;
 
 	if (sa && sa->spacetype == SPACE_VIEW3D)
 		v3d = sa->spacedata.first;
@@ -493,15 +516,15 @@ void ED_object_editmode_enter(bContext *C, int flag)
 		ok = 1;
 		scene->obedit = ob;  /* context sees this */
 
-		EDBM_mesh_make(scene->toolsettings, ob);
+		const bool use_key_index = mesh_needs_keyindex(ob->data);
+
+		EDBM_mesh_make(scene->toolsettings, ob, use_key_index);
 
 		em = BKE_editmesh_from_object(ob);
 		if (LIKELY(em)) {
 			/* order doesn't matter */
 			EDBM_mesh_normals_update(em);
 			BKE_editmesh_tessface_calc(em);
-
-			BM_mesh_select_mode_flush(em->bm);
 		}
 
 		WM_event_add_notifier(C, NC_SCENE | ND_MODE | NS_EDITMODE_MESH, scene);
@@ -517,7 +540,7 @@ void ED_object_editmode_enter(bContext *C, int flag)
 		 * BKE_object_obdata_is_libdata that prevent the bugfix #6614, so
 		 * i add this little hack here.
 		 */
-		if (arm->id.lib) {
+		if (ID_IS_LINKED_DATABLOCK(arm)) {
 			error_libdata();
 			return;
 		}
@@ -532,28 +555,28 @@ void ED_object_editmode_enter(bContext *C, int flag)
 	else if (ob->type == OB_FONT) {
 		scene->obedit = ob; /* XXX for context */
 		ok = 1;
-		make_editText(ob);
+		ED_curve_editfont_make(ob);
 
 		WM_event_add_notifier(C, NC_SCENE | ND_MODE | NS_EDITMODE_TEXT, scene);
 	}
 	else if (ob->type == OB_MBALL) {
 		scene->obedit = ob; /* XXX for context */
 		ok = 1;
-		make_editMball(ob);
+		ED_mball_editmball_make(ob);
 
 		WM_event_add_notifier(C, NC_SCENE | ND_MODE | NS_EDITMODE_MBALL, scene);
 	}
 	else if (ob->type == OB_LATTICE) {
 		scene->obedit = ob; /* XXX for context */
 		ok = 1;
-		make_editLatt(ob);
+		ED_lattice_editlatt_make(ob);
 
 		WM_event_add_notifier(C, NC_SCENE | ND_MODE | NS_EDITMODE_LATTICE, scene);
 	}
 	else if (ob->type == OB_SURF || ob->type == OB_CURVE) {
 		ok = 1;
 		scene->obedit = ob; /* XXX for context */
-		make_editNurb(ob);
+		ED_curve_editnurb_make(ob);
 
 		WM_event_add_notifier(C, NC_SCENE | ND_MODE | NS_EDITMODE_CURVE, scene);
 	}
@@ -599,7 +622,7 @@ static int editmode_toggle_poll(bContext *C)
 	Object *ob = CTX_data_active_object(C);
 
 	/* covers proxies too */
-	if (ELEM(NULL, ob, ob->data) || ((ID *)ob->data)->lib)
+	if (ELEM(NULL, ob, ob->data) || ID_IS_LINKED_DATABLOCK(ob->data))
 		return 0;
 
 	/* if hidden but in edit mode, we still display */
@@ -614,7 +637,7 @@ void OBJECT_OT_editmode_toggle(wmOperatorType *ot)
 	
 	/* identifiers */
 	ot->name = "Toggle Editmode";
-	ot->description = "Toggle Editmode\nToggle object's editmode";
+	ot->description = "Toggle object's editmode";
 	ot->idname = "OBJECT_OT_editmode_toggle";
 	
 	/* api callbacks */
@@ -661,7 +684,7 @@ void OBJECT_OT_posemode_toggle(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Toggle Pose Mode";
 	ot->idname = "OBJECT_OT_posemode_toggle";
-	ot->description = "Toggle Pose Mode\nEnable or disable posing/selecting bones";
+	ot->description = "Enable or disable posing/selecting bones";
 	
 	/* api callbacks */
 	ot->exec = posemode_exec;
@@ -826,7 +849,7 @@ static void copy_attr(Main *bmain, Scene *scene, View3D *v3d, short event)
 	Nurb *nu;
 	bool do_depgraph_update = false;
 	
-	if (scene->id.lib) return;
+	if (ID_IS_LINKED_DATABLOCK(scene)) return;
 
 	if (!(ob = OBACT)) return;
 	
@@ -888,7 +911,7 @@ static void copy_attr(Main *bmain, Scene *scene, View3D *v3d, short event)
 
 					base->object->dup_group = ob->dup_group;
 					if (ob->dup_group)
-						id_lib_extern(&ob->dup_group->id);
+						id_us_plus(&ob->dup_group->id);
 				}
 				else if (event == 7) {    /* mass */
 					base->object->mass = ob->mass;
@@ -924,6 +947,7 @@ static void copy_attr(Main *bmain, Scene *scene, View3D *v3d, short event)
 						cu1 = base->object->data;
 
 						cu1->spacemode = cu->spacemode;
+						cu1->align_y = cu->align_y;
 						cu1->spacing = cu->spacing;
 						cu1->linedist = cu->linedist;
 						cu1->shear = cu->shear;
@@ -934,16 +958,20 @@ static void copy_attr(Main *bmain, Scene *scene, View3D *v3d, short event)
 						cu1->wordspace = cu->wordspace;
 						cu1->ulpos = cu->ulpos;
 						cu1->ulheight = cu->ulheight;
-						if (cu1->vfont) cu1->vfont->id.us--;
+						if (cu1->vfont)
+							id_us_min(&cu1->vfont->id);
 						cu1->vfont = cu->vfont;
 						id_us_plus((ID *)cu1->vfont);
-						if (cu1->vfontb) cu1->vfontb->id.us--;
+						if (cu1->vfontb)
+							id_us_min(&cu1->vfontb->id);
 						cu1->vfontb = cu->vfontb;
 						id_us_plus((ID *)cu1->vfontb);
-						if (cu1->vfonti) cu1->vfonti->id.us--;
+						if (cu1->vfonti)
+							id_us_min(&cu1->vfonti->id);
 						cu1->vfonti = cu->vfonti;
 						id_us_plus((ID *)cu1->vfonti);
-						if (cu1->vfontbi) cu1->vfontbi->id.us--;
+						if (cu1->vfontbi)
+							id_us_min(&cu1->vfontbi->id);
 						cu1->vfontbi = cu->vfontbi;
 						id_us_plus((ID *)cu1->vfontbi);
 						
@@ -1163,7 +1191,7 @@ void OBJECT_OT_forcefield_toggle(wmOperatorType *ot)
 	
 	/* identifiers */
 	ot->name = "Toggle Force Field";
-	ot->description = "Toggle Force Field\nToggle object's force field";
+	ot->description = "Toggle object's force field";
 	ot->idname = "OBJECT_OT_forcefield_toggle";
 	
 	/* api callbacks */
@@ -1257,7 +1285,7 @@ void OBJECT_OT_paths_calculate(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Calculate Object Paths";
 	ot->idname = "OBJECT_OT_paths_calculate";
-	ot->description = "Calculate Object Paths\nCalculate motion paths for the selected objects";
+	ot->description = "Calculate motion paths for the selected objects";
 	
 	/* api callbacks */
 	ot->invoke = object_calculate_paths_invoke;
@@ -1275,6 +1303,16 @@ void OBJECT_OT_paths_calculate(wmOperatorType *ot)
 }
 
 /* --------- */
+
+static int object_update_paths_poll(bContext *C)
+{
+	if (ED_operator_object_active_editable(C)) {
+		Object *ob = ED_object_active_context(C);
+		return (ob->avs.path_bakeflag & MOTIONPATH_BAKE_HAS_PATHS) != 0;
+	}
+	
+	return false;
+}
 
 static int object_update_paths_exec(bContext *C, wmOperator *UNUSED(op))
 {
@@ -1297,11 +1335,11 @@ void OBJECT_OT_paths_update(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Update Object Paths";
 	ot->idname = "OBJECT_OT_paths_update";
-	ot->description = "Update Object Paths\nRecalculate paths for selected objects";
+	ot->description = "Recalculate paths for selected objects";
 	
 	/* api callbakcs */
 	ot->exec = object_update_paths_exec;
-	ot->poll = ED_operator_object_active_editable; /* TODO: this should probably check for existing paths */
+	ot->poll = object_update_paths_poll;
 	
 	/* flags */
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
@@ -1309,26 +1347,44 @@ void OBJECT_OT_paths_update(wmOperatorType *ot)
 
 /* --------- */
 
-/* Clear motion paths for selected objects only */
-void ED_objects_clear_paths(bContext *C)
+/* Helper for ED_objects_clear_paths() */
+static void object_clear_mpath(Object *ob)
 {
-	/* loop over objects in scene */
-	CTX_DATA_BEGIN(C, Object *, ob, selected_editable_objects)
-	{
-		if (ob->mpath) {
-			animviz_free_motionpath(ob->mpath);
-			ob->mpath = NULL;
-			ob->avs.path_bakeflag &= ~MOTIONPATH_BAKE_HAS_PATHS;
-		}
+	if (ob->mpath) {
+		animviz_free_motionpath(ob->mpath);
+		ob->mpath = NULL;
+		ob->avs.path_bakeflag &= ~MOTIONPATH_BAKE_HAS_PATHS;
 	}
-	CTX_DATA_END;
+}
+
+/* Clear motion paths for all objects */
+void ED_objects_clear_paths(bContext *C, bool only_selected)
+{
+	if (only_selected) {
+		/* loop over all selected + sedtiable objects in scene */
+		CTX_DATA_BEGIN(C, Object *, ob, selected_editable_objects)
+		{
+			object_clear_mpath(ob);
+		}
+		CTX_DATA_END;
+	}
+	else {
+		/* loop over all edtiable objects in scene */
+		CTX_DATA_BEGIN(C, Object *, ob, editable_objects)
+		{
+			object_clear_mpath(ob);
+		}
+		CTX_DATA_END;
+	}
 }
 
 /* operator callback for this */
-static int object_clear_paths_exec(bContext *C, wmOperator *UNUSED(op))
-{	
+static int object_clear_paths_exec(bContext *C, wmOperator *op)
+{
+	bool only_selected = RNA_boolean_get(op->ptr, "only_selected");
+	
 	/* use the backend function for this */
-	ED_objects_clear_paths(C);
+	ED_objects_clear_paths(C, only_selected);
 	
 	/* notifiers for updates */
 	WM_event_add_notifier(C, NC_OBJECT | ND_TRANSFORM, NULL);
@@ -1336,19 +1392,34 @@ static int object_clear_paths_exec(bContext *C, wmOperator *UNUSED(op))
 	return OPERATOR_FINISHED; 
 }
 
+/* operator callback/wrapper */
+static int object_clear_paths_invoke(bContext *C, wmOperator *op, const wmEvent *evt)
+{
+	if ((evt->shift) && !RNA_struct_property_is_set(op->ptr, "only_selected")) {
+		RNA_boolean_set(op->ptr, "only_selected", true);
+	}
+	return object_clear_paths_exec(C, op);
+}
+
 void OBJECT_OT_paths_clear(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Clear Object Paths";
 	ot->idname = "OBJECT_OT_paths_clear";
-	ot->description = "Clear Object Paths\nClear path caches for selected objects";
+	ot->description = "Clear path caches for all objects, hold Shift key for selected objects only";
 	
 	/* api callbacks */
+	ot->invoke = object_clear_paths_invoke;
 	ot->exec = object_clear_paths_exec;
 	ot->poll = ED_operator_object_active_editable;
 	
 	/* flags */
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+	
+	/* properties */
+	ot->prop = RNA_def_boolean(ot->srna, "only_selected", false, "Only Selected",
+	                           "Only clear paths from selected objects");
+	RNA_def_property_flag(ot->prop, PROP_SKIP_SAVE);
 }
 
 
@@ -1366,7 +1437,7 @@ static int shade_smooth_exec(bContext *C, wmOperator *op)
 	{
 		data = ob->data;
 
-		if (data && data->lib) {
+		if (data && ID_IS_LINKED_DATABLOCK(data)) {
 			linked_data = true;
 			continue;
 		}
@@ -1410,7 +1481,7 @@ void OBJECT_OT_shade_flat(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Shade Flat";
-	ot->description = "Shade Flat\nRender and display faces uniform, using Face Normals";
+	ot->description = "Render and display faces uniform, using Face Normals";
 	ot->idname = "OBJECT_OT_shade_flat";
 	
 	/* api callbacks */
@@ -1425,7 +1496,7 @@ void OBJECT_OT_shade_smooth(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Shade Smooth";
-	ot->description = "Shade Smooth\nRender and display faces smooth, using interpolated Vertex Normals";
+	ot->description = "Render and display faces smooth, using interpolated Vertex Normals";
 	ot->idname = "OBJECT_OT_shade_smooth";
 	
 	/* api callbacks */
@@ -1449,7 +1520,7 @@ static void UNUSED_FUNCTION(image_aspect) (Scene *scene, View3D *v3d)
 	int a, b, done;
 	
 	if (scene->obedit) return;  // XXX get from context
-	if (scene->id.lib) return;
+	if (ID_IS_LINKED_DATABLOCK(scene)) return;
 	
 	for (base = FIRSTBASE; base; base = base->next) {
 		if (TESTBASELIB(v3d, base)) {
@@ -1502,13 +1573,14 @@ static void UNUSED_FUNCTION(image_aspect) (Scene *scene, View3D *v3d)
 
 static EnumPropertyItem *object_mode_set_itemsf(bContext *C, PointerRNA *UNUSED(ptr), PropertyRNA *UNUSED(prop), bool *r_free)
 {
-	EnumPropertyItem *input = object_mode_items;
+	EnumPropertyItem *input = rna_enum_object_mode_items;
 	EnumPropertyItem *item = NULL;
 	Object *ob;
+	bGPdata *gpd;
 	int totitem = 0;
 
 	if (!C) /* needed for docs */
-		return object_mode_items;
+		return rna_enum_object_mode_items;
 
 	ob = CTX_data_active_object(C);
 	if (ob) {
@@ -1531,6 +1603,14 @@ static EnumPropertyItem *object_mode_set_itemsf(bContext *C, PointerRNA *UNUSED(
 	else {
 		/* We need at least this one! */
 		RNA_enum_items_add_value(&item, &totitem, input, OB_MODE_OBJECT);
+	}
+	
+	/* On top of all the rest, GPencil Stroke Edit Mode
+	 * is available if there's a valid gp datablock...
+	 */
+	gpd = CTX_data_gpencil_data(C);
+	if (gpd) {
+		RNA_enum_items_add_value(&item, &totitem, rna_enum_object_mode_items, OB_MODE_GPENCIL);
 	}
 
 	RNA_enum_item_end(&item, &totitem);
@@ -1556,6 +1636,8 @@ static const char *object_mode_op_string(int mode)
 		return "PARTICLE_OT_particle_edit_toggle";
 	if (mode == OB_MODE_POSE)
 		return "OBJECT_OT_posemode_toggle";
+	if (mode == OB_MODE_GPENCIL)
+		return "GPENCIL_OT_editmode_toggle";
 	return NULL;
 }
 
@@ -1567,6 +1649,8 @@ static bool object_mode_compat_test(Object *ob, ObjectMode mode)
 	if (ob) {
 		if (mode == OB_MODE_OBJECT)
 			return true;
+		else if (mode == OB_MODE_GPENCIL)
+			return true; /* XXX: assume this is the case for now... */
 
 		switch (ob->type) {
 			case OB_MESH:
@@ -1621,13 +1705,45 @@ bool ED_object_mode_compat_set(bContext *C, Object *ob, int mode, ReportList *re
 	return ok;
 }
 
+static int object_mode_set_poll(bContext *C)
+{
+	/* Since Grease Pencil editmode is also handled here,
+	 * we have a special exception for allowing this operator
+	 * to still work in that case when there's no active object
+	 * so that users can exit editmode this way as per normal.
+	 */
+	if (ED_operator_object_active_editable(C))
+		return true;
+	else
+		return (CTX_data_gpencil_data(C) != NULL);
+}
+
 static int object_mode_set_exec(bContext *C, wmOperator *op)
 {
 	Object *ob = CTX_data_active_object(C);
+	bGPdata *gpd = CTX_data_gpencil_data(C);
 	ObjectMode mode = RNA_enum_get(op->ptr, "mode");
 	ObjectMode restore_mode = (ob) ? ob->mode : OB_MODE_OBJECT;
 	const bool toggle = RNA_boolean_get(op->ptr, "toggle");
-
+	
+	if (gpd) {
+		/* GP Mode is not bound to a specific object. Therefore,
+		 * we don't want it to be actually saved on any objects,
+		 * as weirdness can happen if you select other objects,
+		 * or load old files.
+		 *
+		 * Instead, we use the following 2 rules to ensure that
+		 * the mode selector works as expected:
+		 *  1) If there's no object, we want to enter editmode.
+		 *     (i.e. with no object, we're in object mode)
+		 *  2) Otherwise, exit stroke editmode, so that we can
+		 *     enter another mode...
+		 */
+		if (!ob || (gpd->flag & GP_DATA_STROKE_EDITMODE)) {
+			WM_operator_name_call(C, "GPENCIL_OT_editmode_toggle", WM_OP_EXEC_REGION_WIN, NULL);
+		}
+	}
+	
 	if (!ob || !object_mode_compat_test(ob, mode))
 		return OPERATOR_PASS_THROUGH;
 
@@ -1665,18 +1781,18 @@ void OBJECT_OT_mode_set(wmOperatorType *ot)
 	
 	/* identifiers */
 	ot->name = "Set Object Mode";
-	ot->description = "Set Object interaction Mode to";
+	ot->description = "Sets the object interaction mode";
 	ot->idname = "OBJECT_OT_mode_set";
 	
 	/* api callbacks */
 	ot->exec = object_mode_set_exec;
 	
-	ot->poll = ED_operator_object_active_editable;
+	ot->poll = object_mode_set_poll; //ED_operator_object_active_editable;
 	
 	/* flags */
 	ot->flag = 0; /* no register/undo here, leave it to operators being called */
 	
-	ot->prop = RNA_def_enum(ot->srna, "mode", object_mode_items, OB_MODE_OBJECT, "Mode", "");
+	ot->prop = RNA_def_enum(ot->srna, "mode", rna_enum_object_mode_items, OB_MODE_OBJECT, "Mode", "");
 	RNA_def_enum_funcs(ot->prop, object_mode_set_itemsf);
 	RNA_def_property_flag(ot->prop, PROP_SKIP_SAVE);
 
@@ -1724,7 +1840,7 @@ void OBJECT_OT_game_property_new(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "New Game Property";
-	ot->description = "New Game Property\nCreate a new property available to the game engine";
+	ot->description = "Create a new property available to the game engine";
 	ot->idname = "OBJECT_OT_game_property_new";
 
 	/* api callbacks */
@@ -1734,7 +1850,7 @@ void OBJECT_OT_game_property_new(wmOperatorType *ot)
 	/* flags */
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
-	RNA_def_enum(ot->srna, "type", gameproperty_type_items, GPROP_FLOAT, "Type", "Type of game property to add");
+	RNA_def_enum(ot->srna, "type", rna_enum_gameproperty_type_items, GPROP_FLOAT, "Type", "Type of game property to add");
 	RNA_def_string(ot->srna, "name", NULL, MAX_NAME, "Name", "Name of the game property to add");
 }
 
@@ -1765,7 +1881,7 @@ void OBJECT_OT_game_property_remove(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Remove Game Property";
-	ot->description = "Remove Game Property\nRemove game property";
+	ot->description = "Remove game property";
 	ot->idname = "OBJECT_OT_game_property_remove";
 
 	/* api callbacks */
@@ -1829,7 +1945,7 @@ void OBJECT_OT_game_property_move(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Move Game Property";
-	ot->description = "Move Game Property\nMove game property";
+	ot->description = "Move game property";
 	ot->idname = "OBJECT_OT_game_property_move";
 
 	/* api callbacks */
@@ -1930,7 +2046,7 @@ void OBJECT_OT_game_property_copy(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Copy Game Property";
 	ot->idname = "OBJECT_OT_game_property_copy";
-	ot->description = "Copy Game Property\nCopy/merge/replace a game property from active object to all selected objects";
+	ot->description = "Copy/merge/replace a game property from active object to all selected objects";
 
 	/* api callbacks */
 	ot->exec = game_property_copy_exec;
@@ -1962,7 +2078,7 @@ void OBJECT_OT_game_property_clear(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Clear Game Properties";
 	ot->idname = "OBJECT_OT_game_property_clear";
-	ot->description = "Clear Game Properties\nRemove all game properties from all selected objects";
+	ot->description = "Remove all game properties from all selected objects";
 
 	/* api callbacks */
 	ot->exec = game_property_clear_exec;
@@ -2020,7 +2136,7 @@ void OBJECT_OT_logic_bricks_copy(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Copy Logic Bricks to Selected";
-	ot->description = "Copy Logic Bricks to Selected\nCopy logic bricks to other selected objects";
+	ot->description = "Copy logic bricks to other selected objects";
 	ot->idname = "OBJECT_OT_logic_bricks_copy";
 
 	/* api callbacks */
@@ -2072,7 +2188,7 @@ void OBJECT_OT_game_physics_copy(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Copy Game Physics Properties to Selected";
-	ot->description = "Copy Game Physics Properties to Selected\nCopy game physics properties to other selected objects";
+	ot->description = "Copy game physics properties to other selected objects";
 	ot->idname = "OBJECT_OT_game_physics_copy";
 	
 	/* api callbacks */

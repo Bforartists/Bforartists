@@ -35,7 +35,7 @@
 
 #include "BKE_appdir.h"
 #include "BKE_global.h" /* XXX, G.main only */
-#include "BKE_blender.h"
+#include "BKE_blender_version.h"
 #include "BKE_bpath.h"
 
 #include "RNA_types.h"
@@ -45,6 +45,7 @@
 #include "bpy_util.h"
 #include "bpy_rna.h"
 #include "bpy_app.h"
+#include "bpy_rna_id_collection.h"
 #include "bpy_props.h"
 #include "bpy_library.h"
 #include "bpy_operator.h"
@@ -320,11 +321,11 @@ void BPy_init_modules(void)
 	/* needs to be first so bpy_types can run */
 	PyModule_AddObject(mod, "types", BPY_rna_types());
 
-	/* metaclass for idprop types, bpy_types.py needs access */
-	PyModule_AddObject(mod, "StructMetaPropGroup", (PyObject *)&pyrna_struct_meta_idprop_Type);
-
 	/* needs to be first so bpy_types can run */
-	BPY_library_module(mod);
+	BPY_library_load_module(mod);
+	BPY_library_write_module(mod);
+
+	BPY_rna_id_collection_module(mod);
 
 	bpy_import_test("bpy_types");
 	PyModule_AddObject(mod, "data", BPY_rna_module()); /* imports bpy_types by running this */

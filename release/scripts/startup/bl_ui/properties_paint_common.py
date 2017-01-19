@@ -1,4 +1,4 @@
-﻿# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -119,16 +119,14 @@ def brush_texpaint_common(panel, context, layout, brush, settings, projpaint=Fal
                 col.label("Gradient Colors")
                 col.template_color_ramp(brush, "gradient", expand=True)
 
-                if brush.image_tool != 'FILL':
+                if brush.image_tool == 'DRAW':
                     col.label("Background Color")
                     row = col.row(align=True)
                     panel.prop_unified_color(row, context, brush, "secondary_color", text="")
-
-                if brush.image_tool == 'DRAW':
                     col.prop(brush, "gradient_stroke_mode", text="Mode")
                     if brush.gradient_stroke_mode in {'SPACING_REPEAT', 'SPACING_CLAMP'}:
                         col.prop(brush, "grad_spacing")
-                elif brush.image_tool == 'FILL':
+                else: # if brush.image_tool == 'FILL':
                     col.prop(brush, "gradient_fill_mode")
             else:
                 row = col.row(align=True)
@@ -139,9 +137,9 @@ def brush_texpaint_common(panel, context, layout, brush, settings, projpaint=Fal
                     panel.prop_unified_color(row, context, brush, "secondary_color", text="")
                     row.separator()
                     row.operator("paint.brush_colors_flip", icon='FILE_REFRESH', text="")
-                    row.operator("paint.sample_color", icon='EYEDROPPER', text="")
-
-                    col = layout.column()
+        else:
+            if brush.image_tool == 'FILL' and not projpaint:
+                col.prop(brush, "fill_threshold")
 
     elif brush.image_tool == 'SOFTEN':
         col = layout.column(align=True)
@@ -247,15 +245,6 @@ def brush_texture_settings(layout, brush, sculpt):
             layout.operator("brush.stencil_fit_image_aspect")
         layout.operator("brush.stencil_reset_transform")
 
-        # bfa - stencil brush control buttons
-        col = layout.column()
-        col.label(text="Stencil Brush Controls:")
-        row = layout.row(align=False)
-        row.alignment = 'LEFT'
-        row.operator("brush.stencil_control", text = '', icon ='TRANSFORM_MOVE').mode = 'TRANSLATION'
-        row.operator("brush.stencil_control", text = '', icon ='TRANSFORM_ROTATE').mode = 'ROTATION'
-        row.operator("brush.stencil_control", text = '', icon ='TRANSFORM_SCALE').mode = 'SCALE'
-
     # angle and texture_angle_source
     if tex_slot.has_texture_angle:
         col = layout.column()
@@ -300,34 +289,6 @@ def brush_mask_texture_settings(layout, brush):
         if brush.mask_texture and brush.mask_texture.type == 'IMAGE':
             layout.operator("brush.stencil_fit_image_aspect").mask = True
         layout.operator("brush.stencil_reset_transform").mask = True
-
-        # bfa - stencil brush control buttons
-        col = layout.column()
-        col.label(text="Stencil Brush Controls:")
-        row = layout.row(align=False)
-        row.alignment = 'LEFT'
-        row.operator("brush.stencil_control", text = '', icon ='TRANSFORM_MOVE').mode = 'TRANSLATION'
-        row.operator("brush.stencil_control", text = '', icon ='TRANSFORM_ROTATE').mode = 'ROTATION'
-        row.operator("brush.stencil_control", text = '', icon ='TRANSFORM_SCALE').mode = 'SCALE'
-        #prop.mode = 'TRANSLATION'
-        #prop.texmode = 'PRIMARY'
-
-        col = layout.column()
-        col.label(text="Secondary Stencil Brush Controls:")
-
-        row = layout.row(align=False)
-        row.alignment = 'LEFT'
-        prop = row.operator("brush.stencil_control", text = '', icon ='TRANSFORM_MOVE')
-        prop.mode = 'TRANSLATION'
-        prop.texmode = 'SECONDARY'
-        prop = row.operator("brush.stencil_control", text = '', icon ='TRANSFORM_ROTATE')
-        prop.mode = 'ROTATION'
-        prop.texmode = 'SECONDARY'
-        prop = row.operator("brush.stencil_control", text = '', icon ='TRANSFORM_SCALE')
-        prop.mode = 'SCALE'
-        prop.texmode = 'SECONDARY'
-
-        layout.separator()
 
     col = layout.column()
     col.prop(brush, "use_pressure_masking", text="")

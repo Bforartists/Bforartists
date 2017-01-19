@@ -170,6 +170,7 @@ static int mouse_nla_channels(bContext *C, bAnimContext *ac, float x, int channe
 		case ANIMTYPE_DSMAT:    /* Datablock AnimData Expanders */
 		case ANIMTYPE_DSLAM:
 		case ANIMTYPE_DSCAM:
+		case ANIMTYPE_DSCACHEFILE:
 		case ANIMTYPE_DSCUR:
 		case ANIMTYPE_DSSKEY:
 		case ANIMTYPE_DSWOR:
@@ -268,7 +269,7 @@ static int mouse_nla_channels(bContext *C, bAnimContext *ac, float x, int channe
 		{
 			AnimData *adt = BKE_animdata_from_id(ale->id);
 			
-			/* button area... */
+			/* button region... */
 			if (x >= (v2d->cur.xmax - NLACHANNEL_BUTTON_WIDTH)) {
 				if (nlaedit_is_tweakmode_on(ac) == 0) {
 					/* 'push-down' action - only usable when not in TweakMode */
@@ -424,7 +425,7 @@ static int nlachannels_pushdown_exec(bContext *C, wmOperator *op)
 		/* active animdata block */
 		if (nla_panel_context(C, &adt_ptr, NULL, NULL) == 0 || (adt_ptr.data == NULL)) {
 			BKE_report(op->reports, RPT_ERROR, "No active AnimData block to use "
-			           "(select a datablock expander first or set the appropriate flags on an AnimData block)");
+			           "(select a data-block expander first or set the appropriate flags on an AnimData block)");
 			return OPERATOR_CANCELLED;
 		}
 		else {

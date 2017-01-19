@@ -47,6 +47,7 @@
 #include "BIF_generate.h"
 
 #include "ED_transform.h"
+#include "ED_transform_snap_object_context.h"
 
 #include "WM_api.h"
 #include "WM_types.h"
@@ -436,7 +437,7 @@ static float sk_clampPointSize(SK_Point *pt, float size)
 
 static void sk_drawPoint(GLUquadric *quad, SK_Point *pt, float size)
 {
-	glTranslatef(pt->p[0], pt->p[1], pt->p[2]);
+	glTranslate3fv(pt->p);
 	gluSphere(quad, sk_clampPointSize(pt, size), 8, 8);
 }
 
@@ -455,7 +456,7 @@ static void sk_drawEdge(GLUquadric *quad, SK_Point *pt0, SK_Point *pt1, float si
 
 	angle = angle_normalized_v3v3(vec2, vec1);
 
-	glRotatef(angle * (float)(180.0 / M_PI) + 180.0f, axis[0], axis[1], axis[2]);
+	glRotate3fv(angle * (float)(180.0 / M_PI) + 180.0f, axis);
 
 	gluCylinder(quad, sk_clampPointSize(pt1, size), sk_clampPointSize(pt0, size), length, 8, 8);
 }
@@ -475,7 +476,7 @@ static void sk_drawNormal(GLUquadric *quad, SK_Point *pt, float size, float heig
 
 	angle = angle_normalized_v3v3(vec2, pt->no);
 
-	glRotatef(angle * (float)(180.0 / M_PI), axis[0], axis[1], axis[2]);
+	glRotate3fv(angle * (float)(180.0 / M_PI), axis);
 
 	glColor3f(0, 1, 1);
 	gluCylinder(quad, sk_clampPointSize(pt, size), 0, sk_clampPointSize(pt, height), 10, 2);
@@ -969,100 +970,34 @@ static int sk_getStrokeSnapPoint(bContext *C, SK_Point *pt, SK_Sketch *sketch, S
 	ToolSettings *ts = CTX_data_tool_settings(C);
 	int point_added = 0;
 
+	struct SnapObjectContext *snap_context = ED_transform_snap_object_context_create_view3d(
+	        CTX_data_main(C), CTX_data_scene(C), 0,
+	        CTX_wm_region(C), CTX_wm_view3d(C));
+
+	float mvalf[2] = {UNPACK2(dd->mval)};
+	float loc[3], dummy_no[3];
+
 	if (ts->snap_mode == SCE_SNAP_MODE_VOLUME) {
-		DepthPeel *p1, *p2;
-		float *last_p = NULL;
-		float dist = FLT_MAX;
-		float p[3] = {0};
-		float size = 0;
-		float mvalf[2];
-
-		BLI_freelistN(&sketch->depth_peels);
-		BLI_listbase_clear(&sketch->depth_peels);
-
-		mvalf[0] = dd->mval[0];
-		mvalf[1] = dd->mval[1];
-		peelObjectsContext(C, &sketch->depth_peels, mvalf, SNAP_ALL);
-
-		if (stk->nb_points > 0 && stk->points[stk->nb_points - 1].type == PT_CONTINUOUS) {
-			last_p = stk->points[stk->nb_points - 1].p;
-		}
-		else if (LAST_SNAP_POINT_VALID) {
-			last_p = LAST_SNAP_POINT;
-		}
-
-
-		for (p1 = sketch->depth_peels.first; p1; p1 = p1->next) {
-			if (p1->flag == 0) {
-				float vec[3];
-				float new_dist;
-				float new_size = 0;
-
-				p2 = NULL;
-				p1->flag = 1;
-
-				/* if peeling objects, take the first and last from each object */
-				if (ts->snap_flag & SCE_SNAP_PEEL_OBJECT) {
-					DepthPeel *peel;
-					for (peel = p1->next; peel; peel = peel->next) {
-						if (peel->ob == p1->ob) {
-							peel->flag = 1;
-							p2 = peel;
-						}
-					}
-				}
-				/* otherwise, pair first with second and so on */
-				else {
-					for (p2 = p1->next; p2 && p2->ob != p1->ob; p2 = p2->next) {
-						/* nothing to do here */
-					}
-				}
-
-				if (p2) {
-					p2->flag = 1;
-
-					add_v3_v3v3(vec, p1->p, p2->p);
-					mul_v3_fl(vec, 0.5f);
-					new_size = len_v3v3(p1->p, p2->p);
-				}
-				else {
-					copy_v3_v3(vec, p1->p);
-				}
-
-				if (last_p == NULL) {
-					copy_v3_v3(p, vec);
-					size = new_size;
-					dist = 0;
-					break;
-				}
-
-				new_dist = len_v3v3(last_p, vec);
-
-				if (new_dist < dist) {
-					copy_v3_v3(p, vec);
-					dist = new_dist;
-					size = new_size;
-				}
-			}
-		}
-
-		if (dist != FLT_MAX) {
+		float size;
+		if (peelObjectsSnapContext(
+		        snap_context, mvalf,
+		        &(const struct SnapObjectParams){
+		            .snap_select = SNAP_NOT_SELECTED,
+		            .use_object_edit_cage = false,
+		        },
+		        (ts->snap_flag & SCE_SNAP_PEEL_OBJECT) != 0,
+		        loc, dummy_no, &size))
+		{
 			pt->type = dd->type;
 			pt->mode = PT_SNAP;
 			pt->size = size / 2;
-			copy_v3_v3(pt->p, p);
+			copy_v3_v3(pt->p, loc);
 
 			point_added = 1;
 		}
-
-		//BLI_freelistN(&depth_peels);
 	}
 	else {
 		SK_Stroke *snap_stk;
-		float vec[3];
-		float no[3];
-		float mval[2];
-		int found = 0;
 		float dist_px = SNAP_MIN_DISTANCE; // Use a user defined value here
 
 		/* snap to strokes */
@@ -1081,21 +1016,29 @@ static int sk_getStrokeSnapPoint(bContext *C, SK_Point *pt, SK_Sketch *sketch, S
 				point_added = 1;
 			}
 		}
-		
-		mval[0] = dd->mval[0];
-		mval[1] = dd->mval[1];
 
 		/* try to snap to closer object */
-		found = snapObjectsContext(C, mval, &dist_px, vec, no, SNAP_NOT_SELECTED);
-		if (found == 1) {
-			pt->type = dd->type;
-			pt->mode = PT_SNAP;
-			copy_v3_v3(pt->p, vec);
+		{
+			if (ED_transform_snap_object_project_view3d(
+			        snap_context,
+			        ts->snap_mode,
+			        &(const struct SnapObjectParams){
+			            .snap_select = SNAP_NOT_SELECTED,
+			            .use_object_edit_cage = false,
+			        },
+			        mvalf, &dist_px, NULL,
+			        loc, dummy_no))
+			{
+				pt->type = dd->type;
+				pt->mode = PT_SNAP;
+				copy_v3_v3(pt->p, loc);
 
-			point_added = 1;
+				point_added = 1;
+			}
 		}
 	}
 
+	ED_transform_snap_object_context_destroy(snap_context);
 	return point_added;
 }
 
@@ -1779,14 +1722,13 @@ int sk_detectMergeGesture(bContext *C, SK_Gesture *gest, SK_Sketch *UNUSED(sketc
 {
 	ARegion *ar = CTX_wm_region(C);
 	if (gest->nb_segments > 2 && gest->nb_intersections == 2) {
-		short start_val[2], end_val[2];
-		short dist;
+		int start_val[2], end_val[2];
+		int dist;
 
-		if ((ED_view3d_project_short_global(ar, gest->stk->points[0].p,           start_val, V3D_PROJ_TEST_NOP) == V3D_PROJ_RET_OK) &&
-		    (ED_view3d_project_short_global(ar, sk_lastStrokePoint(gest->stk)->p, end_val,   V3D_PROJ_TEST_NOP) == V3D_PROJ_RET_OK))
+		if ((ED_view3d_project_int_global(ar, gest->stk->points[0].p,           start_val, V3D_PROJ_TEST_NOP) == V3D_PROJ_RET_OK) &&
+		    (ED_view3d_project_int_global(ar, sk_lastStrokePoint(gest->stk)->p, end_val,   V3D_PROJ_TEST_NOP) == V3D_PROJ_RET_OK))
 		{
-
-			dist = MAX2(ABS(start_val[0] - end_val[0]), ABS(start_val[1] - end_val[1]));
+			dist = len_manhattan_v2v2_int(start_val, end_val);
 
 			/* if gesture is a circle */
 			if (dist <= 20) {
@@ -2112,7 +2054,7 @@ static void sk_drawSketch(Scene *scene, View3D *UNUSED(v3d), SK_Sketch *sketch, 
 
 			glColor3fv(colors[index]);
 			glPushMatrix();
-			glTranslatef(p->p[0], p->p[1], p->p[2]);
+			glTranslate3fv(p->p);
 			gluSphere(quad, 0.02, 8, 8);
 			glPopMatrix();
 		}

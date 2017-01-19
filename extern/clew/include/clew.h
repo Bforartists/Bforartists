@@ -78,13 +78,13 @@ extern "C" {
     #define CL_API_SUFFIX__VERSION_1_0              AVAILABLE_MAC_OS_X_VERSION_10_6_AND_LATER
     #define CL_EXT_SUFFIX__VERSION_1_0              CL_EXTENSION_WEAK_LINK AVAILABLE_MAC_OS_X_VERSION_10_6_AND_LATER
     #define CL_EXT_SUFFIX__VERSION_1_0_DEPRECATED   CL_EXTENSION_WEAK_LINK AVAILABLE_MAC_OS_X_VERSION_10_6_AND_LATER
-	#define CL_EXT_PREFIX__VERSION_1_0_DEPRECATED   CL_EXTENSION_WEAK_LINK AVAILABLE_MAC_OS_X_VERSION_10_6_AND_LATER
-	#define CL_API_SUFFIX__VERSION_1_1              CL_EXTENSION_WEAK_LINK
-	#define CL_EXT_SUFFIX__VERSION_1_1              CL_EXTENSION_WEAK_LINK
-	#define CL_EXT_SUFFIX__VERSION_1_1_DEPRECATED   CL_EXTENSION_WEAK_LINK AVAILABLE_MAC_OS_X_VERSION_10_7_AND_LATER
-	#define CL_EXT_PREFIX__VERSION_1_1_DEPRECATED   CL_EXTENSION_WEAK_LINK AVAILABLE_MAC_OS_X_VERSION_10_7_AND_LATER
-	#define CL_API_SUFFIX__VERSION_1_2              CL_EXTENSION_WEAK_LINK
-	#define CL_EXT_SUFFIX__VERSION_1_2              CL_EXTENSION_WEAK_LINK
+    #define CL_EXT_PREFIX__VERSION_1_0_DEPRECATED   CL_EXTENSION_WEAK_LINK AVAILABLE_MAC_OS_X_VERSION_10_6_AND_LATER
+    #define CL_API_SUFFIX__VERSION_1_1              CL_EXTENSION_WEAK_LINK
+    #define CL_EXT_SUFFIX__VERSION_1_1              CL_EXTENSION_WEAK_LINK
+    #define CL_EXT_SUFFIX__VERSION_1_1_DEPRECATED   CL_EXTENSION_WEAK_LINK AVAILABLE_MAC_OS_X_VERSION_10_7_AND_LATER
+    #define CL_EXT_PREFIX__VERSION_1_1_DEPRECATED   CL_EXTENSION_WEAK_LINK AVAILABLE_MAC_OS_X_VERSION_10_7_AND_LATER
+    #define CL_API_SUFFIX__VERSION_1_2              CL_EXTENSION_WEAK_LINK
+    #define CL_EXT_SUFFIX__VERSION_1_2              CL_EXTENSION_WEAK_LINK
 #else
     #define CL_EXTENSION_WEAK_LINK
     #define CL_API_SUFFIX__VERSION_1_0
@@ -369,7 +369,8 @@ typedef unsigned int cl_GLenum;
 #endif
 
 /* Define basic vector types */
-#if defined( __VEC__ )
+/* WOrkaround for ppc64el platform: conflicts with bool from C++. */
+#if defined( __VEC__ ) && !(defined(__PPC64__) && defined(__LITTLE_ENDIAN__))
    #include <altivec.h>   /* may be omitted depending on compiler. AltiVec spec provides no way to detect whether the header is required. */
    typedef vector unsigned char     __cl_uchar16;
    typedef vector signed char       __cl_char16;
@@ -2484,7 +2485,7 @@ PFNCLCREATEFROMGLTEXTURE3D)(cl_context      /* context */,
 #ifdef __APPLE__
 #  pragma GCC diagnostic pop // ignored "-Wignored-attributes"
 #endif
-	
+
 /* cl_khr_gl_sharing extension  */
 
 #define cl_khr_gl_sharing 1
@@ -2781,7 +2782,7 @@ CLEW_FUN_EXPORT     PFNCLGETGLCONTEXTINFOKHR            __clewGetGLContextInfoKH
 #define CLEW_ERROR_ATEXIT_FAILED    -2      //!<    Error code for failing to queue the closing of the dynamic library to atexit()
 
 //! \brief Load OpenCL dynamic library and set function entry points
-int         clewInit        ();
+int         clewInit        (void);
 //! \brief Convert an OpenCL error code to its string equivalent
 const char* clewErrorString (cl_int error);
 

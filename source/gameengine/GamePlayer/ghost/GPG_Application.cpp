@@ -78,7 +78,6 @@ extern "C"
 #include "RAS_MeshObject.h"
 #include "RAS_OpenGLRasterizer.h"
 #include "RAS_ListRasterizer.h"
-#include "RAS_GLExtensionManager.h"
 #include "KX_PythonInit.h"
 #include "KX_PyConstraintBinding.h"
 #include "BL_Material.h" // MAXTEX
@@ -302,7 +301,7 @@ bool GPG_Application::startScreenSaverFullScreen(
 		const int stereoMode,
 		const GHOST_TUns16 samples)
 {
-	bool ret = startFullScreen(width, height, bpp, frequency, stereoVisual, stereoMode, samples);
+	bool ret = startFullScreen(width, height, bpp, frequency, stereoVisual, stereoMode, 0, samples);
 	if (ret)
 	{
 		HWND ghost_hwnd = findGhostWindowHWND(m_mainWindow);
@@ -326,6 +325,7 @@ bool GPG_Application::startWindow(
         int windowHeight,
         const bool stereoVisual,
         const int stereoMode,
+		const int alphaBackground,
         const GHOST_TUns16 samples)
 {
 	GHOST_GLSettings glSettings = {0};
@@ -334,6 +334,8 @@ bool GPG_Application::startWindow(
 	//STR_String title ("Blender Player - GHOST");
 	if (stereoVisual)
 		glSettings.flags |= GHOST_glStereoVisual;
+	if (alphaBackground)
+		glSettings.flags |= GHOST_glAlphaBackground;
 	glSettings.numOfAASamples = samples;
 
 	m_mainWindow = fSystem->createWindow(title, windowLeft, windowTop, windowWidth, windowHeight, GHOST_kWindowStateNormal,
@@ -361,6 +363,7 @@ bool GPG_Application::startEmbeddedWindow(
         const GHOST_TEmbedderWindowID parentWindow,
         const bool stereoVisual,
         const int stereoMode,
+		const int alphaBackground,
         const GHOST_TUns16 samples)
 {
 	GHOST_TWindowState state = GHOST_kWindowStateNormal;
@@ -368,6 +371,8 @@ bool GPG_Application::startEmbeddedWindow(
 
 	if (stereoVisual)
 		glSettings.flags |= GHOST_glStereoVisual;
+	if (alphaBackground)
+		glSettings.flags |= GHOST_glAlphaBackground;
 	glSettings.numOfAASamples = samples;
 
 	if (parentWindow != 0)
@@ -395,6 +400,7 @@ bool GPG_Application::startFullScreen(
         int bpp,int frequency,
         const bool stereoVisual,
         const int stereoMode,
+        const int alphaBackground,
         const GHOST_TUns16 samples,
         bool useDesktop)
 {
@@ -408,7 +414,7 @@ bool GPG_Application::startFullScreen(
 	setting.bpp = bpp;
 	setting.frequency = frequency;
 
-	fSystem->beginFullScreen(setting, &m_mainWindow, stereoVisual, samples);
+	fSystem->beginFullScreen(setting, &m_mainWindow, stereoVisual, alphaBackground, samples);
 	m_mainWindow->setCursorVisibility(false);
 	/* note that X11 ignores this (it uses a window internally for fullscreen) */
 	m_mainWindow->setState(GHOST_kWindowStateFullScreen);
@@ -563,7 +569,6 @@ bool GPG_Application::initEngine(GHOST_IWindow* window, const int stereoMode)
 	if (!m_engineInitialized)
 	{
 		GPU_init();
-		bgl::InitExtensions(true);
 
 		// get and set the preferences
 		SYS_SystemHandle syshandle = SYS_GetSystem();
@@ -585,13 +590,8 @@ bool GPG_Application::initEngine(GHOST_IWindow* window, const int stereoMode)
 		bool nodepwarnings = (SYS_GetCommandLineInt(syshandle, "ignore_deprecation_warnings", 1) != 0);
 		bool restrictAnimFPS = (gm->flag & GAME_RESTRICT_ANIM_UPDATES) != 0;
 
-		if (GLEW_ARB_multitexture && GLEW_VERSION_1_1)
-			m_blendermat = (SYS_GetCommandLineInt(syshandle, "blender_material", 1) != 0);
-
-		if (GPU_glsl_support())
-			m_blenderglslmat = (SYS_GetCommandLineInt(syshandle, "blender_glsl_material", 1) != 0);
-		else if (m_globalSettings->matmode == GAME_MAT_GLSL)
-			m_blendermat = false;
+		m_blendermat = (SYS_GetCommandLineInt(syshandle, "blender_material", 1) != 0);
+		m_blenderglslmat = (SYS_GetCommandLineInt(syshandle, "blender_glsl_material", 1) != 0);
 
 		// create the canvas, rasterizer and rendertools
 		m_canvas = new GPG_Canvas(window);
@@ -607,12 +607,20 @@ bool GPG_Application::initEngine(GHOST_IWindow* window, const int stereoMode)
 		if (gm->flag & GAME_SHOW_MOUSE)
 			m_canvas->SetMouseState(RAS_ICanvas::MOUSE_NORMAL);
 		
+		RAS_STORAGE_TYPE raster_storage = RAS_AUTO_STORAGE;
+
+		if (gm->raster_storage == RAS_STORE_VBO) {
+			raster_storage = RAS_VBO;
+		}
+		else if (gm->raster_storage == RAS_STORE_VA) {
+			raster_storage = RAS_VA;
+		}
 		//Don't use displaylists with VBOs
 		//If auto starts using VBOs, make sure to check for that here
-		if (useLists && gm->raster_storage != RAS_STORE_VBO)
-			m_rasterizer = new RAS_ListRasterizer(m_canvas, false, gm->raster_storage);
+		if (useLists && raster_storage != RAS_VBO)
+			m_rasterizer = new RAS_ListRasterizer(m_canvas, true, raster_storage);
 		else
-			m_rasterizer = new RAS_OpenGLRasterizer(m_canvas, gm->raster_storage);
+			m_rasterizer = new RAS_OpenGLRasterizer(m_canvas, raster_storage);
 
 		/* Stereo parameters - Eye Separation from the UI - stereomode from the command-line/UI */
 		m_rasterizer->SetStereoMode((RAS_IRasterizer::StereoMode) stereoMode);
@@ -620,7 +628,9 @@ bool GPG_Application::initEngine(GHOST_IWindow* window, const int stereoMode)
 		
 		if (!m_rasterizer)
 			goto initFailed;
-						
+
+		m_rasterizer->PrintHardwareInfo();
+
 		// create the inputdevices
 		m_keyboard = new GPG_KeyboardDevice();
 		if (!m_keyboard)
@@ -665,6 +675,7 @@ bool GPG_Application::initEngine(GHOST_IWindow* window, const int stereoMode)
 
 		//set the global settings (carried over if restart/load new files)
 		m_ketsjiengine->SetGlobalSettings(m_globalSettings);
+		m_ketsjiengine->SetRender(true);
 
 		m_engineInitialized = true;
 	}

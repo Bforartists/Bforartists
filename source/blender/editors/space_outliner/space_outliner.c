@@ -62,7 +62,7 @@
 
 #include "outliner_intern.h"
 
-static void outliner_main_area_init(wmWindowManager *wm, ARegion *ar)
+static void outliner_main_region_init(wmWindowManager *wm, ARegion *ar)
 {
 	ListBase *lb;
 	wmKeyMap *keymap;
@@ -266,7 +266,7 @@ static void outliner_dropboxes(void)
 	WM_dropbox_add(lb, "OUTLINER_OT_group_link", outliner_group_link_poll, outliner_group_link_copy);
 }
 
-static void outliner_main_area_draw(const bContext *C, ARegion *ar)
+static void outliner_main_region_draw(const bContext *C, ARegion *ar)
 {
 	View2D *v2d = &ar->v2d;
 	View2DScrollers *scrollers;
@@ -287,12 +287,12 @@ static void outliner_main_area_draw(const bContext *C, ARegion *ar)
 }
 
 
-static void outliner_main_area_free(ARegion *UNUSED(ar))
+static void outliner_main_region_free(ARegion *UNUSED(ar))
 {
 	
 }
 
-static void outliner_main_area_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa), ARegion *ar, wmNotifier *wmn)
+static void outliner_main_region_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa), ARegion *ar, wmNotifier *wmn)
 {
 	/* context changes */
 	switch (wmn->category) {
@@ -306,6 +306,7 @@ static void outliner_main_area_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa)
 				case ND_KEYINGSET:
 				case ND_FRAME:
 				case ND_RENDER_OPTIONS:
+				case ND_SEQUENCER:
 				case ND_LAYER:
 				case ND_WORLD:
 					ED_region_tag_redraw(ar);
@@ -399,21 +400,21 @@ static void outliner_main_area_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa)
 /* ************************ header outliner area region *********************** */
 
 /* add handlers, stuff you only do once or on area/region changes */
-static void outliner_header_area_init(wmWindowManager *UNUSED(wm), ARegion *ar)
+static void outliner_header_region_init(wmWindowManager *UNUSED(wm), ARegion *ar)
 {
 	ED_region_header_init(ar);
 }
 
-static void outliner_header_area_draw(const bContext *C, ARegion *ar)
+static void outliner_header_region_draw(const bContext *C, ARegion *ar)
 {
 	ED_region_header(C, ar);
 }
 
-static void outliner_header_area_free(ARegion *UNUSED(ar))
+static void outliner_header_region_free(ARegion *UNUSED(ar))
 {
 }
 
-static void outliner_header_area_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa), ARegion *ar, wmNotifier *wmn)
+static void outliner_header_region_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa), ARegion *ar, wmNotifier *wmn)
 {
 	/* context changes */
 	switch (wmn->category) {
@@ -445,8 +446,8 @@ static SpaceLink *outliner_new(const bContext *UNUSED(C))
 	ar->regiontype = RGN_TYPE_HEADER;
 	ar->alignment = RGN_ALIGN_BOTTOM;
 	
-	/* main area */
-	ar = MEM_callocN(sizeof(ARegion), "main area for outliner");
+	/* main region */
+	ar = MEM_callocN(sizeof(ARegion), "main region for outliner");
 	
 	BLI_addtail(&soutliner->regionbase, ar);
 	ar->regiontype = RGN_TYPE_WINDOW;
@@ -486,6 +487,39 @@ static SpaceLink *outliner_duplicate(SpaceLink *sl)
 	return (SpaceLink *)soutlinern;
 }
 
+static void outliner_id_remap(ScrArea *UNUSED(sa), SpaceLink *slink, ID *old_id, ID *new_id)
+{
+	SpaceOops *so = (SpaceOops *)slink;
+
+	/* Some early out checks. */
+	if (!TREESTORE_ID_TYPE(old_id)) {
+		return;  /* ID type is not used by outilner... */
+	}
+
+	if (so->search_tse.id == old_id) {
+		so->search_tse.id = new_id;
+	}
+
+	if (so->treestore) {
+		TreeStoreElem *tselem;
+		BLI_mempool_iter iter;
+		bool changed = false;
+
+		BLI_mempool_iternew(so->treestore, &iter);
+		while ((tselem = BLI_mempool_iterstep(&iter))) {
+			if (tselem->id == old_id) {
+				tselem->id = new_id;
+				changed = true;
+			}
+		}
+		if (so->treehash && changed) {
+			/* rebuild hash table, because it depends on ids too */
+			/* postpone a full rebuild because this can be called many times on-free */
+			so->storeflag |= SO_TREESTORE_REBUILD;
+		}
+	}
+}
+
 /* only called once, from space_api/spacetypes.c */
 void ED_spacetype_outliner(void)
 {
@@ -502,16 +536,17 @@ void ED_spacetype_outliner(void)
 	st->operatortypes = outliner_operatortypes;
 	st->keymap = outliner_keymap;
 	st->dropboxes = outliner_dropboxes;
-	
+	st->id_remap = outliner_id_remap;
+
 	/* regions: main window */
 	art = MEM_callocN(sizeof(ARegionType), "spacetype outliner region");
 	art->regionid = RGN_TYPE_WINDOW;
 	art->keymapflag = ED_KEYMAP_UI | ED_KEYMAP_VIEW2D | ED_KEYMAP_FRAMES;
 	
-	art->init = outliner_main_area_init;
-	art->draw = outliner_main_area_draw;
-	art->free = outliner_main_area_free;
-	art->listener = outliner_main_area_listener;
+	art->init = outliner_main_region_init;
+	art->draw = outliner_main_region_draw;
+	art->free = outliner_main_region_free;
+	art->listener = outliner_main_region_listener;
 	BLI_addhead(&st->regiontypes, art);
 	
 	/* regions: header */
@@ -520,10 +555,10 @@ void ED_spacetype_outliner(void)
 	art->prefsizey = HEADERY;
 	art->keymapflag = ED_KEYMAP_UI | ED_KEYMAP_VIEW2D | ED_KEYMAP_FRAMES | ED_KEYMAP_HEADER;
 	
-	art->init = outliner_header_area_init;
-	art->draw = outliner_header_area_draw;
-	art->free = outliner_header_area_free;
-	art->listener = outliner_header_area_listener;
+	art->init = outliner_header_region_init;
+	art->draw = outliner_header_region_draw;
+	art->free = outliner_header_region_free;
+	art->listener = outliner_header_region_listener;
 	BLI_addhead(&st->regiontypes, art);
 	
 	BKE_spacetype_register(st);

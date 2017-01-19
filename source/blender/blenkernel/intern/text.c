@@ -152,33 +152,45 @@ static void init_undo_text(Text *text)
 	text->undo_buf = MEM_mallocN(text->undo_len, "undo buf");
 }
 
+/**
+ * \note caller must handle `undo_buf` and `compiled` members.
+ */
+void BKE_text_free_lines(Text *text)
+{
+	for (TextLine *tmp = text->lines.first, *tmp_next; tmp; tmp = tmp_next) {
+		tmp_next = tmp->next;
+		MEM_freeN(tmp->line);
+		if (tmp->format) {
+			MEM_freeN(tmp->format);
+		}
+		MEM_freeN(tmp);
+	}
+
+	BLI_listbase_clear(&text->lines);
+
+	text->curl = text->sell = NULL;
+}
+
+/** Free (or release) any data used by this text (does not free the text itself). */
 void BKE_text_free(Text *text)
 {
-	TextLine *tmp;
+	/* No animdata here. */
 
-	for (tmp = text->lines.first; tmp; tmp = tmp->next) {
-		MEM_freeN(tmp->line);
-		if (tmp->format)
-			MEM_freeN(tmp->format);
-	}
-	
-	BLI_freelistN(&text->lines);
+	BKE_text_free_lines(text);
 
-	if (text->name) MEM_freeN(text->name);
-	MEM_freeN(text->undo_buf);
+	MEM_SAFE_FREE(text->name);
+	MEM_SAFE_FREE(text->undo_buf);
 #ifdef WITH_PYTHON
-	if (text->compiled) BPY_text_free_code(text);
+	BPY_text_free_code(text);
 #endif
 }
 
-Text *BKE_text_add(Main *bmain, const char *name) 
+void BKE_text_init(Text *ta)
 {
-	Text *ta;
 	TextLine *tmp;
-	
-	ta = BKE_libblock_alloc(bmain, ID_TXT, name);
-	ta->id.us = 1;
-	
+
+	BLI_assert(MEMCMP_STRUCT_OFS_IS_ZERO(ta, id));
+
 	ta->name = NULL;
 
 	init_undo_text(ta);
@@ -206,6 +218,15 @@ Text *BKE_text_add(Main *bmain, const char *name)
 	ta->curc = 0;
 	ta->sell = ta->lines.first;
 	ta->selc = 0;
+}
+
+Text *BKE_text_add(Main *bmain, const char *name)
+{
+	Text *ta;
+
+	ta = BKE_libblock_alloc(bmain, ID_TXT, name);
+
+	BKE_text_init(ta);
 
 	return ta;
 }
@@ -332,63 +353,40 @@ static void text_from_buf(Text *text, const unsigned char *buffer, const int len
 
 bool BKE_text_reload(Text *text)
 {
-	FILE *fp;
-	int len;
 	unsigned char *buffer;
-	TextLine *tmp;
-	char str[FILE_MAX];
+	size_t buffer_len;
+	char filepath_abs[FILE_MAX];
 	BLI_stat_t st;
 
 	if (!text->name) {
 		return false;
 	}
 
-	BLI_strncpy(str, text->name, FILE_MAX);
-	BLI_path_abs(str, G.main->name);
+	BLI_strncpy(filepath_abs, text->name, FILE_MAX);
+	BLI_path_abs(filepath_abs, G.main->name);
 	
-	fp = BLI_fopen(str, "r");
-	if (fp == NULL) {
-		return false;
-	}
-	fseek(fp, 0L, SEEK_END);
-	len = ftell(fp);
-	fseek(fp, 0L, SEEK_SET);
-	if (UNLIKELY(len == -1)) {
-		fclose(fp);
+	buffer = BLI_file_read_text_as_mem(filepath_abs, 0, &buffer_len);
+	if (buffer == NULL) {
 		return false;
 	}
 
 	/* free memory: */
-
-	for (tmp = text->lines.first; tmp; tmp = tmp->next) {
-		MEM_freeN(tmp->line);
-		if (tmp->format) MEM_freeN(tmp->format);
-	}
-	
-	BLI_freelistN(&text->lines);
-
-	BLI_listbase_clear(&text->lines);
-	text->curl = text->sell = NULL;
+	BKE_text_free_lines(text);
+	txt_make_dirty(text);
 
 	/* clear undo buffer */
 	MEM_freeN(text->undo_buf);
 	init_undo_text(text);
 
-	buffer = MEM_mallocN(len, "text_buffer");
-	/* under windows fread can return less than len bytes because
-	 * of CR stripping */
-	len = fread(buffer, 1, len, fp);
 
-	fclose(fp);
-
-	if (BLI_stat(str, &st) != -1) {
+	if (BLI_stat(filepath_abs, &st) != -1) {
 		text->mtime = st.st_mtime;
 	}
 	else {
 		text->mtime = 0;
 	}
 
-	text_from_buf(text, buffer, len);
+	text_from_buf(text, buffer, buffer_len);
 
 	MEM_freeN(buffer);
 	return true;
@@ -396,32 +394,23 @@ bool BKE_text_reload(Text *text)
 
 Text *BKE_text_load_ex(Main *bmain, const char *file, const char *relpath, const bool is_internal)
 {
-	FILE *fp;
-	int len;
 	unsigned char *buffer;
+	size_t buffer_len;
 	Text *ta;
-	char str[FILE_MAX];
+	char filepath_abs[FILE_MAX];
 	BLI_stat_t st;
 
-	BLI_strncpy(str, file, FILE_MAX);
+	BLI_strncpy(filepath_abs, file, FILE_MAX);
 	if (relpath) /* can be NULL (bg mode) */
-		BLI_path_abs(str, relpath);
+		BLI_path_abs(filepath_abs, relpath);
 	
-	fp = BLI_fopen(str, "r");
-	if (fp == NULL) {
-		return NULL;
+	buffer = BLI_file_read_text_as_mem(filepath_abs, 0, &buffer_len);
+	if (buffer == NULL) {
+		return false;
 	}
 
-	fseek(fp, 0L, SEEK_END);
-	len = ftell(fp);
-	fseek(fp, 0L, SEEK_SET);
-	if (UNLIKELY(len == -1)) {
-		fclose(fp);
-		return NULL;
-	}
-
-	ta = BKE_libblock_alloc(bmain, ID_TXT, BLI_path_basename(str));
-	ta->id.us = 1;
+	ta = BKE_libblock_alloc(bmain, ID_TXT, BLI_path_basename(filepath_abs));
+	ta->id.us = 0;
 
 	BLI_listbase_clear(&ta->lines);
 	ta->curl = ta->sell = NULL;
@@ -439,22 +428,15 @@ Text *BKE_text_load_ex(Main *bmain, const char *file, const char *relpath, const
 
 	/* clear undo buffer */
 	init_undo_text(ta);
-	
-	buffer = MEM_mallocN(len, "text_buffer");
-	/* under windows fread can return less than len bytes because
-	 * of CR stripping */
-	len = fread(buffer, 1, len, fp);
 
-	fclose(fp);
-
-	if (BLI_stat(str, &st) != -1) {
+	if (BLI_stat(filepath_abs, &st) != -1) {
 		ta->mtime = st.st_mtime;
 	}
 	else {
 		ta->mtime = 0;
 	}
 	
-	text_from_buf(ta, buffer, len);
+	text_from_buf(ta, buffer, buffer_len);
 	
 	MEM_freeN(buffer);
 
@@ -471,7 +453,7 @@ Text *BKE_text_copy(Main *bmain, Text *ta)
 	Text *tan;
 	TextLine *line, *tmp;
 	
-	tan = BKE_libblock_copy(&ta->id);
+	tan = BKE_libblock_copy(bmain, &ta->id);
 	
 	/* file name can be NULL */
 	if (ta->name) {
@@ -510,196 +492,14 @@ Text *BKE_text_copy(Main *bmain, Text *ta)
 
 	init_undo_text(tan);
 
-	if (ta->id.lib) {
-		BKE_id_lib_local_paths(bmain, ta->id.lib, &tan->id);
-	}
+	BKE_id_copy_ensure_local(bmain, &ta->id, &tan->id);
 
 	return tan;
 }
 
-void BKE_text_unlink(Main *bmain, Text *text)
+void BKE_text_make_local(Main *bmain, Text *text, const bool lib_local)
 {
-	bScreen *scr;
-	ScrArea *area;
-	SpaceLink *sl;
-	Object *ob;
-	bController *cont;
-	bActuator *act;
-	bConstraint *con;
-	bNodeTree *ntree;
-	bNode *node;
-	Material *mat;
-	Lamp *la;
-	Tex *te;
-	World *wo;
-	FreestyleLineStyle *linestyle;
-	Scene *sce;
-	SceneRenderLayer *srl;
-	FreestyleModuleConfig *module;
-	bool update;
-
-	for (ob = bmain->object.first; ob; ob = ob->id.next) {
-		/* game controllers */
-		for (cont = ob->controllers.first; cont; cont = cont->next) {
-			if (cont->type == CONT_PYTHON) {
-				bPythonCont *pc;
-				
-				pc = cont->data;
-				if (pc->text == text) pc->text = NULL;
-			}
-		}
-		/* game actuators */
-		for (act = ob->actuators.first; act; act = act->next) {
-			if (act->type == ACT_2DFILTER) {
-				bTwoDFilterActuator *tfa;
-				
-				tfa = act->data;
-				if (tfa->text == text) tfa->text = NULL;
-			}
-		}
-
-		/* pyconstraints */
-		update = 0;
-
-		if (ob->type == OB_ARMATURE && ob->pose) {
-			bPoseChannel *pchan;
-			for (pchan = ob->pose->chanbase.first; pchan; pchan = pchan->next) {
-				for (con = pchan->constraints.first; con; con = con->next) {
-					if (con->type == CONSTRAINT_TYPE_PYTHON) {
-						bPythonConstraint *data = con->data;
-						if (data->text == text) data->text = NULL;
-						update = 1;
-						
-					}
-				}
-			}
-		}
-
-		for (con = ob->constraints.first; con; con = con->next) {
-			if (con->type == CONSTRAINT_TYPE_PYTHON) {
-				bPythonConstraint *data = con->data;
-				if (data->text == text) data->text = NULL;
-				update = 1;
-			}
-		}
-		
-		if (update)
-			DAG_id_tag_update(&ob->id, OB_RECALC_DATA);
-	}
-	
-	/* nodes */
-	for (la = bmain->lamp.first; la; la = la->id.next) {
-		ntree = la->nodetree;
-		if (!ntree)
-			continue;
-		for (node = ntree->nodes.first; node; node = node->next) {
-			if (node->type == NODE_FRAME) {
-				if ((Text *)node->id == text) {
-					node->id = NULL;
-				}
-			}
-		}
-	}
-
-	for (linestyle = bmain->linestyle.first; linestyle; linestyle = linestyle->id.next) {
-		ntree = linestyle->nodetree;
-		if (!ntree)
-			continue;
-		for (node = ntree->nodes.first; node; node = node->next) {
-			if (node->type == NODE_FRAME) {
-				if ((Text *)node->id == text) {
-					node->id = NULL;
-				}
-			}
-		}
-	}
-
-	for (mat = bmain->mat.first; mat; mat = mat->id.next) {
-		ntree = mat->nodetree;
-		if (!ntree)
-			continue;
-		for (node = ntree->nodes.first; node; node = node->next) {
-			if (ELEM(node->type, SH_NODE_SCRIPT, NODE_FRAME)) {
-				if ((Text *)node->id == text) {
-					node->id = NULL;
-				}
-			}
-		}
-	}
-
-	for (te = bmain->tex.first; te; te = te->id.next) {
-		ntree = te->nodetree;
-		if (!ntree)
-			continue;
-		for (node = ntree->nodes.first; node; node = node->next) {
-			if (node->type == NODE_FRAME) {
-				if ((Text *)node->id == text) {
-					node->id = NULL;
-				}
-			}
-		}
-	}
-
-	for (wo = bmain->world.first; wo; wo = wo->id.next) {
-		ntree = wo->nodetree;
-		if (!ntree)
-			continue;
-		for (node = ntree->nodes.first; node; node = node->next) {
-			if (node->type == NODE_FRAME) {
-				if ((Text *)node->id == text) {
-					node->id = NULL;
-				}
-			}
-		}
-	}
-
-	for (sce = bmain->scene.first; sce; sce = sce->id.next) {
-		ntree = sce->nodetree;
-		if (!ntree)
-			continue;
-		for (node = ntree->nodes.first; node; node = node->next) {
-			if (node->type == NODE_FRAME) {
-				Text *ntext = (Text *)node->id;
-				if (ntext == text) node->id = NULL;
-			}
-		}
-
-		/* Freestyle (while looping over the scene) */
-		for (srl = sce->r.layers.first; srl; srl = srl->next) {
-			for (module = srl->freestyleConfig.modules.first; module; module = module->next) {
-				if (module->script == text)
-					module->script = NULL;
-			}
-		}
-	}
-
-	for (ntree = bmain->nodetree.first; ntree; ntree = ntree->id.next) {
-		for (node = ntree->nodes.first; node; node = node->next) {
-			if (ELEM(node->type, SH_NODE_SCRIPT, NODE_FRAME)) {
-				if ((Text *)node->id == text) {
-					node->id = NULL;
-				}
-			}
-		}
-	}
-	
-	/* text space */
-	for (scr = bmain->screen.first; scr; scr = scr->id.next) {
-		for (area = scr->areabase.first; area; area = area->next) {
-			for (sl = area->spacedata.first; sl; sl = sl->next) {
-				if (sl->spacetype == SPACE_TEXT) {
-					SpaceText *st = (SpaceText *) sl;
-
-					if (st->text == text) {
-						st->text = NULL;
-						st->top = 0;
-					}
-				}
-			}
-		}
-	}
-
-	text->id.us = 0;
+	BKE_id_make_local_generic(bmain, &text->id, true, lib_local);
 }
 
 void BKE_text_clear(Text *text) /* called directly from rna */
@@ -1012,11 +812,51 @@ void txt_move_down(Text *text, const bool sel)
 	if (!sel) txt_pop_sel(text);
 }
 
+int txt_calc_tab_left(TextLine *tl, int ch)
+{
+	/* do nice left only if there are only spaces */
+
+	int tabsize = (ch < TXT_TABSIZE) ? ch : TXT_TABSIZE;
+
+	for (int i = 0; i < ch; i++)
+		if (tl->line[i] != ' ') {
+			tabsize = 0;
+			break;
+		}
+
+	/* if in the middle of the space-tab */
+	if (tabsize && ch % TXT_TABSIZE != 0)
+		tabsize = (ch % TXT_TABSIZE);
+	return tabsize;
+}
+
+int txt_calc_tab_right(TextLine *tl, int ch)
+{
+	if (tl->line[ch] == ' ') {
+		int i;
+		for (i = 0; i < ch; i++) {
+			if (tl->line[i] != ' ') {
+				return 0;
+			}
+		}
+
+		int tabsize = (ch) % TXT_TABSIZE + 1;
+		for (i = ch + 1; tl->line[i] == ' ' && tabsize < TXT_TABSIZE; i++) {
+			tabsize++;
+		}
+
+		return i - ch;
+	}
+	else {
+		return 0;
+	}
+}
+
 void txt_move_left(Text *text, const bool sel)
 {
 	TextLine **linep;
 	int *charp;
-	int tabsize = 0, i = 0;
+	int tabsize = 0;
 
 	if (sel) txt_curs_sel(text, &linep, &charp);
 	else { txt_pop_first(text); txt_curs_cur(text, &linep, &charp); }
@@ -1029,24 +869,15 @@ void txt_move_left(Text *text, const bool sel)
 		}
 	}
 	else {
-		// do nice left only if there are only spaces
+		/* do nice left only if there are only spaces */
 		// TXT_TABSIZE hardcoded in DNA_text_types.h
 		if (text->flags & TXT_TABSTOSPACES) {
-			tabsize = (*charp < TXT_TABSIZE) ? *charp : TXT_TABSIZE;
-			
-			for (i = 0; i < (*charp); i++)
-				if ((*linep)->line[i] != ' ') {
-					tabsize = 0;
-					break;
-				}
-			
-			// if in the middle of the space-tab
-			if (tabsize && (*charp) % TXT_TABSIZE != 0)
-				tabsize = ((*charp) % TXT_TABSIZE);
+			tabsize = txt_calc_tab_left(*linep, *charp);
 		}
 		
-		if (tabsize)
+		if (tabsize) {
 			(*charp) -= tabsize;
+		}
 		else {
 			const char *prev = BLI_str_prev_char_utf8((*linep)->line + *charp);
 			*charp = prev - (*linep)->line;
@@ -1059,8 +890,7 @@ void txt_move_left(Text *text, const bool sel)
 void txt_move_right(Text *text, const bool sel)
 {
 	TextLine **linep;
-	int *charp, i;
-	bool do_tab = false;
+	int *charp;
 
 	if (sel) txt_curs_sel(text, &linep, &charp);
 	else { txt_pop_last(text); txt_curs_cur(text, &linep, &charp); }
@@ -1073,22 +903,16 @@ void txt_move_right(Text *text, const bool sel)
 		}
 	}
 	else {
-		// do nice right only if there are only spaces
-		// spaces hardcoded in DNA_text_types.h
-		if (text->flags & TXT_TABSTOSPACES && (*linep)->line[*charp] == ' ') {
-			do_tab = true;
-			for (i = 0; i < *charp; i++)
-				if ((*linep)->line[i] != ' ') {
-					do_tab = false;
-					break;
-				}
+		/* do nice right only if there are only spaces */
+		/* spaces hardcoded in DNA_text_types.h */
+		int tabsize = 0;
+
+		if (text->flags & TXT_TABSTOSPACES) {
+			tabsize = txt_calc_tab_right(*linep, *charp);
 		}
 		
-		if (do_tab) {
-			int tabsize = (*charp) % TXT_TABSIZE + 1;
-			for (i = *charp + 1; (*linep)->line[i] == ' ' && tabsize < TXT_TABSIZE; i++)
-				tabsize++;
-			(*charp) = i;
+		if (tabsize) {
+			(*charp) += tabsize;
 		}
 		else {
 			(*charp) += BLI_str_utf8_size((*linep)->line + *charp);
@@ -2109,7 +1933,7 @@ void txt_do_undo(Text *text)
 {
 	int op = text->undo_buf[text->undo_pos];
 	int prev_flags;
-	unsigned int linep, i;
+	unsigned int linep;
 	unsigned int uchar;
 	unsigned int curln, selln;
 	unsigned short curc, selc;
@@ -2178,6 +2002,8 @@ void txt_do_undo(Text *text)
 			break;
 
 		case UNDO_DBLOCK:
+		{
+			int i;
 			/* length of the string in the buffer */
 			linep = txt_undo_read_uint32(text->undo_buf, &text->undo_pos);
 
@@ -2207,8 +2033,10 @@ void txt_do_undo(Text *text)
 			text->undo_pos--;
 			
 			break;
-
+		}
 		case UNDO_IBLOCK:
+		{
+			int i;
 			/* length of the string in the buffer */
 			linep = txt_undo_read_uint32(text->undo_buf, &text->undo_pos);
 			
@@ -2246,6 +2074,7 @@ void txt_do_undo(Text *text)
 			
 			text->undo_pos--;
 			break;
+		}
 		case UNDO_INDENT:
 		case UNDO_COMMENT:
 		case UNDO_DUPLICATE:

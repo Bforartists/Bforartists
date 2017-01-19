@@ -36,7 +36,7 @@
 #include "DNA_screen_types.h"
 #include "DNA_scene_types.h"
 
-EnumPropertyItem region_type_items[] = {
+EnumPropertyItem rna_enum_region_type_items[] = {
 	{RGN_TYPE_WINDOW, "WINDOW", 0, "Window", ""},
 	{RGN_TYPE_HEADER, "HEADER", 0, "Header", ""},
 	{RGN_TYPE_CHANNELS, "CHANNELS", 0, "Channels", ""},
@@ -127,7 +127,7 @@ static EnumPropertyItem *rna_Area_type_itemf(bContext *UNUSED(C), PointerRNA *UN
                                              PropertyRNA *UNUSED(prop), bool *UNUSED(r_free))
 {
 	/* +1 to skip SPACE_EMPTY */
-	return space_type_items + 1;
+	return rna_enum_space_type_items + 1;
 }
 
 static int rna_Area_type_get(PointerRNA *ptr)
@@ -161,7 +161,7 @@ static void rna_Area_type_update(bContext *C, PointerRNA *ptr)
 			CTX_wm_area_set(C, sa);
 			CTX_wm_region_set(C, NULL);
 
-			ED_area_newspace(C, sa, sa->butspacetype);
+			ED_area_newspace(C, sa, sa->butspacetype, true);
 			ED_area_tag_redraw(sa);
 
 			/* It is possible that new layers becomes visible. */
@@ -284,7 +284,7 @@ static void rna_def_area(BlenderRNA *brna)
 
 	prop = RNA_def_property(srna, "type", PROP_ENUM, PROP_NONE);
 	RNA_def_property_enum_sdna(prop, NULL, "spacetype");
-	RNA_def_property_enum_items(prop, space_type_items);
+	RNA_def_property_enum_items(prop, rna_enum_space_type_items);
 	RNA_def_property_enum_default(prop, SPACE_VIEW3D);
 	RNA_def_property_enum_funcs(prop, "rna_Area_type_get", "rna_Area_type_set", "rna_Area_type_itemf");
 	RNA_def_property_ui_text(prop, "Editor Type", "Current editor type for this area");
@@ -330,22 +330,22 @@ static void rna_def_view2d_api(StructRNA *srna)
 	func = RNA_def_function(srna, "region_to_view", "rna_View2D_region_to_view");
 	RNA_def_function_ui_description(func, "Transform region coordinates to 2D view");
 	parm = RNA_def_int(func, "x", 0, INT_MIN, INT_MAX, "x", "Region x coordinate", -10000, 10000);
-	RNA_def_property_flag(parm, PROP_REQUIRED);
+	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
 	parm = RNA_def_int(func, "y", 0, INT_MIN, INT_MAX, "y", "Region y coordinate", -10000, 10000);
-	RNA_def_property_flag(parm, PROP_REQUIRED);
+	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
 	parm = RNA_def_float_array(func, "result", 2, view_default, -FLT_MAX, FLT_MAX, "Result", "View coordinates", -10000.0f, 10000.0f);
-	RNA_def_property_flag(parm, PROP_THICK_WRAP);
+	RNA_def_parameter_flags(parm, PROP_THICK_WRAP, 0);
 	RNA_def_function_output(func, parm);
 
 	func = RNA_def_function(srna, "view_to_region", "rna_View2D_view_to_region");
 	RNA_def_function_ui_description(func, "Transform 2D view coordinates to region");
 	parm = RNA_def_float(func, "x", 0.0f, -FLT_MAX, FLT_MAX, "x", "2D View x coordinate", -10000.0f, 10000.0f);
-	RNA_def_property_flag(parm, PROP_REQUIRED);
+	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
 	parm = RNA_def_float(func, "y", 0.0f, -FLT_MAX, FLT_MAX, "y", "2D View y coordinate", -10000.0f, 10000.0f);
-	RNA_def_property_flag(parm, PROP_REQUIRED);
+	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
 	RNA_def_boolean(func, "clip", 1, "Clip", "Clip coordinates to the visible region");
 	parm = RNA_def_int_array(func, "result", 2, region_default, INT_MIN, INT_MAX, "Result", "Region coordinates", -10000, 10000);
-	RNA_def_property_flag(parm, PROP_THICK_WRAP);
+	RNA_def_parameter_flags(parm, PROP_THICK_WRAP, 0);
 	RNA_def_function_output(func, parm);
 }
 
@@ -379,7 +379,7 @@ static void rna_def_region(BlenderRNA *brna)
 
 	prop = RNA_def_property(srna, "type", PROP_ENUM, PROP_NONE);
 	RNA_def_property_enum_sdna(prop, NULL, "regiontype");
-	RNA_def_property_enum_items(prop, region_type_items);
+	RNA_def_property_enum_items(prop, rna_enum_region_type_items);
 	RNA_def_property_clear_flag(prop, PROP_EDITABLE);
 	RNA_def_property_ui_text(prop, "Region Type", "Type of this region");
 
@@ -419,7 +419,7 @@ static void rna_def_screen(BlenderRNA *brna)
 
 	srna = RNA_def_struct(brna, "Screen", "ID");
 	RNA_def_struct_sdna(srna, "Screen"); /* it is actually bScreen but for 2.5 the dna is patched! */
-	RNA_def_struct_ui_text(srna, "Screen", "Screen datablock, defining the layout of areas in a window");
+	RNA_def_struct_ui_text(srna, "Screen", "Screen data-block, defining the layout of areas in a window");
 	RNA_def_struct_ui_icon(srna, ICON_SPLITSCREEN);
 
 	/* pointers */

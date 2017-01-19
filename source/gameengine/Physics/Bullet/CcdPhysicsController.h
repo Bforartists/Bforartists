@@ -72,8 +72,8 @@ public:
 
 	CcdShapeConstructionInfo() :
 		m_shapeType(PHY_SHAPE_NONE),
-		m_radius(1.0),
-		m_height(1.0),
+		m_radius(1.0f),
+		m_height(1.0f),
 		m_halfExtend(0.f,0.f,0.f),
 		m_childScale(1.0f,1.0f,1.0f),
 		m_userData(NULL),
@@ -316,7 +316,8 @@ struct CcdConstructionInfo
 	float	m_stepHeight;
 	float	m_jumpSpeed;
 	float	m_fallSpeed;
-	
+	unsigned char m_maxJumps;
+
 	int		m_gamesoftFlag;
 	float	m_soft_linStiff;			/* linear stiffness 0..1 */
 	float	m_soft_angStiff;		/* angular stiffness 0..1 */
@@ -407,19 +408,19 @@ class BlenderBulletCharacterController : public btKinematicCharacterController, 
 {
 private:
 	btMotionState* m_motionState;
-	int m_jumps;
-	int m_maxJumps;
+	unsigned char m_jumps;
+	unsigned char m_maxJumps;
 
 public:
 	BlenderBulletCharacterController(btMotionState *motionState, btPairCachingGhostObject *ghost, btConvexShape* shape, float stepHeight);
 
 	virtual void updateAction(btCollisionWorld *collisionWorld, btScalar dt);
 
-	int getMaxJumps() const;
+	unsigned char getMaxJumps() const;
 
-	void setMaxJumps(int maxJumps);
+	void setMaxJumps(unsigned char maxJumps);
 
-	int getJumpCount() const;
+	unsigned char getJumpCount() const;
 
 	virtual bool canJump() const;
 
@@ -429,12 +430,12 @@ public:
 
 	// PHY_ICharacter interface
 	virtual void Jump()	{ jump(); }
-	virtual bool OnGround(){ return onGround(); }
+	virtual bool OnGround() { return onGround(); }
 	virtual float GetGravity() { return getGravity(); }
 	virtual void SetGravity(float gravity) { setGravity(gravity); }
-	virtual int GetMaxJumps() { return getMaxJumps(); }
-	virtual void SetMaxJumps(int maxJumps) { setMaxJumps(maxJumps); }
-	virtual int GetJumpCount() { return getJumpCount(); }
+	virtual unsigned char GetMaxJumps() { return getMaxJumps(); }
+	virtual void SetMaxJumps(unsigned char maxJumps) { setMaxJumps(maxJumps); }
+	virtual unsigned char GetJumpCount() { return getJumpCount(); }
 	virtual void SetWalkDirection(const MT_Vector3& dir)
 	{
 		btVector3 vec = btVector3(dir[0], dir[1], dir[2]);
@@ -541,14 +542,14 @@ protected:
 		CcdPhysicsController (const CcdConstructionInfo& ci);
 
 		/**
-		* Delete the current Bullet shape used in the rigid body.
-		*/
+		 * Delete the current Bullet shape used in the rigid body.
+		 */
 		bool DeleteControllerShape();
 
 		/**
-		* Delete the old Bullet shape and set the new Bullet shape : newShape
-		* \param newShape The new Bullet shape to set, if is NULL we create a new Bullet shape
-		*/
+		 * Delete the old Bullet shape and set the new Bullet shape : newShape
+		 * \param newShape The new Bullet shape to set, if is NULL we create a new Bullet shape
+		 */
 		bool ReplaceControllerShape(btCollisionShape *newShape);
 
 		virtual ~CcdPhysicsController();

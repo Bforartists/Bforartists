@@ -140,29 +140,30 @@ static void split_v_renderfaces(ObjectRen *obr, int startvlak, int UNUSED(startv
 
 	for (v=0; v<vLen; v++) {
 		VlakRen *vlr = RE_findOrAddVlak(obr, startvlak + vLen*uIndex + v);
+		VlakRen *vlr_other;
 		VertRen *vert = RE_vertren_copy(obr, vlr->v2);
 
 		if (cyclv) {
 			vlr->v2 = vert;
 
-			if (v==vLen-1) {
-				VlakRen *vlr = RE_findOrAddVlak(obr, startvlak + vLen*uIndex + 0);
-				vlr->v1 = vert;
+			if (v == vLen - 1) {
+				vlr_other = RE_findOrAddVlak(obr, startvlak + vLen*uIndex + 0);
+				vlr_other->v1 = vert;
 			}
 			else {
-				VlakRen *vlr = RE_findOrAddVlak(obr, startvlak + vLen*uIndex + v+1);
-				vlr->v1 = vert;
+				vlr_other = RE_findOrAddVlak(obr, startvlak + vLen*uIndex + v+1);
+				vlr_other->v1 = vert;
 			}
 		}
 		else {
 			vlr->v2 = vert;
 
-			if (v<vLen-1) {
-				VlakRen *vlr = RE_findOrAddVlak(obr, startvlak + vLen*uIndex + v+1);
-				vlr->v1 = vert;
+			if (v < vLen - 1) {
+				vlr_other = RE_findOrAddVlak(obr, startvlak + vLen*uIndex + v+1);
+				vlr_other->v1 = vert;
 			}
 
-			if (v==0) {
+			if (v == 0) {
 				vlr->v1 = RE_vertren_copy(obr, vlr->v1);
 			}
 		}
@@ -303,7 +304,7 @@ static void calc_tangent_vector(ObjectRen *obr, VlakRen *vlr, int do_tangent)
 
 typedef struct {
 	ObjectRen *obr;
-
+	int mtface_index;
 } SRenderMeshToTangent;
 
 /* interface */
@@ -336,7 +337,7 @@ static void GetTextureCoordinate(const SMikkTSpaceContext *pContext, float r_uv[
 	//assert(vert_index>=0 && vert_index<4);
 	SRenderMeshToTangent *pMesh = (SRenderMeshToTangent *) pContext->m_pUserData;
 	VlakRen *vlr= RE_findOrAddVlak(pMesh->obr, face_num);
-	MTFace *tface= RE_vlakren_get_tface(pMesh->obr, vlr, pMesh->obr->actmtface, NULL, 0);
+	MTFace *tface= RE_vlakren_get_tface(pMesh->obr, vlr, pMesh->mtface_index, NULL, 0);
 	const float *coord;
 	
 	if (tface  != NULL) {
@@ -370,7 +371,7 @@ static void SetTSpace(const SMikkTSpaceContext *pContext, const float fvTangent[
 	//assert(vert_index>=0 && vert_index<4);
 	SRenderMeshToTangent *pMesh = (SRenderMeshToTangent *) pContext->m_pUserData;
 	VlakRen *vlr = RE_findOrAddVlak(pMesh->obr, face_num);
-	float *ftang = RE_vlakren_get_nmap_tangent(pMesh->obr, vlr, 1);
+	float *ftang = RE_vlakren_get_nmap_tangent(pMesh->obr, vlr, pMesh->mtface_index, true);
 	if (ftang!=NULL) {
 		copy_v3_v3(&ftang[iVert*4+0], fvTangent);
 		ftang[iVert*4+3]=fSign;
@@ -456,7 +457,12 @@ static void calc_vertexnormals(Render *UNUSED(re), ObjectRen *obr, bool do_verte
 		sInterface.m_getNormal = GetNormal;
 		sInterface.m_setTSpaceBasic = SetTSpace;
 
-		genTangSpaceDefault(&sContext);
+		for (a = 0; a < MAX_MTFACE; a++) {
+			if (obr->tangent_mask & 1 << a) {
+				mesh2tangent.mtface_index = a;
+				genTangSpaceDefault(&sContext);
+			}
+		}
 	}
 }
 
@@ -1324,7 +1330,7 @@ static int render_new_particle_system(Render *re, ObjectRen *obr, ParticleSystem
 	part=psys->part;
 	pars=psys->particles;
 
-	if (part==NULL || pars==NULL || !psys_check_enabled(ob, psys))
+	if (part==NULL || pars==NULL || !psys_check_enabled(ob, psys, G.is_rendering))
 		return 0;
 	
 	if (part->ren_as==PART_DRAW_OB || part->ren_as==PART_DRAW_GR || part->ren_as==PART_DRAW_NOT)
@@ -1391,16 +1397,16 @@ static int render_new_particle_system(Render *re, ObjectRen *obr, ParticleSystem
 
 	re->flag |= R_HALO;
 
-	RE_set_customdata_names(obr, &psmd->dm->faceData);
-	sd.totuv = CustomData_number_of_layers(&psmd->dm->faceData, CD_MTFACE);
-	sd.totcol = CustomData_number_of_layers(&psmd->dm->faceData, CD_MCOL);
+	RE_set_customdata_names(obr, &psmd->dm_final->faceData);
+	sd.totuv = CustomData_number_of_layers(&psmd->dm_final->faceData, CD_MTFACE);
+	sd.totcol = CustomData_number_of_layers(&psmd->dm_final->faceData, CD_MCOL);
 
 	if (ma->texco & TEXCO_UV && sd.totuv) {
 		sd.uvco = MEM_callocN(sd.totuv * 2 * sizeof(float), "particle_uvs");
 
 		if (ma->strand_uvname[0]) {
-			sd.override_uv = CustomData_get_named_layer_index(&psmd->dm->faceData, CD_MTFACE, ma->strand_uvname);
-			sd.override_uv -= CustomData_get_layer_index(&psmd->dm->faceData, CD_MTFACE);
+			sd.override_uv = CustomData_get_named_layer_index(&psmd->dm_final->faceData, CD_MTFACE, ma->strand_uvname);
+			sd.override_uv -= CustomData_get_layer_index(&psmd->dm_final->faceData, CD_MTFACE);
 		}
 	}
 	else
@@ -1411,15 +1417,15 @@ static int render_new_particle_system(Render *re, ObjectRen *obr, ParticleSystem
 
 /* 2.2 setup billboards */
 	if (part->ren_as == PART_DRAW_BB) {
-		int first_uv = CustomData_get_layer_index(&psmd->dm->faceData, CD_MTFACE);
+		int first_uv = CustomData_get_layer_index(&psmd->dm_final->faceData, CD_MTFACE);
 
-		bb.uv[0] = CustomData_get_named_layer_index(&psmd->dm->faceData, CD_MTFACE, psys->bb_uvname[0]);
+		bb.uv[0] = CustomData_get_named_layer_index(&psmd->dm_final->faceData, CD_MTFACE, psys->bb_uvname[0]);
 		if (bb.uv[0] < 0)
-			bb.uv[0] = CustomData_get_active_layer_index(&psmd->dm->faceData, CD_MTFACE);
+			bb.uv[0] = CustomData_get_active_layer_index(&psmd->dm_final->faceData, CD_MTFACE);
 
-		bb.uv[1] = CustomData_get_named_layer_index(&psmd->dm->faceData, CD_MTFACE, psys->bb_uvname[1]);
+		bb.uv[1] = CustomData_get_named_layer_index(&psmd->dm_final->faceData, CD_MTFACE, psys->bb_uvname[1]);
 
-		bb.uv[2] = CustomData_get_named_layer_index(&psmd->dm->faceData, CD_MTFACE, psys->bb_uvname[2]);
+		bb.uv[2] = CustomData_get_named_layer_index(&psmd->dm_final->faceData, CD_MTFACE, psys->bb_uvname[2]);
 
 		if (first_uv >= 0) {
 			bb.uv[0] -= first_uv;
@@ -1499,9 +1505,9 @@ static int render_new_particle_system(Render *re, ObjectRen *obr, ParticleSystem
 				if (ma->amb != 0.0f)
 					do_surfacecache = true;
 
-			totface= psmd->dm->getNumTessFaces(psmd->dm);
-			index_mf_to_mpoly = psmd->dm->getTessFaceDataArray(psmd->dm, CD_ORIGINDEX);
-			index_mp_to_orig = psmd->dm->getPolyDataArray(psmd->dm, CD_ORIGINDEX);
+			totface= psmd->dm_final->getNumTessFaces(psmd->dm_final);
+			index_mf_to_mpoly = psmd->dm_final->getTessFaceDataArray(psmd->dm_final, CD_ORIGINDEX);
+			index_mp_to_orig = psmd->dm_final->getPolyDataArray(psmd->dm_final, CD_ORIGINDEX);
 			if (index_mf_to_mpoly == NULL) {
 				index_mp_to_orig = NULL;
 			}
@@ -1556,10 +1562,10 @@ static int render_new_particle_system(Render *re, ObjectRen *obr, ParticleSystem
 			num= pa->num_dmcache;
 
 			if (num == DMCACHE_NOTFOUND)
-				if (pa->num < psmd->dm->getNumTessFaces(psmd->dm))
+				if (pa->num < psmd->dm_final->getNumTessFaces(psmd->dm_final))
 					num= pa->num;
 
-			get_particle_uvco_mcol(part->from, psmd->dm, pa->fuv, num, &sd);
+			get_particle_uvco_mcol(part->from, psmd->dm_final, pa->fuv, num, &sd);
 
 			pa_size = pa->size;
 
@@ -1610,17 +1616,17 @@ static int render_new_particle_system(Render *re, ObjectRen *obr, ParticleSystem
 
 			/* get uvco & mcol */
 			if (part->childtype==PART_CHILD_FACES) {
-				get_particle_uvco_mcol(PART_FROM_FACE, psmd->dm, cpa->fuv, cpa->num, &sd);
+				get_particle_uvco_mcol(PART_FROM_FACE, psmd->dm_final, cpa->fuv, cpa->num, &sd);
 			}
 			else {
 				ParticleData *parent = psys->particles + cpa->parent;
 				num = parent->num_dmcache;
 
 				if (num == DMCACHE_NOTFOUND)
-					if (parent->num < psmd->dm->getNumTessFaces(psmd->dm))
+					if (parent->num < psmd->dm_final->getNumTessFaces(psmd->dm_final))
 						num = parent->num;
 
-				get_particle_uvco_mcol(part->from, psmd->dm, parent->fuv, num, &sd);
+				get_particle_uvco_mcol(part->from, psmd->dm_final, parent->fuv, num, &sd);
 			}
 
 			do_simplify = psys_render_simplify_params(psys, cpa, simplify);
@@ -1736,14 +1742,14 @@ static int render_new_particle_system(Render *re, ObjectRen *obr, ParticleSystem
 						sub_v3_v3v3(loc0, loc1, loc);
 						add_v3_v3v3(loc0, loc1, loc0);
 
-						particle_curve(re, obr, psmd->dm, ma, &sd, loc1, loc0, seed, pa_co);
+						particle_curve(re, obr, psmd->dm_final, ma, &sd, loc1, loc0, seed, pa_co);
 					}
 
 					sd.first = 0;
 					sd.time = time;
 
 					if (k)
-						particle_curve(re, obr, psmd->dm, ma, &sd, loc, loc1, seed, pa_co);
+						particle_curve(re, obr, psmd->dm_final, ma, &sd, loc, loc1, seed, pa_co);
 
 					copy_v3_v3(loc1, loc);
 				}
@@ -1802,7 +1808,7 @@ static int render_new_particle_system(Render *re, ObjectRen *obr, ParticleSystem
 					pa_co[0] = (part->draw & PART_ABS_PATH_TIME) ? (ct-pa_birthtime)/(pa_dietime-pa_birthtime) : ct;
 					pa_co[1] = (float)i/(float)(trail_count-1);
 
-					particle_normal_ren(part->ren_as, part, re, obr, psmd->dm, ma, &sd, &bb, &state, seed, hasize, pa_co);
+					particle_normal_ren(part->ren_as, part, re, obr, psmd->dm_final, ma, &sd, &bb, &state, seed, hasize, pa_co);
 				}
 			}
 			else {
@@ -1838,7 +1844,7 @@ static int render_new_particle_system(Render *re, ObjectRen *obr, ParticleSystem
 					bb.lifetime = pa_dietime-pa_birthtime;
 				}
 
-				particle_normal_ren(part->ren_as, part, re, obr, psmd->dm, ma, &sd, &bb, &state, seed, hasize, pa_co);
+				particle_normal_ren(part->ren_as, part, re, obr, psmd->dm_final, ma, &sd, &bb, &state, seed, hasize, pa_co);
 			}
 		}
 
@@ -1850,7 +1856,7 @@ static int render_new_particle_system(Render *re, ObjectRen *obr, ParticleSystem
 	}
 
 	if (do_surfacecache)
-		strandbuf->surface= cache_strand_surface(re, obr, psmd->dm, mat, timeoffset);
+		strandbuf->surface= cache_strand_surface(re, obr, psmd->dm_final, mat, timeoffset);
 
 /* 4. clean up */
 #if 0  /* XXX old animation system */
@@ -2810,7 +2816,7 @@ static void init_render_curve(Render *re, ObjectRen *obr, int timeoffset)
 						}
 					}
 
-					if (dl->bevelSplitFlag || timeoffset==0) {
+					if (dl->bevel_split || timeoffset == 0) {
 						const int startvlak= obr->totvlak;
 
 						for (a=0; a<dl->parts; a++) {
@@ -2850,10 +2856,15 @@ static void init_render_curve(Render *re, ObjectRen *obr, int timeoffset)
 							}
 						}
 
-						if (dl->bevelSplitFlag) {
-							for (a=0; a<dl->parts-1+!!(dl->flag&DL_CYCL_V); a++)
-								if (dl->bevelSplitFlag[a>>5]&(1<<(a&0x1F)))
-									split_v_renderfaces(obr, startvlak, startvert, dl->parts, dl->nr, a, dl->flag&DL_CYCL_V, dl->flag&DL_CYCL_U);
+						if (dl->bevel_split) {
+							for (a = 0; a < dl->parts - 1 + !!(dl->flag & DL_CYCL_V); a++) {
+								if (BLI_BITMAP_TEST(dl->bevel_split, a)) {
+									split_v_renderfaces(
+									        obr, startvlak, startvert, dl->parts, dl->nr, a,
+									        /* intentionally swap (v, u) --> (u, v) */
+									        dl->flag & DL_CYCL_V, dl->flag & DL_CYCL_U);
+								}
+							}
 						}
 
 						/* vertex normals */
@@ -3112,7 +3123,8 @@ static void init_render_mesh(Render *re, ObjectRen *obr, int timeoffset)
 	float xn, yn, zn,  imat[3][3], mat[4][4];  //nor[3],
 	float *orco = NULL;
 	short (*loop_nors)[4][3] = NULL;
-	bool need_orco = false, need_stress = false, need_nmap_tangent = false, need_tangent = false, need_origindex = false;
+	bool need_orco = false, need_stress = false, need_tangent = false, need_origindex = false;
+	bool need_nmap_tangent_concrete = false;
 	int a, a1, ok, vertofs;
 	int end, totvert = 0;
 	bool do_autosmooth = false, do_displace = false;
@@ -3130,9 +3142,6 @@ static void init_render_mesh(Render *re, ObjectRen *obr, int timeoffset)
 	copy_m3_m4(imat, ob->imat);
 	negative_scale= is_negative_m4(mat);
 
-	if (me->totvert==0)
-		return;
-	
 	need_orco= 0;
 	for (a=1; a<=ob->totcol; a++) {
 		ma= give_render_material(re, ob, a);
@@ -3150,9 +3159,11 @@ static void init_render_mesh(Render *re, ObjectRen *obr, int timeoffset)
 			if (ma->mode_l & MA_NORMAP_TANG) {
 				if (me->mtpoly==NULL) {
 					need_orco= 1;
-					need_tangent= 1;
 				}
-				need_nmap_tangent= 1;
+				need_tangent= 1;
+			}
+			if (ma->mode2_l & MA_TANGENT_CONCRETE) {
+				need_nmap_tangent_concrete = true;
 			}
 		}
 	}
@@ -3161,9 +3172,8 @@ static void init_render_mesh(Render *re, ObjectRen *obr, int timeoffset)
 		/* exception for tangent space baking */
 		if (me->mtpoly==NULL) {
 			need_orco= 1;
-			need_tangent= 1;
 		}
-		need_nmap_tangent= 1;
+		need_tangent= 1;
 	}
 
 	/* check autosmooth and displacement, we then have to skip only-verts optimize
@@ -3193,6 +3203,14 @@ static void init_render_mesh(Render *re, ObjectRen *obr, int timeoffset)
 		dm= mesh_create_derived_render(re->scene, ob, mask);
 	if (dm==NULL) return;	/* in case duplicated object fails? */
 
+	mvert= dm->getVertArray(dm);
+	totvert= dm->getNumVerts(dm);
+
+	if (totvert == 0) {
+		dm->release(dm);
+		return;
+	}
+
 	if (mask & CD_MASK_ORCO) {
 		orco = get_object_orco(re, ob);
 		if (!orco) {
@@ -3203,9 +3221,6 @@ static void init_render_mesh(Render *re, ObjectRen *obr, int timeoffset)
 			}
 		}
 	}
-
-	mvert= dm->getVertArray(dm);
-	totvert= dm->getNumVerts(dm);
 
 	/* attempt to autsmooth on original mesh, only without subsurf */
 	if (do_autosmooth && me->totvert==totvert && me->totface==dm->getNumTessFaces(dm))
@@ -3271,14 +3286,13 @@ static void init_render_mesh(Render *re, ObjectRen *obr, int timeoffset)
 			/* store customdata names, because DerivedMesh is freed */
 			RE_set_customdata_names(obr, &dm->faceData);
 
-			/* add tangent layer if we need one */
-			if (need_nmap_tangent!=0 && CustomData_get_layer_index(&dm->faceData, CD_TANGENT) == -1) {
-				bool generate_data = false;
-				if (CustomData_get_layer_index(&dm->loopData, CD_TANGENT) == -1) {
-					dm->calcLoopTangents(dm);
-					generate_data = true;
-				}
-				DM_generate_tangent_tessface_data(dm, generate_data);
+			/* add tangent layers if we need */
+			if ((ma->nmap_tangent_names_count && need_nmap_tangent_concrete) || need_tangent) {
+				dm->calcLoopTangents(
+				        dm, need_tangent,
+				        (const char (*)[MAX_NAME])ma->nmap_tangent_names, ma->nmap_tangent_names_count);
+				obr->tangent_mask = dm->tangent_mask;
+				DM_generate_tangent_tessface_data(dm, need_nmap_tangent_concrete || need_tangent);
 			}
 			
 			/* still to do for keys: the correct local texture coordinate */
@@ -3398,7 +3412,7 @@ static void init_render_mesh(Render *re, ObjectRen *obr, int timeoffset)
 								CustomDataLayer *layer;
 								MTFace *mtface, *mtf;
 								MCol *mcol, *mc;
-								int index, mtfn= 0, mcn= 0, mtng=0, mln = 0, vindex;
+								int index, mtfn= 0, mcn= 0, mln = 0, vindex;
 								char *name;
 								int nr_verts = v4!=0 ? 4 : 3;
 
@@ -3421,17 +3435,24 @@ static void init_render_mesh(Render *re, ObjectRen *obr, int timeoffset)
 										for (vindex=0; vindex<nr_verts; vindex++)
 											mc[vindex]=mcol[a*4+rev_tab[vindex]];
 									}
-									else if (layer->type == CD_TANGENT && mtng < 1) {
-										if (need_nmap_tangent != 0) {
-											const float * tangent = (const float *) layer->data;
-											float * ftang = RE_vlakren_get_nmap_tangent(obr, vlr, 1);
+									else if (layer->type == CD_TANGENT) {
+										if (need_nmap_tangent_concrete || need_tangent) {
+											int uv_start = CustomData_get_layer_index(&dm->faceData, CD_MTFACE);
+											int uv_index = CustomData_get_named_layer_index(&dm->faceData, CD_MTFACE, layer->name);
+											BLI_assert(uv_start >= 0 && uv_index >= 0);
+											if ((uv_start < 0 || uv_index < 0))
+												continue;
+											int n = uv_index - uv_start;
+
+											const float *tangent = (const float *) layer->data;
+											float *ftang = RE_vlakren_get_nmap_tangent(obr, vlr, n, true);
+
 											for (vindex=0; vindex<nr_verts; vindex++) {
 												copy_v4_v4(ftang+vindex*4, tangent+a*16+rev_tab[vindex]*4);
 												mul_mat3_m4_v3(mat, ftang+vindex*4);
 												normalize_v3(ftang+vindex*4);
 											}
 										}
-										mtng++;
 									}
 									else if (layer->type == CD_TESSLOOPNORMAL && mln < 1) {
 										if (loop_nors) {
@@ -3539,7 +3560,7 @@ static void init_render_mesh(Render *re, ObjectRen *obr, int timeoffset)
 		}
 
 		if (recalc_normals!=0 || need_tangent!=0)
-			calc_vertexnormals(re, obr, recalc_normals, need_tangent, need_nmap_tangent);
+			calc_vertexnormals(re, obr, recalc_normals, need_tangent, need_nmap_tangent_concrete);
 	}
 
 	MEM_SAFE_FREE(loop_nors);
@@ -3798,6 +3819,9 @@ static GroupObject *add_render_lamp(Render *re, Object *ob)
 	lar->falloff_type = la->falloff_type;
 	lar->ld1= la->att1;
 	lar->ld2= la->att2;
+	lar->coeff_const= la->coeff_const;
+	lar->coeff_lin= la->coeff_lin;
+	lar->coeff_quad= la->coeff_quad;
 	lar->curfalloff = curvemapping_copy(la->curfalloff);
 
 	if (lar->curfalloff) {
@@ -3955,7 +3979,7 @@ static void add_lightgroup(Render *re, Group *group, int exclusive)
 {
 	GroupObject *go, *gol;
 	
-	group->id.flag &= ~LIB_DOIT;
+	group->id.tag &= ~LIB_TAG_DOIT;
 
 	/* it's a bit too many loops in loops... but will survive */
 	/* note that 'exclusive' will remove it from the global list */
@@ -3994,12 +4018,12 @@ static void set_material_lightgroups(Render *re)
 		return;
 	
 	for (group= re->main->group.first; group; group=group->id.next)
-		group->id.flag |= LIB_DOIT;
+		group->id.tag |= LIB_TAG_DOIT;
 	
 	/* it's a bit too many loops in loops... but will survive */
 	/* hola! materials not in use...? */
 	for (ma= re->main->mat.first; ma; ma=ma->id.next) {
-		if (ma->group && (ma->group->id.flag & LIB_DOIT))
+		if (ma->group && (ma->group->id.tag & LIB_TAG_DOIT))
 			add_lightgroup(re, ma->group, ma->mode & MA_GROUP_NOLAY);
 	}
 }
@@ -4168,7 +4192,7 @@ static void split_quads(ObjectRen *obr, int dir)
 		vlr= RE_findOrAddVlak(obr, a);
 		
 		/* test if rendering as a quad or triangle, skip wire */
-		if (vlr->v4 && (vlr->flag & R_STRAND)==0 && (vlr->mat->material_type != MA_TYPE_WIRE)) {
+		if ((vlr->flag & R_STRAND)==0 && (vlr->mat->material_type != MA_TYPE_WIRE)) {
 			
 			if (vlr->v4) {
 
@@ -4251,6 +4275,7 @@ static void check_non_flat_quads(ObjectRen *obr)
 				vlr->v2= v3;
 				vlr->v3= v4;
 				vlr->v4= NULL;
+				vlr->flag |= (R_DIVIDE_24 | R_FACE_SPLIT);
 			}
 			else {
 				sub_v3_v3v3(nor, v2->co, v3->co);
@@ -4258,6 +4283,7 @@ static void check_non_flat_quads(ObjectRen *obr)
 					vlr->v2= v3;
 					vlr->v3= v4;
 					vlr->v4= NULL;
+					vlr->flag |= R_FACE_SPLIT;
 				}
 				else {
 					sub_v3_v3v3(nor, v3->co, v4->co);
@@ -4675,7 +4701,7 @@ static void add_render_object(Render *re, Object *ob, Object *par, DupliObject *
 	if (ob->particlesystem.first) {
 		psysindex= 1;
 		for (psys=ob->particlesystem.first; psys; psys=psys->next, psysindex++) {
-			if (!psys_check_enabled(ob, psys))
+			if (!psys_check_enabled(ob, psys, G.is_rendering))
 				continue;
 			
 			obr= RE_addRenderObject(re, ob, par, index, psysindex, ob->lay);
@@ -5204,7 +5230,7 @@ void RE_Database_FromScene(Render *re, Main *bmain, Scene *scene, unsigned int l
 
 		if (re->wrld.mode & (WO_AMB_OCC|WO_ENV_LIGHT|WO_INDIRECT_LIGHT))
 			if (re->wrld.ao_samp_method == WO_AOSAMP_CONSTANT)
-				init_ao_sphere(&re->wrld);
+				init_ao_sphere(re, &re->wrld);
 	}
 	
 	/* still bad... doing all */
@@ -5543,12 +5569,17 @@ static void calculate_speedvectors(Render *re, ObjectInstanceRen *obi, float *ve
 					/* interpolate speed vectors from strand surface */
 					face= mesh->face[*index];
 
-					co1= mesh->co[face[0]];
-					co2= mesh->co[face[1]];
-					co3= mesh->co[face[2]];
-					co4= (face[3])? mesh->co[face[3]]: NULL;
+					co1 = mesh->co[face[0]];
+					co2 = mesh->co[face[1]];
+					co3 = mesh->co[face[2]];
 
-					interp_weights_face_v3(w, co1, co2, co3, co4, strand->vert->co);
+					if (face[3]) {
+						co4 = mesh->co[face[3]];
+						interp_weights_quad_v3(w, co1, co2, co3, co4, strand->vert->co);
+					}
+					else {
+						interp_weights_tri_v3(w, co1, co2, co3, strand->vert->co);
+					}
 
 					zero_v4(speed);
 					madd_v4_v4fl(speed, winspeed[face[0]], w[0]);
@@ -5868,11 +5899,7 @@ void RE_Database_Baking(Render *re, Main *bmain, Scene *scene, unsigned int lay,
 	re->lay= lay;
 
 	/* renderdata setup and exceptions */
-	BLI_freelistN(&re->r.layers);
-	BLI_freelistN(&re->r.views);
-	re->r = scene->r;
-	BLI_duplicatelist(&re->r.layers, &scene->r.layers);
-	BLI_duplicatelist(&re->r.views, &scene->r.views);
+	render_copy_renderdata(&re->r, &scene->r);
 
 	RE_init_threadcount(re);
 	
@@ -5934,7 +5961,7 @@ void RE_Database_Baking(Render *re, Main *bmain, Scene *scene, unsigned int lay,
 		
 		if (re->wrld.mode & (WO_AMB_OCC|WO_ENV_LIGHT|WO_INDIRECT_LIGHT))
 			if (re->wrld.ao_samp_method == WO_AOSAMP_CONSTANT)
-				init_ao_sphere(&re->wrld);
+				init_ao_sphere(re, &re->wrld);
 	}
 	
 	/* still bad... doing all */

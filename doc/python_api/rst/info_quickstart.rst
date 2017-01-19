@@ -47,8 +47,11 @@ A quick list of helpful things to know before starting:
 - For more examples, the text menu has a templates section where some example operators can be found.
 - To examine further scripts distributed with Blender, see:
 
-  | ``~/.blender/scripts/startup/bl_ui`` for the user interface,
-  | ``~/.blender/scripts/startup/bl_op`` for operators.
+  | ``scripts/startup/bl_ui`` for the user interface,
+  | ``scripts/startup/bl_operators`` for operators.
+
+  Exact location depends on platform, see:
+  :ref:`Configuration and Data Paths <blender_manual:getting-started_installing-config-directories>`.
 
 
 Running Scripts
@@ -147,7 +150,7 @@ Data Creation/Removal
 ^^^^^^^^^^^^^^^^^^^^^
 
 Those of you familiar with other Python API's may be surprised that
-new datablocks in the bpy API can't be created by calling the class:
+new data-blocks in the bpy API can't be created by calling the class:
 
    >>> bpy.types.Mesh()
    Traceback (most recent call last):
@@ -301,7 +304,7 @@ In Python, this is done by defining a class, which is a subclass of an existing 
 Example Operator
 ----------------
 
-.. literalinclude:: ../../../release/scripts/templates_py/operator_simple.py
+.. literalinclude:: __/__/__/release/scripts/templates_py/operator_simple.py
 
 Once this script runs, ``SimpleOperator`` is registered with Blender
 and can be called from the operator search popup or added to the toolbar.
@@ -332,7 +335,7 @@ Example Panel
 Panels register themselves as a class, like an operator.
 Notice the extra ``bl_`` variables used to set the context they display in.
 
-.. literalinclude:: ../../../release/scripts/templates_py/ui_panel_simple.py
+.. literalinclude:: __/__/__/release/scripts/templates_py/ui_panel_simple.py
 
 To run the script:
 
@@ -389,11 +392,11 @@ so these are accessed as normal Python types.
 Internal Types
 --------------
 
-Used for Blender datablocks and collections: :class:`bpy.types.bpy_struct`
+Used for Blender data-blocks and collections: :class:`bpy.types.bpy_struct`
 
 For data that contains its own attributes groups/meshes/bones/scenes... etc.
 
-There are 2 main types that wrap Blenders data, one for datablocks
+There are 2 main types that wrap Blenders data, one for data-blocks
 (known internally as ``bpy_struct``), another for properties.
 
    >>> bpy.context.object

@@ -41,6 +41,7 @@
 #include "BKE_data_transfer.h"
 #include "BKE_DerivedMesh.h"
 #include "BKE_library.h"
+#include "BKE_library_query.h"
 #include "BKE_mesh_mapping.h"
 #include "BKE_mesh_remap.h"
 #include "BKE_modifier.h"
@@ -118,17 +119,12 @@ static bool dependsOnNormals(ModifierData *md)
 	return false;
 }
 
-static void foreachObjectLink(ModifierData *md, Object *ob,
-                              void (*walk)(void *userData, Object *ob, Object **obpoin),
-                              void *userData)
+static void foreachObjectLink(
+        ModifierData *md, Object *ob,
+        ObjectWalkFunc walk, void *userData)
 {
 	DataTransferModifierData *dtmd = (DataTransferModifierData *) md;
-	walk(userData, ob, &dtmd->ob_source);
-}
-
-static void foreachIDLink(ModifierData *md, Object *ob, IDWalkFunc walk, void *userData)
-{
-	foreachObjectLink(md, ob, (ObjectWalkFunc)walk, userData);
+	walk(userData, ob, &dtmd->ob_source, IDWALK_NOP);
 }
 
 static void updateDepgraph(ModifierData *md, DagForest *forest,
@@ -260,6 +256,6 @@ ModifierTypeInfo modifierType_DataTransfer = {
 	/* dependsOnTime */     NULL,
 	/* dependsOnNormals */  dependsOnNormals,
 	/* foreachObjectLink */ foreachObjectLink,
-	/* foreachIDLink */     foreachIDLink,
+	/* foreachIDLink */     NULL,
 	/* foreachTexLink */    NULL,
 };

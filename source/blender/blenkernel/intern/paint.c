@@ -298,13 +298,11 @@ void BKE_paint_brush_set(Paint *p, Brush *br)
 	}
 }
 
+/** Free (or release) any data used by this paint curve (does not free the pcurve itself). */
 void BKE_paint_curve_free(PaintCurve *pc)
 {
-	if (pc->points) {
-		MEM_freeN(pc->points);
-		pc->points = NULL;
-		pc->tot_points = 0;
-	}
+	MEM_SAFE_FREE(pc->points);
+	pc->tot_points = 0;
 }
 
 PaintCurve *BKE_paint_curve_add(Main *bmain, const char *name)
@@ -314,6 +312,26 @@ PaintCurve *BKE_paint_curve_add(Main *bmain, const char *name)
 	pc = BKE_libblock_alloc(bmain, ID_PC, name);
 
 	return pc;
+}
+
+PaintCurve *BKE_paint_curve_copy(Main *bmain, PaintCurve *pc)
+{
+	PaintCurve *pc_new;
+
+	pc_new = BKE_libblock_copy(bmain, &pc->id);
+
+	if (pc->tot_points != 0) {
+		pc_new->points = MEM_dupallocN(pc->points);
+	}
+
+	BKE_id_copy_ensure_local(bmain, &pc->id, &pc_new->id);
+
+	return pc_new;
+}
+
+void BKE_paint_curve_make_local(Main *bmain, PaintCurve *pc, const bool lib_local)
+{
+	BKE_id_make_local_generic(bmain, &pc->id, true, lib_local);
 }
 
 Palette *BKE_paint_palette(Paint *p)
@@ -373,11 +391,30 @@ Palette *BKE_palette_add(Main *bmain, const char *name)
 	palette = BKE_libblock_alloc(bmain, ID_PAL, name);
 
 	/* enable fake user by default */
-	palette->id.flag |= LIB_FAKEUSER;
+	id_fake_user_set(&palette->id);
 
 	return palette;
 }
 
+Palette *BKE_palette_copy(Main *bmain, Palette *palette)
+{
+	Palette *palette_new;
+
+	palette_new = BKE_libblock_copy(bmain, &palette->id);
+
+	BLI_duplicatelist(&palette_new->colors, &palette->colors);
+
+	BKE_id_copy_ensure_local(bmain, &palette->id, &palette_new->id);
+
+	return palette_new;
+}
+
+void BKE_palette_make_local(Main *bmain, Palette *palette, const bool lib_local)
+{
+	BKE_id_make_local_generic(bmain, &palette->id, true, lib_local);
+}
+
+/** Free (or release) any data used by this palette (does not free the palette itself). */
 void BKE_palette_free(Palette *palette)
 {
 	BLI_freelistN(&palette->colors);
@@ -493,8 +530,6 @@ void BKE_paint_init(Scene *sce, PaintMode mode, const char col[3])
 
 void BKE_paint_free(Paint *paint)
 {
-	id_us_min((ID *)paint->brush);
-	id_us_min((ID *)paint->palette);
 	curvemapping_free(paint->cavity_curve);
 }
 
@@ -635,7 +670,7 @@ static void sculptsession_bm_to_me_update_data_only(Object *ob, bool reorder)
 			}
 			if (reorder)
 				BM_log_mesh_elems_reorder(ss->bm, ss->bm_log);
-			BM_mesh_bm_to_me(ss->bm, ob->data, false);
+			BM_mesh_bm_to_me(ss->bm, ob->data, (&(struct BMeshToMeshParams){0}));
 		}
 	}
 }

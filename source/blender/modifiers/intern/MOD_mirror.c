@@ -39,6 +39,7 @@
 #include "BLI_math.h"
 
 #include "BKE_cdderivedmesh.h"
+#include "BKE_library_query.h"
 #include "BKE_modifier.h"
 #include "BKE_deform.h"
 
@@ -65,13 +66,13 @@ static void copyData(ModifierData *md, ModifierData *target)
 	modifier_copyData_generic(md, target);
 }
 
-static void foreachObjectLink(ModifierData *md, Object *ob,
-                              void (*walk)(void *userData, Object *ob, Object **obpoin),
-                              void *userData)
+static void foreachObjectLink(
+        ModifierData *md, Object *ob,
+        ObjectWalkFunc walk, void *userData)
 {
 	MirrorModifierData *mmd = (MirrorModifierData *) md;
 
-	walk(userData, ob, &mmd->mirror_ob);
+	walk(userData, ob, &mmd->mirror_ob, IDWALK_NOP);
 }
 
 static void updateDepgraph(ModifierData *md, DagForest *forest,

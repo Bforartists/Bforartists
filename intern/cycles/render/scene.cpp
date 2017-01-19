@@ -34,12 +34,9 @@
 #include "tables.h"
 
 #include "util_foreach.h"
+#include "util_guarded_allocator.h"
+#include "util_logging.h"
 #include "util_progress.h"
-
-#ifdef WITH_CYCLES_DEBUG
-#  include "util_guarded_allocator.h"
-#  include "util_logging.h"
-#endif
 
 CCL_NAMESPACE_BEGIN
 
@@ -57,7 +54,7 @@ Scene::Scene(const SceneParams& params_, const DeviceInfo& device_info_)
 	mesh_manager = new MeshManager();
 	object_manager = new ObjectManager();
 	integrator = new Integrator();
-	image_manager = new ImageManager();
+	image_manager = new ImageManager(device_info_);
 	particle_system_manager = new ParticleSystemManager();
 	curve_system_manager = new CurveSystemManager();
 	bake_manager = new BakeManager();
@@ -67,9 +64,6 @@ Scene::Scene(const SceneParams& params_, const DeviceInfo& device_info_)
 		shader_manager = ShaderManager::create(this, params.shadingsystem);
 	else
 		shader_manager = ShaderManager::create(this, SHADINGSYSTEM_SVM);
-
-	/* Extended image limits for CPU and GPUs */
-	image_manager->set_extended_image_limits(device_info_);
 }
 
 Scene::~Scene()
@@ -97,7 +91,7 @@ void Scene::free_memory(bool final)
 	particle_systems.clear();
 
 	if(device) {
-		camera->device_free(device, &dscene);
+		camera->device_free(device, &dscene, this);
 		film->device_free(device, &dscene, this);
 		background->device_free(device, &dscene);
 		integrator->device_free(device, &dscene);
@@ -141,7 +135,9 @@ void Scene::device_update(Device *device_, Progress& progress)
 {
 	if(!device)
 		device = device_;
-	
+
+	bool print_stats = need_data_update();
+
 	/* The order of updates is important, because there's dependencies between
 	 * the different managers, using data computed by previous managers.
 	 *
@@ -170,13 +166,13 @@ void Scene::device_update(Device *device_, Progress& progress)
 
 	if(progress.get_cancel() || device->have_error()) return;
 
-	progress.set_status("Updating Objects");
-	object_manager->device_update(device, &dscene, this, progress);
+	progress.set_status("Updating Meshes Flags");
+	mesh_manager->device_update_flags(device, &dscene, this, progress);
 
 	if(progress.get_cancel() || device->have_error()) return;
 
-	progress.set_status("Updating Meshes Flags");
-	mesh_manager->device_update_flags(device, &dscene, this, progress);
+	progress.set_status("Updating Objects");
+	object_manager->device_update(device, &dscene, this, progress);
 
 	if(progress.get_cancel() || device->have_error()) return;
 
@@ -191,7 +187,7 @@ void Scene::device_update(Device *device_, Progress& progress)
 	if(progress.get_cancel() || device->have_error()) return;
 
 	progress.set_status("Updating Images");
-	image_manager->device_update(device, &dscene, progress);
+	image_manager->device_update(device, &dscene, this, progress);
 
 	if(progress.get_cancel() || device->have_error()) return;
 
@@ -220,13 +216,13 @@ void Scene::device_update(Device *device_, Progress& progress)
 
 	if(progress.get_cancel() || device->have_error()) return;
 
-	progress.set_status("Updating Film");
-	film->device_update(device, &dscene, this);
+	progress.set_status("Updating Integrator");
+	integrator->device_update(device, &dscene, this);
 
 	if(progress.get_cancel() || device->have_error()) return;
 
-	progress.set_status("Updating Integrator");
-	integrator->device_update(device, &dscene, this);
+	progress.set_status("Updating Film");
+	film->device_update(device, &dscene, this);
 
 	if(progress.get_cancel() || device->have_error()) return;
 
@@ -245,11 +241,16 @@ void Scene::device_update(Device *device_, Progress& progress)
 		device->const_copy_to("__data", &dscene.data, sizeof(dscene.data));
 	}
 
-#ifdef WITH_CYCLES_DEBUG
-	VLOG(1) << "System memory statistics after full device sync:\n"
-	        << "  Usage: " << util_guarded_get_mem_used() << "\n"
-	        << "  Peak: " << util_guarded_get_mem_peak();
-#endif
+	if(print_stats) {
+		size_t mem_used = util_guarded_get_mem_used();
+		size_t mem_peak = util_guarded_get_mem_peak();
+
+		VLOG(1) << "System memory statistics after full device sync:\n"
+		        << "  Usage: " << string_human_readable_number(mem_used)
+		        << " (" << string_human_readable_size(mem_used) << ")\n"
+		        << "  Peak: " << string_human_readable_number(mem_peak)
+		        << " (" << string_human_readable_size(mem_peak) << ")";
+	}
 }
 
 Scene::MotionType Scene::need_motion(bool advanced_shading)
@@ -260,6 +261,14 @@ Scene::MotionType Scene::need_motion(bool advanced_shading)
 		return MOTION_PASS;
 	else
 		return MOTION_NONE;
+}
+
+float Scene::motion_shutter_time()
+{
+	if(need_motion() == Scene::MOTION_PASS)
+		return 2.0f;
+	else
+		return camera->shuttertime;
 }
 
 bool Scene::need_global_attribute(AttributeStandard std)
@@ -286,11 +295,10 @@ bool Scene::need_update()
 	return (need_reset() || film->need_update);
 }
 
-bool Scene::need_reset()
+bool Scene::need_data_update()
 {
 	return (background->need_update
 		|| image_manager->need_update
-		|| camera->need_update
 		|| object_manager->need_update
 		|| mesh_manager->need_update
 		|| light_manager->need_update
@@ -301,6 +309,11 @@ bool Scene::need_reset()
 		|| curve_system_manager->need_update
 		|| bake_manager->need_update
 		|| film->need_update);
+}
+
+bool Scene::need_reset()
+{
+	return need_data_update() || camera->need_update;
 }
 
 void Scene::reset()

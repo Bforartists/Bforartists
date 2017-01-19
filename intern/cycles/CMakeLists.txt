@@ -11,15 +11,18 @@ endif()
 include(cmake/external_libs.cmake)
 
 # Build Flags
-# todo: refactor this code to match scons
+# todo: this code could be refactored a bit to avoid duplication
 # note: CXX_HAS_SSE is needed in case passing SSE flags fails altogether (gcc-arm)
 
-if(WITH_CYCLES_WERROR)
-	ADD_CHECK_C_COMPILER_FLAG(CMAKE_C_FLAGS C_WERROR -Werror)
-	ADD_CHECK_CXX_COMPILER_FLAG(CMAKE_CXX_FLAGS C_WERROR -Werror)
-endif()
-
-if(NOT WITH_CPU_SSE)
+if(WITH_CYCLES_NATIVE_ONLY)
+	set(CXX_HAS_SSE FALSE)
+	set(CXX_HAS_AVX FALSE)
+	set(CXX_HAS_AVX2 FALSE)
+	add_definitions(
+		-DWITH_KERNEL_NATIVE
+	)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
+elseif(NOT WITH_CPU_SSE)
 	set(CXX_HAS_SSE FALSE)
 	set(CXX_HAS_AVX FALSE)
 	set(CXX_HAS_AVX2 FALSE)
@@ -126,20 +129,12 @@ add_definitions(
 	-DCCL_NAMESPACE_END=}
 )
 
-if(WITH_CYCLES_NETWORK)
-	add_definitions(-DWITH_NETWORK)
-endif()
-
 if(WITH_CYCLES_STANDALONE_GUI)
 	add_definitions(-DWITH_CYCLES_STANDALONE_GUI)
 endif()
 
 if(WITH_CYCLES_PTEX)
 	add_definitions(-DWITH_PTEX)
-endif()
-
-if(WITH_CYCLES_OPENSUBDIV)
-	add_definitions(-DWITH_OPENSUBDIV)
 endif()
 
 if(WITH_CYCLES_OSL)
@@ -151,14 +146,24 @@ if(WITH_CYCLES_OSL)
 	)
 endif()
 
-add_definitions(
-	-DWITH_OPENCL
-	-DWITH_CUDA
-	-DWITH_MULTI
-)
+if(WITH_CYCLES_OPENSUBDIV)
+	add_definitions(-DWITH_OPENSUBDIV)
+	include_directories(
+		SYSTEM
+		${OPENSUBDIV_INCLUDE_DIR}
+	)
+endif()
 
-TEST_UNORDERED_MAP_SUPPORT()
-if(HAVE_STD_UNORDERED_MAP_HEADER)
+set(WITH_CYCLES_DEVICE_OPENCL TRUE)
+set(WITH_CYCLES_DEVICE_CUDA TRUE)
+set(WITH_CYCLES_DEVICE_MULTI TRUE)
+
+if(CYCLES_STANDALONE_REPOSITORY)
+	TEST_UNORDERED_MAP_SUPPORT()
+endif()
+if(WITH_CXX11)
+	add_definitions(-DCYCLES_STD_UNORDERED_MAP)
+elseif(HAVE_STD_UNORDERED_MAP_HEADER)
 	if(HAVE_UNORDERED_MAP_IN_STD_NAMESPACE)
 		add_definitions(-DCYCLES_STD_UNORDERED_MAP)
 	else()
@@ -215,15 +220,22 @@ endif()
 if(CMAKE_COMPILER_IS_GNUCXX)
 	ADD_CHECK_CXX_COMPILER_FLAG(CMAKE_CXX_FLAGS _has_cxxflag_float_conversion "-Werror=float-conversion")
 	ADD_CHECK_CXX_COMPILER_FLAG(CMAKE_CXX_FLAGS _has_cxxflag_double_promotion "-Werror=double-promotion")
+	ADD_CHECK_CXX_COMPILER_FLAG(CMAKE_CXX_FLAGS _has_no_error_unused_macros "-Wno-error=unused-macros")
 	unset(_has_cxxflag_float_conversion)
 	unset(_has_cxxflag_double_promotion)
+	unset(_has_no_error_unused_macros)
 endif()
 
 
 # Subdirectories
 
 if(WITH_CYCLES_BLENDER)
+	add_definitions(-DWITH_BLENDER_GUARDEDALLOC)
 	add_subdirectory(blender)
+endif()
+
+if(WITH_CYCLES_NETWORK)
+	add_definitions(-DWITH_NETWORK)
 endif()
 
 if(WITH_CYCLES_STANDALONE OR WITH_CYCLES_NETWORK)
@@ -233,10 +245,16 @@ endif()
 add_subdirectory(bvh)
 add_subdirectory(device)
 add_subdirectory(doc)
+add_subdirectory(graph)
 add_subdirectory(kernel)
 add_subdirectory(render)
 add_subdirectory(subd)
 add_subdirectory(util)
+
+# TODO(sergey): Make this to work with standalone repository.
+if(WITH_GTESTS)
+	add_subdirectory(test)
+endif()
 
 if(NOT WITH_BLENDER AND WITH_CYCLES_STANDALONE)
 	delayed_do_install(${CMAKE_BINARY_DIR}/bin)

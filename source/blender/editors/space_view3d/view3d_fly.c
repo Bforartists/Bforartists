@@ -26,8 +26,10 @@
 
 /* defines VIEW3D_OT_fly modal operator */
 
-//#define NDOF_FLY_DEBUG
-//#define NDOF_FLY_DRAW_TOOMUCH  /* is this needed for ndof? - commented so redraw doesnt thrash - campbell */
+#ifdef WITH_INPUT_NDOF
+//#  define NDOF_FLY_DEBUG
+//#  define NDOF_FLY_DRAW_TOOMUCH  /* is this needed for ndof? - commented so redraw doesnt thrash - campbell */
+#endif /* WITH_INPUT_NDOF */
 
 #include "DNA_object_types.h"
 
@@ -203,7 +205,10 @@ typedef struct FlyInfo {
 	int mval[2]; /* latest 2D mouse values */
 	int center_mval[2]; /* center mouse values */
 	float width, height; /* camera viewport dimensions */
+
+#ifdef WITH_INPUT_NDOF
 	wmNDOFMotionData *ndof;  /* latest 3D mouse values */
+#endif
 
 	/* fly state state */
 	float speed; /* the speed the view is moving per redraw */
@@ -346,7 +351,7 @@ static bool initFlyInfo(bContext *C, FlyInfo *fly, wmOperator *op, const wmEvent
 		fly->rv3d->persp = RV3D_PERSP;
 	}
 
-	if (fly->rv3d->persp == RV3D_CAMOB && fly->v3d->camera->id.lib) {
+	if (fly->rv3d->persp == RV3D_CAMOB && ID_IS_LINKED_DATABLOCK(fly->v3d->camera)) {
 		BKE_report(op->reports, RPT_ERROR, "Cannot fly a camera from an external library");
 		return false;
 	}
@@ -381,7 +386,10 @@ static bool initFlyInfo(bContext *C, FlyInfo *fly, wmOperator *op, const wmEvent
 	fly->timer = WM_event_add_timer(CTX_wm_manager(C), win, TIMER, 0.01f);
 
 	copy_v2_v2_int(fly->mval, event->mval);
+
+#ifdef WITH_INPUT_NDOF
 	fly->ndof = NULL;
+#endif
 
 	fly->time_lastdraw = fly->time_lastwheel = PIL_check_seconds_timer();
 
@@ -449,8 +457,10 @@ static int flyEnd(bContext *C, FlyInfo *fly)
 
 	rv3d->rflag &= ~RV3D_NAVIGATING;
 
+#ifdef WITH_INPUT_NDOF
 	if (fly->ndof)
 		MEM_freeN(fly->ndof);
+#endif
 
 	if (fly->state == FLY_CONFIRM) {
 		MEM_freeN(fly);
@@ -469,6 +479,7 @@ static void flyEvent(bContext *C, wmOperator *op, FlyInfo *fly, const wmEvent *e
 	else if (event->type == MOUSEMOVE) {
 		copy_v2_v2_int(fly->mval, event->mval);
 	}
+#ifdef WITH_INPUT_NDOF
 	else if (event->type == NDOF_MOTION) {
 		/* do these automagically get delivered? yes. */
 		// puts("ndof motion detected in fly mode!");
@@ -478,15 +489,15 @@ static void flyEvent(bContext *C, wmOperator *op, FlyInfo *fly, const wmEvent *e
 		switch (incoming_ndof->progress) {
 			case P_STARTING:
 				/* start keeping track of 3D mouse position */
-#ifdef NDOF_FLY_DEBUG
+#  ifdef NDOF_FLY_DEBUG
 				puts("start keeping track of 3D mouse position");
-#endif
+#  endif
 				/* fall-through */
 			case P_IN_PROGRESS:
 				/* update 3D mouse position */
-#ifdef NDOF_FLY_DEBUG
+#  ifdef NDOF_FLY_DEBUG
 				putchar('.'); fflush(stdout);
-#endif
+#  endif
 				if (fly->ndof == NULL) {
 					// fly->ndof = MEM_mallocN(sizeof(wmNDOFMotionData), tag_name);
 					fly->ndof = MEM_dupallocN(incoming_ndof);
@@ -498,9 +509,9 @@ static void flyEvent(bContext *C, wmOperator *op, FlyInfo *fly, const wmEvent *e
 				break;
 			case P_FINISHING:
 				/* stop keeping track of 3D mouse position */
-#ifdef NDOF_FLY_DEBUG
+#  ifdef NDOF_FLY_DEBUG
 				puts("stop keeping track of 3D mouse position");
-#endif
+#  endif
 				if (fly->ndof) {
 					MEM_freeN(fly->ndof);
 					// free(fly->ndof);
@@ -513,6 +524,7 @@ static void flyEvent(bContext *C, wmOperator *op, FlyInfo *fly, const wmEvent *e
 				break; /* should always be one of the above 3 */
 		}
 	}
+#endif /* WITH_INPUT_NDOF */
 	/* handle modal keymap first */
 	else if (event->type == EVT_MODAL_MAP) {
 		switch (event->val) {
@@ -720,8 +732,6 @@ static int flyApply(bContext *C, FlyInfo *fly)
 	float dvec[3] = {0, 0, 0}; /* this is the direction thast added to the view offset per redraw */
 
 	/* Camera Uprighting variables */
-	float upvec[3] = {0, 0, 0}; /* stores the view's up vector */
-
 	float moffset[2]; /* mouse offset from the views center */
 	float tmp_quat[4]; /* used for rotating the view */
 
@@ -815,6 +825,7 @@ static int flyApply(bContext *C, FlyInfo *fly)
 
 				/* rotate about the X axis- look up/down */
 				if (moffset[1]) {
+					float upvec[3];
 					copy_v3_fl3(upvec, 1.0f, 0.0f, 0.0f);
 					mul_m3_v3(mat, upvec);
 					/* Rotate about the relative up vec */
@@ -830,7 +841,7 @@ static int flyApply(bContext *C, FlyInfo *fly)
 
 				/* rotate about the Y axis- look left/right */
 				if (moffset[0]) {
-
+					float upvec[3];
 					/* if we're upside down invert the moffset */
 					copy_v3_fl3(upvec, 0.0f, 1.0f, 0.0f);
 					mul_m3_v3(mat, upvec);
@@ -858,6 +869,7 @@ static int flyApply(bContext *C, FlyInfo *fly)
 				}
 
 				if (fly->zlock == FLY_AXISLOCK_STATE_ACTIVE) {
+					float upvec[3];
 					copy_v3_fl3(upvec, 1.0f, 0.0f, 0.0f);
 					mul_m3_v3(mat, upvec);
 
@@ -882,6 +894,7 @@ static int flyApply(bContext *C, FlyInfo *fly)
 
 				/* only apply xcorrect when mouse isn't applying x rot */
 				if (fly->xlock == FLY_AXISLOCK_STATE_ACTIVE && moffset[1] == 0) {
+					float upvec[3];
 					copy_v3_fl3(upvec, 0.0f, 0.0f, 1.0f);
 					mul_m3_v3(mat, upvec);
 					/* make sure we have some z rolling */
@@ -958,6 +971,7 @@ static int flyApply(bContext *C, FlyInfo *fly)
 	return OPERATOR_FINISHED;
 }
 
+#ifdef WITH_INPUT_NDOF
 static void flyApply_ndof(bContext *C, FlyInfo *fly)
 {
 	Object *lock_ob = ED_view3d_cameracontrol_object_get(fly->v3d_camera_control);
@@ -976,6 +990,7 @@ static void flyApply_ndof(bContext *C, FlyInfo *fly)
 		}
 	}
 }
+#endif /* WITH_INPUT_NDOF */
 
 static int fly_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 {
@@ -1022,12 +1037,15 @@ static int fly_modal(bContext *C, wmOperator *op, const wmEvent *event)
 
 	flyEvent(C, op, fly, event);
 
+#ifdef WITH_INPUT_NDOF
 	if (fly->ndof) { /* 3D mouse overrules [2D mouse + timer] */
 		if (event->type == NDOF_MOTION) {
 			flyApply_ndof(C, fly);
 		}
 	}
-	else if (event->type == TIMER && event->customdata == fly->timer) {
+	else
+#endif /* WITH_INPUT_NDOF */
+	if (event->type == TIMER && event->customdata == fly->timer) {
 		flyApply(C, fly);
 	}
 
@@ -1064,7 +1082,7 @@ void VIEW3D_OT_fly(wmOperatorType *ot)
 	ot->invoke = fly_invoke;
 	ot->cancel = fly_cancel;
 	ot->modal = fly_modal;
-	ot->poll = ED_operator_view3d_active;
+	ot->poll = ED_operator_region_view3d_active;
 
 	/* flags */
 	ot->flag = OPTYPE_BLOCKING;

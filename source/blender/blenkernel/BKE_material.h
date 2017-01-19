@@ -45,18 +45,19 @@ struct Scene;
 /* materials */
 
 void init_def_material(void);
-void BKE_material_free(struct Material *sc); 
+void BKE_material_free(struct Material *ma);
 void BKE_material_free_ex(struct Material *ma, bool do_id_user);
-void test_object_materials(struct Main *bmain, struct ID *id);
-void BKE_material_resize_object(struct Object *ob, const short totcol, bool do_id_user);
-void init_material(struct Material *ma);
+void test_object_materials(struct Object *ob, struct ID *id);
+void test_all_objects_materials(struct Main *bmain, struct ID *id);
+void BKE_material_resize_object(struct Main *bmain, struct Object *ob, const short totcol, bool do_id_user);
+void BKE_material_init(struct Material *ma);
 void BKE_material_remap_object(struct Object *ob, const unsigned int *remap);
+void BKE_material_remap_object_calc(struct  Object *ob_dst, struct Object *ob_src, short *remap_src_to_dst);
 struct Material *BKE_material_add(struct Main *bmain, const char *name);
-struct Material *BKE_material_copy(struct Material *ma);
+struct Material *BKE_material_copy(struct Main *bmain, struct Material *ma);
 struct Material *localize_material(struct Material *ma);
 struct Material *give_node_material(struct Material *ma); /* returns node material or self */
-void BKE_material_make_local(struct Material *ma);
-void extern_local_matarar(struct Material **matar, short totcol);
+void BKE_material_make_local(struct Main *bmain, struct Material *ma, const bool lib_local);
 
 /* UNUSED */
 // void automatname(struct Material *);
@@ -77,24 +78,22 @@ enum {
 };
 
 struct Material *give_current_material(struct Object *ob, short act);
-struct ID *material_from(struct Object *ob, short act);
 void assign_material_id(struct ID *id, struct Material *ma, short act);
 void assign_material(struct Object *ob, struct Material *ma, short act, int assign_type);
 void assign_matarar(struct Object *ob, struct Material ***matar, short totcol);
 
-short find_material_index(struct Object *ob, struct Material *ma);
-
-bool object_add_material_slot(struct Object *ob);
-bool object_remove_material_slot(struct Object *ob);
+short BKE_object_material_slot_find_index(struct Object *ob, struct Material *ma);
+bool  BKE_object_material_slot_add(struct Object *ob);
+bool  BKE_object_material_slot_remove(struct Object *ob);
 
 void BKE_texpaint_slot_refresh_cache(struct Scene *scene, struct Material *ma);
 void BKE_texpaint_slots_refresh_object(struct Scene *scene, struct Object *ob);
 
 /* rna api */
-void BKE_material_resize_id(struct ID *id, short totcol, bool do_id_user);
-void BKE_material_append_id(struct ID *id, struct Material *ma);
-struct Material *BKE_material_pop_id(struct ID *id, int index, bool update_data); /* index is an int because of RNA */
-void BKE_material_clear_id(struct ID *id, bool update_data);
+void BKE_material_resize_id(struct Main *bmain, struct ID *id, short totcol, bool do_id_user);
+void BKE_material_append_id(struct Main *bmain, struct ID *id, struct Material *ma);
+struct Material *BKE_material_pop_id(struct Main *bmain, struct ID *id, int index, bool update_data); /* index is an int because of RNA */
+void BKE_material_clear_id(struct Main *bmain, struct ID *id, bool update_data);
 /* rendering */
 
 void init_render_material(struct Material *, int, float *);

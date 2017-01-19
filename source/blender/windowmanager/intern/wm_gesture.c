@@ -37,6 +37,7 @@
 
 #include "MEM_guardedalloc.h"
 
+#include "BLI_bitmap_draw_2d.h"
 #include "BLI_blenlib.h"
 #include "BLI_math.h"
 #include "BLI_utildefines.h"
@@ -51,6 +52,7 @@
 #include "wm.h"
 #include "wm_subwindow.h"
 #include "wm_draw.h"
+#include "GPU_basic_shader.h"
 
 
 #include "BIF_glutil.h"
@@ -180,29 +182,29 @@ static void wm_gesture_draw_rect(wmGesture *gt)
 	glEnd();
 	glDisable(GL_BLEND);
 	
-	glEnable(GL_LINE_STIPPLE);
+	GPU_basic_shader_bind(GPU_SHADER_LINE | GPU_SHADER_STIPPLE | GPU_SHADER_USE_COLOR);
 	glColor3ub(96, 96, 96);
-	glLineStipple(1, 0xCCCC);
+	GPU_basic_shader_line_stipple(1, 0xCCCC);
 	sdrawbox(rect->xmin, rect->ymin, rect->xmax, rect->ymax);
 	glColor3ub(255, 255, 255);
-	glLineStipple(1, 0x3333);
+	GPU_basic_shader_line_stipple(1, 0x3333);
 	sdrawbox(rect->xmin, rect->ymin, rect->xmax, rect->ymax);
-	glDisable(GL_LINE_STIPPLE);
+	GPU_basic_shader_bind(GPU_SHADER_USE_COLOR);
 }
 
 static void wm_gesture_draw_line(wmGesture *gt)
 {
 	rcti *rect = (rcti *)gt->customdata;
 	
-	glEnable(GL_LINE_STIPPLE);
+	GPU_basic_shader_bind(GPU_SHADER_LINE | GPU_SHADER_STIPPLE);
 	glColor3ub(96, 96, 96);
-	glLineStipple(1, 0xAAAA);
+	GPU_basic_shader_line_stipple(1, 0xAAAA);
 	sdrawline(rect->xmin, rect->ymin, rect->xmax, rect->ymax);
 	glColor3ub(255, 255, 255);
-	glLineStipple(1, 0x5555);
+	GPU_basic_shader_line_stipple(1, 0x5555);
 	sdrawline(rect->xmin, rect->ymin, rect->xmax, rect->ymax);
 
-	glDisable(GL_LINE_STIPPLE);
+	GPU_basic_shader_bind(GPU_SHADER_USE_COLOR);
 	
 }
 
@@ -217,30 +219,30 @@ static void wm_gesture_draw_circle(wmGesture *gt)
 	glutil_draw_filled_arc(0.0, M_PI * 2.0, rect->xmax, 40);
 	glDisable(GL_BLEND);
 	
-	glEnable(GL_LINE_STIPPLE);
+	// for USE_GLSL works bad because of no relation between lines
+	GPU_basic_shader_bind(GPU_SHADER_LINE | GPU_SHADER_STIPPLE | GPU_SHADER_USE_COLOR);
 	glColor3ub(96, 96, 96);
-	glLineStipple(1, 0xAAAA);
+	GPU_basic_shader_line_stipple(1, 0xAAAA);
 	glutil_draw_lined_arc(0.0, M_PI * 2.0, rect->xmax, 40);
 	glColor3ub(255, 255, 255);
-	glLineStipple(1, 0x5555);
+	GPU_basic_shader_line_stipple(1, 0x5555);
 	glutil_draw_lined_arc(0.0, M_PI * 2.0, rect->xmax, 40);
 	
-	glDisable(GL_LINE_STIPPLE);
+	GPU_basic_shader_bind(GPU_SHADER_USE_COLOR);
 	glTranslatef(-rect->xmin, -rect->ymin, 0.0f);
 	
 }
 
 struct LassoFillData {
-	unsigned int *px;
+	unsigned char *px;
 	int width;
 };
 
-static void draw_filled_lasso_px_cb(int x, int y, void *user_data)
+static void draw_filled_lasso_px_cb(int x, int x_end, int y, void *user_data)
 {
 	struct LassoFillData *data = user_data;
-	unsigned char *col = (unsigned char *)&(data->px[(y * data->width) + x]);
-	col[0] = col[1] = col[2] = 0xff;
-	col[3] = 0x10;
+	unsigned char *col = &(data->px[(y * data->width) + x]);
+	memset(col, 0x10, x_end - x);
 }
 
 static void draw_filled_lasso(wmWindow *win, wmGesture *gt)
@@ -268,22 +270,35 @@ static void draw_filled_lasso(wmWindow *win, wmGesture *gt)
 	if (BLI_rcti_is_empty(&rect) == false) {
 		const int w = BLI_rcti_size_x(&rect);
 		const int h = BLI_rcti_size_y(&rect);
-		unsigned int *pixel_buf = MEM_callocN(sizeof(*pixel_buf) * w * h, __func__);
+		unsigned char *pixel_buf = MEM_callocN(sizeof(*pixel_buf) * w * h, __func__);
 		struct LassoFillData lasso_fill_data = {pixel_buf, w};
 
-		fill_poly_v2i_n(
+		BLI_bitmap_draw_2d_poly_v2i_n(
 		       rect.xmin, rect.ymin, rect.xmax, rect.ymax,
 		       (const int (*)[2])moves, tot,
 		       draw_filled_lasso_px_cb, &lasso_fill_data);
 
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+		glColor4f(1, 1, 1, 1);
+		glPixelTransferf(GL_RED_BIAS, 1);
+		glPixelTransferf(GL_GREEN_BIAS, 1);
+		glPixelTransferf(GL_BLUE_BIAS, 1);
+
+		GPU_basic_shader_bind(GPU_SHADER_TEXTURE_2D | GPU_SHADER_USE_COLOR);
+
 		glEnable(GL_BLEND);
-		// glColor4f(1.0, 1.0, 1.0, 0.05);
-
-		glRasterPos2f(rect.xmin, rect.ymin);
-
-		glDrawPixels(w, h, GL_RGBA, GL_UNSIGNED_BYTE, pixel_buf);
-
+		glaDrawPixelsTex(rect.xmin, rect.ymin, w, h, GL_ALPHA, GL_UNSIGNED_BYTE, GL_NEAREST, pixel_buf);
 		glDisable(GL_BLEND);
+
+		GPU_basic_shader_bind(GPU_SHADER_USE_COLOR);
+
+		glPixelTransferf(GL_RED_BIAS, 0);
+		glPixelTransferf(GL_GREEN_BIAS, 0);
+		glPixelTransferf(GL_BLUE_BIAS, 0);
+
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+
 		MEM_freeN(pixel_buf);
 	}
 
@@ -300,9 +315,10 @@ static void wm_gesture_draw_lasso(wmWindow *win, wmGesture *gt, bool filled)
 		draw_filled_lasso(win, gt);
 	}
 
-	glEnable(GL_LINE_STIPPLE);
+	// for USE_GLSL can't check this yet
+	GPU_basic_shader_bind(GPU_SHADER_LINE | GPU_SHADER_STIPPLE | GPU_SHADER_USE_COLOR);
 	glColor3ub(96, 96, 96);
-	glLineStipple(1, 0xAAAA);
+	GPU_basic_shader_line_stipple(1, 0xAAAA);
 	glBegin(GL_LINE_STRIP);
 	for (i = 0; i < gt->points; i++, lasso += 2)
 		glVertex2sv(lasso);
@@ -311,7 +327,7 @@ static void wm_gesture_draw_lasso(wmWindow *win, wmGesture *gt, bool filled)
 	glEnd();
 	
 	glColor3ub(255, 255, 255);
-	glLineStipple(1, 0x5555);
+	GPU_basic_shader_line_stipple(1, 0x5555);
 	glBegin(GL_LINE_STRIP);
 	lasso = (short *)gt->customdata;
 	for (i = 0; i < gt->points; i++, lasso += 2)
@@ -320,7 +336,7 @@ static void wm_gesture_draw_lasso(wmWindow *win, wmGesture *gt, bool filled)
 		glVertex2sv((short *)gt->customdata);
 	glEnd();
 	
-	glDisable(GL_LINE_STIPPLE);
+	GPU_basic_shader_bind(GPU_SHADER_USE_COLOR);
 	
 }
 
@@ -330,17 +346,17 @@ static void wm_gesture_draw_cross(wmWindow *win, wmGesture *gt)
 	const int winsize_x = WM_window_pixels_x(win);
 	const int winsize_y = WM_window_pixels_y(win);
 
-	glEnable(GL_LINE_STIPPLE);
+	GPU_basic_shader_bind(GPU_SHADER_LINE | GPU_SHADER_STIPPLE | GPU_SHADER_USE_COLOR);
 	glColor3ub(96, 96, 96);
-	glLineStipple(1, 0xCCCC);
+	GPU_basic_shader_line_stipple(1, 0xCCCC);
 	sdrawline(rect->xmin - winsize_x, rect->ymin, rect->xmin + winsize_x, rect->ymin);
 	sdrawline(rect->xmin, rect->ymin - winsize_y, rect->xmin, rect->ymin + winsize_y);
 	
 	glColor3ub(255, 255, 255);
-	glLineStipple(1, 0x3333);
+	GPU_basic_shader_line_stipple(1, 0x3333);
 	sdrawline(rect->xmin - winsize_x, rect->ymin, rect->xmin + winsize_x, rect->ymin);
 	sdrawline(rect->xmin, rect->ymin - winsize_y, rect->xmin, rect->ymin + winsize_y);
-	glDisable(GL_LINE_STIPPLE);
+	GPU_basic_shader_bind(GPU_SHADER_USE_COLOR);
 }
 
 /* called in wm_draw.c */
@@ -348,6 +364,7 @@ void wm_gesture_draw(wmWindow *win)
 {
 	wmGesture *gt = (wmGesture *)win->gesture.first;
 	
+	GPU_basic_shader_line_width(1);
 	for (; gt; gt = gt->next) {
 		/* all in subwindow space */
 		wmSubWindowSet(win, gt->swinid);

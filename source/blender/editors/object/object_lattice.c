@@ -72,7 +72,7 @@
 
 /********************** Load/Make/Free ********************/
 
-void free_editLatt(Object *ob)
+void ED_lattice_editlatt_free(Object *ob)
 {
 	Lattice *lt = ob->data;
 	
@@ -91,12 +91,12 @@ void free_editLatt(Object *ob)
 	}
 }
 
-void make_editLatt(Object *obedit)
+void ED_lattice_editlatt_make(Object *obedit)
 {
 	Lattice *lt = obedit->data;
 	KeyBlock *actkey;
 
-	free_editLatt(obedit);
+	ED_lattice_editlatt_free(obedit);
 
 	actkey = BKE_keyblock_from_object(obedit);
 	if (actkey)
@@ -115,7 +115,7 @@ void make_editLatt(Object *obedit)
 	if (lt->key) lt->editlatt->shapenr = obedit->shapenr;
 }
 
-void load_editLatt(Object *obedit)
+void ED_lattice_editlatt_load(Object *obedit)
 {
 	Lattice *lt, *editlt;
 	KeyBlock *actkey;
@@ -192,8 +192,12 @@ static int lattice_select_random_exec(bContext *C, wmOperator *op)
 {
 	Object *obedit = CTX_data_edit_object(C);
 	Lattice *lt = ((Lattice *)obedit->data)->editlatt->latt;
+
 	const float randfac = RNA_float_get(op->ptr, "percent") / 100.0f;
+	const int seed = WM_operator_properties_select_random_seed_increment_get(op);
 	const bool select = (RNA_enum_get(op->ptr, "action") == SEL_SELECT);
+
+	RNG *rng = BLI_rng_new_srandom(seed);
 
 	int tot;
 	BPoint *bp;
@@ -202,7 +206,7 @@ static int lattice_select_random_exec(bContext *C, wmOperator *op)
 	bp = lt->def;
 	while (tot--) {
 		if (!bp->hide) {
-			if (BLI_frand() < randfac) {
+			if (BLI_rng_get_float(rng) < randfac) {
 				bpoint_select_set(bp, select);
 			}
 		}
@@ -212,6 +216,8 @@ static int lattice_select_random_exec(bContext *C, wmOperator *op)
 	if (select == false) {
 		lt->actbp = LT_ACTBP_NONE;
 	}
+
+	BLI_rng_free(rng);
 
 	WM_event_add_notifier(C, NC_GEOM | ND_SELECT, obedit->data);
 
@@ -233,30 +239,24 @@ void LATTICE_OT_select_random(wmOperatorType *ot)
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
 	/* props */
-	RNA_def_float_percentage(ot->srna, "percent", 50.f, 0.0f, 100.0f,
-	                         "Percent", "Percentage of elements to select randomly", 0.f, 100.0f);
-	WM_operator_properties_select_action_simple(ot, SEL_SELECT);
+	WM_operator_properties_select_random(ot);
 }
 
 
 /* -------------------------------------------------------------------- */
 /* Select Mirror Operator */
 
-static int lattice_select_mirror_exec(bContext *C, wmOperator *op)
+static void ed_lattice_select_mirrored(Lattice *lt, const int axis, const bool extend)
 {
-	Object *obedit = CTX_data_edit_object(C);
-	Lattice *lt = ((Lattice *)obedit->data)->editlatt->latt;
-	const bool extend = RNA_boolean_get(op->ptr, "extend");
-	const int axis = RNA_enum_get(op->ptr, "axis");
-	bool flip_uvw[3] = {false};
-	int tot, i;
+	const int tot = lt->pntsu * lt->pntsv * lt->pntsw;
+	int i;
 	BPoint *bp;
 	BLI_bitmap *selpoints;
 
-	tot = lt->pntsu * lt->pntsv * lt->pntsw;
-
+	bool flip_uvw[3] = {false};
 	flip_uvw[axis] = true;
 
+	/* we could flip this too */
 	if (!extend) {
 		lt->actbp = LT_ACTBP_NONE;
 	}
@@ -283,6 +283,20 @@ static int lattice_select_mirror_exec(bContext *C, wmOperator *op)
 
 
 	MEM_freeN(selpoints);
+}
+
+static int lattice_select_mirror_exec(bContext *C, wmOperator *op)
+{
+	Object *obedit = CTX_data_edit_object(C);
+	Lattice *lt = ((Lattice *)obedit->data)->editlatt->latt;
+	const int axis_flag = RNA_enum_get(op->ptr, "axis");
+	const bool extend = RNA_boolean_get(op->ptr, "extend");
+
+	for (int axis = 0; axis < 3; axis++) {
+		if ((1 << axis) & axis_flag) {
+			ed_lattice_select_mirrored(lt, axis, extend);
+		}
+	}
 
 	WM_event_add_notifier(C, NC_GEOM | ND_SELECT, obedit->data);
 
@@ -304,7 +318,7 @@ void LATTICE_OT_select_mirror(wmOperatorType *ot)
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
 	/* props */
-	RNA_def_enum(ot->srna, "axis", object_axis_unsigned_items, 0, "Axis", "");
+	RNA_def_enum_flag(ot->srna, "axis", rna_enum_axis_flag_xyz_items, (1 << 0), "Axis", "");
 
 	RNA_def_boolean(ot->srna, "extend", false, "Extend", "Extend the selection");
 }
@@ -411,7 +425,7 @@ void LATTICE_OT_select_less(wmOperatorType *ot)
 
 /************************** Select All Operator *************************/
 
-void ED_setflagsLatt(Object *obedit, int flag)
+void ED_lattice_flags_set(Object *obedit, int flag)
 {
 	Lattice *lt = obedit->data;
 	BPoint *bp;
@@ -457,10 +471,10 @@ static int lattice_select_all_exec(bContext *C, wmOperator *op)
 
 	switch (action) {
 		case SEL_SELECT:
-			ED_setflagsLatt(obedit, 1);
+			ED_lattice_flags_set(obedit, 1);
 			break;
 		case SEL_DESELECT:
-			ED_setflagsLatt(obedit, 0);
+			ED_lattice_flags_set(obedit, 0);
 			break;
 		case SEL_INVERT:
 			bp = lt->editlatt->latt->def;
@@ -514,7 +528,7 @@ static int lattice_select_ungrouped_exec(bContext *C, wmOperator *op)
 	}
 
 	if (!RNA_boolean_get(op->ptr, "extend")) {
-		ED_setflagsLatt(obedit, 0);
+		ED_lattice_flags_set(obedit, 0);
 	}
 
 	dv = lt->dvert;
@@ -863,7 +877,7 @@ static BPoint *findnearestLattvert(ViewContext *vc, const int mval[2], int sel)
 	return data.bp;
 }
 
-bool mouse_lattice(bContext *C, const int mval[2], bool extend, bool deselect, bool toggle)
+bool ED_lattice_select_pick(bContext *C, const int mval[2], bool extend, bool deselect, bool toggle)
 {
 	ViewContext vc;
 	BPoint *bp = NULL;
@@ -884,7 +898,7 @@ bool mouse_lattice(bContext *C, const int mval[2], bool extend, bool deselect, b
 			bp->f1 ^= SELECT;  /* swap */
 		}
 		else {
-			ED_setflagsLatt(vc.obedit, 0);
+			ED_lattice_flags_set(vc.obedit, 0);
 			bp->f1 |= SELECT;
 		}
 

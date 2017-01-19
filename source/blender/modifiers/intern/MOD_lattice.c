@@ -41,6 +41,7 @@
 
 #include "BKE_cdderivedmesh.h"
 #include "BKE_lattice.h"
+#include "BKE_library_query.h"
 #include "BKE_modifier.h"
 
 #include "depsgraph_private.h"
@@ -83,12 +84,11 @@ static bool isDisabled(ModifierData *md, int UNUSED(userRenderParams))
 
 static void foreachObjectLink(
         ModifierData *md, Object *ob,
-        void (*walk)(void *userData, Object *ob, Object **obpoin),
-        void *userData)
+        ObjectWalkFunc walk, void *userData)
 {
 	LatticeModifierData *lmd = (LatticeModifierData *) md;
 
-	walk(userData, ob, &lmd->object);
+	walk(userData, ob, &lmd->object, IDWALK_NOP);
 }
 
 static void updateDepgraph(ModifierData *md, DagForest *forest,
@@ -156,6 +156,7 @@ ModifierTypeInfo modifierType_Lattice = {
 	/* structSize */        sizeof(LatticeModifierData),
 	/* type */              eModifierTypeType_OnlyDeform,
 	/* flags */             eModifierTypeFlag_AcceptsCVs |
+	                        eModifierTypeFlag_AcceptsLattice |
 	                        eModifierTypeFlag_SupportsEditmode,
 	/* copyData */          copyData,
 	/* deformVerts */       deformVerts,

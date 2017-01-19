@@ -37,6 +37,7 @@
 
 #include "BLI_blenlib.h"
 #include "BLI_utildefines.h"
+#include "BLI_string.h"
 
 #include "DNA_anim_types.h"
 #include "DNA_texture_types.h"
@@ -50,6 +51,7 @@
 #include "ED_keyframing.h"
 
 #include "UI_interface.h"
+#include "UI_resources.h"
 
 #include "WM_api.h"
 #include "WM_types.h"
@@ -58,9 +60,6 @@
 #include "RNA_define.h"
 
 #include "anim_intern.h"
-
-/* called by WM */
-void free_anim_drivers_copybuf(void);
 
 /* ************************************************** */
 /* Animation Data Validation */
@@ -130,8 +129,8 @@ FCurve *verify_driver_fcurve(ID *id, const char rna_path[], const int array_inde
 				 * - These are configured to 0,0 and 1,1 to give a 1-1 mapping
 				 *   which can be easily tweaked from there.
 				 */
-				insert_vert_fcurve(fcu, 0.0f, 0.0f, INSERTKEY_FAST);
-				insert_vert_fcurve(fcu, 1.0f, 1.0f, INSERTKEY_FAST);
+				insert_vert_fcurve(fcu, 0.0f, 0.0f, BEZT_KEYTYPE_KEYFRAME, INSERTKEY_FAST);
+				insert_vert_fcurve(fcu, 1.0f, 1.0f, BEZT_KEYTYPE_KEYFRAME, INSERTKEY_FAST);
 				
 				/* configure this curve to extrapolate */
 				for (i = 0, bezt = fcu->bezt;  (i < fcu->totvert) && bezt;  i++, bezt++) {
@@ -153,6 +152,218 @@ FCurve *verify_driver_fcurve(ID *id, const char rna_path[], const int array_inde
 
 /* ************************************************** */
 /* Driver Management API */
+
+/* Helper for ANIM_add_driver_with_target - Adds the actual driver */
+static int add_driver_with_target(
+        ReportList *UNUSED(reports),
+        ID *dst_id, const char dst_path[], int dst_index,
+        ID *src_id, const char src_path[], int src_index,
+        PointerRNA *dst_ptr, PropertyRNA *dst_prop,
+        PointerRNA *src_ptr, PropertyRNA *src_prop,
+        short flag, int driver_type)
+{
+	FCurve *fcu;
+	short add_mode = (flag & CREATEDRIVER_WITH_FMODIFIER) ? 2 : 1;
+	const char *prop_name = RNA_property_identifier(src_prop);
+	
+	/* Create F-Curve with Driver */
+	fcu = verify_driver_fcurve(dst_id, dst_path, dst_index, add_mode);
+	
+	if (fcu && fcu->driver) {
+		ChannelDriver *driver = fcu->driver;
+		DriverVar *dvar;
+		
+		/* Set the type of the driver */
+		driver->type = driver_type;
+		
+		/* Set driver expression, so that the driver works out of the box
+		 *
+		 * The following checks define a bit of "autodetection magic" we use
+		 * to ensure that the drivers will behave as expected out of the box
+		 * when faced with properties with different units.
+		 */
+		/* XXX: if we have N-1 mapping, should we include all those in the expression? */
+		if ((RNA_property_unit(dst_prop) == PROP_UNIT_ROTATION) && 
+		    (RNA_property_unit(src_prop) != PROP_UNIT_ROTATION))
+		{
+			/* Rotation Destination:  normal -> radians,  so convert src to radians
+			 * (However, if both input and output is a rotation, don't apply such corrections)
+			 */
+			BLI_strncpy(driver->expression, "radians(var)", sizeof(driver->expression));
+		}
+		else if ((RNA_property_unit(src_prop) == PROP_UNIT_ROTATION) &&
+		         (RNA_property_unit(dst_prop) != PROP_UNIT_ROTATION))
+		{
+			/* Rotation Source:  radians -> normal,  so convert src to degrees
+			 * (However, if both input and output is a rotation, don't apply such corrections)
+			 */
+			BLI_strncpy(driver->expression, "degrees(var)", sizeof(driver->expression));
+		}
+		else {
+			/* Just a normal property without any unit problems */
+			BLI_strncpy(driver->expression, "var", sizeof(driver->expression));
+		}
+		
+		/* Create a driver variable for the target
+		 *   - For transform properties, we want to automatically use "transform channel" instead
+		 *     (The only issue is with quat rotations vs euler channels...)
+		 *   - To avoid problems with transform properties depending on the final transform that they
+		 *     control (thus creating pseudo-cycles - see T48734), we don't use transform channels
+		 *     when both the source and destinations are in same places.
+		 */
+		dvar = driver_add_new_variable(driver);
+		
+		if (ELEM(src_ptr->type, &RNA_Object, &RNA_PoseBone) &&  
+		    (STREQ(prop_name, "location") || STREQ(prop_name, "scale") || STRPREFIX(prop_name, "rotation_")) &&
+		    (src_ptr->data != dst_ptr->data))
+		{
+			/* Transform Channel */
+			DriverTarget *dtar;
+			
+			driver_change_variable_type(dvar, DVAR_TYPE_TRANSFORM_CHAN);
+			dtar = &dvar->targets[0];
+			
+			/* Bone or Object target? */
+			dtar->id = src_id;
+			dtar->idtype = GS(src_id->name);
+			
+			if (src_ptr->type == &RNA_PoseBone) {
+				RNA_string_get(src_ptr, "name", dtar->pchan_name);
+			}
+			
+			/* Transform channel depends on type */
+			if (STREQ(prop_name, "location")) {
+				if (src_index == 2)
+					dtar->transChan = DTAR_TRANSCHAN_LOCZ;
+				else if (src_index == 1)
+					dtar->transChan = DTAR_TRANSCHAN_LOCY;
+				else
+					dtar->transChan = DTAR_TRANSCHAN_LOCX;
+			}
+			else if (STREQ(prop_name, "scale")) {
+				if (src_index == 2)
+					dtar->transChan = DTAR_TRANSCHAN_SCALEZ;
+				else if (src_index == 1)
+					dtar->transChan = DTAR_TRANSCHAN_SCALEY;
+				else
+					dtar->transChan = DTAR_TRANSCHAN_SCALEX;
+			}
+			else {
+				/* XXX: With quaternions and axis-angle, this mapping might not be correct...
+				 *      But since those have 4 elements instead, there's not much we can do
+				 */
+				if (src_index == 2)
+					dtar->transChan = DTAR_TRANSCHAN_ROTZ;
+				else if (src_index == 1)
+					dtar->transChan = DTAR_TRANSCHAN_ROTY;
+				else
+					dtar->transChan = DTAR_TRANSCHAN_ROTX;
+			}
+		}
+		else {
+			/* Single RNA Property */
+			DriverTarget *dtar = &dvar->targets[0];
+			
+			/* ID is as-is */
+			dtar->id = src_id;
+			dtar->idtype = GS(src_id->name);
+			
+			/* Need to make a copy of the path (or build one with array index built in) */
+			if (RNA_property_array_check(src_prop)) {
+				dtar->rna_path = BLI_sprintfN("%s[%d]", src_path, src_index);
+			}
+			else {
+				dtar->rna_path = BLI_strdup(src_path);
+			}
+		}
+	}
+	
+	/* set the done status */
+	return (fcu != NULL);
+}
+
+/* Main Driver Management API calls:
+ *  Add a new driver for the specified property on the given ID block,
+ *  and make it be driven by the specified target.
+ *
+ * This is intended to be used in conjunction with a modal "eyedropper"
+ * for picking the variable that is going to be used to drive this one.
+ *
+ * - flag: eCreateDriverFlags
+ * - driver_type: eDriver_Types
+ * - mapping_type: eCreateDriver_MappingTypes
+ */
+int ANIM_add_driver_with_target(
+        ReportList *reports, 
+        ID *dst_id, const char dst_path[], int dst_index,
+        ID *src_id, const char src_path[], int src_index,
+        short flag, int driver_type, short mapping_type)
+{
+	PointerRNA id_ptr, ptr;
+	PropertyRNA *prop;
+	
+	PointerRNA id_ptr2, ptr2;
+	PropertyRNA *prop2;
+	int done_tot = 0;
+	
+	/* validate pointers first - exit if failure */
+	RNA_id_pointer_create(dst_id, &id_ptr);
+	if (RNA_path_resolve_property(&id_ptr, dst_path, &ptr, &prop) == false) {
+		BKE_reportf(reports, RPT_ERROR, 
+		            "Could not add driver, as RNA path is invalid for the given ID (ID = %s, path = %s)",
+		            dst_id->name, dst_path);
+		return 0;
+	}
+	
+	RNA_id_pointer_create(src_id, &id_ptr2);
+	if ((RNA_path_resolve_property(&id_ptr2, src_path, &ptr2, &prop2) == false) || 
+	    (mapping_type == CREATEDRIVER_MAPPING_NONE))
+	{
+		/* No target - So, fall back to default method for adding a "simple" driver normally */
+		return ANIM_add_driver(reports, dst_id, dst_path, dst_index, flag | CREATEDRIVER_WITH_DEFAULT_DVAR, driver_type);
+	}
+	
+	/* handle curve-property mappings based on mapping_type */
+	switch (mapping_type) {
+		case CREATEDRIVER_MAPPING_N_N: /* N-N - Try to match as much as possible, then use the first one */
+		{
+			/* Use the shorter of the two (to avoid out of bounds access) */
+			int dst_len = (RNA_property_array_check(prop)) ? RNA_property_array_length(&ptr, prop) : 1;
+			int src_len = (RNA_property_array_check(prop)) ? RNA_property_array_length(&ptr2, prop2) : 1;
+			
+			int len = MIN2(dst_len, src_len);
+			int i;
+			
+			for (i = 0; i < len; i++) {
+				done_tot += add_driver_with_target(reports, dst_id, dst_path, i, src_id, src_path, i, &ptr, prop, &ptr2, prop2, flag, driver_type);
+			}
+			break;
+		}
+		
+		case CREATEDRIVER_MAPPING_1_N: /* 1-N - Specified target index for all */
+		default:
+		{
+			int len = (RNA_property_array_check(prop)) ? RNA_property_array_length(&ptr, prop) : 1;
+			int i;
+			
+			for (i = 0; i < len; i++) {
+				done_tot += add_driver_with_target(reports, dst_id, dst_path, i, src_id, src_path, src_index, &ptr, prop, &ptr2, prop2, flag, driver_type);
+			}
+			break;
+		}
+		
+		case CREATEDRIVER_MAPPING_1_1: /* 1-1 - Use the specified index (unless -1) */
+		{
+			done_tot = add_driver_with_target(reports, dst_id, dst_path, dst_index, src_id, src_path, src_index, &ptr, prop, &ptr2, prop2, flag, driver_type);
+			break;
+		}
+	}
+	
+	/* done */
+	return done_tot;
+}
+
+/* --------------------------------- */
 
 /* Main Driver Management API calls:
  *  Add a new driver for the specified property on the given ID block
@@ -304,8 +515,7 @@ bool ANIM_remove_driver(ReportList *UNUSED(reports), ID *id, const char rna_path
 static FCurve *channeldriver_copypaste_buf = NULL;
 
 /* This function frees any MEM_calloc'ed copy/paste buffer data */
-// XXX find some header to put this in!
-void free_anim_drivers_copybuf(void)
+void ANIM_drivers_copybuf_free(void)
 {
 	/* free the buffer F-Curve if it exists, as if it were just another F-Curve */
 	if (channeldriver_copypaste_buf)
@@ -343,7 +553,7 @@ bool ANIM_copy_driver(ReportList *reports, ID *id, const char rna_path[], int ar
 	fcu = verify_driver_fcurve(id, rna_path, array_index, 0);
 	
 	/* clear copy/paste buffer first (for consistency with other copy/paste buffers) */
-	free_anim_drivers_copybuf();
+	ANIM_drivers_copybuf_free();
 	
 	/* copy this to the copy/paste buf if it exists */
 	if (fcu && fcu->driver) {
@@ -394,7 +604,7 @@ bool ANIM_paste_driver(ReportList *reports, ID *id, const char rna_path[], int a
 	
 	/* create Driver F-Curve, but without data which will be copied across... */
 	fcu = verify_driver_fcurve(id, rna_path, array_index, -1);
-
+	
 	if (fcu) {
 		/* copy across the curve data from the buffer curve 
 		 * NOTE: this step needs care to not miss new settings
@@ -419,22 +629,203 @@ bool ANIM_paste_driver(ReportList *reports, ID *id, const char rna_path[], int a
 }
 
 /* ************************************************** */
+/* Driver Management API - Copy/Paste Driver Variables */
+
+/* Copy/Paste Buffer for Driver Variables... */
+static ListBase driver_vars_copybuf = {NULL, NULL};
+
+/* This function frees any MEM_calloc'ed copy/paste buffer data */
+void ANIM_driver_vars_copybuf_free(void)
+{
+	/* Free the driver variables kept in the buffer */
+	if (driver_vars_copybuf.first) {
+		DriverVar *dvar, *dvarn;
+		
+		/* Free variables (and any data they use) */
+		for (dvar = driver_vars_copybuf.first; dvar; dvar = dvarn) {
+			dvarn = dvar->next;
+			driver_free_variable(&driver_vars_copybuf, dvar);
+		}
+	}
+	
+	BLI_listbase_clear(&driver_vars_copybuf);
+}
+
+/* Checks if there are driver variables in the copy/paste buffer */
+bool ANIM_driver_vars_can_paste(void)
+{
+	return (BLI_listbase_is_empty(&driver_vars_copybuf) == false);
+}
+
+/* -------------------------------------------------- */
+
+/* Copy the given driver's variables to the buffer */
+bool ANIM_driver_vars_copy(ReportList *reports, FCurve *fcu)
+{
+	/* sanity checks */
+	if (ELEM(NULL, fcu, fcu->driver)) {
+		BKE_report(reports, RPT_ERROR, "No driver to copy variables from");
+		return false;
+	}
+	
+	if (BLI_listbase_is_empty(&fcu->driver->variables)) {
+		BKE_report(reports, RPT_ERROR, "Driver has no variables to copy");
+		return false;
+	}
+	
+	/* clear buffer */
+	ANIM_driver_vars_copybuf_free();
+	
+	/* copy over the variables */
+	driver_variables_copy(&driver_vars_copybuf, &fcu->driver->variables);
+	
+	return (BLI_listbase_is_empty(&driver_vars_copybuf) == false);
+}
+
+/* Paste the variables in the buffer to the given FCurve */
+bool ANIM_driver_vars_paste(ReportList *reports, FCurve *fcu, bool replace)
+{
+	ChannelDriver *driver = (fcu) ? fcu->driver : NULL;
+	ListBase tmp_list = {NULL, NULL};
+	
+	/* sanity checks */
+	if (BLI_listbase_is_empty(&driver_vars_copybuf)) {
+		BKE_report(reports, RPT_ERROR, "No driver variables in clipboard to paste");
+		return false;
+	}
+	
+	if (ELEM(NULL, fcu, fcu->driver)) {
+		BKE_report(reports, RPT_ERROR, "Cannot paste driver variables without a driver");
+		return false;
+	}
+	
+	/* 1) Make a new copy of the variables in the buffer - these will get pasted later... */
+	driver_variables_copy(&tmp_list, &driver_vars_copybuf);
+	
+	/* 2) Prepare destination array */
+	if (replace) {
+		DriverVar *dvar, *dvarn;
+		
+		/* Free all existing vars first - We aren't retaining anything */
+		for (dvar = driver->variables.first; dvar; dvar = dvarn) {
+			dvarn = dvar->next;
+			driver_free_variable_ex(driver, dvar);
+		}
+		
+		BLI_listbase_clear(&driver->variables);
+	}
+	
+	/* 3) Add new vars */
+	if (driver->variables.last) {
+		DriverVar *last = driver->variables.last;
+		DriverVar *first = tmp_list.first;
+		
+		last->next = first;
+		first->prev = last;
+		
+		driver->variables.last = tmp_list.last;
+	}
+	else {
+		driver->variables.first = tmp_list.first;
+		driver->variables.last = tmp_list.last;
+	}
+	
+#ifdef WITH_PYTHON
+	/* since driver variables are cached, the expression needs re-compiling too */
+	if (driver->type == DRIVER_TYPE_PYTHON)
+		driver->flag |= DRIVER_FLAG_RENAMEVAR;
+#endif
+	
+	return true;
+}
+
+/* ************************************************** */
 /* UI-Button Interface */
+
+/* Add Driver - Enum Defines ------------------------- */
+
+/* Mapping Types enum for operators */
+/* NOTE: Used by ANIM_OT_driver_button_add and UI_OT_eyedropper_driver */
+// XXX: These names need reviewing
+EnumPropertyItem prop_driver_create_mapping_types[] = {
+	{CREATEDRIVER_MAPPING_1_N, "SINGLE_MANY", ICON_UI, "All from Target",
+	 "Drive all components of this property using the target picked"},
+	{CREATEDRIVER_MAPPING_1_1, "DIRECT", 0, "Single from Target",
+	 "Drive this component of this property using the target picked"},
+	 
+	{CREATEDRIVER_MAPPING_N_N, "MATCH", ICON_COLOR, "Match Indices",
+	 "Create drivers for each pair of corresponding elements"},
+	 
+	{CREATEDRIVER_MAPPING_NONE_ALL, "NONE_ALL", ICON_HAND, "Manually Create Later",
+	 "Create drivers for all properties without assigning any targets yet"},
+	{CREATEDRIVER_MAPPING_NONE,     "NONE_SINGLE", 0, "Manually Create Later (Single)",
+	 "Create driver for this property only and without assigning any targets yet"},
+	{0, NULL, 0, NULL, NULL}
+};
+
+/* Filtering callback for driver mapping types enum */
+static EnumPropertyItem *driver_mapping_type_itemsf(bContext *C, PointerRNA *UNUSED(owner_ptr), PropertyRNA *UNUSED(owner_prop), bool *r_free)
+{
+	EnumPropertyItem *input = prop_driver_create_mapping_types;
+	EnumPropertyItem *item = NULL;
+	
+	PointerRNA ptr = {{NULL}};
+	PropertyRNA *prop = NULL;
+	int index;
+	
+	int totitem = 0;
+	
+	if (!C) /* needed for docs */
+		return prop_driver_create_mapping_types;
+	
+	UI_context_active_but_prop_get(C, &ptr, &prop, &index);
+	
+	if (ptr.id.data && ptr.data && prop && RNA_property_animateable(&ptr, prop)) {
+		const bool is_array = RNA_property_array_check(prop);
+		
+		while (input->identifier) {
+			if (ELEM(input->value, CREATEDRIVER_MAPPING_1_1, CREATEDRIVER_MAPPING_NONE) || (is_array)) {
+				RNA_enum_item_add(&item, &totitem, input);
+			}
+			input++;
+		}
+	}
+	else {
+		/* We need at least this one! */
+		RNA_enum_items_add_value(&item, &totitem, input, CREATEDRIVER_MAPPING_NONE);
+	}
+	
+	RNA_enum_item_end(&item, &totitem);
+	
+	*r_free = true;
+	return item;
+}
+
 
 /* Add Driver Button Operator ------------------------ */
 
-static int add_driver_button_exec(bContext *C, wmOperator *op)
+static int add_driver_button_poll(bContext *C)
 {
 	PointerRNA ptr = {{NULL}};
 	PropertyRNA *prop = NULL;
-	int success = 0;
 	int index;
-	const bool all = RNA_boolean_get(op->ptr, "all");
 	
-	/* try to create driver using property retrieved from UI */
+	/* this operator can only run if there's a property button active, and it can be animated */
+	UI_context_active_but_prop_get(C, &ptr, &prop, &index);
+	return (ptr.id.data && ptr.data && prop && RNA_property_animateable(&ptr, prop));
+}
+
+/* Wrapper for creating a driver without knowing what the targets will be yet (i.e. "manual/add later") */
+static int add_driver_button_none(bContext *C, wmOperator *op, short mapping_type)
+{
+	PointerRNA ptr = {{NULL}};
+	PropertyRNA *prop = NULL;
+	int index;
+	int success = 0;
+	
 	UI_context_active_but_prop_get(C, &ptr, &prop, &index);
 	
-	if (all)
+	if (mapping_type == CREATEDRIVER_MAPPING_NONE_ALL)
 		index = -1;
 	
 	if (ptr.id.data && ptr.data && prop && RNA_property_animateable(&ptr, prop)) {
@@ -443,7 +834,6 @@ static int add_driver_button_exec(bContext *C, wmOperator *op)
 		
 		if (path) {
 			success += ANIM_add_driver(op->reports, ptr.id.data, path, index, flags, DRIVER_TYPE_PYTHON);
-			
 			MEM_freeN(path);
 		}
 	}
@@ -452,10 +842,48 @@ static int add_driver_button_exec(bContext *C, wmOperator *op)
 		/* send updates */
 		UI_context_update_anim_flag(C);
 		DAG_relations_tag_update(CTX_data_main(C));
-		WM_event_add_notifier(C, NC_ANIMATION | ND_FCURVES_ORDER, NULL); // XXX
+		WM_event_add_notifier(C, NC_ANIMATION | ND_FCURVES_ORDER, NULL);  // XXX
+		
+		return OPERATOR_FINISHED;
 	}
+	else {
+		return OPERATOR_CANCELLED;
+	}
+}
+
+static int add_driver_button_exec(bContext *C, wmOperator *op)
+{
+	short mapping_type = RNA_enum_get(op->ptr, "mapping_type");
+	if (ELEM(mapping_type, CREATEDRIVER_MAPPING_NONE, CREATEDRIVER_MAPPING_NONE_ALL)) {
+		/* Just create driver with no targets */
+		return add_driver_button_none(C, op, mapping_type);
+	}
+	else {
+		/* Create Driver using Eyedropper */
+		wmOperatorType *ot = WM_operatortype_find("UI_OT_eyedropper_driver", true);
+		
+		/* XXX: We assume that it's fine to use the same set of properties, since they're actually the same... */
+		WM_operator_name_call_ptr(C, ot, WM_OP_INVOKE_DEFAULT, op->ptr);
+		
+		return OPERATOR_FINISHED;
+	}
+}
+
+/* Show menu or create drivers */
+static int add_driver_button_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event))
+{
+	PropertyRNA *prop;
 	
-	return (success) ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
+	if ((prop = RNA_struct_find_property(op->ptr, "mapping_type")) && RNA_property_is_set(op->ptr, prop)) {
+		/* Mapping Type is Set - Directly go into creating drivers */
+		return add_driver_button_exec(C, op);
+	}
+	else {
+		/* Show menu */
+		// TODO: This should get filtered by the enum filter
+		/* important to execute in the region we're currently in */
+		return WM_menu_invoke_ex(C, op, WM_OP_INVOKE_DEFAULT);
+	}
 }
 
 void ANIM_OT_driver_button_add(wmOperatorType *ot)
@@ -463,17 +891,23 @@ void ANIM_OT_driver_button_add(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Add Driver";
 	ot->idname = "ANIM_OT_driver_button_add";
-	ot->description = "Add Driver\nAdd driver(s) for the property(s) connected represented by the highlighted button";
+	ot->description = "Add driver(s) for the property(s) represented by the highlighted button";
 	
 	/* callbacks */
+	/* NOTE: No exec, as we need all these to use the current context info
+	 * (especially the eyedropper, which is interactive)
+	 */
+	ot->invoke = add_driver_button_invoke;
 	ot->exec = add_driver_button_exec; 
-	//op->poll = ??? // TODO: need to have some animatable property to do this
+	ot->poll = add_driver_button_poll;
 	
 	/* flags */
 	ot->flag = OPTYPE_UNDO | OPTYPE_INTERNAL;
-
+	
 	/* properties */
-	RNA_def_boolean(ot->srna, "all", 1, "All", "Create drivers for all elements of the array");
+	ot->prop = RNA_def_enum(ot->srna, "mapping_type", prop_driver_create_mapping_types, 0,
+	                        "Mapping Type", "Method used to match target and driven properties");
+	RNA_def_enum_funcs(ot->prop, driver_mapping_type_itemsf);
 }
 
 /* Remove Driver Button Operator ------------------------ */
@@ -517,7 +951,7 @@ void ANIM_OT_driver_button_remove(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Remove Driver";
 	ot->idname = "ANIM_OT_driver_button_remove";
-	ot->description = "Remove Driver\nRemove the driver(s) for the property(s) connected represented by the highlighted button";
+	ot->description = "Remove the driver(s) for the property(s) connected represented by the highlighted button";
 	
 	/* callbacks */
 	ot->exec = remove_driver_button_exec; 
@@ -564,7 +998,7 @@ void ANIM_OT_copy_driver_button(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Copy Driver";
 	ot->idname = "ANIM_OT_copy_driver_button";
-	ot->description = "Copy Driver\nCopy the driver for the highlighted button";
+	ot->description = "Copy the driver for the highlighted button";
 	
 	/* callbacks */
 	ot->exec = copy_driver_button_exec; 
@@ -608,7 +1042,7 @@ void ANIM_OT_paste_driver_button(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Paste Driver";
 	ot->idname = "ANIM_OT_paste_driver_button";
-	ot->description = "Paste Driver\nPaste the driver in the copy/paste buffer for the highlighted button";
+	ot->description = "Paste the driver in the copy/paste buffer for the highlighted button";
 	
 	/* callbacks */
 	ot->exec = paste_driver_button_exec; 

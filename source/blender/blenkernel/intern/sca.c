@@ -44,10 +44,13 @@
 #include "DNA_object_types.h"
 
 #include "BLI_blenlib.h"
+#include "BLI_ghash.h"
 #include "BLI_math.h"
+
 #include "BKE_global.h"
 #include "BKE_main.h"
 #include "BKE_library.h"
+#include "BKE_library_query.h"
 #include "BKE_sca.h"
 
 /* ******************* SENSORS ************************ */
@@ -434,9 +437,6 @@ void init_actuator(bActuator *act)
 		oa= act->data;
 		oa->flag= 15;
 		break;
-	case ACT_IPO:
-		act->data= MEM_callocN(sizeof(bIpoActuator), "ipoact");
-		break;
 	case ACT_PROPERTY:
 		act->data= MEM_callocN(sizeof(bPropertyActuator), "propact");
 		break;
@@ -602,41 +602,41 @@ void set_sca_new_poins_ob(Object *ob)
 		if (act->flag & ACT_NEW) {
 			if (act->type==ACT_EDIT_OBJECT) {
 				bEditObjectActuator *eoa= act->data;
-				ID_NEW(eoa->ob);
+				ID_NEW_REMAP(eoa->ob);
 			}
 			else if (act->type==ACT_SCENE) {
 				bSceneActuator *sca= act->data;
-				ID_NEW(sca->camera);
+				ID_NEW_REMAP(sca->camera);
 			}
 			else if (act->type==ACT_CAMERA) {
 				bCameraActuator *ca= act->data;
-				ID_NEW(ca->ob);
+				ID_NEW_REMAP(ca->ob);
 			}
 			else if (act->type==ACT_OBJECT) {
 				bObjectActuator *oa= act->data;
-				ID_NEW(oa->reference);
+				ID_NEW_REMAP(oa->reference);
 			}
 			else if (act->type==ACT_MESSAGE) {
 				bMessageActuator *ma= act->data;
-				ID_NEW(ma->toObject);
+				ID_NEW_REMAP(ma->toObject);
 			}
 			else if (act->type==ACT_PARENT) {
 				bParentActuator *para = act->data;
-				ID_NEW(para->ob);
+				ID_NEW_REMAP(para->ob);
 			}
 			else if (act->type==ACT_ARMATURE) {
 				bArmatureActuator *aa = act->data;
-				ID_NEW(aa->target);
-				ID_NEW(aa->subtarget);
+				ID_NEW_REMAP(aa->target);
+				ID_NEW_REMAP(aa->subtarget);
 			}
 			else if (act->type==ACT_PROPERTY) {
 				bPropertyActuator *pa= act->data;
-				ID_NEW(pa->ob);
+				ID_NEW_REMAP(pa->ob);
 			}
 			else if (act->type==ACT_STEERING) {
 				bSteeringActuator *sta = act->data;
-				ID_NEW(sta->navmesh);
-				ID_NEW(sta->target);
+				ID_NEW_REMAP(sta->navmesh);
+				ID_NEW_REMAP(sta->target);
 			}
 		}
 		act= act->next;
@@ -655,74 +655,158 @@ void set_sca_new_poins(void)
 	}
 }
 
-void sca_remove_ob_poin(Object *obt, Object *ob)
+/**
+ * Try to remap logic links to new object... Very, *very* weak.
+ */
+/* XXX Logick bricks... I don't have words to say what I think about this behavior.
+ *     They have silent hidden ugly inter-objects dependencies (a sensor can link into any other
+ *     object's controllers, and same between controllers and actuators, without *any* explicit reference
+ *     to data-block involved).
+ *     This is bad, bad, bad!!!
+ *     ...and forces us to add yet another very ugly hack to get remapping with logic bricks working. */
+void BKE_sca_logic_links_remap(Main *bmain, Object *ob_old, Object *ob_new)
 {
-	bSensor *sens;
-	bMessageSensor *ms;
-	bActuator *act;
-	bCameraActuator *ca;
-	bObjectActuator *oa;
-	bSceneActuator *sa;
-	bEditObjectActuator *eoa;
-	bPropertyActuator *pa;
-	bMessageActuator *ma;
-	bParentActuator *para;
-	bArmatureActuator *aa;
-	bSteeringActuator *sta;
-
-
-	sens= obt->sensors.first;
-	while (sens) {
-		switch (sens->type) {
-		case SENS_MESSAGE:
-			ms= sens->data;
-			if (ms->fromObject==ob) ms->fromObject= NULL;
-		}
-		sens= sens->next;
+	if (ob_new == NULL || (ob_old->controllers.first == NULL && ob_old->actuators.first == NULL)) {
+		/* Nothing to do here... */
+		return;
 	}
 
-	act= obt->actuators.first;
-	while (act) {
-		switch (act->type) {
-		case ACT_CAMERA:
-			ca= act->data;
-			if (ca->ob==ob) ca->ob= NULL;
-			break;
-		case ACT_OBJECT:
-			oa= act->data;
-			if (oa->reference==ob) oa->reference= NULL;
-			break;
-		case ACT_PROPERTY:
-			pa= act->data;
-			if (pa->ob==ob) pa->ob= NULL;
-			break;
-		case ACT_SCENE:
-			sa= act->data;
-			if (sa->camera==ob) sa->camera= NULL;
-			break;
-		case ACT_EDIT_OBJECT:
-			eoa= act->data;
-			if (eoa->ob==ob) eoa->ob= NULL;
-			break;
-		case ACT_MESSAGE:
-			ma= act->data;
-			if (ma->toObject==ob) ma->toObject= NULL;
-			break;
-		case ACT_PARENT:
-			para = act->data;
-			if (para->ob==ob) para->ob = NULL;
-			break;
-		case ACT_ARMATURE:
-			aa = act->data;
-			if (aa->target == ob) aa->target = NULL;
-			if (aa->subtarget == ob) aa->subtarget = NULL;
-			break;
-		case ACT_STEERING:
-			sta = act->data;
-			if (sta->navmesh == ob) sta->navmesh = NULL;
-			if (sta->target == ob) sta->target = NULL;
+	GHash *controllers_map = ob_old->controllers.first ?
+	                             BLI_ghash_ptr_new_ex(__func__, BLI_listbase_count(&ob_old->controllers)) : NULL;
+	GHash *actuators_map = ob_old->actuators.first ?
+	                           BLI_ghash_ptr_new_ex(__func__, BLI_listbase_count(&ob_old->actuators)) : NULL;
+
+	/* We try to remap old controllers/actuators to new ones - in a very basic way. */
+	for (bController *cont_old = ob_old->controllers.first, *cont_new = ob_new->controllers.first;
+	     cont_old;
+	     cont_old = cont_old->next)
+	{
+		bController *cont_new2 = cont_new;
+
+		if (cont_old->mynew != NULL) {
+			cont_new2 = cont_old->mynew;
+			if (!(cont_new2 == cont_new || BLI_findindex(&ob_new->controllers, cont_new2) >= 0)) {
+				cont_new2 = NULL;
+			}
 		}
-		act= act->next;
+		else if (cont_new && cont_old->type != cont_new->type) {
+			cont_new2 = NULL;
+		}
+
+		BLI_ghash_insert(controllers_map, cont_old, cont_new2);
+
+		if (cont_new) {
+			cont_new = cont_new->next;
+		}
+	}
+
+	for (bActuator *act_old = ob_old->actuators.first, *act_new = ob_new->actuators.first;
+	     act_old;
+	     act_old = act_old->next)
+	{
+		bActuator *act_new2 = act_new;
+
+		if (act_old->mynew != NULL) {
+			act_new2 = act_old->mynew;
+			if (!(act_new2 == act_new || BLI_findindex(&ob_new->actuators, act_new2) >= 0)) {
+				act_new2 = NULL;
+			}
+		}
+		else if (act_new && act_old->type != act_new->type) {
+			act_new2 = NULL;
+		}
+
+		BLI_ghash_insert(actuators_map, act_old, act_new2);
+
+		if (act_new) {
+			act_new = act_new->next;
+		}
+	}
+
+	for (Object *ob = bmain->object.first; ob; ob = ob->id.next) {
+		if (controllers_map != NULL) {
+			for (bSensor *sens = ob->sensors.first; sens; sens = sens->next) {
+				for (int a = 0; a < sens->totlinks; a++) {
+					if (sens->links[a]) {
+						bController *old_link = sens->links[a];
+						bController **new_link_p = (bController **)BLI_ghash_lookup_p(controllers_map, old_link);
+
+						if (new_link_p == NULL) {
+							/* old_link is *not* in map's keys (i.e. not to any ob_old->controllers),
+							 * which means we ignore it totally here. */
+						}
+						else if (*new_link_p == NULL) {
+							unlink_logicbricks((void **)&old_link, (void ***)&(sens->links), &sens->totlinks);
+							a--;
+						}
+						else {
+							sens->links[a] = *new_link_p;
+						}
+					}
+				}
+			}
+		}
+
+		if (actuators_map != NULL) {
+			for (bController *cont = ob->controllers.first; cont; cont = cont->next) {
+				for (int a = 0; a < cont->totlinks; a++) {
+					if (cont->links[a]) {
+						bActuator *old_link = cont->links[a];
+						bActuator **new_link_p = (bActuator **)BLI_ghash_lookup_p(actuators_map, old_link);
+
+						if (new_link_p == NULL) {
+							/* old_link is *not* in map's keys (i.e. not to any ob_old->actuators),
+							 * which means we ignore it totally here. */
+						}
+						else if (*new_link_p == NULL) {
+							unlink_logicbricks((void **)&old_link, (void ***)&(cont->links), &cont->totlinks);
+							a--;
+						}
+						else {
+							cont->links[a] = *new_link_p;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	if (controllers_map) {
+		BLI_ghash_free(controllers_map, NULL, NULL);
+	}
+	if (actuators_map) {
+		BLI_ghash_free(actuators_map, NULL, NULL);
+	}
+}
+
+/**
+ * Handle the copying of logic data into a new object, including internal logic links update.
+ * External links (links between logic bricks of different objects) must be handled separately.
+ */
+void BKE_sca_logic_copy(Object *ob_new, Object *ob)
+{
+	copy_sensors(&ob_new->sensors, &ob->sensors);
+	copy_controllers(&ob_new->controllers, &ob->controllers);
+	copy_actuators(&ob_new->actuators, &ob->actuators);
+
+	for (bSensor *sens = ob_new->sensors.first; sens; sens = sens->next) {
+		if (sens->flag & SENS_NEW) {
+			for (int a = 0; a < sens->totlinks; a++) {
+				if (sens->links[a] && sens->links[a]->mynew) {
+					sens->links[a] = sens->links[a]->mynew;
+				}
+			}
+		}
+	}
+
+	for (bController *cont = ob_new->controllers.first; cont; cont = cont->next) {
+		if (cont->flag & CONT_NEW) {
+			for (int a = 0; a < cont->totlinks; a++) {
+				if (cont->links[a] && cont->links[a]->mynew) {
+					cont->links[a] = cont->links[a]->mynew;
+				}
+			}
+		}
 	}
 }
 
@@ -900,6 +984,178 @@ void unlink_logicbricks(void **poin, void ***ppoin, short *tot)
 			(*ppoin)= NULL;
 		}
 		return;
+	}
+}
+
+void BKE_sca_sensors_id_loop(ListBase *senslist, SCASensorIDFunc func, void *userdata)
+{
+	bSensor *sensor;
+
+	for (sensor = senslist->first; sensor; sensor = sensor->next) {
+		func(sensor, (ID **)&sensor->ob, userdata, IDWALK_NOP);
+
+		switch (sensor->type) {
+			case SENS_TOUCH:  /* DEPRECATED */
+			{
+				bTouchSensor *ts = sensor->data;
+				func(sensor, (ID **)&ts->ma, userdata, IDWALK_NOP);
+				break;
+			}
+			case SENS_MESSAGE:
+			{
+				bMessageSensor *ms = sensor->data;
+				func(sensor, (ID **)&ms->fromObject, userdata, IDWALK_NOP);
+				break;
+			}
+			case SENS_ALWAYS:
+			case SENS_NEAR:
+			case SENS_KEYBOARD:
+			case SENS_PROPERTY:
+			case SENS_MOUSE:
+			case SENS_COLLISION:
+			case SENS_RADAR:
+			case SENS_RANDOM:
+			case SENS_RAY:
+			case SENS_JOYSTICK:
+			case SENS_ACTUATOR:
+			case SENS_DELAY:
+			case SENS_ARMATURE:
+			default:
+				break;
+		}
+	}
+}
+
+void BKE_sca_controllers_id_loop(ListBase *contlist, SCAControllerIDFunc func, void *userdata)
+{
+	bController *controller;
+
+	for (controller = contlist->first; controller; controller = controller->next) {
+		switch (controller->type) {
+			case CONT_PYTHON:
+			{
+				bPythonCont *pc = controller->data;
+				func(controller, (ID **)&pc->text, userdata, IDWALK_NOP);
+				break;
+			}
+			case CONT_LOGIC_AND:
+			case CONT_LOGIC_OR:
+			case CONT_EXPRESSION:
+			case CONT_LOGIC_NAND:
+			case CONT_LOGIC_NOR:
+			case CONT_LOGIC_XOR:
+			case CONT_LOGIC_XNOR:
+			default:
+				break;
+		}
+	}
+}
+
+void BKE_sca_actuators_id_loop(ListBase *actlist, SCAActuatorIDFunc func, void *userdata)
+{
+	bActuator *actuator;
+
+	for (actuator = actlist->first; actuator; actuator = actuator->next) {
+		func(actuator, (ID **)&actuator->ob, userdata, IDWALK_NOP);
+
+		switch (actuator->type) {
+			case ACT_ADD_OBJECT:  /* DEPRECATED */
+			{
+				bAddObjectActuator *aoa = actuator->data;
+				func(actuator, (ID **)&aoa->ob, userdata, IDWALK_NOP);
+				break;
+			}
+			case ACT_ACTION:
+			{
+				bActionActuator *aa = actuator->data;
+				func(actuator, (ID **)&aa->act, userdata, IDWALK_NOP);
+				break;
+			}
+			case ACT_SOUND:
+			{
+				bSoundActuator *sa = actuator->data;
+				func(actuator, (ID **)&sa->sound, userdata, IDWALK_NOP);
+				break;
+			}
+			case ACT_EDIT_OBJECT:
+			{
+				bEditObjectActuator *eoa = actuator->data;
+				func(actuator, (ID **)&eoa->ob, userdata, IDWALK_NOP);
+				func(actuator, (ID **)&eoa->me, userdata, IDWALK_NOP);
+				break;
+			}
+			case ACT_SCENE:
+			{
+				bSceneActuator *sa = actuator->data;
+				func(actuator, (ID **)&sa->scene, userdata, IDWALK_NOP);
+				func(actuator, (ID **)&sa->camera, userdata, IDWALK_NOP);
+				break;
+			}
+			case ACT_PROPERTY:
+			{
+				bPropertyActuator *pa = actuator->data;
+				func(actuator, (ID **)&pa->ob, userdata, IDWALK_NOP);
+				break;
+			}
+			case ACT_OBJECT:
+			{
+				bObjectActuator *oa = actuator->data;
+				func(actuator, (ID **)&oa->reference, userdata, IDWALK_NOP);
+				break;
+			}
+			case ACT_CAMERA:
+			{
+				bCameraActuator *ca = actuator->data;
+				func(actuator, (ID **)&ca->ob, userdata, IDWALK_NOP);
+				break;
+			}
+			case ACT_MESSAGE:
+			{
+				bMessageActuator *ma = actuator->data;
+				func(actuator, (ID **)&ma->toObject, userdata, IDWALK_NOP);
+				break;
+			}
+			case ACT_2DFILTER:
+			{
+				bTwoDFilterActuator *tdfa = actuator->data;
+				func(actuator, (ID **)&tdfa->text, userdata, IDWALK_NOP);
+				break;
+			}
+			case ACT_PARENT:
+			{
+				bParentActuator *pa = actuator->data;
+				func(actuator, (ID **)&pa->ob, userdata, IDWALK_NOP);
+				break;
+			}
+			case ACT_ARMATURE:
+			{
+				bArmatureActuator *aa = actuator->data;
+				func(actuator, (ID **)&aa->target, userdata, IDWALK_NOP);
+				func(actuator, (ID **)&aa->subtarget, userdata, IDWALK_NOP);
+				break;
+			}
+			case ACT_STEERING:
+			{
+				bSteeringActuator *sa = actuator->data;
+				func(actuator, (ID **)&sa->target, userdata, IDWALK_NOP);
+				func(actuator, (ID **)&sa->navmesh, userdata, IDWALK_NOP);
+				break;
+			}
+			/* Note: some types seems to be non-implemented? ACT_LAMP, ACT_MATERIAL... */
+			case ACT_LAMP:
+			case ACT_MATERIAL:
+			case ACT_END_OBJECT:  /* DEPRECATED */
+			case ACT_CONSTRAINT:
+			case ACT_GROUP:
+			case ACT_RANDOM:
+			case ACT_GAME:
+			case ACT_VISIBILITY:
+			case ACT_SHAPEACTION:
+			case ACT_STATE:
+			case ACT_MOUSE:
+			default:
+				break;
+		}
 	}
 }
 

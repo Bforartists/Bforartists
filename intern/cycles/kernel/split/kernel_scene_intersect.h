@@ -30,9 +30,8 @@
  * PathState_coop ---------------------------------|                                          |--- Intersection
  * ray_state --------------------------------------|                                          |--- ray_state
  * use_queues_flag --------------------------------|                                          |
- * parallel_samples -------------------------------|                                          |
  * QueueData(QUEUE_ACTIVE_AND_REGENERATED_RAYS) ---|                                          |
- * kg (data + globals) ----------------------------|                                          |
+ * kg (globals) -----------------------------------|                                          |
  * rng_coop ---------------------------------------|                                          |
  * sw ---------------------------------------------|                                          |
  * sh ---------------------------------------------|                                          |
@@ -63,8 +62,7 @@
  */
 
 ccl_device void kernel_scene_intersect(
-        ccl_global char *globals,
-        ccl_constant KernelData *data,
+        KernelGlobals *kg,
         ccl_global uint *rng_coop,
         ccl_global Ray *Ray_coop,              /* Required for scene_intersect */
         ccl_global PathState *PathState_coop,  /* Required for scene_intersect */
@@ -76,7 +74,6 @@ ccl_device void kernel_scene_intersect(
 #ifdef __KERNEL_DEBUG__
         DebugData *debugdata_coop,
 #endif
-        int parallel_samples,                  /* Number of samples to be processed in parallel */
         int ray_index)
 {
 	/* All regenerated rays become active here */
@@ -85,9 +82,6 @@ ccl_device void kernel_scene_intersect(
 
 	if(!IS_STATE(ray_state, ray_index, RAY_ACTIVE))
 		return;
-
-	/* Load kernel globals structure */
-	KernelGlobals *kg = (KernelGlobals *)globals;
 
 #ifdef __KERNEL_DEBUG__
 	DebugData *debug_data = &debugdata_coop[ray_index];
@@ -115,15 +109,16 @@ ccl_device void kernel_scene_intersect(
 		lcg_state = lcg_state_init(&rng, &state, 0x51633e2d);
 	}
 
-	bool hit = scene_intersect(kg, &ray, visibility, isect, &lcg_state, difl, extmax);
+	bool hit = scene_intersect(kg, ray, visibility, isect, &lcg_state, difl, extmax);
 #else
-	bool hit = scene_intersect(kg, &ray, visibility, isect, NULL, 0.0f, 0.0f);
+	bool hit = scene_intersect(kg, ray, visibility, isect, NULL, 0.0f, 0.0f);
 #endif
 
 #ifdef __KERNEL_DEBUG__
 	if(state.flag & PATH_RAY_CAMERA) {
-		debug_data->num_bvh_traversal_steps += isect->num_traversal_steps;
+		debug_data->num_bvh_traversed_nodes += isect->num_traversed_nodes;
 		debug_data->num_bvh_traversed_instances += isect->num_traversed_instances;
+		debug_data->num_bvh_intersections += isect->num_intersections;
 	}
 	debug_data->num_ray_bounces++;
 #endif

@@ -1,6 +1,5 @@
 /*
- * Adapted from code Copyright 2009-2010 NVIDIA Corporation
- * Modifications Copyright 2011, Blender Foundation.
+ * Copyright 2011-2013 Blender Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,13 +46,13 @@ ccl_device_inline int find_attribute_motion(KernelGlobals *kg, int object, uint 
 	return (attr_map.y == ATTR_ELEMENT_NONE) ? (int)ATTR_STD_NOT_FOUND : (int)attr_map.z;
 }
 
-ccl_device_inline void motion_triangle_verts_for_step(KernelGlobals *kg, float3 tri_vindex, int offset, int numverts, int numsteps, int step, float3 verts[3])
+ccl_device_inline void motion_triangle_verts_for_step(KernelGlobals *kg, uint4 tri_vindex, int offset, int numverts, int numsteps, int step, float3 verts[3])
 {
 	if(step == numsteps) {
 		/* center step: regular vertex location */
-		verts[0] = float4_to_float3(kernel_tex_fetch(__tri_verts, __float_as_int(tri_vindex.x)));
-		verts[1] = float4_to_float3(kernel_tex_fetch(__tri_verts, __float_as_int(tri_vindex.y)));
-		verts[2] = float4_to_float3(kernel_tex_fetch(__tri_verts, __float_as_int(tri_vindex.z)));
+		verts[0] = float4_to_float3(kernel_tex_fetch(__prim_tri_verts, tri_vindex.w+0));
+		verts[1] = float4_to_float3(kernel_tex_fetch(__prim_tri_verts, tri_vindex.w+1));
+		verts[2] = float4_to_float3(kernel_tex_fetch(__prim_tri_verts, tri_vindex.w+2));
 	}
 	else {
 		/* center step not store in this array */
@@ -62,19 +61,19 @@ ccl_device_inline void motion_triangle_verts_for_step(KernelGlobals *kg, float3 
 
 		offset += step*numverts;
 
-		verts[0] = float4_to_float3(kernel_tex_fetch(__attributes_float3, offset + __float_as_int(tri_vindex.x)));
-		verts[1] = float4_to_float3(kernel_tex_fetch(__attributes_float3, offset + __float_as_int(tri_vindex.y)));
-		verts[2] = float4_to_float3(kernel_tex_fetch(__attributes_float3, offset + __float_as_int(tri_vindex.z)));
+		verts[0] = float4_to_float3(kernel_tex_fetch(__attributes_float3, offset + tri_vindex.x));
+		verts[1] = float4_to_float3(kernel_tex_fetch(__attributes_float3, offset + tri_vindex.y));
+		verts[2] = float4_to_float3(kernel_tex_fetch(__attributes_float3, offset + tri_vindex.z));
 	}
 }
 
-ccl_device_inline void motion_triangle_normals_for_step(KernelGlobals *kg, float3 tri_vindex, int offset, int numverts, int numsteps, int step, float3 normals[3])
+ccl_device_inline void motion_triangle_normals_for_step(KernelGlobals *kg, uint4 tri_vindex, int offset, int numverts, int numsteps, int step, float3 normals[3])
 {
 	if(step == numsteps) {
 		/* center step: regular vertex location */
-		normals[0] = float4_to_float3(kernel_tex_fetch(__tri_vnormal, __float_as_int(tri_vindex.x)));
-		normals[1] = float4_to_float3(kernel_tex_fetch(__tri_vnormal, __float_as_int(tri_vindex.y)));
-		normals[2] = float4_to_float3(kernel_tex_fetch(__tri_vnormal, __float_as_int(tri_vindex.z)));
+		normals[0] = float4_to_float3(kernel_tex_fetch(__tri_vnormal, tri_vindex.x));
+		normals[1] = float4_to_float3(kernel_tex_fetch(__tri_vnormal, tri_vindex.y));
+		normals[2] = float4_to_float3(kernel_tex_fetch(__tri_vnormal, tri_vindex.z));
 	}
 	else {
 		/* center step not stored in this array */
@@ -83,9 +82,9 @@ ccl_device_inline void motion_triangle_normals_for_step(KernelGlobals *kg, float
 
 		offset += step*numverts;
 
-		normals[0] = float4_to_float3(kernel_tex_fetch(__attributes_float3, offset + __float_as_int(tri_vindex.x)));
-		normals[1] = float4_to_float3(kernel_tex_fetch(__attributes_float3, offset + __float_as_int(tri_vindex.y)));
-		normals[2] = float4_to_float3(kernel_tex_fetch(__attributes_float3, offset + __float_as_int(tri_vindex.z)));
+		normals[0] = float4_to_float3(kernel_tex_fetch(__attributes_float3, offset + tri_vindex.x));
+		normals[1] = float4_to_float3(kernel_tex_fetch(__attributes_float3, offset + tri_vindex.y));
+		normals[2] = float4_to_float3(kernel_tex_fetch(__attributes_float3, offset + tri_vindex.z));
 	}
 }
 
@@ -107,7 +106,7 @@ ccl_device_inline void motion_triangle_vertices(KernelGlobals *kg, int object, i
 
 	/* fetch vertex coordinates */
 	float3 next_verts[3];
-	float3 tri_vindex = float4_to_float3(kernel_tex_fetch(__tri_vindex, prim));
+	uint4 tri_vindex = kernel_tex_fetch(__tri_vindex, prim);
 
 	motion_triangle_verts_for_step(kg, tri_vindex, offset, numverts, numsteps, step, verts);
 	motion_triangle_verts_for_step(kg, tri_vindex, offset, numverts, numsteps, step+1, next_verts);
@@ -133,11 +132,11 @@ ccl_device_inline float3 motion_triangle_refine(KernelGlobals *kg, ShaderData *s
 		if(UNLIKELY(t == 0.0f)) {
 			return P;
 		}
-#ifdef __OBJECT_MOTION__
+#  ifdef __OBJECT_MOTION__
 		Transform tfm = ccl_fetch(sd, ob_itfm);
-#else
+#  else
 		Transform tfm = object_fetch_transform(kg, isect->object, OBJECT_INVERSE_TRANSFORM);
-#endif
+#  endif
 
 		P = transform_point(&tfm, P);
 		D = transform_direction(&tfm, D*t);
@@ -160,11 +159,11 @@ ccl_device_inline float3 motion_triangle_refine(KernelGlobals *kg, ShaderData *s
 	P = P + D*rt;
 
 	if(isect->object != OBJECT_NONE) {
-#ifdef __OBJECT_MOTION__
+#  ifdef __OBJECT_MOTION__
 		Transform tfm = ccl_fetch(sd, ob_tfm);
-#else
+#  else
 		Transform tfm = object_fetch_transform(kg, isect->object, OBJECT_TRANSFORM);
-#endif
+#  endif
 
 		P = transform_point(&tfm, P);
 	}
@@ -178,19 +177,24 @@ ccl_device_inline float3 motion_triangle_refine(KernelGlobals *kg, ShaderData *s
 /* Same as above, except that isect->t is assumed to be in object space for instancing */
 
 #ifdef __SUBSURFACE__
-ccl_device_inline float3 motion_triangle_refine_subsurface(KernelGlobals *kg, ShaderData *sd, const Intersection *isect, const Ray *ray, float3 verts[3])
+#  if defined(__KERNEL_CUDA__) && (defined(i386) || defined(_M_IX86))
+ccl_device_noinline
+#  else
+ccl_device_inline
+#  endif
+float3 motion_triangle_refine_subsurface(KernelGlobals *kg, ShaderData *sd, const Intersection *isect, const Ray *ray, float3 verts[3])
 {
 	float3 P = ray->P;
 	float3 D = ray->D;
 	float t = isect->t;
 
-#ifdef __INTERSECTION_REFINE__
+#  ifdef __INTERSECTION_REFINE__
 	if(isect->object != OBJECT_NONE) {
-#ifdef __OBJECT_MOTION__
+#    ifdef __OBJECT_MOTION__
 		Transform tfm = ccl_fetch(sd, ob_itfm);
-#else
+#    else
 		Transform tfm = object_fetch_transform(kg, isect->object, OBJECT_INVERSE_TRANSFORM);
-#endif
+#    endif
 
 		P = transform_point(&tfm, P);
 		D = transform_direction(&tfm, D);
@@ -212,19 +216,19 @@ ccl_device_inline float3 motion_triangle_refine_subsurface(KernelGlobals *kg, Sh
 	P = P + D*rt;
 
 	if(isect->object != OBJECT_NONE) {
-#ifdef __OBJECT_MOTION__
+#    ifdef __OBJECT_MOTION__
 		Transform tfm = ccl_fetch(sd, ob_tfm);
-#else
+#    else
 		Transform tfm = object_fetch_transform(kg, isect->object, OBJECT_TRANSFORM);
-#endif
+#    endif
 
 		P = transform_point(&tfm, P);
 	}
 
 	return P;
-#else
+#  else
 	return P + D*t;
-#endif
+#  endif
 }
 #endif
 
@@ -254,7 +258,7 @@ ccl_device_noinline void motion_triangle_shader_setup(KernelGlobals *kg, ShaderD
 
 	/* fetch vertex coordinates */
 	float3 verts[3], next_verts[3];
-	float3 tri_vindex = float4_to_float3(kernel_tex_fetch(__tri_vindex, ccl_fetch(sd, prim)));
+	uint4 tri_vindex = kernel_tex_fetch(__tri_vindex, ccl_fetch(sd, prim));
 
 	motion_triangle_verts_for_step(kg, tri_vindex, offset, numverts, numsteps, step, verts);
 	motion_triangle_verts_for_step(kg, tri_vindex, offset, numverts, numsteps, step+1, next_verts);
@@ -319,11 +323,11 @@ ccl_device_noinline void motion_triangle_shader_setup(KernelGlobals *kg, ShaderD
  * time and do a ray intersection with the resulting triangle */
 
 ccl_device_inline bool motion_triangle_intersect(KernelGlobals *kg, Intersection *isect,
-	float3 P, float3 dir, float time, uint visibility, int object, int triAddr)
+	float3 P, float3 dir, float time, uint visibility, int object, int prim_addr)
 {
 	/* primitive index for vertex location lookup */
-	int prim = kernel_tex_fetch(__prim_index, triAddr);
-	int fobject = (object == OBJECT_NONE)? kernel_tex_fetch(__prim_object, triAddr): object;
+	int prim = kernel_tex_fetch(__prim_index, prim_addr);
+	int fobject = (object == OBJECT_NONE)? kernel_tex_fetch(__prim_object, prim_addr): object;
 
 	/* get vertex locations for intersection */
 	float3 verts[3];
@@ -336,13 +340,13 @@ ccl_device_inline bool motion_triangle_intersect(KernelGlobals *kg, Intersection
 #ifdef __VISIBILITY_FLAG__
 		/* visibility flag test. we do it here under the assumption
 		 * that most triangles are culled by node flags */
-		if(kernel_tex_fetch(__prim_visibility, triAddr) & visibility)
+		if(kernel_tex_fetch(__prim_visibility, prim_addr) & visibility)
 #endif
 		{
 			isect->t = t;
 			isect->u = u;
 			isect->v = v;
-			isect->prim = triAddr;
+			isect->prim = prim_addr;
 			isect->object = object;
 			isect->type = PRIMITIVE_MOTION_TRIANGLE;
 		
@@ -358,12 +362,21 @@ ccl_device_inline bool motion_triangle_intersect(KernelGlobals *kg, Intersection
  * multiple hits we pick a single random primitive as the intersection point. */
 
 #ifdef __SUBSURFACE__
-ccl_device_inline void motion_triangle_intersect_subsurface(KernelGlobals *kg, Intersection *isect_array,
-	float3 P, float3 dir, float time, int object, int triAddr, float tmax, uint *num_hits, uint *lcg_state, int max_hits)
+ccl_device_inline void motion_triangle_intersect_subsurface(
+        KernelGlobals *kg,
+        SubsurfaceIntersection *ss_isect,
+        float3 P,
+        float3 dir,
+        float time,
+        int object,
+        int prim_addr,
+        float tmax,
+        uint *lcg_state,
+        int max_hits)
 {
 	/* primitive index for vertex location lookup */
-	int prim = kernel_tex_fetch(__prim_index, triAddr);
-	int fobject = (object == OBJECT_NONE)? kernel_tex_fetch(__prim_object, triAddr): object;
+	int prim = kernel_tex_fetch(__prim_index, prim_addr);
+	int fobject = (object == OBJECT_NONE)? kernel_tex_fetch(__prim_object, prim_addr): object;
 
 	/* get vertex locations for intersection */
 	float3 verts[3];
@@ -373,30 +386,40 @@ ccl_device_inline void motion_triangle_intersect_subsurface(KernelGlobals *kg, I
 	float t, u, v;
 
 	if(ray_triangle_intersect_uv(P, dir, tmax, verts[2], verts[0], verts[1], &u, &v, &t)) {
-		(*num_hits)++;
+		for(int i = min(max_hits, ss_isect->num_hits) - 1; i >= 0; --i) {
+			if(ss_isect->hits[i].t == t) {
+				return;
+			}
+		}
+
+		ss_isect->num_hits++;
 
 		int hit;
 
-		if(*num_hits <= max_hits) {
-			hit = *num_hits - 1;
+		if(ss_isect->num_hits <= max_hits) {
+			hit = ss_isect->num_hits - 1;
 		}
 		else {
 			/* reservoir sampling: if we are at the maximum number of
 			 * hits, randomly replace element or skip it */
-			hit = lcg_step_uint(lcg_state) % *num_hits;
+			hit = lcg_step_uint(lcg_state) % ss_isect->num_hits;
 
 			if(hit >= max_hits)
 				return;
 		}
 
 		/* record intersection */
-		Intersection *isect = &isect_array[hit];
+		Intersection *isect = &ss_isect->hits[hit];
 		isect->t = t;
 		isect->u = u;
 		isect->v = v;
-		isect->prim = triAddr;
+		isect->prim = prim_addr;
 		isect->object = object;
 		isect->type = PRIMITIVE_MOTION_TRIANGLE;
+
+		/* Record geometric normal. */
+		ss_isect->Ng[hit] = normalize(cross(verts[1] - verts[0],
+		                                    verts[2] - verts[0]));
 	}
 }
 #endif

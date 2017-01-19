@@ -29,28 +29,32 @@ class Scene;
 
 void curvebounds(float *lower, float *upper, float3 *p, int dim);
 
-typedef enum curve_primitives {
-	CURVE_TRIANGLES,
-	CURVE_LINE_SEGMENTS,
-	CURVE_SEGMENTS,
-	CURVE_RIBBONS
-} curve_primitives;
+typedef enum CurvePrimitiveType {
+	CURVE_TRIANGLES = 0,
+	CURVE_LINE_SEGMENTS = 1,
+	CURVE_SEGMENTS = 2,
+	CURVE_RIBBONS = 3,
 
-typedef enum curve_shape {
-	CURVE_RIBBON,
-	CURVE_THICK
-} curve_shape;
+	CURVE_NUM_PRIMITIVE_TYPES,
+} CurvePrimitiveType;
 
-typedef enum curve_triangles {
+typedef enum CurveShapeType {
+	CURVE_RIBBON = 0,
+	CURVE_THICK = 1,
+
+	CURVE_NUM_SHAPE_TYPES,
+} CurveShapeType;
+
+typedef enum CurveTriangleMethod {
 	CURVE_CAMERA_TRIANGLES,
 	CURVE_TESSELATED_TRIANGLES
-} curve_triangles;
+} CurveTriangleMethod;
 
-typedef enum curve_lines {
+typedef enum CurveLineMethod {
 	CURVE_ACCURATE,
 	CURVE_CORRECTED,
 	CURVE_UNCORRECTED
-} curve_lines;
+} CurveLineMethod;
 
 class ParticleCurveData {
 
@@ -59,23 +63,23 @@ public:
 	ParticleCurveData();
 	~ParticleCurveData();
 
-	vector<int> psys_firstcurve;
-	vector<int> psys_curvenum;
-	vector<int> psys_shader;
+	array<int> psys_firstcurve;
+	array<int> psys_curvenum;
+	array<int> psys_shader;
 
-	vector<float> psys_rootradius;
-	vector<float> psys_tipradius;
-	vector<float> psys_shape;
-	vector<bool> psys_closetip;
+	array<float> psys_rootradius;
+	array<float> psys_tipradius;
+	array<float> psys_shape;
+	array<bool> psys_closetip;
 
-	vector<int> curve_firstkey;
-	vector<int> curve_keynum;
-	vector<float> curve_length;
-	vector<float3> curve_uv;
-	vector<float3> curve_vcol;
+	array<int> curve_firstkey;
+	array<int> curve_keynum;
+	array<float> curve_length;
+	array<float3> curve_uv;
+	array<float3> curve_vcol;
 
-	vector<float3> curvekey_co;
-	vector<float> curvekey_time;
+	array<float3> curvekey_co;
+	array<float> curvekey_time;
 };
 
 /* HairSystem Manager */
@@ -83,10 +87,10 @@ public:
 class CurveSystemManager {
 public:
 
-	int primitive;
-	int curve_shape;
-	int line_method;
-	int triangle_method;
+	CurvePrimitiveType primitive;
+	CurveShapeType curve_shape;
+	CurveLineMethod line_method;
+	CurveTriangleMethod triangle_method;
 	int resolution;
 	int subdivisions;
 

@@ -333,7 +333,8 @@ void BLI_filelist_entry_datetime_to_string(
         const struct stat *st, const int64_t ts, const bool compact,
         char r_time[FILELIST_DIRENTRY_TIME_LEN], char r_date[FILELIST_DIRENTRY_DATE_LEN])
 {
-	const struct tm *tm = localtime(st ? &st->st_mtime : &ts);
+	time_t ts_mtime = ts;
+	const struct tm *tm = localtime(st ? &st->st_mtime : &ts_mtime);
 	const time_t zero = 0;
 
 	/* Prevent impossible dates in windows. */
@@ -351,8 +352,6 @@ void BLI_filelist_entry_datetime_to_string(
 
 /**
  * Deep-duplicate of a single direntry.
- *
- * \param dup_poin If given, called for each non-NULL direntry->poin. Otherwise, pointer is always simply copied over.
  */
 void BLI_filelist_entry_duplicate(struct direntry *dst, const struct direntry *src)
 {
@@ -367,8 +366,6 @@ void BLI_filelist_entry_duplicate(struct direntry *dst, const struct direntry *s
 
 /**
  * Deep-duplicate of an array of direntries, including the array itself.
- *
- * \param dup_poin If given, called for each non-NULL direntry->poin. Otherwise, pointer is always simply copied over.
  */
 void BLI_filelist_duplicate(
         struct direntry **dest_filelist, struct direntry * const src_filelist, const unsigned int nrentries)

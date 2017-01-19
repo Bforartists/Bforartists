@@ -120,6 +120,7 @@ void ANIM_set_active_channel(bAnimContext *ac, void *data, eAnimCont_Types datat
 			case ANIMTYPE_DSMAT:    /* Datablock AnimData Expanders */
 			case ANIMTYPE_DSLAM:
 			case ANIMTYPE_DSCAM:
+			case ANIMTYPE_DSCACHEFILE:
 			case ANIMTYPE_DSCUR:
 			case ANIMTYPE_DSSKEY:
 			case ANIMTYPE_DSWOR:
@@ -132,6 +133,7 @@ void ANIM_set_active_channel(bAnimContext *ac, void *data, eAnimCont_Types datat
 			case ANIMTYPE_DSLINESTYLE:
 			case ANIMTYPE_DSSPK:
 			case ANIMTYPE_DSGPENCIL:
+			case ANIMTYPE_DSMCLIP:
 			{
 				/* need to verify that this data is valid for now */
 				if (ale->adt) {
@@ -175,6 +177,7 @@ void ANIM_set_active_channel(bAnimContext *ac, void *data, eAnimCont_Types datat
 			case ANIMTYPE_DSMAT:    /* Datablock AnimData Expanders */
 			case ANIMTYPE_DSLAM:
 			case ANIMTYPE_DSCAM:
+			case ANIMTYPE_DSCACHEFILE:
 			case ANIMTYPE_DSCUR:
 			case ANIMTYPE_DSSKEY:
 			case ANIMTYPE_DSWOR:
@@ -188,6 +191,7 @@ void ANIM_set_active_channel(bAnimContext *ac, void *data, eAnimCont_Types datat
 			case ANIMTYPE_DSNTREE:
 			case ANIMTYPE_DSTEX:
 			case ANIMTYPE_DSGPENCIL:
+			case ANIMTYPE_DSMCLIP:
 			{
 				/* need to verify that this data is valid for now */
 				if (ale && ale->adt) {
@@ -275,6 +279,7 @@ void ANIM_deselect_anim_channels(bAnimContext *ac, void *data, eAnimCont_Types d
 				case ANIMTYPE_DSMAT:    /* Datablock AnimData Expanders */
 				case ANIMTYPE_DSLAM:
 				case ANIMTYPE_DSCAM:
+				case ANIMTYPE_DSCACHEFILE:
 				case ANIMTYPE_DSCUR:
 				case ANIMTYPE_DSSKEY:
 				case ANIMTYPE_DSWOR:
@@ -288,6 +293,7 @@ void ANIM_deselect_anim_channels(bAnimContext *ac, void *data, eAnimCont_Types d
 				case ANIMTYPE_DSLINESTYLE:
 				case ANIMTYPE_DSSPK:
 				case ANIMTYPE_DSGPENCIL:
+				case ANIMTYPE_DSMCLIP:
 				{
 					if ((ale->adt) && (ale->adt->flag & ADT_UI_SELECTED))
 						sel = ACHANNEL_SETFLAG_CLEAR;
@@ -370,6 +376,7 @@ void ANIM_deselect_anim_channels(bAnimContext *ac, void *data, eAnimCont_Types d
 			case ANIMTYPE_DSMAT:    /* Datablock AnimData Expanders */
 			case ANIMTYPE_DSLAM:
 			case ANIMTYPE_DSCAM:
+			case ANIMTYPE_DSCACHEFILE:
 			case ANIMTYPE_DSCUR:
 			case ANIMTYPE_DSSKEY:
 			case ANIMTYPE_DSWOR:
@@ -383,6 +390,7 @@ void ANIM_deselect_anim_channels(bAnimContext *ac, void *data, eAnimCont_Types d
 			case ANIMTYPE_DSLINESTYLE:
 			case ANIMTYPE_DSSPK:
 			case ANIMTYPE_DSGPENCIL:
+			case ANIMTYPE_DSMCLIP:
 			{
 				/* need to verify that this data is valid for now */
 				if (ale->adt) {
@@ -431,7 +439,11 @@ void ANIM_flush_setting_anim_channels(bAnimContext *ac, ListBase *anim_data, bAn
 	/* sanity check */
 	if (ELEM(NULL, anim_data, anim_data->first))
 		return;
-	
+
+	if (setting == ACHANNEL_SETTING_ALWAYS_VISIBLE) {
+		return;
+	}
+
 	/* find the channel that got changed */
 	for (ale = anim_data->first; ale; ale = ale->next) {
 		/* compare data, and type as main way of identifying the channel */
@@ -1359,7 +1371,7 @@ static void ANIM_OT_channels_move(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Move Channels";
 	ot->idname = "ANIM_OT_channels_move";
-	ot->description = "Move Channels, Move selected animation channels";
+	ot->description = "Rearrange selected animation channels";
 	
 	/* api callbacks */
 	ot->exec = animchannels_rearrange_exec;
@@ -1503,7 +1515,7 @@ static void ANIM_OT_channels_group(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Group Channels";
 	ot->idname = "ANIM_OT_channels_group";
-	ot->description = "Group Channels\nAdd selected F-Curves to a new group";
+	ot->description = "Add selected F-Curves to a new group";
 	
 	/* callbacks */
 	ot->invoke = WM_operator_props_popup;
@@ -1574,7 +1586,7 @@ static void ANIM_OT_channels_ungroup(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Ungroup Channels";
 	ot->idname = "ANIM_OT_channels_ungroup";
-	ot->description = "Ungroup Channels\nRemove selected F-Curves from their current groups";
+	ot->description = "Remove selected F-Curves from their current groups";
 	
 	/* callbacks */
 	ot->exec = animchannels_ungroup_exec;
@@ -1686,7 +1698,7 @@ static int animchannels_delete_exec(bContext *C, wmOperator *UNUSED(op))
 				bGPDlayer *gpl = (bGPDlayer *)ale->data;
 				
 				/* try to delete the layer's data and the layer itself */
-				free_gpencil_frames(gpl);
+				BKE_gpencil_free_frames(gpl);
 				BLI_freelinkN(&gpd->layers, gpl);
 				break;
 			}
@@ -1718,7 +1730,7 @@ static void ANIM_OT_channels_delete(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Delete Channels";
 	ot->idname = "ANIM_OT_channels_delete";
-	ot->description = "Delete Channels\nDelete all selected animation channels";
+	ot->description = "Delete all selected animation channels";
 	
 	/* api callbacks */
 	ot->exec = animchannels_delete_exec;
@@ -1864,7 +1876,7 @@ static void ANIM_OT_channels_setting_enable(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Enable Channel Setting";
 	ot->idname = "ANIM_OT_channels_setting_enable";
-	ot->description = "Enable Channel Setting, Enable specified setting on all selected animation channels";
+	ot->description = "Enable specified setting on all selected animation channels";
 	
 	/* api callbacks */
 	ot->invoke = WM_menu_invoke;
@@ -1889,7 +1901,7 @@ static void ANIM_OT_channels_setting_disable(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Disable Channel Setting";
 	ot->idname = "ANIM_OT_channels_setting_disable";
-	ot->description = "Disable Channel Setting, Disable specified setting on all selected animation channels";
+	ot->description = "Disable specified setting on all selected animation channels";
 	
 	/* api callbacks */
 	ot->invoke = WM_menu_invoke;
@@ -1914,7 +1926,7 @@ static void ANIM_OT_channels_setting_toggle(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Toggle Channel Setting";
 	ot->idname = "ANIM_OT_channels_setting_toggle";
-	ot->description = "Toggle Channel Setting, Toggle specified setting on all selected animation channels";
+	ot->description = "Toggle specified setting on all selected animation channels";
 	
 	/* api callbacks */
 	ot->invoke = WM_menu_invoke;
@@ -1939,7 +1951,7 @@ static void ANIM_OT_channels_editable_toggle(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Toggle Channel Editability";
 	ot->idname = "ANIM_OT_channels_editable_toggle";
-	ot->description = "Toggle Channel Editability\nToggle editability of selected channels";
+	ot->description = "Toggle editability of selected channels";
 	
 	/* api callbacks */
 	ot->exec = animchannels_setflag_exec;
@@ -1985,7 +1997,7 @@ static void ANIM_OT_channels_expand(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Expand Channels";
 	ot->idname = "ANIM_OT_channels_expand";
-	ot->description = "Expand Channels\nExpand (i.e. open) all selected expandable animation channels";
+	ot->description = "Expand (i.e. open) all selected expandable animation channels";
 	
 	/* api callbacks */
 	ot->exec = animchannels_expand_exec;
@@ -2027,7 +2039,7 @@ static void ANIM_OT_channels_collapse(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Collapse Channels";
 	ot->idname = "ANIM_OT_channels_collapse";
-	ot->description = "Collapse Channels\nCollapse (i.e. close) all selected expandable animation channels";
+	ot->description = "Collapse (i.e. close) all selected expandable animation channels";
 	
 	/* api callbacks */
 	ot->exec = animchannels_collapse_exec;
@@ -2119,7 +2131,7 @@ static int animchannels_clean_empty_exec(bContext *C, wmOperator *UNUSED(op))
 		
 		/* remove AnimData? */
 		if (action_empty && nla_empty && drivers_empty) {
-			BKE_animdata_free(id);
+			BKE_animdata_free(id, true);
 		}
 	}
 	
@@ -2137,7 +2149,7 @@ static void ANIM_OT_channels_clean_empty(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Remove Empty Animation Data";
 	ot->idname = "ANIM_OT_channels_clean_empty";
-	ot->description = "Remove Empty Animation Data\nDelete all empty animation data containers from visible datablocks";
+	ot->description = "Delete all empty animation data containers from visible data-blocks";
 	
 	/* api callbacks */
 	ot->exec = animchannels_clean_empty_exec;
@@ -2210,7 +2222,7 @@ static void ANIM_OT_channels_fcurves_enable(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Revive Disabled F-Curves";
 	ot->idname = "ANIM_OT_channels_fcurves_enable";
-	ot->description = "Revive Disabled F-Curves\nClears 'disabled' tag from all F-Curves to get broken F-Curves working again";
+	ot->description = "Clears 'disabled' tag from all F-Curves to get broken F-Curves working again";
 	
 	/* api callbacks */
 	ot->exec = animchannels_enable_exec;
@@ -2282,7 +2294,7 @@ static void ANIM_OT_channels_find(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Find Channels";
 	ot->idname = "ANIM_OT_channels_find";
-	ot->description = "Find Channels\nFilter the set of channels shown to only include those with matching names";
+	ot->description = "Filter the set of channels shown to only include those with matching names";
 	
 	/* callbacks */
 	ot->invoke = animchannels_find_invoke;
@@ -2323,7 +2335,7 @@ static void ANIM_OT_channels_select_all_toggle(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select All";
 	ot->idname = "ANIM_OT_channels_select_all_toggle";
-	ot->description = "Select All\nToggle selection of all animation channels";
+	ot->description = "Toggle selection of all animation channels";
 	
 	/* api callbacks */
 	ot->exec = animchannels_deselectall_exec;
@@ -2356,7 +2368,7 @@ static void borderselect_anim_channels(bAnimContext *ac, rcti *rect, short selec
 	}
 	else {
 		ymin = 0.0f;
-		ymax = (float)(-ACHANNEL_HEIGHT);
+		ymax = (float)(-ACHANNEL_HEIGHT(ac));
 	}
 	
 	/* convert border-region to view coordinates */
@@ -2372,7 +2384,7 @@ static void borderselect_anim_channels(bAnimContext *ac, rcti *rect, short selec
 		if (ac->datatype == ANIMCONT_NLA)
 			ymin = ymax - NLACHANNEL_STEP(snla);
 		else
-			ymin = ymax - ACHANNEL_STEP;
+			ymin = ymax - ACHANNEL_STEP(ac);
 		
 		/* if channel is within border-select region, alter it */
 		if (!((ymax < rectf.ymin) || (ymin > rectf.ymax))) {
@@ -2478,7 +2490,7 @@ static void ANIM_OT_channels_select_border(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Border Select";
 	ot->idname = "ANIM_OT_channels_select_border";
-	ot->description = "Border Select\nSelect all animation channels within the specified region";
+	ot->description = "Select all animation channels within the specified region";
 	
 	/* api callbacks */
 	ot->invoke = WM_border_select_invoke;
@@ -2573,7 +2585,7 @@ static int animchannels_channel_get(bAnimContext *ac, const int mval[2])
 		UI_view2d_listview_view_to_cell(v2d, NLACHANNEL_NAMEWIDTH, NLACHANNEL_STEP(snla), 0, (float)NLACHANNEL_HEIGHT_HALF(snla), x, y, NULL, &channel_index);
 	}
 	else {
-		UI_view2d_listview_view_to_cell(v2d, ACHANNEL_NAMEWIDTH, ACHANNEL_STEP, 0, (float)ACHANNEL_HEIGHT_HALF, x, y, NULL, &channel_index);
+		UI_view2d_listview_view_to_cell(v2d, ACHANNEL_NAMEWIDTH, ACHANNEL_STEP(ac), 0, (float)ACHANNEL_HEIGHT_HALF(ac), x, y, NULL, &channel_index);
 	}
 
 	return channel_index;
@@ -2603,7 +2615,7 @@ static void ANIM_OT_channels_rename(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Rename Channels";
 	ot->idname = "ANIM_OT_channels_rename";
-	ot->description = "Rename Channels\nRename animation channel under mouse";
+	ot->description = "Rename animation channel under mouse";
 	
 	/* api callbacks */
 	ot->invoke = animchannels_rename_invoke;
@@ -2705,6 +2717,10 @@ static int mouse_anim_channels(bContext *C, bAnimContext *ac, int channel_index,
 			if ((adt) && (adt->flag & ADT_UI_SELECTED))
 				adt->flag |= ADT_UI_ACTIVE;
 			
+			/* ensure we exit editmode on whatever object was active before to avoid getting stuck there - T48747 */
+			if (ob != sce->obedit)
+				ED_object_editmode_exit(C, EM_FREEDATA | EM_FREEUNDO | EM_WAITCURSOR | EM_DO_UNDO);
+			
 			notifierFlags |= (ND_ANIMCHAN | NA_SELECTED);
 			break;
 		}
@@ -2712,6 +2728,7 @@ static int mouse_anim_channels(bContext *C, bAnimContext *ac, int channel_index,
 		case ANIMTYPE_DSMAT:    /* Datablock AnimData Expanders */
 		case ANIMTYPE_DSLAM:
 		case ANIMTYPE_DSCAM:
+		case ANIMTYPE_DSCACHEFILE:
 		case ANIMTYPE_DSCUR:
 		case ANIMTYPE_DSSKEY:
 		case ANIMTYPE_DSWOR:
@@ -2725,6 +2742,7 @@ static int mouse_anim_channels(bContext *C, bAnimContext *ac, int channel_index,
 		case ANIMTYPE_DSLINESTYLE:
 		case ANIMTYPE_DSSPK:
 		case ANIMTYPE_DSGPENCIL:
+		case ANIMTYPE_DSMCLIP:
 		{
 			/* sanity checking... */
 			if (ale->adt) {
@@ -2988,7 +3006,7 @@ static int animchannels_mouseclick_invoke(bContext *C, wmOperator *op, const wmE
 	 *		ACHANNEL_HEIGHT_HALF.
 	 */
 	UI_view2d_region_to_view(v2d, event->mval[0], event->mval[1], &x, &y);
-	UI_view2d_listview_view_to_cell(v2d, ACHANNEL_NAMEWIDTH, ACHANNEL_STEP, 0, (float)ACHANNEL_HEIGHT_HALF, x, y, NULL, &channel_index);
+	UI_view2d_listview_view_to_cell(v2d, ACHANNEL_NAMEWIDTH, ACHANNEL_STEP(&ac), 0, (float)ACHANNEL_HEIGHT_HALF(&ac), x, y, NULL, &channel_index);
 	
 	/* handle mouse-click in the relevant channel then */
 	notifierFlags = mouse_anim_channels(C, &ac, channel_index, selectmode);
@@ -3006,7 +3024,7 @@ static void ANIM_OT_channels_click(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Mouse Click on Channels";
 	ot->idname = "ANIM_OT_channels_click";
-	ot->description = "Mouse Click on Channels\nHandle mouse-clicks over animation channels";
+	ot->description = "Handle mouse-clicks over animation channels";
 	
 	/* api callbacks */
 	ot->invoke = animchannels_mouseclick_invoke;
@@ -3113,7 +3131,7 @@ static void ANIM_OT_channel_select_keys(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select Channel keyframes";
 	ot->idname = "ANIM_OT_channel_select_keys";
-	ot->description = "Select Channel keyframes\nSelect all keyframes of channel under mouse";
+	ot->description = "Select all keyframes of channel under mouse";
 
 	/* api callbacks */
 	ot->invoke = animchannels_channel_select_keys_invoke;

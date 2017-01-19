@@ -1,4 +1,4 @@
-﻿# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -22,17 +22,6 @@ import bpy
 from bpy.types import Header, Menu
 
 
-################################ Switch between the editors ##########################################
-
-class switch_editors_in_graph(bpy.types.Operator):
-    """You are in Graph editor"""      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "wm.switch_editor_in_graph"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Graph Editor"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-
-##########################################################################
-
 class GRAPH_HT_header(Header):
     bl_space_type = 'GRAPH_EDITOR'
 
@@ -44,14 +33,8 @@ class GRAPH_HT_header(Header):
 
         st = context.space_data
 
-        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
-
-        # bfa - The tabs to switch between the four animation editors. The classes are in space_time.py
         row = layout.row(align=True)
-        row.operator("wm.switch_editor_to_timeline", text="", icon='TIME')
-        row.operator("wm.switch_editor_in_graph", text="", icon='GRAPH_ACTIVE')
-        row.operator("wm.switch_editor_to_dopesheet", text="", icon='ACTION')     
-        row.operator("wm.switch_editor_to_nla", text="", icon='NLA')
+        row.template_header()
 
         GRAPH_MT_editor_menus.draw_collapsible(context, layout)
 
@@ -76,23 +59,16 @@ class GRAPH_HT_header(Header):
         layout.prop(st, "pivot_point", icon_only=True)
 
         row = layout.row(align=True)
+        row.operator("graph.copy", text="", icon='COPYDOWN')
+        row.operator("graph.paste", text="", icon='PASTEDOWN')
+        row.operator("graph.paste", text="", icon='PASTEFLIPDOWN').flipped = True
+
+        row = layout.row(align=True)
         if st.has_ghost_curves:
             row.operator("graph.ghost_curves_clear", text="", icon='GHOST_DISABLED')
         else:
             row.operator("graph.ghost_curves_create", text="", icon='GHOST_ENABLED')
 
-# bfa - show hide the editormenu
-class ALL_MT_editormenu(Menu):
-    bl_label = ""
-
-    def draw(self, context):
-        self.draw_menus(self.layout, context)
-
-    @staticmethod
-    def draw_menus(layout, context):
-
-        row = layout.row(align=True)
-        row.template_header() # editor type menus
 
 class GRAPH_MT_editor_menus(Menu):
     bl_idname = "GRAPH_MT_editor_menus"
@@ -153,9 +129,8 @@ class GRAPH_MT_view(Menu):
 
         layout.separator()
         layout.operator("screen.area_dupli")
-        #layout.operator("screen.screen_full_area", text="Toggle Maximize Area")
-        layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area") # bfa - the separated tooltip. Class is in space_text.py
-        layout.operator("screen.screen_full_area").use_hide_panels = True
+        layout.operator("screen.screen_full_area")
+        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area").use_hide_panels = True
 
 
 class GRAPH_MT_select(Menu):
@@ -178,9 +153,8 @@ class GRAPH_MT_select(Menu):
         props = layout.operator("graph.select_border", text="Border (Include Handles)")
         props.axis_range = False
         props.include_handles = True
-        props = layout.operator("graph.select_border", text="Border (Axis + Handles)")
-        props.axis_range = True
-        props.include_handles = True
+
+        layout.operator("graph.select_circle")
 
         layout.separator()
         layout.operator("graph.select_column", text="Columns on Selected Keys").mode = 'KEYS'
@@ -198,11 +172,11 @@ class GRAPH_MT_select(Menu):
         props.mode = 'RIGHT'
 
         layout.separator()
-        layout.operator("graph.select_more",text = "More")
-        layout.operator("graph.select_less",text = "Less")
+        layout.operator("graph.select_more")
+        layout.operator("graph.select_less")
 
         layout.separator()
-        layout.operator("graph.select_linked",text = "Linked")
+        layout.operator("graph.select_linked")
 
 
 class GRAPH_MT_marker(Menu):
@@ -216,16 +190,6 @@ class GRAPH_MT_marker(Menu):
 
         # TODO: pose markers for action edit mode only?
 
-# Workaround to separate the tooltips for Toggle Maximize Area
-class GRAPH_MT_channel_hide_unselected_curves(bpy.types.Operator):
-    """Hide unselected Curves\nHide unselected Curves from Graph Editor """      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "graph.hide_unselected_curves"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Hide Unselected Curves"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.graph.hide(unselected = True)
-        return {'FINISHED'}  
 
 class GRAPH_MT_channel(Menu):
     bl_label = "Channel"
@@ -252,7 +216,7 @@ class GRAPH_MT_channel(Menu):
 
         layout.separator()
         layout.operator("graph.hide", text="Hide Selected Curves").unselected = False
-        layout.operator("graph.hide_unselected_curves", text="Hide Unselected Curves")
+        layout.operator("graph.hide", text="Hide Unselected Curves").unselected = True
         layout.operator("graph.reveal")
 
         layout.separator()
@@ -302,9 +266,8 @@ class GRAPH_MT_key(Menu):
         layout.operator("graph.bake")
 
         layout.separator()
-        layout.operator("graph.copy", text="Copy Keyframes", icon='COPYDOWN')
-        layout.operator("graph.paste", text="Paste Keyframes", icon='PASTEDOWN')
-        layout.operator("graph.paste", text="Paste Flipped", icon='PASTEFLIPDOWN').flipped = True
+        layout.operator("graph.copy")
+        layout.operator("graph.paste")
 
         layout.separator()
         layout.operator("graph.euler_filter", text="Discontinuity (Euler) Filter")
@@ -320,6 +283,20 @@ class GRAPH_MT_key_transform(Menu):
         layout.operator("transform.transform", text="Extend").mode = 'TIME_EXTEND'
         layout.operator("transform.rotate", text="Rotate")
         layout.operator("transform.resize", text="Scale")
+
+
+class GRAPH_MT_delete(Menu):
+    bl_label = "Delete"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("graph.delete")
+
+        layout.separator()
+
+        layout.operator("graph.clean").channels = False
+        layout.operator("graph.clean", text="Clean Channels").channels = True
 
 
 if __name__ == "__main__":  # only for live edit.

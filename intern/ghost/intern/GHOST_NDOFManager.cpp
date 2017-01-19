@@ -299,6 +299,12 @@ bool GHOST_NDOFManager::setDevice(unsigned short vendor_id, unsigned short produ
 					m_buttonMask = 0x07C0F137;
 					m_hidMap = Modern3Dx_HID_map;
 					break;
+				case 0xC633:
+					puts("ndof: using SpaceMouse Enterprise");
+					m_deviceType = NDOF_SpaceMouseEnterprise;
+					m_buttonCount = 31;
+					m_hidMap = Modern3Dx_HID_map;
+					break;
 
 				default:
 					printf("ndof: unknown 3Dconnexion product %04hx\n", product_id);
@@ -318,14 +324,14 @@ bool GHOST_NDOFManager::setDevice(unsigned short vendor_id, unsigned short produ
 	return m_deviceType != NDOF_UnknownDevice;
 }
 
-void GHOST_NDOFManager::updateTranslation(const short t[3], GHOST_TUns64 time)
+void GHOST_NDOFManager::updateTranslation(const int t[3], GHOST_TUns64 time)
 {
 	memcpy(m_translation, t, sizeof(m_translation));
 	m_motionTime = time;
 	m_motionEventPending = true;
 }
 
-void GHOST_NDOFManager::updateRotation(const short r[3], GHOST_TUns64 time)
+void GHOST_NDOFManager::updateRotation(const int r[3], GHOST_TUns64 time)
 {
 	memcpy(m_rotation, r, sizeof(m_rotation));
 	m_motionTime = time;
@@ -372,8 +378,7 @@ void GHOST_NDOFManager::updateButton(int button_number, bool press, GHOST_TUns64
 
 	NDOF_ButtonT button = (button_number < m_buttonCount) ? m_hidMap[button_number] : NDOF_BUTTON_NONE;
 
-	switch (button)
-	{
+	switch (button) {
 		case NDOF_BUTTON_NONE:
 #ifdef DEBUG_NDOF_BUTTONS
 			printf("discarded\n");

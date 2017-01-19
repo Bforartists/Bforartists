@@ -98,7 +98,7 @@ void BKE_pbvh_raycast(
         bool original);
 
 bool BKE_pbvh_node_raycast(
-        PBVH *bvh, PBVHNode *node, float (*origco)[3], int use_origco,
+        PBVH *bvh, PBVHNode *node, float (*origco)[3], bool use_origco,
         const float ray_start[3], const float ray_normal[3],
         float *dist);
 
@@ -210,7 +210,7 @@ void BKE_pbvh_bmesh_after_stroke(PBVH *bvh);
 
 void BKE_pbvh_update(PBVH *bvh, int flags, float (*face_nors)[3]);
 void BKE_pbvh_redraw_BB(PBVH *bvh, float bb_min[3], float bb_max[3]);
-void BKE_pbvh_get_grid_updates(PBVH *bvh, int clear, void ***r_gridfaces, int *r_totface);
+void BKE_pbvh_get_grid_updates(PBVH *bvh, bool clear, void ***r_gridfaces, int *r_totface);
 void BKE_pbvh_grids_update(PBVH *bvh, struct CCGElem **grid_elems,
                            void **gridfaces,
                            struct DMFlagMat *flagmats, unsigned int **grid_hidden);
@@ -348,6 +348,8 @@ void BKE_pbvh_gather_proxies(PBVH *pbvh, PBVHNode ***nodes,  int *totnode);
 void BKE_pbvh_node_get_bm_orco_data(
         PBVHNode *node,
         int (**r_orco_tris)[3], int *r_orco_tris_num, float (**r_orco_coords)[3]);
+
+bool BKE_pbvh_node_vert_update_check_any(PBVH *bvh, PBVHNode *node);
 
 //void BKE_pbvh_node_BB_reset(PBVHNode *node);
 //void BKE_pbvh_node_BB_expand(PBVHNode *node, float co[3]);

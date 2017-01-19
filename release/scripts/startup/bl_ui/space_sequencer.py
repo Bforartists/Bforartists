@@ -1,4 +1,4 @@
-﻿# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -20,7 +20,11 @@
 import bpy
 from bpy.types import Header, Menu, Panel
 from rna_prop_ui import PropertyPanel
-from bl_ui.properties_grease_pencil_common import GreasePencilDataPanel, GreasePencilToolsPanel
+from bl_ui.properties_grease_pencil_common import (
+        GreasePencilDataPanel,
+        GreasePencilPaletteColorPanel,
+        GreasePencilToolsPanel,
+        )
 from bpy.app.translations import pgettext_iface as iface_
 
 
@@ -63,7 +67,9 @@ class SEQUENCER_HT_header(Header):
         st = context.space_data
         scene = context.scene
 
-        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
+        row = layout.row(align=True)
+        row.template_header()
+
         SEQUENCER_MT_editor_menus.draw_collapsible(context, layout)
 
         row = layout.row(align=True)
@@ -120,19 +126,6 @@ class SEQUENCER_HT_header(Header):
         props.sequencer = True
 
         layout.template_running_jobs()
-
-# bfa - show hide the editormenu
-class ALL_MT_editormenu(Menu):
-    bl_label = ""
-
-    def draw(self, context):
-        self.draw_menus(self.layout, context)
-
-    @staticmethod
-    def draw_menus(layout, context):
-
-        row = layout.row(align=True)
-        row.template_header() # editor type menus
 
 
 class SEQUENCER_MT_editor_menus(Menu):
@@ -191,6 +184,7 @@ class SEQUENCER_MT_view(Menu):
             layout.operator_context = 'INVOKE_REGION_WIN'
             layout.operator("sequencer.view_all", text="View all Sequences")
             layout.operator("sequencer.view_selected")
+            layout.operator("sequencer.view_frame")
             layout.operator_context = 'INVOKE_DEFAULT'
         if is_preview:
             layout.operator_context = 'INVOKE_REGION_PREVIEW'
@@ -231,8 +225,8 @@ class SEQUENCER_MT_view(Menu):
             layout.separator()
 
         layout.operator("screen.area_dupli")
-        layout.operator("screen.screen_full_area", text="Toggle Maximize Area")
-        layout.operator("screen.screen_full_area").use_hide_panels = True
+        layout.operator("screen.screen_full_area")
+        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area").use_hide_panels = True
 
 
 class SEQUENCER_MT_select(Menu):
@@ -278,12 +272,23 @@ class SEQUENCER_MT_change(Menu):
 
     def draw(self, context):
         layout = self.layout
+        strip = act_strip(context)
 
         layout.operator_context = 'INVOKE_REGION_WIN'
 
         layout.operator_menu_enum("sequencer.change_effect_input", "swap")
         layout.operator_menu_enum("sequencer.change_effect_type", "type")
-        layout.operator("sequencer.change_path", text="Path/Files")
+        prop = layout.operator("sequencer.change_path", text="Path/Files")
+
+        if strip:
+            stype = strip.type
+
+            if stype == 'IMAGE':
+                prop.filter_image = True
+            elif stype == 'MOVIE':
+                prop.filter_movie = True
+            elif stype == 'SOUND':
+                prop.filter_sound = True
 
 
 class SEQUENCER_MT_frame(Menu):
@@ -294,6 +299,24 @@ class SEQUENCER_MT_frame(Menu):
 
         layout.operator("anim.previewrange_clear")
         layout.operator("anim.previewrange_set")
+
+        layout.separator()
+
+        props = layout.operator("sequencer.strip_jump", text="Jump to Previous Strip")
+        props.next = False
+        props.center = False
+        props = layout.operator("sequencer.strip_jump", text="Jump to Next Strip")
+        props.next = True
+        props.center = False
+
+        layout.separator()
+
+        props = layout.operator("sequencer.strip_jump", text="Jump to Previous Strip (Center)")
+        props.next = False
+        props.center = True
+        props = layout.operator("sequencer.strip_jump", text="Jump to Next Strip (Center)")
+        props.next = True
+        props.center = True
 
 
 class SEQUENCER_MT_add(Menu):
@@ -474,6 +497,7 @@ class SequencerButtonsPanel_Output:
 
 class SEQUENCER_PT_edit(SequencerButtonsPanel, Panel):
     bl_label = "Edit Strip"
+    bl_category = "Strip"
 
     def draw(self, context):
         layout = self.layout
@@ -540,6 +564,7 @@ class SEQUENCER_PT_edit(SequencerButtonsPanel, Panel):
 
 class SEQUENCER_PT_effect(SequencerButtonsPanel, Panel):
     bl_label = "Effect Strip"
+    bl_category = "Strip"
 
     @classmethod
     def poll(cls, context):
@@ -649,9 +674,19 @@ class SEQUENCER_PT_effect(SequencerButtonsPanel, Panel):
             col = layout.column()
             col.prop(strip, "text")
             col.prop(strip, "font_size")
-            col.prop(strip, "use_shadow")
-            col.prop(strip, "align")
+
+            row = col.row()
+            row.prop(strip, "color")
+            row = col.row()
+            row.prop(strip, "use_shadow")
+            rowsub = row.row()
+            rowsub.active = strip.use_shadow
+            rowsub.prop(strip, "shadow_color", text="")
+
+            col.prop(strip, "align_x")
+            col.prop(strip, "align_y")
             col.prop(strip, "location")
+            col.prop(strip, "wrap_width")
             layout.operator("sequencer.export_subtitles")
 
         col = layout.column(align=True)
@@ -664,10 +699,11 @@ class SEQUENCER_PT_effect(SequencerButtonsPanel, Panel):
         elif strip.type == 'GAUSSIAN_BLUR':
             col.prop(strip, "size_x")
             col.prop(strip, "size_y")
- 
+
 
 class SEQUENCER_PT_input(SequencerButtonsPanel, Panel):
     bl_label = "Strip Input"
+    bl_category = "Strip"
 
     @classmethod
     def poll(cls, context):
@@ -709,7 +745,7 @@ class SEQUENCER_PT_input(SequencerButtonsPanel, Panel):
             layout.prop(strip.colorspace_settings, "name")
             layout.prop(strip, "alpha_mode")
 
-            layout.operator("sequencer.change_path")
+            layout.operator("sequencer.change_path").filter_image = True
 
         elif seq_type == 'MOVIE':
             split = layout.split(percentage=0.2)
@@ -762,6 +798,7 @@ class SEQUENCER_PT_input(SequencerButtonsPanel, Panel):
 
 class SEQUENCER_PT_sound(SequencerButtonsPanel, Panel):
     bl_label = "Sound"
+    bl_category = "Strip"
 
     @classmethod
     def poll(cls, context):
@@ -781,13 +818,10 @@ class SEQUENCER_PT_sound(SequencerButtonsPanel, Panel):
         strip = act_strip(context)
         sound = strip.sound
 
-        # TODO: add support to handle SOUND datablock in sequencer soundstrips... For now, hide this useless thing!
-        # layout.template_ID(strip, "sound", open="sound.open")
-
-        # layout.separator()
-        layout.prop(strip, "filepath", text="")
-
+        layout.template_ID(strip, "sound", open="sound.open")
         if sound is not None:
+            layout.prop(sound, "filepath", text="")
+
             row = layout.row()
             if sound.packed_file:
                 row.operator("sound.unpack", icon='PACKAGE', text="Unpack")
@@ -795,6 +829,8 @@ class SEQUENCER_PT_sound(SequencerButtonsPanel, Panel):
                 row.operator("sound.pack", icon='UGLYPACKAGE', text="Pack")
 
             row.prop(sound, "use_memory_cache")
+
+            layout.prop(sound, "use_mono")
 
         if st.waveform_draw_type == 'DEFAULT_WAVEFORMS':
             layout.prop(strip, "show_waveform")
@@ -816,6 +852,7 @@ class SEQUENCER_PT_sound(SequencerButtonsPanel, Panel):
 
 class SEQUENCER_PT_scene(SequencerButtonsPanel, Panel):
     bl_label = "Scene"
+    bl_category = "Strip"
 
     @classmethod
     def poll(cls, context):
@@ -836,15 +873,25 @@ class SEQUENCER_PT_scene(SequencerButtonsPanel, Panel):
         layout.template_ID(strip, "scene")
 
         scene = strip.scene
+        layout.prop(strip, "use_sequence")
 
-        layout.label(text="Camera Override")
-        layout.template_ID(strip, "scene_camera")
+        if not strip.use_sequence:
+            layout.label(text="Camera Override")
+            layout.template_ID(strip, "scene_camera")
 
-        layout.prop(strip, "use_grease_pencil", text="Show Grease Pencil")
+            layout.prop(strip, "use_grease_pencil", text="Show Grease Pencil")
 
         if scene:
             layout.prop(scene, "audio_volume", text="Audio Volume")
 
+        if not strip.use_sequence:
+            if scene:
+                # Warning, this is not a good convention to follow.
+                # Expose here because setting the alpha from the 'Render' menu is very inconvenient.
+                layout.label("Preview")
+                layout.prop(scene.render, "alpha_mode")
+
+        if scene:
             sta = scene.frame_start
             end = scene.frame_end
             layout.label(text=iface_("Original frame range: %d-%d (%d)") % (sta, end, end - sta + 1), translate=False)
@@ -852,6 +899,7 @@ class SEQUENCER_PT_scene(SequencerButtonsPanel, Panel):
 
 class SEQUENCER_PT_mask(SequencerButtonsPanel, Panel):
     bl_label = "Mask"
+    bl_category = "Strip"
 
     @classmethod
     def poll(cls, context):
@@ -881,6 +929,7 @@ class SEQUENCER_PT_mask(SequencerButtonsPanel, Panel):
 
 class SEQUENCER_PT_filter(SequencerButtonsPanel, Panel):
     bl_label = "Filter"
+    bl_category = "Strip"
 
     @classmethod
     def poll(cls, context):
@@ -934,7 +983,8 @@ class SEQUENCER_PT_filter(SequencerButtonsPanel, Panel):
 
 
 class SEQUENCER_PT_proxy(SequencerButtonsPanel, Panel):
-    bl_label = "Proxy / Timecode"
+    bl_label = "Proxy/Timecode"
+    bl_category = "Strip"
 
     @classmethod
     def poll(cls, context):
@@ -975,11 +1025,11 @@ class SEQUENCER_PT_proxy(SequencerButtonsPanel, Panel):
                 if proxy.use_proxy_custom_file:
                     flow.prop(proxy, "filepath")
 
-            row = layout.row()
-            row.prop(strip.proxy, "build_25")
-            row.prop(strip.proxy, "build_50")
-            row.prop(strip.proxy, "build_75")
-            row.prop(strip.proxy, "build_100")
+            row = layout.row(align=True)
+            row.prop(strip.proxy, "build_25", toggle=True)
+            row.prop(strip.proxy, "build_50", toggle=True)
+            row.prop(strip.proxy, "build_75", toggle=True)
+            row.prop(strip.proxy, "build_100", toggle=True)
 
             layout.prop(proxy, "use_overwrite")
 
@@ -1009,7 +1059,7 @@ class SEQUENCER_PT_preview(SequencerButtonsPanel_Output, Panel):
         render = context.scene.render
 
         col = layout.column()
-        col.prop(render, "use_sequencer_gl_preview", text="Open GL Preview")
+        col.prop(render, "use_sequencer_gl_preview", text="OpenGL Preview")
         col = layout.column()
         #col.active = render.use_sequencer_gl_preview
         col.prop(render, "sequencer_gl_preview", text="")
@@ -1067,6 +1117,7 @@ class SEQUENCER_PT_view_safe_areas(SequencerButtonsPanel_Output, Panel):
 
 class SEQUENCER_PT_modifiers(SequencerButtonsPanel, Panel):
     bl_label = "Modifiers"
+    bl_category = "Modifiers"
 
     def draw(self, context):
         layout = self.layout
@@ -1109,6 +1160,8 @@ class SEQUENCER_PT_modifiers(SequencerButtonsPanel, Panel):
                     box.prop_search(mod, "input_mask_strip", sequences_object, "sequences", text="Mask")
                 else:
                     box.prop(mod, "input_mask_id")
+                    row = box.row()
+                    row.prop(mod, "mask_time", expand=True)
 
                 if mod.type == 'COLOR_BALANCE':
                     box.prop(mod, "color_multiply")
@@ -1121,9 +1174,32 @@ class SEQUENCER_PT_modifiers(SequencerButtonsPanel, Panel):
                     col = box.column()
                     col.prop(mod, "bright")
                     col.prop(mod, "contrast")
+                elif mod.type == 'WHITE_BALANCE':
+                    col = box.column()
+                    col.prop(mod, "white_value")
+                elif mod.type == 'TONEMAP':
+                    col = box.column()
+                    col.prop(mod, "tonemap_type")
+                    if mod.tonemap_type == 'RD_PHOTORECEPTOR':
+                        col.prop(mod, "intensity")
+                        col.prop(mod, "contrast")
+                        col.prop(mod, "adaptation")
+                        col.prop(mod, "correction")
+                    elif mod.tonemap_type == 'RH_SIMPLE':
+                        col.prop(mod, "key")
+                        col.prop(mod, "offset")
+                        col.prop(mod, "gamma")
 
 
 class SEQUENCER_PT_grease_pencil(GreasePencilDataPanel, SequencerButtonsPanel_Output, Panel):
+    bl_space_type = 'SEQUENCE_EDITOR'
+    bl_region_type = 'UI'
+
+    # NOTE: this is just a wrapper around the generic GP Panel
+    # But, it should only show up when there are images in the preview region
+
+
+class SEQUENCER_PT_grease_pencil_palettecolor(GreasePencilPaletteColorPanel, SequencerButtonsPanel_Output, Panel):
     bl_space_type = 'SEQUENCE_EDITOR'
     bl_region_type = 'UI'
 
@@ -1144,6 +1220,7 @@ class SEQUENCER_PT_custom_props(SequencerButtonsPanel, PropertyPanel, Panel):
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
     _context_path = "scene.sequence_editor.active_strip"
     _property_type = (bpy.types.Sequence,)
+    bl_category = "Strip"
 
 
 if __name__ == "__main__":  # only for live edit.

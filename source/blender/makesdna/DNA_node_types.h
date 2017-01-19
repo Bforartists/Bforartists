@@ -384,6 +384,7 @@ typedef struct bNodeTree {
 	
 	/* callbacks */
 	void (*progress)(void *, float progress);
+	/** \warning may be called by different threads */
 	void (*stats_draw)(void *, const char *str);
 	int (*test_break)(void *);
 	void (*update_draw)(void *);
@@ -502,7 +503,8 @@ enum {
 };
 
 enum {
-	CMP_NODEFLAG_BLUR_VARIABLE_SIZE = (1 << 0)
+	CMP_NODEFLAG_BLUR_VARIABLE_SIZE = (1 << 0),
+	CMP_NODEFLAG_BLUR_EXTEND_BOUNDS = (1 << 1),
 };
 
 typedef struct NodeFrame {
@@ -687,6 +689,8 @@ typedef struct NodeColorBalance {
 	float slope[3];
 	float offset[3];
 	float power[3];
+	float offset_basis;
+	char _pad[4];
 	
 	/* LGG parameters */
 	float lift[3];
@@ -748,6 +752,8 @@ typedef struct NodeTexEnvironment {
 	ImageUser iuser;
 	int color_space;
 	int projection;
+	int interpolation;
+	int pad;
 } NodeTexEnvironment;
 
 typedef struct NodeTexGradient {
@@ -775,7 +781,7 @@ typedef struct NodeTexMusgrave {
 typedef struct NodeTexWave {
 	NodeTexBase base;
 	int wave_type;
-	int pad;
+	int wave_profile;
 } NodeTexWave;
 
 typedef struct NodeTexMagic {
@@ -803,7 +809,12 @@ typedef struct NodeShaderTexPointDensity {
 	short space;
 	short interpolation;
 	short color_source;
-	short pad2;
+	short ob_color_source;
+	char vertex_attribute_name[64]; /* vertex attribute layer for color source, MAX_CUSTOMDATA_LAYER_NAME */
+	/* Used at runtime only by sampling RNA API. */
+	PointDensity pd;
+	int cached_resolution;
+	int pad2;
 } NodeShaderTexPointDensity;
 
 /* TEX_output */
@@ -904,7 +915,8 @@ typedef struct NodeSunBeams {
 #define SHD_GLOSSY_BECKMANN				0
 #define SHD_GLOSSY_SHARP				1
 #define SHD_GLOSSY_GGX					2
-#define SHD_GLOSSY_ASHIKHMIN_SHIRLEY	3
+#define SHD_GLOSSY_ASHIKHMIN_SHIRLEY			3
+#define SHD_GLOSSY_MULTI_GGX				4
 
 /* vector transform */
 #define SHD_VECT_TRANSFORM_TYPE_VECTOR	0
@@ -967,6 +979,9 @@ typedef struct NodeSunBeams {
 /* wave texture */
 #define SHD_WAVE_BANDS		0
 #define SHD_WAVE_RINGS		1
+
+#define SHD_WAVE_PROFILE_SIN	0
+#define SHD_WAVE_PROFILE_SAW	1
 
 /* sky texture */
 #define SHD_SKY_OLD		0
@@ -1049,6 +1064,7 @@ enum {
 #endif
 	SHD_SUBSURFACE_CUBIC			= 1,
 	SHD_SUBSURFACE_GAUSSIAN			= 2,
+	SHD_SUBSURFACE_BURLEY			= 3,
 };
 
 /* blur node */
@@ -1108,6 +1124,11 @@ enum {
 	CMP_NODEFLAG_PLANETRACKDEFORM_MOTION_BLUR = 1,
 };
 
+/* Stabilization node */
+enum {
+	CMP_NODEFLAG_STABILIZE_INVERSE = 1,
+};
+
 #define CMP_NODE_PLANETRACKDEFORM_MBLUR_SAMPLES_MAX 64
 
 /* Point Density shader node */
@@ -1126,6 +1147,12 @@ enum {
 	SHD_POINTDENSITY_COLOR_PARTAGE   = 1,
 	SHD_POINTDENSITY_COLOR_PARTSPEED = 2,
 	SHD_POINTDENSITY_COLOR_PARTVEL   = 3,
+};
+
+enum {
+	SHD_POINTDENSITY_COLOR_VERTCOL      = 0,
+	SHD_POINTDENSITY_COLOR_VERTWEIGHT   = 1,
+	SHD_POINTDENSITY_COLOR_VERTNOR      = 2,
 };
 
 #endif

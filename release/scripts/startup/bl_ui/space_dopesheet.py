@@ -1,4 +1,4 @@
-﻿# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -51,11 +51,13 @@ def dopesheet_filter(layout, context, genericFiltersOnly=False):
         row.prop(dopesheet, "show_only_matching_fcurves", text="")
         if dopesheet.show_only_matching_fcurves:
             row.prop(dopesheet, "filter_fcurve_name", text="")
+            row.prop(dopesheet, "use_multi_word_filter", text="")
     else:
         row = layout.row(align=True)
         row.prop(dopesheet, "use_filter_text", text="")
         if dopesheet.use_filter_text:
             row.prop(dopesheet, "filter_text", text="")
+            row.prop(dopesheet, "use_multi_word_filter", text="")
 
     if not genericFiltersOnly:
         row = layout.row(align=True)
@@ -99,26 +101,11 @@ def dopesheet_filter(layout, context, genericFiltersOnly=False):
             if bpy.data.grease_pencil:
                 row.prop(dopesheet, "show_gpencil", text="")
 
+            layout.prop(dopesheet, "use_datablock_sort", text="")
+
 
 #######################################
 # DopeSheet Editor - General/Standard UI
-
-# Editor types: 
-# ('VIEW_3D', 'TIMELINE', 'GRAPH_EDITOR', 'DOPESHEET_EDITOR', 'NLA_EDITOR', 'IMAGE_EDITOR', 
-# 'CLIP_EDITOR', 'TEXT_EDITOR', 'NODE_EDITOR', 'PROPERTIES', 'OUTLINER', 'USER_PREFERENCES', 'INFO', 'FILE_BROWSE)
-
-
-################################ Switch between the editors ##########################################
-
-
-class switch_editors_in_dopesheet(bpy.types.Operator):
-    """You are in Dopesheet Editor"""      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "wm.switch_editor_in_dopesheet"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Dopesheet Editor"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-
-##########################################################################
 
 class DOPESHEET_HT_header(Header):
     bl_space_type = 'DOPESHEET_EDITOR'
@@ -129,15 +116,9 @@ class DOPESHEET_HT_header(Header):
         st = context.space_data
         toolsettings = context.tool_settings
 
-        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
-
-        # bfa - The tabs to switch between the four animation editors. The classes are in space_time.py
         row = layout.row(align=True)
-        row.operator("wm.switch_editor_to_timeline", text="", icon='TIME')
-        row.operator("wm.switch_editor_to_graph", text="", icon='IPO')
-        row.operator("wm.switch_editor_in_dopesheet", text="", icon='DOPESHEET_ACTIVE')
-        row.operator("wm.switch_editor_to_nla", text="", icon='NLA')
-        
+        row.template_header()
+
         DOPESHEET_MT_editor_menus.draw_collapsible(context, layout)
 
         layout.prop(st, "mode", text="")
@@ -150,10 +131,10 @@ class DOPESHEET_HT_header(Header):
             layout.template_ID(st, "action", new="action.new", unlink="action.unlink")
 
             row = layout.row(align=True)
-            row.operator("action.push_down", text="", icon='NLA_PUSHDOWN')
-            row.operator("action.stash", text="", icon='FREEZE')
+            row.operator("action.push_down", text="Push Down", icon='NLA_PUSHDOWN')
+            row.operator("action.stash", text="Stash", icon='FREEZE')
 
-        layout.prop(st.dopesheet, "show_summary", text="")
+        layout.prop(st.dopesheet, "show_summary", text="Summary")
 
         if st.mode == 'DOPESHEET':
             dopesheet_filter(layout, context)
@@ -161,6 +142,20 @@ class DOPESHEET_HT_header(Header):
             # 'genericFiltersOnly' limits the options to only the relevant 'generic' subset of
             # filters which will work here and are useful (especially for character animation)
             dopesheet_filter(layout, context, genericFiltersOnly=True)
+        elif st.mode == 'GPENCIL':
+            row = layout.row(align=True)
+            row.prop(st.dopesheet, "show_gpencil_3d_only", text="Active Only")
+
+            if st.dopesheet.show_gpencil_3d_only:
+                row = layout.row(align=True)
+                row.prop(st.dopesheet, "show_only_selected", text="")
+                row.prop(st.dopesheet, "show_hidden", text="")
+
+            row = layout.row(align=True)
+            row.prop(st.dopesheet, "use_filter_text", text="")
+            if st.dopesheet.use_filter_text:
+                row.prop(st.dopesheet, "filter_text", text="")
+                row.prop(st.dopesheet, "use_multi_word_filter", text="")
 
         row = layout.row(align=True)
         row.prop(toolsettings, "use_proportional_action",
@@ -173,18 +168,12 @@ class DOPESHEET_HT_header(Header):
         if st.mode != 'GPENCIL':
             layout.prop(st, "auto_snap", text="")
 
-# bfa - show hide the editormenu
-class ALL_MT_editormenu(Menu):
-    bl_label = ""
-
-    def draw(self, context):
-        self.draw_menus(self.layout, context)
-
-    @staticmethod
-    def draw_menus(layout, context):
-
         row = layout.row(align=True)
-        row.template_header() # editor type menus
+        row.operator("action.copy", text="", icon='COPYDOWN')
+        row.operator("action.paste", text="", icon='PASTEDOWN')
+        if st.mode not in ('GPENCIL', 'MASK'):
+            row.operator("action.paste", text="", icon='PASTEFLIPDOWN').flipped = True
+
 
 class DOPESHEET_MT_editor_menus(Menu):
     bl_idname = "DOPESHEET_MT_editor_menus"
@@ -220,6 +209,9 @@ class DOPESHEET_MT_view(Menu):
 
         st = context.space_data
 
+        layout.operator("action.properties", icon='MENU_PANEL')
+        layout.separator()
+
         layout.prop(st, "use_realtime_update")
         layout.prop(st, "show_frame_indicator")
         layout.prop(st, "show_sliders")
@@ -242,31 +234,8 @@ class DOPESHEET_MT_view(Menu):
 
         layout.separator()
         layout.operator("screen.area_dupli")
-        layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area") # bfa - the separated tooltip. Class is in space_text.py
-        layout.operator("screen.screen_full_area").use_hide_panels = True
-
-
-# Workaround to separate the tooltips
-class DOPESHEET_MT_select_before_current_frame(bpy.types.Operator):
-    """Select Before Current Frame\nSelects the keyframes before the current frame """      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "action.select_leftright_before"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Before Current Frame"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.action.select_leftright(extend = False, mode = 'LEFT')
-        return {'FINISHED'}  
-
-# Workaround to separate the tooltips
-class DOPESHEET_MT_select_after_current_frame(bpy.types.Operator):
-    """Select After Current Frame\nSelects the keyframes after the current frame """      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "action.select_leftright_after"        # unique identifier for buttons and menu items to reference.
-    bl_label = "After Current Frame"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.action.select_leftright(extend = False, mode = 'RIGHT')
-        return {'FINISHED'}  
+        layout.operator("screen.screen_full_area")
+        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area").use_hide_panels = True
 
 
 class DOPESHEET_MT_select(Menu):
@@ -283,6 +252,8 @@ class DOPESHEET_MT_select(Menu):
         layout.operator("action.select_border").axis_range = False
         layout.operator("action.select_border", text="Border Axis Range").axis_range = True
 
+        layout.operator("action.select_circle")
+
         layout.separator()
         layout.operator("action.select_column", text="Columns on Selected Keys").mode = 'KEYS'
         layout.operator("action.select_column", text="Column on Current Frame").mode = 'CFRA'
@@ -291,23 +262,21 @@ class DOPESHEET_MT_select(Menu):
         layout.operator("action.select_column", text="Between Selected Markers").mode = 'MARKERS_BETWEEN'
 
         layout.separator()
-
-        layout.operator("action.select_leftright_before", text="Before Current Frame") # bfa - the separated tooltip
-        layout.operator("action.select_leftright_after", text="After Current Frame") # bfa - the separated tooltip
-        #props = layout.operator("action.select_leftright", text="After Current Frame")
-        #props.extend = False
-        #props.mode = 'RIGHT'
-
-        
+        props = layout.operator("action.select_leftright", text="Before Current Frame")
+        props.extend = False
+        props.mode = 'LEFT'
+        props = layout.operator("action.select_leftright", text="After Current Frame")
+        props.extend = False
+        props.mode = 'RIGHT'
 
         # FIXME: grease pencil mode isn't supported for these yet, so skip for that mode only
         if context.space_data.mode != 'GPENCIL':
             layout.separator()
-            layout.operator("action.select_more",text = "More")
-            layout.operator("action.select_less",text = "Less")
+            layout.operator("action.select_more")
+            layout.operator("action.select_less")
 
             layout.separator()
-            layout.operator("action.select_linked", text = "Linked")
+            layout.operator("action.select_linked")
 
 
 class DOPESHEET_MT_marker(Menu):
@@ -365,16 +334,6 @@ class DOPESHEET_MT_channel(Menu):
         layout.separator()
         layout.operator("anim.channels_fcurves_enable")
 
-# Workaround to separate the tooltips
-class DOPESHEET_MT_key_clean_channels(bpy.types.Operator):
-    """Clean Channels\nSimplify F-Curves by removing closely spaced keyframes in selected channels"""      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "action.clean_channels"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Clean Channels"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.action.clean(channels = True)
-        return {'FINISHED'}  
 
 class DOPESHEET_MT_key(Menu):
     bl_label = "Key"
@@ -404,13 +363,12 @@ class DOPESHEET_MT_key(Menu):
 
         layout.separator()
         layout.operator("action.clean").channels = False
-        layout.operator("action.clean_channels", text="Clean Channels") # bfa -  separated tooltips
+        layout.operator("action.clean", text="Clean Channels").channels = True
         layout.operator("action.sample")
 
         layout.separator()
-        layout.operator("action.copy", text="Copy Keyframes", icon='COPYDOWN')
-        layout.operator("action.paste", text="Paste Keyframes", icon='PASTEDOWN')
-        layout.operator("action.paste", text="Paste Flipped", icon='PASTEFLIPDOWN').flipped = True
+        layout.operator("action.copy")
+        layout.operator("action.paste")
 
 
 class DOPESHEET_MT_key_transform(Menu):
@@ -475,6 +433,20 @@ class DOPESHEET_MT_gpencil_frame(Menu):
         #layout.separator()
         #layout.operator("action.copy")
         #layout.operator("action.paste")
+
+
+class DOPESHEET_MT_delete(Menu):
+    bl_label = "Delete"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("action.delete")
+
+        layout.separator()
+
+        layout.operator("action.clean").channels = False
+        layout.operator("action.clean", text="Clean Channels").channels = True
 
 
 if __name__ == "__main__":  # only for live edit.

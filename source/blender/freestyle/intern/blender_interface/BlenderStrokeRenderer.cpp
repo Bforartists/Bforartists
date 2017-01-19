@@ -243,6 +243,8 @@ Material* BlenderStrokeRenderer::GetStrokeShader(Main *bmain, bNodeTree *iNodeTr
 	PointerRNA fromptr, toptr;
 	NodeShaderAttribute *storage;
 
+	id_us_min(&ma->id);
+
 	if (iNodeTree) {
 		// make a copy of linestyle->nodetree
 		ntree = ntreeCopyTree_ex(iNodeTree, bmain, do_id_user);
@@ -514,6 +516,8 @@ void BlenderStrokeRenderer::RenderStrokeRepBasic(StrokeRep *iStrokeRep) const
 			ma->mode |= MA_SHLESS;
 			ma->vcol_alpha = 1;
 
+			id_us_min(&ma->id);
+
 			// Textures
 			while (iStrokeRep->getMTex(a)) {
 				ma->mtex[a] = (MTex *)iStrokeRep->getMTex(a);
@@ -734,6 +738,7 @@ void BlenderStrokeRenderer::GenerateStrokeMesh(StrokeGroup *group, bool hasTex)
 	     it != itend; ++it)
 	{
 		mesh->mat[material_index] = (*it)->getMaterial();
+		id_us_plus(&mesh->mat[material_index]->id);
 
 		vector<Strip*>& strips = (*it)->getStrips();
 		for (vector<Strip*>::const_iterator s = strips.begin(), send = strips.end(); s != send; ++s) {
@@ -902,7 +907,7 @@ void BlenderStrokeRenderer::GenerateStrokeMesh(StrokeGroup *group, bool hasTex)
 		material_index++;
 	} // loop over strokes
 
-	test_object_materials(freestyle_bmain, (ID *)mesh);
+	test_object_materials(object_mesh, (ID *)mesh);
 
 #if 0 // XXX
 	BLI_assert(mesh->totvert == vertex_index);

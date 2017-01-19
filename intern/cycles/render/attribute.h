@@ -54,15 +54,17 @@ public:
 	TypeDesc type;
 	vector<char> buffer;
 	AttributeElement element;
+	uint flags; /* enum AttributeFlag */
 
 	Attribute() {}
 	~Attribute();
 	void set(ustring name, TypeDesc type, AttributeElement element);
-	void reserve(int numverts, int numfaces, int numsteps, int numcurves, int numkeys, bool resize);
+	void resize(Mesh *mesh, AttributePrimitive prim, bool reserve_only);
+	void resize(size_t num_elements);
 
 	size_t data_sizeof() const;
-	size_t element_size(int numverts, int numfaces, int numsteps, int numcurves, int numkeys) const;
-	size_t buffer_size(int numverts, int numfaces, int numsteps, int numcurves, int numkeys) const;
+	size_t element_size(Mesh *mesh, AttributePrimitive prim) const;
+	size_t buffer_size(Mesh *mesh, AttributePrimitive prim) const;
 
 	char *data() { return (buffer.size())? &buffer[0]: NULL; };
 	float3 *data_float3() { return (float3*)data(); }
@@ -78,6 +80,9 @@ public:
 	const float *data_float() const { return (const float*)data(); }
 	const Transform *data_transform() const { return (const Transform*)data(); }
 	const VoxelAttribute *data_voxel() const { return (const VoxelAttribute*)data(); }
+
+	void zero_data(void* dst);
+	void add_with_weight(void* dst, void* src, float weight);
 
 	void add(const float& f);
 	void add(const float3& f);
@@ -99,12 +104,13 @@ class AttributeSet {
 public:
 	Mesh *triangle_mesh;
 	Mesh *curve_mesh;
+	Mesh *subd_mesh;
 	list<Attribute> attributes;
 
 	AttributeSet();
 	~AttributeSet();
 
-	Attribute *add(ustring name, TypeDesc type, AttributeElement element, bool resize = true);
+	Attribute *add(ustring name, TypeDesc type, AttributeElement element);
 	Attribute *find(ustring name) const;
 	void remove(ustring name);
 
@@ -114,7 +120,7 @@ public:
 
 	Attribute *find(AttributeRequest& req);
 
-	void reserve();
+	void resize(bool reserve_only = false);
 	void clear();
 };
 
@@ -130,12 +136,11 @@ public:
 	AttributeStandard std;
 
 	/* temporary variables used by MeshManager */
-	TypeDesc triangle_type, curve_type;
-	AttributeElement triangle_element, curve_element;
-	int triangle_offset, curve_offset;
+	TypeDesc triangle_type, curve_type, subd_type;
+	AttributeDescriptor triangle_desc, curve_desc, subd_desc;
 
-	AttributeRequest(ustring name_);
-	AttributeRequest(AttributeStandard std);
+	explicit AttributeRequest(ustring name_);
+	explicit AttributeRequest(AttributeStandard std);
 };
 
 /* AttributeRequestSet

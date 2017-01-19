@@ -21,6 +21,8 @@
 #include "util_string.h"
 #include "util_thread.h"
 
+#include "graph.h"
+#include "nodes.h"
 #include "shader.h"
 
 #ifdef WITH_OSL
@@ -53,6 +55,7 @@ struct OSLShaderInfo {
 	  has_surface_bssrdf(false)
 	{}
 
+	OSL::OSLQuery query;
 	bool has_surface_emission;
 	bool has_surface_transparent;
 	bool has_surface_bssrdf;
@@ -81,6 +84,11 @@ public:
 	const char *shader_load_bytecode(const string& hash, const string& bytecode);
 	const char *shader_load_filepath(string filepath);
 	OSLShaderInfo *shader_loaded_info(const string& hash);
+
+	/* create OSL node using OSLQuery */
+	OSLNode *osl_node(const std::string& filepath,
+	                  const std::string& bytecode_hash = "",
+	                  const std::string& bytecode = "");
 
 protected:
 	void texture_system_init();
@@ -113,9 +121,11 @@ protected:
 class OSLCompiler {
 public:
 	OSLCompiler(void *manager, void *shadingsys, ImageManager *image_manager);
-	void compile(OSLGlobals *og, Shader *shader);
+	void compile(Scene *scene, OSLGlobals *og, Shader *shader);
 
 	void add(ShaderNode *node, const char *name, bool isfilepath = false);
+
+	void parameter(ShaderNode *node, const char *name);
 
 	void parameter(const char *name, float f);
 	void parameter_color(const char *name, float3 f);
@@ -128,13 +138,7 @@ public:
 	void parameter(const char *name, const Transform& tfm);
 
 	void parameter_array(const char *name, const float f[], int arraylen);
-	void parameter_color_array(const char *name, const float f[][3], int arraylen);
-	void parameter_vector_array(const char *name, const float f[][3], int arraylen);
-	void parameter_normal_array(const char *name, const float f[][3], int arraylen);
-	void parameter_point_array(const char *name, const float f[][3], int arraylen);
-	void parameter_array(const char *name, const int f[], int arraylen);
-	void parameter_array(const char *name, const char * const s[], int arraylen);
-	void parameter_array(const char *name, const Transform tfm[], int arraylen);
+	void parameter_color_array(const char *name, const array<float3>& f);
 
 	ShaderType output_type() { return current_type; }
 
@@ -144,13 +148,13 @@ public:
 private:
 #ifdef WITH_OSL
 	string id(ShaderNode *node);
-	OSL::ShadingAttribStateRef compile_type(Shader *shader, ShaderGraph *graph, ShaderType type);
+	OSL::ShaderGroupRef compile_type(Shader *shader, ShaderGraph *graph, ShaderType type);
 	bool node_skip_input(ShaderNode *node, ShaderInput *input);
 	string compatible_name(ShaderNode *node, ShaderInput *input);
 	string compatible_name(ShaderNode *node, ShaderOutput *output);
 
-	void find_dependencies(set<ShaderNode*>& dependencies, ShaderInput *input);
-	void generate_nodes(const set<ShaderNode*>& nodes);
+	void find_dependencies(ShaderNodeSet& dependencies, ShaderInput *input);
+	void generate_nodes(const ShaderNodeSet& nodes);
 #endif
 
 	void *shadingsys;

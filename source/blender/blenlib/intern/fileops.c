@@ -304,7 +304,7 @@ static bool delete_unique(const char *path, const bool dir)
 
 	if (dir) {
 		err = !RemoveDirectoryW(path_16);
-		if (err) printf("Unable to remove directory");
+		if (err) printf("Unable to remove directory\n");
 	}
 	else {
 		err = !DeleteFileW(path_16);
@@ -720,6 +720,8 @@ int   BLI_access(const char *filename, int mode)
 /**
  * Deletes the specified file or directory (depending on dir), optionally
  * doing recursive delete of directory contents.
+ *
+ * \return zero on success (matching 'remove' behavior).
  */
 int BLI_delete(const char *file, bool dir, bool recursive)
 {
@@ -825,7 +827,7 @@ static int copy_single_file(const char *from, const char *to)
 		ssize_t link_len;
 
 		/* get large enough buffer to read link content */
-		if (st.st_size < sizeof(buf)) {
+		if ((st.st_size + 1) < sizeof(buf)) {
 			link_buffer = buf;
 			need_free = 0;
 		}
@@ -843,7 +845,7 @@ static int copy_single_file(const char *from, const char *to)
 			return RecursiveOp_Callback_Error;
 		}
 
-		link_buffer[link_len] = 0;
+		link_buffer[link_len] = '\0';
 
 		if (symlink(link_buffer, to)) {
 			perror("symlink");
@@ -1043,9 +1045,14 @@ bool BLI_dir_create_recursive(const char *dirname)
 	return ret;
 }
 
+/**
+ * \return zero on success (matching 'rename' behavior).
+ */
 int BLI_rename(const char *from, const char *to)
 {
-	if (!BLI_exists(from)) return 0;
+	if (!BLI_exists(from)) {
+		return 1;
+	}
 	
 	if (BLI_exists(to))
 		if (BLI_delete(to, false, false)) return 1;

@@ -60,7 +60,7 @@
 #include "WM_api.h"
 #include "WM_types.h"
 
-EnumPropertyItem object_mode_items[] = {
+EnumPropertyItem rna_enum_object_mode_items[] = {
 	{OB_MODE_OBJECT, "OBJECT", ICON_OBJECT_DATAMODE, "Object Mode", ""},
 	{OB_MODE_EDIT, "EDIT", ICON_EDITMODE_HLT, "Edit Mode", ""},
 	{OB_MODE_POSE, "POSE", ICON_POSE_HLT, "Pose Mode", ""},
@@ -69,10 +69,11 @@ EnumPropertyItem object_mode_items[] = {
 	{OB_MODE_WEIGHT_PAINT, "WEIGHT_PAINT", ICON_WPAINT_HLT, "Weight Paint", ""},
 	{OB_MODE_TEXTURE_PAINT, "TEXTURE_PAINT", ICON_TPAINT_HLT, "Texture Paint", ""},
 	{OB_MODE_PARTICLE_EDIT, "PARTICLE_EDIT", ICON_PARTICLEMODE, "Particle Edit", ""},
+	{OB_MODE_GPENCIL, "GPENCIL_EDIT", ICON_GREASEPENCIL, "Edit Strokes", "Edit Grease Pencil Strokes"},
 	{0, NULL, 0, NULL, NULL}
 };
 
-EnumPropertyItem object_empty_drawtype_items[] = {
+EnumPropertyItem rna_enum_object_empty_drawtype_items[] = {
 	{OB_PLAINAXES, "PLAIN_AXES", 0, "Plain Axes", ""},
 	{OB_ARROWS, "ARROWS", 0, "Arrows", ""},
 	{OB_SINGLE_ARROW, "SINGLE_ARROW", 0, "Single Arrow", ""},
@@ -107,18 +108,18 @@ static EnumPropertyItem dupli_items[] = {
 #endif
 
 static EnumPropertyItem collision_bounds_items[] = {
-	{OB_BOUND_BOX, "BOX", 0, "Box", ""},
-	{OB_BOUND_SPHERE, "SPHERE", 0, "Sphere", ""},
-	{OB_BOUND_CYLINDER, "CYLINDER", 0, "Cylinder", ""},
-	{OB_BOUND_CONE, "CONE", 0, "Cone", ""},
-	{OB_BOUND_CONVEX_HULL, "CONVEX_HULL", 0, "Convex Hull", ""},
-	{OB_BOUND_TRIANGLE_MESH, "TRIANGLE_MESH", 0, "Triangle Mesh", ""},
-	{OB_BOUND_CAPSULE, "CAPSULE", 0, "Capsule", ""},
+	{OB_BOUND_BOX, "BOX", ICON_MESH_CUBE, "Box", ""},
+	{OB_BOUND_SPHERE, "SPHERE", ICON_MESH_UVSPHERE, "Sphere", ""},
+	{OB_BOUND_CYLINDER, "CYLINDER", ICON_MESH_CYLINDER, "Cylinder", ""},
+	{OB_BOUND_CONE, "CONE", ICON_MESH_CONE, "Cone", ""},
+	{OB_BOUND_CONVEX_HULL, "CONVEX_HULL", ICON_MESH_ICOSPHERE, "Convex Hull", ""},
+	{OB_BOUND_TRIANGLE_MESH, "TRIANGLE_MESH", ICON_MESH_MONKEY, "Triangle Mesh", ""},
+	{OB_BOUND_CAPSULE, "CAPSULE", ICON_MESH_CAPSULE, "Capsule", ""},
 	/*{OB_DYN_MESH, "DYNAMIC_MESH", 0, "Dynamic Mesh", ""}, */
 	{0, NULL, 0, NULL, NULL}
 };
 
-EnumPropertyItem metaelem_type_items[] = {
+EnumPropertyItem rna_enum_metaelem_type_items[] = {
 	{MB_BALL, "BALL", ICON_META_BALL, "Ball", ""},
 	{MB_TUBE, "CAPSULE", ICON_META_CAPSULE, "Capsule", ""},
 	{MB_PLANE, "PLANE", ICON_META_PLANE, "Plane", ""},
@@ -132,7 +133,7 @@ EnumPropertyItem metaelem_type_items[] = {
 #define OBTYPE_CU_SURF {OB_SURF, "SURFACE", 0, "Surface", ""}
 #define OBTYPE_CU_FONT {OB_FONT, "FONT", 0, "Font", ""}
 
-EnumPropertyItem object_type_items[] = {
+EnumPropertyItem rna_enum_object_type_items[] = {
 	{OB_MESH, "MESH", 0, "Mesh", ""},
 	OBTYPE_CU_CURVE,
 	OBTYPE_CU_SURF,
@@ -149,55 +150,20 @@ EnumPropertyItem object_type_items[] = {
 	{0, NULL, 0, NULL, NULL}
 };
 
-EnumPropertyItem object_type_curve_items[] = {
+EnumPropertyItem rna_enum_object_type_curve_items[] = {
 	OBTYPE_CU_CURVE,
 	OBTYPE_CU_SURF,
 	OBTYPE_CU_FONT,
 	{0, NULL, 0, NULL, NULL}
 };
 
-EnumPropertyItem object_axis_items[] = {
+EnumPropertyItem rna_enum_object_axis_items[] = {
 	{OB_POSX, "POS_X", 0, "+X", ""},
 	{OB_POSY, "POS_Y", 0, "+Y", ""},
 	{OB_POSZ, "POS_Z", 0, "+Z", ""},
 	{OB_NEGX, "NEG_X", 0, "-X", ""},
 	{OB_NEGY, "NEG_Y", 0, "-Y", ""},
 	{OB_NEGZ, "NEG_Z", 0, "-Z", ""},
-	{0, NULL, 0, NULL, NULL}
-};
-
-/* Wire Color Sets */ // bfa - custom wireframe colors
-EnumPropertyItem wire_color_sets_items[] = {
-	{ 0, "DEFAULT", 0, "Default Colors", "" },
-	{ 1, "THEME01", 0, "01 - Theme Color Set", "" },
-	{ 2, "THEME02", 0, "02 - Theme Color Set", "" },
-	{ 3, "THEME03", 0, "03 - Theme Color Set", "" },
-	{ 4, "THEME04", 0, "04 - Theme Color Set", "" },
-	{ 5, "THEME05", 0, "05 - Theme Color Set", "" },
-	{ 6, "THEME06", 0, "06 - Theme Color Set", "" },
-	{ 7, "THEME07", 0, "07 - Theme Color Set", "" },
-	{ 8, "THEME08", 0, "08 - Theme Color Set", "" },
-	{ 9, "THEME09", 0, "09 - Theme Color Set", "" },
-	{ 10, "THEME10", 0, "10 - Theme Color Set", "" },
-	{ 11, "THEME11", 0, "11 - Theme Color Set", "" },
-	{ 12, "THEME12", 0, "12 - Theme Color Set", "" },
-	{ 13, "THEME13", 0, "13 - Theme Color Set", "" },
-	{ 14, "THEME14", 0, "14 - Theme Color Set", "" },
-	{ 15, "THEME15", 0, "15 - Theme Color Set", "" },
-	{ 16, "THEME16", 0, "16 - Theme Color Set", "" },
-	{ 17, "THEME17", 0, "17 - Theme Color Set", "" },
-	{ 18, "THEME18", 0, "18 - Theme Color Set", "" },
-	{ 19, "THEME19", 0, "19 - Theme Color Set", "" },
-	{ 20, "THEME20", 0, "20 - Theme Color Set", "" },
-	{ -1, "CUSTOM", 0, "Custom Color Set", "" },
-	{ 0, NULL, 0, NULL, NULL }
-};
-
-/* for general use (not just object) */
-EnumPropertyItem object_axis_unsigned_items[] = {
-	{0, "X", 0, "X", ""},
-	{1, "Y", 0, "Y", ""},
-	{2, "Z", 0, "Z", ""},
 	{0, NULL, 0, NULL, NULL}
 };
 
@@ -301,18 +267,21 @@ static void rna_Object_active_shape_update(Main *bmain, Scene *scene, PointerRNA
 		switch (ob->type) {
 			case OB_MESH:
 				EDBM_mesh_load(ob);
-				EDBM_mesh_make(scene->toolsettings, ob);
+				EDBM_mesh_make(scene->toolsettings, ob, true);
+
+				DAG_id_tag_update(ob->data, 0);
+
 				EDBM_mesh_normals_update(((Mesh *)ob->data)->edit_btmesh);
 				BKE_editmesh_tessface_calc(((Mesh *)ob->data)->edit_btmesh);
 				break;
 			case OB_CURVE:
 			case OB_SURF:
-				load_editNurb(ob);
-				make_editNurb(ob);
+				ED_curve_editnurb_load(ob);
+				ED_curve_editnurb_make(ob);
 				break;
 			case OB_LATTICE:
-				load_editLatt(ob);
-				make_editLatt(ob);
+				ED_lattice_editlatt_load(ob);
+				ED_lattice_editlatt_make(ob);
 				break;
 		}
 	}
@@ -332,7 +301,7 @@ static void rna_Object_select_update(Main *UNUSED(bmain), Scene *scene, PointerR
 {
 	if (scene) {
 		Object *ob = (Object *)ptr->id.data;
-		short mode = ob->flag & SELECT ? BA_SELECT : BA_DESELECT;
+		short mode = (ob->flag & SELECT) ? BA_SELECT : BA_DESELECT;
 		ED_base_object_select(BKE_scene_base_find(scene, ob), mode);
 	}
 }
@@ -340,7 +309,7 @@ static void rna_Object_select_update(Main *UNUSED(bmain), Scene *scene, PointerR
 static void rna_Base_select_update(Main *UNUSED(bmain), Scene *UNUSED(scene), PointerRNA *ptr)
 {
 	Base *base = (Base *)ptr->data;
-	short mode = base->flag & BA_SELECT ? BA_SELECT : BA_DESELECT;
+	short mode = (base->flag & BA_SELECT) ? BA_SELECT : BA_DESELECT;
 	ED_base_object_select(base, mode);
 }
 
@@ -429,7 +398,7 @@ static void rna_Object_data_set(PointerRNA *ptr, PointerRNA value)
 		id_us_plus(id);
 
 		ob->data = id;
-		test_object_materials(G.main, id);
+		test_object_materials(ob, id);
 
 		if (GS(id->name) == ID_CU)
 			BKE_curve_type_test(ob);
@@ -519,26 +488,6 @@ static void rna_Object_empty_draw_type_set(PointerRNA *ptr, int value)
 	Object *ob = (Object *)ptr->data;
 
 	BKE_object_empty_draw_type_set(ob, value);
-}
-
-void rna_Object_wire_colorset_set(PointerRNA *ptr, int value) // bfa -custom wireframe colors
-{
-	Object *ob = ptr->data;
-
-	/* ensure only valid values get set */
-	if ((value >= -1) && (value < 21)) {
-		ob->custom_wire_color = value;
-
-		/* sync wire colors stored with theme colors based on the index specified */
-		BKE_object_wire_colors_sync(ob);
-	}
-}
-
-int rna_Object_is_custom_wire_colorset_get(PointerRNA *ptr)
-{
-	Object *ob = ptr->data;
-
-	return (ob->custom_wire_color < 0);
 }
 
 static EnumPropertyItem *rna_Object_collision_bounds_itemf(bContext *UNUSED(C), PointerRNA *ptr,
@@ -763,16 +712,16 @@ static void rna_Object_active_material_set(PointerRNA *ptr, PointerRNA value)
 	assign_material(ob, value.data, ob->actcol, BKE_MAT_ASSIGN_EXISTING);
 }
 
-static int rna_Object_active_material_editable(PointerRNA *ptr)
+static int rna_Object_active_material_editable(PointerRNA *ptr, const char **UNUSED(r_info))
 {
 	Object *ob = (Object *)ptr->id.data;
 	bool is_editable;
 
 	if ((ob->matbits == NULL) || (ob->actcol == 0) || ob->matbits[ob->actcol - 1]) {
-		is_editable = (ob->id.lib == NULL);
+		is_editable = !ID_IS_LINKED_DATABLOCK(ob);
 	}
 	else {
-		is_editable = ob->data ? (((ID *)ob->data)->lib == NULL) : false;
+		is_editable = ob->data ? !ID_IS_LINKED_DATABLOCK(ob->data) : false;
 	}
 
 	return is_editable ? PROP_EDITABLE : 0;
@@ -1083,6 +1032,11 @@ static void rna_GameObjectSettings_physics_type_set(PointerRNA *ptr, int value)
 			ob->gameflag |= OB_COLLISION | OB_CHARACTER;
 			ob->gameflag &= ~(OB_SENSOR | OB_OCCLUDER | OB_DYNAMIC | OB_RIGID_BODY | OB_SOFT_BODY | OB_ACTOR |
 			                  OB_ANISOTROPIC_FRICTION | OB_DO_FH | OB_ROT_FH | OB_COLLISION_RESPONSE | OB_NAVMESH);
+			/* When we switch to character physics and the collision bounds is set to triangle mesh
+			 * we have to change collision bounds because triangle mesh is not supported by Characters */
+			if ((ob->gameflag & OB_BOUNDS) && ob->collision_boundtype == OB_BOUND_TRIANGLE_MESH) {
+				ob->boundtype = ob->collision_boundtype = OB_BOUND_BOX;
+			}
 			break;
 		case OB_BODY_TYPE_STATIC:
 			ob->gameflag |= OB_COLLISION;
@@ -1180,7 +1134,7 @@ static void rna_GameObjectSettings_state_get(PointerRNA *ptr, int *values)
 {
 	Object *ob = (Object *)ptr->data;
 	int i;
-	int all_states = (ob->scaflag & OB_ALLSTATE ? 1 : 0);
+	int all_states = (ob->scaflag & OB_ALLSTATE) ? 1 : 0;
 
 	memset(values, 0, sizeof(int) * OB_MAX_STATES);
 	for (i = 0; i < OB_MAX_STATES; i++) {
@@ -1567,6 +1521,7 @@ static void rna_def_vertex_group(BlenderRNA *brna)
 	StructRNA *srna;
 	PropertyRNA *prop;
 	FunctionRNA *func;
+	PropertyRNA *parm;
 
 	static EnumPropertyItem assign_mode_items[] = {
 		{WEIGHT_REPLACE,  "REPLACE",  0, "Replace",  "Replace"},
@@ -1602,27 +1557,27 @@ static void rna_def_vertex_group(BlenderRNA *brna)
 	RNA_def_function_ui_description(func, "Add vertices to the group");
 	RNA_def_function_flag(func, FUNC_USE_REPORTS | FUNC_USE_SELF_ID);
 	/* TODO, see how array size of 0 works, this shouldnt be used */
-	prop = RNA_def_int_array(func, "index", 1, NULL, 0, 0, "", "Index List", 0, 0);
-	RNA_def_property_flag(prop, PROP_DYNAMIC | PROP_REQUIRED);
-	prop = RNA_def_float(func, "weight", 0, 0.0f, 1.0f, "", "Vertex weight", 0.0f, 1.0f);
-	RNA_def_property_flag(prop, PROP_REQUIRED);
-	prop = RNA_def_enum(func, "type", assign_mode_items, 0, "", "Vertex assign mode");
-	RNA_def_property_flag(prop, PROP_REQUIRED);
+	parm = RNA_def_int_array(func, "index", 1, NULL, 0, 0, "", "Index List", 0, 0);
+	RNA_def_parameter_flags(parm, PROP_DYNAMIC, PARM_REQUIRED);
+	parm = RNA_def_float(func, "weight", 0, 0.0f, 1.0f, "", "Vertex weight", 0.0f, 1.0f);
+	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
+	parm = RNA_def_enum(func, "type", assign_mode_items, 0, "", "Vertex assign mode");
+	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
 
 	func = RNA_def_function(srna, "remove", "rna_VertexGroup_vertex_remove");
 	RNA_def_function_ui_description(func, "Remove a vertex from the group");
 	RNA_def_function_flag(func, FUNC_USE_REPORTS | FUNC_USE_SELF_ID);
 	/* TODO, see how array size of 0 works, this shouldnt be used */
-	prop = RNA_def_int_array(func, "index", 1, NULL, 0, 0, "", "Index List", 0, 0);
-	RNA_def_property_flag(prop, PROP_DYNAMIC | PROP_REQUIRED);
+	parm = RNA_def_int_array(func, "index", 1, NULL, 0, 0, "", "Index List", 0, 0);
+	RNA_def_parameter_flags(parm, PROP_DYNAMIC, PARM_REQUIRED);
 
 	func = RNA_def_function(srna, "weight", "rna_VertexGroup_weight");
 	RNA_def_function_ui_description(func, "Get a vertex weight from the group");
 	RNA_def_function_flag(func, FUNC_USE_REPORTS | FUNC_USE_SELF_ID);
-	prop = RNA_def_int(func, "index", 0, 0, INT_MAX, "Index", "The index of the vertex", 0, INT_MAX);
-	RNA_def_property_flag(prop, PROP_REQUIRED);
-	prop = RNA_def_float(func, "weight", 0, 0.0f, 1.0f, "", "Vertex weight", 0.0f, 1.0f);
-	RNA_def_function_return(func, prop);
+	parm = RNA_def_int(func, "index", 0, 0, INT_MAX, "Index", "The index of the vertex", 0, INT_MAX);
+	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
+	parm = RNA_def_float(func, "weight", 0, 0.0f, 1.0f, "", "Vertex weight", 0.0f, 1.0f);
+	RNA_def_function_return(func, parm);
 }
 
 static void rna_def_material_slot(BlenderRNA *brna)
@@ -1648,7 +1603,7 @@ static void rna_def_material_slot(BlenderRNA *brna)
 	RNA_def_property_struct_type(prop, "Material");
 	RNA_def_property_flag(prop, PROP_EDITABLE);
 	RNA_def_property_pointer_funcs(prop, "rna_MaterialSlot_material_get", "rna_MaterialSlot_material_set", NULL, NULL);
-	RNA_def_property_ui_text(prop, "Material", "Material datablock used by this material slot");
+	RNA_def_property_ui_text(prop, "Material", "Material data-block used by this material slot");
 	RNA_def_property_update(prop, NC_OBJECT | ND_DRAW, "rna_MaterialSlot_update");
 
 	prop = RNA_def_property(srna, "link", PROP_ENUM, PROP_NONE);
@@ -1821,6 +1776,14 @@ static void rna_def_object_game_settings(BlenderRNA *brna)
 	RNA_def_property_float_default(prop, 55.0f);
 	RNA_def_property_ui_text(prop, "Fall Speed Max", "Maximum speed at which the character will fall");
 
+	prop = RNA_def_property(srna, "jump_max", PROP_INT, PROP_NONE);
+	RNA_def_property_int_sdna(prop, NULL, "max_jumps");
+	RNA_def_property_range(prop, 1, CHAR_MAX);
+	RNA_def_property_ui_range(prop, 1, 10, 1, 1);
+	RNA_def_property_int_default(prop, 1);
+	RNA_def_property_ui_text(prop, "Max Jumps",
+	                         "The maximum number of jumps the character can make before it hits the ground");
+
 	/* Collision Masks */
 	prop = RNA_def_property(srna, "collision_group", PROP_BOOLEAN, PROP_LAYER_MEMBER);
 	RNA_def_property_boolean_sdna(prop, NULL, "col_group", 1);
@@ -1992,8 +1955,8 @@ static void rna_def_object_constraints(BlenderRNA *brna, PropertyRNA *cprop)
 	func = RNA_def_function(srna, "new", "rna_Object_constraints_new");
 	RNA_def_function_ui_description(func, "Add a new constraint to this object");
 	/* object to add */
-	parm = RNA_def_enum(func, "type", constraint_type_items, 1, "", "Constraint type to add");
-	RNA_def_property_flag(parm, PROP_REQUIRED);
+	parm = RNA_def_enum(func, "type", rna_enum_constraint_type_items, 1, "", "Constraint type to add");
+	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
 	/* return type */
 	parm = RNA_def_pointer(func, "constraint", "Constraint", "", "New constraint");
 	RNA_def_function_return(func, parm);
@@ -2003,8 +1966,8 @@ static void rna_def_object_constraints(BlenderRNA *brna, PropertyRNA *cprop)
 	RNA_def_function_flag(func, FUNC_USE_REPORTS);
 	/* constraint to remove */
 	parm = RNA_def_pointer(func, "constraint", "Constraint", "", "Removed constraint");
-	RNA_def_property_flag(parm, PROP_REQUIRED | PROP_NEVER_NULL | PROP_RNAPTR);
-	RNA_def_property_clear_flag(parm, PROP_THICK_WRAP);
+	RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED | PARM_RNAPTR);
+	RNA_def_parameter_clear_flags(parm, PROP_THICK_WRAP, 0);
 
 	func = RNA_def_function(srna, "clear", "rna_Object_constraints_clear");
 	RNA_def_function_ui_description(func, "Remove all constraint from this object");
@@ -2041,10 +2004,10 @@ static void rna_def_object_modifiers(BlenderRNA *brna, PropertyRNA *cprop)
 	RNA_def_function_flag(func, FUNC_USE_CONTEXT | FUNC_USE_REPORTS);
 	RNA_def_function_ui_description(func, "Add a new modifier");
 	parm = RNA_def_string(func, "name", "Name", 0, "", "New name for the modifier");
-	RNA_def_property_flag(parm, PROP_REQUIRED);
+	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
 	/* modifier to add */
-	parm = RNA_def_enum(func, "type", modifier_type_items, 1, "", "Modifier type to add");
-	RNA_def_property_flag(parm, PROP_REQUIRED);
+	parm = RNA_def_enum(func, "type", rna_enum_object_modifier_type_items, 1, "", "Modifier type to add");
+	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
 	/* return type */
 	parm = RNA_def_pointer(func, "modifier", "Modifier", "", "Newly created modifier");
 	RNA_def_function_return(func, parm);
@@ -2055,8 +2018,8 @@ static void rna_def_object_modifiers(BlenderRNA *brna, PropertyRNA *cprop)
 	RNA_def_function_ui_description(func, "Remove an existing modifier from the object");
 	/* modifier to remove */
 	parm = RNA_def_pointer(func, "modifier", "Modifier", "", "Modifier to remove");
-	RNA_def_property_flag(parm, PROP_REQUIRED | PROP_NEVER_NULL | PROP_RNAPTR);
-	RNA_def_property_clear_flag(parm, PROP_THICK_WRAP);
+	RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED | PARM_RNAPTR);
+	RNA_def_parameter_clear_flags(parm, PROP_THICK_WRAP, 0);
 
 	/* clear all modifiers */
 	func = RNA_def_function(srna, "clear", "rna_Object_modifier_clear");
@@ -2137,8 +2100,8 @@ static void rna_def_object_vertex_groups(BlenderRNA *brna, PropertyRNA *cprop)
 	RNA_def_function_flag(func, FUNC_USE_REPORTS);
 	RNA_def_function_ui_description(func, "Delete vertex group from object");
 	parm = RNA_def_pointer(func, "group", "VertexGroup", "", "Vertex group to remove");
-	RNA_def_property_flag(parm, PROP_REQUIRED | PROP_NEVER_NULL | PROP_RNAPTR);
-	RNA_def_property_clear_flag(parm, PROP_THICK_WRAP);
+	RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED | PARM_RNAPTR);
+	RNA_def_parameter_clear_flags(parm, PROP_THICK_WRAP, 0);
 
 	func = RNA_def_function(srna, "clear", "rna_Object_vgroup_clear");
 	RNA_def_function_ui_description(func, "Delete all vertex groups from object");
@@ -2245,7 +2208,7 @@ static void rna_def_object(BlenderRNA *brna)
 	static int boundbox_dimsize[] = {8, 3};
 
 	srna = RNA_def_struct(brna, "Object", "ID");
-	RNA_def_struct_ui_text(srna, "Object", "Object datablock defining an object in a scene");
+	RNA_def_struct_ui_text(srna, "Object", "Object data-block defining an object in a scene");
 	RNA_def_struct_clear_flag(srna, STRUCT_ID_REFCOUNT);
 	RNA_def_struct_ui_icon(srna, ICON_OBJECT_DATA);
 
@@ -2258,13 +2221,13 @@ static void rna_def_object(BlenderRNA *brna)
 
 	prop = RNA_def_property(srna, "type", PROP_ENUM, PROP_NONE);
 	RNA_def_property_enum_sdna(prop, NULL, "type");
-	RNA_def_property_enum_items(prop, object_type_items);
+	RNA_def_property_enum_items(prop, rna_enum_object_type_items);
 	RNA_def_property_clear_flag(prop, PROP_EDITABLE);
 	RNA_def_property_ui_text(prop, "Type", "Type of Object");
 
 	prop = RNA_def_property(srna, "mode", PROP_ENUM, PROP_NONE);
 	RNA_def_property_enum_sdna(prop, NULL, "mode");
-	RNA_def_property_enum_items(prop, object_mode_items);
+	RNA_def_property_enum_items(prop, rna_enum_object_mode_items);
 	RNA_def_property_clear_flag(prop, PROP_EDITABLE);
 	RNA_def_property_ui_text(prop, "Mode", "Object interaction mode");
 
@@ -2328,7 +2291,7 @@ static void rna_def_object(BlenderRNA *brna)
 	 *      since some other tools still refer to this */
 	prop = RNA_def_property(srna, "track_axis", PROP_ENUM, PROP_NONE);
 	RNA_def_property_enum_sdna(prop, NULL, "trackflag");
-	RNA_def_property_enum_items(prop, object_axis_items);
+	RNA_def_property_enum_items(prop, rna_enum_object_axis_items);
 	RNA_def_property_ui_text(prop, "Track Axis",
 	                         "Axis that points in 'forward' direction (applies to DupliFrame when "
 	                         "parent 'Follow' is enabled)");
@@ -2425,6 +2388,8 @@ static void rna_def_object(BlenderRNA *brna)
 
 	prop = RNA_def_property(srna, "dimensions", PROP_FLOAT, PROP_XYZ_LENGTH);
 	RNA_def_property_array(prop, 3);
+	/* only for the transform-panel and conflicts with animating scale */
+	RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
 	RNA_def_property_float_funcs(prop, "rna_Object_dimensions_get", "rna_Object_dimensions_set", NULL);
 	RNA_def_property_ui_range(prop, 0.0f, FLT_MAX, 1, 3);
 	RNA_def_property_ui_text(prop, "Dimensions", "Absolute bounding box dimensions of the object");
@@ -2567,7 +2532,7 @@ static void rna_def_object(BlenderRNA *brna)
 	/* empty */
 	prop = RNA_def_property(srna, "empty_draw_type", PROP_ENUM, PROP_NONE);
 	RNA_def_property_enum_sdna(prop, NULL, "empty_drawtype");
-	RNA_def_property_enum_items(prop, object_empty_drawtype_items);
+	RNA_def_property_enum_items(prop, rna_enum_object_empty_drawtype_items);
 	RNA_def_property_enum_funcs(prop, NULL, "rna_Object_empty_draw_type_set", NULL);
 	RNA_def_property_ui_text(prop, "Empty Display Type", "Viewport display style for empties");
 	RNA_def_property_update(prop, NC_OBJECT | ND_DRAW, NULL);
@@ -2595,7 +2560,7 @@ static void rna_def_object(BlenderRNA *brna)
 	/* render */
 	prop = RNA_def_property(srna, "pass_index", PROP_INT, PROP_UNSIGNED);
 	RNA_def_property_int_sdna(prop, NULL, "index");
-	RNA_def_property_ui_text(prop, "Pass Index", "Index number for the IndexOB render pass");
+	RNA_def_property_ui_text(prop, "Pass Index", "Index number for the \"Object Index\" render pass");
 	RNA_def_property_update(prop, NC_OBJECT, "rna_Object_internal_update");
 	
 	prop = RNA_def_property(srna, "color", PROP_FLOAT, PROP_COLOR);
@@ -2603,28 +2568,6 @@ static void rna_def_object(BlenderRNA *brna)
 	RNA_def_property_ui_text(prop, "Color", "Object color and alpha, used when faces have the ObColor mode enabled");
 	RNA_def_property_update(prop, NC_OBJECT | ND_DRAW, NULL);
 
-	/* wire color set + wire colors */
-	prop = RNA_def_property(srna, "wire_color_set", PROP_ENUM, PROP_NONE);
-	RNA_def_property_enum_sdna(prop, NULL, "custom_wire_color");
-	RNA_def_property_enum_items(prop, wire_color_sets_items);
-	RNA_def_property_enum_funcs(prop, NULL, "rna_Object_wire_colorset_set", NULL);
-	RNA_def_property_ui_text(prop, "Wire Color Set", "Custom wire color set to use");
-	RNA_def_property_update(prop, NC_OBJECT | ND_DRAW, NULL);
-
-	prop = RNA_def_property(srna, "is_custom_wire_color_set", PROP_BOOLEAN, PROP_NONE);
-	RNA_def_property_boolean_funcs(prop, "rna_Object_is_custom_wire_colorset_get", NULL);
-	RNA_def_property_clear_flag(prop, PROP_EDITABLE);
-	RNA_def_property_ui_text(prop, "Custom Wire Color Set", "Wire Color set is user-defined instead of a fixed theme color set");
-
-	/* Comment from Bone Color Sets: TODO: editing the colors for this should result in changes to the color type... */
-	prop = RNA_def_property(srna, "wire_colors", PROP_POINTER, PROP_NONE);
-	RNA_def_property_flag(prop, PROP_NEVER_NULL);
-	RNA_def_property_struct_type(prop, "ThemeBoneColorSet");
-	/* Comment from Bone Color Sets: NOTE: the DNA data is not really a pointer, but this code works :) */
-	RNA_def_property_pointer_sdna(prop, NULL, "wcs");
-	RNA_def_property_ui_text(prop, "Wire Colors", "Copy of the wire colors associated with the object's wire color set");
-	RNA_def_property_update(prop, NC_OBJECT | ND_DRAW, NULL);
-	
 	/* physics */
 	prop = RNA_def_property(srna, "field", PROP_POINTER, PROP_NONE);
 	RNA_def_property_pointer_sdna(prop, NULL, "pd");
@@ -2841,7 +2784,7 @@ static void rna_def_object(BlenderRNA *brna)
 	RNA_def_property_pointer_sdna(prop, NULL, "gpd");
 	RNA_def_property_struct_type(prop, "GreasePencil");
 	RNA_def_property_flag(prop, PROP_EDITABLE | PROP_ID_REFCOUNT);
-	RNA_def_property_ui_text(prop, "Grease Pencil Data", "Grease Pencil datablock");
+	RNA_def_property_ui_text(prop, "Grease Pencil Data", "Grease Pencil data-block");
 	RNA_def_property_update(prop, NC_OBJECT | ND_DRAW, NULL);
 	
 	/* pose */

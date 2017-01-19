@@ -37,12 +37,14 @@
 
 #include "DNA_armature_types.h"
 #include "DNA_curve_types.h"
+#include "DNA_gpencil_types.h"
 #include "DNA_lattice_types.h"
 #include "DNA_meta_types.h"
 #include "DNA_screen_types.h"
 #include "DNA_scene_types.h"
 #include "DNA_view3d_types.h"
 
+#include "BLI_listbase.h"
 #include "BLI_math.h"
 #include "BLI_utildefines.h"
 
@@ -56,6 +58,7 @@
 #include "BKE_pointcache.h"
 #include "BKE_editmesh.h"
 #include "BKE_lattice.h"
+#include "BKE_gpencil.h"
 
 #include "BIF_gl.h"
 
@@ -66,6 +69,7 @@
 #include "ED_curve.h"
 #include "ED_particle.h"
 #include "ED_view3d.h"
+#include "ED_gpencil.h"
 
 #include "UI_resources.h"
 
@@ -272,6 +276,8 @@ static int calc_manipulator_stats(const bContext *C)
 	RegionView3D *rv3d = ar->regiondata;
 	Base *base;
 	Object *ob = OBACT;
+	bGPdata *gpd = CTX_data_gpencil_data(C);
+	const bool is_gp_edit = ((gpd) && (gpd->flag & GP_DATA_STROKE_EDITMODE));
 	int a, totsel = 0;
 
 	/* transform widget matrix */
@@ -282,8 +288,57 @@ static int calc_manipulator_stats(const bContext *C)
 	/* transform widget centroid/center */
 	INIT_MINMAX(scene->twmin, scene->twmax);
 	zero_v3(scene->twcent);
+	
+	if (is_gp_edit) {
+		float diff_mat[4][4];
+		float fpt[3];
 
-	if (obedit) {
+		for (bGPDlayer *gpl = gpd->layers.first; gpl; gpl = gpl->next) {
+			/* only editable and visible layers are considered */
+			if (gpencil_layer_is_editable(gpl) && (gpl->actframe != NULL)) {
+
+				/* calculate difference matrix if parent object */
+				if (gpl->parent != NULL) {
+					ED_gpencil_parent_location(gpl, diff_mat);
+				}
+
+				for (bGPDstroke *gps = gpl->actframe->strokes.first; gps; gps = gps->next) {
+					/* skip strokes that are invalid for current view */
+					if (ED_gpencil_stroke_can_use(C, gps) == false) {
+						continue;
+					}
+
+					/* we're only interested in selected points here... */
+					if (gps->flag & GP_STROKE_SELECT) {
+						bGPDspoint *pt;
+						int i;
+
+						/* Change selection status of all points, then make the stroke match */
+						for (i = 0, pt = gps->points; i < gps->totpoints; i++, pt++) {
+							if (pt->flag & GP_SPOINT_SELECT) {
+								if (gpl->parent == NULL) {
+									calc_tw_center(scene, &pt->x);
+									totsel++;
+								}
+								else {
+									mul_v3_m4v3(fpt, diff_mat, &pt->x);
+									calc_tw_center(scene, fpt);
+									totsel++;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+
+		/* selection center */
+		if (totsel) {
+			mul_v3_fl(scene->twcent, 1.0f / (float)totsel);   /* centroid! */
+		}
+	}
+	else if (obedit) {
 		ob = obedit;
 		if ((ob->lay & v3d->lay) == 0) return 0;
 
@@ -293,7 +348,7 @@ static int calc_manipulator_stats(const bContext *C)
 			float vec[3] = {0, 0, 0};
 
 			/* USE LAST SELECTE WITH ACTIVE */
-			if ((v3d->around == V3D_ACTIVE) && BM_select_history_active_get(em->bm, &ese)) {
+			if ((v3d->around == V3D_AROUND_ACTIVE) && BM_select_history_active_get(em->bm, &ese)) {
 				BM_editselection_center(&ese, vec);
 				calc_tw_center(scene, vec);
 				totsel = 1;
@@ -318,7 +373,7 @@ static int calc_manipulator_stats(const bContext *C)
 			bArmature *arm = obedit->data;
 			EditBone *ebo;
 
-			if ((v3d->around == V3D_ACTIVE) && (ebo = arm->act_edbone)) {
+			if ((v3d->around == V3D_AROUND_ACTIVE) && (ebo = arm->act_edbone)) {
 				/* doesn't check selection or visibility intentionally */
 				if (ebo->flag & BONE_TIPSEL) {
 					calc_tw_center(scene, ebo->tail);
@@ -339,7 +394,13 @@ static int calc_manipulator_stats(const bContext *C)
 							calc_tw_center(scene, ebo->tail);
 							totsel++;
 						}
-						if (ebo->flag & BONE_ROOTSEL) {
+						if ((ebo->flag & BONE_ROOTSEL) &&
+						    /* don't include same point multiple times */
+						    ((ebo->flag & BONE_CONNECTED) &&
+						     (ebo->parent != NULL) &&
+						     (ebo->parent->flag & BONE_TIPSEL) &&
+						     EBONE_VISIBLE(arm, ebo->parent)) == 0)
+						{
 							calc_tw_center(scene, ebo->head);
 							totsel++;
 						}
@@ -354,7 +415,7 @@ static int calc_manipulator_stats(const bContext *C)
 			Curve *cu = obedit->data;
 			float center[3];
 
-			if (v3d->around == V3D_ACTIVE && ED_curve_active_center(cu, center)) {
+			if (v3d->around == V3D_AROUND_ACTIVE && ED_curve_active_center(cu, center)) {
 				calc_tw_center(scene, center);
 				totsel++;
 			}
@@ -386,11 +447,11 @@ static int calc_manipulator_stats(const bContext *C)
 							}
 							else {
 								if (bezt->f1 & SELECT) {
-									calc_tw_center(scene, bezt->vec[(v3d->around == V3D_LOCAL) ? 1 : 0]);
+									calc_tw_center(scene, bezt->vec[(v3d->around == V3D_AROUND_LOCAL_ORIGINS) ? 1 : 0]);
 									totsel++;
 								}
 								if (bezt->f3 & SELECT) {
-									calc_tw_center(scene, bezt->vec[(v3d->around == V3D_LOCAL) ? 1 : 2]);
+									calc_tw_center(scene, bezt->vec[(v3d->around == V3D_AROUND_LOCAL_ORIGINS) ? 1 : 2]);
 									totsel++;
 								}
 							}
@@ -416,7 +477,7 @@ static int calc_manipulator_stats(const bContext *C)
 			MetaBall *mb = (MetaBall *)obedit->data;
 			MetaElem *ml;
 
-			if ((v3d->around == V3D_ACTIVE) && (ml = mb->lastelem)) {
+			if ((v3d->around == V3D_AROUND_ACTIVE) && (ml = mb->lastelem)) {
 				calc_tw_center(scene, &ml->x);
 				totsel++;
 			}
@@ -433,7 +494,7 @@ static int calc_manipulator_stats(const bContext *C)
 			Lattice *lt = ((Lattice *)obedit->data)->editlatt->latt;
 			BPoint *bp;
 
-			if ((v3d->around == V3D_ACTIVE) && (bp = BKE_lattice_active_point_get(lt))) {
+			if ((v3d->around == V3D_AROUND_ACTIVE) && (bp = BKE_lattice_active_point_get(lt))) {
 				calc_tw_center(scene, bp->vec);
 				totsel++;
 			}
@@ -465,7 +526,7 @@ static int calc_manipulator_stats(const bContext *C)
 
 		if ((ob->lay & v3d->lay) == 0) return 0;
 
-		if ((v3d->around == V3D_ACTIVE) && (pchan = BKE_pose_channel_active(ob))) {
+		if ((v3d->around == V3D_AROUND_ACTIVE) && (pchan = BKE_pose_channel_active(ob))) {
 			/* doesn't check selection or visibility intentionally */
 			Bone *bone = pchan->bone;
 			if (bone) {
@@ -546,7 +607,7 @@ static int calc_manipulator_stats(const bContext *C)
 	}
 
 	/* global, local or normal orientation? */
-	if (ob && totsel) {
+	if (ob && totsel && !is_gp_edit) {
 
 		switch (v3d->twmode) {
 		
@@ -643,7 +704,7 @@ static void test_manipulator_axis(const bContext *C)
 
 static float screen_aligned(RegionView3D *rv3d, float mat[4][4])
 {
-	glTranslatef(mat[3][0], mat[3][1], mat[3][2]);
+	glTranslate3fv(mat[3]);
 
 	/* sets view screen aligned */
 	glRotatef(-360.0f * saacos(rv3d->viewquat[0]) / (float)M_PI, rv3d->viewquat[1], rv3d->viewquat[2], rv3d->viewquat[3]);
@@ -923,7 +984,7 @@ static void draw_manipulator_rotate(
 	/* prepare for screen aligned draw */
 	size = len_v3(rv3d->twmat[0]);
 	glPushMatrix();
-	glTranslatef(rv3d->twmat[3][0], rv3d->twmat[3][1], rv3d->twmat[3][2]);
+	glTranslate3fv(rv3d->twmat[3]);
 
 	if (arcs) {
 		/* clipplane makes nice handles, calc here because of multmatrix but with translate! */
@@ -958,11 +1019,10 @@ static void draw_manipulator_rotate(
 
 		if (is_moving) {
 			float vec[3];
-			vec[0] = 0; // XXX (float)(t->imval[0] - t->center2d[0]);
-			vec[1] = 0; // XXX (float)(t->imval[1] - t->center2d[1]);
+			vec[0] = 0; // XXX (float)(t->mouse.imval[0] - t->center2d[0]);
+			vec[1] = 0; // XXX (float)(t->mouse.imval[1] - t->center2d[1]);
 			vec[2] = 0.0f;
-			normalize_v3(vec);
-			mul_v3_fl(vec, 1.2f * size);
+			normalize_v3_length(vec, 1.2f * size);
 			glBegin(GL_LINES);
 			glVertex3f(0.0f, 0.0f, 0.0f);
 			glVertex3fv(vec);
@@ -1298,6 +1358,7 @@ static void draw_manipulator_scale(
 		}
 	}
 
+#if 0 // XXX
 	/* if shiftkey, center point as last, for selectbuffer order */
 	if (is_picksel) {
 		int shift = 0; // XXX
@@ -1305,11 +1366,13 @@ static void draw_manipulator_scale(
 		if (shift) {
 			glTranslatef(0.0, -dz, 0.0);
 			GPU_select_load_id(MAN_SCALE_C);
+			/* TODO: set glPointSize before drawing center point */
 			glBegin(GL_POINTS);
 			glVertex3f(0.0, 0.0, 0.0);
 			glEnd();
 		}
 	}
+#endif
 
 	/* restore */
 	glLoadMatrixf(rv3d->viewmat);
@@ -1362,7 +1425,7 @@ static void draw_manipulator_translate(
 
 	manipulator_axis_order(rv3d, axis_order);
 
-	// XXX if (moving) glTranslatef(t->vec[0], t->vec[1], t->vec[2]);
+	// XXX if (moving) glTranslate3fv(t->vec);
 	glDisable(GL_DEPTH_TEST);
 
 	/* center circle, do not add to selection when shift is pressed (planar constraint) */
@@ -1476,11 +1539,10 @@ static void draw_manipulator_rotate_cyl(
 
 		if (is_moving) {
 			float vec[3];
-			vec[0] = 0; // XXX (float)(t->imval[0] - t->center2d[0]);
-			vec[1] = 0; // XXX (float)(t->imval[1] - t->center2d[1]);
+			vec[0] = 0; // XXX (float)(t->mouse.imval[0] - t->center2d[0]);
+			vec[1] = 0; // XXX (float)(t->mouse.imval[1] - t->center2d[1]);
 			vec[2] = 0.0f;
-			normalize_v3(vec);
-			mul_v3_fl(vec, 1.2f * size);
+			normalize_v3_length(vec, 1.2f * size);
 			glBegin(GL_LINES);
 			glVertex3f(0.0, 0.0, 0.0);
 			glVertex3fv(vec);
@@ -1582,6 +1644,8 @@ void BIF_draw_manipulator(const bContext *C)
 
 	if (!(v3d->twflag & V3D_USE_MANIPULATOR)) return;
 
+	if ((v3d->twtype & (V3D_MANIP_TRANSLATE | V3D_MANIP_ROTATE | V3D_MANIP_SCALE)) == 0) return;
+
 	{
 		v3d->twflag &= ~V3D_DRAW_MANIPULATOR;
 
@@ -1592,12 +1656,15 @@ void BIF_draw_manipulator(const bContext *C)
 
 		/* now we can define center */
 		switch (v3d->around) {
-			case V3D_CENTER:
-			case V3D_ACTIVE:
+			case V3D_AROUND_CENTER_BOUNDS:
+			case V3D_AROUND_ACTIVE:
 			{
-				Object *ob;
-				if (((v3d->around == V3D_ACTIVE) && (scene->obedit == NULL)) &&
-				    ((ob = OBACT) && !(ob->mode & OB_MODE_POSE)))
+				bGPdata *gpd = CTX_data_gpencil_data(C);
+				Object *ob = OBACT;
+
+				if (((v3d->around == V3D_AROUND_ACTIVE) && (scene->obedit == NULL)) &&
+				    ((gpd == NULL) || !(gpd->flag & GP_DATA_STROKE_EDITMODE)) &&
+				    (ob && !(ob->mode & OB_MODE_POSE)))
 				{
 					copy_v3_v3(rv3d->twmat[3], ob->obmat[3]);
 				}
@@ -1606,11 +1673,11 @@ void BIF_draw_manipulator(const bContext *C)
 				}
 				break;
 			}
-			case V3D_LOCAL:
-			case V3D_CENTROID:
+			case V3D_AROUND_LOCAL_ORIGINS:
+			case V3D_AROUND_CENTER_MEAN:
 				copy_v3_v3(rv3d->twmat[3], scene->twcent);
 				break;
-			case V3D_CURSOR:
+			case V3D_AROUND_CURSOR:
 				copy_v3_v3(rv3d->twmat[3], ED_view3d_cursor3d_get(scene, v3d));
 				break;
 		}
@@ -1627,11 +1694,11 @@ void BIF_draw_manipulator(const bContext *C)
 	drawflags = rv3d->twdrawflag;    /* set in calc_manipulator_stats */
 
 	if (v3d->twflag & V3D_DRAW_MANIPULATOR) {
-
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_BLEND);
-		if (v3d->twtype & V3D_MANIP_ROTATE) {
+		glLineWidth(1.0f);
 
+		if (v3d->twtype & V3D_MANIP_ROTATE) {
 			if (G.debug_value == 3) {
 				if (G.moving & (G_TRANSFORM_OBJ | G_TRANSFORM_EDIT))
 					draw_manipulator_rotate_cyl(v3d, rv3d, drawflags, v3d->twtype, MAN_MOVECOL, true, is_picksel);
@@ -1768,7 +1835,7 @@ int BIF_do_manipulator(bContext *C, const struct wmEvent *event, wmOperator *op)
 	ARegion *ar = CTX_wm_region(C);
 	int constraint_axis[3] = {0, 0, 0};
 	int val;
-	int shift = event->shift;
+	const bool use_planar = RNA_boolean_get(op->ptr, "use_planar_constraint");
 
 	if (!(v3d->twflag & V3D_USE_MANIPULATOR)) return 0;
 	if (!(v3d->twflag & V3D_DRAW_MANIPULATOR)) return 0;
@@ -1789,7 +1856,7 @@ int BIF_do_manipulator(bContext *C, const struct wmEvent *event, wmOperator *op)
 				case MAN_TRANS_C:
 					break;
 				case MAN_TRANS_X:
-					if (shift) {
+					if (use_planar) {
 						constraint_axis[1] = 1;
 						constraint_axis[2] = 1;
 					}
@@ -1797,7 +1864,7 @@ int BIF_do_manipulator(bContext *C, const struct wmEvent *event, wmOperator *op)
 						constraint_axis[0] = 1;
 					break;
 				case MAN_TRANS_Y:
-					if (shift) {
+					if (use_planar) {
 						constraint_axis[0] = 1;
 						constraint_axis[2] = 1;
 					}
@@ -1805,7 +1872,7 @@ int BIF_do_manipulator(bContext *C, const struct wmEvent *event, wmOperator *op)
 						constraint_axis[1] = 1;
 					break;
 				case MAN_TRANS_Z:
-					if (shift) {
+					if (use_planar) {
 						constraint_axis[0] = 1;
 						constraint_axis[1] = 1;
 					}
@@ -1819,7 +1886,7 @@ int BIF_do_manipulator(bContext *C, const struct wmEvent *event, wmOperator *op)
 		else if (drawflags & MAN_SCALE_C) {
 			switch (drawflags) {
 				case MAN_SCALE_X:
-					if (shift) {
+					if (use_planar) {
 						constraint_axis[1] = 1;
 						constraint_axis[2] = 1;
 					}
@@ -1827,7 +1894,7 @@ int BIF_do_manipulator(bContext *C, const struct wmEvent *event, wmOperator *op)
 						constraint_axis[0] = 1;
 					break;
 				case MAN_SCALE_Y:
-					if (shift) {
+					if (use_planar) {
 						constraint_axis[0] = 1;
 						constraint_axis[2] = 1;
 					}
@@ -1835,7 +1902,7 @@ int BIF_do_manipulator(bContext *C, const struct wmEvent *event, wmOperator *op)
 						constraint_axis[1] = 1;
 					break;
 				case MAN_SCALE_Z:
-					if (shift) {
+					if (use_planar) {
 						constraint_axis[0] = 1;
 						constraint_axis[1] = 1;
 					}

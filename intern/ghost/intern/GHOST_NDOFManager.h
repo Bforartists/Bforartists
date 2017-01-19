@@ -21,6 +21,10 @@
  * ***** END GPL LICENSE BLOCK *****
  */
 
+#ifndef WITH_INPUT_NDOF
+#  error NDOF code included in non-NDOF-enabled build
+#endif
+
 #ifndef __GHOST_NDOFMANAGER_H__
 #define __GHOST_NDOFMANAGER_H__
 
@@ -40,6 +44,7 @@ typedef enum {
 	NDOF_SpaceMousePro,
 	NDOF_SpaceMouseWireless,
 	NDOF_SpaceMouseProWireless,
+	NDOF_SpaceMouseEnterprise,
 
 	// older devices
 	NDOF_SpacePilot,
@@ -107,9 +112,12 @@ typedef enum {
 class GHOST_NDOFManager
 {
 public:
-	GHOST_NDOFManager(GHOST_System &);
-
+	GHOST_NDOFManager(GHOST_System&);
 	virtual ~GHOST_NDOFManager() {}
+
+	// whether multi-axis functionality is available (via the OS or driver)
+	// does not imply that a device is plugged in or being used
+	virtual bool available() = 0;
 
 	// each platform's device detection should call this
 	// use standard USB/HID identifiers
@@ -130,8 +138,8 @@ public:
 	//       rotations are + when CCW, - when CW
 	// each platform is responsible for getting axis data into this form
 	// these values should not be scaled (just shuffled or flipped)
-	void updateTranslation(const short t[3], GHOST_TUns64 time);
-	void updateRotation(const short r[3], GHOST_TUns64 time);
+	void updateTranslation(const int t[3], GHOST_TUns64 time);
+	void updateRotation(const int r[3], GHOST_TUns64 time);
 
 	// the latest raw button data from the device
 	// use HID button encoding (not NDOF_ButtonT)
@@ -155,8 +163,8 @@ private:
 	int m_buttonMask;
 	const NDOF_ButtonT *m_hidMap;
 
-	short m_translation[3];
-	short m_rotation[3];
+	int m_translation[3];
+	int m_rotation[3];
 	int m_buttons; // bit field
 
 	GHOST_TUns64 m_motionTime; // in milliseconds

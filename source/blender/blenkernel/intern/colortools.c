@@ -43,6 +43,7 @@
 #include "BLI_blenlib.h"
 #include "BLI_math.h"
 #include "BLI_utildefines.h"
+#include "BLI_task.h"
 #include "BLI_threads.h"
 
 #include "BKE_colortools.h"
@@ -52,10 +53,6 @@
 
 #include "IMB_colormanagement.h"
 #include "IMB_imbuf_types.h"
-
-#ifdef _OPENMP
-#  include <omp.h>
-#endif
 
 /* ********************************* color curve ********************* */
 
@@ -293,10 +290,12 @@ void curvemap_reset(CurveMap *cuma, const rctf *clipr, int preset, int slope)
 		case CURVE_PRESET_LINE:
 			cuma->curve[0].x = clipr->xmin;
 			cuma->curve[0].y = clipr->ymax;
-			cuma->curve[0].flag = 0;
 			cuma->curve[1].x = clipr->xmax;
 			cuma->curve[1].y = clipr->ymin;
-			cuma->curve[1].flag = 0;
+			if (slope == CURVEMAP_SLOPE_POS_NEG) {
+				cuma->curve[0].flag |= CUMA_HANDLE_VECTOR;
+				cuma->curve[1].flag |= CUMA_HANDLE_VECTOR;
+			}
 			break;
 		case CURVE_PRESET_SHARP:
 			cuma->curve[0].x = 0;
@@ -368,32 +367,68 @@ void curvemap_reset(CurveMap *cuma, const rctf *clipr, int preset, int slope)
 		MEM_freeN(cuma->curve);
 		cuma->curve = newpoints;
 	}
-	
+	else if (slope == CURVEMAP_SLOPE_POS_NEG) {
+		const int num_points = cuma->totpoint * 2 - 1;
+		CurveMapPoint *new_points = MEM_mallocN(num_points * sizeof(CurveMapPoint),
+		                                       "curve symmetric points");
+		int i;
+		for (i = 0; i < cuma->totpoint; i++) {
+			const int src_last_point = cuma->totpoint - i - 1;
+			const int dst_last_point = num_points - i - 1;
+			new_points[i] = cuma->curve[src_last_point];
+			new_points[i].x = (1.0f - cuma->curve[src_last_point].x) * 0.5f;
+			new_points[dst_last_point] = new_points[i];
+			new_points[dst_last_point].x = 0.5f + cuma->curve[src_last_point].x * 0.5f;
+		}
+		cuma->totpoint = num_points;
+		MEM_freeN(cuma->curve);
+		cuma->curve = new_points;
+	}
+
 	if (cuma->table) {
 		MEM_freeN(cuma->table);
 		cuma->table = NULL;
 	}
 }
 
-/* if type==1: vector, else auto */
-void curvemap_sethandle(CurveMap *cuma, int type)
+/**
+ * \param type: eBezTriple_Handle
+ */
+void curvemap_handle_set(CurveMap *cuma, int type)
 {
 	int a;
 	
 	for (a = 0; a < cuma->totpoint; a++) {
 		if (cuma->curve[a].flag & CUMA_SELECT) {
-			if (type) cuma->curve[a].flag |= CUMA_VECTOR;
-			else cuma->curve[a].flag &= ~CUMA_VECTOR;
+			cuma->curve[a].flag &= ~(CUMA_HANDLE_VECTOR | CUMA_HANDLE_AUTO_ANIM);
+			if (type == HD_VECT) {
+				cuma->curve[a].flag |= CUMA_HANDLE_VECTOR;
+			}
+			else if (type == HD_AUTO_ANIM) {
+				cuma->curve[a].flag |= CUMA_HANDLE_AUTO_ANIM;
+			}
+			else {
+				/* pass */
+			}
 		}
 	}
 }
 
 /* *********************** Making the tables and display ************** */
 
-/* reduced copy of garbled calchandleNurb() code in curve.c */
-static void calchandle_curvemap(BezTriple *bezt, BezTriple *prev, BezTriple *next, int UNUSED(mode))
+/**
+ * reduced copy of #calchandleNurb_intern code in curve.c
+ */
+static void calchandle_curvemap(
+        BezTriple *bezt, const BezTriple *prev, const BezTriple *next)
 {
-	float *p1, *p2, *p3, pt[3];
+	/* defines to avoid confusion */
+#define p2_h1 ((p2) - 3)
+#define p2_h2 ((p2) + 3)
+
+	const float *p1, *p3;
+	float *p2;
+	float pt[3];
 	float len, len_a, len_b;
 	float dvec_a[2], dvec_b[2];
 
@@ -432,7 +467,7 @@ static void calchandle_curvemap(BezTriple *bezt, BezTriple *prev, BezTriple *nex
 	if (len_a == 0.0f) len_a = 1.0f;
 	if (len_b == 0.0f) len_b = 1.0f;
 
-	if (bezt->h1 == HD_AUTO || bezt->h2 == HD_AUTO) { /* auto */
+	if (ELEM(bezt->h1, HD_AUTO, HD_AUTO_ANIM) || ELEM(bezt->h2, HD_AUTO, HD_AUTO_ANIM)) {    /* auto */
 		float tvec[2];
 		tvec[0] = dvec_b[0] / len_b + dvec_a[0] / len_a;
 		tvec[1] = dvec_b[1] / len_b + dvec_a[1] / len_a;
@@ -440,23 +475,70 @@ static void calchandle_curvemap(BezTriple *bezt, BezTriple *prev, BezTriple *nex
 		len = len_v2(tvec) * 2.5614f;
 		if (len != 0.0f) {
 			
-			if (bezt->h1 == HD_AUTO) {
+			if (ELEM(bezt->h1, HD_AUTO, HD_AUTO_ANIM)) {
 				len_a /= len;
-				madd_v2_v2v2fl(p2 - 3, p2, tvec, -len_a);
+				madd_v2_v2v2fl(p2_h1, p2, tvec, -len_a);
+
+				if ((bezt->h1 == HD_AUTO_ANIM) && next && prev) { /* keep horizontal if extrema */
+					const float ydiff1 = prev->vec[1][1] - bezt->vec[1][1];
+					const float ydiff2 = next->vec[1][1] - bezt->vec[1][1];
+					if ((ydiff1 <= 0.0f && ydiff2 <= 0.0f) ||
+					    (ydiff1 >= 0.0f && ydiff2 >= 0.0f))
+					{
+						bezt->vec[0][1] = bezt->vec[1][1];
+					}
+					else { /* handles should not be beyond y coord of two others */
+						if (ydiff1 <= 0.0f) {
+							if (prev->vec[1][1] > bezt->vec[0][1]) {
+								bezt->vec[0][1] = prev->vec[1][1];
+							}
+						}
+						else {
+							if (prev->vec[1][1] < bezt->vec[0][1]) {
+								bezt->vec[0][1] = prev->vec[1][1];
+							}
+						}
+					}
+				}
 			}
-			if (bezt->h2 == HD_AUTO) {
+			if (ELEM(bezt->h2, HD_AUTO, HD_AUTO_ANIM)) {
 				len_b /= len;
-				madd_v2_v2v2fl(p2 + 3, p2, tvec,  len_b);
+				madd_v2_v2v2fl(p2_h2, p2, tvec,  len_b);
+
+				if ((bezt->h2 == HD_AUTO_ANIM) && next && prev) { /* keep horizontal if extrema */
+					const float ydiff1 = prev->vec[1][1] - bezt->vec[1][1];
+					const float ydiff2 = next->vec[1][1] - bezt->vec[1][1];
+					if ((ydiff1 <= 0.0f && ydiff2 <= 0.0f)||
+					    (ydiff1 >= 0.0f && ydiff2 >= 0.0f))
+					{
+						bezt->vec[2][1] = bezt->vec[1][1];
+					}
+					else { /* handles should not be beyond y coord of two others */
+						if (ydiff1 <= 0.0f) {
+							if (next->vec[1][1] < bezt->vec[2][1]) {
+								bezt->vec[2][1] = next->vec[1][1];
+							}
+						}
+						else {
+							if (next->vec[1][1] > bezt->vec[2][1]) {
+								bezt->vec[2][1] = next->vec[1][1];
+							}
+						}
+					}
+				}
 			}
 		}
 	}
 
 	if (bezt->h1 == HD_VECT) {    /* vector */
-		madd_v2_v2v2fl(p2 - 3, p2, dvec_a, -1.0f / 3.0f);
+		madd_v2_v2v2fl(p2_h1, p2, dvec_a, -1.0f / 3.0f);
 	}
 	if (bezt->h2 == HD_VECT) {
-		madd_v2_v2v2fl(p2 + 3, p2, dvec_b,  1.0f / 3.0f);
+		madd_v2_v2v2fl(p2_h2, p2, dvec_b,  1.0f / 3.0f);
 	}
+
+#undef p2_h1
+#undef p2_h2
 }
 
 /* in X, out Y. 
@@ -512,19 +594,22 @@ static void curvemap_make_table(CurveMap *cuma, const rctf *clipr)
 		cuma->maxtable = max_ff(cuma->maxtable, cmp[a].x);
 		bezt[a].vec[1][0] = cmp[a].x;
 		bezt[a].vec[1][1] = cmp[a].y;
-		if (cmp[a].flag & CUMA_VECTOR)
+		if (cmp[a].flag & CUMA_HANDLE_VECTOR) {
 			bezt[a].h1 = bezt[a].h2 = HD_VECT;
-		else
+		}
+		else if (cmp[a].flag & CUMA_HANDLE_AUTO_ANIM) {
+			bezt[a].h1 = bezt[a].h2 = HD_AUTO_ANIM;
+		}
+		else {
 			bezt[a].h1 = bezt[a].h2 = HD_AUTO;
+		}
 	}
 	
+	const BezTriple *bezt_prev = NULL;
 	for (a = 0; a < cuma->totpoint; a++) {
-		if (a == 0)
-			calchandle_curvemap(bezt, NULL, bezt + 1, 0);
-		else if (a == cuma->totpoint - 1)
-			calchandle_curvemap(bezt + a, bezt + a - 1, NULL, 0);
-		else
-			calchandle_curvemap(bezt + a, bezt + a - 1, bezt + a + 1, 0);
+		const BezTriple *bezt_next = (a != cuma->totpoint - 1) ? &bezt[a + 1] : NULL;
+		calchandle_curvemap(&bezt[a], bezt_prev, bezt_next);
+		bezt_prev = &bezt[a];
 	}
 	
 	/* first and last handle need correction, instead of pointing to center of next/prev, 
@@ -747,12 +832,12 @@ void curvemapping_changed(CurveMapping *cumap, const bool rem_doubles)
 			dy = cmp[a].y - cmp[a + 1].y;
 			if (sqrtf(dx * dx + dy * dy) < thresh) {
 				if (a == 0) {
-					cmp[a + 1].flag |= CUMA_VECTOR;
+					cmp[a + 1].flag |= CUMA_HANDLE_VECTOR;
 					if (cmp[a + 1].flag & CUMA_SELECT)
 						cmp[a].flag |= CUMA_SELECT;
 				}
 				else {
-					cmp[a].flag |= CUMA_VECTOR;
+					cmp[a].flag |= CUMA_HANDLE_VECTOR;
 					if (cmp[a].flag & CUMA_SELECT)
 						cmp[a + 1].flag |= CUMA_SELECT;
 				}
@@ -956,6 +1041,7 @@ static void save_sample_line(Scopes *scopes, const int idx, const float fx, cons
 	/* waveform */
 	switch (scopes->wavefrm_mode) {
 		case SCOPES_WAVEFRM_RGB:
+		case SCOPES_WAVEFRM_RGB_PARADE:
 			scopes->waveform_1[idx + 0] = fx;
 			scopes->waveform_1[idx + 1] = rgb[0];
 			scopes->waveform_2[idx + 0] = fx;
@@ -1060,31 +1146,170 @@ void BKE_histogram_update_sample_line(Histogram *hist, ImBuf *ibuf, const ColorM
 }
 
 /* if view_settings, it also applies this to byte buffers */
+typedef struct ScopesUpdateData {
+	Scopes *scopes;
+	const ImBuf *ibuf;
+	struct ColormanageProcessor *cm_processor;
+	const unsigned char *display_buffer;
+	const int ycc_mode;
+
+	unsigned int *bin_lum, *bin_r, *bin_g, *bin_b, *bin_a;
+} ScopesUpdateData;
+
+typedef struct ScopesUpdateDataChunk {
+	unsigned int bin_lum[256];
+	unsigned int bin_r[256];
+	unsigned int bin_g[256];
+	unsigned int bin_b[256];
+	unsigned int bin_a[256];
+	float min[3], max[3];
+} ScopesUpdateDataChunk;
+
+static void scopes_update_cb(void *userdata, void *userdata_chunk, const int y, const int UNUSED(threadid))
+{
+	const ScopesUpdateData *data = userdata;
+
+	Scopes *scopes = data->scopes;
+	const ImBuf *ibuf = data->ibuf;
+	struct ColormanageProcessor *cm_processor = data->cm_processor;
+	const unsigned char *display_buffer = data->display_buffer;
+	const int ycc_mode = data->ycc_mode;
+
+	ScopesUpdateDataChunk *data_chunk = userdata_chunk;
+	unsigned int *bin_lum = data_chunk->bin_lum;
+	unsigned int *bin_r = data_chunk->bin_r;
+	unsigned int *bin_g = data_chunk->bin_g;
+	unsigned int *bin_b = data_chunk->bin_b;
+	unsigned int *bin_a = data_chunk->bin_a;
+	float *min = data_chunk->min;
+	float *max = data_chunk->max;
+
+	const float *rf = NULL;
+	const unsigned char *rc = NULL;
+	const int rows_per_sample_line = ibuf->y / scopes->sample_lines;
+	const int savedlines = y / rows_per_sample_line;
+	const bool do_sample_line = (savedlines < scopes->sample_lines) && (y % rows_per_sample_line) == 0;
+	const bool is_float = (ibuf->rect_float != NULL);
+
+	if (is_float)
+		rf = ibuf->rect_float + ((size_t)y) * ibuf->x * ibuf->channels;
+	else {
+		rc = display_buffer + ((size_t)y) * ibuf->x * ibuf->channels;
+	}
+
+	for (int x = 0; x < ibuf->x; x++) {
+		float rgba[4], ycc[3], luma;
+
+		if (is_float) {
+			switch (ibuf->channels) {
+				case 4:
+					copy_v4_v4(rgba, rf);
+					IMB_colormanagement_processor_apply_v4(cm_processor, rgba);
+					break;
+				case 3:
+					copy_v3_v3(rgba, rf);
+					IMB_colormanagement_processor_apply_v3(cm_processor, rgba);
+					rgba[3] = 1.0f;
+					break;
+				case 2:
+					copy_v3_fl(rgba, rf[0]);
+					rgba[3] = rf[1];
+					break;
+				case 1:
+					copy_v3_fl(rgba, rf[0]);
+					rgba[3] = 1.0f;
+					break;
+				default:
+					BLI_assert(0);
+			}
+		}
+		else {
+			for (int c = 4; c--;)
+				rgba[c] = rc[c] * INV_255;
+		}
+
+		/* we still need luma for histogram */
+		luma = IMB_colormanagement_get_luminance(rgba);
+
+		/* check for min max */
+		if (ycc_mode == -1) {
+			minmax_v3v3_v3(min, max, rgba);
+		}
+		else {
+			rgb_to_ycc(rgba[0], rgba[1], rgba[2], &ycc[0], &ycc[1], &ycc[2], ycc_mode);
+			mul_v3_fl(ycc, INV_255);
+			minmax_v3v3_v3(min, max, ycc);
+		}
+		/* increment count for histo*/
+		bin_lum[get_bin_float(luma)]++;
+		bin_r[get_bin_float(rgba[0])]++;
+		bin_g[get_bin_float(rgba[1])]++;
+		bin_b[get_bin_float(rgba[2])]++;
+		bin_a[get_bin_float(rgba[3])]++;
+
+		/* save sample if needed */
+		if (do_sample_line) {
+			const float fx = (float)x / (float)ibuf->x;
+			const int idx = 2 * (ibuf->x * savedlines + x);
+			save_sample_line(scopes, idx, fx, rgba, ycc);
+		}
+
+		rf += ibuf->channels;
+		rc += ibuf->channels;
+	}
+}
+
+static void scopes_update_finalize(void *userdata, void *userdata_chunk)
+{
+	const ScopesUpdateData *data = userdata;
+	const ScopesUpdateDataChunk *data_chunk = userdata_chunk;
+
+	unsigned int *bin_lum = data->bin_lum;
+	unsigned int *bin_r = data->bin_r;
+	unsigned int *bin_g = data->bin_g;
+	unsigned int *bin_b = data->bin_b;
+	unsigned int *bin_a = data->bin_a;
+	const unsigned int *bin_lum_c = data_chunk->bin_lum;
+	const unsigned int *bin_r_c = data_chunk->bin_r;
+	const unsigned int *bin_g_c = data_chunk->bin_g;
+	const unsigned int *bin_b_c = data_chunk->bin_b;
+	const unsigned int *bin_a_c = data_chunk->bin_a;
+
+	float (*minmax)[2] = data->scopes->minmax;
+	const float *min = data_chunk->min;
+	const float *max = data_chunk->max;
+
+	for (int b = 256; b--;) {
+		bin_lum[b] += bin_lum_c[b];
+		bin_r[b] += bin_r_c[b];
+		bin_g[b] += bin_g_c[b];
+		bin_b[b] += bin_b_c[b];
+		bin_a[b] += bin_a_c[b];
+	}
+
+	for (int c = 3; c--;) {
+		if (min[c] < minmax[c][0])
+			minmax[c][0] = min[c];
+		if (max[c] > minmax[c][1])
+			minmax[c][1] = max[c];
+	}
+}
+
 void scopes_update(Scopes *scopes, ImBuf *ibuf, const ColorManagedViewSettings *view_settings,
                    const ColorManagedDisplaySettings *display_settings)
 {
-#ifdef _OPENMP
-	const int num_threads = BLI_system_thread_count();
-#endif
-	int a, y;
+	int a;
 	unsigned int nl, na, nr, ng, nb;
 	double divl, diva, divr, divg, divb;
-	unsigned char *display_buffer;
+	const unsigned char *display_buffer = NULL;
 	unsigned int bin_lum[256] = {0},
 	             bin_r[256] = {0},
 	             bin_g[256] = {0},
 	             bin_b[256] = {0},
 	             bin_a[256] = {0};
-	unsigned int bin_lum_t[BLENDER_MAX_THREADS][256] = {{0}},
-	             bin_r_t[BLENDER_MAX_THREADS][256] = {{0}},
-	             bin_g_t[BLENDER_MAX_THREADS][256] = {{0}},
-	             bin_b_t[BLENDER_MAX_THREADS][256] = {{0}},
-	             bin_a_t[BLENDER_MAX_THREADS][256] = {{0}};
 	int ycc_mode = -1;
-	const bool is_float = (ibuf->rect_float != NULL);
 	void *cache_handle = NULL;
 	struct ColormanageProcessor *cm_processor = NULL;
-	int rows_per_sample_line;
 
 	if (ibuf->rect == NULL && ibuf->rect_float == NULL) return;
 
@@ -1100,6 +1325,8 @@ void scopes_update(Scopes *scopes, ImBuf *ibuf, const ColorManagedViewSettings *
 
 	switch (scopes->wavefrm_mode) {
 		case SCOPES_WAVEFRM_RGB:
+			/* fall-through */
+		case SCOPES_WAVEFRM_RGB_PARADE:
 			ycc_mode = -1;
 			break;
 		case SCOPES_WAVEFRM_LUMA:
@@ -1122,7 +1349,6 @@ void scopes_update(Scopes *scopes, ImBuf *ibuf, const ColorManagedViewSettings *
 		scopes->sample_lines = ibuf->y;
 
 	/* scan the image */
-	rows_per_sample_line = ibuf->y / scopes->sample_lines;
 	for (a = 0; a < 3; a++) {
 		scopes->minmax[a][0] = 25500.0f;
 		scopes->minmax[a][1] = -25500.0f;
@@ -1148,129 +1374,21 @@ void scopes_update(Scopes *scopes, ImBuf *ibuf, const ColorManagedViewSettings *
 		cm_processor = IMB_colormanagement_display_processor_new(view_settings, display_settings);
 	}
 	else {
-		display_buffer = (unsigned char *)IMB_display_buffer_acquire(ibuf,
-		                                                             view_settings,
-		                                                             display_settings,
-		                                                             &cache_handle);
+		display_buffer = (const unsigned char *)IMB_display_buffer_acquire(
+		                                            ibuf, view_settings, display_settings, &cache_handle);
 	}
 
 	/* Keep number of threads in sync with the merge parts below. */
-#pragma omp parallel for private(y) schedule(static) num_threads(num_threads) if (ibuf->y > 256)
-	for (y = 0; y < ibuf->y; y++) {
-#ifdef _OPENMP
-		const int thread_idx = omp_get_thread_num();
-#else
-		const int thread_idx = 0;
-#endif
-		const float *rf = NULL;
-		const unsigned char *rc = NULL;
-		const int savedlines = y / rows_per_sample_line;
-		const bool do_sample_line = (savedlines < scopes->sample_lines) && (y % rows_per_sample_line) == 0;
-		float min[3] = { FLT_MAX,  FLT_MAX,  FLT_MAX},
-		      max[3] = {-FLT_MAX, -FLT_MAX, -FLT_MAX};
-		int x, c;
-		if (is_float)
-			rf = ibuf->rect_float + ((size_t)y) * ibuf->x * ibuf->channels;
-		else {
-			rc = display_buffer + ((size_t)y) * ibuf->x * ibuf->channels;
-		}
-		for (x = 0; x < ibuf->x; x++) {
-			float rgba[4], ycc[3], luma;
-			if (is_float) {
+	ScopesUpdateData data = {
+		.scopes = scopes, . ibuf = ibuf,
+		.cm_processor = cm_processor, .display_buffer = display_buffer, .ycc_mode = ycc_mode,
+		.bin_lum = bin_lum, .bin_r = bin_r, .bin_g = bin_g, .bin_b = bin_b, .bin_a = bin_a,
+	};
+	ScopesUpdateDataChunk data_chunk = {{0}};
+	INIT_MINMAX(data_chunk.min, data_chunk.max);
 
-				switch (ibuf->channels) {
-					case 4:
-						copy_v4_v4(rgba, rf);
-						IMB_colormanagement_processor_apply_v4(cm_processor, rgba);
-						break;
-					case 3:
-						copy_v3_v3(rgba, rf);
-						IMB_colormanagement_processor_apply_v3(cm_processor, rgba);
-						rgba[3] = 1.0f;
-						break;
-					case 2:
-						copy_v3_fl(rgba, rf[0]);
-						rgba[3] = rf[1];
-						break;
-					case 1:
-						copy_v3_fl(rgba, rf[0]);
-						rgba[3] = 1.0f;
-						break;
-					default:
-						BLI_assert(0);
-				}
-			}
-			else {
-				for (c = 0; c < 4; c++)
-					rgba[c] = rc[c] * INV_255;
-			}
-
-			/* we still need luma for histogram */
-			luma = IMB_colormanagement_get_luminance(rgba);
-
-			/* check for min max */
-			if (ycc_mode == -1) {
-				for (c = 0; c < 3; c++) {
-					if (rgba[c] < min[c]) min[c] = rgba[c];
-					if (rgba[c] > max[c]) max[c] = rgba[c];
-				}
-			}
-			else {
-				rgb_to_ycc(rgba[0], rgba[1], rgba[2], &ycc[0], &ycc[1], &ycc[2], ycc_mode);
-				for (c = 0; c < 3; c++) {
-					ycc[c] *= INV_255;
-					if (ycc[c] < min[c]) min[c] = ycc[c];
-					if (ycc[c] > max[c]) max[c] = ycc[c];
-				}
-			}
-			/* increment count for histo*/
-			bin_lum_t[thread_idx][get_bin_float(luma)] += 1;
-			bin_r_t[thread_idx][get_bin_float(rgba[0])] += 1;
-			bin_g_t[thread_idx][get_bin_float(rgba[1])] += 1;
-			bin_b_t[thread_idx][get_bin_float(rgba[2])] += 1;
-			bin_a_t[thread_idx][get_bin_float(rgba[3])] += 1;
-
-			/* save sample if needed */
-			if (do_sample_line) {
-				const float fx = (float)x / (float)ibuf->x;
-				const int idx = 2 * (ibuf->x * savedlines + x);
-				save_sample_line(scopes, idx, fx, rgba, ycc);
-			}
-
-			rf += ibuf->channels;
-			rc += ibuf->channels;
-		}
-#pragma omp critical
-		{
-			for (c = 0; c < 3; c++) {
-				if (min[c] < scopes->minmax[c][0]) scopes->minmax[c][0] = min[c];
-				if (max[c] > scopes->minmax[c][1]) scopes->minmax[c][1] = max[c];
-			}
-		}
-	}
-
-#ifdef _OPENMP
-	if (ibuf->y > 256) {
-		for (a = 0; a < num_threads; a++) {
-			int b;
-			for (b = 0; b < 256; b++) {
-				bin_lum[b] += bin_lum_t[a][b];
-				bin_r[b] += bin_r_t[a][b];
-				bin_g[b] += bin_g_t[a][b];
-				bin_b[b] += bin_b_t[a][b];
-				bin_a[b] += bin_a_t[a][b];
-			}
-		}
-	}
-	else
-#endif
-	{
-		memcpy(bin_lum, bin_lum_t[0], sizeof(bin_lum));
-		memcpy(bin_r, bin_r_t[0], sizeof(bin_r));
-		memcpy(bin_g, bin_g_t[0], sizeof(bin_g));
-		memcpy(bin_b, bin_b_t[0], sizeof(bin_b));
-		memcpy(bin_a, bin_a_t[0], sizeof(bin_a));
-	}
+	BLI_task_parallel_range_finalize(0, ibuf->y, &data, &data_chunk, sizeof(data_chunk),
+	                                 scopes_update_cb, scopes_update_finalize, ibuf->y > 256, false);
 
 	/* test for nicer distribution even - non standard, leave it out for a while */
 #if 0

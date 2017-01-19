@@ -34,10 +34,20 @@
 struct bContext;
 struct bAnimContext;
 struct SpaceAction;
+struct ScrArea;
 struct ARegion;
+struct ARegionType;
 struct wmOperatorType;
 
 /* internal exports only */
+
+/* **************************************** */
+/* space_action.c / action_buttons.c */
+
+struct ARegion *action_has_buttons_region(struct ScrArea *sa);
+
+void action_buttons_register(struct ARegionType *art);
+void ACTION_OT_properties(struct wmOperatorType *ot);
 
 /* ***************************************** */
 /* action_draw.c */
@@ -49,6 +59,8 @@ void draw_channel_strips(struct bAnimContext *ac, struct SpaceAction *saction, s
 
 void ACTION_OT_select_all_toggle(struct wmOperatorType *ot);
 void ACTION_OT_select_border(struct wmOperatorType *ot);
+void ACTION_OT_select_lasso(struct wmOperatorType *ot);
+void ACTION_OT_select_circle(struct wmOperatorType *ot);
 void ACTION_OT_select_column(struct wmOperatorType *ot);
 void ACTION_OT_select_linked(struct wmOperatorType *ot);
 void ACTION_OT_select_more(struct wmOperatorType *ot);

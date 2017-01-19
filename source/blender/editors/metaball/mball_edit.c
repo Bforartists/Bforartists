@@ -63,7 +63,7 @@
 #include "mball_intern.h"
 
 /* This function is used to free all MetaElems from MetaBall */
-void free_editMball(Object *obedit)
+void ED_mball_editmball_free(Object *obedit)
 {
 	MetaBall *mb = (MetaBall *)obedit->data;
 
@@ -73,7 +73,7 @@ void free_editMball(Object *obedit)
 
 /* This function is called, when MetaBall Object is
  * switched from object mode to edit mode */
-void make_editMball(Object *obedit)
+void ED_mball_editmball_make(Object *obedit)
 {
 	MetaBall *mb = (MetaBall *)obedit->data;
 	MetaElem *ml; /*, *newml;*/
@@ -91,12 +91,12 @@ void make_editMball(Object *obedit)
 /* This function is called, when MetaBall Object switched from
  * edit mode to object mode. List of MetaElements is copied
  * from object->data->edit_elems to object->data->elems. */
-void load_editMball(Object *UNUSED(obedit))
+void ED_mball_editmball_load(Object *UNUSED(obedit))
 {
 }
 
 /* Add metaelem primitive to metaball object (which is in edit mode) */
-MetaElem *add_metaball_primitive(bContext *UNUSED(C), Object *obedit, float mat[4][4], float dia, int type)
+MetaElem *ED_mball_add_primitive(bContext *UNUSED(C), Object *obedit, float mat[4][4], float dia, int type)
 {
 	MetaBall *mball = (MetaBall *)obedit->data;
 	MetaElem *ml;
@@ -372,17 +372,22 @@ static int select_random_metaelems_exec(bContext *C, wmOperator *op)
 	MetaBall *mb = (MetaBall *)obedit->data;
 	MetaElem *ml;
 	const bool select = (RNA_enum_get(op->ptr, "action") == SEL_SELECT);
-	float percent = RNA_float_get(op->ptr, "percent") / 100.0f;
+	const float randfac = RNA_float_get(op->ptr, "percent") / 100.0f;
+	const int seed = WM_operator_properties_select_random_seed_increment_get(op);
 	
+	RNG *rng = BLI_rng_new_srandom(seed);
+
 	for (ml = mb->editelems->first; ml; ml = ml->next) {
-		if (BLI_frand() < percent) {
+		if (BLI_rng_get_float(rng) < randfac) {
 			if (select)
 				ml->flag |= SELECT;
 			else
 				ml->flag &= ~SELECT;
 		}
 	}
-	
+
+	BLI_rng_free(rng);
+
 	WM_event_add_notifier(C, NC_GEOM | ND_SELECT, mb);
 	
 	return OPERATOR_FINISHED;
@@ -404,9 +409,7 @@ void MBALL_OT_select_random_metaelems(struct wmOperatorType *ot)
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 	
 	/* properties */
-	RNA_def_float_percentage(ot->srna, "percent", 50.f, 0.0f, 100.0f,
-	                         "Percent", "Percentage of elements to select randomly", 0.0f, 100.0f);
-	WM_operator_properties_select_action_simple(ot, SEL_SELECT);
+	WM_operator_properties_select_random(ot);
 }
 
 /***************************** Duplicate operator *****************************/
@@ -576,7 +579,7 @@ void MBALL_OT_reveal_metaelems(wmOperatorType *ot)
 
 /* Select MetaElement with mouse click (user can select radius circle or
  * stiffness circle) */
-bool mouse_mball(bContext *C, const int mval[2], bool extend, bool deselect, bool toggle)
+bool ED_mball_select_pick(bContext *C, const int mval[2], bool extend, bool deselect, bool toggle)
 {
 	static MetaElem *startelem = NULL;
 	Object *obedit = CTX_data_edit_object(C);
@@ -662,6 +665,11 @@ bool mouse_mball(bContext *C, const int mval[2], bool extend, bool deselect, boo
 
 /*  ************* undo for MetaBalls ************* */
 
+typedef struct UndoMBall {
+	ListBase editelems;
+	int lastelem_index;
+} UndoMBall;
+
 /* free all MetaElems from ListBase */
 static void freeMetaElemlist(ListBase *lb)
 {
@@ -675,58 +683,61 @@ static void freeMetaElemlist(ListBase *lb)
 }
 
 
-static void undoMball_to_editMball(void *lbu, void *lbe, void *UNUSED(obe))
+static void undoMball_to_editMball(void *umb_v, void *mb_v, void *UNUSED(obdata))
 {
-	ListBase *lb = lbu;
-	ListBase *editelems = lbe;
-	MetaElem *ml, *newml;
-	
-	freeMetaElemlist(editelems);
+	MetaBall *mb = mb_v;
+	UndoMBall *umb = umb_v;
+
+	freeMetaElemlist(mb->editelems);
+	mb->lastelem = NULL;
 
 	/* copy 'undo' MetaElems to 'edit' MetaElems */
-	ml = lb->first;
-	while (ml) {
-		newml = MEM_dupallocN(ml);
-		BLI_addtail(editelems, newml);
-		ml = ml->next;
+	int index = 0;
+	for (MetaElem *ml_undo = umb->editelems.first; ml_undo; ml_undo = ml_undo->next, index += 1) {
+		MetaElem *ml_edit = MEM_dupallocN(ml_undo);
+		BLI_addtail(mb->editelems, ml_edit);
+		if (index == umb->lastelem_index) {
+			mb->lastelem = ml_edit;
+		}
 	}
 	
 }
 
-static void *editMball_to_undoMball(void *lbe, void *UNUSED(obe))
+static void *editMball_to_undoMball(void *mb_v, void *UNUSED(obdata))
 {
-	ListBase *editelems = lbe;
-	ListBase *lb;
-	MetaElem *ml, *newml;
+	MetaBall *mb = mb_v;
+	UndoMBall *umb;
 
 	/* allocate memory for undo ListBase */
-	lb = MEM_callocN(sizeof(ListBase), "listbase undo");
+	umb = MEM_callocN(sizeof(UndoMBall), __func__);
+	umb->lastelem_index = -1;
 	
 	/* copy contents of current ListBase to the undo ListBase */
-	ml = editelems->first;
-	while (ml) {
-		newml = MEM_dupallocN(ml);
-		BLI_addtail(lb, newml);
-		ml = ml->next;
+	int index = 0;
+	for (MetaElem *ml_edit = mb->editelems->first; ml_edit; ml_edit = ml_edit->next, index += 1) {
+		MetaElem *ml_undo = MEM_dupallocN(ml_edit);
+		BLI_addtail(&umb->editelems, ml_undo);
+		if (ml_edit == mb->lastelem) {
+			umb->lastelem_index = index;
+		}
 	}
 	
-	return lb;
+	return umb;
 }
 
 /* free undo ListBase of MetaElems */
-static void free_undoMball(void *lbv)
+static void free_undoMball(void *umb_v)
 {
-	ListBase *lb = lbv;
+	UndoMBall *umb = umb_v;
 	
-	freeMetaElemlist(lb);
-	MEM_freeN(lb);
+	freeMetaElemlist(&umb->editelems);
+	MEM_freeN(umb);
 }
 
-static ListBase *metaball_get_editelems(Object *ob)
+static MetaBall *metaball_get_obdata(Object *ob)
 {
 	if (ob && ob->type == OB_MBALL) {
-		struct MetaBall *mb = (struct MetaBall *)ob->data;
-		return mb->editelems;
+		return ob->data;
 	}
 	return NULL;
 }
@@ -735,7 +746,7 @@ static ListBase *metaball_get_editelems(Object *ob)
 static void *get_data(bContext *C)
 {
 	Object *obedit = CTX_data_edit_object(C);
-	return metaball_get_editelems(obedit);
+	return metaball_get_obdata(obedit);
 }
 
 /* this is undo system for MetaBalls */

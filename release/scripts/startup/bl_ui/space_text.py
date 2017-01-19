@@ -1,4 +1,4 @@
-﻿# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -32,8 +32,8 @@ class TEXT_HT_header(Header):
         text = st.text
 
         row = layout.row(align=True)
+        row.template_header()
 
-        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
         TEXT_MT_editor_menus.draw_collapsible(context, layout)
 
         if text and text.is_modified:
@@ -43,6 +43,11 @@ class TEXT_HT_header(Header):
 
         row = layout.row(align=True)
         row.template_ID(st, "text", new="text.new", unlink="text.unlink", open="text.open")
+
+        row = layout.row(align=True)
+        row.prop(st, "show_line_numbers", text="")
+        row.prop(st, "show_word_wrap", text="")
+        row.prop(st, "show_syntax_highlight", text="")
 
         if text:
             osl = text.name.endswith(".osl") or text.name.endswith(".oso")
@@ -71,18 +76,6 @@ class TEXT_HT_header(Header):
                           if text.library
                           else "Text: Internal")
 
-# bfa - show hide the editormenu
-class ALL_MT_editormenu(Menu):
-    bl_label = ""
-
-    def draw(self, context):
-        self.draw_menus(self.layout, context)
-
-    @staticmethod
-    def draw_menus(layout, context):
-
-        row = layout.row(align=True)
-        row.template_header() # editor type menus
 
 class TEXT_MT_editor_menus(Menu):
     bl_idname = "TEXT_MT_editor_menus"
@@ -96,13 +89,14 @@ class TEXT_MT_editor_menus(Menu):
         st = context.space_data
         text = st.text
 
-        layout.menu("TEXT_MT_File")
         layout.menu("TEXT_MT_view")
-        
+        layout.menu("TEXT_MT_text")
 
         if text:
             layout.menu("TEXT_MT_edit")
             layout.menu("TEXT_MT_format")
+
+        layout.menu("TEXT_MT_templates")
 
 
 class TEXT_PT_properties(Panel):
@@ -115,21 +109,10 @@ class TEXT_PT_properties(Panel):
 
         st = context.space_data
 
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
-
-        if not scene.UItweaks.icon_or_text: 
-            flow = layout.column_flow()
-            flow.prop(st, "show_line_numbers")
-            flow.prop(st, "show_word_wrap")
-            flow.prop(st, "show_syntax_highlight")
-        else:
-            flow = layout.column_flow()
-            row = flow.row(align=False)
-            row.alignment = 'LEFT'
-            row.prop(st, "show_line_numbers", text = "")
-            row.prop(st, "show_word_wrap", text = "")
-            row.prop(st, "show_syntax_highlight", text = "")
-
+        flow = layout.column_flow()
+        flow.prop(st, "show_line_numbers")
+        flow.prop(st, "show_word_wrap")
+        flow.prop(st, "show_syntax_highlight")
         flow.prop(st, "show_line_highlight")
         flow.prop(st, "use_live_edit")
 
@@ -177,18 +160,6 @@ class TEXT_PT_find(Panel):
         row.prop(st, "use_find_wrap", text="Wrap")
         row.prop(st, "use_find_all", text="All")
 
-# Workaround to separate the tooltips for Toggle Maximize Area
-# Note that this id name also gets used in the other editors now.
-
-class TEXT_Toggle_Maximize_Area(bpy.types.Operator):
-    """Toggle Maximize Area\nToggle display selected area as maximized"""      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "screen.toggle_maximized_area"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Toggle Maximize Area"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    def execute(self, context):        # execute() is called by blender when running the operator.
-        bpy.ops.screen.screen_full_area(use_hide_panels = False)
-        return {'FINISHED'}  
 
 class TEXT_MT_view(Menu):
     bl_label = "View"
@@ -210,12 +181,12 @@ class TEXT_MT_view(Menu):
         layout.separator()
 
         layout.operator("screen.area_dupli")
-        layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area") # bfa - the new separated tooltip. Class is in space_text.py
-        layout.operator("screen.screen_full_area").use_hide_panels = True
+        layout.operator("screen.screen_full_area")
+        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area").use_hide_panels = True
 
 
-class TEXT_MT_File(Menu):
-    bl_label = "File"
+class TEXT_MT_text(Menu):
+    bl_label = "Text"
 
     def draw(self, context):
         layout = self.layout
@@ -223,25 +194,21 @@ class TEXT_MT_File(Menu):
         st = context.space_data
         text = st.text
 
-        layout.operator("text.new", text = "New Text", icon='NEW')
-        layout.operator("text.open", text = "Open Text", icon='FILE_FOLDER')
+        layout.operator("text.new")
+        layout.operator("text.open")
 
         if text:
             layout.operator("text.reload")
 
             layout.column()
-            layout.operator("text.save", icon='FILE_TICK')
-            layout.operator("text.save_as", icon='SAVE_AS')
+            layout.operator("text.save")
+            layout.operator("text.save_as")
 
             if text.filepath:
                 layout.operator("text.make_internal")
 
             layout.column()
             layout.operator("text.run_script")
-
-        layout.separator()
-
-        layout.menu("TEXT_MT_templates")
 
 
 class TEXT_MT_templates_py(Menu):
@@ -271,6 +238,16 @@ class TEXT_MT_templates(Menu):
         layout = self.layout
         layout.menu("TEXT_MT_templates_py")
         layout.menu("TEXT_MT_templates_osl")
+
+
+class TEXT_MT_edit_select(Menu):
+    bl_label = "Select"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("text.select_all")
+        layout.operator("text.select_line")
 
 
 class TEXT_MT_format(Menu):
@@ -335,10 +312,7 @@ class TEXT_MT_edit(Menu):
 
         layout.separator()
 
-        layout.operator("text.select_all")
-        layout.operator("text.select_line")
-
-        layout.operator_menu_enum("text.delete", "type")
+        layout.menu("TEXT_MT_edit_select")
 
         layout.separator()
 

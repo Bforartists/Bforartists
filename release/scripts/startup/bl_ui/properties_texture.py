@@ -242,7 +242,7 @@ class TEXTURE_PT_preview(TextureButtonsPanel, Panel):
         else:
             layout.template_preview(tex, slot=slot)
 
-        #Show Alpha Button for Brush Textures, see #29502
+        # Show Alpha Button for Brush Textures, see #29502
         if context.space_data.texture_context == 'BRUSH':
             layout.prop(tex, "use_preview_alpha")
 
@@ -499,7 +499,7 @@ class TEXTURE_PT_image_sampling(TextureTypePanel, Panel):
 
         col = split.column()
 
-        #Only for Material based textures, not for Lamp/World...
+        # Only for Material based textures, not for Lamp/World...
         if slot and isinstance(idblock, Material):
             col.prop(tex, "use_normal_map")
             row = col.row()
@@ -534,7 +534,7 @@ class TEXTURE_PT_image_sampling(TextureTypePanel, Panel):
 
         col = split.column()
 
-        #Only for Material based textures, not for Lamp/World...
+        # Only for Material based textures, not for Lamp/World...
         if slot and isinstance(idblock, Material):
             col.prop(tex, "use_normal_map")
             row = col.row()
@@ -591,7 +591,7 @@ class TEXTURE_PT_image_mapping(TextureTypePanel, Panel):
         split = layout.split()
 
         col = split.column(align=True)
-        #col.prop(tex, "crop_rectangle")
+        # col.prop(tex, "crop_rectangle")
         col.label(text="Crop Minimum:")
         col.prop(tex, "crop_min_x", text="X")
         col.prop(tex, "crop_min_y", text="Y")
@@ -778,7 +778,7 @@ class TEXTURE_PT_voxeldata(TextureButtonsPanel, Panel):
         elif vd.file_format == 'IMAGE_SEQUENCE':
             layout.template_ID(tex, "image", open="image.open")
             layout.template_image(tex, "image", tex.image_user, compact=True)
-            #layout.prop(vd, "frame_duration")
+            # layout.prop(vd, "frame_duration")
 
         if vd.file_format in {'BLENDER_VOXEL', 'RAW_8BIT'}:
             layout.prop(vd, "use_still_frame")
@@ -831,12 +831,21 @@ class TEXTURE_PT_pointdensity(TextureButtonsPanel, Panel):
 
         col.separator()
 
+        col.label(text="Color Source:")
         if pd.point_source == 'PARTICLE_SYSTEM':
-            col.label(text="Color Source:")
-            col.prop(pd, "color_source", text="")
-            if pd.color_source in {'PARTICLE_SPEED', 'PARTICLE_VELOCITY'}:
+            col.prop(pd, "particle_color_source", text="")
+            if pd.particle_color_source in {'PARTICLE_SPEED', 'PARTICLE_VELOCITY'}:
                 col.prop(pd, "speed_scale")
-            if pd.color_source in {'PARTICLE_SPEED', 'PARTICLE_AGE'}:
+            if pd.particle_color_source in {'PARTICLE_SPEED', 'PARTICLE_AGE'}:
+                layout.template_color_ramp(pd, "color_ramp", expand=True)
+        else:
+            col.prop(pd, "vertex_color_source", text="")
+            if pd.vertex_color_source == 'VERTEX_COLOR':
+                if pd.object and pd.object.data:
+                    col.prop_search(pd, "vertex_attribute_name", pd.object.data, "vertex_colors", text="")
+            if pd.vertex_color_source == 'VERTEX_WEIGHT':
+                if pd.object:
+                    col.prop_search(pd, "vertex_attribute_name", pd.object, "vertex_groups", text="")
                 layout.template_color_ramp(pd, "color_ramp", expand=True)
 
         col = split.column()

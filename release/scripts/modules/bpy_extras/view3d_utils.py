@@ -23,7 +23,7 @@ __all__ = (
     "region_2d_to_origin_3d",
     "region_2d_to_location_3d",
     "location_3d_to_region_2d",
-    )
+)
 
 
 def region_2d_to_vector_3d(region, rv3d, coord):
@@ -50,7 +50,7 @@ def region_2d_to_vector_3d(region, rv3d, coord):
         out = Vector(((2.0 * coord[0] / region.width) - 1.0,
                       (2.0 * coord[1] / region.height) - 1.0,
                       -0.5
-                     ))
+                      ))
 
         w = out.dot(persinv[3].xyz) + persinv[3][3]
 
@@ -101,7 +101,7 @@ def region_2d_to_origin_3d(region, rv3d, coord, clamp=None):
         persinv = persmat.inverted()
         origin_start = ((persinv.col[0].xyz * dx) +
                         (persinv.col[1].xyz * dy) +
-                        viewinv.translation)
+                        persinv.translation)
 
         if clamp != 0.0:
             if rv3d.view_perspective != 'CAMERA':

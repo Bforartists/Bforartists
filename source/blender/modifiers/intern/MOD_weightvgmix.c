@@ -39,6 +39,7 @@
 #include "BKE_cdderivedmesh.h"
 #include "BKE_deform.h"
 #include "BKE_library.h"
+#include "BKE_library_query.h"
 #include "BKE_modifier.h"
 #include "BKE_texture.h"          /* Texture masking. */
 
@@ -171,19 +172,17 @@ static bool dependsOnTime(ModifierData *md)
 	return false;
 }
 
-static void foreachObjectLink(ModifierData *md, Object *ob,
-                              void (*walk)(void *userData, Object *ob, Object **obpoin),
-                              void *userData)
+static void foreachObjectLink(ModifierData *md, Object *ob, ObjectWalkFunc walk, void *userData)
 {
 	WeightVGMixModifierData *wmd = (WeightVGMixModifierData *) md;
-	walk(userData, ob, &wmd->mask_tex_map_obj);
+	walk(userData, ob, &wmd->mask_tex_map_obj, IDWALK_NOP);
 }
 
 static void foreachIDLink(ModifierData *md, Object *ob, IDWalkFunc walk, void *userData)
 {
 	WeightVGMixModifierData *wmd = (WeightVGMixModifierData *) md;
 
-	walk(userData, ob, (ID **)&wmd->mask_texture);
+	walk(userData, ob, (ID **)&wmd->mask_texture, IDWALK_USER);
 
 	foreachObjectLink(md, ob, (ObjectWalkFunc)walk, userData);
 }
@@ -222,9 +221,11 @@ static void updateDepsgraph(ModifierData *md,
 	WeightVGMixModifierData *wmd = (WeightVGMixModifierData *) md;
 	if (wmd->mask_tex_map_obj != NULL && wmd->mask_tex_mapping == MOD_DISP_MAP_OBJECT) {
 		DEG_add_object_relation(node, wmd->mask_tex_map_obj, DEG_OB_COMP_TRANSFORM, "WeightVGMix Modifier");
+		DEG_add_object_relation(node, wmd->mask_tex_map_obj, DEG_OB_COMP_GEOMETRY, "WeightVGMix Modifier");
 	}
 	if (wmd->mask_tex_mapping == MOD_DISP_MAP_GLOBAL) {
 		DEG_add_object_relation(node, ob, DEG_OB_COMP_TRANSFORM, "WeightVGMix Modifier");
+		DEG_add_object_relation(node, ob, DEG_OB_COMP_GEOMETRY, "WeightVGMix Modifier");
 	}
 }
 

@@ -114,6 +114,10 @@ static void node_shader_exec_material(void *data, int UNUSED(thread), bNode *nod
 		/* retrieve normal */
 		if (hasinput[MAT_IN_NORMAL]) {
 			nodestack_get_vec(shi->vn, SOCK_VECTOR, in[MAT_IN_NORMAL]);
+			if (shi->use_world_space_shading) {
+				negate_v3(shi->vn);
+				mul_mat3_m4_v3((float (*)[4])RE_render_current_get_matrix(RE_VIEW_MATRIX), shi->vn);
+			}
 			normalize_v3(shi->vn);
 		}
 		else
@@ -181,7 +185,11 @@ static void node_shader_exec_material(void *data, int UNUSED(thread), bNode *nod
 		}
 		
 		copy_v3_v3(out[MAT_OUT_NORMAL]->vec, shi->vn);
-		
+
+		if (shi->use_world_space_shading) {
+			negate_v3(out[MAT_OUT_NORMAL]->vec);
+			mul_mat3_m4_v3((float (*)[4])RE_render_current_get_matrix(RE_VIEWINV_MATRIX), out[MAT_OUT_NORMAL]->vec);
+		}
 		/* Extended material options */
 		if (node->type == SH_NODE_MATERIAL_EXT) {
 			/* Shadow, Reflect, Refract, Radiosity, Speed seem to cause problems inside
@@ -215,12 +223,27 @@ static void node_shader_init_material(bNodeTree *UNUSED(ntree), bNode *node)
 /* XXX this is also done as a local static function in gpu_codegen.c,
  * but we need this to hack around the crappy material node.
  */
-static GPUNodeLink *gpu_get_input_link(GPUNodeStack *in)
+static GPUNodeLink *gpu_get_input_link(GPUMaterial *mat, GPUNodeStack *in)
 {
-	if (in->link)
+	if (in->link) {
 		return in->link;
-	else
-		return GPU_uniform(in->vec);
+	}
+	else {
+		GPUNodeLink *result = NULL;
+
+		/* note GPU_uniform() is only intended to be used as a parameter to
+		 * GPU_link(), returning it directly results in leaks or double frees */
+		if (in->type == GPU_FLOAT)
+			GPU_link(mat, "set_value", GPU_uniform(in->vec), &result);
+		else if (in->type == GPU_VEC3)
+			GPU_link(mat, "set_rgb", GPU_uniform(in->vec), &result);
+		else if (in->type == GPU_VEC4)
+			GPU_link(mat, "set_rgba", GPU_uniform(in->vec), &result);
+		else
+			BLI_assert(0);
+
+		return result;
+	}
 }
 
 static int gpu_shader_material(GPUMaterial *mat, bNode *node, bNodeExecData *UNUSED(execdata), GPUNodeStack *in, GPUNodeStack *out)
@@ -243,18 +266,22 @@ static int gpu_shader_material(GPUMaterial *mat, bNode *node, bNodeExecData *UNU
 
 		/* write values */
 		if (hasinput[MAT_IN_COLOR])
-			shi.rgb = gpu_get_input_link(&in[MAT_IN_COLOR]);
+			shi.rgb = gpu_get_input_link(mat, &in[MAT_IN_COLOR]);
 		
 		if (hasinput[MAT_IN_SPEC])
-			shi.specrgb = gpu_get_input_link(&in[MAT_IN_SPEC]);
+			shi.specrgb = gpu_get_input_link(mat, &in[MAT_IN_SPEC]);
 		
 		if (hasinput[MAT_IN_REFL])
-			shi.refl = gpu_get_input_link(&in[MAT_IN_REFL]);
+			shi.refl = gpu_get_input_link(mat, &in[MAT_IN_REFL]);
 		
 		/* retrieve normal */
 		if (hasinput[MAT_IN_NORMAL]) {
 			GPUNodeLink *tmp;
-			shi.vn = gpu_get_input_link(&in[MAT_IN_NORMAL]);
+			shi.vn = gpu_get_input_link(mat, &in[MAT_IN_NORMAL]);
+			if (GPU_material_use_world_space_shading(mat)) {
+				GPU_link(mat, "vec_math_negate", shi.vn, &shi.vn);
+				GPU_link(mat, "direction_transform_m4v3", shi.vn, GPU_builtin(GPU_VIEW_MATRIX), &shi.vn);
+			}
 			GPU_link(mat, "vec_math_normalize", shi.vn, &shi.vn, &tmp);
 		}
 		
@@ -263,14 +290,16 @@ static int gpu_shader_material(GPUMaterial *mat, bNode *node, bNodeExecData *UNU
 			GPU_link(mat, "vec_math_negate", shi.vn, &shi.vn);
 
 		if (node->type == SH_NODE_MATERIAL_EXT) {
+			if (hasinput[MAT_IN_MIR])
+				shi.mir = gpu_get_input_link(mat, &in[MAT_IN_MIR]);
 			if (hasinput[MAT_IN_AMB])
-				shi.amb = gpu_get_input_link(&in[MAT_IN_AMB]);
+				shi.amb = gpu_get_input_link(mat, &in[MAT_IN_AMB]);
 			if (hasinput[MAT_IN_EMIT])
-				shi.emit = gpu_get_input_link(&in[MAT_IN_EMIT]);
+				shi.emit = gpu_get_input_link(mat, &in[MAT_IN_EMIT]);
 			if (hasinput[MAT_IN_SPECTRA])
-				shi.spectra = gpu_get_input_link(&in[MAT_IN_SPECTRA]);
+				shi.spectra = gpu_get_input_link(mat, &in[MAT_IN_SPECTRA]);
 			if (hasinput[MAT_IN_ALPHA])
-				shi.alpha = gpu_get_input_link(&in[MAT_IN_ALPHA]);
+				shi.alpha = gpu_get_input_link(mat, &in[MAT_IN_ALPHA]);
 		}
 
 		GPU_shaderesult_set(&shi, &shr); /* clears shr */
@@ -297,6 +326,10 @@ static int gpu_shader_material(GPUMaterial *mat, bNode *node, bNodeExecData *UNU
 		if (node->custom1 & SH_NODE_MAT_NEG)
 			GPU_link(mat, "vec_math_negate", shi.vn, &shi.vn);
 		out[MAT_OUT_NORMAL].link = shi.vn;
+		if (GPU_material_use_world_space_shading(mat)) {
+			GPU_link(mat, "vec_math_negate", out[MAT_OUT_NORMAL].link, &out[MAT_OUT_NORMAL].link);
+			GPU_link(mat, "direction_transform_m4v3", out[MAT_OUT_NORMAL].link, GPU_builtin(GPU_INVERSE_VIEW_MATRIX), &out[MAT_OUT_NORMAL].link);
+		}
 
 		if (node->type == SH_NODE_MATERIAL_EXT) {
 			out[MAT_OUT_DIFFUSE].link = shr.diff;

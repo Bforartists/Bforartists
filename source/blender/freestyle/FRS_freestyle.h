@@ -34,11 +34,17 @@ struct Material;
 struct FreestyleConfig;
 struct FreestyleLineStyle;
 
-extern struct Scene *freestyle_scene;
-extern float freestyle_viewpoint[3];
-extern float freestyle_mv[4][4];
-extern float freestyle_proj[4][4];
-extern int freestyle_viewport[4];
+struct FreestyleGlobals {
+	struct Scene *scene;
+
+	/* camera information */
+	float viewpoint[3];
+	float mv[4][4];
+	float proj[4][4];
+	int viewport[4];
+};
+
+extern struct FreestyleGlobals g_freestyle;
 
 /* Rendering */
 void FRS_initialize(void);
@@ -57,8 +63,7 @@ void FRS_exit(void);
 void FRS_copy_active_lineset(struct FreestyleConfig *config);
 void FRS_paste_active_lineset(struct FreestyleConfig *config);
 void FRS_delete_active_lineset(struct FreestyleConfig *config);
-void FRS_move_active_lineset_up(struct FreestyleConfig *config);
-void FRS_move_active_lineset_down(struct FreestyleConfig *config);
+bool FRS_move_active_lineset(struct FreestyleConfig *config, int direction);
 
 /* Testing */
 struct Material *FRS_create_stroke_material(struct Main *bmain, struct FreestyleLineStyle *linestyle);

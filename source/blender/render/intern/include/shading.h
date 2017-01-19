@@ -82,6 +82,10 @@ void vlr_set_uv_indices(struct VlakRen *vlr, int *i1, int *i2, int *i3);
 
 void	calc_R_ref(struct ShadeInput *shi);
 
+void barycentric_differentials_from_position(
+	const float co[3], const float v1[3], const float v2[3], const float v3[3],
+	const float dxco[3], const float dyco[3], const float facenor[3], const bool differentials,
+	float *u, float *v, float *dx_u, float *dx_v, float *dy_u, float *dy_v);
 
 /* shadeoutput. */
 void shade_lamp_loop(struct ShadeInput *shi, struct ShadeResult *shr);
@@ -95,7 +99,7 @@ ListBase *get_lights(struct ShadeInput *shi);
 float lamp_get_visibility(struct LampRen *lar, const float co[3], float lv[3], float *dist);
 void lamp_get_shadow(struct LampRen *lar, ShadeInput *shi, float inp, float shadfac[4], int do_real);
 
-float	fresnel_fac(const float view[3], const float vn[3], float fresnel, float fac);
+float fresnel_fac(const float view[3], const float vn[3], float fresnel, float fac);
 
 /* rayshade.c */
 extern void shade_ray(struct Isect *is, struct ShadeInput *shi, struct ShadeResult *shr);

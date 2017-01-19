@@ -33,25 +33,24 @@ class Patch;
 
 struct SubdParams {
 	Mesh *mesh;
-	int shader;
-	bool smooth;
 	bool ptex;
 
 	int test_steps;
 	int split_threshold;
 	float dicing_rate;
+	int max_level;
 	Camera *camera;
+	Transform objecttoworld;
 
-	SubdParams(Mesh *mesh_, int shader_, bool smooth_ = true, bool ptex_ = false)
+	SubdParams(Mesh *mesh_, bool ptex_ = false)
 	{
 		mesh = mesh_;
-		shader = shader_;
-		smooth = smooth_;
 		ptex = ptex_;
 
 		test_steps = 3;
 		split_threshold = 1;
-		dicing_rate = 0.1f;
+		dicing_rate = 1.0f;
+		max_level = 12;
 		camera = NULL;
 	}
 
@@ -67,9 +66,9 @@ public:
 	size_t vert_offset;
 	size_t tri_offset;
 
-	EdgeDice(const SubdParams& params);
+	explicit EdgeDice(const SubdParams& params);
 
-	void reserve(int num_verts, int num_tris);
+	void reserve(int num_verts);
 
 	int add_vert(Patch *patch, float2 uv);
 	void add_triangle(Patch *patch, int v0, int v1, int v2);
@@ -108,7 +107,7 @@ public:
 		int tv1;
 	};
 
-	QuadDice(const SubdParams& params);
+	explicit QuadDice(const SubdParams& params);
 
 	void reserve(EdgeFactors& ef, int Mu, int Mv);
 	float3 eval_projected(SubPatch& sub, float u, float v);
@@ -130,46 +129,6 @@ public:
 	float quad_area(const float3& a, const float3& b, const float3& c, const float3& d);
 	float scale_factor(SubPatch& sub, EdgeFactors& ef, int Mu, int Mv);
 
-	void dice(SubPatch& sub, EdgeFactors& ef);
-};
-
-/* Triangle EdgeDice
- *
- * Edge tessellation factors and subpatch coordinates are as follows:
- *
- *        Pw
- *        /\
- *    tv /  \ tu
- *      /    \
- *     /      \
- *  Pu -------- Pv
- *        tw     
- */
-
-class TriangleDice : public EdgeDice {
-public:
-	struct SubPatch {
-		Patch *patch;
-
-		float2 Pu;
-		float2 Pv;
-		float2 Pw;
-	};
-
-	struct EdgeFactors {
-		int tu;
-		int tv;
-		int tw;
-	};
-
-	TriangleDice(const SubdParams& params);
-
-	void reserve(EdgeFactors& ef, int M);
-
-	float2 map_uv(SubPatch& sub, float2 uv);
-	int add_vert(SubPatch& sub, float2 uv);
-
-	void add_grid(SubPatch& sub, EdgeFactors& ef, int M);
 	void dice(SubPatch& sub, EdgeFactors& ef);
 };
 

@@ -22,6 +22,7 @@
 
 #include "bvh.h"
 #include "bvh_binning.h"
+#include "bvh_unaligned.h"
 
 #include "util_boundbox.h"
 #include "util_task.h"
@@ -30,6 +31,7 @@
 CCL_NAMESPACE_BEGIN
 
 class BVHBuildTask;
+class BVHSpatialSplitBuildTask;
 class BVHParams;
 class InnerNode;
 class Mesh;
@@ -57,68 +59,79 @@ protected:
 	friend class BVHObjectSplit;
 	friend class BVHSpatialSplit;
 	friend class BVHBuildTask;
+	friend class BVHSpatialSplitBuildTask;
+	friend class BVHObjectBinning;
 
-	/* adding references */
+	/* Adding references. */
 	void add_reference_mesh(BoundBox& root, BoundBox& center, Mesh *mesh, int i);
 	void add_reference_object(BoundBox& root, BoundBox& center, Object *ob, int i);
 	void add_references(BVHRange& root);
 
-	/* building */
-	BVHNode *build_node(const BVHRange& range, int level);
+	/* Building. */
+	BVHNode *build_node(const BVHRange& range,
+	                    vector<BVHReference> *references,
+	                    int level,
+	                    int thread_id);
 	BVHNode *build_node(const BVHObjectBinning& range, int level);
-	BVHNode *create_leaf_node(const BVHRange& range);
+	BVHNode *create_leaf_node(const BVHRange& range,
+	                          const vector<BVHReference>& references);
 	BVHNode *create_object_leaf_nodes(const BVHReference *ref, int start, int num);
 
-	/* Leaf node type splitting. */
-	BVHNode *create_primitive_leaf_node(const int *p_type,
-	                                    const int *p_index,
-	                                    const int *p_object,
-	                                    const BoundBox& bounds,
-	                                    uint visibility,
-	                                    int start,
-	                                    int nun);
+	bool range_within_max_leaf_size(const BVHRange& range,
+	                                const vector<BVHReference>& references) const;
 
-	bool range_within_max_leaf_size(const BVHRange& range);
-
-	/* threads */
+	/* Threads. */
 	enum { THREAD_TASK_SIZE = 4096 };
-	void thread_build_node(InnerNode *node, int child, BVHObjectBinning *range, int level);
+	void thread_build_node(InnerNode *node,
+	                       int child,
+	                       BVHObjectBinning *range,
+	                       int level);
+	void thread_build_spatial_split_node(InnerNode *node,
+	                                     int child,
+	                                     BVHRange *range,
+	                                     vector<BVHReference> *references,
+	                                     int level,
+	                                     int thread_id);
 	thread_mutex build_mutex;
 
-	/* progress */
+	/* Progress. */
 	void progress_update();
 
-	/* tree rotations */
+	/* Tree rotations. */
 	void rotate(BVHNode *node, int max_depth);
 	void rotate(BVHNode *node, int max_depth, int iterations);
 
-	/* objects and primitive references */
+	/* Objects and primitive references. */
 	vector<Object*> objects;
 	vector<BVHReference> references;
 	int num_original_references;
 
-	/* output primitive indexes and objects */
+	/* Output primitive indexes and objects. */
 	array<int>& prim_type;
 	array<int>& prim_index;
 	array<int>& prim_object;
 
-	/* build parameters */
+	/* Build parameters. */
 	BVHParams params;
 
-	/* progress reporting */
+	/* Progress reporting. */
 	Progress& progress;
 	double progress_start_time;
 	size_t progress_count;
 	size_t progress_total;
 	size_t progress_original_total;
 
-	/* spatial splitting */
+	/* Spatial splitting. */
 	float spatial_min_overlap;
-	vector<BoundBox> spatial_right_bounds;
-	BVHSpatialBin spatial_bins[3][BVHParams::NUM_SPATIAL_BINS];
+	vector<BVHSpatialStorage> spatial_storage;
+	size_t spatial_free_index;
+	thread_spin_lock spatial_spin_lock;
 
-	/* threads */
+	/* Threads. */
 	TaskPool task_pool;
+
+	/* Unaligned building. */
+	BVHUnaligned unaligned_heuristic;
 };
 
 CCL_NAMESPACE_END

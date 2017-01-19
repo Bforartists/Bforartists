@@ -35,8 +35,8 @@
 
 #include "BLI_listbase.h"
 #include "BLI_math.h"
-#include "BLI_path_util.h"
 #include "BLI_string.h"
+#include "BLI_string_utils.h"
 
 #include "BLT_translation.h"
 
@@ -626,8 +626,6 @@ void AnimationImporter:: Assign_color_animations(const COLLADAFW::UniqueId& list
 			fcurve_is_used(fcu);
 		}
 	}
-
-
 }
 
 void AnimationImporter:: Assign_float_animations(const COLLADAFW::UniqueId& listid, ListBase *AnimCurves, const char *anim_type)

@@ -77,14 +77,14 @@ static float edbm_rip_edgedist_squared(
 		const float dist_2d = len_v2v2(vec1, vec2);
 		if (dist_2d > FLT_EPSILON) {
 			const float dist = inset / dist_2d;
-			BLI_assert(finite(dist));
+			BLI_assert(isfinite(dist));
 			interp_v2_v2v2(vec1, vec1, vec2, dist);
 			interp_v2_v2v2(vec2, vec2, vec1, dist);
 		}
 	}
 
 	dist_sq = dist_squared_to_line_segment_v2(mvalf, vec1, vec2);
-	BLI_assert(finite(dist_sq));
+	BLI_assert(isfinite(dist_sq));
 
 	return dist_sq;
 }
@@ -153,8 +153,7 @@ static float edbm_rip_edge_side_measure(
 	ED_view3d_project_float_v2_m4(ar, e->v2->co, e_v2_co, projectMat);
 
 	sub_v2_v2v2(vec, cent, mid);
-	normalize_v2(vec);
-	mul_v2_fl(vec, 0.01f);
+	normalize_v2_length(vec, 0.01f);
 
 	/* rather then adding to both verts, subtract from the mouse */
 	sub_v2_v2v2(fmval_tweak, fmval, vec);
@@ -396,7 +395,7 @@ static void edbm_ripsel_deselect_helper(BMesh *bm, EdgeLoopPair *eloop_pairs,
  * return an un-ordered array of loop pairs
  * use for rebuilding face-fill
  *
- * \note the method currenly used fails for edges with 3+ face users and gives
+ * \note the method currently used fails for edges with 3+ face users and gives
  *       nasty holes in the mesh, there isnt a good way of knowing ahead of time
  *       which loops will be split apart (its possible to figure out but quite involved).
  *       So for now this is a known limitation of current rip-fill option.
@@ -463,7 +462,7 @@ static void edbm_tagged_loop_pairs_do_fill_faces(BMesh *bm, UnorderedLoopPair *u
 		if ((ulp->l_pair[0]    && ulp->l_pair[1]) &&
 		    (ulp->l_pair[0]->e != ulp->l_pair[1]->e))
 		{
-			 /* time has come to make a face! */
+			/* time has come to make a face! */
 			BMVert *v_shared = BM_edge_share_vert(ulp->l_pair[0]->e, ulp->l_pair[1]->e);
 			BMFace *f, *f_example = ulp->l_pair[0]->f;
 			BMLoop *l_iter;
@@ -497,7 +496,7 @@ static void edbm_tagged_loop_pairs_do_fill_faces(BMesh *bm, UnorderedLoopPair *u
 			}
 
 			/* face should never exist */
-			BLI_assert(BM_face_exists(f_verts, f_verts[3] ? 4 : 3, &f) == false);
+			BLI_assert(!BM_face_exists(f_verts, f_verts[3] ? 4 : 3));
 
 			f = BM_face_create_verts(bm, f_verts, f_verts[3] ? 4 : 3, f_example, BM_CREATE_NOP, true);
 
@@ -749,10 +748,8 @@ static int edbm_rip_invoke__vert(bContext *C, wmOperator *op, const wmEvent *eve
 			}
 
 			if (do_fill) {
-				if (do_fill) {
-					/* match extrude vert-order */
-					BM_edge_create(bm, vout[1], vout[0], NULL, BM_CREATE_NOP);
-				}
+				/* match extrude vert-order */
+				BM_edge_create(bm, vout[1], vout[0], NULL, BM_CREATE_NOP);
 			}
 
 			MEM_freeN(vout);

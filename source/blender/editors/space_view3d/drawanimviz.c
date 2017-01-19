@@ -130,7 +130,6 @@ void draw_motion_path_instance(Scene *scene,
 	mpv_start = (mpath->points + sind);
 	
 	/* draw curve-line of path */
-	glShadeModel(GL_SMOOTH);
 	
 	glBegin(GL_LINE_STRIP);
 	for (i = 0, mpv = mpv_start; i < len; i++, mpv++) {
@@ -187,7 +186,6 @@ void draw_motion_path_instance(Scene *scene,
 	}
 	
 	glEnd();
-	glShadeModel(GL_FLAT);
 	
 	glPointSize(1.0);
 	
@@ -220,7 +218,6 @@ void draw_motion_path_instance(Scene *scene,
 		glVertex3fv(mpv->co);
 		glEnd();
 		
-		glPointSize(1.0f);
 		UI_ThemeColor(TH_TEXT_HI);
 	}
 	
@@ -304,8 +301,6 @@ void draw_motion_path_instance(Scene *scene,
 				glVertex3fv(mpv->co);
 		}
 		glEnd();
-		
-		glPointSize(1.0f);
 		
 		/* Draw frame numbers of keyframes  */
 		if (avs->path_viewflag & MOTIONPATH_VIEW_KFNOS) {

@@ -32,26 +32,63 @@
  */
 
 struct ID;
+struct Main;
 
 /* Tips for the callback for cases it's gonna to modify the pointer. */
 enum {
 	IDWALK_NOP = 0,
 	IDWALK_NEVER_NULL = (1 << 0),
 	IDWALK_NEVER_SELF = (1 << 1),
+
+	/**
+	 * Indicates whether this is direct (i.e. by local data) or indirect (i.e. by linked data) usage.
+	 * \note Object proxies are half-local, half-linked...
+	 */
+	IDWALK_INDIRECT_USAGE = (1 << 2),
+
+	/**
+	 * Adjusts #ID.us reference-count.
+	 * \note keep in sync with 'newlibadr_us' use in readfile.c
+	 */
+	IDWALK_USER = (1 << 8),
+	/**
+	 * Ensure #ID.us is at least 1 on use.
+	 */
+	IDWALK_USER_ONE = (1 << 9),
 };
 
-/* Call a callback for each ID link which the given ID uses.
+enum {
+	IDWALK_RET_NOP            = 0,
+	IDWALK_RET_STOP_ITER      = 1 << 0,  /* Completly stop iteration. */
+	IDWALK_RET_STOP_RECURSION = 1 << 1,  /* Stop recursion, that is, do not loop over ID used by current one. */
+};
+
+/**
+ * Call a callback for each ID link which the given ID uses.
  *
- * Return 'false' if you want to stop iteration.
+ * \return a set of flags to control further iteration (0 to keep going).
  */
-typedef bool (*LibraryIDLinkCallback) (void *user_data, struct ID **id_pointer, int cd_flag);
+typedef int (*LibraryIDLinkCallback) (void *user_data, struct ID *id_self, struct ID **id_pointer, int cd_flag);
 
 /* Flags for the foreach function itself. */
 enum {
 	IDWALK_READONLY = (1 << 0),
+	IDWALK_RECURSE  = (1 << 1),  /* Also implies IDWALK_READONLY. */
 };
 
 /* Loop over all of the ID's this datablock links to. */
 void BKE_library_foreach_ID_link(struct ID *id, LibraryIDLinkCallback callback, void *user_data, int flag);
+void BKE_library_update_ID_link_user(struct ID *id_dst, struct ID *id_src, const int cd_flag);
+
+int BKE_library_ID_use_ID(struct ID *id_user, struct ID *id_used);
+
+bool BKE_library_idtype_can_use_idtype(const short id_type_owner, const short id_type_used);
+
+bool BKE_library_ID_is_locally_used(struct Main *bmain, void *idv);
+bool BKE_library_ID_is_indirectly_used(struct Main *bmain, void *idv);
+void BKE_library_ID_test_usages(struct Main *bmain, void *idv, bool *is_used_local, bool *is_used_linked);
+
+void BKE_library_unused_linked_data_set_tag(struct Main *bmain, const bool do_init_tag);
+void BKE_library_indirectly_used_data_tag_clear(struct Main *bmain);
 
 #endif  /* __BKE_LIBRARY_QUERY_H__ */

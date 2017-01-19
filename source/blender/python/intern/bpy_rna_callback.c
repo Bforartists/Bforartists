@@ -174,8 +174,7 @@ static eSpace_Type rna_Space_refine_reverse(StructRNA *srna)
 	if (srna == &RNA_SpaceConsole)          return SPACE_CONSOLE;
 	if (srna == &RNA_SpaceUserPreferences)  return SPACE_USERPREF;
 	if (srna == &RNA_SpaceClipEditor)       return SPACE_CLIP;
-	if (srna == &RNA_SpaceToolbarEditor)	return SPACE_TOOLBAR;
-	return -1;
+	return SPACE_EMPTY;
 }
 
 PyObject *pyrna_callback_classmethod_add(PyObject *UNUSED(self), PyObject *args)
@@ -216,12 +215,12 @@ PyObject *pyrna_callback_classmethod_add(PyObject *UNUSED(self), PyObject *args)
 		if (pyrna_enum_value_from_id(region_draw_mode_items, cb_event_str, &cb_event, "bpy_struct.callback_add()") == -1) {
 			return NULL;
 		}
-		else if (pyrna_enum_value_from_id(region_type_items, cb_regiontype_str, &cb_regiontype, "bpy_struct.callback_add()") == -1) {
+		else if (pyrna_enum_value_from_id(rna_enum_region_type_items, cb_regiontype_str, &cb_regiontype, "bpy_struct.callback_add()") == -1) {
 			return NULL;
 		}
 		else {
 			const eSpace_Type spaceid = rna_Space_refine_reverse(srna);
-			if (spaceid == -1) {
+			if (spaceid == SPACE_EMPTY) {
 				PyErr_Format(PyExc_TypeError, "unknown space type '%.200s'", RNA_struct_identifier(srna));
 				return NULL;
 			}
@@ -279,12 +278,12 @@ PyObject *pyrna_callback_classmethod_remove(PyObject *UNUSED(self), PyObject *ar
 		customdata = ED_region_draw_cb_customdata(handle);
 		Py_DECREF((PyObject *)customdata);
 
-		if (pyrna_enum_value_from_id(region_type_items, cb_regiontype_str, &cb_regiontype, "bpy_struct.callback_remove()") == -1) {
+		if (pyrna_enum_value_from_id(rna_enum_region_type_items, cb_regiontype_str, &cb_regiontype, "bpy_struct.callback_remove()") == -1) {
 			return NULL;
 		}
 		else {
 			const eSpace_Type spaceid = rna_Space_refine_reverse(srna);
-			if (spaceid == -1) {
+			if (spaceid == SPACE_EMPTY) {
 				PyErr_Format(PyExc_TypeError, "unknown space type '%.200s'", RNA_struct_identifier(srna));
 				return NULL;
 			}

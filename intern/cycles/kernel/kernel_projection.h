@@ -47,10 +47,10 @@ ccl_device float2 direction_to_spherical(float3 dir)
 
 ccl_device float3 spherical_to_direction(float theta, float phi)
 {
-	return make_float3(
-		sinf(theta)*cosf(phi),
-		sinf(theta)*sinf(phi),
-		cosf(theta));
+	float sin_theta = sinf(theta);
+	return make_float3(sin_theta*cosf(phi),
+	                   sin_theta*sinf(phi),
+	                   cosf(theta));
 }
 
 /* Equirectangular coordinates <-> Cartesian direction */
@@ -67,11 +67,10 @@ ccl_device float3 equirectangular_range_to_direction(float u, float v, float4 ra
 {
 	float phi = range.x*u + range.y;
 	float theta = range.z*v + range.w;
-
-	return make_float3(
-		sinf(theta)*cosf(phi),
-		sinf(theta)*sinf(phi),
-		cosf(theta));
+	float sin_theta = sinf(theta);
+	return make_float3(sin_theta*cosf(phi),
+	                   sin_theta*sinf(phi),
+	                   cosf(theta));
 }
 
 ccl_device float2 direction_to_equirectangular(float3 dir)
@@ -131,7 +130,10 @@ ccl_device float2 direction_to_fisheye_equisolid(float3 dir, float lens, float w
 	return make_float2(u, v);
 }
 
-ccl_device float3 fisheye_equisolid_to_direction(float u, float v, float lens, float fov, float width, float height)
+ccl_device_inline float3 fisheye_equisolid_to_direction(float u, float v,
+                                                        float lens,
+                                                        float fov,
+                                                        float width, float height)
 {
 	u = (u - 0.5f) * width;
 	v = (v - 0.5f) * height;
@@ -190,7 +192,7 @@ ccl_device float2 direction_to_mirrorball(float3 dir)
 	return make_float2(u, v);
 }
 
-ccl_device float3 panorama_to_direction(KernelGlobals *kg, float u, float v)
+ccl_device_inline float3 panorama_to_direction(KernelGlobals *kg, float u, float v)
 {
 	switch(kernel_data.cam.panorama_type) {
 		case PANORAMA_EQUIRECTANGULAR:
@@ -206,7 +208,7 @@ ccl_device float3 panorama_to_direction(KernelGlobals *kg, float u, float v)
 	}
 }
 
-ccl_device float2 direction_to_panorama(KernelGlobals *kg, float3 dir)
+ccl_device_inline float2 direction_to_panorama(KernelGlobals *kg, float3 dir)
 {
 	switch(kernel_data.cam.panorama_type) {
 		case PANORAMA_EQUIRECTANGULAR:
@@ -222,7 +224,45 @@ ccl_device float2 direction_to_panorama(KernelGlobals *kg, float3 dir)
 	}
 }
 
+ccl_device_inline void spherical_stereo_transform(KernelGlobals *kg, float3 *P, float3 *D)
+{
+	float interocular_offset = kernel_data.cam.interocular_offset;
+
+	/* Interocular offset of zero means either non stereo, or stereo without
+	 * spherical stereo. */
+	kernel_assert(interocular_offset != 0.0f);
+
+	if(kernel_data.cam.pole_merge_angle_to > 0.0f) {
+		const float pole_merge_angle_from = kernel_data.cam.pole_merge_angle_from,
+		            pole_merge_angle_to = kernel_data.cam.pole_merge_angle_to;
+		float altitude = fabsf(safe_asinf((*D).z));
+		if(altitude > pole_merge_angle_to) {
+			interocular_offset = 0.0f;
+		}
+		else if(altitude > pole_merge_angle_from) {
+			float fac = (altitude - pole_merge_angle_from) / (pole_merge_angle_to - pole_merge_angle_from);
+			float fade = cosf(fac * M_PI_2_F);
+			interocular_offset *= fade;
+		}
+	}
+
+	float3 up = make_float3(0.0f, 0.0f, 1.0f);
+	float3 side = normalize(cross(*D, up));
+	float3 stereo_offset = side * interocular_offset;
+
+	*P += stereo_offset;
+
+	/* Convergence distance is FLT_MAX in the case of parallel convergence mode,
+	 * no need to modify direction in this case either. */
+	const float convergence_distance = kernel_data.cam.convergence_distance;
+
+	if(convergence_distance != FLT_MAX)
+	{
+		float3 screen_offset = convergence_distance * (*D);
+		*D = normalize(screen_offset - stereo_offset);
+	}
+}
+
 CCL_NAMESPACE_END
 
-#endif /* __KERNEL_PROJECTION_CL__ */
-
+#endif  /* __KERNEL_PROJECTION_CL__ */

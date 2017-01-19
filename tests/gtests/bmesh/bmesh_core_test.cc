@@ -9,7 +9,9 @@ TEST(bmesh_core, BMVertCreate) {
 	BMVert *bv1, *bv2, *bv3;
 	const float co1[3] = {1.0f, 2.0f, 0.0f};
 
-	bm = BM_mesh_create(&bm_mesh_allocsize_default);
+	BMeshCreateParams bm_params;
+	bm_params.use_toolflags = true;
+	bm = BM_mesh_create(&bm_mesh_allocsize_default, &bm_params);
 	EXPECT_EQ(0, bm->totvert);
 	/* make a custom layer so we can see if it is copied properly */
 	BM_data_layer_add(bm, &bm->vdata, CD_PROP_FLT);
@@ -33,4 +35,5 @@ TEST(bmesh_core, BMVertCreate) {
 	EXPECT_FALSE(BM_elem_flag_test((BMElem *)bv3, BM_ELEM_SELECT));
 	EXPECT_EQ(1.5f, BM_elem_float_data_get(&bm->vdata, bv3, CD_PROP_FLT));
 	EXPECT_EQ(3, BM_mesh_elem_count(bm, BM_VERT));
+	BM_mesh_free(bm);
 }

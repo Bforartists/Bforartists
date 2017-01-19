@@ -55,6 +55,10 @@
 #include "BIF_gl.h"
 #include "BLF_api.h"
 
+#ifndef BLF_STANDALONE
+#include "GPU_basic_shader.h"
+#endif
+
 #include "blf_internal_types.h"
 #include "blf_internal.h"
 
@@ -113,6 +117,10 @@ GlyphCacheBLF *blf_glyph_cache_new(FontBLF *font)
 		gc->max_glyph_height = (int)(((float)font->face->size->metrics.height) / 64.0f);
 	}
 
+	/* can happen with size 1 fonts */
+	CLAMP_MIN(gc->max_glyph_width, 1);
+	CLAMP_MIN(gc->max_glyph_height, 1);
+
 	gc->p2_width = 0;
 	gc->p2_height = 0;
 
@@ -170,12 +178,22 @@ static void blf_glyph_cache_texture(FontBLF *font, GlyphCacheBLF *gc)
 
 	glGenTextures(1, &gc->textures[gc->cur_tex]);
 	glBindTexture(GL_TEXTURE_2D, (font->tex_bind_state = gc->textures[gc->cur_tex]));
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, gc->p2_width, gc->p2_height, 0, GL_ALPHA, GL_UNSIGNED_BYTE, NULL);
+#ifndef BLF_STANDALONE
+	/* needed since basic shader doesn't support alpha-only textures,
+	 * while we could add support this is only used in a few places
+	 * (an alternative could be to have a simple shader for BLF). */
+	if (GLEW_ARB_texture_swizzle && GPU_basic_shader_use_glsl_get()) {
+		GLint swizzle_mask[] = {GL_ONE, GL_ONE, GL_ONE, GL_ALPHA};
+		glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA, swizzle_mask);
+	}
+#endif
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA8, gc->p2_width, gc->p2_height, 0, GL_ALPHA, GL_UNSIGNED_BYTE, NULL);
 }
 
 GlyphBLF *blf_glyph_search(GlyphCacheBLF *gc, unsigned int c)

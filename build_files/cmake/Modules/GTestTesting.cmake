@@ -20,21 +20,25 @@ macro(BLENDER_SRC_GTEST_EX NAME SRC EXTRA_LIBS DO_ADD_TEST)
 		set(TEST_INC
 			${_current_include_directories}
 			${CMAKE_SOURCE_DIR}/tests/gtests
-			${CMAKE_SOURCE_DIR}/extern/libmv/third_party/glog/src
-			${CMAKE_SOURCE_DIR}/extern/libmv/third_party/gflags
+			${CMAKE_SOURCE_DIR}/extern/glog/src
+			${CMAKE_SOURCE_DIR}/extern/gflags/src
 			${CMAKE_SOURCE_DIR}/extern/gtest/include
+			${CMAKE_SOURCE_DIR}/extern/gmock/include
 		)
 		unset(_current_include_directories)
 
 		add_executable(${NAME}_test ${SRC})
 		target_link_libraries(${NAME}_test
 		                      ${EXTRA_LIBS}
+		                      ${PLATFORM_LINKLIBS}
 		                      bf_testing_main
 		                      bf_intern_guardedalloc
 		                      extern_gtest
+		                      extern_gmock
 		                      # needed for glog
 		                      ${PTHREADS_LIBRARIES}
-		                      extern_glog)
+		                      extern_glog
+		                      extern_gflags)
 		set_target_properties(${NAME}_test PROPERTIES
 		                      RUNTIME_OUTPUT_DIRECTORY         "${TESTS_OUTPUT_DIR}"
 		                      RUNTIME_OUTPUT_DIRECTORY_RELEASE "${TESTS_OUTPUT_DIR}"

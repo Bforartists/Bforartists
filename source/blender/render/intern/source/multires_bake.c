@@ -456,7 +456,7 @@ static void do_multires_bake(MultiresBakeRender *bkr, Image *ima, bool require_t
 
 		if (require_tangent) {
 			if (CustomData_get_layer_index(&dm->loopData, CD_TANGENT) == -1)
-				DM_calc_loop_tangents(dm);
+				DM_calc_loop_tangents(dm, true, NULL, 0);
 
 			pvtangent = DM_get_loop_data_layer(dm, CD_TANGENT);
 		}
@@ -864,8 +864,7 @@ static void apply_tangmat_callback(DerivedMesh *lores_dm, DerivedMesh *hires_dm,
 	               lvl, lt, uv[0], uv[1], NULL, n);
 
 	mul_v3_m3v3(vec, tangmat, n);
-	normalize_v3(vec);
-	mul_v3_fl(vec, 0.5);
+	normalize_v3_length(vec, 0.5);
 	add_v3_v3(vec, tmp);
 
 	if (ibuf->rect_float) {
@@ -1189,20 +1188,20 @@ static void count_images(MultiresBakeRender *bkr)
 	totpoly = dm->getNumPolys(dm);
 
 	for (a = 0; a < totpoly; a++)
-		mtexpoly[a].tpage->id.flag &= ~LIB_DOIT;
+		mtexpoly[a].tpage->id.tag &= ~LIB_TAG_DOIT;
 
 	for (a = 0; a < totpoly; a++) {
 		Image *ima = mtexpoly[a].tpage;
-		if ((ima->id.flag & LIB_DOIT) == 0) {
+		if ((ima->id.tag & LIB_TAG_DOIT) == 0) {
 			LinkData *data = BLI_genericNodeN(ima);
 			BLI_addtail(&bkr->image, data);
 			bkr->tot_image++;
-			ima->id.flag |= LIB_DOIT;
+			ima->id.tag |= LIB_TAG_DOIT;
 		}
 	}
 
 	for (a = 0; a < totpoly; a++)
-		mtexpoly[a].tpage->id.flag &= ~LIB_DOIT;
+		mtexpoly[a].tpage->id.tag &= ~LIB_TAG_DOIT;
 }
 
 static void bake_images(MultiresBakeRender *bkr, MultiresBakeResult *result)
@@ -1234,7 +1233,7 @@ static void bake_images(MultiresBakeRender *bkr, MultiresBakeResult *result)
 
 		BKE_image_release_ibuf(ima, ibuf, NULL);
 
-		ima->id.flag |= LIB_DOIT;
+		ima->id.tag |= LIB_TAG_DOIT;
 	}
 }
 

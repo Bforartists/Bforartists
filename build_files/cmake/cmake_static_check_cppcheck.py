@@ -32,8 +32,7 @@ USE_QUIET = (os.environ.get("QUIET", None) is not None)
 CHECKER_IGNORE_PREFIX = [
     "extern",
     "intern/moto",
-    "blender/intern/opennl",
-    ]
+]
 
 CHECKER_BIN = "cppcheck"
 
@@ -44,7 +43,7 @@ CHECKER_ARGS = [
     "--max-configs=1",  # speeds up execution
     #  "--check-config", # when includes are missing
     "--enable=all",  # if you want sixty hundred pedantic suggestions
-    ]
+]
 
 if USE_QUIET:
     CHECKER_ARGS.append("--quiet")

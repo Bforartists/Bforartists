@@ -277,7 +277,7 @@ public:
 	 */
 	virtual GHOST_TSuccess beginFullScreen(
 	        const GHOST_DisplaySetting& setting, GHOST_IWindow **window,
-	        const bool stereoVisual, const GHOST_TUns16 numOfAASamples = 0) = 0;
+	        const bool stereoVisual, const bool alphaBackground = 0, const GHOST_TUns16 numOfAASamples = 0) = 0;
 
 	/**
 	 * Updates the resolution while in fullscreen mode.
@@ -319,9 +319,8 @@ public:
 
 	/**
 	 * Retrieves events from the queue and send them to the event consumers.
-	 * \return Indication of the presence of events.
 	 */
-	virtual bool dispatchEvents() = 0;
+	virtual void dispatchEvents() = 0;
 
 	/**
 	 * Adds the given event consumer to our list.
@@ -378,11 +377,13 @@ public:
 	 */
 	virtual GHOST_TSuccess getButtonState(GHOST_TButtonMask mask, bool& isDown) const = 0;
 
+#ifdef WITH_INPUT_NDOF
 	/**
 	 * Sets 3D mouse deadzone
 	 * \param deadzone: Deadzone of the 3D mouse (both for rotation and pan) relative to full range
 	 */
 	virtual void setNDOFDeadZone(float deadzone) = 0;
+#endif
 
 	/**
 	 * Toggles console
