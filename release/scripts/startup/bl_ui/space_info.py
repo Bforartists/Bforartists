@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -304,37 +304,16 @@ class INFO_MT_help(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator(
-                "wm.url_open", text="Manual", icon='HELP',
-                ).url = "https://www.blender.org/manual"
-        layout.operator(
-                "wm.url_open", text="Release Log", icon='URL',
-                ).url = "http://wiki.blender.org/index.php/Dev:Ref/Release_Notes/%d.%d" % bpy.app.version[:2]
+        layout.operator("wm.url_open", text="Manual", icon='HELP').url = "http://www.bforartists.de/wiki/Manual"
+        layout.operator("wm.url_open", text="Release notes", icon='URL').url = "http://www.bforartists.de/wiki/release-notes"
         layout.separator()
 
-        layout.operator(
-                "wm.url_open", text="Blender Website", icon='URL',
-                ).url = "https://www.blender.org"
-        layout.operator(
-                "wm.url_open", text="Blender Store", icon='URL',
-                ).url = "https://store.blender.org"
-        layout.operator(
-                "wm.url_open", text="Developer Community", icon='URL',
-                ).url = "https://www.blender.org/get-involved/"
-        layout.operator(
-                "wm.url_open", text="User Community", icon='URL',
-                ).url = "https://www.blender.org/support/user-community"
+        layout.operator("wm.url_open", text="Bforartists Website", icon='URL').url = "http://www.bforartists.de"
         layout.separator()
-        layout.operator(
-                "wm.url_open", text="Report a Bug", icon='URL',
-                ).url = "https://developer.blender.org/maniphest/task/edit/form/1"
+        layout.operator("wm.url_open", text="Report a Bug", icon='URL').url = "http://www.bforartists.de/node/add/project-issue/bforartists_bugtracker"
         layout.separator()
 
-        layout.operator(
-                "wm.url_open", text="Python API Reference", icon='URL',
-                ).url = bpy.types.WM_OT_doc_view._prefix
-
-        layout.operator("wm.operator_cheat_sheet", icon='TEXT')
+        layout.operator("wm.url_open", text="Python API Reference", icon='URL').url = "http://www.bforartists.de/pythonapi/contents.html"
         layout.operator("wm.sysinfo", icon='TEXT')
         layout.separator()
 
