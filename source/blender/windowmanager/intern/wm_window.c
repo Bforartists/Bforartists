@@ -359,12 +359,12 @@ void wm_window_title(wmWindowManager *wm, wmWindow *win)
 		/* this is set to 1 if you don't have startup.blend open */
 		if (G.save_over && G.main->name[0]) {
 			char str[sizeof(G.main->name) + 24];
-			BLI_snprintf(str, sizeof(str), "Blender%s [%s%s]", wm->file_saved ? "" : "*", G.main->name,
+			BLI_snprintf(str, sizeof(str), "Bforartists%s [%s%s]", wm->file_saved ? "" : "*", G.main->name,
 			             G.main->recovered ? " (Recovered)" : "");
 			GHOST_SetTitle(win->ghostwin, str);
 		}
 		else
-			GHOST_SetTitle(win->ghostwin, "Blender");
+			GHOST_SetTitle(win->ghostwin, "Bforartists");
 
 		/* Informs GHOST of unsaved changes, to set window modified visual indicator (MAC OS X)
 		 * and to give hint of unsaved changes for a user warning mechanism
