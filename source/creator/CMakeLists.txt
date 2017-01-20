@@ -234,7 +234,7 @@ if(WITH_PYTHON_MODULE)
 	# but not OSX which _must_ be 'MODULE'
 	add_library(blender MODULE ${SRC})
 	set_target_properties(
-		blender
+		bforartists
 		PROPERTIES
 			PREFIX ""
 			OUTPUT_NAME bpy
@@ -244,7 +244,7 @@ if(WITH_PYTHON_MODULE)
 
 	if(APPLE)
 		set_target_properties(
-			blender
+			bforartists
 			PROPERTIES
 				MACOSX_BUNDLE TRUE
 				LINK_FLAGS_RELEASE "${PLATFORM_LINKFLAGS}"
@@ -255,20 +255,20 @@ if(WITH_PYTHON_MODULE)
 	if(WIN32)
 		# python modules use this
 		set_target_properties(
-			blender
+			bforartists
 			PROPERTIES
 			SUFFIX ".pyd"
 		)
 	endif()
 
 else()
-	add_executable(blender ${EXETYPE} ${SRC})
-	WINDOWS_SIGN_TARGET(blender)
+	add_executable(bforartists ${EXETYPE} ${SRC})
+	WINDOWS_SIGN_TARGET(bforartists)
 endif()
 
 if(WITH_BUILDINFO)
 	# explicitly say that the executable depends on the buildinfo
-	add_dependencies(blender buildinfo)
+	add_dependencies(bforartists buildinfo)
 endif()
 
 
@@ -454,19 +454,19 @@ if(UNIX AND NOT APPLE)
 	if(WITH_PYTHON_MODULE)
 		if(WITH_INSTALL_PORTABLE)
 			install(
-				TARGETS blender
+				TARGETS bforartists
 				DESTINATION "."
 			)
 		else()
 			install(
-				TARGETS blender
+				TARGETS bforartists
 				LIBRARY DESTINATION ${PYTHON_SITE_PACKAGES}
 			)
 		endif()
 		# none of the other files are needed currently
 	elseif(WITH_INSTALL_PORTABLE)
 		install(
-			TARGETS blender
+			TARGETS bforartists
 			DESTINATION "."
 		)
 
@@ -493,7 +493,7 @@ if(UNIX AND NOT APPLE)
 	else()
 		# main blender binary
 		install(
-			TARGETS blender
+			TARGETS bforartists
 			DESTINATION bin
 		)
 		if(WITH_DOC_MANPAGE)
@@ -937,7 +937,7 @@ elseif(APPLE)
 		)
 	endmacro()
 
-	set(OSX_APP_SOURCEDIR ${CMAKE_SOURCE_DIR}/release/darwin/blender.app)
+	set(OSX_APP_SOURCEDIR ${CMAKE_SOURCE_DIR}/release/darwin/bforartists.app)
 
 	# setup Info.plist
 	execute_process(COMMAND date "+%Y-%m-%d"
@@ -956,10 +956,10 @@ elseif(APPLE)
 
 	# Give the bundle actual creation/modification date
 	execute_process(COMMAND SetFile -d ${SETFILE_DATE} -m ${SETFILE_DATE}
-	                ${EXECUTABLE_OUTPUT_PATH}/blender.app)
+	                ${EXECUTABLE_OUTPUT_PATH}/bforartists.app)
 
 	install(
-		TARGETS blender
+		TARGETS bforartists
 		DESTINATION "."
 	)
 
@@ -968,18 +968,18 @@ elseif(APPLE)
 
 	install(
 		FILES ${OSX_APP_SOURCEDIR}/Contents/PkgInfo
-		DESTINATION blender.app/Contents
+		DESTINATION bforartists.app/Contents
 	)
 
 	install_dir(
 		${OSX_APP_SOURCEDIR}/Contents/Resources
-		blender.app/Contents/
+		bforartists.app/Contents/
 	)
 
 	if(WITH_OPENMP AND CMAKE_C_COMPILER_ID MATCHES "Clang" AND NOT ${CMAKE_C_COMPILER_VERSION} VERSION_LESS '3.4')
 		install(
 			FILES ${LIBDIR}/openmp/lib/libiomp5.dylib
-			DESTINATION blender.app/Contents/Resources/lib/
+			DESTINATION bforartists.app/Contents/Resources/lib/
 		)
 		install(
 			FILES ${LIBDIR}/openmp/LICENSE.txt
@@ -991,7 +991,7 @@ elseif(APPLE)
 	if(WITH_LLVM AND NOT LLVM_STATIC)
 		install(
 			FILES ${LIBDIR}/llvm/lib/libLLVM-3.4.dylib
-			DESTINATION blender.app/Contents/MacOS
+			DESTINATION bforartists.app/Contents/MacOS
 		)
 	endif()
 
@@ -1135,19 +1135,19 @@ unset(BLENDER_TEXT_FILES_DESTINATION)
 # -----------------------------------------------------------------------------
 # Setup link libs
 
-add_dependencies(blender makesdna)
+add_dependencies(bforartists makesdna)
 
 setup_blender_sorted_libs()
-target_link_libraries(blender ${BLENDER_SORTED_LIBS})
+target_link_libraries(bforartists ${BLENDER_SORTED_LIBS})
 
-setup_liblinks(blender)
+setup_liblinks(bforartists)
 
 # -----------------------------------------------------------------------------
 # Setup launcher
 
 if(WIN32 AND NOT WITH_PYTHON_MODULE)
 	install(
-		TARGETS blender
+		TARGETS bforartists
 		COMPONENT Blender
 		DESTINATION "."
 	)
