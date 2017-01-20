@@ -103,7 +103,7 @@ void RegisterBlendExtension(void)
 	/* Replace the actual app name with the wrapper. */
 	blender_app = strstr(BlPath, "blender-app.exe");
 	if (blender_app != NULL) {
-		strcpy(blender_app, "blender.exe");
+		strcpy(blender_app, "bforartists.exe");
 	}
 
 	/* root is HKLM by default */

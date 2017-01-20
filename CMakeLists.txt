@@ -1690,7 +1690,7 @@ include(build_files/cmake/packaging.cmake)
 #-----------------------------------------------------------------------------
 # Use dynamic loading for OpenMP
 if(WITH_BLENDER)
-	openmp_delayload(blender)
+	openmp_delayload(bforartists)
 endif(WITH_BLENDER)
 if(WITH_PLAYER)
 	openmp_delayload(blenderplayer)
