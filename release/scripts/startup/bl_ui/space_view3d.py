@@ -1095,33 +1095,6 @@ class VIEW3D_MT_angle_control(Menu):
 # XXX: INFO_MT_ names used to keep backwards compatibility (Addons etc that hook into the menu)
 
 
-class INFO_MT_mesh_add(Menu):
-    bl_idname = "INFO_MT_mesh_add"
-    bl_label = "Mesh"
-
-    def draw(self, context):
-        from .space_view3d_toolbar import VIEW3D_PT_tools_add_object
-
-        layout = self.layout
-
-        layout.operator_context = 'INVOKE_REGION_WIN'
-
-        VIEW3D_PT_tools_add_object.draw_add_mesh(layout)
-
-
-class INFO_MT_curve_add(Menu):
-    bl_idname = "INFO_MT_curve_add"
-    bl_label = "Curve"
-
-    def draw(self, context):
-        from .space_view3d_toolbar import VIEW3D_PT_tools_add_object
-        layout = self.layout
-
-        layout.operator_context = 'INVOKE_REGION_WIN'
-
-        VIEW3D_PT_tools_add_object.draw_add_curve(layout)
-
-
 class INFO_MT_surface_add(Menu):
     bl_idname = "INFO_MT_surface_add"
     bl_label = "Surface"
@@ -1173,28 +1146,6 @@ class INFO_MT_edit_armature_add(Menu):
         layout.operator("armature.bone_primitive_add", text="Single Bone", icon='BONE_DATA')
 
 
-class INFO_MT_armature_add(Menu):
-    bl_idname = "INFO_MT_armature_add"
-    bl_label = "Armature"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator_context = 'EXEC_REGION_WIN'
-        layout.operator("object.armature_add", text="Single Bone", icon='BONE_DATA')
-
-
-class INFO_MT_lamp_add(Menu):
-    bl_idname = "INFO_MT_lamp_add"
-    bl_label = "Lamp"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator_context = 'INVOKE_REGION_WIN'
-        layout.operator_enum("object.lamp_add", "type")
-
-
 class INFO_MT_add(Menu):
     bl_label = "Add"
 
@@ -1215,19 +1166,9 @@ class INFO_MT_add(Menu):
         #layout.operator_menu_enum("object.surface_add", "type", text="Surface", icon='OUTLINER_OB_SURFACE')
         layout.menu("INFO_MT_surface_add", icon='OUTLINER_OB_SURFACE')
         layout.menu("INFO_MT_metaball_add", text="Metaball", icon='OUTLINER_OB_META')
-        layout.operator("object.text_add", text="Text", icon='OUTLINER_OB_FONT')
         layout.separator()
 
-        layout.menu("INFO_MT_armature_add", icon='OUTLINER_OB_ARMATURE')
-        layout.operator("object.add", text="Lattice", icon='OUTLINER_OB_LATTICE').type = 'LATTICE'
         layout.operator_menu_enum("object.empty_add", "type", text="Empty", icon='OUTLINER_OB_EMPTY')
-        layout.separator()
-
-        layout.operator("object.speaker_add", text="Speaker", icon='OUTLINER_OB_SPEAKER')
-        layout.separator()
-
-        layout.operator("object.camera_add", text="Camera", icon='OUTLINER_OB_CAMERA')
-        layout.menu("INFO_MT_lamp_add", icon='OUTLINER_OB_LAMP')
         layout.separator()
 
         layout.operator_menu_enum("object.effector_add", "type", text="Force Field", icon='OUTLINER_OB_EMPTY')
