@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 
 #
 #  This program is free software; you can redistribute it and/or
@@ -63,6 +63,9 @@ class RENDER_PT_render(RenderButtonsPanel, Panel):
         layout = self.layout
 
         rd = context.scene.render
+
+        if rd.has_multiple_engines: # bfa - the renderer drodpown box from the info menu bar.
+            layout.prop(rd, "engine", text="")
 
         row = layout.row(align=True)
         row.operator("render.render", text="Render", icon='RENDER_STILL')
