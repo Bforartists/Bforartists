@@ -41,7 +41,6 @@ class INFO_HT_header(Header):
             layout.separator()
         else:
             layout.template_ID(context.window, "screen", new="screen.new", unlink="screen.delete")
-            layout.template_ID(context.screen, "scene", new="scene.new", unlink="scene.delete")
 
         layout.separator()
 
