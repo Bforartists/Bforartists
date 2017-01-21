@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -273,21 +273,6 @@ class IMAGE_MT_uvs_proportional(Menu):
         layout.props_enum(context.tool_settings, "proportional_edit_falloff")
 
 
-class IMAGE_MT_uvs_transform(Menu):
-    bl_label = "Transform"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("transform.translate")
-        layout.operator("transform.rotate")
-        layout.operator("transform.resize")
-
-        layout.separator()
-
-        layout.operator("transform.shear")
-
-
 class IMAGE_MT_uvs_snap(Menu):
     bl_label = "Snap"
 
@@ -367,7 +352,6 @@ class IMAGE_MT_uvs(Menu):
 
         layout.separator()
 
-        layout.menu("IMAGE_MT_uvs_transform")
         layout.menu("IMAGE_MT_uvs_mirror")
         layout.menu("IMAGE_MT_uvs_snap")
         layout.menu("IMAGE_MT_uvs_weldalign")
