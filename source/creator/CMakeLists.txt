@@ -388,7 +388,7 @@ if(WITH_INTERNATIONAL)
 		locales
 		DEPENDS ${_all_mo_files})
 
-	add_dependencies(blender locales)
+	add_dependencies(bforartists locales)
 
 	# Generate INSTALL rules
 	install(
