@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -179,16 +179,6 @@ class VIEW3D_MT_editor_menus(Menu):
             pass
         elif mode_string == 'OBJECT':
             layout.menu("INFO_MT_add", text="Add")
-        elif mode_string == 'EDIT_MESH':
-            layout.menu("INFO_MT_mesh_add", text="Add")
-        elif mode_string == 'EDIT_CURVE':
-            layout.menu("INFO_MT_curve_add", text="Add")
-        elif mode_string == 'EDIT_SURFACE':
-            layout.menu("INFO_MT_surface_add", text="Add")
-        elif mode_string == 'EDIT_METABALL':
-            layout.menu("INFO_MT_metaball_add", text="Add")
-        elif mode_string == 'EDIT_ARMATURE':
-            layout.menu("INFO_MT_edit_armature_add", text="Add")
 
         if gp_edit:
             layout.menu("VIEW3D_MT_edit_gpencil")
