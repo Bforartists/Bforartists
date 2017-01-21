@@ -45,11 +45,6 @@ class INFO_HT_header(Header):
 
         layout.separator()
 
-        if rd.has_multiple_engines:
-            layout.prop(rd, "engine", text="")
-
-        layout.separator()
-
         layout.template_running_jobs()
 
         layout.template_reports_banner()
