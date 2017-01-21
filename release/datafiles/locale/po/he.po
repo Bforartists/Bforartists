@@ -1,0 +1,1329 @@
+
+msgid ""
+msgstr ""
+"Project-Id-Version: Blender 2.76 (sub 0) (b'fb78f6d')\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-10-05 20:13:42\n"
+"PO-Revision-Date: 2012-10-07 13:56+0300\n"
+"Last-Translator: Barak Itkin <lightningismyname@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: he\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Virtaal 0.7.0"
+
+
+msgid "Name"
+msgstr "םש"
+
+
+msgid "Action group is selected"
+msgstr "רבד רחבנ אל"
+
+
+msgid "Random"
+msgstr "יארקא"
+
+
+msgid "Scene"
+msgstr "הנצס"
+
+
+msgid "Add"
+msgstr "ףסוה"
+
+
+msgid "Value"
+msgstr "ךרע"
+
+
+msgid "Reset"
+msgstr "לוחתא"
+
+
+msgid "Y Axis"
+msgstr "Y ריצ"
+
+
+msgid "Location"
+msgstr "םוקימ"
+
+
+msgid "Rotation"
+msgstr "בוביס"
+
+
+msgid "Mean"
+msgstr "עצוממ"
+
+
+msgid "Addon Preferences"
+msgstr "Blender שמתשמ תופדעה"
+
+
+msgid "Width"
+msgstr "בחור"
+
+
+msgid "Size"
+msgstr "לדוג"
+
+
+msgid "Left"
+msgstr "לאמש"
+
+
+msgid "Right"
+msgstr "ןימי"
+
+
+msgid "Vector"
+msgstr "רוטקו"
+
+
+msgid "Speed"
+msgstr "תוריהמ"
+
+
+msgid "Strength"
+msgstr "המצוע"
+
+
+msgid "Center"
+msgstr "זכרמ"
+
+
+msgid "Default"
+msgstr "לדחמ תרירב"
+
+
+msgid "Input Color Space"
+msgstr ":עבצ בחרמ"
+
+
+msgid "Gamma"
+msgstr "אמג"
+
+
+msgid "Saturation"
+msgstr "היוור"
+
+
+msgid "Color"
+msgstr "עבצ"
+
+
+msgid "Constant"
+msgstr "עובק"
+
+
+msgid "Position"
+msgstr "םוקמ"
+
+
+msgid "Output"
+msgstr "טלפ"
+
+
+msgid "Python"
+msgstr "Python"
+
+
+msgid "White Level"
+msgstr "ןבל תמר"
+
+
+msgid "Lamp"
+msgstr "הרונמ"
+
+
+msgid "Mask"
+msgstr "הכסמ"
+
+
+msgid "World"
+msgstr "םלוע"
+
+
+msgid "Generated Coordinates"
+msgstr "רצוימ"
+
+
+msgid "Smooth"
+msgstr "קלח"
+
+
+msgid "Vertex Color"
+msgstr "דוקדוק עבצ"
+
+
+msgid "Shrink"
+msgstr "ץווכ"
+
+
+msgid "Modifiers"
+msgstr "םינשמ"
+
+
+msgid "Surface"
+msgstr "חטשמ"
+
+
+msgid "Apply Density"
+msgstr "תופיפצ"
+
+
+msgid "Frequency"
+msgstr "תורידת"
+
+
+msgid "Path"
+msgstr "ביתנ"
+
+
+msgid "Environment"
+msgstr "הביבס"
+
+
+msgid "Both"
+msgstr "םהינש"
+
+
+msgid "Start"
+msgstr "הלחתה"
+
+
+msgid "End"
+msgstr "ףוס"
+
+
+msgid "3D Space"
+msgstr "חוור"
+
+
+msgid "2D Space"
+msgstr "חוור"
+
+
+msgid "2D Image"
+msgstr "1 הנומת"
+
+
+msgid "Red"
+msgstr "םודא"
+
+
+msgid "Green"
+msgstr "קורי"
+
+
+msgid "Blue"
+msgstr "לוחכ"
+
+
+msgid "Space"
+msgstr "חוור"
+
+
+msgid "Use Gradient"
+msgstr "לקשמ תעיבצ"
+
+
+msgid "Off"
+msgstr "יובכ"
+
+
+msgid "View"
+msgstr "הגוצת"
+
+
+msgid "Movie"
+msgstr "טרס"
+
+
+msgid "Generated"
+msgstr "רצוימ"
+
+
+msgid "Fields"
+msgstr "תודש"
+
+
+msgid "Reflection"
+msgstr "תופקתשה"
+
+
+msgid "Straight"
+msgstr "ןימי"
+
+
+msgid "Specular"
+msgstr "רלקפסא"
+
+
+msgid "Translucency"
+msgstr "הצחמל תופיקש"
+
+
+msgid "Roughness"
+msgstr "תוסג"
+
+
+msgid "Edit Mode"
+msgstr "הכירע בצמ"
+
+
+msgid "Sculpt Mode"
+msgstr "לוסיפ בצמ"
+
+
+msgid "Vertex Paint"
+msgstr "םידוקדוק תעיבצ"
+
+
+msgid "Weight Paint"
+msgstr "לקשמ תעיבצ"
+
+
+msgid "Quadratic"
+msgstr "יעוביר"
+
+
+msgid "Mist"
+msgstr "לפרע"
+
+
+msgid "Window"
+msgstr "ןולח"
+
+
+msgid "Header"
+msgstr "תרתוכ"
+
+
+msgid "Tools"
+msgstr "םילכ"
+
+
+msgid "Density"
+msgstr "תופיפצ"
+
+
+msgid "Emission"
+msgstr "הטילפ"
+
+
+msgid "Mirror"
+msgstr "הארמ"
+
+
+msgid "Apply"
+msgstr "לחה"
+
+
+msgid "Up"
+msgstr "הלעמ"
+
+
+msgid "Triangulate Modifier"
+msgstr "הנשמ ףסוה"
+
+
+msgid "UVWarp Modifier"
+msgstr "הנשמ ףסוה"
+
+
+msgid "U-Axis"
+msgstr "Y ריצ"
+
+
+msgid "V-Axis"
+msgstr "Y ריצ"
+
+
+msgid "UV Center"
+msgstr "זכרמ"
+
+
+msgid "UV Layer"
+msgstr "השדח הבכש"
+
+
+msgid "UV Layer name"
+msgstr "םש קבדה"
+
+
+msgid "Width Hidden"
+msgstr "‪%s‬ (יובח)"
+
+
+msgid "Bokeh Image"
+msgstr "1 הנומת"
+
+
+msgid "Box Mask"
+msgstr "הכסמ"
+
+
+msgid "Lift"
+msgstr "יוליע"
+
+
+msgid "Color Key"
+msgstr "עבצ"
+
+
+msgid "Hue Saturation Value"
+msgstr "היוור"
+
+
+msgid "Map Range"
+msgstr "יארקא"
+
+
+msgid "File Output"
+msgstr "טלפ"
+
+
+msgid "Alpha Convert"
+msgstr "רמה"
+
+
+msgid "Background"
+msgstr "עקר"
+
+
+msgid "Refraction BSDF"
+msgstr "תופקתשה"
+
+
+msgid "Down"
+msgstr "הטמ"
+
+
+msgid "Other"
+msgstr "רחא"
+
+
+msgid "Radius Fac"
+msgstr ":X סוידר"
+
+
+msgid "Timing Mode"
+msgstr "הכירע בצמ"
+
+
+msgid "Ignore timing"
+msgstr "סנכנ"
+
+
+msgid "Gap Duration"
+msgstr "היוור"
+
+
+msgid "Gap Randomness"
+msgstr "יארקא"
+
+
+msgid "U (X) Axis"
+msgstr "Y ריצ"
+
+
+msgid "V (Y) Axis"
+msgstr "Y ריצ"
+
+
+msgid "W (Z) Axis"
+msgstr "Y ריצ"
+
+
+msgid "Toggle Select"
+msgstr "רחבנל קתעה"
+
+
+msgctxt "Operator"
+msgid "Select Faces by Sides"
+msgstr "הבכש רחב"
+
+
+msgctxt "Operator"
+msgid "Select Mode"
+msgstr "לוסיפ בצמ"
+
+
+msgid "Change selection mode"
+msgstr "תופקתשה"
+
+
+msgid "Smooth X Axis"
+msgstr "קלח"
+
+
+msgid "Smooth Y Axis"
+msgstr "Y ריצ"
+
+
+msgid "Smooth Z Axis"
+msgstr "קלח"
+
+
+msgctxt "Operator"
+msgid "Set Path"
+msgstr ":ץבוק ביתנ"
+
+
+msgctxt "Operator"
+msgid "Rotate Fix"
+msgstr "בוביס"
+
+
+msgctxt "Operator"
+msgid "Convert Samples"
+msgstr "רמה"
+
+
+msgctxt "Operator"
+msgid "Add Node"
+msgstr "הנשמ ףסוה"
+
+
+msgctxt "Operator"
+msgid "Add Empty"
+msgstr "טלק ףסוה"
+
+
+msgid "Lamp Type"
+msgstr "הרונמ"
+
+
+msgctxt "Operator"
+msgid "Weight Gradient"
+msgstr "לקשמ תעיבצ"
+
+
+msgctxt "Operator"
+msgid "Copy To Selected"
+msgstr "רחבנל קתעה"
+
+
+msgid "Operation Mode"
+msgstr "תופקתשה"
+
+
+msgctxt "Operator"
+msgid "Copy Selection to Buffer"
+msgstr "רחבנל קתעה"
+
+
+msgctxt "Operator"
+msgid "Rotate View"
+msgstr "בוביס"
+
+
+msgctxt "Operator"
+msgid "Restore Defaults"
+msgstr "לדחמה תרירב יכרעל לכה לחתא"
+
+
+msgid "Tooltip"
+msgstr "םילכ"
+
+
+msgid "Show Diffuse Color"
+msgstr "חתפמ עבצ"
+
+
+msgid "Detail Size"
+msgstr "טוריפ"
+
+
+msgid "System"
+msgstr "תכרעמ"
+
+
+msgid "Color Management"
+msgstr "עבצ לוהינ"
+
+
+msgid "Tile Order"
+msgstr ":םונילופ תלעמ"
+
+
+msgid "Progressive Refine"
+msgstr "תומדקתה"
+
+
+msgid "PO File Path"
+msgstr ":ץבוק ביתנ"
+
+
+msgid "MO File Path"
+msgstr ":ץבוק ביתנ"
+
+
+msgid "POT File Path"
+msgstr ":ץבוק ביתנ"
+
+
+msgid "Indirect"
+msgstr "ףיקע"
+
+
+msgid "Bake to Vertex Color"
+msgstr "דוקדוק עבצ"
+
+
+msgid "Double-Density"
+msgstr "תופיפצ"
+
+
+msgid "Auto Select"
+msgstr "רחבנל קתעה"
+
+
+msgid "Immediate Mode"
+msgstr "הכירע בצמ"
+
+
+msgid "Vertex Arrays"
+msgstr "םידוקדוק תעיבצ"
+
+
+msgid "Ignition"
+msgstr "םוקמ"
+
+
+msgid "Smoke Color"
+msgstr "חתפמ עבצ"
+
+
+msgid "Add fire"
+msgstr "הנשמ ףסוה"
+
+
+msgid "Generated coordinates centered to flow object"
+msgstr "רצוימ"
+
+
+msgid "Manual"
+msgstr "ינדי"
+
+
+msgid "Blender File"
+msgstr "Blender לש טנרטניאה רתא"
+
+
+msgid "Text Style"
+msgstr "האבה הבכש"
+
+
+msgid "Theme Background Color"
+msgstr "עקר"
+
+
+msgid "Show Background"
+msgstr "עקר"
+
+
+msgid "Default Layout"
+msgstr "לדחמ תרירב"
+
+
+msgid "GPU Mipmap Generation"
+msgstr "היוור"
+
+
+msgid "Tiles:"
+msgstr "תיוות לדוג"
+
+
+msgctxt "Operator"
+msgid "Add"
+msgstr "ףסוה"
+
+
+msgid "Location:"
+msgstr "‏:םוקימ"
+
+
+msgctxt "Operator"
+msgid "Animate Path"
+msgstr ":ץבוק ביתנ"
+
+
+msgid "Weight:"
+msgstr ":לקשמ"
+
+
+msgctxt "Operator"
+msgid "Remove"
+msgstr "רסה"
+
+
+msgid "Radius:"
+msgstr ":סוידר"
+
+
+msgid "Color Space:"
+msgstr ":עבצ בחרמ"
+
+
+msgid "UV Axis:"
+msgstr "Y ריצ"
+
+
+msgctxt "Operator"
+msgid "Start"
+msgstr "הלחתה"
+
+
+msgid "File Path:"
+msgstr ":ץבוק ביתנ"
+
+
+msgid "Reaction:"
+msgstr "תופקתשה"
+
+
+msgid "Tile Size:"
+msgstr "תיוות לדוג"
+
+
+msgid "Dimension"
+msgstr "דמימ"
+
+
+msgctxt "Operator"
+msgid "Center"
+msgstr "זכרמ"
+
+
+msgctxt "Operator"
+msgid "Set X Axis"
+msgstr "קלח"
+
+
+msgctxt "Operator"
+msgid "Set Y Axis"
+msgstr "Y ריצ"
+
+
+msgctxt "Operator"
+msgid "Interpolation Mode"
+msgstr "תופקתשה"
+
+
+msgctxt "Operator"
+msgid "Cursor to Selected"
+msgstr "רחבנל קתעה"
+
+
+msgctxt "Operator"
+msgid "Vertex"
+msgstr ":דוקדוק"
+
+
+msgctxt "Operator"
+msgid "X Axis"
+msgstr "Y ריצ"
+
+
+msgctxt "Operator"
+msgid "Y Axis"
+msgstr "Y ריצ"
+
+
+msgctxt "Operator"
+msgid "Manual"
+msgstr "ינדי"
+
+
+msgctxt "Operator"
+msgid "Blender Website"
+msgstr "Blender לש טנרטניאה רתא"
+
+
+msgctxt "Operator"
+msgid "User Community"
+msgstr "םישמתשמ תליהק"
+
+
+msgctxt "Operator"
+msgid "Sensor"
+msgstr "ךרד־רוציק ףסוה"
+
+
+msgctxt "Operator"
+msgid "Controller"
+msgstr "הדוקנ ףסוה"
+
+
+msgctxt "Operator"
+msgid "Move"
+msgstr "טרס"
+
+
+msgctxt "Operator"
+msgid "Movie"
+msgstr "טרס"
+
+
+msgctxt "Operator"
+msgid "Image"
+msgstr "2 הנומת"
+
+
+msgctxt "Operator"
+msgid "Right Handle"
+msgstr ":תינמי תידי"
+
+
+msgctxt "Operator"
+msgid "Scene..."
+msgstr "הנצס"
+
+
+msgctxt "Operator"
+msgid "Alpha Over"
+msgstr "רמה"
+
+
+msgctxt "Operator"
+msgid "Alpha Under"
+msgstr "רמה"
+
+
+msgctxt "Operator"
+msgid "Color"
+msgstr "עבצ"
+
+
+msgid "Path:"
+msgstr ":ביתנ"
+
+
+msgid "Axis Colors:"
+msgstr ":הגוצת עבצ"
+
+
+msgid "Preferences:"
+msgstr "Blender שמתשמ תופדעה"
+
+
+msgctxt "Operator"
+msgid "Shrink Fatten"
+msgstr "ץווכ"
+
+
+msgctxt "Operator"
+msgid "Right"
+msgstr "ןימי"
+
+
+msgctxt "Operator"
+msgid "Left"
+msgstr "לאמש"
+
+
+msgctxt "Operator"
+msgid "Random"
+msgstr "יארקא"
+
+
+msgctxt "Operator"
+msgid "Select All by Layer"
+msgstr "הבכש רחב"
+
+
+msgctxt "Operator"
+msgid "Location"
+msgstr "םוקימ"
+
+
+msgctxt "Operator"
+msgid "Rotation"
+msgstr "בוביס"
+
+
+msgctxt "Operator"
+msgid "Copy Properties..."
+msgstr "םינייפאמ אלל"
+
+
+msgctxt "Operator"
+msgid "Invert"
+msgstr "רמה"
+
+
+msgctxt "Operator"
+msgid "Make"
+msgstr "הכסמ"
+
+
+msgctxt "Operator"
+msgid "Merge Properties"
+msgstr "הגוצת ינייפאמ"
+
+
+msgctxt "Operator"
+msgid "Vertices Only"
+msgstr "דוקדוק עבצ"
+
+
+msgctxt "Operator"
+msgid "Path"
+msgstr "ביתנ"
+
+
+msgid "Constraints:"
+msgstr "עובק"
+
+
+msgctxt "Operator"
+msgid "Apply"
+msgstr "לחה"
+
+
+msgctxt "Operator"
+msgid "Vector"
+msgstr "רוטקו"
+
+
+msgid "Not supported in sculpt mode"
+msgstr ".לוסיפ בצמב ךמתנ אל"
+
+
+msgid "Invalid selection"
+msgstr "תופקתשה"
+
+
+msgid "Poly Order:"
+msgstr ":םונילופ תלעמ"
+
+
+msgid "Before:"
+msgstr ":ינפל"
+
+
+msgid "After:"
+msgstr ":ירחא"
+
+
+msgid "Add Point"
+msgstr "הדוקנ ףסוה"
+
+
+msgid "'Order' of the Polynomial (for a polynomial with n terms, 'order' is n-1)"
+msgstr "(n-1 איה הלעמה ,םירביא n םע םונילופ רובע) םונילופה תלעמ"
+
+
+msgid "Coefficient for polynomial"
+msgstr "םונילופ רובע םימדקמ"
+
+
+msgid "Coefficient of x"
+msgstr "x לש םדקמה"
+
+
+msgid "No active keying set"
+msgstr "הליעפ הבכש עבק"
+
+
+msgid "No active keying set to remove"
+msgstr "הליעפ הבכש עבק"
+
+
+msgid "No joints selected"
+msgstr "רבד רחבנ אל"
+
+
+msgid "Cannot make segment"
+msgstr "השדח הצובק"
+
+
+msgid "Cannot spin"
+msgstr "השדח הצובק"
+
+
+msgctxt "Operator"
+msgid "Reset All to Default Values"
+msgstr "לדחמה תרירב יכרעל לכה לחתא"
+
+
+msgctxt "Operator"
+msgid "Change Shortcut"
+msgstr "ךרד־רוציק הנש"
+
+
+msgctxt "Operator"
+msgid "Remove Shortcut"
+msgstr "ךרד־רוציק רסה"
+
+
+msgctxt "Operator"
+msgid "Add Shortcut"
+msgstr "ךרד־רוציק ףסוה"
+
+
+msgid "No Properties"
+msgstr "םינייפאמ אלל"
+
+
+msgid "(Gamma Corrected)"
+msgstr "(אמג ןקותמ)"
+
+
+msgid "Shortcut: %s"
+msgstr "‬%s‪ :ךרד־רוציק"
+
+
+msgid "Radians: %f"
+msgstr "‬%f‪ :םינאידר"
+
+
+msgid "Expression: %s"
+msgstr "‬%s‪ :יוטיב"
+
+
+msgid "Library: %s"
+msgstr "‬%s‪ :היירפס"
+
+
+msgid "Python: %s"
+msgstr "Python: ‪%s‬"
+
+
+msgid "Disabled: %s"
+msgstr "‬%s‪ :תבשומ"
+
+
+msgid "Python: %s.%s"
+msgstr "Python: ‪%s‬.‪%s‬"
+
+
+msgid "Convert virtual modifier to a real modifier"
+msgstr "ישממ הנשמל ילאוטריו הנשמ רמה"
+
+
+msgid "Delete points"
+msgstr "תודוקנ קחמ"
+
+
+msgid "Stop this job"
+msgstr "וז הדובע רוצע"
+
+
+msgid "Progress"
+msgstr "תומדקתה"
+
+
+msgid "%d items"
+msgstr "‪%d‬ םיטירפ"
+
+
+msgid "Nothing selected"
+msgstr "רבד רחבנ אל"
+
+
+msgid "Selection not supported in object mode"
+msgstr ".לוסיפ בצמב ךמתנ אל"
+
+
+msgid "No active bone"
+msgstr "הליעפ הבכש עבק"
+
+
+msgid "Operation cannot be performed in edit mode"
+msgstr ".לוסיפ בצמב ךמתנ אל"
+
+
+msgid "Editmode lattice is not supported yet"
+msgstr ".לוסיפ בצמב ךמתנ אל"
+
+
+msgid "No active camera set"
+msgstr "הליעפ הבכש עבק"
+
+
+msgid "Width:"
+msgstr "בחור"
+
+
+msgid "Height:"
+msgstr ":לקשמ"
+
+
+msgid "Cancel"
+msgstr "לוטיב"
+
+
+msgid "File path"
+msgstr "ץבוק ביתנ"
+
+
+msgid "File name"
+msgstr "ץבוק םש"
+
+
+msgid "Display Color:"
+msgstr ":הגוצת עבצ"
+
+
+msgid "Key:"
+msgstr ":חתפמ"
+
+
+msgid "Value:"
+msgstr ":ךרע"
+
+
+msgid "Right Handle:"
+msgstr ":תינמי תידי"
+
+
+msgid "Bone 1:"
+msgstr ":1 םצע"
+
+
+msgid "Bone 2:"
+msgstr ":2 םצע"
+
+
+msgid "ERROR: Invalid Python expression"
+msgstr "ןיקת אל Python יוטיב :האיגש"
+
+
+msgid "ERROR: Invalid target channel(s)"
+msgstr "םיניקת אל הרטמ יצורע :האיגש"
+
+
+msgid "Add Variable"
+msgstr "הנתשמ ףסוה"
+
+
+msgid "Add Modifier"
+msgstr "הנשמ ףסוה"
+
+
+msgid "Force updates of dependencies"
+msgstr "תויולת לש ןוכדע הפכ"
+
+
+msgid "View Properties"
+msgstr "הגוצת ינייפאמ"
+
+
+msgid " + Z"
+msgstr " + Z"
+
+
+msgid "Select Layer"
+msgstr "הבכש רחב"
+
+
+msgid "Previous Layer"
+msgstr "תמדוק הבכש"
+
+
+msgid "Next Layer"
+msgstr "האבה הבכש"
+
+
+msgid "Saved %s"
+msgstr "‬%s‪ :תבשומ"
+
+
+msgid "First Modifier:"
+msgstr "הנשמ ףסוה"
+
+
+msgid "Second Modifier:"
+msgstr "הנשמ ףסוה"
+
+
+msgid "Add Controller"
+msgstr "הדוקנ ףסוה"
+
+
+msgid "Add Sensor"
+msgstr "ךרד־רוציק ףסוה"
+
+
+msgid "Label Size"
+msgstr "תיוות לדוג"
+
+
+msgid "Squash"
+msgstr "ךעמ"
+
+
+msgid "Add Input"
+msgstr "טלק ףסוה"
+
+
+msgid "Cannot ungroup"
+msgstr "השדח הצובק"
+
+
+msgid "Remove"
+msgstr "רסה"
+
+
+msgid "Disconnect"
+msgstr "קתנ"
+
+
+msgid "Dependency Loop"
+msgstr "תויולת תאלול"
+
+
+msgid "Not found: %s"
+msgstr "Python: ‪%s‬"
+
+
+msgid "Mixed selection"
+msgstr "תופקתשה"
+
+
+msgid "No active sequence!"
+msgstr "הליעפ הבכש עבק"
+
+
+msgid "Vertex:"
+msgstr ":דוקדוק"
+
+
+msgid "Median:"
+msgstr ":ןויצח"
+
+
+msgid "Radius X:"
+msgstr ":X סוידר"
+
+
+msgid "Radius Y:"
+msgstr ":Y סוידר"
+
+
+msgid "Mean Radius:"
+msgstr ":עצוממ סוידר"
+
+
+msgid "Mean Tilt:"
+msgstr ":עצוממ סוידר"
+
+
+msgid "Shrink/Fatten:"
+msgstr "ץווכ"
+
+
+msgid "view"
+msgstr "הגוצת"
+
+
+msgid "(Smooth)"
+msgstr "קלח"
+
+
+msgid "(Constant)"
+msgstr "עובק"
+
+
+msgid "(Random)"
+msgstr "יארקא"
+
+
+msgid "UV Vertex"
+msgstr ":דוקדוק"
+
+
+msgid "Modify"
+msgstr "הנש"
+
+
+msgid "Verts changed from %d to %d"
+msgstr ".%d‬‪-ל %d‬‪-מ הנתשה םידוקדוקה רפסמ"
+
+
+msgid "Cage verts changed from %d to %d"
+msgstr ".%d‬‪-ל %d‬‪-מ הנתשה םידוקדוקה רפסמ"
+
+
+msgid "Key Color"
+msgstr "חתפמ עבצ"
+
+
+msgid "Image 1"
+msgstr "1 הנומת"
+
+
+msgid "Image 2"
+msgstr "2 הנומת"
+
+
+msgid "Std Dev"
+msgstr "ןקת תייטס"
+
+
+msgid "Incoming"
+msgstr "סנכנ"
+
+
+msgid "Spec"
+msgstr "רלקפסא"
+
+
+msgid "Color2"
+msgstr "2עבצ"
+
+
+msgid "Row Height"
+msgstr "הרוש הבוג"
+
+
+msgid "Detail"
+msgstr "טוריפ"
+
+
+msgid "Bricks 1"
+msgstr "1 םינבל"
+
+
+msgid "Bricks 2"
+msgstr "2 םינבל"
+
+
+msgid "No border area selected"
+msgstr "רבד רחבנ אל"
+
+
+msgid "Paste name"
+msgstr "םש קבדה"
+
+
+msgid "Donations"
+msgstr "תומורת"
+
+
+msgid "Credits"
+msgstr "תודות"
+
+
+msgid "Blender Website"
+msgstr "Blender לש טנרטניאה רתא"
+
+
+msgctxt "Operator"
+msgid "Toggle System Console"
+msgstr "רחבנל קתעה"
+
+
+msgid "Nothing indicated"
+msgstr "רבד רחבנ אל"
+
+
+msgid "Blender User Preferences"
+msgstr "Blender שמתשמ תופדעה"
+
