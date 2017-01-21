@@ -1,0 +1,43 @@
+
+msgid ""
+msgstr ""
+"Project-Id-Version: Blender 2.76 (sub 0) (b'fb78f6d')\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-10-05 20:13:42\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: hr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit"
+
+
+msgctxt "Operator"
+msgid "Duplicate Objects"
+msgstr "bbbbbbbbbbbbb"
+
+
+msgid "Duplicate selected objects and move them"
+msgstr "cccccccccccccccccc"
+
+
+msgid "Duplicate Objects"
+msgstr "aaaaaaaaa"
+
+
+msgid "No active keying set"
+msgstr "aaaaaaaaa"
+
+
+msgid "No active bone"
+msgstr "aaaaaaaaa"
+
+
+msgid "Hide Objects"
+msgstr "aaaaaaaaa"
+
+
+msgid "No active sequence!"
+msgstr "aaaaaaaaa"
+
