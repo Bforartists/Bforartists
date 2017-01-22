@@ -1644,6 +1644,7 @@ class VIEW3D_MT_object_parent(Menu):
         layout.operator_enum("object.parent_set", "type")
         layout.separator()
         layout.operator_enum("object.parent_clear", "type")
+        layout.operator("object.parent_no_inverse_set", text = "Make Parent no Inverse" )
 
 
 class VIEW3D_MT_object_track(Menu):
