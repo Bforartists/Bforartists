@@ -2631,10 +2631,6 @@ class VIEW3D_MT_edit_curve_ctrlpoints(Menu):
 
             layout.separator()
 
-            layout.operator_menu_enum("curve.handle_type_set", "type")
-
-            layout.separator()
-
         layout.menu("VIEW3D_MT_hook")
 
         layout.separator()
