@@ -2387,7 +2387,6 @@ class VIEW3D_MT_edit_mesh_vertices(Menu):
         if with_bullet:
             layout.operator("mesh.convex_hull")
         layout.operator("mesh.vertices_smooth")
-        layout.operator("mesh.remove_doubles")
 
         layout.operator("mesh.blend_from_shape")
 
