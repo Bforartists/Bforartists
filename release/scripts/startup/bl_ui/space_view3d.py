@@ -3701,34 +3701,6 @@ class VIEW3D_PT_background_image(Panel):
                         row.prop(bg, "rotation")
                         row.prop(bg, "size")
 
-
-class VIEW3D_PT_transform_orientations(Panel):
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'UI'
-    bl_label = "Transform Orientations"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    @classmethod
-    def poll(cls, context):
-        view = context.space_data
-        return (view)
-
-    def draw(self, context):
-        layout = self.layout
-
-        view = context.space_data
-        orientation = view.current_orientation
-
-        row = layout.row(align=True)
-        row.prop(view, "transform_orientation", text="")
-        row.operator("transform.create_orientation", text="", icon='ZOOMIN')
-
-        if orientation:
-            row = layout.row(align=True)
-            row.prop(orientation, "name", text="")
-            row.operator("transform.delete_orientation", text="", icon='X')
-
-
 class VIEW3D_PT_etch_a_ton(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
