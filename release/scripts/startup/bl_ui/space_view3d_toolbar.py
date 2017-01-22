@@ -340,6 +340,11 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
         col.operator("mesh.subdivide")
         col.operator("mesh.loopcut_slide")
         col.operator("mesh.offset_edge_loops_slide")
+
+        row = col.row(align=True)
+        row.operator("mesh.dupli_extrude_cursor" , text = 'DupliEx').rotate_source = False
+        row.operator("mesh.dupli_extrude_cursor", text = 'DupliExRot').rotate_source = True
+
         row = col.row(align=True)
         row.operator("mesh.spin")
         row.operator("mesh.screw")
