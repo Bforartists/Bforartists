@@ -247,6 +247,10 @@ class VIEW3D_MT_transform(VIEW3D_MT_transform_base):
         layout.operator("transform.translate", text="Move Texture Space").texture_space = True
         layout.operator("transform.resize", text="Scale Texture Space").texture_space = True
 
+        layout.separator()
+
+        layout.operator("transform.skin_resize", text="Skin Resize")
+
 
 # Object-specific extensions to Transform menu
 class VIEW3D_MT_transform_object(VIEW3D_MT_transform_base):
