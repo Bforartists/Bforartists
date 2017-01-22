@@ -2384,7 +2384,6 @@ class VIEW3D_MT_edit_mesh_vertices(Menu):
         layout.operator("mesh.bevel").vertex_only = True
         if with_bullet:
             layout.operator("mesh.convex_hull")
-        layout.operator("mesh.vertices_smooth")
 
         layout.operator("mesh.blend_from_shape")
 
