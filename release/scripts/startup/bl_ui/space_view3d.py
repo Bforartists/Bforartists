@@ -2597,7 +2597,6 @@ def draw_curve(self, context):
     layout.operator("curve.split")
     layout.operator("curve.separate")
     layout.operator("curve.make_segment")
-    layout.operator("curve.cyclic_toggle")
     layout.menu("VIEW3D_MT_edit_curve_delete")
 
     layout.separator()
