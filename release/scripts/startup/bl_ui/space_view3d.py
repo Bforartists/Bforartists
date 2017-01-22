@@ -2603,7 +2603,6 @@ def draw_curve(self, context):
     layout.separator()
 
     layout.menu("VIEW3D_MT_edit_curve_ctrlpoints")
-    layout.menu("VIEW3D_MT_edit_curve_segments")
 
     layout.separator()
 
@@ -2643,17 +2642,6 @@ class VIEW3D_MT_edit_curve_ctrlpoints(Menu):
         layout.separator()
 
         layout.operator("object.vertex_parent_set")
-
-
-class VIEW3D_MT_edit_curve_segments(Menu):
-    bl_label = "Segments"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("curve.subdivide")
-        layout.operator("curve.switch_direction")
-
 
 class VIEW3D_MT_edit_curve_specials(Menu):
     bl_label = "Specials"
