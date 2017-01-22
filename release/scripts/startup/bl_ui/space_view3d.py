@@ -671,6 +671,22 @@ class VIEW3D_MT_select_pose_more_less(Menu):
         props.extend = True
         props.direction = 'CHILD'
 
+        layout.separator()
+
+        myvar = layout.operator("object.select_hierarchy", text="Parent")
+        myvar.direction = 'PARENT'
+        myvar.extend = False
+        myvar = layout.operator("object.select_hierarchy", text="Child")
+        myvar.direction = 'CHILD'
+        myvar.extend = False
+
+        myvar = layout.operator("object.select_hierarchy", text="Parent Extended")
+        myvar.direction = 'PARENT'
+        myvar.extend = True
+        myvar = layout.operator("object.select_hierarchy", text="Child Extended")
+        myvar.direction = 'CHILD'
+        myvar.extend = True
+
 
 class VIEW3D_MT_select_pose(Menu):
     bl_label = "Select"
