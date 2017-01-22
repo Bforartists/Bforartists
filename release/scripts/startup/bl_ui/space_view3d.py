@@ -2364,7 +2364,6 @@ class VIEW3D_MT_edit_mesh_vertices(Menu):
 
         with_bullet = bpy.app.build_options.bullet
 
-        layout.operator("mesh.merge")
         layout.operator("mesh.rip_move")
         layout.operator("mesh.rip_move_fill")
         layout.operator("mesh.rip_edge_move")
