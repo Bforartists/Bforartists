@@ -1353,6 +1353,9 @@ class VIEW3D_MT_object(Menu):
 
         layout.separator()
 
+        layout.operator("view3d.pastebuffer", text = "Paste")
+
+        layout.operator("view3d.copybuffer", text = "Copy")
         layout.operator("object.duplicate_move")
         layout.operator("object.duplicate_move_linked")
         layout.operator("object.delete", text="Delete...").use_global = False
