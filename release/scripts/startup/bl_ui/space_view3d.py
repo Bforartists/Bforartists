@@ -835,6 +835,8 @@ class VIEW3D_MT_select_edit_mesh(Menu):
         layout.operator("mesh.select_axis", text="Side of Active")
 
         layout.operator("mesh.select_linked", text="Linked")
+        layout.operator("mesh.select_linked_pick", text="Linked Pick Select").deselect = False
+        layout.operator("mesh.select_linked_pick", text="Linked Pick Deselect").deselect = True
         layout.operator("mesh.shortest_path_select", text="Shortest Path")
         layout.operator("mesh.loop_multi_select", text="Edge Loops").ring = False
         layout.operator("mesh.loop_multi_select", text="Edge Rings").ring = True
