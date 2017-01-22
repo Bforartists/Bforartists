@@ -2425,6 +2425,7 @@ class VIEW3D_MT_edit_mesh(Menu):
 
         layout.separator()
 
+        layout.menu("VIEW3D_MT_edit_mesh_select_mode")
         layout.menu("VIEW3D_MT_edit_mesh_vertices")
         layout.menu("VIEW3D_MT_edit_mesh_edges")
         layout.menu("VIEW3D_MT_edit_mesh_faces")
