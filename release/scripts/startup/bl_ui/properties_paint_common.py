@@ -291,6 +291,28 @@ def brush_mask_texture_settings(layout, brush):
             layout.operator("brush.stencil_fit_image_aspect").mask = True
         layout.operator("brush.stencil_reset_transform").mask = True
 
+        # stencil brush controls hotkeys.
+        col = layout.column()
+        col.label(text="Stencil Brush Control:")
+        row = col.row(align=True)
+        row.operator("brush.stencil_control", text = "Trans").mode = 'TRANSLATION'
+        row.operator("brush.stencil_control", text = "Rotate").mode = 'ROTATION'
+        row.operator("brush.stencil_control", text = "Scale").mode = 'SCALE'
+
+        col = layout.column()
+        col.label(text="Stencil Brush Control Secondary:")
+        row = col.row(align=True)
+        myvar = row.operator("brush.stencil_control", text = "Trans")
+        myvar.mode = 'TRANSLATION'
+        myvar.texmode = 'SECONDARY'
+        myvar = row.operator("brush.stencil_control", text = "Rotate")
+        myvar.mode = 'ROTATION'
+        myvar.texmode = 'SECONDARY'
+        myvar = row.operator("brush.stencil_control", text = "Scale")
+        myvar.mode = 'SCALE'
+        myvar.texmode = 'SECONDARY'
+
+
     col = layout.column()
     col.prop(brush, "use_pressure_masking", text="")
     # angle and texture_angle_source
