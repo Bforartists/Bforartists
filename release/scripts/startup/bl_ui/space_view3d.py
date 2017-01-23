@@ -2726,6 +2726,7 @@ class VIEW3D_MT_edit_mesh_clean(Menu):
         layout.operator("mesh.fill_holes")
 
 
+# Delete menu quiz
 class VIEW3D_MT_edit_mesh_delete(Menu):
     bl_label = "Delete"
 
@@ -2736,22 +2737,7 @@ class VIEW3D_MT_edit_mesh_delete(Menu):
 
         layout.separator()
 
-        layout.operator("mesh.dissolve_verts")
-        layout.operator("mesh.dissolve_edges")
-        layout.operator("mesh.dissolve_faces")
-
-        layout.separator()
-
-        layout.operator("mesh.dissolve_limited")
-
-        layout.separator()
-
-        layout.operator("mesh.edge_collapse")
         layout.operator("mesh.delete_edgeloop", text="Edge Loops")
-
-
-class VIEW3D_MT_edit_mesh_showhide(ShowHideMenu, Menu):
-    _operator_name = "mesh"
 
 
 class VIEW3D_MT_edit_gpencil_delete(Menu):
