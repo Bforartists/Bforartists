@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -151,6 +151,9 @@ class GRAPH_MT_select(Menu):
         props.axis_range = True
         props.include_handles = False
         props = layout.operator("graph.select_border", text="Border (Include Handles)")
+        props.axis_range = False
+        props.include_handles = True
+        props = layout.operator("graph.select_border", text="Border (Axis + Handles)")
         props.axis_range = False
         props.include_handles = True
 
