@@ -1798,6 +1798,17 @@ class VIEW3D_MT_object_game(Menu):
 
         layout.operator("object.game_property_clear")
 
+# Show hide menu for face selection masking
+class VIEW3D_MT_facemask_showhide(Menu):
+    bl_label = "Show/Hide"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("paint.face_select_reveal", text="Show Hidden")
+        layout.operator("paint.face_select_hide", text="Hide Selected").unselected = False
+        layout.operator("paint.face_select_hide", text="Hide Unselected").unselected = True
+
 
 # ********** Brush menu **********
 class VIEW3D_MT_brush(Menu):
@@ -1852,6 +1863,10 @@ class VIEW3D_MT_brush(Menu):
                 if sculpt_tool == 'LAYER':
                     layout.prop(brush, "use_persistent")
                     layout.operator("sculpt.set_persistent_base")
+
+            layout.separator()
+
+            layout.menu("VIEW3D_MT_facemask_showhide") ### show hide for face mask tool
 
 
 class VIEW3D_MT_brush_paint_modes(Menu):
