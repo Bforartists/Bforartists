@@ -954,8 +954,15 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
             if tool != 'NONE':
                 col = layout.column()
                 col.prop(brush, "size", slider=True)
+
+                myvar = layout.operator("wm.radial_control", text = "Radial Control Size")
+                myvar.data_path_primary = 'tool_settings.particle_edit.brush.size'
+
                 if tool != 'ADD':
                     col.prop(brush, "strength", slider=True)
+
+                    myvar = layout.operator("wm.radial_control", text = "Radial Control Strength")
+                    myvar.data_path_primary = 'tool_settings.particle_edit.brush.strength'
 
             if tool == 'ADD':
                 col.prop(brush, "count")
