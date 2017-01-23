@@ -135,6 +135,7 @@ class OUTLINER_MT_view(Menu):
         layout.separator()
 
         layout.operator("outliner.select_border")
+        layout.operator("outliner.selected_toggle")
 
         layout.separator()
 
