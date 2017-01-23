@@ -1552,6 +1552,8 @@ class VIEW3D_PT_sculpt_dyntopo(Panel, View3DPaintPanel):
         settings = self.paint_settings(context)
         brush = settings.brush
 
+        layout.operator("sculpt.set_detail_size", text="Set detail size")
+
         col = layout.column()
         col.active = context.sculpt_object.use_dynamic_topology_sculpting
         sub = col.column(align=True)
