@@ -151,10 +151,6 @@ class NLA_MT_select(Menu):
         props.extend = False
         props.mode = 'RIGHT'
 
-        layout.separator()
-
-        layout.operator("anim.channels_find")
-
 
 class NLA_MT_marker(Menu):
     bl_label = "Marker"
