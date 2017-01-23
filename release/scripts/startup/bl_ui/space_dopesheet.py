@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -333,6 +333,10 @@ class DOPESHEET_MT_channel(Menu):
 
         layout.separator()
         layout.operator("anim.channels_fcurves_enable")
+
+        layout.separator()
+
+        layout.operator("anim.channels_find")
 
 
 class DOPESHEET_MT_key(Menu):
