@@ -2315,8 +2315,13 @@ class VIEW3D_MT_pose_constraints(Menu):
         layout.operator("pose.constraints_clear")
 
 
+        # the ShowHideMenu class as a class, so that you can use it in different modes with different hotkeys
 class VIEW3D_MT_pose_showhide(ShowHideMenu, Menu):
-    _operator_name = "pose"
+    _operator_name = "pose" # the name in the user preferences. Important for the hotkey
+
+# the ShowHideMenu class as a class, so that you can use it in different modes with different hotkeys
+class VIEW3D_MT_armature_showhide(ShowHideMenu, Menu):
+    operator_name = "armature" # the name in the user preferences. Important for the hotkey
 
 
 class VIEW3D_MT_pose_apply(Menu):
@@ -3066,6 +3071,7 @@ class VIEW3D_MT_edit_armature(Menu):
 
         layout.separator()
 
+        layout.menu("VIEW3D_MT_armature_showhide")
         layout.menu("VIEW3D_MT_bone_options_toggle", text="Bone Settings")
 
 
