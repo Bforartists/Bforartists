@@ -863,6 +863,8 @@ class VIEW3D_MT_select_edit_curve(Menu):
         layout.operator("curve.select_random")
         layout.operator("curve.select_nth")
         layout.operator("curve.select_linked", text="Select Linked")
+        layout.operator("curve.select_linked_pick", text="Linked Pick Select").deselect = False
+        layout.operator("curve.select_linked_pick", text="Linked Pick Deselect").deselect = True
         layout.operator("curve.select_similar", text="Select Similar")
 
         layout.separator()
@@ -894,6 +896,8 @@ class VIEW3D_MT_select_edit_surface(Menu):
         layout.operator("curve.select_random")
         layout.operator("curve.select_nth")
         layout.operator("curve.select_linked", text="Select Linked")
+        layout.operator("curve.select_linked_pick", text="Linked Pick Select").deselect = False
+        layout.operator("curve.select_linked_pick", text="Linked Pick Deselect").deselect = True
         layout.operator("curve.select_similar", text="Select Similar")
 
         layout.separator()
