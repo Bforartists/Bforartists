@@ -2766,6 +2766,28 @@ class VIEW3D_MT_edit_gpencil_delete(Menu):
 # Edit Curve
 # draw_curve is used by VIEW3D_MT_edit_curve and VIEW3D_MT_edit_surface
 
+# Workaround to separate the tooltips for Show Hide for Curve in Edit Mode
+class VIEW3D_curve_hide_unselected(bpy.types.Operator):
+    """Hide Unselected\nHide unselected Control Points"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "curve.hide_unselected"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Hide Unselected"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.curve.hide(unselected = True)
+        return {'FINISHED'}  
+
+
+class VIEW3D_MT_edit_curve_show_hide(Menu):
+    bl_label = "Show/Hide"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("curve.reveal", text="Show Hidden")
+        layout.operator("curve.hide", text="Hide Selected").unselected = False
+        layout.operator("curve.hide_unselected", text="Hide Unselected")
+
 
 def draw_curve(self, context):
     layout = self.layout
@@ -2773,7 +2795,7 @@ def draw_curve(self, context):
     toolsettings = context.tool_settings
 
     layout.menu("VIEW3D_MT_transform")
-    layout.menu("VIEW3D_MT_mirror")
+    layout.operator("object.vertex_group_mirror")
     layout.menu("VIEW3D_MT_snap")
 
     layout.separator()
@@ -2783,19 +2805,27 @@ def draw_curve(self, context):
     layout.operator("curve.split")
     layout.operator("curve.separate")
     layout.operator("curve.make_segment")
-    layout.menu("VIEW3D_MT_edit_curve_delete")
+    layout.operator("curve.delete", text="Delete...")
 
+    layout.separator()
+
+    layout.operator("curve.smooth_tilt")
+    layout.operator("curve.smooth_radius")
+    layout.operator("curve.smooth_weight")
+    layout.operator("curve.spline_weight_set")
+    
     layout.separator()
 
     layout.menu("VIEW3D_MT_edit_curve_ctrlpoints")
 
     layout.separator()
 
-    layout.menu("VIEW3D_MT_edit_proportional")
+    layout.prop_menu_enum(toolsettings, "proportional_edit")
+    layout.prop_menu_enum(toolsettings, "proportional_edit_falloff")
 
     layout.separator()
 
-    layout.menu("VIEW3D_MT_edit_curve_showhide")
+    layout.menu("VIEW3D_MT_edit_curve_show_hide")# bfa - the new show hide menu with separated tooltips
 
 
 class VIEW3D_MT_edit_curve(Menu):
