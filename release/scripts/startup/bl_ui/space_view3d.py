@@ -2434,6 +2434,7 @@ class VIEW3D_MT_edit_mesh(Menu):
 
         layout.separator()
 
+        layout.menu("VIEW3D_subdivision_set")
         layout.operator("mesh.symmetrize")
         layout.operator("mesh.symmetry_snap")
         layout.operator("mesh.bisect")
