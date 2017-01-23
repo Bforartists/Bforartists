@@ -246,6 +246,16 @@ def brush_texture_settings(layout, brush, sculpt):
             layout.operator("brush.stencil_fit_image_aspect")
         layout.operator("brush.stencil_reset_transform")
 
+        # bfa - stencil brush control buttons
+        col = layout.column()
+        col.label(text="Stencil Brush Controls:")
+        row = layout.row(align=False)
+        row.alignment = 'LEFT'
+        row.operator("brush.stencil_control", text = '', icon ='TRANSFORM_MOVE').mode = 'TRANSLATION'
+        row.operator("brush.stencil_control", text = '', icon ='TRANSFORM_ROTATE').mode = 'ROTATION'
+        row.operator("brush.stencil_control", text = '', icon ='TRANSFORM_SCALE').mode = 'SCALE'
+
+
     # angle and texture_angle_source
     if tex_slot.has_texture_angle:
         col = layout.column()
