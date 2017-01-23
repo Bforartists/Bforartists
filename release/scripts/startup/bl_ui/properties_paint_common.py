@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -137,6 +137,7 @@ def brush_texpaint_common(panel, context, layout, brush, settings, projpaint=Fal
                     panel.prop_unified_color(row, context, brush, "secondary_color", text="")
                     row.separator()
                     row.operator("paint.brush_colors_flip", icon='FILE_REFRESH', text="")
+                    row.operator("paint.sample_color", icon='EYEDROPPER', text="")
         else:
             if brush.image_tool == 'FILL' and not projpaint:
                 col.prop(brush, "fill_threshold")
