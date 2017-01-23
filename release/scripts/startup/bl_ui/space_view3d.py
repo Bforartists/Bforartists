@@ -1067,6 +1067,8 @@ class VIEW3D_MT_select_paint_mask(Menu):
         layout.separator()
 
         layout.operator("paint.face_select_linked", text="Linked")
+        layout.operator("paint.face_select_linked_pick", text="Linked Pick Select").deselect = False
+        layout.operator("paint.face_select_linked_pick", text="Linked Pick Deselect").deselect = True
 
 
 class VIEW3D_MT_select_paint_mask_vertex(Menu):
