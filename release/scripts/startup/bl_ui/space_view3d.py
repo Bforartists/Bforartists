@@ -729,6 +729,8 @@ class VIEW3D_MT_select_particle(Menu):
         layout.operator("particle.select_all").action = 'TOGGLE'
         layout.operator("particle.select_linked")
         layout.operator("particle.select_all", text="Inverse").action = 'INVERT'
+        layout.operator("particle.select_linked").deselect = False
+        layout.operator("particle.select_linked", text="Deselect Linked").deselect = True
 
         layout.separator()
 
