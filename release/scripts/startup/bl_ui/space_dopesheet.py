@@ -371,8 +371,9 @@ class DOPESHEET_MT_key(Menu):
         layout.operator("action.sample")
 
         layout.separator()
-        layout.operator("action.copy")
-        layout.operator("action.paste")
+        layout.operator("action.copy", text="Copy Keyframes", icon='COPYDOWN')
+        layout.operator("action.paste", text="Paste Keyframes", icon='PASTEDOWN')
+        layout.operator("action.paste", text="Paste Flipped", icon='PASTEFLIPDOWN').flipped = True
 
 
 class DOPESHEET_MT_key_transform(Menu):
