@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -160,6 +160,18 @@ class TEXT_PT_find(Panel):
         row.prop(st, "use_find_wrap", text="Wrap")
         row.prop(st, "use_find_all", text="All")
 
+# Workaround to separate the tooltips for Toggle Maximize Area
+# Note that this id name also gets used in the other editors now.
+
+class TEXT_Toggle_Maximize_Area(bpy.types.Operator):
+    """Toggle Maximize Area\nToggle display selected area as maximized"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "screen.toggle_maximized_area"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Toggle Maximize Area"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.screen.screen_full_area(use_hide_panels = False)
+        return {'FINISHED'}  
 
 class TEXT_MT_view(Menu):
     bl_label = "View"
