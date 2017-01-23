@@ -269,8 +269,9 @@ class GRAPH_MT_key(Menu):
         layout.operator("graph.bake")
 
         layout.separator()
-        layout.operator("graph.copy")
-        layout.operator("graph.paste")
+        layout.operator("graph.copy", text="Copy Keyframes", icon='COPYDOWN')
+        layout.operator("graph.paste", text="Paste Keyframes", icon='PASTEDOWN')
+        layout.operator("graph.paste", text="Paste Flipped", icon='PASTEFLIPDOWN').flipped = True
 
         layout.separator()
         layout.operator("graph.euler_filter", text="Discontinuity (Euler) Filter")
