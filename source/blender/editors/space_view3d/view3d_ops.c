@@ -196,7 +196,7 @@ void view3d_operatortypes(void)
 	WM_operatortype_append(VIEW3D_OT_manipulator);
 	WM_operatortype_append(VIEW3D_OT_enable_manipulator);
 	WM_operatortype_append(VIEW3D_OT_cursor3d);
-	//WM_operatortype_append(VIEW3D_OT_lock_cursor3d);
+	WM_operatortype_append(VIEW3D_OT_lock_cursor3d);
 	WM_operatortype_append(VIEW3D_OT_select_lasso);
 	WM_operatortype_append(VIEW3D_OT_select_menu);
 	WM_operatortype_append(VIEW3D_OT_camera_to_view);

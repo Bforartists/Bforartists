@@ -502,6 +502,10 @@ static void rna_View3D_CursorLocation_set(PointerRNA *ptr, const float *values)
 	bScreen *sc = (bScreen *)ptr->id.data;
 	Scene *scene = (Scene *)sc->scene;
 	float *cursor = ED_view3d_cursor3d_get(scene, v3d);
+
+	if (v3d->flag3 & V3D_LOCK_CURSOR) { // bfa - lock cursor
+		return;
+	}
 	
 	copy_v3_v3(cursor, values);
 }
@@ -2531,6 +2535,11 @@ static void rna_def_space_view3d(BlenderRNA *brna)
 	prop = RNA_def_property(srna, "hide_groundgrid", PROP_BOOLEAN, PROP_NONE); // bfa - show hide the whole ground grid inlcuding axis
 	RNA_def_property_boolean_negative_sdna(prop, NULL, "flag3", V3D_HIDE_GROUNDGRID);
 	RNA_def_property_ui_text(prop, "Display Groundgrid", "Show or hide the whole groundgrid including axis");
+	RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
+
+	prop = RNA_def_property(srna, "lock_3d_cursor", PROP_BOOLEAN, PROP_NONE); // bfa - lock cursor
+	RNA_def_property_boolean_sdna(prop, NULL, "flag3", V3D_LOCK_CURSOR);
+	RNA_def_property_ui_text(prop, "Lock 3D Cursor", "Lock the 3D Cursor");
 	RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 	
 	prop = RNA_def_property(srna, "show_axis_x", PROP_BOOLEAN, PROP_NONE);
