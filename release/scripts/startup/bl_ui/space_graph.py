@@ -59,11 +59,6 @@ class GRAPH_HT_header(Header):
         layout.prop(st, "pivot_point", icon_only=True)
 
         row = layout.row(align=True)
-        row.operator("graph.copy", text="", icon='COPYDOWN')
-        row.operator("graph.paste", text="", icon='PASTEDOWN')
-        row.operator("graph.paste", text="", icon='PASTEFLIPDOWN').flipped = True
-
-        row = layout.row(align=True)
         if st.has_ghost_curves:
             row.operator("graph.ghost_curves_clear", text="", icon='GHOST_DISABLED')
         else:
