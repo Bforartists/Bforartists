@@ -1223,10 +1223,6 @@ class VIEW3D_MT_object(Menu):
         view = context.space_data
         is_local_view = (view.local_view is not None)
 
-        layout.operator("ed.undo")
-        layout.operator("ed.redo")
-        layout.operator("ed.undo_history")
-
         # The  Specials menu content. Special settings for Camera, Curve, Font, Empty and Lamp
         # Now also available in the normal menu.
         if context.object :
@@ -1264,6 +1260,8 @@ class VIEW3D_MT_object(Menu):
                         props.header_text = "DOF Distance: %.3f"
                     del view
 
+                    layout.separator()
+
             if obj.type in {'CURVE', 'FONT'}:
                 layout.operator_context = 'INVOKE_REGION_WIN'
                 layout.separator()
@@ -1280,6 +1278,8 @@ class VIEW3D_MT_object(Menu):
                 props.input_scale = 0.01
                 props.header_text = "Width Size: %.3f"
 
+                layout.separator()
+
             if obj.type == 'EMPTY':
                 layout.operator_context = 'INVOKE_REGION_WIN'
                 layout.separator()
@@ -1289,6 +1289,8 @@ class VIEW3D_MT_object(Menu):
                 props.data_path_item = "empty_draw_size"
                 props.input_scale = 0.01
                 props.header_text = "Empty Draw Size: %.3f"
+
+                layout.separator()
 
             if obj.type == 'LAMP':
                 lamp = obj.data
@@ -1959,12 +1961,6 @@ class VIEW3D_MT_paint_weight(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("ed.undo")
-        layout.operator("ed.redo")
-        layout.operator("ed.undo_history")
-
-        layout.separator()
-
         layout.operator("paint.weight_from_bones", text="Assign Automatic From Bones").type = 'AUTOMATIC'
         layout.operator("paint.weight_from_bones", text="Assign From Bone Envelopes").type = 'ENVELOPES'
 
@@ -2075,12 +2071,6 @@ class VIEW3D_MT_particle(Menu):
 
         particle_edit = context.tool_settings.particle_edit
 
-        layout.operator("ed.undo")
-        layout.operator("ed.redo")
-        layout.operator("ed.undo_history")
-
-        layout.separator()
-
         layout.operator("particle.mirror")
 
         layout.separator()
@@ -2153,12 +2143,6 @@ class VIEW3D_MT_pose(Menu):
 
     def draw(self, context):
         layout = self.layout
-
-        layout.operator("ed.undo")
-        layout.operator("ed.redo")
-        layout.operator("ed.undo_history")
-
-        layout.separator()
 
         layout.menu("VIEW3D_MT_transform_armature")
 
@@ -2433,12 +2417,6 @@ class VIEW3D_MT_edit_mesh(Menu):
         layout = self.layout
 
         toolsettings = context.tool_settings
-
-        layout.operator("ed.undo")
-        layout.operator("ed.redo")
-        layout.operator("ed.undo_history")
-
-        layout.separator()
 
         layout.menu("VIEW3D_MT_transform")
         layout.menu("VIEW3D_MT_mirror")
@@ -2975,12 +2953,6 @@ class VIEW3D_MT_edit_meta(Menu):
         layout = self.layout
 
         toolsettings = context.tool_settings
-
-        layout.operator("ed.undo")
-        layout.operator("ed.redo")
-        layout.operator("ed.undo_history")
-
-        layout.separator()
 
         layout.menu("VIEW3D_MT_transform")
         layout.menu("VIEW3D_MT_mirror")
