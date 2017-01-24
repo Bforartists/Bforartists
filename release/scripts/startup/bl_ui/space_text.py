@@ -324,6 +324,7 @@ class TEXT_MT_edit(Menu):
 
         layout.operator("text.select_all")
         layout.operator("text.select_line")
+        layout.operator_menu_enum("text.delete", "type")
 
         layout.separator()
 
