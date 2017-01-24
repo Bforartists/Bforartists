@@ -363,6 +363,23 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
         col.operator_menu_enum("mesh.merge", "type")
         col.operator("mesh.remove_doubles")
 
+        col.label(text="Dissolve:")
+        col.operator("mesh.dissolve_verts")
+        col.operator("mesh.dissolve_edges")
+        col.operator("mesh.dissolve_faces")
+
+        layout.separator()
+
+        col.operator("mesh.dissolve_limited")
+        col.operator("mesh.dissolve_mode")
+
+        layout.separator()
+
+        col.operator("mesh.edge_collapse")
+        
+
+
+
 
 class VIEW3D_PT_tools_meshweight(View3DPanel, Panel):
     bl_category = "Tools"
