@@ -3388,26 +3388,26 @@ class VIEW3D_PT_view3d_display(Panel):
         col.prop(view, "show_all_objects_origin")
         col.prop(view, "show_relationship_lines")
         col.prop(view, "show_cursor", text="3D Cursor") # bfa - show hide cursor checkbox
+        col.prop(view, "hide_groundgrid", text="Groundgrid") # bfa - show hide groundgrid checkbox
 
-        col = layout.column()
-        col.active = display_all
-        split = col.split(percentage=0.55)
-        split.prop(view, "show_floor", text="Grid Floor")
+        if view.hide_groundgrid:
+            col = layout.column()
+            col.active = display_all
+            split = col.split(percentage=0.55)
+            split.prop(view, "show_floor", text="Grid Floor")
 
-        row = split.row(align=True)
-        row.prop(view, "show_axis_x", text="X", toggle=True)
-        row.prop(view, "show_axis_y", text="Y", toggle=True)
-        row.prop(view, "show_axis_z", text="Z", toggle=True)
+            row = split.row(align=True)
+            row.prop(view, "show_axis_x", text="X", toggle=True)
+            row.prop(view, "show_axis_y", text="Y", toggle=True)
+            row.prop(view, "show_axis_z", text="Z", toggle=True)
 
-        sub = col.column(align=True)
-        sub.active = bool(view.show_floor or view.region_quadviews or not view.region_3d.is_perspective)
-        subsub = sub.column(align=True)
-        subsub.active = view.show_floor
-        subsub.prop(view, "grid_lines", text="Lines")
-        sub.prop(view, "grid_scale", text="Scale")
-        subsub = sub.column(align=True)
-        subsub.active = scene.unit_settings.system == 'NONE'
-        subsub.prop(view, "grid_subdivisions", text="Subdivisions")
+            sub = col.column(align=True)
+            sub.active = (display_all and view.show_floor)
+            sub.prop(view, "grid_lines", text="Lines")
+            sub.prop(view, "grid_scale", text="Scale")
+            subsub = sub.column(align=True)
+            subsub.active = scene.unit_settings.system == 'NONE'
+            subsub.prop(view, "grid_subdivisions", text="Subdivisions")
 
         layout.separator()
 
