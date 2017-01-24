@@ -277,85 +277,82 @@ static void drawgrid_draw(ARegion *ar, double wx, double wy, double x, double y,
 
 static void drawgrid(UnitSettings *unit, ARegion *ar, View3D *v3d, const char **grid_unit)
 {
-	/* extern short bgpicmode; */
-	RegionView3D *rv3d = ar->regiondata;
-	double wx, wy, x, y, fw, fx, fy, dx;
-	double vec4[4];
-	unsigned char col[3], col2[3];
+	if ((v3d->flag3 & V3D_HIDE_GROUNDGRID) == 0){ // bfa - draw grid just when groundgrid is true
+		/* extern short bgpicmode; */
+		RegionView3D *rv3d = ar->regiondata;
+		double wx, wy, x, y, fw, fx, fy, dx;
+		double vec4[4];
+		unsigned char col[3], col2[3];
 
-	fx = rv3d->persmat[3][0];
-	fy = rv3d->persmat[3][1];
-	fw = rv3d->persmat[3][3];
+		fx = rv3d->persmat[3][0];
+		fy = rv3d->persmat[3][1];
+		fw = rv3d->persmat[3][3];
 
-	wx = (ar->winx / 2.0); /* because of rounding errors, grid at wrong location */
-	wy = (ar->winy / 2.0);
+		wx = (ar->winx / 2.0); /* because of rounding errors, grid at wrong location */
+		wy = (ar->winy / 2.0);
 
-	x = (wx) * fx / fw;
-	y = (wy) * fy / fw;
+		x = (wx)* fx / fw;
+		y = (wy)* fy / fw;
 
-	vec4[0] = vec4[1] = v3d->grid;
+		vec4[0] = vec4[1] = v3d->grid;
 
-	vec4[2] = 0.0;
-	vec4[3] = 1.0;
-	mul_m4_v4d(rv3d->persmat, vec4);
-	fx = vec4[0];
-	fy = vec4[1];
-	fw = vec4[3];
+		vec4[2] = 0.0;
+		vec4[3] = 1.0;
+		mul_m4_v4d(rv3d->persmat, vec4);
+		fx = vec4[0];
+		fy = vec4[1];
+		fw = vec4[3];
 
-	dx = fabs(x - (wx) * fx / fw);
-	if (dx == 0) dx = fabs(y - (wy) * fy / fw);
-	
-	glLineWidth(1.0f);
+		dx = fabs(x - (wx)* fx / fw);
+		if (dx == 0) dx = fabs(y - (wy)* fy / fw);
 
-	glDepthMask(GL_FALSE);     /* disable write in zbuffer */
+		glLineWidth(1.0f);
 
-	/* check zoom out */
-	UI_ThemeColor(TH_GRID);
-	
-	if (unit->system) {
-		/* Use GRID_MIN_PX * 2 for units because very very small grid
-		 * items are less useful when dealing with units */
-		const void *usys;
-		int len, i;
-		double dx_scalar;
-		float blend_fac;
+		glDepthMask(GL_FALSE);     /* disable write in zbuffer */
 
-		bUnit_GetSystem(unit->system, B_UNIT_LENGTH, &usys, &len);
+		/* check zoom out */
+		UI_ThemeColor(TH_GRID);
 
-		if (usys) {
-			i = len;
-			while (i--) {
-				double scalar = bUnit_GetScaler(usys, i);
+		if (unit->system) {
+			/* Use GRID_MIN_PX * 2 for units because very very small grid
+			 * items are less useful when dealing with units */
+			const void *usys;
+			int len, i;
+			double dx_scalar;
+			float blend_fac;
 
-				dx_scalar = dx * scalar / (double)unit->scale_length;
-				if (dx_scalar < (GRID_MIN_PX_D * 2.0))
-					continue;
+			bUnit_GetSystem(unit->system, B_UNIT_LENGTH, &usys, &len);
 
-				/* Store the smallest drawn grid size units name so users know how big each grid cell is */
-				if (*grid_unit == NULL) {
-					*grid_unit = bUnit_GetNameDisplay(usys, i);
-					rv3d->gridview = (float)((scalar * (double)v3d->grid) / (double)unit->scale_length);
+			if (usys) {
+				i = len;
+				while (i--) {
+					double scalar = bUnit_GetScaler(usys, i);
+
+					dx_scalar = dx * scalar / (double)unit->scale_length;
+					if (dx_scalar < (GRID_MIN_PX_D * 2.0))
+						continue;
+
+					/* Store the smallest drawn grid size units name so users know how big each grid cell is */
+					if (*grid_unit == NULL) {
+						*grid_unit = bUnit_GetNameDisplay(usys, i);
+						rv3d->gridview = (float)((scalar * (double)v3d->grid) / (double)unit->scale_length);
+					}
+					blend_fac = 1.0f - ((GRID_MIN_PX_F * 2.0f) / (float)dx_scalar);
+
+					/* tweak to have the fade a bit nicer */
+					blend_fac = (blend_fac * blend_fac) * 2.0f;
+					CLAMP(blend_fac, 0.3f, 1.0f);
+
+
+					UI_ThemeColorBlend(TH_HIGH_GRAD, TH_GRID, blend_fac);
+
+					drawgrid_draw(ar, wx, wy, x, y, dx_scalar);
 				}
-				blend_fac = 1.0f - ((GRID_MIN_PX_F * 2.0f) / (float)dx_scalar);
-
-				/* tweak to have the fade a bit nicer */
-				blend_fac = (blend_fac * blend_fac) * 2.0f;
-				CLAMP(blend_fac, 0.3f, 1.0f);
-
-
-				UI_ThemeColorBlend(TH_HIGH_GRAD, TH_GRID, blend_fac);
-
-				drawgrid_draw(ar, wx, wy, x, y, dx_scalar);
 			}
 		}
-	}
-	else {
-		const double sublines    = v3d->gridsubdiv;
-		const float  sublines_fl = v3d->gridsubdiv;
-
-		if (dx < GRID_MIN_PX_D) {
-			rv3d->gridview *= sublines_fl;
-			dx *= sublines;
+		else {
+			const double sublines = v3d->gridsubdiv;
+			const float  sublines_fl = v3d->gridsubdiv;
 
 			if (dx < GRID_MIN_PX_D) {
 				rv3d->gridview *= sublines_fl;
@@ -364,15 +361,27 @@ static void drawgrid(UnitSettings *unit, ARegion *ar, View3D *v3d, const char **
 				if (dx < GRID_MIN_PX_D) {
 					rv3d->gridview *= sublines_fl;
 					dx *= sublines;
+
 					if (dx < GRID_MIN_PX_D) {
-						/* pass */
+						rv3d->gridview *= sublines_fl;
+						dx *= sublines;
+						if (dx < GRID_MIN_PX_D) {
+							/* pass */
+						}
+						else {
+							UI_ThemeColor(TH_GRID);
+							drawgrid_draw(ar, wx, wy, x, y, dx);
+						}
 					}
-					else {
-						UI_ThemeColor(TH_GRID);
+					else {  /* start blending out */
+						UI_ThemeColorBlend(TH_HIGH_GRAD, TH_GRID, dx / (GRID_MIN_PX_D * 6.0));
 						drawgrid_draw(ar, wx, wy, x, y, dx);
+
+						UI_ThemeColor(TH_GRID);
+						drawgrid_draw(ar, wx, wy, x, y, sublines * dx);
 					}
 				}
-				else {  /* start blending out */
+				else {  /* start blending out (GRID_MIN_PX < dx < (GRID_MIN_PX * 10)) */
 					UI_ThemeColorBlend(TH_HIGH_GRAD, TH_GRID, dx / (GRID_MIN_PX_D * 6.0));
 					drawgrid_draw(ar, wx, wy, x, y, dx);
 
@@ -380,24 +389,23 @@ static void drawgrid(UnitSettings *unit, ARegion *ar, View3D *v3d, const char **
 					drawgrid_draw(ar, wx, wy, x, y, sublines * dx);
 				}
 			}
-			else {  /* start blending out (GRID_MIN_PX < dx < (GRID_MIN_PX * 10)) */
-				UI_ThemeColorBlend(TH_HIGH_GRAD, TH_GRID, dx / (GRID_MIN_PX_D * 6.0));
-				drawgrid_draw(ar, wx, wy, x, y, dx);
-
-				UI_ThemeColor(TH_GRID);
-				drawgrid_draw(ar, wx, wy, x, y, sublines * dx);
-			}
-		}
-		else {
-			if (dx > (GRID_MIN_PX_D * 10.0)) {  /* start blending in */
-				rv3d->gridview /= sublines_fl;
-				dx /= sublines;
+			else {
 				if (dx > (GRID_MIN_PX_D * 10.0)) {  /* start blending in */
 					rv3d->gridview /= sublines_fl;
 					dx /= sublines;
-					if (dx > (GRID_MIN_PX_D * 10.0)) {
-						UI_ThemeColor(TH_GRID);
-						drawgrid_draw(ar, wx, wy, x, y, dx);
+					if (dx > (GRID_MIN_PX_D * 10.0)) {  /* start blending in */
+						rv3d->gridview /= sublines_fl;
+						dx /= sublines;
+						if (dx > (GRID_MIN_PX_D * 10.0)) {
+							UI_ThemeColor(TH_GRID);
+							drawgrid_draw(ar, wx, wy, x, y, dx);
+						}
+						else {
+							UI_ThemeColorBlend(TH_HIGH_GRAD, TH_GRID, dx / (GRID_MIN_PX_D * 6.0));
+							drawgrid_draw(ar, wx, wy, x, y, dx);
+							UI_ThemeColor(TH_GRID);
+							drawgrid_draw(ar, wx, wy, x, y, dx * sublines);
+						}
 					}
 					else {
 						UI_ThemeColorBlend(TH_HIGH_GRAD, TH_GRID, dx / (GRID_MIN_PX_D * 6.0));
@@ -413,40 +421,34 @@ static void drawgrid(UnitSettings *unit, ARegion *ar, View3D *v3d, const char **
 					drawgrid_draw(ar, wx, wy, x, y, dx * sublines);
 				}
 			}
-			else {
-				UI_ThemeColorBlend(TH_HIGH_GRAD, TH_GRID, dx / (GRID_MIN_PX_D * 6.0));
-				drawgrid_draw(ar, wx, wy, x, y, dx);
-				UI_ThemeColor(TH_GRID);
-				drawgrid_draw(ar, wx, wy, x, y, dx * sublines);
-			}
 		}
+
+
+		x += (wx);
+		y += (wy);
+		UI_GetThemeColor3ubv(TH_GRID, col);
+
+		setlinestyle(0);
+
+		/* center cross */
+		/* horizontal line */
+		if (ELEM(rv3d->view, RV3D_VIEW_RIGHT, RV3D_VIEW_LEFT))
+			UI_make_axis_color(col, col2, 'Y');
+		else UI_make_axis_color(col, col2, 'X');
+		glColor3ubv(col2);
+
+		fdrawline(0.0, y, (float)ar->winx, y);
+
+		/* vertical line */
+		if (ELEM(rv3d->view, RV3D_VIEW_TOP, RV3D_VIEW_BOTTOM))
+			UI_make_axis_color(col, col2, 'Y');
+		else UI_make_axis_color(col, col2, 'Z');
+		glColor3ubv(col2);
+
+		fdrawline(x, 0.0, x, (float)ar->winy);
+
+		glDepthMask(GL_TRUE);  /* enable write in zbuffer */
 	}
-
-
-	x += (wx);
-	y += (wy);
-	UI_GetThemeColor3ubv(TH_GRID, col);
-
-	setlinestyle(0);
-	
-	/* center cross */
-	/* horizontal line */
-	if (ELEM(rv3d->view, RV3D_VIEW_RIGHT, RV3D_VIEW_LEFT))
-		UI_make_axis_color(col, col2, 'Y');
-	else UI_make_axis_color(col, col2, 'X');
-	glColor3ubv(col2);
-	
-	fdrawline(0.0,  y,  (float)ar->winx,  y); 
-	
-	/* vertical line */
-	if (ELEM(rv3d->view, RV3D_VIEW_TOP, RV3D_VIEW_BOTTOM))
-		UI_make_axis_color(col, col2, 'Y');
-	else UI_make_axis_color(col, col2, 'Z');
-	glColor3ubv(col2);
-
-	fdrawline(x, 0.0, x, (float)ar->winy); 
-
-	glDepthMask(GL_TRUE);  /* enable write in zbuffer */
 }
 #undef GRID_MIN_PX
 
@@ -478,89 +480,91 @@ float ED_view3d_grid_scale(Scene *scene, View3D *v3d, const char **grid_unit)
 
 static void drawfloor(Scene *scene, View3D *v3d, const char **grid_unit, bool write_depth)
 {
-	float grid, grid_scale;
-	unsigned char col_grid[3];
-	const int gridlines = v3d->gridlines / 2;
+	if ((v3d->flag3 & V3D_HIDE_GROUNDGRID) == 0){ // bfa - draw grid just when groundgrid is true
+		float grid, grid_scale;
+		unsigned char col_grid[3];
+		const int gridlines = v3d->gridlines / 2;
 
-	if (v3d->gridlines < 3) return;
-	
-	/* use 'grid_scale' instead of 'v3d->grid' from now on */
-	grid_scale = ED_view3d_grid_scale(scene, v3d, grid_unit);
-	grid = gridlines * grid_scale;
+		if (v3d->gridlines < 3) return;
 
-	if (!write_depth)
-		glDepthMask(GL_FALSE);
+		/* use 'grid_scale' instead of 'v3d->grid' from now on */
+		grid_scale = ED_view3d_grid_scale(scene, v3d, grid_unit);
+		grid = gridlines * grid_scale;
 
-	UI_GetThemeColor3ubv(TH_GRID, col_grid);
+		if (!write_depth)
+			glDepthMask(GL_FALSE);
 
-	glLineWidth(1);
+		UI_GetThemeColor3ubv(TH_GRID, col_grid);
 
-	/* draw the Y axis and/or grid lines */
-	if (v3d->gridflag & V3D_SHOW_FLOOR) {
-		const int sublines = v3d->gridsubdiv;
-		float vert[4][3] = {{0.0f}};
-		unsigned char col_bg[3];
-		unsigned char col_grid_emphasise[3], col_grid_light[3];
-		int a;
-		int prev_emphasise = -1;
+		glLineWidth(1);
 
-		UI_GetThemeColor3ubv(TH_BACK, col_bg);
+		/* draw the Y axis and/or grid lines */
+		if (v3d->gridflag & V3D_SHOW_FLOOR) {
+			const int sublines = v3d->gridsubdiv;
+			float vert[4][3] = { { 0.0f } };
+			unsigned char col_bg[3];
+			unsigned char col_grid_emphasise[3], col_grid_light[3];
+			int a;
+			int prev_emphasise = -1;
 
-		/* emphasise division lines lighter instead of darker, if background is darker than grid */
-		UI_GetColorPtrShade3ubv(col_grid, col_grid_light, 10);
-		UI_GetColorPtrShade3ubv(col_grid, col_grid_emphasise,
-		                        (((col_grid[0] + col_grid[1] + col_grid[2]) + 30) >
-		                         (col_bg[0] + col_bg[1] + col_bg[2])) ? 20 : -10);
+			UI_GetThemeColor3ubv(TH_BACK, col_bg);
 
-		/* set fixed axis */
-		vert[0][0] = vert[2][1] = grid;
-		vert[1][0] = vert[3][1] = -grid;
+			/* emphasise division lines lighter instead of darker, if background is darker than grid */
+			UI_GetColorPtrShade3ubv(col_grid, col_grid_light, 10);
+			UI_GetColorPtrShade3ubv(col_grid, col_grid_emphasise,
+				(((col_grid[0] + col_grid[1] + col_grid[2]) + 30) >
+				(col_bg[0] + col_bg[1] + col_bg[2])) ? 20 : -10);
 
-		glEnableClientState(GL_VERTEX_ARRAY);
-		glVertexPointer(3, GL_FLOAT, 0, vert);
+			/* set fixed axis */
+			vert[0][0] = vert[2][1] = grid;
+			vert[1][0] = vert[3][1] = -grid;
 
-		for (a = -gridlines; a <= gridlines; a++) {
-			const float line = a * grid_scale;
-			const int is_emphasise = (a % sublines) == 0;
+			glEnableClientState(GL_VERTEX_ARRAY);
+			glVertexPointer(3, GL_FLOAT, 0, vert);
 
-			if (is_emphasise != prev_emphasise) {
-				glColor3ubv(is_emphasise ? col_grid_emphasise : col_grid_light);
-				prev_emphasise = is_emphasise;
+			for (a = -gridlines; a <= gridlines; a++) {
+				const float line = a * grid_scale;
+				const int is_emphasise = (a % sublines) == 0;
+
+				if (is_emphasise != prev_emphasise) {
+					glColor3ubv(is_emphasise ? col_grid_emphasise : col_grid_light);
+					prev_emphasise = is_emphasise;
+				}
+
+				/* set variable axis */
+				vert[0][1] = vert[1][1] = vert[2][0] = vert[3][0] = line;
+
+				glDrawArrays(GL_LINES, 0, 4);
 			}
 
-			/* set variable axis */
-			vert[0][1] = vert[1][1] = vert[2][0] = vert[3][0] = line;
-
-			glDrawArrays(GL_LINES, 0, 4);
+			glDisableClientState(GL_VERTEX_ARRAY);
 		}
 
-		glDisableClientState(GL_VERTEX_ARRAY);
-	}
-	
-	/* draw the Z axis line */
-	/* check for the 'show Z axis' preference */
-	if (v3d->gridflag & (V3D_SHOW_X | V3D_SHOW_Y | V3D_SHOW_Z)) {
-		glBegin(GL_LINES);
-		int axis;
-		for (axis = 0; axis < 3; axis++) {
-			if (v3d->gridflag & (V3D_SHOW_X << axis)) {
-				float vert[3];
-				unsigned char tcol[3];
+		/* draw the Z axis line */
+		/* check for the 'show Z axis' preference */
+		if (v3d->gridflag & (V3D_SHOW_X | V3D_SHOW_Y | V3D_SHOW_Z)) {
+			glBegin(GL_LINES);
+			int axis;
+			for (axis = 0; axis < 3; axis++) {
+				if (v3d->gridflag & (V3D_SHOW_X << axis)) {
+					float vert[3];
+					unsigned char tcol[3];
 
-				UI_make_axis_color(col_grid, tcol, 'X' + axis);
-				glColor3ubv(tcol);
+					UI_make_axis_color(col_grid, tcol, 'X' + axis);
+					glColor3ubv(tcol);
 
-				zero_v3(vert);
-				vert[axis] = grid;
-				glVertex3fv(vert);
-				vert[axis] = -grid;
-				glVertex3fv(vert);
+					zero_v3(vert);
+					vert[axis] = grid;
+					glVertex3fv(vert);
+					vert[axis] = -grid;
+					glVertex3fv(vert);
+				}
 			}
+			glEnd();
 		}
-		glEnd();
+
+		glDepthMask(GL_TRUE);
 	}
-	
-	glDepthMask(GL_TRUE);
 }
 
 
