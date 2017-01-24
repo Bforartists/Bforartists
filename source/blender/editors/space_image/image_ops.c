@@ -3677,7 +3677,7 @@ void IMAGE_OT_render_border(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Render Border";
-	ot->description = "Set the boundaries of the border render and enable border render";
+	ot->description = "Render Border\nDraw a rectangle to render a portion of the Image";
 	ot->idname = "IMAGE_OT_render_border";
 
 	/* api callbacks */
@@ -3709,8 +3709,7 @@ static int clear_render_border_exec(bContext *C, wmOperator *UNUSED(op))
 void IMAGE_OT_clear_render_border(wmOperatorType *ot)
 {
 	/* identifiers */
-	ot->name = "Clear Render Border";
-	ot->description = "Clear the boundaries of the border render and disable border render";
+	ot->description = "Clear Render Border\nRemoves an existing Render border"; // Short, pregnant, working. And UNDERSTANDABLE! That's how a tooltip should look like.
 	ot->idname = "IMAGE_OT_clear_render_border";
 
 	/* api callbacks */
