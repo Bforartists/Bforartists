@@ -2647,11 +2647,6 @@ class VIEW3D_MT_edit_mesh_edges(Menu):
 
         layout.separator()
 
-        layout.operator("mesh.mark_seam").clear = False
-        layout.operator("mesh.mark_seam", text="Clear Seam").clear = True
-
-        layout.separator()
-
         layout.operator("mesh.mark_sharp")
         layout.operator("mesh.mark_sharp", text="Clear Sharp").clear = True
 
