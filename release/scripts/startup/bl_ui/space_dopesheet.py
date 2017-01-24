@@ -266,11 +266,11 @@ class DOPESHEET_MT_select(Menu):
         # FIXME: grease pencil mode isn't supported for these yet, so skip for that mode only
         if context.space_data.mode != 'GPENCIL':
             layout.separator()
-            layout.operator("action.select_more")
-            layout.operator("action.select_less")
+            layout.operator("action.select_more",text = "More")
+            layout.operator("action.select_less",text = "Less")
 
             layout.separator()
-            layout.operator("action.select_linked")
+            layout.operator("action.select_linked", text = "Linked")
 
 
 class DOPESHEET_MT_marker(Menu):
