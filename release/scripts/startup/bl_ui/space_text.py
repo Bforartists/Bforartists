@@ -317,14 +317,13 @@ class TEXT_MT_edit(Menu):
 
         layout.separator()
 
-        layout.operator("text.move_lines",
-                        text="Move line(s) up").direction = 'UP'
-        layout.operator("text.move_lines",
-                        text="Move line(s) down").direction = 'DOWN'
+        layout.operator("text.move_lines", text="Move line(s) up").direction = 'UP'
+        layout.operator("text.move_lines", text="Move line(s) down").direction = 'DOWN'
 
         layout.separator()
 
-        layout.menu("TEXT_MT_edit_select")
+        layout.operator("text.select_all")
+        layout.operator("text.select_line")
 
         layout.separator()
 
