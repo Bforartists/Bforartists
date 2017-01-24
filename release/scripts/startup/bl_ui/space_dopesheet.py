@@ -168,12 +168,6 @@ class DOPESHEET_HT_header(Header):
         if st.mode != 'GPENCIL':
             layout.prop(st, "auto_snap", text="")
 
-        row = layout.row(align=True)
-        row.operator("action.copy", text="", icon='COPYDOWN')
-        row.operator("action.paste", text="", icon='PASTEDOWN')
-        if st.mode not in ('GPENCIL', 'MASK'):
-            row.operator("action.paste", text="", icon='PASTEFLIPDOWN').flipped = True
-
 
 class DOPESHEET_MT_editor_menus(Menu):
     bl_idname = "DOPESHEET_MT_editor_menus"
