@@ -3388,6 +3388,7 @@ class VIEW3D_PT_view3d_display(Panel):
         col.prop(view, "show_all_objects_origin")
         col.prop(view, "show_relationship_lines")
         col.prop(view, "show_cursor", text="3D Cursor") # bfa - show hide cursor checkbox
+        col.prop(view, "lock_3d_cursor", text="Lock 3D Cursor") # bfa - show hide cursor checkbox
         col.prop(view, "hide_groundgrid", text="Groundgrid") # bfa - show hide groundgrid checkbox
 
         if view.hide_groundgrid:
