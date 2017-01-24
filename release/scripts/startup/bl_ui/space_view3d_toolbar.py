@@ -713,8 +713,6 @@ class VIEW3D_PT_tools_armatureedit(View3DPanel, Panel):
         col = layout.column(align=True)
         col.label(text="Bones:")
         col.operator("armature.bone_primitive_add", text="Add")
-        col.operator("armature.duplicate_move", text="Duplicate")
-        col.operator("armature.delete", text="Delete")
 
         col = layout.column(align=True)
         col.label(text="Modeling:")
