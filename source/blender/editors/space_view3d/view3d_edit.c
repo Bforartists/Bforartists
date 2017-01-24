@@ -3696,8 +3696,8 @@ static int view3d_zoom_border_invoke(bContext *C, wmOperator *op, const wmEvent 
 void VIEW3D_OT_zoom_border(wmOperatorType *ot)
 {
 	/* identifiers */
-	ot->name = "Zoom to Border";
-	ot->description = "Zoom in the view to the nearest object contained in the border";
+	ot->name = "Zoom Border";
+	ot->description = "Drawing rectangle with LMB zooms in. Drawing rectangle with MMB zooms out";
 	ot->idname = "VIEW3D_OT_zoom_border";
 
 	/* api callbacks */
