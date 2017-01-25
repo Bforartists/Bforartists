@@ -3635,6 +3635,31 @@ KDTree *BKE_object_as_kdtree(Object *ob, int *r_tot)
 	return tree;
 }
 
+
+/* Sync colors used for object wire with theme settings */ // bfa custom wireframe colors
+void BKE_object_wire_colors_sync(Object *ob)
+{
+	/* only do color copying if using a custom wire color (i.e. not default color)  */
+	if (ob->custom_wire_color) {
+		if (ob->custom_wire_color > 0) {
+			/* copy theme colors on-to object's custom wire color in case user tries to edit color */
+			bTheme *btheme = U.themes.first;
+			ThemeWireColor *col_set = &btheme->tarm[(ob->custom_wire_color - 1)];
+
+			memcpy(&ob->wcs, col_set, sizeof(ThemeWireColor));
+		}
+		/* otherwise, init custom color with a generic/placeholder color set if
+		* no previous theme color was used that we can just keep using
+		*/
+		else if (ob->wcs.solid[0] == 0) {
+			/* define for setting colors in theme below */
+			rgba_char_args_set(ob->wcs.solid, 0xff, 0x00, 0x00, 255);
+			rgba_char_args_set(ob->wcs.select, 0x81, 0xe6, 0x14, 255);
+			rgba_char_args_set(ob->wcs.active, 0x18, 0xb6, 0xe0, 255);
+		}
+	}
+}
+
 bool BKE_object_modifier_use_time(Object *ob, ModifierData *md)
 {
 	if (modifier_dependsOnTime(md)) {

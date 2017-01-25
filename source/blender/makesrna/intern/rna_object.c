@@ -136,7 +136,7 @@ EnumPropertyItem rna_enum_metaelem_type_items[] = {
 EnumPropertyItem rna_enum_object_type_items[] = {
 	{OB_MESH, "MESH", 0, "Mesh", ""},
 	OBTYPE_CU_CURVE,
-	OBTYPE_CU_SURF,
+	OBTYPE_CU_SURF,/* Wire Color Sets */
 	{OB_MBALL, "META", 0, "Meta", ""},
 	OBTYPE_CU_FONT,
 	{0, "", 0, NULL, NULL},
@@ -165,6 +165,33 @@ EnumPropertyItem rna_enum_object_axis_items[] = {
 	{OB_NEGY, "NEG_Y", 0, "-Y", ""},
 	{OB_NEGZ, "NEG_Z", 0, "-Z", ""},
 	{0, NULL, 0, NULL, NULL}
+};
+
+/* Wire Color Sets */ // bfa - custom wireframe colors
+EnumPropertyItem wire_color_sets_items[] = {
+	{ 0, "DEFAULT", 0, "Default Colors", "" },
+	{ 1, "THEME01", 0, "01 - Theme Color Set", "" },
+	{ 2, "THEME02", 0, "02 - Theme Color Set", "" },
+	{ 3, "THEME03", 0, "03 - Theme Color Set", "" },
+	{ 4, "THEME04", 0, "04 - Theme Color Set", "" },
+	{ 5, "THEME05", 0, "05 - Theme Color Set", "" },
+	{ 6, "THEME06", 0, "06 - Theme Color Set", "" },
+	{ 7, "THEME07", 0, "07 - Theme Color Set", "" },
+	{ 8, "THEME08", 0, "08 - Theme Color Set", "" },
+	{ 9, "THEME09", 0, "09 - Theme Color Set", "" },
+	{ 10, "THEME10", 0, "10 - Theme Color Set", "" },
+	{ 11, "THEME11", 0, "11 - Theme Color Set", "" },
+	{ 12, "THEME12", 0, "12 - Theme Color Set", "" },
+	{ 13, "THEME13", 0, "13 - Theme Color Set", "" },
+	{ 14, "THEME14", 0, "14 - Theme Color Set", "" },
+	{ 15, "THEME15", 0, "15 - Theme Color Set", "" },
+	{ 16, "THEME16", 0, "16 - Theme Color Set", "" },
+	{ 17, "THEME17", 0, "17 - Theme Color Set", "" },
+	{ 18, "THEME18", 0, "18 - Theme Color Set", "" },
+	{ 19, "THEME19", 0, "19 - Theme Color Set", "" },
+	{ 20, "THEME20", 0, "20 - Theme Color Set", "" },
+	{ -1, "CUSTOM", 0, "Custom Color Set", "" },
+	{ 0, NULL, 0, NULL, NULL }
 };
 
 #ifdef RNA_RUNTIME
@@ -489,6 +516,27 @@ static void rna_Object_empty_draw_type_set(PointerRNA *ptr, int value)
 
 	BKE_object_empty_draw_type_set(ob, value);
 }
+
+void rna_Object_wire_colorset_set(PointerRNA *ptr, int value) // bfa -custom wireframe colors
+{
+	Object *ob = ptr->data;
+
+	/* ensure only valid values get set */
+	if ((value >= -1) && (value < 21)) {
+		ob->custom_wire_color = value;
+
+		/* sync wire colors stored with theme colors based on the index specified */
+		BKE_object_wire_colors_sync(ob);
+	}
+}
+
+int rna_Object_is_custom_wire_colorset_get(PointerRNA *ptr)
+{
+	Object *ob = ptr->data;
+
+	return (ob->custom_wire_color < 0);
+}
+
 
 static EnumPropertyItem *rna_Object_collision_bounds_itemf(bContext *UNUSED(C), PointerRNA *ptr,
                                                            PropertyRNA *UNUSED(prop), bool *r_free)
@@ -2566,6 +2614,28 @@ static void rna_def_object(BlenderRNA *brna)
 	prop = RNA_def_property(srna, "color", PROP_FLOAT, PROP_COLOR);
 	RNA_def_property_float_sdna(prop, NULL, "col");
 	RNA_def_property_ui_text(prop, "Color", "Object color and alpha, used when faces have the ObColor mode enabled");
+	RNA_def_property_update(prop, NC_OBJECT | ND_DRAW, NULL);
+
+	/* wire color set + wire colors */
+	prop = RNA_def_property(srna, "wire_color_set", PROP_ENUM, PROP_NONE);
+	RNA_def_property_enum_sdna(prop, NULL, "custom_wire_color");
+	RNA_def_property_enum_items(prop, wire_color_sets_items);
+	RNA_def_property_enum_funcs(prop, NULL, "rna_Object_wire_colorset_set", NULL);
+	RNA_def_property_ui_text(prop, "Wire Color Set", "Custom wire color set to use");
+	RNA_def_property_update(prop, NC_OBJECT | ND_DRAW, NULL);
+
+	prop = RNA_def_property(srna, "is_custom_wire_color_set", PROP_BOOLEAN, PROP_NONE);
+	RNA_def_property_boolean_funcs(prop, "rna_Object_is_custom_wire_colorset_get", NULL);
+	RNA_def_property_clear_flag(prop, PROP_EDITABLE);
+	RNA_def_property_ui_text(prop, "Custom Wire Color Set", "Wire Color set is user-defined instead of a fixed theme color set");
+
+	/* Comment from Bone Color Sets: TODO: editing the colors for this should result in changes to the color type... */
+	prop = RNA_def_property(srna, "wire_colors", PROP_POINTER, PROP_NONE);
+	RNA_def_property_flag(prop, PROP_NEVER_NULL);
+	RNA_def_property_struct_type(prop, "ThemeBoneColorSet");
+	/* Comment from Bone Color Sets: NOTE: the DNA data is not really a pointer, but this code works :) */
+	RNA_def_property_pointer_sdna(prop, NULL, "wcs");
+	RNA_def_property_ui_text(prop, "Wire Colors", "Copy of the wire colors associated with the object's wire color set");
 	RNA_def_property_update(prop, NC_OBJECT | ND_DRAW, NULL);
 
 	/* physics */
