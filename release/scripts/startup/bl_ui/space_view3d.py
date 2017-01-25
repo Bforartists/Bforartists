@@ -3242,6 +3242,7 @@ class VIEW3D_MT_edit_gpencil_interpolate(Menu):
 class VIEW3D_PT_grease_pencil(GreasePencilDataPanel, Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
+    bl_options = {'DEFAULT_CLOSED'}
 
     # NOTE: this is just a wrapper around the generic GP Panel
 
@@ -3257,6 +3258,7 @@ class VIEW3D_PT_view3d_properties(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_label = "View"
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -3305,6 +3307,7 @@ class VIEW3D_PT_view3d_cursor(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_label = "3D Cursor"
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -3453,6 +3456,7 @@ class VIEW3D_PT_view3d_shading(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_label = "Shading"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -3534,6 +3538,7 @@ class VIEW3D_PT_view3d_meshdisplay(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_label = "Mesh Display"
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -3601,6 +3606,7 @@ class VIEW3D_PT_view3d_meshstatvis(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_label = "Mesh Analysis"
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
