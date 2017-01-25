@@ -42,11 +42,6 @@ class TEXT_HT_header(Header):
         row = layout.row(align=True)
         row.template_ID(st, "text", new="text.new", unlink="text.unlink", open="text.open")
 
-        row = layout.row(align=True)
-        row.prop(st, "show_line_numbers", text="")
-        row.prop(st, "show_word_wrap", text="")
-        row.prop(st, "show_syntax_highlight", text="")
-
         if text:
             osl = text.name.endswith(".osl") or text.name.endswith(".oso")
 
