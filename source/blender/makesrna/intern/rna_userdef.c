@@ -2974,7 +2974,7 @@ static void rna_def_userdef_themes(BlenderRNA *brna)
 		{7, "SEQUENCE_EDITOR", ICON_SEQUENCE, "Video Sequence Editor", ""},
 		{8, "TEXT_EDITOR", ICON_TEXT, "Text Editor", ""},
 		{9, "NODE_EDITOR", ICON_NODETREE, "Node Editor", ""},
-		//{10, "LOGIC_EDITOR", ICON_LOGIC, "Logic Editor", ""}, // bfa - disabled logic editor section in the themes tab
+		{10, "LOGIC_EDITOR", ICON_LOGIC, "Logic Editor", ""},
 		{11, "PROPERTIES", ICON_BUTS, "Properties", ""},
 		{12, "OUTLINER", ICON_OOPS, "Outliner", ""},
 		{14, "USER_PREFERENCES", ICON_PREFERENCES, "User Preferences", ""},
