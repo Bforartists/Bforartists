@@ -3302,6 +3302,30 @@ static void SCREEN_OT_header_toggle_menus(wmOperatorType *ot)
 	ot->flag = 0;
 }
 
+// bfa - show hide the editorsmenu
+static int header_toggle_editortypemenu_exec(bContext *C, wmOperator *UNUSED(op))
+{
+	ScrArea *sa = CTX_wm_area(C);
+
+	sa->flag = sa->flag ^ HEADER_NO_EDITORTYPEMENU;
+
+	ED_area_tag_redraw(sa);
+	WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, NULL);
+
+	return OPERATOR_FINISHED;
+}
+static void SCREEN_OT_header_toggle_editortypemenu(wmOperatorType *ot)
+{
+	/* identifiers */
+	ot->name = "Show Editor Menu";
+	ot->idname = "SCREEN_OT_header_toggle_editortypemenu";
+	ot->description = "Shows or hides the Editortype menu to change the editor type";
+
+	/* api callbacks */
+	ot->exec = header_toggle_editortypemenu_exec;
+	ot->poll = ED_operator_areaactive;
+	ot->flag = 0;
+}
 
 /* ************** header tools operator ***************************** */
 void ED_screens_header_tools_menu_create(bContext *C, uiLayout *layout, void *UNUSED(arg))
@@ -3318,6 +3342,12 @@ void ED_screens_header_tools_menu_create(bContext *C, uiLayout *layout, void *UN
 	uiItemO(layout, IFACE_("Collapse Menus"),
 	        (sa->flag & HEADER_NO_PULLDOWN) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
 	        "SCREEN_OT_header_toggle_menus");
+
+	// bfa - show hide the editortypemenu
+
+	uiItemO(layout, IFACE_("Hide Editortype menu"),
+		(sa->flag & HEADER_NO_EDITORTYPEMENU) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
+		"SCREEN_OT_header_toggle_editortypemenu");
 
 	uiItemS(layout);
 
@@ -4298,6 +4328,7 @@ void ED_operatortypes_screen(void)
 	WM_operatortype_append(SCREEN_OT_header_flip);
 	WM_operatortype_append(SCREEN_OT_header);
 	WM_operatortype_append(SCREEN_OT_header_toggle_menus);
+	WM_operatortype_append(SCREEN_OT_header_toggle_editortypemenu); // bfa - show hide the editorsmenu
 	WM_operatortype_append(SCREEN_OT_header_toolbox);
 	WM_operatortype_append(SCREEN_OT_screen_set);
 	WM_operatortype_append(SCREEN_OT_screen_full_area);

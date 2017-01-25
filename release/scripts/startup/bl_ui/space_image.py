@@ -429,9 +429,7 @@ class IMAGE_HT_header(Header):
         show_uvedit = sima.show_uvedit
         show_maskedit = sima.show_maskedit
 
-        row = layout.row(align=True)
-        row.template_header()
-
+        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
         MASK_MT_editor_menus.draw_collapsible(context, layout)
 
         layout.template_ID(sima, "image", new="image.new", open="image.open")
@@ -492,6 +490,19 @@ class IMAGE_HT_header(Header):
 
         if show_uvedit or show_maskedit or mode == 'PAINT':
             layout.prop(sima, "use_realtime_update", icon_only=True, icon='LOCKED')
+
+# bfa - show hide the editormenu
+class ALL_MT_editormenu(Menu):
+    bl_label = ""
+
+    def draw(self, context):
+        self.draw_menus(self.layout, context)
+
+    @staticmethod
+    def draw_menus(layout, context):
+
+        row = layout.row(align=True)
+        row.template_header() # editor type menus
 
 
 class MASK_MT_editor_menus(Menu):

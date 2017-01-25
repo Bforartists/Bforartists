@@ -31,9 +31,7 @@ class INFO_HT_header(Header):
         scene = context.scene
         rd = scene.render
 
-        row = layout.row(align=True)
-        row.template_header()
-
+        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
         INFO_MT_editor_menus.draw_collapsible(context, layout)
 
         if window.screen.show_fullscreen:
@@ -63,6 +61,19 @@ class INFO_HT_header(Header):
             return
 
         row.label(text=scene.statistics(), translate=False)
+
+# bfa - show hide the editormenu
+class ALL_MT_editormenu(Menu):
+    bl_label = ""
+
+    def draw(self, context):
+        self.draw_menus(self.layout, context)
+
+    @staticmethod
+    def draw_menus(layout, context):
+
+        row = layout.row(align=True)
+        row.template_header() # editor type menus
 
 
 class INFO_MT_editor_menus(Menu):
