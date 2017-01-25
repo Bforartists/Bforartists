@@ -31,6 +31,8 @@ class TEXT_HT_header(Header):
         st = context.space_data
         text = st.text
 
+        row = layout.row(align=True)
+
         ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
         TEXT_MT_editor_menus.draw_collapsible(context, layout)
 
