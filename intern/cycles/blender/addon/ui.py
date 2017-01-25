@@ -1,4 +1,4 @@
-#
+﻿#
 # Copyright 2011-2013 Blender Foundation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -361,6 +361,7 @@ class CyclesRender_PT_motion_blur(CyclesButtonsPanel, Panel):
 
 class CyclesRender_PT_film(CyclesButtonsPanel, Panel):
     bl_label = "Film"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -984,6 +985,7 @@ class CyclesWorld_PT_preview(CyclesButtonsPanel, Panel):
 class CyclesWorld_PT_surface(CyclesButtonsPanel, Panel):
     bl_label = "Surface"
     bl_context = "world"
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -1018,6 +1020,7 @@ class CyclesWorld_PT_volume(CyclesButtonsPanel, Panel):
 class CyclesWorld_PT_ambient_occlusion(CyclesButtonsPanel, Panel):
     bl_label = "Ambient Occlusion"
     bl_context = "world"
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -1556,6 +1559,7 @@ class CyclesParticle_PT_CurveSettings(CyclesButtonsPanel, Panel):
 class CyclesScene_PT_simplify(CyclesButtonsPanel, Panel):
     bl_label = "Simplify"
     bl_context = "scene"
+    bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {'CYCLES'}
 
     def draw_header(self, context):
