@@ -20,9 +20,10 @@
 
 # note, properties_animviz is a helper module only.
 
+# support reloading sub-modules
 if "bpy" in locals():
     from importlib import reload
-    for val in _modules_loaded.values():
+    for val in _modules_loaded:
         reload(val)
     del reload
 _modules = [
@@ -78,16 +79,17 @@ _modules = [
     "space_userpref",
     "space_view3d",
     "space_view3d_toolbar",
-    "space_toolbar",
+    #"space_toolbar",
 ]
 
 import bpy
 
 if bpy.app.build_options.freestyle:
     _modules.append("properties_freestyle")
+
 __import__(name=__name__, fromlist=_modules)
 _namespace = globals()
-_modules_loaded = {name: _namespace[name] for name in _modules if name != "bpy"}
+_modules_loaded = [_namespace[name] for name in _modules]
 del _namespace
 
 # bfa - text or icon buttons, the prop
@@ -487,7 +489,7 @@ def register():
     WindowManager.addon_filter = EnumProperty(
             items=addon_filter_items,
             name="Category",
-            description="Filter addons by category",
+            description="Filter add-ons by category",
             )
 
     WindowManager.addon_support = EnumProperty(
