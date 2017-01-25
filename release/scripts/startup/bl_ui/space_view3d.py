@@ -38,9 +38,7 @@ class VIEW3D_HT_header(Header):
         obj = context.active_object
         toolsettings = context.tool_settings
 
-        row = layout.row(align=True)
-        row.template_header()
-
+        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
         VIEW3D_MT_editor_menus.draw_collapsible(context, layout)
 
         # Contains buttons like Mode, Pivot, Manipulator, Layer, Mesh Select Mode...
@@ -145,6 +143,19 @@ class VIEW3D_HT_header(Header):
             row = layout.row(align=True)
             row.prop(context.tool_settings.gpencil_sculpt, "use_select_mask")
             row.prop(context.tool_settings.gpencil_sculpt, "selection_alpha", slider=True)
+
+# bfa - show hide the editormenu
+class ALL_MT_editormenu(Menu):
+    bl_label = ""
+
+    def draw(self, context):
+        self.draw_menus(self.layout, context)
+
+    @staticmethod
+    def draw_menus(layout, context):
+
+        row = layout.row(align=True)
+        row.template_header() # editor type menus
 
 
 class VIEW3D_MT_editor_menus(Menu):

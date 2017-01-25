@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -48,7 +48,7 @@ class USERPREF_HT_header(Header):
     def draw(self, context):
         layout = self.layout
 
-        layout.template_header()
+        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
 
         userpref = context.user_preferences
 
@@ -68,6 +68,18 @@ class USERPREF_HT_header(Header):
             layout.operator("ui.reset_default_theme")
             layout.operator("wm.theme_install")
 
+# bfa - show hide the editormenu
+class ALL_MT_editormenu(Menu):
+    bl_label = ""
+
+    def draw(self, context):
+        self.draw_menus(self.layout, context)
+
+    @staticmethod
+    def draw_menus(layout, context):
+
+        row = layout.row(align=True)
+        row.template_header() # editor type menus
 
 class USERPREF_PT_tabs(Panel):
     bl_label = ""
