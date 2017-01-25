@@ -2218,15 +2218,28 @@ static void draw_dupli_objects_color(
 
 static void draw_dupli_objects(Scene *scene, ARegion *ar, View3D *v3d, Base *base)
 {
-	/* define the color here so draw_dupli_objects_color can be called
-	 * from the set loop */
-	
-	int color = (base->flag & SELECT) ? TH_SELECT : TH_WIRE;
-	/* debug */
-	if (base->object->dup_group && base->object->dup_group->id.us < 1)
-		color = TH_REDALERT;
-	
-	draw_dupli_objects_color(scene, ar, v3d, base, 0, color);
+	/* define the color here so draw_dupli_objects_color can be called // bfa - custom wireframe colors
+	* from the set loop */
+
+	short dflag;
+	int color;
+
+	unsigned char dupli_wire_col[4];  /* dont initialize this */
+
+	if (V3D_IS_WIRECOLOR(scene, v3d) && set_wire_colorset(scene, base, dupli_wire_col)) {
+		glColor3ubv(dupli_wire_col);
+		color = TH_UNDEFINED;
+		dflag = DRAW_CONSTCOLOR;
+	}
+	else {
+		color = (base->flag & SELECT) ? TH_SELECT : TH_WIRE;
+		/* debug */
+		if (base->object->dup_group && base->object->dup_group->id.us < 1)
+			color = TH_REDALERT;
+		dflag = 0;
+	}
+
+	draw_dupli_objects_color(scene, ar, v3d, base, dflag, color);
 }
 
 /* XXX warning, not using gpu offscreen here */

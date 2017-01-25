@@ -235,6 +235,67 @@ int view3d_effective_drawtype(const struct View3D *v3d)
 	return v3d->drawtype;
 }
 
+// bfa - custom wireframe colors
+
+static ThemeWireColor *wcolor = NULL;
+
+/* This function sets the color-set for coloring a certain object wire */
+static bool set_wcolor(Scene *scene, Object *ob)
+{
+	short color_index = 0;
+
+	/* sanity check */
+	if (ELEM(NULL, ob)) {
+		return false;
+	}
+
+	if (ob) {
+		color_index = ob->custom_wire_color;
+	}
+
+	/* wcolor is a pointer to the color set to use. If NULL, then the default
+	* color set (based on the theme colors for 3d-view) is used.
+	*/
+	if (color_index > 0) {
+		bTheme *btheme = UI_GetTheme();
+		wcolor = &btheme->tarm[(color_index - 1)];
+	}
+	else if (color_index == -1) {
+		/* use the group's own custom color set */
+		wcolor = (ob) ? &ob->wcs : NULL;
+	}
+	else
+		return false;
+
+	return true;
+}
+
+/* This function sets the color-set for coloring a certain object wire */ // bfa - custom wireframe colors
+bool set_wire_colorset(Scene *scene, Base *base, unsigned char r_ob_wire_col[4])
+{
+	//Object *ob = base->object;
+
+	if (!set_wcolor(scene, base->object))
+		return false;
+
+	if (base->flag & (SELECT + BA_WAS_SEL)) {
+		if (scene->basact == base) {
+			copy_v3_v3_char((char *)r_ob_wire_col, wcolor->active);
+		}
+		else {
+			copy_v3_v3_char((char *)r_ob_wire_col, wcolor->select);
+		}
+	}
+	else {
+		copy_v3_v3_char((char *)r_ob_wire_col, wcolor->solid);
+	}
+
+	r_ob_wire_col[3] = 255;
+
+	return true;
+}
+
+
 /* this condition has been made more complex since editmode can draw textures */
 bool check_object_draw_texture(Scene *scene, View3D *v3d, const char drawtype)
 {
@@ -3206,16 +3267,32 @@ static void draw_em_fancy_verts(Scene *scene, View3D *v3d, Object *obedit,
 	if (v3d->zbuf) glDepthMask(1);
 }
 
-static void draw_em_fancy_edges(BMEditMesh *em, Scene *scene, View3D *v3d,
+static void draw_em_fancy_edges(BMEditMesh *em, Scene *scene, View3D *v3d, Object *ob,
                                 Mesh *me, DerivedMesh *cageDM, short sel_only,
                                 BMEdge *eed_act)
 {
 	ToolSettings *ts = scene->toolsettings;
 	unsigned char wireCol[4], selCol[4], actCol[4];
 
-	/* since this function does transparent... */
-	UI_GetThemeColor4ubv(TH_EDGE_SELECT, selCol);
-	UI_GetThemeColor4ubv(TH_WIRE_EDIT, wireCol);
+	// bfa - custom wireframe color
+	if (V3D_IS_WIRECOLOR(scene, v3d) && set_wcolor(scene, ob)) {
+		copy_v3_v3_char((char *)selCol, wcolor->active);
+		selCol[3] = 255;
+		copy_v3_v3_char((char *)wireCol, wcolor->solid);
+		/* maybe for higher contrast... */
+		/* wireCol[0] = wcolor->solid[0] / 2;
+		wireCol[1] = wcolor->solid[1] / 2;
+		wireCol[2] = wcolor->solid[2] / 2; */
+		wireCol[3] = 255;
+	}
+	else {
+		/* since this function does transparent... */
+		UI_GetThemeColor4ubv(TH_EDGE_SELECT, selCol);
+		UI_GetThemeColor4ubv(TH_WIRE_EDIT, wireCol);
+	}
+
+	/* ---------------------------------------*/
+
 	UI_GetThemeColor4ubv(TH_EDITMESH_ACTIVE, actCol);
 	
 	/* when sel only is used, don't render wire, only selected, this is used for
@@ -3841,7 +3918,7 @@ static void draw_em_fancy(Scene *scene, ARegion *ar, View3D *v3d,
 			/* we are drawing textures and 'ME_DRAWEDGES' is disabled, don't draw any edges */
 
 			/* only draw selected edges otherwise there is no way of telling if a face is selected */
-			draw_em_fancy_edges(em, scene, v3d, me, cageDM, 1, eed_act);
+			draw_em_fancy_edges(em, scene, v3d, ob, me, cageDM, 1, eed_act);
 
 		}
 		else {
@@ -3882,7 +3959,7 @@ static void draw_em_fancy(Scene *scene, ARegion *ar, View3D *v3d,
 			}
 
 			glLineWidth(1);
-			draw_em_fancy_edges(em, scene, v3d, me, cageDM, 0, eed_act);
+			draw_em_fancy_edges(em, scene, v3d, ob, me, cageDM, 0, eed_act);
 		}
 
 		{
@@ -7589,7 +7666,12 @@ void draw_object(Scene *scene, ARegion *ar, View3D *v3d, Base *base, const short
 
 		ED_view3d_project_base(ar, base);
 
-		draw_object_wire_color(scene, base, _ob_wire_col);
+		// bfa -custom wireframe color
+		if (!V3D_IS_WIRECOLOR(scene, v3d) || !set_wire_colorset(scene, base, _ob_wire_col)) {
+			draw_object_wire_color(scene, base, _ob_wire_col);
+			
+		}
+
 		ob_wire_col = _ob_wire_col;
 
 		glColor3ubv(ob_wire_col);
