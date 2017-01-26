@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -100,6 +100,7 @@ class GreasePencilDrawingToolsPanel:
     @staticmethod
     def draw(self, context):
         layout = self.layout
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
         is_3d_view = context.space_data.type == 'VIEW_3D'
         is_clip_editor = context.space_data.type == 'CLIP_EDITOR'
@@ -107,13 +108,23 @@ class GreasePencilDrawingToolsPanel:
         col = layout.column(align=True)
 
         col.label(text="Draw:")
-        row = col.row(align=True)
-        row.operator("gpencil.draw", icon='GREASEPENCIL', text="Draw").mode = 'DRAW'
-        row.operator("gpencil.draw", icon='FORCE_CURVE', text="Erase").mode = 'ERASER'  # XXX: Needs a dedicated icon
 
-        row = col.row(align=True)
-        row.operator("gpencil.draw", icon='LINE_DATA', text="Line").mode = 'DRAW_STRAIGHT'
-        row.operator("gpencil.draw", icon='MESH_DATA', text="Poly").mode = 'DRAW_POLY'
+        if not scene.UItweaks.icon_or_text: 
+            row = col.row(align=True)
+            row.operator("gpencil.draw", icon='GREASEPENCIL',text="Draw").mode = 'DRAW'
+            row.operator("gpencil.draw", icon= 'ERASE',  text="Erase").mode = 'ERASER'
+
+            row = col.row(align=True)
+            row.operator("gpencil.draw", icon= 'GREASEPENCIL_LINE', text="Line").mode = 'DRAW_STRAIGHT'
+            row.operator("gpencil.draw", icon= 'GREASEPENCIL_POLY', text="Poly").mode = 'DRAW_POLY'
+        else:
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("gpencil.draw", icon='GREASEPENCIL',text="").mode = 'DRAW'
+            row.operator("gpencil.draw", icon= 'ERASE',  text="").mode = 'ERASER'
+            row.operator("gpencil.draw", icon= 'GREASEPENCIL_LINE', text="").mode = 'DRAW_STRAIGHT'
+            row.operator("gpencil.draw", icon= 'GREASEPENCIL_POLY', text="").mode = 'DRAW_POLY'
+            col.separator()
 
         col.separator()
 
@@ -158,7 +169,15 @@ class GreasePencilDrawingToolsPanel:
 
             col.label(text="Tools:")
             col.operator_menu_enum("gpencil.convert", text="Convert to Geometry...", property="type")
-            col.operator("view3d.ruler")
+            layout.separator()
+
+            if not scene.UItweaks.icon_or_text:      
+                col.operator("view3d.ruler", icon= 'RULER')
+                
+            else:
+                row = col.row(align=False)
+                row.alignment = 'LEFT'
+                row.operator("view3d.ruler", icon= 'RULER', text = "")     
 
 
 class GreasePencilStrokeEditPanel:
