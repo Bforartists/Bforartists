@@ -95,27 +95,91 @@ class VIEW3D_PT_tools_object(View3DPanel, Panel):
         if obj:
             obj_type = obj.type
 
-            if obj_type in {'MESH', 'CURVE', 'SURFACE', 'ARMATURE'}:
-                col = layout.column(align=True)
-                col.operator("object.join")
+            scene = context.scene # Our data for the icon_or_text flag is in the current scene
+            # text
+            if not scene.UItweaks.icon_or_text: 
+                col.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="Mirror                   ")
+                if obj_type in {'MESH', 'CURVE', 'SURFACE', 'ARMATURE'}:
+                    col = layout.column(align=True)                    
+                    col.operator("object.join", icon ='JOIN', text="Join                      ")
+                    
+                if obj_type in {'MESH', 'CURVE', 'SURFACE', 'ARMATURE', 'FONT', 'LATTICE'}:
+                    col = layout.column(align=True)
+                    col.operator_menu_enum("object.origin_set", "type", text="Set Origin")
 
-            if obj_type in {'MESH', 'CURVE', 'SURFACE', 'ARMATURE', 'FONT', 'LATTICE'}:
-                col = layout.column(align=True)
-                col.operator_menu_enum("object.origin_set", "type", text="Set Origin")
+                if obj_type in {'MESH', 'CURVE', 'SURFACE'}:
+                    col = layout.column(align=True)
+                    col.label(text="Shading:")
+                    #row = col.row(align=True)
+                    col.operator("object.shade_smooth", text="Smooth                ", icon ='SHADING_SMOOTH')
+                    col.operator("object.shade_flat", text="Flat                       ", icon ='SHADING_FLAT')
 
-            if obj_type in {'MESH', 'CURVE', 'SURFACE'}:
-                col = layout.column(align=True)
-                col.label(text="Shading:")
-                row = col.row(align=True)
-                row.operator("object.shade_smooth", text="Smooth")
-                row.operator("object.shade_flat", text="Flat")
+                if obj_type == 'MESH':
+                    
+                    mesh = context.active_object.data
 
-            if obj_type == 'MESH':
-                col = layout.column(align=True)
-                col.label(text="Data Transfer:")
-                row = col.row(align=True)
-                row.operator("object.data_transfer", text="Data")
-                row.operator("object.datalayout_transfer", text="Data Layout")
+                    col = layout.column()
+
+                    # bfa - autosmooth below shading.
+                    col.prop(mesh, "use_auto_smooth")
+                    sub = col.column()
+                    sub.active = mesh.use_auto_smooth and not mesh.has_custom_normals
+                    sub.prop(mesh, "auto_smooth_angle", text="Angle")
+                    col.prop(mesh, "show_double_sided")
+                    
+                    col = layout.column(align=True)
+                    col.label(text="Data Transfer:")
+                    #row = col.row(align=True)
+                    col.operator("object.data_transfer", icon ='TRANSFER_DATA', text="Data                     ")
+                    col.operator("object.datalayout_transfer", icon ='TRANSFER_DATA_LAYOUT', text="Data Layout         ")
+            
+            # icons
+            else:
+
+                row = layout.row(align=False)
+                row.alignment = 'LEFT'
+                row.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="")
+                if obj_type in {'MESH', 'CURVE', 'SURFACE', 'ARMATURE'}:
+                    row.operator("object.join", icon ='JOIN', text= "" )
+
+                if obj_type in {'MESH', 'CURVE', 'SURFACE', 'ARMATURE', 'FONT', 'LATTICE'}:
+                    col = layout.column(align=True)
+                    col.label(text="Set Origin:")
+                    row = col.row(align=False)
+                    row.alignment = 'LEFT'
+                    #col.operator_menu_enum("object.origin_set", "type", text="Set Origin")
+                    row.operator("object.origin_set", icon ='GEOMETRY_TO_ORIGIN', text="").type='GEOMETRY_ORIGIN'
+                    row.operator("object.origin_set", icon ='ORIGIN_TO_GEOMETRY', text="").type='ORIGIN_GEOMETRY'
+                    row.operator("object.origin_set", icon ='ORIGIN_TO_CURSOR', text="").type='ORIGIN_CURSOR'
+                    row.operator("object.origin_set", icon ='ORIGIN_TO_CENTEROFMASS', text="").type='ORIGIN_CENTER_OF_MASS'
+
+                if obj_type in {'MESH', 'CURVE', 'SURFACE'}:
+                    col = layout.column(align=True)
+                    col.label(text="Shading:")
+                    row = col.row(align=False)
+                    row.alignment = 'LEFT'
+                    row.operator("object.shade_smooth", icon ='SHADING_SMOOTH', text="")
+                    row.operator("object.shade_flat", icon ='SHADING_FLAT', text="")
+
+                if obj_type == 'MESH':
+
+                    mesh = context.active_object.data
+
+                    col = layout.column()
+
+                    # bfa - autosmooth below shading.
+                    col.prop(mesh, "use_auto_smooth")
+                    sub = col.column()
+                    sub.active = mesh.use_auto_smooth and not mesh.has_custom_normals
+                    sub.prop(mesh, "auto_smooth_angle", text="Angle")
+
+                    # data transfer
+                    col = layout.column(align=True)
+                    col.label(text="Data Transfer:")
+                    row = col.row(align=False)
+                    row.alignment = 'LEFT'
+                    row.operator("object.data_transfer", icon ='TRANSFER_DATA', text="")
+                    row.operator("object.datalayout_transfer", icon ='TRANSFER_DATA_LAYOUT', text="")
 
 
 class VIEW3D_PT_tools_add_object(View3DPanel, Panel):
