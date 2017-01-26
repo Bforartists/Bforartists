@@ -641,6 +641,8 @@ class VIEW3D_MT_select_object(Menu):
     def draw(self, context):
         layout = self.layout
 
+        myvar = layout.operator("view3d.select_lasso")
+        myvar.deselect = False
         layout.operator("view3d.select_border")
         layout.operator("view3d.select_circle")
 
@@ -714,6 +716,8 @@ class VIEW3D_MT_select_pose(Menu):
     def draw(self, context):
         layout = self.layout
 
+        myvar = layout.operator("view3d.select_lasso")
+        myvar.deselect = False
         layout.operator("view3d.select_border")
         layout.operator("view3d.select_circle")
 
@@ -741,6 +745,8 @@ class VIEW3D_MT_select_particle(Menu):
     def draw(self, context):
         layout = self.layout
 
+        myvar = layout.operator("view3d.select_lasso")
+        myvar.deselect = False
         layout.operator("view3d.select_border")
         layout.operator("view3d.select_circle")
 
@@ -817,6 +823,8 @@ class VIEW3D_MT_select_edit_mesh(Menu):
     def draw(self, context):
         layout = self.layout
 
+        myvar = layout.operator("view3d.select_lasso")
+        myvar.deselect = False
         layout.operator("view3d.select_border")
         layout.operator("view3d.select_circle")
 
@@ -875,6 +883,8 @@ class VIEW3D_MT_select_edit_curve(Menu):
     def draw(self, context):
         layout = self.layout
 
+        myvar = layout.operator("view3d.select_lasso")
+        myvar.deselect = False
         layout.operator("view3d.select_border")
         layout.operator("view3d.select_circle")
 
@@ -908,6 +918,8 @@ class VIEW3D_MT_select_edit_surface(Menu):
     def draw(self, context):
         layout = self.layout
 
+        myvar = layout.operator("view3d.select_lasso")
+        myvar.deselect = False
         layout.operator("view3d.select_border")
         layout.operator("view3d.select_circle")
 
@@ -959,6 +971,8 @@ class VIEW3D_MT_select_edit_metaball(Menu):
     def draw(self, context):
         layout = self.layout
 
+        myvar = layout.operator("view3d.select_lasso")
+        myvar.deselect = False
         layout.operator("view3d.select_border")
         layout.operator("view3d.select_circle")
 
@@ -982,6 +996,8 @@ class VIEW3D_MT_select_edit_lattice(Menu):
     def draw(self, context):
         layout = self.layout
 
+        myvar = layout.operator("view3d.select_lasso")
+        myvar.deselect = False
         layout.operator("view3d.select_border")
         layout.operator("view3d.select_circle")
 
@@ -1007,6 +1023,8 @@ class VIEW3D_MT_select_edit_armature(Menu):
     def draw(self, context):
         layout = self.layout
 
+        myvar = layout.operator("view3d.select_lasso")
+        myvar.deselect = False
         layout.operator("view3d.select_border")
         layout.operator("view3d.select_circle")
 
@@ -1078,6 +1096,8 @@ class VIEW3D_MT_select_paint_mask(Menu):
     def draw(self, context):
         layout = self.layout
 
+        myvar = layout.operator("view3d.select_lasso")
+        myvar.deselect = False
         layout.operator("view3d.select_border")
         layout.operator("view3d.select_circle")
 
@@ -1099,6 +1119,8 @@ class VIEW3D_MT_select_paint_mask_vertex(Menu):
     def draw(self, context):
         layout = self.layout
 
+        myvar = layout.operator("view3d.select_lasso")
+        myvar.deselect = False
         layout.operator("view3d.select_border")
         layout.operator("view3d.select_circle")
 
