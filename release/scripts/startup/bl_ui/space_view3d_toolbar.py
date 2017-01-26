@@ -602,21 +602,47 @@ class VIEW3D_PT_tools_meshweight(View3DPanel, Panel):
     # Used for Weight-Paint mode and Edit-Mode
     @staticmethod
     def draw_generic(layout):
+
         col = layout.column()
-        col.operator("object.vertex_group_normalize_all", text="Normalize All")
-        col.operator("object.vertex_group_normalize", text="Normalize")
-        col.operator("object.vertex_group_mirror", text="Mirror")
-        col.operator("object.vertex_group_invert", text="Invert")
-        col.operator("object.vertex_group_clean", text="Clean")
-        col.operator("object.vertex_group_quantize", text="Quantize")
-        col.operator("object.vertex_group_levels", text="Levels")
-        col.operator("object.vertex_group_smooth", text="Smooth")
-        col.operator("object.vertex_group_limit_total", text="Limit Total")
-        col.operator("object.vertex_group_fix", text="Fix Deforms")
+        col.operator("object.vertex_group_normalize_all", icon='WEIGHT_NORMALIZE_ALL', text="Normalize All  ")
+        col.operator("object.vertex_group_normalize",icon='WEIGHT_NORMALIZE', text="Normalize       ")
+        col.operator("object.vertex_group_mirror",icon='WEIGHT_MIRROR', text="Mirror              ")
+        col.operator("object.vertex_group_invert", icon='WEIGHT_INVERT',text="Invert              ")
+        col.operator("object.vertex_group_clean", icon='WEIGHT_CLEAN',text="Clean               ")
+        col.operator("object.vertex_group_quantize", icon='WEIGHT_QUANTIZE',text="Quantize         ")
+        col.operator("object.vertex_group_levels", icon='WEIGHT_LEVELS',text="Levels             ")
+        col.operator("object.vertex_group_smooth", icon='WEIGHT_SMOOTH',text="Smooth           ")
+        col.operator("object.vertex_group_limit_total", icon='WEIGHT_LIMIT_TOTAL',text="Limit Total       ")
+        col.operator("object.vertex_group_fix", icon='WEIGHT_FIX_DEFORMS',text="Fix Deforms    ")
+
+    # Used for Weight-Paint mode and Edit-Mode
+    @staticmethod
+    def draw_generic_icons(layout):
+
+        row = layout.row(align=False)
+        row.alignment = 'LEFT'
+        row.operator("object.vertex_group_normalize_all", icon='WEIGHT_NORMALIZE_ALL', text="")
+        row.operator("object.vertex_group_normalize",icon='WEIGHT_NORMALIZE', text="")
+        row.operator("object.vertex_group_mirror",icon='WEIGHT_MIRROR', text="")
+        row.operator("object.vertex_group_invert", icon='WEIGHT_INVERT',text="")
+        row = layout.row(align=False)
+        row.operator("object.vertex_group_clean", icon='WEIGHT_CLEAN',text="")
+        row.operator("object.vertex_group_quantize", icon='WEIGHT_QUANTIZE',text="")
+        row.operator("object.vertex_group_levels", icon='WEIGHT_LEVELS',text="")
+        row.operator("object.vertex_group_smooth", icon='WEIGHT_SMOOTH',text="")
+        row = layout.row(align=False)
+        row.operator("object.vertex_group_limit_total", icon='WEIGHT_LIMIT_TOTAL',text="")
+        row.operator("object.vertex_group_fix", icon='WEIGHT_FIX_DEFORMS',text="")
+
 
     def draw(self, context):
         layout = self.layout
-        self.draw_generic(layout)
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+
+        if not scene.UItweaks.icon_or_text: 
+            self.draw_generic(layout)
+        else:
+            self.draw_generic_icons(layout)
 
 
 class VIEW3D_PT_tools_add_mesh_edit(View3DPanel, Panel):
