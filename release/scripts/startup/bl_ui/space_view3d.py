@@ -1173,56 +1173,6 @@ class VIEW3D_MT_angle_control(Menu):
 # XXX: INFO_MT_ names used to keep backwards compatibility (Addons etc that hook into the menu)
 
 
-class INFO_MT_surface_add(Menu):
-    bl_idname = "INFO_MT_surface_add"
-    bl_label = "Surface"
-
-    def draw(self, context):
-        from .space_view3d_toolbar import VIEW3D_PT_tools_add_object
-        layout = self.layout
-
-        layout.operator_context = 'INVOKE_REGION_WIN'
-
-        VIEW3D_PT_tools_add_object.draw_add_surface(layout)
-
-
-class INFO_MT_metaball_add(Menu):
-    bl_idname = "INFO_MT_metaball_add"
-    bl_label = "Metaball"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator_context = 'INVOKE_REGION_WIN'
-        layout.operator_enum("object.metaball_add", "type")
-
-
-class INFO_MT_edit_curve_add(Menu):
-    bl_idname = "INFO_MT_edit_curve_add"
-    bl_label = "Add"
-
-    def draw(self, context):
-        is_surf = context.active_object.type == 'SURFACE'
-
-        layout = self.layout
-        layout.operator_context = 'EXEC_REGION_WIN'
-
-        if is_surf:
-            INFO_MT_surface_add.draw(self, context)
-        else:
-            INFO_MT_curve_add.draw(self, context)
-
-
-class INFO_MT_edit_armature_add(Menu):
-    bl_idname = "INFO_MT_edit_armature_add"
-    bl_label = "Armature"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator_context = 'EXEC_REGION_WIN'
-        layout.operator("armature.bone_primitive_add", text="Single Bone", icon='BONE_DATA')
-
 
 class INFO_MT_add(Menu):
     bl_label = "Add"
