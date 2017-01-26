@@ -524,6 +524,7 @@ class VIEW3D_MT_view_navigation(Menu):
         layout.operator("view3d.zoom", text="Zoom Out").delta = -1
         layout.operator("view3d.zoom_camera_1_to_1", text="Zoom Camera 1:1")
         layout.operator("view3d.dolly", text="Dolly View")
+        layout.operator("view3d.view_center_pick")
 
         layout.separator()
 
