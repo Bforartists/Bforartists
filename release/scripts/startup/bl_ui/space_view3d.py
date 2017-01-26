@@ -3427,10 +3427,6 @@ class VIEW3D_PT_view3d_display(Panel):
             subsub.active = scene.unit_settings.system == 'NONE'
             subsub.prop(view, "grid_subdivisions", text="Subdivisions")
 
-        layout.separator()
-
-        layout.operator("screen.region_quadview", text="Toggle Quad View")
-
         if view.region_quadviews:
             region = view.region_quadviews[2]
             col = layout.column()
