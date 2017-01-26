@@ -2131,18 +2131,37 @@ class VIEW3D_PT_tools_history(View3DPanel, Panel):
         layout = self.layout
         obj = context.object
 
-        col = layout.column(align=True)
-        row = col.row(align=True)
-        row.operator("ed.undo")
-        row.operator("ed.redo")
-        if obj is None or obj.mode != 'SCULPT':
-            # Sculpt mode does not generate an undo menu it seems...
-            col.operator("ed.undo_history")
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+        # Flag is off, draw buttons as text
+        if not scene.UItweaks.icon_or_text: 
+            col = layout.column(align=True)
+            row = col.row(align=True)
+            row.operator("ed.undo", icon='UNDO')
+            row.operator("ed.redo", icon='REDO')
+            if obj is None or obj.mode != 'SCULPT':
+                # Sculpt mode does not generate an undo menu it seems...
+                col.operator("ed.undo_history", icon='UNDO_HISTORY', text = "Undo History   ")
 
-        col = layout.column(align=True)
-        col.label(text="Repeat:")
-        col.operator("screen.repeat_last")
-        col.operator("screen.repeat_history", text="History...")
+            col = layout.column(align=True)
+            col.label(text="Repeat:")
+            col.operator("screen.repeat_last", icon='REPEAT', text = "Repeat Last     ")
+            col.operator("screen.repeat_history", icon='REDO_HISTORY', text="Repeat History")
+
+        # Flag is on, draw buttons as icons.
+        else:
+            col = layout.column(align=True)
+            row = col.row(align=False)
+            row.operator("ed.undo", icon='UNDO',text="")
+            row.operator("ed.redo", icon='REDO',text="")
+            if obj is None or obj.mode != 'SCULPT':
+                # Sculpt mode does not generate an undo menu it seems...
+                row.operator("ed.undo_history", icon='UNDO_HISTORY',text="")
+
+            col = layout.column(align=True)
+            col.label(text="Repeat:")
+            row = col.row(align=False)
+            row.operator("screen.repeat_last", icon='REPEAT', text="")
+            row.operator("screen.repeat_history", icon='REDO_HISTORY', text="")
 
 
 if __name__ == "__main__":  # only for live edit.
