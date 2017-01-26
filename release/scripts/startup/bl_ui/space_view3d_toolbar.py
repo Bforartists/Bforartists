@@ -398,13 +398,37 @@ class VIEW3D_PT_tools_transform_mesh(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
+        obj = context.object
 
-        col = layout.column(align=True)
-        col.operator("transform.translate")
-        col.operator("transform.rotate")
-        col.operator("transform.resize", text="Scale")
-        col.operator("transform.shrink_fatten", text="Shrink/Fatten")
-        col.operator("transform.push_pull", text="Push/Pull")
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+        # Flag is off, draw buttons as text
+        if not scene.UItweaks.icon_or_text: 
+            col = layout.column(align=True)
+            row = col.row(align=True)
+            row.operator("ed.undo", icon='UNDO')
+            row.operator("ed.redo", icon='REDO')
+            if obj is None or obj.mode != 'SCULPT':
+                # Sculpt mode does not generate an undo menu it seems...
+                col.operator("ed.undo_history", icon='UNDO_HISTORY')
+ 
+ 
+            col = layout.column(align=True)
+            col.label(text="Repeat:")
+            col.operator("screen.repeat_last", icon='REPEAT')
+            col.operator("screen.repeat_history", icon='REDO_HISTORY', text="History...")
+
+        # Flag is on, draw buttons as icons.
+        else:
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("ed.undo", icon='UNDO',text="")
+            row.operator("ed.redo", icon='REDO',text="")
+            row.operator("ed.undo_history", icon='UNDO_HISTORY',text="")
+
+            layout.label(text="Repeat:")
+            row = layout.row(align=False)
+            row.operator("screen.repeat_last", icon='REPEAT',text="")
+            row.operator("screen.repeat_history", icon='REDO_HISTORY',text="")
 
 
 class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
