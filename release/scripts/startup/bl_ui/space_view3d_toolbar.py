@@ -172,7 +172,11 @@ class VIEW3D_PT_tools_add_object(View3DPanel, Panel):
         layout.operator("curve.primitive_nurbs_curve_add", text="Nurbs Curve  ", icon='CURVE_NCURVE')
         layout.operator("curve.primitive_nurbs_circle_add", text="Nurbs Circle  ", icon='CURVE_NCIRCLE')
         layout.operator("curve.primitive_nurbs_path_add", text="Path               ", icon='CURVE_PATH')
+        
+        layout.separator()
 
+        layout.operator("curve.draw", icon='LINE_DATA')
+        
     @staticmethod
     def draw_add_curve_icons(layout, label=False):
         if label:
@@ -191,6 +195,8 @@ class VIEW3D_PT_tools_add_object(View3DPanel, Panel):
         row.operator("curve.primitive_nurbs_curve_add", text="", icon='CURVE_NCURVE')
         row.operator("curve.primitive_nurbs_circle_add", text="", icon='CURVE_NCIRCLE')
         row.operator("curve.primitive_nurbs_path_add", text="", icon='CURVE_PATH')
+        
+        row.operator("curve.draw", text = "", icon='LINE_DATA')
 
     @staticmethod
     def draw_add_surface(layout):
