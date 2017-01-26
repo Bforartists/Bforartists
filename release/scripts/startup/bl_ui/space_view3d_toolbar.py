@@ -365,37 +365,141 @@ class VIEW3D_PT_tools_add_object(View3DPanel, Panel):
 
 class VIEW3D_PT_tools_relations(View3DPanel, Panel):
     bl_category = "Relations"
-    bl_context = "objectmode"
+    #bl_context = "objectmode"
     bl_label = "Relations"
 
     def draw(self, context):
         layout = self.layout
 
-        col = layout.column(align=True)
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
-        col.label(text="Group:")
-        col.operator("group.create", text="New Group")
-        col.operator("group.objects_add_active", text="Add to Active")
-        col.operator("group.objects_remove", text="Remove from Group")
+        obj = context.active_object
 
-        col.separator()
+        if obj is not None:
 
-        col.label(text="Parent:")
-        row = col.row(align=True)
-        row.operator("object.parent_set", text="Set")
-        row.operator("object.parent_clear", text="Clear")
+            mode = obj.mode
+                # Particle edit
+            if mode == 'OBJECT':
 
-        col.separator()
+                if not scene.UItweaks.icon_or_text: 
 
-        col.label(text="Object Data:")
-        col.operator("object.make_links_data")
-        col.operator("object.make_single_user")
+                    col = layout.column(align=True)
 
-        col.separator()
+                    col.label(text="Group:")
+                    col.operator("group.create", icon='NEW_GROUP', text="New Group           ")
+                    col.operator("group.objects_add_active", icon='ADD_TO_ACTIVE', text="Add to Active       ")
+                    col.operator("group.objects_remove", icon='REMOVE_FROM_GROUP', text="Remove from Group")
+                    col.separator()
+                    col.operator("group.objects_remove_active", icon='REMOVE_SELECTED_FROM_ACTIVE_GROUP', text="Remove from Active")
+                    col.operator("group.objects_remove_all", icon='REMOVE_FROM_ALL_GROUPS', text="Remove from All  ")
 
-        col.label(text="Linked Objects:")
-        col.operator("object.make_local")
-        col.operator("object.proxy_make")
+                    col.separator()
+
+                    col.label(text="Parent:")
+                    row = col.row(align=True)
+                    row.operator("object.parent_set", icon='PARENT_SET', text="Set")
+                    row.operator("object.parent_clear", icon='PARENT_CLEAR', text="Clear")
+
+                    col.separator()
+
+                    col.label(text="Object Data:")
+                    col.operator("object.make_links_data", icon='LINK_DATA', text = "Link Data             ")
+                    col.operator("object.make_single_user", icon='MAKE_SINGLE_USER', text = "Make Single User ")
+
+                    col.separator()
+
+                    col.label(text="Linked Objects:")
+                    col.operator("object.make_local", icon='MAKE_LOCAL', text = "Make Local          ")
+                    col.operator("object.proxy_make", icon='MAKE_PROXY', text = "Make Proxy          ")
+
+                else:
+                    col = layout.column(align=True)
+                    col.label(text="Group:")
+                    row = col.row(align=False)
+                    row.alignment = 'LEFT'
+                    row.operator("group.create", icon='NEW_GROUP', text="")
+                    row.operator("group.objects_add_active", icon='ADD_TO_ACTIVE', text="")
+                    row.operator("group.objects_remove", icon='REMOVE_FROM_GROUP', text="")
+
+                    layout.separator()
+                    row = layout.row(align=False)
+                    row.alignment = 'LEFT'
+                    row.operator("group.objects_remove_active", icon='REMOVE_SELECTED_FROM_ACTIVE_GROUP', text="")
+                    row.operator("group.objects_remove_all", icon='REMOVE_FROM_ALL_GROUPS', text="")
+
+                    col = layout.column(align=True)
+                    col.label(text="Parent:")
+
+                    row = col.row(align=False)
+                    row.alignment = 'LEFT'
+                    row.operator("object.parent_set", icon='PARENT_SET', text="")
+                    row.operator("object.parent_clear", icon='PARENT_CLEAR', text="")
+
+                    col = layout.column(align=True)
+                    col.label(text="Object Data:")
+
+                    row = col.row(align=False)
+                    row.alignment = 'LEFT'
+                    row.operator("object.make_links_data", icon='LINK_DATA', text="")
+                    row.operator("object.make_single_user", icon='MAKE_SINGLE_USER', text="")
+
+                    col = layout.column(align=True)
+                    col.label(text="Linked Objects:")
+
+                    row = col.row(align=False)
+                    row.alignment = 'LEFT'
+                    row.operator("object.make_local", icon='MAKE_LOCAL', text="")
+                    row.operator("object.proxy_make", icon='MAKE_PROXY', text="")
+
+            if mode == 'EDIT':
+
+                col = layout.column(align=True)
+                
+                
+                if not scene.UItweaks.icon_or_text: 
+                        col = layout.column(align=True)
+                        row = col.row(align=True)
+                
+                        col.label(text="Parent:")
+                        layout.operator("object.vertex_parent_set", icon = "VERTEX_PARENT")
+                        
+                        if obj.type == 'ARMATURE':
+                            col = layout.column(align=True)
+                            row = col.row(align=True)
+                            row.operator("armature.parent_set", icon='PARENT_SET', text="Make")
+                            row.operator("armature.parent_clear", icon='PARENT_CLEAR', text="Clear")
+                        
+                else:
+                        col = layout.column(align=True)
+                        col.label(text="Parent:")
+                        
+                        row = col.row(align=False)
+                        row.alignment = 'LEFT'
+                        row.operator("object.vertex_parent_set", text= "", icon = "VERTEX_PARENT")
+                        
+                        if obj.type == 'ARMATURE':
+                            row.operator("armature.parent_set", icon='PARENT_SET', text="")
+                            row.operator("armature.parent_clear", icon='PARENT_CLEAR', text="")
+
+            if mode == 'POSE':
+
+                if obj.type == 'ARMATURE':
+
+                    col = layout.column(align=True)
+                    col.label(text="Parent:")
+
+                    if not scene.UItweaks.icon_or_text: 
+                        col = layout.column(align=True)
+                        row = col.row(align=True)
+                        row.operator("object.parent_set", icon='PARENT_SET', text="Set")
+                        row.operator("object.parent_clear", icon='PARENT_CLEAR', text="Clear")
+
+                    else:
+                        col = layout.column(align=True)
+                        row = col.row(align=False)
+                        row.alignment = 'LEFT'
+                        row.operator("object.parent_set", icon='PARENT_SET', text="")
+                        row.operator("object.parent_clear", icon='PARENT_CLEAR', text="")
 
 
 class VIEW3D_PT_tools_animation(View3DPanel, Panel):
