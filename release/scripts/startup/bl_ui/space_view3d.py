@@ -325,10 +325,6 @@ class VIEW3D_MT_mirror(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("transform.mirror", text="Interactive Mirror")
-
-        layout.separator()
-
         layout.operator_context = 'INVOKE_REGION_WIN'
 
         props = layout.operator("transform.mirror", text="X Global")
