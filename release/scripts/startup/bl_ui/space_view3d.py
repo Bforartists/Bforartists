@@ -2403,7 +2403,6 @@ class VIEW3D_MT_edit_mesh(Menu):
         layout.menu("VIEW3D_MT_edit_mesh_vertices")
         layout.menu("VIEW3D_MT_edit_mesh_edges")
         layout.menu("VIEW3D_MT_edit_mesh_faces")
-        layout.menu("VIEW3D_MT_edit_mesh_normals")
         layout.menu("VIEW3D_MT_edit_mesh_clean")
 
         layout.separator()
@@ -2662,20 +2661,6 @@ class VIEW3D_MT_edit_mesh_faces(Menu):
         layout.operator("mesh.uvs_reverse")
         layout.operator("mesh.colors_rotate")
         layout.operator("mesh.colors_reverse")
-
-
-class VIEW3D_MT_edit_mesh_normals(Menu):
-    bl_label = "Normals"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("mesh.normals_make_consistent", text="Recalculate Outside").inside = False
-        layout.operator("mesh.normals_make_consistent", text="Recalculate Inside").inside = True
-
-        layout.separator()
-
-        layout.operator("mesh.flip_normals")
 
 
 class VIEW3D_MT_edit_mesh_clean(Menu):
