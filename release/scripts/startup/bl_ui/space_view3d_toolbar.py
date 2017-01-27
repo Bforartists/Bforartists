@@ -1323,19 +1323,41 @@ class VIEW3D_PT_tools_armatureedit(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
-        col = layout.column(align=True)
-        col.label(text="Bones:")
-        col.operator("armature.bone_primitive_add", text="Add")
+        if not scene.UItweaks.icon_or_text: 
+            col = layout.column(align=True)
+            col.label(text="Bones:")
+            col.operator("armature.bone_primitive_add", icon = 'BONE_DATA', text="Add                  ")
 
-        col = layout.column(align=True)
-        col.label(text="Modeling:")
-        col.operator("armature.extrude_move")
-        col.operator("armature.subdivide", text="Subdivide")
+            col = layout.column(align=True)
+            col.label(text="Modeling:")
+            col.operator("armature.extrude_move", icon = 'EXTRUDE_REGION', text="Extrude            ")
+            col.operator("armature.subdivide", icon = 'SUBDIVIDE_EDGES', text="Subdivide        ")
+            1
+            col = layout.column(align=True)
+            col.label(text="Deform:")
+            col.operator("transform.vertex_random", icon = 'RANDOMIZE', text="Randomize      ")
 
-        col = layout.column(align=True)
-        col.label(text="Deform:")
-        col.operator("transform.vertex_random")
+        else:
+            col = layout.column(align=True)
+            col.label(text="Bones:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("armature.bone_primitive_add", icon = 'BONE_DATA', text="")
+
+            col = layout.column(align=True)
+            col.label(text="Modeling:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("armature.extrude_move", icon = 'EXTRUDE_REGION', text="")
+            row.operator("armature.subdivide", icon = 'SUBDIVIDE_EDGES', text="")
+
+            col = layout.column(align=True)
+            col.label(text="Deform:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("transform.vertex_random", icon = 'RANDOMIZE', text="")
 
 
 class VIEW3D_PT_tools_armatureedit_options(View3DPanel, Panel):
