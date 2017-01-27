@@ -537,24 +537,54 @@ class VIEW3D_PT_tools_rigid_body(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
-        col = layout.column(align=True)
-        col.label(text="Add/Remove:")
-        row = col.row(align=True)
-        row.operator("rigidbody.objects_add", text="Add Active").type = 'ACTIVE'
-        row.operator("rigidbody.objects_add", text="Add Passive").type = 'PASSIVE'
-        row = col.row(align=True)
-        row.operator("rigidbody.objects_remove", text="Remove")
+        if not scene.UItweaks.icon_or_text:
 
-        col = layout.column(align=True)
-        col.label(text="Object Tools:")
-        col.operator("rigidbody.shape_change", text="Change Shape")
-        col.operator("rigidbody.mass_calculate", text="Calculate Mass")
-        col.operator("rigidbody.object_settings_copy", text="Copy from Active")
-        col.operator("object.visual_transform_apply", text="Apply Transformation")
-        col.operator("rigidbody.bake_to_keyframes", text="Bake To Keyframes")
-        col.label(text="Constraints:")
-        col.operator("rigidbody.connect", text="Connect")
+            col = layout.column(align=True)
+            col.label(text="Add/Remove:")
+            col.operator("rigidbody.objects_add", icon='RIGID_ADD_ACTIVE', text="Add Active          ").type = 'ACTIVE'
+            col.operator("rigidbody.objects_add", icon='RIGID_ADD_PASSIVE', text="Add Passive         ").type = 'PASSIVE'
+            col.operator("rigidbody.objects_remove", icon='RIGID_REMOVE', text="Remove               ")
+
+            col = layout.column(align=True)
+            col.label(text="Object Tools:")
+            col.operator("rigidbody.shape_change", icon='RIGID_CHANGE_SHAPE', text="Change Shape      ")
+            col.operator("rigidbody.mass_calculate", icon='RIGID_CALCULATE_MASS', text="Calculate Mass    ")
+            col.operator("rigidbody.object_settings_copy", icon='RIGID_COPY_FROM_ACTIVE', text="Copy from Active")
+            col.operator("object.visual_transform_apply", icon='RIGID_APPLY_TRANS', text="Apply Visual Trans")
+            col.operator("rigidbody.bake_to_keyframes", icon='RIGID_BAKE_TO_KEYFRAME', text="Bake To Keyframes")
+            col.label(text="Constraints:")
+            col.operator("rigidbody.connect", icon='RIGID_CONSTRAINTS_CONNECT', text="Connect               ")
+        else:
+            col = layout.column(align=True)
+            col.label(text="Add/Remove:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("rigidbody.objects_add", icon='RIGID_ADD_ACTIVE', text="").type = 'ACTIVE'
+            row.operator("rigidbody.objects_add", icon='RIGID_ADD_PASSIVE', text="").type = 'PASSIVE'
+            row.operator("rigidbody.objects_remove", icon='RIGID_REMOVE', text="")
+
+            col = layout.column(align=True)
+            col.label(text="Object Tools:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("rigidbody.shape_change", icon='RIGID_CHANGE_SHAPE', text="")
+            row.operator("rigidbody.mass_calculate", icon='RIGID_CALCULATE_MASS', text="")
+            row.operator("rigidbody.object_settings_copy", icon='RIGID_COPY_FROM_ACTIVE', text="")
+            row.operator("object.visual_transform_apply", icon='RIGID_APPLY_TRANS', text="")
+
+            col.separator()
+
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("rigidbody.bake_to_keyframes", icon='RIGID_BAKE_TO_KEYFRAME', text="")
+
+            col = layout.column(align=True)
+            col.label(text="Constraints:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("rigidbody.connect", icon='RIGID_CONSTRAINTS_CONNECT', text="")
 
 
 # ********** default tools for editmode_mesh ****************
