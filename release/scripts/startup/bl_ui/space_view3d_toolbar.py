@@ -1454,46 +1454,65 @@ class VIEW3D_PT_tools_posemode(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
-        col = layout.column(align=True)
-        col.label(text="Transform:")
-        col.operator("transform.translate")
-        col.operator("transform.rotate")
-        col.operator("transform.resize", text="Scale")
+        if not scene.UItweaks.icon_or_text: 
 
-        col = layout.column(align=True)
-        col.label(text="In-Between:")
-        row = col.row(align=True)
-        row.operator("pose.push", text="Push")
-        row.operator("pose.relax", text="Relax")
-        col.operator("pose.breakdown", text="Breakdowner")
-
-        col = layout.column(align=True)
-        col.label(text="Pose:")
-        row = col.row(align=True)
-        row.operator("pose.copy", text="Copy")
-        row.operator("pose.paste", text="Paste")
-
-        row = layout.row(align=True)
-        row.operator("pose.propagate", text="Propagate")
-        row.menu("VIEW3D_MT_pose_propagate", icon='TRIA_RIGHT', text="")
-
-        col = layout.column(align=True)
-        col.operator("poselib.pose_add", text="Add To Library")
-
-        draw_keyframing_tools(context, layout)
-
-        pchan = context.active_pose_bone
-        mpath = pchan.motion_path if pchan else None
-
-        col = layout.column(align=True)
-        col.label(text="Motion Paths:")
-        if mpath:
+            col = layout.column(align=True)
+            col.label(text="In-Between:")
             row = col.row(align=True)
-            row.operator("pose.paths_update", text="Update")
-            row.operator("pose.paths_clear", text="", icon='X')
+            row.operator("pose.push", icon = 'PUSH_POSE', text="Push")
+            row.operator("pose.relax", icon = 'RELAX_POSE',text="Relax")
+            col.operator("pose.breakdown", icon = 'BREAKDOWNER_POSE',text="Breakdowner  ")
+
+            col = layout.column(align=True)
+            col.label(text="Pose:")
+            row = col.row(align=True)
+
+            row = layout.row(align=True)
+            row.operator("pose.propagate", text="Propagate")
+            row.menu("VIEW3D_MT_pose_propagate", icon='TRIA_RIGHT', text="")
+
+            # bfa - Double menu entry. But stays available for further modifications
+            #col = layout.column(align=True)
+            #col.operator("poselib.pose_add", icon = 'ADD_TO_LIBRARY', text="Add To Library")
+
+            draw_keyframing_tools(context, layout)
+
+            col = layout.column(align=True)
+            col.label(text="Motion Paths:")
+            row = col.row(align=True)
+            row.operator("pose.paths_calculate", icon ='MOTIONPATHS_CALCULATE', text="Calculate")
+            row.operator("pose.paths_clear", icon ='MOTIONPATHS_CLEAR', text="Clear")
+
         else:
-            col.operator("pose.paths_calculate", text="Calculate")
+            col = layout.column(align=True)
+            col.label(text="In-Between:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("pose.push", icon = 'PUSH_POSE', text="")
+            row.operator("pose.relax", icon = 'RELAX_POSE',text="")
+            row.operator("pose.breakdown", icon = 'BREAKDOWNER_POSE',text="")
+
+            col = layout.column(align=True)
+            col.label(text="Pose:")
+
+            # bfa - Double menu entry. But stays available for further modifications
+            #row = col.row(align=False)
+            #row.operator("poselib.pose_add", icon = 'ADD_TO_LIBRARY', text="")
+
+            row = col.row(align=True)
+            row.operator("pose.propagate", text="Propagate")
+            row.menu("VIEW3D_MT_pose_propagate", icon='TRIA_RIGHT', text="")
+
+            draw_keyframing_tools_icons(context, layout)
+
+            col = layout.column(align=True)
+            col.label(text="Motion Paths:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("pose.paths_calculate", icon ='MOTIONPATHS_CALCULATE', text="")
+            row.operator("pose.paths_clear", icon ='MOTIONPATHS_CLEAR', text="")
 
 
 class VIEW3D_PT_tools_posemode_options(View3DPanel, Panel):
