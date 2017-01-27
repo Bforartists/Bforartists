@@ -2646,9 +2646,6 @@ class VIEW3D_MT_edit_mesh_faces(Menu):
 
         layout.separator()
 
-        layout.operator("mesh.faces_shade_smooth")
-        layout.operator("mesh.faces_shade_flat")
-
         layout.operator("mesh.normals_make_consistent", text="Recalculate Normals").inside = False
 
         layout.separator()
