@@ -885,35 +885,77 @@ class VIEW3D_PT_tools_add_mesh_edit(View3DPanel, Panel):
             VIEW3D_PT_tools_add_object.draw_add_mesh_icons(col, label=True) # the modified class with icon buttons
 
 
+# Workaround to separate the tooltips for Recalculate Outside and Recalculate Inside
+class VIEW3D_normals_make_consistent_inside(bpy.types.Operator):
+    """Recalculate Normals Inside\nMake selected faces and normals point inside the mesh"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "mesh.normals_recalculate_inside"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Recalculate Inside"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.mesh.normals_make_consistent(inside=True)
+        return {'FINISHED'}  
+
 class VIEW3D_PT_tools_shading(View3DPanel, Panel):
-    bl_category = "Shading / UVs"
+    bl_category = "Shade / UVs"
     bl_context = "mesh_edit"
     bl_label = "Shading"
 
     def draw(self, context):
         layout = self.layout
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
-        col = layout.column(align=True)
-        col.label(text="Faces:")
-        row = col.row(align=True)
-        row.operator("mesh.faces_shade_smooth", text="Smooth")
-        row.operator("mesh.faces_shade_flat", text="Flat")
-        col.label(text="Edges:")
-        row = col.row(align=True)
-        row.operator("mesh.mark_sharp", text="Smooth").clear = True
-        row.operator("mesh.mark_sharp", text="Sharp")
-        col.label(text="Vertices:")
-        row = col.row(align=True)
-        props = row.operator("mesh.mark_sharp", text="Smooth")
-        props.use_verts = True
-        props.clear = True
-        row.operator("mesh.mark_sharp", text="Sharp").use_verts = True
+        if not scene.UItweaks.icon_or_text: 
+            col = layout.column(align=True)
+            col.label(text="Faces:")
+            row = col.row(align=True)
+            row.operator("mesh.faces_shade_smooth", icon = 'SHADING_SMOOTH', text="Smooth")
+            row.operator("mesh.faces_shade_flat", icon = 'SHADING_FLAT',  text="Flat")
+            col.label(text="Edges:")
+            row = col.row(align=True)
+            row.operator("mesh.mark_sharp", icon = 'SHADING_SMOOTH', text="Smooth").clear = True
+            row.operator("mesh.mark_sharp", icon = 'SHADING_FLAT', text="Sharp")
+            col.label(text="Vertices:")
+            row = col.row(align=True)
+            props = row.operator("mesh.mark_sharp", icon = 'SHADING_SMOOTH', text="Smooth")
+            props.use_verts = True
+            props.clear = True
+            row.operator("mesh.mark_sharp", icon = 'SHADING_FLAT', text="Sharp").use_verts = True
 
-        col = layout.column(align=True)
-        col.label(text="Normals:")
-        col.operator("mesh.normals_make_consistent", text="Recalculate")
-        col.operator("mesh.flip_normals", text="Flip Direction")
-        col.operator("mesh.set_normals_from_faces", text="Set From Faces")
+            col = layout.column(align=True)
+            col.label(text="Normals:")
+            col.operator("mesh.normals_make_consistent", icon = 'RECALC_NORMALS', text="Recalc Outside      ")
+            col.operator("mesh.normals_recalculate_inside", icon = 'RECALC_NORMALS_INSIDE', text="Recalc Inside        ")
+            col.operator("mesh.flip_normals", icon = 'FLIP_NORMALS', text="Flip Direction        ")
+
+        else:
+            col = layout.column(align=True)
+            col.label(text="Faces:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("mesh.faces_shade_smooth", icon = 'SHADING_SMOOTH', text="")
+            row.operator("mesh.faces_shade_flat", icon = 'SHADING_FLAT',  text="")
+            col.label(text="Edges:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("mesh.mark_sharp", icon = 'SHADING_SMOOTH', text="").clear = True
+            row.operator("mesh.mark_sharp", icon = 'SHADING_FLAT', text="")
+            col.label(text="Vertices:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            props = row.operator("mesh.mark_sharp", icon = 'SHADING_SMOOTH', text="")
+            props.use_verts = True
+            props.clear = True
+            row.operator("mesh.mark_sharp", icon = 'SHADING_FLAT', text="").use_verts = True
+
+            col = layout.column(align=True)
+            col.label(text="Normals:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("mesh.normals_make_consistent", icon = 'RECALC_NORMALS', text="")
+            row.operator("mesh.normals_recalculate_inside", icon = 'RECALC_NORMALS_INSIDE', text="")
+            row.operator("mesh.flip_normals", icon = 'FLIP_NORMALS', text="")
+
 
 
 class VIEW3D_PT_tools_uvs(View3DPanel, Panel):
