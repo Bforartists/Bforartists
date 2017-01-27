@@ -1029,7 +1029,7 @@ class VIEW3D_PT_tools_add_curve_edit(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
         col = layout.column(align=True)
 
         # bfa - icon or text buttons
@@ -1142,7 +1142,7 @@ class VIEW3D_PT_tools_add_surface_edit(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
         col = layout.column(align=True)
 
         # bfa - icon or text buttons
@@ -1254,7 +1254,7 @@ class VIEW3D_PT_tools_add_mball_edit(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-
+        scene = context.scene # Our data is in the current scene
         col = layout.column(align=True)
 
         # bfa - icon or text buttons
