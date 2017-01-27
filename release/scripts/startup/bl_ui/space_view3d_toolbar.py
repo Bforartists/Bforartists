@@ -385,6 +385,154 @@ class VIEW3D_PT_tools_add_object(View3DPanel, Panel):
         else:
             layout.operator_menu_enum("object.group_instance_add", "group", text="Group Instance", icon='OUTLINER_OB_EMPTY')
 
+class VIEW3D_PT_tools_add_misc(View3DPanel, Panel):
+    bl_category = "Create"
+    bl_context = "objectmode"
+    bl_label = "Add Misc"
+
+    @staticmethod
+    def draw_add_lamp(layout):
+        #layout.operator_enum("object.lamp_add", "type")
+
+        layout.operator("object.lamp_add", text="Point               ", icon='LAMP_POINT').type= 'POINT'
+        layout.operator("object.lamp_add", text="Sun                 ", icon='LAMP_SUN').type= 'SUN' 
+        layout.operator("object.lamp_add", text="Spot                ", icon='LAMP_SPOT').type= 'SPOT' 
+        layout.operator("object.lamp_add", text="Hemi              ", icon='LAMP_HEMI').type= 'HEMI' 
+        layout.operator("object.lamp_add", text="Area               ", icon='LAMP_AREA').type= 'AREA' 
+  
+
+    @staticmethod
+    def draw_add_lamp_icons(layout):
+        row = layout.row(align=False)
+        row.alignment = 'LEFT'
+        row.operator("object.lamp_add", text="", icon='LAMP_POINT').type= 'POINT'
+        row.operator("object.lamp_add", text="", icon='LAMP_SUN').type= 'SUN' 
+        row.operator("object.lamp_add", text="", icon='LAMP_SPOT').type= 'SPOT' 
+        row.operator("object.lamp_add", text="", icon='LAMP_HEMI').type= 'HEMI' 
+        layout.separator()
+        row = layout.row(align=False)
+        row.operator("object.lamp_add", text="", icon='LAMP_AREA').type= 'AREA' 
+
+    @staticmethod
+    def draw_add_other(layout):
+        layout.operator("object.text_add", text="Text                ", icon='OUTLINER_OB_FONT')
+        layout.operator("object.armature_add", text="Armature       ", icon='OUTLINER_OB_ARMATURE')
+        layout.operator("object.add", text="Lattice           ", icon='OUTLINER_OB_LATTICE').type = 'LATTICE'
+        layout.operator("object.camera_add", text="Camera          ", icon='OUTLINER_OB_CAMERA')
+        layout.operator("object.speaker_add", text="Speaker         ", icon='OUTLINER_OB_SPEAKER')
+        
+
+    @staticmethod
+    def draw_add_other_icons(layout):
+        row = layout.row(align=False)
+        row.alignment = 'LEFT'
+        row.operator("object.text_add", text="", icon='OUTLINER_OB_FONT')
+        row.operator("object.armature_add", text="", icon='OUTLINER_OB_ARMATURE')
+        row.operator("object.add", text="", icon='OUTLINER_OB_LATTICE').type = 'LATTICE'
+        row.operator("object.camera_add", text="", icon='OUTLINER_OB_CAMERA')
+        layout.separator()
+        row = layout.row(align=False)
+        row.operator("object.speaker_add", text="", icon='OUTLINER_OB_SPEAKER')
+
+
+    @staticmethod
+    def draw_add_empties(layout):
+        layout.operator("object.empty_add", text="Plain Axes      ", icon='OUTLINER_OB_EMPTY').type = 'PLAIN_AXES'
+        layout.operator("object.empty_add", text="Sphere            ", icon='EMPTY_SPHERE').type = 'SPHERE'
+        layout.operator("object.empty_add", text="Circle             ", icon='EMPTY_CIRCLE').type = 'CIRCLE'
+        layout.operator("object.empty_add", text="Cone               ", icon='EMPTY_CONE').type = 'CONE'
+        layout.operator("object.empty_add", text="Cube               ", icon='EMPTY_CUBE').type = 'CUBE'       
+        layout.operator("object.empty_add", text="Single Arrow  ", icon='EMPTY_SINGLEARROW').type = 'SINGLE_ARROW'
+        layout.operator("object.empty_add", text="Arrows           ", icon='EMPTY_ARROWS').type = 'ARROWS'       
+        layout.operator("object.empty_add", text="Image             ", icon='EMPTY_IMAGE').type = 'IMAGE'
+
+    @staticmethod
+    def draw_add_empties_icons(layout):
+        row = layout.row(align=False)
+        row.alignment = 'LEFT'
+        row.operator("object.empty_add", text="", icon='OUTLINER_OB_EMPTY').type = 'PLAIN_AXES'
+        row.operator("object.empty_add", text="", icon='EMPTY_SPHERE').type = 'SPHERE'
+        row.operator("object.empty_add", text="", icon='EMPTY_CIRCLE').type = 'CIRCLE'
+        row.operator("object.empty_add", text="", icon='EMPTY_CONE').type = 'CONE'
+        layout.separator()
+        row = layout.row(align=False)
+        row.operator("object.empty_add", text="", icon='EMPTY_CUBE').type = 'CUBE'      
+        row.operator("object.empty_add", text="", icon='EMPTY_SINGLEARROW').type = 'SINGLE_ARROW'       
+        row.operator("object.empty_add", text="", icon='EMPTY_ARROWS').type = 'ARROWS'
+        row.operator("object.empty_add", text="", icon='EMPTY_IMAGE').type = 'IMAGE'
+
+    @staticmethod
+    def draw_add_force_field(layout):
+        layout.operator("object.effector_add", text="Boid                ", icon='FORCE_BOID').type='BOID'
+        layout.operator("object.effector_add", text="Charge           ", icon='FORCE_CHARGE').type='CHARGE'
+        layout.operator("object.effector_add", text="Curve Guide   ", icon='FORCE_CURVE').type='GUIDE'
+        layout.operator("object.effector_add", text="Drag                ", icon='FORCE_DRAG').type='DRAG'
+        layout.operator("object.effector_add", text="Force              ", icon='FORCE_FORCE').type='FORCE'
+        layout.operator("object.effector_add", text="Harmonic       ", icon='FORCE_HARMONIC').type='HARMONIC'
+        layout.operator("object.effector_add", text="Lennard-Jones", icon='FORCE_LENNARDJONES').type='LENNARDJ'
+        layout.operator("object.effector_add", text="Magnetic        ", icon='FORCE_MAGNETIC').type='MAGNET'
+        layout.operator("object.effector_add", text="Smoke flow    ", icon='FORCE_SMOKEFLOW').type='SMOKE'
+        layout.operator("object.effector_add", text="Texture           ", icon='FORCE_TEXTURE').type='TEXTURE'
+        layout.operator("object.effector_add", text="Turbulence     ", icon='FORCE_TURBULENCE').type='TURBULENCE'
+        layout.operator("object.effector_add", text="Vortex            ", icon='FORCE_VORTEX').type='VORTEX'
+        layout.operator("object.effector_add", text="Wind               ", icon='FORCE_WIND').type='WIND'
+
+    @staticmethod
+    def draw_add_force_field_icons(layout):
+        row = layout.row(align=False)
+        row.alignment = 'LEFT'
+        row.operator("object.effector_add", text="", icon='FORCE_BOID').type='BOID'
+        row.operator("object.effector_add", text="", icon='FORCE_CHARGE').type='CHARGE'
+        row.operator("object.effector_add", text="", icon='FORCE_CURVE').type='GUIDE'
+        row.operator("object.effector_add", text="", icon='FORCE_DRAG').type='DRAG'
+        layout.separator()
+        row = layout.row(align=False)
+        row.operator("object.effector_add", text="", icon='FORCE_FORCE').type='FORCE'
+        row.operator("object.effector_add", text="", icon='FORCE_HARMONIC').type='HARMONIC'
+        row.operator("object.effector_add", text="", icon='FORCE_LENNARDJONES').type='LENNARDJ'
+        row.operator("object.effector_add", text="", icon='FORCE_MAGNETIC').type='MAGNET'
+        layout.separator()
+        row = layout.row(align=False)
+        row.operator("object.effector_add", text="", icon='FORCE_SMOKEFLOW').type='SMOKE'
+        row.operator("object.effector_add", text="", icon='FORCE_TEXTURE').type='TEXTURE'
+        row.operator("object.effector_add", text="", icon='FORCE_TURBULENCE').type='TURBULENCE'
+        row.operator("object.effector_add", text="", icon='FORCE_VORTEX').type='VORTEX'
+        layout.separator()
+        row = layout.row(align=False)
+        row.operator("object.effector_add", text="", icon='FORCE_WIND').type='WIND'
+
+
+    def draw(self, context):
+        layout = self.layout
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+
+        col = layout.column(align=True)
+        col.label(text="Lamp:")
+        if not scene.UItweaks.icon_or_text: 
+            self.draw_add_lamp(col)
+        else:
+            self.draw_add_lamp_icons(col)
+
+        col = layout.column(align=True)
+        col.label(text="Other:")
+        if not scene.UItweaks.icon_or_text:
+            self.draw_add_other(col)
+        else:
+            self.draw_add_other_icons(col)
+
+        col = layout.column(align=True)
+        col.label(text="Empties:")
+        if not scene.UItweaks.icon_or_text:
+            self.draw_add_empties(col)
+        else:
+            self.draw_add_empties_icons(col)
+
+        col = layout.column(align=True)
+        col.label(text="Force Field:")
+        if not scene.UItweaks.icon_or_text:
+            self.draw_add_force_field(col)
+        else:
+            self.draw_add_force_field_icons(col)
 
 class VIEW3D_PT_tools_relations(View3DPanel, Panel):
     bl_category = "Relations"
