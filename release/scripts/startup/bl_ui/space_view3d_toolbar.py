@@ -1117,22 +1117,54 @@ class VIEW3D_PT_tools_surfaceedit(View3DPanel, Panel):
     def draw(self, context):
         layout = self.layout
 
-        col = layout.column(align=True)
-        col.label(text="Curve:")
-        col.operator("curve.duplicate_move", text="Duplicate")
-        col.operator("curve.delete")
-        col.operator("curve.cyclic_toggle")
-        col.operator("curve.switch_direction")
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
-        col = layout.column(align=True)
-        col.label(text="Modeling:")
-        col.operator("curve.extrude", text="Extrude")
-        col.operator("curve.spin")
-        col.operator("curve.subdivide")
+        if not scene.UItweaks.icon_or_text: 
 
-        col = layout.column(align=True)
-        col.label(text="Deform:")
-        col.operator("transform.vertex_random")
+            col = layout.column(align=True)
+            col.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="Mirror              ")
+            col.label(text="Curve:")
+            col.operator("curve.duplicate_move", icon = 'DUPLICATE', text="Duplicate        ")
+            col.operator("curve.delete", icon = 'DELETE', text="Delete             ")
+            col.operator("curve.cyclic_toggle", icon = 'TOGGLE_CYCLIC', text="Toggle Cyclic  ")
+            col.operator("curve.switch_direction", icon = 'SWITCH_DIRECTION', text="Switch Direction")
+
+            col = layout.column(align=True)
+            col.label(text="Modeling:")
+            col.operator("curve.extrude", icon='EXTRUDE_REGION', text="Extrude           ")
+            col.operator("curve.spin", icon = 'SPIN', text="Spin                 ")  
+            col.operator("curve.subdivide", icon='SUBDIVIDE_EDGES', text="Subdivide        ")
+
+            col = layout.column(align=True)
+            col.label(text="Deform:")
+            col.operator("transform.vertex_random", icon = 'RANDOMIZE', text="Randomize      ")
+
+        else:
+
+            col = layout.column(align=True)
+            row = col.row(align=False)
+            row.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="")
+            col.label(text="Curve:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("curve.duplicate_move", icon = 'DUPLICATE', text="")
+            row.operator("curve.delete", icon = 'DELETE', text = "")
+            row.operator("curve.cyclic_toggle", icon = 'TOGGLE_CYCLIC', text = "")
+            row.operator("curve.switch_direction", icon = 'SWITCH_DIRECTION', text = "")
+
+            col = layout.column(align=True)
+            col.label(text="Modeling:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("curve.extrude", icon='EXTRUDE_REGION', text="")
+            row.operator("curve.spin", icon = 'SPIN', text = "")
+            row.operator("curve.subdivide", icon='SUBDIVIDE_EDGES', text = "")
+
+            col = layout.column(align=True)
+            col.label(text="Deform:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("transform.vertex_random", icon = 'RANDOMIZE', text = "")
 
 
 class VIEW3D_PT_tools_add_surface_edit(View3DPanel, Panel):
