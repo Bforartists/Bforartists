@@ -46,9 +46,32 @@ class View3DPanel:
 def draw_keyframing_tools(context, layout):
     col = layout.column(align=True)
     col.label(text="Keyframes:")
+    col.operator("anim.keyframe_insert_menu", icon= 'KEYFRAMES_INSERT', text="Insert              ")
+    col.operator("anim.keyframe_delete_v3d", icon= 'KEYFRAMES_REMOVE',text="Remove          ")
+    col.operator("nla.bake", icon= 'BAKE_ACTION',text="Bake Action    ")  
+    col.operator("anim.keyframe_clear_v3d", icon= 'KEYFRAMES_CLEAR',text="Clear               ")
+
+    col = layout.column(align=True)
+    col.label(text="Set Keying Set:")
     row = col.row(align=True)
-    row.operator("anim.keyframe_insert_menu", text="Insert")
-    row.operator("anim.keyframe_delete_v3d", text="Remove")
+    row.alignment = 'RIGHT'
+    col.operator("anim.keying_set_active_set", icon='TRIA_RIGHT', text="Set Keying Set")
+    
+
+# Keyframing tools just icons
+def draw_keyframing_tools_icons(context, layout):
+    col = layout.column(align=True)
+    col.label(text="Keyframes:")
+    row = col.row(align=False)
+    row.alignment = 'LEFT'
+    row.operator("anim.keyframe_insert_menu", icon= 'KEYFRAMES_INSERT',text="")
+    row.operator("anim.keyframe_delete_v3d", icon= 'KEYFRAMES_REMOVE',text="")
+    row.operator("nla.bake", icon= 'BAKE_ACTION',text="")
+    row.operator("anim.keyframe_clear_v3d", icon= 'KEYFRAMES_CLEAR',text="")
+
+    col = layout.column(align=True)
+    col.label(text="Set Keying Set:")
+    col.operator("anim.keying_set_active_set", icon='TRIA_RIGHT', text="Set Keying Set")
 
 
 # ********** default tools for object-mode ****************
@@ -509,25 +532,27 @@ class VIEW3D_PT_tools_animation(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
-        ob = context.active_object
-        mpath = ob.motion_path if ob else None
+        if not scene.UItweaks.icon_or_text: 
 
-        draw_keyframing_tools(context, layout)
+            draw_keyframing_tools(context, layout)
 
-        col = layout.column(align=True)
-        col.label(text="Motion Paths:")
-        if mpath:
-            row = col.row(align=True)
-            row.operator("object.paths_update", text="Update")
-            row.operator("object.paths_clear", text="", icon='X')
+            col = layout.column(align=True)
+            col.label(text="Motion Paths:")
+            col.operator("object.paths_calculate", icon ='MOTIONPATHS_CALCULATE', text="Calculate        ")
+            col.operator("object.paths_clear", icon ='MOTIONPATHS_CLEAR',  text="Clear               ")
+
         else:
-            col.operator("object.paths_calculate", text="Calculate")
+            draw_keyframing_tools_icons(context, layout)
 
-        col.separator()
+            col = layout.column(align=True)
+            col.label(text="Motion Paths:")
 
-        col.label(text="Action:")
-        col.operator("nla.bake", text="Bake Action")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("object.paths_calculate", icon ='MOTIONPATHS_CALCULATE',  text="")
+            row.operator("object.paths_clear", icon ='MOTIONPATHS_CLEAR',  text="")
 
 
 class VIEW3D_PT_tools_rigid_body(View3DPanel, Panel):
