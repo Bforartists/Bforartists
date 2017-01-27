@@ -124,13 +124,6 @@ class VIEW3D_HT_header(Header):
         row.operator("render.opengl", text="", icon='RENDER_STILL')
         row.operator("render.opengl", text="", icon='RENDER_ANIMATION').animation = True
 
-        # Pose
-        if obj and mode == 'POSE':
-            row = layout.row(align=True)
-            row.operator("pose.copy", text="", icon='COPYDOWN')
-            row.operator("pose.paste", text="", icon='PASTEDOWN').flipped = False
-            row.operator("pose.paste", text="", icon='PASTEFLIPDOWN').flipped = True
-
         # GPencil
         if context.gpencil_data and context.gpencil_data.use_stroke_edit_mode:
             row = layout.row(align=True)
@@ -2136,11 +2129,6 @@ class VIEW3D_MT_pose(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_pose_slide")
-        layout.menu("VIEW3D_MT_pose_propagate")
-
-        layout.separator()
-
         layout.operator("pose.copy")
         layout.operator("pose.paste").flipped = False
         layout.operator("pose.paste", text="Paste X-Flipped Pose").flipped = True
@@ -2148,7 +2136,6 @@ class VIEW3D_MT_pose(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_pose_library")
-        layout.menu("VIEW3D_MT_pose_motion")
         layout.menu("VIEW3D_MT_pose_group")
 
         layout.separator()
