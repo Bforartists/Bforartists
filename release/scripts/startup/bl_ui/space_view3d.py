@@ -362,7 +362,8 @@ class VIEW3D_MT_uv_map(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("uv.unwrap")
+        layout.operator("uv.unwrap", text="Unwrap ABF").method='ANGLE_BASED'
+        layout.operator("uv.unwrap", text="Unwrap LSCM").method='CONFORMAL'
 
         layout.operator_context = 'INVOKE_DEFAULT'
         layout.operator("uv.smart_project")
