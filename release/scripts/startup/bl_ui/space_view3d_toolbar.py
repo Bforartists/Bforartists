@@ -1435,16 +1435,35 @@ class VIEW3D_PT_tools_textedit(View3DPanel, Panel):
     def draw(self, context):
         layout = self.layout
 
-        col = layout.column(align=True)
-        col.label(text="Set Case:")
-        col.operator("font.case_set", text="To Upper").case = 'UPPER'
-        col.operator("font.case_set", text="To Lower").case = 'LOWER'
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
-        col = layout.column(align=True)
-        col.label(text="Style:")
-        col.operator("font.style_toggle", text="Bold").style = 'BOLD'
-        col.operator("font.style_toggle", text="Italic").style = 'ITALIC'
-        col.operator("font.style_toggle", text="Underline").style = 'UNDERLINE'
+        if not scene.UItweaks.icon_or_text: 
+            col = layout.column(align=True)
+            col.label(text="Set Case:")
+            col.operator("font.case_set", icon = 'SET_UPPERCASE', text="To Upper          ").case = 'UPPER'
+            col.operator("font.case_set", icon = 'SET_LOWERCASE', text="To Lower         ").case = 'LOWER'
+
+            col = layout.column(align=True)
+            col.label(text="Style:")
+            col.operator("font.style_toggle", icon = 'BOLD', text="Bold                 ").style = 'BOLD'
+            col.operator("font.style_toggle", icon = 'ITALIC', text="Italic                ").style = 'ITALIC'
+            col.operator("font.style_toggle", icon = 'UNDERLINED', text="Underline         ").style = 'UNDERLINE'
+
+        else: 
+            col = layout.column(align=True)
+            col.label(text="Set Case:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("font.case_set", icon = 'SET_UPPERCASE', text="").case = 'UPPER'
+            row.operator("font.case_set", icon = 'SET_LOWERCASE', text="").case = 'LOWER'
+
+            col = layout.column(align=True)
+            col.label(text="Style:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("font.style_toggle", icon = 'BOLD', text="").style = 'BOLD'
+            row.operator("font.style_toggle", icon = 'ITALIC', text="").style = 'ITALIC'
+            row.operator("font.style_toggle", icon = 'UNDERLINED', text="").style = 'UNDERLINE'
 
 
 # ********** default tools for editmode_armature ****************
