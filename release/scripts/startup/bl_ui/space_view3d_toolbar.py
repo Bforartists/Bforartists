@@ -995,31 +995,81 @@ class VIEW3D_PT_tools_curveedit(View3DPanel, Panel):
     def draw(self, context):
         layout = self.layout
 
-        col = layout.column(align=True)
-        col.label(text="Curve:")
-        col.operator("curve.cyclic_toggle")
-        col.operator("curve.switch_direction")
-        col.operator("curve.spline_type_set")
-        col.operator("curve.radius_set")
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
 
-        col = layout.column(align=True)
-        col.label(text="Handles:")
-        row = col.row(align=True)
-        row.operator("curve.handle_type_set", text="Auto").type = 'AUTOMATIC'
-        row.operator("curve.handle_type_set", text="Vector").type = 'VECTOR'
-        row = col.row(align=True)
-        row.operator("curve.handle_type_set", text="Align").type = 'ALIGNED'
-        row.operator("curve.handle_type_set", text="Free").type = 'FREE_ALIGN'
+        if not scene.UItweaks.icon_or_text: 
 
-        col = layout.column(align=True)
-        col.operator("curve.normals_make_consistent")
+            col = layout.column(align=True) 
+            col.operator("transform.tilt", icon = 'TILT', text="Tilt                  ")
+            col.operator("transform.transform", icon = 'SHRINK_FATTEN', text="Shrink/Fatten  ").mode = 'CURVE_SHRINKFATTEN'
+            col.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="Mirror              ")
 
-        col = layout.column(align=True)
-        col.label(text="Modeling:")
-        col.operator("curve.extrude_move", text="Extrude")
-        col.operator("curve.subdivide")
-        col.operator("curve.smooth")
-        col.operator("transform.vertex_random")
+            col = layout.column(align=True)
+            col.label(text="Curve:")
+            col.operator("curve.cyclic_toggle", icon = 'TOGGLE_CYCLIC', text="Toggle Cyclic  ")
+            col.operator("curve.switch_direction", icon = 'SWITCH_DIRECTION', text="Switch Direction")
+            col.operator("curve.spline_type_set", icon = 'CURVE_DATA', text="Set Spline Type")
+            col.operator("curve.radius_set", icon = 'RADIUS', text="Set Curve Radius")
+
+            col = layout.column(align=True)
+            col.label(text="Handles:")
+            row = col.row(align=True)
+            row.operator("curve.handle_type_set", icon = 'HANDLE_AUTO', text="Auto").type = 'AUTOMATIC'
+            row.operator("curve.handle_type_set", icon = 'HANDLE_VECTOR', text="Vector").type = 'VECTOR'
+            row = col.row(align=True)
+            row.operator("curve.handle_type_set", icon = 'HANDLE_ALIGN',text="Align").type = 'ALIGNED'
+            row.operator("curve.handle_type_set", icon = 'HANDLE_FREE', text="Free   ").type = 'FREE_ALIGN'
+
+            col = layout.column(align=True)
+            col.operator("curve.normals_make_consistent", icon = 'RECALC_NORMALS', text="Recalc Normals")
+
+            col = layout.column(align=True)
+            col.label(text="Modeling:")
+            col.operator("curve.extrude_move", icon = 'EXTRUDE_REGION', text="Extrude            ")
+            col.operator("curve.subdivide", icon = 'SUBDIVIDE_EDGES', text="Subdivide        ")
+            col.operator("curve.smooth", icon = 'SHADING_SMOOTH', text="Smooth           ")
+            col.operator("transform.vertex_random", icon = 'RANDOMIZE', text="Randomize      ")
+
+        else:
+
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("transform.tilt", icon = 'TILT', text="")
+            row.operator("transform.transform", icon = 'SHRINK_FATTEN', text="").mode = 'CURVE_SHRINKFATTEN'
+            row.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="")
+
+            col = layout.column(align=True)
+            col.label(text="Curve:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("curve.cyclic_toggle", icon = 'TOGGLE_CYCLIC', text = "")
+            row.operator("curve.switch_direction", icon = 'SWITCH_DIRECTION', text = "")
+            row.operator("curve.spline_type_set", icon = 'CURVE_DATA', text = "")
+            row.operator("curve.radius_set", icon = 'RADIUS', text = "")
+
+            col = layout.column(align=True)
+            col.label(text="Handles:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("curve.handle_type_set", icon = 'HANDLE_AUTO', text="").type = 'AUTOMATIC'
+            row.operator("curve.handle_type_set", icon = 'HANDLE_VECTOR',text="").type = 'VECTOR'
+            row.operator("curve.handle_type_set", icon = 'HANDLE_ALIGN',text="").type = 'ALIGNED'
+            row.operator("curve.handle_type_set", icon = 'HANDLE_FREE',text="").type = 'FREE_ALIGN'
+
+            col.separator()
+
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("curve.normals_make_consistent", icon = 'RECALC_NORMALS', text = "")
+
+            col = layout.column(align=True)
+            col.label(text="Modeling:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("curve.extrude_move", icon = 'EXTRUDE_REGION', text = "")
+            row.operator("curve.subdivide", icon = 'SUBDIVIDE_EDGES', text = "")
+            row.operator("curve.smooth", icon = 'SHADING_SMOOTH', text = "")
+            row.operator("transform.vertex_random", icon = 'RANDOMIZE', text = "")
 
 
 class VIEW3D_PT_tools_add_curve_edit(View3DPanel, Panel):
