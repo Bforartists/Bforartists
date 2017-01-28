@@ -77,33 +77,6 @@ def draw_keyframing_tools_icons(context, layout):
 # ********** default tools for object-mode ****************
 
 
-class VIEW3D_PT_tools_transform(View3DPanel, Panel):
-    bl_category = "Tools"
-    bl_context = "objectmode"
-    bl_label = "Transform"
-
-    def draw(self, context):
-        layout = self.layout
-        scene = context.scene # Our data for the icon_or_text flag is in the current
-
-        if not scene.UItweaks.icon_or_text: 
-            col = layout.column(align=True)
-            col.operator("transform.translate", icon='TRANSFORM_MOVE')
-            col.operator("transform.rotate", icon='TRANSFORM_ROTATE')
-            col.operator("transform.resize", icon='TRANSFORM_SCALE', text="Scale")
-
-            col = layout.column(align=True)
-            col.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="Mirror")
-
-        else:
-            row = layout.row(align=False)
-            row.alignment = 'LEFT'
-            row.operator("transform.translate", icon='TRANSFORM_MOVE', text="")
-            row.operator("transform.rotate", icon='TRANSFORM_ROTATE', text="")
-            row.operator("transform.resize", icon='TRANSFORM_SCALE', text="")
-            row.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="")
-
-
 class VIEW3D_PT_tools_object(View3DPanel, Panel):
     bl_category = "Tools"
     bl_context = "objectmode"
