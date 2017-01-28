@@ -1365,14 +1365,10 @@ class VIEW3D_MT_object(Menu):
         layout.menu("VIEW3D_MT_object_apply")
         layout.menu("VIEW3D_MT_snap")
 
-        layout.separator()
-
-        layout.menu("VIEW3D_MT_object_animation")
 
         layout.separator()
 
         layout.operator("view3d.pastebuffer", text = "Paste")
-
         layout.operator("view3d.copybuffer", text = "Copy")
         layout.operator("object.duplicate_move")
         layout.operator("object.duplicate_move_linked")
@@ -1418,7 +1414,8 @@ class VIEW3D_MT_object(Menu):
 
         layout.operator_menu_enum("object.convert", "target")
 
-
+# bfa - The animation menu is removed from the traditional menus as a double menu entry. 
+# But in Blender 2.8 it gets used in grease pencil mode too. So we have to keep it it seems.
 class VIEW3D_MT_object_animation(Menu):
     bl_label = "Animation"
 
@@ -2135,10 +2132,6 @@ class VIEW3D_MT_pose(Menu):
         layout.menu("VIEW3D_MT_pose_apply")
 
         layout.menu("VIEW3D_MT_snap")
-
-        layout.separator()
-
-        layout.menu("VIEW3D_MT_object_animation")
 
         layout.separator()
 
