@@ -313,7 +313,7 @@ void GPENCIL_OT_duplicate(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Duplicate Strokes";
 	ot->idname = "GPENCIL_OT_duplicate";
-	ot->description = "Duplicate the selected Grease Pencil strokes";
+	ot->description = "Duplicate Strokes\nDuplicate the selected Grease Pencil strokes";
 	
 	/* callbacks */
 	ot->exec = gp_duplicate_exec;
@@ -423,7 +423,7 @@ void GPENCIL_OT_copy(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Copy Strokes";
 	ot->idname = "GPENCIL_OT_copy";
-	ot->description = "Copy selected Grease Pencil points and strokes";
+	ot->description = "Copy Strokes\nCopy selected Grease Pencil points and strokes";
 	
 	/* callbacks */
 	ot->exec = gp_strokes_copy_exec;
@@ -565,7 +565,7 @@ void GPENCIL_OT_paste(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Paste Strokes";
 	ot->idname = "GPENCIL_OT_paste";
-	ot->description = "Paste previously copied strokes or copy and merge in active layer";
+	ot->description = "Paste Strokes\nPaste previously copied strokes into active layer";
 	
 	/* callbacks */
 	ot->exec = gp_strokes_paste_exec;
@@ -799,7 +799,7 @@ void GPENCIL_OT_active_frame_delete(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Delete Active Frame";
 	ot->idname = "GPENCIL_OT_active_frame_delete";
-	ot->description = "Delete the active frame for the active Grease Pencil Layer";
+	ot->description = "Delete Active Frame\nDelete the active frame for the active Grease Pencil datablock";
 	
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 	
@@ -1218,7 +1218,7 @@ void GPENCIL_OT_delete(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Delete";
 	ot->idname = "GPENCIL_OT_delete";
-	ot->description = "Delete selected Grease Pencil strokes, vertices, or frames";
+	ot->description = "Delete...\nDelete selected Grease Pencil strokes, vertices, or frames";
 	
 	/* callbacks */
 	ot->invoke = WM_menu_invoke;
@@ -1242,7 +1242,7 @@ void GPENCIL_OT_dissolve(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Dissolve";
 	ot->idname = "GPENCIL_OT_dissolve";
-	ot->description = "Delete selected points without splitting strokes";
+	ot->description = "Dissolve\nDelete selected points without splitting strokes";
 
 	/* callbacks */
 	ot->exec = gp_dissolve_exec;

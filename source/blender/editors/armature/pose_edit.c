@@ -239,7 +239,7 @@ void POSE_OT_paths_calculate(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Calculate Bone Paths";
 	ot->idname = "POSE_OT_paths_calculate";
-	ot->description = "Calculate paths for the selected bones";
+	ot->description = "Calculate Bone Paths\nCalculate paths for the selected bones";
 	
 	/* api callbacks */
 	ot->invoke = pose_calculate_paths_invoke;
@@ -295,7 +295,7 @@ void POSE_OT_paths_update(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Update Bone Paths";
 	ot->idname = "POSE_OT_paths_update";
-	ot->description = "Recalculate paths for bones that already have them";
+	ot->description = "Update Bone Path\nRecalculate paths for bones that already have them";
 	
 	/* api callbakcs */
 	ot->exec = pose_update_paths_exec;
@@ -367,7 +367,7 @@ void POSE_OT_paths_clear(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Clear Bone Paths";
 	ot->idname = "POSE_OT_paths_clear";
-	ot->description = "Clear path caches for all bones, hold Shift key for selected bones only";
+	ot->description = "Clear Bone Paths\nClear path caches for selected bones";
 	
 	/* api callbacks */
 	ot->invoke = pose_clear_paths_invoke;
@@ -626,7 +626,7 @@ void POSE_OT_flip_names(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Flip Names";
 	ot->idname = "POSE_OT_flip_names";
-	ot->description = "Flips (and corrects) the axis suffixes of the names of selected bones";
+	ot->description = "Flip Names\nFlips (and corrects) the axis suffixes of the names of selected bones";
 	
 	/* api callbacks */
 	ot->exec = pose_flip_names_exec;
@@ -680,7 +680,7 @@ void POSE_OT_autoside_names(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "AutoName by Axis";
 	ot->idname = "POSE_OT_autoside_names";
-	ot->description = "Automatically renames the selected bones according to which side of the target axis they fall on";
+	ot->description = "AutoName by Axis\nAutomatically renames the selected bones according to which side of the target axis they fall on";
 	
 	/* api callbacks */
 	ot->invoke = WM_menu_invoke;
@@ -720,7 +720,7 @@ void POSE_OT_rotation_mode_set(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Set Rotation Mode";
 	ot->idname = "POSE_OT_rotation_mode_set";
-	ot->description = "Set the rotation representation used by selected bones";
+	ot->description = "Set Rotation Mode\nSet the rotation representation used by selected bones";
 	
 	/* callbacks */
 	ot->invoke = WM_menu_invoke;
@@ -799,7 +799,7 @@ void ARMATURE_OT_layers_show_all(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Show All Layers";
 	ot->idname = "ARMATURE_OT_layers_show_all";
-	ot->description = "Make all armature layers visible";
+	ot->description = "Show All Layers\nMake all armature layers visible";
 	
 	/* callbacks */
 	ot->exec = pose_armature_layers_showall_exec;
@@ -865,7 +865,7 @@ void ARMATURE_OT_armature_layers(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Change Armature Layers";
 	ot->idname = "ARMATURE_OT_armature_layers";
-	ot->description = "Change the visible armature layers";
+	ot->description = "Change Armature Layers\nChange the visible armature layers";
 	
 	/* callbacks */
 	ot->invoke = armature_layers_invoke;
@@ -939,7 +939,7 @@ void POSE_OT_bone_layers(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Change Bone Layers";
 	ot->idname = "POSE_OT_bone_layers";
-	ot->description = "Change the layers that the selected bones belong to";
+	ot->description = "Change Bone Layers\nChange the layers that the selected bones belong to";
 	
 	/* callbacks */
 	ot->invoke = pose_bone_layers_invoke;
@@ -1012,7 +1012,7 @@ void ARMATURE_OT_bone_layers(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Change Bone Layers";
 	ot->idname = "ARMATURE_OT_bone_layers";
-	ot->description = "Change the layers that the selected bones belong to";
+	ot->description = "Change Bone Layers\nChange the layers that the selected bones belong to";
 	
 	/* callbacks */
 	ot->invoke = armature_bone_layers_invoke;
@@ -1085,7 +1085,7 @@ void POSE_OT_hide(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Hide Selected";
 	ot->idname = "POSE_OT_hide";
-	ot->description = "Tag selected bones to not be visible in Pose Mode";
+	ot->description = "Hide Selected\nTag selected bones to not be visible in Pose Mode";
 	
 	/* api callbacks */
 	ot->exec = pose_hide_exec;
@@ -1133,7 +1133,7 @@ void POSE_OT_reveal(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Reveal Selected";
 	ot->idname = "POSE_OT_reveal";
-	ot->description = "Unhide all bones that have been tagged to be hidden in Pose Mode";
+	ot->description = "Reveal Selected\nUnhide all bones that have been tagged to be hidden in Pose Mode";
 	
 	/* api callbacks */
 	ot->exec = pose_reveal_exec;
@@ -1177,7 +1177,7 @@ void POSE_OT_quaternions_flip(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Flip Quats";
 	ot->idname = "POSE_OT_quaternions_flip";
-	ot->description = "Flip quaternion values to achieve desired rotations, while maintaining the same orientations";
+	ot->description = "Flip Quats\nFlip quaternion values to achieve desired rotations, while maintaining the same orientations";
 	
 	/* callbacks */
 	ot->exec = pose_flip_quats_exec;
