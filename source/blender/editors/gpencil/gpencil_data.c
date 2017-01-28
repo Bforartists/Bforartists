@@ -119,7 +119,7 @@ void GPENCIL_OT_data_add(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Grease Pencil Add New";
 	ot->idname = "GPENCIL_OT_data_add";
-	ot->description = "Add new Grease Pencil data-block";
+	ot->description = "Grease Pencil Add New\nAdd new Grease Pencil datablock";
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 	
 	/* callbacks */
@@ -167,7 +167,7 @@ void GPENCIL_OT_data_unlink(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Grease Pencil Unlink";
 	ot->idname = "GPENCIL_OT_data_unlink";
-	ot->description = "Unlink active Grease Pencil data-block";
+	ot->description = "Grease Pencil Unlink\nUnlink active Grease Pencil datablock";
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 	
 	/* callbacks */
@@ -217,7 +217,7 @@ void GPENCIL_OT_layer_add(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Add New Layer";
 	ot->idname = "GPENCIL_OT_layer_add";
-	ot->description = "Add new Grease Pencil layer for the active Grease Pencil data-block";
+	ot->description = "Add New Layer\nAdd new Grease Pencil layer for the active Grease Pencil datablock";
 	
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 	
@@ -265,7 +265,7 @@ void GPENCIL_OT_layer_remove(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Remove Layer";
 	ot->idname = "GPENCIL_OT_layer_remove";
-	ot->description = "Remove active Grease Pencil layer";
+	ot->description = "Remove Layer\nRemove active Grease Pencil layer";
 	
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 	
@@ -311,7 +311,7 @@ void GPENCIL_OT_layer_move(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Move Grease Pencil Layer";
 	ot->idname = "GPENCIL_OT_layer_move";
-	ot->description = "Move the active Grease Pencil layer up/down in the list";
+	ot->description = "Move Grease Pencil Layer\nMove the active Grease Pencil layer up/down in the list";
 	
 	/* api callbacks */
 	ot->exec = gp_layer_move_exec;
@@ -354,7 +354,7 @@ void GPENCIL_OT_layer_duplicate(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Duplicate Layer";
 	ot->idname = "GPENCIL_OT_layer_duplicate";
-	ot->description = "Make a copy of the active Grease Pencil layer";
+	ot->description = "Duplicate Layer\nMake a copy of the active Grease Pencil layer";
 	
 	/* callbacks */
 	ot->exec = gp_layer_copy_exec;
@@ -402,7 +402,7 @@ void GPENCIL_OT_hide(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Hide Layer(s)";
 	ot->idname = "GPENCIL_OT_hide";
-	ot->description = "Hide selected/unselected Grease Pencil layers";
+	ot->description = "Hide Layer(s)\nHide selected/unselected Grease Pencil layers";
 	
 	/* callbacks */
 	ot->exec = gp_hide_exec;
@@ -448,7 +448,7 @@ void GPENCIL_OT_reveal(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Show All Layers";
 	ot->idname = "GPENCIL_OT_reveal";
-	ot->description = "Show all Grease Pencil layers";
+	ot->description = "Show All Layers\nShow all Grease Pencil layers";
 	
 	/* callbacks */
 	ot->exec = gp_reveal_exec;

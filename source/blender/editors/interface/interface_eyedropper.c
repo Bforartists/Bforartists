@@ -767,7 +767,7 @@ void UI_OT_eyedropper_id(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Eyedropper Data-Block";
 	ot->idname = "UI_OT_eyedropper_id";
-	ot->description = "Sample a data-block from the 3D View to store in a property";
+	ot->description = "Eyedropper Datablock\nSample a datablock from the Blender Window to store in a property";
 
 	/* api callbacks */
 	ot->invoke = datadropper_invoke;
@@ -1100,7 +1100,7 @@ void UI_OT_eyedropper_depth(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Eyedropper Depth";
 	ot->idname = "UI_OT_eyedropper_depth";
-	ot->description = "Sample depth from the 3D view";
+	ot->description = "Eyedropper Depth\nSample depth from the 3D view";
 
 	/* api callbacks */
 	ot->invoke = depthdropper_invoke;
