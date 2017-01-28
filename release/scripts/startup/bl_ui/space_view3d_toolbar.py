@@ -735,45 +735,6 @@ class VIEW3D_PT_tools_rigid_body(View3DPanel, Panel):
 
 # ********** default tools for editmode_mesh ****************
 
-class VIEW3D_PT_tools_transform_mesh(View3DPanel, Panel):
-    bl_category = "Tools"
-    bl_context = "mesh_edit"
-    bl_label = "Transform"
-
-    def draw(self, context):
-        layout = self.layout
-        obj = context.object
-
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
-        # Flag is off, draw buttons as text
-        if not scene.UItweaks.icon_or_text: 
-            col = layout.column(align=True)
-            row = col.row(align=True)
-            row.operator("ed.undo", icon='UNDO')
-            row.operator("ed.redo", icon='REDO')
-            if obj is None or obj.mode != 'SCULPT':
-                # Sculpt mode does not generate an undo menu it seems...
-                col.operator("ed.undo_history", icon='UNDO_HISTORY')
- 
- 
-            col = layout.column(align=True)
-            col.label(text="Repeat:")
-            col.operator("screen.repeat_last", icon='REPEAT')
-            col.operator("screen.repeat_history", icon='REDO_HISTORY', text="History...")
-
-        # Flag is on, draw buttons as icons.
-        else:
-            row = layout.row(align=False)
-            row.alignment = 'LEFT'
-            row.operator("ed.undo", icon='UNDO',text="")
-            row.operator("ed.redo", icon='REDO',text="")
-            row.operator("ed.undo_history", icon='UNDO_HISTORY',text="")
-
-            layout.label(text="Repeat:")
-            row = layout.row(align=False)
-            row.operator("screen.repeat_last", icon='REPEAT',text="")
-            row.operator("screen.repeat_history", icon='REDO_HISTORY',text="")
-
 
 class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
     bl_category = "Tools"
@@ -1132,24 +1093,6 @@ class VIEW3D_PT_tools_meshedit_options(View3DPanel, Panel):
 # ********** default tools for editmode_curve ****************
 
 
-class VIEW3D_PT_tools_transform_curve(View3DPanel, Panel):
-    bl_category = "Tools"
-    bl_context = "curve_edit"
-    bl_label = "Transform"
-
-    def draw(self, context):
-        layout = self.layout
-
-        col = layout.column(align=True)
-        col.operator("transform.translate")
-        col.operator("transform.rotate")
-        col.operator("transform.resize", text="Scale")
-
-        col = layout.column(align=True)
-        col.operator("transform.tilt", text="Tilt")
-        col.operator("transform.transform", text="Shrink/Fatten").mode = 'CURVE_SHRINKFATTEN'
-
-
 class VIEW3D_PT_tools_curveedit(View3DPanel, Panel):
     bl_category = "Tools"
     bl_context = "curve_edit"
@@ -1307,19 +1250,6 @@ class VIEW3D_PT_tools_curveedit_options_stroke(View3DPanel, Panel):
 
 
 # ********** default tools for editmode_surface ****************
-
-class VIEW3D_PT_tools_transform_surface(View3DPanel, Panel):
-    bl_category = "Tools"
-    bl_context = "surface_edit"
-    bl_label = "Transform"
-
-    def draw(self, context):
-        layout = self.layout
-
-        col = layout.column(align=True)
-        col.operator("transform.translate")
-        col.operator("transform.rotate")
-        col.operator("transform.resize", text="Scale")
 
 
 class VIEW3D_PT_tools_surfaceedit(View3DPanel, Panel):
