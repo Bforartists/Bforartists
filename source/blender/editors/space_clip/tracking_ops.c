@@ -133,7 +133,7 @@ void CLIP_OT_add_marker(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Add Marker";
 	ot->idname = "CLIP_OT_add_marker";
-	ot->description = "Place new marker at specified location";
+	ot->description = "Add Marker\nPlace new marker at specified location";
 
 	/* api callbacks */
 	ot->invoke = add_marker_invoke;
@@ -207,7 +207,7 @@ void CLIP_OT_add_marker_at_click(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Add Marker at Click";
 	ot->idname = "CLIP_OT_add_marker_at_click";
-	ot->description = "Place new marker at the desired (clicked) position";
+	ot->description = "Add Marker at Click\nPlace new marker at the desired (clicked) position";
 
 	/* api callbacks */
 	ot->invoke = add_marker_at_click_invoke;
@@ -273,7 +273,7 @@ void CLIP_OT_delete_track(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Delete Track";
 	ot->idname = "CLIP_OT_delete_track";
-	ot->description = "Delete selected tracks";
+	ot->description = "Delete Track\nDelete selected tracks";
 
 	/* api callbacks */
 	ot->invoke = WM_operator_confirm;
@@ -351,7 +351,7 @@ void CLIP_OT_delete_marker(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Delete Marker";
 	ot->idname = "CLIP_OT_delete_marker";
-	ot->description = "Delete marker for current frame from selected tracks";
+	ot->description = "Delete Marker\nDelete marker for current frame from selected tracks";
 
 	/* api callbacks */
 	ot->invoke = WM_operator_confirm;
@@ -1083,7 +1083,7 @@ void CLIP_OT_slide_marker(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Slide Marker";
-	ot->description = "Slide marker areas";
+	ot->description = "Slide Marker\nSlide marker areas";
 	ot->idname = "CLIP_OT_slide_marker";
 
 	/* api callbacks */
@@ -1147,7 +1147,7 @@ void CLIP_OT_clear_track_path(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Clear Track Path";
-	ot->description = "Clear tracks after/before current position or clear the whole track";
+	ot->description = "Clear Track Path, Clear tracks after/before current position or clear the whole track";
 	ot->idname = "CLIP_OT_clear_track_path";
 
 	/* api callbacks */
@@ -1222,7 +1222,7 @@ void CLIP_OT_disable_markers(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Disable Markers";
-	ot->description = "Disable/enable selected markers";
+	ot->description = "Disable Markers\nDisable/enable selected markers";
 	ot->idname = "CLIP_OT_disable_markers";
 
 	/* api callbacks */
@@ -1262,7 +1262,7 @@ void CLIP_OT_set_center_principal(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Set Principal to Center";
-	ot->description = "Set optical center to center of footage";
+	ot->description = "Set Principal to Center\nSet optical center to center of footage";
 	ot->idname = "CLIP_OT_set_center_principal";
 
 	/* api callbacks */
@@ -1339,7 +1339,7 @@ void CLIP_OT_hide_tracks(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Hide Tracks";
-	ot->description = "Hide selected tracks";
+	ot->description = "Hide Tracks\nHide selected tracks";
 	ot->idname = "CLIP_OT_hide_tracks";
 
 	/* api callbacks */
@@ -1390,7 +1390,7 @@ void CLIP_OT_hide_tracks_clear(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Hide Tracks Clear";
-	ot->description = "Clear hide selected tracks";
+	ot->description = "Hide Tracks Clear\nClear hide selected tracks";
 	ot->idname = "CLIP_OT_hide_tracks_clear";
 
 	/* api callbacks */
@@ -1487,7 +1487,7 @@ void CLIP_OT_frame_jump(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Jump to Frame";
-	ot->description = "Jump to special frame";
+	ot->description = "Jump to Frame\nJump to special frame";
 	ot->idname = "CLIP_OT_frame_jump";
 
 	/* api callbacks */
@@ -1590,7 +1590,7 @@ void CLIP_OT_join_tracks(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Join Tracks";
-	ot->description = "Join selected tracks";
+	ot->description = "Join Tracks\nJoin selected tracks";
 	ot->idname = "CLIP_OT_join_tracks";
 
 	/* api callbacks */
@@ -1653,7 +1653,7 @@ void CLIP_OT_lock_tracks(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Lock Tracks";
-	ot->description = "Lock/unlock selected tracks";
+	ot->description = "Lock Tracks\nLock/unlock selected tracks";
 	ot->idname = "CLIP_OT_lock_tracks";
 
 	/* api callbacks */
@@ -1707,7 +1707,7 @@ void CLIP_OT_set_solver_keyframe(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Set Solver Keyframe";
-	ot->description = "Set keyframe used by solver";
+	ot->description = "Set Solver Keyframe\nSet keyframe used by solver";
 	ot->idname = "CLIP_OT_set_solver_keyframe";
 
 	/* api callbacks */
@@ -1758,7 +1758,7 @@ void CLIP_OT_track_copy_color(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Copy Color";
-	ot->description = "Copy color to all selected tracks";
+	ot->description = "Copy Color\nCopy color to all selected tracks";
 	ot->idname = "CLIP_OT_track_copy_color";
 
 	/* api callbacks */
@@ -1982,7 +1982,7 @@ void CLIP_OT_clean_tracks(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Clean Tracks";
-	ot->description = "Clean tracks with high error values or few frames";
+	ot->description = "Clean Tracks\nClean tracks with high error values or few frames";
 	ot->idname = "CLIP_OT_clean_tracks";
 
 	/* api callbacks */
@@ -2024,7 +2024,7 @@ void CLIP_OT_tracking_object_new(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Add Tracking Object";
-	ot->description = "Add new object for tracking";
+	ot->description = "Add Tracking Object\nAdd new object for tracking";
 	ot->idname = "CLIP_OT_tracking_object_new";
 
 	/* api callbacks */
@@ -2064,7 +2064,7 @@ void CLIP_OT_tracking_object_remove(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Remove Tracking Object";
-	ot->description = "Remove object for tracking";
+	ot->description = "Remove Tracking Object\nRemove object for tracking";
 	ot->idname = "CLIP_OT_tracking_object_remove";
 
 	/* api callbacks */
@@ -2095,7 +2095,7 @@ void CLIP_OT_copy_tracks(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Copy Tracks";
-	ot->description = "Copy selected tracks to clipboard";
+	ot->description = "Copy Tracks\nCopy selected tracks to clipboard";
 	ot->idname = "CLIP_OT_copy_tracks";
 
 	/* api callbacks */
@@ -2137,7 +2137,7 @@ void CLIP_OT_paste_tracks(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Paste Tracks";
-	ot->description = "Paste tracks from clipboard";
+	ot->description = "Paste Tracks\nPaste tracks from clipboard";
 	ot->idname = "CLIP_OT_paste_tracks";
 
 	/* api callbacks */
@@ -2223,7 +2223,7 @@ void CLIP_OT_keyframe_insert(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Insert keyframe";
-	ot->description = "Insert a keyframe to selected tracks at current frame";
+	ot->description = "Insert keyframe\nInsert a keyframe to selected tracks at current frame";
 	ot->idname = "CLIP_OT_keyframe_insert";
 
 	/* api callbacks */
@@ -2246,7 +2246,7 @@ void CLIP_OT_keyframe_delete(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Delete keyframe";
-	ot->description = "Delete a keyframe from selected tracks at current frame";
+	ot->description = "Delete keyframe\nDelete a keyframe from selected tracks at current frame";
 	ot->idname = "CLIP_OT_keyframe_delete";
 
 	/* api callbacks */

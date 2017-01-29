@@ -215,7 +215,7 @@ static void GRAPH_OT_cursor_set(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Set Cursor";
 	ot->idname = "GRAPH_OT_cursor_set";
-	ot->description = "Interactively set the current frame and value cursor";
+	ot->description = "Set Cursor\nInteractively set the current frame number and value cursor";
 	
 	/* api callbacks */
 	ot->exec = graphview_cursor_exec;
@@ -318,7 +318,7 @@ static void GRAPH_OT_hide(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Hide Curves";
 	ot->idname = "GRAPH_OT_hide";
-	ot->description = "Hide selected curves from Graph Editor view";
+	ot->description = "Hide Curves\nHide selected curves from Graph Editor view";
 	
 	/* api callbacks */
 	ot->exec = graphview_curves_hide_exec;
@@ -328,7 +328,7 @@ static void GRAPH_OT_hide(wmOperatorType *ot)
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 	
 	/* props */
-	RNA_def_boolean(ot->srna, "unselected", 0, "Unselected", "Hide unselected rather than selected curves");
+	RNA_def_boolean(ot->srna, "unselected", 0, "Unselected", "Unselected\nHide unselected rather than selected curves");
 }
 
 /* ........ */
@@ -389,7 +389,7 @@ static void GRAPH_OT_reveal(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Reveal Curves";
 	ot->idname = "GRAPH_OT_reveal";
-	ot->description = "Make previously hidden curves visible again in Graph Editor view";
+	ot->description = "Reveal Curves\nMake previously hidden curves visible again in Graph Editor view";
 	
 	/* api callbacks */
 	ot->exec = graphview_curves_reveal_exec;
@@ -470,7 +470,7 @@ void ED_operatormacros_graph(void)
 	wmOperatorTypeMacro *otmacro;
 	
 	ot = WM_operatortype_append_macro("GRAPH_OT_duplicate_move", "Duplicate",
-	                                  "Make a copy of all selected keyframes and move them",
+	                                  "Duplicate\nMake a copy of all selected keyframes and move them",
 	                                  OPTYPE_UNDO | OPTYPE_REGISTER);
 	WM_operatortype_macro_define(ot, "GRAPH_OT_duplicate");
 	otmacro = WM_operatortype_macro_define(ot, "TRANSFORM_OT_transform");

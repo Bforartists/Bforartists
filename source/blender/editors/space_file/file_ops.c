@@ -448,7 +448,7 @@ void FILE_OT_select_border(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Activate/Select File";
-	ot->description = "Activate/select the file(s) contained in the border";
+	ot->description = "Activate/Select File\nActivate/select the file(s) contained in the border";
 	ot->idname = "FILE_OT_select_border";
 	
 	/* api callbacks */
@@ -517,7 +517,7 @@ void FILE_OT_select(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Activate/Select File";
-	ot->description = "Activate/select file";
+	ot->description = "Activate/Select File\nActivate/select file";
 	ot->idname = "FILE_OT_select";
 	
 	/* api callbacks */
@@ -525,11 +525,11 @@ void FILE_OT_select(wmOperatorType *ot)
 	ot->poll = ED_operator_file_active;
 
 	/* properties */
-	prop = RNA_def_boolean(ot->srna, "extend", false, "Extend", "Extend selection instead of deselecting everything first");
+	prop = RNA_def_boolean(ot->srna, "extend", false, "Extend", "Extend\nExtend selection instead of deselecting everything first");
 	RNA_def_property_flag(prop, PROP_SKIP_SAVE);
-	prop = RNA_def_boolean(ot->srna, "fill", false, "Fill", "Select everything beginning with the last selection");
+	prop = RNA_def_boolean(ot->srna, "fill", false, "Fill", "Fill\nSelect everything beginning with the last selection");
 	RNA_def_property_flag(prop, PROP_SKIP_SAVE);
-	prop = RNA_def_boolean(ot->srna, "open", true, "Open", "Open a directory when selecting it");
+	prop = RNA_def_boolean(ot->srna, "open", true, "Open", "Open\nOpen a directory when selecting it");
 	RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 }
 
@@ -741,7 +741,7 @@ void FILE_OT_select_walk(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Walk Select/Deselect File";
-	ot->description = "Select/Deselect files by walking through them";
+	ot->description = "Walk Select/Deselect File\nSelect/Deselect files by walking through them";
 	ot->idname = "FILE_OT_select_walk";
 
 	/* api callbacks */
@@ -750,12 +750,12 @@ void FILE_OT_select_walk(wmOperatorType *ot)
 
 	/* properties */
 	prop = RNA_def_enum(ot->srna, "direction", direction_items, 0, "Walk Direction",
-	                    "Select/Deselect file in this direction");
+	                    "Walk Direction\nSelect/Deselect file in this direction");
 	RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 	prop = RNA_def_boolean(ot->srna, "extend", false, "Extend",
-	                       "Extend selection instead of deselecting everything first");
+	                       "Extend\nExtend selection instead of deselecting everything first");
 	RNA_def_property_flag(prop, PROP_SKIP_SAVE);
-	prop = RNA_def_boolean(ot->srna, "fill", false, "Fill", "Select everything beginning with the last selection");
+	prop = RNA_def_boolean(ot->srna, "fill", false, "Fill", "Fill\nSelect everything beginning with the last selection");
 	RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 }
 
@@ -801,7 +801,7 @@ void FILE_OT_select_all_toggle(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "(De)select All Files";
-	ot->description = "Select or deselect all files";
+	ot->description = "(De)select All Files\nSelect or deselect all files";
 	ot->idname = "FILE_OT_select_all_toggle";
 	
 	/* api callbacks */
@@ -840,7 +840,7 @@ void FILE_OT_select_bookmark(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Select Directory";
-	ot->description = "Select a bookmarked directory";
+	ot->description = "Select Directory\nSelect a bookmarked directory";
 	ot->idname = "FILE_OT_select_bookmark";
 	
 	/* api callbacks */
@@ -876,7 +876,7 @@ void FILE_OT_bookmark_add(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Add Bookmark";
-	ot->description = "Add a bookmark for the selected/active directory";
+	ot->description = "Add Bookmark\nAdd a bookmark for the selected/active directory";
 	ot->idname = "FILE_OT_bookmark_add";
 	
 	/* api callbacks */
@@ -921,7 +921,7 @@ void FILE_OT_bookmark_delete(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Delete Bookmark";
-	ot->description = "Delete selected bookmark";
+	ot->description = "Delete Bookmark\nDelete selected bookmark";
 	ot->idname = "FILE_OT_bookmark_delete";
 	
 	/* api callbacks */
@@ -970,7 +970,7 @@ void FILE_OT_bookmark_cleanup(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Cleanup Bookmarks";
-	ot->description = "Delete all invalid bookmarks";
+	ot->description = "Cleanup Bookmarks\nDelete all invalid bookmarks";
 	ot->idname = "FILE_OT_bookmark_cleanup";
 
 	/* api callbacks */
@@ -1052,7 +1052,7 @@ void FILE_OT_bookmark_move(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Move Bookmark";
 	ot->idname = "FILE_OT_bookmark_move";
-	ot->description = "Move the active bookmark up/down in the list";
+	ot->description = "Move Bookmark\nMove the active bookmark up/down in the list";
 
 	/* api callbacks */
 	ot->poll = ED_operator_file_active;
@@ -1061,8 +1061,7 @@ void FILE_OT_bookmark_move(wmOperatorType *ot)
 	/* flags */
 	ot->flag = OPTYPE_REGISTER;  /* No undo! */
 
-	RNA_def_enum(ot->srna, "direction", slot_move, 0, "Direction",
-	             "Direction to move the active bookmark towards");
+	RNA_def_enum(ot->srna, "direction", slot_move, 0, "Direction", "Direction\nDirection to move, UP or DOWN");
 }
 
 static int reset_recent_exec(bContext *C, wmOperator *UNUSED(op))
@@ -1085,7 +1084,7 @@ void FILE_OT_reset_recent(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Reset Recent";
-	ot->description = "Reset Recent files";
+	ot->description = "Reset Recent\nReset Recent files";
 	ot->idname = "FILE_OT_reset_recent";
 	
 	/* api callbacks */
@@ -1146,7 +1145,7 @@ void FILE_OT_highlight(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Highlight File";
-	ot->description = "Highlight selected file(s)";
+	ot->description = "Highlight File\nHighlight selected file(s)";
 	ot->idname = "FILE_OT_highlight";
 	
 	/* api callbacks */
@@ -1181,7 +1180,7 @@ void FILE_OT_cancel(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Cancel File Load";
-	ot->description = "Cancel loading of selected file";
+	ot->description = "Cancel File Load\nCancel loading of selected file";
 	ot->idname = "FILE_OT_cancel";
 	
 	/* api callbacks */
@@ -1427,7 +1426,7 @@ void FILE_OT_execute(struct wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Execute File Window";
-	ot->description = "Execute selected file";
+	ot->description = "Execute File Window\nExecute selected file";
 	ot->idname = "FILE_OT_execute";
 	
 	/* api callbacks */
@@ -1436,7 +1435,7 @@ void FILE_OT_execute(struct wmOperatorType *ot)
 
 	/* properties */
 	prop = RNA_def_boolean(ot->srna, "need_active", 0, "Need Active",
-	                       "Only execute if there's an active selected file in the file list");
+	                       "Need Active\nOnly execute if there's an active selected file in the file list");
 	RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 }
 
@@ -1467,7 +1466,7 @@ void FILE_OT_parent(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Parent File";
-	ot->description = "Move to parent directory";
+	ot->description = "Parent File\nMove to parent directory";
 	ot->idname = "FILE_OT_parent";
 	
 	/* api callbacks */
@@ -1498,7 +1497,7 @@ void FILE_OT_previous(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Previous Folder";
-	ot->description = "Move to previous folder";
+	ot->description = "Previous Folder\nMove to previous folder";
 	ot->idname = "FILE_OT_previous";
 	
 	/* api callbacks */
@@ -1529,7 +1528,7 @@ void FILE_OT_next(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Next Folder";
-	ot->description = "Move to next folder";
+	ot->description = "Next Folder\nMove to next folder";
 	ot->idname = "FILE_OT_next";
 	
 	/* api callbacks */
@@ -1660,7 +1659,7 @@ void FILE_OT_smoothscroll(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Smooth Scroll";
 	ot->idname = "FILE_OT_smoothscroll";
-	ot->description = "Smooth scroll to make editable file visible";
+	ot->description = "Smooth Scroll\nSmooth scroll to make editable file visible";
 	
 	/* api callbacks */
 	ot->invoke = file_smoothscroll_invoke;
@@ -1813,7 +1812,7 @@ void FILE_OT_directory_new(struct wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Create New Directory";
-	ot->description = "Create a new directory";
+	ot->description = "Create New Directory\nCreate a new directory";
 	ot->idname = "FILE_OT_directory_new";
 	
 	/* api callbacks */
@@ -2013,7 +2012,7 @@ void FILE_OT_refresh(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Refresh Filelist";
-	ot->description = "Refresh the file list";
+	ot->description = "Refresh Filelist\nRefresh the file list";
 	ot->idname = "FILE_OT_refresh";
 	
 	/* api callbacks */
@@ -2041,7 +2040,7 @@ void FILE_OT_hidedot(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Toggle Hide Dot Files";
-	ot->description = "Toggle hide hidden dot files";
+	ot->description = "Toggle Hide Dot Files\nToggle hide hidden dot files";
 	ot->idname = "FILE_OT_hidedot";
 	
 	/* api callbacks */
@@ -2091,7 +2090,7 @@ void FILE_OT_bookmark_toggle(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Toggle Bookmarks";
-	ot->description = "Toggle bookmarks display";
+	ot->description = "Toggle Bookmarks\nToggle bookmarks display";
 	ot->idname = "FILE_OT_bookmark_toggle";
 	
 	/* api callbacks */
@@ -2152,7 +2151,7 @@ void FILE_OT_filenum(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Increment Number in Filename";
-	ot->description = "Increment number in filename";
+	ot->description = "Increment Number in Filename\nIncrement number in filename";
 	ot->idname = "FILE_OT_filenum";
 	
 	/* api callbacks */
@@ -2221,7 +2220,7 @@ void FILE_OT_rename(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Rename File or Directory";
-	ot->description = "Rename file or file directory";
+	ot->description = "Rename File or Directory\nRename file or file directory";
 	ot->idname = "FILE_OT_rename";
 	
 	/* api callbacks */
@@ -2298,7 +2297,7 @@ void FILE_OT_delete(struct wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Delete Selected Files";
-	ot->description = "Delete selected files";
+	ot->description = "Delete Selected Files\nDelete selected files";
 	ot->idname = "FILE_OT_delete";
 	
 	/* api callbacks */

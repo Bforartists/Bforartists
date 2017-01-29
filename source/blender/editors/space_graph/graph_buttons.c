@@ -1067,7 +1067,7 @@ void GRAPH_OT_properties(wmOperatorType *ot)
 {
 	ot->name = "Properties";
 	ot->idname = "GRAPH_OT_properties";
-	ot->description = "Toggle the properties region visibility";
+	ot->description = "Properties\nToggle display properties panel";
 	
 	ot->exec = graph_properties_toggle_exec;
 	ot->poll = ED_operator_graphedit_active;

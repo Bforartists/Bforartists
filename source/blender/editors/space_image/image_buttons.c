@@ -1330,7 +1330,7 @@ void IMAGE_OT_properties(wmOperatorType *ot)
 {
 	ot->name = "Properties";
 	ot->idname = "IMAGE_OT_properties";
-	ot->description = "Toggle the properties region visibility";
+	ot->description = "Properties\nToggle display properties panel";
 	
 	ot->exec = image_properties_toggle_exec;
 	ot->poll = ED_operator_image_active;
@@ -1354,7 +1354,7 @@ void IMAGE_OT_toolshelf(wmOperatorType *ot)
 {
 	ot->name = "Tool Shelf";
 	ot->idname = "IMAGE_OT_toolshelf";
-	ot->description = "Toggles tool shelf display";
+	ot->description = "Tool Shelf\nToggles tool shelf display";
 
 	ot->exec = image_scopes_toggle_exec;
 	ot->poll = ED_operator_image_active;

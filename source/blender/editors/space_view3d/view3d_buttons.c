@@ -1206,7 +1206,7 @@ static int view3d_properties_toggle_exec(bContext *C, wmOperator *UNUSED(op))
 void VIEW3D_OT_properties(wmOperatorType *ot)
 {
 	ot->name = "Properties";
-	ot->description = "Toggle the properties region visibility";
+	ot->description = "Properties\nToggles the properties panel display";
 	ot->idname = "VIEW3D_OT_properties";
 
 	ot->exec = view3d_properties_toggle_exec;
