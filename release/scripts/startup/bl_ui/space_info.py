@@ -5,7 +5,7 @@
 #  as published by the Free Software Foundation; either version 2
 #  of the License, or (at your option) any later version.
 #
-#  This program is distributed in the hope that it will be useful,
+#  This program is distributed in the hope that it will be useful,fprops = layout.operator("render.render", text="Render Animation", icon='RENDER_ANIMATION')
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
@@ -250,6 +250,7 @@ class INFO_MT_render(Menu):
         props = layout.operator("render.render", text="Render Animation", icon='RENDER_ANIMATION')
         props.animation = True
         props.use_viewport = True
+        layout.operator("sound.mixdown", text="Mixdown Audio", icon='PLAY_AUDIO')
 
         layout.separator()
 
