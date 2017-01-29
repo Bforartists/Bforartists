@@ -1039,20 +1039,40 @@ class VIEW3D_PT_tools_shading(View3DPanel, Panel):
             row.operator("mesh.flip_normals", icon = 'FLIP_NORMALS', text="")
 
 
+# Tooltip and operator for Clear Seam.
+class VIEW3D_markseam_clear(bpy.types.Operator):
+    """Clear Seam\nClears the UV Seam for selected edges"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "mesh.clear_seam"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Clear seam"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.mesh.mark_seam(clear=True)
+        return {'FINISHED'}  
+
 
 class VIEW3D_PT_tools_uvs(View3DPanel, Panel):
-    bl_category = "Shading / UVs"
+    bl_category = "Shade / UVs"
     bl_context = "mesh_edit"
     bl_label = "UVs"
 
     def draw(self, context):
         layout = self.layout
-
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
         col = layout.column(align=True)
         col.label(text="UV Mapping:")
         col.menu("VIEW3D_MT_uv_map", text="Unwrap")
-        col.operator("mesh.mark_seam").clear = False
-        col.operator("mesh.mark_seam", text="Clear Seam").clear = True
+
+        if not scene.UItweaks.icon_or_text:          
+            col.operator("mesh.mark_seam", icon = 'MARK_SEAM', text="Mark Seam            ").clear = False
+            col.operator("mesh.clear_seam", icon = 'CLEAR_SEAM', text="Clear Seam           ")
+
+        else:
+            col.separator()
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("mesh.mark_seam", icon = 'MARK_SEAM', text = "").clear = False
+            row.operator("mesh.clear_seam", icon = 'CLEAR_SEAM', text="")
 
 
 class VIEW3D_PT_tools_meshedit_options(View3DPanel, Panel):
