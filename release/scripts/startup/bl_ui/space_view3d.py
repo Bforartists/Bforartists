@@ -2008,6 +2008,28 @@ class VIEW3D_MT_hide_mask(Menu):
 
 # ********** Particle menu **********
 
+# Workaround to separate the tooltips for Show Hide for Particles in Particle mode
+class VIEW3D_particle_hide_unselected(bpy.types.Operator):
+    """Hide Unselected\nHide the unselected Particles"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "particle.hide_unselected"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Hide Unselected"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.particle.hide(unselected = True)
+        return {'FINISHED'}  
+
+
+class VIEW3D_MT_particle_show_hide(Menu):
+    bl_label = "Show/Hide"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("particle.reveal", text="Show Hidden")
+        layout.operator("particle.hide", text="Hide Selected").unselected = False
+        layout.operator("particle.hide_unselected", text="Hide Unselected")
+
 
 class VIEW3D_MT_particle(Menu):
     bl_label = "Particle"
@@ -2033,7 +2055,7 @@ class VIEW3D_MT_particle(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_particle_showhide")
+        layout.menu("VIEW3D_MT_particle_show_hide")
 
 
 class VIEW3D_MT_particle_specials(Menu):
