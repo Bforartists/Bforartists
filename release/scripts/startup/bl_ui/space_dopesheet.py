@@ -244,6 +244,29 @@ class DOPESHEET_MT_view(Menu):
         layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area").use_hide_panels = True
 
 
+# Workaround to separate the tooltips
+class DOPESHEET_MT_select_before_current_frame(bpy.types.Operator):
+    """Select Before Current Frame\nSelects the keyframes before the current frame """      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "action.select_leftright_before"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Before Current Frame"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.action.select_leftright(extend = False, mode = 'LEFT')
+        return {'FINISHED'}  
+
+# Workaround to separate the tooltips
+class DOPESHEET_MT_select_after_current_frame(bpy.types.Operator):
+    """Select After Current Frame\nSelects the keyframes after the current frame """      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "action.select_leftright_after"        # unique identifier for buttons and menu items to reference.
+    bl_label = "After Current Frame"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.action.select_leftright(extend = False, mode = 'RIGHT')
+        return {'FINISHED'}  
+
+
 class DOPESHEET_MT_select(Menu):
     bl_label = "Select"
 
@@ -268,12 +291,9 @@ class DOPESHEET_MT_select(Menu):
         layout.operator("action.select_column", text="Between Selected Markers").mode = 'MARKERS_BETWEEN'
 
         layout.separator()
-        props = layout.operator("action.select_leftright", text="Before Current Frame")
-        props.extend = False
-        props.mode = 'LEFT'
-        props = layout.operator("action.select_leftright", text="After Current Frame")
-        props.extend = False
-        props.mode = 'RIGHT'
+        
+        layout.operator("action.select_leftright_before", text="Before Current Frame") # bfa - the separated tooltip
+        layout.operator("action.select_leftright_after", text="After Current Frame") # bfa - the separated tooltip
 
         # FIXME: grease pencil mode isn't supported for these yet, so skip for that mode only
         if context.space_data.mode != 'GPENCIL':
