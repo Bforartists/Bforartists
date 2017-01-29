@@ -201,6 +201,17 @@ class GRAPH_MT_marker(Menu):
         # TODO: pose markers for action edit mode only?
 
 
+# Workaround to separate the tooltips for Toggle Maximize Area
+class GRAPH_MT_channel_hide_unselected_curves(bpy.types.Operator):
+    """Hide unselected Curves\nHide unselected Curves from Graph Editor """      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "graph.hide_unselected_curves"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Hide Unselected Curves"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.graph.hide(unselected = True)
+        return {'FINISHED'}  
+
 class GRAPH_MT_channel(Menu):
     bl_label = "Channel"
 
@@ -226,7 +237,7 @@ class GRAPH_MT_channel(Menu):
 
         layout.separator()
         layout.operator("graph.hide", text="Hide Selected Curves").unselected = False
-        layout.operator("graph.hide", text="Hide Unselected Curves").unselected = True
+        layout.operator("graph.hide_unselected_curves", text="Hide Unselected Curves")
         layout.operator("graph.reveal")
 
         layout.separator()
