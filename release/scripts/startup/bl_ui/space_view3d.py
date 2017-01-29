@@ -2962,6 +2962,18 @@ class VIEW3D_MT_edit_meta(Menu):
         layout.menu("VIEW3D_MT_edit_meta_showhide")
 
 
+# Workaround to separate the tooltips for Show Hide for Curve in Edit Mode
+class VIEW3D_MT_edit_meta_showhide_unselected(bpy.types.Operator):
+    """Hide Unselected\nHide unselected metaelement(s)"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "mball.hide_metaelems_unselected"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Hide Unselected"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.mball.hide_metaelems(unselected = True)
+        return {'FINISHED'}  
+
+
 class VIEW3D_MT_edit_meta_showhide(Menu):
     bl_label = "Show/Hide"
 
@@ -2970,7 +2982,7 @@ class VIEW3D_MT_edit_meta_showhide(Menu):
 
         layout.operator("mball.reveal_metaelems", text="Show Hidden")
         layout.operator("mball.hide_metaelems", text="Hide Selected").unselected = False
-        layout.operator("mball.hide_metaelems", text="Hide Unselected").unselected = True
+        layout.operator("mball.hide_metaelems_unselected", text="Hide Unselected")
 
 
 class VIEW3D_MT_edit_lattice(Menu):
