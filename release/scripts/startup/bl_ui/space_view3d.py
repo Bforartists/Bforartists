@@ -2972,6 +2972,29 @@ class VIEW3D_MT_edit_lattice(Menu):
         layout.menu("VIEW3D_MT_edit_proportional")
 
 
+# Workaround to separate the tooltips for Show Hide for Armature in Edit Mode
+class VIEW3D_armature_hide_unselected(bpy.types.Operator):
+    """Hide Unselected\nHide unselected Bones in Edit Mode"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "armature.hide_unselected"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Hide Unselected"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.armature.hide(unselected = True)
+        return {'FINISHED'}  
+
+
+class VIEW3D_MT_armature_show_hide(Menu):
+    bl_label = "Show/Hide"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("armature.reveal", text="Show Hidden")
+        layout.operator("armature.hide", text="Hide Selected").unselected = False
+        layout.operator("armature.hide_unselected", text="Hide Unselected")
+
+
 class VIEW3D_MT_edit_armature(Menu):
     bl_label = "Armature"
 
@@ -3024,7 +3047,7 @@ class VIEW3D_MT_edit_armature(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_armature_showhide")
+        layout.menu("VIEW3D_MT_armature_show_hide") # bfa - the new show hide menu with split tooltip
         layout.menu("VIEW3D_MT_bone_options_toggle", text="Bone Settings")
 
 
