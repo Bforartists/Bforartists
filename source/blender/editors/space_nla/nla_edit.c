@@ -175,7 +175,7 @@ void NLA_OT_tweakmode_enter(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Enter Tweak Mode";
 	ot->idname = "NLA_OT_tweakmode_enter";
-	ot->description = "Enter tweaking mode for the action referenced by the active strip to edit its keyframes";
+	ot->description = "Enter Tweak Mode\nEnter tweaking mode for the action referenced by the active strip to edit its keyframes";
 	
 	/* api callbacks */
 	ot->exec = nlaedit_enable_tweakmode_exec;
@@ -272,7 +272,7 @@ void NLA_OT_tweakmode_exit(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Exit Tweak Mode";
 	ot->idname = "NLA_OT_tweakmode_exit";
-	ot->description = "Exit tweaking mode for the action referenced by the active strip";
+	ot->description = "Exit Tweak Mode\nExit tweaking mode for the action referenced by the active strip";
 	
 	/* api callbacks */
 	ot->exec = nlaedit_disable_tweakmode_exec;
@@ -380,7 +380,7 @@ void NLA_OT_previewrange_set(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Auto-Set Preview Range";
 	ot->idname = "NLA_OT_previewrange_set";
-	ot->description = "Automatically set Preview Range based on range of keyframes";
+	ot->description = "Auto-Set Preview Range\nAutomatically set Preview Range based on range of keyframes";
 	
 	/* api callbacks */
 	ot->exec = nlaedit_previewrange_exec;
@@ -516,7 +516,7 @@ void NLA_OT_view_all(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "View All";
 	ot->idname = "NLA_OT_view_all";
-	ot->description = "Reset viewable area to show full strips range";
+	ot->description = "View All\nReset viewable area to show full strips range";
 	
 	/* api callbacks */
 	ot->exec = nlaedit_viewall_exec;
@@ -531,7 +531,7 @@ void NLA_OT_view_selected(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "View Selected";
 	ot->idname = "NLA_OT_view_selected";
-	ot->description = "Reset viewable area to show selected strips range";
+	ot->description = "View Selected\nReset viewable area to show selected strips range";
 	
 	/* api callbacks */
 	ot->exec = nlaedit_viewsel_exec;
@@ -683,7 +683,7 @@ void NLA_OT_actionclip_add(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Add Action Strip";
 	ot->idname = "NLA_OT_actionclip_add";
-	ot->description = "Add an Action-Clip strip (i.e. an NLA Strip referencing an Action) to the active track";
+	ot->description = "Add Action Strip\nAdd an Action-Clip strip (i.e. an NLA Strip referencing an Action) to the active track";
 	
 	/* api callbacks */
 	ot->invoke = WM_enum_search_invoke;
@@ -809,7 +809,7 @@ void NLA_OT_transition_add(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Add Transition";
 	ot->idname = "NLA_OT_transition_add";
-	ot->description = "Add a transition strip between two adjacent selected strips";
+	ot->description = "Add Transition\nAdd a transition strip between two adjacent selected strips";
 	
 	/* api callbacks */
 	ot->exec = nlaedit_add_transition_exec;
@@ -894,7 +894,7 @@ void NLA_OT_soundclip_add(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Add Sound Clip";
 	ot->idname = "NLA_OT_soundclip_add";
-	ot->description = "Add a strip for controlling when speaker plays its sound clip";
+	ot->description = "Add Sound Clip\nAdd a strip for controlling when speaker plays its sound clip";
 	
 	/* api callbacks */
 	ot->exec = nlaedit_add_sound_exec;
@@ -956,7 +956,7 @@ void NLA_OT_meta_add(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Add Meta-Strips";
 	ot->idname = "NLA_OT_meta_add";
-	ot->description = "Add new meta-strips incorporating the selected strips";
+	ot->description = "Add Meta-Strips\nAdd new meta-strips incorporating the selected strips";
 	
 	/* api callbacks */
 	ot->exec = nlaedit_add_meta_exec;
@@ -1008,7 +1008,7 @@ void NLA_OT_meta_remove(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Remove Meta-Strips";
 	ot->idname = "NLA_OT_meta_remove";
-	ot->description = "Separate out the strips held by the selected meta-strips";
+	ot->description = "Remove Meta-Strips\nSeparate out the strips held by the selected meta-strips";
 	
 	/* api callbacks */
 	ot->exec = nlaedit_remove_meta_exec;
@@ -1112,7 +1112,7 @@ void NLA_OT_duplicate(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Duplicate Strips";
 	ot->idname = "NLA_OT_duplicate";
-	ot->description = "Duplicate selected NLA-Strips, adding the new strips in new tracks above the originals";
+	ot->description = "Duplicate Strips\nDuplicate selected NLA-Strips, adding the new strips in new tracks above the originals";
 	
 	/* api callbacks */
 	ot->invoke = nlaedit_duplicate_invoke;
@@ -1190,7 +1190,7 @@ void NLA_OT_delete(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Delete Strips";
 	ot->idname = "NLA_OT_delete";
-	ot->description = "Delete selected strips";
+	ot->description = "Delete Strips\nDelete selected strips";
 	
 	/* api callbacks */
 	ot->exec = nlaedit_delete_exec;
@@ -1335,7 +1335,7 @@ void NLA_OT_split(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Split Strips";
 	ot->idname = "NLA_OT_split";
-	ot->description = "Split selected strips at their midpoints";
+	ot->description = "Split Strips\nSplit selected strips at their midpoints";
 	
 	/* api callbacks */
 	ot->exec = nlaedit_split_exec;
@@ -1389,7 +1389,7 @@ static void UNUSED_FUNCTION(NLA_OT_bake)(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Bake Strips";
 	ot->idname = "NLA_OT_bake";
-	ot->description = "Bake all strips of selected AnimData blocks";
+	ot->description = "Bake Strips\nBake all strips of selected AnimData blocks";
 	
 	/* api callbacks */
 	ot->exec = nlaedit_bake_exec;
@@ -1455,7 +1455,7 @@ void NLA_OT_mute_toggle(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Toggle Muting";
 	ot->idname = "NLA_OT_mute_toggle";
-	ot->description = "Mute or un-mute selected strips";
+	ot->description = "Toggle Muting\nMute or un-mute selected strips";
 	
 	/* api callbacks */
 	ot->exec = nlaedit_toggle_mute_exec;
@@ -1614,7 +1614,7 @@ void NLA_OT_swap(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Swap Strips";
 	ot->idname = "NLA_OT_swap";
-	ot->description = "Swap order of selected strips within tracks";
+	ot->description = "Swap Strips\nSwap order of selected strips within tracks";
 	
 	/* api callbacks */
 	ot->exec = nlaedit_swap_exec;
@@ -1688,7 +1688,7 @@ void NLA_OT_move_up(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Move Strips Up";
 	ot->idname = "NLA_OT_move_up";
-	ot->description = "Move selected strips up a track if there's room";
+	ot->description = "Move Strips Up\nMove selected strips up a track if there's room";
 	
 	/* api callbacks */
 	ot->exec = nlaedit_move_up_exec;
@@ -1762,7 +1762,7 @@ void NLA_OT_move_down(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Move Strips Down";
 	ot->idname = "NLA_OT_move_down";
-	ot->description = "Move selected strips down a track if there's room";
+	ot->description = "Move Strips Down\nMove selected strips down a track if there's room";
 	
 	/* api callbacks */
 	ot->exec = nlaedit_move_down_exec;
@@ -1838,7 +1838,7 @@ void NLA_OT_action_sync_length(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Sync Action Length";
 	ot->idname = "NLA_OT_action_sync_length";
-	ot->description = "Synchronize the length of the referenced Action with the length used in the strip";
+	ot->description = "Sync Action Length\nSynchronize the length of the referenced Action with the length used in the strip";
 	
 	/* api callbacks */
 	ot->exec = nlaedit_sync_actlen_exec;
@@ -1915,7 +1915,7 @@ void NLA_OT_make_single_user(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Make Single User";
 	ot->idname = "NLA_OT_make_single_user";
-	ot->description = "Ensure that each action is only used once in the set of strips selected";
+	ot->description = "Make Single User, Ensure that each action is only used once in the set of strips selected";
 	
 	/* api callbacks */
 	ot->invoke = WM_operator_confirm;
@@ -2012,7 +2012,7 @@ void NLA_OT_apply_scale(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Apply Scale";
 	ot->idname = "NLA_OT_apply_scale";
-	ot->description = "Apply scaling of selected strips to their referenced Actions";
+	ot->description = "Apply Scale\nApply scaling of selected strips to their referenced Actions";
 	
 	/* api callbacks */
 	ot->exec = nlaedit_apply_scale_exec;
@@ -2075,7 +2075,7 @@ void NLA_OT_clear_scale(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Clear Scale";
 	ot->idname = "NLA_OT_clear_scale";
-	ot->description = "Reset scaling of selected strips";
+	ot->description = "Clear Scale\nReset scaling of selected strips";
 	
 	/* api callbacks */
 	ot->exec = nlaedit_clear_scale_exec;
@@ -2220,7 +2220,7 @@ void NLA_OT_snap(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Snap Strips";
 	ot->idname = "NLA_OT_snap";
-	ot->description = "Move start of strips to specified time";
+	ot->description = "Snap Strips\nMove start of strips to specified time";
 	
 	/* api callbacks */
 	ot->invoke = WM_menu_invoke;
@@ -2346,7 +2346,7 @@ void NLA_OT_fmodifier_add(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Add F-Modifier";
 	ot->idname = "NLA_OT_fmodifier_add";
-	ot->description = "Add F-Modifier to the active/selected NLA-Strips";
+	ot->description = "Add F-Modifier\nAdd a F-Modifier of the specified type to the selected NLA-Strips";
 	
 	/* api callbacks */
 	ot->invoke = WM_menu_invoke;
@@ -2418,7 +2418,7 @@ void NLA_OT_fmodifier_copy(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Copy F-Modifiers";
 	ot->idname = "NLA_OT_fmodifier_copy";
-	ot->description = "Copy the F-Modifier(s) of the active NLA-Strip";
+	ot->description = "Copy F-Modifiers\nCopy the F-Modifier(s) of the active NLA-Strip";
 	
 	/* api callbacks */
 	ot->exec = nla_fmodifier_copy_exec;
@@ -2495,7 +2495,7 @@ void NLA_OT_fmodifier_paste(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Paste F-Modifiers";
 	ot->idname = "NLA_OT_fmodifier_paste";
-	ot->description = "Add copied F-Modifiers to the selected NLA-Strips";
+	ot->description = "Paste F-Modifiers\nAdd copied F-Modifiers to the selected NLA-Strips";
 	
 	/* api callbacks */
 	ot->exec = nla_fmodifier_paste_exec;

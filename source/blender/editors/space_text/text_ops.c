@@ -197,7 +197,7 @@ void TEXT_OT_new(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Create Text Block";
 	ot->idname = "TEXT_OT_new";
-	ot->description = "Create a new text data-block";
+	ot->description = "Create Text Block\nCreate a new text data block";
 	
 	/* api callbacks */
 	ot->exec = text_new_exec;
@@ -290,7 +290,7 @@ void TEXT_OT_open(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Open Text Block";
 	ot->idname = "TEXT_OT_open";
-	ot->description = "Open a new text data-block";
+	ot->description = "Open Text Block\nOpen a new text data block";
 
 	/* api callbacks */
 	ot->exec = text_open_exec;
@@ -350,7 +350,7 @@ void TEXT_OT_reload(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Reload";
 	ot->idname = "TEXT_OT_reload";
-	ot->description = "Reload active text data-block from its file";
+	ot->description = "Reload\nReload active text data block from its file";
 	
 	/* api callbacks */
 	ot->exec = text_reload_exec;
@@ -399,7 +399,7 @@ void TEXT_OT_unlink(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Unlink";
 	ot->idname = "TEXT_OT_unlink";
-	ot->description = "Unlink active text data-block";
+	ot->description = "Unlink\nUnlink active text data block";
 	
 	/* api callbacks */
 	ot->exec = text_unlink_exec;
@@ -434,7 +434,7 @@ void TEXT_OT_make_internal(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Make Internal";
 	ot->idname = "TEXT_OT_make_internal";
-	ot->description = "Make active text file internal";
+	ot->description = "Make Internal\nMake active text file internal";
 
 	/* api callbacks */
 	ot->exec = text_make_internal_exec;
@@ -514,7 +514,7 @@ void TEXT_OT_save(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Save";
 	ot->idname = "TEXT_OT_save";
-	ot->description = "Save active text data-block";
+	ot->description = "Save\nSave active text data block";
 
 	/* api callbacks */
 	ot->exec = text_save_exec;
@@ -571,7 +571,7 @@ void TEXT_OT_save_as(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Save As";
 	ot->idname = "TEXT_OT_save_as";
-	ot->description = "Save active text file with options";
+	ot->description = "Save As\nSave active text file with options";
 	
 	/* api callbacks */
 	ot->exec = text_save_as_exec;
@@ -648,7 +648,7 @@ void TEXT_OT_run_script(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Run Script";
 	ot->idname = "TEXT_OT_run_script";
-	ot->description = "Run active script";
+	ot->description = "Run Script\nRun active script";
 	
 	/* api callbacks */
 	ot->poll = text_run_script_poll;
@@ -708,7 +708,7 @@ void TEXT_OT_refresh_pyconstraints(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Refresh PyConstraints";
 	ot->idname = "TEXT_OT_refresh_pyconstraints";
-	ot->description = "Refresh all pyconstraints";
+	ot->description = "Refresh PyConstraints\nRefresh all pyconstraints";
 	
 	/* api callbacks */
 	ot->exec = text_refresh_pyconstraints_exec;
@@ -751,7 +751,7 @@ void TEXT_OT_paste(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Paste";
 	ot->idname = "TEXT_OT_paste";
-	ot->description = "Paste text from clipboard";
+	ot->description = "Paste\nPaste text from clipboard";
 	
 	/* api callbacks */
 	ot->exec = text_paste_exec;
@@ -784,7 +784,7 @@ void TEXT_OT_duplicate_line(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Duplicate Line";
 	ot->idname = "TEXT_OT_duplicate_line";
-	ot->description = "Duplicate the current line";
+	ot->description = "Duplicate Line\nDuplicate the current line";
 	
 	/* api callbacks */
 	ot->exec = text_duplicate_line_exec;
@@ -822,7 +822,7 @@ void TEXT_OT_copy(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Copy";
 	ot->idname = "TEXT_OT_copy";
-	ot->description = "Copy selected text to clipboard";
+	ot->description = "Copy\nCopy selected text to clipboard";
 
 	/* api callbacks */
 	ot->exec = text_copy_exec;
@@ -855,7 +855,7 @@ void TEXT_OT_cut(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Cut";
 	ot->idname = "TEXT_OT_cut";
-	ot->description = "Cut selected text to clipboard";
+	ot->description = "Cut\nCut selected text to clipboard";
 	
 	/* api callbacks */
 	ot->exec = text_cut_exec;
@@ -890,7 +890,7 @@ void TEXT_OT_indent(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Indent";
 	ot->idname = "TEXT_OT_indent";
-	ot->description = "Indent selected text";
+	ot->description = "Indent\nIndent selected text";
 	
 	/* api callbacks */
 	ot->exec = text_indent_exec;
@@ -921,7 +921,7 @@ void TEXT_OT_unindent(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Unindent";
 	ot->idname = "TEXT_OT_unindent";
-	ot->description = "Unindent selected text";
+	ot->description = "Unindent\nUnindent selected text";
 	
 	/* api callbacks */
 	ot->exec = text_unindent_exec;
@@ -969,7 +969,7 @@ void TEXT_OT_line_break(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Line Break";
 	ot->idname = "TEXT_OT_line_break";
-	ot->description = "Insert line break at cursor position";
+	ot->description = "Line Break\nInsert line break at cursor position";
 	
 	/* api callbacks */
 	ot->exec = text_line_break_exec;
@@ -1002,7 +1002,7 @@ void TEXT_OT_comment(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Comment";
 	ot->idname = "TEXT_OT_comment";
-	ot->description = "Convert selected text to comment";
+	ot->description = "Comment\nConvert selected text to comment";
 	
 	/* api callbacks */
 	ot->exec = text_comment_exec;
@@ -1036,7 +1036,7 @@ void TEXT_OT_uncomment(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Uncomment";
 	ot->idname = "TEXT_OT_uncomment";
-	ot->description = "Convert selected comment to text";
+	ot->description = "Uncomment\nConvert selected comment to text";
 	
 	/* api callbacks */
 	ot->exec = text_uncomment_exec;
@@ -1168,7 +1168,7 @@ void TEXT_OT_convert_whitespace(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Convert Whitespace";
 	ot->idname = "TEXT_OT_convert_whitespace";
-	ot->description = "Convert whitespaces by type";
+	ot->description = "Convert Whitespace\nConvert whitespaces by type";
 	
 	/* api callbacks */
 	ot->exec = text_convert_whitespace_exec;
@@ -1197,7 +1197,7 @@ void TEXT_OT_select_all(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select All";
 	ot->idname = "TEXT_OT_select_all";
-	ot->description = "Select all text";
+	ot->description = "Select All\nSelect all text";
 	
 	/* api callbacks */
 	ot->exec = text_select_all_exec;
@@ -1223,7 +1223,7 @@ void TEXT_OT_select_line(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select Line";
 	ot->idname = "TEXT_OT_select_line";
-	ot->description = "Select text by line";
+	ot->description = "Select Line\nSelect text by line";
 	
 	/* api callbacks */
 	ot->exec = text_select_line_exec;
@@ -1252,7 +1252,7 @@ void TEXT_OT_select_word(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select Word";
 	ot->idname = "TEXT_OT_select_word";
-	ot->description = "Select word under cursor";
+	ot->description = "Select Word\nSelect word under cursor";
 
 	/* api callbacks */
 	ot->exec = text_select_word_exec;
@@ -1289,7 +1289,7 @@ void TEXT_OT_move_lines(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Move Lines";
 	ot->idname = "TEXT_OT_move_lines";
-	ot->description = "Move the currently selected line(s) up/down";
+	ot->description = "Move Lines\nMove the currently selected line(s) up/down";
 	
 	/* api callbacks */
 	ot->exec = move_lines_exec;
@@ -1841,7 +1841,7 @@ void TEXT_OT_move(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Move Cursor";
 	ot->idname = "TEXT_OT_move";
-	ot->description = "Move cursor to position type";
+	ot->description = "Move Cursor\nMove cursor to position type";
 	
 	/* api callbacks */
 	ot->exec = text_move_exec;
@@ -1865,7 +1865,7 @@ void TEXT_OT_move_select(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Move Select";
 	ot->idname = "TEXT_OT_move_select";
-	ot->description = "Move the cursor while selecting";
+	ot->description = "Move Select\nMove the cursor while selecting";
 	
 	/* api callbacks */
 	ot->exec = text_move_select_exec;
@@ -1909,7 +1909,7 @@ void TEXT_OT_jump(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Jump";
 	ot->idname = "TEXT_OT_jump";
-	ot->description = "Jump cursor to line";
+	ot->description = "Jump\nJump cursor to line";
 	
 	/* api callbacks */
 	ot->invoke = text_jump_invoke;
@@ -2007,7 +2007,7 @@ void TEXT_OT_delete(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Delete";
 	ot->idname = "TEXT_OT_delete";
-	ot->description = "Delete text by cursor position";
+	ot->description = "Delete\nDelete text by cursor position";
 	
 	/* api callbacks */
 	ot->exec = text_delete_exec;
@@ -2035,7 +2035,7 @@ void TEXT_OT_overwrite_toggle(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Toggle Overwrite";
 	ot->idname = "TEXT_OT_overwrite_toggle";
-	ot->description = "Toggle overwrite while typing";
+	ot->description = "Toggle Overwrite\nToggle overwrite while typing";
 	
 	/* api callbacks */
 	ot->exec = text_toggle_overwrite_exec;
@@ -2350,7 +2350,7 @@ void TEXT_OT_scroll_bar(wmOperatorType *ot)
 	ot->flag = OPTYPE_BLOCKING | OPTYPE_INTERNAL;
 
 	/* properties */
-	RNA_def_int(ot->srna, "lines", 1, INT_MIN, INT_MAX, "Lines", "Number of lines to scroll", -100, 100);
+	RNA_def_int(ot->srna, "lines", 1, INT_MIN, INT_MAX, "Lines", "Lines\nNumber of lines to scroll", -100, 100);
 }
 
 /******************* set selection operator **********************/
@@ -2715,7 +2715,7 @@ void TEXT_OT_selection_set(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Set Selection";
 	ot->idname = "TEXT_OT_selection_set";
-	ot->description = "Set cursor selection";
+	ot->description = "Set Selection\nSet cursor selection";
 
 	/* api callbacks */
 	ot->invoke = text_set_selection_invoke;
@@ -2724,7 +2724,7 @@ void TEXT_OT_selection_set(wmOperatorType *ot)
 	ot->poll = text_region_edit_poll;
 
 	/* properties */
-	RNA_def_boolean(ot->srna, "select", 0, "Select", "Set selection end rather than cursor");
+	RNA_def_boolean(ot->srna, "select", 0, "Select", "Select\nSet selection end rather than cursor");
 }
 
 /******************* set cursor operator **********************/
@@ -2762,7 +2762,7 @@ void TEXT_OT_cursor_set(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Set Cursor";
 	ot->idname = "TEXT_OT_cursor_set";
-	ot->description = "Set cursor position";
+	ot->description = "Set Cursor\nSet cursor position";
 
 	/* api callbacks */
 	ot->invoke = text_cursor_set_invoke;
@@ -2818,7 +2818,7 @@ void TEXT_OT_line_number(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Line Number";
 	ot->idname = "TEXT_OT_line_number";
-	ot->description = "The current line number";
+	ot->description = "Line Number\nThe current line number";
 	
 	/* api callbacks */
 	ot->invoke = text_line_number_invoke;
@@ -2912,7 +2912,7 @@ void TEXT_OT_insert(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Insert";
 	ot->idname = "TEXT_OT_insert";
-	ot->description = "Insert text at cursor position";
+	ot->description = "Insert\nInsert text at cursor position";
 	
 	/* api callbacks */
 	ot->exec = text_insert_exec;
@@ -2920,7 +2920,7 @@ void TEXT_OT_insert(wmOperatorType *ot)
 	ot->poll = text_edit_poll;
 
 	/* properties */
-	prop = RNA_def_string(ot->srna, "text", NULL, 0, "Text", "Text to insert at the cursor position");
+	prop = RNA_def_string(ot->srna, "text", NULL, 0, "Text", "Text\nText to insert at the cursor position");
 	RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 }
 
@@ -3000,7 +3000,7 @@ void TEXT_OT_find(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Find Next";
 	ot->idname = "TEXT_OT_find";
-	ot->description = "Find specified text";
+	ot->description = "Find Next\nFind specified text";
 	
 	/* api callbacks */
 	ot->exec = text_find_exec;
@@ -3019,7 +3019,7 @@ void TEXT_OT_replace(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Replace";
 	ot->idname = "TEXT_OT_replace";
-	ot->description = "Replace text with the specified text";
+	ot->description = "Replace\nReplace text with the specified text";
 
 	/* api callbacks */
 	ot->exec = text_replace_exec;
@@ -3049,7 +3049,7 @@ void TEXT_OT_find_set_selected(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Find Set Selected";
 	ot->idname = "TEXT_OT_find_set_selected";
-	ot->description = "Find specified text and set as selected";
+	ot->description = "Find Set Selected\nFind specified text and set as selected";
 	
 	/* api callbacks */
 	ot->exec = text_find_set_selected_exec;
@@ -3076,7 +3076,7 @@ void TEXT_OT_replace_set_selected(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Replace Set Selected";
 	ot->idname = "TEXT_OT_replace_set_selected";
-	ot->description = "Replace text with specified text and set as selected";
+	ot->description = "Replace Set Selected\nReplace text with specified text and set as selected";
 	
 	/* api callbacks */
 	ot->exec = text_replace_set_selected_exec;
@@ -3161,7 +3161,7 @@ void TEXT_OT_resolve_conflict(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Resolve Conflict";
 	ot->idname = "TEXT_OT_resolve_conflict";
-	ot->description = "When external text is out of sync, resolve the conflict";
+	ot->description = "Resolve Conflict\nWhen external text is out of sync, resolve the conflict";
 
 	/* api callbacks */
 	ot->exec = text_resolve_conflict_exec;
@@ -3169,7 +3169,7 @@ void TEXT_OT_resolve_conflict(wmOperatorType *ot)
 	ot->poll = text_save_poll;
 
 	/* properties */
-	RNA_def_enum(ot->srna, "resolution", resolution_items, RESOLVE_IGNORE, "Resolution", "How to solve conflict due to differences in internal and external text");
+	RNA_def_enum(ot->srna, "resolution", resolution_items, RESOLVE_IGNORE, "Resolution", "Resolution\nHow to solve conflict due to differences in internal and external text");
 }
 
 /********************** to 3d object operator *****************/
@@ -3189,7 +3189,7 @@ void TEXT_OT_to_3d_object(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "To 3D Object";
 	ot->idname = "TEXT_OT_to_3d_object";
-	ot->description = "Create 3D text object from active text data-block";
+	ot->description = "To 3D Object\nCreate 3D text object from active text data block";
 	
 	/* api callbacks */
 	ot->exec = text_to_3d_object_exec;
@@ -3199,7 +3199,7 @@ void TEXT_OT_to_3d_object(wmOperatorType *ot)
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
 	/* properties */
-	RNA_def_boolean(ot->srna, "split_lines", 0, "Split Lines", "Create one object per line in the text");
+	RNA_def_boolean(ot->srna, "split_lines", 0, "Split Lines", "Split Lines\nCreate one object per line in the text");
 }
 
 

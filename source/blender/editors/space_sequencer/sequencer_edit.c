@@ -1053,7 +1053,7 @@ void SEQUENCER_OT_gap_remove(struct wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Remove Gaps";
 	ot->idname = "SEQUENCER_OT_gap_remove";
-	ot->description = "Remove gap at current frame to first strip at the right, independent of selection or locked state of strips";
+	ot->description = "Remove Gaps\nRemove gap at current frame to first strip at the right, independent of selection or locked state of strips";
 	
 	/* api callbacks */
 //	ot->invoke = sequencer_snap_invoke;
@@ -1084,7 +1084,7 @@ void SEQUENCER_OT_gap_insert(struct wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Insert Gaps";
 	ot->idname = "SEQUENCER_OT_gap_insert";
-	ot->description = "Insert gap at current frame to first strips at the right, independent of selection or locked state of strips";
+	ot->description = "Insert Gaps\nInsert gap at current frame to first strips at the right, independent of selection or locked state of strips";
 	
 	/* api callbacks */
 	//	ot->invoke = sequencer_snap_invoke;
@@ -1234,7 +1234,7 @@ void SEQUENCER_OT_snap(struct wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Snap Strips";
 	ot->idname = "SEQUENCER_OT_snap";
-	ot->description = "Frame where selected strips will be snapped";
+	ot->description = "Snap Strips\nFrame where selected strips will be snapped";
 	
 	/* api callbacks */
 	ot->invoke = sequencer_snap_invoke;
@@ -1673,7 +1673,7 @@ void SEQUENCER_OT_slip(struct wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Trim Strips";
 	ot->idname = "SEQUENCER_OT_slip";
-	ot->description = "Trim the contents of the active strip";
+	ot->description = "Trim Strips\nTrim the contents of the active strip";
 
 	/* api callbacks */
 	ot->invoke = sequencer_slip_invoke;
@@ -1726,7 +1726,7 @@ void SEQUENCER_OT_mute(struct wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Mute Strips";
 	ot->idname = "SEQUENCER_OT_mute";
-	ot->description = "Mute (un)selected strips";
+	ot->description = "Mute Strips\nMute (un)selected strips";
 	
 	/* api callbacks */
 	ot->exec = sequencer_mute_exec;
@@ -1777,7 +1777,7 @@ void SEQUENCER_OT_unmute(struct wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Un-Mute Strips";
 	ot->idname = "SEQUENCER_OT_unmute";
-	ot->description = "Unmute (un)selected strips";
+	ot->description = "Un-Mute Strips\nUnmute (un)selected strips";
 	
 	/* api callbacks */
 	ot->exec = sequencer_unmute_exec;
@@ -1813,7 +1813,7 @@ void SEQUENCER_OT_lock(struct wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Lock Strips";
 	ot->idname = "SEQUENCER_OT_lock";
-	ot->description = "Lock the active strip so that it can't be transformed";
+	ot->description = "Lock Strips\nLock the active strip so that it can't be transformed";
 	
 	/* api callbacks */
 	ot->exec = sequencer_lock_exec;
@@ -1846,7 +1846,7 @@ void SEQUENCER_OT_unlock(struct wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "UnLock Strips";
 	ot->idname = "SEQUENCER_OT_unlock";
-	ot->description = "Unlock the active strip so that it can't be transformed";
+	ot->description = "UnLock Strips\nUnlock the active strip so that it can't be transformed";
 	
 	/* api callbacks */
 	ot->exec = sequencer_unlock_exec;
@@ -1888,7 +1888,7 @@ void SEQUENCER_OT_reload(struct wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Reload Strips";
 	ot->idname = "SEQUENCER_OT_reload";
-	ot->description = "Reload strips in the sequencer";
+	ot->description = "Reload Strips\nReload strips in the sequencer";
 	
 	/* api callbacks */
 	ot->exec = sequencer_reload_exec;
@@ -1928,7 +1928,7 @@ void SEQUENCER_OT_refresh_all(struct wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Refresh Sequencer";
 	ot->idname = "SEQUENCER_OT_refresh_all";
-	ot->description = "Refresh the sequencer editor";
+	ot->description = "Refresh Sequencer\nRefresh the sequencer editor";
 	
 	/* api callbacks */
 	ot->exec = sequencer_refresh_all_exec;
@@ -1985,7 +1985,7 @@ void SEQUENCER_OT_reassign_inputs(struct wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Reassign Inputs";
 	ot->idname = "SEQUENCER_OT_reassign_inputs";
-	ot->description = "Reassign the inputs for the effect strip";
+	ot->description = "Reassign Inputs\nReassign the inputs for the effect strip";
 
 	/* api callbacks */
 	ot->exec = sequencer_reassign_inputs_exec;
@@ -2021,7 +2021,7 @@ void SEQUENCER_OT_swap_inputs(struct wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Swap Inputs";
 	ot->idname = "SEQUENCER_OT_swap_inputs";
-	ot->description = "Swap the first two inputs for the effect strip";
+	ot->description = "Swap Inputs\nSwap the first two inputs for the effect strip";
 
 	/* api callbacks */
 	ot->exec = sequencer_swap_inputs_exec;
@@ -2124,7 +2124,7 @@ void SEQUENCER_OT_cut(struct wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Cut Strips";
 	ot->idname = "SEQUENCER_OT_cut";
-	ot->description = "Cut the selected strips";
+	ot->description = "Cut Strips\nCut the selected strips";
 	
 	/* api callbacks */
 	ot->invoke = sequencer_cut_invoke;
@@ -2184,7 +2184,7 @@ void SEQUENCER_OT_duplicate(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Duplicate Strips";
 	ot->idname = "SEQUENCER_OT_duplicate";
-	ot->description = "Duplicate the selected strips";
+	ot->description = "Duplicate Strips\nDuplicate the selected strips";
 	
 	/* api callbacks */
 	ot->exec = sequencer_add_duplicate_exec;
@@ -2277,7 +2277,7 @@ void SEQUENCER_OT_delete(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Erase Strips";
 	ot->idname = "SEQUENCER_OT_delete";
-	ot->description = "Erase selected strips from the sequencer";
+	ot->description = "Erase Strips\nErase selected strips from the sequencer";
 	
 	/* api callbacks */
 	ot->invoke = sequencer_delete_invoke;
@@ -2330,7 +2330,7 @@ void SEQUENCER_OT_offset_clear(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Clear Strip Offset";
 	ot->idname = "SEQUENCER_OT_offset_clear";
-	ot->description = "Clear strip offsets from the start and end frames";
+	ot->description = "Clear Strip Offset\nClear strip offsets from the start and end frames";
 
 	/* api callbacks */
 	ot->exec = sequencer_offset_clear_exec;
@@ -2428,7 +2428,7 @@ void SEQUENCER_OT_images_separate(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Separate Images";
 	ot->idname = "SEQUENCER_OT_images_separate";
-	ot->description = "On image sequence strips, it returns a strip for each image";
+	ot->description = "Separate Images\nOn image sequence strips, it returns a strip for each image";
 	
 	/* api callbacks */
 	ot->exec = sequencer_separate_images_exec;
@@ -2519,7 +2519,7 @@ void SEQUENCER_OT_meta_toggle(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Toggle Meta Strip";
 	ot->idname = "SEQUENCER_OT_meta_toggle";
-	ot->description = "Toggle a metastrip (to edit enclosed strips)";
+	ot->description = "Toggle Meta Strip\nToggle a metastrip (to edit enclosed strips)";
 	
 	/* api callbacks */
 	ot->exec = sequencer_meta_toggle_exec;
@@ -2586,7 +2586,7 @@ void SEQUENCER_OT_meta_make(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Make Meta Strip";
 	ot->idname = "SEQUENCER_OT_meta_make";
-	ot->description = "Group selected strips into a metastrip";
+	ot->description = "Make Meta Strip\nGroup selected strips into a metastrip";
 	
 	/* api callbacks */
 	ot->exec = sequencer_meta_make_exec;
@@ -2659,7 +2659,7 @@ void SEQUENCER_OT_meta_separate(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "UnMeta Strip";
 	ot->idname = "SEQUENCER_OT_meta_separate";
-	ot->description = "Put the contents of a metastrip back in the sequencer";
+	ot->description = "UnMeta Strip\nPut the contents of a metastrip back in the sequencer";
 	
 	/* api callbacks */
 	ot->exec = sequencer_meta_separate_exec;
@@ -2685,7 +2685,7 @@ void SEQUENCER_OT_view_all(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "View All";
 	ot->idname = "SEQUENCER_OT_view_all";
-	ot->description = "View all the strips in the sequencer";
+	ot->description = "View All\nView all the strips in the sequencer";
 	
 	/* api callbacks */
 	ot->exec = sequencer_view_all_exec;
@@ -2774,7 +2774,7 @@ void SEQUENCER_OT_view_all_preview(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "View All";
 	ot->idname = "SEQUENCER_OT_view_all_preview";
-	ot->description = "Zoom preview to fit in the area";
+	ot->description = "View All\nZoom preview to fit in the area";
 	
 	/* api callbacks */
 	ot->exec = sequencer_view_all_preview_exec;
@@ -2810,7 +2810,7 @@ void SEQUENCER_OT_view_zoom_ratio(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Sequencer View Zoom Ratio";
 	ot->idname = "SEQUENCER_OT_view_zoom_ratio";
-	ot->description = "Change zoom ratio of sequencer preview";
+	ot->description = "Sequencer View Zoom Ratio\nChange zoom ratio of sequencer preview";
 
 	/* api callbacks */
 	ot->exec = sequencer_view_zoom_ratio_exec;
@@ -2849,7 +2849,7 @@ void SEQUENCER_OT_view_toggle(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "View Toggle";
 	ot->idname = "SEQUENCER_OT_view_toggle";
-	ot->description = "Toggle between sequencer views (sequence, preview, both)";
+	ot->description = "View Toggle\nToggle between sequencer views (sequence, preview, both)";
 	
 	/* api callbacks */
 	ot->exec = sequencer_view_toggle_exec;
@@ -2932,7 +2932,7 @@ void SEQUENCER_OT_view_selected(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "View Selected";
 	ot->idname = "SEQUENCER_OT_view_selected";
-	ot->description = "Zoom the sequencer on the selected strips";
+	ot->description = "View Selected\nZoom the sequencer on the selected strips";
 	
 	/* api callbacks */
 	ot->exec = sequencer_view_selected_exec;
@@ -2989,7 +2989,7 @@ void SEQUENCER_OT_strip_jump(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Jump to Strip";
 	ot->idname = "SEQUENCER_OT_strip_jump";
-	ot->description = "Move frame to previous edit point";
+	ot->description = "Jump to Strip\nMove frame to previous edit point";
 
 	/* api callbacks */
 	ot->exec = sequencer_strip_jump_exec;
@@ -3101,7 +3101,7 @@ void SEQUENCER_OT_swap(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Swap Strip";
 	ot->idname = "SEQUENCER_OT_swap";
-	ot->description = "Swap active strip with strip to the right or left";
+	ot->description = "Swap Strip\nSwap active strip with strip to the right or left";
 	
 	/* api callbacks */
 	ot->exec = sequencer_swap_exec;
@@ -3160,7 +3160,7 @@ void SEQUENCER_OT_rendersize(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Set Render Size";
 	ot->idname = "SEQUENCER_OT_rendersize";
-	ot->description = "Set render size and aspect from active sequence";
+	ot->description = "Set Render Size\nSet render size and aspect from active sequence";
 	
 	/* api callbacks */
 	ot->exec = sequencer_rendersize_exec;
@@ -3243,7 +3243,7 @@ void SEQUENCER_OT_copy(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Copy";
 	ot->idname = "SEQUENCER_OT_copy";
-	ot->description = "";
+	ot->description = "Copy";
 
 	/* api callbacks */
 	ot->exec = sequencer_copy_exec;
@@ -3308,7 +3308,7 @@ void SEQUENCER_OT_paste(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Paste";
 	ot->idname = "SEQUENCER_OT_paste";
-	ot->description = "";
+	ot->description = "Paste";
 
 	/* api callbacks */
 	ot->exec = sequencer_paste_exec;
@@ -3362,7 +3362,7 @@ void SEQUENCER_OT_swap_data(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Sequencer Swap Data";
 	ot->idname = "SEQUENCER_OT_swap_data";
-	ot->description = "Swap 2 sequencer strips";
+	ot->description = "Sequencer Swap Data\nSwap 2 sequencer strips";
 
 	/* api callbacks */
 	ot->exec = sequencer_swap_data_exec;
@@ -3415,7 +3415,7 @@ void SEQUENCER_OT_view_ghost_border(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Border Offset View";
 	ot->idname = "SEQUENCER_OT_view_ghost_border";
-	ot->description = "Set the boundaries of the border used for offset-view";
+	ot->description = "Border Offset View\nSet the boundaries of the border used for offset-view";
 
 	/* api callbacks */
 	ot->invoke = WM_border_select_invoke;
@@ -3485,7 +3485,7 @@ void SEQUENCER_OT_rebuild_proxy(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Rebuild Proxy and Timecode Indices";
 	ot->idname = "SEQUENCER_OT_rebuild_proxy";
-	ot->description = "Rebuild all selected proxies and timecode indices using the job system";
+	ot->description = "Rebuild Proxy and Timecode Indices\nRebuild all selected proxies and timecode indices using the job system";
 	
 	/* api callbacks */
 	ot->invoke = sequencer_rebuild_proxy_invoke;
@@ -3564,7 +3564,7 @@ void SEQUENCER_OT_enable_proxies(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Set Selected Strip Proxies";
 	ot->idname = "SEQUENCER_OT_enable_proxies";
-	ot->description = "Enable selected proxies on all selected Movie strips";
+	ot->description = "Set Selected Strip Proxies\nEnable selected proxies on all selected Movie strips";
 	
 	/* api callbacks */
 	ot->invoke = sequencer_enable_proxies_invoke;
@@ -3635,7 +3635,7 @@ void SEQUENCER_OT_change_effect_input(struct wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Change Effect Input";
 	ot->idname = "SEQUENCER_OT_change_effect_input";
-	ot->description = "";
+	ot->description = "Change Effect Input";
 
 	/* api callbacks */
 	ot->exec = sequencer_change_effect_input_exec;
@@ -3695,7 +3695,7 @@ void SEQUENCER_OT_change_effect_type(struct wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Change Effect Type";
 	ot->idname = "SEQUENCER_OT_change_effect_type";
-	ot->description = "";
+	ot->description = "Change Effect Type";
 
 	/* api callbacks */
 	ot->exec = sequencer_change_effect_type_exec;
@@ -3830,7 +3830,7 @@ void SEQUENCER_OT_change_path(struct wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Change Data/Files";
 	ot->idname = "SEQUENCER_OT_change_path";
-	ot->description = "";
+	ot->description = "Change Data/Files";
 
 	/* api callbacks */
 	ot->exec = sequencer_change_path_exec;
@@ -3948,7 +3948,7 @@ void SEQUENCER_OT_export_subtitles(struct wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Export Subtitles";
 	ot->idname = "SEQUENCER_OT_export_subtitles";
-	ot->description = "Export .srt file containing text strips";
+	ot->description = "Export Subtitles\nExport .srt file containing text strips";
 
 	/* api callbacks */
 	ot->exec = sequencer_export_subtitles_exec;

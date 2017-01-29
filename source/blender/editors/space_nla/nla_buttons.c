@@ -574,7 +574,7 @@ void NLA_OT_properties(wmOperatorType *ot)
 {
 	ot->name = "Properties";
 	ot->idname = "NLA_OT_properties";
-	ot->description = "Toggle the properties region visibility";
+	ot->description = "Properties\nToggle display properties panel";
 	
 	ot->exec = nla_properties_toggle_exec;
 	ot->poll = ED_operator_nla_active;
