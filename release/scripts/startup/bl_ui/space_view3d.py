@@ -1376,10 +1376,8 @@ class VIEW3D_MT_object(Menu):
         layout.operator("object.duplicate_move")
         layout.operator("object.duplicate_move_linked")
         layout.operator("object.delete", text="Delete...").use_global = False
-        layout.operator("object.proxy_make", text="Make Proxy...")
         layout.menu("VIEW3D_MT_make_links", text="Make Links...")
         layout.operator("object.make_dupli_face")
-        layout.operator_menu_enum("object.make_local", "type", text="Make Local...")
         layout.menu("VIEW3D_MT_make_single_user")
 
         layout.separator()
