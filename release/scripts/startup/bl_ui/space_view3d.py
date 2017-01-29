@@ -196,18 +196,6 @@ class VIEW3D_MT_editor_menus(Menu):
 # ********** Utilities **********
 
 
-class ShowHideMenu:
-    bl_label = "Show/Hide"
-    _operator_name = ""
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("%s.reveal" % self._operator_name, text="Show Hidden")
-        layout.operator("%s.hide" % self._operator_name, text="Hide Selected").unselected = False
-        layout.operator("%s.hide" % self._operator_name, text="Hide Unselected").unselected = True
-
-
 # Standard transforms which apply to all cases
 # NOTE: this doesn't seem to be able to be used directly
 class VIEW3D_MT_transform_base(Menu):
@@ -2111,10 +2099,6 @@ class VIEW3D_MT_particle_specials(Menu):
             layout.operator("particle.select_linked")
             layout.operator("particle.select_all", text="Inverse").action = 'INVERT'
 
-
-class VIEW3D_MT_particle_showhide(ShowHideMenu, Menu):
-    _operator_name = "particle"
-
 # ********** Pose Menu **********
 
 
@@ -2310,15 +2294,6 @@ class VIEW3D_MT_pose_constraints(Menu):
         layout.operator("pose.constraint_add_with_targets", text="Add (With Targets)...")
         layout.operator("pose.constraints_copy")
         layout.operator("pose.constraints_clear")
-
-
-        # the ShowHideMenu class as a class, so that you can use it in different modes with different hotkeys
-class VIEW3D_MT_pose_showhide(ShowHideMenu, Menu):
-    _operator_name = "pose" # the name in the user preferences. Important for the hotkey
-
-# the ShowHideMenu class as a class, so that you can use it in different modes with different hotkeys
-class VIEW3D_MT_armature_showhide(ShowHideMenu, Menu):
-    operator_name = "armature" # the name in the user preferences. Important for the hotkey
 
 
 class VIEW3D_MT_pose_apply(Menu):
@@ -2870,10 +2845,6 @@ class VIEW3D_MT_edit_curve_delete(Menu):
         layout.separator()
 
         layout.operator("curve.dissolve_verts")
-
-
-class VIEW3D_MT_edit_curve_showhide(ShowHideMenu, Menu):
-    _operator_name = "curve"
 
 
 class VIEW3D_MT_edit_surface(Menu):
