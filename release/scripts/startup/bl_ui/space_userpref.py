@@ -65,7 +65,7 @@ class USERPREF_HT_header(Header):
             layout.operator("wm.addon_refresh", icon='FILE_REFRESH')
             layout.menu("USERPREF_MT_addons_online_resources")
         elif userpref.active_section == 'THEMES':
-            layout.operator("ui.reset_default_theme")
+            #layout.operator("ui.reset_default_theme") # bfa - obsolete, themes are now in the themes dropdown box.
             layout.operator("wm.theme_install")
 
 # bfa - show hide the editormenu
