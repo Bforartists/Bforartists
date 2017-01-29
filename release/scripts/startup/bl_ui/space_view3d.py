@@ -1208,6 +1208,9 @@ class VIEW3D_MT_object(Menu):
         view = context.space_data
         is_local_view = (view.local_view is not None)
 
+        scene = context.scene
+        obj = context.object
+
         # The  Specials menu content. Special settings for Camera, Curve, Font, Empty and Lamp
         # Now also available in the normal menu.
         if context.object :
