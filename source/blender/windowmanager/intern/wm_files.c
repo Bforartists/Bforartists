@@ -1894,7 +1894,7 @@ void WM_OT_save_as_mainfile(wmOperatorType *ot)
 
 	ot->name = "Save As Blender File";
 	ot->idname = "WM_OT_save_as_mainfile";
-	ot->description = "Save the current file in the desired location";
+	ot->description = "Save As Blender File\nSave As saves the current file in the desired location\nSave Copy saves a copy of the current file in the desired location";
 
 	ot->invoke = wm_save_as_mainfile_invoke;
 	ot->exec = wm_save_as_mainfile_exec;
