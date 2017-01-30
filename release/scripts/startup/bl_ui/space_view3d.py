@@ -610,37 +610,6 @@ class VIEW3D_MT_view_cameras(Menu):
 
 # ********** Select menus, suffix from context.mode **********
 
-class VIEW3D_MT_select_object_more_less(Menu):
-    bl_label = "Select More/Less"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout = self.layout
-
-        layout.operator("object.select_more", text="More")
-        layout.operator("object.select_less", text="Less")
-
-        layout.separator()
-
-        props = layout.operator("object.select_hierarchy", text="Parent")
-        props.extend = False
-        props.direction = 'PARENT'
-
-        props = layout.operator("object.select_hierarchy", text="Child")
-        props.extend = False
-        props.direction = 'CHILD'
-
-        layout.separator()
-
-        props = layout.operator("object.select_hierarchy", text="Extend Parent")
-        props.extend = True
-        props.direction = 'PARENT'
-
-        props = layout.operator("object.select_hierarchy", text="Extend Child")
-        props.extend = True
-        props.direction = 'CHILD'
-
 # Workaround to separate the tooltips
 class VIEW3D_MT_select_object_inverse(bpy.types.Operator):
     """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
@@ -658,9 +627,9 @@ class VIEW3D_MT_select_object(Menu):
     def draw(self, context):
         layout = self.layout
 
-        myvar = layout.operator("view3d.select_lasso", icon='SELECT_LASSO')
+        myvar = layout.operator("view3d.select_lasso", icon='BORDER_LASSO')
         myvar.deselect = False
-        layout.operator("view3d.select_border", icon='SELECT_BORDER')
+        layout.operator("view3d.select_border", icon='BORDER_RECT')
         layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
 
         layout.separator()
@@ -699,81 +668,6 @@ class VIEW3D_MT_select_object(Menu):
         myvar.extend = True
 
         layout.separator()
-    bl_label = "Select"
-
-    def draw(self, context):
-        layout = self.layout
-
-        myvar = layout.operator("view3d.select_lasso", icon = "BORDER_LASSO")
-        myvar.deselect = False
-        layout.operator("view3d.select_border", icon = "BORDER_RECT")
-        layout.operator("view3d.select_circle", icon = "CIRCLE_SELECT")
-
-        layout.separator()
-
-        layout.operator("object.select_all", icon = "SELECT_ALL").action = 'TOGGLE'
-        layout.operator("object.select_all_inverse", text="Inverse", icon='INVERSE')
-
-        layout.separator()
-
-        layout.operator("object.select_random", text="Random")
-        layout.operator("object.select_mirror", text="Mirror")
-        layout.operator("object.select_by_layer", text="All by Layer")
-        layout.operator_menu_enum("object.select_by_type", "type", text="All by Type...")
-        layout.operator("object.select_camera", text="Select Camera")
-
-        layout.separator()
-
-        layout.menu("VIEW3D_MT_select_object_more_less")
-
-        layout.separator()
-
-        layout.operator_menu_enum("object.select_grouped", "type", text="Grouped")
-        layout.operator_menu_enum("object.select_linked", "type", text="Linked")
-        layout.operator("object.select_pattern", text="By Pattern...")
-
-
-class VIEW3D_MT_select_pose_more_less(Menu):
-    bl_label = "Select More/Less"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout = self.layout
-
-        props = layout.operator("pose.select_hierarchy", text="Parent")
-        props.extend = False
-        props.direction = 'PARENT'
-
-        props = layout.operator("pose.select_hierarchy", text="Child")
-        props.extend = False
-        props.direction = 'CHILD'
-
-        layout.separator()
-
-        props = layout.operator("pose.select_hierarchy", text="Extend Parent")
-        props.extend = True
-        props.direction = 'PARENT'
-
-        props = layout.operator("pose.select_hierarchy", text="Extend Child")
-        props.extend = True
-        props.direction = 'CHILD'
-
-        layout.separator()
-
-        myvar = layout.operator("object.select_hierarchy", text="Parent")
-        myvar.direction = 'PARENT'
-        myvar.extend = False
-        myvar = layout.operator("object.select_hierarchy", text="Child")
-        myvar.direction = 'CHILD'
-        myvar.extend = False
-
-        myvar = layout.operator("object.select_hierarchy", text="Parent Extended")
-        myvar.direction = 'PARENT'
-        myvar.extend = True
-        myvar = layout.operator("object.select_hierarchy", text="Child Extended")
-        myvar.direction = 'CHILD'
-        myvar.extend = True
 
 
 class VIEW3D_MT_select_pose(Menu):
@@ -782,9 +676,9 @@ class VIEW3D_MT_select_pose(Menu):
     def draw(self, context):
         layout = self.layout
 
-        myvar = layout.operator("view3d.select_lasso", icon='SELECT_LASSO')
+        myvar = layout.operator("view3d.select_lasso", icon='BORDER_LASSO')
         myvar.deselect = False
-        layout.operator("view3d.select_border", icon='SELECT_BORDER')
+        layout.operator("view3d.select_border", icon='BORDER_RECT')
         layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
 
         layout.separator()
@@ -830,9 +724,9 @@ class VIEW3D_MT_select_particle(Menu):
     def draw(self, context):
         layout = self.layout
 
-        myvar = layout.operator("view3d.select_lasso", icon='SELECT_LASSO')
+        myvar = layout.operator("view3d.select_lasso", icon='BORDER_LASSO')
         myvar.deselect = False
-        layout.operator("view3d.select_border", icon='SELECT_BORDER')
+        layout.operator("view3d.select_border", icon='BORDER_RECT')
 
         layout.separator()
 
@@ -915,9 +809,9 @@ class VIEW3D_MT_select_edit_mesh(Menu):
     def draw(self, context):
         layout = self.layout
 
-        myvar = layout.operator("view3d.select_lasso", icon='SELECT_LASSO')
+        myvar = layout.operator("view3d.select_lasso", icon='BORDER_LASSO')
         myvar.deselect = False
-        layout.operator("view3d.select_border", icon='SELECT_BORDER')
+        layout.operator("view3d.select_border", icon='BORDER_RECT')
         layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
 
         layout.separator()
@@ -994,9 +888,9 @@ class VIEW3D_MT_select_edit_curve(Menu):
     def draw(self, context):
         layout = self.layout
 
-        myvar = layout.operator("view3d.select_lasso", icon='SELECT_LASSO')
+        myvar = layout.operator("view3d.select_lasso", icon='BORDER_LASSO')
         myvar.deselect = False
-        layout.operator("view3d.select_border", icon='SELECT_BORDER')
+        layout.operator("view3d.select_border", icon='BORDER_RECT')
         layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
 
         layout.separator()
@@ -1037,9 +931,9 @@ class VIEW3D_MT_select_edit_surface(Menu):
     def draw(self, context):
         layout = self.layout
 
-        myvar = layout.operator("view3d.select_lasso", icon='SELECT_LASSO')
+        myvar = layout.operator("view3d.select_lasso", icon='BORDER_LASSO')
         myvar.deselect = False
-        layout.operator("view3d.select_border", icon='SELECT_BORDER')
+        layout.operator("view3d.select_border", icon='BORDER_RECT')
         layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
 
         layout.separator()
@@ -1145,9 +1039,9 @@ class VIEW3D_MT_select_edit_lattice(Menu):
     def draw(self, context):
         layout = self.layout
 
-        myvar = layout.operator("view3d.select_lasso", icon='SELECT_LASSO')
+        myvar = layout.operator("view3d.select_lasso", icon='BORDER_LASSO')
         myvar.deselect = False
-        layout.operator("view3d.select_border", icon='SELECT_BORDER')
+        layout.operator("view3d.select_border", icon='BORDER_RECT')
         layout.operator("view3d.select_circle", icon = 'CIRCL_SELECTE')
 
         layout.separator()
@@ -1190,9 +1084,9 @@ class VIEW3D_MT_select_edit_armature(Menu):
     def draw(self, context):
         layout = self.layout
 
-        myvar = layout.operator("view3d.select_lasso", icon='SELECT_LASSO')
+        myvar = layout.operator("view3d.select_lasso", icon='BORDER_LASSO')
         myvar.deselect = False
-        layout.operator("view3d.select_border", icon='SELECT_BORDER')
+        layout.operator("view3d.select_border", icon='BORDER_RECT')
         layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
 
         layout.separator()
