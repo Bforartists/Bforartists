@@ -144,6 +144,29 @@ class IMAGE_MT_select_inverse(bpy.types.Operator):
         bpy.ops.uv.select_all(action = 'INVERT')
         return {'FINISHED'}  
 
+# Workaround to separate the tooltips
+class IMAGE_MT_select_linked_pick_extend(bpy.types.Operator):
+    """Linked Pick Extend\nSelect all UV vertices under the mouse with extend method\nHotkey Only tool! """      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "uv.select_linked_pick_extend"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Linked Pick Extend"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.uv.select_linked_pick(extend = True)
+        return {'FINISHED'} 
+
+# Workaround to separate the tooltips
+class IMAGE_MT_select_linked_extend(bpy.types.Operator):
+    """Linked Extend\nSelect all UV vertices linked to the active keymap extended"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "uv.select_linked_extend"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Linked Extend"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.uv.select_linked(extend = True)
+        return {'FINISHED'} 
+
+
 class IMAGE_MT_select(Menu):
     bl_label = "Select"
 
@@ -163,9 +186,10 @@ class IMAGE_MT_select(Menu):
 
         layout.operator("uv.select_pinned")
         layout.operator("uv.select_linked", text="Linked").extend = False
-        layout.operator("uv.select_linked", text="Linked Extend").extend = True
+        layout.operator("uv.select_linked_extend", text="Linked Extend")
+
         layout.operator("uv.select_linked_pick", text="Linked Pick").extend = False
-        layout.operator("uv.select_linked_pick", text="Linked Pick Extend").extend = True
+        layout.operator("uv.select_linked_pick_extend", text="Linked Pick Extend")
 
         layout.separator()
 
