@@ -471,11 +471,8 @@ class VIEW3D_MT_view(Menu):
         layout.separator()
 
         layout.operator("view3d.localview", text="View Global/Local")
-        #layout.operator("view3d.view_selected", text = "View Selected all Regions" ).use_all_regions = True
         layout.operator("view3d.view_selected_all_regions", text = "View Selected all Regions" )
         layout.operator("view3d.view_selected").use_all_regions = False
-        #layout.operator("view3d.view_all", text = "View All all Regions" ).use_all_regions = True
-        #layout.operator("view3d.view_all", text="Center Cursor and View All").center = True
         layout.operator("view3d.view_all_all_regions", text = "View All all Regions" ) # bfa - separated tooltip
         layout.operator("view3d.view_all_center_cursor", text="Center Cursor and View All") # bfa - separated tooltip
         layout.operator("view3d.view_all").center = False
@@ -484,7 +481,6 @@ class VIEW3D_MT_view(Menu):
 
         layout.operator("screen.area_dupli")
         layout.operator("screen.region_quadview")
-        #layout.operator("screen.screen_full_area", text="Toggle Maximize Area")
         layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area") # bfa - the separated tooltip. Class is in space_text.py
         layout.operator("screen.screen_full_area").use_hide_panels = True
 
