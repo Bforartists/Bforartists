@@ -661,13 +661,12 @@ class VIEW3D_MT_select_object(Menu):
         myvar = layout.operator("view3d.select_lasso", icon = "BORDER_LASSO")
         myvar.deselect = False
         layout.operator("view3d.select_border", icon = "BORDER_RECT")
-        layout.operator("view3d.select_circle")
+        layout.operator("view3d.select_circle", icon = "CIRCLE_SELECT")
 
         layout.separator()
 
-        layout.operator("object.select_all").action = 'TOGGLE'
-        layout.operator("object.select_all_inverse", text="Inverse")
-        #layout.operator("object.select_all_inverse", text="Inverse", icon='SELECT_INVERSE')
+        layout.operator("object.select_all", icon = "SELECT_ALL").action = 'TOGGLE'
+        layout.operator("object.select_all_inverse", text="Inverse", icon='SELECT_INVERSE')
 
         layout.separator()
 
@@ -740,11 +739,11 @@ class VIEW3D_MT_select_pose(Menu):
         myvar = layout.operator("view3d.select_lasso", icon = "BORDER_LASSO")
         myvar.deselect = False
         layout.operator("view3d.select_border", icon = "BORDER_RECT")
-        layout.operator("view3d.select_circle")
+        layout.operator("view3d.select_circle", icon = "CIRCLE_SELECT")
 
         layout.separator()
 
-        layout.operator("pose.select_all").action = 'TOGGLE'
+        layout.operator("pose.select_all", icon = "SELECT_ALL").action = 'TOGGLE'
         layout.operator("pose.select_all", text="Inverse").action = 'INVERT'
         layout.operator("pose.select_mirror", text="Flip Active")
         layout.operator("pose.select_constraint_target", text="Constraint Target")
@@ -769,11 +768,11 @@ class VIEW3D_MT_select_particle(Menu):
         myvar = layout.operator("view3d.select_lasso", icon = "BORDER_LASSO")
         myvar.deselect = False
         layout.operator("view3d.select_border", icon = "BORDER_RECT")
-        layout.operator("view3d.select_circle")
+        layout.operator("view3d.select_circle", icon = "CIRCLE_SELECT")
 
         layout.separator()
 
-        layout.operator("particle.select_all").action = 'TOGGLE'
+        layout.operator("particle.select_all", icon = "SELECT_ALL").action = 'TOGGLE'
         layout.operator("particle.select_linked")
         layout.operator("particle.select_all", text="Inverse").action = 'INVERT'
         layout.operator("particle.select_linked").deselect = False
@@ -847,12 +846,12 @@ class VIEW3D_MT_select_edit_mesh(Menu):
         myvar = layout.operator("view3d.select_lasso", icon = "BORDER_LASSO")
         myvar.deselect = False
         layout.operator("view3d.select_border", icon = "BORDER_RECT")
-        layout.operator("view3d.select_circle")
+        layout.operator("view3d.select_circle", icon = "CIRCLE_SELECT")
 
         layout.separator()
 
         # primitive
-        layout.operator("mesh.select_all").action = 'TOGGLE'
+        layout.operator("mesh.select_all", icon = "SELECT_ALL").action = 'TOGGLE'
         layout.operator("mesh.select_all", text="Inverse").action = 'INVERT'
 
         layout.separator()
@@ -919,11 +918,11 @@ class VIEW3D_MT_select_edit_curve(Menu):
         myvar = layout.operator("view3d.select_lasso", icon = "BORDER_LASSO")
         myvar.deselect = False
         layout.operator("view3d.select_border", icon = "BORDER_RECT")
-        layout.operator("view3d.select_circle")
+        layout.operator("view3d.select_circle", icon = "CIRCLE_SELECT")
 
         layout.separator()
 
-        layout.operator("curve.select_all").action = 'TOGGLE'
+        layout.operator("curve.select_all", icon = "SELECT_ALL").action = 'TOGGLE'
         layout.operator("curve.select_all_inverse", text="Inverse", icon='SELECT_INVERSE')
 
         layout.separator()
@@ -957,11 +956,11 @@ class VIEW3D_MT_select_edit_surface(Menu):
         myvar = layout.operator("view3d.select_lasso", icon = "BORDER_LASSO")
         myvar.deselect = False
         layout.operator("view3d.select_border", icon = "BORDER_RECT")
-        layout.operator("view3d.select_circle")
+        layout.operator("view3d.select_circle", icon = "CIRCLE_SELECT")
 
         layout.separator()
 
-        layout.operator("curve.select_all").action = 'TOGGLE'
+        layout.operator("curve.select_all", icon = "SELECT_ALL").action = 'TOGGLE'
         layout.operator("curve.select_all_inverse", text="Inverse", icon='SELECT_INVERSE')
 
         layout.separator()
@@ -1001,7 +1000,7 @@ class VIEW3D_MT_select_edit_text(Menu):
 
         layout.separator()
 
-        layout.operator("font.select_all")
+        layout.operator("font.select_all", icon = "SELECT_ALL")
 
 # Workaround to separate the tooltips
 class VIEW3D_MT_select_edit_metaball_inverse(bpy.types.Operator):
@@ -1023,11 +1022,11 @@ class VIEW3D_MT_select_edit_metaball(Menu):
         myvar = layout.operator("view3d.select_lasso", icon = "BORDER_LASSO")
         myvar.deselect = False
         layout.operator("view3d.select_border", icon = "BORDER_RECT")
-        layout.operator("view3d.select_circle")
+        layout.operator("view3d.select_circle", icon = "CIRCLE_SELECT")
 
         layout.separator()
 
-        layout.operator("mball.select_all").action = 'TOGGLE'
+        layout.operator("mball.select_all", icon = "SELECT_ALL").action = 'TOGGLE'
         layout.operator("mball.select_all_inverse", text="Inverse", icon='SELECT_INVERSE')
 
         layout.separator()
@@ -1060,11 +1059,11 @@ class VIEW3D_MT_select_edit_lattice(Menu):
         myvar = layout.operator("view3d.select_lasso", icon = "BORDER_LASSO")
         myvar.deselect = False
         layout.operator("view3d.select_border", icon = "BORDER_RECT")
-        layout.operator("view3d.select_circle")
+        layout.operator("view3d.select_circle", icon = "CIRCLE_SELECT")
         
         layout.separator()
 
-        layout.operator("lattice.select_all").action = 'TOGGLE'
+        layout.operator("lattice.select_all", icon = "SELECT_ALL").action = 'TOGGLE'
         layout.operator("uv.select_all_inverse", text="Inverse", icon='SELECT_INVERSE')
 
         layout.separator()
@@ -1103,11 +1102,11 @@ class VIEW3D_MT_select_edit_armature(Menu):
         myvar = layout.operator("view3d.select_lasso", icon = "BORDER_LASSO")
         myvar.deselect = False
         layout.operator("view3d.select_border", icon = "BORDER_RECT")
-        layout.operator("view3d.select_circle")
+        layout.operator("view3d.select_circle", icon = "CIRCLE_SELECT")
 
         layout.separator()
 
-        layout.operator("armature.select_all").action = 'TOGGLE'
+        layout.operator("armature.select_all", icon = "SELECT_ALL").action = 'TOGGLE'
         layout.operator("armature.select_all_inverse", text="Inverse", icon='SELECT_INVERSE')
 
 
@@ -1191,11 +1190,11 @@ class VIEW3D_MT_select_paint_mask(Menu):
         myvar = layout.operator("view3d.select_lasso", icon = "BORDER_LASSO")
         myvar.deselect = False
         layout.operator("view3d.select_border", icon = "BORDER_RECT")
-        layout.operator("view3d.select_circle")
+        layout.operator("view3d.select_circle", icon = "CIRCLE_SELECT")
 
         layout.separator()
 
-        layout.operator("paint.face_select_all").action = 'TOGGLE'
+        layout.operator("paint.face_select_all", icon = "SELECT_ALL").action = 'TOGGLE'
         layout.operator("paint.face_select_all_inverse", text="Inverse", icon='SELECT_INVERSE')
 
         layout.separator()
@@ -1230,7 +1229,7 @@ class VIEW3D_MT_select_paint_mask_vertex(Menu):
 
         layout.separator()
 
-        layout.operator("paint.vert_select_all").action = 'TOGGLE'
+        layout.operator("paint.vert_select_all", icon = "SELECT_ALL").action = 'TOGGLE'
         layout.operator("paint.vert_select_all_inverse", text="Inverse", icon='SELECT_INVERSE')
 
         layout.separator()
@@ -2200,7 +2199,7 @@ class VIEW3D_MT_particle_specials(Menu):
 
             layout.separator()
 
-            layout.operator("particle.select_all").action = 'TOGGLE'
+            layout.operator("particle.select_all", icon = "SELECT_ALL").action = 'TOGGLE'
             layout.operator("particle.select_linked")
             layout.operator("particle.select_all", text="Inverse").action = 'INVERT'
 
