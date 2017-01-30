@@ -64,6 +64,18 @@ class UVToolsPanel:
         return sima.show_uvedit and not context.tool_settings.use_uv_sculpt
 
 
+# Workaround to separate the tooltips for Toggle Maximize Area
+class IMAGE_MT_view_view_fit(bpy.types.Operator):
+    """View Fit\nFits the content area into the window"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "image.view_all_fit"        # unique identifier for buttons and menu items to reference.
+    bl_label = "View Fit"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.image.view_all(fit_view = True)
+        return {'FINISHED'}  
+
+
 class IMAGE_MT_view(Menu):
     bl_label = "View"
 
@@ -111,7 +123,7 @@ class IMAGE_MT_view(Menu):
             layout.operator("image.view_selected")
 
         layout.operator("image.view_all")
-        layout.operator("image.view_all", text="View Fit").fit_view = True
+        layout.operator("image.view_all_fit", text="View Fit")
 
         layout.separator()
 
