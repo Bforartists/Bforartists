@@ -94,7 +94,7 @@ class GreasePencilDrawingToolsPanel:
     # subclass must set
     # bl_space_type = 'IMAGE_EDITOR'
     bl_label = "Grease Pencil"
-    bl_category = "Grease Pencil"
+    bl_category = "G-Pencil"
     bl_region_type = 'TOOLS'
 
     @staticmethod
@@ -184,7 +184,7 @@ class GreasePencilStrokeEditPanel:
     # subclass must set
     # bl_space_type = 'IMAGE_EDITOR'
     bl_label = "Edit Strokes"
-    bl_category = "Grease Pencil"
+    bl_category = "G-Pencil"
     bl_region_type = 'TOOLS'
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -273,7 +273,7 @@ class GreasePencilStrokeEditPanel:
 class GreasePencilInterpolatePanel:
     bl_space_type = 'VIEW_3D'
     bl_label = "Interpolate"
-    bl_category = "Grease Pencil"
+    bl_category = "G-Pencil"
     bl_region_type = 'TOOLS'
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -324,7 +324,7 @@ class GreasePencilBrushPanel:
     # subclass must set
     # bl_space_type = 'IMAGE_EDITOR'
     bl_label = "Drawing Brushes"
-    bl_category = "Grease Pencil"
+    bl_category = "G-Pencil"
     bl_region_type = 'TOOLS'
 
     @staticmethod
@@ -391,7 +391,7 @@ class GreasePencilStrokeSculptPanel:
     # subclass must set
     # bl_space_type = 'IMAGE_EDITOR'
     bl_label = "Sculpt Strokes"
-    bl_category = "Grease Pencil"
+    bl_category = "G-Pencil"
     bl_region_type = 'TOOLS'
 
     @classmethod
@@ -450,7 +450,7 @@ class GreasePencilBrushCurvesPanel:
     # subclass must set
     # bl_space_type = 'IMAGE_EDITOR'
     bl_label = "Brush Curves"
-    bl_category = "Grease Pencil"
+    bl_category = "G-Pencil"
     bl_region_type = 'TOOLS'
     bl_options = {'DEFAULT_CLOSED'}
 
