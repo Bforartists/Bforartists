@@ -133,6 +133,17 @@ class IMAGE_MT_view(Menu):
         layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area").use_hide_panels = True
 
 
+# Workaround to separate the tooltips
+class IMAGE_MT_select_inverse(bpy.types.Operator):
+    """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "uv.select_all_inverse"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Inverse"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.uv.select_all(action = 'INVERT')
+        return {'FINISHED'}  
+
 class IMAGE_MT_select(Menu):
     bl_label = "Select"
 
@@ -146,7 +157,7 @@ class IMAGE_MT_select(Menu):
         layout.separator()
 
         layout.operator("uv.select_all").action = 'TOGGLE'
-        layout.operator("uv.select_all", text="Inverse").action = 'INVERT'
+        layout.operator("uv.select_all_inverse", text="Inverse")
 
         layout.separator()
 
