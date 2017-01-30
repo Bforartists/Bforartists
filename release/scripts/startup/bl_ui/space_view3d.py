@@ -666,7 +666,8 @@ class VIEW3D_MT_select_object(Menu):
         layout.separator()
 
         layout.operator("object.select_all").action = 'TOGGLE'
-        layout.operator("object.select_all_inverse", text="Inverse", icon='SELECT_INVERSE')
+        layout.operator("object.select_all_inverse", text="Inverse")
+        #layout.operator("object.select_all_inverse", text="Inverse", icon='SELECT_INVERSE')
 
         layout.separator()
 
