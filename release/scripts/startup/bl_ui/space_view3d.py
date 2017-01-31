@@ -3375,34 +3375,51 @@ class VIEW3D_PT_view3d_properties(Panel):
         col = layout.column()
         col.active = bool(view.region_3d.view_perspective != 'CAMERA' or view.region_quadviews)
         col.prop(view, "lens")
-        col.label(text="Lock to Object:")
-        col.prop(view, "lock_object", text="")
-        lock_object = view.lock_object
-        if lock_object:
-            if lock_object.type == 'ARMATURE':
-                col.prop_search(view, "lock_bone", lock_object.data,
-                                "edit_bones" if lock_object.mode == 'EDIT'
-                                else "bones",
-                                text="")
-        else:
-            col.prop(view, "lock_cursor", text="Lock to Cursor")
-
-        col = layout.column()
-        col.prop(view, "lock_camera")
-
+          
         col = layout.column(align=True)
         col.label(text="Clip:")
         col.prop(view, "clip_start", text="Start")
         col.prop(view, "clip_end", text="End")
-
-        subcol = col.column(align=True)
-        subcol.enabled = not view.lock_camera_and_layers
-        subcol.label(text="Local Camera:")
-        subcol.prop(view, "camera", text="")
-
+        
         col = layout.column(align=True)
         col.prop(view, "use_render_border")
-        col.active = view.region_3d.view_perspective != 'CAMERA'
+        
+        wm = context.window_manager # Our bool is in the windows_manager
+  
+        # The subtab is closed by default.
+        # When the click at it then it opens. And shows the hidden ui elements.
+        if not wm.subtab_3dview_properties_view_lock:
+            layout.prop(wm,"subtab_3dview_properties_view_lock", emboss=False, icon="TRIA_RIGHT", text="- Lock -")
+
+        else:
+            layout.prop(wm,"subtab_3dview_properties_view_lock", emboss=False, icon="TRIA_DOWN", text="+ Lock +")
+            
+            col = layout.column()
+            col.prop(view, "lock_camera_and_layers")
+
+            subcol = col.column(align=True)
+            subcol.enabled = not view.lock_camera_and_layers
+            
+            subcol.label(text="Local Camera:")
+            subcol.prop(view, "camera", text="")
+
+            col = layout.column(align=True)
+            col.active = view.region_3d.view_perspective != 'CAMERA'
+            
+            col = layout.column()
+            col.prop(view, "lock_camera")
+            
+            col.label(text="Lock to Object:")
+            col.prop(view, "lock_object", text="")
+            lock_object = view.lock_object
+            if lock_object:
+                if lock_object.type == 'ARMATURE':
+                    col.prop_search(view, "lock_bone", lock_object.data,
+                                    "edit_bones" if lock_object.mode == 'EDIT'
+                                    else "bones",
+                                    text="")
+            else:
+                col.prop(view, "lock_cursor", text="Lock to Cursor")
 
 
 class VIEW3D_PT_view3d_cursor(Panel):
