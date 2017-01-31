@@ -156,10 +156,10 @@ class DOPESHEET_HT_header(Header):
             layout.template_ID(st, "action", new="action.new", unlink="action.unlink")
 
             row = layout.row(align=True)
-            row.operator("action.push_down", text="Push Down", icon='NLA_PUSHDOWN')
-            row.operator("action.stash", text="Stash", icon='FREEZE')
+            row.operator("action.push_down", text="", icon='NLA_PUSHDOWN')
+            row.operator("action.stash", text="", icon='FREEZE')
 
-        layout.prop(st.dopesheet, "show_summary", text="Summary")
+        layout.prop(st.dopesheet, "show_summary", text="")
 
         if st.mode == 'DOPESHEET':
             dopesheet_filter(layout, context)
