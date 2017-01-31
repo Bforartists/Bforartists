@@ -7002,8 +7002,9 @@ static bool ui_but_menu(bContext *C, uiBut *but)
 		PointerRNA ptr_props;
 
 		if (UI_but_online_manual_id(but, buf, sizeof(buf))) {
-			uiItemO(layout, CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Online Manual"),
-			        ICON_URL, "WM_OT_doc_view_manual_ui_context");
+			// bfa - turned off the rmb menu item online manual
+			/*uiItemO(layout, CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Online Manual"),
+			        ICON_URL, "WM_OT_doc_view_manual_ui_context");*/
 
 			WM_operator_properties_create(&ptr_props, "WM_OT_doc_view");
 			RNA_string_set(&ptr_props, "doc_id", buf);
