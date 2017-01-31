@@ -2408,8 +2408,7 @@ static void rna_def_space_view3d(BlenderRNA *brna)
 	prop = RNA_def_property(srna, "use_render_border", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_sdna(prop, NULL, "flag2", V3D_RENDER_BORDER);
 	RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
-	RNA_def_property_ui_text(prop, "Render Border", "Use a region within the frame size for rendered viewport "
-	                         "(when not viewing through the camera)");
+	RNA_def_property_ui_text(prop, "Render Border", "Toggle Render Border\nToggles the rendering of the defined render border in the Viewport\nTo define the render border use the Render Border tool from the View menu");
 	RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
 	prop = RNA_def_property(srna, "render_border_min_x", PROP_FLOAT, PROP_NONE);
