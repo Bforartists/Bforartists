@@ -902,9 +902,7 @@ class GreasePencilDataPanel:
         gpd = context.gpencil_data
 
         # Owner Selector
-        if context.space_data.type == 'VIEW_3D':
-            layout.prop(context.tool_settings, "grease_pencil_source", expand=True)
-        elif context.space_data.type == 'CLIP_EDITOR':
+        if context.space_data.type == 'CLIP_EDITOR':
             layout.prop(context.space_data, "grease_pencil_source", expand=True)
 
         # Grease Pencil data selector
