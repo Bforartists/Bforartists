@@ -3840,37 +3840,49 @@ class VIEW3D_PT_background_image(Panel):
             else:
                 row.prop(bg, "show_background_image", text="", emboss=False, icon='RESTRICT_VIEW_ON')
 
-            row.operator("view3d.background_image_remove", text="", emboss=False, icon='X').index = i
-
-            box.prop(bg, "view_axis", text="Axis")
+            row.operator("view3d.background_image_remove", text="", emboss=False, icon='X').index = i            
 
             if bg.show_expanded:
                 row = box.row()
                 row.prop(bg, "source", expand=True)
-
+                
                 has_bg = False
                 if bg.source == 'IMAGE':
                     row = box.row()
                     row.template_ID(bg, "image", open="image.open")
                     if bg.image is not None:
-                        box.template_image(bg, "image", bg.image_user, compact=True)
                         has_bg = True
+                        
+                        # Settings subtab
+                        wm = context.window_manager # Our bool is in the windows_manager
+                        if not wm.subtab_3dview_properties_bgimg_settings:
+                            box.prop(wm,"subtab_3dview_properties_bgimg_settings", emboss=False, icon="TRIA_RIGHT", text="- Settings -")
 
-                        if use_multiview and bg.view_axis in {'CAMERA', 'ALL'}:
-                            box.prop(bg.image, "use_multiview")
+                        else:
+                            box.prop(wm,"subtab_3dview_properties_bgimg_settings", emboss=False, icon="TRIA_DOWN", text="+ Settings +")
+                            
+                            box.prop(bg, "opacity", slider=True)
+                            box.prop(bg, "view_axis", text="Axis")
+                            box.template_image(bg, "image", bg.image_user, compact=True)                          
 
-                            column = box.column()
-                            column.active = bg.image.use_multiview
+                            if use_multiview and bg.view_axis in {'CAMERA','ALL'}:
+                                box.prop(bg.image, "use_multiview")
 
-                            column.label(text="Views Format:")
-                            column.row().prop(bg.image, "views_format", expand=True)
+                                column = box.column()
+                                column.active = bg.image.use_multiview
 
-                            sub = column.box()
-                            sub.active = bg.image.views_format == 'STEREO_3D'
-                            sub.template_image_stereo_3d(bg.image.stereo_3d_format)
+                                column.label(text="Views Format:")
+                                column.row().prop(bg.image, "views_format", expand=True)
+
+                                sub = column.box()
+                                sub.active = bg.image.views_format == 'STEREO_3D'
+                                sub.template_image_stereo_3d(bg.image.stereo_3d_format)
 
                 elif bg.source == 'MOVIE_CLIP':
-                    box.prop(bg, "use_camera_clip")
+                
+                    box.prop(bg, "opacity", slider=True)
+                    box.prop(bg, "view_axis", text="Axis")
+                    box.prop(bg, "use_camera_clip")                   
 
                     column = box.column()
                     column.active = not bg.use_camera_clip
@@ -3886,28 +3898,36 @@ class VIEW3D_PT_background_image(Panel):
                     column.active = has_bg
                     column.prop(bg.clip_user, "proxy_render_size", text="")
                     column.prop(bg.clip_user, "use_render_undistorted")
-
+                    
                 if has_bg:
-                    col = box.column()
-                    col.prop(bg, "opacity", slider=True)
-                    col.row().prop(bg, "draw_depth", expand=True)
+                    
+                    # Align Subtab
+                    wm = context.window_manager # Our bool is in the windows_manager
+                    if not wm.subtab_3dview_properties_bgimg_align:
+                        box.prop(wm,"subtab_3dview_properties_bgimg_align", emboss=False, icon="TRIA_RIGHT", text="- Align -")
 
-                    if bg.view_axis in {'CAMERA', 'ALL'}:
-                        col.row().prop(bg, "frame_method", expand=True)
+                    else:
+                        box.prop(wm,"subtab_3dview_properties_bgimg_align", emboss=False, icon="TRIA_DOWN", text="+ Align +")
 
-                    box = col.box()
-                    row = box.row()
-                    row.prop(bg, "offset_x", text="X")
-                    row.prop(bg, "offset_y", text="Y")
+                        col = box.column()
+                        col.row().prop(bg, "draw_depth", expand=True)
 
-                    row = box.row()
-                    row.prop(bg, "use_flip_x")
-                    row.prop(bg, "use_flip_y")
+                        if bg.view_axis in {'CAMERA', 'ALL'}:
+                            col.row().prop(bg, "frame_method", expand=True)
 
-                    row = box.row()
-                    if bg.view_axis != 'CAMERA':
-                        row.prop(bg, "rotation")
-                        row.prop(bg, "size")
+                        box = col.box()
+                        row = box.row()
+                        row.prop(bg, "offset_x", text="X")
+                        row.prop(bg, "offset_y", text="Y")
+
+                        row = box.row()
+                        row.prop(bg, "use_flip_x")
+                        row.prop(bg, "use_flip_y")
+
+                        row = box.row()
+                        if bg.view_axis != 'CAMERA':
+                            row.prop(bg, "rotation")
+                            row.prop(bg, "size")
 
 class VIEW3D_PT_etch_a_ton(Panel):
     bl_space_type = 'VIEW_3D'
