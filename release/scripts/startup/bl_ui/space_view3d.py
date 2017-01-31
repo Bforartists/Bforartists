@@ -718,6 +718,17 @@ class VIEW3D_MT_select_pose(Menu):
         layout.separator()
 
 
+# Workaround to separate the tooltips
+class VIEW3D_MT_select_particle_inverse(bpy.types.Operator):
+    """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "particle.select_all_inverse"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Inverse"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.particle.select_all(action = 'INVERT')
+        return {'FINISHED'}  
+
 class VIEW3D_MT_select_particle(Menu):
     bl_label = "Select"
 
