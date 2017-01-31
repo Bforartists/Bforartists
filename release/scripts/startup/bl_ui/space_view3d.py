@@ -2604,6 +2604,26 @@ class VIEW3D_MT_edit_mesh_select_mode(Menu):
         layout.operator("mesh.select_mode", text="Face", icon='FACESEL').type = 'FACE'
 
 
+class VIEW3D_MT_edit_mesh_extrude_dupli(bpy.types.Operator):
+    """Duplicate or Extrude to Cursor\nCreates a slightly rotated copy of the current mesh selection\nThe tool can also extrude the selected geometry, dependant of the selection\nHotkey tool! """      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "mesh.dupli_extrude_cursor_norotate"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Duplicate or Extrude to Cursor"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.mesh.dupli_extrude_cursor('INVOKE_DEFAULT',rotate_source = False)
+        return {'FINISHED'}
+
+class VIEW3D_MT_edit_mesh_extrude_dupli_rotate(bpy.types.Operator):
+    """Duplicate or Extrude to Cursor Rotated\nCreates a slightly rotated copy of the current mesh selection, and rotates the source slightly\nThe tool can also extrude the selected geometry, dependant of the selection\nHotkey tool!"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "mesh.dupli_extrude_cursor_rotate"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Duplicate or Extrude to Cursor Rotated"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.mesh.dupli_extrude_cursor('INVOKE_DEFAULT', rotate_source = True)
+        return {'FINISHED'}
+
 class VIEW3D_MT_edit_mesh_extrude(Menu):
     bl_label = "Extrude"
 
@@ -2614,10 +2634,14 @@ class VIEW3D_MT_edit_mesh_extrude(Menu):
             layout.operator("mesh.extrude_edges_move", text="Edges Only"),
         'FACE': lambda layout:
             layout.operator("mesh.extrude_faces_move", text="Individual Faces"),
-        'REGION': lambda layout:
-            layout.operator("view3d.edit_mesh_extrude_move_normal", text="Region"),
+        #'INDIVIDUAL': lambda layout:
+        #    layout.operator("view3d.edit_mesh_extrude_individual_move", icon='EXTRUDE_INDIVIDUAL', text="Individual"),
         'REGION_VERT_NORMAL': lambda layout:
             layout.operator("view3d.edit_mesh_extrude_move_shrink_fatten", text="Region (Vertex Normals)"),
+        'DUPLI_EXTRUDE': lambda layout:
+            layout.operator("mesh.dupli_extrude_cursor_norotate", text="Dupli Extrude", icon='DUPLI_EXTRUDE'),
+        'DUPLI_EX_ROTATE': lambda layout:
+            layout.operator("mesh.dupli_extrude_cursor_rotate", text="Dupli Extrude Rotate", icon='DUPLI_EXTRUDE_ROTATE')
     }
 
     @staticmethod
@@ -2627,11 +2651,12 @@ class VIEW3D_MT_edit_mesh_extrude(Menu):
 
         menu = []
         if mesh.total_face_sel:
-            menu += ['REGION', 'REGION_VERT_NORMAL', 'FACE']
+            menu += ['REGION_VERT_NORMAL', 'FACE']
         if mesh.total_edge_sel and (select_mode[0] or select_mode[1]):
             menu += ['EDGE']
         if mesh.total_vert_sel and select_mode[0]:
             menu += ['VERT']
+        menu += ['DUPLI_EXTRUDE', 'DUPLI_EX_ROTATE']
 
         # should never get here
         return menu
