@@ -5255,7 +5255,7 @@ BGpic *ED_view3D_background_image_new(View3D *v3d)
 
 	bgpic->rotation = 0.0f;
 	bgpic->size = 5.0f;
-	bgpic->blend = 0.5f;
+	bgpic->blend = 0.0f;
 	bgpic->iuser.fie_ima = 2;
 	bgpic->iuser.ok = 1;
 	bgpic->view = 0; /* 0 for all */
