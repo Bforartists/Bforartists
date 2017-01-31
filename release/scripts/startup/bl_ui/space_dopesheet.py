@@ -107,6 +107,24 @@ def dopesheet_filter(layout, context, genericFiltersOnly=False):
 #######################################
 # DopeSheet Editor - General/Standard UI
 
+
+# Editor types: 
+# ('VIEW_3D', 'TIMELINE', 'GRAPH_EDITOR', 'DOPESHEET_EDITOR', 'NLA_EDITOR', 'IMAGE_EDITOR', 
+# 'CLIP_EDITOR', 'TEXT_EDITOR', 'NODE_EDITOR', 'PROPERTIES', 'OUTLINER', 'USER_PREFERENCES', 'INFO', 'FILE_BROWSE)
+
+
+################################ Switch between the editors ##########################################
+
+
+class switch_editors_in_dopesheet(bpy.types.Operator):
+    """You are in Dopesheet Editor"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "wm.switch_editor_in_dopesheet"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Dopesheet Editor"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+
+##########################################################################
+
 class DOPESHEET_HT_header(Header):
     bl_space_type = 'DOPESHEET_EDITOR'
 
@@ -117,6 +135,14 @@ class DOPESHEET_HT_header(Header):
         toolsettings = context.tool_settings
 
         ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
+
+         # bfa - The tabs to switch between the four animation editors. The classes are in space_time.py
+        row = layout.row(align=True)
+        row.operator("wm.switch_editor_to_timeline", text="", icon='TIME')
+        row.operator("wm.switch_editor_to_graph", text="", icon='IPO')
+        row.operator("wm.switch_editor_in_dopesheet", text="", icon='DOPESHEET_ACTIVE')
+        row.operator("wm.switch_editor_to_nla", text="", icon='NLA')
+
         DOPESHEET_MT_editor_menus.draw_collapsible(context, layout)
 
 

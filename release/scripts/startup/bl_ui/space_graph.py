@@ -22,6 +22,18 @@ import bpy
 from bpy.types import Header, Menu
 
 
+################################ Switch between the editors ##########################################
+
+class switch_editors_in_graph(bpy.types.Operator):
+    """You are in Graph editor"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "wm.switch_editor_in_graph"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Graph Editor"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+
+##########################################################################
+
+
 class GRAPH_HT_header(Header):
     bl_space_type = 'GRAPH_EDITOR'
 
@@ -34,6 +46,14 @@ class GRAPH_HT_header(Header):
         st = context.space_data
 
         ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
+
+        # bfa - The tabs to switch between the four animation editors. The classes are in space_time.py
+        row = layout.row(align=True)
+        row.operator("wm.switch_editor_to_timeline", text="", icon='TIME')
+        row.operator("wm.switch_editor_in_graph", text="", icon='GRAPH_ACTIVE')
+        row.operator("wm.switch_editor_to_dopesheet", text="", icon='ACTION')     
+        row.operator("wm.switch_editor_to_nla", text="", icon='NLA')
+
         GRAPH_MT_editor_menus.draw_collapsible(context, layout)
 
         layout.prop(st, "mode", text="")
