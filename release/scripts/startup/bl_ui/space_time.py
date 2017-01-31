@@ -21,6 +21,59 @@ import bpy
 from bpy.types import Header, Menu
 
 
+################################ Switch between the editors ##########################################
+
+class switch_editors_to_graph(bpy.types.Operator):
+    """Switch to Graph editor"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "wm.switch_editor_to_graph"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Switch to Graph Editor"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.wm.context_set_enum(data_path="area.type", value="GRAPH_EDITOR")
+        return {'FINISHED'}
+
+class switch_editors_to_dopesheet(bpy.types.Operator):
+    """Switch to Dopesheet Editor"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "wm.switch_editor_to_dopesheet"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Switch to Dopesheet Editor"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.wm.context_set_enum(data_path="area.type", value="DOPESHEET_EDITOR")
+        return {'FINISHED'} 
+
+class switch_editors_to_timeline(bpy.types.Operator):
+    """Switch to Timeline editor"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "wm.switch_editor_to_timeline"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Switch to Timeline Editor"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.wm.context_set_enum(data_path="area.type", value="TIMELINE")
+        return {'FINISHED'}
+
+class switch_editors_to_nla(bpy.types.Operator):
+    """Switch to NLA editor"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "wm.switch_editor_to_nla"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Switch to NLA Editor"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    def execute(self, context):        # execute() is called by blender when running the operator.
+        bpy.ops.wm.context_set_enum(data_path="area.type", value="NLA_EDITOR")
+        return {'FINISHED'}  
+
+##########################################################################
+
+# The blank button, we don't want to switch to the editor in which we are already.
+
+class switch_editors_in_timeline(bpy.types.Operator):
+    """You are in Timeline editor"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "wm.switch_editor_in_timeline"        # unique identifier for buttons and menu items to reference.
+    bl_label = "Timeline Editor"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+
 class TIME_HT_header(Header):
     bl_space_type = 'TIMELINE'
 
@@ -33,6 +86,14 @@ class TIME_HT_header(Header):
         userprefs = context.user_preferences
 
         ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
+
+        # bfa - The tabs to switch between the four animation editors
+        row = layout.row(align=True)
+        row.operator("wm.switch_editor_in_timeline", text="", icon='TIME_ACTIVE')
+        row.operator("wm.switch_editor_to_graph", text="", icon='IPO')
+        row.operator("wm.switch_editor_to_dopesheet", text="", icon='ACTION')     
+        row.operator("wm.switch_editor_to_nla", text="", icon='NLA')
+
         TIME_MT_editor_menus.draw_collapsible(context, layout)
 
         row = layout.row(align=True)
