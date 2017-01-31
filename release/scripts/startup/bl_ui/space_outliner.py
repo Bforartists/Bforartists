@@ -66,6 +66,12 @@ class OUTLINER_HT_header(Header):
         ks = context.scene.keying_sets.active
 
         ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
+
+        # bfa - The tabs to switch between the four animation editors. The classes are here above
+        row = layout.row(align=True)
+        row.operator("wm.switch_editor_in_outliner", text="", icon='OOPS_ACTIVE')
+        row.operator("wm.switch_editor_to_properties", text="", icon='BUTS')
+
         OUTLINER_MT_editor_menus.draw_collapsible(context, layout)
 
         layout.prop(space, "display_mode", text="")
