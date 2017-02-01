@@ -1137,7 +1137,6 @@ class CyclesWorld_PT_settings(CyclesButtonsPanel, Panel):
 class CyclesMaterial_PT_preview(CyclesButtonsPanel, Panel):
     bl_label = "Preview"
     bl_context = "material"
-    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
