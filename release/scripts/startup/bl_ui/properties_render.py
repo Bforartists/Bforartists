@@ -406,18 +406,29 @@ class RENDER_PT_output(RenderButtonsPanel, Panel):
 
         layout.prop(rd, "filepath", text="")
 
-        split = layout.split()
+        wm = context.window_manager # Our bool is in the windows_manager
+  
+        # The subtab is closed by default.
+        # When the click at it then it opens. And shows the hidden ui elements.
+        if not wm.SP_render_output_options:
+            layout.prop(wm,"SP_render_output_options", emboss=False, icon="TRIA_RIGHT", text="- Options -")
 
-        col = split.column()
-        col.active = not rd.is_movie_format
-        col.prop(rd, "use_overwrite")
-        col.prop(rd, "use_placeholder")
+        else:
+            layout.prop(wm,"SP_render_output_options", emboss=False, icon="TRIA_DOWN", text="+ Options +")
 
-        col = split.column()
-        col.prop(rd, "use_file_extension")
-        col.prop(rd, "use_render_cache")
+            split = layout.split()
+
+            col = split.column()
+            col.active = not rd.is_movie_format
+            col.prop(rd, "use_overwrite")
+            col.prop(rd, "use_placeholder")
+
+            col = split.column()
+            col.prop(rd, "use_file_extension")
+            col.prop(rd, "use_render_cache")
 
         layout.template_image_settings(image_settings, color_management=False)
+
         if rd.use_multiview:
             layout.template_image_views(image_settings)
 
