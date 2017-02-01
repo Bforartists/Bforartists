@@ -332,13 +332,6 @@ class CyclesRender_PT_light_paths(CyclesButtonsPanel, Panel):
         sub.label("Transparency:")
         sub.prop(cscene, "transparent_max_bounces", text="Max")
         sub.prop(cscene, "transparent_min_bounces", text="Min")
-        sub.prop(cscene, "use_transparent_shadows", text="Shadows")
-
-        col.separator()
-
-        col.prop(cscene, "caustics_reflective")
-        col.prop(cscene, "caustics_refractive")
-        col.prop(cscene, "blur_glossy")
 
         col = split.column()
 
@@ -347,11 +340,37 @@ class CyclesRender_PT_light_paths(CyclesButtonsPanel, Panel):
         sub.prop(cscene, "max_bounces", text="Max")
         sub.prop(cscene, "min_bounces", text="Min")
 
-        sub = col.column(align=True)
-        sub.prop(cscene, "diffuse_bounces", text="Diffuse")
-        sub.prop(cscene, "glossy_bounces", text="Glossy")
-        sub.prop(cscene, "transmission_bounces", text="Transmission")
-        sub.prop(cscene, "volume_bounces", text="Volume")
+        wm = context.window_manager # Our bool is in the windows_manager
+  
+        # The subtab is closed by default.
+        # When the click at it then it opens. And shows the hidden ui elements.
+        if not wm.SP_render_light_paths_options:
+            layout.prop(wm,"SP_render_light_paths_options", emboss=False, icon="TRIA_RIGHT", text="- Advanced -")
+
+        else:
+            layout.prop(wm,"SP_render_light_paths_options", emboss=False, icon="TRIA_DOWN", text="+ Advanced +")
+
+            split = layout.split()
+
+            col = split.column()
+
+            sub = col.column(align=True)
+            sub.label("Transparency:")
+            sub.prop(cscene, "use_transparent_shadows", text="Shadows")
+            col.prop(cscene, "caustics_reflective")
+            col.prop(cscene, "caustics_refractive")
+            col.prop(cscene, "blur_glossy")
+
+            col.separator()
+
+            col = split.column()
+
+            sub = col.column(align=True)
+            sub.label(text="Bounces:")
+            sub.prop(cscene, "diffuse_bounces", text="Diffuse")
+            sub.prop(cscene, "glossy_bounces", text="Glossy")
+            sub.prop(cscene, "transmission_bounces", text="Transmission")
+            sub.prop(cscene, "volume_bounces", text="Volume")
 
 
 class CyclesRender_PT_motion_blur(CyclesButtonsPanel, Panel):
