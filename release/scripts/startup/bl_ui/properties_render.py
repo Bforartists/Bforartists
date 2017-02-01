@@ -339,23 +339,32 @@ class RENDER_PT_post_processing(RenderButtonsPanel, Panel):
 
         split.prop(rd, "dither_intensity", text="Dither", slider=True)
 
-        layout.separator()
+        
+        wm = context.window_manager # Our bool is in the windows_manager
+  
+        # The subtab is closed by default.
+        # When the click at it then it opens. And shows the hidden ui elements.
+        if not wm.SP_render_postpro_BI_options:
+            layout.prop(wm,"SP_render_postpro_BI_options", emboss=False, icon="TRIA_RIGHT", text="- Advanced -")
 
-        split = layout.split()
+        else:
+            layout.prop(wm,"SP_render_postpro_BI_options", emboss=False, icon="TRIA_DOWN", text="+ Advanced +")
 
-        col = split.column()
-        col.prop(rd, "use_fields", text="Fields")
-        sub = col.column()
-        sub.active = rd.use_fields
-        sub.row().prop(rd, "field_order", expand=True)
-        sub.prop(rd, "use_fields_still", text="Still")
+            split = layout.split()
 
-        col = split.column()
-        col.prop(rd, "use_edge_enhance")
-        sub = col.column()
-        sub.active = rd.use_edge_enhance
-        sub.prop(rd, "edge_threshold", text="Threshold", slider=True)
-        sub.prop(rd, "edge_color", text="")
+            col = split.column()
+            col.prop(rd, "use_fields", text="Fields")
+            sub = col.column()
+            sub.active = rd.use_fields
+            sub.row().prop(rd, "field_order", expand=True)
+            sub.prop(rd, "use_fields_still", text="Still")
+
+            col = split.column()
+            col.prop(rd, "use_edge_enhance")
+            sub = col.column()
+            sub.active = rd.use_edge_enhance
+            sub.prop(rd, "edge_threshold", text="Threshold", slider=True)
+            sub.prop(rd, "edge_color", text="")
 
 
 class RENDER_PT_stamp(RenderButtonsPanel, Panel):
