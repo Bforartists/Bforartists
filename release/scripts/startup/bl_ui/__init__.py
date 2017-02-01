@@ -274,7 +274,6 @@ def register():
     bpy.types.WindowManager.SP_render_dimensions_options = bpy.props.BoolProperty(name="Advanced", description="Contains advanced Options", default = False)
     bpy.types.WindowManager.SP_render_sampling_options = bpy.props.BoolProperty(name="Options", description="Contains Options", default = False)
     bpy.types.WindowManager.SP_render_light_paths_options = bpy.props.BoolProperty(name="Options", description="Contains Options", default = False)
-    bpy.types.WindowManager.SP_render_sampling_vomume = bpy.props.BoolProperty(name="Options", description="Contains Volume Sampling Settings", default = False)
     bpy.types.WindowManager.SP_render_postpro_BI_options = bpy.props.BoolProperty(name="Advanced", description="Contains more settings", default = False)
 
     #Subtab Bools Scene Panel
@@ -523,7 +522,6 @@ def unregister():
     del bpy.types.WindowManager.SP_render_dimensions_options
     del bpy.types.WindowManager.SP_render_sampling_options
     del bpy.types.WindowManager.SP_render_light_paths_options
-    del bpy.types.WindowManager.SP_render_sampling_vomume
     del bpy.types.WindowManager.SP_render_postpro_BI_options
 
     #Subtab Bools Scene Panel
