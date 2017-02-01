@@ -155,32 +155,47 @@ class RENDER_PT_dimensions(RenderButtonsPanel, Panel):
         sub.prop(rd, "resolution_y", text="Y")
         sub.prop(rd, "resolution_percentage", text="")
 
-        sub.label(text="Aspect Ratio:")
-        sub.prop(rd, "pixel_aspect_x", text="X")
-        sub.prop(rd, "pixel_aspect_y", text="Y")
-
-        row = col.row()
-        row.prop(rd, "use_border", text="Border")
-        sub = row.row()
-        sub.active = rd.use_border
-        sub.prop(rd, "use_crop_to_border", text="Crop")
-
         col = split.column()
         sub = col.column(align=True)
         sub.label(text="Frame Range:")
         sub.prop(scene, "frame_start")
         sub.prop(scene, "frame_end")
-        sub.prop(scene, "frame_step")
-
-        sub.label(text="Frame Rate:")
 
         self.draw_framerate(sub, rd)
 
-        subrow = sub.row(align=True)
-        subrow.label(text="Time Remapping:")
-        subrow = sub.row(align=True)
-        subrow.prop(rd, "frame_map_old", text="Old")
-        subrow.prop(rd, "frame_map_new", text="New")
+        wm = context.window_manager # Our bool is in the windows_manager
+  
+        # The subtab is closed by default.
+        # When the click at it then it opens. And shows the hidden ui elements.
+        if not wm.SP_render_dimensions_options:
+            layout.prop(wm,"SP_render_dimensions_options", emboss=False, icon="TRIA_RIGHT", text="- Advanced -")
+
+        else:
+            layout.prop(wm,"SP_render_dimensions_options", emboss=False, icon="TRIA_DOWN", text="+ Advanced +")
+            
+            split = layout.split()
+
+            col = split.column()
+            sub = col.column(align=True)
+            sub.label(text="Aspect Ratio:")
+            sub.prop(rd, "pixel_aspect_x", text="X")
+            sub.prop(rd, "pixel_aspect_y", text="Y")
+
+            row = col.row()
+            row.prop(rd, "use_border", text="Border")
+            sub = row.row()
+            sub.active = rd.use_border
+            sub.prop(rd, "use_crop_to_border", text="Crop")
+
+            col = split.column()
+            sub = col.column(align=True)
+            sub.prop(scene, "frame_step")         
+
+            subrow = sub.row(align=True)
+            subrow.label(text="Time Remapping:")
+            subrow = sub.row(align=True)
+            subrow.prop(rd, "frame_map_old", text="Old")
+            subrow.prop(rd, "frame_map_new", text="New")
 
 
 class RENDER_PT_antialiasing(RenderButtonsPanel, Panel):
