@@ -1475,17 +1475,18 @@ class CyclesRender_PT_bake(bpy.types.Panel):
 
         layout.separator()
 
-        split = layout.split()
+        col = layout.column()
 
-        col = split.column()
         col.prop(cbk, "margin")
         col.prop(cbk, "use_clear")
 
-        col = split.column()
         col.prop(cbk, "use_selected_to_active")
         sub = col.column()
         sub.active = cbk.use_selected_to_active
         sub.prop(cbk, "use_cage", text="Cage")
+
+
+
         if cbk.use_cage:
             sub.prop(cbk, "cage_extrusion", text="Extrusion")
             sub.prop_search(cbk, "cage_object", scene, "objects", text="")
