@@ -2802,6 +2802,80 @@ class VIEW3D_PT_tools_history(View3DPanel, Panel):
             row.operator("screen.repeat_last", icon='REPEAT', text="")
             row.operator("screen.repeat_history", icon='REDO_HISTORY', text="")
 
+# Bake in Blender Internal
+
+class RENDER_PT_bake(bpy.types.Panel):
+    bl_label = "Bake Blender Render"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = "TOOLS"
+    bl_category = "Tools"
+    bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    
+    @classmethod
+    def poll(cls, context):
+        scene = context.scene
+        return scene and (scene.render.engine in cls.COMPAT_ENGINES)
+
+    def draw(self, context):
+        layout = self.layout
+
+        rd = context.scene.render
+
+        layout.operator("object.bake_image", icon='RENDER_STILL')
+
+        layout.prop(rd, "bake_type", text="")
+
+        multires_bake = False
+        if rd.bake_type in ['NORMALS', 'DISPLACEMENT', 'DERIVATIVE', 'AO']:
+            layout.prop(rd, "use_bake_multires")
+            multires_bake = rd.use_bake_multires
+
+        if not multires_bake:
+            if rd.bake_type == 'NORMALS':
+                layout.prop(rd, "bake_normal_space")
+            elif rd.bake_type in {'DISPLACEMENT', 'AO'}:
+                layout.prop(rd, "use_bake_normalize")
+
+            # col.prop(rd, "bake_aa_mode")
+            # col.prop(rd, "use_bake_antialiasing")
+            
+            col = layout.column()
+            
+            col.prop(rd, "use_bake_selected_to_active")
+            col.prop(rd, "use_bake_to_vertex_color")
+            sub = col.column()
+            sub.active = not rd.use_bake_to_vertex_color
+            sub.prop(rd, "use_bake_clear")
+            
+            sub.prop(rd, "bake_quad_split", text="Split")
+            sub.prop(rd, "bake_margin")
+            
+            sub = col.column()
+            sub.active = rd.use_bake_selected_to_active
+            sub.prop(rd, "bake_distance")
+            sub.prop(rd, "bake_bias")
+        else:
+
+            col.prop(rd, "use_bake_clear")
+            col.prop(rd, "bake_margin")
+
+            if rd.bake_type == 'DISPLACEMENT':
+                col = split.column()
+                col.prop(rd, "use_bake_lores_mesh")
+
+            if rd.bake_type == 'AO':
+                col = split.column()
+                col.prop(rd, "bake_bias")
+                col.prop(rd, "bake_samples")
+
+        if rd.bake_type == 'DERIVATIVE':
+            row = layout.row()
+            row.prop(rd, "use_bake_user_scale", text="")
+
+            sub = row.column()
+            sub.active = rd.use_bake_user_scale
+            sub.prop(rd, "bake_user_scale", text="User Scale")
 
 if __name__ == "__main__":  # only for live edit.
     bpy.utils.register_module(__name__)

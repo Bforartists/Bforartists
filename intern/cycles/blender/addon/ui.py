@@ -1413,11 +1413,18 @@ class CyclesParticle_PT_textures(CyclesButtonsPanel, Panel):
             layout.template_ID(slot, "texture", new="texture.new")
 
 
-class CyclesRender_PT_bake(CyclesButtonsPanel, Panel):
-    bl_label = "Bake"
-    bl_context = "render"
+class CyclesRender_PT_bake(bpy.types.Panel):
+    bl_label = "Bake Cycles"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = "TOOLS"
+    bl_category = "Tools"
     bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {'CYCLES'}
+    
+    @classmethod
+    def poll(cls, context):
+        scene = context.scene
+        return scene and (scene.render.engine in cls.COMPAT_ENGINES)
 
     def draw(self, context):
         layout = self.layout
@@ -1429,7 +1436,7 @@ class CyclesRender_PT_bake(CyclesButtonsPanel, Panel):
         layout.operator("object.bake", icon='RENDER_STILL').type = cscene.bake_type
 
         col = layout.column()
-        col.prop(cscene, "bake_type")
+        col.prop(cscene, "bake_type", text = "")
 
         col = layout.column()
 
