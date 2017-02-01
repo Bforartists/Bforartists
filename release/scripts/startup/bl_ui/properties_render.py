@@ -354,33 +354,52 @@ class RENDER_PT_stamp(RenderButtonsPanel, Panel):
         rd = context.scene.render
 
         layout.prop(rd, "use_stamp")
-        col = layout.column()
-        col.active = rd.use_stamp
-        row = col.row()
-        row.prop(rd, "stamp_font_size", text="Font Size")
-        row.prop(rd, "use_stamp_labels", text="Draw labels")
 
-        row = col.row()
-        row.column().prop(rd, "stamp_foreground", slider=True)
-        row.column().prop(rd, "stamp_background", slider=True)
+        wm = context.window_manager # Our bool is in the windows_manager
+  
+        # The subtab is closed by default.
+        # When the click at it then it opens. And shows the hidden ui elements.
+        if not wm.SP_render_metadata_stampoptions:
+            layout.prop(wm,"SP_render_metadata_stampoptions", emboss=False, icon="TRIA_RIGHT", text="- Stamp Options -")
 
-        layout.label("Enabled Metadata")
-        split = layout.split()
+        else:
+            layout.prop(wm,"SP_render_metadata_stampoptions", emboss=False, icon="TRIA_DOWN", text="+ Stamp Options +") 
 
-        col = split.column()
-        col.prop(rd, "use_stamp_time", text="Time")
-        col.prop(rd, "use_stamp_date", text="Date")
-        col.prop(rd, "use_stamp_render_time", text="RenderTime")
-        col.prop(rd, "use_stamp_frame", text="Frame")
-        col.prop(rd, "use_stamp_scene", text="Scene")
-        col.prop(rd, "use_stamp_memory", text="Memory")
+            col = layout.column()
+            col.active = rd.use_stamp
+            row = col.row()
+            row.prop(rd, "stamp_font_size", text="Font Size")
+            row.prop(rd, "use_stamp_labels", text="Draw labels")
 
-        col = split.column()
-        col.prop(rd, "use_stamp_camera", text="Camera")
-        col.prop(rd, "use_stamp_lens", text="Lens")
-        col.prop(rd, "use_stamp_filename", text="Filename")
-        col.prop(rd, "use_stamp_marker", text="Marker")
-        col.prop(rd, "use_stamp_sequencer_strip", text="Seq. Strip")
+            row = col.row()
+            row.column().prop(rd, "stamp_foreground", slider=True)
+            row.column().prop(rd, "stamp_background", slider=True)
+
+        # The subtab is closed by default.
+        # When the click at it then it opens. And shows the hidden ui elements.
+        if not wm.SP_render_metadata_enabled:
+            layout.prop(wm,"SP_render_metadata_enabled", emboss=False, icon="TRIA_RIGHT", text="- Enabled Metadata -")
+
+        else:
+            layout.prop(wm,"SP_render_metadata_enabled", emboss=False, icon="TRIA_DOWN", text="+ Enabled Metadata +") 
+
+            layout.label("Enabled Metadata")
+            split = layout.split()
+
+            col = split.column()
+            col.prop(rd, "use_stamp_time", text="Time")
+            col.prop(rd, "use_stamp_date", text="Date")
+            col.prop(rd, "use_stamp_render_time", text="RenderTime")
+            col.prop(rd, "use_stamp_frame", text="Frame")
+            col.prop(rd, "use_stamp_scene", text="Scene")
+            col.prop(rd, "use_stamp_memory", text="Memory")
+
+            col = split.column()
+            col.prop(rd, "use_stamp_camera", text="Camera")
+            col.prop(rd, "use_stamp_lens", text="Lens")
+            col.prop(rd, "use_stamp_filename", text="Filename")
+            col.prop(rd, "use_stamp_marker", text="Marker")
+            col.prop(rd, "use_stamp_sequencer_strip", text="Seq. Strip")
 
         row = layout.split(percentage=0.2)
         row.prop(rd, "use_stamp_note", text="Note")
