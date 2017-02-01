@@ -1162,6 +1162,22 @@ class CyclesMaterial_PT_surface(CyclesButtonsPanel, Panel):
             layout.prop(mat, "diffuse_color")
 
 
+class CyclesMaterial_PT_displacement(CyclesButtonsPanel, Panel):
+    bl_label = "Displacement"
+    bl_context = "material"
+
+    @classmethod
+    def poll(cls, context):
+        mat = context.material
+        return mat and mat.node_tree and CyclesButtonsPanel.poll(context)
+
+    def draw(self, context):
+        layout = self.layout
+
+        mat = context.material
+        panel_node_draw(layout, mat, 'OUTPUT_MATERIAL', 'Displacement')
+
+
 class CyclesMaterial_PT_volume(CyclesButtonsPanel, Panel):
     bl_label = "Volume"
     bl_context = "material"
@@ -1179,22 +1195,6 @@ class CyclesMaterial_PT_volume(CyclesButtonsPanel, Panel):
         # cmat = mat.cycles
 
         panel_node_draw(layout, mat, 'OUTPUT_MATERIAL', 'Volume')
-
-
-class CyclesMaterial_PT_displacement(CyclesButtonsPanel, Panel):
-    bl_label = "Displacement"
-    bl_context = "material"
-
-    @classmethod
-    def poll(cls, context):
-        mat = context.material
-        return mat and mat.node_tree and CyclesButtonsPanel.poll(context)
-
-    def draw(self, context):
-        layout = self.layout
-
-        mat = context.material
-        panel_node_draw(layout, mat, 'OUTPUT_MATERIAL', 'Displacement')
 
 
 class CyclesMaterial_PT_settings(CyclesButtonsPanel, Panel):
