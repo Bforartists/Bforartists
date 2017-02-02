@@ -3683,32 +3683,11 @@ class VIEW3D_PT_view3d_meshdisplay(Panel):
 
         mesh = context.active_object.data
         scene = context.scene
-
-        split = layout.split()
-
-        col = split.column()
-        col.label(text="Overlays:")
-        col.prop(mesh, "show_faces", text="Faces")
-        col.prop(mesh, "show_edges", text="Edges")
-        col.prop(mesh, "show_edge_crease", text="Creases")
-        if with_freestyle:
-            col.prop(mesh, "show_edge_seams", text="Seams")
-
-        layout.prop(mesh, "show_weight")
-
-        col = split.column()
-        col.label()
-        if not with_freestyle:
-            col.prop(mesh, "show_edge_seams", text="Seams")
-        col.prop(mesh, "show_edge_sharp", text="Sharp", text_ctxt=i18n_contexts.plural)
-        col.prop(mesh, "show_edge_bevel_weight", text="Bevel")
-        if with_freestyle:
-            col.prop(mesh, "show_freestyle_edge_marks", text="Edge Marks")
-            col.prop(mesh, "show_freestyle_face_marks", text="Face Marks")
+        
+        ################# Normals
 
         col = layout.column()
 
-        col.separator()
         col.label(text="Normals:")
         row = col.row(align=True)
 
@@ -3719,19 +3698,61 @@ class VIEW3D_PT_view3d_meshdisplay(Panel):
         sub = row.row(align=True)
         sub.active = mesh.show_normal_vertex or mesh.show_normal_face or mesh.show_normal_loop
         sub.prop(scene.tool_settings, "normal_size", text="Size")
+        
+        wm = context.window_manager # Our bool is in the windows_manager
+        
+        ################ Overlay Options
+  
+        # The subtab is closed by default.
+        # When the click at it then it opens. And shows the hidden ui elements.
+        if not wm.subtab_3dview_properties_meshdisplay_overlay:
+            layout.prop(wm,"subtab_3dview_properties_meshdisplay_overlay", emboss=False, icon="TRIA_RIGHT", text="- Overlay Options -")
 
-        col.separator()
-        split = layout.split()
-        col = split.column()
-        col.label(text="Edge Info:")
-        col.prop(mesh, "show_extra_edge_length", text="Length")
-        col.prop(mesh, "show_extra_edge_angle", text="Angle")
-        col = split.column()
-        col.label(text="Face Info:")
-        col.prop(mesh, "show_extra_face_area", text="Area")
-        col.prop(mesh, "show_extra_face_angle", text="Angle")
-        if bpy.app.debug:
-            layout.prop(mesh, "show_extra_indices")
+        else:
+            layout.prop(wm,"subtab_3dview_properties_meshdisplay_overlay", emboss=False, icon="TRIA_DOWN", text="+ Overlay Options +")
+            
+            split = layout.split()
+            col = split.column()
+            col.prop(mesh, "show_faces", text="Faces")
+            col.prop(mesh, "show_edges", text="Edges")
+            col.prop(mesh, "show_edge_crease", text="Creases")
+            if with_freestyle:
+                col.prop(mesh, "show_edge_seams", text="Seams")
+
+            layout.prop(mesh, "show_weight")
+
+            col = split.column()
+            if not with_freestyle:
+                col.prop(mesh, "show_edge_seams", text="Seams")
+            col.prop(mesh, "show_edge_sharp", text="Sharp", text_ctxt=i18n_contexts.plural)
+            col.prop(mesh, "show_edge_bevel_weight", text="Bevel")
+            if with_freestyle:
+                col.prop(mesh, "show_freestyle_edge_marks", text="Edge Marks")
+                col.prop(mesh, "show_freestyle_face_marks", text="Face Marks")
+                
+        
+        ################## Info options
+
+  
+        # The subtab is closed by default.
+        # When the click at it then it opens. And shows the hidden ui elements.
+        if not wm.subtab_3dview_properties_meshdisplay_info:
+            layout.prop(wm,"subtab_3dview_properties_meshdisplay_info", emboss=False, icon="TRIA_RIGHT", text="- Info Options -")
+
+        else:
+            layout.prop(wm,"subtab_3dview_properties_meshdisplay_info", emboss=False, icon="TRIA_DOWN", text="+ Info Options +")
+
+            split = layout.split()
+            col = split.column()
+            col.label(text="Edge Info:")
+            col.prop(mesh, "show_extra_edge_length", text="Length")
+            col.prop(mesh, "show_extra_edge_angle", text="Angle")
+            col = split.column()
+            col.label(text="Face Info:")
+            col.prop(mesh, "show_extra_face_area", text="Area")
+            col.prop(mesh, "show_extra_face_angle", text="Angle")
+            if bpy.app.debug:
+                layout.prop(mesh, "show_extra_indices")
 
 
 class VIEW3D_PT_view3d_meshstatvis(Panel):
