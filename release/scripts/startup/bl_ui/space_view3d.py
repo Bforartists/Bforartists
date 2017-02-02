@@ -1457,7 +1457,6 @@ class VIEW3D_MT_object(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_transform_object")
-        layout.menu("VIEW3D_MT_mirror")
         layout.menu("VIEW3D_MT_object_clear")
         layout.menu("VIEW3D_MT_object_apply")
         layout.menu("VIEW3D_MT_snap")
@@ -3045,7 +3044,7 @@ class VIEW3D_MT_edit_meta(Menu):
         toolsettings = context.tool_settings
 
         layout.menu("VIEW3D_MT_transform")
-        layout.menu("VIEW3D_MT_mirror")
+        layout.operator("object.vertex_group_mirror")
         layout.menu("VIEW3D_MT_snap")
 
         layout.separator()
