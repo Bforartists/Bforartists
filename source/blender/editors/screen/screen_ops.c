@@ -4083,7 +4083,7 @@ static void SCREEN_OT_animation_cancel(wmOperatorType *ot)
 	
 	ot->poll = ED_operator_screenactive;
 
-	RNA_def_boolean(ot->srna, "restore_frame", true, "Restore Frame", "Restore the frame when animation was initialized");
+	RNA_def_boolean(ot->srna, "restore_frame", true, "Restore Frame", "Restore Frame\nRestore the frame when animation was initialized");
 }
 
 /* ************** border select operator (template) ***************************** */
@@ -4298,10 +4298,10 @@ static void SCENE_OT_new(wmOperatorType *ot)
 {
 	static EnumPropertyItem type_items[] = {
 		{SCE_COPY_NEW, "NEW", 0, "New", "Add new scene"},
-		{SCE_COPY_EMPTY, "EMPTY", 0, "Copy Settings", "Make a copy without any objects"},
-		{SCE_COPY_LINK_OB, "LINK_OBJECTS", 0, "Link Objects", "Link to the objects from the current scene"},
-		{SCE_COPY_LINK_DATA, "LINK_OBJECT_DATA", 0, "Link Object Data", "Copy objects linked to data from the current scene"},
-		{SCE_COPY_FULL, "FULL_COPY", 0, "Full Copy", "Make a full copy of the current scene"},
+		{SCE_COPY_EMPTY, "EMPTY", 0, "Copy Settings", "Copy Settings\nMake a copy without any objects"},
+		{SCE_COPY_LINK_OB, "LINK_OBJECTS", 0, "Link Objects", "Link Objects\nLink to the objects from the current scene"},
+		{SCE_COPY_LINK_DATA, "LINK_OBJECT_DATA", 0, "Link Object Data", "Link Object Data\nCopy objects linked to data from the current scene"},
+		{SCE_COPY_FULL, "FULL_COPY", 0, "Full Copy", "Full Copy\nMake a full copy of the current scene"},
 		{0, NULL, 0, NULL, NULL}};
 	
 	/* identifiers */
