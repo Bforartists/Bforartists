@@ -241,8 +241,8 @@ class IMAGE_MT_image(Menu):
         sima = context.space_data
         ima = sima.image
 
-        layout.operator("image.new")
-        layout.operator("image.open")
+        layout.operator("image.new", icon='IMAGE_DATA')
+        layout.operator("image.open", icon='FILE_FOLDER')
 
         show_render = sima.show_render
 
@@ -255,9 +255,9 @@ class IMAGE_MT_image(Menu):
                 layout.operator("image.replace")
                 layout.operator("image.reload")
 
-            layout.operator("image.save")
-            layout.operator("image.save_as")
-            layout.operator("image.save_as", text="Save a Copy").copy = True
+            layout.operator("image.save", icon='FILE_TICK')
+            layout.operator("image.save_as", icon='SAVE_AS')
+            layout.operator("image.save_as", text="Save a Copy", icon='SAVE_COPY').copy = True
 
             if ima.source == 'SEQUENCE':
                 layout.operator("image.save_sequence")
