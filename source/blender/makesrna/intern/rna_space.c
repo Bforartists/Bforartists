@@ -84,10 +84,11 @@ EnumPropertyItem rna_enum_space_type_items[] = {
 	{0, "", ICON_NONE, NULL, NULL},
 	{SPACE_FILE, "FILE_BROWSER", ICON_FILESEL, "File Browser", "Browse for files and assets"},
 	{0, "", ICON_NONE, NULL, NULL},
-	{SPACE_CONSOLE, "CONSOLE", ICON_CONSOLE, "Python Console", "Interactive programmatic console for advanced editing and script development"},
-	{0, NULL, 0, NULL, NULL},
 	{ SPACE_TOOLBAR, "TOOLBAR", ICON_TOOLBAR, "Toolbar", "A toolbar. Here you can display various button menus" },
 	{ 0, "", ICON_NONE, NULL, NULL },
+	{SPACE_CONSOLE, "CONSOLE", ICON_CONSOLE, "Python Console", "Interactive programmatic console for advanced editing and script development"},
+	{0, NULL, 0, NULL, NULL},
+
 };
 
 #define V3D_S3D_CAMERA_LEFT        {STEREO_LEFT_ID, "LEFT", ICON_RESTRICT_RENDER_OFF, "Left", ""},
