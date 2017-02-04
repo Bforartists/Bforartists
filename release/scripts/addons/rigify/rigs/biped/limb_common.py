@@ -48,7 +48,7 @@ class FKLimb:
         bpy.ops.object.mode_set(mode='EDIT')
 
         # Create non-scaling parent bone
-        if self.org_parent != None:
+        if self.org_parent is not None:
             loc = Vector(self.obj.data.edit_bones[self.org_bones[0]].head)
             parent = make_nonscaling_child(self.obj, self.org_parent, loc, "_fk")
         else:
@@ -69,7 +69,7 @@ class FKLimb:
         eantistr = copy_bone(self.obj, self.org_bones[1], make_mechanism_name(strip_org(insert_before_lr(self.org_bones[1], "_antistr.fk"))))
 
         # Create the hinge bones
-        if parent != None:
+        if parent is not None:
             socket1 = copy_bone(self.obj, ulimb, make_mechanism_name(ulimb + ".socket1"))
             socket2 = copy_bone(self.obj, ulimb, make_mechanism_name(ulimb + ".socket2"))
 
@@ -85,7 +85,7 @@ class FKLimb:
 
         elimb_mch_e = eb[elimb_mch]
 
-        if parent != None:
+        if parent is not None:
             socket1_e = eb[socket1]
             socket2_e = eb[socket2]
 
@@ -105,7 +105,7 @@ class FKLimb:
         fantistr_e.use_connect = False
         fantistr_e.parent = ulimb_e
 
-        if parent != None:
+        if parent is not None:
             socket1_e.use_connect = False
             socket1_e.parent = eb[parent]
 
@@ -121,7 +121,7 @@ class FKLimb:
         eantistr_e.length /= 8
         put_bone(self.obj, eantistr, Vector(flimb_e.tail))
 
-        if parent != None:
+        if parent is not None:
             socket1_e.length /= 4
             socket2_e.length /= 3
 
@@ -136,7 +136,7 @@ class FKLimb:
         fantistr_p = pb[fantistr]
         eantistr_p = pb[eantistr]
 
-        if parent != None:
+        if parent is not None:
             socket2_p = pb[socket2]
 
         # Lock axes
@@ -154,7 +154,7 @@ class FKLimb:
             flimb_p.lock_rotation = (True, True, False)
 
         # Set up custom properties
-        if parent != None:
+        if parent is not None:
             prop = rna_idprop_ui_prop_get(ulimb_p, "isolate", create=True)
             ulimb_p["isolate"] = 0.0
             prop["soft_min"] = prop["min"] = 0.0
@@ -230,7 +230,7 @@ class FKLimb:
         add_antistretch_drivers(eantistr_p)
 
         # Hinge constraints / drivers
-        if parent != None:
+        if parent is not None:
             con = socket2_p.constraints.new('COPY_LOCATION')
             con.name = "copy_location"
             con.target = self.obj
@@ -282,7 +282,7 @@ class FKLimb:
         create_limb_widget(self.obj, flimb)
 
         ob = create_widget(self.obj, elimb)
-        if ob != None:
+        if ob is not None:
             verts = [(0.7, 1.5, 0.0), (0.7, -0.25, 0.0), (-0.7, -0.25, 0.0), (-0.7, 1.5, 0.0), (0.7, 0.723, 0.0), (-0.7, 0.723, 0.0), (0.7, 0.0, 0.0), (-0.7, 0.0, 0.0)]
             edges = [(1, 2), (0, 3), (0, 4), (3, 5), (4, 6), (1, 6), (5, 7), (2, 7)]
             mesh = ob.data
@@ -324,10 +324,10 @@ class IKLimb:
         bpy.ops.object.mode_set(mode='EDIT')
 
         # Create non-scaling parent bone
-        if self.org_parent != None:
+        if self.org_parent is not None:
             loc = Vector(self.obj.data.edit_bones[self.org_bones[0]].head)
             parent = make_nonscaling_child(self.obj, self.org_parent, loc, "_ik")
-            if self.pole_parent == None:
+            if self.pole_parent is None:
                 self.pole_parent = parent
         else:
             parent = None
@@ -348,7 +348,7 @@ class IKLimb:
         pole = copy_bone(self.obj, self.org_bones[0], pole_target_name)
         if self.pole_parent == self.org_bones[2]:
             self.pole_parent = elimb_mch
-        if self.pole_parent != None:
+        if self.pole_parent is not None:
             pole_par = copy_bone(self.obj, self.pole_parent, make_mechanism_name(insert_before_lr(pole_target_name, "_parent")))
 
         viselimb = copy_bone(self.obj, self.org_bones[2], "VIS-" + strip_org(insert_before_lr(self.org_bones[2], ".ik")))
@@ -357,7 +357,7 @@ class IKLimb:
         # Get edit bones
         eb = self.obj.data.edit_bones
 
-        if parent != None:
+        if parent is not None:
             parent_e = eb[parent]
         ulimb_e = eb[ulimb]
         flimb_e = eb[flimb]
@@ -368,7 +368,7 @@ class IKLimb:
         ulimb_str_e = eb[ulimb_str]
         flimb_str_e = eb[flimb_str]
         pole_e = eb[pole]
-        if self.pole_parent != None:
+        if self.pole_parent is not None:
             pole_par_e = eb[pole_par]
         viselimb_e = eb[viselimb]
         vispole_e = eb[vispole]
@@ -376,7 +376,7 @@ class IKLimb:
         # Parenting
         ulimb_e.use_connect = False
         ulimb_nostr_e.use_connect = False
-        if parent != None:
+        if parent is not None:
             ulimb_e.parent = parent_e
             ulimb_nostr_e.parent = parent_e
 
@@ -396,7 +396,7 @@ class IKLimb:
         flimb_str_e.parent = ulimb_e.parent
 
         pole_e.use_connect = False
-        if self.pole_parent != None:
+        if self.pole_parent is not None:
             pole_par_e.parent = None
             pole_e.parent = pole_par_e
 
@@ -431,7 +431,7 @@ class IKLimb:
         pole_e.head = flimb_e.head + v2
         pole_e.tail = pole_e.head + (Vector((0, 1, 0)) * (v1.length / 8))
         pole_e.roll = 0.0
-        if parent != None:
+        if parent is not None:
             pole_par_e.length *= 0.75
 
         viselimb_e.tail = viselimb_e.head + Vector((0, 0, v1.length / 32))
@@ -455,7 +455,7 @@ class IKLimb:
         ulimb_str_p = pb[ulimb_str]
         flimb_str_p = pb[flimb_str]
         pole_p = pb[pole]
-        if self.pole_parent != None:
+        if self.pole_parent is not None:
             pole_par_p = pb[pole_par]
         viselimb_p = pb[viselimb]
         vispole_p = pb[vispole]
@@ -506,7 +506,7 @@ class IKLimb:
             prop["soft_min"] = prop["min"] = 0.0
             prop["soft_max"] = prop["max"] = 1.0
 
-        if self.pole_parent != None:
+        if self.pole_parent is not None:
             prop = rna_idprop_ui_prop_get(pole_p, "follow", create=True)
             pole_p["follow"] = 1.0
             prop["soft_min"] = prop["min"] = 0.0
@@ -642,7 +642,7 @@ class IKLimb:
         con.owner_space = 'LOCAL'
 
         # Pole target parent
-        if self.pole_parent != None:
+        if self.pole_parent is not None:
             con = pole_par_p.constraints.new('COPY_TRANSFORMS')
             con.name = "parent"
             con.target = self.obj
@@ -741,7 +741,7 @@ class IKLimb:
         create_sphere_widget(self.obj, pole)
 
         ob = create_widget(self.obj, elimb)
-        if ob != None:
+        if ob is not None:
             verts = [(0.7, 1.5, 0.0), (0.7, -0.25, 0.0), (-0.7, -0.25, 0.0), (-0.7, 1.5, 0.0), (0.7, 0.723, 0.0), (-0.7, 0.723, 0.0), (0.7, 0.0, 0.0), (-0.7, 0.0, 0.0)]
             edges = [(1, 2), (0, 3), (0, 4), (3, 5), (4, 6), (1, 6), (5, 7), (2, 7)]
             mesh = ob.data
@@ -777,7 +777,7 @@ class RubberHoseLimb:
         bpy.ops.object.mode_set(mode='EDIT')
 
         # Create non-scaling parent bone
-        if self.org_parent != None:
+        if self.org_parent is not None:
             loc = Vector(self.obj.data.edit_bones[self.org_bones[0]].head)
             parent = make_nonscaling_child(self.obj, self.org_parent, loc, "_rh")
         else:
@@ -805,7 +805,7 @@ class RubberHoseLimb:
             flimb_e.parent = ulimb_e
             flimb_e.use_connect = True
 
-            if parent != None:
+            if parent is not None:
                 elimb_e.use_connect = False
                 ulimb_e.parent = eb[parent]
 
@@ -877,7 +877,7 @@ class RubberHoseLimb:
             # Get edit bones
             eb = self.obj.data.edit_bones
 
-            if parent != None:
+            if parent is not None:
                 parent_e = eb[parent]
             else:
                 parent_e = None
@@ -907,7 +907,7 @@ class RubberHoseLimb:
             fhoseend_par_e = eb[fhoseend_par]
 
             # Parenting
-            if parent != None:
+            if parent is not None:
                 ulimb1_e.use_connect = False
                 ulimb1_e.parent = parent_e
 

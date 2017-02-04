@@ -1,4 +1,4 @@
-﻿# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -21,14 +21,12 @@
 bl_info = {
     "name": "Wavefront OBJ format",
     "author": "Campbell Barton, Bastien Montagne",
-    "version": (2, 2, 1),
-    "blender": (2, 74, 0),
+    "version": (2, 3, 2),
+    "blender": (2, 77, 0),
     "location": "File > Import-Export",
-    "description": "Import-Export OBJ, Import OBJ mesh, UV's, "
-                   "materials and textures",
+    "description": "Import-Export OBJ, Import OBJ mesh, UV's, materials and textures",
     "warning": "",
-    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
-                "Scripts/Import-Export/Wavefront_OBJ",
+    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Import-Export/Wavefront_OBJ",
     "support": 'OFFICIAL',
     "category": "Import-Export"}
 
@@ -144,9 +142,9 @@ class ImportOBJ(bpy.types.Operator, ImportHelper, IOOBJOrientationHelper):
 
         if bpy.data.is_saved and context.user_preferences.filepaths.use_relative_paths:
             import os
-            keywords["relpath"] = os.path.dirname((bpy.data.path_resolve("filepath", False).as_bytes()))
+            keywords["relpath"] = os.path.dirname(bpy.data.filepath)
 
-        return import_obj.load(self, context, **keywords)
+        return import_obj.load(context, **keywords)
 
     def draw(self, context):
         layout = self.layout
@@ -192,7 +190,7 @@ class ExportOBJ(bpy.types.Operator, ExportHelper, IOOBJOrientationHelper):
     use_selection = BoolProperty(
             name="Selection Only",
             description="Export selected objects only",
-            default=True,
+            default=False,
             )
     use_animation = BoolProperty(
             name="Animation",
@@ -203,8 +201,13 @@ class ExportOBJ(bpy.types.Operator, ExportHelper, IOOBJOrientationHelper):
     # object group
     use_mesh_modifiers = BoolProperty(
             name="Apply Modifiers",
-            description="Apply modifiers (preview resolution)",
+            description="Apply modifiers",
             default=True,
+            )
+    use_mesh_modifiers_render = BoolProperty(
+            name="Use Modifiers Render Settings",
+            description="Use render settings when applying modifiers to mesh objects",
+            default=False,
             )
 
     # extra data group
@@ -305,7 +308,7 @@ class ExportOBJ(bpy.types.Operator, ExportHelper, IOOBJOrientationHelper):
                                          ).to_4x4())
 
         keywords["global_matrix"] = global_matrix
-        return export_obj.save(self, context, **keywords)
+        return export_obj.save(context, **keywords)
 
 
 def menu_func_import(self, context):

@@ -21,10 +21,10 @@ class AcDsDataSection(object):
     @classmethod
     def from_tags(cls, tags, drawing):
         data_section = cls()
-        data_section._build(tags, drawing.dxfversion)
+        data_section._build(tags)
         return data_section
 
-    def _build(self, tags, dxfversion):
+    def _build(self, tags):
         if len(tags) == 3:  # empty entities section
             return
 

@@ -29,12 +29,6 @@ def tablename(dxfname):
     return TABLENAMES.get(name, name+'s')
 
 
-class GenericTable(DefaultChunk):
-    @property
-    def name(self):
-        return tablename(self.tags[1].value)
-
-
 class DefaultDrawing(object):
     dxfversion = 'AC1009'
     encoding = 'cp1252'
@@ -43,9 +37,8 @@ class DefaultDrawing(object):
 class TablesSection(object):
     name = 'tables'
 
-    def __init__(self, drawing=DefaultDrawing()):
+    def __init__(self):
         self._tables = dict()
-        self._drawing = drawing
         self._create_default_tables()
 
     def _create_default_tables(self):
@@ -55,7 +48,7 @@ class TablesSection(object):
 
     @staticmethod
     def from_tags(tags, drawing):
-        tables_section = TablesSection(drawing)
+        tables_section = TablesSection()
         tables_section._setup_tables(tags)
         return tables_section
 
@@ -71,8 +64,9 @@ class TablesSection(object):
         itertags = skiptags(iter(tags), 2)  # (0, 'SECTION'), (2, 'TABLES')
         for table in iterchunks(itertags, stoptag='ENDSEC', endofchunk='ENDTAB'):
             table_class = table_factory(name(table))
-            new_table = table_class.from_tags(table, self._drawing)
-            self._tables[new_table.name] = new_table
+            if table_class is not None:
+                new_table = table_class.from_tags(table)
+                self._tables[new_table.name] = new_table
 
     def __getattr__(self, key):
         try:
@@ -89,4 +83,4 @@ TABLESMAP = {
 
 
 def table_factory(name):
-    return TABLESMAP.get(name, GenericTable)
+    return TABLESMAP.get(name, None)

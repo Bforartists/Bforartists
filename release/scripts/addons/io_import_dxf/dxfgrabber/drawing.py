@@ -5,7 +5,7 @@
 
 __author__ = "mozman <mozman@gmx.at>"
 
-from .tags import TagIterator
+from .tags import stream_tagger
 from .sections import Sections
 
 DEFAULT_OPTIONS = {
@@ -23,7 +23,7 @@ class Drawing(object):
         self.assure_3d_coords = options.get('assure_3d_coords', False)
         self.resolve_text_styles = options.get('resolve_text_styles', True)
 
-        tagreader = TagIterator(stream, self.assure_3d_coords)
+        tagreader = stream_tagger(stream, self.assure_3d_coords)
         self.dxfversion = 'AC1009'
         self.encoding = 'cp1252'
         self.filename = None

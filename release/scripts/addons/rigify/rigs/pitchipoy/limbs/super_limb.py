@@ -19,9 +19,15 @@ class Rig:
         """ Initialize torso rig and key rig properties """
         self.obj       = obj
         self.params    = params
-        self.org_bones = list(
-            [bone_name] + connected_children_names(obj, bone_name)
-            )[:3]  # The basic limb is the first 3 bones
+
+        if params.limb_type != 'paw':
+            self.org_bones = list(
+                [bone_name] + connected_children_names(obj, bone_name)
+                )[:3]  # The basic limb is the first 3 bones
+        else:
+            self.org_bones = list(
+                [bone_name] + connected_children_names(obj, bone_name)
+                )[:4]  # The basic limb is the first 4 bones for a paw
 
         self.segments  = params.segments
         self.bbones    = params.bbones
@@ -158,43 +164,90 @@ class Rig:
             eb[ ctrl ].length /= 2
 
         # Contraints
-        for i,b in enumerate( tweaks['mch'] ):
-            first  = 0
-            middle = trunc( len( tweaks['mch'] ) / 2 )
-            last   = len( tweaks['mch'] ) - 1
+        if self.limb_type == 'paw':
 
-            if i == first or i == middle:
-                make_constraint( self, b, {
-                    'constraint'  : 'COPY_SCALE',
-                    'subtarget'   : 'root'
-                })
-            elif i != last:
-                targets       = []
-                dt_target_idx = middle
-                factor        = 0
-                if i < middle:
-                    targets = [first,middle]
-                else:
-                    targets       = [middle,last]
-                    factor        = self.segments
-                    dt_target_idx = last
+            for i,b in enumerate( tweaks['mch'] ):
+                first  = 0
+                middle = trunc( len( tweaks['mch'] ) / 3 )
+                middle1 = middle + self.segments
+                last   =  len( tweaks['mch'] ) - 1
 
-                # Use copy transforms constraints to position each bone
-                # exactly in the location respective to its index (between
-                # the two edges)
-                make_constraint( self, b, {
-                    'constraint'  : 'COPY_TRANSFORMS',
-                    'subtarget'   : tweaks['ctrl'][targets[0]]
-                })
-                make_constraint( self, b, {
-                    'constraint'  : 'COPY_TRANSFORMS',
-                    'subtarget'   : tweaks['ctrl'][targets[1]],
-                    'influence'   : (i - factor) / self.segments
-                })
-                make_constraint( self, b, {
-                    'constraint'  : 'DAMPED_TRACK',
-                    'subtarget'   : tweaks['ctrl'][ dt_target_idx ],
-                })
+                if i == first or i == middle or i == middle1:
+                    make_constraint( self, b, {
+                        'constraint'  : 'COPY_SCALE',
+                        'subtarget'   : 'root'
+                    })
+                elif i != last:
+                    targets       = []
+                    factor        = 0
+                    if i < middle:
+                        dt_target_idx = middle
+                        targets = [first,middle]
+                    elif i > middle and i < middle1:
+                        targets = [middle,middle1]
+                        factor = self.segments
+                        dt_target_idx = middle1
+                    else:
+                        targets       = [middle1,last]
+                        factor        = self.segments * 2
+                        dt_target_idx = last
+
+
+                    # Use copy transforms constraints to position each bone
+                    # exactly in the location respective to its index (between
+                    # the two edges)
+                    make_constraint( self, b, {
+                        'constraint'  : 'COPY_TRANSFORMS',
+                        'subtarget'   : tweaks['ctrl'][targets[0]],
+                    })
+                    make_constraint( self, b, {
+                        'constraint'  : 'COPY_TRANSFORMS',
+                        'subtarget'   : tweaks['ctrl'][targets[1]],
+                        'influence'   : (i - factor) / self.segments
+                    })
+                    make_constraint( self, b, {
+                        'constraint'  : 'DAMPED_TRACK',
+                        'subtarget'   : tweaks['ctrl'][ dt_target_idx ],
+                    })
+
+        else:
+            for i,b in enumerate( tweaks['mch'] ):
+                first  = 0
+                middle = trunc( len( tweaks['mch'] ) / 2 )
+                last   = len( tweaks['mch'] ) - 1
+
+                if i == first or i == middle:
+                    make_constraint( self, b, {
+                        'constraint'  : 'COPY_SCALE',
+                        'subtarget'   : 'root'
+                    })
+                elif i != last:
+                    targets       = []
+                    dt_target_idx = middle
+                    factor        = 0
+                    if i < middle:
+                        targets = [first,middle]
+                    else:
+                        targets       = [middle,last]
+                        factor        = self.segments
+                        dt_target_idx = last
+
+                    # Use copy transforms constraints to position each bone
+                    # exactly in the location respective to its index (between
+                    # the two edges)
+                    make_constraint( self, b, {
+                        'constraint'  : 'COPY_TRANSFORMS',
+                        'subtarget'   : tweaks['ctrl'][targets[0]],
+                    })
+                    make_constraint( self, b, {
+                        'constraint'  : 'COPY_TRANSFORMS',
+                        'subtarget'   : tweaks['ctrl'][targets[1]],
+                        'influence'   : (i - factor) / self.segments
+                    })
+                    make_constraint( self, b, {
+                        'constraint'  : 'DAMPED_TRACK',
+                        'subtarget'   : tweaks['ctrl'][ dt_target_idx ],
+                    })
 
         # Ctrl bones Locks and Widgets
         pb = self.obj.pose.bones
@@ -333,13 +386,16 @@ class Rig:
                 eb[ bone ].length /= 4
 
         # Create MCH Stretch
-        mch_str = copy_bone( 
+        mch_str = copy_bone(
             self.obj, 
             org_bones[0],
             get_bone_name( org_bones[0], 'mch', 'ik_stretch' )
         )
 
-        eb[ mch_str ].tail = eb[ org_bones[-1] ].head
+        if self.limb_type != 'paw':
+            eb[ mch_str ].tail = eb[ org_bones[-1] ].head
+        else:
+            eb[ mch_str ].tail = eb[ org_bones[-2] ].head
         
         # Parenting
         eb[ ctrl    ].parent = eb[ parent ]
@@ -374,8 +430,11 @@ class Rig:
     
 
     def create_fk( self, parent ):
-        org_bones = self.org_bones
-        
+        org_bones = self.org_bones.copy()
+
+        if self.limb_type == 'paw':  # Paw base chain is one bone longer
+            org_bones.pop()
+
         bpy.ops.object.mode_set(mode ='EDIT')
         eb = self.obj.data.edit_bones
 
@@ -429,7 +488,7 @@ class Rig:
         for i,o in enumerate(org):
             if i > 0:
                 eb[o].parent = eb[ org[i-1] ]
-                if i <= 2:
+                if i <= len(org)-1:
                     eb[o].use_connect = True
 
         bpy.ops.object.mode_set(mode ='OBJECT')
@@ -504,7 +563,7 @@ class Rig:
 
         bones = self.create_terminal( self.limb_type, bones )
         
-        return [ create_script( bones ) ]
+        return [ create_script( bones, self.limb_type ) ]
         
 def add_parameters( params ):
     """ Add the parameters of this rig type to the

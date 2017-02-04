@@ -44,7 +44,7 @@ def mesh_triangulate(me):
 
 
 def write_mtl(scene, filepath, path_mode, copy_set, mtl_dict):
-    from mathutils import Color
+    from mathutils import Color, Vector
 
     world = scene.world
     if world:
@@ -152,35 +152,46 @@ def write_mtl(scene, filepath, path_mode, copy_set, mtl_dict):
                             # texface overrides others
                             if (mtex.use_map_color_diffuse and (face_img is None) and
                                 (mtex.use_map_warp is False) and (mtex.texture_coords != 'REFLECTION')):
-                                image_map["map_Kd"] = image
+                                image_map["map_Kd"] = (mtex, image)
                             if mtex.use_map_ambient:
-                                image_map["map_Ka"] = image
+                                image_map["map_Ka"] = (mtex, image)
                             # this is the Spec intensity channel but Ks stands for specular Color
                             '''
                             if mtex.use_map_specular:
-                                image_map["map_Ks"] = image
+                                image_map["map_Ks"] = (mtex, image)
                             '''
                             if mtex.use_map_color_spec:  # specular color
-                                image_map["map_Ks"] = image
+                                image_map["map_Ks"] = (mtex, image)
                             if mtex.use_map_hardness:  # specular hardness/glossiness
-                                image_map["map_Ns"] = image
+                                image_map["map_Ns"] = (mtex, image)
                             if mtex.use_map_alpha:
-                                image_map["map_d"] = image
+                                image_map["map_d"] = (mtex, image)
                             if mtex.use_map_translucency:
-                                image_map["map_Tr"] = image
+                                image_map["map_Tr"] = (mtex, image)
                             if mtex.use_map_normal:
-                                image_map["map_Bump"] = image
+                                image_map["map_Bump"] = (mtex, image)
                             if mtex.use_map_displacement:
-                                image_map["disp"] = image
+                                image_map["disp"] = (mtex, image)
                             if mtex.use_map_color_diffuse and (mtex.texture_coords == 'REFLECTION'):
-                                image_map["refl"] = image
+                                image_map["refl"] = (mtex, image)
                             if mtex.use_map_emit:
-                                image_map["map_Ke"] = image
+                                image_map["map_Ke"] = (mtex, image)
 
-                for key, image in sorted(image_map.items()):
+                for key, (mtex, image) in sorted(image_map.items()):
                     filepath = bpy_extras.io_utils.path_reference(image.filepath, source_dir, dest_dir,
                                                                   path_mode, "", copy_set, image.library)
-                    fw('%s %s\n' % (key, repr(filepath)[1:-1]))
+                    options = []
+                    if key == "map_Bump":
+                        if mtex.normal_factor != 1.0:
+                            options.append('-bm %.6f' % mtex.normal_factor)
+                    if mtex.offset != Vector((0.0, 0.0, 0.0)):
+                        options.append('-o %.6f %.6f %.6f' % mtex.offset[:])
+                    if mtex.scale != Vector((1.0, 1.0, 1.0)):
+                        options.append('-s %.6f %.6f %.6f' % mtex.scale[:])
+                    if options:
+                        fw('%s %s %s\n' % (key, " ".join(options), repr(filepath)[1:-1]))
+                    else:
+                        fw('%s %s\n' % (key, repr(filepath)[1:-1]))
 
 
 def test_nurbs_compat(ob):
@@ -269,6 +280,7 @@ def write_file(filepath, objects, scene,
                EXPORT_UV=True,
                EXPORT_MTL=True,
                EXPORT_APPLY_MODIFIERS=True,
+               EXPORT_APPLY_MODIFIERS_RENDER=False,
                EXPORT_BLEN_OBS=True,
                EXPORT_GROUP_BY_OB=False,
                EXPORT_GROUP_BY_MAT=False,
@@ -352,18 +364,16 @@ def write_file(filepath, objects, scene,
                     subprogress1.step("Ignoring %s, dupli child..." % ob_main.name)
                     continue
 
-                obs = []
+                obs = [(ob_main, ob_main.matrix_world)]
                 if ob_main.dupli_type != 'NONE':
                     # XXX
                     print('creating dupli_list on', ob_main.name)
                     ob_main.dupli_list_create(scene)
 
-                    obs = [(dob.object, dob.matrix) for dob in ob_main.dupli_list]
+                    obs += [(dob.object, dob.matrix) for dob in ob_main.dupli_list]
 
                     # XXX debug print
-                    print(ob_main.name, 'has', len(obs), 'dupli children')
-                else:
-                    obs = [(ob_main, ob_main.matrix_world)]
+                    print(ob_main.name, 'has', len(obs) - 1, 'dupli children')
 
                 subprogress1.enter_substeps(len(obs))
                 for ob, ob_mat in obs:
@@ -378,7 +388,8 @@ def write_file(filepath, objects, scene,
                         # END NURBS
 
                         try:
-                            me = ob.to_mesh(scene, EXPORT_APPLY_MODIFIERS, 'PREVIEW', calc_tessface=False)
+                            me = ob.to_mesh(scene, EXPORT_APPLY_MODIFIERS, calc_tessface=False, 
+                                            settings='RENDER' if EXPORT_APPLY_MODIFIERS_RENDER else 'PREVIEW')
                         except RuntimeError:
                             me = None
 
@@ -418,9 +429,8 @@ def write_file(filepath, objects, scene,
                         if EXPORT_NORMALS and face_index_pairs:
                             me.calc_normals_split()
                             # No need to call me.free_normals_split later, as this mesh is deleted anyway!
-                            loops = me.loops
-                        else:
-                            loops = []
+
+                        loops = me.loops
 
                         if (EXPORT_SMOOTH_GROUPS or EXPORT_SMOOTH_GROUPS_BITFLAGS) and face_index_pairs:
                             smooth_groups, smooth_groups_tot = me.calc_smooth_groups(EXPORT_SMOOTH_GROUPS_BITFLAGS)
@@ -507,7 +517,13 @@ def write_file(filepath, objects, scene,
                                 uv_ls = uv_face_mapping[f_index] = []
                                 for uv_index, l_index in enumerate(f.loop_indices):
                                     uv = uv_layer[l_index].uv
-                                    uv_key = veckey2d(uv)
+                                    # include the vertex index in the key so we don't share UV's between vertices,
+                                    # allowed by the OBJ spec but can cause issues for other importers, see: T47010.
+
+                                    # this works too, shared UV's for all verts
+                                    #~ uv_key = veckey2d(uv)
+                                    uv_key = loops[l_index].vertex_index, veckey2d(uv)
+
                                     uv_val = uv_get(uv_key)
                                     if uv_val is None:
                                         uv_val = uv_dict[uv_key] = uv_unique_count
@@ -532,7 +548,7 @@ def write_file(filepath, objects, scene,
                                     no_val = no_get(no_key)
                                     if no_val is None:
                                         no_val = normals_to_idx[no_key] = no_unique_count
-                                        fw('vn %.6f %.6f %.6f\n' % no_key)
+                                        fw('vn %.4f %.4f %.4f\n' % no_key)
                                         no_unique_count += 1
                                     loops_to_normals[l_idx] = no_val
                             del normals_to_idx, no_get, no_key, no_val
@@ -706,6 +722,7 @@ def _write(context, filepath,
            EXPORT_UV,  # ok
            EXPORT_MTL,
            EXPORT_APPLY_MODIFIERS,  # ok
+           EXPORT_APPLY_MODIFIERS_RENDER,  # ok
            EXPORT_BLEN_OBS,
            EXPORT_GROUP_BY_OB,
            EXPORT_GROUP_BY_MAT,
@@ -762,6 +779,7 @@ def _write(context, filepath,
                        EXPORT_UV,
                        EXPORT_MTL,
                        EXPORT_APPLY_MODIFIERS,
+                       EXPORT_APPLY_MODIFIERS_RENDER,
                        EXPORT_BLEN_OBS,
                        EXPORT_GROUP_BY_OB,
                        EXPORT_GROUP_BY_MAT,
@@ -785,7 +803,9 @@ Currently the exporter lacks these features:
 """
 
 
-def save(operator, context, filepath="",
+def save(context,
+         filepath,
+         *,
          use_triangles=False,
          use_edges=True,
          use_normals=False,
@@ -794,6 +814,7 @@ def save(operator, context, filepath="",
          use_uvs=True,
          use_materials=True,
          use_mesh_modifiers=True,
+         use_mesh_modifiers_render=False,
          use_blen_objects=True,
          group_by_object=False,
          group_by_material=False,
@@ -815,6 +836,7 @@ def save(operator, context, filepath="",
            EXPORT_UV=use_uvs,
            EXPORT_MTL=use_materials,
            EXPORT_APPLY_MODIFIERS=use_mesh_modifiers,
+           EXPORT_APPLY_MODIFIERS_RENDER=use_mesh_modifiers_render,
            EXPORT_BLEN_OBS=use_blen_objects,
            EXPORT_GROUP_BY_OB=group_by_object,
            EXPORT_GROUP_BY_MAT=group_by_material,

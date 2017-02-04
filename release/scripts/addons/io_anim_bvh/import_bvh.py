@@ -20,7 +20,7 @@
 
 # Script copyright (C) Campbell Barton
 
-from math import radians
+from math import radians, ceil
 
 import bpy
 from mathutils import Vector, Euler, Matrix
@@ -79,7 +79,7 @@ class BVH_Node:
         self.anim_data = [(0, 0, 0, 0, 0, 0)]
 
     def __repr__(self):
-        return ('BVH name:"%s", rest_loc:(%.3f,%.3f,%.3f), rest_tail:(%.3f,%.3f,%.3f)' %
+        return ("BVH name: '%s', rest_loc:(%.3f,%.3f,%.3f), rest_tail:(%.3f,%.3f,%.3f)" %
                 (self.name,
                  self.rest_head_world.x, self.rest_head_world.y, self.rest_head_world.z,
                  self.rest_head_world.x, self.rest_head_world.y, self.rest_head_world.z))
@@ -114,6 +114,7 @@ def read_bvh(context, file_path, rotate_mode='XYZ', global_scale=1.0):
 
     bvh_nodes = {None: None}
     bvh_nodes_serial = [None]
+    bvh_frame_count = None
     bvh_frame_time = None
 
     channelIndex = -1
@@ -205,8 +206,13 @@ def read_bvh(context, file_path, rotate_mode='XYZ', global_scale=1.0):
         #  Frames: n
         #  Frame Time: dt
         if len(file_lines[lineIdx]) == 1 and file_lines[lineIdx][0].lower() == 'motion':
-            lineIdx += 2  # Read frame rate.
+            lineIdx += 1  # Read frame count.
+            if (len(file_lines[lineIdx]) == 2 and
+                file_lines[lineIdx][0].lower() == 'frames:'):
 
+                bvh_frame_count = int(file_lines[lineIdx][1])
+
+            lineIdx += 1  # Read frame rate.
             if (len(file_lines[lineIdx]) == 3 and
                 file_lines[lineIdx][0].lower() == 'frame' and
                 file_lines[lineIdx][1].lower() == 'time:'):
@@ -292,7 +298,7 @@ def read_bvh(context, file_path, rotate_mode='XYZ', global_scale=1.0):
             bvh_node.rest_tail_local.y = bvh_node.rest_tail_local.y + global_scale / 10
             bvh_node.rest_tail_world.y = bvh_node.rest_tail_world.y + global_scale / 10
 
-    return bvh_nodes, bvh_frame_time
+    return bvh_nodes, bvh_frame_time, bvh_frame_count
 
 
 def bvh_node_dict2objects(context, bvh_name, bvh_nodes, rotate_mode='NATIVE', frame_start=1, IMPORT_LOOP=False):
@@ -601,9 +607,9 @@ def bvh_node_dict2armature(context,
     return arm_ob
 
 
-def load(operator,
-         context,
-         filepath="",
+def load(context,
+         filepath,
+         *,
          target='ARMATURE',
          rotate_mode='NATIVE',
          global_scale=1.0,
@@ -611,26 +617,46 @@ def load(operator,
          frame_start=1,
          global_matrix=None,
          use_fps_scale=False,
+         update_scene_fps=False,
+         update_scene_duration=False,
+         report=print
          ):
 
     import time
     t1 = time.time()
-    print('\tparsing bvh %r...' % filepath, end="")
+    print("\tparsing bvh %r..." % filepath, end="")
 
-    bvh_nodes, bvh_frame_time = read_bvh(context, filepath,
+    bvh_nodes, bvh_frame_time, bvh_frame_count = read_bvh(context, filepath,
             rotate_mode=rotate_mode,
             global_scale=global_scale)
 
-    print('%.4f' % (time.time() - t1))
+    print("%.4f" % (time.time() - t1))
 
     scene = context.scene
     frame_orig = scene.frame_current
-    fps = scene.render.fps
+
+    # Broken BVH handling: guess frame rate when it is not contained in the file.
     if bvh_frame_time is None:
-        bvh_frame_time = 1.0 / scene.render.fps
+        report({'WARNING'}, "The BVH file does not contain frame duration in its MOTION "
+                            "section, assuming the BVH and Blender scene have the same "
+                            "frame rate")
+        bvh_frame_time = scene.render.fps_base / scene.render.fps
+        # No need to scale the frame rate, as they're equal now anyway.
+        use_fps_scale = False
+
+    if update_scene_fps:
+        _update_scene_fps(context, report, bvh_frame_time)
+
+        # Now that we have a 1-to-1 mapping of Blender frames and BVH frames, there is no need
+        # to scale the FPS any more. It's even better not to, to prevent roundoff errors.
+        use_fps_scale = False
+
+    if update_scene_duration:
+        _update_scene_duration(context, report, bvh_frame_count, bvh_frame_time, frame_start,
+                               use_fps_scale)
 
     t1 = time.time()
-    print('\timporting to blender...', end="")
+    print("\timporting to blender...", end="")
 
     bvh_name = bpy.path.display_name_from_filepath(filepath)
 
@@ -652,10 +678,55 @@ def load(operator,
                               )
 
     else:
-        raise Exception("invalid type")
+        report({'ERROR'}, "Invalid target %r (must be 'ARMATURE' or 'OBJECT')" % target)
+        return {'CANCELLED'}
 
     print('Done in %.4f\n' % (time.time() - t1))
 
     context.scene.frame_set(frame_orig)
 
     return {'FINISHED'}
+
+
+def _update_scene_fps(context, report, bvh_frame_time):
+    """Update the scene's FPS settings from the BVH, but only if the BVH contains enough info."""
+
+    # Broken BVH handling: prevent division by zero.
+    if bvh_frame_time == 0.0:
+        report({'WARNING'}, "Unable to update scene frame rate, as the BVH file "
+                            "contains a zero frame duration in its MOTION section")
+        return
+
+    scene = context.scene
+    scene_fps = scene.render.fps / scene.render.fps_base
+    new_fps = 1.0 / bvh_frame_time
+
+    if scene.render.fps != new_fps or scene.render.fps_base != 1.0:
+        print("\tupdating scene FPS (was %f) to BVH FPS (%f)" % (scene_fps, new_fps))
+    scene.render.fps = new_fps
+    scene.render.fps_base = 1.0
+
+
+def _update_scene_duration(context, report, bvh_frame_count, bvh_frame_time, frame_start,
+                           use_fps_scale):
+    """Extend the scene's duration so that the BVH file fits in its entirety."""
+
+    if bvh_frame_count is None:
+        report({'WARNING'}, "Unable to extend the scene duration, as the BVH file does not "
+                            "contain the number of frames in its MOTION section")
+        return
+
+    # Not likely, but it can happen when a BVH is just used to store an armature.
+    if bvh_frame_count == 0:
+        return
+
+    if use_fps_scale:
+        scene_fps = context.scene.render.fps / context.scene.render.fps_base
+        scaled_frame_count = int(ceil(bvh_frame_count * bvh_frame_time * scene_fps))
+        bvh_last_frame = frame_start + scaled_frame_count
+    else:
+        bvh_last_frame = frame_start + bvh_frame_count
+
+    # Only extend the scene, never shorten it.
+    if context.scene.frame_end < bvh_last_frame:
+        context.scene.frame_end = bvh_last_frame

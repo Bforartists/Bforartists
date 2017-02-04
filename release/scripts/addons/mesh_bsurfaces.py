@@ -21,7 +21,7 @@ bl_info = {
     "name": "Bsurfaces GPL Edition",
     "author": "Eclectiel",
     "version": (1, 5),
-    "blender": (2, 63, 0),
+    "blender": (2, 76, 0),
     "location": "View3D > EditMode > ToolShelf",
     "description": "Modeling and retopology tool.",
     "wiki_url": "http://wiki.blender.org/index.php/Dev:Ref/Release_Notes/2.64/Bsurfaces_1.5",
@@ -2861,7 +2861,7 @@ class GPENCIL_OT_SURFSK_add_surface(bpy.types.Operator):
 
 
     def execute(self, context):
-        self.initial_global_undo_state = bpy.context.user_preferences.edit.use_global_undo
+#        self.initial_global_undo_state = bpy.context.user_preferences.edit.use_global_undo
 
         bpy.context.user_preferences.edit.use_global_undo = False
 
@@ -2967,12 +2967,12 @@ class GPENCIL_OT_SURFSK_add_surface(bpy.types.Operator):
         self.loops_on_strokes = bpy.context.scene.SURFSK_loops_on_strokes
         self.keep_strokes = bpy.context.scene.SURFSK_keep_strokes
 
-        self.edges_U = 10
+        self.edges_U = 5
 
         if self.loops_on_strokes:
-            self.edges_V = 3
+            self.edges_V = 1
         else:
-            self.edges_V = 10
+            self.edges_V = 5
 
         self.is_fill_faces = False
 
@@ -3465,7 +3465,7 @@ class CURVE_OT_SURFSK_reorder_splines(bpy.types.Operator):
             self.main_curve.data.splines[0].bezier_points[0].select_control_point = True
 
             bpy.ops.object.editmode_toggle('INVOKE_REGION_WIN')
-            bpy.ops.curve.separate('INVOKE_REGION_WIN')
+            bpy.ops.curve.separate('EXEC_REGION_WIN')
             bpy.ops.object.editmode_toggle('INVOKE_REGION_WIN')
 
 
@@ -3682,7 +3682,36 @@ class CURVE_OT_SURFSK_first_points(bpy.types.Operator):
 
         return {'FINISHED'}
 
+## Addons Preferences Update Panel
+def update_panel(self, context):
+    try:
+        bpy.utils.unregister_class(VIEW3D_PT_tools_SURFSK_mesh)
+        bpy.utils.unregister_class(VIEW3D_PT_tools_SURFSK_curve)
+    except:
+        pass
+    VIEW3D_PT_tools_SURFSK_mesh.bl_category = context.user_preferences.addons[__name__].preferences.category
+    bpy.utils.register_class(VIEW3D_PT_tools_SURFSK_mesh)
+    VIEW3D_PT_tools_SURFSK_curve.bl_category = context.user_preferences.addons[__name__].preferences.category
+    bpy.utils.register_class(VIEW3D_PT_tools_SURFSK_curve)
 
+class BsurfPreferences(bpy.types.AddonPreferences):
+    # this must match the addon name, use '__package__'
+    # when defining this in a submodule of a python package.
+    bl_idname = __name__
+
+    category = bpy.props.StringProperty(
+            name="Tab Category",
+            description="Choose a name for the category of the panel",
+            default="Tools",
+            update=update_panel)
+
+    def draw(self, context):
+
+        layout = self.layout
+        row = layout.row()
+        col = row.column()
+        col.label(text="Tab Category:")
+        col.prop(self, "category", text="")
 
 
 def register():
@@ -3692,8 +3721,8 @@ def register():
     bpy.utils.register_class(GPENCIL_OT_SURFSK_edit_strokes)
     bpy.utils.register_class(CURVE_OT_SURFSK_reorder_splines)
     bpy.utils.register_class(CURVE_OT_SURFSK_first_points)
-
-
+    bpy.utils.register_class(BsurfPreferences)
+    update_panel(None, bpy.context)
 
     bpy.types.Scene.SURFSK_cyclic_cross = bpy.props.BoolProperty(
         name="Cyclic Cross",
@@ -3735,6 +3764,7 @@ def unregister():
     bpy.utils.unregister_class(GPENCIL_OT_SURFSK_edit_strokes)
     bpy.utils.unregister_class(CURVE_OT_SURFSK_reorder_splines)
     bpy.utils.unregister_class(CURVE_OT_SURFSK_first_points)
+    bpy.utils.unregister_class(BsurfPreferences)
 
     del bpy.types.Scene.SURFSK_precision
     del bpy.types.Scene.SURFSK_keep_strokes

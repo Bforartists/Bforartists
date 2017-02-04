@@ -93,7 +93,7 @@ def read_chan(context, filepath, z_up, rot_ord, sensor_width, sensor_height):
                 obj.keyframe_insert("rotation_quaternion")
             elif obj.rotation_mode == 'AXIS_ANGLE':
                 tmp_rot = trns[1].to_axis_angle()
-                obj.rotation_axis_angle = (tmp_rot[1], ) + tmp_rot[0][:]
+                obj.rotation_axis_angle = (tmp_rot[1], *tmp_rot[0])
                 obj.keyframe_insert("rotation_axis_angle")
                 del tmp_rot
             else:

@@ -775,6 +775,9 @@ class AnimationCurveNodeWrapper:
         if not self._keys:
             return
 
+        if fac == 0.0:
+            return
+
         # So that, with default factor and step values (1), we get:
         min_reldiff_fac = fac * 1.0e-3  # min relative value evolution: 0.1% of current 'order of magnitude'.
         min_absdiff_fac = 0.1  # A tenth of reldiff...
@@ -1155,7 +1158,7 @@ class ObjectWrapper(metaclass=MetaObjectWrapper):
         if self.parent == arm_obj and self.bdata.parent_type == 'ARMATURE':
             return True
         for mod in self.bdata.modifiers:
-            if mod.type == 'ARMATURE' and mod.object == arm_obj.bdata:
+            if mod.type == 'ARMATURE' and mod.object in {arm_obj.bdata, arm_obj.bdata.proxy}:
                 return True
 
     # #### Duplis...
@@ -1190,9 +1193,10 @@ FBXExportSettingsMedia = namedtuple("FBXExportSettingsMedia", (
 FBXExportSettings = namedtuple("FBXExportSettings", (
     "report", "to_axes", "global_matrix", "global_scale", "apply_unit_scale",
     "bake_space_transform", "global_matrix_inv", "global_matrix_inv_transposed",
-    "context_objects", "object_types", "use_mesh_modifiers",
+    "context_objects", "object_types", "use_mesh_modifiers", "use_mesh_modifiers_render",
     "mesh_smooth_type", "use_mesh_edges", "use_tspace",
-    "use_armature_deform_only", "add_leaf_bones", "bone_correction_matrix", "bone_correction_matrix_inv",
+    "armature_nodetype", "use_armature_deform_only", "add_leaf_bones",
+    "bone_correction_matrix", "bone_correction_matrix_inv",
     "bake_anim", "bake_anim_use_all_bones", "bake_anim_use_nla_strips", "bake_anim_use_all_actions",
     "bake_anim_step", "bake_anim_simplify_factor", "bake_anim_force_startend_keying",
     "use_metadata", "media_settings", "use_custom_props",

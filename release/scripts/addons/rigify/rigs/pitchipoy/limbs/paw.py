@@ -30,21 +30,20 @@ def create_paw( cls, bones ):
         [cls.org_bones[0]] + connected_children_names(cls.obj, cls.org_bones[0])
     )
 
-    bones['ik']['ctrl'] = []
+
+    bones['ik']['ctrl']['terminal'] = []
     
     bpy.ops.object.mode_set(mode='EDIT')
     eb = cls.obj.data.edit_bones
 
-    # Create toes def bone
-    toes_def = get_bone_name( org_bones[-1], 'def' )
-    toes_def = copy_bone( cls.obj, org_bones[-1], toes_def )
+    # Create IK paw control
+    ctrl = get_bone_name( org_bones[2], 'ctrl', 'ik' )
+    ctrl = copy_bone( cls.obj, org_bones[2], ctrl )
 
-    eb[ toes_def ].use_connect = False
-    eb[ toes_def ].parent      = eb[ bones['def'][-1] ]
-    eb[ toes_def ].use_connect = True
+    # clear parent (so that rigify will parent to root)
+    eb[ ctrl ].parent      = None
+    eb[ ctrl ].use_connect = False
 
-    bones['def'] += [ toes_def ]
-    
     # Create heel control bone
     heel = get_bone_name( org_bones[2], 'ctrl', 'heel_ik' )
     heel = copy_bone( cls.obj, org_bones[2], heel )
@@ -53,15 +52,7 @@ def create_paw( cls, bones ):
     eb[ heel ].parent      = None
     eb[ heel ].use_connect = False
 
-    # Create IK paw control
-    ctrl = get_bone_name( org_bones[2], 'ctrl', 'ik' )
-    ctrl = copy_bone( cls.obj, org_bones[2], ctrl )
-
-    # clear parent (so that rigify will parent to root) 
-    eb[ ctrl ].parent      = None
-    eb[ ctrl ].use_connect = False
-
-    # Parent 
+    # Parent
     eb[ heel ].parent      = eb[ ctrl ]
     eb[ heel ].use_connect = False
 
@@ -103,8 +94,15 @@ def create_paw( cls, bones ):
         'owner_space' : 'LOCAL'
     })
 
-    # Create ik/fk switch property
     pb = cls.obj.pose.bones
+
+    # Modify rotation mode for ik and tweak controls
+    pb[bones['ik']['ctrl']['limb']].rotation_mode = 'ZXY'
+
+    for b in bones['tweak']['ctrl']:
+        pb[b].rotation_mode = 'ZXY'
+
+    # Create ik/fk switch property
     pb_parent = pb[ bones['parent'] ]
     
     pb_parent['IK_Strertch'] = 1.0
@@ -170,19 +168,18 @@ def create_paw( cls, bones ):
         })
 
         # Constrain toes def bones
-        make_constraint( cls, bones['def'][-2], {
-            'constraint'  : 'DAMPED_TRACK',
-            'subtarget'   : toes
-        })
-        make_constraint( cls, bones['def'][-2], {
-            'constraint'  : 'STRETCH_TO',
-            'subtarget'   : toes
-        })        
-       
+
         make_constraint( cls, bones['def'][-1], {
-            'constraint'  : 'COPY_TRANSFORMS',
-            'subtarget'   : toes
+            'constraint'  : 'DAMPED_TRACK',
+            'subtarget'   : toes,
+            'head_tail'   : 1
         })
+        make_constraint( cls, bones['def'][-1], {
+            'constraint'  : 'STRETCH_TO',
+            'subtarget'   : toes,
+            'head_tail'   : 1
+        })
+
 
         # Find IK/FK switch property
         pb   = cls.obj.pose.bones

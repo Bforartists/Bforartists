@@ -1907,9 +1907,11 @@ def save_single(operator, scene, filepath="",
 
                         # Warning for scaled, mesh objects with armatures
                         if abs(ob.scale[0] - 1.0) > 0.05 or abs(ob.scale[1] - 1.0) > 0.05 or abs(ob.scale[1] - 1.0) > 0.05:
-                            operator.report({'WARNING'}, "Object '%s' has a scale of (%.3f, %.3f, %.3f), " \
-                                                         "Armature deformation will not work as expected " \
-                                                         "(apply Scale to fix)" % ((ob.name,) + tuple(ob.scale)))
+                            operator.report(
+                                    {'WARNING'},
+                                    "Object '%s' has a scale of (%.3f, %.3f, %.3f), "
+                                    "Armature deformation will not work as expected "
+                                    "(apply Scale to fix)" % (ob.name, *ob.scale))
 
                     else:
                         blenParentBoneName = armob = None

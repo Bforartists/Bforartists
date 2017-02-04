@@ -178,8 +178,9 @@ def save_object(fw, global_matrix,
             bm = bmesh.new()
             bm.from_mesh(me)
 
-    bm.transform(global_matrix * obj.matrix_world)
+    # triangulate first so tessellation matches the view-port.
     bmesh.ops.triangulate(bm, faces=bm.faces)
+    bm.transform(global_matrix * obj.matrix_world)
 
     # default empty
     material_colors = []

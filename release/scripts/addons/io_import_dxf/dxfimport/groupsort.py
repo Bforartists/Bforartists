@@ -53,6 +53,13 @@ def by_layer(entities):
     keyf = lambda e: e.layer
     return itertools.groupby(sorted(entities, key=keyf), key=keyf)
 
+def by_closed_poly_no_bulge(entities):
+    """
+    entities: list of DXF entities
+    """
+    keyf = lambda e: is_.closed_poly_no_bulge(e)
+    return itertools.groupby(sorted(entities, key=keyf), key=keyf)
+
 
 def by_dxftype(entities):
     """
@@ -81,3 +88,10 @@ def by_attributes(entities):
         return entity.thickness, subd, width, extrusion
 
     return itertools.groupby(sorted(entities, key=attributes), key=attributes)
+
+def by_insert_block_name(inserts):
+    """
+    entities: list of DXF inserts
+    """
+    keyf = lambda e: e.name
+    return itertools.groupby(sorted(inserts, key=keyf), key=keyf)
