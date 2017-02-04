@@ -1,14 +1,20 @@
 # GPL # "author": "Pontiac, Fourmadmen, Dreampainter"
 
 import bpy
-from mathutils import *
-from math import *
-from bpy.props import *
+from bpy.types import Operator
+from mathutils import Vector, Quaternion
+from math import cos, sin, pi
+from bpy.props import (
+        FloatProperty,
+        IntProperty,
+        )
+
 
 # Create a new mesh (object) from verts/edges/faces.
 # verts/edges/faces ... List of vertices/edges/faces for the
-#                       new mesh (as used in from_pydata).
-# name ... Name of the new mesh (& object).
+#                       new mesh (as used in from_pydata)
+# name ... Name of the new mesh (& object)
+
 def create_mesh_object(context, verts, edges, faces, name):
 
     # Create new mesh
@@ -22,6 +28,7 @@ def create_mesh_object(context, verts, edges, faces, name):
 
     from bpy_extras import object_utils
     return object_utils.object_data_add(context, mesh, operator=None)
+
 
 # A very simple "bridge" tool.
 
@@ -44,7 +51,7 @@ def createFaces(vertIdx1, vertIdx2, closed=False, flipped=False):
     total = len(vertIdx2)
 
     if closed:
-        # Bridge the start with the end.
+        # Bridge the start with the end
         if flipped:
             face = [
                 vertIdx1[0],
@@ -61,7 +68,7 @@ def createFaces(vertIdx1, vertIdx2, closed=False, flipped=False):
             face.append(vertIdx2[total - 1])
             faces.append(face)
 
-    # Bridge the rest of the faces.
+    # Bridge the rest of the faces
     for num in range(total - 1):
         if flipped:
             if fan:
@@ -79,6 +86,7 @@ def createFaces(vertIdx1, vertIdx2, closed=False, flipped=False):
             faces.append(face)
 
     return faces
+
 
 # @todo Clean up vertex&face creation process a bit.
 def add_gem(r1, r2, seg, h1, h2):
@@ -139,8 +147,9 @@ def add_gem(r1, r2, seg, h1, h2):
 
     return verts, faces
 
+
 def add_diamond(segments, girdle_radius, table_radius,
-    crown_height, pavilion_height):
+                crown_height, pavilion_height):
 
     PI_2 = pi * 2.0
     z_axis = (0.0, 0.0, -1.0)
@@ -192,37 +201,48 @@ def add_diamond(segments, girdle_radius, table_radius,
 
     return verts, faces
 
-class AddDiamond(bpy.types.Operator):
-    """Add a diamond mesh"""
+
+class AddDiamond(Operator):
     bl_idname = "mesh.primitive_diamond_add"
     bl_label = "Add Diamond"
+    bl_description = "Construct a diamond mesh"
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
-    segments = IntProperty(name="Segments",
-        description="Number of segments for the diamond",
-        min=3,
-        max=256,
-        default=32)
-    girdle_radius = FloatProperty(name="Girdle Radius",
-        description="Girdle radius of the diamond",
-        min=0.01,
-        max=9999.0,
-        default=1.0)
-    table_radius = FloatProperty(name="Table Radius",
-        description="Girdle radius of the diamond",
-        min=0.01,
-        max=9999.0,
-        default=0.6)
-    crown_height = FloatProperty(name="Crown Height",
-        description="Crown height of the diamond",
-        min=0.01,
-        max=9999.0,
-        default=0.35)
-    pavilion_height = FloatProperty(name="Pavilion Height",
-        description="Pavilion height of the diamond",
-        min=0.01,
-        max=9999.0,
-        default=0.8)
+    segments = IntProperty(
+                        name="Segments",
+                        description="Number of segments for the diamond",
+                        min=3,
+                        max=256,
+                        default=32
+                        )
+    girdle_radius = FloatProperty(
+                        name="Girdle Radius",
+                        description="Girdle radius of the diamond",
+                        min=0.01,
+                        max=9999.0,
+                        default=1.0
+                        )
+    table_radius = FloatProperty(
+                        name="Table Radius",
+                        description="Girdle radius of the diamond",
+                        min=0.01,
+                        max=9999.0,
+                        default=0.6
+                        )
+    crown_height = FloatProperty(
+                        name="Crown Height",
+                        description="Crown height of the diamond",
+                        min=0.01,
+                        max=9999.0,
+                        default=0.35
+                        )
+    pavilion_height = FloatProperty(
+                        name="Pavilion Height",
+                        description="Pavilion height of the diamond",
+                        min=0.01,
+                        max=9999.0,
+                        default=0.8
+                        )
 
     def execute(self, context):
         verts, faces = add_diamond(self.segments,
@@ -235,41 +255,50 @@ class AddDiamond(bpy.types.Operator):
 
         return {'FINISHED'}
 
-class AddGem(bpy.types.Operator):
-    """Add a diamond gem"""
+
+class AddGem(Operator):
     bl_idname = "mesh.primitive_gem_add"
     bl_label = "Add Gem"
-    bl_description = "Create an offset faceted gem"
+    bl_description = "Construct an offset faceted gem mesh"
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
-    segments = IntProperty(name="Segments",
-        description="Longitudial segmentation",
-        min=3,
-        max=265,
-        default=8,)
-    pavilion_radius = FloatProperty(name="Radius",
-       description="Radius of the gem",
-       min=0.01,
-       max=9999.0,
-       default=1.0)
-    crown_radius = FloatProperty(name="Table Radius",
-       description="Radius of the table(top)",
-       min=0.01,
-       max=9999.0,
-       default=0.6)
-    crown_height = FloatProperty(name="Table height",
-       description="Height of the top half",
-       min=0.01,
-       max=9999.0,
-       default=0.35)
-    pavilion_height = FloatProperty(name="Pavilion height",
-       description="Height of bottom half",
-       min=0.01,
-       max=9999.0,
-       default=0.8)
+    segments = IntProperty(
+                        name="Segments",
+                        description="Longitudial segmentation",
+                        min=3,
+                        max=265,
+                        default=8
+                        )
+    pavilion_radius = FloatProperty(
+                        name="Radius",
+                        description="Radius of the gem",
+                        min=0.01,
+                        max=9999.0,
+                        default=1.0
+                        )
+    crown_radius = FloatProperty(
+                        name="Table Radius",
+                        description="Radius of the table(top)",
+                        min=0.01,
+                        max=9999.0,
+                        default=0.6
+                        )
+    crown_height = FloatProperty(
+                        name="Table height",
+                        description="Height of the top half",
+                        min=0.01,
+                        max=9999.0,
+                        default=0.35
+                        )
+    pavilion_height = FloatProperty(
+                        name="Pavilion height",
+                        description="Height of bottom half",
+                        min=0.01,
+                        max=9999.0,
+                        default=0.8
+                        )
 
     def execute(self, context):
-
         # create mesh
         verts, faces = add_gem(
             self.pavilion_radius,

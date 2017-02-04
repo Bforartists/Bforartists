@@ -184,7 +184,6 @@ def elem_props_get_color_rgb(elem, elem_prop_id, default=None):
             # FBX version 7300
             assert(elem_prop.props[1] == b'Color')
             assert(elem_prop.props[2] == b'')
-            assert(elem_prop.props[3] in {b'A', b'A+', b'AU'})
         else:
             assert(elem_prop.props[1] == b'ColorRGB')
             assert(elem_prop.props[2] == b'Color')
@@ -211,7 +210,6 @@ def elem_props_get_number(elem, elem_prop_id, default=None):
         else:
             assert(elem_prop.props[1] == b'Number')
             assert(elem_prop.props[2] == b'')
-            assert(elem_prop.props[3] in {b'A', b'A+', b'AU'})
 
         # we could allow other number types
         assert(elem_prop.props_type[4] == data_types.FLOAT64)
@@ -275,7 +273,6 @@ def elem_props_get_visibility(elem, elem_prop_id, default=None):
         assert(elem_prop.props[0] == elem_prop_id)
         assert(elem_prop.props[1] == b'Visibility')
         assert(elem_prop.props[2] == b'')
-        assert(elem_prop.props[3] in {b'A', b'A+', b'AU'})
 
         # we could allow other number types
         assert(elem_prop.props_type[4] == data_types.FLOAT64)
@@ -674,8 +671,13 @@ def blen_read_animations(fbx_tmpl_astack, fbx_tmpl_alayer, stacks, scene, anim_o
                     id_data = item.id_data
                 else:
                     id_data = item.bl_obj
+                    # XXX Ignore rigged mesh animations - those are a nightmare to handle, see note about it in
+                    #     FbxImportHelperNode class definition.
+                    if id_data.type == 'MESH' and id_data.parent and id_data.parent.type == 'ARMATURE':
+                        continue
                 if id_data is None:
                     continue
+
                 # Create new action if needed (should always be needed!
                 key = (as_uuid, al_uuid, id_data)
                 action = actions.get(key)
@@ -1279,7 +1281,7 @@ def blen_read_material(fbx_tmpl, fbx_obj, settings):
 
     fbx_props = (elem_find_first(fbx_obj, b'Properties70'),
                  elem_find_first(fbx_tmpl, b'Properties70', fbx_elem_nil))
-    assert(fbx_props[0] is not None)
+    #~ assert(fbx_props[0] is not None)  # Some Material may be missing that one, it seems... see T50566.
 
     ma_diff = elem_props_get_color_rgb(fbx_props, b'DiffuseColor', const_color_white)
     ma_spec = elem_props_get_color_rgb(fbx_props, b'SpecularColor', const_color_white)
@@ -1308,6 +1310,9 @@ def blen_read_material(fbx_tmpl, fbx_obj, settings):
         ma.diffuse_color = ma_diff
         ma.specular_color = ma_spec
         ma.alpha = ma_alpha
+        if ma_alpha < 1.0:
+            ma.use_transparency = True
+            ma.transparency_method = 'RAYTRACE'
         ma.specular_intensity = ma_spec_intensity
         ma.specular_hardness = ma_spec_hardness * 5.10 + 1.0
 
@@ -1466,7 +1471,7 @@ class FbxImportHelperNode:
     """
 
     __slots__ = (
-        '_parent', 'anim_compensation_matrix', 'armature_setup', 'armature', 'bind_matrix',
+        '_parent', 'anim_compensation_matrix', 'is_global_animation', 'armature_setup', 'armature', 'bind_matrix',
         'bl_bone', 'bl_data', 'bl_obj', 'bone_child_matrix', 'children', 'clusters',
         'fbx_elem', 'fbx_name', 'fbx_transform_data', 'fbx_type',
         'is_armature', 'has_bone_children', 'is_bone', 'is_root', 'is_leaf',
@@ -1494,7 +1499,15 @@ class FbxImportHelperNode:
             self.matrix, self.matrix_as_parent, self.matrix_geom = (None, None, None)
         self.post_matrix = None                 # correction matrix that needs to be applied after the FBX transform
         self.bone_child_matrix = None           # Objects attached to a bone end not the beginning, this matrix corrects for that
+
+        # XXX Those two are to handle the fact that rigged meshes are not linked to their armature in FBX, which implies
+        #     that their animation is in global space (afaik...).
+        #     This is actually not really solvable currently, since anim_compensation_matrix is not valid if armature
+        #     itself is animated (we'd have to recompute global-to-local anim_compensation_matrix for each frame,
+        #     and for each armature action... beyond being an insane work).
+        #     Solution for now: do not read rigged meshes animations at all! sic...
         self.anim_compensation_matrix = None    # a mesh moved in the hierarchy may have a different local matrix. This compensates animations for this.
+        self.is_global_animation = False
 
         self.meshes = None                      # List of meshes influenced by this bone.
         self.clusters = []                      # Deformer Cluster nodes
@@ -1677,11 +1690,12 @@ class FbxImportHelperNode:
                 armature = self
             else:
                 # otherwise insert a new node
+                # XXX Maybe in case self is virtual FBX root node, we should instead add one armature per bone child?
                 armature = FbxImportHelperNode(None, None, None, False)
                 armature.fbx_name = "Armature"
                 armature.is_armature = True
 
-                for child in self.children:
+                for child in tuple(self.children):
                     if child.is_bone:
                         child.parent = armature
 
@@ -1785,6 +1799,7 @@ class FbxImportHelperNode:
                 old_matrix = m.matrix
                 m.matrix = armature_matrix_inv * m.get_world_matrix()
                 m.anim_compensation_matrix = old_matrix.inverted_safe() * m.matrix
+                m.is_global_animation = True
                 m.parent = self
             self.meshes = meshes
         else:
@@ -2095,7 +2110,7 @@ class FbxImportHelperNode:
                 child_obj = child.build_skeleton_children(fbx_tmpl, settings, scene)
 
             return arm
-        elif self.fbx_elem:
+        elif self.fbx_elem and not self.is_bone:
             obj = self.build_node_obj(fbx_tmpl, settings)
 
             # walk through children
@@ -2137,7 +2152,7 @@ class FbxImportHelperNode:
                     #       Probably because org app (max) handles it completely aside from any parenting stuff,
                     #       which we obviously cannot do in Blender. :/
                     if amat is None:
-                        amat = self.get_bind_matrix()
+                        amat = self.bind_matrix
                     amat = settings.global_matrix * (Matrix() if amat is None else amat)
                     if self.matrix_geom:
                         amat = amat * self.matrix_geom
@@ -2166,7 +2181,8 @@ class FbxImportHelperNode:
             # walk through children
             for child in self.children:
                 child_obj = child.link_hierarchy(fbx_tmpl, settings, scene)
-                child_obj.parent = obj
+                if child_obj:
+                    child_obj.parent = obj
 
             return obj
         else:
@@ -2234,16 +2250,18 @@ def load(operator, context, filepath="",
 
     try:
         elem_root, version = parse_fbx.parse(filepath)
-    except:
+    except Exception as e:
         import traceback
         traceback.print_exc()
 
-        operator.report({'ERROR'}, "Couldn't open file %r" % filepath)
+        operator.report({'ERROR'}, "Couldn't open file %r (%s)" % (filepath, e))
         return {'CANCELLED'}
 
     if version < 7100:
         operator.report({'ERROR'}, "Version %r unsupported, must be %r or later" % (version, 7100))
         return {'CANCELLED'}
+
+    print("FBX version: %r" % version)
 
     if bpy.ops.object.mode_set.poll():
         bpy.ops.object.mode_set(mode='OBJECT', toggle=False)
@@ -2315,7 +2333,7 @@ def load(operator, context, filepath="",
     custom_fps = elem_props_get_number(fbx_settings_props, b'CustomFrameRate', 25.0)
     time_mode = elem_props_get_enum(fbx_settings_props, b'TimeMode')
     real_fps = {eid: val for val, eid in FBX_FRAMERATES[1:]}.get(time_mode, custom_fps)
-    if real_fps < 0.0:
+    if real_fps <= 0.0:
         real_fps = 25.0
     scene.render.fps = round(real_fps)
     scene.render.fps_base = scene.render.fps / real_fps
@@ -2534,7 +2552,9 @@ def load(operator, context, filepath="",
             assert(fbx_props[0] is not None)
 
             transform_data = blen_read_object_transform_preprocess(fbx_props, fbx_obj, Matrix(), use_prepost_rot)
-            is_bone = fbx_obj.props[2] in {b'LimbNode'}  # Note: 'Root' "bones" are handled as (armature) objects.
+            # Note: 'Root' "bones" are handled as (armature) objects.
+            # Note: See T46912 for first FBX file I ever saw with 'Limb' bones - thought those were totally deprecated.
+            is_bone = fbx_obj.props[2] in {b'LimbNode', b'Limb'}
             fbx_helper_nodes[a_uuid] = FbxImportHelperNode(fbx_obj, bl_data, transform_data, is_bone)
 
         # add parent-child relations and add blender data to the node

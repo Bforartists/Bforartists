@@ -386,7 +386,7 @@ class Rigify_Arm_FK2IK(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return (context.active_object != None and context.mode == 'POSE')
+        return (context.active_object is not None and context.mode == 'POSE')
 
     def execute(self, context):
         use_global_undo = context.user_preferences.edit.use_global_undo
@@ -416,7 +416,7 @@ class Rigify_Arm_IK2FK(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return (context.active_object != None and context.mode == 'POSE')
+        return (context.active_object is not None and context.mode == 'POSE')
 
     def execute(self, context):
         use_global_undo = context.user_preferences.edit.use_global_undo
@@ -447,7 +447,7 @@ class Rigify_Leg_FK2IK(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return (context.active_object != None and context.mode == 'POSE')
+        return (context.active_object is not None and context.mode == 'POSE')
 
     def execute(self, context):
         use_global_undo = context.user_preferences.edit.use_global_undo
@@ -479,7 +479,7 @@ class Rigify_Leg_IK2FK(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return (context.active_object != None and context.mode == 'POSE')
+        return (context.active_object is not None and context.mode == 'POSE')
 
     def execute(self, context):
         use_global_undo = context.user_preferences.edit.use_global_undo

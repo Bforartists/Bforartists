@@ -103,8 +103,7 @@ class add_mesh_bolt(bpy.types.Operator):
             description='Diameter of the shank')
             
     bf_Phillips_Bit_Depth = FloatProperty(attr='bf_Phillips_Bit_Depth',
-            name='Bit Depth', default = 0, #set in execute
-            options = {'HIDDEN'}, #gets calculated in execute
+            name='Bit Depth', default = 1.1431535482406616, 
             min = 0, soft_min = 0,max = MAX_INPUT_NUMBER,
             description='Depth of the Phillips Bit')
 
@@ -154,8 +153,7 @@ class add_mesh_bolt(bpy.types.Operator):
             description='Diameter of the Pan Head')
 
     bf_Philips_Bit_Dia = FloatProperty(attr='bf_Philips_Bit_Dia',
-            name='Bit Dia', default = 0, #set in execute
-            options = {'HIDDEN'}, #gets calculated in execute
+            name='Bit Dia', default = 1.8199999332427979,
             min = 0, soft_min = 0,max = MAX_INPUT_NUMBER,
             description='Diameter of the Philips Bit')
     
@@ -175,8 +173,7 @@ class add_mesh_bolt(bpy.types.Operator):
             description='Pitch if the thread')
 
     bf_Minor_Dia = FloatProperty( attr='bf_Minor_Dia',
-            name='Minor Dia', default = 0, #set in execute
-            options = {'HIDDEN'}, #gets calculated in execute
+            name='Minor Dia', default = 2.6211137771606445,
             min = 0, soft_min = 0, max = MAX_INPUT_NUMBER,
             description='Inside diameter of the Thread')
             
@@ -189,6 +186,11 @@ class add_mesh_bolt(bpy.types.Operator):
             name='Root Percent', default = 10,
             min = 1, soft_min = 1, max = 90,
             description='Percent of the pitch that makes up the Root')
+            
+    bf_Div_Count = IntProperty( attr='bf_Div_Count',
+            name='Div count', default = 36,
+            min = 4, soft_min = 4, max = 4096,
+            description='Div count determine circle resolution')
 
     bf_Hex_Nut_Height = FloatProperty( attr='bf_Hex_Nut_Height',
             name='Hex Nut Height', default = 2.4,
@@ -257,6 +259,7 @@ class add_mesh_bolt(bpy.types.Operator):
         col.prop(self, 'bf_Pitch')
         col.prop(self, 'bf_Crest_Percent')
         col.prop(self, 'bf_Root_Percent')
+        col.prop(self, 'bf_Div_Count')
 
 
 
@@ -269,7 +272,6 @@ class add_mesh_bolt(bpy.types.Operator):
     def execute(self, context):
     
         #print('EXECUTING...')
-        self.bf_Phillips_Bit_Depth = float(Get_Phillips_Bit_Height(self.bf_Philips_Bit_Dia))
         Create_New_Mesh(self, context, self.align_matrix)
         return {'FINISHED'}
         

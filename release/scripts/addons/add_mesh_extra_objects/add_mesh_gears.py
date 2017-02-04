@@ -1,13 +1,19 @@
 # GPL # (c) 2009, 2010 Michel J. Anders (varkenvarken)
 
 import bpy
-from math import *
-from bpy.props import *
+from bpy.types import Operator
+from math import atan, asin, cos, sin, tan, pi, radians
+from bpy.props import (
+        FloatProperty,
+        IntProperty,
+        )
+
 
 # Create a new mesh (object) from verts/edges/faces.
 # verts/edges/faces ... List of vertices/edges/faces for the
-#                       new mesh (as used in from_pydata).
-# name ... Name of the new mesh (& object).
+#                       new mesh (as used in from_pydata)
+# name ... Name of the new mesh (& object)
+
 def create_mesh_object(context, verts, edges, faces, name):
     # Create new mesh
     mesh = bpy.data.meshes.new(name)
@@ -21,19 +27,20 @@ def create_mesh_object(context, verts, edges, faces, name):
     from bpy_extras import object_utils
     return object_utils.object_data_add(context, mesh, operator=None)
 
+
 # A very simple "bridge" tool.
 # Connects two equally long vertex rows with faces.
 # Returns a list of the new faces (list of  lists)
 #
-# vertIdx1 ... First vertex list (list of vertex indices).
-# vertIdx2 ... Second vertex list (list of vertex indices).
-# closed ... Creates a loop (first & last are closed).
-# flipped ... Invert the normal of the face(s).
+# vertIdx1 ... First vertex list (list of vertex indices)
+# vertIdx2 ... Second vertex list (list of vertex indices)
+# closed ... Creates a loop (first & last are closed)
+# flipped ... Invert the normal of the face(s)
 #
 # Note: You can set vertIdx1 to a single vertex index to create
-#       a fan/star of faces.
+#       a fan/star of faces
 # Note: If both vertex idx list are the same length they have
-#       to have at least 2 vertices.
+#       to have at least 2 vertices
 
 def createFaces(vertIdx1, vertIdx2, closed=False, flipped=False):
     faces = []
@@ -89,6 +96,7 @@ def createFaces(vertIdx1, vertIdx2, closed=False, flipped=False):
             faces.append(face)
 
     return faces
+
 
 # Calculate the vertex coordinates for a single
 # section of a gear tooth.
@@ -160,9 +168,10 @@ def add_tooth(a, t, d, radius, Ad, De, base, p_angle, rack=0, crown=0.0):
     return (verts_inner_base, verts_outer_base,
         verts_middle_tooth, verts_tip_tooth)
 
+
 # EXPERIMENTAL Calculate the vertex coordinates for a single
 # section of a gearspoke.
-# Returns them as a list of tuples.
+# Returns them as a list of tuples
 #
 # a
 # t
@@ -181,7 +190,6 @@ def add_tooth(a, t, d, radius, Ad, De, base, p_angle, rack=0, crown=0.0):
 def add_spoke(a, t, d, radius, De, base, s, w, l, gap=0, width=19):
     Rd = radius - De
     Rb = Rd - base
-    # Rl = Rb  # UNUSED
 
     verts = []
     edgefaces = []
@@ -216,29 +224,30 @@ def add_spoke(a, t, d, radius, De, base, s, w, l, gap=0, width=19):
 
     return verts, edgefaces, edgefaces2, sf
 
+
 # Create gear geometry.
 # Returns:
 # * A list of vertices (list of tuples)
 # * A list of faces (list of lists)
-# * A list (group) of vertices of the tip (list of vertex indices).
-# * A list (group) of vertices of the valley (list of vertex indices).
+# * A list (group) of vertices of the tip (list of vertex indices)
+# * A list (group) of vertices of the valley (list of vertex indices)
 #
-# teethNum ... Number of teeth on the gear.
+# teethNum ... Number of teeth on the gear
 # radius ... Radius of the gear, negative for crown gear
-# Ad ... Addendum, extent of tooth above radius.
-# De ... Dedendum, extent of tooth below radius.
-# base ... Base, extent of gear below radius.
+# Ad ... Addendum, extent of tooth above radius
+# De ... Dedendum, extent of tooth below radius
+# base ... Base, extent of gear below radius
 # p_angle ... Pressure angle. Skewness of tooth tip. (radiant)
-# width ... Width, thickness of gear.
+# width ... Width, thickness of gear
 # skew ... Skew of teeth. (radiant)
 # conangle ... Conical angle of gear. (radiant)
 # rack
-# crown ... Inward pointing extend of crown teeth.
+# crown ... Inward pointing extend of crown teeth
 #
 # inner radius = radius - (De + base)
 
 def add_gear(teethNum, radius, Ad, De, base, p_angle,
-    width=1, skew=0, conangle=0, rack=0, crown=0.0):
+             width=1, skew=0, conangle=0, rack=0, crown=0.0):
 
     if teethNum < 2:
         return None, None, None, None
@@ -266,8 +275,7 @@ def add_gear(teethNum, radius, Ad, De, base, p_angle,
         verts_outside_top = []
         verts_outside_bottom = []
         for (s, d, c, top) \
-            in [(0, -width, 1, True), \
-            (skew, width, scale, False)]:
+           in [(0, -width, 1, True), (skew, width, scale, False)]:
 
             verts1, verts2, verts3, verts4 = add_tooth(a + s, t, d,
                 radius * c, Ad * c, De * c, base * c, p_angle,
@@ -290,7 +298,7 @@ def add_gear(teethNum, radius, Ad, De, base, p_angle,
             verts_outside.append(vertsIdx2[-1])
 
             if top:
-                #verts_inside_top = vertsIdx1
+                # verts_inside_top = vertsIdx1
                 verts_outside_top = verts_outside
 
                 verts_bridge_start.append(vertsIdx1[0])
@@ -299,7 +307,7 @@ def add_gear(teethNum, radius, Ad, De, base, p_angle,
                 verts_bridge_end.append(vertsIdx2[-1])
 
             else:
-                #verts_inside_bottom = vertsIdx1
+                # verts_inside_bottom = vertsIdx1
                 verts_outside_bottom = verts_outside
 
                 verts_bridge_start.append(vertsIdx2[0])
@@ -323,8 +331,8 @@ def add_gear(teethNum, radius, Ad, De, base, p_angle,
             faces.extend(faces_tooth_middle_top)
             faces.extend(faces_tooth_outer_top)
 
-        #faces_inside = createFaces(verts_inside_top, verts_inside_bottom)
-        #faces.extend(faces_inside)
+        # faces_inside = createFaces(verts_inside_top, verts_inside_bottom)
+        # faces.extend(faces_inside)
 
         faces_outside = createFaces(verts_outside_top, verts_outside_bottom,
             flipped=True)
@@ -336,7 +344,6 @@ def add_gear(teethNum, radius, Ad, De, base, p_angle,
         # Bridge one tooth to the next
         if verts_bridge_prev:
             faces_bridge = createFaces(verts_bridge_prev, verts_bridge_start)
-                            #, closed=True (for "inside" faces)
             faces.extend(faces_bridge)
 
         # Remember "end" vertices for next tooth.
@@ -344,21 +351,21 @@ def add_gear(teethNum, radius, Ad, De, base, p_angle,
 
     # Bridge the first to the last tooth.
     faces_bridge_f_l = createFaces(verts_bridge_prev, verts_bridge_first)
-                        #, closed=True (for "inside" faces)
     faces.extend(faces_bridge_f_l)
 
     return verts, faces, vgroup_top, vgroup_valley
 
-# Create spokes geometry.
+
+# Create spokes geometry
 # Returns:
 # * A list of vertices (list of tuples)
 # * A list of faces (list of lists)
 #
 # teethNum ... Number of teeth on the gear.
 # radius ... Radius of the gear, negative for crown gear
-# De ... Dedendum, extent of tooth below radius.
-# base ... Base, extent of gear below radius.
-# width ... Width, thickness of gear.
+# De ... Dedendum, extent of tooth below radius
+# base ... Base, extent of gear below radius
+# width ... Width, thickness of gear
 # conangle ... Conical angle of gear. (radiant)
 # rack
 # spoke
@@ -369,10 +376,10 @@ def add_gear(teethNum, radius, Ad, De, base, p_angle,
 #
 # @todo Finish this
 # @todo Create a function that takes a "Gear" and creates a
-#       matching "Gear Spokes" object.
+#       matching "Gear Spokes" object
 
 def add_spokes(teethNum, radius, De, base, width=1, conangle=0, rack=0,
-    spoke=3, spbevel=0.1, spwidth=0.2, splength=1.0, spresol=9):
+               spoke=3, spbevel=0.1, spwidth=0.2, splength=1.0, spresol=9):
 
     if teethNum < 2:
         return None, None, None, None
@@ -433,6 +440,7 @@ def add_spokes(teethNum, radius, De, base, width=1, conangle=0, rack=0,
 
     return verts, faces
 
+
 # Create worm geometry.
 # Returns:
 # * A list of vertices
@@ -442,16 +450,17 @@ def add_spokes(teethNum, radius, De, base, width=1, conangle=0, rack=0,
 #
 # teethNum ... Number of teeth on the worm
 # radius ... Radius of the gear, negative for crown gear
-# Ad ... Addendum, extent of tooth above radius.
-# De ... Dedendum, extent of tooth below radius.
+# Ad ... Addendum, extent of tooth above radius
+# De ... Dedendum, extent of tooth below radius
 # p_angle ... Pressure angle. Skewness of tooth tip. (radiant)
-# width ... Width, thickness of gear.
-# crown ... Inward pointing extend of crown teeth.
+# width ... Width, thickness of gear
+# crown ... Inward pointing extend of crown teeth
 #
-# @todo: Fix teethNum. Some numbers are not possible yet.
+# @todo: Fix teethNum. Some numbers are not possible yet
 # @todo: Create start & end geoemtry (closing faces)
+
 def add_worm(teethNum, rowNum, radius, Ad, De, p_angle,
-    width=1, skew=radians(11.25), crown=0.0):
+             width=1, skew=radians(11.25), crown=0.0):
 
     worm = teethNum
     teethNum = 24
@@ -463,7 +472,7 @@ def add_worm(teethNum, rowNum, radius, Ad, De, p_angle,
     vgroup_top = []  # Vertex group of top/tip? vertices.
     vgroup_valley = []  # Vertex group of valley vertices
 
-    #width = width / 2.0
+    # width = width / 2.0
 
     edgeloop_prev = []
     for Row in range(rowNum):
@@ -534,10 +543,11 @@ def add_worm(teethNum, rowNum, radius, Ad, De, p_angle,
 
     return verts, faces, vgroup_top, vgroup_valley
 
-class AddGear(bpy.types.Operator):
-    """Add a gear mesh"""
+
+class AddGear(Operator):
     bl_idname = "mesh.primitive_gear"
     bl_label = "Add Gear"
+    bl_description = "Construct a gear mesh"
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
     number_of_teeth = IntProperty(name="Number of Teeth",
@@ -621,7 +631,6 @@ class AddGear(bpy.types.Operator):
         box.prop(self, 'conangle')
         box.prop(self, 'crown')
 
-
     def execute(self, context):
         verts, faces, verts_tip, verts_valley = add_gear(
             self.number_of_teeth,
@@ -633,7 +642,8 @@ class AddGear(bpy.types.Operator):
             width=self.width,
             skew=self.skew,
             conangle=self.conangle,
-            crown=self.crown)
+            crown=self.crown
+            )
 
         # Actually create the mesh object from this geometry data.
         base = create_mesh_object(context, verts, [], faces, "Gear")
@@ -650,79 +660,98 @@ class AddGear(bpy.types.Operator):
 
         return {'FINISHED'}
 
-class AddWormGear(bpy.types.Operator):
-    """Add a worm gear mesh"""
+
+class AddWormGear(Operator):
     bl_idname = "mesh.primitive_worm_gear"
     bl_label = "Add Worm Gear"
+    bl_description = "Construct a worm gear mesh"
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
-    number_of_teeth = IntProperty(name="Number of Teeth",
-        description="Number of teeth on the gear",
-        min=2,
-        max=265,
-        default=12)
-    number_of_rows = IntProperty(name="Number of Rows",
-        description="Number of rows on the worm gear",
-        min=2,
-        max=265,
-        default=32)
-    radius = FloatProperty(name="Radius",
-        description="Radius of the gear, negative for crown gear",
-        min=-100.0,
-        max=100.0,
-        unit='LENGTH',
-        default=1.0)
-    addendum = FloatProperty(name="Addendum",
-        description="Addendum, extent of tooth above radius",
-        min=0.01,
-        max=100.0,
-        unit='LENGTH',
-        default=0.1)
-    dedendum = FloatProperty(name="Dedendum",
-        description="Dedendum, extent of tooth below radius",
-        min=0.0,
-        max=100.0,
-        unit='LENGTH',
-        default=0.1)
-    angle = FloatProperty(name="Pressure Angle",
-        description="Pressure angle, skewness of tooth tip",
-        min=0.0,
-        max=radians(45.0),
-        default=radians(20.0),
-        unit='ROTATION')
-    row_height = FloatProperty(name="Row Height",
-        description="Height of each Row",
-        min=0.05,
-        max=100.0,
-        unit='LENGTH',
-        default=0.2)
-    skew = FloatProperty(name="Skewness per Row",
-        description="Skew of each row",
-        min=radians(-90.0),
-        max=radians(90.0),
-        default=radians(11.25),
-        unit='ROTATION')
-    crown = FloatProperty(name="Crown",
-        description="Inward pointing extend of crown teeth",
-        min=0.0,
-        max=100.0,
-        unit='LENGTH',
-        default=0.0)
+    number_of_teeth = IntProperty(
+                name="Number of Teeth",
+                description="Number of teeth on the gear",
+                min=2,
+                max=265,
+                default=12
+                )
+    number_of_rows = IntProperty(
+                name="Number of Rows",
+                description="Number of rows on the worm gear",
+                min=2,
+                max=265,
+                default=32
+                )
+    radius = FloatProperty(
+                name="Radius",
+                description="Radius of the gear, negative for crown gear",
+                min=-100.0,
+                max=100.0,
+                unit='LENGTH',
+                default=1.0
+                )
+    addendum = FloatProperty(
+                name="Addendum",
+                description="Addendum, extent of tooth above radius",
+                min=0.01,
+                max=100.0,
+                unit='LENGTH',
+                default=0.1
+                )
+    dedendum = FloatProperty(
+                name="Dedendum",
+                description="Dedendum, extent of tooth below radius",
+                min=0.0,
+                max=100.0,
+                unit='LENGTH',
+                default=0.1
+                )
+    angle = FloatProperty(
+                name="Pressure Angle",
+                description="Pressure angle, skewness of tooth tip",
+                min=0.0,
+                max=radians(45.0),
+                default=radians(20.0),
+                unit='ROTATION'
+                )
+    row_height = FloatProperty(
+                name="Row Height",
+                description="Height of each Row",
+                min=0.05,
+                max=100.0,
+                unit='LENGTH',
+                default=0.2
+                )
+    skew = FloatProperty(
+                name="Skewness per Row",
+                description="Skew of each row",
+                min=radians(-90.0),
+                max=radians(90.0),
+                default=radians(11.25),
+                unit='ROTATION'
+                )
+    crown = FloatProperty(
+                name="Crown",
+                description="Inward pointing extend of crown teeth",
+                min=0.0,
+                max=100.0,
+                unit='LENGTH',
+                default=0.0
+                )
 
     def draw(self, context):
         layout = self.layout
         box = layout.box()
-        box.prop(self, 'number_of_teeth')
-        box.prop(self, 'number_of_rows')
-        box.prop(self, 'radius')
-        box.prop(self, 'row_height')
+        box.prop(self, "number_of_teeth")
+        box.prop(self, "number_of_rows")
+        box.prop(self, "radius")
+        box.prop(self, "row_height")
         box = layout.box()
-        box.prop(self, 'addendum')
-        box.prop(self, 'dedendum')
+        box.prop(self, "addendum")
+        box.prop(self, "dedendum")
         box = layout.box()
-        box.prop(self, 'angle')
-        box.prop(self, 'skew')
-        box.prop(self, 'crown')
+        box.prop(self, "angle")
+        box.prop(self, "skew")
+        box.prop(self, "crown")
 
     def execute(self, context):
 
@@ -735,7 +764,8 @@ class AddWormGear(bpy.types.Operator):
             self.angle,
             width=self.row_height,
             skew=self.skew,
-            crown=self.crown)
+            crown=self.crown
+            )
 
         # Actually create the mesh object from this geometry data.
         base = create_mesh_object(context, verts, [], faces, "Worm Gear")

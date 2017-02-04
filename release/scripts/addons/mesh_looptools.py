@@ -1,4 +1,4 @@
-﻿# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -16,14 +16,12 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-# fixed for Bforartists. Shows in Tool Shelf now.
-
 bl_info = {
     "name": "LoopTools",
     "author": "Bart Crouch",
     "version": (4, 6, 6),
     "blender": (2, 72, 2),
-    "location": "View3D > Tool Shelf > Create > Add Misc",
+    "location": "View3D > Toolbar and View3D > Specials (W-key)",
     "warning": "",
     "description": "Mesh modelling toolkit. Several tools to aid modelling",
     "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
@@ -45,7 +43,7 @@ from bpy_extras import view3d_utils
 ##########################################
 
 
-# used by all tools to improve speed on reruns
+# used by all tools to improve speed on reruns Unlink
 looptools_cache = {}
 
 
@@ -3714,6 +3712,22 @@ class Flatten(bpy.types.Operator):
 
 
 # gstretch operator
+class RemoveGP(bpy.types.Operator):
+    bl_idname = "remove.gp"
+    bl_label = "Remove GP"
+    bl_description = "Remove all Grease Pencil Strokes"
+    bl_options = {'REGISTER', 'UNDO'}
+ 
+    def execute(self, context):
+ 
+        if context.gpencil_data is not None:
+            bpy.ops.gpencil.data_unlink()
+        else:
+            self.report({'INFO'}, "No Grease Pencil data to Unlink")
+            return {'CANCELLED'}
+ 
+        return{'FINISHED'}
+
 class GStretch(bpy.types.Operator):
     bl_idname = "mesh.looptools_gstretch"
     bl_label = "Gstretch"
@@ -3802,7 +3816,6 @@ class GStretch(bpy.types.Operator):
         col = layout.column()
 
         col.prop(self, "method")
-        col.prop(self, "delete_strokes")
         col.separator()
 
         col_conv = col.column(align=True)
@@ -3832,6 +3845,8 @@ class GStretch(bpy.types.Operator):
         else:
             row.prop(self, "lock_z", text = "Z", icon='UNLOCKED')
         col_move.prop(self, "influence")
+        col.separator()
+        col.operator("remove.gp", text = "Delete GP Strokes")
 
     def invoke(self, context, event):
         # flush cached strokes
@@ -3843,6 +3858,7 @@ class GStretch(bpy.types.Operator):
 
     def execute(self, context):
         # initialise
+        scene = context.scene
         global_undo, object, bm = initialise()
         settings_write(self)
 
@@ -4340,8 +4356,7 @@ class VIEW3D_PT_tools_looptools(bpy.types.Panel):
         if lt.display_gstretch:
             box = col.column(align=True).box().column()
             box.prop(lt, "gstretch_method")
-            box.prop(lt, "gstretch_delete_strokes")
-            box.separator()
+
 
             col_conv = box.column(align=True)
             col_conv.prop(lt, "gstretch_conversion", text="")
@@ -4370,6 +4385,7 @@ class VIEW3D_PT_tools_looptools(bpy.types.Panel):
             else:
                 row.prop(lt, "gstretch_lock_z", text = "Z", icon='UNLOCKED')
             col_move.prop(lt, "gstretch_influence")
+            box.operator("remove.gp", text = "Delete GP Strokes")
 
         # loft - first line
         split = col.split(percentage=0.15, align=True)
@@ -4780,9 +4796,37 @@ def menu_func(self, context):
     self.layout.menu("VIEW3D_MT_edit_mesh_looptools")
     self.layout.separator()
 
+## Addons Preferences Update Panel
+def update_panel(self, context):
+    try:
+        bpy.utils.unregister_class(VIEW3D_PT_tools_looptools)
+    except:
+        pass
+    VIEW3D_PT_tools_looptools.bl_category = context.user_preferences.addons[__name__].preferences.category
+    bpy.utils.register_class(VIEW3D_PT_tools_looptools)
+
+class LoopPreferences(bpy.types.AddonPreferences):
+    # this must match the addon name, use '__package__'
+    # when defining this in a submodule of a python package.
+    bl_idname = __name__
+
+    category = bpy.props.StringProperty(
+            name="Tab Category",
+            description="Choose a name for the category of the panel",
+            default="Tools",
+            update=update_panel)
+
+    def draw(self, context):
+
+        layout = self.layout
+        row = layout.row()
+        col = row.column()
+        col.label(text="Tab Category:")
+        col.prop(self, "category", text="")
 
 # define classes for registration
-classes = [VIEW3D_MT_edit_mesh_looptools,
+classes = [
+    VIEW3D_MT_edit_mesh_looptools,
     VIEW3D_PT_tools_looptools,
     LoopToolsProps,
     Bridge,
@@ -4791,23 +4835,26 @@ classes = [VIEW3D_MT_edit_mesh_looptools,
     Flatten,
     GStretch,
     Relax,
-    Space]
+    Space,
+    LoopPreferences,
+    RemoveGP,
+    ]
 
 
 # registering and menu integration
 def register():
     for c in classes:
         bpy.utils.register_class(c)
-    bpy.types.VIEW3D_PT_tools_add_misc.prepend(menu_func)
+    bpy.types.VIEW3D_MT_edit_mesh_specials.prepend(menu_func)
     bpy.types.WindowManager.looptools = bpy.props.PointerProperty(\
         type = LoopToolsProps)
-
+    update_panel(None, bpy.context)
 
 # unregistering and removing menus
 def unregister():
     for c in classes:
         bpy.utils.unregister_class(c)
-    bpy.types.VIEW3D_PT_tools_add_misc.remove(menu_func)
+    bpy.types.VIEW3D_MT_edit_mesh_specials.remove(menu_func)
     try:
         del bpy.types.WindowManager.looptools
     except:

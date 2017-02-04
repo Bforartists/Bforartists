@@ -57,12 +57,12 @@ def validate_module(op, context):
         module_name = addon.module
 
     if not module_name:
-        op.report({'ERROR'}, "No addon module given!")
+        op.report({'ERROR'}, "No add-on module given!")
         return None, None
 
     mod = utils_i18n.enable_addons(addons={module_name}, check_only=True)
     if not mod:
-        op.report({'ERROR'}, "Addon '{}' not found!".format(module_name))
+        op.report({'ERROR'}, "Add-on '{}' not found!".format(module_name))
         return None, None
     return module_name, mod[0]
 
@@ -96,10 +96,10 @@ def enum_addons(self, context):
 class UI_OT_i18n_addon_translation_invoke(bpy.types.Operator):
     """Wrapper operator which will invoke given op after setting its module_name"""
     bl_idname = "ui.i18n_addon_translation_invoke"
-    bl_label = "Update I18n Addon"
+    bl_label = "Update I18n Add-on"
     bl_property = "module_name"
 
-    module_name = EnumProperty(items=enum_addons, name="Addon", description="Addon to process", options=set())
+    module_name = EnumProperty(items=enum_addons, name="Add-on", description="Add-on to process", options=set())
     op_id = StringProperty(name="Operator Name", description="Name (id) of the operator to invoke")
 
     def invoke(self, context, event):
@@ -122,11 +122,11 @@ class UI_OT_i18n_addon_translation_invoke(bpy.types.Operator):
         return op('INVOKE_DEFAULT', module_name=self.module_name)
 
 class UI_OT_i18n_addon_translation_update(bpy.types.Operator):
-    """Update given addon's translation data (found as a py tuple in the addon's source code)"""
+    """Update given add-on's translation data (found as a py tuple in the add-on's source code)"""
     bl_idname = "ui.i18n_addon_translation_update"
-    bl_label = "Update I18n Addon"
+    bl_label = "Update I18n Add-on"
 
-    module_name = EnumProperty(items=enum_addons, name="Addon", description="Addon to process", options=set())
+    module_name = EnumProperty(items=enum_addons, name="Add-on", description="Add-on to process", options=set())
 
     def execute(self, context):
         global _cached_enum_addons
@@ -175,11 +175,11 @@ class UI_OT_i18n_addon_translation_update(bpy.types.Operator):
 
 
 class UI_OT_i18n_addon_translation_import(bpy.types.Operator):
-    """Import given addon's translation data from PO files"""
+    """Import given add-on's translation data from PO files"""
     bl_idname = "ui.i18n_addon_translation_import"
-    bl_label = "I18n Addon Import"
+    bl_label = "I18n Add-on Import"
 
-    module_name = EnumProperty(items=enum_addons, name="Addon", description="Addon to process", options=set())
+    module_name = EnumProperty(items=enum_addons, name="Add-on", description="Add-on to process", options=set())
     directory = StringProperty(maxlen=1024, subtype='FILE_PATH', options={'HIDDEN', 'SKIP_SAVE'})
 
     def _dst(self, trans, path, uid, kind):
@@ -254,11 +254,11 @@ class UI_OT_i18n_addon_translation_import(bpy.types.Operator):
 
 
 class UI_OT_i18n_addon_translation_export(bpy.types.Operator):
-    """Export given addon's translation data as PO files"""
+    """Export given add-on's translation data as PO files"""
     bl_idname = "ui.i18n_addon_translation_export"
-    bl_label = "I18n Addon Export"
+    bl_label = "I18n Add-on Export"
 
-    module_name = EnumProperty(items=enum_addons, name="Addon", description="Addon to process", options=set())
+    module_name = EnumProperty(items=enum_addons, name="Add-on", description="Add-on to process", options=set())
     use_export_pot = BoolProperty(name="Export POT", default=True, description="Export (generate) a POT file too")
     use_update_existing = BoolProperty(name="Update Existing", default=True,
                                        description="Update existing po files, if any, instead of overwriting them")

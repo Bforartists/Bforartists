@@ -88,7 +88,11 @@ def faces_from_mesh(ob, global_matrix, use_mesh_modifiers=False, triangulate=Tru
     except RuntimeError:
         raise StopIteration
 
-    mesh.transform(global_matrix * ob.matrix_world)
+    mat = global_matrix * ob.matrix_world
+    mesh.transform(mat)
+    if mat.is_negative:
+        mesh.flip_normals()
+        mesh.calc_tessface()
 
     if triangulate:
         # From a list of faces, return the face triangulated if needed.

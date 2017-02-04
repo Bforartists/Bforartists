@@ -1,7 +1,10 @@
 # GPL #  Author, Anthony D'Agostino
 
 import bpy
-from bpy.props import IntProperty
+from bpy.props import (
+    IntProperty,
+    EnumProperty,
+    )
 
 import mathutils
 
@@ -9,21 +12,26 @@ import io
 import operator
 import functools
 
+
 class AddTeapot(bpy.types.Operator):
-    """Add a teapot mesh"""
     bl_idname = "mesh.primitive_teapot_add"
     bl_label = "Add Teapot"
+    bl_description = "Construct a teapot or teaspoon mesh"
     bl_options = {"REGISTER", "UNDO"}
 
     resolution = IntProperty(
             name="Resolution",
             description="Resolution of the Teapot",
-            default=5, min=2, max=15,
+            default=5,
+            min=2, max=15,
             )
-    objecttype = IntProperty(
+    objecttype = EnumProperty(
             name="Object Type",
             description="Type of Bezier Object",
-            default=1, min=1, max=2)
+            items=(('1', "Teapot", "Construct a teapot mesh"),
+                   ('2', "Tea Spoon", "Construct a teaspoon mesh")),
+            default='1',
+            )
 
     def execute(self, context):
         verts, faces = make_teapot(self.objecttype,
@@ -31,6 +39,7 @@ class AddTeapot(bpy.types.Operator):
         # Actually create the mesh object from this geometry data.
         obj = create_mesh_object(context, verts, [], faces, "Teapot")
         return {'FINISHED'}
+
 
 def create_mesh_face_hack(faces):
     # FIXME, faces with duplicate vertices shouldn't be created in the first place.
@@ -42,6 +51,7 @@ def create_mesh_face_hack(faces):
                 f_copy.append(i)
         faces_copy.append(f_copy)
     faces[:] = faces_copy
+
 
 def create_mesh_object(context, verts, edges, faces, name):
 
@@ -60,6 +70,7 @@ def create_mesh_object(context, verts, edges, faces, name):
 # ==========================
 # === Bezier patch Block ===
 # ==========================
+
 def read_indexed_patch_file(filename):
     file = io.StringIO(filename)
     rawpatches = []
@@ -81,7 +92,7 @@ def read_indexed_patch_file(filename):
         v1, v2, v3 = map(float, line.split(","))
         verts.append((v1, v2, v3))
     for i in range(len(patches)):
-        for j in range(4):  # len(patches[i])):
+        for j in range(4):      # len(patches[i])):
             for k in range(4):  # len(patches[i][j])):
                 index = patches[i][j][k] - 1
                 rawpatches[i][j][k] = verts[index]
@@ -109,7 +120,7 @@ def make_bezier(ctrlpnts, resolution):
     def makevert(t):
         x, y, z = b1(t) * p1 + b2(t) * p2 + b3(t) * p3 + b4(t) * p4
         return (x, y, z)
-    curveverts = [makevert(i/resolution) for i in range(resolution+1)]
+    curveverts = [makevert(i / resolution) for i in range(resolution + 1)]
     return curveverts
 
 
@@ -178,13 +189,20 @@ def transpose(rowsbycols):
     return colsbyrows
 
 
-def make_teapot(filename, resolution):
+def make_teapot(enumname, resolution):
     filenames = [None, teapot, teaspoon]
-    filename = filenames[filename]
+    try:
+        indexs = int(enumname)
+        filename = filenames[indexs]
+    except:
+        print("Add Teapot Error: EnumProperty could not be set")
+        filename = filenames[1]
+
     patches = read_indexed_patch_file(filename)
     raw = patches_to_raw(patches, resolution)
     verts, faces = raw_to_indexed(raw)
     return (verts, faces)
+
 
 # =================================
 # === Indexed Bezier Data Block ===

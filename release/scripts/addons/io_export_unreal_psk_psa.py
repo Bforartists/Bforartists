@@ -2276,11 +2276,10 @@ class Panel_UDKExport( bpy.types.Panel ):
 
     bl_label        = "UDK Export"
     bl_idname       = "OBJECT_PT_udk_tools"
-    #bl_space_type  = "PROPERTIES"
-    #bl_region_type = "WINDOW"
-    #bl_context     = "object"
+    bl_category     = "File I/O"
     bl_space_type   = "VIEW_3D"
     bl_region_type  = "TOOLS"
+    bl_context = "objectmode"
 
     #def draw_header(self, context):
     #   layout = self.layout
@@ -2655,6 +2654,33 @@ def menu_func(self, context):
     default_path = os.path.splitext(bpy.data.filepath)[0] + ".psk"
     self.layout.operator(ExportUDKAnimData.bl_idname, text="Skeleton Mesh / Animation Data (.psk/.psa)").filepath = default_path
 
+## Addons Preferences Update Panel
+def update_panel(self, context):
+    try:
+        bpy.utils.unregister_class(Panel_UDKExport)
+    except:
+        pass
+    Panel_UDKExport.bl_category = context.user_preferences.addons[__name__].preferences.category
+    bpy.utils.register_class(Panel_UDKExport)
+
+class PskAddonPreferences(bpy.types.AddonPreferences):
+    # this must match the addon name, use '__package__'
+    # when defining this in a submodule of a python package.
+    bl_idname = __name__
+
+    category = bpy.props.StringProperty(
+            name="Tab Category",
+            description="Choose a name for the category of the panel",
+            default="File I/O",
+            update=update_panel)
+
+    def draw(self, context):
+
+        layout = self.layout
+        row = layout.row()
+        col = row.column()
+        col.label(text="Tab Category:")
+        col.prop(self, "category", text="")
 #===========================================================================
 # Entry
 #===========================================================================
@@ -2662,6 +2688,7 @@ def register():
     #print("REGISTER")
     bpy.utils.register_module(__name__)
     bpy.types.INFO_MT_file_export.append(menu_func)
+    update_panel(None, bpy.context)
 
 def unregister():
     #print("UNREGISTER")
