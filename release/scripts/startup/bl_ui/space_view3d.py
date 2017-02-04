@@ -3510,6 +3510,7 @@ class VIEW3D_PT_view3d_display(Panel):
             subsub.prop(view, "grid_subdivisions", text="Subdivisions")
 
         if view.region_quadviews:
+            layout.label(text="Quadview Options:")
             region = view.region_quadviews[2]
             col = layout.column()
             col.prop(region, "lock_rotation")
