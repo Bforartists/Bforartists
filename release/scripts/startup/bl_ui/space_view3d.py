@@ -854,6 +854,10 @@ class VIEW3D_MT_select_edit_mesh(Menu):
 
         layout.separator()
 
+        layout.menu("VIEW3D_MT_edit_mesh_select_more_less")
+
+        layout.separator()
+
         # geometric
         layout.operator("mesh.edges_select_sharp", text="Sharp Edges")
         
@@ -884,12 +888,6 @@ class VIEW3D_MT_select_edit_mesh(Menu):
         layout.operator("mesh.select_linked_pick", text="Linked Pick Deselect").deselect = True
    
 
-        layout.separator()
-
-        layout.operator("mesh.select_more", text="More")
-        layout.operator("mesh.select_less", text="Less")
-
-        layout.separator()
 
 
 # Workaround to separate the tooltips
