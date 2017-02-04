@@ -668,6 +668,9 @@ class VIEW3D_MT_select_object(Menu):
         myvar.extend = True
 
         layout.separator()
+        
+        layout.operator("object.select_more", text="More")
+        layout.operator("object.select_less", text="Less")
 
 # Workaround to separate the tooltips
 class VIEW3D_MT_select_pose_inverse(bpy.types.Operator):
