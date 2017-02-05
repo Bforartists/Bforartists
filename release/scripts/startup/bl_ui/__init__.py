@@ -224,6 +224,10 @@ class UIToolbarAnimationSync(bpy.types.PropertyGroup):
 class UIToolbarAnimationKeyingset(bpy.types.PropertyGroup):
     bool = bpy.props.BoolProperty(name="Keyingset", description="Display the Keyingset Toolbar", default = True)
 
+# bfa - Keyframetype
+class UIToolbarAnimationKeyframetype(bpy.types.PropertyGroup):
+    bool = bpy.props.BoolProperty(name="Keyframetype", description="Display the Keyframetype Toolbar", default = True)
+
 ############################ Toolbar props edit #################################
 
 # bfa - Edit
@@ -422,9 +426,13 @@ def register():
     bpy.utils.register_class(UIToolbarAnimationSync) # Our data block
     bpy.types.Scene.toolbar_animation_sync = bpy.props.PointerProperty(type=UIToolbarAnimationSync)
     
-    # bfa - Animation
+    # bfa - Animation keyingset
     bpy.utils.register_class(UIToolbarAnimationKeyingset) # Our data block
     bpy.types.Scene.toolbar_animation_keyingset = bpy.props.PointerProperty(type=UIToolbarAnimationKeyingset)
+
+    # bfa - Keyframetype
+    bpy.utils.register_class(UIToolbarAnimationKeyframetype) # Our data block
+    bpy.types.Scene.toolbar_animation_keyframetype = bpy.props.PointerProperty(type=UIToolbarAnimationKeyframetype)
 
     ############################ Toolbar props edit #################################
 
@@ -588,6 +596,7 @@ def unregister():
     bpy.utils.unregister_class(UIToolbarAnimationPlay)
     bpy.utils.unregister_class(UIToolbarAnimationSync)
     bpy.utils.unregister_class(UIToolbarAnimationKeyingset)
+    bpy.utils.unregister_class(UIToolbarAnimationKeyframetype)
 
     ############################ Toolbar props Edit #################################
 
