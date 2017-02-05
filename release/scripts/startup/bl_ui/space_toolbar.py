@@ -1058,6 +1058,8 @@ class TOOLBAR_MT_toolbars_animation_menu(Menu):
         layout.prop(scene.toolbar_animation_play, "bool")
         layout.prop(scene.toolbar_animation_sync, "bool")
         layout.prop(scene.toolbar_animation_keyingset, "bool")
+        layout.prop(scene.toolbar_animation_keyframetype, "bool")
+        
          
 ############### bfa - menu hidable by the flag in the right click menu
 
@@ -1175,6 +1177,12 @@ class TOOLBAR_MT_animation(Menu):
             row = layout.row(align=True)
 
             layout.prop(scene, "sync_mode", text="")
+
+        if scene.toolbar_animation_keyframetype.bool: 
+
+            row = layout.row(align=True)
+
+            layout.prop(toolsettings, "keyframe_type", text="", icon_only=True)
 
         if scene.toolbar_animation_keyingset.bool: 
 
