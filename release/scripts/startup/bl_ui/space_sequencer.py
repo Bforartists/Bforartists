@@ -80,11 +80,7 @@ class SEQUENCER_HT_header(Header):
             layout.prop(st, "display_mode", expand=True, text="")
 
         if st.view_type == 'SEQUENCER':
-            row = layout.row(align=True)
-            row.operator("sequencer.copy", text="", icon='COPYDOWN')
-            row.operator("sequencer.paste", text="", icon='PASTEDOWN')
 
-            layout.separator()
             layout.operator("sequencer.refresh_all")
             layout.prop(st, "show_backdrop")
         else:
@@ -411,6 +407,8 @@ class SEQUENCER_MT_strip(Menu):
 
         layout.operator("sequencer.duplicate_move")
         layout.operator("sequencer.delete")
+        layout.operator("sequencer.copy", text="Copy", icon='COPYDOWN')
+        layout.operator("sequencer.paste", text="Paste", icon='PASTEDOWN')
 
         strip = act_strip(context)
 
