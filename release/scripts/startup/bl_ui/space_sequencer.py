@@ -117,12 +117,6 @@ class SEQUENCER_HT_header(Header):
                 if toolsettings.proportional_edit != 'DISABLED':
                     row.prop(toolsettings, "proportional_edit_falloff", icon_only=True)
 
-        row = layout.row(align=True)
-        row.operator("render.opengl", text="", icon='RENDER_STILL').sequencer = True
-        props = row.operator("render.opengl", text="", icon='RENDER_ANIMATION')
-        props.animation = True
-        props.sequencer = True
-
         layout.template_running_jobs()
 
 # bfa - show hide the editormenu
