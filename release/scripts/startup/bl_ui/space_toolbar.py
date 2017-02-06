@@ -179,6 +179,7 @@ class TOOLBAR_MT_file(Menu):
             row.operator("wm.collada_import", text="", icon='LOAD_DAE')
             row.operator("import_anim.bvh", text="", icon='LOAD_BVH')
             row.operator("import_scene.autodesk_3ds", text="", icon='LOAD_3DS')
+            row.operator("wm.alembic_import", text="", icon = "LOAD_ABC" )
 
         ## ------------------ Import uncommon
 
@@ -202,6 +203,7 @@ class TOOLBAR_MT_file(Menu):
             row.operator("wm.collada_export", text="", icon='SAVE_DAE')
             row.operator("export_anim.bvh", text="", icon='SAVE_BVH')
             row.operator("export_scene.autodesk_3ds", text="", icon='SAVE_3DS')
+            row.operator("wm.alembic_export", text="", icon = "SAVE_ABC" )
 
         ## ------------------ Export uncommon
 
