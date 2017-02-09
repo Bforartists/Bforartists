@@ -129,6 +129,7 @@ static void updateDepgraph(ModifierData *md, DagForest *forest,
 
 	/* add relation from canvases to all brush objects */
 	if (pmd && pmd->canvas) {
+#ifdef WITH_LEGACY_DEPSGRAPH
 		for (DynamicPaintSurface *surface = pmd->canvas->surfaces.first; surface; surface = surface->next) {
 			if (surface->effect & MOD_DPAINT_EFFECT_DO_DRIP) {
 				dag_add_forcefield_relations(forest, scene, ob, obNode, surface->effector_weights, true, 0, "Dynamic Paint Field");
@@ -137,6 +138,12 @@ static void updateDepgraph(ModifierData *md, DagForest *forest,
 			/* Actual code uses custom loop over group/scene without layer checks in dynamicPaint_doStep */
 			dag_add_collision_relations(forest, scene, ob, obNode, surface->brush_group, -1, eModifierType_DynamicPaint, is_brush_cb, false, "Dynamic Paint Brush");
 		}
+#else
+	(void)forest;
+	(void)scene;
+	(void)ob;
+	(void)obNode;
+#endif
 	}
 }
 
@@ -174,15 +181,15 @@ static void foreachIDLink(ModifierData *md, Object *ob,
 		DynamicPaintSurface *surface = pmd->canvas->surfaces.first;
 
 		for (; surface; surface = surface->next) {
-			walk(userData, ob, (ID **)&surface->brush_group, IDWALK_NOP);
-			walk(userData, ob, (ID **)&surface->init_texture, IDWALK_USER);
+			walk(userData, ob, (ID **)&surface->brush_group, IDWALK_CB_NOP);
+			walk(userData, ob, (ID **)&surface->init_texture, IDWALK_CB_USER);
 			if (surface->effector_weights) {
-				walk(userData, ob, (ID **)&surface->effector_weights->group, IDWALK_NOP);
+				walk(userData, ob, (ID **)&surface->effector_weights->group, IDWALK_CB_NOP);
 			}
 		}
 	}
 	if (pmd->brush) {
-		walk(userData, ob, (ID **)&pmd->brush->mat, IDWALK_USER);
+		walk(userData, ob, (ID **)&pmd->brush->mat, IDWALK_CB_USER);
 	}
 }
 

@@ -1,4 +1,4 @@
-﻿# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -155,8 +155,8 @@ class OUTLINER_MT_view(Menu):
             layout.separator()
             layout.operator("outliner.show_active")
 
-        layout.operator("outliner.show_one_level", text = "Show one level").open = True
-        layout.operator("outliner.hide_one_level", text = "Hide one level")
+        layout.operator("outliner.show_one_level", text="Show One Level")
+        layout.operator("outliner.show_one_level", text="Hide One Level").open = False
         layout.operator("outliner.show_hierarchy")
 
         layout.separator()

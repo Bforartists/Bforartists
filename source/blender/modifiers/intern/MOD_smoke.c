@@ -138,10 +138,16 @@ static void updateDepgraph(ModifierData *md, DagForest *forest,
 
 	if (smd && (smd->type & MOD_SMOKE_TYPE_DOMAIN) && smd->domain) {
 		/* Actual code uses get_collisionobjects */
+#ifdef WITH_LEGACY_DEPSGRAPH
 		dag_add_collision_relations(forest, scene, ob, obNode, smd->domain->fluid_group, ob->lay|scene->lay, eModifierType_Smoke, is_flow_cb, true, "Smoke Flow");
 		dag_add_collision_relations(forest, scene, ob, obNode, smd->domain->coll_group, ob->lay|scene->lay, eModifierType_Smoke, is_coll_cb, true, "Smoke Coll");
-
 		dag_add_forcefield_relations(forest, scene, ob, obNode, smd->domain->effector_weights, true, PFIELD_SMOKEFLOW, "Smoke Force Field");
+#else
+	(void)forest;
+	(void)scene;
+	(void)ob;
+	(void)obNode;
+#endif
 	}
 }
 
@@ -168,17 +174,17 @@ static void foreachIDLink(ModifierData *md, Object *ob,
 	SmokeModifierData *smd = (SmokeModifierData *) md;
 
 	if (smd->type == MOD_SMOKE_TYPE_DOMAIN && smd->domain) {
-		walk(userData, ob, (ID **)&smd->domain->coll_group, IDWALK_NOP);
-		walk(userData, ob, (ID **)&smd->domain->fluid_group, IDWALK_NOP);
-		walk(userData, ob, (ID **)&smd->domain->eff_group, IDWALK_NOP);
+		walk(userData, ob, (ID **)&smd->domain->coll_group, IDWALK_CB_NOP);
+		walk(userData, ob, (ID **)&smd->domain->fluid_group, IDWALK_CB_NOP);
+		walk(userData, ob, (ID **)&smd->domain->eff_group, IDWALK_CB_NOP);
 
 		if (smd->domain->effector_weights) {
-			walk(userData, ob, (ID **)&smd->domain->effector_weights->group, IDWALK_NOP);
+			walk(userData, ob, (ID **)&smd->domain->effector_weights->group, IDWALK_CB_NOP);
 		}
 	}
 
 	if (smd->type == MOD_SMOKE_TYPE_FLOW && smd->flow) {
-		walk(userData, ob, (ID **)&smd->flow->noise_texture, IDWALK_USER);
+		walk(userData, ob, (ID **)&smd->flow->noise_texture, IDWALK_CB_USER);
 	}
 }
 
