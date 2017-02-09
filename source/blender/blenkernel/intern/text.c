@@ -235,8 +235,9 @@ Text *BKE_text_add(Main *bmain, const char *name)
 /* to a valid utf-8 sequences */
 int txt_extended_ascii_as_utf8(char **str)
 {
-	int bad_char, added = 0, i = 0;
-	int length = strlen(*str);
+	ptrdiff_t bad_char, i = 0;
+	const ptrdiff_t length = (ptrdiff_t)strlen(*str);
+	int added = 0;
 
 	while ((*str)[i]) {
 		if ((bad_char = BLI_utf8_invalid_byte(*str + i, length - i)) == -1)
@@ -248,7 +249,7 @@ int txt_extended_ascii_as_utf8(char **str)
 	
 	if (added != 0) {
 		char *newstr = MEM_mallocN(length + added + 1, "text_line");
-		int mi = 0;
+		ptrdiff_t mi = 0;
 		i = 0;
 		
 		while ((*str)[i]) {
@@ -1934,7 +1935,7 @@ void txt_do_undo(Text *text)
 	int op = text->undo_buf[text->undo_pos];
 	int prev_flags;
 	unsigned int linep;
-	unsigned int uchar;
+	unsigned int uni_char;
 	unsigned int curln, selln;
 	unsigned short curc, selc;
 	unsigned short charp;
@@ -1970,14 +1971,14 @@ void txt_do_undo(Text *text)
 		case UNDO_BS_3:
 		case UNDO_BS_4:
 			charp = op - UNDO_BS_1 + 1;
-			uchar = txt_undo_read_unicode(text->undo_buf, &text->undo_pos, charp);
+			uni_char = txt_undo_read_unicode(text->undo_buf, &text->undo_pos, charp);
 			
 			/* get and restore the cursors */
 			txt_undo_read_cur(text->undo_buf, &text->undo_pos, &curln, &curc);
 			txt_move_to(text, curln, curc, 0);
 			txt_move_to(text, curln, curc, 1);
 			
-			txt_add_char(text, uchar);
+			txt_add_char(text, uni_char);
 
 			text->undo_pos--;
 			break;
@@ -1987,14 +1988,14 @@ void txt_do_undo(Text *text)
 		case UNDO_DEL_3:
 		case UNDO_DEL_4:
 			charp = op - UNDO_DEL_1 + 1;
-			uchar = txt_undo_read_unicode(text->undo_buf, &text->undo_pos, charp);
+			uni_char = txt_undo_read_unicode(text->undo_buf, &text->undo_pos, charp);
 
 			/* get and restore the cursors */
 			txt_undo_read_cur(text->undo_buf, &text->undo_pos, &curln, &curc);
 			txt_move_to(text, curln, curc, 0);
 			txt_move_to(text, curln, curc, 1);
 
-			txt_add_char(text, uchar);
+			txt_add_char(text, uni_char);
 
 			txt_move_left(text, 0);
 
@@ -2162,7 +2163,7 @@ void txt_do_redo(Text *text)
 	char *buf;
 	unsigned int linep;
 	unsigned short charp;
-	unsigned int uchar;
+	unsigned int uni_uchar;
 	unsigned int curln, selln;
 	unsigned short curc, selc;
 	
@@ -2189,9 +2190,9 @@ void txt_do_redo(Text *text)
 			txt_move_to(text, curln, curc, 1);
 			
 			charp = op - UNDO_INSERT_1 + 1;
-			uchar = txt_redo_read_unicode(text->undo_buf, &text->undo_pos, charp);
+			uni_uchar = txt_redo_read_unicode(text->undo_buf, &text->undo_pos, charp);
 
-			txt_add_char(text, uchar);
+			txt_add_char(text, uni_uchar);
 			break;
 
 		case UNDO_BS_1:
