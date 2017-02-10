@@ -398,7 +398,7 @@ class VIEW3D_MT_tocam(bpy.types.Operator):
         return {'FINISHED'} 
 
 class VIEW3D_MT_switchactivecam(bpy.types.Operator):
-    """Set Active Camera\nSets the current selected camera as the active camera to render from.\nYou need to have a camera object selected."""
+    """Set Active Camera\nSets the current selected camera as the active camera to render from\nYou need to have a camera object selected"""
     bl_idname = "view3d.switchactivecam"
     bl_label = "Set active Camera"
     bl_options = {'REGISTER', 'UNDO'}

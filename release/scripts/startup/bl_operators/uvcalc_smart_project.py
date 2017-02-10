@@ -1054,7 +1054,7 @@ class SmartProject(Operator):
     #"""(it operates on all selected mesh objects, and can be used """ \
     #"""to unwrap selected faces, or all faces)"""
 
-    """Smart UV Project\nThis uv mapping method projects the UV mapping from as much sides as defined by the angle."""
+    """Smart UV Project\nThis uv mapping method projects the UV mapping from as much sides as defined by the angle"""
 
     bl_idname = "uv.smart_project"
     bl_label = "Smart UV Project"
