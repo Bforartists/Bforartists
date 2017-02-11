@@ -251,9 +251,6 @@ GLuint linkProgram(const char *version, const char *define)
 	if (vertexShader == 0) {
 		return 0;
 	}
-	if (vertexShader == 0) {
-		return 0;
-	}
 	GLuint geometryShader = compileShader(GL_GEOMETRY_SHADER,
 	                                      version,
 	                                      define,
@@ -261,16 +258,10 @@ GLuint linkProgram(const char *version, const char *define)
 	if (geometryShader == 0) {
 		return 0;
 	}
-	if (geometryShader == 0) {
-		return 0;
-	}
 	GLuint fragmentShader = compileShader(GL_FRAGMENT_SHADER,
 	                                      version,
 	                                      define,
 	                                      datatoc_gpu_shader_opensubdiv_fragment_glsl );
-	if (fragmentShader == 0) {
-		return 0;
-	}
 	if (fragmentShader == 0) {
 		return 0;
 	}
