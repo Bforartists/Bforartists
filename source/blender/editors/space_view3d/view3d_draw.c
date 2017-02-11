@@ -278,6 +278,7 @@ static void drawgrid_draw(ARegion *ar, double wx, double wy, double x, double y,
 static void drawgrid(UnitSettings *unit, ARegion *ar, View3D *v3d, const char **grid_unit)
 {
 	if ((v3d->flag3 & V3D_HIDE_GROUNDGRID) == 0){ // bfa - draw grid just when groundgrid is true
+
 		/* extern short bgpicmode; */
 		RegionView3D *rv3d = ar->regiondata;
 		double wx, wy, x, y, fw, fx, fy, dx;
@@ -315,7 +316,7 @@ static void drawgrid(UnitSettings *unit, ARegion *ar, View3D *v3d, const char **
 
 		if (unit->system) {
 			/* Use GRID_MIN_PX * 2 for units because very very small grid
-			 * items are less useful when dealing with units */
+			* items are less useful when dealing with units */
 			const void *usys;
 			int len, i;
 			double dx_scalar;
@@ -2232,14 +2233,13 @@ static void draw_dupli_objects(Scene *scene, ARegion *ar, View3D *v3d, Base *bas
 		dflag = DRAW_CONSTCOLOR;
 	}
 	else {
-		color = (base->flag & SELECT) ? TH_SELECT : TH_WIRE;
+		int color = (base->flag & SELECT) ? TH_SELECT : TH_WIRE;
 		/* debug */
 		if (base->object->dup_group && base->object->dup_group->id.us < 1)
 			color = TH_REDALERT;
-		dflag = 0;
 	}
 
-	draw_dupli_objects_color(scene, ar, v3d, base, dflag, color);
+	draw_dupli_objects_color(scene, ar, v3d, base, 0, color);
 }
 
 /* XXX warning, not using gpu offscreen here */
