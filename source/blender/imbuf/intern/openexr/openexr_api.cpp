@@ -438,14 +438,6 @@ static bool imb_save_openexr_half(
 				throw std::runtime_error(std::string("Missing data to write to ") + name);
 			}
 
-			/* TODO (dfelinto)
-			 * In some cases we get NULL ibufs, it needs investigation, meanwhile prevent crash
-			 * Multiview Render + Image Editor + OpenEXR + Multi-View
-			 */
-			if (view_ibuf == NULL) {
-				throw std::runtime_error(std::string("Missing data to write to ") + name);
-			}
-
 			/* indicate used buffers */
 			frameBuffer.insert(insertViewName("R", views, view_id), Slice(HALF,  (char *) &pixels[offset].r, xstride, ystride));
 			frameBuffer.insert(insertViewName("G", views, view_id), Slice(HALF,  (char *) &pixels[offset].g, xstride, ystride));
