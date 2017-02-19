@@ -1,0 +1,198 @@
+{
+	"NodeSetup":[
+
+		{
+			"type": "ShaderNodeTexCoord",
+			"label": "Texture Coordinate",
+			"location": [-450, 100]
+
+		},
+    {
+			"type": "ShaderNodeSeparateXYZ",
+			"label": "Separate XYZ",
+			"location": [-150, -250],
+      "in": [
+			["Texture Coordinate", "\"UV\"", 0]
+			]
+
+		},
+    {
+			"type": "ShaderNodeMath",
+			"label": "Absolute X",
+			"location": [55, -130],
+      "in": [
+			["Separate XYZ", "\"X\"", 0]
+			],
+			"operation": "\"ABSOLUTE\""
+		},
+    {
+			"type": "ShaderNodeMath",
+			"label": "Absolute Y",
+			"location": [55, -320],
+      "in": [
+			["Separate XYZ", "\"Y\"", 0]
+			],
+			"operation": "\"ABSOLUTE\""
+		},
+    {
+			"type": "ShaderNodeMath",
+			"label": "Modulo X",
+			"location": [225, -130],
+      "in": [
+			["Absolute X", 0, 0]
+			],
+			"operation": "\"MODULO\"",
+      "inputs[1].default_value": 1
+		},
+    {
+			"type": "ShaderNodeMath",
+			"label": "Modulo Y",
+			"location": [225, -320],
+      "in": [
+			["Absolute Y", 0, 0]
+			],
+			"operation": "\"MODULO\"",
+      "inputs[1].default_value": 1
+		},
+    {
+			"type": "ShaderNodeMath",
+			"label": "Subtract X",
+			"location": [395, -130],
+      "in": [
+			["Modulo X", 0, 0]
+			],
+			"operation": "\"SUBTRACT\"",
+      "inputs[1].default_value": 0.5
+		},
+    {
+			"type": "ShaderNodeMath",
+			"label": "Subtract Y",
+			"location": [395, -320],
+      "in": [
+			["Modulo Y", 0, 0]
+			],
+			"operation": "\"SUBTRACT\"",
+      "inputs[1].default_value": 0.5
+		},
+    {
+			"type": "ShaderNodeMath",
+			"label": "Absolute X (Mirror)",
+			"location": [585, -130],
+      "in": [
+			["Subtract X", 0, 0]
+			],
+			"operation": "\"ABSOLUTE\""
+		},
+    {
+			"type": "ShaderNodeMath",
+			"label": "Absolute Y (Mirror)",
+			"location": [585, -320],
+      "in": [
+			["Subtract Y", 0, 0]
+			],
+			"operation": "\"ABSOLUTE\""
+		},
+    {
+			"type": "ShaderNodeMath",
+			"label": "Adjust strength X",
+			"location": [775, -130],
+      "in": [
+			["Absolute X (Mirror)", 0, 0]
+			],
+			"operation": "\"MULTIPLY\"",
+      "inputs[1].default_value": 0.5
+		},
+    {
+			"type": "ShaderNodeMath",
+			"label": "Adjust strength Y",
+			"location": [775, -320],
+      "in": [
+			["Absolute Y (Mirror)", 0, 0]
+			],
+			"operation": "\"MULTIPLY\"",
+      "inputs[1].default_value": 0.5
+		},
+    {
+			"type": "ShaderNodeTexNoise",
+			"label": "Random Number Generator",
+			"location": [145, 70],
+      "in": [
+			["Texture Coordinate", "\"UV\"", 0]
+			],
+      "inputs[1].default_value": 100000.0
+		},
+    {
+			"type": "ShaderNodeMapping",
+			"label": "Mapping",
+			"location": [-55, 470],
+      "in": [
+			["Texture Coordinate", "\"UV\"", 0]
+      ],
+      "vector_type": "\"TEXTURE\"",
+      "translation": "(0.5, 0.5, 0)"
+		},
+    {
+			"type": "ShaderNodeMixRGB",
+			"label": "Combine Gradients",
+			"location": [1035, -200],
+      "in": [
+			["Adjust strength X", 0, 1],
+      ["Adjust strength Y", 0, 2]
+      ],
+      "inputs[0].default_value": 1,
+      "blend_type": "\"ADD\""
+		},
+    {
+			"type": "ShaderNodeMath",
+			"label": "Adjust slope 1",
+			"location": [1235, -200],
+      "in": [
+			["Combine Gradients", 0, 0]
+			],
+			"operation": "\"SUBTRACT\"",
+      "inputs[1].default_value": 0.21
+		},
+    {
+			"type": "ShaderNodeMath",
+			"label": "Adjust slope 2",
+			"location": [1405, -200],
+      "in": [
+			["Adjust slope 1", 0, 0]
+			],
+			"operation": "\"MULTIPLY\"",
+      "inputs[1].default_value": 11.9
+		},
+    {
+			"type": "ShaderNodeMath",
+			"label": "Prepare Randomization",
+			"location": [1605, 0],
+      "in": [
+      ["Random Number Generator", 0],
+			["Adjust slope 2", 0]
+			],
+			"operation": "\"MULTIPLY\"",
+      "inputs[1].default_value": 11.9
+		},
+    {
+			"type": "ShaderNodeMath",
+			"label": "Randomize",
+			"location": [1785, 100],
+      "in": [
+			["Prepare Randomization", 0, 0]
+			],
+			"operation": "\"LESS_THAN\"",
+      "inputs[1].default_value": 0.25
+		}
+    ,
+    {
+			"type": "ShaderNodeMixRGB",
+			"label": "Pick Vector",
+			"location": [1985, 220],
+      "in": [
+			["Randomize", 0],
+      ["Mapping", 0],
+      ["Texture Coordinate", "\"UV\""]
+			]
+		}
+	]
+}
