@@ -519,6 +519,7 @@ class VIEW3D_MT_view_navigation(Menu):
 
         layout.operator("view3d.fly")
         layout.operator("view3d.walk")
+        layout.operator("view3d.navigate")
 
         layout.separator()
 
