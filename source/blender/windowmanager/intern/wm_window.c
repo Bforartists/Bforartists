@@ -538,7 +538,7 @@ void wm_window_ghostwindows_ensure(wmWindowManager *wm)
 				win->cursor = CURSOR_STD;
 			}
 
-			wm_window_ghostwindow_add(wm, "Blender", win);
+			wm_window_ghostwindow_add(wm, "Bforartists", win); //bfa - changed from blender to bforartists
 		}
 		/* happens after fileread */
 		if (win->eventstate == NULL)
@@ -690,13 +690,13 @@ wmWindow *WM_window_open_temp(bContext *C, const rcti *rect_init, int type)
 	ED_screen_refresh(CTX_wm_manager(C), win); /* test scale */
 	
 	if (sa->spacetype == SPACE_IMAGE)
-		title = IFACE_("Blender Render");
+		title = IFACE_("Bforartists Render");//bfa - changed from blender to bforartists
 	else if (ELEM(sa->spacetype, SPACE_OUTLINER, SPACE_USERPREF))
-		title = IFACE_("Blender User Preferences");
+		title = IFACE_("Bforartists User Preferences");//bfa - changed from blender to bforartists
 	else if (sa->spacetype == SPACE_FILE)
-		title = IFACE_("Blender File View");
+		title = IFACE_("Bforartists File View");//bfa - changed from blender to bforartists
 	else
-		title = "Blender";
+		title = "Bforartists";//bfa - changed from blender to bforartists
 
 	if (win->ghostwin) {
 		GHOST_SetTitle(win->ghostwin, title);
@@ -871,7 +871,7 @@ static int ghost_event_proc(GHOST_EventHandle evt, GHOST_TUserDataPtr C_void_ptr
 		else if (!GHOST_ValidWindow(g_system, ghostwin)) {
 			/* XXX - should be checked, why are we getting an event here, and */
 			/* what is it? */
-			puts("<!> event has invalid window");
+			//puts("<!> event has invalid window"); // bfa - Turned off this message since it fired every time when you closed the User Preferences
 			return 1;
 		}
 		else {
