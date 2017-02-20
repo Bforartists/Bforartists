@@ -433,14 +433,18 @@ class TOOLBAR_MT_view(Menu):
         if scene.toolbar_view_align.bool: 
 
             row = layout.row(align=True)
+
+            row.label(text="- Align toolbar currently disabled -")
+
+            # Currently disabled because of the crash bug in edit mode.
             
-            row.operator("view3d.tofront", text="", icon ="VIEW_FRONT")
-            row.operator("view3d.toback", text="", icon ="VIEW_BACK")
-            row.operator("view3d.toleft", text="", icon ="VIEW_LEFT")
-            row.operator("view3d.toright", text="", icon ="VIEW_RIGHT")
-            row.operator("view3d.totop", text="", icon ="VIEW_TOP")
-            row.operator("view3d.tobottom", text="", icon ="VIEW_BOTTOM")
-            row.operator("view3d.rese3dtview", text="", icon ="VIEW_RESET")
+            #row.operator("view3d.tofront", text="", icon ="VIEW_FRONT")
+            #row.operator("view3d.toback", text="", icon ="VIEW_BACK")
+            #row.operator("view3d.toleft", text="", icon ="VIEW_LEFT")
+            #row.operator("view3d.toright", text="", icon ="VIEW_RIGHT")
+            #row.operator("view3d.totop", text="", icon ="VIEW_TOP")
+            #row.operator("view3d.tobottom", text="", icon ="VIEW_BOTTOM")
+            #row.operator("view3d.rese3dtview", text="", icon ="VIEW_RESET")
 
         ## ------------------ Load / Save sub toolbars
 
