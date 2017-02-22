@@ -100,7 +100,7 @@ class GreasePencilDrawingToolsPanel:
     @staticmethod
     def draw(self, context):
         layout = self.layout
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
 
         is_3d_view = context.space_data.type == 'VIEW_3D'
         is_clip_editor = context.space_data.type == 'CLIP_EDITOR'
@@ -109,22 +109,13 @@ class GreasePencilDrawingToolsPanel:
 
         col.label(text="Draw:")
 
-        if not scene.UItweaks.icon_or_text: 
-            row = col.row(align=True)
-            row.operator("gpencil.draw", icon='GREASEPENCIL',text="Draw").mode = 'DRAW'
-            row.operator("gpencil.draw", icon= 'ERASE',  text="Erase").mode = 'ERASER'
-
-            row = col.row(align=True)
-            row.operator("gpencil.draw", icon= 'GREASEPENCIL_LINE', text="Line").mode = 'DRAW_STRAIGHT'
-            row.operator("gpencil.draw", icon= 'GREASEPENCIL_POLY', text="Poly").mode = 'DRAW_POLY'
-        else:
-            row = col.row(align=False)
-            row.alignment = 'LEFT'
-            row.operator("gpencil.draw", icon='GREASEPENCIL',text="").mode = 'DRAW'
-            row.operator("gpencil.draw", icon= 'ERASE',  text="").mode = 'ERASER'
-            row.operator("gpencil.draw", icon= 'GREASEPENCIL_LINE', text="").mode = 'DRAW_STRAIGHT'
-            row.operator("gpencil.draw", icon= 'GREASEPENCIL_POLY', text="").mode = 'DRAW_POLY'
-            col.separator()
+        row = col.row(align=False)
+        row.alignment = 'LEFT'
+        row.operator("gpencil.draw", icon='GREASEPENCIL',text="").mode = 'DRAW'
+        row.operator("gpencil.draw", icon= 'ERASE',  text="").mode = 'ERASER'
+        row.operator("gpencil.draw", icon= 'GREASEPENCIL_LINE', text="").mode = 'DRAW_STRAIGHT'
+        row.operator("gpencil.draw", icon= 'GREASEPENCIL_POLY', text="").mode = 'DRAW_POLY'
+        col.separator()
 
         col.separator()
 
@@ -171,7 +162,7 @@ class GreasePencilDrawingToolsPanel:
             col.operator_menu_enum("gpencil.convert", text="Convert to Geometry...", property="type")
             layout.separator()
 
-            if not scene.UItweaks.icon_or_text:      
+            if not view.show_iconbuttons:
                 col.operator("view3d.ruler", icon= 'RULER')
                 
             else:
