@@ -44,6 +44,11 @@ class TEXT_HT_header(Header):
         row = layout.row(align=True)
         row.template_ID(st, "text", new="text.new", unlink="text.unlink", open="text.open")
 
+        row = layout.row(align=True)
+        row.prop(st, "show_line_numbers", text="")
+        row.prop(st, "show_word_wrap", text="")
+        row.prop(st, "show_syntax_highlight", text="")
+
         if text:
             osl = text.name.endswith(".osl") or text.name.endswith(".oso")
 
@@ -114,20 +119,6 @@ class TEXT_PT_properties(Panel):
         layout = self.layout
 
         st = context.space_data
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
-
-        if not scene.UItweaks.icon_or_text: 
-            flow = layout.column_flow()
-            flow.prop(st, "show_line_numbers")
-            flow.prop(st, "show_word_wrap")
-            flow.prop(st, "show_syntax_highlight")
-        else:
-            flow = layout.column_flow()
-            row = flow.row(align=False)
-            row.alignment = 'LEFT'
-            row.prop(st, "show_line_numbers", text = "")
-            row.prop(st, "show_word_wrap", text = "")
-            row.prop(st, "show_syntax_highlight", text = "")
 
         flow.prop(st, "show_line_highlight")
         flow.prop(st, "use_live_edit")

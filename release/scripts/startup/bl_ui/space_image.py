@@ -771,9 +771,9 @@ class IMAGE_PT_tools_transform_uvs(Panel, UVToolsPanel):
     def draw(self, context):
         layout = self.layout
 
-        scene = context.scene # Our data for the icon_or_text flag 
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
 
-        if not scene.UItweaks.icon_or_text: 
+        if not view.show_iconbuttons:
             col = layout.column(align=True)
             col.label(text="Transform:")
             col.operator("transform.translate", icon ='TRANSFORM_MOVE')

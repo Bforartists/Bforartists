@@ -91,9 +91,9 @@ class VIEW3D_PT_tools_object(View3DPanel, Panel):
         if obj:
             obj_type = obj.type
 
-            scene = context.scene # Our data for the icon_or_text flag is in the current scene
+            view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
             # text
-            if not scene.UItweaks.icon_or_text: 
+            if not view.show_iconbuttons: 
                 col.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="Mirror                   ")
                 if obj_type in {'MESH', 'CURVE', 'SURFACE', 'ARMATURE'}:
                     col = layout.column(align=True)                    
@@ -313,32 +313,32 @@ class VIEW3D_PT_tools_add_object(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
         col = layout.column(align=True)
 
         col.label(text="Mesh:")
-        if not scene.UItweaks.icon_or_text: 
+        if not view.show_iconbuttons: 
             self.draw_add_mesh(col)
         else:
             self.draw_add_mesh_icons(col)
 
         col = layout.column(align=True)
         col.label(text="Curve:")
-        if not scene.UItweaks.icon_or_text: 
+        if not view.show_iconbuttons: 
             self.draw_add_curve(col)
         else:
             self.draw_add_curve_icons(col)
 
         col = layout.column(align=True)
         col.label(text="Surface:")
-        if not scene.UItweaks.icon_or_text: 
+        if not view.show_iconbuttons: 
             self.draw_add_surface(col)
         else:
             self.draw_add_surface_icons(col)
 
         col = layout.column(align=True)
         col.label(text="Metaball:")
-        if not scene.UItweaks.icon_or_text: 
+        if not view.show_iconbuttons: 
             self.draw_add_mball(col)
         else:
             self.draw_add_mball_icons(col)
@@ -477,32 +477,32 @@ class VIEW3D_PT_tools_add_misc(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
 
         col = layout.column(align=True)
         col.label(text="Lamp:")
-        if not scene.UItweaks.icon_or_text: 
+        if not view.show_iconbuttons: 
             self.draw_add_lamp(col)
         else:
             self.draw_add_lamp_icons(col)
 
         col = layout.column(align=True)
         col.label(text="Other:")
-        if not scene.UItweaks.icon_or_text:
+        if not view.show_iconbuttons:
             self.draw_add_other(col)
         else:
             self.draw_add_other_icons(col)
 
         col = layout.column(align=True)
         col.label(text="Empties:")
-        if not scene.UItweaks.icon_or_text:
+        if not view.show_iconbuttons:
             self.draw_add_empties(col)
         else:
             self.draw_add_empties_icons(col)
 
         col = layout.column(align=True)
         col.label(text="Force Field:")
-        if not scene.UItweaks.icon_or_text:
+        if not view.show_iconbuttons:
             self.draw_add_force_field(col)
         else:
             self.draw_add_force_field_icons(col)
@@ -515,7 +515,7 @@ class VIEW3D_PT_tools_relations(View3DPanel, Panel):
     def draw(self, context):
         layout = self.layout
 
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
 
         obj = context.active_object
 
@@ -525,7 +525,7 @@ class VIEW3D_PT_tools_relations(View3DPanel, Panel):
                 # Particle edit
             if mode == 'OBJECT':
 
-                if not scene.UItweaks.icon_or_text: 
+                if not view.show_iconbuttons: 
 
                     col = layout.column(align=True)
 
@@ -600,7 +600,7 @@ class VIEW3D_PT_tools_relations(View3DPanel, Panel):
                 col = layout.column(align=True)
                 
                 
-                if not scene.UItweaks.icon_or_text: 
+                if not view.show_iconbuttons: 
                         col = layout.column(align=True)
                         row = col.row(align=True)
                 
@@ -632,7 +632,7 @@ class VIEW3D_PT_tools_relations(View3DPanel, Panel):
                     col = layout.column(align=True)
                     col.label(text="Parent:")
 
-                    if not scene.UItweaks.icon_or_text: 
+                    if not view.show_iconbuttons: 
                         col = layout.column(align=True)
                         row = col.row(align=True)
                         row.operator("object.parent_set", icon='PARENT_SET', text="Set")
@@ -653,9 +653,9 @@ class VIEW3D_PT_tools_animation(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
 
-        if not scene.UItweaks.icon_or_text: 
+        if not view.show_iconbuttons: 
 
             draw_keyframing_tools(context, layout)
 
@@ -683,9 +683,9 @@ class VIEW3D_PT_tools_rigid_body(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
 
-        if not scene.UItweaks.icon_or_text:
+        if not view.show_iconbuttons:
 
             col = layout.column(align=True)
             col.label(text="Add/Remove:")
@@ -743,9 +743,9 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
 
-        if not scene.UItweaks.icon_or_text: 
+        if not view.show_iconbuttons: 
 
             col = layout.column(align=True)
             col.operator("transform.shrink_fatten", icon = 'SHRINK_FATTEN', text="Shrink/Fatten   ")
@@ -942,9 +942,9 @@ class VIEW3D_PT_tools_meshweight(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
 
-        if not scene.UItweaks.icon_or_text: 
+        if not view.show_iconbuttons: 
             self.draw_generic(layout)
         else:
             self.draw_generic_icons(layout)
@@ -961,7 +961,7 @@ class VIEW3D_PT_tools_add_mesh_edit(View3DPanel, Panel):
         col = layout.column(align=True)
 
         # bfa - icon or text buttons
-        if not scene.UItweaks.icon_or_text: 
+        if not view.show_iconbuttons: 
             VIEW3D_PT_tools_add_object.draw_add_mesh(col, label=True) # the original class
         else:
             VIEW3D_PT_tools_add_object.draw_add_mesh_icons(col, label=True) # the modified class with icon buttons
@@ -985,9 +985,9 @@ class VIEW3D_PT_tools_shading(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
 
-        if not scene.UItweaks.icon_or_text: 
+        if not view.show_iconbuttons: 
             col = layout.column(align=True)
             col.label(text="Faces:")
             row = col.row(align=True)
@@ -1058,12 +1058,12 @@ class VIEW3D_PT_tools_uvs(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
         col = layout.column(align=True)
         col.label(text="UV Mapping:")
         col.menu("VIEW3D_MT_uv_map", text="Unwrap")
 
-        if not scene.UItweaks.icon_or_text:          
+        if not view.show_iconbuttons:          
             col.operator("mesh.mark_seam", icon = 'MARK_SEAM', text="Mark Seam            ").clear = False
             col.operator("mesh.clear_seam", icon = 'CLEAR_SEAM', text="Clear Seam           ")
 
@@ -1121,9 +1121,9 @@ class VIEW3D_PT_tools_curveedit(View3DPanel, Panel):
     def draw(self, context):
         layout = self.layout
 
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
 
-        if not scene.UItweaks.icon_or_text: 
+        if not view.show_iconbuttons: 
 
             col = layout.column(align=True) 
             col.operator("transform.tilt", icon = 'TILT', text="Tilt                  ")
@@ -1205,11 +1205,11 @@ class VIEW3D_PT_tools_add_curve_edit(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
         col = layout.column(align=True)
 
         # bfa - icon or text buttons
-        if not scene.UItweaks.icon_or_text: 
+        if not view.show_iconbuttons: 
             VIEW3D_PT_tools_add_object.draw_add_curve(col, label=True) # the original class
         else:
             VIEW3D_PT_tools_add_object.draw_add_curve_icons(col, label=True) # the modified class with icon buttons
@@ -1280,9 +1280,9 @@ class VIEW3D_PT_tools_surfaceedit(View3DPanel, Panel):
     def draw(self, context):
         layout = self.layout
 
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
 
-        if not scene.UItweaks.icon_or_text: 
+        if not view.show_iconbuttons: 
 
             col = layout.column(align=True)
             col.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="Mirror              ")
@@ -1337,11 +1337,11 @@ class VIEW3D_PT_tools_add_surface_edit(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
         col = layout.column(align=True)
 
         # bfa - icon or text buttons
-        if not scene.UItweaks.icon_or_text: 
+        if not view.show_iconbuttons: 
             VIEW3D_PT_tools_add_object.draw_add_surface(col) # the original class
         else:
             VIEW3D_PT_tools_add_object.draw_add_surface_icons(col) # the modified class with icon buttons
@@ -1358,9 +1358,9 @@ class VIEW3D_PT_tools_textedit(View3DPanel, Panel):
     def draw(self, context):
         layout = self.layout
 
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
 
-        if not scene.UItweaks.icon_or_text: 
+        if not view.show_iconbuttons: 
             col = layout.column(align=True)
             col.label(text="Set Case:")
             col.operator("font.case_set", icon = 'SET_UPPERCASE', text="To Upper          ").case = 'UPPER'
@@ -1413,9 +1413,9 @@ class VIEW3D_PT_tools_armatureedit(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
 
-        if not scene.UItweaks.icon_or_text: 
+        if not view.show_iconbuttons: 
             col = layout.column(align=True)
             col.label(text="Bones:")
             col.operator("armature.bone_primitive_add", icon = 'BONE_DATA', text="Add                  ")
@@ -1471,9 +1471,9 @@ class VIEW3D_PT_tools_mballedit(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
 
-        if not scene.UItweaks.icon_or_text: 
+        if not view.show_iconbuttons: 
 
             col = layout.column(align=True)
             col.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="Mirror                ")
@@ -1503,7 +1503,7 @@ class VIEW3D_PT_tools_add_mball_edit(View3DPanel, Panel):
         col = layout.column(align=True)
 
         # bfa - icon or text buttons
-        if not scene.UItweaks.icon_or_text: 
+        if not view.show_iconbuttons: 
             VIEW3D_PT_tools_add_object.draw_add_mball(col) # the original class
         else:
             VIEW3D_PT_tools_add_object.draw_add_mball_icons(col) # the modified class with icon buttons
@@ -1519,9 +1519,9 @@ class VIEW3D_PT_tools_latticeedit(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
 
-        if not scene.UItweaks.icon_or_text: 
+        if not view.show_iconbuttons: 
 
             col = layout.column(align=True)
             col.operator("lattice.make_regular", icon = 'MAKE_REGULAR', text = "Make Regular  ")
@@ -1554,9 +1554,9 @@ class VIEW3D_PT_tools_posemode(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
 
-        if not scene.UItweaks.icon_or_text: 
+        if not view.show_iconbuttons: 
 
             col = layout.column(align=True)
             col.label(text="In-Between:")
@@ -2770,9 +2770,9 @@ class VIEW3D_PT_tools_history(View3DPanel, Panel):
         layout = self.layout
         obj = context.object
 
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
         # Flag is off, draw buttons as text
-        if not scene.UItweaks.icon_or_text: 
+        if not view.show_iconbuttons: 
             col = layout.column(align=True)
             row = col.row(align=True)
             row.operator("ed.undo", icon='UNDO')

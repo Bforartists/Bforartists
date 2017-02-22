@@ -3473,12 +3473,9 @@ class VIEW3D_PT_view3d_display(Panel):
         view = context.space_data
         scene = context.scene
 
-        # bfa - Our checkbox for icon or text buttons.
-        # The prop is defined in the __init__.py. When we define it in this file
-        # then we get an error that the scene has no UITweaks attribute. 
-        # Most probably a order of registration problem.
-        layout.prop(scene.UItweaks, "icon_or_text")
         col = layout.column()
+        col.prop(view, "show_iconbuttons", text="Icon or Text Buttons") # bfa - show hide cursor checkbox
+        #col = layout.column()
         col.prop(view, "show_cursor", text="3D Cursor") # bfa - show hide cursor checkbox
   
         col = layout.column()
