@@ -159,10 +159,7 @@ class GreasePencilDrawingToolsPanel:
 
             col.label(text="Tools:")
             col.operator_menu_enum("gpencil.convert", text="Convert to Geometry...", property="type")
-            layout.separator()
-
-            row.alignment = 'LEFT'
-            row.operator("view3d.ruler", icon= 'RULER', text = "")     
+            col.operator("view3d.ruler", icon= 'RULER')
 
 
 class GreasePencilStrokeEditPanel:
