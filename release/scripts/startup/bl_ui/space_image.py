@@ -771,28 +771,14 @@ class IMAGE_PT_tools_transform_uvs(Panel, UVToolsPanel):
     def draw(self, context):
         layout = self.layout
 
-        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
-
-        if not view.show_iconbuttons:
-            col = layout.column(align=True)
-            col.label(text="Transform:")
-            col.operator("transform.translate", icon ='TRANSFORM_MOVE')
-            col.operator("transform.rotate", icon ='TRANSFORM_ROTATE')
-            col.operator("transform.resize", icon ='TRANSFORM_SCALE', text="Scale")
-
-            col.separator()
-
-            col.operator("transform.shear", icon = 'SHEAR')
-
-        else:
-            col = layout.column(align=True)
-            col.label(text="Transform:")
-            row = col.row(align=False)
-            row.alignment = 'LEFT'
-            row.operator("transform.translate", icon ='TRANSFORM_MOVE', text = "")
-            row.operator("transform.rotate", icon ='TRANSFORM_ROTATE', text = "")
-            row.operator("transform.resize", icon ='TRANSFORM_SCALE', text = "")
-            row.operator("transform.shear", icon = 'SHEAR', text = "")
+        col = layout.column(align=True)
+        col.label(text="Transform:")
+        row = col.row(align=False)
+        row.alignment = 'LEFT'
+        row.operator("transform.translate", icon ='TRANSFORM_MOVE', text = "")
+        row.operator("transform.rotate", icon ='TRANSFORM_ROTATE', text = "")
+        row.operator("transform.resize", icon ='TRANSFORM_SCALE', text = "")
+        row.operator("transform.shear", icon = 'SHEAR', text = "")
 
 
 class IMAGE_PT_paint(Panel, ImagePaintPanel):
