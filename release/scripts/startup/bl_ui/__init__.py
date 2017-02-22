@@ -92,10 +92,6 @@ _namespace = globals()
 _modules_loaded = [_namespace[name] for name in _modules]
 del _namespace
 
-# bfa - text or icon buttons, the prop
-class UITweaksData(bpy.types.PropertyGroup):
-    icon_or_text = bpy.props.BoolProperty(name="Icon / Text Buttons", description="Displays some buttons as text or iconbuttons", default = True) # Our prop
-
 ############################ Toolbar props File #################################
 
 # bfa - Load Save
@@ -295,11 +291,6 @@ def register():
     bpy.types.WindowManager.SP_material_settings_options = bpy.props.BoolProperty(name="Viewport Options", description="Contains some Viewport options", default = False)
     bpy.types.WindowManager.SP_material_shading_diffuseramp = bpy.props.BoolProperty(name="Ramp Options", description="Contains some Ramp options", default = False)
     bpy.types.WindowManager.SP_material_shading_specularramp = bpy.props.BoolProperty(name="Ramp Options", description="Contains some Ramp options", default = False)
-
-
-    # bfa - Our data block for icon or text buttons
-    bpy.utils.register_class(UITweaksData) # Our data block
-    bpy.types.Scene.UItweaks = bpy.props.PointerProperty(type=UITweaksData) # Bind reference of type of our data block to type Scene objects
 
     ############################ Toolbar props File #################################
 
@@ -547,10 +538,6 @@ def unregister():
     del bpy.types.WindowManager.SP_material_settings_options   
     del bpy.types.WindowManager.SP_material_shading_diffuseramp
     del bpy.types.WindowManager.SP_material_shading_specularramp
-
-    # bfa - Our data block for icon or text buttons
-    bpy.utils.unregister_class(UITweaksData) # Our data block
-    del bpy.types.Scene.UItweaks # Unregister our data block when unregister.
 
     ############################ Toolbar props File #################################
 
