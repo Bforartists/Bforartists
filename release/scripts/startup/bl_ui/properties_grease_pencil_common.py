@@ -52,12 +52,6 @@ def gpencil_stroke_placement_settings(context, layout):
         row.active = getattr(ts, propname) in {'SURFACE', 'STROKE'}
         row.prop(ts, "use_gpencil_stroke_endpoints")
 
-        if context.scene.tool_settings.gpencil_stroke_placement_view3d == 'CURSOR':
-            row = col.row(align=True)
-            row.label("Lock axis:")
-            row = col.row(align=True)
-            row.prop(ts.gpencil_sculpt, "lockaxis", expand=True)
-
 
 def gpencil_active_brush_settings_simple(context, layout):
     brush = context.active_gpencil_brush
@@ -117,10 +111,6 @@ class GreasePencilDrawingToolsPanel:
         col.separator()
 
         col.separator()
-
-        sub = col.column(align=True)
-        sub.operator("gpencil.blank_frame_add", icon='NEW')
-        sub.operator("gpencil.active_frames_delete_all", icon='X', text="Delete Frame(s)")
 
         sub = col.column(align=True)
         sub.prop(context.tool_settings, "use_gpencil_additive_drawing", text="Additive Drawing")
