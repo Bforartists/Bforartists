@@ -293,11 +293,14 @@ class VIEW3D_MT_totop(bpy.types.Operator):
 
     def execute(self, context): 
         for area in bpy.context.screen.areas:
-            if area.type == 'VIEW_3D':
-                override = bpy.context.copy()
-                override['area'] = area
-                bpy.ops.view3d.viewnumpad(override, type='TOP', align_active=False)
-        return {'FINISHED'} 
+                if area.type == 'VIEW_3D':
+                    for region in area.regions:
+                        if region.type == 'WINDOW':
+                            override = bpy.context.copy()
+                            override['area'] = area
+                            override['region'] = region
+                            bpy.ops.view3d.viewnumpad(override, type='TOP', align_active=False)
+        return {'FINISHED'}
 
 class VIEW3D_MT_tobottom(bpy.types.Operator):
     """Change view to Bottom\nThis button is global, and changes all available 3D views\nUse the View menu to change the view just in selected 3d view"""
@@ -305,13 +308,16 @@ class VIEW3D_MT_tobottom(bpy.types.Operator):
     bl_label = "view from bottom"
     bl_options = {'REGISTER', 'UNDO'}
 
-    def execute(self, context):
+    def execute(self, context): 
         for area in bpy.context.screen.areas:
-            if area.type == 'VIEW_3D':
-                override = bpy.context.copy()
-                override['area'] = area
-                bpy.ops.view3d.viewnumpad(override, type='BOTTOM', align_active=False)
-        return {'FINISHED'} 
+                if area.type == 'VIEW_3D':
+                    for region in area.regions:
+                        if region.type == 'WINDOW':
+                            override = bpy.context.copy()
+                            override['area'] = area
+                            override['region'] = region
+                            bpy.ops.view3d.viewnumpad(override, type='BOTTOM', align_active=False)
+        return {'FINISHED'}
 
 class VIEW3D_MT_tofront(bpy.types.Operator):
     """Change view to Front\nThis button is global, and changes all available 3D views\nUse the View menu to change the view just in selected 3d view"""
@@ -319,27 +325,31 @@ class VIEW3D_MT_tofront(bpy.types.Operator):
     bl_label = "view from front"
     bl_options = {'REGISTER', 'UNDO'}
     def execute(self, context):
-
         for area in bpy.context.screen.areas:
-            if area.type == 'VIEW_3D':
-                override = bpy.context.copy()
-                override['area'] = area
-                bpy.ops.view3d.viewnumpad(override, type='FRONT', align_active=False)
-        return {'FINISHED'} 
-
+                if area.type == 'VIEW_3D':
+                    for region in area.regions:
+                        if region.type == 'WINDOW':
+                            override = bpy.context.copy()
+                            override['area'] = area
+                            override['region'] = region
+                            bpy.ops.view3d.viewnumpad(override, type='FRONT', align_active=False)
+        return {'FINISHED'}
 class VIEW3D_MT_tobback(bpy.types.Operator):
     """Change view to Back\nThis button is global, and changes all available 3D views\nUse the View menu to change the view just in selected 3d view"""
     bl_idname = "view3d.toback"
     bl_label = "view from back"
     bl_options = {'REGISTER', 'UNDO'}
 
-    def execute(self, context):
+    def execute(self, context): 
         for area in bpy.context.screen.areas:
-            if area.type == 'VIEW_3D':
-                override = bpy.context.copy()
-                override['area'] = area
-                bpy.ops.view3d.viewnumpad(override, type='BACK', align_active=False)
-        return {'FINISHED'} 
+                if area.type == 'VIEW_3D':
+                    for region in area.regions:
+                        if region.type == 'WINDOW':
+                            override = bpy.context.copy()
+                            override['area'] = area
+                            override['region'] = region
+                            bpy.ops.view3d.viewnumpad(override, type='BACK', align_active=False)
+        return {'FINISHED'}
 
 class VIEW3D_MT_toleft(bpy.types.Operator):
     """Change view to Left\nThis button is global, and changes all available 3D views\nUse the View menu to change the view just in selected 3d view"""
@@ -347,13 +357,16 @@ class VIEW3D_MT_toleft(bpy.types.Operator):
     bl_label = "view from left"
     bl_options = {'REGISTER', 'UNDO'}
 
-    def execute(self, context):
+    def execute(self, context): 
         for area in bpy.context.screen.areas:
-            if area.type == 'VIEW_3D':
-                override = bpy.context.copy()
-                override['area'] = area
-                bpy.ops.view3d.viewnumpad(override, type='LEFT', align_active=False)
-        return {'FINISHED'} 
+                if area.type == 'VIEW_3D':
+                    for region in area.regions:
+                        if region.type == 'WINDOW':
+                            override = bpy.context.copy()
+                            override['area'] = area
+                            override['region'] = region
+                            bpy.ops.view3d.viewnumpad(override, type='LEFT', align_active=False)
+        return {'FINISHED'}
 
 class VIEW3D_MT_toright(bpy.types.Operator):
     """Change view to Right\nThis button is global, and changes all available 3D views\nUse the View menu to change the view just in selected 3d view"""
@@ -363,11 +376,14 @@ class VIEW3D_MT_toright(bpy.types.Operator):
 
     def execute(self, context): 
         for area in bpy.context.screen.areas:
-            if area.type == 'VIEW_3D':
-                override = bpy.context.copy()
-                override['area'] = area
-                bpy.ops.view3d.viewnumpad(override, type='RIGHT', align_active=False)
-        return {'FINISHED'} 
+                if area.type == 'VIEW_3D':
+                    for region in area.regions:
+                        if region.type == 'WINDOW':
+                            override = bpy.context.copy()
+                            override['area'] = area
+                            override['region'] = region
+                            bpy.ops.view3d.viewnumpad(override, type='RIGHT', align_active=False)
+        return {'FINISHED'}
 
 class VIEW3D_MT_reset3dview(bpy.types.Operator):
     """Reset 3D View \nThis button is global, and changes all available 3D views\nUse the View menu to change the view just in selected 3d view"""
@@ -433,18 +449,14 @@ class TOOLBAR_MT_view(Menu):
         if scene.toolbar_view_align.bool: 
 
             row = layout.row(align=True)
-
-            row.label(text="- Align toolbar currently disabled -")
-
-            # Currently disabled because of the crash bug in edit mode.
             
-            #row.operator("view3d.tofront", text="", icon ="VIEW_FRONT")
-            #row.operator("view3d.toback", text="", icon ="VIEW_BACK")
-            #row.operator("view3d.toleft", text="", icon ="VIEW_LEFT")
-            #row.operator("view3d.toright", text="", icon ="VIEW_RIGHT")
-            #row.operator("view3d.totop", text="", icon ="VIEW_TOP")
-            #row.operator("view3d.tobottom", text="", icon ="VIEW_BOTTOM")
-            #row.operator("view3d.rese3dtview", text="", icon ="VIEW_RESET")
+            row.operator("view3d.tofront", text="", icon ="VIEW_FRONT")
+            row.operator("view3d.toback", text="", icon ="VIEW_BACK")
+            row.operator("view3d.toleft", text="", icon ="VIEW_LEFT")
+            row.operator("view3d.toright", text="", icon ="VIEW_RIGHT")
+            row.operator("view3d.totop", text="", icon ="VIEW_TOP")
+            row.operator("view3d.tobottom", text="", icon ="VIEW_BOTTOM")
+            row.operator("view3d.rese3dtview", text="", icon ="VIEW_RESET")
 
         ## ------------------ Load / Save sub toolbars
 
