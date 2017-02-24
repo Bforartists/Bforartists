@@ -1,7 +1,24 @@
-﻿
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
 bl_info = {
     "name": "Toolbar Settings Bforartists",
-    "author": "Your Name Here",
+    "author": "Bforartists",
     "version": (1, 0),
     "blender": (2, 76, 0),
     "location": "User Preferences > Addons",
@@ -25,63 +42,63 @@ class bforartists_toolbar_settings(AddonPreferences):
 
     # file
 
-    file_load_save = BoolProperty(name="Load / Save", default=True,)
-    file_link_append = BoolProperty(name="Link / Append", default=False,)
-    file_import_common = BoolProperty(name="Import Common", default=True,)
-    file_import_uncommon = BoolProperty(name="Import Uncommon", default=False,)
-    file_export_common = BoolProperty(name="Export Common", default=True,)
-    file_export_uncommon = BoolProperty(name="Export Uncommon", default=False,)
-    file_render = BoolProperty(name="Render", default=True,)
-    file_render_opengl = BoolProperty(name="Render Open GL", default=False,)
-    file_render_misc = BoolProperty(name="Render Misc", default=False,)
+    file_load_save = BoolProperty(name="Load / Save", default=True, description = "Display the Load Save Toolbar\nAll Modes", )
+    file_link_append = BoolProperty(name="Link / Append", default=False, description = "Display the Link Append Toolbar\nAll Modes", )
+    file_import_common = BoolProperty(name="Import Common", default=True, description = "Display the Import Common Toolbar\nAll Modes", )
+    file_import_uncommon = BoolProperty(name="Import Uncommon", default=False, description = "Display the Import Uncommon Toolbar\nAll Modes", )
+    file_export_common = BoolProperty(name="Export Common", default=True, description = "Display the Export Common Toolbar\nAll Modes", )
+    file_export_uncommon = BoolProperty(name="Export Uncommon", default=False, description = "Display the Export Uncommon Toolbar\nAll Modes", )
+    file_render = BoolProperty(name="Render", default=True, description = "Display the Render Toolbar\nAll Modes", )
+    file_render_opengl = BoolProperty(name="Render Open GL", default=False, description = "Display the Render Open GL Toolbar\nAll Modes", )
+    file_render_misc = BoolProperty(name="Render Misc", default=False, description = "Display the Render Misc Toolbar\nAll Modes", )
 
     # view
 
-    view_align = BoolProperty(name="Align", default=False,)
-    view_camera = BoolProperty(name="Camera", default=False,)
+    view_align = BoolProperty(name="Align", default=False, description = "Display the Align Toolbar\nAll Modes", )
+    view_camera = BoolProperty(name="Camera", default=False, description = "Display the Camera Toolbar\nAll Modes", )
 
     # primitives
 
-    primitives_mesh = BoolProperty(name="Mesh", default=True,)
-    primitives_curve = BoolProperty(name="Curve", default=False,)
-    primitives_surface = BoolProperty(name="Surface", default=False,)
-    primitives_metaball = BoolProperty(name="Metaball", default=False,)
-    primitives_lamp = BoolProperty(name="Lamp", default=False,)
-    primitives_other = BoolProperty(name="Other", default=True,)
-    primitives_empties = BoolProperty(name="Empties", default=False,)
-    primitives_forcefield = BoolProperty(name="Force Field", default=False,)
+    primitives_mesh = BoolProperty(name="Mesh", default=True, description = "Display the Mesh Toolbar\nDisplay is mode dependant", )
+    primitives_curve = BoolProperty(name="Curve", default=False, description = "Display the Curve Toolbar\nDisplay is mode dependant", )
+    primitives_surface = BoolProperty(name="Surface", default=False, description = "Display the Surface Toolbar\nDisplay is mode dependant", )
+    primitives_metaball = BoolProperty(name="Metaball", default=False, description = "Display the Metaball Toolbar\nDisplay is mode dependant", )
+    primitives_lamp = BoolProperty(name="Lamp", default=False, description = "Display the Lamp Toolbar\nDisplay is mode dependant", )
+    primitives_other = BoolProperty(name="Other", default=True, description = "Display the Other Toolbar\nDisplay is mode dependant", )
+    primitives_empties = BoolProperty(name="Empties", default=False, description = "Display the Empties Toolbar\nDisplay is mode dependant", )
+    primitives_forcefield = BoolProperty(name="Force Field", default=False, description = "Display the Forcefield Toolbar\nDisplay is mode dependant", )
 
     # Image
 
-    image_uv_common = BoolProperty(name="UV Common", default=True,)
-    image_uv_misc = BoolProperty(name="UV Misc", default=True,)
-    image_uv_align = BoolProperty(name="UV Align", default=True,)
+    image_uv_common = BoolProperty(name="UV Common", default=True, description = "Display the UV Common Toolbar\nAll Modes", )
+    image_uv_misc = BoolProperty(name="UV Misc", default=True, description = "Display the UV Misc Toolbar\nAll Modes", )
+    image_uv_align = BoolProperty(name="UV Align", default=True, description = "Display the UV Align Toolbar\nAll Modes", )
 
     # Tools
 
-    tools_relations = BoolProperty(name="Relations", default=True,)
-    tools_edit = BoolProperty(name="Edit", default=False,)
+    tools_relations = BoolProperty(name="Relations", default=True, description = "Display the Forcefield Toolbar\nDisplay is mode and content dependant", )
+    tools_edit = BoolProperty(name="Edit", default=False, description = "Display the Forcefield Toolbar\nDisplay is mode and content dependant", )
 
     # Animation
 
-    animation_keyframes = BoolProperty(name="Keyframes", default=True,)
-    animation_range = BoolProperty(name="Range", default=False,)
-    animation_play = BoolProperty(name="Play", default=False,)
-    animation_sync = BoolProperty(name="Sync", default=False,)
-    animation_keyframetype = BoolProperty(name="Keyframetype", default=False,)
-    animation_keyingset = BoolProperty(name="Keyingset", default=False,)
+    animation_keyframes = BoolProperty(name="Keyframes", default=True, description = "Display the keyframes Toolbar\nDisplay is mode and content dependant", )
+    animation_range = BoolProperty(name="Range", default=False, description = "Display the Range Toolbar\nAll Modes", )
+    animation_play = BoolProperty(name="Play", default=False, description = "Display the Play Toolbar\nAll Modes", )
+    animation_sync = BoolProperty(name="Sync", default=False, description = "Display the Sync Toolbar\nAll Modes", )
+    animation_keyframetype = BoolProperty(name="Keyframetype", default=False, description = "Display the Keyframe Type Toolbar\nAll Modes", )
+    animation_keyingset = BoolProperty(name="Keyingset", default=False, description = "Display the Keyingset Toolbar\nAll Modes", )
     
     # edit
 
-    edit_edit = BoolProperty(name="Edit", default=True,)
-    edit_weightinedit = BoolProperty(name="Weight in Edit", default=True,)
-    edit_objectapply = BoolProperty(name="Object Apply", default=True,)
-    edit_objectclear = BoolProperty(name="Object Clear", default=True,)
+    edit_edit = BoolProperty(name="Edit", default=True, description = "Display the Edit Toolbar\nDisplay is mode and content dependant", )
+    edit_weightinedit = BoolProperty(name="Weight in Edit", default=True, description = "Display the Weight in Edit Toolbar\nDisplay is mode and content dependant", )
+    edit_objectapply = BoolProperty(name="Object Apply", default=True, description = "Display the Object Apply Toolbar\nDisplay is mode and content dependant", )
+    edit_objectclear = BoolProperty(name="Object Clear", default=True, description = "Display the Object Clear Toolbar\nDisplay is mode and content dependant", )
 
     # misc
 
-    misc_history = BoolProperty(name="History", default=True,)
-    misc_misc = BoolProperty(name="Misc", default=False,)
+    misc_history = BoolProperty(name="History", default=True, description = "Display the History Toolbar\nAll Modes", )
+    misc_misc = BoolProperty(name="Misc", default=False, description = "Display the Misc Toolbar\nAll Modes", )
 
 
     def draw(self, context):
