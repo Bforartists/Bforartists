@@ -83,7 +83,7 @@ class TOOLBAR_MT_toolbar_type(Menu):
 ######################################## Toolbars ##############################################
 
 
-######################################## LoadSave ##############################################
+######################################## File ##############################################
 
 
 #################### Holds the Toolbars menu for file, collapsible
@@ -112,18 +112,19 @@ class TOOLBAR_MT_toolbars_file_menu(Menu):
     def draw(self, context):
         layout = self.layout
 
-        scene = context.scene
-        layout.prop(scene.toolbar_file_loadsave, "bool")
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
 
-        layout.prop(scene.toolbar_file_linkappend, "bool")
+        layout.prop(addon_prefs, "file_load_save")
+        layout.prop(addon_prefs, "file_link_append")
+        layout.prop(addon_prefs, "file_import_common")
+        layout.prop(addon_prefs, "file_import_uncommon")
+        layout.prop(addon_prefs, "file_export_common")
+        layout.prop(addon_prefs, "file_export_uncommon")
+        layout.prop(addon_prefs, "file_render")
+        layout.prop(addon_prefs, "file_render_opengl")
+        layout.prop(addon_prefs, "file_render_misc")
 
-        layout.prop(scene.toolbar_file_importcommon, "bool")
-        layout.prop(scene.toolbar_file_importuncommon, "bool")
-        layout.prop(scene.toolbar_file_exportcommon, "bool")
-        layout.prop(scene.toolbar_file_exportuncommon, "bool")
-        layout.prop(scene.toolbar_file_render, "bool")  
-        layout.prop(scene.toolbar_file_render_view, "bool")  
-        layout.prop(scene.toolbar_file_render_misc, "bool")  
             
 ############### bfa - Load Save menu hidable by the flag in the right click menu
 
@@ -142,7 +143,10 @@ class TOOLBAR_MT_file(Menu):
 
         ## ------------------ Load / Save sub toolbars
 
-        if scene.toolbar_file_loadsave.bool: 
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
+
+        if addon_prefs.file_load_save:
 
             row = layout.row(align=True)
 
@@ -161,7 +165,7 @@ class TOOLBAR_MT_file(Menu):
 
         ## ------------------ Link Append
 
-        if scene.toolbar_file_linkappend.bool: 
+        if addon_prefs.file_link_append: 
 
             row = layout.row(align=True)
 
@@ -170,7 +174,7 @@ class TOOLBAR_MT_file(Menu):
 
         ## ------------------ Import common
 
-        if scene.toolbar_file_importcommon.bool:
+        if addon_prefs.file_import_common:
 
             row = layout.row(align=True)
 
@@ -183,7 +187,7 @@ class TOOLBAR_MT_file(Menu):
 
         ## ------------------ Import uncommon
 
-        if scene.toolbar_file_importuncommon.bool:
+        if addon_prefs.file_import_uncommon:
 
             row = layout.row(align=True)
 
@@ -194,7 +198,7 @@ class TOOLBAR_MT_file(Menu):
             
         ## ------------------ Export common
 
-        if scene.toolbar_file_exportcommon.bool:
+        if addon_prefs.file_export_common:
 
             row = layout.row(align=True)
 
@@ -207,7 +211,7 @@ class TOOLBAR_MT_file(Menu):
 
         ## ------------------ Export uncommon
 
-        if scene.toolbar_file_exportuncommon.bool:
+        if addon_prefs.file_export_uncommon:
 
             row = layout.row(align=True)
 
@@ -217,7 +221,7 @@ class TOOLBAR_MT_file(Menu):
 
         ## ------------------ Render
 
-        if scene.toolbar_file_render.bool:
+        if addon_prefs.file_render:
 
             row = layout.row(align=True)
 
@@ -228,7 +232,7 @@ class TOOLBAR_MT_file(Menu):
 
         ## ------------------ Render
 
-        if scene.toolbar_file_render_view.bool:
+        if addon_prefs.file_render_opengl:
 
             row = layout.row(align=True)
 
@@ -238,7 +242,7 @@ class TOOLBAR_MT_file(Menu):
 
         ## ------------------ Render
 
-        if scene.toolbar_file_render_misc.bool:
+        if addon_prefs.file_render_misc:
 
             row = layout.row(align=True)
 
@@ -278,9 +282,11 @@ class TOOLBAR_MT_toolbars_view_menu(Menu):
     def draw(self, context):
         layout = self.layout
 
-        scene = context.scene
-        layout.prop(scene.toolbar_view_align, "bool")
-        layout.prop(scene.toolbar_view_camera, "bool")
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
+
+        layout.prop(addon_prefs, "view_align")
+        layout.prop(addon_prefs, "view_camera")
 
 
 ############### Change view classes
@@ -446,7 +452,10 @@ class TOOLBAR_MT_view(Menu):
 
         ## ------------------ Load / Save sub toolbars
 
-        if scene.toolbar_view_align.bool: 
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
+
+        if addon_prefs.view_align: 
 
             row = layout.row(align=True)
             
@@ -460,7 +469,7 @@ class TOOLBAR_MT_view(Menu):
 
         ## ------------------ Load / Save sub toolbars
 
-        if scene.toolbar_view_camera.bool: 
+        if addon_prefs.view_camera:
 
             row = layout.row(align=True)
 
@@ -519,16 +528,17 @@ class TOOLBAR_MT_toolbars_primitives_menu(Menu):
     def draw(self, context):
         layout = self.layout
 
-        scene = context.scene
-        layout.prop(scene.toolbar_primitives_mesh, "bool")
-        layout.prop(scene.toolbar_primitives_curve, "bool")
-        layout.prop(scene.toolbar_primitives_surface, "bool")
-        layout.prop(scene.toolbar_primitives_metaball, "bool")
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
 
-        layout.prop(scene.toolbar_primitives_lamp, "bool")
-        layout.prop(scene.toolbar_primitives_other, "bool")
-        layout.prop(scene.toolbar_primitives_empties, "bool")
-        layout.prop(scene.toolbar_primitives_forcefield, "bool")
+        layout.prop(addon_prefs, "primitives_mesh")
+        layout.prop(addon_prefs, "primitives_curve")
+        layout.prop(addon_prefs, "primitives_surface")
+        layout.prop(addon_prefs, "primitives_metaball")
+        layout.prop(addon_prefs, "primitives_lamp")
+        layout.prop(addon_prefs, "primitives_other")
+        layout.prop(addon_prefs, "primitives_empties")
+        layout.prop(addon_prefs, "primitives_forcefield")
 
             
 ############### bfa - menu hidable by the flag in the right click menu
@@ -547,13 +557,16 @@ class TOOLBAR_MT_primitives(Menu):
 
         TOOLBAR_MT_menu_primitives.draw_collapsible(context, layout)
 
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
+
         obj = context.object 
 
         if obj is None:
 
             ## ------------------ primitives sub toolbars
 
-            if scene.toolbar_primitives_mesh.bool: 
+            if addon_prefs.primitives_mesh:
 
                 row = layout.row(align=True)
 
@@ -566,7 +579,7 @@ class TOOLBAR_MT_primitives(Menu):
                 row.operator("mesh.primitive_cone_add", text="", icon='MESH_CONE')
                 row.operator("mesh.primitive_torus_add", text="", icon='MESH_TORUS')
 
-            if scene.toolbar_primitives_curve.bool: 
+            if addon_prefs.primitives_curve: 
 
                 row = layout.row(align=True)
 
@@ -576,7 +589,7 @@ class TOOLBAR_MT_primitives(Menu):
                 row.operator("curve.primitive_nurbs_circle_add", text="", icon='CURVE_NCIRCLE')
                 row.operator("curve.primitive_nurbs_path_add", text="", icon='CURVE_PATH')
 
-            if scene.toolbar_primitives_surface.bool: 
+            if addon_prefs.primitives_surface: 
 
                 row = layout.row(align=True)
 
@@ -587,7 +600,8 @@ class TOOLBAR_MT_primitives(Menu):
                 row.operator("surface.primitive_nurbs_surface_sphere_add", text="", icon='SURFACE_NSPHERE')
                 row.operator("surface.primitive_nurbs_surface_torus_add", text="", icon='SURFACE_NTORUS')
 
-            if scene.toolbar_primitives_metaball.bool: 
+            if addon_prefs.primitives_metaball:
+                 
                 row = layout.row(align=True)
 
                 row.operator("object.metaball_add", text="", icon='META_BALL').type= 'BALL'
@@ -596,7 +610,7 @@ class TOOLBAR_MT_primitives(Menu):
                 row.operator("object.metaball_add", text="", icon='META_ELLIPSOID').type= 'ELLIPSOID'
                 row.operator("object.metaball_add", text="", icon='META_CUBE').type= 'CUBE'
 
-            if scene.toolbar_primitives_lamp.bool: 
+            if addon_prefs.primitives_lamp: 
 
                 row = layout.row(align=True)
 
@@ -606,7 +620,7 @@ class TOOLBAR_MT_primitives(Menu):
                 row.operator("object.lamp_add", text="", icon='LAMP_HEMI').type= 'HEMI' 
                 row.operator("object.lamp_add", text="", icon='LAMP_AREA').type= 'AREA' 
 
-            if scene.toolbar_primitives_other.bool: 
+            if addon_prefs.primitives_other: 
 
                 row = layout.row(align=True)
 
@@ -616,7 +630,7 @@ class TOOLBAR_MT_primitives(Menu):
                 row.operator("object.camera_add", text="", icon='OUTLINER_OB_CAMERA')
                 row.operator("object.speaker_add", text="", icon='OUTLINER_OB_SPEAKER')
 
-            if scene.toolbar_primitives_empties.bool: 
+            if addon_prefs.primitives_empties: 
 
                 row = layout.row(align=True)
 
@@ -629,7 +643,7 @@ class TOOLBAR_MT_primitives(Menu):
                 row.operator("object.empty_add", text="", icon='EMPTY_ARROWS').type = 'ARROWS'
                 row.operator("object.empty_add", text="", icon='EMPTY_IMAGE').type = 'IMAGE'
 
-            if scene.toolbar_primitives_forcefield.bool: 
+            if addon_prefs.primitives_forcefield: 
 
                 row = layout.row(align=True)
 
@@ -655,7 +669,7 @@ class TOOLBAR_MT_primitives(Menu):
 
                 ## ------------------ primitives sub toolbars
 
-                if scene.toolbar_primitives_mesh.bool: 
+                if addon_prefs.primitives_mesh: 
 
                     row = layout.row(align=True)
 
@@ -668,7 +682,7 @@ class TOOLBAR_MT_primitives(Menu):
                     row.operator("mesh.primitive_cone_add", text="", icon='MESH_CONE')
                     row.operator("mesh.primitive_torus_add", text="", icon='MESH_TORUS')
 
-                if scene.toolbar_primitives_curve.bool: 
+                if addon_prefs.primitives_curve: 
 
                     row = layout.row(align=True)
 
@@ -678,7 +692,7 @@ class TOOLBAR_MT_primitives(Menu):
                     row.operator("curve.primitive_nurbs_circle_add", text="", icon='CURVE_NCIRCLE')
                     row.operator("curve.primitive_nurbs_path_add", text="", icon='CURVE_PATH')
 
-                if scene.toolbar_primitives_surface.bool: 
+                if addon_prefs.primitives_surface: 
 
                     row = layout.row(align=True)
 
@@ -689,7 +703,8 @@ class TOOLBAR_MT_primitives(Menu):
                     row.operator("surface.primitive_nurbs_surface_sphere_add", text="", icon='SURFACE_NSPHERE')
                     row.operator("surface.primitive_nurbs_surface_torus_add", text="", icon='SURFACE_NTORUS')
 
-                if scene.toolbar_primitives_metaball.bool: 
+                if addon_prefs.primitives_metaball:
+
                     row = layout.row(align=True)
 
                     row.operator("object.metaball_add", text="", icon='META_BALL').type= 'BALL'
@@ -698,7 +713,7 @@ class TOOLBAR_MT_primitives(Menu):
                     row.operator("object.metaball_add", text="", icon='META_ELLIPSOID').type= 'ELLIPSOID'
                     row.operator("object.metaball_add", text="", icon='META_CUBE').type= 'CUBE'
 
-                if scene.toolbar_primitives_lamp.bool: 
+                if addon_prefs.primitives_lamp: 
 
                     row = layout.row(align=True)
 
@@ -708,7 +723,7 @@ class TOOLBAR_MT_primitives(Menu):
                     row.operator("object.lamp_add", text="", icon='LAMP_HEMI').type= 'HEMI' 
                     row.operator("object.lamp_add", text="", icon='LAMP_AREA').type= 'AREA' 
 
-                if scene.toolbar_primitives_other.bool: 
+                if addon_prefs.primitives_other: 
 
                     row = layout.row(align=True)
 
@@ -718,7 +733,7 @@ class TOOLBAR_MT_primitives(Menu):
                     row.operator("object.camera_add", text="", icon='OUTLINER_OB_CAMERA')
                     row.operator("object.speaker_add", text="", icon='OUTLINER_OB_SPEAKER')
 
-                if scene.toolbar_primitives_empties.bool: 
+                if addon_prefs.primitives_empties: 
 
                     row = layout.row(align=True)
 
@@ -731,7 +746,7 @@ class TOOLBAR_MT_primitives(Menu):
                     row.operator("object.empty_add", text="", icon='EMPTY_ARROWS').type = 'ARROWS'
                     row.operator("object.empty_add", text="", icon='EMPTY_IMAGE').type = 'IMAGE'
 
-                if scene.toolbar_primitives_forcefield.bool: 
+                if addon_prefs.primitives_forcefield: 
 
                     row = layout.row(align=True)
 
@@ -753,7 +768,7 @@ class TOOLBAR_MT_primitives(Menu):
 
                 if obj.type == 'MESH':
 
-                    if scene.toolbar_primitives_mesh.bool: 
+                    if addon_prefs.primitives_mesh: 
 
                         row = layout.row(align=True)
 
@@ -768,7 +783,7 @@ class TOOLBAR_MT_primitives(Menu):
 
                 if obj.type == 'CURVE':
 
-                    if scene.toolbar_primitives_curve.bool: 
+                    if addon_prefs.primitives_curve: 
 
                         row = layout.row(align=True)
 
@@ -778,7 +793,7 @@ class TOOLBAR_MT_primitives(Menu):
                         row.operator("curve.primitive_nurbs_circle_add", text="", icon='CURVE_NCIRCLE')
                         row.operator("curve.primitive_nurbs_path_add", text="", icon='CURVE_PATH')
 
-                if obj.type == 'SURFACE':
+                if addon_prefs.primitives_surface: 
 
                     if scene.toolbar_primitives_surface.bool: 
 
@@ -793,7 +808,7 @@ class TOOLBAR_MT_primitives(Menu):
 
                 if obj.type == 'META':
 
-                    if scene.toolbar_primitives_metaball.bool: 
+                    if addon_prefs.primitives_metaball:
 
                         row = layout.row(align=True)
 
@@ -848,10 +863,12 @@ class TOOLBAR_MT_toolbars_image_menu(Menu):
     def draw(self, context):
         layout = self.layout
 
-        scene = context.scene
-        layout.prop(scene.toolbar_image_uvcommon, "bool")
-        layout.prop(scene.toolbar_image_uvmisc, "bool")
-        layout.prop(scene.toolbar_image_uvalign, "bool")
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
+
+        layout.prop(addon_prefs, "image_uv_common")
+        layout.prop(addon_prefs, "image_uv_misc")
+        layout.prop(addon_prefs, "image_uv_align")
             
 ############### bfa - menu hidable by the flag in the right click menu
 
@@ -868,9 +885,12 @@ class TOOLBAR_MT_image(Menu):
 
         TOOLBAR_MT_menu_image.draw_collapsible(context, layout)
 
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
+
         ## ------------------ image sub toolbars
 
-        if scene.toolbar_image_uvcommon.bool: 
+        if addon_prefs.image_uv_common:
 
             row = layout.row(align=True)
 
@@ -883,7 +903,7 @@ class TOOLBAR_MT_image(Menu):
             row.operator("uv.seams_from_islands", text="", icon ="SEAMSFROMISLAND")
             row.operator("mesh.faces_mirror_uv", text="", icon ="COPYMIRRORED")
 
-        if scene.toolbar_image_uvmisc.bool: 
+        if addon_prefs.image_uv_misc: 
 
             row = layout.row(align=True)
 
@@ -892,7 +912,7 @@ class TOOLBAR_MT_image(Menu):
             row.operator("uv.pin", text= "", icon = "PINNED").clear = False
             row.operator("uv.pin", text="", icon = "UNPINNED").clear = True
 
-        if scene.toolbar_image_uvalign.bool: 
+        if addon_prefs.image_uv_align:
 
             row = layout.row(align=True)
 
@@ -939,10 +959,11 @@ class TOOLBAR_MT_toolbars_tools_menu(Menu):
     def draw(self, context):
         layout = self.layout
 
-        scene = context.scene
-        
-        layout.prop(scene.toolbar_tools_relations, "bool")
-        layout.prop(scene.toolbar_tools_edit, "bool")
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
+
+        layout.prop(addon_prefs, "tools_relations")
+        layout.prop(addon_prefs, "tools_edit")
             
 ############### bfa - menu hidable by the flag in the right click menu
 
@@ -963,13 +984,16 @@ class TOOLBAR_MT_tools(Menu):
 
         ## ------------------ Tools sub toolbars
 
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
+
         if obj is not None:
 
             mode = obj.mode
 
             if mode == 'OBJECT':
 
-                if scene.toolbar_tools_relations.bool:
+                if addon_prefs.tools_relations:
 
                     row = layout.row(align=True)
 
@@ -996,7 +1020,7 @@ class TOOLBAR_MT_tools(Menu):
                     row.operator("object.make_local", icon='MAKE_LOCAL', text="")
                     row.operator("object.proxy_make", icon='MAKE_PROXY', text="")
 
-                if scene.toolbar_tools_edit.bool:
+                if addon_prefs.tools_edit:
 
                     obj_type = obj.type
 
@@ -1031,7 +1055,7 @@ class TOOLBAR_MT_tools(Menu):
 
             if mode == 'EDIT':
 
-                if scene.toolbar_tools_relations.bool:
+                if addon_prefs.tools_relations:
 
                     row = layout.row(align=True)
 
@@ -1070,13 +1094,15 @@ class TOOLBAR_MT_toolbars_animation_menu(Menu):
     def draw(self, context):
         layout = self.layout
 
-        scene = context.scene
-        layout.prop(scene.toolbar_animation_keyframes, "bool")
-        layout.prop(scene.toolbar_animation_range, "bool")
-        layout.prop(scene.toolbar_animation_play, "bool")
-        layout.prop(scene.toolbar_animation_sync, "bool")
-        layout.prop(scene.toolbar_animation_keyingset, "bool")
-        layout.prop(scene.toolbar_animation_keyframetype, "bool")
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
+
+        layout.prop(addon_prefs, "animation_keyframes")
+        layout.prop(addon_prefs, "animation_range")
+        layout.prop(addon_prefs, "animation_play")
+        layout.prop(addon_prefs, "animation_sync")
+        layout.prop(addon_prefs, "animation_keyingset")
+        layout.prop(addon_prefs, "animation_keyframetype")
         
          
 ############### bfa - menu hidable by the flag in the right click menu
@@ -1097,9 +1123,12 @@ class TOOLBAR_MT_animation(Menu):
 
         TOOLBAR_MT_menu_animation.draw_collapsible(context, layout)
 
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
+
         ## ------------------ Animation sub toolbars
 
-        if scene.toolbar_animation_keyframes.bool: 
+        if addon_prefs.animation_keyframes:
 
             obj = context.object
 
@@ -1146,7 +1175,7 @@ class TOOLBAR_MT_animation(Menu):
                     row.operator("object.paths_calculate", icon ='MOTIONPATHS_CALCULATE',  text="")
                     row.operator("object.paths_clear", icon ='MOTIONPATHS_CLEAR',  text="")
 
-        if scene.toolbar_animation_range.bool: 
+        if addon_prefs.animation_range: 
 
             row = layout.row(align=True)
 
@@ -1161,7 +1190,7 @@ class TOOLBAR_MT_animation(Menu):
                 row.prop(scene, "frame_preview_start", text="Start")
                 row.prop(scene, "frame_preview_end", text="End")
 
-        if scene.toolbar_animation_play.bool: 
+        if addon_prefs.animation_play: 
 
             row = layout.row(align=True)
 
@@ -1190,19 +1219,19 @@ class TOOLBAR_MT_animation(Menu):
             row.operator("screen.keyframe_jump", text="", icon='NEXT_KEYFRAME').next = True
             row.operator("screen.frame_jump", text="", icon='FF').end = True
 
-        if scene.toolbar_animation_sync.bool: 
+        if addon_prefs.animation_sync: 
 
             row = layout.row(align=True)
 
             layout.prop(scene, "sync_mode", text="")
 
-        if scene.toolbar_animation_keyframetype.bool: 
+        if addon_prefs.animation_keyframetype: 
 
             row = layout.row(align=True)
 
             layout.prop(toolsettings, "keyframe_type", text="", icon_only=True)
 
-        if scene.toolbar_animation_keyingset.bool: 
+        if addon_prefs.animation_keyingset: 
 
             row = layout.row(align=True)
 
@@ -1219,7 +1248,8 @@ class TOOLBAR_MT_animation(Menu):
             row.operator("anim.keyframe_insert", text="", icon='KEY_HLT')
             row.operator("anim.keyframe_delete", text="", icon='KEY_DEHLT')
 
-######################################## Edit ##############################################
+
+######################################## Edit toolbars ##############################################
 
 class VIEW3D_MT_object_apply_location(bpy.types.Operator):
     """Apply Location\nApplies the current location"""
@@ -1285,11 +1315,13 @@ class TOOLBAR_MT_toolbars_edit_menu(Menu):
     def draw(self, context):
         layout = self.layout
 
-        scene = context.scene
-        layout.prop(scene.toolbar_edit_edit, "bool")
-        layout.prop(scene.toolbar_edit_weight, "bool")
-        layout.prop(scene.toolbar_edit_object_apply, "bool")
-        layout.prop(scene.toolbar_edit_object_clear, "bool")
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
+
+        layout.prop(addon_prefs, "edit_edit")
+        layout.prop(addon_prefs, "edit_weightinedit")
+        layout.prop(addon_prefs, "edit_objectapply")
+        layout.prop(addon_prefs, "edit_objectclear")
             
 ############### bfa - menu hidable by the flag in the right click menu
 
@@ -1307,11 +1339,14 @@ class TOOLBAR_MT_edit(Menu):
 
         TOOLBAR_MT_menu_edit.draw_collapsible(context, layout)
 
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
+
         ## ------------------ Edit sub toolbars
 
         if obj is not None:
 
-            if scene.toolbar_edit_edit.bool: 
+            if addon_prefs.edit_edit: 
 
                 mode = obj.mode
 
@@ -1335,7 +1370,7 @@ class TOOLBAR_MT_edit(Menu):
                     row.operator_menu_enum("mesh.merge", "type")
                     row.operator_menu_enum("mesh.separate", "type")
 
-            if scene.toolbar_edit_weight.bool:
+            if addon_prefs.edit_weightinedit:
 
                 mode = obj.mode
 
@@ -1354,7 +1389,7 @@ class TOOLBAR_MT_edit(Menu):
                     row.operator("object.vertex_group_limit_total", icon='WEIGHT_LIMIT_TOTAL',text="")
                     row.operator("object.vertex_group_fix", icon='WEIGHT_FIX_DEFORMS',text="")
 
-            if scene.toolbar_edit_object_apply.bool:
+            if addon_prefs.edit_objectapply:
 
                 mode = obj.mode
 
@@ -1372,7 +1407,7 @@ class TOOLBAR_MT_edit(Menu):
                     row.operator("object.visual_transform_apply", text = "", text_ctxt=i18n_contexts.default, icon = "VISUALTRANSFORM")
                     row.operator("object.duplicates_make_real", text = "", icon = "MAKEDUPLIREAL")
 
-            if scene.toolbar_edit_object_clear.bool:
+            if addon_prefs.edit_objectclear:
 
                 mode = obj.mode
 
@@ -1411,9 +1446,11 @@ class TOOLBAR_MT_toolbars_misc_menu(Menu):
     def draw(self, context):
         layout = self.layout
 
-        scene = context.scene
-        layout.prop(scene.toolbar_misc_history, "bool")
-        layout.prop(scene.toolbar_misc_misc, "bool")
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
+
+        layout.prop(addon_prefs, "misc_history")
+        layout.prop(addon_prefs, "misc_misc")
             
 ############### bfa - menu hidable by the flag in the right click menu
 
@@ -1431,9 +1468,12 @@ class TOOLBAR_MT_misc(Menu):
 
         TOOLBAR_MT_menu_misc.draw_collapsible(context, layout)
 
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
+
         ## ------------------ Misc sub toolbars
 
-        if scene.toolbar_misc_history.bool:
+        if addon_prefs.misc_history:
 
             row = layout.row(align=True)
 
@@ -1448,11 +1488,11 @@ class TOOLBAR_MT_misc(Menu):
             row.operator("screen.repeat_last", icon='REPEAT', text="")
             row.operator("screen.repeat_history", icon='REDO_HISTORY', text="")
 
-        if scene.toolbar_misc_misc.bool: 
+        if addon_prefs.misc_misc:
 
             row = layout.row(align=True)
 
-            row.label(text=" - Misc Toolbar - ")
+            row.label(text=" - Misc Toolbar, Nothing yet - ")
 
             
 
