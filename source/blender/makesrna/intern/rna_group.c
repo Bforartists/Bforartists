@@ -95,7 +95,7 @@ static void rna_def_group_objects(BlenderRNA *brna, PropertyRNA *cprop)
 	RNA_def_function_ui_description(func, "Add this object to a group");
 	/* object to add */
 	parm = RNA_def_pointer(func, "object", "Object", "", "Object to add");
-	RNA_def_property_flag(parm, PROP_REQUIRED | PROP_NEVER_NULL);
+	RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED);
 
 	/* remove object */
 	func = RNA_def_function(srna, "unlink", "rna_Group_objects_unlink");
@@ -103,7 +103,7 @@ static void rna_def_group_objects(BlenderRNA *brna, PropertyRNA *cprop)
 	RNA_def_function_flag(func, FUNC_USE_CONTEXT | FUNC_USE_REPORTS);
 	/* object to remove */
 	parm = RNA_def_pointer(func, "object", "Object", "", "Object to remove");
-	RNA_def_property_flag(parm, PROP_REQUIRED);
+	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
 }
 
 
@@ -113,7 +113,7 @@ void RNA_def_group(BlenderRNA *brna)
 	PropertyRNA *prop;
 
 	srna = RNA_def_struct(brna, "Group", "ID");
-	RNA_def_struct_ui_text(srna, "Group", "Group of Object datablocks");
+	RNA_def_struct_ui_text(srna, "Group", "Group of Object data-blocks");
 	RNA_def_struct_ui_icon(srna, ICON_GROUP);
 	/* this is done on save/load in readfile.c, removed if no objects are in the group */
 	RNA_def_struct_clear_flag(srna, STRUCT_ID_REFCOUNT);

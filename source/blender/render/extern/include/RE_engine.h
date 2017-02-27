@@ -62,6 +62,7 @@ struct BakePixel;
 #define RE_USE_SAVE_BUFFERS		64
 #define RE_USE_TEXTURE_PREVIEW		128
 #define RE_USE_SHADING_NODES_CUSTOM 	256
+#define RE_USE_SPHERICAL_STEREO 512
 
 /* RenderEngine.flag */
 #define RE_ENGINE_ANIMATION		1
@@ -89,7 +90,7 @@ typedef struct RenderEngineType {
 
 	void (*update)(struct RenderEngine *engine, struct Main *bmain, struct Scene *scene);
 	void (*render)(struct RenderEngine *engine, struct Scene *scene);
-	void (*bake)(struct RenderEngine *engine, struct Scene *scene, struct Object *object, const int pass_type, const int object_id, const struct BakePixel *pixel_array, const int num_pixels, const int depth, void *result);
+	void (*bake)(struct RenderEngine *engine, struct Scene *scene, struct Object *object, const int pass_type, const int pass_filter, const int object_id, const struct BakePixel *pixel_array, const int num_pixels, const int depth, void *result);
 
 	void (*view_update)(struct RenderEngine *engine, const struct bContext *context);
 	void (*view_draw)(struct RenderEngine *engine, const struct bContext *context);
@@ -140,9 +141,11 @@ struct RenderResult *RE_engine_begin_result(RenderEngine *engine, int x, int y, 
 void RE_engine_update_result(RenderEngine *engine, struct RenderResult *result);
 void RE_engine_end_result(RenderEngine *engine, struct RenderResult *result, int cancel, int merge_results);
 
+const char *RE_engine_active_view_get(RenderEngine *engine);
 void RE_engine_active_view_set(RenderEngine *engine, const char *viewname);
-float RE_engine_get_camera_shift_x(RenderEngine *engine, struct Object *camera);
-void RE_engine_get_camera_model_matrix(RenderEngine *engine, struct Object *camera, float *r_modelmat);
+float RE_engine_get_camera_shift_x(RenderEngine *engine, struct Object *camera, int use_spherical_stereo);
+void RE_engine_get_camera_model_matrix(RenderEngine *engine, struct Object *camera, int use_spherical_stereo, float *r_modelmat);
+int RE_engine_get_spherical_stereo(RenderEngine *engine, struct Object *camera);
 
 int RE_engine_test_break(RenderEngine *engine);
 void RE_engine_update_stats(RenderEngine *engine, const char *stats, const char *info);

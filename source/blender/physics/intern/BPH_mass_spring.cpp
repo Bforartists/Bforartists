@@ -138,7 +138,7 @@ static bool collision_response(ClothModifierData *clmd, CollisionModifierData *c
 	bool result = false;
 	
 	float v1[3], v2_old[3], v2_new[3], v_rel_old[3], v_rel_new[3];
-	float epsilon2 = BLI_bvhtree_getepsilon(collmd->bvhtree);
+	float epsilon2 = BLI_bvhtree_get_epsilon(collmd->bvhtree);
 
 	float margin_distance = (float)collpair->distance - epsilon2;
 	float mag_v_rel;
@@ -376,7 +376,8 @@ BLI_INLINE void cloth_calc_spring_force(ClothModifierData *clmd, ClothSpring *s,
 		s->flags |= CLOTH_SPRING_FLAG_NEEDED;
 		
 		// current_position = xold + t * (newposition - xold)
-		interp_v3_v3v3(goal_x, verts[s->ij].xold, verts[s->ij].xconst, time);
+		/* divide by time_scale to prevent goal vertices' delta locations from being multiplied */
+		interp_v3_v3v3(goal_x, verts[s->ij].xold, verts[s->ij].xconst, time / parms->time_scale);
 		sub_v3_v3v3(goal_v, verts[s->ij].xconst, verts[s->ij].xold); // distance covered over dt==1
 		
 		scaling = parms->goalspring + s->stiffness * fabsf(parms->max_struct - parms->goalspring);
@@ -444,11 +445,11 @@ static void hair_get_boundbox(ClothModifierData *clmd, float gmin[3], float gmax
 {
 	Cloth *cloth = clmd->clothObject;
 	Implicit_Data *data = cloth->implicit;
-	unsigned int looptri_num = cloth->tri_num;
+	unsigned int mvert_num = cloth->mvert_num;
 	int i;
 	
 	INIT_MINMAX(gmin, gmax);
-	for (i = 0; i < looptri_num; i++) {
+	for (i = 0; i < mvert_num; i++) {
 		float x[3];
 		BPH_mass_spring_get_motion_state(data, i, x, NULL);
 		DO_MINMAX(x, gmin, gmax);
@@ -1004,6 +1005,8 @@ int BPH_cloth_solve(Object *ob, float frame, ClothModifierData *clmd, ListBase *
 				float v[3];
 				sub_v3_v3v3(v, verts[i].xconst, verts[i].xold);
 				// mul_v3_fl(v, clmd->sim_parms->stepsPerFrame);
+				/* divide by time_scale to prevent constrained velocities from being multiplied */
+				mul_v3_fl(v, 1.0f / clmd->sim_parms->time_scale);
 				BPH_mass_spring_set_velocity(id, i, v);
 			}
 		}
@@ -1070,7 +1073,8 @@ int BPH_cloth_solve(Object *ob, float frame, ClothModifierData *clmd, ListBase *
 			if (clmd->sim_parms->flags & CLOTH_SIMSETTINGS_FLAG_GOAL) {
 				if (verts[i].flags & CLOTH_VERT_FLAG_PINNED) {
 					float x[3];
-					interp_v3_v3v3(x, verts[i].xold, verts[i].xconst, step + dt);
+					/* divide by time_scale to prevent pinned vertices' delta locations from being multiplied */
+					interp_v3_v3v3(x, verts[i].xold, verts[i].xconst, (step + dt) / clmd->sim_parms->time_scale);
 					BPH_mass_spring_set_position(id, i, x);
 				}
 			}

@@ -25,15 +25,15 @@ class ArcEntity:
     an arc. ArcEntity is just used to call do.arc() without having a real Arc-Entity from dxfgrabber.
     """
     def __init__(self, start, end, center, radius, angdir):
-        self.startangle = start
-        self.endangle = end
+        self.start_angle = start
+        self.end_angle = end
         self.center = center
         self.radius = radius
         self.angdir = angdir
 
     def __str__(self):
         return "startangle: %s, endangle: %s, center: %s, radius: %s, angdir: %s" % \
-               (str(self.startangle), str(self.endangle), str(self.center), str(self.radius), str(self.angdir))
+               (str(self.start_angle), str(self.end_angle), str(self.center), str(self.radius), str(self.angdir))
 
 
 class LineEntity:

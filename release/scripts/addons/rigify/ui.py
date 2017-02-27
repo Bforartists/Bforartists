@@ -204,6 +204,10 @@ class VIEW3D_PT_tools_rigify_dev(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
 
+    @classmethod
+    def poll(cls, context):
+        return context.active_object is not None and context.mode in {'EDIT_ARMATURE','EDIT_MESH'}
+
     def draw(self, context):
         obj = context.active_object
         if obj is not None:

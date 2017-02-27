@@ -23,7 +23,7 @@ bl_info = {
     "author": "Benjy Cook",
     "blender": (2, 73, 0),
     "version": (1, 1, 1),
-    "location": "Object UI > Mocap tools",
+    "location": "Active Armature > Object Properties > Mocap tools",
     "description": "Various tools for working with motion capture animation",
     "warning": "",
     "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
@@ -269,6 +269,13 @@ class MocapPanel(bpy.types.Panel):
     bl_region_type = "WINDOW"
     bl_context = "object"
 
+    @classmethod
+    def poll(cls, context):
+        obj = context.object
+        return obj.type == 'ARMATURE' and context.active_object is not None and context.mode in {'EDIT_ARMATURE',
+                                                                                                'POSE',
+                                                                                                'OBJECT'}
+
     def draw(self, context):
         layout = self.layout
 
@@ -349,6 +356,14 @@ class MocapConstraintsPanel(bpy.types.Panel):
     bl_space_type = "PROPERTIES"
     bl_region_type = "WINDOW"
     bl_context = "object"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        obj = context.object
+        return obj.type == 'ARMATURE' and context.active_object is not None and context.mode in {'EDIT_ARMATURE',
+                                                                                                'POSE',
+                                                                                                'OBJECT'}
 
     def draw(self, context):
         layout = self.layout
@@ -405,7 +420,14 @@ class ExtraToolsPanel(bpy.types.Panel):
     bl_space_type = "PROPERTIES"
     bl_region_type = "WINDOW"
     bl_context = "object"
+    bl_options = {'DEFAULT_CLOSED'}
 
+    @classmethod
+    def poll(cls, context):
+        obj = context.object
+        return obj.type == 'ARMATURE' and context.active_object is not None and context.mode in {'EDIT_ARMATURE',
+                                                                                                'POSE',
+                                                                                                'OBJECT'}
     def draw(self, context):
         layout = self.layout
         layout.operator("mocap.samples", text='Samples to Beziers')

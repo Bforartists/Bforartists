@@ -25,10 +25,12 @@ CCL_NAMESPACE_BEGIN
 class Patch {
 public:
 	virtual ~Patch() {}
-	virtual void eval(float3 *P, float3 *dPdu, float3 *dPdv, float u, float v) = 0;
-	virtual bool is_triangle() { return false; }
+	virtual void eval(float3 *P, float3 *dPdu, float3 *dPdv, float3 *N, float u, float v) = 0;
 	virtual BoundBox bound() = 0;
 	virtual int ptex_face_id() { return -1; }
+
+	int patch_index;
+	int shader;
 };
 
 /* Linear Quad Patch */
@@ -36,20 +38,9 @@ public:
 class LinearQuadPatch : public Patch {
 public:
 	float3 hull[4];
+	float3 normals[4];
 
-	void eval(float3 *P, float3 *dPdu, float3 *dPdv, float u, float v);
-	bool is_triangle() { return false; }
-	BoundBox bound();
-};
-
-/* Linear Triangle Patch */
-
-class LinearTrianglePatch : public Patch {
-public:
-	float3 hull[3];
-
-	void eval(float3 *P, float3 *dPdu, float3 *dPdv, float u, float v);
-	bool is_triangle() { return true; }
+	void eval(float3 *P, float3 *dPdu, float3 *dPdv, float3 *N, float u, float v);
 	BoundBox bound();
 };
 
@@ -59,8 +50,7 @@ class BicubicPatch : public Patch {
 public:
 	float3 hull[16];
 
-	void eval(float3 *P, float3 *dPdu, float3 *dPdv, float u, float v);
-	bool is_triangle() { return false; }
+	void eval(float3 *P, float3 *dPdu, float3 *dPdv, float3 *N, float u, float v);
 	BoundBox bound();
 };
 

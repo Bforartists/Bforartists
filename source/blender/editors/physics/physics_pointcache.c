@@ -30,6 +30,9 @@
  */
 
 #include <stdlib.h>
+#include <string.h>
+
+#include "MEM_guardedalloc.h"
 
 #include "BLI_blenlib.h"
 #include "BLI_utildefines.h"
@@ -37,6 +40,7 @@
 #include "DNA_scene_types.h"
 
 #include "BKE_context.h"
+#include "BKE_screen.h"
 #include "BKE_global.h"
 #include "BKE_main.h"
 #include "BKE_particle.h"
@@ -52,18 +56,9 @@
 
 #include "physics_intern.h"
 
-static int cache_break_test(void *UNUSED(cbd))
-{
-	return (G.is_break == true);
-}
 static int ptcache_bake_all_poll(bContext *C)
 {
-	Scene *scene= CTX_data_scene(C);
-
-	if (!scene)
-		return 0;
-	
-	return 1;
+	return CTX_data_scene(C) != NULL;
 }
 
 static int ptcache_poll(bContext *C)
@@ -72,15 +67,82 @@ static int ptcache_poll(bContext *C)
 	return (ptr.data && ptr.id.data);
 }
 
-static void bake_console_progress(void *UNUSED(arg), int nr)
+typedef struct PointCacheJob {
+	void *owner;
+	short *stop, *do_update;
+	float *progress;
+
+	PTCacheBaker *baker;
+} PointCacheJob;
+
+static void ptcache_job_free(void *customdata)
 {
-	printf("\rbake: %3i%%", nr);
-	fflush(stdout);
+	PointCacheJob *job = customdata;
+	MEM_freeN(job->baker);
+	MEM_freeN(job);
 }
 
-static void bake_console_progress_end(void *UNUSED(arg))
+static int ptcache_job_break(void *customdata)
 {
-	printf("\rbake: done!\n");
+	PointCacheJob *job = customdata;
+
+	if (G.is_break) {
+		return 1;
+	}
+
+	if (job->stop && *(job->stop)) {
+		return 1;
+	}
+
+	return 0;
+}
+
+static void ptcache_job_update(void *customdata, float progress, int *cancel)
+{
+    PointCacheJob *job = customdata;
+
+    if (ptcache_job_break(job)) {
+        *cancel = 1;
+    }
+
+    *(job->do_update) = true;
+    *(job->progress) = progress;
+}
+
+static void ptcache_job_startjob(void *customdata, short *stop, short *do_update, float *progress)
+{
+    PointCacheJob *job = customdata;
+
+    job->stop = stop;
+    job->do_update = do_update;
+    job->progress = progress;
+
+    G.is_break = false;
+
+    /* XXX annoying hack: needed to prevent data corruption when changing
+     * scene frame in separate threads
+     */
+    G.is_rendering = true;
+    BKE_spacedata_draw_locks(true);
+
+	BKE_ptcache_bake(job->baker);
+
+    *do_update = true;
+    *stop = 0;
+}
+
+static void ptcache_job_endjob(void *customdata)
+{
+    PointCacheJob *job = customdata;
+	Scene *scene = job->baker->scene;
+
+    G.is_rendering = false;
+    BKE_spacedata_draw_locks(false);
+
+	WM_set_locked_interface(G.main->wm.first, false);
+
+	WM_main_add_notifier(NC_SCENE | ND_FRAME, scene);
+	WM_main_add_notifier(NC_OBJECT | ND_POINTCACHE, job->baker->pid.ob);
 }
 
 static void ptcache_free_bake(PointCache *cache)
@@ -97,44 +159,98 @@ static void ptcache_free_bake(PointCache *cache)
 	}
 }
 
-static int ptcache_bake_all_exec(bContext *C, wmOperator *op)
+static PTCacheBaker *ptcache_baker_create(bContext *C, wmOperator *op, bool all)
 {
-	Main *bmain = CTX_data_main(C);
-	Scene *scene= CTX_data_scene(C);
-	wmWindow *win = G.background ? NULL : CTX_wm_window(C);
-	PTCacheBaker baker;
+	PTCacheBaker *baker = MEM_callocN(sizeof(PTCacheBaker), "PTCacheBaker");
 
-	baker.main = bmain;
-	baker.scene = scene;
-	baker.pid = NULL;
-	baker.bake = RNA_boolean_get(op->ptr, "bake");
-	baker.render = 0;
-	baker.anim_init = 0;
-	baker.quick_step = 1;
-	baker.break_test = cache_break_test;
-	baker.break_data = NULL;
+	baker->main = CTX_data_main(C);
+	baker->scene = CTX_data_scene(C);
+	baker->bake = RNA_boolean_get(op->ptr, "bake");
+	baker->render = 0;
+	baker->anim_init = 0;
+	baker->quick_step = 1;
 
-	/* Disabled for now as this doesn't work properly,
-	 * and pointcache baking will be reimplemented with
-	 * the job system soon anyways. */
-	if (win) {
-		baker.progressbar = (void (*)(void *, int))WM_cursor_time;
-		baker.progressend = (void (*)(void *))WM_cursor_modal_restore;
-		baker.progresscontext = win;
-	}
-	else {
-		baker.progressbar = bake_console_progress;
-		baker.progressend = bake_console_progress_end;
-		baker.progresscontext = NULL;
+	if (!all) {
+		PointerRNA ptr = CTX_data_pointer_get_type(C, "point_cache", &RNA_PointCache);
+		Object *ob = ptr.id.data;
+		PointCache *cache = ptr.data;
+
+		ListBase pidlist;
+		BKE_ptcache_ids_from_object(&pidlist, ob, baker->scene, MAX_DUPLI_RECUR);
+
+		for (PTCacheID *pid = pidlist.first; pid; pid = pid->next) {
+			if (pid->cache == cache) {
+				baker->pid = *pid;
+				break;
+			}
+		}
+
+		BLI_freelistN(&pidlist);
 	}
 
-	BKE_ptcache_bake(&baker);
+	return baker;
+}
 
-	WM_event_add_notifier(C, NC_SCENE|ND_FRAME, scene);
-	WM_event_add_notifier(C, NC_OBJECT|ND_POINTCACHE, NULL);
+static int ptcache_bake_exec(bContext *C, wmOperator *op)
+{
+	bool all = STREQ(op->type->idname, "PTCACHE_OT_bake_all");
+
+	PTCacheBaker *baker = ptcache_baker_create(C, op, all);
+	BKE_ptcache_bake(baker);
+	MEM_freeN(baker);
 
 	return OPERATOR_FINISHED;
 }
+
+static int ptcache_bake_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event))
+{
+	bool all = STREQ(op->type->idname, "PTCACHE_OT_bake_all");
+
+	PointCacheJob *job = MEM_mallocN(sizeof(PointCacheJob), "PointCacheJob");
+	job->baker = ptcache_baker_create(C, op, all);
+	job->baker->bake_job = job;
+	job->baker->update_progress = ptcache_job_update;
+
+	wmJob *wm_job = WM_jobs_get(CTX_wm_manager(C), CTX_wm_window(C), CTX_data_scene(C),
+	                            "Point Cache", WM_JOB_PROGRESS, WM_JOB_TYPE_POINTCACHE);
+
+	WM_jobs_customdata_set(wm_job, job, ptcache_job_free);
+	WM_jobs_timer(wm_job, 0.1, NC_OBJECT | ND_POINTCACHE, NC_OBJECT | ND_POINTCACHE);
+	WM_jobs_callbacks(wm_job, ptcache_job_startjob, NULL, NULL, ptcache_job_endjob);
+
+	WM_set_locked_interface(CTX_wm_manager(C), true);
+
+	WM_jobs_start(CTX_wm_manager(C), wm_job);
+
+	WM_event_add_modal_handler(C, op);
+
+	/* we must run modal until the bake job is done, otherwise the undo push
+	 * happens before the job ends, which can lead to race conditions between
+	 * the baking and file writing code */
+	return OPERATOR_RUNNING_MODAL;
+}
+
+static int ptcache_bake_modal(bContext *C, wmOperator *op, const wmEvent *UNUSED(event))
+{
+	Scene *scene = (Scene *) op->customdata;
+
+	/* no running blender, remove handler and pass through */
+	if (0 == WM_jobs_test(CTX_wm_manager(C), scene, WM_JOB_TYPE_POINTCACHE)) {
+		return OPERATOR_FINISHED | OPERATOR_PASS_THROUGH;
+	}
+
+	return OPERATOR_PASS_THROUGH;
+}
+
+static void ptcache_bake_cancel(bContext *C, wmOperator *op)
+{
+	wmWindowManager *wm = CTX_wm_manager(C);
+	Scene *scene = (Scene *) op->customdata;
+
+	/* kill on cancel, because job is using op->reports */
+	WM_jobs_kill_type(wm, scene, WM_JOB_TYPE_POINTCACHE);
+}
+
 static int ptcache_free_bake_all_exec(bContext *C, wmOperator *UNUSED(op))
 {
 	Scene *scene= CTX_data_scene(C);
@@ -167,7 +283,10 @@ void PTCACHE_OT_bake_all(wmOperatorType *ot)
 	ot->idname = "PTCACHE_OT_bake_all";
 	
 	/* api callbacks */
-	ot->exec = ptcache_bake_all_exec;
+	ot->exec = ptcache_bake_exec;
+	ot->invoke = ptcache_bake_invoke;
+	ot->modal = ptcache_bake_modal;
+	ot->cancel = ptcache_bake_cancel;
 	ot->poll = ptcache_bake_all_poll;
 
 	/* flags */
@@ -189,59 +308,7 @@ void PTCACHE_OT_free_bake_all(wmOperatorType *ot)
 	/* flags */
 	ot->flag = OPTYPE_REGISTER|OPTYPE_UNDO;
 }
-static int ptcache_bake_exec(bContext *C, wmOperator *op)
-{
-	Main *bmain = CTX_data_main(C);
-	Scene *scene = CTX_data_scene(C);
-	wmWindow *win = G.background ? NULL : CTX_wm_window(C);
-	PointerRNA ptr= CTX_data_pointer_get_type(C, "point_cache", &RNA_PointCache);
-	Object *ob= ptr.id.data;
-	PointCache *cache= ptr.data;
-	PTCacheBaker baker;
-	PTCacheID *pid;
-	ListBase pidlist;
 
-	BKE_ptcache_ids_from_object(&pidlist, ob, scene, MAX_DUPLI_RECUR);
-	
-	for (pid=pidlist.first; pid; pid=pid->next) {
-		if (pid->cache == cache)
-			break;
-	}
-
-	baker.main = bmain;
-	baker.scene = scene;
-	baker.pid = pid;
-	baker.bake = RNA_boolean_get(op->ptr, "bake");
-	baker.render = 0;
-	baker.anim_init = 0;
-	baker.quick_step = 1;
-	baker.break_test = cache_break_test;
-	baker.break_data = NULL;
-
-	/* Disabled for now as this doesn't work properly,
-	 * and pointcache baking will be reimplemented with
-	 * the job system soon anyways. */
-	if (win) {
-		baker.progressbar = (void (*)(void *, int))WM_cursor_time;
-		baker.progressend = (void (*)(void *))WM_cursor_modal_restore;
-		baker.progresscontext = win;
-	}
-	else {
-		printf("\n"); /* empty first line before console reports */
-		baker.progressbar = bake_console_progress;
-		baker.progressend = bake_console_progress_end;
-		baker.progresscontext = NULL;
-	}
-
-	BKE_ptcache_bake(&baker);
-
-	BLI_freelistN(&pidlist);
-
-	WM_event_add_notifier(C, NC_SCENE|ND_FRAME, scene);
-	WM_event_add_notifier(C, NC_OBJECT|ND_POINTCACHE, ob);
-
-	return OPERATOR_FINISHED;
-}
 static int ptcache_free_bake_exec(bContext *C, wmOperator *UNUSED(op))
 {
 	PointerRNA ptr= CTX_data_pointer_get_type(C, "point_cache", &RNA_PointCache);
@@ -275,6 +342,9 @@ void PTCACHE_OT_bake(wmOperatorType *ot)
 	
 	/* api callbacks */
 	ot->exec = ptcache_bake_exec;
+	ot->invoke = ptcache_bake_invoke;
+	ot->modal = ptcache_bake_modal;
+	ot->cancel = ptcache_bake_cancel;
 	ot->poll = ptcache_poll;
 
 	/* flags */
@@ -377,7 +447,7 @@ void PTCACHE_OT_add(wmOperatorType *ot)
 	
 	/* api callbacks */
 	ot->exec = ptcache_add_new_exec;
-	ot->poll = ptcache_poll; // ptcache_bake_all_poll;
+	ot->poll = ptcache_poll;
 
 	/* flags */
 	ot->flag = OPTYPE_REGISTER|OPTYPE_UNDO;

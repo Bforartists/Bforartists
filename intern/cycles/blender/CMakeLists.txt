@@ -1,5 +1,6 @@
 
 set(INC
+	../graph
 	../render
 	../device
 	../kernel
@@ -24,6 +25,7 @@ set(SRC
 	blender_camera.cpp
 	blender_mesh.cpp
 	blender_object.cpp
+	blender_object_cull.cpp
 	blender_particles.cpp
 	blender_curves.cpp
 	blender_logging.cpp
@@ -34,6 +36,7 @@ set(SRC
 	blender_texture.cpp
 
 	CCL_api.h
+	blender_object_cull.h
 	blender_sync.h
 	blender_session.h
 	blender_texture.h
@@ -51,6 +54,10 @@ set(ADDON_FILES
 )
 
 add_definitions(${GL_DEFINITIONS})
+
+if(WITH_CYCLES_NETWORK)
+	add_definitions(-DWITH_NETWORK)
+endif()
 
 blender_add_lib(bf_intern_cycles "${SRC}" "${INC}" "${INC_SYS}")
 

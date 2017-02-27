@@ -100,6 +100,8 @@ PropertyRNA *RNA_def_float_color(StructOrFunctionRNA *cont, const char *identifi
 PropertyRNA *RNA_def_float_matrix(StructOrFunctionRNA *cont, const char *identifier, int rows, int columns, const float *default_value, float hardmin, float hardmax, const char *ui_name, const char *ui_description, float softmin, float softmax);
 PropertyRNA *RNA_def_float_rotation(StructOrFunctionRNA *cont, const char *identifier, int len, const float *default_value,
 	float hardmin, float hardmax, const char *ui_name, const char *ui_description, float softmin, float softmax);
+PropertyRNA *RNA_def_float_distance(StructOrFunctionRNA *cont, const char *identifier, float default_value,
+	float hardmin, float hardmax, const char *ui_name, const char *ui_description, float softmin, float softmax);
 PropertyRNA *RNA_def_float_array(StructOrFunctionRNA *cont, const char *identifier, int len, const float *default_value,
 	float hardmin, float hardmax, const char *ui_name, const char *ui_description, float softmin, float softmax);
 
@@ -135,8 +137,8 @@ void RNA_def_property_enum_bitflag_sdna(PropertyRNA *prop, const char *structnam
 void RNA_def_property_pointer_sdna(PropertyRNA *prop, const char *structname, const char *propname);
 void RNA_def_property_collection_sdna(PropertyRNA *prop, const char *structname, const char *propname, const char *lengthpropname);
 
-void RNA_def_property_flag(PropertyRNA *prop, int flag);
-void RNA_def_property_clear_flag(PropertyRNA *prop, int flag);
+void RNA_def_property_flag(PropertyRNA *prop, PropertyFlag flag);
+void RNA_def_property_clear_flag(PropertyRNA *prop, PropertyFlag flag);
 void RNA_def_property_subtype(PropertyRNA *prop, PropertySubType subtype);
 void RNA_def_property_array(PropertyRNA *prop, int length);
 void RNA_def_property_multi_array(PropertyRNA *prop, int dimension, const int length[]);
@@ -198,6 +200,9 @@ void RNA_def_function_return(FunctionRNA *func, PropertyRNA *ret);
 void RNA_def_function_output(FunctionRNA *func, PropertyRNA *ret);
 void RNA_def_function_flag(FunctionRNA *func, int flag);
 void RNA_def_function_ui_description(FunctionRNA *func, const char *description);
+
+void RNA_def_parameter_flags(PropertyRNA *prop, PropertyFlag flag_property, ParameterFlag flag_parameter);
+void RNA_def_parameter_clear_flags(PropertyRNA *prop, PropertyFlag flag_property, ParameterFlag flag_parameter);
 
 /* Dynamic Enums
  * strings are not freed, assumed pointing to static location. */

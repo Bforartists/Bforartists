@@ -32,7 +32,7 @@
 #include "BLI_fileops.h"
 #include "BLI_path_util.h"
 
-#include "BKE_blender.h"  /* BLENDER_VERSION */
+#include "BKE_blender_version.h"
 #include "BKE_appdir.h"  /* own include */
 
 #include "GHOST_Path-api.h"
@@ -121,7 +121,7 @@ static bool test_path(char *targetpath, const char *path_base, const char *path_
 	if (path_sep) BLI_join_dirfile(tmppath, sizeof(tmppath), path_base, path_sep);
 	else BLI_strncpy(tmppath, path_base, sizeof(tmppath));
 
-	/* rare cases folder_name is omitted (when looking for ~/.blender/2.xx dir only) */
+	/* rare cases folder_name is omitted (when looking for ~/.config/blender/2.xx dir only) */
 	if (folder_name)
 		BLI_make_file_string("/", targetpath, tmppath, folder_name);
 	else
@@ -548,15 +548,7 @@ static void where_am_i(char *fullname, const size_t maxlen, const char *name)
 
 		BLI_strncpy(fullname, name, maxlen);
 		if (name[0] == '.') {
-			char wdir[FILE_MAX] = "";
-			BLI_current_working_dir(wdir, sizeof(wdir));     /* backup cwd to restore after */
-
-			// not needed but avoids annoying /./ in name
-			if (name[1] == SEP)
-				BLI_join_dirfile(fullname, maxlen, wdir, name + 2);
-			else
-				BLI_join_dirfile(fullname, maxlen, wdir, name);
-
+			BLI_path_cwd(fullname, maxlen);
 #ifdef _WIN32
 			BLI_path_program_extensions_add_win32(fullname, maxlen);
 #endif
@@ -605,10 +597,20 @@ bool BKE_appdir_program_python_search(
         char *fullpath, const size_t fullpath_len,
         const int version_major, const int version_minor)
 {
+#ifdef PYTHON_EXECUTABLE_NAME
+	/* passed in from the build-systems 'PYTHON_EXECUTABLE' */
+	const char *python_build_def = STRINGIFY(PYTHON_EXECUTABLE_NAME);
+#endif
 	const char *basename = "python";
 	char python_ver[16];
 	/* check both possible names */
-	const char *python_names[] = {basename, python_ver};
+	const char *python_names[] = {
+#ifdef PYTHON_EXECUTABLE_NAME
+		python_build_def,
+#endif
+		python_ver,
+		basename,
+	};
 	int i;
 
 	bool is_found = false;

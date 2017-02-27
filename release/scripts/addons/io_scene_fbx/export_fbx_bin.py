@@ -1557,8 +1557,12 @@ def fbx_data_object_elements(root, ob_obj, scene_data):
     if ob_obj.is_bone:
         obj_type = b"LimbNode"
     elif (ob_obj.type == 'ARMATURE'):
-        #~ obj_type = b"Root"
-        obj_type = b"Null"
+        if scene_data.settings.armature_nodetype == 'ROOT':
+            obj_type = b"Root"
+        elif scene_data.settings.armature_nodetype == 'LIMBNODE':
+            obj_type = b"LimbNode"
+        else:  # Default, preferred option...
+            obj_type = b"Null"
     elif (ob_obj.type in BLENDER_OBJECT_TYPES_MESHLIKE):
         obj_type = b"Mesh"
     elif (ob_obj.type == 'LAMP'):
@@ -1790,10 +1794,10 @@ def fbx_skeleton_from_armature(scene, settings, arm_obj, objects, data_meshes,
         # Always handled by an Armature modifier...
         found = False
         for mod in ob_obj.bdata.modifiers:
-            if mod.type not in {'ARMATURE'}:
+            if mod.type not in {'ARMATURE'} or not mod.object:
                 continue
             # We only support vertex groups binding method, not bone envelopes one!
-            if mod.object == arm_obj.bdata and mod.use_vertex_groups:
+            if mod.object in {arm_obj.bdata, arm_obj.bdata.proxy} and mod.use_vertex_groups:
                 found = True
                 break
 
@@ -1818,8 +1822,8 @@ def fbx_skeleton_from_armature(scene, settings, arm_obj, objects, data_meshes,
 
 def fbx_generate_leaf_bones(settings, data_bones):
     # find which bons have no children
-    child_count = {bo: 0 for bo, _bo_key in data_bones.items()}
-    for bo, _bo_key in data_bones.items():
+    child_count = {bo: 0 for bo in data_bones.keys()}
+    for bo in data_bones.keys():
         if bo.parent and bo.parent.is_bone:
             child_count[bo.parent] += 1
 
@@ -1831,8 +1835,9 @@ def fbx_generate_leaf_bones(settings, data_bones):
     for parent in leaf_parents:
         node_name = parent.name + "_end"
         parent_uuid = parent.fbx_uuid
-        node_uuid = get_fbx_uuid_from_key(node_name + "_node")
-        attr_uuid = get_fbx_uuid_from_key(node_name + "_nodeattr")
+        parent_key = parent.key
+        node_uuid = get_fbx_uuid_from_key(parent_key + "_end_node")
+        attr_uuid = get_fbx_uuid_from_key(parent_key + "_end_nodeattr")
 
         hide = parent.hide
         size = parent.bdata.head_radius * bone_radius_scale
@@ -1852,6 +1857,7 @@ def fbx_animations_do(scene_data, ref_id, f_start, f_end, start_zero, objects=No
     Generate animation data (a single AnimStack) from objects, for a given frame range.
     """
     bake_step = scene_data.settings.bake_anim_step
+    simplify_fac = scene_data.settings.bake_anim_simplify_factor
     scene = scene_data.scene
     force_keying = scene_data.settings.bake_anim_use_all_bones
     force_sek = scene_data.settings.bake_anim_force_startend_keying
@@ -1876,21 +1882,25 @@ def fbx_animations_do(scene_data, ref_id, f_start, f_end, start_zero, objects=No
     p_rots = {}
 
     for ob_obj in objects:
+        if ob_obj.parented_to_armature:
+            continue
         ACNW = AnimationCurveNodeWrapper
         loc, rot, scale, _m, _mr = ob_obj.fbx_object_tx(scene_data)
         rot_deg = tuple(convert_rad_to_deg_iter(rot))
-        animdata_ob[ob_obj] = (ACNW(ob_obj.key, 'LCL_TRANSLATION', ob_obj.is_bone and force_keying, force_sek, loc),
-                               ACNW(ob_obj.key, 'LCL_ROTATION', ob_obj.is_bone and force_keying, force_sek, rot_deg),
-                               ACNW(ob_obj.key, 'LCL_SCALING', ob_obj.is_bone and force_keying, force_sek, scale))
+        force_key = (simplify_fac == 0.0) or (ob_obj.is_bone and force_keying)
+        animdata_ob[ob_obj] = (ACNW(ob_obj.key, 'LCL_TRANSLATION', force_key, force_sek, loc),
+                               ACNW(ob_obj.key, 'LCL_ROTATION', force_key, force_sek, rot_deg),
+                               ACNW(ob_obj.key, 'LCL_SCALING', force_key, force_sek, scale))
         p_rots[ob_obj] = rot
 
     animdata_shapes = OrderedDict()
+    force_key = (simplify_fac == 0.0)
     for me, (me_key, _shapes_key, shapes) in scene_data.data_deformers_shape.items():
         # Ignore absolute shape keys for now!
         if not me.shape_keys.use_relative:
             continue
         for shape, (channel_key, geom_key, _shape_verts_co, _shape_verts_idx) in shapes.items():
-            acnode = AnimationCurveNodeWrapper(channel_key, 'SHAPE_KEY', False, force_sek, (0.0,))
+            acnode = AnimationCurveNodeWrapper(channel_key, 'SHAPE_KEY', force_key, force_sek, (0.0,))
             # Sooooo happy to have to twist again like a mad snake... Yes, we need to write those curves twice. :/
             acnode.add_group(me_key, shape.name, shape.name, (shape.name,))
             animdata_shapes[channel_key] = (acnode, me, shape)
@@ -1919,7 +1929,6 @@ def fbx_animations_do(scene_data, ref_id, f_start, f_end, start_zero, objects=No
     scene.frame_set(back_currframe, 0.0)
 
     animations = OrderedDict()
-    simplify_fac = scene_data.settings.bake_anim_simplify_factor
 
     # And now, produce final data (usable by FBX export code)
     # Objects-like loc/rot/scale...
@@ -1985,6 +1994,7 @@ def fbx_animations(scene_data):
     # Per-NLA strip animstacks.
     if scene_data.settings.bake_anim_use_nla_strips:
         strips = []
+        ob_actions = []
         for ob_obj in scene_data.objects:
             # NLA tracks only for objects, not bones!
             if not ob_obj.is_object:
@@ -1992,6 +2002,9 @@ def fbx_animations(scene_data):
             ob = ob_obj.bdata  # Back to real Blender Object.
             if not ob.animation_data:
                 continue
+            # We have to remove active action from objects, it overwrites strips actions otherwise...
+            ob_actions.append((ob, ob.animation_data.action))
+            ob.animation_data.action = None
             for track in ob.animation_data.nla_tracks:
                 if track.mute:
                     continue
@@ -2009,6 +2022,9 @@ def fbx_animations(scene_data):
 
         for strip in strips:
             strip.mute = False
+
+        for ob, ob_act in ob_actions:
+            ob.animation_data.action = ob_act
 
     # All actions.
     if scene_data.settings.bake_anim_use_all_actions:
@@ -2052,6 +2068,9 @@ def fbx_animations(scene_data):
 
             if not ob.animation_data:
                 continue  # Do not export animations for objects that are absolutely not animated, see T44386.
+
+            if ob.animation_data.is_property_readonly('action'):
+                continue  # Cannot re-assign 'active action' to this object (usually related to NLA usage, see T48089).
 
             # We can't play with animdata and actions and get back to org state easily.
             # So we have to add a temp copy of the object to the scene, animate it, and remove it... :/
@@ -2153,12 +2172,14 @@ def fbx_data_from_scene(scene, settings):
                 data_meshes[ob_obj] = data_meshes[org_ob_obj]
                 continue
 
-        if settings.use_mesh_modifiers or ob.type in BLENDER_OTHER_OBJECT_TYPES:
-            use_org_data = False
+        is_ob_material = any(ms.link == 'OBJECT' for ms in ob.material_slots)
+
+        if settings.use_mesh_modifiers or ob.type in BLENDER_OTHER_OBJECT_TYPES or is_ob_material:
+            # We cannot use default mesh in that case, or material would not be the right ones...
+            use_org_data = not is_ob_material
             tmp_mods = []
-            if ob.type == 'MESH':
+            if use_org_data and ob.type == 'MESH':
                 # No need to create a new mesh in this case, if no modifier is active!
-                use_org_data = True
                 for mod in ob.modifiers:
                     # For meshes, when armature export is enabled, disable Armature modifiers here!
                     if mod.type == 'ARMATURE' and 'ARMATURE' in settings.object_types:
@@ -2167,7 +2188,8 @@ def fbx_data_from_scene(scene, settings):
                     if mod.show_render:
                         use_org_data = False
             if not use_org_data:
-                tmp_me = ob.to_mesh(scene, apply_modifiers=True, settings='RENDER')
+                tmp_me = ob.to_mesh(scene, apply_modifiers=True,
+                                    settings='RENDER' if settings.use_mesh_modifiers_render else 'PREVIEW')
                 data_meshes[ob_obj] = (get_blenderID_key(tmp_me), tmp_me, True)
             # Re-enable temporary disabled modifiers.
             for mod, show_render in tmp_mods:
@@ -2651,13 +2673,15 @@ def fbx_header_elements(root, scene_data, time=None):
 
     props = elem_properties(global_settings)
     up_axis, front_axis, coord_axis = RIGHT_HAND_AXES[scene_data.settings.to_axes]
+    # DO NOT take into account global scale here! That setting is applied to object transformations during export
+    # (in other words, this is pure blender-exporter feature, and has nothing to do with FBX data).
     if scene_data.settings.apply_unit_scale:
         # Unit scaling is applied to objects' scale, so our unit is effectively FBX one (centimeter).
         scale_factor_org = 1.0
-        scale_factor = scene_data.settings.global_scale / units_blender_to_fbx_factor(scene)
+        scale_factor = 1.0 / units_blender_to_fbx_factor(scene)
     else:
         scale_factor_org = units_blender_to_fbx_factor(scene)
-        scale_factor = scene_data.settings.global_scale * units_blender_to_fbx_factor(scene)
+        scale_factor = scale_factor_org
     elem_props_set(props, "p_integer", b"UpAxis", up_axis[0])
     elem_props_set(props, "p_integer", b"UpAxisSign", up_axis[1])
     elem_props_set(props, "p_integer", b"FrontAxis", front_axis[0])
@@ -2848,6 +2872,7 @@ def save_single(operator, scene, filepath="",
                 context_objects=None,
                 object_types=None,
                 use_mesh_modifiers=True,
+                use_mesh_modifiers_render=True,
                 mesh_smooth_type='FACE',
                 use_armature_deform_only=False,
                 bake_anim=True,
@@ -2867,6 +2892,7 @@ def save_single(operator, scene, filepath="",
                 embed_textures=False,
                 use_custom_props=False,
                 bake_space_transform=False,
+                armature_nodetype='NULL',
                 **kwargs
                 ):
 
@@ -2917,9 +2943,10 @@ def save_single(operator, scene, filepath="",
     settings = FBXExportSettings(
         operator.report, (axis_up, axis_forward), global_matrix, global_scale, apply_unit_scale,
         bake_space_transform, global_matrix_inv, global_matrix_inv_transposed,
-        context_objects, object_types, use_mesh_modifiers,
+        context_objects, object_types, use_mesh_modifiers, use_mesh_modifiers_render,
         mesh_smooth_type, use_mesh_edges, use_tspace,
-        use_armature_deform_only, add_leaf_bones, bone_correction_matrix, bone_correction_matrix_inv,
+        armature_nodetype, use_armature_deform_only,
+        add_leaf_bones, bone_correction_matrix, bone_correction_matrix_inv,
         bake_anim, bake_anim_use_all_bones, bake_anim_use_nla_strips, bake_anim_use_all_actions,
         bake_anim_step, bake_anim_simplify_factor, bake_anim_force_startend_keying,
         False, media_settings, use_custom_props,
@@ -2987,6 +3014,7 @@ def defaults_unity3d():
 
         "object_types": {'ARMATURE', 'EMPTY', 'MESH', 'OTHER'},
         "use_mesh_modifiers": True,
+        "use_mesh_modifiers_render": True,
         "use_mesh_edges": False,
         "mesh_smooth_type": 'FACE',
         "use_tspace": False,  # XXX Why? Unity is expected to support tspace import...
@@ -3024,9 +3052,11 @@ def save(operator, context,
 
     ret = None
 
+    active_object = context.scene.objects.active
+
     org_mode = None
-    if context.active_object and context.active_object.mode != 'OBJECT' and bpy.ops.object.mode_set.poll():
-        org_mode = context.active_object.mode
+    if active_object and active_object.mode != 'OBJECT' and bpy.ops.object.mode_set.poll():
+        org_mode = active_object.mode
         bpy.ops.object.mode_set(mode='OBJECT')
 
     if batch_mode == 'OFF':
@@ -3113,7 +3143,7 @@ def save(operator, context,
 
         ret = {'FINISHED'}  # so the script wont run after we have batch exported.
 
-    if context.active_object and org_mode and bpy.ops.object.mode_set.poll():
+    if active_object and org_mode and bpy.ops.object.mode_set.poll():
         bpy.ops.object.mode_set(mode=org_mode)
 
     return ret

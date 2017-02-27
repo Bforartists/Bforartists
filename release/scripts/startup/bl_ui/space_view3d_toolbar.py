@@ -21,7 +21,11 @@ import bpy
 from bpy.types import Menu, Panel, UIList
 from bl_ui.properties_grease_pencil_common import (
         GreasePencilDrawingToolsPanel,
-        GreasePencilStrokeEditPanel
+        GreasePencilStrokeEditPanel,
+        GreasePencilInterpolatePanel,
+        GreasePencilStrokeSculptPanel,
+        GreasePencilBrushPanel,
+        GreasePencilBrushCurvesPanel
         )
 from bl_ui.properties_paint_common import (
         UnifiedPaintPanel,
@@ -51,9 +55,6 @@ def draw_keyframing_tools(context, layout):
     col.label(text="Set Keying Set:")
     row = col.row(align=True)
     row.alignment = 'RIGHT'
-    #TODO
-    #row.operator("anim.keying_set_active_set", text="LocRotScale").type = 'LocRotScale'
-    #row.operator("anim.keying_set_active_set", icon='TRIA_RIGHT', text="")
     col.operator("anim.keying_set_active_set", icon='TRIA_RIGHT', text="Set Keying Set")
     
 
@@ -70,15 +71,11 @@ def draw_keyframing_tools_icons(context, layout):
 
     col = layout.column(align=True)
     col.label(text="Set Keying Set:")
-    #row = col.row(align=True)
-    #row.alignment = 'RIGHT'
-    #TODO
-    #row.operator("anim.keying_set_active_set", text="LocRotScale").type = 'LocRotScale'
-    #row.operator("anim.keying_set_active_set", icon='TRIA_RIGHT', text="")
     col.operator("anim.keying_set_active_set", icon='TRIA_RIGHT', text="Set Keying Set")
-     
+
 
 # ********** default tools for object-mode ****************
+
 
 class VIEW3D_PT_tools_object(View3DPanel, Panel):
     bl_category = "Tools"
@@ -94,9 +91,9 @@ class VIEW3D_PT_tools_object(View3DPanel, Panel):
         if obj:
             obj_type = obj.type
 
-            scene = context.scene # Our data for the icon_or_text flag is in the current scene
+            view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
             # text
-            if not scene.UItweaks.icon_or_text: 
+            if not view.show_iconbuttons: 
                 col.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="Mirror                   ")
                 if obj_type in {'MESH', 'CURVE', 'SURFACE', 'ARMATURE'}:
                     col = layout.column(align=True)                    
@@ -180,6 +177,7 @@ class VIEW3D_PT_tools_object(View3DPanel, Panel):
                     row.operator("object.data_transfer", icon ='TRANSFER_DATA', text="")
                     row.operator("object.datalayout_transfer", icon ='TRANSFER_DATA_LAYOUT', text="")
 
+
 class VIEW3D_PT_tools_add_object(View3DPanel, Panel):
     bl_category = "Create"
     bl_context = "objectmode"
@@ -244,7 +242,11 @@ class VIEW3D_PT_tools_add_object(View3DPanel, Panel):
         layout.operator("curve.primitive_nurbs_curve_add", text="Nurbs Curve  ", icon='CURVE_NCURVE')
         layout.operator("curve.primitive_nurbs_circle_add", text="Nurbs Circle  ", icon='CURVE_NCIRCLE')
         layout.operator("curve.primitive_nurbs_path_add", text="Path               ", icon='CURVE_PATH')
+        
+        layout.separator()
 
+        layout.operator("curve.draw", icon='LINE_DATA')
+        
     @staticmethod
     def draw_add_curve_icons(layout, label=False):
         if label:
@@ -263,6 +265,8 @@ class VIEW3D_PT_tools_add_object(View3DPanel, Panel):
         row.operator("curve.primitive_nurbs_curve_add", text="", icon='CURVE_NCURVE')
         row.operator("curve.primitive_nurbs_circle_add", text="", icon='CURVE_NCIRCLE')
         row.operator("curve.primitive_nurbs_path_add", text="", icon='CURVE_PATH')
+        
+        row.operator("curve.draw", text = "", icon='LINE_DATA')
 
     @staticmethod
     def draw_add_surface(layout):
@@ -309,32 +313,32 @@ class VIEW3D_PT_tools_add_object(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
         col = layout.column(align=True)
 
         col.label(text="Mesh:")
-        if not scene.UItweaks.icon_or_text: 
+        if not view.show_iconbuttons: 
             self.draw_add_mesh(col)
         else:
             self.draw_add_mesh_icons(col)
 
         col = layout.column(align=True)
         col.label(text="Curve:")
-        if not scene.UItweaks.icon_or_text: 
+        if not view.show_iconbuttons: 
             self.draw_add_curve(col)
         else:
             self.draw_add_curve_icons(col)
 
         col = layout.column(align=True)
         col.label(text="Surface:")
-        if not scene.UItweaks.icon_or_text: 
+        if not view.show_iconbuttons: 
             self.draw_add_surface(col)
         else:
             self.draw_add_surface_icons(col)
 
         col = layout.column(align=True)
         col.label(text="Metaball:")
-        if not scene.UItweaks.icon_or_text: 
+        if not view.show_iconbuttons: 
             self.draw_add_mball(col)
         else:
             self.draw_add_mball_icons(col)
@@ -473,36 +477,35 @@ class VIEW3D_PT_tools_add_misc(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
 
         col = layout.column(align=True)
         col.label(text="Lamp:")
-        if not scene.UItweaks.icon_or_text: 
+        if not view.show_iconbuttons: 
             self.draw_add_lamp(col)
         else:
             self.draw_add_lamp_icons(col)
 
         col = layout.column(align=True)
         col.label(text="Other:")
-        if not scene.UItweaks.icon_or_text:
+        if not view.show_iconbuttons:
             self.draw_add_other(col)
         else:
             self.draw_add_other_icons(col)
 
         col = layout.column(align=True)
         col.label(text="Empties:")
-        if not scene.UItweaks.icon_or_text:
+        if not view.show_iconbuttons:
             self.draw_add_empties(col)
         else:
             self.draw_add_empties_icons(col)
 
         col = layout.column(align=True)
         col.label(text="Force Field:")
-        if not scene.UItweaks.icon_or_text:
+        if not view.show_iconbuttons:
             self.draw_add_force_field(col)
         else:
             self.draw_add_force_field_icons(col)
-
 
 class VIEW3D_PT_tools_relations(View3DPanel, Panel):
     bl_category = "Relations"
@@ -512,7 +515,7 @@ class VIEW3D_PT_tools_relations(View3DPanel, Panel):
     def draw(self, context):
         layout = self.layout
 
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
 
         obj = context.active_object
 
@@ -522,7 +525,7 @@ class VIEW3D_PT_tools_relations(View3DPanel, Panel):
                 # Particle edit
             if mode == 'OBJECT':
 
-                if not scene.UItweaks.icon_or_text: 
+                if not view.show_iconbuttons: 
 
                     col = layout.column(align=True)
 
@@ -597,7 +600,7 @@ class VIEW3D_PT_tools_relations(View3DPanel, Panel):
                 col = layout.column(align=True)
                 
                 
-                if not scene.UItweaks.icon_or_text: 
+                if not view.show_iconbuttons: 
                         col = layout.column(align=True)
                         row = col.row(align=True)
                 
@@ -629,7 +632,7 @@ class VIEW3D_PT_tools_relations(View3DPanel, Panel):
                     col = layout.column(align=True)
                     col.label(text="Parent:")
 
-                    if not scene.UItweaks.icon_or_text: 
+                    if not view.show_iconbuttons: 
                         col = layout.column(align=True)
                         row = col.row(align=True)
                         row.operator("object.parent_set", icon='PARENT_SET', text="Set")
@@ -643,7 +646,6 @@ class VIEW3D_PT_tools_relations(View3DPanel, Panel):
                         row.operator("object.parent_clear", icon='PARENT_CLEAR', text="")
 
 
-
 class VIEW3D_PT_tools_animation(View3DPanel, Panel):
     bl_category = "Animation"
     bl_context = "objectmode"
@@ -651,9 +653,9 @@ class VIEW3D_PT_tools_animation(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
 
-        if not scene.UItweaks.icon_or_text: 
+        if not view.show_iconbuttons: 
 
             draw_keyframing_tools(context, layout)
 
@@ -681,16 +683,14 @@ class VIEW3D_PT_tools_rigid_body(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
 
-        if not scene.UItweaks.icon_or_text:
+        if not view.show_iconbuttons:
 
             col = layout.column(align=True)
             col.label(text="Add/Remove:")
-            #row = col.row(align=True)
             col.operator("rigidbody.objects_add", icon='RIGID_ADD_ACTIVE', text="Add Active          ").type = 'ACTIVE'
             col.operator("rigidbody.objects_add", icon='RIGID_ADD_PASSIVE', text="Add Passive         ").type = 'PASSIVE'
-            #row = col.row(align=True)
             col.operator("rigidbody.objects_remove", icon='RIGID_REMOVE', text="Remove               ")
 
             col = layout.column(align=True)
@@ -743,9 +743,9 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
 
-        if not scene.UItweaks.icon_or_text: 
+        if not view.show_iconbuttons: 
 
             col = layout.column(align=True)
             col.operator("transform.shrink_fatten", icon = 'SHRINK_FATTEN', text="Shrink/Fatten   ")
@@ -896,6 +896,8 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
         
 
 
+
+
 class VIEW3D_PT_tools_meshweight(View3DPanel, Panel):
     bl_category = "Tools"
     bl_context = "mesh_edit"
@@ -940,9 +942,9 @@ class VIEW3D_PT_tools_meshweight(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
 
-        if not scene.UItweaks.icon_or_text: 
+        if not view.show_iconbuttons: 
             self.draw_generic(layout)
         else:
             self.draw_generic_icons(layout)
@@ -957,12 +959,13 @@ class VIEW3D_PT_tools_add_mesh_edit(View3DPanel, Panel):
         layout = self.layout
         scene = context.scene # Our data is in the current scene
         col = layout.column(align=True)
-        
+
         # bfa - icon or text buttons
-        if not scene.UItweaks.icon_or_text: 
+        if not view.show_iconbuttons: 
             VIEW3D_PT_tools_add_object.draw_add_mesh(col, label=True) # the original class
         else:
             VIEW3D_PT_tools_add_object.draw_add_mesh_icons(col, label=True) # the modified class with icon buttons
+
 
 # Workaround to separate the tooltips for Recalculate Outside and Recalculate Inside
 class VIEW3D_normals_make_consistent_inside(bpy.types.Operator):
@@ -982,9 +985,9 @@ class VIEW3D_PT_tools_shading(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
 
-        if not scene.UItweaks.icon_or_text: 
+        if not view.show_iconbuttons: 
             col = layout.column(align=True)
             col.label(text="Faces:")
             row = col.row(align=True)
@@ -1035,6 +1038,7 @@ class VIEW3D_PT_tools_shading(View3DPanel, Panel):
             row.operator("mesh.normals_recalculate_inside", icon = 'RECALC_NORMALS_INSIDE', text="")
             row.operator("mesh.flip_normals", icon = 'FLIP_NORMALS', text="")
 
+
 # Tooltip and operator for Clear Seam.
 class VIEW3D_markseam_clear(bpy.types.Operator):
     """Clear Seam\nClears the UV Seam for selected edges"""      # blender will use this as a tooltip for menu items and buttons.
@@ -1054,12 +1058,12 @@ class VIEW3D_PT_tools_uvs(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
         col = layout.column(align=True)
         col.label(text="UV Mapping:")
         col.menu("VIEW3D_MT_uv_map", text="Unwrap")
 
-        if not scene.UItweaks.icon_or_text:          
+        if not view.show_iconbuttons:          
             col.operator("mesh.mark_seam", icon = 'MARK_SEAM', text="Mark Seam            ").clear = False
             col.operator("mesh.clear_seam", icon = 'CLEAR_SEAM', text="Clear Seam           ")
 
@@ -1108,6 +1112,7 @@ class VIEW3D_PT_tools_meshedit_options(View3DPanel, Panel):
 
 # ********** default tools for editmode_curve ****************
 
+
 class VIEW3D_PT_tools_curveedit(View3DPanel, Panel):
     bl_category = "Tools"
     bl_context = "curve_edit"
@@ -1116,9 +1121,9 @@ class VIEW3D_PT_tools_curveedit(View3DPanel, Panel):
     def draw(self, context):
         layout = self.layout
 
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
 
-        if not scene.UItweaks.icon_or_text: 
+        if not view.show_iconbuttons: 
 
             col = layout.column(align=True) 
             col.operator("transform.tilt", icon = 'TILT', text="Tilt                  ")
@@ -1200,18 +1205,72 @@ class VIEW3D_PT_tools_add_curve_edit(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        scene = context.scene # Our data is in the current scene
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
         col = layout.column(align=True)
 
         # bfa - icon or text buttons
-        if not scene.UItweaks.icon_or_text: 
+        if not view.show_iconbuttons: 
             VIEW3D_PT_tools_add_object.draw_add_curve(col, label=True) # the original class
         else:
             VIEW3D_PT_tools_add_object.draw_add_curve_icons(col, label=True) # the modified class with icon buttons
 
+
+class VIEW3D_PT_tools_curveedit_options_stroke(View3DPanel, Panel):
+    bl_category = "Options"
+    bl_context = "curve_edit"
+    bl_label = "Curve Stroke"
+
+    def draw(self, context):
+        layout = self.layout
+
+        tool_settings = context.tool_settings
+        cps = tool_settings.curve_paint_settings
+
+        col = layout.column()
+
+        col.prop(cps, "curve_type")
+
+        if cps.curve_type == 'BEZIER':
+            col.label("Bezier Options:")
+            col.prop(cps, "error_threshold")
+            col.prop(cps, "fit_method")
+            col.prop(cps, "use_corners_detect")
+
+            col = layout.column()
+            col.active = cps.use_corners_detect
+            col.prop(cps, "corner_angle")
+
+        col.label("Pressure Radius:")
+        row = layout.row(align=True)
+        rowsub = row.row(align=True)
+        rowsub.prop(cps, "radius_min", text="Min")
+        rowsub.prop(cps, "radius_max", text="Max")
+
+        row.prop(cps, "use_pressure_radius", text="", icon_only=True)
+
+        col = layout.column()
+        col.label("Taper Radius:")
+        row = layout.row(align=True)
+        row.prop(cps, "radius_taper_start", text="Start")
+        row.prop(cps, "radius_taper_end", text="End")
+
+        col = layout.column()
+        col.label("Projection Depth:")
+        row = layout.row(align=True)
+        row.prop(cps, "depth_mode", expand=True)
+
+        col = layout.column()
+        if cps.depth_mode == 'SURFACE':
+            col.prop(cps, "surface_offset")
+            col.prop(cps, "use_offset_absolute")
+            col.prop(cps, "use_stroke_endpoints")
+            if cps.use_stroke_endpoints:
+                colsub = layout.column(align=True)
+                colsub.prop(cps, "surface_plane", expand=True)
+
+
 # ********** default tools for editmode_surface ****************
 
-# xxx - surface
 
 class VIEW3D_PT_tools_surfaceedit(View3DPanel, Panel):
     bl_category = "Tools"
@@ -1221,9 +1280,9 @@ class VIEW3D_PT_tools_surfaceedit(View3DPanel, Panel):
     def draw(self, context):
         layout = self.layout
 
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
 
-        if not scene.UItweaks.icon_or_text: 
+        if not view.show_iconbuttons: 
 
             col = layout.column(align=True)
             col.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="Mirror              ")
@@ -1278,11 +1337,11 @@ class VIEW3D_PT_tools_add_surface_edit(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        scene = context.scene # Our data is in the current scene
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
         col = layout.column(align=True)
 
         # bfa - icon or text buttons
-        if not scene.UItweaks.icon_or_text: 
+        if not view.show_iconbuttons: 
             VIEW3D_PT_tools_add_object.draw_add_surface(col) # the original class
         else:
             VIEW3D_PT_tools_add_object.draw_add_surface_icons(col) # the modified class with icon buttons
@@ -1299,9 +1358,9 @@ class VIEW3D_PT_tools_textedit(View3DPanel, Panel):
     def draw(self, context):
         layout = self.layout
 
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
 
-        if not scene.UItweaks.icon_or_text: 
+        if not view.show_iconbuttons: 
             col = layout.column(align=True)
             col.label(text="Set Case:")
             col.operator("font.case_set", icon = 'SET_UPPERCASE', text="To Upper          ").case = 'UPPER'
@@ -1333,6 +1392,20 @@ class VIEW3D_PT_tools_textedit(View3DPanel, Panel):
 # ********** default tools for editmode_armature ****************
 
 
+class VIEW3D_PT_tools_armatureedit_transform(View3DPanel, Panel):
+    bl_category = "Tools"
+    bl_context = "armature_edit"
+    bl_label = "Transform"
+
+    def draw(self, context):
+        layout = self.layout
+
+        col = layout.column(align=True)
+        col.operator("transform.translate")
+        col.operator("transform.rotate")
+        col.operator("transform.resize", text="Scale")
+
+
 class VIEW3D_PT_tools_armatureedit(View3DPanel, Panel):
     bl_category = "Tools"
     bl_context = "armature_edit"
@@ -1340,9 +1413,9 @@ class VIEW3D_PT_tools_armatureedit(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
 
-        if not scene.UItweaks.icon_or_text: 
+        if not view.show_iconbuttons: 
             col = layout.column(align=True)
             col.label(text="Bones:")
             col.operator("armature.bone_primitive_add", icon = 'BONE_DATA', text="Add                  ")
@@ -1398,9 +1471,9 @@ class VIEW3D_PT_tools_mballedit(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
 
-        if not scene.UItweaks.icon_or_text: 
+        if not view.show_iconbuttons: 
 
             col = layout.column(align=True)
             col.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="Mirror                ")
@@ -1417,8 +1490,6 @@ class VIEW3D_PT_tools_mballedit(View3DPanel, Panel):
             row = col.row(align=False)
             row.alignment = 'LEFT'
             row.operator("transform.vertex_random", icon = 'RANDOMIZE', text = "")
-            
-
 
 
 class VIEW3D_PT_tools_add_mball_edit(View3DPanel, Panel):
@@ -1432,7 +1503,7 @@ class VIEW3D_PT_tools_add_mball_edit(View3DPanel, Panel):
         col = layout.column(align=True)
 
         # bfa - icon or text buttons
-        if not scene.UItweaks.icon_or_text: 
+        if not view.show_iconbuttons: 
             VIEW3D_PT_tools_add_object.draw_add_mball(col) # the original class
         else:
             VIEW3D_PT_tools_add_object.draw_add_mball_icons(col) # the modified class with icon buttons
@@ -1448,9 +1519,9 @@ class VIEW3D_PT_tools_latticeedit(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
 
-        if not scene.UItweaks.icon_or_text: 
+        if not view.show_iconbuttons: 
 
             col = layout.column(align=True)
             col.operator("lattice.make_regular", icon = 'MAKE_REGULAR', text = "Make Regular  ")
@@ -1483,9 +1554,9 @@ class VIEW3D_PT_tools_posemode(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
 
-        if not scene.UItweaks.icon_or_text: 
+        if not view.show_iconbuttons: 
 
             col = layout.column(align=True)
             col.label(text="In-Between:")
@@ -1659,7 +1730,6 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
                     myvar = layout.operator("wm.radial_control", text = "Radial Control Strength")
                     myvar.data_path_primary = 'tool_settings.particle_edit.brush.strength'
 
-
             if tool == 'ADD':
                 col.prop(brush, "count")
                 col = layout.column()
@@ -1725,6 +1795,12 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
                 col.separator()
                 row = col.row(align=True)
                 row.prop(brush, "crease_pinch_factor", slider=True, text="Pinch")
+
+            # rake_factor
+            if capabilities.has_rake_factor:
+                col.separator()
+                row = col.row(align=True)
+                row.prop(brush, "rake_factor", slider=True)
 
             # use_original_normal and sculpt_plane
             if capabilities.has_sculpt_plane:
@@ -1812,6 +1888,10 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
 
             col.prop(brush, "vertex_tool", text="Blend")
 
+            if brush.vertex_tool == 'BLUR':
+                col.prop(brush, "use_accumulate")
+                col.separator()
+
             col = layout.column()
             col.prop(toolsettings, "use_auto_normalize", text="Auto Normalize")
             col.prop(toolsettings, "use_multipaint", text="Multi-Paint")
@@ -1823,7 +1903,6 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
             if settings.palette:
                 col.template_palette(settings, "palette", color=True)
 
-            #self.prop_unified_color(col, context, brush, "color", text="") # bfa - The original prop_unified_color
             row = col.row(align=True) # We need a row to add our eyedropper besides the color field.
             self.prop_unified_color(row, context, brush, "color", text="") # Here now with row instead of col
             row.separator() # A separator
@@ -2233,6 +2312,15 @@ class VIEW3D_PT_sculpt_dyntopo(Panel, View3DPaintPanel):
     def poll(cls, context):
         return (context.sculpt_object and context.tool_settings.sculpt)
 
+    def draw_header(self, context):
+        layout = self.layout
+        layout.operator(
+                "sculpt.dynamic_topology_toggle",
+                icon='CHECKBOX_HLT' if context.sculpt_object.use_dynamic_topology_sculpting else 'CHECKBOX_DEHLT',
+                text="",
+                emboss=False,
+                )
+
     def draw(self, context):
         layout = self.layout
 
@@ -2241,21 +2329,15 @@ class VIEW3D_PT_sculpt_dyntopo(Panel, View3DPaintPanel):
         settings = self.paint_settings(context)
         brush = settings.brush
 
-        if context.sculpt_object.use_dynamic_topology_sculpting:
-            layout.operator("sculpt.dynamic_topology_toggle", icon='X', text="Disable Dyntopo")
-        else:
-            layout.operator("sculpt.dynamic_topology_toggle", icon='SCULPT_DYNTOPO', text="Enable Dyntopo")
-
         layout.operator("sculpt.set_detail_size", text="Set detail size")
 
         col = layout.column()
         col.active = context.sculpt_object.use_dynamic_topology_sculpting
         sub = col.column(align=True)
-        
         sub.active = (brush and brush.sculpt_tool != 'MASK')
         if (sculpt.detail_type_method == 'CONSTANT'):
             row = sub.row(align=True)
-            row.prop(sculpt, "constant_detail")
+            row.prop(sculpt, "constant_detail_resolution")
             row.operator("sculpt.sample_detail_size", text="", icon='EYEDROPPER')
         elif (sculpt.detail_type_method == 'BRUSH'):
             sub.prop(sculpt, "detail_percent")
@@ -2263,10 +2345,7 @@ class VIEW3D_PT_sculpt_dyntopo(Panel, View3DPaintPanel):
             sub.prop(sculpt, "detail_size")
         sub.prop(sculpt, "detail_refine_method", text="")
         sub.prop(sculpt, "detail_type_method", text="")
-        
-
         col.separator()
-
         col.prop(sculpt, "use_smooth_shading")
         col.operator("sculpt.optimize")
         if (sculpt.detail_type_method == 'CONSTANT'):
@@ -2310,7 +2389,7 @@ class VIEW3D_PT_sculpt_options(Panel, View3DPaintPanel):
 
 class VIEW3D_PT_sculpt_symmetry(Panel, View3DPaintPanel):
     bl_category = "Tools"
-    bl_label = "Symmetry / Lock"
+    bl_label = "Symmetry/Lock"
     bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
@@ -2356,7 +2435,7 @@ class VIEW3D_PT_tools_brush_appearance(Panel, View3DPaintPanel):
     @classmethod
     def poll(cls, context):
         settings = cls.paint_settings(context)
-        return settings
+        return (settings is not None) and (not isinstance(settings, bpy.types.ParticleEdit))
 
     def draw(self, context):
         layout = self.layout
@@ -2401,27 +2480,13 @@ class VIEW3D_PT_tools_weightpaint(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+        VIEW3D_PT_tools_meshweight.draw_generic(layout)
 
-        if not scene.UItweaks.icon_or_text: 
-            VIEW3D_PT_tools_meshweight.draw_generic(layout)
-
-            col = layout.column()
-            col.operator("paint.weight_gradient", icon = 'WEIGHT_GRADIENT')
-            props = col.operator("object.data_transfer", icon = 'WEIGHT_TRANSFER_WEIGHTS', text="Transfer Weights")
-            props.use_reverse_transfer = True
-            props.data_type = 'VGROUP_WEIGHTS'
-            
-        else:
-            VIEW3D_PT_tools_meshweight.draw_generic_icons(layout)
-
-            row = layout.row(align=False)
-            row.alignment = 'LEFT'
-            row.operator("paint.weight_gradient", icon = 'WEIGHT_GRADIENT', text = "")
-            props = row.operator("object.data_transfer", icon = 'WEIGHT_TRANSFER_WEIGHTS', text="")
-            props.use_reverse_transfer = True
-            props.data_type = 'VGROUP_WEIGHTS'
-
+        col = layout.column()
+        col.operator("paint.weight_gradient")
+        props = col.operator("object.data_transfer", text="Transfer Weights")
+        props.use_reverse_transfer = True
+        props.data_type = 'VGROUP_WEIGHTS'
 
 
 class VIEW3D_PT_tools_weightpaint_options(Panel, View3DPaintPanel):
@@ -2454,7 +2519,6 @@ class VIEW3D_PT_tools_weightpaint_options(Panel, View3DPaintPanel):
 
         col.label("Show Zero Weights:")
         sub = col.row()
-        sub.active = (not tool_settings.use_multipaint)
         sub.prop(tool_settings, "vertex_group_user", expand=True)
 
         self.unified_paint_settings(col, context)
@@ -2676,6 +2740,25 @@ class VIEW3D_PT_tools_grease_pencil_edit(GreasePencilStrokeEditPanel, Panel):
     bl_space_type = 'VIEW_3D'
 
 
+# Grease Pencil stroke interpolation tools
+class VIEW3D_PT_tools_grease_pencil_interpolate(GreasePencilInterpolatePanel, Panel):
+    bl_space_type = 'VIEW_3D'
+
+
+# Grease Pencil stroke sculpting tools
+class VIEW3D_PT_tools_grease_pencil_sculpt(GreasePencilStrokeSculptPanel, Panel):
+    bl_space_type = 'VIEW_3D'
+
+
+# Grease Pencil drawing brushes
+class VIEW3D_PT_tools_grease_pencil_brush(GreasePencilBrushPanel, Panel):
+    bl_space_type = 'VIEW_3D'
+
+# Grease Pencil drawingcurves
+class VIEW3D_PT_tools_grease_pencil_brushcurves(GreasePencilBrushCurvesPanel, Panel):
+    bl_space_type = 'VIEW_3D'
+
+
 # Note: moved here so that it's always in last position in 'Tools' panels!
 class VIEW3D_PT_tools_history(View3DPanel, Panel):
     bl_category = "Tools"
@@ -2687,9 +2770,9 @@ class VIEW3D_PT_tools_history(View3DPanel, Panel):
         layout = self.layout
         obj = context.object
 
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
         # Flag is off, draw buttons as text
-        if not scene.UItweaks.icon_or_text: 
+        if not view.show_iconbuttons: 
             col = layout.column(align=True)
             row = col.row(align=True)
             row.operator("ed.undo", icon='UNDO')
@@ -2793,7 +2876,6 @@ class RENDER_PT_bake(bpy.types.Panel):
             sub = row.column()
             sub.active = rd.use_bake_user_scale
             sub.prop(rd, "bake_user_scale", text="User Scale")
-
 
 if __name__ == "__main__":  # only for live edit.
     bpy.utils.register_module(__name__)

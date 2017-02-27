@@ -46,6 +46,8 @@
 #include "BLI_dlrbTree.h"
 
 #include "BKE_context.h"
+#include "BKE_curve.h"
+#include "BKE_fcurve.h"
 #include "BKE_global.h"
 #include "BKE_nla.h"
 #include "BKE_mask.h"
@@ -111,31 +113,24 @@ static void draw_cfra_number(Scene *scene, View2D *v2d, const float cfra, const 
 void ANIM_draw_cfra(const bContext *C, View2D *v2d, short flag)
 {
 	Scene *scene = CTX_data_scene(C);
-	float vec[2];
-	
+
 	/* Draw a light green line to indicate current frame */
-	vec[0] = (float)(scene->r.cfra * scene->r.framelen);
-	
 	UI_ThemeColor(TH_CFRAME);
-	if (flag & DRAWCFRA_WIDE)
-		glLineWidth(3.0);
-	else
-		glLineWidth(2.0);
-	
-	glBegin(GL_LINE_STRIP);
-	vec[1] = v2d->cur.ymin - 500.0f;    /* XXX arbitrary... want it go to bottom */
-	glVertex2fv(vec);
-		
-	vec[1] = v2d->cur.ymax;
-	glVertex2fv(vec);
+
+	const float time = scene->r.cfra + scene->r.subframe;
+	const float x = (float)(time * scene->r.framelen);
+
+	glLineWidth((flag & DRAWCFRA_WIDE) ? 3.0 : 2.0);
+
+	glBegin(GL_LINES);
+	glVertex2f(x, v2d->cur.ymin - 500.0f); /* XXX arbitrary... want it go to bottom */
+	glVertex2f(x, v2d->cur.ymax);
 	glEnd();
-	
-	glLineWidth(1.0);
-	
+
 	/* Draw current frame number in a little box */
 	if (flag & DRAWCFRA_SHOW_NUMBOX) {
 		UI_view2d_view_orthoSpecial(CTX_wm_region(C), v2d, 1);
-		draw_cfra_number(scene, v2d, vec[0], (flag & DRAWCFRA_UNIT_SECONDS) != 0);
+		draw_cfra_number(scene, v2d, x, (flag & DRAWCFRA_UNIT_SECONDS) != 0);
 	}
 }
 
@@ -181,11 +176,17 @@ AnimData *ANIM_nla_mapping_get(bAnimContext *ac, bAnimListElem *ale)
 	/* abort if rendering - we may get some race condition issues... */
 	if (G.is_rendering) return NULL;
 	
-	/* handling depends on the type of animation-context we've got */
-	if (ale) {
-		/* NLA Control Curves occur on NLA strips, and shouldn't be subjected to this kind of mapping */
-		if (ale->type != ANIMTYPE_NLACURVE)
-			return ale->adt;
+	/* apart from strictly keyframe-related contexts, this shouldn't even happen */
+	// XXX: nla and channel here may not be necessary...
+	if (ELEM(ac->datatype, ANIMCONT_ACTION, ANIMCONT_SHAPEKEY, ANIMCONT_DOPESHEET,
+	                       ANIMCONT_FCURVES, ANIMCONT_NLA, ANIMCONT_CHANNEL))
+	{
+		/* handling depends on the type of animation-context we've got */
+		if (ale) {
+			/* NLA Control Curves occur on NLA strips, and shouldn't be subjected to this kind of mapping */
+			if (ale->type != ANIMTYPE_NLACURVE)
+				return ale->adt;
+		}
 	}
 	
 	/* cannot handle... */
@@ -310,7 +311,8 @@ static float normalization_factor_get(Scene *scene, FCurve *fcu, short flag, flo
 
 	fcu->prev_norm_factor = 1.0f;
 	if (fcu->bezt) {
-		BezTriple *bezt;
+		const bool use_preview_only = PRVRANGEON;
+		const BezTriple *bezt;
 		int i;
 		float max_coord = -FLT_MAX;
 		float min_coord = FLT_MAX;
@@ -320,37 +322,91 @@ static float normalization_factor_get(Scene *scene, FCurve *fcu, short flag, flo
 			return 1.0f;
 		}
 
-		if (PRVRANGEON) {
-			for (i = 0, bezt = fcu->bezt; i < fcu->totvert; i++, bezt++) {
-				if (IN_RANGE_INCL(bezt->vec[1][0], scene->r.psfra, scene->r.pefra)) {
-					max_coord = max_ff(max_coord, bezt->vec[0][1]);
-					max_coord = max_ff(max_coord, bezt->vec[1][1]);
-					max_coord = max_ff(max_coord, bezt->vec[2][1]);
+		for (i = 0, bezt = fcu->bezt; i < fcu->totvert; i++, bezt++) {
+			if (use_preview_only && !IN_RANGE_INCL(bezt->vec[1][0],
+			                                       scene->r.psfra,
+			                                       scene->r.pefra))
+			{
+				continue;
+			}
 
-					min_coord = min_ff(min_coord, bezt->vec[0][1]);
+			if (i == 0) {
+				/* We ignore extrapolation flags and handle here, and use the
+				 * control point position only. so we normalize "interesting"
+				 * part of the curve.
+				 *
+				 * Here we handle left extrapolation.
+				 */
+				max_coord = max_ff(max_coord, bezt->vec[1][1]);
+
+				min_coord = min_ff(min_coord, bezt->vec[1][1]);
+			}
+			else {
+				const BezTriple *prev_bezt = bezt - 1;
+				if (prev_bezt->ipo == BEZT_IPO_CONST) {
+					/* Constant interpolation: previous CV value is used up
+					 * to the current keyframe.
+					 */
+					max_coord = max_ff(max_coord, bezt->vec[1][1]);
 					min_coord = min_ff(min_coord, bezt->vec[1][1]);
-					min_coord = min_ff(min_coord, bezt->vec[2][1]);
+				}
+				else if (prev_bezt->ipo == BEZT_IPO_LIN) {
+					/* Linear interpolation: min/max using both previous and
+					 * and current CV.
+					 */
+					max_coord = max_ff(max_coord, bezt->vec[1][1]);
+					min_coord = min_ff(min_coord, bezt->vec[1][1]);
+					max_coord = max_ff(max_coord, prev_bezt->vec[1][1]);
+					min_coord = min_ff(min_coord, prev_bezt->vec[1][1]);
+				}
+				else if (prev_bezt->ipo == BEZT_IPO_BEZ) {
+					const int resol = fcu->driver
+					        ? 32
+					        : min_ii((int)(5.0f * len_v2v2(bezt->vec[1], prev_bezt->vec[1])), 32);
+					if (resol < 2) {
+						max_coord = max_ff(max_coord, prev_bezt->vec[1][1]);
+						min_coord = min_ff(min_coord, prev_bezt->vec[1][1]);
+					}
+					else {
+						float data[120];
+						float v1[2], v2[2], v3[2], v4[2];
+
+						v1[0] = prev_bezt->vec[1][0];
+						v1[1] = prev_bezt->vec[1][1];
+						v2[0] = prev_bezt->vec[2][0];
+						v2[1] = prev_bezt->vec[2][1];
+
+						v3[0] = bezt->vec[0][0];
+						v3[1] = bezt->vec[0][1];
+						v4[0] = bezt->vec[1][0];
+						v4[1] = bezt->vec[1][1];
+
+						correct_bezpart(v1, v2, v3, v4);
+
+						BKE_curve_forward_diff_bezier(v1[0], v2[0], v3[0], v4[0], data, resol, sizeof(float) * 3);
+						BKE_curve_forward_diff_bezier(v1[1], v2[1], v3[1], v4[1], data + 1, resol, sizeof(float) * 3);
+
+						for (int j = 0; j <= resol; ++j) {
+							const float *fp = &data[j * 3];
+							max_coord = max_ff(max_coord, fp[1]);
+							min_coord = min_ff(min_coord, fp[1]);
+						}
+					}
 				}
 			}
 		}
-		else {
-			for (i = 0, bezt = fcu->bezt; i < fcu->totvert; i++, bezt++) {
-				max_coord = max_ff(max_coord, bezt->vec[0][1]);
-				max_coord = max_ff(max_coord, bezt->vec[1][1]);
-				max_coord = max_ff(max_coord, bezt->vec[2][1]);
 
-				min_coord = min_ff(min_coord, bezt->vec[0][1]);
-				min_coord = min_ff(min_coord, bezt->vec[1][1]);
-				min_coord = min_ff(min_coord, bezt->vec[2][1]);
+		if (max_coord > min_coord) {
+			range = max_coord - min_coord;
+			if (range > FLT_EPSILON) {
+				factor = 2.0f / range;
 			}
+			offset = -min_coord - range / 2.0f;
 		}
-
-		range = max_coord - min_coord;
-
-		if (range > FLT_EPSILON) {
-			factor = 2.0f / range;
+		else if (max_coord == min_coord) {
+			factor = 1.0f;
+			offset = -min_coord;
 		}
-		offset = -min_coord - range / 2.0f;
 	}
 	BLI_assert(factor != 0.0f);
 	if (r_offset) {
@@ -403,7 +459,6 @@ static bool find_prev_next_keyframes(struct bContext *C, int *nextfra, int *prev
 {
 	Scene *scene = CTX_data_scene(C);
 	Object *ob = CTX_data_active_object(C);
-	bGPdata *gpd = CTX_data_gpencil_data(C);
 	Mask *mask = CTX_data_edit_mask(C);
 	bDopeSheet ads = {NULL};
 	DLRBT_Tree keys;
@@ -425,11 +480,12 @@ static bool find_prev_next_keyframes(struct bContext *C, int *nextfra, int *prev
 
 	/* populate tree with keyframe nodes */
 	scene_to_keylist(&ads, scene, &keys, NULL);
+	gpencil_to_keylist(&ads, scene->gpd, &keys);
 
-	if (ob)
+	if (ob) {
 		ob_to_keylist(&ads, ob, &keys, NULL);
-
-	gpencil_to_keylist(&ads, gpd, &keys);
+		gpencil_to_keylist(&ads, ob->gpd, &keys);
+	}
 
 	if (mask) {
 		MaskLayer *masklay = BKE_mask_layer_active(mask);

@@ -57,6 +57,7 @@
 #include "BKE_context.h"
 #include "BKE_global.h"
 #include "BKE_report.h"
+#include "BKE_library.h"
 #include "BKE_main.h"
 #include "BKE_movieclip.h"
 #include "BKE_sound.h"
@@ -102,7 +103,7 @@ static void sclip_zoom_set(const bContext *C, float zoom, float location[2])
 		width *= sc->zoom;
 		height *= sc->zoom;
 
-		if ((width < 4) && (height < 4))
+		if ((width < 4) && (height < 4) && sc->zoom < oldzoom)
 			sc->zoom = oldzoom;
 		else if (BLI_rcti_size_x(&ar->winrct) <= sc->zoom)
 			sc->zoom = oldzoom;
@@ -213,7 +214,7 @@ static int open_exec(bContext *C, wmOperator *op)
 
 	errno = 0;
 
-	clip = BKE_movieclip_file_add(bmain, str);
+	clip = BKE_movieclip_file_add_exists(bmain, str);
 
 	if (!clip) {
 		if (op->customdata)
@@ -233,8 +234,8 @@ static int open_exec(bContext *C, wmOperator *op)
 
 	if (pprop->prop) {
 		/* when creating new ID blocks, use is already 1, but RNA
-		 * pointer se also increases user, so this compensates it */
-		clip->id.us--;
+		 * pointer use also increases user, so this compensates it */
+		id_us_min(&clip->id);
 
 		RNA_id_pointer_create(&clip->id, &idptr);
 		RNA_property_pointer_set(&pprop->ptr, pprop->prop, idptr);
@@ -299,8 +300,9 @@ void CLIP_OT_open(wmOperatorType *ot)
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
 	/* properties */
-	WM_operator_properties_filesel(ot, FILE_TYPE_FOLDER | FILE_TYPE_IMAGE | FILE_TYPE_MOVIE, FILE_SPECIAL, FILE_OPENFILE,
-	                               WM_FILESEL_RELPATH | WM_FILESEL_FILES | WM_FILESEL_DIRECTORY, FILE_DEFAULTDISPLAY, FILE_SORT_ALPHA);
+	WM_operator_properties_filesel(
+	        ot, FILE_TYPE_FOLDER | FILE_TYPE_IMAGE | FILE_TYPE_MOVIE, FILE_SPECIAL, FILE_OPENFILE,
+	        WM_FILESEL_RELPATH | WM_FILESEL_FILES | WM_FILESEL_DIRECTORY, FILE_DEFAULTDISPLAY, FILE_SORT_ALPHA);
 }
 
 /******************* reload clip operator *********************/
@@ -474,7 +476,7 @@ void CLIP_OT_view_pan(wmOperatorType *ot)
 	ot->poll = ED_space_clip_view_clip_poll;
 
 	/* flags */
-	ot->flag = OPTYPE_BLOCKING;
+	ot->flag = OPTYPE_BLOCKING | OPTYPE_GRAB_CURSOR;
 
 	/* properties */
 	RNA_def_float_vector(ot->srna, "offset", 2, NULL, -FLT_MAX, FLT_MAX,
@@ -1179,7 +1181,7 @@ static unsigned char *proxy_thread_next_frame(ProxyQueue *queue, MovieClip *clip
 	return mem;
 }
 
-static void proxy_task_func(TaskPool *pool, void *task_data, int UNUSED(threadid))
+static void proxy_task_func(TaskPool * __restrict pool, void *task_data, int UNUSED(threadid))
 {
 	ProxyThread *data = (ProxyThread *)task_data;
 	ProxyQueue *queue = (ProxyQueue *)BLI_task_pool_userdata(pool);
@@ -1400,9 +1402,10 @@ void CLIP_OT_mode_set(wmOperatorType *ot)
 	ot->poll = ED_space_clip_poll;
 
 	/* properties */
-	RNA_def_enum(ot->srna, "mode", clip_editor_mode_items, SC_MODE_TRACKING, "Mode", "");
+	RNA_def_enum(ot->srna, "mode", rna_enum_clip_editor_mode_items, SC_MODE_TRACKING, "Mode", "");
 }
 
+#ifdef WITH_INPUT_NDOF
 /********************** NDOF operator *********************/
 
 /* Combined pan/zoom from a 3D mouse device.
@@ -1449,6 +1452,7 @@ void CLIP_OT_view_ndof(wmOperatorType *ot)
 	ot->invoke = clip_view_ndof_invoke;
 	ot->poll = ED_space_clip_view_clip_poll;
 }
+#endif /* WITH_INPUT_NDOF */
 
 /********************** Prefetch operator *********************/
 
@@ -1533,7 +1537,7 @@ static int clip_set_2d_cursor_exec(bContext *C, wmOperator *op)
 	bool show_cursor = false;
 
 	show_cursor |= sclip->mode == SC_MODE_MASKEDIT;
-	show_cursor |= sclip->around == V3D_CURSOR;
+	show_cursor |= sclip->around == V3D_AROUND_CURSOR;
 
 	if (!show_cursor) {
 		return OPERATOR_CANCELLED;

@@ -84,8 +84,11 @@
 
 /* local include */
 #include "render_types.h"
+#include "shading.h"
 #include "zbuf.h"
 
+/* Remove when Cycles moves from MFace to MLoopTri */
+#define USE_MFACE_WORKAROUND
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 /* defined in pipeline.c, is hardcopy of active dynamic allocated Render */
@@ -261,31 +264,14 @@ static void calc_point_from_barycentric_extrusion(
 }
 
 /**
- * This function returns the barycentric u,v of a face for a coordinate. The face is defined by its index.
- */
-static void calc_barycentric_from_point(
-        TriTessFace *triangles, const int index, const float co[3],
-        int *r_primitive_id, float r_uv[2])
-{
-	TriTessFace *triangle = &triangles[index];
-	resolve_tri_uv_v3(r_uv, co,
-	                  triangle->mverts[0]->co,
-	                  triangle->mverts[1]->co,
-	                  triangle->mverts[2]->co);
-	*r_primitive_id = index;
-}
-
-/**
  * This function populates pixel_array and returns TRUE if things are correct
  */
 static bool cast_ray_highpoly(
-        BVHTreeFromMesh *treeData, TriTessFace *triangles[], BakePixel *pixel_array, BakeHighPolyData *highpoly,
-        const float co[3], const float dir[3], const int pixel_id, const int tot_highpoly,
-        const float du_dx, const float du_dy, const float dv_dx, const float dv_dy)
+        BVHTreeFromMesh *treeData, TriTessFace *triangle_low, TriTessFace *triangles[],
+        BakePixel *pixel_array_low, BakePixel *pixel_array, float mat_low[4][4], BakeHighPolyData *highpoly,
+        const float co[3], const float dir[3], const int pixel_id, const int tot_highpoly)
 {
 	int i;
-	int primitive_id = -1;
-	float uv[2];
 	int hit_mesh = -1;
 	float hit_distance = FLT_MAX;
 
@@ -297,7 +283,7 @@ static bool cast_ray_highpoly(
 
 		hits[i].index = -1;
 		/* TODO: we should use FLT_MAX here, but sweepsphere code isn't prepared for that */
-		hits[i].dist = 10000.0f;
+		hits[i].dist = BVH_RAYCAST_DIST_MAX;
 
 		/* transform the ray from the world space to the highpoly space */
 		mul_v3_m4v3(co_high, highpoly[i].imat, co);
@@ -312,36 +298,69 @@ static bool cast_ray_highpoly(
 		}
 
 		if (hits[i].index != -1) {
-			/* cull backface */
-			const float dot = dot_v3v3(dir_high, hits[i].no);
-			if (dot < 0.0f) {
-				float distance;
-				float hit_world[3];
+			float distance;
+			float hit_world[3];
 
-				/* distance comparison in world space */
-				mul_v3_m4v3(hit_world, highpoly[i].obmat, hits[i].co);
-				distance = len_squared_v3v3(hit_world, co);
+			/* distance comparison in world space */
+			mul_v3_m4v3(hit_world, highpoly[i].obmat, hits[i].co);
+			distance = len_squared_v3v3(hit_world, co);
 
-				if (distance < hit_distance) {
-					hit_mesh = i;
-					hit_distance = distance;
-				}
+			if (distance < hit_distance) {
+				hit_mesh = i;
+				hit_distance = distance;
 			}
 		}
 	}
 
 	if (hit_mesh != -1) {
-		calc_barycentric_from_point(triangles[hit_mesh], hits[hit_mesh].index, hits[hit_mesh].co, &primitive_id, uv);
-		pixel_array[pixel_id].primitive_id = primitive_id;
-		pixel_array[pixel_id].object_id = hit_mesh;
-		copy_v2_v2(pixel_array[pixel_id].uv, uv);
+		int primitive_id_high = hits[hit_mesh].index;
+		TriTessFace *triangle_high = &triangles[hit_mesh][primitive_id_high];
+		BakePixel *pixel_low = &pixel_array_low[pixel_id];
+		BakePixel *pixel_high = &pixel_array[pixel_id];
 
-		/* the differentials are relative to the UV/image space, so the highpoly differentials
-		 * are the same as the low poly differentials */
-		pixel_array[pixel_id].du_dx = du_dx;
-		pixel_array[pixel_id].du_dy = du_dy;
-		pixel_array[pixel_id].dv_dx = dv_dx;
-		pixel_array[pixel_id].dv_dy = dv_dy;
+		pixel_high->primitive_id = primitive_id_high;
+		pixel_high->object_id = hit_mesh;
+
+		/* ray direction in high poly object space */
+		float dir_high[3];
+		mul_v3_mat3_m4v3(dir_high, highpoly[hit_mesh].imat, dir);
+		normalize_v3(dir_high);
+
+		/* compute position differentials on low poly object */
+		float duco_low[3], dvco_low[3], dxco[3], dyco[3];
+		sub_v3_v3v3(duco_low, triangle_low->mverts[0]->co, triangle_low->mverts[2]->co);
+		sub_v3_v3v3(dvco_low, triangle_low->mverts[1]->co, triangle_low->mverts[2]->co);
+
+		mul_v3_v3fl(dxco, duco_low, pixel_low->du_dx);
+		madd_v3_v3fl(dxco, dvco_low, pixel_low->dv_dx);
+		mul_v3_v3fl(dyco, duco_low, pixel_low->du_dy);
+		madd_v3_v3fl(dyco, dvco_low, pixel_low->dv_dy);
+
+		/* transform from low poly to to high poly object space */
+		mul_mat3_m4_v3(mat_low, dxco);
+		mul_mat3_m4_v3(mat_low, dyco);
+		mul_mat3_m4_v3(highpoly[hit_mesh].imat, dxco);
+		mul_mat3_m4_v3(highpoly[hit_mesh].imat, dyco);
+
+		/* transfer position differentials */
+		float tmp[3];
+		mul_v3_v3fl(tmp, dir_high, 1.0f/dot_v3v3(dir_high, triangle_high->normal));
+		madd_v3_v3fl(dxco, tmp, -dot_v3v3(dxco, triangle_high->normal));
+		madd_v3_v3fl(dyco, tmp, -dot_v3v3(dyco, triangle_high->normal));
+
+		/* compute barycentric differentials from position differentials */
+		barycentric_differentials_from_position(
+			hits[hit_mesh].co, triangle_high->mverts[0]->co,
+			triangle_high->mverts[1]->co, triangle_high->mverts[2]->co,
+			dxco, dyco, triangle_high->normal, true,
+			&pixel_high->uv[0], &pixel_high->uv[1],
+			&pixel_high->du_dx, &pixel_high->dv_dx,
+			&pixel_high->du_dy, &pixel_high->dv_dy);
+
+		/* verify we have valid uvs */
+		BLI_assert(pixel_high->uv[0] >= -1e-3f &&
+		           pixel_high->uv[1] >= -1e-3f &&
+		           pixel_high->uv[0] + pixel_high->uv[1] <= 1.0f + 1e-3f);
 	}
 	else {
 		pixel_array[pixel_id].primitive_id = -1;
@@ -351,6 +370,27 @@ static bool cast_ray_highpoly(
 	MEM_freeN(hits);
 	return hit_mesh != -1;
 }
+
+#ifdef USE_MFACE_WORKAROUND
+/**
+ * Until cycles moves to #MLoopTri, we need to keep face-rotation in sync with #test_index_face
+ *
+ * We only need to consider quads since #BKE_mesh_recalc_tessellation doesn't execute this on triangles.
+ */
+static void test_index_face_looptri(const MPoly *mp, MLoop *mloop, MLoopTri *lt)
+{
+	if (mp->totloop == 4) {
+		if (UNLIKELY((mloop[mp->loopstart + 2].v == 0) ||
+		             (mloop[mp->loopstart + 3].v == 0)))
+		{
+			/* remap: (2, 3, 0, 1) */
+			unsigned int l = mp->loopstart;
+			ARRAY_SET_ITEMS(lt[0].tri, l + 2, l + 3, l + 0);
+			ARRAY_SET_ITEMS(lt[1].tri, l + 2, l + 0, l + 1);
+		}
+	}
+}
+#endif
 
 /**
  * This function populates an array of verts for the triangles of a mesh
@@ -362,8 +402,6 @@ static TriTessFace *mesh_calc_tri_tessface(
 	int i;
 	MVert *mvert;
 	TSpace *tspace;
-	float *precomputed_normals = NULL;
-	bool calculate_normal;
 
 	const int tottri = poly_to_tri_count(me->totpoly, me->totloop);
 	MLoopTri *looptri;
@@ -373,16 +411,17 @@ static TriTessFace *mesh_calc_tri_tessface(
 	unsigned int mpoly_prev = UINT_MAX;
 	float no[3];
 
+#ifdef USE_MFACE_WORKAROUND
+	unsigned int mpoly_prev_testindex = UINT_MAX;
+#endif
+
 	mvert = CustomData_get_layer(&me->vdata, CD_MVERT);
 	looptri = MEM_mallocN(sizeof(*looptri) * tottri, __func__);
 	triangles = MEM_mallocN(sizeof(TriTessFace) * tottri, __func__);
 
 	if (tangent) {
 		DM_ensure_normals(dm);
-		DM_calc_loop_tangents(dm);
-
-		precomputed_normals = dm->getPolyDataArray(dm, CD_NORMAL);
-		calculate_normal = precomputed_normals ? false : true;
+		DM_calc_loop_tangents(dm, true, NULL, 0);
 
 		tspace = dm->getLoopDataArray(dm, CD_TANGENT);
 		BLI_assert(tspace);
@@ -394,9 +433,20 @@ static TriTessFace *mesh_calc_tri_tessface(
 	            me->totloop, me->totpoly,
 	            looptri);
 
+
+	const float *precomputed_normals = dm ? dm->getPolyDataArray(dm, CD_NORMAL) : NULL;
+	const bool calculate_normal = precomputed_normals ? false : true;
+
 	for (i = 0; i < tottri; i++) {
-		MLoopTri *lt = &looptri[i];
-		MPoly *mp = &me->mpoly[lt->poly];
+		const MLoopTri *lt = &looptri[i];
+		const MPoly *mp = &me->mpoly[lt->poly];
+
+#ifdef USE_MFACE_WORKAROUND
+		if (lt->poly != mpoly_prev_testindex) {
+			test_index_face_looptri(mp, me->mloop, &looptri[i]);
+			mpoly_prev_testindex = lt->poly;
+		}
+#endif
 
 		triangles[i].mverts[0] = &mvert[me->mloop[lt->tri[0]].v];
 		triangles[i].mverts[1] = &mvert[me->mloop[lt->tri[1]].v];
@@ -407,18 +457,17 @@ static TriTessFace *mesh_calc_tri_tessface(
 			triangles[i].tspace[0] = &tspace[lt->tri[0]];
 			triangles[i].tspace[1] = &tspace[lt->tri[1]];
 			triangles[i].tspace[2] = &tspace[lt->tri[2]];
+		}
 
-			if (calculate_normal) {
-				if (lt->poly != mpoly_prev) {
-					const MPoly *mp = &me->mpoly[lt->poly];
-					BKE_mesh_calc_poly_normal(mp, &me->mloop[mp->loopstart], me->mvert, no);
-					mpoly_prev = lt->poly;
-				}
-				copy_v3_v3(triangles[i].normal, no);
+		if (calculate_normal) {
+			if (lt->poly != mpoly_prev) {
+				BKE_mesh_calc_poly_normal(mp, &me->mloop[mp->loopstart], me->mvert, no);
+				mpoly_prev = lt->poly;
 			}
-			else {
-				copy_v3_v3(triangles[i].normal, &precomputed_normals[lt->poly]);
-			}
+			copy_v3_v3(triangles[i].normal, no);
+		}
+		else {
+			copy_v3_v3(triangles[i].normal, &precomputed_normals[lt->poly]);
 		}
 	}
 
@@ -490,6 +539,7 @@ bool RE_bake_pixels_populate_from_objects(
 	for (i = 0; i < num_pixels; i++) {
 		float co[3];
 		float dir[3];
+		TriTessFace *tri_low;
 
 		primitive_id = pixel_array_from[i].primitive_id;
 
@@ -504,18 +554,21 @@ bool RE_bake_pixels_populate_from_objects(
 		/* calculate from low poly mesh cage */
 		if (is_custom_cage) {
 			calc_point_from_barycentric_cage(tris_low, tris_cage, mat_low, mat_cage, primitive_id, u, v, co, dir);
+			tri_low = &tris_cage[primitive_id];
 		}
 		else if (is_cage) {
 			calc_point_from_barycentric_extrusion(tris_cage, mat_low, imat_low, primitive_id, u, v, cage_extrusion, co, dir, true);
+			tri_low = &tris_cage[primitive_id];
 		}
 		else {
 			calc_point_from_barycentric_extrusion(tris_low, mat_low, imat_low, primitive_id, u, v, cage_extrusion, co, dir, false);
+			tri_low = &tris_low[primitive_id];
 		}
 
 		/* cast ray */
-		if (!cast_ray_highpoly(treeData, tris_high, pixel_array_to, highpoly, co, dir, i, tot_highpoly,
-		                       pixel_array_from[i].du_dx, pixel_array_from[i].du_dy,
-		                       pixel_array_from[i].dv_dx, pixel_array_from[i].dv_dy)) {
+		if (!cast_ray_highpoly(treeData, tri_low, tris_high,
+		                       pixel_array_from, pixel_array_to, mat_low,
+		                       highpoly, co, dir, i, tot_highpoly)) {
 			/* if it fails mask out the original pixel array */
 			pixel_array_from[i].primitive_id = -1;
 		}
@@ -586,22 +639,9 @@ void RE_bake_pixels_populate(
 	const MLoopUV *mloopuv;
 	const int tottri = poly_to_tri_count(me->totpoly, me->totloop);
 	MLoopTri *looptri;
-
-	/* we can't bake in edit mode */
-	if (me->edit_btmesh)
-		return;
-
-	bd.pixel_array = pixel_array;
-	bd.zspan = MEM_callocN(sizeof(ZSpan) * bake_images->size, "bake zspan");
-
-	/* initialize all pixel arrays so we know which ones are 'blank' */
-	for (i = 0; i < num_pixels; i++) {
-		pixel_array[i].primitive_id = -1;
-	}
-
-	for (i = 0; i < bake_images->size; i++) {
-		zbuf_alloc_span(&bd.zspan[i], bake_images->data[i].width, bake_images->data[i].height, R.clipcrop);
-	}
+#ifdef USE_MFACE_WORKAROUND
+	unsigned int mpoly_prev_testindex = UINT_MAX;
+#endif
 
 	if ((uv_layer == NULL) || (uv_layer[0] == '\0')) {
 		mloopuv = CustomData_get_layer(&me->ldata, CD_MLOOPUV);
@@ -613,6 +653,20 @@ void RE_bake_pixels_populate(
 
 	if (mloopuv == NULL)
 		return;
+
+
+	bd.pixel_array = pixel_array;
+	bd.zspan = MEM_callocN(sizeof(ZSpan) * bake_images->size, "bake zspan");
+
+	/* initialize all pixel arrays so we know which ones are 'blank' */
+	for (i = 0; i < num_pixels; i++) {
+		pixel_array[i].primitive_id = -1;
+		pixel_array[i].object_id = 0;
+	}
+
+	for (i = 0; i < bake_images->size; i++) {
+		zbuf_alloc_span(&bd.zspan[i], bake_images->data[i].width, bake_images->data[i].height, R.clipcrop);
+	}
 
 	looptri = MEM_mallocN(sizeof(*looptri) * tottri, __func__);
 
@@ -632,6 +686,13 @@ void RE_bake_pixels_populate(
 
 		bd.bk_image = &bake_images->data[image_id];
 		bd.primitive_id = ++p_id;
+
+#ifdef USE_MFACE_WORKAROUND
+		if (lt->poly != mpoly_prev_testindex) {
+			test_index_face_looptri(mp, me->mloop, &looptri[i]);
+			mpoly_prev_testindex = lt->poly;
+		}
+#endif
 
 		for (a = 0; a < 3; a++) {
 			const float *uv = mloopuv[lt->tri[a]].uv;
@@ -751,7 +812,10 @@ void RE_bake_normal_world_to_tangent(
 		offset = i * depth;
 
 		if (primitive_id == -1) {
-			copy_v3_fl3(&result[offset], 0.5f, 0.5f, 1.0f);
+			if (depth == 4)
+				copy_v4_fl4(&result[offset], 0.5f, 0.5f, 1.0f, 1.0f);
+			else
+				copy_v3_fl3(&result[offset], 0.5f, 0.5f, 1.0f);
 			continue;
 		}
 

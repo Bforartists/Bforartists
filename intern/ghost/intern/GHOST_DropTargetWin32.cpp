@@ -75,7 +75,7 @@ HRESULT __stdcall GHOST_DropTargetWin32::QueryInterface(REFIID riid, void **ppvO
 		return S_OK;
 	}
 	else {
-		*ppvObj = 0;
+		*ppvObj = NULL;
 		return E_NOINTERFACE;
 	}
 }
@@ -97,8 +97,7 @@ ULONG __stdcall GHOST_DropTargetWin32::Release(void)
 {
 	ULONG refs = ::InterlockedDecrement(&m_cRef);
 		
-	if (refs == 0)
-	{
+	if (refs == 0) {
 		delete this;
 		return 0;
 	}
@@ -126,8 +125,7 @@ HRESULT __stdcall GHOST_DropTargetWin32::DragEnter(IDataObject *pDataObject, DWO
  */
 HRESULT __stdcall GHOST_DropTargetWin32::DragOver(DWORD grfKeyState, POINTL pt, DWORD *pdwEffect)
 {
-	if (m_window->canAcceptDragOperation())
-	{
+	if (m_window->canAcceptDragOperation()) {
 		*pdwEffect = allowedDropEffect(*pdwEffect);
 	}
 	else {
@@ -155,8 +153,7 @@ HRESULT __stdcall GHOST_DropTargetWin32::DragLeave(void)
 HRESULT __stdcall GHOST_DropTargetWin32::Drop(IDataObject *pDataObject, DWORD grfKeyState, POINTL pt, DWORD *pdwEffect)
 {
 	void *data = getGhostData(pDataObject);
-	if (m_window->canAcceptDragOperation())
-	{
+	if (m_window->canAcceptDragOperation()) {
 		*pdwEffect = allowedDropEffect(*pdwEffect);
 
 	}
@@ -190,15 +187,13 @@ GHOST_TDragnDropTypes GHOST_DropTargetWin32::getGhostType(IDataObject *pDataObje
 	 * conversion, but we do the conversion ourself with WC_NO_BEST_FIT_CHARS.
 	 */
 	FORMATETC fmtetc = { CF_TEXT, 0, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
-	if (pDataObject->QueryGetData(&fmtetc) == S_OK)
-	{
+	if (pDataObject->QueryGetData(&fmtetc) == S_OK) {
 		return GHOST_kDragnDropTypeString;
 	}
 
 	// Filesnames
 	fmtetc.cfFormat = CF_HDROP;
-	if (pDataObject->QueryGetData(&fmtetc) == S_OK)
-	{
+	if (pDataObject->QueryGetData(&fmtetc) == S_OK) {
 		return GHOST_kDragnDropTypeFilenames;
 	}
 

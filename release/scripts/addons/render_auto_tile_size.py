@@ -146,7 +146,9 @@ def ats_poll(context):
 
 
 def engine_is_gpu(engine, device, userpref):
-    return engine == 'CYCLES' and device == 'GPU' and userpref.system.compute_device_type != 'NONE'
+    if engine == 'CYCLES' and device == 'GPU':
+        return userpref.addons['cycles'].preferences.has_active_device()
+    return False
 
 
 def get_tilesize_prop(engine, device, userpref):
@@ -206,11 +208,7 @@ def get_threads(context, device):
     userpref = context.user_preferences
 
     if engine_is_gpu(engine, device, userpref):
-        gpu_device_str = userpref.system.compute_device
-        if 'MULTI' in gpu_device_str:
-            threads = int(gpu_device_str.split('_')[-1])
-        else:
-            threads = 1
+        threads = userpref.addons['cycles'].preferences.get_num_gpu_devices()
     else:
         threads = render.threads
 

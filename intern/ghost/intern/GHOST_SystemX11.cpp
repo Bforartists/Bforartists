@@ -48,7 +48,7 @@
 #include "GHOST_DisplayManagerX11.h"
 #include "GHOST_EventDragnDrop.h"
 #ifdef WITH_INPUT_NDOF
-#  include "GHOST_NDOFManagerX11.h"
+#  include "GHOST_NDOFManagerUnix.h"
 #endif
 
 #ifdef WITH_XDND
@@ -59,6 +59,11 @@
 
 #ifdef WITH_XF86KEYSYM
 #include <X11/XF86keysym.h>
+#endif
+
+/* for XIWarpPointer */
+#ifdef WITH_X11_XINPUT
+#  include <X11/extensions/XInput2.h>
 #endif
 
 /* For timing */
@@ -73,8 +78,16 @@
 /* for debugging - so we can breakpoint X11 errors */
 // #define USE_X11_ERROR_HANDLERS
 
+#ifdef WITH_X11_XINPUT
+#  define USE_XINPUT_HOTPLUG
+#endif
+
 /* see [#34039] Fix Alt key glitch on Unity desktop */
 #define USE_UNITY_WORKAROUND
+
+/* Fix 'shortcut' part of keyboard reading code only ever using first defined keymap instead of active one.
+ * See T47228 and D1746 */
+#define USE_NON_LATIN_KB_WORKAROUND
 
 static GHOST_TKey convertXKey(KeySym key);
 
@@ -165,11 +178,36 @@ GHOST_SystemX11(
 	}
 	
 #ifdef WITH_X11_XINPUT
+	/* detect if we have xinput (for reuse) */
+	{
+		memset(&m_xinput_version, 0, sizeof(m_xinput_version));
+		XExtensionVersion *version = XGetExtensionVersion(m_display, INAME);
+		if (version && (version != (XExtensionVersion *)NoSuchExtension)) {
+			if (version->present) {
+				m_xinput_version = *version;
+			}
+			XFree(version);
+		}
+	}
+
+#ifdef USE_XINPUT_HOTPLUG
+	if (m_xinput_version.present) {
+		XEventClass class_presence;
+		int xi_presence;
+		DevicePresence(m_display, xi_presence, class_presence);
+		XSelectExtensionEvent(
+		        m_display,
+		        RootWindow(m_display, DefaultScreen(m_display)),
+		        &class_presence, 1);
+		(void)xi_presence;
+	}
+#endif  /* USE_XINPUT_HOTPLUG */
+
 	/* initialize incase X11 fails to load */
 	memset(&m_xtablet, 0, sizeof(m_xtablet));
 
-	initXInputDevices();
-#endif
+	refreshXInputDevices();
+#endif  /* WITH_X11_XINPUT */
 }
 
 GHOST_SystemX11::
@@ -202,7 +240,7 @@ init()
 
 	if (success) {
 #ifdef WITH_INPUT_NDOF
-		m_ndofManager = new GHOST_NDOFManagerX11(*this);
+		m_ndofManager = new GHOST_NDOFManagerUnix(*this);
 #endif
 		m_displayManager = new GHOST_DisplayManagerX11(this);
 
@@ -298,7 +336,7 @@ createWindow(const STR_String& title,
 		const bool exclusive,
 		const GHOST_TEmbedderWindowID parentWindow)
 {
-	GHOST_WindowX11 *window = 0;
+	GHOST_WindowX11 *window = NULL;
 	
 	if (!m_display) return 0;
 	
@@ -306,6 +344,7 @@ createWindow(const STR_String& title,
 	                             left, top, width, height,
 	                             state, parentWindow, type,
 	                             ((glSettings.flags & GHOST_glStereoVisual) != 0), exclusive,
+	                             ((glSettings.flags & GHOST_glAlphaBackground) != 0),
 	                             glSettings.numOfAASamples, (glSettings.flags & GHOST_glDebugContext) != 0);
 
 	if (window) {
@@ -320,7 +359,7 @@ createWindow(const STR_String& title,
 		}
 		else {
 			delete window;
-			window = 0;
+			window = NULL;
 		}
 	}
 	return window;
@@ -415,8 +454,7 @@ static Bool init_timestamp_scanner(Display *, XEvent *event, XPointer arg)
 {
 	init_timestamp_data *data =
 	    reinterpret_cast<init_timestamp_data *>(arg);
-	switch (event->type)
-	{
+	switch (event->type) {
 		case ButtonPress:
 		case ButtonRelease:
 			data->timestamp = event->xbutton.time;
@@ -589,7 +627,7 @@ processEvents(
 		}
 
 #ifdef WITH_INPUT_NDOF
-		if (static_cast<GHOST_NDOFManagerX11 *>(m_ndofManager)->processEvents()) {
+		if (static_cast<GHOST_NDOFManagerUnix *>(m_ndofManager)->processEvents()) {
 			anyProcessed = true;
 		}
 #endif
@@ -623,7 +661,12 @@ static bool checkTabletProximity(Display *display, XDevice *device)
 		return false;
 	}
 
+	/* needed since unplugging will abort() without this */
+	GHOST_X11_ERROR_HANDLERS_OVERRIDE(handler_store);
+
 	state = XQueryDeviceState(display, device);
+
+	GHOST_X11_ERROR_HANDLERS_RESTORE(handler_store);
 
 	if (state) {
 		XInputClass *cls = state->data;
@@ -657,6 +700,41 @@ GHOST_SystemX11::processEvent(XEvent *xe)
 	GHOST_WindowX11 *window = findGhostWindow(xe->xany.window);
 	GHOST_Event *g_event = NULL;
 
+#ifdef USE_XINPUT_HOTPLUG
+	/* Hot-Plug support */
+	if (m_xinput_version.present) {
+		XEventClass class_presence;
+		int xi_presence;
+
+		DevicePresence(m_display, xi_presence, class_presence);
+		(void)class_presence;
+
+		if (xe->type == xi_presence) {
+			XDevicePresenceNotifyEvent *notify_event = (XDevicePresenceNotifyEvent *)xe;
+			if ((notify_event->devchange == DeviceEnabled) ||
+			    (notify_event->devchange == DeviceDisabled) ||
+			    (notify_event->devchange == DeviceAdded) ||
+			    (notify_event->devchange == DeviceRemoved))
+			{
+				refreshXInputDevices();
+
+				/* update all window events */
+				{
+					vector<GHOST_IWindow *> & win_vec = m_windowManager->getWindows();
+					vector<GHOST_IWindow *>::iterator win_it = win_vec.begin();
+					vector<GHOST_IWindow *>::const_iterator win_end = win_vec.end();
+
+					for (; win_it != win_end; ++win_it) {
+						GHOST_WindowX11 *window = static_cast<GHOST_WindowX11 *>(*win_it);
+						window->refreshXInputDevices();
+					}
+				}
+			}
+		}
+	}
+#endif  /* USE_XINPUT_HOTPLUG */
+
+
 	if (!window) {
 		return;
 	}
@@ -676,7 +754,6 @@ GHOST_SystemX11::processEvent(XEvent *xe)
 		}
 	}
 #endif /* WITH_X11_XINPUT */
-
 	switch (xe->type) {
 		case Expose:
 		{
@@ -762,6 +839,7 @@ GHOST_SystemX11::processEvent(XEvent *xe)
 		{
 			XKeyEvent *xke = &(xe->xkey);
 			KeySym key_sym;
+			KeySym key_sym_str;
 			char ascii;
 #if defined(WITH_X11_XINPUT) && defined(X_HAVE_UTF8_STRING)
 			/* utf8_array[] is initial buffer used for Xutf8LookupString().
@@ -777,8 +855,98 @@ GHOST_SystemX11::processEvent(XEvent *xe)
 			char *utf8_buf = NULL;
 #endif
 			
+			GHOST_TEventType type = (xke->type == KeyPress) ?  GHOST_kEventKeyDown : GHOST_kEventKeyUp;
+
 			GHOST_TKey gkey;
 
+#ifdef USE_NON_LATIN_KB_WORKAROUND
+			/* XXX Code below is kinda awfully convoluted... Issues are:
+			 *
+			 *     - In keyboards like latin ones, numbers need a 'Shift' to be accessed but key_sym
+			 *       is unmodified (or anyone swapping the keys with xmodmap).
+			 *
+			 *     - XLookupKeysym seems to always use first defined keymap (see T47228), which generates
+			 *       keycodes unusable by convertXKey for non-latin-compatible keymaps.
+			 *
+			 * To address this, we:
+			 *
+			 *     - Try to get a 'number' key_sym using XLookupKeysym (with virtual shift modifier),
+			 *       in a very restrictive set of cases.
+			 *     - Fallback to XLookupString to get a key_sym from active user-defined keymap.
+			 *
+			 * Note that:
+			 *     - This effectively 'lock' main number keys to always output number events (except when using alt-gr).
+			 *     - This enforces users to use an ascii-compatible keymap with Blender - but at least it gives
+			 *       predictable and consistent results.
+			 *
+			 * Also, note that nothing in XLib sources [1] makes it obvious why those two functions give different
+			 * key_sym results...
+			 *
+			 * [1] http://cgit.freedesktop.org/xorg/lib/libX11/tree/src/KeyBind.c
+			 */
+			/* Mode_switch 'modifier' is AltGr - when this one or Shift are enabled, we do not want to apply
+			 * that 'forced number' hack. */
+			const unsigned int mode_switch_mask = XkbKeysymToModifiers(xke->display, XK_Mode_switch);
+			const unsigned int number_hack_forbidden_kmods_mask = mode_switch_mask | ShiftMask;
+			if ((xke->keycode >= 10 && xke->keycode < 20) && ((xke->state & number_hack_forbidden_kmods_mask) == 0)) {
+				key_sym = XLookupKeysym(xke, ShiftMask);
+				if (!((key_sym >= XK_0) && (key_sym <= XK_9))) {
+					key_sym = XLookupKeysym(xke, 0);
+				}
+			}
+			else {
+				key_sym = XLookupKeysym(xke, 0);
+			}
+
+			if (!XLookupString(xke, &ascii, 1, &key_sym_str, NULL)) {
+				ascii = '\0';
+			}
+
+			/* Only allow a limited set of keys from XLookupKeysym, all others we take from XLookupString,
+			 * unless it gives unknown key... */
+			gkey = convertXKey(key_sym);
+			switch (gkey) {
+				case GHOST_kKeyRightAlt:
+				case GHOST_kKeyLeftAlt:
+				case GHOST_kKeyRightShift:
+				case GHOST_kKeyLeftShift:
+				case GHOST_kKeyRightControl:
+				case GHOST_kKeyLeftControl:
+				case GHOST_kKeyOS:
+				case GHOST_kKey0:
+				case GHOST_kKey1:
+				case GHOST_kKey2:
+				case GHOST_kKey3:
+				case GHOST_kKey4:
+				case GHOST_kKey5:
+				case GHOST_kKey6:
+				case GHOST_kKey7:
+				case GHOST_kKey8:
+				case GHOST_kKey9:
+				case GHOST_kKeyNumpad0:
+				case GHOST_kKeyNumpad1:
+				case GHOST_kKeyNumpad2:
+				case GHOST_kKeyNumpad3:
+				case GHOST_kKeyNumpad4:
+				case GHOST_kKeyNumpad5:
+				case GHOST_kKeyNumpad6:
+				case GHOST_kKeyNumpad7:
+				case GHOST_kKeyNumpad8:
+				case GHOST_kKeyNumpad9:
+				case GHOST_kKeyNumpadPeriod:
+				case GHOST_kKeyNumpadEnter:
+				case GHOST_kKeyNumpadPlus:
+				case GHOST_kKeyNumpadMinus:
+				case GHOST_kKeyNumpadAsterisk:
+				case GHOST_kKeyNumpadSlash:
+					break;
+				default:
+					GHOST_TKey gkey_str = convertXKey(key_sym_str);
+					if (gkey_str != GHOST_kKeyUnknown) {
+						gkey = gkey_str;
+					}
+			}
+#else
 			/* In keyboards like latin ones,
 			 * numbers needs a 'Shift' to be accessed but key_sym
 			 * is unmodified (or anyone swapping the keys with xmodmap).
@@ -799,14 +967,12 @@ GHOST_SystemX11::processEvent(XEvent *xe)
 			}
 
 			gkey = convertXKey(key_sym);
-
-			GHOST_TEventType type = (xke->type == KeyPress) ? 
-			                        GHOST_kEventKeyDown : GHOST_kEventKeyUp;
 			
 			if (!XLookupString(xke, &ascii, 1, NULL, NULL)) {
 				ascii = '\0';
 			}
-			
+#endif
+
 #if defined(WITH_X11_XINPUT) && defined(X_HAVE_UTF8_STRING)
 			/* getting unicode on key-up events gives XLookupNone status */
 			XIC xic = window->getX11_XIC();
@@ -1194,7 +1360,8 @@ GHOST_SystemX11::processEvent(XEvent *xe)
 				 *       events). So we have to check which values this event actually contains!
 				 */
 
-#define AXIS_VALUE_GET(axis, val)  ((axis_first <= axis && axes_end > axis) && ((void)(val = data->axis_data[axis]), true))
+#define AXIS_VALUE_GET(axis, val) \
+	((axis_first <= axis && axes_end > axis) && ((void)(val = data->axis_data[axis - axis_first]), true))
 
 				if (AXIS_VALUE_GET(2, axis_value)) {
 					window->GetTabletData()->Pressure = axis_value / ((float)m_xtablet.PressureLevels);
@@ -1340,8 +1507,8 @@ GHOST_TSuccess
 GHOST_SystemX11::
 setCursorPosition(
 		GHOST_TInt32 x,
-		GHOST_TInt32 y
-        ) {
+		GHOST_TInt32 y)
+{
 
 	/* This is a brute force move in screen coordinates
 	 * XWarpPointer does relative moves so first determine the
@@ -1355,7 +1522,22 @@ setCursorPosition(
 	int relx = x - cx;
 	int rely = y - cy;
 
-	XWarpPointer(m_display, None, None, 0, 0, 0, 0, relx, rely);
+#ifdef WITH_X11_XINPUT
+	if ((m_xinput_version.present) &&
+	    (m_xinput_version.major_version >= 2))
+	{
+		/* Needed to account for XInput "Coordinate Transformation Matrix", see T48901 */
+		int device_id;
+		if (XIGetClientPointer(m_display, None, &device_id) != False) {
+			XIWarpPointer(m_display, device_id, None, None, 0, 0, 0, 0, relx, rely);
+		}
+	}
+	else
+#endif
+	{
+		XWarpPointer(m_display, None, None, 0, 0, 0, 0, relx, rely);
+	}
+
 	XSync(m_display, 0); /* Sync to process all requests */
 	
 	return GHOST_kSuccess;
@@ -1444,6 +1626,7 @@ convertXKey(KeySym key)
 		switch (key) {
 			GXMAP(type, XK_BackSpace,    GHOST_kKeyBackSpace);
 			GXMAP(type, XK_Tab,          GHOST_kKeyTab);
+			GXMAP(type, XK_ISO_Left_Tab, GHOST_kKeyTab);
 			GXMAP(type, XK_Return,       GHOST_kKeyEnter);
 			GXMAP(type, XK_Escape,       GHOST_kKeyEsc);
 			GXMAP(type, XK_space,        GHOST_kKeySpace);
@@ -1455,6 +1638,7 @@ convertXKey(KeySym key)
 			GXMAP(type, XK_quoteright,   GHOST_kKeyQuote);
 			GXMAP(type, XK_quoteleft,    GHOST_kKeyAccentGrave);
 			GXMAP(type, XK_minus,        GHOST_kKeyMinus);
+			GXMAP(type, XK_plus,         GHOST_kKeyPlus);
 			GXMAP(type, XK_slash,        GHOST_kKeySlash);
 			GXMAP(type, XK_backslash,    GHOST_kKeyBackslash);
 			GXMAP(type, XK_equal,        GHOST_kKeyEqual);
@@ -1870,20 +2054,26 @@ GHOST_TSuccess GHOST_SystemX11::pushDragDropEvent(GHOST_TEventType eventType,
 	                         );
 }
 #endif
-
-#if defined(USE_X11_ERROR_HANDLERS) || defined(WITH_X11_XINPUT)
-/*
+/**
  * These callbacks can be used for debugging, so we can breakpoint on an X11 error.
-
  *
  * Dummy function to get around IO Handler exiting if device invalid
  * Basically it will not crash blender now if you have a X device that
  * is configured but not plugged in.
  */
-int GHOST_X11_ApplicationErrorHandler(Display * /*display*/, XErrorEvent *theEvent)
+int GHOST_X11_ApplicationErrorHandler(Display *display, XErrorEvent *event)
 {
-	fprintf(stderr, "Ignoring Xlib error: error code %d request code %d\n",
-	        theEvent->error_code, theEvent->request_code);
+	char error_code_str[512];
+
+	XGetErrorText(display, event->error_code, error_code_str, sizeof(error_code_str));
+
+	fprintf(stderr,
+	        "Received X11 Error:\n"
+	        "\terror code:   %d\n"
+	        "\trequest code: %d\n"
+	        "\tminor code:   %d\n"
+	        "\terror text:   %s\n",
+	        event->error_code, event->request_code, event->minor_code, error_code_str);
 
 	/* No exit! - but keep lint happy */
 	return 0;
@@ -1896,7 +2086,6 @@ int GHOST_X11_ApplicationIOErrorHandler(Display * /*display*/)
 	/* No exit! - but keep lint happy */
 	return 0;
 }
-#endif
 
 #ifdef WITH_X11_XINPUT
 /* These C functions are copied from Wine 1.1.13's wintab.c */
@@ -1907,8 +2096,7 @@ int GHOST_X11_ApplicationIOErrorHandler(Display * /*display*/)
 static bool match_token(const char *haystack, const char *needle)
 {
 	const char *p, *q;
-	for (p = haystack; *p; )
-	{
+	for (p = haystack; *p; ) {
 		while (*p && isspace(*p))
 			p++;
 		if (!*p)
@@ -1994,23 +2182,27 @@ static BOOL is_eraser(const char *name, const char *type)
 #undef FALSE
 /* end code copied from wine */
 
-void GHOST_SystemX11::initXInputDevices()
+void GHOST_SystemX11::refreshXInputDevices()
 {
-	static XErrorHandler   old_handler = (XErrorHandler) 0;
-	static XIOErrorHandler old_handler_io = (XIOErrorHandler) 0;
+	if (m_xinput_version.present) {
 
-	XExtensionVersion *version = XGetExtensionVersion(m_display, INAME);
+		if (m_xtablet.StylusDevice) {
+			XCloseDevice(m_display, m_xtablet.StylusDevice);
+			m_xtablet.StylusDevice = NULL;
+		}
 
-	if (version && (version != (XExtensionVersion *)NoSuchExtension)) {
-		if (version->present) {
+		if (m_xtablet.EraserDevice) {
+			XCloseDevice(m_display, m_xtablet.EraserDevice);
+			m_xtablet.EraserDevice = NULL;
+		}
+
+		/* Install our error handler to override Xlib's termination behavior */
+		GHOST_X11_ERROR_HANDLERS_OVERRIDE(handler_store);
+
+		{
 			int device_count;
 			XDeviceInfo *device_info = XListInputDevices(m_display, &device_count);
-			m_xtablet.StylusDevice = NULL;
-			m_xtablet.EraserDevice = NULL;
 
-			/* Install our error handler to override Xlib's termination behavior */
-			old_handler = XSetErrorHandler(GHOST_X11_ApplicationErrorHandler);
-			old_handler_io = XSetIOErrorHandler(GHOST_X11_ApplicationIOErrorHandler);
 
 			for (int i = 0; i < device_count; ++i) {
 				char *device_type = device_info[i].type ? XGetAtomName(m_display, device_info[i].type) : NULL;
@@ -2069,13 +2261,10 @@ void GHOST_SystemX11::initXInputDevices()
 				}
 			}
 
-			/* Restore handler */
-			(void) XSetErrorHandler(old_handler);
-			(void) XSetIOErrorHandler(old_handler_io);
-
 			XFreeDeviceList(device_info);
 		}
-		XFree(version);
+
+		GHOST_X11_ERROR_HANDLERS_RESTORE(handler_store);
 	}
 }
 

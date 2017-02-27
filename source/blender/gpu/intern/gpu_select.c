@@ -69,6 +69,9 @@ typedef struct GPUQueryState {
 
 static GPUQueryState g_query_state = {0};
 
+/**
+ * initialize and provide buffer for results
+ */
 void GPU_select_begin(unsigned int *buffer, unsigned int bufsize, rctf *input, char mode, int oldhits)
 {
 	g_query_state.select_is_active = true;
@@ -95,7 +98,7 @@ void GPU_select_begin(unsigned int *buffer, unsigned int bufsize, rctf *input, c
 
 		g_query_state.queries = MEM_mallocN(g_query_state.num_of_queries * sizeof(*g_query_state.queries), "gpu selection queries");
 		g_query_state.id = MEM_mallocN(g_query_state.num_of_queries * sizeof(*g_query_state.id), "gpu selection ids");
-		glGenQueriesARB(g_query_state.num_of_queries, g_query_state.queries);
+		glGenQueries(g_query_state.num_of_queries, g_query_state.queries);
 
 		glPushAttrib(GL_DEPTH_BUFFER_BIT | GL_VIEWPORT_BIT);
 		/* disable writing to the framebuffer */
@@ -133,6 +136,13 @@ void GPU_select_begin(unsigned int *buffer, unsigned int bufsize, rctf *input, c
 	}
 }
 
+/**
+ * loads a new selection id and ends previous query, if any. In second pass of selection it also returns
+ * if id has been hit on the first pass already.
+ * Thus we can skip drawing un-hit objects.
+ *
+ * \warning We rely on the order of object rendering on passes to be the same for this to work.
+ */
 bool GPU_select_load_id(unsigned int id)
 {
 	/* if no selection mode active, ignore */
@@ -144,17 +154,17 @@ bool GPU_select_load_id(unsigned int id)
 	}
 	else {
 		if (g_query_state.query_issued) {
-			glEndQueryARB(GL_SAMPLES_PASSED_ARB);
+			glEndQuery(GL_SAMPLES_PASSED);
 		}
 		/* if required, allocate extra queries */
 		if (g_query_state.active_query == g_query_state.num_of_queries) {
 			g_query_state.num_of_queries += ALLOC_QUERIES;
 			g_query_state.queries = MEM_reallocN(g_query_state.queries, g_query_state.num_of_queries * sizeof(*g_query_state.queries));
 			g_query_state.id = MEM_reallocN(g_query_state.id, g_query_state.num_of_queries * sizeof(*g_query_state.id));
-			glGenQueriesARB(ALLOC_QUERIES, &g_query_state.queries[g_query_state.active_query]);
+			glGenQueries(ALLOC_QUERIES, &g_query_state.queries[g_query_state.active_query]);
 		}
 
-		glBeginQueryARB(GL_SAMPLES_PASSED_ARB, g_query_state.queries[g_query_state.active_query]);
+		glBeginQuery(GL_SAMPLES_PASSED, g_query_state.queries[g_query_state.active_query]);
 		g_query_state.id[g_query_state.active_query] = id;
 		g_query_state.active_query++;
 		g_query_state.query_issued = true;
@@ -173,6 +183,11 @@ bool GPU_select_load_id(unsigned int id)
 	return true;
 }
 
+/**
+ * Cleanup and flush selection results to buffer.
+ * Return number of hits and hits in buffer.
+ * if \a dopass is true, we will do a second pass with occlusion queries to get the closest hit.
+ */
 unsigned int GPU_select_end(void)
 {
 	unsigned int hits = 0;
@@ -184,12 +199,12 @@ unsigned int GPU_select_end(void)
 		int i;
 
 		if (g_query_state.query_issued) {
-			glEndQueryARB(GL_SAMPLES_PASSED_ARB);
+			glEndQuery(GL_SAMPLES_PASSED);
 		}
 
 		for (i = 0; i < g_query_state.active_query; i++) {
 			unsigned int result;
-			glGetQueryObjectuivARB(g_query_state.queries[i], GL_QUERY_RESULT_ARB, &result);
+			glGetQueryObjectuiv(g_query_state.queries[i], GL_QUERY_RESULT, &result);
 			if (result > 0) {
 				if (g_query_state.mode != GPU_SELECT_NEAREST_SECOND_PASS) {
 					int maxhits = g_query_state.bufsize / 4;
@@ -221,7 +236,7 @@ unsigned int GPU_select_end(void)
 			}
 		}
 
-		glDeleteQueriesARB(g_query_state.num_of_queries, g_query_state.queries);
+		glDeleteQueries(g_query_state.num_of_queries, g_query_state.queries);
 		MEM_freeN(g_query_state.queries);
 		MEM_freeN(g_query_state.id);
 		glPopAttrib();
@@ -233,16 +248,15 @@ unsigned int GPU_select_end(void)
 	return hits;
 }
 
-
-bool GPU_select_query_check_support(void)
-{
-	return GLEW_ARB_occlusion_query;
-}
-
-
+/**
+ * has user activated?
+ */
 bool GPU_select_query_check_active(void)
 {
-	return GLEW_ARB_occlusion_query &&
-	       ((U.gpu_select_method == USER_SELECT_USE_OCCLUSION_QUERY) ||
-	        ((U.gpu_select_method == USER_SELECT_AUTO) && GPU_type_matches(GPU_DEVICE_ATI, GPU_OS_ANY, GPU_DRIVER_ANY)));
+	return ((U.gpu_select_method == USER_SELECT_USE_OCCLUSION_QUERY) ||
+	        ((U.gpu_select_method == USER_SELECT_AUTO) &&
+	         (GPU_type_matches(GPU_DEVICE_ATI, GPU_OS_ANY, GPU_DRIVER_ANY) ||
+	          /* unsupported by nouveau, gallium 0.4, see: T47940 */
+	          GPU_type_matches(GPU_DEVICE_NVIDIA, GPU_OS_UNIX, GPU_DRIVER_OPENSOURCE))));
+
 }

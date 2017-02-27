@@ -175,7 +175,7 @@ class UI_AP_i18n_settings(bpy.types.AddonPreferences):
 
     def draw(self, context):
         layout = self.layout
-        layout.label(text="WARNING: preferences are lost when addon is disabled, be sure to use \"Save Persistent\" "
+        layout.label(text="WARNING: preferences are lost when add-on is disabled, be sure to use \"Save Persistent\" "
                           "if you want to keep your settings!")
         layout.prop(self, "WARN_MSGID_NOT_CAPITALIZED")
         layout.prop(self, "GETTEXT_MSGFMT_EXECUTABLE")

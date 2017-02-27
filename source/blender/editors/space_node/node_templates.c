@@ -32,6 +32,7 @@
 #include "DNA_node_types.h"
 #include "DNA_screen_types.h"
 
+#include "BLI_array.h"
 #include "BLI_listbase.h"
 #include "BLI_string.h"
 
@@ -150,7 +151,7 @@ static void node_remove_linked(bNodeTree *ntree, bNode *rem_node)
 
 		if (node->flag & NODE_TEST) {
 			if (node->id)
-				node->id->us--;
+				id_us_min(node->id);
 			nodeFreeNode(ntree, node);
 		}
 	}
@@ -168,7 +169,7 @@ static void node_socket_disconnect(Main *bmain, bNodeTree *ntree, bNode *node_to
 	nodeUpdate(ntree, node_to);
 	ntreeUpdateTree(bmain, ntree);
 
-	ED_node_tag_update_nodetree(bmain, ntree);
+	ED_node_tag_update_nodetree(bmain, ntree, node_to);
 }
 
 /* remove all nodes connected to this socket, if they aren't connected to other nodes */
@@ -183,7 +184,7 @@ static void node_socket_remove(Main *bmain, bNodeTree *ntree, bNode *node_to, bN
 	nodeUpdate(ntree, node_to);
 	ntreeUpdateTree(bmain, ntree);
 
-	ED_node_tag_update_nodetree(bmain, ntree);
+	ED_node_tag_update_nodetree(bmain, ntree, node_to);
 }
 
 /* add new node connected to this socket, or replace an existing one */
@@ -279,7 +280,7 @@ static void node_socket_add_replace(const bContext *C, bNodeTree *ntree, bNode *
 	nodeUpdate(ntree, node_to);
 	ntreeUpdateTree(CTX_data_main(C), ntree);
 
-	ED_node_tag_update_nodetree(CTX_data_main(C), ntree);
+	ED_node_tag_update_nodetree(CTX_data_main(C), ntree, node_to);
 }
 
 /****************************** Node Link Menu *******************************/
@@ -420,6 +421,27 @@ static int ui_compatible_sockets(int typeA, int typeB)
 	return (typeA == typeB);
 }
 
+static int ui_node_item_name_compare(const void *a, const void *b)
+{
+	const bNodeType *type_a = *(const bNodeType **)a;
+	const bNodeType *type_b = *(const bNodeType **)b;
+	return BLI_natstrcmp(type_a->ui_name, type_b->ui_name);
+}
+
+static bool ui_node_item_special_poll(const bNodeTree *UNUSED(ntree),
+                                      const bNodeType *ntype)
+{
+	if (STREQ(ntype->idname, "ShaderNodeUVAlongStroke")) {
+		/* TODO(sergey): Currently we don't have Freestyle nodes edited from
+		 * the buttons context, so can ignore it's nodes completely.
+		 *
+		 * However, we might want to do some extra checks here later.
+		 */
+		return false;
+	}
+	return true;
+}
+
 static void ui_node_menu_column(NodeLinkArg *arg, int nclass, const char *cname)
 {
 	bNodeTree *ntree = arg->ntree;
@@ -439,19 +461,38 @@ static void ui_node_menu_column(NodeLinkArg *arg, int nclass, const char *cname)
 			compatibility = NODE_OLD_SHADING;
 	}
 
+	/* generate array of node types sorted by UI name */
+	bNodeType **sorted_ntypes = NULL;
+	BLI_array_declare(sorted_ntypes);
+
 	NODE_TYPES_BEGIN(ntype) {
+		if (compatibility && !(ntype->compatibility & compatibility)) {
+			continue;
+		}
+
+		if (ntype->nclass != nclass) {
+			continue;
+		}
+
+		if (!ui_node_item_special_poll(ntree, ntype)) {
+			continue;
+		}
+
+		BLI_array_append(sorted_ntypes, ntype);
+	}
+	NODE_TYPES_END
+
+	qsort(sorted_ntypes, BLI_array_count(sorted_ntypes), sizeof(bNodeType *), ui_node_item_name_compare);
+
+	/* generate UI */
+	for (int j = 0; j < BLI_array_count(sorted_ntypes); j++) {
+		bNodeType *ntype = sorted_ntypes[j];
 		NodeLinkItem *items;
 		int totitems;
 		char name[UI_MAX_NAME_STR];
 		const char *cur_node_name = NULL;
 		int i, num = 0;
 		int icon = ICON_NONE;
-		
-		if (compatibility && !(ntype->compatibility & compatibility))
-			continue;
-		
-		if (ntype->nclass != nclass)
-			continue;
 		
 		arg->node_type = ntype;
 		
@@ -502,7 +543,8 @@ static void ui_node_menu_column(NodeLinkArg *arg, int nclass, const char *cname)
 		if (items)
 			MEM_freeN(items);
 	}
-	NODE_TYPES_END
+
+	BLI_array_free(sorted_ntypes);
 }
 
 static void node_menu_column_foreach_cb(void *calldata, int nclass, const char *name)
@@ -622,7 +664,7 @@ static void ui_node_draw_input(uiLayout *layout, bContext *C, bNodeTree *ntree, 
 	uiLayout *split, *row, *col;
 	bNode *lnode;
 	char label[UI_MAX_NAME_STR];
-	int indent = (depth > 1) ? 2 * (depth - 1) : 0;
+	int i, indent = (depth > 1) ? 2 * (depth - 1) : 0;
 	int dependency_loop;
 
 	if (input->flag & SOCK_UNAVAIL)
@@ -641,7 +683,8 @@ static void ui_node_draw_input(uiLayout *layout, bContext *C, bNodeTree *ntree, 
 	RNA_pointer_create(&ntree->id, &RNA_Node, node, &nodeptr);
 
 	/* indented label */
-	memset(label, ' ', indent);
+	for (i = 0; i < indent; i++)
+		label[i] = ' ';
 	label[indent] = '\0';
 	BLI_snprintf(label, UI_MAX_NAME_STR, "%s%s:", label, IFACE_(input->name));
 

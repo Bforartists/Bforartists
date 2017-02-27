@@ -300,15 +300,16 @@ def setConstraint(m_constraint, context):
         print("please wait a moment, calculating fix")
         for t in range(s, e):
             context.scene.frame_set(t)
-            axis = obj.matrix_world.to_3x3() * Vector((0, 0, 100))
+            axis = obj.matrix_world.to_3x3() * Vector((0, 0, 1))
             offset = obj.matrix_world.to_3x3() * Vector((0, 0, m_constraint.targetDist))
             ray_origin = (cons_obj.matrix * obj.matrix_world).to_translation() - offset  # world position of constrained bone
             ray_target = ray_origin + axis
             #convert ray points to floor's object space
             ray_origin = floor.matrix_world.inverted() * ray_origin
             ray_target = floor.matrix_world.inverted() * ray_target
-            hit, nor, ind = floor.ray_cast(ray_origin, ray_target)
-            if hit != Vector((0, 0, 0)):
+            ray_direction = ray_target - ray_origin
+            ok, hit, nor, ind = floor.ray_cast(ray_origin, ray_direction)
+            if ok:
                 bakedPos[t] = (floor.matrix_world * hit)
                 bakedPos[t] += Vector((0, 0, m_constraint.targetDist))
             else:

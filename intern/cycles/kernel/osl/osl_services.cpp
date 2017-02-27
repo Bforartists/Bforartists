@@ -18,7 +18,7 @@
  * here, so for now we just put here. In the future it might be better
  * to have dedicated file for such tweaks.
  */
-#if defined(__GNUC__) && defined(NDEBUG)
+#if (defined(__GNUC__) && !defined(__clang__)) && defined(NDEBUG)
 #  pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
 #  pragma GCC diagnostic ignored "-Wuninitialized"
 #endif
@@ -35,6 +35,7 @@
 #include "osl_shader.h"
 
 #include "util_foreach.h"
+#include "util_logging.h"
 #include "util_string.h"
 
 #include "kernel_compat_cpu.h"
@@ -44,15 +45,16 @@
 #include "kernel_differential.h"
 #include "kernel_montecarlo.h"
 #include "kernel_camera.h"
-
+#include "kernels/cpu/kernel_cpu_image.h"
 #include "geom/geom.h"
+#include "bvh/bvh.h"
 
 #include "kernel_projection.h"
 #include "kernel_accumulate.h"
 #include "kernel_shader.h"
 
 #ifdef WITH_PTEX
-#include <Ptexture.h>
+#  include <Ptexture.h>
 #endif
 
 CCL_NAMESPACE_BEGIN
@@ -91,6 +93,7 @@ ustring OSLRenderServices::u_geom_numpolyvertices("geom:numpolyvertices");
 ustring OSLRenderServices::u_geom_trianglevertices("geom:trianglevertices");
 ustring OSLRenderServices::u_geom_polyvertices("geom:polyvertices");
 ustring OSLRenderServices::u_geom_name("geom:name");
+ustring OSLRenderServices::u_geom_undisplaced("geom:undisplaced");
 ustring OSLRenderServices::u_is_smooth("geom:is_smooth");
 #ifdef __HAIR__
 ustring OSLRenderServices::u_is_curve("geom:is_curve");
@@ -99,7 +102,10 @@ ustring OSLRenderServices::u_curve_tangent_normal("geom:curve_tangent_normal");
 #endif
 ustring OSLRenderServices::u_path_ray_length("path:ray_length");
 ustring OSLRenderServices::u_path_ray_depth("path:ray_depth");
+ustring OSLRenderServices::u_path_diffuse_depth("path:diffuse_depth");
+ustring OSLRenderServices::u_path_glossy_depth("path:glossy_depth");
 ustring OSLRenderServices::u_path_transparent_depth("path:transparent_depth");
+ustring OSLRenderServices::u_path_transmission_depth("path:transmission_depth");
 ustring OSLRenderServices::u_trace("trace");
 ustring OSLRenderServices::u_hit("hit");
 ustring OSLRenderServices::u_hitdist("hitdist");
@@ -124,6 +130,10 @@ OSLRenderServices::OSLRenderServices()
 
 OSLRenderServices::~OSLRenderServices()
 {
+	if(osl_ts) {
+		VLOG(2) << "OSL texture system stats:\n"
+		        << osl_ts->getstats();
+	}
 #ifdef WITH_PTEX
 	ptex_cache->release();
 #endif
@@ -160,6 +170,12 @@ bool OSLRenderServices::get_matrix(OSL::ShaderGlobals *sg, OSL::Matrix44 &result
 
 			return true;
 		}
+		else if(sd->type == PRIMITIVE_LAMP) {
+			Transform tfm = transform_transpose(sd->ob_tfm);
+			COPY_MATRIX44(&result, &tfm);
+
+			return true;
+		}
 	}
 
 	return false;
@@ -187,6 +203,12 @@ bool OSLRenderServices::get_inverse_matrix(OSL::ShaderGlobals *sg, OSL::Matrix44
 #endif
 			itfm = transform_transpose(itfm);
 			COPY_MATRIX44(&result, &itfm);
+
+			return true;
+		}
+		else if(sd->type == PRIMITIVE_LAMP) {
+			Transform tfm = transform_transpose(sd->ob_itfm);
+			COPY_MATRIX44(&result, &tfm);
 
 			return true;
 		}
@@ -279,6 +301,12 @@ bool OSLRenderServices::get_matrix(OSL::ShaderGlobals *sg, OSL::Matrix44 &result
 
 			return true;
 		}
+		else if(sd->type == PRIMITIVE_LAMP) {
+			Transform tfm = transform_transpose(sd->ob_tfm);
+			COPY_MATRIX44(&result, &tfm);
+
+			return true;
+		}
 	}
 
 	return false;
@@ -300,6 +328,12 @@ bool OSLRenderServices::get_inverse_matrix(OSL::ShaderGlobals *sg, OSL::Matrix44
 			Transform tfm = object_fetch_transform(kg, object, OBJECT_INVERSE_TRANSFORM);
 #endif
 			tfm = transform_transpose(tfm);
+			COPY_MATRIX44(&result, &tfm);
+
+			return true;
+		}
+		else if(sd->type == PRIMITIVE_LAMP) {
+			Transform tfm = transform_transpose(sd->ob_itfm);
 			COPY_MATRIX44(&result, &tfm);
 
 			return true;
@@ -549,13 +583,13 @@ static bool get_mesh_element_attribute(KernelGlobals *kg, const ShaderData *sd, 
 	   attr.type == TypeDesc::TypeNormal || attr.type == TypeDesc::TypeColor)
 	{
 		float3 fval[3];
-		fval[0] = primitive_attribute_float3(kg, sd, attr.elem, attr.offset,
+		fval[0] = primitive_attribute_float3(kg, sd, attr.desc,
 		                                     (derivatives) ? &fval[1] : NULL, (derivatives) ? &fval[2] : NULL);
 		return set_attribute_float3(fval, type, derivatives, val);
 	}
 	else if(attr.type == TypeDesc::TypeFloat) {
 		float fval[3];
-		fval[0] = primitive_attribute_float(kg, sd, attr.elem, attr.offset,
+		fval[0] = primitive_attribute_float(kg, sd, attr.desc,
 		                                    (derivatives) ? &fval[1] : NULL, (derivatives) ? &fval[2] : NULL);
 		return set_attribute_float(fval, type, derivatives, val);
 	}
@@ -568,7 +602,7 @@ static bool get_mesh_attribute(KernelGlobals *kg, const ShaderData *sd, const OS
                                const TypeDesc& type, bool derivatives, void *val)
 {
 	if(attr.type == TypeDesc::TypeMatrix) {
-		Transform tfm = primitive_attribute_matrix(kg, sd, attr.offset);
+		Transform tfm = primitive_attribute_matrix(kg, sd, attr.desc);
 		return set_attribute_matrix(tfm, type, val);
 	}
 	else {
@@ -678,7 +712,7 @@ bool OSLRenderServices::get_object_standard_attribute(KernelGlobals *kg, ShaderD
 		else
 			motion_triangle_vertices(kg, sd->object, sd->prim, sd->time, P);
 
-		if(!(sd->flag & SD_TRANSFORM_APPLIED)) {
+		if(!(sd->object_flag & SD_OBJECT_TRANSFORM_APPLIED)) {
 			object_position_transform(kg, sd, &P[0]);
 			object_position_transform(kg, sd, &P[1]);
 			object_position_transform(kg, sd, &P[2]);
@@ -723,12 +757,38 @@ bool OSLRenderServices::get_background_attribute(KernelGlobals *kg, ShaderData *
 	}
 	else if(name == u_path_ray_depth) {
 		/* Ray Depth */
-		int f = sd->ray_depth;
+		PathState *state = sd->osl_path_state;
+		int f = state->bounce;
+		return set_attribute_int(f, type, derivatives, val);
+	}
+	else if(name == u_path_diffuse_depth) {
+		/* Diffuse Ray Depth */
+		PathState *state = sd->osl_path_state;
+		int f = state->diffuse_bounce;
+		return set_attribute_int(f, type, derivatives, val);
+	}
+	else if(name == u_path_glossy_depth) {
+		/* Glossy Ray Depth */
+		PathState *state = sd->osl_path_state;
+		int f = state->glossy_bounce;
+		return set_attribute_int(f, type, derivatives, val);
+	}
+	else if(name == u_path_transmission_depth) {
+		/* Transmission Ray Depth */
+		PathState *state = sd->osl_path_state;
+		int f = state->transmission_bounce;
 		return set_attribute_int(f, type, derivatives, val);
 	}
 	else if(name == u_path_transparent_depth) {
 		/* Transparent Ray Depth */
-		int f = sd->transparent_depth;
+		PathState *state = sd->osl_path_state;
+		int f = state->transparent_bounce;
+		return set_attribute_int(f, type, derivatives, val);
+	}
+	else if(name == u_path_transmission_depth) {
+		/* Transmission Ray Depth */
+		PathState *state = sd->osl_path_state;
+		int f = state->transmission_bounce;
 		return set_attribute_int(f, type, derivatives, val);
 	}
 	else if(name == u_ndc) {
@@ -774,7 +834,7 @@ bool OSLRenderServices::get_attribute(ShaderData *sd, bool derivatives, ustring 
                                       TypeDesc type, ustring name, void *val)
 {
 	KernelGlobals *kg = sd->osl_globals;
-	bool is_curve;
+	int prim_type = 0;
 	int object;
 
 	/* lookup of attribute on another object */
@@ -785,25 +845,24 @@ bool OSLRenderServices::get_attribute(ShaderData *sd, bool derivatives, ustring 
 			return false;
 
 		object = it->second;
-		is_curve = false;
 	}
 	else {
 		object = sd->object;
-		is_curve = (sd->type & PRIMITIVE_ALL_CURVE) != 0;
+		prim_type = attribute_primitive_type(kg, sd);
 
 		if(object == OBJECT_NONE)
 			return get_background_attribute(kg, sd, name, type, derivatives, val);
 	}
 
 	/* find attribute on object */
-	object = object*ATTR_PRIM_TYPES + (is_curve == true);
+	object = object*ATTR_PRIM_TYPES + prim_type;
 	OSLGlobals::AttributeMap& attribute_map = kg->osl->attribute_map[object];
 	OSLGlobals::AttributeMap::iterator it = attribute_map.find(name);
 
 	if(it != attribute_map.end()) {
 		const OSLGlobals::Attribute& attr = it->second;
 
-		if(attr.elem != ATTR_ELEMENT_OBJECT) {
+		if(attr.desc.element != ATTR_ELEMENT_OBJECT) {
 			/* triangle and vertex attributes */
 			if(get_mesh_element_attribute(kg, sd, attr, type, derivatives, val))
 				return true;
@@ -840,14 +899,26 @@ bool OSLRenderServices::has_userdata(ustring name, TypeDesc type, OSL::ShaderGlo
 	return false; /* never called by OSL */
 }
 
-bool OSLRenderServices::texture(ustring filename, TextureOpt &options,
+bool OSLRenderServices::texture(ustring filename,
+                                TextureHandle *texture_handle,
+                                TexturePerthread *texture_thread_info,
+                                TextureOpt &options,
                                 OSL::ShaderGlobals *sg,
-                                float s, float t, float dsdx, float dtdx,
-                                float dsdy, float dtdy, int nchannels, float *result)
+                                float s, float t,
+                                float dsdx, float dtdx, float dsdy, float dtdy,
+                                int nchannels,
+                                float *result,
+                                float *dresultds,
+                                float *dresultdt)
 {
 	OSL::TextureSystem *ts = osl_ts;
 	ShaderData *sd = (ShaderData *)(sg->renderstate);
 	KernelGlobals *kg = sd->osl_globals;
+
+	if(texture_thread_info == NULL) {
+		OSLThreadData *tdata = kg->osl_tdata;
+		texture_thread_info = tdata->oiio_thread_info;
+	}
 
 #ifdef WITH_PTEX
 	/* todo: this is just a quick hack, only works with particular files and options */
@@ -888,7 +959,7 @@ bool OSLRenderServices::texture(ustring filename, TextureOpt &options,
 #endif
 	bool status;
 
-	if(filename[0] == '@') {
+	if(filename.length() && filename[0] == '@') {
 		int slot = atoi(filename.c_str() + 1);
 		float4 rgba = kernel_tex_image_interp(slot, s, 1.0f - t);
 
@@ -902,20 +973,27 @@ bool OSLRenderServices::texture(ustring filename, TextureOpt &options,
 		status = true;
 	}
 	else {
-		OSLThreadData *tdata = kg->osl_tdata;
-		OIIO::TextureSystem::Perthread *thread_info = tdata->oiio_thread_info;
-
-		OIIO::TextureSystem::TextureHandle *th = ts->get_texture_handle(filename, thread_info);
-
-#if OIIO_VERSION < 10500
-		status = ts->texture(th, thread_info,
-		                     options, s, t, dsdx, dtdx, dsdy, dtdy,
-		                     result);
-#else
-		status = ts->texture(th, thread_info,
-		                     options, s, t, dsdx, dtdx, dsdy, dtdy,
-		                     nchannels, result);
-#endif
+		if(texture_handle != NULL) {
+			status = ts->texture(texture_handle,
+			                     texture_thread_info,
+			                     options,
+			                     s, t,
+			                     dsdx, dtdx,
+			                     dsdy, dtdy,
+			                     nchannels,
+			                     result,
+			                     dresultds, dresultdt);
+		}
+		else {
+			status = ts->texture(filename,
+			                     options,
+			                     s, t,
+			                     dsdx, dtdx,
+			                     dsdy, dtdy,
+			                     nchannels,
+			                     result,
+			                     dresultds, dresultdt);
+		}
 	}
 
 	if(!status) {
@@ -927,21 +1005,42 @@ bool OSLRenderServices::texture(ustring filename, TextureOpt &options,
 			if(nchannels == 4)
 				result[3] = 1.0f;
 		}
+		/* This might be slow, but prevents error messages leak and
+		 * other nasty stuff happening.
+		 */
+		string err = ts->geterror();
+		(void)err;
 	}
 
 	return status;
 }
 
-bool OSLRenderServices::texture3d(ustring filename, TextureOpt &options,
-                                  OSL::ShaderGlobals *sg, const OSL::Vec3 &P,
-                                  const OSL::Vec3 &dPdx, const OSL::Vec3 &dPdy,
-                                  const OSL::Vec3 &dPdz, int nchannels, float *result)
+bool OSLRenderServices::texture3d(ustring filename,
+                                  TextureHandle *texture_handle,
+                                  TexturePerthread *texture_thread_info,
+                                  TextureOpt &options,
+                                  OSL::ShaderGlobals *sg,
+                                  const OSL::Vec3 &P,
+                                  const OSL::Vec3 &dPdx,
+                                  const OSL::Vec3 &dPdy,
+                                  const OSL::Vec3 &dPdz,
+                                  int nchannels,
+                                  float *result,
+                                  float *dresultds,
+                                  float *dresultdt,
+                                  float *dresultdr)
 {
 	OSL::TextureSystem *ts = osl_ts;
 	ShaderData *sd = (ShaderData *)(sg->renderstate);
 	KernelGlobals *kg = sd->osl_globals;
+
+	if(texture_thread_info == NULL) {
+		OSLThreadData *tdata = kg->osl_tdata;
+		texture_thread_info = tdata->oiio_thread_info;
+	}
+
 	bool status;
-	if(filename[0] == '@') {
+	if(filename.length() && filename[0] == '@') {
 		int slot = atoi(filename.c_str() + 1);
 		float4 rgba = kernel_tex_image_interp_3d(slot, P.x, P.y, P.z);
 
@@ -955,17 +1054,25 @@ bool OSLRenderServices::texture3d(ustring filename, TextureOpt &options,
 		status = true;
 	}
 	else {
-		OSLThreadData *tdata = kg->osl_tdata;
-		OIIO::TextureSystem::Perthread *thread_info = tdata->oiio_thread_info;
-		OIIO::TextureSystem::TextureHandle *th = ts->get_texture_handle(filename, thread_info);
-#if OIIO_VERSION < 10500
-		status = ts->texture3d(th, thread_info,
-		                       options, P, dPdx, dPdy, dPdz, result);
-#else
-		status = ts->texture3d(th, thread_info,
-		                       options, P, dPdx, dPdy, dPdz,
-		                       nchannels, result);
-#endif
+		if(texture_handle != NULL) {
+			status = ts->texture3d(texture_handle,
+			                       texture_thread_info,
+			                       options,
+			                       P,
+			                       dPdx, dPdy, dPdz,
+			                       nchannels,
+			                       result,
+			                       dresultds, dresultdt, dresultdr);
+		}
+		else {
+			status = ts->texture3d(filename,
+			                       options,
+			                       P,
+			                       dPdx, dPdy, dPdz,
+			                       nchannels,
+			                       result,
+			                       dresultds, dresultdt, dresultdr);
+		}
 	}
 
 	if(!status) {
@@ -977,7 +1084,11 @@ bool OSLRenderServices::texture3d(ustring filename, TextureOpt &options,
 			if(nchannels == 4)
 				result[3] = 1.0f;
 		}
-
+		/* This might be slow, but prevents error messages leak and
+		 * other nasty stuff happening.
+		 */
+		string err = ts->geterror();
+		(void)err;
 	}
 
 	return status;
@@ -996,14 +1107,9 @@ bool OSLRenderServices::environment(ustring filename, TextureOpt &options,
 
 	OIIO::TextureSystem::TextureHandle *th = ts->get_texture_handle(filename, thread_info);
 
-#if OIIO_VERSION < 10500
-	bool status = ts->environment(th, thread_info,
-	                              options, R, dRdx, dRdy, result);
-#else
 	bool status = ts->environment(th, thread_info,
 	                              options, R, dRdx, dRdy,
 	                              nchannels, result);
-#endif
 
 	if(!status) {
 		if(nchannels == 3 || nchannels == 4) {
@@ -1091,7 +1197,7 @@ bool OSLRenderServices::trace(TraceOpt &options, OSL::ShaderGlobals *sg,
 	tracedata->sd.osl_globals = sd->osl_globals;
 
 	/* raytrace */
-	return scene_intersect(sd->osl_globals, &ray, PATH_RAY_ALL_VISIBILITY, &tracedata->isect, NULL, 0.0f, 0.0f);
+	return scene_intersect(sd->osl_globals, ray, PATH_RAY_ALL_VISIBILITY, &tracedata->isect, NULL, 0.0f, 0.0f);
 }
 
 
@@ -1115,11 +1221,7 @@ bool OSLRenderServices::getmessage(OSL::ShaderGlobals *sg, ustring source, ustri
 
 				if(!tracedata->setup) {
 					/* lazy shader data setup */
-					ShaderData *original_sd = (ShaderData *)(sg->renderstate);
-					int bounce = original_sd->ray_depth + 1;
-					int transparent_bounce = original_sd->transparent_depth;
-
-					shader_setup_from_ray(kg, sd, &tracedata->isect, &tracedata->ray, bounce, transparent_bounce);
+					shader_setup_from_ray(kg, sd, &tracedata->isect, &tracedata->ray);
 					tracedata->setup = true;
 				}
 

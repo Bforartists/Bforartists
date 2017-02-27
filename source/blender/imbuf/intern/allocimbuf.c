@@ -89,11 +89,14 @@ void imb_mmap_unlock(void)
 void imb_freemipmapImBuf(ImBuf *ibuf)
 {
 	int a;
-	
-	for (a = 1; a < ibuf->miptot; a++) {
-		if (ibuf->mipmap[a - 1])
-			IMB_freeImBuf(ibuf->mipmap[a - 1]);
-		ibuf->mipmap[a - 1] = NULL;
+
+	/* Do not trust ibuf->miptot, in some cases IMB_remakemipmap can leave unfreed unused levels,
+	 * leading to memory leaks... */
+	for (a = 0; a < IMB_MIPMAP_LEVELS; a++) {
+		if (ibuf->mipmap[a] != NULL) {
+			IMB_freeImBuf(ibuf->mipmap[a]);
+			ibuf->mipmap[a] = NULL;
+		}
 	}
 
 	ibuf->miptot = 0;
@@ -446,49 +449,60 @@ ImBuf *IMB_allocImBuf(unsigned int x, unsigned int y, uchar planes, unsigned int
 {
 	ImBuf *ibuf;
 
-	ibuf = MEM_callocN(sizeof(ImBuf), "ImBuf_struct");
+	ibuf = MEM_mallocN(sizeof(ImBuf), "ImBuf_struct");
 
 	if (ibuf) {
-		ibuf->x = x;
-		ibuf->y = y;
-		ibuf->planes = planes;
-		ibuf->ftype = IMB_FTYPE_PNG;
-		ibuf->foptions.quality = 15; /* the 15 means, set compression to low ratio but not time consuming */
-		ibuf->channels = 4;  /* float option, is set to other values when buffers get assigned */
-		ibuf->ppm[0] = ibuf->ppm[1] = IMB_DPI_DEFAULT / 0.0254f; /* IMB_DPI_DEFAULT -> pixels-per-meter */
-
-		if (flags & IB_rect) {
-			if (imb_addrectImBuf(ibuf) == false) {
-				IMB_freeImBuf(ibuf);
-				return NULL;
-			}
+		if (!IMB_initImBuf(ibuf, x, y, planes, flags)) {
+			IMB_freeImBuf(ibuf);
+			return NULL;
 		}
-		
-		if (flags & IB_rectfloat) {
-			if (imb_addrectfloatImBuf(ibuf) == false) {
-				IMB_freeImBuf(ibuf);
-				return NULL;
-			}
-		}
-		
-		if (flags & IB_zbuf) {
-			if (addzbufImBuf(ibuf) == false) {
-				IMB_freeImBuf(ibuf);
-				return NULL;
-			}
-		}
-		
-		if (flags & IB_zbuffloat) {
-			if (addzbuffloatImBuf(ibuf) == false) {
-				IMB_freeImBuf(ibuf);
-				return NULL;
-			}
-		}
-
-		/* assign default spaces */
-		colormanage_imbuf_set_default_spaces(ibuf);
 	}
+
 	return (ibuf);
+}
+
+bool IMB_initImBuf(struct ImBuf *ibuf,
+                   unsigned int x, unsigned int y,
+                   unsigned char planes, unsigned int flags)
+{
+	memset(ibuf, 0, sizeof(ImBuf));
+
+	ibuf->x = x;
+	ibuf->y = y;
+	ibuf->planes = planes;
+	ibuf->ftype = IMB_FTYPE_PNG;
+	ibuf->foptions.quality = 15; /* the 15 means, set compression to low ratio but not time consuming */
+	ibuf->channels = 4;  /* float option, is set to other values when buffers get assigned */
+	ibuf->ppm[0] = ibuf->ppm[1] = IMB_DPI_DEFAULT / 0.0254f; /* IMB_DPI_DEFAULT -> pixels-per-meter */
+
+	if (flags & IB_rect) {
+		if (imb_addrectImBuf(ibuf) == false) {
+			return false;
+		}
+	}
+
+	if (flags & IB_rectfloat) {
+		if (imb_addrectfloatImBuf(ibuf) == false) {
+			return false;
+		}
+	}
+
+	if (flags & IB_zbuf) {
+		if (addzbufImBuf(ibuf) == false) {
+			return false;
+		}
+	}
+
+	if (flags & IB_zbuffloat) {
+		if (addzbuffloatImBuf(ibuf) == false) {
+			return false;
+		}
+	}
+
+	/* assign default spaces */
+	colormanage_imbuf_set_default_spaces(ibuf);
+
+	return true;
 }
 
 /* does no zbuffers? */
@@ -502,6 +516,8 @@ ImBuf *IMB_dupImBuf(ImBuf *ibuf1)
 
 	if (ibuf1->rect) flags |= IB_rect;
 	if (ibuf1->rect_float) flags |= IB_rectfloat;
+	if (ibuf1->zbuf) flags |= IB_zbuf;
+	if (ibuf1->zbuf_float) flags |= IB_zbuffloat;
 
 	x = ibuf1->x;
 	y = ibuf1->y;
@@ -515,6 +531,12 @@ ImBuf *IMB_dupImBuf(ImBuf *ibuf1)
 	
 	if (flags & IB_rectfloat)
 		memcpy(ibuf2->rect_float, ibuf1->rect_float, ((size_t)ibuf1->channels) * x * y * sizeof(float));
+
+	if (flags & IB_zbuf)
+		memcpy(ibuf2->zbuf, ibuf1->zbuf, ((size_t)x) * y * sizeof(int));
+
+	if (flags & IB_zbuffloat)
+		memcpy(ibuf2->zbuf_float, ibuf1->zbuf_float, ((size_t)x) * y * sizeof(float));
 
 	if (ibuf1->encodedbuffer) {
 		ibuf2->encodedbuffersize = ibuf1->encodedbuffersize;
@@ -533,8 +555,8 @@ ImBuf *IMB_dupImBuf(ImBuf *ibuf1)
 	tbuf.rect          = ibuf2->rect;
 	tbuf.rect_float    = ibuf2->rect_float;
 	tbuf.encodedbuffer = ibuf2->encodedbuffer;
-	tbuf.zbuf          = NULL;
-	tbuf.zbuf_float    = NULL;
+	tbuf.zbuf          = ibuf2->zbuf;
+	tbuf.zbuf_float    = ibuf2->zbuf_float;
 	for (a = 0; a < IMB_MIPMAP_LEVELS; a++)
 		tbuf.mipmap[a] = NULL;
 	tbuf.dds_data.data = NULL;

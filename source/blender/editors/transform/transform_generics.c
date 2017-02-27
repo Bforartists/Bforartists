@@ -39,6 +39,7 @@
 #include "DNA_anim_types.h"
 #include "DNA_armature_types.h"
 #include "DNA_brush_types.h"
+#include "DNA_gpencil_types.h"
 #include "DNA_lattice_types.h"
 #include "DNA_screen_types.h"
 #include "DNA_sequence_types.h"
@@ -73,6 +74,7 @@
 #include "BKE_depsgraph.h"
 #include "BKE_fcurve.h"
 #include "BKE_lattice.h"
+#include "BKE_library.h"
 #include "BKE_nla.h"
 #include "BKE_context.h"
 #include "BKE_paint.h"
@@ -278,7 +280,7 @@ static void animrecord_check_state(Scene *scene, ID *id, wmTimer *animtimer)
 					NlaStrip *strip = add_nlastrip_to_stack(adt, adt->action);
 					
 					/* clear reference to action now that we've pushed it onto the stack */
-					adt->action->id.us--;
+					id_us_min(&adt->action->id);
 					adt->action = NULL;
 					
 					/* adjust blending + extend so that they will behave correctly */
@@ -420,7 +422,7 @@ static void recalcData_graphedit(TransInfo *t)
 /* helper for recalcData() - for NLA Editor transforms */
 static void recalcData_nla(TransInfo *t)
 {
-	TransDataNla *tdn = (TransDataNla *)t->customData;
+	TransDataNla *tdn = t->custom.type.data;
 	SpaceNla *snla = (SpaceNla *)t->sa->spacedata.first;
 	Scene *scene = t->scene;
 	double secf = FPS;
@@ -561,7 +563,7 @@ static void recalcData_nla(TransInfo *t)
 		}
 		
 		/* Use RNA to write the values to ensure that constraints on these are obeyed
-		 * (e.g. for transition strips, the values are taken from the neighbours)
+		 * (e.g. for transition strips, the values are taken from the neighbors)
 		 * 
 		 * NOTE: we write these twice to avoid truncation errors which can arise when
 		 * moving the strips a large distance using numeric input [#33852] 
@@ -950,7 +952,13 @@ static void recalcData_sequencer(TransInfo *t)
 		Sequence *seq = tdsq->seq;
 
 		if (seq != seq_prev) {
-			BKE_sequence_invalidate_dependent(t->scene, seq);
+			if (BKE_sequence_tx_fullupdate_test(seq)) {
+				/* A few effect strip types need a complete recache on transform. */
+				BKE_sequence_invalidate_cache(t->scene, seq);
+			}
+			else {
+				BKE_sequence_invalidate_dependent(t->scene, seq);
+			}
 		}
 
 		seq_prev = seq;
@@ -959,6 +967,18 @@ static void recalcData_sequencer(TransInfo *t)
 	BKE_sequencer_preprocessed_cache_cleanup();
 
 	flushTransSeq(t);
+}
+
+/* force recalculation of triangles during transformation */
+static void recalcData_gpencil_strokes(TransInfo *t)
+ {
+	TransData *td = t->data;
+	for (int i = 0; i < t->total; i++, td++) {
+		bGPDstroke *gps = td->extra;
+		if (gps != NULL) {
+			gps->flag |= GP_STROKE_RECALC_CACHES;
+		}
+	}
 }
 
 /* called for updating while transform acts, once per redraw */
@@ -975,7 +995,8 @@ void recalcData(TransInfo *t)
 		flushTransPaintCurve(t);
 	}
 	else if (t->options & CTX_GPENCIL_STROKES) {
-		/* pass? */
+		/* set recalc triangle cache flag */
+		recalcData_gpencil_strokes(t);
 	}
 	else if (t->spacetype == SPACE_IMAGE) {
 		recalcData_image(t);
@@ -1032,7 +1053,7 @@ void drawLine(TransInfo *t, const float center[3], const float dir[3], char axis
 		glColor3ubv(col2);
 		
 		setlinestyle(0);
-		glBegin(GL_LINE_STRIP);
+		glBegin(GL_LINES);
 		glVertex3fv(v1);
 		glVertex3fv(v2);
 		glEnd();
@@ -1047,10 +1068,10 @@ void drawLine(TransInfo *t, const float center[3], const float dir[3], char axis
 void resetTransModal(TransInfo *t)
 {
 	if (t->mode == TFM_EDGE_SLIDE) {
-		freeEdgeSlideVerts(t);
+		freeEdgeSlideVerts(t, &t->custom.mode);
 	}
 	else if (t->mode == TFM_VERT_SLIDE) {
-		freeVertSlideVerts(t);
+		freeVertSlideVerts(t, &t->custom.mode);
 	}
 }
 
@@ -1088,6 +1109,7 @@ void initTransInfo(bContext *C, TransInfo *t, wmOperator *op, const wmEvent *eve
 	ScrArea *sa = CTX_wm_area(C);
 	Object *obedit = CTX_data_edit_object(C);
 	Object *ob = CTX_data_active_object(C);
+	bGPdata *gpd = CTX_data_gpencil_data(C);
 	PropertyRNA *prop;
 	
 	t->scene = sce;
@@ -1112,19 +1134,19 @@ void initTransInfo(bContext *C, TransInfo *t, wmOperator *op, const wmEvent *eve
 	t->redraw = TREDRAW_HARD;  /* redraw first time */
 	
 	if (event) {
-		copy_v2_v2_int(t->imval, event->mval);
-		t->event_type = event->type;
+		t->mouse.imval[0] = event->mval[0];
+		t->mouse.imval[1] = event->mval[1];
 	}
 	else {
-		t->imval[0] = 0;
-		t->imval[1] = 0;
+		t->mouse.imval[0] = 0;
+		t->mouse.imval[1] = 0;
 	}
 	
-	t->con.imval[0] = t->imval[0];
-	t->con.imval[1] = t->imval[1];
+	t->con.imval[0] = t->mouse.imval[0];
+	t->con.imval[1] = t->mouse.imval[1];
 	
-	t->mval[0] = t->imval[0];
-	t->mval[1] = t->imval[1];
+	t->mval[0] = t->mouse.imval[0];
+	t->mval[1] = t->mouse.imval[1];
 	
 	t->transform        = NULL;
 	t->handleEvent      = NULL;
@@ -1155,6 +1177,11 @@ void initTransInfo(bContext *C, TransInfo *t, wmOperator *op, const wmEvent *eve
 		if (RNA_property_boolean_get(op->ptr, prop)) {
 			t->remove_on_cancel = true;
 		}
+	}
+	
+	/* GPencil editing context */
+	if ((gpd) && (gpd->flag & GP_DATA_STROKE_EDITMODE)) {
+		t->options |= CTX_GPENCIL_STROKES;
 	}
 
 	/* Assign the space type, some exceptions for running in different mode */
@@ -1204,13 +1231,13 @@ void initTransInfo(bContext *C, TransInfo *t, wmOperator *op, const wmEvent *eve
 		
 		/* bend always uses the cursor */
 		if (t->mode == TFM_BEND) {
-			t->around = V3D_CURSOR;
+			t->around = V3D_AROUND_CURSOR;
 		}
 
 		t->current_orientation = v3d->twmode;
 
 		/* exceptional case */
-		if (t->around == V3D_LOCAL) {
+		if (t->around == V3D_AROUND_LOCAL_ORIGINS) {
 			if (ELEM(t->mode, TFM_ROTATION, TFM_RESIZE, TFM_TRACKBALL)) {
 				const bool use_island = transdata_check_local_islands(t, t->around);
 
@@ -1266,7 +1293,7 @@ void initTransInfo(bContext *C, TransInfo *t, wmOperator *op, const wmEvent *eve
 	else if (t->spacetype == SPACE_NODE) {
 		// XXX for now, get View2D from the active region
 		t->view = &ar->v2d;
-		t->around = V3D_CENTER;
+		t->around = V3D_AROUND_CENTER_BOUNDS;
 	}
 	else if (t->spacetype == SPACE_IPO) {
 		SpaceIpo *sipo = sa->spacedata.first;
@@ -1292,7 +1319,7 @@ void initTransInfo(bContext *C, TransInfo *t, wmOperator *op, const wmEvent *eve
 		else {
 			t->view = NULL;
 		}
-		t->around = V3D_CENTER;
+		t->around = V3D_AROUND_CENTER_BOUNDS;
 	}
 
 	if (op && ((prop = RNA_struct_find_property(op->ptr, "constraint_orientation")) &&
@@ -1407,8 +1434,8 @@ void initTransInfo(bContext *C, TransInfo *t, wmOperator *op, const wmEvent *eve
 	}
 #endif
 
-	setTransformViewMatrices(t);
 	setTransformViewAspect(t, t->aspect);
+	setTransformViewMatrices(t);
 	initNumInput(&t->num);
 }
 
@@ -1426,14 +1453,20 @@ void postTrans(bContext *C, TransInfo *t)
 	if (t->draw_handle_cursor)
 		WM_paint_cursor_end(CTX_wm_manager(C), t->draw_handle_cursor);
 
-	if (t->customFree) {
-		/* Can take over freeing t->data and data2d etc... */
-		t->customFree(t);
-		BLI_assert(t->customData == NULL);
-	}
-	else if ((t->customData != NULL) && (t->flag & T_FREE_CUSTOMDATA)) {
-		MEM_freeN(t->customData);
-		t->customData = NULL;
+	/* Free all custom-data */
+	{
+		TransCustomData *custom_data = &t->custom.first_elem;
+		for (int i = 0; i < TRANS_CUSTOM_DATA_ELEM_MAX; i++, custom_data++) {
+			if (custom_data->free_cb) {
+				/* Can take over freeing t->data and data2d etc... */
+				custom_data->free_cb(t, custom_data);
+				BLI_assert(custom_data->data == NULL);
+			}
+			else if ((custom_data->data != NULL) && custom_data->use_free) {
+				MEM_freeN(custom_data->data);
+				custom_data->data = NULL;
+			}
+		}
 	}
 
 	/* postTrans can be called when nothing is selected, so data is NULL already */
@@ -1482,6 +1515,8 @@ void postTrans(bContext *C, TransInfo *t)
 	if (t->mouse.data) {
 		MEM_freeN(t->mouse.data);
 	}
+
+	freeSnapping(t);
 }
 
 void applyTransObjects(TransInfo *t)
@@ -1562,6 +1597,8 @@ void restoreTransObjects(TransInfo *t)
 
 void calculateCenter2D(TransInfo *t)
 {
+	BLI_assert(!is_zero_v3(t->aspect));
+
 	if (t->flag & (T_EDIT | T_POSE)) {
 		Object *ob = t->obedit ? t->obedit : t->poseobj;
 		float vec[3];
@@ -1575,16 +1612,18 @@ void calculateCenter2D(TransInfo *t)
 	}
 }
 
-void calculateCenterGlobal(TransInfo *t)
+void calculateCenterGlobal(
+        TransInfo *t, const float center_local[3],
+        float r_center_global[3])
 {
 	/* setting constraint center */
 	/* note, init functions may over-ride t->center */
 	if (t->flag & (T_EDIT | T_POSE)) {
 		Object *ob = t->obedit ? t->obedit : t->poseobj;
-		mul_v3_m4v3(t->center_global, ob->obmat, t->center);
+		mul_v3_m4v3(r_center_global, ob->obmat, center_local);
 	}
 	else {
-		copy_v3_v3(t->center_global, t->center);
+		copy_v3_v3(r_center_global, center_local);
 	}
 }
 
@@ -1665,8 +1704,14 @@ void calculateCenterCursorGraph2D(TransInfo *t, float r_center[2])
 	Scene *scene = t->scene;
 	
 	/* cursor is combination of current frame, and graph-editor cursor value */
-	r_center[0] = (float)(scene->r.cfra);
-	r_center[1] = sipo->cursorVal;
+	if (sipo->mode == SIPO_MODE_DRIVERS) {
+		r_center[0] = sipo->cursorTime;
+		r_center[1] = sipo->cursorVal;
+	}
+	else {
+		r_center[0] = (float)(scene->r.cfra);
+		r_center[1] = sipo->cursorVal;
+	}
 }
 
 void calculateCenterMedian(TransInfo *t, float r_center[3])
@@ -1753,43 +1798,55 @@ bool calculateCenterActive(TransInfo *t, bool select_only, float r_center[3])
 	return ok;
 }
 
-
-void calculateCenter(TransInfo *t)
+static void calculateCenter_FromAround(TransInfo *t, int around, float r_center[3])
 {
-	switch (t->around) {
-		case V3D_CENTER:
-			calculateCenterBound(t, t->center);
+	switch (around) {
+		case V3D_AROUND_CENTER_BOUNDS:
+			calculateCenterBound(t, r_center);
 			break;
-		case V3D_CENTROID:
-			calculateCenterMedian(t, t->center);
+		case V3D_AROUND_CENTER_MEAN:
+			calculateCenterMedian(t, r_center);
 			break;
-		case V3D_CURSOR:
+		case V3D_AROUND_CURSOR:
 			if (ELEM(t->spacetype, SPACE_IMAGE, SPACE_CLIP))
-				calculateCenterCursor2D(t, t->center);
+				calculateCenterCursor2D(t, r_center);
 			else if (t->spacetype == SPACE_IPO)
-				calculateCenterCursorGraph2D(t, t->center);
+				calculateCenterCursorGraph2D(t, r_center);
 			else
-				calculateCenterCursor(t, t->center);
+				calculateCenterCursor(t, r_center);
 			break;
-		case V3D_LOCAL:
+		case V3D_AROUND_LOCAL_ORIGINS:
 			/* Individual element center uses median center for helpline and such */
-			calculateCenterMedian(t, t->center);
+			calculateCenterMedian(t, r_center);
 			break;
-		case V3D_ACTIVE:
+		case V3D_AROUND_ACTIVE:
 		{
-			if (calculateCenterActive(t, false, t->center)) {
+			if (calculateCenterActive(t, false, r_center)) {
 				/* pass */
 			}
 			else {
 				/* fallback */
-				calculateCenterMedian(t, t->center);
+				calculateCenterMedian(t, r_center);
 			}
 			break;
 		}
 	}
+}
+
+void calculateCenter(TransInfo *t)
+{
+	calculateCenter_FromAround(t, t->around, t->center);
+	calculateCenterGlobal(t, t->center, t->center_global);
+
+	/* avoid calculating again */
+	{
+		TransCenterData *cd = &t->center_cache[t->around];
+		copy_v3_v3(cd->local, t->center);
+		copy_v3_v3(cd->global, t->center_global);
+		cd->is_set = true;
+	}
 
 	calculateCenter2D(t);
-	calculateCenterGlobal(t);
 
 	/* for panning from cameraview */
 	if (t->flag & T_OBJECT) {
@@ -1841,6 +1898,23 @@ void calculateCenter(TransInfo *t)
 			t->zfac = 0.0f;
 		}
 	}
+}
+
+BLI_STATIC_ASSERT(ARRAY_SIZE(((TransInfo *)NULL)->center_cache) == (V3D_AROUND_ACTIVE + 1), "test size");
+
+/**
+ * Lazy initialize transform center data, when we need to access center values from other types.
+ */
+const TransCenterData *transformCenter_from_type(TransInfo *t, int around)
+{
+	BLI_assert(around <= V3D_AROUND_ACTIVE);
+	TransCenterData *cd = &t->center_cache[around];
+	if (cd->is_set == false) {
+		calculateCenter_FromAround(t, around, cd->local);
+		calculateCenterGlobal(t, cd->local, cd->global);
+		cd->is_set = true;
+	}
+	return cd;
 }
 
 void calculatePropRatio(TransInfo *t)

@@ -61,8 +61,10 @@ typedef enum {
 	MASK_HANDLE_MODE_INDIVIDUAL_HANDLES = 2,
 } eMaskhandleMode;
 
-struct MaskSplinePoint *BKE_mask_spline_point_array(struct MaskSpline *spline);
-struct MaskSplinePoint *BKE_mask_spline_point_array_from_point(struct MaskSpline *spline, struct MaskSplinePoint *point_ref);
+struct MaskSplinePoint *BKE_mask_spline_point_array(
+        struct MaskSpline *spline);
+struct MaskSplinePoint *BKE_mask_spline_point_array_from_point(
+        struct MaskSpline *spline, const struct MaskSplinePoint *point_ref);
 
 /* mask layers */
 struct MaskLayer *BKE_mask_layer_new(struct Mask *mask, const char *name);
@@ -121,10 +123,11 @@ void BKE_mask_point_select_set_handle(struct MaskSplinePoint *point, const eMask
 /* general */
 struct Mask *BKE_mask_new(struct Main *bmain, const char *name);
 struct Mask *BKE_mask_copy_nolib(struct Mask *mask);
-struct Mask *BKE_mask_copy(struct Mask *mask);
+struct Mask *BKE_mask_copy(struct Main *bmain, struct Mask *mask);
 
-void BKE_mask_free_nolib(struct Mask *mask);
-void BKE_mask_free(struct Main *bmain, struct Mask *mask);
+void BKE_mask_make_local(struct Main *bmain, struct Mask *mask, const bool lib_local);
+
+void BKE_mask_free(struct Mask *mask);
 
 void BKE_mask_coord_from_frame(float r_co[2], const float co[2], const float frame_size[2]);
 void BKE_mask_coord_from_movieclip(struct MovieClip *clip, struct MovieClipUser *user, float r_co[2], const float co[2]);

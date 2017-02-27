@@ -252,7 +252,7 @@ class Rig:
 
         # Create control widgets
         w = create_widget(self.obj, ctrl)
-        if w != None:
+        if w is not None:
             mesh = w.data
             verts = [(0, 0, 0), (0, 1, 0), (0.05, 1, 0), (0.05, 1.1, 0), (-0.05, 1.1, 0), (-0.05, 1, 0)]
             if 'Z' in self.primary_rotation_axis:
@@ -321,23 +321,23 @@ def parameters_ui(layout, params):
 
     col = r.column(align=True)
     row = col.row(align=True)
-    row.prop(params, "ik_layers", index=8, toggle=True, text="")
-    row.prop(params, "ik_layers", index=9, toggle=True, text="")
-    row.prop(params, "ik_layers", index=10, toggle=True, text="")
-    row.prop(params, "ik_layers", index=11, toggle=True, text="")
-    row.prop(params, "ik_layers", index=12, toggle=True, text="")
-    row.prop(params, "ik_layers", index=13, toggle=True, text="")
-    row.prop(params, "ik_layers", index=14, toggle=True, text="")
-    row.prop(params, "ik_layers", index=15, toggle=True, text="")
+    row.prop(params, "extra_layers", index=8, toggle=True, text="")
+    row.prop(params, "extra_layers", index=9, toggle=True, text="")
+    row.prop(params, "extra_layers", index=10, toggle=True, text="")
+    row.prop(params, "extra_layers", index=11, toggle=True, text="")
+    row.prop(params, "extra_layers", index=12, toggle=True, text="")
+    row.prop(params, "extra_layers", index=13, toggle=True, text="")
+    row.prop(params, "extra_layers", index=14, toggle=True, text="")
+    row.prop(params, "extra_layers", index=15, toggle=True, text="")
     row = col.row(align=True)
-    row.prop(params, "ik_layers", index=24, toggle=True, text="")
-    row.prop(params, "ik_layers", index=25, toggle=True, text="")
-    row.prop(params, "ik_layers", index=26, toggle=True, text="")
-    row.prop(params, "ik_layers", index=27, toggle=True, text="")
-    row.prop(params, "ik_layers", index=28, toggle=True, text="")
-    row.prop(params, "ik_layers", index=29, toggle=True, text="")
-    row.prop(params, "ik_layers", index=30, toggle=True, text="")
-    row.prop(params, "ik_layers", index=31, toggle=True, text="")
+    row.prop(params, "extra_layers", index=24, toggle=True, text="")
+    row.prop(params, "extra_layers", index=25, toggle=True, text="")
+    row.prop(params, "extra_layers", index=26, toggle=True, text="")
+    row.prop(params, "extra_layers", index=27, toggle=True, text="")
+    row.prop(params, "extra_layers", index=28, toggle=True, text="")
+    row.prop(params, "extra_layers", index=29, toggle=True, text="")
+    row.prop(params, "extra_layers", index=30, toggle=True, text="")
+    row.prop(params, "extra_layers", index=31, toggle=True, text="")
 
     r = layout.row()
     r.label(text="Bend rotation axis:")

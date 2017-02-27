@@ -53,11 +53,14 @@
 #include "WM_api.h"
 #include "WM_types.h"
 
+#include "GPU_draw.h"
+#include "GPU_buffers.h"
+
 /* own include */
 
 /* copy the face flags, most importantly selection from the mesh to the final derived mesh,
  * use in object mode when selecting faces (while painting) */
-void paintface_flush_flags(Object *ob)
+void paintface_flush_flags(Object *ob, short flag)
 {
 	Mesh *me = BKE_mesh_from_object(ob);
 	DerivedMesh *dm = ob->derivedFinal;
@@ -66,6 +69,8 @@ void paintface_flush_flags(Object *ob)
 	int totpoly;
 	int i;
 	
+	BLI_assert((flag & ~(SELECT | ME_HIDE)) == 0);
+
 	if (me == NULL)
 		return;
 
@@ -73,7 +78,9 @@ void paintface_flush_flags(Object *ob)
 
 	/* we could call this directly in all areas that change selection,
 	 * since this could become slow for realtime updates (circle-select for eg) */
-	BKE_mesh_flush_select_from_polys(me);
+	if (flag & SELECT) {
+		BKE_mesh_flush_select_from_polys(me);
+	}
 
 	if (dm == NULL)
 		return;
@@ -90,8 +97,14 @@ void paintface_flush_flags(Object *ob)
 				/* Copy flags onto the final derived poly from the original mesh poly */
 				mp_orig = me->mpoly + index_array[i];
 				polys[i].flag = mp_orig->flag;
+
 			}
 		}
+	}
+
+	if (flag & ME_HIDE) {
+		/* draw-object caches hidden faces, force re-generation T46867 */
+		GPU_drawobject_free(dm);
 	}
 }
 
@@ -122,7 +135,7 @@ void paintface_hide(Object *ob, const bool unselected)
 	
 	BKE_mesh_flush_hidden_from_polys(me);
 
-	paintface_flush_flags(ob);
+	paintface_flush_flags(ob, SELECT | ME_HIDE);
 }
 
 
@@ -147,7 +160,7 @@ void paintface_reveal(Object *ob)
 
 	BKE_mesh_flush_hidden_from_polys(me);
 
-	paintface_flush_flags(ob);
+	paintface_flush_flags(ob, SELECT | ME_HIDE);
 }
 
 /* Set tface seams based on edge data, uses hash table to find seam edges. */
@@ -241,7 +254,7 @@ void paintface_select_linked(bContext *C, Object *ob, const int mval[2], const b
 
 	select_linked_tfaces_with_seams(me, index, select);
 
-	paintface_flush_flags(ob);
+	paintface_flush_flags(ob, SELECT);
 }
 
 void paintface_deselect_all_visible(Object *ob, int action, bool flush_flags)
@@ -287,7 +300,7 @@ void paintface_deselect_all_visible(Object *ob, int action, bool flush_flags)
 	}
 
 	if (flush_flags) {
-		paintface_flush_flags(ob);
+		paintface_flush_flags(ob, SELECT);
 	}
 }
 
@@ -376,7 +389,7 @@ bool paintface_mouse_select(struct bContext *C, Object *ob, const int mval[2], b
 	
 	/* image window redraw */
 	
-	paintface_flush_flags(ob);
+	paintface_flush_flags(ob, SELECT);
 	WM_event_add_notifier(C, NC_GEOM | ND_SELECT, ob->data);
 	ED_region_tag_redraw(CTX_wm_region(C)); // XXX - should redraw all 3D views
 	return true;
@@ -421,7 +434,7 @@ int do_paintface_box_select(ViewContext *vc, rcti *rect, bool select, bool exten
 	if (ENDIAN_ORDER == B_ENDIAN) {
 		IMB_convert_rgba_to_abgr(ibuf);
 	}
-	WM_framebuffer_to_index_array(ibuf->rect, size[0] * size[1]);
+	GPU_select_to_index_array(ibuf->rect, size[0] * size[1]);
 
 	a = size[0] * size[1];
 	while (a--) {
@@ -454,7 +467,7 @@ int do_paintface_box_select(ViewContext *vc, rcti *rect, bool select, bool exten
 	glReadBuffer(GL_BACK);
 #endif
 
-	paintface_flush_flags(vc->obact);
+	paintface_flush_flags(vc->obact, SELECT);
 
 	return OPERATOR_FINISHED;
 }
@@ -620,12 +633,16 @@ static int mirrtopo_vert_sort(const void *v1, const void *v2)
 	return 0;
 }
 
-bool ED_mesh_mirrtopo_recalc_check(Mesh *me, const int ob_mode, MirrTopoStore_t *mesh_topo_store)
+bool ED_mesh_mirrtopo_recalc_check(Mesh *me, DerivedMesh *dm, const int ob_mode, MirrTopoStore_t *mesh_topo_store)
 {
 	int totvert;
 	int totedge;
 
-	if (me->edit_btmesh) {
+	if (dm) {
+		totvert = dm->getNumVerts(dm);
+		totedge = dm->getNumEdges(dm);
+	}
+	else if (me->edit_btmesh) {
 		totvert = me->edit_btmesh->bm->totvert;
 		totedge = me->edit_btmesh->bm->totedge;
 	}
@@ -647,11 +664,11 @@ bool ED_mesh_mirrtopo_recalc_check(Mesh *me, const int ob_mode, MirrTopoStore_t 
 
 }
 
-void ED_mesh_mirrtopo_init(Mesh *me, const int ob_mode, MirrTopoStore_t *mesh_topo_store,
+void ED_mesh_mirrtopo_init(Mesh *me, DerivedMesh *dm, const int ob_mode, MirrTopoStore_t *mesh_topo_store,
                            const bool skip_em_vert_array_init)
 {
-	MEdge *medge;
-	BMEditMesh *em = me->edit_btmesh;
+	MEdge *medge = NULL, *med;
+	BMEditMesh *em = dm ?  NULL : me->edit_btmesh;
 
 	/* editmode*/
 	BMEdge *eed;
@@ -680,7 +697,7 @@ void ED_mesh_mirrtopo_init(Mesh *me, const int ob_mode, MirrTopoStore_t *mesh_to
 		totvert = em->bm->totvert;
 	}
 	else {
-		totvert = me->totvert;
+		totvert = dm ? dm->getNumVerts(dm) : me->totvert;
 	}
 
 	topo_hash = MEM_callocN(totvert * sizeof(MirrTopoHash_t), "TopoMirr");
@@ -696,10 +713,11 @@ void ED_mesh_mirrtopo_init(Mesh *me, const int ob_mode, MirrTopoStore_t *mesh_to
 		}
 	}
 	else {
-		totedge = me->totedge;
+		totedge = dm ? dm->getNumEdges(dm) : me->totedge;
+		medge = dm ? dm->getEdgeArray(dm) : me->medge;
 
-		for (a = 0, medge = me->medge; a < me->totedge; a++, medge++) {
-			const unsigned int i1 = medge->v1, i2 = medge->v2;
+		for (a = 0, med = medge; a < totedge; a++, med++) {
+			const unsigned int i1 = med->v1, i2 = med->v2;
 			topo_hash[i1]++;
 			topo_hash[i2]++;
 		}
@@ -724,8 +742,8 @@ void ED_mesh_mirrtopo_init(Mesh *me, const int ob_mode, MirrTopoStore_t *mesh_to
 			}
 		}
 		else {
-			for (a = 0, medge = me->medge; a < me->totedge; a++, medge++) {
-				const unsigned int i1 = medge->v1, i2 = medge->v2;
+			for (a = 0, med = medge; a < totedge; a++, med++) {
+				const unsigned int i1 = med->v1, i2 = med->v2;
 				topo_hash[i1] += topo_hash_prev[i2] * topo_pass;
 				topo_hash[i2] += topo_hash_prev[i1] * topo_pass;
 				tot_unique_edges += (topo_hash[i1] != topo_hash[i2]);
@@ -769,7 +787,6 @@ void ED_mesh_mirrtopo_init(Mesh *me, const int ob_mode, MirrTopoStore_t *mesh_to
 			BM_mesh_elem_table_ensure(em->bm, BM_VERT);
 		}
 	}
-
 
 	for (a = 0; a < totvert; a++) {
 		topo_pairs[a].hash    = topo_hash[a];

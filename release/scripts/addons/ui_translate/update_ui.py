@@ -100,7 +100,7 @@ class UI_PT_i18n_update_translations_settings(bpy.types.Panel):
 
         if not i18n_sett.is_init:
             layout.label(text="Could not init languages data!")
-            layout.label(text="Please edit the preferences of the UI Translate addon")
+            layout.label(text="Please edit the preferences of the UI Translate add-on")
         else:
             split = layout.split(0.75)
             split.template_list("UI_UL_i18n_languages", "", i18n_sett, "langs", i18n_sett, "active_lang", rows=8)
@@ -132,7 +132,7 @@ class UI_PT_i18n_update_translations_settings(bpy.types.Panel):
             layout.prop(i18n_sett, "pot_path")
 
             layout.separator()
-            layout.label("Addons:")
+            layout.label("Add-ons:")
             row = layout.row()
             op = row.operator("ui.i18n_addon_translation_invoke", text="Refresh I18n Data...")
             op.op_id = "ui.i18n_addon_translation_update"

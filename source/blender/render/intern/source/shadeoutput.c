@@ -894,7 +894,7 @@ void calc_R_ref(ShadeInput *shi)
 
 }
 
-/* called from ray.c */
+/* called from rayshade.c */
 void shade_color(ShadeInput *shi, ShadeResult *shr)
 {
 	Material *ma= shi->mat;
@@ -1188,12 +1188,10 @@ float lamp_get_visibility(LampRen *lar, const float co[3], float lv[3], float *d
 		return 1.0f;
 	}
 	else {
-		float visifac= 1.0f, t;
+		float visifac= 1.0f, visifac_r;
 		
 		sub_v3_v3v3(lv, co, lar->co);
-		*dist = len_v3(lv);
-		t = 1.0f / (*dist);
-		mul_v3_fl(lv, t);
+		mul_v3_fl(lv, 1.0f / (*dist = len_v3(lv)));
 		
 		/* area type has no quad or sphere option */
 		if (lar->type==LA_AREA) {
@@ -1225,6 +1223,15 @@ float lamp_get_visibility(LampRen *lar, const float co[3], float lv[3], float *d
 					if (lar->ld2>0.0f)
 						visifac*= lar->distkw/(lar->distkw+lar->ld2*dist[0]*dist[0]);
 					break;
+				case LA_FALLOFF_INVCOEFFICIENTS:
+					visifac_r = lar->coeff_const +
+								lar->coeff_lin * dist[0] +
+								lar->coeff_quad * dist[0] * dist[0];
+					if (visifac_r > 0.0)
+						visifac = 1.0 / visifac_r;
+					else
+						visifac = 0.0;
+					break;
 				case LA_FALLOFF_CURVE:
 					/* curvemapping_initialize is called from #add_render_lamp */
 					visifac = curvemapping_evaluateF(lar->curfalloff, 0, dist[0]/lar->dist);
@@ -1241,7 +1248,7 @@ float lamp_get_visibility(LampRen *lar, const float co[3], float lv[3], float *d
 			
 			if (visifac > 0.0f) {
 				if (lar->type==LA_SPOT) {
-					float inpr;
+					float inpr, t;
 					
 					if (lar->mode & LA_SQUARE) {
 						if (dot_v3v3(lv, lar->vec) > 0.0f) {
@@ -1615,9 +1622,6 @@ static void shade_lamp_loop_only_shadow(ShadeInput *shi, ShadeResult *shr)
 			lar= go->lampren;
 			if (lar==NULL) continue;
 			
-			/* yafray: ignore shading by photonlights, not used in Blender */
-			if (lar->type==LA_YF_PHOTON) continue;
-			
 			if (lar->mode & LA_LAYER) if ((lar->lay & shi->obi->lay)==0) continue;
 			if ((lar->lay & shi->lay)==0) continue;
 			
@@ -1815,7 +1819,7 @@ void shade_lamp_loop(ShadeInput *shi, ShadeResult *shr)
 		shr->combined[1]= shi->g;
 		shr->combined[2]= shi->b;
 		shr->alpha= shi->alpha;
-		return;
+		goto finally_shadeless;
 	}
 
 	if ( (ma->mode & (MA_VERTEXCOL|MA_VERTEXCOLP))== MA_VERTEXCOL ) {	/* vertexcolor light */
@@ -1857,9 +1861,6 @@ void shade_lamp_loop(ShadeInput *shi, ShadeResult *shr)
 		for (go=lights->first; go; go= go->next) {
 			lar= go->lampren;
 			if (lar==NULL) continue;
-			
-			/* yafray: ignore shading by photonlights, not used in Blender */
-			if (lar->type==LA_YF_PHOTON) continue;
 			
 			/* test for lamp layer */
 			if (lar->mode & LA_LAYER) if ((lar->lay & shi->obi->lay)==0) continue;
@@ -1922,8 +1923,8 @@ void shade_lamp_loop(ShadeInput *shi, ShadeResult *shr)
 		copy_v3_v3(shr->combined, shr->diffshad);
 			
 		/* calculate shadow pass, we use a multiplication mask */
-		/* if diff = 0,0,0 it doesn't matter what the shadow pass is, so leave it as is */
-		if (passflag & SCE_PASS_SHADOW && !(shr->diff[0]==0.0f && shr->diff[1]==0.0f && shr->diff[2]==0.0f)) {
+		/* Even if diff = 0,0,0, it does matter what the shadow pass is, since we may want it 'for itself'! */
+		if (passflag & SCE_PASS_SHADOW) {
 			if (shr->diff[0]!=0.0f) shr->shad[0]= shr->shad[0]/shr->diff[0];
 			/* can't determine proper shadow from shad/diff (0/0), so use shadow intensity */
 			else if (shr->shad[0]==0.0f) shr->shad[0]= shr->shad[3];
@@ -2006,7 +2007,11 @@ void shade_lamp_loop(ShadeInput *shi, ShadeResult *shr)
 		add_v3_v3(shr->combined, shr->emit);
 	if (shi->combinedflag & SCE_PASS_SPEC)
 		add_v3_v3(shr->combined, shr->spec);
-	
+
+
+	/* Last section of this function applies to shadeless colors too */
+finally_shadeless:
+
 	/* modulate by the object color */
 	if ((ma->shade_flag & MA_OBCOLOR) && shi->obr->ob) {
 		if (!(ma->sss_flag & MA_DIFF_SSS) || !sss_pass_done(&R, ma)) {
@@ -2031,7 +2036,7 @@ static float lamp_get_data_internal(ShadeInput *shi, GroupObject *go, float col[
 	LampRen *lar = go->lampren;
 	float visifac, inp;
 
-	if (!lar || lar->type == LA_YF_PHOTON
+	if (!lar
 	    || ((lar->mode & LA_LAYER) && (lar->lay & shi->obi->lay) == 0)
 	    || (lar->lay & shi->lay) == 0)
 		return 0.0f;
@@ -2059,11 +2064,13 @@ static float lamp_get_data_internal(ShadeInput *shi, GroupObject *go, float col[
 		if (lar->mode & LA_SHAD_TEX)
 			do_lamp_tex(lar, lv, shi, shadow, LA_SHAD_TEX);
 
-		lamp_get_shadow(lar, shi, inp, shadfac, shi->depth);
+		if (R.r.mode & R_SHADOW) {
+			lamp_get_shadow(lar, shi, inp, shadfac, shi->depth);
 
-		shadow[0] = 1.0f - ((1.0f - shadfac[0] * shadfac[3]) * (1.0f - shadow[0]));
-		shadow[1] = 1.0f - ((1.0f - shadfac[1] * shadfac[3]) * (1.0f - shadow[1]));
-		shadow[2] = 1.0f - ((1.0f - shadfac[2] * shadfac[3]) * (1.0f - shadow[2]));
+			shadow[0] = 1.0f - ((1.0f - shadfac[0] * shadfac[3]) * (1.0f - shadow[0]));
+			shadow[1] = 1.0f - ((1.0f - shadfac[1] * shadfac[3]) * (1.0f - shadow[1]));
+			shadow[2] = 1.0f - ((1.0f - shadfac[2] * shadfac[3]) * (1.0f - shadow[2]));
+		}
 	}
 
 	return visifac;
@@ -2115,4 +2122,53 @@ float RE_lamp_get_data(ShadeInput *shi, Object *lamp_obj, float col[4], float lv
 	}
 
 	return 0.0f;
+}
+
+const float (*RE_object_instance_get_matrix(struct ObjectInstanceRen *obi, int matrix_id))[4]
+{
+	if (obi) {
+		switch (matrix_id) {
+			case RE_OBJECT_INSTANCE_MATRIX_OB:
+				return (const float(*)[4])obi->obmat;
+			case RE_OBJECT_INSTANCE_MATRIX_OBINV:
+				return (const float(*)[4])obi->obinvmat;
+			case RE_OBJECT_INSTANCE_MATRIX_LOCALTOVIEW:
+				return (const float(*)[4])obi->localtoviewmat;
+			case RE_OBJECT_INSTANCE_MATRIX_LOCALTOVIEWINV:
+				return (const float(*)[4])obi->localtoviewinvmat;
+		}
+	}
+	return NULL;
+}
+
+const float (*RE_render_current_get_matrix(int matrix_id))[4]
+{
+	switch(matrix_id) {
+		case RE_VIEW_MATRIX:
+			return (const float(*)[4])R.viewmat;
+		case RE_VIEWINV_MATRIX:
+			return (const float(*)[4])R.viewinv;
+	}
+	return NULL;
+}
+
+float RE_fresnel_dielectric(float incoming[3], float normal[3], float eta)
+{
+	/* compute fresnel reflectance without explicitly computing
+	 * the refracted direction */
+	float c = fabs(dot_v3v3(incoming, normal));
+	float g = eta * eta - 1.0 + c * c;
+	float result;
+
+	if (g > 0.0) {
+		g = sqrtf(g);
+		float A = (g - c) / (g + c);
+		float B = (c * (g + c) - 1.0) / (c * (g - c) + 1.0);
+		result = 0.5 * A * A * (1.0 + B * B);
+	}
+	else {
+		result = 1.0;  /* TIR (no refracted component) */
+	}
+
+	return result;
 }

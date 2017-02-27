@@ -301,7 +301,7 @@ void update_autoflags_fcurve(FCurve *fcu, bContext *C, ReportList *reports, Poin
  * NOTE: any recalculate of the F-Curve that needs to be done will need to 
  *      be done by the caller.
  */
-int insert_bezt_fcurve(FCurve *fcu, BezTriple *bezt, short flag)
+int insert_bezt_fcurve(FCurve *fcu, const BezTriple *bezt, short flag)
 {
 	int i = 0;
 	
@@ -383,11 +383,16 @@ int insert_bezt_fcurve(FCurve *fcu, BezTriple *bezt, short flag)
 	return i;
 }
 
-/* This function is a wrapper for insert_bezt_fcurve_internal(), and should be used when
+/**
+ * This function is a wrapper for insert_bezt_fcurve_internal(), and should be used when
  * adding a new keyframe to a curve, when the keyframe doesn't exist anywhere else yet. 
  * It returns the index at which the keyframe was added.
+ *
+ * \param keyframe_type: The type of keyframe (eBezTriple_KeyframeTypes)
+ * \param flag: Optional flags (eInsertKeyFlags) for controlling how keys get added 
+ *              and/or whether updates get done
  */
-int insert_vert_fcurve(FCurve *fcu, float x, float y, short flag)
+int insert_vert_fcurve(FCurve *fcu, float x, float y, char keyframe_type, short flag)
 {
 	BezTriple beztr = {{{0}}};
 	unsigned int oldTot = fcu->totvert;
@@ -413,9 +418,8 @@ int insert_vert_fcurve(FCurve *fcu, float x, float y, short flag)
 		beztr.ipo = BEZT_IPO_BEZ;
 	}
 	else {
-		/* for UI usage - defaults should come from the */
+		/* for UI usage - defaults should come from the userprefs and/or toolsettings */
 		beztr.h1 = beztr.h2 = U.keyhandles_new; /* use default handle type here */
-		//BEZKEYTYPE(&beztr)= scene->keytype; /* default keyframe type */
 		
 		/* use default interpolation mode, with exceptions for int/discrete values */
 		beztr.ipo = U.ipo_new;
@@ -428,6 +432,9 @@ int insert_vert_fcurve(FCurve *fcu, float x, float y, short flag)
 	else if ((beztr.ipo == BEZT_IPO_BEZ) && (fcu->flag & FCURVE_INT_VALUES)) {
 		beztr.ipo = BEZT_IPO_LIN;
 	}
+	
+	/* set keyframe type value (supplied), which should come from the scene settings in most cases */
+	BEZKEYTYPE(&beztr) = keyframe_type;
 	
 	/* set default values for "easing" interpolation mode settings
 	 * NOTE: Even if these modes aren't currently used, if users switch
@@ -873,11 +880,13 @@ static float visualkey_get_value(PointerRNA *ptr, PropertyRNA *prop, int array_i
  *  Use this when validation of necessary animation data is not necessary, since an RNA-pointer to the necessary
  *	data being keyframed, and a pointer to the F-Curve to use have both been provided.
  *
+ *  keytype is the "keyframe type" (eBezTriple_KeyframeTypes), as shown in the Dope Sheet.
+ *
  *	The flag argument is used for special settings that alter the behavior of
  *	the keyframe insertion. These include the 'visual' keyframing modes, quick refresh,
  *	and extra keyframe filtering.
  */
-bool insert_keyframe_direct(ReportList *reports, PointerRNA ptr, PropertyRNA *prop, FCurve *fcu, float cfra, short flag)
+bool insert_keyframe_direct(ReportList *reports, PointerRNA ptr, PropertyRNA *prop, FCurve *fcu, float cfra, char keytype, short flag)
 {
 	float curval = 0.0f;
 	
@@ -921,6 +930,19 @@ bool insert_keyframe_direct(ReportList *reports, PointerRNA ptr, PropertyRNA *pr
 	
 	/* update F-Curve flags to ensure proper behaviour for property type */
 	update_autoflags_fcurve_direct(fcu, prop);
+
+	/* adjust frame on which to add keyframe */
+	if ((flag & INSERTKEY_DRIVER) && (fcu->driver)) {
+		PathResolvedRNA anim_rna;
+
+		if (RNA_path_resolved_create(&ptr, prop, fcu->array_index, &anim_rna)) {
+			/* for making it easier to add corrective drivers... */
+			cfra = evaluate_driver(&anim_rna, fcu->driver, cfra);
+		}
+		else {
+			cfra = 0.0f;
+		}
+	}
 	
 	/* obtain value to give keyframe */
 	if ( (flag & INSERTKEY_MATRIX) && 
@@ -946,7 +968,7 @@ bool insert_keyframe_direct(ReportList *reports, PointerRNA ptr, PropertyRNA *pr
 		
 		/* insert new keyframe at current frame */
 		if (insert_mode)
-			insert_vert_fcurve(fcu, cfra, curval, flag);
+			insert_vert_fcurve(fcu, cfra, curval, keytype, flag);
 		
 		/* delete keyframe immediately before/after newly added */
 		switch (insert_mode) {
@@ -964,7 +986,7 @@ bool insert_keyframe_direct(ReportList *reports, PointerRNA ptr, PropertyRNA *pr
 	}
 	else {
 		/* just insert keyframe */
-		insert_vert_fcurve(fcu, cfra, curval, flag);
+		insert_vert_fcurve(fcu, cfra, curval, keytype, flag);
 		
 		/* return success */
 		return true;
@@ -983,7 +1005,7 @@ bool insert_keyframe_direct(ReportList *reports, PointerRNA ptr, PropertyRNA *pr
  *
  *	index of -1 keys all array indices
  */
-short insert_keyframe(ReportList *reports, ID *id, bAction *act, const char group[], const char rna_path[], int array_index, float cfra, short flag)
+short insert_keyframe(ReportList *reports, ID *id, bAction *act, const char group[], const char rna_path[], int array_index, float cfra, char keytype, short flag)
 {	
 	PointerRNA id_ptr, ptr;
 	PropertyRNA *prop = NULL;
@@ -1054,10 +1076,13 @@ short insert_keyframe(ReportList *reports, ID *id, bAction *act, const char grou
 				if (ELEM(RNA_property_subtype(prop), PROP_TRANSLATION, PROP_XYZ, PROP_EULER, PROP_COLOR, PROP_COORDS)) {
 					fcu->color_mode = FCURVE_COLOR_AUTO_RGB;
 				}
+				else if (RNA_property_subtype(prop), PROP_QUATERNION) {
+					fcu->color_mode = FCURVE_COLOR_AUTO_YRGB;
+				}
 			}
 			
 			/* insert keyframe */
-			ret += insert_keyframe_direct(reports, ptr, prop, fcu, cfra, flag);
+			ret += insert_keyframe_direct(reports, ptr, prop, fcu, cfra, keytype, flag);
 		}
 	}
 	
@@ -1253,8 +1278,9 @@ static short clear_keyframe(ReportList *reports, ID *id, bAction *act, const cha
 			continue;
 
 		if (BKE_fcurve_is_protected(fcu)) {
-			if (G.debug & G_DEBUG)
-				printf("WARNING: not deleting keyframe for locked F-Curve\n");
+			BKE_reportf(reports, RPT_WARNING,
+			            "Not clearing all keyframes from locked F-Curve '%s' for %s '%s'",
+			            fcu->rna_path, BKE_idcode_to_name(GS(id->name)), id->name + 2);
 			continue;
 		}
 
@@ -1645,14 +1671,45 @@ static int delete_key_v3d_exec(bContext *C, wmOperator *op)
 			
 			for (fcu = act->curves.first; fcu; fcu = fcn) {
 				fcn = fcu->next;
-
+				
+				/* don't touch protected F-Curves */
 				if (BKE_fcurve_is_protected(fcu)) {
 					BKE_reportf(op->reports, RPT_WARNING,
 					            "Not deleting keyframe for locked F-Curve '%s', object '%s'",
 					            fcu->rna_path, id->name + 2);
 					continue;
 				}
-
+				
+				/* special exception for bones, as this makes this operator more convenient to use
+				 * NOTE: This is only done in pose mode. In object mode, we're dealign with the entire object.
+				 */
+				if ((ob->mode & OB_MODE_POSE) && strstr(fcu->rna_path, "pose.bones[\"")) {
+					bPoseChannel *pchan;
+					char *bone_name;
+					
+					/* get bone-name, and check if this bone is selected */
+					bone_name = BLI_str_quoted_substrN(fcu->rna_path, "pose.bones[");
+					pchan = BKE_pose_channel_find_name(ob->pose, bone_name);
+					if (bone_name) MEM_freeN(bone_name);
+					
+					/* skip if bone is not selected */
+					if ((pchan) && (pchan->bone)) {
+						/* bones are only selected/editable if visible... */
+						bArmature *arm = (bArmature *)ob->data;
+					
+						/* skipping - not visible on currently visible layers */
+						if ((arm->layer & pchan->bone->layer) == 0)
+							continue;
+						/* skipping - is currently hidden */
+						if (pchan->bone->flag & BONE_HIDDEN_P)
+							continue;
+						
+						/* selection flag... */
+						if ((pchan->bone->flag & BONE_SELECTED) == 0)
+							continue;
+					}
+				}
+				
 				/* delete keyframes on current frame 
 				 * WARNING: this can delete the next F-Curve, hence the "fcn" copying
 				 */
@@ -1661,7 +1718,11 @@ static int delete_key_v3d_exec(bContext *C, wmOperator *op)
 		}
 		
 		/* report success (or failure) */
-		BKE_reportf(op->reports, RPT_INFO, "Object '%s' successfully had %d keyframes removed", id->name + 2, success);
+		if (success)
+			BKE_reportf(op->reports, RPT_INFO, "Object '%s' successfully had %d keyframes removed", id->name + 2, success);
+		else
+			BKE_reportf(op->reports, RPT_ERROR, "No keyframes removed from Object '%s'", id->name + 2);
+		
 		DAG_id_tag_update(&ob->id, OB_RECALC_OB);
 	}
 	CTX_DATA_END;
@@ -1695,9 +1756,11 @@ void ANIM_OT_keyframe_delete_v3d(wmOperatorType *ot)
 static int insert_key_button_exec(bContext *C, wmOperator *op)
 {
 	Scene *scene = CTX_data_scene(C);
+	ToolSettings *ts = scene->toolsettings;
 	PointerRNA ptr = {{NULL}};
 	PropertyRNA *prop = NULL;
 	char *path;
+	uiBut *but;
 	float cfra = (float)CFRA;
 	short success = 0;
 	int index;
@@ -1708,7 +1771,10 @@ static int insert_key_button_exec(bContext *C, wmOperator *op)
 	flag = ANIM_get_keyframing_flags(scene, 1);
 	
 	/* try to insert keyframe using property retrieved from UI */
-	UI_context_active_but_prop_get(C, &ptr, &prop, &index);
+	if (!(but = UI_context_active_but_prop_get(C, &ptr, &prop, &index))) {
+		/* pass event on if no active button found */
+		return (OPERATOR_CANCELLED | OPERATOR_PASS_THROUGH);
+	}
 	
 	if ((ptr.id.data && ptr.data && prop) && RNA_property_animateable(&ptr, prop)) {
 		if (ptr.type == &RNA_NlaStrip) {
@@ -1719,7 +1785,18 @@ static int insert_key_button_exec(bContext *C, wmOperator *op)
 			NlaStrip *strip = (NlaStrip *)ptr.data;
 			FCurve *fcu = list_find_fcurve(&strip->fcurves, RNA_property_identifier(prop), index);
 			
-			success = insert_keyframe_direct(op->reports, ptr, prop, fcu, cfra, 0);
+			success = insert_keyframe_direct(op->reports, ptr, prop, fcu, cfra, ts->keyframe_type, 0);
+		}
+		else if (UI_but_flag_is_set(but, UI_BUT_DRIVEN)) {
+			/* Driven property - Find driver */
+			FCurve *fcu;
+			bool driven, special;
+			
+			fcu = rna_get_fcurve_context_ui(C, &ptr, prop, index, NULL, NULL, &driven, &special);
+			
+			if (fcu && driven) {
+				success = insert_keyframe_direct(op->reports, ptr, prop, fcu, cfra, ts->keyframe_type, INSERTKEY_DRIVER);
+			}
 		}
 		else {
 			/* standard properties */
@@ -1731,7 +1808,7 @@ static int insert_key_button_exec(bContext *C, wmOperator *op)
 					index = -1;
 				}
 				
-				success = insert_keyframe(op->reports, ptr.id.data, NULL, NULL, path, index, cfra, flag);
+				success = insert_keyframe(op->reports, ptr.id.data, NULL, NULL, path, index, cfra, ts->keyframe_type, flag);
 				
 				MEM_freeN(path);
 			}
@@ -1798,7 +1875,10 @@ static int delete_key_button_exec(bContext *C, wmOperator *op)
 	const bool all = RNA_boolean_get(op->ptr, "all");
 	
 	/* try to insert keyframe using property retrieved from UI */
-	UI_context_active_but_prop_get(C, &ptr, &prop, &index);
+	if (!UI_context_active_but_prop_get(C, &ptr, &prop, &index)) {
+		/* pass event on if no active button found */
+		return (OPERATOR_CANCELLED | OPERATOR_PASS_THROUGH);
+	}
 
 	if (ptr.id.data && ptr.data && prop) {
 		if (ptr.type == &RNA_NlaStrip) {
@@ -1898,7 +1978,10 @@ static int clear_key_button_exec(bContext *C, wmOperator *op)
 	const bool all = RNA_boolean_get(op->ptr, "all");
 
 	/* try to insert keyframe using property retrieved from UI */
-	UI_context_active_but_prop_get(C, &ptr, &prop, &index);
+	if (!UI_context_active_but_prop_get(C, &ptr, &prop, &index)) {
+		/* pass event on if no active button found */
+		return (OPERATOR_CANCELLED | OPERATOR_PASS_THROUGH);
+	}
 
 	if (ptr.id.data && ptr.data && prop) {
 		path = RNA_path_from_ID_to_property(&ptr, prop);
@@ -1959,16 +2042,24 @@ bool autokeyframe_cfra_can_key(Scene *scene, ID *id)
 	/* only filter if auto-key mode requires this */
 	if (IS_AUTOKEY_ON(scene) == 0)
 		return false;
-		
-	if (IS_AUTOKEY_MODE(scene, NORMAL)) {
-		/* can insert anytime we like... */
-		return true;
-	}
-	else { /* REPLACE */
-		/* for whole block - only key if there's a keyframe on that frame already
-		 *	this is a valid assumption when we're blocking + tweaking
+	
+	if (IS_AUTOKEY_MODE(scene, EDITKEYS)) {
+		/* Replace Mode:
+		 * For whole block, only key if there's a keyframe on that frame already
+		 * This is a valid assumption when we're blocking + tweaking
 		 */
 		return id_frame_has_keyframe(id, cfra, ANIMFILTER_KEYS_LOCAL);
+	}
+	else {
+		/* Normal Mode (or treat as being normal mode):
+		 *
+		 * Just in case the flags aren't set properly (i.e. only on/off is set, without a mode)
+		 * let's set the "normal" flag too, so that it will all be sane everywhere...
+		 */
+		scene->toolsettings->autokey_mode = AUTOKEY_MODE_NORMAL;
+		
+		/* Can insert anytime we like... */
+		return true;
 	}
 }
 

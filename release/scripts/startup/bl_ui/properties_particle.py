@@ -79,6 +79,8 @@ class PARTICLE_MT_specials(Menu):
         props.use_active = False
         props.remove_target_particles = True
 
+        layout.operator("particle.duplicate_particle_system")
+
 
 class PARTICLE_MT_hair_dynamics_presets(Menu):
     bl_label = "Hair Dynamics Presets"
@@ -218,9 +220,13 @@ class PARTICLE_PT_context_particles(ParticleButtonsPanel, Panel):
                 row.prop(part, "hair_step")
                 if psys is not None and psys.is_edited:
                     if psys.is_global_hair:
-                        layout.operator("particle.connect_hair")
+                        row = layout.row(align=True)
+                        row.operator("particle.connect_hair").all = False
+                        row.operator("particle.connect_hair", text="Connect All").all = True
                     else:
-                        layout.operator("particle.disconnect_hair")
+                        row = layout.row(align=True)
+                        row.operator("particle.disconnect_hair").all = False
+                        row.operator("particle.disconnect_hair", text="Disconnect All").all = True
             elif psys is not None and part.type == 'REACTOR':
                 split.enabled = particle_panel_enabled(context, psys)
                 split.prop(psys, "reactor_target_object")
@@ -253,7 +259,7 @@ class PARTICLE_PT_emission(ParticleButtonsPanel, Panel):
         layout.enabled = particle_panel_enabled(context, psys) and (psys is None or not psys.has_multiple_caches)
 
         row = layout.row()
-        row.active = part.distribution != 'GRID'
+        row.active = part.emit_from == 'VERT' or part.distribution != 'GRID'
         row.prop(part, "count")
 
         if part.type == 'HAIR':
@@ -601,6 +607,8 @@ class PARTICLE_PT_physics(ParticleButtonsPanel, Panel):
             row.prop(part, "use_size_deflect")
             row.prop(part, "use_die_on_collision")
 
+            layout.prop(part, "collision_group")
+
             if part.physics_type == 'FLUID':
                 fluid = part.fluid
 
@@ -710,6 +718,8 @@ class PARTICLE_PT_physics(ParticleButtonsPanel, Panel):
             col.prop(boids, "land_personal_space")
             col.prop(boids, "land_stick_force")
 
+            layout.prop(part, "collision_group")
+
             split = layout.split()
 
             col = split.column(align=True)
@@ -742,8 +752,8 @@ class PARTICLE_PT_physics(ParticleButtonsPanel, Panel):
             subsub.operator("particle.target_remove", icon='ZOOMOUT', text="")
             sub = col.row()
             subsub = sub.column(align=True)
-            subsub.operator("particle.target_move_up", icon='MOVE_UP_VEC', text="")
-            subsub.operator("particle.target_move_down", icon='MOVE_DOWN_VEC', text="")
+            subsub.operator("particle.target_move_up", icon='TRIA_UP', text="")
+            subsub.operator("particle.target_move_down", icon='TRIA_DOWN', text="")
 
             key = psys.active_particle_target
             if key:
@@ -806,8 +816,8 @@ class PARTICLE_PT_boidbrain(ParticleButtonsPanel, Panel):
         #sub.operator("boid.state_add", icon='ZOOMIN', text="")
         #sub.operator("boid.state_del", icon='ZOOMOUT', text="")
         #sub = row.row(align=True)
-        #sub.operator("boid.state_move_up", icon='MOVE_UP_VEC', text="")
-        #sub.operator("boid.state_move_down", icon='MOVE_DOWN_VEC', text="")
+        #sub.operator("boid.state_move_up", icon='TRIA_UP', text="")
+        #sub.operator("boid.state_move_down", icon='TRIA_DOWN', text="")
 
         state = boids.active_boid_state
 
@@ -830,8 +840,8 @@ class PARTICLE_PT_boidbrain(ParticleButtonsPanel, Panel):
         subsub.operator("boid.rule_del", icon='ZOOMOUT', text="")
         sub = col.row()
         subsub = sub.column(align=True)
-        subsub.operator("boid.rule_move_up", icon='MOVE_UP_VEC', text="")
-        subsub.operator("boid.rule_move_down", icon='MOVE_DOWN_VEC', text="")
+        subsub.operator("boid.rule_move_up", icon='TRIA_UP', text="")
+        subsub.operator("boid.rule_move_down", icon='TRIA_DOWN', text="")
 
         rule = state.active_boid_rule
 
@@ -839,8 +849,8 @@ class PARTICLE_PT_boidbrain(ParticleButtonsPanel, Panel):
             row = layout.row()
             row.prop(rule, "name", text="")
             #somebody make nice icons for boids here please! -jahka
-            row.prop(rule, "use_in_air", icon='MOVE_UP_VEC', text="")
-            row.prop(rule, "use_on_land", icon='MOVE_DOWN_VEC', text="")
+            row.prop(rule, "use_in_air", icon='TRIA_UP', text="")
+            row.prop(rule, "use_on_land", icon='TRIA_DOWN', text="")
 
             row = layout.row()
 
@@ -999,8 +1009,8 @@ class PARTICLE_PT_render(ParticleButtonsPanel, Panel):
                 subsub = sub.column(align=True)
                 subsub.operator("particle.dupliob_copy", icon='ZOOMIN', text="")
                 subsub.operator("particle.dupliob_remove", icon='ZOOMOUT', text="")
-                subsub.operator("particle.dupliob_move_up", icon='MOVE_UP_VEC', text="")
-                subsub.operator("particle.dupliob_move_down", icon='MOVE_DOWN_VEC', text="")
+                subsub.operator("particle.dupliob_move_up", icon='TRIA_UP', text="")
+                subsub.operator("particle.dupliob_move_down", icon='TRIA_DOWN', text="")
 
                 weight = part.active_dupliweight
                 if weight:

@@ -263,9 +263,8 @@ extern int GHOST_ProcessEvents(GHOST_SystemHandle systemhandle, int waitForEvent
 /**
  * Retrieves events from the queue and send them to the event consumers.
  * \param systemhandle The handle to the system
- * \return Indication of the presence of events.
  */
-extern int GHOST_DispatchEvents(GHOST_SystemHandle systemhandle);
+extern void GHOST_DispatchEvents(GHOST_SystemHandle systemhandle);
 
 /**
  * Adds the given event consumer to our list.
@@ -434,6 +433,7 @@ extern GHOST_TSuccess GHOST_GetButtonState(GHOST_SystemHandle systemhandle,
                                            GHOST_TButtonMask mask,
                                            int *isDown);
 
+#ifdef WITH_INPUT_NDOF
 /***************************************************************************************
  * Access to 3D mouse.
  ***************************************************************************************/
@@ -443,6 +443,7 @@ extern GHOST_TSuccess GHOST_GetButtonState(GHOST_SystemHandle systemhandle,
  * \param deadzone Deadzone of the 3D mouse (both for rotation and pan) relative to full range
  */
 extern void GHOST_setNDOFDeadZone(float deadzone);
+#endif
 
 
 /***************************************************************************************

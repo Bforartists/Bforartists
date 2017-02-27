@@ -19,6 +19,8 @@
 
 #include "device_task.h"
 
+#include "buffers.h"
+
 #include "util_algorithm.h"
 #include "util_time.h"
 
@@ -29,8 +31,8 @@ CCL_NAMESPACE_BEGIN
 DeviceTask::DeviceTask(Type type_)
 : type(type_), x(0), y(0), w(0), h(0), rgba_byte(0), rgba_half(0), buffer(0),
   sample(0), num_samples(1),
-  shader_input(0), shader_output(0),
-  shader_eval_type(0), shader_x(0), shader_w(0)
+  shader_input(0), shader_output(0), shader_output_luma(0),
+  shader_eval_type(0), shader_filter(0), shader_x(0), shader_w(0)
 {
 	last_update_time = time_dt();
 }
@@ -99,14 +101,18 @@ void DeviceTask::split(list<DeviceTask>& tasks, int num, int max_size)
 	}
 }
 
-void DeviceTask::update_progress(RenderTile *rtile)
+void DeviceTask::update_progress(RenderTile *rtile, int pixel_samples)
 {
 	if((type != PATH_TRACE) &&
 	   (type != SHADER))
 		return;
 
-	if(update_progress_sample)
-		update_progress_sample();
+	if(update_progress_sample) {
+		if(pixel_samples == -1) {
+			pixel_samples = shader_w;
+		}
+		update_progress_sample(pixel_samples, rtile? rtile->sample : 0);
+	}
 
 	if(update_tile_sample) {
 		double current_time = time_dt();

@@ -109,7 +109,7 @@ class ImportSTL(Operator, ImportHelper, IOSTLOrientationHelper):
     use_scene_unit = BoolProperty(
             name="Scene Unit",
             description="Apply current scene's unit (as defined by unit scale) to imported data",
-            default=True,
+            default=False,
             )
 
     use_facet_normal = BoolProperty(
@@ -163,6 +163,11 @@ class ExportSTL(Operator, ExportHelper, IOSTLOrientationHelper):
     filename_ext = ".stl"
     filter_glob = StringProperty(default="*.stl", options={'HIDDEN'})
 
+    use_selection = BoolProperty(
+            name="Selection Only",
+            description="Export selected objects only",
+            default=False,
+            )
     global_scale = FloatProperty(
             name="Scale",
             min=0.01, max=1000.0,
@@ -184,7 +189,15 @@ class ExportSTL(Operator, ExportHelper, IOSTLOrientationHelper):
             description="Apply the modifiers before saving",
             default=True,
             )
+    batch_mode = EnumProperty(
+            name="Batch Mode",
+            items=(('OFF', "Off", "All data in one file"),
+                   ('OBJECT', "Object", "Each object as a file"),
+                   ))
 
+    @property
+    def check_extension(self):
+        return self.batch_mode == 'OFF'
 
     def execute(self, context):
         from . import stl_utils
@@ -193,14 +206,20 @@ class ExportSTL(Operator, ExportHelper, IOSTLOrientationHelper):
         from mathutils import Matrix
         keywords = self.as_keywords(ignore=("axis_forward",
                                             "axis_up",
+                                            "use_selection",
                                             "global_scale",
                                             "check_existing",
                                             "filter_glob",
                                             "use_scene_unit",
                                             "use_mesh_modifiers",
+                                            "batch_mode"
                                             ))
 
         scene = context.scene
+        if self.use_selection:
+            data_seq = context.selected_objects
+        else:
+            data_seq = scene.objects
 
         # Take into account scene's unit scale, so that 1 inch in Blender gives 1 inch elsewhere! See T42000.
         global_scale = self.global_scale
@@ -211,11 +230,19 @@ class ExportSTL(Operator, ExportHelper, IOSTLOrientationHelper):
                                         to_up=self.axis_up,
                                         ).to_4x4() * Matrix.Scale(global_scale, 4)
 
-        faces = itertools.chain.from_iterable(
-            blender_utils.faces_from_mesh(ob, global_matrix, self.use_mesh_modifiers)
-            for ob in context.selected_objects)
+        if self.batch_mode == 'OFF':
+            faces = itertools.chain.from_iterable(
+                    blender_utils.faces_from_mesh(ob, global_matrix, self.use_mesh_modifiers)
+                    for ob in data_seq)
 
-        stl_utils.write_stl(faces=faces, **keywords)
+            stl_utils.write_stl(faces=faces, **keywords)
+        elif self.batch_mode == 'OBJECT':
+            prefix = os.path.splitext(self.filepath)[0]
+            keywords_temp = keywords.copy()
+            for ob in data_seq:
+                faces = blender_utils.faces_from_mesh(ob, global_matrix, self.use_mesh_modifiers)
+                keywords_temp["filepath"] = prefix + bpy.path.clean_name(ob.name) + ".stl"
+                stl_utils.write_stl(faces=faces, **keywords_temp)
 
         return {'FINISHED'}
 

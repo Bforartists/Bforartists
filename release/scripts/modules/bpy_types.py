@@ -21,11 +21,13 @@
 from _bpy import types as bpy_types
 import _bpy
 
-StructRNA = bpy_types.Struct.__bases__[0]
-StructMetaPropGroup = _bpy.StructMetaPropGroup
+StructRNA = bpy_types.bpy_struct
+StructMetaPropGroup = bpy_types.bpy_struct_meta_idprop
 # StructRNA = bpy_types.Struct
 
 bpy_types.BlendDataLibraries.load = _bpy._library_load
+bpy_types.BlendDataLibraries.write = _bpy._library_write
+bpy_types.BlendData.user_map = _bpy._rna_id_collection_user_map
 
 
 class Context(StructRNA):
@@ -34,8 +36,10 @@ class Context(StructRNA):
     def copy(self):
         from types import BuiltinMethodType
         new_context = {}
-        generic_attrs = (list(StructRNA.__dict__.keys()) +
-                         ["bl_rna", "rna_type", "copy"])
+        generic_attrs = (
+            *StructRNA.__dict__.keys(),
+            "bl_rna", "rna_type", "copy",
+        )
         for attr in dir(self):
             if not (attr.startswith("_") or attr in generic_attrs):
                 value = getattr(self, attr)
@@ -205,7 +209,7 @@ class _GenericBone:
     @property
     def basename(self):
         """The name of this bone before any '.' character"""
-        #return self.name.rsplit(".", 1)[0]
+        # return self.name.rsplit(".", 1)[0]
         return self.name.split(".")[0]
 
     @property
@@ -404,29 +408,33 @@ class Mesh(bpy_types.ID):
            the *vertices* argument. eg: [(5, 6, 8, 9), (1, 2, 3), ...]
 
         :type faces: iterable object
+
+        .. warning::
+
+           Invalid mesh data
+           *(out of range indices, edges with matching indices,
+           2 sided faces... etc)* are **not** prevented.
+           If the data used for mesh creation isn't known to be valid,
+           run :class:`Mesh.validate` after this function.
         """
+        from itertools import chain, islice, accumulate
+
+        face_lengths = tuple(map(len, faces))
+
         self.vertices.add(len(vertices))
         self.edges.add(len(edges))
-        self.loops.add(sum((len(f) for f in faces)))
+        self.loops.add(sum(face_lengths))
         self.polygons.add(len(faces))
 
-        vertices_flat = [f for v in vertices for f in v]
-        self.vertices.foreach_set("co", vertices_flat)
-        del vertices_flat
+        self.vertices.foreach_set("co", tuple(chain.from_iterable(vertices)))
+        self.edges.foreach_set("vertices", tuple(chain.from_iterable(edges)))
 
-        edges_flat = [i for e in edges for i in e]
-        self.edges.foreach_set("vertices", edges_flat)
-        del edges_flat
+        vertex_indices = tuple(chain.from_iterable(faces))
+        loop_starts = tuple(islice(chain([0], accumulate(face_lengths)), len(faces)))
 
-        # this is different in bmesh
-        loop_index = 0
-        for i, p in enumerate(self.polygons):
-            f = faces[i]
-            loop_len = len(f)
-            p.loop_start = loop_index
-            p.loop_total = loop_len
-            p.vertices = f
-            loop_index += loop_len
+        self.polygons.foreach_set("loop_total", face_lengths)
+        self.polygons.foreach_set("loop_start", loop_starts)
+        self.polygons.foreach_set("vertices", vertex_indices)
 
         # if no edges - calculate them
         if faces and (not edges):
@@ -534,6 +542,7 @@ class Sound(bpy_types.ID):
 
 
 class RNAMeta(type):
+
     def __new__(cls, name, bases, classdict, **args):
         result = type.__new__(cls, name, bases, classdict)
         if bases and bases[0] is not StructRNA:
@@ -554,6 +563,7 @@ class RNAMeta(type):
 
 
 class OrderedDictMini(dict):
+
     def __init__(self, *args):
         self.order = []
         dict.__init__(self, args)
@@ -573,6 +583,7 @@ class RNAMetaPropGroup(StructMetaPropGroup, RNAMeta):
 
 
 class OrderedMeta(RNAMeta):
+
     def __init__(cls, name, bases, attributes):
         if attributes.__class__ is OrderedDictMini:
             cls.order = attributes.order
@@ -627,7 +638,7 @@ class Macro(StructRNA, metaclass=OrderedMeta):
 
 
 class PropertyGroup(StructRNA, metaclass=RNAMetaPropGroup):
-        __slots__ = ()
+    __slots__ = ()
 
 
 class RenderEngine(StructRNA, metaclass=RNAMeta):

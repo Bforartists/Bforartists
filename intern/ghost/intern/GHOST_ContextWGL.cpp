@@ -48,7 +48,6 @@ HGLRC GHOST_ContextWGL::s_sharedHGLRC = NULL;
 int   GHOST_ContextWGL::s_sharedCount = 0;
 
 bool GHOST_ContextWGL::s_singleContextMode = false;
-bool GHOST_ContextWGL::s_warn_old = false;
 
 
 /* Intel video-cards don't work fine with multiple contexts and
@@ -64,6 +63,7 @@ static bool is_crappy_intel_card()
 
 GHOST_ContextWGL::GHOST_ContextWGL(
         bool stereoVisual,
+        bool alphaBackground,
         GHOST_TUns16 numOfAASamples,
         HWND hWnd,
         HDC hDC,
@@ -79,6 +79,7 @@ GHOST_ContextWGL::GHOST_ContextWGL(
       m_contextMajorVersion(contextMajorVersion),
       m_contextMinorVersion(contextMinorVersion),
       m_contextFlags(contextFlags),
+      m_alphaBackground(alphaBackground),
       m_contextResetNotificationStrategy(contextResetNotificationStrategy),
       m_hGLRC(NULL)
 #ifdef WITH_GLEW_MX
@@ -169,7 +170,7 @@ GHOST_TSuccess GHOST_ContextWGL::activateDrawingContext()
 /* Ron Fosner's code for weighting pixel formats and forcing software.
  * See http://www.opengl.org/resources/faq/technical/weight.cpp
  */
-static int weight_pixel_format(PIXELFORMATDESCRIPTOR &pfd)
+static int weight_pixel_format(PIXELFORMATDESCRIPTOR &pfd, PIXELFORMATDESCRIPTOR &preferredPFD)
 {
 	int weight = 0;
 
@@ -182,6 +183,7 @@ static int weight_pixel_format(PIXELFORMATDESCRIPTOR &pfd)
 	    !(pfd.dwFlags & PFD_DOUBLEBUFFER)    || /* Blender _needs_ this */
 	    !(pfd.iPixelType == PFD_TYPE_RGBA)   ||
 	     (pfd.cDepthBits < 16)               ||
+	     (pfd.cColorBits > 32)               || /* 64 bit formats disable aero */
 	     (pfd.dwFlags & PFD_GENERIC_FORMAT))    /* no software renderers */
 	{
 		return 0;
@@ -195,11 +197,12 @@ static int weight_pixel_format(PIXELFORMATDESCRIPTOR &pfd)
 
 	weight += pfd.cColorBits -  8;
 
-#ifdef GHOST_OPENGL_ALPHA
-	if (pfd.cAlphaBits > 0)
+	if (preferredPFD.cAlphaBits > 0 && pfd.cAlphaBits > 0)
+		weight++;
+#ifdef WIN32_COMPOSITING
+	if ((preferredPFD.dwFlags & PFD_SUPPORT_COMPOSITION) && (pfd.dwFlags & PFD_SUPPORT_COMPOSITION))
 		weight++;
 #endif
-
 #ifdef GHOST_OPENGL_STENCIL
 	if (pfd.cStencilBits >= 8)
 		weight++;
@@ -240,7 +243,7 @@ static int choose_pixel_format_legacy(HDC hDC, PIXELFORMATDESCRIPTOR &preferredP
 
 		WIN32_CHK(check == lastPFD);
 
-		int w = weight_pixel_format(pfd);
+		int w = weight_pixel_format(pfd, preferredPFD);
 
 		if (w > weight) {
 			weight = w;
@@ -497,7 +500,10 @@ int GHOST_ContextWGL::_choose_pixel_format_arb_2(
 {
 	std::vector<int> iAttributes;
 
+#define _MAX_PIXEL_FORMATS 32
+
 	int iPixelFormat = 0;
+	int iPixelFormats[_MAX_PIXEL_FORMATS];
 
 	int samples;
 
@@ -522,8 +528,31 @@ int GHOST_ContextWGL::_choose_pixel_format_arb_2(
 		        sRGB);
 
 		UINT nNumFormats;
-		WIN32_CHK(wglChoosePixelFormatARB(m_hDC, &(iAttributes[0]), NULL, 1, &iPixelFormat, &nNumFormats));
+		WIN32_CHK(wglChoosePixelFormatARB(m_hDC, &(iAttributes[0]), NULL, _MAX_PIXEL_FORMATS, iPixelFormats, &nNumFormats));
 
+#ifdef WIN32_COMPOSITING
+		if (needAlpha && nNumFormats) {
+			// scan through all pixel format to make sure one supports compositing
+			PIXELFORMATDESCRIPTOR pfd;
+			int i;
+
+			for (i = 0; i < nNumFormats; i++) {
+				if (DescribePixelFormat(m_hDC, iPixelFormats[i], sizeof(PIXELFORMATDESCRIPTOR), &pfd)) {
+					if (pfd.dwFlags & PFD_SUPPORT_COMPOSITION) {
+						iPixelFormat = iPixelFormats[i];
+						break;
+					}
+				}
+			}
+			if (i == nNumFormats) {
+				fprintf(stderr,
+						"Warning! Unable to find a pixel format with compositing capability.\n");
+				iPixelFormat = iPixelFormats[0];
+			}
+		}
+		else
+#endif
+			iPixelFormat = iPixelFormats[0];
 		/* total number of formats that match (regardless of size of iPixelFormat array)
 		 * see: WGL_ARB_pixel_format extension spec */
 		if (nNumFormats > 0)
@@ -539,7 +568,7 @@ int GHOST_ContextWGL::_choose_pixel_format_arb_2(
 	// check how many samples were actually gotten
 	if (iPixelFormat != 0) {
 		int iQuery[] = { WGL_SAMPLES_ARB };
-		int actualSamples;
+		int actualSamples, alphaBits;
 		wglGetPixelFormatAttribivARB(m_hDC, iPixelFormat, 0, 1, iQuery, &actualSamples);
 
 		if (actualSamples != *numOfAASamples) {
@@ -549,6 +578,14 @@ int GHOST_ContextWGL::_choose_pixel_format_arb_2(
 			        *numOfAASamples, actualSamples);
 
 			*numOfAASamples = actualSamples; // set context property to actual value
+		}
+		if (needAlpha) {
+			iQuery[0] = WGL_ALPHA_BITS_ARB;
+			wglGetPixelFormatAttribivARB(m_hDC, iPixelFormat, 0, 1, iQuery, &alphaBits);
+			if (alphaBits == 0) {
+				fprintf(stderr,
+						"Warning! Unable to find a frame buffer with alpha channel.\n");
+			}
 		}
 	}
 	else {
@@ -671,20 +708,27 @@ int GHOST_ContextWGL::choose_pixel_format(
 	PIXELFORMATDESCRIPTOR preferredPFD = {
 		sizeof(PIXELFORMATDESCRIPTOR),   /* size */
 		1,                               /* version */
+		(DWORD) (
 		PFD_SUPPORT_OPENGL |
 		PFD_DRAW_TO_WINDOW |
 		PFD_SWAP_COPY      |             /* support swap copy */
 		PFD_DOUBLEBUFFER   |             /* support double-buffering */
-		(stereoVisual ? PFD_STEREO : 0), /* support stereo */
+		(stereoVisual ? PFD_STEREO : 0) |/* support stereo */
+		(
+#ifdef WIN32_COMPOSITING
+		needAlpha ? PFD_SUPPORT_COMPOSITION :	 /* support composition for transparent background */
+#endif
+		0
+		)),
 		PFD_TYPE_RGBA,                   /* color type */
-		24,                              /* preferred color depth */
+		(BYTE) (needAlpha ? 32 : 24),           /* preferred color depth */
 		0, 0, 0, 0, 0, 0,                /* color bits (ignored) */
-		needAlpha ? 8 : 0,               /* alpha buffer */
+		(BYTE) (needAlpha ? 8 : 0),               /* alpha buffer */
 		0,                               /* alpha shift (ignored) */
 		0,                               /* no accumulation buffer */
 		0, 0, 0, 0,                      /* accum bits (ignored) */
 		24,                              /* depth buffer */
-		needStencil ? 8 : 0,             /* stencil buffer */
+		(BYTE) (needStencil ? 8 : 0),             /* stencil buffer */
 		0,                               /* no auxiliary buffers */
 		PFD_MAIN_PLANE,                  /* main layer */
 		0,                               /* reserved */
@@ -728,11 +772,7 @@ static void reportContextString(const char *name, const char *dummy, const char 
 
 GHOST_TSuccess GHOST_ContextWGL::initializeDrawingContext()
 {
-#ifdef GHOST_OPENGL_ALPHA
-	const bool needAlpha = true;
-#else
-	const bool needAlpha = false;
-#endif
+	const bool needAlpha = m_alphaBackground;
 
 #ifdef GHOST_OPENGL_STENCIL
 	const bool needStencil = true;
@@ -918,27 +958,27 @@ GHOST_TSuccess GHOST_ContextWGL::initializeDrawingContext()
 	reportContextString("Version",  m_dummyVersion,  version);
 #endif
 
-	if (!s_warn_old) {
-		if ((strcmp(vendor, "Microsoft Corporation") == 0 ||
-		    strcmp(renderer, "GDI Generic") == 0) && version[0] == '1' && version[2] == '1')
-		{
-			MessageBox(m_hWnd, "Your system does not use 3D hardware acceleration.\n"
-			                   "Such systems can cause stability problems in Blender and they are unsupported.\n\n"
-			                   "This may be caused by:\n"
-			                   "* A missing or faulty graphics driver installation.\n"
-			                   "  Blender needs a graphics card driver to work correctly.\n"
-			                   "* Accessing Blender through a remote connection.\n"
-			                   "* Using Blender through a virtual machine.\n\n"
-			                   "Disable this message in <User Preferences - Interface - Warn On Deprecated OpenGL>",
-			                   "Blender - Can't detect 3D hardware accelerated Driver!", MB_OK | MB_ICONWARNING);
-		}
-		else if (version[0] == '1' && version[2] < '4') {
-			MessageBox(m_hWnd, "The OpenGL version provided by your graphics driver version is too low\n"
-			                   "Blender requires version 1.4 and may not work correctly\n\n"
-			                   "Disable this message in <User Preferences - Interface - Warn On Deprecated OpenGL>",
-			                   "Blender - Unsupported Graphics Driver!", MB_OK | MB_ICONWARNING);
-		}
-		s_warn_old = true;
+	if ((strcmp(vendor, "Microsoft Corporation") == 0 ||
+	     strcmp(renderer, "GDI Generic") == 0) && version[0] == '1' && version[2] == '1')
+	{
+		MessageBox(m_hWnd, "Your system does not use 3D hardware acceleration.\n"
+		                   "Blender requires a graphics driver with OpenGL 2.1 support.\n\n"
+		                   "This may be caused by:\n"
+		                   "* A missing or faulty graphics driver installation.\n"
+		                   "  Blender needs a graphics card driver to work correctly.\n"
+		                   "* Accessing Blender through a remote connection.\n"
+		                   "* Using Blender through a virtual machine.\n\n"
+		                   "The program will now close.",
+		           "Blender - Can't detect 3D hardware accelerated Driver!",
+		           MB_OK | MB_ICONERROR);
+		exit(0);
+	}
+	else if (version[0] < '2' || (version[0] == '2' && version[2] < '1')) {
+		MessageBox(m_hWnd, "Blender requires a graphics driver with OpenGL 2.1 support.\n\n"
+		                   "The program will now close.",
+		           "Blender - Unsupported Graphics Driver!",
+		           MB_OK | MB_ICONERROR);
+		exit(0);
 	}
 
 	return GHOST_kSuccess;

@@ -23,11 +23,6 @@
  * ***** END GPL LICENSE BLOCK *****
  */
 
-/* Do some compatibility hacks in order to make
- * the code working with GPU_material pipeline.
- */
-#define GLSL_COMPAT_WORKAROUND
-
 #include "opensubdiv_capi.h"
 
 #ifdef _MSC_VER
@@ -47,11 +42,31 @@
 #include <opensubdiv/osd/cpuGLVertexBuffer.h>
 #include <opensubdiv/osd/cpuEvaluator.h>
 
+#include "MEM_guardedalloc.h"
+
+#include "opensubdiv_capi.h"
+#include "opensubdiv_topology_refiner.h"
+
 using OpenSubdiv::Osd::GLMeshInterface;
 
-extern "C" char datatoc_gpu_shader_opensubd_display_glsl[];
+extern "C" char datatoc_gpu_shader_opensubdiv_vertex_glsl[];
+extern "C" char datatoc_gpu_shader_opensubdiv_geometry_glsl[];
+extern "C" char datatoc_gpu_shader_opensubdiv_fragment_glsl[];
+
+/* TODO(sergey): This is bit of bad level calls :S */
+extern "C" {
+void copy_m3_m3(float m1[3][3], float m2[3][3]);
+void copy_m3_m4(float m1[3][3], float m2[4][4]);
+void adjoint_m3_m3(float m1[3][3], float m[3][3]);
+float determinant_m3_array(float m[3][3]);
+bool invert_m3_m3(float m1[3][3], float m2[3][3]);
+bool invert_m3(float m[3][3]);
+void transpose_m3(float mat[3][3]);
+}
 
 #define MAX_LIGHTS 8
+#define SUPPORT_COLOR_MATERIAL
+
 typedef struct Light {
 	float position[4];
 	float ambient[4];
@@ -65,6 +80,7 @@ typedef struct Light {
 	float spot_cutoff;
 	float spot_exponent;
 	float spot_cos_cutoff;
+	float pad, pad2;
 #endif
 } Light;
 
@@ -80,129 +96,135 @@ typedef struct Transform {
 } Transform;
 
 static bool g_use_osd_glsl = false;
-static int g_active_uv_index = -1;
+static int g_active_uv_index = 0;
 
 static GLuint g_flat_fill_solid_program = 0;
 static GLuint g_flat_fill_texture2d_program = 0;
 static GLuint g_smooth_fill_solid_program = 0;
 static GLuint g_smooth_fill_texture2d_program = 0;
+
+static GLuint g_flat_fill_solid_shadeless_program = 0;
+static GLuint g_flat_fill_texture2d_shadeless_program = 0;
+static GLuint g_smooth_fill_solid_shadeless_program = 0;
+static GLuint g_smooth_fill_texture2d_shadeless_program = 0;
+
 static GLuint g_wireframe_program = 0;
 
 static GLuint g_lighting_ub = 0;
 static Lighting g_lighting_data;
 static Transform g_transform;
 
-/* TODO(sergey): This is actually duplicated code from BLI. */
-namespace {
-void copy_m3_m3(float m1[3][3], float m2[3][3])
+struct OpenSubdiv_GLMeshFVarData
 {
-	/* destination comes first: */
-	memcpy(&m1[0], &m2[0], 9 * sizeof(float));
-}
-
-void copy_m3_m4(float m1[3][3], float m2[4][4])
-{
-	m1[0][0] = m2[0][0];
-	m1[0][1] = m2[0][1];
-	m1[0][2] = m2[0][2];
-
-	m1[1][0] = m2[1][0];
-	m1[1][1] = m2[1][1];
-	m1[1][2] = m2[1][2];
-
-	m1[2][0] = m2[2][0];
-	m1[2][1] = m2[2][1];
-	m1[2][2] = m2[2][2];
-}
-
-void adjoint_m3_m3(float m1[3][3], float m[3][3])
-{
-	m1[0][0] = m[1][1] * m[2][2] - m[1][2] * m[2][1];
-	m1[0][1] = -m[0][1] * m[2][2] + m[0][2] * m[2][1];
-	m1[0][2] = m[0][1] * m[1][2] - m[0][2] * m[1][1];
-
-	m1[1][0] = -m[1][0] * m[2][2] + m[1][2] * m[2][0];
-	m1[1][1] = m[0][0] * m[2][2] - m[0][2] * m[2][0];
-	m1[1][2] = -m[0][0] * m[1][2] + m[0][2] * m[1][0];
-
-	m1[2][0] = m[1][0] * m[2][1] - m[1][1] * m[2][0];
-	m1[2][1] = -m[0][0] * m[2][1] + m[0][1] * m[2][0];
-	m1[2][2] = m[0][0] * m[1][1] - m[0][1] * m[1][0];
-}
-
-float determinant_m3_array(float m[3][3])
-{
-	return (m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1]) -
-	        m[1][0] * (m[0][1] * m[2][2] - m[0][2] * m[2][1]) +
-	        m[2][0] * (m[0][1] * m[1][2] - m[0][2] * m[1][1]));
-}
-
-bool invert_m3_m3(float m1[3][3], float m2[3][3])
-{
-	float det;
-	int a, b;
-	bool success;
-
-	/* calc adjoint */
-	adjoint_m3_m3(m1, m2);
-
-	/* then determinant old matrix! */
-	det = determinant_m3_array(m2);
-
-	success = (det != 0.0f);
-
-	if (det != 0.0f) {
-		det = 1.0f / det;
-		for (a = 0; a < 3; a++) {
-			for (b = 0; b < 3; b++) {
-				m1[a][b] *= det;
-			}
-		}
+	OpenSubdiv_GLMeshFVarData() :
+		texture_buffer(0), offset_buffer(0) {
 	}
 
-	return success;
-}
+	~OpenSubdiv_GLMeshFVarData()
+	{
+		Release();
+	}
 
-bool invert_m3(float m[3][3])
-{
-	float tmp[3][3];
-	bool success;
+	void Release()
+	{
+		if (texture_buffer) {
+			glDeleteTextures(1, &texture_buffer);
+		}
+		if (offset_buffer) {
+			glDeleteTextures(1, &offset_buffer);
+		}
+		texture_buffer = 0;
+		offset_buffer = 0;
+		fvar_width = 0;
+		channel_offsets.clear();
+	}
 
-	success = invert_m3_m3(tmp, m);
-	copy_m3_m3(m, tmp);
+	void Create(const OpenSubdiv::Far::TopologyRefiner *refiner,
+	            const OpenSubdiv::Far::PatchTable *patch_table,
+	            int fvar_width,
+	            const float *fvar_src_data)
+	{
+		Release();
 
-	return success;
-}
+		this->fvar_width = fvar_width;
 
-void transpose_m3(float mat[3][3])
-{
-	float t;
+		/* Expand fvar data to per-patch array */
+		const int max_level = refiner->GetMaxLevel();
+		const int num_channels = patch_table->GetNumFVarChannels();
+		std::vector<float> data;
+		int fvar_data_offset = 0;
+		channel_offsets.resize(num_channels);
+		for (int channel = 0; channel < num_channels; ++channel) {
+			OpenSubdiv::Far::ConstIndexArray indices =
+			        patch_table->GetFVarValues(channel);
 
-	t = mat[0][1];
-	mat[0][1] = mat[1][0];
-	mat[1][0] = t;
-	t = mat[0][2];
-	mat[0][2] = mat[2][0];
-	mat[2][0] = t;
-	t = mat[1][2];
-	mat[1][2] = mat[2][1];
-	mat[2][1] = t;
-}
+			channel_offsets[channel] = data.size();
+			data.reserve(data.size() + indices.size() * fvar_width);
+
+			for (int fvert = 0; fvert < (int)indices.size(); ++fvert) {
+				int index = indices[fvert] * fvar_width;
+				for (int i = 0; i < fvar_width; ++i) {
+					data.push_back(fvar_src_data[fvar_data_offset + index++]);
+				}
+			}
+			if (refiner->IsUniform()) {
+				const int num_values_max = refiner->GetLevel(max_level).GetNumFVarValues(channel);
+				fvar_data_offset += num_values_max * fvar_width;
+			} else {
+				const int num_values_total = refiner->GetNumFVarValuesTotal(channel);
+				fvar_data_offset += num_values_total * fvar_width;
+			}
+		}
+
+		GLuint buffer;
+		glGenBuffers(1, &buffer);
+		glBindBuffer(GL_ARRAY_BUFFER, buffer);
+		glBufferData(GL_ARRAY_BUFFER, data.size()*sizeof(float),
+		             &data[0], GL_STATIC_DRAW);
+
+		glGenTextures(1, &texture_buffer);
+		glBindTexture(GL_TEXTURE_BUFFER, texture_buffer);
+		glTexBuffer(GL_TEXTURE_BUFFER, GL_R32F, buffer);
+
+		glDeleteBuffers(1, &buffer);
+
+		glGenBuffers(1, &buffer);
+		glBindBuffer(GL_ARRAY_BUFFER, buffer);
+		glBufferData(GL_ARRAY_BUFFER, channel_offsets.size()*sizeof(int),
+		             &channel_offsets[0], GL_STATIC_DRAW);
+
+		glGenTextures(1, &offset_buffer);
+		glBindTexture(GL_TEXTURE_BUFFER, offset_buffer);
+		glTexBuffer(GL_TEXTURE_BUFFER, GL_R32I, buffer);
+		glBindTexture(GL_TEXTURE_BUFFER, 0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	}
+	GLuint texture_buffer;
+	GLuint offset_buffer;
+	std::vector<int> channel_offsets;
+	int fvar_width;
+};
+
+namespace {
 
 GLuint compileShader(GLenum shaderType,
-                     const char *section,
-                     const char *define)
+                     const char *version,
+                     const char *define,
+                     const char *source)
 {
-	const char *sources[3];
-	char sdefine[64];
-	sprintf(sdefine, "#define %s\n#define GLSL_COMPAT_WORKAROUND\n", section);
-
-	sources[0] = define;
-	sources[1] = sdefine;
-	sources[2] = datatoc_gpu_shader_opensubd_display_glsl;
+	const char *sources[] = {
+		version,
+		define,
+#ifdef SUPPORT_COLOR_MATERIAL
+		"#define SUPPORT_COLOR_MATERIAL\n",
+#else
+		"",
+#endif
+		source,
+	};
 
 	GLuint shader = glCreateShader(shaderType);
-	glShaderSource(shader, 3, sources, NULL);
+	glShaderSource(shader, 4, sources, NULL);
 	glCompileShader(shader);
 
 	GLint status;
@@ -210,33 +232,36 @@ GLuint compileShader(GLenum shaderType,
 	if (status == GL_FALSE) {
 		GLchar emsg[1024];
 		glGetShaderInfoLog(shader, sizeof(emsg), 0, emsg);
-		fprintf(stderr, "Error compiling GLSL shader (%s): %s\n", section, emsg);
-		fprintf(stderr, "Section: %s\n", sdefine);
+		fprintf(stderr, "Error compiling GLSL: %s\n", emsg);
+		fprintf(stderr, "Version: %s\n", version);
 		fprintf(stderr, "Defines: %s\n", define);
-		fprintf(stderr, "Source: %s\n", sources[2]);
+		fprintf(stderr, "Source: %s\n", source);
 		return 0;
 	}
 
 	return shader;
 }
 
-GLuint linkProgram(const char *define)
+GLuint linkProgram(const char *version, const char *define)
 {
 	GLuint vertexShader = compileShader(GL_VERTEX_SHADER,
-	                                    "VERTEX_SHADER",
-	                                    define);
+	                                    version,
+	                                    define,
+	                                    datatoc_gpu_shader_opensubdiv_vertex_glsl);
 	if (vertexShader == 0) {
 		return 0;
 	}
 	GLuint geometryShader = compileShader(GL_GEOMETRY_SHADER,
-	                                      "GEOMETRY_SHADER",
-	                                      define);
+	                                      version,
+	                                      define,
+	                                      datatoc_gpu_shader_opensubdiv_geometry_glsl);
 	if (geometryShader == 0) {
 		return 0;
 	}
 	GLuint fragmentShader = compileShader(GL_FRAGMENT_SHADER,
-	                                      "FRAGMENT_SHADER",
-	                                      define);
+	                                      version,
+	                                      define,
+	                                      datatoc_gpu_shader_opensubdiv_fragment_glsl );
 	if (fragmentShader == 0) {
 		return 0;
 	}
@@ -250,30 +275,23 @@ GLuint linkProgram(const char *define)
 	glBindAttribLocation(program, 0, "position");
 	glBindAttribLocation(program, 1, "normal");
 
-#ifdef GLSL_COMPAT_WORKAROUND
-	glProgramParameteriEXT(program,
-	                       GL_GEOMETRY_INPUT_TYPE_EXT,
-	                       GL_LINES_ADJACENCY_EXT);
 
-	if (strstr(define, "WIREFRAME") == NULL) {
+	if (!GLEW_VERSION_3_2) {
+		/* provide input/output layout info */
+		glProgramParameteriEXT(program,
+		                       GL_GEOMETRY_INPUT_TYPE_EXT,
+		                       GL_LINES_ADJACENCY_EXT);
+
+		bool wireframe = strstr(define, "WIREFRAME") != NULL;
+
 		glProgramParameteriEXT(program,
 		                       GL_GEOMETRY_OUTPUT_TYPE_EXT,
-		                       GL_TRIANGLE_STRIP);
-
-		glProgramParameteriEXT(program,
-		                       GL_GEOMETRY_VERTICES_OUT_EXT,
-		                       4);
-	}
-	else {
-		glProgramParameteriEXT(program,
-		                       GL_GEOMETRY_OUTPUT_TYPE_EXT,
-		                       GL_LINE_STRIP);
+		                       wireframe ? GL_LINE_STRIP : GL_TRIANGLE_STRIP);
 
 		glProgramParameteriEXT(program,
 		                       GL_GEOMETRY_VERTICES_OUT_EXT,
 		                       8);
 	}
-#endif
 
 	glLinkProgram(program);
 
@@ -301,18 +319,21 @@ GLuint linkProgram(const char *define)
 	                   0);  /* GL_TEXTURE0 */
 
 	glProgramUniform1i(program,
+	                   glGetUniformLocation(program, "FVarDataOffsetBuffer"),
+	                   30);  /* GL_TEXTURE30 */
+
+	glProgramUniform1i(program,
 	                   glGetUniformLocation(program, "FVarDataBuffer"),
 	                   31);  /* GL_TEXTURE31 */
 
 	return program;
 }
 
-void bindProgram(GLMeshInterface * /*mesh*/,
-                 int program)
+void bindProgram(OpenSubdiv_GLMesh *gl_mesh, int program)
 {
 	glUseProgram(program);
 
-	/* Matricies */
+	/* Matrices */
 	glUniformMatrix4fv(glGetUniformLocation(program, "modelViewMatrix"),
 	                   1, false,
 	                   g_transform.model_view_matrix);
@@ -323,7 +344,7 @@ void bindProgram(GLMeshInterface * /*mesh*/,
 	                   1, false,
 	                   g_transform.normal_matrix);
 
-	/* Ligthing */
+	/* Lighting */
 	glBindBuffer(GL_UNIFORM_BUFFER, g_lighting_ub);
 	glBufferSubData(GL_UNIFORM_BUFFER,
 	                0, sizeof(g_lighting_data), &g_lighting_data);
@@ -352,23 +373,34 @@ void bindProgram(GLMeshInterface * /*mesh*/,
 		glUniform4fv(glGetUniformLocation(program, "diffuse"), 1, color);
 	}
 
-	/* TODO(sergey): Bring face varying back. */
-#if 0
 	/* Face-vertex data */
-	if (mesh->GetDrawContext()->GetFvarDataTextureBuffer()) {
-		glActiveTexture(GL_TEXTURE31);
-		glBindTexture(GL_TEXTURE_BUFFER,
-		              mesh->GetDrawContext()->GetFvarDataTextureBuffer());
-		glActiveTexture(GL_TEXTURE0);
+	if (gl_mesh->fvar_data != NULL) {
+		if (gl_mesh->fvar_data->texture_buffer) {
+			glActiveTexture(GL_TEXTURE31);
+			glBindTexture(GL_TEXTURE_BUFFER, gl_mesh->fvar_data->texture_buffer);
+			glActiveTexture(GL_TEXTURE0);
+		}
+
+		if (gl_mesh->fvar_data->offset_buffer) {
+			glActiveTexture(GL_TEXTURE30);
+			glBindTexture(GL_TEXTURE_BUFFER, gl_mesh->fvar_data->offset_buffer);
+			glActiveTexture(GL_TEXTURE0);
+		}
+
+		glUniform1i(glGetUniformLocation(program, "osd_fvar_count"),
+		            gl_mesh->fvar_data->fvar_width);
+		if (gl_mesh->fvar_data->channel_offsets.size() > 0 &&
+		    g_active_uv_index >= 0)
+		{
+			glUniform1i(glGetUniformLocation(program, "osd_active_uv_offset"),
+			            gl_mesh->fvar_data->channel_offsets[g_active_uv_index]);
+		} else {
+			glUniform1i(glGetUniformLocation(program, "osd_active_uv_offset"), 0);
+		}
+	} else {
+		glUniform1i(glGetUniformLocation(program, "osd_fvar_count"), 0);
+		glUniform1i(glGetUniformLocation(program, "osd_active_uv_offset"), 0);
 	}
-#endif
-
-	/* TODO(sergey): Bring face varying back. */
-	glUniform1i(glGetUniformLocation(program, "osd_fvar_count"),
-	            0/* * mesh->GetFVarCount()*/);
-
-	glUniform1i(glGetUniformLocation(program, "osd_active_uv_offset"),
-	            g_active_uv_index * 2);
 }
 
 }  /* namespace */
@@ -378,11 +410,69 @@ bool openSubdiv_osdGLDisplayInit(void)
 	static bool need_init = true;
 	static bool init_success = false;
 	if (need_init) {
-		g_flat_fill_solid_program = linkProgram("#define FLAT_SHADING\n");
-		g_flat_fill_texture2d_program = linkProgram("#define USE_TEXTURE_2D\n#define FLAT_SHADING\n");
-		g_smooth_fill_solid_program = linkProgram("#define SMOOTH_SHADING\n");
-		g_smooth_fill_texture2d_program = linkProgram("#define USE_TEXTURE_2D\n#define SMOOTH_SHADING\n");
-		g_wireframe_program = linkProgram("#define WIREFRAME\n");
+
+		if (!openSubdiv_supportGPUDisplay()) {
+			return false;
+		}
+
+		const char *version = "";
+		if (GLEW_VERSION_3_2) {
+			version = "#version 150 compatibility\n";
+		}
+		else if (GLEW_VERSION_3_1) {
+			version = "#version 140\n"
+			          "#extension GL_ARB_compatibility: enable\n";
+		}
+		else {
+			version = "#version 130\n";
+			/* minimum supported for OpenSubdiv */
+		}
+
+		g_flat_fill_solid_program = linkProgram(
+		        version,
+		        "#define USE_COLOR_MATERIAL\n"
+		        "#define USE_LIGHTING\n"
+		        "#define FLAT_SHADING\n");
+		g_flat_fill_texture2d_program = linkProgram(
+		        version,
+		        "#define USE_COLOR_MATERIAL\n"
+		        "#define USE_LIGHTING\n"
+		        "#define USE_TEXTURE_2D\n"
+		        "#define FLAT_SHADING\n");
+		g_smooth_fill_solid_program = linkProgram(
+		        version,
+		        "#define USE_COLOR_MATERIAL\n"
+		        "#define USE_LIGHTING\n"
+		        "#define SMOOTH_SHADING\n");
+		g_smooth_fill_texture2d_program = linkProgram(
+		        version,
+		        "#define USE_COLOR_MATERIAL\n"
+		        "#define USE_LIGHTING\n"
+		        "#define USE_TEXTURE_2D\n"
+		        "#define SMOOTH_SHADING\n");
+
+		g_flat_fill_solid_shadeless_program = linkProgram(
+		        version,
+		        "#define USE_COLOR_MATERIAL\n"
+		        "#define FLAT_SHADING\n");
+		g_flat_fill_texture2d_shadeless_program = linkProgram(
+		        version,
+		        "#define USE_COLOR_MATERIAL\n"
+		        "#define USE_TEXTURE_2D\n"
+		        "#define FLAT_SHADING\n");
+		g_smooth_fill_solid_shadeless_program = linkProgram(
+		        version,
+		        "#define USE_COLOR_MATERIAL\n"
+		        "#define SMOOTH_SHADING\n");
+		g_smooth_fill_texture2d_shadeless_program = linkProgram(
+		        version,
+		        "#define USE_COLOR_MATERIAL\n"
+		        "#define USE_TEXTURE_2D\n"
+		        "#define SMOOTH_SHADING\n");
+
+		g_wireframe_program = linkProgram(
+		        version,
+		        "#define WIREFRAME\n");
 
 		glGenBuffers(1, &g_lighting_ub);
 		glBindBuffer(GL_UNIFORM_BUFFER, g_lighting_ub);
@@ -404,30 +494,33 @@ void openSubdiv_osdGLDisplayDeinit(void)
 	if (g_lighting_ub != 0) {
 		glDeleteBuffers(1, &g_lighting_ub);
 	}
-	if (g_flat_fill_solid_program) {
-		glDeleteProgram(g_flat_fill_solid_program);
-	}
-	if (g_flat_fill_texture2d_program) {
-		glDeleteProgram(g_flat_fill_texture2d_program);
-	}
-	if (g_smooth_fill_solid_program) {
-		glDeleteProgram(g_flat_fill_solid_program);
-	}
-	if (g_smooth_fill_texture2d_program) {
-		glDeleteProgram(g_smooth_fill_texture2d_program);
-	}
-	if (g_wireframe_program) {
-		glDeleteProgram(g_wireframe_program);
-	}
+#define SAFE_DELETE_PROGRAM(program) \
+	do { \
+		if (program) { \
+			glDeleteProgram(program); \
+		} \
+	} while (false)
+
+	SAFE_DELETE_PROGRAM(g_flat_fill_solid_program);
+	SAFE_DELETE_PROGRAM(g_flat_fill_texture2d_program);
+	SAFE_DELETE_PROGRAM(g_smooth_fill_solid_program);
+	SAFE_DELETE_PROGRAM(g_smooth_fill_texture2d_program);
+	SAFE_DELETE_PROGRAM(g_flat_fill_solid_shadeless_program);
+	SAFE_DELETE_PROGRAM(g_flat_fill_texture2d_shadeless_program);
+	SAFE_DELETE_PROGRAM(g_smooth_fill_solid_shadeless_program);
+	SAFE_DELETE_PROGRAM(g_smooth_fill_texture2d_shadeless_program);
+	SAFE_DELETE_PROGRAM(g_wireframe_program);
+
+#undef SAFE_DELETE_PROGRAM
 }
 
 void openSubdiv_osdGLMeshDisplayPrepare(int use_osd_glsl,
                                         int active_uv_index)
 {
-	g_use_osd_glsl = use_osd_glsl != 0;
 	g_active_uv_index = active_uv_index;
+	g_use_osd_glsl = (use_osd_glsl != 0);
 
-	/* Update transformation matricies. */
+	/* Update transformation matrices. */
 	glGetFloatv(GL_PROJECTION_MATRIX, g_transform.projection_matrix);
 	glGetFloatv(GL_MODELVIEW_MATRIX, g_transform.model_view_matrix);
 
@@ -482,7 +575,7 @@ void openSubdiv_osdGLMeshDisplayPrepare(int use_osd_glsl,
 	}
 }
 
-static GLuint preapre_patchDraw(GLMeshInterface *mesh,
+static GLuint prepare_patchDraw(OpenSubdiv_GLMesh *gl_mesh,
                                 bool fill_quads)
 {
 	GLint program = 0;
@@ -497,51 +590,74 @@ static GLuint preapre_patchDraw(GLMeshInterface *mesh,
 				glUniform1i(location, model == GL_FLAT);
 			}
 
-			/* TODO(sergey): Bring this back. */
-#if 0
 			/* Face-vertex data */
-			if (mesh->GetDrawContext()->GetFvarDataTextureBuffer()) {
-				glActiveTexture(GL_TEXTURE31);
-				glBindTexture(GL_TEXTURE_BUFFER,
-				              mesh->GetDrawContext()->GetFvarDataTextureBuffer());
-				glActiveTexture(GL_TEXTURE0);
+			if (gl_mesh->fvar_data != NULL) {
+				if (gl_mesh->fvar_data->texture_buffer) {
+					glActiveTexture(GL_TEXTURE31);
+					glBindTexture(GL_TEXTURE_BUFFER,
+					              gl_mesh->fvar_data->texture_buffer);
+					glActiveTexture(GL_TEXTURE0);
+				}
+
+				if (gl_mesh->fvar_data->offset_buffer) {
+					glActiveTexture(GL_TEXTURE30);
+					glBindTexture(GL_TEXTURE_BUFFER,
+					              gl_mesh->fvar_data->offset_buffer);
+					glActiveTexture(GL_TEXTURE0);
+				}
 
 				GLint location = glGetUniformLocation(program, "osd_fvar_count");
 				if (location != -1) {
-					glUniform1i(location, mesh->GetFVarCount());
+					glUniform1i(location, gl_mesh->fvar_data->fvar_width);
 				}
 
 				location = glGetUniformLocation(program, "osd_active_uv_offset");
 				if (location != -1) {
-					glUniform1i(location,
-					            g_active_uv_index * 2);
+					if (gl_mesh->fvar_data->channel_offsets.size() > 0 &&
+					    g_active_uv_index >= 0)
+					{
+						glUniform1i(location,
+						            gl_mesh->fvar_data->channel_offsets[g_active_uv_index]);
+					} else {
+						glUniform1i(location, 0);
+					}
 				}
+			} else {
+				glUniform1i(glGetUniformLocation(program, "osd_fvar_count"), 0);
+				glUniform1i(glGetUniformLocation(program, "osd_active_uv_offset"), 0);
 			}
-#endif
-
 		}
 		return program;
 	}
 
 	if (fill_quads) {
 		int model;
-		GLboolean use_texture_2d;
+		GLboolean use_texture_2d, use_lighting;
 		glGetIntegerv(GL_SHADE_MODEL, &model);
 		glGetBooleanv(GL_TEXTURE_2D, &use_texture_2d);
+		glGetBooleanv(GL_LIGHTING, &use_lighting);
 		if (model == GL_FLAT) {
 			if (use_texture_2d) {
-				program = g_flat_fill_texture2d_program;
+				program = use_lighting
+				                  ? g_flat_fill_texture2d_program
+				                  : g_flat_fill_texture2d_shadeless_program;
 			}
 			else {
-				program = g_flat_fill_solid_program;
+				program = use_lighting
+				                  ? g_flat_fill_solid_program
+				                  : g_flat_fill_solid_shadeless_program;
 			}
 		}
 		else {
 			if (use_texture_2d) {
-				program = g_smooth_fill_texture2d_program;
+				program = use_lighting
+				                  ? g_smooth_fill_texture2d_program
+				                  : g_smooth_fill_texture2d_shadeless_program;
 			}
 			else {
-				program = g_smooth_fill_solid_program;
+				program = use_lighting
+				                  ? g_smooth_fill_solid_program
+				                  : g_smooth_fill_solid_shadeless_program;
 			}
 		}
 	}
@@ -550,7 +666,7 @@ static GLuint preapre_patchDraw(GLMeshInterface *mesh,
 		program = g_wireframe_program;
 	}
 
-	bindProgram(mesh, program);
+	bindProgram(gl_mesh, program);
 
 	return program;
 }
@@ -611,7 +727,7 @@ static void draw_partition_patches_range(GLMeshInterface *mesh,
 				const int num_draw_patches = std::min(num_remained_patches,
 				                                      num_block_patches - start_draw_patch);
 				perform_drawElements(program,
-				                     i,
+				                     i + start_draw_patch,
 				                     num_draw_patches * num_control_verts,
 				                     patch.GetIndexBase() + start_draw_patch * num_control_verts);
 				num_remained_patches -= num_draw_patches;
@@ -657,7 +773,7 @@ void openSubdiv_osdGLMeshDisplay(OpenSubdiv_GLMesh *gl_mesh,
 	}
 
 	/* Setup GLSL/OpenGL to draw patches in current context. */
-	GLuint program = preapre_patchDraw(mesh, fill_quads != 0);
+	GLuint program = prepare_patchDraw(gl_mesh, fill_quads != 0);
 
 	if (start_patch != -1) {
 		draw_partition_patches_range(mesh,
@@ -671,4 +787,24 @@ void openSubdiv_osdGLMeshDisplay(OpenSubdiv_GLMesh *gl_mesh,
 
 	/* Finish patch drawing by restoring all changes to the OpenGL context. */
 	finish_patchDraw(fill_quads != 0);
+}
+
+void openSubdiv_osdGLAllocFVar(OpenSubdiv_TopologyRefinerDescr *topology_refiner,
+                               OpenSubdiv_GLMesh *gl_mesh,
+                               const float *fvar_data)
+{
+	GLMeshInterface *mesh =
+		(GLMeshInterface *)(gl_mesh->descriptor);
+	gl_mesh->fvar_data = OBJECT_GUARDED_NEW(OpenSubdiv_GLMeshFVarData);
+	gl_mesh->fvar_data->Create(topology_refiner->osd_refiner,
+	                           mesh->GetFarPatchTable(),
+	                           2,
+	                           fvar_data);
+}
+
+void openSubdiv_osdGLDestroyFVar(OpenSubdiv_GLMesh *gl_mesh)
+{
+	if (gl_mesh->fvar_data != NULL) {
+		OBJECT_GUARDED_DELETE(gl_mesh->fvar_data, OpenSubdiv_GLMeshFVarData);
+	}
 }

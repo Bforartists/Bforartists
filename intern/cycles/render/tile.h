@@ -31,13 +31,12 @@ public:
 	int index;
 	int x, y, w, h;
 	int device;
-	bool rendering;
 
 	Tile()
 	{}
 
 	Tile(int index_, int x_, int y_, int w_, int h_, int device_)
-	: index(index_), x(x_), y(y_), w(w_), h(h_), device(device_), rendering(false) {}
+	: index(index_), x(x_), y(y_), w(w_), h(h_), device(device_) {}
 };
 
 /* Tile order */
@@ -48,7 +47,8 @@ enum TileOrder {
 	TILE_RIGHT_TO_LEFT = 1,
 	TILE_LEFT_TO_RIGHT = 2,
 	TILE_TOP_TO_BOTTOM = 3,
-	TILE_BOTTOM_TO_TOP = 4
+	TILE_BOTTOM_TO_TOP = 4,
+	TILE_HILBERT_SPIRAL = 5,
 };
 
 /* Tile Manager */
@@ -64,7 +64,13 @@ public:
 		int resolution_divider;
 		int num_tiles;
 		int num_rendered_tiles;
-		list<Tile> tiles;
+
+		/* Total samples over all pixels: Generally num_samples*num_pixels,
+		 * but can be higher due to the initial resolution division for previews. */
+		uint64_t total_pixel_samples;
+		/* This vector contains a list of tiles for every logical device in the session.
+		 * In each list, the tiles are sorted according to the tile order setting. */
+		vector<list<Tile> > tiles;
 	} state;
 
 	int num_samples;
@@ -78,8 +84,19 @@ public:
 	bool next();
 	bool next_tile(Tile& tile, int device = 0);
 	bool done();
-	
+
 	void set_tile_order(TileOrder tile_order_) { tile_order = tile_order_; }
+
+	/* ** Sample range rendering. ** */
+
+	/* Start sample in the range. */
+	int range_start_sample;
+
+	/* Number to samples in the rendering range. */
+	int range_num_samples;
+
+	/* Get number of actual samples to render. */
+	int get_num_effective_samples();
 protected:
 
 	void set_tiles();
@@ -109,17 +126,8 @@ protected:
 	 */
 	bool background;
 
-	/* splits image into tiles and assigns equal amount of tiles to every render device */
-	void gen_tiles_global();
-
-	/* slices image into as much pieces as how many devices are rendering this image */
-	void gen_tiles_sliced();
-
-	/* returns tiles for background render */
-	list<Tile>::iterator next_background_tile(int device, TileOrder tile_order);
-
-	/* returns first unhandled tile for viewport render */
-	list<Tile>::iterator next_viewport_tile(int device);
+	/* Generate tile list, return number of tiles. */
+	int gen_tiles(bool sliced);
 };
 
 CCL_NAMESPACE_END

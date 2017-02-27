@@ -23,7 +23,7 @@ set(MY_WC_HASH "unknown")
 if(EXISTS ${CMAKE_SOURCE_DIR}/.git/)
 	find_package(Git)
 	if(GIT_FOUND)
-		message(STATUS "-- Found Git: ${GIT_EXECUTABLE}")
+		message(STATUS "Found Git: ${GIT_EXECUTABLE}")
 		execute_process(COMMAND git rev-parse --short HEAD
 		                WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 		                OUTPUT_VARIABLE MY_WC_HASH
@@ -37,7 +37,22 @@ unset(MY_WC_HASH)
 
 # Force Package Name
 execute_process(COMMAND date "+%Y%m%d" OUTPUT_VARIABLE CPACK_DATE OUTPUT_STRIP_TRAILING_WHITESPACE)
-set(CPACK_PACKAGE_FILE_NAME ${PROJECT_NAME}-${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}-git${CPACK_DATE}.${BUILD_REV}-${CMAKE_SYSTEM_PROCESSOR})
+string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
+if (MSVC)
+	if ("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
+		set(PACKAGE_ARCH windows64)
+	else()
+		set(PACKAGE_ARCH windows32)
+	endif()
+else(MSVC)
+	set(PACKAGE_ARCH ${CMAKE_SYSTEM_PROCESSOR})
+endif()
+
+if (CPACK_OVERRIDE_PACKAGENAME)
+	set(CPACK_PACKAGE_FILE_NAME ${CPACK_OVERRIDE_PACKAGENAME}-${PACKAGE_ARCH})
+else()
+	set(CPACK_PACKAGE_FILE_NAME ${PROJECT_NAME_LOWER}-${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}-git${CPACK_DATE}.${BUILD_REV}-${PACKAGE_ARCH})
+endif()
 
 if(CMAKE_SYSTEM_NAME MATCHES "Linux")
 	# RPM packages
@@ -66,13 +81,14 @@ if(WIN32)
 	set(CPACK_PACKAGE_INSTALL_DIRECTORY "Blender Foundation/Blender")
 	set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "Blender Foundation/Blender")
 
-	set(CPACK_NSIS_MUI_ICON ${CMAKE_SOURCE_DIR}/source/icons/winblender.ico)
+	set(CPACK_NSIS_MUI_ICON ${CMAKE_SOURCE_DIR}/release/windows/icons/winblender.ico)
 	set(CPACK_NSIS_COMPRESSOR "/SOLID lzma")
 
 	set(CPACK_RESOURCE_FILE_LICENSE ${CMAKE_SOURCE_DIR}/release/text/GPL-license.txt)
-	set(CPACK_WIX_PRODUCT_ICON ${CMAKE_SOURCE_DIR}/source/icons/winblender.ico)
+	set(CPACK_WIX_PRODUCT_ICON ${CMAKE_SOURCE_DIR}/release/windows/icons/winblender.ico)
 	set(CPACK_WIX_UPGRADE_GUID "B767E4FD-7DE7-4094-B051-3AE62E13A17A")
 
+	set(CPACK_WIX_TEMPLATE ${LIBDIR}/package/installer_wix/WIX.template)
 	set(CPACK_WIX_UI_BANNER ${LIBDIR}/package/installer_wix/WIX_UI_BANNER.bmp)
 	set(CPACK_WIX_UI_DIALOG ${LIBDIR}/package/installer_wix/WIX_UI_DIALOG.bmp)
 
@@ -81,6 +97,8 @@ if(WIN32)
 endif()
 
 set(CPACK_PACKAGE_EXECUTABLES "blender" "blender")
+set(CPACK_CREATE_DESKTOP_LINKS "blender" "blender")
+
 include(CPack)
 
 # Target for build_archive.py script, to automatically pass along

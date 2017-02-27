@@ -51,6 +51,8 @@
 #include "BIF_gl.h"
 #include "BIF_glutil.h"
 
+#include "GPU_basic_shader.h"
+
 #include "UI_resources.h"
 #include "UI_view2d.h"
 
@@ -100,10 +102,10 @@ static void draw_spline_parents(MaskLayer *UNUSED(masklay), MaskSpline *spline)
 	if (!spline->tot_point)
 		return;
 
-	glColor3ub(0, 0, 0);
-	glEnable(GL_LINE_STIPPLE);
-	glLineStipple(1, 0xAAAA);
+	GPU_basic_shader_bind_enable(GPU_SHADER_LINE | GPU_SHADER_STIPPLE);
+	GPU_basic_shader_line_stipple(1, 0xAAAA);
 
+	glColor3ub(0, 0, 0);
 	glBegin(GL_LINES);
 
 	for (i = 0; i < spline->tot_point; i++) {
@@ -121,7 +123,7 @@ static void draw_spline_parents(MaskLayer *UNUSED(masklay), MaskSpline *spline)
 
 	glEnd();
 
-	glDisable(GL_LINE_STIPPLE);
+	GPU_basic_shader_bind_disable(GPU_SHADER_LINE | GPU_SHADER_STIPPLE);
 }
 #endif
 
@@ -197,7 +199,6 @@ static void draw_single_handle(const MaskLayer *mask_layer, const MaskSplinePoin
 		glVertex2fv(point_pos);
 		glVertex2fv(handle_pos);
 		glEnd();
-		glLineWidth(1);
 	}
 
 	switch (handle_type) {
@@ -213,6 +214,7 @@ static void draw_single_handle(const MaskLayer *mask_layer, const MaskSplinePoin
 			break;
 	}
 
+	glLineWidth(1);
 	glBegin(GL_LINES);
 	glVertex2fv(point_pos);
 	glVertex2fv(handle_pos);
@@ -387,8 +389,6 @@ static void draw_spline_points(const bContext *C, MaskLayer *masklay, MaskSpline
 		draw_circle(x, y, 6.0f, false, xscale, yscale);
 	}
 
-	glPointSize(1.0f);
-
 	if (is_smooth) {
 		glDisable(GL_LINE_SMOOTH);
 		glDisable(GL_BLEND);
@@ -457,7 +457,8 @@ static void mask_draw_curve_type(const bContext *C, MaskSpline *spline, float (*
 
 		case MASK_DT_DASH:
 		default:
-			glEnable(GL_LINE_STIPPLE);
+			GPU_basic_shader_bind_enable(GPU_SHADER_LINE | GPU_SHADER_STIPPLE);
+			GPU_basic_shader_line_stipple(3, 0xAAAA);
 
 #ifdef USE_XOR
 			glEnable(GL_COLOR_LOGIC_OP);
@@ -465,7 +466,6 @@ static void mask_draw_curve_type(const bContext *C, MaskSpline *spline, float (*
 #endif
 			mask_color_active_tint(rgb_tmp, rgb_spline, is_active);
 			glColor4ubv(rgb_tmp);
-			glLineStipple(3, 0xaaaa);
 			glEnableClientState(GL_VERTEX_ARRAY);
 			glVertexPointer(2, GL_FLOAT, 0, points);
 			glDrawArrays(draw_method, 0, tot_point);
@@ -475,10 +475,10 @@ static void mask_draw_curve_type(const bContext *C, MaskSpline *spline, float (*
 #endif
 			mask_color_active_tint(rgb_tmp, rgb_black, is_active);
 			glColor4ubv(rgb_tmp);
-			glLineStipple(3, 0x5555);
+			GPU_basic_shader_line_stipple(3, 0x5555);
 			glDrawArrays(draw_method, 0, tot_point);
 
-			glDisable(GL_LINE_STIPPLE);
+			GPU_basic_shader_bind_disable(GPU_SHADER_LINE | GPU_SHADER_STIPPLE);
 			break;
 
 
@@ -669,7 +669,7 @@ typedef struct ThreadedMaskRasterizeData {
 	int num_scanlines;
 } ThreadedMaskRasterizeData;
 
-static void mask_rasterize_func(TaskPool *pool, void *taskdata, int UNUSED(threadid))
+static void mask_rasterize_func(TaskPool * __restrict pool, void *taskdata, int UNUSED(threadid))
 {
 	ThreadedMaskRasterizeState *state = (ThreadedMaskRasterizeState *) BLI_task_pool_userdata(pool);
 	ThreadedMaskRasterizeData *data = (ThreadedMaskRasterizeData *) taskdata;

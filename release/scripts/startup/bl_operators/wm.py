@@ -1,4 +1,4 @@
-﻿# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -40,6 +40,12 @@ rna_path_prop = StringProperty(
 rna_reverse_prop = BoolProperty(
         name="Reverse",
         description="Cycle backwards",
+        default=False,
+        )
+
+rna_wrap_prop = BoolProperty(
+        name="Wrap",
+        description="Wrap back to the first/last values",
         default=False,
         )
 
@@ -125,7 +131,7 @@ def execute_context_assign(self, context):
 
 
 class BRUSH_OT_active_index_set(Operator):
-    """Set Brush Number\nSet active sculpt/paint brush from it's number"""
+    """Set active sculpt/paint brush from it's number"""
     bl_idname = "brush.active_index_set"
     bl_label = "Set Brush Number"
 
@@ -160,7 +166,7 @@ class BRUSH_OT_active_index_set(Operator):
 
 
 class WM_OT_context_set_boolean(Operator):
-    """Context Set Boolean\nSet a context value"""
+    """Set a context value"""
     bl_idname = "wm.context_set_boolean"
     bl_label = "Context Set Boolean"
     bl_options = {'UNDO', 'INTERNAL'}
@@ -176,7 +182,7 @@ class WM_OT_context_set_boolean(Operator):
 
 
 class WM_OT_context_set_int(Operator):  # same as enum
-    """Context Set\nSet a context value"""
+    """Set a context value"""
     bl_idname = "wm.context_set_int"
     bl_label = "Context Set"
     bl_options = {'UNDO', 'INTERNAL'}
@@ -193,7 +199,7 @@ class WM_OT_context_set_int(Operator):  # same as enum
 
 
 class WM_OT_context_scale_float(Operator):
-    """Context Scale Floa\nScale a float context value"""
+    """Scale a float context value"""
     bl_idname = "wm.context_scale_float"
     bl_label = "Context Scale Float"
     bl_options = {'UNDO', 'INTERNAL'}
@@ -221,7 +227,7 @@ class WM_OT_context_scale_float(Operator):
 
 
 class WM_OT_context_scale_int(Operator):
-    """Context Scale Int\nScale an int context value"""
+    """Scale an int context value"""
     bl_idname = "wm.context_scale_int"
     bl_label = "Context Scale Int"
     bl_options = {'UNDO', 'INTERNAL'}
@@ -264,7 +270,7 @@ class WM_OT_context_scale_int(Operator):
 
 
 class WM_OT_context_set_float(Operator):  # same as enum
-    """Context Set Float\nSet a context value"""
+    """Set a context value"""
     bl_idname = "wm.context_set_float"
     bl_label = "Context Set Float"
     bl_options = {'UNDO', 'INTERNAL'}
@@ -281,7 +287,7 @@ class WM_OT_context_set_float(Operator):  # same as enum
 
 
 class WM_OT_context_set_string(Operator):  # same as enum
-    """Context Set String\nSet a context value"""
+    """Set a context value"""
     bl_idname = "wm.context_set_string"
     bl_label = "Context Set String"
     bl_options = {'UNDO', 'INTERNAL'}
@@ -297,7 +303,7 @@ class WM_OT_context_set_string(Operator):  # same as enum
 
 
 class WM_OT_context_set_enum(Operator):
-    """Context Set Enum\nSet a context value"""
+    """Set a context value"""
     bl_idname = "wm.context_set_enum"
     bl_label = "Context Set Enum"
     bl_options = {'UNDO', 'INTERNAL'}
@@ -313,7 +319,7 @@ class WM_OT_context_set_enum(Operator):
 
 
 class WM_OT_context_set_value(Operator):
-    """Context Set Value\nSet a context value"""
+    """Set a context value"""
     bl_idname = "wm.context_set_value"
     bl_label = "Context Set Value"
     bl_options = {'UNDO', 'INTERNAL'}
@@ -334,7 +340,7 @@ class WM_OT_context_set_value(Operator):
 
 
 class WM_OT_context_toggle(Operator):
-    """Context Toggle\nToggle a context value"""
+    """Toggle a context value"""
     bl_idname = "wm.context_toggle"
     bl_label = "Context Toggle"
     bl_options = {'UNDO', 'INTERNAL'}
@@ -353,7 +359,7 @@ class WM_OT_context_toggle(Operator):
 
 
 class WM_OT_context_toggle_enum(Operator):
-    """Context Toggle Values\nToggle a context value"""
+    """Toggle a context value"""
     bl_idname = "wm.context_toggle_enum"
     bl_label = "Context Toggle Values"
     bl_options = {'UNDO', 'INTERNAL'}
@@ -391,7 +397,7 @@ class WM_OT_context_toggle_enum(Operator):
 
 
 class WM_OT_context_cycle_int(Operator):
-    """Context Int Cycle\nSet a context value (useful for cycling active material, """ \
+    """Set a context value (useful for cycling active material, """ \
     """vertex keys, groups, etc.)"""
     bl_idname = "wm.context_cycle_int"
     bl_label = "Context Int Cycle"
@@ -399,6 +405,7 @@ class WM_OT_context_cycle_int(Operator):
 
     data_path = rna_path_prop
     reverse = rna_reverse_prop
+    wrap = rna_wrap_prop
 
     def execute(self, context):
         data_path = self.data_path
@@ -413,26 +420,28 @@ class WM_OT_context_cycle_int(Operator):
 
         exec("context.%s = value" % data_path)
 
-        if value != eval("context.%s" % data_path):
-            # relies on rna clamping integers out of the range
-            if self.reverse:
-                value = (1 << 31) - 1
-            else:
-                value = -1 << 31
+        if self.wrap:
+            if value != eval("context.%s" % data_path):
+                # relies on rna clamping integers out of the range
+                if self.reverse:
+                    value = (1 << 31) - 1
+                else:
+                    value = -1 << 31
 
-            exec("context.%s = value" % data_path)
+                exec("context.%s = value" % data_path)
 
         return operator_path_undo_return(context, data_path)
 
 
 class WM_OT_context_cycle_enum(Operator):
-    """Context Enum Cycle\nToggle a context value"""
+    """Toggle a context value"""
     bl_idname = "wm.context_cycle_enum"
     bl_label = "Context Enum Cycle"
     bl_options = {'UNDO', 'INTERNAL'}
 
     data_path = rna_path_prop
     reverse = rna_reverse_prop
+    wrap = rna_wrap_prop
 
     def execute(self, context):
         data_path = self.data_path
@@ -460,15 +469,18 @@ class WM_OT_context_cycle_enum(Operator):
         enums = rna_struct.properties[rna_prop_str].enum_items.keys()
         orig_index = enums.index(orig_value)
 
-        # Have the info we need, advance to the next item
+        # Have the info we need, advance to the next item.
+        #
+        # When wrap's disabled we may set the value to its self,
+        # this is done to ensure update callbacks run.
         if self.reverse:
             if orig_index == 0:
-                advance_enum = enums[-1]
+                advance_enum = enums[-1] if self.wrap else enums[0]
             else:
                 advance_enum = enums[orig_index - 1]
         else:
             if orig_index == len(enums) - 1:
-                advance_enum = enums[0]
+                advance_enum = enums[0] if self.wrap else enums[-1]
             else:
                 advance_enum = enums[orig_index + 1]
 
@@ -478,7 +490,7 @@ class WM_OT_context_cycle_enum(Operator):
 
 
 class WM_OT_context_cycle_array(Operator):
-    """Context Array Cycle\nSet a context array value """ \
+    """Set a context array value """ \
     """(useful for cycling the active mesh edit mode)"""
     bl_idname = "wm.context_cycle_array"
     bl_label = "Context Array Cycle"
@@ -601,7 +613,7 @@ class WM_OT_operator_pie_enum(Operator):
 
 
 class WM_OT_context_set_id(Operator):
-    """Set Library ID\nSet a context value to an ID data-block"""
+    """Set a context value to an ID data-block"""
     bl_idname = "wm.context_set_id"
     bl_label = "Set Library ID"
     bl_options = {'UNDO', 'INTERNAL'}
@@ -644,11 +656,6 @@ doc_id = StringProperty(
         options={'HIDDEN'},
         )
 
-doc_new = StringProperty(
-        name="Edit Description",
-        maxlen=1024,
-        )
-
 data_path_iter = StringProperty(
         description="The data path relative to the context, must point to an iterable")
 
@@ -657,7 +664,7 @@ data_path_item = StringProperty(
 
 
 class WM_OT_context_collection_boolean_set(Operator):
-    """Context Collection Boolean Set\nSet boolean values for a collection of items"""
+    """Set boolean values for a collection of items"""
     bl_idname = "wm.context_collection_boolean_set"
     bl_label = "Context Collection Boolean Set"
     bl_options = {'UNDO', 'REGISTER', 'INTERNAL'}
@@ -716,7 +723,7 @@ class WM_OT_context_collection_boolean_set(Operator):
 
 
 class WM_OT_context_modal_mouse(Operator):
-    """Context Modal Mouse\nAdjust arbitrary values with mouse input"""
+    """Adjust arbitrary values with mouse input"""
     bl_idname = "wm.context_modal_mouse"
     bl_label = "Context Modal Mouse"
     bl_options = {'GRAB_CURSOR', 'BLOCKING', 'UNDO', 'INTERNAL'}
@@ -923,22 +930,29 @@ def _wm_doc_get_id(doc_id, do_url=True, url_prefix=""):
 
                 # detect if this is a inherited member and use that name instead
                 rna_parent = rna_class.bl_rna
-                rna_prop = rna_parent.properties[class_prop]
-                rna_parent = rna_parent.base
-                while rna_parent and rna_prop == rna_parent.properties.get(class_prop):
-                    class_name = rna_parent.identifier
+                rna_prop = rna_parent.properties.get(class_prop)
+                if rna_prop:
                     rna_parent = rna_parent.base
+                    while rna_parent and rna_prop == rna_parent.properties.get(class_prop):
+                        class_name = rna_parent.identifier
+                        rna_parent = rna_parent.base
 
-                if do_url:
-                    url = ("%s/bpy.types.%s.html#bpy.types.%s.%s" % (url_prefix, class_name, class_name, class_prop))
+                    if do_url:
+                        url = ("%s/bpy.types.%s.html#bpy.types.%s.%s" % (url_prefix, class_name, class_name, class_prop))
+                    else:
+                        rna = ("bpy.types.%s.%s" % (class_name, class_prop))
                 else:
-                    rna = ("bpy.types.%s.%s" % (class_name, class_prop))
+                    # We assume this is custom property, only try to generate generic url/rna_id...
+                    if do_url:
+                        url = ("%s/bpy.types.bpy_struct.html#bpy.types.bpy_struct.items" % (url_prefix,))
+                    else:
+                        rna = "bpy.types.bpy_struct"
 
     return url if do_url else rna
 
 
 class WM_OT_doc_view_manual(Operator):
-    """View Manual\nLoad online manual"""
+    """Load online manual"""
     bl_idname = "wm.doc_view_manual"
     bl_label = "View Manual"
 
@@ -1013,79 +1027,6 @@ class WM_OT_doc_view(Operator):
         return {'FINISHED'}
 
 
-'''
-class WM_OT_doc_edit(Operator):
-    """Edit online reference docs"""
-    bl_idname = "wm.doc_edit"
-    bl_label = "Edit Documentation"
-
-    doc_id = doc_id
-    doc_new = doc_new
-
-    _url = "http://www.mindrones.com/blender/svn/xmlrpc.php"
-
-    def _send_xmlrpc(self, data_dict):
-        print("sending data:", data_dict)
-
-        import xmlrpc.client
-        user = "blenderuser"
-        pwd = "blender>user"
-
-        docblog = xmlrpc.client.ServerProxy(self._url)
-        docblog.metaWeblog.newPost(1, user, pwd, data_dict, 1)
-
-    def execute(self, context):
-
-        doc_id = self.doc_id
-        doc_new = self.doc_new
-
-        class_name, class_prop = doc_id.split('.')
-
-        if not doc_new:
-            self.report({'ERROR'}, "No input given for '%s'" % doc_id)
-            return {'CANCELLED'}
-
-        # check if this is an operator
-        op_name = class_name.upper() + '_OT_' + class_prop
-        op_class = getattr(bpy.types, op_name, None)
-
-        # Upload this to the web server
-        upload = {}
-
-        if op_class:
-            rna = op_class.bl_rna
-            doc_orig = rna.description
-            if doc_orig == doc_new:
-                return {'RUNNING_MODAL'}
-
-            print("op - old:'%s' -> new:'%s'" % (doc_orig, doc_new))
-            upload["title"] = 'OPERATOR %s:%s' % (doc_id, doc_orig)
-        else:
-            rna = getattr(bpy.types, class_name).bl_rna
-            doc_orig = rna.properties[class_prop].description
-            if doc_orig == doc_new:
-                return {'RUNNING_MODAL'}
-
-            print("rna - old:'%s' -> new:'%s'" % (doc_orig, doc_new))
-            upload["title"] = 'RNA %s:%s' % (doc_id, doc_orig)
-
-        upload["description"] = doc_new
-
-        self._send_xmlrpc(upload)
-
-        return {'FINISHED'}
-
-    def draw(self, context):
-        layout = self.layout
-        layout.label(text="Descriptor ID: '%s'" % self.doc_id)
-        layout.prop(self, "doc_new", text="")
-
-    def invoke(self, context, event):
-        wm = context.window_manager
-        return wm.invoke_props_dialog(self, width=600)
-'''
-
-
 rna_path = StringProperty(
         name="Property Edit",
         description="Property data_path edit",
@@ -1117,6 +1058,10 @@ rna_max = FloatProperty(
         precision=3,
         )
 
+rna_use_soft_limits = BoolProperty(
+        name="Use Soft Limits",
+        )
+
 
 class WM_OT_properties_edit(Operator):
     bl_idname = "wm.properties_edit"
@@ -1129,9 +1074,20 @@ class WM_OT_properties_edit(Operator):
     value = rna_value
     min = rna_min
     max = rna_max
+    use_soft_limits = rna_use_soft_limits
+    soft_min = rna_min
+    soft_max = rna_max
     description = StringProperty(
             name="Tooltip",
             )
+
+    def _cmp_props_get(self):
+        # Changing these properties will refresh the UI
+        return {
+            "use_soft_limits": self.use_soft_limits,
+            "soft_range": (self.soft_min, self.soft_max),
+            "hard_range": (self.min, self.max),
+            }
 
     def execute(self, context):
         from rna_prop_ui import (
@@ -1180,8 +1136,15 @@ class WM_OT_properties_edit(Operator):
         prop_ui = rna_idprop_ui_prop_get(item, prop)
 
         if prop_type in {float, int}:
-            prop_ui["soft_min"] = prop_ui["min"] = prop_type(self.min)
-            prop_ui["soft_max"] = prop_ui["max"] = prop_type(self.max)
+            prop_ui["min"] = prop_type(self.min)
+            prop_ui["max"] = prop_type(self.max)
+
+            if self.use_soft_limits:
+                prop_ui["soft_min"] = prop_type(self.soft_min)
+                prop_ui["soft_max"] = prop_type(self.soft_max)
+            else:
+                prop_ui["soft_min"] = prop_type(self.min)
+                prop_ui["soft_max"] = prop_type(self.max)
 
         prop_ui["description"] = self.description
 
@@ -1242,8 +1205,61 @@ class WM_OT_properties_edit(Operator):
             self.max = prop_ui.get("max", 1000000000)
             self.description = prop_ui.get("description", "")
 
+            self.soft_min = prop_ui.get("soft_min", self.min)
+            self.soft_max = prop_ui.get("soft_max", self.max)
+            self.use_soft_limits = (
+                    self.min != self.soft_min or
+                    self.max != self.soft_max)
+
+        # store for comparison
+        self._cmp_props = self._cmp_props_get()
+
         wm = context.window_manager
         return wm.invoke_props_dialog(self)
+
+    def check(self, context):
+        cmp_props = self._cmp_props_get()
+        changed = False
+        if self._cmp_props != cmp_props:
+            if cmp_props["use_soft_limits"]:
+                if cmp_props["soft_range"] != self._cmp_props["soft_range"]:
+                    self.min = min(self.min, self.soft_min)
+                    self.max = max(self.max, self.soft_max)
+                    changed = True
+                if cmp_props["hard_range"] != self._cmp_props["hard_range"]:
+                    self.soft_min = max(self.min, self.soft_min)
+                    self.soft_max = min(self.max, self.soft_max)
+                    changed = True
+            else:
+                if cmp_props["soft_range"] != cmp_props["hard_range"]:
+                    self.soft_min = self.min
+                    self.soft_max = self.max
+                    changed = True
+
+            changed |= (cmp_props["use_soft_limits"] != self._cmp_props["use_soft_limits"])
+
+            if changed:
+                cmp_props = self._cmp_props_get()
+
+            self._cmp_props = cmp_props
+
+        return changed
+
+    def draw(self, context):
+        layout = self.layout
+        layout.prop(self, "property")
+        layout.prop(self, "value")
+        row = layout.row(align=True)
+        row.prop(self, "min")
+        row.prop(self, "max")
+
+        layout.prop(self, "use_soft_limits")
+
+        row = layout.row(align=True)
+        row.enabled = self.use_soft_limits
+        row.prop(self, "soft_min", text="Soft Min")
+        row.prop(self, "soft_max", text="Soft Max")
+        layout.prop(self, "description")
 
 
 class WM_OT_properties_add(Operator):
@@ -1272,7 +1288,10 @@ class WM_OT_properties_add(Operator):
 
             return prop_new
 
-        prop = unique_name(item.keys())
+        prop = unique_name(
+                {*item.keys(),
+                 *type(item).bl_rna.properties.keys(),
+                 })
 
         item[prop] = 1.0
         rna_idprop_ui_prop_update(item, prop)
@@ -1302,7 +1321,7 @@ class WM_OT_properties_context_change(Operator):
 
 
 class WM_OT_properties_remove(Operator):
-    """Remove Property\nInternal use (edit a property data_path)"""
+    """Internal use (edit a property data_path)"""
     bl_idname = "wm.properties_remove"
     bl_label = "Remove Property"
     bl_options = {'UNDO', 'INTERNAL'}
@@ -1378,18 +1397,35 @@ class WM_OT_appconfig_activate(Operator):
 
 
 class WM_OT_sysinfo(Operator):
-    """System Info\nGenerate System Info"""
+    """Generate system information, saved into a text file"""
+
     bl_idname = "wm.sysinfo"
-    bl_label = "System Info"
+    bl_label = "Save System Info"
+
+    filepath = StringProperty(
+            subtype='FILE_PATH',
+            options={'SKIP_SAVE'},
+            )
 
     def execute(self, context):
         import sys_info
-        sys_info.write_sysinfo(self)
+        sys_info.write_sysinfo(self.filepath)
         return {'FINISHED'}
+
+    def invoke(self, context, event):
+        import os
+
+        if not self.filepath:
+            self.filepath = os.path.join(
+                    os.path.expanduser("~"), "system-info.txt")
+
+        wm = context.window_manager
+        wm.fileselect_add(self)
+        return {'RUNNING_MODAL'}
 
 
 class WM_OT_copy_prev_settings(Operator):
-    """Copy Previous Settings\nCopy settings from previous version"""
+    """Copy settings from previous version"""
     bl_idname = "wm.copy_prev_settings"
     bl_label = "Copy Previous Settings"
 
@@ -1404,7 +1440,7 @@ class WM_OT_copy_prev_settings(Operator):
         if os.path.isdir(path_dst):
             self.report({'ERROR'}, "Target path %r exists" % path_dst)
         elif not os.path.isdir(path_src):
-            self.report({'ERROR'}, "Source path %r exists" % path_src)
+            self.report({'ERROR'}, "Source path %r does not exist" % path_src)
         else:
             shutil.copytree(path_src, path_dst, symlinks=True)
 
@@ -1423,7 +1459,7 @@ class WM_OT_copy_prev_settings(Operator):
 
 
 class WM_OT_blenderplayer_start(Operator):
-    """Start Game In Player\nLaunch the blender-player with the current blend-file"""
+    """Launch the blender-player with the current blend-file"""
     bl_idname = "wm.blenderplayer_start"
     bl_label = "Start Game In Player"
 
@@ -1738,16 +1774,16 @@ class WM_OT_operator_cheat_sheet(Operator):
 
 
 # -----------------------------------------------------------------------------
-# Addon Operators
+# Add-on Operators
 
 class WM_OT_addon_enable(Operator):
-    "Enable an addon"
+    "Enable an add-on"
     bl_idname = "wm.addon_enable"
-    bl_label = "Enable Addon"
+    bl_label = "Enable Add-on"
 
     module = StringProperty(
             name="Module",
-            description="Module name of the addon to enable",
+            description="Module name of the add-on to enable",
             )
 
     def execute(self, context):
@@ -1755,7 +1791,7 @@ class WM_OT_addon_enable(Operator):
 
         err_str = ""
 
-        def err_cb():
+        def err_cb(ex):
             import traceback
             nonlocal err_str
             err_str = traceback.format_exc()
@@ -1785,13 +1821,13 @@ class WM_OT_addon_enable(Operator):
 
 
 class WM_OT_addon_disable(Operator):
-    "Disable an addon"
+    "Disable an add-on"
     bl_idname = "wm.addon_disable"
-    bl_label = "Disable Addon"
+    bl_label = "Disable Add-on"
 
     module = StringProperty(
             name="Module",
-            description="Module name of the addon to disable",
+            description="Module name of the add-on to disable",
             )
 
     def execute(self, context):
@@ -1799,7 +1835,7 @@ class WM_OT_addon_disable(Operator):
 
         err_str = ""
 
-        def err_cb():
+        def err_cb(ex):
             import traceback
             nonlocal err_str
             err_str = traceback.format_exc()
@@ -1873,7 +1909,7 @@ class WM_OT_theme_install(Operator):
 
 
 class WM_OT_addon_refresh(Operator):
-    "Scan addon directories for new modules"
+    "Scan add-on directories for new modules"
     bl_idname = "wm.addon_refresh"
     bl_label = "Refresh"
 
@@ -1886,13 +1922,13 @@ class WM_OT_addon_refresh(Operator):
 
 
 class WM_OT_addon_install(Operator):
-    "Install an addon"
+    "Install an add-on"
     bl_idname = "wm.addon_install"
     bl_label = "Install from File..."
 
     overwrite = BoolProperty(
             name="Overwrite",
-            description="Remove existing addons with the same ID",
+            description="Remove existing add-ons with the same ID",
             default=True,
             )
     target = EnumProperty(
@@ -1951,7 +1987,7 @@ class WM_OT_addon_install(Operator):
                 path_addons = os.path.join(path_addons, "addons")
 
         if not path_addons:
-            self.report({'ERROR'}, "Failed to get addons path")
+            self.report({'ERROR'}, "Failed to get add-ons path")
             return {'CANCELLED'}
 
         if not os.path.isdir(path_addons):
@@ -1967,7 +2003,7 @@ class WM_OT_addon_install(Operator):
         pyfile_dir = os.path.dirname(pyfile)
         for addon_path in addon_utils.paths():
             if os.path.samefile(pyfile_dir, addon_path):
-                self.report({'ERROR'}, "Source file is in the addon search path: %r" % addon_path)
+                self.report({'ERROR'}, "Source file is in the add-on search path: %r" % addon_path)
                 return {'CANCELLED'}
         del addon_path
         del pyfile_dir
@@ -2051,13 +2087,13 @@ class WM_OT_addon_install(Operator):
 
 
 class WM_OT_addon_remove(Operator):
-    "Delete the addon from the file system"
+    "Delete the add-on from the file system"
     bl_idname = "wm.addon_remove"
-    bl_label = "Remove Addon"
+    bl_label = "Remove Add-on"
 
     module = StringProperty(
             name="Module",
-            description="Module name of the addon to remove",
+            description="Module name of the add-on to remove",
             )
 
     @staticmethod
@@ -2081,7 +2117,7 @@ class WM_OT_addon_remove(Operator):
 
         path, isdir = WM_OT_addon_remove.path_from_addon(self.module)
         if path is None:
-            self.report({'WARNING'}, "Addon path %r could not be found" % path)
+            self.report({'WARNING'}, "Add-on path %r could not be found" % path)
             return {'CANCELLED'}
 
         # in case its enabled
@@ -2100,7 +2136,7 @@ class WM_OT_addon_remove(Operator):
 
     # lame confirmation check
     def draw(self, context):
-        self.layout.label(text="Remove Addon: %r?" % self.module)
+        self.layout.label(text="Remove Add-on: %r?" % self.module)
         path, isdir = WM_OT_addon_remove.path_from_addon(self.module)
         self.layout.label(text="Path: %r" % path)
 
@@ -2110,14 +2146,14 @@ class WM_OT_addon_remove(Operator):
 
 
 class WM_OT_addon_expand(Operator):
-    "Display more information on this addon"
+    "Display information and preferences for this add-on"
     bl_idname = "wm.addon_expand"
     bl_label = ""
     bl_options = {'INTERNAL'}
 
     module = StringProperty(
             name="Module",
-            description="Module name of the addon to expand",
+            description="Module name of the add-on to expand",
             )
 
     def execute(self, context):
@@ -2129,5 +2165,34 @@ class WM_OT_addon_expand(Operator):
         if mod is not None:
             info = addon_utils.module_bl_info(mod)
             info["show_expanded"] = not info["show_expanded"]
+
+        return {'FINISHED'}
+
+class WM_OT_addon_userpref_show(Operator):
+    "Show add-on user preferences"
+    bl_idname = "wm.addon_userpref_show"
+    bl_label = ""
+    bl_options = {'INTERNAL'}
+
+    module = StringProperty(
+            name="Module",
+            description="Module name of the add-on to expand",
+            )
+
+    def execute(self, context):
+        import addon_utils
+
+        module_name = self.module
+
+        modules = addon_utils.modules(refresh=False)
+        mod = addon_utils.addons_fake_modules.get(module_name)
+        if mod is not None:
+            info = addon_utils.module_bl_info(mod)
+            info["show_expanded"] = True
+
+            bpy.context.user_preferences.active_section = 'ADDONS'
+            context.window_manager.addon_filter = 'All'
+            context.window_manager.addon_search = info["name"]
+            bpy.ops.screen.userpref_show('INVOKE_DEFAULT')
 
         return {'FINISHED'}

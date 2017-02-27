@@ -19,11 +19,11 @@
 bl_info = {
     "name": "Import Unreal Skeleton Mesh (.psk)/Animation Set (psa)",
     "author": "Darknet, flufy3d, camg188",
-    "version": (2, 2),
+    "version": (2, 2, 0),
     "blender": (2, 64, 0),
     "location": "File > Import > Skeleton Mesh (.psk)/Animation Set (psa)",
     "description": "Import Skeleleton Mesh/Animation Data",
-    "warning": "",
+    "warning": "may produce errors, fix in progress",
     "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.5/Py/"
                 "Scripts/Import-Export/Unreal_psk_psa",
     "category": "Import-Export",
@@ -1103,6 +1103,8 @@ class Panel_UDKImport(bpy.types.Panel):
     bl_idname = "OBJECT_PT_udk_import"
     bl_space_type = "VIEW_3D"
     bl_region_type = "TOOLS"
+    bl_category = "File I/O"
+    bl_context = "objectmode"
 
     filepath = StringProperty(
             subtype='FILE_PATH',

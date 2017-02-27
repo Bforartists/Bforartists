@@ -54,7 +54,8 @@ static void bm_bridge_splice_loops(BMesh *bm, LinkData *el_a, LinkData *el_b, co
 		interp_v3_v3v3(v_b->co, v_a->co, v_b->co, merge_factor);
 		BLI_assert(v_a != v_b);
 		BMO_slot_map_elem_insert(&op_weld, slot_targetmap, v_a, v_b);
-	} while ((el_b = el_b->next),
+	} while ((void)
+	         (el_b = el_b->next),
 	         (el_a = el_a->next));
 
 	BMO_op_exec(bm, &op_weld);
@@ -95,7 +96,8 @@ static float bm_edgeloop_offset_length(
 	BLI_assert(el_a->prev == NULL);  /* must be first */
 	do {
 		len += len_v3v3(((BMVert *)el_a->data)->co, ((BMVert *)el_b->data)->co);
-	} while ((el_b = el_b->next ? el_b->next : el_b_first),
+	} while ((void)
+	         (el_b = el_b->next ? el_b->next : el_b_first),
 	         (el_a = el_a->next) && (len < len_max));
 	return len;
 }
@@ -129,13 +131,13 @@ static void bm_face_edges_tag_out(BMesh *bm, BMFace *f)
 	BMLoop *l_iter, *l_first;
 	l_iter = l_first = BM_FACE_FIRST_LOOP(f);
 	do {
-		BMO_elem_flag_enable(bm, l_iter->e, EDGE_OUT);
+		BMO_edge_flag_enable(bm, l_iter->e, EDGE_OUT);
 	} while ((l_iter = l_iter->next) != l_first);
 }
 
 static bool bm_edge_test_cb(BMEdge *e, void *bm_v)
 {
-	return BMO_elem_flag_test((BMesh *)bm_v, e, EDGE_MARK);
+	return BMO_edge_flag_test((BMesh *)bm_v, e, EDGE_MARK);
 }
 
 static void bridge_loop_pair(
@@ -260,7 +262,7 @@ static void bridge_loop_pair(
 		if (bm->totface) {
 			struct BMEdgeLoopStore *estore_pair[2] = {el_store_a, el_store_b};
 			int i;
-			int winding_votes = 0;
+			int winding_votes[2] = {0, 0};
 			int winding_dir = 1;
 			for (i = 0; i < 2; i++, winding_dir = -winding_dir) {
 				LinkData *el;
@@ -269,22 +271,56 @@ static void bridge_loop_pair(
 					if (el_next) {
 						BMEdge *e = BM_edge_exists(el->data, el_next->data);
 						if (e && BM_edge_is_boundary(e)) {
-							winding_votes += ((e->l->v == el->data) ? winding_dir : -winding_dir);
+							winding_votes[i] += ((e->l->v == el->data) ? winding_dir : -winding_dir);
 						}
 					}
 				}
 			}
 
-			if (winding_votes < 0) {
-				BM_edgeloop_flip(bm, el_store_a);
-				BM_edgeloop_flip(bm, el_store_b);
+			if (winding_votes[0] || winding_votes[1]) {
+				bool flip[2] = {false, false};
+
+				/* for direction aligned loops we can't rely on the directly we have,
+				 * use the winding defined by the connected faces (see T48356). */
+				if (fabsf(dot_a) < eps) {
+					if (winding_votes[0] < 0) {
+						flip[0] = !flip[0];
+						winding_votes[0] *= -1;
+
+					}
+				}
+				if (fabsf(dot_b) < eps) {
+					if (winding_votes[1] < 0) {
+						flip[1] = !flip[1];
+						winding_votes[1] *= -1;
+					}
+				}
+
+				/* when both loops contradict the winding, flip them so surrounding geometry matches */
+				if ((winding_votes[0] + winding_votes[1]) < 0) {
+					flip[0] = !flip[0];
+					flip[1] = !flip[1];
+
+					/* valid but unused */
+#if 0
+					winding_votes[0] *= -1;
+					winding_votes[1] *= -1;
+#endif
+				}
+
+				if (flip[0]) {
+					BM_edgeloop_flip(bm, el_store_a);
+				}
+				if (flip[1]) {
+					BM_edgeloop_flip(bm, el_store_b);
+				}
 			}
 		}
 	}
 
 	if (el_store_a_len > el_store_b_len) {
 		el_store_b = BM_edgeloop_copy(el_store_b);
-		BM_edgeloop_expand(bm, el_store_b, el_store_a_len);
+		BM_edgeloop_expand(bm, el_store_b, el_store_a_len, false, NULL);
 		el_store_b_free = true;
 	}
 
@@ -362,34 +398,36 @@ static void bridge_loop_pair(
 
 			if (v_b != v_b_next) {
 				BMVert *v_arr[4] = {v_a, v_b, v_b_next, v_a_next};
-				if (BM_face_exists(v_arr, 4, &f) == false) {
+				f = BM_face_exists(v_arr, 4);
+				if (f == NULL) {
 					/* copy if loop data if its is missing on one ring */
 					f = BM_face_create_verts(bm, v_arr, 4, NULL, BM_CREATE_NOP, true);
 
 					l_iter = BM_FACE_FIRST_LOOP(f);
-					if (l_b)      BM_elem_attrs_copy(bm, bm, l_b,      l_iter); l_iter = l_iter->next;
-					if (l_b_next) BM_elem_attrs_copy(bm, bm, l_b_next, l_iter); l_iter = l_iter->next;
-					if (l_a_next) BM_elem_attrs_copy(bm, bm, l_a_next, l_iter); l_iter = l_iter->next;
-					if (l_a)      BM_elem_attrs_copy(bm, bm, l_a,      l_iter);
+					if (l_b)      { BM_elem_attrs_copy(bm, bm, l_b,      l_iter); } l_iter = l_iter->next;
+					if (l_b_next) { BM_elem_attrs_copy(bm, bm, l_b_next, l_iter); } l_iter = l_iter->next;
+					if (l_a_next) { BM_elem_attrs_copy(bm, bm, l_a_next, l_iter); } l_iter = l_iter->next;
+					if (l_a)      { BM_elem_attrs_copy(bm, bm, l_a,      l_iter); }
 				}
 			}
 			else {
 				BMVert *v_arr[3] = {v_a, v_b, v_a_next};
-				if (BM_face_exists(v_arr, 3, &f) == false) {
+				f = BM_face_exists(v_arr, 3);
+				if (f == NULL) {
 					/* fan-fill a triangle */
 					f = BM_face_create_verts(bm, v_arr, 3, NULL, BM_CREATE_NOP, true);
 
 					l_iter = BM_FACE_FIRST_LOOP(f);
-					if (l_b)      BM_elem_attrs_copy(bm, bm, l_b,      l_iter); l_iter = l_iter->next;
-					if (l_a_next) BM_elem_attrs_copy(bm, bm, l_a_next, l_iter); l_iter = l_iter->next;
-					if (l_a)      BM_elem_attrs_copy(bm, bm, l_a,      l_iter);
+					if (l_b)      { BM_elem_attrs_copy(bm, bm, l_b,      l_iter); } l_iter = l_iter->next;
+					if (l_a_next) { BM_elem_attrs_copy(bm, bm, l_a_next, l_iter); } l_iter = l_iter->next;
+					if (l_a)      { BM_elem_attrs_copy(bm, bm, l_a,      l_iter); }
 				}
 			}
 
 			if (f_example && (f_example != f)) {
 				BM_elem_attrs_copy(bm, bm, f_example, f);
 			}
-			BMO_elem_flag_enable(bm, f, FACE_OUT);
+			BMO_face_flag_enable(bm, f, FACE_OUT);
 			BM_elem_flag_enable(f, BM_ELEM_TAG);
 
 			/* tag all edges of the face, untag the loop edges after */
@@ -450,7 +488,7 @@ static void bridge_loop_pair(
 			BMOIter siter;
 			BMFace *f;
 			BMO_ITER (f, &siter, op_sub.slots_in, "faces", BM_FACE) {
-				BMO_elem_flag_enable(bm, f, FACE_OUT);
+				BMO_face_flag_enable(bm, f, FACE_OUT);
 				bm_face_edges_tag_out(bm, f);
 			}
 		}
@@ -462,7 +500,7 @@ static void bridge_loop_pair(
 			BMOIter siter;
 			BMFace *f;
 			BMO_ITER (f, &siter, op_sub.slots_out, "geom.out", BM_FACE) {
-				BMO_elem_flag_enable(bm, f, FACE_OUT);
+				BMO_face_flag_enable(bm, f, FACE_OUT);
 				bm_face_edges_tag_out(bm, f);
 			}
 		}
@@ -484,7 +522,7 @@ static void bridge_loop_pair(
 				if (el_next) {
 					if (el->data != el_next->data) {
 						BMEdge *e = BM_edge_exists(el->data, el_next->data);
-						BMO_elem_flag_disable(bm, e, EDGE_OUT);
+						BMO_edge_flag_disable(bm, e, EDGE_OUT);
 					}
 				}
 			}

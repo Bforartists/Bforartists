@@ -39,9 +39,11 @@
 /* Struct Declarations */
 
 struct ID;
+struct IDProperty;
 struct ListBase;
 struct ARegion;
 struct ScrArea;
+struct bScreen;
 struct wmEvent;
 struct wmWindow;
 struct wmOperator;
@@ -60,6 +62,7 @@ struct uiFontStyle;
 struct uiWidgetColors;
 struct Image;
 struct ImageUser;
+struct wmKeyConfig;
 struct wmOperatorType;
 struct uiWidgetColors;
 struct MTex;
@@ -158,13 +161,13 @@ enum {
 	UI_BUT_NODE_LINK       = (1 << 8),
 	UI_BUT_NODE_ACTIVE     = (1 << 9),
 	UI_BUT_DRAG_LOCK       = (1 << 10),
-	UI_BUT_DISABLED        = (1 << 11),
+	UI_BUT_DISABLED        = (1 << 11),  /* grayed out and uneditable */
 	UI_BUT_COLOR_LOCK      = (1 << 12),
 	UI_BUT_ANIMATED        = (1 << 13),
 	UI_BUT_ANIMATED_KEY    = (1 << 14),
 	UI_BUT_DRIVEN          = (1 << 15),
 	UI_BUT_REDALERT        = (1 << 16),
-	UI_BUT_INACTIVE        = (1 << 17),
+	UI_BUT_INACTIVE        = (1 << 17),  /* grayed out but still editable */
 	UI_BUT_LAST_ACTIVE     = (1 << 18),
 	UI_BUT_UNDO            = (1 << 19),
 	UI_BUT_IMMEDIATE       = (1 << 20),
@@ -176,9 +179,9 @@ enum {
 	UI_BUT_DRAG_MULTI      = (1 << 25),  /* edit this button as well as the active button (not just dragging) */
 	UI_BUT_SCA_LINK_GREY   = (1 << 26),  /* used to flag if sca links shoud be gray out */
 	UI_BUT_HAS_SEP_CHAR    = (1 << 27),  /* but->str contains UI_SEP_CHAR, used for key shortcuts */
-	UI_BUT_TIP_FORCE       = (1 << 28),  /* force show tooltips when holding option/alt if U's USER_TOOLTIPS is off */
+	UI_BUT_UPDATE_DELAY    = (1 << 28),  /* don't run updates while dragging (needed in rare cases). */
 	UI_BUT_TEXTEDIT_UPDATE = (1 << 29),  /* when widget is in textedit mode, update value on each char stroke */
-	UI_BUT_SEARCH_UNLINK   = (1 << 30),  /* show unlink for search button */
+	UI_BUT_VALUE_CLEAR     = (1 << 30),  /* show 'x' icon to clear/unlink value of text or search button */
 };
 
 #define UI_PANEL_WIDTH          340
@@ -203,6 +206,12 @@ enum {
 	UI_BUT_ALIGN_RIGHT       = (1 << 16),
 	UI_BUT_ALIGN_DOWN        = (1 << 17),
 	UI_BUT_ALIGN             = (UI_BUT_ALIGN_TOP | UI_BUT_ALIGN_LEFT | UI_BUT_ALIGN_RIGHT | UI_BUT_ALIGN_DOWN),
+
+	/* Warning - HACK! Needed for buttons which are not TOP/LEFT aligned, but have some top/left corner stitched to some
+	 *                 other TOP/LEFT-aligned button, because of 'corrective' hack in widget_roundbox_set()... */
+	UI_BUT_ALIGN_STITCH_TOP  = (1 << 18),
+	UI_BUT_ALIGN_STITCH_LEFT = (1 << 19),
+	UI_BUT_ALIGN_ALL         = (UI_BUT_ALIGN | UI_BUT_ALIGN_STITCH_TOP | UI_BUT_ALIGN_STITCH_LEFT),
 };
 
 /* scale fixed button widths by this to account for DPI */
@@ -345,6 +354,7 @@ typedef void (*uiButHandleFunc)(struct bContext *C, void *arg1, void *arg2);
 typedef void (*uiButHandleRenameFunc)(struct bContext *C, void *arg, char *origstr);
 typedef void (*uiButHandleNFunc)(struct bContext *C, void *argN, void *arg2);
 typedef int (*uiButCompleteFunc)(struct bContext *C, char *str, void *arg);
+typedef struct ARegion *(*uiButSearchCreateFunc)(struct bContext *C, struct ARegion *butregion, uiBut *but);
 typedef void (*uiButSearchFunc)(const struct bContext *C, void *arg, const char *str, uiSearchItems *items);
 /* Must return allocated string. */
 typedef char *(*uiButToolTipFunc)(struct bContext *C, void *argN, const char *tip);
@@ -355,6 +365,13 @@ typedef void (*uiBlockHandleFunc)(struct bContext *C, void *arg, int event);
 
 typedef void (*uiMenuCreateFunc)(struct bContext *C, struct uiLayout *layout, void *arg1);
 typedef void (*uiMenuHandleFunc)(struct bContext *C, void *arg, int event);
+/**
+ * Used for cycling menu values without opening the menu (Ctrl-Wheel).
+ * \param direction: forward or backwards [1 / -1].
+ * \param arg1: uiBut.poin (as with #uiMenuCreateFunc).
+ * \return true when the button was changed.
+ */
+typedef bool (*uiMenuStepFunc)(struct bContext *C, int direction, void *arg1);
 
 /* Popup Menus
  *
@@ -365,12 +382,18 @@ typedef void (*uiMenuHandleFunc)(struct bContext *C, void *arg, int event);
 
 typedef struct uiPopupMenu uiPopupMenu;
 
-struct uiPopupMenu *UI_popup_menu_begin(struct bContext *C, const char *title, int icon) ATTR_NONNULL();
+uiPopupMenu *UI_popup_menu_begin(
+        struct bContext *C, const char *title, int icon) ATTR_NONNULL();
+uiPopupMenu *UI_popup_menu_begin_ex(
+        struct bContext *C, const char *title, const char *block_name,
+        int icon) ATTR_NONNULL();
 void UI_popup_menu_end(struct bContext *C, struct uiPopupMenu *head);
 struct uiLayout *UI_popup_menu_layout(uiPopupMenu *head);
 
 void UI_popup_menu_reports(struct bContext *C, struct ReportList *reports) ATTR_NONNULL();
 int UI_popup_menu_invoke(struct bContext *C, const char *idname, struct ReportList *reports) ATTR_NONNULL(1, 2);
+
+void UI_popup_menu_retval_set(const uiBlock *block, const int retval, const bool enable);
 
 /* Pie menus */
 typedef struct uiPieMenu uiPieMenu;
@@ -478,6 +501,7 @@ bool    UI_but_active_drop_color(struct bContext *C);
 
 void    UI_but_flag_enable(uiBut *but, int flag);
 void    UI_but_flag_disable(uiBut *but, int flag);
+bool    UI_but_flag_is_set(uiBut *but, int flag);
 
 void    UI_but_drawflag_enable(uiBut *but, int flag);
 void    UI_but_drawflag_disable(uiBut *but, int flag);
@@ -623,8 +647,7 @@ void UI_but_string_info_get(struct bContext *C, uiBut *but, ...) ATTR_SENTINEL(0
 #define UI_ID_AUTO_NAME     (1 << 7)
 #define UI_ID_FAKE_USER     (1 << 8)
 #define UI_ID_PIN           (1 << 9)
-#define UI_ID_BROWSE_RENDER (1 << 10)
-#define UI_ID_PREVIEWS      (1 << 11)
+#define UI_ID_PREVIEWS      (1 << 10)
 #define UI_ID_FULL          (UI_ID_RENAME | UI_ID_BROWSE | UI_ID_ADD_NEW | UI_ID_OPEN | UI_ID_ALONE | UI_ID_DELETE | UI_ID_LOCAL)
 
 int UI_icon_from_id(struct ID *id);
@@ -645,7 +668,7 @@ uiBut *uiDefKeyevtButS(uiBlock *block, int retval, const char *str, int x, int y
 uiBut *uiDefHotKeyevtButS(uiBlock *block, int retval, const char *str, int x, int y, short width, short height, short *keypoin, short *modkeypoin, const char *tip);
 
 uiBut *uiDefSearchBut(uiBlock *block, void *arg, int retval, int icon, int maxlen, int x, int y, short width, short height, float a1, float a2, const char *tip);
-uiBut *uiDefSearchButO_ptr(uiBlock *block, struct wmOperatorType *ot, IDProperty *properties,
+uiBut *uiDefSearchButO_ptr(uiBlock *block, struct wmOperatorType *ot, struct IDProperty *properties,
                            void *arg, int retval, int icon, int maxlen, int x, int y,
                            short width, short height, float a1, float a2, const char *tip);
 
@@ -665,7 +688,9 @@ uiBut *UI_block_links_find_inlink(uiBlock *block, void *poin);
 /* use inside searchfunc to add items */
 bool    UI_search_item_add(uiSearchItems *items, const char *name, void *poin, int iconid);
 /* bfunc gets search item *poin as arg2, or if NULL the old string */
-void    UI_but_func_search_set(uiBut *but,        uiButSearchFunc sfunc, void *arg1, uiButHandleFunc bfunc, void *active);
+void    UI_but_func_search_set(
+        uiBut *but, uiButSearchCreateFunc cfunc, uiButSearchFunc sfunc,
+        void *arg1, uiButHandleFunc bfunc, void *active);
 /* height in pixels, it's using hardcoded values still */
 int     UI_searchbox_size_y(void);
 int     UI_searchbox_size_x(void);
@@ -688,7 +713,10 @@ void    UI_but_func_drawextra_set(
         void (*func)(const struct bContext *C, void *, void *, void *, struct rcti *rect),
         void *arg1, void *arg2);
 
+void    UI_but_func_menu_step_set(uiBut *but, uiMenuStepFunc func);
+
 void    UI_but_func_tooltip_set(uiBut *but, uiButToolTipFunc func, void *argN);
+void    UI_but_tooltip_refresh(struct bContext *C, uiBut *but);
 void    UI_but_tooltip_timer_remove(struct bContext *C, uiBut *but);
 
 bool UI_textbutton_activate_rna(const struct bContext *C, struct ARegion *ar,
@@ -759,6 +787,7 @@ void UI_popup_handlers_remove_all(struct bContext *C, struct ListBase *handlers)
 void UI_init(void);
 void UI_init_userdef(void);
 void UI_reinit_font(void);
+void UI_reinit_gl_state(void);
 void UI_exit(void);
 
 /* Layout
@@ -919,6 +948,7 @@ void uiTemplateReportsBanner(uiLayout *layout, struct bContext *C);
 void uiTemplateKeymapItemProperties(uiLayout *layout, struct PointerRNA *ptr);
 void uiTemplateComponentMenu(uiLayout *layout, struct PointerRNA *ptr, const char *propname, const char *name);
 void uiTemplateNodeSocket(uiLayout *layout, struct bContext *C, float *color);
+void uiTemplateCacheFile(uiLayout *layout, struct bContext *C, struct PointerRNA *ptr, const char *propname);
 
 /* Default UIList class name, keep in sync with its declaration in bl_ui/__init__.py */
 #define UI_UL_DEFAULT_CLASS_NAME "UI_UL_list"
@@ -951,7 +981,7 @@ void uiItemIntO(uiLayout *layout, const char *name, int icon, const char *opname
 void uiItemFloatO(uiLayout *layout, const char *name, int icon, const char *opname, const char *propname, float value);
 void uiItemStringO(uiLayout *layout, const char *name, int icon, const char *opname, const char *propname, const char *value);
 
-PointerRNA uiItemFullO_ptr(uiLayout *layout, struct wmOperatorType *ot, const char *name, int icon, IDProperty *properties, int context, int flag);
+PointerRNA uiItemFullO_ptr(uiLayout *layout, struct wmOperatorType *ot, const char *name, int icon, struct IDProperty *properties, int context, int flag);
 PointerRNA uiItemFullO(uiLayout *layout, const char *idname, const char *name, int icon, struct IDProperty *properties, int context, int flag);
 
 void uiItemR(uiLayout *layout, struct PointerRNA *ptr, const char *propname, int flag, const char *name, int icon);
@@ -961,7 +991,13 @@ void uiItemEnumR(uiLayout *layout, const char *name, int icon, struct PointerRNA
 void uiItemEnumR_string(uiLayout *layout, struct PointerRNA *ptr, const char *propname, const char *value, const char *name, int icon);
 void uiItemsEnumR(uiLayout *layout, struct PointerRNA *ptr, const char *propname);
 void uiItemPointerR(uiLayout *layout, struct PointerRNA *ptr, const char *propname, struct PointerRNA *searchptr, const char *searchpropname, const char *name, int icon);
-void uiItemsFullEnumO(uiLayout *layout, const char *opname, const char *propname, struct IDProperty *properties, int context, int flag);
+void uiItemsFullEnumO(
+        uiLayout *layout, const char *opname, const char *propname,
+        struct IDProperty *properties, int context, int flag);
+void uiItemsFullEnumO_items(
+        uiLayout *layout, struct wmOperatorType *ot, PointerRNA ptr, PropertyRNA *prop,
+        IDProperty *properties, int context, int flag,
+        const EnumPropertyItem *item_array, int totitem);
 
 void uiItemL(uiLayout *layout, const char *name, int icon); /* label */
 void uiItemLDrag(uiLayout *layout, struct PointerRNA *ptr, const char *name, int icon); /* label icon for dragging */
@@ -980,7 +1016,9 @@ typedef struct uiDragColorHandle {
 	bool gamma_corrected;
 } uiDragColorHandle;
 
-void ED_button_operatortypes(void);
+void ED_operatortypes_ui(void);
+void ED_keymap_ui(struct wmKeyConfig *keyconf);
+
 void UI_drop_color_copy(struct wmDrag *drag, struct wmDropBox *drop);
 int UI_drop_color_poll(struct bContext *C, struct wmDrag *drag, const struct wmEvent *event);
 
@@ -990,12 +1028,18 @@ bool UI_context_copy_to_selected_list(
 
 /* Helpers for Operators */
 uiBut *UI_context_active_but_get(const struct bContext *C);
-void UI_context_active_but_prop_get(const struct bContext *C, struct PointerRNA *ptr, struct PropertyRNA **prop, int *index);
+uiBut *UI_context_active_but_prop_get(
+        const struct bContext *C,
+        struct PointerRNA *r_ptr, struct PropertyRNA **r_prop, int *r_index);
 void UI_context_active_but_prop_handle(struct bContext *C);
 struct wmOperator *UI_context_active_operator_get(const struct bContext *C);
 void UI_context_update_anim_flag(const struct bContext *C);
-void UI_context_active_but_prop_get_filebrowser(const struct bContext *C, struct PointerRNA *r_ptr, struct PropertyRNA **r_prop, bool *r_is_undo);
-void UI_context_active_but_prop_get_templateID(struct bContext *C, struct PointerRNA *ptr, struct PropertyRNA **prop);
+void UI_context_active_but_prop_get_filebrowser(
+        const struct bContext *C,
+        struct PointerRNA *r_ptr, struct PropertyRNA **r_prop, bool *r_is_undo);
+void UI_context_active_but_prop_get_templateID(
+        struct bContext *C,
+        struct PointerRNA *r_ptr, struct PropertyRNA **r_prop);
 
 /* Styled text draw */
 void UI_fontstyle_set(const struct uiFontStyle *fs);

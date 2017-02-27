@@ -43,6 +43,9 @@ struct wmEvent;
 struct wmKeyConfig;
 struct wmKeyMap;
 struct wmOperatorType;
+struct Main;
+struct SnapObjectContext;
+struct SnapObjectParams;
 
 void transform_keymap_for_space(struct wmKeyConfig *keyconf, struct wmKeyMap *keymap, int spaceid);
 void transform_operatortypes(void);
@@ -94,7 +97,6 @@ enum TfmMode {
 #define CTX_NO_PET          (1 << 2)
 #define CTX_NO_MIRROR       (1 << 3)
 #define CTX_AUTOCONFIRM     (1 << 4)
-#define CTX_NDOF            (1 << 5)
 #define CTX_MOVIECLIP       (1 << 6)
 #define CTX_MASK            (1 << 7)
 #define CTX_PAINT_CURVE     (1 << 8)
@@ -110,6 +112,7 @@ struct TransInfo;
 struct Base;
 struct Scene;
 struct Object;
+struct wmOperator;
 
 /* UNUSED */
 // int BIF_snappingSupported(struct Object *obedit);
@@ -156,43 +159,40 @@ void BIF_draw_manipulator(const struct bContext *C);
 
 /* Snapping */
 
-
-typedef struct DepthPeel {
-	struct DepthPeel *next, *prev;
-
-	float depth;
-	float p[3];
-	float no[3];
-	struct Object *ob;
-	int flag;
-} DepthPeel;
-
-struct ListBase;
-
-typedef enum SnapMode {
+typedef enum SnapSelect {
 	SNAP_ALL = 0,
 	SNAP_NOT_SELECTED = 1,
-	SNAP_NOT_OBEDIT = 2
-} SnapMode;
+	SNAP_NOT_ACTIVE = 2,
+} SnapSelect;
 
 #define SNAP_MIN_DISTANCE 30
-#define TRANSFORM_DIST_MAX_RAY (FLT_MAX / 2.0f)
 
-bool peelObjectsTransForm(struct TransInfo *t, struct ListBase *depth_peels, const float mval[2], SnapMode mode);
-bool peelObjectsContext(struct bContext *C, struct ListBase *depth_peels, const float mval[2], SnapMode mode);
-bool snapObjectsTransform(struct TransInfo *t, const float mval[2], float *r_dist_px, float r_loc[3], float r_no[3], SnapMode mode);
-bool snapObjectsContext(struct bContext *C, const float mval[2], float *r_dist_px, float r_loc[3], float r_no[3], SnapMode mode);
-/* taks args for all settings */
-bool snapObjectsEx(struct Scene *scene, struct Base *base_act, struct View3D *v3d, struct ARegion *ar, struct Object *obedit, short snap_mode,
-                   const float mval[2], float *r_dist_px,
-                   float r_loc[3], float r_no[3], float *r_ray_dist, SnapMode mode);
-bool snapObjectsRayEx(struct Scene *scene, struct Base *base_act, struct View3D *v3d, struct ARegion *ar, struct Object *obedit, short snap_mode,
-                      struct Object **r_ob, float r_obmat[4][4],
-                      const float ray_start[3], const float ray_normal[3], float *r_ray_dist,
-                      const float mval[2], float *r_dist_px, float r_loc[3], float r_no[3], SnapMode mode);
+bool peelObjectsTransform(
+        struct TransInfo *t,
+        const float mval[2],
+        const bool use_peel_object,
+        /* return args */
+        float r_loc[3], float r_no[3], float *r_thickness);
+bool peelObjectsSnapContext(
+        struct SnapObjectContext *sctx,
+        const float mval[2],
+        const struct SnapObjectParams *params,
+        const bool use_peel_object,
+        /* return args */
+        float r_loc[3], float r_no[3], float *r_thickness);
 
-bool snapNodesTransform(struct TransInfo *t, const int mval[2], float *r_dist_px, float r_loc[2], char *r_node_border, SnapMode mode);
-bool snapNodesContext(struct bContext *C, const int mval[2], float *r_dist_px, float r_loc[2], char *r_node_border, SnapMode mode);
+bool snapObjectsTransform(
+        struct TransInfo *t, const float mval[2],
+        float *dist_px,
+        /* return args */
+        float r_loc[3], float r_no[3]);
+bool snapNodesTransform(
+        struct TransInfo *t, const int mval[2], SnapSelect snap_select,
+        /* return args */
+        float r_loc[2], float *r_dist_px, char *r_node_border);
+bool snapNodesContext(
+        struct bContext *C, const int mval[2], SnapSelect snap_select,
+        /* return args */
+        float r_loc[2], float *r_dist_px, char *r_node_border);
 
-#endif
-
+#endif  /* __ED_TRANSFORM_H__ */

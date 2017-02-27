@@ -98,12 +98,12 @@ ModifierData *ED_object_modifier_add(ReportList *reports, Main *bmain, Scene *sc
 	ModifierData *md = NULL, *new_md = NULL;
 	const ModifierTypeInfo *mti = modifierType_getInfo(type);
 	
-	/* only geometry objects should be able to get modifiers [#25291] */
-	if (!ELEM(ob->type, OB_MESH, OB_CURVE, OB_SURF, OB_FONT, OB_LATTICE)) {
+	/* Check compatibility of modifier [T25291, T50373]. */
+	if (!BKE_object_support_modifier_type_check(ob, type)) {
 		BKE_reportf(reports, RPT_WARNING, "Modifiers cannot be added to object '%s'", ob->id.name + 2);
 		return NULL;
 	}
-	
+
 	if (mti->flags & eModifierTypeFlag_Single) {
 		if (modifiers_findByType(ob, type)) {
 			BKE_report(reports, RPT_WARNING, "Only one modifier of this type is allowed");
@@ -324,6 +324,7 @@ static bool object_modifier_remove(Main *bmain, Object *ob, ModifierData *md,
 
 	BLI_remlink(&ob->modifiers, md);
 	modifier_free(md);
+	BKE_object_free_derived_caches(ob);
 
 	return 1;
 }
@@ -709,6 +710,8 @@ int ED_object_modifier_apply(ReportList *reports, Scene *scene, Object *ob, Modi
 	BLI_remlink(&ob->modifiers, md);
 	modifier_free(md);
 
+	BKE_object_free_derived_caches(ob);
+
 	return 1;
 }
 
@@ -749,10 +752,10 @@ static EnumPropertyItem *modifier_add_itemf(bContext *C, PointerRNA *UNUSED(ptr)
 	int totitem = 0, a;
 	
 	if (!ob)
-		return modifier_type_items;
+		return rna_enum_object_modifier_type_items;
 
-	for (a = 0; modifier_type_items[a].identifier; a++) {
-		md_item = &modifier_type_items[a];
+	for (a = 0; rna_enum_object_modifier_type_items[a].identifier; a++) {
+		md_item = &rna_enum_object_modifier_type_items[a];
 
 		if (md_item->identifier[0]) {
 			mti = modifierType_getInfo(md_item->value);
@@ -802,7 +805,7 @@ void OBJECT_OT_modifier_add(wmOperatorType *ot)
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 	
 	/* properties */
-	prop = RNA_def_enum(ot->srna, "type", modifier_type_items, eModifierType_Subsurf, "Type", "");
+	prop = RNA_def_enum(ot->srna, "type", rna_enum_object_modifier_type_items, eModifierType_Subsurf, "Type", "");
 	RNA_def_enum_funcs(prop, modifier_add_itemf);
 	ot->prop = prop;
 }
@@ -814,9 +817,9 @@ int edit_modifier_poll_generic(bContext *C, StructRNA *rna_type, int obtype_flag
 	PointerRNA ptr = CTX_data_pointer_get_type(C, "modifier", rna_type);
 	Object *ob = (ptr.id.data) ? ptr.id.data : ED_object_active_context(C);
 	
-	if (!ob || ob->id.lib) return 0;
+	if (!ob || ID_IS_LINKED_DATABLOCK(ob)) return 0;
 	if (obtype_flag && ((1 << ob->type) & obtype_flag) == 0) return 0;
-	if (ptr.id.data && ((ID *)ptr.id.data)->lib) return 0;
+	if (ptr.id.data && ID_IS_LINKED_DATABLOCK(ptr.id.data)) return 0;
 	
 	return 1;
 }
@@ -1355,8 +1358,9 @@ void OBJECT_OT_multires_external_save(wmOperatorType *ot)
 	/* flags */
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_INTERNAL;
 
-	WM_operator_properties_filesel(ot, FILE_TYPE_FOLDER | FILE_TYPE_BTX, FILE_SPECIAL, FILE_SAVE,
-	                               WM_FILESEL_FILEPATH | WM_FILESEL_RELPATH, FILE_DEFAULTDISPLAY, FILE_SORT_ALPHA);
+	WM_operator_properties_filesel(
+	        ot, FILE_TYPE_FOLDER | FILE_TYPE_BTX, FILE_SPECIAL, FILE_SAVE,
+	        WM_FILESEL_FILEPATH | WM_FILESEL_RELPATH, FILE_DEFAULTDISPLAY, FILE_SORT_ALPHA);
 	edit_modifier_properties(ot);
 }
 
@@ -1456,7 +1460,7 @@ static int skin_edit_poll(bContext *C)
 	        edit_modifier_poll_generic(C, &RNA_SkinModifier, (1 << OB_MESH)));
 }
 
-static void skin_root_clear(BMesh *bm, BMVert *bm_vert, GSet *visited)
+static void skin_root_clear(BMVert *bm_vert, GSet *visited, const int cd_vert_skin_offset)
 {
 	BMEdge *bm_edge;
 	BMIter bm_iter;
@@ -1464,16 +1468,13 @@ static void skin_root_clear(BMesh *bm, BMVert *bm_vert, GSet *visited)
 	BM_ITER_ELEM (bm_edge, &bm_iter, bm_vert, BM_EDGES_OF_VERT) {
 		BMVert *v2 = BM_edge_other_vert(bm_edge, bm_vert);
 
-		if (!BLI_gset_haskey(visited, v2)) {
-			MVertSkin *vs = CustomData_bmesh_get(&bm->vdata,
-			                                     v2->head.data,
-			                                     CD_MVERT_SKIN);
+		if (BLI_gset_add(visited, v2)) {
+			MVertSkin *vs = BM_ELEM_CD_GET_VOID_P(v2, cd_vert_skin_offset);
 
 			/* clear vertex root flag and add to visited set */
 			vs->flag &= ~MVERT_SKIN_ROOT;
-			BLI_gset_insert(visited, v2);
 
-			skin_root_clear(bm, v2, visited);
+			skin_root_clear(v2, visited, cd_vert_skin_offset);
 		}
 	}
 }
@@ -1483,6 +1484,7 @@ static int skin_root_mark_exec(bContext *C, wmOperator *UNUSED(op))
 	Object *ob = CTX_data_edit_object(C);
 	BMEditMesh *em = BKE_editmesh_from_object(ob);
 	BMesh *bm = em->bm;
+	const int cd_vert_skin_offset = CustomData_get_offset(&bm->vdata, CD_MVERT_SKIN);
 	BMVert *bm_vert;
 	BMIter bm_iter;
 	GSet *visited;
@@ -1492,19 +1494,16 @@ static int skin_root_mark_exec(bContext *C, wmOperator *UNUSED(op))
 	BKE_mesh_ensure_skin_customdata(ob->data);
 
 	BM_ITER_MESH (bm_vert, &bm_iter, bm, BM_VERTS_OF_MESH) {
-		if (!BLI_gset_haskey(visited, bm_vert) &&
-		    BM_elem_flag_test(bm_vert, BM_ELEM_SELECT))
+		if (BM_elem_flag_test(bm_vert, BM_ELEM_SELECT) &&
+		    BLI_gset_add(visited, bm_vert))
 		{
-			MVertSkin *vs = CustomData_bmesh_get(&bm->vdata,
-			                                     bm_vert->head.data,
-			                                     CD_MVERT_SKIN);
+			MVertSkin *vs = BM_ELEM_CD_GET_VOID_P(bm_vert, cd_vert_skin_offset);
 
 			/* mark vertex as root and add to visited set */
 			vs->flag |= MVERT_SKIN_ROOT;
-			BLI_gset_insert(visited, bm_vert);
 
 			/* clear root flag from all connected vertices (recursively) */
-			skin_root_clear(bm, bm_vert, visited);
+			skin_root_clear(bm_vert, visited, cd_vert_skin_offset);
 		}
 	}
 

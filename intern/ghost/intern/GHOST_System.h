@@ -48,7 +48,9 @@ class GHOST_Event;
 class GHOST_TimerManager;
 class GHOST_Window;
 class GHOST_WindowManager;
+#ifdef WITH_INPUT_NDOF
 class GHOST_NDOFManager;
+#endif
 
 /**
  * Implementation of platform independent functionality of the GHOST_ISystem
@@ -144,8 +146,8 @@ public:
 	 * \return	Indication of success.
 	 */
 	GHOST_TSuccess beginFullScreen(const GHOST_DisplaySetting& setting, GHOST_IWindow **window,
-	                                       const bool stereoVisual, const GHOST_TUns16 numOfAASamples = 0);
-		
+	                               const bool stereoVisual, const bool alphaBackground, const GHOST_TUns16 numOfAASamples = 0);
+
 	/**
 	 * Updates the resolution while in fullscreen mode.
 	 * \param setting	The new setting of the display.
@@ -190,9 +192,8 @@ public:
 	/**
 	 * Dispatches all the events on the stack.
 	 * The event stack will be empty afterwards.
-	 * \return Indication as to whether any of the consumers handled the events.
 	 */
-	bool dispatchEvents();
+	void dispatchEvents();
 
 	/**
 	 * Adds the given event consumer to our list.
@@ -237,6 +238,7 @@ public:
 	 */
 	GHOST_TSuccess getButtonState(GHOST_TButtonMask mask, bool& isDown) const;
 	
+#ifdef WITH_INPUT_NDOF
 	/***************************************************************************************
 	 * Access to 3D mouse.
 	 ***************************************************************************************/
@@ -246,6 +248,7 @@ public:
 	 * \param deadzone: Deadzone of the 3D mouse (both for rotation and pan) relative to full range
 	 */
 	void setNDOFDeadZone(float deadzone);
+#endif
 
 	/***************************************************************************************
 	 * Other (internal) functionality.
@@ -337,7 +340,7 @@ protected:
 	 * \return Indication of success.
 	 */
 	GHOST_TSuccess createFullScreenWindow(GHOST_Window **window, const GHOST_DisplaySetting &settings,
-	                                              const bool stereoVisual, const GHOST_TUns16 numOfAASamples = 0);
+	                                      const bool stereoVisual, const bool alphaBackground = 0, const GHOST_TUns16 numOfAASamples = 0);
 
 	/** The display manager (platform dependent). */
 	GHOST_DisplayManager *m_displayManager;

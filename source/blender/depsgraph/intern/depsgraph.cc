@@ -30,10 +30,12 @@
  * Core routines for how the Depsgraph works.
  */
 
-#include <string.h>
+#include "intern/depsgraph.h" /* own include */
 
 #include "MEM_guardedalloc.h"
 
+#include "BLI_utildefines.h"
+#include "BLI_ghash.h"
 #include "BLI_listbase.h"
 
 extern "C" {
@@ -49,12 +51,18 @@ extern "C" {
 #include "RNA_access.h"
 }
 
+#include <cstring>
+
 #include "DEG_depsgraph.h"
-#include "depsgraph.h" /* own include */
-#include "depsnode.h"
-#include "depsnode_operation.h"
-#include "depsnode_component.h"
-#include "depsgraph_intern.h"
+
+#include "intern/nodes/deg_node.h"
+#include "intern/nodes/deg_node_component.h"
+#include "intern/nodes/deg_node_operation.h"
+
+#include "intern/depsgraph_intern.h"
+#include "util/deg_util_foreach.h"
+
+namespace DEG {
 
 static DEG_EditorUpdateIDCb deg_editor_update_id_cb = NULL;
 static DEG_EditorUpdateSceneCb deg_editor_update_scene_cb = NULL;
@@ -66,6 +74,9 @@ Depsgraph::Depsgraph()
     layers(0)
 {
 	BLI_spin_init(&lock);
+	id_hash = BLI_ghash_ptr_new("Depsgraph id hash");
+	subgraphs = BLI_gset_ptr_new("Depsgraph subgraphs");
+	entry_tags = BLI_gset_ptr_new("Depsgraph entry_tags");
 }
 
 Depsgraph::~Depsgraph()
@@ -73,6 +84,9 @@ Depsgraph::~Depsgraph()
 	/* Free root node - it won't have been freed yet... */
 	clear_id_nodes();
 	clear_subgraph_nodes();
+	BLI_ghash_free(id_hash, NULL, NULL);
+	BLI_gset_free(subgraphs, NULL);
+	BLI_gset_free(entry_tags, NULL);
 	if (this->root_node != NULL) {
 		OBJECT_GUARDED_DELETE(this->root_node, RootDepsNode);
 	}
@@ -102,7 +116,7 @@ static bool pointer_to_component_node_criteria(const PointerRNA *ptr,
                                                const PropertyRNA *prop,
                                                ID **id,
                                                eDepsNode_Type *type,
-                                               string *subdata)
+                                               const char **subdata)
 {
 	if (!ptr->type)
 		return false;
@@ -175,16 +189,23 @@ static bool pointer_to_component_node_criteria(const PointerRNA *ptr,
 		/* Transforms props? */
 		if (prop) {
 			const char *prop_identifier = RNA_property_identifier((PropertyRNA *)prop);
-
+			/* TODO(sergey): How to optimize this? */
 			if (strstr(prop_identifier, "location") ||
 			    strstr(prop_identifier, "rotation") ||
-			    strstr(prop_identifier, "scale"))
+			    strstr(prop_identifier, "scale") ||
+			    strstr(prop_identifier, "matrix_"))
 			{
 				*type = DEPSNODE_TYPE_TRANSFORM;
 				return true;
 			}
+			else if (strstr(prop_identifier, "data")) {
+				/* We access object.data, most likely a geometry.
+				 * Might be a bone tho..
+				 */
+				*type = DEPSNODE_TYPE_GEOMETRY;
+				return true;
+			}
 		}
-		// ...
 	}
 	else if (ptr->type == &RNA_ShapeKey) {
 		Key *key = (Key *)ptr->id.data;
@@ -218,7 +239,7 @@ DepsNode *Depsgraph::find_node_from_pointer(const PointerRNA *ptr,
 {
 	ID *id;
 	eDepsNode_Type type;
-	string name;
+	const char *name;
 
 	/* Get querying conditions. */
 	if (pointer_to_id_node_criteria(ptr, prop, &id)) {
@@ -226,8 +247,9 @@ DepsNode *Depsgraph::find_node_from_pointer(const PointerRNA *ptr,
 	}
 	else if (pointer_to_component_node_criteria(ptr, prop, &id, &type, &name)) {
 		IDDepsNode *id_node = find_id_node(id);
-		if (id_node)
+		if (id_node != NULL) {
 			return id_node->find_component(type, name);
+		}
 	}
 
 	return NULL;
@@ -235,10 +257,16 @@ DepsNode *Depsgraph::find_node_from_pointer(const PointerRNA *ptr,
 
 /* Node Management ---------------------------- */
 
+static void id_node_deleter(void *value)
+{
+	IDDepsNode *id_node = reinterpret_cast<IDDepsNode *>(value);
+	OBJECT_GUARDED_DELETE(id_node, IDDepsNode);
+}
+
 RootDepsNode *Depsgraph::add_root_node()
 {
 	if (!root_node) {
-		DepsNodeFactory *factory = DEG_get_node_factory(DEPSNODE_TYPE_ROOT);
+		DepsNodeFactory *factory = deg_get_node_factory(DEPSNODE_TYPE_ROOT);
 		root_node = (RootDepsNode *)factory->create_node(NULL, "", "Root (Scene)");
 	}
 	return root_node;
@@ -267,12 +295,12 @@ TimeSourceDepsNode *Depsgraph::find_time_source(const ID *id) const
 
 SubgraphDepsNode *Depsgraph::add_subgraph_node(const ID *id)
 {
-	DepsNodeFactory *factory = DEG_get_node_factory(DEPSNODE_TYPE_SUBGRAPH);
+	DepsNodeFactory *factory = deg_get_node_factory(DEPSNODE_TYPE_SUBGRAPH);
 	SubgraphDepsNode *subgraph_node =
 		(SubgraphDepsNode *)factory->create_node(id, "", id->name + 2);
 
 	/* Add to subnodes list. */
-	this->subgraphs.insert(subgraph_node);
+	BLI_gset_insert(subgraphs, subgraph_node);
 
 	/* if there's an ID associated, add to ID-nodes lookup too */
 	if (id) {
@@ -289,37 +317,34 @@ SubgraphDepsNode *Depsgraph::add_subgraph_node(const ID *id)
 
 void Depsgraph::remove_subgraph_node(SubgraphDepsNode *subgraph_node)
 {
-	subgraphs.erase(subgraph_node);
+	BLI_gset_remove(subgraphs, subgraph_node, NULL);
 	OBJECT_GUARDED_DELETE(subgraph_node, SubgraphDepsNode);
 }
 
 void Depsgraph::clear_subgraph_nodes()
 {
-	for (Subgraphs::iterator it = subgraphs.begin();
-	     it != subgraphs.end();
-	     ++it)
+	GSET_FOREACH_BEGIN(SubgraphDepsNode *, subgraph_node, subgraphs)
 	{
-		SubgraphDepsNode *subgraph_node = *it;
 		OBJECT_GUARDED_DELETE(subgraph_node, SubgraphDepsNode);
 	}
-	subgraphs.clear();
+	GSET_FOREACH_END();
+	BLI_gset_clear(subgraphs, NULL);
 }
 
 IDDepsNode *Depsgraph::find_id_node(const ID *id) const
 {
-	IDNodeMap::const_iterator it = this->id_hash.find(id);
-	return it != this->id_hash.end() ? it->second : NULL;
+	return reinterpret_cast<IDDepsNode *>(BLI_ghash_lookup(id_hash, id));
 }
 
-IDDepsNode *Depsgraph::add_id_node(ID *id, const string &name)
+IDDepsNode *Depsgraph::add_id_node(ID *id, const char *name)
 {
 	IDDepsNode *id_node = find_id_node(id);
 	if (!id_node) {
-		DepsNodeFactory *factory = DEG_get_node_factory(DEPSNODE_TYPE_ID_REF);
+		DepsNodeFactory *factory = deg_get_node_factory(DEPSNODE_TYPE_ID_REF);
 		id_node = (IDDepsNode *)factory->create_node(id, "", name);
-		id->flag |= LIB_DOIT;
+		id->tag |= LIB_TAG_DOIT;
 		/* register */
-		this->id_hash[id] = id_node;
+		BLI_ghash_insert(id_hash, id, id_node);
 	}
 	return id_node;
 }
@@ -329,21 +354,14 @@ void Depsgraph::remove_id_node(const ID *id)
 	IDDepsNode *id_node = find_id_node(id);
 	if (id_node) {
 		/* unregister */
-		this->id_hash.erase(id);
+		BLI_ghash_remove(id_hash, id, NULL, NULL);
 		OBJECT_GUARDED_DELETE(id_node, IDDepsNode);
 	}
 }
 
 void Depsgraph::clear_id_nodes()
 {
-	for (IDNodeMap::const_iterator it = id_hash.begin();
-	     it != id_hash.end();
-	     ++it)
-	{
-		IDDepsNode *id_node = it->second;
-		OBJECT_GUARDED_DELETE(id_node, IDDepsNode);
-	}
-	id_hash.clear();
+	BLI_ghash_clear(id_hash, NULL, id_node_deleter);
 }
 
 /* Add new relationship between two nodes. */
@@ -360,8 +378,7 @@ DepsRelation *Depsgraph::add_new_relation(OperationDepsNode *from,
 	if (comp_node->type == DEPSNODE_TYPE_GEOMETRY) {
 		IDDepsNode *id_to = to->owner->owner;
 		IDDepsNode *id_from = from->owner->owner;
-		Object *object_to = (Object *)id_to->id;
-		if (id_to != id_from && (object_to->recalc & OB_RECALC_ALL)) {
+		if (id_to != id_from && (id_to->id->tag & LIB_TAG_ID_RECALC_ALL)) {
 			if ((id_from->eval_flags & DAG_EVAL_NEED_CPU) == 0) {
 				id_from->tag_update(this);
 				id_from->eval_flags |= DAG_EVAL_NEED_CPU;
@@ -413,18 +430,28 @@ DepsRelation::DepsRelation(DepsNode *from,
 */
 #endif
 
-	/* Hook it up to the nodes which use it. */
-	from->outlinks.insert(this);
-	to->inlinks.insert(this);
+	/* Hook it up to the nodes which use it.
+	 *
+	 * NOTE: We register relation in the nodes which this link connects to here
+	 * in constructor but we don't unregister it in the destructor.
+	 *
+	 * Reasoning:
+	 *
+	 * - Destructor is currently used on global graph destruction, so there's no
+	 *   real need in avoiding dangling pointers, all the memory is to be freed
+	 *   anyway.
+	 *
+	 * - Unregistering relation is not a cheap operation, so better to have it
+	 *   as an explicit call if we need this.
+	 */
+	from->outlinks.push_back(this);
+	to->inlinks.push_back(this);
 }
 
 DepsRelation::~DepsRelation()
 {
 	/* Sanity check. */
 	BLI_assert(this->from && this->to);
-	/* Remove it from the nodes that use it. */
-	this->from->outlinks.erase(this);
-	this->to->inlinks.erase(this);
 }
 
 /* Low level tagging -------------------------------------- */
@@ -439,49 +466,17 @@ void Depsgraph::add_entry_tag(OperationDepsNode *node)
 	/* Add to graph-level set of directly modified nodes to start searching from.
 	 * NOTE: this is necessary since we have several thousand nodes to play with...
 	 */
-	this->entry_tags.insert(node);
+	BLI_gset_insert(entry_tags, node);
 }
 
 void Depsgraph::clear_all_nodes()
 {
 	clear_id_nodes();
 	clear_subgraph_nodes();
-	id_hash.clear();
+	BLI_ghash_clear(id_hash, NULL, NULL);
 	if (this->root_node) {
 		OBJECT_GUARDED_DELETE(this->root_node, RootDepsNode);
 		root_node = NULL;
-	}
-}
-
-/* **************** */
-/* Public Graph API */
-
-/* Initialize a new Depsgraph */
-Depsgraph *DEG_graph_new()
-{
-	return OBJECT_GUARDED_NEW(Depsgraph);
-}
-
-/* Free graph's contents and graph itself */
-void DEG_graph_free(Depsgraph *graph)
-{
-	OBJECT_GUARDED_DELETE(graph, Depsgraph);
-}
-
-/* Set callbacks which are being called when depsgraph changes. */
-void DEG_editors_set_update_cb(DEG_EditorUpdateIDCb id_func,
-                               DEG_EditorUpdateSceneCb scene_func,
-                               DEG_EditorUpdateScenePreCb scene_pre_func)
-{
-	deg_editor_update_id_cb = id_func;
-	deg_editor_update_scene_cb = scene_func;
-	deg_editor_update_scene_pre_cb = scene_pre_func;
-}
-
-void DEG_editors_update_pre(Main *bmain, Scene *scene, bool time)
-{
-	if (deg_editor_update_scene_pre_cb != NULL) {
-		deg_editor_update_scene_pre_cb(bmain, scene, time);
 	}
 }
 
@@ -496,5 +491,42 @@ void deg_editors_scene_update(Main *bmain, Scene *scene, bool updated)
 {
 	if (deg_editor_update_scene_cb != NULL) {
 		deg_editor_update_scene_cb(bmain, scene, updated);
+	}
+}
+
+}  // namespace DEG
+
+/* **************** */
+/* Public Graph API */
+
+/* Initialize a new Depsgraph */
+Depsgraph *DEG_graph_new()
+{
+	DEG::Depsgraph *deg_depsgraph = OBJECT_GUARDED_NEW(DEG::Depsgraph);
+	return reinterpret_cast<Depsgraph *>(deg_depsgraph);
+}
+
+/* Free graph's contents and graph itself */
+void DEG_graph_free(Depsgraph *graph)
+{
+	using DEG::Depsgraph;
+	DEG::Depsgraph *deg_depsgraph = reinterpret_cast<DEG::Depsgraph *>(graph);
+	OBJECT_GUARDED_DELETE(deg_depsgraph, Depsgraph);
+}
+
+/* Set callbacks which are being called when depsgraph changes. */
+void DEG_editors_set_update_cb(DEG_EditorUpdateIDCb id_func,
+                               DEG_EditorUpdateSceneCb scene_func,
+                               DEG_EditorUpdateScenePreCb scene_pre_func)
+{
+	DEG::deg_editor_update_id_cb = id_func;
+	DEG::deg_editor_update_scene_cb = scene_func;
+	DEG::deg_editor_update_scene_pre_cb = scene_pre_func;
+}
+
+void DEG_editors_update_pre(Main *bmain, Scene *scene, bool time)
+{
+	if (DEG::deg_editor_update_scene_pre_cb != NULL) {
+		DEG::deg_editor_update_scene_pre_cb(bmain, scene, time);
 	}
 }

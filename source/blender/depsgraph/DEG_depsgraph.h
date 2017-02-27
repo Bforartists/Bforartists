@@ -131,9 +131,6 @@ void DEG_ids_clear_recalc(struct Main *bmain);
 
 /* Update Flushing ------------------------------- */
 
-/* Flush updates */
-void DEG_graph_flush_updates(struct Main *bmain, Depsgraph *graph);
-
 /* Flush updates for all IDs */
 void DEG_ids_flush_tagged(struct Main *bmain);
 
@@ -143,11 +140,6 @@ void DEG_ids_flush_tagged(struct Main *bmain);
 void DEG_ids_check_recalc(struct Main *bmain,
                           struct Scene *scene,
                           bool time);
-
-/* Clear all update tags
- * - For aborted updates, or after successful evaluation
- */
-void DEG_graph_clear_tags(Depsgraph *graph);
 
 /* ************************************************ */
 /* Evaluation Engine API */
@@ -176,7 +168,7 @@ void DEG_evaluate_on_framechange(struct EvaluationContext *eval_ctx,
                                  struct Main *bmain,
                                  Depsgraph *graph,
                                  float ctime,
-                                 const int layer);
+                                 const unsigned int layer);
 
 /* Data changed recalculation entry point.
  * < context_type: context to perform evaluation for
@@ -184,7 +176,7 @@ void DEG_evaluate_on_framechange(struct EvaluationContext *eval_ctx,
  */
 void DEG_evaluate_on_refresh_ex(struct EvaluationContext *eval_ctx,
                                 Depsgraph *graph,
-                                const int layers);
+                                const unsigned int layers);
 
 /* Data changed recalculation entry point.
  * < context_type: context to perform evaluation for

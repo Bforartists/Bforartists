@@ -44,17 +44,20 @@
 #include "DNA_scene_types.h"
 
 #include "BLI_utildefines.h"
+#include "BLI_bitmap_draw_2d.h"
+#include "BLI_ghash.h"
 #include "BLI_math.h"
 #include "BLI_math_base.h"
 #include "BLI_listbase.h"
-#include "BLI_path_util.h"
 #include "BLI_string.h"
+#include "BLI_string_utils.h"
 #include "BLI_threads.h"
 
 #include "BLT_translation.h"
 
 #include "BKE_fcurve.h"
 #include "BKE_tracking.h"
+#include "BKE_library.h"
 #include "BKE_movieclip.h"
 #include "BKE_object.h"
 #include "BKE_scene.h"
@@ -64,13 +67,15 @@
 
 #include "RNA_access.h"
 
-#include "raskter.h"
-
 #include "libmv-capi.h"
 #include "tracking_private.h"
 
 typedef struct MovieDistortion {
 	struct libmv_CameraIntrinsics *intrinsics;
+	/* Parameters needed for coordinates normalization. */
+	float principal[2];
+	float pixel_aspect;
+	float focal;
 } MovieDistortion;
 
 static struct {
@@ -184,8 +189,131 @@ void BKE_tracking_free(MovieTracking *tracking)
 	tracking_dopesheet_free(&tracking->dopesheet);
 }
 
+/* Copy the whole list of tracks. */
+static void tracking_tracks_copy(ListBase *tracks_dst, ListBase *tracks_src, GHash *tracks_mapping)
+{
+	MovieTrackingTrack *track_dst, *track_src;
+
+	BLI_listbase_clear(tracks_dst);
+	BLI_ghash_clear(tracks_mapping, NULL, NULL);
+
+	for (track_src = tracks_src->first; track_src != NULL; track_src = track_src->next) {
+		track_dst = MEM_dupallocN(track_src);
+		if (track_src->markers) {
+			track_dst->markers = MEM_dupallocN(track_src->markers);
+		}
+		id_us_plus(&track_dst->gpd->id);
+		BLI_addtail(tracks_dst, track_dst);
+		BLI_ghash_insert(tracks_mapping, track_src, track_dst);
+	}
+}
+
+/* copy the whole list of plane tracks (need whole MovieTracking structures due to embedded pointers to tracks).
+ * WARNING: implies tracking_[dst/src] and their tracks have already been copied. */
+static void tracking_plane_tracks_copy(ListBase *plane_tracks_dst, ListBase *plane_tracks_src, GHash *tracks_mapping)
+{
+	MovieTrackingPlaneTrack *plane_track_dst, *plane_track_src;
+
+	BLI_listbase_clear(plane_tracks_dst);
+
+	for (plane_track_src = plane_tracks_src->first; plane_track_src != NULL; plane_track_src = plane_track_src->next) {
+		plane_track_dst = MEM_dupallocN(plane_tracks_src);
+		if (plane_track_src->markers) {
+			plane_track_dst->markers = MEM_dupallocN(plane_track_src->markers);
+		}
+		plane_track_dst->point_tracks = MEM_mallocN(sizeof(*plane_track_dst->point_tracks) * plane_track_dst->point_tracksnr, __func__);
+		for (int i = 0; i < plane_track_dst->point_tracksnr; i++) {
+			plane_track_dst->point_tracks[i] = BLI_ghash_lookup(tracks_mapping, plane_track_src->point_tracks[i]);
+		}
+		id_us_plus(&plane_track_dst->image->id);
+		BLI_addtail(plane_tracks_dst, plane_track_dst);
+	}
+}
+
+/* Copy reconstruction structure. */
+static void tracking_reconstruction_copy(
+        MovieTrackingReconstruction *reconstruction_dst, MovieTrackingReconstruction *reconstruction_src)
+{
+	*reconstruction_dst = *reconstruction_src;
+	if (reconstruction_src->cameras) {
+		reconstruction_dst->cameras = MEM_dupallocN(reconstruction_src->cameras);
+	}
+}
+
+/* Copy stabilization structure. */
+static void tracking_stabilization_copy(
+        MovieTrackingStabilization *stabilization_dst, MovieTrackingStabilization *stabilization_src)
+{
+	*stabilization_dst = *stabilization_src;
+}
+
+/* Copy tracking object. */
+static void tracking_object_copy(
+        MovieTrackingObject *object_dst, MovieTrackingObject *object_src, GHash *tracks_mapping)
+{
+	*object_dst = *object_src;
+	tracking_tracks_copy(&object_dst->tracks, &object_src->tracks, tracks_mapping);
+	tracking_plane_tracks_copy(&object_dst->plane_tracks, &object_src->plane_tracks, tracks_mapping);
+	tracking_reconstruction_copy(&object_dst->reconstruction, &object_src->reconstruction);
+}
+
+/* Copy list of tracking objects. */
+static void tracking_objects_copy(ListBase *objects_dst, ListBase *objects_src, GHash *tracks_mapping)
+{
+	MovieTrackingObject *object_dst, *object_src;
+
+	BLI_listbase_clear(objects_dst);
+
+	for (object_src = objects_src->first; object_src != NULL; object_src = object_src->next) {
+		object_dst = MEM_mallocN(sizeof(*object_dst), __func__);
+		tracking_object_copy(object_dst, object_src, tracks_mapping);
+		BLI_addtail(objects_dst, object_dst);
+	}
+}
+
+/* Copy tracking structure content. */
+void BKE_tracking_copy(MovieTracking *tracking_dst, MovieTracking *tracking_src)
+{
+	GHash *tracks_mapping = BLI_ghash_ptr_new(__func__);
+
+	*tracking_dst = *tracking_src;
+
+	tracking_tracks_copy(&tracking_dst->tracks, &tracking_src->tracks, tracks_mapping);
+	tracking_plane_tracks_copy(&tracking_dst->plane_tracks, &tracking_src->plane_tracks, tracks_mapping);
+	tracking_reconstruction_copy(&tracking_dst->reconstruction, &tracking_src->reconstruction);
+	tracking_stabilization_copy(&tracking_dst->stabilization, &tracking_src->stabilization);
+	if (tracking_src->act_track) {
+		tracking_dst->act_track = BLI_ghash_lookup(tracks_mapping, tracking_src->act_track);
+	}
+	if (tracking_src->act_plane_track) {
+		MovieTrackingPlaneTrack *plane_track_src, *plane_track_dst;
+		for (plane_track_src = tracking_src->plane_tracks.first, plane_track_dst = tracking_dst->plane_tracks.first;
+		     !ELEM(NULL, plane_track_src, plane_track_dst);
+		     plane_track_src = plane_track_src->next, plane_track_dst = plane_track_dst->next)
+		{
+			if (plane_track_src == tracking_src->act_plane_track) {
+				tracking_dst->act_plane_track = plane_track_dst;
+				break;
+			}
+		}
+	}
+
+	/* Warning! Will override tracks_mapping. */
+	tracking_objects_copy(&tracking_dst->objects, &tracking_src->objects, tracks_mapping);
+
+	/* Those remaining are runtime data, they will be reconstructed as needed, do not bother copying them. */
+	tracking_dst->dopesheet.ok = false;
+	BLI_listbase_clear(&tracking_dst->dopesheet.channels);
+	BLI_listbase_clear(&tracking_dst->dopesheet.coverage_segments);
+
+	tracking_dst->camera.intrinsics = NULL;
+	tracking_dst->stats = NULL;
+
+	BLI_ghash_free(tracks_mapping, NULL, NULL);
+}
+
 /* Initialize motion tracking settings to default values,
- * used when new movie clip datablock is creating.
+ * used when new movie clip datablock is created.
  */
 void BKE_tracking_settings_init(MovieTracking *tracking)
 {
@@ -203,10 +331,22 @@ void BKE_tracking_settings_init(MovieTracking *tracking)
 	tracking->settings.object_distance = 1;
 
 	tracking->stabilization.scaleinf = 1.0f;
+	tracking->stabilization.anchor_frame = 1;
+	zero_v2(tracking->stabilization.target_pos);
+	tracking->stabilization.target_rot = 0.0f;
+	tracking->stabilization.scale = 1.0f;
+
+	tracking->stabilization.act_track = 0;
+	tracking->stabilization.act_rot_track = 0;
+	tracking->stabilization.tot_track = 0;
+	tracking->stabilization.tot_rot_track = 0;
+
+	tracking->stabilization.scaleinf = 1.0f;
 	tracking->stabilization.locinf = 1.0f;
 	tracking->stabilization.rotinf = 1.0f;
 	tracking->stabilization.maxscale = 2.0f;
 	tracking->stabilization.filter = TRACKING_FILTER_BILINEAR;
+	tracking->stabilization.flag |= TRACKING_SHOW_STAB_TRACKS;
 
 	BKE_tracking_object_add(tracking, "Camera");
 }
@@ -421,6 +561,7 @@ MovieTrackingTrack *BKE_tracking_track_add(MovieTracking *tracking, ListBase *tr
 	track->flag = settings->default_flag;
 	track->algorithm_flag = settings->default_algorithm_flag;
 	track->weight = settings->default_weight;
+	track->weight_stab = settings->default_weight;
 
 	memset(&marker, 0, sizeof(marker));
 	marker.pos[0] = x;
@@ -458,6 +599,12 @@ MovieTrackingTrack *BKE_tracking_track_duplicate(MovieTrackingTrack *track)
 	new_track->next = new_track->prev = NULL;
 
 	new_track->markers = MEM_dupallocN(new_track->markers);
+
+	/* Orevent duplicate from being used for 2D stabilization.
+	 * If necessary, it shall be added explicitly.
+	 */
+	new_track->flag &= ~TRACK_USE_2D_STAB;
+	new_track->flag &= ~TRACK_USE_2D_STAB_ROT;
 
 	return new_track;
 }
@@ -810,38 +957,55 @@ static bGPDlayer *track_mask_gpencil_layer_get(MovieTrackingTrack *track)
 	return NULL;
 }
 
+typedef struct TrackMaskSetPixelData {
+	float *mask;
+	int mask_width;
+	int mask_height;
+} TrackMaskSetPixelData;
+
+static void track_mask_set_pixel_cb(int x, int x_end, int y, void *user_data)
+{
+	TrackMaskSetPixelData *data = (TrackMaskSetPixelData *)user_data;
+	size_t index =     (size_t)y * data->mask_width + x;
+	size_t index_end = (size_t)y * data->mask_width + x_end;
+	do {
+		data->mask[index] = 1.0f;
+	} while (++index != index_end);
+}
+
 static void track_mask_gpencil_layer_rasterize(int frame_width, int frame_height,
                                                MovieTrackingMarker *marker, bGPDlayer *layer,
                                                float *mask, int mask_width, int mask_height)
 {
 	bGPDframe *frame = layer->frames.first;
+	TrackMaskSetPixelData data;
+
+	data.mask = mask;
+	data.mask_width = mask_width;
+	data.mask_height = mask_height;
 
 	while (frame) {
 		bGPDstroke *stroke = frame->strokes.first;
 
 		while (stroke) {
 			bGPDspoint *stroke_points = stroke->points;
-			float *mask_points, *fp;
-			int i;
-
 			if (stroke->flag & GP_STROKE_2DSPACE) {
-				fp = mask_points = MEM_callocN(2 * stroke->totpoints * sizeof(float),
+				int *mask_points, *point;
+				point = mask_points = MEM_callocN(2 * stroke->totpoints * sizeof(int),
 				                               "track mask rasterization points");
-
-				for (i = 0; i < stroke->totpoints; i++, fp += 2) {
-					fp[0] = (stroke_points[i].x - marker->search_min[0]) * frame_width / mask_width;
-					fp[1] = (stroke_points[i].y - marker->search_min[1]) * frame_height / mask_height;
+				for (int i = 0; i < stroke->totpoints; i++, point += 2) {
+					point[0] = (stroke_points[i].x - marker->search_min[0]) * frame_width;
+					point[1] = (stroke_points[i].y - marker->search_min[1]) * frame_height;
 				}
-
 				/* TODO: add an option to control whether AA is enabled or not */
-				PLX_raskterize((float (*)[2])mask_points, stroke->totpoints, mask, mask_width, mask_height);
-
+				BLI_bitmap_draw_2d_poly_v2i_n(
+				        0, 0, mask_width, mask_height,
+				        (const int (*)[2])mask_points, stroke->totpoints,
+				        track_mask_set_pixel_cb, &data);
 				MEM_freeN(mask_points);
 			}
-
 			stroke = stroke->next;
 		}
-
 		frame = frame->next;
 	}
 }
@@ -1864,6 +2028,11 @@ MovieDistortion *BKE_tracking_distortion_new(MovieTracking *tracking,
 	distortion = MEM_callocN(sizeof(MovieDistortion), "BKE_tracking_distortion_create");
 	distortion->intrinsics = libmv_cameraIntrinsicsNew(&camera_intrinsics_options);
 
+	const MovieTrackingCamera *camera = &tracking->camera;
+	copy_v2_v2(distortion->principal, camera->principal);
+	distortion->pixel_aspect = camera->pixel_aspect;
+	distortion->focal = camera->focal;
+
 	return distortion;
 }
 
@@ -1876,6 +2045,11 @@ void BKE_tracking_distortion_update(MovieDistortion *distortion, MovieTracking *
 	                                             calibration_width,
 	                                             calibration_height,
 	                                             &camera_intrinsics_options);
+
+	const MovieTrackingCamera *camera = &tracking->camera;
+	copy_v2_v2(distortion->principal, camera->principal);
+	distortion->pixel_aspect = camera->pixel_aspect;
+	distortion->focal = camera->focal;
 
 	libmv_cameraIntrinsicsUpdate(&camera_intrinsics_options, distortion->intrinsics);
 }
@@ -1890,7 +2064,7 @@ MovieDistortion *BKE_tracking_distortion_copy(MovieDistortion *distortion)
 	MovieDistortion *new_distortion;
 
 	new_distortion = MEM_callocN(sizeof(MovieDistortion), "BKE_tracking_distortion_create");
-
+	*new_distortion = *distortion;
 	new_distortion->intrinsics = libmv_cameraIntrinsicsCopy(distortion->intrinsics);
 
 	return new_distortion;
@@ -1948,6 +2122,36 @@ ImBuf *BKE_tracking_distortion_exec(MovieDistortion *distortion, MovieTracking *
 	return resibuf;
 }
 
+void BKE_tracking_distortion_distort_v2(MovieDistortion *distortion,
+                                        const float co[2],
+                                        float r_co[2])
+{
+	const float aspy = 1.0f / distortion->pixel_aspect;
+
+	/* Normalize coords. */
+	float inv_focal = 1.0f / distortion->focal;
+	double x = (co[0] - distortion->principal[0]) * inv_focal,
+	       y = (co[1] - distortion->principal[1] * aspy) * inv_focal;
+
+	libmv_cameraIntrinsicsApply(distortion->intrinsics, x, y, &x, &y);
+
+	/* Result is in image coords already. */
+	r_co[0] = x;
+	r_co[1] = y;
+}
+
+void BKE_tracking_distortion_undistort_v2(MovieDistortion *distortion,
+                                          const float co[2],
+                                          float r_co[2])
+{
+	double x = co[0], y = co[1];
+	libmv_cameraIntrinsicsInvert(distortion->intrinsics, x, y, &x, &y);
+
+	const float aspy = 1.0f / distortion->pixel_aspect;
+	r_co[0] = (float)x * distortion->focal + distortion->principal[0];
+	r_co[1] = (float)y * distortion->focal + distortion->principal[1] * aspy;
+}
+
 void BKE_tracking_distortion_free(MovieDistortion *distortion)
 {
 	libmv_cameraIntrinsicsDestroy(distortion->intrinsics);
@@ -1957,40 +2161,43 @@ void BKE_tracking_distortion_free(MovieDistortion *distortion)
 
 void BKE_tracking_distort_v2(MovieTracking *tracking, const float co[2], float r_co[2])
 {
-	MovieTrackingCamera *camera = &tracking->camera;
+	const MovieTrackingCamera *camera = &tracking->camera;
+	const float aspy = 1.0f / tracking->camera.pixel_aspect;
 
 	libmv_CameraIntrinsicsOptions camera_intrinsics_options;
-	double x, y;
-	float aspy = 1.0f / tracking->camera.pixel_aspect;
-
 	tracking_cameraIntrinscisOptionsFromTracking(tracking,
 	                                             0, 0,
 	                                             &camera_intrinsics_options);
+	libmv_CameraIntrinsics *intrinsics =
+	        libmv_cameraIntrinsicsNew(&camera_intrinsics_options);
 
-	/* normalize coords */
-	x = (co[0] - camera->principal[0]) / camera->focal;
-	y = (co[1] - camera->principal[1] * aspy) / camera->focal;
+	/* Normalize coordinates. */
+	double x = (co[0] - camera->principal[0]) / camera->focal,
+	       y = (co[1] - camera->principal[1] * aspy) / camera->focal;
 
-	libmv_cameraIntrinsicsApply(&camera_intrinsics_options, x, y, &x, &y);
+	libmv_cameraIntrinsicsApply(intrinsics, x, y, &x, &y);
+	libmv_cameraIntrinsicsDestroy(intrinsics);
 
-	/* result is in image coords already */
+	/* Result is in image coords already. */
 	r_co[0] = x;
 	r_co[1] = y;
 }
 
 void BKE_tracking_undistort_v2(MovieTracking *tracking, const float co[2], float r_co[2])
 {
-	MovieTrackingCamera *camera = &tracking->camera;
+	const MovieTrackingCamera *camera = &tracking->camera;
+	const float aspy = 1.0f / tracking->camera.pixel_aspect;
 
 	libmv_CameraIntrinsicsOptions camera_intrinsics_options;
-	double x = co[0], y = co[1];
-	float aspy = 1.0f / tracking->camera.pixel_aspect;
-
 	tracking_cameraIntrinscisOptionsFromTracking(tracking,
 	                                             0, 0,
 	                                             &camera_intrinsics_options);
+	libmv_CameraIntrinsics *intrinsics =
+	        libmv_cameraIntrinsicsNew(&camera_intrinsics_options);
 
-	libmv_cameraIntrinsicsInvert(&camera_intrinsics_options, x, y, &x, &y);
+	double x = co[0], y = co[1];
+	libmv_cameraIntrinsicsInvert(intrinsics, x, y, &x, &y);
+	libmv_cameraIntrinsicsDestroy(intrinsics);
 
 	r_co[0] = (float)x * camera->focal + camera->principal[0];
 	r_co[1] = (float)y * camera->focal + camera->principal[1] * aspy;
@@ -2577,7 +2784,6 @@ static void tracking_dopesheet_calc_coverage(MovieTracking *tracking)
 	int frames, start_frame = INT_MAX, end_frame = -INT_MAX;
 	int *per_frame_counter;
 	int prev_coverage, last_segment_frame;
-	int i;
 
 	/* find frame boundaries */
 	for (track = tracksbase->first; track; track = track->next) {
@@ -2592,9 +2798,7 @@ static void tracking_dopesheet_calc_coverage(MovieTracking *tracking)
 
 	/* find per-frame markers count */
 	for (track = tracksbase->first; track; track = track->next) {
-		int i;
-
-		for (i = 0; i < track->markersnr; i++) {
+		for (int i = 0; i < track->markersnr; i++) {
 			MovieTrackingMarker *marker = &track->markers[i];
 
 			/* TODO: perhaps we need to add check for non-single-frame track here */
@@ -2611,7 +2815,7 @@ static void tracking_dopesheet_calc_coverage(MovieTracking *tracking)
 	if (!per_frame_counter[0])
 		prev_coverage = TRACKING_COVERAGE_OK;
 
-	for (i = 1; i < frames; i++) {
+	for (int i = 1; i < frames; i++) {
 		int coverage = coverage_from_count(per_frame_counter[i]);
 
 		/* means only disabled tracks in the end, could be ignored */

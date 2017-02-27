@@ -55,6 +55,8 @@ class RAS_IPolyMaterial;
 class RAS_MeshSlot;
 class RAS_ILightObject;
 class SCA_IScene;
+class RAS_IOffScreen;
+class RAS_ISync;
 
 typedef vector<unsigned short> KX_IndexArray;
 typedef vector<RAS_TexVert> KX_VertexArray;
@@ -258,6 +260,18 @@ public:
 	virtual float GetFocalLength() = 0;
 
 	/**
+	 * Create an offscreen render buffer that can be used as target for render.
+	 * For the time being, it is only used in VideoTexture for custom render.
+	 */
+	virtual RAS_IOffScreen *CreateOffScreen(int width, int height, int samples, int target) = 0;
+
+	/**
+	 * Create a sync object
+	 * For use with offscreen render
+	 */
+	virtual RAS_ISync *CreateSync(int type) = 0;
+
+	/**
 	 * SwapBuffers swaps the back buffer with the front buffer.
 	 */
 	virtual void SwapBuffers() = 0;
@@ -267,7 +281,6 @@ public:
 	 * IndexPrimitives: Renders primitives from mesh slot.
 	 */
 	virtual void IndexPrimitives(class RAS_MeshSlot &ms) = 0;
-	virtual void IndexPrimitivesMulti(class RAS_MeshSlot &ms) = 0;
 
 	/**
 	 * IndexPrimitives_3DText will render text into the polygons.
@@ -288,7 +301,7 @@ public:
 	 * Sets the modelview matrix.
 	 */
 	virtual void SetViewMatrix(const MT_Matrix4x4 &mat, const MT_Matrix3x3 &ori,
-	                           const MT_Point3 &pos, bool perspective) = 0;
+	                           const MT_Point3 &pos, const MT_Vector3 &scale, bool perspective) = 0;
 
 	/**
 	 */
@@ -423,7 +436,7 @@ public:
 	/**
 	 * Render Tools
 	 */
-	virtual void applyTransform(double *oglmatrix, int drawingmode) = 0;
+	virtual void applyTransform(float *oglmatrix, int drawingmode) = 0;
 
 	/**
 	 * Renders 2D boxes.
@@ -447,7 +460,7 @@ public:
 	 */
 	virtual void RenderText3D(
 	        int fontid, const char *text, int size, int dpi,
-	        const float color[4], const double mat[16], float aspect) = 0;
+	        const float color[4], const float mat[16], float aspect) = 0;
 
 	/**
 	 * Renders 2D text string.
@@ -479,6 +492,11 @@ public:
 	virtual void SetClientObject(void *obj) = 0;
 
 	virtual void SetAuxilaryClientInfo(void *inf) = 0;
+
+	/**
+	 * Prints information about what the hardware supports.
+	 */
+	virtual void PrintHardwareInfo() = 0;
 
 #ifdef WITH_CXX_GUARDEDALLOC
 	MEM_CXX_CLASS_ALLOC_FUNCS("GE:RAS_IRasterizer")

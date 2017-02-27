@@ -5,70 +5,34 @@
 
 __author__ = "mozman <mozman@gmx.at>"
 
-from .dxfentity import DXFEntity
 from .layers import Table
-from .dxfattr import DXFAttr, DXFAttributes, DefSubclass
 
 
 class Linetype(object):
-    def __init__(self, wrapper):
-        self.name = wrapper.get_dxf_attrib('name')
-        self.description = wrapper.get_dxf_attrib('description')
-        self.length = wrapper.get_dxf_attrib('length')  # overall length of the pattern
-        self.pattern = wrapper.get_pattern()  # list of floats: value>0: line, value<0: gap, value=0: dot
+    def __init__(self, tags):
+        self.name = ""
+        self.description = ""
+        self.length = 0  # overall length of the pattern
+        self.pattern = []  # list of floats: value>0: line, value<0: gap, value=0: dot
+        for code, value in tags.plain_tags():
+            if code == 2:
+                self.name = value
+            elif code == 3:
+                self.description = value
+            elif code == 40:
+                self.length = value
+            elif code == 49:
+                self.pattern.append(value)
 
 
 class LinetypeTable(Table):
     name = 'linetypes'
 
     @staticmethod
-    def from_tags(tags, drawing):
-        dxfversion = drawing.dxfversion
+    def from_tags(tags):
         styles = LinetypeTable()
-        for entrytags in styles._classified_tags(tags):
-            dxfstyle = styles.wrap(entrytags, dxfversion)
-            styles._table_entries[dxfstyle.get_dxf_attrib('name')] = Linetype(dxfstyle)
+        for entry_tags in styles.entry_tags(tags):
+            style = Linetype(entry_tags)
+            styles._table_entries[style.name] = style
         return styles
-    
-    @staticmethod
-    def wrap(tags, dxfversion):
-        return DXF12Linetype(tags) if dxfversion == "AC1009" else DXF13Linetype(tags)
 
-
-class DXF12Linetype(DXFEntity):
-    DXFATTRIBS = DXFAttributes(DefSubclass(None, {
-        'handle': DXFAttr(5),
-        'name': DXFAttr(2),
-        'description': DXFAttr(3),
-        'length': DXFAttr(40),
-        'items': DXFAttr(73),
-    }))
-
-    def get_pattern(self):
-        items = self.get_dxf_attrib('items')
-        if items == 0:
-            return []
-        else:
-            tags = self.tags.noclass
-            return [pattern_tag.value for pattern_tag in tags.find_all(49)]
-
-none_subclass = DefSubclass(None, {'handle': DXFAttr(5)})
-symbol_subclass = DefSubclass('AcDbSymbolTableRecord', {})
-linetype_subclass = DefSubclass('AcDbLinetypeTableRecord', {
-    'name': DXFAttr(2),
-    'description': DXFAttr(3),
-    'length': DXFAttr(40),
-    'items': DXFAttr(73),
-})
-
-
-class DXF13Linetype(DXF12Linetype):
-    DXFATTRIBS = DXFAttributes(none_subclass, symbol_subclass, linetype_subclass)
-
-    def get_pattern(self):
-        items = self.get_dxf_attrib('items')
-        if items == 0:
-            return []
-        else:
-            tags = self.tags.get_subclass('AcDbLinetypeTableRecord')
-            return [pattern_tag.value for pattern_tag in tags.find_all(49)]

@@ -28,7 +28,7 @@ class CONSOLE_HT_header(Header):
         layout = self.layout.row()
 
         ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
-        CONSOLE_MT_editor_menus.draw_collapsible(context, layout)
+        CONSOLE_MT_editor_menus.draw_collapsible(context, layout)      
 
         layout.operator("console.autocomplete", text="Autocomplete")
 
@@ -44,9 +44,6 @@ class ALL_MT_editormenu(Menu):
 
         row = layout.row(align=True)
         row.template_header() # editor type menus
-
-
-
 
 class CONSOLE_MT_editor_menus(Menu):
     bl_idname = "CONSOLE_MT_editor_menus"
@@ -85,7 +82,7 @@ class CONSOLE_MT_console(Menu):
 
         layout.operator("screen.area_dupli")
         layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area") # bfa - the separated tooltip. Class is in space_text.py
-        layout.operator("screen.screen_full_area").use_hide_panels = True
+        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area").use_hide_panels = True
 
 
 class CONSOLE_MT_language(Menu):

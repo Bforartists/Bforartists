@@ -9,14 +9,13 @@ from .tags import Tags, DXFTag
 
 
 class DefaultChunk(object):
-    def __init__(self, tags, drawing):
+    def __init__(self, tags):
         assert isinstance(tags, Tags)
         self.tags = tags
-        self._drawing = drawing
 
     @staticmethod
     def from_tags(tags, drawing):
-        return DefaultChunk(tags, drawing)
+        return DefaultChunk(tags)
 
     @property
     def name(self):

@@ -24,23 +24,23 @@ CCL_NAMESPACE_BEGIN
 
 /* Reading attributes on various curve elements */
 
-ccl_device float curve_attribute_float(KernelGlobals *kg, const ShaderData *sd, AttributeElement elem, int offset, float *dx, float *dy)
+ccl_device float curve_attribute_float(KernelGlobals *kg, const ShaderData *sd, const AttributeDescriptor desc, float *dx, float *dy)
 {
-	if(elem == ATTR_ELEMENT_CURVE) {
+	if(desc.element == ATTR_ELEMENT_CURVE) {
 #ifdef __RAY_DIFFERENTIALS__
 		if(dx) *dx = 0.0f;
 		if(dy) *dy = 0.0f;
 #endif
 
-		return kernel_tex_fetch(__attributes_float, offset + ccl_fetch(sd, prim));
+		return kernel_tex_fetch(__attributes_float, desc.offset + ccl_fetch(sd, prim));
 	}
-	else if(elem == ATTR_ELEMENT_CURVE_KEY || elem == ATTR_ELEMENT_CURVE_KEY_MOTION) {
+	else if(desc.element == ATTR_ELEMENT_CURVE_KEY || desc.element == ATTR_ELEMENT_CURVE_KEY_MOTION) {
 		float4 curvedata = kernel_tex_fetch(__curves, ccl_fetch(sd, prim));
 		int k0 = __float_as_int(curvedata.x) + PRIMITIVE_UNPACK_SEGMENT(ccl_fetch(sd, type));
 		int k1 = k0 + 1;
 
-		float f0 = kernel_tex_fetch(__attributes_float, offset + k0);
-		float f1 = kernel_tex_fetch(__attributes_float, offset + k1);
+		float f0 = kernel_tex_fetch(__attributes_float, desc.offset + k0);
+		float f1 = kernel_tex_fetch(__attributes_float, desc.offset + k1);
 
 #ifdef __RAY_DIFFERENTIALS__
 		if(dx) *dx = ccl_fetch(sd, du).dx*(f1 - f0);
@@ -59,9 +59,9 @@ ccl_device float curve_attribute_float(KernelGlobals *kg, const ShaderData *sd, 
 	}
 }
 
-ccl_device float3 curve_attribute_float3(KernelGlobals *kg, const ShaderData *sd, AttributeElement elem, int offset, float3 *dx, float3 *dy)
+ccl_device float3 curve_attribute_float3(KernelGlobals *kg, const ShaderData *sd, const AttributeDescriptor desc, float3 *dx, float3 *dy)
 {
-	if(elem == ATTR_ELEMENT_CURVE) {
+	if(desc.element == ATTR_ELEMENT_CURVE) {
 		/* idea: we can't derive any useful differentials here, but for tiled
 		 * mipmap image caching it would be useful to avoid reading the highest
 		 * detail level always. maybe a derivative based on the hair density
@@ -71,15 +71,15 @@ ccl_device float3 curve_attribute_float3(KernelGlobals *kg, const ShaderData *sd
 		if(dy) *dy = make_float3(0.0f, 0.0f, 0.0f);
 #endif
 
-		return float4_to_float3(kernel_tex_fetch(__attributes_float3, offset + ccl_fetch(sd, prim)));
+		return float4_to_float3(kernel_tex_fetch(__attributes_float3, desc.offset + ccl_fetch(sd, prim)));
 	}
-	else if(elem == ATTR_ELEMENT_CURVE_KEY || elem == ATTR_ELEMENT_CURVE_KEY_MOTION) {
+	else if(desc.element == ATTR_ELEMENT_CURVE_KEY || desc.element == ATTR_ELEMENT_CURVE_KEY_MOTION) {
 		float4 curvedata = kernel_tex_fetch(__curves, ccl_fetch(sd, prim));
 		int k0 = __float_as_int(curvedata.x) + PRIMITIVE_UNPACK_SEGMENT(ccl_fetch(sd, type));
 		int k1 = k0 + 1;
 
-		float3 f0 = float4_to_float3(kernel_tex_fetch(__attributes_float3, offset + k0));
-		float3 f1 = float4_to_float3(kernel_tex_fetch(__attributes_float3, offset + k1));
+		float3 f0 = float4_to_float3(kernel_tex_fetch(__attributes_float3, desc.offset + k0));
+		float3 f1 = float4_to_float3(kernel_tex_fetch(__attributes_float3, desc.offset + k1));
 
 #ifdef __RAY_DIFFERENTIALS__
 		if(dx) *dx = ccl_fetch(sd, du).dx*(f1 - f0);
@@ -222,13 +222,22 @@ ccl_device_inline ssef transform_point_T3(const ssef t[3], const ssef &a)
 
 #ifdef __KERNEL_SSE2__
 /* Pass P and dir by reference to aligned vector */
-ccl_device_inline bool bvh_cardinal_curve_intersect(KernelGlobals *kg, Intersection *isect,
+ccl_device_forceinline bool bvh_cardinal_curve_intersect(KernelGlobals *kg, Intersection *isect,
 	const float3 &P, const float3 &dir, uint visibility, int object, int curveAddr, float time, int type, uint *lcg_state, float difl, float extmax)
 #else
-ccl_device_inline bool bvh_cardinal_curve_intersect(KernelGlobals *kg, Intersection *isect,
+ccl_device_forceinline bool bvh_cardinal_curve_intersect(KernelGlobals *kg, Intersection *isect,
 	float3 P, float3 dir, uint visibility, int object, int curveAddr, float time,int type, uint *lcg_state, float difl, float extmax)
 #endif
 {
+	const bool is_curve_primitive = (type & PRIMITIVE_CURVE);
+
+	if(!is_curve_primitive && kernel_data.bvh.use_bvh_steps) {
+		const float2 prim_time = kernel_tex_fetch(__prim_time, curveAddr);
+		if(time < prim_time.x || time > prim_time.y) {
+			return false;
+		}
+	}
+
 	int segment = PRIMITIVE_UNPACK_SEGMENT(type);
 	float epsilon = 0.0f;
 	float r_st, r_en;
@@ -255,9 +264,20 @@ ccl_device_inline bool bvh_cardinal_curve_intersect(KernelGlobals *kg, Intersect
 		int ka = max(k0 - 1, v00.x);
 		int kb = min(k1 + 1, v00.x + v00.y - 1);
 
+#ifdef __KERNEL_AVX2__
+		avxf P_curve_0_1, P_curve_2_3;
+		if(is_curve_primitive) {
+			P_curve_0_1 = _mm256_loadu2_m128(&kg->__curve_keys.data[k0].x, &kg->__curve_keys.data[ka].x);
+			P_curve_2_3 = _mm256_loadu2_m128(&kg->__curve_keys.data[kb].x, &kg->__curve_keys.data[k1].x);
+		}
+		else {
+			int fobject = (object == OBJECT_NONE) ? kernel_tex_fetch(__prim_object, curveAddr) : object;
+			motion_cardinal_curve_keys_avx(kg, fobject, prim, time, ka, k0, k1, kb, &P_curve_0_1,&P_curve_2_3);
+		}
+#else  /* __KERNEL_AVX2__ */
 		ssef P_curve[4];
 
-		if(type & PRIMITIVE_CURVE) {
+		if(is_curve_primitive) {
 			P_curve[0] = load4f(&kg->__curve_keys.data[ka].x);
 			P_curve[1] = load4f(&kg->__curve_keys.data[k0].x);
 			P_curve[2] = load4f(&kg->__curve_keys.data[k1].x);
@@ -267,6 +287,7 @@ ccl_device_inline bool bvh_cardinal_curve_intersect(KernelGlobals *kg, Intersect
 			int fobject = (object == OBJECT_NONE)? kernel_tex_fetch(__prim_object, curveAddr): object;
 			motion_cardinal_curve_keys(kg, fobject, prim, time, ka, k0, k1, kb, (float4*)&P_curve);
 		}
+#endif  /* __KERNEL_AVX2__ */
 
 		ssef rd_sgn = set_sign_bit<0, 1, 1, 1>(shuffle<0>(rd_ss));
 		ssef mul_zxxy = shuffle<2, 0, 0, 1>(vdir) * rd_sgn;
@@ -278,12 +299,43 @@ ccl_device_inline bool bvh_cardinal_curve_intersect(KernelGlobals *kg, Intersect
 		ssef htfm1 = shuffle<1, 0, 1, 3>(load1f_first(extract<0>(d_ss)), vdir0);
 		ssef htfm2 = shuffle<1, 3, 2, 3>(mul_shuf, vdir0);
 
+#ifdef __KERNEL_AVX2__
+		const avxf vPP = _mm256_broadcast_ps(&P.m128);
+		const avxf htfm00 = avxf(htfm0.m128, htfm0.m128);
+		const avxf htfm11 = avxf(htfm1.m128, htfm1.m128);
+		const avxf htfm22 = avxf(htfm2.m128, htfm2.m128);
+
+		const avxf p01 = madd(shuffle<0>(P_curve_0_1 - vPP),
+		                      htfm00,
+		                      madd(shuffle<1>(P_curve_0_1 - vPP),
+		                           htfm11,
+		                           shuffle<2>(P_curve_0_1 - vPP) * htfm22));
+		const avxf p23 = madd(shuffle<0>(P_curve_2_3 - vPP),
+		                      htfm00,
+		                      madd(shuffle<1>(P_curve_2_3 - vPP),
+		                           htfm11,
+		                           shuffle<2>(P_curve_2_3 - vPP)*htfm22));
+
+		const ssef p0 = _mm256_castps256_ps128(p01);
+		const ssef p1 = _mm256_extractf128_ps(p01, 1);
+		const ssef p2 = _mm256_castps256_ps128(p23);
+		const ssef p3 = _mm256_extractf128_ps(p23, 1);
+
+		const ssef P_curve_1 = _mm256_extractf128_ps(P_curve_0_1, 1);
+		r_st = ((float4 &)P_curve_1).w;
+		const ssef P_curve_2 = _mm256_castps256_ps128(P_curve_2_3);
+		r_en = ((float4 &)P_curve_2).w;
+#else  /* __KERNEL_AVX2__ */
 		ssef htfm[] = { htfm0, htfm1, htfm2 };
 		ssef vP = load4f(P);
 		ssef p0 = transform_point_T3(htfm, P_curve[0] - vP);
 		ssef p1 = transform_point_T3(htfm, P_curve[1] - vP);
 		ssef p2 = transform_point_T3(htfm, P_curve[2] - vP);
 		ssef p3 = transform_point_T3(htfm, P_curve[3] - vP);
+
+		r_st = ((float4 &)P_curve[1]).w;
+		r_en = ((float4 &)P_curve[2]).w;
+#endif  /* __KERNEL_AVX2__ */
 
 		float fc = 0.71f;
 		ssef vfc = ssef(fc);
@@ -294,8 +346,6 @@ ccl_device_inline bool bvh_cardinal_curve_intersect(KernelGlobals *kg, Intersect
 		vcurve_coef[2] = madd(ssef(fc * 2.0f), p0, madd(ssef(fc - 3.0f), p1, msub(ssef(3.0f - 2.0f * fc), p2, vfcxp3)));
 		vcurve_coef[3] = msub(ssef(fc - 2.0f), p2 - p1, msub(vfc, p0, vfcxp3));
 
-		r_st = ((float4 &)P_curve[1]).w;
-		r_en = ((float4 &)P_curve[2]).w;
 	}
 #else
 	float3 curve_coef[4];
@@ -322,7 +372,7 @@ ccl_device_inline bool bvh_cardinal_curve_intersect(KernelGlobals *kg, Intersect
 
 		float4 P_curve[4];
 
-		if(type & PRIMITIVE_CURVE) {
+		if(is_curve_primitive) {
 			P_curve[0] = kernel_tex_fetch(__curve_keys, ka);
 			P_curve[1] = kernel_tex_fetch(__curve_keys, k0);
 			P_curve[2] = kernel_tex_fetch(__curve_keys, k1);
@@ -383,8 +433,9 @@ ccl_device_inline bool bvh_cardinal_curve_intersect(KernelGlobals *kg, Intersect
 
 	/* begin loop */
 	while(!(tree >> (depth))) {
-		float i_st = tree * resol;
-		float i_en = i_st + (level * resol);
+		const float i_st = tree * resol;
+		const float i_en = i_st + (level * resol);
+
 #ifdef __KERNEL_SSE2__
 		ssef vi_st = ssef(i_st), vi_en = ssef(i_en);
 		ssef vp_st = madd(madd(madd(vcurve_coef[3], vi_st, vcurve_coef[2]), vi_st, vcurve_coef[1]), vi_st, vcurve_coef[0]);
@@ -450,21 +501,31 @@ ccl_device_inline bool bvh_cardinal_curve_intersect(KernelGlobals *kg, Intersect
 		else if(level == 1) {
 
 			/* the maximum recursion depth is reached.
-			* check if dP0.(Q-P0)>=0 and dPn.(Pn-Q)>=0.
-			* dP* is reversed if necessary.*/
+			 * check if dP0.(Q-P0)>=0 and dPn.(Pn-Q)>=0.
+			 * dP* is reversed if necessary.*/
 			float t = isect->t;
 			float u = 0.0f;
 			float gd = 0.0f;
 
 			if(flags & CURVE_KN_RIBBONS) {
 				float3 tg = (p_en - p_st);
+#ifdef __KERNEL_SSE__
+				const float3 tg_sq = tg * tg;
+				float w = tg_sq.x + tg_sq.y;
+#else
 				float w = tg.x * tg.x + tg.y * tg.y;
+#endif
 				if(w == 0) {
 					tree++;
 					level = tree & -tree;
 					continue;
 				}
+#ifdef __KERNEL_SSE__
+				const float3 p_sttg = p_st * tg;
+				w = -(p_sttg.x + p_sttg.y) / w;
+#else
 				w = -(p_st.x * tg.x + p_st.y * tg.y) / w;
+#endif
 				w = saturate(w);
 
 				/* compute u on the curve segment */
@@ -496,7 +557,13 @@ ccl_device_inline bool bvh_cardinal_curve_intersect(KernelGlobals *kg, Intersect
 				if(difl != 0.0f) {
 					mw_extension = min(difl * fabsf(bmaxz), extmax);
 					r_ext = mw_extension + r_curr;
+#ifdef __KERNEL_SSE__
+					const float3 p_curr_sq = p_curr * p_curr;
+					const float3 dxxx = _mm_sqrt_ss(_mm_hadd_ps(p_curr_sq.m128, p_curr_sq.m128));
+					float d = dxxx.x;
+#else
 					float d = sqrtf(p_curr.x * p_curr.x + p_curr.y * p_curr.y);
+#endif
 					float d0 = d - r_curr;
 					float d1 = d + r_curr;
 					float inv_mw_extension = 1.0f/mw_extension;
@@ -621,15 +688,24 @@ ccl_device_inline bool bvh_cardinal_curve_intersect(KernelGlobals *kg, Intersect
 	return hit;
 }
 
-ccl_device_inline bool bvh_curve_intersect(KernelGlobals *kg, Intersection *isect,
+ccl_device_forceinline bool bvh_curve_intersect(KernelGlobals *kg, Intersection *isect,
 	float3 P, float3 direction, uint visibility, int object, int curveAddr, float time, int type, uint *lcg_state, float difl, float extmax)
 {
 	/* define few macros to minimize code duplication for SSE */
 #ifndef __KERNEL_SSE2__
-#define len3_squared(x) len_squared(x)
-#define len3(x) len(x)
-#define dot3(x, y) dot(x, y)
+#  define len3_squared(x) len_squared(x)
+#  define len3(x) len(x)
+#  define dot3(x, y) dot(x, y)
 #endif
+
+	const bool is_curve_primitive = (type & PRIMITIVE_CURVE);
+
+	if(!is_curve_primitive && kernel_data.bvh.use_bvh_steps) {
+		const float2 prim_time = kernel_tex_fetch(__prim_time, curveAddr);
+		if(time < prim_time.x || time > prim_time.y) {
+			return false;
+		}
+	}
 
 	int segment = PRIMITIVE_UNPACK_SEGMENT(type);
 	/* curve Intersection check */
@@ -645,7 +721,7 @@ ccl_device_inline bool bvh_curve_intersect(KernelGlobals *kg, Intersection *isec
 #ifndef __KERNEL_SSE2__
 	float4 P_curve[2];
 
-	if(type & PRIMITIVE_CURVE) {
+	if(is_curve_primitive) {
 		P_curve[0] = kernel_tex_fetch(__curve_keys, k0);
 		P_curve[1] = kernel_tex_fetch(__curve_keys, k1);
 	}
@@ -680,7 +756,7 @@ ccl_device_inline bool bvh_curve_intersect(KernelGlobals *kg, Intersection *isec
 #else
 	ssef P_curve[2];
 	
-	if(type & PRIMITIVE_CURVE) {
+	if(is_curve_primitive) {
 		P_curve[0] = load4f(&kg->__curve_keys.data[k0].x);
 		P_curve[1] = load4f(&kg->__curve_keys.data[k1].x);
 	}
@@ -850,9 +926,9 @@ ccl_device_inline bool bvh_curve_intersect(KernelGlobals *kg, Intersection *isec
 	return false;
 
 #ifndef __KERNEL_SSE2__
-#undef len3_squared
-#undef len3
-#undef dot3
+#  undef len3_squared
+#  undef len3
+#  undef dot3
 #endif
 }
 

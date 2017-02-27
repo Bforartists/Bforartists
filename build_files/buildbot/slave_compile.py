@@ -31,165 +31,178 @@ if len(sys.argv) < 2:
 builder = sys.argv[1]
 
 # we run from build/ directory
-blender_dir = '../blender.git'
+blender_dir = os.path.join('..', 'blender.git')
+
+
+def parse_header_file(filename, define):
+    import re
+    regex = re.compile("^#\s*define\s+%s\s+(.*)" % define)
+    with open(filename, "r") as file:
+        for l in file:
+            match = regex.match(l)
+            if match:
+                return match.group(1)
+    return None
 
 if 'cmake' in builder:
     # cmake
 
-    # set build options
-    cmake_options = ['-DCMAKE_BUILD_TYPE:STRING=Release']
+    # Some fine-tuning configuration
+    blender_dir = os.path.join('..', blender_dir)
+    build_dir = os.path.abspath(os.path.join('..', 'build', builder))
+    install_dir = os.path.abspath(os.path.join('..', 'install', builder))
+    targets = ['blender']
 
-    if builder.endswith('mac_x86_64_cmake'):
-        cmake_options.append('-DCMAKE_OSX_ARCHITECTURES:STRING=x86_64')
-    elif builder.endswith('mac_i386_cmake'):
-        cmake_options.append('-DCMAKE_OSX_ARCHITECTURES:STRING=i386')
-    elif builder.endswith('mac_ppc_cmake'):
-        cmake_options.append('-DCMAKE_OSX_ARCHITECTURES:STRING=ppc')
+    chroot_name = None  # If not None command will be delegated to that chroot
+    cuda_chroot_name = None  # If not None cuda compilationcommand will be delegated to that chroot
+    build_cubins = True  # Whether to build Cycles CUDA kernels
+    bits = 64
 
-    if 'win64' in builder:
-        cmake_options.append(['-G', '"Visual Studio 12 2013 Win64"'])
-    elif 'win32' in builder:
-        cmake_options.append(['-G', '"Visual Studio 12 2013"'])
+    # Config file to be used (relative to blender's sources root)
+    cmake_config_file = "build_files/cmake/config/blender_full.cmake"
+    cmake_player_config_file = None
+    cmake_cuda_config_file = None
 
-    cmake_options.append("-C../blender.git/build_files/cmake/config/blender_full.cmake")
-    cmake_options.append("-DWITH_CYCLES_CUDA_BINARIES=1")
-    # configure and make
-    retcode = subprocess.call(['cmake', blender_dir] + cmake_options)
-    if retcode != 0:
-        sys.exit(retcode)
+    # Set build options.
+    cmake_options = []
+    cmake_extra_options = ['-DCMAKE_BUILD_TYPE:STRING=Release']
+    cuda_cmake_options = []
 
-    if 'win32' in builder:
-        retcode = subprocess.call(['msbuild', 'INSTALL.vcxproj', '/Property:PlatformToolset=v120_xp', '/p:Configuration=Release'])
-    elif 'win64' in builder:
-        retcode = subprocess.call(['msbuild', 'INSTALL.vcxproj', '/p:Configuration=Release'])
+    if builder.startswith('mac'):
+        # Set up OSX architecture
+        if builder.endswith('x86_64_10_6_cmake'):
+            cmake_extra_options.append('-DCMAKE_OSX_ARCHITECTURES:STRING=x86_64')
+        cmake_extra_options.append('-DWITH_CODEC_QUICKTIME=OFF')
+        cmake_extra_options.append('-DCMAKE_OSX_DEPLOYMENT_TARGET=10.6')
+
+
+    elif builder.startswith('win'):
+        if builder.endswith('_vc2015'):
+            if builder.startswith('win64'):
+                cmake_options.extend(['-G', 'Visual Studio 14 2015 Win64'])
+            elif builder.startswith('win32'):
+                bits = 32
+                cmake_options.extend(['-G', 'Visual Studio 14 2015'])
+            cmake_extra_options.append('-DCUDA_NVCC_FLAGS=--cl-version;2013;' +
+                '--compiler-bindir;C:\\Program Files (x86)\\Microsoft Visual Studio 12.0\\VC\\bin')
+        else:
+            if builder.startswith('win64'):
+                cmake_options.extend(['-G', 'Visual Studio 12 2013 Win64'])
+            elif builder.startswith('win32'):
+                bits = 32
+                cmake_options.extend(['-G', 'Visual Studio 12 2013'])
+        cmake_extra_options.append('-DCUDA_NVCC_EXECUTABLE:FILEPATH=C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v8.0/bin/nvcc.exe')
+
+    elif builder.startswith('linux'):
+        tokens = builder.split("_")
+        glibc = tokens[1]
+        if glibc == 'glibc219':
+            deb_name = "jessie"
+        elif glibc == 'glibc211':
+            deb_name = "squeeze"
+        cmake_config_file = "build_files/buildbot/config/blender_linux.cmake"
+        cmake_player_config_file = "build_files/buildbot/config/blender_linux_player.cmake"
+        if builder.endswith('x86_64_cmake'):
+            chroot_name = 'buildbot_' + deb_name + '_x86_64'
+            targets = ['player', 'blender']
+        elif builder.endswith('i686_cmake'):
+            bits = 32
+            chroot_name = 'buildbot_' + deb_name + '_i686'
+            cuda_chroot_name = 'buildbot_' + deb_name + '_x86_64'
+            targets = ['player', 'blender', 'cuda']
+
+        cmake_extra_options.append('-DCUDA_NVCC_EXECUTABLE=/usr/local/cuda-8.0/bin/nvcc')
+
+    cmake_options.append("-C" + os.path.join(blender_dir, cmake_config_file))
+
+    # Prepare CMake options needed to configure cuda binaries compilation.
+    cuda_cmake_options.append("-DWITH_CYCLES_CUDA_BINARIES=%s" % ('ON' if build_cubins else 'OFF'))
+    cuda_cmake_options.append("-DCYCLES_CUDA_BINARIES_ARCH=sm_20;sm_21;sm_30;sm_35;sm_37;sm_50;sm_52;sm_60;sm_61")
+    if build_cubins or 'cuda' in targets:
+        if bits == 32:
+            cuda_cmake_options.append("-DCUDA_64_BIT_DEVICE_CODE=OFF")
+        else:
+            cuda_cmake_options.append("-DCUDA_64_BIT_DEVICE_CODE=ON")
+
+    # Only modify common cmake options if cuda doesn't require separate target.
+    if 'cuda' not in targets:
+        cmake_options += cuda_cmake_options
+
+    cmake_options.append("-DCMAKE_INSTALL_PREFIX=%s" % (install_dir))
+
+    cmake_options += cmake_extra_options
+
+    # Prepare chroot command prefix if needed
+    if chroot_name:
+        chroot_prefix = ['schroot', '-c', chroot_name, '--']
     else:
-        retcode = subprocess.call(['make', '-s', '-j4', 'install'])
-    sys.exit(retcode)
-else:
-    python_bin = 'python'
-    if builder.find('linux') != -1:
-        python_bin = '/opt/lib/python-2.7/bin/python2.7'
+        chroot_prefix = []
+    if cuda_chroot_name:
+        cuda_chroot_prefix = ['schroot', '-c', cuda_chroot_name, '--']
+    else:
+        cuda_chroot_prefix = chroot_prefix[:]
 
-    # scons
-    os.chdir(blender_dir)
-    scons_cmd = [python_bin, 'scons/scons.py']
-    scons_options = ['BF_FANCY=False']
-
-    # We're using the same rules as release builder, so tweak
-    # build and install dirs
-    build_dir = os.path.join('..', 'build', builder)
-    install_dir = os.path.join('..', 'install', builder)
-
-    # Clean install directory so we'll be sure there's no
-    # residual libs and files remained from the previous install.
+    # Make sure no garbage remained from the previous run
     if os.path.isdir(install_dir):
         shutil.rmtree(install_dir)
 
-    buildbot_dir = os.path.dirname(os.path.realpath(__file__))
-    config_dir = os.path.join(buildbot_dir, 'config')
+    for target in targets:
+        print("Building target %s" % (target))
+        # Construct build directory name based on the target
+        target_build_dir = build_dir
+        target_chroot_prefix = chroot_prefix[:]
+        if target != 'blender':
+            target_build_dir += '_' + target
+        target_name = 'install'
+        # Make sure build directory exists and enter it
+        if not os.path.isdir(target_build_dir):
+            os.mkdir(target_build_dir)
+        os.chdir(target_build_dir)
+        # Tweaking CMake options to respect the target
+        target_cmake_options = cmake_options[:]
+        if target == 'player':
+            target_cmake_options.append("-C" + os.path.join(blender_dir, cmake_player_config_file))
+        elif target == 'cuda':
+            target_cmake_options += cuda_cmake_options
+            target_chroot_prefix = cuda_chroot_prefix[:]
+            target_name = 'cycles_kernel_cuda'
+        # If cuda binaries are compiled as a separate target, make sure
+        # other targets don't compile cuda binaries.
+        if 'cuda' in targets and target != 'cuda':
+            target_cmake_options.append("-DWITH_CYCLES_CUDA_BINARIES=OFF")
+        # Configure the build
+        print("CMake options:")
+        print(target_cmake_options)
+        if os.path.exists('CMakeCache.txt'):
+            print("Removing CMake cache")
+            os.remove('CMakeCache.txt')
+        retcode = subprocess.call(target_chroot_prefix + ['cmake', blender_dir] + target_cmake_options)
+        if retcode != 0:
+            print('Condifuration FAILED!')
+            sys.exit(retcode)
 
-    if builder.find('linux') != -1:
-        configs = []
-        if builder.endswith('linux_glibc211_x86_64_scons'):
-            configs = ['user-config-player-glibc211-x86_64.py',
-                       'user-config-cuda-glibc211-x86_64.py',
-                       'user-config-glibc211-x86_64.py'
-                       ]
-            chroot_name = 'buildbot_squeeze_x86_64'
-            cuda_chroot = 'buildbot_squeeze_x86_64'
-        elif builder.endswith('linux_glibc211_i386_scons'):
-            configs = ['user-config-player-glibc211-i686.py',
-                       'user-config-cuda-glibc211-i686.py',
-                       'user-config-glibc211-i686.py']
-            chroot_name = 'buildbot_squeeze_i686'
+        if 'win32' in builder or 'win64' in builder:
+            command = ['cmake', '--build', '.', '--target', target_name, '--config', 'Release']
+        else:
+            command = target_chroot_prefix + ['make', '-s', '-j2', target_name]
 
-            # use 64bit cuda toolkit, so there'll be no memory limit issues
-            cuda_chroot = 'buildbot_squeeze_x86_64'
+        print("Executing command:")
+        print(command)
+        retcode = subprocess.call(command)
 
-        # Compilation will happen inside of chroot environment
-        prog_scons_cmd = ['schroot', '-c', chroot_name, '--'] + scons_cmd
-        cuda_scons_cmd = ['schroot', '-c', cuda_chroot, '--'] + scons_cmd
+        if retcode != 0:
+            sys.exit(retcode)
 
-        common_options = ['BF_INSTALLDIR=' + install_dir] + scons_options
+        if builder.startswith('linux') and target == 'cuda':
+            blender_h = os.path.join(blender_dir, "source", "blender", "blenkernel", "BKE_blender_version.h")
+            blender_version = int(parse_header_file(blender_h, 'BLENDER_VERSION'))
+            blender_version = "%d.%d" % (blender_version // 100, blender_version % 100)
+            kernels = os.path.join(target_build_dir, 'intern', 'cycles', 'kernel')
+            install_kernels = os.path.join(install_dir, blender_version, 'scripts', 'addons', 'cycles', 'lib')
+            os.mkdir(install_kernels)
+            print("Copying cuda binaries from %s to %s" % (kernels, install_kernels))
+            os.system('cp %s/*.cubin %s' % (kernels, install_kernels))
 
-        for config in configs:
-            config_fpath = os.path.join(config_dir, config)
-
-            scons_options = []
-
-            if config.find('player') != -1:
-                scons_options.append('BF_BUILDDIR=%s_player' % (build_dir))
-            elif config.find('cuda') != -1:
-                scons_options.append('BF_BUILDDIR=%s_cuda' % (build_dir))
-            else:
-                scons_options.append('BF_BUILDDIR=%s' % (build_dir))
-
-            scons_options += common_options
-
-            if config.find('player') != -1:
-                scons_options.append('blenderplayer')
-                cur_scons_cmd = prog_scons_cmd
-            elif config.find('cuda') != -1:
-                scons_options.append('cudakernels')
-                cur_scons_cmd = cuda_scons_cmd
-
-                if config.find('i686') != -1:
-                    scons_options.append('BF_BITNESS=32')
-                elif config.find('x86_64') != -1:
-                    scons_options.append('BF_BITNESS=64')
-            else:
-                scons_options.append('blender')
-                cur_scons_cmd = prog_scons_cmd
-
-            scons_options.append('BF_CONFIG=' + config_fpath)
-
-            retcode = subprocess.call(cur_scons_cmd + scons_options)
-            if retcode != 0:
-                print('Error building rules with config ' + config)
-                sys.exit(retcode)
-
-        sys.exit(0)
-    else:
-        if builder.find('win') != -1:
-            bitness = '32'
-
-            if builder.find('win64') != -1:
-                bitness = '64'
-
-            scons_options.append('BF_INSTALLDIR=' + install_dir)
-            scons_options.append('BF_BUILDDIR=' + build_dir)
-            scons_options.append('BF_BITNESS=' + bitness)
-            scons_options.append('WITH_BF_CYCLES_CUDA_BINARIES=True')
-            scons_options.append('BF_CYCLES_CUDA_NVCC=nvcc.exe')
-            if builder.find('mingw') != -1:
-                scons_options.append('BF_TOOLSET=mingw')
-            if builder.endswith('vc2013'):
-                scons_options.append('MSVS_VERSION=12.0')
-                scons_options.append('MSVC_VERSION=12.0')
-                scons_options.append('WITH_BF_CYCLES_CUDA_BINARIES=1')
-                scons_options.append('BF_CYCLES_CUDA_NVCC=nvcc.exe')
-            scons_options.append('BF_NUMJOBS=1')
-
-        elif builder.find('mac') != -1:
-            if builder.find('x86_64') != -1:
-                config = 'user-config-mac-x86_64.py'
-            else:
-                config = 'user-config-mac-i386.py'
-
-            scons_options.append('BF_CONFIG=' + os.path.join(config_dir, config))
-
-        if builder.find('win') != -1:
-            if not os.path.exists(install_dir):
-                os.makedirs(install_dir)
-            if builder.endswith('vc2013'):
-                dlls = ('msvcp120.dll', 'msvcr120.dll', 'vcomp120.dll')
-            if builder.find('win64') == -1:
-                dlls_path = '..\\..\\..\\redist\\x86'
-            else:
-                dlls_path = '..\\..\\..\\redist\\amd64'
-            for dll in dlls:
-                shutil.copyfile(os.path.join(dlls_path, dll), os.path.join(install_dir, dll))
-
-        retcode = subprocess.call([python_bin, 'scons/scons.py'] + scons_options)
-
-        sys.exit(retcode)
+else:
+    print("Unknown building system")
+    sys.exit(1)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2013 Blender Foundation
+ * Copyright 2011-2016 Blender Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,9 @@
 #ifndef __GRAPH_H__
 #define __GRAPH_H__
 
+#include "node.h"
+#include "node_type.h"
+
 #include "kernel_types.h"
 
 #include "util_list.h"
@@ -29,6 +32,7 @@
 CCL_NAMESPACE_BEGIN
 
 class AttributeRequestSet;
+class Scene;
 class Shader;
 class ShaderInput;
 class ShaderOutput;
@@ -37,23 +41,7 @@ class ShaderGraph;
 class SVMCompiler;
 class OSLCompiler;
 class OutputNode;
-
-/* Socket Type
- *
- * Data type for inputs and outputs */
-
-enum ShaderSocketType {
-	SHADER_SOCKET_UNDEFINED,
-	
-	SHADER_SOCKET_FLOAT,
-	SHADER_SOCKET_INT,
-	SHADER_SOCKET_COLOR,
-	SHADER_SOCKET_VECTOR,
-	SHADER_SOCKET_POINT,
-	SHADER_SOCKET_NORMAL,
-	SHADER_SOCKET_CLOSURE,
-	SHADER_SOCKET_STRING
-};
+class ConstantFolder;
 
 /* Bump
  *
@@ -75,40 +63,14 @@ enum ShaderBump {
 enum ShaderNodeSpecialType {
 	SHADER_SPECIAL_TYPE_NONE,
 	SHADER_SPECIAL_TYPE_PROXY,
-	SHADER_SPECIAL_TYPE_MIX_CLOSURE,
-	SHADER_SPECIAL_TYPE_MIX_RGB, /* Only Mix subtype */
 	SHADER_SPECIAL_TYPE_AUTOCONVERT,
 	SHADER_SPECIAL_TYPE_GEOMETRY,
 	SHADER_SPECIAL_TYPE_SCRIPT,
-	SHADER_SPECIAL_TYPE_BACKGROUND,
 	SHADER_SPECIAL_TYPE_IMAGE_SLOT,
 	SHADER_SPECIAL_TYPE_CLOSURE,
-	SHADER_SPECIAL_TYPE_EMISSION,
+	SHADER_SPECIAL_TYPE_COMBINE_CLOSURE,
+	SHADER_SPECIAL_TYPE_OUTPUT,
 	SHADER_SPECIAL_TYPE_BUMP,
-};
-
-/* Enum
- *
- * Utility class for enum values. */
-
-class ShaderEnum {
-public:
-	bool empty() const { return left.empty(); }
-	void insert(const char *x, int y) {
-		left[ustring(x)] = y;
-		right[y] = ustring(x);
-	}
-
-	bool exists(ustring x) { return left.find(x) != left.end(); }
-	bool exists(int y) { return right.find(y) != right.end(); }
-
-	int operator[](const char *x) { return left[ustring(x)]; }
-	int operator[](ustring x) { return left[x]; }
-	ustring operator[](int y) { return right[y]; }
-
-protected:
-	map<ustring, int> left;
-	map<int, ustring> right;
 };
 
 /* Input
@@ -119,39 +81,21 @@ protected:
 
 class ShaderInput {
 public:
-	enum DefaultValue {
-		TEXTURE_GENERATED,
-		TEXTURE_UV,
-		INCOMING,
-		NORMAL,
-		POSITION,
-		TANGENT,
-		NONE
-	};
+	ShaderInput(const SocketType& socket_type_, ShaderNode* parent_)
+	: socket_type(socket_type_), parent(parent_), link(NULL), stack_offset(SVM_STACK_INVALID)
+	{}
 
-	enum Usage {
-		USE_SVM = 1,
-		USE_OSL = 2,
-		USE_ALL = USE_SVM|USE_OSL
-	};
+	ustring name() { return socket_type.ui_name; }
+	int flags() { return socket_type.flags; }
+	SocketType::Type type() { return socket_type.type; }
 
-	ShaderInput(ShaderNode *parent, const char *name, ShaderSocketType type);
-	void set(const float3& v) { value = v; }
-	void set(float f) { value = make_float3(f, 0, 0); }
-	void set(const ustring v) { value_string = v; }
+	void set(float f) { ((Node*)parent)->set(socket_type, f); }
+	void set(float3 f) { ((Node*)parent)->set(socket_type, f); }
 
-	const char *name;
-	ShaderSocketType type;
-
+	const SocketType& socket_type;
 	ShaderNode *parent;
 	ShaderOutput *link;
-
-	DefaultValue default_value;
-	float3 value;
-	ustring value_string;
-
 	int stack_offset; /* for SVM compiler */
-	int usage;
 };
 
 /* Output
@@ -160,14 +104,16 @@ public:
 
 class ShaderOutput {
 public:
-	ShaderOutput(ShaderNode *parent, const char *name, ShaderSocketType type);
+	ShaderOutput(const SocketType& socket_type_, ShaderNode* parent_)
+	: socket_type(socket_type_), parent(parent_), stack_offset(SVM_STACK_INVALID)
+	{}
 
-	const char *name;
+	ustring name() { return socket_type.ui_name; }
+	SocketType::Type type() { return socket_type.type; }
+
+	const SocketType& socket_type;
 	ShaderNode *parent;
-	ShaderSocketType type;
-
 	vector<ShaderInput*> links;
-
 	int stack_offset; /* for SVM compiler */
 };
 
@@ -176,23 +122,31 @@ public:
  * Shader node in graph, with input and output sockets. This is the virtual
  * base class for all node types. */
 
-class ShaderNode {
+class ShaderNode : public Node {
 public:
-	ShaderNode(const char *name);
+	explicit ShaderNode(const NodeType *type);
 	virtual ~ShaderNode();
+
+	void create_inputs_outputs(const NodeType *type);
 
 	ShaderInput *input(const char *name);
 	ShaderOutput *output(const char *name);
-
-	ShaderInput *add_input(const char *name, ShaderSocketType type, float value=0.0f, int usage=ShaderInput::USE_ALL);
-	ShaderInput *add_input(const char *name, ShaderSocketType type, float3 value, int usage=ShaderInput::USE_ALL);
-	ShaderInput *add_input(const char *name, ShaderSocketType type, ShaderInput::DefaultValue value, int usage=ShaderInput::USE_ALL);
-	ShaderOutput *add_output(const char *name, ShaderSocketType type);
+	ShaderInput *input(ustring name);
+	ShaderOutput *output(ustring name);
 
 	virtual ShaderNode *clone() const = 0;
 	virtual void attributes(Shader *shader, AttributeRequestSet *attributes);
 	virtual void compile(SVMCompiler& compiler) = 0;
 	virtual void compile(OSLCompiler& compiler) = 0;
+
+	/* ** Node optimization ** */
+	/* Check whether the node can be replaced with single constant. */
+	virtual void constant_fold(const ConstantFolder& /*folder*/) {}
+
+	/* Simplify settings used by artists to the ones which are simpler to
+	 * evaluate in the kernel but keep the final result unchanged.
+	 */
+	virtual void simplify_settings(Scene * /*scene*/) {};
 
 	virtual bool has_surface_emission() { return false; }
 	virtual bool has_surface_transparent() { return false; }
@@ -200,11 +154,11 @@ public:
 	virtual bool has_bssrdf_bump() { return false; }
 	virtual bool has_spatial_varying() { return false; }
 	virtual bool has_object_dependency() { return false; }
+	virtual bool has_integrator_dependency() { return false; }
 
 	vector<ShaderInput*> inputs;
 	vector<ShaderOutput*> outputs;
 
-	ustring name; /* name, not required to be unique */
 	int id; /* index in graph node array */
 	ShaderBump bump; /* for bump mapping utility */
 	
@@ -227,18 +181,34 @@ public:
 	 * nodes group.
 	 */
 	virtual int get_feature() { return bump == SHADER_BUMP_NONE ? 0 : NODE_FEATURE_BUMP; }
+
+	/* Get closure ID to which the node compiles into. */
+	virtual ClosureType get_closure_type() { return CLOSURE_NONE_ID; }
+
+	/* Check whether settings of the node equals to another one.
+	 *
+	 * This is mainly used to check whether two nodes can be merged
+	 * together. Meaning, runtime stuff like node id and unbound slots
+	 * will be ignored for comparison.
+	 *
+	 * NOTE: If some node can't be de-duplicated for whatever reason it
+	 * is to be handled in the subclass.
+	 */
+	virtual bool equals(const ShaderNode& other);
 };
 
 
 /* Node definition utility macros */
 
 #define SHADER_NODE_CLASS(type) \
+	NODE_DECLARE; \
 	type(); \
 	virtual ShaderNode *clone() const { return new type(*this); } \
 	virtual void compile(SVMCompiler& compiler); \
 	virtual void compile(OSLCompiler& compiler); \
 
 #define SHADER_NODE_NO_CLONE_CLASS(type) \
+	NODE_DECLARE; \
 	type(); \
 	virtual void compile(SVMCompiler& compiler); \
 	virtual void compile(OSLCompiler& compiler); \
@@ -247,6 +217,18 @@ public:
 	virtual ShaderNode *clone() const { return new type(*this); } \
 	virtual void compile(SVMCompiler& compiler); \
 	virtual void compile(OSLCompiler& compiler); \
+
+class ShaderNodeIDComparator
+{
+public:
+	bool operator()(const ShaderNode *n1, const ShaderNode *n2) const
+	{
+		return n1->id < n2->id;
+	}
+};
+
+typedef set<ShaderNode*, ShaderNodeIDComparator> ShaderNodeSet;
+typedef map<ShaderNode*, ShaderNode*, ShaderNodeIDComparator> ShaderNodeMap;
 
 /* Graph
  *
@@ -268,11 +250,16 @@ public:
 	OutputNode *output();
 
 	void connect(ShaderOutput *from, ShaderInput *to);
+	void disconnect(ShaderOutput *from);
 	void disconnect(ShaderInput *to);
-	void relink(vector<ShaderInput*> inputs, vector<ShaderInput*> outputs, ShaderOutput *output);
+	void relink(ShaderNode *node, ShaderOutput *from, ShaderOutput *to);
 
-	void remove_unneeded_nodes();
-	void finalize(bool do_bump = false, bool do_osl = false);
+	void remove_proxy_nodes();
+	void finalize(Scene *scene,
+	              bool do_bump = false,
+	              bool do_osl = false,
+	              bool do_simplify = false,
+	              bool bump_in_object_space = false);
 
 	int get_num_closures();
 
@@ -281,15 +268,21 @@ public:
 protected:
 	typedef pair<ShaderNode* const, ShaderNode*> NodePair;
 
-	void find_dependencies(set<ShaderNode*>& dependencies, ShaderInput *input);
-	void copy_nodes(set<ShaderNode*>& nodes, map<ShaderNode*, ShaderNode*>& nnodemap);
+	void find_dependencies(ShaderNodeSet& dependencies, ShaderInput *input);
+	void clear_nodes();
+	void copy_nodes(ShaderNodeSet& nodes, ShaderNodeMap& nnodemap);
 
 	void break_cycles(ShaderNode *node, vector<bool>& visited, vector<bool>& on_stack);
-	void clean();
-	void bump_from_displacement();
+	void bump_from_displacement(bool use_object_space);
 	void refine_bump_nodes();
 	void default_inputs(bool do_osl);
 	void transform_multi_closure(ShaderNode *node, ShaderOutput *weight_out, bool volume);
+
+	/* Graph simplification routines. */
+	void clean(Scene *scene);
+	void constant_fold();
+	void simplify_settings(Scene *scene);
+	void deduplicate_nodes();
 };
 
 CCL_NAMESPACE_END

@@ -19,16 +19,17 @@
 # Modified BFA Version with Move to Layer button and the layer widget from the 3d view header.
 # And hidable options
 
+
 # <pep8 compliant>
 #
 bl_info = {
     "name": "Layer Management",
     "author": "Alfonso Annarumma, Bastien Montagne",
     "version": (1, 5, 2),
-    "blender": (2, 72, 0),
+    "blender": (2, 76, 0),
     "location": "Toolshelf > Layers Tab",
     "warning": "",
-    "description": "Display and Edit Layer Name",
+    "description": "Display and Edit Layer Name - Bforartists version ",
     "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/3D_interaction/layer_manager",
     "category": "3D View",
 }
@@ -368,7 +369,6 @@ class SCENE_OT_namedlayer_show_all(bpy.types.Operator):
 
         return {'FINISHED'}
     
-    
 class SCENE_PT_layer_manager(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -569,8 +569,10 @@ class SCENE_UL_namedlayer_groups(UIList):
 class SCENE_PT_namedlayer_groups(bpy.types.Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
+    bl_context = "objectmode"
     bl_category = "Layers"
     bl_label = "Layer Groups"
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(self, context):
@@ -593,6 +595,36 @@ class SCENE_PT_namedlayer_groups(bpy.types.Panel):
             layout.prop(scene.layergroups[group_idx], "layers", text="", toggle=True)
             layout.prop(scene.layergroups[group_idx], "name", text="Name:")
 
+## Addons Preferences Update Panel
+def update_panel(self, context):
+    try:
+        bpy.utils.unregister_class(SCENE_PT_namedlayer_layers)
+        bpy.utils.unregister_class(SCENE_PT_namedlayer_groups)
+    except:
+        pass
+    SCENE_PT_namedlayer_layers.bl_category = context.user_preferences.addons[__name__].preferences.category
+    bpy.utils.register_class(SCENE_PT_namedlayer_layers) 
+    SCENE_PT_namedlayer_groups.bl_category = context.user_preferences.addons[__name__].preferences.category
+    bpy.utils.register_class(SCENE_PT_namedlayer_groups)    
+
+class LayerMAddonPreferences(bpy.types.AddonPreferences):
+    # this must match the addon name, use '__package__'
+    # when defining this in a submodule of a python package.
+    bl_idname = __name__
+
+    category = bpy.props.StringProperty(
+            name="Tab Category",
+            description="Choose a name for the category of the panel",
+            default="Layers",
+            update=update_panel)
+
+    def draw(self, context):
+
+        layout = self.layout
+        row = layout.row()
+        col = row.column()
+        col.label(text="Tab Category:")
+        col.prop(self, "category", text="")
 
 def register():
     bpy.utils.register_module(__name__)
@@ -601,15 +633,17 @@ def register():
     bpy.types.Scene.layergroups_index = IntProperty(default=-1)
     bpy.types.Scene.namedlayers = PointerProperty(type=NamedLayers)
     bpy.app.handlers.scene_update_post.append(check_init_data)
+    update_panel(None, bpy.context)
     
     bpy.types.Scene.WT_Named_Layers_Options = bpy.props.BoolProperty(name="Display WireTools paramaters", default=False)
-
 
 def unregister():
     bpy.app.handlers.scene_update_post.remove(check_init_data)
     del bpy.types.Scene.layergroups
     del bpy.types.Scene.layergroups_index
     del bpy.types.Scene.namedlayers
+    
+    del bpy.types.Scene.WT_Named_Layers_Options
     bpy.utils.unregister_module(__name__)
 
 

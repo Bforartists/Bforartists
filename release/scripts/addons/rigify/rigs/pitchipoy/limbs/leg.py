@@ -227,6 +227,12 @@ def create_leg( cls, bones ):
         'owner_space' : 'LOCAL'
     })
 
+    # Modify rotation mode for ik and tweak controls
+    pb[bones['ik']['ctrl']['limb']].rotation_mode = 'ZXY'
+
+    for b in bones['tweak']['ctrl']:
+        pb[b].rotation_mode = 'ZXY'
+
     # Create ik/fk switch property
     pb_parent = pb[ bones['parent'] ]
     

@@ -90,6 +90,48 @@ Constants
 
    Right eye being used during stereoscopic rendering.
 
+.. data:: RAS_OFS_RENDER_BUFFER
+
+   The pixel buffer for offscreen render is a RenderBuffer. Argument to :func:`offScreenCreate`
+
+.. data:: RAS_OFS_RENDER_TEXTURE
+
+   The pixel buffer for offscreen render is a Texture. Argument to :func:`offScreenCreate`
+
+
+*****
+Types
+*****
+
+.. class:: RASOffScreen
+
+   An off-screen render buffer object. 
+
+   Use :func:`offScreenCreate` to create it.
+   Currently it can only be used in the :class:`bge.texture.ImageRender`
+   constructor to render on a FBO rather than the default viewport.
+
+  .. attribute:: width
+
+     The width in pixel of the FBO
+
+     :type: integer
+
+  .. attribute:: height
+
+     The height in pixel of the FBO
+
+     :type: integer
+
+  .. attribute:: color
+
+     The underlying OpenGL bind code of the texture object that holds
+     the rendered image, 0 if the FBO is using RenderBuffer.
+     The choice between RenderBuffer and Texture is determined
+     by the target argument of :func:`offScreenCreate`.
+
+     :type: integer
+
 
 *********
 Functions
@@ -113,7 +155,9 @@ Functions
 
    .. note:: Only works in the standalone player, not the Blender-embedded player.
 
+   :arg width: width in pixels
    :type width: integer
+   :arg height: height in pixels
    :type height: integer
 
 .. function:: setFullScreen(enable)
@@ -122,6 +166,7 @@ Functions
 
    .. note:: Only works in the standalone player, not the Blender-embedded player.
 
+   :arg enable: ``True`` to set full screen, ``False`` to set windowed.
    :type enable: bool
 
 .. function:: getFullScreen()
@@ -134,9 +179,12 @@ Functions
 
 .. function:: getDisplayDimensions()
 
-   Get the actual display dimensions, in pixels, of the physical display (e.g., the monitor).
+   Get the display dimensions, in pixels, of the display (e.g., the
+   monitor). Can return the size of the entire view, so the
+   combination of all monitors; for example, ``(3840, 1080)`` for two
+   side-by-side 1080p monitors.
    
-   :type dimension: list [width,heigh] 
+   :rtype: tuple (width, height)
 
 .. function:: makeScreenshot(filename)
 
@@ -161,13 +209,14 @@ Functions
 
 .. function:: enableVisibility(visible)
 
-   Doesn't really do anything...
+   Deprecated; doesn't do anything.
 
 
 .. function:: showMouse(visible)
 
    Enables or disables the operating system mouse cursor.
 
+   :arg visible:
    :type visible: boolean
 
 
@@ -175,15 +224,15 @@ Functions
 
    Sets the mouse cursor position.
 
+   :arg x: X-coordinate in screen pixel coordinates.
    :type x: integer
+   :arg y: Y-coordinate in screen pixel coordinates.
    :type y: integer
 
 
 .. function:: setBackgroundColor(rgba)
 
-   Sets the window background color. (Deprecated: use KX_WorldInfo.background_color)
-
-   :type rgba: list [r, g, b, a]
+   Deprecated and no longer functional. Use :py:meth:`bge.types.KX_WorldInfo.backgroundColor` instead.
 
 
 .. function:: setEyeSeparation(eyesep)
@@ -227,6 +276,7 @@ Functions
 
    Set the material mode to use for OpenGL rendering.
 
+   :arg mode: material mode
    :type mode: KX_TEXFACE_MATERIAL, KX_BLENDER_MULTITEX_MATERIAL, KX_BLENDER_GLSL_MATERIAL
 
    .. note:: Changes will only affect newly created scenes.
@@ -243,14 +293,17 @@ Functions
 
    Enables or disables a GLSL material setting.
 
+   :arg setting:
    :type setting: string (lights, shaders, shadows, ramps, nodes, extra_textures)
+   :arg enable:
    :type enable: boolean
 
 
-.. function:: getGLSLMaterialSetting(setting, enable)
+.. function:: getGLSLMaterialSetting(setting)
 
    Get the state of a GLSL material setting.
 
+   :arg setting:
    :type setting: string (lights, shaders, shadows, ramps, nodes, extra_textures)
    :rtype: boolean
 
@@ -311,24 +364,28 @@ Functions
 
    Show or hide the framerate.
 
+   :arg enable:
    :type enable: boolean
 
 .. function:: showProfile(enable)
 
    Show or hide the profile.
 
+   :arg enable:
    :type enable: boolean
 
 .. function:: showProperties(enable)
 
    Show or hide the debug properties.
 
+   :arg enable:
    :type enable: boolean
 
 .. function:: autoDebugList(enable)
 
    Enable or disable auto adding debug properties to the debug list.
 
+   :arg enable:
    :type enable: boolean
 
 .. function:: clearDebugList()
@@ -347,3 +404,22 @@ Functions
    Get the current vsync value
 
    :rtype: One of VSYNC_OFF, VSYNC_ON, VSYNC_ADAPTIVE
+
+.. function:: offScreenCreate(width,height[,samples=0][,target=bge.render.RAS_OFS_RENDER_BUFFER])
+
+   Create a Off-screen render buffer object.
+
+   :arg width: the width of the buffer in pixels
+   :type width: integer
+   :arg height: the height of the buffer in pixels
+   :type height: integer
+   :arg samples: the number of multisample for anti-aliasing (MSAA), 0 to disable MSAA
+   :type samples: integer
+   :arg target: the pixel storage: :data:`RAS_OFS_RENDER_BUFFER` to render on RenderBuffers (the default),
+      :data:`RAS_OFS_RENDER_TEXTURE` to render on texture. 
+      The later is interesting if you want to access the texture directly (see :attr:`RASOffScreen.color`).
+      Otherwise the default is preferable as it's more widely supported by GPUs and more efficient.
+      If the GPU does not support MSAA+Texture (e.g. Intel HD GPU), MSAA will be disabled.
+   :type target: integer
+   :rtype: :class:`RASOffScreen`
+

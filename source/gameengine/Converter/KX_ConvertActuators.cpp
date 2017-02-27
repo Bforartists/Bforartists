@@ -54,7 +54,6 @@
 
 // Ketsji specific logicbricks
 #include "KX_SceneActuator.h"
-#include "KX_IpoActuator.h"
 #include "KX_SoundActuator.h"
 #include "KX_ObjectActuator.h"
 #include "KX_TrackToActuator.h"
@@ -262,32 +261,6 @@ void BL_ConvertActuators(const char* maggiename,
 				else
 					printf ("Discarded shape action actuator from non-mesh object [%s]\n", blenderobject->id.name+2);
 			}
-		case ACT_IPO:
-			{
-				bIpoActuator* ipoact = (bIpoActuator*) bact->data;
-				bool ipochild = (ipoact->flag & ACT_IPOCHILD) !=0;
-				STR_String propname = ipoact->name;
-				STR_String frameProp = ipoact->frameProp;
-				// first bit?
-				bool ipo_as_force = (ipoact->flag & ACT_IPOFORCE);
-				bool local = (ipoact->flag & ACT_IPOLOCAL);
-				bool ipo_add = (ipoact->flag & ACT_IPOADD);
-				
-				KX_IpoActuator* tmpbaseact = new KX_IpoActuator(
-				            gameobj,
-				            propname ,
-				            frameProp,
-				            ipoact->sta,
-				            ipoact->end,
-				            ipochild,
-				            ipoact->type + 1, // + 1, because Blender starts to count at zero,
-				            // Ketsji at 1, because zero is reserved for "NoDef"
-				            ipo_as_force,
-				            ipo_add,
-				            local);
-				baseact = tmpbaseact;
-				break;
-			}
 		case ACT_LAMP:
 			{
 				break;
@@ -421,8 +394,9 @@ void BL_ConvertActuators(const char* maggiename,
 						soundActuatorType);
 
 					// if we made it mono, we have to free it
-					if(snd_sound != sound->playback_handle && snd_sound != NULL)
+					if (sound && snd_sound && snd_sound != sound->playback_handle) {
 						AUD_Sound_free(snd_sound);
+					}
 
 					tmpsoundact->SetName(bact->name);
 					baseact = tmpsoundact;
@@ -504,6 +478,13 @@ void BL_ConvertActuators(const char* maggiename,
 				case ACT_EDOB_REPLACE_MESH:
 					{
 						RAS_MeshObject *tmpmesh = converter->FindGameMesh(editobact->me);
+
+						if (!tmpmesh) {
+							std::cout << "Warning: object \"" << objectname <<
+							"\" from ReplaceMesh actuator \"" << uniquename <<
+							"\" uses a mesh not owned by an object in scene \"" <<
+							scene->GetName() << "\"." << std::endl;
+						}
 
 						KX_SCA_ReplaceMeshActuator* tmpreplaceact = new KX_SCA_ReplaceMeshActuator(
 						            gameobj,
@@ -804,6 +785,12 @@ void BL_ConvertActuators(const char* maggiename,
 				case ACT_GAME_LOADCFG:
 					{
 						mode = KX_GameActuator::KX_GAME_LOADCFG;
+						break;
+					}
+					case ACT_GAME_SCREENSHOT:
+					{
+						mode = KX_GameActuator::KX_GAME_SCREENSHOT;
+						filename = gameact->filename;
 						break;
 					}
 				default:
@@ -1141,6 +1128,7 @@ void BL_ConvertActuators(const char* maggiename,
 			uniquename += uniqueval->GetText();
 			uniqueval->Release();
 			baseact->SetName(bact->name);
+			baseact->SetLogicManager(logicmgr);
 			//gameobj->SetProperty(uniquename,baseact);
 			gameobj->AddActuator(baseact);
 			

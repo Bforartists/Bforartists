@@ -122,6 +122,7 @@ def write_mesh(context, info, report_cb):
                 filepath=filepath,
                 ascii=False,
                 use_mesh_modifiers=True,
+                use_selection=True,
                 global_scale=global_scale,
                 )
     elif export_format == 'PLY':

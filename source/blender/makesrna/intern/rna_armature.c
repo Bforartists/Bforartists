@@ -482,6 +482,82 @@ static void rna_Armature_transform(struct bArmature *arm, float *mat)
 
 #else
 
+/* Settings for curved bbone settings - The posemode values get applied over the top of the editmode ones */
+void rna_def_bone_curved_common(StructRNA *srna, bool is_posebone)
+{
+#define RNA_DEF_CURVEBONE_UPDATE(prop, is_posebone)                                \
+	{                                                                              \
+		if (is_posebone)                                                           \
+			RNA_def_property_update(prop, NC_OBJECT | ND_POSE, "rna_Pose_update"); \
+		else                                                                       \
+			RNA_def_property_update(prop, 0, "rna_Armature_update_data");          \
+	} (void)0;
+	
+	PropertyRNA *prop;
+	
+	/* Roll In/Out */
+	prop = RNA_def_property(srna, "bbone_rollin", PROP_FLOAT, PROP_ANGLE);
+	RNA_def_property_float_sdna(prop, NULL, "roll1");
+	RNA_def_property_range(prop, -M_PI * 2.0, M_PI * 2.0);
+	RNA_def_property_ui_text(prop, "Roll In", "Roll offset for the start of the B-Bone, adjusts twist");
+	RNA_DEF_CURVEBONE_UPDATE(prop, is_posebone);
+	
+	prop = RNA_def_property(srna, "bbone_rollout", PROP_FLOAT, PROP_ANGLE);
+	RNA_def_property_float_sdna(prop, NULL, "roll2");
+	RNA_def_property_range(prop, -M_PI * 2.0, M_PI * 2.0);
+	RNA_def_property_ui_text(prop, "Roll Out", "Roll offset for the end of the B-Bone, adjusts twist");
+	RNA_DEF_CURVEBONE_UPDATE(prop, is_posebone);
+	
+	if (is_posebone == false) {
+		prop = RNA_def_property(srna, "use_endroll_as_inroll", PROP_BOOLEAN, PROP_NONE);
+		RNA_def_property_ui_text(prop, "Inherit End Roll", "Use Roll Out of parent bone as Roll In of its children");
+		RNA_def_property_boolean_sdna(prop, NULL, "flag", BONE_ADD_PARENT_END_ROLL);
+		RNA_def_property_update(prop, 0, "rna_Armature_update_data");
+	}
+	
+	/* Curve X/Y Offsets */
+	prop = RNA_def_property(srna, "bbone_curveinx", PROP_FLOAT, PROP_NONE);
+	RNA_def_property_float_sdna(prop, NULL, "curveInX");
+	RNA_def_property_range(prop, -5.0f, 5.0f);
+	RNA_def_property_ui_text(prop, "In X", "X-axis handle offset for start of the B-Bone's curve, adjusts curvature");
+	RNA_DEF_CURVEBONE_UPDATE(prop, is_posebone);
+	
+	prop = RNA_def_property(srna, "bbone_curveiny", PROP_FLOAT, PROP_NONE);
+	RNA_def_property_float_sdna(prop, NULL, "curveInY");
+	RNA_def_property_range(prop, -5.0f, 5.0f);
+	RNA_def_property_ui_text(prop, "In Y", "Y-axis handle offset for start of the B-Bone's curve, adjusts curvature");
+	RNA_DEF_CURVEBONE_UPDATE(prop, is_posebone);
+	
+	prop = RNA_def_property(srna, "bbone_curveoutx", PROP_FLOAT, PROP_NONE);
+	RNA_def_property_float_sdna(prop, NULL, "curveOutX");
+	RNA_def_property_range(prop, -5.0f, 5.0f);
+	RNA_def_property_ui_text(prop, "Out X", "X-axis handle offset for end of the B-Bone's curve, adjusts curvature");
+	RNA_DEF_CURVEBONE_UPDATE(prop, is_posebone);
+	
+	prop = RNA_def_property(srna, "bbone_curveouty", PROP_FLOAT, PROP_NONE);
+	RNA_def_property_float_sdna(prop, NULL, "curveOutY");
+	RNA_def_property_range(prop, -5.0f, 5.0f);
+	RNA_def_property_ui_text(prop, "Out Y", "Y-axis handle offset for end of the B-Bone's curve, adjusts curvature");
+	RNA_DEF_CURVEBONE_UPDATE(prop, is_posebone);
+	
+	/* Scale In/Out */
+	prop = RNA_def_property(srna, "bbone_scalein", PROP_FLOAT, PROP_NONE);
+	RNA_def_property_float_sdna(prop, NULL, "scaleIn");
+	RNA_def_property_range(prop, 0.0f, 5.0f);
+	RNA_def_property_float_default(prop, 1.0f);
+	RNA_def_property_ui_text(prop, "Scale In", "Scale factor for start of the B-Bone, adjusts thickness (for tapering effects)");
+	RNA_DEF_CURVEBONE_UPDATE(prop, is_posebone);
+	
+	prop = RNA_def_property(srna, "bbone_scaleout", PROP_FLOAT, PROP_NONE);
+	RNA_def_property_float_sdna(prop, NULL, "scaleOut");
+	RNA_def_property_range(prop, 0.0f, 5.0f);
+	RNA_def_property_float_default(prop, 1.0f);
+	RNA_def_property_ui_text(prop, "Scale Out", "Scale factor for end of the B-Bone, adjusts thickness (for tapering effects)");
+	RNA_DEF_CURVEBONE_UPDATE(prop, is_posebone);
+	
+#undef RNA_DEF_CURVEBONE_UPDATE
+}
+
 static void rna_def_bone_common(StructRNA *srna, int editbone)
 {
 	PropertyRNA *prop;
@@ -633,7 +709,7 @@ static void rna_def_bone(BlenderRNA *brna)
 	PropertyRNA *prop;
 	
 	srna = RNA_def_struct(brna, "Bone", NULL);
-	RNA_def_struct_ui_text(srna, "Bone", "Bone in an Armature datablock");
+	RNA_def_struct_ui_text(srna, "Bone", "Bone in an Armature data-block");
 	RNA_def_struct_ui_icon(srna, ICON_BONE_DATA);
 	RNA_def_struct_path_func(srna, "rna_Bone_path");
 	RNA_def_struct_idprops_func(srna, "rna_Bone_idprops");
@@ -653,6 +729,7 @@ static void rna_def_bone(BlenderRNA *brna)
 	RNA_def_property_ui_text(prop, "Children", "Bones which are children of this bone");
 
 	rna_def_bone_common(srna, 0);
+	rna_def_bone_curved_common(srna, 0);
 
 	/* XXX should we define this in PoseChannel wrapping code instead?
 	 *     But PoseChannels directly get some of their flags from here... */
@@ -732,7 +809,7 @@ static void rna_def_edit_bone(BlenderRNA *brna)
 	srna = RNA_def_struct(brna, "EditBone", NULL);
 	RNA_def_struct_sdna(srna, "EditBone");
 	RNA_def_struct_idprops_func(srna, "rna_EditBone_idprops");
-	RNA_def_struct_ui_text(srna, "Edit Bone", "Editmode bone in an Armature datablock");
+	RNA_def_struct_ui_text(srna, "Edit Bone", "Editmode bone in an Armature data-block");
 	RNA_def_struct_ui_icon(srna, ICON_BONE_DATA);
 	
 	RNA_define_verify_sdna(0); /* not in sdna */
@@ -766,6 +843,7 @@ static void rna_def_edit_bone(BlenderRNA *brna)
 	RNA_def_property_update(prop, 0, "rna_Armature_editbone_transform_update");
 
 	rna_def_bone_common(srna, 1);
+	rna_def_bone_curved_common(srna, 0);
 
 	prop = RNA_def_property(srna, "hide", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_sdna(prop, NULL, "flag", BONE_HIDDEN_A);
@@ -870,8 +948,7 @@ static void rna_def_armature_edit_bones(BlenderRNA *brna, PropertyRNA *cprop)
 	RNA_def_function_flag(func, FUNC_USE_REPORTS);
 	RNA_def_function_ui_description(func, "Add a new bone");
 	parm = RNA_def_string(func, "name", "Object", 0, "", "New name for the bone");
-	RNA_def_property_flag(parm, PROP_REQUIRED);
-
+	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
 	/* return type */
 	parm = RNA_def_pointer(func, "bone", "EditBone", "", "Newly created edit bone");
 	RNA_def_function_return(func, parm);
@@ -882,16 +959,18 @@ static void rna_def_armature_edit_bones(BlenderRNA *brna, PropertyRNA *cprop)
 	RNA_def_function_ui_description(func, "Remove an existing bone from the armature");
 	/* target to remove*/
 	parm = RNA_def_pointer(func, "bone", "EditBone", "", "EditBone to remove");
-	RNA_def_property_flag(parm, PROP_REQUIRED | PROP_NEVER_NULL | PROP_RNAPTR);
-	RNA_def_property_clear_flag(parm, PROP_THICK_WRAP);
+	RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED | PARM_RNAPTR);
+	RNA_def_parameter_clear_flags(parm, PROP_THICK_WRAP, 0);
 }
 
 static void rna_def_armature(BlenderRNA *brna)
 {
 	StructRNA *srna;
-	FunctionRNA *func;
 	PropertyRNA *prop;
-	
+
+	FunctionRNA *func;
+	PropertyRNA *parm;
+
 	static EnumPropertyItem prop_drawtype_items[] = {
 		{ARM_OCTA, "OCTAHEDRAL", 0, "Octahedral", "Display bones as octahedral shape (default)"},
 		{ARM_LINE, "STICK", 0, "Stick", "Display bones as simple 2D lines with dots"},
@@ -921,14 +1000,14 @@ static void rna_def_armature(BlenderRNA *brna)
 	
 	srna = RNA_def_struct(brna, "Armature", "ID");
 	RNA_def_struct_ui_text(srna, "Armature",
-	                       "Armature datablock containing a hierarchy of bones, usually used for rigging characters");
+	                       "Armature data-block containing a hierarchy of bones, usually used for rigging characters");
 	RNA_def_struct_ui_icon(srna, ICON_ARMATURE_DATA);
 	RNA_def_struct_sdna(srna, "bArmature");
 
 	func = RNA_def_function(srna, "transform", "rna_Armature_transform");
 	RNA_def_function_ui_description(func, "Transform armature bones by a matrix");
-	prop = RNA_def_float_matrix(func, "matrix", 4, 4, NULL, 0.0f, 0.0f, "", "Matrix", 0.0f, 0.0f);
-	RNA_def_property_flag(prop, PROP_REQUIRED);
+	parm = RNA_def_float_matrix(func, "matrix", 4, 4, NULL, 0.0f, 0.0f, "", "Matrix", 0.0f, 0.0f);
+	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
 
 	/* Animation Data */
 	rna_def_animdata_common(srna);

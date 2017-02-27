@@ -28,6 +28,7 @@
  *  \ingroup spimage
  */
 
+#include "DNA_gpencil_types.h"
 #include "DNA_mesh_types.h"
 #include "DNA_mask_types.h"
 #include "DNA_meshdata_types.h"
@@ -44,6 +45,7 @@
 #include "BKE_colortools.h"
 #include "BKE_context.h"
 #include "BKE_image.h"
+#include "BKE_library.h"
 #include "BKE_scene.h"
 #include "BKE_screen.h"
 
@@ -232,7 +234,10 @@ static void image_operatortypes(void)
 	WM_operatortype_append(IMAGE_OT_view_zoom_in);
 	WM_operatortype_append(IMAGE_OT_view_zoom_out);
 	WM_operatortype_append(IMAGE_OT_view_zoom_ratio);
+	WM_operatortype_append(IMAGE_OT_view_zoom_border);
+#ifdef WITH_INPUT_NDOF
 	WM_operatortype_append(IMAGE_OT_view_ndof);
+#endif
 
 	WM_operatortype_append(IMAGE_OT_new);
 	WM_operatortype_append(IMAGE_OT_open);
@@ -285,7 +290,7 @@ static void image_keymap(struct wmKeyConfig *keyconf)
 	
 	WM_keymap_add_item(keymap, "IMAGE_OT_view_all", HOMEKEY, KM_PRESS, 0, 0);
 
-	kmi = WM_keymap_add_item(keymap, "IMAGE_OT_view_all", FKEY, KM_PRESS, 0, 0);
+	kmi = WM_keymap_add_item(keymap, "IMAGE_OT_view_all", HOMEKEY, KM_PRESS, KM_SHIFT, 0);
 	RNA_boolean_set(kmi->ptr, "fit_view", true);
 
 	WM_keymap_add_item(keymap, "IMAGE_OT_view_selected", PADPERIOD, KM_PRESS, 0, 0);
@@ -293,8 +298,10 @@ static void image_keymap(struct wmKeyConfig *keyconf)
 	WM_keymap_add_item(keymap, "IMAGE_OT_view_pan", MIDDLEMOUSE, KM_PRESS, KM_SHIFT, 0);
 	WM_keymap_add_item(keymap, "IMAGE_OT_view_pan", MOUSEPAN, 0, 0, 0);
 
+#ifdef WITH_INPUT_NDOF
 	WM_keymap_add_item(keymap, "IMAGE_OT_view_all", NDOF_BUTTON_FIT, KM_PRESS, 0, 0); // or view selected?
 	WM_keymap_add_item(keymap, "IMAGE_OT_view_ndof", NDOF_MOTION, 0, 0, 0);
+#endif
 
 	WM_keymap_add_item(keymap, "IMAGE_OT_view_zoom_in", WHEELINMOUSE, KM_PRESS, 0, 0);
 	WM_keymap_add_item(keymap, "IMAGE_OT_view_zoom_out", WHEELOUTMOUSE, KM_PRESS, 0, 0);
@@ -303,6 +310,7 @@ static void image_keymap(struct wmKeyConfig *keyconf)
 	WM_keymap_add_item(keymap, "IMAGE_OT_view_zoom", MIDDLEMOUSE, KM_PRESS, KM_CTRL, 0);
 	WM_keymap_add_item(keymap, "IMAGE_OT_view_zoom", MOUSEZOOM, 0, 0, 0);
 	WM_keymap_add_item(keymap, "IMAGE_OT_view_zoom", MOUSEPAN, 0, KM_CTRL, 0);
+	WM_keymap_add_item(keymap, "IMAGE_OT_view_zoom_border", BKEY, KM_PRESS, KM_SHIFT, 0);
 
 	/* ctrl now works as well, shift + numpad works as arrow keys on Windows */
 	RNA_float_set(WM_keymap_add_item(keymap, "IMAGE_OT_view_zoom_ratio", PAD8, KM_PRESS, KM_CTRL, 0)->ptr, "ratio", 8.0f);
@@ -582,7 +590,7 @@ static int image_context(const bContext *C, const char *member, bContextDataResu
 /************************** main region ***************************/
 
 /* sets up the fields of the View2D from zoom and offset */
-static void image_main_area_set_view2d(SpaceImage *sima, ARegion *ar)
+static void image_main_region_set_view2d(SpaceImage *sima, ARegion *ar)
 {
 	Image *ima = ED_space_image(sima);
 	float x1, y1, w, h;
@@ -635,7 +643,7 @@ static void image_main_area_set_view2d(SpaceImage *sima, ARegion *ar)
 }
 
 /* add handlers, stuff you only do once or on area/region changes */
-static void image_main_area_init(wmWindowManager *wm, ARegion *ar)
+static void image_main_region_init(wmWindowManager *wm, ARegion *ar)
 {
 	wmKeyMap *keymap;
 	
@@ -670,7 +678,7 @@ static void image_main_area_init(wmWindowManager *wm, ARegion *ar)
 
 }
 
-static void image_main_area_draw(const bContext *C, ARegion *ar)
+static void image_main_region_draw(const bContext *C, ARegion *ar)
 {
 	/* draw entirely, view changes should be handled here */
 	SpaceImage *sima = CTX_wm_space_image(C);
@@ -704,7 +712,7 @@ static void image_main_area_draw(const bContext *C, ARegion *ar)
 		sima->iuser.scene = scene;
 
 	/* we set view2d from own zoom and offset each time */
-	image_main_area_set_view2d(sima, ar);
+	image_main_region_set_view2d(sima, ar);
 
 	/* we draw image in pixelspace */
 	draw_image_main(C, ar);
@@ -793,7 +801,7 @@ static void image_main_area_draw(const bContext *C, ARegion *ar)
 #endif
 }
 
-static void image_main_area_listener(bScreen *UNUSED(sc), ScrArea *sa, ARegion *ar, wmNotifier *wmn)
+static void image_main_region_listener(bScreen *UNUSED(sc), ScrArea *sa, ARegion *ar, wmNotifier *wmn)
 {
 	/* context changes */
 	switch (wmn->category) {
@@ -821,7 +829,7 @@ static void image_main_area_listener(bScreen *UNUSED(sc), ScrArea *sa, ARegion *
 /* *********************** buttons region ************************ */
 
 /* add handlers, stuff you only do once or on area/region changes */
-static void image_buttons_area_init(wmWindowManager *wm, ARegion *ar)
+static void image_buttons_region_init(wmWindowManager *wm, ARegion *ar)
 {
 	wmKeyMap *keymap;
 
@@ -832,12 +840,12 @@ static void image_buttons_area_init(wmWindowManager *wm, ARegion *ar)
 	WM_event_add_keymap_handler(&ar->handlers, keymap);
 }
 
-static void image_buttons_area_draw(const bContext *C, ARegion *ar)
+static void image_buttons_region_draw(const bContext *C, ARegion *ar)
 {
 	ED_region_panels(C, ar, NULL, -1, true);
 }
 
-static void image_buttons_area_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa), ARegion *ar, wmNotifier *wmn)
+static void image_buttons_region_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa), ARegion *ar, wmNotifier *wmn)
 {
 	/* context changes */
 	switch (wmn->category) {
@@ -873,7 +881,7 @@ static void image_buttons_area_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa)
 /* *********************** scopes region ************************ */
 
 /* add handlers, stuff you only do once or on area/region changes */
-static void image_tools_area_init(wmWindowManager *wm, ARegion *ar)
+static void image_tools_region_init(wmWindowManager *wm, ARegion *ar)
 {
 	wmKeyMap *keymap;
 	
@@ -884,7 +892,7 @@ static void image_tools_area_init(wmWindowManager *wm, ARegion *ar)
 	WM_event_add_keymap_handler(&ar->handlers, keymap);
 }
 
-static void image_tools_area_draw(const bContext *C, ARegion *ar)
+static void image_tools_region_draw(const bContext *C, ARegion *ar)
 {
 	SpaceImage *sima = CTX_wm_space_image(C);
 	Scene *scene = CTX_data_scene(C);
@@ -910,7 +918,7 @@ static void image_tools_area_draw(const bContext *C, ARegion *ar)
 	ED_region_panels(C, ar, NULL, -1, true);
 }
 
-static void image_tools_area_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa), ARegion *ar, wmNotifier *wmn)
+static void image_tools_region_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa), ARegion *ar, wmNotifier *wmn)
 {
 	/* context changes */
 	switch (wmn->category) {
@@ -946,17 +954,17 @@ static void image_tools_area_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa), 
 /************************* header region **************************/
 
 /* add handlers, stuff you only do once or on area/region changes */
-static void image_header_area_init(wmWindowManager *UNUSED(wm), ARegion *ar)
+static void image_header_region_init(wmWindowManager *UNUSED(wm), ARegion *ar)
 {
 	ED_region_header_init(ar);
 }
 
-static void image_header_area_draw(const bContext *C, ARegion *ar)
+static void image_header_region_draw(const bContext *C, ARegion *ar)
 {
 	ED_region_header(C, ar);
 }
 
-static void image_header_area_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa), ARegion *ar, wmNotifier *wmn)
+static void image_header_region_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa), ARegion *ar, wmNotifier *wmn)
 {
 	/* context changes */
 	switch (wmn->category) {
@@ -976,6 +984,31 @@ static void image_header_area_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa),
 					break;
 			}
 			break;
+	}
+}
+
+static void image_id_remap(ScrArea *UNUSED(sa), SpaceLink *slink, ID *old_id, ID *new_id)
+{
+	SpaceImage *simg = (SpaceImage *)slink;
+
+	if (!ELEM(GS(old_id->name), ID_IM, ID_GD, ID_MSK)) {
+		return;
+	}
+
+	if ((ID *)simg->image == old_id) {
+		simg->image = (Image *)new_id;
+		id_us_ensure_real(new_id);
+	}
+
+	if ((ID *)simg->gpd == old_id) {
+		simg->gpd = (bGPdata *)new_id;
+		id_us_min(old_id);
+		id_us_plus(new_id);
+	}
+
+	if ((ID *)simg->mask_info.mask == old_id) {
+		simg->mask_info.mask = (Mask *)new_id;
+		id_us_ensure_real(new_id);
 	}
 }
 
@@ -1000,14 +1033,15 @@ void ED_spacetype_image(void)
 	st->refresh = image_refresh;
 	st->listener = image_listener;
 	st->context = image_context;
-	
+	st->id_remap = image_id_remap;
+
 	/* regions: main window */
 	art = MEM_callocN(sizeof(ARegionType), "spacetype image region");
 	art->regionid = RGN_TYPE_WINDOW;
 	art->keymapflag = ED_KEYMAP_FRAMES | ED_KEYMAP_GPENCIL;
-	art->init = image_main_area_init;
-	art->draw = image_main_area_draw;
-	art->listener = image_main_area_listener;
+	art->init = image_main_region_init;
+	art->draw = image_main_region_draw;
+	art->listener = image_main_region_listener;
 
 	BLI_addhead(&st->regiontypes, art);
 	
@@ -1016,9 +1050,9 @@ void ED_spacetype_image(void)
 	art->regionid = RGN_TYPE_UI;
 	art->prefsizex = 220; // XXX
 	art->keymapflag = ED_KEYMAP_UI | ED_KEYMAP_FRAMES;
-	art->listener = image_buttons_area_listener;
-	art->init = image_buttons_area_init;
-	art->draw = image_buttons_area_draw;
+	art->listener = image_buttons_region_listener;
+	art->init = image_buttons_region_init;
+	art->draw = image_buttons_region_draw;
 	BLI_addhead(&st->regiontypes, art);
 
 	ED_uvedit_buttons_register(art);
@@ -1029,9 +1063,9 @@ void ED_spacetype_image(void)
 	art->regionid = RGN_TYPE_TOOLS;
 	art->prefsizex = 220; // XXX
 	art->keymapflag = ED_KEYMAP_UI | ED_KEYMAP_FRAMES;
-	art->listener = image_tools_area_listener;
-	art->init = image_tools_area_init;
-	art->draw = image_tools_area_draw;
+	art->listener = image_tools_region_listener;
+	art->init = image_tools_region_init;
+	art->draw = image_tools_region_draw;
 	BLI_addhead(&st->regiontypes, art);
 
 	/* regions: header */
@@ -1039,9 +1073,9 @@ void ED_spacetype_image(void)
 	art->regionid = RGN_TYPE_HEADER;
 	art->prefsizey = HEADERY;
 	art->keymapflag = ED_KEYMAP_UI | ED_KEYMAP_VIEW2D | ED_KEYMAP_FRAMES | ED_KEYMAP_HEADER;
-	art->listener = image_header_area_listener;
-	art->init = image_header_area_init;
-	art->draw = image_header_area_draw;
+	art->listener = image_header_region_listener;
+	art->init = image_header_region_init;
+	art->draw = image_header_region_draw;
 	
 	BLI_addhead(&st->regiontypes, art);
 	

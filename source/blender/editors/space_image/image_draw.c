@@ -130,6 +130,7 @@ static void draw_render_info(const bContext *C,
 
 			UI_ThemeColor(TH_FACE_SELECT);
 
+			glLineWidth(1.0f);
 			for (i = 0, tile = tiles; i < total_tiles; i++, tile++) {
 				glaDrawBorderCorners(tile, zoomx, zoomy);
 			}
@@ -191,6 +192,19 @@ void ED_image_draw_info(Scene *scene, ARegion *ar, bool color_manage, bool use_d
 	if (zpf) {
 		glColor3ub(255, 255, 255);
 		BLI_snprintf(str, sizeof(str), " Z:%-.3f |", *zpf);
+		BLF_position(blf_mono_font, dx, dy, 0);
+		BLF_draw_ascii(blf_mono_font, str, sizeof(str));
+		dx += BLF_width(blf_mono_font, str, sizeof(str));
+	}
+
+	if (channels == 1 && (cp != NULL || fp != NULL)) {
+		if (fp != NULL) {
+			BLI_snprintf(str, sizeof(str), " Val:%-.3f |", fp[0]);
+		}
+		else if (cp != NULL) {
+			BLI_snprintf(str, sizeof(str), " Val:%-.3f |", cp[0] / 255.0f);
+		}
+		glColor3ub(255, 255, 255);
 		BLF_position(blf_mono_font, dx, dy, 0);
 		BLF_draw_ascii(blf_mono_font, str, sizeof(str));
 		dx += BLF_width(blf_mono_font, str, sizeof(str));
@@ -338,9 +352,7 @@ void ED_image_draw_info(Scene *scene, ARegion *ar, bool color_manage, bool use_d
 
 	/* draw outline */
 	glColor3ub(128, 128, 128);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glRecti(color_rect.xmin, color_rect.ymin, color_rect.xmax, color_rect.ymax);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	sdrawbox(color_rect.xmin, color_rect.ymin, color_rect.xmax, color_rect.ymax);
 
 	dx += 1.75f * UI_UNIT_X;
 
@@ -478,6 +490,19 @@ static void sima_draw_zbuffloat_pixels(Scene *scene, float x1, float y1, int rec
 	MEM_freeN(rectf);
 }
 
+static int draw_image_channel_offset(SpaceImage *sima)
+{
+#ifdef __BIG_ENDIAN__
+	if      (sima->flag & SI_SHOW_R) return 0;
+	else if (sima->flag & SI_SHOW_G) return 1;
+	else                             return 2;
+#else
+	if      (sima->flag & SI_SHOW_R) return 1;
+	else if (sima->flag & SI_SHOW_G) return 2;
+	else                             return 3;
+#endif
+}
+
 static void draw_image_buffer(const bContext *C, SpaceImage *sima, ARegion *ar, Scene *scene, ImBuf *ibuf, float fx, float fy, float zoomx, float zoomy)
 {
 	int x, y;
@@ -513,7 +538,32 @@ static void draw_image_buffer(const bContext *C, SpaceImage *sima, ARegion *ar, 
 			fdrawcheckerboard(x, y, x + ibuf->x * zoomx, y + ibuf->y * zoomy);
 		}
 
-		glaDrawImBuf_glsl_ctx(C, ibuf, x, y, GL_NEAREST);
+		if ((sima->flag & (SI_SHOW_R | SI_SHOW_G | SI_SHOW_B)) == 0) {
+			int clip_max_x, clip_max_y;
+			UI_view2d_view_to_region(&ar->v2d,
+			                         ar->v2d.cur.xmax, ar->v2d.cur.ymax,
+			                         &clip_max_x, &clip_max_y);
+			glaDrawImBuf_glsl_ctx_clipping(C, ibuf, x, y, GL_NEAREST,
+			                               0, 0, clip_max_x, clip_max_y);
+		}
+		else {
+			unsigned char *display_buffer;
+			void *cache_handle;
+
+			/* TODO(sergey): Ideally GLSL shading should be capable of either
+			 * disabling some channels or displaying buffer with custom offset.
+			 */
+			display_buffer = IMB_display_buffer_acquire_ctx(C, ibuf, &cache_handle);
+
+			if (display_buffer != NULL) {
+				int channel_offset = draw_image_channel_offset(sima);
+				glaDrawPixelsSafe(x, y, ibuf->x, ibuf->y, ibuf->x, GL_LUMINANCE, GL_UNSIGNED_INT,
+				                  display_buffer - (4 - channel_offset));
+			}
+			if (cache_handle != NULL) {
+				IMB_display_buffer_release(cache_handle);
+			}
+		}
 
 		if (sima->flag & SI_USE_ALPHA)
 			glDisable(GL_BLEND);
@@ -551,6 +601,7 @@ static void draw_image_buffer_tiled(SpaceImage *sima, ARegion *ar, Scene *scene,
 	unsigned int *rect;
 	int dx, dy, sx, sy, x, y;
 	void *cache_handle;
+	int channel_offset = -1;
 
 	/* verify valid values, just leave this a while */
 	if (ima->xrep < 1) return;
@@ -577,11 +628,19 @@ static void draw_image_buffer_tiled(SpaceImage *sima, ARegion *ar, Scene *scene,
 	rect = get_part_from_buffer((unsigned int *)display_buffer, ibuf->x, sx, sy, sx + dx, sy + dy);
 	
 	/* draw repeated */
+	if ((sima->flag & (SI_SHOW_R | SI_SHOW_G | SI_SHOW_B)) != 0) {
+		channel_offset = draw_image_channel_offset(sima);
+	}
 	for (sy = 0; sy + dy <= ibuf->y; sy += dy) {
 		for (sx = 0; sx + dx <= ibuf->x; sx += dx) {
 			UI_view2d_view_to_region(&ar->v2d, fx + (float)sx / (float)ibuf->x, fy + (float)sy / (float)ibuf->y, &x, &y);
-
-			glaDrawPixelsSafe(x, y, dx, dy, dx, GL_RGBA, GL_UNSIGNED_BYTE, rect);
+			if (channel_offset == -1) {
+				glaDrawPixelsSafe(x, y, dx, dy, dx, GL_RGBA, GL_UNSIGNED_BYTE, rect);
+			}
+			else {
+				glaDrawPixelsSafe(x, y, dx, dy, dx, GL_LUMINANCE, GL_UNSIGNED_INT,
+				                  (unsigned char *)rect - (4 - channel_offset));
+			}
 		}
 	}
 
@@ -774,7 +833,7 @@ static void draw_image_paint_helpers(const bContext *C, ARegion *ar, Scene *scen
 	}
 }
 
-/* draw main image area */
+/* draw main image region */
 
 void draw_image_main(const bContext *C, ARegion *ar)
 {
@@ -855,7 +914,7 @@ void draw_image_main(const bContext *C, ARegion *ar)
 			BLI_rctf_init(&frame, 0.0f, ibuf->x, 0.0f, ibuf->y);
 			UI_view2d_view_to_region(&ar->v2d, 0.0f, 0.0f, &x, &y);
 
-			ED_region_image_metadata_draw(x, y, ibuf, frame, zoomx, zoomy);
+			ED_region_image_metadata_draw(x, y, ibuf, &frame, zoomx, zoomy);
 		}
 	}
 

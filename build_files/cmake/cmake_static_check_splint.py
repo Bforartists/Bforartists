@@ -25,8 +25,7 @@
 CHECKER_IGNORE_PREFIX = [
     "extern",
     "intern/moto",
-    "blender/intern/opennl",
-    ]
+]
 
 CHECKER_BIN = "splint"
 
@@ -62,7 +61,7 @@ CHECKER_ARGS = [
     # dummy, witjout this splint complains with:
     #  /usr/include/bits/confname.h:31:27: *** Internal Bug at cscannerHelp.c:2428: Unexpanded macro not function or constant: int _PC_MAX_CANON
     "-D_PC_MAX_CANON=0",
-    ]
+]
 
 
 import project_source_info

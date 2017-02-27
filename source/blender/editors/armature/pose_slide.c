@@ -51,6 +51,8 @@
 #include "WM_api.h"
 #include "WM_types.h"
 
+#include "UI_interface.h"
+
 #include "ED_armature.h"
 #include "ED_keyframes_draw.h"
 #include "ED_markers.h"
@@ -301,8 +303,8 @@ static void pose_slide_apply_vec3(tPoseSlideOp *pso, tPChanFCurveLink *pfl, floa
 	MEM_freeN(path);
 }
 
-/* helper for apply() - perform sliding for custom properties */
-static void pose_slide_apply_props(tPoseSlideOp *pso, tPChanFCurveLink *pfl)
+/* helper for apply() - perform sliding for custom properties or bbone properties */
+static void pose_slide_apply_props(tPoseSlideOp *pso, tPChanFCurveLink *pfl, const char prop_prefix[])
 {
 	PointerRNA ptr = {{NULL}};
 	LinkData *ld;
@@ -311,8 +313,10 @@ static void pose_slide_apply_props(tPoseSlideOp *pso, tPChanFCurveLink *pfl)
 	/* setup pointer RNA for resolving paths */
 	RNA_pointer_create(NULL, &RNA_PoseBone, pfl->pchan, &ptr);
 	
-	/* custom properties are just denoted using ["..."][etc.] after the end of the base path, 
-	 * so just check for opening pair after the end of the path
+	/* - custom properties are just denoted using ["..."][etc.] after the end of the base path, 
+	 *   so just check for opening pair after the end of the path
+	 * - bbone properties are similar, but they always start with a prefix "bbone_*",
+	 *   so a similar method should work here for those too
 	 */
 	for (ld = pfl->fcurves.first; ld; ld = ld->next) {
 		FCurve *fcu = (FCurve *)ld->data;
@@ -326,7 +330,7 @@ static void pose_slide_apply_props(tPoseSlideOp *pso, tPChanFCurveLink *pfl)
 		 *	- pPtr is the chunk of the path which is left over
 		 */
 		bPtr = strstr(fcu->rna_path, pfl->pchan_path) + len;
-		pPtr = strstr(bPtr, "[\"");   /* dummy " for texteditor bugs */
+		pPtr = strstr(bPtr, prop_prefix);
 		
 		if (pPtr) {
 			/* use RNA to try and get a handle on this property, then, assuming that it is just
@@ -515,9 +519,16 @@ static void pose_slide_apply(bContext *C, tPoseSlideOp *pso)
 			}
 		}
 		
+		if (pchan->flag & POSE_BBONE_SHAPE) {
+			/* bbone properties - they all start a "bbone_" prefix */
+			pose_slide_apply_props(pso, pfl, "bbone_"); 
+		}
+		
 		if (pfl->oldprops) {
-			/* not strictly a transform, but contributes to the pose produced in many rigs */
-			pose_slide_apply_props(pso, pfl);
+			/* not strictly a transform, but custom properties contribute to the pose produced in many rigs
+			 * (e.g. the facial rigs used in Sintel)
+			 */
+			pose_slide_apply_props(pso, pfl, "[\"");  /* dummy " for texteditor bugs */
 		}
 	}
 	
@@ -544,7 +555,7 @@ static void pose_slide_reset(tPoseSlideOp *pso)
 /* draw percentage indicator in header */
 static void pose_slide_draw_status(tPoseSlideOp *pso)
 {
-	char status_str[256];
+	char status_str[UI_MAX_DRAW_STR];
 	char mode_str[32];
 	
 	switch (pso->mode) {
@@ -655,6 +666,15 @@ static int pose_slide_invoke_common(bContext *C, wmOperator *op, tPoseSlideOp *p
 	return OPERATOR_RUNNING_MODAL;
 }
 
+/* calculate percentage based on position of mouse (we only use x-axis for now.
+ * since this is more convenient for users to do), and store new percentage value
+ */
+static void pose_slide_mouse_update_percentage(tPoseSlideOp *pso, wmOperator *op, const wmEvent *event)
+{
+	pso->percentage = (event->x - pso->ar->winrct.xmin) / ((float)pso->ar->winx);
+	RNA_float_set(op->ptr, "percentage", pso->percentage);
+}
+
 /* common code for modal() */
 static int pose_slide_modal(bContext *C, wmOperator *op, const wmEvent *event)
 {
@@ -665,6 +685,7 @@ static int pose_slide_modal(bContext *C, wmOperator *op, const wmEvent *event)
 	switch (event->type) {
 		case LEFTMOUSE: /* confirm */
 		case RETKEY:
+		case PADENTER:
 		{
 			/* return to normal cursor and header status */
 			ED_area_headerprint(pso->sa, NULL);
@@ -702,11 +723,8 @@ static int pose_slide_modal(bContext *C, wmOperator *op, const wmEvent *event)
 		{
 			/* only handle mousemove if not doing numinput */
 			if (has_numinput == false) {
-				/* calculate percentage based on position of mouse (we only use x-axis for now.
-				 * since this is more convenient for users to do), and store new percentage value
-				 */
-				pso->percentage = (event->x - pso->ar->winrct.xmin) / ((float)pso->ar->winx);
-				RNA_float_set(op->ptr, "percentage", pso->percentage);
+				/* update percentage based on position of mouse */
+				pose_slide_mouse_update_percentage(pso, op, event);
 				
 				/* update percentage indicator in header */
 				pose_slide_draw_status(pso);
@@ -787,7 +805,7 @@ static void pose_slide_opdef_properties(wmOperatorType *ot)
 /* ------------------------------------ */
 
 /* invoke() - for 'push' mode */
-static int pose_slide_push_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event))
+static int pose_slide_push_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 {
 	tPoseSlideOp *pso;
 	
@@ -798,6 +816,9 @@ static int pose_slide_push_invoke(bContext *C, wmOperator *op, const wmEvent *UN
 	}
 	else
 		pso = op->customdata;
+		
+	/* initialise percentage so that it won't pop on first mouse move */
+	pose_slide_mouse_update_percentage(pso, op, event);
 	
 	/* do common setup work */
 	return pose_slide_invoke_common(C, op, pso);
@@ -844,7 +865,7 @@ void POSE_OT_push(wmOperatorType *ot)
 /* ........................ */
 
 /* invoke() - for 'relax' mode */
-static int pose_slide_relax_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event))
+static int pose_slide_relax_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 {
 	tPoseSlideOp *pso;
 	
@@ -855,6 +876,9 @@ static int pose_slide_relax_invoke(bContext *C, wmOperator *op, const wmEvent *U
 	}
 	else
 		pso = op->customdata;
+	
+	/* initialise percentage so that it won't pop on first mouse move */
+	pose_slide_mouse_update_percentage(pso, op, event);
 	
 	/* do common setup work */
 	return pose_slide_invoke_common(C, op, pso);
@@ -901,7 +925,7 @@ void POSE_OT_relax(wmOperatorType *ot)
 /* ........................ */
 
 /* invoke() - for 'breakdown' mode */
-static int pose_slide_breakdown_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event))
+static int pose_slide_breakdown_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 {
 	tPoseSlideOp *pso;
 	
@@ -912,6 +936,9 @@ static int pose_slide_breakdown_invoke(bContext *C, wmOperator *op, const wmEven
 	}
 	else
 		pso = op->customdata;
+	
+	/* initialise percentage so that it won't pop on first mouse move */
+	pose_slide_mouse_update_percentage(pso, op, event);
 	
 	/* do common setup work */
 	return pose_slide_invoke_common(C, op, pso);

@@ -83,12 +83,11 @@ struct PBVHNode {
 	 * array. The array is sized to match 'totprim', and each of
 	 * the face's corners gets an index into the vert_indices
 	 * array, in the same order as the corners in the original
-	 * MFace. The fourth value should not be used if the original
-	 * face is a triangle.
+	 * MLoopTri.
 	 *
 	 * Used for leaf nodes in a mesh-based PBVH (not multires.)
 	 */
-	const int (*face_vert_indices)[4];
+	const int (*face_vert_indices)[3];
 
 	/* Indicates whether this node is a leaf or not; also used for
 	 * marking various updates that need to be applied. */
@@ -145,6 +144,11 @@ struct PBVH {
 	const DMFlagMat *grid_flag_mats;
 	int totgrid;
 	BLI_bitmap **grid_hidden;
+	/* index_buf of GPU_PBVH_Buffers can be the same for all 'fully drawn' nodes (same size).
+	 * Previously was stored in a static var in gpu_buffer.c, but this breaks in case we handle several different
+	 * objects in sculpt mode with different sizes at the same time, so now storing that common gpu buffer
+	 * in an opaque pointer per pbvh. See T47637. */
+	struct GridCommonGPUBuffer *grid_common_gpu_buffer;
 
 	/* Only used during BVH build and update,
 	 * don't need to remain valid after */

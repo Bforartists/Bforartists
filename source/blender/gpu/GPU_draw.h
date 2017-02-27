@@ -63,7 +63,7 @@ void GPU_state_init(void);
  * - first the state is initialized by a particular object and
  *   it's materials
  * - after this, materials can be quickly enabled by their number,
- *   GPU_enable_material returns 0 if drawing should be skipped
+ *   GPU_object_material_bind returns 0 if drawing should be skipped
  * - after drawing, the material must be disabled again */
 
 void GPU_begin_object_materials(struct View3D *v3d, struct RegionView3D *rv3d, 
@@ -71,8 +71,9 @@ void GPU_begin_object_materials(struct View3D *v3d, struct RegionView3D *rv3d,
 void GPU_end_object_materials(void);
 bool GPU_object_materials_check(void);
 
-int GPU_enable_material(int nr, void *attribs);
-void GPU_disable_material(void);
+int GPU_object_material_bind(int nr, void *attribs);
+void GPU_object_material_unbind(void);
+int GPU_object_material_visible(int nr, void *attribs);
 
 void GPU_begin_dupli_object(struct DupliObject *dob);
 void GPU_end_dupli_object(void);
@@ -96,8 +97,9 @@ void GPU_clear_tpage(bool force);
  * - this affects fixed functions materials and texface, not glsl */
 
 int GPU_default_lights(void);
-int GPU_scene_object_lights(struct Scene *scene, struct Object *ob,
-	int lay, float viewmat[4][4], int ortho);
+int GPU_scene_object_lights(
+        struct Scene *scene, struct Object *ob,
+        int lay, float viewmat[4][4], int ortho);
 
 /* Text render
  * - based on moving uv coordinates */
@@ -128,13 +130,18 @@ void GPU_set_gpu_mipmapping(int gpu_mipmap);
 /* Image updates and free
  * - these deal with images bound as opengl textures */
 
-void GPU_paint_update_image(struct Image *ima, ImageUser *iuser, int x, int y, int w, int h);
+void GPU_paint_update_image(struct Image *ima, struct ImageUser *iuser, int x, int y, int w, int h);
 void GPU_update_images_framechange(void);
 int GPU_update_image_time(struct Image *ima, double time);
-int GPU_verify_image(struct Image *ima, struct ImageUser *iuser, int tftile, bool compare, bool mipmap, bool is_data);
-void GPU_create_gl_tex(unsigned int *bind, unsigned int *rect, float *frect, int rectw, int recth,
-                       bool mipmap, bool use_hight_bit_depth, struct Image *ima);
-void GPU_create_gl_tex_compressed(unsigned int *bind, unsigned int *pix, int x, int y, int mipmap, struct Image *ima, struct ImBuf *ibuf);
+int GPU_verify_image(
+        struct Image *ima, struct ImageUser *iuser,
+        int textarget, int tftile, bool compare, bool mipmap, bool is_data);
+void GPU_create_gl_tex(
+        unsigned int *bind, unsigned int *rect, float *frect, int rectw, int recth,
+        int textarget, bool mipmap, bool use_hight_bit_depth, struct Image *ima);
+void GPU_create_gl_tex_compressed(
+        unsigned int *bind, unsigned int *pix, int x, int y, int mipmap,
+        int textarget, struct Image *ima, struct ImBuf *ibuf);
 bool GPU_upload_dxt_texture(struct ImBuf *ibuf);
 void GPU_free_image(struct Image *ima);
 void GPU_free_images(void);
@@ -152,6 +159,12 @@ void GPU_free_unused_buffers(void);
 struct DerivedMesh;
 void GPU_draw_update_fvar_offset(struct DerivedMesh *dm);
 #endif
+
+/* utilities */
+void	GPU_select_index_set(int index);
+void	GPU_select_index_get(int index, int *r_col);
+int		GPU_select_to_index(unsigned int col);
+void	GPU_select_to_index_array(unsigned int *col, const unsigned int size);
 
 #ifdef __cplusplus
 }

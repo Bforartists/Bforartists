@@ -32,6 +32,7 @@
 
 #include "BLI_math.h"
 #include "BLI_rect.h"
+#include "BLI_task.h"
 #include "BLI_utildefines.h"
 
 #include "DNA_brush_types.h"
@@ -59,16 +60,14 @@
 
 #include "ED_view3d.h"
 
+#include "GPU_basic_shader.h"
+
 #include "UI_resources.h"
 
 #include "paint_intern.h"
 /* still needed for sculpt_stroke_get_location, should be
  * removed eventually (TODO) */
 #include "sculpt_intern.h"
-
-#ifdef _OPENMP
-#include <omp.h>
-#endif
 
 /* TODOs:
  *
@@ -137,6 +136,112 @@ static void make_tex_snap(TexSnapshot *snap, ViewContext *vc, float zoom)
 	snap->winy = vc->ar->winy;
 }
 
+typedef struct LoadTexData {
+	Brush *br;
+	ViewContext *vc;
+
+	MTex *mtex;
+	GLubyte *buffer;
+	bool col;
+
+	struct ImagePool *pool;
+	int size;
+	float rotation;
+	float radius;
+} LoadTexData;
+
+static void load_tex_task_cb_ex(void *userdata, void *UNUSED(userdata_chunck), const int j, const int thread_id)
+{
+	LoadTexData *data = userdata;
+	Brush *br = data->br;
+	ViewContext *vc = data->vc;
+
+	MTex *mtex = data->mtex;
+	GLubyte *buffer = data->buffer;
+	const bool col = data->col;
+
+	struct ImagePool *pool = data->pool;
+	const int size = data->size;
+	const float rotation = data->rotation;
+	const float radius = data->radius;
+
+	bool convert_to_linear = false;
+	struct ColorSpace *colorspace = NULL;
+
+	if (mtex->tex && mtex->tex->type == TEX_IMAGE && mtex->tex->ima) {
+		ImBuf *tex_ibuf = BKE_image_pool_acquire_ibuf(mtex->tex->ima, &mtex->tex->iuser, pool);
+		/* For consistency, sampling always returns color in linear space */
+		if (tex_ibuf && tex_ibuf->rect_float == NULL) {
+			convert_to_linear = true;
+			colorspace = tex_ibuf->rect_colorspace;
+		}
+		BKE_image_pool_release_ibuf(mtex->tex->ima, tex_ibuf, pool);
+	}
+
+	for (int i = 0; i < size; i++) {
+		// largely duplicated from tex_strength
+
+		int index = j * size + i;
+
+		float x = (float)i / size;
+		float y = (float)j / size;
+		float len;
+
+		if (mtex->brush_map_mode == MTEX_MAP_MODE_TILED) {
+			x *= vc->ar->winx / radius;
+			y *= vc->ar->winy / radius;
+		}
+		else {
+			x = (x - 0.5f) * 2.0f;
+			y = (y - 0.5f) * 2.0f;
+		}
+
+		len = sqrtf(x * x + y * y);
+
+		if (ELEM(mtex->brush_map_mode, MTEX_MAP_MODE_TILED, MTEX_MAP_MODE_STENCIL) || len <= 1.0f) {
+			/* it is probably worth optimizing for those cases where the texture is not rotated by skipping the calls to
+			 * atan2, sqrtf, sin, and cos. */
+			if (mtex->tex && (rotation > 0.001f || rotation < -0.001f)) {
+				const float angle = atan2f(y, x) + rotation;
+
+				x = len * cosf(angle);
+				y = len * sinf(angle);
+			}
+
+			if (col) {
+				float rgba[4];
+
+				paint_get_tex_pixel_col(mtex, x, y, rgba, pool, thread_id, convert_to_linear, colorspace);
+
+				buffer[index * 4]     = rgba[0] * 255;
+				buffer[index * 4 + 1] = rgba[1] * 255;
+				buffer[index * 4 + 2] = rgba[2] * 255;
+				buffer[index * 4 + 3] = rgba[3] * 255;
+			}
+			else {
+				float avg = paint_get_tex_pixel(mtex, x, y, pool, thread_id);
+
+				avg += br->texture_sample_bias;
+
+				/* clamp to avoid precision overflow */
+				CLAMP(avg, 0.0f, 1.0f);
+				buffer[index] = 255 - (GLubyte)(255 * avg);
+			}
+		}
+		else {
+			if (col) {
+				buffer[index * 4]     = 0;
+				buffer[index * 4 + 1] = 0;
+				buffer[index * 4 + 2] = 0;
+				buffer[index * 4 + 3] = 0;
+			}
+			else {
+				buffer[index] = 0;
+			}
+		}
+	}
+}
+
 static int load_tex(Brush *br, ViewContext *vc, float zoom, bool col, bool primary)
 {
 	bool init;
@@ -147,11 +252,9 @@ static int load_tex(Brush *br, ViewContext *vc, float zoom, bool col, bool prima
 	GLubyte *buffer = NULL;
 
 	int size;
-	int j;
-	int refresh;
-	GLenum format = col ? GL_RGBA : GL_ALPHA;
+	bool refresh;
 	OverlayControlFlags invalid = (primary) ? (overlay_flags & PAINT_INVALID_OVERLAY_TEXTURE_PRIMARY) :
-	                           (overlay_flags & PAINT_INVALID_OVERLAY_TEXTURE_SECONDARY);
+	                                          (overlay_flags & PAINT_INVALID_OVERLAY_TEXTURE_SECONDARY);
 
 	target = (primary) ? &primary_snap : &secondary_snap;
 
@@ -164,13 +267,9 @@ static int load_tex(Brush *br, ViewContext *vc, float zoom, bool col, bool prima
 
 	if (refresh) {
 		struct ImagePool *pool = NULL;
-		bool convert_to_linear = false;
-		struct ColorSpace *colorspace;
 		/* stencil is rotated later */
-		const float rotation = (mtex->brush_map_mode != MTEX_MAP_MODE_STENCIL) ?
-		                       -mtex->rot : 0;
-
-		float radius = BKE_brush_size_get(vc->scene, br) * zoom;
+		const float rotation = (mtex->brush_map_mode != MTEX_MAP_MODE_STENCIL) ? -mtex->rot : 0.0f;
+		const float radius = BKE_brush_size_get(vc->scene, br) * zoom;
 
 		make_tex_snap(target, vc, zoom);
 
@@ -189,8 +288,9 @@ static int load_tex(Brush *br, ViewContext *vc, float zoom, bool col, bool prima
 			if (size < target->old_size)
 				size = target->old_size;
 		}
-		else
+		else {
 			size = 512;
+		}
 
 		if (target->old_size != size) {
 			if (target->overlay_texture) {
@@ -212,98 +312,12 @@ static int load_tex(Brush *br, ViewContext *vc, float zoom, bool col, bool prima
 		if (mtex->tex && mtex->tex->nodetree)
 			ntreeTexBeginExecTree(mtex->tex->nodetree);  /* has internal flag to detect it only does it once */
 
-#pragma omp parallel for schedule(static)
-		for (j = 0; j < size; j++) {
-			int i;
-			float y;
-			float len;
-			int thread_num;
+		LoadTexData data = {
+		    .br = br, .vc = vc, .mtex = mtex, .buffer = buffer, .col = col,
+		    .pool = pool, .size = size, .rotation = rotation, .radius = radius,
+		};
 
-#ifdef _OPENMP
-			thread_num = omp_get_thread_num();
-#else
-			thread_num = 0;
-#endif
-
-			if (mtex->tex->type == TEX_IMAGE && mtex->tex->ima) {
-				ImBuf *tex_ibuf = BKE_image_pool_acquire_ibuf(mtex->tex->ima, &mtex->tex->iuser, pool);
-				/* For consistency, sampling always returns color in linear space */
-				if (tex_ibuf && tex_ibuf->rect_float == NULL) {
-					convert_to_linear = true;
-					colorspace = tex_ibuf->rect_colorspace;
-				}
-				BKE_image_pool_release_ibuf(mtex->tex->ima, tex_ibuf, pool);
-			}
-
-
-			for (i = 0; i < size; i++) {
-
-				// largely duplicated from tex_strength
-
-				int index = j * size + i;
-				float x;
-
-				x = (float)i / size;
-				y = (float)j / size;
-
-				if (mtex->brush_map_mode == MTEX_MAP_MODE_TILED) {
-					x *= vc->ar->winx / radius;
-					y *= vc->ar->winy / radius;
-				}
-				else {
-					x -= 0.5f;
-					y -= 0.5f;
-
-					x *= 2;
-					y *= 2;
-				}
-
-				len = sqrtf(x * x + y * y);
-
-				if (ELEM(mtex->brush_map_mode, MTEX_MAP_MODE_TILED, MTEX_MAP_MODE_STENCIL) || len <= 1) {
-					/* it is probably worth optimizing for those cases where 
-					 * the texture is not rotated by skipping the calls to
-					 * atan2, sqrtf, sin, and cos. */
-					if (mtex->tex && (rotation > 0.001f || rotation < -0.001f)) {
-						const float angle = atan2f(y, x) + rotation;
-
-						x = len * cosf(angle);
-						y = len * sinf(angle);
-					}
-
-					if (col) {
-						float rgba[4];
-
-						paint_get_tex_pixel_col(mtex, x, y, rgba, pool, thread_num, convert_to_linear, colorspace);
-
-						buffer[index * 4]     = rgba[0] * 255;
-						buffer[index * 4 + 1] = rgba[1] * 255;
-						buffer[index * 4 + 2] = rgba[2] * 255;
-						buffer[index * 4 + 3] = rgba[3] * 255;
-					}
-					else {
-						float avg = paint_get_tex_pixel(mtex, x, y, pool, thread_num);
-
-						avg += br->texture_sample_bias;
-
-						/* clamp to avoid precision overflow */
-						CLAMP(avg, 0.0f, 1.0f);
-						buffer[index] = 255 - (GLubyte)(255 * avg);
-					}
-				}
-				else {
-					if (col) {
-						buffer[index * 4]     = 0;
-						buffer[index * 4 + 1] = 0;
-						buffer[index * 4 + 2] = 0;
-						buffer[index * 4 + 3] = 0;
-					}
-					else {
-						buffer[index] = 0;
-					}
-				}
-			}
-		}
+		BLI_task_parallel_range_ex(0, size, &data, NULL, 0, load_tex_task_cb_ex, true, false);
 
 		if (mtex->tex && mtex->tex->nodetree)
 			ntreeTexEndExecTree(mtex->tex->nodetree->execdata);
@@ -321,8 +335,11 @@ static int load_tex(Brush *br, ViewContext *vc, float zoom, bool col, bool prima
 	glBindTexture(GL_TEXTURE_2D, target->overlay_texture);
 
 	if (refresh) {
+		GLenum format = col ? GL_RGBA : GL_ALPHA;
+		GLenum internalformat = col ? GL_RGBA8 : GL_ALPHA8;
+
 		if (!init || (target->old_col != col)) {
-			glTexImage2D(GL_TEXTURE_2D, 0, format, size, size, 0, format, GL_UNSIGNED_BYTE, buffer);
+			glTexImage2D(GL_TEXTURE_2D, 0, internalformat, size, size, 0, format, GL_UNSIGNED_BYTE, buffer);
 		}
 		else {
 			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, size, size, format, GL_UNSIGNED_BYTE, buffer);
@@ -334,9 +351,8 @@ static int load_tex(Brush *br, ViewContext *vc, float zoom, bool col, bool prima
 		target->old_col = col;
 	}
 
-	glEnable(GL_TEXTURE_2D);
+	GPU_basic_shader_bind(GPU_SHADER_TEXTURE_2D | GPU_SHADER_USE_COLOR);
 
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
@@ -350,6 +366,34 @@ static int load_tex(Brush *br, ViewContext *vc, float zoom, bool col, bool prima
 	return 1;
 }
 
+static void load_tex_cursor_task_cb(void *userdata, const int j)
+{
+	LoadTexData *data = userdata;
+	Brush *br = data->br;
+
+	GLubyte *buffer = data->buffer;
+
+	const int size = data->size;
+
+	for (int i = 0; i < size; i++) {
+		// largely duplicated from tex_strength
+
+		const int index = j * size + i;
+		const float x = (((float)i / size) - 0.5f) * 2.0f;
+		const float y = (((float)j / size) - 0.5f) * 2.0f;
+		const float len = sqrtf(x * x + y * y);
+
+		if (len <= 1.0f) {
+			float avg = BKE_brush_curve_strength_clamped(br, len, 1.0f);  /* Falloff curve */
+
+			buffer[index] = 255 - (GLubyte)(255 * avg);
+		}
+		else {
+			buffer[index] = 0;
+		}
+	}
+}
+
 static int load_tex_cursor(Brush *br, ViewContext *vc, float zoom)
 {
 	bool init;
@@ -358,10 +402,7 @@ static int load_tex_cursor(Brush *br, ViewContext *vc, float zoom)
 	GLubyte *buffer = NULL;
 
 	int size;
-	int j;
-	int refresh;
-
-	refresh =
+	const bool refresh =
 	    !cursor_snap.overlay_texture ||
 	    (overlay_flags & PAINT_INVALID_OVERLAY_CURVE) ||
 	    cursor_snap.zoom != zoom;
@@ -401,41 +442,11 @@ static int load_tex_cursor(Brush *br, ViewContext *vc, float zoom)
 
 		curvemapping_initialize(br->curve);
 
-#pragma omp parallel for schedule(static)
-		for (j = 0; j < size; j++) {
-			int i;
-			float y;
-			float len;
+		LoadTexData data = {
+		    .br = br, .buffer = buffer, .size = size,
+		};
 
-			for (i = 0; i < size; i++) {
-
-				// largely duplicated from tex_strength
-
-				int index = j * size + i;
-				float x;
-
-				x = (float)i / size;
-				y = (float)j / size;
-
-				x -= 0.5f;
-				y -= 0.5f;
-
-				x *= 2;
-				y *= 2;
-
-				len = sqrtf(x * x + y * y);
-
-				if (len <= 1) {
-					float avg = BKE_brush_curve_strength_clamped(br, len, 1.0f);  /* Falloff curve */
-
-					buffer[index] = 255 - (GLubyte)(255 * avg);
-
-				}
-				else {
-					buffer[index] = 0;
-				}
-			}
-		}
+		BLI_task_parallel_range(0, size, &data, load_tex_cursor_task_cb, true);
 
 		if (!cursor_snap.overlay_texture)
 			glGenTextures(1, &cursor_snap.overlay_texture);
@@ -448,7 +459,7 @@ static int load_tex_cursor(Brush *br, ViewContext *vc, float zoom)
 
 	if (refresh) {
 		if (!init) {
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, size, size, 0, GL_ALPHA, GL_UNSIGNED_BYTE, buffer);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA8, size, size, 0, GL_ALPHA, GL_UNSIGNED_BYTE, buffer);
 		}
 		else {
 			glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, size, size, GL_ALPHA, GL_UNSIGNED_BYTE, buffer);
@@ -458,9 +469,8 @@ static int load_tex_cursor(Brush *br, ViewContext *vc, float zoom)
 			MEM_freeN(buffer);
 	}
 
-	glEnable(GL_TEXTURE_2D);
+	GPU_basic_shader_bind(GPU_SHADER_TEXTURE_2D | GPU_SHADER_USE_COLOR);
 
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
@@ -524,38 +534,44 @@ static int project_brush_radius(ViewContext *vc,
 static bool sculpt_get_brush_geometry(
         bContext *C, ViewContext *vc,
         int x, int y, int *pixel_radius,
-        float location[3])
+        float location[3], UnifiedPaintSettings *ups)
 {
 	Scene *scene = CTX_data_scene(C);
 	Paint *paint = BKE_paint_get_active_from_context(C);
 	float mouse[2];
-	bool hit;
+	bool hit = false;
 
 	mouse[0] = x;
 	mouse[1] = y;
 
-	if (vc->obact->sculpt && vc->obact->sculpt->pbvh &&
-	    sculpt_stroke_get_location(C, location, mouse))
-	{
+	if (vc->obact->sculpt && vc->obact->sculpt->pbvh) {
+		if (!ups->stroke_active) {
+			hit = sculpt_stroke_get_location(C, location, mouse);
+		}
+		else {
+			hit = ups->last_hit;
+			copy_v3_v3(location, ups->last_location);
+		}
+	}
+
+	if (hit) {
 		Brush *brush = BKE_paint_brush(paint);
+
 		*pixel_radius =
-		    project_brush_radius(vc,
-		                         BKE_brush_unprojected_radius_get(scene, brush),
-		                         location);
+		        project_brush_radius(vc,
+		                             BKE_brush_unprojected_radius_get(scene, brush),
+		                             location);
 
 		if (*pixel_radius == 0)
 			*pixel_radius = BKE_brush_size_get(scene, brush);
 
 		mul_m4_v3(vc->obact->obmat, location);
-
-		hit = 1;
 	}
 	else {
 		Sculpt *sd    = CTX_data_tool_settings(C)->sculpt;
 		Brush *brush = BKE_paint_brush(&sd->paint);
 
 		*pixel_radius = BKE_brush_size_get(scene, brush);
-		hit = 0;
 	}
 
 	return hit;
@@ -644,9 +660,9 @@ static void paint_draw_tex_overlay(UnifiedPaintSettings *ups, Brush *brush,
 			glMatrixMode(GL_MODELVIEW);
 			glPushMatrix();
 			if (primary)
-				glTranslatef(brush->stencil_pos[0], brush->stencil_pos[1], 0);
+				glTranslate2fv(brush->stencil_pos);
 			else
-				glTranslatef(brush->mask_stencil_pos[0], brush->mask_stencil_pos[1], 0);
+				glTranslate2fv(brush->mask_stencil_pos);
 			glRotatef(RAD2DEGF(mtex->rot), 0, 0, 1);
 			glMatrixMode(GL_TEXTURE);
 		}
@@ -725,7 +741,7 @@ static void paint_draw_cursor_overlay(UnifiedPaintSettings *ups, Brush *brush,
 			do_pop = true;
 			glPushMatrix();
 			glLoadIdentity();
-			glTranslatef(center[0], center[1], 0);
+			glTranslate2fv(center);
 			glScalef(ups->size_pressure_value, ups->size_pressure_value, 1);
 			glTranslatef(-center[0], -center[1], 0);
 		}
@@ -789,6 +805,7 @@ static void paint_draw_alpha_overlay(UnifiedPaintSettings *ups, Brush *brush,
 	}
 
 	glPopAttrib();
+	GPU_basic_shader_bind(GPU_SHADER_USE_COLOR);
 }
 
 
@@ -915,8 +932,6 @@ static void paint_draw_curve_cursor(Brush *brush)
 		draw_rect_point(&cp->bez.vec[0][0], 8.0, cp->bez.f1 || cp->bez.f2);
 		draw_rect_point(&cp->bez.vec[2][0], 8.0, cp->bez.f3 || cp->bez.f2);
 
-		glLineWidth(1.0);
-
 		glDisable(GL_BLEND);
 		glDisable(GL_LINE_SMOOTH);
 		glDisableClientState(GL_VERTEX_ARRAY);
@@ -1001,7 +1016,7 @@ static void paint_draw_cursor(bContext *C, int x, int y, void *UNUSED(unused))
 	translation[1] = y;
 	outline_alpha = 0.5;
 	outline_col = brush->add_col;
-	final_radius = BKE_brush_size_get(scene, brush) * zoomx;
+	final_radius = (BKE_brush_size_get(scene, brush) * zoomx);
 
 	/* don't calculate rake angles while a stroke is active because the rake variables are global and
 	 * we may get interference with the stroke itself. For line strokes, such interference is visible */
@@ -1020,7 +1035,7 @@ static void paint_draw_cursor(bContext *C, int x, int y, void *UNUSED(unused))
 		bool hit;
 
 		/* test if brush is over the mesh */
-		hit = sculpt_get_brush_geometry(C, &vc, x, y, &pixel_radius, location);
+		hit = sculpt_get_brush_geometry(C, &vc, x, y, &pixel_radius, location, ups);
 
 		if (BKE_brush_use_locked_size(scene, brush))
 			BKE_brush_size_set(scene, brush, pixel_radius);
@@ -1049,6 +1064,7 @@ static void paint_draw_cursor(bContext *C, int x, int y, void *UNUSED(unused))
 	}
 
 	/* make lines pretty */
+	glLineWidth(1.0f);
 	glEnable(GL_BLEND);
 	glEnable(GL_LINE_SMOOTH);
 
@@ -1056,7 +1072,7 @@ static void paint_draw_cursor(bContext *C, int x, int y, void *UNUSED(unused))
 	glColor4f(outline_col[0], outline_col[1], outline_col[2], outline_alpha);
 
 	/* draw brush outline */
-	glTranslatef(translation[0], translation[1], 0);
+	glTranslate2fv(translation);
 
 	/* draw an inner brush */
 	if (ups->stroke_active && BKE_brush_use_size_pressure(scene, brush)) {

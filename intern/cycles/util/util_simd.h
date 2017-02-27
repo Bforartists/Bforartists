@@ -71,7 +71,7 @@ __forceinline operator          int      ( ) const { return std::numeric_limits<
 #define _lzcnt_u64 __lzcnt64
 #endif
 
-#if defined(_WIN32) && !defined(__MINGW32__)
+#if defined(_WIN32) && !defined(__MINGW32__) && !defined(__clang__)
 
 __forceinline int __popcnt(int in) {
   return _mm_popcnt_u32(in);
@@ -229,7 +229,7 @@ __forceinline int __btr(int v, int i) {
   int r = 0; asm ("btr %1,%0" : "=r"(r) : "r"(i), "0"(v) : "flags"); return r;
 }
 
-#if defined(__KERNEL_64_BIT__) || defined(__APPLE__)
+#if (defined(__KERNEL_64_BIT__) || defined(__APPLE__)) && !(defined(__ILP32__) && defined(__x86_64__))
 __forceinline size_t __bsf(size_t v) {
   size_t r = 0; asm ("bsf %1,%0" : "=r"(r) : "r"(v)); return r;
 }
@@ -271,7 +271,7 @@ __forceinline unsigned int bitscan(unsigned int v) {
 #endif
 }
 
-#if defined(__KERNEL_64_BIT__) || defined(__APPLE__)
+#if (defined(__KERNEL_64_BIT__) || defined(__APPLE__)) && !(defined(__ILP32__) && defined(__x86_64__))
 __forceinline size_t bitscan(size_t v) {
 #if defined(__KERNEL_AVX2__)
 #if defined(__KERNEL_64_BIT__)
@@ -313,7 +313,7 @@ __forceinline unsigned int __bscf(unsigned int& v)
   return i;
 }
 
-#if defined(__KERNEL_64_BIT__) || defined(__APPLE__)
+#if (defined(__KERNEL_64_BIT__) || defined(__APPLE__)) && !(defined(__ILP32__) && defined(__x86_64__))
 __forceinline size_t __bscf(size_t& v) 
 {
   size_t i = bitscan(v);
@@ -430,6 +430,23 @@ __forceinline __int64 _mm_extract_epi64( __m128i input, const int index ) {
 
 #endif
 
+#else  /* __KERNEL_SSE2__ */
+
+/* This section is for utility functions which operates on non-register data
+ * which might be used from a non-vectorized code.
+ */
+
+ccl_device_inline int bitscan(int value)
+{
+	assert(value != 0);
+	int bit = 0;
+	while(value >>= 1) {
+		++bit;
+	}
+	return bit;
+}
+
+
 #endif /* __KERNEL_SSE2__ */
 
 CCL_NAMESPACE_END
@@ -438,6 +455,7 @@ CCL_NAMESPACE_END
 #include "util_sseb.h"
 #include "util_ssei.h"
 #include "util_ssef.h"
+#include "util_avxf.h"
 
 #endif /* __UTIL_SIMD_TYPES_H__ */
 

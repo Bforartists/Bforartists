@@ -28,6 +28,10 @@
 #include <pthread.h>
 #include <queue>
 
+#ifdef __APPLE__
+#  include <libkern/OSAtomic.h>
+#endif
+
 #include "util_function.h"
 
 CCL_NAMESPACE_BEGIN
@@ -48,37 +52,58 @@ typedef boost::condition_variable thread_condition_variable;
 
 class thread {
 public:
-	thread(function<void(void)> run_cb_)
+	thread(function<void(void)> run_cb, int group = -1);
+	~thread();
 
-	{
-		joined = false;
-		run_cb = run_cb_;
-
-		pthread_create(&pthread_id, NULL, run, (void*)this);
-	}
-
-	~thread()
-	{
-		if(!joined)
-			join();
-	}
-
-	static void *run(void *arg)
-	{
-		((thread*)arg)->run_cb();
-		return NULL;
-	}
-
-	bool join()
-	{
-		joined = true;
-		return pthread_join(pthread_id, NULL) == 0;
-	}
+	static void *run(void *arg);
+	bool join();
 
 protected:
-	function<void(void)> run_cb;
-	pthread_t pthread_id;
-	bool joined;
+	function<void(void)> run_cb_;
+	pthread_t pthread_id_;
+	bool joined_;
+	int group_;
+};
+
+/* Own wrapper around pthread's spin lock to make it's use easier. */
+
+class thread_spin_lock {
+public:
+#ifdef __APPLE__
+	inline thread_spin_lock() {
+		spin_ = OS_SPINLOCK_INIT;
+	}
+
+	inline void lock() {
+		OSSpinLockLock(&spin_);
+	}
+
+	inline void unlock() {
+		OSSpinLockUnlock(&spin_);
+	}
+#else  /* __APPLE__ */
+	inline thread_spin_lock() {
+		pthread_spin_init(&spin_, 0);
+	}
+
+	inline ~thread_spin_lock() {
+		pthread_spin_destroy(&spin_);
+	}
+
+	inline void lock() {
+		pthread_spin_lock(&spin_);
+	}
+
+	inline void unlock() {
+		pthread_spin_unlock(&spin_);
+	}
+#endif  /* __APPLE__ */
+protected:
+#ifdef __APPLE__
+	OSSpinLock spin_;
+#else
+	pthread_spinlock_t spin_;
+#endif
 };
 
 CCL_NAMESPACE_END

@@ -46,6 +46,8 @@
 
 #include "BLO_readfile.h"
 
+#include "DNA_space_types.h"  /* For FILE_MAX_LIBEXTRA */
+
 #include "IMB_imbuf_types.h"
 #include "IMB_imbuf.h"
 #include "IMB_thumbs.h"
@@ -217,7 +219,7 @@ static bool thumbhash_from_path(const char *UNUSED(path), ThumbSource source, ch
 	}
 }
 
-static int uri_from_filename(const char *path, char *uri)
+static bool uri_from_filename(const char *path, char *uri)
 {
 	char orig_uri[URI_MAX];
 	const char *dirstart = path;
@@ -243,16 +245,9 @@ static int uri_from_filename(const char *path, char *uri)
 #else
 	BLI_snprintf(orig_uri, URI_MAX, "file://%s", dirstart);
 #endif
-	
-#ifdef WITH_ICONV
-	{
-		char uri_utf8[URI_MAX];
-		escape_uri_string(orig_uri, uri_utf8, URI_MAX, UNSAFE_PATH);
-		BLI_string_to_utf8(uri_utf8, uri, NULL);
-	}
-#else 
+
 	escape_uri_string(orig_uri, uri, URI_MAX, UNSAFE_PATH);
-#endif
+
 	return 1;
 }
 
@@ -489,7 +484,9 @@ ImBuf *IMB_thumb_create(const char *path, ThumbSize size, ThumbSource source, Im
 	char uri[URI_MAX] = "";
 	char thumb_name[40];
 
-	uri_from_filename(path, uri);
+	if (!uri_from_filename(path, uri)) {
+		return NULL;
+	}
 	thumbname_from_uri(uri, thumb_name, sizeof(thumb_name));
 
 	return thumb_create_ex(path, uri, thumb_name, false, THUMB_DEFAULT_HASH, NULL, NULL, size, source, img);
@@ -538,7 +535,7 @@ ImBuf *IMB_thumb_manage(const char *org_path, ThumbSize size, ThumbSource source
 	char thumb_path[FILE_MAX];
 	char thumb_name[40];
 	char uri[URI_MAX];
-	char path_buff[FILE_MAX];
+	char path_buff[FILE_MAX_LIBEXTRA];
 	const char *file_path;
 	const char *path;
 	BLI_stat_t st;
