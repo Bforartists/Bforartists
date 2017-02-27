@@ -27,6 +27,7 @@
 #include "subd_patch.h"
 #include "subd_split.h"
 
+#include "util_algorithm.h"
 #include "util_foreach.h"
 #include "util_logging.h"
 #include "util_math.h"
@@ -525,6 +526,31 @@ static void attr_create_uv_map(Scene *scene,
 }
 
 /* Create vertex pointiness attributes. */
+
+/* Compare vertices by sum of their coordinates. */
+class VertexAverageComparator {
+public:
+	VertexAverageComparator(const array<float3>& verts)
+	        : verts_(verts) {
+	}
+
+	bool operator()(const int& vert_idx_a, const int& vert_idx_b)
+	{
+		const float3 &vert_a = verts_[vert_idx_a];
+		const float3 &vert_b = verts_[vert_idx_b];
+		if(vert_a == vert_b) {
+			/* Special case for doubles, so we ensure ordering. */
+			return vert_idx_a > vert_idx_b;
+		}
+		const float x1 = vert_a.x + vert_a.y + vert_a.z;
+		const float x2 = vert_b.x + vert_b.y + vert_b.z;
+		return x1 < x2;
+	}
+
+protected:
+	const array<float3>& verts_;
+};
+
 static void attr_create_pointiness(Scene *scene,
                                    Mesh *mesh,
                                    BL::Mesh& b_mesh,
@@ -534,49 +560,65 @@ static void attr_create_pointiness(Scene *scene,
 		return;
 	}
 	const int num_verts = b_mesh.vertices.length();
-	AttributeSet& attributes = (subdivision)? mesh->subd_attributes: mesh->attributes;
-	Attribute *attr = attributes.add(ATTR_STD_POINTINESS);
-	float *data = attr->data_float();
 	/* STEP 1: Find out duplicated vertices and point duplicates to a single
 	 *         original vertex.
 	 */
+	vector<int> sorted_vert_indeices(num_verts);
+	for(int vert_index = 0; vert_index < num_verts; ++vert_index) {
+		sorted_vert_indeices[vert_index] = vert_index;
+	}
+	VertexAverageComparator compare(mesh->verts);
+	sort(sorted_vert_indeices.begin(), sorted_vert_indeices.end(), compare);
 	/* This array stores index of the original vertex for the given vertex
 	 * index.
 	 */
 	vector<int> vert_orig_index(num_verts);
-	BL::Mesh::vertices_iterator v;
-	int vert_index = 0;
-	for(b_mesh.vertices.begin(v);
-	    v != b_mesh.vertices.end();
-	    ++v, ++vert_index)
+	for(int sorted_vert_index = 0;
+	    sorted_vert_index < num_verts;
+	    ++sorted_vert_index)
 	{
-		const float3 vert_co = get_float3(v->co());
+		const int vert_index = sorted_vert_indeices[sorted_vert_index];
+		const float3 &vert_co = mesh->verts[vert_index];
 		bool found = false;
-		int other_vert_index;
-		for(other_vert_index = 0;
-		    other_vert_index < vert_index;
-		    ++other_vert_index)
+		for(int other_sorted_vert_index = sorted_vert_index + 1;
+		    other_sorted_vert_index < num_verts;
+		    ++other_sorted_vert_index)
 		{
-			const float3 other_vert_co =
-			        get_float3(b_mesh.vertices[other_vert_index].co());
-			if(other_vert_co == vert_co) {
+			const int other_vert_index =
+			        sorted_vert_indeices[other_sorted_vert_index];
+			const float3 &other_vert_co = mesh->verts[other_vert_index];
+			/* We are too far away now, we wouldn't have duplicate. */
+			if ((other_vert_co.x + other_vert_co.y + other_vert_co.z) -
+			    (vert_co.x + vert_co.y + vert_co.z) > 3 * FLT_EPSILON)
+			{
+				break;
+			}
+			/* Found duplicate. */
+			if(len_squared(other_vert_co - vert_co) < FLT_EPSILON) {
 				found = true;
+				vert_orig_index[vert_index] = other_vert_index;
 				break;
 			}
 		}
-		if(found) {
-			vert_orig_index[vert_index] = other_vert_index;
-		}
-		else {
+		if(!found) {
 			vert_orig_index[vert_index] = vert_index;
 		}
 	}
+	/* Make sure we always points to the very first orig vertex. */
+	for(int vert_index = 0; vert_index < num_verts; ++vert_index) {
+		int orig_index = vert_orig_index[vert_index];
+		while(orig_index != vert_orig_index[orig_index]) {
+			orig_index = vert_orig_index[orig_index];
+		}
+		vert_orig_index[vert_index] = orig_index;
+	}
+	sorted_vert_indeices.free_memory();
 	/* STEP 2: Calculate vertex normals taking into account their possible
 	 *         duplicates which gets "welded" together.
 	 */
 	vector<float3> vert_normal(num_verts, make_float3(0.0f, 0.0f, 0.0f));
 	/* First we accumulate all vertex normals in the original index. */
-	for(vert_index = 0; vert_index < num_verts; ++vert_index) {
+	for(int vert_index = 0; vert_index < num_verts; ++vert_index) {
 		const float3 normal = get_float3(b_mesh.vertices[vert_index].normal());
 		const int orig_index = vert_orig_index[vert_index];
 		vert_normal[orig_index] += normal;
@@ -584,7 +626,7 @@ static void attr_create_pointiness(Scene *scene,
 	/* Then we normalize the accumulated result and flush it to all duplicates
 	 * as well.
 	 */
-	for(vert_index = 0; vert_index < num_verts; ++vert_index) {
+	for(int vert_index = 0; vert_index < num_verts; ++vert_index) {
 		const int orig_index = vert_orig_index[vert_index];
 		vert_normal[vert_index] = normalize(vert_normal[orig_index]);
 	}
@@ -611,8 +653,7 @@ static void attr_create_pointiness(Scene *scene,
 		++counter[v0];
 		++counter[v1];
 	}
-	vert_index = 0;
-	for(b_mesh.vertices.begin(v); v != b_mesh.vertices.end(); ++v, ++vert_index) {
+	for(int vert_index = 0; vert_index < num_verts; ++vert_index) {
 		const int orig_index = vert_orig_index[vert_index];
 		if(orig_index != vert_index) {
 			/* Skip duplicates, they'll be overwritten later on. */
@@ -630,6 +671,9 @@ static void attr_create_pointiness(Scene *scene,
 		}
 	}
 	/* STEP 3: Blur vertices to approximate 2 ring neighborhood. */
+	AttributeSet& attributes = (subdivision)? mesh->subd_attributes: mesh->attributes;
+	Attribute *attr = attributes.add(ATTR_STD_POINTINESS);
+	float *data = attr->data_float();
 	memcpy(data, &raw_data[0], sizeof(float) * raw_data.size());
 	memset(&counter[0], 0, sizeof(int) * counter.size());
 	edge_index = 0;
@@ -646,11 +690,11 @@ static void attr_create_pointiness(Scene *scene,
 		++counter[v0];
 		++counter[v1];
 	}
-	for(vert_index = 0; vert_index < num_verts; ++vert_index) {
+	for(int vert_index = 0; vert_index < num_verts; ++vert_index) {
 		data[vert_index] /= counter[vert_index] + 1;
 	}
 	/* STEP 4: Copy attribute to the duplicated vertices. */
-	for(vert_index = 0; vert_index < num_verts; ++vert_index) {
+	for(int vert_index = 0; vert_index < num_verts; ++vert_index) {
 		const int orig_index = vert_orig_index[vert_index];
 		data[vert_index] = data[orig_index];
 	}
@@ -732,6 +776,15 @@ static void create_mesh(Scene *scene,
 			int n = (vi[3] == 0)? 3: 4;
 			int shader = clamp(f->material_index(), 0, used_shaders.size()-1);
 			bool smooth = f->use_smooth() || use_loop_normals;
+
+			if(use_loop_normals) {
+				BL::Array<float, 12> loop_normals = f->split_normals();
+				for(int i = 0; i < n; i++) {
+					N[vi[i]] = make_float3(loop_normals[i * 3],
+					                       loop_normals[i * 3 + 1],
+					                       loop_normals[i * 3 + 2]);
+				}
+			}
 
 			/* Create triangles.
 			 *
@@ -1241,4 +1294,3 @@ void BlenderSync::sync_mesh_motion(BL::Object& b_ob,
 }
 
 CCL_NAMESPACE_END
-
