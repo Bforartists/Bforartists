@@ -13,6 +13,24 @@ def kmi_props_setattr(kmi_props, attr, value):
 wm = bpy.context.window_manager
 kc = wm.keyconfigs.new(os.path.splitext(os.path.basename(__file__))[0])
 
+# Map Object Non-modal
+km = kc.keymaps.new('Object Non-modal', space_type='EMPTY', region_type='WINDOW', modal=False)
+
+kmi = km.keymap_items.new('object.mode_set', 'TWO', 'PRESS')
+kmi_props_setattr(kmi.properties, 'mode', 'EDIT')
+kmi = km.keymap_items.new('object.mode_set', 'THREE', 'PRESS')
+kmi_props_setattr(kmi.properties, 'mode', 'SCULPT')
+kmi = km.keymap_items.new('object.mode_set', 'FOUR', 'PRESS')
+kmi_props_setattr(kmi.properties, 'mode', 'VERTEX_PAINT')
+kmi = km.keymap_items.new('object.mode_set', 'FIVE', 'PRESS')
+kmi_props_setattr(kmi.properties, 'mode', 'WEIGHT_PAINT')
+kmi = km.keymap_items.new('object.mode_set', 'SIX', 'PRESS')
+kmi_props_setattr(kmi.properties, 'mode', 'TEXTURE_PAINT')
+kmi = km.keymap_items.new('object.mode_set', 'SEVEN', 'PRESS')
+kmi_props_setattr(kmi.properties, 'mode', 'POSE')
+kmi = km.keymap_items.new('object.mode_set', 'ONE', 'PRESS')
+kmi_props_setattr(kmi.properties, 'mode', 'OBJECT')
+
 # Map Mesh
 km = kc.keymaps.new('Mesh', space_type='EMPTY', region_type='WINDOW', modal=False)
 
@@ -321,24 +339,6 @@ kmi = km.keymap_items.new('view3d.view_roll', 'NUMPAD_4', 'PRESS', shift=True, c
 kmi_props_setattr(kmi.properties, 'angle', -0.2619999945163727)
 kmi = km.keymap_items.new('view3d.view_roll', 'NUMPAD_6', 'PRESS', shift=True, ctrl=True)
 kmi_props_setattr(kmi.properties, 'angle', 0.2619999945163727)
-
-# Map Object Non-modal
-km = kc.keymaps.new('Object Non-modal', space_type='EMPTY', region_type='WINDOW', modal=False)
-
-kmi = km.keymap_items.new('object.mode_set', 'TWO', 'PRESS')
-kmi_props_setattr(kmi.properties, 'mode', 'EDIT')
-kmi = km.keymap_items.new('object.mode_set', 'THREE', 'PRESS')
-kmi_props_setattr(kmi.properties, 'mode', 'SCULPT')
-kmi = km.keymap_items.new('object.mode_set', 'FOUR', 'PRESS')
-kmi_props_setattr(kmi.properties, 'mode', 'VERTEX_PAINT')
-kmi = km.keymap_items.new('object.mode_set', 'FIVE', 'PRESS')
-kmi_props_setattr(kmi.properties, 'mode', 'WEIGHT_PAINT')
-kmi = km.keymap_items.new('object.mode_set', 'SIX', 'PRESS')
-kmi_props_setattr(kmi.properties, 'mode', 'TEXTURE_PAINT')
-kmi = km.keymap_items.new('object.mode_set', 'SEVEN', 'PRESS')
-kmi_props_setattr(kmi.properties, 'mode', 'OBJECT')
-kmi = km.keymap_items.new('object.mode_set', 'ONE', 'PRESS')
-kmi_props_setattr(kmi.properties, 'mode', 'OBJECT')
 
 # Map Window
 km = kc.keymaps.new('Window', space_type='EMPTY', region_type='WINDOW', modal=False)
