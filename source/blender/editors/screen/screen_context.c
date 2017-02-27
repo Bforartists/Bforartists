@@ -75,6 +75,7 @@ static unsigned int context_layers(bScreen *sc, Scene *scene, ScrArea *sa_ctx)
 const char *screen_context_dir[] = {
 	"scene", "visible_objects", "visible_bases", "selectable_objects", "selectable_bases",
 	"selected_objects", "selected_bases",
+	"editable_objects", "editable_bases",
 	"selected_editable_objects", "selected_editable_bases",
 	"visible_bones", "editable_bones", "selected_bones", "selected_editable_bones",
 	"visible_pose_bones", "selected_pose_bones", "active_bone", "active_pose_bone",
@@ -84,7 +85,8 @@ const char *screen_context_dir[] = {
 	"sequences", "selected_sequences", "selected_editable_sequences", /* sequencer */
 	"gpencil_data", "gpencil_data_owner", /* grease pencil data */
 	"visible_gpencil_layers", "editable_gpencil_layers", "editable_gpencil_strokes",
-	"active_gpencil_layer", "active_gpencil_frame",
+	"active_gpencil_layer", "active_gpencil_frame", "active_gpencil_palette", 
+	"active_gpencil_palettecolor", "active_gpencil_brush",
 	"active_operator",
 	NULL};
 
@@ -115,7 +117,7 @@ int ed_screen_context(const bContext *C, const char *member, bContextDataResult 
 	}
 	else if (CTX_data_equals(member, "visible_objects") || CTX_data_equals(member, "visible_bases")) {
 		const unsigned int lay = context_layers(sc, scene, sa);
-		int visible_objects = CTX_data_equals(member, "visible_objects");
+		const bool visible_objects = CTX_data_equals(member, "visible_objects");
 
 		for (base = scene->base.first; base; base = base->next) {
 			if (((base->object->restrictflag & OB_RESTRICT_VIEW) == 0) && (base->lay & lay)) {
@@ -130,7 +132,7 @@ int ed_screen_context(const bContext *C, const char *member, bContextDataResult 
 	}
 	else if (CTX_data_equals(member, "selectable_objects") || CTX_data_equals(member, "selectable_bases")) {
 		const unsigned int lay = context_layers(sc, scene, sa);
-		int selectable_objects = CTX_data_equals(member, "selectable_objects");
+		const bool selectable_objects = CTX_data_equals(member, "selectable_objects");
 
 		for (base = scene->base.first; base; base = base->next) {
 			if (base->lay & lay) {
@@ -147,7 +149,7 @@ int ed_screen_context(const bContext *C, const char *member, bContextDataResult 
 	}
 	else if (CTX_data_equals(member, "selected_objects") || CTX_data_equals(member, "selected_bases")) {
 		const unsigned int lay = context_layers(sc, scene, sa);
-		int selected_objects = CTX_data_equals(member, "selected_objects");
+		const bool selected_objects = CTX_data_equals(member, "selected_objects");
 
 		for (base = scene->base.first; base; base = base->next) {
 			if ((base->flag & SELECT) && (base->lay & lay)) {
@@ -162,7 +164,7 @@ int ed_screen_context(const bContext *C, const char *member, bContextDataResult 
 	}
 	else if (CTX_data_equals(member, "selected_editable_objects") || CTX_data_equals(member, "selected_editable_bases")) {
 		const unsigned int lay = context_layers(sc, scene, sa);
-		int selected_editable_objects = CTX_data_equals(member, "selected_editable_objects");
+		const bool selected_editable_objects = CTX_data_equals(member, "selected_editable_objects");
 
 		for (base = scene->base.first; base; base = base->next) {
 			if ((base->flag & SELECT) && (base->lay & lay)) {
@@ -179,10 +181,28 @@ int ed_screen_context(const bContext *C, const char *member, bContextDataResult 
 		CTX_data_type_set(result, CTX_DATA_TYPE_COLLECTION);
 		return 1;
 	}
+	else if (CTX_data_equals(member, "editable_objects") || CTX_data_equals(member, "editable_bases")) {
+		const unsigned int lay = context_layers(sc, scene, sa);
+		const bool editable_objects = CTX_data_equals(member, "editable_objects");
+		
+		/* Visible + Editable, but not necessarily selected */
+		for (base = scene->base.first; base; base = base->next) {
+			if (((base->object->restrictflag & OB_RESTRICT_VIEW) == 0) && (base->lay & lay)) {
+				if (0 == BKE_object_is_libdata(base->object)) {
+					if (editable_objects)
+						CTX_data_id_list_add(result, &base->object->id);
+					else
+						CTX_data_list_add(result, &scene->id, &RNA_ObjectBase, base);
+				}
+			}
+		}
+		CTX_data_type_set(result, CTX_DATA_TYPE_COLLECTION);
+		return 1;
+	}
 	else if (CTX_data_equals(member, "visible_bones") || CTX_data_equals(member, "editable_bones")) {
 		bArmature *arm = (obedit && obedit->type == OB_ARMATURE) ? obedit->data : NULL;
 		EditBone *ebone, *flipbone = NULL;
-		int editable_bones = CTX_data_equals(member, "editable_bones");
+		const bool editable_bones = CTX_data_equals(member, "editable_bones");
 		
 		if (arm && arm->edbo) {
 			/* Attention: X-Axis Mirroring is also handled here... */
@@ -224,7 +244,7 @@ int ed_screen_context(const bContext *C, const char *member, bContextDataResult 
 	else if (CTX_data_equals(member, "selected_bones") || CTX_data_equals(member, "selected_editable_bones")) {
 		bArmature *arm = (obedit && obedit->type == OB_ARMATURE) ? obedit->data : NULL;
 		EditBone *ebone, *flipbone = NULL;
-		int selected_editable_bones = CTX_data_equals(member, "selected_editable_bones");
+		const bool selected_editable_bones = CTX_data_equals(member, "selected_editable_bones");
 		
 		if (arm && arm->edbo) {
 			/* Attention: X-Axis Mirroring is also handled here... */
@@ -447,7 +467,7 @@ int ed_screen_context(const bContext *C, const char *member, bContextDataResult 
 		bGPdata *gpd = ED_gpencil_data_get_active_direct((ID *)sc, scene, sa, obact);
 		
 		if (gpd) {
-			bGPDlayer *gpl = gpencil_layer_getactive(gpd);
+			bGPDlayer *gpl = BKE_gpencil_layer_getactive(gpd);
 			
 			if (gpl) {
 				CTX_data_pointer_set(result, &gpd->id, &RNA_GPencilLayer, gpl);
@@ -455,12 +475,50 @@ int ed_screen_context(const bContext *C, const char *member, bContextDataResult 
 			}
 		}
 	}
+	else if (CTX_data_equals(member, "active_gpencil_palette")) {
+		/* XXX: see comment for gpencil_data case... */
+		bGPdata *gpd = ED_gpencil_data_get_active_direct((ID *)sc, scene, sa, obact);
+
+		if (gpd) {
+			bGPDpalette *palette = BKE_gpencil_palette_getactive(gpd);
+
+			if (palette) {
+				CTX_data_pointer_set(result, &gpd->id, &RNA_GPencilPalette, palette);
+				return 1;
+			}
+		}
+	}
+	else if (CTX_data_equals(member, "active_gpencil_palettecolor")) {
+		/* XXX: see comment for gpencil_data case... */
+		bGPdata *gpd = ED_gpencil_data_get_active_direct((ID *)sc, scene, sa, obact);
+
+		if (gpd) {
+			bGPDpalette *palette = BKE_gpencil_palette_getactive(gpd);
+
+			if (palette) {
+				bGPDpalettecolor *palcolor = BKE_gpencil_palettecolor_getactive(palette);
+				if (palcolor) {
+					CTX_data_pointer_set(result, &gpd->id, &RNA_GPencilPaletteColor, palcolor);
+					return 1;
+				}
+			}
+		}
+	}
+	else if (CTX_data_equals(member, "active_gpencil_brush")) {
+		/* XXX: see comment for gpencil_data case... */
+		bGPDbrush *brush = BKE_gpencil_brush_getactive(scene->toolsettings);
+
+		if (brush) {
+			CTX_data_pointer_set(result, &scene->id, &RNA_GPencilBrush, brush);
+			return 1;
+		}
+	}
 	else if (CTX_data_equals(member, "active_gpencil_frame")) {
 		/* XXX: see comment for gpencil_data case... */
 		bGPdata *gpd = ED_gpencil_data_get_active_direct((ID *)sc, scene, sa, obact);
 		
 		if (gpd) {
-			bGPDlayer *gpl = gpencil_layer_getactive(gpd);
+			bGPDlayer *gpl = BKE_gpencil_layer_getactive(gpd);
 			
 			if (gpl) {
 				CTX_data_pointer_set(result, &gpd->id, &RNA_GPencilLayer, gpl->actframe);
@@ -492,7 +550,7 @@ int ed_screen_context(const bContext *C, const char *member, bContextDataResult 
 			bGPDlayer *gpl;
 			
 			for (gpl = gpd->layers.first; gpl; gpl = gpl->next) {
-				if ((gpl->flag & (GP_LAYER_HIDE | GP_LAYER_LOCKED)) == 0) {
+				if (gpencil_layer_is_editable(gpl)) {
 					CTX_data_list_add(result, &gpd->id, &RNA_GPencilLayer, gpl);
 				}
 			}
@@ -508,12 +566,17 @@ int ed_screen_context(const bContext *C, const char *member, bContextDataResult 
 			bGPDlayer *gpl;
 			
 			for (gpl = gpd->layers.first; gpl; gpl = gpl->next) {
-				if ((gpl->flag & (GP_LAYER_HIDE | GP_LAYER_LOCKED)) == 0 && (gpl->actframe)) {
+				if (gpencil_layer_is_editable(gpl) && (gpl->actframe)) {
 					bGPDframe *gpf = gpl->actframe;
 					bGPDstroke *gps;
 					
 					for (gps = gpf->strokes.first; gps; gps = gps->next) {
 						if (ED_gpencil_stroke_can_use_direct(sa, gps)) {
+							/* check if the color is editable */
+							if (ED_gpencil_stroke_color_use(gpl, gps) == false) {
+								continue;
+							}
+
 							CTX_data_list_add(result, &gpd->id, &RNA_GPencilStroke, gps);
 						}
 					}

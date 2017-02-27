@@ -23,6 +23,7 @@ from bpy.types import Operator
 from bpy.props import (
         FloatProperty,
         IntProperty,
+        BoolProperty,
         )
 from bpy.app.translations import pgettext_data as data_
 
@@ -31,25 +32,24 @@ from bpy_extras import object_utils
 
 def add_torus(major_rad, minor_rad, major_seg, minor_seg):
     from math import cos, sin, pi
-    from mathutils import Vector, Quaternion
+    from mathutils import Vector, Matrix
 
-    PI_2 = pi * 2.0
-    z_axis = 0.0, 0.0, 1.0
+    pi_2 = pi * 2.0
 
     verts = []
     faces = []
     i1 = 0
     tot_verts = major_seg * minor_seg
     for major_index in range(major_seg):
-        quat = Quaternion(z_axis, (major_index / major_seg) * PI_2)
+        matrix = Matrix.Rotation((major_index / major_seg) * pi_2, 3, 'Z')
 
         for minor_index in range(minor_seg):
-            angle = 2 * pi * minor_index / minor_seg
+            angle = pi_2 * minor_index / minor_seg
 
-            vec = quat * Vector((major_rad + (cos(angle) * minor_rad),
-                                 0.0,
-                                 (sin(angle) * minor_rad),
-                                 ))
+            vec = matrix * Vector((major_rad + (cos(angle) * minor_rad),
+                                   0.0,
+                                   sin(angle) * minor_rad,
+                                   ))
 
             verts.extend(vec[:])
 
@@ -57,7 +57,6 @@ def add_torus(major_rad, minor_rad, major_seg, minor_seg):
                 i2 = (major_index) * minor_seg
                 i3 = i1 + minor_seg
                 i4 = i2 + minor_seg
-
             else:
                 i2 = i1 + 1
                 i3 = i1 + minor_seg
@@ -70,15 +69,64 @@ def add_torus(major_rad, minor_rad, major_seg, minor_seg):
             if i4 >= tot_verts:
                 i4 = i4 - tot_verts
 
-            # stupid eekadoodle
-            if i2:
-                faces.extend([i1, i3, i4, i2])
-            else:
-                faces.extend([i2, i1, i3, i4])
+            faces.extend([i1, i3, i4, i2])
 
             i1 += 1
 
     return verts, faces
+
+
+def add_uvs(mesh, minor_seg, major_seg):
+    from math import fmod
+
+    mesh.uv_textures.new()
+    uv_data = mesh.uv_layers.active.data
+    polygons = mesh.polygons
+    u_step = 1.0 / major_seg
+    v_step = 1.0 / minor_seg
+
+    # Round UV's, needed when segments aren't divisible by 4.
+    u_init = 0.5 + fmod(0.5, u_step)
+    v_init = 0.5 + fmod(0.5, v_step)
+
+    # Calculate wrapping value under 1.0 to prevent
+    # float precision errors wrapping at the wrong step.
+    u_wrap = 1.0 - (u_step / 2.0)
+    v_wrap = 1.0 - (v_step / 2.0)
+
+    vertex_index = 0
+
+    u_prev = u_init
+    u_next = u_prev + u_step
+    for major_index in range(major_seg):
+        v_prev = v_init
+        v_next = v_prev + v_step
+        for minor_index in range(minor_seg):
+            loops = polygons[vertex_index].loop_indices
+            if minor_index == minor_seg - 1 and major_index == 0:
+                uv_data[loops[1]].uv = u_prev, v_prev
+                uv_data[loops[2]].uv = u_next, v_prev
+                uv_data[loops[0]].uv = u_prev, v_next
+                uv_data[loops[3]].uv = u_next, v_next
+            else:
+                uv_data[loops[0]].uv = u_prev, v_prev
+                uv_data[loops[1]].uv = u_next, v_prev
+                uv_data[loops[3]].uv = u_prev, v_next
+                uv_data[loops[2]].uv = u_next, v_next
+
+            if v_next > v_wrap:
+                v_prev = v_next - 1.0
+            else:
+                v_prev = v_next
+            v_next = v_prev + v_step
+
+            vertex_index += 1
+
+        if u_next > u_wrap:
+            u_prev = u_next - 1.0
+        else:
+            u_prev = u_next
+        u_next = u_prev + u_step
 
 
 class AddTorus(Operator, object_utils.AddObjectHelper):
@@ -145,10 +193,18 @@ class AddTorus(Operator, object_utils.AddObjectHelper):
             subtype='DISTANCE',
             unit='LENGTH',
             )
+    generate_uvs = BoolProperty(
+            name="Generate UVs",
+            description="Generate a default UV map",
+            default=False,
+            )
 
     def draw(self, context):
         layout = self.layout
+
         col = layout.column(align=True)
+        col.prop(self, 'generate_uvs')
+        col.separator()
         col.prop(self, 'view_align')
 
         col = layout.column(align=True)
@@ -217,6 +273,10 @@ class AddTorus(Operator, object_utils.AddObjectHelper):
         mesh.polygons.foreach_set("loop_start", range(0, nbr_loops, 4))
         mesh.polygons.foreach_set("loop_total", (4,) * nbr_polys)
         mesh.loops.foreach_set("vertex_index", faces)
+
+        if self.generate_uvs:
+            add_uvs(mesh, self.minor_segments, self.major_segments)
+
         mesh.update()
 
         object_utils.object_data_add(context, mesh, operator=self)

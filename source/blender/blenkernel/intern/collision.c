@@ -71,6 +71,15 @@ void collision_move_object(CollisionModifierData *collmd, float step, float prev
 	float tv[3] = {0, 0, 0};
 	unsigned int i = 0;
 
+	/* the collider doesn't move this frame */
+	if (collmd->is_static) {
+		for (i = 0; i < collmd->mvert_num; i++) {
+			zero_v3(collmd->current_v[i].co);
+		}
+
+		return;
+	}
+
 	for (i = 0; i < collmd->mvert_num; i++) {
 		sub_v3_v3v3(tv, collmd->xnew[i].co, collmd->x[i].co);
 		VECADDS(collmd->current_x[i].co, collmd->x[i].co, tv, prevstep);
@@ -224,7 +233,7 @@ static int cloth_collision_response_static ( ClothModifierData *clmd, CollisionM
 	float w1, w2, w3, u1, u2, u3;
 	float v1[3], v2[3], relativeVelocity[3];
 	float magrelVel;
-	float epsilon2 = BLI_bvhtree_getepsilon ( collmd->bvhtree );
+	float epsilon2 = BLI_bvhtree_get_epsilon ( collmd->bvhtree );
 
 	cloth1 = clmd->clothObject;
 
@@ -396,7 +405,7 @@ static CollPair* cloth_collision(ModifierData *md1, ModifierData *md2,
 #endif
 	double distance = 0;
 	float epsilon1 = clmd->coll_parms->epsilon;
-	float epsilon2 = BLI_bvhtree_getepsilon ( collmd->bvhtree );
+	float epsilon2 = BLI_bvhtree_get_epsilon ( collmd->bvhtree );
 
 	tri_a = &clmd->clothObject->tri[overlap->indexA];
 	tri_b = &collmd->tri[overlap->indexB];
@@ -503,12 +512,13 @@ static void add_collision_object(Object ***objs, unsigned int *numobj, unsigned 
 
 // return all collision objects in scene
 // collision object will exclude self 
-Object **get_collisionobjects(Scene *scene, Object *self, Group *group, unsigned int *numcollobj, unsigned int modifier_type)
+Object **get_collisionobjects_ext(Scene *scene, Object *self, Group *group, int layer, unsigned int *numcollobj, unsigned int modifier_type, bool dupli)
 {
 	Base *base;
 	Object **objs;
 	GroupObject *go;
 	unsigned int numobj= 0, maxobj= 100;
+	int level = dupli ? 0 : 1;
 	
 	objs= MEM_callocN(sizeof(Object *)*maxobj, "CollisionObjectsArray");
 
@@ -516,16 +526,14 @@ Object **get_collisionobjects(Scene *scene, Object *self, Group *group, unsigned
 	if (group) {
 		/* use specified group */
 		for (go= group->gobject.first; go; go= go->next)
-			add_collision_object(&objs, &numobj, &maxobj, go->ob, self, 0, modifier_type);
+			add_collision_object(&objs, &numobj, &maxobj, go->ob, self, level, modifier_type);
 	}
 	else {
 		Scene *sce_iter;
 		/* add objects in same layer in scene */
 		for (SETLOOPER(scene, sce_iter, base)) {
-			/* Need to check for active layers, too.
-			Otherwise this check fails if the objects are not on the same layer - DG */
-			if ((base->lay & self->lay) || (base->lay & scene->lay))
-				add_collision_object(&objs, &numobj, &maxobj, base->object, self, 0, modifier_type);
+			if ( base->lay & layer )
+				add_collision_object(&objs, &numobj, &maxobj, base->object, self, level, modifier_type);
 
 		}
 	}
@@ -533,6 +541,13 @@ Object **get_collisionobjects(Scene *scene, Object *self, Group *group, unsigned
 	*numcollobj= numobj;
 
 	return objs;
+}
+
+Object **get_collisionobjects(Scene *scene, Object *self, Group *group, unsigned int *numcollobj, unsigned int modifier_type)
+{
+	/* Need to check for active layers, too.
+	   Otherwise this check fails if the objects are not on the same layer - DG */
+	return get_collisionobjects_ext(scene, self, group, self->lay | scene->lay, numcollobj, modifier_type, true);
 }
 
 static void add_collider_cache_object(ListBase **objs, Object *ob, Object *self, int level)
@@ -909,7 +924,7 @@ static bool cloth_points_collision_response_static(ClothModifierData *clmd, Coll
 	// float w1, w2;
 	float u1, u2, u3;
 	float v1[3], v2_old[3], v2_new[3], v_rel_old[3], v_rel_new[3];
-	float epsilon2 = BLI_bvhtree_getepsilon ( collmd->bvhtree );
+	float epsilon2 = BLI_bvhtree_get_epsilon ( collmd->bvhtree );
 
 	for ( ; collpair != collision_end; collpair++ ) {
 		float margin_distance = (float)(collpair->distance - (double)epsilon2);
@@ -999,7 +1014,7 @@ static bool cloth_points_collision_response_static(ClothModifierData *clmd, Coll
 }
 
 BLI_INLINE bool cloth_point_face_collision_params(const float p1[3], const float p2[3], const float v0[3], const float v1[3], const float v2[3],
-                                                  float r_nor[3], float *r_lambda, float r_w[4])
+                                                  float r_nor[3], float *r_lambda, float r_w[3])
 {
 	float edge1[3], edge2[3], p2face[3], p1p2[3], v0p2[3];
 	float nor_v0p2, nor_p1p2;
@@ -1011,7 +1026,7 @@ BLI_INLINE bool cloth_point_face_collision_params(const float p1[3], const float
 	
 	nor_v0p2 = dot_v3v3(v0p2, r_nor);
 	madd_v3_v3v3fl(p2face, p2, r_nor, -nor_v0p2);
-	interp_weights_face_v3(r_w, v0, v1, v2, NULL, p2face);
+	interp_weights_tri_v3(r_w, v0, v1, v2, p2face);
 	
 	sub_v3_v3v3(p1p2, p2, p1);
 	sub_v3_v3v3(v0p2, p2, v0);
@@ -1070,7 +1085,7 @@ static CollPair *cloth_point_collpair(
 	const float *co1 = mverts[bp1].co, *co2 = mverts[bp2].co, *co3 = mverts[bp3].co;
 	float lambda /*, distance1 */, distance2;
 	float facenor[3], v1p1[3], v1p2[3];
-	float w[4];
+	float w[3];
 
 	if (!cloth_point_face_collision_params(p1, p2, co1, co2, co3, facenor, &lambda, w))
 		return collpair;
@@ -1249,7 +1264,7 @@ int cloth_points_objcollision(Object *ob, ClothModifierData *clmd, float step, f
 			
 			/* search for overlapping collision pairs */
 			overlap = BLI_bvhtree_overlap(cloth_bvh, collmd->bvhtree, &result, NULL, NULL);
-			epsilon = BLI_bvhtree_getepsilon(collmd->bvhtree);
+			epsilon = BLI_bvhtree_get_epsilon(collmd->bvhtree);
 			
 			// go to next object if no overlap is there
 			if (result && overlap) {
@@ -1375,7 +1390,7 @@ void cloth_find_point_contacts(Object *ob, ClothModifierData *clmd, float step, 
 		
 		/* search for overlapping collision pairs */
 		overlap = BLI_bvhtree_overlap(cloth_bvh, collmd->bvhtree, &result, NULL, NULL);
-		epsilon = BLI_bvhtree_getepsilon(collmd->bvhtree);
+		epsilon = BLI_bvhtree_get_epsilon(collmd->bvhtree);
 		
 		// go to next object if no overlap is there
 		if (result && overlap) {

@@ -186,6 +186,7 @@ GLSL Lamp Uniforms
       mat4_world_to_cam_ * (-vec3_lamp_Z_axis)
 
    .. note::
+
       - The lamp Z axis points to the opposite direction of light.
       - The norm of the vector should be unit length.
 
@@ -276,6 +277,12 @@ GLSL Lamp Uniforms
    See :class:`bpy.types.SpotLamp.spot_blend`.
 
    :type: float
+
+.. data:: GPU_DYNAMIC_LAMP_SPOTSCALE
+
+   Represents the SpotLamp local scale.
+
+   :type: float2
 
 
 GLSL Sampler Uniforms

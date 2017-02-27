@@ -67,6 +67,7 @@ void free_avicodecdata(struct AviCodecData *acd);
 void free_qtcodecdata(struct QuicktimeCodecData *acd);
 
 void BKE_scene_free(struct Scene *sce);
+void BKE_scene_init(struct Scene *sce);
 struct Scene *BKE_scene_add(struct Main *bmain, const char *name);
 
 /* base functions */
@@ -97,12 +98,15 @@ void BKE_scene_base_flag_from_objects(struct Scene *scene);
 void BKE_scene_set_background(struct Main *bmain, struct Scene *sce);
 struct Scene *BKE_scene_set_name(struct Main *bmain, const char *name);
 
-struct Scene *BKE_scene_copy(struct Scene *sce, int type);
+struct Scene *BKE_scene_copy(struct Main *bmain, struct Scene *sce, int type);
 void BKE_scene_groups_relink(struct Scene *sce);
-void BKE_scene_unlink(struct Main *bmain, struct Scene *sce, struct Scene *newsce);
+
+void BKE_scene_make_local(struct Main *bmain, struct Scene *sce, const bool lib_local);
 
 struct Object *BKE_scene_camera_find(struct Scene *sc);
+#ifdef DURIAN_CAMERA_SWITCH
 struct Object *BKE_scene_camera_switch_find(struct Scene *scene); // DURIAN_CAMERA_SWITCH
+#endif
 int BKE_scene_camera_switch_update(struct Scene *scene);
 
 char *BKE_scene_find_marker_name(struct Scene *scene, int frame);
@@ -134,6 +138,8 @@ float get_render_aosss_error(const struct RenderData *r, float error);
 
 bool BKE_scene_use_new_shading_nodes(const struct Scene *scene);
 bool BKE_scene_use_shading_nodes_custom(struct Scene *scene);
+bool BKE_scene_use_world_space_shading(struct Scene *scene);
+bool BKE_scene_use_spherical_stereo(struct Scene *scene);
 
 bool BKE_scene_uses_blender_internal(const struct Scene *scene);
 bool BKE_scene_uses_blender_game(const struct Scene *scene);
@@ -152,17 +158,17 @@ bool        BKE_scene_multiview_is_stereo3d(const struct RenderData *rd);
 bool        BKE_scene_multiview_is_render_view_active(const struct RenderData *rd, const struct SceneRenderView *srv);
 bool        BKE_scene_multiview_is_render_view_first(const struct RenderData *rd, const char *viewname);
 bool        BKE_scene_multiview_is_render_view_last(const struct RenderData *rd, const char *viewname);
-size_t      BKE_scene_multiview_num_views_get(const struct RenderData *rd);
+int         BKE_scene_multiview_num_views_get(const struct RenderData *rd);
 struct SceneRenderView *BKE_scene_multiview_render_view_findindex(const struct RenderData *rd, const int view_id);
 const char *BKE_scene_multiview_render_view_name_get(const struct RenderData *rd, const int view_id);
-size_t      BKE_scene_multiview_view_id_get(const struct RenderData *rd, const char *viewname);
+int         BKE_scene_multiview_view_id_get(const struct RenderData *rd, const char *viewname);
 void        BKE_scene_multiview_filepath_get(struct SceneRenderView *srv, const char *filepath, char *r_filepath);
 void        BKE_scene_multiview_view_filepath_get(const struct RenderData *rd, const char *filepath, const char *view, char *r_filepath);
 const char *BKE_scene_multiview_view_suffix_get(const struct RenderData *rd, const char *viewname);
-const char *BKE_scene_multiview_view_id_suffix_get(const struct RenderData *rd, const size_t view_id);
+const char *BKE_scene_multiview_view_id_suffix_get(const struct RenderData *rd, const int view_id);
 void        BKE_scene_multiview_view_prefix_get(struct Scene *scene, const char *name, char *rprefix, const char **rext);
 void        BKE_scene_multiview_videos_dimensions_get(const struct RenderData *rd, const size_t width, const size_t height, size_t *r_width, size_t *r_height);
-size_t      BKE_scene_multiview_num_videos_get(const struct RenderData *rd);
+int         BKE_scene_multiview_num_videos_get(const struct RenderData *rd);
 
 #ifdef __cplusplus
 }

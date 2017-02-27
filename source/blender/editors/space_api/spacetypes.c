@@ -95,8 +95,8 @@ void ED_spacetypes_init(void)
 	ED_spacetype_logic();
 	ED_spacetype_console();
 	ED_spacetype_userpref();
-	ED_spacetype_clip();
 	ED_spacetype_toolbar();
+	ED_spacetype_clip();	
 //	...
 	
 	/* register operator types for screen and all spaces */
@@ -121,7 +121,7 @@ void ED_spacetypes_init(void)
 	ED_operatortypes_io();
 	
 	ED_operatortypes_view2d();
-	ED_button_operatortypes();
+	ED_operatortypes_ui();
 	
 	/* register operators */
 	spacetypes = BKE_spacetypes_list();
@@ -189,6 +189,7 @@ void ED_spacetypes_keymap(wmKeyConfig *keyconf)
 	ED_keymap_marker(keyconf);
 
 	ED_keymap_view2d(keyconf);
+	ED_keymap_ui(keyconf);
 
 	spacetypes = BKE_spacetypes_list();
 	for (stype = spacetypes->first; stype; stype = stype->next) {
@@ -250,8 +251,10 @@ void ED_region_draw_cb_draw(const bContext *C, ARegion *ar, int type)
 	RegionDrawCB *rdc;
 	
 	for (rdc = ar->type->drawcalls.first; rdc; rdc = rdc->next) {
-		if (rdc->type == type)
+		if (rdc->type == type) {
+			UI_reinit_gl_state();
 			rdc->draw(C, ar, rdc->customdata);
+		}
 	}
 }
 

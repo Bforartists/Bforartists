@@ -36,9 +36,9 @@ from . import data_types
 
 # at the end of each nested block, there is a NUL record to indicate
 # that the sub-scope exists (i.e. to distinguish between P: and P : {})
-# this NUL record is 13 bytes long.
-_BLOCK_SENTINEL_LENGTH = 13
-_BLOCK_SENTINEL_DATA = (b'\0' * _BLOCK_SENTINEL_LENGTH)
+_BLOCK_SENTINEL_LENGTH = ...
+_BLOCK_SENTINEL_DATA = ...
+read_fbx_elem_uint = ...
 _IS_BIG_ENDIAN = (__import__("sys").byteorder != 'little')
 _HEAD_MAGIC = b'Kaydara FBX Binary\x20\x20\x00\x1a\x00'
 from collections import namedtuple
@@ -48,6 +48,10 @@ del namedtuple
 
 def read_uint(read):
     return unpack(b'<I', read(4))[0]
+
+
+def read_uint64(read):
+    return unpack(b'<Q', read(8))[0]
 
 
 def read_ubyte(read):
@@ -98,16 +102,35 @@ read_data_dict = {
     }
 
 
+# FBX 7500 (aka FBX2016) introduces incompatible changes at binary level:
+#   * The NULL block marking end of nested stuff switches from 13 bytes long to 25 bytes long.
+#   * The FBX element metadata (end_offset, prop_count and prop_length) switch from uint32 to uint64.
+def init_version(fbx_version):
+    global _BLOCK_SENTINEL_LENGTH, _BLOCK_SENTINEL_DATA, read_fbx_elem_uint
+
+    _BLOCK_SENTINEL_LENGTH = ...
+    _BLOCK_SENTINEL_DATA = ...
+    read_fbx_elem_uint = ...
+
+    if fbx_version < 7500:
+        _BLOCK_SENTINEL_LENGTH = 13
+        read_fbx_elem_uint = read_uint
+    else:
+        _BLOCK_SENTINEL_LENGTH = 25
+        read_fbx_elem_uint = read_uint64
+    _BLOCK_SENTINEL_DATA = (b'\0' * _BLOCK_SENTINEL_LENGTH)
+
+
 def read_elem(read, tell, use_namedtuple):
     # [0] the offset at which this block ends
     # [1] the number of properties in the scope
     # [2] the length of the property list
-    end_offset = read_uint(read)
+    end_offset = read_fbx_elem_uint(read)
     if end_offset == 0:
         return None
 
-    prop_count = read_uint(read)
-    prop_length = read_uint(read)
+    prop_count = read_fbx_elem_uint(read)
+    prop_length = read_fbx_elem_uint(read)
 
     elem_id = read_string_ubyte(read)        # elem name of the scope/key
     elem_props_type = bytearray(prop_count)  # elem property types
@@ -159,6 +182,7 @@ def parse(fn, use_namedtuple=True):
             raise IOError("Invalid header")
 
         fbx_version = read_uint(read)
+        init_version(fbx_version)
 
         while True:
             elem = read_elem(read, tell, use_namedtuple)

@@ -119,8 +119,8 @@ ImBuf *ED_space_image_acquire_buffer(SpaceImage *sima, void **r_lock)
 		if (ibuf) {
 			if (ibuf->rect || ibuf->rect_float)
 				return ibuf;
-
-			BKE_image_release_ibuf(sima->image, ibuf, NULL);
+			BKE_image_release_ibuf(sima->image, ibuf, *r_lock);
+			*r_lock = NULL;
 		}
 	}
 	else
@@ -291,6 +291,34 @@ void ED_image_point_pos__reverse(SpaceImage *sima, ARegion *ar, const float co[2
 	r_co[1] = (co[1] * height * zoomy) + (float)sy;
 }
 
+/**
+ * This is more a user-level functionality, for going to next/prev used slot,
+ * Stepping onto the last unused slot too.
+ */
+bool ED_image_slot_cycle(struct Image *image, int direction)
+{
+	const int cur = image->render_slot;
+	int i, slot;
+
+	BLI_assert(ELEM(direction, -1, 1));
+
+	for (i = 1; i < IMA_MAX_RENDER_SLOT; i++) {
+		slot = (cur + ((direction == -1) ? -i : i)) % IMA_MAX_RENDER_SLOT;
+		if (slot < 0) slot += IMA_MAX_RENDER_SLOT;
+
+		if (image->renders[slot] || slot == image->last_render_slot) {
+			image->render_slot = slot;
+			break;
+		}
+	}
+
+	if (i == IMA_MAX_RENDER_SLOT) {
+		image->render_slot = ((cur == 1) ? 0 : 1);
+	}
+
+	return (cur != image->render_slot);
+}
+
 void ED_space_image_scopes_update(const struct bContext *C, struct SpaceImage *sima, struct ImBuf *ibuf, bool use_view_settings)
 {
 	Scene *scene = CTX_data_scene(C);
@@ -301,6 +329,16 @@ void ED_space_image_scopes_update(const struct bContext *C, struct SpaceImage *s
 		return;
 	if (ob && ((ob->mode & (OB_MODE_TEXTURE_PAINT | OB_MODE_EDIT)) != 0))
 		return;
+
+	/* We also don't update scopes of render result during render. */
+	if (G.is_rendering) {
+		const Image *image = sima->image;
+		if (image != NULL &&
+		    (image->type == IMA_TYPE_R_RESULT || image->type == IMA_TYPE_COMPOSITE))
+		{
+			return;
+		}
+	}
 	
 	scopes_update(&sima->scopes, ibuf, use_view_settings ? &scene->view_settings : NULL, &scene->display_settings);
 }

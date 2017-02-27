@@ -27,7 +27,7 @@ output from this tool should be added into "doc/python_api/rst/change_log.rst"
 blender --background --python doc/python_api/sphinx_changelog_gen.py -- --dump
 
 # create changelog
-blender --background --python doc/python_api/sphinx_changelog_gen.py -- \
+blender --background --factory-startup --python doc/python_api/sphinx_changelog_gen.py -- \
         --api_from blender_2_63_0.py \
         --api_to   blender_2_64_0.py \
         --api_out changes.rst
@@ -48,7 +48,8 @@ python doc/python_api/sphinx_changelog_gen.py -- \
 '''
 {"module.name":
     {"parent.class":
-        {"basic_type", "member_name": ("Name", type, range, length, default, descr, f_args, f_arg_types, f_ret_types)}, ...
+        {"basic_type", "member_name":
+            ("Name", type, range, length, default, descr, f_args, f_arg_types, f_ret_types)}, ...
     }, ...
 }
 '''
@@ -99,34 +100,34 @@ def api_dump():
                 prop_range = None
 
             dump_class[prop_id] = (
-                    "prop_rna",                 # basic_type
-                    prop.name,                  # name
-                    prop_type,                  # type
-                    prop_range,                 # range
-                    prop_length,                # length
-                    prop.default,               # default
-                    prop.description,           # descr
-                    Ellipsis,                   # f_args
-                    Ellipsis,                   # f_arg_types
-                    Ellipsis,                   # f_ret_types
-                    )
+                "prop_rna",                 # basic_type
+                prop.name,                  # name
+                prop_type,                  # type
+                prop_range,                 # range
+                prop_length,                # length
+                prop.default,               # default
+                prop.description,           # descr
+                Ellipsis,                   # f_args
+                Ellipsis,                   # f_arg_types
+                Ellipsis,                   # f_ret_types
+            )
         del props
 
         # python props, tricky since we dont know much about them.
         for prop_id, attr in struct_info.get_py_properties():
 
             dump_class[prop_id] = (
-                    "prop_py",                  # basic_type
-                    Ellipsis,                   # name
-                    Ellipsis,                   # type
-                    Ellipsis,                   # range
-                    Ellipsis,                   # length
-                    Ellipsis,                   # default
-                    attr.__doc__,               # descr
-                    Ellipsis,                   # f_args
-                    Ellipsis,                   # f_arg_types
-                    Ellipsis,                   # f_ret_types
-                    )
+                "prop_py",                  # basic_type
+                Ellipsis,                   # name
+                Ellipsis,                   # type
+                Ellipsis,                   # range
+                Ellipsis,                   # length
+                Ellipsis,                   # default
+                attr.__doc__,               # descr
+                Ellipsis,                   # f_args
+                Ellipsis,                   # f_arg_types
+                Ellipsis,                   # f_ret_types
+            )
 
         # kludge func -> props
         funcs = [(func.identifier, func) for func in struct_info.functions]
@@ -137,17 +138,17 @@ def api_dump():
             func_args_type = tuple([prop.type for prop in func.args])
 
             dump_class[func_id] = (
-                    "func_rna",                 # basic_type
-                    Ellipsis,                   # name
-                    Ellipsis,                   # type
-                    Ellipsis,                   # range
-                    Ellipsis,                   # length
-                    Ellipsis,                   # default
-                    func.description,           # descr
-                    func_args_ids,              # f_args
-                    func_args_type,             # f_arg_types
-                    func_ret_types,             # f_ret_types
-                    )
+                "func_rna",                 # basic_type
+                Ellipsis,                   # name
+                Ellipsis,                   # type
+                Ellipsis,                   # range
+                Ellipsis,                   # length
+                Ellipsis,                   # default
+                func.description,           # descr
+                func_args_ids,              # f_args
+                func_args_type,             # f_arg_types
+                func_ret_types,             # f_ret_types
+            )
         del funcs
 
         # kludge func -> props
@@ -158,17 +159,17 @@ def api_dump():
             func_args_ids = tuple(inspect.getargspec(attr).args)
 
             dump_class[func_id] = (
-                    "func_py",                  # basic_type
-                    Ellipsis,                   # name
-                    Ellipsis,                   # type
-                    Ellipsis,                   # range
-                    Ellipsis,                   # length
-                    Ellipsis,                   # default
-                    attr.__doc__,               # descr
-                    func_args_ids,              # f_args
-                    Ellipsis,                   # f_arg_types
-                    Ellipsis,                   # f_ret_types
-                    )
+                "func_py",                  # basic_type
+                Ellipsis,                   # name
+                Ellipsis,                   # type
+                Ellipsis,                   # range
+                Ellipsis,                   # length
+                Ellipsis,                   # default
+                attr.__doc__,               # descr
+                func_args_ids,              # f_args
+                Ellipsis,                   # f_arg_types
+                Ellipsis,                   # f_ret_types
+            )
         del funcs
 
     import pprint
@@ -330,21 +331,25 @@ def main():
 
     # When --help or no args are given, print this help
     usage_text = "Run blender in background mode with this script: "
-    "blender --background --python %s -- [options]" % os.path.basename(__file__)
+    "blender --background --factory-startup --python %s -- [options]" % os.path.basename(__file__)
 
     epilog = "Run this before releases"
 
     parser = argparse.ArgumentParser(description=usage_text, epilog=epilog)
 
-    parser.add_argument("--dump", dest="dump", action='store_true',
-            help="When set the api will be dumped into blender_version.py")
+    parser.add_argument(
+        "--dump", dest="dump", action='store_true',
+        help="When set the api will be dumped into blender_version.py")
 
-    parser.add_argument("--api_from", dest="api_from", metavar='FILE',
-            help="File to compare from (previous version)")
-    parser.add_argument("--api_to", dest="api_to", metavar='FILE',
-            help="File to compare from (current)")
-    parser.add_argument("--api_out", dest="api_out", metavar='FILE',
-            help="Output sphinx changelog")
+    parser.add_argument(
+        "--api_from", dest="api_from", metavar='FILE',
+        help="File to compare from (previous version)")
+    parser.add_argument(
+        "--api_to", dest="api_to", metavar='FILE',
+        help="File to compare from (current)")
+    parser.add_argument(
+        "--api_out", dest="api_out", metavar='FILE',
+        help="Output sphinx changelog")
 
     args = parser.parse_args(argv)  # In this example we wont use the args
 

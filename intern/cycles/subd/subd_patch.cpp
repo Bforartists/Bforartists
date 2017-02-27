@@ -57,7 +57,7 @@ static void decasteljau_bicubic(float3 *P, float3 *du, float3 *dv, const float3 
 
 /* Linear Quad Patch */
 
-void LinearQuadPatch::eval(float3 *P, float3 *dPdu, float3 *dPdv, float u, float v)
+void LinearQuadPatch::eval(float3 *P, float3 *dPdu, float3 *dPdv, float3 *N, float u, float v)
 {
 	float3 d0 = interp(hull[0], hull[1], u);
 	float3 d1 = interp(hull[2], hull[3], u);
@@ -67,6 +67,10 @@ void LinearQuadPatch::eval(float3 *P, float3 *dPdu, float3 *dPdv, float u, float
 	if(dPdu && dPdv) {
 		*dPdu = interp(hull[1] - hull[0], hull[3] - hull[2], v);
 		*dPdv = interp(hull[2] - hull[0], hull[3] - hull[1], u);
+	}
+
+	if(N) {
+		*N = normalize(interp(interp(normals[0], normals[1], u), interp(normals[2], normals[3], u), v));
 	}
 }
 
@@ -80,33 +84,24 @@ BoundBox LinearQuadPatch::bound()
 	return bbox;
 }
 
-/* Linear Triangle Patch */
-
-void LinearTrianglePatch::eval(float3 *P, float3 *dPdu, float3 *dPdv, float u, float v)
-{
-	*P = u*hull[0] + v*hull[1] + (1.0f - u - v)*hull[2];
-
-	if(dPdu && dPdv) {
-		*dPdu = hull[0] - hull[2];
-		*dPdv = hull[1] - hull[2];
-	}
-}
-
-BoundBox LinearTrianglePatch::bound()
-{
-	BoundBox bbox = BoundBox::empty;
-
-	for(int i = 0; i < 3; i++)
-		bbox.grow(hull[i]);
-	
-	return bbox;
-}
-
 /* Bicubic Patch */
 
-void BicubicPatch::eval(float3 *P, float3 *dPdu, float3 *dPdv, float u, float v)
+void BicubicPatch::eval(float3 *P, float3 *dPdu, float3 *dPdv, float3 *N, float u, float v)
 {
-	decasteljau_bicubic(P, dPdu, dPdv, hull, u, v);
+	if(N) {
+		float3 dPdu_, dPdv_;
+		decasteljau_bicubic(P, &dPdu_, &dPdv_, hull, u, v);
+
+		if(dPdu && dPdv) {
+			*dPdu = dPdu_;
+			*dPdv = dPdv_;
+		}
+
+		*N = normalize(cross(dPdu_, dPdv_));
+	}
+	else {
+		decasteljau_bicubic(P, dPdu, dPdv, hull, u, v);
+	}
 }
 
 BoundBox BicubicPatch::bound()

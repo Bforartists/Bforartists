@@ -36,10 +36,13 @@
 
 #include "BLI_blenlib.h"
 #include "BLI_math.h"
+#include "BLI_string_utils.h"
 
 #include "BKE_animsys.h"
 #include "BKE_action.h"
+#include "BKE_appdir.h"
 #include "BKE_armature.h"
+#include "BKE_blender_copybuffer.h"
 #include "BKE_context.h"
 #include "BKE_deform.h"
 #include "BKE_depsgraph.h"
@@ -248,29 +251,6 @@ void POSE_OT_visual_transform_apply(wmOperatorType *ot)
 /* ********************************************** */
 /* Copy/Paste */
 
-/* Global copy/paste buffer for pose - cleared on start/end session + before every copy operation */
-static bPose *g_posebuf = NULL;
-
-void ED_clipboard_posebuf_free(void)
-{
-	if (g_posebuf) {
-		bPoseChannel *pchan;
-		
-		for (pchan = g_posebuf->chanbase.first; pchan; pchan = pchan->next) {
-			if (pchan->prop) {
-				IDP_FreeProperty(pchan->prop);
-				MEM_freeN(pchan->prop);
-			}
-		}
-		
-		/* was copied without constraints */
-		BLI_freelistN(&g_posebuf->chanbase);
-		MEM_freeN(g_posebuf);
-	}
-	
-	g_posebuf = NULL;
-}
-
 /* This function is used to indicate that a bone is selected 
  * and needs to be included in copy buffer (used to be for inserting keys)
  */
@@ -307,7 +287,7 @@ static bPoseChannel *pose_bone_do_paste(Object *ob, bPoseChannel *chan, const bo
 	
 	/* get the name - if flipping, we must flip this first */
 	if (flip)
-		BKE_deform_flip_side_name(name, chan->name, false);
+		BLI_string_flip_side_name(name, chan->name, false, sizeof(name));
 	else
 		BLI_strncpy(name, chan->name, sizeof(name));
 	
@@ -367,9 +347,25 @@ static bPoseChannel *pose_bone_do_paste(Object *ob, bPoseChannel *chan, const bo
 				axis_angle_to_quat(pchan->quat, chan->rotAxis, pchan->rotAngle);
 		}
 		
+		/* B-Bone posing options should also be included... */
+		pchan->curveInX = chan->curveInX;
+		pchan->curveInY = chan->curveInY;
+		pchan->curveOutX = chan->curveOutX;
+		pchan->curveOutY = chan->curveOutY;
+		
+		pchan->roll1 = chan->roll1;
+		pchan->roll2 = chan->roll2;
+		pchan->scaleIn = chan->scaleIn;
+		pchan->scaleOut = chan->scaleOut;
+		
 		/* paste flipped pose? */
 		if (flip) {
 			pchan->loc[0] *= -1;
+			
+			pchan->curveInX *= -1;
+			pchan->curveOutX *= -1;
+			pchan->roll1 *= -1; // XXX?
+			pchan->roll2 *= -1; // XXX?
 			
 			/* has to be done as eulers... */
 			if (pchan->rotmode > 0) {
@@ -420,21 +416,45 @@ static bPoseChannel *pose_bone_do_paste(Object *ob, bPoseChannel *chan, const bo
 static int pose_copy_exec(bContext *C, wmOperator *op)
 {
 	Object *ob = BKE_object_pose_armature_get(CTX_data_active_object(C));
-	
-	/* sanity checking */
+	char str[FILE_MAX];
+	/* Sanity checking. */
 	if (ELEM(NULL, ob, ob->pose)) {
 		BKE_report(op->reports, RPT_ERROR, "No pose to copy");
 		return OPERATOR_CANCELLED;
 	}
-
-	/* free existing pose buffer */
-	ED_clipboard_posebuf_free();
-	
-	/* sets chan->flag to POSE_KEY if bone selected, then copy those bones to the buffer */
-	set_pose_keys(ob);  
-	BKE_pose_copy_data(&g_posebuf, ob->pose, 0);
-	
-	
+	/* Sets chan->flag to POSE_KEY if bone selected. */
+	set_pose_keys(ob);
+	/* Construct a local bmain and only put object and it's data into it,
+	 * o this way we don't expand any other objects into the copy buffer
+	 * file.
+	 *
+	 * TODO(sergey): Find an easier way to tell copy buffer to only store
+	 * data we are actually interested in. Maybe pass it a flag to skip
+	 * any datablock expansion?
+	 */
+	Main *temp_bmain = BKE_main_new();
+	Object ob_copy = *ob;
+	bArmature arm_copy = *((bArmature *)ob->data);
+	ob_copy.data = &arm_copy;
+	BLI_addtail(&temp_bmain->object, &ob_copy);
+	BLI_addtail(&temp_bmain->armature, &arm_copy);
+	/* begin copy buffer on a temp bmain. */
+	BKE_copybuffer_begin(temp_bmain);
+	/* Store the whole object to the copy buffer because pose can't be
+	 * existing on it's own.
+	 */
+	BKE_copybuffer_tag_ID(&ob_copy.id);
+	BLI_make_file_string("/", str, BKE_tempdir_base(), "copybuffer_pose.blend");
+	BKE_copybuffer_save(temp_bmain, str, op->reports);
+	/* We clear the lists so no datablocks gets freed,
+	 * This is required because objects in temp bmain shares same pointers
+	 * as the real ones.
+	 */
+	BLI_listbase_clear(&temp_bmain->object);
+	BLI_listbase_clear(&temp_bmain->armature);
+	BKE_main_free(temp_bmain);
+	/* We are all done! */
+	BKE_report(op->reports, RPT_INFO, "Copied pose to buffer");
 	return OPERATOR_FINISHED;
 }
 
@@ -462,44 +482,60 @@ static int pose_paste_exec(bContext *C, wmOperator *op)
 	bPoseChannel *chan;
 	const bool flip = RNA_boolean_get(op->ptr, "flipped");
 	bool selOnly = RNA_boolean_get(op->ptr, "selected_mask");
-
-	/* get KeyingSet to use */
+	/* Get KeyingSet to use. */
 	KeyingSet *ks = ANIM_get_keyingset_for_autokeying(scene, ANIM_KS_WHOLE_CHARACTER_ID);
-
-	/* sanity checks */
-	if (ELEM(NULL, ob, ob->pose))
-		return OPERATOR_CANCELLED;
-
-	if (g_posebuf == NULL) {
-		BKE_report(op->reports, RPT_ERROR, "Copy buffer is empty");
+	/* Sanity checks. */
+	if (ELEM(NULL, ob, ob->pose)) {
 		return OPERATOR_CANCELLED;
 	}
-	
-	/* if selOnly option is enabled, if user hasn't selected any bones, 
-	 * just go back to default behavior to be more in line with other pose tools
+	/* Read copy buffer .blend file. */
+	char str[FILE_MAX];
+	Main *tmp_bmain = BKE_main_new();
+	BLI_make_file_string("/", str, BKE_tempdir_base(), "copybuffer_pose.blend");
+	if (!BKE_copybuffer_read(tmp_bmain, str, op->reports)) {
+		BKE_report(op->reports, RPT_ERROR, "Copy buffer is empty");
+		BKE_main_free(tmp_bmain);
+		return OPERATOR_CANCELLED;
+	}
+	/* Make sure data from this file is usable for pose paste. */
+	if (BLI_listbase_count_ex(&tmp_bmain->object, 2) != 1) {
+		BKE_report(op->reports, RPT_ERROR, "Copy buffer is not from pose mode");
+		BKE_main_free(tmp_bmain);
+		return OPERATOR_CANCELLED;
+	}
+	Object *object_from = tmp_bmain->object.first;
+	bPose *pose_from = object_from->pose;
+	if (pose_from == NULL) {
+		BKE_report(op->reports, RPT_ERROR, "Copy buffer has no pose");
+		BKE_main_free(tmp_bmain);
+		return OPERATOR_CANCELLED;
+	}
+	/* If selOnly option is enabled, if user hasn't selected any bones,
+	 * just go back to default behavior to be more in line with other
+	 * pose tools.
 	 */
 	if (selOnly) {
-		if (CTX_DATA_COUNT(C, selected_pose_bones) == 0)
-			selOnly = 0;
+		if (CTX_DATA_COUNT(C, selected_pose_bones) == 0) {
+			selOnly = false;
+		}
 	}
-
-	/* Safely merge all of the channels in the buffer pose into any existing pose */
-	for (chan = g_posebuf->chanbase.first; chan; chan = chan->next) {
+	/* Safely merge all of the channels in the buffer pose into any
+	 * existing pose.
+	 */
+	for (chan = pose_from->chanbase.first; chan; chan = chan->next) {
 		if (chan->flag & POSE_KEY) {
-			/* try to perform paste on this bone */
+			/* Try to perform paste on this bone. */
 			bPoseChannel *pchan = pose_bone_do_paste(ob, chan, selOnly, flip);
-			
-			if (pchan) {
-				/* keyframing tagging for successful paste */
+			if (pchan != NULL) {
+				/* Keyframing tagging for successful paste, */
 				ED_autokeyframe_pchan(C, scene, ob, pchan, ks);
 			}
 		}
 	}
-	
-	/* Update event for pose and deformation children */
+	BKE_main_free(tmp_bmain);
+	/* Update event for pose and deformation children. */
 	DAG_id_tag_update(&ob->id, OB_RECALC_DATA);
-		
-	/* notifiers for updates */
+	/* Notifiers for updates, */
 	WM_event_add_notifier(C, NC_OBJECT | ND_POSE, ob);
 
 	return OPERATOR_FINISHED;
@@ -540,6 +576,9 @@ static void pchan_clear_scale(bPoseChannel *pchan)
 		pchan->size[1] = 1.0f;
 	if ((pchan->protectflag & OB_LOCK_SCALEZ) == 0)
 		pchan->size[2] = 1.0f;
+	
+	pchan->scaleIn = 1.0f;
+	pchan->scaleOut = 1.0f;
 }
 
 /* clear location of pose-channel */
@@ -650,6 +689,15 @@ static void pchan_clear_rot(bPoseChannel *pchan)
 			zero_v3(pchan->eul);
 		}
 	}
+	
+	/* Clear also Bendy Bone stuff - Roll is obvious, but Curve X/Y stuff is also kindof rotational in nature... */
+	pchan->roll1 = 0.0f;
+	pchan->roll2 = 0.0f;
+	
+	pchan->curveInX = 0.0f;
+	pchan->curveInY = 0.0f;
+	pchan->curveOutX = 0.0f;
+	pchan->curveOutY = 0.0f;
 }
 
 /* clear loc/rot/scale of pose-channel */

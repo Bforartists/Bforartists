@@ -376,6 +376,9 @@ bool BKE_autotrack_context_step(AutoTrackContext *context)
 #pragma omp parallel for if (context->num_tracks > 1)
 	for (track = 0; track < context->num_tracks; ++track) {
 		AutoTrackOptions *options = &context->options[track];
+		if (options->is_failed) {
+			continue;
+		}
 		libmv_Marker libmv_current_marker,
 		             libmv_reference_marker,
 		             libmv_tracked_marker;
@@ -447,7 +450,7 @@ bool BKE_autotrack_context_step(AutoTrackContext *context)
 void BKE_autotrack_context_sync(AutoTrackContext *context)
 {
 	int newframe, frame_delta = context->backwards ? -1 : 1;
-	int clip, frame;
+	int frame;
 
 	BLI_spin_lock(&context->spin_lock);
 	newframe = context->user.framenr;
@@ -463,16 +466,25 @@ void BKE_autotrack_context_sync(AutoTrackContext *context)
 			AutoTrackOptions *options = &context->options[track];
 			int track_frame = BKE_movieclip_remap_scene_to_clip_frame(
 				context->clips[options->clip_index], frame);
-			if (options->is_failed && options->failed_frame == track_frame) {
-				MovieTrackingMarker *prev_marker =
-					BKE_tracking_marker_get_exact(options->track, frame);
-				if (prev_marker) {
-					marker = *prev_marker;
-					marker.framenr = context->backwards ?
-					                 track_frame - 1 :
-					                 track_frame + 1;
-					marker.flag |= MARKER_DISABLED;
-					BKE_tracking_marker_insert(options->track, &marker);
+			if (options->is_failed) {
+				if (options->failed_frame == track_frame) {
+					MovieTrackingMarker *prev_marker =
+					        BKE_tracking_marker_get_exact(
+					                options->track,
+					                context->backwards
+					                        ? frame + 1
+					                        : frame - 1);
+					if (prev_marker) {
+						marker = *prev_marker;
+						marker.framenr = track_frame;
+						marker.flag |= MARKER_DISABLED;
+						BKE_tracking_marker_insert(options->track, &marker);
+						continue;
+					}
+				}
+				if ((context->backwards && options->failed_frame > track_frame) ||
+				    (!context->backwards && options->failed_frame < track_frame))
+				{
 					continue;
 				}
 			}
@@ -502,7 +514,7 @@ void BKE_autotrack_context_sync(AutoTrackContext *context)
 	}
 	BLI_spin_unlock(&context->spin_lock);
 
-	for (clip = 0; clip < context->num_clips; ++clip) {
+	for (int clip = 0; clip < context->num_clips; ++clip) {
 		MovieTracking *tracking = &context->clips[clip]->tracking;
 		BKE_tracking_dopesheet_tag_update(tracking);
 	}

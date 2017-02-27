@@ -42,7 +42,7 @@ public:
 	VBO(RAS_DisplayArray *data, unsigned int indices);
 	~VBO();
 
-	void	Draw(int texco_num, RAS_IRasterizer::TexCoGen* texco, int attrib_num, RAS_IRasterizer::TexCoGen* attrib, int *attrib_layer, bool multi);
+	void	Draw(int texco_num, RAS_IRasterizer::TexCoGen* texco, int attrib_num, RAS_IRasterizer::TexCoGen* attrib, int *attrib_layer);
 
 	void	UpdateData();
 	void	UpdateIndices();
@@ -62,6 +62,8 @@ private:
 	void*			uv_offset;
 };
 
+typedef std::map<RAS_DisplayArray*, VBO*> VBOMap;
+
 class RAS_StorageVBO : public RAS_IStorage
 {
 
@@ -73,9 +75,8 @@ public:
 	virtual void	Exit();
 
 	virtual void	IndexPrimitives(RAS_MeshSlot& ms);
-	virtual void	IndexPrimitivesMulti(RAS_MeshSlot& ms);
 
-	virtual void	SetDrawingMode(int drawingmode){m_drawingmode=drawingmode;};
+	virtual void	SetDrawingMode(int drawingmode) {m_drawingmode = drawingmode;};
 
 protected:
 	int				m_drawingmode;
@@ -87,9 +88,7 @@ protected:
 	RAS_IRasterizer::TexCoGen*		m_attrib;
 	int*			                m_attrib_layer;
 
-	std::map<RAS_DisplayArray*, class VBO*>	m_vbo_lookup;
-
-	virtual void			IndexPrimitivesInternal(RAS_MeshSlot& ms, bool multi);
+	VBOMap			m_vbo_lookup;
 
 #ifdef WITH_CXX_GUARDEDALLOC
 public:

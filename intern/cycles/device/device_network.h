@@ -132,7 +132,7 @@ public:
 		archive & type & task.x & task.y & task.w & task.h;
 		archive & task.rgba_byte & task.rgba_half & task.buffer & task.sample & task.num_samples;
 		archive & task.offset & task.stride;
-		archive & task.shader_input & task.shader_output & task.shader_eval_type;
+		archive & task.shader_input & task.shader_output & task.shader_output_luma & task.shader_eval_type;
 		archive & task.shader_x & task.shader_w;
 		archive & task.need_finish_queue;
 	}
@@ -291,7 +291,7 @@ public:
 		*archive & type & task.x & task.y & task.w & task.h;
 		*archive & task.rgba_byte & task.rgba_half & task.buffer & task.sample & task.num_samples;
 		*archive & task.offset & task.stride;
-		*archive & task.shader_input & task.shader_output & task.shader_eval_type;
+		*archive & task.shader_input & task.shader_output & task.shader_output_luma & task.shader_eval_type;
 		*archive & task.shader_x & task.shader_w;
 		*archive & task.need_finish_queue;
 
@@ -322,7 +322,7 @@ protected:
 
 class ServerDiscovery {
 public:
-	ServerDiscovery(bool discover = false)
+	explicit ServerDiscovery(bool discover = false)
 	: listen_socket(io_service), collect_servers(false)
 	{
 		/* setup listen socket */

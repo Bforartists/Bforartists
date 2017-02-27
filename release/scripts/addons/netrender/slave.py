@@ -322,9 +322,6 @@ def render_slave(engine, netsettings, threads):
                 if job.type == netrender.model.JOB_BLENDER:
                     netrender.repath.reset(job)
 
-                # read leftovers if needed
-                data.stdout += process.stdout.read()
-
                 if data.cancelled:
                     # kill process if needed
                     if process.poll() is None:
@@ -333,6 +330,9 @@ def render_slave(engine, netsettings, threads):
                         except OSError:
                             pass
                     continue # to next frame
+
+                # read leftovers if needed
+                data.stdout += process.stdout.read()
 
                 # flush the rest of the logs
                 if data.stdout:

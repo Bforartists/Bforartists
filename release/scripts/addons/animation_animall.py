@@ -470,6 +470,34 @@ class ANIM_OT_clear_animation_animall(bpy.types.Operator):
         
         return {'FINISHED'}
 
+## Addons Preferences Update Panel
+def update_panel(self, context):
+    try:
+        bpy.utils.unregister_class(VIEW3D_PT_animall)
+    except:
+        pass
+    VIEW3D_PT_animall.bl_category = context.user_preferences.addons[__name__].preferences.category
+    bpy.utils.register_class(VIEW3D_PT_animall)
+
+
+class AnimallAddonPreferences(bpy.types.AddonPreferences):
+    # this must match the addon name, use '__package__'
+    # when defining this in a submodule of a python package.
+    bl_idname = __name__
+
+    category = bpy.props.StringProperty(
+            name="Tab Category",
+            description="Choose a name for the category of the panel",
+            default="Animation",
+            update=update_panel)
+
+    def draw(self, context):
+
+        layout = self.layout
+        row = layout.row()
+        col = row.column()
+        col.label(text="Tab Category:")
+        col.prop(self, "category", text="")
 
 def register():
     bpy.utils.register_module(__name__)

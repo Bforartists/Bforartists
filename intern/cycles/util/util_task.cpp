@@ -16,8 +16,10 @@
 
 #include "util_debug.h"
 #include "util_foreach.h"
+#include "util_logging.h"
 #include "util_system.h"
 #include "util_task.h"
+#include "util_time.h"
 
 //#define THREADING_DEBUG_ENABLED
 
@@ -34,6 +36,7 @@ CCL_NAMESPACE_BEGIN
 
 TaskPool::TaskPool()
 {
+	num_tasks_handled = 0;
 	num = 0;
 	do_cancel = false;
 }
@@ -58,7 +61,7 @@ void TaskPool::push(const TaskRunFunction& run, bool front)
 	push(new Task(run), front);
 }
 
-void TaskPool::wait_work()
+void TaskPool::wait_work(Summary *stats)
 {
 	thread_scoped_lock num_lock(num_mutex);
 
@@ -89,7 +92,7 @@ void TaskPool::wait_work()
 		/* if found task, do it, otherwise wait until other tasks are done */
 		if(found_entry) {
 			/* run task */
-			work_entry.task->run();
+			work_entry.task->run(0);
 
 			/* delete task */
 			delete work_entry.task;
@@ -107,6 +110,11 @@ void TaskPool::wait_work()
 			num_cond.wait(num_lock);
 			THREADING_DEBUG("num==%d, condition wait done in TaskPool::wait_work !found_entry\n", num);
 		}
+	}
+
+	if(stats != NULL) {
+		stats->time_total = time_dt() - start_time;
+		stats->num_tasks_handled = num_tasks_handled;
 	}
 }
 
@@ -158,7 +166,11 @@ void TaskPool::num_decrease(int done)
 void TaskPool::num_increase()
 {
 	thread_scoped_lock num_lock(num_mutex);
+	if(num_tasks_handled == 0) {
+		start_time = time_dt();
+	}
 	num++;
+	num_tasks_handled++;
 	THREADING_DEBUG("num==%d, notifying all in TaskPool::num_increase\n", num);
 	num_cond.notify_all();
 }
@@ -183,16 +195,62 @@ void TaskScheduler::init(int num_threads)
 	if(users == 0) {
 		do_exit = false;
 
-		if(num_threads == 0) {
+		const bool use_auto_threads = (num_threads == 0);
+		if(use_auto_threads) {
 			/* automatic number of threads */
 			num_threads = system_cpu_thread_count();
 		}
+		VLOG(1) << "Creating pool of " << num_threads << " threads.";
 
 		/* launch threads that will be waiting for work */
 		threads.resize(num_threads);
 
-		for(size_t i = 0; i < threads.size(); i++)
-			threads[i] = new thread(function_bind(&TaskScheduler::thread_run, i));
+		const int num_groups = system_cpu_group_count();
+		unsigned short num_process_groups;
+		vector<unsigned short> process_groups;
+		int current_group_threads;
+		if(num_groups > 1) {
+			process_groups.resize(num_groups);
+			num_process_groups = system_cpu_process_groups(num_groups, 
+			                                               &process_groups[0]);
+			if(num_process_groups == 1) {
+				current_group_threads = system_cpu_group_thread_count(process_groups[0]);
+			}
+		}
+		int thread_index = 0;
+		for(int group = 0; group < num_groups; ++group) {
+			/* NOTE: That's not really efficient from threading point of view,
+			 * but it is simple to read and it doesn't make sense to use more
+			 * user-specified threads than logical threads anyway.
+			 */
+			int num_group_threads = (group == num_groups - 1)
+			        ? (threads.size() - thread_index)
+			        : system_cpu_group_thread_count(group);
+			for(int group_thread = 0;
+				group_thread < num_group_threads && thread_index < threads.size();
+				++group_thread, ++thread_index)
+			{
+				/* NOTE: Thread group of -1 means we would not force thread affinity. */
+				int thread_group;
+				if(num_groups == 1) {
+					/* Use default affinity if there's only one CPU group in the system. */
+					thread_group = -1;
+				}
+				else if(use_auto_threads &&
+				        num_process_groups == 1 &&
+						num_threads <= current_group_threads)
+				{
+					/* If we fit into curent CPU group we also don't force any affinity. */
+					thread_group = -1;
+				}
+				else {
+					thread_group = group;
+				}
+				threads[thread_index] = new thread(function_bind(&TaskScheduler::thread_run,
+				                                                 thread_index + 1),
+				                                   thread_group);
+			}
+		}
 	}
 	
 	users++;
@@ -206,8 +264,10 @@ void TaskScheduler::exit()
 
 	if(users == 0) {
 		/* stop all waiting threads */
+		TaskScheduler::queue_mutex.lock();
 		do_exit = true;
 		TaskScheduler::queue_cond.notify_all();
+		TaskScheduler::queue_mutex.unlock();
 
 		/* delete threads */
 		foreach(thread *t, threads) {
@@ -217,6 +277,12 @@ void TaskScheduler::exit()
 
 		threads.clear();
 	}
+}
+
+void TaskScheduler::free_memory()
+{
+	assert(users == 0);
+	threads.free_memory();
 }
 
 bool TaskScheduler::thread_wait_pop(Entry& entry)
@@ -237,7 +303,7 @@ bool TaskScheduler::thread_wait_pop(Entry& entry)
 	return true;
 }
 
-void TaskScheduler::thread_run(int /*thread_id*/)
+void TaskScheduler::thread_run(int thread_id)
 {
 	Entry entry;
 
@@ -246,7 +312,7 @@ void TaskScheduler::thread_run(int /*thread_id*/)
 	/* keep popping off tasks */
 	while(thread_wait_pop(entry)) {
 		/* run task */
-		entry.task->run();
+		entry.task->run(thread_id);
 
 		/* delete task */
 		delete entry.task;
@@ -413,7 +479,7 @@ void DedicatedTaskPool::thread_run()
 	/* keep popping off tasks */
 	while(thread_wait_pop(task)) {
 		/* run task */
-		task->run();
+		task->run(0);
 
 		/* delete task */
 		delete task;
@@ -442,6 +508,14 @@ void DedicatedTaskPool::clear()
 
 	/* notify done */
 	num_decrease(done);
+}
+
+string TaskPool::Summary::full_report() const
+{
+	string report = "";
+	report += string_printf("Total time:    %f\n", time_total);
+	report += string_printf("Tasks handled: %d\n", num_tasks_handled);
+	return report;
 }
 
 CCL_NAMESPACE_END

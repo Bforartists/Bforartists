@@ -280,7 +280,7 @@ class Rig:
             
         # Create ctrl master widget
         w = create_widget(self.obj, master_name)
-        if w != None:
+        if w is not None:
             mesh = w.data
             verts = [(0, 0, 0), (0, 1, 0), (0.05, 1, 0), (0.05, 1.1, 0), (-0.05, 1.1, 0), (-0.05, 1, 0)]
             if 'Z' in self.params.primary_rotation_axis:

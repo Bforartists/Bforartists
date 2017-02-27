@@ -48,7 +48,7 @@
  *   - store a heap of paths which are being scanned (#PathContext.states).
  *   - continuously search the shortest path in the heap.
  *   - never step over the same element twice (tag elements as #ELE_TOUCHED).
- *     this avoids going into an eternal loop of there are many possible branches (see T45582).
+ *     this avoids going into an eternal loop if there are many possible branches (see T45582).
  *   - when running into a branch, create a new #PathLinkState state and add to the heap.
  *   - when the target is reached, finish - since none of the other paths can be shorter then the one just found.
  * - if the connection can't be found - fail.
@@ -67,17 +67,28 @@
 #define ELE_TOUCHED 4
 
 #define FACE_WALK_TEST(f)  (CHECK_TYPE_INLINE(f, BMFace *), \
-	BMO_elem_flag_test(pc->bm_bmoflag, f, FACE_EXCLUDE) == 0)
+	BMO_face_flag_test(pc->bm_bmoflag, f, FACE_EXCLUDE) == 0)
 #define VERT_WALK_TEST(v)  (CHECK_TYPE_INLINE(v, BMVert *), \
-	BMO_elem_flag_test(pc->bm_bmoflag, v, VERT_EXCLUDE) == 0)
+	BMO_vert_flag_test(pc->bm_bmoflag, v, VERT_EXCLUDE) == 0)
 
+#if 0
 #define ELE_TOUCH_TEST(e) \
 	(CHECK_TYPE_ANY(e, BMVert *, BMEdge *, BMElem *, BMElemF *), \
 	 BMO_elem_flag_test(pc->bm_bmoflag, (BMElemF *)e, ELE_TOUCHED))
+#endif
 #define ELE_TOUCH_MARK(e) \
 	{ CHECK_TYPE_ANY(e, BMVert *, BMEdge *, BMElem *, BMElemF *); \
 	  BMO_elem_flag_enable(pc->bm_bmoflag, (BMElemF *)e, ELE_TOUCHED); } ((void)0)
 
+
+#define ELE_TOUCH_TEST_VERT(v) BMO_vert_flag_test(pc->bm_bmoflag, v, ELE_TOUCHED)
+// #define ELE_TOUCH_MARK_VERT(v) BMO_vert_flag_enable(pc->bm_bmoflag, (BMElemF *)v, ELE_TOUCHED)
+
+#define ELE_TOUCH_TEST_EDGE(e) BMO_edge_flag_test(pc->bm_bmoflag, e, ELE_TOUCHED)
+// #define ELE_TOUCH_MARK_EDGE(e) BMO_edge_flag_enable(pc->bm_bmoflag, (BMElemF *)e, ELE_TOUCHED)
+
+// #define ELE_TOUCH_TEST_FACE(f) BMO_face_flag_test(pc->bm_bmoflag, f, ELE_TOUCHED)
+// #define ELE_TOUCH_MARK_FACE(f) BMO_face_flag_enable(pc->bm_bmoflag, (BMElemF *)f, ELE_TOUCHED)
 
 // #define DEBUG_PRINT
 
@@ -113,8 +124,8 @@ typedef struct PathLinkState {
 } PathLinkState;
 
 /**
-  \name Min Dist Dir Util
-
+ * \name Min Dist Dir Util
+ *
  * Simply getting the closest intersecting vert/edge is _not_ good enough. see T43792
  * we need to get the closest in both directions since the absolute closest may be a dead-end.
  *
@@ -352,7 +363,7 @@ static PathLinkState *state_step__face_edges(
 				BMElem *ele_next_from = (BMElem *)l_iter->f;
 
 				if (FACE_WALK_TEST((BMFace *)ele_next_from) &&
-				    (ELE_TOUCH_TEST(ele_next) == false))
+				    (ELE_TOUCH_TEST_EDGE((BMEdge *)ele_next) == false))
 				{
 					min_dist_dir_update(mddir, dist_dir);
 					mddir->dist_min[index] = dist_test;
@@ -397,7 +408,7 @@ static PathLinkState *state_step__face_verts(
 				BMElem *ele_next_from = (BMElem *)l_iter->f;
 
 				if (FACE_WALK_TEST((BMFace *)ele_next_from) &&
-				    (ELE_TOUCH_TEST(ele_next) == false))
+				    (ELE_TOUCH_TEST_VERT((BMVert *)ele_next) == false))
 				{
 					min_dist_dir_update(mddir, dist_dir);
 					mddir->dist_min[index] = dist_test;
@@ -480,7 +491,7 @@ static bool state_step(PathContext *pc, PathLinkState *state)
 					if (state_isect_co_exact(pc, v_other->co)) {
 						BMElem *ele_next      = (BMElem *)v_other;
 						BMElem *ele_next_from = (BMElem *)e;
-						if (ELE_TOUCH_TEST(ele_next) == false) {
+						if (ELE_TOUCH_TEST_VERT((BMVert *)ele_next) == false) {
 							state = state_link_add_test(pc, state, &state_orig, ele_next, ele_next_from);
 						}
 					}
@@ -492,6 +503,108 @@ static bool state_step(PathContext *pc, PathLinkState *state)
 		BLI_assert(0);
 	}
 	return (state_orig.link_last != state->link_last);
+}
+
+/**
+ * Get a orientation matrix from 2 vertices.
+ */
+static void bm_vert_pair_to_matrix(BMVert *v_pair[2], float r_unit_mat[3][3])
+{
+	const float eps = 1e-8f;
+
+	float basis_dir[3];
+	float basis_tmp[3];
+	float basis_nor[3];
+
+	sub_v3_v3v3(basis_dir, v_pair[0]->co, v_pair[1]->co);
+	normalize_v3(basis_dir);
+
+#if 0
+	add_v3_v3v3(basis_nor, v_pair[0]->no, v_pair[1]->no);
+	cross_v3_v3v3(basis_tmp, basis_nor, basis_dir);
+	cross_v3_v3v3(basis_nor, basis_tmp, basis_dir);
+#else
+	/* align both normals to the directions before combining */
+	{
+		float basis_nor_a[3];
+		float basis_nor_b[3];
+
+		/* align normal to direction */
+		project_plane_v3_v3v3(basis_nor_a, v_pair[0]->no, basis_dir);
+		project_plane_v3_v3v3(basis_nor_b, v_pair[1]->no, basis_dir);
+
+		/* don't normalize before combining so as normals approach the direction, they have less effect (T46784). */
+
+		/* combine the normals */
+		/* for flipped faces */
+		if (dot_v3v3(basis_nor_a, basis_nor_b) < 0.0f) {
+			negate_v3(basis_nor_b);
+		}
+		add_v3_v3v3(basis_nor, basis_nor_a, basis_nor_b);
+	}
+#endif
+
+	/* get third axis */
+	normalize_v3(basis_nor);
+	cross_v3_v3v3(basis_tmp, basis_dir, basis_nor);
+
+
+	/* Try get the axis from surrounding faces, fallback to 'ortho_v3_v3' */
+	if (UNLIKELY(normalize_v3(basis_tmp) < eps)) {
+		/* vertex normals are directly opposite */
+
+		/* find the loop with the lowest angle */
+		struct { float nor[3]; float angle_cos; } axis_pair[2];
+		int i;
+
+		for (i = 0; i < 2; i++) {
+			BMIter liter;
+			BMLoop *l;
+
+			zero_v2(axis_pair[i].nor);
+			axis_pair[i].angle_cos = -FLT_MAX;
+
+			BM_ITER_ELEM (l, &liter, v_pair[i], BM_LOOPS_OF_VERT) {
+				float basis_dir_proj[3];
+				float angle_cos_test;
+
+				/* project basis dir onto the normal to find its closest angle */
+				project_plane_v3_v3v3(basis_dir_proj, basis_dir, l->f->no);
+
+				if (normalize_v3(basis_dir_proj) > eps) {
+					angle_cos_test = dot_v3v3(basis_dir_proj, basis_dir);
+
+					if (angle_cos_test > axis_pair[i].angle_cos) {
+						axis_pair[i].angle_cos = angle_cos_test;
+						copy_v3_v3(axis_pair[i].nor, basis_dir_proj);
+					}
+				}
+			}
+		}
+
+		/* create a new 'basis_nor' from the best direction.
+		 * note: we could add the directions,
+		 * but this more often gives 45d rotated matrix, so just use the best one. */
+		copy_v3_v3(basis_nor, axis_pair[axis_pair[0].angle_cos < axis_pair[1].angle_cos].nor);
+		project_plane_v3_v3v3(basis_nor, basis_nor, basis_dir);
+
+		cross_v3_v3v3(basis_tmp, basis_dir, basis_nor);
+
+		/* last resort, pick _any_ ortho axis */
+		if (UNLIKELY(normalize_v3(basis_tmp) < eps)) {
+			ortho_v3_v3(basis_nor, basis_dir);
+			normalize_v3(basis_nor);
+			cross_v3_v3v3(basis_tmp, basis_dir, basis_nor);
+			normalize_v3(basis_tmp);
+		}
+	}
+
+	copy_v3_v3(r_unit_mat[0], basis_tmp);
+	copy_v3_v3(r_unit_mat[1], basis_dir);
+	copy_v3_v3(r_unit_mat[2], basis_nor);
+	if (invert_m3(r_unit_mat) == false) {
+		unit_m3(r_unit_mat);
+	}
 }
 
 void bmo_connect_vert_pair_exec(BMesh *bm, BMOperator *op)
@@ -532,60 +645,7 @@ void bmo_connect_vert_pair_exec(BMesh *bm, BMOperator *op)
 
 	/* calculate matrix */
 	{
-		float basis_dir[3];
-		float basis_tmp[3];
-		float basis_nor[3];
-
-
-		sub_v3_v3v3(basis_dir, pc.v_a->co, pc.v_b->co);
-
-#if 0
-		add_v3_v3v3(basis_nor, pc.v_a->no, pc.v_b->no);
-		cross_v3_v3v3(basis_tmp, basis_nor, basis_dir);
-		cross_v3_v3v3(basis_nor, basis_tmp, basis_dir);
-#else
-		/* align both normals to the directions before combining */
-		{
-			float basis_nor_a[3];
-			float basis_nor_b[3];
-
-			/* align normal to direction */
-			cross_v3_v3v3(basis_tmp,   pc.v_a->no, basis_dir);
-			cross_v3_v3v3(basis_nor_a, basis_tmp,  basis_dir);
-
-			cross_v3_v3v3(basis_tmp,   pc.v_b->no, basis_dir);
-			cross_v3_v3v3(basis_nor_b, basis_tmp,  basis_dir);
-
-			/* combine the normals */
-			normalize_v3(basis_nor_a);
-			normalize_v3(basis_nor_b);
-
-			/* for flipped faces */
-			if (dot_v3v3(basis_nor_a, basis_nor_b) < 0.0f) {
-				negate_v3(basis_nor_b);
-			}
-			add_v3_v3v3(basis_nor, basis_nor_a, basis_nor_b);
-		}
-#endif
-
-		/* get third axis */
-		normalize_v3(basis_dir);
-		normalize_v3(basis_nor);
-		cross_v3_v3v3(basis_tmp, basis_dir, basis_nor);
-		if (UNLIKELY(normalize_v3(basis_tmp) < FLT_EPSILON)) {
-			ortho_v3_v3(basis_nor, basis_dir);
-			normalize_v3(basis_nor);
-			cross_v3_v3v3(basis_tmp, basis_dir, basis_nor);
-			normalize_v3(basis_tmp);
-		}
-
-		copy_v3_v3(pc.matrix[0], basis_tmp);
-		copy_v3_v3(pc.matrix[1], basis_dir);
-		copy_v3_v3(pc.matrix[2], basis_nor);
-		if (invert_m3(pc.matrix) == false) {
-			unit_m3(pc.matrix);
-		}
-
+		bm_vert_pair_to_matrix(&pc.v_a, pc.matrix);
 		pc.axis_sep = dot_m3_v3_row_x(pc.matrix, pc.v_a->co);
 	}
 
@@ -601,7 +661,7 @@ void bmo_connect_vert_pair_exec(BMesh *bm, BMOperator *op)
 	while (!BLI_heap_is_empty(pc.states)) {
 
 #ifdef DEBUG_PRINT
-		printf("\n%s: stepping %d\n", __func__, BLI_heap_size(pc.states));
+		printf("\n%s: stepping %u\n", __func__, BLI_heap_size(pc.states));
 #endif
 
 		while (!BLI_heap_is_empty(pc.states)) {
@@ -654,11 +714,11 @@ void bmo_connect_vert_pair_exec(BMesh *bm, BMOperator *op)
 				BMVert *v_new;
 				float e_fac = state_calc_co_pair_fac(&pc, e->v1->co, e->v2->co);
 				v_new = BM_edge_split(bm, e, e->v1, NULL, e_fac);
-				BMO_elem_flag_enable(bm, v_new, VERT_OUT);
+				BMO_vert_flag_enable(bm, v_new, VERT_OUT);
 			}
 			else if (link->ele->head.htype == BM_VERT) {
 				BMVert *v = (BMVert *)link->ele;
-				BMO_elem_flag_enable(bm, v, VERT_OUT);
+				BMO_vert_flag_enable(bm, v, VERT_OUT);
 			}
 			else {
 				BLI_assert(0);
@@ -666,8 +726,8 @@ void bmo_connect_vert_pair_exec(BMesh *bm, BMOperator *op)
 		} while ((link = link->next));
 	}
 
-	BMO_elem_flag_enable(bm, pc.v_a, VERT_OUT);
-	BMO_elem_flag_enable(bm, pc.v_b, VERT_OUT);
+	BMO_vert_flag_enable(bm, pc.v_a, VERT_OUT);
+	BMO_vert_flag_enable(bm, pc.v_b, VERT_OUT);
 
 	BLI_mempool_destroy(pc.link_pool);
 

@@ -51,6 +51,9 @@ if(NOT WITH_HEADLESS)
 			../blenlib/intern/winstuff_dir.c
 			../../../intern/utfconv/utfconv.c
 		)
+
+		set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${PLATFORM_LINKFLAGS}")
+		set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} ${PLATFORM_LINKFLAGS_DEBUG}")
 	endif()
 
 	include_directories(${PNG_INCLUDE_DIRS})
@@ -59,4 +62,9 @@ if(NOT WITH_HEADLESS)
 	add_executable(datatoc_icon ${SRC})
 
 	target_link_libraries(datatoc_icon ${PNG_LIBRARIES} ${ZLIB_LIBRARIES})
+	# PNG library uses pow() and floow(), so seems -lm is required for proper
+	# workign binary.
+	if(UNIX AND NOT APPLE)
+		target_link_libraries(datatoc_icon m)
+	endif()
 endif()

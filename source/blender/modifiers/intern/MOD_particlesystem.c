@@ -36,6 +36,7 @@
 #include <stddef.h>
 
 #include "DNA_material_types.h"
+#include "DNA_mesh_types.h"
 
 #include "BLI_utildefines.h"
 
@@ -51,17 +52,23 @@ static void initData(ModifierData *md)
 {
 	ParticleSystemModifierData *psmd = (ParticleSystemModifierData *) md;
 	psmd->psys = NULL;
-	psmd->dm = NULL;
+	psmd->dm_final = NULL;
+	psmd->dm_deformed = NULL;
 	psmd->totdmvert = psmd->totdmedge = psmd->totdmface = 0;
 }
 static void freeData(ModifierData *md)
 {
 	ParticleSystemModifierData *psmd = (ParticleSystemModifierData *) md;
 
-	if (psmd->dm) {
-		psmd->dm->needsFree = 1;
-		psmd->dm->release(psmd->dm);
-		psmd->dm = NULL;
+	if (psmd->dm_final) {
+		psmd->dm_final->needsFree = true;
+		psmd->dm_final->release(psmd->dm_final);
+		psmd->dm_final = NULL;
+		if (psmd->dm_deformed) {
+			psmd->dm_deformed->needsFree = true;
+			psmd->dm_deformed->release(psmd->dm_deformed);
+			psmd->dm_deformed = NULL;
+		}
 	}
 
 	/* ED_object_modifier_remove may have freed this first before calling
@@ -78,7 +85,8 @@ static void copyData(ModifierData *md, ModifierData *target)
 
 	modifier_copyData_generic(md, target);
 
-	tpsmd->dm = NULL;
+	tpsmd->dm_final = NULL;
+	tpsmd->dm_deformed = NULL;
 	tpsmd->totdmvert = tpsmd->totdmedge = tpsmd->totdmface = 0;
 }
 
@@ -93,12 +101,12 @@ static void deformVerts(ModifierData *md, Object *ob,
                         DerivedMesh *derivedData,
                         float (*vertexCos)[3],
                         int UNUSED(numVerts),
-                        ModifierApplyFlag UNUSED(flag))
+                        ModifierApplyFlag flag)
 {
 	DerivedMesh *dm = derivedData;
 	ParticleSystemModifierData *psmd = (ParticleSystemModifierData *) md;
 	ParticleSystem *psys = NULL;
-	int needsFree = 0;
+	bool needsFree = false;
 	/* float cfra = BKE_scene_frame_get(md->scene); */  /* UNUSED */
 
 	if (ob->particlesystem.first)
@@ -106,7 +114,7 @@ static void deformVerts(ModifierData *md, Object *ob,
 	else
 		return;
 	
-	if (!psys_check_enabled(ob, psys))
+	if (!psys_check_enabled(ob, psys, (flag & MOD_APPLY_RENDER) != 0))
 		return;
 
 	if (dm == NULL) {
@@ -115,13 +123,18 @@ static void deformVerts(ModifierData *md, Object *ob,
 		if (!dm)
 			return;
 
-		needsFree = 1;
+		needsFree = true;
 	}
 
 	/* clear old dm */
-	if (psmd->dm) {
-		psmd->dm->needsFree = 1;
-		psmd->dm->release(psmd->dm);
+	if (psmd->dm_final) {
+		psmd->dm_final->needsFree = true;
+		psmd->dm_final->release(psmd->dm_final);
+		if (psmd->dm_deformed) {
+			psmd->dm_deformed->needsFree = 1;
+			psmd->dm_deformed->release(psmd->dm_deformed);
+			psmd->dm_deformed = NULL;
+		}
 	}
 	else if (psmd->flag & eParticleSystemFlag_file_loaded) {
 		/* in file read dm just wasn't saved in file so no need to reset everything */
@@ -133,34 +146,47 @@ static void deformVerts(ModifierData *md, Object *ob,
 	}
 
 	/* make new dm */
-	psmd->dm = CDDM_copy(dm);
-	CDDM_apply_vert_coords(psmd->dm, vertexCos);
-	CDDM_calc_normals(psmd->dm);
+	psmd->dm_final = CDDM_copy(dm);
+	CDDM_apply_vert_coords(psmd->dm_final, vertexCos);
+	CDDM_calc_normals(psmd->dm_final);
 
 	if (needsFree) {
-		dm->needsFree = 1;
+		dm->needsFree = true;
 		dm->release(dm);
 	}
 
 	/* protect dm */
-	psmd->dm->needsFree = 0;
+	psmd->dm_final->needsFree = false;
+
+	DM_ensure_tessface(psmd->dm_final);
+
+	if (!psmd->dm_final->deformedOnly) {
+		/* XXX Think we can assume here that if current DM is not only-deformed, ob->deformedOnly has been set.
+		 *     This is awfully weak though. :| */
+		if (ob->derivedDeform) {
+			psmd->dm_deformed = CDDM_copy(ob->derivedDeform);
+		}
+		else {  /* Can happen in some cases, e.g. when rendering from Edit mode... */
+			psmd->dm_deformed = CDDM_from_mesh((Mesh *)ob->data);
+		}
+		DM_ensure_tessface(psmd->dm_deformed);
+	}
 
 	/* report change in mesh structure */
-	DM_ensure_tessface(psmd->dm);
-	if (psmd->dm->getNumVerts(psmd->dm) != psmd->totdmvert ||
-	    psmd->dm->getNumEdges(psmd->dm) != psmd->totdmedge ||
-	    psmd->dm->getNumTessFaces(psmd->dm) != psmd->totdmface)
+	if (psmd->dm_final->getNumVerts(psmd->dm_final) != psmd->totdmvert ||
+	    psmd->dm_final->getNumEdges(psmd->dm_final) != psmd->totdmedge ||
+	    psmd->dm_final->getNumTessFaces(psmd->dm_final) != psmd->totdmface)
 	{
 		psys->recalc |= PSYS_RECALC_RESET;
 
-		psmd->totdmvert = psmd->dm->getNumVerts(psmd->dm);
-		psmd->totdmedge = psmd->dm->getNumEdges(psmd->dm);
-		psmd->totdmface = psmd->dm->getNumTessFaces(psmd->dm);
+		psmd->totdmvert = psmd->dm_final->getNumVerts(psmd->dm_final);
+		psmd->totdmedge = psmd->dm_final->getNumEdges(psmd->dm_final);
+		psmd->totdmface = psmd->dm_final->getNumTessFaces(psmd->dm_final);
 	}
 
 	if (!(ob->transflag & OB_NO_PSYS_UPDATE)) {
 		psmd->flag &= ~eParticleSystemFlag_psys_updated;
-		particle_system_update(md->scene, ob, psys);
+		particle_system_update(md->scene, ob, psys, (flag & MOD_APPLY_RENDER) != 0);
 		psmd->flag |= eParticleSystemFlag_psys_updated;
 	}
 }

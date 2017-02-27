@@ -1,7 +1,8 @@
 ..
    This document is appended to the auto generated bmesh api doc to avoid clogging up the C files with details.
    to test this run:
-   ./blender.bin -b -noaudio -P doc/python_api/sphinx_doc_gen.py -- --partial bmesh* ; cd doc/python_api ; sphinx-build sphinx-in sphinx-out ; cd ../../
+   ./blender.bin -b -noaudio -P doc/python_api/sphinx_doc_gen.py -- \
+                 --partial bmesh* ; cd doc/python_api ; sphinx-build sphinx-in sphinx-out ; cd ../../
 
 
 Submodules:
@@ -22,7 +23,7 @@ The features exposed closely follow the C API,
 giving python access to the functions used by blenders own mesh editing tools.
 
 For an overview of BMesh data types and how they reference each other see:
-`BMesh Design Document <http://wiki.blender.org/index.php/Dev:2.6/Source/Modeling/BMesh/Design>`_ .
+`BMesh Design Document <https://wiki.blender.org/index.php/Dev:Source/Modeling/BMesh/Design>`_ .
 
 
 .. note::
@@ -30,25 +31,16 @@ For an overview of BMesh data types and how they reference each other see:
    **Disk** and **Radial** data is not exposed by the python api since this is for internal use only.
 
 
-.. warning::
-
-   This API is still in development and experimental, while we don't expect to see large changes,
-   many areas are not well tested yet and so its possible changes will be made that break scripts.
-
-   *Campbell Barton, 13, March 2012*
-
-
-.. warning::
-
-   TODO items are...
+.. warning:: TODO items are...
 
    * add access to BMesh **walkers**
    * add custom-data manipulation functions add/remove/rename.
 
+
 Example Script
 --------------
 
-.. literalinclude:: ../../../release/scripts/templates_py/bmesh_simple.py
+.. literalinclude:: __/__/__/release/scripts/templates_py/bmesh_simple.py
 
 
 Stand-Alone Module
@@ -67,9 +59,9 @@ There are 2 ways to access BMesh data, you can create a new BMesh by converting 
 :class:`bpy.types.BlendData.meshes` or by accessing the current edit mode mesh.
 see: :class:`bmesh.types.BMesh.from_mesh` and :mod:`bmesh.from_edit_mesh` respectively.
 
-When explicitly converting from mesh data python **owns** the data, that is to say - that the mesh only exists while
-python holds a reference to it, and the script is responsible for putting it back into a mesh data-block when the edits
-are done.
+When explicitly converting from mesh data python **owns** the data, that is to say -
+that the mesh only exists while python holds a reference to it,
+and the script is responsible for putting it back into a mesh data-block when the edits are done.
 
 Note that unlike :mod:`bpy`, a BMesh does not necessarily correspond to data in the currently open blend file,
 a BMesh can be created, edited and freed without the user ever seeing or having access to it.

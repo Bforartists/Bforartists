@@ -138,6 +138,7 @@ enum {
 	OPTYPE_INTERNAL     = (1 << 6),
 
 	OPTYPE_LOCK_BYPASS  = (1 << 7),  /* Allow operator to run when interface is locked */
+	OPTYPE_UNDO_GROUPED = (1 << 8),  /* Special type of undo which doesn't store itself multiple times */
 };
 
 /* context to call operator in for WM_operator_name_call */
@@ -486,6 +487,7 @@ typedef enum {  /* motion progress, for modal handlers */
 	P_FINISHED
 } wmProgress;
 
+#ifdef WITH_INPUT_NDOF
 typedef struct wmNDOFMotionData {
 	/* awfully similar to GHOST_TEventNDOFMotionData... */
 	/* Each component normally ranges from -1 to +1, but can exceed that.
@@ -497,6 +499,7 @@ typedef struct wmNDOFMotionData {
 	float dt; /* time since previous NDOF Motion event */
 	wmProgress progress; /* is this the first event, the last, or one of many in between? */
 } wmNDOFMotionData;
+#endif /* WITH_INPUT_NDOF */
 
 typedef struct wmTimer {
 	struct wmTimer *next, *prev;
@@ -521,6 +524,7 @@ typedef struct wmOperatorType {
 	const char *idname;		/* unique identifier */
 	const char *translation_context;
 	const char *description;	/* tooltips and python docs */
+	const char *undo_group;	/* identifier to group operators together */
 
 	/* this callback executes the operator without any interactive input,
 	 * parameters may be provided through operator properties. cannot use

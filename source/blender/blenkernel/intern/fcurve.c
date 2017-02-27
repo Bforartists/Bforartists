@@ -47,6 +47,7 @@
 #include "BLI_math.h"
 #include "BLI_easing.h"
 #include "BLI_threads.h"
+#include "BLI_string_utils.h"
 #include "BLI_utildefines.h"
 
 #include "BLT_translation.h"
@@ -314,23 +315,25 @@ int list_find_data_fcurves(ListBase *dst, ListBase *src, const char *dataPrefix,
 	return matches;
 }
 
-FCurve *rna_get_fcurve(PointerRNA *ptr, PropertyRNA *prop, int rnaindex, AnimData **adt, 
-                       bAction **action, bool *r_driven, bool *r_special)
+FCurve *rna_get_fcurve(
+        PointerRNA *ptr, PropertyRNA *prop, int rnaindex,
+        AnimData **r_adt,  bAction **r_action, bool *r_driven, bool *r_special)
 {
-	return rna_get_fcurve_context_ui(NULL, ptr, prop, rnaindex, adt, action, r_driven, r_special);
+	return rna_get_fcurve_context_ui(NULL, ptr, prop, rnaindex, r_adt, r_action, r_driven, r_special);
 }
 
-FCurve *rna_get_fcurve_context_ui(bContext *C, PointerRNA *ptr, PropertyRNA *prop, int rnaindex, AnimData **animdata,
-                                  bAction **action, bool *r_driven, bool *r_special)
+FCurve *rna_get_fcurve_context_ui(
+        bContext *C, PointerRNA *ptr, PropertyRNA *prop, int rnaindex,
+        AnimData **r_animdata, bAction **r_action, bool *r_driven, bool *r_special)
 {
 	FCurve *fcu = NULL;
 	PointerRNA tptr = *ptr;
 	
-	if (animdata) *animdata = NULL;
 	*r_driven = false;
 	*r_special = false;
 	
-	if (action) *action = NULL;
+	if (r_animdata) *r_animdata = NULL;
+	if (r_action) *r_action = NULL;
 	
 	/* Special case for NLA Control Curves... */
 	if (ptr->type == &RNA_NlaStrip) {
@@ -372,8 +375,8 @@ FCurve *rna_get_fcurve_context_ui(bContext *C, PointerRNA *ptr, PropertyRNA *pro
 					if (adt->action && adt->action->curves.first) {
 						fcu = list_find_fcurve(&adt->action->curves, path, rnaindex);
 						
-						if (fcu && action)
-							*action = adt->action;
+						if (fcu && r_action)
+							*r_action = adt->action;
 					}
 					
 					/* if not animated, check if driven */
@@ -381,14 +384,14 @@ FCurve *rna_get_fcurve_context_ui(bContext *C, PointerRNA *ptr, PropertyRNA *pro
 						fcu = list_find_fcurve(&adt->drivers, path, rnaindex);
 						
 						if (fcu) {
-							if (animdata) *animdata = adt;
+							if (r_animdata) *r_animdata = adt;
 							*r_driven = true;
 						}
 					}
 					
-					if (fcu && action) {
-						if (animdata) *animdata = adt;
-						*action = adt->action;
+					if (fcu && r_action) {
+						if (r_animdata) *r_animdata = adt;
+						*r_action = adt->action;
 						break;
 					}
 					else if (step) {
@@ -1149,6 +1152,71 @@ static float dtar_get_prop_val(ChannelDriver *driver, DriverTarget *dtar)
 	return value;
 }
 
+/**
+ * Same as 'dtar_get_prop_val'. but get the RNA property.
+ */
+bool driver_get_variable_property(
+        ChannelDriver *driver, DriverTarget *dtar,
+        PointerRNA *r_ptr, PropertyRNA **r_prop, int *r_index)
+{
+	PointerRNA id_ptr;
+	PointerRNA ptr;
+	PropertyRNA *prop;
+	ID *id;
+	int index = -1;
+
+	/* sanity check */
+	if (ELEM(NULL, driver, dtar))
+		return false;
+
+	id = dtar_id_ensure_proxy_from(dtar->id);
+
+	/* error check for missing pointer... */
+	if (id == NULL) {
+		if (G.debug & G_DEBUG) {
+			printf("Error: driver has an invalid target to use (path = %s)\n", dtar->rna_path);
+		}
+
+		driver->flag |= DRIVER_FLAG_INVALID;
+		dtar->flag   |= DTAR_FLAG_INVALID;
+		return false;
+	}
+
+	/* get RNA-pointer for the ID-block given in target */
+	RNA_id_pointer_create(id, &id_ptr);
+
+	/* get property to read from, and get value as appropriate */
+	if (dtar->rna_path == NULL || dtar->rna_path[0] == '\0') {
+		ptr = PointerRNA_NULL;
+		prop = NULL; /* ok */
+	}
+	else if (RNA_path_resolve_property_full(&id_ptr, dtar->rna_path, &ptr, &prop, &index)) {
+		/* ok */
+	}
+	else {
+		/* path couldn't be resolved */
+		if (G.debug & G_DEBUG) {
+			printf("Driver Evaluation Error: cannot resolve target for %s -> %s\n", id->name, dtar->rna_path);
+		}
+
+		ptr = PointerRNA_NULL;
+		*r_prop = NULL;
+		*r_index = -1;
+
+		driver->flag |= DRIVER_FLAG_INVALID;
+		dtar->flag   |= DTAR_FLAG_INVALID;
+		return false;
+	}
+
+	*r_ptr = ptr;
+	*r_prop = prop;
+	*r_index = index;
+
+	/* if we're still here, we should be ok... */
+	dtar->flag &= ~DTAR_FLAG_INVALID;
+	return true;
+}
+
 /* Helper function to obtain a pointer to a Pose Channel (for evaluating drivers) */
 static bPoseChannel *dtar_get_pchan_ptr(ChannelDriver *driver, DriverTarget *dtar)
 {
@@ -1235,7 +1303,7 @@ static float dvar_eval_rotDiff(ChannelDriver *driver, DriverVar *dvar)
 	mat4_to_quat(q1, pchan->pose_mat);
 	mat4_to_quat(q2, pchan2->pose_mat);
 	
-	invert_qt(q1);
+	invert_qt_normalized(q1);
 	mul_qt_qtqt(quat, q1, q2);
 	angle = 2.0f * (saacos(quat[0]));
 	angle = ABS(angle);
@@ -1533,8 +1601,8 @@ static const DriverVarTypeInfo *get_dvar_typeinfo(int type)
 
 /* Driver API --------------------------------- */
 
-/* This frees the driver variable itself */
-void driver_free_variable(ChannelDriver *driver, DriverVar *dvar)
+/* Perform actual freeing driver variable and remove it from the given list */
+void driver_free_variable(ListBase *variables, DriverVar *dvar)
 {
 	/* sanity checks */
 	if (dvar == NULL)
@@ -1554,13 +1622,38 @@ void driver_free_variable(ChannelDriver *driver, DriverVar *dvar)
 	DRIVER_TARGETS_LOOPER_END
 	
 	/* remove the variable from the driver */
-	BLI_freelinkN(&driver->variables, dvar);
+	BLI_freelinkN(variables, dvar);
+}
 
+/* Free the driver variable and do extra updates */
+void driver_free_variable_ex(ChannelDriver *driver, DriverVar *dvar)
+{
+	/* remove and free the driver variable */
+	driver_free_variable(&driver->variables, dvar);
+	
 #ifdef WITH_PYTHON
 	/* since driver variables are cached, the expression needs re-compiling too */
 	if (driver->type == DRIVER_TYPE_PYTHON)
 		driver->flag |= DRIVER_FLAG_RENAMEVAR;
 #endif
+}
+
+/* Copy driver variables from src_vars list to dst_vars list */
+void driver_variables_copy(ListBase *dst_vars, const ListBase *src_vars)
+{
+	BLI_assert(BLI_listbase_is_empty(dst_vars));
+	BLI_duplicatelist(dst_vars, src_vars);
+	
+	for (DriverVar *dvar = dst_vars->first; dvar; dvar = dvar->next) {
+		/* need to go over all targets so that we don't leave any dangling paths */
+		DRIVER_TARGETS_LOOPER(dvar) 
+		{
+			/* make a copy of target's rna path if available */
+			if (dtar->rna_path)
+				dtar->rna_path = MEM_dupallocN(dtar->rna_path);
+		}
+		DRIVER_TARGETS_LOOPER_END
+	}
 }
 
 /* Change the type of driver variable */
@@ -1593,6 +1686,71 @@ void driver_change_variable_type(DriverVar *dvar, int type)
 	DRIVER_TARGETS_LOOPER_END
 }
 
+/* Validate driver name (after being renamed) */
+void driver_variable_name_validate(DriverVar *dvar)
+{
+	/* Special character blacklist */
+	const char special_char_blacklist[] = {
+	    '~', '`', '!', '@', '#', '$', '%', '^', '&', '*', '+', '=', '-',
+	    '/', '\\', '?', ':', ';',  '<', '>', '{', '}', '[', ']', '|',
+	    ' ', '.', '\t', '\n', '\r'
+	};
+	
+	/* sanity checks */
+	if (dvar == NULL)
+		return;
+	
+	/* clear all invalid-name flags */
+	dvar->flag &= ~DVAR_ALL_INVALID_FLAGS;
+	
+	/* 0) Zero-length identifiers are not allowed */
+	if (dvar->name[0] == '\0') {
+		dvar->flag |= DVAR_FLAG_INVALID_EMPTY;
+	}
+	
+	/* 1) Must start with a letter */
+	/* XXX: We assume that valid unicode letters in other languages are ok too, hence the blacklisting */
+	if (ELEM(dvar->name[0], '0', '1', '2', '3', '4', '5', '6', '7', '8', '9')) {
+		dvar->flag |= DVAR_FLAG_INVALID_START_NUM;
+	}
+	else if (dvar->name[0] == '_') {
+		/* NOTE: We don't allow names to start with underscores (i.e. it helps when ruling out security risks) */
+		dvar->flag |= DVAR_FLAG_INVALID_START_CHAR;
+	}
+	
+	/* 2) Must not contain invalid stuff in the middle of the string */
+	if (strchr(dvar->name, ' ')) {
+		dvar->flag |= DVAR_FLAG_INVALID_HAS_SPACE;
+	}
+	if (strchr(dvar->name, '.')) {
+		dvar->flag |= DVAR_FLAG_INVALID_HAS_DOT;
+	}
+	
+	/* 3) Check for special characters - Either at start, or in the middle */
+	for (int i = 0; i < sizeof(special_char_blacklist); i++) {
+		char *match = strchr(dvar->name, special_char_blacklist[i]);
+		
+		if (match == dvar->name)
+			dvar->flag |= DVAR_FLAG_INVALID_START_CHAR;
+		else if (match != NULL)
+			dvar->flag |= DVAR_FLAG_INVALID_HAS_SPECIAL;
+	}
+	
+	/* 4) Check if the name is a reserved keyword
+	 * NOTE: These won't confuse Python, but it will be impossible to use the variable
+	 *       in an expression without Python misinterpreting what these are for
+	 */
+#ifdef WITH_PYTHON
+	if (BPY_string_is_keyword(dvar->name)) {
+		dvar->flag |= DVAR_FLAG_INVALID_PY_KEYWORD;
+	}
+#endif
+
+	/* If any these conditions match, the name is invalid */
+	if (dvar->flag & DVAR_ALL_INVALID_FLAGS)
+		dvar->flag |= DVAR_FLAG_INVALID_NAME;
+}
+
 /* Add a new driver variable */
 DriverVar *driver_add_new_variable(ChannelDriver *driver)
 {
@@ -1619,7 +1777,7 @@ DriverVar *driver_add_new_variable(ChannelDriver *driver)
 	if (driver->type == DRIVER_TYPE_PYTHON)
 		driver->flag |= DRIVER_FLAG_RENAMEVAR;
 #endif
-
+	
 	/* return the target */
 	return dvar;
 }
@@ -1638,7 +1796,7 @@ void fcurve_free_driver(FCurve *fcu)
 	/* free driver targets */
 	for (dvar = driver->variables.first; dvar; dvar = dvarn) {
 		dvarn = dvar->next;
-		driver_free_variable(driver, dvar);
+		driver_free_variable_ex(driver, dvar);
 	}
 
 #ifdef WITH_PYTHON
@@ -1656,7 +1814,6 @@ void fcurve_free_driver(FCurve *fcu)
 ChannelDriver *fcurve_copy_driver(ChannelDriver *driver)
 {
 	ChannelDriver *ndriver;
-	DriverVar *dvar;
 	
 	/* sanity checks */
 	if (driver == NULL)
@@ -1667,19 +1824,8 @@ ChannelDriver *fcurve_copy_driver(ChannelDriver *driver)
 	ndriver->expr_comp = NULL;
 	
 	/* copy variables */
-	BLI_listbase_clear(&ndriver->variables);
-	BLI_duplicatelist(&ndriver->variables, &driver->variables);
-	
-	for (dvar = ndriver->variables.first; dvar; dvar = dvar->next) {
-		/* need to go over all targets so that we don't leave any dangling paths */
-		DRIVER_TARGETS_LOOPER(dvar) 
-		{
-			/* make a copy of target's rna path if available */
-			if (dtar->rna_path)
-				dtar->rna_path = MEM_dupallocN(dtar->rna_path);
-		}
-		DRIVER_TARGETS_LOOPER_END
-	}
+	BLI_listbase_clear(&ndriver->variables); /* to get rid of refs to non-copied data (that's still used on original) */ 
+	driver_variables_copy(&ndriver->variables, &driver->variables);
 	
 	/* return the new driver */
 	return ndriver;
@@ -1714,7 +1860,7 @@ float driver_get_variable_value(ChannelDriver *driver, DriverVar *dvar)
  *	- "evaltime" is the frame at which F-Curve is being evaluated
  *  - has to return a float value
  */
-static float evaluate_driver(ChannelDriver *driver, const float evaltime)
+float evaluate_driver(PathResolvedRNA *anim_rna, ChannelDriver *driver, const float evaltime)
 {
 	DriverVar *dvar;
 	
@@ -1799,7 +1945,9 @@ static float evaluate_driver(ChannelDriver *driver, const float evaltime)
 				 *  - on errors it reports, then returns 0.0f
 				 */
 				BLI_mutex_lock(&python_driver_lock);
-				driver->curval = BPY_driver_exec(driver, evaltime);
+
+				driver->curval = BPY_driver_exec(anim_rna, driver, evaltime);
+
 				BLI_mutex_unlock(&python_driver_lock);
 			}
 #else /* WITH_PYTHON*/
@@ -2436,11 +2584,11 @@ static float fcurve_eval_samples(FCurve *fcu, FPoint *fpts, float evaltime)
 		float t = fabsf(evaltime - floorf(evaltime));
 		
 		/* find the one on the right frame (assume that these are spaced on 1-frame intervals) */
-		fpt = prevfpt + (int)(evaltime - prevfpt->vec[0]);
+		fpt = prevfpt + ((int)evaltime - (int)prevfpt->vec[0]);
 		
 		/* if not exactly on the frame, perform linear interpolation with the next one */
-		if (t != 0.0f) 
-			cvalue = interpf(fpt->vec[1], (fpt + 1)->vec[1], t);
+		if ((t != 0.0f) && (t < 1.0f))
+			cvalue = interpf(fpt->vec[1], (fpt + 1)->vec[1], 1.0f - t);
 		else
 			cvalue = fpt->vec[1];
 	}
@@ -2454,48 +2602,10 @@ static float fcurve_eval_samples(FCurve *fcu, FPoint *fpts, float evaltime)
 /* Evaluate and return the value of the given F-Curve at the specified frame ("evaltime") 
  * Note: this is also used for drivers
  */
-float evaluate_fcurve(FCurve *fcu, float evaltime)
+static float evaluate_fcurve_ex(FCurve *fcu, float evaltime, float cvalue)
 {
 	FModifierStackStorage *storage;
-	float cvalue = 0.0f;
 	float devaltime;
-	
-	/* if there is a driver (only if this F-Curve is acting as 'driver'), evaluate it to find value to use as "evaltime" 
-	 * since drivers essentially act as alternative input (i.e. in place of 'time') for F-Curves
-	 */
-	if (fcu->driver) {
-		/* evaltime now serves as input for the curve */
-		evaltime = evaluate_driver(fcu->driver, evaltime);
-		
-		/* only do a default 1-1 mapping if it's unlikely that anything else will set a value... */
-		if (fcu->totvert == 0) {
-			FModifier *fcm;
-			bool do_linear = true;
-			
-			/* out-of-range F-Modifiers will block, as will those which just plain overwrite the values 
-			 * XXX: additive is a bit more dicey; it really depends then if things are in range or not...
-			 */
-			for (fcm = fcu->modifiers.first; fcm; fcm = fcm->next) {
-				/* if there are range-restrictions, we must definitely block [#36950] */
-				if ((fcm->flag & FMODIFIER_FLAG_RANGERESTRICT) == 0 ||
-				    ((fcm->sfra <= evaltime) && (fcm->efra >= evaltime)) )
-				{
-					/* within range: here it probably doesn't matter, though we'd want to check on additive... */
-				}
-				else {
-					/* outside range: modifier shouldn't contribute to the curve here, though it does in other areas,
-					 * so neither should the driver!
-					 */
-					do_linear = false;
-				}
-			}
-			
-			/* only copy over results if none of the modifiers disagreed with this */
-			if (do_linear) {
-				cvalue = evaltime;
-			}
-		}
-	}
 
 	/* evaluate modifiers which modify time to evaluate the base curve at */
 	storage = evaluate_fmodifiers_storage_new(&fcu->modifiers);
@@ -2525,8 +2635,60 @@ float evaluate_fcurve(FCurve *fcu, float evaltime)
 	return cvalue;
 }
 
+float evaluate_fcurve(FCurve *fcu, float evaltime)
+{
+	BLI_assert(fcu->driver == NULL);
+
+	return evaluate_fcurve_ex(fcu, evaltime, 0.0);
+}
+
+float evaluate_fcurve_driver(PathResolvedRNA *anim_rna, FCurve *fcu, float evaltime)
+{
+	BLI_assert(fcu->driver != NULL);
+	float cvalue = 0.0f;
+
+	/* if there is a driver (only if this F-Curve is acting as 'driver'), evaluate it to find value to use as "evaltime"
+	 * since drivers essentially act as alternative input (i.e. in place of 'time') for F-Curves
+	 */
+	if (fcu->driver) {
+		/* evaltime now serves as input for the curve */
+		evaltime = evaluate_driver(anim_rna, fcu->driver, evaltime);
+
+		/* only do a default 1-1 mapping if it's unlikely that anything else will set a value... */
+		if (fcu->totvert == 0) {
+			FModifier *fcm;
+			bool do_linear = true;
+
+			/* out-of-range F-Modifiers will block, as will those which just plain overwrite the values
+			 * XXX: additive is a bit more dicey; it really depends then if things are in range or not...
+			 */
+			for (fcm = fcu->modifiers.first; fcm; fcm = fcm->next) {
+				/* if there are range-restrictions, we must definitely block [#36950] */
+				if ((fcm->flag & FMODIFIER_FLAG_RANGERESTRICT) == 0 ||
+				    ((fcm->sfra <= evaltime) && (fcm->efra >= evaltime)) )
+				{
+					/* within range: here it probably doesn't matter, though we'd want to check on additive... */
+				}
+				else {
+					/* outside range: modifier shouldn't contribute to the curve here, though it does in other areas,
+					 * so neither should the driver!
+					 */
+					do_linear = false;
+				}
+			}
+
+			/* only copy over results if none of the modifiers disagreed with this */
+			if (do_linear) {
+				cvalue = evaltime;
+			}
+		}
+	}
+
+	return evaluate_fcurve_ex(fcu, evaltime, cvalue);
+}
+
 /* Calculate the value of the given F-Curve at the given frame, and set its curval */
-void calculate_fcurve(FCurve *fcu, float ctime)
+float calculate_fcurve(PathResolvedRNA *anim_rna, FCurve *fcu, float evaltime)
 {
 	/* only calculate + set curval (overriding the existing value) if curve has 
 	 * any data which warrants this...
@@ -2535,7 +2697,18 @@ void calculate_fcurve(FCurve *fcu, float ctime)
 	    list_has_suitable_fmodifier(&fcu->modifiers, 0, FMI_TYPE_GENERATE_CURVE))
 	{
 		/* calculate and set curval (evaluates driver too if necessary) */
-		fcu->curval = evaluate_fcurve(fcu, ctime);
+		float curval;
+		if (fcu->driver) {
+			curval = evaluate_fcurve_driver(anim_rna, fcu, evaltime);
+		}
+		else {
+			curval = evaluate_fcurve(fcu, evaltime);
+		}
+		fcu->curval = curval;  /* debug display only, not thread safe! */
+		return curval;
+	}
+	else {
+		return 0.0f;
 	}
 }
 

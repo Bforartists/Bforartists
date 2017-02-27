@@ -36,6 +36,7 @@
 
 struct BMEditMesh;
 struct BMOperator;
+struct BMElem;
 struct EnumPropertyItem;
 struct bContext;
 struct wmKeyConfig;
@@ -74,6 +75,11 @@ void EDBM_stats_update(struct BMEditMesh *em);
 
 int  EDBM_view3d_poll(struct bContext *C);
 
+struct BMElem *EDBM_elem_from_selectmode(
+        struct BMEditMesh *em,
+        struct BMVert *eve, struct BMEdge *eed, struct BMFace *efa);
+int            EDBM_elem_to_index_any(struct BMEditMesh *em, struct BMElem *ele);
+struct BMElem *EDBM_elem_from_index_any(struct BMEditMesh *em, int index);
 
 /* *** editmesh_add.c *** */
 void MESH_OT_primitive_plane_add(struct wmOperatorType *ot);
@@ -109,6 +115,7 @@ void MESH_OT_inset(struct wmOperatorType *ot);
 
 /* *** editmesh_intersect.c *** */
 void MESH_OT_intersect(struct wmOperatorType *ot);
+void MESH_OT_intersect_boolean(struct wmOperatorType *ot);
 void MESH_OT_face_split_by_edges(struct wmOperatorType *ot);
 
 
@@ -154,7 +161,6 @@ void MESH_OT_select_non_manifold(struct wmOperatorType *ot);
 void MESH_OT_select_random(struct wmOperatorType *ot);
 void MESH_OT_select_ungrouped(struct wmOperatorType *ot);
 void MESH_OT_select_axis(struct wmOperatorType *ot);
-void MESH_OT_select_next_loop(struct wmOperatorType *ot);
 void MESH_OT_region_to_loop(struct wmOperatorType *ot);
 void MESH_OT_loop_to_region(struct wmOperatorType *ot);
 void MESH_OT_shortest_path_select(struct wmOperatorType *ot);
@@ -210,6 +216,7 @@ void MESH_OT_fill_holes(struct wmOperatorType *ot);
 void MESH_OT_beautify_fill(struct wmOperatorType *ot);
 void MESH_OT_quads_convert_to_tris(struct wmOperatorType *ot);
 void MESH_OT_tris_convert_to_quads(struct wmOperatorType *ot);
+void MESH_OT_decimate(struct wmOperatorType *ot);
 void MESH_OT_dissolve_verts(struct wmOperatorType *ot);
 void MESH_OT_dissolve_edges(struct wmOperatorType *ot);
 void MESH_OT_dissolve_faces(struct wmOperatorType *ot);

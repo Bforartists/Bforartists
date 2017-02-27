@@ -47,11 +47,12 @@
 #include "MEM_guardedalloc.h"
 
 #include "BLI_blenlib.h"
+#include "BLI_string_utils.h"
 #include "BLI_utildefines.h"
-#include "BLI_path_util.h"
 
 #include "BKE_action.h"
 #include "BKE_context.h"
+#include "BKE_library.h"
 #include "BKE_main.h"
 #include "BKE_sca.h"
 
@@ -308,12 +309,13 @@ static void do_logic_buts(bContext *C, void *UNUSED(arg), int event)
 						}
 						
 						if (sa->sound)
-							((ID *)sa->sound)->us--;
+							id_us_min(((ID *)sa->sound));
 						
 						sa->sound= (struct bSound *)sound;
 						
-						if (sound)
-							sound->us++;
+						if (sound) {
+							id_us_plus(sound);
+						}
 						
 						sa->sndnr= 0;
 						didit= 1;
@@ -397,8 +399,6 @@ static const char *actuator_name(int type)
 		return N_("Action");
 	case ACT_OBJECT:
 		return N_("Motion");
-	case ACT_IPO:
-		return N_("F-Curve");
 	case ACT_LAMP:
 		return N_("Lamp");
 	case ACT_CAMERA:
@@ -1696,7 +1696,7 @@ static void draw_actuator_filter_2d(uiLayout *layout, PointerRNA *ptr)
 static void draw_actuator_game(uiLayout *layout, PointerRNA *ptr)
 {
 	uiItemR(layout, ptr, "mode", 0, NULL, ICON_NONE);
-	if (RNA_enum_get(ptr, "mode") == ACT_GAME_LOAD)
+	if (ELEM(RNA_enum_get(ptr, "mode"), ACT_GAME_LOAD, ACT_GAME_SCREENSHOT))
 		uiItemR(layout, ptr, "filename", 0, NULL, ICON_NONE);
 }
 

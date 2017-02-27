@@ -42,14 +42,15 @@ struct DynamicLibrary {
 };
 
 #ifdef WIN32
-
+#ifndef _WIN32_WINNT
 #define _WIN32_WINNT 0x501 /* Windows XP or newer */
+#endif
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include "utf_winfunc.h"
 #include "utfconv.h"
 
-DynamicLibrary *BLI_dynlib_open(char *name)
+DynamicLibrary *BLI_dynlib_open(const char *name)
 {
 	DynamicLibrary *lib;
 	void *handle;
@@ -105,7 +106,7 @@ void BLI_dynlib_close(DynamicLibrary *lib)
 
 #include <dlfcn.h>
 
-DynamicLibrary *BLI_dynlib_open(char *name)
+DynamicLibrary *BLI_dynlib_open(const char *name)
 {
 	DynamicLibrary *lib;
 	void *handle = dlopen(name, RTLD_LAZY);

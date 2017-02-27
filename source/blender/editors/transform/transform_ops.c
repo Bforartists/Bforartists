@@ -122,7 +122,7 @@ static TransformModeItem transform_modes[] =
 	{NULL, 0}
 };
 
-EnumPropertyItem transform_mode_types[] =
+EnumPropertyItem rna_enum_transform_mode_types[] =
 {
 	{TFM_INIT, "INIT", 0, "Init", ""},
 	{TFM_DUMMY, "DUMMY", 0, "Dummy", ""},
@@ -386,7 +386,7 @@ static int transform_modal(bContext *C, wmOperator *op, const wmEvent *event)
 	TransInfo *t = op->customdata;
 	const enum TfmMode mode_prev = t->mode;
 
-#if 0
+#if defined(WITH_INPUT_NDOF) && 0
 	// stable 2D mouse coords map to different 3D coords while the 3D mouse is active
 	// in other words, 2D deltas are no longer good enough!
 	// disable until individual 'transformers' behave better
@@ -524,11 +524,12 @@ void Transform_Properties(struct wmOperatorType *ot, int flags)
 
 
 	if (flags & P_PROPORTIONAL) {
-		RNA_def_enum(ot->srna, "proportional", proportional_editing_items, 0, "Proportional Editing", "");
-		prop = RNA_def_enum(ot->srna, "proportional_edit_falloff", proportional_falloff_items, 0,
-		                    "Proportional Editing Falloff", "Proportional Editing Falloff\nFalloff type for proportional editing mode");
+		RNA_def_enum(ot->srna, "proportional", rna_enum_proportional_editing_items, 0, "Proportional Editing", "");
+		prop = RNA_def_enum(ot->srna, "proportional_edit_falloff", rna_enum_proportional_falloff_items, 0,
+		                    "Proportional Editing Falloff", "Falloff type for proportional editing mode");
 		RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_ID_CURVE); /* Abusing id_curve :/ */
-		RNA_def_float(ot->srna, "proportional_size", 1, 0.00001f, FLT_MAX, "Proportional Size", "", 0.001, 100);
+		RNA_def_float(ot->srna, "proportional_size", 1, T_PROP_SIZE_MIN, T_PROP_SIZE_MAX,
+		              "Proportional Size", "", 0.001f, 100.0f);
 	}
 
 	if (flags & P_SNAP) {
@@ -536,7 +537,7 @@ void Transform_Properties(struct wmOperatorType *ot, int flags)
 		RNA_def_property_flag(prop, PROP_HIDDEN);
 
 		if (flags & P_GEO_SNAP) {
-			prop = RNA_def_enum(ot->srna, "snap_target", snap_target_items, 0, "Target", "");
+			prop = RNA_def_enum(ot->srna, "snap_target", rna_enum_snap_target_items, 0, "Target", "");
 			RNA_def_property_flag(prop, PROP_HIDDEN);
 			prop = RNA_def_float_vector(ot->srna, "snap_point", 3, NULL, -FLT_MAX, FLT_MAX, "Point", "", -FLT_MAX, FLT_MAX);
 			RNA_def_property_flag(prop, PROP_HIDDEN);
@@ -684,11 +685,9 @@ static void TRANSFORM_OT_rotate(struct wmOperatorType *ot)
 
 static void TRANSFORM_OT_tilt(struct wmOperatorType *ot)
 {
-	PropertyRNA *prop;
-
 	/* identifiers */
 	ot->name = "Tilt";
-	/* optionals - 
+	/* optional -
 	 * "Tilt selected vertices"
 	 * "Specify an extra axis rotation for selected vertices of 3D curve" */
 	ot->description = "Tilt\nTilt selected control vertices of 3D curve"; 
@@ -702,8 +701,7 @@ static void TRANSFORM_OT_tilt(struct wmOperatorType *ot)
 	ot->cancel = transform_cancel;
 	ot->poll   = ED_operator_editcurve_3d;
 
-	prop = RNA_def_float(ot->srna, "value", 0.0, -FLT_MAX, FLT_MAX, "Angle", "", -M_PI * 2, M_PI * 2);
-	RNA_def_property_subtype(prop, PROP_ANGLE);
+	RNA_def_float_rotation(ot->srna, "value", 0, NULL, -FLT_MAX, FLT_MAX, "Angle", "", -M_PI * 2, M_PI * 2);
 
 	Transform_Properties(ot, P_PROPORTIONAL | P_MIRROR | P_SNAP);
 }
@@ -851,6 +849,12 @@ static void TRANSFORM_OT_edge_slide(struct wmOperatorType *ot)
 
 	prop = RNA_def_boolean(ot->srna, "single_side", false, "Single Side", "");
 	RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
+	RNA_def_boolean(ot->srna, "use_even", false, "Even",
+	                "Make the edge loop match the shape of the adjacent edge loop");
+	RNA_def_boolean(ot->srna, "flipped", false, "Flipped",
+	                "When Even mode is active, flips between the two adjacent edge loops");
+	RNA_def_boolean(ot->srna, "use_clamp", true, "Clamp",
+	                "Clamp within the edge extents");
 
 	Transform_Properties(ot, P_MIRROR | P_SNAP | P_CORRECT_UV);
 }
@@ -871,6 +875,12 @@ static void TRANSFORM_OT_vert_slide(struct wmOperatorType *ot)
 	ot->poll   = ED_operator_editmesh_region_view3d;
 
 	RNA_def_float_factor(ot->srna, "value", 0, -10.0f, 10.0f, "Factor", "", -1.0f, 1.0f);
+	RNA_def_boolean(ot->srna, "use_even", false, "Even",
+	                "Make the edge loop match the shape of the adjacent edge loop");
+	RNA_def_boolean(ot->srna, "flipped", false, "Flipped",
+	                "When Even mode is active, flips between the two adjacent edge loops");
+	RNA_def_boolean(ot->srna, "use_clamp", true, "Clamp",
+	                "Clamp within the edge extents");
 
 	Transform_Properties(ot, P_MIRROR | P_SNAP | P_CORRECT_UV);
 }
@@ -973,7 +983,7 @@ static void TRANSFORM_OT_transform(struct wmOperatorType *ot)
 	ot->cancel = transform_cancel;
 	ot->poll   = ED_operator_screenactive;
 
-	prop = RNA_def_enum(ot->srna, "mode", transform_mode_types, TFM_TRANSLATION, "Mode", "");
+	prop = RNA_def_enum(ot->srna, "mode", rna_enum_transform_mode_types, TFM_TRANSLATION, "Mode", "");
 	RNA_def_property_flag(prop, PROP_HIDDEN);
 
 	RNA_def_float_vector(ot->srna, "value", 4, NULL, -FLT_MAX, FLT_MAX, "Values", "", -FLT_MAX, FLT_MAX);

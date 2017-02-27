@@ -1763,20 +1763,15 @@ void itasc_initialize_tree(struct Scene *scene, Object *ob, float ctime)
 	}
 	// if at least one tree, create the scenes from the PoseTree stored in the channels
 	// postpone until execute_tree: this way the pose constraint are included
-	//if (count)
-	//	create_scene(scene, ob, ctime);
-	//itasc_update_param(ob->pose);
+	if (count)
+		create_scene(scene, ob, ctime);
+	itasc_update_param(ob->pose);
 	// make sure we don't rebuilt until the user changes something important
 	ob->pose->flag &= ~POSE_WAS_REBUILT;
 }
 
-void itasc_execute_tree(struct Scene *scene, struct Object *ob,  struct bPoseChannel *pchan, float ctime)
+void itasc_execute_tree(struct Scene *scene, Object *ob,  bPoseChannel *pchan_root, float ctime)
 {
-	if (!ob->pose->ikdata) {
-		// IK tree not yet created, no it now
-		create_scene(scene, ob, ctime);
-		itasc_update_param(ob->pose);
-	}
 	if (ob->pose->ikdata) {
 		IK_Data *ikdata = (IK_Data *)ob->pose->ikdata;
 		bItasc *ikparam = (bItasc *) ob->pose->ikparam;
@@ -1784,7 +1779,7 @@ void itasc_execute_tree(struct Scene *scene, struct Object *ob,  struct bPoseCha
 		if (!ikparam) ikparam = &DefIKParam;
 
 		for (IK_Scene *ikscene = ikdata->first; ikscene; ikscene = ikscene->next) {
-			if (ikscene->channels[0].pchan == pchan) {
+			if (ikscene->channels[0].pchan == pchan_root) {
 				float timestep = scene->r.frs_sec_base / scene->r.frs_sec;
 				if (ob->pose->flag & POSE_GAME_ENGINE) {
 					timestep = ob->pose->ctime;

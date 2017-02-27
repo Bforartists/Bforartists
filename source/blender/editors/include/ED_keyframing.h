@@ -91,14 +91,14 @@ void update_autoflags_fcurve(struct FCurve *fcu, struct bContext *C, struct Repo
  *  Use this when validation of necessary animation data isn't necessary as it already
  *  exists, and there is a beztriple that can be directly copied into the array.
  */
-int insert_bezt_fcurve(struct FCurve *fcu, struct BezTriple *bezt, short flag);
+int insert_bezt_fcurve(struct FCurve *fcu, const struct BezTriple *bezt, short flag);
 
 /* Main Keyframing API call: 
  *  Use this when validation of necessary animation data isn't necessary as it
  *  already exists. It will insert a keyframe using the current value being keyframed.
  *  Returns the index at which a keyframe was added (or -1 if failed)
  */
-int insert_vert_fcurve(struct FCurve *fcu, float x, float y, short flag);
+int insert_vert_fcurve(struct FCurve *fcu, float x, float y, char keytype, short flag);
 
 /* -------- */
 
@@ -106,7 +106,7 @@ int insert_vert_fcurve(struct FCurve *fcu, float x, float y, short flag);
  *	Use this to insert a keyframe using the current value being keyframed, in the 
  *	nominated F-Curve (no creation of animation data performed). Returns success.
  */
-bool insert_keyframe_direct(struct ReportList *reports, struct PointerRNA ptr, struct PropertyRNA *prop, struct FCurve *fcu, float cfra, short flag);
+bool insert_keyframe_direct(struct ReportList *reports, struct PointerRNA ptr, struct PropertyRNA *prop, struct FCurve *fcu, float cfra, char keytype, short flag);
 
 /* -------- */
 
@@ -114,7 +114,7 @@ bool insert_keyframe_direct(struct ReportList *reports, struct PointerRNA ptr, s
  *	Use this to create any necessary animation data, and then insert a keyframe
  *	using the current value being keyframed, in the relevant place. Returns success.
  */
-short insert_keyframe(struct ReportList *reports, struct ID *id, struct bAction *act, const char group[], const char rna_path[], int array_index, float cfra, short flag);
+short insert_keyframe(struct ReportList *reports, struct ID *id, struct bAction *act, const char group[], const char rna_path[], int array_index, float cfra, char keytype, short flag);
 
 /* Main Keyframing API call: 
  *  Use this to delete keyframe on current frame for relevant channel. Will perform checks just in case.
@@ -235,6 +235,19 @@ typedef enum eCreateDriverFlags {
 	CREATEDRIVER_WITH_FMODIFIER     = (1 << 1),   /* create drivers with Generator FModifier (for backwards compat) */
 } eCreateDriverFlags;
 
+/* Heuristic to use for connecting target properties to driven ones */
+typedef enum eCreateDriver_MappingTypes {
+	CREATEDRIVER_MAPPING_1_N        = 0,           /* 1 to Many - Use the specified index, and drive all elements with it */
+	CREATEDRIVER_MAPPING_1_1        = 1,           /* 1 to 1 - Only for the specified index on each side */
+	CREATEDRIVER_MAPPING_N_N        = 2,           /* Many to Many - Match up the indices one by one (only for drivers on vectors/arrays) */
+	
+	CREATEDRIVER_MAPPING_NONE       = 3,           /* None (Single Prop)    - Do not create driver with any targets; these will get added later instead */
+	CREATEDRIVER_MAPPING_NONE_ALL   = 4,           /* None (All Properties) - Do not create driver with any targets; these will get added later instead */
+} eCreateDriver_MappingTypes;
+
+/* RNA Enum of eCreateDriver_MappingTypes, for use by the appropriate operators */
+extern EnumPropertyItem prop_driver_create_mapping_types[];
+
 /* -------- */
 
 /* Low-level call to add a new driver F-Curve. This shouldn't be used directly for most tools,
@@ -244,8 +257,24 @@ struct FCurve *verify_driver_fcurve(struct ID *id, const char rna_path[], const 
 
 /* -------- */
 
-/* Returns whether there is a driver in the copy/paste buffer to paste */
-bool ANIM_driver_can_paste(void);
+/* Main Driver Management API calls:
+ *  Add a new driver for the specified property on the given ID block,
+ *  and make it be driven by the specified target.
+ *
+ * This is intended to be used in conjunction with a modal "eyedropper"
+ * for picking the variable that is going to be used to drive this one.
+ *
+ * - flag: eCreateDriverFlags
+ * - driver_type: eDriver_Types
+ * - mapping_type: eCreateDriver_MappingTypes
+ */
+int ANIM_add_driver_with_target(
+        struct ReportList *reports, 
+        struct ID *dst_id, const char dst_path[], int dst_index,
+        struct ID *src_id, const char src_path[], int src_index,
+        short flag, int driver_type, short mapping_type);
+
+/* -------- */
 
 /* Main Driver Management API calls:
  *  Add a new driver for the specified property on the given ID block
@@ -256,6 +285,19 @@ int ANIM_add_driver(struct ReportList *reports, struct ID *id, const char rna_pa
  *  Remove the driver for the specified property on the given ID block (if available)
  */
 bool ANIM_remove_driver(struct ReportList *reports, struct ID *id, const char rna_path[], int array_index, short flag);
+
+/* -------- */
+
+/* Clear copy-paste buffer for drivers */
+void ANIM_drivers_copybuf_free(void);
+
+/* Clear copy-paste buffer for driver variable sets */
+void ANIM_driver_vars_copybuf_free(void);
+
+/* -------- */
+
+/* Returns whether there is a driver in the copy/paste buffer to paste */
+bool ANIM_driver_can_paste(void);
 
 /* Main Driver Management API calls:
  *  Make a copy of the driver for the specified property on the given ID block
@@ -268,22 +310,33 @@ bool ANIM_copy_driver(struct ReportList *reports, struct ID *id, const char rna_
  */
 bool ANIM_paste_driver(struct ReportList *reports, struct ID *id, const char rna_path[], int array_index, short flag);
 
+/* -------- */
+
+/* Checks if there are driver variables in the copy/paste buffer */
+bool ANIM_driver_vars_can_paste(void);
+
+/* Copy the given driver's variables to the buffer */
+bool ANIM_driver_vars_copy(struct ReportList *reports, struct FCurve *fcu);
+
+/* Paste the variables in the buffer to the given FCurve */
+bool ANIM_driver_vars_paste(struct ReportList *reports, struct FCurve *fcu, bool replace);
+
 /* ************ Auto-Keyframing ********************** */
 /* Notes:
  * - All the defines for this (User-Pref settings and Per-Scene settings)
  *  are defined in DNA_userdef_types.h
- * - Scene settings take presidence over those for userprefs, with old files
+ * - Scene settings take precedence over those for userprefs, with old files
  *  inheriting userpref settings for the scene settings
  * - "On/Off + Mode" are stored per Scene, but "settings" are currently stored
  *  as userprefs
  */
 
 /* Auto-Keying macros for use by various tools */
-/* check if auto-keyframing is enabled (per scene takes presidence) */
+/* check if auto-keyframing is enabled (per scene takes precedence) */
 #define IS_AUTOKEY_ON(scene)  ((scene) ? (scene->toolsettings->autokey_mode & AUTOKEY_ON) : (U.autokey_mode & AUTOKEY_ON))
-/* check the mode for auto-keyframing (per scene takes presidence)  */
+/* check the mode for auto-keyframing (per scene takes precedence)  */
 #define IS_AUTOKEY_MODE(scene, mode)  ((scene) ? (scene->toolsettings->autokey_mode == AUTOKEY_MODE_##mode) : (U.autokey_mode == AUTOKEY_MODE_##mode))
-/* check if a flag is set for auto-keyframing (per scene takes presidence) */
+/* check if a flag is set for auto-keyframing (per scene takes precedence) */
 #define IS_AUTOKEY_FLAG(scene, flag) \
 	((scene) ? \
 		((scene->toolsettings->autokey_flag & AUTOKEY_FLAG_##flag) || (U.autokey_flag & AUTOKEY_FLAG_##flag)) \
@@ -336,6 +389,7 @@ bool ED_autokeyframe_pchan(struct bContext *C, struct Scene *scene, struct Objec
 #define ANIM_KS_LOC_ROT_SCALE_ID    "LocRotScale"
 #define ANIM_KS_AVAILABLE_ID        "Available"
 #define ANIM_KS_WHOLE_CHARACTER_ID  "WholeCharacter"
+#define ANIM_KS_WHOLE_CHARACTER_SELECTED_ID  "WholeCharacterSelected"
 
 #ifdef __cplusplus
 }

@@ -1,4 +1,4 @@
-﻿# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -20,14 +20,12 @@
 
 # Script copyright (C) Campbell Barton
 
-# fixed for Bforartists. Shows in Tool Shelf now.
-
 bl_info = {
     "name": "Grease Scatter Objects",
     "author": "Campbell Barton",
     "version": (0, 1),
     "blender": (2, 58, 0),
-    "location": "View3D > Tool Shelf > Create > Add Misc",
+    "location": "3D View, Add Mesh",
     "description": "Scatter a group of objects onto the active mesh using "
                    "the grease pencil lines",
     "warning": "",
@@ -93,8 +91,8 @@ def _main(self,
     DEBUG = False
 
     def fix_point(p):
-        hit, no, ind = closest_point_on_mesh(obj_mat_inv * p)
-        if ind != -1:
+        ok, hit, no, ind = closest_point_on_mesh(obj_mat_inv * p)
+        if ok:
             if DEBUG:
                 return [p, no, None]
             else:
@@ -153,13 +151,12 @@ def _main(self,
                 m_alt_2 = Matrix.Rotation(radians(-22.5), 3, n)
                 for _m in mats:
                     for m in (_m, m_alt_1 * _m, m_alt_2 * _m):
-                        hit, nor, ind = ray(pofs, pofs + (m * n_seek))
-                        if ind != -1:
-                            dist = (pofs - hit).length
-                            if dist < best_dist:
-                                best_dist = dist
-                                best_nor = nor
-                                #best_hit = hit
+                        pdir = m * n_seek
+                        ok, hit, nor, ind = ray(pofs, pdir, best_dist)
+                        if ok:
+                            best_dist = (pofs - hit).length
+                            best_nor = nor
+                            # best_hit = hit
 
                 if best_nor:
                     pt[1].length = best_dist
@@ -213,9 +210,9 @@ def _main(self,
                         ntmp.y += uniform(-l, l) * RAND_LOC
                         ntmp.z += uniform(-l, l) * RAND_LOC
 
-                        hit, hit_no, ind = ray(vantage, vantage + ntmp)
+                        ok, hit, hit_no, ind = ray(vantage, ntmp, ntmp.length)
                         # print(hit, hit_no)
-                        if ind != -1:
+                        if ok:
                             if hit_no.angle(Z_UP) < WALL_LIMIT:
                                 hits.append(hit)
                                 nors.append(hit_no)
@@ -393,12 +390,12 @@ def menu_func(self, context):
 
 def register():
     bpy.utils.register_class(Scatter)
-    bpy.types.VIEW3D_PT_tools_add_misc.append(menu_func)
+    bpy.types.INFO_MT_mesh_add.append(menu_func)
 
 
 def unregister():
     bpy.utils.unregister_class(Scatter)
-    bpy.types.VIEW3D_PT_tools_add_misc.remove(menu_func)
+    bpy.types.INFO_MT_mesh_add.remove(menu_func)
 
 #if __name__ == "__main__":
 #    _main()

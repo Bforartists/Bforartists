@@ -1,12 +1,18 @@
 uniform int PrimitiveIdBase;
 uniform int osd_active_uv_offset;
 
-varying vec3 varnormal;
-varying vec3 varposition;
+#if __VERSION__ >= 150
+  layout(lines_adjacency) in;
+  layout(triangle_strip, max_vertices = 4) out;
+#endif
 
 in block {
 	VertexData v;
-} inpt[4];
+} inpt[];
+
+/* compatibility */
+out vec3 varnormal;
+out vec3 varposition;
 
 uniform bool osd_flat_shading;
 uniform int osd_fvar_count;
@@ -25,7 +31,20 @@ uniform int osd_fvar_count;
 		             tessCoord.t); \
 	}
 
+#ifdef USE_NEW_SHADING
+#  define INTERP_FACE_VARYING_ATT_2(result, fvarOffset, tessCoord) \
+	{ \
+		vec2 tmp; \
+		INTERP_FACE_VARYING_2(tmp, fvarOffset, tessCoord); \
+		result = vec3(tmp, 0); \
+	}
+#else
+#  define INTERP_FACE_VARYING_ATT_2(result, fvarOffset, tessCoord) \
+	INTERP_FACE_VARYING_2(result, fvarOffset, tessCoord)
+#endif
+
 uniform samplerBuffer FVarDataBuffer;
+uniform isamplerBuffer FVarDataOffsetBuffer;
 
 out block {
 	VertexData v;
@@ -43,7 +62,7 @@ void emit_flat(int index, vec3 normal)
 	varposition = outpt.v.position.xyz;
 
 	/* TODO(sergey): Only uniform subdivisions atm. */
-	vec2 quadst[4] = vec2[](vec2(0,0), vec2(1,0), vec2(1,1), vec2(0,1));
+	vec2 quadst[4] = vec2[](vec2(0, 0), vec2(1, 0), vec2(1, 1), vec2(0, 1));
 	vec2 st = quadst[index];
 
 	INTERP_FACE_VARYING_2(outpt.v.uv, osd_active_uv_offset, st);
@@ -64,7 +83,7 @@ void emit_smooth(int index)
 	varposition = outpt.v.position.xyz;
 
 	/* TODO(sergey): Only uniform subdivisions atm. */
-	vec2 quadst[4] = vec2[](vec2(0,0), vec2(1,0), vec2(1,1), vec2(0,1));
+	vec2 quadst[4] = vec2[](vec2(0, 0), vec2(1, 0), vec2(1, 1), vec2(0, 1));
 	vec2 st = quadst[index];
 
 	INTERP_FACE_VARYING_2(outpt.v.uv, osd_active_uv_offset, st);

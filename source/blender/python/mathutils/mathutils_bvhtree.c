@@ -72,9 +72,15 @@
 "   :type distance: float\n"
 
 #define PYBVH_FIND_GENERIC_RETURN_DOC \
-"   :return: Returns a tuple (:class:`Vector` location, :class:`Vector` normal, int index, float distance),\n" \
+"   :return: Returns a tuple\n" \
+"      (:class:`Vector` location, :class:`Vector` normal, int index, float distance),\n" \
 "      Values will all be None if no hit is found.\n" \
 "   :rtype: :class:`tuple`\n"
+
+#define PYBVH_FIND_GENERIC_RETURN_LIST_DOC \
+"   :return: Returns a list of tuples\n" \
+"      (:class:`Vector` location, :class:`Vector` normal, int index, float distance),\n" \
+"   :rtype: :class:`list`\n"
 
 #define PYBVH_FROM_GENERIC_EPSILON_DOC \
 "   :arg epsilon: Increase the threshold for detecting overlap and raycast hits.\n" \
@@ -328,7 +334,7 @@ static void py_bvhtree_nearest_point_cb(void *userdata, int index, const float c
 }
 
 PyDoc_STRVAR(py_bvhtree_ray_cast_doc,
-".. method:: ray_cast(co, direction, distance=sys.float_info.max)\n"
+".. method:: ray_cast(origin, direction, distance=sys.float_info.max)\n"
 "\n"
 "   Cast a ray onto the mesh.\n"
 "\n"
@@ -352,7 +358,7 @@ static PyObject *py_bvhtree_ray_cast(PyBVHTree *self, PyObject *args)
 
 		if (!PyArg_ParseTuple(
 		        args, (char *)"OO|f:ray_cast",
-				&py_co, &py_direction, &max_dist))
+		        &py_co, &py_direction, &max_dist))
 		{
 			return NULL;
 		}
@@ -383,7 +389,7 @@ static PyObject *py_bvhtree_ray_cast(PyBVHTree *self, PyObject *args)
 }
 
 PyDoc_STRVAR(py_bvhtree_find_nearest_doc,
-".. method:: find_nearest(co, distance=" PYBVH_MAX_DIST_STR ")\n"
+".. method:: find_nearest(origin, distance=" PYBVH_MAX_DIST_STR ")\n"
 "\n"
 "   Find the nearest element to a point.\n"
 "\n"
@@ -431,6 +437,91 @@ static PyObject *py_bvhtree_find_nearest(PyBVHTree *self, PyObject *args)
 
 	return py_bvhtree_nearest_to_py_none();
 }
+
+struct PyBVH_RangeData {
+	PyBVHTree *self;
+	PyObject *result;
+	float dist_sq;
+};
+
+static void py_bvhtree_nearest_point_range_cb(void *userdata, int index, const float co[3], float UNUSED(dist_sq_bvh))
+{
+	struct PyBVH_RangeData *data = userdata;
+	PyBVHTree *self = data->self;
+
+	const float (*coords)[3] = (const float (*)[3])self->coords;
+	const unsigned int *tri = self->tris[index];
+	const float *tri_co[3] = {coords[tri[0]], coords[tri[1]], coords[tri[2]]};
+	float nearest_tmp[3], dist_sq;
+
+	closest_on_tri_to_point_v3(nearest_tmp, co, UNPACK3(tri_co));
+	dist_sq = len_squared_v3v3(co, nearest_tmp);
+
+	if (dist_sq < data->dist_sq) {
+		BVHTreeNearest nearest;
+		nearest.index = self->orig_index ? self->orig_index[index] : index;
+		nearest.dist_sq = dist_sq;
+		copy_v3_v3(nearest.co, nearest_tmp);
+		if (self->orig_normal) {
+			copy_v3_v3(nearest.no, self->orig_normal[nearest.index]);
+		}
+		else {
+			normal_tri_v3(nearest.no, UNPACK3(tri_co));
+		}
+
+		PyList_APPEND(data->result, py_bvhtree_nearest_to_py(&nearest));
+	}
+}
+
+PyDoc_STRVAR(py_bvhtree_find_nearest_range_doc,
+".. method:: find_nearest_range(origin, distance=" PYBVH_MAX_DIST_STR ")\n"
+"\n"
+"   Find the nearest elements to a point in the distance range.\n"
+"\n"
+"   :arg co: Find nearest elements to this point.\n"
+"   :type co: :class:`Vector`\n"
+PYBVH_FIND_GENERIC_DISTANCE_DOC
+PYBVH_FIND_GENERIC_RETURN_LIST_DOC
+);
+static PyObject *py_bvhtree_find_nearest_range(PyBVHTree *self, PyObject *args)
+{
+	const char *error_prefix = "find_nearest_range";
+	float co[3];
+	float max_dist = max_dist_default;
+
+	/* parse args */
+	{
+		PyObject *py_co;
+
+		if (!PyArg_ParseTuple(
+		        args, (char *)"O|f:find_nearest_range",
+		        &py_co, &max_dist))
+		{
+			return NULL;
+		}
+
+		if (mathutils_array_parse(co, 2, 3 | MU_ARRAY_ZERO, py_co, error_prefix) == -1) {
+			return NULL;
+		}
+	}
+
+	PyObject *ret = PyList_New(0);
+
+	if (self->tree) {
+		struct PyBVH_RangeData data = {
+			.self = self,
+			.result = ret,
+			.dist_sq = SQUARE(max_dist),
+		};
+
+		BLI_bvhtree_range_query(
+		        self->tree, co, max_dist,
+		        py_bvhtree_nearest_point_range_cb, &data);
+	}
+
+	return ret;
+}
+
 
 BLI_INLINE unsigned int overlap_hash(const void *overlap_v)
 {
@@ -726,12 +817,13 @@ static PyObject *C_BVHTree_FromPolygons(PyObject *UNUSED(cls), PyObject *args, P
 					PyErr_Format(PyExc_ValueError,
 					             "%s: index %d must be less than %d",
 					             error_prefix, plink->poly[j], coords_len);
-
-					Py_DECREF(py_tricoords_fast);
+					/* decref below */
 					valid = false;
 					break;
 				}
 			}
+
+			Py_DECREF(py_tricoords_fast);
 
 			if (py_tricoords_len >= 3) {
 				tris_len += (py_tricoords_len - 2);
@@ -777,7 +869,7 @@ static PyObject *C_BVHTree_FromPolygons(PyObject *UNUSED(cls), PyObject *args, P
 				axis_dominant_v3_to_m3_negate(axis_mat, normal);
 
 				for (j = 0; j < plink->len; j++) {
-					mul_v2_m3v3(proj_coords[i], axis_mat, coords[plink->poly[j]]);
+					mul_v2_m3v3(proj_coords[j], axis_mat, coords[plink->poly[j]]);
 				}
 
 				BLI_polyfill_calc_arena((const float (*)[2])proj_coords, plink->len, 1, tris_offset, pf_arena);
@@ -894,7 +986,7 @@ static PyObject *C_BVHTree_FromBMesh(PyObject *UNUSED(cls), PyObject *args, PyOb
 
 		looptris = MEM_mallocN(sizeof(*looptris) * (size_t)tris_len, __func__);
 
-		BM_bmesh_calc_tessellation(bm, looptris, &tris_len_dummy);
+		BM_mesh_calc_tessellation(bm, looptris, &tris_len_dummy);
 		BLI_assert(tris_len_dummy == (int)tris_len);
 	}
 
@@ -1132,7 +1224,8 @@ static PyObject *C_BVHTree_FromObject(PyObject *UNUSED(cls), PyObject *args, PyO
 
 static PyMethodDef py_bvhtree_methods[] = {
 	{"ray_cast", (PyCFunction)py_bvhtree_ray_cast, METH_VARARGS, py_bvhtree_ray_cast_doc},
-	{"find", (PyCFunction)py_bvhtree_find_nearest, METH_VARARGS, py_bvhtree_find_nearest_doc},
+	{"find_nearest", (PyCFunction)py_bvhtree_find_nearest, METH_VARARGS, py_bvhtree_find_nearest_doc},
+	{"find_nearest_range", (PyCFunction)py_bvhtree_find_nearest_range, METH_VARARGS, py_bvhtree_find_nearest_range_doc},
 	{"overlap", (PyCFunction)py_bvhtree_overlap, METH_O, py_bvhtree_overlap_doc},
 
 	/* class methods */

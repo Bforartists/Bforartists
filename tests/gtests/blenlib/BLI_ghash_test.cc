@@ -62,11 +62,11 @@ TEST(ghash, InsertLookup)
 		BLI_ghash_insert(ghash, SET_UINT_IN_POINTER(*k), SET_UINT_IN_POINTER(*k));
 	}
 
-	EXPECT_EQ(TESTCASE_SIZE, BLI_ghash_size(ghash));
+	EXPECT_EQ(BLI_ghash_size(ghash), TESTCASE_SIZE);
 
 	for (i = TESTCASE_SIZE, k = keys; i--; k++) {
 		void *v = BLI_ghash_lookup(ghash, SET_UINT_IN_POINTER(*k));
-		EXPECT_EQ(*k, GET_UINT_FROM_POINTER(v));
+		EXPECT_EQ(GET_UINT_FROM_POINTER(v), *k);
 	}
 
 	BLI_ghash_free(ghash, NULL, NULL);
@@ -85,16 +85,16 @@ TEST(ghash, InsertRemove)
 		BLI_ghash_insert(ghash, SET_UINT_IN_POINTER(*k), SET_UINT_IN_POINTER(*k));
 	}
 
-	EXPECT_EQ(TESTCASE_SIZE, BLI_ghash_size(ghash));
+	EXPECT_EQ(BLI_ghash_size(ghash), TESTCASE_SIZE);
 	bkt_size = BLI_ghash_buckets_size(ghash);
 
 	for (i = TESTCASE_SIZE, k = keys; i--; k++) {
 		void *v = BLI_ghash_popkey(ghash, SET_UINT_IN_POINTER(*k), NULL);
-		EXPECT_EQ(*k, GET_UINT_FROM_POINTER(v));
+		EXPECT_EQ(GET_UINT_FROM_POINTER(v), *k);
 	}
 
-	EXPECT_EQ(0, BLI_ghash_size(ghash));
-	EXPECT_EQ(bkt_size, BLI_ghash_buckets_size(ghash));
+	EXPECT_EQ(BLI_ghash_size(ghash), 0);
+	EXPECT_EQ(BLI_ghash_buckets_size(ghash), bkt_size);
 
 	BLI_ghash_free(ghash, NULL, NULL);
 }
@@ -113,15 +113,15 @@ TEST(ghash, InsertRemoveShrink)
 		BLI_ghash_insert(ghash, SET_UINT_IN_POINTER(*k), SET_UINT_IN_POINTER(*k));
 	}
 
-	EXPECT_EQ(TESTCASE_SIZE, BLI_ghash_size(ghash));
+	EXPECT_EQ(BLI_ghash_size(ghash), TESTCASE_SIZE);
 	bkt_size = BLI_ghash_buckets_size(ghash);
 
 	for (i = TESTCASE_SIZE, k = keys; i--; k++) {
 		void *v = BLI_ghash_popkey(ghash, SET_UINT_IN_POINTER(*k), NULL);
-		EXPECT_EQ(*k, GET_UINT_FROM_POINTER(v));
+		EXPECT_EQ(GET_UINT_FROM_POINTER(v), *k);
 	}
 
-	EXPECT_EQ(0, BLI_ghash_size(ghash));
+	EXPECT_EQ(BLI_ghash_size(ghash), 0);
 	EXPECT_LT(BLI_ghash_buckets_size(ghash), bkt_size);
 
 	BLI_ghash_free(ghash, NULL, NULL);
@@ -141,18 +141,60 @@ TEST(ghash, Copy)
 		BLI_ghash_insert(ghash, SET_UINT_IN_POINTER(*k), SET_UINT_IN_POINTER(*k));
 	}
 
-	EXPECT_EQ(TESTCASE_SIZE, BLI_ghash_size(ghash));
+	EXPECT_EQ(BLI_ghash_size(ghash), TESTCASE_SIZE);
 
 	ghash_copy = BLI_ghash_copy(ghash, NULL, NULL);
 
-	EXPECT_EQ(TESTCASE_SIZE, BLI_ghash_size(ghash_copy));
-	EXPECT_EQ(BLI_ghash_buckets_size(ghash), BLI_ghash_buckets_size(ghash_copy));
+	EXPECT_EQ(BLI_ghash_size(ghash_copy), TESTCASE_SIZE);
+	EXPECT_EQ(BLI_ghash_buckets_size(ghash_copy), BLI_ghash_buckets_size(ghash));
 
 	for (i = TESTCASE_SIZE, k = keys; i--; k++) {
 		void *v = BLI_ghash_lookup(ghash_copy, SET_UINT_IN_POINTER(*k));
-		EXPECT_EQ(*k, GET_UINT_FROM_POINTER(v));
+		EXPECT_EQ(GET_UINT_FROM_POINTER(v), *k);
 	}
 
 	BLI_ghash_free(ghash, NULL, NULL);
 	BLI_ghash_free(ghash_copy, NULL, NULL);
+}
+
+/* Check pop. */
+TEST(ghash, Pop)
+{
+	GHash *ghash = BLI_ghash_new(BLI_ghashutil_inthash_p, BLI_ghashutil_intcmp, __func__);
+	unsigned int keys[TESTCASE_SIZE], *k;
+	int i;
+
+	BLI_ghash_flag_set(ghash, GHASH_FLAG_ALLOW_SHRINK);
+	init_keys(keys, 30);
+
+	for (i = TESTCASE_SIZE, k = keys; i--; k++) {
+		BLI_ghash_insert(ghash, SET_UINT_IN_POINTER(*k), SET_UINT_IN_POINTER(*k));
+	}
+
+	EXPECT_EQ(BLI_ghash_size(ghash), TESTCASE_SIZE);
+
+	GHashIterState pop_state = {0};
+
+	for (i = TESTCASE_SIZE / 2; i--; ) {
+		void *k, *v;
+		bool success = BLI_ghash_pop(ghash, &pop_state, &k, &v);
+		EXPECT_EQ(k, v);
+		EXPECT_TRUE(success);
+
+		if (i % 2) {
+			BLI_ghash_insert(ghash, SET_UINT_IN_POINTER(i * 4), SET_UINT_IN_POINTER(i * 4));
+		}
+	}
+
+	EXPECT_EQ(BLI_ghash_size(ghash), (TESTCASE_SIZE - TESTCASE_SIZE / 2 + TESTCASE_SIZE / 4));
+
+	{
+		void *k, *v;
+		while (BLI_ghash_pop(ghash, &pop_state, &k, &v)) {
+			EXPECT_EQ(k, v);
+		}
+	}
+	EXPECT_EQ(BLI_ghash_size(ghash), 0);
+
+	BLI_ghash_free(ghash, NULL, NULL);
 }

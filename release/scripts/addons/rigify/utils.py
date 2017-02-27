@@ -392,7 +392,7 @@ def create_circle_polygon(number_verts, axis, radius=1.0, head_tail=0.0):
 def create_widget(rig, bone_name, bone_transform_name=None):
     """ Creates an empty widget object for a bone, and returns the object.
     """
-    if bone_transform_name == None:
+    if bone_transform_name is None:
         bone_transform_name = bone_name
 
     obj_name = WGT_PREFIX + bone_name

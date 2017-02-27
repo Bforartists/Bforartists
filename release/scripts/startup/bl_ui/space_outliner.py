@@ -1,4 +1,4 @@
-﻿# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -48,13 +48,11 @@ class switch_editors_to_outliner(bpy.types.Operator):
 
 ################################ Switch between the editors ##########################################
 
-
 class switch_editors_in_outliner(bpy.types.Operator):
     """You are in Outliner Editor"""      # blender will use this as a tooltip for menu items and buttons.
     bl_idname = "wm.switch_editor_in_outliner"        # unique identifier for buttons and menu items to reference.
     bl_label = "Outliner Editor"         # display name in the interface.
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
 
 
 class OUTLINER_HT_header(Header):
@@ -113,6 +111,7 @@ class ALL_MT_editormenu(Menu):
         row = layout.row(align=True)
         row.template_header() # editor type menus
 
+
 class OUTLINER_MT_editor_menus(Menu):
     bl_idname = "OUTLINER_MT_editor_menus"
     bl_label = ""
@@ -156,8 +155,8 @@ class OUTLINER_MT_view(Menu):
             layout.separator()
             layout.operator("outliner.show_active")
 
-        layout.operator("outliner.show_one_level", text = "Show one level").open = True
-        layout.operator("outliner.hide_one_level", text = "Hide one level")
+        layout.operator("outliner.show_one_level", text="Show One Level")
+        layout.operator("outliner.show_one_level", text="Hide One Level").open = False
         layout.operator("outliner.show_hierarchy")
 
         layout.separator()

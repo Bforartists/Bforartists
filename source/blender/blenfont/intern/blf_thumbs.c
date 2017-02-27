@@ -84,10 +84,12 @@ void BLF_thumb_preview(
 
 	/* Always create the image with a white font,
 	 * the caller can theme how it likes */
-	memcpy(font->buf_info.col, font_color, sizeof(font->buf_info.col));
+	memcpy(font->buf_info.col_init, font_color, sizeof(font->buf_info.col_init));
 	font->pos[1] = (float)h;
 
 	font_size_curr = font_size;
+
+	blf_draw_buffer__start(font);
 
 	for (i = 0; i < draw_str_lines; i++) {
 		const char *draw_str_i18n = BLT_translate_do(BLT_I18NCONTEXT_DEFAULT, draw_str[i]);
@@ -95,6 +97,10 @@ void BLF_thumb_preview(
 		int draw_str_i18n_nbr = 0;
 
 		blf_font_size(font, (unsigned int)MAX2(font_size_min, font_size_curr), dpi);
+
+		/* font->glyph_cache remains NULL if blf_font_size() failed to set font size */
+		if (!font->glyph_cache)
+			break;
 
 		/* decrease font size each time */
 		font_size_curr -= (font_size_curr / font_shrink);
@@ -110,12 +116,13 @@ void BLF_thumb_preview(
 		if (blf_font_count_missing_chars(
 		        font, draw_str_i18n, draw_str_i18n_len, &draw_str_i18n_nbr) > (draw_str_i18n_nbr / 2))
 		{
-			blf_font_buffer(font, draw_str[i]);
+			blf_font_draw_buffer(font, draw_str[i], strlen(draw_str[i]), NULL);
 		}
 		else {
-			blf_font_buffer(font, draw_str_i18n);
+			blf_font_draw_buffer(font, draw_str_i18n, draw_str_i18n_len, NULL);
 		}
 	}
 
+	blf_draw_buffer__end();
 	blf_font_free(font);
 }

@@ -30,12 +30,12 @@
  * throughput_coop --------------------------------------|                                 |--- Queue_data (QUEUE_HITBF_BUFF_UPDATE_TOREGEN_RAYS)
  * PathRadiance_coop ------------------------------------|                                 |--- throughput_coop
  * PathState_coop ---------------------------------------|                                 |--- PathRadiance_coop
- * shader_data ------------------------------------------|                                 |--- PathState_coop
+ * sd ---------------------------------------------------|                                 |--- PathState_coop
  * ray_state --------------------------------------------|                                 |--- ray_state
  * Queue_data (QUEUE_ACTIVE_AND_REGENERATD_RAYS) --------|                                 |--- Ray_coop
  * Queue_index (QUEUE_HITBG_BUFF_UPDATE_TOREGEN_RAYS) ---|                                 |--- use_queues_flag
  * Ray_coop ---------------------------------------------|                                 |
- * kg (globals + data) ----------------------------------|                                 |
+ * kg (globals) -----------------------------------------|                                 |
  * LightRay_dl_coop -------------------------------------|
  * ISLamp_coop ------------------------------------------|
  * BSDFEval_coop ----------------------------------------|
@@ -60,9 +60,8 @@
  * QUEUE_HITBG_BUFF_UPDATE_TOREGEN_RAYS will be filled with RAY_TO_REGENERATE and more RAY_UPDATE_BUFFER rays
  */
 ccl_device char kernel_next_iteration_setup(
-        ccl_global char *globals,
-        ccl_constant KernelData *data,
-        ccl_global char *shader_data,         /* Required for setting up ray for next iteration */
+        KernelGlobals *kg,
+        ShaderData *sd,                       /* Required for setting up ray for next iteration */
         ccl_global uint *rng_coop,            /* Required for setting up ray for next iteration */
         ccl_global float3 *throughput_coop,   /* Required for setting up ray for next iteration */
         PathRadiance *PathRadiance_coop,      /* Required for setting up ray for next iteration */
@@ -81,16 +80,14 @@ ccl_device char kernel_next_iteration_setup(
 {
 	char enqueue_flag = 0;
 
-	/* Load kernel globals structure and ShaderData structure. */
-	KernelGlobals *kg = (KernelGlobals *)globals;
-	ShaderData *sd = (ShaderData *)shader_data;
-	PathRadiance *L = 0x0;
-	ccl_global PathState *state = 0x0;
+	/* Load ShaderData structure. */
+	PathRadiance *L = NULL;
+	ccl_global PathState *state = NULL;
 
 	/* Path radiance update for AO/Direct_lighting's shadow blocked. */
 	if(IS_FLAG(ray_state, ray_index, RAY_SHADOW_RAY_CAST_DL) ||
 	   IS_FLAG(ray_state, ray_index, RAY_SHADOW_RAY_CAST_AO))
-	 {
+	{
 		state = &PathState_coop[ray_index];
 		L = &PathRadiance_coop[ray_index];
 		float3 _throughput = throughput_coop[ray_index];
@@ -129,7 +126,7 @@ ccl_device char kernel_next_iteration_setup(
 	if(IS_STATE(ray_state, ray_index, RAY_ACTIVE)) {
 		ccl_global float3 *throughput = &throughput_coop[ray_index];
 		ccl_global Ray *ray = &Ray_coop[ray_index];
-		ccl_global RNG* rng = &rng_coop[ray_index];
+		ccl_global RNG *rng = &rng_coop[ray_index];
 		state = &PathState_coop[ray_index];
 		L = &PathRadiance_coop[ray_index];
 

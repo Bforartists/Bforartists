@@ -253,10 +253,10 @@ typedef struct BulletSoftBody {
 
 /* BulletSoftBody.flag */
 #define OB_BSB_SHAPE_MATCHING	2
-#define OB_BSB_UNUSED 4
+// #define OB_BSB_UNUSED 4
 #define OB_BSB_BENDING_CONSTRAINTS 8
 #define OB_BSB_AERO_VPOINT 16 /* aero model, Vertex normals are oriented toward velocity*/
-#define OB_BSB_AERO_VTWOSIDE 32 /* aero model, Vertex normals are flipped to match velocity */
+// #define OB_BSB_AERO_VTWOSIDE 32 /* aero model, Vertex normals are flipped to match velocity */
 
 /* BulletSoftBody.collisionflags */
 #define OB_BSB_COL_SDF_RS	2 /* SDF based rigid vs soft */
@@ -339,6 +339,8 @@ typedef struct SoftBody {
 	struct PointCache *pointcache;
 	struct ListBase ptcaches;
 
+	struct Group *collision_group;
+
 	struct EffectorWeights *effector_weights;
 	/* reverse esimated obmatrix .. no need to store in blend file .. how ever who cares */ 
 	float lcom[3];
@@ -370,6 +372,7 @@ typedef struct SoftBody {
 #define PFIELD_DO_ROTATION		(1<<15)
 #define PFIELD_GUIDE_PATH_WEIGHT (1<<16)	/* apply curve weights */
 #define PFIELD_SMOKE_DENSITY    (1<<17)		/* multiply smoke force by density */
+#define PFIELD_GRAVITATION		(1<<18)             /* used for (simple) force */
 
 /* pd->falloff */
 #define PFIELD_FALL_SPHERE		0

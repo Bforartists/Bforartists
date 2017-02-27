@@ -53,6 +53,7 @@ void            PyC_List_Fill(PyObject *list, PyObject *value);
 PyObject *      PyC_UnicodeFromByte(const char *str);
 PyObject *      PyC_UnicodeFromByteAndSize(const char *str, Py_ssize_t size);
 const char *    PyC_UnicodeAsByte(PyObject *py_str, PyObject **coerce); /* coerce must be NULL */
+const char *    PyC_UnicodeAsByteAndSize(PyObject *py_str, Py_ssize_t *size, PyObject **coerce);
 
 /* name namespace function for bpy & bge */
 PyObject *		PyC_DefaultNameSpace(const char *filename);
@@ -79,7 +80,7 @@ int       PyC_FlagSet_ValueFromID(PyC_FlagSet *item, const char *identifier, int
 int       PyC_FlagSet_ToBitfield(PyC_FlagSet *items, PyObject *value, int *r_value, const char *error_prefix);
 PyObject *PyC_FlagSet_FromBitfield(PyC_FlagSet *items, int flag);
 
-int PyC_RunString_AsNumber(const char *expr, double *value, const char *filename);
+bool PyC_RunString_AsNumber(const char *expr, double *value, const char *filename);
 
 int PyC_ParseBool(PyObject *o, void *p);
 

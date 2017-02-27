@@ -71,27 +71,20 @@ static int sound_cfra;
 static char **audio_device_names = NULL;
 #endif
 
-bSound *BKE_sound_new_file(struct Main *bmain, const char *filename)
+bSound *BKE_sound_new_file(struct Main *bmain, const char *filepath)
 {
 	bSound *sound;
-
-	char str[FILE_MAX];
 	const char *path;
+	char str[FILE_MAX];
 
-	size_t len;
-
-	BLI_strncpy(str, filename, sizeof(str));
+	BLI_strncpy(str, filepath, sizeof(str));
 
 	path = /*bmain ? bmain->name :*/ G.main->name;
 
 	BLI_path_abs(str, path);
 
-	len = strlen(filename);
-	while (len > 0 && filename[len - 1] != '/' && filename[len - 1] != '\\')
-		len--;
-
-	sound = BKE_libblock_alloc(bmain, ID_SO, filename + len);
-	BLI_strncpy(sound->name, filename, FILE_MAX);
+	sound = BKE_libblock_alloc(bmain, ID_SO, BLI_path_basename(filepath));
+	BLI_strncpy(sound->name, filepath, FILE_MAX);
 	/* sound->type = SOUND_TYPE_FILE; */ /* XXX unused currently */
 
 	BKE_sound_load(bmain, sound);
@@ -99,8 +92,42 @@ bSound *BKE_sound_new_file(struct Main *bmain, const char *filename)
 	return sound;
 }
 
+bSound *BKE_sound_new_file_exists_ex(struct Main *bmain, const char *filepath, bool *r_exists)
+{
+	bSound *sound;
+	char str[FILE_MAX], strtest[FILE_MAX];
+
+	BLI_strncpy(str, filepath, sizeof(str));
+	BLI_path_abs(str, bmain->name);
+
+	/* first search an identical filepath */
+	for (sound = bmain->sound.first; sound; sound = sound->id.next) {
+		BLI_strncpy(strtest, sound->name, sizeof(sound->name));
+		BLI_path_abs(strtest, ID_BLEND_PATH(bmain, &sound->id));
+
+		if (BLI_path_cmp(strtest, str) == 0) {
+			id_us_plus(&sound->id);  /* officially should not, it doesn't link here! */
+			if (r_exists)
+				*r_exists = true;
+			return sound;
+		}
+	}
+
+	if (r_exists)
+		*r_exists = false;
+	return BKE_sound_new_file(bmain, filepath);
+}
+
+bSound *BKE_sound_new_file_exists(struct Main *bmain, const char *filepath)
+{
+	return BKE_sound_new_file_exists_ex(bmain, filepath, NULL);
+}
+
+/** Free (or release) any data used by this sound (does not free the sound itself). */
 void BKE_sound_free(bSound *sound)
 {
+	/* No animdata here. */
+
 	if (sound->packedfile) {
 		freePackedFile(sound->packedfile);
 		sound->packedfile = NULL;
@@ -120,13 +147,17 @@ void BKE_sound_free(bSound *sound)
 
 	BKE_sound_free_waveform(sound);
 	
+#endif  /* WITH_AUDASPACE */
 	if (sound->spinlock) {
 		BLI_spin_end(sound->spinlock);
 		MEM_freeN(sound->spinlock);
 		sound->spinlock = NULL;
 	}
-	
-#endif  /* WITH_AUDASPACE */
+}
+
+void BKE_sound_make_local(Main *bmain, bSound *sound, const bool lib_local)
+{
+	BKE_id_make_local_generic(bmain, &sound->id, true, lib_local);
 }
 
 #ifdef WITH_AUDASPACE
@@ -136,6 +167,10 @@ static const char *force_device = NULL;
 #ifdef WITH_JACK
 static void sound_sync_callback(void *data, int mode, float time)
 {
+	// Ugly: Blender doesn't like it when the animation is played back during rendering
+	if (G.is_rendering)
+		return;
+
 	struct Main *bmain = (struct Main *)data;
 	struct Scene *scene;
 
@@ -203,7 +238,7 @@ void BKE_sound_init(struct Main *bmain)
 		buffersize = 1024;
 
 	if (specs.rate < AUD_RATE_8000)
-		specs.rate = AUD_RATE_44100;
+		specs.rate = AUD_RATE_48000;
 
 	if (specs.format <= AUD_FORMAT_INVALID)
 		specs.format = AUD_FORMAT_S16;
@@ -220,7 +255,8 @@ void BKE_sound_init(struct Main *bmain)
 void BKE_sound_init_main(struct Main *bmain)
 {
 #ifdef WITH_JACK
-	AUD_setSynchronizerCallback(sound_sync_callback, bmain);
+	if (sound_device)
+		AUD_setSynchronizerCallback(sound_sync_callback, bmain);
 #else
 	(void)bmain; /* unused */
 #endif
@@ -290,15 +326,6 @@ bSound *BKE_sound_new_limiter(struct Main *bmain, bSound *source, float start, f
 	return sound;
 }
 #endif
-
-void BKE_sound_delete(struct Main *bmain, bSound *sound)
-{
-	if (sound) {
-		BKE_sound_free(sound);
-
-		BKE_libblock_free(bmain, sound);
-	}
-}
 
 void BKE_sound_cache(bSound *sound)
 {
@@ -427,6 +454,16 @@ void BKE_sound_destroy_scene(struct Scene *scene)
 		AUD_destroySet(scene->speaker_handles);
 }
 
+void BKE_sound_reset_scene_specs(struct Scene *scene)
+{
+	AUD_Specs specs;
+
+	specs.channels = AUD_Device_getChannels(sound_device);
+	specs.rate = AUD_Device_getRate(sound_device);
+
+	AUD_Sequence_setSpecs(scene->sound_scene, specs);
+}
+
 void BKE_sound_mute_scene(struct Scene *scene, int muted)
 {
 	if (scene->sound_scene)
@@ -538,6 +575,7 @@ void BKE_sound_set_scene_sound_pitch(void *handle, float pitch, char animated)
 
 void BKE_sound_set_scene_sound_pan(void *handle, float pan, char animated)
 {
+	printf("%s\n", __func__);
 	AUD_SequenceEntry_setAnimationData(handle, AUD_AP_PANNING, sound_cfra, &pan, animated);
 }
 
@@ -552,15 +590,10 @@ void BKE_sound_update_sequencer(struct Main *main, bSound *sound)
 
 static void sound_start_play_scene(struct Scene *scene)
 {
-	AUD_Specs specs;
-
 	if (scene->playback_handle)
 		AUD_Handle_stop(scene->playback_handle);
 
-	specs.channels = AUD_Device_getChannels(sound_device);
-	specs.rate = AUD_Device_getRate(sound_device);
-
-	AUD_Sequence_setSpecs(scene->sound_scene, specs);
+	BKE_sound_reset_scene_specs(scene);
 
 	if ((scene->playback_handle = AUD_Device_play(sound_device, scene->sound_scene, 1)))
 		AUD_Handle_setLoopCount(scene->playback_handle, -1);
@@ -669,6 +702,10 @@ void BKE_sound_seek_scene(struct Main *bmain, struct Scene *scene)
 
 float BKE_sound_sync_scene(struct Scene *scene)
 {
+	// Ugly: Blender doesn't like it when the animation is played back during rendering
+	if (G.is_rendering)
+		return NAN_FLT;
+
 	if (scene->playback_handle) {
 		if (scene->audio.flag & AUDIO_SYNC)
 			return AUD_getSynchronizerPosition(scene->playback_handle);
@@ -680,6 +717,10 @@ float BKE_sound_sync_scene(struct Scene *scene)
 
 int BKE_sound_scene_playing(struct Scene *scene)
 {
+	// Ugly: Blender doesn't like it when the animation is played back during rendering
+	if (G.is_rendering)
+		return -1;
+
 	if (scene->audio.flag & AUDIO_SYNC)
 		return AUD_isSynchronizerPlaying();
 	else
@@ -842,7 +883,7 @@ char **BKE_sound_get_device_names(void)
 		audio_device_names = AUD_getDeviceNames();
 #else
 		static const char *names[] = {
-			"Null", "SDL", "OpenAL", "Jack", NULL
+			"Null", "SDL", "OpenAL", "JACK", NULL
 		};
 		audio_device_names = (char **)names;
 #endif
@@ -874,6 +915,7 @@ void BKE_sound_delete_cache(struct bSound *UNUSED(sound)) {}
 void BKE_sound_load(struct Main *UNUSED(bmain), struct bSound *UNUSED(sound)) {}
 void BKE_sound_create_scene(struct Scene *UNUSED(scene)) {}
 void BKE_sound_destroy_scene(struct Scene *UNUSED(scene)) {}
+void BKE_sound_reset_scene_specs(struct Scene *UNUSED(scene)) {}
 void BKE_sound_mute_scene(struct Scene *UNUSED(scene), int UNUSED(muted)) {}
 void *BKE_sound_scene_add_scene_sound(struct Scene *UNUSED(scene), struct Sequence *UNUSED(sequence),
                                       int UNUSED(startframe), int UNUSED(endframe), int UNUSED(frameskip)) { return NULL; }

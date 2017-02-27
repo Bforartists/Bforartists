@@ -40,9 +40,9 @@
 #include "MEM_guardedalloc.h"
 
 #include "BLI_utildefines.h"
-#include "BLI_path_util.h"
 #include "BLI_listbase.h"
 #include "BLI_string.h"
+#include "BLI_string_utils.h"
 #include "BLI_ghash.h"
 
 #include "BLT_translation.h"
@@ -183,7 +183,7 @@ NlaStrip *copy_nlastrip(NlaStrip *strip, const bool use_same_action)
 		}
 		else {
 			/* use a copy of the action instead (user count shouldn't have changed yet) */
-			strip_d->act = BKE_action_copy(strip_d->act);
+			strip_d->act = BKE_action_copy(G.main, strip_d->act);
 		}
 	}
 		
@@ -1178,7 +1178,34 @@ static void nlastrip_fix_resize_overlaps(NlaStrip *strip)
 		NlaStrip *nls = strip->next;
 		float offset = 0.0f;
 		
-		if (strip->end > nls->start) {
+		if (nls->type == NLASTRIP_TYPE_TRANSITION) {
+			/* transition strips should grow/shrink to accomodate the resized strip,
+			 * but if the strip's bounds now exceed the transition, we're forced to
+			 * offset everything to maintain the balance
+			 */
+			if (strip->end <= nls->start) {
+				/* grow the transition to fill the void */
+				nls->start = strip->end;
+			}
+			else if (strip->end < nls->end) {
+				/* shrink the transition to give the strip room */
+				nls->start = strip->end;
+			}
+			else {
+				/* shrink transition down to 1 frame long (so that it can still be found),
+				 * then offset everything else by the remaining defict to give the strip room
+				 */
+				nls->start = nls->end - 1.0f;
+				offset     = ceilf(strip->end - nls->start);  /* XXX: review whether preventing fractionals is good here... */
+				
+				/* apply necessary offset to ensure that the strip has enough space */
+				for (; nls; nls = nls->next) {
+					nls->start += offset;
+					nls->end   += offset;
+				}
+			}
+		}
+		else if (strip->end > nls->start) {
 			/* NOTE: need to ensure we don't have a fractional frame offset, even if that leaves a gap,
 			 * otherwise it will be very hard to get rid of later
 			 */
@@ -1198,7 +1225,34 @@ static void nlastrip_fix_resize_overlaps(NlaStrip *strip)
 		NlaStrip *nls = strip->prev;
 		float offset = 0.0f;
 		
-		if (strip->start < nls->end) {
+		if (nls->type == NLASTRIP_TYPE_TRANSITION) {
+			/* transition strips should grow/shrink to accomodate the resized strip,
+			 * but if the strip's bounds now exceed the transition, we're forced to
+			 * offset everything to maintain the balance
+			 */
+			if (strip->start >= nls->end) {
+				/* grow the transition to fill the void */
+				nls->end = strip->start;
+			}
+			else if (strip->start > nls->start) {
+				/* shrink the transition to give the strip room */
+				nls->end = strip->start;
+			}
+			else {
+				/* shrink transition down to 1 frame long (so that it can still be found),
+				 * then offset everything else by the remaining defict to give the strip room
+				 */
+				nls->end = nls->start + 1.0f;
+				offset   = ceilf(nls->end - strip->start);  /* XXX: review whether preventing fractionals is good here... */
+				
+				/* apply necessary offset to ensure that the strip has enough space */
+				for (; nls; nls = nls->next) {
+					nls->start -= offset;
+					nls->end   -= offset;
+				}
+			}
+		}
+		else if (strip->start < nls->end) {
 			/* NOTE: need to ensure we don't have a fractional frame offset, even if that leaves a gap,
 			 * otherwise it will be very hard to get rid of later
 			 */
@@ -1237,7 +1291,7 @@ void BKE_nlastrip_recalculate_bounds(NlaStrip *strip)
 	if (IS_EQF(mapping, 0.0f) == 0)
 		strip->end = (actlen * mapping) + strip->start;
 	
-	/* make sure we don't overlap our neighbours */
+	/* make sure we don't overlap our neighbors */
 	nlastrip_fix_resize_overlaps(strip);
 }
 
@@ -1778,7 +1832,7 @@ bool BKE_nla_tweakmode_enter(AnimData *adt)
 		}
 		return false;
 	}
-		
+	
 	/* go over all the tracks up to the active one, tagging each strip that uses the same 
 	 * action as the active strip, but leaving everything else alone
 	 */
@@ -1859,8 +1913,19 @@ void BKE_nla_tweakmode_exit(AnimData *adt)
 	for (nlt = adt->nla_tracks.first; nlt; nlt = nlt->next) {
 		nlt->flag &= ~NLATRACK_DISABLED;
 		
-		for (strip = nlt->strips.first; strip; strip = strip->next)
+		for (strip = nlt->strips.first; strip; strip = strip->next) {
+			/* sync strip extents if this strip uses the same action */
+			if ((adt->actstrip) && (adt->actstrip->act == strip->act) && (strip->flag & NLASTRIP_FLAG_SYNC_LENGTH)) {
+				/* recalculate the length of the action */
+				calc_action_range(strip->act, &strip->actstart, &strip->actend, 0);
+				
+				/* adjust the strip extents in response to this */
+				BKE_nlastrip_recalculate_bounds(strip);
+			}
+			
+			/* clear tweakuser flag */
 			strip->flag &= ~NLASTRIP_FLAG_TWEAKUSER;
+		}
 	}
 	
 	/* handle AnimData level changes:
@@ -1870,7 +1935,8 @@ void BKE_nla_tweakmode_exit(AnimData *adt)
 	 *	- editing-flag for this AnimData block should also get turned off
 	 *	- clear pointer to active strip
 	 */
-	if (adt->action) adt->action->id.us--;
+	if (adt->action)
+		id_us_min(&adt->action->id);
 	adt->action = adt->tmpact;
 	adt->tmpact = NULL;
 	adt->act_track = NULL;

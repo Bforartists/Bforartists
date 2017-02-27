@@ -172,6 +172,7 @@ KX_Scene::KX_Scene(class SCA_IInputDevice* keyboarddevice,
 	m_activity_culling = false;
 	m_suspend = false;
 	m_isclearingZbuffer = true;
+	m_isShadowDone = false;
 	m_tempObjectList = new CListValue();
 	m_objectlist = new CListValue();
 	m_parentlist = new CListValue();
@@ -898,7 +899,7 @@ SCA_IObject* KX_Scene::AddReplicaObject(class CValue* originalobject,
 		m_tempObjectList->Add(replica->AddRef());
 		// this convert the life from frames to sort-of seconds, hard coded 0.02 that assumes we have 50 frames per second
 		// if you change this value, make sure you change it in KX_GameObject::pyattr_get_life property too
-		CValue *fval = new CFloatValue(lifespan*0.02);
+		CValue *fval = new CFloatValue(lifespan*0.02f);
 		replica->SetProperty("::timebomb",fval);
 		fval->Release();
 	}
@@ -1006,16 +1007,27 @@ void KX_Scene::RemoveObject(class CValue* gameobj)
 	//newobj->SetSGNode(0);
 }
 
+void KX_Scene::RemoveDupliGroup(class CValue *gameobj)
+{
+	KX_GameObject *newobj = (KX_GameObject *) gameobj;
+
+	if (newobj->IsDupliGroup()) {
+		for (int i = 0; i < newobj->GetInstanceObjects()->GetCount(); i++) {
+			CValue *obj = newobj->GetInstanceObjects()->GetValue(i);
+			DelayedRemoveObject(obj);
+		}
+	}
+}
+
 void KX_Scene::DelayedRemoveObject(class CValue* gameobj)
 {
-	//KX_GameObject* newobj = (KX_GameObject*) gameobj;
+	RemoveDupliGroup(gameobj);
+
 	if (!m_euthanasyobjects->SearchValue(gameobj))
 	{
 		m_euthanasyobjects->Add(gameobj->AddRef());
-	} 
+	}
 }
-
-
 
 int KX_Scene::NewRemoveObject(class CValue* gameobj)
 {
@@ -1546,9 +1558,9 @@ void KX_Scene::CalculateVisibleMeshes(RAS_IRasterizer* rasty,KX_Camera* cam, int
 		planes[5].setValue(cplanes[3].getValue());	// bottom
 		CullingInfo info(layer);
 
-		double mvmat[16] = {0};
+		float mvmat[16] = {0};
 		cam->GetModelviewMatrix().getValue(mvmat);
-		double pmat[16] = {0};
+		float pmat[16] = {0};
 		cam->GetProjectionMatrix().getValue(pmat);
 
 		dbvt_culling = m_physicsEnvironment->CullingTest(PhysicsCullingCallback,&info,planes,5,m_dbvt_occlusion_res,
@@ -1577,7 +1589,7 @@ void KX_Scene::LogicBeginFrame(double curtime)
 		
 		if (propval)
 		{
-			float timeleft = propval->GetNumber() - 1.0/KX_KetsjiEngine::GetTicRate();
+			float timeleft = (float)(propval->GetNumber() - 1.0/KX_KetsjiEngine::GetTicRate());
 			
 			if (timeleft > 0)
 			{
@@ -1653,7 +1665,7 @@ static void update_anim_thread_func(TaskPool *pool, void *taskdata, int UNUSED(t
 
 		// Only do deformers here if they are not parented to an armature, otherwise the armature will
 		// handle updating its children
-		if (gameobj->GetDeformer() && (!parent || (parent && parent->GetGameObjectType() != SCA_IObject::OBJ_ARMATURE)))
+		if (gameobj->GetDeformer() && (!parent || parent->GetGameObjectType() != SCA_IObject::OBJ_ARMATURE))
 			gameobj->GetDeformer()->Update();
 
 		for (int j=0; j<children->GetCount(); ++j) {
@@ -1678,10 +1690,6 @@ void KX_Scene::UpdateAnimations(double curtime)
 
 	BLI_task_pool_work_and_wait(pool);
 	BLI_task_pool_free(pool);
-
-	for (int i=0; i<m_animatedlist->GetCount(); ++i) {
-		((KX_GameObject*)m_animatedlist->GetValue(i))->UpdateActionIPOs();
-	}
 }
 
 void KX_Scene::LogicUpdateFrame(double curtime, bool frame)
@@ -1777,7 +1785,7 @@ void KX_Scene::UpdateObjectLods(void)
 
 	for (int i = 0; i < this->GetObjectList()->GetCount(); i++) {
 		gameobj = (KX_GameObject*) GetObjectList()->GetValue(i);
-		if (!gameobj->GetCulled()){
+		if (!gameobj->GetCulled()) {
 			gameobj->UpdateLod(cam_pos);
 		}
 	}
@@ -1820,9 +1828,9 @@ void KX_Scene::UpdateObjectActivity(void)
 				 * Manhattan distance. */
 				MT_Point3 obpos = ob->NodeGetWorldPosition();
 				
-				if ((fabs(camloc[0] - obpos[0]) > m_activity_box_radius) ||
-				    (fabs(camloc[1] - obpos[1]) > m_activity_box_radius) ||
-				    (fabs(camloc[2] - obpos[2]) > m_activity_box_radius) )
+				if ((fabsf(camloc[0] - obpos[0]) > m_activity_box_radius) ||
+				    (fabsf(camloc[1] - obpos[1]) > m_activity_box_radius) ||
+				    (fabsf(camloc[2] - obpos[2]) > m_activity_box_radius) )
 				{
 					ob->Suspend();
 				}
@@ -1836,8 +1844,8 @@ void KX_Scene::UpdateObjectActivity(void)
 
 void KX_Scene::SetActivityCullingRadius(float f)
 {
-	if (f < 0.5)
-		f = 0.5;
+	if (f < 0.5f)
+		f = 0.5f;
 	m_activity_box_radius = f;
 }
 	
@@ -1918,6 +1926,7 @@ static void MergeScene_LogicBrick(SCA_ILogicBrick* brick, KX_Scene *from, KX_Sce
 
 	brick->Replace_IScene(to);
 	brick->Replace_NetworkScene(to->GetNetworkScene());
+	brick->SetLogicManager(to->GetLogicManager());
 
 	// If we end up replacing a KX_TouchEventManager, we need to make sure
 	// physics controllers are properly in place. In other words, do this
@@ -2534,8 +2543,8 @@ KX_PYMETHODDEF_DOC(KX_Scene, addObject,
 	if (!PyArg_ParseTuple(args, "O|Oi:addObject", &pyob, &pyreference, &time))
 		return NULL;
 
-	if (!ConvertPythonToGameObject(pyob, &ob, false, "scene.addObject(object, reference, time): KX_Scene (first argument)") ||
-		!ConvertPythonToGameObject(pyreference, &reference, true, "scene.addObject(object, reference, time): KX_Scene (second argument)"))
+	if (!ConvertPythonToGameObject(m_logicmgr, pyob, &ob, false, "scene.addObject(object, reference, time): KX_Scene (first argument)") ||
+		!ConvertPythonToGameObject(m_logicmgr, pyreference, &reference, true, "scene.addObject(object, reference, time): KX_Scene (second argument)"))
 		return NULL;
 
 	if (!m_inactivelist->SearchValue(ob)) {

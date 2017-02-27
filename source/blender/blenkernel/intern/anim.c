@@ -201,7 +201,15 @@ bMotionPath *animviz_verify_motionpaths(ReportList *reports, Scene *scene, Objec
 		mpath->flag |= MOTIONPATH_FLAG_BHEAD;
 	else
 		mpath->flag &= ~MOTIONPATH_FLAG_BHEAD;
-	
+
+	/* set default custom values */
+	mpath->color[0] = 1.0;    /* Red */
+	mpath->color[1] = 0.0;
+	mpath->color[2] = 0.0;
+
+	mpath->line_thickness = 1;
+	mpath->flag |= MOTIONPATH_FLAG_LINES;  /* draw lines by default */
+
 	/* allocate a cache */
 	mpath->points = MEM_callocN(sizeof(bMotionPathVert) * mpath->length, "bMotionPathVerts");
 	
@@ -340,11 +348,11 @@ static void motionpaths_calc_update_scene(Scene *scene)
 		}
 	}
 #else // original, 'always correct' version
-	  /* do all updates
-	   *  - if this is too slow, resort to using a more efficient way
-	   *    that doesn't force complete update, but for now, this is the
-	   *    most accurate way!
-	   */
+	/* do all updates
+	 *  - if this is too slow, resort to using a more efficient way
+	 *    that doesn't force complete update, but for now, this is the
+	 *    most accurate way!
+	 */
 	BKE_scene_update_for_newframe(G.main->eval_ctx, G.main, scene, scene->lay); /* XXX this is the best way we can get anything moving */
 #endif
 }

@@ -6,20 +6,34 @@
 __author__ = "mozman <mozman@gmx.at>"
 
 from .tags import TagGroups
-from .tags import ClassifiedTags
-from .dxfentity import DXFEntity
+from .tags import Tags
 
-from .dxfattr import DXFAttr, DXFAttributes, DefSubclass
+LOCK = 0b00000100
+FROZEN = 0b00000001
 
 
 class Layer(object):
-    def __init__(self, wrapper):
-        self.name = wrapper.get_dxf_attrib('name')
-        self.color = wrapper.get_color()
-        self.linetype = wrapper.get_dxf_attrib('linetype')
-        self.locked = wrapper.is_locked()
-        self.frozen = wrapper.is_frozen()
-        self.on = wrapper.is_on()
+    def __init__(self, tags):
+        self.name = ""
+        self.color = 7
+        self.linetype = ""
+        self.locked = False
+        self.frozen = False
+        self.on = True
+        for code, value in tags.plain_tags():
+            if code == 2:
+                self.name = value
+            elif code == 70:
+                self.frozen = bool(value & FROZEN)
+                self.locked = bool(value & LOCK)
+            elif code == 62:
+                if value < 0:
+                    self.on = False
+                    self.color = abs(value)
+                else:
+                    self.color = value
+            elif code == 6:
+                self.linetype = value
 
 
 class Table(object):
@@ -55,66 +69,22 @@ class Table(object):
 
     # end public interface
 
-    def _classified_tags(self, tags):
+    def entry_tags(self, tags):
         groups = TagGroups(tags)
         assert groups.get_name(0) == 'TABLE'
         assert groups.get_name(-1) == 'ENDTAB'
         for entrytags in groups[1:-1]:
-            yield ClassifiedTags(entrytags)
+            yield Tags(entrytags)
 
 
 class LayerTable(Table):
     name = 'layers'
 
     @staticmethod
-    def from_tags(tags, drawing):
-        dxfversion = drawing.dxfversion
+    def from_tags(tags):
         layers = LayerTable()
-        for entrytags in layers._classified_tags(tags):
-            dxflayer = layers.wrap(entrytags, dxfversion)
-            layers._table_entries[dxflayer.get_dxf_attrib('name')] = Layer(dxflayer)
+        for entrytags in layers.entry_tags(tags):
+            layer = Layer(entrytags)
+            layers._table_entries[layer.name] = layer
         return layers
 
-    @staticmethod
-    def wrap(tags, dxfversion):
-        return DXF12Layer(tags) if dxfversion == "AC1009" else DXF13Layer(tags)
-
-
-class DXF12Layer(DXFEntity):
-    DXFATTRIBS = DXFAttributes(DefSubclass(None, {
-        'handle': DXFAttr(5),
-        'name': DXFAttr(2),
-        'flags': DXFAttr(70),
-        'color': DXFAttr(62),  # dxf color index, if < 0 layer is off
-        'linetype': DXFAttr(6),
-        }))
-    LOCK = 0b00000100
-    FROZEN = 0b00000001
-
-    def is_frozen(self):
-        return self.get_dxf_attrib('flags') & DXF12Layer.FROZEN > 0
-
-    def is_locked(self):
-        return self.get_dxf_attrib('flags') & DXF12Layer.LOCK > 0
-
-    def is_off(self):
-        return self.get_dxf_attrib('color') < 0
-
-    def is_on(self):
-        return not self.is_off()
-
-    def get_color(self):
-        return abs(self.get_dxf_attrib('color'))
-
-none_subclass = DefSubclass(None, {'handle': DXFAttr(5)})
-symbol_subclass = DefSubclass('AcDbSymbolTableRecord', {})
-layer_subclass = DefSubclass('AcDbLayerTableRecord', {
-    'name': DXFAttr(2),  # layer name
-    'flags': DXFAttr(70),
-    'color': DXFAttr(62),  # dxf color index
-    'linetype': DXFAttr(6),  # linetype name
-})
-
-
-class DXF13Layer(DXF12Layer):
-    DXFATTRIBS = DXFAttributes(none_subclass, symbol_subclass, layer_subclass)

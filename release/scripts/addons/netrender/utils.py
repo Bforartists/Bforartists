@@ -61,7 +61,7 @@ else:
         def __exit__(self, exc_type, exc_value, traceback):
             pass
 
-if system in {'Windows', 'win32'} and platform.version() >= '5': # Error mode is only available on Win2k or higher, that's version 5
+if system in {"Windows", "win32"}:
     import ctypes
     class NoErrorDialogContext:
         def __init__(self):
@@ -159,7 +159,7 @@ def clientScan(report = None):
 
         return ("", 8000) # return default values
 
-def clientConnection(netsettings, report = None, scan = True, timeout = 5):
+def clientConnection(netsettings, report = None, scan = True, timeout = 50):
     address = netsettings.server_address
     port = netsettings.server_port
     use_ssl = netsettings.use_ssl

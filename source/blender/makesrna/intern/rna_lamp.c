@@ -166,7 +166,7 @@ static void rna_Lamp_use_nodes_update(bContext *C, PointerRNA *ptr)
 
 #else
 /* Don't define icons here, so they don't show up in the Lamp UI (properties Editor) - DingTo */
-EnumPropertyItem lamp_type_items[] = {
+EnumPropertyItem rna_enum_lamp_type_items[] = {
 	{LA_LOCAL, "POINT", 0, "Point", "Omnidirectional point light source"},
 	{LA_SUN, "SUN", 0, "Sun", "Constant direction parallel ray light source"},
 	{LA_SPOT, "SPOT", 0, "Spot", "Directional cone light source"},
@@ -189,7 +189,7 @@ static void rna_def_lamp_mtex(BlenderRNA *brna)
 
 	srna = RNA_def_struct(brna, "LampTextureSlot", "TextureSlot");
 	RNA_def_struct_sdna(srna, "MTex");
-	RNA_def_struct_ui_text(srna, "Lamp Texture Slot", "Texture slot for textures in a Lamp datablock");
+	RNA_def_struct_ui_text(srna, "Lamp Texture Slot", "Texture slot for textures in a Lamp data-block");
 
 	prop = RNA_def_property(srna, "texture_coords", PROP_ENUM, PROP_NONE);
 	RNA_def_property_enum_sdna(prop, NULL, "texco");
@@ -250,7 +250,7 @@ static void rna_def_lamp_sky_settings(BlenderRNA *brna)
 
 	prop = RNA_def_property(srna, "sky_blend_type", PROP_ENUM, PROP_NONE);
 	RNA_def_property_enum_sdna(prop, NULL, "skyblendtype");
-	RNA_def_property_enum_items(prop, ramp_blend_items);
+	RNA_def_property_enum_items(prop, rna_enum_ramp_blend_items);
 	RNA_def_property_ui_text(prop, "Sky Blend Mode", "Blend mode for combining sun sky with world sky");
 	RNA_def_property_update(prop, 0, "rna_Lamp_sky_update");
 	
@@ -343,11 +343,11 @@ static void rna_def_lamp(BlenderRNA *brna)
 
 	srna = RNA_def_struct(brna, "Lamp", "ID");
 	RNA_def_struct_refine_func(srna, "rna_Lamp_refine");
-	RNA_def_struct_ui_text(srna, "Lamp", "Lamp datablock for lighting a scene");
+	RNA_def_struct_ui_text(srna, "Lamp", "Lamp data-block for lighting a scene");
 	RNA_def_struct_ui_icon(srna, ICON_LAMP_DATA);
 
 	prop = RNA_def_property(srna, "type", PROP_ENUM, PROP_NONE);
-	RNA_def_property_enum_items(prop, lamp_type_items);
+	RNA_def_property_enum_items(prop, rna_enum_lamp_type_items);
 	RNA_def_property_ui_text(prop, "Type", "Type of Lamp");
 	RNA_def_property_translation_context(prop, BLT_I18NCONTEXT_ID_LAMP);
 	RNA_def_property_update(prop, 0, "rna_Lamp_draw_update");
@@ -420,6 +420,7 @@ static void rna_def_lamp_falloff(StructRNA *srna)
 		{LA_FALLOFF_CONSTANT, "CONSTANT", 0, "Constant", ""},
 		{LA_FALLOFF_INVLINEAR, "INVERSE_LINEAR", 0, "Inverse Linear", ""},
 		{LA_FALLOFF_INVSQUARE, "INVERSE_SQUARE", 0, "Inverse Square", ""},
+		{LA_FALLOFF_INVCOEFFICIENTS, "INVERSE_COEFFICIENTS", 0, "Inverse Coefficients", ""},
 		{LA_FALLOFF_CURVE, "CUSTOM_CURVE", 0, "Custom Curve", ""},
 		{LA_FALLOFF_SLIDERS, "LINEAR_QUADRATIC_WEIGHTED", 0, "Lin/Quad Weighted", ""},
 		{0, NULL, 0, NULL, NULL}
@@ -450,6 +451,27 @@ static void rna_def_lamp_falloff(StructRNA *srna)
 	RNA_def_property_float_sdna(prop, NULL, "att2");
 	RNA_def_property_range(prop, 0.0f, 1.0f);
 	RNA_def_property_ui_text(prop, "Quadratic Attenuation", "Quadratic distance attenuation");
+	RNA_def_property_update(prop, 0, "rna_Lamp_draw_update");
+
+	prop = RNA_def_property(srna, "constant_coefficient", PROP_FLOAT, PROP_NONE);
+	RNA_def_property_float_sdna(prop, NULL, "coeff_const");
+	RNA_def_property_range(prop, 0.0f, FLT_MAX);
+	RNA_def_property_ui_text(prop, "Constant Coefficient",
+	                         "Constant distance attenuation coefficient");
+	RNA_def_property_update(prop, 0, "rna_Lamp_draw_update");
+
+	prop = RNA_def_property(srna, "linear_coefficient", PROP_FLOAT, PROP_NONE);
+	RNA_def_property_float_sdna(prop, NULL, "coeff_lin");
+	RNA_def_property_range(prop, 0.0f, FLT_MAX);
+	RNA_def_property_ui_text(prop, "Linear Coefficient",
+	                         "Linear distance attenuation coefficient");
+	RNA_def_property_update(prop, 0, "rna_Lamp_draw_update");
+
+	prop = RNA_def_property(srna, "quadratic_coefficient", PROP_FLOAT, PROP_NONE);
+	RNA_def_property_float_sdna(prop, NULL, "coeff_quad");
+	RNA_def_property_range(prop, 0.0f, FLT_MAX);
+	RNA_def_property_ui_text(prop, "Quadratic Coefficient",
+	                         "Quadratic distance attenuation coefficient");
 	RNA_def_property_update(prop, 0, "rna_Lamp_draw_update");
 }
 
@@ -524,7 +546,7 @@ static void rna_def_lamp_shadow(StructRNA *srna, int spot, int area)
 	prop = RNA_def_property(srna, "shadow_method", PROP_ENUM, PROP_NONE);
 	RNA_def_property_enum_bitflag_sdna(prop, NULL, "mode");
 	RNA_def_property_enum_items(prop, (spot) ? prop_spot_shadow_items : prop_shadow_items);
-	RNA_def_property_update(prop, 0, "rna_Lamp_update");
+	RNA_def_property_update(prop, 0, "rna_Lamp_draw_update");
 
 	prop = RNA_def_property(srna, "shadow_buffer_size", PROP_INT, PROP_NONE);
 	RNA_def_property_int_sdna(prop, NULL, "bufsize");

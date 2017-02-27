@@ -44,6 +44,7 @@ struct GPUOffScreen;
 struct GPUFXSettings;
 struct rcti;
 struct Scene;
+struct GPUShader;
 enum eGPUFXFlags;
 
 /**** Public API *****/
@@ -82,7 +83,9 @@ bool GPU_fx_compositor_initialize_passes(
         const struct GPUFXSettings *fx_settings);
 
 /* do compositing on the fx passes that have been initialized */
-bool GPU_fx_do_composite_pass(GPUFX *fx, float projmat[4][4], bool is_persp, struct Scene *scene, struct GPUOffScreen *ofs);
+bool GPU_fx_do_composite_pass(
+        GPUFX *fx, float projmat[4][4], bool is_persp,
+        struct Scene *scene, struct GPUOffScreen *ofs);
 
 /* bind new depth buffer for XRay pass */
 void GPU_fx_compositor_setup_XRay_pass(GPUFX *fx, bool do_xray);
@@ -92,6 +95,10 @@ void GPU_fx_compositor_XRay_resolve(GPUFX *fx);
 
 void GPU_fx_compositor_init_dof_settings(struct GPUDOFSettings *dof);
 void GPU_fx_compositor_init_ssao_settings(struct GPUSSAOSettings *ssao);
+
+
+/* initialize and cache the shader unform interface for effects */
+void GPU_fx_shader_init_interface(struct GPUShader *shader, GPUFXShaderEffect effect);
 #ifdef __cplusplus
 }
 #endif

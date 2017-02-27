@@ -38,6 +38,7 @@
 
 #include "BLI_blenlib.h"
 #include "BLI_math_vector.h"
+#include "BLI_string_utils.h"
 #include "BLI_utildefines.h"
 
 #include "BLT_translation.h"
@@ -58,6 +59,8 @@
 #include "BKE_key.h"
 #include "BKE_lattice.h"
 #include "BKE_library.h"
+#include "BKE_main.h"
+#include "BKE_mesh.h"
 #include "BKE_editmesh.h"
 #include "BKE_scene.h"
 
@@ -73,11 +76,13 @@
 #define IPO_BEZTRIPLE   100
 #define IPO_BPOINT      101
 
+
+/** Free (or release) any data used by this shapekey (does not free the key itself). */
 void BKE_key_free(Key *key)
 {
 	KeyBlock *kb;
-	
-	BKE_animdata_free((ID *)key);
+
+	BKE_animdata_free((ID *)key, false);
 
 	while ((kb = BLI_pophead(&key->block))) {
 		if (kb->data)
@@ -146,14 +151,12 @@ Key *BKE_key_add(ID *id)    /* common function */
 	return key;
 }
 
-Key *BKE_key_copy(Key *key)
+Key *BKE_key_copy(Main *bmain, Key *key)
 {
 	Key *keyn;
 	KeyBlock *kbn, *kb;
 	
-	if (key == NULL) return NULL;
-	
-	keyn = BKE_libblock_copy(&key->id);
+	keyn = BKE_libblock_copy(bmain, &key->id);
 	
 	BLI_duplicatelist(&keyn->block, &key->block);
 	
@@ -168,21 +171,15 @@ Key *BKE_key_copy(Key *key)
 		kb = kb->next;
 	}
 
-	if (key->id.lib) {
-		BKE_id_lib_local_paths(G.main, key->id.lib, &keyn->id);
-	}
+	BKE_id_copy_ensure_local(bmain, &key->id, &keyn->id);
 
 	return keyn;
 }
-
 
 Key *BKE_key_copy_nolib(Key *key)
 {
 	Key *keyn;
 	KeyBlock *kbn, *kb;
-	
-	if (key == NULL)
-		return NULL;
 	
 	keyn = MEM_dupallocN(key);
 
@@ -202,19 +199,6 @@ Key *BKE_key_copy_nolib(Key *key)
 	}
 	
 	return keyn;
-}
-
-void BKE_key_make_local(Key *key)
-{
-
-	/* - only lib users: do nothing
-	 * - only local users: set flag
-	 * - mixed: make copy
-	 */
-	if (key == NULL) return;
-	
-	key->id.lib = NULL;
-	new_id(NULL, &key->id, NULL);
 }
 
 /* Sort shape keys and Ipo curves after a change.  This assumes that at most
@@ -1392,24 +1376,49 @@ float *BKE_key_evaluate_object(Object *ob, int *r_totelem)
 	return BKE_key_evaluate_object_ex(ob, r_totelem, NULL, 0);
 }
 
+Key **BKE_key_from_id_p(ID *id)
+{
+	switch (GS(id->name)) {
+		case ID_ME:
+		{
+			Mesh *me = (Mesh *)id;
+			return &me->key;
+		}
+		case ID_CU:
+		{
+			Curve *cu = (Curve *)id;
+			if (cu->vfont == NULL) {
+				return &cu->key;
+			}
+			break;
+		}
+		case ID_LT:
+		{
+			Lattice *lt = (Lattice *)id;
+			return &lt->key;
+		}
+	}
+
+	return NULL;
+}
+
+Key *BKE_key_from_id(ID *id)
+{
+	Key **key_p;
+	key_p = BKE_key_from_id_p(id);
+	if (key_p) {
+		return *key_p;
+	}
+
+	return NULL;
+}
+
 Key **BKE_key_from_object_p(Object *ob)
 {
-	if (ob == NULL)
+	if (ob == NULL || ob->data == NULL)
 		return NULL;
 
-	if (ob->type == OB_MESH) {
-		Mesh *me = ob->data;
-		return &me->key;
-	}
-	else if (ELEM(ob->type, OB_CURVE, OB_SURF)) {
-		Curve *cu = ob->data;
-		return &cu->key;
-	}
-	else if (ob->type == OB_LATTICE) {
-		Lattice *lt = ob->data;
-		return &lt->key;
-	}
-	return NULL;
+	return BKE_key_from_id_p(ob->data);
 }
 
 Key *BKE_key_from_object(Object *ob)
@@ -1773,6 +1782,66 @@ void BKE_keyblock_convert_to_mesh(KeyBlock *kb, Mesh *me)
 		copy_v3_v3(mvert->co, *fp);
 	}
 }
+
+/**
+ * Computes normals (vertices, polygons and/or loops ones) of given mesh for given shape key.
+ *
+ * \param kb the KeyBlock to use to compute normals.
+ * \param mesh the Mesh to apply keyblock to.
+ * \param r_vertnors if non-NULL, an array of vectors, same length as number of vertices.
+ * \param r_polynors if non-NULL, an array of vectors, same length as number of polygons.
+ * \param r_loopnors if non-NULL, an array of vectors, same length as number of loops.
+ */
+void BKE_keyblock_mesh_calc_normals(
+        struct KeyBlock *kb, struct Mesh *mesh,
+        float (*r_vertnors)[3], float (*r_polynors)[3], float (*r_loopnors)[3])
+{
+	/* We use a temp, shallow copy of mesh to work. */
+	Mesh me;
+	bool free_polynors = false;
+
+	if (r_vertnors == NULL && r_polynors == NULL && r_loopnors == NULL) {
+		return;
+	}
+
+	me = *mesh;
+	me.mvert = MEM_dupallocN(mesh->mvert);
+	CustomData_reset(&me.vdata);
+	CustomData_reset(&me.edata);
+	CustomData_reset(&me.pdata);
+	CustomData_reset(&me.ldata);
+	CustomData_reset(&me.fdata);
+
+	BKE_keyblock_convert_to_mesh(kb, &me);
+
+	if (r_polynors == NULL && r_loopnors != NULL) {
+		r_polynors = MEM_mallocN(sizeof(float[3]) * me.totpoly, __func__);
+		free_polynors = true;
+	}
+	BKE_mesh_calc_normals_poly(
+	            me.mvert, r_vertnors, me.totvert, me.mloop, me.mpoly, me.totloop, me.totpoly, r_polynors, false);
+
+	if (r_loopnors) {
+		short (*clnors)[2] = CustomData_get_layer(&mesh->ldata, CD_CUSTOMLOOPNORMAL);  /* May be NULL. */
+
+		BKE_mesh_normals_loop_split(
+		        me.mvert, me.totvert, me.medge, me.totedge,
+		        me.mloop, r_loopnors, me.totloop, me.mpoly, r_polynors, me.totpoly,
+		        (me.flag & ME_AUTOSMOOTH) != 0, me.smoothresh, NULL, clnors, NULL);
+	}
+
+	CustomData_free(&me.vdata, me.totvert);
+	CustomData_free(&me.edata, me.totedge);
+	CustomData_free(&me.pdata, me.totpoly);
+	CustomData_free(&me.ldata, me.totloop);
+	CustomData_free(&me.fdata, me.totface);
+	MEM_freeN(me.mvert);
+
+	if (free_polynors) {
+		MEM_freeN(r_polynors);
+	}
+}
+
 
 /************************* raw coords ************************/
 void BKE_keyblock_update_from_vertcos(Object *ob, KeyBlock *kb, float (*vertCos)[3])

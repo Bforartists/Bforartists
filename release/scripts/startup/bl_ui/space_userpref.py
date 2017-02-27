@@ -24,7 +24,7 @@ from bpy.app.translations import contexts as i18n_contexts
 
 
 def opengl_lamp_buttons(column, lamp):
-    split = column.split(percentage=0.1)
+    split = column.row()
 
     split.prop(lamp, "use", text="", icon='OUTLINER_OB_LAMP' if lamp.use else 'LAMP_DATA')
 
@@ -79,7 +79,6 @@ class ALL_MT_editormenu(Menu):
 
         row = layout.row(align=True)
         row.template_header() # editor type menus
-
 
 class USERPREF_PT_tabs(Panel):
     bl_label = ""
@@ -186,7 +185,6 @@ class USERPREF_PT_interface(Panel):
         if sys.platform[:3] == "win":
             col.label("Warnings")
             col.prop(view, "use_quit_dialog")
-            col.prop(view, "use_gl_warn_support")
 
         row.separator()
         row.separator()
@@ -313,10 +311,10 @@ class USERPREF_PT_edit(Panel):
         col.prop(edit, "grease_pencil_manhattan_distance", text="Manhattan Distance")
         col.prop(edit, "grease_pencil_euclidean_distance", text="Euclidean Distance")
         col.separator()
-        col.prop(edit, "use_grease_pencil_smooth_stroke", text="Smooth Stroke")
+        col.prop(edit, "grease_pencil_default_color", text="Default Color")
+        col.separator()
         col.prop(edit, "use_grease_pencil_simplify_stroke", text="Simplify Stroke")
         col.separator()
-        col.prop(edit, "grease_pencil_default_color", text="Default Color")
         col.separator()
         col.separator()
         col.separator()
@@ -442,12 +440,11 @@ class USERPREF_PT_system(Panel):
 
         col.separator()
 
-        if hasattr(system, "compute_device_type"):
-            col.label(text="Compute Device:")
-            col.row().prop(system, "compute_device_type", expand=True)
-            sub = col.row()
-            sub.active = system.compute_device_type != 'CPU'
-            sub.prop(system, "compute_device", text="")
+        if bpy.app.build_options.cycles:
+            addon = userpref.addons.get("cycles")
+            if addon is not None:
+                addon.preferences.draw_impl(col, context)
+            del addon
 
         if hasattr(system, "opensubdiv_compute_type"):
             col.label(text="OpenSubdiv compute:")
@@ -464,16 +461,14 @@ class USERPREF_PT_system(Panel):
         col.prop(system, "use_gpu_mipmap")
         col.prop(system, "use_16bit_textures")
 
-        if system.is_occlusion_query_supported():
-            col.separator()
-            col.label(text="Selection")
-            col.prop(system, "select_method", text="")
+        col.separator()
+        col.label(text="Selection")
+        col.prop(system, "select_method", text="")
 
         col.separator()
 
         col.label(text="Anisotropic Filtering")
         col.prop(system, "anisotropic_filter", text="")
-        col.prop(system, "use_vertex_buffer_objects")
 
         col.separator()
 
@@ -504,7 +499,7 @@ class USERPREF_PT_system(Panel):
 
         col.separator()
 
-        col.label(text="Sequencer / Clip Editor:")
+        col.label(text="Sequencer/Clip Editor:")
         # currently disabled in the code
         # col.prop(system, "prefetch_frames")
         col.prop(system, "memory_cache_limit")
@@ -542,6 +537,7 @@ class USERPREF_PT_system(Panel):
 
         column.separator()
         column.prop(system, "font_path_ui")
+        column.prop(system, "font_path_ui_mono")
 
         if bpy.app.build_options.international:
             column.prop(system, "use_international_fonts")
@@ -573,8 +569,33 @@ class USERPREF_PT_theme(Panel):
     bl_region_type = 'WINDOW'
     bl_options = {'HIDE_HEADER'}
 
+    # not essential, hard-coded UI delimiters for the theme layout
+    ui_delimiters = {
+        'VIEW_3D': {
+            "text_grease_pencil",
+            "text_keyframe",
+            "speaker",
+            "freestyle_face_mark",
+            "split_normal",
+            "bone_solid",
+            "paint_curve_pivot",
+            },
+        'GRAPH_EDITOR': {
+            "handle_vertex_select",
+            },
+        'IMAGE_EDITOR': {
+            "paint_curve_pivot",
+            },
+        'NODE_EDITOR': {
+            "layout_node",
+            },
+        'CLIP_EDITOR': {
+            "handle_vertex_select",
+            }
+        }
+
     @staticmethod
-    def _theme_generic(split, themedata):
+    def _theme_generic(split, themedata, theme_area):
 
         col = split.column()
 
@@ -601,13 +622,30 @@ class USERPREF_PT_theme(Panel):
 
                 props_type.setdefault((prop.type, prop.subtype), []).append(prop)
 
+            th_delimiters = USERPREF_PT_theme.ui_delimiters.get(theme_area)
             for props_type, props_ls in sorted(props_type.items()):
                 if props_type[0] == 'POINTER':
                     for i, prop in enumerate(props_ls):
                         theme_generic_recurse(getattr(data, prop.identifier))
                 else:
-                    for i, prop in enumerate(props_ls):
-                        colsub_pair[i % 2].row().prop(data, prop.identifier)
+                    if th_delimiters is None:
+                        # simple, no delimiters
+                        for i, prop in enumerate(props_ls):
+                            colsub_pair[i % 2].row().prop(data, prop.identifier)
+                    else:
+                        # add hard coded delimiters
+                        i = 0
+                        for prop in props_ls:
+                            colsub = colsub_pair[i]
+                            colsub.row().prop(data, prop.identifier)
+                            i = (i + 1) % 2
+                            if prop.identifier in th_delimiters:
+                                if i:
+                                    colsub = colsub_pair[1]
+                                    colsub.row().label("")
+                                colsub_pair[0].row().label("")
+                                colsub_pair[1].row().label("")
+                                i = 0
 
         theme_generic_recurse(themedata)
 
@@ -878,7 +916,7 @@ class USERPREF_PT_theme(Panel):
             col.label(text="Widget Label:")
             self._ui_font_style(col, style.widget_label)
         else:
-            self._theme_generic(split, getattr(theme, theme.theme_area.lower()))
+            self._theme_generic(split, getattr(theme, theme.theme_area.lower()), theme.theme_area)
 
 
 class USERPREF_PT_file(Panel):
@@ -1149,15 +1187,23 @@ class USERPREF_PT_input(Panel):
             sub.prop(walk, "view_height")
             sub.prop(walk, "jump_height")
 
-        col.separator()
-        col.label(text="NDOF Device:")
-        sub = col.column(align=True)
-        sub.prop(inputs, "ndof_sensitivity", text="NDOF Sensitivity")
-        sub.prop(inputs, "ndof_orbit_sensitivity", text="NDOF Orbit Sensitivity")
-        sub.prop(inputs, "ndof_deadzone", text="NDOF Deadzone")
-        sub = col.column(align=True)
-        sub.row().prop(inputs, "ndof_view_navigate_method", expand=True)
-        sub.row().prop(inputs, "ndof_view_rotate_method", expand=True)
+        if inputs.use_ndof:
+            col.separator()
+            col.label(text="NDOF Device:")
+            sub = col.column(align=True)
+            sub.prop(inputs, "ndof_sensitivity", text="Pan Sensitivity")
+            sub.prop(inputs, "ndof_orbit_sensitivity", text="Orbit Sensitivity")
+            sub.prop(inputs, "ndof_deadzone", text="Deadzone")
+
+            sub.separator()
+            col.label(text="Navigation Style:")
+            sub = col.column(align=True)
+            sub.row().prop(inputs, "ndof_view_navigate_method", expand=True)
+
+            sub.separator()
+            col.label(text="Rotation Style:")
+            sub = col.column(align=True)
+            sub.row().prop(inputs, "ndof_view_rotate_method", expand=True)
 
         row.separator()
 
@@ -1302,9 +1348,19 @@ class USERPREF_PT_addons(Panel):
                 col_box = col.column()
                 box = col_box.box()
                 colsub = box.column()
-                row = colsub.row()
+                row = colsub.row(align=True)
 
-                row.operator("wm.addon_expand", icon='TRIA_DOWN' if info["show_expanded"] else 'TRIA_RIGHT', emboss=False).module = module_name
+                row.operator(
+                        "wm.addon_expand",
+                        icon='TRIA_DOWN' if info["show_expanded"] else 'TRIA_RIGHT',
+                        emboss=False,
+                        ).module = module_name
+
+                row.operator(
+                        "wm.addon_disable" if is_enabled else "wm.addon_enable",
+                        icon='CHECKBOX_HLT' if is_enabled else 'CHECKBOX_DEHLT', text="",
+                        emboss=False,
+                        ).module = module_name
 
                 sub = row.row()
                 sub.active = is_enabled
@@ -1314,11 +1370,6 @@ class USERPREF_PT_addons(Panel):
 
                 # icon showing support level.
                 sub.label(icon=self._support_icon_mapping.get(info["support"], 'QUESTION'))
-
-                if is_enabled:
-                    row.operator("wm.addon_disable", icon='CHECKBOX_HLT', text="", emboss=False).module = module_name
-                else:
-                    row.operator("wm.addon_enable", icon='CHECKBOX_DEHLT', text="", emboss=False).module = module_name
 
                 # Expanded UI (only if additional info is available)
                 if info["show_expanded"]:
@@ -1357,7 +1408,7 @@ class USERPREF_PT_addons(Panel):
                             split.operator("wm.url_open", text="Documentation", icon='HELP').url = info["wiki_url"]
                         split.operator("wm.url_open", text="Report a Bug", icon='URL').url = info.get(
                                 "tracker_url",
-                                "http://developer.blender.org/maniphest/task/create/?project=3&type=Bug")
+                                "https://developer.blender.org/maniphest/task/edit/form/2")
                         if user_addon:
                             split.operator("wm.addon_remove", text="Remove", icon='CANCEL').module = mod.__name__
 
@@ -1397,12 +1448,15 @@ class USERPREF_PT_addons(Panel):
                 # Addon UI Code
                 box = col.column().box()
                 colsub = box.column()
-                row = colsub.row()
+                row = colsub.row(align=True)
 
-                row.label(text=module_name, translate=False, icon='ERROR')
+                row.label(text="", icon='ERROR')
 
                 if is_enabled:
                     row.operator("wm.addon_disable", icon='CHECKBOX_HLT', text="", emboss=False).module = module_name
+
+                row.label(text=module_name, translate=False)
+
 
 if __name__ == "__main__":  # only for live edit.
     bpy.utils.register_module(__name__)

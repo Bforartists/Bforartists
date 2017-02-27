@@ -29,8 +29,8 @@ set(INC
 	../makesdna
 	../../../intern/guardedalloc
 	../../../intern/atomic
+	../../../intern/eigen
 	../../../extern/wcwidth
-	../../../extern/Eigen3
 )
 
 set(INC_SYS
@@ -52,8 +52,11 @@ set(SRC
 	intern/BLI_memarena.c
 	intern/BLI_mempool.c
 	intern/DLRB_tree.c
+	intern/array_store.c
+	intern/array_store_utils.c
 	intern/array_utils.c
 	intern/astar.c
+	intern/bitmap_draw_2d.c
 	intern/boxpack2d.c
 	intern/buffer.c
 	intern/callbacks.c
@@ -88,6 +91,7 @@ set(SRC
 	intern/math_statistics.c
 	intern/math_vector.c
 	intern/math_vector_inline.c
+	intern/memory_utils.c
 	intern/noise.c
 	intern/path_util.c
 	intern/polyfill2d.c
@@ -105,6 +109,7 @@ set(SRC
 	intern/string.c
 	intern/string_cursor_utf8.c
 	intern/string_utf8.c
+	intern/string_utils.c
 	intern/system.c
 	intern/task.c
 	intern/threads.c
@@ -119,9 +124,12 @@ set(SRC
 	BLI_alloca.h
 	BLI_args.h
 	BLI_array.h
+	BLI_array_store.h
+	BLI_array_store_utils.h
 	BLI_array_utils.h
 	BLI_astar.h
 	BLI_bitmap.h
+	BLI_bitmap_draw_2d.h
 	BLI_blenlib.h
 	BLI_boxpack2d.h
 	BLI_buffer.h
@@ -169,6 +177,7 @@ set(SRC
 	BLI_math_statistics.h
 	BLI_math_vector.h
 	BLI_memarena.h
+	BLI_memory_utils.h
 	BLI_mempool.h
 	BLI_noise.h
 	BLI_path_util.h
@@ -187,6 +196,7 @@ set(SRC
 	BLI_string.h
 	BLI_string_cursor_utf8.h
 	BLI_string_utf8.h
+	BLI_string_utils.h
 	BLI_sys_types.h
 	BLI_system.h
 	BLI_task.h

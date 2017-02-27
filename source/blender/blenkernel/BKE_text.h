@@ -41,9 +41,11 @@ struct Main;
 struct Text;
 struct TextLine;
 
+void			BKE_text_free_lines	(struct Text *text);
 void			BKE_text_free		(struct Text *text);
 void 			txt_set_undostate	(int u);
 int 			txt_get_undostate	(void);
+void            BKE_text_init(struct Text *ta);
 struct Text    *BKE_text_add	(struct Main *bmain, const char *name);
 int				txt_extended_ascii_as_utf8(char **str);
 bool            BKE_text_reload(struct Text *text);
@@ -51,7 +53,7 @@ struct Text    *BKE_text_load_ex(struct Main *bmain, const char *file, const cha
                                  const bool is_internal);
 struct Text    *BKE_text_load	(struct Main *bmain, const char *file, const char *relpath);
 struct Text    *BKE_text_copy		(struct Main *bmain, struct Text *ta);
-void			BKE_text_unlink		(struct Main *bmain, struct Text *text);
+void            BKE_text_make_local (struct Main *bmain, struct Text *text, const bool lib_local);
 void			BKE_text_clear      (struct Text *text);
 void			BKE_text_write      (struct Text *text, const char *str);
 int             BKE_text_file_modified_check(struct Text *text);
@@ -106,6 +108,9 @@ void	txt_duplicate_line	(struct Text *text);
 int		txt_setcurr_tab_spaces(struct Text *text, int space);
 bool	txt_cursor_is_line_start(struct Text *text);
 bool	txt_cursor_is_line_end(struct Text *text);
+
+int txt_calc_tab_left(struct TextLine *line, int ch);
+int txt_calc_tab_right(struct TextLine *line, int ch);
 
 #if 0
 void	txt_print_undo		(struct Text *text);

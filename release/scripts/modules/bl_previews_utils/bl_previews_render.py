@@ -21,12 +21,10 @@
 # Populate a template file (POT format currently) from Blender RNA/py/C data.
 # Note: This script is meant to be used from inside Blender!
 
-import collections
 import os
-import sys
 
 import bpy
-from mathutils import Vector, Euler
+from mathutils import Vector, Euler, Matrix
 
 
 INTERN_PREVIEW_TYPES = {'MATERIAL', 'LAMP', 'WORLD', 'TEXTURE', 'IMAGE'}
@@ -67,6 +65,8 @@ def rna_backup_restore(data, backup):
 
 
 def do_previews(do_objects, do_groups, do_scenes, do_data_intern):
+    import collections
+
     # Helpers.
     RenderContext = collections.namedtuple("RenderContext", (
         "scene", "world", "camera", "lamp", "camera_data", "lamp_data", "image",  # All those are names!
@@ -169,7 +169,7 @@ def do_previews(do_objects, do_groups, do_scenes, do_data_intern):
                     scene.objects.unlink(bpy.data.objects[render_context.camera, None])
                 if render_context.lamp:
                     scene.objects.unlink(bpy.data.objects[render_context.lamp, None])
-                bpy.data.scenes.remove(scene)
+                bpy.data.scenes.remove(scene, do_unlink=True)
                 scene = None
             else:
                 rna_backup_restore(scene, render_context.backup_scene)
@@ -236,8 +236,8 @@ def do_previews(do_objects, do_groups, do_scenes, do_data_intern):
         return success
 
     def objects_render_engine_guess(obs):
-        for obname in obs:
-            ob = bpy.data.objects[obname, None]
+        for obname, libpath in obs:
+            ob = bpy.data.objects[obname, libpath]
             for matslot in ob.material_slots:
                 mat = matslot.material
                 if mat and mat.use_nodes and mat.node_tree:
@@ -246,13 +246,24 @@ def do_previews(do_objects, do_groups, do_scenes, do_data_intern):
                             return 'CYCLES'
         return 'BLENDER_RENDER'
 
-    def object_bbox_merge(bbox, ob, ob_space):
-        if ob.bound_box:
+    def object_bbox_merge(bbox, ob, ob_space, offset_matrix):
+        # Take group instances into account (including linked one in this case).
+        if ob.type == 'EMPTY' and ob.dupli_type == 'GROUP':
+            grp_objects = tuple((ob.name, ob.library.filepath if ob.library else None) for ob in ob.dupli_group.objects)
+            if (len(grp_objects) == 0):
+                ob_bbox = ob.bound_box
+            else:
+                coords = objects_bbox_calc(ob_space, grp_objects,
+                                           Matrix.Translation(ob.dupli_group.dupli_offset).inverted())
+                ob_bbox = ((coords[0], coords[1], coords[2]), (coords[21], coords[22], coords[23]))
+        elif ob.bound_box:
             ob_bbox = ob.bound_box
         else:
             ob_bbox = ((-ob.scale.x, -ob.scale.y, -ob.scale.z), (ob.scale.x, ob.scale.y, ob.scale.z))
-        for v in ob.bound_box:
-            v = ob_space.matrix_world.inverted() * ob.matrix_world * Vector(v)
+
+        for v in ob_bbox:
+            v = offset_matrix * Vector(v) if offset_matrix is not None else Vector(v)
+            v = ob_space.matrix_world.inverted() * ob.matrix_world * v
             if bbox[0].x > v.x:
                 bbox[0].x = v.x
             if bbox[0].y > v.y:
@@ -266,11 +277,11 @@ def do_previews(do_objects, do_groups, do_scenes, do_data_intern):
             if bbox[1].z < v.z:
                 bbox[1].z = v.z
 
-    def objects_bbox_calc(camera, objects):
+    def objects_bbox_calc(camera, objects, offset_matrix):
         bbox = (Vector((1e9, 1e9, 1e9)), Vector((-1e9, -1e9, -1e9)))
-        for obname in objects:
-            ob = bpy.data.objects[obname, None]
-            object_bbox_merge(bbox, ob, camera)
+        for obname, libpath in objects:
+            ob = bpy.data.objects[obname, libpath]
+            object_bbox_merge(bbox, ob, camera, offset_matrix)
         # Our bbox has been generated in camera local space, bring it back in world one
         bbox[0][:] = camera.matrix_world * bbox[0]
         bbox[1][:] = camera.matrix_world * bbox[1]
@@ -286,12 +297,12 @@ def do_previews(do_objects, do_groups, do_scenes, do_data_intern):
         )
         return cos
 
-    def preview_render_do(render_context, item_container, item_name, objects):
+    def preview_render_do(render_context, item_container, item_name, objects, offset_matrix=None):
         scene = bpy.data.scenes[render_context.scene, None]
         if objects is not None:
             camera = bpy.data.objects[render_context.camera, None]
             lamp = bpy.data.objects[render_context.lamp, None] if render_context.lamp is not None else None
-            cos = objects_bbox_calc(camera, objects)
+            cos = objects_bbox_calc(camera, objects, offset_matrix)
             loc, ortho_scale = camera.camera_fit_coords(scene, cos)
             camera.location = loc
             if lamp:
@@ -322,7 +333,7 @@ def do_previews(do_objects, do_groups, do_scenes, do_data_intern):
     prev_scenename = bpy.context.screen.scene.name
 
     if do_objects:
-        prev_shown = tuple(ob.hide_render for ob in ids_nolib(bpy.data.objects))
+        prev_shown = {ob.name: ob.hide_render for ob in ids_nolib(bpy.data.objects)}
         for ob in ids_nolib(bpy.data.objects):
             if ob in objects_ignored:
                 continue
@@ -332,7 +343,7 @@ def do_previews(do_objects, do_groups, do_scenes, do_data_intern):
                 continue
             if root.type not in OBJECT_TYPES_RENDER:
                 continue
-            objects = (root.name,)
+            objects = ((root.name, None),)
 
             render_engine = objects_render_engine_guess(objects)
             render_context = render_contexts.get(render_engine, None)
@@ -343,8 +354,8 @@ def do_previews(do_objects, do_groups, do_scenes, do_data_intern):
             scene = bpy.data.scenes[render_context.scene, None]
             bpy.context.screen.scene = scene
 
-            for obname in objects:
-                ob = bpy.data.objects[obname, None]
+            for obname, libpath in objects:
+                ob = bpy.data.objects[obname, libpath]
                 if obname not in scene.objects:
                     scene.objects.link(ob)
                 ob.hide_render = False
@@ -361,21 +372,23 @@ def do_previews(do_objects, do_groups, do_scenes, do_data_intern):
             #         File "<string>", line 327, in do_previews
             #         OverflowError: Python int too large to convert to C long
             #    ... :(
-            import sys
             scene = bpy.data.scenes[render_context.scene, None]
-            for obname in objects:
-                ob = bpy.data.objects[obname, None]
+            for obname, libpath in objects:
+                ob = bpy.data.objects[obname, libpath]
                 scene.objects.unlink(ob)
                 ob.hide_render = True
 
-        for ob, is_rendered in zip(tuple(ids_nolib(bpy.data.objects)), prev_shown):
-            ob.hide_render = is_rendered
+        for ob in ids_nolib(bpy.data.objects):
+            is_rendered = prev_shown.get(ob.name, ...)
+            if is_rendered is not ...:
+                ob.hide_render = is_rendered
 
     if do_groups:
         for grp in ids_nolib(bpy.data.groups):
             if grp.name in groups_ignored:
                 continue
-            objects = tuple(ob.name for ob in grp.objects)
+            # Here too, we do want to keep linked objects members of local group...
+            objects = tuple((ob.name, ob.library.filepath if ob.library else None) for ob in grp.objects)
 
             render_engine = objects_render_engine_guess(objects)
             render_context = render_contexts.get(render_engine, None)
@@ -391,7 +404,9 @@ def do_previews(do_objects, do_groups, do_scenes, do_data_intern):
             grp_obname = grp_ob.name
             scene.update()
 
-            preview_render_do(render_context, 'groups', grp.name, objects)
+            offset_matrix = Matrix.Translation(grp.dupli_offset).inverted()
+
+            preview_render_do(render_context, 'groups', grp.name, objects, offset_matrix)
 
             scene = bpy.data.scenes[render_context.scene, None]
             scene.objects.unlink(bpy.data.objects[grp_obname, None])
@@ -411,7 +426,7 @@ def do_previews(do_objects, do_groups, do_scenes, do_data_intern):
             objects = None
             if not has_camera:
                 # We had to add a temp camera, now we need to place it to see interesting objects!
-                objects = tuple(ob.name for ob in scene.objects
+                objects = tuple((ob.name, ob.library.filepath if ob.library else None) for ob in scene.objects
                                         if (not ob.hide_render) and (ob.type in OBJECT_TYPES_RENDER))
 
             preview_render_do(render_context, 'scenes', scene.name, objects)
@@ -466,13 +481,25 @@ def main():
     argv = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else []
 
     parser = argparse.ArgumentParser(description="Use Blender to generate previews for currently open Blender file's items.")
-    parser.add_argument('--clear', default=False, action="store_true", help="Clear previews instead of generating them.")
-    parser.add_argument('--no_scenes', default=True, action="store_false", help="Do not generate/clear previews for scene IDs.")
-    parser.add_argument('--no_groups', default=True, action="store_false", help="Do not generate/clear previews for group IDs.")
-    parser.add_argument('--no_objects', default=True, action="store_false", help="Do not generate/clear previews for object IDs.")
+    parser.add_argument('--clear', default=False, action="store_true",
+                        help="Clear previews instead of generating them.")
+    parser.add_argument('--no_backups', default=False, action="store_true",
+                        help="Do not generate a backup .blend1 file when saving processed ones.")
+    parser.add_argument('--no_scenes', default=True, action="store_false",
+                        help="Do not generate/clear previews for scene IDs.")
+    parser.add_argument('--no_groups', default=True, action="store_false",
+                        help="Do not generate/clear previews for group IDs.")
+    parser.add_argument('--no_objects', default=True, action="store_false",
+                        help="Do not generate/clear previews for object IDs.")
     parser.add_argument('--no_data_intern', default=True, action="store_false",
                         help="Do not generate/clear previews for mat/tex/image/etc. IDs (those handled by core Blender code).")
     args = parser.parse_args(argv)
+
+    orig_save_version = bpy.context.user_preferences.filepaths.save_version
+    if args.no_backups:
+        bpy.context.user_preferences.filepaths.save_version = 0
+    elif orig_save_version < 1:
+        bpy.context.user_preferences.filepaths.save_version = 1
 
     if args.clear:
         print("clear!")
@@ -482,6 +509,9 @@ def main():
         print("render!")
         do_previews(do_objects=args.no_objects, do_groups=args.no_groups, do_scenes=args.no_scenes,
                     do_data_intern=args.no_data_intern)
+
+    # Not really necessary, but better be consistent.
+    bpy.context.user_preferences.filepaths.save_version = orig_save_version
 
 
 if __name__ == "__main__":

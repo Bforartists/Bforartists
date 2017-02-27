@@ -93,7 +93,7 @@ class KX_ObstacleSimulation;
 #endif
 
 /* for ID freeing */
-#define IS_TAGGED(_id) ((_id) && (((ID *)_id)->flag & LIB_DOIT))
+#define IS_TAGGED(_id) ((_id) && (((ID *)_id)->tag & LIB_TAG_DOIT))
 
 /**
  * The KX_Scene holds all data for an independent scene. It relates
@@ -170,6 +170,11 @@ protected:
 	 * Does this scene clear the z-buffer?
 	 */
 	bool m_isclearingZbuffer;
+
+	/**
+	 * Does the shadow buffer needs calculing
+	 */
+	bool m_isShadowDone;
 
 	/**
 	 * The name of the scene
@@ -339,6 +344,7 @@ public:
 	void RemoveNodeDestructObject(SG_IObject* node,
 	                              CValue* gameobj);
 	void RemoveObject(CValue* gameobj);
+	void RemoveDupliGroup(CValue *gameobj);
 	void DelayedRemoveObject(CValue* gameobj);
 	
 	int NewRemoveObject(CValue* gameobj);
@@ -571,6 +577,8 @@ public:
 	bool IsSuspended();
 	bool IsClearingZBuffer();
 	void EnableZBufferClearing(bool isclearingZbuffer);
+	bool IsShadowDone() { return m_isShadowDone; }
+	void SetShadowDone(bool b) { m_isShadowDone = b; }
 	// use of DBVT tree for camera culling
 	void SetDbvtCulling(bool b) { m_dbvt_culling = b; }
 	bool GetDbvtCulling() { return m_dbvt_culling; }

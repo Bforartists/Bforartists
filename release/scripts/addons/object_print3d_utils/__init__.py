@@ -35,19 +35,17 @@ if "bpy" in locals():
     import importlib
     importlib.reload(ui)
     importlib.reload(operators)
+    importlib.reload(mesh_helpers)
 else:
     import bpy
     from bpy.props import (
             StringProperty,
             BoolProperty,
-            IntProperty,
             FloatProperty,
-            FloatVectorProperty,
             EnumProperty,
             PointerProperty,
             )
     from bpy.types import (
-            Operator,
             AddonPreferences,
             PropertyGroup,
             )
@@ -57,6 +55,7 @@ else:
             )
 
 import math
+
 
 class Print3DSettings(PropertyGroup):
     export_format = EnumProperty(
@@ -118,6 +117,40 @@ class Print3DSettings(PropertyGroup):
             min=0.0, max=math.radians(90.0),
             )
 
+
+# Addons Preferences Update Panel
+def update_panel(self, context):
+    try:
+        bpy.utils.unregister_class(ui.Print3DToolBarObject)
+        bpy.utils.unregister_class(ui.Print3DToolBarMesh)
+    except:
+        pass
+    ui.Print3DToolBarObject.bl_category = context.user_preferences.addons[__name__].preferences.category
+    bpy.utils.register_class(ui.Print3DToolBarObject)
+    ui.Print3DToolBarMesh.bl_category = context.user_preferences.addons[__name__].preferences.category
+    bpy.utils.register_class(ui.Print3DToolBarMesh)
+
+
+class printpreferences(AddonPreferences):
+    # this must match the addon name, use '__package__'
+    # when defining this in a submodule of a python package.
+    bl_idname = __name__
+
+    category = bpy.props.StringProperty(
+            name="Tab Category",
+            description="Choose a name for the category of the panel",
+            default="3D Printing",
+            update=update_panel)
+
+    def draw(self, context):
+
+        layout = self.layout
+        row = layout.row()
+        col = row.column()
+        col.label(text="Tab Category:")
+        col.prop(self, "category", text="")
+
+
 classes = (
     ui.Print3DToolBarObject,
     ui.Print3DToolBarMesh,
@@ -136,7 +169,7 @@ classes = (
 
     operators.Print3DCleanIsolated,
     operators.Print3DCleanDistorted,
-    operators.Print3DCleanThin,
+    # operators.Print3DCleanThin,
     operators.Print3DCleanNonManifold,
 
     operators.Print3DSelectReport,
@@ -147,6 +180,7 @@ classes = (
     operators.Print3DExport,
 
     Print3DSettings,
+    printpreferences,
     )
 
 

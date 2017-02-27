@@ -56,6 +56,12 @@ static void rna_cloth_update(Main *UNUSED(bmain), Scene *UNUSED(scene), PointerR
 	WM_main_add_notifier(NC_OBJECT | ND_MODIFIER, ob);
 }
 
+static void rna_cloth_dependency_update(Main *bmain, Scene *scene, PointerRNA *ptr)
+{
+	DAG_relations_tag_update(bmain);
+	rna_cloth_update(bmain, scene, ptr);
+}
+
 static void rna_cloth_pinning_changed(Main *UNUSED(bmain), Scene *UNUSED(scene), PointerRNA *ptr)
 {
 	Object *ob = (Object *)ptr->id.data;
@@ -68,6 +74,16 @@ static void rna_cloth_pinning_changed(Main *UNUSED(bmain), Scene *UNUSED(scene),
 	WM_main_add_notifier(NC_OBJECT | ND_MODIFIER, ob);
 }
 
+static void rna_ClothSettings_bending_set(struct PointerRNA *ptr, float value)
+{
+	ClothSimSettings *settings = (ClothSimSettings *)ptr->data;
+
+	settings->bending = value;
+
+	/* check for max clipping */
+	if (value > settings->max_bend)
+		settings->max_bend = value;
+}
 
 static void rna_ClothSettings_max_bend_set(struct PointerRNA *ptr, float value)
 {
@@ -78,6 +94,17 @@ static void rna_ClothSettings_max_bend_set(struct PointerRNA *ptr, float value)
 		value = settings->bending;
 	
 	settings->max_bend = value;
+}
+
+static void rna_ClothSettings_structural_set(struct PointerRNA *ptr, float value)
+{
+	ClothSimSettings *settings = (ClothSimSettings *)ptr->data;
+
+	settings->structural = value;
+
+	/* check for max clipping */
+	if (value > settings->max_struct)
+		settings->max_struct = value;
 }
 
 static void rna_ClothSettings_max_struct_set(struct PointerRNA *ptr, float value)
@@ -269,7 +296,7 @@ static void rna_def_cloth_solver_result(BlenderRNA *brna)
 	    {BPH_SOLVER_NUMERICAL_ISSUE, "NUMERICAL_ISSUE", 0, "Numerical Issue", "The provided data did not satisfy the prerequisites"},
 	    {BPH_SOLVER_NO_CONVERGENCE, "NO_CONVERGENCE", 0, "No Convergence", "Iterative procedure did not converge"},
 	    {BPH_SOLVER_INVALID_INPUT, "INVALID_INPUT", 0, "Invalid Input", "The inputs are invalid, or the algorithm has been improperly called"},
-		{0, NULL, 0, NULL, NULL}
+	    {0, NULL, 0, NULL, NULL}
 	};
 	
 	srna = RNA_def_struct(brna, "ClothSolverResult", NULL);
@@ -436,9 +463,17 @@ static void rna_def_cloth_sim_settings(BlenderRNA *brna)
 
 	prop = RNA_def_property(srna, "quality", PROP_INT, PROP_NONE);
 	RNA_def_property_int_sdna(prop, NULL, "stepsPerFrame");
-	RNA_def_property_range(prop, 1, 80);
+	RNA_def_property_range(prop, 1, INT_MAX);
+	RNA_def_property_ui_range(prop, 1, 80, 1, -1);
 	RNA_def_property_ui_text(prop, "Quality",
 	                         "Quality of the simulation in steps per frame (higher is better quality but slower)");
+	RNA_def_property_update(prop, 0, "rna_cloth_update");
+
+	prop = RNA_def_property(srna, "time_scale", PROP_FLOAT, PROP_NONE);
+	RNA_def_property_float_sdna(prop, NULL, "time_scale");
+	RNA_def_property_range(prop, 0.0f, FLT_MAX);
+	RNA_def_property_ui_range(prop, 0.0f, 10.0f, 10, 3);
+	RNA_def_property_ui_text(prop, "Speed", "Cloth speed is multiplied by this value");
 	RNA_def_property_update(prop, 0, "rna_cloth_update");
 
 	prop = RNA_def_property(srna, "vertex_group_shrink", PROP_STRING, PROP_NONE);
@@ -485,6 +520,7 @@ static void rna_def_cloth_sim_settings(BlenderRNA *brna)
 	prop = RNA_def_property(srna, "structural_stiffness", PROP_FLOAT, PROP_NONE);
 	RNA_def_property_float_sdna(prop, NULL, "structural");
 	RNA_def_property_range(prop, 0.0f, 10000.0f);
+	RNA_def_property_float_funcs(prop, NULL, "rna_ClothSettings_structural_set", NULL);
 	RNA_def_property_ui_text(prop, "Structural Stiffness", "Overall stiffness of structure");
 	RNA_def_property_update(prop, 0, "rna_cloth_update");
 
@@ -513,6 +549,7 @@ static void rna_def_cloth_sim_settings(BlenderRNA *brna)
 	prop = RNA_def_property(srna, "bending_stiffness", PROP_FLOAT, PROP_NONE);
 	RNA_def_property_float_sdna(prop, NULL, "bending");
 	RNA_def_property_range(prop, 0.0f, 10000.0f);
+	RNA_def_property_float_funcs(prop, NULL, "rna_ClothSettings_bending_set", NULL);
 	RNA_def_property_ui_text(prop, "Bending Stiffness",
 	                         "Wrinkle coefficient (higher = less smaller but more big wrinkles)");
 	RNA_def_property_update(prop, 0, "rna_cloth_update");
@@ -535,6 +572,7 @@ static void rna_def_cloth_sim_settings(BlenderRNA *brna)
 	RNA_def_property_boolean_sdna(prop, NULL, "flags", CLOTH_SIMSETTINGS_FLAG_SEW);
 	RNA_def_property_ui_text(prop, "Sew Cloth", "Pulls loose edges together");
 	RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
+	RNA_def_property_update(prop, 0, "rna_cloth_update");
 
 	prop = RNA_def_property(srna, "vertex_group_bending", PROP_STRING, PROP_NONE);
 	RNA_def_property_string_funcs(prop, "rna_ClothSettings_bend_vgroup_get", "rna_ClothSettings_bend_vgroup_length",
@@ -555,6 +593,12 @@ static void rna_def_cloth_sim_settings(BlenderRNA *brna)
 	                               "rna_ClothSettings_rest_shape_key_set", NULL, NULL);
 	RNA_def_property_ui_text(prop, "Rest Shape Key", "Shape key to use the rest spring lengths from");
 	RNA_def_property_update(prop, 0, "rna_cloth_update");
+
+	prop = RNA_def_property(srna, "use_dynamic_mesh", PROP_BOOLEAN, PROP_NONE);
+	RNA_def_property_boolean_sdna(prop, NULL, "flags", CLOTH_SIMSETTINGS_FLAG_DYNAMIC_BASEMESH);
+	RNA_def_property_ui_text(prop, "Dynamic Base Mesh", "Make simulation respect deformations in the base mesh");
+	RNA_def_property_update(prop, 0, "rna_cloth_update");
+	RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
 
 	/* unused */
 
@@ -655,7 +699,8 @@ static void rna_def_cloth_collision_settings(BlenderRNA *brna)
 
 	prop = RNA_def_property(srna, "collision_quality", PROP_INT, PROP_NONE);
 	RNA_def_property_int_sdna(prop, NULL, "loop_count");
-	RNA_def_property_range(prop, 1, 20);
+	RNA_def_property_range(prop, 1, SHRT_MAX);
+	RNA_def_property_ui_range(prop, 1, 20, 1, -1);
 	RNA_def_property_ui_text(prop, "Collision Quality",
 	                         "How many collision iterations should be done. (higher is better quality but slower)");
 	RNA_def_property_update(prop, 0, "rna_cloth_update");
@@ -680,7 +725,8 @@ static void rna_def_cloth_collision_settings(BlenderRNA *brna)
 
 	prop = RNA_def_property(srna, "self_collision_quality", PROP_INT, PROP_NONE);
 	RNA_def_property_int_sdna(prop, NULL, "self_loop_count");
-	RNA_def_property_range(prop, 1, 10);
+	RNA_def_property_range(prop, 1, SHRT_MAX);
+	RNA_def_property_ui_range(prop, 1, 10, 1, -1);
 	RNA_def_property_ui_text(prop, "Self Collision Quality",
 	                         "How many self collision iterations should be done "
 	                         "(higher is better quality but slower)");
@@ -689,7 +735,7 @@ static void rna_def_cloth_collision_settings(BlenderRNA *brna)
 	prop = RNA_def_property(srna, "group", PROP_POINTER, PROP_NONE);
 	RNA_def_property_flag(prop, PROP_EDITABLE);
 	RNA_def_property_ui_text(prop, "Collision Group", "Limit colliders to this Group");
-	RNA_def_property_update(prop, 0, "rna_cloth_update");
+	RNA_def_property_update(prop, 0, "rna_cloth_dependency_update");
 
 	prop = RNA_def_property(srna, "vertex_group_self_collisions", PROP_STRING, PROP_NONE);
 	RNA_def_property_string_funcs(prop, "rna_CollSettings_selfcol_vgroup_get", "rna_CollSettings_selfcol_vgroup_length",

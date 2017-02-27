@@ -83,6 +83,9 @@ void render_result_save_empty_result_tiles(struct Render *re);
 void render_result_exr_file_begin(struct Render *re);
 void render_result_exr_file_end(struct Render *re);
 
+/* render pass wrapper for gpencil */
+struct RenderPass *gp_add_pass(struct RenderResult *rr, struct RenderLayer *rl, int channels, int passtype, const char *viewname);
+
 void render_result_exr_file_merge(struct RenderResult *rr, struct RenderResult *rrpart, const char *viewname);
 
 void render_result_exr_file_path(struct Scene *scene, const char *layname, int sample, char *filepath);
@@ -97,8 +100,6 @@ bool render_result_exr_file_cache_read(struct Render *re);
 /* Combined Pixel Rect */
 
 struct ImBuf *render_result_rect_to_ibuf(struct RenderResult *rr, struct RenderData *rd, const int view_id);
-void render_result_rect_from_ibuf(struct RenderResult *rr, struct RenderData *rd,
-	struct ImBuf *ibuf, const int view_id);
 
 void render_result_rect_fill_zero(struct RenderResult *rr, const int view_id);
 void render_result_rect_get_pixels(struct RenderResult *rr,

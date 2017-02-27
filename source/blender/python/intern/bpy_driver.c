@@ -42,10 +42,15 @@
 #include "BKE_fcurve.h"
 #include "BKE_global.h"
 
+#include "bpy_rna_driver.h"  /* for pyrna_driver_get_variable_value */
+
+#include "bpy_intern_string.h"
+
 #include "bpy_driver.h"
 
 extern void BPY_update_rna_module(void);
 
+#define USE_RNA_AS_PYOBJECT
 
 /* for pydrivers (drivers using one-line Python expressions to express relationships between targets) */
 PyObject *bpy_pydriver_Dict = NULL;
@@ -94,24 +99,48 @@ int bpy_pydriver_create_dict(void)
 }
 
 /* note, this function should do nothing most runs, only when changing frame */
-static PyObject *bpy_pydriver_InternStr__frame = NULL;
 /* not thread safe but neither is python */
-static float bpy_pydriver_evaltime_prev = FLT_MAX;
+static struct {
+	float evaltime;
 
-static void bpy_pydriver_update_dict(const float evaltime)
+	/* borrowed reference to the 'self' in 'bpy_pydriver_Dict'
+	 * keep for as long as the same self is used. */
+	PyObject *self;
+} g_pydriver_state_prev = {
+	.evaltime = FLT_MAX,
+	.self = NULL,
+};
+
+static void bpy_pydriver_namespace_update_frame(const float evaltime)
 {
-	if (bpy_pydriver_evaltime_prev != evaltime) {
+	if (g_pydriver_state_prev.evaltime != evaltime) {
+		PyObject *item = PyFloat_FromDouble(evaltime);
+		PyDict_SetItem(bpy_pydriver_Dict, bpy_intern_str_frame, item);
+		Py_DECREF(item);
 
-		/* currently only update the frame */
-		if (bpy_pydriver_InternStr__frame == NULL) {
-			bpy_pydriver_InternStr__frame = PyUnicode_FromString("frame");
-		}
+		g_pydriver_state_prev.evaltime = evaltime;
+	}
+}
 
-		PyDict_SetItem(bpy_pydriver_Dict,
-		               bpy_pydriver_InternStr__frame,
-		               PyFloat_FromDouble(evaltime));
+static void bpy_pydriver_namespace_update_self(struct PathResolvedRNA *anim_rna)
+{
+	if ((g_pydriver_state_prev.self == NULL) ||
+	    (pyrna_driver_is_equal_anim_rna(anim_rna, g_pydriver_state_prev.self) == false))
+	{
+		PyObject *item = pyrna_driver_self_from_anim_rna(anim_rna);
+		PyDict_SetItem(bpy_pydriver_Dict, bpy_intern_str_self, item);
+		Py_DECREF(item);
 
-		bpy_pydriver_evaltime_prev = evaltime;
+		g_pydriver_state_prev.self = item;
+	}
+}
+
+static void bpy_pydriver_namespace_clear_self(void)
+{
+	if (g_pydriver_state_prev.self) {
+		PyDict_DelItem(bpy_pydriver_Dict, bpy_intern_str_self);
+
+		g_pydriver_state_prev.self = NULL;
 	}
 }
 
@@ -134,11 +163,10 @@ void BPY_driver_reset(void)
 		bpy_pydriver_Dict = NULL;
 	}
 
-	if (bpy_pydriver_InternStr__frame) {
-		Py_DECREF(bpy_pydriver_InternStr__frame);
-		bpy_pydriver_InternStr__frame = NULL;
-		bpy_pydriver_evaltime_prev = FLT_MAX;
-	}
+	g_pydriver_state_prev.evaltime = FLT_MAX;
+
+	/* freed when clearing driver dict */
+	g_pydriver_state_prev.self = NULL;
 
 	if (use_gil)
 		PyGILState_Release(gilstate);
@@ -169,7 +197,7 @@ static void pydriver_error(ChannelDriver *driver)
  * now release the GIL on python operator execution instead, using
  * PyEval_SaveThread() / PyEval_RestoreThread() so we don't lock up blender.
  */
-float BPY_driver_exec(ChannelDriver *driver, const float evaltime)
+float BPY_driver_exec(struct PathResolvedRNA *anim_rna, ChannelDriver *driver, const float evaltime)
 {
 	PyObject *driver_vars = NULL;
 	PyObject *retval = NULL;
@@ -211,7 +239,7 @@ float BPY_driver_exec(ChannelDriver *driver, const float evaltime)
 	/* init global dictionary for py-driver evaluation settings */
 	if (!bpy_pydriver_Dict) {
 		if (bpy_pydriver_create_dict() != 0) {
-			fprintf(stderr, "Pydriver error: couldn't create Python dictionary");
+			fprintf(stderr, "PyDriver error: couldn't create Python dictionary\n");
 			if (use_gil)
 				PyGILState_Release(gilstate);
 			return 0.0f;
@@ -219,8 +247,14 @@ float BPY_driver_exec(ChannelDriver *driver, const float evaltime)
 	}
 
 	/* update global namespace */
-	bpy_pydriver_update_dict(evaltime);
+	bpy_pydriver_namespace_update_frame(evaltime);
 
+	if (driver->flag & DRIVER_FLAG_USE_SELF) {
+		bpy_pydriver_namespace_update_self(anim_rna);
+	}
+	else {
+		bpy_pydriver_namespace_clear_self();
+	}
 
 	if (driver->expr_comp == NULL)
 		driver->flag |= DRIVER_FLAG_RECOMPILE;
@@ -259,18 +293,49 @@ float BPY_driver_exec(ChannelDriver *driver, const float evaltime)
 	}
 
 	/* add target values to a dict that will be used as '__locals__' dict */
-	driver_vars = PyDict_New(); // XXX do we need to decref this?
+	driver_vars = _PyDict_NewPresized(PyTuple_GET_SIZE(expr_vars));
 	for (dvar = driver->variables.first, i = 0; dvar; dvar = dvar->next) {
 		PyObject *driver_arg = NULL;
-		float tval = 0.0f;
-		
-		/* try to get variable value */
-		tval = driver_get_variable_value(driver, dvar);
-		driver_arg = PyFloat_FromDouble((double)tval);
-		
+
+	/* support for any RNA data */
+#ifdef USE_RNA_AS_PYOBJECT
+		if (dvar->type == DVAR_TYPE_SINGLE_PROP) {
+			driver_arg = pyrna_driver_get_variable_value(driver, &dvar->targets[0]);
+
+			if (driver_arg == NULL) {
+				driver_arg = PyFloat_FromDouble(0.0);
+				dvar->curval = 0.0f;
+			}
+			else {
+				/* no need to worry about overflow here, values from RNA are within limits. */
+				if (PyFloat_CheckExact(driver_arg)) {
+					dvar->curval = (float)PyFloat_AsDouble(driver_arg);
+				}
+				else if (PyLong_CheckExact(driver_arg)) {
+					dvar->curval = (float)PyLong_AsLong(driver_arg);
+				}
+				else if (PyBool_Check(driver_arg)) {
+					dvar->curval = (driver_arg == Py_True);
+				}
+				else {
+					dvar->curval = 0.0f;
+				}
+			}
+		}
+		else
+#endif
+		{
+			/* try to get variable value */
+			float tval = driver_get_variable_value(driver, dvar);
+			driver_arg = PyFloat_FromDouble((double)tval);
+		}
+
 		/* try to add to dictionary */
 		/* if (PyDict_SetItemString(driver_vars, dvar->name, driver_arg)) { */
-		if (PyDict_SetItem(driver_vars, PyTuple_GET_ITEM(expr_vars, i++), driver_arg) < 0) {
+		if (PyDict_SetItem(driver_vars, PyTuple_GET_ITEM(expr_vars, i++), driver_arg) != -1) {
+			Py_DECREF(driver_arg);
+		}
+		else {
 			/* this target failed - bad name */
 			if (targets_ok) {
 				/* first one - print some extra info for easier identification */
@@ -316,7 +381,7 @@ float BPY_driver_exec(ChannelDriver *driver, const float evaltime)
 	if (use_gil)
 		PyGILState_Release(gilstate);
 
-	if (finite(result)) {
+	if (isfinite(result)) {
 		return (float)result;
 	}
 	else {

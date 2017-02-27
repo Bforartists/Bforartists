@@ -35,10 +35,12 @@
 #include "DNA_group_types.h"
 
 #include "BKE_freestyle.h"
+#include "BKE_library.h"
 #include "BKE_linestyle.h"
 
 #include "BLI_blenlib.h"
 #include "BLI_math.h"
+#include "BLI_string_utils.h"
 
 // function declarations
 static FreestyleLineSet *alloc_lineset(void);
@@ -65,11 +67,11 @@ void BKE_freestyle_config_free(FreestyleConfig *config)
 
 	for (lineset = (FreestyleLineSet *)config->linesets.first; lineset; lineset = lineset->next) {
 		if (lineset->group) {
-			lineset->group->id.us--;
+			id_us_min(&lineset->group->id);
 			lineset->group = NULL;
 		}
 		if (lineset->linestyle) {
-			lineset->linestyle->id.us--;
+			id_us_min(&lineset->linestyle->id);
 			lineset->linestyle = NULL;
 		}
 	}
@@ -107,7 +109,7 @@ static void copy_lineset(FreestyleLineSet *new_lineset, FreestyleLineSet *linese
 {
 	new_lineset->linestyle = lineset->linestyle;
 	if (new_lineset->linestyle)
-		new_lineset->linestyle->id.us++;
+		id_us_plus(&new_lineset->linestyle->id);
 	new_lineset->flags = lineset->flags;
 	new_lineset->selection = lineset->selection;
 	new_lineset->qi = lineset->qi;
@@ -117,7 +119,7 @@ static void copy_lineset(FreestyleLineSet *new_lineset, FreestyleLineSet *linese
 	new_lineset->exclude_edge_types = lineset->exclude_edge_types;
 	new_lineset->group = lineset->group;
 	if (new_lineset->group) {
-		new_lineset->group->id.us++;
+		id_us_plus(&new_lineset->group->id);
 	}
 	strcpy(new_lineset->name, lineset->name);
 }
@@ -150,22 +152,14 @@ bool BKE_freestyle_module_delete(FreestyleConfig *config, FreestyleModuleConfig 
 	return true;
 }
 
-bool BKE_freestyle_module_move_up(FreestyleConfig *config, FreestyleModuleConfig *module_conf)
+/**
+ * Reinsert \a module_conf offset by \a direction from current position.
+ * \return if position of \a module_conf changed.
+ */
+bool BKE_freestyle_module_move(FreestyleConfig *config, FreestyleModuleConfig *module_conf, int direction)
 {
-	if (BLI_findindex(&config->modules, module_conf) == -1)
-		return false;
-	BLI_remlink(&config->modules, module_conf);
-	BLI_insertlinkbefore(&config->modules, module_conf->prev, module_conf);
-	return true;
-}
-
-bool BKE_freestyle_module_move_down(FreestyleConfig *config, FreestyleModuleConfig *module_conf)
-{
-	if (BLI_findindex(&config->modules, module_conf) == -1)
-		return false;
-	BLI_remlink(&config->modules, module_conf);
-	BLI_insertlinkafter(&config->modules, module_conf->next, module_conf);
-	return true;
+	return ((BLI_findindex(&config->modules, module_conf) > -1) &&
+	        (BLI_listbase_link_move(&config->modules, module_conf, direction) == true));
 }
 
 void BKE_freestyle_lineset_unique_name(FreestyleConfig *config, FreestyleLineSet *lineset)
@@ -215,10 +209,10 @@ bool BKE_freestyle_lineset_delete(FreestyleConfig *config, FreestyleLineSet *lin
 	if (BLI_findindex(&config->linesets, lineset) == -1)
 		return false;
 	if (lineset->group) {
-		lineset->group->id.us--;
+		id_us_min(&lineset->group->id);
 	}
 	if (lineset->linestyle) {
-		lineset->linestyle->id.us--;
+		id_us_min(&lineset->linestyle->id);
 	}
 	BLI_remlink(&config->linesets, lineset);
 	MEM_freeN(lineset);

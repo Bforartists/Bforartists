@@ -27,16 +27,14 @@ SpaceView3D = bpy.types.SpaceView3D
 callback_handle = []
 
 
-def tag_redraw_all_view3d():
+def tag_redraw_areas():
     context = bpy.context
 
     # Py cant access notifers
     for window in context.window_manager.windows:
         for area in window.screen.areas:
-            if area.type == 'VIEW_3D':
-                for region in area.regions:
-                    if region.type == 'WINDOW':
-                        region.tag_redraw()
+            if area.type in ['VIEW_3D', 'PROPERTIES']:
+                area.tag_redraw()
 
 
 def callback_enable():
@@ -47,7 +45,7 @@ def callback_enable():
     handle_view = SpaceView3D.draw_handler_add(draw_callback_view, (), 'WINDOW', 'POST_VIEW')
     callback_handle[:] = handle_pixel, handle_view
 
-    tag_redraw_all_view3d()
+    tag_redraw_areas()
 
 
 def callback_disable():
@@ -59,7 +57,7 @@ def callback_disable():
     SpaceView3D.draw_handler_remove(handle_view, 'WINDOW')
     callback_handle[:] = []
 
-    tag_redraw_all_view3d()
+    tag_redraw_areas()
 
 
 def draw_callback_px():
@@ -70,6 +68,11 @@ def draw_callback_px():
     blf.size(font_id, 12, 72)
 
     data_matrix, data_quat, data_euler, data_vector, data_vector_array = utils.console_math_data()
+
+    name_hide = context.window_manager.MathVisProp.name_hide
+
+    if name_hide:
+        return
 
     if not data_matrix and not data_quat and not data_euler and not data_vector and not data_vector_array:
 
@@ -92,13 +95,13 @@ def draw_callback_px():
     # vars for projection
     perspective_matrix = region3d.perspective_matrix.copy()
 
-    def draw_text(text, vec):
+    def draw_text(text, vec, dx=3.0, dy=-4.0):
         vec_4d = perspective_matrix * vec.to_4d()
         if vec_4d.w > 0.0:
             x = region_mid_width + region_mid_width * (vec_4d.x / vec_4d.w)
             y = region_mid_height + region_mid_height * (vec_4d.y / vec_4d.w)
 
-            blf.position(font_id, x + 3.0, y - 4.0, 0.0)
+            blf.position(font_id, x + dx, y + dy, 0.0)
             blf.draw(font_id, text)
 
     # points
@@ -114,34 +117,56 @@ def draw_callback_px():
     # matrix
     if data_matrix:
         for key, mat in data_matrix.items():
-            draw_text(key, mat[3])
+            loc = Vector((mat[0][3], mat[1][3], mat[2][3]))
+            draw_text(key, loc, dx=10, dy=-20)
 
+    line = 20
     if data_quat:
         loc = context.scene.cursor_location.copy()
         for key, mat in data_quat.items():
-            draw_text(key, loc)
+            draw_text(key, loc, dy=-line)
+            line += 20
 
     if data_euler:
         loc = context.scene.cursor_location.copy()
         for key, mat in data_euler.items():
-            draw_text(key, loc)
+            draw_text(key, loc, dy=-line)
+            line += 20
 
 
 def draw_callback_view():
     context = bpy.context
 
-    from bgl import glEnable, glDisable, glColor3f, glVertex3f, glPointSize, glLineWidth, glBegin, glEnd, glLineStipple, GL_POINTS, GL_LINE_STRIP, GL_LINES, GL_LINE_STIPPLE
+    from bgl import (
+        glEnable,
+        glDisable,
+        glColor3f,
+        glVertex3f,
+        glPointSize,
+        glLineWidth,
+        glBegin,
+        glEnd,
+        glLineStipple,
+        GL_POINTS,
+        GL_LINE_STRIP,
+        GL_LINES,
+        GL_LINE_STIPPLE
+    )
 
     data_matrix, data_quat, data_euler, data_vector, data_vector_array = utils.console_math_data()
 
+    # draw_matrix modifiers
+    bbox_hide = context.window_manager.MathVisProp.bbox_hide
+    bbox_scale = context.window_manager.MathVisProp.bbox_scale
+
     # draw_matrix vars
     zero = Vector((0.0, 0.0, 0.0))
-    x_p = Vector((1.0, 0.0, 0.0))
-    x_n = Vector((-1.0, 0.0, 0.0))
-    y_p = Vector((0.0, 1.0, 0.0))
-    y_n = Vector((0.0, -1.0, 0.0))
-    z_p = Vector((0.0, 0.0, 1.0))
-    z_n = Vector((0.0, 0.0, -1.0))
+    x_p = Vector((bbox_scale, 0.0, 0.0))
+    x_n = Vector((-bbox_scale, 0.0, 0.0))
+    y_p = Vector((0.0, bbox_scale, 0.0))
+    y_n = Vector((0.0, -bbox_scale, 0.0))
+    z_p = Vector((0.0, 0.0, bbox_scale))
+    z_n = Vector((0.0, 0.0, -bbox_scale))
     bb = [Vector() for i in range(8)]
 
     def draw_matrix(mat):
@@ -176,7 +201,7 @@ def draw_callback_view():
         glEnd()
 
         # z
-        glColor3f(0.2, 0.2, 1.0)
+        glColor3f(0.4, 0.4, 1.0)
         glBegin(GL_LINES)
         glVertex3f(*(zero_tx))
         glVertex3f(*(mat * z_p))
@@ -189,11 +214,14 @@ def draw_callback_view():
         glEnd()
 
         # bounding box
+        if bbox_hide:
+            return
+
         i = 0
         glColor3f(1.0, 1.0, 1.0)
-        for x in (-1.0, 1.0):
-            for y in (-1.0, 1.0):
-                for z in (-1.0, 1.0):
+        for x in (-bbox_scale, bbox_scale):
+            for y in (-bbox_scale, bbox_scale):
+                for z in (-bbox_scale, bbox_scale):
                     bb[i][:] = x, y, z
                     bb[i] = mat * bb[i]
                     i += 1

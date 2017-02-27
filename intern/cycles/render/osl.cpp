@@ -75,10 +75,10 @@ void OSLShaderManager::reset(Scene * /*scene*/)
 
 void OSLShaderManager::device_update(Device *device, DeviceScene *dscene, Scene *scene, Progress& progress)
 {
-	VLOG(1) << "Total " << scene->shaders.size() << " shaders.";
-
 	if(!need_update)
 		return;
+
+	VLOG(1) << "Total " << scene->shaders.size() << " shaders.";
 
 	device_free(device, dscene, scene);
 
@@ -99,8 +99,8 @@ void OSLShaderManager::device_update(Device *device, DeviceScene *dscene, Scene 
 		thread_scoped_lock lock(ss_mutex);
 
 		OSLCompiler compiler((void*)this, (void*)ss, scene->image_manager);
-		compiler.background = (shader == scene->shaders[scene->default_background]);
-		compiler.compile(og, shader);
+		compiler.background = (shader == scene->default_background);
+		compiler.compile(scene, og, shader);
 
 		if(shader->use_mis && shader->has_surface_emission)
 			scene->light_manager->need_update = true;
@@ -125,11 +125,21 @@ void OSLShaderManager::device_update(Device *device, DeviceScene *dscene, Scene 
 
 	device_update_common(device, dscene, scene, progress);
 
-	/* greedyjit test
 	{
+		/* Perform greedyjit optimization.
+		 *
+		 * This might waste time on optimizing gorups which are never actually
+		 * used, but this prevents OSL from allocating data on TLS at render
+		 * time.
+		 *
+		 * This is much better for us because this way we aren't required to
+		 * stop task scheduler threads to make sure all TLS is clean and don't
+		 * have issues with TLS data free accessing freed memory if task scheduler
+		 * is being freed after the Session is freed.
+		 */
 		thread_scoped_lock lock(ss_shared_mutex);
 		ss->optimize_all_groups();
-	}*/
+	}
 }
 
 void OSLShaderManager::device_free(Device *device, DeviceScene *dscene, Scene *scene)
@@ -176,6 +186,7 @@ void OSLShaderManager::texture_system_free()
 	ts_shared_users--;
 
 	if(ts_shared_users == 0) {
+		ts_shared->invalidate_all(true);
 		OSL::TextureSystem::destroy(ts_shared);
 		ts_shared = NULL;
 	}
@@ -191,13 +202,26 @@ void OSLShaderManager::shading_system_init()
 	if(ss_shared_users == 0) {
 		services_shared = new OSLRenderServices();
 
+		string shader_path = path_get("shader");
+#ifdef _WIN32
+		/* Annoying thing, Cycles stores paths in UTF-8 codepage, so it can
+		 * operate with file paths with any character. This requires to use wide
+		 * char functions, but OSL uses old fashioned ANSI functions which means:
+		 *
+		 * - We have to convert our paths to ANSI before passing to OSL
+		 * - OSL can't be used when there's a multi-byte character in the path
+		 *   to the shaders folder.
+		 */
+		shader_path = string_to_ansi(shader_path);
+#endif
+
 		ss_shared = new OSL::ShadingSystem(services_shared, ts_shared, &errhandler);
 		ss_shared->attribute("lockgeom", 1);
 		ss_shared->attribute("commonspace", "world");
-		ss_shared->attribute("searchpath:shader", path_get("shader"));
-		//ss_shared->attribute("greedyjit", 1);
+		ss_shared->attribute("searchpath:shader", shader_path);
+		ss_shared->attribute("greedyjit", 1);
 
-		VLOG(1) << "Using shader search path: " << path_get("shader");
+		VLOG(1) << "Using shader search path: " << shader_path;
 
 		/* our own ray types */
 		static const char *raytypes[] = {
@@ -253,11 +277,7 @@ void OSLShaderManager::shading_system_free()
 
 bool OSLShaderManager::osl_compile(const string& inputfile, const string& outputfile)
 {
-#if OSL_LIBRARY_VERSION_CODE < 10602
-	vector<string_view> options;
-#else
 	vector<string> options;
-#endif
 	string stdosl_path;
 	string shader_path = path_get("shader");
 
@@ -272,7 +292,7 @@ bool OSLShaderManager::osl_compile(const string& inputfile, const string& output
 	stdosl_path = path_get("shader/stdosl.h");
 
 	/* compile */
-	OSL::OSLCompiler *compiler = new OSL::OSLCompiler();
+	OSL::OSLCompiler *compiler = new OSL::OSLCompiler(&OSL::ErrorHandler::default_handler());
 	bool ok = compiler->compile(string_view(inputfile), options, string_view(stdosl_path));
 	delete compiler;
 
@@ -374,14 +394,143 @@ const char *OSLShaderManager::shader_load_bytecode(const string& hash, const str
 {
 	ss->LoadMemoryCompiledShader(hash.c_str(), bytecode.c_str());
 
-	/* this is a bit weak, but works */
 	OSLShaderInfo info;
+
+	if(!info.query.open_bytecode(bytecode)) {
+		fprintf(stderr, "OSL query error: %s\n", info.query.geterror().c_str());
+	}
+
+	/* this is a bit weak, but works */
 	info.has_surface_emission = (bytecode.find("\"emission\"") != string::npos);
 	info.has_surface_transparent = (bytecode.find("\"transparent\"") != string::npos);
 	info.has_surface_bssrdf = (bytecode.find("\"bssrdf\"") != string::npos);
+
 	loaded_shaders[hash] = info;
 
 	return loaded_shaders.find(hash)->first.c_str();
+}
+
+OSLNode *OSLShaderManager::osl_node(const std::string& filepath,
+                                    const std::string& bytecode_hash,
+                                    const std::string& bytecode)
+{
+	/* create query */
+	const char *hash;
+
+	if(!filepath.empty()) {
+		hash = shader_load_filepath(filepath);
+	}
+	else {
+		hash = shader_test_loaded(bytecode_hash);
+		if(!hash)
+			hash = shader_load_bytecode(bytecode_hash, bytecode);
+	}
+
+	if(!hash) {
+		return NULL;
+	}
+
+	OSLShaderInfo *info = shader_loaded_info(hash);
+
+	/* count number of inputs */
+	size_t num_inputs = 0;
+
+	for(int i = 0; i < info->query.nparams(); i++) {
+		const OSL::OSLQuery::Parameter *param = info->query.getparam(i);
+
+		/* skip unsupported types */
+		if(param->varlenarray || param->isstruct || param->type.arraylen > 1)
+			continue;
+
+		if(!param->isoutput)
+			num_inputs++;
+	}
+
+	/* create node */
+	OSLNode *node = OSLNode::create(num_inputs);
+
+	/* add new sockets from parameters */
+	set<void*> used_sockets;
+
+	for(int i = 0; i < info->query.nparams(); i++) {
+		const OSL::OSLQuery::Parameter *param = info->query.getparam(i);
+
+		/* skip unsupported types */
+		if(param->varlenarray || param->isstruct || param->type.arraylen > 1)
+			continue;
+
+		SocketType::Type socket_type;
+
+		if(param->isclosure) {
+			socket_type = SocketType::CLOSURE;
+		}
+		else if(param->type.vecsemantics != TypeDesc::NOSEMANTICS) {
+			if(param->type.vecsemantics == TypeDesc::COLOR)
+				socket_type = SocketType::COLOR;
+			else if(param->type.vecsemantics == TypeDesc::POINT)
+				socket_type = SocketType::POINT;
+			else if(param->type.vecsemantics == TypeDesc::VECTOR)
+				socket_type = SocketType::VECTOR;
+			else if(param->type.vecsemantics == TypeDesc::NORMAL)
+				socket_type = SocketType::NORMAL;
+			else
+				continue;
+
+			if(!param->isoutput && param->validdefault) {
+				float3 *default_value = (float3*)node->input_default_value();
+				default_value->x = param->fdefault[0];
+				default_value->y = param->fdefault[1];
+				default_value->z = param->fdefault[2];
+			}
+		}
+		else if(param->type.aggregate == TypeDesc::SCALAR) {
+			if(param->type.basetype == TypeDesc::INT) {
+				socket_type = SocketType::INT;
+
+				if(!param->isoutput && param->validdefault) {
+					*(int*)node->input_default_value() = param->idefault[0];
+				}
+			}
+			else if(param->type.basetype == TypeDesc::FLOAT) {
+				socket_type = SocketType::FLOAT;
+
+				if(!param->isoutput && param->validdefault) {
+					*(float*)node->input_default_value() = param->fdefault[0];
+				}
+			}
+			else if(param->type.basetype == TypeDesc::STRING) {
+				socket_type = SocketType::STRING;
+
+				if(!param->isoutput && param->validdefault) {
+					*(ustring*)node->input_default_value() = param->sdefault[0];
+				}
+			}
+			else
+				continue;
+		}
+		else
+			continue;
+
+		if(param->isoutput) {
+			node->add_output(param->name, socket_type);
+		}
+		else {
+			node->add_input(param->name, socket_type);
+		}
+	}
+
+	/* set bytcode hash or filepath */
+	if(!bytecode_hash.empty()) {
+		node->bytecode_hash = bytecode_hash;
+	}
+	else {
+		node->filepath = filepath;
+	}
+
+	/* Generate inputs and outputs */
+	node->create_inputs_outputs(node->type);
+
+	return node;
 }
 
 /* Graph Compiler */
@@ -400,14 +549,14 @@ string OSLCompiler::id(ShaderNode *node)
 {
 	/* assign layer unique name based on pointer address + bump mode */
 	stringstream stream;
-	stream << "node_" << node->name << "_" << node;
+	stream << "node_" << node->type->name << "_" << node;
 
 	return stream.str();
 }
 
 string OSLCompiler::compatible_name(ShaderNode *node, ShaderInput *input)
 {
-	string sname(input->name);
+	string sname(input->name().string());
 	size_t i;
 
 	/* strip whitespace */
@@ -416,7 +565,7 @@ string OSLCompiler::compatible_name(ShaderNode *node, ShaderInput *input)
 	
 	/* if output exists with the same name, add "In" suffix */
 	foreach(ShaderOutput *output, node->outputs) {
-		if(strcmp(input->name, output->name)==0) {
+		if(input->name() == output->name()) {
 			sname += "In";
 			break;
 		}
@@ -427,7 +576,7 @@ string OSLCompiler::compatible_name(ShaderNode *node, ShaderInput *input)
 
 string OSLCompiler::compatible_name(ShaderNode *node, ShaderOutput *output)
 {
-	string sname(output->name);
+	string sname(output->name().string());
 	size_t i;
 
 	/* strip whitespace */
@@ -436,7 +585,7 @@ string OSLCompiler::compatible_name(ShaderNode *node, ShaderOutput *output)
 	
 	/* if input exists with the same name, add "Out" suffix */
 	foreach(ShaderInput *input, node->inputs) {
-		if(strcmp(input->name, output->name)==0) {
+		if(input->name() == output->name()) {
 			sname += "Out";
 			break;
 		}
@@ -450,24 +599,24 @@ bool OSLCompiler::node_skip_input(ShaderNode *node, ShaderInput *input)
 	/* exception for output node, only one input is actually used
 	 * depending on the current shader type */
 	
-	if(!(input->usage & ShaderInput::USE_OSL))
+	if(input->flags() & SocketType::SVM_INTERNAL)
 		return true;
 
-	if(node->name == ustring("output")) {
-		if(strcmp(input->name, "Surface") == 0 && current_type != SHADER_TYPE_SURFACE)
+	if(node->special_type == SHADER_SPECIAL_TYPE_OUTPUT) {
+		if(input->name() == "Surface" && current_type != SHADER_TYPE_SURFACE)
 			return true;
-		if(strcmp(input->name, "Volume") == 0 && current_type != SHADER_TYPE_VOLUME)
+		if(input->name() == "Volume" && current_type != SHADER_TYPE_VOLUME)
 			return true;
-		if(strcmp(input->name, "Displacement") == 0 && current_type != SHADER_TYPE_DISPLACEMENT)
+		if(input->name() == "Displacement" && current_type != SHADER_TYPE_DISPLACEMENT)
 			return true;
-		if(strcmp(input->name, "Normal") == 0)
-			return true;
-	}
-	else if(node->name == ustring("bump")) {
-		if(strcmp(input->name, "Height") == 0)
+		if(input->name() == "Normal" && current_type != SHADER_TYPE_BUMP)
 			return true;
 	}
-	else if(current_type == SHADER_TYPE_DISPLACEMENT && input->link && input->link->parent->name == ustring("bump"))
+	else if(node->special_type == SHADER_SPECIAL_TYPE_BUMP) {
+		if(input->name() == "Height")
+			return true;
+	}
+	else if(current_type == SHADER_TYPE_DISPLACEMENT && input->link && input->link->parent->special_type == SHADER_SPECIAL_TYPE_BUMP)
 		return true;
 
 	return false;
@@ -492,34 +641,36 @@ void OSLCompiler::add(ShaderNode *node, const char *name, bool isfilepath)
 			if(node_skip_input(node, input))
 				continue;
 			/* already has default value assigned */
-			else if(input->default_value != ShaderInput::NONE)
+			else if(input->flags() & SocketType::DEFAULT_LINK_MASK)
 				continue;
 
 			string param_name = compatible_name(node, input);
-			switch(input->type) {
-				case SHADER_SOCKET_COLOR:
-					parameter_color(param_name.c_str(), input->value);
+			const SocketType& socket = input->socket_type;
+			switch(input->type()) {
+				case SocketType::COLOR:
+					parameter_color(param_name.c_str(), node->get_float3(socket));
 					break;
-				case SHADER_SOCKET_POINT:
-					parameter_point(param_name.c_str(), input->value);
+				case SocketType::POINT:
+					parameter_point(param_name.c_str(), node->get_float3(socket));
 					break;
-				case SHADER_SOCKET_VECTOR:
-					parameter_vector(param_name.c_str(), input->value);
+				case SocketType::VECTOR:
+					parameter_vector(param_name.c_str(), node->get_float3(socket));
 					break;
-				case SHADER_SOCKET_NORMAL:
-					parameter_normal(param_name.c_str(), input->value);
+				case SocketType::NORMAL:
+					parameter_normal(param_name.c_str(), node->get_float3(socket));
 					break;
-				case SHADER_SOCKET_FLOAT:
-					parameter(param_name.c_str(), input->value.x);
+				case SocketType::FLOAT:
+					parameter(param_name.c_str(), node->get_float(socket));
 					break;
-				case SHADER_SOCKET_INT:
-					parameter(param_name.c_str(), (int)input->value.x);
+				case SocketType::INT:
+					parameter(param_name.c_str(), node->get_int(socket));
 					break;
-				case SHADER_SOCKET_STRING:
-					parameter(param_name.c_str(), input->value_string);
+				case SocketType::STRING:
+					parameter(param_name.c_str(), node->get_string(socket));
 					break;
-				case SHADER_SOCKET_CLOSURE:
-				case SHADER_SOCKET_UNDEFINED:
+				case SocketType::CLOSURE:
+				case SocketType::UNDEFINED:
+				default:
 					break;
 			}
 		}
@@ -532,6 +683,8 @@ void OSLCompiler::add(ShaderNode *node, const char *name, bool isfilepath)
 	else if(current_type == SHADER_TYPE_VOLUME)
 		ss->Shader("surface", name, id(node).c_str());
 	else if(current_type == SHADER_TYPE_DISPLACEMENT)
+		ss->Shader("displacement", name, id(node).c_str());
+	else if(current_type == SHADER_TYPE_BUMP)
 		ss->Shader("displacement", name, id(node).c_str());
 	else
 		assert(0);
@@ -555,23 +708,195 @@ void OSLCompiler::add(ShaderNode *node, const char *name, bool isfilepath)
 	/* test if we shader contains specific closures */
 	OSLShaderInfo *info = ((OSLShaderManager*)manager)->shader_loaded_info(name);
 
-	if(info && current_type == SHADER_TYPE_SURFACE) {
-		if(info->has_surface_emission)
-			current_shader->has_surface_emission = true;
-		if(info->has_surface_transparent)
-			current_shader->has_surface_transparent = true;
-		if(info->has_surface_bssrdf) {
-			current_shader->has_surface_bssrdf = true;
-			current_shader->has_bssrdf_bump = true; /* can't detect yet */
+	if(current_type == SHADER_TYPE_SURFACE) {
+		if(info) {
+			if(info->has_surface_emission)
+				current_shader->has_surface_emission = true;
+			if(info->has_surface_transparent)
+				current_shader->has_surface_transparent = true;
+			if(info->has_surface_bssrdf) {
+				current_shader->has_surface_bssrdf = true;
+				current_shader->has_bssrdf_bump = true; /* can't detect yet */
+			}
+		}
+
+		if(node->has_spatial_varying()) {
+			current_shader->has_surface_spatial_varying = true;
 		}
 	}
 	else if(current_type == SHADER_TYPE_VOLUME) {
 		if(node->has_spatial_varying())
-			current_shader->has_heterogeneous_volume = true;
+			current_shader->has_volume_spatial_varying = true;
 	}
 
 	if(node->has_object_dependency()) {
 		current_shader->has_object_dependency = true;
+	}
+
+	if(node->has_integrator_dependency()) {
+		current_shader->has_integrator_dependency = true;
+	}
+}
+
+static TypeDesc array_typedesc(TypeDesc typedesc, int arraylength)
+{
+	return TypeDesc((TypeDesc::BASETYPE)typedesc.basetype,
+	                (TypeDesc::AGGREGATE)typedesc.aggregate,
+	                (TypeDesc::VECSEMANTICS)typedesc.vecsemantics,
+	                arraylength);
+}
+
+void OSLCompiler::parameter(ShaderNode* node, const char *name)
+{
+	OSL::ShadingSystem *ss = (OSL::ShadingSystem*)shadingsys;
+	ustring uname = ustring(name);
+	const SocketType& socket = *(node->type->find_input(uname));
+
+	switch(socket.type)
+	{
+		case SocketType::BOOLEAN:
+		{
+			int value = node->get_bool(socket);
+			ss->Parameter(name, TypeDesc::TypeInt, &value);
+			break;
+		}
+		case SocketType::FLOAT:
+		{
+			float value = node->get_float(socket);
+			ss->Parameter(uname, TypeDesc::TypeFloat, &value);
+			break;
+		}
+		case SocketType::INT:
+		{
+			int value = node->get_int(socket);
+			ss->Parameter(uname, TypeDesc::TypeInt, &value);
+			break;
+		}
+		case SocketType::COLOR:
+		{
+			float3 value = node->get_float3(socket);
+			ss->Parameter(uname, TypeDesc::TypeColor, &value);
+			break;
+		}
+		case SocketType::VECTOR:
+		{
+			float3 value = node->get_float3(socket);
+			ss->Parameter(uname, TypeDesc::TypeVector, &value);
+			break;
+		}
+		case SocketType::POINT:
+		{
+			float3 value = node->get_float3(socket);
+			ss->Parameter(uname, TypeDesc::TypePoint, &value);
+			break;
+		}
+		case SocketType::NORMAL:
+		{
+			float3 value = node->get_float3(socket);
+			ss->Parameter(uname, TypeDesc::TypeNormal, &value);
+			break;
+		}
+		case SocketType::POINT2:
+		{
+			float2 value = node->get_float2(socket);
+			ss->Parameter(uname, TypeDesc(TypeDesc::FLOAT, TypeDesc::VEC2, TypeDesc::POINT), &value);
+			break;
+		}
+		case SocketType::STRING:
+		{
+			ustring value = node->get_string(socket);
+			ss->Parameter(uname, TypeDesc::TypeString, &value);
+			break;
+		}
+		case SocketType::ENUM:
+		{
+			ustring value = node->get_string(socket);
+			ss->Parameter(uname, TypeDesc::TypeString, &value);
+			break;
+		}
+		case SocketType::TRANSFORM:
+		{
+			Transform value = node->get_transform(socket);
+			ss->Parameter(uname, TypeDesc::TypeMatrix, &value);
+			break;
+		}
+		case SocketType::BOOLEAN_ARRAY:
+		{
+			// OSL does not support booleans, so convert to int
+			const array<bool>& value = node->get_bool_array(socket);
+			array<int> intvalue(value.size());
+			for(size_t i = 0; i < value.size(); i++)
+				intvalue[i] = value[i];
+			ss->Parameter(uname, array_typedesc(TypeDesc::TypeInt, value.size()), intvalue.data());
+			break;
+		}
+		case SocketType::FLOAT_ARRAY:
+		{
+			const array<float>& value = node->get_float_array(socket);
+			ss->Parameter(uname, array_typedesc(TypeDesc::TypeFloat, value.size()), value.data());
+			break;
+		}
+		case SocketType::INT_ARRAY:
+		{
+			const array<int>& value = node->get_int_array(socket);
+			ss->Parameter(uname, array_typedesc(TypeDesc::TypeInt, value.size()), value.data());
+			break;
+		}
+		case SocketType::COLOR_ARRAY:
+		case SocketType::VECTOR_ARRAY:
+		case SocketType::POINT_ARRAY:
+		case SocketType::NORMAL_ARRAY:
+		{
+			TypeDesc typedesc;
+
+			switch(socket.type)
+			{
+				case SocketType::COLOR_ARRAY: typedesc = TypeDesc::TypeColor; break;
+				case SocketType::VECTOR_ARRAY: typedesc = TypeDesc::TypeVector; break;
+				case SocketType::POINT_ARRAY: typedesc = TypeDesc::TypePoint; break;
+				case SocketType::NORMAL_ARRAY: typedesc = TypeDesc::TypeNormal; break;
+				default: assert(0); break;
+			}
+
+			// convert to tightly packed array since float3 has padding
+			const array<float3>& value = node->get_float3_array(socket);
+			array<float> fvalue(value.size() * 3);
+			for(size_t i = 0, j = 0; i < value.size(); i++) {
+				fvalue[j++] = value[i].x;
+				fvalue[j++] = value[i].y;
+				fvalue[j++] = value[i].z;
+			}
+
+			ss->Parameter(uname, array_typedesc(typedesc, value.size()), fvalue.data());
+			break;
+		}
+		case SocketType::POINT2_ARRAY:
+		{
+			const array<float2>& value = node->get_float2_array(socket);
+			ss->Parameter(uname, array_typedesc(TypeDesc(TypeDesc::FLOAT, TypeDesc::VEC2, TypeDesc::POINT), value.size()), value.data());
+			break;
+		}
+		case SocketType::STRING_ARRAY:
+		{
+			const array<ustring>& value = node->get_string_array(socket);
+			ss->Parameter(uname, array_typedesc(TypeDesc::TypeString, value.size()), value.data());
+			break;
+		}
+		case SocketType::TRANSFORM_ARRAY:
+		{
+			const array<Transform>& value = node->get_transform_array(socket);
+			ss->Parameter(uname, array_typedesc(TypeDesc::TypeMatrix, value.size()), value.data());
+			break;
+		}
+		case SocketType::CLOSURE:
+		case SocketType::NODE:
+		case SocketType::NODE_ARRAY:
+		case SocketType::UNDEFINED:
+		case SocketType::UINT:
+		{
+			assert(0);
+			break;
+		}
 	}
 }
 
@@ -638,67 +963,28 @@ void OSLCompiler::parameter_array(const char *name, const float f[], int arrayle
 	ss->Parameter(name, type, f);
 }
 
-void OSLCompiler::parameter_color_array(const char *name, const float f[][3], int arraylen)
+void OSLCompiler::parameter_color_array(const char *name, const array<float3>& f)
 {
+	/* NB: cycles float3 type is actually 4 floats! need to use an explicit array */
+	array<float[3]> table(f.size());
+
+	for(int i = 0; i < f.size(); ++i) {
+		table[i][0] = f[i].x;
+		table[i][1] = f[i].y;
+		table[i][2] = f[i].z;
+	}
+
 	OSL::ShadingSystem *ss = (OSL::ShadingSystem*)shadingsys;
 	TypeDesc type = TypeDesc::TypeColor;
-	type.arraylen = arraylen;
-	ss->Parameter(name, type, f);
+	type.arraylen = table.size();
+	ss->Parameter(name, type, table.data());
 }
 
-void OSLCompiler::parameter_vector_array(const char *name, const float f[][3], int arraylen)
-{
-	OSL::ShadingSystem *ss = (OSL::ShadingSystem*)shadingsys;
-	TypeDesc type = TypeDesc::TypeVector;
-	type.arraylen = arraylen;
-	ss->Parameter(name, type, f);
-}
-
-void OSLCompiler::parameter_normal_array(const char *name, const float f[][3], int arraylen)
-{
-	OSL::ShadingSystem *ss = (OSL::ShadingSystem*)shadingsys;
-	TypeDesc type = TypeDesc::TypeNormal;
-	type.arraylen = arraylen;
-	ss->Parameter(name, type, f);
-}
-
-void OSLCompiler::parameter_point_array(const char *name, const float f[][3], int arraylen)
-{
-	OSL::ShadingSystem *ss = (OSL::ShadingSystem*)shadingsys;
-	TypeDesc type = TypeDesc::TypePoint;
-	type.arraylen = arraylen;
-	ss->Parameter(name, type, f);
-}
-
-void OSLCompiler::parameter_array(const char *name, const int f[], int arraylen)
-{
-	OSL::ShadingSystem *ss = (OSL::ShadingSystem*)shadingsys;
-	TypeDesc type = TypeDesc::TypeInt;
-	type.arraylen = arraylen;
-	ss->Parameter(name, type, f);
-}
-
-void OSLCompiler::parameter_array(const char *name, const char * const s[], int arraylen)
-{
-	OSL::ShadingSystem *ss = (OSL::ShadingSystem*)shadingsys;
-	TypeDesc type = TypeDesc::TypeString;
-	type.arraylen = arraylen;
-	ss->Parameter(name, type, s);
-}
-
-void OSLCompiler::parameter_array(const char *name, const Transform tfm[], int arraylen)
-{
-	OSL::ShadingSystem *ss = (OSL::ShadingSystem*)shadingsys;
-	TypeDesc type = TypeDesc::TypeMatrix;
-	type.arraylen = arraylen;
-	ss->Parameter(name, type, (const float *)tfm);
-}
-
-void OSLCompiler::find_dependencies(set<ShaderNode*>& dependencies, ShaderInput *input)
+void OSLCompiler::find_dependencies(ShaderNodeSet& dependencies, ShaderInput *input)
 {
 	ShaderNode *node = (input->link)? input->link->parent: NULL;
 
-	if(node) {
+	if(node != NULL && dependencies.find(node) == dependencies.end()) {
 		foreach(ShaderInput *in, node->inputs)
 			if(!node_skip_input(node, in))
 				find_dependencies(dependencies, in);
@@ -707,9 +993,9 @@ void OSLCompiler::find_dependencies(set<ShaderNode*>& dependencies, ShaderInput 
 	}
 }
 
-void OSLCompiler::generate_nodes(const set<ShaderNode*>& nodes)
+void OSLCompiler::generate_nodes(const ShaderNodeSet& nodes)
 {
-	set<ShaderNode*> done;
+	ShaderNodeSet done;
 	bool nodes_done;
 
 	do {
@@ -733,6 +1019,8 @@ void OSLCompiler::generate_nodes(const set<ShaderNode*>& nodes)
 							current_shader->has_surface_emission = true;
 						if(node->has_surface_transparent())
 							current_shader->has_surface_transparent = true;
+						if(node->has_spatial_varying())
+							current_shader->has_surface_spatial_varying = true;
 						if(node->has_surface_bssrdf()) {
 							current_shader->has_surface_bssrdf = true;
 							if(node->has_bssrdf_bump())
@@ -741,7 +1029,7 @@ void OSLCompiler::generate_nodes(const set<ShaderNode*>& nodes)
 					}
 					else if(current_type == SHADER_TYPE_VOLUME) {
 						if(node->has_spatial_varying())
-							current_shader->has_heterogeneous_volume = true;
+							current_shader->has_volume_spatial_varying = true;
 					}
 				}
 				else
@@ -751,20 +1039,26 @@ void OSLCompiler::generate_nodes(const set<ShaderNode*>& nodes)
 	} while(!nodes_done);
 }
 
-OSL::ShadingAttribStateRef OSLCompiler::compile_type(Shader *shader, ShaderGraph *graph, ShaderType type)
+OSL::ShaderGroupRef OSLCompiler::compile_type(Shader *shader, ShaderGraph *graph, ShaderType type)
 {
 	OSL::ShadingSystem *ss = (OSL::ShadingSystem*)shadingsys;
 
 	current_type = type;
 
-	OSL::ShadingAttribStateRef group = ss->ShaderGroupBegin(shader->name.c_str());
+	OSL::ShaderGroupRef group = ss->ShaderGroupBegin(shader->name.c_str());
 
 	ShaderNode *output = graph->output();
-	set<ShaderNode*> dependencies;
+	ShaderNodeSet dependencies;
 
 	if(type == SHADER_TYPE_SURFACE) {
 		/* generate surface shader */
 		find_dependencies(dependencies, output->input("Surface"));
+		generate_nodes(dependencies);
+		output->compile(*this);
+	}
+	else if(type == SHADER_TYPE_BUMP) {
+		/* generate bump shader */
+		find_dependencies(dependencies, output->input("Normal"));
 		generate_nodes(dependencies);
 		output->compile(*this);
 	}
@@ -788,7 +1082,7 @@ OSL::ShadingAttribStateRef OSLCompiler::compile_type(Shader *shader, ShaderGraph
 	return group;
 }
 
-void OSLCompiler::compile(OSLGlobals *og, Shader *shader)
+void OSLCompiler::compile(Scene *scene, OSLGlobals *og, Shader *shader)
 {
 	if(shader->need_update) {
 		ShaderGraph *graph = shader->graph;
@@ -800,9 +1094,17 @@ void OSLCompiler::compile(OSLGlobals *og, Shader *shader)
 				shader->graph_bump = shader->graph->copy();
 
 		/* finalize */
-		shader->graph->finalize(false, true);
-		if(shader->graph_bump)
-			shader->graph_bump->finalize(true, true);
+		shader->graph->finalize(scene,
+		                        false,
+		                        true,
+		                        shader->has_integrator_dependency);
+		if(shader->graph_bump) {
+			shader->graph_bump->finalize(scene,
+			                             true,
+			                             true,
+			                             shader->has_integrator_dependency,
+			                             shader->displacement_method == DISPLACE_BOTH);
+		}
 
 		current_shader = shader;
 
@@ -813,23 +1115,25 @@ void OSLCompiler::compile(OSLGlobals *og, Shader *shader)
 		shader->has_bssrdf_bump = false;
 		shader->has_volume = false;
 		shader->has_displacement = false;
-		shader->has_heterogeneous_volume = false;
+		shader->has_surface_spatial_varying = false;
+		shader->has_volume_spatial_varying = false;
 		shader->has_object_dependency = false;
+		shader->has_integrator_dependency = false;
 
 		/* generate surface shader */
 		if(shader->used && graph && output->input("Surface")->link) {
 			shader->osl_surface_ref = compile_type(shader, shader->graph, SHADER_TYPE_SURFACE);
 
-			if(shader->graph_bump)
-				shader->osl_surface_bump_ref = compile_type(shader, shader->graph_bump, SHADER_TYPE_SURFACE);
+			if(shader->graph_bump && shader->displacement_method != DISPLACE_TRUE)
+				shader->osl_surface_bump_ref = compile_type(shader, shader->graph_bump, SHADER_TYPE_BUMP);
 			else
-				shader->osl_surface_bump_ref = shader->osl_surface_ref;
+				shader->osl_surface_bump_ref = OSL::ShaderGroupRef();
 
 			shader->has_surface = true;
 		}
 		else {
-			shader->osl_surface_ref = OSL::ShadingAttribStateRef();
-			shader->osl_surface_bump_ref = OSL::ShadingAttribStateRef();
+			shader->osl_surface_ref = OSL::ShaderGroupRef();
+			shader->osl_surface_bump_ref = OSL::ShaderGroupRef();
 		}
 
 		/* generate volume shader */
@@ -838,7 +1142,7 @@ void OSLCompiler::compile(OSLGlobals *og, Shader *shader)
 			shader->has_volume = true;
 		}
 		else
-			shader->osl_volume_ref = OSL::ShadingAttribStateRef();
+			shader->osl_volume_ref = OSL::ShaderGroupRef();
 
 		/* generate displacement shader */
 		if(shader->used && graph && output->input("Displacement")->link) {
@@ -846,23 +1150,23 @@ void OSLCompiler::compile(OSLGlobals *og, Shader *shader)
 			shader->has_displacement = true;
 		}
 		else
-			shader->osl_displacement_ref = OSL::ShadingAttribStateRef();
+			shader->osl_displacement_ref = OSL::ShaderGroupRef();
 	}
 
 	/* push state to array for lookup */
 	og->surface_state.push_back(shader->osl_surface_ref);
-	og->surface_state.push_back(shader->osl_surface_bump_ref);
-
 	og->volume_state.push_back(shader->osl_volume_ref);
-	og->volume_state.push_back(shader->osl_volume_ref);
-
 	og->displacement_state.push_back(shader->osl_displacement_ref);
-	og->displacement_state.push_back(shader->osl_displacement_ref);
+	og->bump_state.push_back(shader->osl_surface_bump_ref);
 }
 
 #else
 
 void OSLCompiler::add(ShaderNode * /*node*/, const char * /*name*/, bool /*isfilepath*/)
+{
+}
+
+void OSLCompiler::parameter(ShaderNode * /*node*/, const char * /*name*/)
 {
 }
 
@@ -906,31 +1210,7 @@ void OSLCompiler::parameter_array(const char * /*name*/, const float /*f*/[], in
 {
 }
 
-void OSLCompiler::parameter_color_array(const char * /*name*/, const float /*f*/[][3], int /*arraylen*/)
-{
-}
-
-void OSLCompiler::parameter_vector_array(const char * /*name*/, const float /*f*/[][3], int /*arraylen*/)
-{
-}
-
-void OSLCompiler::parameter_normal_array(const char * /*name*/, const float /*f*/[][3], int /*arraylen*/)
-{
-}
-
-void OSLCompiler::parameter_point_array(const char * /*name*/, const float /*f*/[][3], int /*arraylen*/)
-{
-}
-
-void OSLCompiler::parameter_array(const char * /*name*/, const int /*f*/[], int /*arraylen*/)
-{
-}
-
-void OSLCompiler::parameter_array(const char * /*name*/, const char * const /*s*/[], int /*arraylen*/)
-{
-}
-
-void OSLCompiler::parameter_array(const char * /*name*/, const Transform /*tfm*/[], int /*arraylen*/)
+void OSLCompiler::parameter_color_array(const char * /*name*/, const array<float3>& /*f*/)
 {
 }
 

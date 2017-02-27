@@ -3,12 +3,17 @@
 # This file is distributed under the MIT License. See the LICENSE.md for more details.
 
 import bpy
+from bpy.props import (
+        IntProperty,
+        BoolProperty,
+        BoolVectorProperty,
+        FloatVectorProperty,
+        FloatProperty,
+        )
 
-from bpy.props import IntProperty, BoolProperty, FloatVectorProperty, FloatProperty
-
-import bpy
 import mathutils
 import copy
+
 
 class MengerSponge(object):
     FACE_INDICES = [
@@ -111,13 +116,13 @@ class MengerSponge(object):
                         continue
                     next_points = [
                         local_vert_map[(x, y, z)],
-                        local_vert_map[(x+1, y, z)],
-                        local_vert_map[(x+1, y, z+1)],
-                        local_vert_map[(x, y, z+1)],
-                        local_vert_map[(x, y+1, z)],
-                        local_vert_map[(x+1, y+1, z)],
-                        local_vert_map[(x+1, y+1, z+1)],
-                        local_vert_map[(x, y+1, z+1)],
+                        local_vert_map[(x + 1, y, z)],
+                        local_vert_map[(x + 1, y, z + 1)],
+                        local_vert_map[(x, y, z + 1)],
+                        local_vert_map[(x, y + 1, z)],
+                        local_vert_map[(x + 1, y + 1, z)],
+                        local_vert_map[(x + 1, y + 1, z + 1)],
+                        local_vert_map[(x, y + 1, z + 1)],
                     ]
                     visibility = copy.copy(self.__face_visibility[(x, y, z)])
                     if face_vis:
@@ -134,38 +139,42 @@ class MengerSponge(object):
 
 
 class AddMengerSponge(bpy.types.Operator):
-    """Add a menger sponge"""
     bl_idname = "mesh.menger_sponge_add"
     bl_label = "Menger Sponge"
+    bl_description = "Construct a menger sponge mesh"
     bl_options = {'REGISTER', 'UNDO'}
 
     level = IntProperty(
-        name="Level",
-        description="Sponge Level",
-        min=0, max=4,
-        default=1,
-        )
-
+                    name="Level",
+                    description="Sponge Level",
+                    min=0, max=4,
+                    default=1,
+                    )
     radius = FloatProperty(
-        name="Width",
-        description="Sponge Radius",
-        min=0.01, max=100.0,
-        default=1.0,
-        )
-
+                    name="Width",
+                    description="Sponge Radius",
+                    min=0.01, max=100.0,
+                    default=1.0,
+                    )
     # generic transform props
     view_align = BoolProperty(
-        name="Align to View",
-        default=False,
-        )
+                    name="Align to View",
+                    default=False,
+                    )
     location = FloatVectorProperty(
-        name="Location",
-        subtype='TRANSLATION',
-        )
+                    name="Location",
+                    subtype='TRANSLATION',
+                    )
     rotation = FloatVectorProperty(
-        name="Rotation",
-        subtype='EULER',
-        )
+                    name="Rotation",
+                    subtype='EULER',
+                    )
+    layers = BoolVectorProperty(
+                    name="Layers",
+                    size=20,
+                    subtype='LAYER',
+                    options={'HIDDEN', 'SKIP_SAVE'},
+                    )
 
     def execute(self, context):
         sponger = MengerSponge(self.level)
@@ -177,7 +186,7 @@ class AddMengerSponge(bpy.types.Operator):
         uvs = [(0.0, 0.0), (0.0, 1.0), (1.0, 1.0), (1.0, 0.0)]
         mesh.uv_textures.new()
         for i, uvloop in enumerate(mesh.uv_layers.active.data):
-            uvloop.uv = uvs[i%4]
+            uvloop.uv = uvs[i % 4]
 
         from bpy_extras import object_utils
         object_utils.object_data_add(context, mesh, operator=self)

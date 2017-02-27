@@ -77,21 +77,19 @@ void RenderLayersBaseProg::doInterpolation(float output[4], float x, float y, Pi
 	unsigned int offset;
 	int width = this->getWidth(), height = this->getHeight();
 
+	int ix = x, iy = y;
+	if (ix < 0 || iy < 0 || ix >= width || iy >= height) {
+		if (this->m_elementsize == 1)
+			output[0] = 0.0f;
+		else if (this->m_elementsize == 3)
+			zero_v3(output);
+		else
+			zero_v4(output);
+		return;
+	}
+
 	switch (sampler) {
 		case COM_PS_NEAREST: {
-			int ix = x;
-			int iy = y;
-			if (ix < 0 || iy < 0 || ix >= width || iy >= height) {
-				if (this->m_elementsize == 1)
-					output[0] = 0.0f;
-				else if (this->m_elementsize == 3)
-					zero_v3(output);
-				else
-					zero_v4(output);
-				break;
-				
-			}
-
 			offset = (iy * width + ix) * this->m_elementsize;
 
 			if (this->m_elementsize == 1)
@@ -150,6 +148,7 @@ void RenderLayersBaseProg::executePixelSampled(float output[4], float x, float y
 			expected_element_size = 4;
 		}
 		else {
+			expected_element_size = 0;
 			BLI_assert(!"Something horribly wrong just happened");
 		}
 		BLI_assert(expected_element_size == actual_element_size);
@@ -276,7 +275,7 @@ void RenderLayersDepthProg::executePixelSampled(float output[4], float x, float 
 	float *inputBuffer = this->getInputBuffer();
 
 	if (inputBuffer == NULL || ix < 0 || iy < 0 || ix >= (int)this->getWidth() || iy >= (int)this->getHeight() ) {
-		output[0] = 0.0f;
+		output[0] = 10e10f;
 	}
 	else {
 		unsigned int offset = (iy * this->getWidth() + ix);

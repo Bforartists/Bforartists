@@ -20,16 +20,16 @@
 
 bl_info = {
     "name": "Web3D X3D/VRML2 format",
-    "author": "Campbell Barton, Bart, Bastien Montagne",
-    "version": (1, 1, 0),
-    "blender": (2, 74, 0),
+    "author": "Campbell Barton, Bart, Bastien Montagne, Seva Alekseyev",
+    "version": (1, 2, 0),
+    "blender": (2, 76, 0),
     "location": "File > Import-Export",
     "description": "Import-Export X3D, Import VRML2",
     "warning": "",
-    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
-                "Scripts/Import-Export/Web3D",
+    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Import-Export/Web3D",
     "support": 'OFFICIAL',
-    "category": "Import-Export"}
+    "category": "Import-Export",
+}
 
 if "bpy" in locals():
     import importlib
@@ -78,7 +78,7 @@ class ImportX3D(bpy.types.Operator, ImportHelper, IOX3DOrientationHelper):
                                         ).to_4x4()
         keywords["global_matrix"] = global_matrix
 
-        return import_x3d.load(self, context, **keywords)
+        return import_x3d.load(context, **keywords)
 
 
 class ExportX3D(bpy.types.Operator, ExportHelper, IOX3DOrientationHelper):
@@ -156,7 +156,7 @@ class ExportX3D(bpy.types.Operator, ExportHelper, IOX3DOrientationHelper):
                                         ).to_4x4() * Matrix.Scale(self.global_scale, 4)
         keywords["global_matrix"] = global_matrix
 
-        return export_x3d.save(self, context, **keywords)
+        return export_x3d.save(context, **keywords)
 
 
 def menu_func_import(self, context):

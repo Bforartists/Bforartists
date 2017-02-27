@@ -34,14 +34,14 @@
 #include "BKE_animsys.h"
 #include "BKE_global.h"
 #include "BKE_library.h"
+#include "BKE_library_query.h"
+#include "BKE_library_remap.h"
 #include "BKE_main.h"
 #include "BKE_speaker.h"
 
-void *BKE_speaker_add(Main *bmain, const char *name)
+void BKE_speaker_init(Speaker *spk)
 {
-	Speaker *spk;
-
-	spk =  BKE_libblock_alloc(bmain, ID_SPK, name);
+	BLI_assert(MEMCMP_STRUCT_OFS_IS_ZERO(spk, id));
 
 	spk->attenuation = 1.0f;
 	spk->cone_angle_inner = 360.0f;
@@ -55,80 +55,39 @@ void *BKE_speaker_add(Main *bmain, const char *name)
 	spk->volume = 1.0f;
 	spk->volume_max = 1.0f;
 	spk->volume_min = 0.0f;
+}
+
+void *BKE_speaker_add(Main *bmain, const char *name)
+{
+	Speaker *spk;
+
+	spk =  BKE_libblock_alloc(bmain, ID_SPK, name);
+
+	BKE_speaker_init(spk);
 
 	return spk;
 }
 
-Speaker *BKE_speaker_copy(Speaker *spk)
+Speaker *BKE_speaker_copy(Main *bmain, Speaker *spk)
 {
 	Speaker *spkn;
 
-	spkn = BKE_libblock_copy(&spk->id);
-	if (spkn->sound)
-		spkn->sound->id.us++;
+	spkn = BKE_libblock_copy(bmain, &spk->id);
 
-	if (spk->id.lib) {
-		BKE_id_lib_local_paths(G.main, spk->id.lib, &spkn->id);
-	}
+	if (spkn->sound)
+		id_us_plus(&spkn->sound->id);
+
+	BKE_id_copy_ensure_local(bmain, &spk->id, &spkn->id);
 
 	return spkn;
 }
 
-void BKE_speaker_make_local(Speaker *spk)
+void BKE_speaker_make_local(Main *bmain, Speaker *spk, const bool lib_local)
 {
-	Main *bmain = G.main;
-	Object *ob;
-	bool is_local = false, is_lib = false;
-
-	/* - only lib users: do nothing
-	 * - only local users: set flag
-	 * - mixed: make copy
-	 */
-
-	if (spk->id.lib == NULL) return;
-	if (spk->id.us == 1) {
-		id_clear_lib_data(bmain, &spk->id);
-		return;
-	}
-
-	ob = bmain->object.first;
-	while (ob) {
-		if (ob->data == spk) {
-			if (ob->id.lib) is_lib = true;
-			else is_local = true;
-		}
-		ob = ob->id.next;
-	}
-
-	if (is_local && is_lib == false) {
-		id_clear_lib_data(bmain, &spk->id);
-	}
-	else if (is_local && is_lib) {
-		Speaker *spk_new = BKE_speaker_copy(spk);
-		spk_new->id.us = 0;
-
-		/* Remap paths of new ID using old library as base. */
-		BKE_id_lib_local_paths(bmain, spk->id.lib, &spk_new->id);
-
-		ob = bmain->object.first;
-		while (ob) {
-			if (ob->data == spk) {
-
-				if (ob->id.lib == NULL) {
-					ob->data = spk_new;
-					spk_new->id.us++;
-					spk->id.us--;
-				}
-			}
-			ob = ob->id.next;
-		}
-	}
+	BKE_id_make_local_generic(bmain, &spk->id, true, lib_local);
 }
 
 void BKE_speaker_free(Speaker *spk)
 {
-	if (spk->sound)
-		spk->sound->id.us--;
-
-	BKE_animdata_free((ID *)spk);
+	BKE_animdata_free((ID *)spk, false);
 }

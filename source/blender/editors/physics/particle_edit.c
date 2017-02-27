@@ -102,7 +102,7 @@ void update_world_cos(Object *ob, PTCacheEdit *edit);
 #define LOOP_SELECTED_KEYS		for (k=0, key=point->keys; k<point->totkey; k++, key++) if ((key->flag & PEK_SELECT) && !(key->flag & PEK_HIDE))
 #define LOOP_TAGGED_KEYS		for (k=0, key=point->keys; k<point->totkey; k++, key++) if (key->flag & PEK_TAG)
 
-#define KEY_WCO					(key->flag & PEK_USE_WCO ? key->world_co : key->co)
+#define KEY_WCO					((key->flag & PEK_USE_WCO) ? key->world_co : key->co)
 
 /**************************** utilities *******************************/
 
@@ -659,7 +659,7 @@ static void foreach_mouse_hit_key(PEData *data, ForKeyMatFunc func, int selected
 				if (selected==0 || key->flag & PEK_SELECT) {
 					if (key_inside_circle(data, data->rad, KEY_WCO, &data->dist)) {
 						if (edit->psys && !(edit->psys->flag & PSYS_GLOBAL_HAIR)) {
-							psys_mat_hair_to_global(data->ob, psmd->dm, psys->part->from, psys->particles + p, mat);
+							psys_mat_hair_to_global(data->ob, psmd->dm_final, psys->part->from, psys->particles + p, mat);
 							invert_m4_m4(imat, mat);
 						}
 
@@ -674,7 +674,7 @@ static void foreach_mouse_hit_key(PEData *data, ForKeyMatFunc func, int selected
 				if (selected==0 || key->flag & PEK_SELECT) {
 					if (key_inside_circle(data, data->rad, KEY_WCO, &data->dist)) {
 						if (edit->psys && !(edit->psys->flag & PSYS_GLOBAL_HAIR)) {
-							psys_mat_hair_to_global(data->ob, psmd->dm, psys->part->from, psys->particles + p, mat);
+							psys_mat_hair_to_global(data->ob, psmd->dm_final, psys->part->from, psys->particles + p, mat);
 							invert_m4_m4(imat, mat);
 						}
 
@@ -761,7 +761,7 @@ static void PE_update_mirror_cache(Object *ob, ParticleSystem *psys)
 	psmd= psys_get_modifier(ob, psys);
 	totpart= psys->totpart;
 
-	if (!psmd->dm)
+	if (!psmd->dm_final)
 		return;
 
 	tree= BLI_kdtree_new(totpart);
@@ -769,7 +769,7 @@ static void PE_update_mirror_cache(Object *ob, ParticleSystem *psys)
 	/* insert particles into kd tree */
 	LOOP_PARTICLES {
 		key = pa->hair;
-		psys_mat_hair_to_orco(ob, psmd->dm, psys->part->from, pa, mat);
+		psys_mat_hair_to_orco(ob, psmd->dm_final, psys->part->from, pa, mat);
 		copy_v3_v3(co, key->co);
 		mul_m4_v3(mat, co);
 		BLI_kdtree_insert(tree, p, co);
@@ -783,7 +783,7 @@ static void PE_update_mirror_cache(Object *ob, ParticleSystem *psys)
 	
 	LOOP_PARTICLES {
 		key = pa->hair;
-		psys_mat_hair_to_orco(ob, psmd->dm, psys->part->from, pa, mat);
+		psys_mat_hair_to_orco(ob, psmd->dm_final, psys->part->from, pa, mat);
 		copy_v3_v3(co, key->co);
 		mul_m4_v3(mat, co);
 		co[0] = -co[0];
@@ -898,7 +898,7 @@ static void PE_apply_mirror(Object *ob, ParticleSystem *psys)
 	edit= psys->edit;
 	psmd= psys_get_modifier(ob, psys);
 
-	if (!psmd->dm)
+	if (!psmd->dm_final)
 		return;
 
 	if (!edit->mirror_cache)
@@ -911,7 +911,7 @@ static void PE_apply_mirror(Object *ob, ParticleSystem *psys)
 	 * to avoid doing mirror twice */
 	LOOP_POINTS {
 		if (point->flag & PEP_EDIT_RECALC) {
-			PE_mirror_particle(ob, psmd->dm, psys, psys->particles + p, NULL);
+			PE_mirror_particle(ob, psmd->dm_final, psys, psys->particles + p, NULL);
 
 			if (edit->mirror_cache[p] != -1)
 				edit->points[edit->mirror_cache[p]].flag &= ~PEP_EDIT_RECALC;
@@ -946,11 +946,11 @@ static void pe_deflect_emitter(Scene *scene, Object *ob, PTCacheEdit *edit)
 	psys = edit->psys;
 	psmd = psys_get_modifier(ob, psys);
 
-	if (!psmd->dm)
+	if (!psmd->dm_final)
 		return;
 
 	LOOP_EDITED_POINTS {
-		psys_mat_hair_to_object(ob, psmd->dm, psys->part->from, psys->particles + p, hairmat);
+		psys_mat_hair_to_object(ob, psmd->dm_final, psys->part->from, psys->particles + p, hairmat);
 	
 		LOOP_KEYS {
 			mul_m4_v3(hairmat, key->co);
@@ -1095,7 +1095,7 @@ void recalc_lengths(PTCacheEdit *edit)
 /* calculate a tree for finding nearest emitter's vertice */
 void recalc_emitter_field(Object *ob, ParticleSystem *psys)
 {
-	DerivedMesh *dm=psys_get_modifier(ob, psys)->dm;
+	DerivedMesh *dm=psys_get_modifier(ob, psys)->dm_final;
 	PTCacheEdit *edit= psys->edit;
 	float *vec, *nor;
 	int i, totface /*, totvert*/;
@@ -1173,7 +1173,7 @@ static void PE_update_selection(Scene *scene, Object *ob, int useflag)
 		}
 	}
 
-	psys_cache_edit_paths(scene, ob, edit, CFRA);
+	psys_cache_edit_paths(scene, ob, edit, CFRA, G.is_rendering);
 
 
 	/* disable update flag */
@@ -1188,12 +1188,12 @@ void update_world_cos(Object *ob, PTCacheEdit *edit)
 	POINT_P; KEY_K;
 	float hairmat[4][4];
 
-	if (psys==0 || psys->edit==0 || psmd->dm==NULL)
+	if (psys==0 || psys->edit==0 || psmd->dm_final==NULL)
 		return;
 
 	LOOP_POINTS {
 		if (!(psys->flag & PSYS_GLOBAL_HAIR))
-			psys_mat_hair_to_global(ob, psmd->dm, psys->part->from, psys->particles+p, hairmat);
+			psys_mat_hair_to_global(ob, psmd->dm_final, psys->part->from, psys->particles+p, hairmat);
 
 		LOOP_KEYS {
 			copy_v3_v3(key->world_co, key->co);
@@ -1289,7 +1289,7 @@ void PE_update_object(Scene *scene, Object *ob, int useflag)
 	PE_hide_keys_time(scene, edit, CFRA);
 
 	/* regenerate path caches */
-	psys_cache_edit_paths(scene, ob, edit, CFRA);
+	psys_cache_edit_paths(scene, ob, edit, CFRA, G.is_rendering);
 
 	/* disable update flag */
 	LOOP_POINTS {
@@ -1634,7 +1634,10 @@ static int select_random_exec(bContext *C, wmOperator *op)
 	int p;
 	int k;
 
-	const float randf = RNA_float_get (op->ptr, "percent") / 100.0f;
+	const float randfac = RNA_float_get(op->ptr, "percent") / 100.0f;
+	const int seed = WM_operator_properties_select_random_seed_increment_get(op);
+	const bool select = (RNA_enum_get(op->ptr, "action") == SEL_SELECT);
+	RNG *rng;
 
 	type = RNA_enum_get(op->ptr, "type");
 
@@ -1644,10 +1647,12 @@ static int select_random_exec(bContext *C, wmOperator *op)
 	ob = CTX_data_active_object(C);
 	edit = PE_get_current(scene, ob);
 
+	rng = BLI_rng_new_srandom(seed);
+
 	switch (type) {
 		case RAN_HAIR:
 			LOOP_VISIBLE_POINTS {
-				int flag = (BLI_frand() < randf) ? SEL_SELECT : SEL_DESELECT;
+				int flag = ((BLI_rng_get_float(rng) < randfac) == select) ? SEL_SELECT : SEL_DESELECT;
 				LOOP_KEYS {
 					select_action_apply (point, key, flag);
 				}
@@ -1656,12 +1661,14 @@ static int select_random_exec(bContext *C, wmOperator *op)
 		case RAN_POINTS:
 			LOOP_VISIBLE_POINTS {
 				LOOP_VISIBLE_KEYS {
-					int flag = (BLI_frand() < randf) ? SEL_SELECT : SEL_DESELECT;
+					int flag = ((BLI_rng_get_float(rng) < randfac) == select) ? SEL_SELECT : SEL_DESELECT;
 					select_action_apply (point, key, flag);
 				}
 			}
 			break;
 	}
+
+	BLI_rng_free(rng);
 
 	PE_update_selection(data.scene, data.ob, 1);
 	WM_event_add_notifier(C, NC_OBJECT|ND_PARTICLE|NA_SELECTED, data.ob);
@@ -1684,9 +1691,7 @@ void PARTICLE_OT_select_random(wmOperatorType *ot)
 	ot->flag = OPTYPE_REGISTER|OPTYPE_UNDO;
 
 	/* properties */
-	RNA_def_float_percentage (ot->srna, "percent", 50.0f, 0.0f, 100.0f, "Percent",
-	                          "Percentage (mean) of elements in randomly selected set",
-	                          0.0f, 100.0f);
+	WM_operator_properties_select_random(ot);
 	ot->prop = RNA_def_enum (ot->srna, "type", select_random_type_items, RAN_HAIR,
 	                         "Type", "Select either hair or points");
 }
@@ -1834,7 +1839,7 @@ int PE_lasso_select(bContext *C, const int mcords[][2], const short moves, bool 
 
 	LOOP_VISIBLE_POINTS {
 		if (edit->psys && !(psys->flag & PSYS_GLOBAL_HAIR))
-			psys_mat_hair_to_global(ob, psmd->dm, psys->part->from, psys->particles + p, mat);
+			psys_mat_hair_to_global(ob, psmd->dm_final, psys->part->from, psys->particles + p, mat);
 
 		if (pset->selectmode==SCE_SELECT_POINT) {
 			LOOP_KEYS {
@@ -2268,7 +2273,7 @@ static int remove_tagged_particles(Object *ob, ParticleSystem *psys, int mirror)
 		psmd= psys_get_modifier(ob, psys);
 
 		LOOP_TAGGED_POINTS {
-			PE_mirror_particle(ob, psmd->dm, psys, psys->particles + p, NULL);
+			PE_mirror_particle(ob, psmd->dm_final, psys, psys->particles + p, NULL);
 		}
 	}
 
@@ -2283,7 +2288,7 @@ static int remove_tagged_particles(Object *ob, ParticleSystem *psys, int mirror)
 			npoint= new_points= MEM_callocN(new_totpart * sizeof(PTCacheEditPoint), "PTCacheEditKey array");
 
 			if (ELEM(NULL, new_pars, new_points)) {
-				 /* allocation error! */
+				/* allocation error! */
 				if (new_pars)
 					MEM_freeN(new_pars);
 				if (new_points)
@@ -2348,7 +2353,7 @@ static void remove_tagged_keys(Object *ob, ParticleSystem *psys)
 
 		LOOP_POINTS {
 			LOOP_TAGGED_KEYS {
-				PE_mirror_particle(ob, psmd->dm, psys, psys->particles + p, NULL);
+				PE_mirror_particle(ob, psmd->dm_final, psys, psys->particles + p, NULL);
 				break;
 			}
 		}
@@ -2562,7 +2567,7 @@ static int remove_doubles_exec(bContext *C, wmOperator *op)
 			
 		/* insert particles into kd tree */
 		LOOP_SELECTED_POINTS {
-			psys_mat_hair_to_object(ob, psmd->dm, psys->part->from, psys->particles+p, mat);
+			psys_mat_hair_to_object(ob, psmd->dm_final, psys->part->from, psys->particles+p, mat);
 			copy_v3_v3(co, point->keys->co);
 			mul_m4_v3(mat, co);
 			BLI_kdtree_insert(tree, p, co);
@@ -2572,7 +2577,7 @@ static int remove_doubles_exec(bContext *C, wmOperator *op)
 
 		/* tag particles to be removed */
 		LOOP_SELECTED_POINTS {
-			psys_mat_hair_to_object(ob, psmd->dm, psys->part->from, psys->particles+p, mat);
+			psys_mat_hair_to_object(ob, psmd->dm_final, psys->part->from, psys->particles+p, mat);
 			copy_v3_v3(co, point->keys->co);
 			mul_m4_v3(mat, co);
 
@@ -2803,13 +2808,17 @@ static void PE_mirror_x(Scene *scene, Object *ob, int tagged)
 		return;
 
 	psmd= psys_get_modifier(ob, psys);
-	if (!psmd->dm)
+	if (!psmd->dm_final)
 		return;
+
+	const bool use_dm_final_indices = (psys->part->use_modifier_stack && !psmd->dm_final->deformedOnly);
 
 	/* NOTE: this is not nice to use tessfaces but hard to avoid since pa->num uses tessfaces */
 	BKE_mesh_tessface_ensure(me);
 
-	mirrorfaces= mesh_get_x_mirror_faces(ob, NULL);
+	/* Note: In case psys uses DM tessface indices, we mirror final DM itself, not orig mesh. Avoids an (impossible)
+	 *       dm -> orig -> dm tessface indices conversion... */
+	mirrorfaces = mesh_get_x_mirror_faces(ob, NULL, use_dm_final_indices ? psmd->dm_final : NULL);
 
 	if (!edit->mirror_cache)
 		PE_update_mirror_cache(ob, psys);
@@ -2818,11 +2827,12 @@ static void PE_mirror_x(Scene *scene, Object *ob, int tagged)
 	newtotpart= psys->totpart;
 	LOOP_VISIBLE_POINTS {
 		pa = psys->particles + p;
+
 		if (!tagged) {
 			if (point_is_selected(point)) {
 				if (edit->mirror_cache[p] != -1) {
 					/* already has a mirror, don't need to duplicate */
-					PE_mirror_particle(ob, psmd->dm, psys, pa, NULL);
+					PE_mirror_particle(ob, psmd->dm_final, psys, pa, NULL);
 					continue;
 				}
 				else
@@ -2835,6 +2845,8 @@ static void PE_mirror_x(Scene *scene, Object *ob, int tagged)
 	}
 
 	if (newtotpart != psys->totpart) {
+		MFace *mtessface = use_dm_final_indices ? psmd->dm_final->getTessFaceArray(psmd->dm_final) : me->mface;
+
 		/* allocate new arrays and copy existing */
 		new_pars= MEM_callocN(newtotpart*sizeof(ParticleData), "ParticleData new");
 		new_points= MEM_callocN(newtotpart*sizeof(PTCacheEditPoint), "PTCacheEditPoint new");
@@ -2864,10 +2876,12 @@ static void PE_mirror_x(Scene *scene, Object *ob, int tagged)
 
 		for (p=0, point=edit->points; p<totpart; p++, point++) {
 			pa = psys->particles + p;
+			const int pa_num = pa->num;
 
 			if (point->flag & PEP_HIDE)
 				continue;
-			if (!(point->flag & PEP_TAG) || mirrorfaces[pa->num*2] == -1)
+
+			if (!(point->flag & PEP_TAG) || mirrorfaces[pa_num * 2] == -1)
 				continue;
 
 			/* duplicate */
@@ -2877,26 +2891,30 @@ static void PE_mirror_x(Scene *scene, Object *ob, int tagged)
 			if (point->keys) newpoint->keys= MEM_dupallocN(point->keys);
 
 			/* rotate weights according to vertex index rotation */
-			rotation= mirrorfaces[pa->num*2+1];
+			rotation= mirrorfaces[pa_num * 2 + 1];
 			newpa->fuv[0] = pa->fuv[2];
 			newpa->fuv[1] = pa->fuv[1];
 			newpa->fuv[2] = pa->fuv[0];
 			newpa->fuv[3] = pa->fuv[3];
-			while (rotation-- > 0)
-				if (me->mface[pa->num].v4) {
+			while (rotation--) {
+				if (mtessface[pa_num].v4) {
 					SHIFT4(float, newpa->fuv[0], newpa->fuv[1], newpa->fuv[2], newpa->fuv[3]);
 				}
 				else {
 					SHIFT3(float, newpa->fuv[0], newpa->fuv[1], newpa->fuv[2]);
 				}
+			}
 
-			/* assign face inddex */
-			newpa->num= mirrorfaces[pa->num*2];
-			newpa->num_dmcache= psys_particle_dm_face_lookup(ob, psmd->dm, newpa->num, newpa->fuv, NULL);
+			/* assign face index */
+			/* NOTE: mesh_get_x_mirror_faces generates -1 for non-found mirror, same as DMCACHE_NOTFOUND... */
+			newpa->num = mirrorfaces[pa_num * 2];
 
-			if ((newpa->num_dmcache != DMCACHE_NOTFOUND) && psys->part->use_modifier_stack && !psmd->dm->deformedOnly) {
-				newpa->num = newpa->num_dmcache;
+			if (use_dm_final_indices) {
 				newpa->num_dmcache = DMCACHE_ISCHILD;
+			}
+			else {
+				newpa->num_dmcache = psys_particle_dm_face_lookup(
+				                         psmd->dm_final, psmd->dm_deformed, newpa->num, newpa->fuv, NULL);
 			}
 
 			/* update edit key pointers */
@@ -2907,7 +2925,7 @@ static void PE_mirror_x(Scene *scene, Object *ob, int tagged)
 			}
 
 			/* map key positions as mirror over x axis */
-			PE_mirror_particle(ob, psmd->dm, psys, pa, newpa);
+			PE_mirror_particle(ob, psmd->dm_final, psys, pa, newpa);
 
 			newpa++;
 			newpoint++;
@@ -3355,7 +3373,7 @@ static int particle_intersect_dm(Scene *scene, Object *ob, DerivedMesh *dm,
 	totface=dm->getNumTessFaces(dm);
 	mface=dm->getTessFaceDataArray(dm, CD_MFACE);
 	mvert=dm->getVertDataArray(dm, CD_MVERT);
-	
+
 	/* lets intersect the faces */
 	for (i=0; i<totface; i++, mface++) {
 		if (vert_cos) {
@@ -3411,7 +3429,7 @@ static int particle_intersect_dm(Scene *scene, Object *ob, DerivedMesh *dm,
 			}
 		}
 		else {
-			if (isect_line_tri_v3(co1, co2, v1, v2, v3, &cur_d, cur_uv)) {
+			if (isect_line_segment_tri_v3(co1, co2, v1, v2, v3, &cur_d, cur_uv)) {
 				if (cur_d<*min_d) {
 					*min_d=cur_d;
 					min_w[0] = 1.0f - cur_uv[0] - cur_uv[1];
@@ -3425,7 +3443,7 @@ static int particle_intersect_dm(Scene *scene, Object *ob, DerivedMesh *dm,
 				}
 			}
 			if (mface->v4) {
-				if (isect_line_tri_v3(co1, co2, v1, v3, v4, &cur_d, cur_uv)) {
+				if (isect_line_segment_tri_v3(co1, co2, v1, v3, v4, &cur_d, cur_uv)) {
 					if (cur_d<*min_d) {
 						*min_d=cur_d;
 						min_w[0] = 1.0f - cur_uv[0] - cur_uv[1];
@@ -3447,6 +3465,7 @@ static int brush_add(PEData *data, short number)
 {
 	Scene *scene= data->scene;
 	Object *ob= data->ob;
+	DerivedMesh *dm;
 	PTCacheEdit *edit = data->edit;
 	ParticleSystem *psys= edit->psys;
 	ParticleData *add_pars;
@@ -3460,11 +3479,7 @@ static int brush_add(PEData *data, short number)
 	float framestep, timestep;
 	short size= pset->brush[PE_BRUSH_ADD].size;
 	short size2= size*size;
-	DerivedMesh *dm=0;
 	RNG *rng;
-	const int *index_mf_to_mpoly;
-	const int *index_mp_to_orig;
-	bool release_dm = false;
 
 	invert_m4_m4(imat, ob->obmat);
 
@@ -3482,15 +3497,13 @@ static int brush_add(PEData *data, short number)
 
 	timestep= psys_get_timestep(&sim);
 
-	if (psmd->dm->deformedOnly || psys->part->use_modifier_stack)
-		dm = psmd->dm;
-	else {
-		dm = mesh_get_derived_deform(scene, ob, CD_MASK_BAREMESH | CD_MASK_MFACE);
-		release_dm = true;
+	if (psys->part->use_modifier_stack || psmd->dm_final->deformedOnly) {
+		dm = psmd->dm_final;
 	}
-
-	index_mf_to_mpoly = dm->getTessFaceDataArray(dm, CD_ORIGINDEX);
-	index_mp_to_orig  = dm->getPolyDataArray(dm, CD_ORIGINDEX);
+	else {
+		dm = psmd->dm_deformed;
+	}
+	BLI_assert(dm);
 
 	for (i=0; i<number; i++) {
 		if (number>1) {
@@ -3518,16 +3531,22 @@ static int brush_add(PEData *data, short number)
 		
 		/* warning, returns the derived mesh face */
 		if (particle_intersect_dm(scene, ob, dm, 0, co1, co2, &min_d, &add_pars[n].num_dmcache, add_pars[n].fuv, 0, 0, 0, 0)) {
-			if (index_mf_to_mpoly && index_mp_to_orig)
-				add_pars[n].num = DM_origindex_mface_mpoly(index_mf_to_mpoly, index_mp_to_orig, add_pars[n].num_dmcache);
-			else
+			if (psys->part->use_modifier_stack && !psmd->dm_final->deformedOnly) {
 				add_pars[n].num = add_pars[n].num_dmcache;
+				add_pars[n].num_dmcache = DMCACHE_ISCHILD;
+			}
+			else if (dm == psmd->dm_deformed) {
+				/* Final DM is not same topology as orig mesh, we have to map num_dmcache to real final dm. */
+				add_pars[n].num = add_pars[n].num_dmcache;
+				add_pars[n].num_dmcache = psys_particle_dm_face_lookup(
+				                              psmd->dm_final, psmd->dm_deformed,
+				                              add_pars[n].num, add_pars[n].fuv, NULL);
+			}
+			else {
+				add_pars[n].num = add_pars[n].num_dmcache;
+			}
 
-			if (psys_particle_dm_face_lookup(ob, psmd->dm, add_pars[n].num_dmcache, add_pars[n].fuv, NULL) != DMCACHE_NOTFOUND) {
-				if (psys->part->use_modifier_stack && !psmd->dm->deformedOnly) {
-					add_pars[n].num = add_pars[n].num_dmcache;
-					add_pars[n].num_dmcache = DMCACHE_ISCHILD;
-				}
+			if (add_pars[n].num != DMCACHE_NOTFOUND) {
 				n++;
 			}
 		}
@@ -3562,7 +3581,7 @@ static int brush_add(PEData *data, short number)
 			tree=BLI_kdtree_new(psys->totpart);
 			
 			for (i=0, pa=psys->particles; i<totpart; i++, pa++) {
-				psys_particle_on_dm(psmd->dm, psys->part->from, pa->num, pa->num_dmcache, pa->fuv, pa->foffset, cur_co, 0, 0, 0, 0, 0);
+				psys_particle_on_dm(psmd->dm_final, psys->part->from, pa->num, pa->num_dmcache, pa->fuv, pa->foffset, cur_co, 0, 0, 0, 0, 0);
 				BLI_kdtree_insert(tree, i, cur_co);
 			}
 
@@ -3606,7 +3625,7 @@ static int brush_add(PEData *data, short number)
 				int w, maxw;
 				float maxd, totw=0.0, weight[3];
 
-				psys_particle_on_dm(psmd->dm, psys->part->from, pa->num, pa->num_dmcache, pa->fuv, pa->foffset, co1, 0, 0, 0, 0, 0);
+				psys_particle_on_dm(psmd->dm_final, psys->part->from, pa->num, pa->num_dmcache, pa->fuv, pa->foffset, co1, 0, 0, 0, 0, 0);
 				maxw = BLI_kdtree_find_nearest_n(tree, co1, ptn, 3);
 
 				maxd= ptn[maxw-1].dist;
@@ -3671,7 +3690,7 @@ static int brush_add(PEData *data, short number)
 				}
 			}
 			for (k=0, hkey=pa->hair; k<pset->totaddkey; k++, hkey++) {
-				psys_mat_hair_to_global(ob, psmd->dm, psys->part->from, pa, hairmat);
+				psys_mat_hair_to_global(ob, psmd->dm_final, psys->part->from, pa, hairmat);
 				invert_m4_m4(imat, hairmat);
 				mul_m4_v3(imat, hkey->co);
 			}
@@ -3682,9 +3701,6 @@ static int brush_add(PEData *data, short number)
 	}
 
 	MEM_freeN(add_pars);
-
-	if (release_dm)
-		dm->release(dm);
 
 	BLI_rng_free(rng);
 	
@@ -3861,7 +3877,7 @@ static void brush_edit_apply(bContext *C, wmOperator *op, PointerRNA *itemptr)
 				case PE_BRUSH_PUFF:
 				{
 					if (edit->psys) {
-						data.dm= psmd->dm;
+						data.dm= psmd->dm_final;
 						data.mval= mval;
 						data.rad= pe_brush_size_get(scene, brush);
 						data.select= selected;
@@ -3917,7 +3933,7 @@ static void brush_edit_apply(bContext *C, wmOperator *op, PointerRNA *itemptr)
 				case PE_BRUSH_WEIGHT:
 				{
 					if (edit->psys) {
-						data.dm= psmd->dm;
+						data.dm= psmd->dm_final;
 						data.mval= mval;
 						data.rad= pe_brush_size_get(scene, brush);
 
@@ -4095,7 +4111,9 @@ static bool shape_cut_test_point(PEData *data, ParticleCacheKey *key)
 	userdata.bvhdata = data->shape_bvh;
 	userdata.num_hits = 0;
 	
-	BLI_bvhtree_ray_cast_all(shape_bvh->tree, key->co, dir, 0.0f, point_inside_bvh_cb, &userdata);
+	BLI_bvhtree_ray_cast_all(
+	        shape_bvh->tree, key->co, dir, 0.0f, BVH_RAYCAST_DIST_MAX,
+	        point_inside_bvh_cb, &userdata);
 	
 	/* for any point inside a watertight mesh the number of hits is uneven */
 	return (userdata.num_hits % 2) == 1;
@@ -4540,7 +4558,7 @@ int PE_minmax(Scene *scene, float min[3], float max[3])
 
 	LOOP_VISIBLE_POINTS {
 		if (psys)
-			psys_mat_hair_to_global(ob, psmd->dm, psys->part->from, psys->particles+p, mat);
+			psys_mat_hair_to_global(ob, psmd->dm_final, psys->part->from, psys->particles+p, mat);
 
 		LOOP_SELECTED_KEYS {
 			copy_v3_v3(co, key->co);
@@ -4571,7 +4589,7 @@ void PE_create_particle_edit(Scene *scene, Object *ob, PointCache *cache, Partic
 	int totpoint;
 
 	/* no psmd->dm happens in case particle system modifier is not enabled */
-	if (!(psys && psmd && psmd->dm) && !cache)
+	if (!(psys && psmd && psmd->dm_final) && !cache)
 		return;
 
 	if (cache && cache->flag & PTCACHE_DISK_CACHE)
@@ -4675,7 +4693,7 @@ static int particle_edit_toggle_poll(bContext *C)
 
 	if (ob == NULL || ob->type != OB_MESH)
 		return 0;
-	if (!ob->data || ((ID *)ob->data)->lib)
+	if (!ob->data || ID_IS_LINKED_DATABLOCK(ob->data))
 		return 0;
 	if (CTX_data_edit_object(C))
 		return 0;
@@ -4788,6 +4806,116 @@ void PARTICLE_OT_edited_clear(wmOperatorType *ot)
 	ot->exec = clear_edited_exec;
 	ot->poll = particle_edit_toggle_poll;
 	ot->invoke = clear_edited_invoke;
+
+	/* flags */
+	ot->flag = OPTYPE_REGISTER|OPTYPE_UNDO;
+}
+
+/************************ Unify length operator ************************/
+
+static float calculate_point_length(PTCacheEditPoint *point)
+{
+	float length = 0.0f;
+	KEY_K;
+	LOOP_KEYS {
+		if (k > 0) {
+			length += len_v3v3((key - 1)->co, key->co);
+		}
+	}
+	return length;
+}
+
+static float calculate_average_length(PTCacheEdit *edit)
+{
+	int num_selected = 0;
+	float total_length = 0;
+	POINT_P;
+	LOOP_SELECTED_POINTS {
+		total_length += calculate_point_length(point);
+		++num_selected;
+	}
+	if (num_selected == 0) {
+		return 0.0f;
+	}
+	return total_length / num_selected;
+}
+
+static void scale_point_factor(PTCacheEditPoint *point, float factor)
+{
+	float orig_prev_co[3], prev_co[3];
+	KEY_K;
+	LOOP_KEYS {
+		if (k == 0) {
+			copy_v3_v3(orig_prev_co, key->co);
+			copy_v3_v3(prev_co, key->co);
+		}
+		else {
+			float new_co[3];
+			float delta[3];
+
+			sub_v3_v3v3(delta, key->co, orig_prev_co);
+			mul_v3_fl(delta, factor);
+			add_v3_v3v3(new_co, prev_co, delta);
+
+			copy_v3_v3(orig_prev_co, key->co);
+			copy_v3_v3(key->co, new_co);
+			copy_v3_v3(prev_co, key->co);
+		}
+	}
+	point->flag |= PEP_EDIT_RECALC;
+}
+
+static void scale_point_to_length(PTCacheEditPoint *point, float length)
+{
+	const float point_length = calculate_point_length(point);
+	if (point_length != 0.0f) {
+		const float factor = length / point_length;
+		scale_point_factor(point, factor);
+	}
+}
+
+static void scale_points_to_length(PTCacheEdit *edit, float length)
+{
+	POINT_P;
+	LOOP_SELECTED_POINTS {
+		scale_point_to_length(point, length);
+	}
+	recalc_lengths(edit);
+}
+
+static int unify_length_exec(bContext *C, wmOperator *UNUSED(op))
+{
+	Object *ob = CTX_data_active_object(C);
+	Scene *scene = CTX_data_scene(C);
+	PTCacheEdit *edit = PE_get_current(scene, ob);
+	float average_length = calculate_average_length(edit);
+	if (average_length == 0.0f) {
+		return OPERATOR_CANCELLED;
+	}
+	scale_points_to_length(edit, average_length);
+
+	PE_update_object(scene, ob, 1);
+	if (edit->psys) {
+		WM_event_add_notifier(C, NC_OBJECT|ND_PARTICLE|NA_EDITED, ob);
+	}
+	else {
+		DAG_id_tag_update(&ob->id, OB_RECALC_DATA);
+		WM_event_add_notifier(C, NC_OBJECT|ND_MODIFIER, ob);
+	}
+
+	return OPERATOR_FINISHED;
+}
+
+void PARTICLE_OT_unify_length(struct wmOperatorType *ot)
+{
+	/* identifiers */
+	ot->name = "Unify Length";
+	ot->idname = "PARTICLE_OT_unify_length";
+	ot->description = "Make selected hair the same length";
+
+	/* api callbacks */
+	ot->exec = unify_length_exec;
+	ot->poll = PE_poll_view3d;
 
 	/* flags */
 	ot->flag = OPTYPE_REGISTER|OPTYPE_UNDO;

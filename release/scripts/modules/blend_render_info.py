@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # ##### BEGIN GPL LICENSE BLOCK #####
 #
@@ -42,8 +42,8 @@ def read_blend_rend_chunk(path):
 
     if head[0:2] == b'\x1f\x8b':  # gzip magic
         import gzip
-        blendfile.close()
-        blendfile = gzip.open(path, "rb")
+        blendfile.seek(0)
+        blendfile = gzip.open(blendfile, "rb")
         head = blendfile.read(7)
 
     if head != b'BLENDER':

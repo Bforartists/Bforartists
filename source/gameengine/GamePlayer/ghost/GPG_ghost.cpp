@@ -46,8 +46,8 @@
 #include "KX_PyConstraintBinding.h" // for PHY_SetActiveEnvironment
 
 /**********************************
-* Begin Blender include block
-**********************************/
+ * Begin Blender include block
+ **********************************/
 #ifdef __cplusplus
 extern "C"
 {
@@ -61,6 +61,7 @@ extern "C"
 
 #include "DNA_scene_types.h"
 #include "DNA_userdef_types.h"
+#include "DNA_genfile.h"
 
 #include "BLO_readfile.h"
 #include "BLO_runtime.h"
@@ -74,6 +75,7 @@ extern "C"
 #include "BKE_node.h"
 #include "BKE_report.h"
 #include "BKE_library.h"
+#include "BKE_library_remap.h"
 #include "BKE_modifier.h"
 #include "BKE_material.h"
 #include "BKE_text.h"
@@ -102,8 +104,8 @@ extern char datatoc_bmonofont_ttf[];
 #include "GPU_draw.h"
 
 /**********************************
-* End Blender include block
-**********************************/
+ * End Blender include block
+ **********************************/
 
 #include "BL_System.h"
 #include "GPG_Application.h"
@@ -116,10 +118,14 @@ extern char datatoc_bmonofont_ttf[];
 #include "RNA_define.h"
 
 #ifdef WIN32
-#include <windows.h>
-#if !defined(DEBUG)
-#include <wincon.h>
-#endif // !defined(DEBUG)
+#  include <windows.h>
+#  if !defined(DEBUG)
+#    include <wincon.h>
+#  endif // !defined(DEBUG)
+#  if defined(_MSC_VER) && defined(_M_X64)
+#    include <math.h> /* needed for _set_FMA3_enable */
+#  endif
+#  include "utfconv.h"
 #endif // WIN32
 
 #ifdef WITH_SDL_DYNLOAD
@@ -399,7 +405,14 @@ static int GPG_PyNextFrame(void *state0)
 	}
 }
 
-int main(int argc, char** argv)
+int main(
+	int argc,
+#ifdef WIN32
+	char **UNUSED(argv_c)
+#else
+	char **argv
+#endif
+	)
 {
 	int i;
 	int argc_py_clamped= argc; /* use this so python args can be added after ' - ' */
@@ -433,7 +446,36 @@ int main(int argc, char** argv)
 	int validArguments=0;
 	bool samplesParFound = false;
 	GHOST_TUns16 aasamples = 0;
+	int alphaBackground = 0;
 	
+#ifdef WIN32
+	char **argv;
+	int argv_num;
+
+	/* We delay loading of openmp so we can set the policy here. */
+# if defined(_MSC_VER)
+	_putenv_s("OMP_WAIT_POLICY", "PASSIVE");
+# endif
+
+	/* FMA3 support in the 2013 CRT is broken on Vista and Windows 7 RTM (fixed in SP1). Just disable it. */
+#  if defined(_MSC_VER) && defined(_M_X64)
+	_set_FMA3_enable(0);
+#  endif
+
+	/* Win32 Unicode Args */
+	/* NOTE: cannot use guardedalloc malloc here, as it's not yet initialized
+	 *       (it depends on the args passed in, which is what we're getting here!)
+	 */
+	{
+		wchar_t **argv_16 = CommandLineToArgvW(GetCommandLineW(), &argc);
+		argv = (char**)malloc(argc * sizeof(char *));
+		for (argv_num = 0; argv_num < argc; argv_num++) {
+			argv[argv_num] = alloc_utf_8_from_16(argv_16[argv_num], 0);
+		}
+		LocalFree(argv_16);
+	}
+#endif  /* WIN32 */
+
 #ifdef __linux__
 #ifdef __alpha__
 	signal (SIGFPE, SIG_IGN);
@@ -451,14 +493,15 @@ int main(int argc, char** argv)
 	// freeing up GPU_Textures works correctly.
 	BLI_threadapi_init();
 
+	DNA_sdna_current_init();
+
 	RNA_init();
 
 	init_nodesystem();
 	
-	initglobals();
+	BKE_blender_globals_init();
 
-	U.gameflags |= USER_DISABLE_VBO;
-	// We load our own G.main, so free the one that initglobals() gives us
+	// We load our own G.main, so free the one that BKE_blender_globals_init() gives us
 	BKE_main_free(G.main);
 	G.main = NULL;
 
@@ -669,7 +712,7 @@ int main(int argc, char** argv)
 			{
 				i++;
 				if ( (i + 1) <= validArguments )
-					parentWindow = atoi(argv[i++]);
+					parentWindow = (GHOST_TEmbedderWindowID)atoll(argv[i++]);
 				else {
 					error = true;
 					printf("error: too few options for parent window argument.\n");
@@ -800,6 +843,12 @@ int main(int argc, char** argv)
 				}
 				break;
 			}
+			case 'a':   // allow window to blend with display background
+			{
+				i++;
+				alphaBackground = 1;
+				break;
+			}
 			default:  //not recognized
 			{
 				printf("Unknown argument: %s\n", argv[i++]);
@@ -855,7 +904,7 @@ int main(int argc, char** argv)
 
 				get_filename(argc_py_clamped, argv, filename);
 				if (filename[0])
-					BLI_path_cwd(filename);
+					BLI_path_cwd(filename, sizeof(filename));
 				
 
 				// fill the GlobalSettings with the first scene files
@@ -1003,7 +1052,7 @@ int main(int argc, char** argv)
 #endif
 								{
 									app.startFullScreen(fullScreenWidth, fullScreenHeight, fullScreenBpp, fullScreenFrequency,
-									                    stereoWindow, stereomode, aasamples, (scene->gm.playerflag & GAME_PLAYER_DESKTOP_RESOLUTION));
+									                    stereoWindow, stereomode, alphaBackground, aasamples, (scene->gm.playerflag & GAME_PLAYER_DESKTOP_RESOLUTION));
 								}
 							}
 							else
@@ -1050,7 +1099,7 @@ int main(int argc, char** argv)
 										app.startEmbeddedWindow(title, parentWindow, stereoWindow, stereomode, aasamples);
 									else
 										app.startWindow(title, windowLeft, windowTop, windowWidth, windowHeight,
-										                stereoWindow, stereomode, aasamples);
+										                stereoWindow, stereomode, alphaBackground, aasamples);
 
 									if (SYS_GetCommandLineInt(syshandle, "nomipmap", 0)) {
 										GPU_set_mipmap(0);
@@ -1099,7 +1148,7 @@ int main(int argc, char** argv)
 								MEM_freeN(python_code);
 							}
 							else {
-								fprintf(stderr, "ERROR: cannot yield control to Python: no Python text data block named '%s'\n", python_main);
+								fprintf(stderr, "ERROR: cannot yield control to Python: no Python text data-block named '%s'\n", python_main);
 							}
 						}
 						else {
@@ -1133,7 +1182,7 @@ int main(int argc, char** argv)
 		}
 	}
 
-	/* refer to WM_exit_ext() and free_blender(),
+	/* refer to WM_exit_ext() and BKE_blender_free(),
 	 * these are not called in the player but we need to match some of there behavior here,
 	 * if the order of function calls or blenders state isn't matching that of blender proper,
 	 * we may get troubles later on */
@@ -1165,6 +1214,14 @@ int main(int argc, char** argv)
 	}
 
 	BKE_tempdir_session_purge();
+
+#ifdef WIN32
+	while (argv_num) {
+		free(argv[--argv_num]);
+	}
+	free(argv);
+	argv = NULL;
+#endif
 
 	return error ? -1 : 0;
 }

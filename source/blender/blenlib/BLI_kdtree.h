@@ -50,7 +50,7 @@ void BLI_kdtree_insert(
         KDTree *tree, int index,
         const float co[3]) ATTR_NONNULL(1, 3);
 int BLI_kdtree_find_nearest(
-        KDTree *tree, const float co[3],
+        const KDTree *tree, const float co[3],
         KDTreeNearest *r_nearest) ATTR_NONNULL(1, 2);
 
 #define BLI_kdtree_find_nearest_n(tree, co, r_nearest, n) \
@@ -58,14 +58,22 @@ int BLI_kdtree_find_nearest(
 #define BLI_kdtree_range_search(tree, co, r_nearest, range) \
         BLI_kdtree_range_search__normal(tree, co, NULL, r_nearest, range)
 
+int BLI_kdtree_find_nearest_cb(
+        const KDTree *tree, const float co[3],
+        int (*filter_cb)(void *user_data, int index, const float co[3], float dist_sq), void *user_data,
+        KDTreeNearest *r_nearest);
+void BLI_kdtree_range_search_cb(
+        const KDTree *tree, const float co[3], float range,
+        bool (*search_cb)(void *user_data, int index, const float co[3], float dist_sq), void *user_data);
+
 /* Normal use is deprecated */
 /* remove __normal functions when last users drop */
 int BLI_kdtree_find_nearest_n__normal(
-        KDTree *tree, const float co[3], const float nor[3],
+        const KDTree *tree, const float co[3], const float nor[3],
         KDTreeNearest *r_nearest,
         unsigned int n) ATTR_NONNULL(1, 2, 4);
 int BLI_kdtree_range_search__normal(
-        KDTree *tree, const float co[3], const float nor[3],
+        const KDTree *tree, const float co[3], const float nor[3],
         KDTreeNearest **r_nearest,
         float range) ATTR_NONNULL(1, 2, 4) ATTR_WARN_UNUSED_RESULT;
 

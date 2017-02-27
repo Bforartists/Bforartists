@@ -56,6 +56,7 @@
 
 #include "BLI_blenlib.h"
 #include "BLI_math.h"
+#include "BLI_string_utils.h"
 
 #include "BLT_translation.h"
 
@@ -343,7 +344,7 @@ static void do_versions_mesh_mloopcol_swap_2_62_1(Mesh *me)
 		if (layer->type == CD_MLOOPCOL) {
 			mloopcol = (MLoopCol *)layer->data;
 			for (i = 0; i < me->totloop; i++, mloopcol++) {
-				SWAP(char, mloopcol->r, mloopcol->b);
+				SWAP(unsigned char, mloopcol->r, mloopcol->b);
 			}
 		}
 	}
@@ -459,19 +460,19 @@ static void do_versions_affine_tracker_track(MovieTrackingTrack *track)
 
 		if (is_zero_v2(marker->pattern_corners[0]) && is_zero_v2(marker->pattern_corners[1]) &&
 		    is_zero_v2(marker->pattern_corners[2]) && is_zero_v2(marker->pattern_corners[3]))
-			{
-				marker->pattern_corners[0][0] = track->pat_min[0];
-				marker->pattern_corners[0][1] = track->pat_min[1];
+		{
+			marker->pattern_corners[0][0] = track->pat_min[0];
+			marker->pattern_corners[0][1] = track->pat_min[1];
 
-				marker->pattern_corners[1][0] = track->pat_max[0];
-				marker->pattern_corners[1][1] = track->pat_min[1];
+			marker->pattern_corners[1][0] = track->pat_max[0];
+			marker->pattern_corners[1][1] = track->pat_min[1];
 
-				marker->pattern_corners[2][0] = track->pat_max[0];
-				marker->pattern_corners[2][1] = track->pat_max[1];
+			marker->pattern_corners[2][0] = track->pat_max[0];
+			marker->pattern_corners[2][1] = track->pat_max[1];
 
-				marker->pattern_corners[3][0] = track->pat_min[0];
-				marker->pattern_corners[3][1] = track->pat_max[1];
-			}
+			marker->pattern_corners[3][0] = track->pat_min[0];
+			marker->pattern_corners[3][1] = track->pat_max[1];
+		}
 
 		if (is_zero_v2(marker->search_min) && is_zero_v2(marker->search_max)) {
 			copy_v2_v2(marker->search_min, track->search_min);
@@ -1386,7 +1387,7 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *main)
 							SpaceClip *sclip = (SpaceClip *)sl;
 
 							if (sclip->around == 0) {
-								sclip->around = V3D_CENTROID;
+								sclip->around = V3D_AROUND_CENTER_MEAN;
 							}
 						}
 					}
@@ -1864,7 +1865,6 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *main)
 
 	if (main->versionfile < 265 || (main->versionfile == 265 && main->subversionfile < 5)) {
 		Scene *scene;
-		Image *image;
 		Tex *tex;
 
 		for (scene = main->scene.first; scene; scene = scene->id.next) {
@@ -1904,7 +1904,7 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *main)
 			}
 		}
 
-		for (image = main->image.first; image; image = image->id.next) {
+		for (Image *image = main->image.first; image; image = image->id.next) {
 			if (image->flag & IMA_DO_PREMUL) {
 				image->alpha_mode = IMA_ALPHA_STRAIGHT;
 			}
@@ -1915,7 +1915,7 @@ void blo_do_versions_260(FileData *fd, Library *UNUSED(lib), Main *main)
 
 		for (tex = main->tex.first; tex; tex = tex->id.next) {
 			if (tex->type == TEX_IMAGE && (tex->imaflag & TEX_USEALPHA) == 0) {
-				image = blo_do_versions_newlibadr(fd, tex->id.lib, tex->ima);
+				Image *image = blo_do_versions_newlibadr(fd, tex->id.lib, tex->ima);
 
 				if (image && (image->flag & IMA_DO_PREMUL) == 0)
 					image->flag |= IMA_IGNORE_ALPHA;

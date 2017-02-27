@@ -56,6 +56,8 @@ void graph_draw_ghost_curves(struct bAnimContext *ac, struct SpaceIpo *sipo, str
 /* ***************************************** */
 /* graph_select.c */
 
+void deselect_graph_keys(struct bAnimContext *ac, bool test, short sel, bool do_channels);
+
 void GRAPH_OT_select_all_toggle(struct wmOperatorType *ot);
 void GRAPH_OT_select_border(struct wmOperatorType *ot);
 void GRAPH_OT_select_lasso(struct wmOperatorType *ot);
@@ -145,6 +147,11 @@ enum eGraphKeys_Mirror_Mode {
 void GRAPH_OT_fmodifier_add(struct wmOperatorType *ot);
 void GRAPH_OT_fmodifier_copy(struct wmOperatorType *ot);
 void GRAPH_OT_fmodifier_paste(struct wmOperatorType *ot);
+
+/* ----------- */
+
+void GRAPH_OT_driver_variables_copy(struct wmOperatorType *ot);
+void GRAPH_OT_driver_variables_paste(struct wmOperatorType *ot);
 
 /* ----------- */
 

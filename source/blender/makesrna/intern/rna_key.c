@@ -33,6 +33,7 @@
 #include "DNA_lattice_types.h"
 #include "DNA_mesh_types.h"
 
+#include "BLI_string_utils.h"
 #include "BLI_utildefines.h"
 
 #include "BLT_translation.h"
@@ -155,6 +156,112 @@ static void rna_ShapeKey_slider_max_set(PointerRNA *ptr, float value)
 }
 
 #undef SHAPEKEY_SLIDER_TOL
+
+/* ***** Normals accessors for shapekeys. ***** */
+/* Note: with this we may recompute several times the same data, should we want to access verts, then polys, then loops
+ *       normals... However, such case looks rather unlikely - and not worth adding some kind of caching in KeyBlocks.
+ */
+
+static Mesh *rna_KeyBlock_normals_get_mesh(PointerRNA *ptr, ID *id)
+{
+	Key *key = rna_ShapeKey_find_key((id == NULL && ptr != NULL) ? ptr->id.data : id);
+	id = key ? key->from : NULL;
+
+	if (id != NULL) {
+		switch (GS(id->name)) {
+			case ID_ME:
+				return (Mesh *)id;
+			case ID_OB:
+			{
+				Object *ob = (Object *)id;
+				if (ob->type == OB_MESH) {
+					return ob->data;
+				}
+			}
+		}
+	}
+
+	return NULL;
+}
+
+static int rna_KeyBlock_normals_vert_len(PointerRNA *ptr, int length[RNA_MAX_ARRAY_DIMENSION])
+{
+	Mesh *me = rna_KeyBlock_normals_get_mesh(ptr, NULL);
+
+	length[0] = me ? me->totvert : 0;
+	length[1] = 3;
+
+	return (length[0] * length[1]);
+}
+
+static void rna_KeyBlock_normals_vert_calc(ID *id, KeyBlock *data, int *normals_len, float **normals)
+{
+	Mesh *me = rna_KeyBlock_normals_get_mesh(NULL, id);
+
+	*normals_len = (me ? me->totvert : 0) * 3;
+
+	if (ELEM(NULL, me, data) || (me->totvert == 0)) {
+		*normals = NULL;
+		return;
+	}
+
+	*normals = MEM_mallocN(sizeof(**normals) * (size_t)(*normals_len), __func__);
+
+	BKE_keyblock_mesh_calc_normals(data, me, (float (*)[3])(*normals), NULL, NULL);
+}
+
+static int rna_KeyBlock_normals_poly_len(PointerRNA *ptr, int length[RNA_MAX_ARRAY_DIMENSION])
+{
+	Mesh *me = rna_KeyBlock_normals_get_mesh(ptr, NULL);
+
+	length[0] = me ? me->totpoly : 0;
+	length[1] = 3;
+
+	return (length[0] * length[1]);
+}
+
+static void rna_KeyBlock_normals_poly_calc(ID *id, KeyBlock *data, int *normals_len, float **normals)
+{
+	Mesh *me = rna_KeyBlock_normals_get_mesh(NULL, id);
+
+	*normals_len = (me ? me->totpoly : 0) * 3;
+
+	if (ELEM(NULL, me, data) || (me->totpoly == 0)) {
+		*normals = NULL;
+		return;
+	}
+
+	*normals = MEM_mallocN(sizeof(**normals) * (size_t)(*normals_len), __func__);
+
+	BKE_keyblock_mesh_calc_normals(data, me, NULL, (float (*)[3])(*normals), NULL);
+}
+
+static int rna_KeyBlock_normals_loop_len(PointerRNA *ptr, int length[RNA_MAX_ARRAY_DIMENSION])
+{
+	Mesh *me = rna_KeyBlock_normals_get_mesh(ptr, NULL);
+
+	length[0] = me ? me->totloop : 0;
+	length[1] = 3;
+
+	return (length[0] * length[1]);
+}
+
+static void rna_KeyBlock_normals_loop_calc(ID *id, KeyBlock *data, int *normals_len, float **normals)
+{
+	Mesh *me = rna_KeyBlock_normals_get_mesh(NULL, id);
+
+	*normals_len = (me ? me->totloop : 0) * 3;
+
+	if (ELEM(NULL, me, data) || (me->totloop == 0)) {
+		*normals = NULL;
+		return;
+	}
+
+	*normals = MEM_mallocN(sizeof(**normals) * (size_t)(*normals_len), __func__);
+
+	BKE_keyblock_mesh_calc_normals(data, me, NULL, NULL, (float (*)[3])(*normals));
+}
+
 
 PointerRNA rna_object_shapekey_index_get(ID *id, int value)
 {
@@ -482,7 +589,7 @@ static char *rna_ShapeKeyPoint_path(PointerRNA *ptr)
 
 #else
 
-EnumPropertyItem keyblock_type_items[] = {
+EnumPropertyItem rna_enum_keyblock_type_items[] = {
 	{KEY_LINEAR, "KEY_LINEAR", 0, "Linear", ""},
 	{KEY_CARDINAL, "KEY_CARDINAL", 0, "Cardinal", ""},
 	{KEY_CATMULL_ROM, "KEY_CATMULL_ROM", 0, "Catmull-Rom", ""},
@@ -558,10 +665,11 @@ static void rna_def_keydata(BlenderRNA *brna)
 static void rna_def_keyblock(BlenderRNA *brna)
 {
 	StructRNA *srna;
-	PropertyRNA *prop;
+	PropertyRNA *prop, *parm;
+	FunctionRNA *func;
 
 	srna = RNA_def_struct(brna, "ShapeKey", NULL);
-	RNA_def_struct_ui_text(srna, "Shape Key", "Shape key in a shape keys datablock");
+	RNA_def_struct_ui_text(srna, "Shape Key", "Shape key in a shape keys data-block");
 	RNA_def_struct_sdna(srna, "KeyBlock");
 	RNA_def_struct_path_func(srna, "rna_ShapeKey_path");
 	RNA_def_struct_ui_icon(srna, ICON_SHAPEKEY_DATA);
@@ -591,7 +699,7 @@ static void rna_def_keyblock(BlenderRNA *brna)
 
 	prop = RNA_def_property(srna, "interpolation", PROP_ENUM, PROP_NONE);
 	RNA_def_property_enum_sdna(prop, NULL, "type");
-	RNA_def_property_enum_items(prop, keyblock_type_items);
+	RNA_def_property_enum_items(prop, rna_enum_keyblock_type_items);
 	RNA_def_property_ui_text(prop, "Interpolation", "Interpolation type for absolute shape keys");
 	RNA_def_property_update(prop, 0, "rna_Key_update_data");
 
@@ -633,6 +741,36 @@ static void rna_def_keyblock(BlenderRNA *brna)
 	RNA_def_property_ui_text(prop, "Data", "");
 	RNA_def_property_collection_funcs(prop, "rna_ShapeKey_data_begin", NULL, NULL, "rna_ShapeKey_data_get",
 	                                  "rna_ShapeKey_data_length", NULL, NULL, NULL);
+
+	/* XXX multi-dim dynamic arrays are very badly supported by (py)rna currently, those are defined for the day
+	 *     it works better, for now user will get a 1D tuple...
+	 **/
+	func = RNA_def_function(srna, "normals_vertex_get", "rna_KeyBlock_normals_vert_calc");
+	RNA_def_function_ui_description(func, "Compute local space vertices' normals for this shape key");
+	RNA_def_function_flag(func, FUNC_USE_SELF_ID);
+	parm = RNA_def_property(func, "normals", PROP_FLOAT, /* PROP_DIRECTION */ PROP_NONE);
+	RNA_def_parameter_flags(parm, PROP_DYNAMIC, PARM_OUTPUT);
+	RNA_def_property_multi_array(parm, 2, NULL);
+	RNA_def_property_range(parm, -1.0f, 1.0f);
+	RNA_def_property_dynamic_array_funcs(parm, "rna_KeyBlock_normals_vert_len");
+
+	func = RNA_def_function(srna, "normals_polygon_get", "rna_KeyBlock_normals_poly_calc");
+	RNA_def_function_ui_description(func, "Compute local space faces' normals for this shape key");
+	RNA_def_function_flag(func, FUNC_USE_SELF_ID);
+	parm = RNA_def_property(func, "normals", PROP_FLOAT, /* PROP_DIRECTION */ PROP_NONE);
+	RNA_def_parameter_flags(parm, PROP_DYNAMIC, PARM_OUTPUT);
+	RNA_def_property_multi_array(parm, 2, NULL);
+	RNA_def_property_range(parm, -1.0f, 1.0f);
+	RNA_def_property_dynamic_array_funcs(parm, "rna_KeyBlock_normals_poly_len");
+
+	func = RNA_def_function(srna, "normals_split_get", "rna_KeyBlock_normals_loop_calc");
+	RNA_def_function_ui_description(func, "Compute local space face corners' normals for this shape key");
+	RNA_def_function_flag(func, FUNC_USE_SELF_ID);
+	parm = RNA_def_property(func, "normals", PROP_FLOAT, /* PROP_DIRECTION */ PROP_NONE);
+	RNA_def_parameter_flags(parm, PROP_DYNAMIC, PARM_OUTPUT);
+	RNA_def_property_multi_array(parm, 2, NULL);
+	RNA_def_property_range(parm, -1.0f, 1.0f);
+	RNA_def_property_dynamic_array_funcs(parm, "rna_KeyBlock_normals_loop_len");
 }
 
 static void rna_def_key(BlenderRNA *brna)
@@ -641,7 +779,7 @@ static void rna_def_key(BlenderRNA *brna)
 	PropertyRNA *prop;
 
 	srna = RNA_def_struct(brna, "Key", "ID");
-	RNA_def_struct_ui_text(srna, "Key", "Shape keys datablock containing different shapes of geometric datablocks");
+	RNA_def_struct_ui_text(srna, "Key", "Shape keys data-block containing different shapes of geometric data-blocks");
 	RNA_def_struct_ui_icon(srna, ICON_SHAPEKEY_DATA);
 
 	prop = RNA_def_property(srna, "reference_key", PROP_POINTER, PROP_NONE);
@@ -660,7 +798,7 @@ static void rna_def_key(BlenderRNA *brna)
 	prop = RNA_def_property(srna, "user", PROP_POINTER, PROP_NONE);
 	RNA_def_property_flag(prop, PROP_NEVER_NULL);
 	RNA_def_property_pointer_sdna(prop, NULL, "from");
-	RNA_def_property_ui_text(prop, "User", "Datablock using these shape keys");
+	RNA_def_property_ui_text(prop, "User", "Data-block using these shape keys");
 
 	prop = RNA_def_property(srna, "use_relative", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_sdna(prop, NULL, "type", KEY_RELATIVE);

@@ -74,7 +74,6 @@ class switch_editors_in_timeline(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
 
 
-
 class TIME_HT_header(Header):
     bl_space_type = 'TIMELINE'
 
@@ -94,7 +93,7 @@ class TIME_HT_header(Header):
         row.operator("wm.switch_editor_to_graph", text="", icon='IPO')
         row.operator("wm.switch_editor_to_dopesheet", text="", icon='ACTION')     
         row.operator("wm.switch_editor_to_nla", text="", icon='NLA')
-     
+
         TIME_MT_editor_menus.draw_collapsible(context, layout)
 
         row = layout.row(align=True)
@@ -109,7 +108,10 @@ class TIME_HT_header(Header):
             row.prop(scene, "frame_preview_start", text="Start")
             row.prop(scene, "frame_preview_end", text="End")
 
-        layout.prop(scene, "frame_current", text="")
+        if scene.show_subframe:
+            layout.prop(scene, "frame_float", text="")
+        else:
+            layout.prop(scene, "frame_current", text="")
 
         layout.separator()
 
@@ -165,7 +167,6 @@ class ALL_MT_editormenu(Menu):
         row = layout.row(align=True)
         row.template_header() # editor type menus
 
-
 class TIME_MT_editor_menus(Menu):
     bl_idname = "TIME_MT_editor_menus"
     bl_label = ""
@@ -201,16 +202,21 @@ class TIME_MT_view(Menu):
 
         layout.prop(st, "show_seconds")
         layout.prop(st, "show_locked_time")
-        layout.operator("time.view_all")
 
         layout.separator()
 
         layout.prop(st, "show_frame_indicator")
         layout.prop(scene, "show_keys_from_selected_only")
+        layout.prop(scene, "show_subframe")
 
         layout.separator()
 
         layout.menu("TIME_MT_cache")
+
+        layout.separator()
+
+        layout.operator("time.view_all")
+        layout.operator("time.view_frame")
 
         layout.separator()
 
@@ -219,9 +225,8 @@ class TIME_MT_view(Menu):
         layout.separator()
 
         layout.operator("screen.area_dupli")
-        #layout.operator("screen.screen_full_area", text="Toggle Maximize Area")
         layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area") # bfa - the separated tooltip. Class is in space_text.py
-        layout.operator("screen.screen_full_area").use_hide_panels = True
+        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area").use_hide_panels = True
 
 
 class TIME_MT_cache(Menu):
@@ -312,6 +317,7 @@ class marker_menu_generic_marker_jump_previous(bpy.types.Operator):
     def execute(self, context):        # execute() is called by blender when running the operator.
         bpy.ops.screen.marker_jump(next = False)
         return {'FINISHED'}  
+
 
 def marker_menu_generic(layout):
 

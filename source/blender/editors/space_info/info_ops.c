@@ -249,7 +249,7 @@ static int unpack_all_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(
 	}
 
 	if (count == 1)
-		strcpy(title, IFACE_("Unpack 1 File"));
+		BLI_strncpy(title, IFACE_("Unpack 1 File"), sizeof(title));
 	else
 		BLI_snprintf(title, sizeof(title), IFACE_("Unpack %d Files"), count);
 	
@@ -484,8 +484,9 @@ void FILE_OT_find_missing_files(wmOperatorType *ot)
 	/* properties */
 	RNA_def_boolean(ot->srna, "find_all", false, "Find All", "Find All\nFind all files in the search path (not just missing)");
 
-	WM_operator_properties_filesel(ot, 0, FILE_SPECIAL, FILE_OPENFILE,
-	                               WM_FILESEL_DIRECTORY, FILE_DEFAULTDISPLAY, FILE_SORT_ALPHA);
+	WM_operator_properties_filesel(
+	        ot, 0, FILE_SPECIAL, FILE_OPENFILE,
+	        WM_FILESEL_DIRECTORY, FILE_DEFAULTDISPLAY, FILE_SORT_ALPHA);
 }
 
 /********************* report box operator *********************/

@@ -28,7 +28,11 @@ from bl_ui.properties_paint_common import (
 from bl_ui.properties_grease_pencil_common import (
         GreasePencilDrawingToolsPanel,
         GreasePencilStrokeEditPanel,
+        GreasePencilStrokeSculptPanel,
+        GreasePencilBrushPanel,
+        GreasePencilBrushCurvesPanel,
         GreasePencilDataPanel,
+        GreasePencilPaletteColorPanel
         )
 from bpy.app.translations import pgettext_iface as iface_
 
@@ -58,6 +62,7 @@ class UVToolsPanel:
     def poll(cls, context):
         sima = context.space_data
         return sima.show_uvedit and not context.tool_settings.use_uv_sculpt
+
 
 # Workaround to separate the tooltips for Toggle Maximize Area
 class IMAGE_MT_view_view_fit(bpy.types.Operator):
@@ -98,7 +103,7 @@ class IMAGE_MT_view(Menu):
         layout.prop(uv, "show_metadata")
         if paint.brush and (context.image_paint_object or sima.mode == 'PAINT'):
             layout.prop(uv, "show_texpaint")
-            layout.prop(toolsettings, "show_uv_local_view", text="Show same material")
+            layout.prop(toolsettings, "show_uv_local_view", text="Show Same Material")
 
         layout.separator()
 
@@ -118,23 +123,27 @@ class IMAGE_MT_view(Menu):
             layout.operator("image.view_selected")
 
         layout.operator("image.view_all")
-        #layout.operator("image.view_all", text="View Fit").fit_view = True
         layout.operator("image.view_all_fit", text="View Fit")
 
         layout.separator()
 
         if show_render:
+            layout.operator("image.render_border")
+            layout.operator("image.clear_render_border")
+
+            layout.separator()
+
             layout.operator("image.cycle_render_slot", text="Render Slot Cycle Next")
             layout.operator("image.cycle_render_slot", text="Render Slot Cycle Previous").reverse = True
             layout.operator("image.clear_render_border", text = "Clear Render Border")
             layout.operator("image.render_border", text = "Render Border")
+
             layout.separator()
 
-
         layout.operator("screen.area_dupli")
-        #layout.operator("screen.screen_full_area", text="Toggle Maximize Area")
         layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area") # bfa - the separated tooltip. Class is in space_text.py
-        layout.operator("screen.screen_full_area").use_hide_panels = True
+        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area").use_hide_panels = True
+
 
 # Workaround to separate the tooltips
 class IMAGE_MT_select_inverse(bpy.types.Operator):
@@ -176,27 +185,23 @@ class IMAGE_MT_select(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("uv.select_border", text="Border Select").pinned = False
+        layout.operator("uv.select_border").pinned = False
         layout.operator("uv.select_border", text="Border Select Pinned").pinned = True
         layout.operator("uv.circle_select")
 
         layout.separator()
 
         layout.operator("uv.select_all").action = 'TOGGLE'
-        #layout.operator("uv.select_all", text="Inverse").action = 'INVERT'
         layout.operator("uv.select_all_inverse", text="Inverse")
 
         layout.separator()
 
         layout.operator("uv.select_pinned")
         layout.operator("uv.select_linked", text="Linked").extend = False
-        #layout.operator("uv.select_linked", text="Linked Extend").extend = True
         layout.operator("uv.select_linked_extend", text="Linked Extend")
 
         layout.operator("uv.select_linked_pick", text="Linked Pick").extend = False
-        #layout.operator("uv.select_linked_pick", text="Linked Pick Extend").extend = True
         layout.operator("uv.select_linked_pick_extend", text="Linked Pick Extend")
-
 
         layout.separator()
 
@@ -206,7 +211,6 @@ class IMAGE_MT_select(Menu):
         layout.separator()
 
         layout.operator("uv.select_split",text = "Split")
-
 
 
 class IMAGE_MT_brush(Menu):
@@ -265,18 +269,17 @@ class IMAGE_MT_image(Menu):
             layout.menu("IMAGE_MT_image_invert")
 
             if not show_render:
-                layout.separator()
-
                 if not ima.packed_file:
+                    layout.separator()
                     layout.operator("image.pack")
 
                 # only for dirty && specific image types, perhaps
                 # this could be done in operator poll too
                 if ima.is_dirty:
                     if ima.source in {'FILE', 'GENERATED'} and ima.type != 'OPEN_EXR_MULTILAYER':
+                        if ima.packed_file:
+                            layout.separator()
                         layout.operator("image.pack", text="Pack As PNG").as_png = True
-
-            layout.separator()
 
 
 class IMAGE_MT_image_invert(Menu):
@@ -308,6 +311,19 @@ class IMAGE_MT_uvs_showhide(Menu):
         layout.operator("uv.hide", text="Hide Selected").unselected = False
         layout.operator("uv.hide", text="Hide Unselected").unselected = True
 
+
+class IMAGE_MT_uvs_proportional(Menu):
+    bl_label = "Proportional Editing"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.props_enum(context.tool_settings, "proportional_edit")
+
+        layout.separator()
+
+        layout.label("Falloff:")
+        layout.props_enum(context.tool_settings, "proportional_edit_falloff")
 
 
 class IMAGE_MT_uvs_snap(Menu):
@@ -372,9 +388,9 @@ class IMAGE_MT_uvs(Menu):
         layout.separator()
 
         layout.prop(uv, "use_live_unwrap")
-        layout.operator("uv.unwrap", icon='UNWRAP_ABF')
-        layout.operator("uv.pin", text="Unpin", icon = "UNPINNED").clear = True
-        layout.operator("uv.pin", icon = "PINNED").clear = False
+        layout.operator("uv.unwrap")
+        layout.operator("uv.pin", text="Unpin").clear = True
+        layout.operator("uv.pin").clear = False
 
         layout.separator()
 
@@ -395,8 +411,7 @@ class IMAGE_MT_uvs(Menu):
 
         layout.separator()
 
-        layout.prop_menu_enum(toolsettings, "proportional_edit")
-        layout.prop_menu_enum(toolsettings, "proportional_edit_falloff")
+        layout.menu("IMAGE_MT_uvs_proportional")
 
         layout.separator()
 
@@ -536,6 +551,7 @@ class ALL_MT_editormenu(Menu):
         row = layout.row(align=True)
         row.template_header() # editor type menus
 
+
 class MASK_MT_editor_menus(Menu):
     bl_idname = "MASK_MT_editor_menus"
     bl_label = ""
@@ -630,6 +646,47 @@ class IMAGE_PT_image_properties(Panel):
         layout.template_image(sima, "image", iuser, multiview=True)
 
 
+class IMAGE_PT_game_properties(Panel):
+    bl_space_type = 'IMAGE_EDITOR'
+    bl_region_type = 'UI'
+    bl_label = "Game Properties"
+
+    @classmethod
+    def poll(cls, context):
+        sima = context.space_data
+        # display even when not in game mode because these settings effect the 3d view
+        return (sima and sima.image and not sima.show_maskedit)  # and (rd.engine == 'BLENDER_GAME')
+
+    def draw(self, context):
+        layout = self.layout
+
+        sima = context.space_data
+        ima = sima.image
+
+        split = layout.split()
+
+        col = split.column()
+        col.prop(ima, "use_animation")
+        sub = col.column(align=True)
+        sub.active = ima.use_animation
+        sub.prop(ima, "frame_start", text="Start")
+        sub.prop(ima, "frame_end", text="End")
+        sub.prop(ima, "fps", text="Speed")
+
+        col.prop(ima, "use_tiles")
+        sub = col.column(align=True)
+        sub.active = ima.use_tiles or ima.use_animation
+        sub.prop(ima, "tiles_x", text="X")
+        sub.prop(ima, "tiles_y", text="Y")
+
+        col = split.column()
+        col.label(text="Clamp:")
+        col.prop(ima, "use_clamp_x", text="X")
+        col.prop(ima, "use_clamp_y", text="Y")
+        col.separator()
+        col.prop(ima, "mapping", expand=True)
+
+
 class IMAGE_PT_view_properties(Panel):
     bl_space_type = 'IMAGE_EDITOR'
     bl_region_type = 'UI'
@@ -691,6 +748,12 @@ class IMAGE_PT_view_properties(Panel):
             sub.active = uvedit.show_stretch
             sub.row().prop(uvedit, "draw_stretch_type", expand=True)
 
+            col = layout.column()
+            col.prop(uvedit, "show_other_objects")
+            row = col.row()
+            row.active = uvedit.show_other_objects
+            row.prop(uvedit, "other_uv_filter", text="Filter")
+
         if show_render and ima:
             layout.separator()
             render_slot = ima.render_slots.active
@@ -708,28 +771,14 @@ class IMAGE_PT_tools_transform_uvs(Panel, UVToolsPanel):
     def draw(self, context):
         layout = self.layout
 
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
-
-        if not scene.UItweaks.icon_or_text: 
-            col = layout.column(align=True)
-            col.label(text="Transform:")
-            col.operator("transform.translate", icon ='TRANSFORM_MOVE')
-            col.operator("transform.rotate", icon ='TRANSFORM_ROTATE')
-            col.operator("transform.resize", icon ='TRANSFORM_SCALE', text="Scale")
-
-            col.separator()
-
-            col.operator("transform.shear", icon = 'SHEAR')
-
-        else:
-            col = layout.column(align=True)
-            col.label(text="Transform:")
-            row = col.row(align=False)
-            row.alignment = 'LEFT'
-            row.operator("transform.translate", icon ='TRANSFORM_MOVE', text = "")
-            row.operator("transform.rotate", icon ='TRANSFORM_ROTATE', text = "")
-            row.operator("transform.resize", icon ='TRANSFORM_SCALE', text = "")
-            row.operator("transform.shear", icon = 'SHEAR', text = "")
+        col = layout.column(align=True)
+        col.label(text="Transform:")
+        row = col.row(align=False)
+        row.alignment = 'LEFT'
+        row.operator("transform.translate", icon ='TRANSFORM_MOVE', text = "")
+        row.operator("transform.rotate", icon ='TRANSFORM_ROTATE', text = "")
+        row.operator("transform.resize", icon ='TRANSFORM_SCALE', text = "")
+        row.operator("transform.shear", icon = 'SHEAR', text = "")
 
 
 class IMAGE_PT_paint(Panel, ImagePaintPanel):
@@ -751,8 +800,8 @@ class IMAGE_PT_paint(Panel, ImagePaintPanel):
     @classmethod
     def poll(cls, context):
         sima = context.space_data
-        toolsettings = context.tool_settings.image_paint
         return sima.show_paint
+
 
 class IMAGE_PT_tools_brush_overlay(BrushButtonsPanel, Panel):
     bl_label = "Overlay"
@@ -1008,7 +1057,7 @@ class IMAGE_PT_tools_paint_options(BrushButtonsPanel, Panel):
         layout = self.layout
 
         toolsettings = context.tool_settings
-        brush = toolsettings.image_paint.brush
+        # brush = toolsettings.image_paint.brush
 
         ups = toolsettings.unified_paint_settings
 
@@ -1080,13 +1129,6 @@ class IMAGE_UV_sculpt(Panel, ImagePaintPanel):
             row = col.row(align=True)
             self.prop_unified_strength(row, context, brush, "strength", slider=True, text="Strength")
             self.prop_unified_strength(row, context, brush, "use_pressure_strength")
-
-            # bfa - Radial Control hotkeys.
-            col = layout.column()
-            col.label(text="Radial Control Keys:")
-            col.label(text=" - Radius: F")
-            col.label(text=" - Strength: Shift F")
-
 
         col = layout.column()
         col.prop(toolsettings, "uv_sculpt_lock_borders")
@@ -1216,6 +1258,14 @@ class IMAGE_PT_grease_pencil(GreasePencilDataPanel, Panel):
     # NOTE: this is just a wrapper around the generic GP Panel
 
 
+# Grease Pencil palette colors
+class IMAGE_PT_grease_pencil_palettecolor(GreasePencilPaletteColorPanel, Panel):
+    bl_space_type = 'IMAGE_EDITOR'
+    bl_region_type = 'UI'
+
+    # NOTE: this is just a wrapper around the generic GP Panel
+
+
 # Grease Pencil drawing tools
 class IMAGE_PT_tools_grease_pencil_draw(GreasePencilDrawingToolsPanel, Panel):
     bl_space_type = 'IMAGE_EDITOR'
@@ -1223,6 +1273,21 @@ class IMAGE_PT_tools_grease_pencil_draw(GreasePencilDrawingToolsPanel, Panel):
 
 # Grease Pencil stroke editing tools
 class IMAGE_PT_tools_grease_pencil_edit(GreasePencilStrokeEditPanel, Panel):
+    bl_space_type = 'IMAGE_EDITOR'
+
+
+# Grease Pencil stroke sculpting tools
+class IMAGE_PT_tools_grease_pencil_sculpt(GreasePencilStrokeSculptPanel, Panel):
+    bl_space_type = 'IMAGE_EDITOR'
+
+
+# Grease Pencil drawing brushes
+class IMAGE_PT_tools_grease_pencil_brush(GreasePencilBrushPanel, Panel):
+    bl_space_type = 'IMAGE_EDITOR'
+
+
+# Grease Pencil drawing curves
+class IMAGE_PT_tools_grease_pencil_brushcurves(GreasePencilBrushCurvesPanel, Panel):
     bl_space_type = 'IMAGE_EDITOR'
 
 

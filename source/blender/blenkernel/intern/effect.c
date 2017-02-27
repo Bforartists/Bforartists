@@ -64,6 +64,7 @@
 #include "BKE_cdderivedmesh.h"
 #include "BKE_effect.h"
 #include "BKE_global.h"
+#include "BKE_library.h"
 #include "BKE_modifier.h"
 #include "BKE_object.h"
 #include "BKE_particle.h"
@@ -138,9 +139,6 @@ void free_partdeflect(PartDeflect *pd)
 	if (!pd)
 		return;
 
-	if (pd->tex)
-		pd->tex->id.us--;
-
 	if (pd->rng)
 		BLI_rng_free(pd->rng);
 
@@ -157,15 +155,20 @@ static EffectorCache *new_effector_cache(Scene *scene, Object *ob, ParticleSyste
 	eff->frame = -1;
 	return eff;
 }
-static void add_object_to_effectors(ListBase **effectors, Scene *scene, EffectorWeights *weights, Object *ob, Object *ob_src)
+static void add_object_to_effectors(ListBase **effectors, Scene *scene, EffectorWeights *weights, Object *ob, Object *ob_src, bool for_simulation)
 {
 	EffectorCache *eff = NULL;
 
-	if ( ob == ob_src || weights->weight[ob->pd->forcefield] == 0.0f )
+	if ( ob == ob_src )
 		return;
 
-	if (ob->pd->shape == PFIELD_SHAPE_POINTS && !ob->derivedFinal )
-		return;
+	if (for_simulation) {
+		if (weights->weight[ob->pd->forcefield] == 0.0f )
+			return;
+
+		if (ob->pd->shape == PFIELD_SHAPE_POINTS && !ob->derivedFinal )
+			return;
+	}
 
 	if (*effectors == NULL)
 		*effectors = MEM_callocN(sizeof(ListBase), "effectors list");
@@ -177,24 +180,24 @@ static void add_object_to_effectors(ListBase **effectors, Scene *scene, Effector
 
 	BLI_addtail(*effectors, eff);
 }
-static void add_particles_to_effectors(ListBase **effectors, Scene *scene, EffectorWeights *weights, Object *ob, ParticleSystem *psys, ParticleSystem *psys_src)
+static void add_particles_to_effectors(ListBase **effectors, Scene *scene, EffectorWeights *weights, Object *ob, ParticleSystem *psys, ParticleSystem *psys_src, bool for_simulation)
 {
 	ParticleSettings *part= psys->part;
 
-	if ( !psys_check_enabled(ob, psys) )
+	if ( !psys_check_enabled(ob, psys, G.is_rendering) )
 		return;
 
 	if ( psys == psys_src && (part->flag & PART_SELF_EFFECT) == 0)
 		return;
 
-	if ( part->pd && part->pd->forcefield && weights->weight[part->pd->forcefield] != 0.0f) {
+	if ( part->pd && part->pd->forcefield && (!for_simulation || weights->weight[part->pd->forcefield] != 0.0f)) {
 		if (*effectors == NULL)
 			*effectors = MEM_callocN(sizeof(ListBase), "effectors list");
 
 		BLI_addtail(*effectors, new_effector_cache(scene, ob, psys, part->pd));
 	}
 
-	if (part->pd2 && part->pd2->forcefield && weights->weight[part->pd2->forcefield] != 0.0f) {
+	if (part->pd2 && part->pd2->forcefield && (!for_simulation || weights->weight[part->pd2->forcefield] != 0.0f)) {
 		if (*effectors == NULL)
 			*effectors = MEM_callocN(sizeof(ListBase), "effectors list");
 
@@ -204,7 +207,7 @@ static void add_particles_to_effectors(ListBase **effectors, Scene *scene, Effec
 
 /* returns ListBase handle with objects taking part in the effecting */
 ListBase *pdInitEffectors(Scene *scene, Object *ob_src, ParticleSystem *psys_src,
-                          EffectorWeights *weights, bool precalc)
+                          EffectorWeights *weights, bool for_simulation)
 {
 	Base *base;
 	unsigned int layer= ob_src->lay;
@@ -216,13 +219,13 @@ ListBase *pdInitEffectors(Scene *scene, Object *ob_src, ParticleSystem *psys_src
 		for (go= weights->group->gobject.first; go; go= go->next) {
 			if ( (go->ob->lay & layer) ) {
 				if ( go->ob->pd && go->ob->pd->forcefield )
-					add_object_to_effectors(&effectors, scene, weights, go->ob, ob_src);
+					add_object_to_effectors(&effectors, scene, weights, go->ob, ob_src, for_simulation);
 
 				if ( go->ob->particlesystem.first ) {
 					ParticleSystem *psys= go->ob->particlesystem.first;
 
 					for ( ; psys; psys=psys->next )
-						add_particles_to_effectors(&effectors, scene, weights, go->ob, psys, psys_src);
+						add_particles_to_effectors(&effectors, scene, weights, go->ob, psys, psys_src, for_simulation);
 				}
 			}
 		}
@@ -231,19 +234,19 @@ ListBase *pdInitEffectors(Scene *scene, Object *ob_src, ParticleSystem *psys_src
 		for (base = scene->base.first; base; base= base->next) {
 			if ( (base->lay & layer) ) {
 				if ( base->object->pd && base->object->pd->forcefield )
-					add_object_to_effectors(&effectors, scene, weights, base->object, ob_src);
+					add_object_to_effectors(&effectors, scene, weights, base->object, ob_src, for_simulation);
 
 				if ( base->object->particlesystem.first ) {
 					ParticleSystem *psys= base->object->particlesystem.first;
 
 					for ( ; psys; psys=psys->next )
-						add_particles_to_effectors(&effectors, scene, weights, base->object, psys, psys_src);
+						add_particles_to_effectors(&effectors, scene, weights, base->object, psys, psys_src, for_simulation);
 				}
 			}
 		}
 	}
 	
-	if (precalc)
+	if (for_simulation)
 		pdPrecalculateEffectors(effectors);
 	
 	return effectors;
@@ -565,7 +568,9 @@ int get_effector_data(EffectorCache *eff, EffectorData *efd, EffectedPoint *poin
 	float cfra = eff->scene->r.cfra;
 	int ret = 0;
 
-	if (eff->pd && eff->pd->shape==PFIELD_SHAPE_SURFACE && eff->surmd) {
+	/* In case surface object is in Edit mode when loading the .blend, surface modifier is never executed
+	 * and bvhtree never built, see T48415. */
+	if (eff->pd && eff->pd->shape==PFIELD_SHAPE_SURFACE && eff->surmd && eff->surmd->bvhtree) {
 		/* closest point in the object surface is an effector */
 		float vec[3];
 
@@ -745,37 +750,39 @@ static void do_texture_effector(EffectorCache *eff, EffectorData *efd, EffectedP
 
 	copy_v3_v3(tex_co, point->loc);
 
-	if (eff->pd->flag & PFIELD_TEX_2D) {
+	if (eff->pd->flag & PFIELD_TEX_OBJECT) {
+		mul_m4_v3(eff->ob->imat, tex_co);
+
+		if (eff->pd->flag & PFIELD_TEX_2D)
+			tex_co[2] = 0.0f;
+	}
+	else if (eff->pd->flag & PFIELD_TEX_2D) {
 		float fac=-dot_v3v3(tex_co, efd->nor);
 		madd_v3_v3fl(tex_co, efd->nor, fac);
 	}
 
-	if (eff->pd->flag & PFIELD_TEX_OBJECT) {
-		mul_m4_v3(eff->ob->imat, tex_co);
-	}
-
 	scene_color_manage = BKE_scene_check_color_management_enabled(eff->scene);
 
-	hasrgb = multitex_ext(eff->pd->tex, tex_co, NULL, NULL, 0, result, NULL, scene_color_manage, false);
+	hasrgb = multitex_ext(eff->pd->tex, tex_co, NULL, NULL, 0, result, 0, NULL, scene_color_manage, false);
 
 	if (hasrgb && mode==PFIELD_TEX_RGB) {
 		force[0] = (0.5f - result->tr) * strength;
 		force[1] = (0.5f - result->tg) * strength;
 		force[2] = (0.5f - result->tb) * strength;
 	}
-	else {
+	else if (nabla != 0) {
 		strength/=nabla;
 
 		tex_co[0] += nabla;
-		multitex_ext(eff->pd->tex, tex_co, NULL, NULL, 0, result+1, NULL, scene_color_manage, false);
+		multitex_ext(eff->pd->tex, tex_co, NULL, NULL, 0, result+1, 0, NULL, scene_color_manage, false);
 
 		tex_co[0] -= nabla;
 		tex_co[1] += nabla;
-		multitex_ext(eff->pd->tex, tex_co, NULL, NULL, 0, result+2, NULL, scene_color_manage, false);
+		multitex_ext(eff->pd->tex, tex_co, NULL, NULL, 0, result+2, 0, NULL, scene_color_manage, false);
 
 		tex_co[1] -= nabla;
 		tex_co[2] += nabla;
-		multitex_ext(eff->pd->tex, tex_co, NULL, NULL, 0, result+3, NULL, scene_color_manage, false);
+		multitex_ext(eff->pd->tex, tex_co, NULL, NULL, 0, result+3, 0, NULL, scene_color_manage, false);
 
 		if (mode == PFIELD_TEX_GRAD || !hasrgb) { /* if we don't have rgb fall back to grad */
 			/* generate intensity if texture only has rgb value */
@@ -802,6 +809,9 @@ static void do_texture_effector(EffectorCache *eff, EffectorData *efd, EffectedP
 			force[1] = (drdz - dbdx) * strength;
 			force[2] = (dgdx - drdy) * strength;
 		}
+	}
+	else {
+		zero_v3(force);
 	}
 
 	if (eff->pd->flag & PFIELD_TEX_2D) {
@@ -838,6 +848,14 @@ static void do_physical_effector(EffectorCache *eff, EffectorData *efd, Effected
 			break;
 		case PFIELD_FORCE:
 			normalize_v3(force);
+			if (pd->flag & PFIELD_GRAVITATION){ /* Option: Multiply by 1/distance^2 */
+				if (efd->distance < FLT_EPSILON){
+					strength = 0.0f;
+				}
+				else {
+					strength *= powf(efd->distance, -2.0f);
+				}
+			}
 			mul_v3_fl(force, strength * efd->falloff);
 			break;
 		case PFIELD_VORTEX:
@@ -1120,7 +1138,7 @@ static void debug_data_insert(SimDebugData *debug_data, SimDebugElement *elem)
 		BLI_ghash_insert(debug_data->gh, elem, elem);
 }
 
-void BKE_sim_debug_data_add_element(int type, const float v1[3], const float v2[3], float r, float g, float b, const char *category, unsigned int hash)
+void BKE_sim_debug_data_add_element(int type, const float v1[3], const float v2[3], const char *str, float r, float g, float b, const char *category, unsigned int hash)
 {
 	unsigned int category_hash = BLI_ghashutil_strhash_p(category);
 	SimDebugElement *elem;
@@ -1139,8 +1157,18 @@ void BKE_sim_debug_data_add_element(int type, const float v1[3], const float v2[
 	elem->color[0] = r;
 	elem->color[1] = g;
 	elem->color[2] = b;
-	copy_v3_v3(elem->v1, v1);
-	copy_v3_v3(elem->v2, v2);
+	if (v1)
+		copy_v3_v3(elem->v1, v1);
+	else
+		zero_v3(elem->v1);
+	if (v2)
+		copy_v3_v3(elem->v2, v2);
+	else
+		zero_v3(elem->v2);
+	if (str)
+		BLI_strncpy(elem->str, str, sizeof(elem->str));
+	else
+		elem->str[0] = '\0';
 	
 	debug_data_insert(_sim_debug_data, elem);
 }

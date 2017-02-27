@@ -57,6 +57,7 @@
 #include "ED_anim_api.h"
 #include "ED_screen.h"
 #include "ED_sequencer.h"
+#include "ED_util.h"
 
 #include "anim_intern.h"
 
@@ -94,7 +95,7 @@ static void change_frame_apply(bContext *C, wmOperator *op)
 {
 	Main *bmain = CTX_data_main(C);
 	Scene *scene = CTX_data_scene(C);
-	int frame = RNA_int_get(op->ptr, "frame");
+	float frame = RNA_float_get(op->ptr, "frame");
 	bool do_snap = RNA_boolean_get(op->ptr, "snap");
 
 	if (do_snap && CTX_wm_space_seq(C)) {
@@ -102,10 +103,15 @@ static void change_frame_apply(bContext *C, wmOperator *op)
 	}
 
 	/* set the new frame number */
-	CFRA = frame;
+	CFRA = (int)frame;
+	if (scene->r.flag & SCER_SHOW_SUBFRAME) {
+		SUBFRA = frame - (int)frame;
+	}
+	else {
+		SUBFRA = 0.0f;
+	}
 	FRAMENUMBER_MIN_CLAMP(CFRA);
-	SUBFRA = 0.0f;
-	
+
 	/* do updates */
 	BKE_sound_seek_scene(bmain, scene);
 	WM_event_add_notifier(C, NC_SCENE | ND_FRAME, scene);
@@ -124,18 +130,18 @@ static int change_frame_exec(bContext *C, wmOperator *op)
 /* ---- */
 
 /* Get frame from mouse coordinates */
-static int frame_from_event(bContext *C, const wmEvent *event)
+static float frame_from_event(bContext *C, const wmEvent *event)
 {
 	ARegion *region = CTX_wm_region(C);
 	Scene *scene = CTX_data_scene(C);
 	float viewx;
-	int frame;
+	float frame;
 
 	/* convert from region coordinates to View2D 'tot' space */
 	viewx = UI_view2d_region_to_view_x(&region->v2d, event->mval[0]);
 	
 	/* round result to nearest int (frames are ints!) */
-	frame = iroundf(viewx);
+	frame = viewx;
 	
 	if (scene->r.flag & SCER_LOCK_FRAME_SELECTION) {
 		CLAMP(frame, PSFRA, PEFRA);
@@ -186,7 +192,7 @@ static int change_frame_invoke(bContext *C, wmOperator *op, const wmEvent *event
 	 * as user could click on a single frame (jump to frame) as well as
 	 * click-dragging over a range (modal scrubbing).
 	 */
-	RNA_int_set(op->ptr, "frame", frame_from_event(C, event));
+	RNA_float_set(op->ptr, "frame", frame_from_event(C, event));
 
 	change_frame_seq_preview_begin(C, event);
 
@@ -214,7 +220,7 @@ static int change_frame_modal(bContext *C, wmOperator *op, const wmEvent *event)
 			break;
 
 		case MOUSEMOVE:
-			RNA_int_set(op->ptr, "frame", frame_from_event(C, event));
+			RNA_float_set(op->ptr, "frame", frame_from_event(C, event));
 			change_frame_apply(C, op);
 			break;
 		
@@ -263,10 +269,11 @@ static void ANIM_OT_change_frame(wmOperatorType *ot)
 	ot->poll = change_frame_poll;
 	
 	/* flags */
-	ot->flag = OPTYPE_BLOCKING | OPTYPE_UNDO | OPTYPE_GRAB_CURSOR;
+	ot->flag = OPTYPE_BLOCKING | OPTYPE_GRAB_CURSOR | OPTYPE_UNDO_GROUPED;
+	ot->undo_group = "FRAME_CHANGE";
 
 	/* rna */
-	ot->prop = RNA_def_int(ot->srna, "frame", 0, MINAFRAME, MAXFRAME, "Frame", "", MINAFRAME, MAXFRAME);
+	ot->prop = RNA_def_float(ot->srna, "frame", 0, MINAFRAME, MAXFRAME, "Frame", "", MINAFRAME, MAXFRAME);
 	prop = RNA_def_boolean(ot->srna, "snap", false, "Snap", "");
 	RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 }

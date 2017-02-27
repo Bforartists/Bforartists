@@ -67,7 +67,7 @@ struct bAction;
 
 #ifdef WITH_PYTHON
 /* utility conversion function */
-bool ConvertPythonToGameObject(PyObject *value, KX_GameObject **object, bool py_none_ok, const char *error_prefix);
+bool ConvertPythonToGameObject(SCA_LogicManager *logicmgr, PyObject *value, KX_GameObject **object, bool py_none_ok, const char *error_prefix);
 #endif
 
 #ifdef USE_MATHUTILS
@@ -111,9 +111,6 @@ protected:
 
 	PHY_IPhysicsController*				m_pPhysicsController;
 	PHY_IGraphicController*				m_pGraphicController;
-	STR_String							m_testPropName;
-	bool								m_xray;
-	KX_GameObject*						m_pHitObject;
 
 	SG_Node*							m_pSGNode;
 
@@ -131,8 +128,17 @@ protected:
 	BL_ActionManager* GetActionManager();
 	
 	bool								m_bRecordAnimation;
+
 public:
 	bool								m_isDeformable;
+
+	/**
+	 * KX_GameObject custom infos for ray cast, it contains property name,
+	 * collision mask, xray flag and hited object.
+	 * This structure is created during ray cast and passed as argument 
+	 * "data" to functions KX_GameObject::NeedRayCast and KX_GameObject::RayHit.
+	 */
+	struct RayCastData;
 
 	/**
 	 * Helper function for modules that can't include KX_ClientObjectInfo.h
@@ -169,7 +175,7 @@ public:
 	 * side effect of storing the result internally. The
 	 * memory for the matrix remains the property of this class.
 	 */ 
-		double *
+		float *
 	GetOpenGLMatrix(
 	);
 
@@ -320,12 +326,6 @@ public:
 	 * Kick the object's action manager
 	 */
 	void UpdateActionManager(float curtime);
-
-	/**
-	 * Have the action manager update IPOs
-	 * note: not thread-safe!
-	 */
-	void UpdateActionIPOs();
 
 	/*********************************
 	 * End Animation API
@@ -661,8 +661,10 @@ public:
 		return (m_pSGNode && m_pSGNode->GetSGParent() && m_pSGNode->GetSGParent()->IsVertexParent());
 	}
 
-	bool RayHit(KX_ClientObjectInfo* client, KX_RayCast* result, void * const data);
-	bool NeedRayCast(KX_ClientObjectInfo* client);
+	/// \see KX_RayCast
+	bool RayHit(KX_ClientObjectInfo *client, KX_RayCast *result, RayCastData *rayData);
+	/// \see KX_RayCast
+	bool NeedRayCast(KX_ClientObjectInfo *client, RayCastData *rayData);
 
 
 	/**
