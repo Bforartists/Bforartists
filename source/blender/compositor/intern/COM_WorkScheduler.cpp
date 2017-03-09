@@ -50,7 +50,8 @@
 
 
 /// @brief list of all CPUDevices. for every hardware thread an instance of CPUDevice is created
-static vector<CPUDevice *> g_cpudevices;
+static vector<CPUDevice*> g_cpudevices;
+static ThreadLocal(CPUDevice *) g_thread_device;
 
 #if COM_CURRENT_THREADING_MODEL == COM_TM_QUEUE
 /// @brief list of all thread for every CPUDevice in cpudevices a thread exists
@@ -153,9 +154,9 @@ int COM_isHighlightedbNode(bNode *bnode)
 #if COM_CURRENT_THREADING_MODEL == COM_TM_QUEUE
 void *WorkScheduler::thread_execute_cpu(void *data)
 {
-	Device *device = (Device *)data;
+	CPUDevice *device = (CPUDevice *)data;
 	WorkPackage *work;
-	
+	BLI_thread_local_set(g_thread_device, device);
 	while ((work = (WorkPackage *)BLI_thread_queue_pop(g_cpuqueue))) {
 		HIGHLIGHT(work);
 		device->execute(work);
@@ -186,7 +187,7 @@ void WorkScheduler::schedule(ExecutionGroup *group, int chunkNumber)
 {
 	WorkPackage *package = new WorkPackage(group, chunkNumber);
 #if COM_CURRENT_THREADING_MODEL == COM_TM_NOTHREAD
-	CPUDevice device;
+	CPUDevice device(0);
 	device.execute(package);
 	delete package;
 #elif COM_CURRENT_THREADING_MODEL == COM_TM_QUEUE
@@ -276,6 +277,7 @@ bool WorkScheduler::hasGPUDevices()
 #endif
 }
 
+#if COM_CURRENT_THREADING_MODEL == COM_TM_QUEUE
 static void CL_CALLBACK clContextError(const char *errinfo,
                                        const void * /*private_info*/,
                                        size_t /*cb*/,
@@ -283,6 +285,7 @@ static void CL_CALLBACK clContextError(const char *errinfo,
 {
 	printf("OPENCL error: %s\n", errinfo);
 }
+#endif
 
 void WorkScheduler::initialize(bool use_opencl, int num_cpu_threads)
 {
@@ -310,18 +313,20 @@ void WorkScheduler::initialize(bool use_opencl, int num_cpu_threads)
 			device->deinitialize();
 			delete device;
 		}
-
+		if (g_cpuInitialized) {
+			BLI_thread_local_delete(g_thread_device);
+		}
 		g_cpuInitialized = false;
 	}
 
 	/* initialize CPU threads */
 	if (!g_cpuInitialized) {
 		for (int index = 0; index < num_cpu_threads; index++) {
-			CPUDevice *device = new CPUDevice();
+			CPUDevice *device = new CPUDevice(index);
 			device->initialize();
 			g_cpudevices.push_back(device);
 		}
-
+		BLI_thread_local_create(g_thread_device);
 		g_cpuInitialized = true;
 	}
 
@@ -407,7 +412,7 @@ void WorkScheduler::deinitialize()
 			device->deinitialize();
 			delete device;
 		}
-
+		BLI_thread_local_delete(g_thread_device);
 		g_cpuInitialized = false;
 	}
 
@@ -450,3 +455,8 @@ void WorkScheduler::deinitialize()
 	}
 }
 
+int WorkScheduler::current_thread_id()
+{
+	CPUDevice *device = (CPUDevice *)BLI_thread_local_get(g_thread_device);
+	return device->thread_id();
+}

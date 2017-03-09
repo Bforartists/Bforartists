@@ -54,11 +54,16 @@ if(WIN32 AND NOT UNIX)
 		)
 	endif()
 
-	add_executable(blenderplayer ${EXETYPE} bad_level_call_stubs/stubs.c ../icons/winblender.rc)
-
+	add_executable(
+			blenderplayer ${EXETYPE}
+			bad_level_call_stubs/stubs.c
+			${CMAKE_SOURCE_DIR}/release/windows/icons/winblender.rc)
+	WINDOWS_SIGN_TARGET(blenderplayer)
 	install(TARGETS blenderplayer
 			COMPONENT Blenderplayer
 			DESTINATION ".")
+
+add_cc_flags_custom_test(blenderplayer)
 
 elseif(APPLE)
 	add_executable(blenderplayer ${EXETYPE} bad_level_call_stubs/stubs.c)
@@ -78,6 +83,11 @@ else()
 		install(
 			TARGETS blenderplayer
 			DESTINATION bin
+		)
+	else()
+		install(
+			TARGETS blenderplayer
+			DESTINATION "."
 		)
 	endif()
 endif()
@@ -103,7 +113,6 @@ endif()
 		ge_player_common 
 		bf_intern_string 
 		bf_intern_ghost
-		bf_intern_ghostndof3dconnexion
 		bf_rna
 		bf_blenkernel
 		bf_depsgraph
@@ -145,7 +154,6 @@ endif()
 		bf_imbuf_openexr 
 		bf_imbuf_openimageio
 		extern_openjpeg
-		extern_redcode
 		bf_imbuf_dds
 		bf_dna
 		ge_videotex
@@ -162,16 +170,15 @@ endif()
 		bf_blenkernel # duplicate for linking
 		bf_intern_mikktspace
 		extern_recastnavigation
-		bf_intern_raskter
 		bf_intern_opencolorio
-		bf_intern_opennl
 		bf_intern_glew_mx
+		bf_intern_eigen
 		extern_rangetree
 		extern_wcwidth
-		extern_libmv
+		bf_intern_libmv
 		extern_glog
+		extern_gflags
 		extern_sdlew
-		extern_eigen3
 	)
 
 	if(WITH_MOD_CLOTH_ELTOPO)
@@ -189,8 +196,6 @@ endif()
 	if(WITH_LIBMV)
 		list(APPEND BLENDER_SORTED_LIBS extern_ceres)
 	endif()
-
-	list(APPEND BLENDER_SORTED_LIBS extern_colamd)
 
 	if(WITH_MOD_BOOLEAN)
 		list(APPEND BLENDER_SORTED_LIBS extern_carve)
@@ -212,8 +217,24 @@ endif()
 		list(APPEND BLENDER_SORTED_LIBS bf_intern_locale)
 	endif()
 
+	if(WITH_GAMEENGINE_DECKLINK)
+		list(APPEND BLENDER_SORTED_LIBS bf_intern_decklink)
+	endif()
+
+	if(WIN32)
+		list(APPEND BLENDER_SORTED_LIBS bf_intern_gpudirect)
+	endif()
+
 	if(WITH_OPENSUBDIV)
 		list(APPEND BLENDER_SORTED_LIBS bf_intern_opensubdiv)
+	endif()
+
+	if(WITH_OPENVDB)
+		list(APPEND BLENDER_SORTED_LIBS bf_intern_openvdb)
+	endif()
+
+	if(WITH_ALEMBIC)
+		list(APPEND BLENDER_SORTED_LIBS bf_alembic)
 	endif()
 
 	foreach(SORTLIB ${BLENDER_SORTED_LIBS})
@@ -253,5 +274,9 @@ setup_liblinks(blenderplayer)
 # We put CLEW and CUEW here because OPENSUBDIV_LIBRARIES dpeends on them..
 if(WITH_CYCLES OR WITH_COMPOSITOR OR WITH_OPENSUBDIV)
 	target_link_libraries(blenderplayer "extern_clew")
-	target_link_libraries(blenderplayer "extern_cuew")
+	if(WITH_CUDA_DYNLOAD)
+		target_link_libraries(blenderplayer "extern_cuew")
+	else()
+		target_link_libraries(${target} ${CUDA_CUDA_LIBRARY})
+	endif()
 endif()

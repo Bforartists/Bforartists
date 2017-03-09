@@ -23,13 +23,18 @@ import subprocess
 import os
 import sys
 import time
-from math import atan, pi, degrees, sqrt
+from math import atan, pi, degrees, sqrt, cos, sin
 import re
 import random
 import platform#
 import subprocess#
-from bpy.types import(Operator)#all added for render preview
+from bpy.types import(Operator)
+from imghdr import what #imghdr is a python lib to identify image file types
+
 from . import df3 # for smoke rendering
+from . import shading # for BI POV haders emulation
+from . import primitives # for import and export of POV specific primitives
+from . import nodes # for POV specific nodes
 ##############################SF###########################
 ##############find image texture
 def imageFormat(imgF):
@@ -49,8 +54,10 @@ def imageFormat(imgF):
     }.get(os.path.splitext(imgF)[-1].upper(), "")
 
     if not ext:
-        print(" WARNING: texture image format not supported ")
-
+        #maybe add a check for if path exists here? 
+        print(" WARNING: texture image has no extension") #too verbose
+        
+        ext = what(imgF) #imghdr is a python lib to identify image file types
     return ext
 
 
@@ -89,6 +96,9 @@ def imgMapTransforms(ts):
     # inverse, a standard scale factor.
     # 0.5 Offset is needed relatively to scale because center of the
     # scale is 0.5,0.5 in blender and 0,0 in POV
+            # Strange that the translation factor for scale is not the same as for
+            # translate.
+            # TODO: verify both matches with blender internal.
     image_map_transforms = ""
     image_map_transforms = ("scale <%.4g,%.4g,%.4g> translate <%.4g,%.4g,%.4g>" % \
                   ( 1.0 / ts.scale.x,
@@ -138,8 +148,9 @@ def imgMapBG(wts):
     
     
 def path_image(image):
-    return bpy.path.abspath(image.filepath, library=image.library)
-
+    return bpy.path.abspath(image.filepath, library=image.library).replace("\\","/")
+    # .replace("\\","/") to get only forward slashes as it's what POV prefers, 
+    # even on windows
 # end find image texture
 # -----------------------------------------------------------------------------
 
@@ -174,495 +185,147 @@ def safety(name, Level):
 ##############end safety string name material
 ##############################EndSF###########################
 
-def is_renderable(ob):
-    return (ob.hide_render==False)
+def is_renderable(scene, ob):
+    return (ob.is_visible(scene) and not ob.hide_render)
 
 
-def renderable_objects():
-    return [ob for ob in bpy.data.objects if is_renderable(ob)]
+def renderable_objects(scene):
+    return [ob for ob in bpy.data.objects if is_renderable(scene, ob)]
 
 
 tabLevel = 0
 unpacked_images=[]
 
-workDir = bpy.utils.resource_path('USER')   
-previewDir=os.path.join(workDir, "preview")
+user_dir = bpy.utils.resource_path('USER')
+preview_dir = os.path.join(user_dir, "preview")
+
 ## Make sure Preview directory exists and is empty
-if not os.path.isdir(previewDir):
-    os.mkdir(previewDir)
-smokePath = os.path.join(previewDir, "smoke.df3")
-    
-def exportPattern(texture):
-    tex=texture
-    pat = tex.pov
-    PATname = "PAT_%s"%string_strip_hyphen(bpy.path.clean_name(tex.name))
-    mappingDif = ("translate <%.4g,%.4g,%.4g> scale <%.4g,%.4g,%.4g>" % \
-          (pat.tex_mov_x, pat.tex_mov_y, pat.tex_mov_z,
-           1.0 / pat.tex_scale_x, 1.0 / pat.tex_scale_y, 1.0 / pat.tex_scale_z))
-    texStrg=""
-    def exportColorRamp(texture):
-        tex=texture
-        pat = tex.pov      
-        colRampStrg="color_map {\n"
-        numColor=0
-        for el in tex.color_ramp.elements:
-            numColor+=1
-            pos = el.position
-            col=el.color
-            colR,colG,colB,colA = col[0],col[1],col[2],1-col[3]
-            if pat.tex_pattern_type not in {'checker', 'hexagon', 'square', 'triangular', 'brick'} :
-                colRampStrg+="[%.4g color rgbf<%.4g,%.4g,%.4g,%.4g>] \n"%(pos,colR,colG,colB,colA)
-            if pat.tex_pattern_type in {'brick','checker'} and numColor < 3:
-                colRampStrg+="color rgbf<%.4g,%.4g,%.4g,%.4g> \n"%(colR,colG,colB,colA)
-            if pat.tex_pattern_type == 'hexagon' and numColor < 4 :
-                colRampStrg+="color rgbf<%.4g,%.4g,%.4g,%.4g> \n"%(colR,colG,colB,colA)
-            if pat.tex_pattern_type == 'square' and numColor < 5 :
-                colRampStrg+="color rgbf<%.4g,%.4g,%.4g,%.4g> \n"%(colR,colG,colB,colA)
-            if pat.tex_pattern_type == 'triangular' and numColor < 7 :
-                colRampStrg+="color rgbf<%.4g,%.4g,%.4g,%.4g> \n"%(colR,colG,colB,colA)
-                      
-        colRampStrg+="} \n"
-        #end color map
-        return colRampStrg
-    #much work to be done here only defaults translated for now:
-    #pov noise_generator 3 means perlin noise
-    if pat.tex_pattern_type == 'emulator':
-        texStrg+="pigment {\n"
-        ####################### EMULATE BLENDER VORONOI TEXTURE ####################
-        if tex.type == 'VORONOI':  
-            texStrg+="crackle\n"
-            texStrg+="    offset %.4g\n"%tex.nabla
-            texStrg+="    form <%.4g,%.4g,%.4g>\n"%(tex.weight_1, tex.weight_2, tex.weight_3)
-            if tex.distance_metric == 'DISTANCE':
-                texStrg+="    metric 2.5\n"          
-            if tex.distance_metric == 'DISTANCE_SQUARED':
-                texStrg+="    metric 2.5\n"
-                texStrg+="    poly_wave 2\n"                
-            if tex.distance_metric == 'MINKOVSKY': 
-                texStrg+="    metric %s\n"%tex.minkovsky_exponent             
-            if tex.distance_metric == 'MINKOVSKY_FOUR': 
-                texStrg+="    metric 4\n"
-            if tex.distance_metric == 'MINKOVSKY_HALF': 
-                texStrg+="    metric 0.5\n"
-            if tex.distance_metric == 'CHEBYCHEV': 
-                texStrg+="    metric 10\n"
-            if tex.distance_metric == 'MANHATTAN': 
-                texStrg+="    metric 1\n"
+smokePath = os.path.join(preview_dir, "smoke.df3")
 
-            if tex.color_mode == 'POSITION':
-                texStrg+="solid\n"
-            texStrg+="scale 0.25\n"
-            
-            if tex.use_color_ramp == True:
-                texStrg+=exportColorRamp(tex)
-            else:
-                texStrg+="color_map {\n"
-                texStrg+="[0 color rgbt<0,0,0,1>]\n"
-                texStrg+="[1 color rgbt<1,1,1,0>]\n" 
-                texStrg+="}\n"            
-        ####################### EMULATE BLENDER CLOUDS TEXTURE ####################
-        if tex.type == 'CLOUDS':  
-            if tex.noise_type == 'SOFT_NOISE':
-                texStrg+="wrinkles\n"
-                texStrg+="scale 0.25\n"
-            else:
-                texStrg+="granite\n"
-            if tex.use_color_ramp == True:
-                texStrg+=exportColorRamp(tex)
-            else:
-                texStrg+="color_map {\n"
-                texStrg+="[0 color rgbt<0,0,0,1>]\n"
-                texStrg+="[1 color rgbt<1,1,1,0>]\n" 
-                texStrg+="}\n"
-        ####################### EMULATE BLENDER WOOD TEXTURE ####################
-        if tex.type == 'WOOD':
-            if tex.wood_type == 'RINGS':
-                texStrg+="wood\n"
-                texStrg+="scale 0.25\n"
-            if tex.wood_type == 'RINGNOISE':
-                texStrg+="wood\n"
-                texStrg+="scale 0.25\n"
-                texStrg+="turbulence %.4g\n"%(tex.turbulence/100)
-            if tex.wood_type == 'BANDS':
-                texStrg+="marble\n"
-                texStrg+="scale 0.25\n"
-                texStrg+="rotate <45,-45,45>\n"
-            if tex.wood_type == 'BANDNOISE':
-                texStrg+="marble\n"
-                texStrg+="scale 0.25\n"
-                texStrg+="rotate <45,-45,45>\n"
-                texStrg+="turbulence %.4g\n"%(tex.turbulence/10)
-            
-            if tex.noise_basis_2 == 'SIN':
-                texStrg+="sine_wave\n"
-            if tex.noise_basis_2 == 'TRI':
-                texStrg+="triangle_wave\n"
-            if tex.noise_basis_2 == 'SAW':
-                texStrg+="ramp_wave\n"
-            if tex.use_color_ramp == True:
-                texStrg+=exportColorRamp(tex)
-            else:
-                texStrg+="color_map {\n"
-                texStrg+="[0 color rgbt<0,0,0,0>]\n"
-                texStrg+="[1 color rgbt<1,1,1,0>]\n" 
-                texStrg+="}\n"
-        ####################### EMULATE BLENDER STUCCI TEXTURE ####################
-        if tex.type == 'STUCCI':  
-            texStrg+="bozo\n"
-            texStrg+="scale 0.25\n"
-            if tex.noise_type == 'HARD_NOISE':
-                texStrg+="triangle_wave\n"
-                if tex.use_color_ramp == True:
-                    texStrg+=exportColorRamp(tex)
-                else:
-                    texStrg+="color_map {\n"
-                    texStrg+="[0 color rgbf<1,1,1,0>]\n"
-                    texStrg+="[1 color rgbt<0,0,0,1>]\n"
-                    texStrg+="}\n"
-            else:
-                if tex.use_color_ramp == True:
-                    texStrg+=exportColorRamp(tex)
-                else:
-                    texStrg+="color_map {\n"
-                    texStrg+="[0 color rgbf<0,0,0,1>]\n"
-                    texStrg+="[1 color rgbt<1,1,1,0>]\n"
-                    texStrg+="}\n"
-        ####################### EMULATE BLENDER MAGIC TEXTURE ####################
-        if tex.type == 'MAGIC':  
-            texStrg+="leopard\n"
-            if tex.use_color_ramp == True:
-                texStrg+=exportColorRamp(tex)
-            else:
-                texStrg+="color_map {\n"
-                texStrg+="[0 color rgbt<1,1,1,0.5>]\n"
-                texStrg+="[0.25 color rgbf<0,1,0,0.75>]\n"
-                texStrg+="[0.5 color rgbf<0,0,1,0.75>]\n"
-                texStrg+="[0.75 color rgbf<1,0,1,0.75>]\n"
-                texStrg+="[1 color rgbf<0,1,0,0.75>]\n"
-                texStrg+="}\n"
-            texStrg+="scale 0.1\n"            
-        ####################### EMULATE BLENDER MARBLE TEXTURE ####################
-        if tex.type == 'MARBLE':  
-            texStrg+="marble\n"
-            texStrg+="turbulence 0.5\n"
-            texStrg+="noise_generator 3\n"
-            texStrg+="scale 0.75\n"
-            texStrg+="rotate <45,-45,45>\n"
-            if tex.use_color_ramp == True:
-                texStrg+=exportColorRamp(tex)
-            else:
-                if tex.marble_type == 'SOFT':
-                    texStrg+="color_map {\n"
-                    texStrg+="[0 color rgbt<0,0,0,0>]\n"
-                    texStrg+="[0.05 color rgbt<0,0,0,0>]\n"
-                    texStrg+="[1 color rgbt<0.9,0.9,0.9,0>]\n"
-                    texStrg+="}\n"
-                elif tex.marble_type == 'SHARP':
-                    texStrg+="color_map {\n"
-                    texStrg+="[0 color rgbt<0,0,0,0>]\n"
-                    texStrg+="[0.025 color rgbt<0,0,0,0>]\n"
-                    texStrg+="[1 color rgbt<0.9,0.9,0.9,0>]\n"
-                    texStrg+="}\n"
-                else:
-                    texStrg+="[0 color rgbt<0,0,0,0>]\n"
-                    texStrg+="[1 color rgbt<1,1,1,0>]\n"            
-                    texStrg+="}\n"
-            if tex.noise_basis_2 == 'SIN':
-                texStrg+="sine_wave\n"
-            if tex.noise_basis_2 == 'TRI':
-                texStrg+="triangle_wave\n"
-            if tex.noise_basis_2 == 'SAW':
-                texStrg+="ramp_wave\n"
-        ####################### EMULATE BLENDER BLEND TEXTURE ####################
-        if tex.type == 'BLEND':
-            if tex.progression=='RADIAL':
-                texStrg+="radial\n"
-                if tex.use_flip_axis=='HORIZONTAL':
-                    texStrg+="rotate x*90\n"
-                else:
-                    texStrg+="rotate <-90,0,90>\n"
-                texStrg+="ramp_wave\n"
-            elif tex.progression=='SPHERICAL':
-                texStrg+="spherical\n"
-                texStrg+="scale 3\n"
-                texStrg+="poly_wave 1\n"
-            elif tex.progression=='QUADRATIC_SPHERE':
-                texStrg+="spherical\n"
-                texStrg+="scale 3\n"
-                texStrg+="    poly_wave 2\n"
-            elif tex.progression=='DIAGONAL':
-                texStrg+="gradient <1,1,0>\n"
-                texStrg+="scale 3\n"
-            elif tex.use_flip_axis=='HORIZONTAL':        
-                texStrg+="gradient x\n"
-                texStrg+="scale 2.01\n"
-            elif tex.use_flip_axis=='VERTICAL':
-                texStrg+="gradient y\n"
-                texStrg+="scale 2.01\n"
-            #texStrg+="ramp_wave\n"
-            #texStrg+="frequency 0.5\n"
-            texStrg+="phase 0.5\n"
-            if tex.use_color_ramp == True:
-                texStrg+=exportColorRamp(tex)
-            else:
-                texStrg+="color_map {\n"
-                texStrg+="[0 color rgbt<1,1,1,0>]\n"
-                texStrg+="[1 color rgbf<0,0,0,1>]\n"
-                texStrg+="}\n"
-            if tex.progression == 'LINEAR': 
-                texStrg+="    poly_wave 1\n"
-            if tex.progression == 'QUADRATIC': 
-                texStrg+="    poly_wave 2\n"
-            if tex.progression == 'EASING':
-                texStrg+="    poly_wave 1.5\n"            
-        ####################### EMULATE BLENDER MUSGRAVE TEXTURE ####################
-        # if tex.type == 'MUSGRAVE':  
-            # texStrg+="function{ f_ridged_mf( x, y, 0, 1, 2, 9, -0.5, 3,3 )*0.5}\n"
-            # texStrg+="color_map {\n"
-            # texStrg+="[0 color rgbf<0,0,0,1>]\n"
-            # texStrg+="[1 color rgbf<1,1,1,0>]\n"
-            # texStrg+="}\n"
-        # simplified for now:
+def write_global_setting(scene,file):
+    file.write("global_settings {\n")
+    file.write("    assumed_gamma %.6f\n"%scene.pov.assumed_gamma)
+    if scene.pov.global_settings_advanced:
+        if scene.pov.radio_enable == False:
+            file.write("    adc_bailout %.6f\n"%scene.pov.adc_bailout)
+        file.write("    ambient_light <%.6f,%.6f,%.6f>\n"%scene.pov.ambient_light[:])
+        file.write("    irid_wavelength <%.6f,%.6f,%.6f>\n"%scene.pov.irid_wavelength[:])
+        file.write("    charset %s\n"%scene.pov.charset)
+        file.write("    max_trace_level %s\n"%scene.pov.max_trace_level)    
+        file.write("    max_intersections %s\n"%scene.pov.max_intersections)
+        file.write("    number_of_waves %s\n"%scene.pov.number_of_waves)
+        file.write("    noise_generator %s\n"%scene.pov.noise_generator) 
 
-        if tex.type == 'MUSGRAVE':
-            texStrg+="bozo scale 0.25 \n"
-            if tex.use_color_ramp == True:
-                texStrg+=exportColorRamp(tex)
-            else: 
-                texStrg+="color_map {[0.5 color rgbf<0,0,0,1>][1 color rgbt<1,1,1,0>]}ramp_wave \n"            
-        ####################### EMULATE BLENDER DISTORTED NOISE TEXTURE ####################
-        if tex.type == 'DISTORTED_NOISE':  
-            texStrg+="average\n"
-            texStrg+="  pigment_map {\n"
-            texStrg+="  [1 bozo scale 0.25 turbulence %.4g\n" %tex.distortion
-            if tex.use_color_ramp == True:
-                texStrg+=exportColorRamp(tex)
-            else: 
-                texStrg+="color_map {\n"
-                texStrg+="[0 color rgbt<1,1,1,0>]\n"
-                texStrg+="[1 color rgbf<0,0,0,1>]\n"
-                texStrg+="}\n"
-            texStrg+="]\n"
+    # below properties not added to __init__ yet to avoid conflicts with material sss scale 
+    # unless it would override then should be interfaced also in scene units property tab
 
-            if tex.noise_distortion == 'CELL_NOISE':
-                texStrg+="  [1 cells scale 0.1\n"
-                if tex.use_color_ramp == True:
-                    texStrg+=exportColorRamp(tex)
-                else: 
-                    texStrg+="color_map {\n"
-                    texStrg+="[0 color rgbt<1,1,1,0>]\n"
-                    texStrg+="[1 color rgbf<0,0,0,1>]\n"
-                    texStrg+="}\n"
-                texStrg+="]\n"                
-            if tex.noise_distortion=='VORONOI_CRACKLE':
-                texStrg+="  [1 crackle scale 0.25\n"
-                if tex.use_color_ramp == True:
-                    texStrg+=exportColorRamp(tex)
-                else: 
-                    texStrg+="color_map {\n"
-                    texStrg+="[0 color rgbt<1,1,1,0>]\n"
-                    texStrg+="[1 color rgbf<0,0,0,1>]\n"
-                    texStrg+="}\n"
-                texStrg+="]\n"                
-            if tex.noise_distortion in ['VORONOI_F1','VORONOI_F2','VORONOI_F3','VORONOI_F4','VORONOI_F2_F1']:
-                texStrg+="  [1 crackle metric 2.5 scale 0.25 turbulence %.4g\n" %(tex.distortion/2)
-                if tex.use_color_ramp == True:
-                    texStrg+=exportColorRamp(tex)
-                else: 
-                    texStrg+="color_map {\n"
-                    texStrg+="[0 color rgbt<1,1,1,0>]\n"
-                    texStrg+="[1 color rgbf<0,0,0,1>]\n"
-                    texStrg+="}\n"
-                texStrg+="]\n"                
-            else:
-                texStrg+="  [1 wrinkles scale 0.25\n" 
-                if tex.use_color_ramp == True:
-                    texStrg+=exportColorRamp(tex)
-                else: 
-                    texStrg+="color_map {\n"
-                    texStrg+="[0 color rgbt<1,1,1,0>]\n"
-                    texStrg+="[1 color rgbf<0,0,0,1>]\n"
-                    texStrg+="}\n"
-                texStrg+="]\n"
-            texStrg+="  }\n"
-        ####################### EMULATE BLENDER NOISE TEXTURE ####################
-        if tex.type == 'NOISE':  
-            texStrg+="cells\n"
-            texStrg+="turbulence 3\n"
-            texStrg+="omega 3\n"
-            if tex.use_color_ramp == True:
-                texStrg+=exportColorRamp(tex)
-            else: 
-                texStrg+="color_map {\n"
-                texStrg+="[0.75 color rgb<0,0,0,>]\n"
-                texStrg+="[1 color rgb<1,1,1,>]\n"
-                texStrg+="}\n"
+    # if scene.pov.sslt_enable:
+        # file.write("    mm_per_unit %s\n"%scene.pov.mm_per_unit) 
+        # file.write("    subsurface {\n")
+        # file.write("        samples %s, %s\n"%(scene.pov.sslt_samples_max,scene.pov.sslt_samples_min))
+        # if scene.pov.sslt_radiosity:
+            # file.write("        radiosity on\n")
+        # file.write("}\n")
 
-        ####################### IGNORE OTHER BLENDER TEXTURE ####################
-        else: #non translated textures
-            pass
-        texStrg+="}\n\n"            
+    if scene.pov.radio_enable:
+        file.write("    radiosity {\n")
+        file.write("        pretrace_start %.6f\n"%scene.pov.radio_pretrace_start) 
+        file.write("        pretrace_end %.6f\n"%scene.pov.radio_pretrace_end) 
+        file.write("        count %s\n"%scene.pov.radio_count) 
+        file.write("        nearest_count %s\n"%scene.pov.radio_nearest_count) 
+        file.write("        error_bound %.6f\n"%scene.pov.radio_error_bound)         
+        file.write("        recursion_limit %s\n"%scene.pov.radio_recursion_limit) 
+        file.write("        low_error_factor %.6f\n"%scene.pov.radio_low_error_factor) 
+        file.write("        gray_threshold %.6f\n"%scene.pov.radio_gray_threshold) 
+        file.write("        maximum_reuse %.6f\n"%scene.pov.radio_maximum_reuse) 
+        file.write("        minimum_reuse %.6f\n"%scene.pov.radio_minimum_reuse) 
+        file.write("        brightness %.6f\n"%scene.pov.radio_brightness) 
+        file.write("        adc_bailout %.6f\n"%scene.pov.radio_adc_bailout)
+        if scene.pov.radio_normal:
+            file.write("        normal on\n") 
+        if scene.pov.radio_always_sample:
+            file.write("        always_sample on\n") 
+        if scene.pov.radio_media:
+            file.write("        media on\n") 
+        if scene.pov.radio_subsurface:
+            file.write("        subsurface on\n")
+        file.write("    }\n")
 
-        texStrg+="#declare f%s=\n"%PATname
-        texStrg+="function{pigment{%s}}\n"%PATname       
-        texStrg+="\n"
-        
-    else:
-        texStrg+="pigment {\n"
-        texStrg+="%s\n"%pat.tex_pattern_type
-        if pat.tex_pattern_type == 'agate': 
-            texStrg+="agate_turb %.4g\n"%pat.modifier_turbulence                           
-        if pat.tex_pattern_type in {'spiral1', 'spiral2', 'tiling'}: 
-            texStrg+="%s\n"%pat.modifier_numbers
-        if pat.tex_pattern_type == 'quilted': 
-            texStrg+="control0 %s control1 %s\n"%(pat.modifier_control0, pat.modifier_control1)                           
-        if pat.tex_pattern_type == 'mandel': 
-            texStrg+="%s exponent %s \n"%(pat.f_iter, pat.f_exponent)  
-        if pat.tex_pattern_type == 'julia': 
-            texStrg+="<%.4g, %.4g> %s exponent %s \n"%(pat.julia_complex_1, pat.julia_complex_2, pat.f_iter, pat.f_exponent)   
-        if pat.tex_pattern_type == 'magnet' and pat.magnet_style == 'mandel': 
-            texStrg+="%s mandel %s \n"%(pat.magnet_type, pat.f_iter)
-        if pat.tex_pattern_type == 'magnet' and pat.magnet_style == 'julia':  
-            texStrg+="%s julia <%.4g, %.4g> %s\n"%(pat.magnet_type, pat.julia_complex_1, pat.julia_complex_2, pat.f_iter) 
-        if pat.tex_pattern_type in {'mandel', 'julia', 'magnet'}:
-            texStrg+="interior %s, %.4g\n"%(pat.f_ior, pat.f_ior_fac) 
-            texStrg+="exterior %s, %.4g\n"%(pat.f_eor, pat.f_eor_fac)
-        if pat.tex_pattern_type == 'gradient': 
-            texStrg+="<%s, %s, %s> \n"%(pat.grad_orient_x, pat.grad_orient_y, pat.grad_orient_z)
-        if pat.tex_pattern_type == 'pavement':
-            numTiles=pat.pave_tiles
-            numPattern=1
-            if pat.pave_sides == '4' and pat.pave_tiles == 3: 
-                 numPattern = pat.pave_pat_2
-            if pat.pave_sides == '6' and pat.pave_tiles == 3: 
-                numPattern = pat.pave_pat_3
-            if pat.pave_sides == '3' and pat.pave_tiles == 4: 
-                numPattern = pat.pave_pat_3
-            if pat.pave_sides == '3' and pat.pave_tiles == 5: 
-                numPattern = pat.pave_pat_4
-            if pat.pave_sides == '4' and pat.pave_tiles == 4: 
-                numPattern = pat.pave_pat_5
-            if pat.pave_sides == '6' and pat.pave_tiles == 4: 
-                numPattern = pat.pave_pat_7
-            if pat.pave_sides == '4' and pat.pave_tiles == 5: 
-                numPattern = pat.pave_pat_12
-            if pat.pave_sides == '3' and pat.pave_tiles == 6: 
-                numPattern = pat.pave_pat_12
-            if pat.pave_sides == '6' and pat.pave_tiles == 5: 
-                numPattern = pat.pave_pat_22
-            if pat.pave_sides == '4' and pat.pave_tiles == 6: 
-                numPattern = pat.pave_pat_35
-            if pat.pave_sides == '6' and pat.pave_tiles == 6: 
-                numTiles = 5                                
-            texStrg+="number_of_sides %s number_of_tiles %s pattern %s form %s \n"%(pat.pave_sides, numTiles, numPattern, pat.pave_form)
-        ################ functions #####################################################################################################
-        if pat.tex_pattern_type == 'function':                 
-            texStrg+="{ %s"%pat.func_list
-            texStrg+="(x"
-            if pat.func_plus_x != "NONE":
-                if pat.func_plus_x =='increase':
-                    texStrg+="*"                                    
-                if pat.func_plus_x =='plus':
-                    texStrg+="+"
-                texStrg+="%.4g"%pat.func_x
-            texStrg+=",y"
-            if pat.func_plus_y != "NONE":
-                if pat.func_plus_y =='increase':
-                    texStrg+="*"                                   
-                if pat.func_plus_y =='plus':
-                    texStrg+="+"
-                texStrg+="%.4g"%pat.func_y
-            texStrg+=",z"
-            if pat.func_plus_z != "NONE":
-                if pat.func_plus_z =='increase':
-                    texStrg+="*"                                    
-                if pat.func_plus_z =='plus':
-                    texStrg+="+"
-                texStrg+="%.4g"%pat.func_z
-            sort = -1
-            if pat.func_list in {"f_comma","f_crossed_trough","f_cubic_saddle","f_cushion","f_devils_curve",
-                                 "f_enneper","f_glob","f_heart","f_hex_x","f_hex_y","f_hunt_surface",
-                                 "f_klein_bottle","f_kummer_surface_v1","f_lemniscate_of_gerono","f_mitre",
-                                 "f_nodal_cubic","f_noise_generator","f_odd","f_paraboloid","f_pillow",
-                                 "f_piriform","f_quantum","f_quartic_paraboloid","f_quartic_saddle",
-                                 "f_sphere","f_steiners_roman","f_torus_gumdrop","f_umbrella"}:
-                sort = 0
-            if pat.func_list in {"f_bicorn","f_bifolia","f_boy_surface","f_superellipsoid","f_torus"}:
-                sort = 1
-            if pat.func_list in {"f_ellipsoid","f_folium_surface","f_hyperbolic_torus",
-                                 "f_kampyle_of_eudoxus","f_parabolic_torus","f_quartic_cylinder","f_torus2"}:
-                sort = 2
-            if pat.func_list in {"f_blob2","f_cross_ellipsoids","f_flange_cover","f_isect_ellipsoids",
-                                 "f_kummer_surface_v2","f_ovals_of_cassini","f_rounded_box","f_spikes_2d","f_strophoid"}:
-                sort = 3
-            if pat.func_list in {"f_algbr_cyl1","f_algbr_cyl2","f_algbr_cyl3","f_algbr_cyl4","f_blob","f_mesh1","f_poly4","f_spikes"}:
-                sort = 4
-            if pat.func_list in {"f_devils_curve_2d","f_dupin_cyclid","f_folium_surface_2d","f_hetero_mf","f_kampyle_of_eudoxus_2d",
-                                 "f_lemniscate_of_gerono_2d","f_polytubes","f_ridge","f_ridged_mf","f_spiral","f_witch_of_agnesi"}:
-                sort = 5
-            if pat.func_list in {"f_helix1","f_helix2","f_piriform_2d","f_strophoid_2d"}:
-                sort = 6
-            if pat.func_list == "f_helical_torus":
-                sort = 7
-            if sort > -1:
-                texStrg+=",%.4g"%pat.func_P0
-            if sort > 0:
-                texStrg+=",%.4g"%pat.func_P1
-            if sort > 1:
-                texStrg+=",%.4g"%pat.func_P2
-            if sort > 2:
-                texStrg+=",%.4g"%pat.func_P3
-            if sort > 3:
-                texStrg+=",%.4g"%pat.func_P4
-            if sort > 4:
-                texStrg+=",%.4g"%pat.func_P5
-            if sort > 5:
-                texStrg+=",%.4g"%pat.func_P6
-            if sort > 6:
-                texStrg+=",%.4g"%pat.func_P7
-                texStrg+=",%.4g"%pat.func_P8
-                texStrg+=",%.4g"%pat.func_P9
-            texStrg+=")}\n"
-        ############## end functions ###############################################################
-        if pat.tex_pattern_type not in {'checker', 'hexagon', 'square', 'triangular', 'brick'}:                        
-            texStrg+="color_map {\n"
-        numColor=0
-        if tex.use_color_ramp == True:
-            for el in tex.color_ramp.elements:
-                numColor+=1
-                pos = el.position
-                col=el.color
-                colR,colG,colB,colA = col[0],col[1],col[2],1-col[3]
-                if pat.tex_pattern_type not in {'checker', 'hexagon', 'square', 'triangular', 'brick'} :
-                    texStrg+="[%.4g color rgbf<%.4g,%.4g,%.4g,%.4g>] \n"%(pos,colR,colG,colB,colA)
-                if pat.tex_pattern_type in {'brick','checker'} and numColor < 3:
-                    texStrg+="color rgbf<%.4g,%.4g,%.4g,%.4g> \n"%(colR,colG,colB,colA)
-                if pat.tex_pattern_type == 'hexagon' and numColor < 4 :
-                    texStrg+="color rgbf<%.4g,%.4g,%.4g,%.4g> \n"%(colR,colG,colB,colA)
-                if pat.tex_pattern_type == 'square' and numColor < 5 :
-                    texStrg+="color rgbf<%.4g,%.4g,%.4g,%.4g> \n"%(colR,colG,colB,colA)
-                if pat.tex_pattern_type == 'triangular' and numColor < 7 :
-                    texStrg+="color rgbf<%.4g,%.4g,%.4g,%.4g> \n"%(colR,colG,colB,colA)
+    if scene.pov.photon_enable:
+        file.write("    photons {\n")
+        if scene.pov.photon_enable_count:
+            file.write("        count %s\n"%scene.pov.photon_count)
         else:
-            texStrg+="[0 color rgbf<0,0,0,1>]\n"
-            texStrg+="[1 color rgbf<1,1,1,0>]\n"
-        if pat.tex_pattern_type not in {'checker', 'hexagon', 'square', 'triangular', 'brick'} :                        
-            texStrg+="} \n"                       
-        if pat.tex_pattern_type == 'brick':                        
-            texStrg+="brick_size <%.4g, %.4g, %.4g> mortar %.4g \n"%(pat.brick_size_x, pat.brick_size_y, pat.brick_size_z, pat.brick_mortar)
-        texStrg+="%s \n"%mappingDif
-        texStrg+="rotate <%.4g,%.4g,%.4g> \n"%(pat.tex_rot_x, pat.tex_rot_y, pat.tex_rot_z)
-        texStrg+="turbulence <%.4g,%.4g,%.4g> \n"%(pat.warp_turbulence_x, pat.warp_turbulence_y, pat.warp_turbulence_z)
-        texStrg+="octaves %s \n"%pat.modifier_octaves
-        texStrg+="lambda %.4g \n"%pat.modifier_lambda
-        texStrg+="omega %.4g \n"%pat.modifier_omega
-        texStrg+="frequency %.4g \n"%pat.modifier_frequency
-        texStrg+="phase %.4g \n"%pat.modifier_phase                       
-        texStrg+="}\n\n"
-        texStrg+="#declare f%s=\n"%PATname
-        texStrg+="function{pigment{%s}}\n"%PATname       
-        texStrg+="\n"
-    return(texStrg)
+            file.write("        spacing %.6g\n"%scene.pov.photon_spacing)
+        if scene.pov.photon_gather:
+            file.write("        gather %s, %s\n"%(scene.pov.photon_gather_min,scene.pov.photon_gather_max))
+        if scene.pov.photon_autostop:
+            file.write("        autostop %.4g\n"%scene.pov.photon_autostop_value)
+        if scene.pov.photon_jitter_enable:
+            file.write("        jitter %.4g\n"%scene.pov.photon_jitter)
+        file.write("        max_trace_level %s\n"%scene.pov.photon_max_trace_level)
+        if scene.pov.photon_adc:
+            file.write("        adc_bailout %.6f\n"%scene.pov.photon_adc_bailout)
+        if scene.pov.photon_media_enable:
+            file.write("        media %s, %s\n"%(scene.pov.photon_media_steps,scene.pov.photon_media_factor))
+        if scene.pov.photon_map_file_save_load in {'save'}:
+            filePhName = 'Photon_map_file.ph'
+            if scene.pov.photon_map_file != '':
+                filePhName = scene.pov.photon_map_file+'.ph'
+            filePhDir = tempfile.gettempdir()
+            path = bpy.path.abspath(scene.pov.photon_map_dir)
+            if os.path.exists(path):
+                filePhDir = path
+            fullFileName = os.path.join(filePhDir,filePhName)
+            file.write('        save_file "%s"\n'%fullFileName)
+            scene.pov.photon_map_file = fullFileName
+        if scene.pov.photon_map_file_save_load in {'load'}:
+            fullFileName = bpy.path.abspath(scene.pov.photon_map_file)
+            if os.path.exists(fullFileName):
+                file.write('        load_file "%s"\n'%fullFileName)
+        file.write("}\n")
+    file.write("}\n")
+
+def write_object_modifiers(scene,ob,File):
+    if ob.pov.hollow:
+        File.write("hollow\n")
+    if ob.pov.double_illuminate:
+        File.write("double_illuminate\n")
+    if ob.pov.sturm:
+        File.write("sturm\n")
+    if ob.pov.no_shadow:
+        File.write("no_shadow\n")
+    if ob.pov.no_image:
+        File.write("no_image\n")
+    if ob.pov.no_reflection:
+        File.write("no_reflection\n")
+    if ob.pov.no_radiosity:
+        File.write("no_radiosity\n")
+    if ob.pov.inverse:
+        File.write("inverse\n")
+    if ob.pov.hierarchy:
+        File.write("hierarchy\n")
+    if scene.pov.photon_enable:
+        File.write("photons {\n")
+        if ob.pov.target:
+            File.write("target %.4g\n"%ob.pov.target_value)
+        if ob.pov.refraction:
+            File.write("refraction on\n")
+        if ob.pov.reflection:
+            File.write("reflection on\n")
+        if ob.pov.pass_through:
+            File.write("pass_through\n")
+        File.write("}\n")
+    # if ob.pov.object_ior > 1:
+        # File.write("interior {\n")
+        # File.write("ior %.4g\n"%ob.pov.object_ior)
+        # if scene.pov.photon_enable and ob.pov.target and ob.pov.refraction and ob.pov.dispersion:
+            # File.write("ior %.4g\n"%ob.pov.dispersion_value)
+            # File.write("ior %s\n"%ob.pov.dispersion_samples) 
+        # if scene.pov.photon_enable == False:
+            # File.write("caustics %.4g\n"%ob.pov.fake_caustics_power)
+    
+
 
 def write_pov(filename, scene=None, info_callback=None):
     import mathutils
@@ -775,7 +438,7 @@ def write_pov(filename, scene=None, info_callback=None):
 
             if material.pov.photons_reflection:
                 pov_photons_reflection = True
-            if material.pov.refraction_type == "0":
+            if not material.pov.refraction_caustics:
                 pov_fake_caustics = False
                 pov_photons_refraction = False
             elif material.pov.refraction_type == "1":
@@ -825,236 +488,7 @@ def write_pov(filename, scene=None, info_callback=None):
 
     materialNames = {}
     DEF_MAT_NAME = "" #or "Default"?
-
-    def writeMaterial(material):
-        # Assumes only called once on each material
-        if material:
-            name_orig = material.name
-            name = materialNames[name_orig] = uniqueName(bpy.path.clean_name(name_orig), materialNames)
-        else:
-            name = name_orig = DEF_MAT_NAME
-
-
-        if material:
-            # If saturation(.s) is not zero, then color is not grey, and has a tint
-            colored_specular_found = (material.specular_color.s > 0.0)
-
-        ##################
-        # Several versions of the finish: Level conditions are variations for specular/Mirror
-        # texture channel map with alternative finish of 0 specular and no mirror reflection.
-        # Level=1 Means No specular nor Mirror reflection
-        # Level=2 Means translation of spec and mir levels for when no map influences them
-        # Level=3 Means Maximum Spec and Mirror
-
-        def povHasnoSpecularMaps(Level):
-            if Level == 1:
-                tabWrite("#declare %s = finish {" % safety(name, Level=1))
-                if comments:
-                    file.write("  //No specular nor Mirror reflection\n")
-                else:
-                    tabWrite("\n")
-            elif Level == 2:
-                tabWrite("#declare %s = finish {" % safety(name, Level=2))
-                if comments:
-                    file.write("  //translation of spec and mir levels for when no map " \
-                               "influences them\n")
-                else:
-                    tabWrite("\n")
-            elif Level == 3:
-                tabWrite("#declare %s = finish {" % safety(name, Level=3))
-                if comments:
-                    file.write("  //Maximum Spec and Mirror\n")
-                else:
-                    tabWrite("\n")
-
-            if material:
-                # POV-Ray 3.7 now uses two diffuse values respectively for front and back shading
-                # (the back diffuse is like blender translucency)
-                frontDiffuse = material.diffuse_intensity
-                backDiffuse = material.translucency
-
-                if material.pov.conserve_energy:
-
-                    #Total should not go above one
-                    if (frontDiffuse + backDiffuse) <= 1.0:
-                        pass
-                    elif frontDiffuse == backDiffuse:
-                        # Try to respect the user's 'intention' by comparing the two values but
-                        # bringing the total back to one.
-                        frontDiffuse = backDiffuse = 0.5
-                    # Let the highest value stay the highest value.
-                    elif frontDiffuse > backDiffuse:
-                        # clamps the sum below 1
-                        backDiffuse = min(backDiffuse, (1.0 - frontDiffuse))
-                    else:
-                        frontDiffuse = min(frontDiffuse, (1.0 - backDiffuse))
-
-                # map hardness between 0.0 and 1.0
-                roughness = ((1.0 - ((material.specular_hardness - 1.0) / 510.0)))
-                ## scale from 0.0 to 0.1
-                roughness *= 0.1
-                # add a small value because 0.0 is invalid.
-                roughness += (1.0 / 511.0)
-
-                ################################Diffuse Shader######################################
-                # Not used for Full spec (Level=3) of the shader.
-                if material.diffuse_shader == 'OREN_NAYAR' and Level != 3:
-                    # Blender roughness is what is generally called oren nayar Sigma,
-                    # and brilliance in POV-Ray.
-                    tabWrite("brilliance %.3g\n" % (0.9 + material.roughness))
-
-                if material.diffuse_shader == 'TOON' and Level != 3:
-                    tabWrite("brilliance %.3g\n" % (0.01 + material.diffuse_toon_smooth * 0.25))
-                    # Lower diffuse and increase specular for toon effect seems to look better
-                    # in POV-Ray.
-                    frontDiffuse *= 0.5
-
-                if material.diffuse_shader == 'MINNAERT' and Level != 3:
-                    #tabWrite("aoi %.3g\n" % material.darkness)
-                    pass  # let's keep things simple for now
-                if material.diffuse_shader == 'FRESNEL' and Level != 3:
-                    #tabWrite("aoi %.3g\n" % material.diffuse_fresnel_factor)
-                    pass  # let's keep things simple for now
-                if material.diffuse_shader == 'LAMBERT' and Level != 3:
-                    # trying to best match lambert attenuation by that constant brilliance value
-                    tabWrite("brilliance 1.8\n")
-
-                if Level == 2:
-                    ###########################Specular Shader######################################
-                    # No difference between phong and cook torrence in blender HaHa!
-                    if (material.specular_shader == 'COOKTORR' or
-                        material.specular_shader == 'PHONG'):
-                        tabWrite("phong %.3g\n" % (material.specular_intensity))
-                        tabWrite("phong_size %.3g\n" % (material.specular_hardness / 2 + 0.25))
-
-                    # POV-Ray 'specular' keyword corresponds to a Blinn model, without the ior.
-                    elif material.specular_shader == 'BLINN':
-                        # Use blender Blinn's IOR just as some factor for spec intensity
-                        tabWrite("specular %.3g\n" % (material.specular_intensity *
-                                                      (material.specular_ior / 4.0)))
-                        tabWrite("roughness %.3g\n" % roughness)
-                        #Could use brilliance 2(or varying around 2 depending on ior or factor) too.
-
-                    elif material.specular_shader == 'TOON':
-                        tabWrite("phong %.3g\n" % (material.specular_intensity * 2.0))
-                        # use extreme phong_size
-                        tabWrite("phong_size %.3g\n" % (0.1 + material.specular_toon_smooth / 2.0))
-
-                    elif material.specular_shader == 'WARDISO':
-                        # find best suited default constant for brilliance Use both phong and
-                        # specular for some values.
-                        tabWrite("specular %.3g\n" % (material.specular_intensity /
-                                                      (material.specular_slope + 0.0005)))
-                        # find best suited default constant for brilliance Use both phong and
-                        # specular for some values.
-                        tabWrite("roughness %.4g\n" % (0.0005 + material.specular_slope / 10.0))
-                        # find best suited default constant for brilliance Use both phong and
-                        # specular for some values.
-                        tabWrite("brilliance %.4g\n" % (1.8 - material.specular_slope * 1.8))
-
-                ####################################################################################
-                elif Level == 1:
-                    tabWrite("specular 0\n")
-                elif Level == 3:
-                    tabWrite("specular 1\n")
-                tabWrite("diffuse %.3g %.3g\n" % (frontDiffuse, backDiffuse))
-
-                tabWrite("ambient %.3g\n" % material.ambient)
-                # POV-Ray blends the global value
-                #tabWrite("ambient rgb <%.3g, %.3g, %.3g>\n" % \
-                #         tuple([c*material.ambient for c in world.ambient_color]))
-                tabWrite("emission %.3g\n" % material.emit)  # New in POV-Ray 3.7
-
-                #POV-Ray just ignores roughness if there's no specular keyword
-                #tabWrite("roughness %.3g\n" % roughness)
-
-                if material.pov.conserve_energy:
-                    # added for more realistic shading. Needs some checking to see if it
-                    # really works. --Maurice.
-                    tabWrite("conserve_energy\n")
-
-                if colored_specular_found == True:
-                     tabWrite("metallic\n")          
-
-                # 'phong 70.0 '
-                if Level != 1:
-                    if material.raytrace_mirror.use:
-                        raytrace_mirror = material.raytrace_mirror
-                        if raytrace_mirror.reflect_factor:
-                            tabWrite("reflection {\n")
-                            tabWrite("rgb <%.3g, %.3g, %.3g>\n" % material.mirror_color[:])                          
-                            if material.pov.mirror_metallic:
-                                tabWrite("metallic %.3g\n" % (raytrace_mirror.reflect_factor))
-                            # Blurry reflections for UberPOV
-                            if using_uberpov and raytrace_mirror.gloss_factor < 1.0:
-                                #tabWrite("#ifdef(unofficial) #if(unofficial = \"patch\") #if(patch(\"upov-reflection-roughness\") > 0)\n")
-                                tabWrite("roughness %.6f\n" % \
-                                         (0.000001/raytrace_mirror.gloss_factor))
-                                #tabWrite("#end #end #end\n") # This and previous comment for backward compatibility, messier pov code
-                            if material.pov.mirror_use_IOR:  # WORKING ?
-                                # Removed from the line below: gives a more physically correct
-                                # material but needs proper IOR. --Maurice
-                                tabWrite("fresnel 1 ")
-                            tabWrite("falloff %.3g exponent %.3g} " % \
-                                     (raytrace_mirror.fresnel, raytrace_mirror.fresnel_factor))
-                                
-                if material.subsurface_scattering.use:
-                    subsurface_scattering = material.subsurface_scattering
-                    tabWrite("subsurface { translucency <%.3g, %.3g, %.3g> }\n" % (
-                             (subsurface_scattering.radius[0]),
-                             (subsurface_scattering.radius[1]),
-                             (subsurface_scattering.radius[2]),
-                             )
-                            )
-
-                if material.pov.irid_enable:
-                    tabWrite("irid { %.4g thickness %.4g turbulence %.4g }" % \
-                             (material.pov.irid_amount, material.pov.irid_thickness,
-                              material.pov.irid_turbulence))
-
-            else:
-                tabWrite("diffuse 0.8\n")
-                tabWrite("phong 70.0\n")
-
-                #tabWrite("specular 0.2\n")
-
-            # This is written into the object
-            '''
-            if material and material.transparency_method=='RAYTRACE':
-                'interior { ior %.3g} ' % material.raytrace_transparency.ior
-            '''
-
-            #tabWrite("crand 1.0\n") # Sand granyness
-            #tabWrite("metallic %.6f\n" % material.spec)
-            #tabWrite("phong %.6f\n" % material.spec)
-            #tabWrite("phong_size %.6f\n" % material.spec)
-            #tabWrite("brilliance %.6f " % (material.specular_hardness/256.0) # Like hardness
-
-            tabWrite("}\n\n")
-
-        # Level=2 Means translation of spec and mir levels for when no map influences them
-        povHasnoSpecularMaps(Level=2)
-
-        if material:
-            special_texture_found = False
-            for t in material.texture_slots:
-                if t and t.use:
-                    if (t.texture.type == 'IMAGE' and t.texture.image) or t.texture.type != 'IMAGE':
-                        validPath=True
-                else:
-                    validPath=False
-                if(t and t.use and validPath and
-                   (t.use_map_specular or t.use_map_raymir or t.use_map_normal or t.use_map_alpha)):
-                    special_texture_found = True
-                    continue  # Some texture found
-
-            if special_texture_found or colored_specular_found:
-                # Level=1 Means No specular nor Mirror reflection
-                povHasnoSpecularMaps(Level=1)
-
-                # Level=3 Means Maximum Spec and Mirror
-                povHasnoSpecularMaps(Level=3)
-
+    
     def exportCamera():
         camera = scene.camera
 
@@ -1088,15 +522,28 @@ def write_pov(filename, scene=None, info_callback=None):
             tabWrite("rotate  <%.6f, %.6f, %.6f>\n" % \
                      tuple([degrees(e) for e in matrix.to_3x3().to_euler()]))
             tabWrite("translate <%.6f, %.6f, %.6f>\n" % matrix.translation[:])
-            if camera.data.pov.dof_enable and focal_point != 0:
+            if camera.data.pov.dof_enable and (focal_point != 0 or camera.data.dof_object):
                 tabWrite("aperture %.3g\n" % camera.data.pov.dof_aperture)
                 tabWrite("blur_samples %d %d\n" % \
                          (camera.data.pov.dof_samples_min, camera.data.pov.dof_samples_max))
                 tabWrite("variance 1/%d\n" % camera.data.pov.dof_variance)
                 tabWrite("confidence %.3g\n" % camera.data.pov.dof_confidence)
-                tabWrite("focal_point <0, 0, %f>\n" % focal_point)
+                if camera.data.dof_object:
+                    focalOb = scene.objects[camera.data.dof_object.name]
+                    matrixBlur = global_matrix * focalOb.matrix_world
+                    tabWrite("focal_point <%.4f,%.4f,%.4f>\n"% matrixBlur.translation[:])
+                else:
+                    tabWrite("focal_point <0, 0, %f>\n" % focal_point)
+        if camera.data.pov.normal_enable:
+            tabWrite("normal {%s %.4f turbulence %.4f scale %.4f}\n"%
+                    (camera.data.pov.normal_patterns,
+                    camera.data.pov.cam_normal,
+                    camera.data.pov.turbulence,
+                    camera.data.pov.scale))
         tabWrite("}\n")
+        
 
+        
     def exportLamps(lamps):
         # Incremented after each lamp export to declare its target
         # currently used for Fresnel diffuse shader as their slope vector:
@@ -1109,7 +556,7 @@ def write_pov(filename, scene=None, info_callback=None):
             matrix = global_matrix * ob.matrix_world
 
             # Color is modified by energy #muiltiplie by 2 for a better match --Maurice
-            color = tuple([c * lamp.energy * 2.0 for c in lamp.color])
+            color = tuple([c * lamp.energy for c in lamp.color])
 
             tabWrite("light_source {\n")
             tabWrite("< 0,0,0 >\n")
@@ -1129,12 +576,36 @@ def write_pov(filename, scene=None, info_callback=None):
                 tabWrite("tightness 0\n")  # 0:10f
 
                 tabWrite("point_at  <0, 0, -1>\n")
+                if lamp.use_halo:
+                    tabWrite("looks_like{\n")
+                    tabWrite("sphere{<0,0,0>,%.6f\n" %lamp.distance)
+                    tabWrite("hollow\n")
+                    tabWrite("material{\n")
+                    tabWrite("texture{\n")
+                    tabWrite("pigment{rgbf<1,1,1,%.4f>}\n" % (lamp.halo_intensity*5.0))
+                    tabWrite("}\n")
+                    tabWrite("interior{\n")
+                    tabWrite("media{\n")
+                    tabWrite("emission 1\n")
+                    tabWrite("scattering {1, 0.5}\n")
+                    tabWrite("density{\n")
+                    tabWrite("spherical\n")
+                    tabWrite("color_map{\n")
+                    tabWrite("[0.0 rgb <0,0,0>]\n")
+                    tabWrite("[0.5 rgb <1,1,1>]\n")
+                    tabWrite("[1.0 rgb <1,1,1>]\n")
+                    tabWrite("}\n")
+                    tabWrite("}\n")
+                    tabWrite("}\n")
+                    tabWrite("}\n")
+                    tabWrite("}\n")
+                    tabWrite("}\n")
+                    tabWrite("}\n")
             elif lamp.type == 'SUN':
                 tabWrite("parallel\n")
                 tabWrite("point_at  <0, 0, -1>\n")  # *must* be after 'parallel'
 
             elif lamp.type == 'AREA':
-                tabWrite("area_illumination\n")
                 tabWrite("fade_distance %.6f\n" % (lamp.distance / 2.0))
                 # Area lights have no falloff type, so always use blenders lamp quad equivalent
                 # for those?
@@ -1150,6 +621,7 @@ def write_pov(filename, scene=None, info_callback=None):
 
                 tabWrite("area_light <%.6f,0,0>,<0,%.6f,0> %d, %d\n" % \
                          (size_x, size_y, samples_x, samples_y))
+                tabWrite("area_illumination\n")
                 if lamp.shadow_ray_sample_method == 'CONSTANT_JITTERED':
                     if lamp.use_jitter:
                         tabWrite("jitter\n")
@@ -1189,7 +661,930 @@ def write_pov(filename, scene=None, info_callback=None):
                         ob.rotation_euler.x, ob.rotation_euler.y, ob.rotation_euler.z))
 
 ####################################################################################################
+    def exportRainbows(rainbows):
+        for ob in rainbows:
+            povdataname = ob.data.name #enough?
+            angle = degrees(ob.data.spot_size/2.5) #radians in blender (2
+            width = ob.data.spot_blend *10
+            distance = ob.data.shadow_buffer_clip_start 
+            #eps=0.0000001
+            #angle = br/(cr+eps) * 10 #eps is small epsilon variable to avoid dividing by zero
+            #width = ob.dimensions[2] #now let's say width of rainbow is the actual proxy height
+            # formerly:
+            #cz-bz # let's say width of the rainbow is height of the cone (interfacing choice
+            
+            # v(A,B) rotates vector A about origin by vector B.
+            # and avoid a 0 length vector by adding 1
+            
+            # file.write("#declare %s_Target= vrotate(<%.6g,%.6g,%.6g>,<%.4g,%.4g,%.4g>);\n" % \
+                       # (povdataname, -(ob.location.x+0.1), -(ob.location.y+0.1), -(ob.location.z+0.1),
+                        # ob.rotation_euler.x, ob.rotation_euler.y, ob.rotation_euler.z))                    
+            
+            direction = (ob.location.x,ob.location.y,ob.location.z) # not taking matrix into account
+            rmatrix = global_matrix * ob.matrix_world
+            
+            #ob.rotation_euler.to_matrix().to_4x4() * mathutils.Vector((0,0,1))
+            # XXX Is result of the below offset by 90 degrees?
+            up =ob.matrix_world.to_3x3()[1].xyz #* global_matrix 
 
+
+            # XXX TO CHANGE: 
+            #formerly:
+            #tabWrite("#declare %s = rainbow {\n"%povdataname) 
+            
+            # clumsy for now but remove the rainbow from instancing
+            # system because not an object. use lamps later instead of meshes
+            
+            #del data_ref[dataname]
+            tabWrite("rainbow {\n")
+
+            tabWrite("angle %.4f\n"%angle)
+            tabWrite("width %.4f\n"%width)
+            tabWrite("distance %.4f\n"%distance)
+            tabWrite("arc_angle %.4f\n"%ob.pov.arc_angle)
+            tabWrite("falloff_angle %.4f\n"%ob.pov.falloff_angle)
+            tabWrite("direction <%.4f,%.4f,%.4f>\n"%rmatrix.translation[:])
+            tabWrite("up <%.4f,%.4f,%.4f>\n"%(up[0],up[1],up[2]))
+            tabWrite("color_map {\n")
+            tabWrite("[0.000  color rgbt<1.0, 0.5, 1.0, 1.0>]\n")
+            tabWrite("[0.130  color rgbt<0.5, 0.5, 1.0, 0.9>]\n")
+            tabWrite("[0.298  color rgbt<0.2, 0.2, 1.0, 0.7>]\n")
+            tabWrite("[0.412  color rgbt<0.2, 1.0, 1.0, 0.4>]\n")
+            tabWrite("[0.526  color rgbt<0.2, 1.0, 0.2, 0.4>]\n")
+            tabWrite("[0.640  color rgbt<1.0, 1.0, 0.2, 0.4>]\n")
+            tabWrite("[0.754  color rgbt<1.0, 0.5, 0.2, 0.6>]\n")
+            tabWrite("[0.900  color rgbt<1.0, 0.2, 0.2, 0.7>]\n")
+            tabWrite("[1.000  color rgbt<1.0, 0.2, 0.2, 1.0>]\n")
+            tabWrite("}\n")
+            
+            
+            povMatName = "Default_texture"
+            #tabWrite("texture {%s}\n"%povMatName)
+            write_object_modifiers(scene,ob,file)
+            #tabWrite("rotate x*90\n")
+            #matrix = global_matrix * ob.matrix_world
+            #writeMatrix(matrix)
+            tabWrite("}\n")
+            #continue #Don't render proxy mesh, skip to next object
+            
+################################XXX LOFT, ETC.
+    def exportCurves(scene, ob):
+        name_orig = "OB" + ob.name
+        dataname_orig = "DATA" + ob.data.name
+
+        name = string_strip_hyphen(bpy.path.clean_name(name_orig))
+        dataname = string_strip_hyphen(bpy.path.clean_name(dataname_orig))
+
+        global_matrix = mathutils.Matrix.Rotation(-pi / 2.0, 4, 'X')
+        matrix=global_matrix*ob.matrix_world
+        bezier_sweep = False
+        if ob.pov.curveshape == 'sphere_sweep':
+            #inlined spheresweep macro, which itself calls Shapes.inc:
+            file.write('        #include "shapes.inc"\n')
+
+            file.write('        #macro Shape_Bezierpoints_Sphere_Sweep(_merge_shape, _resolution, _points_array, _radius_array)\n')
+            file.write('        //input adjusting and inspection\n')
+            file.write('        #if(_resolution <= 1)\n')
+            file.write('            #local res = 1;\n')
+            file.write('        #else\n')
+            file.write('            #local res = int(_resolution);\n')
+            file.write('        #end\n')
+            file.write('        #if(dimensions(_points_array) != 1 | dimensions(_radius_array) != 1)\n')
+            file.write('            #error ""\n')
+            file.write('        #elseif(div(dimension_size(_points_array,1),4) - dimension_size(_points_array,1)/4 != 0)\n')
+            file.write('            #error ""\n')
+            file.write('        #elseif(dimension_size(_points_array,1) != dimension_size(_radius_array,1))\n')
+            file.write('            #error ""\n')
+            file.write('        #else\n')
+            file.write('            #local n_of_seg = div(dimension_size(_points_array,1), 4);\n')
+            file.write('            #local ctrl_pts_array = array[n_of_seg]\n')
+            file.write('            #local ctrl_rs_array = array[n_of_seg]\n')
+            file.write('            #for(i, 0, n_of_seg-1)\n')
+            file.write('                #local ctrl_pts_array[i] = array[4] {_points_array[4*i], _points_array[4*i+1], _points_array[4*i+2], _points_array[4*i+3]}\n')
+            file.write('                #local ctrl_rs_array[i] = array[4] {abs(_radius_array[4*i]), abs(_radius_array[4*i+1]), abs(_radius_array[4*i+2]), abs(_radius_array[4*i+3])}\n')
+            file.write('            #end\n')
+            file.write('        #end\n')
+
+            file.write('        //drawing\n')
+            file.write('        #local mockup1 =\n')
+            file.write('        #if(_merge_shape) merge{ #else union{ #end\n')
+            file.write('            #for(i, 0, n_of_seg-1)\n')
+            file.write('                #local has_head = true;\n')
+            file.write('                #if(i = 0)\n')
+            file.write('                    #if(vlength(ctrl_pts_array[i][0]-ctrl_pts_array[n_of_seg-1][3]) = 0 & ctrl_rs_array[i][0]-ctrl_rs_array[n_of_seg-1][3] <= 0)\n')
+            file.write('                        #local has_head = false;\n')
+            file.write('                    #end\n')
+            file.write('                #else\n')
+            file.write('                    #if(vlength(ctrl_pts_array[i][0]-ctrl_pts_array[i-1][3]) = 0 & ctrl_rs_array[i][0]-ctrl_rs_array[i-1][3] <= 0)\n')
+            file.write('                        #local has_head = false;\n')
+            file.write('                    #end\n')
+            file.write('                #end\n')
+            file.write('                #if(has_head = true)\n')
+            file.write('                    sphere{\n')
+            file.write('                    ctrl_pts_array[i][0], ctrl_rs_array[i][0]\n')
+            file.write('                    }\n')
+            file.write('                #end\n')
+            file.write('                #local para_t = (1/2)/res;\n')
+            file.write('                #local this_point = ctrl_pts_array[i][0]*pow(1-para_t,3) + ctrl_pts_array[i][1]*3*pow(1-para_t,2)*para_t + ctrl_pts_array[i][2]*3*(1-para_t)*pow(para_t,2) + ctrl_pts_array[i][3]*pow(para_t,3);\n')
+            file.write('                #local this_radius = ctrl_rs_array[i][0]*pow(1-para_t,3) + ctrl_rs_array[i][1]*3*pow(1-para_t,2)*para_t + ctrl_rs_array[i][2]*3*(1-para_t)*pow(para_t,2) + ctrl_rs_array[i][3]*pow(para_t,3);\n')
+            file.write('                #if(vlength(this_point-ctrl_pts_array[i][0]) > abs(this_radius-ctrl_rs_array[i][0]))\n')
+            file.write('                    object{\n')
+            file.write('                    Connect_Spheres(ctrl_pts_array[i][0], ctrl_rs_array[i][0], this_point, this_radius)\n')
+            file.write('                    }\n')
+            file.write('                #end\n')
+            file.write('                sphere{\n')
+            file.write('                this_point, this_radius\n')
+            file.write('                }\n')
+            file.write('                #for(j, 1, res-1)\n')
+            file.write('                    #local last_point = this_point;\n')
+            file.write('                    #local last_radius = this_radius;\n')
+            file.write('                    #local para_t = (1/2+j)/res;\n')
+            file.write('                    #local this_point = ctrl_pts_array[i][0]*pow(1-para_t,3) + ctrl_pts_array[i][1]*3*pow(1-para_t,2)*para_t + ctrl_pts_array[i][2]*3*(1-para_t)*pow(para_t,2) + ctrl_pts_array[i][3]*pow(para_t,3);\n')
+            file.write('                    #local this_radius = ctrl_rs_array[i][0]*pow(1-para_t,3) + ctrl_rs_array[i][1]*3*pow(1-para_t,2)*para_t + ctrl_rs_array[i][2]*3*(1-para_t)*pow(para_t,2) + ctrl_rs_array[i][3]*pow(para_t,3);\n')
+            file.write('                    #if(vlength(this_point-last_point) > abs(this_radius-last_radius))\n')
+            file.write('                        object{\n')
+            file.write('                        Connect_Spheres(last_point, last_radius, this_point, this_radius)\n')
+            file.write('                        }\n')
+            file.write('                    #end\n')
+            file.write('                    sphere{\n')
+            file.write('                    this_point, this_radius\n')
+            file.write('                    }\n')
+            file.write('                #end\n')
+            file.write('                #local last_point = this_point;\n')
+            file.write('                #local last_radius = this_radius;\n')
+            file.write('                #local this_point = ctrl_pts_array[i][3];\n')
+            file.write('                #local this_radius = ctrl_rs_array[i][3];\n')
+            file.write('                #if(vlength(this_point-last_point) > abs(this_radius-last_radius))\n')
+            file.write('                    object{\n')
+            file.write('                    Connect_Spheres(last_point, last_radius, this_point, this_radius)\n')
+            file.write('                    }\n')
+            file.write('                #end\n')
+            file.write('                sphere{\n')
+            file.write('                this_point, this_radius\n')
+            file.write('                }\n')
+            file.write('            #end\n')
+            file.write('        }\n')
+            file.write('        mockup1\n')
+            file.write('        #end\n')
+
+            for spl in ob.data.splines:
+                if spl.type == "BEZIER":
+                    bezier_sweep = True
+        if ob.pov.curveshape in {'loft','birail'}:
+            n=0
+            for spline in ob.data.splines:
+                n+=1
+                tabWrite('#declare %s%s=spline {\n'%(dataname,n))
+                tabWrite('cubic_spline\n')
+                lp = len(spline.points)
+                delta = 1/(lp)
+                d=-delta
+                point = spline.points[lp-1]
+                x,y,z,w  = point.co[:]
+                tabWrite('%.6f, <%.6f,%.6f,%.6f>\n'%(d,x,y,z))
+                d+=delta
+                for point in spline.points:
+                    x,y,z,w  = point.co[:]
+                    tabWrite('%.6f, <%.6f,%.6f,%.6f>\n'%(d,x,y,z))
+                    d+=delta
+                for i in range(2):
+                    point = spline.points[i]
+                    x,y,z,w  = point.co[:]
+                    tabWrite('%.6f, <%.6f,%.6f,%.6f>\n'%(d,x,y,z))
+                    d+=delta
+                tabWrite('}\n')
+            if ob.pov.curveshape in {'loft'}:
+                n = len(ob.data.splines)
+                tabWrite('#declare %s = array[%s]{\n'%(dataname,(n+3)))
+                tabWrite('spline{%s%s},\n'%(dataname,n))
+                for i in range(n):
+                    tabWrite('spline{%s%s},\n'%(dataname,(i+1)))
+                tabWrite('spline{%s1},\n'%(dataname))
+                tabWrite('spline{%s2}\n'%(dataname))
+                tabWrite('}\n')
+            # Use some of the Meshmaker.inc macro, here inlined
+            file.write('#macro CheckFileName(FileName)\n')
+            file.write('   #local Len=strlen(FileName);\n')
+            file.write('   #if(Len>0)\n')
+            file.write('      #if(file_exists(FileName))\n')
+            file.write('         #if(Len>=4)\n')
+            file.write('            #local Ext=strlwr(substr(FileName,Len-3,4))\n')
+            file.write('            #if (strcmp(Ext,".obj")=0 | strcmp(Ext,".pcm")=0 | strcmp(Ext,".arr")=0)\n')
+            file.write('               #local Return=99;\n')
+            file.write('            #else\n')
+            file.write('               #local Return=0;\n')
+            file.write('            #end\n')
+            file.write('         #else\n')
+            file.write('            #local Return=0;\n')
+            file.write('         #end\n')
+            file.write('      #else\n')
+            file.write('         #if(Len>=4)\n')
+            file.write('            #local Ext=strlwr(substr(FileName,Len-3,4))\n')
+            file.write('            #if (strcmp(Ext,".obj")=0 | strcmp(Ext,".pcm")=0 | strcmp(Ext,".arr")=0)\n')
+            file.write('               #if (strcmp(Ext,".obj")=0)\n')
+            file.write('                  #local Return=2;\n')
+            file.write('               #end\n')
+            file.write('               #if (strcmp(Ext,".pcm")=0)\n')
+            file.write('                  #local Return=3;\n')
+            file.write('               #end\n')
+            file.write('               #if (strcmp(Ext,".arr")=0)\n')
+            file.write('                  #local Return=4;\n')
+            file.write('               #end\n')
+            file.write('            #else\n')
+            file.write('               #local Return=1;\n')
+            file.write('            #end\n')
+            file.write('         #else\n')
+            file.write('            #local Return=1;\n')
+            file.write('         #end\n')
+            file.write('      #end\n')
+            file.write('   #else\n')
+            file.write('      #local Return=1;\n')
+            file.write('   #end\n')
+            file.write('   (Return)\n')
+            file.write('#end\n')
+
+            file.write('#macro BuildSpline(Arr, SplType)\n')
+            file.write('   #local Ds=dimension_size(Arr,1);\n')
+            file.write('   #local Asc=asc(strupr(SplType));\n')
+            file.write('   #if(Asc!=67 & Asc!=76 & Asc!=81) \n')
+            file.write('      #local Asc=76;\n')
+            file.write('      #debug "\nWrong spline type defined (C/c/L/l/N/n/Q/q), using default linear_spline\\n"\n')
+            file.write('   #end\n')
+            file.write('   spline {\n')
+            file.write('      #switch (Asc)\n')
+            file.write('         #case (67) //C  cubic_spline\n')
+            file.write('            cubic_spline\n')
+            file.write('         #break\n')
+            file.write('         #case (76) //L  linear_spline\n')
+            file.write('            linear_spline\n')
+            file.write('         #break\n')
+            file.write('         #case (78) //N  linear_spline\n')
+            file.write('            natural_spline\n')
+            file.write('         #break\n')
+            file.write('         #case (81) //Q  Quadratic_spline\n')
+            file.write('            quadratic_spline\n')
+            file.write('         #break\n')
+            file.write('      #end\n')
+            file.write('      #local Add=1/((Ds-2)-1);\n')
+            file.write('      #local J=0-Add;\n')
+            file.write('      #local I=0;\n')
+            file.write('      #while (I<Ds)\n')
+            file.write('         J\n')
+            file.write('         Arr[I]\n')
+            file.write('         #local I=I+1;\n')
+            file.write('         #local J=J+Add;\n')
+            file.write('      #end\n')
+            file.write('   }\n')
+            file.write('#end\n')
+
+
+            file.write('#macro BuildWriteMesh2(VecArr, NormArr, UVArr, U, V, FileName)\n')
+            #suppressed some file checking from original macro because no more separate files
+            file.write(' #local Write=0;\n')
+            file.write(' #debug concat("\\n\\n Building mesh2: \\n   - vertex_vectors\\n")\n')
+            file.write('  #local NumVertices=dimension_size(VecArr,1);\n')
+            file.write('  #switch (Write)\n')
+            file.write('     #case(1)\n')
+            file.write('        #write(\n')
+            file.write('           MeshFile,\n')
+            file.write('           "  vertex_vectors {\\n",\n')
+            file.write('           "    ", str(NumVertices,0,0),"\\n    "\n')
+            file.write('        )\n')
+            file.write('     #break\n')
+            file.write('     #case(2)\n')
+            file.write('        #write(\n')
+            file.write('           MeshFile,\n')
+            file.write('           "# Vertices: ",str(NumVertices,0,0),"\\n"\n')
+            file.write('        )\n')
+            file.write('     #break\n')
+            file.write('     #case(3)\n')
+            file.write('        #write(\n')
+            file.write('           MeshFile,\n')
+            file.write('           str(2*NumVertices,0,0),",\\n"\n')
+            file.write('        )\n')
+            file.write('     #break\n')
+            file.write('     #case(4)\n')
+            file.write('        #write(\n')
+            file.write('           MeshFile,\n')
+            file.write('           "#declare VertexVectors= array[",str(NumVertices,0,0),"] {\\n  "\n')
+            file.write('        )\n')
+            file.write('     #break\n')
+            file.write('  #end\n')
+            file.write('  mesh2 {\n')
+            file.write('     vertex_vectors {\n')
+            file.write('        NumVertices\n')
+            file.write('        #local I=0;\n')
+            file.write('        #while (I<NumVertices)\n')
+            file.write('           VecArr[I]\n')
+            file.write('           #switch(Write)\n')
+            file.write('              #case(1)\n')
+            file.write('                 #write(MeshFile, VecArr[I])\n')
+            file.write('              #break\n')
+            file.write('              #case(2)\n')
+            file.write('                 #write(\n')
+            file.write('                    MeshFile,\n')
+            file.write('                    "v ", VecArr[I].x," ", VecArr[I].y," ", VecArr[I].z,"\\n"\n')
+            file.write('                 )\n')
+            file.write('              #break\n')
+            file.write('              #case(3)\n')
+            file.write('                 #write(\n')
+            file.write('                    MeshFile,\n')
+            file.write('                    VecArr[I].x,",", VecArr[I].y,",", VecArr[I].z,",\\n"\n')
+            file.write('                 )\n')
+            file.write('              #break\n')
+            file.write('              #case(4)\n')
+            file.write('                 #write(MeshFile, VecArr[I])\n')
+            file.write('              #break\n')
+            file.write('           #end\n')
+            file.write('           #local I=I+1;\n')
+            file.write('           #if(Write=1 | Write=4)\n')
+            file.write('              #if(mod(I,3)=0)\n')
+            file.write('                 #write(MeshFile,"\\n    ")\n')
+            file.write('              #end\n')
+            file.write('           #end \n')
+            file.write('        #end\n')
+            file.write('        #switch(Write)\n')
+            file.write('           #case(1)\n')
+            file.write('              #write(MeshFile,"\\n  }\\n")\n')
+            file.write('           #break\n')
+            file.write('           #case(2)\n')
+            file.write('              #write(MeshFile,"\\n")\n')
+            file.write('           #break\n')
+            file.write('           #case(3)\n')
+            file.write('              // do nothing\n')
+            file.write('           #break\n')
+            file.write('           #case(4) \n')
+            file.write('              #write(MeshFile,"\\n}\\n")\n')
+            file.write('           #break\n')
+            file.write('        #end\n')
+            file.write('     }\n')
+
+            file.write('     #debug concat("   - normal_vectors\\n")    \n')
+            file.write('     #local NumVertices=dimension_size(NormArr,1);\n')
+            file.write('     #switch(Write)\n')
+            file.write('        #case(1)\n')
+            file.write('           #write(\n')
+            file.write('              MeshFile,\n')
+            file.write('              "  normal_vectors {\\n",\n')
+            file.write('              "    ", str(NumVertices,0,0),"\\n    "\n')
+            file.write('           )\n')
+            file.write('        #break\n')
+            file.write('        #case(2)\n')
+            file.write('           #write(\n')
+            file.write('              MeshFile,\n')
+            file.write('              "# Normals: ",str(NumVertices,0,0),"\\n"\n')
+            file.write('           )\n')
+            file.write('        #break\n')
+            file.write('        #case(3)\n')
+            file.write('           // do nothing\n')
+            file.write('        #break\n')
+            file.write('        #case(4)\n')
+            file.write('           #write(\n')
+            file.write('              MeshFile,\n')
+            file.write('              "#declare NormalVectors= array[",str(NumVertices,0,0),"] {\\n  "\n')
+            file.write('           )\n')
+            file.write('        #break\n')
+            file.write('     #end\n')
+            file.write('     normal_vectors {\n')
+            file.write('        NumVertices\n')
+            file.write('        #local I=0;\n')
+            file.write('        #while (I<NumVertices)\n')
+            file.write('           NormArr[I]\n')
+            file.write('           #switch(Write)\n')
+            file.write('              #case(1)\n')
+            file.write('                 #write(MeshFile NormArr[I])\n')
+            file.write('              #break\n')
+            file.write('              #case(2)\n')
+            file.write('                 #write(\n')
+            file.write('                    MeshFile,\n')
+            file.write('                    "vn ", NormArr[I].x," ", NormArr[I].y," ", NormArr[I].z,"\\n"\n')
+            file.write('                 )\n')
+            file.write('              #break\n')
+            file.write('              #case(3)\n')
+            file.write('                 #write(\n')
+            file.write('                    MeshFile,\n')
+            file.write('                    NormArr[I].x,",", NormArr[I].y,",", NormArr[I].z,",\\n"\n')
+            file.write('                 )\n')
+            file.write('              #break\n')
+            file.write('              #case(4)\n')
+            file.write('                 #write(MeshFile NormArr[I])\n')
+            file.write('              #break\n')
+            file.write('           #end\n')
+            file.write('           #local I=I+1;\n')
+            file.write('           #if(Write=1 | Write=4) \n')
+            file.write('              #if(mod(I,3)=0)\n')
+            file.write('                 #write(MeshFile,"\\n    ")\n')
+            file.write('              #end\n')
+            file.write('           #end\n')
+            file.write('        #end\n')
+            file.write('        #switch(Write)\n')
+            file.write('           #case(1)\n')
+            file.write('              #write(MeshFile,"\\n  }\\n")\n')
+            file.write('           #break\n')
+            file.write('           #case(2)\n')
+            file.write('              #write(MeshFile,"\\n")\n')
+            file.write('           #break\n')
+            file.write('           #case(3)\n')
+            file.write('              //do nothing\n')
+            file.write('           #break\n')
+            file.write('           #case(4)\n')
+            file.write('              #write(MeshFile,"\\n}\\n")\n')
+            file.write('           #break\n')
+            file.write('        #end\n')
+            file.write('     }\n')
+     
+            file.write('     #debug concat("   - uv_vectors\\n")   \n')
+            file.write('     #local NumVertices=dimension_size(UVArr,1);\n')
+            file.write('     #switch(Write)\n')
+            file.write('        #case(1)\n')
+            file.write('           #write(\n')
+            file.write('              MeshFile, \n')
+            file.write('              "  uv_vectors {\\n",\n')
+            file.write('              "    ", str(NumVertices,0,0),"\\n    "\n')
+            file.write('           )\n')
+            file.write('         #break\n')
+            file.write('         #case(2)\n')
+            file.write('           #write(\n')
+            file.write('              MeshFile,\n')
+            file.write('              "# UV-vectors: ",str(NumVertices,0,0),"\\n"\n')
+            file.write('           )\n')
+            file.write('         #break\n')
+            file.write('         #case(3)\n')
+            file.write('           // do nothing, *.pcm does not support uv-vectors\n')
+            file.write('         #break\n')
+            file.write('         #case(4)\n')
+            file.write('            #write(\n')
+            file.write('               MeshFile,\n')
+            file.write('               "#declare UVVectors= array[",str(NumVertices,0,0),"] {\\n  "\n')
+            file.write('            )\n')
+            file.write('         #break\n')
+            file.write('     #end\n')
+            file.write('     uv_vectors {\n')
+            file.write('        NumVertices\n')
+            file.write('        #local I=0;\n')
+            file.write('        #while (I<NumVertices)\n')
+            file.write('           UVArr[I]\n')
+            file.write('           #switch(Write)\n')
+            file.write('              #case(1)\n')
+            file.write('                 #write(MeshFile UVArr[I])\n')
+            file.write('              #break\n')
+            file.write('              #case(2)\n')
+            file.write('                 #write(\n')
+            file.write('                    MeshFile,\n')
+            file.write('                    "vt ", UVArr[I].u," ", UVArr[I].v,"\\n"\n')
+            file.write('                 )\n')
+            file.write('              #break\n')
+            file.write('              #case(3)\n')
+            file.write('                 //do nothing\n')
+            file.write('              #break\n')
+            file.write('              #case(4)\n')
+            file.write('                 #write(MeshFile UVArr[I])\n')
+            file.write('              #break\n')
+            file.write('           #end\n')
+            file.write('           #local I=I+1; \n')
+            file.write('           #if(Write=1 | Write=4)\n')
+            file.write('              #if(mod(I,3)=0)\n')
+            file.write('                 #write(MeshFile,"\\n    ")\n')
+            file.write('              #end \n')
+            file.write('           #end\n')
+            file.write('        #end \n')
+            file.write('        #switch(Write)\n')
+            file.write('           #case(1)\n')
+            file.write('              #write(MeshFile,"\\n  }\\n")\n')
+            file.write('           #break\n')
+            file.write('           #case(2)\n')
+            file.write('              #write(MeshFile,"\\n")\n')
+            file.write('           #break\n')
+            file.write('           #case(3)\n')
+            file.write('              //do nothing\n')
+            file.write('           #break\n')
+            file.write('           #case(4)\n')
+            file.write('              #write(MeshFile,"\\n}\\n")\n')
+            file.write('           #break\n')
+            file.write('        #end\n')
+            file.write('     }\n')
+            file.write('\n')
+            file.write('     #debug concat("   - face_indices\\n")   \n')
+            file.write('     #declare NumFaces=U*V*2;\n')
+            file.write('     #switch(Write)\n')
+            file.write('        #case(1)\n')
+            file.write('           #write(\n')
+            file.write('              MeshFile,\n')
+            file.write('              "  face_indices {\\n"\n')
+            file.write('              "    ", str(NumFaces,0,0),"\\n    "\n')
+            file.write('           )\n')
+            file.write('        #break\n')
+            file.write('        #case(2)\n')
+            file.write('           #write (\n')
+            file.write('              MeshFile,\n')
+            file.write('              "# faces: ",str(NumFaces,0,0),"\\n"\n')
+            file.write('           )\n')
+            file.write('        #break\n')
+            file.write('        #case(3)\n')
+            file.write('           #write (\n')
+            file.write('              MeshFile,\n')
+            file.write('              "0,",str(NumFaces,0,0),",\\n"\n')
+            file.write('           )\n')
+            file.write('        #break\n')
+            file.write('        #case(4)\n')
+            file.write('           #write(\n')
+            file.write('              MeshFile,\n')
+            file.write('              "#declare FaceIndices= array[",str(NumFaces,0,0),"] {\\n  "\n')
+            file.write('           )\n')
+            file.write('        #break\n')
+            file.write('     #end\n')
+            file.write('     face_indices {\n')
+            file.write('        NumFaces\n')
+            file.write('        #local I=0;\n')
+            file.write('        #local H=0;\n')
+            file.write('        #local NumVertices=dimension_size(VecArr,1);\n')
+            file.write('        #while (I<V)\n')
+            file.write('           #local J=0;\n')
+            file.write('           #while (J<U)\n')
+            file.write('              #local Ind=(I*U)+I+J;\n')
+            file.write('              <Ind, Ind+1, Ind+U+2>, <Ind, Ind+U+1, Ind+U+2>\n')
+            file.write('              #switch(Write)\n')
+            file.write('                 #case(1)\n')
+            file.write('                    #write(\n')
+            file.write('                       MeshFile,\n')
+            file.write('                       <Ind, Ind+1, Ind+U+2>, <Ind, Ind+U+1, Ind+U+2>\n')
+            file.write('                    )\n')
+            file.write('                 #break\n')
+            file.write('                 #case(2)\n')
+            file.write('                    #write(\n')
+            file.write('                       MeshFile,\n')
+            file.write('                       "f ",Ind+1,"/",Ind+1,"/",Ind+1," ",Ind+1+1,"/",Ind+1+1,"/",Ind+1+1," ",Ind+U+2+1,"/",Ind+U+2+1,"/",Ind+U+2+1,"\\n",\n')
+            file.write('                       "f ",Ind+U+1+1,"/",Ind+U+1+1,"/",Ind+U+1+1," ",Ind+1,"/",Ind+1,"/",Ind+1," ",Ind+U+2+1,"/",Ind+U+2+1,"/",Ind+U+2+1,"\\n"\n')
+            file.write('                    )\n')
+            file.write('                 #break\n')
+            file.write('                 #case(3)\n')
+            file.write('                    #write(\n')
+            file.write('                       MeshFile,\n')
+            file.write('                       Ind,",",Ind+NumVertices,",",Ind+1,",",Ind+1+NumVertices,",",Ind+U+2,",",Ind+U+2+NumVertices,",\\n"\n')
+            file.write('                       Ind+U+1,",",Ind+U+1+NumVertices,",",Ind,",",Ind+NumVertices,",",Ind+U+2,",",Ind+U+2+NumVertices,",\\n"\n')
+            file.write('                    )\n')
+            file.write('                 #break\n')
+            file.write('                 #case(4)\n')
+            file.write('                    #write(\n')
+            file.write('                       MeshFile,\n')
+            file.write('                       <Ind, Ind+1, Ind+U+2>, <Ind, Ind+U+1, Ind+U+2>\n')
+            file.write('                    )\n')
+            file.write('                 #break\n')
+            file.write('              #end\n')
+            file.write('              #local J=J+1;\n')
+            file.write('              #local H=H+1;\n')
+            file.write('              #if(Write=1 | Write=4)\n')
+            file.write('                 #if(mod(H,3)=0)\n')
+            file.write('                    #write(MeshFile,"\\n    ")\n')
+            file.write('                 #end \n')
+            file.write('              #end\n')
+            file.write('           #end\n')
+            file.write('           #local I=I+1;\n')
+            file.write('        #end\n')
+            file.write('     }\n')
+            file.write('     #switch(Write)\n')
+            file.write('        #case(1)\n')
+            file.write('           #write(MeshFile, "\\n  }\\n}")\n')
+            file.write('           #fclose MeshFile\n')
+            file.write('           #debug concat(" Done writing\\n")\n')
+            file.write('        #break\n')
+            file.write('        #case(2)\n')
+            file.write('           #fclose MeshFile\n')
+            file.write('           #debug concat(" Done writing\\n")\n')
+            file.write('        #break\n')
+            file.write('        #case(3)\n')
+            file.write('           #fclose MeshFile\n')
+            file.write('           #debug concat(" Done writing\\n")\n')
+            file.write('        #break\n')
+            file.write('        #case(4)\n')
+            file.write('           #write(MeshFile, "\\n}\\n}")\n')
+            file.write('           #fclose MeshFile\n')
+            file.write('           #debug concat(" Done writing\\n")\n')
+            file.write('        #break\n')
+            file.write('     #end\n')
+            file.write('  }\n')
+            file.write('#end\n')
+            
+            file.write('#macro MSM(SplineArray, SplRes, Interp_type,  InterpRes, FileName)\n')
+            file.write('    #declare Build=CheckFileName(FileName);\n')
+            file.write('    #if(Build=0)\n')
+            file.write('        #debug concat("\\n Parsing mesh2 from file: ", FileName, "\\n")\n')
+            file.write('        #include FileName\n')
+            file.write('        object{Surface}\n')
+            file.write('    #else\n')
+            file.write('        #local NumVertices=(SplRes+1)*(InterpRes+1);\n')
+            file.write('        #local NumFaces=SplRes*InterpRes*2;\n')
+            file.write('        #debug concat("\\n Calculating ",str(NumVertices,0,0)," vertices for ", str(NumFaces,0,0)," triangles\\n\\n")\n')
+            file.write('        #local VecArr=array[NumVertices]\n')
+            file.write('        #local NormArr=array[NumVertices]\n')
+            file.write('        #local UVArr=array[NumVertices]\n')
+            file.write('        #local N=dimension_size(SplineArray,1);\n')
+            file.write('        #local TempSplArr0=array[N];\n')
+            file.write('        #local TempSplArr1=array[N];\n')
+            file.write('        #local TempSplArr2=array[N];\n')
+            file.write('        #local PosStep=1/SplRes;\n')
+            file.write('        #local InterpStep=1/InterpRes;\n')
+            file.write('        #local Count=0;\n')
+            file.write('        #local Pos=0;\n')
+            file.write('        #while(Pos<=1)\n')
+            file.write('            #local I=0;\n')
+            file.write('            #if (Pos=0)\n')
+            file.write('                #while (I<N)\n')
+            file.write('                    #local Spl=spline{SplineArray[I]}\n')
+            file.write('                    #local TempSplArr0[I]=<0,0,0>+Spl(Pos);\n')
+            file.write('                    #local TempSplArr1[I]=<0,0,0>+Spl(Pos+PosStep);\n')
+            file.write('                    #local TempSplArr2[I]=<0,0,0>+Spl(Pos-PosStep);\n')
+            file.write('                    #local I=I+1;\n')
+            file.write('                #end\n')
+            file.write('                #local S0=BuildSpline(TempSplArr0, Interp_type)\n')
+            file.write('                #local S1=BuildSpline(TempSplArr1, Interp_type)\n')
+            file.write('                #local S2=BuildSpline(TempSplArr2, Interp_type)\n')
+            file.write('            #else\n')
+            file.write('                #while (I<N)\n')
+            file.write('                    #local Spl=spline{SplineArray[I]}\n')
+            file.write('                    #local TempSplArr1[I]=<0,0,0>+Spl(Pos+PosStep);\n')
+            file.write('                    #local I=I+1;\n')
+            file.write('                #end\n')
+            file.write('                #local S1=BuildSpline(TempSplArr1, Interp_type)\n')
+            file.write('            #end\n')
+            file.write('            #local J=0;\n')
+            file.write('            #while (J<=1)\n')
+            file.write('                #local P0=<0,0,0>+S0(J);\n')
+            file.write('                #local P1=<0,0,0>+S1(J);\n')
+            file.write('                #local P2=<0,0,0>+S2(J);\n')
+            file.write('                #local P3=<0,0,0>+S0(J+InterpStep);\n')
+            file.write('                #local P4=<0,0,0>+S0(J-InterpStep);\n')
+            file.write('                #local B1=P4-P0;\n')
+            file.write('                #local B2=P2-P0;\n')
+            file.write('                #local B3=P3-P0;\n')
+            file.write('                #local B4=P1-P0;\n')
+            file.write('                #local N1=vcross(B1,B2);\n')
+            file.write('                #local N2=vcross(B2,B3);\n')
+            file.write('                #local N3=vcross(B3,B4);\n')
+            file.write('                #local N4=vcross(B4,B1);\n')
+            file.write('                #local Norm=vnormalize((N1+N2+N3+N4));\n')
+            file.write('                #local VecArr[Count]=P0;\n')
+            file.write('                #local NormArr[Count]=Norm;\n')
+            file.write('                #local UVArr[Count]=<J,Pos>;\n')
+            file.write('                #local J=J+InterpStep;\n')
+            file.write('                #local Count=Count+1;\n')
+            file.write('            #end\n')
+            file.write('            #local S2=spline{S0}\n')
+            file.write('            #local S0=spline{S1}\n')
+            file.write('            #debug concat("\\r Done ", str(Count,0,0)," vertices : ", str(100*Count/NumVertices,0,2)," %")\n')
+            file.write('            #local Pos=Pos+PosStep;\n')
+            file.write('        #end\n')
+            file.write('        BuildWriteMesh2(VecArr, NormArr, UVArr, InterpRes, SplRes, "")\n')
+            file.write('    #end\n')
+            file.write('#end\n\n')
+
+            file.write('#macro Coons(Spl1, Spl2, Spl3, Spl4, Iter_U, Iter_V, FileName)\n')
+            file.write('   #declare Build=CheckFileName(FileName);\n')
+            file.write('   #if(Build=0)\n')
+            file.write('      #debug concat("\\n Parsing mesh2 from file: ", FileName, "\\n")\n')
+            file.write('      #include FileName\n')
+            file.write('      object{Surface}\n')
+            file.write('   #else\n')
+            file.write('      #local NumVertices=(Iter_U+1)*(Iter_V+1);\n')
+            file.write('      #local NumFaces=Iter_U*Iter_V*2;\n')
+            file.write('      #debug concat("\\n Calculating ", str(NumVertices,0,0), " vertices for ",str(NumFaces,0,0), " triangles\\n\\n")\n')
+            file.write('      #declare VecArr=array[NumVertices]   \n')
+            file.write('      #declare NormArr=array[NumVertices]   \n')
+            file.write('      #local UVArr=array[NumVertices]      \n')
+            file.write('      #local Spl1_0=Spl1(0);\n')
+            file.write('      #local Spl2_0=Spl2(0);\n')
+            file.write('      #local Spl3_0=Spl3(0);\n')
+            file.write('      #local Spl4_0=Spl4(0);\n')
+            file.write('      #local UStep=1/Iter_U;\n')
+            file.write('      #local VStep=1/Iter_V;\n')
+            file.write('      #local Count=0;\n')
+            file.write('      #local I=0;\n')
+            file.write('      #while (I<=1)\n')
+            file.write('         #local Im=1-I;\n')
+            file.write('         #local J=0;\n')
+            file.write('         #while (J<=1)\n')
+            file.write('            #local Jm=1-J;\n')
+            file.write('            #local C0=Im*Jm*(Spl1_0)+Im*J*(Spl2_0)+I*J*(Spl3_0)+I*Jm*(Spl4_0);\n')
+            file.write('            #local P0=LInterpolate(I, Spl1(J), Spl3(Jm)) + \n')
+            file.write('               LInterpolate(Jm, Spl2(I), Spl4(Im))-C0;\n')
+            file.write('            #declare VecArr[Count]=P0;\n')
+            file.write('            #local UVArr[Count]=<J,I>;\n')
+            file.write('            #local J=J+UStep;\n')
+            file.write('            #local Count=Count+1;\n')
+            file.write('         #end\n')
+            file.write('         #debug concat(\n')
+            file.write('            "\r Done ", str(Count,0,0)," vertices :         ",\n')
+            file.write('            str(100*Count/NumVertices,0,2)," %"\n')
+            file.write('         )\n')
+            file.write('         #local I=I+VStep;\n')
+            file.write('      #end\n')
+            file.write('      #debug "\r Normals                                  "\n')
+            file.write('      #local Count=0;\n')
+            file.write('      #local I=0;\n')
+            file.write('      #while (I<=Iter_V)\n')
+            file.write('         #local J=0;\n')
+            file.write('         #while (J<=Iter_U)\n')
+            file.write('            #local Ind=(I*Iter_U)+I+J;\n')
+            file.write('            #local P0=VecArr[Ind];\n')
+            file.write('            #if(J=0)\n')
+            file.write('               #local P1=P0+(P0-VecArr[Ind+1]);\n')
+            file.write('            #else\n')
+            file.write('               #local P1=VecArr[Ind-1];\n')
+            file.write('            #end\n')
+            file.write('            #if (J=Iter_U)\n')
+            file.write('               #local P2=P0+(P0-VecArr[Ind-1]);\n')
+            file.write('            #else\n')
+            file.write('               #local P2=VecArr[Ind+1];\n')
+            file.write('            #end\n')
+            file.write('            #if (I=0)\n')
+            file.write('               #local P3=P0+(P0-VecArr[Ind+Iter_U+1]);\n')
+            file.write('            #else\n')
+            file.write('               #local P3=VecArr[Ind-Iter_U-1];\n')
+            file.write('            #end\n')
+            file.write('            #if (I=Iter_V)\n')
+            file.write('               #local P4=P0+(P0-VecArr[Ind-Iter_U-1]);\n')
+            file.write('            #else\n')
+            file.write('               #local P4=VecArr[Ind+Iter_U+1];\n')
+            file.write('            #end\n')
+            file.write('            #local B1=P4-P0;\n')
+            file.write('            #local B2=P2-P0;\n')
+            file.write('            #local B3=P3-P0;\n')
+            file.write('            #local B4=P1-P0;\n')
+            file.write('            #local N1=vcross(B1,B2);\n')
+            file.write('            #local N2=vcross(B2,B3);\n')
+            file.write('            #local N3=vcross(B3,B4);\n')
+            file.write('            #local N4=vcross(B4,B1);\n')
+            file.write('            #local Norm=vnormalize((N1+N2+N3+N4));\n')
+            file.write('            #declare NormArr[Count]=Norm;\n')
+            file.write('            #local J=J+1;\n')
+            file.write('            #local Count=Count+1;\n')
+            file.write('         #end\n')
+            file.write('         #debug concat("\r Done ", str(Count,0,0)," normals : ",str(100*Count/NumVertices,0,2), " %")\n')
+            file.write('         #local I=I+1;\n')
+            file.write('      #end\n')
+            file.write('      BuildWriteMesh2(VecArr, NormArr, UVArr, Iter_U, Iter_V, FileName)\n')
+            file.write('   #end\n')
+            file.write('#end\n\n')
+            
+        if bezier_sweep == False:
+            tabWrite("#declare %s =\n"%dataname)
+        if ob.pov.curveshape == 'sphere_sweep' and bezier_sweep == False:
+            tabWrite("union {\n")
+            for spl in ob.data.splines:
+                if spl.type != "BEZIER":
+                    spl_type = "linear"
+                    if spl.type == "NURBS":
+                        spl_type = "cubic"
+                    points=spl.points
+                    numPoints=len(points)
+                    if spl.use_cyclic_u:
+                        numPoints+=3
+
+                    tabWrite("sphere_sweep { %s_spline %s,\n"%(spl_type,numPoints))
+                    if spl.use_cyclic_u:
+                        pt1 = points[len(points)-1]
+                        wpt1 = pt1.co
+                        tabWrite("<%.4g,%.4g,%.4g>,%.4g\n" %(wpt1[0], wpt1[1], wpt1[2], pt1.radius*ob.data.bevel_depth))
+                    for pt in points:
+                        wpt = pt.co
+                        tabWrite("<%.4g,%.4g,%.4g>,%.4g\n" %(wpt[0], wpt[1], wpt[2], pt.radius*ob.data.bevel_depth))
+                    if spl.use_cyclic_u:
+                        for i in range (0,2):
+                            endPt=points[i]
+                            wpt = endPt.co
+                            tabWrite("<%.4g,%.4g,%.4g>,%.4g\n" %(wpt[0], wpt[1], wpt[2], endPt.radius*ob.data.bevel_depth))
+
+                    
+                tabWrite("}\n")
+
+        if ob.pov.curveshape == 'sor':
+            for spl in ob.data.splines:
+                if spl.type in {'POLY','NURBS'}:
+                    points=spl.points
+                    numPoints=len(points)
+                    tabWrite("sor { %s,\n"%numPoints)
+                    for pt in points:
+                        wpt = pt.co
+                        tabWrite("<%.4g,%.4g>\n" %(wpt[0], wpt[1]))
+                else:
+                    tabWrite("box { 0,0\n")
+        if ob.pov.curveshape in {'lathe','prism'}:
+            spl = ob.data.splines[0]
+            if spl.type == "BEZIER":
+                points=spl.bezier_points
+                lenCur=len(points)-1
+                lenPts=lenCur*4
+                ifprism = ''
+                if ob.pov.curveshape in {'prism'}:
+                    height = ob.data.extrude
+                    ifprism = '-%s, %s,'%(height, height)
+                    lenCur+=1
+                    lenPts+=4
+                tabWrite("%s { bezier_spline %s %s,\n"%(ob.pov.curveshape,ifprism,lenPts))
+                for i in range(0,lenCur):
+                    p1=points[i].co
+                    pR=points[i].handle_right
+                    end = i+1
+                    if i == lenCur-1 and ob.pov.curveshape in {'prism'}:
+                        end = 0
+                    pL=points[end].handle_left
+                    p2=points[end].co
+                    line="<%.4g,%.4g>"%(p1[0],p1[1])
+                    line+="<%.4g,%.4g>"%(pR[0],pR[1])
+                    line+="<%.4g,%.4g>"%(pL[0],pL[1])
+                    line+="<%.4g,%.4g>"%(p2[0],p2[1])
+                    tabWrite("%s\n" %line)
+            else:
+                points=spl.points
+                lenCur=len(points)
+                lenPts=lenCur
+                ifprism = ''
+                if ob.pov.curveshape in {'prism'}:
+                    height = ob.data.extrude
+                    ifprism = '-%s, %s,'%(height, height)
+                    lenPts+=3
+                spl_type = 'quadratic'
+                if spl.type == 'POLY':
+                    spl_type = 'linear'
+                tabWrite("%s { %s_spline %s %s,\n"%(ob.pov.curveshape,spl_type,ifprism,lenPts))
+                if ob.pov.curveshape in {'prism'}:
+                    pt = points[len(points)-1]
+                    wpt = pt.co
+                    tabWrite("<%.4g,%.4g>\n" %(wpt[0], wpt[1]))
+                for pt in points:
+                    wpt = pt.co
+                    tabWrite("<%.4g,%.4g>\n" %(wpt[0], wpt[1]))
+                if ob.pov.curveshape in {'prism'}:
+                    for i in range(2):
+                        pt = points[i]
+                        wpt = pt.co
+                        tabWrite("<%.4g,%.4g>\n" %(wpt[0], wpt[1]))
+        if bezier_sweep:
+            for p in range(len(ob.data.splines)):
+                br = []
+                depth = ob.data.bevel_depth
+                spl = ob.data.splines[p]
+                points=spl.bezier_points
+                lenCur = len(points)-1
+                numPoints = lenCur*4
+                if spl.use_cyclic_u:
+                    lenCur += 1
+                    numPoints += 4
+                tabWrite("#declare %s_points_%s = array[%s]{\n"%(dataname,p,numPoints))
+                for i in range(lenCur):
+                    p1=points[i].co
+                    pR=points[i].handle_right
+                    end = i+1
+                    if spl.use_cyclic_u and i == (lenCur - 1):
+                        end = 0
+                    pL=points[end].handle_left
+                    p2=points[end].co
+                    r3 = points[end].radius * depth
+                    r0 = points[i].radius * depth
+                    r1 = 2/3*r0 + 1/3*r3
+                    r2 = 1/3*r0 + 2/3*r3
+                    br.append((r0,r1,r2,r3))                
+                    line="<%.4g,%.4g,%.4f>"%(p1[0],p1[1],p1[2])
+                    line+="<%.4g,%.4g,%.4f>"%(pR[0],pR[1],pR[2])
+                    line+="<%.4g,%.4g,%.4f>"%(pL[0],pL[1],pL[2])
+                    line+="<%.4g,%.4g,%.4f>"%(p2[0],p2[1],p2[2])
+                    tabWrite("%s\n" %line)
+                tabWrite("}\n")
+                tabWrite("#declare %s_radii_%s = array[%s]{\n"%(dataname,p,len(br)*4))
+                for Tuple in br:
+                    tabWrite('%.4f,%.4f,%.4f,%.4f\n'%(Tuple[0],Tuple[1],Tuple[2],Tuple[3]))
+                tabWrite("}\n")
+            if len(ob.data.splines)== 1:
+                tabWrite('#declare %s = object{\n'%dataname)
+                tabWrite('    Shape_Bezierpoints_Sphere_Sweep(yes,%s, %s_points_%s, %s_radii_%s) \n'%(ob.data.resolution_u,dataname,p,dataname,p))                            
+            else:
+                tabWrite('#declare %s = union{\n'%dataname)
+                for p in range(len(ob.data.splines)):
+                    tabWrite('    object{Shape_Bezierpoints_Sphere_Sweep(yes,%s, %s_points_%s, %s_radii_%s)} \n'%(ob.data.resolution_u,dataname,p,dataname,p))            
+                #tabWrite('#include "bezier_spheresweep.inc"\n') #now inlined
+               # tabWrite('#declare %s = object{Shape_Bezierpoints_Sphere_Sweep(yes,%s, %s_bezier_points, %.4f) \n'%(dataname,ob.data.resolution_u,dataname,ob.data.bevel_depth))
+        if ob.pov.curveshape in {'loft'}:
+            tabWrite('object {MSM(%s,%s,"c",%s,"")\n'%(dataname,ob.pov.res_u,ob.pov.res_v))
+        if ob.pov.curveshape in {'birail'}:
+            splines = '%s1,%s2,%s3,%s4'%(dataname,dataname,dataname,dataname)
+            tabWrite('object {Coons(%s, %s, %s, "")\n'%(splines,ob.pov.res_u,ob.pov.res_v))
+        povMatName = "Default_texture"
+        if ob.active_material:
+            #povMatName = string_strip_hyphen(bpy.path.clean_name(ob.active_material.name))
+            try:
+                material = ob.active_material
+                writeObjectMaterial(material, ob)
+            except IndexError:
+                print(me)
+        #tabWrite("texture {%s}\n"%povMatName)
+        if ob.pov.curveshape in {'prism'}:
+            tabWrite("rotate <90,0,0>\n")
+            tabWrite("scale y*-1\n" )
+        tabWrite("}\n")
+        
+#################################################################        
+        
+            
     def exportMeta(metas):
 
         # TODO - blenders 'motherball' naming is not supported.
@@ -1452,24 +1847,24 @@ def write_pov(filename, scene=None, info_callback=None):
                         # channeldata = fire
 
                         # sc_fr = '%s/%s/%s/%05d' % (efutil.export_path, efutil.scene_filename(), bpy.context.scene.name, bpy.context.scene.frame_current)
-                        #		        if not os.path.exists( sc_fr ):
-                        #			        os.makedirs(sc_fr)
+                        #               if not os.path.exists( sc_fr ):
+                        #                   os.makedirs(sc_fr)
                         #
-                        #       		smoke_filename = '%s.smoke' % bpy.path.clean_name(domain.name)
-                        #	        	smoke_path = '/'.join([sc_fr, smoke_filename])
+                        #               smoke_filename = '%s.smoke' % bpy.path.clean_name(domain.name)
+                        #               smoke_path = '/'.join([sc_fr, smoke_filename])
                         #
-                        #		        with open(smoke_path, 'wb') as smoke_file:
-                        #			        # Binary densitygrid file format
-                        #			        #
-                        #			        # File header
-                        #	        		smoke_file.write(b'SMOKE')        #magic number
-                        #		        	smoke_file.write(struct.pack('<I', big_res[0]))
-                        #			        smoke_file.write(struct.pack('<I', big_res[1]))
-                        #       			smoke_file.write(struct.pack('<I', big_res[2]))
+                        #               with open(smoke_path, 'wb') as smoke_file:
+                        #                   # Binary densitygrid file format
+                        #                   #
+                        #                   # File header
+                        #                   smoke_file.write(b'SMOKE')        #magic number
+                        #                   smoke_file.write(struct.pack('<I', big_res[0]))
+                        #                   smoke_file.write(struct.pack('<I', big_res[1]))
+                        #                   smoke_file.write(struct.pack('<I', big_res[2]))
                         # Density data
-                        #       			smoke_file.write(struct.pack('<%df'%len(channeldata), *channeldata))
+                        #                   smoke_file.write(struct.pack('<%df'%len(channeldata), *channeldata))
                         #
-                        #	        	LuxLog('Binary SMOKE file written: %s' % (smoke_path))
+                        #               LuxLog('Binary SMOKE file written: %s' % (smoke_path))
 
         #return big_res[0], big_res[1], big_res[2], channeldata
 
@@ -1533,9 +1928,9 @@ def write_pov(filename, scene=None, info_callback=None):
                 file.write("}\n")
 
                 
-                #file.write("	            interpolate 1\n")
-                #file.write("	            frequency 0\n")
-                #file.write("	}\n")
+                #file.write("               interpolate 1\n")
+                #file.write("               frequency 0\n")
+                #file.write("   }\n")
                 #file.write("}\n")                            
                 
         ob_num = 0
@@ -1544,7 +1939,8 @@ def write_pov(filename, scene=None, info_callback=None):
 
             # XXX I moved all those checks here, as there is no need to compute names
             #     for object we won't export here!
-            if ob.type in {'LAMP', 'CAMERA', 'EMPTY', 'META', 'ARMATURE', 'LATTICE'}:
+            if (ob.type in {'LAMP', 'CAMERA', #'EMPTY', #empties can bear dupligroups
+                            'META', 'ARMATURE', 'LATTICE'}):
                 continue
             smokeFlag=False
             for mod in ob.modifiers:
@@ -1565,7 +1961,7 @@ def write_pov(filename, scene=None, info_callback=None):
                             if (pSys.settings.render_type == 'PATH') and mod.show_render and (pSys.name == mod.particle_system.name):
                                 tstart = time.time()
                                 texturedHair=0
-                                if ob.active_material is not None:
+                                if ob.material_slots[pSys.settings.material - 1].material and ob.active_material is not None:
                                     pmaterial = ob.material_slots[pSys.settings.material - 1].material
                                     for th in pmaterial.texture_slots:
                                         if th and th.use:
@@ -1609,12 +2005,12 @@ def write_pov(filename, scene=None, info_callback=None):
                                             file.write('%i,\n' % (steps))
                                         #changing world coordinates to object local coordinates by multiplying with inverted matrix    
                                         initCo = ob.matrix_world.inverted()*(pSys.co_hair(ob, pindex, 0))
-                                        if ob.active_material is not None:
+                                        if ob.material_slots[pSys.settings.material - 1].material and ob.active_material is not None:
                                             pmaterial = ob.material_slots[pSys.settings.material-1].material
                                             for th in pmaterial.texture_slots:
                                                 if th and th.use and th.use_map_color_diffuse:
                                                     #treat POV textures as bitmaps
-                                                    if (th.texture.type == 'IMAGE' and th.texture.image and th.texture_coords == 'UV' and ob.data.uv_textures != None): # or (th.texture.pov.tex_pattern_type != 'emulator' and th.texture_coords == 'UV' and ob.data.uv_textures != None):
+                                                    if (th.texture.type == 'IMAGE' and th.texture.image and th.texture_coords == 'UV' and ob.data.uv_textures is not None): # or (th.texture.pov.tex_pattern_type != 'emulator' and th.texture_coords == 'UV' and ob.data.uv_textures is not None):
                                                         image=th.texture.image
                                                         image_width = image.size[0]
                                                         image_height = image.size[1]
@@ -1665,7 +2061,6 @@ def write_pov(filename, scene=None, info_callback=None):
                                                 file.write('}\n')
                                             
                                           # All but the final sphere_sweep (each array element) needs a terminating comma.
-
                                         if pindex != totalNumberOfHairs:
                                             file.write(',\n')
                                         else:
@@ -1734,27 +2129,28 @@ def write_pov(filename, scene=None, info_callback=None):
                                 
                                 if renderEmitter == False:
                                     continue #don't render mesh, skip to next object.
-                try:
-                    me = ob.to_mesh(scene, True, 'RENDER')
-                except:
-                    # happens when curves cant be made into meshes because of no-data
-                    continue
-
-                importance = ob.pov.importance_value
-                me_materials = me.materials
-                me_faces = me.tessfaces[:]
-                
-                if not me or not me_faces:
-                    continue
 
     #############################################
                 # Generating a name for object just like materials to be able to use it
                 # (baking for now or anything else).
-                # XXX I don't understand that:&nbsp;if we are here, sel if a non-empty iterable,
+                # XXX I don't understand that if we are here, sel if a non-empty iterable,
                 #     so this condition is always True, IMO -- mont29
-                if sel:
+                if ob.data:
                     name_orig = "OB" + ob.name
                     dataname_orig = "DATA" + ob.data.name
+                elif ob.is_duplicator:
+                    if ob.dupli_type == 'GROUP':
+                        name_orig = "OB" + ob.name
+                        dataname_orig = "DATA" + ob.dupli_group.name
+                    else:
+                        #hoping only dupligroups have several source datablocks
+                        ob.dupli_list_create(scene)
+                        for eachduplicate in ob.dupli_list:
+                            dataname_orig = "DATA" + eachduplicate.object.name
+                        ob.dupli_list_clear()                    
+                elif ob.type == 'EMPTY':
+                    name_orig = "OB" + ob.name
+                    dataname_orig = "DATA" + ob.name
                 else:
                     name_orig = DEF_OBJ_NAME
                     dataname_orig = DEF_OBJ_NAME
@@ -1776,269 +2172,864 @@ def write_pov(filename, scene=None, info_callback=None):
                 matrix = global_matrix * ob.matrix_world
                 povdataname = store(scene, ob, name, dataname, matrix)
                 if povdataname is None:
-                    print("This is an instance")
+                    print("This is an instance of " + name)
                     continue
 
-                print("Writing Down First Occurence")
+                print("Writing Down First Occurence of " + name)
+                                    
+############################################Povray Primitives
+                # special exportCurves() function takes care of writing
+                # lathe, sphere_sweep, birail, and loft except with modifiers
+                # converted to mesh
+                if not ob.is_modified(scene, 'RENDER'):
+                    if ob.type == 'CURVE' and (ob.pov.curveshape in 
+                                    {'lathe', 'sphere_sweep', 'loft'}):
+                        continue #Don't render proxy mesh, skip to next object
 
-                uv_textures = me.tessface_uv_textures
-                if len(uv_textures) > 0:
-                    if me.uv_textures.active and uv_textures.active.data:
-                        uv_layer = uv_textures.active.data
-                else:
-                    uv_layer = None
+                if ob.pov.object_as == 'ISOSURFACE':
+                    tabWrite("#declare %s = isosurface{ \n"% povdataname)
+                    tabWrite("function{ \n")
+                    textName = ob.pov.iso_function_text
+                    if textName:
+                        node_tree = bpy.context.scene.node_tree
+                        for node in node_tree.nodes:
+                            if node.bl_idname == "IsoPropsNode" and node.label == ob.name:
+                                for inp in node.inputs:
+                                    if inp:
+                                        tabWrite("#declare %s = %.6g;\n"%(inp.name,inp.default_value))
 
-                try:
-                    #vcol_layer = me.vertex_colors.active.data
-                    vcol_layer = me.tessface_vertex_colors.active.data
-                except AttributeError:
-                    vcol_layer = None
-
-                faces_verts = [f.vertices[:] for f in me_faces]
-                faces_normals = [f.normal[:] for f in me_faces]
-                verts_normals = [v.normal[:] for v in me.vertices]
-
-                # quads incur an extra face
-                quadCount = sum(1 for f in faces_verts if len(f) == 4)
-
-                # Use named declaration to allow reference e.g. for baking. MR
-                file.write("\n")
-                tabWrite("#declare %s =\n" % povdataname)
-                tabWrite("mesh2 {\n")
-                tabWrite("vertex_vectors {\n")
-                tabWrite("%d" % len(me.vertices))  # vert count
-
-                tabStr = tab * tabLevel
-                for v in me.vertices:
-                    if linebreaksinlists:
-                        file.write(",\n")
-                        file.write(tabStr + "<%.6f, %.6f, %.6f>" % v.co[:])  # vert count
+                        text = bpy.data.texts[textName]
+                        for line in text.lines:
+                            split = line.body.split()
+                            if split[0] != "#declare":
+                                tabWrite("%s\n"%line.body)
                     else:
-                        file.write(", ")
-                        file.write("<%.6f, %.6f, %.6f>" % v.co[:])  # vert count
-                    #tabWrite("<%.6f, %.6f, %.6f>" % v.co[:])  # vert count
-                file.write("\n")
-                tabWrite("}\n")
-
-                # Build unique Normal list
-                uniqueNormals = {}
-                for fi, f in enumerate(me_faces):
-                    fv = faces_verts[fi]
-                    # [-1] is a dummy index, use a list so we can modify in place
-                    if f.use_smooth:  # Use vertex normals
-                        for v in fv:
-                            key = verts_normals[v]
-                            uniqueNormals[key] = [-1]
-                    else:  # Use face normal
-                        key = faces_normals[fi]
-                        uniqueNormals[key] = [-1]
-
-                tabWrite("normal_vectors {\n")
-                tabWrite("%d" % len(uniqueNormals))  # vert count
-                idx = 0
-                tabStr = tab * tabLevel
-                for no, index in uniqueNormals.items():
-                    if linebreaksinlists:
-                        file.write(",\n")
-                        file.write(tabStr + "<%.6f, %.6f, %.6f>" % no)  # vert count
+                        tabWrite("abs(x) - 2 + y")
+                    tabWrite("}\n")
+                    tabWrite("threshold %.6g\n"%ob.pov.threshold)
+                    tabWrite("max_gradient %.6g\n"%ob.pov.max_gradient)
+                    tabWrite("accuracy  %.6g\n"%ob.pov.accuracy)
+                    tabWrite("contained_by { ")
+                    if ob.pov.contained_by == "sphere":
+                        tabWrite("sphere {0,%.6g}}\n"%ob.pov.container_scale)
                     else:
-                        file.write(", ")
-                        file.write("<%.6f, %.6f, %.6f>" % no)  # vert count
-                    index[0] = idx
-                    idx += 1
-                file.write("\n")
-                tabWrite("}\n")
+                        tabWrite("box {-%.6g,%.6g}}\n"%(ob.pov.container_scale,ob.pov.container_scale))
+                    if ob.pov.all_intersections:
+                        tabWrite("all_intersections\n")
+                    else:
+                        if ob.pov.max_trace > 1:
+                            tabWrite("max_trace %.6g\n"%ob.pov.max_trace)
+                    povMatName = "Default_texture"
+                    if ob.active_material:
+                        #povMatName = string_strip_hyphen(bpy.path.clean_name(ob.active_material.name))
+                        try:
+                            material = ob.active_material
+                            writeObjectMaterial(material, ob)
+                        except IndexError:
+                            print(me)
+                    #tabWrite("texture {%s}\n"%povMatName)
+                    tabWrite("scale %.6g\n"%(1/ob.pov.container_scale))
+                    tabWrite("}\n")
+                    continue #Don't render proxy mesh, skip to next object
 
-                # Vertex colors
-                vertCols = {}  # Use for material colors also.
+                if ob.pov.object_as == 'SUPERELLIPSOID':
+                    tabWrite("#declare %s = superellipsoid{ <%.4f,%.4f>\n"%(povdataname,ob.pov.se_n2,ob.pov.se_n1))
+                    povMatName = "Default_texture"
+                    if ob.active_material:
+                        #povMatName = string_strip_hyphen(bpy.path.clean_name(ob.active_material.name))
+                        try:
+                            material = ob.active_material
+                            writeObjectMaterial(material, ob)
+                        except IndexError:
+                            print(me)
+                    #tabWrite("texture {%s}\n"%povMatName)
+                    write_object_modifiers(scene,ob,file)
+                    tabWrite("}\n")
+                    continue #Don't render proxy mesh, skip to next object
 
-                if uv_layer:
-                    # Generate unique UV's
-                    uniqueUVs = {}
-                    #n = 0
-                    for fi, uv in enumerate(uv_layer):
 
-                        if len(faces_verts[fi]) == 4:
-                            uvs = uv_layer[fi].uv[0], uv_layer[fi].uv[1], uv_layer[fi].uv[2], uv_layer[fi].uv[3]
-                        else:
-                            uvs = uv_layer[fi].uv[0], uv_layer[fi].uv[1], uv_layer[fi].uv[2]
+                if ob.pov.object_as == 'SUPERTORUS':
+                    rMajor = ob.pov.st_major_radius
+                    rMinor = ob.pov.st_minor_radius
+                    ring = ob.pov.st_ring
+                    cross = ob.pov.st_cross
+                    accuracy=ob.pov.st_accuracy
+                    gradient=ob.pov.st_max_gradient
+                    ############Inline Supertorus macro
+                    file.write("#macro Supertorus(RMj, RMn, MajorControl, MinorControl, Accuracy, MaxGradient)\n")
+                    file.write("   #local CP = 2/MinorControl;\n")
+                    file.write("   #local RP = 2/MajorControl;\n")
+                    file.write("   isosurface {\n")
+                    file.write("      function { pow( pow(abs(pow(pow(abs(x),RP) + pow(abs(z),RP), 1/RP) - RMj),CP) + pow(abs(y),CP) ,1/CP) - RMn }\n")
+                    file.write("      threshold 0\n")
+                    file.write("      contained_by {box {<-RMj-RMn,-RMn,-RMj-RMn>, < RMj+RMn, RMn, RMj+RMn>}}\n")
+                    file.write("      #if(MaxGradient >= 1)\n")
+                    file.write("         max_gradient MaxGradient\n")
+                    file.write("      #else\n")
+                    file.write("         evaluate 1, 10, 0.1\n")
+                    file.write("      #end\n")
+                    file.write("      accuracy Accuracy\n")
+                    file.write("   }\n")
+                    file.write("#end\n")
+                    ############
+                    tabWrite("#declare %s = object{ Supertorus( %.4g,%.4g,%.4g,%.4g,%.4g,%.4g)\n"%(povdataname,rMajor,rMinor,ring,cross,accuracy,gradient))
+                    povMatName = "Default_texture"
+                    if ob.active_material:
+                        #povMatName = string_strip_hyphen(bpy.path.clean_name(ob.active_material.name))
+                        try:
+                            material = ob.active_material
+                            writeObjectMaterial(material, ob)
+                        except IndexError:
+                            print(me)
+                    #tabWrite("texture {%s}\n"%povMatName)
+                    write_object_modifiers(scene,ob,file)
+                    tabWrite("rotate x*90\n")
+                    tabWrite("}\n")
+                    continue #Don't render proxy mesh, skip to next object
+                    
 
-                        for uv in uvs:
-                            uniqueUVs[uv[:]] = [-1]
+                if ob.pov.object_as == 'PLANE':
+                    tabWrite("#declare %s = plane{ <0,0,1>,1\n"%povdataname)
+                    povMatName = "Default_texture"
+                    if ob.active_material:
+                         #povMatName = string_strip_hyphen(bpy.path.clean_name(ob.active_material.name))
+                        try:
+                            material = ob.active_material
+                            writeObjectMaterial(material, ob)
+                        except IndexError:
+                            print(me) 
+                    #tabWrite("texture {%s}\n"%povMatName)
+                    write_object_modifiers(scene,ob,file)
+                    #tabWrite("rotate x*90\n")
+                    tabWrite("}\n")
+                    continue #Don't render proxy mesh, skip to next object
 
-                    tabWrite("uv_vectors {\n")
-                    #print unique_uvs
-                    tabWrite("%d" % len(uniqueUVs))  # vert count
-                    idx = 0
+
+                if ob.pov.object_as == 'BOX':
+                    tabWrite("#declare %s = box { -1,1\n"%povdataname)
+                    povMatName = "Default_texture"
+                    if ob.active_material:
+                        #povMatName = string_strip_hyphen(bpy.path.clean_name(ob.active_material.name))
+                        try:
+                            material = ob.active_material
+                            writeObjectMaterial(material, ob)
+                        except IndexError:
+                            print(me)
+                    #tabWrite("texture {%s}\n"%povMatName)
+                    write_object_modifiers(scene,ob,file)
+                    #tabWrite("rotate x*90\n")
+                    tabWrite("}\n")
+                    continue #Don't render proxy mesh, skip to next object
+
+
+                if ob.pov.object_as == 'CONE':
+                    br = ob.pov.cone_base_radius
+                    cr = ob.pov.cone_cap_radius
+                    bz = ob.pov.cone_base_z
+                    cz = ob.pov.cone_cap_z
+                    tabWrite("#declare %s = cone { <0,0,%.4f>,%.4f,<0,0,%.4f>,%.4f\n"%(povdataname,bz,br,cz,cr))
+                    povMatName = "Default_texture"
+                    if ob.active_material:
+                        #povMatName = string_strip_hyphen(bpy.path.clean_name(ob.active_material.name))
+                        try:
+                            material = ob.active_material
+                            writeObjectMaterial(material, ob)
+                        except IndexError:
+                            print(me)
+                    #tabWrite("texture {%s}\n"%povMatName)
+                    write_object_modifiers(scene,ob,file)
+                    #tabWrite("rotate x*90\n")
+                    tabWrite("}\n")
+                    continue #Don't render proxy mesh, skip to next object
+
+                if ob.pov.object_as == 'CYLINDER':
+                    r = ob.pov.cylinder_radius
+                    x2 = ob.pov.cylinder_location_cap[0]
+                    y2 = ob.pov.cylinder_location_cap[1]
+                    z2 = ob.pov.cylinder_location_cap[2]
+                    tabWrite("#declare %s = cylinder { <0,0,0>,<%6f,%6f,%6f>,%6f\n"%(
+                            povdataname,
+                            x2,
+                            y2,
+                            z2,
+                            r))
+                    povMatName = "Default_texture"
+                    if ob.active_material:
+                        #povMatName = string_strip_hyphen(bpy.path.clean_name(ob.active_material.name))
+                        try:
+                            material = ob.active_material
+                            writeObjectMaterial(material, ob)
+                        except IndexError:
+                            print(me)
+                    #tabWrite("texture {%s}\n"%povMatName)
+                    #cylinders written at origin, translated below
+                    write_object_modifiers(scene,ob,file)
+                    #tabWrite("rotate x*90\n")
+                    tabWrite("}\n")
+                    continue #Don't render proxy mesh, skip to next object
+
+
+                if ob.pov.object_as == 'HEIGHT_FIELD':
+                    data = ""
+                    filename = ob.pov.hf_filename
+                    data += '"%s"'%filename
+                    gamma = ' gamma %.4f'%ob.pov.hf_gamma
+                    data += gamma
+                    if ob.pov.hf_premultiplied:
+                        data += ' premultiplied on'
+                    if ob.pov.hf_smooth:
+                        data += ' smooth'
+                    if ob.pov.hf_water > 0:
+                        data += ' water_level %.4f'%ob.pov.hf_water
+                    #hierarchy = ob.pov.hf_hierarchy
+                    tabWrite('#declare %s = height_field { %s\n'%(povdataname,data))
+                    povMatName = "Default_texture"
+                    if ob.active_material:
+                        #povMatName = string_strip_hyphen(bpy.path.clean_name(ob.active_material.name))
+                        try:
+                            material = ob.active_material
+                            writeObjectMaterial(material, ob)
+                        except IndexError:
+                            print(me)
+                    #tabWrite("texture {%s}\n"%povMatName)
+                    write_object_modifiers(scene,ob,file)
+                    tabWrite("rotate x*90\n")
+                    tabWrite("translate <-0.5,0.5,0>\n")
+                    tabWrite("scale <0,-1,0>\n")
+                    tabWrite("}\n")
+                    continue #Don't render proxy mesh, skip to next object
+
+
+                if ob.pov.object_as == 'SPHERE':
+
+                    tabWrite("#declare %s = sphere { 0,%6f\n"%(povdataname,ob.pov.sphere_radius))
+                    povMatName = "Default_texture"
+                    if ob.active_material:
+                        #povMatName = string_strip_hyphen(bpy.path.clean_name(ob.active_material.name))
+                        try:
+                            material = ob.active_material
+                            writeObjectMaterial(material, ob)
+                        except IndexError:
+                            print(me)
+                    #tabWrite("texture {%s}\n"%povMatName)
+                    write_object_modifiers(scene,ob,file)
+                    #tabWrite("rotate x*90\n")
+                    tabWrite("}\n")
+                    continue #Don't render proxy mesh, skip to next object
+
+                if ob.pov.object_as == 'TORUS':
+                    tabWrite("#declare %s = torus { %.4f,%.4f\n"%(povdataname,ob.pov.torus_major_radius,ob.pov.torus_minor_radius))
+                    povMatName = "Default_texture"
+                    if ob.active_material:
+                        #povMatName = string_strip_hyphen(bpy.path.clean_name(ob.active_material.name))
+                        try:
+                            material = ob.active_material
+                            writeObjectMaterial(material, ob)
+                        except IndexError:
+                            print(me)
+                    #tabWrite("texture {%s}\n"%povMatName)
+                    write_object_modifiers(scene,ob,file)
+                    tabWrite("rotate x*90\n")
+                    tabWrite("}\n")
+                    continue #Don't render proxy mesh, skip to next object
+
+                    
+                if ob.pov.object_as == 'PARAMETRIC':
+                    tabWrite("#declare %s = parametric {\n"%povdataname)
+                    tabWrite("function { %s }\n"%ob.pov.x_eq)
+                    tabWrite("function { %s }\n"%ob.pov.y_eq)
+                    tabWrite("function { %s }\n"%ob.pov.z_eq)
+                    tabWrite("<%.4f,%.4f>, <%.4f,%.4f>\n"%(ob.pov.u_min,ob.pov.v_min,ob.pov.u_max,ob.pov.v_max))
+                    if ob.pov.contained_by == "sphere":
+                        tabWrite("contained_by { sphere{0, 2} }\n")
+                    else:
+                        tabWrite("contained_by { box{-2, 2} }\n")
+                    tabWrite("max_gradient %.6f\n"%ob.pov.max_gradient)
+                    tabWrite("accuracy %.6f\n"%ob.pov.accuracy)
+                    tabWrite("precompute 10 x,y,z\n")
+                    tabWrite("}\n")
+                    continue #Don't render proxy mesh, skip to next object
+                    
+                if ob.pov.object_as == 'POLYCIRCLE':
+                    #TODO write below macro Once:
+                    #if write_polytocircle_macro_once == 0:
+                    file.write("/****************************\n")
+                    file.write("This macro was written by 'And'.\n")
+                    file.write("Link:(http://news.povray.org/povray.binaries.scene-files/)\n")
+                    file.write("****************************/\n")
+                    file.write("//from math.inc:\n")
+                    file.write("#macro VPerp_Adjust(V, Axis)\n")
+                    file.write("   vnormalize(vcross(vcross(Axis, V), Axis))\n")
+                    file.write("#end\n")
+                    file.write("//Then for the actual macro\n")
+                    file.write("#macro Shape_Slice_Plane_2P_1V(point1, point2, clip_direct)\n")
+                    file.write("#local p1 = point1 + <0,0,0>;\n")
+                    file.write("#local p2 = point2 + <0,0,0>;\n")
+                    file.write("#local clip_v = vnormalize(clip_direct + <0,0,0>);\n")
+                    file.write("#local direct_v1 = vnormalize(p2 - p1);\n")
+                    file.write("#if(vdot(direct_v1, clip_v) = 1)\n")
+                    file.write('    #error "Shape_Slice_Plane_2P_1V error: Can\'t decide plane"\n')
+                    file.write("#end\n\n")
+                    file.write("#local norm = -vnormalize(clip_v - direct_v1*vdot(direct_v1,clip_v));\n")
+                    file.write("#local d = vdot(norm, p1);\n")
+                    file.write("plane{\n")
+                    file.write("norm, d\n")
+                    file.write("}\n")
+                    file.write("#end\n\n")
+                    file.write("//polygon to circle\n")
+                    file.write("#macro Shape_Polygon_To_Circle_Blending(_polygon_n, _side_face, _polygon_circumscribed_radius, _circle_radius, _height)\n")
+                    file.write("#local n = int(_polygon_n);\n")
+                    file.write("#if(n < 3)\n")
+                    file.write("    #error ""\n")
+                    file.write("#end\n\n")
+                    file.write("#local front_v = VPerp_Adjust(_side_face, z);\n")
+                    file.write("#if(vdot(front_v, x) >= 0)\n")
+                    file.write("    #local face_ang = acos(vdot(-y, front_v));\n")
+                    file.write("#else\n")
+                    file.write("    #local face_ang = -acos(vdot(-y, front_v));\n")
+                    file.write("#end\n")
+                    file.write("#local polyg_ext_ang = 2*pi/n;\n")
+                    file.write("#local polyg_outer_r = _polygon_circumscribed_radius;\n")
+                    file.write("#local polyg_inner_r = polyg_outer_r*cos(polyg_ext_ang/2);\n")
+                    file.write("#local cycle_r = _circle_radius;\n")
+                    file.write("#local h = _height;\n")
+                    file.write("#if(polyg_outer_r < 0 | cycle_r < 0 | h <= 0)\n")
+                    file.write('    #error "error: each side length must be positive"\n')
+                    file.write("#end\n\n")
+                    file.write("#local multi = 1000;\n")
+                    file.write("#local poly_obj =\n")
+                    file.write("polynomial{\n")
+                    file.write("4,\n")
+                    file.write("xyz(0,2,2): multi*1,\n")
+                    file.write("xyz(2,0,1): multi*2*h,\n")
+                    file.write("xyz(1,0,2): multi*2*(polyg_inner_r-cycle_r),\n")
+                    file.write("xyz(2,0,0): multi*(-h*h),\n")
+                    file.write("xyz(0,0,2): multi*(-pow(cycle_r - polyg_inner_r, 2)),\n")
+                    file.write("xyz(1,0,1): multi*2*h*(-2*polyg_inner_r + cycle_r),\n")
+                    file.write("xyz(1,0,0): multi*2*h*h*polyg_inner_r,\n")
+                    file.write("xyz(0,0,1): multi*2*h*polyg_inner_r*(polyg_inner_r - cycle_r),\n")
+                    file.write("xyz(0,0,0): multi*(-pow(polyg_inner_r*h, 2))\n")
+                    file.write("sturm\n")
+                    file.write("}\n\n")
+                    file.write("#local mockup1 =\n")
+                    file.write("difference{\n")
+                    file.write("    cylinder{\n")
+                    file.write("    <0,0,0.0>,<0,0,h>, max(polyg_outer_r, cycle_r)\n")
+                    file.write("    }\n\n")
+                    file.write("    #for(i, 0, n-1)\n")
+                    file.write("        object{\n")
+                    file.write("        poly_obj\n")
+                    file.write("        inverse\n")
+                    file.write("        rotate <0, 0, -90 + degrees(polyg_ext_ang*i)>\n")
+                    file.write("        }\n")
+                    file.write("        object{\n")
+                    file.write("        Shape_Slice_Plane_2P_1V(<polyg_inner_r,0,0>,<cycle_r,0,h>,x)\n")
+                    file.write("        rotate <0, 0, -90 + degrees(polyg_ext_ang*i)>\n")
+                    file.write("        }\n")
+                    file.write("    #end\n")
+                    file.write("}\n\n")
+                    file.write("object{\n")
+                    file.write("mockup1\n")
+                    file.write("rotate <0, 0, degrees(face_ang)>\n")
+                    file.write("}\n")
+                    file.write("#end\n")
+                    #Use the macro
+                    ngon = ob.pov.polytocircle_ngon
+                    ngonR = ob.pov.polytocircle_ngonR
+                    circleR = ob.pov.polytocircle_circleR
+                    tabWrite("#declare %s = object { Shape_Polygon_To_Circle_Blending(%s, z, %.4f, %.4f, 2) rotate x*180 translate z*1\n"%(povdataname,ngon,ngonR,circleR))
+                    tabWrite("}\n")
+                    continue #Don't render proxy mesh, skip to next object
+
+                   
+############################################else try to export mesh
+                elif ob.is_duplicator == False: #except duplis which should be instances groups for now but all duplis later
+                    if ob.type == 'EMPTY':
+                        tabWrite("\n//dummy sphere to represent Empty location\n")
+                        tabWrite("#declare %s =sphere {<0, 0, 0>,0 pigment{rgbt 1} no_image no_reflection no_radiosity photons{pass_through collect off} hollow}\n" % povdataname)
+                    
+                    try:
+                        me = ob.to_mesh(scene, True, 'RENDER')
+                        
+                    #XXX Here? identify the specific exception for mesh object with no data
+                    #XXX So that we can write something for the dataname !
+                    except:
+
+                        # also happens when curves cant be made into meshes because of no-data
+                        continue
+                    
+                    importance = ob.pov.importance_value
+                    if me:
+                        me_materials = me.materials
+                        me_faces = me.tessfaces[:]
+                    if len(me_faces)==0:
+                        tabWrite("\n//dummy sphere to represent empty mesh location\n")
+                        tabWrite("#declare %s =sphere {<0, 0, 0>,0 pigment{rgbt 1} no_image no_reflection no_radiosity photons{pass_through collect off} hollow}\n" % povdataname)
+                  
+                    
+                    if not me or not me_faces:
+                        continue
+
+                    uv_textures = me.tessface_uv_textures
+                    if len(uv_textures) > 0:
+                        if me.uv_textures.active and uv_textures.active.data:
+                            uv_layer = uv_textures.active.data
+                    else:
+                        uv_layer = None
+
+                    try:
+                        #vcol_layer = me.vertex_colors.active.data
+                        vcol_layer = me.tessface_vertex_colors.active.data
+                    except AttributeError:
+                        vcol_layer = None
+
+                    faces_verts = [f.vertices[:] for f in me_faces]
+                    faces_normals = [f.normal[:] for f in me_faces]
+                    verts_normals = [v.normal[:] for v in me.vertices]
+
+                    # quads incur an extra face
+                    quadCount = sum(1 for f in faces_verts if len(f) == 4)
+
+                    # Use named declaration to allow reference e.g. for baking. MR
+                    file.write("\n")
+                    tabWrite("#declare %s =\n" % povdataname)
+                    tabWrite("mesh2 {\n")
+                    tabWrite("vertex_vectors {\n")
+                    tabWrite("%d" % len(me.vertices))  # vert count
+
                     tabStr = tab * tabLevel
-                    for uv, index in uniqueUVs.items():
+                    for v in me.vertices:
                         if linebreaksinlists:
                             file.write(",\n")
-                            file.write(tabStr + "<%.6f, %.6f>" % uv)
+                            file.write(tabStr + "<%.6f, %.6f, %.6f>" % v.co[:])  # vert count
                         else:
                             file.write(", ")
-                            file.write("<%.6f, %.6f>" % uv)
-                        index[0] = idx
-                        idx += 1
-                    '''
-                    else:
-                        # Just add 1 dummy vector, no real UV's
-                        tabWrite('1') # vert count
-                        file.write(',\n\t\t<0.0, 0.0>')
-                    '''
+                            file.write("<%.6f, %.6f, %.6f>" % v.co[:])  # vert count
+                        #tabWrite("<%.6f, %.6f, %.6f>" % v.co[:])  # vert count
                     file.write("\n")
                     tabWrite("}\n")
 
-                if me.vertex_colors:
-                    #Write down vertex colors as a texture for each vertex
-                    tabWrite("texture_list {\n")
-                    tabWrite("%d\n" % (((len(me_faces)-quadCount) * 3 )+ quadCount * 4)) # works only with tris and quad mesh for now
-                    VcolIdx=0
-                    if comments:
-                        file.write("\n  //Vertex colors: one simple pigment texture per vertex\n")
+                    # Build unique Normal list
+                    uniqueNormals = {}
                     for fi, f in enumerate(me_faces):
-                        # annoying, index may be invalid
-                        material_index = f.material_index
-                        try:
-                            material = me_materials[material_index]
-                        except:
-                            material = None
-                        if material: #and material.use_vertex_color_paint: #Always use vertex color when there is some for now
-                         
-                            col = vcol_layer[fi]
+                        fv = faces_verts[fi]
+                        # [-1] is a dummy index, use a list so we can modify in place
+                        if f.use_smooth:  # Use vertex normals
+                            for v in fv:
+                                key = verts_normals[v]
+                                uniqueNormals[key] = [-1]
+                        else:  # Use face normal
+                            key = faces_normals[fi]
+                            uniqueNormals[key] = [-1]
+
+                    tabWrite("normal_vectors {\n")
+                    tabWrite("%d" % len(uniqueNormals))  # vert count
+                    idx = 0
+                    tabStr = tab * tabLevel
+                    for no, index in uniqueNormals.items():
+                        if linebreaksinlists:
+                            file.write(",\n")
+                            file.write(tabStr + "<%.6f, %.6f, %.6f>" % no)  # vert count
+                        else:
+                            file.write(", ")
+                            file.write("<%.6f, %.6f, %.6f>" % no)  # vert count
+                        index[0] = idx
+                        idx += 1
+                    file.write("\n")
+                    tabWrite("}\n")
+
+                    # Vertex colors
+                    vertCols = {}  # Use for material colors also.
+
+                    if uv_layer:
+                        # Generate unique UV's
+                        uniqueUVs = {}
+                        #n = 0
+                        for fi, uv in enumerate(uv_layer):
 
                             if len(faces_verts[fi]) == 4:
-                                cols = col.color1, col.color2, col.color3, col.color4
+                                uvs = uv_layer[fi].uv[0], uv_layer[fi].uv[1], uv_layer[fi].uv[2], uv_layer[fi].uv[3]
                             else:
-                                cols = col.color1, col.color2, col.color3
+                                uvs = uv_layer[fi].uv[0], uv_layer[fi].uv[1], uv_layer[fi].uv[2]
 
-                            for col in cols:
-                                key = col[0], col[1], col[2], material_index  # Material index!
-                                VcolIdx+=1
-                                vertCols[key] = [VcolIdx]
-                                if linebreaksinlists:
-                                    tabWrite("texture {pigment{ color rgb <%6f,%6f,%6f> }}\n" % (col[0], col[1], col[2]))
-                                else:
-                                    tabWrite("texture {pigment{ color rgb <%6f,%6f,%6f> }}" % (col[0], col[1], col[2]))
-                                    tabStr = tab * tabLevel
+                            for uv in uvs:
+                                uniqueUVs[uv[:]] = [-1]
+
+                        tabWrite("uv_vectors {\n")
+                        #print unique_uvs
+                        tabWrite("%d" % len(uniqueUVs))  # vert count
+                        idx = 0
+                        tabStr = tab * tabLevel
+                        for uv, index in uniqueUVs.items():
+                            if linebreaksinlists:
+                                file.write(",\n")
+                                file.write(tabStr + "<%.6f, %.6f>" % uv)
+                            else:
+                                file.write(", ")
+                                file.write("<%.6f, %.6f>" % uv)
+                            index[0] = idx
+                            idx += 1
+                        '''
                         else:
-                            if material:
+                            # Just add 1 dummy vector, no real UV's
+                            tabWrite('1') # vert count
+                            file.write(',\n\t\t<0.0, 0.0>')
+                        '''
+                        file.write("\n")
+                        tabWrite("}\n")
+
+                    if me.vertex_colors:
+                        #Write down vertex colors as a texture for each vertex
+                        tabWrite("texture_list {\n")
+                        tabWrite("%d\n" % (((len(me_faces)-quadCount) * 3 )+ quadCount * 4)) # works only with tris and quad mesh for now
+                        VcolIdx=0
+                        if comments:
+                            file.write("\n  //Vertex colors: one simple pigment texture per vertex\n")
+                        for fi, f in enumerate(me_faces):
+                            # annoying, index may be invalid
+                            material_index = f.material_index
+                            try:
+                                material = me_materials[material_index]
+                            except:
+                                material = None
+                            if material: #and material.use_vertex_color_paint: #Always use vertex color when there is some for now
+                             
+                                col = vcol_layer[fi]
+
+                                if len(faces_verts[fi]) == 4:
+                                    cols = col.color1, col.color2, col.color3, col.color4
+                                else:
+                                    cols = col.color1, col.color2, col.color3
+
+                                for col in cols:
+                                    key = col[0], col[1], col[2], material_index  # Material index!
+                                    VcolIdx+=1
+                                    vertCols[key] = [VcolIdx]
+                                    if linebreaksinlists:
+                                        tabWrite("texture {pigment{ color rgb <%6f,%6f,%6f> }}\n" % (col[0], col[1], col[2]))
+                                    else:
+                                        tabWrite("texture {pigment{ color rgb <%6f,%6f,%6f> }}" % (col[0], col[1], col[2]))
+                                        tabStr = tab * tabLevel
+                            else:
+                                if material:
+                                    # Multiply diffuse with SSS Color
+                                    if material.subsurface_scattering.use:
+                                        diffuse_color = [i * j for i, j in zip(material.subsurface_scattering.color[:], material.diffuse_color[:])]
+                                        key = diffuse_color[0], diffuse_color[1], diffuse_color[2], \
+                                              material_index
+                                        vertCols[key] = [-1]
+                                    else:
+                                        diffuse_color = material.diffuse_color[:]
+                                        key = diffuse_color[0], diffuse_color[1], diffuse_color[2], \
+                                              material_index
+                                        vertCols[key] = [-1]
+
+                        tabWrite("\n}\n")                
+                        # Face indices
+                        tabWrite("\nface_indices {\n")
+                        tabWrite("%d" % (len(me_faces) + quadCount))  # faces count
+                        tabStr = tab * tabLevel
+
+                        for fi, f in enumerate(me_faces):
+                            fv = faces_verts[fi]
+                            material_index = f.material_index
+                            if len(fv) == 4:
+                                indices = (0, 1, 2), (0, 2, 3)
+                            else:
+                                indices = ((0, 1, 2),)
+
+                            if vcol_layer:
+                                col = vcol_layer[fi]
+
+                                if len(fv) == 4:
+                                    cols = col.color1, col.color2, col.color3, col.color4
+                                else:
+                                    cols = col.color1, col.color2, col.color3
+
+                            if not me_materials or me_materials[material_index] is None:  # No materials
+                                for i1, i2, i3 in indices:
+                                    if linebreaksinlists:
+                                        file.write(",\n")
+                                        # vert count
+                                        file.write(tabStr + "<%d,%d,%d>" % (fv[i1], fv[i2], fv[i3]))
+                                    else:
+                                        file.write(", ")
+                                        file.write("<%d,%d,%d>" % (fv[i1], fv[i2], fv[i3]))  # vert count
+                            else:
+                                material = me_materials[material_index]
+                                for i1, i2, i3 in indices:
+                                    if me.vertex_colors: #and material.use_vertex_color_paint:
+                                        # Color per vertex - vertex color
+
+                                        col1 = cols[i1]
+                                        col2 = cols[i2]
+                                        col3 = cols[i3]
+
+                                        ci1 = vertCols[col1[0], col1[1], col1[2], material_index][0]
+                                        ci2 = vertCols[col2[0], col2[1], col2[2], material_index][0]
+                                        ci3 = vertCols[col3[0], col3[1], col3[2], material_index][0]
+                                    else:
+                                        # Color per material - flat material color
+                                        if material.subsurface_scattering.use:
+                                            diffuse_color = [i * j for i, j in zip(material.subsurface_scattering.color[:], material.diffuse_color[:])]
+                                        else:
+                                            diffuse_color = material.diffuse_color[:]
+                                        ci1 = ci2 = ci3 = vertCols[diffuse_color[0], diffuse_color[1], \
+                                                          diffuse_color[2], f.material_index][0]
+                                        # ci are zero based index so we'll subtract 1 from them
+                                    if linebreaksinlists:
+                                        file.write(",\n")
+                                        file.write(tabStr + "<%d,%d,%d>, %d,%d,%d" % \
+                                                   (fv[i1], fv[i2], fv[i3], ci1-1, ci2-1, ci3-1))  # vert count 
+                                    else:
+                                        file.write(", ")
+                                        file.write("<%d,%d,%d>, %d,%d,%d" % \
+                                                   (fv[i1], fv[i2], fv[i3], ci1-1, ci2-1, ci3-1))  # vert count
+
+                        file.write("\n")
+                        tabWrite("}\n")
+
+                        # normal_indices indices
+                        tabWrite("normal_indices {\n")
+                        tabWrite("%d" % (len(me_faces) + quadCount))  # faces count
+                        tabStr = tab * tabLevel
+                        for fi, fv in enumerate(faces_verts):
+
+                            if len(fv) == 4:
+                                indices = (0, 1, 2), (0, 2, 3)
+                            else:
+                                indices = ((0, 1, 2),)
+
+                            for i1, i2, i3 in indices:
+                                if me_faces[fi].use_smooth:
+                                    if linebreaksinlists:
+                                        file.write(",\n")
+                                        file.write(tabStr + "<%d,%d,%d>" %\
+                                        (uniqueNormals[verts_normals[fv[i1]]][0],\
+                                         uniqueNormals[verts_normals[fv[i2]]][0],\
+                                         uniqueNormals[verts_normals[fv[i3]]][0]))  # vert count
+                                    else:
+                                        file.write(", ")
+                                        file.write("<%d,%d,%d>" %\
+                                        (uniqueNormals[verts_normals[fv[i1]]][0],\
+                                         uniqueNormals[verts_normals[fv[i2]]][0],\
+                                         uniqueNormals[verts_normals[fv[i3]]][0]))  # vert count
+                                else:
+                                    idx = uniqueNormals[faces_normals[fi]][0]
+                                    if linebreaksinlists:
+                                        file.write(",\n")
+                                        file.write(tabStr + "<%d,%d,%d>" % (idx, idx, idx))  # vert count
+                                    else:
+                                        file.write(", ")
+                                        file.write("<%d,%d,%d>" % (idx, idx, idx))  # vert count
+
+                        file.write("\n")
+                        tabWrite("}\n")
+
+                        if uv_layer:
+                            tabWrite("uv_indices {\n")
+                            tabWrite("%d" % (len(me_faces) + quadCount))  # faces count
+                            tabStr = tab * tabLevel
+                            for fi, fv in enumerate(faces_verts):
+
+                                if len(fv) == 4:
+                                    indices = (0, 1, 2), (0, 2, 3)
+                                else:
+                                    indices = ((0, 1, 2),)
+
+                                uv = uv_layer[fi]
+                                if len(faces_verts[fi]) == 4:
+                                    uvs = uv.uv[0][:], uv.uv[1][:], uv.uv[2][:], uv.uv[3][:]
+                                else:
+                                    uvs = uv.uv[0][:], uv.uv[1][:], uv.uv[2][:]
+
+                                for i1, i2, i3 in indices:
+                                    if linebreaksinlists:
+                                        file.write(",\n")
+                                        file.write(tabStr + "<%d,%d,%d>" % (
+                                                 uniqueUVs[uvs[i1]][0],\
+                                                 uniqueUVs[uvs[i2]][0],\
+                                                 uniqueUVs[uvs[i3]][0]))
+                                    else:
+                                        file.write(", ")
+                                        file.write("<%d,%d,%d>" % (
+                                                 uniqueUVs[uvs[i1]][0],\
+                                                 uniqueUVs[uvs[i2]][0],\
+                                                 uniqueUVs[uvs[i3]][0]))
+
+                            file.write("\n")
+                            tabWrite("}\n")
+
+                        if me.materials:
+                            try:
+                                material = me.materials[0]  # dodgy
+                                writeObjectMaterial(material, ob)
+                            except IndexError:
+                                print(me)
+
+                        #Importance for radiosity sampling added here:
+                        tabWrite("radiosity { \n")
+                        tabWrite("importance %3g \n" % importance)
+                        tabWrite("}\n")
+
+                        tabWrite("}\n")  # End of mesh block
+                    else:
+                        facesMaterials = [] # WARNING!!!!!!!!!!!!!!!!!!!!!!
+                        if me_materials:
+                            for f in me_faces:
+                                if f.material_index not in facesMaterials:
+                                    facesMaterials.append(f.material_index)
+                        # No vertex colors, so write material colors as vertex colors
+                        for i, material in enumerate(me_materials):
+
+                            if material and material.pov.material_use_nodes == False:  # WARNING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                                 # Multiply diffuse with SSS Color
                                 if material.subsurface_scattering.use:
                                     diffuse_color = [i * j for i, j in zip(material.subsurface_scattering.color[:], material.diffuse_color[:])]
-                                    key = diffuse_color[0], diffuse_color[1], diffuse_color[2], \
-                                          material_index
+                                    key = diffuse_color[0], diffuse_color[1], diffuse_color[2], i  # i == f.mat
                                     vertCols[key] = [-1]
                                 else:
                                     diffuse_color = material.diffuse_color[:]
-                                    key = diffuse_color[0], diffuse_color[1], diffuse_color[2], \
-                                          material_index
+                                    key = diffuse_color[0], diffuse_color[1], diffuse_color[2], i  # i == f.mat
                                     vertCols[key] = [-1]
 
-                    tabWrite("\n}\n")                
-                    # Face indices
-                    tabWrite("\nface_indices {\n")
-                    tabWrite("%d" % (len(me_faces) + quadCount))  # faces count
-                    tabStr = tab * tabLevel
+                                idx = 0
+                                LocalMaterialNames = []                       
+                                for col, index in vertCols.items():
+                                    #if me_materials:
+                                    mater = me_materials[col[3]]
+                                    if me_materials is None: #XXX working?
+                                        material_finish = DEF_MAT_NAME  # not working properly,
+                                        trans = 0.0
 
-                    for fi, f in enumerate(me_faces):
-                        fv = faces_verts[fi]
-                        material_index = f.material_index
-                        if len(fv) == 4:
-                            indices = (0, 1, 2), (0, 2, 3)
-                        else:
-                            indices = ((0, 1, 2),)
-
-                        if vcol_layer:
-                            col = vcol_layer[fi]
-
-                            if len(fv) == 4:
-                                cols = col.color1, col.color2, col.color3, col.color4
-                            else:
-                                cols = col.color1, col.color2, col.color3
-
-                        if not me_materials or me_materials[material_index] is None:  # No materials
-                            for i1, i2, i3 in indices:
-                                if linebreaksinlists:
-                                    file.write(",\n")
-                                    # vert count
-                                    file.write(tabStr + "<%d,%d,%d>" % (fv[i1], fv[i2], fv[i3]))
-                                else:
-                                    file.write(", ")
-                                    file.write("<%d,%d,%d>" % (fv[i1], fv[i2], fv[i3]))  # vert count
-                        else:
-                            material = me_materials[material_index]
-                            for i1, i2, i3 in indices:
-                                if me.vertex_colors: #and material.use_vertex_color_paint:
-                                    # Color per vertex - vertex color
-
-                                    col1 = cols[i1]
-                                    col2 = cols[i2]
-                                    col3 = cols[i3]
-
-                                    ci1 = vertCols[col1[0], col1[1], col1[2], material_index][0]
-                                    ci2 = vertCols[col2[0], col2[1], col2[2], material_index][0]
-                                    ci3 = vertCols[col3[0], col3[1], col3[2], material_index][0]
-                                else:
-                                    # Color per material - flat material color
-                                    if material.subsurface_scattering.use:
-                                        diffuse_color = [i * j for i, j in zip(material.subsurface_scattering.color[:], material.diffuse_color[:])]
                                     else:
-                                        diffuse_color = material.diffuse_color[:]
-                                    ci1 = ci2 = ci3 = vertCols[diffuse_color[0], diffuse_color[1], \
-                                                      diffuse_color[2], f.material_index][0]
-                                    # ci are zero based index so we'll subtract 1 from them
-                                if linebreaksinlists:
-                                    file.write(",\n")
-                                    file.write(tabStr + "<%d,%d,%d>, %d,%d,%d" % \
-                                               (fv[i1], fv[i2], fv[i3], ci1-1, ci2-1, ci3-1))  # vert count 
-                                else:
-                                    file.write(", ")
-                                    file.write("<%d,%d,%d>, %d,%d,%d" % \
-                                               (fv[i1], fv[i2], fv[i3], ci1-1, ci2-1, ci3-1))  # vert count
+                                        shading.writeTextureInfluence(mater, materialNames, 
+                                                                        LocalMaterialNames,
+                                                                        path_image, lampCount,
+                                                                        imageFormat, imgMap,
+                                                                        imgMapTransforms,
+                                                                        tabWrite, comments,
+                                                                        string_strip_hyphen,
+                                                                        safety, col, os, preview_dir,  unpacked_images)
+                                    ###################################################################
+                                    index[0] = idx
+                                    idx += 1                                    
 
-                    file.write("\n")
-                    tabWrite("}\n")
 
-                    # normal_indices indices
-                    tabWrite("normal_indices {\n")
-                    tabWrite("%d" % (len(me_faces) + quadCount))  # faces count
-                    tabStr = tab * tabLevel
-                    for fi, fv in enumerate(faces_verts):
-
-                        if len(fv) == 4:
-                            indices = (0, 1, 2), (0, 2, 3)
+                            
+                        # Vert Colors
+                        tabWrite("texture_list {\n")
+                        # In case there's is no material slot, give at least one texture 
+                        #(an empty one so it uses pov default)
+                        if len(vertCols)==0:
+                            file.write(tabStr + "1")
                         else:
-                            indices = ((0, 1, 2),)
+                            file.write(tabStr + "%s" % (len(vertCols)))  # vert count
 
-                        for i1, i2, i3 in indices:
-                            if me_faces[fi].use_smooth:
-                                if linebreaksinlists:
-                                    file.write(",\n")
-                                    file.write(tabStr + "<%d,%d,%d>" %\
-                                    (uniqueNormals[verts_normals[fv[i1]]][0],\
-                                     uniqueNormals[verts_normals[fv[i2]]][0],\
-                                     uniqueNormals[verts_normals[fv[i3]]][0]))  # vert count
-                                else:
-                                    file.write(", ")
-                                    file.write("<%d,%d,%d>" %\
-                                    (uniqueNormals[verts_normals[fv[i1]]][0],\
-                                     uniqueNormals[verts_normals[fv[i2]]][0],\
-                                     uniqueNormals[verts_normals[fv[i3]]][0]))  # vert count
+
+
+                            
+                        # below "material" alias, added check ob.active_material 
+                        # to avoid variable referenced before assignment error                                 
+                        try:
+                            material = ob.active_material
+                        except IndexError:
+                            #when no material slot exists,                         
+                            material=None
+
+                        # WARNING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                        if material and ob.active_material is not None and material.pov.material_use_nodes == False:
+                            if material.pov.replacement_text != "":
+                                file.write("\n")
+                                file.write(" texture{%s}\n" % material.pov.replacement_text)
+
                             else:
-                                idx = uniqueNormals[faces_normals[fi]][0]
-                                if linebreaksinlists:
-                                    file.write(",\n")
-                                    file.write(tabStr + "<%d,%d,%d>" % (idx, idx, idx))  # vert count
+                                # Loop through declared materials list
+                                for cMN in LocalMaterialNames:
+                                    if material != "Default":
+                                        file.write("\n texture{MAT_%s}\n" % cMN)
+                                        #use string_strip_hyphen(materialNames[material])) 
+                                        #or Something like that to clean up the above?
+                        elif material and material.pov.material_use_nodes:
+                            for index in facesMaterials:
+                                faceMaterial = string_strip_hyphen(bpy.path.clean_name(me_materials[index].name))
+                                file.write("\n texture{%s}\n" % faceMaterial)
+                        # END!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                        else:
+                            file.write(" texture{}\n")                
+                        tabWrite("}\n")
+
+                        # Face indices
+                        tabWrite("face_indices {\n")
+                        tabWrite("%d" % (len(me_faces) + quadCount))  # faces count
+                        tabStr = tab * tabLevel
+
+                        for fi, f in enumerate(me_faces):
+                            fv = faces_verts[fi]
+                            material_index = f.material_index
+                            if len(fv) == 4:
+                                indices = (0, 1, 2), (0, 2, 3)
+                            else:
+                                indices = ((0, 1, 2),)
+
+                            if vcol_layer:
+                                col = vcol_layer[fi]
+
+                                if len(fv) == 4:
+                                    cols = col.color1, col.color2, col.color3, col.color4
                                 else:
-                                    file.write(", ")
-                                    file.write("<%d,%d,%d>" % (idx, idx, idx))  # vert count
+                                    cols = col.color1, col.color2, col.color3
 
-                    file.write("\n")
-                    tabWrite("}\n")
+                            if not me_materials or me_materials[material_index] is None:  # No materials
+                                for i1, i2, i3 in indices:
+                                    if linebreaksinlists:
+                                        file.write(",\n")
+                                        # vert count
+                                        file.write(tabStr + "<%d,%d,%d>" % (fv[i1], fv[i2], fv[i3]))
+                                    else:
+                                        file.write(", ")
+                                        file.write("<%d,%d,%d>" % (fv[i1], fv[i2], fv[i3]))  # vert count
+                            else:
+                                material = me_materials[material_index]
+                                for i1, i2, i3 in indices:
+                                    ci1 = ci2 = ci3 = f.material_index
+                                    if me.vertex_colors: #and material.use_vertex_color_paint:
+                                        # Color per vertex - vertex color
 
-                    if uv_layer:
-                        tabWrite("uv_indices {\n")
+                                        col1 = cols[i1]
+                                        col2 = cols[i2]
+                                        col3 = cols[i3]
+
+                                        ci1 = vertCols[col1[0], col1[1], col1[2], material_index][0]
+                                        ci2 = vertCols[col2[0], col2[1], col2[2], material_index][0]
+                                        ci3 = vertCols[col3[0], col3[1], col3[2], material_index][0]
+                                    elif material.pov.material_use_nodes:
+                                        ci1 = ci2 = ci3 = 0
+                                    else:
+                                        # Color per material - flat material color
+                                        if material.subsurface_scattering.use:
+                                            diffuse_color = [i * j for i, j in
+                                                zip(material.subsurface_scattering.color[:],
+                                                    material.diffuse_color[:])]
+                                        else:
+                                            diffuse_color = material.diffuse_color[:]
+                                        ci1 = ci2 = ci3 = vertCols[diffuse_color[0], diffuse_color[1], \
+                                                          diffuse_color[2], f.material_index][0]
+
+                                    if linebreaksinlists:
+                                        file.write(",\n")
+                                        file.write(tabStr + "<%d,%d,%d>, %d,%d,%d" % \
+                                                   (fv[i1], fv[i2], fv[i3], ci1, ci2, ci3))  # vert count
+                                    else:
+                                        file.write(", ")
+                                        file.write("<%d,%d,%d>, %d,%d,%d" % \
+                                                   (fv[i1], fv[i2], fv[i3], ci1, ci2, ci3))  # vert count
+
+                        file.write("\n")
+                        tabWrite("}\n")
+
+                        # normal_indices indices
+                        tabWrite("normal_indices {\n")
                         tabWrite("%d" % (len(me_faces) + quadCount))  # faces count
                         tabStr = tab * tabLevel
                         for fi, fv in enumerate(faces_verts):
@@ -2048,754 +3039,116 @@ def write_pov(filename, scene=None, info_callback=None):
                             else:
                                 indices = ((0, 1, 2),)
 
-                            uv = uv_layer[fi]
-                            if len(faces_verts[fi]) == 4:
-                                uvs = uv.uv[0][:], uv.uv[1][:], uv.uv[2][:], uv.uv[3][:]
-                            else:
-                                uvs = uv.uv[0][:], uv.uv[1][:], uv.uv[2][:]
-
                             for i1, i2, i3 in indices:
-                                if linebreaksinlists:
-                                    file.write(",\n")
-                                    file.write(tabStr + "<%d,%d,%d>" % (
-                                             uniqueUVs[uvs[i1]][0],\
-                                             uniqueUVs[uvs[i2]][0],\
-                                             uniqueUVs[uvs[i3]][0]))
+                                if me_faces[fi].use_smooth:
+                                    if linebreaksinlists:
+                                        file.write(",\n")
+                                        file.write(tabStr + "<%d,%d,%d>" %\
+                                        (uniqueNormals[verts_normals[fv[i1]]][0],\
+                                         uniqueNormals[verts_normals[fv[i2]]][0],\
+                                         uniqueNormals[verts_normals[fv[i3]]][0]))  # vert count
+                                    else:
+                                        file.write(", ")
+                                        file.write("<%d,%d,%d>" %\
+                                        (uniqueNormals[verts_normals[fv[i1]]][0],\
+                                         uniqueNormals[verts_normals[fv[i2]]][0],\
+                                         uniqueNormals[verts_normals[fv[i3]]][0]))  # vert count
                                 else:
-                                    file.write(", ")
-                                    file.write("<%d,%d,%d>" % (
-                                             uniqueUVs[uvs[i1]][0],\
-                                             uniqueUVs[uvs[i2]][0],\
-                                             uniqueUVs[uvs[i3]][0]))
+                                    idx = uniqueNormals[faces_normals[fi]][0]
+                                    if linebreaksinlists:
+                                        file.write(",\n")
+                                        file.write(tabStr + "<%d,%d,%d>" % (idx, idx, idx)) # vertcount
+                                    else:
+                                        file.write(", ")
+                                        file.write("<%d,%d,%d>" % (idx, idx, idx))  # vert count
 
                         file.write("\n")
                         tabWrite("}\n")
 
-                    if me.materials:
-                        try:
-                            material = me.materials[0]  # dodgy
-                            writeObjectMaterial(material, ob)
-                        except IndexError:
-                            print(me)
+                        if uv_layer:
+                            tabWrite("uv_indices {\n")
+                            tabWrite("%d" % (len(me_faces) + quadCount))  # faces count
+                            tabStr = tab * tabLevel
+                            for fi, fv in enumerate(faces_verts):
 
-                    #Importance for radiosity sampling added here:
-                    tabWrite("radiosity { \n")
-                    tabWrite("importance %3g \n" % importance)
-                    tabWrite("}\n")
-
-                    tabWrite("}\n")  # End of mesh block
-                else:
-                    # No vertex colors, so write material colors as vertex colors
-                    for i, material in enumerate(me_materials):
-
-                        if material:
-                            # Multiply diffuse with SSS Color
-                            if material.subsurface_scattering.use:
-                                diffuse_color = [i * j for i, j in zip(material.subsurface_scattering.color[:], material.diffuse_color[:])]
-                                key = diffuse_color[0], diffuse_color[1], diffuse_color[2], i  # i == f.mat
-                                vertCols[key] = [-1]
-                            else:
-                                diffuse_color = material.diffuse_color[:]
-                                key = diffuse_color[0], diffuse_color[1], diffuse_color[2], i  # i == f.mat
-                                vertCols[key] = [-1]
-
-                            idx = 0
-                            LocalMaterialNames = []                       
-                            for col, index in vertCols.items():
-                                #if me_materials:
-                                mater = me_materials[col[3]]
-                                if me_materials is None: #XXX working?
-                                    material_finish = DEF_MAT_NAME  # not working properly,
-                                    trans = 0.0
-
+                                if len(fv) == 4:
+                                    indices = (0, 1, 2), (0, 2, 3)
                                 else:
-                                    material_finish = materialNames[mater.name]                        
-                                    if mater.use_transparency:
-                                        trans = 1.0 - mater.alpha
+                                    indices = ((0, 1, 2),)
+
+                                uv = uv_layer[fi]
+                                if len(faces_verts[fi]) == 4:
+                                    uvs = uv.uv[0][:], uv.uv[1][:], uv.uv[2][:], uv.uv[3][:]
+                                else:
+                                    uvs = uv.uv[0][:], uv.uv[1][:], uv.uv[2][:]
+
+                                for i1, i2, i3 in indices:
+                                    if linebreaksinlists:
+                                        file.write(",\n")
+                                        file.write(tabStr + "<%d,%d,%d>" % (
+                                                 uniqueUVs[uvs[i1]][0],\
+                                                 uniqueUVs[uvs[i2]][0],\
+                                                 uniqueUVs[uvs[i3]][0]))
                                     else:
-                                        trans = 0.0                            
-                                    if (mater.specular_color.s == 0.0):
-                                        colored_specular_found = False
-                                    else:
-                                        colored_specular_found = True
+                                        file.write(", ")
+                                        file.write("<%d,%d,%d>" % (
+                                                 uniqueUVs[uvs[i1]][0],\
+                                                 uniqueUVs[uvs[i2]][0],\
+                                                 uniqueUVs[uvs[i3]][0]))
 
-                                    if mater.use_transparency and mater.transparency_method == 'RAYTRACE':
-                                        povFilter = mater.raytrace_transparency.filter * (1.0 - mater.alpha)
-                                        trans = (1.0 - mater.alpha) - povFilter
-                                    else:
-                                        povFilter = 0.0
-                                        
-                                    ##############SF
-                                    texturesDif = ""
-                                    texturesSpec = ""
-                                    texturesNorm = ""
-                                    texturesAlpha = ""
-                                    #proceduralFlag=False
-                                    for t in mater.texture_slots:
-                                        if t and t.use and t.texture.type != 'IMAGE' and t.texture.type != 'NONE':
-                                            proceduralFlag=True
-                                            image_filename = "PAT_%s"%string_strip_hyphen(bpy.path.clean_name(t.texture.name))
-                                            if image_filename:
-                                                if t.use_map_color_diffuse:
-                                                    texturesDif = image_filename
-                                                    # colvalue = t.default_value  # UNUSED
-                                                    t_dif = t
-                                                    if t_dif.texture.pov.tex_gamma_enable:
-                                                        imgGamma = (" gamma %.3g " % t_dif.texture.pov.tex_gamma_value)
-                                                if t.use_map_specular or t.use_map_raymir:
-                                                    texturesSpec = image_filename
-                                                    # colvalue = t.default_value  # UNUSED
-                                                    t_spec = t
-                                                if t.use_map_normal:
-                                                    texturesNorm = image_filename
-                                                    # colvalue = t.normal_factor * 10.0  # UNUSED
-                                                    #textNormName=t.texture.image.name + ".normal"
-                                                    #was the above used? --MR
-                                                    t_nor = t
-                                                if t.use_map_alpha:
-                                                    texturesAlpha = image_filename
-                                                    # colvalue = t.alpha_factor * 10.0  # UNUSED
-                                                    #textDispName=t.texture.image.name + ".displ"
-                                                    #was the above used? --MR
-                                                    t_alpha = t
-
-                                        if t and t.texture.type == 'IMAGE' and t.use and t.texture.image and t.texture.pov.tex_pattern_type == 'emulator':
-                                            proceduralFlag=False
-                                            if t.texture.image.packed_file:
-                                                orig_image_filename=t.texture.image.filepath_raw
-                                                workDir = bpy.utils.resource_path('USER')
-                                                previewDir=os.path.join(workDir, "preview")
-                                                unpackedfilename= os.path.join(previewDir,("unpacked_img_"+(string_strip_hyphen(bpy.path.clean_name(t.texture.name)))))
-                                                if not os.path.exists(unpackedfilename):
-                                                    # record which images that were newly copied and can be safely
-                                                    # cleaned up
-                                                    unpacked_images.append(unpackedfilename)                                            
-                                                t.texture.image.filepath_raw=unpackedfilename
-                                                t.texture.image.save()
-                                                image_filename = unpackedfilename
-                                                t.texture.image.filepath_raw=orig_image_filename
-                                            else:
-                                                image_filename = path_image(t.texture.image)
-                                            # IMAGE SEQUENCE BEGINS
-                                            if image_filename:
-                                                if bpy.data.images[t.texture.image.name].source == 'SEQUENCE':
-                                                    korvaa = "." + str(bpy.data.textures[t.texture.name].image_user.frame_offset + 1).zfill(3) + "."
-                                                    image_filename = image_filename.replace(".001.", korvaa)
-                                                    print(" seq debug ")
-                                                    print(image_filename)
-                                            # IMAGE SEQUENCE ENDS
-                                            imgGamma = ""
-                                            if image_filename:
-                                                if t.use_map_color_diffuse:
-                                                    texturesDif = image_filename
-                                                    # colvalue = t.default_value  # UNUSED
-                                                    t_dif = t
-                                                    if t_dif.texture.pov.tex_gamma_enable:
-                                                        imgGamma = (" gamma %.3g " % t_dif.texture.pov.tex_gamma_value)
-                                                if t.use_map_specular or t.use_map_raymir:
-                                                    texturesSpec = image_filename
-                                                    # colvalue = t.default_value  # UNUSED
-                                                    t_spec = t
-                                                if t.use_map_normal:
-                                                    texturesNorm = image_filename
-                                                    # colvalue = t.normal_factor * 10.0  # UNUSED
-                                                    #textNormName=t.texture.image.name + ".normal"
-                                                    #was the above used? --MR
-                                                    t_nor = t
-                                                if t.use_map_alpha:
-                                                    texturesAlpha = image_filename
-                                                    # colvalue = t.alpha_factor * 10.0  # UNUSED
-                                                    #textDispName=t.texture.image.name + ".displ"
-                                                    #was the above used? --MR
-                                                    t_alpha = t
-
-                                    ####################################################################################
-
-
-                                    file.write("\n")
-                                    # THIS AREA NEEDS TO LEAVE THE TEXTURE OPEN UNTIL ALL MAPS ARE WRITTEN DOWN.
-                                    # --MR
-                                    currentMatName = string_strip_hyphen(materialNames[mater.name])
-                                    LocalMaterialNames.append(currentMatName)
-                                    file.write("\n #declare MAT_%s = \ntexture{\n" % currentMatName)
-
-                                    ################################################################################
-                                    
-                                    if mater.pov.replacement_text != "":
-                                        file.write("%s\n" % mater.pov.replacement_text)
-                                    #################################################################################
-                                    if mater.diffuse_shader == 'MINNAERT':
-                                        tabWrite("\n")
-                                        tabWrite("aoi\n")
-                                        tabWrite("texture_map {\n")
-                                        tabWrite("[%.3g finish {diffuse %.3g}]\n" % \
-                                                 (mater.darkness / 2.0, 2.0 - mater.darkness))
-                                        tabWrite("[%.3g\n" % (1.0 - (mater.darkness / 2.0)))
-
-                                    if mater.diffuse_shader == 'FRESNEL':
-                                        # For FRESNEL diffuse in POV, we'll layer slope patterned textures
-                                        # with lamp vector as the slope vector and nest one slope per lamp
-                                        # into each texture map's entry.
-
-                                        c = 1
-                                        while (c <= lampCount):
-                                            tabWrite("slope { lampTarget%s }\n" % (c))
-                                            tabWrite("texture_map {\n")
-                                            # Diffuse Fresnel value and factor go up to five,
-                                            # other kind of values needed: used the number 5 below to remap
-                                            tabWrite("[%.3g finish {diffuse %.3g}]\n" % \
-                                                     ((5.0 - mater.diffuse_fresnel) / 5,
-                                                      (mater.diffuse_intensity *
-                                                       ((5.0 - mater.diffuse_fresnel_factor) / 5))))
-                                            tabWrite("[%.3g\n" % ((mater.diffuse_fresnel_factor / 5) *
-                                                                  (mater.diffuse_fresnel / 5.0)))
-                                            c += 1
-
-                                    # if shader is a 'FRESNEL' or 'MINNAERT': slope pigment pattern or aoi
-                                    # and texture map above, the rest below as one of its entry
-
-                                    if texturesSpec != "" or texturesAlpha != "":
-                                        if texturesSpec != "":
-                                            # tabWrite("\n")
-                                            tabWrite("pigment_pattern {\n")
-                                            if texturesSpec and texturesSpec.startswith("PAT_"):
-                                                tabWrite("function{f%s(x,y,z).grey}" %texturesSpec) 
-                                            else:
-                                                # POV-Ray "scale" is not a number of repetitions factor, but its
-                                                # inverse, a standard scale factor.
-                                                # Offset seems needed relatively to scale so probably center of the
-                                                # scale is not the same in blender and POV
-                                                mappingSpec =imgMapTransforms(t_spec)
-                                                # mappingSpec = "translate <%.4g,%.4g,%.4g> scale <%.4g,%.4g,%.4g>\n" % \
-                                                              # (-t_spec.offset.x, t_spec.offset.y, t_spec.offset.z,
-                                                               # 1.0 / t_spec.scale.x, 1.0 / t_spec.scale.y,
-                                                               # 1.0 / t_spec.scale.z)
-                                                tabWrite("uv_mapping image_map{%s \"%s\" %s}\n" % \
-                                                         (imageFormat(texturesSpec), texturesSpec, imgMap(t_spec)))
-                                                tabWrite("%s\n" % mappingSpec)
-                                            tabWrite("}\n")
-                                            tabWrite("texture_map {\n")
-                                            tabWrite("[0 \n")
-
-                                        if texturesDif == "":
-                                            if texturesAlpha != "":
-                                                tabWrite("\n")
-                                                if texturesAlpha and texturesAlpha.startswith("PAT_"):
-                                                    tabWrite("function{f%s(x,y,z).transmit}\n" %texturesAlpha) 
-                                                else:
-                                                    # POV-Ray "scale" is not a number of repetitions factor, but its
-                                                    # inverse, a standard scale factor.
-                                                    # Offset seems needed relatively to scale so probably center of the
-                                                    # scale is not the same in blender and POV
-                                                    mappingAlpha = imgMapTransforms(t_alpha)
-                                                    # mappingAlpha = " translate <%.4g, %.4g, %.4g> " \
-                                                                   # "scale <%.4g, %.4g, %.4g>\n" % \
-                                                                   # (-t_alpha.offset.x, -t_alpha.offset.y,
-                                                                    # t_alpha.offset.z, 1.0 / t_alpha.scale.x,
-                                                                    # 1.0 / t_alpha.scale.y, 1.0 / t_alpha.scale.z)
-                                                    tabWrite("pigment {pigment_pattern {uv_mapping image_map" \
-                                                             "{%s \"%s\" %s}%s" % \
-                                                             (imageFormat(texturesAlpha), texturesAlpha,
-                                                              imgMap(t_alpha), mappingAlpha))
-                                                tabWrite("}\n")
-                                                tabWrite("pigment_map {\n")
-                                                tabWrite("[0 color rgbft<0,0,0,1,1>]\n")
-                                                tabWrite("[1 color rgbft<%.3g, %.3g, %.3g, %.3g, %.3g>]\n" % \
-                                                         (col[0], col[1], col[2], povFilter, trans))
-                                                tabWrite("}\n")
-                                                tabWrite("}\n")
-
-                                            else:
-
-                                                tabWrite("pigment {rgbft<%.3g, %.3g, %.3g, %.3g, %.3g>}\n" % \
-                                                         (col[0], col[1], col[2], povFilter, trans))
-
-                                            if texturesSpec != "":
-                                                # Level 1 is no specular
-                                                tabWrite("finish {%s}\n" % (safety(material_finish, Level=1)))
-
-                                            else:
-                                                # Level 2 is translated spec
-                                                tabWrite("finish {%s}\n" % (safety(material_finish, Level=2)))
-
-                                        else:
-                                            mappingDif = imgMapTransforms(t_dif)
-
-                                            if texturesAlpha != "":
-                                                mappingAlpha = imgMapTransforms(t_alpha)
-                                                # mappingAlpha = " translate <%.4g,%.4g,%.4g> " \
-                                                               # "scale <%.4g,%.4g,%.4g>" % \
-                                                               # (-t_alpha.offset.x, -t_alpha.offset.y,
-                                                                # t_alpha.offset.z, 1.0 / t_alpha.scale.x,
-                                                                # 1.0 / t_alpha.scale.y, 1.0 / t_alpha.scale.z)
-                                                tabWrite("pigment {\n")
-                                                tabWrite("pigment_pattern {\n")
-                                                if texturesAlpha and texturesAlpha.startswith("PAT_"):
-                                                    tabWrite("function{f%s(x,y,z).transmit}\n" %texturesAlpha) 
-                                                else:
-                                                    tabWrite("uv_mapping image_map{%s \"%s\" %s}%s}\n" % \
-                                                             (imageFormat(texturesAlpha), texturesAlpha,
-                                                              imgMap(t_alpha), mappingAlpha))
-                                                tabWrite("pigment_map {\n")
-                                                tabWrite("[0 color rgbft<0,0,0,1,1>]\n")
-                                                #if texturesAlpha and texturesAlpha.startswith("PAT_"):
-                                                    #tabWrite("[1 pigment{%s}]\n" %texturesDif) 
-                                                if texturesDif and not texturesDif.startswith("PAT_"):
-                                                    tabWrite("[1 uv_mapping image_map {%s \"%s\" %s} %s]\n" % \
-                                                             (imageFormat(texturesDif), texturesDif,
-                                                              (imgGamma + imgMap(t_dif)), mappingDif))
-                                                elif texturesDif and texturesDif.startswith("PAT_"):
-                                                    tabWrite("[1 %s]\n" %texturesDif)                                                          
-                                                tabWrite("}\n")
-                                                tabWrite("}\n")
-                                                if texturesAlpha and texturesAlpha.startswith("PAT_"):
-                                                    tabWrite("}\n")
-
-                                            else:
-                                                if texturesDif and texturesDif.startswith("PAT_"):
-                                                    tabWrite("pigment{%s}\n" %texturesDif) 
-                                                else:
-                                                    tabWrite("pigment {uv_mapping image_map {%s \"%s\" %s}%s}\n" % \
-                                                             (imageFormat(texturesDif), texturesDif,
-                                                              (imgGamma + imgMap(t_dif)), mappingDif))
-
-                                            if texturesSpec != "":
-                                                # Level 1 is no specular
-                                                tabWrite("finish {%s}\n" % (safety(material_finish, Level=1)))
-
-                                            else:
-                                                # Level 2 is translated specular
-                                                tabWrite("finish {%s}\n" % (safety(material_finish, Level=2)))
-
-                                            ## scale 1 rotate y*0
-                                            #imageMap = ("{image_map {%s \"%s\" %s }\n" % \
-                                            #            (imageFormat(textures),textures,imgMap(t_dif)))
-                                            #tabWrite("uv_mapping pigment %s} %s finish {%s}\n" % \
-                                            #         (imageMap,mapping,safety(material_finish)))
-                                            #tabWrite("pigment {uv_mapping image_map {%s \"%s\" %s}%s} " \
-                                            #         "finish {%s}\n" % \
-                                            #         (imageFormat(texturesDif), texturesDif, imgMap(t_dif),
-                                            #          mappingDif, safety(material_finish)))
-                                        if texturesNorm != "":
-                                            ## scale 1 rotate y*0
-                                            # POV-Ray "scale" is not a number of repetitions factor, but its
-                                            # inverse, a standard scale factor.
-                                            # Offset seems needed relatively to scale so probably center of the
-                                            # scale is not the same in blender and POV
-                                            mappingNor =imgMapTransforms(t_nor)
-                                            # mappingNor = " translate <%.4g,%.4g,%.4g> scale <%.4g,%.4g,%.4g>" % \
-                                                         # (-t_nor.offset.x, -t_nor.offset.y, t_nor.offset.z,
-                                                          # 1.0 / t_nor.scale.x, 1.0 / t_nor.scale.y,
-                                                          # 1.0 / t_nor.scale.z)
-                                            #imageMapNor = ("{bump_map {%s \"%s\" %s mapping}" % \
-                                            #               (imageFormat(texturesNorm),texturesNorm,imgMap(t_nor)))
-                                            #We were not using the above maybe we should?
-                                            if texturesNorm and texturesNorm.startswith("PAT_"):
-                                                tabWrite("normal{function{f%s(x,y,z).grey} bump_size %.4g}\n" %(texturesNorm, t_nor.normal_factor * 10)) 
-                                            else:
-                                                tabWrite("normal {uv_mapping bump_map " \
-                                                         "{%s \"%s\" %s  bump_size %.4g }%s}\n" % \
-                                                         (imageFormat(texturesNorm), texturesNorm, imgMap(t_nor),
-                                                          t_nor.normal_factor * 10, mappingNor))
-                                        if texturesSpec != "":
-                                            tabWrite("]\n")
-                                        ##################Second index for mapping specular max value###############
-                                            tabWrite("[1 \n")
-
-                                    if texturesDif == "" and mater.pov.replacement_text == "":
-                                        if texturesAlpha != "":
-                                            # POV-Ray "scale" is not a number of repetitions factor, but its inverse,
-                                            # a standard scale factor.
-                                            # Offset seems needed relatively to scale so probably center of the scale
-                                            # is not the same in blender and POV
-                                            # Strange that the translation factor for scale is not the same as for
-                                            # translate.
-                                            # TODO: verify both matches with blender internal.
-                                            mappingAlpha = imgMapTransforms(t_alpha)
-                                            # mappingAlpha = " translate <%.4g,%.4g,%.4g> scale <%.4g,%.4g,%.4g>\n" % \
-                                                           # (-t_alpha.offset.x, -t_alpha.offset.y, t_alpha.offset.z,
-                                                            # 1.0 / t_alpha.scale.x, 1.0 / t_alpha.scale.y,
-                                                            # 1.0 / t_alpha.scale.z)
-                                            if texturesAlpha and texturesAlpha.startswith("PAT_"):
-                                                tabWrite("function{f%s(x,y,z).transmit}\n" %texturesAlpha) 
-                                            else:
-                                                tabWrite("pigment {pigment_pattern {uv_mapping image_map" \
-                                                         "{%s \"%s\" %s}%s}\n" % \
-                                                         (imageFormat(texturesAlpha), texturesAlpha, imgMap(t_alpha),
-                                                          mappingAlpha))
-                                            tabWrite("pigment_map {\n")
-                                            tabWrite("[0 color rgbft<0,0,0,1,1>]\n")
-                                            tabWrite("[1 color rgbft<%.3g, %.3g, %.3g, %.3g, %.3g>]\n" % \
-                                                     (col[0], col[1], col[2], povFilter, trans))
-                                            tabWrite("}\n")
-                                            tabWrite("}\n")
-
-                                        else:
-                                            tabWrite("pigment {rgbft<%.3g, %.3g, %.3g, %.3g, %.3g>}\n" % \
-                                                     (col[0], col[1], col[2], povFilter, trans))
-                                                     
-                                                                    
-                                        if texturesSpec != "":
-                                            # Level 3 is full specular
-                                            tabWrite("finish {%s}\n" % (safety(material_finish, Level=3)))
-                                            
-                                        elif colored_specular_found:
-                                            # Level 1 is no specular
-                                            tabWrite("finish {%s}\n" % (safety(material_finish, Level=1)))
-
-                                        else:
-                                            # Level 2 is translated specular
-                                            tabWrite("finish {%s}\n" % (safety(material_finish, Level=2)))
-
-                                    elif mater.pov.replacement_text == "":
-                                        mappingDif = imgMapTransforms(t_dif)
-                                        # mappingDif = ("scale <%.4g,%.4g,%.4g> translate <%.4g,%.4g,%.4g>" % \
-                                                      # ( 1.0 / t_dif.scale.x, 
-                                                      # 1.0 / t_dif.scale.y,
-                                                      # 1.0 / t_dif.scale.z, 
-                                                      # 0.5-(0.5/t_dif.scale.x) + t_dif.offset.x,
-                                                      # 0.5-(0.5/t_dif.scale.y) + t_dif.offset.y,
-                                                      # 0.5-(0.5/t_dif.scale.z) + t_dif.offset.z))
-                                        if texturesAlpha != "":
-                                            # Strange that the translation factor for scale is not the same as for
-                                            # translate.
-                                            # TODO: verify both matches with blender internal.
-                                            mappingAlpha = imgMapTransforms(t_alpha)
-                                            # mappingAlpha = "translate <%.4g,%.4g,%.4g> scale <%.4g,%.4g,%.4g>" % \
-                                                           # (-t_alpha.offset.x, -t_alpha.offset.y, t_alpha.offset.z,
-                                                            # 1.0 / t_alpha.scale.x, 1.0 / t_alpha.scale.y,
-                                                            # 1.0 / t_alpha.scale.z)
-                                            if texturesAlpha and texturesAlpha.startswith("PAT_"):
-                                                tabWrite("pigment{pigment_pattern {function{f%s(x,y,z).transmit}}\n" %texturesAlpha)
-                                            else:
-                                                tabWrite("pigment {pigment_pattern {uv_mapping image_map" \
-                                                         "{%s \"%s\" %s}%s}\n" % \
-                                                         (imageFormat(texturesAlpha), texturesAlpha, imgMap(t_alpha),
-                                                          mappingAlpha))
-                                            tabWrite("pigment_map {\n")
-                                            tabWrite("[0 color rgbft<0,0,0,1,1>]\n")
-                                            if texturesAlpha and texturesAlpha.startswith("PAT_"):
-                                                tabWrite("[1 function{f%s(x,y,z).transmit}]\n" %texturesAlpha) 
-                                            elif texturesDif and not texturesDif.startswith("PAT_"):                                       
-                                                tabWrite("[1 uv_mapping image_map {%s \"%s\" %s} %s]\n" % \
-                                                         (imageFormat(texturesDif), texturesDif,
-                                                          (imgMap(t_dif) + imgGamma), mappingDif))
-                                            elif texturesDif and texturesDif.startswith("PAT_"):
-                                                tabWrite("[1 %s]\n" %texturesDif)
-                                            tabWrite("}\n")
-                                            tabWrite("}\n")
-
-                                        else:
-                                            if texturesDif and texturesDif.startswith("PAT_"):
-                                                tabWrite("pigment{%s}\n" %texturesDif) 
-                                            else:                                    
-                                                tabWrite("pigment {\n")
-                                                tabWrite("uv_mapping image_map {\n")
-                                                #tabWrite("%s \"%s\" %s}%s\n" % \
-                                                #         (imageFormat(texturesDif), texturesDif,
-                                                #         (imgGamma + imgMap(t_dif)),mappingDif))
-                                                tabWrite("%s \"%s\" \n" % (imageFormat(texturesDif), texturesDif))
-                                                tabWrite("%s\n" % (imgGamma + imgMap(t_dif)))
-                                                tabWrite("}\n")
-                                                tabWrite("%s\n" % mappingDif)
-                                                tabWrite("}\n")
-                                              
-                                        if texturesSpec != "":
-                                            # Level 3 is full specular
-                                            tabWrite("finish {%s}\n" % (safety(material_finish, Level=3)))                  
-                                        else:
-                                            # Level 2 is translated specular
-                                            tabWrite("finish {%s}\n" % (safety(material_finish, Level=2)))
-
-                                        ## scale 1 rotate y*0
-                                        #imageMap = ("{image_map {%s \"%s\" %s }" % \
-                                        #            (imageFormat(textures), textures,imgMap(t_dif)))
-                                        #file.write("\n\t\t\tuv_mapping pigment %s} %s finish {%s}" % \
-                                        #           (imageMap, mapping, safety(material_finish)))
-                                        #file.write("\n\t\t\tpigment {uv_mapping image_map " \
-                                        #           "{%s \"%s\" %s}%s} finish {%s}" % \
-                                        #           (imageFormat(texturesDif), texturesDif,imgMap(t_dif),
-                                        #            mappingDif, safety(material_finish)))
-                                    if texturesNorm != "" and mater.pov.replacement_text == "":
-                                        ## scale 1 rotate y*0
-                                        # POV-Ray "scale" is not a number of repetitions factor, but its inverse,
-                                        # a standard scale factor.
-                                        # Offset seems needed relatively to scale so probably center of the scale is
-                                        # not the same in blender and POV
-                                        mappingNor =imgMapTransforms(t_nor)
-                                        # mappingNor = (" translate <%.4g,%.4g,%.4g> scale <%.4g,%.4g,%.4g>" % \
-                                                      # (-t_nor.offset.x, -t_nor.offset.y, t_nor.offset.z,
-                                                       # 1.0 / t_nor.scale.x, 1.0 / t_nor.scale.y, 1.0 / t_nor.scale.z))
-                                        #imageMapNor = ("{bump_map {%s \"%s\" %s mapping}" % \
-                                        #               (imageFormat(texturesNorm),texturesNorm,imgMap(t_nor)))
-                                        #We were not using the above maybe we should?
-                                        if texturesNorm and texturesNorm.startswith("PAT_"):
-                                            tabWrite("normal{function{f%s(x,y,z).grey} bump_size %.4g}\n" %(texturesNorm, t_nor.normal_factor * 10))
-                                        else:                                    
-                                            tabWrite("normal {uv_mapping bump_map {%s \"%s\" %s  bump_size %.4g }%s}\n" % \
-                                                     (imageFormat(texturesNorm), texturesNorm, imgMap(t_nor),
-                                                      t_nor.normal_factor * 10.0, mappingNor))
-                                    if texturesSpec != "" and mater.pov.replacement_text == "":
-                                        tabWrite("]\n")
-
-                                        tabWrite("}\n")
-
-                                    #End of slope/ior texture_map
-                                    if mater.diffuse_shader == 'MINNAERT' and mater.pov.replacement_text == "":
-                                        tabWrite("]\n")
-                                        tabWrite("}\n")
-                                    if mater.diffuse_shader == 'FRESNEL' and mater.pov.replacement_text == "":
-                                        c = 1
-                                        while (c <= lampCount):
-                                            tabWrite("]\n")
-                                            tabWrite("}\n")
-                                            c += 1
-
-                                      
-                                            
-                                    # Close first layer of POV "texture" (Blender material)
-                                    tabWrite("}\n")
-                                    
-                                    if (mater.specular_color.s > 0.0):
-                                        colored_specular_found = True
-                                    else:
-                                        colored_specular_found = False
-                                        
-                                    # Write another layered texture using invisible diffuse and metallic trick 
-                                    # to emulate colored specular highlights
-                                    special_texture_found = False
-                                    for t in mater.texture_slots:
-                                        if(t and t.use and ((t.texture.type == 'IMAGE' and t.texture.image) or t.texture.type != 'IMAGE') and
-                                           (t.use_map_specular or t.use_map_raymir)):
-                                            # Specular mapped textures would conflict with colored specular
-                                            # because POV can't layer over or under pigment patterned textures
-                                            special_texture_found = True
-                                    
-                                    if colored_specular_found and not special_texture_found:
-                                        if comments:
-                                            file.write("  // colored highlights with a stransparent metallic layer\n")
-                                        else:
-                                            tabWrite("\n")
-                                    
-                                        tabWrite("texture {\n")
-                                        tabWrite("pigment {rgbft<%.3g, %.3g, %.3g, 0, 1>}\n" % \
-                                                         (mater.specular_color[0], mater.specular_color[1], mater.specular_color[2]))
-                                        tabWrite("finish {%s}\n" % (safety(material_finish, Level=2))) # Level 2 is translated spec
-
-                                        texturesNorm = ""
-                                        for t in mater.texture_slots:
-
-                                            if t and t.texture.pov.tex_pattern_type != 'emulator':
-                                                proceduralFlag=True
-                                                image_filename = string_strip_hyphen(bpy.path.clean_name(t.texture.name))
-                                            if t and t.texture.type == 'IMAGE' and t.use and t.texture.image and t.texture.pov.tex_pattern_type == 'emulator':
-                                                proceduralFlag=False 
-                                                image_filename = path_image(t.texture.image)
-                                                imgGamma = ""
-                                                if image_filename:
-                                                    if t.use_map_normal:
-                                                        texturesNorm = image_filename
-                                                        # colvalue = t.normal_factor * 10.0  # UNUSED
-                                                        #textNormName=t.texture.image.name + ".normal"
-                                                        #was the above used? --MR
-                                                        t_nor = t
-                                                        if proceduralFlag:
-                                                            tabWrite("normal{function{f%s(x,y,z).grey} bump_size %.4g}\n" %(texturesNorm, t_nor.normal_factor * 10))
-                                                        else:
-                                                            tabWrite("normal {uv_mapping bump_map " \
-                                                                     "{%s \"%s\" %s  bump_size %.4g }%s}\n" % \
-                                                                     (imageFormat(texturesNorm), texturesNorm, imgMap(t_nor),
-                                                                      t_nor.normal_factor * 10, mappingNor))
-                                                                      
-                                        tabWrite("}\n") # THEN IT CAN CLOSE LAST LAYER OF TEXTURE   --MR
-
-
-                                ####################################################################################
-                                index[0] = idx
-                                idx += 1
-                                
-
-
-                        
-                    # Vert Colors
-                    tabWrite("texture_list {\n")
-                    # In case there's is no material slot, give at least one texture (empty so it uses pov default)
-                    if len(vertCols)==0:
-                        file.write(tabStr + "1")
-                    else:
-                        file.write(tabStr + "%s" % (len(vertCols)))  # vert count
-                    if material is not None:    
-                        if material.pov.replacement_text != "":
                             file.write("\n")
-                            file.write(" texture{%s}\n" % material.pov.replacement_text)
+                            tabWrite("}\n")
 
-                        else:
-                            # Loop through declared materials list
-                            for cMN in LocalMaterialNames:
-                                if material != "Default":
-                                    file.write("\n texture{MAT_%s}\n" % cMN)#string_strip_hyphen(materialNames[material])) # Something like that
-                    else:
-                        file.write(" texture{}\n")                
-                    tabWrite("}\n")
+                        if me.materials:
+                            try:
+                                material = me.materials[0]  # dodgy
+                                writeObjectMaterial(material, ob)
+                            except IndexError:
+                                print(me)
 
-                    # Face indices
-                    tabWrite("face_indices {\n")
-                    tabWrite("%d" % (len(me_faces) + quadCount))  # faces count
-                    tabStr = tab * tabLevel
-
-                    for fi, f in enumerate(me_faces):
-                        fv = faces_verts[fi]
-                        material_index = f.material_index
-                        if len(fv) == 4:
-                            indices = (0, 1, 2), (0, 2, 3)
-                        else:
-                            indices = ((0, 1, 2),)
-
-                        if vcol_layer:
-                            col = vcol_layer[fi]
-
-                            if len(fv) == 4:
-                                cols = col.color1, col.color2, col.color3, col.color4
-                            else:
-                                cols = col.color1, col.color2, col.color3
-
-                        if not me_materials or me_materials[material_index] is None:  # No materials
-                            for i1, i2, i3 in indices:
-                                if linebreaksinlists:
-                                    file.write(",\n")
-                                    # vert count
-                                    file.write(tabStr + "<%d,%d,%d>" % (fv[i1], fv[i2], fv[i3]))
-                                else:
-                                    file.write(", ")
-                                    file.write("<%d,%d,%d>" % (fv[i1], fv[i2], fv[i3]))  # vert count
-                        else:
-                            material = me_materials[material_index]
-                            for i1, i2, i3 in indices:
-                                if me.vertex_colors: #and material.use_vertex_color_paint:
-                                    # Color per vertex - vertex color
-
-                                    col1 = cols[i1]
-                                    col2 = cols[i2]
-                                    col3 = cols[i3]
-
-                                    ci1 = vertCols[col1[0], col1[1], col1[2], material_index][0]
-                                    ci2 = vertCols[col2[0], col2[1], col2[2], material_index][0]
-                                    ci3 = vertCols[col3[0], col3[1], col3[2], material_index][0]
-                                else:
-                                    # Color per material - flat material color
-                                    if material.subsurface_scattering.use:
-                                        diffuse_color = [i * j for i, j in zip(material.subsurface_scattering.color[:], material.diffuse_color[:])]
-                                    else:
-                                        diffuse_color = material.diffuse_color[:]
-                                    ci1 = ci2 = ci3 = vertCols[diffuse_color[0], diffuse_color[1], \
-                                                      diffuse_color[2], f.material_index][0]
-
-                                if linebreaksinlists:
-                                    file.write(",\n")
-                                    file.write(tabStr + "<%d,%d,%d>, %d,%d,%d" % \
-                                               (fv[i1], fv[i2], fv[i3], ci1, ci2, ci3))  # vert count
-                                else:
-                                    file.write(", ")
-                                    file.write("<%d,%d,%d>, %d,%d,%d" % \
-                                               (fv[i1], fv[i2], fv[i3], ci1, ci2, ci3))  # vert count
-
-                    file.write("\n")
-                    tabWrite("}\n")
-
-                    # normal_indices indices
-                    tabWrite("normal_indices {\n")
-                    tabWrite("%d" % (len(me_faces) + quadCount))  # faces count
-                    tabStr = tab * tabLevel
-                    for fi, fv in enumerate(faces_verts):
-
-                        if len(fv) == 4:
-                            indices = (0, 1, 2), (0, 2, 3)
-                        else:
-                            indices = ((0, 1, 2),)
-
-                        for i1, i2, i3 in indices:
-                            if me_faces[fi].use_smooth:
-                                if linebreaksinlists:
-                                    file.write(",\n")
-                                    file.write(tabStr + "<%d,%d,%d>" %\
-                                    (uniqueNormals[verts_normals[fv[i1]]][0],\
-                                     uniqueNormals[verts_normals[fv[i2]]][0],\
-                                     uniqueNormals[verts_normals[fv[i3]]][0]))  # vert count
-                                else:
-                                    file.write(", ")
-                                    file.write("<%d,%d,%d>" %\
-                                    (uniqueNormals[verts_normals[fv[i1]]][0],\
-                                     uniqueNormals[verts_normals[fv[i2]]][0],\
-                                     uniqueNormals[verts_normals[fv[i3]]][0]))  # vert count
-                            else:
-                                idx = uniqueNormals[faces_normals[fi]][0]
-                                if linebreaksinlists:
-                                    file.write(",\n")
-                                    file.write(tabStr + "<%d,%d,%d>" % (idx, idx, idx))  # vert count
-                                else:
-                                    file.write(", ")
-                                    file.write("<%d,%d,%d>" % (idx, idx, idx))  # vert count
-
-                    file.write("\n")
-                    tabWrite("}\n")
-
-                    if uv_layer:
-                        tabWrite("uv_indices {\n")
-                        tabWrite("%d" % (len(me_faces) + quadCount))  # faces count
-                        tabStr = tab * tabLevel
-                        for fi, fv in enumerate(faces_verts):
-
-                            if len(fv) == 4:
-                                indices = (0, 1, 2), (0, 2, 3)
-                            else:
-                                indices = ((0, 1, 2),)
-
-                            uv = uv_layer[fi]
-                            if len(faces_verts[fi]) == 4:
-                                uvs = uv.uv[0][:], uv.uv[1][:], uv.uv[2][:], uv.uv[3][:]
-                            else:
-                                uvs = uv.uv[0][:], uv.uv[1][:], uv.uv[2][:]
-
-                            for i1, i2, i3 in indices:
-                                if linebreaksinlists:
-                                    file.write(",\n")
-                                    file.write(tabStr + "<%d,%d,%d>" % (
-                                             uniqueUVs[uvs[i1]][0],\
-                                             uniqueUVs[uvs[i2]][0],\
-                                             uniqueUVs[uvs[i3]][0]))
-                                else:
-                                    file.write(", ")
-                                    file.write("<%d,%d,%d>" % (
-                                             uniqueUVs[uvs[i1]][0],\
-                                             uniqueUVs[uvs[i2]][0],\
-                                             uniqueUVs[uvs[i3]][0]))
-
-                        file.write("\n")
+                        #Importance for radiosity sampling added here:
+                        tabWrite("radiosity { \n")
+                        tabWrite("importance %3g \n" % importance)
                         tabWrite("}\n")
 
-                    if me.materials:
-                        try:
-                            material = me.materials[0]  # dodgy
-                            writeObjectMaterial(material, ob)
-                        except IndexError:
-                            print(me)
+                        tabWrite("}\n")  # End of mesh block
 
-                    #Importance for radiosity sampling added here:
-                    tabWrite("radiosity { \n")
-                    tabWrite("importance %3g \n" % importance)
-                    tabWrite("}\n")
+                      
+                        
+                    bpy.data.meshes.remove(me)
 
-                    tabWrite("}\n")  # End of mesh block
-
-                bpy.data.meshes.remove(me)
-
+        duplidata_ref = []
+        for ob in sel:
+            #matrix = global_matrix * ob.matrix_world
+            if ob.is_duplicator:
+                tabWrite("\n//--DupliObjects in %s--\n\n"% ob.name)
+                ob.dupli_list_create(scene)
+                dup = ""
+                if ob.is_modified(scene, 'RENDER'):
+                    #modified object always unique so using object name rather than data name
+                    dup = "#declare OB%s = union{\n" %(string_strip_hyphen(bpy.path.clean_name(ob.name))) 
+                else:
+                    dup = "#declare DATA%s = union{\n" %(string_strip_hyphen(bpy.path.clean_name(ob.name)))
+                for eachduplicate in ob.dupli_list:
+                    duplidataname = "OB"+string_strip_hyphen(bpy.path.clean_name(bpy.data.objects[eachduplicate.object.name].data.name))
+                    dup += ("\tobject {\n\t\tDATA%s\n\t\t%s\t}\n" %(string_strip_hyphen(bpy.path.clean_name(bpy.data.objects[eachduplicate.object.name].data.name)), MatrixAsPovString(ob.matrix_world.inverted() * eachduplicate.matrix)))
+                    #add object to a list so that it is not rendered for some dupli_types
+                    if ob.dupli_type not in {'GROUP'} and duplidataname not in duplidata_ref:
+                        duplidata_ref.append(duplidataname) #older key [string_strip_hyphen(bpy.path.clean_name("OB"+ob.name))]
+                dup += "}\n"
+                ob.dupli_list_clear()
+                tabWrite(dup)
+            else:
+                continue
+        print(duplidata_ref)
         for data_name, inst in data_ref.items():
             for ob_name, matrix_str in inst:
-                tabWrite("//----Blender Object Name:%s----\n" % ob_name)
-                tabWrite("object { \n")
-                tabWrite("%s\n" % data_name)
-                tabWrite("%s\n" % matrix_str)
-                tabWrite("}\n")
+                if ob_name not in duplidata_ref: #.items() for a dictionary
+                    tabWrite("\n//----Blender Object Name:%s----\n" % ob_name)
+                    tabWrite("object { \n")
+                    tabWrite("%s\n" % data_name)
+                    tabWrite("%s\n" % matrix_str)
+                    tabWrite("}\n")
 
     def exportWorld(world):
         render = scene.render
@@ -2839,7 +3192,7 @@ def write_pov(filename, scene=None, info_callback=None):
 
                     # Commented below was an idea to make the Background image oriented as camera
                     # taken here:
-#http://news.povray.org/povray.newusers/thread/%3Cweb.4a5cddf4e9c9822ba2f93e20@news.povray.org%3E/
+#http://news.pov.org/pov.newusers/thread/%3Cweb.4a5cddf4e9c9822ba2f93e20@news.pov.org%3E/
                     # Replace 4/3 by the ratio of each image found by some custom or existing
                     # function
                     #mappingBlend = (" translate <%.4g,%.4g,%.4g> rotate z*degrees" \
@@ -2862,8 +3215,8 @@ def write_pov(filename, scene=None, info_callback=None):
                         # Further Scale by 2 and translate by -1 are 
                         # required for the sky_sphere not to repeat
                   
-                        mappingBlend = "scale 2 scale <%.4g,%.4g,%.4g> translate -1 translate <%.4g,%.4g,%.4g> " \
-                                       "rotate<0,0,0> " % \
+                        mappingBlend = "scale 2 scale <%.4g,%.4g,%.4g> translate -1 " \
+                                       "translate <%.4g,%.4g,%.4g> rotate<0,0,0> " % \
                                        ((1.0 / t_blend.scale.x), 
                                        (1.0 / t_blend.scale.y),
                                        (1.0 / t_blend.scale.z), 
@@ -2933,7 +3286,7 @@ def write_pov(filename, scene=None, info_callback=None):
             tabWrite("fog {\n")
             tabWrite("distance %.6f\n" % mist.depth)
             tabWrite("color rgbt<%.3g, %.3g, %.3g, %.3g>\n" % \
-                     (world.horizon_color[:] + (1.0 - mist.intensity,)))
+                     (*world.horizon_color, 1.0 - mist.intensity))
             #tabWrite("fog_offset %.6f\n" % mist.start)
             #tabWrite("fog_alt 5\n")
             #tabWrite("turbulence 0.2\n")
@@ -2952,22 +3305,39 @@ def write_pov(filename, scene=None, info_callback=None):
         tabWrite("assumed_gamma 1.0\n")
         tabWrite("max_trace_level %d\n" % scene.pov.max_trace_level)
 
+        if scene.pov.charset != 'ascii':
+            file.write("    charset %s\n"%scene.pov.charset)
+        if scene.pov.global_settings_advanced:
+            if scene.pov.adc_bailout_enable and scene.pov.radio_enable == False:
+                file.write("    adc_bailout %.6f\n"%scene.pov.adc_bailout)
+            if scene.pov.ambient_light_enable:
+                file.write("    ambient_light <%.6f,%.6f,%.6f>\n"%scene.pov.ambient_light[:])
+            if scene.pov.irid_wavelength_enable:
+                file.write("    irid_wavelength <%.6f,%.6f,%.6f>\n"%scene.pov.irid_wavelength[:])
+            if scene.pov.max_intersections_enable:
+                file.write("    max_intersections %s\n"%scene.pov.max_intersections)
+            if scene.pov.number_of_waves_enable:
+                file.write("    number_of_waves %s\n"%scene.pov.number_of_waves)
+            if scene.pov.noise_generator_enable:
+                file.write("    noise_generator %s\n"%scene.pov.noise_generator) 
         if scene.pov.radio_enable:
             tabWrite("radiosity {\n")
             tabWrite("adc_bailout %.4g\n" % scene.pov.radio_adc_bailout)
-            tabWrite("always_sample %d\n" % scene.pov.radio_always_sample)
             tabWrite("brightness %.4g\n" % scene.pov.radio_brightness)
             tabWrite("count %d\n" % scene.pov.radio_count)
             tabWrite("error_bound %.4g\n" % scene.pov.radio_error_bound)
             tabWrite("gray_threshold %.4g\n" % scene.pov.radio_gray_threshold)
             tabWrite("low_error_factor %.4g\n" % scene.pov.radio_low_error_factor)
-            tabWrite("media %d\n" % scene.pov.radio_media)
+            tabWrite("maximum_reuse %.4g\n" % scene.pov.radio_maximum_reuse)            
             tabWrite("minimum_reuse %.4g\n" % scene.pov.radio_minimum_reuse)
             tabWrite("nearest_count %d\n" % scene.pov.radio_nearest_count)
-            tabWrite("normal %d\n" % scene.pov.radio_normal)
             tabWrite("pretrace_start %.3g\n" % scene.pov.radio_pretrace_start)
             tabWrite("pretrace_end %.3g\n" % scene.pov.radio_pretrace_end)
             tabWrite("recursion_limit %d\n" % scene.pov.radio_recursion_limit)
+            tabWrite("always_sample %d\n" % scene.pov.radio_always_sample)
+            tabWrite("normal %d\n" % scene.pov.radio_normal)
+            tabWrite("media %d\n" % scene.pov.radio_media)
+            tabWrite("subsurface %d\n" % scene.pov.radio_subsurface)
             tabWrite("}\n")
         onceSss = 1
         onceAmbient = 1
@@ -2977,24 +3347,33 @@ def write_pov(filename, scene=None, info_callback=None):
                 # In pov, the scale has reversed influence compared to blender. these number
                 # should correct that
                 tabWrite("mm_per_unit %.6f\n" % \
-                         (material.subsurface_scattering.scale * 1000.0))# formerly ...scale * (-100.0) + 15.0))
+                         (material.subsurface_scattering.scale * 1000.0))
+                         # 1000 rather than scale * (-100.0) + 15.0))
+
                 # In POV-Ray, the scale factor for all subsurface shaders needs to be the same
-                sslt_samples = (11 - material.subsurface_scattering.error_threshold) * 10 # formerly ...*100
+                
+                # formerly sslt_samples were multiplied by 100 instead of 10
+                sslt_samples = (11 - material.subsurface_scattering.error_threshold) * 10 
+
                 tabWrite("subsurface { samples %d, %d }\n" % (sslt_samples, sslt_samples / 10))
                 onceSss = 0
 
             if world and onceAmbient:
-                tabWrite("ambient_light rgbt<%.3g, %.3g, %.3g,1>\n" % world.ambient_color[:])
+                tabWrite("ambient_light rgb<%.3g, %.3g, %.3g>\n" % world.ambient_color[:])
                 onceAmbient = 0
 
-            if (material.pov.refraction_type == "2" or material.pov.photons_reflection == True) and oncePhotons:
-                tabWrite("photons {\n")
-                tabWrite("spacing %.6f\n" % scene.pov.photon_spacing)
-                tabWrite("max_trace_level %d\n" % scene.pov.photon_max_trace_level)
-                tabWrite("adc_bailout %.3g\n" % scene.pov.photon_adc_bailout)
-                tabWrite("gather %d, %d\n" % (scene.pov.photon_gather_min, scene.pov.photon_gather_max))
-                tabWrite("}\n")
-                oncePhotons = 0
+            if scene.pov.photon_enable:
+                if (oncePhotons and
+                        (material.pov.refraction_type == "2" or
+                        material.pov.photons_reflection == True)):
+                    tabWrite("photons {\n")
+                    tabWrite("spacing %.6f\n" % scene.pov.photon_spacing)
+                    tabWrite("max_trace_level %d\n" % scene.pov.photon_max_trace_level)
+                    tabWrite("adc_bailout %.3g\n" % scene.pov.photon_adc_bailout)
+                    tabWrite("gather %d, %d\n" % (scene.pov.photon_gather_min,
+                        scene.pov.photon_gather_max))
+                    tabWrite("}\n")
+                    oncePhotons = 0
 
         tabWrite("}\n")
 
@@ -3010,7 +3389,7 @@ def write_pov(filename, scene=None, info_callback=None):
                 file.write(txt.as_string())
                 file.write("\n")
 
-    sel = renderable_objects()
+    sel = renderable_objects(scene)
     if comments:
         file.write("//----------------------------------------------\n" \
                    "//--Exported with POV-Ray exporter for Blender--\n" \
@@ -3031,11 +3410,14 @@ def write_pov(filename, scene=None, info_callback=None):
         file.write("\n//--Patterns Definitions--\n\n")
     LocalPatternNames = []
     for texture in bpy.data.textures: #ok?
-        if texture.users > 0:
-            currentPatName = string_strip_hyphen(bpy.path.clean_name(texture.name)) #string_strip_hyphen(patternNames[texture.name]) #maybe instead
-            LocalPatternNames.append(currentPatName) #use this list to prevent writing texture instances several times and assign in mats?
-            file.write("\n #declare PAT_%s = \n" % currentPatName)
-            file.write(exportPattern(texture))
+        if texture.users > 0:         
+            currentPatName = string_strip_hyphen(bpy.path.clean_name(texture.name)) 
+            #string_strip_hyphen(patternNames[texture.name]) #maybe instead of the above
+            LocalPatternNames.append(currentPatName) 
+            #use above list to prevent writing texture instances several times and assign in mats?
+            if (texture.type not in {'NONE', 'IMAGE'} and texture.pov.tex_pattern_type == 'emulator')or(texture.type in {'NONE', 'IMAGE'} and texture.pov.tex_pattern_type != 'emulator'):
+                file.write("\n#declare PAT_%s = \n" % currentPatName)
+                file.write(shading.exportPattern(texture, string_strip_hyphen))
             file.write("\n")                
     if comments:
         file.write("\n//--Background--\n\n")
@@ -3050,32 +3432,66 @@ def write_pov(filename, scene=None, info_callback=None):
     if comments:
         file.write("\n//--Lamps--\n\n")
 
-    exportLamps([l for l in sel if l.type == 'LAMP'])
+    exportLamps([L for L in sel if (L.type == 'LAMP' and L.pov.object_as != 'RAINBOW')])
+    
+    if comments:
+        file.write("\n//--Rainbows--\n\n")
+    exportRainbows([L for L in sel if (L.type == 'LAMP' and L.pov.object_as == 'RAINBOW')])
 
+
+    if comments:
+        file.write("\n//--Special Curves--\n\n")
+    for c in sel:
+        if c.is_modified(scene, 'RENDER'):
+            continue #don't export as pov curves objects with modifiers, but as mesh
+        elif c.type == 'CURVE' and (c.pov.curveshape in {'lathe','sphere_sweep','loft','birail'}):
+            exportCurves(scene,c)    
+
+            
     if comments:
         file.write("\n//--Material Definitions--\n\n")
     # write a default pigment for objects with no material (comment out to show black)
     file.write("#default{ pigment{ color rgb 0.8 }}\n")
     # Convert all materials to strings we can access directly per vertex.
     #exportMaterials()
-    writeMaterial(None)  # default material
+    shading.writeMaterial(using_uberpov, DEF_MAT_NAME, scene, tabWrite, safety, comments, uniqueName, materialNames, None)  # default material
     for material in bpy.data.materials:
         if material.users > 0:
-            writeMaterial(material)
+            if material.pov.material_use_nodes:
+                ntree = material.node_tree
+                povMatName=string_strip_hyphen(bpy.path.clean_name(material.name))
+                if len(ntree.nodes)==0:
+                    file.write('#declare %s = texture {%s}\n'%(povMatName,color))
+                else:
+                    shading.write_nodes(scene,povMatName,ntree,file)
+
+                for node in ntree.nodes:
+                    if node:
+                        if node.bl_idname == "PovrayOutputNode":
+                            if node.inputs["Texture"].is_linked:
+                                for link in ntree.links:
+                                    if link.to_node.bl_idname == "PovrayOutputNode":
+                                        povMatName=string_strip_hyphen(bpy.path.clean_name(link.from_node.name))+"_%s"%povMatName
+                            else:
+                                file.write('#declare %s = texture {%s}\n'%(povMatName,color))
+            else:
+                shading.writeMaterial(using_uberpov, DEF_MAT_NAME, scene, tabWrite, safety, comments, uniqueName, materialNames, material)
+            # attributes are all the variables needed by the other python file...
     if comments:
         file.write("\n")
 
-    exportMeta([l for l in sel if l.type == 'META'])
+    exportMeta([m for m in sel if m.type == 'META'])
 
     if comments:
         file.write("//--Mesh objects--\n")
 
     exportMeshes(scene, sel)
+
     #What follow used to happen here:
     #exportCamera()
     #exportWorld(scene.world)
     #exportGlobalSettings(scene)
-    # MR:..and the order was important for an attempt to implement pov 3.7 baking
+    # MR:..and the order was important for implementing pov 3.7 baking
     #      (mesh camera) comment for the record
     # CR: Baking should be a special case than. If "baking", than we could change the order.
 
@@ -3084,7 +3500,7 @@ def write_pov(filename, scene=None, info_callback=None):
     #print("pov file closed %s" % file.closed)
 
 
-def write_pov_ini(scene, filename_ini, filename_pov, filename_image):
+def write_pov_ini(scene, filename_ini, filename_log, filename_pov, filename_image):
     feature_set = bpy.context.user_preferences.addons[__package__].preferences.branch_feature_set_povray
     using_uberpov = (feature_set=='uberpov')
     #scene = bpy.data.scenes[0]
@@ -3095,6 +3511,12 @@ def write_pov_ini(scene, filename_ini, filename_pov, filename_image):
 
     file = open(filename_ini, "w")
     file.write("Version=3.7\n")
+    #write povray text stream to temporary file of same name with _log suffix
+    #file.write("All_File='%s'\n" % filename_log)
+    # DEBUG.OUT log if none specified:
+    file.write("All_File=1\n")
+    
+
     file.write("Input_File_Name='%s'\n" % filename_pov)
     file.write("Output_File_Name='%s'\n" % filename_image)
 
@@ -3172,7 +3594,8 @@ class PovrayRender(bpy.types.RenderEngine):
         # assume if there is a 64bit binary that the user has a 64bit capable OS
         if sys.platform[:3] == "win":
             import winreg
-            win_reg_key = winreg.OpenKey(winreg.HKEY_CURRENT_USER, "Software\\POV-Ray\\v3.7\\Windows")
+            win_reg_key = winreg.OpenKey(winreg.HKEY_CURRENT_USER,
+                "Software\\POV-Ray\\v3.7\\Windows")
             win_home = winreg.QueryValueEx(win_reg_key, "Home")[0]
 
             # First try 64bits UberPOV
@@ -3216,6 +3639,7 @@ class PovrayRender(bpy.types.RenderEngine):
             self._temp_file_out = tempfile.NamedTemporaryFile(suffix=".png", delete=False).name
             #self._temp_file_out = tempfile.NamedTemporaryFile(suffix=".tga", delete=False).name
             self._temp_file_ini = tempfile.NamedTemporaryFile(suffix=".ini", delete=False).name
+            self._temp_file_log = os.path.join(tempfile.gettempdir(), "alltext.out")
         else:
             self._temp_file_in = povPath + ".pov"
             # PNG with POV 3.7, can show the background color with alpha. In the long run using the
@@ -3223,6 +3647,8 @@ class PovrayRender(bpy.types.RenderEngine):
             self._temp_file_out = renderImagePath + ".png"
             #self._temp_file_out = renderImagePath + ".tga"
             self._temp_file_ini = povPath + ".ini"
+            logPath = bpy.path.abspath(scene.pov.scene_path).replace('\\', '/')
+            self._temp_file_log = os.path.join(logPath, "alltext.out")
             '''
             self._temp_file_in = "/test.pov"
             # PNG with POV 3.7, can show the background color with alpha. In the long run using the
@@ -3234,6 +3660,9 @@ class PovrayRender(bpy.types.RenderEngine):
 
         def info_callback(txt):
             self.update_stats("", "POV-Ray 3.7: " + txt)
+
+        # os.makedirs(user_dir, exist_ok=True)  # handled with previews
+        os.makedirs(preview_dir, exist_ok=True)
 
         write_pov(self._temp_file_in, scene, info_callback)
 
@@ -3248,7 +3677,7 @@ class PovrayRender(bpy.types.RenderEngine):
             print("POV-Ray 3.7: could not execute povray, possibly POV-Ray isn't installed")
             return False
 
-        write_pov_ini(scene, self._temp_file_ini, self._temp_file_in, self._temp_file_out)
+        write_pov_ini(scene, self._temp_file_ini, self._temp_file_log, self._temp_file_in, self._temp_file_out)
 
         print ("***-STARTING-***")
 
@@ -3564,38 +3993,41 @@ class PovrayRender(bpy.types.RenderEngine):
         else:
             print("***POV FILE NOT FOUND***")
 
-        print("***POV FINISHED***")
+        print("***POV FILE FINISHED***")
 
+        #print(filename_log) #bring the pov log to blender console with proper path?
+        with open(self._temp_file_log) as f: # The with keyword automatically closes the file when you are done
+            print(f.read())        
+        
         self.update_stats("", "")
 
         if scene.pov.tempfiles_enable or scene.pov.deletefiles_enable:
             self._cleanup()
 
 
-    
-#################################Operators#########################################
+##################################################################################
+#################################Operators########################################
+##################################################################################
 class RenderPovTexturePreview(Operator):
     bl_idname = "tex.preview_update"
     bl_label = "Update preview"
     def execute(self, context):
         tex=bpy.context.object.active_material.active_texture #context.texture
         texPrevName=string_strip_hyphen(bpy.path.clean_name(tex.name))+"_prev"
-        workDir = bpy.utils.resource_path('USER')    
-        previewDir=os.path.join(workDir, "preview")
-        
+
         ## Make sure Preview directory exists and is empty
-        if not os.path.isdir(previewDir):
-            os.mkdir(previewDir)
-        
-        iniPrevFile=os.path.join(previewDir, "Preview.ini")
-        inputPrevFile=os.path.join(previewDir, "Preview.pov")
-        outputPrevFile=os.path.join(previewDir, texPrevName)
+        if not os.path.isdir(preview_dir):
+            os.mkdir(preview_dir)
+
+        iniPrevFile=os.path.join(preview_dir, "Preview.ini")
+        inputPrevFile=os.path.join(preview_dir, "Preview.pov")
+        outputPrevFile=os.path.join(preview_dir, texPrevName)
         ##################### ini ##########################################
         fileIni=open("%s"%iniPrevFile,"w")
         fileIni.write('Version=3.7\n')
         fileIni.write('Input_File_Name="%s"\n'%inputPrevFile)
         fileIni.write('Output_File_Name="%s.png"\n'%outputPrevFile)
-        fileIni.write('Library_Path="%s"\n'%previewDir)
+        fileIni.write('Library_Path="%s"\n' % preview_dir)
         fileIni.write('Width=256\n')
         fileIni.write('Height=256\n')
         fileIni.write('Pause_When_Done=0\n')
@@ -3610,7 +4042,7 @@ class RenderPovTexturePreview(Operator):
         filePov=open("%s"%inputPrevFile,"w")
         PATname = "PAT_"+string_strip_hyphen(bpy.path.clean_name(tex.name))
         filePov.write("#declare %s = \n"%PATname)
-        filePov.write(exportPattern(tex))
+        filePov.write(shading.exportPattern(tex, string_strip_hyphen))
 
         filePov.write("#declare Plane =\n")
         filePov.write("mesh {\n")
@@ -3640,9 +4072,11 @@ class RenderPovTexturePreview(Operator):
         pov_binary = PovrayRender._locate_binary()
         
         if sys.platform[:3] == "win":
-            p1=subprocess.Popen(["%s"%pov_binary,"/EXIT","%s"%iniPrevFile],stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
+            p1=subprocess.Popen(["%s"%pov_binary,"/EXIT","%s"%iniPrevFile],
+                stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
         else:
-            p1=subprocess.Popen(["%s"%pov_binary,"-d","%s"%iniPrevFile],stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
+            p1=subprocess.Popen(["%s"%pov_binary,"-d","%s"%iniPrevFile],
+                stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
         p1.wait()
 
         tex.use_nodes = True
@@ -3664,4 +4098,5 @@ class RenderPovTexturePreview(Operator):
         links.new(im.outputs[0],previewer.inputs[0])
         #tex.type="IMAGE" # makes clip extend possible
         #tex.extension="CLIP"
-        return {'FINISHED'}    
+        return {'FINISHED'}
+        

@@ -22,7 +22,7 @@ import bpy
 import os
 import re
 from mathutils import Vector, Matrix, Euler, Color, geometry
-from math import pi, radians
+from math import pi, radians, sqrt
 
 import bmesh
 from .. import dxfgrabber
@@ -39,9 +39,11 @@ except:
 
 BY_LAYER = 0
 BY_DXFTYPE = 1
-SEPARATED = 2
-LINKED_OBJECTS = 3
-GROUP_INSTANCES = 4
+BY_CLOSED_NO_BULGE_POLY = 2
+SEPARATED = 3
+LINKED_OBJECTS = 4
+GROUP_INSTANCES = 5
+BY_BLOCK = 6
 
 
 def transform(p1, p2, c1, c2, c3):
@@ -93,7 +95,7 @@ class Do:
         "dwg", "combination", "known_blocks", "import_text", "import_light", "export_acis", "merge_lines",
         "do_bounding_boxes", "acis_files", "errors", "block_representation", "recenter", "did_group_instance",
         "objects_before", "pDXF", "pScene", "thickness_and_width", "but_group_by_att", "current_scene",
-        "dxf_unit_scale",
+        "dxf_unit_scale"
     )
 
     def __init__(self, dxf_filename, c=BY_LAYER, import_text=True, import_light=True, export_acis=True,
@@ -145,7 +147,7 @@ class Do:
                     cscn_lat = self.current_scene.get('latitude', 0)
                     cscn_lon = self.current_scene.get('longitude', 0)
                     cscn_alt = self.current_scene.get('altitude', 0)
-                    add = Vector(transform(wgs84, self.pScene, cscn_lat, cscn_lon, cscn_alt))
+                    add = Vector(transform(wgs84, self.pScene, cscn_lon, cscn_lat, cscn_alt))
 
             # projection
             newco = Vector(transform(self.pDXF, self.pScene, c1, c2, c3))
@@ -177,8 +179,8 @@ class Do:
             elif type(self.pScene) is not None:
                 wgs84 = Proj(init="EPSG:4326")
                 latlon = transform(self.pScene, wgs84, center[0], center[1], center[2])
-                scene['latitude'] = latlon[0]
-                scene['longitude'] = latlon[1]
+                scene['longitude'] = latlon[0]
+                scene['latitude'] = latlon[1]
                 scene['altitude'] = latlon[2]
 
     """ GEOMETRY DXF TYPES TO BLENDER CURVES FILTERS"""
@@ -279,10 +281,10 @@ class Do:
 
     def arc(self, en, curve=None, aunits=None, angdir=None, angbase=None):
         """
-        en: dxf entity (en.startangle, en.endangle, en.center, en.radius)
+        en: dxf entity (en.start_angle, en.end_angle, en.center, en.radius)
         curve: optional; Blender curve data of type "CURVE" (object.data) to which the arc should be added to
         return control points of a cubic spline (do be used in a spline with bulges / series of arcs)
-        note: en.startangle + en.endangle: angles measured from the angle base (angbase) in the direction of
+        note: en.start_angle + en.end_angle: angles measured from the angle base (angbase) in the direction of
               angdir (1 = clockwise, 0 = counterclockwise)
         """
         treshold = 0.005
@@ -296,11 +298,11 @@ class Do:
         kappa = 0.5522848
 
         if aunits == 0:
-            s = radians(en.startangle+angbase)
-            e = radians(en.endangle+angbase)
+            s = radians(en.start_angle+angbase)
+            e = radians(en.end_angle+angbase)
         else:
-            s = en.startangle+angbase
-            e = en.endangle+angbase
+            s = en.start_angle+angbase
+            e = en.end_angle+angbase
 
         if s > e:
             e += 2 * pi
@@ -418,7 +420,7 @@ class Do:
         ratio: ratio between major and minor axis lengths (always < 1)
         curve: Blender curve data of type "CURVE" (object.data) to which the ellipse should be added to
         """
-        major = Vector(en.majoraxis)
+        major = Vector(en.major_axis)
         en.__dict__["radius"] = major.length
         c = self.circle(en, curve, major.normalized())
         b = c.bezier_points
@@ -491,21 +493,26 @@ class Do:
         verts = []
         for p in points:
             verts.append(bm.verts.new(self.proj(p)))
-        face = bm.faces.new(verts)
 
-        if len(points) == 4:
-            for i in range(2):
-                edge1 = verts[i].co
-                edge2 = verts[i + 1].co
-                opposite1 = verts[i + 2].co
-                opposite2 = verts[(i + 3) % 4].co
-                ii = geometry.intersect_line_line(edge1, edge2, opposite1, opposite2)
-                if ii is not None:
-                    if _is_on_edge(ii[0]):
-                        bm.faces.remove(face)
-                        iv = bm.verts.new(ii[0])
-                        bm.faces.new((verts[i], iv, verts[(i + 3) % 4]))
-                        bm.faces.new((verts[i + 1], iv, verts[i + 2]))
+        # add only an edge if len points < 3
+        if len(points) == 2:
+            bm.edges.new(verts)
+        elif len(points) > 2:
+            face = bm.faces.new(verts)
+
+            if len(points) == 4:
+                for i in range(2):
+                    edge1 = verts[i].co
+                    edge2 = verts[i + 1].co
+                    opposite1 = verts[i + 2].co
+                    opposite2 = verts[(i + 3) % 4].co
+                    ii = geometry.intersect_line_line(edge1, edge2, opposite1, opposite2)
+                    if ii is not None:
+                        if _is_on_edge(ii[0]):
+                            bm.faces.remove(face)
+                            iv = bm.verts.new(ii[0])
+                            bm.faces.new((verts[i], iv, verts[(i + 3) % 4]))
+                            bm.faces.new((verts[i + 1], iv, verts[i + 2]))
 
     def the3dface(self, en, bm):
         """ f: dxf entity
@@ -610,7 +617,7 @@ class Do:
         extrusion describes the normal vector of the entity
         """
         if entity.dxftype not in {"LINE", "POINT"}:
-            if Vector(entity.extrusion) != Vector((0, 0, 1)):
+            if is_.extrusion(entity):
                 transformation = convert.extrusion_to_matrix(entity)
                 obj.location = transformation * obj.location
                 obj.rotation_euler.rotate(transformation)
@@ -753,7 +760,7 @@ class Do:
                     ratio = 50 / en.rect_width
                     d.size = en.height * ratio * 1.4  # XXX HACK
                     scale = (1 / ratio, 1 / ratio, 1 / ratio)
-                    d.space_line = en.linespacing
+                    d.space_line = en.line_spacing
                 else:
                     width = en.rect_width
                     scale = (1, 1, 1)
@@ -1192,6 +1199,27 @@ class Do:
             subd.levels = entity.subdivision_levels
             subd.show_expanded = False
 
+    def polys_to_mesh(self, entities, scene, name):
+        d = bpy.data.meshes.new(name)
+        bm = bmesh.new()
+        m = Matrix(((1, 0, 0, 0), (0, 1, 0, 0), (0, 0, 1, 0), (0, 0, 0, 1)))
+        for en in entities:
+            t = m
+            verts = []
+            if is_.extrusion(en):
+                t = convert.extrusion_to_matrix(en)
+            for p in en.points:
+                verts.append(bm.verts.new(self.proj((t*Vector(p)).to_3d())))
+            if len(verts) > 2:
+                bm.faces.new(verts)
+            elif len(verts) == 2:
+                bm.edges.new(verts)
+
+        bm.to_mesh(d)
+        o = bpy.data.objects.new(name, d)
+        scene.objects.link(o)
+        return o
+
     def object_mesh(self, entities, scene, name):
         """
         entities: list of DXF entities
@@ -1319,7 +1347,10 @@ class Do:
             entity = entities
 
         # call merged geometry methods
-        if is_.mesh(TYPE):
+
+        if TYPE is True:  # TYPE == True == is_.closed_poly_no_bulge for all entities
+            o = self.polys_to_mesh(entities, scene, name)
+        elif is_.mesh(TYPE):
             o = self.object_mesh(entities, scene, name)
         elif is_.curve(TYPE):
             o = self.object_curve(entities, scene, name)
@@ -1373,6 +1404,71 @@ class Do:
         else:
             scene[name + "_recenter"] = center
 
+    def _dupliface(self, blockname, inserts, blgroup, scene):
+        """
+        go through all inserts and check if there is one having no rotation or extrusion (if there is none
+        then there is none... any other measure to hide the original is also not water proof; just try the first
+        and most obvious way and if it doesn't work, we will not try to cover uncoverable cases)
+        - Place the duplicator object with a first face according to the chosen start insert.
+        - Add the block as a child object to the duplicator object. If there are any recursive inserts in the
+          insert, keep appending children to the children.
+        - Any subsequent inserts in the list are represented just by a face in the duplicator object.
+        """
+        aunits = self.dwg.header.get('$AUNITS', 0)
+        f = 20
+        base = [
+            Vector(( sqrt(((1/f)**2))/2, sqrt(((1/f)**2))/2,0)),
+            Vector(( sqrt(((1/f)**2))/2,-sqrt(((1/f)**2))/2,0)),
+            Vector((-sqrt(((1/f)**2))/2,-sqrt(((1/f)**2))/2,0)),
+            Vector((-sqrt(((1/f)**2))/2, sqrt(((1/f)**2))/2,0)),
+        ]
+
+        bm = bmesh.new()
+        location = None
+        for entity in inserts:
+            extrusion = convert.extrusion_to_matrix(entity)
+            scale = Matrix(((entity.scale[0],0,0,0),(0,entity.scale[1],0,0),(0,0,entity.scale[2],0),(0,0,0,1)))
+            rotation = radians(entity.rotation) if aunits == 0 else entity.rotation
+            rotm = scale * extrusion * extrusion.Rotation(rotation, 4, "Z")
+            if location is None:
+                location = rotm * Vector(entity.insert)
+                entity.insert = (0, 0, 0)
+                transformation = rotm
+            else:
+                transformation = rotm.Translation((extrusion * Vector(entity.insert))-location) * rotm
+            verts = []
+            for v in base:
+                verts.append(bm.verts.new(transformation * v))
+            bm.faces.new(verts)
+
+
+
+        m = bpy.data.meshes.new(blockname+"_geometry")
+        bm.to_mesh(m)
+        o = bpy.data.objects.new(blockname, m)
+        o.location = location
+        scene.objects.link(o)
+
+        self._nest_block(o, blockname, blgroup, scene)
+        o.dupli_type = "FACES"
+        o.use_dupli_faces_scale = True
+        o.dupli_faces_scale = f
+
+    def _nest_block(self, parent, name, blgroup, scene):
+        b = self.dwg.blocks[name]
+        e = bpy.data.objects.new(name, None)
+        scene.objects.link(e)
+        #e.location = parent.location
+        e.parent = parent
+        for TYPE, grouped in groupsort.by_dxftype(b):
+            if TYPE == "INSERT":
+                for en in grouped:
+                    self._nest_block(e, en.name, blgroup, scene)
+            else:
+                o = self._call_object_types(TYPE, grouped, blgroup, name+"_"+TYPE, scene)
+                #o.location = e.location
+                o.parent = e
+
     def combined_objects(self, entities, scene, override_name=None, override_group=None):
         """
         entities: list of dxf entities
@@ -1392,15 +1488,19 @@ class Do:
             # sort
             if self.combination == BY_LAYER:
                 group_sorted = groupsort.by_blender_type(layer_ents)
-            elif self.combination == BY_DXFTYPE:
+            elif self.combination == BY_DXFTYPE or self.combination == BY_BLOCK:
                 group_sorted = groupsort.by_dxftype(layer_ents)
+            elif self.combination == BY_CLOSED_NO_BULGE_POLY:
+                group_sorted = groupsort.by_closed_poly_no_bulge(layer_ents)
             else:
                 break
 
             for TYPE, grouped_entities in group_sorted:
-                if self.but_group_by_att:
+                if self.but_group_by_att and self.combination != BY_CLOSED_NO_BULGE_POLY and self.combination != BY_BLOCK:
                     for atts, by_att in groupsort.by_attributes(grouped_entities):
                         thickness, subd, width, extrusion = atts
+                        if extrusion is None:  # unset extrusion defaults to (0, 0, 1)
+                            extrusion = (0, 0, 1)
                         att = ""
                         if thickness != 0:
                             att += "thickness" + str(thickness) + ", "
@@ -1416,10 +1516,40 @@ class Do:
                         if o is not None:
                             objects.append(o)
                 else:
-                    name = layer_name + "_" + TYPE.replace("object_", "")
-                    o = self._call_object_types(TYPE, grouped_entities, group, name, scene, False)
-                    if o is not None:
-                        objects.append(o)
+                    if type(TYPE) is bool and not TYPE:
+                        for ttype, sub_entities in groupsort.by_blender_type(grouped_entities):
+                            name = layer_name + "_" + ttype.replace("object_", "")
+                            o = self._call_object_types(ttype, sub_entities, group, name, scene, False)
+                            if o is not None:
+                                objects.append(o)
+                    else:
+                        if TYPE == "INSERT" and self.combination == BY_BLOCK:
+                            for NAME, grouped_inserts in groupsort.by_insert_block_name(grouped_entities):
+                                sorted_inserts = []
+                                separates = []
+                                for i in grouped_inserts:
+                                    sames = 1
+                                    for c in range(2):
+                                        if i.scale[c+1] - i.scale[0] < 0.00001:
+                                            sames += 1
+                                    if not (sames == 3 or (sames == 2 and i.scale[2] == 1)):
+                                        print(i.scale)
+                                        separates.append(i)
+                                    else:
+                                        if i.extrusion == (0, 0, 1) and i.rotation == 0.0 and i.scale == (1, 1, 1):
+                                            sorted_inserts.insert(0, i)
+                                        else:
+                                            sorted_inserts.append(i)
+
+                                if len(sorted_inserts) > 0:
+                                    self._dupliface(NAME, sorted_inserts, group, scene)
+                                for s in separates:
+                                    self.insert(s, scene, NAME, group)
+                        else:
+                            name = layer_name + "_" + TYPE.replace("object_", "") if type(TYPE) is str else "MERGED_POLYS"
+                            o = self._call_object_types(TYPE, grouped_entities, group, name, scene, False)
+                            if o is not None:
+                                objects.append(o)
         return objects
 
     def separated_entities(self, entities, scene, override_name=None, override_group=None):
@@ -1475,7 +1605,9 @@ class Do:
         if self.recenter:
             self.objects_before += scene.objects[:]
 
-        if self.combination != SEPARATED:
+        if self.combination == BY_BLOCK:
+            self.combined_objects((en for en in self.dwg.modelspace()), scene)
+        elif self.combination != SEPARATED:
             self.combined_objects((en for en in self.dwg.modelspace() if is_.combined_entity(en)), scene)
             self.separated_entities((en for en in self.dwg.modelspace() if is_.separated_entity(en)), scene)
         else:

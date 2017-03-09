@@ -77,6 +77,10 @@ static wmKeyMapItem *wm_keymap_item_copy(wmKeyMapItem *kmi)
 		kmin->properties = IDP_CopyProperty(kmin->properties);
 		kmin->ptr->data = kmin->properties;
 	}
+	else {
+		kmin->properties = NULL;
+		kmin->ptr = NULL;
+	}
 
 	return kmin;
 }
@@ -87,6 +91,8 @@ static void wm_keymap_item_free(wmKeyMapItem *kmi)
 	if (kmi->ptr) {
 		WM_operator_properties_free(kmi->ptr);
 		MEM_freeN(kmi->ptr);
+		kmi->ptr = NULL;
+		kmi->properties = NULL;
 	}
 }
 
@@ -120,7 +126,7 @@ static void wm_keymap_item_properties_update_ot(wmKeyMapItem *kmi)
 		}
 		else {
 			/* zombie keymap item */
-			MEM_SAFE_FREE(kmi->ptr);
+			wm_keymap_item_free(kmi);
 		}
 	}
 }
@@ -201,6 +207,9 @@ int WM_keymap_map_type_get(wmKeyMapItem *kmi)
 	}
 	if (kmi->type == KM_TEXTINPUT) {
 		return KMI_TYPE_TEXTINPUT;
+	}
+	if (ELEM(kmi->type, TABLET_STYLUS, TABLET_ERASER)) {
+		return KMI_TYPE_MOUSE;
 	}
 	return KMI_TYPE_KEYBOARD;
 }
@@ -903,15 +912,21 @@ static void wm_user_modal_keymap_set_items(wmWindowManager *wm, wmKeyMap *km)
 
 const char *WM_key_event_string(const short type, const bool compact)
 {
-	const char *name = NULL;
+	EnumPropertyItem *it;
+	const int i = RNA_enum_from_value(rna_enum_event_type_items, (int)type);
+
+	if (i == -1) {
+		return "";
+	}
+	it = &rna_enum_event_type_items[i];
+
 	/* We first try enum items' description (abused as shortname here), and fall back to usual name if empty. */
-	if ((compact && RNA_enum_description(event_type_items, (int)type, &name) && name[0]) ||
-	    RNA_enum_name(event_type_items, (int)type, &name))
-	{
-		return IFACE_(name);
+	if (compact && it->description[0]) {
+		/* XXX No context for enum descriptions... In practice shall not be an issue though. */
+		return IFACE_(it->description);
 	}
 
-	return "";
+	return CTX_IFACE_(BLT_I18NCONTEXT_UI_EVENTS, it->name);
 }
 
 /* TODO: also support (some) value, like e.g. double-click? */
@@ -1292,17 +1307,12 @@ char *WM_key_event_operator_string(
 	return NULL;
 }
 
-int WM_key_event_operator_id(
+wmKeyMapItem *WM_key_event_operator(
         const bContext *C, const char *opname, int opcontext,
         IDProperty *properties, const bool is_hotkey,
         wmKeyMap **r_keymap)
 {
-	wmKeyMapItem *kmi = wm_keymap_item_find(C, opname, opcontext, properties, is_hotkey, true, r_keymap);
-	
-	if (kmi)
-		return kmi->id;
-	else
-		return 0;
+	return wm_keymap_item_find(C, opname, opcontext, properties, is_hotkey, true, r_keymap);
 }
 
 int WM_keymap_item_compare(wmKeyMapItem *k1, wmKeyMapItem *k2)
@@ -1784,10 +1794,10 @@ wmKeyMap *WM_keymap_guess_opname(const bContext *C, const char *opname)
 	/* UV Editor */
 	else if (STRPREFIX(opname, "UV_OT")) {
 		/* Hack to allow using UV unwrapping ops from 3DView/editmode.
-		* Mesh keymap is probably not ideal, but best place I could find to put those. */
+		 * Mesh keymap is probably not ideal, but best place I could find to put those. */
 		if (sl->spacetype == SPACE_VIEW3D) {
 			km = WM_keymap_find_all(C, "Mesh", 0, 0);
-			if (km && km->poll && !km->poll(C)) {
+			if (km && km->poll && !km->poll((bContext *)C)) {
 				km = NULL;
 			}
 		}
@@ -1801,7 +1811,7 @@ wmKeyMap *WM_keymap_guess_opname(const bContext *C, const char *opname)
 	}
 	/* Animation Editor Channels */
 	else if (STRPREFIX(opname, "ANIM_OT_channels")) {
-		km = WM_keymap_find_all(C, "Animation Channels", sl->spacetype, 0);
+		km = WM_keymap_find_all(C, "Animation Channels", 0, 0);
 	}
 	/* Animation Generic - after channels */
 	else if (STRPREFIX(opname, "ANIM_OT")) {

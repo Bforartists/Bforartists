@@ -1,11 +1,11 @@
-﻿# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
 #  as published by the Free Software Foundation; either version 2
 #  of the License, or (at your option) any later version.
 #
-#  This program is distributed in the hope that it will be useful,
+#  This program is distributed in the hope that it will be useful,fprops = layout.operator("render.render", text="Render Animation", icon='RENDER_ANIMATION')
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
@@ -19,6 +19,7 @@
 # <pep8 compliant>
 import bpy
 from bpy.types import Header, Menu
+
 
 ############################### Tabs to switch between layouts ###################################################
 
@@ -108,6 +109,7 @@ class switch_layout_to_motiontracking(bpy.types.Operator):
 
 ###########################################################################################################
 
+
 class INFO_HT_header(Header):
     bl_space_type = 'INFO'
 
@@ -126,13 +128,6 @@ class INFO_HT_header(Header):
             layout.separator()
         else:
             layout.template_ID(context.window, "screen", new="screen.new", unlink="screen.delete")
-           # layout.template_ID(context.screen, "scene", new="scene.new", unlink="scene.delete") # bfa - removed the scene drodpown box
-
-        layout.separator()
-
-
-        #if rd.has_multiple_engines: # bfa - removed the renderer drodpown box, and moved it to Properties editor.
-        #    layout.prop(rd, "engine", text="")
 
         layout.separator()
 
@@ -154,6 +149,7 @@ class INFO_HT_header(Header):
             row.label(bpy.app.autoexec_fail_message)
             return
 
+        # switch between layouts
         row.operator("wm.switch_layout_to_default", text="Def")
         row.operator("wm.switch_layout_to_animation", text="Ani")
         row.operator("wm.switch_layout_to_uv", text="UV")
@@ -176,7 +172,6 @@ class ALL_MT_editormenu(Menu):
         row = layout.row(align=True)
         row.template_header() # editor type menus
 
-# --------------------------------menu items, down to line 310
 
 class INFO_MT_editor_menus(Menu):
     bl_idname = "INFO_MT_editor_menus"
@@ -263,7 +258,9 @@ class INFO_MT_file_import(Menu):
 
     def draw(self, context):
         if bpy.app.build_options.collada:
-            self.layout.operator("wm.collada_import", text="Collada (Default) (.dae)", icon ="LOAD_DAE")
+            self.layout.operator("wm.collada_import", text="Collada (Default) (.dae)")
+        if bpy.app.build_options.alembic:
+            self.layout.operator("wm.alembic_import", text="Alembic (.abc)")
 
 
 class INFO_MT_file_export(Menu):
@@ -272,7 +269,9 @@ class INFO_MT_file_export(Menu):
 
     def draw(self, context):
         if bpy.app.build_options.collada:
-            self.layout.operator("wm.collada_export", text="Collada (Default) (.dae)", icon ="SAVE_DAE")
+            self.layout.operator("wm.collada_export", text="Collada (Default) (.dae)")
+        if bpy.app.build_options.alembic:
+            self.layout.operator("wm.alembic_export", text="Alembic (.abc)")
 
 
 class INFO_MT_file_external_data(Menu):
@@ -302,7 +301,6 @@ class INFO_MT_file_external_data(Menu):
         layout.operator("file.find_missing_files")
 
 
-
 class INFO_MT_file_previews(Menu):
     bl_label = "Data Previews"
 
@@ -310,6 +308,12 @@ class INFO_MT_file_previews(Menu):
         layout = self.layout
 
         layout.operator("wm.previews_ensure")
+        layout.operator("wm.previews_batch_generate")
+
+        layout.separator()
+
+        layout.operator("wm.previews_clear")
+        layout.operator("wm.previews_batch_clear")
 
 
 class INFO_MT_game(Menu):
@@ -341,19 +345,19 @@ class INFO_MT_render(Menu):
 
         layout.operator("render.render", text="Render Image", icon='RENDER_STILL').use_viewport = True
         props = layout.operator("render.render", text="Render Animation", icon='RENDER_ANIMATION')
-        layout.operator("sound.mixdown", text="Mixdown Audio", icon='PLAY_AUDIO')
         props.animation = True
         props.use_viewport = True
+        layout.operator("sound.mixdown", text="Mixdown Audio", icon='PLAY_AUDIO')
 
         layout.separator()
 
-        layout.operator("render.opengl", text="OpenGL Render Image", icon = 'RENDER_STILL_VIEW')
-        layout.operator("render.opengl", text="OpenGL Render Animation", icon = 'RENDER_ANI_VIEW').animation = True
+        layout.operator("render.opengl", text="OpenGL Render Image")
+        layout.operator("render.opengl", text="OpenGL Render Animation").animation = True
         layout.menu("INFO_MT_opengl_render")
 
         layout.separator()
 
-        layout.operator("render.view_show", icon = 'HIDE_RENDERVIEW')
+        layout.operator("render.view_show")
         layout.operator("render.play_rendered_anim", icon='PLAY')
 
 
@@ -364,8 +368,9 @@ class INFO_MT_opengl_render(Menu):
         layout = self.layout
 
         rd = context.scene.render
-
         layout.prop(rd, "use_antialiasing")
+        layout.prop(rd, "use_full_sample")
+
         layout.prop_menu_enum(rd, "antialiasing_samples")
         layout.prop_menu_enum(rd, "alpha_mode")
 
@@ -401,9 +406,8 @@ class INFO_MT_window(Menu):
         layout.operator("script.reload") # Reload all python scripts. Mainly meant for the UI scripts.
 
         layout.separator()
-
+        
         layout.operator("wm.search_menu") # The search menu. Note that this just calls the pure search menu, and not the whole search menu addon.
-
 
 class INFO_MT_help(Menu):
     bl_label = "Help"
@@ -434,13 +438,12 @@ class WM_OT_redraw_timer(Menu):
         layout = self.layout
 
         layout.operator("wm.redraw_timer", text = 'Draw Region').type ='DRAW'
-        layout.operator("wm.redraw_timer", text = 'Draw Region + Swap').type ='DRAW_SWAP'
+        layout.operator("wm.redraw_timer", text = 'Draw Region  Swap').type ='DRAW_SWAP'
         layout.operator("wm.redraw_timer", text = 'Draw Window').type ='DRAW_WIN'
-        layout.operator("wm.redraw_timer", text = 'Draw Window + Swap').type ='DRAW_WIN_SWAP'
+        layout.operator("wm.redraw_timer", text = 'Draw Window  Swap').type ='DRAW_WIN_SWAP'
         layout.operator("wm.redraw_timer", text = 'Anim Step').type ='ANIM_STEP'
         layout.operator("wm.redraw_timer", text = 'Anim Play').type ='ANIM_PLAY'
         layout.operator("wm.redraw_timer", text = 'Undo/Redo').type ='UNDO'
-
 
 if __name__ == "__main__":  # only for live edit.
     bpy.utils.register_module(__name__)

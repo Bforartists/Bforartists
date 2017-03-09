@@ -105,7 +105,7 @@ static const char *get_surf_defname(int type)
 }
 
 
-Nurb *add_nurbs_primitive(bContext *C, Object *obedit, float mat[4][4], int type, int newob)
+Nurb *ED_curve_add_nurbs_primitive(bContext *C, Object *obedit, float mat[4][4], int type, int newob)
 {
 	static int xzproj = 0;   /* this function calls itself... */
 	ListBase *editnurb = object_editcurve_get(obedit);
@@ -121,7 +121,6 @@ Nurb *add_nurbs_primitive(bContext *C, Object *obedit, float mat[4][4], int type
 	const float grid = 1.0f;
 	const int cutype = (type & CU_TYPE); // poly, bezier, nurbs, etc
 	const int stype = (type & CU_PRIMITIVE);
-	const bool force_3d = (((Curve *)obedit->data)->flag & CU_3D) != 0; /* could be adding to an existing 3D curve */
 
 	unit_m4(umat);
 	unit_m4(viewmat);
@@ -145,7 +144,6 @@ Nurb *add_nurbs_primitive(bContext *C, Object *obedit, float mat[4][4], int type
 		case CU_PRIM_CURVE: /* curve */
 			nu->resolu = cu->resolu;
 			if (cutype == CU_BEZIER) {
-				if (!force_3d) nu->flag |= CU_2D;
 				nu->pntsu = 2;
 				nu->bezt = (BezTriple *)MEM_callocN(2 * sizeof(BezTriple), "addNurbprim1");
 				bezt = nu->bezt;
@@ -247,7 +245,6 @@ Nurb *add_nurbs_primitive(bContext *C, Object *obedit, float mat[4][4], int type
 			nu->resolu = cu->resolu;
 
 			if (cutype == CU_BEZIER) {
-				if (!force_3d) nu->flag |= CU_2D;
 				nu->pntsu = 4;
 				nu->bezt = (BezTriple *)MEM_callocN(sizeof(BezTriple) * 4, "addNurbprim1");
 				nu->flagu = CU_NURB_CYCLIC;
@@ -346,7 +343,7 @@ Nurb *add_nurbs_primitive(bContext *C, Object *obedit, float mat[4][4], int type
 			break;
 		case CU_PRIM_TUBE: /* Cylinder */
 			if (cutype == CU_NURBS) {
-				nu = add_nurbs_primitive(C, obedit, mat, CU_NURBS | CU_PRIM_CIRCLE, 0); /* circle */
+				nu = ED_curve_add_nurbs_primitive(C, obedit, mat, CU_NURBS | CU_PRIM_CIRCLE, 0); /* circle */
 				nu->resolu = cu->resolu;
 				nu->flag = CU_SMOOTH;
 				BLI_addtail(editnurb, nu); /* temporal for extrude and translate */
@@ -423,7 +420,7 @@ Nurb *add_nurbs_primitive(bContext *C, Object *obedit, float mat[4][4], int type
 				float tmp_vec[3] = {0.f, 0.f, 1.f};
 
 				xzproj = 1;
-				nu = add_nurbs_primitive(C, obedit, mat, CU_NURBS | CU_PRIM_CIRCLE, 0); /* circle */
+				nu = ED_curve_add_nurbs_primitive(C, obedit, mat, CU_NURBS | CU_PRIM_CIRCLE, 0); /* circle */
 				xzproj = 0;
 				nu->resolu = cu->resolu;
 				nu->resolv = cu->resolv;
@@ -459,6 +456,10 @@ Nurb *add_nurbs_primitive(bContext *C, Object *obedit, float mat[4][4], int type
 	BLI_assert(nu != NULL);
 
 	if (nu) { /* should always be set */
+		if ((obedit->type != OB_SURF) && ((cu->flag & CU_3D) == 0)) {
+			nu->flag |= CU_2D;
+		}
+
 		nu->flag |= CU_SMOOTH;
 		cu->actnu = BLI_listbase_count(editnurb);
 		cu->actvert = CU_ACT_NONE;
@@ -523,7 +524,7 @@ static int curvesurf_prim_add(bContext *C, wmOperator *op, int type, int isSurf)
 	dia = RNA_float_get(op->ptr, "radius");
 	mul_mat3_m4_fl(mat, dia);
 
-	nu = add_nurbs_primitive(C, obedit, mat, type, newob);
+	nu = ED_curve_add_nurbs_primitive(C, obedit, mat, type, newob);
 	editnurb = object_editcurve_get(obedit);
 	BLI_addtail(editnurb, nu);
 

@@ -49,6 +49,7 @@
 
 #include "BLI_blenlib.h"
 #include "BLI_math.h"
+#include "BLI_string_utils.h"
 #include "BLI_utildefines.h"
 
 #include "BKE_global.h"
@@ -59,6 +60,8 @@
 #include "BKE_depsgraph.h"
 #include "BKE_scene.h"
 #include "BKE_library.h"
+#include "BKE_library_query.h"
+#include "BKE_library_remap.h"
 #include "BKE_displist.h"
 #include "BKE_mball.h"
 #include "BKE_object.h"
@@ -66,53 +69,46 @@
 
 /* Functions */
 
-void BKE_mball_unlink(MetaBall *mb)
-{
-	int a;
-	
-	for (a = 0; a < mb->totcol; a++) {
-		if (mb->mat[a]) mb->mat[a]->id.us--;
-		mb->mat[a] = NULL;
-	}
-}
-
-
-/* do not free mball itself */
+/** Free (or release) any data used by this mball (does not free the mball itself). */
 void BKE_mball_free(MetaBall *mb)
 {
-	BKE_mball_unlink(mb);
-	
-	if (mb->adt) {
-		BKE_animdata_free((ID *)mb);
-		mb->adt = NULL;
-	}
-	if (mb->mat) MEM_freeN(mb->mat);
+	BKE_animdata_free((ID *)mb, false);
+
+	MEM_SAFE_FREE(mb->mat);
+
 	BLI_freelistN(&mb->elems);
 	if (mb->disp.first) BKE_displist_free(&mb->disp);
 }
 
-MetaBall *BKE_mball_add(Main *bmain, const char *name)
+void BKE_mball_init(MetaBall *mb)
 {
-	MetaBall *mb;
-	
-	mb = BKE_libblock_alloc(bmain, ID_MB, name);
-	
+	BLI_assert(MEMCMP_STRUCT_OFS_IS_ZERO(mb, id));
+
 	mb->size[0] = mb->size[1] = mb->size[2] = 1.0;
 	mb->texflag = MB_AUTOSPACE;
 	
 	mb->wiresize = 0.4f;
 	mb->rendersize = 0.2f;
 	mb->thresh = 0.6f;
-	
+}
+
+MetaBall *BKE_mball_add(Main *bmain, const char *name)
+{
+	MetaBall *mb;
+
+	mb = BKE_libblock_alloc(bmain, ID_MB, name);
+
+	BKE_mball_init(mb);
+
 	return mb;
 }
 
-MetaBall *BKE_mball_copy(MetaBall *mb)
+MetaBall *BKE_mball_copy(Main *bmain, MetaBall *mb)
 {
 	MetaBall *mbn;
 	int a;
 	
-	mbn = BKE_libblock_copy(&mb->id);
+	mbn = BKE_libblock_copy(bmain, &mb->id);
 
 	BLI_duplicatelist(&mbn->elems, &mb->elems);
 	
@@ -124,67 +120,14 @@ MetaBall *BKE_mball_copy(MetaBall *mb)
 	mbn->editelems = NULL;
 	mbn->lastelem = NULL;
 	
-	if (mb->id.lib) {
-		BKE_id_lib_local_paths(G.main, mb->id.lib, &mbn->id);
-	}
+	BKE_id_copy_ensure_local(bmain, &mb->id, &mbn->id);
 
 	return mbn;
 }
 
-static void extern_local_mball(MetaBall *mb)
+void BKE_mball_make_local(Main *bmain, MetaBall *mb, const bool lib_local)
 {
-	if (mb->mat) {
-		extern_local_matarar(mb->mat, mb->totcol);
-	}
-}
-
-void BKE_mball_make_local(MetaBall *mb)
-{
-	Main *bmain = G.main;
-	Object *ob;
-	bool is_local = false, is_lib = false;
-
-	/* - only lib users: do nothing
-	 * - only local users: set flag
-	 * - mixed: make copy
-	 */
-	
-	if (mb->id.lib == NULL) return;
-	if (mb->id.us == 1) {
-		id_clear_lib_data(bmain, &mb->id);
-		extern_local_mball(mb);
-		
-		return;
-	}
-
-	for (ob = G.main->object.first; ob && ELEM(0, is_lib, is_local); ob = ob->id.next) {
-		if (ob->data == mb) {
-			if (ob->id.lib) is_lib = true;
-			else is_local = true;
-		}
-	}
-	
-	if (is_local && is_lib == false) {
-		id_clear_lib_data(bmain, &mb->id);
-		extern_local_mball(mb);
-	}
-	else if (is_local && is_lib) {
-		MetaBall *mb_new = BKE_mball_copy(mb);
-		mb_new->id.us = 0;
-
-		/* Remap paths of new ID using old library as base. */
-		BKE_id_lib_local_paths(bmain, mb->id.lib, &mb_new->id);
-
-		for (ob = G.main->object.first; ob; ob = ob->id.next) {
-			if (ob->data == mb) {
-				if (ob->id.lib == NULL) {
-					ob->data = mb_new;
-					mb_new->id.us++;
-					mb->id.us--;
-				}
-			}
-		}
-	}
+	BKE_id_make_local_generic(bmain, &mb->id, true, lib_local);
 }
 
 /* most simple meta-element adding function
@@ -284,6 +227,8 @@ void BKE_mball_texspace_calc(Object *ob)
 	size[2] = (max[2] - min[2]) / 2.0f;
 #endif
 	BKE_boundbox_init_from_minmax(bb, min, max);
+
+	bb->flag &= ~BOUNDBOX_DIRTY;
 }
 
 float *BKE_mball_make_orco(Object *ob, ListBase *dispbase)

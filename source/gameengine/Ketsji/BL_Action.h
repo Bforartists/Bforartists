@@ -48,9 +48,9 @@ private:
 
 	float m_startframe;
 	float m_endframe;
+	/// The current action frame.
+	float m_localframe;
 	float m_starttime;
-	float m_endtime;
-	float m_localtime;
 
 	float m_blendin;
 	float m_blendframe;
@@ -69,6 +69,8 @@ private:
 
 	bool m_done;
 	bool m_calc_localtime;
+	/// Set to true when m_starttime is initialized in Update.
+	bool m_initializedTime;
 
 	void ClearControllerList();
 	void InitIPO();
@@ -94,10 +96,6 @@ public:
 			float playback_speed,
 			short blend_mode);
 	/**
-	 * Stop playing the action
-	 */
-	void Stop();
-	/**
 	 * Whether or not the action is still playing
 	 */
 	bool IsDone();
@@ -105,10 +103,6 @@ public:
 	 * Update the action's frame, etc.
 	 */
 	void Update(float curtime);
-	/**
-	 * Update object IPOs (note: not thread-safe!)
-	 */
-	void UpdateIPOs();
 
 	// Accessors
 	float GetFrame();
@@ -143,6 +137,11 @@ public:
 		ACT_IPOFLAG_ADD = 4,
 		ACT_IPOFLAG_CHILD = 8,
 	};
+
+	/// Initialize a lock for animation thread issues.
+	static void InitLock();
+	/// Finalize a lock for animation thread issues.
+	static void EndLock();
 
 #ifdef WITH_CXX_GUARDEDALLOC
 	MEM_CXX_CLASS_ALLOC_FUNCS("GE:BL_Action")

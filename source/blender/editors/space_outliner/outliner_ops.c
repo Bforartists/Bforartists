@@ -51,7 +51,11 @@ void outliner_operatortypes(void)
 	WM_operatortype_append(OUTLINER_OT_scene_operation);
 	WM_operatortype_append(OUTLINER_OT_object_operation);
 	WM_operatortype_append(OUTLINER_OT_group_operation);
+	WM_operatortype_append(OUTLINER_OT_lib_operation);
+	WM_operatortype_append(OUTLINER_OT_lib_relocate);
 	WM_operatortype_append(OUTLINER_OT_id_operation);
+	WM_operatortype_append(OUTLINER_OT_id_delete);
+	WM_operatortype_append(OUTLINER_OT_id_remap);
 	WM_operatortype_append(OUTLINER_OT_data_operation);
 	WM_operatortype_append(OUTLINER_OT_animdata_operation);
 	WM_operatortype_append(OUTLINER_OT_action_set);
@@ -124,7 +128,8 @@ void outliner_keymap(wmKeyConfig *keyconf)
 	WM_keymap_add_item(keymap, "OUTLINER_OT_show_active", PERIODKEY, KM_PRESS, 0, 0);
 	WM_keymap_add_item(keymap, "OUTLINER_OT_show_active", PADPERIOD, KM_PRESS, 0, 0);
 	
-	WM_keymap_add_item(keymap, "OUTLINER_OT_scroll_page", PAGEDOWNKEY, KM_PRESS, 0, 0);
+	kmi = WM_keymap_add_item(keymap, "OUTLINER_OT_scroll_page", PAGEDOWNKEY, KM_PRESS, 0, 0);
+	RNA_boolean_set(kmi->ptr, "up", false);
 	kmi = WM_keymap_add_item(keymap, "OUTLINER_OT_scroll_page", PAGEUPKEY, KM_PRESS, 0, 0);
 	RNA_boolean_set(kmi->ptr, "up", true);
 	

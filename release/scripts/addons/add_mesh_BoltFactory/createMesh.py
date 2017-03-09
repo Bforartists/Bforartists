@@ -343,17 +343,17 @@ def Allen_Bit_Dia_To_Flat(DIA):
 
 
 def Create_Allen_Bit(FLAT_DISTANCE,HEIGHT):
-    Div = 36
     verts = []
     faces = []
+    DIV_COUNT = 36
 
     Flat_Radius = (float(FLAT_DISTANCE)/2.0)/cos(radians(30))
     OUTTER_RADIUS = Flat_Radius * 1.05
     Outter_Radius_Height = Flat_Radius * (0.1/5.77)
     FaceStart_Outside = len(verts)
-    Deg_Step = 360.0 /float(Div)
+    Deg_Step = 360.0 /float(DIV_COUNT)
 
-    for i in range(int(Div/2)+1):    # only do half and mirror later
+    for i in range(int(DIV_COUNT/2)+1):    # only do half and mirror later
         x = sin(radians(i*Deg_Step))*OUTTER_RADIUS
         y = cos(radians(i*Deg_Step))*OUTTER_RADIUS
         verts.append([x,y,0])
@@ -438,18 +438,18 @@ def Phillips_Fill(OFFSET,FLIP= 0):
 
 
 def Create_Phillips_Bit(FLAT_DIA,FLAT_WIDTH,HEIGHT):
-    Div = 36
     verts = []
     faces = []
 
+    DIV_COUNT = 36
     FLAT_RADIUS = FLAT_DIA * 0.5
     OUTTER_RADIUS = FLAT_RADIUS * 1.05
 
     Flat_Half = float(FLAT_WIDTH)/2.0
 
     FaceStart_Outside = len(verts)
-    Deg_Step = 360.0 /float(Div)
-    for i in range(int(Div/4)+1):    # only do half and mirror later
+    Deg_Step = 360.0 /float(DIV_COUNT)
+    for i in range(int(DIV_COUNT/4)+1):    # only do half and mirror later
         x = sin(radians(i*Deg_Step))*OUTTER_RADIUS
         y = cos(radians(i*Deg_Step))*OUTTER_RADIUS
         verts.append([x,y,0])
@@ -488,9 +488,8 @@ def Max_Pan_Bit_Dia(HEAD_DIA):
     return (sin(radians(10))*XRad) * 2.0
 
 
-def Create_Pan_Head(HOLE_DIA,HEAD_DIA,SHANK_DIA,HEIGHT,RAD1,RAD2,FACE_OFFSET):
+def Create_Pan_Head(HOLE_DIA,HEAD_DIA,SHANK_DIA,HEIGHT,RAD1,RAD2,FACE_OFFSET,DIV_COUNT):
 
-    DIV = 36
     HOLE_RADIUS = HOLE_DIA * 0.5
     HEAD_RADIUS = HEAD_DIA * 0.5
     SHANK_RADIUS = SHANK_DIA * 0.5
@@ -547,10 +546,10 @@ def Create_Pan_Head(HOLE_DIA,HEAD_DIA,SHANK_DIA,HEIGHT,RAD1,RAD2,FACE_OFFSET):
     Row += 1
 
 
-    sVerts,sFaces = SpinDup(verts,faces,360,DIV,'z')
+    sVerts,sFaces = SpinDup(verts,faces,360,DIV_COUNT,'z')
     sVerts.extend(verts)        #add the start verts to the Spin verts to complete the loop
 
-    faces.extend(Build_Face_List_Quads(FaceStart,Row-1,DIV))
+    faces.extend(Build_Face_List_Quads(FaceStart,Row-1,DIV_COUNT))
 
     # Global_Head_Height = HEIGHT  # UNUSED
 
@@ -559,8 +558,7 @@ def Create_Pan_Head(HOLE_DIA,HEAD_DIA,SHANK_DIA,HEIGHT,RAD1,RAD2,FACE_OFFSET):
 
 
 
-def Create_Dome_Head(HOLE_DIA,HEAD_DIA,SHANK_DIA,HEIGHT,RAD1,RAD2,FACE_OFFSET):
-    DIV = 36
+def Create_Dome_Head(HOLE_DIA,HEAD_DIA,SHANK_DIA,HEIGHT,RAD1,RAD2,FACE_OFFSET,DIV_COUNT):
     HOLE_RADIUS = HOLE_DIA * 0.5
     HEAD_RADIUS = HEAD_DIA * 0.5
     SHANK_RADIUS = SHANK_DIA * 0.5
@@ -615,17 +613,16 @@ def Create_Dome_Head(HOLE_DIA,HEAD_DIA,SHANK_DIA,HEIGHT,RAD1,RAD2,FACE_OFFSET):
     Row += 1
 
 
-    sVerts,sFaces = SpinDup(verts,faces,360,DIV,'z')
+    sVerts,sFaces = SpinDup(verts,faces,360,DIV_COUNT,'z')
     sVerts.extend(verts)        #add the start verts to the Spin verts to complete the loop
 
-    faces.extend(Build_Face_List_Quads(FaceStart,Row-1,DIV))
+    faces.extend(Build_Face_List_Quads(FaceStart,Row-1,DIV_COUNT))
 
     return sVerts,faces,Dome_Height
 
 
 
-def Create_CounterSink_Head(HOLE_DIA,HEAD_DIA,SHANK_DIA,HEIGHT,RAD1):
-    DIV = 36
+def Create_CounterSink_Head(HOLE_DIA,HEAD_DIA,SHANK_DIA,HEIGHT,RAD1,DIV_COUNT):
 
     HOLE_RADIUS = HOLE_DIA * 0.5
     HEAD_RADIUS = HEAD_DIA * 0.5
@@ -658,19 +655,18 @@ def Create_CounterSink_Head(HOLE_DIA,HEAD_DIA,SHANK_DIA,HEIGHT,RAD1):
     Row += 1
 
 
-    sVerts,sFaces = SpinDup(verts,faces,360,DIV,'z')
+    sVerts,sFaces = SpinDup(verts,faces,360,DIV_COUNT,'z')
     sVerts.extend(verts)        #add the start verts to the Spin verts to complete the loop
 
 
-    faces.extend(Build_Face_List_Quads(FaceStart,Row-1,DIV,1))
+    faces.extend(Build_Face_List_Quads(FaceStart,Row-1,DIV_COUNT,1))
 
     return sVerts,faces,HEIGHT
 
 
 
 
-def Create_Cap_Head(HOLE_DIA,HEAD_DIA,SHANK_DIA,HEIGHT,RAD1,RAD2):
-    DIV = 36
+def Create_Cap_Head(HOLE_DIA,HEAD_DIA,SHANK_DIA,HEIGHT,RAD1,RAD2,DIV_COUNT):
 
     HOLE_RADIUS = HOLE_DIA * 0.5
     HEAD_RADIUS = HEAD_DIA * 0.5
@@ -711,11 +707,11 @@ def Create_Cap_Head(HOLE_DIA,HEAD_DIA,SHANK_DIA,HEIGHT,RAD1,RAD2):
         Row += 1
 
 
-    sVerts,sFaces = SpinDup(verts,faces,360,DIV,'z')
+    sVerts,sFaces = SpinDup(verts,faces,360,DIV_COUNT,'z')
     sVerts.extend(verts)        #add the start verts to the Spin verts to complete the loop
 
 
-    faces.extend(Build_Face_List_Quads(FaceStart,Row-1,DIV))
+    faces.extend(Build_Face_List_Quads(FaceStart,Row-1,DIV_COUNT))
 
     return sVerts,faces,HEIGHT+RAD2
 
@@ -952,15 +948,15 @@ def Create_Hex_Head(FLAT,HOLE_DIA,SHANK_DIA,HEIGHT):
 
 
 
-def Thread_Start3(verts,INNER_RADIUS,OUTTER_RADIUS,PITCH,DIV,CREST_PERCENT,ROOT_PERCENT,Height_Offset):
+def Thread_Start3(verts,INNER_RADIUS,OUTTER_RADIUS,PITCH,DIV_COUNT,CREST_PERCENT,ROOT_PERCENT,Height_Offset):
 
 
     Ret_Row = 0;
 
     # Half_Pitch = float(PITCH)/2  # UNUSED
     Height_Start = Height_Offset - PITCH
-    Height_Step = float(PITCH)/float(DIV)
-    Deg_Step = 360.0 /float(DIV)
+    Height_Step = float(PITCH)/float(DIV_COUNT)
+    Deg_Step = 360.0 /float(DIV_COUNT)
 
     Crest_Height = float(PITCH) * float(CREST_PERCENT)/float(100)
     Root_Height = float(PITCH) * float(ROOT_PERCENT)/float(100)
@@ -968,10 +964,10 @@ def Thread_Start3(verts,INNER_RADIUS,OUTTER_RADIUS,PITCH,DIV,CREST_PERCENT,ROOT_
 
 #theard start
 
-    Rank = float(OUTTER_RADIUS - INNER_RADIUS)/float(DIV)
+    Rank = float(OUTTER_RADIUS - INNER_RADIUS)/float(DIV_COUNT)
     for j in range(4):
 
-        for i in range(DIV+1):
+        for i in range(DIV_COUNT+1):
             z = Height_Offset - (Height_Step*i)
             if z > Height_Start:
                 z = Height_Start
@@ -981,7 +977,7 @@ def Thread_Start3(verts,INNER_RADIUS,OUTTER_RADIUS,PITCH,DIV,CREST_PERCENT,ROOT_
         Height_Offset -= Crest_Height
         Ret_Row += 1
 
-        for i in range(DIV+1):
+        for i in range(DIV_COUNT+1):
             z = Height_Offset - (Height_Step*i)
             if z > Height_Start:
                 z = Height_Start
@@ -993,7 +989,7 @@ def Thread_Start3(verts,INNER_RADIUS,OUTTER_RADIUS,PITCH,DIV,CREST_PERCENT,ROOT_
         Ret_Row += 1
 
 
-        for i in range(DIV+1):
+        for i in range(DIV_COUNT+1):
             z = Height_Offset - (Height_Step*i)
             if z > Height_Start:
                 z = Height_Start
@@ -1007,7 +1003,7 @@ def Thread_Start3(verts,INNER_RADIUS,OUTTER_RADIUS,PITCH,DIV,CREST_PERCENT,ROOT_
         Height_Offset -= Root_Height
         Ret_Row += 1
 
-        for i in range(DIV+1):
+        for i in range(DIV_COUNT+1):
             z = Height_Offset - (Height_Step*i)
             if z > Height_Start:
                 z = Height_Start
@@ -1025,10 +1021,9 @@ def Thread_Start3(verts,INNER_RADIUS,OUTTER_RADIUS,PITCH,DIV,CREST_PERCENT,ROOT_
     return Ret_Row,Height_Offset
 
 
-def Create_Shank_Verts(START_DIA,OUTTER_DIA,LENGTH,Z_LOCATION = 0):
+def Create_Shank_Verts(START_DIA,OUTTER_DIA,LENGTH,Z_LOCATION,DIV_COUNT):
 
     verts = []
-    DIV = 36
 
     START_RADIUS = START_DIA/2
     OUTTER_RADIUS = OUTTER_DIA/2
@@ -1041,7 +1036,7 @@ def Create_Shank_Verts(START_DIA,OUTTER_DIA,LENGTH,Z_LOCATION = 0):
 
     Stright_Length = LENGTH - Taper_Lentgh
 
-    Deg_Step = 360.0 /float(DIV)
+    Deg_Step = 360.0 /float(DIV_COUNT)
 
     Row = 0
 
@@ -1051,7 +1046,7 @@ def Create_Shank_Verts(START_DIA,OUTTER_DIA,LENGTH,Z_LOCATION = 0):
 
 
         #ring
-    for i in range(DIV+1):
+    for i in range(DIV_COUNT+1):
         x = sin(radians(i*Deg_Step))*START_RADIUS
         y = cos(radians(i*Deg_Step))*START_RADIUS
         z =  Height_Offset - 0
@@ -1060,7 +1055,7 @@ def Create_Shank_Verts(START_DIA,OUTTER_DIA,LENGTH,Z_LOCATION = 0):
     Height_Offset -= Stright_Length
     Row += 1
 
-    for i in range(DIV+1):
+    for i in range(DIV_COUNT+1):
         x = sin(radians(i*Deg_Step))*START_RADIUS
         y = cos(radians(i*Deg_Step))*START_RADIUS
         z =  Height_Offset - 0
@@ -1073,17 +1068,16 @@ def Create_Shank_Verts(START_DIA,OUTTER_DIA,LENGTH,Z_LOCATION = 0):
     return verts,Row,Height_Offset
 
 
-def Create_Thread_Start_Verts(INNER_DIA,OUTTER_DIA,PITCH,CREST_PERCENT,ROOT_PERCENT,Z_LOCATION = 0):
+def Create_Thread_Start_Verts(INNER_DIA,OUTTER_DIA,PITCH,CREST_PERCENT,ROOT_PERCENT,Z_LOCATION,DIV_COUNT):
 
     verts = []
-    DIV = 36
-
+    
     INNER_RADIUS = INNER_DIA/2
     OUTTER_RADIUS = OUTTER_DIA/2
 
     # Half_Pitch = float(PITCH)/2  # UNUSED
-    Deg_Step = 360.0 /float(DIV)
-    Height_Step = float(PITCH)/float(DIV)
+    Deg_Step = 360.0 /float(DIV_COUNT)
+    Height_Step = float(PITCH)/float(DIV_COUNT)
 
     Row = 0
 
@@ -1097,7 +1091,7 @@ def Create_Thread_Start_Verts(INNER_DIA,OUTTER_DIA,PITCH,CREST_PERCENT,ROOT_PERC
     Root_Height = float(PITCH) * float(ROOT_PERCENT)/float(100)
     Root_to_Crest_Height = Crest_to_Root_Height = (float(PITCH) - (Crest_Height + Root_Height))/2.0
 
-    Rank = float(OUTTER_RADIUS - INNER_RADIUS)/float(DIV)
+    Rank = float(OUTTER_RADIUS - INNER_RADIUS)/float(DIV_COUNT)
 
     Height_Offset = Z_LOCATION + PITCH
     Cut_off = Z_LOCATION
@@ -1105,7 +1099,7 @@ def Create_Thread_Start_Verts(INNER_DIA,OUTTER_DIA,PITCH,CREST_PERCENT,ROOT_PERC
 
     for j in range(1):
 
-        for i in range(DIV+1):
+        for i in range(DIV_COUNT+1):
             x = sin(radians(i*Deg_Step))*OUTTER_RADIUS
             y = cos(radians(i*Deg_Step))*OUTTER_RADIUS
             z = Height_Offset - (Height_Step*i)
@@ -1115,7 +1109,7 @@ def Create_Thread_Start_Verts(INNER_DIA,OUTTER_DIA,PITCH,CREST_PERCENT,ROOT_PERC
         Height_Offset -= Crest_Height
         Row += 1
 
-        for i in range(DIV+1):
+        for i in range(DIV_COUNT+1):
             x = sin(radians(i*Deg_Step))*OUTTER_RADIUS
             y = cos(radians(i*Deg_Step))*OUTTER_RADIUS
             z = Height_Offset - (Height_Step*i)
@@ -1125,7 +1119,7 @@ def Create_Thread_Start_Verts(INNER_DIA,OUTTER_DIA,PITCH,CREST_PERCENT,ROOT_PERC
         Height_Offset -= Crest_to_Root_Height
         Row += 1
 
-        for i in range(DIV+1):
+        for i in range(DIV_COUNT+1):
             x = sin(radians(i*Deg_Step))*OUTTER_RADIUS
             y = cos(radians(i*Deg_Step))*OUTTER_RADIUS
             z = Height_Offset - (Height_Step*i)
@@ -1135,7 +1129,7 @@ def Create_Thread_Start_Verts(INNER_DIA,OUTTER_DIA,PITCH,CREST_PERCENT,ROOT_PERC
         Height_Offset -= Root_Height
         Row += 1
 
-        for i in range(DIV+1):
+        for i in range(DIV_COUNT+1):
             x = sin(radians(i*Deg_Step))*OUTTER_RADIUS
             y = cos(radians(i*Deg_Step))*OUTTER_RADIUS
             z = Height_Offset - (Height_Step*i)
@@ -1147,7 +1141,7 @@ def Create_Thread_Start_Verts(INNER_DIA,OUTTER_DIA,PITCH,CREST_PERCENT,ROOT_PERC
 
 
     for j in range(2):
-        for i in range(DIV+1):
+        for i in range(DIV_COUNT+1):
             z = Height_Offset - (Height_Step*i)
             if z > Height_Start:
                 z = Height_Start
@@ -1158,7 +1152,7 @@ def Create_Thread_Start_Verts(INNER_DIA,OUTTER_DIA,PITCH,CREST_PERCENT,ROOT_PERC
         Height_Offset -= Crest_Height
         Row += 1
 
-        for i in range(DIV+1):
+        for i in range(DIV_COUNT+1):
             z = Height_Offset - (Height_Step*i)
             if z > Height_Start:
                 z = Height_Start
@@ -1171,7 +1165,7 @@ def Create_Thread_Start_Verts(INNER_DIA,OUTTER_DIA,PITCH,CREST_PERCENT,ROOT_PERC
         Row += 1
 
 
-        for i in range(DIV+1):
+        for i in range(DIV_COUNT+1):
             z = Height_Offset - (Height_Step*i)
             if z > Height_Start:
                 z = Height_Start
@@ -1186,7 +1180,7 @@ def Create_Thread_Start_Verts(INNER_DIA,OUTTER_DIA,PITCH,CREST_PERCENT,ROOT_PERC
         Height_Offset -= Root_Height
         Row += 1
 
-        for i in range(DIV+1):
+        for i in range(DIV_COUNT+1):
             z = Height_Offset - (Height_Step*i)
             if z > Height_Start:
                 z = Height_Start
@@ -1207,17 +1201,16 @@ def Create_Thread_Start_Verts(INNER_DIA,OUTTER_DIA,PITCH,CREST_PERCENT,ROOT_PERC
 
 
 
-def Create_Thread_Verts(INNER_DIA,OUTTER_DIA,PITCH,HEIGHT,CREST_PERCENT,ROOT_PERCENT,Z_LOCATION = 0):
+def Create_Thread_Verts(INNER_DIA,OUTTER_DIA,PITCH,HEIGHT,CREST_PERCENT,ROOT_PERCENT,Z_LOCATION,DIV_COUNT):
     verts = []
 
-    DIV = 36
 
     INNER_RADIUS = INNER_DIA/2
     OUTTER_RADIUS = OUTTER_DIA/2
 
     # Half_Pitch = float(PITCH)/2  # UNUSED
-    Deg_Step = 360.0 /float(DIV)
-    Height_Step = float(PITCH)/float(DIV)
+    Deg_Step = 360.0 /float(DIV_COUNT)
+    Height_Step = float(PITCH)/float(DIV_COUNT)
 
     NUM_OF_START_THREADS = 4.0
     NUM_OF_END_THREADS = 3.0
@@ -1236,7 +1229,7 @@ def Create_Thread_Verts(INNER_DIA,OUTTER_DIA,PITCH,HEIGHT,CREST_PERCENT,ROOT_PER
 
     for j in range(Num):
 
-        for i in range(DIV+1):
+        for i in range(DIV_COUNT+1):
             x = sin(radians(i*Deg_Step))*OUTTER_RADIUS
             y = cos(radians(i*Deg_Step))*OUTTER_RADIUS
             z = Height_Offset - (Height_Step*i)
@@ -1245,7 +1238,7 @@ def Create_Thread_Verts(INNER_DIA,OUTTER_DIA,PITCH,HEIGHT,CREST_PERCENT,ROOT_PER
         Height_Offset -= Crest_Height
         Row += 1
 
-        for i in range(DIV+1):
+        for i in range(DIV_COUNT+1):
             x = sin(radians(i*Deg_Step))*OUTTER_RADIUS
             y = cos(radians(i*Deg_Step))*OUTTER_RADIUS
             z = Height_Offset - (Height_Step*i)
@@ -1255,7 +1248,7 @@ def Create_Thread_Verts(INNER_DIA,OUTTER_DIA,PITCH,HEIGHT,CREST_PERCENT,ROOT_PER
         Row += 1
 
 
-        for i in range(DIV+1):
+        for i in range(DIV_COUNT+1):
             x = sin(radians(i*Deg_Step))*INNER_RADIUS
             y = cos(radians(i*Deg_Step))*INNER_RADIUS
             z = Height_Offset - (Height_Step*i)
@@ -1264,7 +1257,7 @@ def Create_Thread_Verts(INNER_DIA,OUTTER_DIA,PITCH,HEIGHT,CREST_PERCENT,ROOT_PER
         Height_Offset -= Root_Height
         Row += 1
 
-        for i in range(DIV+1):
+        for i in range(DIV_COUNT+1):
             x = sin(radians(i*Deg_Step))*INNER_RADIUS
             y = cos(radians(i*Deg_Step))*INNER_RADIUS
             z = Height_Offset - (Height_Step*i)
@@ -1277,17 +1270,16 @@ def Create_Thread_Verts(INNER_DIA,OUTTER_DIA,PITCH,HEIGHT,CREST_PERCENT,ROOT_PER
 
 
 
-def Create_Thread_End_Verts(INNER_DIA,OUTTER_DIA,PITCH,CREST_PERCENT,ROOT_PERCENT,Z_LOCATION = 0):
+def Create_Thread_End_Verts(INNER_DIA,OUTTER_DIA,PITCH,CREST_PERCENT,ROOT_PERCENT,Z_LOCATION,DIV_COUNT):
     verts = []
 
-    DIV = 36
 
     INNER_RADIUS = INNER_DIA/2
     OUTTER_RADIUS = OUTTER_DIA/2
 
     # Half_Pitch = float(PITCH)/2  # UNUSED
-    Deg_Step = 360.0 /float(DIV)
-    Height_Step = float(PITCH)/float(DIV)
+    Deg_Step = 360.0 /float(DIV_COUNT)
+    Height_Step = float(PITCH)/float(DIV_COUNT)
 
     Crest_Height = float(PITCH) * float(CREST_PERCENT)/float(100)
     Root_Height = float(PITCH) * float(ROOT_PERCENT)/float(100)
@@ -1307,7 +1299,7 @@ def Create_Thread_End_Verts(INNER_DIA,OUTTER_DIA,PITCH,CREST_PERCENT,ROOT_PERCEN
     # FaceStart = len(verts)  # UNUSED
     for j in range(4):
 
-        for i in range(DIV+1):
+        for i in range(DIV_COUNT+1):
             z = Height_Offset - (Height_Step*i)
             z = max(z,Max_Height)
             Tapper_Radius = OUTTER_RADIUS
@@ -1321,7 +1313,7 @@ def Create_Thread_End_Verts(INNER_DIA,OUTTER_DIA,PITCH,CREST_PERCENT,ROOT_PERCEN
         Height_Offset -= Crest_Height
         Row += 1
 
-        for i in range(DIV+1):
+        for i in range(DIV_COUNT+1):
             z = Height_Offset - (Height_Step*i)
             z = max(z,Max_Height)
             Tapper_Radius = OUTTER_RADIUS
@@ -1336,7 +1328,7 @@ def Create_Thread_End_Verts(INNER_DIA,OUTTER_DIA,PITCH,CREST_PERCENT,ROOT_PERCEN
         Row += 1
 
 
-        for i in range(DIV+1):
+        for i in range(DIV_COUNT+1):
             z = Height_Offset - (Height_Step*i)
             z = max(z,Max_Height)
             Tapper_Radius = OUTTER_RADIUS - (Tapper_Height_Start - z)
@@ -1350,7 +1342,7 @@ def Create_Thread_End_Verts(INNER_DIA,OUTTER_DIA,PITCH,CREST_PERCENT,ROOT_PERCEN
         Height_Offset -= Root_Height
         Row += 1
 
-        for i in range(DIV+1):
+        for i in range(DIV_COUNT+1):
             z = Height_Offset - (Height_Step*i)
             z = max(z,Max_Height)
             Tapper_Radius = OUTTER_RADIUS - (Tapper_Height_Start - z)
@@ -1369,12 +1361,10 @@ def Create_Thread_End_Verts(INNER_DIA,OUTTER_DIA,PITCH,CREST_PERCENT,ROOT_PERCEN
 
 
 
-def Create_External_Thread(SHANK_DIA,SHANK_LENGTH,INNER_DIA,OUTTER_DIA,PITCH,LENGTH,CREST_PERCENT,ROOT_PERCENT):
+def Create_External_Thread(SHANK_DIA,SHANK_LENGTH,INNER_DIA,OUTTER_DIA,PITCH,LENGTH,CREST_PERCENT,ROOT_PERCENT,DIV_COUNT):
 
     verts = []
     faces = []
-
-    DIV = 36
 
     Total_Row = 0
     # Thread_Len = 0  # UNUSED
@@ -1383,18 +1373,18 @@ def Create_External_Thread(SHANK_DIA,SHANK_LENGTH,INNER_DIA,OUTTER_DIA,PITCH,LEN
     Offset = 0.0;
 
 
-    Shank_Verts,Shank_Row,Offset = Create_Shank_Verts(SHANK_DIA,OUTTER_DIA,SHANK_LENGTH,Offset)
+    Shank_Verts,Shank_Row,Offset = Create_Shank_Verts(SHANK_DIA,OUTTER_DIA,SHANK_LENGTH,Offset,DIV_COUNT)
     Total_Row += Shank_Row
 
-    Thread_Start_Verts,Thread_Start_Row,Offset = Create_Thread_Start_Verts(INNER_DIA,OUTTER_DIA,PITCH,CREST_PERCENT,ROOT_PERCENT,Offset)
+    Thread_Start_Verts,Thread_Start_Row,Offset = Create_Thread_Start_Verts(INNER_DIA,OUTTER_DIA,PITCH,CREST_PERCENT,ROOT_PERCENT,Offset,DIV_COUNT)
     Total_Row += Thread_Start_Row
 
 
-    Thread_Verts,Thread_Row,Offset = Create_Thread_Verts(INNER_DIA,OUTTER_DIA,PITCH,LENGTH,CREST_PERCENT,ROOT_PERCENT,Offset)
+    Thread_Verts,Thread_Row,Offset = Create_Thread_Verts(INNER_DIA,OUTTER_DIA,PITCH,LENGTH,CREST_PERCENT,ROOT_PERCENT,Offset,DIV_COUNT)
     Total_Row += Thread_Row
 
 
-    Thread_End_Verts,Thread_End_Row,Offset,Lowest_Z_Vert = Create_Thread_End_Verts(INNER_DIA,OUTTER_DIA,PITCH,CREST_PERCENT,ROOT_PERCENT,Offset )
+    Thread_End_Verts,Thread_End_Row,Offset,Lowest_Z_Vert = Create_Thread_End_Verts(INNER_DIA,OUTTER_DIA,PITCH,CREST_PERCENT,ROOT_PERCENT,Offset,DIV_COUNT )
     Total_Row += Thread_End_Row
 
 
@@ -1403,8 +1393,8 @@ def Create_External_Thread(SHANK_DIA,SHANK_LENGTH,INNER_DIA,OUTTER_DIA,PITCH,LEN
     verts.extend(Thread_Verts)
     verts.extend(Thread_End_Verts)
 
-    faces.extend(Build_Face_List_Quads(Face_Start,DIV,Total_Row -1,0))
-    faces.extend(Fill_Ring_Face(len(verts)-DIV,DIV,1))
+    faces.extend(Build_Face_List_Quads(Face_Start,DIV_COUNT,Total_Row -1,0))
+    faces.extend(Fill_Ring_Face(len(verts)-DIV_COUNT,DIV_COUNT,1))
 
     return verts,faces,0.0 - Lowest_Z_Vert
 
@@ -1566,8 +1556,7 @@ def add_Hex_Nut(FLAT,HOLE_DIA,HEIGHT):
 
 
 
-def add_Nylon_Head(OUTSIDE_RADIUS,Z_LOCATION = 0):
-    DIV = 36
+def add_Nylon_Head(OUTSIDE_RADIUS,Z_LOCATION,DIV_COUNT):
     verts = []
     faces = []
     Row = 0
@@ -1611,17 +1600,16 @@ def add_Nylon_Head(OUTSIDE_RADIUS,Z_LOCATION = 0):
     Lowest_Z_Vert = min(Lowest_Z_Vert,z)
     Row += 1
 
-    sVerts,sFaces = SpinDup(verts,faces,360,DIV,'z')
+    sVerts,sFaces = SpinDup(verts,faces,360,DIV_COUNT,'z')
     sVerts.extend(verts)        #add the start verts to the Spin verts to complete the loop
 
-    faces.extend(Build_Face_List_Quads(FaceStart,Row-1,DIV))
+    faces.extend(Build_Face_List_Quads(FaceStart,Row-1,DIV_COUNT))
 
     return Move_Verts_Up_Z(sVerts,0),faces,Lowest_Z_Vert
 
 
 
-def add_Nylon_Part(OUTSIDE_RADIUS,Z_LOCATION = 0):
-    DIV = 36
+def add_Nylon_Part(OUTSIDE_RADIUS,Z_LOCATION,DIV_COUNT):
     verts = []
     faces = []
     Row = 0
@@ -1665,10 +1653,10 @@ def add_Nylon_Part(OUTSIDE_RADIUS,Z_LOCATION = 0):
     Row += 1
 
 
-    sVerts,sFaces = SpinDup(verts,faces,360,DIV,'z')
+    sVerts,sFaces = SpinDup(verts,faces,360,DIV_COUNT,'z')
     sVerts.extend(verts)  #add the start verts to the Spin verts to complete the loop
 
-    faces.extend(Build_Face_List_Quads(FaceStart,Row-1,DIV,1))
+    faces.extend(Build_Face_List_Quads(FaceStart,Row-1,DIV_COUNT,1))
 
     return sVerts,faces,0 - Lowest_Z_Vert
 
@@ -1843,18 +1831,17 @@ def Create_Internal_Thread_End_Verts(verts,INNER_RADIUS,OUTTER_RADIUS,PITCH,DIV,
     return Ret_Row,Height_End  # send back Height End as this is the lowest point
 
 
-def Create_Internal_Thread(INNER_DIA,OUTTER_DIA,PITCH,HEIGHT,CREST_PERCENT,ROOT_PERCENT,INTERNAL = 1):
+def Create_Internal_Thread(INNER_DIA,OUTTER_DIA,PITCH,HEIGHT,CREST_PERCENT,ROOT_PERCENT,INTERNAL,DIV_COUNT):
     verts = []
     faces = []
 
-    DIV = 36
 
     INNER_RADIUS = INNER_DIA/2
     OUTTER_RADIUS = OUTTER_DIA/2
 
     # Half_Pitch = float(PITCH)/2  # UNUSED
-    Deg_Step = 360.0 /float(DIV)
-    Height_Step = float(PITCH)/float(DIV)
+    Deg_Step = 360.0 /float(DIV_COUNT)
+    Height_Step = float(PITCH)/float(DIV_COUNT)
 
     Num = int(round((HEIGHT- PITCH)/PITCH))  # less one pitch for the start and end that is 1/2 pitch high
 
@@ -1869,33 +1856,33 @@ def Create_Internal_Thread(INNER_DIA,OUTTER_DIA,PITCH,HEIGHT,CREST_PERCENT,ROOT_
     Height_Offset = 0
     FaceStart = len(verts)
 
-    Row_Inc,Height_Offset = Create_Internal_Thread_Start_Verts(verts,INNER_RADIUS,OUTTER_RADIUS,PITCH,DIV,CREST_PERCENT,ROOT_PERCENT,Height_Offset)
+    Row_Inc,Height_Offset = Create_Internal_Thread_Start_Verts(verts,INNER_RADIUS,OUTTER_RADIUS,PITCH,DIV_COUNT,CREST_PERCENT,ROOT_PERCENT,Height_Offset)
     Row += Row_Inc
 
     for j in range(Num):
 
-        for i in range(DIV+1):
+        for i in range(DIV_COUNT+1):
             x = sin(radians(i*Deg_Step))*OUTTER_RADIUS
             y = cos(radians(i*Deg_Step))*OUTTER_RADIUS
             verts.append([x,y,Height_Offset - (Height_Step*i) ])
         Height_Offset -= Crest_Height
         Row += 1
 
-        for i in range(DIV+1):
+        for i in range(DIV_COUNT+1):
             x = sin(radians(i*Deg_Step))*OUTTER_RADIUS
             y = cos(radians(i*Deg_Step))*OUTTER_RADIUS
             verts.append([x,y,Height_Offset - (Height_Step*i) ])
         Height_Offset -= Crest_to_Root_Height
         Row += 1
 
-        for i in range(DIV+1):
+        for i in range(DIV_COUNT+1):
             x = sin(radians(i*Deg_Step))*INNER_RADIUS
             y = cos(radians(i*Deg_Step))*INNER_RADIUS
             verts.append([x,y,Height_Offset - (Height_Step*i) ])
         Height_Offset -= Root_Height
         Row += 1
 
-        for i in range(DIV+1):
+        for i in range(DIV_COUNT+1):
             x = sin(radians(i*Deg_Step))*INNER_RADIUS
             y = cos(radians(i*Deg_Step))*INNER_RADIUS
             verts.append([x,y,Height_Offset - (Height_Step*i) ])
@@ -1903,10 +1890,10 @@ def Create_Internal_Thread(INNER_DIA,OUTTER_DIA,PITCH,HEIGHT,CREST_PERCENT,ROOT_
         Row += 1
 
 
-    Row_Inc,Height_Offset = Create_Internal_Thread_End_Verts(verts,INNER_RADIUS,OUTTER_RADIUS,PITCH,DIV,CREST_PERCENT,ROOT_PERCENT,Height_Offset)
+    Row_Inc,Height_Offset = Create_Internal_Thread_End_Verts(verts,INNER_RADIUS,OUTTER_RADIUS,PITCH,DIV_COUNT,CREST_PERCENT,ROOT_PERCENT,Height_Offset)
     Row += Row_Inc
 
-    faces.extend(Build_Face_List_Quads(FaceStart,DIV,Row -1,INTERNAL))
+    faces.extend(Build_Face_List_Quads(FaceStart,DIV_COUNT,Row -1,INTERNAL))
 
     return verts,faces,0 - Height_Offset
 
@@ -1922,7 +1909,7 @@ def Nut_Mesh(props, context):
     New_Nut_Height = 5
 
     Face_Start = len(verts)
-    Thread_Verts,Thread_Faces,New_Nut_Height = Create_Internal_Thread(props.bf_Minor_Dia,props.bf_Major_Dia,props.bf_Pitch,props.bf_Hex_Nut_Height,props.bf_Crest_Percent,props.bf_Root_Percent,1)
+    Thread_Verts,Thread_Faces,New_Nut_Height = Create_Internal_Thread(props.bf_Minor_Dia,props.bf_Major_Dia,props.bf_Pitch,props.bf_Hex_Nut_Height,props.bf_Crest_Percent,props.bf_Root_Percent,1,props.bf_Div_Count)
     verts.extend(Thread_Verts)
     faces.extend(Copy_Faces(Thread_Faces,Face_Start))
 
@@ -1935,12 +1922,12 @@ def Nut_Mesh(props, context):
 
     if props.bf_Nut_Type == 'bf_Nut_Lock':
         Face_Start = len(verts)
-        Nylon_Head_Verts,Nylon_Head_faces,LowZ = add_Nylon_Head(Lock_Nut_Rad,0-New_Nut_Height)
+        Nylon_Head_Verts,Nylon_Head_faces,LowZ = add_Nylon_Head(Lock_Nut_Rad,0-New_Nut_Height,props.bf_Div_Count)
         verts.extend((Nylon_Head_Verts))
         faces.extend(Copy_Faces(Nylon_Head_faces,Face_Start))
 
         Face_Start = len(verts)
-        Nylon_Verts,Nylon_faces,Temp_LowZ = add_Nylon_Part(Lock_Nut_Rad,0-New_Nut_Height)
+        Nylon_Verts,Nylon_faces,Temp_LowZ = add_Nylon_Part(Lock_Nut_Rad,0-New_Nut_Height,props.bf_Div_Count)
         verts.extend((Nylon_Verts))
         faces.extend(Copy_Faces(Nylon_faces,Face_Start))
 
@@ -1997,16 +1984,16 @@ def Bolt_Mesh(props, context):
         Head_Verts,Head_Faces,Head_Height = Create_Hex_Head(props.bf_Hex_Head_Flat_Distance,Bit_Dia,props.bf_Shank_Dia,props.bf_Hex_Head_Height)
 
     elif props.bf_Head_Type == 'bf_Head_Cap':
-        Head_Verts,Head_Faces,Head_Height = Create_Cap_Head(Bit_Dia,props.bf_Cap_Head_Dia,props.bf_Shank_Dia,props.bf_Cap_Head_Height,props.bf_Cap_Head_Dia*(1.0/19.0),props.bf_Cap_Head_Dia*(1.0/19.0))
+        Head_Verts,Head_Faces,Head_Height = Create_Cap_Head(Bit_Dia,props.bf_Cap_Head_Dia,props.bf_Shank_Dia,props.bf_Cap_Head_Height,props.bf_Cap_Head_Dia*(1.0/19.0),props.bf_Cap_Head_Dia*(1.0/19.0),props.DIV_COUNT)
 
     elif props.bf_Head_Type =='bf_Head_Dome':
-        Head_Verts,Head_Faces,Head_Height = Create_Dome_Head(Bit_Dia,props.bf_Dome_Head_Dia,props.bf_Shank_Dia,props.bf_Hex_Head_Height,1,1,0)
+        Head_Verts,Head_Faces,Head_Height = Create_Dome_Head(Bit_Dia,props.bf_Dome_Head_Dia,props.bf_Shank_Dia,props.bf_Hex_Head_Height,1,1,0,props.bf_Div_Count)
 
     elif props.bf_Head_Type == 'bf_Head_Pan':
-        Head_Verts,Head_Faces,Head_Height = Create_Pan_Head(Bit_Dia,props.bf_Pan_Head_Dia,props.bf_Shank_Dia,props.bf_Hex_Head_Height,1,1,0)
+        Head_Verts,Head_Faces,Head_Height = Create_Pan_Head(Bit_Dia,props.bf_Pan_Head_Dia,props.bf_Shank_Dia,props.bf_Hex_Head_Height,1,1,0,props.bf_Div_Count)
 
     elif props.bf_Head_Type == 'bf_Head_CounterSink':
-        Head_Verts,Head_Faces,Head_Height = Create_CounterSink_Head(Bit_Dia,props.bf_CounterSink_Head_Dia,props.bf_Shank_Dia,props.bf_CounterSink_Head_Dia,props.bf_CounterSink_Head_Dia*(0.09/6.31))
+        Head_Verts,Head_Faces,Head_Height = Create_CounterSink_Head(Bit_Dia,props.bf_CounterSink_Head_Dia,props.bf_Shank_Dia,props.bf_CounterSink_Head_Dia,props.bf_CounterSink_Head_Dia*(0.09/6.31),props.bf_Div_Count)
 #Head_Verts,Head_Faces,Head_Height = Create_CounterSink_Head(Bit_Dia,props.bf_CounterSink_Head_Dia,props.bf_Shank_Dia,props.bf_CounterSink_Head_Dia,props.bf_CounterSink_Head_Dia*(1.0/19.0))
 
     Face_Start = len(verts)
@@ -2018,7 +2005,7 @@ def Bolt_Mesh(props, context):
     faces.extend(Copy_Faces(Head_Faces,Face_Start))
 
     Face_Start = len(verts)
-    Thread_Verts,Thread_Faces,Thread_Height = Create_External_Thread(props.bf_Shank_Dia,props.bf_Shank_Length,props.bf_Minor_Dia,props.bf_Major_Dia,props.bf_Pitch,props.bf_Thread_Length,props.bf_Crest_Percent,props.bf_Root_Percent)
+    Thread_Verts,Thread_Faces,Thread_Height = Create_External_Thread(props.bf_Shank_Dia,props.bf_Shank_Length,props.bf_Minor_Dia,props.bf_Major_Dia,props.bf_Pitch,props.bf_Thread_Length,props.bf_Crest_Percent,props.bf_Root_Percent,props.bf_Div_Count)
 
     verts.extend(Move_Verts_Up_Z(Thread_Verts,00))
     faces.extend(Copy_Faces(Thread_Faces,Face_Start))

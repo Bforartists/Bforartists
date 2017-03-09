@@ -33,6 +33,7 @@ class switch_editors_in_graph(bpy.types.Operator):
 
 ##########################################################################
 
+
 class GRAPH_HT_header(Header):
     bl_space_type = 'GRAPH_EDITOR'
 
@@ -59,10 +60,11 @@ class GRAPH_HT_header(Header):
 
         dopesheet_filter(layout, context)
 
-        layout.prop(st, "use_normalization", text="Normalize")
-        row = layout.row()
-        row.active = st.use_normalization
-        row.prop(st, "use_auto_normalization", text="Auto")
+        row = layout.row(align=True)
+        row.prop(st, "use_normalization", icon='NORMALIZE_FCURVES', text="Normalize", toggle=True)
+        sub = row.row(align=True)
+        sub.active = st.use_normalization
+        sub.prop(st, "use_auto_normalization", icon='FILE_REFRESH', text="", toggle=True)
 
         row = layout.row(align=True)
 
@@ -153,9 +155,8 @@ class GRAPH_MT_view(Menu):
 
         layout.separator()
         layout.operator("screen.area_dupli")
-        #layout.operator("screen.screen_full_area", text="Toggle Maximize Area")
         layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area") # bfa - the separated tooltip. Class is in space_text.py
-        layout.operator("screen.screen_full_area").use_hide_panels = True
+        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area").use_hide_panels = True
 
 
 class GRAPH_MT_select(Menu):
@@ -179,8 +180,10 @@ class GRAPH_MT_select(Menu):
         props.axis_range = False
         props.include_handles = True
         props = layout.operator("graph.select_border", text="Border (Axis + Handles)")
-        props.axis_range = True
+        props.axis_range = False
         props.include_handles = True
+
+        layout.operator("graph.select_circle")
 
         layout.separator()
         layout.operator("graph.select_column", text="Columns on Selected Keys").mode = 'KEYS'
@@ -198,10 +201,12 @@ class GRAPH_MT_select(Menu):
         props.mode = 'RIGHT'
 
         layout.separator()
+
         layout.operator("graph.select_more",text = "More")
         layout.operator("graph.select_less",text = "Less")
 
         layout.separator()
+
         layout.operator("graph.select_linked",text = "Linked")
 
 
@@ -215,6 +220,7 @@ class GRAPH_MT_marker(Menu):
         marker_menu_generic(layout)
 
         # TODO: pose markers for action edit mode only?
+
 
 # Workaround to separate the tooltips for Toggle Maximize Area
 class GRAPH_MT_channel_hide_unselected_curves(bpy.types.Operator):
@@ -320,6 +326,20 @@ class GRAPH_MT_key_transform(Menu):
         layout.operator("transform.transform", text="Extend").mode = 'TIME_EXTEND'
         layout.operator("transform.rotate", text="Rotate")
         layout.operator("transform.resize", text="Scale")
+
+
+class GRAPH_MT_delete(Menu):
+    bl_label = "Delete"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("graph.delete")
+
+        layout.separator()
+
+        layout.operator("graph.clean").channels = False
+        layout.operator("graph.clean", text="Clean Channels").channels = True
 
 
 if __name__ == "__main__":  # only for live edit.

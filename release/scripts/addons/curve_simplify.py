@@ -1,4 +1,4 @@
-﻿# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -16,14 +16,12 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-# fixed for Bforartists. Shows in Tool Shelf now.
-
 bl_info = {
     "name": "Simplify Curves",
     "author": "testscreenings",
     "version": (1, 0, 1),
     "blender": (2, 75, 0),
-    "location": "View3D > Tool Shelf > Create > Add Misc",
+    "location": "Search > Simplify Curves",
     "description": "Simplifies 3D Curve objects and animation F-Curves",
     "warning": "",
     "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
@@ -619,17 +617,14 @@ def register():
 
     bpy.types.GRAPH_MT_channel.append(menu_func)
     bpy.types.DOPESHEET_MT_channel.append(menu_func)
-
-    #bpy.types.INFO_MT_curve_add.append(menu)
-    bpy.types.VIEW3D_PT_tools_add_misc.append(menu)
+    bpy.types.INFO_MT_curve_add.append(menu)
 
 def unregister():
 
     bpy.types.GRAPH_MT_channel.remove(menu_func)
     bpy.types.DOPESHEET_MT_channel.remove(menu_func)
-    bpy.types.VIEW3D_PT_tools_add_misc.remove(menu)
+    bpy.types.INFO_MT_curve_add.remove(menu)
 
-    #bpy.utils.unregister_module(__name__)
     bpy.utils.unregister_module(__name__)
 
 if __name__ == "__main__":

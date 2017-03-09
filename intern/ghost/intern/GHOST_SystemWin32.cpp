@@ -41,7 +41,7 @@
 
 #include <shlobj.h>
 #include <tlhelp32.h>
-#include <Psapi.h>
+#include <psapi.h>
 #include <windowsx.h>
 
 #include "utfconv.h"
@@ -57,7 +57,7 @@
 #include "GHOST_WindowWin32.h"
 
 #ifdef WITH_INPUT_NDOF
-#include "GHOST_NDOFManagerWin32.h"
+  #include "GHOST_NDOFManagerWin32.h"
 #endif
 
 // Key code values not found in winuser.h
@@ -125,9 +125,9 @@
 static void initRawInput()
 {
 #ifdef WITH_INPUT_NDOF
-#define DEVICE_COUNT 2
+  #define DEVICE_COUNT 2
 #else
-#define DEVICE_COUNT 1
+  #define DEVICE_COUNT 1
 #endif
 
 	RAWINPUTDEVICE devices[DEVICE_COUNT];
@@ -241,7 +241,7 @@ GHOST_IWindow *GHOST_SystemWin32::createWindow(
 		        state,
 		        type,
 		        ((glSettings.flags & GHOST_glStereoVisual) != 0),
-	            ((glSettings.flags & GHOST_glWarnSupport) != 0),
+		        ((glSettings.flags & GHOST_glAlphaBackground) != 0),
 		        glSettings.numOfAASamples,
 		        parentWindow,
 		        ((glSettings.flags & GHOST_glDebugContext) != 0));
@@ -254,7 +254,7 @@ GHOST_IWindow *GHOST_SystemWin32::createWindow(
 	else {
 		GHOST_PRINT("GHOST_SystemWin32::createWindow(): window invalid\n");
 		delete window;
-		window = 0;
+		window = NULL;
 	}
 
 	return window;
@@ -409,7 +409,11 @@ GHOST_TSuccess GHOST_SystemWin32::init()
 			::LoadIcon(NULL, IDI_APPLICATION);
 		}
 		wc.hCursor = ::LoadCursor(0, IDC_ARROW);
-		wc.hbrBackground = 0;
+		wc.hbrBackground = 
+#ifdef INW32_COMPISITING
+			(HBRUSH)CreateSolidBrush
+#endif
+			(0x00000000);
 		wc.lpszMenuName = 0;
 		wc.lpszClassName = L"GHOST_WindowClass";
 
@@ -708,18 +712,26 @@ GHOST_EventCursor *GHOST_SystemWin32::processCursorEvent(GHOST_TEventType type, 
 }
 
 
-GHOST_EventWheel *GHOST_SystemWin32::processWheelEvent(GHOST_WindowWin32 *window, WPARAM wParam, LPARAM lParam)
+void GHOST_SystemWin32::processWheelEvent(GHOST_WindowWin32 *window, WPARAM wParam, LPARAM lParam)
 {
-	// short fwKeys = LOWORD(wParam);			// key flags
-	int zDelta = (short) HIWORD(wParam);    // wheel rotation
-	
-	// zDelta /= WHEEL_DELTA;
-	// temporary fix below: microsoft now has added more precision, making the above division not work
-	zDelta = (zDelta <= 0) ? -1 : 1;
+	GHOST_SystemWin32 *system = (GHOST_SystemWin32 *)getSystem();
 
-	// short xPos = (short) LOWORD(lParam);	// horizontal position of pointer
-	// short yPos = (short) HIWORD(lParam);	// vertical position of pointer
-	return new GHOST_EventWheel(getSystem()->getMilliSeconds(), window, zDelta);
+	int acc = system->m_wheelDeltaAccum;
+	int delta = GET_WHEEL_DELTA_WPARAM(wParam);
+	
+	if (acc * delta < 0) {
+		// scroll direction reversed.
+		acc = 0;
+	}
+	acc += delta;
+	int direction = (acc >= 0) ? 1 : -1;
+	acc = abs(acc);
+	
+	while (acc >= WHEEL_DELTA) {
+		system->pushEvent(new GHOST_EventWheel(system->getMilliSeconds(), window, direction));
+		acc -= WHEEL_DELTA;
+	}
+	system->m_wheelDeltaAccum = acc * direction;
 }
 
 
@@ -767,7 +779,7 @@ GHOST_EventKey *GHOST_SystemWin32::processKeyEvent(GHOST_WindowWin32 *window, RA
 		// GHOST_PRINTF("%c\n", ascii); // we already get this info via EventPrinter
 	}
 	else {
-		event = 0;
+		event = NULL;
 	}
 	return event;
 }
@@ -867,12 +879,12 @@ bool GHOST_SystemWin32::processNDOF(RAWINPUT const &raw)
 		{
 			const short *axis = (short *)(data + 1);
 			// massage into blender view coords (same goes for rotation)
-			const short t[3] = {axis[0], -axis[2], axis[1]};
+			const int t[3] = {axis[0], -axis[2], axis[1]};
 			m_ndofManager->updateTranslation(t, now);
 
 			if (raw.data.hid.dwSizeHid == 13) {
 				// this report also includes rotation
-				const short r[3] = {-axis[3], axis[5], -axis[4]};
+				const int r[3] = {-axis[3], axis[5], -axis[4]};
 				m_ndofManager->updateRotation(r, now);
 
 				// I've never gotten one of these, has anyone else?
@@ -883,7 +895,7 @@ bool GHOST_SystemWin32::processNDOF(RAWINPUT const &raw)
 		case 2: // rotation
 		{
 			const short *axis = (short *)(data + 1);
-			const short r[3] = {-axis[0], axis[2], -axis[1]};
+			const int r[3] = {-axis[0], axis[2], -axis[1]};
 			m_ndofManager->updateRotation(r, now);
 			break;
 		}
@@ -901,7 +913,7 @@ bool GHOST_SystemWin32::processNDOF(RAWINPUT const &raw)
 
 LRESULT WINAPI GHOST_SystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	GHOST_Event *event = 0;
+	GHOST_Event *event = NULL;
 	bool eventHandled = false;
 
 	LRESULT lResult = 0;
@@ -1133,14 +1145,9 @@ LRESULT WINAPI GHOST_SystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, 
 					POINT mouse_pos = {GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
 					HWND mouse_hwnd = ChildWindowFromPoint(HWND_DESKTOP, mouse_pos);
 					GHOST_WindowWin32 *mouse_window = (GHOST_WindowWin32 *)::GetWindowLongPtr(mouse_hwnd, GWLP_USERDATA);
-					if (mouse_window != NULL) {
-						event = processWheelEvent(mouse_window, wParam, lParam);
-					}
-					else {
-						/* Happens when mouse is not over any of blender's windows. */
-						event = processWheelEvent(window, wParam, lParam);
-					}
-
+					
+					processWheelEvent(mouse_window ? mouse_window : window , wParam, lParam);
+					eventHandled = true;
 #ifdef BROKEN_PEEK_TOUCHPAD
 					PostMessage(hwnd, WM_USER, 0, 0);
 #endif
@@ -1199,6 +1206,7 @@ LRESULT WINAPI GHOST_SystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, 
 					GHOST_ModifierKeys modifiers;
 					modifiers.clear();
 					system->storeModifierKeys(modifiers);
+					system->m_wheelDeltaAccum = 0;
 					event = processWindowEvent(LOWORD(wParam) ? GHOST_kEventWindowActivate : GHOST_kEventWindowDeactivate, window);
 					/* WARNING: Let DefWindowProc handle WM_ACTIVATE, otherwise WM_MOUSEWHEEL
 					 * will not be dispatched to OUR active window if we minimize one of OUR windows. */
@@ -1541,8 +1549,7 @@ static bool isStartedFromCommandPrompt()
 
 int GHOST_SystemWin32::toggleConsole(int action)
 {
-	switch (action)
-	{
+	switch (action) {
 		case 3: // startup: hide if not started from command prompt
 		{
 			if (isStartedFromCommandPrompt()) {

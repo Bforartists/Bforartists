@@ -100,7 +100,33 @@ class LightFieldPropertyGroup(bpy.types.PropertyGroup):
             min=0,
             description="The spacing in pixels between two cameras on the focal plane")
 
+## Addons Preferences Update Panel
+def update_panel(self, context):
+    try:
+        bpy.utils.unregister_class(light_field_tools.VIEW3D_OT_lightfield_tools)
+    except:
+        pass
+    light_field_tools.VIEW3D_OT_lightfield_tools.bl_category = context.user_preferences.addons[__name__].preferences.category
+    bpy.utils.register_class(light_field_tools.VIEW3D_OT_lightfield_tools)
 
+class LFTPreferences(bpy.types.AddonPreferences):
+    # this must match the addon name, use '__package__'
+    # when defining this in a submodule of a python package.
+    bl_idname = __name__
+
+    category = bpy.props.StringProperty(
+            name="Tab Category",
+            description="Choose a name for the category of the panel",
+            default="Tools",
+            update=update_panel)
+
+    def draw(self, context):
+
+        layout = self.layout
+        row = layout.row()
+        col = row.column()
+        col.label(text="Tab Category:")
+        col.prop(self, "category", text="")
 
 def register():
     # register properties

@@ -61,6 +61,76 @@ int BVHNode::getSubtreeSize(BVH_STAT stat) const
 				}
 			}
 			return cnt;
+		case BVH_STAT_ALIGNED_COUNT:
+			if(!is_unaligned()) {
+				cnt = 1;
+			}
+			break;
+		case BVH_STAT_UNALIGNED_COUNT:
+			if(is_unaligned()) {
+				cnt = 1;
+			}
+			break;
+		case BVH_STAT_ALIGNED_INNER_COUNT:
+			if(!is_leaf()) {
+				bool has_unaligned = false;
+				for(int j = 0; j < num_children(); j++) {
+					has_unaligned |= get_child(j)->is_unaligned();
+				}
+				cnt += has_unaligned? 0: 1;
+			}
+			break;
+		case BVH_STAT_UNALIGNED_INNER_COUNT:
+			if(!is_leaf()) {
+				bool has_unaligned = false;
+				for(int j = 0; j < num_children(); j++) {
+					has_unaligned |= get_child(j)->is_unaligned();
+				}
+				cnt += has_unaligned? 1: 0;
+			}
+			break;
+		case BVH_STAT_ALIGNED_INNER_QNODE_COUNT:
+			{
+				bool has_unaligned = false;
+				for(int i = 0; i < num_children(); i++) {
+					BVHNode *node = get_child(i);
+					if(node->is_leaf()) {
+						has_unaligned |= node->is_unaligned();
+					}
+					else {
+						for(int j = 0; j < node->num_children(); j++) {
+							cnt += node->get_child(j)->getSubtreeSize(stat);
+							has_unaligned |= node->get_child(j)->is_unaligned();
+						}
+					}
+				}
+				cnt += has_unaligned? 0: 1;
+			}
+			return cnt;
+		case BVH_STAT_UNALIGNED_INNER_QNODE_COUNT:
+			{
+				bool has_unaligned = false;
+				for(int i = 0; i < num_children(); i++) {
+					BVHNode *node = get_child(i);
+					if(node->is_leaf()) {
+						has_unaligned |= node->is_unaligned();
+					}
+					else {
+						for(int j = 0; j < node->num_children(); j++) {
+							cnt += node->get_child(j)->getSubtreeSize(stat);
+							has_unaligned |= node->get_child(j)->is_unaligned();
+						}
+					}
+				}
+				cnt += has_unaligned? 1: 0;
+			}
+			return cnt;
+		case BVH_STAT_ALIGNED_LEAF_COUNT:
+			cnt = (is_leaf() && !is_unaligned()) ? 1 : 0;
+			break;
+		case BVH_STAT_UNALIGNED_LEAF_COUNT:
+			cnt = (is_leaf() && is_unaligned()) ? 1 : 0;
+			break;
 		default:
 			assert(0); /* unknown mode */
 	}
@@ -104,6 +174,19 @@ uint BVHNode::update_visibility()
 	}
 
 	return m_visibility;
+}
+
+void BVHNode::update_time()
+{
+	if(!is_leaf()) {
+		InnerNode *inner = (InnerNode*)this;
+		BVHNode *child0 = inner->children[0];
+		BVHNode *child1 = inner->children[1];
+		child0->update_time();
+		child1->update_time();
+		m_time_from = min(child0->m_time_from, child1->m_time_from);
+		m_time_to =  max(child0->m_time_to, child1->m_time_to);
+	}
 }
 
 /* Inner Node */

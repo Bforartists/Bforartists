@@ -237,6 +237,13 @@ typedef struct View3D {
 	float stereo3d_convergence_factor;
 	float stereo3d_volume_alpha;
 	float stereo3d_convergence_alpha;
+
+	/* Previous viewport draw type.
+	 * Runtime-only, set in the rendered viewport toggle operator.
+	 */
+	short prev_drawtype;
+	short pad1;
+	float pad2;
 } View3D;
 
 
@@ -249,7 +256,6 @@ typedef struct View3D {
 /*#define V3D_DISPIMAGE		1*/ /*UNUSED*/
 #define V3D_DISPBGPICS		2
 #define V3D_HIDE_HELPLINES	4
-#define V3D_INVALID_BACKBUF	8
 #define V3D_INVALID_BACKBUF	8
 
 #define V3D_ALIGN			1024
@@ -289,11 +295,10 @@ typedef struct View3D {
 #define RV3D_VIEW_RIGHT			 4
 #define RV3D_VIEW_TOP			 5
 #define RV3D_VIEW_BOTTOM		 6
-#define RV3D_VIEW_PERSPORTHO	 7
 #define RV3D_VIEW_CAMERA		 8
 
 #define RV3D_VIEW_IS_AXIS(view) \
-	((view >= RV3D_VIEW_FRONT) && (view <= RV3D_VIEW_BOTTOM))
+	(((view) >= RV3D_VIEW_FRONT) && ((view) <= RV3D_VIEW_BOTTOM))
 
 /* View3d->flag2 (short) */
 #define V3D_WIRE_COLOR_NOCUSTOM	(1 << 1) // bfa - custom wireframe colors
@@ -317,14 +322,22 @@ typedef struct View3D {
 #define V3D_SHOW_WORLD			(1 << 0)
 #define V3D_HIDE_CURSOR         (1 << 1) // bfa - show hide 3d cursor
 #define V3D_HIDE_GROUNDGRID     (1 << 2) // bfa - show hide the whole groundgrid. Also in 2d view orthographic
+#define V3D_SHOW_ICONBUTTONS    (1 << 3) // bfa - show hide the icon buttons
 #define V3D_LOCK_CURSOR			(1 << 14)// bfa	/* Custom flag for locking the 3D cursor */
 
 /* View3D->around */
-#define V3D_CENTER		 0
-#define V3D_CENTROID	 3
-#define V3D_CURSOR		 1
-#define V3D_LOCAL		 2
-#define V3D_ACTIVE		 4
+enum {
+	/* center of the bounding box */
+	V3D_AROUND_CENTER_BOUNDS	= 0,
+	/* center from the sum of all points divided by the total */
+	V3D_AROUND_CENTER_MEAN		= 3,
+	/* pivot around the 2D/3D cursor */
+	V3D_AROUND_CURSOR			= 1,
+	/* pivot around each items own origin */
+	V3D_AROUND_LOCAL_ORIGINS	= 2,
+	/* pivot around the active items origin */
+	V3D_AROUND_ACTIVE			= 4,
+};
 
 /*View3D types (only used in tools, not actually saved)*/
 #define V3D_VIEW_STEPLEFT		 1

@@ -92,7 +92,7 @@ static int text_edit_poll(bContext *C)
 	if (!text)
 		return 0;
 
-	if (text->id.lib) {
+	if (ID_IS_LINKED_DATABLOCK(text)) {
 		// BKE_report(op->reports, RPT_ERROR, "Cannot edit external libdata");
 		return 0;
 	}
@@ -108,7 +108,7 @@ int text_space_edit_poll(bContext *C)
 	if (!st || !text)
 		return 0;
 
-	if (text->id.lib) {
+	if (ID_IS_LINKED_DATABLOCK(text)) {
 		// BKE_report(op->reports, RPT_ERROR, "Cannot edit external libdata");
 		return 0;
 	}
@@ -128,7 +128,7 @@ static int text_region_edit_poll(bContext *C)
 	if (!ar || ar->regiontype != RGN_TYPE_WINDOW)
 		return 0;
 
-	if (text->id.lib) {
+	if (ID_IS_LINKED_DATABLOCK(text)) {
 		// BKE_report(op->reports, RPT_ERROR, "Cannot edit external libdata");
 		return 0;
 	}
@@ -248,12 +248,14 @@ static int text_open_exec(bContext *C, wmOperator *op)
 	pprop = op->customdata;
 
 	if (pprop->prop) {
+		id_us_ensure_real(&text->id);
 		RNA_id_pointer_create(&text->id, &idptr);
 		RNA_property_pointer_set(&pprop->ptr, pprop->prop, idptr);
 		RNA_property_update(C, &pprop->ptr, pprop->prop);
 	}
 	else if (st) {
 		st->text = text;
+		id_us_ensure_real(&text->id);
 		st->left = 0;
 		st->top = 0;
 		st->scroll_accum[0] = 0.0f;
@@ -300,8 +302,9 @@ void TEXT_OT_open(wmOperatorType *ot)
 	ot->flag = OPTYPE_UNDO;
 	
 	/* properties */
-	WM_operator_properties_filesel(ot, FILE_TYPE_FOLDER | FILE_TYPE_TEXT | FILE_TYPE_PYSCRIPT, FILE_SPECIAL, FILE_OPENFILE,
-	                               WM_FILESEL_FILEPATH, FILE_DEFAULTDISPLAY, FILE_SORT_ALPHA);  //XXX TODO, relative_path
+	WM_operator_properties_filesel(
+	        ot, FILE_TYPE_FOLDER | FILE_TYPE_TEXT | FILE_TYPE_PYSCRIPT, FILE_SPECIAL, FILE_OPENFILE,
+	        WM_FILESEL_FILEPATH, FILE_DEFAULTDISPLAY, FILE_SORT_ALPHA);  //XXX TODO, relative_path
 	RNA_def_boolean(ot->srna, "internal", 0, "Make internal", "Make text file internal after loading");
 }
 
@@ -383,8 +386,7 @@ static int text_unlink_exec(bContext *C, wmOperator *UNUSED(op))
 		}
 	}
 
-	BKE_text_unlink(bmain, text);
-	BKE_libblock_free(bmain, text);
+	BKE_libblock_delete(bmain, text);
 
 	text_drawcache_tag_update(st, 1);
 	WM_event_add_notifier(C, NC_TEXT | NA_REMOVED, NULL);
@@ -577,8 +579,9 @@ void TEXT_OT_save_as(wmOperatorType *ot)
 	ot->poll = text_edit_poll;
 
 	/* properties */
-	WM_operator_properties_filesel(ot, FILE_TYPE_FOLDER | FILE_TYPE_TEXT | FILE_TYPE_PYSCRIPT, FILE_SPECIAL, FILE_SAVE,
-	                               WM_FILESEL_FILEPATH, FILE_DEFAULTDISPLAY, FILE_SORT_ALPHA);  //XXX TODO, relative_path
+	WM_operator_properties_filesel(
+	        ot, FILE_TYPE_FOLDER | FILE_TYPE_TEXT | FILE_TYPE_PYSCRIPT, FILE_SPECIAL, FILE_SAVE,
+	        WM_FILESEL_FILEPATH, FILE_DEFAULTDISPLAY, FILE_SORT_ALPHA);  //XXX TODO, relative_path
 }
 
 /******************* run script operator *********************/
@@ -598,7 +601,7 @@ static int text_run_script(bContext *C, ReportList *reports)
 	void *curl_prev = text->curl;
 	int curc_prev = text->curc;
 
-	if (BPY_text_exec(C, text, reports, !is_live)) {
+	if (BPY_execute_text(C, text, reports, !is_live)) {
 		if (is_live) {
 			/* for nice live updates */
 			WM_event_add_notifier(C, NC_WINDOW | NA_EDITED, NULL);
@@ -1054,108 +1057,102 @@ static int text_convert_whitespace_exec(bContext *C, wmOperator *op)
 	Text *text = CTX_data_edit_text(C);
 	TextLine *tmp;
 	FlattenString fs;
-	size_t a, j;
-	char *new_line;
-	int extra, number; //unknown for now
+	size_t a, j, max_len = 0;
 	int type = RNA_enum_get(op->ptr, "type");
 
 	/* first convert to all space, this make it a lot easier to convert to tabs
 	 * because there is no mixtures of ' ' && '\t' */
 	for (tmp = text->lines.first; tmp; tmp = tmp->next) {
-		const char *text_check_line     = tmp->line;
-		const int   text_check_line_len = tmp->len;
-		number = flatten_string(st, &fs, text_check_line) + 1;
-		flatten_string_free(&fs);
-		new_line = MEM_callocN(number, "Converted_Line");
-		j = 0;
-		for (a = 0; a < text_check_line_len; a++) { //foreach char in line
-			if (text_check_line[a] == '\t') { //checking for tabs
-				//get the number of spaces this tabs is showing
-				//i don't like doing it this way but will look into it later
-				new_line[j] = '\0';
-				number = flatten_string(st, &fs, new_line);
-				flatten_string_free(&fs);
-				new_line[j] = '\t';
-				new_line[j + 1] = '\0';
-				number = flatten_string(st, &fs, new_line) - number;
-				flatten_string_free(&fs);
+		char *new_line;
 
-				for (extra = 0; extra < number; extra++) {
-					new_line[j] = ' ';
-					j++;
-				}
-			}
-			else {
-				new_line[j] = text_check_line[a];
-				j++;
-			}
-		}
-		new_line[j] = '\0';
-		// put new_line in the tmp->line spot still need to try and set the curc correctly
-		if (tmp->line) MEM_freeN(tmp->line);
-		if (tmp->format) MEM_freeN(tmp->format);
+		BLI_assert(tmp->line);
+
+		flatten_string(st, &fs, tmp->line);
+		new_line = BLI_strdup(fs.buf);
+		flatten_string_free(&fs);
+
+		MEM_freeN(tmp->line);
+		if (tmp->format)
+			MEM_freeN(tmp->format);
 		
+		/* Put new_line in the tmp->line spot still need to try and set the curc correctly. */
 		tmp->line = new_line;
 		tmp->len = strlen(new_line);
 		tmp->format = NULL;
+		if (tmp->len > max_len) {
+			max_len = tmp->len;
+		}
 	}
 	
-	if (type == TO_TABS) { // Converting to tabs
-		//start over from the beginning
-		
+	if (type == TO_TABS) {
+		char *tmp_line = MEM_mallocN(sizeof(*tmp_line) * (max_len + 1), __func__);
+
 		for (tmp = text->lines.first; tmp; tmp = tmp->next) {
 			const char *text_check_line     = tmp->line;
 			const int   text_check_line_len = tmp->len;
-			extra = 0;
-			for (a = 0; a < text_check_line_len; a++) {
-				number = 0;
-				for (j = 0; j < (size_t)st->tabnumber; j++) {
-					if ((a + j) <= text_check_line_len) { //check to make sure we are not pass the end of the line
-						if (text_check_line[a + j] != ' ') {
-							number = 1;
+			char *tmp_line_cur = tmp_line;
+			const size_t tab_len = st->tabnumber;
+
+			BLI_assert(text_check_line);
+
+			for (a = 0; a < text_check_line_len;) {
+				/* A tab can only start at a position multiple of tab_len... */
+				if (!(a % tab_len) && (text_check_line[a] == ' ')) {
+					/* a + 0 we already know to be ' ' char... */
+					for (j = 1; (j < tab_len) && (a + j < text_check_line_len) && (text_check_line[a + j] == ' '); j++);
+
+					if (j == tab_len) {
+						/* We found a set of spaces that can be replaced by a tab... */
+						if ((tmp_line_cur == tmp_line) && a != 0) {
+							/* Copy all 'valid' string already 'parsed'... */
+							memcpy(tmp_line_cur, text_check_line, a);
+							tmp_line_cur += a;
 						}
+						*tmp_line_cur = '\t';
+						tmp_line_cur++;
+						a += j;
+					}
+					else {
+						if (tmp_line_cur != tmp_line) {
+							memcpy(tmp_line_cur, &text_check_line[a], j);
+							tmp_line_cur += j;
+						}
+						a += j;
 					}
 				}
-				if (!number) { //found all number of space to equal a tab
-					a = a + (st->tabnumber - 1);
-					extra = extra + 1;
+				else {
+					size_t len = BLI_str_utf8_size_safe(&text_check_line[a]);
+					if (tmp_line_cur != tmp_line) {
+						memcpy(tmp_line_cur, &text_check_line[a], len);
+						tmp_line_cur += len;
+					}
+					a += len;
 				}
 			}
-			
-			if (extra > 0) {   //got tabs make malloc and do what you have to do
-				new_line = MEM_callocN(text_check_line_len - (((st->tabnumber * extra) - extra) - 1), "Converted_Line");
-				extra = 0; //reuse vars
-				for (a = 0; a < text_check_line_len; a++) {
-					number = 0;
-					for (j = 0; j < (size_t)st->tabnumber; j++) {
-						if ((a + j) <= text_check_line_len) { //check to make sure we are not pass the end of the line
-							if (text_check_line[a + j] != ' ') {
-								number = 1;
-							}
-						}
-					}
 
-					if (!number) { //found all number of space to equal a tab
-						new_line[extra] = '\t';
-						a = a + (st->tabnumber - 1);
-						extra++;
-						
-					}
-					else { //not adding a tab
-						new_line[extra] = text_check_line[a];
-						extra++;
-					}
-				}
-				new_line[extra] = '\0';
-				// put new_line in the tmp->line spot still need to try and set the curc correctly
-				if (tmp->line) MEM_freeN(tmp->line);
-				if (tmp->format) MEM_freeN(tmp->format);
-				
-				tmp->line = new_line;
-				tmp->len = strlen(new_line);
+			if (tmp_line_cur != tmp_line) {
+				*tmp_line_cur = '\0';
+
+#ifndef NDEBUG
+				BLI_assert(tmp_line_cur - tmp_line <= max_len);
+
+				flatten_string(st, &fs, tmp_line);
+				BLI_assert(STREQ(fs.buf, tmp->line));
+				flatten_string_free(&fs);
+#endif
+
+				MEM_freeN(tmp->line);
+				if (tmp->format)
+					MEM_freeN(tmp->format);
+
+				/* Put new_line in the tmp->line spot still need to try and set the curc correctly. */
+				tmp->line = BLI_strdup(tmp_line);
+				tmp->len = strlen(tmp_line);
 				tmp->format = NULL;
 			}
 		}
+
+		MEM_freeN(tmp_line);
 	}
 
 	text_update_edited(text);
@@ -1851,7 +1848,7 @@ void TEXT_OT_move(wmOperatorType *ot)
 	ot->poll = text_edit_poll;
 
 	/* properties */
-	RNA_def_enum(ot->srna, "type", move_type_items, LINE_BEGIN, "Type", "Type\nWhere to move cursor to");
+	RNA_def_enum(ot->srna, "type", move_type_items, LINE_BEGIN, "Type", "Where to move cursor to");
 }
 
 /******************* move select operator ********************/
@@ -1875,7 +1872,7 @@ void TEXT_OT_move_select(wmOperatorType *ot)
 	ot->poll = text_space_edit_poll;
 
 	/* properties */
-	RNA_def_enum(ot->srna, "type", move_type_items, LINE_BEGIN, "Type", "Type\nWhere to move cursor to, to make a selection");
+	RNA_def_enum(ot->srna, "type", move_type_items, LINE_BEGIN, "Type", "Where to move cursor to, to make a selection");
 }
 
 /******************* jump operator *********************/
@@ -1955,6 +1952,19 @@ static int text_delete_exec(bContext *C, wmOperator *op)
 		txt_backspace_word(text);
 	}
 	else if (type == DEL_PREV_CHAR) {
+
+		if (text->flags & TXT_TABSTOSPACES) {
+			if (!txt_has_sel(text) && !txt_cursor_is_line_start(text)) {
+				int tabsize = 0;
+				tabsize = txt_calc_tab_left(text->curl, text->curc);
+				if (tabsize) {
+					text->sell = text->curl;
+					text->selc = text->curc - tabsize;
+					txt_order_cursors(text, false);
+				}
+			}
+		}
+
 		txt_backspace_char(text);
 	}
 	else if (type == DEL_NEXT_WORD) {
@@ -1964,6 +1974,19 @@ static int text_delete_exec(bContext *C, wmOperator *op)
 		txt_delete_word(text);
 	}
 	else if (type == DEL_NEXT_CHAR) {
+
+		if (text->flags & TXT_TABSTOSPACES) {
+			if (!txt_has_sel(text) && !txt_cursor_is_line_end(text)) {
+				int tabsize = 0;
+				tabsize = txt_calc_tab_right(text->curl, text->curc);
+				if (tabsize) {
+					text->sell = text->curl;
+					text->selc = text->curc + tabsize;
+					txt_order_cursors(text, true);
+				}
+			}
+		}
+
 		txt_delete_char(text);
 	}
 
@@ -1991,7 +2014,7 @@ void TEXT_OT_delete(wmOperatorType *ot)
 	ot->poll = text_edit_poll;
 
 	/* properties */
-	RNA_def_enum(ot->srna, "type", delete_type_items, DEL_NEXT_CHAR, "Type", "Type\nWhich part of the text to delete");
+	RNA_def_enum(ot->srna, "type", delete_type_items, DEL_NEXT_CHAR, "Type", "Which part of the text to delete");
 }
 
 /******************* toggle overwrite operator **********************/
@@ -2375,20 +2398,22 @@ static int flatten_column_to_offset(SpaceText *st, const char *str, int index)
 	return j;
 }
 
-static TextLine *get_first_visible_line(SpaceText *st, ARegion *ar, int *y)
+static TextLine *get_line_pos_wrapped(SpaceText *st, ARegion *ar, int *y)
 {
 	TextLine *linep = st->text->lines.first;
-	int i;
-	for (i = st->top; i > 0 && linep; ) {
-		int lines = text_get_visible_lines(st, ar, linep->line);
-		
-		if (i - lines < 0) {
-			*y += i;
+	int i, lines;
+
+	if (*y < -st->top) {
+		return NULL;  /* We are beyond the first line... */
+	}
+
+	for (i = -st->top; i <= *y && linep; linep = linep->next, i += lines) {
+		lines = text_get_visible_lines(st, ar, linep->line);
+
+		if (i + lines > *y) {
+			/* We found the line matching given vertical 'coordinate', now set y relative to this line's start. */
+			*y -= i;
 			break;
-		}
-		else {
-			linep = linep->next;
-			i -= lines;
 		}
 	}
 	return linep;
@@ -2399,23 +2424,22 @@ static void text_cursor_set_to_pos_wrapped(SpaceText *st, ARegion *ar, int x, in
 	Text *text = st->text;
 	int max = wrap_width(st, ar); /* column */
 	int charp = -1;               /* mem */
-	int loop = 1, found = 0;      /* flags */
-	char ch;
+	bool found = false;           /* flags */
 	
-	/* Point to first visible line */
-	TextLine *linep = get_first_visible_line(st, ar, &y);
-	
-	while (loop && linep) {
+	/* Point to line matching given y position, if any. */
+	TextLine *linep = get_line_pos_wrapped(st, ar, &y);
+
+	if (linep) {
 		int i = 0, start = 0, end = max; /* column */
-		int j = 0, curs = 0, endj = 0;   /* mem */
-		int chop = 1;                    /* flags */
-		
-		for (; loop; j += BLI_str_utf8_size_safe(linep->line + j)) {
+		int j, curs = 0, endj = 0;       /* mem */
+		bool chop = true;                /* flags */
+		char ch;
+
+		for (j = 0 ; !found && ((ch = linep->line[j]) != '\0'); j += BLI_str_utf8_size_safe(linep->line + j)) {
 			int chars;
 			int columns = BLI_str_utf8_char_width_safe(linep->line + j); /* = 1 for tab */
 			
 			/* Mimic replacement of tabs */
-			ch = linep->line[j];
 			if (ch == '\t') {
 				chars = st->tabnumber - i % st->tabnumber;
 				ch = ' ';
@@ -2428,7 +2452,8 @@ static void text_cursor_set_to_pos_wrapped(SpaceText *st, ARegion *ar, int x, in
 				/* Gone too far, go back to last wrap point */
 				if (y < 0) {
 					charp = endj;
-					loop = 0;
+					y = 0;
+					found = true;
 					break;
 					/* Exactly at the cursor */
 				}
@@ -2436,7 +2461,7 @@ static void text_cursor_set_to_pos_wrapped(SpaceText *st, ARegion *ar, int x, in
 					/* current position could be wrapped to next line */
 					/* this should be checked when end of current line would be reached */
 					charp = curs = j;
-					found = 1;
+					found = true;
 					/* Prepare curs for next wrap */
 				}
 				else if (i - end <= x && i + columns - end > x) {
@@ -2446,68 +2471,70 @@ static void text_cursor_set_to_pos_wrapped(SpaceText *st, ARegion *ar, int x, in
 					end = MIN2(end, i);
 					
 					if (found) {
-						/* exact cursor position was found, check if it's */
-						/* still on needed line (hasn't been wrapped) */
-						if (charp > endj && !chop && ch != '\0') charp = endj;
-						loop = 0;
+						/* exact cursor position was found, check if it's still on needed line (hasn't been wrapped) */
+						if (charp > endj && !chop && ch != '\0')
+							charp = endj;
 						break;
 					}
 					
-					if (chop) endj = j;
+					if (chop)
+						endj = j;
 					start = end;
 					end += max;
 					
 					if (j < linep->len)
 						y--;
 					
-					chop = 1;
+					chop = true;
 					if (y == 0 && i + columns - start > x) {
 						charp = curs;
-						loop = 0;
+						found = true;
 						break;
 					}
 				}
 				else if (ch == ' ' || ch == '-' || ch == '\0') {
 					if (found) {
-						loop = 0;
 						break;
 					}
 					
 					if (y == 0 && i + columns - start > x) {
 						charp = curs;
-						loop = 0;
+						found = true;
 						break;
 					}
 					end = i + 1;
 					endj = j;
-					chop = 0;
+					chop = false;
 				}
 				i += columns;
 			}
-			
-			if (ch == '\0') break;
 		}
+
+		BLI_assert(y == 0);
 		
-		if (!loop || found) break;
-		
-		if (!linep->next) {
+		if (!found) {
+			/* On correct line but didn't meet cursor, must be at end */
 			charp = linep->len;
-			break;
 		}
-		
-		/* On correct line but didn't meet cursor, must be at end */
-		if (y == 0) {
-			charp = linep->len;
-			break;
-		}
-		linep = linep->next;
-		
-		y--;
+	}
+	else if (y < 0) {  /* Before start of text. */
+		linep = st->text->lines.first;
+		charp = 0;
+	}
+	else {  /* Beyond end of text */
+		linep = st->text->lines.last;
+		charp = linep->len;
 	}
 
-	if (linep && charp != -1) {
-		if (sel) { text->sell = linep; text->selc = charp; }
-		else     { text->curl = linep; text->curc = charp; }
+	BLI_assert(linep && charp != -1);
+
+	if (sel) {
+		text->sell = linep;
+		text->selc = charp;
+	}
+	else {
+		text->curl = linep;
+		text->curc = charp;
 	}
 }
 

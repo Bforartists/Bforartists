@@ -25,14 +25,13 @@
 CHECKER_IGNORE_PREFIX = [
     "extern",
     "intern/moto",
-    "blender/intern/opennl",
-    ]
+]
 
 CHECKER_BIN = "smatch"
 CHECKER_ARGS = [
     "--full-path",
     "--two-passes",
-    ]
+]
 
 import project_source_info
 import subprocess

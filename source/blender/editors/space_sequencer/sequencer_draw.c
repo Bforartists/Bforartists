@@ -58,6 +58,8 @@
 #include "BIF_gl.h"
 #include "BIF_glutil.h"
 
+#include "GPU_basic_shader.h"
+
 #include "ED_anim_api.h"
 #include "ED_gpencil.h"
 #include "ED_markers.h"
@@ -177,7 +179,11 @@ void color3ubv_from_seq(Scene *curscene, Sequence *seq, unsigned char col[3])
 			blendcol[0] = blendcol[1] = blendcol[2] = 128;
 			if (seq->flag & SEQ_MUTE) UI_GetColorPtrBlendShade3ubv(col, blendcol, col, 0.5, 20);
 			break;
-		
+
+		case SEQ_TYPE_TEXT:
+			UI_GetThemeColor3ubv(TH_SEQ_TEXT, col);
+			break;
+
 		default:
 			col[0] = 10; col[1] = 255; col[2] = 40;
 			break;
@@ -191,14 +197,14 @@ static void drawseqwave(const bContext *C, SpaceSeq *sseq, Scene *scene, Sequenc
 	 * x2 the end x value, same for y1 and y2
 	 * stepsize is width of a pixel.
 	 */
-	if ((sseq->flag & SEQ_ALL_WAVEFORMS) || (seq->flag & SEQ_AUDIO_DRAW_WAVEFORM)) {
+	if (seq->sound && ((sseq->flag & SEQ_ALL_WAVEFORMS) || (seq->flag & SEQ_AUDIO_DRAW_WAVEFORM))) {
 		int i, j, pos;
 		int length = floor((x2 - x1) / stepsize) + 1;
 		float ymid = (y1 + y2) / 2;
 		float yscale = (y2 - y1) / 2;
 		float samplestep;
 		float startsample, endsample;
-		float value;
+		float value1, value2;
 		bSound *sound = seq->sound;
 		
 		SoundWaveform *waveform;
@@ -209,10 +215,10 @@ static void drawseqwave(const bContext *C, SpaceSeq *sseq, Scene *scene, Sequenc
 		}
 		
 		BLI_spin_lock(sound->spinlock);
-		if (!seq->sound->waveform) {
+		if (!sound->waveform) {
 			if (!(sound->flags & SOUND_FLAGS_WAVEFORM_LOADING)) {
 				/* prevent sounds from reloading */
-				seq->sound->flags |= SOUND_FLAGS_WAVEFORM_LOADING;
+				sound->flags |= SOUND_FLAGS_WAVEFORM_LOADING;
 				BLI_spin_unlock(sound->spinlock);
 				sequencer_preview_add_sound(C, seq);
 			}
@@ -223,7 +229,7 @@ static void drawseqwave(const bContext *C, SpaceSeq *sseq, Scene *scene, Sequenc
 		}
 		BLI_spin_unlock(sound->spinlock);
 		
-		waveform = seq->sound->waveform;
+		waveform = sound->waveform;
 
 		if (waveform->length == 0) {
 			/* BKE_sound_read_waveform() set an empty SoundWaveform data in case it cannot generate a valid one...
@@ -238,49 +244,51 @@ static void drawseqwave(const bContext *C, SpaceSeq *sseq, Scene *scene, Sequenc
 		if (length > floor((waveform->length - startsample) / samplestep))
 			length = floor((waveform->length - startsample) / samplestep);
 
-		glBegin(GL_LINE_STRIP);
+		glColor4f(1.0f, 1.0f, 1.0f, 0.5);
+		glEnable(GL_BLEND);
+		glBegin(GL_TRIANGLE_STRIP);
 		for (i = 0; i < length; i++) {
-			pos = startsample + i * samplestep;
+			float sampleoffset = startsample + i * samplestep;
+			pos = sampleoffset;
 
-			value = waveform->data[pos * 3];
+			value1 = waveform->data[pos * 3];
+			value2 = waveform->data[pos * 3 + 1];
 
-			for (j = pos + 1; (j < waveform->length) && (j < pos + samplestep); j++) {
-				if (value > waveform->data[j * 3])
-					value = waveform->data[j * 3];
+			if (samplestep > 1.0f) {
+				for (j = pos + 1; (j < waveform->length) && (j < pos + samplestep); j++) {
+					if (value1 > waveform->data[j * 3])
+						value1 = waveform->data[j * 3];
+
+					if (value2 < waveform->data[j * 3 + 1])
+						value2 = waveform->data[j * 3 + 1];
+				}
+			}
+			else {
+				/* use simple linear interpolation */
+				float f = sampleoffset - pos;
+				value1 = (1.0f - f) * value1 + f * waveform->data[pos * 3 + 3];
+				value2 = (1.0f - f) * value2 + f * waveform->data[pos * 3 + 4];
 			}
 
-			glVertex2f(x1 + i * stepsize, ymid + value * yscale);
+			glVertex2f(x1 + i * stepsize, ymid + value1 * yscale);
+			glVertex2f(x1 + i * stepsize, ymid + value2 * yscale);
 		}
 		glEnd();
-
-		glBegin(GL_LINE_STRIP);
-		for (i = 0; i < length; i++) {
-			pos = startsample + i * samplestep;
-
-			value = waveform->data[pos * 3 + 1];
-
-			for (j = pos + 1; (j < waveform->length) && (j < pos + samplestep); j++) {
-				if (value < waveform->data[j * 3 + 1])
-					value = waveform->data[j * 3 + 1];
-			}
-
-			glVertex2f(x1 + i * stepsize, ymid + value * yscale);
-		}
-		glEnd();
+		glDisable(GL_BLEND);
 	}
 }
 
 static void drawmeta_stipple(int value)
 {
 	if (value) {
-		glEnable(GL_POLYGON_STIPPLE);
-		glPolygonStipple(stipple_halftone);
+		GPU_basic_shader_bind(GPU_SHADER_STIPPLE | GPU_SHADER_USE_COLOR);
+		GPU_basic_shader_stipple(GPU_SHADER_STIPPLE_HALFTONE);
 		
 		glEnable(GL_LINE_STIPPLE);
 		glLineStipple(1, 0x8888);
 	}
 	else {
-		glDisable(GL_POLYGON_STIPPLE);
+		GPU_basic_shader_bind(GPU_SHADER_USE_COLOR);
 		glDisable(GL_LINE_STIPPLE);
 	}
 }
@@ -299,6 +307,20 @@ static void drawmeta_contents(Scene *scene, Sequence *seqm, float x1, float y1, 
 	int chan_range = 0;
 	float draw_range = y2 - y1;
 	float draw_height;
+	ListBase *seqbase;
+	int offset;
+
+	seqbase = BKE_sequence_seqbase_get(seqm, &offset);
+	if (!seqbase || BLI_listbase_is_empty(seqbase)) {
+		return;
+	}
+
+	if (seqm->type == SEQ_TYPE_SCENE) {
+		offset  = seqm->start - offset;
+	}
+	else {
+		offset = 0;
+	}
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -306,7 +328,7 @@ static void drawmeta_contents(Scene *scene, Sequence *seqm, float x1, float y1, 
 	if (seqm->flag & SEQ_MUTE)
 		drawmeta_stipple(1);
 
-	for (seq = seqm->seqbase.first; seq; seq = seq->next) {
+	for (seq = seqbase->first; seq; seq = seq->next) {
 		chan_min = min_ii(chan_min, seq->machine);
 		chan_max = max_ii(chan_max, seq->machine);
 	}
@@ -316,11 +338,14 @@ static void drawmeta_contents(Scene *scene, Sequence *seqm, float x1, float y1, 
 
 	col[3] = 196; /* alpha, used for all meta children */
 
-	for (seq = seqm->seqbase.first; seq; seq = seq->next) {
-		if ((seq->startdisp > x2 || seq->enddisp < x1) == 0) {
+	for (seq = seqbase->first; seq; seq = seq->next) {
+		const int startdisp = seq->startdisp + offset;
+		const int enddisp   = seq->enddisp   + offset;
+
+		if ((startdisp > x2 || enddisp < x1) == 0) {
 			float y_chan = (seq->machine - chan_min) / (float)(chan_range) * draw_range;
-			float x1_chan = seq->startdisp;
-			float x2_chan = seq->enddisp;
+			float x1_chan = startdisp;
+			float x2_chan = enddisp;
 			float y1_chan, y2_chan;
 
 			if ((seqm->flag & SEQ_MUTE) == 0 && (seq->flag & SEQ_MUTE))
@@ -446,7 +471,7 @@ static void draw_seq_handle(View2D *v2d, Sequence *seq, const float handsize_cla
 }
 
 /* draw info text on a sequence strip */
-static void draw_seq_text(View2D *v2d, Sequence *seq, float x1, float x2, float y1, float y2, const unsigned char background_col[3])
+static void draw_seq_text(View2D *v2d, SpaceSeq *sseq, Sequence *seq, float x1, float x2, float y1, float y2, const unsigned char background_col[3])
 {
 	rctf rect;
 	char str[32 + FILE_MAX];
@@ -515,7 +540,12 @@ static void draw_seq_text(View2D *v2d, Sequence *seq, float x1, float x2, float 
 		                       name, seq->len);
 	}
 	else if (seq->type == SEQ_TYPE_SOUND_RAM) {
-		if (seq->sound) {
+		/* If a waveform is drawn, we don't want to overlay it with text,
+		 * as it would make both hard to read. */
+		if ((sseq->flag & SEQ_ALL_WAVEFORMS) || (seq->flag & SEQ_AUDIO_DRAW_WAVEFORM)) {
+			str[0] = 0;
+			str_len = 0;
+		} else if (seq->sound) {
 			str_len = BLI_snprintf(str, sizeof(str), "%s: %s | %d",
 			                       name, seq->sound->name, seq->len);
 		}
@@ -561,14 +591,13 @@ void draw_shadedstrip(Sequence *seq, unsigned char col[3], float x1, float y1, f
 	float ymid1, ymid2;
 	
 	if (seq->flag & SEQ_MUTE) {
-		glEnable(GL_POLYGON_STIPPLE);
-		glPolygonStipple(stipple_halftone);
+		GPU_basic_shader_bind(GPU_SHADER_STIPPLE | GPU_SHADER_USE_COLOR);
+		GPU_basic_shader_stipple(GPU_SHADER_STIPPLE_HALFTONE);
 	}
 	
 	ymid1 = (y2 - y1) * 0.25f + y1;
 	ymid2 = (y2 - y1) * 0.65f + y1;
 	
-	glShadeModel(GL_SMOOTH);
 	glBegin(GL_QUADS);
 	
 	if (seq->flag & SEQ_INVALID_EFFECT) { col[0] = 255; col[1] = 0; col[2] = 255; }
@@ -609,7 +638,7 @@ void draw_shadedstrip(Sequence *seq, unsigned char col[3], float x1, float y1, f
 	glEnd();
 	
 	if (seq->flag & SEQ_MUTE) {
-		glDisable(GL_POLYGON_STIPPLE);
+		GPU_basic_shader_bind(GPU_SHADER_USE_COLOR);
 	}
 }
 
@@ -776,32 +805,32 @@ static void draw_seq_strip(const bContext *C, SpaceSeq *sseq, Scene *scene, AReg
 
 	/* draw lock */
 	if (seq->flag & SEQ_LOCK) {
-		glEnable(GL_POLYGON_STIPPLE);
+		GPU_basic_shader_bind(GPU_SHADER_STIPPLE | GPU_SHADER_USE_COLOR);
 		glEnable(GL_BLEND);
 
 		/* light stripes */
 		glColor4ub(255, 255, 255, 32);
-		glPolygonStipple(stipple_diag_stripes_pos);
+		GPU_basic_shader_stipple(GPU_SHADER_STIPPLE_DIAG_STRIPES);
 		glRectf(x1, y1, x2, y2);
 
 		/* dark stripes */
 		glColor4ub(0, 0, 0, 32);
-		glPolygonStipple(stipple_diag_stripes_neg);
+		GPU_basic_shader_stipple(GPU_SHADER_STIPPLE_DIAG_STRIPES_SWAP);
 		glRectf(x1, y1, x2, y2);
 
-		glDisable(GL_POLYGON_STIPPLE);
+		GPU_basic_shader_bind(GPU_SHADER_USE_COLOR);
 		glDisable(GL_BLEND);
 	}
 
 	if (!BKE_sequence_is_valid_check(seq)) {
-		glEnable(GL_POLYGON_STIPPLE);
+		GPU_basic_shader_bind(GPU_SHADER_STIPPLE | GPU_SHADER_USE_COLOR);
 
 		/* panic! */
 		glColor4ub(255, 0, 0, 255);
-		glPolygonStipple(stipple_diag_stripes_pos);
+		GPU_basic_shader_stipple(GPU_SHADER_STIPPLE_DIAG_STRIPES);
 		glRectf(x1, y1, x2, y2);
 
-		glDisable(GL_POLYGON_STIPPLE);
+		GPU_basic_shader_bind(GPU_SHADER_USE_COLOR);
 	}
 
 	color3ubv_from_seq(scene, seq, col);
@@ -815,21 +844,23 @@ static void draw_seq_strip(const bContext *C, SpaceSeq *sseq, Scene *scene, AReg
 	else
 		UI_GetColorPtrShade3ubv(col, col, outline_tint);
 	
-	glColor3ubv((GLubyte *)col);
-	
+	if ((seq->type == SEQ_TYPE_META) ||
+	    ((seq->type == SEQ_TYPE_SCENE) && (seq->flag & SEQ_SCENE_STRIPS)))
+	{
+		drawmeta_contents(scene, seq, x1, y1, x2, y2);
+	}
+
 	if (seq->flag & SEQ_MUTE) {
 		glEnable(GL_LINE_STIPPLE);
 		glLineStipple(1, 0x8888);
 	}
 	
+	glColor3ubv((GLubyte *)col);
+	
 	UI_draw_roundbox_shade_x(GL_LINE_LOOP, x1, y1, x2, y2, 0.0, 0.1, 0.0);
 	
 	if (seq->flag & SEQ_MUTE) {
 		glDisable(GL_LINE_STIPPLE);
-	}
-	
-	if (seq->type == SEQ_TYPE_META) {
-		drawmeta_contents(scene, seq, x1, y1, x2, y2);
 	}
 	
 	/* calculate if seq is long enough to print a name */
@@ -844,7 +875,7 @@ static void draw_seq_strip(const bContext *C, SpaceSeq *sseq, Scene *scene, AReg
 
 	/* nice text here would require changing the view matrix for texture text */
 	if ((x2 - x1) / pixelx > 32) {
-		draw_seq_text(v2d, seq, x1, x2, y1, y2, background_col);
+		draw_seq_text(v2d, sseq, seq, x1, x2, y1, y2, background_col);
 	}
 }
 
@@ -1012,6 +1043,8 @@ static void sequencer_draw_borders(const SpaceSeq *sseq, const View2D *v2d, cons
 	float x2 = v2d->tot.xmax;
 	float y2 = v2d->tot.ymax;
 
+	glLineWidth(1.0f);
+
 	/* border */
 	setlinestyle(3);
 
@@ -1043,7 +1076,8 @@ static void sequencer_draw_borders(const SpaceSeq *sseq, const View2D *v2d, cons
 }
 
 /* draws checkerboard background for transparent content */
-static void sequencer_draw_background(const SpaceSeq *sseq, View2D *v2d, const float viewrect[2])
+static void sequencer_draw_background(
+        const SpaceSeq *sseq, View2D *v2d, const float viewrect[2], const bool draw_overlay)
 {
 	/* setting up the view */
 	UI_view2d_totRect_set(v2d, viewrect[0] + 0.5f, viewrect[1] + 0.5f);
@@ -1052,7 +1086,7 @@ static void sequencer_draw_background(const SpaceSeq *sseq, View2D *v2d, const f
 
 	/* only draw alpha for main buffer */
 	if (sseq->mainb == SEQ_DRAW_IMG_IMBUF) {
-		if (sseq->flag & SEQ_USE_ALPHA) {
+		if ((sseq->flag & SEQ_USE_ALPHA) && !draw_overlay) {
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -1072,7 +1106,6 @@ void draw_image_seq(const bContext *C, Scene *scene, ARegion *ar, SpaceSeq *sseq
 	float viewrect[2];
 	float col[3];
 	GLuint texid;
-	GLuint last_texid;
 	void *display_buffer;
 	void *cache_handle = NULL;
 	const bool is_imbuf = ED_space_sequencer_check_show_imbuf(sseq);
@@ -1120,10 +1153,10 @@ void draw_image_seq(const bContext *C, Scene *scene, ARegion *ar, SpaceSeq *sseq
 	    (ibuf->rect == NULL && ibuf->rect_float == NULL))
 	{
 		/* gpencil can also be drawn without a valid imbuf */
-		if (draw_gpencil && is_imbuf) {
+		if ((draw_gpencil && is_imbuf) && !draw_overlay) {
 			sequencer_display_size(scene, sseq, viewrect);
 
-			sequencer_draw_background(sseq, v2d, viewrect);
+			sequencer_draw_background(sseq, v2d, viewrect, false);
 			sequencer_draw_borders(sseq, v2d, scene);
 
 			sequencer_draw_gpencil(C);
@@ -1193,7 +1226,7 @@ void draw_image_seq(const bContext *C, Scene *scene, ARegion *ar, SpaceSeq *sseq
 	}
 
 	if (!draw_backdrop) {
-		sequencer_draw_background(sseq, v2d, viewrect);
+		sequencer_draw_background(sseq, v2d, viewrect, draw_overlay);
 	}
 
 	if (scope) {
@@ -1268,11 +1301,9 @@ void draw_image_seq(const bContext *C, Scene *scene, ARegion *ar, SpaceSeq *sseq
 		}
 	}
 
-	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	glColor4f(1.0, 1.0, 1.0, 1.0);
 
-	last_texid = glaGetOneInteger(GL_TEXTURE_2D);
-	glEnable(GL_TEXTURE_2D);
+	GPU_basic_shader_bind(GPU_SHADER_TEXTURE_2D | GPU_SHADER_USE_COLOR);
 	glGenTextures(1, (GLuint *)&texid);
 
 	glBindTexture(GL_TEXTURE_2D, texid);
@@ -1346,8 +1377,8 @@ void draw_image_seq(const bContext *C, Scene *scene, ARegion *ar, SpaceSeq *sseq
 	}
 	glEnd();
 
-	glBindTexture(GL_TEXTURE_2D, last_texid);
-	glDisable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	GPU_basic_shader_bind(GPU_SHADER_USE_COLOR);
 	if (sseq->mainb == SEQ_DRAW_IMG_IMBUF && sseq->flag & SEQ_USE_ALPHA)
 		glDisable(GL_BLEND);
 	glDeleteTextures(1, &texid);
@@ -1362,7 +1393,7 @@ void draw_image_seq(const bContext *C, Scene *scene, ARegion *ar, SpaceSeq *sseq
 		IMB_freeImBuf(ibuf);
 
 	if (draw_metadata) {
-		ED_region_image_metadata_draw(0.0, 0.0, ibuf, v2d->tot, 1.0, 1.0);
+		ED_region_image_metadata_draw(0.0, 0.0, ibuf, &v2d->tot, 1.0, 1.0);
 	}
 
 	if (draw_backdrop) {
@@ -1603,7 +1634,8 @@ void draw_timeline_seq(const bContext *C, ARegion *ar)
 	// NOTE: the gridlines are currently spaced every 25 frames, which is only fine for 25 fps, but maybe not for 30...
 	UI_view2d_constant_grid_draw(v2d);
 
-	if (sseq->draw_flag & SEQ_DRAW_BACKDROP) {
+	/* Only draw backdrop in pure sequence view. */
+	if (sseq->view == SEQ_VIEW_SEQUENCE && sseq->draw_flag & SEQ_DRAW_BACKDROP) {
 		draw_image_seq(C, scene, ar, sseq, scene->r.cfra, 0, false, true);
 		UI_view2d_view_ortho(v2d);
 	}

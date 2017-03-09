@@ -54,7 +54,7 @@ void draw_image_grease_pencil(struct bContext *C, bool onlyv2d);
 void draw_image_sample_line(struct SpaceImage *sima);
 
 /* image_ops.c */
-int space_image_main_area_poll(struct bContext *C);
+int space_image_main_region_poll(struct bContext *C);
 
 void IMAGE_OT_view_all(struct wmOperatorType *ot);
 void IMAGE_OT_view_pan(struct wmOperatorType *ot);
@@ -63,7 +63,10 @@ void IMAGE_OT_view_zoom(struct wmOperatorType *ot);
 void IMAGE_OT_view_zoom_in(struct wmOperatorType *ot);
 void IMAGE_OT_view_zoom_out(struct wmOperatorType *ot);
 void IMAGE_OT_view_zoom_ratio(struct wmOperatorType *ot);
+void IMAGE_OT_view_zoom_border(struct wmOperatorType *ot);
+#ifdef WITH_INPUT_NDOF
 void IMAGE_OT_view_ndof(struct wmOperatorType *ot);
+#endif
 
 void IMAGE_OT_new(struct wmOperatorType *ot);
 void IMAGE_OT_open(struct wmOperatorType *ot);

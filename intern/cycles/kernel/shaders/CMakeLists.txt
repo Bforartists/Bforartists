@@ -81,6 +81,7 @@ set(SRC_OSL
 	node_wireframe.osl
 	node_hair_bsdf.osl
 	node_uv_map.osl
+	node_rgb_to_bw.osl
 )
 
 set(SRC_OSL_HEADERS
@@ -102,8 +103,8 @@ foreach(_file ${SRC_OSL})
 	string(REPLACE ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} _OSO_FILE ${_OSO_FILE})
 	add_custom_command(
 		OUTPUT ${_OSO_FILE} 
-		COMMAND ${OSL_COMPILER} -q -O2  -I"${CMAKE_CURRENT_SOURCE_DIR}" ${_OSL_FILE}
-		DEPENDS ${_OSL_FILE} ${SRC_OSL_HEADERS})
+		COMMAND ${OSL_COMPILER} -q -O2  -I"${CMAKE_CURRENT_SOURCE_DIR}" -o ${_OSO_FILE} ${_OSL_FILE}
+		DEPENDS ${_OSL_FILE} ${SRC_OSL_HEADERS} ${OSL_COMPILER})
 	list(APPEND SRC_OSO
 		${_OSO_FILE}
 	)
@@ -112,7 +113,7 @@ foreach(_file ${SRC_OSL})
 	unset(_OSO_FILE)
 endforeach()
 
-add_custom_target(cycles_osl_shaders ALL DEPENDS ${SRC_OSO} ${SRC_OSL_HEADERS})
+add_custom_target(cycles_osl_shaders ALL DEPENDS ${SRC_OSO} ${SRC_OSL_HEADERS} ${OSL_COMPILER})
 
 # CMAKE_CURRENT_SOURCE_DIR is already included in OSO paths
 delayed_install("" "${SRC_OSO}" ${CYCLES_INSTALL_PATH}/shader)

@@ -247,7 +247,7 @@ static void node_browse_tex_cb(bContext *C, void *ntree_v, void *node_v)
 	if (node->menunr < 1) return;
 	
 	if (node->id) {
-		node->id->us--;
+		id_us_min(node->id);
 		node->id = NULL;
 	}
 	tex = BLI_findlink(&bmain->tex, node->menunr - 1);
@@ -391,6 +391,7 @@ static void node_draw_frame_label(bNodeTree *ntree, bNode *node, const float asp
 	float x, y;
 	const int font_size = data->label_size / aspect;
 	const float margin = (float)(NODE_DY / 4);
+	int label_height;
 
 	nodeLabel(ntree, node, label, sizeof(label));
 
@@ -403,10 +404,11 @@ static void node_draw_frame_label(bNodeTree *ntree, bNode *node, const float asp
 
 	width = BLF_width(fontid, label, sizeof(label));
 	ascender = BLF_ascender(fontid);
+	label_height = ((margin / aspect) + (ascender * aspect));
 	
 	/* 'x' doesn't need aspect correction */
 	x = BLI_rctf_cent_x(rct) - (0.5f * width);
-	y = rct->ymax - ((margin / aspect) + (ascender * aspect));
+	y = rct->ymax - label_height;
 
 	BLF_position(fontid, x, y, 0);
 	BLF_draw(fontid, label, BLF_DRAW_STR_DUMMY_MAX);
@@ -415,31 +417,44 @@ static void node_draw_frame_label(bNodeTree *ntree, bNode *node, const float asp
 	if (node->id) {
 		Text *text = (Text *)node->id;
 		TextLine *line;
-		const float line_spacing = (BLF_height_max(fontid) * aspect) * 0.7f;
+		const int   line_height_max = BLF_height_max(fontid);
+		const float line_spacing = (line_height_max * aspect);
+		const float line_width = (BLI_rctf_size_x(rct) - margin) / aspect;
+		int y_min;
 
 		/* 'x' doesn't need aspect correction */
 		x = rct->xmin + margin;
-		y = rct->ymax - ((margin / aspect) + (ascender * aspect));
-		y -= line_spacing;
+		y = rct->ymax - (label_height + line_spacing);
+		/* early exit */
+		y_min = y + ((margin * 2) - (y - rct->ymin));
 
-		BLF_enable(fontid, BLF_CLIPPING);
+		BLF_enable(fontid, BLF_CLIPPING | BLF_WORD_WRAP);
 		BLF_clipping(
 		        fontid,
 		        rct->xmin,
-		        rct->ymin,
-		        rct->xmin + ((rct->xmax - rct->xmin) / aspect) - margin,
+		        /* round to avoid clipping half-way through a line */
+		        y - (floorf(((y - rct->ymin) - (margin * 2)) / line_spacing) * line_spacing),
+		        rct->xmin + line_width,
 		        rct->ymax);
 
+		BLF_wordwrap(fontid, line_width);
+
 		for (line = text->lines.first; line; line = line->next) {
-			BLF_position(fontid, x, y, 0);
-			BLF_draw(fontid, line->line, line->len);
-			y -= line_spacing;
-			if (y < rct->ymin) {
+			struct ResultBLF info;
+			if (line->line[0]) {
+				BLF_position(fontid, x, y, 0);
+				BLF_draw_ex(fontid, line->line, line->len, &info);
+				y -= line_spacing * info.lines;
+			}
+			else {
+				y -= line_spacing;
+			}
+			if (y < y_min) {
 				break;
 			}
 		}
 
-		BLF_disable(fontid, BLF_CLIPPING);
+		BLF_disable(fontid, BLF_CLIPPING | BLF_WORD_WRAP);
 	}
 
 	BLF_disable(fontid, BLF_ASPECT);
@@ -847,6 +862,7 @@ static void node_shader_buts_tex_environment(uiLayout *layout, bContext *C, Poin
 	node_buts_image_user(layout, C, &iuserptr, &imaptr, &iuserptr);
 
 	uiItemR(layout, ptr, "color_space", 0, "", ICON_NONE);
+	uiItemR(layout, ptr, "interpolation", 0, "", ICON_NONE);
 	uiItemR(layout, ptr, "projection", 0, "", ICON_NONE);
 }
 
@@ -888,6 +904,7 @@ static void node_shader_buts_tex_environment_ex(uiLayout *layout, bContext *C, P
 	}
 
 	uiItemR(layout, ptr, "color_space", 0, IFACE_("Color Space"), ICON_NONE);
+	uiItemR(layout, ptr, "interpolation", 0, IFACE_("Interpolation"), ICON_NONE);
 	uiItemR(layout, ptr, "projection", 0, IFACE_("Projection"), ICON_NONE);
 }
 
@@ -927,6 +944,7 @@ static void node_shader_buts_tex_brick(uiLayout *layout, bContext *UNUSED(C), Po
 static void node_shader_buts_tex_wave(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
 {
 	uiItemR(layout, ptr, "wave_type", 0, "", ICON_NONE);
+	uiItemR(layout, ptr, "wave_profile", 0, "", ICON_NONE);
 }
 
 static void node_shader_buts_tex_musgrave(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
@@ -943,6 +961,11 @@ static void node_shader_buts_tex_pointdensity(uiLayout *layout, bContext *UNUSED
 {
 	bNode *node = ptr->data;
 	NodeShaderTexPointDensity *shader_point_density = node->storage;
+	Object *ob = (Object *)node->id;
+	PointerRNA ob_ptr, obdata_ptr;
+
+	RNA_id_pointer_create((ID *)ob, &ob_ptr);
+	RNA_id_pointer_create(ob ? (ID *)ob->data : NULL, &obdata_ptr);
 
 	uiItemR(layout, ptr, "point_source", UI_ITEM_R_EXPAND, NULL, ICON_NONE);
 	uiItemR(layout, ptr, "object", 0, NULL, ICON_NONE);
@@ -958,7 +981,18 @@ static void node_shader_buts_tex_pointdensity(uiLayout *layout, bContext *UNUSED
 	uiItemR(layout, ptr, "interpolation", 0, NULL, ICON_NONE);
 	uiItemR(layout, ptr, "resolution", 0, NULL, ICON_NONE);
 	if (shader_point_density->point_source == SHD_POINTDENSITY_SOURCE_PSYS) {
-		uiItemR(layout, ptr, "color_source", 0, NULL, ICON_NONE);
+		uiItemR(layout, ptr, "particle_color_source", 0, NULL, ICON_NONE);
+	}
+	else {
+		uiItemR(layout, ptr, "vertex_color_source", 0, NULL, ICON_NONE);
+		if (shader_point_density->ob_color_source == SHD_POINTDENSITY_COLOR_VERTWEIGHT) {
+			if (ob_ptr.data)
+				uiItemPointerR(layout, ptr, "vertex_attribute_name", &ob_ptr, "vertex_groups", "", ICON_NONE);
+		}
+		if (shader_point_density->ob_color_source == SHD_POINTDENSITY_COLOR_VERTCOL) {
+			if (obdata_ptr.data)
+				uiItemPointerR(layout, ptr, "vertex_attribute_name", &obdata_ptr, "vertex_colors", "", ICON_NONE);
+		}
 	}
 }
 
@@ -1042,21 +1076,8 @@ static void node_shader_buts_anisotropic(uiLayout *layout, bContext *UNUSED(C), 
 	uiItemR(layout, ptr, "distribution", 0, "", ICON_NONE);
 }
 
-static void node_shader_buts_subsurface(uiLayout *layout, bContext *C, PointerRNA *ptr)
+static void node_shader_buts_subsurface(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
 {
-	/* SSS only enabled in Experimental Kernel */
-	PointerRNA scene = CTX_data_pointer_get(C, "scene");
-	if (scene.data) {
-		PointerRNA cscene = RNA_pointer_get(&scene, "cycles");
-		if (cscene.data &&
-		    ((U.compute_device_type != USER_COMPUTE_DEVICE_NONE) &&
-		     (RNA_enum_get(&cscene, "device") == 1) &&
-		     (RNA_enum_get(&cscene, "feature_set") == 0)))
-		{
-			uiItemL(layout, IFACE_("Only enabled in experimental GPU kernel"), ICON_ERROR);
-		}
-	}
-
 	uiItemR(layout, ptr, "falloff", 0, "", ICON_NONE);
 }
 
@@ -1317,7 +1338,7 @@ static void node_composit_buts_renderlayers(uiLayout *layout, bContext *C, Point
 	
 	scn_ptr = RNA_pointer_get(ptr, "scene");
 	RNA_string_get(&scn_ptr, "name", scene_name);
-	
+
 	WM_operator_properties_create_ptr(&op_ptr, ot);
 	RNA_string_set(&op_ptr, "layer", layer_name);
 	RNA_string_set(&op_ptr, "scene", scene_name);
@@ -1361,6 +1382,7 @@ static void node_composit_buts_blur(uiLayout *layout, bContext *UNUSED(C), Point
 		uiItemR(col, ptr, "size_x", 0, IFACE_("X"), ICON_NONE);
 		uiItemR(col, ptr, "size_y", 0, IFACE_("Y"), ICON_NONE);
 	}
+	uiItemR(col, ptr, "use_extended_bounds", 0, NULL, ICON_NONE);
 }
 
 static void node_composit_buts_dblur(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
@@ -1605,17 +1627,6 @@ static void node_composit_buts_zcombine(uiLayout *layout, bContext *UNUSED(C), P
 	col = uiLayoutColumn(layout, true);
 	uiItemR(col, ptr, "use_alpha", 0, NULL, ICON_NONE);
 	uiItemR(col, ptr, "use_antialias_z", 0, NULL, ICON_NONE);
-}
-
-
-static void node_composit_buts_hue_sat(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
-{
-	uiLayout *col;
-	
-	col = uiLayoutColumn(layout, false);
-	uiItemR(col, ptr, "color_hue", UI_ITEM_R_SLIDER, NULL, ICON_NONE);
-	uiItemR(col, ptr, "color_saturation", UI_ITEM_R_SLIDER, NULL, ICON_NONE);
-	uiItemR(col, ptr, "color_value", UI_ITEM_R_SLIDER, NULL, ICON_NONE);
 }
 
 static void node_composit_buts_dilateerode(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
@@ -1931,6 +1942,7 @@ static void node_composit_buts_colorbalance(uiLayout *layout, bContext *UNUSED(C
 		uiTemplateColorPicker(col, ptr, "offset", 1, 1, 0, 1);
 		row = uiLayoutRow(col, false);
 		uiItemR(row, ptr, "offset", 0, NULL, ICON_NONE);
+		uiItemR(col, ptr, "offset_basis", 0, NULL, ICON_NONE);
 		
 		col = uiLayoutColumn(split, false);
 		uiTemplateColorPicker(col, ptr, "power", 1, 1, 0, 1);
@@ -2023,6 +2035,7 @@ static void node_composit_buts_stabilize2d(uiLayout *layout, bContext *C, Pointe
 		return;
 
 	uiItemR(layout, ptr, "filter_type", 0, "", ICON_NONE);
+	uiItemR(layout, ptr, "invert", 0, NULL, ICON_NONE);
 }
 
 static void node_composit_buts_translate(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
@@ -2193,6 +2206,7 @@ static void node_composit_buts_bokehblur(uiLayout *layout, bContext *UNUSED(C), 
 	uiItemR(layout, ptr, "use_variable_size", 0, NULL, ICON_NONE);
 	// uiItemR(layout, ptr, "f_stop", 0, NULL, ICON_NONE);  // UNUSED
 	uiItemR(layout, ptr, "blur_max", 0, NULL, ICON_NONE);
+	uiItemR(layout, ptr, "use_extended_bounds", 0, NULL, ICON_NONE);
 }
 
 static void node_composit_backdrop_viewer(SpaceNode *snode, ImBuf *backdrop, bNode *node, int x, int y)
@@ -2439,7 +2453,6 @@ static void node_composit_buts_planetrackdeform(uiLayout *layout, bContext *C, P
 		MovieTrackingObject *object;
 		uiLayout *col;
 		PointerRNA tracking_ptr;
-		NodeTrackPosData *data = node->storage;
 
 		RNA_pointer_create(&clip->id, &RNA_MovieTracking, tracking, &tracking_ptr);
 
@@ -2555,9 +2568,6 @@ static void node_composit_set_butfunc(bNodeType *ntype)
 			break;
 		case CMP_NODE_ALPHAOVER:
 			ntype->draw_buttons = node_composit_buts_alphaover;
-			break;
-		case CMP_NODE_HUE_SAT:
-			ntype->draw_buttons = node_composit_buts_hue_sat;
 			break;
 		case CMP_NODE_TEXTURE:
 			ntype->draw_buttons = node_buts_texture;
@@ -2877,7 +2887,8 @@ static void node_texture_set_butfunc(bNodeType *ntype)
 static void node_property_update_default(Main *bmain, Scene *UNUSED(scene), PointerRNA *ptr)
 {
 	bNodeTree *ntree = ptr->id.data;
-	ED_node_tag_update_nodetree(bmain, ntree);
+	bNode *node = ptr->data;
+	ED_node_tag_update_nodetree(bmain, ntree, node);
 }
 
 static void node_socket_template_properties_update(bNodeType *ntype, bNodeSocketTemplate *stemp)
@@ -3229,9 +3240,9 @@ void draw_nodespace_back_pix(const bContext *C, ARegion *ar, SpaceNode *snode, b
 				display_buffer = IMB_display_buffer_acquire_ctx(C, ibuf, &cache_handle);
 				
 #ifdef __BIG_ENDIAN__
-				if      (snode->flag & SNODE_SHOW_R) ofs = 2;
+				if      (snode->flag & SNODE_SHOW_R) ofs = 0;
 				else if (snode->flag & SNODE_SHOW_G) ofs = 1;
-				else                                 ofs = 0;
+				else                                 ofs = 2;
 #else
 				if      (snode->flag & SNODE_SHOW_R) ofs = 1;
 				else if (snode->flag & SNODE_SHOW_G) ofs = 2;
@@ -3242,7 +3253,7 @@ void draw_nodespace_back_pix(const bContext *C, ARegion *ar, SpaceNode *snode, b
 				/* swap bytes, so alpha is most significant one, then just draw it as luminance int */
 				
 				glaDrawPixelsSafe(x, y, ibuf->x, ibuf->y, ibuf->x, GL_LUMINANCE, GL_UNSIGNED_INT,
-				                  display_buffer + ofs);
+				                  display_buffer - (4 - ofs));
 				
 				glPixelZoom(1.0f, 1.0f);
 			}
@@ -3322,7 +3333,7 @@ void draw_nodespace_back_pix(const bContext *C, ARegion *ar, SpaceNode *snode, b
 
 
 /* if v2d not NULL, it clips and returns 0 if not visible */
-int node_link_bezier_points(View2D *v2d, SpaceNode *snode, bNodeLink *link, float coord_array[][2], int resol)
+bool node_link_bezier_points(View2D *v2d, SpaceNode *snode, bNodeLink *link, float coord_array[][2], int resol)
 {
 	float dist, vec[4][2];
 	float deltax, deltay;
@@ -3358,7 +3369,8 @@ int node_link_bezier_points(View2D *v2d, SpaceNode *snode, bNodeLink *link, floa
 		toreroute = 0;
 	}
 
-	dist = UI_GetThemeValue(TH_NODE_CURVING) * 0.10f * fabsf(vec[0][0] - vec[3][0]);
+	/* may be called outside of drawing (so pass spacetype) */
+	dist = UI_GetThemeValueType(TH_NODE_CURVING, SPACE_NODE) * 0.10f * fabsf(vec[0][0] - vec[3][0]);
 	deltax = vec[3][0] - vec[0][0];
 	deltay = vec[3][1] - vec[0][1];
 	/* check direction later, for top sockets */
@@ -3462,7 +3474,6 @@ void node_draw_link_bezier(View2D *v2d, SpaceNode *snode, bNodeLink *link,
 				glBegin(GL_LINE_STRIP);
 				glVertex2fv(arrow1);
 				glVertex2fv(arrow);
-				glVertex2fv(arrow);
 				glVertex2fv(arrow2);
 				glEnd();
 			}
@@ -3499,15 +3510,11 @@ void node_draw_link_bezier(View2D *v2d, SpaceNode *snode, bNodeLink *link,
 			glBegin(GL_LINE_STRIP);
 			glVertex2fv(arrow1);
 			glVertex2fv(arrow);
-			glVertex2fv(arrow);
 			glVertex2fv(arrow2);
 			glEnd();
 		}
 		
 		glDisable(GL_LINE_SMOOTH);
-		
-		/* restore previuos linewidth */
-		glLineWidth(1.0f);
 	}
 }
 
@@ -3538,13 +3545,9 @@ void node_draw_link_straight(View2D *v2d, SpaceNode *snode, bNodeLink *link,
                              int th_col1, int do_shaded, int th_col2, int do_triple, int th_col3)
 {
 	float coord_array[2][2];
-	float linew;
 	int i;
 	
 	node_link_straight_points(v2d, snode, link, coord_array);
-	
-	/* store current linewidth */
-	glGetFloatv(GL_LINE_WIDTH, &linew);
 	
 	glEnable(GL_LINE_SMOOTH);
 	
@@ -3591,9 +3594,6 @@ void node_draw_link_straight(View2D *v2d, SpaceNode *snode, bNodeLink *link,
 	}
 	
 	glDisable(GL_LINE_SMOOTH);
-	
-	/* restore previuos linewidth */
-	glLineWidth(1.0f);
 }
 #endif
 

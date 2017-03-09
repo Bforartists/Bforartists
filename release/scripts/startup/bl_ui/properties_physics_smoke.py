@@ -35,14 +35,19 @@ class PhysicButtonsPanel:
     def poll(cls, context):
         ob = context.object
         rd = context.scene.render
-        return (ob and ob.type == 'MESH') and (not rd.use_game_engine) and (context.smoke)
+        return (ob and ob.type == 'MESH') and (rd.engine in cls.COMPAT_ENGINES) and (context.smoke)
 
 
 class PHYSICS_PT_smoke(PhysicButtonsPanel, Panel):
     bl_label = "Smoke"
+    COMPAT_ENGINES = {'BLENDER_RENDER'}
 
     def draw(self, context):
         layout = self.layout
+
+        if not bpy.app.build_options.mod_smoke:
+            layout.label("Built without Smoke modifier")
+            return
 
         md = context.smoke
         ob = context.object
@@ -131,6 +136,7 @@ class PHYSICS_PT_smoke(PhysicButtonsPanel, Panel):
 class PHYSICS_PT_smoke_flow_advanced(PhysicButtonsPanel, Panel):
     bl_label = "Smoke Flow Advanced"
     bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {'BLENDER_RENDER'}
 
     @classmethod
     def poll(cls, context):
@@ -165,6 +171,7 @@ class PHYSICS_PT_smoke_flow_advanced(PhysicButtonsPanel, Panel):
 class PHYSICS_PT_smoke_fire(PhysicButtonsPanel, Panel):
     bl_label = "Smoke Flames"
     bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {'BLENDER_RENDER'}
 
     @classmethod
     def poll(cls, context):
@@ -194,6 +201,7 @@ class PHYSICS_PT_smoke_fire(PhysicButtonsPanel, Panel):
 class PHYSICS_PT_smoke_adaptive_domain(PhysicButtonsPanel, Panel):
     bl_label = "Smoke Adaptive Domain"
     bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {'BLENDER_RENDER'}
 
     @classmethod
     def poll(cls, context):
@@ -227,12 +235,13 @@ class PHYSICS_PT_smoke_adaptive_domain(PhysicButtonsPanel, Panel):
 class PHYSICS_PT_smoke_highres(PhysicButtonsPanel, Panel):
     bl_label = "Smoke High Resolution"
     bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {'BLENDER_RENDER'}
 
     @classmethod
     def poll(cls, context):
         md = context.smoke
         rd = context.scene.render
-        return md and (md.smoke_type == 'DOMAIN') and (not rd.use_game_engine)
+        return md and (md.smoke_type == 'DOMAIN') and (rd.engine in cls.COMPAT_ENGINES)
 
     def draw_header(self, context):
         md = context.smoke.domain_settings
@@ -266,12 +275,13 @@ class PHYSICS_PT_smoke_highres(PhysicButtonsPanel, Panel):
 class PHYSICS_PT_smoke_groups(PhysicButtonsPanel, Panel):
     bl_label = "Smoke Groups"
     bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {'BLENDER_RENDER'}
 
     @classmethod
     def poll(cls, context):
         md = context.smoke
         rd = context.scene.render
-        return md and (md.smoke_type == 'DOMAIN') and (not rd.use_game_engine)
+        return md and (md.smoke_type == 'DOMAIN') and (rd.engine in cls.COMPAT_ENGINES)
 
     def draw(self, context):
         layout = self.layout
@@ -294,27 +304,58 @@ class PHYSICS_PT_smoke_groups(PhysicButtonsPanel, Panel):
 class PHYSICS_PT_smoke_cache(PhysicButtonsPanel, Panel):
     bl_label = "Smoke Cache"
     bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {'BLENDER_RENDER'}
 
     @classmethod
     def poll(cls, context):
         md = context.smoke
         rd = context.scene.render
-        return md and (md.smoke_type == 'DOMAIN') and (not rd.use_game_engine)
+        return md and (md.smoke_type == 'DOMAIN') and (rd.engine in cls.COMPAT_ENGINES)
 
     def draw(self, context):
         layout = self.layout
 
-        md = context.smoke.domain_settings
-        cache = md.point_cache
+        domain = context.smoke.domain_settings
+        cache_file_format = domain.cache_file_format
 
-        layout.label(text="Compression:")
-        layout.prop(md, "point_cache_compress_type", expand=True)
+        layout.prop(domain, "cache_file_format")
 
+        if cache_file_format == 'POINTCACHE':
+            layout.label(text="Compression:")
+            layout.prop(domain, "point_cache_compress_type", expand=True)
+        elif cache_file_format == 'OPENVDB':
+            if not bpy.app.build_options.openvdb:
+                layout.label("Built without OpenVDB support")
+                return
+
+            layout.label(text="Compression:")
+            layout.prop(domain, "openvdb_cache_compress_type", expand=True)
+            row = layout.row()
+            row.label("Data Depth:")
+            row.prop(domain, "data_depth", expand=True, text="Data Depth")
+
+        cache = domain.point_cache
         point_cache_ui(self, context, cache, (cache.is_baked is False), 'SMOKE')
 
 
 class PHYSICS_PT_smoke_field_weights(PhysicButtonsPanel, Panel):
     bl_label = "Smoke Field Weights"
+    bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {'BLENDER_RENDER'}
+
+    @classmethod
+    def poll(cls, context):
+        md = context.smoke
+        rd = context.scene.render
+        return md and (md.smoke_type == 'DOMAIN') and (rd.engine in cls.COMPAT_ENGINES)
+
+    def draw(self, context):
+        domain = context.smoke.domain_settings
+        effector_weights_ui(self, context, domain.effector_weights, 'SMOKE')
+
+
+class PHYSICS_PT_smoke_display_settings(PhysicButtonsPanel, Panel):
+    bl_label = "Smoke Display Settings"
     bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
@@ -325,7 +366,49 @@ class PHYSICS_PT_smoke_field_weights(PhysicButtonsPanel, Panel):
 
     def draw(self, context):
         domain = context.smoke.domain_settings
-        effector_weights_ui(self, context, domain.effector_weights, 'SMOKE')
+        layout = self.layout
+
+        layout.prop(domain, "display_thickness")
+
+        layout.separator()
+        layout.label(text="Slicing:")
+        layout.prop(domain, "slice_method")
+
+        slice_method = domain.slice_method
+        axis_slice_method = domain.axis_slice_method
+
+        do_axis_slicing = (slice_method == 'AXIS_ALIGNED')
+        do_full_slicing = (axis_slice_method == 'FULL')
+
+        row = layout.row();
+        row.enabled = do_axis_slicing
+        row.prop(domain, "axis_slice_method")
+
+        col = layout.column();
+        col.enabled = not do_full_slicing and do_axis_slicing
+        col.prop(domain, "slice_axis")
+        col.prop(domain, "slice_depth")
+
+        row = layout.row();
+        row.enabled = do_full_slicing or not do_axis_slicing
+        row.prop(domain, "slice_per_voxel")
+
+        layout.separator()
+        layout.label(text="Debug:")
+        layout.prop(domain, "draw_velocity")
+        col = layout.column();
+        col.enabled = domain.draw_velocity
+        col.prop(domain, "vector_draw_type")
+        col.prop(domain, "vector_scale")
+
+        layout.separator()
+        layout.label(text="Color Mapping:")
+        layout.prop(domain, "use_color_ramp")
+        col = layout.column();
+        col.enabled = domain.use_color_ramp
+        col.prop(domain, "coba_field")
+        col.template_color_ramp(domain, "color_ramp", expand=True)
+
 
 if __name__ == "__main__":  # only for live edit.
     bpy.utils.register_module(__name__)

@@ -108,15 +108,11 @@ static PyObject *Quaternion_to_euler(QuaternionObject *self, PyObject *args)
 	normalize_qt_qt(tquat, self->quat);
 
 	if (eul_compat) {
-		float mat[3][3];
-
 		if (BaseMath_ReadCallback(eul_compat) == -1)
 			return NULL;
 
-		quat_to_mat3(mat, tquat);
-
-		if (order == EULER_ORDER_XYZ)  mat3_to_compatible_eul(eul, eul_compat->eul, mat);
-		else                           mat3_to_compatible_eulO(eul, eul_compat->eul, order, mat);
+		if (order == EULER_ORDER_XYZ)  quat_to_compatible_eul(eul, eul_compat->eul, tquat);
+		else                           quat_to_compatible_eulO(eul, eul_compat->eul, order, tquat);
 	}
 	else {
 		if (order == EULER_ORDER_XYZ)  quat_to_eul(eul, tquat);
@@ -1169,9 +1165,9 @@ static void quat__axis_angle_sanitize(float axis[3], float *angle)
 {
 	if (axis) {
 		if (is_zero_v3(axis) ||
-		    !finite(axis[0]) ||
-		    !finite(axis[1]) ||
-		    !finite(axis[2]))
+		    !isfinite(axis[0]) ||
+		    !isfinite(axis[1]) ||
+		    !isfinite(axis[2]))
 		{
 			axis[0] = 1.0f;
 			axis[1] = 0.0f;
@@ -1186,7 +1182,7 @@ static void quat__axis_angle_sanitize(float axis[3], float *angle)
 	}
 
 	if (angle) {
-		if (!finite(*angle)) {
+		if (!isfinite(*angle)) {
 			*angle = 0.0f;
 		}
 	}

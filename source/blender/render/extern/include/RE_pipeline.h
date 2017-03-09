@@ -48,7 +48,6 @@ struct ReportList;
 struct Scene;
 struct SceneRenderLayer;
 struct EnvMap;
-struct RenderResult;
 struct StampData;
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -98,9 +97,10 @@ typedef struct RenderPass {
 } RenderPass;
 
 enum {
-	RENDER_PASS_DEBUG_BVH_TRAVERSAL_STEPS = 0,
+	RENDER_PASS_DEBUG_BVH_TRAVERSED_NODES = 0,
 	RENDER_PASS_DEBUG_BVH_TRAVERSED_INSTANCES = 1,
 	RENDER_PASS_DEBUG_RAY_BOUNCES = 2,
+	RENDER_PASS_DEBUG_BVH_INTERSECTIONS = 3,
 };
 
 /* a renderlayer is a full image, but with all passes and samples */
@@ -159,7 +159,7 @@ typedef struct RenderResult {
 	ListBase layers;
 	
 	/* multiView maps to a StringVector in OpenEXR */
-	ListBase views;
+	ListBase views;  /* RenderView */
 
 	/* allowing live updates: */
 	volatile rcti renrect;
@@ -231,8 +231,15 @@ struct RenderStats *RE_GetStats(struct Render *re);
 void RE_ResultGet32(struct Render *re, unsigned int *rect);
 void RE_AcquiredResultGet32(struct Render *re, struct RenderResult *result, unsigned int *rect, const int view_id);
 
+void RE_render_result_rect_from_ibuf(
+        struct RenderResult *rr, struct RenderData *rd,
+        struct ImBuf *ibuf, const int view_id);
+
 struct RenderLayer *RE_GetRenderLayer(struct RenderResult *rr, const char *name);
 float *RE_RenderLayerGetPass(volatile struct RenderLayer *rl, int passtype, const char *viewname);
+
+/* add passes for grease pencil */
+struct RenderPass *RE_create_gp_pass(struct RenderResult *rr, const char *layername, const char *viewname);
 
 /* obligatory initialize call, disprect is optional */
 void RE_InitState(struct Render *re, struct Render *source, struct RenderData *rd,
@@ -246,8 +253,8 @@ struct Object *RE_GetCamera(struct Render *re); /* return camera override if set
 void RE_SetOverrideCamera(struct Render *re, struct Object *camera);
 void RE_SetCamera(struct Render *re, struct Object *camera);
 void RE_SetEnvmapCamera(struct Render *re, struct Object *cam_ob, float viewscale, float clipsta, float clipend);
-void RE_SetWindow(struct Render *re, rctf *viewplane, float clipsta, float clipend);
-void RE_SetOrtho(struct Render *re, rctf *viewplane, float clipsta, float clipend);
+void RE_SetWindow(struct Render *re, const rctf *viewplane, float clipsta, float clipend);
+void RE_SetOrtho(struct Render *re, const rctf *viewplane, float clipsta, float clipend);
 void RE_SetPixelSize(struct Render *re, float pixsize);
 
 /* option to set viewmatrix before making dbase */
@@ -255,10 +262,12 @@ void RE_SetView(struct Render *re, float mat[4][4]);
 
 /* get current view and window transform */
 void RE_GetView(struct Render *re, float mat[4][4]);
-void RE_GetViewPlane(struct Render *re, rctf *viewplane, rcti *disprect);
+void RE_GetViewPlane(struct Render *re, rctf *r_viewplane, rcti *r_disprect);
 
 /* make or free the dbase */
-void RE_Database_FromScene(struct Render *re, struct Main *bmain, struct Scene *scene, unsigned int lay, int use_camera_view);
+void RE_Database_FromScene(
+        struct Render *re, struct Main *bmain, struct Scene *scene,
+        unsigned int lay, int use_camera_view);
 void RE_Database_Preprocess(struct Render *re);
 void RE_Database_Free(struct Render *re);
 
@@ -273,10 +282,12 @@ void RE_init_threadcount(Render *re);
 /* the main processor, assumes all was set OK! */
 void RE_TileProcessor(struct Render *re);
 
-bool RE_WriteRenderViewsImage(struct ReportList *reports, struct RenderResult *rr, struct Scene *scene, const bool stamp, char *name);
-bool RE_WriteRenderViewsMovie(struct ReportList *reports, struct RenderResult *rr, struct Scene *scene, struct RenderData *rd,
-                              struct bMovieHandle *mh, const size_t width, const size_t height, void **movie_ctx_arr,
-                              const size_t totvideos, bool preview);
+bool RE_WriteRenderViewsImage(
+        struct ReportList *reports, struct RenderResult *rr, struct Scene *scene, const bool stamp, char *name);
+bool RE_WriteRenderViewsMovie(
+        struct ReportList *reports, struct RenderResult *rr, struct Scene *scene, struct RenderData *rd,
+        struct bMovieHandle *mh, void **movie_ctx_arr,
+        const int totvideos, bool preview);
 
 /* only RE_NewRender() needed, main Blender render calls */
 void RE_BlenderFrame(struct Render *re, struct Main *bmain, struct Scene *scene,
@@ -299,11 +310,16 @@ void RE_SetReports(struct Render *re, struct ReportList *reports);
 void RE_PreviewRender(struct Render *re, struct Main *bmain, struct Scene *scene);
 
 bool RE_ReadRenderResult(struct Scene *scene, struct Scene *scenode);
-bool RE_WriteRenderResult(struct ReportList *reports, RenderResult *rr, const char *filename, struct ImageFormatData *imf, const bool multiview, const char *view);
-struct RenderResult *RE_MultilayerConvert(void *exrhandle, const char *colorspace, bool predivide, int rectx, int recty);
+bool RE_WriteRenderResult(
+        struct ReportList *reports, RenderResult *rr, const char *filename,
+        struct ImageFormatData *imf, const bool multiview, const char *view);
+struct RenderResult *RE_MultilayerConvert(
+        void *exrhandle, const char *colorspace, bool predivide, int rectx, int recty);
 
 extern const float default_envmap_layout[];
-bool RE_WriteEnvmapResult(struct ReportList *reports, struct Scene *scene, struct EnvMap *env, const char *relpath, const char imtype, float layout[12]);
+bool RE_WriteEnvmapResult(
+        struct ReportList *reports, struct Scene *scene, struct EnvMap *env,
+        const char *relpath, const char imtype, float layout[12]);
 
 /* do a full sample buffer compo */
 void RE_MergeFullSample(struct Render *re, struct Main *bmain, struct Scene *sce, struct bNodeTree *ntree);
@@ -321,7 +337,9 @@ void RE_current_scene_update_cb(struct Render *re, void *handle, void (*f)(void 
 /* should move to kernel once... still unsure on how/where */
 float RE_filter_value(int type, float x);
 /* vector blur zbuffer method */
-void RE_zbuf_accumulate_vecblur(struct NodeBlurData *nbd, int xsize, int ysize, float *newrect, float *imgrect, float *vecbufrect, float *zbufrect);
+void RE_zbuf_accumulate_vecblur(
+        struct NodeBlurData *nbd, int xsize, int ysize, float *newrect,
+        const float *imgrect, float *vecbufrect, const float *zbufrect);
 
 int RE_seq_render_active(struct Scene *scene, struct RenderData *rd);
 
@@ -346,7 +364,9 @@ struct RenderPass *RE_pass_find_by_type(volatile struct RenderLayer *rl, int pas
 #define RE_BAKE_DERIVATIVE			13
 #define RE_BAKE_VERTEX_COLORS		14
 
-void RE_Database_Baking(struct Render *re, struct Main *bmain, struct Scene *scene, unsigned int lay, const int type, struct Object *actob);
+void RE_Database_Baking(
+        struct Render *re, struct Main *bmain, struct Scene *scene,
+        unsigned int lay, const int type, struct Object *actob);
 
 void RE_DataBase_GetView(struct Render *re, float mat[4][4]);
 void RE_GetCameraWindow(struct Render *re, struct Object *camera, int frame, float mat[4][4]);
@@ -358,12 +378,21 @@ bool RE_is_rendering_allowed(struct Scene *scene, struct Object *camera_override
 
 bool RE_allow_render_generic_object(struct Object *ob);
 
+/* RE_updateRenderInstances flag */
+enum {
+	RE_OBJECT_INSTANCES_UPDATE_VIEW  = (1 << 0),
+	RE_OBJECT_INSTANCES_UPDATE_OBMAT = (1 << 1),
+};
+void RE_updateRenderInstances(Render *re, int flag);
+
 /******* defined in render_result.c *********/
 
 bool RE_HasFakeLayer(RenderResult *res);
 bool RE_RenderResult_is_stereo(RenderResult *res);
 struct RenderView *RE_RenderViewGetById(struct RenderResult *res, const int view_id);
 struct RenderView *RE_RenderViewGetByName(struct RenderResult *res, const char *viewname);
+
+RenderResult *RE_DuplicateRenderResult(RenderResult *rr);
 
 /******* Debug pass helper functions *********/
 

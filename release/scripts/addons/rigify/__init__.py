@@ -1,4 +1,4 @@
-﻿#====================== BEGIN GPL LICENSE BLOCK ======================
+#====================== BEGIN GPL LICENSE BLOCK ======================
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -18,15 +18,13 @@
 
 # <pep8 compliant>
 
-#fixed for Bforartists. Shows in Tool Shelf now.
-
 bl_info = {
     "name": "Rigify",
     "version": (0, 4),
     "author": "Nathan Vegdahl",
     "blender": (2, 66, 0),
     "description": "Automatic rigging from building-block components",
-    "location": "Armature properties, Bone properties, View3d tools panel",
+    "location": "Armature properties, Bone properties, View3d tools panel, Armature Add menu",
     "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.5/Py/"
                 "Scripts/Rigging/Rigify",
     "tracker_url": "http://github.com/cessen/rigify/issues",

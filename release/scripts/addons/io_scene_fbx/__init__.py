@@ -21,8 +21,8 @@
 bl_info = {
     "name": "FBX format",
     "author": "Campbell Barton, Bastien Montagne, Jens Restemeier",
-    "version": (3, 6, 2),
-    "blender": (2, 74, 0),
+    "version": (3, 7, 9),
+    "blender": (2, 77, 0),
     "location": "File > Import-Export",
     "description": "FBX IO meshes, UV's, vertex colors, materials, textures, cameras, lamps and actions",
     "warning": "",
@@ -314,6 +314,11 @@ class ExportFBX(bpy.types.Operator, ExportHelper, IOFBXOrientationHelper):
                         "WARNING: prevents exporting shape keys",
             default=True,
             )
+    use_mesh_modifiers_render = BoolProperty(
+            name="Use Modifiers Render Setting",
+            description="Use render settings when applying modifiers to mesh objects",
+            default=True,
+            )
     mesh_smooth_type = EnumProperty(
             name="Smoothing",
             items=(('OFF', "Normals Only", "Export only normals instead of writing edge or face smoothing data"),
@@ -374,6 +379,17 @@ class ExportFBX(bpy.types.Operator, ExportHelper, IOFBXOrientationHelper):
             name="Only Deform Bones",
             description="Only write deforming bones (and non-deforming ones when they have deforming children)",
             default=False,
+            )
+    armature_nodetype = EnumProperty(
+            name="Armature FBXNode Type",
+            items=(('NULL', "Null", "'Null' FBX node, similar to Blender's Empty (default)"),
+                   ('ROOT', "Root", "'Root' FBX node, supposed to be the root of chains of bones..."),
+                   ('LIMBNODE', "LimbNode", "'LimbNode' FBX node, a regular joint between two bones..."),
+                  ),
+            description="FBX type of node (object) used to represent Blender's armatures "
+                        "(use Null one unless you experience issues with other app, other choices may no import back "
+                        "perfectly in Blender...)",
+            default='NULL',
             )
     # Anim - 7.4
     bake_anim = BoolProperty(
@@ -507,6 +523,9 @@ class ExportFBX(bpy.types.Operator, ExportHelper, IOFBXOrientationHelper):
                 sub.prop(self, "use_batch_own_dir", text="", icon='NEWFOLDER')
             elif self.ui_tab == 'GEOMETRY':
                 layout.prop(self, "use_mesh_modifiers")
+                sub = layout.row()
+                sub.enabled = self.use_mesh_modifiers
+                sub.prop(self, "use_mesh_modifiers_render")
                 layout.prop(self, "mesh_smooth_type")
                 layout.prop(self, "use_mesh_edges")
                 sub = layout.row()
@@ -517,6 +536,7 @@ class ExportFBX(bpy.types.Operator, ExportHelper, IOFBXOrientationHelper):
                 layout.prop(self, "add_leaf_bones")
                 layout.prop(self, "primary_bone_axis")
                 layout.prop(self, "secondary_bone_axis")
+                layout.prop(self, "armature_nodetype")
             elif self.ui_tab == 'ANIMATION':
                 layout.prop(self, "bake_anim")
                 col = layout.column()

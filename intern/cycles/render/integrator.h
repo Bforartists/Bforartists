@@ -19,14 +19,18 @@
 
 #include "kernel_types.h"
 
+#include "node.h"
+
 CCL_NAMESPACE_BEGIN
 
 class Device;
 class DeviceScene;
 class Scene;
 
-class Integrator {
+class Integrator : public Node {
 public:
+	NODE_DECLARE;
+
 	int min_bounce;
 	int max_bounce;
 
@@ -39,6 +43,8 @@ public:
 	int transparent_max_bounce;
 	bool transparent_shadows;
 
+	int ao_bounces;
+
 	int volume_max_steps;
 	float volume_step_size;
 
@@ -47,7 +53,6 @@ public:
 	float filter_glossy;
 
 	int seed;
-	int layer_flag;
 
 	float sample_clamp_direct;
 	float sample_clamp_indirect;
@@ -61,12 +66,17 @@ public:
 	int mesh_light_samples;
 	int subsurface_samples;
 	int volume_samples;
+	int start_sample;
+
 	bool sample_all_lights_direct;
 	bool sample_all_lights_indirect;
+	float light_sampling_threshold;
 
 	enum Method {
 		BRANCHED_PATH = 0,
-		PATH = 1
+		PATH = 1,
+
+		NUM_METHODS,
 	};
 	
 	Method method;

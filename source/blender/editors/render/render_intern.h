@@ -89,11 +89,12 @@ void TEXTURE_OT_envmap_clear_all(struct wmOperatorType *ot);
 
 /* render_internal.c */
 void RENDER_OT_render(struct wmOperatorType *ot);
+void RENDER_OT_shutter_curve_preset(struct wmOperatorType *ot);
 void render_view3d_update(struct RenderEngine *engine, const struct bContext *C);
 void render_view3d_draw(struct RenderEngine *engine, const struct bContext *C);
 
 /* render_view.c */
-struct ScrArea *render_view_open(struct bContext *C, int mx, int my);
+struct ScrArea *render_view_open(struct bContext *C, int mx, int my, struct ReportList *reports);
 
 void RENDER_OT_view_show(struct wmOperatorType *ot);
 void RENDER_OT_view_cancel(struct wmOperatorType *ot);

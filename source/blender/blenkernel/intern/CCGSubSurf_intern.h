@@ -86,7 +86,7 @@ void ccg_ehashIterator_next(EHashIterator *ehi);
 int ccg_ehashIterator_isStopped(EHashIterator *ehi);
 
 /**
- * Standard allocator implementarion.
+ * Standard allocator implementation.
  */
 
 CCGAllocatorIFC *ccg_getStandardAllocatorIFC(void);
@@ -255,10 +255,7 @@ struct CCGSubSurf {
 	 */
 	int osd_next_face_ptex_index;
 
-	/* ** Needs review.  ** */
-	bool osd_subsurf_uv;
-	int osd_uv_index;
-	bool osd_uvs_invalid;
+	bool osd_subdiv_uvs;
 #endif
 };
 
@@ -302,6 +299,16 @@ void ccgSubSurf__sync_legacy(CCGSubSurf *ss);
 /* * CCGSubSurf_opensubdiv.c * */
 
 void ccgSubSurf__sync_opensubdiv(CCGSubSurf *ss);
+
+/* Delayed free routines. Will do actual free if called from
+ * main thread and schedule free for later free otherwise.
+ */
+
+#ifdef WITH_OPENSUBDIV
+void ccgSubSurf__delete_osdGLMesh(struct OpenSubdiv_GLMesh *osd_mesh);
+void ccgSubSurf__delete_vertex_array(unsigned int vao);
+void ccgSubSurf__delete_pending(void);
+#endif
 
 /* * CCGSubSurf_opensubdiv_converter.c * */
 

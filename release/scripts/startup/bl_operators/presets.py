@@ -169,14 +169,16 @@ class AddPresetBase:
             if not filepath:
                 return {'CANCELLED'}
 
-            if hasattr(self, "remove"):
-                self.remove(context, filepath)
-            else:
-                try:
+            try:
+                if hasattr(self, "remove"):
+                    self.remove(context, filepath)
+                else:
                     os.remove(filepath)
-                except:
-                    import traceback
-                    traceback.print_exc()
+            except Exception as e:
+                self.report({'ERROR'}, "Unable to remove preset: %r" % e)
+                import traceback
+                traceback.print_exc()
+                return {'CANCELLED'}
 
             # XXX, stupid!
             preset_menu_class.bl_label = "Presets"
@@ -660,3 +662,21 @@ class WM_MT_operator_presets(Menu):
         return AddPresetOperator.operator_path(self.operator)
 
     preset_operator = "script.execute_preset"
+
+
+class AddPresetUnitsLength(AddPresetBase, Operator):
+    """Add or remove length units preset"""
+    bl_idname = "scene.units_length_preset_add"
+    bl_label = "Add Length Units Preset"
+    preset_menu = "SCENE_MT_units_length_presets"
+
+    preset_defines = [
+        "scene = bpy.context.scene"
+    ]
+
+    preset_values = [
+        "scene.unit_settings.system",
+        "scene.unit_settings.scale_length",
+    ]
+
+    preset_subdir = "units_length"

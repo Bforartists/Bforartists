@@ -44,6 +44,11 @@ class TEXT_HT_header(Header):
         row = layout.row(align=True)
         row.template_ID(st, "text", new="text.new", unlink="text.unlink", open="text.open")
 
+        row = layout.row(align=True)
+        row.prop(st, "show_line_numbers", text="")
+        row.prop(st, "show_word_wrap", text="")
+        row.prop(st, "show_syntax_highlight", text="")
+
         if text:
             osl = text.name.endswith(".osl") or text.name.endswith(".oso")
 
@@ -84,6 +89,7 @@ class ALL_MT_editormenu(Menu):
         row = layout.row(align=True)
         row.template_header() # editor type menus
 
+
 class TEXT_MT_editor_menus(Menu):
     bl_idname = "TEXT_MT_editor_menus"
     bl_label = ""
@@ -98,7 +104,6 @@ class TEXT_MT_editor_menus(Menu):
 
         layout.menu("TEXT_MT_File")
         layout.menu("TEXT_MT_view")
-        
 
         if text:
             layout.menu("TEXT_MT_edit")
@@ -114,21 +119,6 @@ class TEXT_PT_properties(Panel):
         layout = self.layout
 
         st = context.space_data
-
-        scene = context.scene # Our data for the icon_or_text flag is in the current scene
-
-        if not scene.UItweaks.icon_or_text: 
-            flow = layout.column_flow()
-            flow.prop(st, "show_line_numbers")
-            flow.prop(st, "show_word_wrap")
-            flow.prop(st, "show_syntax_highlight")
-        else:
-            flow = layout.column_flow()
-            row = flow.row(align=False)
-            row.alignment = 'LEFT'
-            row.prop(st, "show_line_numbers", text = "")
-            row.prop(st, "show_word_wrap", text = "")
-            row.prop(st, "show_syntax_highlight", text = "")
 
         flow.prop(st, "show_line_highlight")
         flow.prop(st, "use_live_edit")
@@ -211,7 +201,7 @@ class TEXT_MT_view(Menu):
 
         layout.operator("screen.area_dupli")
         layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area") # bfa - the new separated tooltip. Class is in space_text.py
-        layout.operator("screen.screen_full_area").use_hide_panels = True
+        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area").use_hide_panels = True
 
 
 class TEXT_MT_File(Menu):
@@ -273,6 +263,16 @@ class TEXT_MT_templates(Menu):
         layout.menu("TEXT_MT_templates_osl")
 
 
+class TEXT_MT_edit_select(Menu):
+    bl_label = "Select"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("text.select_all")
+        layout.operator("text.select_line")
+
+
 class TEXT_MT_format(Menu):
     bl_label = "Format"
 
@@ -328,16 +328,13 @@ class TEXT_MT_edit(Menu):
 
         layout.separator()
 
-        layout.operator("text.move_lines",
-                        text="Move line(s) up").direction = 'UP'
-        layout.operator("text.move_lines",
-                        text="Move line(s) down").direction = 'DOWN'
+        layout.operator("text.move_lines", text="Move line(s) up").direction = 'UP'
+        layout.operator("text.move_lines", text="Move line(s) down").direction = 'DOWN'
 
         layout.separator()
 
         layout.operator("text.select_all")
         layout.operator("text.select_line")
-
         layout.operator_menu_enum("text.delete", "type")
 
         layout.separator()

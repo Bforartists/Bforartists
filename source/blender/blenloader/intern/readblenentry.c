@@ -72,6 +72,13 @@ void BLO_blendhandle_print_sizes(BlendHandle *, void *);
 
 /* Access routines used by filesel. */
 	 
+/**
+ * Open a blendhandle from a file path.
+ *
+ * \param filepath The file path to open.
+ * \param reports Report errors in opening the file (can be NULL).
+ * \return A handle on success, or NULL on failure.
+ */
 BlendHandle *BLO_blendhandle_from_file(const char *filepath, ReportList *reports)
 {
 	BlendHandle *bh;
@@ -81,6 +88,13 @@ BlendHandle *BLO_blendhandle_from_file(const char *filepath, ReportList *reports
 	return bh;
 }
 
+/**
+ * Open a blendhandle from memory.
+ *
+ * \param mem The data to load from.
+ * \param memsize The size of the data.
+ * \return A handle on success, or NULL on failure.
+ */
 BlendHandle *BLO_blendhandle_from_memory(const void *mem, int memsize)
 {
 	BlendHandle *bh;
@@ -120,6 +134,14 @@ void BLO_blendhandle_print_sizes(BlendHandle *bh, void *fp)
 	fprintf(fp, "]\n");
 }
 
+/**
+ * Gets the names of all the datablocks in a file of a certain type (e.g. all the scene names in a file).
+ *
+ * \param bh The blendhandle to access.
+ * \param ofblocktype The type of names to get.
+ * \param tot_names The length of the returned list.
+ * \return A BLI_linklist of strings. The string links should be freed with malloc.
+ */
 LinkNode *BLO_blendhandle_get_datablock_names(BlendHandle *bh, int ofblocktype, int *tot_names)
 {
 	FileData *fd = (FileData *) bh;
@@ -142,6 +164,14 @@ LinkNode *BLO_blendhandle_get_datablock_names(BlendHandle *bh, int ofblocktype, 
 	return names;
 }
 
+/**
+ * Gets the previews of all the datablocks in a file of a certain type (e.g. all the scene previews in a file).
+ *
+ * \param bh The blendhandle to access.
+ * \param ofblocktype The type of names to get.
+ * \param tot_prev The length of the returned list.
+ * \return A BLI_linklist of PreviewImage. The PreviewImage links should be freed with malloc.
+ */
 LinkNode *BLO_blendhandle_get_previews(BlendHandle *bh, int ofblocktype, int *tot_prev)
 {
 	FileData *fd = (FileData *) bh;
@@ -232,7 +262,13 @@ LinkNode *BLO_blendhandle_get_previews(BlendHandle *bh, int ofblocktype, int *to
 	return previews;
 }
 
-LinkNode *BLO_blendhandle_get_linkable_groups(BlendHandle *bh) 
+/**
+ * Gets the names of all the linkable datablock types available in a file. (e.g. "Scene", "Mesh", "Lamp", etc.).
+ *
+ * \param bh The blendhandle to access.
+ * \return A BLI_linklist of strings. The string links should be freed with malloc.
+ */
+LinkNode *BLO_blendhandle_get_linkable_groups(BlendHandle *bh)
 {
 	FileData *fd = (FileData *) bh;
 	GSet *gathered = BLI_gset_ptr_new("linkable_groups gh");
@@ -247,9 +283,8 @@ LinkNode *BLO_blendhandle_get_linkable_groups(BlendHandle *bh)
 			if (BKE_idcode_is_linkable(bhead->code)) {
 				const char *str = BKE_idcode_to_name(bhead->code);
 				
-				if (!BLI_gset_haskey(gathered, (void *)str)) {
+				if (BLI_gset_add(gathered, (void *)str)) {
 					BLI_linklist_prepend(&names, strdup(str));
-					BLI_gset_insert(gathered, (void *)str);
 				}
 			}
 		}
@@ -260,6 +295,11 @@ LinkNode *BLO_blendhandle_get_linkable_groups(BlendHandle *bh)
 	return names;
 }		
 
+/**
+ * Close and free a blendhandle. The handle becomes invalid after this call.
+ *
+ * \param bh The handle to close.
+ */
 void BLO_blendhandle_close(BlendHandle *bh)
 {
 	FileData *fd = (FileData *) bh;
@@ -269,6 +309,14 @@ void BLO_blendhandle_close(BlendHandle *bh)
 
 /**********/
 
+/**
+ * Open a blender file from a pathname. The function returns NULL
+ * and sets a report in the list if it cannot open the file.
+ *
+ * \param filepath The path of the file to open.
+ * \param reports If the return value is NULL, errors indicating the cause of the failure.
+ * \return The data of the file.
+ */
 BlendFileData *BLO_read_from_file(const char *filepath, ReportList *reports)
 {
 	BlendFileData *bfd = NULL;
@@ -284,6 +332,15 @@ BlendFileData *BLO_read_from_file(const char *filepath, ReportList *reports)
 	return bfd;
 }
 
+/**
+ * Open a blender file from memory. The function returns NULL
+ * and sets a report in the list if it cannot open the file.
+ *
+ * \param mem The file data.
+ * \param memsize The length of \a mem.
+ * \param reports If the return value is NULL, errors indicating the cause of the failure.
+ * \return The data of the file.
+ */
 BlendFileData *BLO_read_from_memory(const void *mem, int memsize, ReportList *reports)
 {
 	BlendFileData *bfd = NULL;
@@ -299,11 +356,17 @@ BlendFileData *BLO_read_from_memory(const void *mem, int memsize, ReportList *re
 	return bfd;
 }
 
+/**
+ * Used for undo/redo, skips part of libraries reading (assuming their data are already loaded & valid).
+ *
+ * \param oldmain old main, from which we will keep libraries and other datablocks that should not have changed.
+ * \param filename current file, only for retrieving library data.
+ */
 BlendFileData *BLO_read_from_memfile(Main *oldmain, const char *filename, MemFile *memfile, ReportList *reports)
 {
 	BlendFileData *bfd = NULL;
 	FileData *fd;
-	ListBase mainlist;
+	ListBase old_mainlist;
 	
 	fd = blo_openblendermemfile(memfile, reports);
 	if (fd) {
@@ -314,9 +377,9 @@ BlendFileData *BLO_read_from_memfile(Main *oldmain, const char *filename, MemFil
 		blo_clear_proxy_pointers_from_lib(oldmain);
 
 		/* separate libraries from old main */
-		blo_split_main(&mainlist, oldmain);
+		blo_split_main(&old_mainlist, oldmain);
 		/* add the library pointers in oldmap lookup */
-		blo_add_library_pointer_map(&mainlist, fd);
+		blo_add_library_pointer_map(&old_mainlist, fd);
 		
 		/* makes lookup of existing images in old main */
 		blo_make_image_pointer_map(fd, oldmain);
@@ -340,25 +403,56 @@ BlendFileData *BLO_read_from_memfile(Main *oldmain, const char *filename, MemFil
 		/* ensures relinked sounds are not freed */
 		blo_end_sound_pointer_map(fd, oldmain);
 
-		/* move libraries from old main to new main */
-		if (bfd && mainlist.first != mainlist.last) {
-			
-			/* Library structs themselves */
-			bfd->main->library = oldmain->library;
-			BLI_listbase_clear(&oldmain->library);
-			
-			/* add the Library mainlist to the new main */
-			BLI_remlink(&mainlist, oldmain);
-			BLI_addhead(&mainlist, bfd->main);
+		/* Still in-use libraries have already been moved from oldmain to new mainlist,
+		 * but oldmain itself shall *never* be 'transferred' to new mainlist! */
+		BLI_assert(old_mainlist.first == oldmain);
+
+		if (bfd && old_mainlist.first != old_mainlist.last) {
+			/* Even though directly used libs have been already moved to new main, indirect ones have not.
+			 * This is a bit annoying, but we have no choice but to keep them all for now - means some now unused
+			 * data may remain in memory, but think we'll have to live with it. */
+			Main *libmain, *libmain_next;
+			Main *newmain = bfd->main;
+			ListBase new_mainlist = {newmain, newmain};
+
+			for (libmain = oldmain->next; libmain; libmain = libmain_next) {
+				libmain_next = libmain->next;
+				/* Note that LIB_INDIRECT does not work with libraries themselves, so we use non-NULL parent
+				 * to detect indirect-linked ones... */
+				if (libmain->curlib && (libmain->curlib->parent != NULL)) {
+					BLI_remlink(&old_mainlist, libmain);
+					BLI_addtail(&new_mainlist, libmain);
+				}
+				else {
+#ifdef PRINT_DEBUG
+					printf("Dropped Main for lib: %s\n", libmain->curlib->id.name);
+#endif
+				}
+			}
+			/* In any case, we need to move all lib datablocks themselves - those are 'first level data',
+			 * getting rid of them would imply updating spaces & co to prevent invalid pointers access. */
+			BLI_movelisttolist(&newmain->library, &oldmain->library);
+
+			blo_join_main(&new_mainlist);
 		}
-		blo_join_main(&mainlist);
-		
+
+		/* printf("Remaining mains/libs in oldmain: %d\n", BLI_listbase_count(&fd->old_mainlist) - 1); */
+
+		/* That way, libs (aka mains) we did not reuse in new undone/redone state
+		 * will be cleared together with oldmain... */
+		blo_join_main(&old_mainlist);
+
 		blo_freefiledata(fd);
 	}
 
 	return bfd;
 }
 
+/**
+ * Frees a BlendFileData structure and *all* the data associated with it (the userdef data, and the main libblock data).
+ *
+ * \param bfd The structure to free.
+ */
 void BLO_blendfiledata_free(BlendFileData *bfd)
 {
 	if (bfd->main) {

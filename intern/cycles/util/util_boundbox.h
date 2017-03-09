@@ -25,8 +25,6 @@
 #include "util_transform.h"
 #include "util_types.h"
 
-using namespace std;
-
 CCL_NAMESPACE_BEGIN
 
 /* 3D BoundBox */
@@ -151,7 +149,7 @@ public:
 		       (isfinite(max.x) && isfinite(max.y) && isfinite(max.z));
 	}
 
-	BoundBox transformed(const Transform *tfm)
+	BoundBox transformed(const Transform *tfm) const
 	{
 		BoundBox result = BoundBox::empty;
 

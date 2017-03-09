@@ -16,7 +16,12 @@
 
 CCL_NAMESPACE_BEGIN
 
-ccl_device_inline void path_state_init(KernelGlobals *kg, ccl_addr_space PathState *state, ccl_addr_space RNG *rng, int sample, ccl_addr_space Ray *ray)
+ccl_device_inline void path_state_init(KernelGlobals *kg,
+                                       ShaderData *stack_sd,
+                                       ccl_addr_space PathState *state,
+                                       ccl_addr_space RNG *rng,
+                                       int sample,
+                                       ccl_addr_space Ray *ray)
 {
 	state->flag = PATH_RAY_CAMERA|PATH_RAY_MIS_SKIP;
 
@@ -40,9 +45,9 @@ ccl_device_inline void path_state_init(KernelGlobals *kg, ccl_addr_space PathSta
 	state->volume_bounce = 0;
 
 	if(kernel_data.integrator.use_volumes) {
-		/* initialize volume stack with volume we are inside of */
-		kernel_volume_stack_init(kg, ray, state->volume_stack);
-		/* seed RNG for cases where we can't use stratified samples */
+		/* Initialize volume stack with volume we are inside of. */
+		kernel_volume_stack_init(kg, stack_sd, state, ray, state->volume_stack);
+		/* Seed RNG for cases where we can't use stratified samples .*/
 		state->rng_congruential = lcg_init(*rng + sample*0x51633e2d);
 	}
 	else {
@@ -131,9 +136,6 @@ ccl_device_inline uint path_state_ray_visibility(KernelGlobals *kg, PathState *s
 	/* todo: this is not supported as its own ray visibility yet */
 	if(state->flag & PATH_RAY_VOLUME_SCATTER)
 		flag |= PATH_RAY_DIFFUSE;
-	/* for camera visibility, use render layer flags */
-	if(flag & PATH_RAY_CAMERA)
-		flag |= kernel_data.integrator.layer_flag;
 
 	return flag;
 }
@@ -166,6 +168,16 @@ ccl_device_inline float path_state_terminate_probability(KernelGlobals *kg, ccl_
 
 	/* probalistic termination */
 	return average(throughput); /* todo: try using max here */
+}
+
+/* TODO(DingTo): Find more meaningful name for this */
+ccl_device_inline void path_state_modify_bounce(ccl_addr_space PathState *state, bool increase)
+{
+	/* Modify bounce temporarily for shader eval */
+	if(increase)
+		state->bounce += 1;
+	else
+		state->bounce -= 1;
 }
 
 CCL_NAMESPACE_END

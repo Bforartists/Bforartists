@@ -29,20 +29,27 @@ Example linux usage
 Windows not supported so far
 """
 
+import sys
+
+# until we have arg parsing
+import project_info
+if not project_info.init(sys.argv[-1]):
+    sys.exit(1)
+
 from project_info import (
-        SIMPLE_PROJECTFILE,
-        SOURCE_DIR,
-        CMAKE_DIR,
-        PROJECT_DIR,
-        source_list,
-        is_project_file,
-        is_c_header,
-        # is_py,
-        cmake_advanced_info,
-        cmake_compiler_defines,
-        cmake_cache_var,
-        project_name_get,
-        )
+    SIMPLE_PROJECTFILE,
+    SOURCE_DIR,
+    CMAKE_DIR,
+    PROJECT_DIR,
+    source_list,
+    is_project_file,
+    is_c_header,
+    # is_py,
+    cmake_advanced_info,
+    cmake_compiler_defines,
+    cmake_cache_var,
+    project_name_get,
+)
 
 
 import os
@@ -50,6 +57,8 @@ from os.path import join, dirname, normpath, relpath, exists
 
 
 def create_nb_project_main():
+    from xml.sax.saxutils import escape
+
     files = list(source_list(SOURCE_DIR, filename_check=is_project_file))
     files_rel = [relpath(f, start=PROJECT_DIR) for f in files]
     files_rel.sort()
@@ -71,7 +80,6 @@ def create_nb_project_main():
         else:
             # be tricky, get the project name from git if we can!
             PROJECT_NAME = project_name_get()
-
 
         make_exe = cmake_cache_var("CMAKE_MAKE_PROGRAM")
         make_exe_basename = os.path.basename(make_exe)
@@ -207,8 +215,8 @@ def create_nb_project_main():
             build_cmd = "${MAKE} -f Makefile"
             clean_cmd = "${MAKE} -f Makefile clean"
 
-        f.write('          <buildCommand>%s</buildCommand>\n' % build_cmd)
-        f.write('          <cleanCommand>%s</cleanCommand>\n' % clean_cmd)
+        f.write('          <buildCommand>%s</buildCommand>\n' % escape(build_cmd))
+        f.write('          <cleanCommand>%s</cleanCommand>\n' % escape(clean_cmd))
         f.write('          <executablePath>./bin/blender</executablePath>\n')
         del build_cmd, clean_cmd
 
@@ -219,7 +227,7 @@ def create_nb_project_main():
             f.write('            </incDir>\n')
             f.write('            <preprocessorList>\n')
             for cdef in defines:
-                f.write('              <Elem>%s</Elem>\n' % cdef)
+                f.write('              <Elem>%s</Elem>\n' % escape(cdef))
             f.write('            </preprocessorList>\n')
 
         f.write('          <cTool>\n')

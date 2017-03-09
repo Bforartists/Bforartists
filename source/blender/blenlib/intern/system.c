@@ -25,6 +25,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "BLI_utildefines.h"
 #include "BLI_system.h"
 
 #include "MEM_guardedalloc.h"
@@ -34,7 +35,7 @@
 #  include <execinfo.h>
 #elif defined(WIN32)
 #  include <windows.h>
-#  include <DbgHelp.h>
+#  include <dbghelp.h>
 #endif
 
 int BLI_cpu_support_sse2(void)

@@ -33,6 +33,7 @@
 #include <stdio.h>
 
 #include "DNA_anim_types.h"
+#include "DNA_group_types.h"
 #include "DNA_scene_types.h"
 
 #include "MEM_guardedalloc.h"
@@ -125,15 +126,15 @@ static SpaceLink *nla_new(const bContext *C)
 	ar->v2d.flag = V2D_VIEWSYNC_AREA_VERTICAL;
 	
 	/* ui buttons */
-	ar = MEM_callocN(sizeof(ARegion), "buttons area for nla");
+	ar = MEM_callocN(sizeof(ARegion), "buttons region for nla");
 	
 	BLI_addtail(&snla->regionbase, ar);
 	ar->regiontype = RGN_TYPE_UI;
 	ar->alignment = RGN_ALIGN_RIGHT;
 	ar->flag = RGN_FLAG_HIDDEN;
 	
-	/* main area */
-	ar = MEM_callocN(sizeof(ARegion), "main area for nla");
+	/* main region */
+	ar = MEM_callocN(sizeof(ARegion), "main region for nla");
 	
 	BLI_addtail(&snla->regionbase, ar);
 	ar->regiontype = RGN_TYPE_WINDOW;
@@ -200,7 +201,7 @@ static SpaceLink *nla_duplicate(SpaceLink *sl)
 }
 
 /* add handlers, stuff you only do once or on area/region changes */
-static void nla_channel_area_init(wmWindowManager *wm, ARegion *ar)
+static void nla_channel_region_init(wmWindowManager *wm, ARegion *ar)
 {
 	wmKeyMap *keymap;
 	
@@ -222,7 +223,7 @@ static void nla_channel_area_init(wmWindowManager *wm, ARegion *ar)
 }
 
 /* draw entirely, view changes should be handled here */
-static void nla_channel_area_draw(const bContext *C, ARegion *ar)
+static void nla_channel_region_draw(const bContext *C, ARegion *ar)
 {
 	bAnimContext ac;
 	View2D *v2d = &ar->v2d;
@@ -250,7 +251,7 @@ static void nla_channel_area_draw(const bContext *C, ARegion *ar)
 
 
 /* add handlers, stuff you only do once or on area/region changes */
-static void nla_main_area_init(wmWindowManager *wm, ARegion *ar)
+static void nla_main_region_init(wmWindowManager *wm, ARegion *ar)
 {
 	wmKeyMap *keymap;
 	
@@ -263,7 +264,7 @@ static void nla_main_area_init(wmWindowManager *wm, ARegion *ar)
 	WM_event_add_keymap_handler(&ar->handlers, keymap);
 }
 
-static void nla_main_area_draw(const bContext *C, ARegion *ar)
+static void nla_main_region_draw(const bContext *C, ARegion *ar)
 {
 	/* draw entirely, view changes should be handled here */
 	SpaceNla *snla = CTX_wm_space_nla(C);
@@ -326,18 +327,18 @@ static void nla_main_area_draw(const bContext *C, ARegion *ar)
 
 
 /* add handlers, stuff you only do once or on area/region changes */
-static void nla_header_area_init(wmWindowManager *UNUSED(wm), ARegion *ar)
+static void nla_header_region_init(wmWindowManager *UNUSED(wm), ARegion *ar)
 {
 	ED_region_header_init(ar);
 }
 
-static void nla_header_area_draw(const bContext *C, ARegion *ar)
+static void nla_header_region_draw(const bContext *C, ARegion *ar)
 {
 	ED_region_header(C, ar);
 }
 
 /* add handlers, stuff you only do once or on area/region changes */
-static void nla_buttons_area_init(wmWindowManager *wm, ARegion *ar)
+static void nla_buttons_region_init(wmWindowManager *wm, ARegion *ar)
 {
 	wmKeyMap *keymap;
 	
@@ -347,7 +348,7 @@ static void nla_buttons_area_init(wmWindowManager *wm, ARegion *ar)
 	WM_event_add_keymap_handler_bb(&ar->handlers, keymap, &ar->v2d.mask, &ar->winrct);
 }
 
-static void nla_buttons_area_draw(const bContext *C, ARegion *ar)
+static void nla_buttons_region_draw(const bContext *C, ARegion *ar)
 {
 	ED_region_panels(C, ar, NULL, -1, true);
 }
@@ -385,7 +386,7 @@ static void nla_region_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa), ARegio
 }
 
 
-static void nla_main_area_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa), ARegion *ar, wmNotifier *wmn)
+static void nla_main_region_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa), ARegion *ar, wmNotifier *wmn)
 {
 	/* context changes */
 	switch (wmn->category) {
@@ -430,7 +431,7 @@ static void nla_main_area_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa), ARe
 	}
 }
 
-static void nla_channel_area_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa), ARegion *ar, wmNotifier *wmn)
+static void nla_channel_region_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa), ARegion *ar, wmNotifier *wmn)
 {
 	/* context changes */
 	switch (wmn->category) {
@@ -501,6 +502,19 @@ static void nla_listener(bScreen *UNUSED(sc), ScrArea *sa, wmNotifier *wmn)
 	}
 }
 
+static void nla_id_remap(ScrArea *UNUSED(sa), SpaceLink *slink, ID *old_id, ID *new_id)
+{
+	SpaceNla *snla = (SpaceNla *)slink;
+
+	if (!ELEM(GS(old_id->name), ID_GR)) {
+		return;
+	}
+
+	if ((ID *)snla->ads->filter_grp == old_id) {
+		snla->ads->filter_grp = (Group *)new_id;
+	}
+}
+
 /* only called once, from space/spacetypes.c */
 void ED_spacetype_nla(void)
 {
@@ -517,13 +531,14 @@ void ED_spacetype_nla(void)
 	st->operatortypes = nla_operatortypes;
 	st->listener = nla_listener;
 	st->keymap = nla_keymap;
-	
+	st->id_remap = nla_id_remap;
+
 	/* regions: main window */
 	art = MEM_callocN(sizeof(ARegionType), "spacetype nla region");
 	art->regionid = RGN_TYPE_WINDOW;
-	art->init = nla_main_area_init;
-	art->draw = nla_main_area_draw;
-	art->listener = nla_main_area_listener;
+	art->init = nla_main_region_init;
+	art->draw = nla_main_region_draw;
+	art->listener = nla_main_region_listener;
 	art->keymapflag = ED_KEYMAP_VIEW2D | ED_KEYMAP_MARKERS | ED_KEYMAP_ANIMATION | ED_KEYMAP_FRAMES;
 
 	BLI_addhead(&st->regiontypes, art);
@@ -534,8 +549,8 @@ void ED_spacetype_nla(void)
 	art->prefsizey = HEADERY;
 	art->keymapflag = ED_KEYMAP_UI | ED_KEYMAP_VIEW2D | ED_KEYMAP_FRAMES | ED_KEYMAP_HEADER;
 	
-	art->init = nla_header_area_init;
-	art->draw = nla_header_area_draw;
+	art->init = nla_header_region_init;
+	art->draw = nla_header_region_draw;
 	
 	BLI_addhead(&st->regiontypes, art);
 	
@@ -545,9 +560,9 @@ void ED_spacetype_nla(void)
 	art->prefsizex = 200;
 	art->keymapflag = ED_KEYMAP_UI | ED_KEYMAP_VIEW2D | ED_KEYMAP_FRAMES;
 	
-	art->init = nla_channel_area_init;
-	art->draw = nla_channel_area_draw;
-	art->listener = nla_channel_area_listener;
+	art->init = nla_channel_region_init;
+	art->draw = nla_channel_region_draw;
+	art->listener = nla_channel_region_listener;
 	
 	BLI_addhead(&st->regiontypes, art);
 	
@@ -557,8 +572,8 @@ void ED_spacetype_nla(void)
 	art->prefsizex = 200;
 	art->keymapflag = ED_KEYMAP_UI;
 	art->listener = nla_region_listener;
-	art->init = nla_buttons_area_init;
-	art->draw = nla_buttons_area_draw;
+	art->init = nla_buttons_region_init;
+	art->draw = nla_buttons_region_draw;
 	
 	BLI_addhead(&st->regiontypes, art);
 

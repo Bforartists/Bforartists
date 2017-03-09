@@ -130,7 +130,11 @@ class Rig:
         mch_eb.length /= 4
 
         # Positioning pivot in a more usable location for animators
-        pivot_loc = ( eb[ org_bones[0]].head + eb[ org_bones[0]].tail ) / 2
+        if hasattr(self,'tail_pos') and self.tail_pos > 0:
+            pivot_loc = eb[ org_bones[pivot-1]].head
+        else:
+            pivot_loc = ( eb[ org_bones[0]].head + eb[ org_bones[0]].tail ) / 2
+
         put_bone( self.obj, ctrl_name, pivot_loc )
 
         return {
@@ -495,7 +499,13 @@ class Rig:
                     'subtarget'   : tweaks[ tidx + 1 ],
                 })
 
-            
+        pb = self.obj.pose.bones
+
+        for t in tweaks:
+            if t != bones['neck']['ctrl']:
+                pb[t].rotation_mode = 'ZXY'
+
+
     def create_drivers( self, bones ):
         bpy.ops.object.mode_set(mode ='OBJECT')
         pb = self.obj.pose.bones

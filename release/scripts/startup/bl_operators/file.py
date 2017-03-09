@@ -86,19 +86,20 @@ class WM_OT_previews_batch_generate(Operator):
             name="Trusted Blend Files",
             description="Enable python evaluation for selected files",
             )
+    use_backups = BoolProperty(
+            default=True,
+            name="Save Backups",
+            description="Keep a backup (.blend1) version of the files when saving with generated previews",
+            )
 
     def invoke(self, context, event):
         context.window_manager.fileselect_add(self)
         return {'RUNNING_MODAL'}
 
     def execute(self, context):
-        if "subprocess" in locals():
-            import imp
-            imp.reload(preview_render)
-        else:
-            import os
-            import subprocess
-            from bl_previews_utils import bl_previews_render as preview_render
+        import os
+        import subprocess
+        from bl_previews_utils import bl_previews_render as preview_render
 
         context.window_manager.progress_begin(0, len(self.files))
         context.window_manager.progress_update(0)
@@ -126,6 +127,8 @@ class WM_OT_previews_batch_generate(Operator):
                 cmd.append('--no_objects')
             if not self.use_intern_data:
                 cmd.append('--no_data_intern')
+            if not self.use_backups:
+                cmd.append("--no_backups")
             if subprocess.call(cmd):
                 self.report({'ERROR'}, "Previews generation process failed for file '%s'!" % blen_path)
                 context.window_manager.progress_end()
@@ -192,19 +195,20 @@ class WM_OT_previews_batch_clear(Operator):
             name="Trusted Blend Files",
             description="Enable python evaluation for selected files",
             )
+    use_backups = BoolProperty(
+            default=True,
+            name="Save Backups",
+            description="Keep a backup (.blend1) version of the files when saving with cleared previews",
+            )
 
     def invoke(self, context, event):
         context.window_manager.fileselect_add(self)
         return {'RUNNING_MODAL'}
 
     def execute(self, context):
-        if "subprocess" in locals():
-            import imp
-            imp.reload(preview_render)
-        else:
-            import os
-            import subprocess
-            from bl_previews_utils import bl_previews_render as preview_render
+        import os
+        import subprocess
+        from bl_previews_utils import bl_previews_render as preview_render
 
         context.window_manager.progress_begin(0, len(self.files))
         context.window_manager.progress_update(0)
@@ -233,6 +237,8 @@ class WM_OT_previews_batch_clear(Operator):
                 cmd.append('--no_objects')
             if not self.use_intern_data:
                 cmd.append('--no_data_intern')
+            if not self.use_backups:
+                cmd.append("--no_backups")
             if subprocess.call(cmd):
                 self.report({'ERROR'}, "Previews clear process failed for file '%s'!" % blen_path)
                 context.window_manager.progress_end()

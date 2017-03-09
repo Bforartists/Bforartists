@@ -29,6 +29,7 @@
 #include "DNA_object_types.h"
 #include "DNA_controller_types.h"
 
+#include "BLI_string_utils.h"
 #include "BLI_utildefines.h"
 
 #include "BLT_translation.h"
@@ -40,7 +41,7 @@
 
 #include "WM_types.h"
 
-EnumPropertyItem controller_type_items[] = {
+EnumPropertyItem rna_enum_controller_type_items[] = {
 	{CONT_LOGIC_AND, "LOGIC_AND", 0, "And", "Logic And"},
 	{CONT_LOGIC_OR, "LOGIC_OR", 0, "Or", "Logic Or"},
 	{CONT_LOGIC_NAND, "LOGIC_NAND", 0, "Nand", "Logic Nand"},
@@ -213,7 +214,7 @@ void RNA_def_controller(BlenderRNA *brna)
 	prop = RNA_def_property(srna, "type", PROP_ENUM, PROP_NONE);
 	RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
 	RNA_def_property_enum_funcs(prop, NULL, "rna_Controller_type_set", NULL);
-	RNA_def_property_enum_items(prop, controller_type_items);
+	RNA_def_property_enum_items(prop, rna_enum_controller_type_items);
 	RNA_def_property_ui_text(prop, "Type", "");
 	RNA_def_property_update(prop, NC_LOGIC, NULL);
 
@@ -287,7 +288,7 @@ void RNA_def_controller(BlenderRNA *brna)
 	prop = RNA_def_property(srna, "text", PROP_POINTER, PROP_NONE);
 	RNA_def_property_struct_type(prop, "Text");
 	RNA_def_property_flag(prop, PROP_EDITABLE);
-	RNA_def_property_ui_text(prop, "Text", "Text datablock with the python script");
+	RNA_def_property_ui_text(prop, "Text", "Text data-block with the python script");
 	RNA_def_property_update(prop, NC_LOGIC, NULL);
 
 	prop = RNA_def_property(srna, "module", PROP_STRING, PROP_NONE);

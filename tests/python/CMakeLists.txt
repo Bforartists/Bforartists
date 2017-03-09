@@ -73,6 +73,16 @@ if(USE_EXPERIMENTAL_TESTS)
 	)
 endif()
 
+# ------------------------------------------------------------------------------
+# PY API TESTS
+add_test(script_pyapi_bpy_path ${TEST_BLENDER_EXE}
+	--python ${CMAKE_CURRENT_LIST_DIR}/bl_pyapi_bpy_path.py
+)
+
+add_test(script_pyapi_bpy_utils_units ${TEST_BLENDER_EXE}
+	--python ${CMAKE_CURRENT_LIST_DIR}/bl_pyapi_bpy_utils_units.py
+)
+
 # test running mathutils testing script
 add_test(script_pyapi_mathutils ${TEST_BLENDER_EXE}
 	--python ${CMAKE_CURRENT_LIST_DIR}/bl_pyapi_mathutils.py
@@ -83,6 +93,11 @@ add_test(script_pyapi_mathutils ${TEST_BLENDER_EXE}
 add_test(bevel ${TEST_BLENDER_EXE}
 	${TEST_SRC_DIR}/modeling/bevel_regression.blend
 	--python-text run_tests
+)
+
+add_test(split_faces ${TEST_BLENDER_EXE}
+    ${TEST_SRC_DIR}/modeling/split_faces_test.blend
+    --python-text run_tests
 )
 
 # ------------------------------------------------------------------------------
@@ -120,7 +135,7 @@ add_test(export_obj_cube ${TEST_BLENDER_EXE}
 	--run={'FINISHED'}&bpy.ops.export_scene.obj\(filepath='${TEST_OUT_DIR}/export_obj_cube.obj',use_selection=False\)
 	--md5_source=${TEST_OUT_DIR}/export_obj_cube.obj
 	--md5_source=${TEST_OUT_DIR}/export_obj_cube.mtl
-	--md5=e776c6f8e9e0afba346e85bcd10b8e99 --md5_method=FILE
+	--md5=e80660437ad9bfe082849641c361a233 --md5_method=FILE
 )
 
 add_test(export_obj_nurbs ${TEST_BLENDER_EXE}
@@ -389,24 +404,33 @@ endif()
 
 if(WITH_CYCLES)
 	if(OPENIMAGEIO_IDIFF AND EXISTS "${TEST_SRC_DIR}/cycles/ctests/shader")
-		add_test(cycles_reports_test
-			${CMAKE_CURRENT_LIST_DIR}/cycles_render_tests.py
-			-blender "${TEST_BLENDER_EXE_BARE}"
-			-testdir "${TEST_SRC_DIR}/cycles/ctests/reports"
-			-idiff "${OPENIMAGEIO_IDIFF}"
-		)
-		add_test(cycles_render_test
-			${CMAKE_CURRENT_LIST_DIR}/cycles_render_tests.py
-			-blender "${TEST_BLENDER_EXE_BARE}"
-			-testdir "${TEST_SRC_DIR}/cycles/ctests/render"
-			-idiff "${OPENIMAGEIO_IDIFF}"
-		)
-		add_test(cycles_shaders_test
-			${CMAKE_CURRENT_LIST_DIR}/cycles_render_tests.py
-			-blender "${TEST_BLENDER_EXE_BARE}"
-			-testdir "${TEST_SRC_DIR}/cycles/ctests/shader"
-			-idiff "${OPENIMAGEIO_IDIFF}"
-		)
+		macro(add_cycles_render_test subject)
+			if(MSVC)
+				add_test(NAME cycles_${subject}_test
+					COMMAND
+						"$<TARGET_FILE_DIR:blender>/${BLENDER_VERSION_MAJOR}.${BLENDER_VERSION_MINOR}/python/bin/python$<$<CONFIG:Debug>:_d>"
+						${CMAKE_CURRENT_LIST_DIR}/cycles_render_tests.py
+					-blender "$<TARGET_FILE:blender>"
+					-testdir "${TEST_SRC_DIR}/cycles/ctests/${subject}"
+					-idiff "${OPENIMAGEIO_IDIFF}"
+				)
+			else()
+				add_test(cycles_${subject}_test
+					 ${CMAKE_CURRENT_LIST_DIR}/cycles_render_tests.py
+					-blender "${TEST_BLENDER_EXE_BARE}"
+					-testdir "${TEST_SRC_DIR}/cycles/ctests/${subject}"
+					-idiff "${OPENIMAGEIO_IDIFF}"
+				)
+			endif()
+		endmacro()
+		if(WITH_OPENGL_TESTS)
+			add_cycles_render_test(opengl)
+		endif()
+		add_cycles_render_test(image)
+		add_cycles_render_test(mblur)
+		add_cycles_render_test(reports)
+		add_cycles_render_test(render)
+		add_cycles_render_test(shader)
 	else()
 		MESSAGE(STATUS "Disabling Cycles tests because tests folder does not exist")
 	endif()

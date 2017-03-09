@@ -125,7 +125,10 @@ def align_objects(context,
                   relative_to,
                   bb_quality):
 
-    cursor = context.scene.cursor_location
+    scene = context.scene
+    space = context.space_data
+
+    cursor = (space if space and space.type == 'VIEW_3D' else scene).cursor_location
 
     Left_Front_Up_SEL = [0.0, 0.0, 0.0]
     Right_Back_Down_SEL = [0.0, 0.0, 0.0]
@@ -136,7 +139,7 @@ def align_objects(context,
 
     for obj in context.selected_objects:
         matrix_world = obj.matrix_world.copy()
-        bb_world = [matrix_world * Vector(v[:]) for v in obj.bound_box]
+        bb_world = [matrix_world * Vector(v) for v in obj.bound_box]
         objects.append((obj, bb_world))
 
     if not objects:
@@ -362,6 +365,7 @@ class AlignObjects(Operator):
             )
     align_mode = EnumProperty(
             name="Align Mode:",
+            description="Side of object to use for alignment",
             items=(('OPT_1', "Negative Sides", ""),
                    ('OPT_2', "Centers", ""),
                    ('OPT_3', "Positive Sides", ""),
@@ -370,10 +374,11 @@ class AlignObjects(Operator):
             )
     relative_to = EnumProperty(
             name="Relative To:",
-            items=(('OPT_1', "Scene Origin", ""),
-                   ('OPT_2', "3D Cursor", ""),
-                   ('OPT_3', "Selection", ""),
-                   ('OPT_4', "Active", ""),
+            description="Reference location to align to",
+            items=(('OPT_1', "Scene Origin", "Use the Scene Origin as the position for the selected objects to align to"),
+                   ('OPT_2', "3D Cursor", "Use the 3D cursor as the position for the selected objects to align to"),
+                   ('OPT_3', "Selection", "Use the selected objects as the position for the selected objects to align to"),
+                   ('OPT_4', "Active", "Use the active object as the position for the selected objects to align to"),
                    ),
             default='OPT_4',
             )

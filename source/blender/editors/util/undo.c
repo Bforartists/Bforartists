@@ -42,7 +42,7 @@
 
 #include "BLT_translation.h"
 
-#include "BKE_blender.h"
+#include "BKE_blender_undo.h"
 #include "BKE_context.h"
 #include "BKE_global.h"
 #include "BKE_main.h"
@@ -76,7 +76,6 @@
 
 void ED_undo_push(bContext *C, const char *str)
 {
-	wmWindowManager *wm = CTX_wm_manager(C);
 	Object *obedit = CTX_data_edit_object(C);
 	Object *obact = CTX_data_active_object(C);
 
@@ -111,11 +110,7 @@ void ED_undo_push(bContext *C, const char *str)
 		BKE_undo_write(C, str);
 	}
 
-	if (wm->file_saved) {
-		wm->file_saved = 0;
-		/* notifier that data changed, for save-over warning or header */
-		WM_event_add_notifier(C, NC_WM | ND_DATACHANGED, NULL);
-	}
+	WM_file_tag_modified(C);
 }
 
 /* note: also check undo_history_exec() in bottom if you change notifiers */
@@ -222,6 +217,19 @@ static int ed_undo_step(bContext *C, int step, const char *undoname)
 	return OPERATOR_FINISHED;
 }
 
+void ED_undo_grouped_push(bContext *C, const char *str)
+{
+	/* do nothing if previous undo task is the same as this one (or from the same undo group) */
+	const char *last_undo = BKE_undo_get_name_last();
+
+	if (last_undo && STREQ(str, last_undo)) {
+		return;
+	}
+
+	/* push as usual */
+	ED_undo_push(C, str);
+}
+
 void ED_undo_pop(bContext *C)
 {
 	ed_undo_step(C, 1, NULL);
@@ -235,6 +243,16 @@ void ED_undo_push_op(bContext *C, wmOperator *op)
 {
 	/* in future, get undo string info? */
 	ED_undo_push(C, op->type->name);
+}
+
+void ED_undo_grouped_push_op(bContext *C, wmOperator *op)
+{
+	if (op->type->undo_group[0] != '\0') {
+		ED_undo_grouped_push(C, op->type->undo_group);
+	}
+	else {
+		ED_undo_grouped_push(C, op->type->name);
+	}
 }
 
 void ED_undo_pop_op(bContext *C, wmOperator *op)
@@ -309,6 +327,13 @@ static int ed_redo_exec(bContext *C, wmOperator *UNUSED(op))
 	return ed_undo_step(C, -1, NULL);
 }
 
+static int ed_undo_redo_exec(bContext *C, wmOperator *UNUSED(op))
+{
+	wmOperator *last_op = WM_operator_last_redo(C);
+	const int ret = ED_undo_operator_repeat(C, last_op);
+	return ret ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
+}
+
 
 /* ********************** */
 
@@ -351,6 +376,17 @@ void ED_OT_redo(wmOperatorType *ot)
 	ot->poll = ED_operator_screenactive;
 }
 
+void ED_OT_undo_redo(wmOperatorType *ot)
+{
+	/* identifiers */
+	ot->name = "Undo and Redo";
+	ot->description = "Undo and redo previous action";
+	ot->idname = "ED_OT_undo_redo";
+	
+	/* api callbacks */
+	ot->exec = ed_undo_redo_exec;
+	ot->poll = ED_operator_screenactive;
+}
 
 /* ui callbacks should call this rather than calling WM_operator_repeat() themselves */
 int ED_undo_operator_repeat(bContext *C, struct wmOperator *op)
@@ -441,7 +477,8 @@ enum {
 	UNDOSYSTEM_GLOBAL   = 1,
 	UNDOSYSTEM_EDITMODE = 2,
 	UNDOSYSTEM_PARTICLE = 3,
-	UNDOSYSTEM_IMAPAINT = 4
+	UNDOSYSTEM_IMAPAINT = 4,
+	UNDOSYSTEM_SCULPT   = 5,
 };
 
 static int get_undo_system(bContext *C)
@@ -466,14 +503,16 @@ static int get_undo_system(bContext *C)
 		}
 	}
 	else {
-		Object *obact = CTX_data_active_object(C);
-		
 		if (obact) {
 			if (obact->mode & OB_MODE_PARTICLE_EDIT)
 				return UNDOSYSTEM_PARTICLE;
 			else if (obact->mode & OB_MODE_TEXTURE_PAINT) {
 				if (!ED_undo_paint_empty(UNDO_PAINT_IMAGE))
 					return UNDOSYSTEM_IMAPAINT;
+			}
+			else if (obact->mode & OB_MODE_SCULPT) {
+				if (!ED_undo_paint_empty(UNDO_PAINT_MESH))
+					return UNDOSYSTEM_SCULPT;
 			}
 		}
 		if (U.uiflag & USER_GLOBALUNDO)
@@ -501,6 +540,9 @@ static EnumPropertyItem *rna_undo_itemf(bContext *C, int undosys, int *totitem)
 		}
 		else if (undosys == UNDOSYSTEM_IMAPAINT) {
 			name = ED_undo_paint_get_name(C, UNDO_PAINT_IMAGE, i, &active);
+		}
+		else if (undosys == UNDOSYSTEM_SCULPT) {
+			name = ED_undo_paint_get_name(C, UNDO_PAINT_MESH, i, &active);
 		}
 		else {
 			name = BKE_undo_get_name(i, &active);
@@ -582,6 +624,9 @@ static int undo_history_exec(bContext *C, wmOperator *op)
 		}
 		else if (undosys == UNDOSYSTEM_IMAPAINT) {
 			ED_undo_paint_step_num(C, UNDO_PAINT_IMAGE, item);
+		}
+		else if (undosys == UNDOSYSTEM_SCULPT) {
+			ED_undo_paint_step_num(C, UNDO_PAINT_MESH, item);
 		}
 		else {
 			ED_viewport_render_kill_jobs(CTX_wm_manager(C), CTX_data_main(C), true);

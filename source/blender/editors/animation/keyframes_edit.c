@@ -44,6 +44,7 @@
 #include "DNA_scene_types.h"
 
 #include "BKE_fcurve.h"
+#include "BKE_nla.h"
 
 #include "ED_anim_api.h"
 #include "ED_keyframes_edit.h"
@@ -290,9 +291,39 @@ static short summary_keyframes_loop(KeyframeEditData *ked, bAnimContext *ac, Key
 			case ALE_MASKLAY:
 			case ALE_GPFRAME:
 				break;
+				
+			case ALE_FCURVE:
 			default:
-				ret_code = ANIM_fcurve_keyframes_loop(ked, ale->data, key_ok, key_cb, fcu_cb);
+			{
+				if (ked && ked->iterflags) {
+					/* make backups of the current values, so that a localised fix
+					 * (e.g. NLA time remapping) can be applied to these values
+					 */
+					float f1 = ked->f1;
+					float f2 = ked->f2;
+					
+					if (ked->iterflags & (KED_F1_NLA_UNMAP | KED_F2_NLA_UNMAP)) {
+						AnimData *adt = ANIM_nla_mapping_get(ac, ale);
+						
+						if (ked->iterflags & KED_F1_NLA_UNMAP)
+							ked->f1 = BKE_nla_tweakedit_remap(adt, f1, NLATIME_CONVERT_UNMAP);
+						if (ked->iterflags & KED_F2_NLA_UNMAP)
+							ked->f2 = BKE_nla_tweakedit_remap(adt, f2, NLATIME_CONVERT_UNMAP);
+					}
+					
+					/* now operate on the channel as per normal */
+					ret_code = ANIM_fcurve_keyframes_loop(ked, ale->data, key_ok, key_cb, fcu_cb);
+					
+					/* reset */
+					ked->f1 = f1;
+					ked->f2 = f2;
+				}
+				else {
+					/* no special handling required... */
+					ret_code = ANIM_fcurve_keyframes_loop(ked, ale->data, key_ok, key_cb, fcu_cb);
+				}
 				break;
+			}
 		}
 		
 		if (ret_code)
@@ -508,17 +539,17 @@ static short ok_bezier_region(KeyframeEditData *ked, BezTriple *bezt)
 }
 
 /**
- * only called from #ok_bezier_region_lasso
+ * Called from #ok_bezier_region_lasso and #ok_bezier_channel_lasso
  */
-static bool bezier_region_lasso_test(
-        const struct KeyframeEdit_LassoData *data_lasso,
+bool keyframe_region_lasso_test(
+        const KeyframeEdit_LassoData *data_lasso,
         const float xy[2])
 {
 	if (BLI_rctf_isect_pt_v(data_lasso->rectf_scaled, xy)) {
 		float xy_view[2];
-
+		
 		BLI_rctf_transform_pt_v(data_lasso->rectf_view, data_lasso->rectf_scaled, xy_view, xy);
-
+		
 		if (BLI_lasso_is_point_inside(data_lasso->mcords, data_lasso->mcords_tot, xy_view[0], xy_view[1], INT_MAX)) {
 			return true;
 		}
@@ -529,16 +560,14 @@ static bool bezier_region_lasso_test(
 
 static short ok_bezier_region_lasso(KeyframeEditData *ked, BezTriple *bezt)
 {
-	/* rect is stored in data property (it's of type rectf, but may not be set) */
+	/* check for lasso customdata (KeyframeEdit_LassoData) */
 	if (ked->data) {
 		short ok = 0;
-
-#define KEY_CHECK_OK(_index) bezier_region_lasso_test(ked->data, bezt->vec[_index])
+		
+#define KEY_CHECK_OK(_index) keyframe_region_lasso_test(ked->data, bezt->vec[_index])
 		KEYFRAME_OK_CHECKS(KEY_CHECK_OK);
 #undef KEY_CHECK_OK
-
-		/* check for lasso */
-
+		
 		/* return ok flags */
 		return ok;
 	}
@@ -546,18 +575,45 @@ static short ok_bezier_region_lasso(KeyframeEditData *ked, BezTriple *bezt)
 		return 0;
 }
 
+static short ok_bezier_channel_lasso(KeyframeEditData *ked, BezTriple *bezt)
+{
+	/* check for lasso customdata (KeyframeEdit_LassoData) */
+	if (ked->data) {
+		KeyframeEdit_LassoData *data = ked->data;
+		float pt[2];
+		
+		/* late-binding remap of the x values (for summary channels) */
+		/* XXX: Ideally we reset, but it should be fine just leaving it as-is
+		 * as the next channel will reset it properly, while the next summary-channel
+		 * curve will also reset by itself...
+		 */
+		if (ked->iterflags & (KED_F1_NLA_UNMAP | KED_F2_NLA_UNMAP)) {
+			data->rectf_scaled->xmin = ked->f1;
+			data->rectf_scaled->xmax = ked->f2;
+		}
+		
+		/* only use the x-coordinate of the point; the y is the channel range... */
+		pt[0] = bezt->vec[1][0];
+		pt[1] = ked->channel_y;
+		
+		if (keyframe_region_lasso_test(data, pt))
+			return KEYFRAME_OK_KEY;
+	}
+	return 0;
+}
+
 /**
- * only called from #ok_bezier_region_circle
+ * Called from #ok_bezier_region_circle and #ok_bezier_channel_circle
  */
-static bool bezier_region_circle_test(
-        const struct KeyframeEdit_CircleData *data_circle,
+bool keyframe_region_circle_test(
+        const KeyframeEdit_CircleData *data_circle,
         const float xy[2])
 {
 	if (BLI_rctf_isect_pt_v(data_circle->rectf_scaled, xy)) {
 		float xy_view[2];
-
+		
 		BLI_rctf_transform_pt_v(data_circle->rectf_view, data_circle->rectf_scaled, xy_view, xy);
-
+		
 		xy_view[0] = xy_view[0] - data_circle->mval[0];
 		xy_view[1] = xy_view[1] - data_circle->mval[1];
 		return len_squared_v2(xy_view) < data_circle->radius_squared;
@@ -569,19 +625,46 @@ static bool bezier_region_circle_test(
 
 static short ok_bezier_region_circle(KeyframeEditData *ked, BezTriple *bezt)
 {
-	/* rect is stored in data property (it's of type rectf, but may not be set) */
+	/* check for circle select customdata (KeyframeEdit_CircleData) */
 	if (ked->data) {
 		short ok = 0;
-
-#define KEY_CHECK_OK(_index) bezier_region_circle_test(ked->data, bezt->vec[_index])
+		
+#define KEY_CHECK_OK(_index) keyframe_region_circle_test(ked->data, bezt->vec[_index])
 		KEYFRAME_OK_CHECKS(KEY_CHECK_OK);
 #undef KEY_CHECK_OK
-
+		
 		/* return ok flags */
 		return ok;
 	}
 	else
 		return 0;
+}
+
+static short ok_bezier_channel_circle(KeyframeEditData *ked, BezTriple *bezt)
+{
+	/* check for circle select customdata (KeyframeEdit_CircleData) */
+	if (ked->data) {
+		KeyframeEdit_CircleData *data = ked->data;
+		float pt[2];
+		
+		/* late-binding remap of the x values (for summary channels) */
+		/* XXX: Ideally we reset, but it should be fine just leaving it as-is
+		 * as the next channel will reset it properly, while the next summary-channel
+		 * curve will also reset by itself...
+		 */
+		if (ked->iterflags & (KED_F1_NLA_UNMAP | KED_F2_NLA_UNMAP)) {
+			data->rectf_scaled->xmin = ked->f1;
+			data->rectf_scaled->xmax = ked->f2;
+		}
+		
+		/* only use the x-coordinate of the point; the y is the channel range... */
+		pt[0] = bezt->vec[1][0];
+		pt[1] = ked->channel_y;
+		
+		if (keyframe_region_circle_test(data, pt))
+			return KEYFRAME_OK_KEY;
+	}
+	return 0;
 }
 
 
@@ -603,8 +686,12 @@ KeyframeEditFunc ANIM_editkeyframes_ok(short mode)
 			return ok_bezier_region;
 		case BEZT_OK_REGION_LASSO: /* only if the point falls within KeyframeEdit_LassoData defined data */
 			return ok_bezier_region_lasso;
-		case BEZT_OK_REGION_CIRCLE: /* only if the point falls within KeyframeEdit_LassoData defined data */
+		case BEZT_OK_REGION_CIRCLE: /* only if the point falls within KeyframeEdit_CircleData defined data */
 			return ok_bezier_region_circle;
+		case BEZT_OK_CHANNEL_LASSO: /* same as BEZT_OK_REGION_LASSO, but we're only using the x-value of the points */
+			return ok_bezier_channel_lasso;
+		case BEZT_OK_CHANNEL_CIRCLE: /* same as BEZT_OK_REGION_CIRCLE, but we're only using the x-value of the points */
+			return ok_bezier_channel_circle;
 		default: /* nothing was ok */
 			return NULL;
 	}
@@ -714,6 +801,14 @@ static short snap_bezier_horizontal(KeyframeEditData *UNUSED(ked), BezTriple *be
 	return 0;
 }
 
+/* frame to snap to is stored in the custom data -> first float value slot */
+static short snap_bezier_time(KeyframeEditData *ked, BezTriple *bezt)
+{
+	if (bezt->f2 & SELECT)
+		bezt->vec[1][0] = ked->f1;
+	return 0;
+}
+
 /* value to snap to is stored in the custom data -> first float value slot */
 static short snap_bezier_value(KeyframeEditData *ked, BezTriple *bezt)
 {
@@ -736,6 +831,8 @@ KeyframeEditFunc ANIM_editkeyframes_snap(short type)
 			return snap_bezier_nearestsec;
 		case SNAP_KEYS_HORIZONTAL: /* snap handles to same value */
 			return snap_bezier_horizontal;
+		case SNAP_KEYS_TIME: /* snap to given frame/time */
+			return snap_bezier_time;
 		case SNAP_KEYS_VALUE: /* snap to given value */
 			return snap_bezier_value;
 		default: /* just in case */
@@ -812,6 +909,16 @@ static short mirror_bezier_marker(KeyframeEditData *ked, BezTriple *bezt)
 	return 0;
 }
 
+static short mirror_bezier_time(KeyframeEditData *ked, BezTriple *bezt)
+{
+	/* value to mirror over is strored in f1 */
+	if (bezt->f2 & SELECT) {
+		mirror_bezier_xaxis_ex(bezt, ked->f1);
+	}
+	
+	return 0;
+}
+
 static short mirror_bezier_value(KeyframeEditData *ked, BezTriple *bezt)
 {
 	/* value to mirror over is stored in the custom data -> first float value slot */
@@ -835,6 +942,8 @@ KeyframeEditFunc ANIM_editkeyframes_mirror(short type)
 			return mirror_bezier_xaxis;
 		case MIRROR_KEYS_MARKER: /* mirror over marker */
 			return mirror_bezier_marker; 
+		case MIRROR_KEYS_TIME: /* mirror over frame/time */
+			return mirror_bezier_time;
 		case MIRROR_KEYS_VALUE: /* mirror over given value */
 			return mirror_bezier_value;
 		default: /* just in case */
@@ -1099,6 +1208,13 @@ static short set_keytype_jitter(KeyframeEditData *UNUSED(ked), BezTriple *bezt)
 	return 0;
 }
 
+static short set_keytype_moving_hold(KeyframeEditData *UNUSED(ked), BezTriple *bezt) 
+{
+	if (bezt->f2 & SELECT) 
+		BEZKEYTYPE(bezt) = BEZT_KEYTYPE_MOVEHOLD;
+	return 0;
+}
+
 /* Set the interpolation type of the selected BezTriples in each F-Curve to the specified one */
 KeyframeEditFunc ANIM_editkeyframes_keytype(short code)
 {
@@ -1111,6 +1227,9 @@ KeyframeEditFunc ANIM_editkeyframes_keytype(short code)
 			
 		case BEZT_KEYTYPE_JITTER: /* jitter keyframe */
 			return set_keytype_jitter;
+			
+		case BEZT_KEYTYPE_MOVEHOLD: /* moving hold */
+			return set_keytype_moving_hold;
 			
 		case BEZT_KEYTYPE_KEYFRAME: /* proper keyframe */
 		default:

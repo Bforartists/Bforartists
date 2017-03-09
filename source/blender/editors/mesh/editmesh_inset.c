@@ -44,6 +44,8 @@
 #include "WM_api.h"
 #include "WM_types.h"
 
+#include "UI_interface.h"
+
 #include "ED_mesh.h"
 #include "ED_numinput.h"
 #include "ED_screen.h"
@@ -53,8 +55,6 @@
 
 #include "mesh_intern.h"  /* own include */
 
-
-#define HEADER_LENGTH 180
 
 typedef struct {
 	float old_thickness;
@@ -83,7 +83,7 @@ static void edbm_inset_update_header(wmOperator *op, bContext *C)
 	const char *str = IFACE_("Confirm: Enter/LClick, Cancel: (Esc/RClick), Thickness: %s, "
 	                         "Depth (Ctrl to tweak): %s (%s), Outset (O): (%s), Boundary (B): (%s), Individual (I): (%s)");
 
-	char msg[HEADER_LENGTH];
+	char msg[UI_MAX_DRAW_STR];
 	ScrArea *sa = CTX_wm_area(C);
 	Scene *sce = CTX_data_scene(C);
 
@@ -95,7 +95,7 @@ static void edbm_inset_update_header(wmOperator *op, bContext *C)
 			BLI_snprintf(flts_str, NUM_STR_REP_LEN, "%f", RNA_float_get(op->ptr, "thickness"));
 			BLI_snprintf(flts_str + NUM_STR_REP_LEN, NUM_STR_REP_LEN, "%f", RNA_float_get(op->ptr, "depth"));
 		}
-		BLI_snprintf(msg, HEADER_LENGTH, str,
+		BLI_snprintf(msg, sizeof(msg), str,
 		             flts_str,
 		             flts_str + NUM_STR_REP_LEN,
 		             WM_bool_as_string(opdata->modify_depth),
@@ -143,8 +143,10 @@ static bool edbm_inset_init(bContext *C, wmOperator *op, const bool is_modal)
 		opdata->mesh_backup = EDBM_redo_state_store(em);
 		opdata->draw_handle_pixel = ED_region_draw_cb_activate(ar->type, ED_region_draw_mouse_line_cb, opdata->mcenter, REGION_DRAW_POST_PIXEL);
 		G.moving = G_TRANSFORM_EDIT;
-		opdata->twtype = v3d->twtype;
-		v3d->twtype = 0;
+		if (v3d) {
+			opdata->twtype = v3d->twtype;
+			v3d->twtype = 0;
+		}
 	}
 
 	return true;
@@ -162,7 +164,9 @@ static void edbm_inset_exit(bContext *C, wmOperator *op)
 		ARegion *ar = CTX_wm_region(C);
 		EDBM_redo_state_free(&opdata->mesh_backup, NULL, false);
 		ED_region_draw_cb_exit(ar->type, opdata->draw_handle_pixel);
-		v3d->twtype = opdata->twtype;
+		if (v3d) {
+			v3d->twtype = opdata->twtype;
+		}
 		G.moving = 0;
 	}
 
@@ -280,7 +284,7 @@ static int edbm_inset_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 	opdata = op->customdata;
 
 	/* initialize mouse values */
-	if (!calculateTransformCenter(C, V3D_CENTROID, center_3d, opdata->mcenter)) {
+	if (!calculateTransformCenter(C, V3D_AROUND_CENTER_MEAN, center_3d, opdata->mcenter)) {
 		/* in this case the tool will likely do nothing,
 		 * ideally this will never happen and should be checked for above */
 		opdata->mcenter[0] = opdata->mcenter[1] = 0;
@@ -507,10 +511,10 @@ void MESH_OT_inset(wmOperatorType *ot)
 	RNA_def_boolean(ot->srna, "use_relative_offset", false, "Offset Relative", "Scale the offset by surrounding geometry");
 	RNA_def_boolean(ot->srna, "use_edge_rail",       false, "Edge Rail", "Inset the region along existing edges");
 
-	prop = RNA_def_float(ot->srna, "thickness", 0.01f, 0.0f, 1e12f, "Thickness", "", 0.0f, 10.0f);
+	prop = RNA_def_float_distance(ot->srna, "thickness", 0.01f, 0.0f, 1e12f, "Thickness", "", 0.0f, 10.0f);
 	/* use 1 rather then 10 for max else dragging the button moves too far */
 	RNA_def_property_ui_range(prop, 0.0, 1.0, 0.01, 4);
-	prop = RNA_def_float(ot->srna, "depth", 0.0f, -1e12f, 1e12f, "Depth", "", -10.0f, 10.0f);
+	prop = RNA_def_float_distance(ot->srna, "depth", 0.0f, -1e12f, 1e12f, "Depth", "", -10.0f, 10.0f);
 	RNA_def_property_ui_range(prop, -10.0f, 10.0f, 0.01, 4);
 
 	RNA_def_boolean(ot->srna, "use_outset", false, "Outset", "Outset rather than inset");

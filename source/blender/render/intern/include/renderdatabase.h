@@ -76,7 +76,7 @@ typedef struct VlakTableNode {
 	int *origindex;
 	int totmtface, totmcol;
 	float *surfnor;
-	float *tangent;
+	float *tangent_arrays[MAX_MTFACE];
 	struct RadFace **radface;
 } VlakTableNode;
 
@@ -119,6 +119,7 @@ struct ObjectInstanceRen *RE_addRenderInstance(
         struct Render *re, struct ObjectRen *obr, struct Object *ob, struct Object *par,
         int index, int psysindex, float mat[4][4], int lay, const struct DupliObject *dob);
 void RE_makeRenderInstances(struct Render *re);
+void RE_updateRenderInstance(Render *re, ObjectInstanceRen *obi, int flag);
 
 void RE_instance_rotate_ray_start(struct ObjectInstanceRen *obi, struct Isect *is);
 void RE_instance_rotate_ray_dir(struct ObjectInstanceRen *obi, struct Isect *is);
@@ -136,7 +137,7 @@ struct MTFace *RE_vlakren_get_tface(struct ObjectRen *obr, VlakRen *ren, int n, 
 struct MCol *RE_vlakren_get_mcol(struct ObjectRen *obr, VlakRen *ren, int n, char **name, int verify);
 int *RE_vlakren_get_origindex(struct ObjectRen *obr, VlakRen *vlak, int verify);
 float *RE_vlakren_get_surfnor(struct ObjectRen *obr, VlakRen *ren, int verify);
-float *RE_vlakren_get_nmap_tangent(struct ObjectRen *obr, VlakRen *ren, int verify);
+float *RE_vlakren_get_nmap_tangent(ObjectRen *obr, VlakRen *vlak, int index, bool verify);
 RadFace **RE_vlakren_get_radface(struct ObjectRen *obr, VlakRen *ren, int verify);
 void RE_vlakren_get_normal(struct Render *re, struct ObjectInstanceRen *obi, struct VlakRen *vlr, float *nor);
 

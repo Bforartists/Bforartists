@@ -1,4 +1,4 @@
-﻿# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -26,7 +26,7 @@ __all__ = (
     "disable",
     "reset_all",
     "module_bl_info",
-    )
+)
 
 import bpy as _bpy
 _user_preferences = _bpy.context.user_preferences
@@ -51,7 +51,7 @@ def paths():
 
     # CONTRIB SCRIPTS: good for testing but not official scripts yet
     # if folder addons_contrib/ exists, scripts in there will be loaded too
-    addon_paths += _bpy.utils.script_paths("blender-addons-contrib")
+    addon_paths += _bpy.utils.script_paths("addons_contrib")
 
     return addon_paths
 
@@ -193,7 +193,7 @@ def modules_refresh(module_cache=addons_fake_modules):
     del modules_stale
 
 
-def modules(module_cache=addons_fake_modules, refresh=True):
+def modules(module_cache=addons_fake_modules, *, refresh=True):
     if refresh or ((module_cache is addons_fake_modules) and modules._is_first):
         modules_refresh(module_cache)
         modules._is_first = False
@@ -255,12 +255,18 @@ def _addon_remove(module_name):
             addons.remove(addon)
 
 
-def enable(module_name, default_set=False, persistent=False, handle_error=None):
+def enable(module_name, *, default_set=False, persistent=False, handle_error=None):
     """
     Enables an addon by name.
 
-    :arg module_name: The name of the addon and module.
+    :arg module_name: the name of the addon and module.
     :type module_name: string
+    :arg default_set: Set the user-preference.
+    :type default_set: bool
+    :arg persistent: Ensure the addon is enabled for the entire session (after loading new files).
+    :type persistent: bool
+    :arg handle_error: Called in the case of an error, taking an exception argument.
+    :type handle_error: function
     :return: the loaded module or None on failure.
     :rtype: module
     """
@@ -270,7 +276,7 @@ def enable(module_name, default_set=False, persistent=False, handle_error=None):
     from bpy_restrict_state import RestrictBlend
 
     if handle_error is None:
-        def handle_error():
+        def handle_error(ex):
             import traceback
             traceback.print_exc()
 
@@ -286,10 +292,10 @@ def enable(module_name, default_set=False, persistent=False, handle_error=None):
             # in most cases the caller should 'check()' first.
             try:
                 mod.unregister()
-            except:
+            except Exception as ex:
                 print("Exception in module unregister(): %r" %
                       getattr(mod, "__file__", module_name))
-                handle_error()
+                handle_error(ex)
                 return None
 
         mod.__addon_enabled__ = False
@@ -301,8 +307,8 @@ def enable(module_name, default_set=False, persistent=False, handle_error=None):
 
             try:
                 importlib.reload(mod)
-            except:
-                handle_error()
+            except Exception as ex:
+                handle_error(ex)
                 del sys.modules[module_name]
                 return None
             mod.__addon_enabled__ = False
@@ -329,7 +335,7 @@ def enable(module_name, default_set=False, persistent=False, handle_error=None):
             if type(ex) is ImportError and ex.name == module_name:
                 print("addon not found: %r" % module_name)
             else:
-                handle_error()
+                handle_error(ex)
 
             if default_set:
                 _addon_remove(module_name)
@@ -341,10 +347,10 @@ def enable(module_name, default_set=False, persistent=False, handle_error=None):
         # 3) try run the modules register function
         try:
             mod.register()
-        except:
+        except Exception as ex:
             print("Exception in module register(): %r" %
                   getattr(mod, "__file__", module_name))
-            handle_error()
+            handle_error(ex)
             del sys.modules[module_name]
             if default_set:
                 _addon_remove(module_name)
@@ -360,17 +366,21 @@ def enable(module_name, default_set=False, persistent=False, handle_error=None):
     return mod
 
 
-def disable(module_name, default_set=False, handle_error=None):
+def disable(module_name, *, default_set=False, handle_error=None):
     """
     Disables an addon by name.
 
     :arg module_name: The name of the addon and module.
     :type module_name: string
+    :arg default_set: Set the user-preference.
+    :type default_set: bool
+    :arg handle_error: Called in the case of an error, taking an exception argument.
+    :type handle_error: function
     """
     import sys
 
     if handle_error is None:
-        def handle_error():
+        def handle_error(ex):
             import traceback
             traceback.print_exc()
 
@@ -385,10 +395,10 @@ def disable(module_name, default_set=False, handle_error=None):
 
         try:
             mod.unregister()
-        except:
+        except Exception as ex:
             print("Exception in module unregister(): %r" %
                   getattr(mod, "__file__", module_name))
-            handle_error()
+            handle_error(ex)
     else:
         print("addon_utils.disable: %s not %s." %
               (module_name, "disabled" if mod is None else "loaded"))
@@ -401,7 +411,7 @@ def disable(module_name, default_set=False, handle_error=None):
         print("\taddon_utils.disable", module_name)
 
 
-def reset_all(reload_scripts=False):
+def reset_all(*, reload_scripts=False):
     """
     Sets the addon state based on the user preferences.
     """
@@ -448,7 +458,7 @@ def module_bl_info(mod, info_basis=None):
             "category": "",
             "warning": "",
             "show_expanded": False,
-            }
+        }
 
     addon_info = getattr(mod, "bl_info", {})
 

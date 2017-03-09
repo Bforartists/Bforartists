@@ -51,7 +51,7 @@ def check_vertcount(mesh, vertcount):
         raise Exception('Error, number of verts has changed during animation, cannot export')
 
 
-def save(operator, context, filepath="", frame_start=1, frame_end=300, fps=25.0):
+def save(context, filepath="", frame_start=1, frame_end=300, fps=25.0, use_rest_frame=False):
     """
     Blender.Window.WaitCursor(1)
 
@@ -82,6 +82,9 @@ def save(operator, context, filepath="", frame_start=1, frame_end=300, fps=25.0)
     numverts = len(me.vertices)
 
     numframes = frame_end - frame_start + 1
+    if use_rest_frame:
+        numframes += 1
+
     f = open(filepath, 'wb')  # no Errors yet:Safe to create file
 
     # Write the header
@@ -90,10 +93,10 @@ def save(operator, context, filepath="", frame_start=1, frame_end=300, fps=25.0)
     # Write the frame times (should we use the time IPO??)
     f.write(pack(">%df" % (numframes), *[frame / fps for frame in range(numframes)]))  # seconds
 
-    #rest frame needed to keep frames in sync
-    check_vertcount(me, numverts)
-    me.transform(mat_flip * obj.matrix_world)
-    f.write(pack(">%df" % (numverts * 3), *[axis for v in me.vertices for axis in v.co]))
+    if use_rest_frame:
+        check_vertcount(me, numverts)
+        me.transform(mat_flip * obj.matrix_world)
+        f.write(pack(">%df" % (numverts * 3), *[axis for v in me.vertices for axis in v.co]))
 
     for frame in range(frame_start, frame_end + 1):  # in order to start at desired frame
         scene.frame_set(frame)

@@ -80,7 +80,7 @@ void VBO::UpdateIndices()
 					&data->m_index[0], GL_STATIC_DRAW);
 }
 
-void VBO::Draw(int texco_num, RAS_IRasterizer::TexCoGen* texco, int attrib_num, RAS_IRasterizer::TexCoGen* attrib, int *attrib_layer, bool multi)
+void VBO::Draw(int texco_num, RAS_IRasterizer::TexCoGen* texco, int attrib_num, RAS_IRasterizer::TexCoGen* attrib, int *attrib_layer)
 {
 	int unit;
 
@@ -100,41 +100,32 @@ void VBO::Draw(int texco_num, RAS_IRasterizer::TexCoGen* texco, int attrib_num, 
 	glEnableClientState(GL_COLOR_ARRAY);
 	glColorPointer(4, GL_UNSIGNED_BYTE, this->stride, this->color_offset);
 
-	if (multi)
+	for (unit = 0; unit < texco_num; ++unit)
 	{
-		for (unit = 0; unit < texco_num; ++unit)
-		{
-			glClientActiveTexture(GL_TEXTURE0_ARB + unit);
-			switch (texco[unit]) {
-				case RAS_IRasterizer::RAS_TEXCO_ORCO:
-				case RAS_IRasterizer::RAS_TEXCO_GLOB:
-					glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-					glTexCoordPointer(3, GL_FLOAT, this->stride, this->vertex_offset);
-					break;
-				case RAS_IRasterizer::RAS_TEXCO_UV:
-					glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-					glTexCoordPointer(2, GL_FLOAT, this->stride, (void*)((intptr_t)this->uv_offset+(sizeof(GLfloat)*2*unit)));
-					break;
-				case RAS_IRasterizer::RAS_TEXCO_NORM:
-					glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-					glTexCoordPointer(3, GL_FLOAT, this->stride, this->normal_offset);
-					break;
-				case RAS_IRasterizer::RAS_TEXTANGENT:
-					glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-					glTexCoordPointer(4, GL_FLOAT, this->stride, this->tangent_offset);
-					break;
-				default:
-					break;
-			}
+		glClientActiveTexture(GL_TEXTURE0_ARB + unit);
+		switch (texco[unit]) {
+			case RAS_IRasterizer::RAS_TEXCO_ORCO:
+			case RAS_IRasterizer::RAS_TEXCO_GLOB:
+				glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+				glTexCoordPointer(3, GL_FLOAT, this->stride, this->vertex_offset);
+				break;
+			case RAS_IRasterizer::RAS_TEXCO_UV:
+				glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+				glTexCoordPointer(2, GL_FLOAT, this->stride, (void*)((intptr_t)this->uv_offset+(sizeof(GLfloat)*2*unit)));
+				break;
+			case RAS_IRasterizer::RAS_TEXCO_NORM:
+				glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+				glTexCoordPointer(3, GL_FLOAT, this->stride, this->normal_offset);
+				break;
+			case RAS_IRasterizer::RAS_TEXTANGENT:
+				glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+				glTexCoordPointer(4, GL_FLOAT, this->stride, this->tangent_offset);
+				break;
+			default:
+				break;
 		}
-		glClientActiveTextureARB(GL_TEXTURE0_ARB);
 	}
-	else //TexFace
-	{
-		glClientActiveTextureARB(GL_TEXTURE0_ARB);
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		glTexCoordPointer(2, GL_FLOAT, this->stride, this->uv_offset);
-	}
+	glClientActiveTextureARB(GL_TEXTURE0_ARB);
 
 	if (GLEW_ARB_vertex_program)
 	{
@@ -158,12 +149,15 @@ void VBO::Draw(int texco_num, RAS_IRasterizer::TexCoGen* texco, int attrib_num, 
 					glVertexAttribPointerARB(unit, 4, GL_FLOAT, GL_FALSE, this->stride, this->tangent_offset);
 					glEnableVertexAttribArrayARB(unit);
 					break;
+				case RAS_IRasterizer::RAS_TEXCO_VCOL:
+					glVertexAttribPointerARB(unit, 4, GL_UNSIGNED_BYTE, GL_TRUE, this->stride, this->color_offset);
+					glEnableVertexAttribArrayARB(unit);
 				default:
 					break;
 			}
 		}
 	}
-	
+
 	glDrawElements(this->mode, this->indices, GL_UNSIGNED_SHORT, 0);
 
 	glDisableClientState(GL_VERTEX_ARRAY);
@@ -202,20 +196,15 @@ bool RAS_StorageVBO::Init()
 
 void RAS_StorageVBO::Exit()
 {
+	VBOMap::iterator it = m_vbo_lookup.begin();
+	while (it != m_vbo_lookup.end()) {
+		delete it->second;
+		++it;
+	}
 	m_vbo_lookup.clear();
 }
 
 void RAS_StorageVBO::IndexPrimitives(RAS_MeshSlot& ms)
-{
-	IndexPrimitivesInternal(ms, false);
-}
-
-void RAS_StorageVBO::IndexPrimitivesMulti(RAS_MeshSlot& ms)
-{
-	IndexPrimitivesInternal(ms, true);
-}
-
-void RAS_StorageVBO::IndexPrimitivesInternal(RAS_MeshSlot& ms, bool multi)
 {
 	RAS_MeshSlot::iterator it;
 	VBO *vbo;
@@ -233,6 +222,6 @@ void RAS_StorageVBO::IndexPrimitivesInternal(RAS_MeshSlot& ms, bool multi)
 			vbo->UpdateData();
 		}
 
-		vbo->Draw(*m_texco_num, m_texco, *m_attrib_num, m_attrib, m_attrib_layer, multi);
+		vbo->Draw(*m_texco_num, m_texco, *m_attrib_num, m_attrib, m_attrib_layer);
 	}
 }

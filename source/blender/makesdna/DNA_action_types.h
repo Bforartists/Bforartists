@@ -76,6 +76,8 @@ typedef struct bMotionPath {
 	int start_frame;            /* for drawing paths, the start frame number */
 	int end_frame;              /* for drawing paths, the end frame number */
 	
+	float color[3];	            /* optional custom color */
+	int line_thickness;         /* line thickness */
 	int flag;                   /* baking settings - eMotionPath_Flag */
 } bMotionPath;
 
@@ -84,7 +86,11 @@ typedef enum eMotionPath_Flag {
 	/* (for bones) path represents the head of the bone */
 	MOTIONPATH_FLAG_BHEAD       = (1 << 0),
 	/* motion path is being edited */
-	MOTIONPATH_FLAG_EDIT        = (1 << 1)
+	MOTIONPATH_FLAG_EDIT        = (1 << 1),
+	/* Custom colors */
+	MOTIONPATH_FLAG_CUSTOM      = (1 << 2),
+	/* Draw lines or only points */
+	MOTIONPATH_FLAG_LINES       = (1 << 3)   
 } eMotionPath_Flag;
 
 /* Visualization General --------------------------- */
@@ -198,7 +204,9 @@ typedef struct bPoseChannel {
 	short agrp_index;               /* index of action-group this bone belongs to (0 = default/no group) */
 	char constflag;                 /* for quick detecting which constraints affect this channel */
 	char selectflag;                /* copy of bone flag, so you can work with library armatures, not for runtime use */
-	char pad0[6];
+	char drawflag;
+	char bboneflag;
+	char pad0[4];
 
 	struct Bone         *bone;      /* set on read file or rebuild pose */
 	struct bPoseChannel *parent;    /* set on read file or rebuild pose */
@@ -212,6 +220,9 @@ typedef struct bPoseChannel {
 	struct bPoseChannel *custom_tx; /* odd feature, display with another bones transform.
 	                                 * needed in rare cases for advanced rigs,
 	                                 * since the alternative is highly complicated - campbell */
+	float custom_scale;
+
+	char pad1[4];
 
 	/* transforms - written in by actions or transform */
 	float loc[3];
@@ -238,7 +249,16 @@ typedef struct bPoseChannel {
 	float ikstretch;
 	float ikrotweight;              /* weight of joint rotation constraint */
 	float iklinweight;              /* weight of joint stretch constraint */
-
+	
+	/* curved bones settings - these are for animating, and are applied on top of the copies in pchan->bone */
+	float roll1, roll2;
+	float curveInX, curveInY;
+	float curveOutX, curveOutY;
+	float scaleIn, scaleOut;
+	
+	struct bPoseChannel *bbone_prev; /* next/prev bones to use as handle references when calculating bbones (optional) */
+	struct bPoseChannel *bbone_next;
+	
 	void        *temp;              /* use for outliner */
 } bPoseChannel;
 
@@ -249,17 +269,17 @@ typedef enum ePchan_Flag {
 	POSE_LOC        =   (1 << 0),
 	POSE_ROT        =   (1 << 1),
 	POSE_SIZE       =   (1 << 2),
-	/* old IK/cache stuff... */
-#if 0
-	POSE_IK_MAT     =   (1 << 3),
-	POSE_UNUSED2    =   (1 << 4),
-	POSE_UNUSED3    =   (1 << 5),
-	POSE_UNUSED4    =   (1 << 6),
-	POSE_UNUSED5    =   (1 << 7),
-	/* has Standard IK */
-	POSE_HAS_IK     =   (1 << 8),
-#endif
-	/* IK/Pose solving*/
+	
+	/* old IK/cache stuff
+	 * - used to be here from (1 << 3) to (1 << 8) 
+	 *   but has been repurposed since 2.77.2
+	 *   as they haven't been used in over 10 years
+	 */
+	
+	/* has BBone deforms */
+	POSE_BBONE_SHAPE =  (1 << 3),
+	
+	/* IK/Pose solving */
 	POSE_CHAIN      =   (1 << 9),
 	POSE_DONE       =   (1 << 10),
 	/* visualization */
@@ -305,6 +325,24 @@ typedef enum ePchan_IkFlag {
 	BONE_IK_NO_YDOF_TEMP = (1 << 11),
 	BONE_IK_NO_ZDOF_TEMP = (1 << 12)
 } ePchan_IkFlag;
+
+/* PoseChannel->drawflag */
+typedef enum ePchan_DrawFlag {
+	PCHAN_DRAW_NO_CUSTOM_BONE_SIZE = (1 << 0),
+} ePchan_DrawFlag;
+
+#define PCHAN_CUSTOM_DRAW_SIZE(pchan) \
+	(pchan)->custom_scale * (((pchan)->drawflag & PCHAN_DRAW_NO_CUSTOM_BONE_SIZE) ? 1.0f : (pchan)->bone->length)
+
+/* PoseChannel->bboneflag */
+typedef enum ePchan_BBoneFlag {
+	/* Use custom reference bones (for roll and handle alignment), instead of immediate neighbors */
+	PCHAN_BBONE_CUSTOM_HANDLES    = (1 << 1),
+	/* Evaluate start handle as being "relative" */
+	PCHAN_BBONE_CUSTOM_START_REL  = (1 << 2),
+	/* Evaluate end handle as being "relative" */
+	PCHAN_BBONE_CUSTOM_END_REL    = (1 << 3),
+} ePchan_BBoneFlag;
 
 /* PoseChannel->rotmode and Object->rotmode */
 typedef enum eRotationModes {
@@ -584,6 +622,9 @@ typedef enum eDopeSheet_FilterFlag {
 	ADS_FILTER_BY_FCU_NAME      = (1 << 27),  /* for F-Curves, filter by the displayed name (i.e. to isolate all Location curves only) */
 	ADS_FILTER_ONLY_ERRORS		= (1 << 28),  /* show only F-Curves which are disabled/have errors - for debugging drivers */
 	
+	/* GPencil Mode */
+	ADS_FILTER_GP_3DONLY        = (1 << 29),  /* GP Mode - Only show datablocks used in the scene */
+	
 	/* combination filters (some only used at runtime) */
 	ADS_FILTER_NOOBDATA = (ADS_FILTER_NOCAM | ADS_FILTER_NOMAT | ADS_FILTER_NOLAM | ADS_FILTER_NOCUR | ADS_FILTER_NOPART | ADS_FILTER_NOARM | ADS_FILTER_NOSPK | ADS_FILTER_NOMODIFIERS)
 } eDopeSheet_FilterFlag;	
@@ -591,7 +632,10 @@ typedef enum eDopeSheet_FilterFlag {
 /* DopeSheet general flags */
 typedef enum eDopeSheet_Flag {
 	ADS_FLAG_SUMMARY_COLLAPSED  = (1 << 0),   /* when summary is shown, it is collapsed, so all other channels get hidden */
-	ADS_FLAG_SHOW_DBFILTERS     = (1 << 1)    /* show filters for datablocks */
+	ADS_FLAG_SHOW_DBFILTERS     = (1 << 1),   /* show filters for datablocks */
+	
+	ADS_FLAG_FUZZY_NAMES        = (1 << 2),   /* use fuzzy/partial string matches when ADS_FILTER_BY_FCU_NAME is enabled (WARNING: expensive operation) */
+	ADS_FLAG_NO_DB_SORT         = (1 << 3),   /* do not sort datablocks (mostly objects) by name (NOTE: potentially expensive operation) */
 	
 	/* NOTE: datablock filter flags continued (1 << 10) onwards... */
 } eDopeSheet_Flag;
@@ -656,7 +700,9 @@ typedef enum eAnimEdit_Context {
 	/* dopesheet (default) */
 	SACTCONT_DOPESHEET = 3,
 	/* mask */
-	SACTCONT_MASK = 4
+	SACTCONT_MASK = 4,
+	/* cache file */
+	SACTCONT_CACHEFILE = 5,
 } eAnimEdit_Context;
 
 /* SpaceAction AutoSnap Settings (also used by other Animation Editors) */

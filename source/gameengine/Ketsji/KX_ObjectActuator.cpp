@@ -65,12 +65,12 @@ KX_ObjectActuator(
 	m_drot(drot),
 	m_linear_velocity(linV),
 	m_angular_velocity(angV),
-	m_linear_length2(0.0),
-	m_current_linear_factor(0.0),
-	m_current_angular_factor(0.0),
+	m_linear_length2(0.0f),
+	m_current_linear_factor(0.0f),
+	m_current_angular_factor(0.0f),
 	m_damping(damping),
-	m_previous_error(0.0,0.0,0.0),
-	m_error_accumulator(0.0,0.0,0.0),
+	m_previous_error(0.0f,0.0f,0.0f),
+	m_error_accumulator(0.0f,0.0f,0.0f),
 	m_bitLocalFlag (flag),
 	m_reference(refobj),
 	m_active_combined_velocity (false),
@@ -134,13 +134,13 @@ bool KX_ObjectActuator::Update()
 
 		// Explicitly stop the movement if we're using character motion
 		if (m_bitLocalFlag.CharacterMotion) {
-			character->SetWalkDirection(MT_Vector3 (0.0, 0.0, 0.0));
+			character->SetWalkDirection(MT_Vector3 (0.0f, 0.0f, 0.0f));
 		}
 
 		m_linear_damping_active = false;
 		m_angular_damping_active = false;
-		m_error_accumulator.setValue(0.0,0.0,0.0);
-		m_previous_error.setValue(0.0,0.0,0.0);
+		m_error_accumulator.setValue(0.0f,0.0f,0.0f);
+		m_previous_error.setValue(0.0f,0.0f,0.0f);
 		m_jumping = false;
 		return false; 
 
@@ -291,10 +291,10 @@ bool KX_ObjectActuator::Update()
 							m_current_linear_factor = linV.dot(m_linear_velocity)/m_linear_length2;
 							m_linear_damping_active = true;
 						}
-						if (m_current_linear_factor < 1.0)
-							m_current_linear_factor += 1.0/m_damping;
-						if (m_current_linear_factor > 1.0)
-							m_current_linear_factor = 1.0;
+						if (m_current_linear_factor < 1.0f)
+							m_current_linear_factor += 1.0f/m_damping;
+						if (m_current_linear_factor > 1.0f)
+							m_current_linear_factor = 1.0f;
 						linV = m_current_linear_factor * m_linear_velocity;
 						parent->setLinearVelocity(linV,(m_bitLocalFlag.LinearVelocity) != 0);
 					} else {
@@ -314,10 +314,10 @@ bool KX_ObjectActuator::Update()
 						m_current_angular_factor = angV.dot(m_angular_velocity)/m_angular_length2;
 						m_angular_damping_active = true;
 					}
-					if (m_current_angular_factor < 1.0)
-						m_current_angular_factor += 1.0/m_damping;
-					if (m_current_angular_factor > 1.0)
-						m_current_angular_factor = 1.0;
+					if (m_current_angular_factor < 1.0f)
+						m_current_angular_factor += 1.0f/m_damping;
+					if (m_current_angular_factor > 1.0f)
+						m_current_angular_factor = 1.0f;
 					angV = m_current_angular_factor * m_angular_velocity;
 					parent->setAngularVelocity(angV,(m_bitLocalFlag.AngularVelocity) != 0);
 				} else {
@@ -687,7 +687,7 @@ int KX_ObjectActuator::pyattr_set_reference(void *self, const struct KX_PYATTRIB
 	KX_ObjectActuator* actuator = static_cast<KX_ObjectActuator*>(self);
 	KX_GameObject *refOb;
 	
-	if (!ConvertPythonToGameObject(value, &refOb, true, "actu.reference = value: KX_ObjectActuator"))
+	if (!ConvertPythonToGameObject(actuator->GetLogicManager(), value, &refOb, true, "actu.reference = value: KX_ObjectActuator"))
 		return PY_SET_ATTR_FAIL;
 	
 	if (actuator->m_reference)

@@ -58,10 +58,12 @@ set(SRC
 	intern/wm_draw.c
 	intern/wm_event_system.c
 	intern/wm_files.c
+	intern/wm_files_link.c
 	intern/wm_gesture.c
 	intern/wm_init_exit.c
 	intern/wm_jobs.c
 	intern/wm_keymap.c
+	intern/wm_operator_props.c
 	intern/wm_operators.c
 	intern/wm_subwindow.c
 	intern/wm_window.c
@@ -142,9 +144,10 @@ endif()
 
 if(WITH_OPENSUBDIV)
 	add_definitions(-DWITH_OPENSUBDIV)
-	list(APPEND INC
-		../../../intern/opensubdiv
-	)
+endif()
+
+if(WITH_INPUT_NDOF)
+	add_definitions(-DWITH_INPUT_NDOF)
 endif()
 
 if(WIN32)

@@ -73,6 +73,7 @@ public:
 	 * \param parentWindow  Parent (embedder) window
 	 * \param type		The type of drawing context installed in this window.
 	 * \param stereoVisual	Stereo visual for quad buffered stereo.
+	 * \param alphaBackground Enable alpha blending of window with display background
 	 * \param numOfAASamples	Number of samples used for AA (zero if no AA)
 	 */
 	GHOST_WindowX11(
@@ -88,6 +89,7 @@ public:
 	    GHOST_TDrawingContextType type = GHOST_kDrawingContextTypeNone,
 	    const bool stereoVisual = false,
 	    const bool exclusive = false,
+	    const bool alphaBackground = false,
 	    const GHOST_TUns16 numOfAASamples = 0,
 	    const bool is_debug = false
 	    );
@@ -210,6 +212,10 @@ public:
 	bool createX11_XIC();
 #endif
 
+#ifdef WITH_X11_XINPUT
+	void refreshXInputDevices();
+#endif
+
 #ifdef WITH_XDND
 	GHOST_DropTargetX11 *getDropTarget()
 	{
@@ -313,14 +319,11 @@ private:
 	Cursor
 	getEmptyCursor(
 	    );
-
-#ifdef WITH_X11_XINPUT
-	void initXInputDevices();
-#endif
 	
 	Window m_window;
 	Display *m_display;
 	XVisualInfo *m_visualInfo;
+	void *m_fbconfig;
 
 	GHOST_TWindowState m_normal_state;
 

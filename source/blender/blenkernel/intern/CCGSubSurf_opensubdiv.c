@@ -28,12 +28,15 @@
 #include "BLI_sys_types.h" // for intptr_t support
 
 #include "BLI_utildefines.h" /* for BLI_assert */
+#include "BLI_listbase.h"
 #include "BLI_math.h"
+#include "BLI_threads.h"
 
 #include "CCGSubSurf.h"
 #include "CCGSubSurf_intern.h"
 
 #include "BKE_DerivedMesh.h"
+#include "BKE_subsurf.h"
 
 #include "DNA_userdef_types.h"
 
@@ -41,6 +44,7 @@
 #include "opensubdiv_converter_capi.h"
 
 #include "GL/glew.h"
+#include "GPU_extensions.h"
 
 #define OSD_LOG if (false) printf
 
@@ -186,7 +190,6 @@ void ccgSubSurf_checkTopologyChanged(CCGSubSurf *ss, DerivedMesh *dm)
 		/* ** Make sure both GPU and CPU backends are properly reset. ** */
 
 		ss->osd_coarse_coords_invalid = true;
-		ss->osd_uvs_invalid = true;
 
 		/* Reset GPU part. */
 		ss->osd_mesh_invalid = true;
@@ -212,7 +215,9 @@ static void ccgSubSurf__updateGLMeshCoords(CCGSubSurf *ss)
 	                                       ss->osd_num_coarse_coords);
 }
 
-bool ccgSubSurf_prepareGLMesh(CCGSubSurf *ss, bool use_osd_glsl)
+bool ccgSubSurf_prepareGLMesh(CCGSubSurf *ss,
+                              bool use_osd_glsl,
+                              int active_uv_index)
 {
 	int compute_type;
 
@@ -236,7 +241,7 @@ bool ccgSubSurf_prepareGLMesh(CCGSubSurf *ss, bool use_osd_glsl)
 
 	if (ss->osd_mesh_invalid) {
 		if (ss->osd_mesh != NULL) {
-			openSubdiv_deleteOsdGLMesh(ss->osd_mesh);
+			ccgSubSurf__delete_osdGLMesh(ss->osd_mesh);
 			ss->osd_mesh = NULL;
 		}
 		ss->osd_mesh_invalid = false;
@@ -252,8 +257,7 @@ bool ccgSubSurf_prepareGLMesh(CCGSubSurf *ss, bool use_osd_glsl)
 		ss->osd_mesh = openSubdiv_createOsdGLMeshFromTopologyRefiner(
 		        ss->osd_topology_refiner,
 		        compute_type,
-		        ss->subdivLevels,
-		        ss->osd_subsurf_uv);
+		        ss->subdivLevels);
 		ss->osd_topology_refiner = NULL;
 
 		if (UNLIKELY(ss->osd_mesh == NULL)) {
@@ -286,7 +290,7 @@ bool ccgSubSurf_prepareGLMesh(CCGSubSurf *ss, bool use_osd_glsl)
 		ss->osd_coarse_coords_invalid = false;
 	}
 
-	openSubdiv_osdGLMeshDisplayPrepare(use_osd_glsl, ss->osd_uv_index);
+	openSubdiv_osdGLMeshDisplayPrepare(use_osd_glsl, active_uv_index);
 
 	return true;
 }
@@ -897,8 +901,7 @@ void ccgSubSurf__sync_opensubdiv(CCGSubSurf *ss)
 void ccgSubSurf_free_osd_mesh(CCGSubSurf *ss)
 {
 	if (ss->osd_mesh != NULL) {
-		/* TODO(sergey): Make sure free happens form the main thread! */
-		openSubdiv_deleteOsdGLMesh(ss->osd_mesh);
+		ccgSubSurf__delete_osdGLMesh(ss->osd_mesh);
 		ss->osd_mesh = NULL;
 	}
 	if (ss->osd_vao != 0) {
@@ -919,6 +922,91 @@ void ccgSubSurf_getMinMax(CCGSubSurf *ss, float r_min[3], float r_max[3])
 		/* Coarse coordinates has normals interleaved into the array. */
 		DO_MINMAX(ss->osd_coarse_coords[2 * i], r_min, r_max);
 	}
+}
+
+/* ** Delayed delete routines ** */
+
+typedef struct OsdDeletePendingItem {
+	struct OsdDeletePendingItem *next, *prev;
+	OpenSubdiv_GLMesh *osd_mesh;
+	unsigned int vao;
+} OsdDeletePendingItem;
+
+static SpinLock delete_spin;
+static ListBase delete_pool = {NULL, NULL};
+
+static void delete_pending_push(OpenSubdiv_GLMesh *osd_mesh,
+                                unsigned int vao)
+{
+	OsdDeletePendingItem *new_entry = MEM_mallocN(sizeof(OsdDeletePendingItem),
+	                                              "opensubdiv delete entry");
+	new_entry->osd_mesh = osd_mesh;
+	new_entry->vao = vao;
+	BLI_spin_lock(&delete_spin);
+	BLI_addtail(&delete_pool, new_entry);
+	BLI_spin_unlock(&delete_spin);
+}
+
+void ccgSubSurf__delete_osdGLMesh(OpenSubdiv_GLMesh *osd_mesh)
+{
+	if (BLI_thread_is_main()) {
+		openSubdiv_deleteOsdGLMesh(osd_mesh);
+	}
+	else {
+		delete_pending_push(osd_mesh, 0);
+	}
+}
+
+void ccgSubSurf__delete_vertex_array(unsigned int vao)
+{
+	if (BLI_thread_is_main()) {
+		glDeleteVertexArrays(1, &vao);
+	}
+	else {
+		delete_pending_push(NULL, vao);
+	}
+}
+
+void ccgSubSurf__delete_pending(void)
+{
+	OsdDeletePendingItem *entry;
+	BLI_assert(BLI_thread_is_main());
+	BLI_spin_lock(&delete_spin);
+	for (entry = delete_pool.first; entry != NULL; entry = entry->next) {
+		if (entry->osd_mesh != NULL) {
+			openSubdiv_deleteOsdGLMesh(entry->osd_mesh);
+		}
+		if (entry->vao != 0) {
+			glDeleteVertexArrays(1, &entry->vao);
+		}
+	}
+	BLI_freelistN(&delete_pool);
+	BLI_spin_unlock(&delete_spin);
+}
+
+void ccgSubSurf__sync_subdivUvs(CCGSubSurf *ss, bool subdiv_uvs)
+{
+    ss->osd_subdiv_uvs = subdiv_uvs;
+}
+
+/* ** Public API ** */
+
+void BKE_subsurf_osd_init(void)
+{
+	openSubdiv_init(GPU_legacy_support());
+	BLI_spin_init(&delete_spin);
+}
+
+void BKE_subsurf_free_unused_buffers(void)
+{
+	ccgSubSurf__delete_pending();
+}
+
+void BKE_subsurf_osd_cleanup(void)
+{
+	openSubdiv_cleanup();
+	ccgSubSurf__delete_pending();
+	BLI_spin_end(&delete_spin);
 }
 
 #endif  /* WITH_OPENSUBDIV */

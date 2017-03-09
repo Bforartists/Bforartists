@@ -36,19 +36,17 @@
 /* *************** internal api ************** */
 void	wm_subwindows_free(wmWindow *win);
 
-int		wm_subwindow_open(wmWindow *win, const rcti *winrct);
+int		wm_subwindow_open(wmWindow *win, const rcti *winrct, bool activate);
 void	wm_subwindow_close(wmWindow *win, int swinid);
 int		wm_subwindow_get_id(wmWindow *win);				/* returns id */
 
-void	wm_subwindow_position(wmWindow *win, int swinid, const rcti *winrct);
+void	wm_subwindow_position(wmWindow *win, int swinid, const rcti *winrct, bool activate);
 
 void	wm_subwindow_size_get(wmWindow *win, int swinid, int *x, int *y);
 void	wm_subwindow_origin_get(wmWindow *win, int swinid, int *x, int *y);
 void	wm_subwindow_matrix_get(wmWindow *win, int swinid, float mat[4][4]);
 void	wm_subwindow_rect_get(wmWindow *win, int swinid, struct rcti *r_rect);
 void    wm_subwindow_rect_set(wmWindow *win, int swinid, const rcti *rect);
-
-unsigned int index_to_framebuffer(int index);
 
 #endif /* __WM_SUBWINDOW_H__ */
 

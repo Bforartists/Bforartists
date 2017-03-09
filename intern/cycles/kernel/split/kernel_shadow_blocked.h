@@ -31,10 +31,10 @@
               QUEUE_SHADOW_RAY_CAST_DL_RAYS) -------|                            |
  * Queue_index(QUEUE_SHADOW_RAY_CAST_AO_RAYS&
               QUEUE_SHADOW_RAY_CAST_DL_RAYS) -------|                            |
- * kg (globals + data) -----------------------------|                            |
+ * kg (globals) ------------------------------------|                            |
  * queuesize ---------------------------------------|                            |
  *
- * Note on shader_shadow : shader_shadow is neither input nor output to this kernel. shader_shadow is filled and consumed in this kernel itself.
+ * Note on sd_shadow : sd_shadow is neither input nor output to this kernel. sd_shadow is filled and consumed in this kernel itself.
  * Note on queues :
  * The kernel fetches from QUEUE_SHADOW_RAY_CAST_AO_RAYS and QUEUE_SHADOW_RAY_CAST_DL_RAYS queues. We will empty
  * these queues this kernel.
@@ -46,16 +46,11 @@
  * QUEUE_SHADOW_RAY_CAST_AO_RAYS and QUEUE_SHADOW_RAY_CAST_DL_RAYS will be empty at kernel exit.
  */
 ccl_device void kernel_shadow_blocked(
-        ccl_global char *globals,
-        ccl_constant KernelData *data,
-        ccl_global char *shader_shadow,        /* Required for shadow blocked */
+        KernelGlobals *kg,
         ccl_global PathState *PathState_coop,  /* Required for shadow blocked */
         ccl_global Ray *LightRay_dl_coop,      /* Required for direct lighting's shadow blocked */
         ccl_global Ray *LightRay_ao_coop,      /* Required for AO's shadow blocked */
-        Intersection *Intersection_coop_AO,
-        Intersection *Intersection_coop_DL,
         ccl_global char *ray_state,
-        int total_num_rays,
         char shadow_blocked_type,
         int ray_index)
 {
@@ -65,30 +60,21 @@ ccl_device void kernel_shadow_blocked(
 	if(IS_FLAG(ray_state, ray_index, RAY_SHADOW_RAY_CAST_DL) ||
 	   IS_FLAG(ray_state, ray_index, RAY_SHADOW_RAY_CAST_AO))
 	{
-		/* Load kernel global structure. */
-		KernelGlobals *kg = (KernelGlobals *)globals;
-		ShaderData *sd_shadow  = (ShaderData *)shader_shadow;
-
 		ccl_global PathState *state = &PathState_coop[ray_index];
 		ccl_global Ray *light_ray_dl_global = &LightRay_dl_coop[ray_index];
 		ccl_global Ray *light_ray_ao_global = &LightRay_ao_coop[ray_index];
-		Intersection *isect_ao_global = &Intersection_coop_AO[ray_index];
-		Intersection *isect_dl_global = &Intersection_coop_DL[ray_index];
 
 		ccl_global Ray *light_ray_global =
 		        shadow_blocked_type == RAY_SHADOW_RAY_CAST_AO
-		                 ? light_ray_ao_global
-		                 : light_ray_dl_global;
-		Intersection *isect_global =
-		        RAY_SHADOW_RAY_CAST_AO ? isect_ao_global : isect_dl_global;
+		                ? light_ray_ao_global
+		                : light_ray_dl_global;
 
 		float3 shadow;
 		update_path_radiance = !(shadow_blocked(kg,
+		                                        kg->sd_input,
 		                                        state,
 		                                        light_ray_global,
-		                                        &shadow,
-		                                        sd_shadow,
-		                                        isect_global));
+		                                        &shadow));
 
 		/* We use light_ray_global's P and t to store shadow and
 		 * update_path_radiance.

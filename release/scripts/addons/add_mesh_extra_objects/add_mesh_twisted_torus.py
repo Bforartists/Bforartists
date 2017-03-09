@@ -1,30 +1,36 @@
-# GPL # by Paulo_Gomes
+# GPL # "author": Paulo_Gomes
 
 import bpy
-from bpy.props import *
-
-from mathutils import *
+from mathutils import Quaternion, Vector
 from math import cos, sin, pi
+from bpy.props import (
+        FloatProperty,
+        IntProperty,
+        BoolProperty,
+        )
 
-# Create a new mesh (object) from verts/edges/faces.
+
+# Create a new mesh (object) from verts/edges/faces
 # verts/edges/faces ... List of vertices/edges/faces for the
-#                       new mesh (as used in from_pydata).
-# name ... Name of the new mesh (& object).
+#                       new mesh (as used in from_pydata)
+# name ... Name of the new mesh (& object)
+
 def create_mesh_object(context, verts, edges, faces, name):
 
     # Create new mesh
     mesh = bpy.data.meshes.new(name)
 
-    # Make a mesh from a list of verts/edges/faces.
+    # Make a mesh from a list of verts/edges/faces
     mesh.from_pydata(verts, edges, faces)
 
-    # Update mesh geometry after adding stuff.
+    # Update mesh geometry after adding stuff
     mesh.update()
 
     from bpy_extras import object_utils
     return object_utils.object_data_add(context, mesh, operator=None)
 
-# A very simple "bridge" tool.
+
+# A very simple "bridge" tool
 
 def createFaces(vertIdx1, vertIdx2, closed=False, flipped=False):
     faces = []
@@ -45,7 +51,7 @@ def createFaces(vertIdx1, vertIdx2, closed=False, flipped=False):
     total = len(vertIdx2)
 
     if closed:
-        # Bridge the start with the end.
+        # Bridge the start with the end
         if flipped:
             face = [
                 vertIdx1[0],
@@ -62,7 +68,7 @@ def createFaces(vertIdx1, vertIdx2, closed=False, flipped=False):
             face.append(vertIdx2[total - 1])
             faces.append(face)
 
-    # Bridge the rest of the faces.
+    # Bridge the rest of the faces
     for num in range(total - 1):
         if flipped:
             if fan:
@@ -80,6 +86,7 @@ def createFaces(vertIdx1, vertIdx2, closed=False, flipped=False):
             faces.append(face)
 
     return faces
+
 
 def add_twisted_torus(major_rad, minor_rad, major_seg, minor_seg, twists):
     PI_2 = pi * 2.0
@@ -108,7 +115,7 @@ def add_twisted_torus(major_rad, minor_rad, major_seg, minor_seg, twists):
             edgeloop.append(len(verts))
             verts.append(vec)
 
-        # Remember very first edgeloop.
+        # Remember very first edgeloop
         if major_index == 0:
             edgeloop_first = edgeloop
 
@@ -125,56 +132,72 @@ def add_twisted_torus(major_rad, minor_rad, major_seg, minor_seg, twists):
 
     return verts, faces
 
+
 class AddTwistedTorus(bpy.types.Operator):
-    """Add a torus mesh"""
     bl_idname = "mesh.primitive_twisted_torus_add"
-    bl_label = "Add Torus"
+    bl_label = "Add Twisted Torus"
+    bl_description = "Construct a twisted torus mesh"
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
-    major_radius = FloatProperty(name="Major Radius",
-        description="Radius from the origin to the" \
-            " center of the cross section",
+    major_radius = FloatProperty(
+        name="Major Radius",
+        description="Radius from the origin to the"
+                    " center of the cross section",
         min=0.01,
         max=100.0,
-        default=1.0)
-    minor_radius = FloatProperty(name="Minor Radius",
+        default=1.0
+        )
+    minor_radius = FloatProperty(
+        name="Minor Radius",
         description="Radius of the torus' cross section",
         min=0.01,
         max=100.0,
-        default=0.25)
-    major_segments = IntProperty(name="Major Segments",
+        default=0.25
+        )
+    major_segments = IntProperty(
+        name="Major Segments",
         description="Number of segments for the main ring of the torus",
         min=3,
         max=256,
-        default=48)
-    minor_segments = IntProperty(name="Minor Segments",
+        default=48
+        )
+    minor_segments = IntProperty(
+        name="Minor Segments",
         description="Number of segments for the minor ring of the torus",
         min=3,
         max=256,
-        default=12)
-    twists = IntProperty(name="Twists",
+        default=12
+        )
+    twists = IntProperty(
+        name="Twists",
         description="Number of twists of the torus",
         min=0,
         max=256,
-        default=1)
-
-    use_abso = BoolProperty(name="Use Int+Ext Controls",
-        description="Use the Int / Ext controls for torus dimensions",
-        default=False)
-    abso_major_rad = FloatProperty(name="Exterior Radius",
+        default=1
+        )
+    use_abso = BoolProperty(
+        name="Use Int/Ext Controls",
+        description="Use the Int/Ext controls for torus dimensions",
+        default=False
+        )
+    abso_major_rad = FloatProperty(
+        name="Exterior Radius",
         description="Total Exterior Radius of the torus",
         min=0.01,
         max=100.0,
-        default=1.0)
-    abso_minor_rad = FloatProperty(name="Inside Radius",
+        default=1.0
+        )
+    abso_minor_rad = FloatProperty(
+        name="Inside Radius",
         description="Total Interior Radius of the torus",
         min=0.01,
         max=100.0,
-        default=0.5)
+        default=0.5
+        )
 
     def execute(self, context):
 
-        if self.use_abso == True:
+        if self.use_abso is True:
             extra_helper = (self.abso_major_rad - self.abso_minor_rad) * 0.5
             self.major_radius = self.abso_minor_rad + extra_helper
             self.minor_radius = extra_helper
@@ -184,9 +207,10 @@ class AddTwistedTorus(bpy.types.Operator):
             self.minor_radius,
             self.major_segments,
             self.minor_segments,
-            self.twists)
+            self.twists
+            )
 
-        # Actually create the mesh object from this geometry data.
+        # Create the mesh object from this geometry data.
         obj = create_mesh_object(context, verts, [], faces, "TwistedTorus")
 
         return {'FINISHED'}

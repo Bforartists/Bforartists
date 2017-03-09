@@ -71,6 +71,7 @@
  *       as it is and stick with using BMesh and CDDM.
  */
 
+#include "DNA_defs.h"
 #include "DNA_customdata_types.h"
 #include "DNA_meshdata_types.h"
 
@@ -151,7 +152,8 @@ typedef enum DMDrawFlag {
 	DM_DRAW_USE_TEXPAINT_UV     = (1 << 3),
 	DM_DRAW_SKIP_HIDDEN         = (1 << 4),
 	DM_DRAW_SKIP_SELECT         = (1 << 5),
-	DM_DRAW_SELECT_USE_EDITMODE = (1 << 6)
+	DM_DRAW_SELECT_USE_EDITMODE = (1 << 6),
+	DM_DRAW_NEED_NORMALS        = (1 << 7)
 } DMDrawFlag;
 
 typedef enum DMForeachFlag {
@@ -179,7 +181,7 @@ struct DerivedMesh {
 	int numVertData, numEdgeData, numTessFaceData, numLoopData, numPolyData;
 	int needsFree; /* checked on ->release, is set to 0 for cached results */
 	int deformedOnly; /* set by modifier stack if only deformed from original */
-	BVHCache bvhCache;
+	BVHCache *bvhCache;
 	struct GPUDrawObject *drawObject;
 	DerivedMeshType type;
 	float auto_bump_scale;
@@ -199,6 +201,8 @@ struct DerivedMesh {
 	/* use for converting to BMesh which doesn't store bevel weight and edge crease by default */
 	char cd_flag;
 
+	char tangent_mask; /* which tangent layers are calculated */
+
 	/** Calculate vert and face normals */
 	void (*calcNormals)(DerivedMesh *dm);
 
@@ -209,7 +213,9 @@ struct DerivedMesh {
 	void (*calcLoopNormalsSpaceArray)(DerivedMesh *dm, const bool use_split_normals, const float split_angle,
 	                                  struct MLoopNorSpaceArray *r_lnors_spacearr);
 
-	void (*calcLoopTangents)(DerivedMesh *dm);
+	void (*calcLoopTangents)(
+	        DerivedMesh *dm, bool calc_active_tangent,
+	        const char (*tangent_names)[MAX_NAME], int tangent_names_count);
 
 	/** Recalculates mesh tessellation */
 	void (*recalcTessellation)(DerivedMesh *dm);
@@ -409,7 +415,7 @@ struct DerivedMesh {
 	void (*drawFacesTex)(DerivedMesh *dm,
 	                     DMSetDrawOptionsTex setDrawOptions,
 	                     DMCompareDrawOptions compareDrawOptions,
-	                     void *userData, DMDrawFlag uvflag);
+	                     void *userData, DMDrawFlag flag);
 
 	/** Draw all faces with GLSL materials
 	 *  o setMaterial is called for every different material nr
@@ -443,7 +449,7 @@ struct DerivedMesh {
 	void (*drawMappedFacesTex)(DerivedMesh *dm,
 	                           DMSetDrawOptionsMappedTex setDrawOptions,
 	                           DMCompareDrawOptions compareDrawOptions,
-	                           void *userData, DMDrawFlag uvflag);
+	                           void *userData, DMDrawFlag flag);
 
 	/** Draw mapped faces with GLSL materials
 	 * - setMaterial is called for every different material nr
@@ -688,7 +694,7 @@ DerivedMesh *mesh_create_derived_render(
         CustomDataMask dataMask);
 
 DerivedMesh *getEditDerivedBMesh(
-        struct BMEditMesh *em, struct Object *ob,
+        struct BMEditMesh *em, struct Object *ob, CustomDataMask data_mask,
         float (*vertexCos)[3]);
 
 DerivedMesh *mesh_create_derived_index_render(
@@ -717,7 +723,7 @@ DerivedMesh *mesh_create_derived_physics(
         CustomDataMask dataMask);
 
 DerivedMesh *editbmesh_get_derived_base(
-        struct Object *, struct BMEditMesh *em);
+        struct Object *ob, struct BMEditMesh *em, CustomDataMask data_mask);
 DerivedMesh *editbmesh_get_derived_cage(
         struct Scene *scene, struct Object *,
         struct BMEditMesh *em, CustomDataMask dataMask);
@@ -751,22 +757,22 @@ void DM_update_weight_mcol(
 typedef struct DMVertexAttribs {
 	struct {
 		struct MLoopUV *array;
-		int em_offset, gl_index, gl_texco;
+		int em_offset, gl_index, gl_texco, gl_info_index;
 	} tface[MAX_MTFACE];
 
 	struct {
 		struct MLoopCol *array;
-		int em_offset, gl_index;
+		int em_offset, gl_index, gl_info_index;
 	} mcol[MAX_MCOL];
 
 	struct {
 		float (*array)[4];
-		int em_offset, gl_index;
-	} tang;
+		int em_offset, gl_index, gl_info_index;
+	} tang[MAX_MTFACE];
 
 	struct {
 		float (*array)[3];
-		int em_offset, gl_index, gl_texco;
+		int em_offset, gl_index, gl_texco, gl_info_index;
 	} orco;
 
 	int tottface, totmcol, tottang, totorco;
@@ -777,8 +783,22 @@ void DM_vertex_attributes_from_gpu(
         struct GPUVertexAttribs *gattribs, DMVertexAttribs *attribs);
 
 void DM_draw_attrib_vertex(DMVertexAttribs *attribs, int a, int index, int vert, int loop);
+void DM_draw_attrib_vertex_uniforms(const DMVertexAttribs *attribs);
 
-void DM_calc_loop_tangents(DerivedMesh *dm);
+void DM_calc_tangents_names_from_gpu(
+        const struct GPUVertexAttribs *gattribs,
+        char (*tangent_names)[MAX_NAME], int *tangent_names_count);
+void DM_add_named_tangent_layer_for_uv(
+        CustomData *uv_data, CustomData *tan_data, int numLoopData,
+        const char *layer_name);
+void DM_calc_loop_tangents_step_0(
+        const CustomData *loopData, bool calc_active_tangent,
+        const char (*tangent_names)[MAX_NAME], int tangent_names_count,
+        bool *rcalc_act, bool *rcalc_ren, int *ract_uv_n, int *rren_uv_n,
+        char *ract_uv_name, char *rren_uv_name, char *rtangent_mask);
+void DM_calc_loop_tangents(
+        DerivedMesh *dm, bool calc_active_tangent, const char (*tangent_names)[MAX_NAME],
+        int tangent_names_count);
 void DM_calc_auto_bump_scale(DerivedMesh *dm);
 
 /** Set object's bounding box based on DerivedMesh min/max data */

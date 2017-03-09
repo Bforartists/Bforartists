@@ -155,9 +155,9 @@ static void bm_face_bisect_verts(BMesh *bm, BMFace *f, const float plane[4], con
 			BM_face_split(bm, f, l_a, l_b, &l_new, NULL, true);
 			if (l_new) {
 				if (oflag_center) {
-					BMO_elem_flag_enable(bm, l_new->e, oflag_center);
-					BMO_elem_flag_enable(bm, l_new->f, oflag_center);
-					BMO_elem_flag_enable(bm, f,        oflag_center);
+					BMO_edge_flag_enable(bm, l_new->e, oflag_center);
+					BMO_face_flag_enable(bm, l_new->f, oflag_center);
+					BMO_face_flag_enable(bm, f,        oflag_center);
 				}
 			}
 		}
@@ -264,8 +264,18 @@ static void bm_face_bisect_verts(BMesh *bm, BMFace *f, const float plane[4], con
 					/* in fact this simple test is good enough,
 					 * test if the loops are adjacent */
 					if (found && !BM_loop_is_adjacent(l_a, l_b)) {
+						BMLoop *l_new;
 						BMFace *f_tmp;
-						f_tmp = BM_face_split(bm, face_split_arr[j], l_a, l_b, NULL, NULL, true);
+						f_tmp = BM_face_split(bm, face_split_arr[j], l_a, l_b, &l_new, NULL, true);
+
+						if (l_new) {
+							if (oflag_center) {
+								BMO_edge_flag_enable(bm, l_new->e,          oflag_center);
+								BMO_face_flag_enable(bm, l_new->f,          oflag_center);
+								BMO_face_flag_enable(bm, face_split_arr[j], oflag_center);
+							}
+						}
+
 						if (f_tmp) {
 							if (f_tmp != face_split_arr[j]) {
 								STACK_PUSH(face_split_arr, f_tmp);
@@ -362,7 +372,7 @@ void BM_mesh_bisect_plane(
 
 		if (BM_VERT_DIR(v) == 0) {
 			if (oflag_center) {
-				BMO_elem_flag_enable(bm, v, oflag_center);
+				BMO_vert_flag_enable(bm, v, oflag_center);
 			}
 			if (use_snap_center) {
 				closest_to_plane_v3(v->co, plane, v->co);
@@ -397,7 +407,7 @@ void BM_mesh_bisect_plane(
 			v_new = BM_edge_split(bm, e, e->v1, NULL, e_fac);
 			vert_is_center_enable(v_new);
 			if (oflag_center) {
-				BMO_elem_flag_enable(bm, v_new, oflag_center);
+				BMO_vert_flag_enable(bm, v_new, oflag_center);
 			}
 
 			BM_VERT_DIR(v_new) = 0;
@@ -429,7 +439,7 @@ void BM_mesh_bisect_plane(
 			/* if both verts are on the center - tag it */
 			if (oflag_center) {
 				if (side[0] == 0 && side[1] == 0) {
-					BMO_elem_flag_enable(bm, e, oflag_center);
+					BMO_edge_flag_enable(bm, e, oflag_center);
 				}
 			}
 		}

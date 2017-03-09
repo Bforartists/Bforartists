@@ -36,6 +36,7 @@
 #include "BLI_utildefines.h"
 
 #include "BKE_cdderivedmesh.h"
+#include "BKE_library_query.h"
 #include "BKE_modifier.h"
 #include "BKE_deform.h"
 #include "BKE_texture.h"
@@ -115,20 +116,18 @@ static void foreachObjectLink(ModifierData *md, Object *ob, ObjectWalkFunc walk,
 {
 	WarpModifierData *wmd = (WarpModifierData *) md;
 
-	walk(userData, ob, &wmd->object_from);
-	walk(userData, ob, &wmd->object_to);
-	walk(userData, ob, &wmd->map_object);
+	walk(userData, ob, &wmd->object_from, IDWALK_CB_NOP);
+	walk(userData, ob, &wmd->object_to, IDWALK_CB_NOP);
+	walk(userData, ob, &wmd->map_object, IDWALK_CB_NOP);
 }
 
 static void foreachIDLink(ModifierData *md, Object *ob, IDWalkFunc walk, void *userData)
 {
 	WarpModifierData *wmd = (WarpModifierData *) md;
 
-	walk(userData, ob, (ID **)&wmd->texture);
+	walk(userData, ob, (ID **)&wmd->texture, IDWALK_CB_USER);
 
-	walk(userData, ob, (ID **)&wmd->object_from);
-	walk(userData, ob, (ID **)&wmd->object_to);
-	walk(userData, ob, (ID **)&wmd->map_object);
+	foreachObjectLink(md, ob, (ObjectWalkFunc)walk, userData);
 }
 
 static void foreachTexLink(ModifierData *md, Object *ob, TexWalkFunc walk, void *userData)
@@ -375,6 +374,7 @@ ModifierTypeInfo modifierType_Warp = {
 	/* structSize */        sizeof(WarpModifierData),
 	/* type */              eModifierTypeType_OnlyDeform,
 	/* flags */             eModifierTypeFlag_AcceptsCVs |
+	                        eModifierTypeFlag_AcceptsLattice |
 	                        eModifierTypeFlag_SupportsEditmode,
 	/* copyData */          copyData,
 	/* deformVerts */       deformVerts,

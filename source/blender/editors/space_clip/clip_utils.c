@@ -175,20 +175,13 @@ void clip_graph_tracking_iterate(SpaceClip *sc, bool selected_only, bool include
 void clip_delete_track(bContext *C, MovieClip *clip, MovieTrackingTrack *track)
 {
 	MovieTracking *tracking = &clip->tracking;
-	MovieTrackingStabilization *stab = &tracking->stabilization;
 	MovieTrackingTrack *act_track = BKE_tracking_track_get_active(tracking);
 	ListBase *tracksbase = BKE_tracking_get_active_tracks(tracking);
-	bool has_bundle = false, update_stab = false;
+	bool has_bundle = false;
 	char track_name_escaped[MAX_NAME], prefix[MAX_NAME * 2];
 
 	if (track == act_track)
 		tracking->act_track = NULL;
-
-	if (track == stab->rot_track) {
-		stab->rot_track = NULL;
-
-		update_stab = true;
-	}
 
 	/* handle reconstruction display in 3d viewport */
 	if (track->flag & TRACK_HAS_BUNDLE)
@@ -207,8 +200,7 @@ void clip_delete_track(bContext *C, MovieClip *clip, MovieTrackingTrack *track)
 
 	WM_event_add_notifier(C, NC_MOVIECLIP | NA_EDITED, clip);
 
-	if (update_stab) {
-		tracking->stabilization.ok = false;
+	if (track->flag & (TRACK_USE_2D_STAB | TRACK_USE_2D_STAB_ROT)) {
 		WM_event_add_notifier(C, NC_MOVIECLIP | ND_DISPLAY, clip);
 	}
 
@@ -247,23 +239,18 @@ void clip_draw_cfra(SpaceClip *sc, ARegion *ar, Scene *scene)
 {
 	View2D *v2d = &ar->v2d;
 	float xscale, yscale;
-	float vec[2];
 
 	/* Draw a light green line to indicate current frame */
-	vec[0] = (float)(sc->user.framenr * scene->r.framelen);
-
 	UI_ThemeColor(TH_CFRAME);
+
+	float x = (float)(sc->user.framenr * scene->r.framelen);
+
 	glLineWidth(2.0);
 
-	glBegin(GL_LINE_STRIP);
-	vec[1] = v2d->cur.ymin;
-	glVertex2fv(vec);
-
-	vec[1] = v2d->cur.ymax;
-	glVertex2fv(vec);
+	glBegin(GL_LINES);
+	glVertex2f(x, v2d->cur.ymin);
+	glVertex2f(x, v2d->cur.ymax);
 	glEnd();
-
-	glLineWidth(1.0);
 
 	UI_view2d_view_orthoSpecial(ar, v2d, 1);
 

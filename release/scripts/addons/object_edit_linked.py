@@ -164,6 +164,7 @@ class PanelLinkedEdit(bpy.types.Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "TOOLS"
     bl_category = "Relations"
+    bl_context = "objectmode"
 
     @classmethod
     def poll(cls, context):

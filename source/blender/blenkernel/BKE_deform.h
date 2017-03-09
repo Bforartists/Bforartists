@@ -68,25 +68,40 @@ void BKE_defvert_array_copy(struct MDeformVert *dst, const struct MDeformVert *s
 float  defvert_find_weight(const struct MDeformVert *dvert, const int defgroup);
 float  defvert_array_find_weight_safe(const struct MDeformVert *dvert, const int index, const int defgroup);
 
+float BKE_defvert_multipaint_collective_weight(
+        const struct MDeformVert *dv, int defbase_tot,
+        const bool *defbase_sel, int defbase_tot_sel, bool do_autonormalize);
+
 void defvert_copy(struct MDeformVert *dvert_dst, const struct MDeformVert *dvert_src);
-void defvert_copy_subset(struct MDeformVert *dvert_dst, const struct MDeformVert *dvert_src,
-                         const bool *vgroup_subset, const int vgroup_tot);
-void defvert_copy_index(struct MDeformVert *dvert_dst, const struct MDeformVert *dvert_src, const int defgroup);
+void defvert_copy_subset(
+        struct MDeformVert *dvert_dst, const struct MDeformVert *dvert_src,
+        const bool *vgroup_subset, const int vgroup_tot);
+void defvert_mirror_subset(
+        struct MDeformVert *dvert_dst, const struct MDeformVert *dvert_src,
+        const bool *vgroup_subset, const int vgroup_tot,
+        const int *flip_map, const int flip_map_len);
+void defvert_copy_index(
+        struct MDeformVert       *dvert_dst, const int defgroup_dst,
+        const struct MDeformVert *dvert_src, const int defgroup_src);
 void defvert_sync(struct MDeformVert *dvert_dst, const struct MDeformVert *dvert_src, const bool use_verify);
-void defvert_sync_mapped(struct MDeformVert *dvert_dst, const struct MDeformVert *dvert_src,
-                         const int *flip_map, const int flip_map_len, const bool use_verify);
+void defvert_sync_mapped(
+        struct MDeformVert *dvert_dst, const struct MDeformVert *dvert_src,
+        const int *flip_map, const int flip_map_len, const bool use_verify);
 void defvert_remap(struct MDeformVert *dvert, int *map, const int map_len);
 void defvert_flip(struct MDeformVert *dvert, const int *flip_map, const int flip_map_len);
 void defvert_flip_merged(struct MDeformVert *dvert, const int *flip_map, const int flip_map_len);
 void defvert_normalize(struct MDeformVert *dvert);
-void defvert_normalize_subset(struct MDeformVert *dvert,
-                              const bool *vgroup_subset, const int vgroup_tot);
-void defvert_normalize_lock_single(struct MDeformVert *dvert,
-                                   const bool *vgroup_subset, const int vgroup_tot,
-                                   const int def_nr_lock);
-void defvert_normalize_lock_map(struct MDeformVert *dvert,
-                                const bool *vgroup_subset, const int vgroup_tot,
-                                const bool *lock_flags, const int defbase_tot);
+void defvert_normalize_subset(
+        struct MDeformVert *dvert,
+        const bool *vgroup_subset, const int vgroup_tot);
+void defvert_normalize_lock_single(
+        struct MDeformVert *dvert,
+        const bool *vgroup_subset, const int vgroup_tot,
+        const int def_nr_lock);
+void defvert_normalize_lock_map(
+        struct MDeformVert *dvert,
+        const bool *vgroup_subset, const int vgroup_tot,
+        const bool *lock_flags, const int defbase_tot);
 
 /* Utilities to 'extract' a given vgroup into a simple float array, for verts, but also edges/polys/loops. */
 void BKE_defvert_extract_vgroup_to_vertweights(
@@ -100,14 +115,5 @@ void BKE_defvert_extract_vgroup_to_loopweights(
 void BKE_defvert_extract_vgroup_to_polyweights(
         struct MDeformVert *dvert, const int defgroup, const int num_verts, struct MLoop *loops, const int num_loops,
         struct MPoly *polys, const int num_polys, float *r_weights, const bool invert_vgroup);
-
-/* utility function, note that MAX_VGROUP_NAME chars is the maximum string length since its only
- * used with defgroups currently */
-
-void BKE_deform_split_suffix(const char string[MAX_VGROUP_NAME], char base[MAX_VGROUP_NAME], char ext[MAX_VGROUP_NAME]);
-void BKE_deform_split_prefix(const char string[MAX_VGROUP_NAME], char base[MAX_VGROUP_NAME], char ext[MAX_VGROUP_NAME]);
-
-void BKE_deform_flip_side_name(char name[MAX_VGROUP_NAME], const char from_name[MAX_VGROUP_NAME],
-                               const bool strip_number);
 
 #endif  /* __BKE_DEFORM_H__ */

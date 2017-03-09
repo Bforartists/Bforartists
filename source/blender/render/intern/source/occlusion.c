@@ -115,6 +115,8 @@ typedef struct OcclusionTree {
 	int doindirect;
 
 	OcclusionCache *cache;
+
+	int num_threads;
 } OcclusionTree;
 
 typedef struct OcclusionThread {
@@ -327,7 +329,7 @@ static void occ_face(const OccFace *face, float co[3], float normal[3], float *a
 		if (vlr->v4)
 			mid_v3_v3v3(co, vlr->v1->co, vlr->v3->co);
 		else
-			cent_tri_v3(co, vlr->v1->co, vlr->v2->co, vlr->v3->co);
+			mid_v3_v3v3v3(co, vlr->v1->co, vlr->v2->co, vlr->v3->co);
 
 		if (obi->flag & R_TRANSFORMED)
 			mul_m4_v3(obi->mat, co);
@@ -641,6 +643,7 @@ static void occ_build_sh_normalize(OccNode *node)
 
 static OcclusionTree *occ_tree_build(Render *re)
 {
+	const int num_threads = re->r.threads;
 	OcclusionTree *tree;
 	ObjectInstanceRen *obi;
 	ObjectRen *obr;
@@ -679,7 +682,7 @@ static OcclusionTree *occ_tree_build(Render *re)
 	BLI_memarena_use_calloc(tree->arena);
 
 	if (re->wrld.aomode & WO_AOCACHE)
-		tree->cache = MEM_callocN(sizeof(OcclusionCache) * BLENDER_MAX_THREADS, "OcclusionCache");
+		tree->cache = MEM_callocN(sizeof(OcclusionCache) * num_threads, "OcclusionCache");
 
 	tree->face = MEM_callocN(sizeof(OccFace) * totface, "OcclusionFace");
 	tree->co = MEM_callocN(sizeof(float) * 3 * totface, "OcclusionCo");
@@ -730,8 +733,10 @@ static OcclusionTree *occ_tree_build(Render *re)
 	if (!(re->test_break(re->tbh)))
 		occ_build_sh_normalize(tree->root);
 
-	for (a = 0; a < BLENDER_MAX_THREADS; a++)
+	for (a = 0; a < num_threads; a++)
 		tree->stack[a] = MEM_callocN(sizeof(OccNode) * TOTCHILD * (tree->maxdepth + 1), "OccStack");
+
+	tree->num_threads = num_threads;
 
 	return tree;
 }
@@ -742,7 +747,7 @@ static void occ_free_tree(OcclusionTree *tree)
 
 	if (tree) {
 		if (tree->arena) BLI_memarena_free(tree->arena);
-		for (a = 0; a < BLENDER_MAX_THREADS; a++)
+		for (a = 0; a < tree->num_threads; a++)
 			if (tree->stack[a])
 				MEM_freeN(tree->stack[a]);
 		if (tree->occlusion) MEM_freeN(tree->occlusion);
@@ -1185,9 +1190,14 @@ static void sample_occ_surface(ShadeInput *shi)
 		co1 = mesh->co[face[0]];
 		co2 = mesh->co[face[1]];
 		co3 = mesh->co[face[2]];
-		co4 = (face[3]) ? mesh->co[face[3]] : NULL;
 
-		interp_weights_face_v3(w, co1, co2, co3, co4, strand->vert->co);
+		if (face[3]) {
+			co4 = mesh->co[face[3]];
+			interp_weights_quad_v3(w, co1, co2, co3, co4, strand->vert->co);
+		}
+		else {
+			interp_weights_tri_v3(w, co1, co2, co3, strand->vert->co);
+		}
 
 		zero_v3(shi->ao);
 		zero_v3(shi->env);
@@ -1240,7 +1250,7 @@ static void *exec_strandsurface_sample(void *data)
 			normal_quad_v3(n, co1, co2, co3, co4);
 		}
 		else {
-			cent_tri_v3(co, co1, co2, co3);
+			mid_v3_v3v3v3(co, co1, co2, co3);
 			normal_tri_v3(n, co1, co2, co3);
 		}
 		negate_v3(n);

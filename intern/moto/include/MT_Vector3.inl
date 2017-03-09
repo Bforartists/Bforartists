@@ -17,7 +17,7 @@ GEN_INLINE MT_Vector3& MT_Vector3::operator*=(MT_Scalar s) {
 
 GEN_INLINE MT_Vector3& MT_Vector3::operator/=(MT_Scalar s) {
     MT_assert(!MT_fuzzyZero(s));
-    return *this *= MT_Scalar(1.0) / s;
+    return *this *= MT_Scalar(1.0f) / s;
 }
 
 GEN_INLINE MT_Vector3 operator+(const MT_Vector3& v1, const MT_Vector3& v2) {
@@ -40,7 +40,7 @@ GEN_INLINE MT_Vector3 operator*(MT_Scalar s, const MT_Vector3& v) { return v * s
 
 GEN_INLINE MT_Vector3 operator/(const MT_Vector3& v, MT_Scalar s) {
     MT_assert(!MT_fuzzyZero(s));
-    return v * (MT_Scalar(1.0) / s);
+    return v * (MT_Scalar(1.0f) / s);
 }
 
 GEN_INLINE MT_Vector3 operator*(const MT_Vector3& v1, const MT_Vector3& v2) {
@@ -52,7 +52,7 @@ GEN_INLINE MT_Scalar MT_Vector3::dot(const MT_Vector3& v) const {
 }
 
 GEN_INLINE MT_Scalar MT_Vector3::length2() const { return dot(*this); }
-GEN_INLINE MT_Scalar MT_Vector3::length() const { return sqrt(length2()); }
+GEN_INLINE MT_Scalar MT_Vector3::length() const { return sqrtf(length2()); }
 
 GEN_INLINE MT_Vector3 MT_Vector3::absolute() const {
     return MT_Vector3(MT_abs(m_co[0]), MT_abs(m_co[1]), MT_abs(m_co[2]));
@@ -64,7 +64,7 @@ GEN_INLINE bool MT_Vector3::fuzzyZero() const {
 
 GEN_INLINE void MT_Vector3::noiseGate(MT_Scalar threshold) {
     if (length2() < threshold) {
-        setValue(MT_Scalar(0.0), MT_Scalar(0.0), MT_Scalar(0.0));
+        setValue(MT_Scalar(0.0f), MT_Scalar(0.0f), MT_Scalar(0.0f));
     }
 }
 
@@ -73,7 +73,7 @@ GEN_INLINE MT_Vector3 MT_Vector3::normalized() const { return *this / length(); 
 GEN_INLINE MT_Vector3 MT_Vector3::safe_normalized() const { 
 	MT_Scalar len = length();
 	return MT_fuzzyZero(len) ? 
-        MT_Vector3(MT_Scalar(1.0), MT_Scalar(0.0), MT_Scalar(0.0)) : 
+        MT_Vector3(MT_Scalar(1.0f), MT_Scalar(0.0f), MT_Scalar(0.0f)) : 
         *this / len; 
 }
 
@@ -93,9 +93,9 @@ GEN_INLINE MT_Vector3 MT_Vector3::scaled(MT_Scalar xx, MT_Scalar yy, MT_Scalar z
 }
 
 GEN_INLINE MT_Scalar MT_Vector3::angle(const MT_Vector3& v) const {
-    MT_Scalar s = sqrt(length2() * v.length2());
+    MT_Scalar s = sqrtf(length2() * v.length2());
     MT_assert(!MT_fuzzyZero(s));
-    return acos(dot(v) / s);
+    return acosf(dot(v) / s);
 }
 
 GEN_INLINE MT_Vector3 MT_Vector3::cross(const MT_Vector3& v) const {
@@ -116,10 +116,10 @@ GEN_INLINE int MT_Vector3::closestAxis() const {
 }
 
 GEN_INLINE MT_Vector3 MT_Vector3::random() {
-    MT_Scalar z = MT_Scalar(2.0) * MT_random() - MT_Scalar(1.0);
-    MT_Scalar r = sqrt(MT_Scalar(1.0) - z * z);
-    MT_Scalar t = MT_2_PI * MT_random();
-    return MT_Vector3(r * cos(t), r * sin(t), z);
+    MT_Scalar z = MT_Scalar(2.0f) * MT_random() - MT_Scalar(1.0f);
+    MT_Scalar r = sqrtf(MT_Scalar(1.0f) - z * z);
+    MT_Scalar t = (float)MT_2_PI * MT_random();
+    return MT_Vector3(r * cosf(t), r * sinf(t), z);
 }
 
 GEN_INLINE MT_Scalar  MT_dot(const MT_Vector3& v1, const MT_Vector3& v2) { 

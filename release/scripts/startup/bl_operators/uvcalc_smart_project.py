@@ -23,7 +23,11 @@ import bpy
 from bpy.types import Operator
 
 DEG_TO_RAD = 0.017453292519943295 # pi/180.0
-SMALL_NUM = 0.00000001  # see bug [#31598] why we dont have smaller values
+# see bugs:
+# - T31598 (when too small).
+# - T48086 (when too big).
+SMALL_NUM = 1e-12
+
 
 global USER_FILL_HOLES
 global USER_FILL_HOLES_QUALITY
@@ -708,7 +712,8 @@ def main(context,
          island_margin,
          projection_limit,
          user_area_weight,
-         use_aspect
+         use_aspect,
+         stretch_to_bounds,
          ):
     global USER_FILL_HOLES
     global USER_FILL_HOLES_QUALITY
@@ -733,7 +738,7 @@ def main(context,
     USER_PROJECTION_LIMIT = projection_limit
     USER_ONLY_SELECTED_FACES = True
     USER_SHARE_SPACE = 1 # Only for hole filling.
-    USER_STRETCH_ASPECT = 1 # Only for hole filling.
+    USER_STRETCH_ASPECT = stretch_to_bounds
     USER_ISLAND_MARGIN = island_margin # Only for hole filling.
     USER_FILL_HOLES = 0
     USER_FILL_HOLES_QUALITY = 50 # Only for hole filling.
@@ -812,9 +817,6 @@ def main(context,
         else:
             meshFaces = [thickface(f, uv_layer, me_verts) for i, f in enumerate(me.polygons)]
 
-        if not meshFaces:
-            continue
-
 #XXX		Window.DrawProgressBar(0.1, 'SmartProj UV Unwrapper, mapping "%s", %i faces.' % (me.name, len(meshFaces)))
 
         # =======
@@ -833,6 +835,9 @@ def main(context,
             for uv in meshFaces[-1].uv:
                 uv.zero()
             meshFaces.pop()
+
+        if not meshFaces:
+            continue
 
         # Smallest first is slightly more efficient, but if the user cancels early then its better we work on the larger data.
 
@@ -1031,8 +1036,7 @@ def main(context,
     '',\
     'UV Layout',\
     ('Share Tex Space', USER_SHARE_SPACE, 'Objects Share texture space, map all objects into 1 uvmap.'),\
-    ('Stretch to bounds', USER_STRETCH_ASPECT, 'Stretch the final output to texture bounds.'),\
-*	('Island Margin:', USER_ISLAND_MARGIN, 0.0, 0.5, ''),\
+    ('Island Margin:', USER_ISLAND_MARGIN, 0.0, 0.5, ''),\
     'Fill in empty areas',\
     ('Fill Holes', USER_FILL_HOLES, 'Fill in empty areas reduced texture waistage (slow).'),\
     ('Fill Quality:', USER_FILL_HOLES_QUALITY, 1, 100, 'Depends on fill holes, how tightly to fill UV holes, (higher is slower)'),\
@@ -1050,7 +1054,7 @@ class SmartProject(Operator):
     #"""(it operates on all selected mesh objects, and can be used """ \
     #"""to unwrap selected faces, or all faces)"""
 
-    """Smart UV Project\nThis uv mapping method projects the UV mapping from as much sides as defined by the angle."""
+    """Smart UV Project\nThis uv mapping method projects the UV mapping from as much sides as defined by the angle"""
 
     bl_idname = "uv.smart_project"
     bl_label = "Smart UV Project"
@@ -1079,6 +1083,11 @@ class SmartProject(Operator):
             description="Map UVs taking image aspect ratio into account",
             default=True
             )
+    stretch_to_bounds = BoolProperty(
+            name="Stretch to UV Bounds",
+            description="Stretch the final output to texture bounds",
+            default=True,
+            )
 
     @classmethod
     def poll(cls, context):
@@ -1089,7 +1098,8 @@ class SmartProject(Operator):
              self.island_margin,
              self.angle_limit,
              self.user_area_weight,
-             self.use_aspect
+             self.use_aspect,
+             self.stretch_to_bounds
              )
         return {'FINISHED'}
 

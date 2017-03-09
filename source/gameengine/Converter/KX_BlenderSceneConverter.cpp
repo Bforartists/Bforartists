@@ -108,12 +108,12 @@ extern "C" {
 	#include "../../blender/blenlib/BLI_linklist.h"
 }
 
-#include <pthread.h>
+#include "BLI_task.h"
 
-/* This is used to avoid including pthread.h in KX_BlenderSceneConverter.h */
+// This is used to avoid including BLI_task.h in KX_BlenderSceneConverter.h
 typedef struct ThreadInfo {
-	vector<pthread_t>	threads;
-	pthread_mutex_t		merge_lock;
+	TaskPool *m_pool;
+	ThreadMutex m_mutex;
 } ThreadInfo;
 
 KX_BlenderSceneConverter::KX_BlenderSceneConverter(
@@ -126,27 +126,17 @@ KX_BlenderSceneConverter::KX_BlenderSceneConverter(
 							m_useglslmat(false),
 							m_use_mat_cache(true)
 {
-	BKE_main_id_tag_all(maggie, false);  /* avoid re-tagging later on */
+	BKE_main_id_tag_all(maggie, LIB_TAG_DOIT, false);  /* avoid re-tagging later on */
 	m_newfilename = "";
 	m_threadinfo = new ThreadInfo();
-	pthread_mutex_init(&m_threadinfo->merge_lock, NULL);
+	m_threadinfo->m_pool = BLI_task_pool_create(engine->GetTaskScheduler(), NULL);
+	BLI_mutex_init(&m_threadinfo->m_mutex);
 }
 
 KX_BlenderSceneConverter::~KX_BlenderSceneConverter()
 {
 	// clears meshes, and hashmaps from blender to gameengine data
 	// delete sumoshapes
-
-	if (m_threadinfo) {
-		vector<pthread_t>::iterator pit = m_threadinfo->threads.begin();
-		while (pit != m_threadinfo->threads.end()) {
-			pthread_join((*pit), NULL);
-			pit++;
-		}
-
-		pthread_mutex_destroy(&m_threadinfo->merge_lock);
-		delete m_threadinfo;
-	}
 
 	int numAdtLists = m_map_blender_to_gameAdtList.size();
 	for (int i = 0; i < numAdtLists; i++) {
@@ -190,6 +180,15 @@ KX_BlenderSceneConverter::~KX_BlenderSceneConverter()
 	}
 
 	m_DynamicMaggie.clear();
+
+	if (m_threadinfo) {
+		/* Thread infos like mutex must be freed after FreeBlendFile function.
+		Because it needs to lock the mutex, even if there's no active task when it's
+		in the scene converter destructor. */
+		BLI_task_pool_free(m_threadinfo->m_pool);
+		BLI_mutex_end(&m_threadinfo->m_mutex);
+		delete m_threadinfo;
+	}
 }
 
 void KX_BlenderSceneConverter::SetNewFileName(const STR_String &filename)
@@ -631,8 +630,8 @@ void KX_BlenderSceneConverter::WritePhysicsObjectToAnimationIpo(int frameNumber)
 
 					mat3_to_compatible_eul(blenderObject->rot, blenderObject->rot, tmat);
 
-					insert_keyframe(NULL, &blenderObject->id, NULL, NULL, "location", -1, (float)frameNumber, INSERTKEY_FAST);
-					insert_keyframe(NULL, &blenderObject->id, NULL, NULL, "rotation_euler", -1, (float)frameNumber, INSERTKEY_FAST);
+					insert_keyframe(NULL, &blenderObject->id, NULL, NULL, "location", -1, (float)frameNumber, BEZT_KEYTYPE_JITTER, INSERTKEY_FAST);
+					insert_keyframe(NULL, &blenderObject->id, NULL, NULL, "rotation_euler", -1, (float)frameNumber, BEZT_KEYTYPE_JITTER, INSERTKEY_FAST);
 
 #if 0
 					const MT_Point3& position = gameObj->NodeGetWorldPosition();
@@ -787,7 +786,7 @@ void KX_BlenderSceneConverter::MergeAsyncLoads()
 	vector<KX_LibLoadStatus *>::iterator mit;
 	vector<KX_Scene *>::iterator sit;
 
-	pthread_mutex_lock(&m_threadinfo->merge_lock);
+	BLI_mutex_lock(&m_threadinfo->m_mutex);
 
 	for (mit = m_mergequeue.begin(); mit != m_mergequeue.end(); ++mit) {
 		merge_scenes = (vector<KX_Scene *> *)(*mit)->GetData();
@@ -805,17 +804,27 @@ void KX_BlenderSceneConverter::MergeAsyncLoads()
 
 	m_mergequeue.clear();
 
-	pthread_mutex_unlock(&m_threadinfo->merge_lock);
+	BLI_mutex_unlock(&m_threadinfo->m_mutex);
+}
+
+void KX_BlenderSceneConverter::FinalizeAsyncLoads()
+{
+	// Finish all loading libraries.
+	if (m_threadinfo) {
+		BLI_task_pool_work_and_wait(m_threadinfo->m_pool);
+	}
+	// Merge all libraries data in the current scene, to avoid memory leak of unmerged scenes.
+	MergeAsyncLoads();
 }
 
 void KX_BlenderSceneConverter::AddScenesToMergeQueue(KX_LibLoadStatus *status)
 {
-	pthread_mutex_lock(&m_threadinfo->merge_lock);
+	BLI_mutex_lock(&m_threadinfo->m_mutex);
 	m_mergequeue.push_back(status);
-	pthread_mutex_unlock(&m_threadinfo->merge_lock);
+	BLI_mutex_unlock(&m_threadinfo->m_mutex);
 }
 
-static void *async_convert(void *ptr)
+static void async_convert(TaskPool *pool, void *ptr, int UNUSED(threadid))
 {
 	KX_Scene *new_scene = NULL;
 	KX_LibLoadStatus *status = (KX_LibLoadStatus *)ptr;
@@ -835,8 +844,6 @@ static void *async_convert(void *ptr)
 	status->SetData(merge_scenes);
 
 	status->GetConverter()->AddScenesToMergeQueue(status);
-
-	return NULL;
 }
 
 KX_LibLoadStatus *KX_BlenderSceneConverter::LinkBlendFileMemory(void *data, int length, const char *path, char *group, KX_Scene *scene_merge, char **err_str, short options)
@@ -865,7 +872,7 @@ static void load_datablocks(Main *main_tmp, BlendHandle *bpy_openlib, const char
 	int i = 0;
 	LinkNode *n = names;
 	while (n) {
-		BLO_library_append_named_part(main_tmp, &bpy_openlib, (char *)n->link, idcode);
+		BLO_library_link_named_part(main_tmp, &bpy_openlib, idcode, (char *)n->link);
 		n = (LinkNode *)n->next;
 		i++;
 	}
@@ -909,7 +916,7 @@ KX_LibLoadStatus *KX_BlenderSceneConverter::LinkBlendFile(BlendHandle *bpy_openl
 
 	short flag = 0; /* don't need any special options */
 	/* created only for linking, then freed */
-	Main *main_tmp = BLO_library_append_begin(main_newlib, &bpy_openlib, (char *)path);
+	Main *main_tmp = BLO_library_link_begin(main_newlib, &bpy_openlib, (char *)path);
 
 	load_datablocks(main_tmp, bpy_openlib, path, idcode);
 
@@ -922,7 +929,7 @@ KX_LibLoadStatus *KX_BlenderSceneConverter::LinkBlendFile(BlendHandle *bpy_openl
 		load_datablocks(main_tmp, bpy_openlib, path, ID_AC);
 	}
 
-	BLO_library_append_end(NULL, main_tmp, &bpy_openlib, idcode, flag);
+	BLO_library_link_end(main_tmp, &bpy_openlib, flag, NULL, NULL);
 
 	BLO_blendhandle_close(bpy_openlib);
 
@@ -981,10 +988,8 @@ KX_LibLoadStatus *KX_BlenderSceneConverter::LinkBlendFile(BlendHandle *bpy_openl
 		}
 
 		if (options & LIB_LOAD_ASYNC) {
-			pthread_t id;
 			status->SetData(scenes);
-			pthread_create(&id, NULL, &async_convert, (void *)status);
-			m_threadinfo->threads.push_back(id);
+			BLI_task_pool_push(m_threadinfo->m_pool, async_convert, (void *)status, false, TASK_PRIORITY_LOW);
 		}
 
 #ifdef WITH_PYTHON
@@ -1023,12 +1028,24 @@ bool KX_BlenderSceneConverter::FreeBlendFile(Main *maggie)
 
 	if (maggie == NULL)
 		return false;
-	
+
+	// If the given library is currently in loading, we do nothing.
+	if (m_status_map.count(maggie->name)) {
+		BLI_mutex_lock(&m_threadinfo->m_mutex);
+		const bool finished = m_status_map[maggie->name]->IsFinished();
+		BLI_mutex_unlock(&m_threadinfo->m_mutex);
+
+		if (!finished) {
+			printf("Library (%s) is currently being loaded asynchronously, and cannot be freed until this process is done\n", maggie->name);
+			return false;
+		}
+	}
+
 	/* tag all false except the one we remove */
 	for (vector<Main *>::iterator it = m_DynamicMaggie.begin(); !(it == m_DynamicMaggie.end()); it++) {
 		Main *main = *it;
 		if (main != maggie) {
-			BKE_main_id_tag_all(main, false);
+			BKE_main_id_tag_all(main, LIB_TAG_DOIT, false);
 		}
 		else {
 			maggie_index = i;
@@ -1041,7 +1058,7 @@ bool KX_BlenderSceneConverter::FreeBlendFile(Main *maggie)
 		return false;
 
 	m_DynamicMaggie.erase(m_DynamicMaggie.begin() + maggie_index);
-	BKE_main_id_tag_all(maggie, true);
+	BKE_main_id_tag_all(maggie, LIB_TAG_DOIT, true);
 
 	/* free all tagged objects */
 	KX_SceneList *scenes = m_ketsjiEngine->CurrentScenes();
@@ -1408,8 +1425,8 @@ RAS_MeshObject *KX_BlenderSceneConverter::ConvertMeshSpecial(KX_Scene *kx_scene,
 #ifdef DEBUG
 		printf("Mesh has a user \"%s\"\n", name);
 #endif
-		me = (ID*)BKE_mesh_copy_ex(from_maggie, (Mesh*)me);
-		me->us--;
+		me = (ID*)BKE_mesh_copy(from_maggie, (Mesh*)me);
+		id_us_min(me);
 	}
 	BLI_remlink(&from_maggie->mesh, me); /* even if we made the copy it needs to be removed */
 	BLI_addtail(&maggie->mesh, me);
@@ -1421,21 +1438,21 @@ RAS_MeshObject *KX_BlenderSceneConverter::ConvertMeshSpecial(KX_Scene *kx_scene,
 		/* ensure all materials are tagged */
 		for (int i = 0; i < mesh->totcol; i++) {
 			if (mesh->mat[i])
-				mesh->mat[i]->id.flag &= ~LIB_DOIT;
+				mesh->mat[i]->id.tag &= ~LIB_TAG_DOIT;
 		}
 
 		for (int i = 0; i < mesh->totcol; i++) {
 			Material *mat_old = mesh->mat[i];
 
 			/* if its tagged its a replaced material */
-			if (mat_old && (mat_old->id.flag & LIB_DOIT) == 0) {
+			if (mat_old && (mat_old->id.tag & LIB_TAG_DOIT) == 0) {
 				Material *mat_old = mesh->mat[i];
-				Material *mat_new = BKE_material_copy(mat_old);
+				Material *mat_new = BKE_material_copy(from_maggie, mat_old);
 
-				mat_new->id.flag |= LIB_DOIT;
-				mat_old->id.us--;
+				mat_new->id.tag |= LIB_TAG_DOIT;
+				id_us_min(&mat_old->id);
 
-				BLI_remlink(&G.main->mat, mat_new); // BKE_material_copy uses G.main, and there is no BKE_material_copy_ex
+				BLI_remlink(&from_maggie->mat, mat_new); // BKE_material_copy uses G.main, and there is no BKE_material_copy_ex
 				BLI_addtail(&maggie->mat, mat_new);
 
 				mesh->mat[i] = mat_new;
@@ -1444,8 +1461,8 @@ RAS_MeshObject *KX_BlenderSceneConverter::ConvertMeshSpecial(KX_Scene *kx_scene,
 				for (int j = i + 1; j < mesh->totcol; j++) {
 					if (mesh->mat[j] == mat_old) {
 						mesh->mat[j] = mat_new;
-						mat_new->id.us++;
-						mat_old->id.us--;
+						id_us_plus(&mat_new->id);
+						id_us_min(&mat_old->id);
 					}
 				}
 			}

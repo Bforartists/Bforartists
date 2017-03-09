@@ -219,17 +219,30 @@ static int file_browse_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 		fbo->is_undo = is_undo;
 		op->customdata = fbo;
 
-		RNA_string_set(op->ptr, path_prop, str);
-		MEM_freeN(str);
-
 		/* normally ED_fileselect_get_params would handle this but we need to because of stupid
 		 * user-prefs exception - campbell */
 		if ((prop_relpath = RNA_struct_find_property(op->ptr, "relative_path"))) {
 			if (!RNA_property_is_set(op->ptr, prop_relpath)) {
+				bool is_relative = (U.flag & USER_RELPATHS) != 0;
+
+				/* while we want to follow the defaults,
+				 * we better not switch existing paths relative/absolute state. */
+				if (str[0]) {
+					is_relative = BLI_path_is_rel(str);
+				}
+
+				if (UNLIKELY(ptr.data == &U)) {
+					is_relative = false;
+				}
+
 				/* annoying exception!, if were dealing with the user prefs, default relative to be off */
-				RNA_property_boolean_set(op->ptr, prop_relpath, U.flag & USER_RELPATHS && (ptr.data != &U));
+				RNA_property_boolean_set(op->ptr, prop_relpath, is_relative);
 			}
 		}
+
+		RNA_string_set(op->ptr, path_prop, str);
+		MEM_freeN(str);
+
 		WM_event_add_fileselect(C, op);
 
 		return OPERATOR_RUNNING_MODAL;
@@ -252,8 +265,9 @@ void BUTTONS_OT_file_browse(wmOperatorType *ot)
 	ot->flag = 0;
 
 	/* properties */
-	WM_operator_properties_filesel(ot, 0, FILE_SPECIAL, FILE_OPENFILE,
-	                               WM_FILESEL_FILEPATH | WM_FILESEL_RELPATH, FILE_DEFAULTDISPLAY, FILE_SORT_ALPHA);
+	WM_operator_properties_filesel(
+	        ot, 0, FILE_SPECIAL, FILE_OPENFILE,
+	        WM_FILESEL_FILEPATH | WM_FILESEL_RELPATH, FILE_DEFAULTDISPLAY, FILE_SORT_ALPHA);
 }
 
 /* second operator, only difference from BUTTONS_OT_file_browse is WM_FILESEL_DIRECTORY */
@@ -273,6 +287,7 @@ void BUTTONS_OT_directory_browse(wmOperatorType *ot)
 	ot->flag = 0;
 
 	/* properties */
-	WM_operator_properties_filesel(ot, 0, FILE_SPECIAL, FILE_OPENFILE,
-	                               WM_FILESEL_DIRECTORY | WM_FILESEL_RELPATH, FILE_DEFAULTDISPLAY, FILE_SORT_ALPHA);
+	WM_operator_properties_filesel(
+	        ot, 0, FILE_SPECIAL, FILE_OPENFILE,
+	        WM_FILESEL_DIRECTORY | WM_FILESEL_RELPATH, FILE_DEFAULTDISPLAY, FILE_SORT_ALPHA);
 }

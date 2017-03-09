@@ -98,8 +98,8 @@ static PyObject *pyop_poll(PyObject *UNUSED(self), PyObject *args)
 	}
 
 	if (context_str) {
-		if (RNA_enum_value_from_id(operator_context_items, context_str, &context) == 0) {
-			char *enum_str = BPy_enum_as_string(operator_context_items);
+		if (RNA_enum_value_from_id(rna_enum_operator_context_items, context_str, &context) == 0) {
+			char *enum_str = BPy_enum_as_string(rna_enum_operator_context_items);
 			PyErr_Format(PyExc_TypeError,
 			             "Calling operator \"bpy.ops.%s.poll\" error, "
 			             "expected a string enum in (%s)",
@@ -184,8 +184,8 @@ static PyObject *pyop_call(PyObject *UNUSED(self), PyObject *args)
 	}
 
 	if (context_str) {
-		if (RNA_enum_value_from_id(operator_context_items, context_str, &context) == 0) {
-			char *enum_str = BPy_enum_as_string(operator_context_items);
+		if (RNA_enum_value_from_id(rna_enum_operator_context_items, context_str, &context) == 0) {
+			char *enum_str = BPy_enum_as_string(rna_enum_operator_context_items);
 			PyErr_Format(PyExc_TypeError,
 			             "Calling operator \"bpy.ops.%s\" error, "
 			             "expected a string enum in (%s)",
@@ -223,9 +223,9 @@ static PyObject *pyop_call(PyObject *UNUSED(self), PyObject *args)
 		WM_operator_properties_create_ptr(&ptr, ot);
 		WM_operator_properties_sanitize(&ptr, 0);
 
-		if (kw && PyDict_Size(kw))
-			error_val = pyrna_pydict_to_props(&ptr, kw, 0, "Converting py args to operator properties: ");
-
+		if (kw && PyDict_Size(kw)) {
+			error_val = pyrna_pydict_to_props(&ptr, kw, false, "Converting py args to operator properties: ");
+		}
 
 		if (error_val == 0) {
 			ReportList *reports;
@@ -264,6 +264,11 @@ static PyObject *pyop_call(PyObject *UNUSED(self), PyObject *args)
 			if ((reports->flag & RPT_FREE) == 0) {
 				MEM_freeN(reports);
 			}
+			else {
+				/* The WM is now responsible for running the modal operator,
+				 * show reports in the info window. */
+				reports->flag &= ~RPT_OP_HOLD;
+			}
 		}
 
 		WM_operator_properties_free(&ptr);
@@ -301,7 +306,7 @@ static PyObject *pyop_call(PyObject *UNUSED(self), PyObject *args)
 	bpy_import_main_set(CTX_data_main(C));
 
 	/* return operator_ret as a bpy enum */
-	return pyrna_enum_bitfield_to_py(operator_return_items, operator_ret);
+	return pyrna_enum_bitfield_to_py(rna_enum_operator_return_items, operator_ret);
 
 }
 
@@ -348,8 +353,9 @@ static PyObject *pyop_as_string(PyObject *UNUSED(self), PyObject *args)
 	/* Save another lookup */
 	RNA_pointer_create(NULL, ot->srna, NULL, &ptr);
 
-	if (kw && PyDict_Size(kw))
-		error_val = pyrna_pydict_to_props(&ptr, kw, 0, "Converting py args to operator properties: ");
+	if (kw && PyDict_Size(kw)) {
+		error_val = pyrna_pydict_to_props(&ptr, kw, false, "Converting py args to operator properties: ");
+	}
 
 	if (error_val == 0)
 		buf = WM_operator_pystring_ex(C, NULL, all_args, macro_args, ot, &ptr);

@@ -43,7 +43,7 @@
 #include "WM_types.h"
 
 /* see WM_types.h */
-EnumPropertyItem operator_context_items[] = {
+EnumPropertyItem rna_enum_operator_context_items[] = {
 	{WM_OP_INVOKE_DEFAULT, "INVOKE_DEFAULT", 0, "Invoke Default", ""},
 	{WM_OP_INVOKE_REGION_WIN, "INVOKE_REGION_WIN", 0, "Invoke Region Window", ""},
 	{WM_OP_INVOKE_REGION_CHANNELS, "INVOKE_REGION_CHANNELS", 0, "Invoke Region Channels", ""},
@@ -59,7 +59,7 @@ EnumPropertyItem operator_context_items[] = {
 	{0, NULL, 0, NULL, NULL}
 };
 
-EnumPropertyItem uilist_layout_type_items[] = {
+EnumPropertyItem rna_enum_uilist_layout_type_items[] = {
 	{UILST_LAYOUT_DEFAULT, "DEFAULT", 0, "Default Layout", "Use the default, multi-rows layout"},
 	{UILST_LAYOUT_COMPACT, "COMPACT", 0, "Compact Layout", "Use the compact, single-row layout"},
 	{UILST_LAYOUT_GRID, "GRID", 0, "Grid Layout", "Use the grid-based layout"},
@@ -886,7 +886,7 @@ static void rna_def_ui_layout(BlenderRNA *brna)
 	RNA_def_property_boolean_funcs(prop, "rna_UILayout_active_get", "rna_UILayout_active_set");
 	
 	prop = RNA_def_property(srna, "operator_context", PROP_ENUM, PROP_NONE);
-	RNA_def_property_enum_items(prop, operator_context_items);
+	RNA_def_property_enum_items(prop, rna_enum_operator_context_items);
 	RNA_def_property_enum_funcs(prop, "rna_UILayout_op_context_get", "rna_UILayout_op_context_set", NULL);
 	
 	prop = RNA_def_property(srna, "enabled", PROP_BOOLEAN, PROP_NONE);
@@ -944,20 +944,20 @@ static void rna_def_panel(BlenderRNA *brna)
 	RNA_def_function_flag(func, FUNC_NO_SELF | FUNC_REGISTER_OPTIONAL);
 	RNA_def_function_return(func, RNA_def_boolean(func, "visible", 1, "", ""));
 	parm = RNA_def_pointer(func, "context", "Context", "", "");
-	RNA_def_property_flag(parm, PROP_REQUIRED | PROP_NEVER_NULL);
+	RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED);
 
 	/* draw */
 	func = RNA_def_function(srna, "draw", NULL);
 	RNA_def_function_ui_description(func, "Draw UI elements into the panel UI layout");
 	RNA_def_function_flag(func, FUNC_REGISTER);
 	parm = RNA_def_pointer(func, "context", "Context", "", "");
-	RNA_def_property_flag(parm, PROP_REQUIRED | PROP_NEVER_NULL);
+	RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED);
 
 	func = RNA_def_function(srna, "draw_header", NULL);
 	RNA_def_function_ui_description(func, "Draw UI elements into the panel's header UI layout");
 	RNA_def_function_flag(func, FUNC_REGISTER_OPTIONAL);
 	parm = RNA_def_pointer(func, "context", "Context", "", "");
-	RNA_def_property_flag(parm, PROP_REQUIRED | PROP_NEVER_NULL);
+	RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED);
 
 	prop = RNA_def_property(srna, "layout", PROP_POINTER, PROP_NONE);
 	RNA_def_property_struct_type(prop, "UILayout");
@@ -996,13 +996,13 @@ static void rna_def_panel(BlenderRNA *brna)
 
 	prop = RNA_def_property(srna, "bl_space_type", PROP_ENUM, PROP_NONE);
 	RNA_def_property_enum_sdna(prop, NULL, "type->space_type");
-	RNA_def_property_enum_items(prop, space_type_items);
+	RNA_def_property_enum_items(prop, rna_enum_space_type_items);
 	RNA_def_property_flag(prop, PROP_REGISTER);
 	RNA_def_property_ui_text(prop, "Space type", "The space where the panel is going to be used in");
 	
 	prop = RNA_def_property(srna, "bl_region_type", PROP_ENUM, PROP_NONE);
 	RNA_def_property_enum_sdna(prop, NULL, "type->region_type");
-	RNA_def_property_enum_items(prop, region_type_items);
+	RNA_def_property_enum_items(prop, rna_enum_region_type_items);
 	RNA_def_property_flag(prop, PROP_REGISTER);
 	RNA_def_property_ui_text(prop, "Region Type", "The region where the panel is going to be used in");
 
@@ -1052,7 +1052,7 @@ static void rna_def_uilist(BlenderRNA *brna)
 
 	/* Data */
 	prop = RNA_def_property(srna, "layout_type", PROP_ENUM, PROP_NONE);
-	RNA_def_property_enum_items(prop, uilist_layout_type_items);
+	RNA_def_property_enum_items(prop, rna_enum_uilist_layout_type_items);
 	RNA_def_property_clear_flag(prop, PROP_EDITABLE);
 
 	/* Filter options */
@@ -1084,35 +1084,35 @@ static void rna_def_uilist(BlenderRNA *brna)
 	                                      "function, you may want to check given 'item' is of the right type...)");
 	RNA_def_function_flag(func, FUNC_REGISTER_OPTIONAL);
 	parm = RNA_def_pointer(func, "context", "Context", "", "");
-	RNA_def_property_flag(parm, PROP_REQUIRED);
+	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
 	parm = RNA_def_pointer(func, "layout", "UILayout", "", "Layout to draw the item");
-	RNA_def_property_flag(parm, PROP_REQUIRED | PROP_NEVER_NULL);
+	RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED);
 	parm = RNA_def_pointer(func, "data", "AnyType", "", "Data from which to take Collection property");
-	RNA_def_property_flag(parm, PROP_REQUIRED | PROP_RNAPTR);
+	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED | PARM_RNAPTR);
 	parm = RNA_def_pointer(func, "item", "AnyType", "", "Item of the collection property");
-	RNA_def_property_flag(parm, PROP_REQUIRED | PROP_RNAPTR);
+	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED | PARM_RNAPTR);
 	parm = RNA_def_int(func, "icon", 0, 0, INT_MAX, "", "Icon of the item in the collection", 0, INT_MAX);
-	RNA_def_property_flag(parm, PROP_REQUIRED);
+	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
 	parm = RNA_def_pointer(func, "active_data", "AnyType", "",
 	                       "Data from which to take property for the active element");
-	RNA_def_property_flag(parm, PROP_REQUIRED | PROP_RNAPTR | PROP_NEVER_NULL);
+	RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED | PARM_RNAPTR);
 	parm = RNA_def_string(func, "active_property", NULL, 0, "",
 	                      "Identifier of property in active_data, for the active element");
-	RNA_def_property_flag(parm, PROP_REQUIRED);
+	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
 	RNA_def_int(func, "index", 0, 0, INT_MAX, "", "Index of the item in the collection", 0, INT_MAX);
-	RNA_def_property_flag(parm, PROP_REQUIRED | PROP_PYFUNC_OPTIONAL);
+	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED | PARM_PYFUNC_OPTIONAL);
 	prop = RNA_def_property(func, "flt_flag", PROP_INT, PROP_UNSIGNED);
 	RNA_def_property_ui_text(prop, "", "The filter-flag result for this item");
-	RNA_def_property_flag(parm, PROP_REQUIRED | PROP_PYFUNC_OPTIONAL);
+	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED | PARM_PYFUNC_OPTIONAL);
 
 	/* draw_filter */
 	func = RNA_def_function(srna, "draw_filter", NULL);
 	RNA_def_function_ui_description(func, "Draw filtering options");
 	RNA_def_function_flag(func, FUNC_REGISTER_OPTIONAL);
 	parm = RNA_def_pointer(func, "context", "Context", "", "");
-	RNA_def_property_flag(parm, PROP_REQUIRED);
+	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
 	parm = RNA_def_pointer(func, "layout", "UILayout", "", "Layout to draw the item");
-	RNA_def_property_flag(parm, PROP_REQUIRED | PROP_NEVER_NULL);
+	RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED);
 
 	/* filter */
 	func = RNA_def_function(srna, "filter_items", NULL);
@@ -1120,19 +1120,19 @@ static void rna_def_uilist(BlenderRNA *brna)
 	                                      "filter_flags, and reorder results in filter_neworder arrays)");
 	RNA_def_function_flag(func, FUNC_REGISTER_OPTIONAL);
 	parm = RNA_def_pointer(func, "context", "Context", "", "");
-	RNA_def_property_flag(parm, PROP_REQUIRED);
+	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
 	parm = RNA_def_pointer(func, "data", "AnyType", "", "Data from which to take Collection property");
-	RNA_def_property_flag(parm, PROP_REQUIRED | PROP_RNAPTR);
+	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED | PARM_RNAPTR);
 	parm = RNA_def_string(func, "property", NULL, 0, "", "Identifier of property in data, for the collection");
-	RNA_def_property_flag(parm, PROP_REQUIRED);
+	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
 	prop = RNA_def_property(func, "filter_flags", PROP_INT, PROP_UNSIGNED);
-	RNA_def_property_flag(prop, PROP_REQUIRED | PROP_DYNAMIC);
+	RNA_def_property_flag(prop, PARM_REQUIRED | PROP_DYNAMIC);
 	RNA_def_property_array(prop, 1);  /* XXX Dummy value, default 0 does not work */
 	RNA_def_property_ui_text(prop, "", "An array of filter flags, one for each item in the collection (NOTE: "
 	                                   "FILTER_ITEM bit is reserved, it defines whether the item is shown or not)");
 	RNA_def_function_output(func, prop);
 	prop = RNA_def_property(func, "filter_neworder", PROP_INT, PROP_UNSIGNED);
-	RNA_def_property_flag(prop, PROP_REQUIRED | PROP_DYNAMIC);
+	RNA_def_property_flag(prop, PARM_REQUIRED | PROP_DYNAMIC);
 	RNA_def_property_array(prop, 1);  /* XXX Dummy value, default 0 does not work */
 	RNA_def_property_ui_text(prop, "", "An array of indices, one for each item in the collection, mapping the org "
 	                                   "index to the new one");
@@ -1166,7 +1166,7 @@ static void rna_def_header(BlenderRNA *brna)
 	RNA_def_function_ui_description(func, "Draw UI elements into the header UI layout");
 	RNA_def_function_flag(func, FUNC_REGISTER);
 	parm = RNA_def_pointer(func, "context", "Context", "", "");
-	RNA_def_property_flag(parm, PROP_REQUIRED);
+	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
 
 	RNA_define_verify_sdna(0); /* not in sdna */
 
@@ -1187,7 +1187,7 @@ static void rna_def_header(BlenderRNA *brna)
 
 	prop = RNA_def_property(srna, "bl_space_type", PROP_ENUM, PROP_NONE);
 	RNA_def_property_enum_sdna(prop, NULL, "type->space_type");
-	RNA_def_property_enum_items(prop, space_type_items);
+	RNA_def_property_enum_items(prop, rna_enum_space_type_items);
 	RNA_def_property_flag(prop, PROP_REGISTER);
 	RNA_def_property_ui_text(prop, "Space type", "The space where the header is going to be used in");
 
@@ -1214,14 +1214,14 @@ static void rna_def_menu(BlenderRNA *brna)
 	RNA_def_function_flag(func, FUNC_NO_SELF | FUNC_REGISTER_OPTIONAL);
 	RNA_def_function_return(func, RNA_def_boolean(func, "visible", 1, "", ""));
 	parm = RNA_def_pointer(func, "context", "Context", "", "");
-	RNA_def_property_flag(parm, PROP_REQUIRED);
+	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
 
 	/* draw */
 	func = RNA_def_function(srna, "draw", NULL);
 	RNA_def_function_ui_description(func, "Draw UI elements into the menu UI layout");
 	RNA_def_function_flag(func, FUNC_REGISTER);
 	parm = RNA_def_pointer(func, "context", "Context", "", "");
-	RNA_def_property_flag(parm, PROP_REQUIRED);
+	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
 
 	RNA_define_verify_sdna(false); /* not in sdna */
 

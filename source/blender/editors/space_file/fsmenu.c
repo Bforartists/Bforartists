@@ -304,7 +304,7 @@ void fsmenu_insert_entry(struct FSMenu *fsmenu, FSMenuCategory category, const c
 
 			for (; tfsm; tfsm = tfsm->next) {
 				if (STREQ(tfsm->path, fsm_iter->path)) {
-					if (tfsm->name && tfsm->name[0]) {
+					if (tfsm->name[0]) {
 						name = tfsm->name;
 					}
 					break;
@@ -509,56 +509,6 @@ void fsmenu_read_system(struct FSMenu *fsmenu, int read_bookmarks)
 #else
 #ifdef __APPLE__
 	{
-#if (MAC_OS_X_VERSION_MIN_REQUIRED <= 1050)
-		OSErr err = noErr;
-		int i;
-		const char *home;
-		
-		/* loop through all the OS X Volumes, and add them to the SYSTEM section */
-		for (i = 1; err != nsvErr; i++) {
-			FSRef dir;
-			unsigned char path[FILE_MAX];
-			
-			err = FSGetVolumeInfo(kFSInvalidVolumeRefNum, i, NULL, kFSVolInfoNone, NULL, NULL, &dir);
-			if (err != noErr)
-				continue;
-			
-			FSRefMakePath(&dir, path, FILE_MAX);
-			if (!STREQ((char *)path, "/home") && !STREQ((char *)path, "/net")) {
-				/* /net and /home are meaningless on OSX, home folders are stored in /Users */
-				fsmenu_insert_entry(fsmenu, FS_CATEGORY_SYSTEM, (char *)path, NULL, FS_INSERT_SORTED);
-			}
-		}
-
-		/* As 10.4 doesn't provide proper API to retrieve the favorite places,
-		 * assume they are the standard ones 
-		 * TODO : replace hardcoded paths with proper BKE_appdir_folder_id calls */
-		home = getenv("HOME");
-		if (read_bookmarks && home) {
-			BLI_snprintf(line, sizeof(line), "%s/", home);
-			fsmenu_insert_entry(fsmenu, FS_CATEGORY_SYSTEM_BOOKMARKS, line, NULL, FS_INSERT_SORTED);
-			BLI_snprintf(line, sizeof(line), "%s/Desktop/", home);
-			if (BLI_exists(line)) {
-				fsmenu_insert_entry(fsmenu, FS_CATEGORY_SYSTEM_BOOKMARKS, line, NULL, FS_INSERT_SORTED);
-			}
-			BLI_snprintf(line, sizeof(line), "%s/Documents/", home);
-			if (BLI_exists(line)) {
-				fsmenu_insert_entry(fsmenu, FS_CATEGORY_SYSTEM_BOOKMARKS, line, NULL, FS_INSERT_SORTED);
-			}
-			BLI_snprintf(line, sizeof(line), "%s/Pictures/", home);
-			if (BLI_exists(line)) {
-				fsmenu_insert_entry(fsmenu, FS_CATEGORY_SYSTEM_BOOKMARKS, line, NULL, FS_INSERT_SORTED);
-			}
-			BLI_snprintf(line, sizeof(line), "%s/Music/", home);
-			if (BLI_exists(line)) {
-				fsmenu_insert_entry(fsmenu, FS_CATEGORY_SYSTEM_BOOKMARKS, line, NULL, FS_INSERT_SORTED);
-			}
-			BLI_snprintf(line, sizeof(line), "%s/Movies/", home);
-			if (BLI_exists(line)) {
-				fsmenu_insert_entry(fsmenu, FS_CATEGORY_SYSTEM_BOOKMARKS, line, NULL, FS_INSERT_SORTED);
-			}
-		}
-#else /* OSX 10.6+ */
 		/* Get mounted volumes better method OSX 10.6 and higher, see: */
 		/*https://developer.apple.com/library/mac/#documentation/CoreFOundation/Reference/CFURLRef/Reference/reference.html*/
 		/* we get all volumes sorted including network and do not relay on user-defined finder visibility, less confusing */
@@ -568,14 +518,18 @@ void fsmenu_read_system(struct FSMenu *fsmenu, int read_bookmarks)
 		CFURLEnumeratorRef volEnum = CFURLEnumeratorCreateForMountedVolumes(NULL, kCFURLEnumeratorSkipInvisibles, NULL);
 		
 		while (result != kCFURLEnumeratorEnd) {
-			unsigned char defPath[FILE_MAX];
+			char defPath[FILE_MAX];
 
 			result = CFURLEnumeratorGetNextURL(volEnum, &cfURL, NULL);
 			if (result != kCFURLEnumeratorSuccess)
 				continue;
 			
 			CFURLGetFileSystemRepresentation(cfURL, false, (UInt8 *)defPath, FILE_MAX);
-			fsmenu_insert_entry(fsmenu, FS_CATEGORY_SYSTEM, (char *)defPath, NULL, FS_INSERT_SORTED);
+
+			/* Add end slash for consistency with other platforms */
+			BLI_add_slash(defPath);
+
+			fsmenu_insert_entry(fsmenu, FS_CATEGORY_SYSTEM, defPath, NULL, FS_INSERT_SORTED);
 		}
 		
 		CFRelease(volEnum);
@@ -609,6 +563,9 @@ void fsmenu_read_system(struct FSMenu *fsmenu, int read_bookmarks)
 				if (pathString == NULL || !CFStringGetCString(pathString, line, sizeof(line), kCFStringEncodingUTF8))
 					continue;
 
+				/* Add end slash for consistency with other platforms */
+				BLI_add_slash(line);
+
 				/* Exclude "all my files" as it makes no sense in blender fileselector */
 				/* Exclude "airdrop" if wlan not active as it would show "" ) */
 				if (!strstr(line, "myDocuments.cannedSearch") && (*line != '\0')) {
@@ -622,7 +579,6 @@ void fsmenu_read_system(struct FSMenu *fsmenu, int read_bookmarks)
 			CFRelease(pathesArray);
 			CFRelease(list);
 		}
-#endif /* OSX 10.6+ */
 	}
 #else
 	/* unix */

@@ -46,19 +46,20 @@ public:
 	int offset, stride;
 
 	device_ptr shader_input;
-	device_ptr shader_output;
+	device_ptr shader_output, shader_output_luma;
 	int shader_eval_type;
+	int shader_filter;
 	int shader_x, shader_w;
 
-	DeviceTask(Type type = PATH_TRACE);
+	explicit DeviceTask(Type type = PATH_TRACE);
 
 	int get_subtask_count(int num, int max_size = 0);
 	void split(list<DeviceTask>& tasks, int num, int max_size = 0);
 
-	void update_progress(RenderTile *rtile);
+	void update_progress(RenderTile *rtile, int pixel_samples = -1);
 
 	function<bool(Device *device, RenderTile&)> acquire_tile;
-	function<void(void)> update_progress_sample;
+	function<void(long, int)> update_progress_sample;
 	function<void(RenderTile&)> update_tile_sample;
 	function<void(RenderTile&)> release_tile;
 	function<bool(void)> get_cancel;

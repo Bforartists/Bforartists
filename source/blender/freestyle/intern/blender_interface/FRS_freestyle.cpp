@@ -54,6 +54,8 @@ extern "C" {
 #include "BKE_text.h"
 #include "BKE_context.h"
 
+#include "BLT_translation.h"
+
 #include "BLI_blenlib.h"
 #include "BLI_math.h"
 #include "BLI_callbacks.h"
@@ -68,6 +70,8 @@ extern "C" {
 #define DEFAULT_SPHERE_RADIUS 1.0f
 #define DEFAULT_DKR_EPSILON   0.0f
 
+struct FreestyleGlobals g_freestyle;
+
 // Freestyle configuration
 static bool freestyle_is_initialized = false;
 static Config::Path *pathconfig = NULL;
@@ -78,14 +82,6 @@ static AppView *view = NULL;
 static FreestyleLineSet lineset_buffer;
 static bool lineset_copied = false;
 
-// camera information
-float freestyle_viewpoint[3];
-float freestyle_mv[4][4];
-float freestyle_proj[4][4];
-int freestyle_viewport[4];
-
-// current scene
-Scene *freestyle_scene;
 
 static void load_post_callback(struct Main * /*main*/, struct ID * /*id*/, void * /*arg*/)
 {
@@ -113,7 +109,7 @@ void FRS_initialize()
 	view = new AppView;
 	controller->setView(view);
 	controller->Clear();
-	freestyle_scene = NULL;
+	g_freestyle.scene = NULL;
 	lineset_copied = false;
 
 	BLI_callback_add(&load_post_callback_funcstore, BLI_CB_EVT_LOAD_POST);
@@ -159,9 +155,9 @@ static void init_view(Render *re)
 		break;
 	}
 
-	freestyle_viewport[0] = freestyle_viewport[1] = 0;
-	freestyle_viewport[2] = width;
-	freestyle_viewport[3] = height;
+	g_freestyle.viewport[0] = g_freestyle.viewport[1] = 0;
+	g_freestyle.viewport[2] = width;
+	g_freestyle.viewport[3] = height;
 
 	view->setWidth(width);
 	view->setHeight(height);
@@ -184,17 +180,15 @@ static void init_camera(Render *re)
 	// Therefore, the view point (i.e., camera position) is at the origin, and
 	// the model-view matrix is simply the identity matrix.
 
-	freestyle_viewpoint[0] = 0.0;
-	freestyle_viewpoint[1] = 0.0;
-	freestyle_viewpoint[2] = 0.0;
+	zero_v3(g_freestyle.viewpoint);
 
-	unit_m4(freestyle_mv);
+	unit_m4(g_freestyle.mv);
 
-	copy_m4_m4(freestyle_proj, re->winmat);
+	copy_m4_m4(g_freestyle.proj, re->winmat);
 
 #if 0
-	print_m4("mv", freestyle_mv);
-	print_m4("proj", freestyle_proj);
+	print_m4("mv", g_freestyle.mv);
+	print_m4("proj", g_freestyle.proj);
 #endif
 }
 
@@ -292,7 +286,7 @@ static bool test_edge_type_conditions(struct edge_type_condition *conditions,
 static void prepare(Render *re, SceneRenderLayer *srl)
 {
 	// load mesh
-	re->i.infostr = "Freestyle: Mesh loading";
+	re->i.infostr = IFACE_("Freestyle: Mesh loading");
 	re->stats_draw(re->sdh, &re->i);
 	re->i.infostr = NULL;
 	if (controller->LoadMesh(re, srl)) // returns if scene cannot be loaded or if empty
@@ -439,8 +433,8 @@ static void prepare(Render *re, SceneRenderLayer *srl)
 		cout << "Crease angle : " << controller->getCreaseAngle() << endl;
 		cout << "Sphere radius : " << controller->getSphereRadius() << endl;
 		cout << "Face smoothness : " << (controller->getFaceSmoothness() ? "enabled" : "disabled") << endl;
-		cout << "Redges and valleys : " << (controller->getComputeRidgesAndValleysFlag() ? "enabled" : "disabled") <<
-		        endl;
+		cout << "Ridges and valleys : " <<
+		        (controller->getComputeRidgesAndValleysFlag() ? "enabled" : "disabled") << endl;
 		cout << "Suggestive contours : " <<
 		        (controller->getComputeSuggestiveContoursFlag() ? "enabled" : "disabled") << endl;
 		cout << "Suggestive contour Kr derivative epsilon : " <<
@@ -475,7 +469,7 @@ static void prepare(Render *re, SceneRenderLayer *srl)
 		return;
 
 	// compute view map
-	re->i.infostr = "Freestyle: View map creation";
+	re->i.infostr = IFACE_("Freestyle: View map creation");
 	re->stats_draw(re->sdh, &re->i);
 	re->i.infostr = NULL;
 	controller->ComputeViewMap();
@@ -630,19 +624,23 @@ Render *FRS_do_stroke_rendering(Render *re, SceneRenderLayer *srl, int render)
 		// render and composite Freestyle result
 		if (controller->_ViewMap) {
 			// render strokes
-			re->i.infostr = "Freestyle: Stroke rendering";
+			re->i.infostr = IFACE_("Freestyle: Stroke rendering");
 			re->stats_draw(re->sdh, &re->i);
 			re->i.infostr = NULL;
-			freestyle_scene = re->scene;
-			controller->DrawStrokes();
-			freestyle_render = controller->RenderStrokes(re, true);
+			g_freestyle.scene = re->scene;
+			int strokeCount = controller->DrawStrokes();
+			if (strokeCount > 0) {
+				freestyle_render = controller->RenderStrokes(re, true);
+			}
 			controller->CloseFile();
-			freestyle_scene = NULL;
+			g_freestyle.scene = NULL;
 
 			// composite result
-			FRS_composite_result(re, srl, freestyle_render);
-			RE_FreeRenderResult(freestyle_render->result);
-			freestyle_render->result = NULL;
+			if (freestyle_render) {
+				FRS_composite_result(re, srl, freestyle_render);
+				RE_FreeRenderResult(freestyle_render->result);
+				freestyle_render->result = NULL;
+			}
 		}
 	}
 
@@ -698,10 +696,10 @@ void FRS_paste_active_lineset(FreestyleConfig *config)
 
 	if (lineset) {
 		if (lineset->linestyle)
-			lineset->linestyle->id.us--;
+			id_us_min(&lineset->linestyle->id);
 		lineset->linestyle = lineset_buffer.linestyle;
 		if (lineset->linestyle)
-			lineset->linestyle->id.us++;
+			id_us_plus(&lineset->linestyle->id);
 		lineset->flags = lineset_buffer.flags;
 		lineset->selection = lineset_buffer.selection;
 		lineset->qi = lineset_buffer.qi;
@@ -710,12 +708,12 @@ void FRS_paste_active_lineset(FreestyleConfig *config)
 		lineset->edge_types = lineset_buffer.edge_types;
 		lineset->exclude_edge_types = lineset_buffer.exclude_edge_types;
 		if (lineset->group) {
-			lineset->group->id.us--;
+			id_us_min(&lineset->group->id);
 			lineset->group = NULL;
 		}
 		if (lineset_buffer.group) {
 			lineset->group = lineset_buffer.group;
-			lineset->group->id.us++;
+			id_us_plus(&lineset->group->id);
 		}
 		strcpy(lineset->name, lineset_buffer.name);
 		BKE_freestyle_lineset_unique_name(config, lineset);
@@ -732,24 +730,14 @@ void FRS_delete_active_lineset(FreestyleConfig *config)
 	}
 }
 
-void FRS_move_active_lineset_up(FreestyleConfig *config)
+/**
+ * Reinsert the active lineset at an offset \a direction from current position.
+ * \return if position of active lineset has changed.
+ */
+bool FRS_move_active_lineset(FreestyleConfig *config, int direction)
 {
 	FreestyleLineSet *lineset = BKE_freestyle_lineset_get_active(config);
-
-	if (lineset) {
-		BLI_remlink(&config->linesets, lineset);
-		BLI_insertlinkbefore(&config->linesets, lineset->prev, lineset);
-	}
-}
-
-void FRS_move_active_lineset_down(FreestyleConfig *config)
-{
-	FreestyleLineSet *lineset = BKE_freestyle_lineset_get_active(config);
-
-	if (lineset) {
-		BLI_remlink(&config->linesets, lineset);
-		BLI_insertlinkafter(&config->linesets, lineset->next, lineset);
-	}
+	return (lineset != NULL) && BLI_listbase_link_move(&config->linesets, lineset, direction);
 }
 
 // Testing

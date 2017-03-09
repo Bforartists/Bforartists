@@ -51,11 +51,13 @@ def dopesheet_filter(layout, context, genericFiltersOnly=False):
         row.prop(dopesheet, "show_only_matching_fcurves", text="")
         if dopesheet.show_only_matching_fcurves:
             row.prop(dopesheet, "filter_fcurve_name", text="")
+            row.prop(dopesheet, "use_multi_word_filter", text="")
     else:
         row = layout.row(align=True)
         row.prop(dopesheet, "use_filter_text", text="")
         if dopesheet.use_filter_text:
             row.prop(dopesheet, "filter_text", text="")
+            row.prop(dopesheet, "use_multi_word_filter", text="")
 
     if not genericFiltersOnly:
         row = layout.row(align=True)
@@ -99,9 +101,12 @@ def dopesheet_filter(layout, context, genericFiltersOnly=False):
             if bpy.data.grease_pencil:
                 row.prop(dopesheet, "show_gpencil", text="")
 
+            layout.prop(dopesheet, "use_datablock_sort", text="")
+
 
 #######################################
 # DopeSheet Editor - General/Standard UI
+
 
 # Editor types: 
 # ('VIEW_3D', 'TIMELINE', 'GRAPH_EDITOR', 'DOPESHEET_EDITOR', 'NLA_EDITOR', 'IMAGE_EDITOR', 
@@ -131,14 +136,15 @@ class DOPESHEET_HT_header(Header):
 
         ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
 
-        # bfa - The tabs to switch between the four animation editors. The classes are in space_time.py
+         # bfa - The tabs to switch between the four animation editors. The classes are in space_time.py
         row = layout.row(align=True)
         row.operator("wm.switch_editor_to_timeline", text="", icon='TIME')
         row.operator("wm.switch_editor_to_graph", text="", icon='IPO')
         row.operator("wm.switch_editor_in_dopesheet", text="", icon='DOPESHEET_ACTIVE')
         row.operator("wm.switch_editor_to_nla", text="", icon='NLA')
-        
+
         DOPESHEET_MT_editor_menus.draw_collapsible(context, layout)
+
 
         layout.prop(st, "mode", text="")
 
@@ -161,6 +167,20 @@ class DOPESHEET_HT_header(Header):
             # 'genericFiltersOnly' limits the options to only the relevant 'generic' subset of
             # filters which will work here and are useful (especially for character animation)
             dopesheet_filter(layout, context, genericFiltersOnly=True)
+        elif st.mode == 'GPENCIL':
+            row = layout.row(align=True)
+            row.prop(st.dopesheet, "show_gpencil_3d_only", text="Active Only")
+
+            if st.dopesheet.show_gpencil_3d_only:
+                row = layout.row(align=True)
+                row.prop(st.dopesheet, "show_only_selected", text="")
+                row.prop(st.dopesheet, "show_hidden", text="")
+
+            row = layout.row(align=True)
+            row.prop(st.dopesheet, "use_filter_text", text="")
+            if st.dopesheet.use_filter_text:
+                row.prop(st.dopesheet, "filter_text", text="")
+                row.prop(st.dopesheet, "use_multi_word_filter", text="")
 
         row = layout.row(align=True)
         row.prop(toolsettings, "use_proportional_action",
@@ -185,6 +205,7 @@ class ALL_MT_editormenu(Menu):
 
         row = layout.row(align=True)
         row.template_header() # editor type menus
+
 
 class DOPESHEET_MT_editor_menus(Menu):
     bl_idname = "DOPESHEET_MT_editor_menus"
@@ -220,6 +241,9 @@ class DOPESHEET_MT_view(Menu):
 
         st = context.space_data
 
+        layout.operator("action.properties", icon='MENU_PANEL')
+        layout.separator()
+
         layout.prop(st, "use_realtime_update")
         layout.prop(st, "show_frame_indicator")
         layout.prop(st, "show_sliders")
@@ -243,7 +267,7 @@ class DOPESHEET_MT_view(Menu):
         layout.separator()
         layout.operator("screen.area_dupli")
         layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area") # bfa - the separated tooltip. Class is in space_text.py
-        layout.operator("screen.screen_full_area").use_hide_panels = True
+        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area").use_hide_panels = True
 
 
 # Workaround to separate the tooltips
@@ -283,6 +307,8 @@ class DOPESHEET_MT_select(Menu):
         layout.operator("action.select_border").axis_range = False
         layout.operator("action.select_border", text="Border Axis Range").axis_range = True
 
+        layout.operator("action.select_circle")
+
         layout.separator()
         layout.operator("action.select_column", text="Columns on Selected Keys").mode = 'KEYS'
         layout.operator("action.select_column", text="Column on Current Frame").mode = 'CFRA'
@@ -291,14 +317,9 @@ class DOPESHEET_MT_select(Menu):
         layout.operator("action.select_column", text="Between Selected Markers").mode = 'MARKERS_BETWEEN'
 
         layout.separator()
-
+        
         layout.operator("action.select_leftright_before", text="Before Current Frame") # bfa - the separated tooltip
         layout.operator("action.select_leftright_after", text="After Current Frame") # bfa - the separated tooltip
-        #props = layout.operator("action.select_leftright", text="After Current Frame")
-        #props.extend = False
-        #props.mode = 'RIGHT'
-
-        
 
         # FIXME: grease pencil mode isn't supported for these yet, so skip for that mode only
         if context.space_data.mode != 'GPENCIL':
@@ -375,6 +396,7 @@ class DOPESHEET_MT_key_clean_channels(bpy.types.Operator):
     def execute(self, context):        # execute() is called by blender when running the operator.
         bpy.ops.action.clean(channels = True)
         return {'FINISHED'}  
+
 
 class DOPESHEET_MT_key(Menu):
     bl_label = "Key"
@@ -475,6 +497,20 @@ class DOPESHEET_MT_gpencil_frame(Menu):
         #layout.separator()
         #layout.operator("action.copy")
         #layout.operator("action.paste")
+
+
+class DOPESHEET_MT_delete(Menu):
+    bl_label = "Delete"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("action.delete")
+
+        layout.separator()
+
+        layout.operator("action.clean").channels = False
+        layout.operator("action.clean", text="Clean Channels").channels = True
 
 
 if __name__ == "__main__":  # only for live edit.

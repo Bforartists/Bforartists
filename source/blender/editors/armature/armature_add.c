@@ -38,6 +38,8 @@
 
 #include "BLI_blenlib.h"
 #include "BLI_math.h"
+#include "BLI_ghash.h"
+#include "BLI_string_utils.h"
 
 #include "BKE_action.h"
 #include "BKE_constraint.h"
@@ -82,6 +84,15 @@ EditBone *ED_armature_edit_bone_add(bArmature *arm, const char *name)
 	bone->segments = 1;
 	bone->layer = arm->layer;
 	
+	bone->roll1 = 0.0f;
+	bone->roll2 = 0.0f;
+	bone->curveInX = 0.0f;
+	bone->curveInY = 0.0f;
+	bone->curveOutX = 0.0f;
+	bone->curveOutY = 0.0f;
+	bone->scaleIn = 1.0f;
+	bone->scaleOut = 1.0f;
+
 	return bone;
 }
 
@@ -221,7 +232,7 @@ static int armature_click_extrude_invoke(bContext *C, wmOperator *op, const wmEv
 	copy_v3_v3(oldcurs, fp);
 
 	VECCOPY2D(mval_f, event->mval);
-	ED_view3d_win_to_3d(ar, fp, mval_f, tvec);
+	ED_view3d_win_to_3d(v3d, ar, fp, mval_f, tvec);
 	copy_v3_v3(fp, tvec);
 
 	/* extrude to the where new cursor is and store the operation result */
@@ -285,6 +296,71 @@ void preEditBoneDuplicate(ListBase *editbones)
 {
 	/* clear temp */
 	ED_armature_ebone_listbase_temp_clear(editbones);
+}
+
+/**
+ * Helper function for #postEditBoneDuplicate,
+ * return the destination pchan from the original.
+ */
+static bPoseChannel *pchan_duplicate_map(const bPose *pose, GHash *name_map, bPoseChannel *pchan_src)
+{
+	bPoseChannel *pchan_dst = NULL;
+	const char *name_src = pchan_src->name;
+	const char *name_dst = BLI_ghash_lookup(name_map, name_src);
+	if (name_dst) {
+		pchan_dst = BKE_pose_channel_find_name(pose, name_dst);
+	}
+
+	if (pchan_dst == NULL) {
+		pchan_dst = pchan_src;
+	}
+
+	return pchan_dst;
+}
+
+void postEditBoneDuplicate(struct ListBase *editbones, Object *ob)
+{
+	if (ob->pose == NULL) {
+		return;
+	}
+
+	BKE_pose_channels_hash_free(ob->pose);
+	BKE_pose_channels_hash_make(ob->pose);
+
+	GHash *name_map = BLI_ghash_str_new(__func__);
+
+	for (EditBone *ebone_src = editbones->first; ebone_src; ebone_src = ebone_src->next) {
+		EditBone *ebone_dst = ebone_src->temp.ebone;
+		if (!ebone_dst) {
+			ebone_dst = ED_armature_bone_get_mirrored(editbones, ebone_src);
+		}
+		if (ebone_dst) {
+			BLI_ghash_insert(name_map, ebone_src->name, ebone_dst->name);
+		}
+	}
+
+	for (EditBone *ebone_src = editbones->first; ebone_src; ebone_src = ebone_src->next) {
+		EditBone *ebone_dst = ebone_src->temp.ebone;
+		if (ebone_dst) {
+			bPoseChannel *pchan_src = BKE_pose_channel_find_name(ob->pose, ebone_src->name);
+			if (pchan_src) {
+				bPoseChannel *pchan_dst = BKE_pose_channel_find_name(ob->pose, ebone_dst->name);
+				if (pchan_dst) {
+					if (pchan_src->custom_tx) {
+						pchan_dst->custom_tx = pchan_duplicate_map(ob->pose, name_map, pchan_src->custom_tx);
+					}
+					if (pchan_src->bbone_prev) {
+						pchan_dst->bbone_prev = pchan_duplicate_map(ob->pose, name_map, pchan_src->bbone_prev);
+					}
+					if (pchan_src->bbone_next) {
+						pchan_dst->bbone_next = pchan_duplicate_map(ob->pose, name_map, pchan_src->bbone_next);
+					}
+				}
+			}
+		}
+	}
+
+	BLI_ghash_free(name_map, NULL, NULL);
 }
 
 /*
@@ -490,6 +566,8 @@ static int armature_duplicate_selected_exec(bContext *C, wmOperator *UNUSED(op))
 		}
 	}
 
+	postEditBoneDuplicate(arm->edbo, obedit);
+
 	ED_armature_validate_active(arm);
 
 	WM_event_add_notifier(C, NC_OBJECT | ND_BONE_SELECT, obedit);
@@ -542,9 +620,9 @@ static int armature_symmetrize_exec(bContext *C, wmOperator *op)
 		if (EBONE_VISIBLE(arm, ebone_iter) &&
 		    (ebone_iter->flag & BONE_SELECTED))
 		{
-			char name_flip[MAX_VGROUP_NAME];
+			char name_flip[MAXBONENAME];
 
-			BKE_deform_flip_side_name(name_flip, ebone_iter->name, false);
+			BLI_string_flip_side_name(name_flip, ebone_iter->name, false, sizeof(name_flip));
 
 			if (STREQ(name_flip, ebone_iter->name)) {
 				/* if the name matches, we don't have the potential to be mirrored, just skip */
@@ -602,9 +680,9 @@ static int armature_symmetrize_exec(bContext *C, wmOperator *op)
 		    /* will be set if the mirror bone already exists (no need to make a new one) */
 		    (ebone_iter->temp.ebone == NULL))
 		{
-			char name_flip[MAX_VGROUP_NAME];
+			char name_flip[MAXBONENAME];
 
-			BKE_deform_flip_side_name(name_flip, ebone_iter->name, false);
+			BLI_string_flip_side_name(name_flip, ebone_iter->name, false, sizeof(name_flip));
 
 			/* bones must have a side-suffix */
 			if (!STREQ(name_flip, ebone_iter->name)) {
@@ -619,7 +697,7 @@ static int armature_symmetrize_exec(bContext *C, wmOperator *op)
 		}
 	}
 
-	/*	Run though the list and fix the pointers */
+	/*	Run through the list and fix the pointers */
 	for (ebone_iter = arm->edbo->first; ebone_iter && ebone_iter != ebone_first_dupe; ebone_iter = ebone_iter->next) {
 		if (ebone_iter->temp.ebone) {
 			/* copy all flags except for ... */
@@ -687,6 +765,8 @@ static int armature_symmetrize_exec(bContext *C, wmOperator *op)
 		arm->act_edbone = arm->act_edbone->temp.ebone;
 	}
 
+	postEditBoneDuplicate(arm->edbo, obedit);
+
 	ED_armature_validate_active(arm);
 
 	WM_event_add_notifier(C, NC_OBJECT | ND_BONE_SELECT, obedit);
@@ -697,7 +777,7 @@ static int armature_symmetrize_exec(bContext *C, wmOperator *op)
 /* following conventions from #MESH_OT_symmetrize */
 void ARMATURE_OT_symmetrize(wmOperatorType *ot)
 {
-	/* subset of 'symmetrize_direction_items' */
+	/* subset of 'rna_enum_symmetrize_direction_items' */
 	static EnumPropertyItem arm_symmetrize_direction_items[] = {
 		{-1, "NEGATIVE_X", 0, "-X to +X", ""},
 		{+1, "POSITIVE_X", 0, "+X to -X", ""},
@@ -826,6 +906,16 @@ static int armature_extrude_exec(bContext *C, wmOperator *op)
 					newbone->segments = 1;
 					newbone->layer = ebone->layer;
 					
+					newbone->roll1 = ebone->roll1;
+					newbone->roll2 = ebone->roll2;
+					newbone->curveInX = ebone->curveInX;
+					newbone->curveInY = ebone->curveInY;
+					newbone->curveOutX = ebone->curveOutX;
+					newbone->curveOutY = ebone->curveOutY;
+					newbone->scaleIn = ebone->scaleIn;
+					newbone->scaleOut = ebone->scaleOut;
+
+
 					BLI_strncpy(newbone->name, ebone->name, sizeof(newbone->name));
 					
 					if (flipbone && forked) {   // only set if mirror edit

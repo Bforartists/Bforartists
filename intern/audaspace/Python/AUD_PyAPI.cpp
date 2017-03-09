@@ -128,7 +128,7 @@ Factory_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 }
 
 PyDoc_STRVAR(M_aud_Factory_sine_doc,
-			 "sine(frequency, rate=44100)\n\n"
+			 "sine(frequency, rate=48000)\n\n"
 			 "Creates a sine factory which plays a sine wave.\n\n"
 			 ":arg frequency: The frequency of the sine wave in Hz.\n"
 			 ":type frequency: float\n"
@@ -142,7 +142,7 @@ static PyObject *
 Factory_sine(PyTypeObject* type, PyObject *args)
 {
 	float frequency;
-	double rate = 44100;
+	double rate = 48000;
 
 	if(!PyArg_ParseTuple(args, "f|d:sine", &frequency, &rate))
 		return NULL;
@@ -861,7 +861,7 @@ Factory_filter(Factory* self, PyObject *args)
 	py_a_len= py_a ? PySequence_Size(py_a) : 0;
 	py_b_len= PySequence_Size(py_b);
 
-	if(!py_b_len || ((py_a != NULL) && !py_b_len))
+	if(!py_b_len || ((py_a != NULL) && !py_a_len))
 	{
 		PyErr_SetString(PyExc_ValueError, "The sequence has to contain at least one value!");
 		return NULL;
@@ -2115,7 +2115,7 @@ Device_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 
 	static const char *kwlist[] = {"type", "rate", "channels", "format", "buffer_size", "name", NULL};
 	int device;
-	double rate = AUD_RATE_44100;
+	double rate = AUD_RATE_48000;
 	int channels = AUD_CHANNELS_STEREO;
 	int format = AUD_FORMAT_FLOAT32;
 	int buffersize = AUD_DEFAULT_BUFFER_SIZE;
@@ -2698,7 +2698,7 @@ Device_set_doppler_factor(Device *self, PyObject *args, void* nothing)
 
 PyDoc_STRVAR(M_aud_Device_distance_model_doc,
 			 "The distance model of the device.\n\n"
-			 ".. seealso:: http://connect.creativelabs.com/openal/Documentation/OpenAL%201.1%20Specification.htm#_Toc199835864");
+			 ".. seealso:: `OpenAL documentation <https://www.openal.org/documentation>`");
 
 static PyObject *
 Device_get_distance_model(Device *self, void* nothing)

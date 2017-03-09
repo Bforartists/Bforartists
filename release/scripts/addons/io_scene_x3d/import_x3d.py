@@ -23,6 +23,13 @@ DEBUG = False
 # This should work without a blender at all
 import os
 import shlex
+import math
+from math import sin, cos, pi
+
+texture_cache = {}
+material_cache = {}
+
+EPSILON = 0.0000001  # Very crude.
 
 
 def imageConvertCompat(path):
@@ -374,7 +381,8 @@ class vrmlNode(object):
                  'DEF_NAMESPACE',
                  'ROUTE_IPO_NAMESPACE',
                  'PROTO_NAMESPACE',
-                 'x3dNode')
+                 'x3dNode',
+                 'parsed')
 
     def __init__(self, parent, node_type, lineno):
         self.id = None
@@ -383,6 +391,7 @@ class vrmlNode(object):
         self.blendObject = None
         self.blendData = None
         self.x3dNode = None  # for x3d import only
+        self.parsed = None  # We try to reuse objects in a smart way
         if parent:
             parent.children.append(self)
 
@@ -517,9 +526,22 @@ class vrmlNode(object):
             # Check inside a list of optional types
             return [child for child in self_real.children if child.getSpec() in node_spec]
 
+    def getChildrenBySpecCondition(self, cond):  # spec could be Transform, Shape, Appearance
+        self_real = self.getRealNode()
+        # using getSpec functions allows us to use the spec of USE children that dont have their spec in their ID
+        return [child for child in self_real.children if cond(child.getSpec())]
+
     def getChildBySpec(self, node_spec):  # spec could be Transform, Shape, Appearance
         # Use in cases where there is only ever 1 child of this type
         ls = self.getChildrenBySpec(node_spec)
+        if ls:
+            return ls[0]
+        else:
+            return None
+
+    def getChildBySpecCondition(self, cond):  # spec could be Transform, Shape, Appearance
+        # Use in cases where there is only ever 1 child of this type
+        ls = self.getChildrenBySpecCondition(cond)
         if ls:
             return ls[0]
         else:
@@ -773,7 +795,7 @@ class vrmlNode(object):
         def array_as_number(array_string):
             array_data = []
             try:
-                array_data = [int(val) for val in array_string]
+                array_data = [int(val, 0) for val in array_string]
             except:
                 try:
                     array_data = [float(val) for val in array_string]
@@ -1224,6 +1246,14 @@ class vrmlNode(object):
                             self.fields.append(value)
                 i += 1
 
+    # This is a prerequisite for DEF/USE-based material caching
+    def canHaveReferences(self):
+        return self.node_type == NODE_NORMAL and self.getDefName()
+
+    # This is a prerequisite for raw XML-based material caching. For now, only for X3D
+    def desc(self):
+        return None
+
 
 def gzipOpen(path):
     import gzip
@@ -1236,13 +1266,14 @@ def gzipOpen(path):
 
     if data is None:
         try:
-            filehandle = open(path, 'rU')
+            filehandle = open(path, 'rU', encoding='utf-8', errors='surrogateescape')
             data = filehandle.read()
             filehandle.close()
         except:
-            pass
+            import traceback
+            traceback.print_exc()
     else:
-        data = data.decode('utf-8', "replace")
+        data = data.decode(encoding='utf-8', errors='surrogateescape')
 
     return data
 
@@ -1306,6 +1337,7 @@ class x3dNode(vrmlNode):
 
     def parse(self, IS_PROTO_DATA=False):
         # print(self.x3dNode.tagName)
+        self.lineno = self.x3dNode.parse_position[0]
 
         define = self.x3dNode.getAttributeNode('DEF')
         if define:
@@ -1339,10 +1371,14 @@ class x3dNode(vrmlNode):
     def getSpec(self):
         return self.x3dNode.tagName  # should match vrml spec
 
+    # Used to retain object identifiers from X3D to Blender
     def getDefName(self):
-        data = self.x3dNode.getAttributeNode('DEF')
-        if data:
-            data.value  # XXX, return??
+        node_id = self.x3dNode.getAttributeNode('DEF')
+        if node_id:
+            return node_id.value
+        node_id = self.x3dNode.getAttributeNode('USE')
+        if node_id:
+            return "USE_" + node_id.value
         return None
 
     # Other funcs operate from vrml, but this means we can wrap XML fields, still use nice utility funcs
@@ -1363,17 +1399,20 @@ class x3dNode(vrmlNode):
         else:
             return None
 
+    def canHaveReferences(self):
+        return self.x3dNode.getAttributeNode('DEF')
+
+    def desc(self):
+        return self.getRealNode().x3dNode.toxml()
+
 
 def x3d_parse(path):
     """
     Sets up the root node and returns it so load_web3d() can deal with the blender side of things.
     Return root (x3dNode, '') or (None, 'Error String')
     """
-
-    try:
-        import xml.dom.minidom
-    except:
-        return None, 'Error, import XML parsing module (xml.dom.minidom) failed, install python'
+    import xml.dom.minidom
+    import xml.sax
 
     '''
     try:    doc = xml.dom.minidom.parse(path)
@@ -1386,7 +1425,22 @@ def x3d_parse(path):
     if data is None:
         return None, 'Failed to open file: ' + path
 
-    doc = xml.dom.minidom.parseString(data)
+    # Enable line number reporting in the parser - kinda brittle
+    def set_content_handler(dom_handler):
+        def startElementNS(name, tagName, attrs):
+            orig_start_cb(name, tagName, attrs)
+            cur_elem = dom_handler.elementStack[-1]
+            cur_elem.parse_position = (parser._parser.CurrentLineNumber, parser._parser.CurrentColumnNumber)
+
+        orig_start_cb = dom_handler.startElementNS
+        dom_handler.startElementNS = startElementNS
+        orig_set_content_handler(dom_handler)
+
+    parser = xml.sax.make_parser()
+    orig_set_content_handler = parser.setContentHandler
+    parser.setContentHandler = set_content_handler
+
+    doc = xml.dom.minidom.parseString(data, parser)
 
     try:
         x3dnode = doc.getElementsByTagName('X3D')[0]
@@ -1423,7 +1477,7 @@ for i, f in enumerate(files):
 # -----------------------------------------------------------------------------------
 import bpy
 from bpy_extras import image_utils
-from mathutils import Vector, Matrix
+from mathutils import Vector, Matrix, Quaternion
 
 GLOBALS = {'CIRCLE_DETAIL': 16}
 
@@ -1524,12 +1578,6 @@ def translateTexTransform(node, ancestry):
 
     return new_mat
 
-
-# 90d X rotation
-import math
-MATRIX_Z_TO_Y = Matrix.Rotation(math.pi / 2.0, 4, 'X')
-
-
 def getFinalMatrix(node, mtx, ancestry, global_matrix):
 
     transform_nodes = [node_tx for node_tx in ancestry if node_tx.getSpec() == 'Transform']
@@ -1550,307 +1598,772 @@ def getFinalMatrix(node, mtx, ancestry, global_matrix):
     return mtx
 
 
-def importMesh_IndexedFaceSet(geom, bpyima, ancestry):
-    # print(geom.lineno, geom.id, vrmlNode.DEF_NAMESPACE.keys())
+# -----------------------------------------------------------------------------------
+# Mesh import utilities
 
+# Assumes that the mesh has tessfaces - doesn't support polygons.
+# Also assumes that tessfaces are all triangles.
+# Assumes that the sequence of the mesh vertices array matches
+# the source file. For indexed meshes, that's almost a given;
+# for nonindexed ones, this is a consideration.
+
+
+def importMesh_ApplyColors(bpymesh, geom, ancestry):
+    colors = geom.getChildBySpec(['ColorRGBA', 'Color'])
+    if colors:
+        if colors.getSpec() == 'ColorRGBA':
+            # Array of arrays; no need to flatten
+            rgb = [c[:3] for c
+                   in colors.getFieldAsArray('color', 4, ancestry)]
+        else:
+            rgb = colors.getFieldAsArray('color', 3, ancestry)
+        tc = bpymesh.tessface_vertex_colors.new()
+        tc.data.foreach_set("color1", [i for face
+                                       in bpymesh.tessfaces
+                                       for i in rgb[face.vertices[0]]])
+        tc.data.foreach_set("color2", [i for face
+                                       in bpymesh.tessfaces
+                                       for i in rgb[face.vertices[1]]])
+        tc.data.foreach_set("color3", [i for face
+                                       in bpymesh.tessfaces
+                                       for i in rgb[face.vertices[2]]])
+
+
+# Assumes that the vertices have not been rearranged compared to the
+# source file order # or in the order assumed by the spec (e. g. in
+# Elevation, in rows by x).
+# Assumes tessfaces have been set, doesn't support polygons.
+def importMesh_ApplyNormals(bpymesh, geom, ancestry):
+    normals = geom.getChildBySpec('Normal')
+    if not normals:
+        return
+
+    per_vertex = geom.getFieldAsBool('normalPerVertex', True, ancestry)
+    vectors = normals.getFieldAsArray('vector', 0, ancestry)
+    if per_vertex:
+        bpymesh.vertices.foreach_set("normal", vectors)
+    else:
+        bpymesh.tessfaces.foreach_set("normal", vectors)
+
+
+# Reads the standard Coordinate object - common for all mesh elements
+# Feeds the vertices in the mesh.
+# Rearranging the vertex order is a bad idea - other elements
+# in X3D might rely on it,  if you need to rearrange, please play with
+# vertex indices in the tessfaces/polygons instead.
+#
+# Vertex culling that we have in IndexedFaceSet is an unfortunate exception,
+# brought forth by a very specific issue.
+def importMesh_ReadVertices(bpymesh, geom, ancestry):
+    # We want points here as a flat array, but the caching logic in
+    # IndexedFaceSet presumes a 2D one.
+    # The case for caching is stronger over there.
+    coord = geom.getChildBySpec('Coordinate')
+    points = coord.getFieldAsArray('point', 0, ancestry)
+    bpymesh.vertices.add(len(points) // 3)
+    bpymesh.vertices.foreach_set("co", points)
+
+
+# Assumes the mesh only contains triangular tessfaces, and the order
+# of vertices matches the source file.
+# Relies upon texture coordinates in the X3D node; if a coordinate generation
+# algorithm for a geometry is in the spec (e. g. for ElevationGrid), it needs
+# to be implemeted by the geometry handler.
+#
+# Texture transform is applied in ProcessObject.
+def importMesh_ApplyTextureToTessfaces(bpymesh, geom, ancestry, bpyima):
+    if not bpyima:
+        return
+
+    tex_coord = geom.getChildBySpec('TextureCoordinate')
+    if not tex_coord:
+        return
+
+    coord_points = tex_coord.getFieldAsArray('point', 2, ancestry)
+    if not coord_points:
+        return
+
+    d = bpymesh.tessface_uv_textures.new().data
+    for face in d:  # No foreach_set for nonscalars
+        face.image = bpyima
+    uv = [i for face in bpymesh.tessfaces
+          for vno in range(3) for i in coord_points[face.vertices[vno]]]
+    d.foreach_set('uv', uv)
+
+
+# Common steps for all triangle meshes once the geometry has been set:
+# normals, vertex colors, and texture.
+def importMesh_FinalizeTriangleMesh(bpymesh, geom, ancestry, bpyima):
+    importMesh_ApplyNormals(bpymesh, geom, ancestry)
+    importMesh_ApplyColors(bpymesh, geom, ancestry)
+    importMesh_ApplyTextureToTessfaces(bpymesh, geom, ancestry, bpyima)
+    bpymesh.validate()
+    bpymesh.update()
+    return bpymesh
+
+
+# Assumes that the mesh is stored as polygons and loops, and the premade array
+# of texture coordinates follows the loop array.
+# The loops array must be flat.
+def importMesh_ApplyTextureToLoops(bpymesh, bpyima, loops):
+    d = bpymesh.uv_textures.new().data
+    for f in d:
+        f.image = bpyima
+    bpymesh.uv_layers[0].data.foreach_set('uv', loops)
+
+
+def flip(r, ccw):
+    return r if ccw else r[::-1]
+
+# -----------------------------------------------------------------------------------
+# Now specific geometry importers
+
+
+def importMesh_IndexedTriangleSet(geom, ancestry, bpyima):
+    # Ignoring solid
+    # colorPerVertex is always true
     ccw = geom.getFieldAsBool('ccw', True, ancestry)
-    ifs_colorPerVertex = geom.getFieldAsBool('colorPerVertex', True, ancestry)  # per vertex or per face
-    ifs_normalPerVertex = geom.getFieldAsBool('normalPerVertex', True, ancestry)
-
-    # This is odd how point is inside Coordinate
-
-    # VRML not x3d
-    #coord = geom.getChildByName('coord') # 'Coordinate'
-
-    coord = geom.getChildBySpec('Coordinate')  # works for x3d and vrml
-
-    if coord:
-        ifs_points = coord.getFieldAsArray('point', 3, ancestry)
-    else:
-        coord = []
-
-    if not coord:
-        print('\tWarnint: IndexedFaceSet has no points')
-        return None, ccw
-
-    ifs_faces = geom.getFieldAsArray('coordIndex', 0, ancestry)
-
-    coords_tex = None
-    if ifs_faces:  # In rare cases this causes problems - no faces but UVs???
-
-        # WORKS - VRML ONLY
-        # coords_tex = geom.getChildByName('texCoord')
-        coords_tex = geom.getChildBySpec('TextureCoordinate')
-
-        if coords_tex:
-            ifs_texpoints = [(0, 0)] # EEKADOODLE - vertex start at 1
-            ifs_texpoints.extend(coords_tex.getFieldAsArray('point', 2, ancestry))
-            ifs_texfaces = geom.getFieldAsArray('texCoordIndex', 0, ancestry)
-
-            if not ifs_texpoints:
-                # IF we have no coords, then dont bother
-                coords_tex = None
-
-    # WORKS - VRML ONLY
-    # vcolor = geom.getChildByName('color')
-    vcolor = geom.getChildBySpec('Color')
-    vcolor_spot = None  # spot color when we dont have an array of colors
-    if vcolor:
-        # float to char
-        ifs_vcol = [(0, 0, 0)]  # EEKADOODLE - vertex start at 1
-        ifs_vcol.extend([col for col in vcolor.getFieldAsArray('color', 3, ancestry)])
-        ifs_color_index = geom.getFieldAsArray('colorIndex', 0, ancestry)
-
-        if not ifs_vcol:
-            vcolor_spot = vcolor.getFieldAsFloatTuple('color', [], ancestry)
-
-    # Convert faces into somthing blender can use
-    edges = []
-
-    # All lists are aligned!
-    faces = []
-    faces_uv = []  # if ifs_texfaces is empty then the faces_uv will match faces exactly.
-    faces_orig_index = []  # for ngons, we need to know our original index
-
-    if coords_tex and ifs_texfaces:
-        do_uvmap = True
-    else:
-        do_uvmap = False
-
-    # current_face = [0] # pointer anyone
-
-    def add_face(face, fuvs, orig_index):
-        l = len(face)
-        if l == 3 or l == 4:
-            faces.append(face)
-            # faces_orig_index.append(current_face[0])
-            if do_uvmap:
-                faces_uv.append(fuvs)
-
-            faces_orig_index.append(orig_index)
-        elif l == 2:
-            edges.append(face)
-        elif l > 4:
-            for i in range(2, len(face)):
-                faces.append([face[0], face[i - 1], face[i]])
-                if do_uvmap:
-                    faces_uv.append([fuvs[0], fuvs[i - 1], fuvs[i]])
-                faces_orig_index.append(orig_index)
-        else:
-            # faces with 1 verts? pfft!
-            # still will affect index ordering
-            pass
-
-    face = []
-    fuvs = []
-    orig_index = 0
-    for i, fi in enumerate(ifs_faces):
-        # ifs_texfaces and ifs_faces should be aligned
-        if fi != -1:
-            # face.append(int(fi)) # in rare cases this is a float
-            # EEKADOODLE!!!
-            # Annoyance where faces that have a zero index vert get rotated. This will then mess up UVs and VColors
-            face.append(int(fi) + 1)  # in rare cases this is a float, +1 because of stupid EEKADOODLE :/
-
-            if do_uvmap:
-                if i >= len(ifs_texfaces):
-                    print('\tWarning: UV Texface index out of range')
-                    fuvs.append(ifs_texfaces[0])
-                else:
-                    fuvs.append(ifs_texfaces[i])
-        else:
-            add_face(face, fuvs, orig_index)
-            face = []
-            if do_uvmap:
-                fuvs = []
-            orig_index += 1
-
-    add_face(face, fuvs, orig_index)
-    del add_face  # dont need this func anymore
 
     bpymesh = bpy.data.meshes.new(name="XXX")
+    importMesh_ReadVertices(bpymesh, geom, ancestry)
 
-    # EEKADOODLE
-    bpymesh.vertices.add(1 + (len(ifs_points)))
-    bpymesh.vertices.foreach_set("co", [0, 0, 0] + [a for v in ifs_points for a in v])  # XXX25 speed
+    # Read the faces
+    index = geom.getFieldAsArray('index', 0, ancestry)
+    n = len(index) // 3
+    if not ccw:
+        index = [index[3 * i + j] for i in range(n) for j in (1, 0, 2)]
+    bpymesh.tessfaces.add(n)
+    bpymesh.tessfaces.foreach_set("vertices", index)
 
-    # print(len(ifs_points), faces, edges, ngons)
+    return importMesh_FinalizeTriangleMesh(bpymesh, geom, ancestry, bpyima)
 
-    try:
-        bpymesh.tessfaces.add(len(faces))
-        bpymesh.tessfaces.foreach_set("vertices_raw", [a for f in faces for a in (f + [0] if len(f) == 3 else f)])  # XXX25 speed
-    except KeyError:
-        print("one or more vert indices out of range. corrupt file?")
-        #for f in faces:
-        #   bpymesh.tessfaces.extend(faces, smooth=True)
 
-    bpymesh.validate()
-    # bpymesh.update()  # cant call now, because it would convert tessface
+def importMesh_IndexedTriangleStripSet(geom, ancestry, bpyima):
+    # Ignoring solid
+    # colorPerVertex is always true
+    cw = 0 if geom.getFieldAsBool('ccw', True, ancestry) else 1
+    bpymesh = bpy.data.meshes.new(name="IndexedTriangleStripSet")
+    importMesh_ReadVertices(bpymesh, geom, ancestry)
 
-    if len(bpymesh.tessfaces) != len(faces):
-        print('\tWarning: adding faces did not work! file is invalid, not adding UVs or vcolors')
-        bpymesh.update()
-        return bpymesh, ccw
+    # Read the faces
+    index = geom.getFieldAsArray('index', 0, ancestry)
+    while index[-1] == -1:
+        del index[-1]
+    ngaps = sum(1 for i in index if i == -1)
+    bpymesh.tessfaces.add(len(index) - 2 - 3 * ngaps)
 
-    # Apply UVs if we have them
-    if not do_uvmap:
-        faces_uv = faces  # fallback, we didnt need a uvmap in the first place, fallback to the face/vert mapping.
-    if coords_tex:
-        #print(ifs_texpoints)
-        # print(geom)
-        uvlay = bpymesh.tessface_uv_textures.new()
+    def triangles():
+        i = 0
+        odd = cw
+        while True:
+            yield index[i + odd]
+            yield index[i + 1 - odd]
+            yield index[i + 2]
+            odd = 1 - odd
+            i += 1
+            if i + 2 >= len(index):
+                return
+            if index[i + 2] == -1:
+                i += 3
+                odd = cw
+    bpymesh.tessfaces.foreach_set("vertices", [f for f in triangles()])
+    return importMesh_FinalizeTriangleMesh(bpymesh, geom, ancestry, bpyima)
 
-        for i, f in enumerate(uvlay.data):
-            f.image = bpyima
-            fuv = faces_uv[i]  # uv indices
-            for j, uv in enumerate(f.uv):
-                # print(fuv, j, len(ifs_texpoints))
-                try:
-                    f.uv[j] = ifs_texpoints[fuv[j] + 1]  # XXX25, speedup
-                except:
-                    print('\tWarning: UV Index out of range')
-                    f.uv[j] = ifs_texpoints[0]  # XXX25, speedup
 
-    elif bpyima and len(bpymesh.tessfaces):
-        # Oh Bugger! - we cant really use blenders ORCO for for texture space since texspace dosnt rotate.
-        # we have to create VRML's coords as UVs instead.
+def importMesh_IndexedTriangleFanSet(geom, ancestry, bpyima):
+    # Ignoring solid
+    # colorPerVertex is always true
+    cw = 0 if geom.getFieldAsBool('ccw', True, ancestry) else 1
+    bpymesh = bpy.data.meshes.new(name="IndexedTriangleFanSet")
+    importMesh_ReadVertices(bpymesh, geom, ancestry)
 
-        # VRML docs
-        """
-        If the texCoord field is NULL, a default texture coordinate mapping is calculated using the local
-        coordinate system bounding box of the shape. The longest dimension of the bounding box defines the S coordinates,
-        and the next longest defines the T coordinates. If two or all three dimensions of the bounding box are equal,
-        ties shall be broken by choosing the X, Y, or Z dimension in that order of preference.
-        The value of the S coordinate ranges from 0 to 1, from one end of the bounding box to the other.
-        The T coordinate ranges between 0 and the ratio of the second greatest dimension of the bounding box to the greatest dimension.
-        """
+    # Read the faces
+    index = geom.getFieldAsArray('index', 0, ancestry)
+    while index[-1] == -1:
+        del index[-1]
+    ngaps = sum(1 for i in index if i == -1)
+    bpymesh.tessfaces.add(len(index) - 2 - 3 * ngaps)
 
-        # Note, S,T == U,V
-        # U gets longest, V gets second longest
-        xmin, ymin, zmin = ifs_points[0]
-        xmax, ymax, zmax = ifs_points[0]
-        for co in ifs_points:
-            x, y, z = co
-            if x < xmin:
-                xmin = x
-            if y < ymin:
-                ymin = y
-            if z < zmin:
-                zmin = z
+    def triangles():
+        i = 0
+        j = 1
+        while True:
+            yield index[i]
+            yield index[i + j + cw]
+            yield index[i + j + 1 - cw]
+            j += 1
+            if i + j + 1 >= len(index):
+                return
+            if index[i + j + 1] == -1:
+                i = j + 2
+                j = 1
+    bpymesh.tessfaces.foreach_set("vertices", [f for f in triangles()])
+    return importMesh_FinalizeTriangleMesh(bpymesh, geom, ancestry, bpyima)
 
-            if x > xmax:
-                xmax = x
-            if y > ymax:
-                ymax = y
-            if z > zmax:
-                zmax = z
 
-        xlen = xmax - xmin
-        ylen = ymax - ymin
-        zlen = zmax - zmin
+def importMesh_TriangleSet(geom, ancestry, bpyima):
+    # Ignoring solid
+    # colorPerVertex is always true
+    ccw = geom.getFieldAsBool('ccw', True, ancestry)
+    bpymesh = bpy.data.meshes.new(name="TriangleSet")
+    importMesh_ReadVertices(bpymesh, geom, ancestry)
+    n = len(bpymesh.vertices)
+    bpymesh.tessfaces.add(n // 3)
+    if ccw:
+        fv = [i for i in range(n)]
+    else:
+        fv = [3 * i + j for i in range(n // 3) for j in (1, 0, 2)]
+    bpymesh.tessfaces.foreach_set("vertices", fv)
 
-        depth_min = xmin, ymin, zmin
-        depth_list = [xlen, ylen, zlen]
-        depth_sort = depth_list[:]
-        depth_sort.sort()
+    return importMesh_FinalizeTriangleMesh(bpymesh, geom, ancestry, bpyima)
 
-        depth_idx = [depth_list.index(val) for val in depth_sort]
 
-        axis_u = depth_idx[-1]
-        axis_v = depth_idx[-2]  # second longest
+def importMesh_TriangleStripSet(geom, ancestry, bpyima):
+    # Ignoring solid
+    # colorPerVertex is always true
+    cw = 0 if geom.getFieldAsBool('ccw', True, ancestry) else 1
+    bpymesh = bpy.data.meshes.new(name="TriangleStripSet")
+    importMesh_ReadVertices(bpymesh, geom, ancestry)
+    counts = geom.getFieldAsArray('stripCount', 0, ancestry)
+    bpymesh.tessfaces.add(sum([n - 2 for n in counts]))
 
-        # Hack, swap these !!! TODO - Why swap??? - it seems to work correctly but should not.
-        # axis_u,axis_v = axis_v,axis_u
+    def triangles():
+        b = 0
+        for i in range(0, len(counts)):
+            for j in range(0, counts[i] - 2):
+                yield b + j + (j + cw) % 2
+                yield b + j + 1 - (j + cw) % 2
+                yield b + j + 2
+            b += counts[i]
+    bpymesh.tessfaces.foreach_set("vertices", [x for x in triangles()])
 
-        min_u = depth_min[axis_u]
-        min_v = depth_min[axis_v]
-        depth_u = depth_list[axis_u]
-        depth_v = depth_list[axis_v]
+    return importMesh_FinalizeTriangleMesh(bpymesh, geom, ancestry, bpyima)
 
-        depth_list[axis_u]
 
-        if axis_u == axis_v:
-            # This should be safe because when 2 axies have the same length, the lower index will be used.
-            axis_v += 1
+def importMesh_TriangleFanSet(geom, ancestry, bpyima):
+    # Ignoring solid
+    # colorPerVertex is always true
+    cw = 0 if geom.getFieldAsBool('ccw', True, ancestry) else 1
+    bpymesh = bpy.data.meshes.new(name="TriangleStripSet")
+    importMesh_ReadVertices(bpymesh, geom, ancestry)
+    counts = geom.getFieldAsArray('fanCount', 0, ancestry)
+    bpymesh.tessfaces.add(sum([n - 2 for n in counts]))
 
-        uvlay = bpymesh.tessface_uv_textures.new()
+    def triangles():
+        b = 0
+        for i in range(0, len(counts)):
+            for j in range(1, counts[i] - 1):
+                yield b
+                yield b + j + cw
+                yield b + j + 1 - cw
+            b += counts[i]
+    bpymesh.tessfaces.foreach_set("vertices", [x for x in triangles()])
+    return importMesh_FinalizeTriangleMesh(bpymesh, geom, ancestry, bpyima)
 
-        # HACK !!! - seems to be compatible with Cosmo though.
-        depth_v = depth_u = max(depth_v, depth_u)
 
-        bpymesh_vertices = bpymesh.vertices[:]
-        bpymesh_faces = bpymesh.tessfaces[:]
+def importMesh_IndexedFaceSet(geom, ancestry, bpyima):
+    # Saw the following structure in X3Ds: the first mesh has a huge set
+    # of vertices and a reasonably sized index. The rest of the meshes
+    # reference the Coordinate node from the first one, and have their
+    # own reasonably sized indices.
+    #
+    # In Blender, to the best of my knowledge, there's no way to reuse
+    # the vertex set between meshes. So we have culling logic instead -
+    # for each mesh, only leave vertices that are used for faces.
 
-        for j, f in enumerate(uvlay.data):
-            f.image = bpyima
-            fuv = f.uv
-            f_v = bpymesh_faces[j].vertices[:]  # XXX25 speed
+    ccw = geom.getFieldAsBool('ccw', True, ancestry)
+    coord = geom.getChildBySpec('Coordinate')
+    if coord.reference:
+        points = coord.getRealNode().parsed
+        # We need unflattened coord array here, while
+        # importMesh_ReadVertices uses flattened. Can't cache both :(
+        # TODO: resolve that somehow, so that vertex set can be effectively
+        # reused between different mesh types?
+    else:
+        points = coord.getFieldAsArray('point', 3, ancestry)
+        if coord.canHaveReferences():
+            coord.parsed = points
+    index = geom.getFieldAsArray('coordIndex', 0, ancestry)
 
-            for i, v in enumerate(f_v):
-                co = bpymesh_vertices[v].co
-                fuv[i] = (co[axis_u] - min_u) / depth_u, (co[axis_v] - min_v) / depth_v
+    while index and index[-1] == -1:
+        del index[-1]
 
-    # Add vcote
-    if vcolor:
-        # print(ifs_vcol)
-        collay = bpymesh.tessface_vertex_colors.new()
+    if len(points) >= 2 * len(index):  # Need to cull
+        culled_points = []
+        cull = {}  # Maps old vertex indices to new ones
+        uncull = []  # Maps new indices to the old ones
+        new_index = 0
+    else:
+        uncull = cull = None
 
-        for f_idx, f in enumerate(collay.data):
-            fv = bpymesh.tessfaces[f_idx].vertices[:]
-            if len(fv) == 3:  # XXX speed
-                fcol = f.color1, f.color2, f.color3
-            else:
-                fcol = f.color1, f.color2, f.color3, f.color4
-            if ifs_colorPerVertex:
-                for i, c in enumerate(fcol):
-                    color_index = fv[i]  # color index is vert index
-                    if ifs_color_index:
-                        try:
-                            color_index = ifs_color_index[color_index]
-                        except:
-                            print('\tWarning: per vertex color index out of range')
-                            continue
-
-                    if color_index < len(ifs_vcol):
-                        c.r, c.g, c.b = ifs_vcol[color_index]
-                    else:
-                        #print('\tWarning: per face color index out of range')
-                        pass
-            else:
-                if vcolor_spot:  # use 1 color, when ifs_vcol is []
-                    for c in fcol:
-                        c.r, c.g, c.b = vcolor_spot
+    faces = []
+    face = []
+    # Generate faces. Cull the vertices if necessary,
+    for i in index:
+        if i == -1:
+            if face:
+                faces.append(flip(face, ccw))
+            face = []
+        else:
+            if cull is not None:
+                if not(i in cull):
+                    culled_points.append(points[i])
+                    cull[i] = new_index
+                    uncull.append(i)
+                    i = new_index
+                    new_index += 1
                 else:
-                    color_index = faces_orig_index[f_idx]  # color index is face index
-                    #print(color_index, ifs_color_index)
-                    if ifs_color_index:
-                        if color_index >= len(ifs_color_index):
-                            print('\tWarning: per face color index out of range')
-                            color_index = 0
-                        else:
-                            color_index = ifs_color_index[color_index]
-                    # skip eedadoodle vert
-                    color_index += 1
-                    try:
-                        col = ifs_vcol[color_index]
-                    except IndexError:
-                        # TODO, look
-                        col = (1.0, 1.0, 1.0)
-                    for i, c in enumerate(fcol):
-                        c.r, c.g, c.b = col
+                    i = cull[i]
+            face.append(i)
+    if face:
+        faces.append(flip(face, ccw))  # The last face
 
-    # XXX25
-    # bpymesh.vertices.delete([0, ])  # EEKADOODLE
+    if cull:
+        points = culled_points
 
-    bpymesh.update()
+    bpymesh = bpy.data.meshes.new(name="IndexedFaceSet")
+    bpymesh.from_pydata(points, [], faces)
+    # No validation here. It throws off the per-face stuff.
+
+    # Similar treatment for normal and color indices
+
+    def processPerVertexIndex(ind):
+        if ind:
+            # Deflatten into an array of arrays by face; the latter might
+            # need to be flipped
+            i = 0
+            verts_by_face = []
+            for f in faces:
+                verts_by_face.append(flip(ind[i:i + len(f)], ccw))
+                i += len(f) + 1
+            return verts_by_face
+        elif uncull:
+            return [[uncull[v] for v in f] for f in faces]
+        else:
+            return faces  # Reuse coordIndex, as per the spec
+
+    # Normals
+    normals = geom.getChildBySpec('Normal')
+    if normals:
+        per_vertex = geom.getFieldAsBool('normalPerVertex', True, ancestry)
+        vectors = normals.getFieldAsArray('vector', 3, ancestry)
+        normal_index = geom.getFieldAsArray('normalIndex', 0, ancestry)
+        if per_vertex:
+            co = [co for f in processPerVertexIndex(normal_index)
+                  for v in f for co in vectors[v]]
+            bpymesh.vertices.foreach_set("normal", co)
+        else:
+            co = [co for (i, f) in enumerate(faces) for j in f
+                  for co in vectors[normal_index[i] if normal_index else i]]
+            bpymesh.polygons.foreach_set("normal", co)
+
+    # Apply vertex/face colors
+    colors = geom.getChildBySpec(['ColorRGBA', 'Color'])
+    if colors:
+        if colors.getSpec() == 'ColorRGBA':
+            # Array of arrays; no need to flatten
+            rgb = [c[:3] for c
+                   in colors.getFieldAsArray('color', 4, ancestry)]
+        else:
+            rgb = colors.getFieldAsArray('color', 3, ancestry)
+
+        color_per_vertex = geom.getFieldAsBool('colorPerVertex',
+                                               True, ancestry)
+        color_index = geom.getFieldAsArray('colorIndex', 0, ancestry)
+
+        d = bpymesh.vertex_colors.new().data
+        if color_per_vertex:
+            cco = [cco for f in processPerVertexIndex(color_index)
+                   for v in f for cco in rgb[v]]
+        elif color_index:  # Color per face with index
+            cco = [cco for (i, f) in enumerate(faces) for j in f
+                   for cco in rgb[color_index[i]]]
+        else:  # Color per face without index
+            cco = [cco for (i, f) in enumerate(faces) for j in f
+                   for cco in rgb[i]]
+        d.foreach_set('color', cco)
+
+    # Texture
+    if bpyima:
+        tex_coord = geom.getChildBySpec('TextureCoordinate')
+        if tex_coord:
+            tex_coord_points = tex_coord.getFieldAsArray('point', 2, ancestry)
+            tex_index = geom.getFieldAsArray('texCoordIndex', 0, ancestry)
+            tex_index = processPerVertexIndex(tex_index)
+            loops = [co for f in tex_index
+                     for v in f for co in tex_coord_points[v]]
+        else:
+            x_min = x_max = y_min = y_max = z_min = z_max = None
+            for f in faces:
+                # Unused vertices don't participate in size; X3DOM does so
+                for v in f:
+                    (x, y, z) = points[v]
+                    if x_min is None or x < x_min:
+                        x_min = x
+                    if x_max is None or x > x_max:
+                        x_max = x
+                    if y_min is None or y < y_min:
+                        y_min = y
+                    if y_max is None or y > y_max:
+                        y_max = y
+                    if z_min is None or z < z_min:
+                        z_min = z
+                    if z_max is None or z > z_max:
+                        z_max = z
+
+            mins = (x_min, y_min, z_min)
+            deltas = (x_max - x_min, y_max - y_min, z_max - z_min)
+            axes = [0, 1, 2]
+            axes.sort(key=lambda a: (-deltas[a], a))
+            # Tuple comparison breaks ties
+            (s_axis, t_axis) = axes[0:2]
+            s_min = mins[s_axis]
+            ds = deltas[s_axis]
+            t_min = mins[t_axis]
+            dt = deltas[t_axis]
+
+            def generatePointCoords(pt):
+                return (pt[s_axis] - s_min) / ds, (pt[t_axis] - t_min) / dt
+            loops = [co for f in faces for v in f
+                     for co in generatePointCoords(points[v])]
+
+        importMesh_ApplyTextureToLoops(bpymesh, bpyima, loops)
+
     bpymesh.validate()
+    bpymesh.update()
+    return bpymesh
 
-    return bpymesh, ccw
+
+def importMesh_ElevationGrid(geom, ancestry, bpyima):
+    height = geom.getFieldAsArray('height', 0, ancestry)
+    x_dim = geom.getFieldAsInt('xDimension', 0, ancestry)
+    x_spacing = geom.getFieldAsFloat('xSpacing', 1, ancestry)
+    z_dim = geom.getFieldAsInt('zDimension', 0, ancestry)
+    z_spacing = geom.getFieldAsFloat('zSpacing', 1, ancestry)
+    ccw = geom.getFieldAsBool('ccw', True, ancestry)
+
+    # The spec assumes a certain ordering of quads; outer loop by z, inner by x
+    bpymesh = bpy.data.meshes.new(name="ElevationGrid")
+    bpymesh.vertices.add(x_dim * z_dim)
+    co = [w for x in range(x_dim) for z in range(z_dim)
+          for w in (x * x_spacing, height[x_dim * z + x], z * z_spacing)]
+    bpymesh.vertices.foreach_set("co", co)
+
+    bpymesh.tessfaces.add((x_dim - 1) * (z_dim - 1))
+    # If the ccw is off, we flip the 2nd and the 4th vertices of each face.
+    # For quad tessfaces, it's important that the final vertex index is not 0
+    # (Blender treats it as a triangle then).
+    # So simply reversing the face is not an option.
+    verts = [i for x in range(x_dim - 1) for z in range(z_dim - 1)
+             for i in (z * x_dim + x,
+                       z * x_dim + x + 1 if ccw else (z + 1) * x_dim + x,
+                       (z + 1) * x_dim + x + 1,
+                       (z + 1) * x_dim + x if ccw else z * x_dim + x + 1)]
+    bpymesh.tessfaces.foreach_set("vertices_raw", verts)
+
+    importMesh_ApplyNormals(bpymesh, geom, ancestry)
+    # ApplyColors won't work here; faces are quads, and also per-face
+    # coloring should be supported
+    colors = geom.getChildBySpec(['ColorRGBA', 'Color'])
+    if colors:
+        if colors.getSpec() == 'ColorRGBA':
+            rgb = [c[:3] for c
+                   in colors.getFieldAsArray('color', 4, ancestry)]
+            # Array of arrays; no need to flatten
+        else:
+            rgb = colors.getFieldAsArray('color', 3, ancestry)
+
+        tc = bpymesh.tessface_vertex_colors.new()
+        tcd = tc.data
+        if geom.getFieldAsBool('colorPerVertex', True, ancestry):
+            # Per-vertex coloring
+            # Note the 2/4 flip here
+            tcd.foreach_set("color1", [c for x in range(x_dim - 1)
+                            for z in range(z_dim - 1)
+                            for c in rgb[z * x_dim + x]])
+            tcd.foreach_set("color2" if ccw else "color4",
+                            [c for x in range(x_dim - 1)
+                             for z in range(z_dim - 1)
+                             for c in rgb[z * x_dim + x + 1]])
+            tcd.foreach_set("color3", [c for x in range(x_dim - 1)
+                            for z in range(z_dim - 1)
+                            for c in rgb[(z + 1) * x_dim + x + 1]])
+            tcd.foreach_set("color4" if ccw else "color2",
+                            [c for x in range(x_dim - 1)
+                             for z in range(z_dim - 1)
+                             for c in rgb[(z + 1) * x_dim + x]])
+        else:  # Coloring per face
+            colors = [c for x in range(x_dim - 1)
+                      for z in range(z_dim - 1) for c in rgb[z * (x_dim - 1) + x]]
+            tcd.foreach_set("color1", colors)
+            tcd.foreach_set("color2", colors)
+            tcd.foreach_set("color3", colors)
+            tcd.foreach_set("color4", colors)
+
+    # Textures also need special treatment; it's all quads,
+    # and there's a builtin algorithm for coordinate generation
+    if bpyima:
+        tex_coord = geom.getChildBySpec('TextureCoordinate')
+        if tex_coord:
+            coord_points = tex_coord.getFieldAsArray('point', 2, ancestry)
+        else:
+            coord_points = [(i / (x_dim - 1), j / (z_dim - 1))
+                            for i in range(x_dim)
+                            for j in range(z_dim)]
+
+        d = bpymesh.tessface_uv_textures.new().data
+        for face in d:  # No foreach_set for nonscalars
+            face.image = bpyima
+        # Rather than repeat the face/vertex algorithm from above, we read
+        # the vertex index back from tessfaces. Might be suboptimal.
+        uv = [i for face in bpymesh.tessfaces
+              for vno in range(4)
+              for i in coord_points[face.vertices[vno]]]
+        d.foreach_set('uv_raw', uv)
+
+    bpymesh.validate()
+    bpymesh.update()
+    return bpymesh
 
 
-def importMesh_IndexedLineSet(geom, ancestry):
+def importMesh_Extrusion(geom, ancestry, bpyima):
+    # Interestingly, the spec doesn't allow for vertex/face colors in this
+    # element, nor for normals.
+    # Since coloring and normals are not supported here, and also large
+    # polygons for caps might be required, we shall use from_pydata().
+
+    ccw = geom.getFieldAsBool('ccw', True, ancestry)
+    begin_cap = geom.getFieldAsBool('beginCap', True, ancestry)
+    end_cap = geom.getFieldAsBool('endCap', True, ancestry)
+    cross = geom.getFieldAsArray('crossSection', 2, ancestry)
+    if not cross:
+        cross = ((1, 1), (1, -1), (-1, -1), (-1, 1), (1, 1))
+    spine = geom.getFieldAsArray('spine', 3, ancestry)
+    if not spine:
+        spine = ((0, 0, 0), (0, 1, 0))
+    orient = geom.getFieldAsArray('orientation', 4, ancestry)
+    if orient:
+        orient = [Quaternion(o[:3], o[3]).to_matrix()
+                  if o[3] else None for o in orient]
+    scale = geom.getFieldAsArray('scale', 2, ancestry)
+    if scale:
+        scale = [Matrix(((s[0], 0, 0), (0, 1, 0), (0, 0, s[1])))
+                 if s[0] != 1 or s[1] != 1 else None for s in scale]
+
+    # Special treatment for the closed spine and cross section.
+    # Let's save some memory by not creating identical but distinct vertices;
+    # later we'll introduce conditional logic to link the last vertex with
+    # the first one where necessary.
+    cross_closed = cross[0] == cross[-1]
+    if cross_closed:
+        cross = cross[:-1]
+    nc = len(cross)
+    cross = [Vector((c[0], 0, c[1])) for c in cross]
+    ncf = nc if cross_closed else nc - 1
+    # Face count along the cross; for closed cross, it's the same as the
+    # respective vertex count
+
+    spine_closed = spine[0] == spine[-1]
+    if spine_closed:
+        spine = spine[:-1]
+    ns = len(spine)
+    spine = [Vector(s) for s in spine]
+    nsf = ns if spine_closed else ns - 1
+
+    # This will be used for fallback, where the current spine point joins
+    # two collinear spine segments. No need to recheck the case of the
+    # closed spine/last-to-first point juncture; if there's an angle there,
+    # it would kick in on the first iteration of the main loop by spine.
+    def findFirstAngleNormal():
+        for i in range(1, ns - 1):
+            spt = spine[i]
+            z = (spine[i + 1] - spt).cross(spine[i - 1] - spt)
+            if z.length > EPSILON:
+                return z
+        # All the spines are collinear. Fallback to the rotated source
+        # XZ plane.
+        # TODO: handle the situation where the first two spine points match
+        v = spine[1] - spine[0]
+        orig_y = Vector((0, 1, 0))
+        orig_z = Vector((0, 0, 1))
+        if v.cross(orig_y).length >= EPSILON:
+            # Spine at angle with global y - rotate the z accordingly
+            orig_z.rotate(orig_y.rotation_difference(v))
+        return orig_z
+
+    verts = []
+    z = None
+    for i, spt in enumerate(spine):
+        if (i > 0 and i < ns - 1) or spine_closed:
+            snext = spine[(i + 1) % ns]
+            sprev = spine[(i - 1 + ns) % ns]
+            y = snext - sprev
+            vnext = snext - spt
+            vprev = sprev - spt
+            try_z = vnext.cross(vprev)
+            # Might be zero, then all kinds of fallback
+            if try_z.length > EPSILON:
+                if z is not None and try_z.dot(z) < 0:
+                    try_z.negate()
+                z = try_z
+            elif not z:  # No z, and no previous z.
+                # Look ahead, see if there's at least one point where
+                # spines are not collinear.
+                z = findFirstAngleNormal()
+        elif i == 0:  # And non-crossed
+            snext = spine[i + 1]
+            y = snext - spt
+            z = findFirstAngleNormal()
+        else:  # last point and not crossed
+            sprev = spine[i - 1]
+            y = spt - sprev
+            # If there's more than one point in the spine, z is already set.
+            # One point in the spline is an error anyway.
+
+        x = y.cross(z)
+        m = Matrix(((x.x, y.x, z.x), (x.y, y.y, z.y), (x.z, y.z, z.z)))
+        # Columns are the unit vectors for the xz plane for the cross-section
+        m.normalize()
+        if orient:
+            mrot = orient[i] if len(orient) > 1 else orient[0]
+            if mrot:
+                m *= mrot  # Not sure about this. Counterexample???
+        if scale:
+            mscale = scale[i] if len(scale) > 1 else scale[0]
+            if mscale:
+                m *= mscale
+                # First the cross-section 2-vector is scaled,
+                # then applied to the xz plane unit vectors
+        for cpt in cross:
+            verts.append((spt + m * cpt).to_tuple())
+            # Could've done this with a single 4x4 matrix... Oh well
+
+    # The method from_pydata() treats correctly quads with final vertex
+    # index being zero.
+    # So we just flip the vertices if ccw is off.
+
+    faces = []
+    if begin_cap:
+        faces.append(flip([x for x in range(nc - 1, -1, -1)], ccw))
+
+    # Order of edges in the face: forward along cross, forward along spine,
+    # backward along cross, backward along spine, flipped if now ccw.
+    # This order is assumed later in the texture coordinate assignment;
+    # please don't change without syncing.
+
+    faces += [flip((
+        s * nc + c,
+        s * nc + (c + 1) % nc,
+        (s + 1) * nc + (c + 1) % nc,
+        (s + 1) * nc + c), ccw) for s in range(ns - 1) for c in range(ncf)]
+
+    if spine_closed:
+        # The faces between the last and the first spine poins
+        b = (ns - 1) * nc
+        faces += [flip((
+            b + c,
+            b + (c + 1) % nc,
+            (c + 1) % nc,
+            c), ccw) for c in range(ncf)]
+
+    if end_cap:
+        faces.append(flip([(ns - 1) * nc + x for x in range(0, nc)], ccw))
+
+    bpymesh = bpy.data.meshes.new(name="Extrusion")
+    bpymesh.from_pydata(verts, [], faces)
+
+    # Polygons and loops here, not tessfaces. The way we deal with
+    # textures in triangular meshes doesn't apply.
+    if bpyima:
+        # The structure of the loop array goes: cap, side, cap
+        if begin_cap or end_cap:  # Need dimensions
+            x_min = x_max = z_min = z_max = None
+            for c in cross:
+                (x, z) = (c.x, c.z)
+                if x_min is None or x < x_min:
+                    x_min = x
+                if x_max is None or x > x_max:
+                    x_max = x
+                if z_min is None or z < z_min:
+                    z_min = z
+                if z_max is None or z > z_max:
+                    z_max = z
+            dx = x_max - x_min
+            dz = z_max - z_min
+            cap_scale = dz if dz > dx else dx
+
+        # Takes an index in the cross array, returns scaled
+        # texture coords for cap texturing purposes
+        def scaledLoopVertex(i):
+            c = cross[i]
+            return (c.x - x_min) / cap_scale, (c.z - z_min) / cap_scale
+
+        # X3DOM uses raw cap shape, not a scaled one. So we will, too.
+
+        loops = []
+        mloops = bpymesh.loops
+        if begin_cap:  # vertex indices match the indices in cross
+            # Rely on the loops in the mesh; don't repeat the face
+            # generation logic here
+            loops += [co for i in range(nc)
+                      for co in scaledLoopVertex(mloops[i].vertex_index)]
+
+        # Sides
+        # Same order of vertices as in face generation
+        # We don't rely on the loops in the mesh; instead,
+        # we repeat the face generation logic.
+        loops += [co for s in range(nsf)
+                  for c in range(ncf)
+                  for v in flip(((c / ncf, s / nsf),
+                                 ((c + 1) / ncf, s / nsf),
+                                 ((c + 1) / ncf, (s + 1) / nsf),
+                                 (c / ncf, (s + 1) / nsf)), ccw) for co in v]
+
+        if end_cap:
+            # Base loop index for end cap
+            lb = ncf * nsf * 4 + (nc if begin_cap else 0)
+            # Rely on the loops here too.
+            loops += [co for i in range(nc) for co
+                      in scaledLoopVertex(mloops[lb + i].vertex_index % nc)]
+        importMesh_ApplyTextureToLoops(bpymesh, bpyima, loops)
+
+    bpymesh.validate(True)
+    bpymesh.update()
+    return bpymesh
+
+
+# -----------------------------------------------------------------------------------
+# Line and point sets
+
+
+def importMesh_LineSet(geom, ancestry, bpyima):
+    # TODO: line display properties are ignored
+    # Per-vertex color is ignored
+    coord = geom.getChildBySpec('Coordinate')
+    src_points = coord.getFieldAsArray('point', 3, ancestry)
+    # Array of 3; Blender needs arrays of 4
+    bpycurve = bpy.data.curves.new("LineSet", 'CURVE')
+    bpycurve.dimensions = '3D'
+    counts = geom.getFieldAsArray('vertexCount', 0, ancestry)
+    b = 0
+    for n in counts:
+        sp = bpycurve.splines.new('POLY')
+        sp.points.add(n - 1)  # points already has one element
+
+        def points():
+            for x in src_points[b:b + n]:
+                yield x[0]
+                yield x[1]
+                yield x[2]
+                yield 0
+        sp.points.foreach_set('co', [x for x in points()])
+        b += n
+    return bpycurve
+
+
+def importMesh_IndexedLineSet(geom, ancestry, _):
     # VRML not x3d
-    #coord = geom.getChildByName('coord') # 'Coordinate'
+    # coord = geom.getChildByName('coord') # 'Coordinate'
     coord = geom.getChildBySpec('Coordinate')  # works for x3d and vrml
     if coord:
         points = coord.getFieldAsArray('point', 3, ancestry)
@@ -1874,7 +2387,8 @@ def importMesh_IndexedLineSet(geom, ancestry):
             line.append(int(il))
     lines.append(line)
 
-    # vcolor = geom.getChildByName('color') # blender dosnt have per vertex color
+    # vcolor = geom.getChildByName('color')
+    # blender dosnt have per vertex color
 
     bpycurve = bpy.data.curves.new('IndexedCurve', 'CURVE')
     bpycurve.dimensions = '3D'
@@ -1891,18 +2405,18 @@ def importMesh_IndexedLineSet(geom, ancestry):
     return bpycurve
 
 
-def importMesh_PointSet(geom, ancestry):
+def importMesh_PointSet(geom, ancestry, _):
     # VRML not x3d
-    #coord = geom.getChildByName('coord') # 'Coordinate'
     coord = geom.getChildBySpec('Coordinate')  # works for x3d and vrml
     if coord:
         points = coord.getFieldAsArray('point', 3, ancestry)
     else:
         points = []
 
-    # vcolor = geom.getChildByName('color') # blender dosnt have per vertex color
+    # vcolor = geom.getChildByName('color')
+    # blender dosnt have per vertex color
 
-    bpymesh = bpy.data.meshes.new("XXX")
+    bpymesh = bpy.data.meshes.new("PointSet")
     bpymesh.vertices.add(len(points))
     bpymesh.vertices.foreach_set("co", [a for v in points for a in v])
 
@@ -1910,341 +2424,715 @@ def importMesh_PointSet(geom, ancestry):
     bpymesh.update()
     return bpymesh
 
+
+# -----------------------------------------------------------------------------------
+# Primitives
+# SA: they used to use bpy.ops for primitive creation. That was
+# unbelievably slow on complex scenes. I rewrote to generate meshes
+# by hand.
+
+
 GLOBALS['CIRCLE_DETAIL'] = 12
 
 
-def bpy_ops_add_object_hack():  # XXX25, evil
-    scene = bpy.context.scene
-    obj = scene.objects[0]
-    scene.objects.unlink(obj)
-    bpymesh = obj.data
-    bpy.data.objects.remove(obj)
+def importMesh_Sphere(geom, ancestry, bpyima):
+    # solid is ignored.
+    # Extra field 'subdivision="n m"' attribute, specifying how many
+    # rings and segments to use (X3DOM).
+    r = geom.getFieldAsFloat('radius', 0.5, ancestry)
+    subdiv = geom.getFieldAsArray('subdivision', 0, ancestry)
+    if subdiv:
+        if len(subdiv) == 1:
+            nr = ns = subdiv[0]
+        else:
+            (nr, ns) = subdiv
+    else:
+        nr = ns = GLOBALS['CIRCLE_DETAIL']
+        # used as both ring count and segment count
+    lau = pi / nr  # Unit angle of latitude (rings) for the given tesselation
+    lou = 2 * pi / ns  # Unit angle of longitude (segments)
+
+    bpymesh = bpy.data.meshes.new(name="Sphere")
+
+    bpymesh.vertices.add(ns * (nr - 1) + 2)
+    # The non-polar vertices go from x=0, negative z plane counterclockwise -
+    # to -x, to +z, to +x, back to -z
+    co = [0, r, 0, 0, -r, 0]  # +y and -y poles
+    co += [r * coe for ring in range(1, nr) for seg in range(ns)
+           for coe in (-sin(lou * seg) * sin(lau * ring),
+                       cos(lau * ring),
+                       -cos(lou * seg) * sin(lau * ring))]
+    bpymesh.vertices.foreach_set('co', co)
+
+    tf = bpymesh.tessfaces
+    tf.add(ns * nr)
+    vb = 2 + (nr - 2) * ns  # First vertex index for the bottom cap
+    fb = (nr - 1) * ns  # First face index for the bottom cap
+
+    # Because of tricky structure, assign texture coordinates along with
+    # face creation. Can't easily do foreach_set, 'cause caps are triangles and
+    # sides are quads.
+
+    if bpyima:
+        tex = bpymesh.tessface_uv_textures.new().data
+        for face in tex:  # No foreach_set for nonscalars
+            face.image = bpyima
+
+    # Faces go in order: top cap, sides, bottom cap.
+    # Sides go by ring then by segment.
+
+    # Caps
+    # Top cap face vertices go in order: down right up
+    # (starting from +y pole)
+    # Bottom cap goes: up left down (starting from -y pole)
+    for seg in range(ns):
+        tf[seg].vertices = (0, seg + 2, (seg + 1) % ns + 2)
+        tf[fb + seg].vertices = (1, vb + (seg + 1) % ns, vb + seg)
+        if bpyima:
+            tex[seg].uv = (((seg + 0.5) / ns, 1),
+                           (seg / ns, 1 - 1 / nr),
+                           ((seg + 1) / ns, 1 - 1 / nr))
+            tex[fb + seg].uv = (((seg + 0.5) / ns, 0),
+                                ((seg + 1) / ns, 1 / nr),
+                                (seg / ns, 1 / nr))
+
+    # Sides
+    # Side face vertices go in order:  down right up left
+    for ring in range(nr - 2):
+        tvb = 2 + ring * ns
+        # First vertex index for the top edge of the ring
+        bvb = tvb + ns
+        # First vertex index for the bottom edge of the ring
+        rfb = ns * (ring + 1)
+        # First face index for the ring
+        for seg in range(ns):
+            nseg = (seg + 1) % ns
+            tf[rfb + seg].vertices_raw = (tvb + seg, bvb + seg, bvb + nseg, tvb + nseg)
+            if bpyima:
+                tex[rfb + seg].uv_raw = (seg / ns, 1 - (ring + 1) / nr,
+                                         seg / ns, 1 - (ring + 2) / nr,
+                                         (seg + 1) / ns, 1 - (ring + 2) / nr,
+                                         (seg + 1) / ns, 1 - (ring + 1) / nr)
+
+    bpymesh.validate(False)
+    bpymesh.update()
     return bpymesh
 
 
-def importMesh_Sphere(geom, ancestry):
-    diameter = geom.getFieldAsFloat('radius', 0.5, ancestry)
-    # bpymesh = Mesh.Primitives.UVsphere(GLOBALS['CIRCLE_DETAIL'], GLOBALS['CIRCLE_DETAIL'], diameter)
-
-    bpy.ops.mesh.primitive_uv_sphere_add(segments=GLOBALS['CIRCLE_DETAIL'],
-                                         ring_count=GLOBALS['CIRCLE_DETAIL'],
-                                         size=diameter,
-                                         view_align=False,
-                                         enter_editmode=False,
-                                         )
-
-    bpymesh = bpy_ops_add_object_hack()
-
-    bpymesh.transform(MATRIX_Z_TO_Y)
-    return bpymesh
-
-
-def importMesh_Cylinder(geom, ancestry):
-    # bpymesh = bpy.data.meshes.new()
-    diameter = geom.getFieldAsFloat('radius', 1.0, ancestry)
+def importMesh_Cylinder(geom, ancestry, bpyima):
+    # solid is ignored
+    # no ccw in this element
+    # Extra parameter subdivision="n" - how many faces to use
+    radius = geom.getFieldAsFloat('radius', 1.0, ancestry)
     height = geom.getFieldAsFloat('height', 2, ancestry)
-
-    # bpymesh = Mesh.Primitives.Cylinder(GLOBALS['CIRCLE_DETAIL'], diameter, height)
-
-    bpy.ops.mesh.primitive_cylinder_add(vertices=GLOBALS['CIRCLE_DETAIL'],
-                                        radius=diameter,
-                                        depth=height,
-                                        end_fill_type='NGON',
-                                        view_align=False,
-                                        enter_editmode=False,
-                                        )
-
-    bpymesh = bpy_ops_add_object_hack()
-
-    bpymesh.transform(MATRIX_Z_TO_Y)
-
-    # Warning - Rely in the order Blender adds verts
-    # not nice design but wont change soon.
-
     bottom = geom.getFieldAsBool('bottom', True, ancestry)
     side = geom.getFieldAsBool('side', True, ancestry)
     top = geom.getFieldAsBool('top', True, ancestry)
 
-    if not top:  # last vert is top center of tri fan.
-        # bpymesh.vertices.delete([(GLOBALS['CIRCLE_DETAIL'] + GLOBALS['CIRCLE_DETAIL']) + 1])  # XXX25
-        pass
+    n = geom.getFieldAsInt('subdivision', GLOBALS['CIRCLE_DETAIL'], ancestry)
 
-    if not bottom:  # second last vert is bottom of triangle fan
-        # XXX25
-        # bpymesh.vertices.delete([GLOBALS['CIRCLE_DETAIL'] + GLOBALS['CIRCLE_DETAIL']])
-        pass
+    nn = n * 2
+    yvalues = (height / 2, -height / 2)
+    angle = 2 * pi / n
 
-    if not side:
-        # remove all quads
-        # XXX25
-        # bpymesh.tessfaces.delete(1, [f for f in bpymesh.tessfaces if len(f) == 4])
-        pass
+    # The seam is at x=0, z=-r, vertices go ccw -
+    # to pos x, to neg z, to neg x, back to neg z
+    verts = [(-radius * sin(angle * i), y, -radius * cos(angle * i))
+             for i in range(n) for y in yvalues]
+    faces = []
+    if side:
+        # Order of edges in side faces: up, left, down, right.
+        # Texture coordinate logic depends on it.
+        faces += [(i * 2 + 3, i * 2 + 2, i * 2, i * 2 + 1)
+                  for i in range(n - 1)] + [(1, 0, nn - 2, nn - 1)]
+    if top:
+        faces += [[x for x in range(0, nn, 2)]]
+    if bottom:
+        faces += [[x for x in range(nn - 1, -1, -2)]]
 
+    bpymesh = bpy.data.meshes.new(name="Cylinder")
+    bpymesh.from_pydata(verts, [], faces)
+    # Tried constructing the mesh manually from polygons/loops/edges,
+    # the difference in performance on Blender 2.74 (Win64) is negligible.
+
+    bpymesh.validate(False)
+
+    # Polygons here, not tessfaces
+    # The structure of the loop array goes: cap, side, cap.
+    if bpyima:
+        loops = []
+        if side:
+            loops += [co for i in range(n)
+                      for co in ((i + 1) / n, 0, (i + 1) / n, 1, i / n, 1, i / n, 0)]
+
+        if top:
+            loops += [0.5 + co / 2 for i in range(n)
+                      for co in (-sin(angle * i), cos(angle * i))]
+
+        if bottom:
+            loops += [0.5 - co / 2 for i in range(n - 1, -1, -1)
+                      for co in (sin(angle * i), cos(angle * i))]
+
+        importMesh_ApplyTextureToLoops(bpymesh, bpyima, loops)
+
+    bpymesh.update()
     return bpymesh
 
 
-def importMesh_Cone(geom, ancestry):
-    # bpymesh = bpy.data.meshes.new()
-    diameter = geom.getFieldAsFloat('bottomRadius', 1.0, ancestry)
+def importMesh_Cone(geom, ancestry, bpyima):
+    # Solid ignored
+    # Extra parameter subdivision="n" - how many faces to use
+    n = geom.getFieldAsInt('subdivision', GLOBALS['CIRCLE_DETAIL'], ancestry)
+    radius = geom.getFieldAsFloat('bottomRadius', 1.0, ancestry)
     height = geom.getFieldAsFloat('height', 2, ancestry)
-
-    # bpymesh = Mesh.Primitives.Cone(GLOBALS['CIRCLE_DETAIL'], diameter, height)
-
-    bpy.ops.mesh.primitive_cone_add(vertices=GLOBALS['CIRCLE_DETAIL'],
-                                    radius1=diameter,
-                                    radius2=0,
-                                    depth=height,
-                                    end_fill_type='NGON',
-                                    view_align=False,
-                                    enter_editmode=False,
-                                    )
-
-    bpymesh = bpy_ops_add_object_hack()
-
-    bpymesh.transform(MATRIX_Z_TO_Y)
-
-    # Warning - Rely in the order Blender adds verts
-    # not nice design but wont change soon.
-
     bottom = geom.getFieldAsBool('bottom', True, ancestry)
     side = geom.getFieldAsBool('side', True, ancestry)
 
-    if not bottom:  # last vert is on the bottom
-        # bpymesh.vertices.delete([GLOBALS['CIRCLE_DETAIL'] + 1]) # XXX25
-        pass
-    if not side:  # second last vert is on the pointy bit of the cone
-        # bpymesh.vertices.delete([GLOBALS['CIRCLE_DETAIL']]) # XXX25
-        pass
+    d = height / 2
+    angle = 2 * pi / n
 
+    verts = [(0, d, 0)]
+    verts += [(-radius * sin(angle * i),
+               -d,
+               -radius * cos(angle * i)) for i in range(n)]
+    faces = []
+
+    # Side face vertices go: up down right
+    if side:
+        faces += [(1 + (i + 1) % n, 0, 1 + i) for i in range(n)]
+    if bottom:
+        faces += [[i for i in range(n, 0, -1)]]
+
+    bpymesh = bpy.data.meshes.new(name="Cone")
+    bpymesh.from_pydata(verts, [], faces)
+
+    bpymesh.validate(False)
+    if bpyima:
+        loops = []
+        if side:
+            loops += [co for i in range(n)
+                      for co in ((i + 1) / n, 0, (i + 0.5) / n, 1, i / n, 0)]
+        if bottom:
+            loops += [0.5 - co / 2 for i in range(n - 1, -1, -1)
+                      for co in (sin(angle * i), cos(angle * i))]
+        importMesh_ApplyTextureToLoops(bpymesh, bpyima, loops)
+
+    bpymesh.update()
     return bpymesh
 
 
-def importMesh_Box(geom, ancestry):
-    # bpymesh = bpy.data.meshes.new()
+def importMesh_Box(geom, ancestry, bpyima):
+    # Solid is ignored
+    # No ccw in this element
+    (dx, dy, dz) = geom.getFieldAsFloatTuple('size', (2.0, 2.0, 2.0), ancestry)
+    dx /= 2
+    dy /= 2
+    dz /= 2
 
-    size = geom.getFieldAsFloatTuple('size', (2.0, 2.0, 2.0), ancestry)
+    bpymesh = bpy.data.meshes.new(name="Box")
+    bpymesh.vertices.add(8)
 
-    # bpymesh = Mesh.Primitives.Cube(1.0)
-    bpy.ops.mesh.primitive_cube_add(view_align=False,
-                                    enter_editmode=False,
-                                    )
+    # xz plane at +y, ccw
+    co = (dx, dy, dz, -dx, dy, dz, -dx, dy, -dz, dx, dy, -dz,
+          # xz plane at -y
+          dx, -dy, dz, -dx, -dy, dz, -dx, -dy, -dz, dx, -dy, -dz)
+    bpymesh.vertices.foreach_set('co', co)
 
-    bpymesh = bpy_ops_add_object_hack()
+    bpymesh.tessfaces.add(6)
+    bpymesh.tessfaces.foreach_set('vertices_raw', (
+        0, 1, 2, 3,   # +y
+        4, 0, 3, 7,   # +x
+        7, 3, 2, 6,   # -z
+        6, 2, 1, 5,   # -x
+        5, 1, 0, 4,   # +z
+        7, 6, 5, 4))  # -y
 
-    # Scale the box to the size set
-    scale_mat = Matrix(((size[0], 0, 0), (0, size[1], 0), (0, 0, size[2]))) * 0.5
-    bpymesh.transform(scale_mat.to_4x4())
+    bpymesh.validate(False)
+    if bpyima:
+        d = bpymesh.tessface_uv_textures.new().data
+        for face in d:  # No foreach_set for nonscalars
+            face.image = bpyima
+        d.foreach_set('uv_raw', (
+            1, 0, 0, 0, 0, 1, 1, 1,
+            0, 0, 0, 1, 1, 1, 1, 0,
+            0, 0, 0, 1, 1, 1, 1, 0,
+            0, 0, 0, 1, 1, 1, 1, 0,
+            0, 0, 0, 1, 1, 1, 1, 0,
+            1, 0, 0, 0, 0, 1, 1, 1))
 
+    bpymesh.update()
     return bpymesh
 
+# -----------------------------------------------------------------------------------
+# Utilities for importShape
 
-def importShape(node, ancestry, global_matrix):
-    def apply_texmtx(blendata, texmtx):
-        for luv in bpydata.uv_layers.active.data:
-            luv.uv = texmtx * luv.uv
+
+# Textures are processed elsewhere.
+def appearance_CreateMaterial(vrmlname, mat, ancestry, is_vcol):
+    # Given an X3D material, creates a Blender material.
+    # texture is applied later, in appearance_Create().
+    # All values between 0.0 and 1.0, defaults from VRML docs.
+    bpymat = bpy.data.materials.new(vrmlname)
+    bpymat.ambient = mat.getFieldAsFloat('ambientIntensity', 0.2, ancestry)
+    diff_color = mat.getFieldAsFloatTuple('diffuseColor',
+                                          [0.8, 0.8, 0.8],
+                                          ancestry)
+    bpymat.diffuse_color = diff_color
+
+    # NOTE - blender dosnt support emmisive color
+    # Store in mirror color and approximate with emit.
+    emit = mat.getFieldAsFloatTuple('emissiveColor', [0.0, 0.0, 0.0], ancestry)
+    bpymat.mirror_color = emit
+    bpymat.emit = (emit[0] + emit[1] + emit[2]) / 3.0
+
+    shininess = mat.getFieldAsFloat('shininess', 0.2, ancestry)
+    bpymat.specular_hardness = int(1 + (510 * shininess))
+    # 0-1 -> 1-511
+    bpymat.specular_color = mat.getFieldAsFloatTuple('specularColor',
+                                                     [0.0, 0.0, 0.0], ancestry)
+    bpymat.alpha = 1.0 - mat.getFieldAsFloat('transparency', 0.0, ancestry)
+    if bpymat.alpha < 0.999:
+        bpymat.use_transparency = True
+    if is_vcol:
+        bpymat.use_vertex_color_paint = True
+    return bpymat
+
+
+def appearance_CreateDefaultMaterial():
+    # Just applies the X3D defaults. Used for shapes
+    # without explicit material definition
+    # (but possibly with a texture).
+
+    bpymat = bpy.data.materials.new("Material")
+    bpymat.ambient = 0.2
+    bpymat.diffuse_color = [0.8, 0.8, 0.8]
+    bpymat.mirror_color = (0, 0, 0)
+    bpymat.emit = 0
+
+    bpymat.specular_hardness = 103
+    # 0-1 -> 1-511
+    bpymat.specular_color = (0, 0, 0)
+    bpymat.alpha = 1
+    return bpymat
+
+
+def appearance_LoadImageTextureFile(ima_urls, node):
+    bpyima = None
+    for f in ima_urls:
+        dirname = os.path.dirname(node.getFilename())
+        bpyima = image_utils.load_image(f, dirname,
+                                        place_holder=False,
+                                        recursive=False,
+                                        convert_callback=imageConvertCompat)
+        if bpyima:
+            break
+
+    return bpyima
+
+
+def appearance_LoadImageTexture(imageTexture, ancestry, node):
+    # TODO: cache loaded textures...
+    ima_urls = imageTexture.getFieldAsString('url', None, ancestry)
+
+    if ima_urls is None:
+        try:
+            ima_urls = imageTexture.getFieldAsStringArray('url', ancestry)
+            # in some cases we get a list of images.
+        except:
+            ima_urls = None
+    else:
+        if '" "' in ima_urls:
+            # '"foo" "bar"' --> ['foo', 'bar']
+            ima_urls = [w.strip('"') for w in ima_urls.split('" "')]
+        else:
+            ima_urls = [ima_urls]
+    # ima_urls is a list or None
+
+    if ima_urls is None:
+        print("\twarning, image with no URL, this is odd")
+        return None
+    else:
+        bpyima = appearance_LoadImageTextureFile(ima_urls, node)
+
+        if not bpyima:
+            print("ImportX3D warning: unable to load texture", ima_urls)
+        else:
+            # KNOWN BUG; PNGs with a transparent color are not perceived
+            # as transparent. Need alpha channel.
+
+            bpyima.use_alpha = bpyima.depth in {32, 128}
+        return bpyima
+
+
+def appearance_LoadTexture(tex_node, ancestry, node):
+    # Both USE-based caching and desc-based caching
+    # Works for bother ImageTextures and PixelTextures
+
+    # USE-based caching
+    if tex_node.reference:
+        return tex_node.getRealNode().parsed
+
+    # Desc-based caching. It might misfire on multifile models, where the
+    # same desc means different things in different files.
+    # TODO: move caches to file level.
+    desc = tex_node.desc()
+    if desc and desc in texture_cache:
+        bpyima = texture_cache[desc]
+        if tex_node.canHaveReferences():
+            tex_node.parsed = bpyima
+        return bpyima
+
+    # No cached texture, load it.
+    if tex_node.getSpec() == 'ImageTexture':
+        bpyima = appearance_LoadImageTexture(tex_node, ancestry, node)
+    else:  # PixelTexture
+        bpyima = appearance_LoadPixelTexture(tex_node, ancestry)
+
+    if bpyima:  # Loading can still fail
+        repeat_s = tex_node.getFieldAsBool('repeatS', True, ancestry)
+        bpyima.use_clamp_x = not repeat_s
+        repeat_t = tex_node.getFieldAsBool('repeatT', True, ancestry)
+        bpyima.use_clamp_y = not repeat_t
+
+        # Update the desc-based cache
+        if desc:
+            texture_cache[desc] = bpyima
+
+        # Update the USE-based cache
+        if tex_node.canHaveReferences():
+            tex_node.parsed = bpyima
+
+    return bpyima
+
+
+def appearance_ExpandCachedMaterial(bpymat):
+    if bpymat.texture_slots[0] is not None:
+        bpyima = bpymat.texture_slots[0].texture.image
+        tex_has_alpha = bpyima.use_alpha
+        return (bpymat, bpyima, tex_has_alpha)
+
+    return (bpymat, None, False)
+
+
+def appearance_MakeDescCacheKey(material, tex_node):
+    mat_desc = material.desc() if material else "Default"
+    tex_desc = tex_node.desc() if tex_node else "Default"
+
+    if not((tex_node and tex_desc is None) or
+           (material and mat_desc is None)):
+        # desc not available (in VRML)
+        # TODO: serialize VRML nodes!!!
+        return (mat_desc, tex_desc)
+    elif not tex_node and not material:
+        # Even for VRML, we cache the null material
+        return ("Default", "Default")
+    else:
+        return None  # Desc-based caching is off
+
+
+def appearance_Create(vrmlname, material, tex_node, ancestry, node, is_vcol):
+    # Creates a Blender material object from appearance
+    bpyima = None
+    tex_has_alpha = False
+
+    if material:
+        bpymat = appearance_CreateMaterial(vrmlname, material, ancestry, is_vcol)
+    else:
+        bpymat = appearance_CreateDefaultMaterial()
+
+    if tex_node:  # Texture caching inside there
+        bpyima = appearance_LoadTexture(tex_node, ancestry, node)
+
+    if is_vcol:
+        bpymat.use_vertex_color_paint = True
+
+    if bpyima:
+        tex_has_alpha = bpyima.use_alpha
+
+        texture = bpy.data.textures.new(bpyima.name, 'IMAGE')
+        texture.image = bpyima
+
+        mtex = bpymat.texture_slots.add()
+        mtex.texture = texture
+
+        mtex.texture_coords = 'UV'
+        mtex.use_map_diffuse = True
+        mtex.use = True
+
+        if bpyima.use_alpha:
+            bpymat.use_transparency = True
+            mtex.use_map_alpha = True
+            mtex.alpha_factor = 0.0
+
+    return (bpymat, bpyima, tex_has_alpha)
+
+
+def importShape_LoadAppearance(vrmlname, appr, ancestry, node, is_vcol):
+    """
+    Material creation takes nontrivial time on large models.
+    So we cache them aggressively.
+    However, in Blender, texture is a part of material, while in
+    X3D it's not. Blender's notion of material corresponds to
+    X3D's notion of appearance.
+
+    TextureTransform is not a part of material (at least
+    not in the current implementation).
+
+    USE on an Appearance node and USE on a Material node
+    call for different approaches.
+
+    Tools generate repeating, idential material definitions.
+    Can't rely on USE alone. Repeating texture definitions
+    are entirely possible, too.
+
+    Vertex coloring is not a part of appearance, but Blender
+    has a material flag for it. However, if a mesh has no vertex
+    color layer, setting use_vertex_color_paint to true has no
+    effect. So it's fine to reuse the same  material for meshes
+    with vertex colors and for ones without.
+    It's probably an abuse of Blender of some level.
+
+    So here's the caching structure:
+    For USE on apprearance, we store the material object
+    in the appearance node.
+
+    For USE on texture, we store the image object in the tex node.
+
+    For USE on material with no texture, we store the material object
+    in the material node.
+
+    Also, we store textures by description in texture_cache.
+
+    Also, we store materials by (material desc, texture desc)
+    in material_cache.
+    """
+    # First, check entire-appearance cache
+    if appr.reference and appr.getRealNode().parsed:
+        return appearance_ExpandCachedMaterial(appr.getRealNode().parsed)
+
+    tex_node = appr.getChildBySpec(('ImageTexture', 'PixelTexture'))
+    # Other texture nodes are: MovieTexture, MultiTexture
+    material = appr.getChildBySpec('Material')
+    # We're ignoring FillProperties, LineProperties, and shaders
+
+    # Check the USE-based material cache for textureless materials
+    if material and material.reference and not tex_node and material.getRealNode().parsed:
+        return appearance_ExpandCachedMaterial(material.getRealNode().parsed)
+
+    # Now the description-based caching
+    cache_key = appearance_MakeDescCacheKey(material, tex_node)
+
+    if cache_key and cache_key in material_cache:
+        bpymat = material_cache[cache_key]
+        # Still want to make the material available for USE-based reuse
+        if appr.canHaveReferences():
+            appr.parsed = bpymat
+        if material and material.canHaveReferences() and not tex_node:
+            material.parsed = bpymat
+        return appearance_ExpandCachedMaterial(bpymat)
+
+    # Done checking full-material caches. Texture cache may still kick in.
+    # Create the material already
+    (bpymat, bpyima, tex_has_alpha) = appearance_Create(vrmlname, material, tex_node, ancestry, node, is_vcol)
+
+    # Update the caches
+    if appr.canHaveReferences():
+        appr.parsed = bpymat
+
+    if cache_key:
+        material_cache[cache_key] = bpymat
+
+    if material and material.canHaveReferences() and not tex_node:
+        material.parsed = bpymat
+
+    return (bpymat, bpyima, tex_has_alpha)
+
+
+def appearance_LoadPixelTexture(pixelTexture, ancestry):
+    image = pixelTexture.getFieldAsArray('image', 0, ancestry)
+    (w, h, plane_count) = image[0:3]
+    has_alpha = plane_count in {2, 4}
+    pixels = image[3:]
+    if len(pixels) != w * h:
+        print("ImportX3D warning: pixel count in PixelTexture is off")
+
+    bpyima = bpy.data.images.new("PixelTexture", w, h, has_alpha, True)
+    bpyima.use_alpha = has_alpha
+
+    # Conditional above the loop, for performance
+    if plane_count == 3:  # RGB
+        bpyima.pixels = [(cco & 0xff) / 255 for pixel in pixels
+                         for cco in (pixel >> 16, pixel >> 8, pixel, 255)]
+    elif plane_count == 4:  # RGBA
+        bpyima.pixels = [(cco & 0xff) / 255 for pixel in pixels
+                         for cco
+                         in (pixel >> 24, pixel >> 16, pixel >> 8, pixel)]
+    elif plane_count == 1:  # Intensity - does Blender even support that?
+        bpyima.pixels = [(cco & 0xff) / 255 for pixel in pixels
+                         for cco in (pixel, pixel, pixel, 255)]
+    elif plane_count == 2:  # Intensity/aplha
+        bpyima.pixels = [(cco & 0xff) / 255 for pixel in pixels
+                         for cco
+                         in (pixel >> 8, pixel >> 8, pixel >> 8, pixel)]
+    bpyima.update()
+    return bpyima
+
+
+# Called from importShape to insert a data object (typically a mesh)
+# into the scene
+def importShape_ProcessObject(
+        bpyscene, vrmlname, bpydata, geom, geom_spec, node,
+        bpymat, has_alpha, texmtx, ancestry,
+        global_matrix):
+
+    vrmlname += "_" + geom_spec
+    bpydata.name = vrmlname
+
+    if type(bpydata) == bpy.types.Mesh:
+        # solid, as understood by the spec, is always true in Blender
+        # solid=false, we don't support it yet.
+        creaseAngle = geom.getFieldAsFloat('creaseAngle', None, ancestry)
+        if creaseAngle is not None:
+            bpydata.auto_smooth_angle = creaseAngle
+            bpydata.use_auto_smooth = True
+
+        # Only ever 1 material per shape
+        if bpymat:
+            bpydata.materials.append(bpymat)
+
+        if bpydata.tessface_uv_textures:
+            if has_alpha:  # set the faces alpha flag?
+                # transp = Mesh.FaceTranspModes.ALPHA
+                for f in bpydata.tessface_uv_textures.active.data:
+                    f.blend_type = 'ALPHA'
+
+            if texmtx:
+                # Apply texture transform?
+                uv_copy = Vector()
+                for f in bpydata.tessface_uv_textures.active.data:
+                    fuv = f.uv
+                    for i, uv in enumerate(fuv):
+                        uv_copy.x = uv[0]
+                        uv_copy.y = uv[1]
+
+                        fuv[i] = (uv_copy * texmtx)[0:2]
+        # Done transforming the texture
+        # TODO: check if per-polygon textures are supported here.
+    elif type(bpydata) == bpy.types.TextCurve:
+        # Text with textures??? Not sure...
+        if bpymat:
+            bpydata.materials.append(bpymat)
+
+    # Can transform data or object, better the object so we can instance
+    # the data
+    # bpymesh.transform(getFinalMatrix(node))
+    bpyob = node.blendObject = bpy.data.objects.new(vrmlname, bpydata)
+    bpyob.matrix_world = getFinalMatrix(node, None, ancestry, global_matrix)
+    bpyscene.objects.link(bpyob).select = True
+
+    if DEBUG:
+        bpyob["source_line_no"] = geom.lineno
+
+
+def importText(geom, ancestry, bpyima):
+    fmt = geom.getChildBySpec('FontStyle')
+    size = fmt.getFieldAsFloat("size", 1, ancestry) if fmt else 1.
+    body = geom.getFieldAsString("string", None, ancestry)
+    body = [w.strip('"') for w in body.split('" "')]
+
+    bpytext = bpy.data.curves.new(name="Text", type='FONT')
+    bpytext.offset_y = - size
+    bpytext.body = "\n".join(body)
+    bpytext.size = size
+    return bpytext
+
+
+# -----------------------------------------------------------------------------------
+
+
+geometry_importers = {
+    'IndexedFaceSet': importMesh_IndexedFaceSet,
+    'IndexedTriangleSet': importMesh_IndexedTriangleSet,
+    'IndexedTriangleStripSet': importMesh_IndexedTriangleStripSet,
+    'IndexedTriangleFanSet': importMesh_IndexedTriangleFanSet,
+    'IndexedLineSet': importMesh_IndexedLineSet,
+    'TriangleSet': importMesh_TriangleSet,
+    'TriangleStripSet': importMesh_TriangleStripSet,
+    'TriangleFanSet': importMesh_TriangleFanSet,
+    'LineSet': importMesh_LineSet,
+    'ElevationGrid': importMesh_ElevationGrid,
+    'Extrusion': importMesh_Extrusion,
+    'PointSet': importMesh_PointSet,
+    'Sphere': importMesh_Sphere,
+    'Box': importMesh_Box,
+    'Cylinder': importMesh_Cylinder,
+    'Cone': importMesh_Cone,
+    'Text': importText,
+    }
+
+
+def importShape(bpyscene, node, ancestry, global_matrix):
+    # Under Shape, we can only have Appearance, MetadataXXX and a geometry node
+    def isGeometry(spec):
+        return spec != "Appearance" and not spec.startswith("Metadata")
 
     bpyob = node.getRealNode().blendObject
 
     if bpyob is not None:
         bpyob = node.blendData = node.blendObject = bpyob.copy()
-        bpy.context.scene.objects.link(bpyob).select = True
-    else:
-        vrmlname = node.getDefName()
-        if not vrmlname:
-            vrmlname = 'Shape'
-
-        # works 100% in vrml, but not x3d
-        #appr = node.getChildByName('appearance') # , 'Appearance'
-        #geom = node.getChildByName('geometry') # , 'IndexedFaceSet'
-
-        # Works in vrml and x3d
-        appr = node.getChildBySpec('Appearance')
-        geom = node.getChildBySpec(['IndexedFaceSet', 'IndexedLineSet', 'PointSet', 'Sphere', 'Box', 'Cylinder', 'Cone'])
-
-        # For now only import IndexedFaceSet's
-        if geom:
-            bpymat = None
-            bpyima = None
-            texmtx = None
-
-            image_depth = 0  # so we can set alpha face flag later
-            is_vcol = (geom.getChildBySpec('Color') is not None)
-
-            if appr:
-                #mat = appr.getChildByName('material') # 'Material'
-                #ima = appr.getChildByName('texture') # , 'ImageTexture'
-                #if ima and ima.getSpec() != 'ImageTexture':
-                #   print('\tWarning: texture type "%s" is not supported' % ima.getSpec())
-                #   ima = None
-                # textx = appr.getChildByName('textureTransform')
-
-                mat = appr.getChildBySpec('Material')
-                ima = appr.getChildBySpec('ImageTexture')
-
-                textx = appr.getChildBySpec('TextureTransform')
-
-                if textx:
-                    texmtx = translateTexTransform(textx, ancestry)
-
-                bpymat = appr.getRealNode().blendData
-
-                if bpymat is None:
-                    # print(mat, ima)
-                    if mat or ima:
-                        if not mat:
-                            mat = ima  # This is a bit dumb, but just means we use default values for all
-
-                        # all values between 0.0 and 1.0, defaults from VRML docs
-                        bpymat = bpy.data.materials.new(vrmlname)
-                        bpymat.ambient = mat.getFieldAsFloat('ambientIntensity', 0.2, ancestry)
-                        bpymat.diffuse_color = mat.getFieldAsFloatTuple('diffuseColor', [0.8, 0.8, 0.8], ancestry)
-
-                        # NOTE - blender dosnt support emmisive color
-                        # Store in mirror color and approximate with emit.
-                        emit = mat.getFieldAsFloatTuple('emissiveColor', [0.0, 0.0, 0.0], ancestry)
-                        bpymat.mirror_color = emit
-                        bpymat.emit = (emit[0] + emit[1] + emit[2]) / 3.0
-
-                        bpymat.specular_hardness = int(1 + (510 * mat.getFieldAsFloat('shininess', 0.2, ancestry)))  # 0-1 -> 1-511
-                        bpymat.specular_color = mat.getFieldAsFloatTuple('specularColor', [0.0, 0.0, 0.0], ancestry)
-                        bpymat.alpha = 1.0 - mat.getFieldAsFloat('transparency', 0.0, ancestry)
-                        if bpymat.alpha < 0.999:
-                            bpymat.use_transparency = True
-                        if is_vcol:
-                            bpymat.use_vertex_color_paint = True
-
-                    if ima:
-                        bpyima = ima.getRealNode().blendData
-
-                        if bpyima is None:
-                            ima_urls = ima.getFieldAsString('url', None, ancestry)
-
-                            if ima_urls is None:
-                                try:
-                                    ima_urls = ima.getFieldAsStringArray('url', ancestry)  # in some cases we get a list of images.
-                                except:
-                                    ima_urls = None
-                            else:
-                                if '" "' in ima_urls:
-                                    # '"foo" "bar"' --> ['foo', 'bar']
-                                    ima_urls = [w.strip('"') for w in ima_urls.split('" "')]
-                                else:
-                                    ima_urls = [ima_urls]
-                            # ima_urls is a list or None
-
-                            if ima_urls is None:
-                                print("\twarning, image with no URL, this is odd")
-                            else:
-                                for f in ima_urls:
-                                    bpyima = image_utils.load_image(f, os.path.dirname(node.getFilename()), place_holder=False,
-                                                                    recursive=False, convert_callback=imageConvertCompat)
-                                    if bpyima:
-                                        break
-
-                                if bpyima:
-                                    texture = bpy.data.textures.new(bpyima.name, 'IMAGE')
-                                    texture.image = bpyima
-
-                                    # Adds textures for materials (rendering)
-                                    try:
-                                        image_depth = bpyima.depth
-                                    except:
-                                        image_depth = -1
-
-                                    mtex = bpymat.texture_slots.add()
-                                    mtex.texture = texture
-
-                                    mtex.texture_coords = 'UV'
-                                    mtex.use_map_diffuse = True
-
-                                    if image_depth in {32, 128}:
-                                        bpymat.use_transparency = True
-                                        mtex.use_map_alpha = True
-                                        mtex.alpha_factor = 0.0
-
-                                    ima_repS = ima.getFieldAsBool('repeatS', True, ancestry)
-                                    ima_repT = ima.getFieldAsBool('repeatT', True, ancestry)
-
-                                    # To make this work properly we'd need to scale the UV's too, better to ignore th
-                                    # texture.repeat =  max(1, ima_repS * 512), max(1, ima_repT * 512)
-
-                                    if not ima_repS:
-                                        bpyima.use_clamp_x = True
-                                    if not ima_repT:
-                                        bpyima.use_clamp_y = True
-                elif ima:
-                    bpyima = ima.getRealNode().blendData
-
-                appr.blendData = bpymat
-                if ima:
-                    ima.blendData = bpyima
-
-            bpydata = geom.getRealNode().blendData
-            if bpydata is None:
-                geom_spec = geom.getSpec()
-                ccw = True
-                if geom_spec == 'IndexedFaceSet':
-                    bpydata, ccw = importMesh_IndexedFaceSet(geom, bpyima, ancestry)
-                elif geom_spec == 'IndexedLineSet':
-                    bpydata = importMesh_IndexedLineSet(geom, ancestry)
-                elif geom_spec == 'PointSet':
-                    bpydata = importMesh_PointSet(geom, ancestry)
-                elif geom_spec == 'Sphere':
-                    bpydata = importMesh_Sphere(geom, ancestry)
-                elif geom_spec == 'Box':
-                    bpydata = importMesh_Box(geom, ancestry)
-                elif geom_spec == 'Cylinder':
-                    bpydata = importMesh_Cylinder(geom, ancestry)
-                elif geom_spec == 'Cone':
-                    bpydata = importMesh_Cone(geom, ancestry)
-                else:
-                    print('\tWarning: unsupported type "%s"' % geom_spec)
-                    return
-
-                if bpydata:
-                    vrmlname = vrmlname + geom_spec
-                    bpydata.name = vrmlname
-
-                    if type(bpydata) == bpy.types.Mesh:
-                        is_solid = geom.getFieldAsBool('solid', True, ancestry)
-                        creaseAngle = geom.getFieldAsFloat('creaseAngle', None, ancestry)
-
-                        if creaseAngle is not None:
-                            bpydata.auto_smooth_angle = creaseAngle
-                            bpydata.use_auto_smooth = True
-
-                        # Only ever 1 material per shape
-                        if bpymat:
-                            bpydata.materials.append(bpymat)
-
-                        if bpydata.uv_layers:
-                            if texmtx:
-                                # Apply texture transform?
-                                apply_texmtx(blendata, texmtx)
-                        # Done transforming the texture
-
-                        # Must be here and not in IndexedFaceSet because it needs an object for the flip func. Messy :/
-                        if not ccw:
-                            # bpydata.flipNormals()
-                            # XXX25
-                            pass
-
-                    # else could be a curve for example
-
-            # if texmtx is defined, we need specific UVMap, hence a copy of the mesh...
-            elif texmtx and blendata.uv_layers:
-                bpydata = bpydata.copy()
-                apply_texmtx(blendata, texmtx)
-
-            geom.blendData = bpydata
-
-            if bpydata:
-                bpyob = node.blendData = node.blendObject = bpy.data.objects.new(vrmlname, bpydata)
-                bpy.context.scene.objects.link(bpyob).select = True
-
-    if bpyob:
         # Could transform data, but better the object so we can instance the data
         bpyob.matrix_world = getFinalMatrix(node, None, ancestry, global_matrix)
+        bpyscene.objects.link(bpyob).select = True
+        return
+
+    vrmlname = node.getDefName()
+    if not vrmlname:
+        vrmlname = 'Shape'
+
+    appr = node.getChildBySpec('Appearance')
+    geom = node.getChildBySpecCondition(isGeometry)
+    if not geom:
+        # Oh well, no geometry node in this shape
+        return
+
+    bpymat = None
+    bpyima = None
+    texmtx = None
+    tex_has_alpha = False
+
+    is_vcol = (geom.getChildBySpec(['Color', 'ColorRGBA']) is not None)
+
+    if appr:
+        (bpymat, bpyima,
+         tex_has_alpha) = importShape_LoadAppearance(vrmlname, appr,
+                                                     ancestry, node,
+                                                     is_vcol)
+
+        textx = appr.getChildBySpec('TextureTransform')
+        if textx:
+            texmtx = translateTexTransform(textx, ancestry)
+
+    bpydata = None
+    geom_spec = geom.getSpec()
+
+    # ccw is handled by every geometry importer separately; some
+    # geometries are easier to flip than others
+    geom_fn = geometry_importers.get(geom_spec)
+    if geom_fn is not None:
+        bpydata = geom_fn(geom, ancestry, bpyima)
+
+        # There are no geometry importers that can legally return
+        # no object.  It's either a bpy object, or an exception
+        importShape_ProcessObject(
+                bpyscene, vrmlname, bpydata, geom, geom_spec,
+                node, bpymat, tex_has_alpha, texmtx,
+                ancestry, global_matrix)
+    else:
+        print('\tImportX3D warning: unsupported type "%s"' % geom_spec)
+
+
+# -----------------------------------------------------------------------------------
+# Lighting
 
 
 def importLamp_PointLight(node, ancestry):
@@ -2260,7 +3148,7 @@ def importLamp_PointLight(node, ancestry):
     # is_on = node.getFieldAsBool('on', True, ancestry) # TODO
     radius = node.getFieldAsFloat('radius', 100.0, ancestry)
 
-    bpylamp = bpy.data.lamps.new("ToDo", 'POINT')
+    bpylamp = bpy.data.lamps.new(vrmlname, 'POINT')
     bpylamp.energy = intensity
     bpylamp.distance = radius
     bpylamp.color = color
@@ -2330,7 +3218,7 @@ def importLamp_SpotLight(node, ancestry):
     return bpylamp, mtx
 
 
-def importLamp(node, spec, ancestry, global_matrix):
+def importLamp(bpyscene, node, spec, ancestry, global_matrix):
     if spec == 'PointLight':
         bpylamp, mtx = importLamp_PointLight(node, ancestry)
     elif spec == 'DirectionalLight':
@@ -2341,13 +3229,16 @@ def importLamp(node, spec, ancestry, global_matrix):
         print("Error, not a lamp")
         raise ValueError
 
-    bpyob = node.blendData = node.blendObject = bpy.data.objects.new("TODO", bpylamp)
-    bpy.context.scene.objects.link(bpyob).select = True
+    bpyob = node.blendData = node.blendObject = bpy.data.objects.new(bpylamp.name, bpylamp)
+    bpyscene.objects.link(bpyob).select = True
 
     bpyob.matrix_world = getFinalMatrix(node, mtx, ancestry, global_matrix)
 
 
-def importViewpoint(node, ancestry, global_matrix):
+# -----------------------------------------------------------------------------------
+
+
+def importViewpoint(bpyscene, node, ancestry, global_matrix):
     name = node.getDefName()
     if not name:
         name = 'Viewpoint'
@@ -2365,17 +3256,17 @@ def importViewpoint(node, ancestry, global_matrix):
     mtx = Matrix.Translation(Vector(position)) * translateRotation(orientation)
 
     bpyob = node.blendData = node.blendObject = bpy.data.objects.new(name, bpycam)
-    bpy.context.scene.objects.link(bpyob).select = True
+    bpyscene.objects.link(bpyob).select = True
     bpyob.matrix_world = getFinalMatrix(node, mtx, ancestry, global_matrix)
 
 
-def importTransform(node, ancestry, global_matrix):
+def importTransform(bpyscene, node, ancestry, global_matrix):
     name = node.getDefName()
     if not name:
         name = 'Transform'
 
     bpyob = node.blendData = node.blendObject = bpy.data.objects.new(name, None)
-    bpy.context.scene.objects.link(bpyob).select = True
+    bpyscene.objects.link(bpyob).select = True
 
     bpyob.matrix_world = getFinalMatrix(node, None, ancestry, global_matrix)
 
@@ -2559,21 +3450,24 @@ ROUTE champFly001.bindTime TO vpTs.set_startTime
                 translateTimeSensor(time_node, action, ancestry)
 
 
-def load_web3d(path,
-               PREF_FLAT=False,
-               PREF_CIRCLE_DIV=16,
-               global_matrix=None,
-               HELPER_FUNC=None,
-               ):
+def load_web3d(
+        bpyscene,
+        filepath,
+        *,
+        PREF_FLAT=False,
+        PREF_CIRCLE_DIV=16,
+        global_matrix=None,
+        HELPER_FUNC=None
+        ):
 
     # Used when adding blender primitives
     GLOBALS['CIRCLE_DETAIL'] = PREF_CIRCLE_DIV
 
     #root_node = vrml_parse('/_Cylinder.wrl')
-    if path.lower().endswith('.x3d'):
-        root_node, msg = x3d_parse(path)
+    if filepath.lower().endswith('.x3d'):
+        root_node, msg = x3d_parse(filepath)
     else:
-        root_node, msg = vrml_parse(path)
+        root_node, msg = vrml_parse(filepath)
 
     if not root_node:
         print(msg)
@@ -2601,15 +3495,15 @@ def load_web3d(path,
             # by an external script. - gets first pick
             pass
         if spec == 'Shape':
-            importShape(node, ancestry, global_matrix)
+            importShape(bpyscene, node, ancestry, global_matrix)
         elif spec in {'PointLight', 'DirectionalLight', 'SpotLight'}:
-            importLamp(node, spec, ancestry, global_matrix)
+            importLamp(bpyscene, node, spec, ancestry, global_matrix)
         elif spec == 'Viewpoint':
-            importViewpoint(node, ancestry, global_matrix)
+            importViewpoint(bpyscene, node, ancestry, global_matrix)
         elif spec == 'Transform':
             # Only use transform nodes when we are not importing a flat object hierarchy
             if PREF_FLAT == False:
-                importTransform(node, ancestry, global_matrix)
+                importTransform(bpyscene, node, ancestry, global_matrix)
             '''
         # These are delt with later within importRoute
         elif spec=='PositionInterpolator':
@@ -2634,7 +3528,7 @@ def load_web3d(path,
                 node = defDict[key]
                 if node.blendData is None:  # Add an object if we need one for animation
                     node.blendData = node.blendObject = bpy.data.objects.new('AnimOb', None)  # , name)
-                    bpy.context.scene.objects.link(node.blendObject).select = True
+                    bpyscene.objects.link(node.blendObject).select = True
 
                 if node.blendData.animation_data is None:
                     node.blendData.animation_data_create()
@@ -2672,13 +3566,36 @@ def load_web3d(path,
                 c.parent = parent
 
         # update deps
-        bpy.context.scene.update()
+        bpyscene.update()
         del child_dict
 
 
-def load(operator, context, filepath="", global_matrix=None):
+def load_with_profiler(
+        context,
+        filepath,
+        *,
+        global_matrix=None
+        ):
+    import cProfile
+    import pstats
+    pro = cProfile.Profile()
+    pro.runctx("load_web3d(context.scene, filepath, PREF_FLAT=True, "
+               "PREF_CIRCLE_DIV=16, global_matrix=global_matrix)",
+               globals(), locals())
+    st = pstats.Stats(pro)
+    st.sort_stats("time")
+    st.print_stats(0.1)
+    # st.print_callers(0.1)
 
-    load_web3d(filepath,
+
+def load(context,
+         filepath,
+         *,
+         global_matrix=None
+         ):
+
+    # loadWithProfiler(operator, context, filepath, global_matrix)
+    load_web3d(context.scene, filepath,
                PREF_FLAT=True,
                PREF_CIRCLE_DIV=16,
                global_matrix=global_matrix,

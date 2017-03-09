@@ -156,7 +156,7 @@ void ED_armature_origin_set(Scene *scene, Object *ob, float cursor[3], int cente
 		mul_m4_v3(ob->imat, cent);
 	}
 	else {
-		if (around == V3D_CENTROID) {
+		if (around == V3D_AROUND_CENTER_MEAN) {
 			int total = 0;
 			zero_v3(cent);
 			for (ebone = arm->edbo->first; ebone; ebone = ebone->next) {
@@ -317,9 +317,10 @@ static int armature_calc_roll_exec(bContext *C, wmOperator *op)
 		float cursor_local[3];
 		const float   *cursor = ED_view3d_cursor3d_get(scene, v3d);
 		
-		
+		invert_m4_m4(ob->imat, ob->obmat);
 		copy_v3_v3(cursor_local, cursor);
-		mul_m3_v3(imat, cursor_local);
+		mul_m4_v3(ob->imat, cursor_local);
+
 		
 		/* cursor */
 		for (ebone = arm->edbo->first; ebone; ebone = ebone->next) {
@@ -409,6 +410,7 @@ static int armature_calc_roll_exec(bContext *C, wmOperator *op)
 			if (type < 3) vec[type] = 1.0f;
 			else vec[type - 2] = -1.0f;
 			mul_m3_v3(imat, vec);
+			normalize_v3(vec);
 		}
 		
 		if (axis_flip) negate_v3(vec);
@@ -457,6 +459,58 @@ void ARMATURE_OT_calculate_roll(wmOperatorType *ot)
 	ot->prop = RNA_def_enum(ot->srna, "type", prop_calc_roll_types, CALC_ROLL_TAN_POS_X, "Type", "");
 	RNA_def_boolean(ot->srna, "axis_flip", 0, "Flip Axis", "Negate the alignment axis");
 	RNA_def_boolean(ot->srna, "axis_only", 0, "Shortest Rotation", "Ignore the axis direction, use the shortest rotation to align");
+}
+
+static int armature_roll_clear_exec(bContext *C, wmOperator *op)
+{
+	Object *ob = CTX_data_edit_object(C);
+
+	bArmature *arm = ob->data;
+	EditBone *ebone;
+
+	const float roll = RNA_float_get(op->ptr, "roll");
+
+	for (ebone = arm->edbo->first; ebone; ebone = ebone->next) {
+		if (EBONE_VISIBLE(arm, ebone) && EBONE_EDITABLE(ebone)) {
+			/* roll func is a callback which assumes that all is well */
+			ebone->roll = roll;
+		}
+	}
+
+	if (arm->flag & ARM_MIRROR_EDIT) {
+		for (ebone = arm->edbo->first; ebone; ebone = ebone->next) {
+			if ((EBONE_VISIBLE(arm, ebone) && EBONE_EDITABLE(ebone)) == 0) {
+				EditBone *ebone_mirr = ED_armature_bone_get_mirrored(arm->edbo, ebone);
+				if (ebone_mirr && (EBONE_VISIBLE(arm, ebone_mirr) && EBONE_EDITABLE(ebone_mirr))) {
+					ebone->roll = -ebone_mirr->roll;
+				}
+			}
+		}
+	}
+
+	/* note, notifier might evolve */
+	WM_event_add_notifier(C, NC_OBJECT | ND_BONE_SELECT, ob);
+
+	return OPERATOR_FINISHED;
+}
+
+void ARMATURE_OT_roll_clear(wmOperatorType *ot)
+{
+	/* identifiers */
+	ot->name = "Clear Roll";
+	ot->idname = "ARMATURE_OT_roll_clear";
+	ot->description = "Clear roll for selected bones";
+
+	/* api callbacks */
+	ot->exec = armature_roll_clear_exec;
+	ot->poll = ED_operator_editarmature;
+
+	/* flags */
+	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+
+	RNA_def_float_rotation(
+	        ot->srna, "roll", 0, NULL, DEG2RADF(-360.0f), DEG2RADF(360.0f),
+	        "Roll", "", DEG2RADF(-360.0f), DEG2RADF(360.0f));
 }
 
 /* ******************************** Chain-Based Tools ********************************* */
@@ -1274,6 +1328,7 @@ static int armature_delete_selected_exec(bContext *C, wmOperator *UNUSED(op))
 		return OPERATOR_CANCELLED;
 	
 	ED_armature_sync_selection(arm->edbo);
+	BKE_pose_tag_recalc(CTX_data_main(C), obedit->pose);
 
 	WM_event_add_notifier(C, NC_OBJECT | ND_BONE_SELECT, obedit);
 
@@ -1288,7 +1343,7 @@ void ARMATURE_OT_delete(wmOperatorType *ot)
 	ot->description = "Delete Selected Bone(s)\nRemove selected bones from the armature";
 	
 	/* api callbacks */
-	//ot->invoke = WM_operator_confirm;
+	//ot->invoke = WM_operator_confirm; // bfa - turned off confirm on delete
 	ot->exec = armature_delete_selected_exec;
 	ot->poll = ED_operator_editarmature;
 	

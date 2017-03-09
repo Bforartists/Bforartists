@@ -437,36 +437,36 @@ class FractureGroup(bpy.types.Operator):
 # Import Functions
 
 def import_object(obname):
-	opath = "//data.blend\\Object\\" + obname
-	s = os.sep
-	#dpath = bpy.utils.script_paths()[0] + \
-	#	 '%saddons%sobject_fracture%sdata.blend\\Object\\' % (s, s, s)
-	dpath=''
-	fpath=''
-	for p in bpy.utils.script_paths():
-		
-		testfname= p + '%saddons%sobject_fracture%sdata.blend' % (s,s,s)
-		print(testfname)
-		if os.path.isfile(testfname):
-			fname=testfname
-			dpath = p + \
-			'%saddons%sobject_fracture%sdata.blend\\Object\\' % (s, s, s)
-			break
-	# DEBUG
-	#print('import_object: ' + opath)
+    opath = "//data.blend\\Object\\" + obname
+    s = os.sep
+    #dpath = bpy.utils.script_paths()[0] + \
+    #    '%saddons%sobject_fracture%sdata.blend\\Object\\' % (s, s, s)
+    dpath=''
+    fpath=''
+    for p in bpy.utils.script_paths():
 
-	bpy.ops.wm.append(
-			filepath=opath,
-			filename=obname,
-			directory=dpath,
-			filemode=1,
-			link=False,
-			autoselect=True,
-			active_layer=True,
-			instance_groups=True)
+        testfname= p + '%saddons%sobject_fracture%sdata.blend' % (s,s,s)
+        print(testfname)
+        if os.path.isfile(testfname):
+            fname=testfname
+            dpath = p + \
+            '%saddons%sobject_fracture%sdata.blend\\Object\\' % (s, s, s)
+            break
+    # DEBUG
+    #print('import_object: ' + opath)
 
-	for ob in bpy.context.selected_objects:
-		ob.location = bpy.context.scene.cursor_location
+    bpy.ops.wm.append(
+            filepath=opath,
+            filename=obname,
+            directory=dpath,
+            filemode=1,
+            link=False,
+            autoselect=True,
+            active_layer=True,
+            instance_groups=True)
+
+    for ob in bpy.context.selected_objects:
+        ob.location = bpy.context.scene.cursor_location
 
 
 class ImportFractureRecorder(bpy.types.Operator):

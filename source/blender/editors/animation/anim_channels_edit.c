@@ -120,6 +120,7 @@ void ANIM_set_active_channel(bAnimContext *ac, void *data, eAnimCont_Types datat
 			case ANIMTYPE_DSMAT:    /* Datablock AnimData Expanders */
 			case ANIMTYPE_DSLAM:
 			case ANIMTYPE_DSCAM:
+			case ANIMTYPE_DSCACHEFILE:
 			case ANIMTYPE_DSCUR:
 			case ANIMTYPE_DSSKEY:
 			case ANIMTYPE_DSWOR:
@@ -132,6 +133,7 @@ void ANIM_set_active_channel(bAnimContext *ac, void *data, eAnimCont_Types datat
 			case ANIMTYPE_DSLINESTYLE:
 			case ANIMTYPE_DSSPK:
 			case ANIMTYPE_DSGPENCIL:
+			case ANIMTYPE_DSMCLIP:
 			{
 				/* need to verify that this data is valid for now */
 				if (ale->adt) {
@@ -175,6 +177,7 @@ void ANIM_set_active_channel(bAnimContext *ac, void *data, eAnimCont_Types datat
 			case ANIMTYPE_DSMAT:    /* Datablock AnimData Expanders */
 			case ANIMTYPE_DSLAM:
 			case ANIMTYPE_DSCAM:
+			case ANIMTYPE_DSCACHEFILE:
 			case ANIMTYPE_DSCUR:
 			case ANIMTYPE_DSSKEY:
 			case ANIMTYPE_DSWOR:
@@ -188,6 +191,7 @@ void ANIM_set_active_channel(bAnimContext *ac, void *data, eAnimCont_Types datat
 			case ANIMTYPE_DSNTREE:
 			case ANIMTYPE_DSTEX:
 			case ANIMTYPE_DSGPENCIL:
+			case ANIMTYPE_DSMCLIP:
 			{
 				/* need to verify that this data is valid for now */
 				if (ale && ale->adt) {
@@ -275,6 +279,7 @@ void ANIM_deselect_anim_channels(bAnimContext *ac, void *data, eAnimCont_Types d
 				case ANIMTYPE_DSMAT:    /* Datablock AnimData Expanders */
 				case ANIMTYPE_DSLAM:
 				case ANIMTYPE_DSCAM:
+				case ANIMTYPE_DSCACHEFILE:
 				case ANIMTYPE_DSCUR:
 				case ANIMTYPE_DSSKEY:
 				case ANIMTYPE_DSWOR:
@@ -288,6 +293,7 @@ void ANIM_deselect_anim_channels(bAnimContext *ac, void *data, eAnimCont_Types d
 				case ANIMTYPE_DSLINESTYLE:
 				case ANIMTYPE_DSSPK:
 				case ANIMTYPE_DSGPENCIL:
+				case ANIMTYPE_DSMCLIP:
 				{
 					if ((ale->adt) && (ale->adt->flag & ADT_UI_SELECTED))
 						sel = ACHANNEL_SETFLAG_CLEAR;
@@ -370,6 +376,7 @@ void ANIM_deselect_anim_channels(bAnimContext *ac, void *data, eAnimCont_Types d
 			case ANIMTYPE_DSMAT:    /* Datablock AnimData Expanders */
 			case ANIMTYPE_DSLAM:
 			case ANIMTYPE_DSCAM:
+			case ANIMTYPE_DSCACHEFILE:
 			case ANIMTYPE_DSCUR:
 			case ANIMTYPE_DSSKEY:
 			case ANIMTYPE_DSWOR:
@@ -383,6 +390,7 @@ void ANIM_deselect_anim_channels(bAnimContext *ac, void *data, eAnimCont_Types d
 			case ANIMTYPE_DSLINESTYLE:
 			case ANIMTYPE_DSSPK:
 			case ANIMTYPE_DSGPENCIL:
+			case ANIMTYPE_DSMCLIP:
 			{
 				/* need to verify that this data is valid for now */
 				if (ale->adt) {
@@ -431,7 +439,11 @@ void ANIM_flush_setting_anim_channels(bAnimContext *ac, ListBase *anim_data, bAn
 	/* sanity check */
 	if (ELEM(NULL, anim_data, anim_data->first))
 		return;
-	
+
+	if (setting == ACHANNEL_SETTING_ALWAYS_VISIBLE) {
+		return;
+	}
+
 	/* find the channel that got changed */
 	for (ale = anim_data->first; ale; ale = ale->next) {
 		/* compare data, and type as main way of identifying the channel */
@@ -1686,7 +1698,7 @@ static int animchannels_delete_exec(bContext *C, wmOperator *UNUSED(op))
 				bGPDlayer *gpl = (bGPDlayer *)ale->data;
 				
 				/* try to delete the layer's data and the layer itself */
-				free_gpencil_frames(gpl);
+				BKE_gpencil_free_frames(gpl);
 				BLI_freelinkN(&gpd->layers, gpl);
 				break;
 			}
@@ -2119,7 +2131,7 @@ static int animchannels_clean_empty_exec(bContext *C, wmOperator *UNUSED(op))
 		
 		/* remove AnimData? */
 		if (action_empty && nla_empty && drivers_empty) {
-			BKE_animdata_free(id);
+			BKE_animdata_free(id, true);
 		}
 	}
 	
@@ -2356,7 +2368,7 @@ static void borderselect_anim_channels(bAnimContext *ac, rcti *rect, short selec
 	}
 	else {
 		ymin = 0.0f;
-		ymax = (float)(-ACHANNEL_HEIGHT);
+		ymax = (float)(-ACHANNEL_HEIGHT(ac));
 	}
 	
 	/* convert border-region to view coordinates */
@@ -2372,7 +2384,7 @@ static void borderselect_anim_channels(bAnimContext *ac, rcti *rect, short selec
 		if (ac->datatype == ANIMCONT_NLA)
 			ymin = ymax - NLACHANNEL_STEP(snla);
 		else
-			ymin = ymax - ACHANNEL_STEP;
+			ymin = ymax - ACHANNEL_STEP(ac);
 		
 		/* if channel is within border-select region, alter it */
 		if (!((ymax < rectf.ymin) || (ymin > rectf.ymax))) {
@@ -2478,7 +2490,7 @@ static void ANIM_OT_channels_select_border(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Border Select";
 	ot->idname = "ANIM_OT_channels_select_border";
-	ot->description = "Border Select\nSelect all animation channels within the specified region";
+	ot->description = "Select all animation channels within the specified region";
 	
 	/* api callbacks */
 	ot->invoke = WM_border_select_invoke;
@@ -2573,7 +2585,7 @@ static int animchannels_channel_get(bAnimContext *ac, const int mval[2])
 		UI_view2d_listview_view_to_cell(v2d, NLACHANNEL_NAMEWIDTH, NLACHANNEL_STEP(snla), 0, (float)NLACHANNEL_HEIGHT_HALF(snla), x, y, NULL, &channel_index);
 	}
 	else {
-		UI_view2d_listview_view_to_cell(v2d, ACHANNEL_NAMEWIDTH, ACHANNEL_STEP, 0, (float)ACHANNEL_HEIGHT_HALF, x, y, NULL, &channel_index);
+		UI_view2d_listview_view_to_cell(v2d, ACHANNEL_NAMEWIDTH, ACHANNEL_STEP(ac), 0, (float)ACHANNEL_HEIGHT_HALF(ac), x, y, NULL, &channel_index);
 	}
 
 	return channel_index;
@@ -2705,6 +2717,10 @@ static int mouse_anim_channels(bContext *C, bAnimContext *ac, int channel_index,
 			if ((adt) && (adt->flag & ADT_UI_SELECTED))
 				adt->flag |= ADT_UI_ACTIVE;
 			
+			/* ensure we exit editmode on whatever object was active before to avoid getting stuck there - T48747 */
+			if (ob != sce->obedit)
+				ED_object_editmode_exit(C, EM_FREEDATA | EM_FREEUNDO | EM_WAITCURSOR | EM_DO_UNDO);
+			
 			notifierFlags |= (ND_ANIMCHAN | NA_SELECTED);
 			break;
 		}
@@ -2712,6 +2728,7 @@ static int mouse_anim_channels(bContext *C, bAnimContext *ac, int channel_index,
 		case ANIMTYPE_DSMAT:    /* Datablock AnimData Expanders */
 		case ANIMTYPE_DSLAM:
 		case ANIMTYPE_DSCAM:
+		case ANIMTYPE_DSCACHEFILE:
 		case ANIMTYPE_DSCUR:
 		case ANIMTYPE_DSSKEY:
 		case ANIMTYPE_DSWOR:
@@ -2725,6 +2742,7 @@ static int mouse_anim_channels(bContext *C, bAnimContext *ac, int channel_index,
 		case ANIMTYPE_DSLINESTYLE:
 		case ANIMTYPE_DSSPK:
 		case ANIMTYPE_DSGPENCIL:
+		case ANIMTYPE_DSMCLIP:
 		{
 			/* sanity checking... */
 			if (ale->adt) {
@@ -2988,7 +3006,7 @@ static int animchannels_mouseclick_invoke(bContext *C, wmOperator *op, const wmE
 	 *		ACHANNEL_HEIGHT_HALF.
 	 */
 	UI_view2d_region_to_view(v2d, event->mval[0], event->mval[1], &x, &y);
-	UI_view2d_listview_view_to_cell(v2d, ACHANNEL_NAMEWIDTH, ACHANNEL_STEP, 0, (float)ACHANNEL_HEIGHT_HALF, x, y, NULL, &channel_index);
+	UI_view2d_listview_view_to_cell(v2d, ACHANNEL_NAMEWIDTH, ACHANNEL_STEP(&ac), 0, (float)ACHANNEL_HEIGHT_HALF(&ac), x, y, NULL, &channel_index);
 	
 	/* handle mouse-click in the relevant channel then */
 	notifierFlags = mouse_anim_channels(C, &ac, channel_index, selectmode);
