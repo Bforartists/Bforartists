@@ -1,4 +1,4 @@
-#  ***** BEGIN GPL LICENSE BLOCK *****
+﻿#  ***** BEGIN GPL LICENSE BLOCK *****
 #
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -17,8 +17,10 @@
 
 # <pep8-80 compliant>
 
+# This version is fixed for Bforartists. But works also in Blender.
+
 bl_info = {
-    "name": "Enhanced 3D Cursor",
+    "name": "Enhanced 3D Cursor - Bforartists Version",
     "description": "Cursor history and bookmarks; drag/snap cursor.",
     "author": "dairin0d",
     "version": (3, 0, 1),
@@ -4195,6 +4197,13 @@ class Cursor3DTools(bpy.types.Panel):
         row = row.split(0.35, True)
         row.prop(history, "max_size", text="")
         row.prop(history, "current_id", text="")
+        
+        # === Transform Orientation === # bfa - fix for transform orientation panel that does not exist in Bforartists
+        row = self.layout.row()
+        row.label (text = "Transform Orientation" )
+        row = self.layout.row()
+        row.operator("view3d.align_orientation", text="Align")
+        row.operator("view3d.copy_orientation", text="Copy")
 
         # === BOOKMARK LIBRARIES === #
         settings.libraries.draw(context, layout)
@@ -4558,10 +4567,11 @@ class CopyOrientation(bpy.types.Operator):
 
         return {'FINISHED'}
 
-def transform_orientations_panel_extension(self, context):
-    row = self.layout.row()
-    row.operator("view3d.align_orientation", text="Align")
-    row.operator("view3d.copy_orientation", text="Copy")
+# bfa - the transform panel in the Properties sidebar in the 3D view does not exist in Bforartists
+#def transform_orientations_panel_extension(self, context):
+#    row = self.layout.row()
+#    row.operator("view3d.align_orientation", text="Align")
+#    row.operator("view3d.copy_orientation", text="Copy")
 
 # ===== CURSOR MONITOR ===== #
 class CursorMonitor(bpy.types.Operator):
@@ -5567,8 +5577,9 @@ def register():
     bpy.types.WindowManager.cursor_3d_runtime_settings = \
         bpy.props.PointerProperty(type=CursorRuntimeSettings)
 
-    bpy.types.VIEW3D_PT_transform_orientations.append(
-        transform_orientations_panel_extension)
+    # bfa - the transform panel in the Properties sidebar in the 3D view does not exist in Bforartists
+    #bpy.types.VIEW3D_PT_transform_orientations.append(
+    #    transform_orientations_panel_extension)
 
     # View properties panel is already long. Appending something
     # to it would make it too inconvenient
@@ -5601,9 +5612,10 @@ def unregister():
 
     if hasattr(bpy.types.WindowManager, "cursor_3d_runtime_settings"):
         del bpy.types.WindowManager.cursor_3d_runtime_settings
-
-    bpy.types.VIEW3D_PT_transform_orientations.remove(
-        transform_orientations_panel_extension)
+    
+    # bfa - the transform panel in the Properties sidebar in the 3D view does not exist in Bforartists
+    #bpy.types.VIEW3D_PT_transform_orientations.remove(
+    #    transform_orientations_panel_extension)
 
     #bpy.types.VIEW3D_PT_view3d_properties.remove(draw_cursor_tools)
 
