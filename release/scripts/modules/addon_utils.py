@@ -1,4 +1,4 @@
-﻿# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -31,9 +31,8 @@ __all__ = (
 import bpy as _bpy
 _user_preferences = _bpy.context.user_preferences
 
+error_duplicates = False
 error_encoding = False
-# (name, file, path)
-error_duplicates = []
 addons_fake_modules = {}
 
 
@@ -52,17 +51,18 @@ def paths():
 
     # CONTRIB SCRIPTS: good for testing but not official scripts yet
     # if folder addons_contrib/ exists, scripts in there will be loaded too
-    addon_paths += _bpy.utils.script_paths("blender-addons-contrib")
+    addon_paths += _bpy.utils.script_paths("addons_contrib")
 
     return addon_paths
 
 
 def modules_refresh(module_cache=addons_fake_modules):
+    global error_duplicates
     global error_encoding
     import os
 
+    error_duplicates = False
     error_encoding = False
-    error_duplicates.clear()
 
     path_list = paths()
 
@@ -168,7 +168,7 @@ def modules_refresh(module_cache=addons_fake_modules):
                 if mod.__file__ != mod_path:
                     print("multiple addons with the same name:\n  %r\n  %r" %
                           (mod.__file__, mod_path))
-                    error_duplicates.append((mod.bl_info["name"], mod.__file__, mod_path))
+                    error_duplicates = True
 
                 elif mod.__time__ != os.path.getmtime(mod_path):
                     print("reloading addon:",
