@@ -33,7 +33,12 @@ def add_box(width, height, depth):
     return verts, faces
 
 
-from bpy.props import FloatProperty, BoolProperty, FloatVectorProperty
+from bpy.props import (
+        BoolProperty,
+        BoolVectorProperty,
+        FloatProperty,
+        FloatVectorProperty,
+        )
 
 
 class AddBox(bpy.types.Operator):
@@ -59,6 +64,12 @@ class AddBox(bpy.types.Operator):
             description="Box Depth",
             min=0.01, max=100.0,
             default=1.0,
+            )
+    layers = BoolVectorProperty(
+            name="Layers",
+            description="Object Layers",
+            size=20,
+            options={'HIDDEN', 'SKIP_SAVE'},
             )
 
     # generic transform props

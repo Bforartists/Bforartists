@@ -348,7 +348,7 @@ def export(file,
 
         loc, rot, scale = matrix.decompose()
         rot = rot.to_axis_angle()
-        rot = rot[0].normalized()[:] + (rot[1], )
+        rot = (*rot[0].normalized(), rot[1])
 
         ident_step = ident + (' ' * (-len(ident) + \
         fw('%s<Viewpoint ' % ident)))
@@ -395,7 +395,7 @@ def export(file,
 
         loc, rot, sca = matrix.decompose()
         rot = rot.to_axis_angle()
-        rot = rot[0][:] + (rot[1], )
+        rot = (*rot[0], rot[1])
 
         fw(ident_step + 'translation="%.6f %.6f %.6f"\n' % loc[:])
         # fw(ident_step + 'center="%.6f %.6f %.6f"\n' % (0, 0, 0))
@@ -593,6 +593,29 @@ def export(file,
             face_groups_items = list(face_groups.items())
             face_groups_items.sort(key=lambda m: (m[0][0], getattr(m[0][1], 'name', '')))
 
+            is_col = (mesh.tessface_vertex_colors.active and (material is None or material.use_vertex_color_paint))
+            mesh_faces_col = mesh.tessface_vertex_colors.active.data if is_col else None
+
+            # Check if vertex colors can be exported in per-vertex mode.
+            # Do we have just one color per vertex in every face that uses the vertex?
+            if is_col:
+                def calc_vertex_color():
+                    vert_color = [None] * len(mesh.vertices)
+
+                    for i, face in enumerate(mesh_faces):
+                        fcol = mesh_faces_col[i]
+                        face_colors = (fcol.color1, fcol.color2, fcol.color3, fcol.color4)
+                        for j, vert_index in enumerate(face.vertices):
+                            if vert_color[vert_index] is None:
+                                vert_color[vert_index] = face_colors[j][:]
+                            elif vert_color[vert_index] != face_colors[j][:]:
+                                return False, ()
+
+                    return True, vert_color
+
+                is_col_per_vertex, vert_color = calc_vertex_color()
+                del calc_vertex_color
+
             for (material_index, image), face_group in face_groups_items:  # face_groups.items()
                 if face_group:
                     material = mesh_materials[material_index]
@@ -601,7 +624,6 @@ def export(file,
                     ident += '\t'
 
                     is_smooth = False
-                    is_col = (mesh.tessface_vertex_colors.active and (material is None or material.use_vertex_color_paint))
 
                     # kludge but as good as it gets!
                     for i in face_group:
@@ -678,7 +700,6 @@ def export(file,
                     ident = ident[:-1]
                     fw('%s</Appearance>\n' % ident)
 
-                    mesh_faces_col = mesh.tessface_vertex_colors.active.data if is_col else None
                     mesh_faces_uv = mesh.tessface_uv_textures.active.data if is_uv else None
 
                     #-- IndexedFaceSet or IndexedLineSet
@@ -841,7 +862,7 @@ def export(file,
                             fw(ident_step + 'normalPerVertex="true"\n')
 
                         # IndexedTriangleSet assumes true
-                        if is_col:
+                        if is_col and not is_col_per_vertex:
                             fw(ident_step + 'colorPerVertex="false"\n')
 
                         # for IndexedTriangleSet we use a uv per vertex so this isnt needed.
@@ -912,10 +933,18 @@ def export(file,
                             fw('" />\n')
 
                         if is_col:
+                            # Need better logic here, dynamic determination
+                            # which of the X3D coloring models fits better this mesh - per face
+                            # or per vertex. Probably with an explicit fallback mode parameter.
                             fw('%s<Color color="' % ident)
-                            # XXX, 1 color per face, only
-                            for i in face_group:
-                                fw('%.3f %.3f %.3f ' % mesh_faces_col[i].color1[:])
+                            if is_col_per_vertex:
+                                for i in range(len(mesh.vertices)):
+                                    # may be None,
+                                    fw('%.3f %.3f %.3f ' % (vert_color[i] or (0.0, 0.0, 0.0)))
+                            else: # Export as colors per face.
+                                # TODO: average them rather than using the first one!
+                                for i in face_group:
+                                    fw('%.3f %.3f %.3f ' % mesh_faces_col[i].color1[:])
                             fw('" />\n')
 
                         #--- output vertexColors
@@ -1547,7 +1576,9 @@ def gzip_open_utf8(filepath, mode):
     return file
 
 
-def save(operator, context, filepath="",
+def save(context,
+         filepath,
+         *,
          use_selection=True,
          use_mesh_modifiers=False,
          use_triangulate=False,
@@ -1557,7 +1588,7 @@ def save(operator, context, filepath="",
          use_h3d=False,
          global_matrix=None,
          path_mode='AUTO',
-         name_decorations=True,
+         name_decorations=True
          ):
 
     bpy.path.ensure_ext(filepath, '.x3dz' if use_compress else '.x3d')

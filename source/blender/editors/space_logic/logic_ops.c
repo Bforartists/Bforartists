@@ -37,6 +37,7 @@
 #include "DNA_scene_types.h"
 
 #include "BLI_blenlib.h"
+#include "BLI_string_utils.h"
 #include "BLI_utildefines.h"
 
 #include "BLT_translation.h"
@@ -65,7 +66,7 @@ static int edit_sensor_poll(bContext *C)
 {
 	PointerRNA ptr = CTX_data_pointer_get_type(C, "sensor", &RNA_Sensor);
 
-	if (ptr.data && ((ID *)ptr.id.data)->lib) return 0;
+	if (ptr.data && ID_IS_LINKED_DATABLOCK(ptr.id.data)) return 0;
 	return 1;
 }
 
@@ -73,7 +74,7 @@ static int edit_controller_poll(bContext *C)
 {
 	PointerRNA ptr = CTX_data_pointer_get_type(C, "controller", &RNA_Controller);
 
-	if (ptr.data && ((ID *)ptr.id.data)->lib) return 0;
+	if (ptr.data && ID_IS_LINKED_DATABLOCK(ptr.id.data)) return 0;
 	return 1;
 }
 
@@ -81,7 +82,7 @@ static int edit_actuator_poll(bContext *C)
 {
 	PointerRNA ptr = CTX_data_pointer_get_type(C, "actuator", &RNA_Actuator);
 
-	if (ptr.data && ((ID *)ptr.id.data)->lib) return 0;
+	if (ptr.data && ID_IS_LINKED_DATABLOCK(ptr.id.data)) return 0;
 	return 1;
 }
 
@@ -328,7 +329,7 @@ static void LOGIC_OT_sensor_add(wmOperatorType *ot)
 	/* properties */
 	ot->prop = prop = RNA_def_enum(ot->srna, "type", DummyRNA_NULL_items, SENS_ALWAYS, "Type", "Type\nType of sensor to add");
 	RNA_def_enum_funcs(prop, rna_Sensor_type_itemf);
-	prop = RNA_def_string(ot->srna, "name", NULL, MAX_NAME, "Name", "NamenName of the Sensor to add");
+	prop = RNA_def_string(ot->srna, "name", NULL, MAX_NAME, "Name", "Name\nName of the Sensor to add");
 	RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 	prop = RNA_def_string(ot->srna, "object", NULL, MAX_NAME, "Object", "Object\nName of the Object to add the Sensor to");
 	RNA_def_property_flag(prop, PROP_SKIP_SAVE);
@@ -447,7 +448,7 @@ static void LOGIC_OT_controller_add(wmOperatorType *ot)
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_INTERNAL;
 	
 	/* properties */
-	ot->prop = RNA_def_enum(ot->srna, "type", controller_type_items, CONT_LOGIC_AND, "Type", "Type\nType of controller to add");
+	ot->prop = RNA_def_enum(ot->srna, "type", rna_enum_controller_type_items, CONT_LOGIC_AND, "Type", "Type of controller to add");
 	prop = RNA_def_string(ot->srna, "name", NULL, MAX_NAME, "Name", "Name\nName of the Controller to add");
 	RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 	prop = RNA_def_string(ot->srna, "object", NULL, MAX_NAME, "Object", "Object\nName of the Object to add the Controller to");

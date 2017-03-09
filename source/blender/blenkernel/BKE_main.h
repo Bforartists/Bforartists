@@ -42,6 +42,8 @@
  */
 #include "DNA_listBase.h"
 
+#include "BKE_library.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -49,6 +51,8 @@ extern "C" {
 struct EvaluationContext;
 struct Library;
 struct MainLock;
+struct GHash;
+struct BLI_mempool;
 
 /* Blender thumbnail, as written on file (width, height, and data as char RGBA). */
 /* We pack pixel data after that struct. */
@@ -56,6 +60,22 @@ typedef struct BlendThumbnail {
 	int width, height;
 	char rect[0];
 } BlendThumbnail;
+
+/* Structs caching relations between data-blocks in a given Main. */
+typedef struct MainIDRelationsEntry {
+	struct MainIDRelationsEntry *next;
+	/* WARNING! for user_to_used, that pointer is really an ID** one, but for used_to_user, it’s only an ID* one! */
+	struct ID **id_pointer;
+	int usage_flag;  /* Using IDWALK_ enums, in BKE_library_query.h */
+} MainIDRelationsEntry;
+
+typedef struct MainIDRelations {
+	struct GHash *id_user_to_used;
+	struct GHash *id_used_to_user;
+
+	/* Private... */
+	struct BLI_mempool *entry_pool;
+} MainIDRelations;
 
 typedef struct Main {
 	struct Main *next, *prev;
@@ -85,7 +105,6 @@ typedef struct Main {
 	ListBase key;
 	ListBase world;
 	ListBase screen;
-	ListBase script;
 	ListBase vfont;
 	ListBase text;
 	ListBase speaker;
@@ -103,11 +122,17 @@ typedef struct Main {
 	ListBase movieclip;
 	ListBase mask;
 	ListBase linestyle;
+	ListBase cachefiles;
 
-	char id_tag_update[256];
+	char id_tag_update[MAX_LIBARRAY];
 
 	/* Evaluation context used by viewport */
 	struct EvaluationContext *eval_ctx;
+
+	/* Must be generated, used and freed by same code - never assume this is valid data unless you know
+	 * when, who and how it was created.
+	 * Used by code doing a lot of remapping etc. at once to speed things up. */
+	struct MainIDRelations *relations;
 
 	struct MainLock *lock;
 } Main;

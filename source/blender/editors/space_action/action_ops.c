@@ -51,11 +51,16 @@
 
 void action_operatortypes(void)
 {
+	/* view */
+	WM_operatortype_append(ACTION_OT_properties);
+	
 	/* keyframes */
 	/* selection */
 	WM_operatortype_append(ACTION_OT_clickselect);
 	WM_operatortype_append(ACTION_OT_select_all_toggle);
 	WM_operatortype_append(ACTION_OT_select_border);
+	WM_operatortype_append(ACTION_OT_select_lasso);
+	WM_operatortype_append(ACTION_OT_select_circle);
 	WM_operatortype_append(ACTION_OT_select_column);
 	WM_operatortype_append(ACTION_OT_select_linked);
 	WM_operatortype_append(ACTION_OT_select_more);
@@ -175,6 +180,14 @@ static void action_keymap_keyframes(wmKeyConfig *keyconf, wmKeyMap *keymap)
 	kmi = WM_keymap_add_item(keymap, "ACTION_OT_select_border", BKEY, KM_PRESS, KM_ALT, 0);
 	RNA_boolean_set(kmi->ptr, "axis_range", true);
 	
+	/* region select */
+	kmi = WM_keymap_add_item(keymap, "ACTION_OT_select_lasso", EVT_TWEAK_A, KM_ANY, KM_CTRL, 0);
+	RNA_boolean_set(kmi->ptr, "deselect", false);
+	kmi = WM_keymap_add_item(keymap, "ACTION_OT_select_lasso", EVT_TWEAK_A, KM_ANY, KM_CTRL | KM_SHIFT, 0);
+	RNA_boolean_set(kmi->ptr, "deselect", true);
+	
+	WM_keymap_add_item(keymap, "ACTION_OT_select_circle", CKEY, KM_PRESS, 0, 0);
+	
 	/* column select */
 	RNA_enum_set(WM_keymap_add_item(keymap, "ACTION_OT_select_column", KKEY, KM_PRESS, 0, 0)->ptr, "mode", ACTKEYS_COLUMNSEL_KEYS);
 	RNA_enum_set(WM_keymap_add_item(keymap, "ACTION_OT_select_column", KKEY, KM_PRESS, KM_CTRL, 0)->ptr, "mode", ACTKEYS_COLUMNSEL_CFRA);
@@ -227,7 +240,9 @@ static void action_keymap_keyframes(wmKeyConfig *keyconf, wmKeyMap *keymap)
 	/* auto-set range */
 	WM_keymap_add_item(keymap, "ACTION_OT_previewrange_set", PKEY, KM_PRESS, KM_CTRL | KM_ALT, 0);
 	WM_keymap_add_item(keymap, "ACTION_OT_view_all", HOMEKEY, KM_PRESS, 0, 0);
+#ifdef WITH_INPUT_NDOF
 	WM_keymap_add_item(keymap, "ACTION_OT_view_all", NDOF_BUTTON_FIT, KM_PRESS, 0, 0);
+#endif
 	WM_keymap_add_item(keymap, "ACTION_OT_view_selected", PADPERIOD, KM_PRESS, 0, 0);
 	WM_keymap_add_item(keymap, "ACTION_OT_view_frame", PAD0, KM_PRESS, 0, 0);
 
@@ -256,6 +271,13 @@ static void action_keymap_keyframes(wmKeyConfig *keyconf, wmKeyMap *keymap)
 void action_keymap(wmKeyConfig *keyconf)
 {
 	wmKeyMap *keymap;
+	
+	/* keymap for all regions */
+	keymap = WM_keymap_find(keyconf, "Dopesheet Generic", SPACE_ACTION, 0);
+	
+	/* region management... */
+	WM_keymap_add_item(keymap, "ACTION_OT_properties", NKEY, KM_PRESS, 0, 0);
+	
 	
 	/* channels */
 	/* Channels are not directly handled by the Action Editor module, but are inherited from the Animation module. 

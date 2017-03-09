@@ -3,6 +3,7 @@ set(INC
 	.
 	..
 	../svm
+	../../graph
 	../../render
 	../../util
 	../../device
@@ -24,7 +25,6 @@ set(SRC
 )
 
 set(HEADER_SRC
-	osl_bssrdf.h
 	osl_closures.h
 	osl_globals.h
 	osl_services.h

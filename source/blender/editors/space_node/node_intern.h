@@ -133,7 +133,7 @@ void NODE_OT_backimage_sample(struct wmOperatorType *ot);
 /* drawnode.c */
 void node_draw_link(struct View2D *v2d, struct SpaceNode *snode, struct bNodeLink *link);
 void node_draw_link_bezier(struct View2D *v2d, struct SpaceNode *snode, struct bNodeLink *link, int th_col1, bool do_shaded, int th_col2, bool do_triple, int th_col3);
-int  node_link_bezier_points(struct View2D *v2d, struct SpaceNode *snode, struct bNodeLink *link, float coord_array[][2], int resol);
+bool node_link_bezier_points(struct View2D *v2d, struct SpaceNode *snode, struct bNodeLink *link, float coord_array[][2], int resol);
 // void node_draw_link_straight(View2D *v2d, SpaceNode *snode, bNodeLink *link, int th_col1, int do_shaded, int th_col2, int do_triple, int th_col3 );
 void draw_nodespace_back_pix(const struct bContext *C, struct ARegion *ar, struct SpaceNode *snode, bNodeInstanceKey parent_key);
 
@@ -155,6 +155,8 @@ void NODE_OT_group_edit(struct wmOperatorType *ot);
 
 
 /* node_relationships.c */
+bool node_connected_to_output(struct bNodeTree *ntree, struct bNode *node);
+
 void NODE_OT_link(struct wmOperatorType *ot);
 void NODE_OT_link_make(struct wmOperatorType *ot);
 void NODE_OT_links_cut(struct wmOperatorType *ot);

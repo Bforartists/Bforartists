@@ -63,9 +63,6 @@
 
 #include "MEM_guardedalloc.h"
 
-/* local */
-#define UNIQUE_NAME_MAX 128
-
 /* Declarations */
 
 #ifdef WIN32
@@ -147,174 +144,19 @@ void BLI_stringenc(char *string, const char *head, const char *tail, unsigned sh
 	sprintf(string, "%s%.*d%s", head, numlen, MAX2(0, pic), tail);
 }
 
-/**
- * Looks for a numeric suffix preceded by delim character on the end of
- * name, puts preceding part into *left and value of suffix into *nr.
- * Returns the length of *left.
- *
- * Foo.001 -> "Foo", 1
- * Returning the length of "Foo"
- *
- * \param left  Where to return copy of part preceding delim
- * \param nr  Where to return value of numeric suffix
- * \param name  String to split
- * \param delim  Delimiter character
- * \return  Length of \a left
- */
-int BLI_split_name_num(char *left, int *nr, const char *name, const char delim)
-{
-	const int name_len = strlen(name);
-
-	*nr = 0;
-	memcpy(left, name, (name_len + 1) * sizeof(char));
-
-	/* name doesn't end with a delimiter "foo." */
-	if ((name_len > 1 && name[name_len - 1] == delim) == 0) {
-		int a = name_len;
-		while (a--) {
-			if (name[a] == delim) {
-				left[a] = '\0';  /* truncate left part here */
-				*nr = atol(name + a + 1);
-				/* casting down to an int, can overflow for large numbers */
-				if (*nr < 0)
-					*nr = 0;
-				return a;
-			}
-			else if (isdigit(name[a]) == 0) {
-				/* non-numeric suffix - give up */
-				break;
-			}
-		}
-	}
-
-	return name_len;
-}
-
-/**
- * Ensures name is unique (according to criteria specified by caller in unique_check callback),
- * incrementing its numeric suffix as necessary. Returns true if name had to be adjusted.
- *
- * \param unique_check  Return true if name is not unique
- * \param arg  Additional arg to unique_check--meaning is up to caller
- * \param defname  To initialize name if latter is empty
- * \param delim  Delimits numeric suffix in name
- * \param name  Name to be ensured unique
- * \param name_len  Maximum length of name area
- * \return true if there if the name was changed
- */
-bool BLI_uniquename_cb(bool (*unique_check)(void *arg, const char *name),
-                       void *arg, const char *defname, char delim, char *name, int name_len)
-{
-	if (name[0] == '\0') {
-		BLI_strncpy(name, defname, name_len);
-	}
-
-	if (unique_check(arg, name)) {
-		char numstr[16];
-		char tempname[UNIQUE_NAME_MAX];
-		char left[UNIQUE_NAME_MAX];
-		int number;
-		int len = BLI_split_name_num(left, &number, name, delim);
-		do {
-			/* add 1 to account for \0 */
-			const int numlen = BLI_snprintf(numstr, sizeof(numstr), "%c%03d", delim, ++number) + 1;
-
-			/* highly unlikely the string only has enough room for the number
-			 * but support anyway */
-			if ((len == 0) || (numlen >= name_len)) {
-				/* number is know not to be utf-8 */
-				BLI_strncpy(tempname, numstr, name_len);
-			}
-			else {
-				char *tempname_buf;
-				tempname_buf = tempname + BLI_strncpy_utf8_rlen(tempname, left, name_len - numlen);
-				memcpy(tempname_buf, numstr, numlen);
-			}
-		} while (unique_check(arg, tempname));
-
-		BLI_strncpy(name, tempname, name_len);
-		
-		return true;
-	}
-	
-	return false;
-}
-
-/* little helper macro for BLI_uniquename */
-#ifndef GIVE_STRADDR
-#  define GIVE_STRADDR(data, offset) ( ((char *)data) + offset)
-#endif
-
-/* Generic function to set a unique name. It is only designed to be used in situations
- * where the name is part of the struct, and also that the name is at most UNIQUE_NAME_MAX chars long.
- * 
- * For places where this is used, see constraint.c for example...
- *
- *  name_offs: should be calculated using offsetof(structname, membername) macro from stddef.h
- *  len: maximum length of string (to prevent overflows, etc.)
- *  defname: the name that should be used by default if none is specified already
- *  delim: the character which acts as a delimiter between parts of the name
- */
-static bool uniquename_find_dupe(ListBase *list, void *vlink, const char *name, int name_offs)
-{
-	Link *link;
-
-	for (link = list->first; link; link = link->next) {
-		if (link != vlink) {
-			if (STREQ(GIVE_STRADDR(link, name_offs), name)) {
-				return true;
-			}
-		}
-	}
-
-	return false;
-}
-
-static bool uniquename_unique_check(void *arg, const char *name)
-{
-	struct {ListBase *lb; void *vlink; int name_offs; } *data = arg;
-	return uniquename_find_dupe(data->lb, data->vlink, name, data->name_offs);
-}
-
-/**
- * Ensures that the specified block has a unique name within the containing list,
- * incrementing its numeric suffix as necessary. Returns true if name had to be adjusted.
- *
- * \param list  List containing the block
- * \param vlink  The block to check the name for
- * \param defname  To initialize block name if latter is empty
- * \param delim  Delimits numeric suffix in name
- * \param name_offs  Offset of name within block structure
- * \param name_len  Maximum length of name area
- */
-bool BLI_uniquename(ListBase *list, void *vlink, const char *defname, char delim, int name_offs, int name_len)
-{
-	struct {ListBase *lb; void *vlink; int name_offs; } data;
-	data.lb = list;
-	data.vlink = vlink;
-	data.name_offs = name_offs;
-
-	assert((name_len > 1) && (name_len <= UNIQUE_NAME_MAX));
-
-	/* See if we are given an empty string */
-	if (ELEM(NULL, vlink, defname))
-		return false;
-
-	return BLI_uniquename_cb(uniquename_unique_check, &data, defname, delim, GIVE_STRADDR(vlink, name_offs), name_len);
-}
-
 static int BLI_path_unc_prefix_len(const char *path); /* defined below in same file */
 
 /* ******************** string encoding ***************** */
 
-/* This is quite an ugly function... its purpose is to
- * take the dir name, make it absolute, and clean it up, replacing
- * excess file entry stuff (like /tmp/../tmp/../)
- * note that dir isn't protected for max string names... 
- * 
- * If relbase is NULL then its ignored
+/**
+ * Remove redundant characters from \a path and optionally make absolute.
+ *
+ * \param relabase: The path this is relative to, or ignored when NULL.
+ * \param path: Can be any input, and this function converts it to a regular full path.
+ * Also removes garbage from directory paths, like `/../` or double slashes etc.
+ *
+ * \note \a path isn't protected for max string names...
  */
-
 void BLI_cleanup_path(const char *relabase, char *path)
 {
 	ptrdiff_t a;
@@ -403,6 +245,9 @@ void BLI_cleanup_path(const char *relabase, char *path)
 #endif
 }
 
+/**
+ * Cleanup filepath ensuring a trailing slash.
+ */
 void BLI_cleanup_dir(const char *relabase, char *dir)
 {
 	BLI_cleanup_path(relabase, dir);
@@ -410,6 +255,9 @@ void BLI_cleanup_dir(const char *relabase, char *dir)
 
 }
 
+/**
+ * Cleanup filepath ensuring no trailing slash.
+ */
 void BLI_cleanup_file(const char *relabase, char *path)
 {
 	BLI_cleanup_path(relabase, path);
@@ -423,7 +271,7 @@ void BLI_cleanup_file(const char *relabase, char *path)
  * \return true if \a fname was changed, false otherwise.
  *
  * For now, simply replaces reserved chars (as listed in
- * http://en.wikipedia.org/wiki/Filename#Reserved_characters_and_words )
+ * https://en.wikipedia.org/wiki/Filename#Reserved_characters_and_words )
  * by underscores ('_').
  *
  * \note Space case ' ' is a bit of an edge case here - in theory it is allowed, but again can be an issue
@@ -510,7 +358,7 @@ bool BLI_filename_make_safe(char *fname)
 bool BLI_path_make_safe(char *path)
 {
 	/* Simply apply BLI_filename_make_safe() over each component of the path.
-	 * Luckily enough, same 'sfae' rules applies to filenames and dirnames. */
+	 * Luckily enough, same 'safe' rules applies to filenames and dirnames. */
 	char *curr_slash, *curr_path = path;
 	bool changed = false;
 	bool skip_first = false;
@@ -954,7 +802,7 @@ bool BLI_path_frame_range(char *path, int sta, int end, int digits)
  */
 bool BLI_path_frame_get(char *path, int *r_frame, int *r_numdigits)
 {
-	if (path && *path) {
+	if (*path) {
 		char *file = (char *)BLI_last_slash(path);
 		char *c;
 		int len, numdigits;
@@ -1003,9 +851,9 @@ bool BLI_path_frame_get(char *path, int *r_frame, int *r_numdigits)
 	return false;
 }
 
-void BLI_path_frame_strip(char *path, bool setsharp, char *ext)
+void BLI_path_frame_strip(char *path, bool set_frame_char, char *ext)
 {
-	if (path && *path) {
+	if (*path) {
 		char *file = (char *)BLI_last_slash(path);
 		char *c, *suffix;
 		int len;
@@ -1040,15 +888,12 @@ void BLI_path_frame_strip(char *path, bool setsharp, char *ext)
 		if (numdigits) {
 			/* replace the number with the suffix and terminate the string */
 			while (numdigits--) {
-				if (ext) *ext++ = *suffix;
-
-				if (setsharp) *c++ = '#';
-				else *c++ = *suffix;
-
+				*ext++ = *suffix;
+				*c++ = set_frame_char ? '#' : *suffix;
 				suffix++;
 			}
-			*c = 0;
-			if (ext) *ext = 0;
+			*c = '\0';
+			*ext = '\0';
 		}
 	}
 }
@@ -1064,9 +909,14 @@ bool BLI_path_frame_check_chars(const char *path)
 }
 
 /**
- * If path begins with "//", strips that and replaces it with basepath directory. Also converts
- * a drive-letter prefix to something more sensible if this is a non-drive-letter-based system.
- * Returns true if "//" prefix expansion was done.
+ * If path begins with "//", strips that and replaces it with basepath directory.
+ *
+ * \note Also converts drive-letter prefix to something more sensible
+ * if this is a non-drive-letter-based system.
+ *
+ * \param path: The path to convert.
+ * \param basepath: The directory to base relative paths with.
+ * \return true if the path was relative (started with "//").
  */
 bool BLI_path_abs(char *path, const char *basepath)
 {
@@ -1179,7 +1029,7 @@ bool BLI_path_abs(char *path, const char *basepath)
  * \note Should only be done with command line paths.
  * this is _not_ something blenders internal paths support like the "//" prefix
  */
-bool BLI_path_cwd(char *path)
+bool BLI_path_cwd(char *path, const size_t maxlen)
 {
 	bool wasrelative = true;
 	const int filelen = strlen(path);
@@ -1193,24 +1043,15 @@ bool BLI_path_cwd(char *path)
 #endif
 	
 	if (wasrelative) {
-		char cwd[FILE_MAX] = "";
-		BLI_current_working_dir(cwd, sizeof(cwd)); /* in case the full path to the blend isn't used */
-		
-		if (cwd[0] == '\0') {
-			printf("Could not get the current working directory - $PWD for an unknown reason.\n");
-		}
-		else {
-			/* uses the blend path relative to cwd important for loading relative linked files.
-			 *
-			 * cwd should contain c:\ etc on win32 so the relbase can be NULL
-			 * relbase being NULL also prevents // being misunderstood as relative to the current
-			 * blend file which isn't a feature we want to use in this case since were dealing
-			 * with a path from the command line, rather than from inside Blender */
-
+		char cwd[FILE_MAX];
+		/* in case the full path to the blend isn't used */
+		if (BLI_current_working_dir(cwd, sizeof(cwd))) {
 			char origpath[FILE_MAX];
 			BLI_strncpy(origpath, path, FILE_MAX);
-			
-			BLI_make_file_string(NULL, path, cwd, origpath); 
+			BLI_join_dirfile(path, maxlen, cwd, origpath);
+		}
+		else {
+			printf("Could not get the current working directory - $PWD for an unknown reason.\n");
 		}
 	}
 	
@@ -1761,7 +1602,7 @@ void BLI_join_dirfile(char *__restrict dst, const size_t maxlen, const char *__r
 	}
 
 	/* inline BLI_add_slash */
-	if ((dirlen > 0) && (dst[dirlen - 1] != SEP)) {
+	if ((dirlen > 0) && !ELEM(dst[dirlen - 1], SEP, ALTSEP)) {
 		dst[dirlen++] = SEP;
 		dst[dirlen] = '\0';
 	}
@@ -1927,8 +1768,7 @@ const char *BLI_first_slash(const char *string)
 	if (!ffslash) return fbslash;
 	else if (!fbslash) return ffslash;
 	
-	if ((intptr_t)ffslash < (intptr_t)fbslash) return ffslash;
-	else return fbslash;
+	return (ffslash < fbslash) ? ffslash : fbslash;
 }
 
 /**
@@ -1942,8 +1782,7 @@ const char *BLI_last_slash(const char *string)
 	if (!lfslash) return lbslash; 
 	else if (!lbslash) return lfslash;
 	
-	if ((intptr_t)lfslash < (intptr_t)lbslash) return lbslash;
-	else return lfslash;
+	return (lfslash > lbslash) ? lfslash : lbslash;
 }
 
 /**
@@ -1991,38 +1830,3 @@ void BLI_path_native_slash(char *path)
 	BLI_str_replace_char(path + BLI_path_unc_prefix_len(path), '\\', '/');
 #endif
 }
-
-
-#ifdef WITH_ICONV
-
-/**
- * Converts a string encoded in the charset named by *code to UTF-8.
- * Opens a new iconv context each time it is run, which is probably not the
- * most efficient. */
-void BLI_string_to_utf8(char *original, char *utf_8, const char *code)
-{
-	size_t inbytesleft = strlen(original);
-	size_t outbytesleft = 512;
-	size_t rv = 0;
-	iconv_t cd;
-	
-	if (NULL == code) {
-		code = locale_charset();
-	}
-	cd = iconv_open("UTF-8", code);
-
-	if (cd == (iconv_t)(-1)) {
-		printf("iconv_open Error");
-		*utf_8 = '\0';
-		return;
-	}
-	rv = iconv(cd, &original, &inbytesleft, &utf_8, &outbytesleft);
-	if (rv == (size_t) -1) {
-		printf("iconv Error\n");
-		iconv_close(cd);
-		return;
-	}
-	*utf_8 = '\0';
-	iconv_close(cd);
-}
-#endif // WITH_ICONV

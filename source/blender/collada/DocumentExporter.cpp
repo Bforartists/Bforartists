@@ -90,7 +90,7 @@ extern "C"
 #include "BKE_action.h" // pose functions
 #include "BKE_animsys.h"
 #include "BKE_armature.h"
-#include "BKE_blender.h" // version info
+#include "BKE_blender_version.h"
 #include "BKE_fcurve.h"
 #include "BKE_global.h"
 #include "BKE_image.h"
@@ -98,6 +98,7 @@ extern "C"
 #include "BKE_material.h"
 #include "BKE_object.h"
 #include "BKE_scene.h"
+#include "BKE_appdir.h"
 
 #include "ED_keyframing.h"
 #ifdef WITH_BUILDINFO
@@ -132,6 +133,7 @@ extern bool bc_has_object_type(LinkNode *export_set, short obtype);
 #include "LightExporter.h"
 #include "MaterialExporter.h"
 
+#include <errno.h>
 
 char *bc_CustomData_get_layer_name(const struct CustomData *data, int type, int n)
 {
@@ -153,28 +155,45 @@ char *bc_CustomData_get_active_layer_name(const CustomData *data, int type)
 DocumentExporter::DocumentExporter(const ExportSettings *export_settings) : export_settings(export_settings) {
 }
 
+static COLLADABU::NativeString make_temp_filepath(const char *name, const char *extension)
+{
+	char tempfile[FILE_MAX];
+	const char *tempdir = BKE_tempdir_session();
+
+	if (name == NULL) {
+		name = "untitled";
+	}
+
+	BLI_make_file_string(NULL, tempfile, tempdir, name);
+
+	if (extension) {
+		BLI_ensure_extension(tempfile, FILE_MAX, extension);
+	}
+
+	COLLADABU::NativeString native_filename =
+		COLLADABU::NativeString(tempfile, COLLADABU::NativeString::ENCODING_UTF8);
+	return native_filename;
+}
+
 // TODO: it would be better to instantiate animations rather than create a new one per object
 // COLLADA allows this through multiple <channel>s in <animation>.
 // For this to work, we need to know objects that use a certain action.
 
-void DocumentExporter::exportCurrentScene(Scene *sce)
+int DocumentExporter::exportCurrentScene(Scene *sce)
 {
 	PointerRNA sceneptr, unit_settings;
 	PropertyRNA *system; /* unused , *scale; */
 
 	clear_global_id_map();
-	
-	COLLADABU::NativeString native_filename =
-	    COLLADABU::NativeString(std::string(this->export_settings->filepath), COLLADABU::NativeString::ENCODING_UTF8);
-	COLLADASW::StreamWriter sw(native_filename);
 
-	fprintf(stdout, "Collada export: %s\n", this->export_settings->filepath);
+	COLLADABU::NativeString native_filename = make_temp_filepath(NULL, ".dae");
+	COLLADASW::StreamWriter *writer = new COLLADASW::StreamWriter(native_filename);
 
 	// open <collada>
-	sw.startDocument();
+	writer->startDocument();
 
 	// <asset>
-	COLLADASW::Asset asset(&sw);
+	COLLADASW::Asset asset(writer);
 
 	RNA_id_pointer_create(&(sce->id), &sceneptr);
 	unit_settings = RNA_pointer_get(&sceneptr, "unit_settings");
@@ -241,41 +260,41 @@ void DocumentExporter::exportCurrentScene(Scene *sce)
 	LinkNode *export_set = this->export_settings->export_set;
 	// <library_cameras>
 	if (bc_has_object_type(export_set, OB_CAMERA)) {
-		CamerasExporter ce(&sw, this->export_settings);
+		CamerasExporter ce(writer, this->export_settings);
 		ce.exportCameras(sce);
 	}
 	
 	// <library_lights>
 	if (bc_has_object_type(export_set, OB_LAMP)) {
-		LightsExporter le(&sw, this->export_settings);
+		LightsExporter le(writer, this->export_settings);
 		le.exportLights(sce);
 	}
 
 	// <library_images>
-	ImagesExporter ie(&sw, this->export_settings);
+	ImagesExporter ie(writer, this->export_settings);
 	ie.exportImages(sce);
 	
 	// <library_effects>
-	EffectsExporter ee(&sw, this->export_settings);
+	EffectsExporter ee(writer, this->export_settings);
 	ee.exportEffects(sce);
 	
 	// <library_materials>
-	MaterialsExporter me(&sw, this->export_settings);
+	MaterialsExporter me(writer, this->export_settings);
 	me.exportMaterials(sce);
 
 	// <library_geometries>
 	if (bc_has_object_type(export_set, OB_MESH)) {
-		GeometryExporter ge(&sw, this->export_settings);
+		GeometryExporter ge(writer, this->export_settings);
 		ge.exportGeom(sce);
 	}
 
 	// <library_animations>
-	AnimationExporter ae(&sw, this->export_settings);
+	AnimationExporter ae(writer, this->export_settings);
 	bool has_animations = ae.exportAnimations(sce);
 
 	// <library_controllers>
-	ArmatureExporter arm_exporter(&sw, this->export_settings);
-	ControllerExporter controller_exporter(&sw , this->export_settings);
+	ArmatureExporter arm_exporter(writer, this->export_settings);
+	ControllerExporter controller_exporter(writer, this->export_settings);
 	if (bc_has_object_type(export_set, OB_ARMATURE) || this->export_settings->include_shapekeys) 
 	{
 		controller_exporter.export_controllers(sce);
@@ -283,7 +302,7 @@ void DocumentExporter::exportCurrentScene(Scene *sce)
 
 	// <library_visual_scenes>
 
-	SceneExporter se(&sw, &arm_exporter, this->export_settings);
+	SceneExporter se(writer, &arm_exporter, this->export_settings);
 
 	if (has_animations && this->export_settings->export_transformation_type == BC_TRANSFORMATION_TYPE_MATRIX) {
 		// channels adressing <matrix> objects is not (yet) supported
@@ -301,13 +320,22 @@ void DocumentExporter::exportCurrentScene(Scene *sce)
 	
 	// <scene>
 	std::string scene_name(translate_id(id_name(sce)));
-	COLLADASW::Scene scene(&sw, COLLADASW::URI(COLLADABU::Utils::EMPTY_STRING,
+	COLLADASW::Scene scene(writer, COLLADASW::URI(COLLADABU::Utils::EMPTY_STRING,
 	                                           scene_name));
 	scene.add();
 	
 	// close <Collada>
-	sw.endDocument();
+	writer->endDocument();
+	delete writer;
 
+	// Finally move the created document into place
+	fprintf(stdout, "Collada export to: %s\n", this->export_settings->filepath);
+	int status = BLI_rename(native_filename.c_str(), this->export_settings->filepath);
+	if (status != 0) {
+		status = BLI_copy(native_filename.c_str(), this->export_settings->filepath);
+		BLI_delete(native_filename.c_str(), false, false);
+	}
+	return status;
 }
 
 void DocumentExporter::exportScenes(const char *filename)

@@ -29,17 +29,23 @@
  *  \ingroup spoutliner
  */
 
+#include <string.h>
+
 #include "MEM_guardedalloc.h"
 
 #include "DNA_anim_types.h"
 #include "DNA_group_types.h"
+#include "DNA_ID.h"
 #include "DNA_scene_types.h"
 #include "DNA_object_types.h"
 #include "DNA_material_types.h"
 
 #include "BLI_blenlib.h"
 #include "BLI_utildefines.h"
+#include "BLI_path_util.h"
 #include "BLI_mempool.h"
+#include "BLI_stack.h"
+#include "BLI_string.h"
 
 #include "BLT_translation.h"
 
@@ -47,7 +53,10 @@
 #include "BKE_context.h"
 #include "BKE_depsgraph.h"
 #include "BKE_global.h"
+#include "BKE_idcode.h"
 #include "BKE_library.h"
+#include "BKE_library_query.h"
+#include "BKE_library_remap.h"
 #include "BKE_main.h"
 #include "BKE_outliner_treehash.h"
 #include "BKE_report.h"
@@ -55,10 +64,13 @@
 #include "BKE_material.h"
 #include "BKE_group.h"
 
+#include "../blenloader/BLO_readfile.h"
+
 #include "ED_object.h"
 #include "ED_outliner.h"
 #include "ED_screen.h"
 #include "ED_keyframing.h"
+#include "ED_armature.h"
 
 #include "WM_api.h"
 #include "WM_types.h"
@@ -69,6 +81,9 @@
 
 #include "RNA_access.h"
 #include "RNA_define.h"
+#include "RNA_enum_types.h"
+
+#include "GPU_material.h"
 
 #include "outliner_intern.h"
 
@@ -102,9 +117,7 @@ static void outliner_open_reveal(SpaceOops *soops, ListBase *lb, TreeElement *te
 }
 #endif
 
-static TreeElement *outliner_dropzone_element(
-        const SpaceOops *soops, TreeElement *te,
-        const float fmval[2], const bool children)
+static TreeElement *outliner_dropzone_element(TreeElement *te, const float fmval[2], const bool children)
 {
 	if ((fmval[1] > te->ys) && (fmval[1] < (te->ys + UI_UNIT_Y))) {
 		/* name and first icon */
@@ -114,7 +127,7 @@ static TreeElement *outliner_dropzone_element(
 	/* Not it.  Let's look at its children. */
 	if (children && (TREESTORE(te)->flag & TSE_CLOSED) == 0 && (te->subtree.first)) {
 		for (te = te->subtree.first; te; te = te->next) {
-			TreeElement *te_valid = outliner_dropzone_element(soops, te, fmval, children);
+			TreeElement *te_valid = outliner_dropzone_element(te, fmval, children);
 			if (te_valid)
 				return te_valid;
 		}
@@ -128,7 +141,7 @@ TreeElement *outliner_dropzone_find(const SpaceOops *soops, const float fmval[2]
 	TreeElement *te;
 
 	for (te = soops->tree.first; te; te = te->next) {
-		TreeElement *te_valid = outliner_dropzone_element(soops, te, fmval, children);
+		TreeElement *te_valid = outliner_dropzone_element(te, fmval, children);
 		if (te_valid)
 			return te_valid;
 	}
@@ -149,7 +162,7 @@ static int do_outliner_item_openclose(bContext *C, SpaceOops *soops, TreeElement
 		/* all below close/open? */
 		if (all) {
 			tselem->flag &= ~TSE_CLOSED;
-			outliner_set_flag(soops, &te->subtree, TSE_CLOSED, !outliner_has_one_flag(soops, &te->subtree, TSE_CLOSED, 1));
+			outliner_set_flag(&te->subtree, TSE_CLOSED, !outliner_has_one_flag(&te->subtree, TSE_CLOSED, 1));
 		}
 		else {
 			if (tselem->flag & TSE_CLOSED) tselem->flag &= ~TSE_CLOSED;
@@ -217,7 +230,7 @@ static void do_item_rename(ARegion *ar, TreeElement *te, TreeStoreElem *tselem, 
 	else if (ELEM(tselem->type, TSE_SEQUENCE, TSE_SEQ_STRIP, TSE_SEQUENCE_DUP)) {
 		BKE_report(reports, RPT_WARNING, "Cannot edit sequence name");
 	}
-	else if (tselem->id->lib) {
+	else if (ID_IS_LINKED_DATABLOCK(tselem->id)) {
 		BKE_report(reports, RPT_WARNING, "Cannot edit external libdata");
 	}
 	else if (te->idcode == ID_LI && ((Library *)tselem->id)->parent) {
@@ -229,18 +242,16 @@ static void do_item_rename(ARegion *ar, TreeElement *te, TreeStoreElem *tselem, 
 	}
 }
 
-void item_rename_cb(bContext *C, Scene *UNUSED(scene), TreeElement *te,
-                    TreeStoreElem *UNUSED(tsep), TreeStoreElem *tselem)
+void item_rename_cb(
+        bContext *C, ReportList *reports, Scene *UNUSED(scene), TreeElement *te,
+        TreeStoreElem *UNUSED(tsep), TreeStoreElem *tselem, void *UNUSED(user_data))
 {
 	ARegion *ar = CTX_wm_region(C);
-	ReportList *reports = CTX_wm_reports(C); // XXX
 	do_item_rename(ar, te, tselem, reports);
 }
 
-static int do_outliner_item_rename(bContext *C, ARegion *ar, SpaceOops *soops, TreeElement *te, const float mval[2])
-{	
-	ReportList *reports = CTX_wm_reports(C); // XXX
-	
+static int do_outliner_item_rename(ReportList *reports, ARegion *ar, TreeElement *te, const float mval[2])
+{
 	if (mval[1] > te->ys && mval[1] < te->ys + UI_UNIT_Y) {
 		TreeStoreElem *tselem = TREESTORE(te);
 		
@@ -253,12 +264,12 @@ static int do_outliner_item_rename(bContext *C, ARegion *ar, SpaceOops *soops, T
 	}
 	
 	for (te = te->subtree.first; te; te = te->next) {
-		if (do_outliner_item_rename(C, ar, soops, te, mval)) return 1;
+		if (do_outliner_item_rename(reports, ar, te, mval)) return 1;
 	}
 	return 0;
 }
 
-static int outliner_item_rename(bContext *C, wmOperator *UNUSED(op), const wmEvent *event)
+static int outliner_item_rename(bContext *C, wmOperator *op, const wmEvent *event)
 {
 	ARegion *ar = CTX_wm_region(C);
 	SpaceOops *soops = CTX_wm_space_outliner(C);
@@ -269,7 +280,7 @@ static int outliner_item_rename(bContext *C, wmOperator *UNUSED(op), const wmEve
 	UI_view2d_region_to_view(&ar->v2d, event->mval[0], event->mval[1], &fmval[0], &fmval[1]);
 	
 	for (te = soops->tree.first; te; te = te->next) {
-		if (do_outliner_item_rename(C, ar, soops, te, fmval)) {
+		if (do_outliner_item_rename(op->reports, ar, te, fmval)) {
 			changed = true;
 			break;
 		}
@@ -290,6 +301,408 @@ void OUTLINER_OT_item_rename(wmOperatorType *ot)
 	ot->poll = ED_operator_outliner_active;
 }
 
+/* ID delete --------------------------------------------------- */
+
+static void id_delete(bContext *C, ReportList *reports, TreeElement *te, TreeStoreElem *tselem)
+{
+	Main *bmain = CTX_data_main(C);
+	ID *id = tselem->id;
+
+	BLI_assert(te->idcode != 0 && id != NULL);
+	BLI_assert(te->idcode != ID_LI || ((Library *)id)->parent == NULL);
+	UNUSED_VARS_NDEBUG(te);
+
+	if (id->tag & LIB_TAG_INDIRECT) {
+		BKE_reportf(reports, RPT_WARNING, "Cannot delete indirectly linked id '%s'", id->name);
+		return;
+	}
+	else if (BKE_library_ID_is_indirectly_used(bmain, id) && ID_REAL_USERS(id) <= 1) {
+		BKE_reportf(reports, RPT_WARNING,
+		            "Cannot delete id '%s', indirectly used data-blocks need at least one user",
+		            id->name);
+		return;
+	}
+
+
+	BKE_libblock_delete(bmain, id);
+
+	WM_event_add_notifier(C, NC_WINDOW, NULL);
+}
+
+void id_delete_cb(
+        bContext *C, ReportList *reports, Scene *UNUSED(scene),
+        TreeElement *te, TreeStoreElem *UNUSED(tsep), TreeStoreElem *tselem, void *UNUSED(user_data))
+{
+	id_delete(C, reports, te, tselem);
+}
+
+static int outliner_id_delete_invoke_do(bContext *C, ReportList *reports, TreeElement *te, const float mval[2])
+{
+	if (mval[1] > te->ys && mval[1] < te->ys + UI_UNIT_Y) {
+		TreeStoreElem *tselem = TREESTORE(te);
+
+		if (te->idcode != 0 && tselem->id) {
+			if (te->idcode == ID_LI && ((Library *)tselem->id)->parent) {
+				BKE_reportf(reports, RPT_ERROR_INVALID_INPUT,
+				            "Cannot delete indirectly linked library '%s'", ((Library *)tselem->id)->filepath);
+				return OPERATOR_CANCELLED;
+			}
+			id_delete(C, reports, te, tselem);
+			return OPERATOR_FINISHED;
+		}
+	}
+	else {
+		for (te = te->subtree.first; te; te = te->next) {
+			int ret;
+			if ((ret = outliner_id_delete_invoke_do(C, reports, te, mval))) {
+				return ret;
+			}
+		}
+	}
+
+	return 0;
+}
+
+static int outliner_id_delete_invoke(bContext *C, wmOperator *op, const wmEvent *event)
+{
+	ARegion *ar = CTX_wm_region(C);
+	SpaceOops *soops = CTX_wm_space_outliner(C);
+	TreeElement *te;
+	float fmval[2];
+
+	BLI_assert(ar && soops);
+
+	UI_view2d_region_to_view(&ar->v2d, event->mval[0], event->mval[1], &fmval[0], &fmval[1]);
+
+	for (te = soops->tree.first; te; te = te->next) {
+		int ret;
+
+		if ((ret = outliner_id_delete_invoke_do(C, op->reports, te, fmval))) {
+			return ret;
+		}
+	}
+
+	return OPERATOR_CANCELLED;
+}
+
+void OUTLINER_OT_id_delete(wmOperatorType *ot)
+{
+	ot->name = "Delete Data-Block";
+	ot->idname = "OUTLINER_OT_id_delete";
+	ot->description = "Delete the ID under cursor";
+
+	ot->invoke = outliner_id_delete_invoke;
+	ot->poll = ED_operator_outliner_active;
+}
+
+/* ID remap --------------------------------------------------- */
+
+static int outliner_id_remap_exec(bContext *C, wmOperator *op)
+{
+	Main *bmain = CTX_data_main(C);
+	Scene *scene = CTX_data_scene(C);
+	SpaceOops *soops = CTX_wm_space_outliner(C);
+
+	const short id_type = (short)RNA_enum_get(op->ptr, "id_type");
+	ID *old_id = BLI_findlink(which_libbase(CTX_data_main(C), id_type), RNA_enum_get(op->ptr, "old_id"));
+	ID *new_id = BLI_findlink(which_libbase(CTX_data_main(C), id_type), RNA_enum_get(op->ptr, "new_id"));
+
+	/* check for invalid states */
+	if (soops == NULL) {
+		return OPERATOR_CANCELLED;
+	}
+
+	if (!(old_id && new_id && (old_id != new_id) && (GS(old_id->name) == GS(new_id->name)))) {
+		BKE_reportf(op->reports, RPT_ERROR_INVALID_INPUT, "Invalid old/new ID pair ('%s' / '%s')",
+		            old_id ? old_id->name : "Invalid ID", new_id ? new_id->name : "Invalid ID");
+		return OPERATOR_CANCELLED;
+	}
+
+	if (ID_IS_LINKED_DATABLOCK(old_id)) {
+		BKE_reportf(op->reports, RPT_WARNING,
+		            "Old ID '%s' is linked from a library, indirect usages of this data-block will not be remapped",
+		            old_id->name);
+	}
+
+	BKE_libblock_remap(bmain, old_id, new_id,
+	                   ID_REMAP_SKIP_INDIRECT_USAGE | ID_REMAP_SKIP_NEVER_NULL_USAGE);
+
+	BKE_main_lib_objects_recalc_all(bmain);
+
+	/* recreate dependency graph to include new objects */
+	DAG_scene_relations_rebuild(bmain, scene);
+
+	/* free gpu materials, some materials depend on existing objects, such as lamps so freeing correctly refreshes */
+	GPU_materials_free();
+
+	WM_event_add_notifier(C, NC_WINDOW, NULL);
+
+	return OPERATOR_FINISHED;
+}
+
+static bool outliner_id_remap_find_tree_element(bContext *C, wmOperator *op, ListBase *tree, const float y)
+{
+	TreeElement *te;
+
+	for (te = tree->first; te; te = te->next) {
+		if (y > te->ys && y < te->ys + UI_UNIT_Y) {
+			TreeStoreElem *tselem = TREESTORE(te);
+
+			if (tselem->type == 0 && tselem->id) {
+				printf("found id %s (%p)!\n", tselem->id->name, tselem->id);
+
+				RNA_enum_set(op->ptr, "id_type", GS(tselem->id->name));
+				RNA_enum_set_identifier(C, op->ptr, "new_id", tselem->id->name + 2);
+				RNA_enum_set_identifier(C, op->ptr, "old_id", tselem->id->name + 2);
+				return true;
+			}
+		}
+		if (outliner_id_remap_find_tree_element(C, op, &te->subtree, y)) {
+			return true;
+		}
+	}
+	return false;
+}
+
+static int outliner_id_remap_invoke(bContext *C, wmOperator *op, const wmEvent *event)
+{
+	SpaceOops *soops = CTX_wm_space_outliner(C);
+	ARegion *ar = CTX_wm_region(C);
+	float fmval[2];
+
+	if (!RNA_property_is_set(op->ptr, RNA_struct_find_property(op->ptr, "id_type"))) {
+		UI_view2d_region_to_view(&ar->v2d, event->mval[0], event->mval[1], &fmval[0], &fmval[1]);
+
+		outliner_id_remap_find_tree_element(C, op, &soops->tree, fmval[1]);
+	}
+
+	return WM_operator_props_dialog_popup(C, op, 200, 100);
+}
+
+static EnumPropertyItem *outliner_id_itemf(bContext *C, PointerRNA *ptr, PropertyRNA *UNUSED(prop), bool *r_free)
+{
+	EnumPropertyItem item_tmp = {0}, *item = NULL;
+	int totitem = 0;
+	int i = 0;
+
+	short id_type = (short)RNA_enum_get(ptr, "id_type");
+	ID *id = which_libbase(CTX_data_main(C), id_type)->first;
+
+	for (; id; id = id->next) {
+		item_tmp.identifier = item_tmp.name = id->name + 2;
+		item_tmp.value = i++;
+		RNA_enum_item_add(&item, &totitem, &item_tmp);
+	}
+
+	RNA_enum_item_end(&item, &totitem);
+	*r_free = true;
+
+	return item;
+}
+
+void OUTLINER_OT_id_remap(wmOperatorType *ot)
+{
+	PropertyRNA *prop;
+
+	/* identifiers */
+	ot->name = "Outliner ID data Remap";
+	ot->idname = "OUTLINER_OT_id_remap";
+	ot->description = "";
+
+	/* callbacks */
+	ot->invoke = outliner_id_remap_invoke;
+	ot->exec = outliner_id_remap_exec;
+	ot->poll = ED_operator_outliner_active;
+
+	ot->flag = 0;
+
+	RNA_def_enum(ot->srna, "id_type", rna_enum_id_type_items, ID_OB, "ID Type", "");
+
+	prop = RNA_def_enum(ot->srna, "old_id", DummyRNA_NULL_items, 0, "Old ID", "Old ID to replace");
+	RNA_def_property_enum_funcs_runtime(prop, NULL, NULL, outliner_id_itemf);
+	RNA_def_property_flag(prop, PROP_ENUM_NO_TRANSLATE | PROP_HIDDEN);
+
+	ot->prop = RNA_def_enum(ot->srna, "new_id", DummyRNA_NULL_items, 0,
+	                        "New ID", "New ID to remap all selected IDs' users to");
+	RNA_def_property_enum_funcs_runtime(ot->prop, NULL, NULL, outliner_id_itemf);
+	RNA_def_property_flag(ot->prop, PROP_ENUM_NO_TRANSLATE);
+}
+
+void id_remap_cb(
+        bContext *C, ReportList *UNUSED(reports), Scene *UNUSED(scene), TreeElement *UNUSED(te),
+        TreeStoreElem *UNUSED(tsep), TreeStoreElem *tselem, void *UNUSED(user_data))
+{
+	wmOperatorType *ot = WM_operatortype_find("OUTLINER_OT_id_remap", false);
+	PointerRNA op_props;
+
+	BLI_assert(tselem->id != NULL);
+
+	WM_operator_properties_create_ptr(&op_props, ot);
+
+	RNA_enum_set(&op_props, "id_type", GS(tselem->id->name));
+	RNA_enum_set_identifier(C, &op_props, "old_id", tselem->id->name + 2);
+
+	WM_operator_name_call_ptr(C, ot, WM_OP_INVOKE_DEFAULT, &op_props);
+
+	WM_operator_properties_free(&op_props);
+}
+
+/* Library relocate/reload --------------------------------------------------- */
+
+static int lib_relocate(
+        bContext *C, TreeElement *te, TreeStoreElem *tselem, wmOperatorType *ot, const bool reload)
+{
+	PointerRNA op_props;
+	int ret = 0;
+
+	BLI_assert(te->idcode == ID_LI && tselem->id != NULL);
+	UNUSED_VARS_NDEBUG(te);
+
+	WM_operator_properties_create_ptr(&op_props, ot);
+
+	RNA_string_set(&op_props, "library", tselem->id->name + 2);
+
+	if (reload) {
+		Library *lib = (Library *)tselem->id;
+		char dir[FILE_MAXDIR], filename[FILE_MAX];
+
+		BLI_split_dirfile(lib->filepath, dir, filename, sizeof(dir), sizeof(filename));
+
+		printf("%s, %s\n", tselem->id->name, lib->filepath);
+
+		/* We assume if both paths in lib are not the same then lib->name was relative... */
+		RNA_boolean_set(&op_props, "relative_path", BLI_path_cmp(lib->filepath, lib->name) != 0);
+
+		RNA_string_set(&op_props, "directory", dir);
+		RNA_string_set(&op_props, "filename", filename);
+
+		ret = WM_operator_name_call_ptr(C, ot, WM_OP_EXEC_DEFAULT, &op_props);
+	}
+	else {
+		ret = WM_operator_name_call_ptr(C, ot, WM_OP_INVOKE_DEFAULT, &op_props);
+	}
+
+	WM_operator_properties_free(&op_props);
+
+	return ret;
+}
+
+static int outliner_lib_relocate_invoke_do(
+        bContext *C, ReportList *reports, TreeElement *te, const float mval[2], const bool reload)
+{
+	if (mval[1] > te->ys && mval[1] < te->ys + UI_UNIT_Y) {
+		TreeStoreElem *tselem = TREESTORE(te);
+
+		if (te->idcode == ID_LI && tselem->id) {
+			if (((Library *)tselem->id)->parent && !reload) {
+				BKE_reportf(reports, RPT_ERROR_INVALID_INPUT,
+				            "Cannot relocate indirectly linked library '%s'", ((Library *)tselem->id)->filepath);
+				return OPERATOR_CANCELLED;
+			}
+			else {
+				wmOperatorType *ot = WM_operatortype_find(reload ? "WM_OT_lib_reload" : "WM_OT_lib_relocate", false);
+
+				return lib_relocate(C, te, tselem, ot, reload);
+			}
+		}
+	}
+	else {
+		for (te = te->subtree.first; te; te = te->next) {
+			int ret;
+			if ((ret = outliner_lib_relocate_invoke_do(C, reports, te, mval, reload))) {
+				return ret;
+			}
+		}
+	}
+
+	return 0;
+}
+
+static int outliner_lib_relocate_invoke(bContext *C, wmOperator *op, const wmEvent *event)
+{
+	ARegion *ar = CTX_wm_region(C);
+	SpaceOops *soops = CTX_wm_space_outliner(C);
+	TreeElement *te;
+	float fmval[2];
+
+	BLI_assert(ar && soops);
+
+	UI_view2d_region_to_view(&ar->v2d, event->mval[0], event->mval[1], &fmval[0], &fmval[1]);
+
+	for (te = soops->tree.first; te; te = te->next) {
+		int ret;
+
+		if ((ret = outliner_lib_relocate_invoke_do(C, op->reports, te, fmval, false))) {
+			return ret;
+		}
+	}
+
+	return OPERATOR_CANCELLED;
+}
+
+void OUTLINER_OT_lib_relocate(wmOperatorType *ot)
+{
+	ot->name = "Relocate Library";
+	ot->idname = "OUTLINER_OT_lib_relocate";
+	ot->description = "Relocate the library under cursor";
+
+	ot->invoke = outliner_lib_relocate_invoke;
+	ot->poll = ED_operator_outliner_active;
+}
+
+/* XXX This does not work with several items
+ *     (it is only called once in the end, due to the 'deferred' filebrowser invocation through event system...). */
+void lib_relocate_cb(
+        bContext *C, ReportList *UNUSED(reports), Scene *UNUSED(scene), TreeElement *te,
+        TreeStoreElem *UNUSED(tsep), TreeStoreElem *tselem, void *UNUSED(user_data))
+{
+	wmOperatorType *ot = WM_operatortype_find("WM_OT_lib_relocate", false);
+
+	lib_relocate(C, te, tselem, ot, false);
+}
+
+
+static int outliner_lib_reload_invoke(bContext *C, wmOperator *op, const wmEvent *event)
+{
+	ARegion *ar = CTX_wm_region(C);
+	SpaceOops *soops = CTX_wm_space_outliner(C);
+	TreeElement *te;
+	float fmval[2];
+
+	BLI_assert(ar && soops);
+
+	UI_view2d_region_to_view(&ar->v2d, event->mval[0], event->mval[1], &fmval[0], &fmval[1]);
+
+	for (te = soops->tree.first; te; te = te->next) {
+		int ret;
+
+		if ((ret = outliner_lib_relocate_invoke_do(C, op->reports, te, fmval, true))) {
+			return ret;
+		}
+	}
+
+	return OPERATOR_CANCELLED;
+}
+
+void OUTLINER_OT_lib_reload(wmOperatorType *ot)
+{
+	ot->name = "Reload Library";
+	ot->idname = "OUTLINER_OT_lib_reload";
+	ot->description = "Reload the library under cursor";
+
+	ot->invoke = outliner_lib_reload_invoke;
+	ot->poll = ED_operator_outliner_active;
+}
+
+void lib_reload_cb(
+        bContext *C, ReportList *UNUSED(reports), Scene *UNUSED(scene), TreeElement *te,
+        TreeStoreElem *UNUSED(tsep), TreeStoreElem *tselem, void *UNUSED(user_data))
+{
+	wmOperatorType *ot = WM_operatortype_find("WM_OT_lib_reload", false);
+
+	lib_relocate(C, te, tselem, ot, true);
+}
+
 /* ************************************************************** */
 /* Setting Toggling Operators */
 
@@ -298,20 +711,20 @@ void OUTLINER_OT_item_rename(wmOperatorType *ot)
 
 /* Apply Settings ------------------------------- */
 
-static int outliner_count_levels(SpaceOops *soops, ListBase *lb, const int curlevel)
+static int outliner_count_levels(ListBase *lb, const int curlevel)
 {
 	TreeElement *te;
 	int level = curlevel, lev;
 	
 	for (te = lb->first; te; te = te->next) {
 		
-		lev = outliner_count_levels(soops, &te->subtree, curlevel + 1);
+		lev = outliner_count_levels(&te->subtree, curlevel + 1);
 		if (lev > level) level = lev;
 	}
 	return level;
 }
 
-int outliner_has_one_flag(SpaceOops *soops, ListBase *lb, short flag, const int curlevel)
+int outliner_has_one_flag(ListBase *lb, short flag, const int curlevel)
 {
 	TreeElement *te;
 	TreeStoreElem *tselem;
@@ -321,13 +734,13 @@ int outliner_has_one_flag(SpaceOops *soops, ListBase *lb, short flag, const int 
 		tselem = TREESTORE(te);
 		if (tselem->flag & flag) return curlevel;
 		
-		level = outliner_has_one_flag(soops, &te->subtree, flag, curlevel + 1);
+		level = outliner_has_one_flag(&te->subtree, flag, curlevel + 1);
 		if (level) return level;
 	}
 	return 0;
 }
 
-void outliner_set_flag(SpaceOops *soops, ListBase *lb, short flag, short set)
+void outliner_set_flag(ListBase *lb, short flag, short set)
 {
 	TreeElement *te;
 	TreeStoreElem *tselem;
@@ -336,7 +749,7 @@ void outliner_set_flag(SpaceOops *soops, ListBase *lb, short flag, short set)
 		tselem = TREESTORE(te);
 		if (set == 0) tselem->flag &= ~flag;
 		else tselem->flag |= flag;
-		outliner_set_flag(soops, &te->subtree, flag, set);
+		outliner_set_flag(&te->subtree, flag, set);
 	}
 }
 
@@ -369,12 +782,18 @@ int common_restrict_check(bContext *C, Object *ob)
 
 /* Toggle Visibility ---------------------------------------- */
 
-void object_toggle_visibility_cb(bContext *C, Scene *scene, TreeElement *te,
-                                 TreeStoreElem *UNUSED(tsep), TreeStoreElem *tselem)
+void object_toggle_visibility_cb(
+        bContext *C, ReportList *reports, Scene *scene, TreeElement *te,
+        TreeStoreElem *UNUSED(tsep), TreeStoreElem *tselem, void *UNUSED(user_data))
 {
 	Base *base = (Base *)te->directdata;
 	Object *ob = (Object *)tselem->id;
-	
+
+	if (ID_IS_LINKED_DATABLOCK(tselem->id)) {
+		BKE_report(reports, RPT_WARNING, "Cannot edit external libdata");
+		return;
+	}
+
 	/* add check for edit mode */
 	if (!common_restrict_check(C, ob)) return;
 	
@@ -385,21 +804,22 @@ void object_toggle_visibility_cb(bContext *C, Scene *scene, TreeElement *te,
 	}
 }
 
-void group_toggle_visibility_cb(bContext *UNUSED(C), Scene *scene, TreeElement *UNUSED(te),
-                                TreeStoreElem *UNUSED(tsep), TreeStoreElem *tselem)
+void group_toggle_visibility_cb(
+        bContext *UNUSED(C), ReportList *UNUSED(reports), Scene *scene, TreeElement *UNUSED(te),
+        TreeStoreElem *UNUSED(tsep), TreeStoreElem *tselem, void *UNUSED(user_data))
 {
 	Group *group = (Group *)tselem->id;
 	restrictbutton_gr_restrict_flag(scene, group, OB_RESTRICT_VIEW);
 }
 
-static int outliner_toggle_visibility_exec(bContext *C, wmOperator *UNUSED(op))
+static int outliner_toggle_visibility_exec(bContext *C, wmOperator *op)
 {
 	Main *bmain = CTX_data_main(C);
 	SpaceOops *soops = CTX_wm_space_outliner(C);
 	Scene *scene = CTX_data_scene(C);
 	ARegion *ar = CTX_wm_region(C);
 	
-	outliner_do_object_operation(C, scene, soops, &soops->tree, object_toggle_visibility_cb);
+	outliner_do_object_operation(C, op->reports, scene, soops, &soops->tree, object_toggle_visibility_cb);
 	
 	DAG_id_type_tag(bmain, ID_OB);
 	WM_event_add_notifier(C, NC_SCENE | ND_OB_VISIBLE, scene);
@@ -424,31 +844,38 @@ void OUTLINER_OT_visibility_toggle(wmOperatorType *ot)
 
 /* Toggle Selectability ---------------------------------------- */
 
-void object_toggle_selectability_cb(bContext *UNUSED(C), Scene *scene, TreeElement *te,
-                                    TreeStoreElem *UNUSED(tsep), TreeStoreElem *tselem)
+void object_toggle_selectability_cb(
+        bContext *UNUSED(C), ReportList *reports, Scene *scene, TreeElement *te,
+        TreeStoreElem *UNUSED(tsep), TreeStoreElem *tselem, void *UNUSED(user_data))
 {
 	Base *base = (Base *)te->directdata;
-	
+
+	if (ID_IS_LINKED_DATABLOCK(tselem->id)) {
+		BKE_report(reports, RPT_WARNING, "Cannot edit external libdata");
+		return;
+	}
+
 	if (base == NULL) base = BKE_scene_base_find(scene, (Object *)tselem->id);
 	if (base) {
 		base->object->restrictflag ^= OB_RESTRICT_SELECT;
 	}
 }
 
-void group_toggle_selectability_cb(bContext *UNUSED(C), Scene *scene, TreeElement *UNUSED(te),
-                                   TreeStoreElem *UNUSED(tsep), TreeStoreElem *tselem)
+void group_toggle_selectability_cb(
+        bContext *UNUSED(C), ReportList *UNUSED(reports), Scene *scene, TreeElement *UNUSED(te),
+        TreeStoreElem *UNUSED(tsep), TreeStoreElem *tselem, void *UNUSED(user_data))
 {
 	Group *group = (Group *)tselem->id;
 	restrictbutton_gr_restrict_flag(scene, group, OB_RESTRICT_SELECT);
 }
 
-static int outliner_toggle_selectability_exec(bContext *C, wmOperator *UNUSED(op))
+static int outliner_toggle_selectability_exec(bContext *C, wmOperator *op)
 {
 	SpaceOops *soops = CTX_wm_space_outliner(C);
 	Scene *scene = CTX_data_scene(C);
 	ARegion *ar = CTX_wm_region(C);
 	
-	outliner_do_object_operation(C, scene, soops, &soops->tree, object_toggle_selectability_cb);
+	outliner_do_object_operation(C, op->reports, scene, soops, &soops->tree, object_toggle_selectability_cb);
 	
 	WM_event_add_notifier(C, NC_SCENE | ND_OB_SELECT, scene);
 	ED_region_tag_redraw(ar);
@@ -472,31 +899,38 @@ void OUTLINER_OT_selectability_toggle(wmOperatorType *ot)
 
 /* Toggle Renderability ---------------------------------------- */
 
-void object_toggle_renderability_cb(bContext *UNUSED(C), Scene *scene, TreeElement *te,
-                                    TreeStoreElem *UNUSED(tsep), TreeStoreElem *tselem)
+void object_toggle_renderability_cb(
+        bContext *UNUSED(C), ReportList *reports, Scene *scene, TreeElement *te,
+        TreeStoreElem *UNUSED(tsep), TreeStoreElem *tselem, void *UNUSED(user_data))
 {
 	Base *base = (Base *)te->directdata;
-	
+
+	if (ID_IS_LINKED_DATABLOCK(tselem->id)) {
+		BKE_report(reports, RPT_WARNING, "Cannot edit external libdata");
+		return;
+	}
+
 	if (base == NULL) base = BKE_scene_base_find(scene, (Object *)tselem->id);
 	if (base) {
 		base->object->restrictflag ^= OB_RESTRICT_RENDER;
 	}
 }
 
-void group_toggle_renderability_cb(bContext *UNUSED(C), Scene *scene, TreeElement *UNUSED(te),
-                                   TreeStoreElem *UNUSED(tsep), TreeStoreElem *tselem)
+void group_toggle_renderability_cb(
+        bContext *UNUSED(C), ReportList *UNUSED(reports), Scene *scene, TreeElement *UNUSED(te),
+        TreeStoreElem *UNUSED(tsep), TreeStoreElem *tselem, void *UNUSED(user_data))
 {
 	Group *group = (Group *)tselem->id;
 	restrictbutton_gr_restrict_flag(scene, group, OB_RESTRICT_RENDER);
 }
 
-static int outliner_toggle_renderability_exec(bContext *C, wmOperator *UNUSED(op))
+static int outliner_toggle_renderability_exec(bContext *C, wmOperator *op)
 {
 	Main *bmain = CTX_data_main(C);
 	SpaceOops *soops = CTX_wm_space_outliner(C);
 	Scene *scene = CTX_data_scene(C);
 	
-	outliner_do_object_operation(C, scene, soops, &soops->tree, object_toggle_renderability_cb);
+	outliner_do_object_operation(C, op->reports, scene, soops, &soops->tree, object_toggle_renderability_cb);
 	
 	DAG_id_type_tag(bmain, ID_OB);
 	WM_event_add_notifier(C, NC_SCENE | ND_OB_RENDER, scene);
@@ -528,10 +962,10 @@ static int outliner_toggle_expanded_exec(bContext *C, wmOperator *UNUSED(op))
 	SpaceOops *soops = CTX_wm_space_outliner(C);
 	ARegion *ar = CTX_wm_region(C);
 	
-	if (outliner_has_one_flag(soops, &soops->tree, TSE_CLOSED, 1))
-		outliner_set_flag(soops, &soops->tree, TSE_CLOSED, 0);
+	if (outliner_has_one_flag(&soops->tree, TSE_CLOSED, 1))
+		outliner_set_flag(&soops->tree, TSE_CLOSED, 0);
 	else 
-		outliner_set_flag(soops, &soops->tree, TSE_CLOSED, 1);
+		outliner_set_flag(&soops->tree, TSE_CLOSED, 1);
 	
 	ED_region_tag_redraw(ar);
 	
@@ -560,10 +994,10 @@ static int outliner_toggle_selected_exec(bContext *C, wmOperator *UNUSED(op))
 	ARegion *ar = CTX_wm_region(C);
 	Scene *scene = CTX_data_scene(C);
 	
-	if (outliner_has_one_flag(soops, &soops->tree, TSE_SELECTED, 1))
-		outliner_set_flag(soops, &soops->tree, TSE_SELECTED, 0);
+	if (outliner_has_one_flag(&soops->tree, TSE_SELECTED, 1))
+		outliner_set_flag(&soops->tree, TSE_SELECTED, 0);
 	else 
-		outliner_set_flag(soops, &soops->tree, TSE_SELECTED, 1);
+		outliner_set_flag(&soops->tree, TSE_SELECTED, 1);
 	
 	soops->storeflag |= SO_TREESTORE_REDRAW;
 	
@@ -645,14 +1079,35 @@ static int outliner_show_active_exec(bContext *C, wmOperator *UNUSED(op))
 	
 	TreeElement *te;
 	int xdelta, ytop;
-	
-	// TODO: make this get this info from context instead...
-	if (OBACT == NULL) 
+
+	Object *obact = OBACT;
+
+	if (!obact)
 		return OPERATOR_CANCELLED;
-	
-	te = outliner_find_id(so, &so->tree, (ID *)OBACT);
+
+
+	te = outliner_find_id(so, &so->tree, &obact->id);
+
+	if (obact->type == OB_ARMATURE) {
+		/* traverse down the bone hierarchy in case of armature */
+		TreeElement *te_obact = te;
+
+		if (obact->mode & OB_MODE_POSE) {
+			bPoseChannel *pchan = CTX_data_active_pose_bone(C);
+			if (pchan) {
+				te = outliner_find_posechannel(&te_obact->subtree, pchan);
+			}
+		}
+		else if (obact->mode & OB_MODE_EDIT) {
+			EditBone *ebone = CTX_data_active_bone(C);
+			if (ebone) {
+				te = outliner_find_editbone(&te_obact->subtree, ebone);
+			}
+		}
+	}
+
 	if (te) {
-		/* open up tree to active object */
+		/* open up tree to active object/bone */
 		if (outliner_open_back(te)) {
 			outliner_set_coordinates(ar, so);
 		}
@@ -712,6 +1167,8 @@ static int outliner_scroll_page_exec(bContext *C, wmOperator *op)
 
 void OUTLINER_OT_scroll_page(wmOperatorType *ot)
 {
+	PropertyRNA *prop;
+
 	/* identifiers */
 	ot->name = "Scroll Page";
 	ot->idname = "OUTLINER_OT_scroll_page";
@@ -722,7 +1179,8 @@ void OUTLINER_OT_scroll_page(wmOperatorType *ot)
 	ot->poll = ED_operator_outliner_active;
 	
 	/* properties */
-	RNA_def_boolean(ot->srna, "up", 0, "Up", "Scroll up one page");
+	prop = RNA_def_boolean(ot->srna, "up", 0, "Up", "Scroll up one page");
+	RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 }
 
 /* Search ------------------------------------------------------- */
@@ -838,7 +1296,7 @@ static void outliner_find_panel(Scene *UNUSED(scene), ARegion *ar, SpaceOops *so
 /* Show One Level ----------------------------------------------- */
 
 /* helper function for Show/Hide one level operator */
-static void outliner_openclose_level(SpaceOops *soops, ListBase *lb, int curlevel, int level, int open)
+static void outliner_openclose_level(ListBase *lb, int curlevel, int level, int open)
 {
 	TreeElement *te;
 	TreeStoreElem *tselem;
@@ -853,7 +1311,7 @@ static void outliner_openclose_level(SpaceOops *soops, ListBase *lb, int curleve
 			if (curlevel >= level) tselem->flag |= TSE_CLOSED;
 		}
 		
-		outliner_openclose_level(soops, &te->subtree, curlevel + 1, level, open);
+		outliner_openclose_level(&te->subtree, curlevel + 1, level, open);
 	}
 }
 
@@ -864,13 +1322,13 @@ static int outliner_one_level_exec(bContext *C, wmOperator *op)
 	const bool add = RNA_boolean_get(op->ptr, "open");
 	int level;
 	
-	level = outliner_has_one_flag(soops, &soops->tree, TSE_CLOSED, 1);
+	level = outliner_has_one_flag(&soops->tree, TSE_CLOSED, 1);
 	if (add == 1) {
-		if (level) outliner_openclose_level(soops, &soops->tree, 1, level, 1);
+		if (level) outliner_openclose_level(&soops->tree, 1, level, 1);
 	}
 	else {
-		if (level == 0) level = outliner_count_levels(soops, &soops->tree, 0);
-		if (level) outliner_openclose_level(soops, &soops->tree, 1, level - 1, 0);
+		if (level == 0) level = outliner_count_levels(&soops->tree, 0);
+		if (level) outliner_openclose_level(&soops->tree, 1, level - 1, 0);
 	}
 	
 	ED_region_tag_redraw(ar);
@@ -901,7 +1359,7 @@ void OUTLINER_OT_show_one_level(wmOperatorType *ot)
 /* Show Hierarchy ----------------------------------------------- */
 
 /* helper function for tree_element_shwo_hierarchy() - recursively checks whether subtrees have any objects*/
-static int subtree_has_objects(SpaceOops *soops, ListBase *lb)
+static int subtree_has_objects(ListBase *lb)
 {
 	TreeElement *te;
 	TreeStoreElem *tselem;
@@ -909,7 +1367,7 @@ static int subtree_has_objects(SpaceOops *soops, ListBase *lb)
 	for (te = lb->first; te; te = te->next) {
 		tselem = TREESTORE(te);
 		if (tselem->type == 0 && te->idcode == ID_OB) return 1;
-		if (subtree_has_objects(soops, &te->subtree)) return 1;
+		if (subtree_has_objects(&te->subtree)) return 1;
 	}
 	return 0;
 }
@@ -930,7 +1388,7 @@ static void tree_element_show_hierarchy(Scene *scene, SpaceOops *soops, ListBase
 				else tselem->flag &= ~TSE_CLOSED;
 			}
 			else if (te->idcode == ID_OB) {
-				if (subtree_has_objects(soops, &te->subtree)) tselem->flag &= ~TSE_CLOSED;
+				if (subtree_has_objects(&te->subtree)) tselem->flag &= ~TSE_CLOSED;
 				else tselem->flag |= TSE_CLOSED;
 			}
 		}
@@ -1482,7 +1940,7 @@ static int outliner_orphans_purge_invoke(bContext *C, wmOperator *op, const wmEv
 {
 	/* present a prompt to informing users that this change is irreversible */
 	return WM_operator_confirm_message(C, op,
-	                                   "Purging unused datablocks cannot be undone. "
+	                                   "Purging unused data-blocks cannot be undone. "
 	                                   "Click here to proceed...");
 }
 
@@ -1534,7 +1992,7 @@ static int parent_drop_exec(bContext *C, wmOperator *op)
 	RNA_string_get(op->ptr, "child", childname);
 	ob = (Object *)BKE_libblock_find_name(ID_OB, childname);
 
-	if (ob->id.lib) {
+	if (ID_IS_LINKED_DATABLOCK(ob)) {
 		BKE_report(op->reports, RPT_INFO, "Can't edit library linked object");
 		return OPERATOR_CANCELLED;
 	}
@@ -1582,7 +2040,7 @@ static int parent_drop_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 		if (ob == par) {
 			return OPERATOR_CANCELLED;
 		}
-		if (ob->id.lib) {
+		if (ID_IS_LINKED_DATABLOCK(ob)) {
 			BKE_report(op->reports, RPT_INFO, "Can't edit library linked object");
 			return OPERATOR_CANCELLED;
 		}
@@ -1791,7 +2249,7 @@ static int scene_drop_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 		RNA_string_get(op->ptr, "object", obname);
 		ob = (Object *)BKE_libblock_find_name(ID_OB, obname);
 
-		if (ELEM(NULL, ob, scene) || scene->id.lib != NULL) {
+		if (ELEM(NULL, ob, scene) || ID_IS_LINKED_DATABLOCK(scene)) {
 			return OPERATOR_CANCELLED;
 		}
 
@@ -1955,37 +2413,4 @@ void OUTLINER_OT_group_link(wmOperatorType *ot)
 
 	/* properties */
 	RNA_def_string(ot->srna, "object", "Object", MAX_ID_NAME, "Object", "Target Object");
-}
-
-/******** Utils to clear any ref to freed ID... **********/
-
-void ED_outliner_id_unref(SpaceOops *so, const ID *id)
-{
-	/* Some early out checks. */
-	if (!TREESTORE_ID_TYPE(id)) {
-		return;  /* ID type is not used by outilner... */
-	}
-
-	if (so->search_tse.id == id) {
-		so->search_tse.id = NULL;
-	}
-
-	if (so->treestore) {
-		TreeStoreElem *tselem;
-		BLI_mempool_iter iter;
-		bool changed = false;
-
-		BLI_mempool_iternew(so->treestore, &iter);
-		while ((tselem = BLI_mempool_iterstep(&iter))) {
-			if (tselem->id == id) {
-				tselem->id = NULL;
-				changed = true;
-			}
-		}
-		if (so->treehash && changed) {
-			/* rebuild hash table, because it depends on ids too */
-			/* postpone a full rebuild because this can be called many times on-free */
-			so->storeflag |= SO_TREESTORE_REBUILD;
-		}
-	}
 }

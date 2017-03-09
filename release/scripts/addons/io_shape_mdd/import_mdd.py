@@ -80,7 +80,7 @@ def obj_update_frame(file, scene, obj, start, fr, step):
     obj.data.update()
 
 
-def load(operator, context, filepath, frame_start=0, frame_step=1):
+def load(context, filepath, frame_start=0, frame_step=1):
 
     scene = context.scene
     obj = context.object

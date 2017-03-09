@@ -21,6 +21,7 @@
 #include "kernel_math.h"
 #include "kernel_types.h"
 #include "kernel_globals.h"
+#include "kernel_image_opencl.h"
 
 #include "util_atomic.h"
 
@@ -31,6 +32,7 @@
 #include "kernel_camera.h"
 
 #include "geom/geom.h"
+#include "bvh/bvh.h"
 
 #include "kernel_accumulate.h"
 #include "kernel_shader.h"

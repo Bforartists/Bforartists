@@ -914,14 +914,25 @@ class QuantitativeInvisibilityRangeUP1D(UnaryPredicate1D):
         return self.qi_start <= qi <= self.qi_end
 
 
+def getQualifiedObjectName(ob):
+    if ob.library is not None:
+        return ob.library.filepath + '/' + ob.name
+    return ob.name
+
+
 class ObjectNamesUP1D(UnaryPredicate1D):
     def __init__(self, names, negative):
         UnaryPredicate1D.__init__(self)
         self.names = names
         self.negative = negative
 
+    def getViewShapeName(self, vs):
+        if vs.library_path is not None:
+            return vs.library_path + '/' + vs.name
+        return vs.name
+
     def __call__(self, viewEdge):
-        found = viewEdge.viewshape.name in self.names
+        found = self.getViewShapeName(viewEdge.viewshape) in self.names
         if self.negative:
             return not found
         return found
@@ -1159,6 +1170,7 @@ class Seed:
 
 _seed = Seed()
 
+
 def get_dashed_pattern(linestyle):
     """Extracts the dashed pattern from the various UI options """
     pattern = []
@@ -1172,6 +1184,15 @@ def get_dashed_pattern(linestyle):
         pattern.append(linestyle.dash3)
         pattern.append(linestyle.gap3)
     return pattern
+
+
+def get_grouped_objects(group):
+    for ob in group.objects:
+        if ob.dupli_type == 'GROUP' and ob.dupli_group is not None:
+            for dupli in get_grouped_objects(ob.dupli_group):
+                yield dupli
+        else:
+            yield ob
 
 
 integration_types = {
@@ -1256,7 +1277,7 @@ def process(layer_name, lineset_name):
     # prepare selection criteria by group of objects
     if lineset.select_by_group:
         if lineset.group is not None:
-            names = {ob.name: True for ob in lineset.group.objects}
+            names = {getQualifiedObjectName(ob): True for ob in get_grouped_objects(lineset.group)}
             upred = ObjectNamesUP1D(names, lineset.group_negation == 'EXCLUSIVE')
             selection_criteria.append(upred)
     # prepare selection criteria by image border

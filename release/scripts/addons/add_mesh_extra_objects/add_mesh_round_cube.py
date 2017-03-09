@@ -4,14 +4,23 @@ import bpy
 from bpy_extras import object_utils
 from itertools import permutations
 from math import copysign, pi, sqrt
+from bpy.props import (
+        BoolProperty,
+        EnumProperty,
+        FloatProperty,
+        FloatVectorProperty,
+        IntProperty
+        )
 
-def round_cube(radius=1.0, arcdiv=4, lindiv=0., size=(0. ,0. ,0.), div_type='CORNERS', odd_axis_align=False, info_only=False):
+
+def round_cube(radius=1.0, arcdiv=4, lindiv=0., size=(0., 0., 0.),
+               div_type='CORNERS', odd_axis_align=False, info_only=False):
     # subdiv bitmasks
     CORNERS, EDGES, ALL = 0, 1, 2
     try:
         subdiv = ('CORNERS', 'EDGES', 'ALL').index(div_type)
     except ValueError:
-        subdiv = CORNERS # fallback
+        subdiv = CORNERS  # fallback
 
     radius = max(radius, 0.)
     if not radius:
@@ -28,7 +37,7 @@ def round_cube(radius=1.0, arcdiv=4, lindiv=0., size=(0. ,0. ,0.), div_type='COR
     if not lindiv:
         subdiv = CORNERS
 
-    odd = arcdiv % 2 # even = arcdiv % 2 ^ 1
+    odd = arcdiv % 2  # even = arcdiv % 2 ^ 1
     step_size = 2. / arcdiv
 
     odd_aligned = 0
@@ -43,8 +52,8 @@ def round_cube(radius=1.0, arcdiv=4, lindiv=0., size=(0. ,0. ,0.), div_type='COR
     if arcdiv == 1 and not odd_aligned and subdiv == EDGES:
         subdiv = CORNERS
 
-    half_chord = 0. # ~ spherical cap base radius
-    sagitta = 0. # ~ spherical cap height
+    half_chord = 0.  # ~ spherical cap base radius
+    sagitta = 0.     # ~ spherical cap height
     if not axis_aligned:
         half_chord = sqrt(3.) * radius / (3. * arcdiv)
         id2 = 1. / (arcdiv * arcdiv)
@@ -54,8 +63,8 @@ def round_cube(radius=1.0, arcdiv=4, lindiv=0., size=(0. ,0. ,0.), div_type='COR
     exyz = [0. if s < 2. * (radius - sagitta) else (s - 2. * (radius - sagitta)) * 0.5 for s in size]
     ex, ey, ez = exyz
 
-    dxyz = [0, 0, 0]      # extrusion divisions per axis
-    dssxyz = [0., 0., 0.] # extrusion division step sizes per axis
+    dxyz = [0, 0, 0]       # extrusion divisions per axis
+    dssxyz = [0., 0., 0.]  # extrusion division step sizes per axis
 
     for i in range(3):
         sc = 2. * (exyz[i] + half_chord)
@@ -78,22 +87,22 @@ def round_cube(radius=1.0, arcdiv=4, lindiv=0., size=(0. ,0. ,0.), div_type='COR
                 dvc += ec * ec // 2 * sum(dxyz) + ec * (ec - 1)
         else:
             dvc = (arcdiv * 4) * ec + ec * (ec - 1) if axis_aligned else 0
-        vert_count = int(6 * arcdiv*arcdiv + (0 if odd_aligned else 2) + dvc)
+        vert_count = int(6 * arcdiv * arcdiv + (0 if odd_aligned else 2) + dvc)
         if not radius and not max(size) > 0:
             vert_count = 1
         return arcdiv, lindiv, vert_count
 
     if not radius and not max(size) > 0:
         # Single vertex
-        return [(0,0,0)], []
+        return [(0, 0, 0)], []
 
     # uv lookup table
     uvlt = []
     v = vi
     for j in range(1, steps + 1):
-        v2 = v*v
+        v2 = v * v
         uvlt.append((v, v2, radius * sqrt(18. - 6. * v2) / 6.))
-        v = vi + j * step_size # v += step_size # instead of accumulating errors
+        v = vi + j * step_size  # v += step_size # instead of accumulating errors
         # clear fp errors / signs at axis
         if abs(v) < 1e-10:
             v = 0.0
@@ -150,7 +159,7 @@ def round_cube(radius=1.0, arcdiv=4, lindiv=0., size=(0. ,0. ,0.), div_type='COR
             svitc = svit[side]
             exr = exyz[xp]
             eyr = exyz[yp]
-            ri = 0 # row index
+            ri = 0  # row index
             rij = zer if side < 4 else yer
 
             if side == 5:
@@ -161,16 +170,16 @@ def round_cube(radius=1.0, arcdiv=4, lindiv=0., size=(0. ,0. ,0.), div_type='COR
                 span = range(1, arcdiv)
                 ri = 1
 
-            for j in span: # rows
+            for j in span:  # rows
                 v, v2, mv2 = uvlt[j]
-                tv2mh = 1./3. * v2 - 0.5
+                tv2mh = 1. / 3. * v2 - 0.5
                 hv2 = 0.5 * v2
 
                 if j == hemi and rij:
                     # Jump over non-edge row indices
                     ri += rij
 
-                for i in span: # columns
+                for i in span:  # columns
                     u, u2, mu2 = uvlt[i]
                     vert[xp] = u * mv2
                     vert[yp] = v * mu2
@@ -182,7 +191,7 @@ def round_cube(radius=1.0, arcdiv=4, lindiv=0., size=(0. ,0. ,0.), div_type='COR
                     rv = tuple(vert)
 
                     if exr and i == hemi:
-                        rx = vert[xp] # save rotated x
+                        rx = vert[xp]  # save rotated x
                         vert[xp] = rxi = (-exr - half_chord) * dir[xp]
                         if axis_aligned:
                             svitc[ri].append(len(verts))
@@ -216,7 +225,7 @@ def round_cube(radius=1.0, arcdiv=4, lindiv=0., size=(0. ,0. ,0.), div_type='COR
                                             svitc[hemi + axis_aligned + l].append(len(verts))
                                             verts.append(tuple(vert))
                                         vert[yp] = ry
-                        vert[xp] = rx # restore
+                        vert[xp] = rx  # restore
 
                     if eyr and j == hemi:
                         vert[yp] = (-eyr - half_chord) * dir[yp]
@@ -276,122 +285,119 @@ def round_cube(radius=1.0, arcdiv=4, lindiv=0., size=(0. ,0. ,0.), div_type='COR
     for side, rows in enumerate(svit):
         xp, yp = sides[side][:2]
         oa4 = odd_aligned and side == 4
-        if oa4: # special case
+        if oa4:  # special case
             hemi += 1
         for j, row in enumerate(rows[:-1]):
-            tri = odd_aligned and (oa4 and not j or rows[j+1][-1] < 0)
+            tri = odd_aligned and (oa4 and not j or rows[j + 1][-1] < 0)
             for i, vi in enumerate(row[:-1]):
                 # odd_aligned triangle corners
                 if vi < 0:
                     if not j and not i:
-                        faces.append((row[i+1], rows[j+1][i+1], rows[j+1][i]))
+                        faces.append((row[i + 1], rows[j + 1][i + 1], rows[j + 1][i]))
                 elif oa4 and not i and j == len(rows) - 2:
-                    faces.append((vi, row[i+1], rows[j+1][i+1]))
+                    faces.append((vi, row[i + 1], rows[j + 1][i + 1]))
                 elif tri and i == len(row) - 2:
                     if j:
-                        faces.append((vi, row[i+1], rows[j+1][i]))
+                        faces.append((vi, row[i + 1], rows[j + 1][i]))
                     else:
                         if oa4 or arcdiv > 1:
-                            faces.append((vi, rows[j+1][i+1], rows[j+1][i]))
+                            faces.append((vi, rows[j + 1][i + 1], rows[j + 1][i]))
                         else:
-                            faces.append((vi, row[i+1], rows[j+1][i]))
+                            faces.append((vi, row[i + 1], rows[j + 1][i]))
                 # subdiv = EDGES (not ALL)
                 elif subdiv and len(rows[j + 1]) < len(row) and (i >= hemi):
                     if (i == hemi):
-                        faces.append((vi, row[i+1+dxyz[xp]], rows[j+1+dxyz[yp]][i+1+dxyz[xp]], rows[j+1+dxyz[yp]][i]))
+                        faces.append((vi, row[i + 1 + dxyz[xp]], rows[j + 1 + dxyz[yp]][i + 1 + dxyz[xp]],
+                                     rows[j + 1 + dxyz[yp]][i]))
                     elif i > hemi + dxyz[xp]:
-                        faces.append((vi, row[i+1], rows[j+1][i+1-dxyz[xp]], rows[j+1][i-dxyz[xp]]))
+                        faces.append((vi, row[i + 1], rows[j + 1][i + 1 - dxyz[xp]], rows[j + 1][i - dxyz[xp]]))
                 elif subdiv and len(rows[j + 1]) > len(row) and (i >= hemi):
                     if (i > hemi):
-                        faces.append((vi, row[i+1], rows[j+1][i+1+dxyz[xp]], rows[j+1][i+dxyz[xp]]))
+                        faces.append((vi, row[i + 1], rows[j + 1][i + 1 + dxyz[xp]], rows[j + 1][i + dxyz[xp]]))
                 elif subdiv and len(row) < len(rows[0]) and i == hemi:
                     pass
                 else:
                     # Most faces...
-                    faces.append((vi, row[i+1], rows[j+1][i+1], rows[j+1][i]))
+                    faces.append((vi, row[i + 1], rows[j + 1][i + 1], rows[j + 1][i]))
         if oa4:
             hemi -= 1
 
     return verts, faces
 
-from bpy.props import BoolProperty, EnumProperty, FloatProperty, FloatVectorProperty, IntProperty
 
 class AddRoundCube(bpy.types.Operator, object_utils.AddObjectHelper):
-    """Add Round Cube Primitive"""
-    bl_idname = 'mesh.primitive_round_cube_add'
-    bl_label = 'Add Round Cube'
-    bl_description = 'Add mesh primitives: Quadspheres, Capsules, Rounded Cuboids, 3D Grids, etc.'
-    bl_options = {'REGISTER', 'UNDO', 'PRESET'}
+    bl_idname = "mesh.primitive_round_cube_add"
+    bl_label = "Add Round Cube"
+    bl_description = ("Create mesh primitives: Quadspheres,"
+                     "\nCapsules, Rounded Cuboids, 3D Grids etc.")
+    bl_options = {"REGISTER", "UNDO", "PRESET"}
 
     sanity_check_verts = 200000
     vert_count = 0
 
     radius = FloatProperty(
-            name = 'Radius',
-            description = 'Radius of vertices for sphere, capsule or cuboid bevel',
-            default = 1.0, min = 0.0, soft_min=0.01, step=10
+            name='Radius',
+            description='Radius of vertices for sphere, capsule or cuboid bevel',
+            default=1.0, min=0.0, soft_min=0.01, step=10
             )
-
     size = FloatVectorProperty(
-            name = 'Size',
-            description = 'Size',
-            subtype = 'XYZ',
+            name='Size',
+            description='Size',
+            subtype='XYZ',
             )
-
     arc_div = IntProperty(
-            name = 'Arc Divisions',
-            description = 'Arc curve divisions, per quadrant; 0 = derive from Linear',
-            default = 4, min = 1
+            name='Arc Divisions',
+            description='Arc curve divisions, per quadrant; 0=derive from Linear',
+            default=4, min=1
             )
-
     lin_div = FloatProperty(
-            name = 'Linear Divisions',
-            description = 'Linear unit divisions (Edges/Faces); 0 = derive from Arc',
-            default = 0.0, min = 0.0, step=100, precision=1
+            name='Linear Divisions',
+            description='Linear unit divisions (Edges/Faces); 0=derive from Arc',
+            default=0.0, min=0.0, step=100, precision=1
             )
-
     div_type = EnumProperty(
-            name = 'Type',
-            description = 'Division type',
-            items = (
+            name='Type',
+            description='Division type',
+            items=(
                 ('CORNERS', 'Corners', 'Sphere / Corners'),
                 ('EDGES', 'Edges', 'Sphere / Corners and extruded edges (size)'),
                 ('ALL', 'All', 'Sphere / Corners, extruded edges and faces (size)')),
-            default = 'CORNERS',
+            default='CORNERS',
             )
-
     odd_axis_align = BoolProperty(
-            name = 'Odd Axis Align',
-            description = 'Align odd arc divisions with axes (Note: triangle corners!)',
+            name='Odd Axis Align',
+            description='Align odd arc divisions with axes (Note: triangle corners!)',
             )
-
     no_limit = BoolProperty(
-            name = 'No Limit',
-            description = 'Do not limit to '+str(sanity_check_verts)+' vertices (sanity check)',
-            options = {'HIDDEN'}
+            name='No Limit',
+            description='Do not limit to ' + str(sanity_check_verts) + ' vertices (sanity check)',
+            options={'HIDDEN'}
             )
 
     def execute(self, context):
-        if self.arc_div <=0 and self.lin_div <= 0:
+        if self.arc_div <= 0 and self.lin_div <= 0:
             self.report({'ERROR'}, 'Either Arc Divisions or Linear Divisions must be greater than zero!')
             return {'CANCELLED'}
 
         if not self.no_limit:
             if self.vert_count > self.sanity_check_verts:
-                self.report({'ERROR'}, 'More than '+str(self.sanity_check_verts)+' vertices!  Check "No Limit" to proceed')
+                self.report({'ERROR'}, 'More than ' + str(self.sanity_check_verts) +
+                            ' vertices!  Check "No Limit" to proceed')
                 return {'CANCELLED'}
 
-        verts, faces = round_cube(self.radius, self.arc_div, self.lin_div, self.size, self.div_type, self.odd_axis_align)
+        verts, faces = round_cube(self.radius, self.arc_div, self.lin_div,
+                                  self.size, self.div_type, self.odd_axis_align)
 
         mesh = bpy.data.meshes.new('Roundcube')
-        mesh.from_pydata(verts,[],faces)
+        mesh.from_pydata(verts, [], faces)
         object_utils.object_data_add(context, mesh, operator=self)
 
         return {'FINISHED'}
 
     def check(self, context):
-        self.arcdiv, self.lindiv, self.vert_count = round_cube(self.radius, self.arc_div, self.lin_div, self.size, self.div_type, self.odd_axis_align, True)
-        return True # False
+        self.arcdiv, self.lindiv, self.vert_count = round_cube(self.radius, self.arc_div, self.lin_div,
+                                                               self.size, self.div_type, self.odd_axis_align, True)
+        return True
 
     def invoke(self, context, event):
         self.check(context)
@@ -432,5 +438,4 @@ class AddRoundCube(bpy.types.Operator, object_utils.AddObjectHelper):
         col.prop(self, 'location', expand=True)
         col = layout.column(align=True)
         col.prop(self, 'rotation', expand=True)
-
 

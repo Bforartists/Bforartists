@@ -28,6 +28,15 @@
 
 /** \file blender/blenlib/intern/scanfill.c
  *  \ingroup bli
+ *
+ * Triangulate multiple 2D/3D polygon with support for holes,
+ * use for tessellating curves, fonts and geometry.
+ * See main function #BLI_scanfill_calc
+ *
+ * Uses sweep-line method.
+ *
+ * \note There is a similar API in polyfill2d.c
+ * which uses ear clipping, but has no hole support.
  */
 
 #include <stdio.h>
@@ -602,7 +611,7 @@ static unsigned int scanfill(ScanFillContext *sf_ctx, PolyFill *pf, const int fl
 			else {
 				/* test rest of vertices */
 				ScanFillVertLink *best_sc = NULL;
-				float best_angle = 3.14f;
+				float angle_best_cos = -1.0f;
 				float miny;
 				bool firsttime = false;
 				
@@ -633,21 +642,18 @@ static unsigned int scanfill(ScanFillContext *sf_ctx, PolyFill *pf, const int fl
 										best_sc = sc1;
 									}
 									else {
-										float angle;
-										
 										/* prevent angle calc for the simple cases only 1 vertex is found */
 										if (firsttime == false) {
-											best_angle = angle_v2v2v2(v2->xy, v1->xy, best_sc->vert->xy);
+											angle_best_cos = cos_v2v2v2(v2->xy, v1->xy, best_sc->vert->xy);
 											firsttime = true;
 										}
 
-										angle = angle_v2v2v2(v2->xy, v1->xy, sc1->vert->xy);
-										if (angle < best_angle) {
+										const float angle_test_cos = cos_v2v2v2(v2->xy, v1->xy, sc1->vert->xy);
+										if (angle_test_cos > angle_best_cos) {
 											best_sc = sc1;
-											best_angle = angle;
+											angle_best_cos = angle_test_cos;
 										}
 									}
-										
 								}
 							}
 						}

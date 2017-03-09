@@ -32,8 +32,9 @@
 #include "DNA_actuator_types.h"
 #include "DNA_scene_types.h" /* for MAXFRAME */
 
-#include "BLI_utildefines.h"
 #include "BLI_math.h"
+#include "BLI_string_utils.h"
+#include "BLI_utildefines.h"
 
 #include "BLT_translation.h"
 
@@ -333,7 +334,7 @@ static void rna_Actuator_constraint_detect_material_set(struct PointerRNA *ptr, 
 	bActuator *act = (bActuator *)ptr->data;
 	bConstraintActuator *ca = act->data;
 
-	short old_value = (ca->flag & ACT_CONST_MATERIAL ? 1 : 0);
+	short old_value = (ca->flag & ACT_CONST_MATERIAL) ? 1 : 0;
 
 	if (old_value != value) {
 		ca->flag ^= ACT_CONST_MATERIAL;
@@ -1706,6 +1707,7 @@ static void rna_def_game_actuator(BlenderRNA *brna)
 		{ACT_GAME_QUIT, "QUIT", 0, "Quit Game", ""},
 		{ACT_GAME_SAVECFG, "SAVECFG", 0, "Save bge.logic.globalDict", ""},
 		{ACT_GAME_LOADCFG, "LOADCFG", 0, "Load bge.logic.globalDict", ""},
+		{ACT_GAME_SCREENSHOT, "SCREENSHOT", 0, "Screenshot", ""},
 		{0, NULL, 0, NULL, NULL}
 	};
 	
@@ -1722,8 +1724,8 @@ static void rna_def_game_actuator(BlenderRNA *brna)
 	/* ACT_GAME_LOAD */
 	prop = RNA_def_property(srna, "filename", PROP_STRING, PROP_FILEPATH);
 	RNA_def_property_ui_text(prop, "File",
-	                         "Load this blend file, use the \"//\" prefix for a path relative to the current "
-	                         "blend file");
+	                         "The file to use, depending on the mode (e.g. the blend file to load or a destination "
+	                         "for saving a screenshot) - use the \"//\" prefix for a relative path");
 	RNA_def_property_update(prop, NC_LOGIC, NULL);
 	/*XXX to do: an operator that calls file_browse with relative_path on and blender filtering active */
 }

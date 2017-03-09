@@ -54,7 +54,7 @@ typedef struct FModifier {
 	
 	void *data;			/* pointer to modifier data */
 	
-	char name[64];		/* user-defined description for the modifier */
+	char name[64];		/* user-defined description for the modifier - MAX_ID_NAME-2 */
 	short type;			/* type of f-curve modifier */
 	short flag;			/* settings for the modifier */
 	
@@ -271,7 +271,7 @@ typedef struct DriverTarget {
 	
 	char *rna_path;			/* RNA path defining the setting to use (for DVAR_TYPE_SINGLE_PROP) */
 	
-	char pchan_name[32];	/* name of the posebone to use (for vars where DTAR_FLAG_STRUCT_REF is used) */
+	char pchan_name[64];	/* name of the posebone to use (for vars where DTAR_FLAG_STRUCT_REF is used) - MAX_ID_NAME-2 */
 	short transChan;		/* transform channel index (for DVAR_TYPE_TRANSFORM_CHAN)*/
 	
 	short flag;				/* flags for the validity of the target (NOTE: these get reset every time the types change) */
@@ -327,13 +327,15 @@ typedef enum eDriverTarget_TransformChannels {
  */
 typedef struct DriverVar {
 	struct DriverVar *next, *prev;
-
-	char name[64];              /* name of the variable to use in py-expression (must be valid python identifier) */
-
+	
+	char name[64];              /* name of the variable to use in py-expression (must be valid python identifier) - MAX_ID_NAME-2 */
+	
 	DriverTarget targets[8];    /* MAX_DRIVER_TARGETS, target slots */
-	short num_targets;          /* number of targets actually used by this variable */
-
-	short type;                 /* type of driver target (eDriverTarget_Types) */
+	
+	char num_targets;           /* number of targets actually used by this variable */
+	char type;                  /* type of driver variable (eDriverVar_Types) */
+	
+	short flag;                 /* validation tags, etc. (eDriverVar_Flags) */
 	float curval;               /* result of previous evaluation */
 } DriverVar;
 
@@ -354,6 +356,41 @@ typedef enum eDriverVar_Types {
 	 */
 	MAX_DVAR_TYPES
 } eDriverVar_Types;
+
+/* Driver Variable Flags */
+typedef enum eDriverVar_Flags {
+	/* variable is not set up correctly */
+	DVAR_FLAG_ERROR               = (1 << 0),
+	
+	/* variable name doesn't pass the validation tests */
+	DVAR_FLAG_INVALID_NAME        = (1 << 1),
+	/* name starts with a number */
+	DVAR_FLAG_INVALID_START_NUM   = (1 << 2),
+	/* name starts with a special character (!, $, @, #, _, etc.) */
+	DVAR_FLAG_INVALID_START_CHAR  = (1 << 3),
+	/* name contains a space */
+	DVAR_FLAG_INVALID_HAS_SPACE   = (1 << 4),
+	/* name contains a dot */
+	DVAR_FLAG_INVALID_HAS_DOT     = (1 << 5),
+	/* name contains invalid chars */
+	DVAR_FLAG_INVALID_HAS_SPECIAL = (1 << 6),
+	/* name is a reserved keyword */
+	DVAR_FLAG_INVALID_PY_KEYWORD  = (1 << 7),
+	/* name is zero-length */
+	DVAR_FLAG_INVALID_EMPTY       = (1 << 8),
+} eDriverVar_Flags;
+
+/* All invalid dvar name flags */
+#define DVAR_ALL_INVALID_FLAGS (   \
+	DVAR_FLAG_INVALID_NAME |       \
+	DVAR_FLAG_INVALID_START_NUM | \
+	DVAR_FLAG_INVALID_START_CHAR | \
+	DVAR_FLAG_INVALID_HAS_SPACE |  \
+	DVAR_FLAG_INVALID_HAS_DOT |    \
+	DVAR_FLAG_INVALID_HAS_SPECIAL |  \
+	DVAR_FLAG_INVALID_PY_KEYWORD  | \
+	DVAR_FLAG_INVALID_EMPTY  \
+)
 
 /* --- */
 
@@ -413,7 +450,9 @@ typedef enum eDriver_Flags {
 		/* the names are cached so they don't need have python unicode versions created each time */
 	DRIVER_FLAG_RENAMEVAR	= (1<<4),
 		/* intermediate values of driver should be shown in the UI for debugging purposes */
-	DRIVER_FLAG_SHOWDEBUG	= (1<<5)
+	DRIVER_FLAG_SHOWDEBUG	= (1<<5),
+		/* include 'self' in the drivers namespace. */
+	DRIVER_FLAG_USE_SELF	= (1<<6),
 } eDriver_Flags;
 
 /* F-Curves -------------------------------------- */
@@ -447,7 +486,7 @@ typedef struct FCurve {
 	unsigned int totvert;	/* total number of points which define the curve (i.e. size of arrays in FPoints) */
 	
 		/* value cache + settings */
-	float curval;			/* value stored from last time curve was evaluated */
+	float curval;			/* value stored from last time curve was evaluated (not threadsafe, debug display only!) */
 	short flag;				/* user-editable settings for this curve */
 	short extend;			/* value-extending mode for this curve (does not cover  */
 	
@@ -500,8 +539,9 @@ typedef enum eFCurve_Extend {
 /* curve coloring modes */
 typedef enum eFCurve_Coloring {
 	FCURVE_COLOR_AUTO_RAINBOW = 0,		/* automatically determine color using rainbow (calculated at drawtime) */
-	FCURVE_COLOR_AUTO_RGB,				/* automatically determine color using XYZ (array index) <-> RGB */
-	FCURVE_COLOR_CUSTOM					/* custom color */
+	FCURVE_COLOR_AUTO_RGB     = 1,		/* automatically determine color using XYZ (array index) <-> RGB */
+	FCURVE_COLOR_AUTO_YRGB    = 3,		/* automatically determine color where XYZ <-> RGB, but index(X) != 0 */
+	FCURVE_COLOR_CUSTOM       = 2,		/* custom color */
 } eFCurve_Coloring;
 
 /* ************************************************ */
@@ -568,7 +608,7 @@ typedef struct NlaStrip {
 	ListBase fcurves;           /* F-Curves for controlling this strip's influence and timing */    // TODO: move out?
 	ListBase modifiers;         /* F-Curve modifiers to be applied to the entire strip's referenced F-Curves */
 
-	char name[64];              /* User-Visible Identifier for Strip */
+	char name[64];              /* User-Visible Identifier for Strip - MAX_ID_NAME-2 */
 
 	float influence;            /* Influence of strip */
 	float strip_time;           /* Current 'time' within action being used (automatically evaluated, but can be overridden) */
@@ -678,7 +718,7 @@ typedef struct NlaTrack {
 	int flag;				/* settings for this track */
 	int index;				/* index of the track in the stack (NOTE: not really useful, but we need a pad var anyways!) */
 	
-	char name[64];			/* short user-description of this track */
+	char name[64];			/* short user-description of this track - MAX_ID_NAME-2 */
 } NlaTrack;
 
 /* settings for track */
@@ -714,7 +754,7 @@ typedef struct KS_Path {
 	struct KS_Path *next, *prev;
 	
 	ID *id;					/* ID block that keyframes are for */
-	char group[64];			/* name of the group to add to */
+	char group[64];			/* name of the group to add to - MAX_ID_NAME-2 */
 	
 	int idtype;				/* ID-type that path can be used on */
 	
@@ -765,10 +805,10 @@ typedef struct KeyingSet {
 	
 	ListBase paths;			/* (KS_Path) paths to keyframe to */
 	
-	char idname[64];		/* unique name (for search, etc.) */
-	char name[64];			/* user-viewable name for KeyingSet (for menus, etc.) */
+	char idname[64];		/* unique name (for search, etc.) - MAX_ID_NAME-2  */
+	char name[64];			/* user-viewable name for KeyingSet (for menus, etc.) - MAX_ID_NAME-2 */
 	char description[240];	/* (RNA_DYN_DESCR_MAX) short help text. */
-	char typeinfo[64];		/* name of the typeinfo data used for the relative paths */
+	char typeinfo[64];		/* name of the typeinfo data used for the relative paths - MAX_ID_NAME-2 */
 	
 	int active_path;		/* index of the active path */
 	
@@ -800,6 +840,7 @@ typedef enum eInsertKeyFlags {
 	/* Allow to make a full copy of new key into existing one, if any, instead of 'reusing' existing handles.
 	 * Used by copy/paste code. */
 	INSERTKEY_OVERWRITE_FULL = (1<<7),
+	INSERTKEY_DRIVER    = (1<<8),	/* for driver FCurves, use driver's "input" value - for easier corrective driver setup */
 } eInsertKeyFlags;
 
 /* ************************************************ */
@@ -898,7 +939,10 @@ typedef enum eAnimData_Flag {
 	ADT_UI_ACTIVE           = (1<<15),
 
 		/* F-Curves from this AnimData block are not visible in the Graph Editor */
-	ADT_CURVES_NOT_VISIBLE  = (1<<16)
+	ADT_CURVES_NOT_VISIBLE  = (1<<16),
+
+		/* F-Curves from this AnimData block are always visible */
+	ADT_CURVES_ALWAYS_VISIBLE = (1<<17),
 } eAnimData_Flag;
 
 /* Animation Data recalculation settings (to be set by depsgraph) */

@@ -40,8 +40,13 @@
 #include <cstdio>
 #include <cstring>
 
-/* this should eventually be enabled, but causes T46431 */
-// #define USE_CONTEXT_FLAGS
+/* needed for intel drivers (works w/ mesa-swrast & nvidia) */
+#define USE_GLXEW_INIT_WORKAROUND
+
+#ifdef USE_GLXEW_INIT_WORKAROUND
+static GLuint _glewStrLen(const GLubyte *s);
+static GLboolean _glewSearchExtension(const char *name, const GLubyte *start, const GLubyte *end);
+#endif
 
 #ifdef WITH_GLEW_MX
 GLXEWContext *glxewContext = NULL;
@@ -57,6 +62,7 @@ GHOST_ContextGLX::GHOST_ContextGLX(
         Window window,
         Display *display,
         XVisualInfo *visualInfo,
+        GLXFBConfig fbconfig,
         int contextProfileMask,
         int contextMajorVersion,
         int contextMinorVersion,
@@ -65,6 +71,7 @@ GHOST_ContextGLX::GHOST_ContextGLX(
     : GHOST_Context(stereoVisual, numOfAASamples),
       m_display(display),
       m_visualInfo(visualInfo),
+      m_fbconfig(fbconfig),
       m_window(window),
       m_contextProfileMask(contextProfileMask),
       m_contextMajorVersion(contextMajorVersion),
@@ -89,7 +96,7 @@ GHOST_ContextGLX::~GHOST_ContextGLX()
 
 		if (m_context != None) {
 			if (m_window != 0 && m_context == ::glXGetCurrentContext())
-				::glXMakeCurrent(m_display, m_window, NULL);
+				::glXMakeCurrent(m_display, None, NULL);
 
 			if (m_context != s_sharedContext || s_sharedCount == 1) {
 				assert(s_sharedCount > 0);
@@ -148,27 +155,56 @@ void GHOST_ContextGLX::initContextGLXEW()
 
 GHOST_TSuccess GHOST_ContextGLX::initializeDrawingContext()
 {
-#ifdef WITH_X11_XINPUT
-	/* use our own event handlers to avoid exiting blender,
-	 * this would happen for eg:
-	 * if you open blender, unplug a tablet, then open a new window. */
-	XErrorHandler   old_handler    = XSetErrorHandler  (GHOST_X11_ApplicationErrorHandler  );
-	XIOErrorHandler old_handler_io = XSetIOErrorHandler(GHOST_X11_ApplicationIOErrorHandler);
-#endif
+	GHOST_X11_ERROR_HANDLERS_OVERRIDE(handler_store);
 
-#ifdef USE_CONTEXT_FLAGS
-	/* needed so 'GLXEW_ARB_create_context' is valid */
-	mxIgnoreNoVersion(1);
-	initContextGLXEW();
-	mxIgnoreNoVersion(0);
-#endif
+	/* -------------------------------------------------------------------- */
+	/* Begin Inline Glew  */
 
-#ifdef USE_CONTEXT_FLAGS
-	if (GLXEW_ARB_create_context)
+#ifdef USE_GLXEW_INIT_WORKAROUND
+	const GLubyte *extStart = (GLubyte *)"";
+	const GLubyte *extEnd;
+	if (glXQueryExtension(m_display, NULL, NULL)) {
+		extStart = (const GLubyte *)glXGetClientString(m_display, GLX_EXTENSIONS);
+		if ((extStart == NULL) ||
+		    (glXChooseFBConfig = (PFNGLXCHOOSEFBCONFIGPROC)glXGetProcAddressARB(
+		             (const GLubyte *)"glXChooseFBConfig")) == NULL ||
+		    (glXCreateContextAttribsARB = (PFNGLXCREATECONTEXTATTRIBSARBPROC)glXGetProcAddressARB(
+		             (const GLubyte *)"glXCreateContextAttribsARB")) == NULL)
+		{
+			extStart = (GLubyte *)"";
+		}
+	}
+	extEnd = extStart + _glewStrLen(extStart);
+
+#undef GLXEW_ARB_create_context
+	const bool GLXEW_ARB_create_context =
+	        _glewSearchExtension("GLX_ARB_create_context", extStart, extEnd);
+#undef GLXEW_ARB_create_context_profile
+	const bool GLXEW_ARB_create_context_profile =
+	        _glewSearchExtension("GLX_ARB_create_context_profile", extStart, extEnd);
+#undef GLXEW_ARB_create_context_robustness
+const bool GLXEW_ARB_create_context_robustness =
+	        _glewSearchExtension("GLX_ARB_create_context_robustness", extStart, extEnd);
+#ifdef WITH_GLEW_ES
+#undef GLXEW_EXT_create_context_es_profile
+	const bool GLXEW_EXT_create_context_es_profile =
+	        _glewSearchExtension("GLX_EXT_create_context_es_profile", extStart, extEnd);
+#undef GLXEW_EXT_create_context_es2_profile
+	const bool GLXEW_EXT_create_context_es2_profile =
+	        _glewSearchExtension("GLX_EXT_create_context_es2_profile", extStart, extEnd);
+#endif  /* WITH_GLEW_ES */
+
+	/* End Inline Glew */
+	/* -------------------------------------------------------------------- */
 #else
-	if (0)
-#endif
-	{
+	/* important to initialize only glxew (_not_ glew),
+	 * since this breaks w/ Mesa's `swrast`, see: T46431 */
+	glxewInit();
+#endif  /* USE_GLXEW_INIT_WORKAROUND */
+
+
+
+	if (GLXEW_ARB_create_context) {
 		int profileBitCore   = m_contextProfileMask & GLX_CONTEXT_CORE_PROFILE_BIT_ARB;
 		int profileBitCompat = m_contextProfileMask & GLX_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB;
 
@@ -243,19 +279,24 @@ GHOST_TSuccess GHOST_ContextGLX::initializeDrawingContext()
 		attribs[i++] = 0;
 
 		/* Create a GL 3.x context */
-		GLXFBConfig *framebuffer_config = NULL;
-		{
-			int glx_attribs[64];
-			int fbcount = 0;
-
-			GHOST_X11_GL_GetAttributes(glx_attribs, 64, m_numOfAASamples, m_stereoVisual, true);
-
-			framebuffer_config = glXChooseFBConfig(m_display, DefaultScreen(m_display), glx_attribs, &fbcount);
+		if (m_fbconfig) {
+			m_context = glXCreateContextAttribsARB(m_display, m_fbconfig, s_sharedContext, true, attribs);
 		}
+		else {
+			GLXFBConfig *framebuffer_config = NULL;
+			{
+				int glx_attribs[64];
+				int fbcount = 0;
 
-		if (framebuffer_config) {
-			m_context = glXCreateContextAttribsARB(m_display, framebuffer_config[0], s_sharedContext, True, attribs);
-			XFree(framebuffer_config);
+				GHOST_X11_GL_GetAttributes(glx_attribs, 64, m_numOfAASamples, m_stereoVisual, false, true);
+
+				framebuffer_config = glXChooseFBConfig(m_display, DefaultScreen(m_display), glx_attribs, &fbcount);
+			}
+
+			if (framebuffer_config) {
+				m_context = glXCreateContextAttribsARB(m_display, framebuffer_config[0], s_sharedContext, True, attribs);
+				XFree(framebuffer_config);
+			}
 		}
 	}
 	else {
@@ -266,6 +307,8 @@ GHOST_TSuccess GHOST_ContextGLX::initializeDrawingContext()
 	GHOST_TSuccess success;
 
 	if (m_context != NULL) {
+		const unsigned char *version;
+
 		if (!s_sharedContext)
 			s_sharedContext = m_context;
 
@@ -273,11 +316,9 @@ GHOST_TSuccess GHOST_ContextGLX::initializeDrawingContext()
 
 		glXMakeCurrent(m_display, m_window, m_context);
 
-#ifndef USE_CONTEXT_FLAGS
 		// Seems that this has to be called after MakeCurrent,
 		// which means we cannot use glX extensions until after we create a context
 		initContextGLXEW();
-#endif
 
 		initClearGL();
 		::glXSwapBuffers(m_display, m_window);
@@ -285,18 +326,24 @@ GHOST_TSuccess GHOST_ContextGLX::initializeDrawingContext()
 		/* re initialize to get the extensions properly */
 		initContextGLXEW();
 
-		success = GHOST_kSuccess;
+		version = glGetString(GL_VERSION);
+
+		if (!version || version[0] < '2' || ((version[0] == '2') &&  (version[2] < '1'))) {
+			fprintf(stderr, "Error! Blender requires OpenGL 2.1 to run. Try updating your drivers.\n");
+			fflush(stderr);
+			/* ugly, but we get crashes unless a whole bunch of systems are patched. */
+			exit(0);
+		}
+		else
+			success = GHOST_kSuccess;
 	}
 	else {
 		/* freeing well clean up the context initialized above */
 		success = GHOST_kFailure;
 	}
 
-#ifdef WITH_X11_XINPUT
-	/* Restore handler */
-	XSetErrorHandler  (old_handler);
-	XSetIOErrorHandler(old_handler_io);
-#endif
+
+	GHOST_X11_ERROR_HANDLERS_RESTORE(handler_store);
 
 	return success;
 }
@@ -350,15 +397,10 @@ GHOST_TSuccess GHOST_ContextGLX::getSwapInterval(int &intervalOut)
 int GHOST_X11_GL_GetAttributes(
         int *attribs, int attribs_max,
         int samples, bool is_stereo_visual,
+        bool need_alpha,
         bool for_fb_config)
 {
 	int i = 0;
-
-#ifdef GHOST_OPENGL_ALPHA
-	const bool need_alpha = true;
-#else
-	const bool need_alpha = false;
-#endif
 
 #ifdef GHOST_OPENGL_STENCIL
 	const bool need_stencil = true;
@@ -424,3 +466,45 @@ int GHOST_X11_GL_GetAttributes(
 
 	return i;
 }
+
+
+/* excuse inlining part of glew */
+#ifdef USE_GLXEW_INIT_WORKAROUND
+static GLuint _glewStrLen(const GLubyte *s)
+{
+	GLuint i = 0;
+	if (s == NULL) return 0;
+	while (s[i] != '\0') i++;
+	return i;
+}
+
+static GLuint _glewStrCLen(const GLubyte *s, GLubyte c)
+{
+	GLuint i = 0;
+	if (s == NULL) return 0;
+	while (s[i] != '\0' && s[i] != c) i++;
+	return (s[i] == '\0' || s[i] == c) ? i : 0;
+}
+
+static GLboolean _glewStrSame(const GLubyte *a, const GLubyte *b, GLuint n)
+{
+	GLuint i = 0;
+	if (a == NULL || b == NULL)
+		return (a == NULL && b == NULL && n == 0) ? GL_TRUE : GL_FALSE;
+	while (i < n && a[i] != '\0' && b[i] != '\0' && a[i] == b[i]) i++;
+	return i == n ? GL_TRUE : GL_FALSE;
+}
+
+static GLboolean _glewSearchExtension(const char *name, const GLubyte *start, const GLubyte *end)
+{
+	const GLubyte *p;
+	GLuint len = _glewStrLen((const GLubyte *)name);
+	p = start;
+	while (p < end) {
+		GLuint n = _glewStrCLen(p, ' ');
+		if (len == n && _glewStrSame((const GLubyte *)name, p, n)) return GL_TRUE;
+		p += n + 1;
+	}
+	return GL_FALSE;
+}
+#endif  /* USE_GLXEW_INIT_WORKAROUND */

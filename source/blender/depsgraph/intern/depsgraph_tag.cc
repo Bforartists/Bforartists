@@ -31,7 +31,7 @@
  */
 
 #include <stdio.h>
-#include <cstring>
+#include <cstring>  /* required for memset */
 #include <queue>
 
 extern "C" {
@@ -42,6 +42,9 @@ extern "C" {
 #include "DNA_screen_types.h"
 #include "DNA_windowmanager_types.h"
 
+#include "BLI_task.h"
+
+#include "BKE_idcode.h"
 #include "BKE_library.h"
 #include "BKE_main.h"
 #include "BKE_node.h"
@@ -53,11 +56,14 @@ extern "C" {
 #include "DEG_depsgraph.h"
 } /* extern "C" */
 
-#include "depsgraph_debug.h"
-#include "depsnode.h"
-#include "depsnode_component.h"
-#include "depsnode_operation.h"
-#include "depsgraph_intern.h"
+#include "intern/eval/deg_eval_flush.h"
+
+#include "intern/nodes/deg_node.h"
+#include "intern/nodes/deg_node_component.h"
+#include "intern/nodes/deg_node_operation.h"
+
+#include "intern/depsgraph_intern.h"
+#include "util/deg_util_foreach.h"
 
 /* *********************** */
 /* Update Tagging/Flushing */
@@ -76,13 +82,13 @@ namespace {
 
 void lib_id_recalc_tag(Main *bmain, ID *id)
 {
-	id->flag |= LIB_ID_RECALC;
+	id->tag |= LIB_TAG_ID_RECALC;
 	DEG_id_type_tag(bmain, GS(id->name));
 }
 
 void lib_id_recalc_data_tag(Main *bmain, ID *id)
 {
-	id->flag |= LIB_ID_RECALC_DATA;
+	id->tag |= LIB_TAG_ID_RECALC_DATA;
 	DEG_id_type_tag(bmain, GS(id->name));
 }
 
@@ -152,19 +158,21 @@ void depsgraph_legacy_handle_update_tag(Main *bmain, ID *id, short flag)
  */
 void DEG_graph_id_tag_update(Main *bmain, Depsgraph *graph, ID *id)
 {
-	IDDepsNode *node = graph->find_id_node(id);
+	DEG::Depsgraph *deg_graph = reinterpret_cast<DEG::Depsgraph *>(graph);
+	DEG::IDDepsNode *node = deg_graph->find_id_node(id);
 	lib_id_recalc_tag(bmain, id);
 	if (node != NULL) {
-		node->tag_update(graph);
+		node->tag_update(deg_graph);
 	}
 }
 
 /* Tag nodes related to a specific piece of data */
 void DEG_graph_data_tag_update(Depsgraph *graph, const PointerRNA *ptr)
 {
-	DepsNode *node = graph->find_node_from_pointer(ptr, NULL);
-	if (node) {
-		node->tag_update(graph);
+	DEG::Depsgraph *deg_graph = reinterpret_cast<DEG::Depsgraph *>(graph);
+	DEG::DepsNode *node = deg_graph->find_node_from_pointer(ptr, NULL);
+	if (node != NULL) {
+		node->tag_update(deg_graph);
 	}
 	else {
 		printf("Missing node in %s\n", __func__);
@@ -177,9 +185,10 @@ void DEG_graph_property_tag_update(Depsgraph *graph,
                                    const PointerRNA *ptr,
                                    const PropertyRNA *prop)
 {
-	DepsNode *node = graph->find_node_from_pointer(ptr, prop);
-	if (node) {
-		node->tag_update(graph);
+	DEG::Depsgraph *deg_graph = reinterpret_cast<DEG::Depsgraph *>(graph);
+	DEG::DepsNode *node = deg_graph->find_node_from_pointer(ptr, prop);
+	if (node != NULL) {
+		node->tag_update(deg_graph);
 	}
 	else {
 		printf("Missing node in %s\n", __func__);
@@ -226,6 +235,9 @@ void DEG_id_tag_update_ex(Main *bmain, ID *id, short flag)
 			if (flag & (OB_RECALC_OB | OB_RECALC_DATA)) {
 				DEG_graph_id_tag_update(bmain, graph, id);
 			}
+			else if (flag & OB_RECALC_TIME) {
+				DEG_graph_id_tag_update(bmain, graph, id);
+			}
 		}
 	}
 
@@ -251,116 +263,8 @@ void DEG_id_type_tag(Main *bmain, short idtype)
 		DEG_id_type_tag(bmain, ID_WO);
 		DEG_id_type_tag(bmain, ID_SCE);
 	}
-	/* We tag based on first ID type character to avoid
-	 * looping over all ID's in case there are no tags.
-	 */
-	bmain->id_tag_update[((unsigned char *)&idtype)[0]] = 1;
-}
 
-/* Update Flushing ---------------------------------- */
-
-/* FIFO queue for tagged nodes that need flushing */
-/* XXX This may get a dedicated implementation later if needed - lukas */
-typedef std::queue<OperationDepsNode *> FlushQueue;
-
-/* Flush updates from tagged nodes outwards until all affected nodes are tagged. */
-void DEG_graph_flush_updates(Main *bmain, Depsgraph *graph)
-{
-	/* sanity check */
-	if (graph == NULL)
-		return;
-
-	/* Nothing to update, early out. */
-	if (graph->entry_tags.size() == 0) {
-		return;
-	}
-
-	/* TODO(sergey): With a bit of flag magic we can get rid of this
-	 * extra loop.
-	 */
-	for (Depsgraph::OperationNodes::const_iterator it = graph->operations.begin();
-	     it != graph->operations.end();
-	     ++it)
-	{
-		OperationDepsNode *node = *it;
-		node->scheduled = false;
-	}
-
-	FlushQueue queue;
-	/* Starting from the tagged "entry" nodes, flush outwards... */
-	/* NOTE: Also need to ensure that for each of these, there is a path back to
-	 *       root, or else they won't be done.
-	 * NOTE: Count how many nodes we need to handle - entry nodes may be
-	 *       component nodes which don't count for this purpose!
-	 */
-	for (Depsgraph::EntryTags::const_iterator it = graph->entry_tags.begin();
-	     it != graph->entry_tags.end();
-	     ++it)
-	{
-		OperationDepsNode *node = *it;
-		IDDepsNode *id_node = node->owner->owner;
-		queue.push(node);
-		deg_editors_id_update(bmain, id_node->id);
-		node->scheduled = true;
-	}
-
-	while (!queue.empty()) {
-		OperationDepsNode *node = queue.front();
-		queue.pop();
-
-		IDDepsNode *id_node = node->owner->owner;
-		lib_id_recalc_tag(bmain, id_node->id);
-		/* TODO(sergey): For until we've got proper data nodes in the graph. */
-		lib_id_recalc_data_tag(bmain, id_node->id);
-
-		ID *id = id_node->id;
-		/* This code is used to preserve those areas which does direct
-		 * object update,
-		 *
-		 * Plus it ensures visibility changes and relations and layers
-		 * visibility update has proper flags to work with.
-		 */
-		if (GS(id->name) == ID_OB) {
-			Object *object = (Object *)id;
-			ComponentDepsNode *comp_node = node->owner;
-			if (comp_node->type == DEPSNODE_TYPE_ANIMATION) {
-				object->recalc |= OB_RECALC_TIME;
-			}
-			else if (comp_node->type == DEPSNODE_TYPE_TRANSFORM) {
-				object->recalc |= OB_RECALC_OB;
-			}
-			else {
-				object->recalc |= OB_RECALC_DATA;
-			}
-		}
-
-		/* Flush to nodes along links... */
-		for (OperationDepsNode::Relations::const_iterator it = node->outlinks.begin();
-		     it != node->outlinks.end();
-		     ++it)
-		{
-			DepsRelation *rel = *it;
-			OperationDepsNode *to_node = (OperationDepsNode *)rel->to;
-			if (to_node->scheduled == false) {
-				to_node->flag |= DEPSOP_FLAG_NEEDS_UPDATE;
-				queue.push(to_node);
-				to_node->scheduled = true;
-				deg_editors_id_update(bmain, id_node->id);
-			}
-		}
-
-		/* TODO(sergey): For until incremental updates are possible
-		 * witin a component at least we tag the whole component
-		 * for update.
-		 */
-		for (ComponentDepsNode::OperationMap::iterator it = node->owner->operations.begin();
-		     it != node->owner->operations.end();
-		     ++it)
-		{
-			OperationDepsNode *op = it->second;
-			op->flag |= DEPSOP_FLAG_NEEDS_UPDATE;
-		}
-	}
+	bmain->id_tag_update[BKE_idcode_to_index(idtype)] = 1;
 }
 
 /* Recursively push updates out to all nodes dependent on this,
@@ -374,49 +278,30 @@ void DEG_ids_flush_tagged(Main *bmain)
 	{
 		/* TODO(sergey): Only visible scenes? */
 		if (scene->depsgraph != NULL) {
-			DEG_graph_flush_updates(bmain, scene->depsgraph);
+			DEG::deg_graph_flush_updates(
+			        bmain,
+			        reinterpret_cast<DEG::Depsgraph *>(scene->depsgraph));
 		}
 	}
-}
-
-/* Clear tags from all operation nodes. */
-void DEG_graph_clear_tags(Depsgraph *graph)
-{
-	/* Go over all operation nodes, clearing tags. */
-	for (Depsgraph::OperationNodes::const_iterator it = graph->operations.begin();
-	     it != graph->operations.end();
-	     ++it)
-	{
-		OperationDepsNode *node = *it;
-
-		/* Clear node's "pending update" settings. */
-		node->flag &= ~(DEPSOP_FLAG_DIRECTLY_MODIFIED | DEPSOP_FLAG_NEEDS_UPDATE);
-		/* Reset so that it can be bumped up again. */
-		node->num_links_pending = 0;
-		node->scheduled = false;
-	}
-
-	/* Clear any entry tags which haven't been flushed. */
-	graph->entry_tags.clear();
 }
 
 /* Update dependency graph when visible scenes/layers changes. */
 void DEG_graph_on_visible_update(Main *bmain, Scene *scene)
 {
-	Depsgraph *graph = scene->depsgraph;
+	DEG::Depsgraph *graph = reinterpret_cast<DEG::Depsgraph *>(scene->depsgraph);
 	wmWindowManager *wm = (wmWindowManager *)bmain->wm.first;
 	int old_layers = graph->layers;
 	if (wm != NULL) {
-		BKE_main_id_flag_listbase(&bmain->scene, LIB_DOIT, true);
+		BKE_main_id_tag_listbase(&bmain->scene, LIB_TAG_DOIT, true);
 		graph->layers = 0;
 		for (wmWindow *win = (wmWindow *)wm->windows.first;
 		     win != NULL;
 		     win = (wmWindow *)win->next)
 		{
 			Scene *scene = win->screen->scene;
-			if (scene->id.flag & LIB_DOIT) {
+			if (scene->id.tag & LIB_TAG_DOIT) {
 				graph->layers |= BKE_screen_visible_layers(win->screen, scene);
-				scene->id.flag &= ~LIB_DOIT;
+				scene->id.tag &= ~LIB_TAG_DOIT;
 			}
 		}
 	}
@@ -431,14 +316,10 @@ void DEG_graph_on_visible_update(Main *bmain, Scene *scene)
 		 * This is mainly needed on file load only, after that updates of invisible objects
 		 * will be stored in the pending list.
 		 */
-		for (Depsgraph::OperationNodes::const_iterator it = graph->operations.begin();
-		     it != graph->operations.end();
-		     ++it)
+		GHASH_FOREACH_BEGIN(DEG::IDDepsNode *, id_node, graph->id_hash)
 		{
-			OperationDepsNode *node = *it;
-			IDDepsNode *id_node = node->owner->owner;
 			ID *id = id_node->id;
-			if ((id->flag & LIB_ID_RECALC_ALL) != 0 ||
+			if ((id->tag & LIB_TAG_ID_RECALC_ALL) != 0 ||
 			    (id_node->layers & scene->lay_updated) == 0)
 			{
 				id_node->tag_update(graph);
@@ -450,18 +331,19 @@ void DEG_graph_on_visible_update(Main *bmain, Scene *scene)
 			 */
 			if (GS(id->name) == ID_OB) {
 				Object *object = (Object *)id;
-				if ((id->flag & LIB_ID_RECALC_ALL) == 0 &&
+				if ((id->tag & LIB_TAG_ID_RECALC_ALL) == 0 &&
 				    (object->recalc & OB_RECALC_ALL) != 0)
 				{
 					id_node->tag_update(graph);
-					ComponentDepsNode *anim_comp =
-					        id_node->find_component(DEPSNODE_TYPE_ANIMATION);
+					DEG::ComponentDepsNode *anim_comp =
+					        id_node->find_component(DEG::DEPSNODE_TYPE_ANIMATION);
 					if (anim_comp != NULL && object->recalc & OB_RECALC_TIME) {
 						anim_comp->tag_update(graph);
 					}
 				}
 			}
 		}
+		GHASH_FOREACH_END();
 	}
 	scene->lay_updated |= graph->layers;
 }
@@ -493,16 +375,13 @@ void DEG_ids_check_recalc(Main *bmain, Scene *scene, bool time)
 		ListBase *lb = lbarray[a];
 		ID *id = (ID *)lb->first;
 
-		/* We tag based on first ID type character to avoid
-		 * looping over all ID's in case there are no tags.
-		 */
-		if (id && bmain->id_tag_update[(unsigned char)id->name[0]]) {
+		if (id && bmain->id_tag_update[BKE_idcode_to_index(GS(id->name))]) {
 			updated = true;
 			break;
 		}
 	}
 
-	deg_editors_scene_update(bmain, scene, (updated || time));
+	DEG::deg_editors_scene_update(bmain, scene, (updated || time));
 }
 
 void DEG_ids_clear_recalc(Main *bmain)
@@ -521,17 +400,14 @@ void DEG_ids_clear_recalc(Main *bmain)
 		ListBase *lb = lbarray[a];
 		ID *id = (ID *)lb->first;
 
-		/* We tag based on first ID type character to avoid
-		 * looping over all ID's in case there are no tags.
-		 */
-		if (id && bmain->id_tag_update[(unsigned char)id->name[0]]) {
+		if (id && bmain->id_tag_update[BKE_idcode_to_index(GS(id->name))]) {
 			for (; id; id = (ID *)id->next) {
-				id->flag &= ~(LIB_ID_RECALC | LIB_ID_RECALC_DATA);
+				id->tag &= ~(LIB_TAG_ID_RECALC | LIB_TAG_ID_RECALC_DATA);
 
 				/* Some ID's contain semi-datablock nodetree */
 				ntree = ntreeFromID(id);
 				if (ntree != NULL) {
-					ntree->id.flag &= ~(LIB_ID_RECALC | LIB_ID_RECALC_DATA);
+					ntree->id.tag &= ~(LIB_TAG_ID_RECALC | LIB_TAG_ID_RECALC_DATA);
 				}
 			}
 		}

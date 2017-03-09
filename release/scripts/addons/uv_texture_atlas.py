@@ -102,7 +102,7 @@ class TexAtl_Main(Panel):
         # Resolution and Unwrap types (only if Lightmap group is added)
         if context.scene.ms_lightmap_groups:
             group = scene.ms_lightmap_groups[scene.ms_lightmap_groups_index]
-            row.label(text="Resolutiom:")
+            row.label(text="Resolution:")
             row.prop(group, 'resolutionX', text='')
             row.prop(group, 'resolutionY', text='')
             row = self.layout.row()
@@ -498,7 +498,7 @@ class TexAtl_DelLightmapGroup(Operator):
                     obj.hide_render = False
                     obj.hide = False
 
-                bpy.data.groups.remove(group)
+                bpy.data.groups.remove(group, do_unlink=True)
 
             # Remove Lightmap Group
             scene.ms_lightmap_groups.remove(scene.ms_lightmap_groups_index)

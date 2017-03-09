@@ -59,11 +59,6 @@ private:
 	 */
 	BL_Action* GetAction(short layer);
 
-	/**
-	 * Add new action with given layer
-	 */
-	BL_Action* AddAction(short layer);
-
 public:
 	BL_ActionManager(class KX_GameObject* obj);
 	~BL_ActionManager();
@@ -128,11 +123,6 @@ public:
 	 * Update any running actions
 	 */
 	void Update(float);
-
-	/**
-	 * Update object IPOs (note: not thread-safe!)
-	 */
-	void UpdateIPOs();
 
 #ifdef WITH_CXX_GUARDEDALLOC
 	MEM_CXX_CLASS_ALLOC_FUNCS("GE:BL_ActionManager")

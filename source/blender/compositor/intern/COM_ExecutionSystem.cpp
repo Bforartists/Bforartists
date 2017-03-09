@@ -28,6 +28,8 @@ extern "C" {
 #include "BKE_node.h"
 }
 
+#include "BLT_translation.h"
+
 #include "COM_Converter.h"
 #include "COM_NodeOperationBuilder.h"
 #include "COM_NodeOperation.h"
@@ -35,8 +37,6 @@ extern "C" {
 #include "COM_WorkScheduler.h"
 #include "COM_ReadBufferOperation.h"
 #include "COM_Debug.h"
-
-#include "BKE_global.h"
 
 #ifdef WITH_CXX_GUARDEDALLOC
 #include "MEM_guardedalloc.h"
@@ -78,7 +78,7 @@ ExecutionSystem::ExecutionSystem(RenderData *rd, Scene *scene, bNodeTree *editin
 	                         viewer_border->xmin < viewer_border->xmax &&
 	                         viewer_border->ymin < viewer_border->ymax;
 
-	editingtree->stats_draw(editingtree->sdh, "Compositing | Determining resolution");
+	editingtree->stats_draw(editingtree->sdh, IFACE_("Compositing | Determining resolution"));
 
 	for (index = 0; index < this->m_groups.size(); index++) {
 		resolution[0] = 0;
@@ -129,7 +129,7 @@ void ExecutionSystem::set_operations(const Operations &operations, const Groups 
 void ExecutionSystem::execute()
 {
 	const bNodeTree *editingtree = this->m_context.getbNodeTree();
-	editingtree->stats_draw(editingtree->sdh, (char *)"Compositing | Initializing execution");
+	editingtree->stats_draw(editingtree->sdh, IFACE_("Compositing | Initializing execution"));
 
 	DebugInfo::execute_started(this);
 	
@@ -185,7 +185,7 @@ void ExecutionSystem::execute()
 	WorkScheduler::finish();
 	WorkScheduler::stop();
 
-	editingtree->stats_draw(editingtree->sdh, (char *)"Compositing | Deinitializing execution");
+	editingtree->stats_draw(editingtree->sdh, IFACE_("Compositing | De-initializing execution"));
 	for (index = 0; index < this->m_operations.size(); index++) {
 		NodeOperation *operation = this->m_operations[index];
 		operation->deinitExecution();

@@ -114,14 +114,14 @@ static int add_primitive_plane_exec(bContext *C, wmOperator *op)
 	obedit = make_prim_init(C, CTX_DATA_(BLT_I18NCONTEXT_ID_MESH, "Plane"), &dia, mat, &was_editmode, loc, rot, layer);
 	em = BKE_editmesh_from_object(obedit);
 
-	if (calc_uvs && !ED_uvedit_test(obedit)) {
-		ED_mesh_uv_texture_add(obedit->data, NULL, true);
+	if (calc_uvs) {
+		ED_mesh_uv_texture_ensure(obedit->data, NULL);
 	}
 
 	if (!EDBM_op_call_and_selectf(
 	        em, op, "verts.out", false,
-			"create_grid x_segments=%i y_segments=%i size=%f matrix=%m4 calc_uvs=%b",
-			1, 1, RNA_float_get(op->ptr, "radius"), mat, calc_uvs))
+	        "create_grid x_segments=%i y_segments=%i size=%f matrix=%m4 calc_uvs=%b",
+	        1, 1, RNA_float_get(op->ptr, "radius"), mat, calc_uvs))
 	{
 		return OPERATOR_CANCELLED;
 	}
@@ -165,14 +165,14 @@ static int add_primitive_cube_exec(bContext *C, wmOperator *op)
 	obedit = make_prim_init(C, CTX_DATA_(BLT_I18NCONTEXT_ID_MESH, "Cube"), &dia, mat, &was_editmode, loc, rot, layer);
 	em = BKE_editmesh_from_object(obedit);
 
-	if (calc_uvs && !ED_uvedit_test(obedit)) {
-		ED_mesh_uv_texture_add(obedit->data, NULL, true);
+	if (calc_uvs) {
+		ED_mesh_uv_texture_ensure(obedit->data, NULL);
 	}
 
 	if (!EDBM_op_call_and_selectf(
 	        em, op, "verts.out", false,
-			"create_cube matrix=%m4 size=%f calc_uvs=%b",
-			mat, RNA_float_get(op->ptr, "radius") * 2.0f, calc_uvs))
+	        "create_cube matrix=%m4 size=%f calc_uvs=%b",
+	        mat, RNA_float_get(op->ptr, "radius") * 2.0f, calc_uvs))
 	{
 		return OPERATOR_CANCELLED;
 	}
@@ -227,15 +227,15 @@ static int add_primitive_circle_exec(bContext *C, wmOperator *op)
 	obedit = make_prim_init(C, CTX_DATA_(BLT_I18NCONTEXT_ID_MESH, "Circle"), &dia, mat, &was_editmode, loc, rot, layer);
 	em = BKE_editmesh_from_object(obedit);
 
-	if (calc_uvs && !ED_uvedit_test(obedit)) {
-		ED_mesh_uv_texture_add(obedit->data, NULL, true);
+	if (calc_uvs) {
+		ED_mesh_uv_texture_ensure(obedit->data, NULL);
 	}
 
 	if (!EDBM_op_call_and_selectf(
 	        em, op, "verts.out", false,
-			"create_circle segments=%i diameter=%f cap_ends=%b cap_tris=%b matrix=%m4 calc_uvs=%b",
+	        "create_circle segments=%i diameter=%f cap_ends=%b cap_tris=%b matrix=%m4 calc_uvs=%b",
 	        RNA_int_get(op->ptr, "vertices"), RNA_float_get(op->ptr, "radius"),
-			cap_end, cap_tri, mat, calc_uvs))
+	        cap_end, cap_tri, mat, calc_uvs))
 	{
 		return OPERATOR_CANCELLED;
 	}
@@ -286,18 +286,18 @@ static int add_primitive_cylinder_exec(bContext *C, wmOperator *op)
 	obedit = make_prim_init(C, CTX_DATA_(BLT_I18NCONTEXT_ID_MESH, "Cylinder"), &dia, mat, &was_editmode, loc, rot, layer);
 	em = BKE_editmesh_from_object(obedit);
 
-	if (calc_uvs && !ED_uvedit_test(obedit)) {
-		ED_mesh_uv_texture_add(obedit->data, NULL, true);
+	if (calc_uvs) {
+		ED_mesh_uv_texture_ensure(obedit->data, NULL);
 	}
 
 	if (!EDBM_op_call_and_selectf(
 	        em, op, "verts.out", false,
-			"create_cone segments=%i diameter1=%f diameter2=%f cap_ends=%b cap_tris=%b depth=%f matrix=%m4 calc_uvs=%b",
+	        "create_cone segments=%i diameter1=%f diameter2=%f cap_ends=%b cap_tris=%b depth=%f matrix=%m4 calc_uvs=%b",
 	        RNA_int_get(op->ptr, "vertices"),
 	        RNA_float_get(op->ptr, "radius"),
 	        RNA_float_get(op->ptr, "radius"),
 	        cap_end, cap_tri,
-			RNA_float_get(op->ptr, "depth"), mat, calc_uvs))
+	        RNA_float_get(op->ptr, "depth"), mat, calc_uvs))
 	{
 		return OPERATOR_CANCELLED;
 	}
@@ -309,8 +309,6 @@ static int add_primitive_cylinder_exec(bContext *C, wmOperator *op)
 
 void MESH_OT_primitive_cylinder_add(wmOperatorType *ot)
 {
-	PropertyRNA *prop;
-
 	/* identifiers */
 	ot->name = "Add Cylinder";
 	ot->description = "Add Cylinder\nConstruct a cylinder mesh";
@@ -326,8 +324,7 @@ void MESH_OT_primitive_cylinder_add(wmOperatorType *ot)
 	/* props */
 	RNA_def_int(ot->srna, "vertices", 32, 3, MESH_ADD_VERTS_MAXI, "Vertices", "", 3, 500);
 	ED_object_add_unit_props(ot);
-	prop = RNA_def_float(ot->srna, "depth", 2.0f, 0.0, OBJECT_ADD_SIZE_MAXF, "Depth", "", 0.001, 100.00);
-	RNA_def_property_subtype(prop, PROP_DISTANCE);
+	RNA_def_float_distance(ot->srna, "depth", 2.0f, 0.0, OBJECT_ADD_SIZE_MAXF, "Depth", "", 0.001, 100.00);
 	RNA_def_enum(ot->srna, "end_fill_type", fill_type_items, 1, "Cap Fill Type", "");
 
 	ED_object_add_mesh_props(ot);
@@ -352,15 +349,15 @@ static int add_primitive_cone_exec(bContext *C, wmOperator *op)
 	obedit = make_prim_init(C, CTX_DATA_(BLT_I18NCONTEXT_ID_MESH, "Cone"), &dia, mat, &was_editmode, loc, rot, layer);
 	em = BKE_editmesh_from_object(obedit);
 
-	if (calc_uvs && !ED_uvedit_test(obedit)) {
-		ED_mesh_uv_texture_add(obedit->data, NULL, true);
+	if (calc_uvs) {
+		ED_mesh_uv_texture_ensure(obedit->data, NULL);
 	}
 
 	if (!EDBM_op_call_and_selectf(
 	        em, op, "verts.out", false,
-			"create_cone segments=%i diameter1=%f diameter2=%f cap_ends=%b cap_tris=%b depth=%f matrix=%m4 calc_uvs=%b",
+	        "create_cone segments=%i diameter1=%f diameter2=%f cap_ends=%b cap_tris=%b depth=%f matrix=%m4 calc_uvs=%b",
 	        RNA_int_get(op->ptr, "vertices"), RNA_float_get(op->ptr, "radius1"),
-			RNA_float_get(op->ptr, "radius2"), cap_end, cap_tri, RNA_float_get(op->ptr, "depth"), mat, calc_uvs))
+	        RNA_float_get(op->ptr, "radius2"), cap_end, cap_tri, RNA_float_get(op->ptr, "depth"), mat, calc_uvs))
 	{
 		return OPERATOR_CANCELLED;
 	}
@@ -372,8 +369,6 @@ static int add_primitive_cone_exec(bContext *C, wmOperator *op)
 
 void MESH_OT_primitive_cone_add(wmOperatorType *ot)
 {
-	PropertyRNA *prop;
-
 	/* identifiers */
 	ot->name = "Add Cone";
 	ot->description = "Add Cone\nConstruct a conic mesh";
@@ -388,12 +383,9 @@ void MESH_OT_primitive_cone_add(wmOperatorType *ot)
 
 	/* props */
 	RNA_def_int(ot->srna, "vertices", 32, 3, MESH_ADD_VERTS_MAXI, "Vertices", "", 3, 500);
-	prop = RNA_def_float(ot->srna, "radius1", 1.0f, 0.0, OBJECT_ADD_SIZE_MAXF, "Radius 1", "", 0.001, 100.00);
-	RNA_def_property_subtype(prop, PROP_DISTANCE);
-	prop = RNA_def_float(ot->srna, "radius2", 0.0f, 0.0, OBJECT_ADD_SIZE_MAXF, "Radius 2", "", 0.001, 100.00);
-	RNA_def_property_subtype(prop, PROP_DISTANCE);
-	prop = RNA_def_float(ot->srna, "depth", 2.0f, 0.0, OBJECT_ADD_SIZE_MAXF, "Depth", "", 0.001, 100.00);
-	RNA_def_property_subtype(prop, PROP_DISTANCE);
+	RNA_def_float_distance(ot->srna, "radius1", 1.0f, 0.0, OBJECT_ADD_SIZE_MAXF, "Radius 1", "", 0.001, 100.00);
+	RNA_def_float_distance(ot->srna, "radius2", 0.0f, 0.0, OBJECT_ADD_SIZE_MAXF, "Radius 2", "", 0.001, 100.00);
+	RNA_def_float_distance(ot->srna, "depth", 2.0f, 0.0, OBJECT_ADD_SIZE_MAXF, "Depth", "", 0.001, 100.00);
 	RNA_def_enum(ot->srna, "end_fill_type", fill_type_items, 1, "Base Fill Type", "");
 
 	ED_object_add_mesh_props(ot);
@@ -415,12 +407,16 @@ static int add_primitive_grid_exec(bContext *C, wmOperator *op)
 	obedit = make_prim_init(C, CTX_DATA_(BLT_I18NCONTEXT_ID_MESH, "Grid"), &dia, mat, &was_editmode, loc, rot, layer);
 	em = BKE_editmesh_from_object(obedit);
 
+	if (calc_uvs) {
+		ED_mesh_uv_texture_ensure(obedit->data, NULL);
+	}
+
 	if (!EDBM_op_call_and_selectf(
 	        em, op, "verts.out", false,
-			"create_grid x_segments=%i y_segments=%i size=%f matrix=%m4 calc_uvs=%b",
+	        "create_grid x_segments=%i y_segments=%i size=%f matrix=%m4 calc_uvs=%b",
 	        RNA_int_get(op->ptr, "x_subdivisions"),
 	        RNA_int_get(op->ptr, "y_subdivisions"),
-			RNA_float_get(op->ptr, "radius"), mat, calc_uvs))
+	        RNA_float_get(op->ptr, "radius"), mat, calc_uvs))
 	{
 		return OPERATOR_CANCELLED;
 	}
@@ -465,6 +461,7 @@ static int add_primitive_monkey_exec(bContext *C, wmOperator *op)
 	bool enter_editmode;
 	unsigned int layer;
 	bool was_editmode;
+	const bool calc_uvs = RNA_boolean_get(op->ptr, "calc_uvs");
 
 	WM_operator_view3d_unit_defaults(C, op);
 	ED_object_add_generic_get_opts(C, op, 'Y', loc, rot, &enter_editmode, &layer, NULL);
@@ -475,9 +472,13 @@ static int add_primitive_monkey_exec(bContext *C, wmOperator *op)
 
 	em = BKE_editmesh_from_object(obedit);
 
+	if (calc_uvs) {
+		ED_mesh_uv_texture_ensure(obedit->data, NULL);
+	}
+
 	if (!EDBM_op_call_and_selectf(
 	        em, op, "verts.out",  false,
-	        "create_monkey matrix=%m4", mat))
+	        "create_monkey matrix=%m4 calc_uvs=%b", mat, calc_uvs))
 	{
 		return OPERATOR_CANCELLED;
 	}
@@ -502,6 +503,8 @@ void MESH_OT_primitive_monkey_add(wmOperatorType *ot)
 	ED_object_add_unit_props(ot);
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
+	/* props */
+	ED_object_add_mesh_props(ot);
 	ED_object_add_generic_props(ot, true);
 }
 
@@ -520,15 +523,15 @@ static int add_primitive_uvsphere_exec(bContext *C, wmOperator *op)
 	obedit = make_prim_init(C, CTX_DATA_(BLT_I18NCONTEXT_ID_MESH, "Sphere"), &dia, mat, &was_editmode, loc, rot, layer);
 	em = BKE_editmesh_from_object(obedit);
 
-	if (calc_uvs && !ED_uvedit_test(obedit)) {
-		ED_mesh_uv_texture_add(obedit->data, NULL, true);
+	if (calc_uvs) {
+		ED_mesh_uv_texture_ensure(obedit->data, NULL);
 	}
 
 	if (!EDBM_op_call_and_selectf(
 	        em, op, "verts.out", false,
-			"create_uvsphere u_segments=%i v_segments=%i diameter=%f matrix=%m4 calc_uvs=%b",
+	        "create_uvsphere u_segments=%i v_segments=%i diameter=%f matrix=%m4 calc_uvs=%b",
 	        RNA_int_get(op->ptr, "segments"), RNA_int_get(op->ptr, "ring_count"),
-			RNA_float_get(op->ptr, "size"), mat, calc_uvs))
+	        RNA_float_get(op->ptr, "size"), mat, calc_uvs))
 	{
 		return OPERATOR_CANCELLED;
 	}
@@ -540,8 +543,6 @@ static int add_primitive_uvsphere_exec(bContext *C, wmOperator *op)
 
 void MESH_OT_primitive_uv_sphere_add(wmOperatorType *ot)
 {
-	PropertyRNA *prop;
-
 	/* identifiers */
 	ot->name = "Add UV Sphere";
 	ot->description = "Add UV Sphere\nConstruct a UV sphere mesh";
@@ -557,8 +558,7 @@ void MESH_OT_primitive_uv_sphere_add(wmOperatorType *ot)
 	/* props */
 	RNA_def_int(ot->srna, "segments", 32, 3, MESH_ADD_VERTS_MAXI / 100, "Segments", "", 3, 500);
 	RNA_def_int(ot->srna, "ring_count", 16, 3, MESH_ADD_VERTS_MAXI / 100, "Rings", "", 3, 500);
-	prop = RNA_def_float(ot->srna, "size", 1.0f, 0.0, OBJECT_ADD_SIZE_MAXF, "Size", "", 0.001, 100.00);
-	RNA_def_property_subtype(prop, PROP_DISTANCE);
+	RNA_def_float_distance(ot->srna, "size", 1.0f, 0.0, OBJECT_ADD_SIZE_MAXF, "Size", "", 0.001, 100.00);
 
 	ED_object_add_mesh_props(ot);
 	ED_object_add_generic_props(ot, true);
@@ -579,15 +579,15 @@ static int add_primitive_icosphere_exec(bContext *C, wmOperator *op)
 	obedit = make_prim_init(C, CTX_DATA_(BLT_I18NCONTEXT_ID_MESH, "Icosphere"), &dia, mat, &was_editmode, loc, rot, layer);
 	em = BKE_editmesh_from_object(obedit);
 
-	if (calc_uvs && !ED_uvedit_test(obedit)) {
-		ED_mesh_uv_texture_add(obedit->data, NULL, true);
+	if (calc_uvs) {
+		ED_mesh_uv_texture_ensure(obedit->data, NULL);
 	}
 
 	if (!EDBM_op_call_and_selectf(
 	        em, op, "verts.out", false,
-			"create_icosphere subdivisions=%i diameter=%f matrix=%m4 calc_uvs=%b",
+	        "create_icosphere subdivisions=%i diameter=%f matrix=%m4 calc_uvs=%b",
 	        RNA_int_get(op->ptr, "subdivisions"),
-			RNA_float_get(op->ptr, "size"), mat, calc_uvs))
+	        RNA_float_get(op->ptr, "size"), mat, calc_uvs))
 	{
 		return OPERATOR_CANCELLED;
 	}
@@ -599,8 +599,6 @@ static int add_primitive_icosphere_exec(bContext *C, wmOperator *op)
 
 void MESH_OT_primitive_ico_sphere_add(wmOperatorType *ot)
 {
-	PropertyRNA *prop;
-
 	/* identifiers */
 	ot->name = "Add Ico Sphere";
 	ot->description = "Add Ico Sphere\nConstruct an Icosphere mesh";
@@ -615,8 +613,7 @@ void MESH_OT_primitive_ico_sphere_add(wmOperatorType *ot)
 
 	/* props */
 	RNA_def_int(ot->srna, "subdivisions", 2, 1, 10, "Subdivisions", "", 1, 8);
-	prop = RNA_def_float(ot->srna, "size", 1.0f, 0.0f, OBJECT_ADD_SIZE_MAXF, "Size", "", 0.001f, 100.00);
-	RNA_def_property_subtype(prop, PROP_DISTANCE);
+	RNA_def_float_distance(ot->srna, "size", 1.0f, 0.0f, OBJECT_ADD_SIZE_MAXF, "Size", "", 0.001f, 100.00);
 
 	ED_object_add_mesh_props(ot);
 	ED_object_add_generic_props(ot, true);

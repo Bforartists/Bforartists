@@ -45,104 +45,16 @@
 #include "BIF_gl.h"
 #include "BIF_glutil.h"
 
-
 #include "IMB_colormanagement.h"
 #include "IMB_imbuf_types.h"
+
+#include "GPU_basic_shader.h"
 
 #include "UI_interface.h"
 
 #ifndef GL_CLAMP_TO_EDGE
 #define GL_CLAMP_TO_EDGE                        0x812F
 #endif
-
-
-/* ******************************************** */
-
-/* defined in BIF_gl.h */
-const GLubyte stipple_halftone[128] = {
-	0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55, 
-	0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55, 
-	0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-	0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55, 
-	0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55, 
-	0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-	0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55, 
-	0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55, 
-	0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-	0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55, 
-	0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55, 
-	0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-	0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55, 
-	0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55, 
-	0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-	0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55};
-
-
-/*  repeat this pattern
- *
- *     X000X000
- *     00000000
- *     00X000X0
- *     00000000 */
-
-
-const GLubyte stipple_quarttone[128] = {
-	136, 136, 136, 136, 0, 0, 0, 0, 34, 34, 34, 34, 0, 0, 0, 0,
-	136, 136, 136, 136, 0, 0, 0, 0, 34, 34, 34, 34, 0, 0, 0, 0,
-	136, 136, 136, 136, 0, 0, 0, 0, 34, 34, 34, 34, 0, 0, 0, 0,
-	136, 136, 136, 136, 0, 0, 0, 0, 34, 34, 34, 34, 0, 0, 0, 0,
-	136, 136, 136, 136, 0, 0, 0, 0, 34, 34, 34, 34, 0, 0, 0, 0,
-	136, 136, 136, 136, 0, 0, 0, 0, 34, 34, 34, 34, 0, 0, 0, 0,
-	136, 136, 136, 136, 0, 0, 0, 0, 34, 34, 34, 34, 0, 0, 0, 0,
-	136, 136, 136, 136, 0, 0, 0, 0, 34, 34, 34, 34, 0, 0, 0, 0};
-
-
-const GLubyte stipple_diag_stripes_pos[128] = {
-	0x00, 0xff, 0x00, 0xff, 0x01, 0xfe, 0x01, 0xfe,
-	0x03, 0xfc, 0x03, 0xfc, 0x07, 0xf8, 0x07, 0xf8,
-	0x0f, 0xf0, 0x0f, 0xf0, 0x1f, 0xe0, 0x1f, 0xe0,
-	0x3f, 0xc0, 0x3f, 0xc0, 0x7f, 0x80, 0x7f, 0x80,
-	0xff, 0x00, 0xff, 0x00, 0xfe, 0x01, 0xfe, 0x01,
-	0xfc, 0x03, 0xfc, 0x03, 0xf8, 0x07, 0xf8, 0x07,
-	0xf0, 0x0f, 0xf0, 0x0f, 0xe0, 0x1f, 0xe0, 0x1f,
-	0xc0, 0x3f, 0xc0, 0x3f, 0x80, 0x7f, 0x80, 0x7f,
-	0x00, 0xff, 0x00, 0xff, 0x01, 0xfe, 0x01, 0xfe,
-	0x03, 0xfc, 0x03, 0xfc, 0x07, 0xf8, 0x07, 0xf8,
-	0x0f, 0xf0, 0x0f, 0xf0, 0x1f, 0xe0, 0x1f, 0xe0,
-	0x3f, 0xc0, 0x3f, 0xc0, 0x7f, 0x80, 0x7f, 0x80,
-	0xff, 0x00, 0xff, 0x00, 0xfe, 0x01, 0xfe, 0x01,
-	0xfc, 0x03, 0xfc, 0x03, 0xf8, 0x07, 0xf8, 0x07,
-	0xf0, 0x0f, 0xf0, 0x0f, 0xe0, 0x1f, 0xe0, 0x1f,
-	0xc0, 0x3f, 0xc0, 0x3f, 0x80, 0x7f, 0x80, 0x7f};
-
-
-const GLubyte stipple_diag_stripes_neg[128] = {
-	0xff, 0x00, 0xff, 0x00, 0xfe, 0x01, 0xfe, 0x01,
-	0xfc, 0x03, 0xfc, 0x03, 0xf8, 0x07, 0xf8, 0x07,
-	0xf0, 0x0f, 0xf0, 0x0f, 0xe0, 0x1f, 0xe0, 0x1f,
-	0xc0, 0x3f, 0xc0, 0x3f, 0x80, 0x7f, 0x80, 0x7f,
-	0x00, 0xff, 0x00, 0xff, 0x01, 0xfe, 0x01, 0xfe,
-	0x03, 0xfc, 0x03, 0xfc, 0x07, 0xf8, 0x07, 0xf8,
-	0x0f, 0xf0, 0x0f, 0xf0, 0x1f, 0xe0, 0x1f, 0xe0,
-	0x3f, 0xc0, 0x3f, 0xc0, 0x7f, 0x80, 0x7f, 0x80,
-	0xff, 0x00, 0xff, 0x00, 0xfe, 0x01, 0xfe, 0x01,
-	0xfc, 0x03, 0xfc, 0x03, 0xf8, 0x07, 0xf8, 0x07,
-	0xf0, 0x0f, 0xf0, 0x0f, 0xe0, 0x1f, 0xe0, 0x1f,
-	0xc0, 0x3f, 0xc0, 0x3f, 0x80, 0x7f, 0x80, 0x7f,
-	0x00, 0xff, 0x00, 0xff, 0x01, 0xfe, 0x01, 0xfe,
-	0x03, 0xfc, 0x03, 0xfc, 0x07, 0xf8, 0x07, 0xf8,
-	0x0f, 0xf0, 0x0f, 0xf0, 0x1f, 0xe0, 0x1f, 0xe0,
-	0x3f, 0xc0, 0x3f, 0xc0, 0x7f, 0x80, 0x7f, 0x80};
-
-const GLubyte stipple_checker_8px[128] = {
-	255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0,
-	255,  0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0,
-	0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255,
-	0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255,
-	255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0,
-	255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0,
-	0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255,
-	0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255, 0, 255};
 
 /* UNUSED */
 #if 0
@@ -159,7 +71,7 @@ void fdrawbezier(float vec[4][3])
 	
 	vec[2][0] = vec[3][0] - dist;
 	vec[2][1] = vec[3][1];
-	/* we can reuse the dist variable here to increment the GL curve eval amount*/
+	/* we can reuse the dist variable here to increment the GL curve eval amount */
 	dist = 1.0f / curve_res;
 	
 	cpack(0x0);
@@ -179,32 +91,20 @@ void fdrawbezier(float vec[4][3])
 
 void fdrawline(float x1, float y1, float x2, float y2)
 {
-	float v[2];
-	
-	glBegin(GL_LINE_STRIP);
-	v[0] = x1; v[1] = y1;
-	glVertex2fv(v);
-	v[0] = x2; v[1] = y2;
-	glVertex2fv(v);
+	glBegin(GL_LINES);
+	glVertex2f(x1, y1);
+	glVertex2f(x2, y2);
 	glEnd();
 }
 
 void fdrawbox(float x1, float y1, float x2, float y2)
 {
-	float v[2];
+	glBegin(GL_LINE_LOOP);
 	
-	glBegin(GL_LINE_STRIP);
-	
-	v[0] = x1; v[1] = y1;
-	glVertex2fv(v);
-	v[0] = x1; v[1] = y2;
-	glVertex2fv(v);
-	v[0] = x2; v[1] = y2;
-	glVertex2fv(v);
-	v[0] = x2; v[1] = y1;
-	glVertex2fv(v);
-	v[0] = x1; v[1] = y1;
-	glVertex2fv(v);
+	glVertex2f(x1, y1);
+	glVertex2f(x1, y2);
+	glVertex2f(x2, y2);
+	glVertex2f(x2, y1);
 	
 	glEnd();
 }
@@ -217,21 +117,17 @@ void fdrawcheckerboard(float x1, float y1, float x2, float y2)
 	glRectf(x1, y1, x2, y2);
 	glColor3ubv(col2);
 
-	glEnable(GL_POLYGON_STIPPLE);
-	glPolygonStipple(stipple_checker_8px);
+	GPU_basic_shader_bind(GPU_SHADER_STIPPLE | GPU_SHADER_USE_COLOR);
+	GPU_basic_shader_stipple(GPU_SHADER_STIPPLE_CHECKER_8PX);
 	glRectf(x1, y1, x2, y2);
-	glDisable(GL_POLYGON_STIPPLE);
+	GPU_basic_shader_bind(GPU_SHADER_USE_COLOR);
 }
 
 void sdrawline(int x1, int y1, int x2, int y2)
 {
-	int v[2];
-	
-	glBegin(GL_LINE_STRIP);
-	v[0] = x1; v[1] = y1;
-	glVertex2iv(v);
-	v[0] = x2; v[1] = y2;
-	glVertex2iv(v);
+	glBegin(GL_LINES);
+	glVertex2i(x1, y1);
+	glVertex2i(x2, y2);
 	glEnd();
 }
 
@@ -247,13 +143,9 @@ void sdrawline(int x1, int y1, int x2, int y2)
 
 static void sdrawtripoints(int x1, int y1, int x2, int y2)
 {
-	int v[2];
-	v[0] = x1; v[1] = y1;
-	glVertex2iv(v);
-	v[0] = x1; v[1] = y2;
-	glVertex2iv(v);
-	v[0] = x2; v[1] = y1;
-	glVertex2iv(v);
+	glVertex2i(x1, y1);
+	glVertex2i(x1, y2);
+	glVertex2i(x2, y1);
 }
 
 void sdrawtri(int x1, int y1, int x2, int y2)
@@ -273,20 +165,12 @@ void sdrawtrifill(int x1, int y1, int x2, int y2)
 
 void sdrawbox(int x1, int y1, int x2, int y2)
 {
-	int v[2];
+	glBegin(GL_LINE_LOOP);
 	
-	glBegin(GL_LINE_STRIP);
-	
-	v[0] = x1; v[1] = y1;
-	glVertex2iv(v);
-	v[0] = x1; v[1] = y2;
-	glVertex2iv(v);
-	v[0] = x2; v[1] = y2;
-	glVertex2iv(v);
-	v[0] = x2; v[1] = y1;
-	glVertex2iv(v);
-	v[0] = x1; v[1] = y1;
-	glVertex2iv(v);
+	glVertex2i(x1, y1);
+	glVertex2i(x1, y2);
+	glVertex2i(x2, y2);
+	glVertex2i(x2, y1);
 	
 	glEnd();
 }
@@ -436,17 +320,17 @@ void glutil_draw_lined_arc(float start, float angle, float radius, int nsegments
 	glEnd();
 }
 
-int glaGetOneInteger(int param)
-{
-	GLint i;
-	glGetIntegerv(param, &i);
-	return i;
-}
-
 float glaGetOneFloat(int param)
 {
 	GLfloat v;
 	glGetFloatv(param, &v);
+	return v;
+}
+
+int glaGetOneInt(int param)
+{
+	GLint v;
+	glGetIntegerv(param, &v);
 	return v;
 }
 
@@ -474,9 +358,6 @@ static int get_cached_work_texture(int *r_w, int *r_h)
 	static int tex_h = 256;
 
 	if (texid == -1) {
-		GLint ltexid = glaGetOneInteger(GL_TEXTURE_2D);
-		unsigned char *tbuf;
-
 		glGenTextures(1, (GLuint *)&texid);
 
 		glBindTexture(GL_TEXTURE_2D, texid);
@@ -484,11 +365,9 @@ static int get_cached_work_texture(int *r_w, int *r_h)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-		tbuf = MEM_callocN(tex_w * tex_h * 4, "tbuf");
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, tex_w, tex_h, 0, GL_RGBA, GL_UNSIGNED_BYTE, tbuf);
-		MEM_freeN(tbuf);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, tex_w, tex_h, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 
-		glBindTexture(GL_TEXTURE_2D, ltexid);
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	*r_w = tex_w;
@@ -496,22 +375,24 @@ static int get_cached_work_texture(int *r_w, int *r_h)
 	return texid;
 }
 
-void glaDrawPixelsTexScaled(float x, float y, int img_w, int img_h, int format, int type, int zoomfilter, void *rect, float scaleX, float scaleY)
+void glaDrawPixelsTexScaled_clipping(float x, float y, int img_w, int img_h,
+                                     int format, int type, int zoomfilter, void *rect,
+                                     float scaleX, float scaleY,
+                                     float clip_min_x, float clip_min_y,
+                                     float clip_max_x, float clip_max_y)
 {
 	unsigned char *uc_rect = (unsigned char *) rect;
 	const float *f_rect = (float *)rect;
 	float xzoom = glaGetOneFloat(GL_ZOOM_X), yzoom = glaGetOneFloat(GL_ZOOM_Y);
-	int ltexid = glaGetOneInteger(GL_TEXTURE_2D);
-	int lrowlength = glaGetOneInteger(GL_UNPACK_ROW_LENGTH);
 	int subpart_x, subpart_y, tex_w, tex_h;
 	int seamless, offset_x, offset_y, nsubparts_x, nsubparts_y;
 	int texid = get_cached_work_texture(&tex_w, &tex_h);
 	int components;
+	const bool use_clipping = ((clip_min_x < clip_max_x) && (clip_min_y < clip_max_y));
 
 	/* Specify the color outside this function, and tex will modulate it.
 	 * This is useful for changing alpha without using glPixelTransferf()
 	 */
-	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, img_w);
 	glBindTexture(GL_TEXTURE_2D, texid);
 
@@ -520,9 +401,10 @@ void glaDrawPixelsTexScaled(float x, float y, int img_w, int img_h, int format, 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, zoomfilter);
 
-#ifdef __APPLE__
+#if defined(__APPLE__) && 0
+	/* [merwin] disable this workaround and see if anyone is affected. If not scrap it! Also at end of this function */
 	/* workaround for os x 10.5/10.6 driver bug: http://lists.apple.com/archives/Mac-opengl/2008/Jul/msg00117.html */
-	glPixelZoom(1.f, 1.f);
+	glPixelZoom(1.0f, 1.0f);
 #endif
 	
 	/* setup seamless 2=on, 0=off */
@@ -538,7 +420,7 @@ void glaDrawPixelsTexScaled(float x, float y, int img_w, int img_h, int format, 
 		components = 4;
 	else if (format == GL_RGB)
 		components = 3;
-	else if (ELEM(format,  GL_LUMINANCE, GL_ALPHA))
+	else if (ELEM(format, GL_LUMINANCE, GL_ALPHA))
 		components = 1;
 	else {
 		BLI_assert(!"Incompatible format passed to glaDrawPixelsTexScaled");
@@ -557,7 +439,7 @@ void glaDrawPixelsTexScaled(float x, float y, int img_w, int img_h, int format, 
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F_ARB, tex_w, tex_h, 0, format, GL_FLOAT, NULL);
 	}
 	else {
-		/* switch to 8bit RGBA for byte buffer  */
+		/* switch to 8bit RGBA for byte buffer */
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, tex_w, tex_h, 0, format, GL_UNSIGNED_BYTE, NULL);
 	}
 
@@ -573,15 +455,27 @@ void glaDrawPixelsTexScaled(float x, float y, int img_w, int img_h, int format, 
 			int offset_top = (seamless && remainder_y > tex_h) ? 1 : 0;
 			float rast_x = x + subpart_x * offset_x * xzoom;
 			float rast_y = y + subpart_y * offset_y * yzoom;
-			
-			/* check if we already got these because we always get 2 more when doing seamless*/
+			/* check if we already got these because we always get 2 more when doing seamless */
 			if (subpart_w <= seamless || subpart_h <= seamless)
 				continue;
-			
+
+			if (use_clipping) {
+				if (rast_x + (float)(subpart_w - offset_right) * xzoom * scaleX < clip_min_x ||
+				    rast_y + (float)(subpart_h - offset_top) * yzoom * scaleY < clip_min_y)
+				{
+					continue;
+				}
+				if (rast_x + (float)offset_left * xzoom > clip_max_x ||
+				    rast_y + (float)offset_bot * yzoom > clip_max_y)
+				{
+					continue;
+				}
+			}
+
 			if (type == GL_FLOAT) {
 				glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, subpart_w, subpart_h, format, GL_FLOAT, &f_rect[((size_t)subpart_y) * offset_y * img_w * components + subpart_x * offset_x * components]);
 				
-				/* add an extra border of pixels so linear looks ok at edges of full image. */
+				/* add an extra border of pixels so linear looks ok at edges of full image */
 				if (subpart_w < tex_w)
 					glTexSubImage2D(GL_TEXTURE_2D, 0, subpart_w, 0, 1, subpart_h, format, GL_FLOAT, &f_rect[((size_t)subpart_y) * offset_y * img_w * components + (subpart_x * offset_x + subpart_w - 1) * components]);
 				if (subpart_h < tex_h)
@@ -600,7 +494,7 @@ void glaDrawPixelsTexScaled(float x, float y, int img_w, int img_h, int format, 
 					glTexSubImage2D(GL_TEXTURE_2D, 0, subpart_w, subpart_h, 1, 1, format, GL_UNSIGNED_BYTE, &uc_rect[(((size_t)subpart_y) * offset_y + subpart_h - 1) * img_w * components + (subpart_x * offset_x + subpart_w - 1) * components]);
 			}
 
-			glEnable(GL_TEXTURE_2D);
+			GPU_basic_shader_bind(GPU_SHADER_TEXTURE_2D | GPU_SHADER_USE_COLOR);
 			glBegin(GL_QUADS);
 			glTexCoord2f((float)(0 + offset_left) / tex_w, (float)(0 + offset_bot) / tex_h);
 			glVertex2f(rast_x + (float)offset_left * xzoom, rast_y + (float)offset_bot * yzoom);
@@ -614,23 +508,39 @@ void glaDrawPixelsTexScaled(float x, float y, int img_w, int img_h, int format, 
 			glTexCoord2f((float)(0 + offset_left) / tex_w, (float)(subpart_h - offset_top) / tex_h);
 			glVertex2f(rast_x + (float)offset_left * xzoom, rast_y + (float)(subpart_h - offset_top) * yzoom * scaleY);
 			glEnd();
-			glDisable(GL_TEXTURE_2D);
+			GPU_basic_shader_bind(GPU_SHADER_USE_COLOR);
 		}
 	}
 
-	glBindTexture(GL_TEXTURE_2D, ltexid);
-	glPixelStorei(GL_UNPACK_ROW_LENGTH, lrowlength);
-	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 	
-#ifdef __APPLE__
+#if defined(__APPLE__) && 0
 	/* workaround for os x 10.5/10.6 driver bug (above) */
 	glPixelZoom(xzoom, yzoom);
 #endif
 }
 
+void glaDrawPixelsTexScaled(float x, float y, int img_w, int img_h,
+                            int format, int type, int zoomfilter, void *rect,
+                            float scaleX, float scaleY)
+{
+	glaDrawPixelsTexScaled_clipping(x, y, img_w, img_h, format, type, zoomfilter, rect,
+	                                scaleX, scaleY, 0.0f, 0.0f, 0.0f, 0.0f);
+}
+
 void glaDrawPixelsTex(float x, float y, int img_w, int img_h, int format, int type, int zoomfilter, void *rect)
 {
-	glaDrawPixelsTexScaled(x, y, img_w, img_h, format, type, zoomfilter, rect, 1.0f, 1.0f);
+	glaDrawPixelsTexScaled_clipping(x, y, img_w, img_h, format, type, zoomfilter, rect, 1.0f, 1.0f,
+	                                0.0f, 0.0f, 0.0f, 0.0f);
+}
+
+void glaDrawPixelsTex_clipping(float x, float y, int img_w, int img_h,
+                               int format, int type, int zoomfilter, void *rect,
+                               float clip_min_x, float clip_min_y, float clip_max_x, float clip_max_y)
+{
+	glaDrawPixelsTexScaled_clipping(x, y, img_w, img_h, format, type, zoomfilter, rect, 1.0f, 1.0f,
+	                                clip_min_x, clip_min_y, clip_max_x, clip_max_y);
 }
 
 void glaDrawPixelsSafe(float x, float y, int img_w, int img_h, int row_w, int format, int type, void *rect)
@@ -676,7 +586,9 @@ void glaDrawPixelsSafe(float x, float y, int img_w, int img_h, int row_w, int fo
 	draw_h = min_ii(img_h - off_y, ceil((scissor[3] - rast_y) / yzoom));
 
 	if (draw_w > 0 && draw_h > 0) {
-		int old_row_length = glaGetOneInteger(GL_UNPACK_ROW_LENGTH);
+
+		int bound_options;
+		GPU_BASIC_SHADER_DISABLE_AND_STORE(bound_options);
 
 		/* Don't use safe RasterPos (slower) if we can avoid it. */
 		if (rast_x >= 0 && rast_y >= 0) {
@@ -708,20 +620,32 @@ void glaDrawPixelsSafe(float x, float y, int img_w, int img_h, int row_w, int fo
 			}
 		}
 		
-		glPixelStorei(GL_UNPACK_ROW_LENGTH,  old_row_length);
+		glPixelStorei(GL_UNPACK_ROW_LENGTH,  0);
+
+		GPU_BASIC_SHADER_ENABLE_AND_RESTORE(bound_options);
 	}
 }
 
 /* uses either DrawPixelsSafe or DrawPixelsTex, based on user defined maximum */
-void glaDrawPixelsAuto(float x, float y, int img_w, int img_h, int format, int type, int zoomfilter, void *rect)
+void glaDrawPixelsAuto_clipping(float x, float y, int img_w, int img_h,
+                                int format, int type, int zoomfilter, void *rect,
+                                float clip_min_x, float clip_min_y,
+                                float clip_max_x, float clip_max_y)
 {
 	if (U.image_draw_method != IMAGE_DRAW_METHOD_DRAWPIXELS) {
 		glColor4f(1.0, 1.0, 1.0, 1.0);
-		glaDrawPixelsTex(x, y, img_w, img_h, format, type, zoomfilter, rect);
+		glaDrawPixelsTex_clipping(x, y, img_w, img_h, format, type, zoomfilter, rect,
+		                          clip_min_x, clip_min_y, clip_max_x, clip_max_y);
 	}
 	else {
 		glaDrawPixelsSafe(x, y, img_w, img_h, img_w, format, type, rect);
 	}
+}
+
+void glaDrawPixelsAuto(float x, float y, int img_w, int img_h, int format, int type, int zoomfilter, void *rect)
+{
+	glaDrawPixelsAuto_clipping(x, y, img_w, img_h, format, type, zoomfilter, rect,
+	                           0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 /* 2D Drawing Assistance */
@@ -863,101 +787,6 @@ void glaEnd2DDraw(gla2DDrawInfo *di)
 }
 #endif
 
-/* **************** GL_POINT hack ************************ */
-
-static int curmode = 0;
-static int pointhack = 0;
-static GLubyte Squaredot[16] = {0xff, 0xff, 0xff, 0xff,
-                                0xff, 0xff, 0xff, 0xff,
-                                0xff, 0xff, 0xff, 0xff,
-                                0xff, 0xff, 0xff, 0xff};
-
-void bglBegin(int mode)
-{
-	curmode = mode;
-	
-	if (mode == GL_POINTS) {
-		float value[4];
-		glGetFloatv(GL_POINT_SIZE_RANGE, value);
-		if (value[1] < 2.0f) {
-			glGetFloatv(GL_POINT_SIZE, value);
-			pointhack = iroundf(value[0]);
-			if (pointhack > 4) pointhack = 4;
-		}
-		else {
-			glBegin(mode);
-		}
-	}
-}
-
-#if 0 /* UNUSED */
-int bglPointHack(void)
-{
-	float value[4];
-	int pointhack_px;
-	glGetFloatv(GL_POINT_SIZE_RANGE, value);
-	if (value[1] < 2.0f) {
-		glGetFloatv(GL_POINT_SIZE, value);
-		pointhack_px = floorf(value[0] + 0.5f);
-		if (pointhack_px > 4) pointhack_px = 4;
-		return pointhack_px;
-	}
-	return 0;
-}
-#endif
-
-void bglVertex3fv(const float vec[3])
-{
-	switch (curmode) {
-		case GL_POINTS:
-			if (pointhack) {
-				glRasterPos3fv(vec);
-				glBitmap(pointhack, pointhack, (float)pointhack / 2.0f, (float)pointhack / 2.0f, 0.0, 0.0, Squaredot);
-			}
-			else {
-				glVertex3fv(vec);
-			}
-			break;
-	}
-}
-
-void bglVertex3f(float x, float y, float z)
-{
-	switch (curmode) {
-		case GL_POINTS:
-			if (pointhack) {
-				glRasterPos3f(x, y, z);
-				glBitmap(pointhack, pointhack, (float)pointhack / 2.0f, (float)pointhack / 2.0f, 0.0, 0.0, Squaredot);
-			}
-			else {
-				glVertex3f(x, y, z);
-			}
-			break;
-	}
-}
-
-void bglVertex2fv(const float vec[2])
-{
-	switch (curmode) {
-		case GL_POINTS:
-			if (pointhack) {
-				glRasterPos2fv(vec);
-				glBitmap(pointhack, pointhack, (float)pointhack / 2, pointhack / 2, 0.0, 0.0, Squaredot);
-			}
-			else {
-				glVertex2fv(vec);
-			}
-			break;
-	}
-}
-
-
-void bglEnd(void)
-{
-	if (pointhack) pointhack = 0;
-	else glEnd();
-	
-}
 
 /* Uses current OpenGL state to get view matrices for gluProject/gluUnProject */
 void bgl_get_mats(bglMats *mats)
@@ -993,7 +822,7 @@ void bgl_get_mats(bglMats *mats)
  */
 void bglPolygonOffset(float viewdist, float dist)
 {
-	static float winmat[16], offset = 0.0;
+	static float winmat[16], offset = 0.0f;
 	
 	if (dist != 0.0f) {
 		float offs;
@@ -1023,8 +852,13 @@ void bglPolygonOffset(float viewdist, float dist)
 #endif
 		}
 		else {
-			/* should be clipping value or so... */
-			offs = 0.0005f * dist;
+			/* This adjustment effectively results in reducing the Z value by 0.25%.
+			 *
+			 * winmat[14] actually evaluates to `-2 * far * near / (far - near)`,
+			 * is very close to -0.2 with default clip range, and is used as the coefficient multiplied by `w / z`,
+			 * thus controlling the z dependent part of the depth value.
+			 */
+			offs = winmat[14] * -0.0025f * dist;
 		}
 		
 		winmat[14] -= offs;
@@ -1034,7 +868,6 @@ void bglPolygonOffset(float viewdist, float dist)
 		glMatrixMode(GL_MODELVIEW);
 	}
 	else {
-
 		glMatrixMode(GL_PROJECTION);
 		winmat[14] += offset;
 		offset = 0.0;
@@ -1043,23 +876,14 @@ void bglPolygonOffset(float viewdist, float dist)
 	}
 }
 
-#if 0 /* UNUSED */
-void bglFlush(void) 
-{
-	glFlush();
-#ifdef __APPLE__
-//	if (GPU_type_matches(GPU_DEVICE_INTEL, GPU_OS_MAC, GPU_DRIVER_OFFICIAL))
-// XXX		myswapbuffers(); //hack to get mac intel graphics to show frontbuffer
-#endif
-}
-#endif
-
 /* **** Color management helper functions for GLSL display/transform ***** */
 
 /* Draw given image buffer on a screen using GLSL for display transform */
-void glaDrawImBuf_glsl(ImBuf *ibuf, float x, float y, int zoomfilter,
-                       ColorManagedViewSettings *view_settings,
-                       ColorManagedDisplaySettings *display_settings)
+void glaDrawImBuf_glsl_clipping(ImBuf *ibuf, float x, float y, int zoomfilter,
+                                ColorManagedViewSettings *view_settings,
+                                ColorManagedDisplaySettings *display_settings,
+                                float clip_min_x, float clip_min_y,
+                                float clip_max_x, float clip_max_y)
 {
 	bool force_fallback = false;
 	bool need_fallback = true;
@@ -1096,7 +920,6 @@ void glaDrawImBuf_glsl(ImBuf *ibuf, float x, float y, int zoomfilter,
 		}
 
 		if (ok) {
-			glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 			glColor4f(1.0, 1.0, 1.0, 1.0);
 
 			if (ibuf->rect_float) {
@@ -1110,14 +933,16 @@ void glaDrawImBuf_glsl(ImBuf *ibuf, float x, float y, int zoomfilter,
 					BLI_assert(!"Incompatible number of channels for GLSL display");
 
 				if (format != 0) {
-					glaDrawPixelsTex(x, y, ibuf->x, ibuf->y, format, GL_FLOAT,
-					                 zoomfilter, ibuf->rect_float);
+					glaDrawPixelsTex_clipping(x, y, ibuf->x, ibuf->y, format, GL_FLOAT,
+					                          zoomfilter, ibuf->rect_float,
+					                          clip_min_x, clip_min_y, clip_max_x, clip_max_y);
 				}
 			}
 			else if (ibuf->rect) {
 				/* ibuf->rect is always RGBA */
-				glaDrawPixelsTex(x, y, ibuf->x, ibuf->y, GL_RGBA, GL_UNSIGNED_BYTE,
-				                 zoomfilter, ibuf->rect);
+				glaDrawPixelsTex_clipping(x, y, ibuf->x, ibuf->y, GL_RGBA, GL_UNSIGNED_BYTE,
+				                          zoomfilter, ibuf->rect,
+				                          clip_min_x, clip_min_y, clip_max_x, clip_max_y);
 			}
 
 			IMB_colormanagement_finish_glsl_draw();
@@ -1133,22 +958,43 @@ void glaDrawImBuf_glsl(ImBuf *ibuf, float x, float y, int zoomfilter,
 
 		display_buffer = IMB_display_buffer_acquire(ibuf, view_settings, display_settings, &cache_handle);
 
-		if (display_buffer)
-			glaDrawPixelsAuto(x, y, ibuf->x, ibuf->y, GL_RGBA, GL_UNSIGNED_BYTE,
-			                  zoomfilter, display_buffer);
+		if (display_buffer) {
+			glaDrawPixelsAuto_clipping(x, y, ibuf->x, ibuf->y, GL_RGBA, GL_UNSIGNED_BYTE,
+			                           zoomfilter, display_buffer,
+			                           clip_min_x, clip_min_y, clip_max_x, clip_max_y);
+		}
 
 		IMB_display_buffer_release(cache_handle);
 	}
 }
 
-void glaDrawImBuf_glsl_ctx(const bContext *C, ImBuf *ibuf, float x, float y, int zoomfilter)
+void glaDrawImBuf_glsl(ImBuf *ibuf, float x, float y, int zoomfilter,
+                       ColorManagedViewSettings *view_settings,
+                       ColorManagedDisplaySettings *display_settings)
+{
+	glaDrawImBuf_glsl_clipping(ibuf, x, y, zoomfilter, view_settings, display_settings,
+	                           0.0f, 0.0f, 0.0f, 0.0f);
+}
+
+void glaDrawImBuf_glsl_ctx_clipping(const bContext *C,
+                                    ImBuf *ibuf,
+                                    float x, float y,
+                                    int zoomfilter,
+                                    float clip_min_x, float clip_min_y,
+                                    float clip_max_x, float clip_max_y)
 {
 	ColorManagedViewSettings *view_settings;
 	ColorManagedDisplaySettings *display_settings;
 
 	IMB_colormanagement_display_settings_from_ctx(C, &view_settings, &display_settings);
 
-	glaDrawImBuf_glsl(ibuf, x, y, zoomfilter, view_settings, display_settings);
+	glaDrawImBuf_glsl_clipping(ibuf, x, y, zoomfilter, view_settings, display_settings,
+	                           clip_min_x, clip_min_y, clip_max_x, clip_max_y);
+}
+
+void glaDrawImBuf_glsl_ctx(const bContext *C, ImBuf *ibuf, float x, float y, int zoomfilter)
+{
+	glaDrawImBuf_glsl_ctx_clipping(C, ibuf, x, y, zoomfilter, 0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 void cpack(unsigned int x)

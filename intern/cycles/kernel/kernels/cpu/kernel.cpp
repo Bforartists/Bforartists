@@ -16,15 +16,49 @@
 
 /* CPU kernel entry points */
 
-#include "kernel_compat_cpu.h"
+/* On x86-64, we can assume SSE2, so avoid the extra kernel and compile this
+ * one with SSE2 intrinsics.
+ */
+#if defined(__x86_64__) || defined(_M_X64)
+#  define __KERNEL_SSE2__
+#endif
+
+/* When building kernel for native machine detect kernel features from the flags
+ * set by compiler.
+ */
+#ifdef WITH_KERNEL_NATIVE
+#  ifdef __SSE2__
+#    ifndef __KERNEL_SSE2__
+#      define __KERNEL_SSE2__
+#    endif
+#  endif
+#  ifdef __SSE3__
+#    define __KERNEL_SSE3__
+#  endif
+#  ifdef __SSSE3__
+#    define __KERNEL_SSSE3__
+#  endif
+#  ifdef __SSE4_1__
+#    define __KERNEL_SSE41__
+#  endif
+#  ifdef __AVX__
+#    define __KERNEL_SSE__
+#    define __KERNEL_AVX__
+#  endif
+#  ifdef __AVX2__
+#    define __KERNEL_SSE__
+#    define __KERNEL_AVX2__
+#  endif
+#endif
+
+/* quiet unused define warnings */
+#if defined(__KERNEL_SSE2__)
+    /* do nothing */
+#endif
+
 #include "kernel.h"
-#include "kernel_math.h"
-#include "kernel_types.h"
-#include "kernel_globals.h"
-#include "kernel_film.h"
-#include "kernel_path.h"
-#include "kernel_path_branched.h"
-#include "kernel_bake.h"
+#define KERNEL_ARCH cpu
+#include "kernel_cpu_impl.h"
 
 CCL_NAMESPACE_BEGIN
 
@@ -58,13 +92,13 @@ void kernel_tex_copy(KernelGlobals *kg,
 #define KERNEL_IMAGE_TEX(type, ttype, tname)
 #include "kernel_textures.h"
 
-	else if(strstr(name, "__tex_image_float")) {
+	else if(strstr(name, "__tex_image_float4")) {
 		texture_image_float4 *tex = NULL;
-		int id = atoi(name + strlen("__tex_image_float_"));
+		int id = atoi(name + strlen("__tex_image_float4_"));
 		int array_index = id;
 
-		if(array_index >= 0 && array_index < MAX_FLOAT_IMAGES) {
-			tex = &kg->texture_float_images[array_index];
+		if(array_index >= 0 && array_index < TEX_NUM_FLOAT4_CPU) {
+			tex = &kg->texture_float4_images[array_index];
 		}
 
 		if(tex) {
@@ -74,13 +108,29 @@ void kernel_tex_copy(KernelGlobals *kg,
 			tex->extension = extension;
 		}
 	}
-	else if(strstr(name, "__tex_image")) {
-		texture_image_uchar4 *tex = NULL;
-		int id = atoi(name + strlen("__tex_image_"));
-		int array_index = id - MAX_FLOAT_IMAGES;
+	else if(strstr(name, "__tex_image_float")) {
+		texture_image_float *tex = NULL;
+		int id = atoi(name + strlen("__tex_image_float_"));
+		int array_index = id - TEX_START_FLOAT_CPU;
 
-		if(array_index >= 0 && array_index < MAX_BYTE_IMAGES) {
-			tex = &kg->texture_byte_images[array_index];
+		if(array_index >= 0 && array_index < TEX_NUM_FLOAT_CPU) {
+			tex = &kg->texture_float_images[array_index];
+		}
+
+		if(tex) {
+			tex->data = (float*)mem;
+			tex->dimensions_set(width, height, depth);
+			tex->interpolation = interpolation;
+			tex->extension = extension;
+		}
+	}
+	else if(strstr(name, "__tex_image_byte4")) {
+		texture_image_uchar4 *tex = NULL;
+		int id = atoi(name + strlen("__tex_image_byte4_"));
+		int array_index = id - TEX_START_BYTE4_CPU;
+
+		if(array_index >= 0 && array_index < TEX_NUM_BYTE4_CPU) {
+			tex = &kg->texture_byte4_images[array_index];
 		}
 
 		if(tex) {
@@ -90,53 +140,56 @@ void kernel_tex_copy(KernelGlobals *kg,
 			tex->extension = extension;
 		}
 	}
+	else if(strstr(name, "__tex_image_byte")) {
+		texture_image_uchar *tex = NULL;
+		int id = atoi(name + strlen("__tex_image_byte_"));
+		int array_index = id - TEX_START_BYTE_CPU;
+
+		if(array_index >= 0 && array_index < TEX_NUM_BYTE_CPU) {
+			tex = &kg->texture_byte_images[array_index];
+		}
+
+		if(tex) {
+			tex->data = (uchar*)mem;
+			tex->dimensions_set(width, height, depth);
+			tex->interpolation = interpolation;
+			tex->extension = extension;
+		}
+	}
+	else if(strstr(name, "__tex_image_half4")) {
+		texture_image_half4 *tex = NULL;
+		int id = atoi(name + strlen("__tex_image_half4_"));
+		int array_index = id - TEX_START_HALF4_CPU;
+
+		if(array_index >= 0 && array_index < TEX_NUM_HALF4_CPU) {
+			tex = &kg->texture_half4_images[array_index];
+		}
+
+		if(tex) {
+			tex->data = (half4*)mem;
+			tex->dimensions_set(width, height, depth);
+			tex->interpolation = interpolation;
+			tex->extension = extension;
+		}
+	}
+	else if(strstr(name, "__tex_image_half")) {
+		texture_image_half *tex = NULL;
+		int id = atoi(name + strlen("__tex_image_half_"));
+		int array_index = id - TEX_START_HALF_CPU;
+
+		if(array_index >= 0 && array_index < TEX_NUM_HALF_CPU) {
+			tex = &kg->texture_half_images[array_index];
+		}
+
+		if(tex) {
+			tex->data = (half*)mem;
+			tex->dimensions_set(width, height, depth);
+			tex->interpolation = interpolation;
+			tex->extension = extension;
+		}
+	}
 	else
 		assert(0);
 }
 
-/* On x86-64, we can assume SSE2, so avoid the extra kernel and compile this one with SSE2 intrinsics */
-#if defined(__x86_64__) || defined(_M_X64)
-#define __KERNEL_SSE2__
-#endif
-
-/* quiet unused define warnings */
-#if defined(__KERNEL_SSE2__)
-	/* do nothing */
-#endif
-
-/* Path Tracing */
-
-void kernel_cpu_path_trace(KernelGlobals *kg, float *buffer, unsigned int *rng_state, int sample, int x, int y, int offset, int stride)
-{
-#ifdef __BRANCHED_PATH__
-	if(kernel_data.integrator.branched)
-		kernel_branched_path_trace(kg, buffer, rng_state, sample, x, y, offset, stride);
-	else
-#endif
-		kernel_path_trace(kg, buffer, rng_state, sample, x, y, offset, stride);
-}
-
-/* Film */
-
-void kernel_cpu_convert_to_byte(KernelGlobals *kg, uchar4 *rgba, float *buffer, float sample_scale, int x, int y, int offset, int stride)
-{
-	kernel_film_convert_to_byte(kg, rgba, buffer, sample_scale, x, y, offset, stride);
-}
-
-void kernel_cpu_convert_to_half_float(KernelGlobals *kg, uchar4 *rgba, float *buffer, float sample_scale, int x, int y, int offset, int stride)
-{
-	kernel_film_convert_to_half_float(kg, rgba, buffer, sample_scale, x, y, offset, stride);
-}
-
-/* Shader Evaluation */
-
-void kernel_cpu_shader(KernelGlobals *kg, uint4 *input, float4 *output, int type, int i, int offset, int sample)
-{
-	if(type >= SHADER_EVAL_BAKE)
-		kernel_bake_evaluate(kg, input, output, (ShaderEvalType)type, i, offset, sample);
-	else
-		kernel_shader_evaluate(kg, input, output, (ShaderEvalType)type, i, sample);
-}
-
 CCL_NAMESPACE_END
-

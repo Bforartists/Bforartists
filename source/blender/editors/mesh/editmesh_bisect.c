@@ -73,6 +73,7 @@ static bool mesh_bisect_interactive_calc(
 	wmGesture *gesture = op->customdata;
 	BisectData *opdata;
 
+	View3D *v3d = CTX_wm_view3d(C);
 	ARegion *ar = CTX_wm_region(C);
 	RegionView3D *rv3d = ar->regiondata;
 
@@ -101,7 +102,7 @@ static bool mesh_bisect_interactive_calc(
 	normalize_v3(plane_no);  /* not needed but nicer for user */
 
 	/* point on plane, can use either start or endpoint */
-	ED_view3d_win_to_3d(ar, co_ref, co_a_ss, plane_co);
+	ED_view3d_win_to_3d(v3d, ar, co_ref, co_a_ss, plane_co);
 
 	if (opdata->is_first == false)
 		EDBM_redo_state_restore(opdata->mesh_backup, em, false);
@@ -285,13 +286,13 @@ static int mesh_bisect_exec(bContext *C, wmOperator *op)
 
 		/* Fill */
 		BMO_op_initf(
-		        bm, &bmop_fill, op->flag,
+		        bm, &bmop_fill, 0,
 		        "triangle_fill edges=%S normal=%v use_dissolve=%b",
 		        &bmop, "geom_cut.out", normal_fill, true);
 		BMO_op_exec(bm, &bmop_fill);
 
 		/* Copy Attributes */
-		BMO_op_initf(bm, &bmop_attr, op->flag,
+		BMO_op_initf(bm, &bmop_attr, 0,
 		             "face_attribute_fill faces=%S use_normals=%b use_data=%b",
 		             &bmop_fill, "geom.out", false, true);
 		BMO_op_exec(bm, &bmop_attr);

@@ -1,4 +1,4 @@
-﻿# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -18,14 +18,12 @@
 
 # <pep8-80 compliant>
 
-# fixed for Bforartists. Shows in Tool Shelf now.
-
 bl_info = {
     "name": "IvyGen",
     "author": "testscreenings, PKHG, TrumanBlending",
     "version": (0, 1, 1),
     "blender": (2, 59, 0),
-    "location": "View3D > Tool Shelf > Create > Add Misc",
+    "location": "View3D > Add > Curve",
     "description": "Adds generated ivy to a mesh object starting "
                    "at the 3D cursor",
     "warning": "",
@@ -33,7 +31,6 @@ bl_info = {
                 "Scripts/Curve/Ivy_Gen",
     "category": "Add Curve",
 }
-
 
 
 import bpy
@@ -405,16 +402,16 @@ def adhesion(loc, ob, max_l):
     # Compute the adhesion vector by finding the nearest point
     nearest_result = ob.closest_point_on_mesh(tran_loc, max_l)
     adhesion_vector = Vector((0.0, 0.0, 0.0))
-    if nearest_result[2] != -1:
+    if nearest_result[0]:
         # Compute the distance to the nearest point
-        adhesion_vector = ob.matrix_world * nearest_result[0] - loc
+        adhesion_vector = ob.matrix_world * nearest_result[1] - loc
         distance = adhesion_vector.length
         # If it's less than the maximum allowed and not 0, continue
         if distance:
             # Compute the direction vector between the closest point and loc
             adhesion_vector.normalize()
             adhesion_vector *= 1.0 - distance / max_l
-            #adhesion_vector *= getFaceWeight(ob.data, nearest_result[2])
+            #adhesion_vector *= getFaceWeight(ob.data, nearest_result[3])
     return adhesion_vector
 
 
@@ -426,15 +423,16 @@ def collision(ob, pos, new_pos):
     tran_mat = ob.matrix_world.inverted()
     tran_pos = tran_mat * pos
     tran_new_pos = tran_mat * new_pos
+    tran_dir = tran_new_pos - tran_pos
 
-    ray_result = ob.ray_cast(tran_pos, tran_new_pos)
+    ray_result = ob.ray_cast(tran_pos, tran_dir, tran_dir.length)
     # If there's a collision we need to check it
-    if ray_result[2] != -1:
+    if ray_result[0]:
         # Check whether the collision is going into the object
-        if (tran_new_pos - tran_pos).dot(ray_result[1]) < 0.0:
+        if tran_dir.dot(ray_result[2]) < 0.0:
             # Find projection of the piont onto the plane
             p0 = tran_new_pos - (tran_new_pos -
-                                          ray_result[0]).project(ray_result[1])
+                                          ray_result[1]).project(ray_result[2])
             # Reflect in the plane
             tran_new_pos += 2 * (p0 - tran_new_pos)
             new_pos *= 0
@@ -539,6 +537,10 @@ class IvyGen(bpy.types.Operator):
         return ((ob is not None) and
                 (ob.type == 'MESH') and
                 (context.mode == 'OBJECT'))
+        
+    def invoke(self, context, event):
+        self.updateIvy = True
+        return self.execute(context)
 
     def execute(self, context):
         if not self.updateIvy:
@@ -670,16 +672,11 @@ def menu_func(self, context):
 
 def register():
     bpy.utils.register_module(__name__)
-    #bpy.types.INFO_MT_curve_add.append(menu_func)
-    bpy.types.VIEW3D_PT_tools_add_misc.append(menu_func)
-
-    
+    bpy.types.INFO_MT_curve_add.append(menu_func)
 
 
 def unregister():
-    #bpy.types.INFO_MT_curve_add.remove(menu_func)
-    bpy.types.VIEW3D_PT_tools_add_misc.remove(menu_func)
-
+    bpy.types.INFO_MT_curve_add.remove(menu_func)
     bpy.utils.unregister_module(__name__)
 
 

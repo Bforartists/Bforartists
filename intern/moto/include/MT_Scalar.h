@@ -51,9 +51,8 @@
 #include <float.h>
 
 #include "MT_random.h"
-#include "NM_Scalar.h"
 
-typedef double MT_Scalar; //this should be float !
+typedef float MT_Scalar;
 
 
 const MT_Scalar  MT_DEGS_PER_RAD(57.29577951308232286465);
@@ -62,23 +61,23 @@ const MT_Scalar  MT_PI(3.14159265358979323846);
 const MT_Scalar  MT_2_PI(6.28318530717958623200);
 const MT_Scalar  MT_EPSILON(1.0e-10);
 const MT_Scalar  MT_EPSILON2(1.0e-20);
-const MT_Scalar  MT_INFINITY(1.0e50);
+const MT_Scalar  MT_INFINITY(1.0e38);
 
 inline int       MT_sign(MT_Scalar x) {
-    return x < 0.0 ? -1 : x > 0.0 ? 1 : 0;
+    return x < 0.0f ? -1 : x > 0.0f ? 1 : 0;
 }
  
 inline MT_Scalar MT_abs(MT_Scalar x) { return fabs(x); }
 
-inline bool      MT_fuzzyZero(MT_Scalar x) { return MT_abs(x) < MT_EPSILON; }
-inline bool      MT_fuzzyZero2(MT_Scalar x) { return MT_abs(x) < MT_EPSILON2; }
+inline bool      MT_fuzzyZero(MT_Scalar x) { return MT_abs(x) < (float)MT_EPSILON; }
+inline bool      MT_fuzzyZero2(MT_Scalar x) { return MT_abs(x) < (float)MT_EPSILON2; }
 
 inline MT_Scalar MT_radians(MT_Scalar x) { 
-    return x * MT_RADS_PER_DEG;
+    return x * (float)MT_RADS_PER_DEG;
 }
 
 inline MT_Scalar MT_degrees(MT_Scalar x) { 
-    return x * MT_DEGS_PER_RAD;
+    return x * (float)MT_DEGS_PER_RAD;
 }
 
 inline MT_Scalar MT_random() { 

@@ -43,7 +43,7 @@
  * Queue_index (QUEUE_ACTIVE_AND_REGENERATED_RAYS) ------|                                      |--- work_array
  * parallel_samples -------------------------------------|                                      |--- PathState_coop
  * end_sample -------------------------------------------|                                      |--- throughput_coop
- * kg (globals + data) ----------------------------------|                                      |--- rng_coop
+ * kg (globals) -----------------------------------------|                                      |--- rng_coop
  * rng_state --------------------------------------------|                                      |--- Ray
  * PathRadiance_coop ------------------------------------|                                      |
  * sw ---------------------------------------------------|                                      |
@@ -57,7 +57,7 @@
  * work_pool_wgs ----------------------------------------|                                      |
  * num_samples ------------------------------------------|                                      |
  *
- * note on shader_data : shader_data argument is neither an input nor an output for this kernel. It is just filled and consumed here itself.
+ * note on sd : sd argument is neither an input nor an output for this kernel. It is just filled and consumed here itself.
  * Note on Queues :
  * This kernel fetches rays from QUEUE_HITBG_BUFF_UPDATE_TOREGEN_RAYS queue.
  *
@@ -70,9 +70,7 @@
  * QUEUE_HITBG_BUFF_UPDATE_TOREGEN_RAYS will be empty
  */
 ccl_device char kernel_background_buffer_update(
-        ccl_global char *globals,
-        ccl_constant KernelData *data,
-        ccl_global char *shader_data,
+        KernelGlobals *kg,
         ccl_global float *per_sample_output_buffers,
         ccl_global uint *rng_state,
         ccl_global uint *rng_coop,             /* Required for buffer Update */
@@ -100,11 +98,6 @@ ccl_device char kernel_background_buffer_update(
         int ray_index)
 {
 	char enqueue_flag = 0;
-
-	/* Load kernel globals structure and ShaderData strucuture */
-	KernelGlobals *kg = (KernelGlobals *)globals;
-	ShaderData *sd = (ShaderData *)shader_data;
-
 #ifdef __KERNEL_DEBUG__
 	DebugData *debug_data = &debugdata_coop[ray_index];
 #endif
@@ -164,7 +157,7 @@ ccl_device char kernel_background_buffer_update(
 		if(IS_STATE(ray_state, ray_index, RAY_HIT_BACKGROUND)) {
 #ifdef __BACKGROUND__
 			/* sample background shader */
-			float3 L_background = indirect_background(kg, state, ray, sd);
+			float3 L_background = indirect_background(kg, kg->sd_input, state, ray);
 			path_radiance_accum_background(L, (*throughput), L_background, state->bounce);
 #endif
 			ASSIGN_RAY_STATE(ray_state, ray_index, RAY_UPDATE_BUFFER);
@@ -233,13 +226,14 @@ ccl_device char kernel_background_buffer_update(
 				*throughput = make_float3(1.0f, 1.0f, 1.0f);
 				*L_transparent = 0.0f;
 				path_radiance_init(L, kernel_data.film.use_light_pass);
-				path_state_init(kg, state, rng, sample, ray);
+				path_state_init(kg, kg->sd_input, state, rng, sample, ray);
 #ifdef __KERNEL_DEBUG__
 				debug_data_init(debug_data);
 #endif
 				ASSIGN_RAY_STATE(ray_state, ray_index, RAY_REGENERATED);
 				enqueue_flag = 1;
-			} else {
+			}
+			else {
 				/* These rays do not participate in path-iteration. */
 				float4 L_rad = make_float4(0.0f, 0.0f, 0.0f, 0.0f);
 				/* Accumulate result in output buffer. */

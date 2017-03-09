@@ -1,14 +1,19 @@
 # GPL Original by Fourmadmen
 
 import bpy
-from mathutils import *
-from math import *
-from bpy.props import *
+from mathutils import Vector, Quaternion
+from math import pi
+from bpy.props import (
+        IntProperty,
+        FloatProperty,
+        )
+
 
 # Create a new mesh (object) from verts/edges/faces.
 # verts/edges/faces ... List of vertices/edges/faces for the
-#                       new mesh (as used in from_pydata).
-# name ... Name of the new mesh (& object).
+#                       new mesh (as used in from_pydata)
+# name ... Name of the new mesh (& object)
+
 def create_mesh_object(context, verts, edges, faces, name):
 
     # Create new mesh
@@ -22,6 +27,7 @@ def create_mesh_object(context, verts, edges, faces, name):
 
     from bpy_extras import object_utils
     return object_utils.object_data_add(context, mesh, operator=None)
+
 
 # A very simple "bridge" tool.
 
@@ -68,14 +74,14 @@ def createFaces(vertIdx1, vertIdx2, closed=False, flipped=False):
                 face = [vertIdx2[num], vertIdx1[0], vertIdx2[num + 1]]
             else:
                 face = [vertIdx2[num], vertIdx1[num],
-                    vertIdx1[num + 1], vertIdx2[num + 1]]
+                        vertIdx1[num + 1], vertIdx2[num + 1]]
             faces.append(face)
         else:
             if fan:
                 face = [vertIdx1[0], vertIdx2[num], vertIdx2[num + 1]]
             else:
                 face = [vertIdx1[num], vertIdx2[num],
-                    vertIdx2[num + 1], vertIdx1[num + 1]]
+                        vertIdx2[num + 1], vertIdx1[num + 1]]
             faces.append(face)
 
     return faces
@@ -121,8 +127,6 @@ def add_star(points, outer_radius, inner_radius, height):
         vec = quat * Vector((radius, 0, -half_height))
         verts.append(vec)
 
-
-
     faces_top = createFaces([vert_idx_top], edgeloop_top, closed=True)
     faces_outside = createFaces(edgeloop_top, edgeloop_bottom, closed=True)
     faces_bottom = createFaces([vert_idx_bottom], edgeloop_bottom,
@@ -134,32 +138,40 @@ def add_star(points, outer_radius, inner_radius, height):
 
     return verts, faces
 
+
 class AddStar(bpy.types.Operator):
-    """Add a star mesh"""
     bl_idname = "mesh.primitive_star_add"
     bl_label = "Simple Star"
+    bl_description = "Construct a star mesh"
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
-    points = IntProperty(name="Points",
+    points = IntProperty(
+        name="Points",
         description="Number of points for the star",
         min=2,
         max=256,
-        default=5)
-    outer_radius = FloatProperty(name="Outer Radius",
+        default=5
+        )
+    outer_radius = FloatProperty(
+        name="Outer Radius",
         description="Outer radius of the star",
         min=0.01,
         max=9999.0,
-        default=1.0)
-    innter_radius = FloatProperty(name="Inner Radius",
+        default=1.0
+        )
+    innter_radius = FloatProperty(
+        name="Inner Radius",
         description="Inner radius of the star",
         min=0.01,
         max=9999.0,
-        default=0.5)
+        default=0.5
+        )
     height = FloatProperty(name="Height",
         description="Height of the star",
         min=0.01,
         max=9999.0,
-        default=0.5)
+        default=0.5
+        )
 
     def execute(self, context):
 
@@ -167,7 +179,8 @@ class AddStar(bpy.types.Operator):
             self.points,
             self.outer_radius,
             self.innter_radius,
-            self.height)
+            self.height
+            )
 
         obj = create_mesh_object(context, verts, [], faces, "Star")
 

@@ -52,6 +52,7 @@ struct rcti;
 /* **** Common functions **** */
 
 void BKE_tracking_free(struct MovieTracking *tracking);
+void BKE_tracking_copy(struct MovieTracking *tracking_dst, struct MovieTracking *tracking_src);
 
 void BKE_tracking_settings_init(struct MovieTracking *tracking);
 
@@ -200,6 +201,12 @@ void BKE_tracking_distortion_set_threads(struct MovieDistortion *distortion, int
 struct MovieDistortion *BKE_tracking_distortion_copy(struct MovieDistortion *distortion);
 struct ImBuf *BKE_tracking_distortion_exec(struct MovieDistortion *distortion, struct MovieTracking *tracking,
                                            struct ImBuf *ibuf, int width, int height, float overscan, bool undistort);
+void BKE_tracking_distortion_distort_v2(struct MovieDistortion *distortion,
+                                        const float co[2],
+                                        float r_co[2]);
+void BKE_tracking_distortion_undistort_v2(struct MovieDistortion *distortion,
+                                          const float co[2],
+                                          float r_co[2]);
 void BKE_tracking_distortion_free(struct MovieDistortion *distortion);
 
 void BKE_tracking_distort_v2(struct MovieTracking *tracking, const float co[2], float r_co[2]);
@@ -270,9 +277,9 @@ void BKE_tracking_detect_harris(struct MovieTracking *tracking, struct ListBase 
                                 bool place_outside_layer);
 
 /* **** 2D stabilization **** */
-void BKE_tracking_stabilization_data_get(struct MovieTracking *tracking, int framenr, int width, int height,
+void BKE_tracking_stabilization_data_get(struct MovieClip *clip, int framenr, int width, int height,
                                          float translation[2], float *scale, float *angle);
-struct ImBuf *BKE_tracking_stabilize_frame(struct MovieTracking *tracking, int framenr, struct ImBuf *ibuf,
+struct ImBuf *BKE_tracking_stabilize_frame(struct MovieClip *clip, int framenr, struct ImBuf *ibuf,
                                            float translation[2], float *scale, float *angle);
 void BKE_tracking_stabilization_data_to_mat4(int width, int height, float aspect, float translation[2],
                                              float scale, float angle, float mat[4][4]);

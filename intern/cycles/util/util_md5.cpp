@@ -141,7 +141,7 @@ void MD5Hash::process(const uint8_t *data /*[64]*/)
 
 			X = xbuf;		/* (dynamic only) */
 			for(i = 0; i < 16; ++i, xp += 4)
-			xbuf[i] = xp[0] + (xp[1] << 8) + (xp[2] << 16) + (xp[3] << 24);
+				xbuf[i] = xp[0] + (xp[1] << 8) + (xp[2] << 16) + (xp[3] << 24);
 		}
 	}
 
@@ -371,6 +371,13 @@ string MD5Hash::get_hex()
 	buf[sizeof(buf)-1] = '\0';
 	
 	return string(buf);
+}
+
+string util_md5_string(const string& str)
+{
+	MD5Hash md5;
+	md5.append((uint8_t*)str.c_str(), str.size());
+	return md5.get_hex();
 }
 
 CCL_NAMESPACE_END

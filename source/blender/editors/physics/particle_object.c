@@ -195,14 +195,14 @@ static int new_particle_settings_exec(bContext *C, wmOperator *UNUSED(op))
 
 	/* add or copy particle setting */
 	if (psys->part)
-		part= BKE_particlesettings_copy(psys->part);
+		part= BKE_particlesettings_copy(bmain, psys->part);
 	else
 		part= psys_new_settings("ParticleSettings", bmain);
 
 	ob= ptr.id.data;
 
 	if (psys->part)
-		psys->part->id.us--;
+		id_us_min(&psys->part->id);
 
 	psys->part = part;
 
@@ -592,7 +592,7 @@ static void disconnect_hair(Scene *scene, Object *ob, ParticleSystem *psys)
 			point++;
 		}
 
-		psys_mat_hair_to_global(ob, psmd->dm, psys->part->from, pa, hairmat);
+		psys_mat_hair_to_global(ob, psmd->dm_final, psys->part->from, pa, hairmat);
 
 		for (k=0, key=pa->hair; k<pa->totkey; k++, key++) {
 			mul_m4_v3(hairmat, key->co);
@@ -618,7 +618,6 @@ static int disconnect_hair_exec(bContext *C, wmOperator *op)
 {
 	Scene *scene= CTX_data_scene(C);
 	Object *ob= ED_object_context(C);
-	PointerRNA ptr = CTX_data_pointer_get_type(C, "particle_system", &RNA_ParticleSystem);
 	ParticleSystem *psys= NULL;
 	const bool all = RNA_boolean_get(op->ptr, "all");
 
@@ -631,7 +630,7 @@ static int disconnect_hair_exec(bContext *C, wmOperator *op)
 		}
 	}
 	else {
-		psys = ptr.data;
+		psys = psys_get_current(ob);
 		disconnect_hair(scene, ob, psys);
 	}
 
@@ -650,7 +649,7 @@ void PARTICLE_OT_disconnect_hair(wmOperatorType *ot)
 	ot->exec = disconnect_hair_exec;
 	
 	/* flags */
-	ot->flag = OPTYPE_REGISTER|OPTYPE_UNDO;
+	ot->flag = OPTYPE_UNDO;  /* No REGISTER, redo does not work due to missing update, see T47750. */
 
 	RNA_def_boolean(ot->srna, "all", 0, "All hair", "Disconnect all hair systems from the emitter mesh");
 }
@@ -676,7 +675,7 @@ static bool remap_hair_emitter(Scene *scene, Object *ob, ParticleSystem *psys,
 	float from_ob_imat[4][4], to_ob_imat[4][4];
 	float from_imat[4][4], to_imat[4][4];
 
-	if (!target_psmd->dm)
+	if (!target_psmd->dm_final)
 		return false;
 	if (!psys->part || psys->part->type != PART_HAIR)
 		return false;
@@ -690,15 +689,17 @@ static bool remap_hair_emitter(Scene *scene, Object *ob, ParticleSystem *psys,
 	invert_m4_m4(from_imat, from_mat);
 	invert_m4_m4(to_imat, to_mat);
 	
-	if (target_psmd->dm->deformedOnly) {
+	if (target_psmd->dm_final->deformedOnly) {
 		/* we don't want to mess up target_psmd->dm when converting to global coordinates below */
-		dm = target_psmd->dm;
+		dm = target_psmd->dm_final;
 	}
 	else {
-		/* warning: this rebuilds target_psmd->dm! */
-		dm = mesh_get_derived_deform(scene, target_ob, CD_MASK_BAREMESH | CD_MASK_MFACE);
+		dm = target_psmd->dm_deformed;
 	}
-	target_dm = target_psmd->dm;
+	target_dm = target_psmd->dm_final;
+	if (dm == NULL) {
+		return false;
+	}
 	/* don't modify the original vertices */
 	dm = CDDM_copy(dm);
 
@@ -766,7 +767,7 @@ static bool remap_hair_emitter(Scene *scene, Object *ob, ParticleSystem *psys,
 			tpa->foffset = 0.0f;
 
 			tpa->num = nearest.index;
-			tpa->num_dmcache = psys_particle_dm_face_lookup(target_ob, target_dm, tpa->num, tpa->fuv, NULL);
+			tpa->num_dmcache = psys_particle_dm_face_lookup(target_dm, dm, tpa->num, tpa->fuv, NULL);
 		}
 		else {
 			me = &medge[nearest.index];
@@ -864,7 +865,6 @@ static int connect_hair_exec(bContext *C, wmOperator *op)
 {
 	Scene *scene= CTX_data_scene(C);
 	Object *ob= ED_object_context(C);
-	PointerRNA ptr = CTX_data_pointer_get_type(C, "particle_system", &RNA_ParticleSystem);
 	ParticleSystem *psys= NULL;
 	const bool all = RNA_boolean_get(op->ptr, "all");
 	bool any_connected = false;
@@ -878,12 +878,13 @@ static int connect_hair_exec(bContext *C, wmOperator *op)
 		}
 	}
 	else {
-		psys = ptr.data;
+		psys = psys_get_current(ob);
 		any_connected |= connect_hair(scene, ob, psys);
 	}
 
 	if (!any_connected) {
-		BKE_report(op->reports, RPT_ERROR, "Can't disconnect hair if particle system modifier is disabled");
+		BKE_report(op->reports, RPT_WARNING,
+		           "No hair connected (can't connect hair if particle system modifier is disabled)");
 		return OPERATOR_CANCELLED;
 	}
 
@@ -902,7 +903,7 @@ void PARTICLE_OT_connect_hair(wmOperatorType *ot)
 	ot->exec = connect_hair_exec;
 	
 	/* flags */
-	ot->flag = OPTYPE_REGISTER|OPTYPE_UNDO;
+	ot->flag = OPTYPE_UNDO;  /* No REGISTER, redo does not work due to missing update, see T47750. */
 
 	RNA_def_boolean(ot->srna, "all", 0, "All hair", "Connect all hair systems to the emitter mesh");
 }
@@ -976,7 +977,7 @@ static void remove_particle_systems_from_object(Object *ob_to)
 	
 	if (ob_to->type != OB_MESH)
 		return;
-	if (!ob_to->data || ((ID *)ob_to->data)->lib)
+	if (!ob_to->data || ID_IS_LINKED_DATABLOCK(ob_to->data))
 		return;
 	
 	for (md = ob_to->modifiers.first; md; md = md_next) {
@@ -995,7 +996,13 @@ static void remove_particle_systems_from_object(Object *ob_to)
 }
 
 /* single_psys_from is optional, if NULL all psys of ob_from are copied */
-static bool copy_particle_systems_to_object(Scene *scene, Object *ob_from, ParticleSystem *single_psys_from, Object *ob_to, int space)
+static bool copy_particle_systems_to_object(Main *bmain,
+                                            Scene *scene,
+                                            Object *ob_from,
+                                            ParticleSystem *single_psys_from,
+                                            Object *ob_to,
+                                            int space,
+                                            bool duplicate_settings)
 {
 	ModifierData *md;
 	ParticleSystem *psys_start = NULL, *psys, *psys_from;
@@ -1006,7 +1013,7 @@ static bool copy_particle_systems_to_object(Scene *scene, Object *ob_from, Parti
 	
 	if (ob_to->type != OB_MESH)
 		return false;
-	if (!ob_to->data || ((ID *)ob_to->data)->lib)
+	if (!ob_to->data || ID_IS_LINKED_DATABLOCK(ob_to->data))
 		return false;
 	
 	/* For remapping we need a valid DM.
@@ -1066,12 +1073,17 @@ static bool copy_particle_systems_to_object(Scene *scene, Object *ob_from, Parti
 		modifier_unique_name(&ob_to->modifiers, (ModifierData *)psmd);
 		
 		psmd->psys = psys;
-		psmd->dm = CDDM_copy(final_dm);
-		CDDM_calc_normals(psmd->dm);
-		DM_ensure_tessface(psmd->dm);
+		psmd->dm_final = CDDM_copy(final_dm);
+		CDDM_calc_normals(psmd->dm_final);
+		DM_ensure_tessface(psmd->dm_final);
 		
 		if (psys_from->edit)
 			copy_particle_edit(scene, ob_to, psys, psys_from);
+
+		if (duplicate_settings) {
+			id_us_min(&psys->part->id);
+			psys->part = BKE_particlesettings_copy(bmain, psys->part);
+		}
 	}
 	MEM_freeN(tmp_psys);
 	
@@ -1095,11 +1107,13 @@ static bool copy_particle_systems_to_object(Scene *scene, Object *ob_from, Parti
 				break;
 			default:
 				/* should not happen */
+				from_mat = to_mat = NULL;
 				BLI_assert(false);
 				break;
 		}
-		
-		remap_hair_emitter(scene, ob_from, psys_from, ob_to, psys, psys->edit, from_mat, to_mat, psys_from->flag & PSYS_GLOBAL_HAIR, psys->flag & PSYS_GLOBAL_HAIR);
+		if (ob_from != ob_to) {
+			remap_hair_emitter(scene, ob_from, psys_from, ob_to, psys, psys->edit, from_mat, to_mat, psys_from->flag & PSYS_GLOBAL_HAIR, psys->flag & PSYS_GLOBAL_HAIR);
+		}
 		
 		/* tag for recalc */
 //		psys->recalc |= PSYS_RECALC_RESET;
@@ -1131,6 +1145,7 @@ static int copy_particle_systems_exec(bContext *C, wmOperator *op)
 	const int space = RNA_enum_get(op->ptr, "space");
 	const bool remove_target_particles = RNA_boolean_get(op->ptr, "remove_target_particles");
 	const bool use_active = RNA_boolean_get(op->ptr, "use_active");
+	Main *bmain = CTX_data_main(C);
 	Scene *scene = CTX_data_scene(C);
 	Object *ob_from = ED_object_active_context(C);
 	ParticleSystem *psys_from = use_active ? CTX_data_pointer_get_type(C, "particle_system", &RNA_ParticleSystem).data : NULL;
@@ -1146,7 +1161,7 @@ static int copy_particle_systems_exec(bContext *C, wmOperator *op)
 				remove_particle_systems_from_object(ob_to);
 				changed = true;
 			}
-			if (copy_particle_systems_to_object(scene, ob_from, psys_from, ob_to, space))
+			if (copy_particle_systems_to_object(bmain, scene, ob_from, psys_from, ob_to, space, false))
 				changed = true;
 			else
 				fail++;
@@ -1187,4 +1202,43 @@ void PARTICLE_OT_copy_particle_systems(wmOperatorType *ot)
 	RNA_def_enum(ot->srna, "space", space_items, PAR_COPY_SPACE_OBJECT, "Space", "Space transform for copying from one object to another");
 	RNA_def_boolean(ot->srna, "remove_target_particles", true, "Remove Target Particles", "Remove particle systems on the target objects");
 	RNA_def_boolean(ot->srna, "use_active", false, "Use Active", "Use the active particle system from the context");
+}
+
+static int duplicate_particle_systems_poll(bContext *C)
+{
+	if (!ED_operator_object_active_editable(C)) {
+		return false;
+	}
+	Object *ob = ED_object_active_context(C);
+	if (BLI_listbase_is_empty(&ob->particlesystem)) {
+		return false;
+	}
+	return true;
+}
+
+static int duplicate_particle_systems_exec(bContext *C, wmOperator *op)
+{
+	const bool duplicate_settings = RNA_boolean_get(op->ptr, "use_duplicate_settings");
+	Scene *scene = CTX_data_scene(C);
+	Object *ob = ED_object_active_context(C);
+	ParticleSystem *psys = CTX_data_pointer_get_type(C, "particle_system", &RNA_ParticleSystem).data;
+	copy_particle_systems_to_object(CTX_data_main(C), scene, ob, psys, ob,
+	                                PAR_COPY_SPACE_OBJECT, duplicate_settings);
+	return OPERATOR_FINISHED;
+}
+
+void PARTICLE_OT_duplicate_particle_system(wmOperatorType *ot)
+{
+	ot->name = "Duplicate Particle Systems";
+	ot->description = "Duplicate particle system within the active object";
+	ot->idname = "PARTICLE_OT_duplicate_particle_system";
+
+	ot->poll = duplicate_particle_systems_poll;
+	ot->exec = duplicate_particle_systems_exec;
+
+	/* flags */
+	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+
+	RNA_def_boolean(ot->srna, "use_duplicate_settings", false, "Duplicate Settings",
+	                "Duplicate settings as well, so new particle system uses own settings");
 }

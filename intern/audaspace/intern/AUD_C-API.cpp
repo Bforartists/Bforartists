@@ -75,7 +75,6 @@
 #include "AUD_MutexLock.h"
 
 #ifdef WITH_SDL
-#include <SDL.h>
 #include "AUD_SDLDevice.h"
 #endif
 
@@ -156,18 +155,18 @@ AUD_Device* AUD_init(const char* device, AUD_DeviceSpecs specs, int buffersize, 
 		}
 #endif
 #ifdef WITH_JACK
-		else if(dname == "Jack")
+		else if(dname == "JACK")
 		{
 #ifdef __APPLE__
 			struct stat st;
 			if (stat("/Library/Frameworks/Jackmp.framework", &st) != 0) {
-				printf("Warning: Jack Framework not installed\n");
+				printf("Warning: JACK Framework not installed\n");
 				return NULL;
 			}
 			else
 #endif
 			if (!AUD_jack_supported()) {
-				printf("Warning: Jack cllient not installed\n");
+				printf("Warning: JACK cllient not installed\n");
 				return NULL;
 			}
 			else {
@@ -918,7 +917,7 @@ AUD_Sound *AUD_Sequence_create(float fps, int muted)
 	// specs are changed at a later point!
 	AUD_Specs specs;
 	specs.channels = AUD_CHANNELS_STEREO;
-	specs.rate = AUD_RATE_44100;
+	specs.rate = AUD_RATE_48000;
 	AUD_Sound *sequencer = new AUD_Sound(boost::shared_ptr<AUD_SequencerFactory>(new AUD_SequencerFactory(specs, fps, muted)));
 	return sequencer;
 }
@@ -1292,9 +1291,11 @@ AUD_Device *AUD_openMixdownDevice(AUD_DeviceSpecs specs, AUD_Sound *sequencer, f
 		device->setQuality(true);
 		device->setVolume(volume);
 
-		dynamic_cast<AUD_SequencerFactory *>(sequencer->get())->setSpecs(specs.specs);
+		AUD_SequencerFactory *f = dynamic_cast<AUD_SequencerFactory *>(sequencer->get());
 
-		AUD_Handle handle = device->play(*sequencer);
+		f->setSpecs(specs.specs);
+
+		AUD_Handle handle = device->play(f->createQualityReader());
 		if (handle.get()) {
 			handle->seek(start);
 		}

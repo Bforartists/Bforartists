@@ -29,9 +29,6 @@
  *  \ingroup wm
  */
 
-
-
-
 #ifndef __WM_CURSORS_H__
 #define __WM_CURSORS_H__
 
@@ -111,13 +108,10 @@ enum {
 	BC_YELLOW
 };
 
-#define SMALL_CURSOR    0
-#define BIG_CURSOR      1
-
 struct wmWindow;
 struct wmEvent;
 
-int wm_cursor_arrow_move(struct wmWindow *win, struct wmEvent *event);
+bool wm_cursor_arrow_move(struct wmWindow *win, const struct wmEvent *event);
 
 
 #endif /* __WM_CURSORS_H__ */

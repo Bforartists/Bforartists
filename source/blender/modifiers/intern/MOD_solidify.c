@@ -141,9 +141,9 @@ static void dm_calc_normal(DerivedMesh *dm, float (*face_nors)[3], float (*r_ver
 					 * using the angle between the 2 faces as a weighting */
 #if 0
 					add_v3_v3v3(edge_normal, face_nors[edge_ref->f1], face_nors[edge_ref->f2]);
-					normalize_v3(edge_normal);
-
-					mul_v3_fl(edge_normal, angle_normalized_v3v3(face_nors[edge_ref->f1], face_nors[edge_ref->f2]));
+					normalize_v3_length(
+					        edge_normal,
+					        angle_normalized_v3v3(face_nors[edge_ref->f1], face_nors[edge_ref->f2]));
 #else
 					mid_v3_v3v3_angle_weighted(edge_normal, face_nors[edge_ref->f1], face_nors[edge_ref->f2]);
 #endif
@@ -272,7 +272,7 @@ static DerivedMesh *applyModifier(
 		/* calculate only face normals */
 		face_nors = MEM_mallocN(sizeof(*face_nors) * (size_t)numFaces, __func__);
 		BKE_mesh_calc_normals_poly(
-		            orig_mvert, (int)numVerts,
+		            orig_mvert, NULL, (int)numVerts,
 		            orig_mloop, orig_mpoly,
 		            (int)numLoops, (int)numFaces,
 		            face_nors, true);
@@ -455,15 +455,28 @@ static DerivedMesh *applyModifier(
 
 		mp = mpoly + numFaces;
 		for (i = 0; i < dm->numPolyData; i++, mp++) {
+			const int loop_end = mp->totloop - 1;
 			MLoop *ml2;
 			unsigned int e;
 			int j;
 
+			/* reverses the loop direction (MLoop.v as well as custom-data)
+			 * MLoop.e also needs to be corrected too, done in a separate loop below. */
 			ml2 = mloop + mp->loopstart + dm->numLoopData;
+#if 0
 			for (j = 0; j < mp->totloop; j++) {
 				CustomData_copy_data(&dm->loopData, &result->loopData, mp->loopstart + j,
-				                     mp->loopstart + (mp->totloop - j - 1) + dm->numLoopData, 1);
+				                     mp->loopstart + (loop_end - j) + dm->numLoopData, 1);
 			}
+#else
+			/* slightly more involved, keep the first vertex the same for the copy,
+			 * ensures the diagonals in the new face match the original. */
+			j = 0;
+			for (int j_prev = loop_end; j < mp->totloop; j_prev = j++) {
+				CustomData_copy_data(&dm->loopData, &result->loopData, mp->loopstart + j,
+				                     mp->loopstart + (loop_end - j_prev) + dm->numLoopData, 1);
+			}
+#endif
 
 			if (mat_ofs) {
 				mp->mat_nr += mat_ofs;
@@ -471,10 +484,10 @@ static DerivedMesh *applyModifier(
 			}
 
 			e = ml2[0].e;
-			for (j = 0; j < mp->totloop - 1; j++) {
+			for (j = 0; j < loop_end; j++) {
 				ml2[j].e = ml2[j + 1].e;
 			}
-			ml2[mp->totloop - 1].e = e;
+			ml2[loop_end].e = e;
 
 			mp->loopstart += dm->numLoopData;
 
@@ -694,9 +707,9 @@ static DerivedMesh *applyModifier(
 			INIT_VERT_ARRAY_OFFSETS(false);
 
 			for (i_orig = 0; i_orig < i_end; i_orig++, mv++) {
-				const unsigned int i = do_shell_align ? i_orig : new_vert_arr[i_orig];
-				if (vert_accum[i]) { /* zero if unselected */
-					madd_v3_v3fl(mv->co, vert_nors[i], ofs_new * (vert_angles[i] / vert_accum[i]));
+				const unsigned int i_other = do_shell_align ? i_orig : new_vert_arr[i_orig];
+				if (vert_accum[i_other]) { /* zero if unselected */
+					madd_v3_v3fl(mv->co, vert_nors[i_other], ofs_new * (vert_angles[i_other] / vert_accum[i_other]));
 				}
 			}
 		}
@@ -709,9 +722,9 @@ static DerivedMesh *applyModifier(
 			INIT_VERT_ARRAY_OFFSETS(true);
 
 			for (i_orig = 0; i_orig < i_end; i_orig++, mv++) {
-				const unsigned int i = do_shell_align ? i_orig : new_vert_arr[i_orig];
-				if (vert_accum[i]) { /* zero if unselected */
-					madd_v3_v3fl(mv->co, vert_nors[i], ofs_orig * (vert_angles[i] / vert_accum[i]));
+				const unsigned int i_other = do_shell_align ? i_orig : new_vert_arr[i_orig];
+				if (vert_accum[i_other]) { /* zero if unselected */
+					madd_v3_v3fl(mv->co, vert_nors[i_other], ofs_orig * (vert_angles[i_other] / vert_accum[i_other]));
 				}
 			}
 		}

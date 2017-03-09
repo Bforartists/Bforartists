@@ -1036,7 +1036,7 @@ def draw_sticks_normal(all_atoms,
     list_group_sub = []
     counter = 0
     for stick in all_sticks:
-		
+
         # The vectors of the two atoms
         atom1 = all_atoms[stick.atom1-1].location-center
         atom2 = all_atoms[stick.atom2-1].location-center

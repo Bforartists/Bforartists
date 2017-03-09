@@ -983,7 +983,7 @@ static PyObject *Buffer_repr(Buffer *self)
 	switch (self->type) {
 		case GL_BYTE:   typestr = "GL_BYTE"; break;
 		case GL_SHORT:  typestr = "GL_SHORT"; break;
-		case GL_INT:    typestr = "GL_BYTE"; break;
+		case GL_INT:    typestr = "GL_INT"; break;
 		case GL_FLOAT:  typestr = "GL_FLOAT"; break;
 		case GL_DOUBLE: typestr = "GL_DOUBLE"; break;
 		default:        typestr = "UNKNOWN"; break;
@@ -3681,7 +3681,7 @@ static PyObject *Method_ShaderSource(PyObject *UNUSED(self), PyObject *args)
 
 	glShaderSource(shader, 1, (const char **)&source, NULL);
 
-	return Py_INCREF(Py_None), Py_None;
+	Py_RETURN_NONE;
 }
 
 

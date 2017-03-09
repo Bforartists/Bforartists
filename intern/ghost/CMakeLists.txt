@@ -166,11 +166,6 @@ elseif(APPLE AND NOT WITH_X11)
 
 			intern/GHOST_NDOFManagerCocoa.h
 		)
-
-		list(APPEND SRC_NDOF3DCONNEXION
-			intern/GHOST_NDOFManager3Dconnexion.c
-			intern/GHOST_NDOFManager3Dconnexion.h
-		)
 	endif()
 
 	if(WITH_CODEC_QUICKTIME)
@@ -228,11 +223,15 @@ elseif(WITH_X11)
 		)
 	endif()
 
+	if(WITH_X11_ALPHA)
+		add_definitions(-DWITH_X11_ALPHA)
+	endif()
+
 	if(WITH_INPUT_NDOF)
 		list(APPEND SRC
-			intern/GHOST_NDOFManagerX11.cpp
+			intern/GHOST_NDOFManagerUnix.cpp
 
-			intern/GHOST_NDOFManagerX11.h
+			intern/GHOST_NDOFManagerUnix.h
 		)
 	endif()
 
@@ -315,8 +314,8 @@ if(APPLE)
 
 elseif(UNIX)
 	list(APPEND SRC
-		intern/GHOST_SystemPathsX11.cpp
-		intern/GHOST_SystemPathsX11.h
+		intern/GHOST_SystemPathsUnix.cpp
+		intern/GHOST_SystemPathsUnix.h
 	)
 
 	if(NOT WITH_INSTALL_PORTABLE)
@@ -338,8 +337,3 @@ endif()
 add_definitions(${GL_DEFINITIONS})
 
 blender_add_lib(bf_intern_ghost "${SRC}" "${INC}" "${INC_SYS}")
-
-# workaround for apple clang mangling extern "C" symbols
-if(WITH_INPUT_NDOF AND APPLE)
-	blender_add_lib(bf_intern_ghostndof3dconnexion "${SRC_NDOF3DCONNEXION}" "${INC}" "${INC_SYS}")
-endif()

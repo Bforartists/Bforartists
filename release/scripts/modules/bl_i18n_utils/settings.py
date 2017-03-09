@@ -89,6 +89,7 @@ LANGUAGES = (
     (39, "Uzbek Cyrillic (Ўзбек)", "uz_UZ@cyrillic"),
     (40, "Hindi (मानक हिन्दी)", "hi_IN"),
     (41, "Vietnamese (tiếng Việt)", "vi_VN"),
+    (42, "Basque (Euskara)", "eu_EU"),
 )
 
 # Default context, in py!
@@ -328,15 +329,22 @@ WARN_MSGID_NOT_CAPITALIZED_ALLOWED = {
     "available with",
     "brown fox",
     "can't save image while rendering",
+    "constructive modifier",
+    "edge data",
     "expected a timeline/animation area to be active",
     "expected a view3d region",
     "expected a view3d region & editcurve",
     "expected a view3d region & editmesh",
+    "face data",
     "image file not found",
     "image format is read-only",
     "image path can't be written to",
     "in memory to enable editing!",
     "jumps over",
+    "left",
+    "multi-res modifier",
+    "non-triangle face",
+    "right",
     "the lazy dog",
     "unable to load movie clip",
     "unable to load text",
@@ -348,6 +356,7 @@ WARN_MSGID_NOT_CAPITALIZED_ALLOWED = {
     "unsupported format",
     "unsupported image format",
     "unsupported movie clip format",
+    "vertex data",
     "verts only",
     "virtual parents",
 }

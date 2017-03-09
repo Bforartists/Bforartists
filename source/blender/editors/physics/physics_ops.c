@@ -69,6 +69,8 @@ static void operatortypes_particle(void)
 	WM_operatortype_append(PARTICLE_OT_particle_edit_toggle);
 	WM_operatortype_append(PARTICLE_OT_edited_clear);
 
+	WM_operatortype_append(PARTICLE_OT_unify_length);
+
 
 	WM_operatortype_append(OBJECT_OT_particle_system_add);
 	WM_operatortype_append(OBJECT_OT_particle_system_remove);
@@ -81,6 +83,7 @@ static void operatortypes_particle(void)
 	WM_operatortype_append(PARTICLE_OT_connect_hair);
 	WM_operatortype_append(PARTICLE_OT_disconnect_hair);
 	WM_operatortype_append(PARTICLE_OT_copy_particle_systems);
+	WM_operatortype_append(PARTICLE_OT_duplicate_particle_system);
 
 	WM_operatortype_append(PARTICLE_OT_dupliob_copy);
 	WM_operatortype_append(PARTICLE_OT_dupliob_remove);
@@ -134,8 +137,14 @@ static void keymap_particle(wmKeyConfig *keyconf)
 	kmi = WM_keymap_add_item(keymap, "PARTICLE_OT_hide", HKEY, KM_PRESS, KM_SHIFT, 0);
 	RNA_boolean_set(kmi->ptr, "unselected", true);
 
-	kmi = WM_keymap_verify_item(keymap, "VIEW3D_OT_manipulator", LEFTMOUSE, KM_PRESS, KM_ANY, 0);
+	/* Shift+LMB behavior first, so it has priority over KM_ANY item below. */
+	kmi = WM_keymap_verify_item(keymap, "VIEW3D_OT_manipulator", LEFTMOUSE, KM_PRESS, KM_SHIFT, 0);
 	RNA_boolean_set(kmi->ptr, "release_confirm", true);
+	RNA_boolean_set(kmi->ptr, "use_planar_constraint", true);
+	/* Using KM_ANY here to allow holding modifiers before starting to transform. */
+	kmi = WM_keymap_add_item(keymap, "VIEW3D_OT_manipulator", LEFTMOUSE, KM_PRESS, KM_ANY, 0);
+	RNA_boolean_set(kmi->ptr, "release_confirm", true);
+	RNA_boolean_set(kmi->ptr, "use_planar_constraint", false);
 
 	WM_keymap_add_item(keymap, "PARTICLE_OT_brush_edit", LEFTMOUSE, KM_PRESS, 0, 0);
 	WM_keymap_add_item(keymap, "PARTICLE_OT_brush_edit", LEFTMOUSE, KM_PRESS, KM_SHIFT, 0);

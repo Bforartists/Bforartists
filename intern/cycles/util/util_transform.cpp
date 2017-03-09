@@ -158,7 +158,7 @@ Transform transform_inverse(const Transform& tfm)
 
 float4 transform_to_quat(const Transform& tfm)
 {
-	double trace = tfm[0][0] + tfm[1][1] + tfm[2][2];
+	double trace = (double)(tfm[0][0] + tfm[1][1] + tfm[2][2]);
 	float4 qt;
 
 	if(trace > 0.0) {
@@ -236,7 +236,7 @@ static void transform_decompose(Transform *decomp, const Transform *tfm)
 	} while(iteration < 100 && norm > 1e-4f);
 
 	if(transform_negative_scale(R))
-		R = R * transform_scale(-1.0f, -1.0f, -1.0f); /* todo: test scale */
+		R = R * transform_scale(-1.0f, -1.0f, -1.0f);
 
 	decomp->x = transform_to_quat(R);
 

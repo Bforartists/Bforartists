@@ -313,12 +313,10 @@ CCGSubSurf *ccgSubSurf_new(CCGMeshIFC *ifc, int subdivLevels, CCGAllocatorIFC *a
 		ss->osd_vao = 0;
 		ss->skip_grids = false;
 		ss->osd_compute = 0;
-		ss->osd_uvs_invalid = true;
-		ss->osd_subsurf_uv = 0;
-		ss->osd_uv_index = -1;
 		ss->osd_next_face_ptex_index = 0;
 		ss->osd_coarse_coords = NULL;
 		ss->osd_num_coarse_coords = 0;
+		ss->osd_subdiv_uvs = false;
 #endif
 
 		return ss;
@@ -334,11 +332,10 @@ void ccgSubSurf_free(CCGSubSurf *ss)
 		openSubdiv_deleteEvaluatorDescr(ss->osd_evaluator);
 	}
 	if (ss->osd_mesh != NULL) {
-		/* TODO(sergey): Make sure free happens form the main thread! */
-		openSubdiv_deleteOsdGLMesh(ss->osd_mesh);
+		ccgSubSurf__delete_osdGLMesh(ss->osd_mesh);
 	}
 	if (ss->osd_vao != 0) {
-		glDeleteVertexArrays(1, &ss->osd_vao);
+		ccgSubSurf__delete_vertex_array(ss->osd_vao);
 	}
 	if (ss->osd_coarse_coords != NULL) {
 		MEM_freeN(ss->osd_coarse_coords);

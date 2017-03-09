@@ -72,7 +72,7 @@ public:
 
 		progressive = false;
 		experimental = false;
-		samples = USHRT_MAX;
+		samples = INT_MAX;
 		tile_size = make_int2(64, 64);
 		start_resolution = INT_MAX;
 		threads = 0;
@@ -89,8 +89,7 @@ public:
 	}
 
 	bool modified(const SessionParams& params)
-	{ return !(device.type == params.device.type
-		&& device.id == params.device.id
+	{ return !(device == params.device
 		&& background == params.background
 		&& progressive_refine == params.progressive_refine
 		&& output_path == params.output_path
@@ -129,7 +128,7 @@ public:
 	function<void(RenderTile&)> write_render_tile_cb;
 	function<void(RenderTile&)> update_render_tile_cb;
 
-	Session(const SessionParams& params);
+	explicit Session(const SessionParams& params);
 	~Session();
 
 	void start();
@@ -145,6 +144,10 @@ public:
 	void load_kernels();
 
 	void device_free();
+
+	/* Returns the rendering progress or 0 if no progress can be determined
+	 * (for example, when rendering with unlimited samples). */
+	float get_progress();
 
 protected:
 	struct DelayedReset {
@@ -174,8 +177,6 @@ protected:
 	void update_tile_sample(RenderTile& tile);
 	void release_tile(RenderTile& tile);
 
-	void update_progress_sample();
-
 	bool device_use_gl;
 
 	thread *session_thread;
@@ -195,10 +196,7 @@ protected:
 
 	bool kernels_loaded;
 
-	double start_time;
 	double reset_time;
-	double preview_time;
-	double paused_time;
 
 	/* progressive refine */
 	double last_update_time;

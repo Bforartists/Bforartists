@@ -78,25 +78,12 @@ typedef uint64_t u_int64_t;
 #endif /* ifdef platform for types */
 
 #include <stddef.h>  /* size_t define */
+#include <stdbool.h>
 
-#ifdef HAVE_STDBOOL_H
-# include <stdbool.h>
-#elif !defined(__bool_true_false_are_defined) && !defined(__BOOL_DEFINED)
-# ifndef HAVE__BOOL
-#  ifdef __cplusplus
-typedef bool _BLI_Bool;
-#  else
-/* Make sure bool is alays defined with the same size for both C and C++ */
-#   define _BLI_Bool unsigned char
-#  endif
-# else
-#  define _BLI_Bool _Bool
-# endif
-# define bool _BLI_Bool
-# define false 0
-# define true 1
-# define __bool_true_false_are_defined 1
-#endif
+typedef unsigned int uint;
+typedef unsigned short ushort;
+typedef unsigned long ulong;
+typedef unsigned char uchar;
 
 #ifdef __cplusplus 
 }

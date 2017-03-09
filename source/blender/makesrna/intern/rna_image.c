@@ -44,7 +44,7 @@
 #include "WM_types.h"
 #include "WM_api.h"
 
-EnumPropertyItem image_generated_type_items[] = {
+EnumPropertyItem rna_enum_image_generated_type_items[] = {
 	{IMA_GENTYPE_BLANK, "BLANK", 0, "Blank", "Generate a blank image"},
 	{IMA_GENTYPE_GRID, "UV_GRID", 0, "UV Grid", "Generated grid to test UV mappings"},
 	{IMA_GENTYPE_GRID_COLOR, "COLOR_GRID", 0, "Color Grid", "Generated improved UV grid to test UV mappings"},
@@ -61,6 +61,10 @@ static EnumPropertyItem image_source_items[] = {
 };
 
 #ifdef RNA_RUNTIME
+
+#include "BKE_global.h"
+
+#include "GPU_draw.h"
 
 #include "IMB_imbuf.h"
 #include "IMB_imbuf_types.h"
@@ -399,7 +403,11 @@ static void rna_Image_pixels_set(PointerRNA *ptr, const float *values)
 				((unsigned char *)ibuf->rect)[i] = FTOCHAR(values[i]);
 		}
 
-		ibuf->userflags |= IB_BITMAPDIRTY | IB_DISPLAY_BUFFER_INVALID;
+		ibuf->userflags |= IB_BITMAPDIRTY | IB_DISPLAY_BUFFER_INVALID | IB_MIPMAP_INVALID;
+		if (!G.background) {
+			GPU_free_image(ima);
+		}
+		WM_main_add_notifier(NC_IMAGE | ND_DISPLAY, &ima->id);
 	}
 
 	BKE_image_release_ibuf(ima, ibuf, lock);
@@ -496,7 +504,7 @@ static void rna_def_imageuser(BlenderRNA *brna)
 
 	srna = RNA_def_struct(brna, "ImageUser", NULL);
 	RNA_def_struct_ui_text(srna, "Image User",
-	                       "Parameters defining how an Image datablock is used by another datablock");
+	                       "Parameters defining how an Image data-block is used by another data-block");
 	RNA_def_struct_path_func(srna, "rna_ImageUser_path");
 
 	prop = RNA_def_property(srna, "use_auto_refresh", PROP_BOOLEAN, PROP_NONE);
@@ -576,9 +584,9 @@ static void rna_def_image_packed_files(BlenderRNA *brna)
 
 	prop = RNA_def_property(srna, "filepath", PROP_STRING, PROP_FILEPATH);
 	RNA_def_property_string_sdna(prop, NULL, "filepath");
-	RNA_def_property_clear_flag(prop, PROP_EDITABLE);
 	RNA_def_struct_name_property(srna, prop);
-	RNA_def_property_clear_flag(prop, PROP_EDITABLE);
+
+	RNA_api_image_packed_file(srna);
 }
 
 static void rna_def_render_slot(BlenderRNA *brna)
@@ -649,7 +657,7 @@ static void rna_def_image(BlenderRNA *brna)
 	};
 
 	srna = RNA_def_struct(brna, "Image", "ID");
-	RNA_def_struct_ui_text(srna, "Image", "Image datablock referencing an external or packed image");
+	RNA_def_struct_ui_text(srna, "Image", "Image data-block referencing an external or packed image");
 	RNA_def_struct_ui_icon(srna, ICON_IMAGE_DATA);
 
 	prop = RNA_def_property(srna, "filepath", PROP_STRING, PROP_FILEPATH);
@@ -663,7 +671,7 @@ static void rna_def_image(BlenderRNA *brna)
 	RNA_def_property_ui_text(prop, "File Name", "Image/Movie file name (without data refreshing)");
 
 	prop = RNA_def_property(srna, "file_format", PROP_ENUM, PROP_NONE);
-	RNA_def_property_enum_items(prop, image_type_items);
+	RNA_def_property_enum_items(prop, rna_enum_image_type_items);
 	RNA_def_property_enum_funcs(prop, "rna_Image_file_format_get", "rna_Image_file_format_set", NULL);
 	RNA_def_property_ui_text(prop, "File Format", "Format used for re-saving this file");
 
@@ -743,7 +751,7 @@ static void rna_def_image(BlenderRNA *brna)
 	/* generated image (image_generated_change_cb) */
 	prop = RNA_def_property(srna, "generated_type", PROP_ENUM, PROP_NONE);
 	RNA_def_property_enum_sdna(prop, NULL, "gen_type");
-	RNA_def_property_enum_items(prop, image_generated_type_items);
+	RNA_def_property_enum_items(prop, rna_enum_image_generated_type_items);
 	RNA_def_property_ui_text(prop, "Generated Type", "Generated image type");
 	RNA_def_property_update(prop, NC_IMAGE | ND_DISPLAY, "rna_Image_generated_update");
 	RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
@@ -918,7 +926,7 @@ static void rna_def_image(BlenderRNA *brna)
 	/* multiview */
 	prop = RNA_def_property(srna, "views_format", PROP_ENUM, PROP_NONE);
 	RNA_def_property_enum_sdna(prop, NULL, "views_format");
-	RNA_def_property_enum_items(prop, views_format_items);
+	RNA_def_property_enum_items(prop, rna_enum_views_format_items);
 	RNA_def_property_ui_text(prop, "Views Format", "Mode to load image views");
 	RNA_def_property_update(prop, NC_IMAGE | ND_DISPLAY, "rna_Image_views_format_update");
 

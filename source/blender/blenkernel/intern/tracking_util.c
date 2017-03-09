@@ -42,8 +42,8 @@
 #include "BLI_math.h"
 #include "BLI_listbase.h"
 #include "BLI_ghash.h"
-#include "BLI_path_util.h"
 #include "BLI_string.h"
+#include "BLI_string_utils.h"
 
 #include "BLT_translation.h"
 
@@ -482,7 +482,18 @@ MovieTrackingMarker *tracking_get_keyframed_marker(MovieTrackingTrack *track,
 			 * fallback to the first marker in current tracked segment
 			 * as a keyframe.
 			 */
-			if (next_marker && next_marker->flag & MARKER_DISABLED) {
+			if (next_marker == NULL) {
+				/* Could happen when trying to get reference marker for the fist
+				 * one on the segment which isn't surrounded by disabled markers.
+				 *
+				 * There's no really good choice here, just use the reference
+				 * marker which looks correct..
+				 */
+				if (marker_keyed_fallback == NULL) {
+					marker_keyed_fallback = cur_marker;
+				}
+			}
+			else if (next_marker->flag & MARKER_DISABLED) {
 				if (marker_keyed_fallback == NULL)
 					marker_keyed_fallback = cur_marker;
 			}
@@ -518,7 +529,7 @@ typedef struct AccessCacheKey {
 static unsigned int accesscache_hashhash(const void *key_v)
 {
 	const AccessCacheKey *key = (const AccessCacheKey *) key_v;
-	/* TODP(sergey): Need better hasing here for faster frame access. */
+	/* TODP(sergey): Need better hashing here for faster frame access. */
 	return key->clip_index << 16 | key->frame;
 }
 
@@ -614,17 +625,17 @@ static ImBuf *make_grayscale_ibuf_copy(ImBuf *ibuf)
 	 */
 	size = (size_t)grayscale->x * (size_t)grayscale->y * sizeof(float);
 	grayscale->channels = 1;
-	if ((grayscale->rect_float = MEM_mapallocN(size, "tracking grayscale image"))) {
+	if ((grayscale->rect_float = MEM_mapallocN(size, "tracking grayscale image")) != NULL) {
 		grayscale->mall |= IB_rectfloat;
 		grayscale->flags |= IB_rectfloat;
-	}
 
-	for (i = 0; i < grayscale->x * grayscale->y; ++i) {
-		const float *pixel = ibuf->rect_float + ibuf->channels * i;
+		for (i = 0; i < grayscale->x * grayscale->y; ++i) {
+			const float *pixel = ibuf->rect_float + ibuf->channels * i;
 
-		grayscale->rect_float[i] = 0.2126f * pixel[0] +
-		                           0.7152f * pixel[1] +
-		                           0.0722f * pixel[2];
+			grayscale->rect_float[i] = 0.2126f * pixel[0] +
+			                           0.7152f * pixel[1] +
+			                           0.0722f * pixel[2];
+		}
 	}
 
 	return grayscale;
@@ -642,14 +653,14 @@ static void ibuf_to_float_image(const ImBuf *ibuf, libmv_FloatImage *float_image
 static ImBuf *float_image_to_ibuf(libmv_FloatImage *float_image)
 {
 	ImBuf *ibuf = IMB_allocImBuf(float_image->width, float_image->height, 32, 0);
-	size_t size = (size_t)ibuf->x * (size_t)ibuf->y *
-	              float_image->channels * sizeof(float);
+	size_t size = (size_t)ibuf->x * (size_t)ibuf->y * float_image->channels * sizeof(float);
 	ibuf->channels = float_image->channels;
-	if ((ibuf->rect_float = MEM_mapallocN(size, "tracking grayscale image"))) {
+	if ((ibuf->rect_float = MEM_mapallocN(size, "tracking grayscale image")) != NULL) {
 		ibuf->mall |= IB_rectfloat;
 		ibuf->flags |= IB_rectfloat;
+
+		memcpy(ibuf->rect_float, float_image->buffer, size);
 	}
-	memcpy(ibuf->rect_float, float_image->buffer, size);
 	return ibuf;
 }
 
@@ -751,8 +762,8 @@ static ImBuf *accessor_get_ibuf(TrackingImageAccessor *accessor,
 			final_ibuf = IMB_dupImBuf(orig_ibuf);
 		}
 		IMB_scaleImBuf(final_ibuf,
-		               ibuf->x / (1 << downscale),
-		               ibuf->y / (1 << downscale));
+		               orig_ibuf->x / (1 << downscale),
+		               orig_ibuf->y / (1 << downscale));
 	}
 
 	if (transform != NULL) {
@@ -769,7 +780,7 @@ static ImBuf *accessor_get_ibuf(TrackingImageAccessor *accessor,
 	}
 
 	if (input_mode == LIBMV_IMAGE_MODE_RGBA) {
-		BLI_assert(ibuf->channels == 3 || ibuf->channels == 4);
+		BLI_assert(orig_ibuf->channels == 3 || orig_ibuf->channels == 4);
 		/* pass */
 	}
 	else /* if (input_mode == LIBMV_IMAGE_MODE_MONO) */ {

@@ -61,7 +61,7 @@ static EnumPropertyItem texture_filter_items[] = {
 };
 #endif
 
-EnumPropertyItem texture_type_items[] = {
+EnumPropertyItem rna_enum_texture_type_items[] = {
 	{0, "NONE", 0, "None", ""},
 	{TEX_BLEND, "BLEND", ICON_TEXTURE, "Blend", "Procedural - create a ramp texture"},
 	{TEX_CLOUDS, "CLOUDS", ICON_TEXTURE, "Clouds", "Procedural - create a cloud-like fractal noise texture"},
@@ -174,7 +174,7 @@ static void rna_Texture_update(Main *bmain, Scene *UNUSED(scene), PointerRNA *pt
 	}
 	else if (GS(id->name) == ID_NT) {
 		bNodeTree *ntree = ptr->id.data;
-		ED_node_tag_update_nodetree(bmain, ntree);
+		ED_node_tag_update_nodetree(bmain, ntree, NULL);
 	}
 }
 
@@ -225,7 +225,7 @@ static void rna_Texture_type_set(PointerRNA *ptr, int value)
 	BKE_texture_type_set(tex, value);
 }
 
-void rna_TextureSlot_update(Main *UNUSED(bmain), Scene *UNUSED(scene), PointerRNA *ptr)
+void rna_TextureSlot_update(Main *UNUSED(bmain), Scene *scene, PointerRNA *ptr)
 {
 	ID *id = ptr->id.data;
 
@@ -244,8 +244,12 @@ void rna_TextureSlot_update(Main *UNUSED(bmain), Scene *UNUSED(scene), PointerRN
 			WM_main_add_notifier(NC_LAMP | ND_LIGHTING_DRAW, id);
 			break;
 		case ID_BR:
+		{
+			MTex *mtex = ptr->data;
+			BKE_paint_invalidate_overlay_tex(scene, mtex->tex);
 			WM_main_add_notifier(NC_BRUSH, id);
 			break;
+		}
 		case ID_LS:
 			WM_main_add_notifier(NC_LINESTYLE, id);
 			break;
@@ -265,24 +269,6 @@ void rna_TextureSlot_update(Main *UNUSED(bmain), Scene *UNUSED(scene), PointerRN
 		}
 	}
 }
-
-void rna_TextureSlot_brush_update(Main *bmain, Scene *scene, PointerRNA *ptr)
-{
-	ID *id = ptr->id.data;
-
-	DAG_id_tag_update(id, 0);
-
-	switch (GS(id->name)) {
-		case ID_BR:
-		{
-			MTex *mtex = ptr->data;
-			BKE_paint_invalidate_overlay_tex(scene, mtex->tex);
-			break;
-		}
-	}
-	rna_TextureSlot_update(bmain, scene, ptr);
-}
-
 
 char *rna_TextureSlot_path(PointerRNA *ptr)
 {
@@ -660,7 +646,7 @@ static void rna_def_mtex(BlenderRNA *brna)
 	RNA_def_property_pointer_sdna(prop, NULL, "tex");
 	RNA_def_property_struct_type(prop, "Texture");
 	RNA_def_property_flag(prop, PROP_EDITABLE);
-	RNA_def_property_ui_text(prop, "Texture", "Texture datablock used by this texture slot");
+	RNA_def_property_ui_text(prop, "Texture", "Texture data-block used by this texture slot");
 	RNA_def_property_update(prop, NC_MATERIAL | ND_SHADING_LINKS, "rna_TextureSlot_update");
 
 	prop = RNA_def_property(srna, "name", PROP_STRING, PROP_NONE);
@@ -675,14 +661,14 @@ static void rna_def_mtex(BlenderRNA *brna)
 	RNA_def_property_float_sdna(prop, NULL, "ofs");
 	RNA_def_property_ui_range(prop, -10, 10, 10, RNA_TRANSLATION_PREC_DEFAULT);
 	RNA_def_property_ui_text(prop, "Offset", "Fine tune of the texture mapping X, Y and Z locations");
-	RNA_def_property_update(prop, 0, "rna_TextureSlot_brush_update");
+	RNA_def_property_update(prop, 0, "rna_TextureSlot_update");
 
 	prop = RNA_def_property(srna, "scale", PROP_FLOAT, PROP_XYZ);
 	RNA_def_property_float_sdna(prop, NULL, "size");
 	RNA_def_property_flag(prop, PROP_PROPORTIONAL);
 	RNA_def_property_ui_range(prop, -100, 100, 10, 2);
 	RNA_def_property_ui_text(prop, "Size", "Set scaling for the texture's X, Y and Z sizes");
-	RNA_def_property_update(prop, 0, "rna_TextureSlot_brush_update");
+	RNA_def_property_update(prop, 0, "rna_TextureSlot_update");
 
 	prop = RNA_def_property(srna, "color", PROP_FLOAT, PROP_COLOR);
 	RNA_def_property_float_sdna(prop, NULL, "r");
@@ -1668,12 +1654,20 @@ static void rna_def_texture_pointdensity(BlenderRNA *brna)
 		{0, NULL, 0, NULL, NULL}
 	};
 	
-	static EnumPropertyItem color_source_items[] = {
+	static EnumPropertyItem particle_color_source_items[] = {
 		{TEX_PD_COLOR_CONSTANT, "CONSTANT", 0, "Constant", ""},
 		{TEX_PD_COLOR_PARTAGE, "PARTICLE_AGE", 0, "Particle Age", "Lifetime mapped as 0.0 - 1.0 intensity"},
 		{TEX_PD_COLOR_PARTSPEED, "PARTICLE_SPEED", 0, "Particle Speed",
 		                         "Particle speed (absolute magnitude of velocity) mapped as 0.0-1.0 intensity"},
 		{TEX_PD_COLOR_PARTVEL, "PARTICLE_VELOCITY", 0, "Particle Velocity", "XYZ velocity mapped to RGB colors"},
+		{0, NULL, 0, NULL, NULL}
+	};
+	
+	static EnumPropertyItem vertex_color_source_items[] = {
+		{TEX_PD_COLOR_CONSTANT, "CONSTANT", 0, "Constant", ""},
+		{TEX_PD_COLOR_VERTCOL, "VERTEX_COLOR", 0, "Vertex Color", "Vertex color layer"},
+		{TEX_PD_COLOR_VERTWEIGHT, "VERTEX_WEIGHT", 0, "Vertex Weight", "Vertex group weight"},
+		{TEX_PD_COLOR_VERTNOR, "VERTEX_NORMAL", 0, "Vertex Normal", "XYZ normal vector mapped to RGB colors"},
 		{0, NULL, 0, NULL, NULL}
 	};
 	
@@ -1742,10 +1736,20 @@ static void rna_def_texture_pointdensity(BlenderRNA *brna)
 	RNA_def_property_ui_text(prop, "Softness", "Softness of the 'soft' falloff option");
 	RNA_def_property_update(prop, 0, "rna_Texture_update");
 	
-	prop = RNA_def_property(srna, "color_source", PROP_ENUM, PROP_NONE);
+	prop = RNA_def_property(srna, "particle_color_source", PROP_ENUM, PROP_NONE);
 	RNA_def_property_enum_sdna(prop, NULL, "color_source");
-	RNA_def_property_enum_items(prop, color_source_items);
+	RNA_def_property_enum_items(prop, particle_color_source_items);
 	RNA_def_property_ui_text(prop, "Color Source", "Data to derive color results from");
+	RNA_def_property_update(prop, 0, "rna_Texture_update");
+	
+	prop = RNA_def_property(srna, "vertex_color_source", PROP_ENUM, PROP_NONE);
+	RNA_def_property_enum_sdna(prop, NULL, "ob_color_source");
+	RNA_def_property_enum_items(prop, vertex_color_source_items);
+	RNA_def_property_ui_text(prop, "Color Source", "Data to derive color results from");
+	RNA_def_property_update(prop, 0, "rna_Texture_update");
+	
+	prop = RNA_def_property(srna, "vertex_attribute_name", PROP_STRING, PROP_NONE);
+	RNA_def_property_ui_text(prop, "Vertex Attribute Name", "Vertex attribute to use for color");
 	RNA_def_property_update(prop, 0, "rna_Texture_update");
 	
 	prop = RNA_def_property(srna, "speed_scale", PROP_FLOAT, PROP_NONE);
@@ -2021,14 +2025,14 @@ static void rna_def_texture(BlenderRNA *brna)
 
 	srna = RNA_def_struct(brna, "Texture", "ID");
 	RNA_def_struct_sdna(srna, "Tex");
-	RNA_def_struct_ui_text(srna, "Texture", "Texture datablock used by materials, lamps, worlds and brushes");
+	RNA_def_struct_ui_text(srna, "Texture", "Texture data-block used by materials, lamps, worlds and brushes");
 	RNA_def_struct_ui_icon(srna, ICON_TEXTURE_DATA);
 	RNA_def_struct_refine_func(srna, "rna_Texture_refine");
 
 	prop = RNA_def_property(srna, "type", PROP_ENUM, PROP_NONE);
 	/*RNA_def_property_clear_flag(prop, PROP_EDITABLE); */
 	RNA_def_property_enum_sdna(prop, NULL, "type");
-	RNA_def_property_enum_items(prop, texture_type_items);
+	RNA_def_property_enum_items(prop, rna_enum_texture_type_items);
 	RNA_def_property_enum_funcs(prop, NULL, "rna_Texture_type_set", NULL);
 	RNA_def_property_ui_text(prop, "Type", "");
 	RNA_def_property_update(prop, 0, "rna_Texture_update");

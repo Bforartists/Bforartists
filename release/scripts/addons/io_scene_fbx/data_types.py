@@ -36,6 +36,10 @@ FLOAT64_ARRAY = b'd'[0]
 BOOL_ARRAY = b'b'[0]
 BYTE_ARRAY = b'c'[0]
 
+# Some other misc defines
+# Known combinations so far - supposed meaning: A = animatable, A+ = animated, U = UserProp
+# VALID_NUMBER_FLAGS = {b'A', b'A+', b'AU', b'A+U'}  # Not used...
+
 # array types - actual length may vary (depending on underlying C implementation)!
 import array
 

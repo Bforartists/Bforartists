@@ -22,11 +22,12 @@ bl_info = {
     "name": "Cloud Generator",
     "author": "Nick Keeline(nrk)",
     "version": (1, 0),
-    "blender": (2, 75, 0),
-    "location": "Blender Render: Tool Shelf > Create Tab",
+    "blender": (2, 77, 0),
+    "location": "Tool Shelf > Create Tab",
     "description": "Creates Volumetric Clouds",
     "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
                 "Scripts/Object/Cloud_Gen",
+    "tracker_url" : "https://developer.blender.org/maniphest/project/3/type/Bug/",
     "category": "Object",
 }
 
@@ -34,6 +35,145 @@ import bpy
 from bpy.props import BoolProperty, EnumProperty
 from bpy.types import Operator, Panel
 
+# For Cycles Render we create node groups or if it already exists we return it.
+def CreateNodeGroup(Type):
+
+# Look for NodeTree if it already exists return it
+    
+    CreateGroup = True
+    for Group in bpy.data.node_groups:
+        if Group.name == Type:
+            CreateGroup = False
+            NodeGroup = Group
+            
+    if CreateGroup == True:
+        NodeGroup = bpy.data.node_groups.new(name=Type,type="ShaderNodeTree")
+        NodeGroup.name = Type
+        NodeGroup.bl_label = Type
+        NodeGroup.nodes.clear()
+
+# Create a bunch of nodes and group them based on input to the def
+# Function type
+        if Type == 'CloudGen_VolumeProperties':
+            AddAddAndEmission = NodeGroup.nodes.new('ShaderNodeAddShader')
+            AddAddAndEmission.location = [300,395]
+            AddAbsorptionAndScatter = NodeGroup.nodes.new('ShaderNodeAddShader')
+            AddAbsorptionAndScatter.location = [0,395]
+            VolumeAbsorption = NodeGroup.nodes.new('ShaderNodeVolumeAbsorption')
+            VolumeAbsorption.location = [-300,395]
+            VolumeScatter = NodeGroup.nodes.new('ShaderNodeVolumeScatter')
+            VolumeScatter.location = [-300,0]
+            VolumeEmission = NodeGroup.nodes.new('ShaderNodeEmission')
+            VolumeEmission.location = [-300,-300]
+            MathAbsorptionMultiply = NodeGroup.nodes.new('ShaderNodeMath')
+            MathAbsorptionMultiply.location = [-750,395]
+            MathAbsorptionMultiply.operation = 'MULTIPLY'
+            MathScatterMultiply = NodeGroup.nodes.new('ShaderNodeMath')
+            MathScatterMultiply.location = [-750,0]
+            MathScatterMultiply.operation = 'MULTIPLY'
+            MathEmissionMultiply = NodeGroup.nodes.new('ShaderNodeMath')
+            MathEmissionMultiply.location = [-750,-300]
+            MathEmissionMultiply.operation = 'MULTIPLY'
+            MathBrightnessMultiply = NodeGroup.nodes.new('ShaderNodeMath')
+            MathBrightnessMultiply.location = [-1200,0]
+            MathBrightnessMultiply.operation = 'MULTIPLY'
+            MathGreaterThan = NodeGroup.nodes.new('ShaderNodeMath')
+            MathGreaterThan.location = [-1200,600]
+            MathGreaterThan.operation = 'GREATER_THAN'
+            MathGreaterThan.inputs[1].default_value = 0
+    
+            NodeGroup.links.new(AddAddAndEmission.inputs[0],AddAbsorptionAndScatter.outputs[0])
+            NodeGroup.links.new(AddAddAndEmission.inputs[1],VolumeEmission.outputs[0])
+            NodeGroup.links.new(AddAbsorptionAndScatter.inputs[0],VolumeAbsorption.outputs[0])
+            NodeGroup.links.new(AddAbsorptionAndScatter.inputs[1],VolumeScatter.outputs[0])
+            NodeGroup.links.new(VolumeAbsorption.inputs[1],MathAbsorptionMultiply.outputs[0])
+            NodeGroup.links.new(VolumeScatter.inputs[1],MathScatterMultiply.outputs[0])
+            NodeGroup.links.new(VolumeEmission.inputs[1],MathEmissionMultiply.outputs[0])
+            NodeGroup.links.new(MathAbsorptionMultiply.inputs[0],MathGreaterThan.outputs[0])
+            NodeGroup.links.new(MathScatterMultiply.inputs[0],MathGreaterThan.outputs[0])
+            NodeGroup.links.new(MathEmissionMultiply.inputs[0],MathGreaterThan.outputs[0])
+            NodeGroup.links.new(VolumeAbsorption.inputs[0],MathBrightnessMultiply.outputs[0])
+            
+# Create and Link In/Out to Group Node
+# Outputs
+            group_outputs = NodeGroup.nodes.new('NodeGroupOutput')
+            group_outputs.location = (600,395)
+            NodeGroup.outputs.new('NodeSocketShader','shader_out')             
+            NodeGroup.links.new(AddAddAndEmission.outputs[0],group_outputs.inputs['shader_out']) 
+            
+# Inputs
+            group_inputs = NodeGroup.nodes.new('NodeGroupInput')
+            group_inputs.location = (-1500,-300)
+            NodeGroup.inputs.new('NodeSocketFloat','Density')   
+            NodeGroup.inputs.new('NodeSocketFloat','Absorption Multiply')  
+            NodeGroup.inputs.new('NodeSocketColor','Absorption Color')  
+            NodeGroup.inputs.new('NodeSocketFloat','Scatter Multiply')  
+            NodeGroup.inputs.new('NodeSocketColor','Scatter Color')  
+            NodeGroup.inputs.new('NodeSocketFloat','Emission Amount')  
+            NodeGroup.inputs.new('NodeSocketFloat','Cloud Brightness')  
+                 
+            NodeGroup.links.new(group_inputs.outputs['Density'],MathGreaterThan.inputs[0]) 
+            NodeGroup.links.new(group_inputs.outputs['Absorption Multiply'],MathAbsorptionMultiply.inputs[1]) 
+            NodeGroup.links.new(group_inputs.outputs['Absorption Color'],MathBrightnessMultiply.inputs[0]) 
+            NodeGroup.links.new(group_inputs.outputs['Scatter Multiply'],MathScatterMultiply.inputs[1]) 
+            NodeGroup.links.new(group_inputs.outputs['Scatter Color'],VolumeScatter.inputs[0]) 
+            NodeGroup.links.new(group_inputs.outputs['Emission Amount'],MathEmissionMultiply.inputs[1]) 
+            NodeGroup.links.new(group_inputs.outputs['Cloud Brightness'],MathBrightnessMultiply.inputs[1]) 
+                 
+            
+        if Type == 'CloudGen_TextureProperties':
+            MathAdd = NodeGroup.nodes.new('ShaderNodeMath')
+            MathAdd.location = [-200,0]
+            MathAdd.operation = 'ADD'
+            MathDensityMultiply = NodeGroup.nodes.new('ShaderNodeMath')
+            MathDensityMultiply.location = [-390,0]
+            MathDensityMultiply.operation = 'MULTIPLY'
+            PointDensityRamp = NodeGroup.nodes.new('ShaderNodeValToRGB')
+            PointDensityRamp.location = [-675,-250]
+            PointRamp = PointDensityRamp.color_ramp
+            PElements = PointRamp.elements
+            PElements[0].position = 0.418
+            PElements[0].color = 0, 0, 0, 1
+            PElements[1].position = 0.773
+            PElements[1].color = 1, 1, 1, 1
+            CloudRamp = NodeGroup.nodes.new('ShaderNodeValToRGB')
+            CloudRamp.location = [-675,0]
+            CRamp = CloudRamp.color_ramp
+            CElements = CRamp.elements
+            CElements[0].position = 0.527
+            CElements[0].color = 0, 0, 0, 1
+            CElements[1].position = 0.759
+            CElements[1].color = 1, 1, 1, 1
+            NoiseTex = NodeGroup.nodes.new('ShaderNodeTexNoise')
+            NoiseTex.location = [-940,0]
+            NoiseTex.inputs['Detail'].default_value = 4
+            TexCoord = NodeGroup.nodes.new('ShaderNodeTexCoord')
+            TexCoord.location = [-1250,0]
+            
+            
+            NodeGroup.links.new(MathAdd.inputs[0],MathDensityMultiply.outputs[0])
+            NodeGroup.links.new(MathAdd.inputs[1],PointDensityRamp.outputs[0])
+            NodeGroup.links.new(MathDensityMultiply.inputs[0],CloudRamp.outputs[0])
+            NodeGroup.links.new(CloudRamp.inputs[0],NoiseTex.outputs[0])
+            NodeGroup.links.new(NoiseTex.inputs[0],TexCoord.outputs[3])
+            
+# Create and Link In/Out to Group Nodes
+# Outputs
+            group_outputs = NodeGroup.nodes.new('NodeGroupOutput')
+            group_outputs.location = (0,0)
+            NodeGroup.outputs.new('NodeSocketFloat','Density W_CloudTex')             
+            NodeGroup.links.new(MathAdd.outputs[0],group_outputs.inputs['Density W_CloudTex']) 
+            
+# Inputs
+            group_inputs = NodeGroup.nodes.new('NodeGroupInput')
+            group_inputs.location = (-1250,-300)
+            NodeGroup.inputs.new('NodeSocketFloat','Scale')   
+            NodeGroup.inputs.new('NodeSocketFloat','Point Density In')  
+            NodeGroup.links.new(group_inputs.outputs['Scale'],NoiseTex.inputs['Scale']) 
+            NodeGroup.links.new(group_inputs.outputs['Point Density In'],MathDensityMultiply.inputs[1]) 
+            NodeGroup.links.new(group_inputs.outputs['Point Density In'],PointDensityRamp.inputs[0]) 
+            
+    return NodeGroup
 
 # This routine takes an object and deletes all of the geometry in it
 # and adds a bounding box to it.
@@ -306,43 +446,38 @@ class VIEW3D_PT_tools_cloud(Panel):
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
-        if context.scene.render.engine == "BLENDER_RENDER":
-            active_obj = context.active_object
-            layout = self.layout
-            col = layout.column(align=True)
+        active_obj = context.active_object
+        layout = self.layout
+        col = layout.column(align=True)
 
-            WhatToDo = getActionToDo(active_obj)
+        WhatToDo = getActionToDo(active_obj)
 
-            if WhatToDo == 'DEGENERATE':
-                col.operator("cloud.generate_cloud", text="DeGenerate")
+        if WhatToDo == 'DEGENERATE':
+            col.operator("cloud.generate_cloud", text="DeGenerate")
 
-            elif WhatToDo == 'CLOUD_CONVERT_TO_MESH':
-                col.operator("cloud.generate_cloud", text="Convert to Mesh")
+        elif WhatToDo == 'CLOUD_CONVERT_TO_MESH':
+            col.operator("cloud.generate_cloud", text="Convert to Mesh")
 
-            elif WhatToDo == 'NO_SELECTION_DO_NOTHING':
-                col.label(text="Select one or more")
-                col.label(text="objects to generate")
-                col.label(text="a cloud")
+        elif WhatToDo == 'NO_SELECTION_DO_NOTHING':
+            col.label(text="Select one or more")
+            col.label(text="objects to generate")
+            col.label(text="a cloud")
 
-            elif WhatToDo == 'CLOUD_DO_NOTHING':
-                col.label(text="Must select")
-                col.label(text="bound box")
+        elif WhatToDo == 'CLOUD_DO_NOTHING':
+            col.label(text="Must select")
+            col.label(text="bound box")
 
-            elif WhatToDo == 'GENERATE':
-                col.operator("cloud.generate_cloud", text="Generate Cloud")
+        elif WhatToDo == 'GENERATE':
+            col.operator("cloud.generate_cloud", text="Generate Cloud")
 
-                col.prop(context.scene, "cloud_type")
-                col.prop(context.scene, "cloudparticles")
-                col.prop(context.scene, "cloudsmoothing")
-            else:
-                col.label(text="Select one or more")
-                col.label(text="objects to generate")
-                col.label(text="a cloud")
+            col.prop(context.scene, "cloud_type")
+            col.prop(context.scene, "cloudsmoothing")
+        else:
+            col.label(text="Select one or more")
+            col.label(text="objects to generate")
+            col.label(text="a cloud")
 
-        if context.scene.render.engine == "CYCLES":
-            layout = self.layout
-            layout.label(text="Blender Render Only")
-            
+
 class GenerateCloud(Operator):
     """Create a Cloud,Undo Cloud, or convert to Mesh Cloud depending on selection"""
     bl_idname = "cloud.generate_cloud"
@@ -357,14 +492,15 @@ class GenerateCloud(Operator):
         else:
             return (context.active_object.type == 'MESH')
 
-
     def execute(self, context):
-        # Make variable that is the current .blend file main data blocks
+        # Prevent unsupported Execution in Local View modes
         space_data = bpy.context.space_data
 
         if True in space_data.layers_local_view:
-            self.report({'INFO'}, 'Global Perspective mode only unable to continue.')
+            self.report({'INFO'}, 'Global Perspective modes only unable to continue.')
             return {'FINISHED'}
+
+        # Make variable that is the current .blend file main data blocks
         blend_data = context.blend_data
 
         # Make variable that is the active object selected by user
@@ -376,20 +512,33 @@ class GenerateCloud(Operator):
         # Parameters the user may want to change:
         # Number of points this number is multiplied by the volume to get
         # the number of points the scripts will put in the volume.
-        numOfPoints = 1.0
-        maxNumOfPoints = 100000
-        maxPointDensityRadius = 1.5
-        scattering = 2.5
-        pointDensityRadiusFactor = 1.0
-        densityScale = 1.5
-
+        
+        if bpy.context.scene.render.engine == 'BLENDER_RENDER': 
+            numOfPoints = 1.0
+            maxNumOfPoints = 100000
+            maxPointDensityRadius = 1.5
+            scattering = 2.5
+            pointDensityRadiusFactor = 1.0
+            densityScale = 1.5
+        elif bpy.context.scene.render.engine == 'CYCLES':
+            numOfPoints = .80
+            maxNumOfPoints = 100000
+            maxPointDensityRadius = 1.0
+            scattering = 2.5
+            pointDensityRadiusFactor = .37
+            densityScale = 1.5
+            noiseScale = 1
+            
+            
         # What should we do?
         WhatToDo = getActionToDo(active_object)
 
         if WhatToDo == 'DEGENERATE':
             # Degenerate Cloud
             mainObj = active_object
-
+            
+            bpy.ops.object.hide_view_clear()
+            
             cloudMembers = active_object.children
 
             createdObjects = []
@@ -486,6 +635,7 @@ class GenerateCloud(Operator):
                 selObj.name = "DefinitioinObj"
                 selObj.draw_type = 'WIRE'
                 selObj.hide_render = True
+                selObj.hide = True
                 makeParent(bounds, selObj, scene)
 
             # Do the same to the 1. object since it is no longer in list.
@@ -562,54 +712,118 @@ class GenerateCloud(Operator):
             bpy.ops.object.material_slot_add()
             bounds.material_slots[0].material = cloudMaterial
 
-            # Set Up the Cloud Material
-            cloudMaterial.name = "CloudMaterial"
-            cloudMaterial.type = 'VOLUME'
-            mVolume = cloudMaterial.volume
-            mVolume.scattering = scattering
-            mVolume.density = 0
-            mVolume.density_scale = densityScale
-            mVolume.transmission_color = 3.0, 3.0, 3.0
-            mVolume.step_size = 0.1
-            mVolume.use_light_cache = True
-            mVolume.cache_resolution = 45
-
-            # Add a texture
-            # vMaterialTextureSlots = cloudMaterial.texture_slots  # UNUSED
-            cloudtex = blend_data.textures.new("CloudTex", type='CLOUDS')
-            cloudtex.noise_type = 'HARD_NOISE'
-            cloudtex.noise_scale = 2
-            mtex = cloudMaterial.texture_slots.add()
-            mtex.texture = cloudtex
-            mtex.texture_coords = 'ORCO'
-            mtex.use_map_color_diffuse = True
-
             # Set time
             scene.frame_current = 1
+                
+            #Set Up Material for Blender Internal
+            if bpy.context.scene.render.engine == 'BLENDER_RENDER': 
+                # Set Up the Cloud Material
+                cloudMaterial.name = "CloudMaterial"
+                cloudMaterial.type = 'VOLUME'
+                mVolume = cloudMaterial.volume
+                mVolume.scattering = scattering
+                mVolume.density = 0
+                mVolume.density_scale = densityScale
+                mVolume.transmission_color = 3.0, 3.0, 3.0
+                mVolume.step_size = 0.1
+                mVolume.use_light_cache = True
+                mVolume.cache_resolution = 45
 
-            # Add a Point Density texture
-            pDensity = blend_data.textures.new("CloudPointDensity", 'POINT_DENSITY')
+                # Add a texture
+                # vMaterialTextureSlots = cloudMaterial.texture_slots  # UNUSED
+                cloudtex = blend_data.textures.new("CloudTex", type='CLOUDS')
+                cloudtex.noise_type = 'HARD_NOISE'
+                cloudtex.noise_scale = 2
+                mtex = cloudMaterial.texture_slots.add()
+                mtex.texture = cloudtex
+                mtex.texture_coords = 'ORCO'
+                mtex.use_map_color_diffuse = True
 
-            mtex = cloudMaterial.texture_slots.add()
-            mtex.texture = pDensity
-            mtex.texture_coords = 'GLOBAL'
-            mtex.use_map_density = True
-            mtex.use_rgb_to_intensity = True
-            mtex.texture_coords = 'GLOBAL'
+                # Set time
+                scene.frame_current = 1
 
-            pDensity.point_density.vertex_cache_space = 'WORLD_SPACE'
-            pDensity.point_density.use_turbulence = True
-            pDensity.point_density.noise_basis = 'VORONOI_F2'
-            pDensity.point_density.turbulence_depth = 3
+                # Add a Point Density texture
+                pDensity = blend_data.textures.new("CloudPointDensity", 'POINT_DENSITY')
 
-            pDensity.use_color_ramp = True
-            pRamp = pDensity.color_ramp
-            #pRamp.use_interpolation = 'LINEAR'
-            pRampElements = pRamp.elements
-            #pRampElements[1].position = .9
-            #pRampElements[1].color = 0.18, 0.18, 0.18, 0.8
-            bpy.ops.texture.slot_move(type='UP')
+                mtex = cloudMaterial.texture_slots.add()
+                mtex.texture = pDensity
+                mtex.texture_coords = 'GLOBAL'
+                mtex.use_map_density = True
+                mtex.use_rgb_to_intensity = True
+                mtex.texture_coords = 'GLOBAL'
 
+                pDensity.point_density.vertex_cache_space = 'WORLD_SPACE'
+                pDensity.point_density.use_turbulence = True
+                pDensity.point_density.noise_basis = 'VORONOI_F2'
+                pDensity.point_density.turbulence_depth = 3
+
+                pDensity.use_color_ramp = True
+                pRamp = pDensity.color_ramp
+                #pRamp.use_interpolation = 'LINEAR'
+                pRampElements = pRamp.elements
+                #pRampElements[1].position = .9
+                #pRampElements[1].color = 0.18, 0.18, 0.18, 0.8
+                bpy.ops.texture.slot_move(type='UP')
+
+            #Set Up Material for Cycles Engine
+            elif bpy.context.scene.render.engine == 'CYCLES': 
+                VolumePropertiesGroup = CreateNodeGroup('CloudGen_VolumeProperties')
+                CloudTexPropertiesGroup = CreateNodeGroup('CloudGen_TextureProperties')
+  
+                cloudMaterial.name = "CloudMaterial"
+                # Add a texture
+                # vMaterialTextureSlots = cloudMaterial.texture_slots  # UNUSED
+                cloudtex = blend_data.textures.new("CloudTex", type='CLOUDS')
+                cloudtex.noise_type = 'HARD_NOISE'
+                cloudtex.noise_scale = 2     
+                
+                cloudMaterial.use_nodes = True
+                cloudTree = cloudMaterial.node_tree
+                cloudMatNodes = cloudTree.nodes
+                cloudMatNodes.clear()
+                
+                outputNode = cloudMatNodes.new('ShaderNodeOutputMaterial') 
+                outputNode.location = (200,300)
+                
+                tranparentNode = cloudMatNodes.new('ShaderNodeBsdfTransparent') 
+                tranparentNode.location = (0,300)  
+                
+                volumeGroup = cloudMatNodes.new("ShaderNodeGroup")  
+                volumeGroup.node_tree = VolumePropertiesGroup
+                volumeGroup.location = (0,150)
+                
+                cloudTexGroup = cloudMatNodes.new("ShaderNodeGroup")  
+                cloudTexGroup.node_tree = CloudTexPropertiesGroup
+                cloudTexGroup.location = (-200,150)
+                
+                PointDensityNode = cloudMatNodes.new("ShaderNodeTexPointDensity")  
+                PointDensityNode.location = (-400,150)
+                PointDensityNode.resolution = 100
+                PointDensityNode.space = 'OBJECT'
+                PointDensityNode.interpolation = 'Linear'                
+#                PointDensityNode.color_source = 'CONSTANT'
+                
+                cloudTree.links.new(outputNode.inputs[0],tranparentNode.outputs[0])
+                cloudTree.links.new(outputNode.inputs[1],volumeGroup.outputs[0])
+                cloudTree.links.new(volumeGroup.inputs[0],cloudTexGroup.outputs[0])
+                cloudTree.links.new(cloudTexGroup.inputs[1],PointDensityNode.outputs[1])
+                
+                #PointDensityNode.point_source = 'PARTICLE_SYSTEM'
+                #VolumePropsNode = cloudMatNodes.new(VolumePropertiesGroup)
+                #VolumePropsNode.location = (-200,0)
+                
+                
+                #tree = bpy.data.materials['CloudMaterial'].node_tree
+                #group = bpy.data.groups.data.node_groups['CloudGen_VolumeProperties']
+                #newgroup = tree.nodes.new("ShaderNodeGroup")
+                #newgroup.node_tree = bpy.data.node_groups['CloudGen_VolumeProperties']
+                #ramp = tree.nodes.new('ShaderNodeValToRGB') 
+                #cramp = ramp.color_ramp
+                
+                #mport bpy
+                #obj = bpy.data.objects['CloudBounds']
+                #(obj.dimensions[0] * obj.dimensions[1] * obj.dimensions[2])
+                
             # Estimate the number of particles for the size of bounds.
             volumeBoundBox = (bounds.dimensions[0] * bounds.dimensions[1] * bounds.dimensions[2])
             numParticles = int((2.4462 * volumeBoundBox + 430.4) * numOfPoints)
@@ -623,10 +837,19 @@ class GenerateCloud(Operator):
             # of bounds.
             cloudParticles.settings.count = numParticles
 
-            pDensity.point_density.radius = (.00013764 * volumeBoundBox + .3989) * pointDensityRadiusFactor
+            PDensityRadius = (.00013764 * volumeBoundBox + .3989) * pointDensityRadiusFactor
+            
+            if bpy.context.scene.render.engine == 'BLENDER_RENDER': 
+                pDensity.point_density.radius = PDensityRadius
 
-            if pDensity.point_density.radius > maxPointDensityRadius:
-                pDensity.point_density.radius = maxPointDensityRadius
+                if pDensity.point_density.radius > maxPointDensityRadius:
+                    pDensity.point_density.radius = maxPointDensityRadius
+                    
+            elif bpy.context.scene.render.engine == 'CYCLES': 
+                PointDensityNode.radius = PDensityRadius
+
+                if PDensityRadius > maxPointDensityRadius:
+                    PointDensityNode.radius = maxPointDensityRadius
 
             # Set time to 1.
             scene.frame_current = 1
@@ -656,53 +879,92 @@ class GenerateCloud(Operator):
                 # Apply modifier
                 bpy.ops.object.modifier_apply(apply_as='DATA', modifier=cldPntsModifiers[0].name)
 
-                pDensity.point_density.point_source = 'OBJECT'
-                pDensity.point_density.object = cloudPnts
+                if bpy.context.scene.render.engine == 'BLENDER_RENDER': 
+                    pDensity.point_density.point_source = 'OBJECT'
+                    pDensity.point_density.object = cloudPnts
 
+                elif bpy.context.scene.render.engine == 'CYCLES': 
+                    PointDensityNode.point_source = 'OBJECT'
+                    PointDensityNode.object = cloudPnts
+                    
                 removeParticleSystemFromObj(scene, cloud)
 
             else:
 
-                pDensity.point_density.point_source = 'PARTICLE_SYSTEM'
-                pDensity.point_density.object = cloud
-                pDensity.point_density.particle_system = cloudParticles
+                if bpy.context.scene.render.engine == 'BLENDER_RENDER': 
+                    pDensity.point_density.point_source = 'PARTICLE_SYSTEM'
+                    pDensity.point_density.object = cloud
+                    pDensity.point_density.particle_system = cloudParticles
 
-            if scene.cloud_type == '1':  # Cumulous
-                print("Cumulous")
-                mVolume.density_scale = 2.22
-                pDensity.point_density.turbulence_depth = 10
-                pDensity.point_density.turbulence_strength = 6.3
-                pDensity.point_density.turbulence_scale = 2.9
-                pRampElements[1].position = .606
-                pDensity.point_density.radius = pDensity.point_density.radius + 0.1
+                elif bpy.context.scene.render.engine == 'CYCLES': 
+                    PointDensityNode.point_source = 'PARTICLE_SYSTEM'
+                    PointDensityNode.particle_system = cloudPnts
+                    
+            if bpy.context.scene.render.engine == 'BLENDER_RENDER': 
+                if scene.cloud_type == '1':  # Cumulous
+                    print("Cumulous")
+                    mVolume.density_scale = 2.22
+                    pDensity.point_density.turbulence_depth = 10
+                    pDensity.point_density.turbulence_strength = 6.3
+                    pDensity.point_density.turbulence_scale = 2.9
+                    pRampElements[1].position = .606
+                    pDensity.point_density.radius = pDensity.point_density.radius + 0.1
 
-            elif scene.cloud_type == '2':  # Cirrus
-                print("Cirrus")
-                pDensity.point_density.turbulence_strength = 22
-                mVolume.transmission_color = 3.5, 3.5, 3.5
-                mVolume.scattering = 0.13
+                elif scene.cloud_type == '2':  # Cirrus
+                    print("Cirrus")
+                    pDensity.point_density.turbulence_strength = 22
+                    mVolume.transmission_color = 3.5, 3.5, 3.5
+                    mVolume.scattering = 0.13
 
-            elif scene.cloud_type == '3':  # Explosion
-                mVolume.emission = 1.42
-                mtex.use_rgb_to_intensity = False
-                pRampElements[0].position = 0.825
-                pRampElements[0].color = 0.119, 0.119, 0.119, 1
-                pRampElements[1].position = .049
-                pRampElements[1].color = 1.0, 1.0, 1.0, 0
-                pDensity.point_density.turbulence_strength = 1.5
-                pRampElement1 = pRampElements.new(.452)
-                pRampElement1.color = 0.814, 0.112, 0, 1
-                pRampElement2 = pRampElements.new(.234)
-                pRampElement2.color = 0.814, 0.310, 0.002, 1
-                pRampElement3 = pRampElements.new(0.669)
-                pRampElement3.color = 0.0, 0.0, 0.040, 1
+                elif scene.cloud_type == '3':  # Explosion
+                    print("Explosion")
+                    mVolume.emission = 1.42
+                    mtex.use_rgb_to_intensity = False
+                    pRampElements[0].position = 0.825
+                    pRampElements[0].color = 0.119, 0.119, 0.119, 1
+                    pRampElements[1].position = .049
+                    pRampElements[1].color = 1.0, 1.0, 1.0, 0
+                    pDensity.point_density.turbulence_strength = 1.5
+                    pRampElement1 = pRampElements.new(.452)
+                    pRampElement1.color = 0.814, 0.112, 0, 1
+                    pRampElement2 = pRampElements.new(.234)
+                    pRampElement2.color = 0.814, 0.310, 0.002, 1
+                    pRampElement3 = pRampElements.new(0.669)
+                    pRampElement3.color = 0.0, 0.0, 0.040, 1
 
+                    
+            elif bpy.context.scene.render.engine == 'CYCLES':
+                
+                volumeGroup.inputs['Absorption Multiply'].default_value = 50       
+                volumeGroup.inputs['Absorption Color'].default_value = (1.0, 1.0, 1.0, 1.0)      
+                volumeGroup.inputs['Scatter Multiply'].default_value  = 30       
+                volumeGroup.inputs['Scatter Color'].default_value = (.58, .58, .58, 1.0)            
+                volumeGroup.inputs['Emission Amount'].default_value = .1   
+                volumeGroup.inputs['Cloud Brightness'].default_value  = 1.3
+                noiseCloudScale = volumeBoundBox*(-.001973)+5.1216
+                if noiseCloudScale < .05:
+                    noiseCloudScale = .05    
+                cloudTexGroup.inputs['Scale'].default_value  = noiseCloudScale
+                   
+                if scene.cloud_type == '1':  # Cumulous
+                    print("Cumulous")
+                    
+                elif scene.cloud_type == '2':  # Cirrus
+                    print("Cirrus")
+                    
+                elif scene.cloud_type == '3':  # Explosion
+                    print("Explosion")
+                
+                #to cloud to view in cycles in render mode we need to hide geometry meshes...
+                firstObject.hide = True   
+                cloud.hide = True 
+                    
             # Select the object.
             bounds.select = True
             scene.objects.active = bounds
 
             #Let's resize the bound box to be more accurate.
-            how_much_bigger = pDensity.point_density.radius + 0.1
+            how_much_bigger = PDensityRadius + 0.1
 
             #If it's a particle cloud use cloud mesh if otherwise use point mesh
             if not scene.cloudparticles:

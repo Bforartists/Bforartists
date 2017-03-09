@@ -34,11 +34,11 @@ CCL_NAMESPACE_BEGIN
 
 /* Wireframe Node */
 
-ccl_device float wireframe(KernelGlobals *kg,
-                           ShaderData *sd,
-                           float size,
-                           int pixel_size,
-                           float3 *P)
+ccl_device_inline float wireframe(KernelGlobals *kg,
+                                  ShaderData *sd,
+                                  float size,
+                                  int pixel_size,
+                                  float3 *P)
 {
 #ifdef __HAIR__
 	if(ccl_fetch(sd, prim) != PRIM_NONE && ccl_fetch(sd, type) & PRIMITIVE_ALL_TRIANGLE)
@@ -57,7 +57,7 @@ ccl_device float wireframe(KernelGlobals *kg,
 		else
 			motion_triangle_vertices(kg, ccl_fetch(sd, object), ccl_fetch(sd, prim), ccl_fetch(sd, time), Co);
 
-		if(!(ccl_fetch(sd, flag) & SD_TRANSFORM_APPLIED)) {
+		if(!(ccl_fetch(sd, object_flag) & SD_OBJECT_TRANSFORM_APPLIED)) {
 			object_position_transform(kg, sd, &Co[0]);
 			object_position_transform(kg, sd, &Co[1]);
 			object_position_transform(kg, sd, &Co[2]);

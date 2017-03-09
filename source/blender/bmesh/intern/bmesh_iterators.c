@@ -31,6 +31,7 @@
 #include "MEM_guardedalloc.h"
 
 #include "BLI_utildefines.h"
+#include "BLI_bitmap.h"
 
 #include "bmesh.h"
 #include "intern/bmesh_private.h"
@@ -48,7 +49,6 @@ const char bm_iter_itype_htype_map[BM_ITYPE_MAX] = {
 	BM_VERT, /* BM_VERTS_OF_FACE */
 	BM_EDGE, /* BM_EDGES_OF_FACE */
 	BM_LOOP, /* BM_LOOPS_OF_FACE */
-	BM_LOOP, /* BM_ALL_LOOPS_OF_FACE */
 	BM_LOOP, /* BM_LOOPS_OF_LOOP */
 	BM_LOOP  /* BM_LOOPS_OF_EDGE */
 };
@@ -251,6 +251,64 @@ void *BMO_iter_as_arrayN(
 	}
 }
 
+int BM_iter_mesh_bitmap_from_filter(
+        const char itype, BMesh *bm,
+        BLI_bitmap *bitmap,
+        bool (*test_fn)(BMElem *, void *user_data),
+        void *user_data)
+{
+	BMIter iter;
+	BMElem *ele;
+	int i;
+	int bitmap_enabled = 0;
+
+	BM_ITER_MESH_INDEX (ele, &iter, bm, itype, i) {
+		if (test_fn(ele, user_data)) {
+			BLI_BITMAP_ENABLE(bitmap, i);
+			bitmap_enabled++;
+		}
+		else {
+			BLI_BITMAP_DISABLE(bitmap, i);
+		}
+	}
+
+	return bitmap_enabled;
+}
+
+/**
+ * Needed when we want to check faces, but return a loop aligned array.
+ */
+int BM_iter_mesh_bitmap_from_filter_tessface(
+        BMesh *bm,
+        BLI_bitmap *bitmap,
+        bool (*test_fn)(BMFace *, void *user_data),
+        void *user_data)
+{
+	BMIter iter;
+	BMFace *f;
+	int i;
+	int j = 0;
+	int bitmap_enabled = 0;
+
+	BM_ITER_MESH_INDEX (f, &iter, bm, BM_FACES_OF_MESH, i) {
+		if (test_fn(f, user_data)) {
+			for (int tri = 2; tri < f->len; tri++) {
+				BLI_BITMAP_ENABLE(bitmap, j);
+				bitmap_enabled++;
+				j++;
+			}
+		}
+		else {
+			for (int tri = 2; tri < f->len; tri++) {
+				BLI_BITMAP_DISABLE(bitmap, j);
+				j++;
+			}
+		}
+	}
+
+	return bitmap_enabled;
+}
+
 /**
  * \brief Elem Iter Flag Count
  *
@@ -281,16 +339,43 @@ int BMO_iter_elem_count_flag(
         const short oflag, const bool value)
 {
 	BMIter iter;
-	BMElemF *ele;
 	int count = 0;
 
 	/* loops have no header flags */
 	BLI_assert(bm_iter_itype_htype_map[itype] != BM_LOOP);
 
-	BM_ITER_ELEM (ele, &iter, data, itype) {
-		if (BMO_elem_flag_test_bool(bm, ele, oflag) == value) {
-			count++;
+	switch (bm_iter_itype_htype_map[itype]) {
+		case BM_VERT:
+		{
+			BMVert *ele;
+			BM_ITER_ELEM (ele, &iter, data, itype) {
+				if (BMO_vert_flag_test_bool(bm, ele, oflag) == value) {
+					count++;
+				}
+			}
+			break;
 		}
+		case BM_EDGE:
+		{
+			BMEdge *ele;
+			BM_ITER_ELEM (ele, &iter, data, itype) {
+				if (BMO_edge_flag_test_bool(bm, ele, oflag) == value) {
+					count++;
+				}
+			}
+			break;
+		}
+		case BM_FACE:
+		{
+			BMFace *ele;
+			BM_ITER_ELEM (ele, &iter, data, itype) {
+				if (BMO_face_flag_test_bool(bm, ele, oflag) == value) {
+					count++;
+				}
+			}
+			break;
+		}
+
 	}
 	return count;
 }
@@ -400,9 +485,9 @@ void  bmiter__face_of_vert_begin(struct BMIter__face_of_vert *iter)
 {
 	((BMIter *)iter)->count = bmesh_disk_facevert_count(iter->vdata);
 	if (((BMIter *)iter)->count) {
-		iter->e_first = bmesh_disk_faceedge_find_first(iter->vdata->e, iter->vdata);
+		iter->l_first = bmesh_disk_faceloop_find_first(iter->vdata->e, iter->vdata);
+		iter->e_first = iter->l_first->e;
 		iter->e_next = iter->e_first;
-		iter->l_first = bmesh_radial_faceloop_find_first(iter->e_first->l, iter->vdata);
 		iter->l_next = iter->l_first;
 	}
 	else {
@@ -441,9 +526,9 @@ void  bmiter__loop_of_vert_begin(struct BMIter__loop_of_vert *iter)
 {
 	((BMIter *)iter)->count = bmesh_disk_facevert_count(iter->vdata);
 	if (((BMIter *)iter)->count) {
-		iter->e_first = bmesh_disk_faceedge_find_first(iter->vdata->e, iter->vdata);
+		iter->l_first = bmesh_disk_faceloop_find_first(iter->vdata->e, iter->vdata);
+		iter->e_first = iter->l_first->e;
 		iter->e_next = iter->e_first;
-		iter->l_first = bmesh_radial_faceloop_find_first(iter->e_first->l, iter->vdata);
 		iter->l_next = iter->l_first;
 	}
 	else {

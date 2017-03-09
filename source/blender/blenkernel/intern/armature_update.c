@@ -224,7 +224,7 @@ static void splineik_init_tree_from_pchan(Scene *scene, Object *UNUSED(ob), bPos
 	}
 
 	/* make a new Spline-IK chain, and store it in the IK chains */
-	/* TODO: we should check if there is already an IK chain on this, since that would take presidence... */
+	/* TODO: we should check if there is already an IK chain on this, since that would take precedence... */
 	{
 		/* make new tree */
 		tSplineIK_Tree *tree = MEM_callocN(sizeof(tSplineIK_Tree), "SplineIK Tree");
@@ -617,9 +617,11 @@ void BKE_pose_eval_bone(EvaluationContext *UNUSED(eval_ctx),
 				/* pass */
 			}
 			else {
-				/* TODO(sergey): Use time source node for time. */
-				float ctime = BKE_scene_frame_get(scene); /* not accurate... */
-				BKE_pose_where_is_bone(scene, ob, pchan, ctime, 1);
+				if ((pchan->flag & POSE_DONE) == 0) {
+					/* TODO(sergey): Use time source node for time. */
+					float ctime = BKE_scene_frame_get(scene); /* not accurate... */
+					BKE_pose_where_is_bone(scene, ob, pchan, ctime, 1);
+				}
 			}
 		}
 	}
@@ -631,12 +633,18 @@ void BKE_pose_constraints_evaluate(EvaluationContext *UNUSED(eval_ctx),
 {
 	Scene *scene = G.main->scene.first;
 	DEBUG_PRINT("%s on %s pchan %s\n", __func__, ob->id.name, pchan->name);
-	if (pchan->flag & POSE_IKTREE || pchan->flag & POSE_IKSPLINE) {
+	bArmature *arm = (bArmature *)ob->data;
+	if (arm->flag & ARM_RESTPOS) {
+		return;
+	}
+	else if (pchan->flag & POSE_IKTREE || pchan->flag & POSE_IKSPLINE) {
 		/* IK are being solved separately/ */
 	}
 	else {
-		float ctime = BKE_scene_frame_get(scene); /* not accurate... */
-		BKE_pose_where_is_bone(scene, ob, pchan, ctime, 1);
+		if ((pchan->flag & POSE_DONE) == 0) {
+			float ctime = BKE_scene_frame_get(scene); /* not accurate... */
+			BKE_pose_where_is_bone(scene, ob, pchan, ctime, 1);
+		}
 	}
 }
 
@@ -688,7 +696,7 @@ void BKE_pose_eval_flush(EvaluationContext *UNUSED(eval_ctx),
 
 void BKE_pose_eval_proxy_copy(EvaluationContext *UNUSED(eval_ctx), Object *ob)
 {
-	BLI_assert(ob->id.lib != NULL && ob->proxy_from != NULL);
+	BLI_assert(ID_IS_LINKED_DATABLOCK(ob) && ob->proxy_from != NULL);
 	DEBUG_PRINT("%s on %s\n", __func__, ob->id.name);
 	if (BKE_pose_copy_result(ob->pose, ob->proxy_from->pose) == false) {
 		printf("Proxy copy error, lib Object: %s proxy Object: %s\n",

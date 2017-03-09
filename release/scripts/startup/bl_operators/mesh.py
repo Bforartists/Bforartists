@@ -148,3 +148,103 @@ class MeshMirrorUV(Operator):
                         double_warn)
 
         return {'FINISHED'}
+
+
+class MeshSelectNext(Operator):
+    """Select the next element (using selection order)"""
+    bl_idname = "mesh.select_next_item"
+    bl_label = "Select Next Element"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.mode == 'EDIT_MESH')
+
+    def execute(self, context):
+        import bmesh
+        from .bmesh import find_adjacent
+
+        obj = context.active_object
+        me = obj.data
+        bm = bmesh.from_edit_mesh(me)
+
+        if find_adjacent.select_next(bm, self.report):
+            bm.select_flush_mode()
+            bmesh.update_edit_mesh(me, False)
+
+        return {'FINISHED'}
+
+
+class MeshSelectPrev(Operator):
+    """Select the next element (using selection order)"""
+    bl_idname = "mesh.select_prev_item"
+    bl_label = "Select Previous Element"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.mode == 'EDIT_MESH')
+
+    def execute(self, context):
+        import bmesh
+        from .bmesh import find_adjacent
+
+        obj = context.active_object
+        me = obj.data
+        bm = bmesh.from_edit_mesh(me)
+
+        if find_adjacent.select_prev(bm, self.report):
+            bm.select_flush_mode()
+            bmesh.update_edit_mesh(me, False)
+
+        return {'FINISHED'}
+
+
+# XXX This is hackish (going forth and back from Object mode...), to be redone once we have proper support of
+#     custom normals in BMesh/edit mode.
+class MehsSetNormalsFromFaces(Operator):
+    """Set the custom vertex normals from the selected faces ones"""
+    bl_idname = "mesh.set_normals_from_faces"
+    bl_label = "Set Normals From Faces"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.mode == 'EDIT_MESH' and context.edit_object.data.polygons)
+
+    def execute(self, context):
+        import mathutils
+
+        bpy.ops.object.mode_set(mode='OBJECT')
+        obj = context.active_object
+        me = obj.data
+
+        v2nors = {}
+        for p in me.polygons:
+            if not p.select:
+                continue
+            for lidx, vidx in zip(p.loop_indices, p.vertices):
+                assert(me.loops[lidx].vertex_index == vidx)
+                v2nors.setdefault(vidx, []).append(p.normal)
+
+        for nors in v2nors.values():
+            nors[:] = [sum(nors, mathutils.Vector((0, 0, 0))).normalized()]
+
+        if not me.has_custom_normals:
+            me.create_normals_split()
+        me.calc_normals_split()
+
+        normals = []
+        for l in me.loops:
+            nor = v2nors.get(l.vertex_index, [None])[0]
+            if nor is None:
+                nor = l.normal
+            normals.append(nor.to_tuple())
+
+        me.normals_split_custom_set(normals)
+
+        me.free_normals_split()
+        bpy.ops.object.mode_set(mode='EDIT')
+
+        return {'FINISHED'}
+

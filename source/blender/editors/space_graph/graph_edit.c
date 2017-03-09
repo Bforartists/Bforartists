@@ -54,6 +54,7 @@
 
 #include "BLT_translation.h"
 
+#include "BKE_depsgraph.h"
 #include "BKE_fcurve.h"
 #include "BKE_global.h"
 #include "BKE_nla.h"
@@ -140,8 +141,14 @@ void get_graph_keyframe_extents(bAnimContext *ac, float *xmin, float *xmax, floa
 		
 		/* ensure that the extents are not too extreme that view implodes...*/
 		if (foundBounds) {
-			if ((xmin && xmax) && (fabsf(*xmax - *xmin) < 0.1f)) *xmax += 0.1f;
-			if ((ymin && ymax) && (fabsf(*ymax - *ymin) < 0.1f)) *ymax += 0.1f;
+			if ((xmin && xmax) && (fabsf(*xmax - *xmin) < 0.001f)) {
+				*xmin -= 0.0005f;
+				*xmax += 0.0005f;
+			}
+			if ((ymin && ymax) && (fabsf(*ymax - *ymin) < 0.001f)) {
+				*ymax -= 0.0005f;
+				*ymax += 0.0005f;
+			}
 		}
 		else {
 			if (xmin) *xmin = (float)PSFRA;
@@ -258,13 +265,7 @@ static int graphkeys_view_selected_exec(bContext *C, wmOperator *op)
 	return graphkeys_viewall(C, true, include_handles, smooth_viewtx);
 }
 
-static int graphkeys_view_frame_exec(bContext *C, wmOperator *op)
-{
-	const int smooth_viewtx = WM_operator_smooth_viewtx_get(op);
-	ANIM_center_frame(C, smooth_viewtx);
-	return OPERATOR_FINISHED;
-}
-
+/* ......... */
 
 void GRAPH_OT_view_all(wmOperatorType *ot)
 {
@@ -304,6 +305,15 @@ void GRAPH_OT_view_selected(wmOperatorType *ot)
 	                           "Include handles of keyframes when calculating extents");
 }
 
+/* ********************** View Frame Operator ****************************** */
+
+static int graphkeys_view_frame_exec(bContext *C, wmOperator *op)
+{
+	const int smooth_viewtx = WM_operator_smooth_viewtx_get(op);
+	ANIM_center_frame(C, smooth_viewtx);
+	return OPERATOR_FINISHED;
+}
+
 void GRAPH_OT_view_frame(wmOperatorType *ot)
 {
 	/* identifiers */
@@ -313,8 +323,8 @@ void GRAPH_OT_view_frame(wmOperatorType *ot)
 
 	/* api callbacks */
 	ot->exec = graphkeys_view_frame_exec;
-	ot->poll = ED_operator_graphedit_active; /* XXX: unchecked poll to get fsamples working too, but makes modifier damage trickier... */
-
+	ot->poll = ED_operator_graphedit_active;
+	
 	/* flags */
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
@@ -354,7 +364,6 @@ static void create_ghost_curves(bAnimContext *ac, int start, int end)
 		FPoint *fpt;
 		float unitFac, offset;
 		int cfra;
-		SpaceIpo *sipo = (SpaceIpo *) ac->sl;
 		short mapping_flag = ANIM_get_normalization_flags(ac);
 		
 		/* disable driver so that it don't muck up the sampling process */
@@ -484,57 +493,129 @@ void GRAPH_OT_ghost_curves_clear(wmOperatorType *ot)
 
 /* ******************** Insert Keyframes Operator ************************* */
 
-/* defines for insert keyframes tool */
+/* Mode defines for insert keyframes tool */
+typedef enum eGraphKeys_InsertKey_Types {
+	GRAPHKEYS_INSERTKEY_ALL    = (1 << 0),
+	GRAPHKEYS_INSERTKEY_SEL    = (1 << 1),
+	GRAPHKEYS_INSERTKEY_CURSOR = (1 << 2),
+	GRAPHKEYS_INSERTKEY_ACTIVE = (1 << 3),
+} eGraphKeys_InsertKey_Types;
+
+/* RNA mode types for insert keyframes tool */
 static EnumPropertyItem prop_graphkeys_insertkey_types[] = {
-	{1, "ALL", 0, "All Channels", ""},
-	{2, "SEL", 0, "Only Selected Channels", ""},
+	{GRAPHKEYS_INSERTKEY_ALL,   "ALL", 0, "All Channels",
+	 "Insert a keyframe on all visible and editable F-Curves using each curve's current value"},
+	{GRAPHKEYS_INSERTKEY_SEL,   "SEL", 0, "Only Selected Channels",
+	 "Insert a keyframe on selected F-Curves using each curve's current value"},
+	{0, "", 0, "", ""},
+	{GRAPHKEYS_INSERTKEY_ACTIVE | GRAPHKEYS_INSERTKEY_CURSOR, "CURSOR_ACTIVE", 0,
+	 "Active Channels At Cursor", "Insert a keyframe for the active F-Curve at the cursor point"},
+	{GRAPHKEYS_INSERTKEY_SEL | GRAPHKEYS_INSERTKEY_CURSOR, "CURSOR_SEL", 0,
+	 "Selected Channels At Cursor", "Insert a keyframe for selected F-Curves at the cursor point"},
 	{0, NULL, 0, NULL, NULL}
 };
 
 /* this function is responsible for snapping keyframes to frame-times */
-static void insert_graph_keys(bAnimContext *ac, short mode) 
+static void insert_graph_keys(bAnimContext *ac, eGraphKeys_InsertKey_Types mode) 
 {
 	ListBase anim_data = {NULL, NULL};
 	bAnimListElem *ale;
 	int filter;
+	size_t num_items;
 	
 	ReportList *reports = ac->reports;
+	SpaceIpo *sipo = (SpaceIpo *)ac->sl;
 	Scene *scene = ac->scene;
+	ToolSettings *ts = scene->toolsettings;
 	short flag = 0;
 	
 	/* filter data */
 	filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_CURVE_VISIBLE | ANIMFILTER_FOREDIT | ANIMFILTER_NODUPLIS);
-	if (mode == 2) filter |= ANIMFILTER_SEL;
+	if (mode & GRAPHKEYS_INSERTKEY_SEL)
+		filter |= ANIMFILTER_SEL;
+	else if (mode & GRAPHKEYS_INSERTKEY_ACTIVE)
+		filter |= ANIMFILTER_ACTIVE;
 	
-	ANIM_animdata_filter(ac, &anim_data, filter, ac->data, ac->datatype);
+	num_items = ANIM_animdata_filter(ac, &anim_data, filter, ac->data, ac->datatype);
+	if (num_items == 0) {
+		if (mode & GRAPHKEYS_INSERTKEY_ACTIVE)
+			BKE_report(reports, RPT_ERROR, "No active F-Curve to add a keyframe to. Select an editable F-Curve first");
+		else if (mode & GRAPHKEYS_INSERTKEY_SEL)
+			BKE_report(reports, RPT_ERROR, "No selected F-Curves to add keyframes to");
+		else
+			BKE_report(reports, RPT_ERROR, "No channels to add keyframes to");
+		
+		return;
+	}
 	
 	/* init keyframing flag */
 	flag = ANIM_get_keyframing_flags(scene, 1);
 	
 	/* insert keyframes */
-	for (ale = anim_data.first; ale; ale = ale->next) {
-		AnimData *adt = ANIM_nla_mapping_get(ac, ale);
-		FCurve *fcu = (FCurve *)ale->key_data;
-		float cfra;
-		
-		/* adjust current frame for NLA-mapping */
-		if (adt)
-			cfra = BKE_nla_tweakedit_remap(adt, (float)CFRA, NLATIME_CONVERT_UNMAP);
-		else 
-			cfra = (float)CFRA;
+	if (mode & GRAPHKEYS_INSERTKEY_CURSOR) {
+		for (ale = anim_data.first; ale; ale = ale->next) {
+			AnimData *adt = ANIM_nla_mapping_get(ac, ale);
+			FCurve *fcu = (FCurve *)ale->key_data;
 			
-		/* read value from property the F-Curve represents, or from the curve only?
-		 * - ale->id != NULL:    Typically, this means that we have enough info to try resolving the path
-		 * - ale->owner != NULL: If this is set, then the path may not be resolvable from the ID alone,
-		 *                       so it's easier for now to just read the F-Curve directly.
-		 *                       (TODO: add the full-blown PointerRNA relative parsing case here...)
-		 */
-		if (ale->id && !ale->owner)
-			insert_keyframe(reports, ale->id, NULL, ((fcu->grp) ? (fcu->grp->name) : (NULL)), fcu->rna_path, fcu->array_index, cfra, flag);
-		else
-			insert_vert_fcurve(fcu, cfra, fcu->curval, 0);
-		
-		ale->update |= ANIM_UPDATE_DEFAULT;
+			short mapping_flag = ANIM_get_normalization_flags(ac);
+			float offset;
+			float unit_scale = ANIM_unit_mapping_get_factor(ac->scene, ale->id, ale->key_data, mapping_flag, &offset);
+			
+			float x, y;
+			
+			
+			/* perform time remapping for x-coordinate (if necessary) */
+			if ((sipo) && (sipo->mode == SIPO_MODE_DRIVERS))
+				x = sipo->cursorTime;
+			else if (adt)
+				x = BKE_nla_tweakedit_remap(adt, (float)CFRA, NLATIME_CONVERT_UNMAP);
+			else
+				x = (float)CFRA;
+			
+			/* normalise units of cursor's value */
+			if (sipo)
+				y = (sipo->cursorVal / unit_scale) - offset;
+			else
+				y = 0.0f;
+				
+			/* insert keyframe directly into the F-Curve */
+			insert_vert_fcurve(fcu, x, y, ts->keyframe_type, 0);
+			
+			ale->update |= ANIM_UPDATE_DEFAULT;
+		}
+	}
+	else {
+		for (ale = anim_data.first; ale; ale = ale->next) {
+			AnimData *adt = ANIM_nla_mapping_get(ac, ale);
+			FCurve *fcu = (FCurve *)ale->key_data;
+			float cfra;
+			
+			/* adjust current frame for NLA-mapping */
+			if ((sipo) && (sipo->mode == SIPO_MODE_DRIVERS))
+				cfra = sipo->cursorTime;
+			else if (adt)
+				cfra = BKE_nla_tweakedit_remap(adt, (float)CFRA, NLATIME_CONVERT_UNMAP);
+			else 
+				cfra = (float)CFRA;
+				
+			/* read value from property the F-Curve represents, or from the curve only?
+			 * - ale->id != NULL:    Typically, this means that we have enough info to try resolving the path
+			 * - ale->owner != NULL: If this is set, then the path may not be resolvable from the ID alone,
+			 *                       so it's easier for now to just read the F-Curve directly.
+			 *                       (TODO: add the full-blown PointerRNA relative parsing case here...)
+			 * - fcu->driver != NULL: If this is set, then it's a driver. If we don't check for this, we'd end
+			 *                        up adding the keyframes on a new F-Curve in the action data instead.
+			 */
+			if (ale->id && !ale->owner && !fcu->driver) {
+				insert_keyframe(reports, ale->id, NULL, ((fcu->grp) ? (fcu->grp->name) : (NULL)), fcu->rna_path, fcu->array_index, cfra, ts->keyframe_type, flag);
+			}
+			else {
+				const float curval = evaluate_fcurve(fcu, cfra);
+				insert_vert_fcurve(fcu, cfra, curval, ts->keyframe_type, 0);
+			}
+			
+			ale->update |= ANIM_UPDATE_DEFAULT;
+		}
 	}
 	
 	ANIM_animdata_update(ac, &anim_data);
@@ -546,7 +627,7 @@ static void insert_graph_keys(bAnimContext *ac, short mode)
 static int graphkeys_insertkey_exec(bContext *C, wmOperator *op)
 {
 	bAnimContext ac;
-	short mode;
+	eGraphKeys_InsertKey_Types mode;
 	
 	/* get editor data */
 	if (ANIM_animdata_get_context(C, &ac) == 0)
@@ -610,9 +691,19 @@ static int graphkeys_click_insert_exec(bContext *C, wmOperator *op)
 	 */
 	if (fcurve_is_keyframable(fcu)) {
 		ListBase anim_data;
-
+		ToolSettings *ts = ac.scene->toolsettings;
+		
 		short mapping_flag = ANIM_get_normalization_flags(&ac);
 		float scale, offset;
+		
+		/* preserve selection? */
+		if (RNA_boolean_get(op->ptr, "extend") == false) {
+			/* deselect all keyframes first, so that we can immediately start manipulating the newly added one(s)
+			 * - only affect the keyframes themselves, as we don't want channels popping in and out...
+			 */
+			deselect_graph_keys(&ac, false, SELECT_SUBTRACT, false);
+		}
+		
 		/* get frame and value from props */
 		frame = RNA_float_get(op->ptr, "frame");
 		val = RNA_float_get(op->ptr, "value");
@@ -623,11 +714,11 @@ static int graphkeys_click_insert_exec(bContext *C, wmOperator *op)
 		
 		/* apply inverse unit-mapping to value to get correct value for F-Curves */
 		scale = ANIM_unit_mapping_get_factor(ac.scene, ale->id, fcu, mapping_flag | ANIM_UNITCONV_RESTORE, &offset);
-
+		
 		val = val * scale - offset;
-
+		
 		/* insert keyframe on the specified frame + value */
-		insert_vert_fcurve(fcu, frame, val, 0);
+		insert_vert_fcurve(fcu, frame, val, ts->keyframe_type, 0);
 		
 		ale->update |= ANIM_UPDATE_DEPS;
 		
@@ -702,6 +793,8 @@ void GRAPH_OT_click_insert(wmOperatorType *ot)
 	/* properties */
 	RNA_def_float(ot->srna, "frame", 1.0f, -FLT_MAX, FLT_MAX, "Frame Number", "Frame to insert keyframe on", 0, 100);
 	RNA_def_float(ot->srna, "value", 1.0f, -FLT_MAX, FLT_MAX, "Value", "Value for keyframe on", 0, 100);
+	
+	RNA_def_boolean(ot->srna, "extend", false, "Extend", "Extend selection instead of deselecting everything first");
 }
 
 /* ******************** Copy/Paste Keyframes Operator ************************* */
@@ -713,7 +806,7 @@ static short copy_graph_keys(bAnimContext *ac)
 	int filter, ok = 0;
 	
 	/* clear buffer first */
-	free_anim_copybuf();
+	ANIM_fcurves_copybuf_free();
 	
 	/* filter data */
 	filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_CURVE_VISIBLE | ANIMFILTER_NODUPLIS);
@@ -835,8 +928,8 @@ void GRAPH_OT_paste(wmOperatorType *ot)
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 	
 	/* props */
-	RNA_def_enum(ot->srna, "offset", keyframe_paste_offset_items, KEYFRAME_PASTE_OFFSET_CFRA_START, "Offset", "Paste time offset of keys");
-	RNA_def_enum(ot->srna, "merge", keyframe_paste_merge_items, KEYFRAME_PASTE_MERGE_MIX, "Type", "Method of merging pasted keys and existing");
+	RNA_def_enum(ot->srna, "offset", rna_enum_keyframe_paste_offset_items, KEYFRAME_PASTE_OFFSET_CFRA_START, "Offset", "Paste time offset of keys");
+	RNA_def_enum(ot->srna, "merge", rna_enum_keyframe_paste_merge_items, KEYFRAME_PASTE_MERGE_MIX, "Type", "Method of merging pasted keys and existing");
 	prop = RNA_def_boolean(ot->srna, "flipped", false, "Flipped", "Paste keyframes from mirrored bones if they exist");
 	RNA_def_property_flag(prop, PROP_SKIP_SAVE);
 }
@@ -898,7 +991,7 @@ void GRAPH_OT_duplicate(wmOperatorType *ot)
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 	
 	/* to give to transform */
-	RNA_def_enum(ot->srna, "mode", transform_mode_types, TFM_TRANSLATION, "Mode", "");
+	RNA_def_enum(ot->srna, "mode", rna_enum_transform_mode_types, TFM_TRANSLATION, "Mode", "");
 }
 
 /* ******************** Delete Keyframes Operator ************************* */
@@ -1275,8 +1368,9 @@ void GRAPH_OT_sound_bake(wmOperatorType *ot)
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
 	/* properties */
-	WM_operator_properties_filesel(ot, FILE_TYPE_FOLDER | FILE_TYPE_SOUND | FILE_TYPE_MOVIE, FILE_SPECIAL, FILE_OPENFILE,
-	                               WM_FILESEL_FILEPATH, FILE_DEFAULTDISPLAY, FILE_SORT_ALPHA);
+	WM_operator_properties_filesel(
+	        ot, FILE_TYPE_FOLDER | FILE_TYPE_SOUND | FILE_TYPE_MOVIE, FILE_SPECIAL, FILE_OPENFILE,
+	        WM_FILESEL_FILEPATH, FILE_DEFAULTDISPLAY, FILE_SORT_ALPHA);
 	RNA_def_float(ot->srna, "low", 0.0f, 0.0, 100000.0, "Lowest frequency",
 	              "Cutoff frequency of a high-pass filter that is applied to the audio data", 0.1, 1000.00);
 	RNA_def_float(ot->srna, "high", 100000.0, 0.0, 100000.0, "Highest frequency",
@@ -1541,7 +1635,7 @@ void GRAPH_OT_interpolation_type(wmOperatorType *ot)
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 	
 	/* id-props */
-	ot->prop = RNA_def_enum(ot->srna, "type", beztriple_interpolation_mode_items, 0, "Type", "");
+	ot->prop = RNA_def_enum(ot->srna, "type", rna_enum_beztriple_interpolation_mode_items, 0, "Type", "");
 }
 
 /* ******************** Set Easing Operator *********************** */
@@ -1607,7 +1701,7 @@ void GRAPH_OT_easing_type(wmOperatorType *ot)
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 	
 	/* id-props */
-	ot->prop = RNA_def_enum(ot->srna, "type", beztriple_interpolation_easing_items, 0, "Type", "");
+	ot->prop = RNA_def_enum(ot->srna, "type", rna_enum_beztriple_interpolation_easing_items, 0, "Type", "");
 }
 
 /* ******************** Set Handle-Type Operator *********************** */
@@ -1683,7 +1777,7 @@ void GRAPH_OT_handle_type(wmOperatorType *ot)
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 	
 	/* id-props */
-	ot->prop = RNA_def_enum(ot->srna, "type", keyframe_handle_type_items, 0, "Type", "");
+	ot->prop = RNA_def_enum(ot->srna, "type", rna_enum_keyframe_handle_type_items, 0, "Type", "");
 }
 
 /* ************************************************************************** */
@@ -1934,10 +2028,18 @@ static int graphkeys_framejump_exec(bContext *C, wmOperator *UNUSED(op))
 		SpaceIpo *sipo = (SpaceIpo *)ac.sl;
 		Scene *scene = ac.scene;
 		
-		/* take the average values, rounding to the nearest int for the current frame */
-		CFRA = iroundf(ked.f1 / ked.i1);
-		SUBFRA = 0.f;
-		sipo->cursorVal = ked.f2 / (float)ked.i1;
+		/* take the average values, rounding to the nearest int as necessary for int results */
+		if (sipo->mode == SIPO_MODE_DRIVERS) {
+			/* Drivers Mode - Affects cursor (float) */
+			sipo->cursorTime = ked.f1 / (float)ked.i1;
+			sipo->cursorVal  = ked.f2 / (float)ked.i1;
+		}
+		else {
+			/* Animation Mode - Affects current frame (int) */
+			CFRA = iroundf(ked.f1 / ked.i1);
+			SUBFRA = 0.f;
+			sipo->cursorVal = ked.f2 / (float)ked.i1;
+		}
 	}
 	
 	/* set notifier that things have changed */
@@ -1987,6 +2089,7 @@ static void snap_graph_keys(bAnimContext *ac, short mode)
 	bAnimListElem *ale;
 	int filter;
 	
+	SpaceIpo *sipo = (SpaceIpo *)ac->sl;
 	KeyframeEditData ked;
 	KeyframeEditFunc edit_cb;
 	float cursor_value = 0.0f;
@@ -1995,9 +2098,7 @@ static void snap_graph_keys(bAnimContext *ac, short mode)
 	filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_CURVE_VISIBLE | ANIMFILTER_FOREDIT | ANIMFILTER_NODUPLIS);
 	ANIM_animdata_filter(ac, &anim_data, filter, ac->data, ac->datatype);
 	
-	/* get beztriple editing callbacks */
-	edit_cb = ANIM_editkeyframes_snap(mode);
-	
+	/* init custom data for iterating over keyframes */
 	memset(&ked, 0, sizeof(KeyframeEditData)); 
 	ked.scene = ac->scene;
 	if (mode == GRAPHKEYS_SNAP_NEAREST_MARKER) {
@@ -2005,9 +2106,20 @@ static void snap_graph_keys(bAnimContext *ac, short mode)
 		ked.list.last = (ac->markers) ? ac->markers->last : NULL;
 	}
 	else if (mode == GRAPHKEYS_SNAP_VALUE) {
-		SpaceIpo *sipo = (SpaceIpo *)ac->sl;
 		cursor_value = (sipo) ? sipo->cursorVal : 0.0f;
 	}
+	else if (mode == GRAPHKEYS_SNAP_CFRA) {
+		/* In drivers mode, use the cursor value instead
+		 * (We need to use a different callback for that though)
+		 */
+		if (sipo->mode == SIPO_MODE_DRIVERS) {
+			ked.f1 = sipo->cursorTime;
+			mode = SNAP_KEYS_TIME;
+		}
+	}
+	
+	/* get beztriple editing callbacks */
+	edit_cb = ANIM_editkeyframes_snap(mode);
 	
 	/* snap keyframes */
 	for (ale = anim_data.first; ale; ale = ale->next) {
@@ -2024,13 +2136,13 @@ static void snap_graph_keys(bAnimContext *ac, short mode)
 		
 		/* perform snapping */
 		if (adt) {
-			ANIM_nla_mapping_apply_fcurve(adt, ale->key_data, 0, 1); 
+			ANIM_nla_mapping_apply_fcurve(adt, ale->key_data, 0, 0); 
 			ANIM_fcurve_keyframes_loop(&ked, ale->key_data, NULL, edit_cb, calchandles_fcurve);
-			ANIM_nla_mapping_apply_fcurve(adt, ale->key_data, 1, 1);
+			ANIM_nla_mapping_apply_fcurve(adt, ale->key_data, 1, 0);
 		}
 		else 
 			ANIM_fcurve_keyframes_loop(&ked, ale->key_data, NULL, edit_cb, calchandles_fcurve);
-
+		
 		ale->update |= ANIM_UPDATE_DEFAULT;
 	}
 
@@ -2104,18 +2216,16 @@ static void mirror_graph_keys(bAnimContext *ac, short mode)
 	bAnimListElem *ale;
 	int filter;
 	
+	SpaceIpo *sipo = (SpaceIpo *)ac->sl;
 	KeyframeEditData ked;
 	KeyframeEditFunc edit_cb;
 	float cursor_value = 0.0f;
 
-	/* get beztriple editing callbacks */
-	edit_cb = ANIM_editkeyframes_mirror(mode);
-	
+	/* init custom data for looping over keyframes */
 	memset(&ked, 0, sizeof(KeyframeEditData)); 
 	ked.scene = ac->scene;
 	
-	/* for 'first selected marker' mode, need to find first selected marker first! */
-	// XXX should this be made into a helper func in the API?
+	/* store mode-specific custom data... */
 	if (mode == GRAPHKEYS_MIRROR_MARKER) {
 		TimeMarker *marker = NULL;
 		
@@ -2129,9 +2239,20 @@ static void mirror_graph_keys(bAnimContext *ac, short mode)
 			return;
 	}
 	else if (mode == GRAPHKEYS_MIRROR_VALUE) {
-		SpaceIpo *sipo = (SpaceIpo *)ac->sl;
 		cursor_value = (sipo) ? sipo->cursorVal : 0.0f;
 	}
+	else if (mode == GRAPHKEYS_MIRROR_CFRA) {
+		/* In drivers mode, use the cursor value instead
+		 * (We need to use a different callback for that though)
+		 */
+		if (sipo->mode == SIPO_MODE_DRIVERS) {
+			ked.f1 = sipo->cursorTime;
+			mode = MIRROR_KEYS_TIME;
+		}
+	}
+	
+	/* get beztriple editing callbacks */
+	edit_cb = ANIM_editkeyframes_mirror(mode);
 	
 	/* filter data */
 	filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_CURVE_VISIBLE | ANIMFILTER_FOREDIT | ANIMFILTER_NODUPLIS);
@@ -2152,13 +2273,13 @@ static void mirror_graph_keys(bAnimContext *ac, short mode)
 		
 		/* perform actual mirroring */
 		if (adt) {
-			ANIM_nla_mapping_apply_fcurve(adt, ale->key_data, 0, 1); 
+			ANIM_nla_mapping_apply_fcurve(adt, ale->key_data, 0, 0); 
 			ANIM_fcurve_keyframes_loop(&ked, ale->key_data, NULL, edit_cb, calchandles_fcurve);
-			ANIM_nla_mapping_apply_fcurve(adt, ale->key_data, 1, 1);
+			ANIM_nla_mapping_apply_fcurve(adt, ale->key_data, 1, 0);
 		}
 		else 
 			ANIM_fcurve_keyframes_loop(&ked, ale->key_data, NULL, edit_cb, calchandles_fcurve);
-
+		
 		ale->update |= ANIM_UPDATE_DEFAULT;
 	}
 
@@ -2270,27 +2391,29 @@ static EnumPropertyItem *graph_fmodifier_itemf(bContext *C, PointerRNA *UNUSED(p
 	EnumPropertyItem *item = NULL;
 	int totitem = 0;
 	int i = 0;
-
+	
 	if (C == NULL) {
-		return fmodifier_type_items;
+		return rna_enum_fmodifier_type_items;
 	}
-
+	
 	/* start from 1 to skip the 'Invalid' modifier type */
 	for (i = 1; i < FMODIFIER_NUM_TYPES; i++) {
 		const FModifierTypeInfo *fmi = get_fmodifier_typeinfo(i);
 		int index;
-
+		
 		/* check if modifier is valid for this context */
 		if (fmi == NULL)
 			continue;
-
-		index = RNA_enum_from_value(fmodifier_type_items, fmi->type);
-		RNA_enum_item_add(&item, &totitem, &fmodifier_type_items[index]);
+		
+		index = RNA_enum_from_value(rna_enum_fmodifier_type_items, fmi->type);
+		if (index != -1) {  /* Not all types are implemented yet... */
+			RNA_enum_item_add(&item, &totitem, &rna_enum_fmodifier_type_items[index]);
+		}
 	}
-
+	
 	RNA_enum_item_end(&item, &totitem);
 	*r_free = true;
-
+	
 	return item;
 }
 
@@ -2331,16 +2454,15 @@ static int graph_fmodifier_add_exec(bContext *C, wmOperator *op)
 			BKE_report(op->reports, RPT_ERROR, "Modifier could not be added (see console for details)");
 			break;
 		}
-
+		
 		ale->update |= ANIM_UPDATE_DEPS;
 	}
-
+	
 	ANIM_animdata_update(&ac, &anim_data);
 	ANIM_animdata_freelist(&anim_data);
 	
 	/* set notifier that things have changed */
-	// FIXME: this really isn't the best description for it...
-	WM_event_add_notifier(C, NC_ANIMATION, NULL);
+	WM_event_add_notifier(C, NC_ANIMATION | ND_KEYFRAME | NA_EDITED, NULL);
 	
 	return OPERATOR_FINISHED;
 }
@@ -2348,7 +2470,7 @@ static int graph_fmodifier_add_exec(bContext *C, wmOperator *op)
 void GRAPH_OT_fmodifier_add(wmOperatorType *ot)
 {
 	PropertyRNA *prop;
-
+	
 	/* identifiers */
 	ot->name = "Add F-Curve Modifier";
 	ot->idname = "GRAPH_OT_fmodifier_add";
@@ -2363,10 +2485,10 @@ void GRAPH_OT_fmodifier_add(wmOperatorType *ot)
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 	
 	/* id-props */
-	prop = RNA_def_enum(ot->srna, "type", fmodifier_type_items, 0, "Type", "");
+	prop = RNA_def_enum(ot->srna, "type", rna_enum_fmodifier_type_items, 0, "Type", "");
 	RNA_def_enum_funcs(prop, graph_fmodifier_itemf);
 	ot->prop = prop;
-
+	
 	RNA_def_boolean(ot->srna, "only_active", 1, "Only Active", "Only add F-Modifier to active F-Curve");
 }
 
@@ -2383,7 +2505,7 @@ static int graph_fmodifier_copy_exec(bContext *C, wmOperator *op)
 		return OPERATOR_CANCELLED;
 	
 	/* clear buffer first */
-	free_fmodifiers_copybuf();
+	ANIM_fmodifiers_copybuf_free();
 	
 	/* get the active F-Curve */
 	ale = get_active_fcurve_channel(&ac);
@@ -2391,10 +2513,10 @@ static int graph_fmodifier_copy_exec(bContext *C, wmOperator *op)
 	/* if this exists, call the copy F-Modifiers API function */
 	if (ale && ale->data) {
 		FCurve *fcu = (FCurve *)ale->data;
-
+		
 		/* TODO: when 'active' vs 'all' boolean is added, change last param! */
 		ok = ANIM_fmodifiers_copy_to_buf(&fcu->modifiers, 0);
-
+		
 		/* free temp data now */
 		MEM_freeN(ale);
 	}
@@ -2431,33 +2553,43 @@ void GRAPH_OT_fmodifier_copy(wmOperatorType *ot)
 static int graph_fmodifier_paste_exec(bContext *C, wmOperator *op)
 {
 	bAnimContext ac;
+	
 	ListBase anim_data = {NULL, NULL};
 	bAnimListElem *ale;
-	int filter, ok = 0;
+	int filter;
+	
+	const bool replace = RNA_boolean_get(op->ptr, "replace");
+	bool ok = false;
 	
 	/* get editor data */
 	if (ANIM_animdata_get_context(C, &ac) == 0)
 		return OPERATOR_CANCELLED;
 	
 	/* filter data */
-	filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_CURVE_VISIBLE | ANIMFILTER_SEL | ANIMFILTER_FOREDIT);
+	if (RNA_boolean_get(op->ptr, "only_active")) {
+		/* This should be the default (for buttons) - Just paste to the active FCurve */
+		filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_ACTIVE | ANIMFILTER_FOREDIT | ANIMFILTER_NODUPLIS);
+	}
+	else {
+		/* This is only if the operator gets called from a hotkey or search - Paste to all visible curves */
+		filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_CURVE_VISIBLE | ANIMFILTER_SEL | ANIMFILTER_FOREDIT | ANIMFILTER_NODUPLIS);
+	}
+	
 	ANIM_animdata_filter(&ac, &anim_data, filter, ac.data, ac.datatype);
 	
 	/* paste modifiers */
 	for (ale = anim_data.first; ale; ale = ale->next) {
 		FCurve *fcu = (FCurve *)ale->data;
 		int tot;
-
-		/* TODO: do we want to replace existing modifiers? add user pref for that! */
-		tot = ANIM_fmodifiers_paste_from_buf(&fcu->modifiers, 0);
-
+		
+		tot = ANIM_fmodifiers_paste_from_buf(&fcu->modifiers, replace);
+		
 		if (tot) {
 			ale->update |= ANIM_UPDATE_DEPS;
+			ok = true;
 		}
-
-		ok += tot;
 	}
-
+	
 	if (ok) {
 		ANIM_animdata_update(&ac, &anim_data);
 	}
@@ -2465,7 +2597,6 @@ static int graph_fmodifier_paste_exec(bContext *C, wmOperator *op)
 	
 	/* successful or not? */
 	if (ok) {
-
 		/* set notifier that keyframes have changed */
 		WM_event_add_notifier(C, NC_ANIMATION | ND_KEYFRAME | NA_EDITED, NULL);
 		
@@ -2490,6 +2621,128 @@ void GRAPH_OT_fmodifier_paste(wmOperatorType *ot)
 	
 	/* flags */
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+	
+	/* properties */
+	RNA_def_boolean(ot->srna, "only_active", true, "Only Active", "Only paste F-Modifiers on active F-Curve");
+	RNA_def_boolean(ot->srna, "replace", false, "Replace Existing", 
+	                "Replace existing F-Modifiers, instead of just appending to the end of the existing list");
+}
+
+/* ************************************************************************** */
+/* Drivers */
+
+/* ******************** Copy Driver Vars Operator *********************** */
+
+static int graph_driver_vars_copy_exec(bContext *C, wmOperator *op)
+{
+	bAnimContext ac;
+	bAnimListElem *ale;
+	bool ok = false;
+	
+	/* get editor data */
+	if (ANIM_animdata_get_context(C, &ac) == 0)
+		return OPERATOR_CANCELLED;
+	
+	/* clear buffer first */
+	ANIM_driver_vars_copybuf_free();
+	
+	/* get the active F-Curve */
+	ale = get_active_fcurve_channel(&ac);
+	
+	/* if this exists, call the copy driver vars API function */
+	if (ale && ale->data) {
+		FCurve *fcu = (FCurve *)ale->data;
+		
+		ok = ANIM_driver_vars_copy(op->reports, fcu);
+		
+		/* free temp data now */
+		MEM_freeN(ale);
+	}
+	
+	/* successful or not? */
+	if (ok)
+		return OPERATOR_FINISHED;
+	else
+		return OPERATOR_CANCELLED;
+}
+ 
+void GRAPH_OT_driver_variables_copy(wmOperatorType *ot)
+{
+	/* identifiers */
+	ot->name = "Copy Driver Variables";
+	ot->idname = "GRAPH_OT_driver_variables_copy";
+	ot->description = "Copy the driver variables of the active F-Curve";
+	
+	/* api callbacks */
+	ot->exec = graph_driver_vars_copy_exec;
+	ot->poll = graphop_active_fcurve_poll; 
+	
+	/* flags */
+	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+}
+
+/* ******************** Paste Driver Vars Operator *********************** */
+
+static int graph_driver_vars_paste_exec(bContext *C, wmOperator *op)
+{
+	bAnimContext ac;
+	
+	ListBase anim_data = {NULL, NULL};
+	bAnimListElem *ale;
+	int filter;
+	
+	const bool replace = RNA_boolean_get(op->ptr, "replace");
+	bool ok = false;
+	
+	/* get editor data */
+	if (ANIM_animdata_get_context(C, &ac) == 0)
+		return OPERATOR_CANCELLED;
+	
+	/* filter data */
+	filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_ACTIVE | ANIMFILTER_FOREDIT | ANIMFILTER_NODUPLIS);
+	ANIM_animdata_filter(&ac, &anim_data, filter, ac.data, ac.datatype);
+	
+	/* paste variables */
+	for (ale = anim_data.first; ale; ale = ale->next) {
+		FCurve *fcu = (FCurve *)ale->data;
+		ok |= ANIM_driver_vars_paste(op->reports, fcu, replace);
+	}
+	
+	/* cleanup */
+	ANIM_animdata_freelist(&anim_data);
+	
+	/* successful or not? */
+	if (ok) {
+		/* rebuild depsgraph, now that there are extra deps here */
+		DAG_relations_tag_update(CTX_data_main(C));
+		
+		/* set notifier that keyframes have changed */
+		WM_event_add_notifier(C, NC_SCENE | ND_FRAME, CTX_data_scene(C));
+		
+		return OPERATOR_FINISHED;
+	}
+	else {
+		return OPERATOR_CANCELLED;
+	}
+}
+ 
+void GRAPH_OT_driver_variables_paste(wmOperatorType *ot)
+{
+	/* identifiers */
+	ot->name = "Paste Driver Variables";
+	ot->idname = "GRAPH_OT_driver_variables_paste";
+	ot->description = "Add copied driver variables to the active driver";
+	
+	/* api callbacks */
+	ot->exec = graph_driver_vars_paste_exec;
+	ot->poll = graphop_active_fcurve_poll;
+	
+	/* flags */
+	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+	
+	/* properties */
+	RNA_def_boolean(ot->srna, "replace", false, "Replace Existing", 
+	                "Replace existing driver variables, instead of just appending to the end of the existing list");
 }
 
 /* ************************************************************************** */

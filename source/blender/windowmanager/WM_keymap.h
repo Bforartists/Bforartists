@@ -26,7 +26,7 @@
 #ifndef __WM_KEYMAP_H__
 #define __WM_KEYMAP_H__
 
-/** \file WM_keymap.h
+/** \file blender/windowmanager/WM_keymap.h
  *  \ingroup wm
  */
 
@@ -110,7 +110,7 @@ const char *WM_key_event_string(const short type, const bool compact);
 int WM_keymap_item_raw_to_string(
         const short shift, const short ctrl, const short alt, const short oskey, const short keymodifier,
         const short val, const short type, const bool compact, const int len, char *r_str);
-int         WM_key_event_operator_id(
+wmKeyMapItem *WM_key_event_operator(
         const struct bContext *C, const char *opname, int opcontext,
         struct IDProperty *properties, const bool is_hotkey,
         struct wmKeyMap **r_keymap);

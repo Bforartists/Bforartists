@@ -39,7 +39,6 @@
 #include "RAS_BucketManager.h"
 #include "RAS_MeshObject.h"
 #include "RAS_IRasterizer.h"
-#include "RAS_OpenGLRasterizer/RAS_GLExtensionManager.h"
 
 #include "GPU_draw.h"
 
@@ -676,13 +675,13 @@ void KX_BlenderMaterial::ActivatGLMaterials( RAS_IRasterizer* rasty )const
 			mMaterial->matcolor[0]*mMaterial->emit,
 			mMaterial->matcolor[1]*mMaterial->emit,
 			mMaterial->matcolor[2]*mMaterial->emit,
-			1.0 );
+			1.0f );
 
 		rasty->SetAmbient(mMaterial->amb);
 	}
 
 	if (mMaterial->material)
-		rasty->SetPolygonOffset(-mMaterial->material->zoffs, 0.0);
+		rasty->SetPolygonOffset(-mMaterial->material->zoffs, 0.0f);
 }
 
 
@@ -973,6 +972,7 @@ PyMethodDef KX_BlenderMaterial::Methods[] =
 {
 	KX_PYMETHODTABLE( KX_BlenderMaterial, getShader ),
 	KX_PYMETHODTABLE( KX_BlenderMaterial, getMaterialIndex ),
+	KX_PYMETHODTABLE( KX_BlenderMaterial, getTextureBindcode ),
 	KX_PYMETHODTABLE( KX_BlenderMaterial, setBlending ),
 	{NULL,NULL} //Sentinel
 };
@@ -1323,6 +1323,22 @@ KX_PYMETHODDEF_DOC( KX_BlenderMaterial, setBlending , "setBlending( bge.logic.sr
 		mUserDefBlend = true;
 		Py_RETURN_NONE;
 	}
+	return NULL;
+}
+
+KX_PYMETHODDEF_DOC(KX_BlenderMaterial, getTextureBindcode, "getTextureBindcode(texslot)")
+{
+	unsigned int texslot;
+	if (!PyArg_ParseTuple(args, "i:texslot", &texslot)) {
+		PyErr_SetString(PyExc_ValueError, "material.getTextureBindcode(texslot): KX_BlenderMaterial, expected an int.");
+		return NULL;
+	}
+	Image *ima = getImage(texslot);
+	if (ima) {
+		unsigned int *bindcode = ima->bindcode;
+		return PyLong_FromLong(*bindcode);
+	}
+	PyErr_SetString(PyExc_ValueError, "material.getTextureBindcode(texslot): KX_BlenderMaterial, invalid texture slot.");
 	return NULL;
 }
 

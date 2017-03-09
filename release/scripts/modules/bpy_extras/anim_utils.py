@@ -49,7 +49,7 @@ def bake_action(frame_start,
     :type frame_end: int
     :arg frame_step: Frame step.
     :type frame_step: int
-    :arg only_selected: Only bake selected data.
+    :arg only_selected: Only bake selected bones.
     :type only_selected: bool
     :arg do_pose: Bake pose channels.
     :type do_pose: bool
@@ -155,6 +155,11 @@ def bake_action(frame_start,
     atd = obj.animation_data_create()
     if action is None:
         action = bpy.data.actions.new("Action")
+
+    # Leave tweak mode before trying to modify the action (T48397)
+    if atd.use_tweak_mode:
+        atd.use_tweak_mode = False
+
     atd.action = action
 
     # -------------------------------------------------------------------------

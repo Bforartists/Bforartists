@@ -45,6 +45,7 @@ struct ARegion;
 struct ARegionType;
 struct BMEditMesh;
 struct Base;
+struct bContext;
 struct BoundBox;
 struct Brush;
 struct CSG_FaceIteratorDescriptor;
@@ -111,6 +112,7 @@ struct bConstraint;
 struct bConstraintOb;
 struct bConstraintTarget;
 struct bContextDataResult;
+struct bGPDlayer;
 struct bNode;
 struct bNodeType;
 struct bNodeSocket;
@@ -137,9 +139,9 @@ struct wmWindowManager;
 #if 1
 #if defined(__GNUC__)
 #  pragma GCC diagnostic error "-Wmissing-prototypes"
+#  pragma GCC diagnostic ignored "-Wunused-parameter"
 #endif
 
-#include "../../intern/cycles/blender/CCL_api.h"
 #include "../../intern/dualcon/dualcon.h"
 #include "../../intern/elbeem/extern/elbeem.h"
 #include "../blender/blenkernel/BKE_modifier.h"
@@ -147,10 +149,12 @@ struct wmWindowManager;
 #include "../blender/collada/collada.h"
 #include "../blender/compositor/COM_compositor.h"
 #include "../blender/editors/include/ED_armature.h"
+#include "../blender/editors/include/ED_anim_api.h"
 #include "../blender/editors/include/ED_buttons.h"
 #include "../blender/editors/include/ED_clip.h"
 #include "../blender/editors/include/ED_curve.h"
 #include "../blender/editors/include/ED_fileselect.h"
+#include "../blender/editors/include/ED_gpencil.h"
 #include "../blender/editors/include/ED_image.h"
 #include "../blender/editors/include/ED_info.h"
 #include "../blender/editors/include/ED_keyframes_edit.h"
@@ -166,6 +170,7 @@ struct wmWindowManager;
 #include "../blender/editors/include/ED_space_api.h"
 #include "../blender/editors/include/ED_text.h"
 #include "../blender/editors/include/ED_transform.h"
+#include "../blender/editors/include/ED_transform_snap_object_context.h"
 #include "../blender/editors/include/ED_uvedit.h"
 #include "../blender/editors/include/ED_view3d.h"
 #include "../blender/editors/include/UI_interface.h"
@@ -194,6 +199,8 @@ extern bool pyrna_id_FromPyObject(struct PyObject *obj, struct ID **id);
 extern const char *BPY_app_translations_py_pgettext(const char *msgctxt, const char *msgid);
 extern const char *BPY_app_translations_py_pgettext(const char *msgctxt, const char *msgid);
 extern struct PyObject *pyrna_id_CreatePyObject(struct ID *id);
+/* bpy_interface.c */
+bool BPY_string_is_keyword(const char *str) { return false; }
 
 #endif
 /* end declarations */
@@ -217,7 +224,7 @@ extern struct PyObject *pyrna_id_CreatePyObject(struct ID *id);
 /*new render funcs */
 void EDBM_selectmode_set(struct BMEditMesh *em) RET_NONE
 void EDBM_mesh_load(struct Object *ob) RET_NONE
-void EDBM_mesh_make(struct ToolSettings *ts, struct Object *ob) RET_NONE
+void EDBM_mesh_make(struct ToolSettings *ts, struct Object *ob, const bool use_key_index) RET_NONE
 void EDBM_mesh_normals_update(struct BMEditMesh *em) RET_NONE
 void *g_system;
 bool EDBM_mtexpoly_check(struct BMEditMesh *em) RET_ZERO
@@ -225,21 +232,23 @@ bool EDBM_mtexpoly_check(struct BMEditMesh *em) RET_ZERO
 float *RE_RenderLayerGetPass(volatile struct RenderLayer *rl, int passtype, const char *viewname) RET_NULL
 float RE_filter_value(int type, float x) RET_ZERO
 struct RenderLayer *RE_GetRenderLayer(struct RenderResult *rr, const char *name) RET_NULL
-void RE_init_texture_rng() RET_NONE
-void RE_exit_texture_rng() RET_NONE
+void RE_texture_rng_init() RET_NONE
+void RE_texture_rng_exit() RET_NONE
 
-bool RE_layers_have_name(struct RenderResult *result) {STUB_ASSERT(0); return 0;}
-void RE_engine_active_view_set(struct RenderEngine *engine, const char *viewname) {STUB_ASSERT(0);}
-void RE_engine_get_camera_model_matrix(struct RenderEngine *engine, struct Object *camera, float *r_modelmat) {STUB_ASSERT(0);}
-float RE_engine_get_camera_shift_x(struct RenderEngine *engine, struct Object *camera) RET_ZERO
-void RE_SetActiveRenderView(struct Render *re, const char *viewname) {STUB_ASSERT(0);}
+bool RE_layers_have_name(struct RenderResult *result) RET_ZERO
+const char *RE_engine_active_view_get(struct RenderEngine *engine) RET_NULL
+void RE_engine_active_view_set(struct RenderEngine *engine, const char *viewname) RET_NONE
+void RE_engine_get_camera_model_matrix(struct RenderEngine *engine, struct Object *camera, int use_spherical_stereo, float *r_modelmat) RET_NONE
+float RE_engine_get_camera_shift_x(struct RenderEngine *engine, struct Object *camera, int use_spherical_stereo) RET_ZERO
+int RE_engine_get_spherical_stereo(struct RenderEngine *engine, struct Object *camera) RET_ZERO
+void RE_SetActiveRenderView(struct Render *re, const char *viewname) RET_NONE
 
 struct RenderPass *RE_pass_find_by_type(volatile struct RenderLayer *rl, int passtype, const char *viewname) RET_NULL
 bool RE_HasFakeLayer(RenderResult *res) RET_ZERO
 
 /* zbuf.c stub */
 void antialias_tagbuf(int xsize, int ysize, char *rectmove) RET_NONE
-void RE_zbuf_accumulate_vecblur(struct NodeBlurData *nbd, int xsize, int ysize, float *newrect, float *imgrect, float *vecbufrect, float *zbufrect) RET_NONE
+void RE_zbuf_accumulate_vecblur(struct NodeBlurData *nbd, int xsize, int ysize, float *newrect, const float *imgrect, float *vecbufrect, const float *zbufrect) RET_NONE
 
 /* imagetexture.c stub */
 void ibuf_sample(struct ImBuf *ibuf, float fx, float fy, float dx, float dy, float *result) RET_NONE
@@ -249,12 +258,12 @@ bool ED_texture_context_check_linestyle(const struct bContext *C) RET_ZERO
 void FRS_free_view_map_cache(void) RET_NONE
 
 /* texture.c */
-int	multitex_ext(struct Tex *tex, float texvec[3], float dxt[3], float dyt[3], int osatex, struct TexResult *texres, struct ImagePool *pool, bool scene_color_manage, const bool skip_load_image) RET_ZERO
+int	multitex_ext(struct Tex *tex, float texvec[3], float dxt[3], float dyt[3], int osatex, struct TexResult *texres, short thread, struct ImagePool *pool, bool scene_color_manage, const bool skip_load_image) RET_ZERO
 int multitex_ext_safe(struct Tex *tex, float texvec[3], struct TexResult *texres, struct ImagePool *pool, bool scene_color_manage, const bool skip_load_image) RET_ZERO
 int multitex_nodes(struct Tex *tex, float texvec[3], float dxt[3], float dyt[3], int osatex, struct TexResult *texres, const short thread, short which_output, struct ShadeInput *shi, struct MTex *mtex, struct ImagePool *pool) RET_ZERO
 
-struct Material *RE_init_sample_material(struct Material *orig_mat, struct Scene *scene) RET_NULL
-void RE_free_sample_material(struct Material *mat) RET_NONE
+struct Material *RE_sample_material_init(struct Material *orig_mat, struct Scene *scene) RET_NULL
+void RE_sample_material_free(struct Material *mat) RET_NONE
 void RE_sample_material_color(
         struct Material *mat, float color[3], float *alpha, const float volume_co[3], const float surface_co[3],
         int tri_index, struct DerivedMesh *orcoDm, struct Object *ob) RET_NONE
@@ -262,6 +271,8 @@ void RE_sample_material_color(
 struct Render *RE_GetRender(const char *name) RET_NULL
 struct Object *RE_GetCamera(struct Render *re) RET_NULL
 float RE_lamp_get_data(struct ShadeInput *shi, struct Object *lamp_obj, float col[4], float lv[3], float *dist, float shadow[4]) RET_ZERO
+const float (*RE_object_instance_get_matrix(struct ObjectInstanceRen *obi, int matrix_id))[4] RET_NULL
+const float (*RE_render_current_get_matrix(int matrix_id))[4] RET_NULL
 
 /* blenkernel */
 bool BKE_paint_proj_mesh_data_check(struct Scene *scene, struct Object *ob, bool *uvs, bool *mat, bool *tex, bool *stencil) RET_ZERO
@@ -274,10 +285,11 @@ struct Scene *RE_GetScene(struct Render *re) RET_NULL
 void RE_Database_Free(struct Render *re) RET_NONE
 void RE_FreeRender(struct Render *re) RET_NONE
 void RE_DataBase_GetView(struct Render *re, float mat[4][4]) RET_NONE
-int	externtex(struct MTex *mtex, const float vec[3], float *tin, float *tr, float *tg, float *tb, float *ta, const int thread, struct ImagePool *pool, const bool skip_load_image) RET_ZERO
+int externtex(
+        struct MTex *mtex, const float vec[3], float *tin, float *tr, float *tg, float *tb, float *ta,
+        const int thread, struct ImagePool *pool, const bool skip_load_image, const bool texnode_preview) RET_ZERO
 float texture_value_blend(float tex, float out, float fact, float facg, int blendtype) RET_ZERO
 void texture_rgb_blend(float in[3], const float tex[3], const float out[3], float fact, float facg, int blendtype) RET_NONE
-const unsigned char stipple_quarttone[128];
 double elbeemEstimateMemreq(int res, float sx, float sy, float sz, int refine, char *retstr) RET_ZERO
 struct Render *RE_NewRender(const char *name) RET_NULL
 void RE_SwapResult(struct Render *re, struct RenderResult **rr) RET_NONE
@@ -298,6 +310,8 @@ void WM_operator_handlers_clear(wmWindowManager *wm, struct wmOperatorType *ot) 
 void WM_autosave_init(wmWindowManager *wm) RET_NONE
 void WM_jobs_kill_all_except(struct wmWindowManager *wm, void *owner) RET_NONE
 
+void WM_lib_reload(struct Library *lib, struct bContext *C, struct ReportList *reports) RET_NONE
+
 char *WM_clipboard_text_get(bool selection, int *r_len) RET_NULL
 char *WM_clipboard_text_get_firstline(bool selection, int *r_len) RET_NULL
 void WM_clipboard_text_set(const char *buf, bool selection) RET_NONE
@@ -308,15 +322,28 @@ void WM_cursor_modal_restore(struct wmWindow *win) RET_NONE
 void WM_cursor_time(struct wmWindow *win, int nr) RET_NONE
 void WM_cursor_warp(struct wmWindow *win, int x, int y) RET_NONE
 
-void WM_ndof_deadzone_set(float deadzone) RET_NONE
+struct wmJob *WM_jobs_get(struct wmWindowManager *wm, struct wmWindow *win, void *owner, const char *name, int flag, int job_type) RET_NULL
+void WM_jobs_customdata_set(struct wmJob *job, void *customdata, void (*free)(void *)) RET_NONE
+void WM_jobs_timer(struct wmJob *job, double timestep, unsigned int note, unsigned int endnote) RET_NONE
+
+void WM_jobs_callbacks(struct wmJob *job,
+                       void (*startjob)(void *, short *, short *, float *),
+                       void (*initjob)(void *),
+                       void (*update)(void *),
+                       void (*endjob)(void *)) RET_NONE
+
+void WM_jobs_start(struct wmWindowManager *wm, struct wmJob *job) RET_NONE
+void WM_report(ReportType type, const char *message) RET_NONE
+
+#ifdef WITH_INPUT_NDOF
+    void WM_ndof_deadzone_set(float deadzone) RET_NONE
+#endif
 
 void                WM_uilisttype_init(void) RET_NONE
 struct uiListType  *WM_uilisttype_find(const char *idname, bool quiet) RET_NULL
 bool                WM_uilisttype_add(struct uiListType *ult) RET_ZERO
 void                WM_uilisttype_freelink(struct uiListType *ult) RET_NONE
 void                WM_uilisttype_free(void) RET_NONE
-
-void WM_framebuffer_index_get(int index, int *r_col) RET_NONE
 
 struct wmKeyMapItem *WM_keymap_item_find_id(struct wmKeyMap *keymap, int id) RET_NULL
 int WM_enum_search_invoke(struct bContext *C, struct wmOperator *op, const struct wmEvent *event) RET_ZERO
@@ -340,6 +367,7 @@ void *ED_region_draw_cb_activate(struct ARegionType *art, void(*draw)(const stru
 void *ED_region_draw_cb_customdata(void *handle) RET_ZERO /* XXX This one looks wrong also */
 void ED_region_draw_cb_exit(struct ARegionType *art, void *handle) RET_NONE
 void ED_area_headerprint(struct ScrArea *sa, const char *str) RET_NONE
+void ED_gpencil_parent_location(struct bGPDlayer *gpl, float diff_mat[4][4]) RET_NONE
 void UI_view2d_region_to_view(struct View2D *v2d, float x, float y, float *viewx, float *viewy) RET_NONE
 bool UI_view2d_view_to_region_clip(struct View2D *v2d, float x, float y, int *regionx, int *regiony) RET_ZERO
 void UI_view2d_view_to_region(struct View2D *v2d, float x, float y, int *regionx, int *region_y) RET_NONE
@@ -370,7 +398,7 @@ void ED_area_tag_redraw_regiontype(struct ScrArea *sa, int regiontype) RET_NONE
 void ED_render_engine_changed(struct Main *bmain) RET_NONE
 
 void ED_file_read_bookmarks(void) RET_NONE
-void ED_file_change_dir(struct bContext *C, const bool checkdir) RET_NONE
+void ED_file_change_dir(struct bContext *C) RET_NONE
 void ED_preview_kill_jobs(struct wmWindowManager *wm, struct Main *bmain) RET_NONE
 struct FSMenu *ED_fsmenu_get(void) RET_NULL
 struct FSMenuEntry *ED_fsmenu_get_category(struct FSMenu *fsmenu, FSMenuCategory category) RET_NULL
@@ -406,11 +434,12 @@ int	WM_keymap_map_type_get(struct wmKeyMapItem *kmi) RET_ZERO
 /* rna editors */
 
 struct FCurve *verify_fcurve(struct bAction *act, const char group[], struct PointerRNA *ptr, const char rna_path[], const int array_index, short add) RET_NULL
-int insert_vert_fcurve(struct FCurve *fcu, float x, float y, short flag) RET_ZERO
+int insert_vert_fcurve(struct FCurve *fcu, float x, float y, char keytype, short flag) RET_ZERO
 void delete_fcurve_key(struct FCurve *fcu, int index, bool do_recalc) RET_NONE
 struct KeyingSetInfo *ANIM_keyingset_info_find_name (const char name[]) RET_NULL
 struct KeyingSet *ANIM_scene_get_active_keyingset (struct Scene *scene) RET_NULL
 int ANIM_scene_get_keyingset_index(struct Scene *scene, struct KeyingSet *ks) RET_ZERO
+void ANIM_id_update(struct Scene *scene, struct ID *id) RET_NONE
 struct ListBase builtin_keyingsets;
 void ANIM_keyingset_info_register(struct KeyingSetInfo *ksi) RET_NONE
 void ANIM_keyingset_info_unregister(struct Main *bmain, KeyingSetInfo *ksi) RET_NONE
@@ -423,25 +452,25 @@ void ED_space_image_get_zoom(struct SpaceImage *sima, struct ARegion *ar, float 
 const char *ED_info_stats_string(struct Scene *scene) RET_NULL
 void ED_area_tag_redraw(struct ScrArea *sa) RET_NONE
 void ED_area_tag_refresh(struct ScrArea *sa) RET_NONE
-void ED_area_newspace(struct bContext *C, struct ScrArea *sa, int type) RET_NONE
+void ED_area_newspace(struct bContext *C, struct ScrArea *sa, int type, const bool skip_ar_exit) RET_NONE
 void ED_region_tag_redraw(struct ARegion *ar) RET_NONE
 void WM_event_add_fileselect(struct bContext *C, struct wmOperator *op) RET_NONE
 void WM_cursor_wait(bool val) RET_NONE
 void ED_node_texture_default(const struct bContext *C, struct Tex *tex) RET_NONE
 void ED_node_tag_update_id(struct ID *id) RET_NONE
-void ED_node_tag_update_nodetree(struct Main *bmain, struct bNodeTree *ntree) RET_NONE
+void ED_node_tag_update_nodetree(struct Main *bmain, struct bNodeTree *ntree, struct bNode *node) RET_NONE
 void ED_node_tree_update(const struct bContext *C) RET_NONE
-void ED_node_set_tree_type(struct SpaceNode *snode, struct bNodeTreeType *typeinfo){}
-void ED_init_custom_node_type(struct bNodeType *ntype){}
-void ED_init_custom_node_socket_type(struct bNodeSocketType *stype){}
+void ED_node_set_tree_type(struct SpaceNode *snode, struct bNodeTreeType *typeinfo) RET_NONE
+void ED_init_custom_node_type(struct bNodeType *ntype) RET_NONE
+void ED_init_custom_node_socket_type(struct bNodeSocketType *stype) RET_NONE
 void ED_init_standard_node_socket_type(struct bNodeSocketType *stype) RET_NONE
 void ED_init_node_socket_type_virtual(struct bNodeSocketType *stype) RET_NONE
-int ED_node_tree_path_length(struct SpaceNode *snode){return 0;}
-void ED_node_tree_path_get(struct SpaceNode *snode, char *value){}
-void ED_node_tree_path_get_fixedbuf(struct SpaceNode *snode, char *value, int max_length){}
-void ED_node_tree_start(struct SpaceNode *snode, struct bNodeTree *ntree, struct ID *id, struct ID *from){}
-void ED_node_tree_push(struct SpaceNode *snode, struct bNodeTree *ntree, struct bNode *gnode){}
-void ED_node_tree_pop(struct SpaceNode *snode){}
+int ED_node_tree_path_length(struct SpaceNode *snode) RET_ZERO
+void ED_node_tree_path_get(struct SpaceNode *snode, char *value) RET_NONE
+void ED_node_tree_path_get_fixedbuf(struct SpaceNode *snode, char *value, int max_length) RET_NONE
+void ED_node_tree_start(struct SpaceNode *snode, struct bNodeTree *ntree, struct ID *id, struct ID *from) RET_NONE
+void ED_node_tree_push(struct SpaceNode *snode, struct bNodeTree *ntree, struct bNode *gnode) RET_NONE
+void ED_node_tree_pop(struct SpaceNode *snode) RET_NONE
 int ED_view3d_scene_layer_set(int lay, const int *values, int *active) RET_ZERO
 void ED_view3d_quadview_update(struct ScrArea *sa, struct ARegion *ar, bool do_clip) RET_NONE
 void ED_view3d_from_m4(float mat[4][4], float ofs[3], float quat[4], float *dist) RET_NONE
@@ -496,8 +525,8 @@ void ED_object_constraint_tag_update(struct Object *ob, struct bConstraint *con)
 void ED_vgroup_vert_add(struct Object *ob, struct bDeformGroup *dg, int vertnum, float weight, int assignmode) RET_NONE
 void ED_vgroup_vert_remove(struct Object *ob, struct bDeformGroup *dg, int vertnum) RET_NONE
 float ED_vgroup_vert_weight(struct Object *ob, struct bDeformGroup *dg, int vertnum) RET_ZERO
-int ED_mesh_mirror_topo_table(struct Object *ob, char mode) RET_ZERO
-int ED_mesh_mirror_spatial_table(struct Object *ob, struct BMEditMesh *em, const float co[3], char mode) RET_ZERO
+int ED_mesh_mirror_topo_table(struct Object *ob, struct DerivedMesh *dm, char mode) RET_ZERO
+int ED_mesh_mirror_spatial_table(struct Object *ob, struct BMEditMesh *em, struct DerivedMesh *dm, const float co[3], char mode) RET_ZERO
 
 float ED_rollBoneToVector(EditBone *bone, const float new_up_axis[3], const bool axis_only) RET_ZERO
 void ED_space_image_get_size(struct SpaceImage *sima, int *width, int *height) RET_NONE
@@ -511,16 +540,26 @@ bool ED_texture_context_check_others(const struct bContext *C) RET_ZERO
 
 bool ED_text_region_location_from_cursor(SpaceText *st, ARegion *ar, const int cursor_co[2], int r_pixel_co[2]) RET_ZERO
 
-bool snapObjectsRayEx(struct Scene *scene, struct Base *base_act, struct View3D *v3d, struct ARegion *ar, struct Object *obedit, short snap_mode,
-                      struct Object **r_ob, float r_obmat[4][4],
-                      const float ray_start[3], const float ray_normal[3], float *r_ray_dist,
-                      const float mval[2], float *r_dist_px, float r_loc[3], float r_no[3], SnapMode mode) RET_ZERO
+SnapObjectContext *ED_transform_snap_object_context_create(
+        struct Main *bmain, struct Scene *scene, int flag) RET_NULL
+SnapObjectContext *ED_transform_snap_object_context_create_view3d(
+        struct Main *bmain, struct Scene *scene, int flag,
+        const struct ARegion *ar, const struct View3D *v3d) RET_NULL
+void ED_transform_snap_object_context_destroy(SnapObjectContext *sctx) RET_NONE
+bool ED_transform_snap_object_project_ray_ex(
+        struct SnapObjectContext *sctx,
+        const unsigned short snap_to,
+        const struct SnapObjectParams *params,
+        const float ray_start[3], const float ray_normal[3], float *ray_depth,
+        /* return args */
+        float r_loc[3], float r_no[3], int *r_index,
+        struct Object **r_ob, float r_obmat[4][4]) RET_ZERO
 
-void make_editLatt(struct Object *obedit) RET_NONE
-void load_editLatt(struct Object *obedit) RET_NONE
+void ED_lattice_editlatt_make(struct Object *obedit) RET_NONE
+void ED_lattice_editlatt_load(struct Object *obedit) RET_NONE
 
-void load_editNurb(struct Object *obedit) RET_NONE
-void make_editNurb(struct Object *obedit) RET_NONE
+void ED_curve_editnurb_load(struct Object *obedit) RET_NONE
+void ED_curve_editnurb_make(struct Object *obedit) RET_NONE
 
 
 void uiItemR(uiLayout *layout, struct PointerRNA *ptr, const char *propname, int flag, const char *name, int icon) RET_NONE
@@ -576,7 +615,6 @@ void uiTemplateList(struct uiLayout *layout, struct bContext *C, const char *lis
 void uiTemplateRunningJobs(struct uiLayout *layout, struct bContext *C) RET_NONE
 void uiTemplateOperatorSearch(struct uiLayout *layout) RET_NONE
 void uiTemplateHeader3D(struct uiLayout *layout, struct bContext *C) RET_NONE
-void uiTemplateLayer3D(struct uiLayout *layout, struct bContext *C) RET_NONE // bfa - the layer widget as a single template
 void uiTemplateEditModeSelection(struct uiLayout *layout, struct bContext *C) RET_NONE
 void uiTemplateImage(uiLayout *layout, struct bContext *C, struct PointerRNA *ptr, const char *propname, struct PointerRNA *userptr, int compact, int multiview) RET_NONE
 void uiTemplateColorPicker(uiLayout *layout, struct PointerRNA *ptr, const char *propname, int value_slider, int lock, int lock_luminosity, int cubic) RET_NONE
@@ -600,6 +638,7 @@ void uiTemplateComponentMenu(struct uiLayout *layout, struct PointerRNA *ptr, co
 void uiTemplateNodeSocket(struct uiLayout *layout, struct bContext *C, float *color) RET_NONE
 void uiTemplatePalette(struct uiLayout *layout, struct PointerRNA *ptr, const char *propname, int color) RET_NONE
 void uiTemplateImageStereo3d(struct uiLayout *layout, struct PointerRNA *stereo3d_format_ptr) RET_NONE
+void uiTemplateCacheFile(uiLayout *layout, struct bContext *C, struct PointerRNA *ptr, const char *propname) RET_NONE
 
 /* rna render */
 struct RenderResult *RE_engine_begin_result(RenderEngine *engine, int x, int y, int w, int h, const char *layername, const char *viewname) RET_NULL
@@ -628,9 +667,13 @@ void RE_engine_update_memory_stats(struct RenderEngine *engine, float mem_used, 
 struct RenderEngine *RE_engine_create(struct RenderEngineType *type) RET_NULL
 void RE_engine_frame_set(struct RenderEngine *engine, int frame, float subframe) RET_NONE
 void RE_FreePersistentData(void) RET_NONE
-void RE_sample_point_density(struct Scene *scene, struct PointDensity *pd, int resolution, const bool use_render_params, float *values) RET_NONE;
+void RE_point_density_cache(struct Scene *scene, struct PointDensity *pd, const bool use_render_params) RET_NONE
+void RE_point_density_minmax(struct Scene *scene, struct PointDensity *pd, const bool use_render_params, float r_min[3], float r_max[3]) RET_NONE
+void RE_point_density_sample(struct Scene *scene, struct PointDensity *pd, int resolution, const bool use_render_params, float *values) RET_NONE
+void RE_point_density_free(struct PointDensity *pd) RET_NONE
 void RE_instance_get_particle_info(struct ObjectInstanceRen *obi, float *index, float *age, float *lifetime, float co[3], float *size, float vel[3], float angvel[3]) RET_NONE
 void RE_FreeAllPersistentData(void) RET_NONE
+float RE_fresnel_dielectric(float incoming[3], float normal[3], float eta) RET_ZERO
 
 /* python */
 struct wmOperatorType *WM_operatortype_find(const char *idname, bool quiet) RET_NULL
@@ -652,7 +695,7 @@ void WM_operator_bl_idname(char *to, const char *from) RET_NONE
 void WM_operator_py_idname(char *to, const char *from) RET_NONE
 int WM_operator_ui_popup(struct bContext *C, struct wmOperator *op, int width, int height) RET_ZERO
 void update_autoflags_fcurve(struct FCurve *fcu, struct bContext *C, struct ReportList *reports, struct PointerRNA *ptr) RET_NONE
-short insert_keyframe(struct ReportList *reports, struct ID *id, struct bAction *act, const char group[], const char rna_path[], int array_index, float cfra, short flag) RET_ZERO
+short insert_keyframe(struct ReportList *reports, struct ID *id, struct bAction *act, const char group[], const char rna_path[], int array_index, float cfra, char keytype, short flag) RET_ZERO
 short delete_keyframe(struct ReportList *reports, struct ID *id, struct bAction *act, const char group[], const char rna_path[], int array_index, float cfra, short flag) RET_ZERO
 struct bAction *verify_adt_action(struct ID *id, short add) RET_NULL
 char *WM_operator_pystring_ex(struct bContext *C, struct wmOperator *op, const bool all_args, const bool macro_args, struct wmOperatorType *ot, struct PointerRNA *opptr) RET_NULL
@@ -690,6 +733,7 @@ int collada_export(struct Scene *sce,
 
                    int triangulate,
                    int use_object_instantiation,
+                   int use_blender_profile,
                    int sort_by_name,
                    BC_export_transformation_type export_transformation_type,
                    int open_sim) RET_ZERO
@@ -702,13 +746,13 @@ void BPY_text_free_code(struct Text *text) RET_NONE
 void BPY_id_release(struct ID *id) RET_NONE
 int BPY_context_member_get(struct bContext *C, const char *member, struct bContextDataResult *result) RET_ZERO
 void BPY_pyconstraint_target(struct bPythonConstraint *con, struct bConstraintTarget *ct) RET_NONE
-float BPY_driver_exec(struct ChannelDriver *driver, const float evaltime) RET_ZERO /* might need this one! */
+float BPY_driver_exec(PathResolvedRNA *anim_rna, struct ChannelDriver *driver, const float evaltime) RET_ZERO /* might need this one! */
 void BPY_DECREF(void *pyob_ptr) RET_NONE
 void BPY_pyconstraint_exec(struct bPythonConstraint *con, struct bConstraintOb *cob, struct ListBase *targets) RET_NONE
 void macro_wrapper(struct wmOperatorType *ot, void *userdata) RET_NONE
 bool pyrna_id_FromPyObject(struct PyObject *obj, struct ID **id) RET_ZERO
 struct PyObject *pyrna_id_CreatePyObject(struct ID *id) RET_NULL
-void BPY_context_update(struct bContext *C) RET_NONE;
+void BPY_context_update(struct bContext *C) RET_NONE
 const char *BPY_app_translations_py_pgettext(const char *msgctxt, const char *msgid) RET_ARG(msgid)
 
 /* intern/dualcon */
@@ -725,10 +769,6 @@ void *dualcon(const DualConInput *input_mesh,
               float hermite_num,
               float scale,
               int depth) RET_ZERO
-
-/* intern/cycles */
-struct CCLDeviceInfo;
-struct CCLDeviceInfo *CCL_compute_device_list(int opencl) RET_NULL
 
 /* compositor */
 void COM_execute(RenderData *rd, Scene *scene, bNodeTree *editingtree, int rendering,

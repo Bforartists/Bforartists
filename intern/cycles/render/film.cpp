@@ -26,6 +26,7 @@
 #include "util_debug.h"
 #include "util_foreach.h"
 #include "util_math.h"
+#include "util_math_cdf.h"
 
 CCL_NAMESPACE_BEGIN
 
@@ -38,10 +39,10 @@ static bool compare_pass_order(const Pass& a, const Pass& b)
 	return (a.components > b.components);
 }
 
-void Pass::add(PassType type, vector<Pass>& passes)
+void Pass::add(PassType type, array<Pass>& passes)
 {
-	foreach(Pass& existing_pass, passes)
-		if(existing_pass.type == type)
+	for(size_t i = 0; i < passes.size(); i++)
+		if(passes[i].type == type)
 			return;
 
 	Pass pass;
@@ -153,14 +154,9 @@ void Pass::add(PassType type, vector<Pass>& passes)
 			pass.components = 0;
 			break;
 #ifdef WITH_CYCLES_DEBUG
-		case PASS_BVH_TRAVERSAL_STEPS:
-			pass.components = 1;
-			pass.exposure = false;
-			break;
+		case PASS_BVH_TRAVERSED_NODES:
 		case PASS_BVH_TRAVERSED_INSTANCES:
-			pass.components = 1;
-			pass.exposure = false;
-			break;
+		case PASS_BVH_INTERSECTIONS:
 		case PASS_RAY_BOUNCES:
 			pass.components = 1;
 			pass.exposure = false;
@@ -168,17 +164,17 @@ void Pass::add(PassType type, vector<Pass>& passes)
 #endif
 	}
 
-	passes.push_back(pass);
+	passes.push_back_slow(pass);
 
 	/* order from by components, to ensure alignment so passes with size 4
 	 * come first and then passes with size 1 */
-	sort(passes.begin(), passes.end(), compare_pass_order);
+	sort(&passes[0], &passes[0] + passes.size(), compare_pass_order);
 
 	if(pass.divide_type != PASS_NONE)
 		Pass::add(pass.divide_type, passes);
 }
 
-bool Pass::equals(const vector<Pass>& A, const vector<Pass>& B)
+bool Pass::equals(const array<Pass>& A, const array<Pass>& B)
 {
 	if(A.size() != B.size())
 		return false;
@@ -190,10 +186,10 @@ bool Pass::equals(const vector<Pass>& A, const vector<Pass>& B)
 	return true;
 }
 
-bool Pass::contains(const vector<Pass>& passes, PassType type)
+bool Pass::contains(const array<Pass>& passes, PassType type)
 {
-	foreach(const Pass& pass, passes)
-		if(pass.type == type)
+	for(size_t i = 0; i < passes.size(); i++)
+		if(passes[i].type == type)
 			return true;
 	
 	return false;
@@ -208,17 +204,20 @@ static float filter_func_box(float /*v*/, float /*width*/)
 
 static float filter_func_gaussian(float v, float width)
 {
-	v *= 2.0f/width;
+	v *= 6.0f/width;
 	return expf(-2.0f*v*v);
+}
+
+static float filter_func_blackman_harris(float v, float width)
+{
+	v = M_2PI_F * (v / width + 0.5f);
+	return 0.35875f - 0.48829f*cosf(v) + 0.14128f*cosf(2.0f*v) - 0.01168f*cosf(3.0f*v);
 }
 
 static vector<float> filter_table(FilterType type, float width)
 {
-	const int filter_table_size = FILTER_TABLE_SIZE-1;
-	vector<float> filter_table_cdf(filter_table_size+1);
-	vector<float> filter_table(filter_table_size+1);
+	vector<float> filter_table(FILTER_TABLE_SIZE);
 	float (*filter_func)(float, float) = NULL;
-	int i, half_size = filter_table_size/2;
 
 	switch(type) {
 		case FILTER_BOX:
@@ -226,64 +225,70 @@ static vector<float> filter_table(FilterType type, float width)
 			break;
 		case FILTER_GAUSSIAN:
 			filter_func = filter_func_gaussian;
+			width *= 3.0f;
+			break;
+		case FILTER_BLACKMAN_HARRIS:
+			filter_func = filter_func_blackman_harris;
+			width *= 2.0f;
 			break;
 		default:
 			assert(0);
 	}
 
-	/* compute cumulative distribution function */
-	filter_table_cdf[0] = 0.0f;
-	
-	for(i = 0; i < filter_table_size; i++) {
-		float x = i*width*0.5f/(filter_table_size-1);
-		float y = filter_func(x, width);
-		filter_table_cdf[i+1] += filter_table_cdf[i] + fabsf(y);
-	}
+	/* Create importance sampling table. */
 
-	for(i = 0; i <= filter_table_size; i++)
-		filter_table_cdf[i] /= filter_table_cdf[filter_table_size];
-	
-	/* create importance sampling table */
-	for(i = 0; i <= half_size; i++) {
-		float x = i/(float)half_size;
-		int index = upper_bound(filter_table_cdf.begin(), filter_table_cdf.end(), x) - filter_table_cdf.begin();
-		float t;
+	/* TODO(sergey): With the even filter table size resolution we can not
+	 * really make it nice symmetric importance map without sampling full range
+	 * (meaning, we would need to sample full filter range and not use the
+	 * make_symmetric argument).
+	 *
+	 * Current code matches exactly initial filter table code, but we should
+	 * consider either making FILTER_TABLE_SIZE odd value or sample full filter.
+	 */
 
-		if(index < filter_table_size+1) {
-			t = (x - filter_table_cdf[index])/(filter_table_cdf[index+1] - filter_table_cdf[index]);
-		}
-		else {
-			t = 0.0f;
-			index = filter_table_size;
-		}
-
-		float y = ((index + t)/(filter_table_size))*width;
-
-		filter_table[half_size+i] = 0.5f*(1.0f + y);
-		filter_table[half_size-i] = 0.5f*(1.0f - y);
-	}
+	util_cdf_inverted(FILTER_TABLE_SIZE,
+	                  0.0f,
+	                  width * 0.5f,
+	                  function_bind(filter_func, _1, width),
+	                  true,
+	                  filter_table);
 
 	return filter_table;
 }
 
 /* Film */
 
-Film::Film()
+NODE_DEFINE(Film)
 {
-	exposure = 0.8f;
+	NodeType* type = NodeType::add("film", create);
+
+	SOCKET_FLOAT(exposure, "Exposure", 0.8f);
+	SOCKET_FLOAT(pass_alpha_threshold, "Pass Alpha Threshold", 0.5f);
+
+	static NodeEnum filter_enum;
+	filter_enum.insert("box", FILTER_BOX);
+	filter_enum.insert("gaussian", FILTER_GAUSSIAN);
+	filter_enum.insert("blackman_harris", FILTER_BLACKMAN_HARRIS);
+
+	SOCKET_ENUM(filter_type, "Filter Type", filter_enum, FILTER_BOX);
+	SOCKET_FLOAT(filter_width, "Filter Width", 1.0f);
+
+	SOCKET_FLOAT(mist_start, "Mist Start", 0.0f);
+	SOCKET_FLOAT(mist_depth, "Mist Depth", 100.0f);
+	SOCKET_FLOAT(mist_falloff, "Mist Falloff", 1.0f);
+
+	SOCKET_BOOLEAN(use_sample_clamp, "Use Sample Clamp", false);
+
+	return type;
+}
+
+Film::Film()
+: Node(node_type)
+{
 	Pass::add(PASS_COMBINED, passes);
-	pass_alpha_threshold = 0.5f;
-
-	filter_type = FILTER_BOX;
-	filter_width = 1.0f;
-	filter_table_offset = TABLE_OFFSET_INVALID;
-
-	mist_start = 0.0f;
-	mist_depth = 100.0f;
-	mist_falloff = 1.0f;
 
 	use_light_visibility = false;
-	use_sample_clamp = false;
+	filter_table_offset = TABLE_OFFSET_INVALID;
 
 	need_update = true;
 }
@@ -307,7 +312,8 @@ void Film::device_update(Device *device, DeviceScene *dscene, Scene *scene)
 	kfilm->pass_stride = 0;
 	kfilm->use_light_pass = use_light_visibility || use_sample_clamp;
 
-	foreach(Pass& pass, passes) {
+	for(size_t i = 0; i < passes.size(); i++) {
+		Pass& pass = passes[i];
 		kfilm->pass_flag |= pass.type;
 
 		switch(pass.type) {
@@ -410,11 +416,14 @@ void Film::device_update(Device *device, DeviceScene *dscene, Scene *scene)
 				break;
 
 #ifdef WITH_CYCLES_DEBUG
-			case PASS_BVH_TRAVERSAL_STEPS:
-				kfilm->pass_bvh_traversal_steps = kfilm->pass_stride;
+			case PASS_BVH_TRAVERSED_NODES:
+				kfilm->pass_bvh_traversed_nodes = kfilm->pass_stride;
 				break;
 			case PASS_BVH_TRAVERSED_INSTANCES:
 				kfilm->pass_bvh_traversed_instances = kfilm->pass_stride;
+				break;
+			case PASS_BVH_INTERSECTIONS:
+				kfilm->pass_bvh_intersections = kfilm->pass_stride;
 				break;
 			case PASS_RAY_BOUNCES:
 				kfilm->pass_ray_bounces = kfilm->pass_stride;
@@ -433,6 +442,7 @@ void Film::device_update(Device *device, DeviceScene *dscene, Scene *scene)
 
 	/* update filter table */
 	vector<float> table = filter_table(filter_type, filter_width);
+	scene->lookup_tables->remove_table(&filter_table_offset);
 	filter_table_offset = scene->lookup_tables->add_table(dscene, table);
 	kfilm->filter_table_offset = (int)filter_table_offset;
 
@@ -448,26 +458,15 @@ void Film::device_free(Device * /*device*/,
                        DeviceScene * /*dscene*/,
                        Scene *scene)
 {
-	if(filter_table_offset != TABLE_OFFSET_INVALID) {
-		scene->lookup_tables->remove_table(filter_table_offset);
-		filter_table_offset = TABLE_OFFSET_INVALID;
-	}
+	scene->lookup_tables->remove_table(&filter_table_offset);
 }
 
 bool Film::modified(const Film& film)
 {
-	return !(exposure == film.exposure
-		&& Pass::equals(passes, film.passes)
-		&& pass_alpha_threshold == film.pass_alpha_threshold
-		&& use_sample_clamp == film.use_sample_clamp
-		&& filter_type == film.filter_type
-		&& filter_width == film.filter_width
-		&& mist_start == film.mist_start
-		&& mist_depth == film.mist_depth
-		&& mist_falloff == film.mist_falloff);
+	return !Node::equals(film) || !Pass::equals(passes, film.passes);
 }
 
-void Film::tag_passes_update(Scene *scene, const vector<Pass>& passes_)
+void Film::tag_passes_update(Scene *scene, const array<Pass>& passes_)
 {
 	if(Pass::contains(passes, PASS_UV) != Pass::contains(passes_, PASS_UV)) {
 		scene->mesh_manager->tag_update(scene);

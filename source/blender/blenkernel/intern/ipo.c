@@ -62,6 +62,7 @@
 
 #include "BLI_blenlib.h"
 #include "BLI_dynstr.h"
+#include "BLI_string_utils.h"
 #include "BLI_utildefines.h"
 
 #include "BLT_translation.h"
@@ -71,6 +72,8 @@
 #include "BKE_action.h"
 #include "BKE_fcurve.h"
 #include "BKE_global.h"
+#include "BKE_key.h"
+#include "BKE_library.h"
 #include "BKE_main.h"
 #include "BKE_nla.h"
 #include "BKE_sequencer.h"
@@ -329,7 +332,7 @@ static const char *constraint_adrcodes_to_paths(int adrcode, int *array_index)
  * NOTE: as we don't have access to the keyblock where the data comes from (for now), 
  *       we'll just use numerical indices for now...
  */
-static char *shapekey_adrcodes_to_paths(int adrcode, int *UNUSED(array_index))
+static char *shapekey_adrcodes_to_paths(ID *id, int adrcode, int *UNUSED(array_index))
 {
 	static char buf[128];
 	
@@ -339,8 +342,19 @@ static char *shapekey_adrcodes_to_paths(int adrcode, int *UNUSED(array_index))
 		BLI_strncpy(buf, "eval_time", sizeof(buf));
 	}
 	else {
+		/* Find the name of the ShapeKey (i.e. KeyBlock) to look for */
+		Key *key = (Key *)id;
+		KeyBlock *kb = BKE_keyblock_from_key(key, adrcode);
+		
 		/* setting that we alter is the "value" (i.e. keyblock.curval) */
-		BLI_snprintf(buf, sizeof(buf), "key_blocks[%d].value", adrcode);
+		if (kb) {
+			/* Use the keyblock name, escaped, so that path lookups for this will work */
+			BLI_snprintf(buf, sizeof(buf), "key_blocks[\"%s\"].value", kb->name);
+		}
+		else {
+			/* Fallback - Use the adrcode as index directly, so that this can be manually fixed */
+			BLI_snprintf(buf, sizeof(buf), "key_blocks[%d].value", adrcode);
+		}
 	}
 	return buf;
 }
@@ -798,13 +812,14 @@ static const char *particle_adrcodes_to_paths(int adrcode, int *array_index)
 
 /* Allocate memory for RNA-path for some property given a blocktype, adrcode, and 'root' parts of path
  *	Input:
+ *		- id					- the datablock that the curve's IPO block is attached to and/or which the new paths will start from
  *		- blocktype, adrcode	- determines setting to get
  *		- actname, constname,seq - used to build path
  *	Output:
  *		- array_index			- index in property's array (if applicable) to use
  *		- return				- the allocated path...
  */
-static char *get_rna_access(int blocktype, int adrcode, char actname[], char constname[], Sequence *seq, int *array_index)
+static char *get_rna_access(ID *id, int blocktype, int adrcode, char actname[], char constname[], Sequence *seq, int *array_index)
 {
 	DynStr *path = BLI_dynstr_new();
 	const char *propname = NULL;
@@ -827,7 +842,7 @@ static char *get_rna_access(int blocktype, int adrcode, char actname[], char con
 			break;
 			
 		case ID_KE: /* shapekeys */
-			propname = shapekey_adrcodes_to_paths(adrcode, &dummy_index);
+			propname = shapekey_adrcodes_to_paths(id, adrcode, &dummy_index);
 			break;
 			
 		case ID_CO: /* constraint */
@@ -1273,7 +1288,7 @@ static void icu_to_fcurves(ID *id, ListBase *groups, ListBase *list, IpoCurve *i
 		/* get rna-path
 		 *	- we will need to set the 'disabled' flag if no path is able to be made (for now)
 		 */
-		fcu->rna_path = get_rna_access(icu->blocktype, icu->adrcode, actname, constname, seq, &fcu->array_index);
+		fcu->rna_path = get_rna_access(id, icu->blocktype, icu->adrcode, actname, constname, seq, &fcu->array_index);
 		if (fcu->rna_path == NULL)
 			fcu->flag |= FCURVE_DISABLED;
 		
@@ -1429,7 +1444,7 @@ static void ipo_to_animato(ID *id, Ipo *ipo, char actname[], char constname[], S
 	}
 	
 	/* if this IPO block doesn't have any users after this one, free... */
-	ipo->id.us--;
+	id_us_min(&ipo->id);
 	if (ID_REAL_USERS(ipo) <= 0) {
 		IpoCurve *icn;
 		
@@ -1477,7 +1492,7 @@ static void action_to_animato(ID *id, bAction *act, ListBase *groups, ListBase *
 		/* convert Action Channel's IPO data */
 		if (achan->ipo) {
 			ipo_to_animato(id, achan->ipo, achan->name, NULL, NULL, groups, curves, drivers);
-			achan->ipo->id.us--;
+			id_us_min(&achan->ipo->id);
 			achan->ipo = NULL;
 		}
 		
@@ -1489,7 +1504,7 @@ static void action_to_animato(ID *id, bAction *act, ListBase *groups, ListBase *
 			/* convert Constraint Channel's IPO data */
 			if (conchan->ipo) {
 				ipo_to_animato(id, conchan->ipo, achan->name, conchan->name, NULL, groups, curves, drivers);
-				conchan->ipo->id.us--;
+				id_us_min(&conchan->ipo->id);
 				conchan->ipo = NULL;
 			}
 			
@@ -1718,7 +1733,7 @@ void do_versions_ipos_to_animato(Main *main)
 			if (ob->ipo) {
 				ipo_to_animdata(id, ob->ipo, NULL, NULL, NULL);
 				
-				ob->ipo->id.us--;
+				id_us_min(&ob->ipo->id);
 				ob->ipo = NULL;
 			}
 			
@@ -1726,7 +1741,7 @@ void do_versions_ipos_to_animato(Main *main)
 			 * causing errors with evaluation in the new evaluation pipeline
 			 */
 			if (ob->action) {
-				ob->action->id.us--;
+				id_us_min(&ob->action->id);
 				ob->action = NULL;
 			}
 			
@@ -1743,7 +1758,7 @@ void do_versions_ipos_to_animato(Main *main)
 				
 				/* only decrease usercount if this Action isn't now being used by AnimData */
 				if (ob->action != adt->action) {
-					ob->action->id.us--;
+					id_us_min(&ob->action->id);
 					ob->action = NULL;
 				}
 			}
@@ -1751,7 +1766,7 @@ void do_versions_ipos_to_animato(Main *main)
 			/* IPO second... */
 			if (ob->ipo) {
 				ipo_to_animdata(id, ob->ipo, NULL, NULL, NULL);
-				ob->ipo->id.us--;
+				id_us_min(&ob->ipo->id);
 				ob->ipo = NULL;
 
 				{
@@ -1788,7 +1803,7 @@ void do_versions_ipos_to_animato(Main *main)
 						 * so that drivers can be added properly...
 						 */
 						ipo_to_animdata(id, con->ipo, pchan->name, con->name, NULL);
-						con->ipo->id.us--;
+						id_us_min(&con->ipo->id);
 						con->ipo = NULL;
 					}
 				}
@@ -1808,7 +1823,7 @@ void do_versions_ipos_to_animato(Main *main)
 				 * so that drivers can be added properly...
 				 */
 				ipo_to_animdata(id, con->ipo, NULL, con->name, NULL);
-				con->ipo->id.us--;
+				id_us_min(&con->ipo->id);
 				con->ipo = NULL;
 			}
 			 
@@ -1828,7 +1843,7 @@ void do_versions_ipos_to_animato(Main *main)
 				/* convert Constraint Channel's IPO data */
 				if (conchan->ipo) {
 					ipo_to_animdata(id, conchan->ipo, NULL, conchan->name, NULL);
-					conchan->ipo->id.us--;
+					id_us_min(&conchan->ipo->id);
 					conchan->ipo = NULL;
 				}
 				
@@ -1865,7 +1880,7 @@ void do_versions_ipos_to_animato(Main *main)
 			if (adt->action)
 				adt->action->idroot = key->ipo->blocktype;
 			
-			key->ipo->id.us--;
+			id_us_min(&key->ipo->id);
 			key->ipo = NULL;
 		}
 	}
@@ -1887,7 +1902,7 @@ void do_versions_ipos_to_animato(Main *main)
 			if (adt->action)
 				adt->action->idroot = ma->ipo->blocktype;
 			
-			ma->ipo->id.us--;
+			id_us_min(&ma->ipo->id);
 			ma->ipo = NULL;
 		}
 	}
@@ -1909,7 +1924,7 @@ void do_versions_ipos_to_animato(Main *main)
 			if (adt->action)
 				adt->action->idroot = wo->ipo->blocktype;
 			
-			wo->ipo->id.us--;
+			id_us_min(&wo->ipo->id);
 			wo->ipo = NULL;
 		}
 	}
@@ -1960,7 +1975,7 @@ void do_versions_ipos_to_animato(Main *main)
 				if (adt->action)
 					adt->action->idroot = ID_SCE;  /* scene-rooted */
 				
-				seq->ipo->id.us--;
+				id_us_min(&seq->ipo->id);
 				seq->ipo = NULL;
 			}
 			SEQ_END
@@ -1985,7 +2000,7 @@ void do_versions_ipos_to_animato(Main *main)
 			if (adt->action)
 				adt->action->idroot = te->ipo->blocktype;
 			
-			te->ipo->id.us--;
+			id_us_min(&te->ipo->id);
 			te->ipo = NULL;
 		}
 	}
@@ -2007,7 +2022,7 @@ void do_versions_ipos_to_animato(Main *main)
 			if (adt->action)
 				adt->action->idroot = ca->ipo->blocktype;
 			
-			ca->ipo->id.us--;
+			id_us_min(&ca->ipo->id);
 			ca->ipo = NULL;
 		}
 	}
@@ -2029,7 +2044,7 @@ void do_versions_ipos_to_animato(Main *main)
 			if (adt->action)
 				adt->action->idroot = la->ipo->blocktype;
 			
-			la->ipo->id.us--;
+			id_us_min(&la->ipo->id);
 			la->ipo = NULL;
 		}
 	}
@@ -2051,7 +2066,7 @@ void do_versions_ipos_to_animato(Main *main)
 			if (adt->action)
 				adt->action->idroot = cu->ipo->blocktype;
 			
-			cu->ipo->id.us--;
+			id_us_min(&cu->ipo->id);
 			cu->ipo = NULL;
 		}
 	}

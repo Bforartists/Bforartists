@@ -125,7 +125,7 @@ class DATA_PT_shape_curve(CurveButtonsPanel, Panel):
             col.prop(curve, "use_fill_deform")
 
         if is_curve:
-            col.label(text="Path / Curve-Deform:")
+            col.label(text="Path/Curve-Deform:")
             sub = col.column()
             subsub = sub.row()
             subsub.prop(curve, "use_radius")
@@ -188,7 +188,10 @@ class DATA_PT_geometry_curve(CurveButtonsPanelCurve, Panel):
             row.label(text="Bevel Factor:")
 
             col = layout.column()
-            col.active = (curve.bevel_depth > 0 or curve.bevel_object is not None)
+            col.active = (
+                    (curve.bevel_depth > 0.0) or
+                    (curve.extrude > 0.0) or
+                    (curve.bevel_object is not None))
             row = col.row(align=True)
             row.prop(curve, "bevel_factor_mapping_start", text="")
             row.prop(curve, "bevel_factor_start", text="Start")
@@ -367,8 +370,11 @@ class DATA_PT_paragraph(CurveButtonsPanelText, Panel):
 
         text = context.curve
 
-        layout.label(text="Align:")
-        layout.prop(text, "align", expand=True)
+        layout.label(text="Horizontal Alignment:")
+        layout.prop(text, "align_x", expand=True)
+
+        layout.label(text="Vertical Alignment:")
+        layout.prop(text, "align_y", expand=True)
 
         split = layout.split()
 

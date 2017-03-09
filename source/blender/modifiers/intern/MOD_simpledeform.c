@@ -40,6 +40,7 @@
 #include "BLI_utildefines.h"
 
 #include "BKE_cdderivedmesh.h"
+#include "BKE_library_query.h"
 #include "BKE_modifier.h"
 #include "BKE_deform.h"
 
@@ -213,9 +214,14 @@ static void SimpleDeformModifier_do(SimpleDeformModifierData *smd, struct Object
 	}
 
 	modifier_get_vgroup(ob, dm, smd->vgroup_name, &dvert, &vgroup);
+	const bool invert_vgroup = (smd->flag & MOD_SIMPLEDEFORM_FLAG_INVERT_VGROUP) != 0;
 
 	for (i = 0; i < numVerts; i++) {
 		float weight = defvert_array_find_weight_safe(dvert, i, vgroup);
+
+		if (invert_vgroup) {
+			weight = 1.0f - weight;
+		}
 
 		if (weight != 0.0f) {
 			float co[3], dcut[3] = {0.0f, 0.0f, 0.0f};
@@ -279,11 +285,12 @@ static CustomDataMask requiredDataMask(Object *UNUSED(ob), ModifierData *md)
 	return dataMask;
 }
 
-static void foreachObjectLink(ModifierData *md, Object *ob,
-                              void (*walk)(void *userData, Object *ob, Object **obpoin), void *userData)
+static void foreachObjectLink(
+        ModifierData *md, Object *ob,
+        ObjectWalkFunc walk, void *userData)
 {
 	SimpleDeformModifierData *smd  = (SimpleDeformModifierData *)md;
-	walk(userData, ob, &smd->origin);
+	walk(userData, ob, &smd->origin, IDWALK_CB_NOP);
 }
 
 static void updateDepgraph(ModifierData *md, DagForest *forest,
@@ -359,6 +366,7 @@ ModifierTypeInfo modifierType_SimpleDeform = {
 
 	/* flags */             eModifierTypeFlag_AcceptsMesh |
 	                        eModifierTypeFlag_AcceptsCVs |
+	                        eModifierTypeFlag_AcceptsLattice |
 	                        eModifierTypeFlag_SupportsEditmode |
 	                        eModifierTypeFlag_EnableInEditmode,
 

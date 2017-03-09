@@ -138,9 +138,13 @@ bool invert_m3_m3(float R[3][3], float A[3][3]);
 bool invert_m4(float R[4][4]);
 bool invert_m4_m4(float R[4][4], float A[4][4]);
 
-/* double ariphmetics */
+/* double arithmetic (mixed float/double) */
 void mul_m4_v4d(float M[4][4], double r[4]);
 void mul_v4d_m4v4d(double r[4], float M[4][4], double v[4]);
+
+/* double matrix functions (no mixing types) */
+void mul_v3_m3v3_db(double r[3], double M[3][3], const double a[3]);
+void mul_m3_v3_db(double M[3][3], double r[3]);
 
 
 /****************************** Linear Algebra *******************************/
@@ -153,10 +157,14 @@ void transpose_m4_m4(float R[4][4], float A[4][4]);
 
 int compare_m4m4(float mat1[4][4], float mat2[4][4], float limit);
 
-void normalize_m3(float R[3][3]);
-void normalize_m3_m3(float R[3][3], float A[3][3]);
-void normalize_m4(float R[4][4]);
-void normalize_m4_m4(float R[4][4], float A[4][4]);
+void normalize_m3_ex(float R[3][3], float r_scale[3]) ATTR_NONNULL();
+void normalize_m3(float R[3][3]) ATTR_NONNULL();
+void normalize_m3_m3_ex(float R[3][3], float A[3][3], float r_scale[3]) ATTR_NONNULL();
+void normalize_m3_m3(float R[3][3], float A[3][3]) ATTR_NONNULL();
+void normalize_m4_ex(float R[4][4], float r_scale[3]) ATTR_NONNULL();
+void normalize_m4(float R[4][4]) ATTR_NONNULL();
+void normalize_m4_m4_ex(float R[4][4], float A[4][4], float r_scale[3]) ATTR_NONNULL();
+void normalize_m4_m4(float R[4][4], float A[4][4]) ATTR_NONNULL();
 
 void orthogonalize_m3(float R[3][3], int axis);
 void orthogonalize_m4(float R[4][4], int axis);
@@ -169,6 +177,10 @@ bool is_orthonormal_m4(float mat[4][4]);
 bool is_uniform_scaled_m3(float mat[3][3]);
 bool is_uniform_scaled_m4(float m[4][4]);
 
+/* Note: 'adjoint' here means the adjugate (adjunct, "classical adjoint") matrix!
+ * Nowadays 'adjoint' usually refers to the conjugate transpose,
+ * which for real-valued matrices is simply the transpose.
+ */
 void adjoint_m2_m2(float R[2][2], float A[2][2]);
 void adjoint_m3_m3(float R[3][3], float A[3][3]);
 void adjoint_m4_m4(float R[4][4], float A[4][4]);
@@ -207,13 +219,14 @@ void mat4_to_size(float r[3], float M[4][4]);
 
 void translate_m4(float mat[4][4], float tx, float ty, float tz);
 void rotate_m4(float mat[4][4], const char axis, const float angle);
-void rotate_m2(float mat[2][2], const float angle);
 void transform_pivot_set_m4(float mat[4][4], const float pivot[3]);
 
 void mat3_to_rot_size(float rot[3][3], float size[3], float mat3[3][3]);
 void mat4_to_loc_rot_size(float loc[3], float rot[3][3], float size[3], float wmat[4][4]);
 void mat4_to_loc_quat(float loc[3], float quat[4], float wmat[4][4]);
 void mat4_decompose(float loc[3], float quat[4], float size[3], float wmat[4][4]);
+
+void mat3_polar_decompose(float mat3[3][3], float r_U[3][3], float r_P[3][3]);
 
 void loc_eul_size_to_mat4(float R[4][4],
                           const float loc[3], const float eul[3], const float size[3]);
@@ -227,11 +240,17 @@ void loc_axisangle_size_to_mat4(float R[4][4],
 void blend_m3_m3m3(float R[3][3], float A[3][3], float B[3][3], const float t);
 void blend_m4_m4m4(float R[4][4], float A[4][4], float B[4][4], const float t);
 
+void interp_m3_m3m3(float R[3][3], float A[3][3], float B[3][3], const float t);
+void interp_m4_m4m4(float R[4][4], float A[4][4], float B[4][4], const float t);
+
 bool is_negative_m3(float mat[3][3]);
 bool is_negative_m4(float mat[4][4]);
 
 bool is_zero_m3(float mat[3][3]);
 bool is_zero_m4(float mat[4][4]);
+
+bool equals_m3m3(float mat1[3][3], float mat2[3][3]);
+bool equals_m4m4(float mat1[4][4], float mat2[4][4]);
 
 /* SpaceTransform helper */
 typedef struct SpaceTransform {
@@ -253,7 +272,7 @@ void BLI_space_transform_invert_normal(const struct SpaceTransform *data, float 
 /*********************************** Other ***********************************/
 
 void print_m3(const char *str, float M[3][3]);
-void print_m4(const char *str, float M[3][4]);
+void print_m4(const char *str, float M[4][4]);
 
 #define print_m3_id(M) print_m3(STRINGIFY(M), M)
 #define print_m4_id(M) print_m4(STRINGIFY(M), M)

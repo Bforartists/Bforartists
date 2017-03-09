@@ -60,6 +60,14 @@ void BLO_update_defaults_userpref_blend(void)
 
 	U.versions = 1;
 	U.savetime = 2;
+
+	/* default from T47064 */
+	U.audiorate = 48000;
+
+	/* Keep this a very small, non-zero number so zero-alpha doesn't mask out objects behind it.
+	 * but take care since some hardware has driver bugs here (T46962).
+	 * Further hardware workarounds should be made in gpu_extensions.c */
+	U.glalphaclip = (1.0f / 255);
 }
 
 /**
@@ -67,17 +75,11 @@ void BLO_update_defaults_userpref_blend(void)
  * This function can be emptied each time the startup.blend is updated. */
 void BLO_update_defaults_startup_blend(Main *bmain)
 {
-	Scene *scene;
-	SceneRenderLayer *srl;
-	FreestyleLineStyle *linestyle;
-	Mesh *me;
-	Material *mat;
-
-	for (scene = bmain->scene.first; scene; scene = scene->id.next) {
+	for (Scene *scene = bmain->scene.first; scene; scene = scene->id.next) {
 		scene->r.im_format.planes = R_IMF_PLANES_RGBA;
 		scene->r.im_format.compress = 15;
 
-		for (srl = scene->r.layers.first; srl; srl = srl->next) {
+		for (SceneRenderLayer *srl = scene->r.layers.first; srl; srl = srl->next) {
 			srl->freestyleConfig.sphere_radius = 0.1f;
 			srl->pass_alpha_threshold = 0.5f;
 		}
@@ -91,13 +93,72 @@ void BLO_update_defaults_startup_blend(Main *bmain)
 				sculpt->flags |= SCULPT_DYNTOPO_COLLAPSE;
 				sculpt->detail_size = 12;
 			}
+			
+			if (ts->gp_sculpt.brush[0].size == 0) {
+				GP_BrushEdit_Settings *gset = &ts->gp_sculpt;
+				GP_EditBrush_Data *brush;
+				
+				brush = &gset->brush[GP_EDITBRUSH_TYPE_SMOOTH];
+				brush->size = 25;
+				brush->strength = 0.3f;
+				brush->flag = GP_EDITBRUSH_FLAG_USE_FALLOFF | GP_EDITBRUSH_FLAG_SMOOTH_PRESSURE;
+				
+				brush = &gset->brush[GP_EDITBRUSH_TYPE_THICKNESS];
+				brush->size = 25;
+				brush->strength = 0.5f;
+				brush->flag = GP_EDITBRUSH_FLAG_USE_FALLOFF;
+				
+				brush = &gset->brush[GP_EDITBRUSH_TYPE_STRENGTH];
+				brush->size = 25;
+				brush->strength = 0.5f;
+				brush->flag = GP_EDITBRUSH_FLAG_USE_FALLOFF;
+
+				brush = &gset->brush[GP_EDITBRUSH_TYPE_GRAB];
+				brush->size = 50;
+				brush->strength = 0.3f;
+				brush->flag = GP_EDITBRUSH_FLAG_USE_FALLOFF;
+				
+				brush = &gset->brush[GP_EDITBRUSH_TYPE_PUSH];
+				brush->size = 25;
+				brush->strength = 0.3f;
+				brush->flag = GP_EDITBRUSH_FLAG_USE_FALLOFF;
+				
+				brush = &gset->brush[GP_EDITBRUSH_TYPE_TWIST];
+				brush->size = 50;
+				brush->strength = 0.3f; // XXX?
+				brush->flag = GP_EDITBRUSH_FLAG_USE_FALLOFF;
+				
+				brush = &gset->brush[GP_EDITBRUSH_TYPE_PINCH];
+				brush->size = 50;
+				brush->strength = 0.5f; // XXX?
+				brush->flag = GP_EDITBRUSH_FLAG_USE_FALLOFF;
+				
+				brush = &gset->brush[GP_EDITBRUSH_TYPE_RANDOMIZE];
+				brush->size = 25;
+				brush->strength = 0.5f;
+				brush->flag = GP_EDITBRUSH_FLAG_USE_FALLOFF;
+			}
+			
+			ts->gpencil_v3d_align = GP_PROJECT_VIEWSPACE;
+			ts->gpencil_v2d_align = GP_PROJECT_VIEWSPACE;
+			ts->gpencil_seq_align = GP_PROJECT_VIEWSPACE;
+			ts->gpencil_ima_align = GP_PROJECT_VIEWSPACE;
+
+			ParticleEditSettings *pset = &ts->particle;
+			for (int a = 0; a < PE_TOT_BRUSH; a++) {
+				pset->brush[a].strength = 0.5f;
+				pset->brush[a].count = 10;
+			}
+			pset->brush[PE_BRUSH_CUT].strength = 1.0f;
 		}
 
 		scene->gm.lodflag |= SCE_LOD_USE_HYST;
 		scene->gm.scehysteresis = 10;
+
+		scene->r.ffcodecdata.audio_mixrate = 48000;
 	}
 
-	for (linestyle = bmain->linestyle.first; linestyle; linestyle = linestyle->id.next) {
+	for (FreestyleLineStyle *linestyle = bmain->linestyle.first; linestyle; linestyle = linestyle->id.next) {
 		linestyle->flag = LS_SAME_OBJECT | LS_NO_SORTING | LS_TEXTURE;
 		linestyle->sort_key = LS_SORT_KEY_DISTANCE_FROM_CAMERA;
 		linestyle->integration_type = LS_INTEGRATION_MEAN;
@@ -105,44 +166,49 @@ void BLO_update_defaults_startup_blend(Main *bmain)
 		linestyle->chain_count = 10;
 	}
 
-	{
-		bScreen *screen;
+	for (bScreen *screen = bmain->screen.first; screen; screen = screen->id.next) {
+		ScrArea *area;
+		for (area = screen->areabase.first; area; area = area->next) {
+			SpaceLink *space_link;
+			ARegion *ar;
 
-		for (screen = bmain->screen.first; screen; screen = screen->id.next) {
-			ScrArea *area;
-			for (area = screen->areabase.first; area; area = area->next) {
-				SpaceLink *space_link;
-				ARegion *ar;
-
-				for (space_link = area->spacedata.first; space_link; space_link = space_link->next) {
-					if (space_link->spacetype == SPACE_CLIP) {
-						SpaceClip *space_clip = (SpaceClip *) space_link;
-						space_clip->flag &= ~SC_MANUAL_CALIBRATION;
-					}
+			for (space_link = area->spacedata.first; space_link; space_link = space_link->next) {
+				if (space_link->spacetype == SPACE_CLIP) {
+					SpaceClip *space_clip = (SpaceClip *) space_link;
+					space_clip->flag &= ~SC_MANUAL_CALIBRATION;
 				}
+			}
 
-				for (ar = area->regionbase.first; ar; ar = ar->next) {
-					/* Remove all stored panels, we want to use defaults (order, open/closed) as defined by UI code here! */
-					BLI_freelistN(&ar->panels);
+			for (ar = area->regionbase.first; ar; ar = ar->next) {
+				/* Remove all stored panels, we want to use defaults (order, open/closed) as defined by UI code here! */
+				BLI_freelistN(&ar->panels);
 
-					/* some toolbars have been saved as initialized,
-					* we don't want them to have odd zoom-level or scrolling set, see: T47047 */
-					if (ELEM(ar->regiontype, RGN_TYPE_UI, RGN_TYPE_TOOLS, RGN_TYPE_TOOL_PROPS)) {
-						ar->v2d.flag &= ~V2D_IS_INITIALISED;
-					}
+				/* some toolbars have been saved as initialized,
+				 * we don't want them to have odd zoom-level or scrolling set, see: T47047 */
+				if (ELEM(ar->regiontype, RGN_TYPE_UI, RGN_TYPE_TOOLS, RGN_TYPE_TOOL_PROPS)) {
+					ar->v2d.flag &= ~V2D_IS_INITIALISED;
 				}
 			}
 		}
 	}
 
-	for (me = bmain->mesh.first; me; me = me->id.next) {
+	for (Mesh *me = bmain->mesh.first; me; me = me->id.next) {
 		me->smoothresh = DEG2RADF(180.0f);
 		me->flag &= ~ME_TWOSIDED;
 	}
 
-	for (mat = bmain->mat.first; mat; mat = mat->id.next) {
+	for (Material *mat = bmain->mat.first; mat; mat = mat->id.next) {
 		mat->line_col[0] = mat->line_col[1] = mat->line_col[2] = 0.0f;
 		mat->line_col[3] = 1.0f;
+	}
+
+	{
+		Object *ob;
+
+		ob = (Object *)BKE_libblock_find_name_ex(bmain, ID_OB, "Camera");
+		if (ob) {
+			ob->rot[1] = 0.0f;
+		}
 	}
 
 	{
@@ -177,6 +243,29 @@ void BLO_update_defaults_startup_blend(Main *bmain)
 		br = (Brush *)BKE_libblock_find_name_ex(bmain, ID_BR, "Draw");
 		if (br) {
 			br->ob_mode &= ~OB_MODE_TEXTURE_PAINT;
+		}
+
+		/* rename twist brush to rotate brush to match rotate tool */
+		br = (Brush *)BKE_libblock_find_name_ex(bmain, ID_BR, "Twist");
+		if (br) {
+			BKE_libblock_rename(bmain, &br->id, "Rotate");
+		}
+
+		/* use original normal for grab brush (otherwise flickers with normal weighting). */
+		br = (Brush *)BKE_libblock_find_name_ex(bmain, ID_BR, "Grab");
+		if (br) {
+			br->flag |= BRUSH_ORIGINAL_NORMAL;
+		}
+
+		/* increase strength, better for smoothing method */
+		br = (Brush *)BKE_libblock_find_name_ex(bmain, ID_BR, "Blur");
+		if (br) {
+			br->alpha = 1.0f;
+		}
+
+		br = (Brush *)BKE_libblock_find_name_ex(bmain, ID_BR, "Flatten/Contrast");
+		if (br) {
+			br->flag |= BRUSH_ACCUMULATE;
 		}
 	}
 }

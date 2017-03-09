@@ -21,17 +21,17 @@ class BlocksSection(object):
     def from_tags(tags, drawing):
         blocks_section = BlocksSection()
         if drawing.grab_blocks:
-            blocks_section._build(tags, drawing.dxfversion)
+            blocks_section._build(tags)
         return blocks_section
 
-    def _build(self, tags, dxfversion):
+    def _build(self, tags):
         if len(tags) == 3:  # empty block section
             return
         groups = list()
         for group in TagGroups(islice(tags, 2, len(tags)-1)):
             groups.append(group)
             if group[0].value == 'ENDBLK':
-                entities = build_entities(groups, dxfversion)
+                entities = build_entities(groups)
                 block = entities[0]
                 block.set_entities(entities[1:-1])
                 self._add(block)

@@ -125,7 +125,8 @@ class RatingUsage(RatingRule):
                  "descritpiton":str(self),
                  "limit":"",
                  "id":self.id()
-	  }
+                }
+
 
 class RatingUsageByCategory(RatingRule):
     def __init__(self, get_jobs):
@@ -149,7 +150,7 @@ class RatingUsageByCategory(RatingRule):
                  "descritpiton":str(self),
                  "limit":"",
                  "id":self.id()
-	  }
+                }
 
 
 class NewJobPriority(PriorityRule):
@@ -176,7 +177,7 @@ class NewJobPriority(PriorityRule):
                  "limit": self.limit,           
                  "limit_str":self.str_limit(),
                  "id":self.id()
-	  }
+                }
 
 class MinimumTimeBetweenDispatchPriority(PriorityRule):
     def __init__(self, limit = 10):
@@ -203,8 +204,7 @@ class MinimumTimeBetweenDispatchPriority(PriorityRule):
                  "limit": self.limit,
                  "limit_str":self.str_limit(),
                  "id":self.id()
-                 
-	  }
+                }
 
 class ExcludeQueuedEmptyJob(ExclusionRule):
     def __init__(self):
@@ -224,7 +224,8 @@ class ExcludeQueuedEmptyJob(ExclusionRule):
                  "limit": "",
                  "limit_str":"",
                  "id":self.id()
-	  }
+                }
+
 
 class ExcludeSlavesLimit(ExclusionRule):
     def __init__(self, count_jobs, count_slaves, limit = 0.75):
@@ -253,4 +254,4 @@ class ExcludeSlavesLimit(ExclusionRule):
                  "limit": self.limit,
                  "limit_str":self.str_limit(),
                  "id":self.id()
-	  }
+                }

@@ -36,6 +36,7 @@
 struct BezTriple;
 struct Curve;
 struct EditNurb;
+struct GHash;
 struct ListBase;
 struct Main;
 struct Nurb;
@@ -52,6 +53,13 @@ typedef struct CurveCache {
 	struct Path *path;
 } CurveCache;
 
+/* Definitions needed for shape keys */
+typedef struct CVKeyIndex {
+	void *orig_cv;
+	int key_index, nu_index, pt_index, vertex_index;
+	bool switched;
+} CVKeyIndex;
+
 #define KNOTSU(nu)      ( (nu)->orderu + (nu)->pntsu + (((nu)->flagu & CU_NURB_CYCLIC) ? ((nu)->orderu - 1) : 0) )
 #define KNOTSV(nu)      ( (nu)->orderv + (nu)->pntsv + (((nu)->flagv & CU_NURB_CYCLIC) ? ((nu)->orderv - 1) : 0) )
 
@@ -66,12 +74,12 @@ typedef struct CurveCache {
 #define CU_DO_2DFILL(cu)  ((((cu)->flag & CU_3D) == 0) && (((cu)->flag & (CU_FRONT | CU_BACK)) != 0))
 
 /* ** Curve ** */
-void BKE_curve_unlink(struct Curve *cu);
 void BKE_curve_free(struct Curve *cu);
 void BKE_curve_editfont_free(struct Curve *cu);
+void BKE_curve_init(struct Curve *cu);
 struct Curve *BKE_curve_add(struct Main *bmain, const char *name, int type);
-struct Curve *BKE_curve_copy(struct Curve *cu);
-void BKE_curve_make_local(struct Curve *cu);
+struct Curve *BKE_curve_copy(struct Main *bmain, struct Curve *cu);
+void BKE_curve_make_local(struct Main *bmain, struct Curve *cu, const bool lib_local);
 short BKE_curve_type_get(struct Curve *cu);
 void BKE_curve_type_test(struct Object *ob);
 void BKE_curve_curve_dimension_update(struct Curve *cu);
@@ -108,7 +116,8 @@ void BK_curve_nurbs_vertexCos_apply(struct ListBase *lb, float (*vertexCos)[3]);
 float (*BKE_curve_nurbs_keyVertexCos_get(struct ListBase *lb, float *key))[3];
 void BKE_curve_nurbs_keyVertexTilts_apply(struct ListBase *lb, float *key);
 
-void BKE_curve_editNurb_keyIndex_free(struct EditNurb *editnurb);
+void BKE_curve_editNurb_keyIndex_delCV(struct GHash *keyindex, const void *cv);
+void BKE_curve_editNurb_keyIndex_free(struct GHash **keyindex);
 void BKE_curve_editNurb_free(struct Curve *cu);
 struct ListBase *BKE_curve_editNurbs_get(struct Curve *cu);
 
@@ -149,6 +158,16 @@ void BKE_nurb_minmax(struct Nurb *nu, bool use_radius, float min[3], float max[3
 
 void BKE_nurb_makeFaces(struct Nurb *nu, float *coord_array, int rowstride, int resolu, int resolv);
 void BKE_nurb_makeCurve(struct Nurb *nu, float *coord_array, float *tilt_array, float *radius_array, float *weight_array, int resolu, int stride);
+
+unsigned int BKE_curve_calc_coords_axis_len(
+        const unsigned int bezt_array_len, const unsigned int resolu,
+        const bool is_cyclic, const bool use_cyclic_duplicate_endpoint);
+void BKE_curve_calc_coords_axis(
+        const struct BezTriple *bezt_array, const unsigned int bezt_array_len, const unsigned int resolu,
+        const bool is_cyclic, const bool use_cyclic_duplicate_endpoint,
+        /* array params */
+        const unsigned int axis, const unsigned int stride,
+        float *r_points);
 
 void BKE_nurb_knot_calc_u(struct Nurb *nu);
 void BKE_nurb_knot_calc_v(struct Nurb *nu);

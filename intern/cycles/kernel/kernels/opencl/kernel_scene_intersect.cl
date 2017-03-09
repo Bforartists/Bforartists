@@ -17,7 +17,7 @@
 #include "split/kernel_scene_intersect.h"
 
 __kernel void kernel_ocl_path_trace_scene_intersect(
-        ccl_global char *globals,
+        ccl_global char *kg,
         ccl_constant KernelData *data,
         ccl_global uint *rng_coop,
         ccl_global Ray *Ray_coop,              /* Required for scene_intersect */
@@ -58,15 +58,14 @@ __kernel void kernel_ocl_path_trace_scene_intersect(
 			return;
 		}
 	} else {
-		if(x < (sw * parallel_samples) && y < sh){
+		if(x < (sw * parallel_samples) && y < sh) {
 			ray_index = x + y * (sw * parallel_samples);
 		} else {
 			return;
 		}
 	}
 
-	kernel_scene_intersect(globals,
-	                       data,
+	kernel_scene_intersect((KernelGlobals *)kg,
 	                       rng_coop,
 	                       Ray_coop,
 	                       PathState_coop,
@@ -77,6 +76,5 @@ __kernel void kernel_ocl_path_trace_scene_intersect(
 #ifdef __KERNEL_DEBUG__
 	                       debugdata_coop,
 #endif
-	                       parallel_samples,
 	                       ray_index);
 }

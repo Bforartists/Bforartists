@@ -94,6 +94,8 @@
 
 #include "UI_interface.h"
 
+#include "GPU_draw.h"
+
 #include "view3d_intern.h"  /* own include */
 
 float ED_view3d_select_dist_px(void)
@@ -108,6 +110,7 @@ void view3d_set_viewcontext(bContext *C, ViewContext *vc)
 	vc->ar = CTX_wm_region(C);
 	vc->scene = CTX_data_scene(C);
 	vc->v3d = CTX_wm_view3d(C);
+	vc->win = CTX_wm_window(C);
 	vc->rv3d = CTX_wm_region_view3d(C);
 	vc->obact = CTX_data_active_object(C);
 	vc->obedit = CTX_data_edit_object(C);
@@ -417,11 +420,12 @@ static void do_lasso_select_objects(ViewContext *vc, const int mcords[][2], cons
 
 	for (base = vc->scene->base.first; base; base = base->next) {
 		if (BASE_SELECTABLE(vc->v3d, base)) { /* use this to avoid un-needed lasso lookups */
-			ED_view3d_project_base(vc->ar, base);
-			if (BLI_lasso_is_point_inside(mcords, moves, base->sx, base->sy, IS_CLIPPED)) {
-				
-				ED_base_object_select(base, select ? BA_SELECT : BA_DESELECT);
-				base->object->flag = base->flag;
+			if (ED_view3d_project_base(vc->ar, base) == V3D_PROJ_RET_OK) {
+				if (BLI_lasso_is_point_inside(mcords, moves, base->sx, base->sy, IS_CLIPPED)) {
+
+					ED_base_object_select(base, select ? BA_SELECT : BA_DESELECT);
+					base->object->flag = base->flag;
+				}
 			}
 			if (vc->obact == base->object && (base->object->mode & OB_MODE_POSE)) {
 				do_lasso_select_pose(vc, base->object, mcords, moves, select);
@@ -601,7 +605,7 @@ static void do_lasso_select_lattice(ViewContext *vc, const int mcords[][2], shor
 	view3d_userdata_lassoselect_init(&data, vc, &rect, mcords, moves, select);
 
 	if (extend == false && select)
-		ED_setflagsLatt(vc->obedit, 0);
+		ED_lattice_flags_set(vc->obedit, 0);
 
 	ED_view3d_init_mats_rv3d(vc->obedit, vc->rv3d); /* for foreach's screen/vert projection */
 	lattice_foreachScreenVert(vc, do_lasso_select_lattice__doSelect, &data, V3D_PROJ_TEST_CLIP_DEFAULT);
@@ -784,7 +788,7 @@ static void do_lasso_select_paintface(ViewContext *vc, const int mcords[][2], sh
 
 	EDBM_backbuf_free();
 
-	paintface_flush_flags(ob);
+	paintface_flush_flags(ob, SELECT);
 }
 
 #if 0
@@ -1095,20 +1099,22 @@ static Base *object_mouse_select_menu(bContext *C, ViewContext *vc, unsigned int
 
 		/* two selection methods, the CTRL select uses max dist of 15 */
 		if (buffer) {
-			int a;
-			for (a = 0; a < hits; a++) {
+			for (int a = 0; a < hits; a++) {
 				/* index was converted */
-				if (base->selcol == buffer[(4 * a) + 3])
+				if (base->selcol == (buffer[(4 * a) + 3] & ~0xFFFF0000)) {
 					ok = true;
+					break;
+				}
 			}
 		}
 		else {
-			int temp, dist = 15;
-			ED_view3d_project_base(vc->ar, base);
-			
-			temp = abs(base->sx - mval[0]) + abs(base->sy - mval[1]);
-			if (temp < dist)
-				ok = true;
+			const int dist = 15 * U.pixelsize;
+			if (ED_view3d_project_base(vc->ar, base) == V3D_PROJ_RET_OK) {
+				const int delta_px[2] = {base->sx - mval[0], base->sy - mval[1]};
+				if (len_manhattan_v2_int(delta_px) < dist) {
+					ok = true;
+				}
+			}
 		}
 
 		if (ok) {
@@ -1394,8 +1400,9 @@ static void deselect_all_tracks(MovieTracking *tracking)
 }
 
 /* mval is region coords */
-static bool mouse_select(bContext *C, const int mval[2],
-                         bool extend, bool deselect, bool toggle, bool obcenter, bool enumerate, bool object)
+static bool ed_object_select_pick(
+        bContext *C, const int mval[2],
+        bool extend, bool deselect, bool toggle, bool obcenter, bool enumerate, bool object)
 {
 	ViewContext vc;
 	ARegion *ar = CTX_wm_region(C);
@@ -1466,7 +1473,7 @@ static bool mouse_select(bContext *C, const int mval[2],
 			const bool has_bones = selectbuffer_has_bones(buffer, hits);
 
 			/* note; shift+alt goes to group-flush-selecting */
-			if (has_bones == 0 && enumerate) {
+			if (enumerate) {
 				basact = object_mouse_select_menu(C, &vc, buffer, hits, mval, toggle);
 			}
 			else {
@@ -1685,7 +1692,7 @@ static int do_paintvert_box_select(ViewContext *vc, rcti *rect, bool select, boo
 		if (ENDIAN_ORDER == B_ENDIAN) {
 			IMB_convert_rgba_to_abgr(ibuf);
 		}
-		WM_framebuffer_to_index_array(ibuf->rect, size[0] * size[1]);
+		GPU_select_to_index_array(ibuf->rect, size[0] * size[1]);
 
 		a = size[0] * size[1];
 		while (a--) {
@@ -1795,7 +1802,7 @@ static int do_lattice_box_select(ViewContext *vc, rcti *rect, bool select, bool 
 	view3d_userdata_boxselect_init(&data, vc, rect, select);
 
 	if (extend == false && select)
-		ED_setflagsLatt(vc->obedit, 0);
+		ED_lattice_flags_set(vc->obedit, 0);
 
 	ED_view3d_init_mats_rv3d(vc->obedit, vc->rv3d); /* for foreach's screen/vert projection */
 	lattice_foreachScreenVert(vc, do_lattice_box_select__doSelect, &data, V3D_PROJ_TEST_CLIP_DEFAULT);
@@ -1947,6 +1954,9 @@ static int do_armature_box_select(ViewContext *vc, rcti *rect, bool select, bool
 		int index = buffer[(4 * a) + 3];
 		if (index != -1) {
 			ebone = BLI_findlink(arm->edbo, index & ~(BONESEL_ANY));
+			if ((index & 0xFFFF0000) == 0) {
+				continue;
+			}
 			if ((select == false) || ((ebone->flag & BONE_UNSELECTABLE) == 0)) {
 				if (index & BONESEL_TIP) {
 					ebone->flag |= BONE_DONE;
@@ -2202,7 +2212,9 @@ void VIEW3D_OT_select_border(wmOperatorType *ot)
 
 /* mouse selection in weight paint */
 /* gets called via generic mouse select operator */
-static bool mouse_weight_paint_vertex_select(bContext *C, const int mval[2], bool extend, bool deselect, bool toggle, Object *obact)
+static bool ed_wpaint_vertex_select_pick(
+        bContext *C, const int mval[2],
+        bool extend, bool deselect, bool toggle, Object *obact)
 {
 	View3D *v3d = CTX_wm_view3d(C);
 	const bool use_zbuf = (v3d->flag & V3D_ZBUF_SELECT) != 0;
@@ -2283,15 +2295,15 @@ static int view3d_select_exec(bContext *C, wmOperator *op)
 		if (obedit->type == OB_MESH)
 			retval = EDBM_select_pick(C, location, extend, deselect, toggle);
 		else if (obedit->type == OB_ARMATURE)
-			retval = mouse_armature(C, location, extend, deselect, toggle);
+			retval = ED_armature_select_pick(C, location, extend, deselect, toggle);
 		else if (obedit->type == OB_LATTICE)
-			retval = mouse_lattice(C, location, extend, deselect, toggle);
+			retval = ED_lattice_select_pick(C, location, extend, deselect, toggle);
 		else if (ELEM(obedit->type, OB_CURVE, OB_SURF))
-			retval = mouse_nurb(C, location, extend, deselect, toggle);
+			retval = ED_curve_editnurb_select_pick(C, location, extend, deselect, toggle);
 		else if (obedit->type == OB_MBALL)
-			retval = mouse_mball(C, location, extend, deselect, toggle);
+			retval = ED_mball_select_pick(C, location, extend, deselect, toggle);
 		else if (obedit->type == OB_FONT)
-			retval = mouse_font(C, location, extend, deselect, toggle);
+			retval = ED_curve_editfont_select_pick(C, location, extend, deselect, toggle);
 			
 	}
 	else if (obact && obact->mode & OB_MODE_PARTICLE_EDIT)
@@ -2299,9 +2311,9 @@ static int view3d_select_exec(bContext *C, wmOperator *op)
 	else if (obact && BKE_paint_select_face_test(obact))
 		retval = paintface_mouse_select(C, obact, location, extend, deselect, toggle);
 	else if (BKE_paint_select_vert_test(obact))
-		retval = mouse_weight_paint_vertex_select(C, location, extend, deselect, toggle, obact);
+		retval = ed_wpaint_vertex_select_pick(C, location, extend, deselect, toggle, obact);
 	else
-		retval = mouse_select(C, location, extend, deselect, toggle, center, enumerate, object);
+		retval = ed_object_select_pick(C, location, extend, deselect, toggle, center, enumerate, object);
 
 	/* passthrough allows tweaks
 	 * FINISHED to signal one operator worked
@@ -2459,7 +2471,7 @@ static void paint_facesel_circle_select(ViewContext *vc, const bool select, cons
 	if (bbsel) {
 		edbm_backbuf_check_and_select_tfaces(me, select);
 		EDBM_backbuf_free();
-		paintface_flush_flags(ob);
+		paintface_flush_flags(ob, SELECT);
 	}
 }
 

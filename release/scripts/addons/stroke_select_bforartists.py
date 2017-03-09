@@ -106,7 +106,7 @@ class StrokeSelectPanel(bpy.types.Panel):
  
 # The menu entry in the Select menu. The operator. See also def register for the location
 def menu_func(self, context):
-    self.layout.operator("view3d.stroke_select")
+    self.layout.operator("view3d.stroke_select", icon = "STROKE_SELECT")
     
 
 # ------------------------------ register unregister --------------------------------------------------------  

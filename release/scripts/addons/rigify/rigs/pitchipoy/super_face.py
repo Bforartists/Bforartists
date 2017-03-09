@@ -119,7 +119,8 @@ class Rig:
         
         distance = ( eyeL_e.head - eyeR_e.head ) * 3
         distance = distance.cross( (0, 0, 1) )
-        
+        eye_length = eyeL_e.length
+
         eyeL_ctrl_name = strip_org( bones['eyes'][0] )
         eyeR_ctrl_name = strip_org( bones['eyes'][1] )
         
@@ -136,8 +137,8 @@ class Rig:
         eyes_ctrl_e.head[:] =  ( eyeL_ctrl_e.head + eyeR_ctrl_e.head ) / 2
         
         for bone in [ eyeL_ctrl_e, eyeR_ctrl_e, eyes_ctrl_e ]:
-            bone.tail[:] = bone.head + Vector( [ 0, 0, eyeL_e.length * 0.75 ] )
-        
+            bone.tail[:] = bone.head + Vector( [ 0, 0, eye_length * 0.75 ] )
+
         ## Widget for transforming the both eyes
         eye_master_names = []
         for bone in bones['eyes']:
@@ -674,6 +675,13 @@ class Rig:
             const.target    = self.obj
             const.subtarget = subtarget
             const.influence = influence
+
+        elif constraint_type == 'teeth':
+
+            const = owner_pb.constraints.new( 'COPY_TRANSFORMS' )
+            const.target    = self.obj
+            const.subtarget = subtarget
+            const.influence = influence
         
         elif constraint_type == 'tweak_copyloc':
         
@@ -815,7 +823,10 @@ class Rig:
         self.make_constraits( 'mch_jaw_master', 'MCH-jaw_master.002', 'jaw_master', 0.35  )
         self.make_constraits( 'mch_jaw_master', 'MCH-jaw_master.003', 'jaw_master', 0.10  )
         self.make_constraits( 'mch_jaw_master', 'MCH-jaw_master.004', 'jaw_master', 0.025 )
-        
+
+        self.make_constraits( 'teeth', 'ORG-teeth.T', 'teeth.T', 1.00 )
+        self.make_constraits( 'teeth', 'ORG-teeth.B', 'teeth.B', 1.00 )
+
         for bone in all_bones['mch']['jaw'][1:-1]:
             self.make_constraits( 'mch_jaw_master', bone, 'MCH-mouth_lock' )
             
@@ -1070,8 +1081,8 @@ def create_sample(obj):
     bone.use_connect = False
     bones['face'] = bone.name
     bone = arm.edit_bones.new('nose')
-    bone.head[:] = 0.0004, -0.0905, 0.1125
-    bone.tail[:] = 0.0004, -0.1105, 0.0864
+    bone.head[:] = 0.0000, -0.0905, 0.1125
+    bone.tail[:] = 0.0000, -0.1105, 0.0864
     bone.roll = 0.0000
     bone.use_connect = False
     bone.parent = arm.edit_bones[bones['face']]
@@ -1091,8 +1102,8 @@ def create_sample(obj):
     bone.parent = arm.edit_bones[bones['face']]
     bones['lip.B.L'] = bone.name
     bone = arm.edit_bones.new('jaw')
-    bone.head[:] = 0.0004, -0.0389, 0.0222
-    bone.tail[:] = 0.0004, -0.0923, 0.0044
+    bone.head[:] = 0.0000, -0.0389, 0.0222
+    bone.tail[:] = 0.0000, -0.0923, 0.0044
     bone.roll = 0.0000
     bone.use_connect = False
     bone.parent = arm.edit_bones[bones['face']]
@@ -1196,29 +1207,29 @@ def create_sample(obj):
     bone.parent = arm.edit_bones[bones['face']]
     bones['cheek.T.R'] = bone.name
     bone = arm.edit_bones.new('teeth.T')
-    bone.head[:] = 0.0004, -0.0927, 0.0613
-    bone.tail[:] = 0.0004, -0.0621, 0.0613
+    bone.head[:] = 0.0000, -0.0927, 0.0613
+    bone.tail[:] = 0.0000, -0.0621, 0.0613
     bone.roll = 0.0000
     bone.use_connect = False
     bone.parent = arm.edit_bones[bones['face']]
     bones['teeth.T'] = bone.name
     bone = arm.edit_bones.new('teeth.B')
-    bone.head[:] = 0.0004, -0.0881, 0.0397
-    bone.tail[:] = 0.0004, -0.0575, 0.0397
+    bone.head[:] = 0.0000, -0.0881, 0.0397
+    bone.tail[:] = 0.0000, -0.0575, 0.0397
     bone.roll = 0.0000
     bone.use_connect = False
     bone.parent = arm.edit_bones[bones['face']]
     bones['teeth.B'] = bone.name
     bone = arm.edit_bones.new('tongue')
-    bone.head[:] = 0.0004, -0.0781, 0.0493
-    bone.tail[:] = 0.0004, -0.0620, 0.0567
+    bone.head[:] = 0.0000, -0.0781, 0.0493
+    bone.tail[:] = 0.0000, -0.0620, 0.0567
     bone.roll = 0.0000
     bone.use_connect = False
     bone.parent = arm.edit_bones[bones['face']]
     bones['tongue'] = bone.name
     bone = arm.edit_bones.new('nose.001')
-    bone.head[:] = 0.0004, -0.1105, 0.0864
-    bone.tail[:] = 0.0004, -0.1193, 0.0771
+    bone.head[:] = 0.0000, -0.1105, 0.0864
+    bone.tail[:] = 0.0000, -0.1193, 0.0771
     bone.roll = 0.0000
     bone.use_connect = True
     bone.parent = arm.edit_bones[bones['nose']]
@@ -1238,8 +1249,8 @@ def create_sample(obj):
     bone.parent = arm.edit_bones[bones['lip.B.L']]
     bones['lip.B.L.001'] = bone.name
     bone = arm.edit_bones.new('chin')
-    bone.head[:] = 0.0004, -0.0923, 0.0044
-    bone.tail[:] = 0.0004, -0.0921, 0.0158
+    bone.head[:] = 0.0000, -0.0923, 0.0044
+    bone.tail[:] = 0.0000, -0.0921, 0.0158
     bone.roll = 0.0000
     bone.use_connect = True
     bone.parent = arm.edit_bones[bones['jaw']]
@@ -1329,22 +1340,22 @@ def create_sample(obj):
     bone.parent = arm.edit_bones[bones['cheek.T.R']]
     bones['cheek.T.R.001'] = bone.name
     bone = arm.edit_bones.new('tongue.001')
-    bone.head[:] = 0.0004, -0.0620, 0.0567
-    bone.tail[:] = 0.0004, -0.0406, 0.0584
+    bone.head[:] = 0.0000, -0.0620, 0.0567
+    bone.tail[:] = 0.0000, -0.0406, 0.0584
     bone.roll = 0.0000
     bone.use_connect = True
     bone.parent = arm.edit_bones[bones['tongue']]
     bones['tongue.001'] = bone.name
     bone = arm.edit_bones.new('nose.002')
-    bone.head[:] = 0.0004, -0.1193, 0.0771
-    bone.tail[:] = 0.0004, -0.1118, 0.0739
+    bone.head[:] = 0.0000, -0.1193, 0.0771
+    bone.tail[:] = 0.0000, -0.1118, 0.0739
     bone.roll = 0.0000
     bone.use_connect = True
     bone.parent = arm.edit_bones[bones['nose.001']]
     bones['nose.002'] = bone.name
     bone = arm.edit_bones.new('chin.001')
-    bone.head[:] = 0.0004, -0.0921, 0.0158
-    bone.tail[:] = 0.0004, -0.0914, 0.0404
+    bone.head[:] = 0.0000, -0.0921, 0.0158
+    bone.tail[:] = 0.0000, -0.0914, 0.0404
     bone.roll = 0.0000
     bone.use_connect = True
     bone.parent = arm.edit_bones[bones['chin']]
@@ -1420,15 +1431,15 @@ def create_sample(obj):
     bone.parent = arm.edit_bones[bones['cheek.T.R.001']]
     bones['nose.R'] = bone.name
     bone = arm.edit_bones.new('tongue.002')
-    bone.head[:] = 0.0004, -0.0406, 0.0584
-    bone.tail[:] = 0.0004, -0.0178, 0.0464
+    bone.head[:] = 0.0000, -0.0406, 0.0584
+    bone.tail[:] = 0.0000, -0.0178, 0.0464
     bone.roll = 0.0000
     bone.use_connect = True
     bone.parent = arm.edit_bones[bones['tongue.001']]
     bones['tongue.002'] = bone.name
     bone = arm.edit_bones.new('nose.003')
-    bone.head[:] = 0.0004, -0.1118, 0.0739
-    bone.tail[:] = 0.0004, -0.1019, 0.0733
+    bone.head[:] = 0.0000, -0.1118, 0.0739
+    bone.tail[:] = 0.0000, -0.1019, 0.0733
     bone.roll = 0.0000
     bone.use_connect = True
     bone.parent = arm.edit_bones[bones['nose.002']]
@@ -1491,21 +1502,21 @@ def create_sample(obj):
     bones['temple.R'] = bone.name
     bone = arm.edit_bones.new('nose.L.001')
     bone.head[:] = 0.0118, -0.0966, 0.0757
-    bone.tail[:] = 0.0004, -0.1193, 0.0771
+    bone.tail[:] = 0.0000, -0.1193, 0.0771
     bone.roll = 0.1070
     bone.use_connect = True
     bone.parent = arm.edit_bones[bones['nose.L']]
     bones['nose.L.001'] = bone.name
     bone = arm.edit_bones.new('nose.R.001')
     bone.head[:] = -0.0118, -0.0966, 0.0757
-    bone.tail[:] = -0.0004, -0.1193, 0.0771
+    bone.tail[:] = -0.0000, -0.1193, 0.0771
     bone.roll = -0.1070
     bone.use_connect = True
     bone.parent = arm.edit_bones[bones['nose.R']]
     bones['nose.R.001'] = bone.name
     bone = arm.edit_bones.new('nose.004')
-    bone.head[:] = 0.0004, -0.1019, 0.0733
-    bone.tail[:] = 0.0004, -0.1014, 0.0633
+    bone.head[:] = 0.0000, -0.1019, 0.0733
+    bone.tail[:] = 0.0000, -0.1014, 0.0633
     bone.roll = 0.0000
     bone.use_connect = True
     bone.parent = arm.edit_bones[bones['nose.003']]

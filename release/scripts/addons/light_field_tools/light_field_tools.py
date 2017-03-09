@@ -399,6 +399,7 @@ class VIEW3D_OT_lightfield_tools(bpy.types.Panel):
     bl_region_type = "TOOLS"
     bl_context = "objectmode"
     bl_label = "Light Field Tools"
+    bl_category = "Tools"
 
     def draw(self, context):
         layout = self.layout

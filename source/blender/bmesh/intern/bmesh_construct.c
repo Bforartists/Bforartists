@@ -46,10 +46,29 @@
 
 #define SELECT 1
 
+
+/**
+ * Fill in a vertex array from an edge array.
+ *
+ * \returns false if any verts aren't found.
+ */
+bool BM_verts_from_edges(BMVert **vert_arr, BMEdge **edge_arr, const int len)
+{
+	int i, i_prev = len - 1;
+	for (i = 0; i < len; i++) {
+		vert_arr[i] = BM_edge_share_vert(edge_arr[i_prev], edge_arr[i]);
+		if (vert_arr[i] == NULL) {
+			return false;
+		}
+		i_prev = i;
+	}
+	return true;
+}
+
 /**
  * Fill in an edge array from a vertex array (connected polygon loop).
  *
- * \returns false if any edges aren't found .
+ * \returns false if any edges aren't found.
  */
 bool BM_edges_from_verts(BMEdge **edge_arr, BMVert **vert_arr, const int len)
 {
@@ -116,7 +135,7 @@ BMFace *BM_face_create_quad_tri(
  */
 void BM_face_copy_shared(
         BMesh *bm, BMFace *f,
-        BMElemFilterFunc filter_fn, void *user_data)
+        BMLoopFilterFunc filter_fn, void *user_data)
 {
 	BMLoop *l_first;
 	BMLoop *l_iter;
@@ -149,7 +168,7 @@ void BM_face_copy_shared(
 			for (j = 0; j < 2; j++) {
 				BLI_assert(l_dst[j]->v == l_src[j]->v);
 				if (BM_ELEM_API_FLAG_TEST(l_dst[j], _FLAG_OVERLAP) == 0) {
-					if ((filter_fn == NULL) || filter_fn((BMElem *)l_src[j], user_data)) {
+					if ((filter_fn == NULL) || filter_fn(l_src[j], user_data)) {
 						bm_loop_attrs_copy(bm, bm, l_src[j], l_dst[j]);
 						BM_ELEM_API_FLAG_ENABLE(l_dst[j], _FLAG_OVERLAP);
 					}
@@ -368,14 +387,10 @@ BMFace *BM_face_create_ngon_verts(
  *
  * \note Since this is a vcloud there is no direction.
  */
-BMFace *BM_face_create_ngon_vcloud(
-        BMesh *bm, BMVert **vert_arr, int len,
-        const BMFace *f_example, const eBMCreateFlag create_flag)
+void BM_verts_sort_radial_plane(BMVert **vert_arr, int len)
 {
 	struct SortIntByFloat *vang = BLI_array_alloca(vang, len);
 	BMVert **vert_arr_map = BLI_array_alloca(vert_arr_map, len);
-
-	BMFace *f;
 
 	float totv_inv = 1.0f / (float)len;
 	int i = 0;
@@ -451,26 +466,9 @@ BMFace *BM_face_create_ngon_vcloud(
 
 	/* now calculate every points angle around the normal (signed) */
 	for (i = 0; i < len; i++) {
-		float co[3];
-		float proj_vec[3];
-		float angle;
-
-		/* center relative vec */
-		sub_v3_v3v3(co, vert_arr[i]->co, cent);
-
-		/* align to plane */
-		project_v3_v3v3(proj_vec, co, nor);
-		sub_v3_v3(co, proj_vec);
-
-		/* now 'co' is valid - we can compare its angle against the far vec */
-		angle = angle_v3v3(far_vec, co);
-
-		if (dot_v3v3(co, sign_vec) < 0.0f) {
-			angle = -angle;
-		}
-
-		vang[i].sort_value = angle;
+		vang[i].sort_value = angle_signed_on_axis_v3v3v3_v3(far, cent, vert_arr[i]->co, nor);
 		vang[i].data = i;
+		vert_arr_map[i] = vert_arr[i];
 	}
 
 	/* sort by angle and magic! - we have our ngon */
@@ -478,14 +476,9 @@ BMFace *BM_face_create_ngon_vcloud(
 
 	/* --- */
 
-	/* create edges and find the winding (if faces are attached to any existing edges) */
 	for (i = 0; i < len; i++) {
-		vert_arr_map[i] = vert_arr[vang[i].data];
+		vert_arr[i] = vert_arr_map[vang[i].data];
 	}
-
-	f = BM_face_create_ngon_verts(bm, vert_arr_map, len, f_example, create_flag, true, true);
-
-	return f;
 }
 
 /*************************************************************/
@@ -607,7 +600,7 @@ void BM_elem_attrs_copy(BMesh *bm_src, BMesh *bm_dst, const void *ele_src, void 
 	BM_elem_attrs_copy_ex(bm_src, bm_dst, ele_src, ele_dst, BM_ELEM_SELECT);
 }
 
-void BM_elem_select_copy(BMesh *bm_dst, BMesh *UNUSED(bm_src), void *ele_dst_v, const void *ele_src_v)
+void BM_elem_select_copy(BMesh *bm_dst, void *ele_dst_v, const void *ele_src_v)
 {
 	BMHeader *ele_dst = ele_dst_v;
 	const BMHeader *ele_src = ele_src_v;
@@ -695,7 +688,9 @@ BMesh *BM_mesh_copy(BMesh *bm_old)
 	const BMAllocTemplate allocsize = BMALLOC_TEMPLATE_FROM_BM(bm_old);
 
 	/* allocate a bmesh */
-	bm_new = BM_mesh_create(&allocsize);
+	bm_new = BM_mesh_create(
+	        &allocsize,
+	        &((struct BMeshCreateParams){.use_toolflags = bm_old->use_toolflags,}));
 
 	BM_mesh_copy_init_customdata(bm_new, bm_old, &allocsize);
 

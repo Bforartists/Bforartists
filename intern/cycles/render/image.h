@@ -20,48 +20,33 @@
 #include "device.h"
 #include "device_memory.h"
 
+#include "util_image.h"
 #include "util_string.h"
 #include "util_thread.h"
 #include "util_vector.h"
 
-#include "kernel_types.h"  /* for TEX_NUM_FLOAT_IMAGES */
-
 CCL_NAMESPACE_BEGIN
-
-/* generic */
-#define TEX_NUM_IMAGES			94
-#define TEX_IMAGE_BYTE_START	TEX_NUM_FLOAT_IMAGES
-
-/* extended gpu */
-#define TEX_EXTENDED_NUM_IMAGES_GPU		145
-
-/* extended cpu */
-#define TEX_EXTENDED_NUM_FLOAT_IMAGES	1024
-#define TEX_EXTENDED_NUM_IMAGES_CPU		1024
-#define TEX_EXTENDED_IMAGE_BYTE_START	TEX_EXTENDED_NUM_FLOAT_IMAGES
-
-
-/* Limitations for packed images.
-*
-* Technically number of textures is unlimited, but it should in
-* fact be in sync with CPU limitations.
-*/
-#define TEX_PACKED_NUM_IMAGES            1024
-
-/* color to use when textures are not found */
-#define TEX_IMAGE_MISSING_R 1
-#define TEX_IMAGE_MISSING_G 0
-#define TEX_IMAGE_MISSING_B 1
-#define TEX_IMAGE_MISSING_A 1
 
 class Device;
 class DeviceScene;
 class Progress;
+class Scene;
 
 class ImageManager {
 public:
-	ImageManager();
+	explicit ImageManager(const DeviceInfo& info);
 	~ImageManager();
+
+	enum ImageDataType {
+		IMAGE_DATA_TYPE_FLOAT4 = 0,
+		IMAGE_DATA_TYPE_BYTE4 = 1,
+		IMAGE_DATA_TYPE_HALF4 = 2,
+		IMAGE_DATA_TYPE_FLOAT = 3,
+		IMAGE_DATA_TYPE_BYTE = 4,
+		IMAGE_DATA_TYPE_HALF = 5,
+
+		IMAGE_DATA_NUM_TYPES
+	};
 
 	int add_image(const string& filename,
 	              void *builtin_data,
@@ -72,32 +57,56 @@ public:
 	              InterpolationType interpolation,
 	              ExtensionType extension,
 	              bool use_alpha);
-	void remove_image(int slot);
+	void remove_image(int flat_slot);
 	void remove_image(const string& filename,
 	                  void *builtin_data,
 	                  InterpolationType interpolation,
-	                  ExtensionType extension);
+	                  ExtensionType extension,
+	                  bool use_alpha);
 	void tag_reload_image(const string& filename,
 	                      void *builtin_data,
 	                      InterpolationType interpolation,
-	                      ExtensionType extension);
-	bool is_float_image(const string& filename, void *builtin_data, bool& is_linear);
+	                      ExtensionType extension,
+	                      bool use_alpha);
+	ImageDataType get_image_metadata(const string& filename, void *builtin_data, bool& is_linear);
 
-	void device_update(Device *device, DeviceScene *dscene, Progress& progress);
-	void device_update_slot(Device *device, DeviceScene *dscene, int slot, Progress *progress);
+	void device_update(Device *device,
+	                   DeviceScene *dscene,
+	                   Scene *scene,
+	                   Progress& progress);
+	void device_update_slot(Device *device,
+	                        DeviceScene *dscene,
+	                        Scene *scene,
+	                        int flat_slot,
+	                        Progress *progress);
 	void device_free(Device *device, DeviceScene *dscene);
 	void device_free_builtin(Device *device, DeviceScene *dscene);
 
 	void set_osl_texture_system(void *texture_system);
 	void set_pack_images(bool pack_images_);
-	void set_extended_image_limits(const DeviceInfo& info);
 	bool set_animation_frame_update(int frame);
 
 	bool need_update;
 
-	function<void(const string &filename, void *data, bool &is_float, int &width, int &height, int &depth, int &channels)> builtin_image_info_cb;
-	function<bool(const string &filename, void *data, unsigned char *pixels)> builtin_image_pixels_cb;
-	function<bool(const string &filename, void *data, float *pixels)> builtin_image_float_pixels_cb;
+	/* NOTE: Here pixels_size is a size of storage, which equals to
+	 *       width * height * depth.
+	 *       Use this to avoid some nasty memory corruptions.
+	 */
+	function<void(const string &filename,
+	              void *data,
+	              bool &is_float,
+	              int &width,
+	              int &height,
+	              int &depth,
+	              int &channels)> builtin_image_info_cb;
+	function<bool(const string &filename,
+	              void *data,
+	              unsigned char *pixels,
+	              const size_t pixels_size)> builtin_image_pixels_cb;
+	function<bool(const string &filename,
+	              void *data,
+	              float *pixels,
+	              const size_t pixels_size)> builtin_image_float_pixels_cb;
 
 	struct Image {
 		string filename;
@@ -114,24 +123,46 @@ public:
 	};
 
 private:
-	int tex_num_images;
-	int tex_num_float_images;
-	int tex_image_byte_start;
+	int tex_num_images[IMAGE_DATA_NUM_TYPES];
+	int tex_start_images[IMAGE_DATA_NUM_TYPES];
+
 	thread_mutex device_mutex;
 	int animation_frame;
 
-	vector<Image*> images;
-	vector<Image*> float_images;
+	vector<Image*> images[IMAGE_DATA_NUM_TYPES];
 	void *osl_texture_system;
 	bool pack_images;
 
-	bool file_load_image(Image *img, device_vector<uchar4>& tex_img);
-	bool file_load_float_image(Image *img, device_vector<float4>& tex_img);
+	bool file_load_image_generic(Image *img, ImageInput **in, int &width, int &height, int &depth, int &components);
 
-	void device_load_image(Device *device, DeviceScene *dscene, int slot, Progress *progess);
-	void device_free_image(Device *device, DeviceScene *dscene, int slot);
+	template<TypeDesc::BASETYPE FileFormat,
+	         typename StorageType,
+	         typename DeviceType>
+	bool file_load_image(Image *img,
+	                     ImageDataType type,
+	                     int texture_limit,
+	                     device_vector<DeviceType>& tex_img);
 
-	void device_pack_images(Device *device, DeviceScene *dscene, Progress& progess);
+	int type_index_to_flattened_slot(int slot, ImageDataType type);
+	int flattened_slot_to_type_index(int flat_slot, ImageDataType *type);
+	string name_from_type(int type);
+
+	uint8_t pack_image_options(ImageDataType type, size_t slot);
+
+	void device_load_image(Device *device,
+	                       DeviceScene *dscene,
+	                       Scene *scene,
+	                       ImageDataType type,
+	                       int slot,
+	                       Progress *progess);
+	void device_free_image(Device *device,
+	                       DeviceScene *dscene,
+	                       ImageDataType type,
+	                       int slot);
+
+	void device_pack_images(Device *device,
+	                        DeviceScene *dscene,
+	                        Progress& progess);
 };
 
 CCL_NAMESPACE_END

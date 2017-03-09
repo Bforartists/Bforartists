@@ -32,8 +32,9 @@ Attribute::~Attribute()
 	if(element == ATTR_ELEMENT_VOXEL) {
 		VoxelAttribute *voxel_data = data_voxel();
 
-		if(voxel_data)
+		if(voxel_data && voxel_data->slot != -1) {
 			voxel_data->manager->remove_image(voxel_data->slot);
+		}
 	}
 }
 
@@ -43,6 +44,7 @@ void Attribute::set(ustring name_, TypeDesc type_, AttributeElement element_)
 	type = type_;
 	element = element_;
 	std = ATTR_STD_NONE;
+	flags = 0;
 
 	/* string and matrix not supported! */
 	assert(type == TypeDesc::TypeFloat || type == TypeDesc::TypeColor ||
@@ -50,14 +52,19 @@ void Attribute::set(ustring name_, TypeDesc type_, AttributeElement element_)
 		type == TypeDesc::TypeNormal || type == TypeDesc::TypeMatrix);
 }
 
-void Attribute::reserve(int numverts, int numtris, int numsteps, int numcurves, int numkeys, bool resize)
+void Attribute::resize(Mesh *mesh, AttributePrimitive prim, bool reserve_only)
 {
-	if(resize) {
-		buffer.resize(buffer_size(numverts, numtris, numsteps, numcurves, numkeys), 0);
+	if(reserve_only) {
+		buffer.reserve(buffer_size(mesh, prim));
 	}
 	else {
-		buffer.reserve(buffer_size(numverts, numtris, numsteps, numcurves, numkeys));
+		buffer.resize(buffer_size(mesh, prim), 0);
 	}
+}
+
+void Attribute::resize(size_t num_elements)
+{
+	buffer.resize(num_elements * data_sizeof(), 0);
 }
 
 void Attribute::add(const float& f)
@@ -117,6 +124,8 @@ size_t Attribute::data_sizeof() const
 {
 	if(element == ATTR_ELEMENT_VOXEL)
 		return sizeof(VoxelAttribute);
+	else if(element == ATTR_ELEMENT_CORNER_BYTE)
+		return sizeof(uchar4);
 	else if(type == TypeDesc::TypeFloat)
 		return sizeof(float);
 	else if(type == TypeDesc::TypeMatrix)
@@ -125,10 +134,14 @@ size_t Attribute::data_sizeof() const
 		return sizeof(float3);
 }
 
-size_t Attribute::element_size(int numverts, int numtris, int numsteps, int numcurves, int numkeys) const
+size_t Attribute::element_size(Mesh *mesh, AttributePrimitive prim) const
 {
+	if(flags & ATTR_FINAL_SIZE) {
+		return buffer.size() / data_sizeof();
+	}
+
 	size_t size;
-	
+
 	switch(element) {
 		case ATTR_ELEMENT_OBJECT:
 		case ATTR_ELEMENT_MESH:
@@ -136,38 +149,54 @@ size_t Attribute::element_size(int numverts, int numtris, int numsteps, int numc
 			size = 1;
 			break;
 		case ATTR_ELEMENT_VERTEX:
-			size = numverts;
+			size = mesh->verts.size() + mesh->num_ngons;
+			if(prim == ATTR_PRIM_SUBD) {
+				size -= mesh->num_subd_verts;
+			}
 			break;
 		case ATTR_ELEMENT_VERTEX_MOTION:
-			size = numverts * (numsteps - 1);
+			size = (mesh->verts.size() + mesh->num_ngons) * (mesh->motion_steps - 1);
+			if(prim == ATTR_PRIM_SUBD) {
+				size -= mesh->num_subd_verts * (mesh->motion_steps - 1);
+			}
 			break;
 		case ATTR_ELEMENT_FACE:
-			size = numtris;
+			if(prim == ATTR_PRIM_TRIANGLE) {
+				size = mesh->num_triangles();
+			}
+			else {
+				size = mesh->subd_faces.size() + mesh->num_ngons;
+			}
 			break;
 		case ATTR_ELEMENT_CORNER:
 		case ATTR_ELEMENT_CORNER_BYTE:
-			size = numtris*3;
+			if(prim == ATTR_PRIM_TRIANGLE) {
+				size = mesh->num_triangles()*3;
+			}
+			else {
+				size = mesh->subd_face_corners.size() + mesh->num_ngons;
+			}
 			break;
 		case ATTR_ELEMENT_CURVE:
-			size = numcurves;
+			size = mesh->num_curves();
 			break;
 		case ATTR_ELEMENT_CURVE_KEY:
-			size = numkeys;
+			size = mesh->curve_keys.size();
 			break;
 		case ATTR_ELEMENT_CURVE_KEY_MOTION:
-			size = numkeys * (numsteps - 1);
+			size = mesh->curve_keys.size() * (mesh->motion_steps - 1);
 			break;
 		default:
 			size = 0;
 			break;
 	}
-	
+
 	return size;
 }
 
-size_t Attribute::buffer_size(int numverts, int numtris, int numsteps, int numcurves, int numkeys) const
+size_t Attribute::buffer_size(Mesh *mesh, AttributePrimitive prim) const
 {
-	return element_size(numverts, numtris, numsteps, numcurves, numkeys)*data_sizeof();
+	return element_size(mesh, prim)*data_sizeof();
 }
 
 bool Attribute::same_storage(TypeDesc a, TypeDesc b)
@@ -185,6 +214,29 @@ bool Attribute::same_storage(TypeDesc a, TypeDesc b)
 		}
 	}
 	return false;
+}
+
+void Attribute::zero_data(void* dst)
+{
+	memset(dst, 0, data_sizeof());
+}
+
+void Attribute::add_with_weight(void* dst, void* src, float weight)
+{
+	if(element == ATTR_ELEMENT_CORNER_BYTE) {
+		for(int i = 0; i < 4; i++) {
+			((uchar*)dst)[i] += uchar(((uchar*)src)[i] * weight);
+		}
+	}
+	else if(same_storage(type, TypeDesc::TypeFloat)) {
+		*((float*)dst) += *((float*)src) * weight;
+	}
+	else if(same_storage(type, TypeDesc::TypeVector)) {
+		*((float4*)dst) += *((float4*)src) * weight;
+	}
+	else {
+		assert(!"not implemented for this type");
+	}
 }
 
 const char *Attribute::standard_name(AttributeStandard std)
@@ -256,13 +308,14 @@ AttributeSet::AttributeSet()
 {
 	triangle_mesh = NULL;
 	curve_mesh = NULL;
+	subd_mesh = NULL;
 }
 
 AttributeSet::~AttributeSet()
 {
 }
 
-Attribute *AttributeSet::add(ustring name, TypeDesc type, AttributeElement element, bool resize)
+Attribute *AttributeSet::add(ustring name, TypeDesc type, AttributeElement element)
 {
 	Attribute *attr = find(name);
 
@@ -290,10 +343,12 @@ Attribute *AttributeSet::add(ustring name, TypeDesc type, AttributeElement eleme
 
 	/* this is weak .. */
 	if(triangle_mesh)
-		attr->reserve(triangle_mesh->verts.size(), triangle_mesh->triangles.size(), triangle_mesh->motion_steps, 0, 0, resize);
+		attr->resize(triangle_mesh, ATTR_PRIM_TRIANGLE, false);
 	if(curve_mesh)
-		attr->reserve(0, 0, curve_mesh->motion_steps, curve_mesh->curves.size(), curve_mesh->curve_keys.size(), resize);
-	
+		attr->resize(curve_mesh, ATTR_PRIM_CURVE, false);
+	if(subd_mesh)
+		attr->resize(subd_mesh, ATTR_PRIM_SUBD, false);
+
 	return attr;
 }
 
@@ -329,7 +384,7 @@ Attribute *AttributeSet::add(AttributeStandard std, ustring name)
 	if(name == ustring())
 		name = Attribute::standard_name(std);
 
-	if(triangle_mesh) {
+	if(triangle_mesh || subd_mesh) {
 		switch(std) {
 			case ATTR_STD_VERTEX_NORMAL:
 				attr = add(name, TypeDesc::TypeNormal, ATTR_ELEMENT_VERTEX);
@@ -447,13 +502,15 @@ Attribute *AttributeSet::find(AttributeRequest& req)
 		return find(req.std);
 }
 
-void AttributeSet::reserve()
+void AttributeSet::resize(bool reserve_only)
 {
 	foreach(Attribute& attr, attributes) {
 		if(triangle_mesh)
-			attr.reserve(triangle_mesh->verts.size(), triangle_mesh->triangles.size(), triangle_mesh->motion_steps, 0, 0, true);
+			attr.resize(triangle_mesh, ATTR_PRIM_TRIANGLE, reserve_only);
 		if(curve_mesh)
-			attr.reserve(0, 0, 0, curve_mesh->curves.size(), curve_mesh->curve_keys.size(), true);
+			attr.resize(curve_mesh, ATTR_PRIM_CURVE, reserve_only);
+		if(subd_mesh)
+			attr.resize(subd_mesh, ATTR_PRIM_SUBD, reserve_only);
 	}
 }
 
@@ -470,12 +527,19 @@ AttributeRequest::AttributeRequest(ustring name_)
 	std = ATTR_STD_NONE;
 
 	triangle_type = TypeDesc::TypeFloat;
-	triangle_element = ATTR_ELEMENT_NONE;
-	triangle_offset = 0;
+	triangle_desc.element = ATTR_ELEMENT_NONE;
+	triangle_desc.offset = 0;
+	triangle_desc.type = NODE_ATTR_FLOAT;
 
 	curve_type = TypeDesc::TypeFloat;
-	curve_element = ATTR_ELEMENT_NONE;
-	curve_offset = 0;
+	curve_desc.element = ATTR_ELEMENT_NONE;
+	curve_desc.offset = 0;
+	curve_desc.type = NODE_ATTR_FLOAT;
+
+	subd_type = TypeDesc::TypeFloat;
+	subd_desc.element = ATTR_ELEMENT_NONE;
+	subd_desc.offset = 0;
+	subd_desc.type = NODE_ATTR_FLOAT;
 }
 
 AttributeRequest::AttributeRequest(AttributeStandard std_)
@@ -484,12 +548,19 @@ AttributeRequest::AttributeRequest(AttributeStandard std_)
 	std = std_;
 
 	triangle_type = TypeDesc::TypeFloat;
-	triangle_element = ATTR_ELEMENT_NONE;
-	triangle_offset = 0;
+	triangle_desc.element = ATTR_ELEMENT_NONE;
+	triangle_desc.offset = 0;
+	triangle_desc.type = NODE_ATTR_FLOAT;
 
 	curve_type = TypeDesc::TypeFloat;
-	curve_element = ATTR_ELEMENT_NONE;
-	curve_offset = 0;
+	curve_desc.element = ATTR_ELEMENT_NONE;
+	curve_desc.offset = 0;
+	curve_desc.type = NODE_ATTR_FLOAT;
+
+	subd_type = TypeDesc::TypeFloat;
+	subd_desc.element = ATTR_ELEMENT_NONE;
+	subd_desc.offset = 0;
+	subd_desc.type = NODE_ATTR_FLOAT;
 }
 
 /* AttributeRequestSet */

@@ -154,6 +154,24 @@ void invert_qt_qt(float q1[4], const float q2[4])
 	invert_qt(q1);
 }
 
+/**
+ * This is just conjugate_qt for cases we know \a q is unit-length.
+ * we could use #conjugate_qt directly, but use this function to show intent,
+ * and assert if its ever becomes non-unit-length.
+ */
+void invert_qt_normalized(float q[4])
+{
+	BLI_ASSERT_UNIT_QUAT(q);
+	conjugate_qt(q);
+
+}
+
+void invert_qt_qt_normalized(float q1[4], const float q2[4])
+{
+	copy_qt_qt(q1, q2);
+	invert_qt_normalized(q1);
+}
+
 /* simple mult */
 void mul_qt_fl(float q[4], const float f)
 {
@@ -182,8 +200,7 @@ void mul_fac_qt_fl(float q[4], const float fac)
 	const float co = cosf(angle);
 	const float si = sinf(angle);
 	q[0] = co;
-	normalize_v3(q + 1);
-	mul_v3_fl(q + 1, si);
+	normalize_v3_length(q + 1, si);
 }
 
 /* skip error check, currently only needed by mat3_to_quat_is_ok */
@@ -275,14 +292,11 @@ void quat_to_mat4(float m[4][4], const float q[4])
 	m[3][3] = 1.0f;
 }
 
-void mat3_to_quat(float q[4], float wmat[3][3])
+void mat3_normalized_to_quat(float q[4], float mat[3][3])
 {
 	double tr, s;
-	float mat[3][3];
 
-	/* work on a copy */
-	copy_m3_m3(mat, wmat);
-	normalize_m3(mat); /* this is needed AND a 'normalize_qt' in the end */
+	BLI_ASSERT_UNIT_M3(mat);
 
 	tr = 0.25 * (double)(1.0f + mat[0][0] + mat[1][1] + mat[2][2]);
 
@@ -326,13 +340,30 @@ void mat3_to_quat(float q[4], float wmat[3][3])
 
 	normalize_qt(q);
 }
+void mat3_to_quat(float q[4], float m[3][3])
+{
+	float unit_mat[3][3];
+
+	/* work on a copy */
+	/* this is needed AND a 'normalize_qt' in the end */
+	normalize_m3_m3(unit_mat, m);
+	mat3_normalized_to_quat(q, unit_mat);
+}
+
+void mat4_normalized_to_quat(float q[4], float m[4][4])
+{
+	float mat3[3][3];
+
+	copy_m3_m4(mat3, m);
+	mat3_normalized_to_quat(q, mat3);
+}
 
 void mat4_to_quat(float q[4], float m[4][4])
 {
-	float mat[3][3];
+	float mat3[3][3];
 
-	copy_m3_m4(mat, m);
-	mat3_to_quat(q, mat);
+	copy_m3_m4(mat3, m);
+	mat3_to_quat(q, mat3);
 }
 
 void mat3_to_quat_is_ok(float q[4], float wmat[3][3])
@@ -936,7 +967,16 @@ void axis_angle_to_mat4(float mat[4][4], const float axis[3], const float angle)
 	copy_m4_m3(mat, tmat);
 }
 
-/* 3x3 matrix to axis angle (see Mat4ToVecRot too) */
+/* 3x3 matrix to axis angle */
+void mat3_normalized_to_axis_angle(float axis[3], float *angle, float mat[3][3])
+{
+	float q[4];
+
+	/* use quaternions as intermediate representation */
+	/* TODO: it would be nicer to go straight there... */
+	mat3_normalized_to_quat(q, mat);
+	quat_to_axis_angle(axis, angle, q);
+}
 void mat3_to_axis_angle(float axis[3], float *angle, float mat[3][3])
 {
 	float q[4];
@@ -947,7 +987,18 @@ void mat3_to_axis_angle(float axis[3], float *angle, float mat[3][3])
 	quat_to_axis_angle(axis, angle, q);
 }
 
-/* 4x4 matrix to axis angle (see Mat4ToVecRot too) */
+/* 4x4 matrix to axis angle */
+void mat4_normalized_to_axis_angle(float axis[3], float *angle, float mat[4][4])
+{
+	float q[4];
+
+	/* use quaternions as intermediate representation */
+	/* TODO: it would be nicer to go straight there... */
+	mat4_normalized_to_quat(q, mat);
+	quat_to_axis_angle(axis, angle, q);
+}
+
+/* 4x4 matrix to axis angle */
 void mat4_to_axis_angle(float axis[3], float *angle, float mat[4][4])
 {
 	float q[4];
@@ -956,6 +1007,13 @@ void mat4_to_axis_angle(float axis[3], float *angle, float mat[4][4])
 	/* TODO: it would be nicer to go straight there... */
 	mat4_to_quat(q, mat);
 	quat_to_axis_angle(axis, angle, q);
+}
+
+void axis_angle_to_mat4_single(float mat[4][4], const char axis, const float angle)
+{
+	float mat3[3][3];
+	axis_angle_to_mat3_single(mat3, axis, angle);
+	copy_m4_m3(mat, mat3);
 }
 
 /* rotation matrix from a single axis */
@@ -1014,6 +1072,20 @@ void angle_to_mat2(float mat[2][2], const float angle)
 	mat[0][1] =  angle_sin;
 	mat[1][0] = -angle_sin;
 	mat[1][1] =  angle_cos;
+}
+
+void axis_angle_to_quat_single(float q[4], const char axis, const float angle)
+{
+	const float angle_half = angle * 0.5f;
+	const float angle_cos = cosf(angle_half);
+	const float angle_sin = sinf(angle_half);
+	const int axis_index = (axis - 'X');
+
+	assert(axis >= 'X' && axis <= 'Z');
+
+	q[0] = angle_cos;
+	zero_v3(q + 1);
+	q[axis_index + 1] = angle_sin;
 }
 
 /****************************** Exponential Map ******************************/
@@ -1115,15 +1187,11 @@ void eul_to_mat4(float mat[4][4], const float eul[3])
 /* returns two euler calculation methods, so we can pick the best */
 
 /* XYZ order */
-static void mat3_to_eul2(float tmat[3][3], float eul1[3], float eul2[3])
+static void mat3_normalized_to_eul2(const float mat[3][3], float eul1[3], float eul2[3])
 {
-	float cy, quat[4], mat[3][3];
+	const float cy = hypotf(mat[0][0], mat[0][1]);
 
-	mat3_to_quat(quat, tmat);
-	quat_to_mat3(mat, quat);
-	normalize_m3_m3(mat, tmat);
-
-	cy = hypotf(mat[0][0], mat[0][1]);
+	BLI_ASSERT_UNIT_M3(mat);
 
 	if (cy > 16.0f * FLT_EPSILON) {
 
@@ -1146,11 +1214,11 @@ static void mat3_to_eul2(float tmat[3][3], float eul1[3], float eul2[3])
 }
 
 /* XYZ order */
-void mat3_to_eul(float *eul, float tmat[3][3])
+void mat3_normalized_to_eul(float eul[3], float mat[3][3])
 {
 	float eul1[3], eul2[3];
 
-	mat3_to_eul2(tmat, eul1, eul2);
+	mat3_normalized_to_eul2(mat, eul1, eul2);
 
 	/* return best, which is just the one with lowest values it in */
 	if (fabsf(eul1[0]) + fabsf(eul1[1]) + fabsf(eul1[2]) > fabsf(eul2[0]) + fabsf(eul2[1]) + fabsf(eul2[2])) {
@@ -1160,24 +1228,33 @@ void mat3_to_eul(float *eul, float tmat[3][3])
 		copy_v3_v3(eul, eul1);
 	}
 }
-
-/* XYZ order */
-void mat4_to_eul(float *eul, float tmat[4][4])
+void mat3_to_eul(float eul[3], float mat[3][3])
 {
-	float tempMat[3][3];
-
-	copy_m3_m4(tempMat, tmat);
-	normalize_m3(tempMat);
-	mat3_to_eul(eul, tempMat);
+	float unit_mat[3][3];
+	normalize_m3_m3(unit_mat, mat);
+	mat3_normalized_to_eul(eul, unit_mat);
 }
 
 /* XYZ order */
-void quat_to_eul(float *eul, const float quat[4])
+void mat4_normalized_to_eul(float eul[3], float m[4][4])
 {
-	float mat[3][3];
+	float mat3[3][3];
+	copy_m3_m4(mat3, m);
+	mat3_normalized_to_eul(eul, mat3);
+}
+void mat4_to_eul(float eul[3], float m[4][4])
+{
+	float mat3[3][3];
+	copy_m3_m4(mat3, m);
+	mat3_to_eul(eul, mat3);
+}
 
-	quat_to_mat3(mat, quat);
-	mat3_to_eul(eul, mat);
+/* XYZ order */
+void quat_to_eul(float eul[3], const float quat[4])
+{
+	float unit_mat[3][3];
+	quat_to_mat3(unit_mat, quat);
+	mat3_normalized_to_eul(eul, unit_mat);
 }
 
 /* XYZ order */
@@ -1267,12 +1344,12 @@ void compatible_eul(float eul[3], const float oldrot[3])
 /* uses 2 methods to retrieve eulers, and picks the closest */
 
 /* XYZ order */
-void mat3_to_compatible_eul(float eul[3], const float oldrot[3], float mat[3][3])
+void mat3_normalized_to_compatible_eul(float eul[3], const float oldrot[3], float mat[3][3])
 {
 	float eul1[3], eul2[3];
 	float d1, d2;
 
-	mat3_to_eul2(mat, eul1, eul2);
+	mat3_normalized_to_eul2(mat, eul1, eul2);
 
 	compatible_eul(eul1, oldrot);
 	compatible_eul(eul2, oldrot);
@@ -1287,6 +1364,19 @@ void mat3_to_compatible_eul(float eul[3], const float oldrot[3], float mat[3][3]
 	else {
 		copy_v3_v3(eul, eul1);
 	}
+}
+void mat3_to_compatible_eul(float eul[3], const float oldrot[3], float mat[3][3])
+{
+	float unit_mat[3][3];
+	normalize_m3_m3(unit_mat, mat);
+	mat3_normalized_to_compatible_eul(eul, oldrot, unit_mat);
+}
+
+void quat_to_compatible_eul(float eul[3], const float oldrot[3], const float quat[4])
+{
+	float unit_mat[3][3];
+	quat_to_mat3(unit_mat, quat);
+	mat3_normalized_to_compatible_eul(eul, oldrot, unit_mat);
 }
 
 /************************** Arbitrary Order Eulers ***************************/
@@ -1373,10 +1463,10 @@ void eulO_to_quat(float q[4], const float e[3], const short order)
 /* Convert quaternion to Euler angles (in radians). */
 void quat_to_eulO(float e[3], short const order, const float q[4])
 {
-	float M[3][3];
+	float unit_mat[3][3];
 
-	quat_to_mat3(M, q);
-	mat3_to_eulO(e, order, M);
+	quat_to_mat3(unit_mat, q);
+	mat3_normalized_to_eulO(e, order, unit_mat);
 }
 
 /* Construct 3x3 matrix from Euler angles (in radians). */
@@ -1421,15 +1511,13 @@ void eulO_to_mat3(float M[3][3], const float e[3], const short order)
 }
 
 /* returns two euler calculation methods, so we can pick the best */
-static void mat3_to_eulo2(float M[3][3], float eul1[3], float eul2[3], const short order)
+static void mat3_normalized_to_eulo2(float mat[3][3], float eul1[3], float eul2[3], const short order)
 {
 	const RotOrderInfo *R = get_rotation_order_info(order);
 	short i = R->axis[0], j = R->axis[1], k = R->axis[2];
-	float mat[3][3];
 	float cy;
 
-	/* process the matrix first */
-	normalize_m3_m3(mat, M);
+	BLI_ASSERT_UNIT_M3(mat);
 
 	cy = hypotf(mat[i][i], mat[i][j]);
 
@@ -1457,23 +1545,22 @@ static void mat3_to_eulo2(float M[3][3], float eul1[3], float eul2[3], const sho
 }
 
 /* Construct 4x4 matrix from Euler angles (in radians). */
-void eulO_to_mat4(float M[4][4], const float e[3], const short order)
+void eulO_to_mat4(float mat[4][4], const float e[3], const short order)
 {
-	float m[3][3];
+	float unit_mat[3][3];
 
 	/* for now, we'll just do this the slow way (i.e. copying matrices) */
-	normalize_m3(m);
-	eulO_to_mat3(m, e, order);
-	copy_m4_m3(M, m);
+	eulO_to_mat3(unit_mat, e, order);
+	copy_m4_m3(mat, unit_mat);
 }
 
 /* Convert 3x3 matrix to Euler angles (in radians). */
-void mat3_to_eulO(float eul[3], const short order, float M[3][3])
+void mat3_normalized_to_eulO(float eul[3], const short order, float m[3][3])
 {
 	float eul1[3], eul2[3];
 	float d1, d2;
 
-	mat3_to_eulo2(M, eul1, eul2, order);
+	mat3_normalized_to_eulo2(m, eul1, eul2, order);
 
 	d1 = fabsf(eul1[0]) + fabsf(eul1[1]) + fabsf(eul1[2]);
 	d2 = fabsf(eul2[0]) + fabsf(eul2[1]) + fabsf(eul2[2]);
@@ -1486,25 +1573,39 @@ void mat3_to_eulO(float eul[3], const short order, float M[3][3])
 		copy_v3_v3(eul, eul1);
 	}
 }
-
-/* Convert 4x4 matrix to Euler angles (in radians). */
-void mat4_to_eulO(float e[3], const short order, float M[4][4])
+void mat3_to_eulO(float eul[3], const short order, float m[3][3])
 {
-	float m[3][3];
-
-	/* for now, we'll just do this the slow way (i.e. copying matrices) */
-	copy_m3_m4(m, M);
-	normalize_m3(m);
-	mat3_to_eulO(e, order, m);
+	float unit_mat[3][3];
+	normalize_m3_m3(unit_mat, m);
+	mat3_normalized_to_eulO(eul, order, unit_mat);
 }
 
+/* Convert 4x4 matrix to Euler angles (in radians). */
+void mat4_normalized_to_eulO(float eul[3], const short order, float m[4][4])
+{
+	float mat3[3][3];
+
+	/* for now, we'll just do this the slow way (i.e. copying matrices) */
+	copy_m3_m4(mat3, m);
+	mat3_normalized_to_eulO(eul, order, mat3);
+}
+
+void mat4_to_eulO(float eul[3], const short order, float m[4][4])
+{
+	float mat3[3][3];
+	copy_m3_m4(mat3, m);
+	normalize_m3(mat3);
+	mat3_normalized_to_eulO(eul, order, mat3);
+}
+
+
 /* uses 2 methods to retrieve eulers, and picks the closest */
-void mat3_to_compatible_eulO(float eul[3], float oldrot[3], const short order, float mat[3][3])
+void mat3_normalized_to_compatible_eulO(float eul[3], float oldrot[3], const short order, float mat[3][3])
 {
 	float eul1[3], eul2[3];
 	float d1, d2;
 
-	mat3_to_eulo2(mat, eul1, eul2, order);
+	mat3_normalized_to_eulo2(mat, eul1, eul2, order);
 
 	compatible_eul(eul1, oldrot);
 	compatible_eul(eul2, oldrot);
@@ -1520,16 +1621,40 @@ void mat3_to_compatible_eulO(float eul[3], float oldrot[3], const short order, f
 		copy_v3_v3(eul, eul1);
 	}
 }
-
-void mat4_to_compatible_eulO(float eul[3], float oldrot[3], const short order, float M[4][4])
+void mat3_to_compatible_eulO(float eul[3], float oldrot[3], const short order, float mat[3][3])
 {
-	float m[3][3];
+	float unit_mat[3][3];
+
+	normalize_m3_m3(unit_mat, mat);
+	mat3_normalized_to_compatible_eulO(eul, oldrot, order, unit_mat);
+}
+
+void mat4_normalized_to_compatible_eulO(float eul[3], float oldrot[3], const short order, float m[4][4])
+{
+	float mat3[3][3];
 
 	/* for now, we'll just do this the slow way (i.e. copying matrices) */
-	copy_m3_m4(m, M);
-	normalize_m3(m);
-	mat3_to_compatible_eulO(eul, oldrot, order, m);
+	copy_m3_m4(mat3, m);
+	mat3_normalized_to_compatible_eulO(eul, oldrot, order, mat3);
 }
+void mat4_to_compatible_eulO(float eul[3], float oldrot[3], const short order, float m[4][4])
+{
+	float mat3[3][3];
+
+	/* for now, we'll just do this the slow way (i.e. copying matrices) */
+	copy_m3_m4(mat3, m);
+	normalize_m3(mat3);
+	mat3_normalized_to_compatible_eulO(eul, oldrot, order, mat3);
+}
+
+void quat_to_compatible_eulO(float eul[3], float oldrot[3], const short order, const float quat[4])
+{
+	float unit_mat[3][3];
+
+	quat_to_mat3(unit_mat, quat);
+	mat3_normalized_to_compatible_eulO(eul, oldrot, order, unit_mat);
+}
+
 /* rotate the given euler by the given angle on the specified axis */
 /* NOTE: is this safe to do with different axis orders? */
 
@@ -1631,7 +1756,7 @@ void mat4_to_dquat(DualQuat *dq, float basemat[4][4], float mat[4][4])
 
 	copy_m3_m4(mat3, mat);
 
-	if (!is_orthonormal_m3(mat3) || (determinant_m4(mat) < 0.0f) || len_v3(dscale) > 1e-4f) {
+	if (!is_orthonormal_m3(mat3) || (determinant_m4(mat) < 0.0f) || len_squared_v3(dscale) > SQUARE(1e-4f)) {
 		/* extract R and S  */
 		float tmp[4][4];
 

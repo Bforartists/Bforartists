@@ -44,13 +44,13 @@
 #include "WM_api.h"
 
 /* matching fnction in rna_ID.c */
-static int rna_VectorFont_filepath_editable(PointerRNA *ptr)
+static int rna_VectorFont_filepath_editable(PointerRNA *ptr, const char **UNUSED(r_info))
 {
 	VFont *vfont = ptr->id.data;
 	if (BKE_vfont_is_builtin(vfont)) {
-		return false;
+		return 0;
 	}
-	return true;
+	return PROP_EDITABLE;
 }
 
 static void rna_VectorFont_reload_update(Main *UNUSED(bmain), Scene *UNUSED(scene), PointerRNA *ptr)

@@ -58,9 +58,12 @@
 #include "BKE_animsys.h"
 #include "BKE_displist.h"
 #include "BKE_global.h"
+#include "BKE_depsgraph.h"
 #include "BKE_icons.h"
 #include "BKE_image.h"
 #include "BKE_library.h"
+#include "BKE_library_query.h"
+#include "BKE_library_remap.h"
 #include "BKE_main.h"
 #include "BKE_material.h"
 #include "BKE_mesh.h"
@@ -78,52 +81,42 @@ Material defmaterial;
 /* called on startup, creator.c */
 void init_def_material(void)
 {
-	init_material(&defmaterial);
+	BKE_material_init(&defmaterial);
 }
 
-/* not material itself */
+/** Free (or release) any data used by this material (does not free the material itself). */
 void BKE_material_free(Material *ma)
 {
-	BKE_material_free_ex(ma, true);
-}
-
-/* not material itself */
-void BKE_material_free_ex(Material *ma, bool do_id_user)
-{
-	MTex *mtex;
 	int a;
+
+	BKE_animdata_free((ID *)ma, false);
 	
 	for (a = 0; a < MAX_MTEX; a++) {
-		mtex = ma->mtex[a];
-		if (do_id_user && mtex && mtex->tex) mtex->tex->id.us--;
-		if (mtex) MEM_freeN(mtex);
+		MEM_SAFE_FREE(ma->mtex[a]);
 	}
 	
-	if (ma->ramp_col) MEM_freeN(ma->ramp_col);
-	if (ma->ramp_spec) MEM_freeN(ma->ramp_spec);
-	
-	BKE_animdata_free((ID *)ma);
-	
-	if (ma->preview)
-		BKE_previewimg_free(&ma->preview);
-	BKE_icon_id_delete((struct ID *)ma);
-	ma->id.icon_id = 0;
+	MEM_SAFE_FREE(ma->ramp_col);
+	MEM_SAFE_FREE(ma->ramp_spec);
 	
 	/* is no lib link block, but material extension */
 	if (ma->nodetree) {
-		ntreeFreeTree_ex(ma->nodetree, do_id_user);
+		ntreeFreeTree(ma->nodetree);
 		MEM_freeN(ma->nodetree);
+		ma->nodetree = NULL;
 	}
 
-	if (ma->texpaintslot)
-		MEM_freeN(ma->texpaintslot);
+	MEM_SAFE_FREE(ma->texpaintslot);
 
-	if (ma->gpumaterial.first)
-		GPU_material_free(&ma->gpumaterial);
+	GPU_material_free(&ma->gpumaterial);
+
+	BKE_icon_id_delete((ID *)ma);
+	BKE_previewimg_free(&ma->preview);
 }
 
-void init_material(Material *ma)
+void BKE_material_init(Material *ma)
 {
+	BLI_assert(MEMCMP_STRUCT_OFS_IS_ZERO(ma, id));
+
 	ma->r = ma->g = ma->b = ma->ref = 0.8;
 	ma->specr = ma->specg = ma->specb = 1.0;
 	ma->mirr = ma->mirg = ma->mirb = 1.0;
@@ -221,18 +214,18 @@ Material *BKE_material_add(Main *bmain, const char *name)
 
 	ma = BKE_libblock_alloc(bmain, ID_MA, name);
 	
-	init_material(ma);
+	BKE_material_init(ma);
 	
 	return ma;
 }
 
 /* XXX keep synced with next function */
-Material *BKE_material_copy(Material *ma)
+Material *BKE_material_copy(Main *bmain, Material *ma)
 {
 	Material *man;
 	int a;
 	
-	man = BKE_libblock_copy(&ma->id);
+	man = BKE_libblock_copy(bmain, &ma->id);
 	
 	id_lib_extern((ID *)man->group);
 	
@@ -247,17 +240,15 @@ Material *BKE_material_copy(Material *ma)
 	if (ma->ramp_col) man->ramp_col = MEM_dupallocN(ma->ramp_col);
 	if (ma->ramp_spec) man->ramp_spec = MEM_dupallocN(ma->ramp_spec);
 	
-	if (ma->preview) man->preview = BKE_previewimg_copy(ma->preview);
-
 	if (ma->nodetree) {
-		man->nodetree = ntreeCopyTree(ma->nodetree);
+		man->nodetree = ntreeCopyTree(bmain, ma->nodetree);
 	}
+
+	BKE_previewimg_id_copy(&man->id, &ma->id);
 
 	BLI_listbase_clear(&man->gpumaterial);
-	
-	if (ma->id.lib) {
-		BKE_id_lib_local_paths(G.main, ma->id.lib, &man->id);
-	}
+
+	BKE_id_copy_ensure_local(bmain, &ma->id, &man->id);
 
 	return man;
 }
@@ -292,181 +283,9 @@ Material *localize_material(Material *ma)
 	return man;
 }
 
-static void extern_local_material(Material *ma)
+void BKE_material_make_local(Main *bmain, Material *ma, const bool lib_local)
 {
-	int i;
-	for (i = 0; i < MAX_MTEX; i++) {
-		if (ma->mtex[i]) id_lib_extern((ID *)ma->mtex[i]->tex);
-	}
-}
-
-void BKE_material_make_local(Material *ma)
-{
-	Main *bmain = G.main;
-	Object *ob;
-	Mesh *me;
-	Curve *cu;
-	MetaBall *mb;
-	int a;
-	bool is_local = false, is_lib = false;
-
-	/* - only lib users: do nothing
-	 * - only local users: set flag
-	 * - mixed: make copy
-	 */
-	
-	if (ma->id.lib == NULL) return;
-
-	/* One local user; set flag and return. */
-	if (ma->id.us == 1) {
-		id_clear_lib_data(bmain, &ma->id);
-		extern_local_material(ma);
-		return;
-	}
-
-	/* Check which other IDs reference this one to determine if it's used by
-	 * lib or local */
-	/* test objects */
-	ob = bmain->object.first;
-	while (ob) {
-		if (ob->mat) {
-			for (a = 0; a < ob->totcol; a++) {
-				if (ob->mat[a] == ma) {
-					if (ob->id.lib) is_lib = true;
-					else is_local = true;
-				}
-			}
-		}
-		ob = ob->id.next;
-	}
-	/* test meshes */
-	me = bmain->mesh.first;
-	while (me) {
-		if (me->mat) {
-			for (a = 0; a < me->totcol; a++) {
-				if (me->mat[a] == ma) {
-					if (me->id.lib) is_lib = true;
-					else is_local = true;
-				}
-			}
-		}
-		me = me->id.next;
-	}
-	/* test curves */
-	cu = bmain->curve.first;
-	while (cu) {
-		if (cu->mat) {
-			for (a = 0; a < cu->totcol; a++) {
-				if (cu->mat[a] == ma) {
-					if (cu->id.lib) is_lib = true;
-					else is_local = true;
-				}
-			}
-		}
-		cu = cu->id.next;
-	}
-	/* test mballs */
-	mb = bmain->mball.first;
-	while (mb) {
-		if (mb->mat) {
-			for (a = 0; a < mb->totcol; a++) {
-				if (mb->mat[a] == ma) {
-					if (mb->id.lib) is_lib = true;
-					else is_local = true;
-				}
-			}
-		}
-		mb = mb->id.next;
-	}
-
-	/* Only local users. */
-	if (is_local && is_lib == false) {
-		id_clear_lib_data(bmain, &ma->id);
-		extern_local_material(ma);
-	}
-	/* Both user and local, so copy. */
-	else if (is_local && is_lib) {
-		Material *ma_new = BKE_material_copy(ma);
-
-		ma_new->id.us = 0;
-
-		/* Remap paths of new ID using old library as base. */
-		BKE_id_lib_local_paths(bmain, ma->id.lib, &ma_new->id);
-
-		/* do objects */
-		ob = bmain->object.first;
-		while (ob) {
-			if (ob->mat) {
-				for (a = 0; a < ob->totcol; a++) {
-					if (ob->mat[a] == ma) {
-						if (ob->id.lib == NULL) {
-							ob->mat[a] = ma_new;
-							ma_new->id.us++;
-							ma->id.us--;
-						}
-					}
-				}
-			}
-			ob = ob->id.next;
-		}
-		/* do meshes */
-		me = bmain->mesh.first;
-		while (me) {
-			if (me->mat) {
-				for (a = 0; a < me->totcol; a++) {
-					if (me->mat[a] == ma) {
-						if (me->id.lib == NULL) {
-							me->mat[a] = ma_new;
-							ma_new->id.us++;
-							ma->id.us--;
-						}
-					}
-				}
-			}
-			me = me->id.next;
-		}
-		/* do curves */
-		cu = bmain->curve.first;
-		while (cu) {
-			if (cu->mat) {
-				for (a = 0; a < cu->totcol; a++) {
-					if (cu->mat[a] == ma) {
-						if (cu->id.lib == NULL) {
-							cu->mat[a] = ma_new;
-							ma_new->id.us++;
-							ma->id.us--;
-						}
-					}
-				}
-			}
-			cu = cu->id.next;
-		}
-		/* do mballs */
-		mb = bmain->mball.first;
-		while (mb) {
-			if (mb->mat) {
-				for (a = 0; a < mb->totcol; a++) {
-					if (mb->mat[a] == ma) {
-						if (mb->id.lib == NULL) {
-							mb->mat[a] = ma_new;
-							ma_new->id.us++;
-							ma->id.us--;
-						}
-					}
-				}
-			}
-			mb = mb->id.next;
-		}
-	}
-}
-
-/* for curve, mball, mesh types */
-void extern_local_matarar(struct Material **matar, short totcol)
-{
-	short i;
-	for (i = 0; i < totcol; i++) {
-		id_lib_extern((ID *)matar[i]);
-	}
+	BKE_id_make_local_generic(bmain, &ma->id, true, lib_local);
 }
 
 Material ***give_matarar(Object *ob)
@@ -580,7 +399,7 @@ static void material_data_index_clear_id(ID *id)
 	}
 }
 
-void BKE_material_resize_id(struct ID *id, short totcol, bool do_id_user)
+void BKE_material_resize_id(Main *bmain, ID *id, short totcol, bool do_id_user)
 {
 	Material ***matar = give_matarar_id(id);
 	short *totcolp = give_totcolp_id(id);
@@ -606,9 +425,11 @@ void BKE_material_resize_id(struct ID *id, short totcol, bool do_id_user)
 		*matar = MEM_recallocN(*matar, sizeof(void *) * totcol);
 	}
 	*totcolp = totcol;
+
+	DAG_relations_tag_update(bmain);
 }
 
-void BKE_material_append_id(ID *id, Material *ma)
+void BKE_material_append_id(Main *bmain, ID *id, Material *ma)
 {
 	Material ***matar;
 	if ((matar = give_matarar_id(id))) {
@@ -621,11 +442,12 @@ void BKE_material_append_id(ID *id, Material *ma)
 		(*matar)[(*totcol)++] = ma;
 
 		id_us_plus((ID *)ma);
-		test_object_materials(G.main, id);
+		test_all_objects_materials(bmain, id);
+		DAG_relations_tag_update(bmain);
 	}
 }
 
-Material *BKE_material_pop_id(ID *id, int index_i, bool update_data)
+Material *BKE_material_pop_id(Main *bmain, ID *id, int index_i, bool update_data)
 {
 	short index = (short)index_i;
 	Material *ret = NULL;
@@ -647,24 +469,30 @@ Material *BKE_material_pop_id(ID *id, int index_i, bool update_data)
 
 				(*totcol)--;
 				*matar = MEM_reallocN(*matar, sizeof(void *) * (*totcol));
-				test_object_materials(G.main, id);
+				test_all_objects_materials(G.main, id);
 			}
 
 			if (update_data) {
 				/* decrease mat_nr index */
 				material_data_index_remove_id(id, index);
 			}
+
+			DAG_relations_tag_update(bmain);
 		}
 	}
 	
 	return ret;
 }
 
-void BKE_material_clear_id(struct ID *id, bool update_data)
+void BKE_material_clear_id(Main *bmain, ID *id, bool update_data)
 {
 	Material ***matar;
 	if ((matar = give_matarar_id(id))) {
 		short *totcol = give_totcolp_id(id);
+
+		while ((*totcol)--) {
+			id_us_min((ID *)((*matar)[*totcol]));
+		}
 		*totcol = 0;
 		if (*matar) {
 			MEM_freeN(*matar);
@@ -675,6 +503,8 @@ void BKE_material_clear_id(struct ID *id, bool update_data)
 			/* decrease mat_nr index */
 			material_data_index_clear_id(id);
 		}
+
+		DAG_relations_tag_update(bmain);
 	}
 }
 
@@ -719,18 +549,6 @@ Material *give_current_material(Object *ob, short act)
 	return ma;
 }
 
-ID *material_from(Object *ob, short act)
-{
-
-	if (ob == NULL) return NULL;
-
-	if (ob->totcol == 0) return ob->data;
-	if (act == 0) act = 1;
-
-	if (ob->matbits[act - 1]) return (ID *)ob;
-	else return ob->data;
-}
-
 Material *give_node_material(Material *ma)
 {
 	if (ma && ma->use_nodes && ma->nodetree) {
@@ -743,7 +561,7 @@ Material *give_node_material(Material *ma)
 	return NULL;
 }
 
-void BKE_material_resize_object(Object *ob, const short totcol, bool do_id_user)
+void BKE_material_resize_object(Main *bmain, Object *ob, const short totcol, bool do_id_user)
 {
 	Material **newmatar;
 	char *newmatbits;
@@ -780,9 +598,23 @@ void BKE_material_resize_object(Object *ob, const short totcol, bool do_id_user)
 	ob->totcol = totcol;
 	if (ob->totcol && ob->actcol == 0) ob->actcol = 1;
 	if (ob->actcol > ob->totcol) ob->actcol = ob->totcol;
+
+	DAG_relations_tag_update(bmain);
 }
 
-void test_object_materials(Main *bmain, ID *id)
+void test_object_materials(Object *ob, ID *id)
+{
+	/* make the ob mat-array same size as 'ob->data' mat-array */
+	const short *totcol;
+
+	if (id == NULL || (totcol = give_totcolp_id(id)) == NULL) {
+		return;
+	}
+
+	BKE_material_resize_object(G.main, ob, *totcol, false);
+}
+
+void test_all_objects_materials(Main *bmain, ID *id)
 {
 	/* make the ob mat-array same size as 'ob->data' mat-array */
 	Object *ob;
@@ -795,7 +627,7 @@ void test_object_materials(Main *bmain, ID *id)
 	BKE_main_lock(bmain);
 	for (ob = bmain->object.first; ob; ob = ob->id.next) {
 		if (ob->data == id) {
-			BKE_material_resize_object(ob, *totcol, false);
+			BKE_material_resize_object(bmain, ob, *totcol, false);
 		}
 	}
 	BKE_main_unlock(bmain);
@@ -838,13 +670,14 @@ void assign_material_id(ID *id, Material *ma, short act)
 
 	/* in data */
 	mao = (*matarar)[act - 1];
-	if (mao) mao->id.us--;
+	if (mao)
+		id_us_min(&mao->id);
 	(*matarar)[act - 1] = ma;
 
 	if (ma)
-		id_us_plus((ID *)ma);
+		id_us_plus(&ma->id);
 
-	test_object_materials(G.main, id);
+	test_all_objects_materials(G.main, id);
 }
 
 void assign_material(Object *ob, Material *ma, short act, int assign_type)
@@ -857,8 +690,8 @@ void assign_material(Object *ob, Material *ma, short act, int assign_type)
 	if (act < 1) act = 1;
 	
 	/* prevent crashing when using accidentally */
-	BLI_assert(ob->id.lib == NULL);
-	if (ob->id.lib) return;
+	BLI_assert(!ID_IS_LINKED_DATABLOCK(ob));
+	if (ID_IS_LINKED_DATABLOCK(ob)) return;
 	
 	/* test arraylens */
 	
@@ -916,18 +749,21 @@ void assign_material(Object *ob, Material *ma, short act, int assign_type)
 	ob->matbits[act - 1] = bit;
 	if (bit == 1) {   /* in object */
 		mao = ob->mat[act - 1];
-		if (mao) mao->id.us--;
+		if (mao)
+			id_us_min(&mao->id);
 		ob->mat[act - 1] = ma;
+		test_object_materials(ob, ob->data);
 	}
 	else {  /* in data */
 		mao = (*matarar)[act - 1];
-		if (mao) mao->id.us--;
+		if (mao)
+			id_us_min(&mao->id);
 		(*matarar)[act - 1] = ma;
+		test_all_objects_materials(G.main, ob->data);  /* Data may be used by several objects... */
 	}
 
 	if (ma)
-		id_us_plus((ID *)ma);
-	test_object_materials(G.main, ob->data);
+		id_us_plus(&ma->id);
 }
 
 
@@ -958,6 +794,62 @@ void BKE_material_remap_object(Object *ob, const unsigned int *remap)
 	}
 }
 
+/**
+ * Calculate a material remapping from \a ob_src to \a ob_dst.
+ *
+ * \param remap_src_to_dst: An array the size of `ob_src->totcol`
+ * where index values are filled in which map to \a ob_dst materials.
+ */
+void BKE_material_remap_object_calc(
+        Object *ob_dst, Object *ob_src,
+        short *remap_src_to_dst)
+{
+	if (ob_src->totcol == 0) {
+		return;
+	}
+
+	GHash *gh_mat_map = BLI_ghash_ptr_new_ex(__func__, ob_src->totcol);
+
+	for (int i = 0; i < ob_dst->totcol; i++) {
+		Material *ma_src = give_current_material(ob_dst, i + 1);
+		BLI_ghash_reinsert(gh_mat_map, ma_src, SET_INT_IN_POINTER(i), NULL, NULL);
+	}
+
+	/* setup default mapping (when materials don't match) */
+	{
+		int i = 0;
+		if (ob_dst->totcol >= ob_src->totcol) {
+			for (; i < ob_src->totcol; i++) {
+				remap_src_to_dst[i] = i;
+			}
+		}
+		else {
+			for (; i < ob_dst->totcol; i++) {
+				remap_src_to_dst[i] = i;
+			}
+			for (; i < ob_src->totcol; i++) {
+				remap_src_to_dst[i] = 0;
+			}
+		}
+	}
+
+	for (int i = 0; i < ob_src->totcol; i++) {
+		Material *ma_src = give_current_material(ob_src, i + 1);
+
+		if ((i < ob_dst->totcol) && (ma_src == give_current_material(ob_dst, i + 1))) {
+			/* when objects have exact matching materials - keep existing index */
+		}
+		else {
+			void **index_src_p = BLI_ghash_lookup_p(gh_mat_map, ma_src);
+			if (index_src_p) {
+				remap_src_to_dst[i] = GET_INT_FROM_POINTER(*index_src_p);
+			}
+		}
+	}
+
+	BLI_ghash_free(gh_mat_map, NULL, NULL);
+}
+
 
 /* XXX - this calls many more update calls per object then are needed, could be optimized */
 void assign_matarar(struct Object *ob, struct Material ***matar, short totcol)
@@ -965,7 +857,11 @@ void assign_matarar(struct Object *ob, struct Material ***matar, short totcol)
 	int actcol_orig = ob->actcol;
 	short i;
 
-	while (object_remove_material_slot(ob)) {}
+	while ((ob->totcol > totcol) &&
+	       BKE_object_material_slot_remove(ob))
+	{
+		/* pass */
+	}
 
 	/* now we have the right number of slots */
 	for (i = 0; i < totcol; i++)
@@ -978,7 +874,7 @@ void assign_matarar(struct Object *ob, struct Material ***matar, short totcol)
 }
 
 
-short find_material_index(Object *ob, Material *ma)
+short BKE_object_material_slot_find_index(Object *ob, Material *ma)
 {
 	Material ***matarar;
 	short a, *totcolp;
@@ -998,7 +894,7 @@ short find_material_index(Object *ob, Material *ma)
 	return 0;
 }
 
-bool object_add_material_slot(Object *ob)
+bool BKE_object_material_slot_add(Object *ob)
 {
 	if (ob == NULL) return false;
 	if (ob->totcol >= MAXMAT) return false;
@@ -1068,7 +964,7 @@ static void do_init_render_material(Material *ma, int r_mode, float *amb)
 		Group *group;
 
 		for (group = G.main->group.first; group; group = group->id.next) {
-			if (!group->id.lib && STREQ(group->id.name, ma->group->id.name)) {
+			if (!ID_IS_LINKED_DATABLOCK(group) && STREQ(group->id.name, ma->group->id.name)) {
 				ma->group = group;
 			}
 		}
@@ -1081,7 +977,6 @@ static void init_render_nodetree(bNodeTree *ntree, Material *basemat, int r_mode
 
 	/* parses the geom+tex nodes */
 	ntreeShaderGetTexcoMode(ntree, r_mode, &basemat->texco, &basemat->mode_l);
-
 	for (node = ntree->nodes.first; node; node = node->next) {
 		if (node->id) {
 			if (GS(node->id->name) == ID_MA) {
@@ -1103,6 +998,21 @@ static void init_render_nodetree(bNodeTree *ntree, Material *basemat, int r_mode
 			else if (node->type == NODE_GROUP)
 				init_render_nodetree((bNodeTree *)node->id, basemat, r_mode, amb);
 		}
+		else if (node->typeinfo->type == SH_NODE_NORMAL_MAP) {
+			basemat->mode2_l |= MA_TANGENT_CONCRETE;
+			NodeShaderNormalMap *nm = node->storage;
+			bool taken_into_account = false;
+			for (int i = 0; i < basemat->nmap_tangent_names_count; i++) {
+				if (STREQ(basemat->nmap_tangent_names[i], nm->uv_map)) {
+					taken_into_account = true;
+					break;
+				}
+			}
+			if (!taken_into_account) {
+				BLI_assert(basemat->nmap_tangent_names_count < MAX_MTFACE + 1);
+				strcpy(basemat->nmap_tangent_names[basemat->nmap_tangent_names_count++], nm->uv_map);
+			}
+		}
 	}
 }
 
@@ -1117,7 +1027,7 @@ void init_render_material(Material *mat, int r_mode, float *amb)
 		 * mode_l will have it set when all node materials are shadeless. */
 		mat->mode_l = (mat->mode & MA_MODE_PIPELINE) | MA_SHLESS;
 		mat->mode2_l = mat->mode2 & MA_MODE2_PIPELINE;
-
+		mat->nmap_tangent_names_count = 0;
 		init_render_nodetree(mat->nodetree, mat, r_mode, amb);
 		
 		if (!mat->nodetree->execdata)
@@ -1245,13 +1155,13 @@ void material_drivers_update(Scene *scene, Material *ma, float ctime)
 	//	printf("material_drivers_update(%s, %s)\n", scene->id.name, ma->id.name);
 	
 	/* Prevent infinite recursion by checking (and tagging the material) as having been visited already
-	 * (see BKE_scene_update_tagged()). This assumes ma->id.flag & LIB_DOIT isn't set by anything else
+	 * (see BKE_scene_update_tagged()). This assumes ma->id.tag & LIB_TAG_DOIT isn't set by anything else
 	 * in the meantime... [#32017]
 	 */
-	if (ma->id.flag & LIB_DOIT)
+	if (ma->id.tag & LIB_TAG_DOIT)
 		return;
 
-	ma->id.flag |= LIB_DOIT;
+	ma->id.tag |= LIB_TAG_DOIT;
 	
 	/* material itself */
 	if (ma->adt && ma->adt->drivers.first) {
@@ -1263,10 +1173,10 @@ void material_drivers_update(Scene *scene, Material *ma, float ctime)
 		material_node_drivers_update(scene, ma->nodetree, ctime);
 	}
 
-	ma->id.flag &= ~LIB_DOIT;
+	ma->id.tag &= ~LIB_TAG_DOIT;
 }
 
-bool object_remove_material_slot(Object *ob)
+bool BKE_object_material_slot_remove(Object *ob)
 {
 	Material *mao, ***matarar;
 	Object *obt;
@@ -1304,7 +1214,8 @@ bool object_remove_material_slot(Object *ob)
 	
 	/* we delete the actcol */
 	mao = (*matarar)[ob->actcol - 1];
-	if (mao) mao->id.us--;
+	if (mao)
+		id_us_min(&mao->id);
 	
 	for (a = ob->actcol; a < ob->totcol; a++)
 		(*matarar)[a - 1] = (*matarar)[a];
@@ -1323,7 +1234,8 @@ bool object_remove_material_slot(Object *ob)
 			
 			/* WATCH IT: do not use actcol from ob or from obt (can become zero) */
 			mao = obt->mat[actcol - 1];
-			if (mao) mao->id.us--;
+			if (mao)
+				id_us_min(&mao->id);
 		
 			for (a = actcol; a < obt->totcol; a++) {
 				obt->mat[a - 1] = obt->mat[a];
@@ -1757,7 +1669,7 @@ void free_matcopybuf(void)
 	matcopybuf.ramp_spec = NULL;
 
 	if (matcopybuf.nodetree) {
-		ntreeFreeTree_ex(matcopybuf.nodetree, false);
+		ntreeFreeTree(matcopybuf.nodetree);
 		MEM_freeN(matcopybuf.nodetree);
 		matcopybuf.nodetree = NULL;
 	}
@@ -1802,8 +1714,10 @@ void paste_matcopybuf(Material *ma)
 	if (ma->ramp_spec) MEM_freeN(ma->ramp_spec);
 	for (a = 0; a < MAX_MTEX; a++) {
 		mtex = ma->mtex[a];
-		if (mtex && mtex->tex) mtex->tex->id.us--;
-		if (mtex) MEM_freeN(mtex);
+		if (mtex && mtex->tex)
+			id_us_min(&mtex->tex->id);
+		if (mtex)
+			MEM_freeN(mtex);
 	}
 
 	if (ma->nodetree) {
@@ -1977,7 +1891,7 @@ static short mesh_getmaterialnumber(Mesh *me, Material *ma)
 /* append material */
 static short mesh_addmaterial(Mesh *me, Material *ma)
 {
-	BKE_material_append_id(&me->id, NULL);
+	BKE_material_append_id(G.main, &me->id, NULL);
 	me->mat[me->totcol - 1] = ma;
 
 	id_us_plus(&ma->id);
@@ -2087,7 +2001,7 @@ static void convert_tfacematerial(Main *main, Material *ma)
 			}
 			/* create a new material */
 			else {
-				mat_new = BKE_material_copy(ma);
+				mat_new = BKE_material_copy(main, ma);
 				if (mat_new) {
 					/* rename the material*/
 					BLI_strncpy(mat_new->id.name, idname, sizeof(mat_new->id.name));
@@ -2116,7 +2030,7 @@ static void convert_tfacematerial(Main *main, Material *ma)
 		/* remove material from mesh */
 		for (a = 0; a < me->totcol; ) {
 			if (me->mat[a] == ma) {
-				BKE_material_pop_id(&me->id, a, true);
+				BKE_material_pop_id(main, &me->id, a, true);
 			}
 			else {
 				a++;
@@ -2159,7 +2073,7 @@ int do_version_tface(Main *main)
 	
 	/* 1st part: marking mesh materials to update */
 	for (me = main->mesh.first; me; me = me->id.next) {
-		if (me->id.lib) continue;
+		if (ID_IS_LINKED_DATABLOCK(me)) continue;
 
 		/* get the active tface layer */
 		index = CustomData_get_active_layer_index(&me->fdata, CD_MTFACE);
@@ -2213,7 +2127,7 @@ int do_version_tface(Main *main)
 				 * at doversion time: direct_link might not have happened on it,
 				 * so ma->mtex is not pointing to valid memory yet.
 				 * later we could, but it's better not */
-				else if (ma->id.lib)
+				else if (ID_IS_LINKED_DATABLOCK(ma))
 					continue;
 				
 				/* material already marked as disputed */
@@ -2278,7 +2192,7 @@ int do_version_tface(Main *main)
 
 	/* we shouldn't loop through the materials created in the loop. make the loop stop at its original length) */
 	for (ma = main->mat.first, a = 0; ma; ma = ma->id.next, a++) {
-		if (ma->id.lib) continue;
+		if (ID_IS_LINKED_DATABLOCK(ma)) continue;
 
 		/* disputed material */
 		if (ma->game.flag == MAT_BGE_DISPUTED) {

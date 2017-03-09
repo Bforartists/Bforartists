@@ -45,6 +45,7 @@
 #include "BKE_deform.h"
 #include "BKE_DerivedMesh.h"
 #include "BKE_library.h"
+#include "BKE_library_query.h"
 #include "BKE_scene.h"
 #include "BKE_texture.h"
 
@@ -110,8 +111,8 @@ static void foreachObjectLink(
 {
 	WaveModifierData *wmd = (WaveModifierData *) md;
 
-	walk(userData, ob, &wmd->objectcenter);
-	walk(userData, ob, &wmd->map_object);
+	walk(userData, ob, &wmd->objectcenter, IDWALK_CB_NOP);
+	walk(userData, ob, &wmd->map_object, IDWALK_CB_NOP);
 }
 
 static void foreachIDLink(ModifierData *md, Object *ob,
@@ -119,7 +120,7 @@ static void foreachIDLink(ModifierData *md, Object *ob,
 {
 	WaveModifierData *wmd = (WaveModifierData *) md;
 
-	walk(userData, ob, (ID **)&wmd->texture);
+	walk(userData, ob, (ID **)&wmd->texture, IDWALK_CB_USER);
 
 	foreachObjectLink(md, ob, (ObjectWalkFunc)walk, userData);
 }
@@ -383,6 +384,7 @@ ModifierTypeInfo modifierType_Wave = {
 	/* structSize */        sizeof(WaveModifierData),
 	/* type */              eModifierTypeType_OnlyDeform,
 	/* flags */             eModifierTypeFlag_AcceptsCVs |
+	                        eModifierTypeFlag_AcceptsLattice |
 	                        eModifierTypeFlag_SupportsEditmode,
 	/* copyData */          copyData,
 	/* deformVerts */       deformVerts,

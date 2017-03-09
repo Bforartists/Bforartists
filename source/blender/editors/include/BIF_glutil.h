@@ -90,16 +90,11 @@ void glutil_draw_lined_arc(float start, float angle, float radius, int nsegments
 void glutil_draw_filled_arc(float start, float angle, float radius, int nsegments);
 
 /**
- * Returns an integer value as obtained by glGetIntegerv.
- * The param must cause only one value to be gotten from GL.
- */
-int glaGetOneInteger(int param);
-
-/**
  * Returns a float value as obtained by glGetFloatv.
  * The param must cause only one value to be gotten from GL.
  */
 float glaGetOneFloat(int param);
+int glaGetOneInt(int param);
 
 /**
  * Functions like glRasterPos2i, except ensures that the resulting
@@ -149,6 +144,8 @@ void glaDrawPixelsSafe(float x, float y, int img_w, int img_h, int row_w, int fo
  */
 
 void glaDrawPixelsTex(float x, float y, int img_w, int img_h, int format, int type, int zoomfilter, void *rect);
+void glaDrawPixelsTex_clipping(float x, float y, int img_w, int img_h, int format, int type, int zoomfilter, void *rect,
+                               float clip_min_x, float clip_min_y, float clip_max_x, float clip_max_y);
 
 /**
  * glaDrawPixelsAuto - Switches between texture or pixel drawing using UserDef.
@@ -156,9 +153,13 @@ void glaDrawPixelsTex(float x, float y, int img_w, int img_h, int format, int ty
  * needs glaDefine2DArea to be set.
  */
 void glaDrawPixelsAuto(float x, float y, int img_w, int img_h, int format, int type, int zoomfilter, void *rect);
+void glaDrawPixelsAuto_clipping(float x, float y, int img_w, int img_h, int format, int type, int zoomfilter, void *rect,
+                                float clip_min_x, float clip_min_y, float clip_max_x, float clip_max_y);
 
 
 void glaDrawPixelsTexScaled(float x, float y, int img_w, int img_h, int format, int type, int zoomfilter, void *rect, float scaleX, float scaleY);
+void glaDrawPixelsTexScaled_clipping(float x, float y, int img_w, int img_h, int format, int type, int zoomfilter, void *rect, float scaleX, float scaleY,
+                                     float clip_min_x, float clip_min_y, float clip_max_x, float clip_max_y);
 
 /* 2D Drawing Assistance */
 
@@ -191,15 +192,6 @@ void gla2DGetMap(gla2DDrawInfo *di, struct rctf *rect);
 void gla2DSetMap(gla2DDrawInfo *di, struct rctf *rect);
 #endif
 
-/* use this for platform hacks. glPointSize is solved here */
-void bglBegin(int mode);
-void bglEnd(void);
-// int bglPointHack(void); /* UNUSED */
-void bglVertex3fv(const float vec[3]);
-void bglVertex3f(float x, float y, float z);
-void bglVertex2fv(const float vec[2]);
-/* intel gfx cards frontbuffer problem */
-// void bglFlush(void); /* UNUSED */
 void set_inverted_drawing(int enable);
 void setlinestyle(int nr);
 
@@ -220,9 +212,21 @@ void bgl_get_mats(bglMats *mats);
 void glaDrawImBuf_glsl(struct ImBuf *ibuf, float x, float y, int zoomfilter,
                        struct ColorManagedViewSettings *view_settings,
                        struct ColorManagedDisplaySettings *display_settings);
+void glaDrawImBuf_glsl_clipping(struct ImBuf *ibuf, float x, float y, int zoomfilter,
+                                struct ColorManagedViewSettings *view_settings,
+                                struct ColorManagedDisplaySettings *display_settings,
+                                float clip_min_x, float clip_min_y,
+                                float clip_max_x, float clip_max_y);
+
 
 /* Draw imbuf on a screen, preferably using GLSL display transform */
 void glaDrawImBuf_glsl_ctx(const struct bContext *C, struct ImBuf *ibuf, float x, float y, int zoomfilter);
+void glaDrawImBuf_glsl_ctx_clipping(const struct bContext *C,
+                                    struct ImBuf *ibuf,
+                                    float x, float y,
+                                    int zoomfilter,
+                                    float clip_min_x, float clip_min_y,
+                                    float clip_max_x, float clip_max_y);
 
 void glaDrawBorderCorners(const struct rcti *border, float zoomx, float zoomy);
 

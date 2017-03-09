@@ -62,7 +62,7 @@ struct Scene;
 typedef void (*UpdateFunc)(struct Main *main, struct Scene *scene, struct PointerRNA *ptr);
 typedef void (*ContextPropUpdateFunc)(struct bContext *C, struct PointerRNA *ptr, struct PropertyRNA *prop);
 typedef void (*ContextUpdateFunc)(struct bContext *C, struct PointerRNA *ptr);
-typedef int (*EditableFunc)(struct PointerRNA *ptr);
+typedef int (*EditableFunc)(struct PointerRNA *ptr, const char **r_info);
 typedef int (*ItemEditableFunc)(struct PointerRNA *ptr, int index);
 typedef struct IDProperty *(*IDPropertiesFunc)(struct PointerRNA *ptr, bool create);
 typedef struct StructRNA *(*StructRefineFunc)(struct PointerRNA *ptr);
@@ -162,6 +162,10 @@ struct PropertyRNA {
 	const char *identifier;
 	/* various options */
 	int flag;
+	/* Function parameters flags. */
+	short flag_parameter;
+	/* Internal ("private") flags. */
+	short flag_internal;
 
 	/* user readable name */
 	const char *name;
@@ -183,12 +187,14 @@ struct PropertyRNA {
 	/* array lengths lengths for all dimensions (when arraydimension > 0) */
 	unsigned int arraylength[RNA_MAX_ARRAY_DIMENSION];
 	unsigned int totarraylength;
-	
+
 	/* callback for updates on change */
 	UpdateFunc update;
 	int noteflag;
 
-	/* callback for testing if editable */
+	/* Callback for testing if editable. Its r_info parameter can be used to
+	 * return info on editable state that might be shown to user. E.g. tooltips
+	 * of disabled buttons can show reason why button is disabled using this. */
 	EditableFunc editable;
 	/* callback for testing if array-item editable (if applicable) */
 	ItemEditableFunc itemeditable;
@@ -206,6 +212,15 @@ struct PropertyRNA {
 	 * (in a pointer array at the moment, may later be a tuple) */
 	void *py_data;
 };
+
+/* internal flags WARNING! 16bits only! */
+typedef enum PropertyFlagIntern {
+	PROP_INTERN_BUILTIN                 = (1 << 0),
+	PROP_INTERN_RUNTIME                 = (1 << 1),
+	PROP_INTERN_RAW_ACCESS              = (1 << 2),
+	PROP_INTERN_RAW_ARRAY               = (1 << 3),
+	PROP_INTERN_FREE_POINTERS           = (1 << 4),
+} PropertyFlagIntern;
 
 /* Property Types */
 
@@ -345,7 +360,7 @@ struct StructRNA {
 	 * which is useful for subclassing RNA */
 	void *py_type;
 	void *blender_type;
-	
+
 	/* various options */
 	int flag;
 
@@ -357,7 +372,7 @@ struct StructRNA {
 	const char *translation_context;
 	/* icon ID */
 	int icon;
-	
+
 	/* property that defines the name */
 	PropertyRNA *nameproperty;
 

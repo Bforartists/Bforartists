@@ -36,6 +36,7 @@ static bNodeSocketTemplate sh_node_tex_brick_in[] = {
 	{ 	SOCK_RGBA, 1, 	N_("Mortar"), 		0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, PROP_NONE, SOCK_NO_INTERNAL_LINK},
 	{	SOCK_FLOAT, 1,  N_("Scale"),		5.0f, 0.0f, 0.0f, 0.0f, -1000.0f, 1000.0f, PROP_NONE, SOCK_NO_INTERNAL_LINK},
 	{	SOCK_FLOAT, 1,  N_("Mortar Size"),	0.02f, 0.0f, 0.0f, 0.0f, 0.0f, 0.125f, PROP_NONE, SOCK_NO_INTERNAL_LINK},
+	{	SOCK_FLOAT, 1,  N_("Mortar Smooth"),	0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, PROP_NONE, SOCK_NO_INTERNAL_LINK},
 	{	SOCK_FLOAT, 1,  N_("Bias"),		    0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, PROP_NONE, SOCK_NO_INTERNAL_LINK},
 	{	SOCK_FLOAT, 1,  N_("Brick Width"),	0.5f, 0.0f, 0.0f, 0.0f, 0.01f, 100.0f, PROP_NONE, SOCK_NO_INTERNAL_LINK},
 	{	SOCK_FLOAT, 1,  N_("Row Height"),   0.25f, 0.0f, 0.0f, 0.0f, 0.01f, 100.0f, PROP_NONE, SOCK_NO_INTERNAL_LINK},
@@ -60,16 +61,29 @@ static void node_shader_init_tex_brick(bNodeTree *UNUSED(ntree), bNode *node)
 	tex->squash_freq = 2;
 
 	node->storage = tex;
+
+	for (bNodeSocket *sock = node->inputs.first; sock; sock = sock->next) {
+		if (STREQ(sock->name, "Mortar Smooth")) {
+			((bNodeSocketValueFloat*)sock->default_value)->value = 0.1f;
+		}
+	}
 }
 
 static int node_shader_gpu_tex_brick(GPUMaterial *mat, bNode *node, bNodeExecData *UNUSED(execdata), GPUNodeStack *in, GPUNodeStack *out)
 {
-	if (!in[0].link)
+	if (!in[0].link) {
 		in[0].link = GPU_attribute(CD_ORCO, "");
+		GPU_link(mat, "generated_from_orco", in[0].link, &in[0].link);
+	}
 
 	node_shader_gpu_tex_mapping(mat, node, in, out);
-
-	return GPU_stack_link(mat, "node_tex_brick", in, out);
+	NodeTexBrick *tex = (NodeTexBrick *)node->storage;
+	float offset_freq = tex->offset_freq;
+	float squash_freq = tex->squash_freq;
+	return GPU_stack_link(mat, "node_tex_brick",
+	                      in, out,
+	                      GPU_uniform(&tex->offset), GPU_uniform(&offset_freq),
+	                      GPU_uniform(&tex->squash), GPU_uniform(&squash_freq));
 }
 
 /* node type definition */
