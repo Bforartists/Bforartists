@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -17,11 +17,11 @@
 # ##### END GPL LICENSE BLOCK #####
 
 bl_info = {
-    "name": "ANT Landscape",
+    "name": "ANT Landscape - Bforartists version",
     "author": "Jimmy Hazevoet",
     "version": (0, 1, 4),
     "blender": (2, 77, 0),
-    "location": "View3D > Add > Mesh",
+    "location": "View3D > Tool Shelf > Create > Add Misc",
     "description": "Add a landscape primitive",
     "warning": "", # used for warning icon and text in addons panel
     "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
@@ -837,13 +837,13 @@ def menu_func_landscape(self, context):
 def register():
     bpy.utils.register_module(__name__)
 
-    bpy.types.INFO_MT_mesh_add.append(menu_func_landscape)
+    bpy.types.VIEW3D_PT_tools_add_misc.append(menu_func_landscape)
 
 
 def unregister():
     bpy.utils.unregister_module(__name__)
 
-    bpy.types.INFO_MT_mesh_add.remove(menu_func_landscape)
+    bpy.types.VIEW3D_PT_tools_add_misc.remove(menu_func_landscape)
 
 
 if __name__ == "__main__":
