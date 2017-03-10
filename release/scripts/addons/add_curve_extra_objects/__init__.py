@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -18,8 +18,10 @@
 # Contributed to by
 # testscreenings, Alejandro Omar Chocano Vasquez, Jimmy Hazevoet, meta-androcto #
 
+# fixed for Bforartists. Shows in Tool Shelf now.
+
 bl_info = {
-    "name": "Extra Objects",
+    "name": "Extra Objects - Bforartists version",
     "author": "Multiple Authors",
     "version": (0, 1),
     "blender": (2, 76, 0),
@@ -179,18 +181,18 @@ def menu_surface(self, context):
 def register():
     bpy.utils.register_module(__name__)
 
-    # Add "Extras" menu to the "Add Curve" menu
-    bpy.types.INFO_MT_curve_add.append(menu_func)
+    # Add "Extras" menu
+    bpy.types.VIEW3D_PT_tools_add_misc.append(menu_func)
     # Add "Extras" menu to the "Add Surface" menu
-    bpy.types.INFO_MT_surface_add.append(menu_surface)
+    bpy.types.VIEW3D_PT_tools_add_object.append(menu_surface)
 
 def unregister():
     bpy.utils.unregister_module(__name__)
 
-    # Remove "Extras" menu from the "Add Curve" menu.
-    bpy.types.INFO_MT_curve_add.remove(menu_func)
+    # Remove "Extras" menu
+    bpy.types.VIEW3D_PT_tools_add_misc.remove(menu_func)
     # Remove "Extras" menu from the "Add Surface" menu.
-    bpy.types.INFO_MT_surface_add.remove(menu_surface)
+    bpy.types.VIEW3D_PT_tools_add_object.remove(menu_surface)
 
 if __name__ == "__main__":
     register()
