@@ -262,13 +262,13 @@ if(WITH_BOOST)
 			list(APPEND __boost_packages iostreams)
 		endif()
 		list(APPEND __boost_packages system)
-		find_package(Boost 1.48 COMPONENTS ${__boost_packages})
+		find_package(Boost COMPONENTS ${__boost_packages})
 		if(NOT Boost_FOUND)
 			# try to find non-multithreaded if -mt not found, this flag
 			# doesn't matter for us, it has nothing to do with thread
 			# safety, but keep it to not disturb build setups
 			set(Boost_USE_MULTITHREADED OFF)
-			find_package(Boost 1.48 COMPONENTS ${__boost_packages})
+			find_package(Boost COMPONENTS ${__boost_packages})
 		endif()
 		unset(__boost_packages)
 		if(Boost_USE_STATIC_LIBS AND WITH_BOOST_ICU)

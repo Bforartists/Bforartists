@@ -207,14 +207,14 @@ typedef struct ScrArea {
 
 	rcti totrct;			/* rect bound by v1 v2 v3 v4 */
 
+  int headertype;				/* OLD! 0=no header, 1= down, 2= up */
+  int do_refresh;				/* private, for spacetype refresh callback */
+  int flag;
+  int region_active_win;		/* index of last used region of 'RGN_TYPE_WINDOW'
+									 * runtime variable, updated by executing operators */
+
 	char spacetype, butspacetype;	/* SPACE_..., butspacetype is button arg  */
 	short winx, winy;				/* size */
-	
-	short headertype;				/* OLD! 0=no header, 1= down, 2= up */
-	short do_refresh;				/* private, for spacetype refresh callback */
-	short flag;
-	short region_active_win;		/* index of last used region of 'RGN_TYPE_WINDOW'
-									 * runtime variable, updated by executing operators */
 	char temp, pad;
 	
 	struct SpaceType *type;		/* callbacks for this space type */
