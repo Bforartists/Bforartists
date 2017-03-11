@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -20,7 +20,7 @@
 
 
 bl_info = {
-    "name": "tinyCAD Mesh tools",
+    "name": "tinyCAD Mesh tools - Bforartists version",
     "author": "zeffii (aka Dealga McArdle)",
     "version": (1, 3, 0),
     "blender": (2, 7, 7),
@@ -65,11 +65,11 @@ def register():
     bpy.utils.register_module(__name__)
     bpy.types.Scene.tinycad_props = bpy.props.PointerProperty(
         name="TinyCAD props", type=TinyCADProperties)
-    bpy.types.VIEW3D_MT_edit_mesh_specials.prepend(menu_func)
+    bpy.types.VIEW3D_PT_tools_meshedit.prepend(menu_func)
 
 
 def unregister():
-    bpy.types.VIEW3D_MT_edit_mesh_specials.remove(menu_func)
+    bpy.types.VIEW3D_PT_tools_meshedit.remove(menu_func)
     bpy.utils.unregister_module(__name__)
     del bpy.types.Scene.tinycad_props
     unregister_icons()
