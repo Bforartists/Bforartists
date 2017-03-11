@@ -1,4 +1,4 @@
-# Paul "BrikBot" Marshall
+﻿# Paul "BrikBot" Marshall
 # Created: July 1, 2011
 # Last Modified: September 26, 2013
 # Homepage (blog): http://post.darkarsenic.com/
@@ -33,7 +33,7 @@
 # <pep8 compliant>
 
 bl_info = {
-    "name": "Rock Generator",
+    "name": "Rock Generator - Bforartists version",
     "author": "Paul Marshall (brikbot)",
     "version": (1, 4),
     "blender": (2, 68, 0),
@@ -64,13 +64,13 @@ def menu_func_rocks(self, context):
 def register():
     bpy.utils.register_module(__name__)
 
-    bpy.types.INFO_MT_mesh_add.append(menu_func_rocks)
+    bpy.types.VIEW3D_PT_tools_add_misc.append(menu_func_rocks)
 
 
 def unregister():
     bpy.utils.unregister_module(__name__)
 
-    bpy.types.INFO_MT_mesh_add.remove(menu_func_rocks)
+    bpy.types.VIEW3D_PT_tools_add_misc.remove(menu_func_rocks)
 
 
 if __name__ == "__main__":
