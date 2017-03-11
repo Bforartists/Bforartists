@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -18,7 +18,7 @@
 
 
 bl_info = {
-    "name": "Easy Lattice Object",
+    "name": "Easy Lattice Object - Bforartists version",
     "author": "Kursad Karatas",
     "version": (0, 5),
     "blender": (2, 66, 0),
@@ -410,13 +410,13 @@ def register():
     # bpy.utils.register
     # menu_func = (lambda self, context: self.layout.operator('EasyLattice'))
     # bpy.types.VIEW3D_PT_tools_objectmode.append(menu_draw)
-    bpy.types.VIEW3D_MT_edit_mesh_specials.append( menu_draw )
+    bpy.types.VIEW3D_PT_tools_meshedit.append( menu_draw )
 
 
 def unregister():
     bpy.utils.unregister_class( EasyLattice )
     # bpy.types.VIEW3D_PT_tools_objectmode.remove(menu_draw)
-    bpy.types.VIEW3D_MT_edit_mesh_specials.remove( menu_draw )
+    bpy.types.VIEW3D_PT_tools_meshedit.remove( menu_draw )
 
 if __name__ == "__main__":
     register()
