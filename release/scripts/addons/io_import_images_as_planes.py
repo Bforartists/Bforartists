@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -19,11 +19,11 @@
 # <pep8 compliant>
 
 bl_info = {
-    "name": "Import Images as Planes",
+    "name": "Import Images as Planes - Bforartists version",
     "author": "Florian Meyer (tstscr), mont29, matali, Ted Schundler (SpkyElctrc)",
     "version": (3, 1, 0),
     "blender": (2, 78, 0),
-    "location": "File > Import > Images as Planes or Add > Mesh > Images as Planes",
+    "location": "File > Import > Images as Planes or 3dView > Tool Shelf > Create > Add Misc",
     "description": "Imports images and creates planes with the appropriate aspect ratio. "
                    "The images are mapped to the planes.",
     "warning": "",
@@ -1207,14 +1207,14 @@ def import_images_button(self, context):
 def register():
     bpy.utils.register_module(__name__)
     bpy.types.INFO_MT_file_import.append(import_images_button)
-    bpy.types.INFO_MT_mesh_add.append(import_images_button)
+    bpy.types.VIEW3D_PT_tools_add_misc.append(import_images_button)
     bpy.app.handlers.load_post.append(register_driver)
     register_driver()
 
 
 def unregister():
     bpy.types.INFO_MT_file_import.remove(import_images_button)
-    bpy.types.INFO_MT_mesh_add.remove(import_images_button)
+    bpy.types.VIEW3D_PT_tools_add_misc.remove(import_images_button)
 
     # This will only exist if drivers are active
     if check_drivers in bpy.app.handlers.scene_update_post:
