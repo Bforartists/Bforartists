@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -17,11 +17,11 @@
 # ##### END GPL LICENSE BLOCK #####
 
 bl_info = {
-    "name": "Make Thread Mesh",
+    "name": "Make Thread Mesh - Bforartists version",
     "author": "Oscurart",
     "version": (1, 0),
     "blender": (2, 59, 0),
-    "location": "Add > Mesh > Thread",
+    "location": "View3D > Tool Shelf > Create > Add Misc",
     "description": "Make a thread.",
     "warning": "",
     "wiki_url": "http://oscurart.blogspot.com",
@@ -87,12 +87,12 @@ def add_screw_list(self, context):
         icon="PLUGIN")
 
 def register():
-    bpy.types.INFO_MT_mesh_add.append(add_screw_list)
+    bpy.types.VIEW3D_PT_tools_add_misc.append(add_screw_list)
     bpy.utils.register_class(oscMakeScrew)
 
 
 def unregister():
-    bpy.types.INFO_MT_mesh_add.remove(add_screw_list)
+    bpy.types.VIEW3D_PT_tools_add_misc.remove(add_screw_list)
     bpy.utils.unregister_class(oscMakeScrew)
 
 
