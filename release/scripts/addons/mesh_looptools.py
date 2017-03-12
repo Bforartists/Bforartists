@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 bl_info = {
-    "name": "LoopTools",
+    "name": "LoopTools - Bforartists Version",
     "author": "Bart Crouch",
     "version": (4, 6, 6),
     "blender": (2, 72, 2),
@@ -4845,7 +4845,7 @@ classes = [
 def register():
     for c in classes:
         bpy.utils.register_class(c)
-    bpy.types.VIEW3D_MT_edit_mesh_specials.prepend(menu_func)
+    bpy.types.VIEW3D_PT_tools_meshedit.prepend(menu_func)
     bpy.types.WindowManager.looptools = bpy.props.PointerProperty(\
         type = LoopToolsProps)
     update_panel(None, bpy.context)
@@ -4854,7 +4854,7 @@ def register():
 def unregister():
     for c in classes:
         bpy.utils.unregister_class(c)
-    bpy.types.VIEW3D_MT_edit_mesh_specials.remove(menu_func)
+    bpy.types.VIEW3D_PT_tools_meshedit.remove(menu_func)
     try:
         del bpy.types.WindowManager.looptools
     except:
