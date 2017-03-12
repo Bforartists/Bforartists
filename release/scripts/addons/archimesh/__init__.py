@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -26,9 +26,9 @@
 # Define Addon info
 # ----------------------------------------------
 bl_info = {
-    "name": "Archimesh",
+    "name": "Archimesh - Bforartists version",
     "author": "Antonio Vazquez (antonioya)",
-    "location": "View3D > Add > Mesh > Archimesh",
+    "location": "View3D > Tool Shelf > Create > Add Misc",
     "version": (1, 1, 3),
     "blender": (2, 6, 8),
     "description": "Generate rooms, doors, windows, and other architecture objects",
@@ -82,7 +82,7 @@ import bpy
 # noinspection PyUnresolvedReferences
 from bpy.props import BoolProperty, FloatVectorProperty, IntProperty, FloatProperty
 # noinspection PyUnresolvedReferences
-from bpy.types import Menu, Scene, INFO_MT_mesh_add, WindowManager
+from bpy.types import Menu, Scene, VIEW3D_PT_tools_add_misc, WindowManager
 
 # ----------------------------------------------------------
 # Decoration assets
@@ -199,7 +199,7 @@ def register():
     bpy.utils.register_class(achm_window_panel.AchmWinPanel)
     bpy.utils.register_class(achm_window_panel.AchmWindowEditPanel)
     bpy.utils.register_class(Archi_Pref)
-    INFO_MT_mesh_add.append(AchmMenu_func)
+    VIEW3D_PT_tools_add_misc.append(AchmMenu_func)
     update_panel(None, bpy.context)
     # Define properties
     Scene.archimesh_select_only = BoolProperty(
@@ -310,7 +310,7 @@ def unregister():
     bpy.utils.unregister_class(achm_window_panel.AchmWinPanel)
     bpy.utils.unregister_class(achm_window_panel.AchmWindowEditPanel)
     bpy.utils.unregister_class(Archi_Pref)
-    INFO_MT_mesh_add.remove(AchmMenu_func)
+    VIEW3D_PT_tools_add_misc.remove(AchmMenu_func)
 
     # Remove properties
     del Scene.archimesh_select_only
