@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and / or
 #  modify it under the terms of the GNU General Public License
@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 bl_info = {
-    'name': 'Simple Curve',
+    'name': 'Simple Curve - Bforartists version',
     'author': 'Spivak Vladimir (http://cwolf3d.korostyshev.net)',
     'version': (1, 5, 2),
     'blender': (2, 6, 9),
@@ -1584,7 +1584,7 @@ def Simple_button(self, context):
 def register():
     bpy.utils.register_module(__name__)
 
-    bpy.types.INFO_MT_curve_add.append(Simple_button)
+    bpy.types.VIEW3D_PT_tools_add_misc.append(Simple_button)
 
     SimpleVariables()
 
@@ -1592,7 +1592,7 @@ def register():
 def unregister():
     bpy.utils.unregister_module(__name__)
 
-    bpy.types.INFO_MT_curve_add.remove(Simple_button)
+    bpy.types.VIEW3D_PT_tools_add_misc.remove(Simple_button)
 
 if __name__ == "__main__":
     register()
