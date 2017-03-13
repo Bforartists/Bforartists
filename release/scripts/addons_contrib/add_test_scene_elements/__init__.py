@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -18,7 +18,7 @@
 # by meta-androcto #
 
 bl_info = {
-    "name": "Test Scene, Light, Camera",
+    "name": "Test Scene, Light, Camera - Bforartists version",
     "author": "Meta Androcto",
     "version": (0, 2),
     "blender": (2, 77, 0),
@@ -126,7 +126,7 @@ def register():
     camera_turnaround.register()
     bpy.utils.register_module(__name__)
     # Add "Extras" menu to the "Add Mesh" menu
-    bpy.types.INFO_MT_add.append(menu)
+    bpy.types.VIEW3D_PT_tools_add_misc.append(menu)
     try:
         bpy.types.VIEW3D_MT_AddMenu.prepend(menu)
     except:
@@ -135,7 +135,7 @@ def register():
 def unregister():
     camera_turnaround.unregister()
     # Remove "Extras" menu from the "Add Mesh" menu.
-    bpy.types.INFO_MT_add.remove(menu)
+    bpy.types.VIEW3D_PT_tools_add_misc.remove(menu)
     try:
         bpy.types.VIEW3D_MT_AddMenu.remove(menu)
     except:
