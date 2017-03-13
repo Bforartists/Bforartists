@@ -1,5 +1,6 @@
+﻿#
 bl_info = {
-    "name": "Add Camera Rigs",
+    "name": "Add Camera Rigs - Bforartists version",
     "author": "Wayne Dixon, Kris Wittig",
     "version": (1, 1),
     "blender": (2, 77, 0),
@@ -722,8 +723,8 @@ def register():
     bpy.utils.register_class(MakeCameraActive)
     bpy.utils.register_class(AddMarkerBind)
     bpy.utils.register_class(AddDofEmpty)
-    bpy.types.INFO_MT_armature_add.append(add_dolly_button)
-    bpy.types.INFO_MT_armature_add.append(add_crane_button)
+    bpy.types.VIEW3D_PT_tools_add_misc.append(add_dolly_button)
+    bpy.types.VIEW3D_PT_tools_add_misc.append(add_crane_button)
 
 def unregister():
     bpy.utils.unregister_class(BuildDollyRig)
@@ -733,8 +734,8 @@ def unregister():
     bpy.utils.unregister_class(MakeCameraActive)
     bpy.utils.unregister_class(AddMarkerBind)
     bpy.utils.unregister_class(AddDofEmpty)
-    bpy.types.INFO_MT_armature_add.remove(add_dolly_button)
-    bpy.types.INFO_MT_armature_add.remove(add_crane_button)
+    bpy.types.VIEW3D_PT_tools_add_misc.remove(add_dolly_button)
+    bpy.types.VIEW3D_PT_tools_add_misc.remove(add_crane_button)
 
 if __name__ == "__main__":
     register()
