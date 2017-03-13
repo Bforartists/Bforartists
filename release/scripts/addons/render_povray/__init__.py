@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -19,7 +19,7 @@
 # <pep8 compliant>
 
 bl_info = {
-    "name": "POVRAY-3.7",
+    "name": "POVRAY-3.7 - Bforartists version",
     "author": "Campbell Barton, Silvio Falcinelli, Maurice Raybaud, "
               "Constantin Rahn, Bastien Montagne, Leonid Desyatkov",
     "version": (0, 0, 9),
@@ -2165,7 +2165,7 @@ class PovrayPreferences(AddonPreferences):
 
 def register():
     bpy.utils.register_module(__name__)
-    bpy.types.INFO_MT_add.prepend(ui.menu_func_add)
+    bpy.types.VIEW3D_PT_tools_add_misc.prepend(ui.menu_func_add)
     bpy.types.INFO_MT_file_import.append(ui.menu_func_import)
     #used for parametric objects:
     addon_utils.enable("add_mesh_extra_objects", default_set=False, persistent=True)
@@ -2196,7 +2196,7 @@ def unregister():
     #bpy.types.TEXTURE_PT_context_texture.remove(TEXTURE_PT_povray_type)
     addon_utils.disable("add_mesh_extra_objects", default_set=False)
     bpy.types.INFO_MT_file_import.remove(ui.menu_func_import)
-    bpy.types.INFO_MT_add.remove(ui.menu_func_add)
+    bpy.types.VIEW3D_PT_tools_add_misc.remove(ui.menu_func_add)
     bpy.utils.unregister_module(__name__)
 
 
