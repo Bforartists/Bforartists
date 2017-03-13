@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and / or
 #  modify it under the terms of the GNU General Public License
@@ -1588,7 +1588,7 @@ def register():
     bpy.utils.register_class(SimpleEdit)
     bpy.utils.register_class(INFO_MT_simple_menu)
 
-    bpy.types.INFO_MT_curve_add.append(Simple_button)
+    bpy.types.VIEW3D_PT_tools_add_misc.append(Simple_button)
 
     SimpleVariables()
 
@@ -1601,7 +1601,7 @@ def unregister():
     bpy.utils.unregister_class(SimpleEdit)
     bpy.utils.unregister_class(INFO_MT_simple_menu)
 
-    bpy.types.INFO_MT_curve_add.remove(Simple_button)
+    bpy.types.VIEW3D_PT_tools_add_misc.remove(Simple_button)
 
 if __name__ == "__main__":
     register()
