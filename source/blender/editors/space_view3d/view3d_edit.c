@@ -4818,6 +4818,7 @@ static int manipulator_invoke(bContext *C, wmOperator *op, const wmEvent *event)
 
 void VIEW3D_OT_manipulator(wmOperatorType *ot)
 {
+	PropertyRNA *prop;
 
 	/* identifiers */
 	ot->name = "3D Manipulator";
@@ -4832,8 +4833,9 @@ void VIEW3D_OT_manipulator(wmOperatorType *ot)
 	/* properties to pass to transform */
 	Transform_Properties(ot, P_CONSTRAINT);
 
-	RNA_def_boolean(ot->srna, "use_planar_constraint", false, "Planar Constraint", "Limit the transformation to the "
-	                "two axes that have not been clicked (translate/scale only)");
+	prop = RNA_def_boolean(ot->srna, "use_planar_constraint", false, "Planar Constraint", "Limit the transformation to the "
+	                       "two axes that have not been clicked (translate/scale only)");
+	RNA_def_property_flag(prop, PROP_SKIP_SAVE | PROP_HIDDEN);
 }
 
 static int enable_manipulator_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event))
@@ -4922,11 +4924,7 @@ static float view_autodist_depth_margin(ARegion *ar, const int mval[2], int marg
 		rect.ymax = mval[1] + 1;
 	}
 	else {
-		rect.xmax = mval[0] + margin;
-		rect.ymax = mval[1] + margin;
-
-		rect.xmin = mval[0] - margin;
-		rect.ymin = mval[1] - margin;
+		BLI_rcti_init_pt_radius(&rect, mval, margin);
 	}
 
 	view3d_update_depths_rect(ar, &depth_temp, &rect);
