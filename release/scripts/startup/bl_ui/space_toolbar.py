@@ -289,151 +289,6 @@ class TOOLBAR_MT_toolbars_view_menu(Menu):
         layout.prop(addon_prefs, "view_camera")
 
 
-############### Change view classes
-
-class VIEW3D_MT_totop(bpy.types.Operator):
-    """Change view to Top\nThis button is global, and changes all available 3D views\nUse the View menu to change the view just in selected 3d view"""
-    bl_idname = "view3d.totop"
-    bl_label = "view from top"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context): 
-        for area in bpy.context.screen.areas:
-                if area.type == 'VIEW_3D':
-                    for region in area.regions:
-                        if region.type == 'WINDOW':
-                            override = bpy.context.copy()
-                            override['area'] = area
-                            override['region'] = region
-                            bpy.ops.view3d.viewnumpad(override, type='TOP', align_active=False)
-        return {'FINISHED'}
-
-class VIEW3D_MT_tobottom(bpy.types.Operator):
-    """Change view to Bottom\nThis button is global, and changes all available 3D views\nUse the View menu to change the view just in selected 3d view"""
-    bl_idname = "view3d.tobottom"
-    bl_label = "view from bottom"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context): 
-        for area in bpy.context.screen.areas:
-                if area.type == 'VIEW_3D':
-                    for region in area.regions:
-                        if region.type == 'WINDOW':
-                            override = bpy.context.copy()
-                            override['area'] = area
-                            override['region'] = region
-                            bpy.ops.view3d.viewnumpad(override, type='BOTTOM', align_active=False)
-        return {'FINISHED'}
-
-class VIEW3D_MT_tofront(bpy.types.Operator):
-    """Change view to Front\nThis button is global, and changes all available 3D views\nUse the View menu to change the view just in selected 3d view"""
-    bl_idname = "view3d.tofront"
-    bl_label = "view from front"
-    bl_options = {'REGISTER', 'UNDO'}
-    def execute(self, context):
-        for area in bpy.context.screen.areas:
-                if area.type == 'VIEW_3D':
-                    for region in area.regions:
-                        if region.type == 'WINDOW':
-                            override = bpy.context.copy()
-                            override['area'] = area
-                            override['region'] = region
-                            bpy.ops.view3d.viewnumpad(override, type='FRONT', align_active=False)
-        return {'FINISHED'}
-class VIEW3D_MT_tobback(bpy.types.Operator):
-    """Change view to Back\nThis button is global, and changes all available 3D views\nUse the View menu to change the view just in selected 3d view"""
-    bl_idname = "view3d.toback"
-    bl_label = "view from back"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context): 
-        for area in bpy.context.screen.areas:
-                if area.type == 'VIEW_3D':
-                    for region in area.regions:
-                        if region.type == 'WINDOW':
-                            override = bpy.context.copy()
-                            override['area'] = area
-                            override['region'] = region
-                            bpy.ops.view3d.viewnumpad(override, type='BACK', align_active=False)
-        return {'FINISHED'}
-
-class VIEW3D_MT_toleft(bpy.types.Operator):
-    """Change view to Left\nThis button is global, and changes all available 3D views\nUse the View menu to change the view just in selected 3d view"""
-    bl_idname = "view3d.toleft"
-    bl_label = "view from left"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context): 
-        for area in bpy.context.screen.areas:
-                if area.type == 'VIEW_3D':
-                    for region in area.regions:
-                        if region.type == 'WINDOW':
-                            override = bpy.context.copy()
-                            override['area'] = area
-                            override['region'] = region
-                            bpy.ops.view3d.viewnumpad(override, type='LEFT', align_active=False)
-        return {'FINISHED'}
-
-class VIEW3D_MT_toright(bpy.types.Operator):
-    """Change view to Right\nThis button is global, and changes all available 3D views\nUse the View menu to change the view just in selected 3d view"""
-    bl_idname = "view3d.toright"
-    bl_label = "view from right"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context): 
-        for area in bpy.context.screen.areas:
-                if area.type == 'VIEW_3D':
-                    for region in area.regions:
-                        if region.type == 'WINDOW':
-                            override = bpy.context.copy()
-                            override['area'] = area
-                            override['region'] = region
-                            bpy.ops.view3d.viewnumpad(override, type='RIGHT', align_active=False)
-        return {'FINISHED'}
-
-class VIEW3D_MT_reset3dview(bpy.types.Operator):
-    """Reset 3D View \nThis button is global, and changes all available 3D views\nUse the View menu to change the view just in selected 3d view"""
-    bl_idname = "view3d.rese3dtview"
-    bl_label = "view from right"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context): 
-        for area in bpy.context.screen.areas:
-            if area.type == 'VIEW_3D':
-                override = bpy.context.copy()
-                override['area'] = area
-                bpy.ops.view.reset_3d_view()
-        return {'FINISHED'} 
-
-class VIEW3D_MT_tocam(bpy.types.Operator):
-    """Switch to / from Camera view\nSwitches the scene display between active camera and world camera\nThis button is global, and changes all available 3D views\nUse the View menu to change the view just in selected 3d view"""
-    bl_idname = "view3d.tocam"
-    bl_label = "view from active camera"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context): 
-        for area in bpy.context.screen.areas:
-            if area.type == 'VIEW_3D':
-                override = bpy.context.copy()
-                override['area'] = area
-                bpy.ops.view3d.viewnumpad(override, type='CAMERA', align_active=False)
-        return {'FINISHED'} 
-
-class VIEW3D_MT_switchactivecam(bpy.types.Operator):
-    """Set Active Camera\nSets the current selected camera as the active camera to render from\nYou need to have a camera object selected"""
-    bl_idname = "view3d.switchactivecam"
-    bl_label = "Set active Camera"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context): 
-
-        context = bpy.context
-        scene = context.scene
-        if context.active_object is not None:
-            currentCameraObj = bpy.data.objects[bpy.context.active_object.name]
-            scene.camera = currentCameraObj     
-        return {'FINISHED'} 
-
             
 ############### bfa - Load Save menu hidable by the flag in the right click menu
 
@@ -450,7 +305,7 @@ class TOOLBAR_MT_view(Menu):
 
         TOOLBAR_MT_menu_view.draw_collapsible(context, layout)
 
-        ## ------------------ Load / Save sub toolbars
+        ## ------------------ View toolbar Align
 
         user_preferences = context.user_preferences
         addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
@@ -459,43 +314,15 @@ class TOOLBAR_MT_view(Menu):
 
             row = layout.row(align=True)
             
-            row.operator("view3d.tofront", text="", icon ="VIEW_FRONT")
-            row.operator("view3d.toback", text="", icon ="VIEW_BACK")
-            row.operator("view3d.toleft", text="", icon ="VIEW_LEFT")
-            row.operator("view3d.toright", text="", icon ="VIEW_RIGHT")
-            row.operator("view3d.totop", text="", icon ="VIEW_TOP")
-            row.operator("view3d.tobottom", text="", icon ="VIEW_BOTTOM")
-            row.operator("view3d.rese3dtview", text="", icon ="VIEW_RESET")
-
-        ## ------------------ Load / Save sub toolbars
+            row.label(text=" - Align is Empty - ")
+            
+        ## ------------------ View toolbar Camera
 
         if addon_prefs.view_camera:
 
             row = layout.row(align=True)
 
-            obj = context.object 
-
-            row.operator("view3d.tocam", text="", icon ="VIEW_SWITCHTOCAM")
-
-            row = layout.row(align=True)
-
-            # Set active camera. Just enabled when a camera object is selected.
-            if obj is not None:
-
-                obj_type = obj.type
-
-                if obj_type == 'CAMERA':
-
-                    row.operator("view3d.switchactivecam", text="", icon ="VIEW_SWITCHACTIVECAM")
-   
-                else:
-                    
-                    row.enabled = False
-                    row.operator("view3d.switchactivecam", text="", icon ="VIEW_SWITCHACTIVECAM")
-
-            else:
-                row.enabled = False
-                row.operator("view3d.switchactivecam", text="", icon ="VIEW_SWITCHACTIVECAM")
+            row.label(text=" - Camera is Empty - ")
 
             
             
