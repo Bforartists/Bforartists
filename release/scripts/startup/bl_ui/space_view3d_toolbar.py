@@ -1392,20 +1392,6 @@ class VIEW3D_PT_tools_textedit(View3DPanel, Panel):
 # ********** default tools for editmode_armature ****************
 
 
-class VIEW3D_PT_tools_armatureedit_transform(View3DPanel, Panel):
-    bl_category = "Tools"
-    bl_context = "armature_edit"
-    bl_label = "Transform"
-
-    def draw(self, context):
-        layout = self.layout
-
-        col = layout.column(align=True)
-        col.operator("transform.translate")
-        col.operator("transform.rotate")
-        col.operator("transform.resize", text="Scale")
-
-
 class VIEW3D_PT_tools_armatureedit(View3DPanel, Panel):
     bl_category = "Tools"
     bl_context = "armature_edit"
