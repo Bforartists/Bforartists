@@ -552,7 +552,7 @@ class VIEW3D_MT_view_align(Menu):
 
         # Rest of align
 
-        layout.operator("view3d.view_persportho")
+        layout.operator("view3d.view_persportho", icon = "PERSP_ORTHO")
 
         layout.separator()
 

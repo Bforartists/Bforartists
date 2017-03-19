@@ -67,6 +67,10 @@ def align_view_buttons(self, context):
     
     row = layout.row(align=True)
     
+    row.operator("view3d.view_persportho", text = "", icon = "PERSP_ORTHO")
+    
+    row = layout.row(align=True)
+    
     row.operator("view3d.viewnumpad", text="", icon = 'VIEW_SWITCHTOCAM').type = 'CAMERA'
 
     row = layout.row(align=True)
