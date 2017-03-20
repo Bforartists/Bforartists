@@ -960,6 +960,8 @@ class VIEW3D_PT_tools_add_mesh_edit(View3DPanel, Panel):
         scene = context.scene # Our data is in the current scene
         col = layout.column(align=True)
 
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
+
         # bfa - icon or text buttons
         if not view.show_iconbuttons: 
             VIEW3D_PT_tools_add_object.draw_add_mesh(col, label=True) # the original class
