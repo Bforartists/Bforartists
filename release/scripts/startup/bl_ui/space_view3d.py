@@ -709,7 +709,7 @@ class VIEW3D_MT_select_pose(Menu):
         layout.separator()
 
         layout.operator_menu_enum("pose.select_grouped", "type", text="Grouped")
-        layout.operator("pose.select_linked", text="Linked")      
+        layout.operator("pose.select_linked", text="Connected")      
         layout.operator("object.select_pattern", text="By Pattern...")
 
         layout.separator()

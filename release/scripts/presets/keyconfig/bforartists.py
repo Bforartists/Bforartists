@@ -13,12 +13,27 @@ def kmi_props_setattr(kmi_props, attr, value):
 wm = bpy.context.window_manager
 kc = wm.keyconfigs.new(os.path.splitext(os.path.basename(__file__))[0])
 
+# Map Pose
+km = kc.keymaps.new('Pose', space_type='EMPTY', region_type='WINDOW', modal=False)
+
+kmi = km.keymap_items.new('object.parent_set', 'P', 'PRESS', ctrl=True)
+kmi = km.keymap_items.new('pose.hide', 'H', 'PRESS')
+kmi_props_setattr(kmi.properties, 'unselected', False)
+kmi = km.keymap_items.new('pose.hide_unselected', 'H', 'PRESS', shift=True)
+kmi = km.keymap_items.new('pose.reveal', 'H', 'PRESS', alt=True)
+kmi = km.keymap_items.new('pose.copy', 'C', 'PRESS', ctrl=True)
+kmi = km.keymap_items.new('pose.paste', 'V', 'PRESS', ctrl=True)
+kmi_props_setattr(kmi.properties, 'flipped', False)
+kmi = km.keymap_items.new('pose.select_all', 'A', 'PRESS')
+kmi_props_setattr(kmi.properties, 'action', 'TOGGLE')
+kmi = km.keymap_items.new('pose.select_all_inverse', 'I', 'PRESS', ctrl=True)
+kmi = km.keymap_items.new('pose.select_linked', 'L', 'PRESS')
+
 # Map 3D View
 km = kc.keymaps.new('3D View', space_type='VIEW_3D', region_type='WINDOW', modal=False)
 
 kmi = km.keymap_items.new('wm.context_toggle', 'ACTIONMOUSE', 'PRESS', key_modifier='I')
 kmi_props_setattr(kmi.properties, 'data_path', 'window_manager.stroke_select_bool')
-
 kmi = km.keymap_items.new('view3d.manipulator', 'LEFTMOUSE', 'PRESS', shift=True)
 kmi_props_setattr(kmi.properties, 'release_confirm', True)
 kmi_props_setattr(kmi.properties, 'use_planar_constraint', True)
@@ -249,7 +264,6 @@ kmi = km.keymap_items.new('view3d.view_roll', 'NUMPAD_4', 'PRESS', shift=True, c
 kmi_props_setattr(kmi.properties, 'angle', -0.2619999945163727)
 kmi = km.keymap_items.new('view3d.view_roll', 'NUMPAD_6', 'PRESS', shift=True, ctrl=True)
 kmi_props_setattr(kmi.properties, 'angle', 0.2619999945163727)
-
 
 # Map Object Non-modal
 km = kc.keymaps.new('Object Non-modal', space_type='EMPTY', region_type='WINDOW', modal=False)
@@ -1169,21 +1183,6 @@ kmi_props_setattr(kmi.properties, 'deselect', False)
 kmi = km.keymap_items.new('view3d.select_lasso', 'EVT_TWEAK_A', 'ANY', shift=True, ctrl=True)
 kmi_props_setattr(kmi.properties, 'deselect', True)
 kmi = km.keymap_items.new('view3d.select_circle', 'G', 'PRESS')
-
-# Map Pose
-km = kc.keymaps.new('Pose', space_type='EMPTY', region_type='WINDOW', modal=False)
-
-kmi = km.keymap_items.new('object.parent_set', 'P', 'PRESS', ctrl=True)
-kmi = km.keymap_items.new('pose.hide', 'H', 'PRESS')
-kmi_props_setattr(kmi.properties, 'unselected', False)
-kmi = km.keymap_items.new('pose.hide_unselected', 'H', 'PRESS', shift=True)
-kmi = km.keymap_items.new('pose.reveal', 'H', 'PRESS', alt=True)
-kmi = km.keymap_items.new('pose.copy', 'C', 'PRESS', ctrl=True)
-kmi = km.keymap_items.new('pose.paste', 'V', 'PRESS', ctrl=True)
-kmi_props_setattr(kmi.properties, 'flipped', False)
-kmi = km.keymap_items.new('pose.select_all', 'A', 'PRESS')
-kmi_props_setattr(kmi.properties, 'action', 'TOGGLE')
-kmi = km.keymap_items.new('pose.select_all_inverse', 'I', 'PRESS', ctrl=True)
 
 # Map Object Mode
 km = kc.keymaps.new('Object Mode', space_type='EMPTY', region_type='WINDOW', modal=False)
