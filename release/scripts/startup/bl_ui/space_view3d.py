@@ -1121,6 +1121,7 @@ class VIEW3D_MT_select_edit_armature(Menu):
         layout.separator()
 
         layout.operator("armature.select_mirror", text="Mirror").extend = False
+        layout.operator("armature.select_linked", text="Connected")
 
         layout.separator()
 
@@ -1142,6 +1143,7 @@ class VIEW3D_MT_select_edit_armature(Menu):
 
         layout.separator()
 
+        layout.operator("armature.select_linked", text = "Connected")
         layout.operator_menu_enum("armature.select_similar", "type", text="Similar")
         layout.operator("object.select_pattern", text="Pattern...")
 
