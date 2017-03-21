@@ -55,6 +55,7 @@ class CONSOLE_MT_editor_menus(Menu):
     @staticmethod
     def draw_menus(layout, context):
         layout.menu("CONSOLE_MT_console")
+        layout.menu("CONSOLE_MT_edit")
 
 
 class CONSOLE_MT_console(Menu):
@@ -62,10 +63,9 @@ class CONSOLE_MT_console(Menu):
 
     def draw(self, context):
         layout = self.layout
-
-        layout.operator("console.indent")
-        layout.operator("console.unindent")
-
+        
+        layout.operator("console.execute").interactive = True
+        
         layout.separator()
 
         layout.operator("console.clear")
@@ -73,16 +73,56 @@ class CONSOLE_MT_console(Menu):
 
         layout.separator()
 
-        layout.operator("console.copy_as_script")
-        layout.operator("console.copy")
-        layout.operator("console.paste")
+        layout.operator("console.copy_as_script", text = "Copy as Script")
+        layout.operator("console.copy", text ="Copy")
+        layout.operator("console.paste", text = "Paste")
+        
+        layout.separator()
+
         layout.menu("CONSOLE_MT_language")
+        
+        layout.separator()
+        
+        myvar = layout.operator("wm.context_cycle_int", text = "Zoom Text in")
+        myvar.data_path = "space_data.font_size"
+        myvar.reverse = False
+        
+        myvar = layout.operator("wm.context_cycle_int", text = "Zoom Text Out")
+        myvar.data_path = "space_data.font_size"
+        myvar.reverse = True
 
         layout.separator()
 
         layout.operator("screen.area_dupli")
         layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area") # bfa - the separated tooltip. Class is in space_text.py
         layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area").use_hide_panels = True
+        
+class CONSOLE_MT_edit(Menu):
+    bl_label = "Edit"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("console.indent")
+        layout.operator("console.unindent")
+        
+        layout.separator()
+        
+        layout.operator("console.move", text ="Cursor to Previous Word").type = "PREVIOUS_WORD"
+        layout.operator("console.move", text ="Cursor to Next Word").type = "NEXT_WORD"
+        layout.operator("console.move", text ="Cursor to Line Begin").type = "LINE_BEGIN"
+        layout.operator("console.move", text ="Cursor to Line Begin").type = "LINE_END"     
+        layout.operator("console.move", text ="Cursor to Previous Character").type = "PREVIOUS_CHARACTER"
+        layout.operator("console.move", text ="Cursor to Next Character").type = "NEXT_CHARACTER"
+        
+        layout.separator()
+        
+        layout.operator_menu_enum("console.delete", "type")
+        
+        layout.separator()
+        
+        layout.operator("console.history_cycle").reverse = False
+        layout.operator("console.history_cycle").reverse = True
 
 
 class CONSOLE_MT_language(Menu):
