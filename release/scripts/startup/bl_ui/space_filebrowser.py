@@ -269,6 +269,10 @@ class FILEBROWSER_MT_select(Menu):
         layout = self.layout
 
         space = context.space_data
+        
+        layout.operator("file.bookmark_toggle")
+        
+        layout.separator()
 
         layout.operator("file.select_all_toggle")
         layout.operator("file.select_border", text = "Border Select")
