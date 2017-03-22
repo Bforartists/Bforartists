@@ -73,7 +73,7 @@ static void RegisterBlendExtension_Fail(HKEY root)
 	if (root)
 		RegCloseKey(root);
 	if (!G.background)
-		MessageBox(0, "Could not register file extension.", "Blender error", MB_OK | MB_ICONERROR);
+		MessageBox(0, "Could not register file extension.", "Bforartists error", MB_OK | MB_ICONERROR);
 	TerminateProcess(GetCurrentProcess(), 1);
 }
 
@@ -176,7 +176,7 @@ void RegisterBlendExtension(void)
 	printf("success (%s)\n", usr_mode ? "user" : "system");
 	if (!G.background) {
 		sprintf(MBox, "File extension registered for %s.", usr_mode ? "the current user. To register for all users, run as an administrator" : "all users");
-		MessageBox(0, MBox, "Blender", MB_OK | MB_ICONINFORMATION);
+		MessageBox(0, MBox, "Bforartists", MB_OK | MB_ICONINFORMATION);
 	}
 	TerminateProcess(GetCurrentProcess(), 0);
 }
