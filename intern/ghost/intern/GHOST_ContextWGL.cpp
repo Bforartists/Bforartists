@@ -962,11 +962,11 @@ GHOST_TSuccess GHOST_ContextWGL::initializeDrawingContext()
 	     strcmp(renderer, "GDI Generic") == 0) && version[0] == '1' && version[2] == '1')
 	{
 		MessageBox(m_hWnd, "Your system does not use 3D hardware acceleration.\n"
-		                   "Blender requires a graphics driver with OpenGL 2.1 support.\n\n"
+		                   "Bforartists requires a graphics driver with OpenGL 2.1 support.\n\n"
 		                   "This may be caused by:\n"
 		                   "* A missing or faulty graphics driver installation.\n"
 		                   "  Bforartists needs a graphics card driver to work correctly.\n"
-		                   "* Accessing Blender through a remote connection.\n"
+		                   "* Accessing Bforartists through a remote connection.\n"
 		                   "* Using Bforartists through a virtual machine.\n\n"
 		                   "The program will now close.",
 		           "Bforartists - Can't detect 3D hardware accelerated Driver!",

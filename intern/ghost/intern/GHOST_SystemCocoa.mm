@@ -429,12 +429,12 @@ GHOST_TSuccess GHOST_SystemCocoa::init()
 			NSMenu *appMenu;
 
 			//Create the application menu
-			appMenu = [[NSMenu alloc] initWithTitle:@"Blender"];
+			appMenu = [[NSMenu alloc] initWithTitle:@"Bforartists"];
 
-			[appMenu addItemWithTitle:@"About Blender" action:@selector(orderFrontStandardAboutPanel:) keyEquivalent:@""];
+			[appMenu addItemWithTitle:@"About Bforartists" action:@selector(orderFrontStandardAboutPanel:) keyEquivalent:@""];
 			[appMenu addItem:[NSMenuItem separatorItem]];
 
-			menuItem = [appMenu addItemWithTitle:@"Hide Blender" action:@selector(hide:) keyEquivalent:@"h"];
+			menuItem = [appMenu addItemWithTitle:@"Hide Bforartists" action:@selector(hide:) keyEquivalent:@"h"];
 			[menuItem setKeyEquivalentModifierMask:NSCommandKeyMask];
 
 			menuItem = [appMenu addItemWithTitle:@"Hide others" action:@selector(hideOtherApplications:) keyEquivalent:@"h"];
@@ -442,7 +442,7 @@ GHOST_TSuccess GHOST_SystemCocoa::init()
 
 			[appMenu addItemWithTitle:@"Show All" action:@selector(unhideAllApplications:) keyEquivalent:@""];
 
-			menuItem = [appMenu addItemWithTitle:@"Quit Blender" action:@selector(terminate:) keyEquivalent:@"q"];
+			menuItem = [appMenu addItemWithTitle:@"Quit Bforartists" action:@selector(terminate:) keyEquivalent:@"q"];
 			[menuItem setKeyEquivalentModifierMask:NSCommandKeyMask];
 
 			menuItem = [[NSMenuItem alloc] init];
@@ -1090,7 +1090,7 @@ GHOST_TUns8 GHOST_SystemCocoa::handleQuitRequest()
 	//Check open windows if some changes are not saved
 	if (m_windowManager->getAnyModifiedState())
 	{
-		int shouldQuit = NSRunAlertPanel(@"Exit Blender", @"Some changes have not been saved.\nDo you really want to quit?",
+		int shouldQuit = NSRunAlertPanel(@"Exit Bforartists", @"Some changes have not been saved.\nDo you really want to quit?",
 		                                 @"Cancel", @"Quit Anyway", nil);
 		if (shouldQuit == NSAlertAlternateReturn)
 		{
