@@ -427,7 +427,7 @@ endif()
 if("${CMAKE_GENERATOR}" MATCHES ".*Makefiles.*")
 	# message after building.
 	add_custom_command(
-		TARGET blender POST_BUILD MAIN_DEPENDENCY blender
+		TARGET bforartists POST_BUILD MAIN_DEPENDENCY bforartists
 		COMMAND ${CMAKE_COMMAND} -E
 		        echo 'now run: \"make install\" to copy runtime files and scripts to ${TARGETDIR_VER}'
 	)
