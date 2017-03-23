@@ -1499,13 +1499,6 @@ class VIEW3D_MT_object(Menu):
 
         layout.separator()
 
-        if is_local_view:
-            layout.operator_context = 'EXEC_REGION_WIN'
-            layout.operator("object.move_to_layer", text="Move out of Local View")
-            layout.operator_context = 'INVOKE_REGION_WIN'
-        else:
-            layout.operator("object.move_to_layer", text="Move to Layer...")
-
         layout.menu("VIEW3D_MT_object_showhide")
 
         layout.operator_menu_enum("object.convert", "target")
