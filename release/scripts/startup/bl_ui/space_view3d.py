@@ -1350,8 +1350,6 @@ class VIEW3D_MT_object(Menu):
                         props.header_text = "DOF Distance: %.3f"
                     del view
 
-                    layout.separator()
-
             if obj.type in {'CURVE', 'FONT'}:
                 layout.operator_context = 'INVOKE_REGION_WIN'
                 layout.separator()
@@ -1368,7 +1366,6 @@ class VIEW3D_MT_object(Menu):
                 props.input_scale = 0.01
                 props.header_text = "Width Size: %.3f"
 
-                layout.separator()
 
             if obj.type == 'EMPTY':
                 layout.operator_context = 'INVOKE_REGION_WIN'
@@ -1380,7 +1377,6 @@ class VIEW3D_MT_object(Menu):
                 props.input_scale = 0.01
                 props.header_text = "Empty Draw Size: %.3f"
 
-                layout.separator()
 
             if obj.type == 'LAMP':
                 lamp = obj.data
