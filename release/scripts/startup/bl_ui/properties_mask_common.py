@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -316,22 +316,27 @@ class MASK_MT_mask(Menu):
         layout = self.layout
 
         layout.operator("mask.delete")
+        layout.operator("mask.duplicate_move", text = "Duplicate")
 
         layout.separator()
+
         layout.operator("mask.cyclic_toggle")
         layout.operator("mask.switch_direction")
         layout.operator("mask.normals_make_consistent")
         layout.operator("mask.feather_weight_clear")  # TODO, better place?
 
         layout.separator()
+
         layout.operator("mask.parent_clear")
         layout.operator("mask.parent_set")
 
         layout.separator()
+
         layout.operator("mask.copy_splines")
         layout.operator("mask.paste_splines")
 
         layout.separator()
+
         layout.menu("MASK_MT_visibility")
         layout.menu("MASK_MT_transform")
         layout.menu("MASK_MT_animation")
