@@ -271,7 +271,7 @@ class MASK_PT_tools:
         col.operator("mask.delete")
         col.operator("mask.cyclic_toggle")
         col.operator("mask.switch_direction")
-        col.operator("mask.handle_type_set")
+        col.operator_menu_enum("mask.handle_type_set", "type", text="Set Handle Type")
         col.operator("mask.feather_weight_clear")
 
         col = layout.column(align=True)
