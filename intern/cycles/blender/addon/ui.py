@@ -1707,19 +1707,16 @@ def draw_device(self, context):
         from . import engine
         cscene = scene.cycles
 
-        wm = context.window_manager # Our bool is in the windows_manager
-        if  wm.SP_render_render_options:
+        layout.prop(cscene, "feature_set")
 
-            layout.prop(cscene, "feature_set")
+        split = layout.split(percentage=1/3)
+        split.label("Device:")
+        row = split.row()
+        row.active = show_device_selection(context)
+        row.prop(cscene, "device", text="")
 
-            split = layout.split(percentage=1/3)
-            split.label("Device:")
-            row = split.row()
-            row.active = show_device_selection(context)
-            row.prop(cscene, "device", text="")
-
-            if engine.with_osl() and use_cpu(context):
-                layout.prop(cscene, "shading_system")
+        if engine.with_osl() and use_cpu(context):
+            layout.prop(cscene, "shading_system")
 
 
 def draw_pause(self, context):
