@@ -1066,7 +1066,6 @@ from bl_ui.properties_mask_common import (
         MASK_PT_point,
         MASK_PT_display,
         MASK_PT_tools,
-        MASK_PT_transforms,
         )
 
 
@@ -1093,11 +1092,6 @@ class CLIP_PT_active_mask_point(MASK_PT_point, Panel):
 class CLIP_PT_mask(MASK_PT_mask, Panel):
     bl_space_type = 'CLIP_EDITOR'
     bl_region_type = 'UI'
-
-
-class CLIP_PT_tools_mask_transforms(MASK_PT_transforms, Panel):
-    bl_space_type = 'CLIP_EDITOR'
-    bl_region_type = 'TOOLS'
 
 
 class CLIP_PT_tools_mask(MASK_PT_tools, Panel):
