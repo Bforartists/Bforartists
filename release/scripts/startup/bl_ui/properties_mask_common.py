@@ -294,26 +294,6 @@ class MASK_PT_tools:
         col.operator("mask.shape_key_rekey", text="Re-Key Shape Points")
 
 
-class MASK_PT_add:
-    # subclasses must define...
-    #~ bl_space_type = 'CLIP_EDITOR'
-    #~ bl_region_type = 'TOOLS'
-    bl_label = "Add"
-    bl_category = "Mask"
-
-    @classmethod
-    def poll(cls, context):
-        space_data = context.space_data
-        return space_data.mode == 'MASK'
-
-    def draw(self, context):
-        layout = self.layout
-
-        col = layout.column(align=True)
-        col.operator("mask.primitive_circle_add", icon='MESH_CIRCLE')
-        col.operator("mask.primitive_square_add", icon='MESH_PLANE')
-
-
 class MASK_MT_mask(Menu):
     bl_label = "Mask"
 
