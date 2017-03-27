@@ -121,9 +121,6 @@ class VIEW3D_HT_header(Header):
 
         # GPencil
         if context.gpencil_data and context.gpencil_data.use_stroke_edit_mode:
-            row = layout.row(align=True)
-            row.operator("gpencil.copy", text="", icon='COPYDOWN')
-            row.operator("gpencil.paste", text="", icon='PASTEDOWN')
 
             # XXX: icon
             layout.prop(context.gpencil_data, "use_onion_skinning", text="Onion Skins", icon='PARTICLE_PATH')
@@ -3239,6 +3236,11 @@ class VIEW3D_MT_edit_gpencil(Menu):
 
         layout.separator()
 
+        layout.operator("gpencil.copy", text="Copy")
+        layout.operator("gpencil.paste", text="Paste")
+
+        layout.separator()
+
         layout.operator("gpencil.brush_paint", text="Sculpt Strokes").wait_for_input = True
         layout.prop_menu_enum(toolsettings.gpencil_sculpt, "tool", text="Sculpt Brush")
 
@@ -3262,12 +3264,7 @@ class VIEW3D_MT_edit_gpencil(Menu):
         layout.separator()
 
         layout.operator_menu_enum("gpencil.stroke_join", "type", text="Join...")
-        layout.operator("gpencil.stroke_flip", text="Flip Direction")
-
-        layout.separator()
-
-        layout.operator("gpencil.copy", text="Copy")
-        layout.operator("gpencil.paste", text="Paste")
+        layout.operator("gpencil.stroke_flip", text="Flip Direction")      
 
         layout.separator()
 

@@ -190,10 +190,6 @@ class GreasePencilStrokeEditPanel:
             col.operator("gpencil.palettecolor_select")
 
         layout.label(text="Edit:")
-        row = layout.row(align=True)
-        row.operator("gpencil.copy", text="Copy")
-        row.operator("gpencil.paste", text="Paste").type = 'COPY'
-        row.operator("gpencil.paste", text="Paste & Merge").type = 'MERGE'
 
         col = layout.column(align=True)
         col.operator("gpencil.delete")
