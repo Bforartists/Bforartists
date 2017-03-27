@@ -265,6 +265,11 @@ class MASK_PT_tools:
 
     def draw(self, context):
         layout = self.layout
+        
+        col = layout.column(align=True)
+        col.label(text="Add Spline:")
+        col.operator("mask.primitive_circle_add")
+        col.operator("mask.primitive_square_add")
 
         col = layout.column(align=True)
         col.label(text="Spline:")
