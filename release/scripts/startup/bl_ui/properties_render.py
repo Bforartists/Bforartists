@@ -54,9 +54,8 @@ class RenderButtonsPanel:
         scene = context.scene
         return scene and (scene.render.engine in cls.COMPAT_ENGINES)
 
-
 class RENDER_PT_render(RenderButtonsPanel, Panel):
-    bl_label = "Render"
+    bl_label = "Renderer Options"
     bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {'BLENDER_RENDER'}
 
@@ -65,25 +64,13 @@ class RENDER_PT_render(RenderButtonsPanel, Panel):
 
         rd = context.scene.render
 
-        if rd.has_multiple_engines: # bfa - the renderer drodpown box from the info menu bar.
-            layout.prop(rd, "engine", text="")
+        split = layout.split(percentage=0.33)
 
-        wm = context.window_manager # Our bool is in the windows_manager
-  
-        # The subtab is closed by default.
-        # When the click at it then it opens. And shows the hidden ui elements.
-        if not wm.SP_render_render_options:
-            layout.prop(wm,"SP_render_render_options", emboss=False, icon="TRIA_RIGHT", text="- Options -")
+        split.label(text="Display:")
+        row = split.row(align=True)
+        row.prop(rd, "display_mode", text="")
+        row.prop(rd, "use_lock_interface", icon_only=True)
 
-        else:
-            layout.prop(wm,"SP_render_render_options", emboss=False, icon="TRIA_DOWN", text="+ Options +")
-
-            split = layout.split(percentage=0.33)
-
-            split.label(text="Display:")
-            row = split.row(align=True)
-            row.prop(rd, "display_mode", text="")
-            row.prop(rd, "use_lock_interface", icon_only=True)
 
 
 class RENDER_PT_dimensions(RenderButtonsPanel, Panel):

@@ -266,7 +266,6 @@ class PHYSICS_PT_game_obstacles(PhysicsButtonsPanel, Panel):
         row.prop(game, "obstacle_radius", text="Radius")
         row.label()
 
-
 class RenderButtonsPanel:
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
@@ -277,24 +276,24 @@ class RenderButtonsPanel:
         rd = context.scene.render
         return (rd.engine in cls.COMPAT_ENGINES)
 
-# Bforartists has moved the render dropdown box from the info menu bar into the Properties editor under the Render tab.
-# Normally the render tab does not display in game mode in this panel. But we need a way to escape the game mode.
-# So we need to show the Render dropdown box also in game mode. That's why we need a new tab here.
-# The render class from the properties render file did not work here. So i create a new class called renderbge.
-# Because with this class you can go back to the other modes again.
-class RENDER_PT_renderbge(RenderButtonsPanel, Panel):
-    bl_label = "Render"
-    COMPAT_ENGINES = {'BLENDER_GAME'}
+# bfa - the renderer dropdown box to choose the renderer
+# It is in the games section because of the order. properties_game.py gets executed before properties_render.py
+# And so we have to place the dropdown box panel here so that it gets displayed at the top too when you are in game engine mode.
+
+class RENDER_PT_renderer(Panel):
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_label = "Renderer"
 
     def draw(self, context):
         layout = self.layout
 
         rd = context.scene.render
 
-        row = layout.row()
         if rd.has_multiple_engines: # bfa - the renderer drodpown box from the info menu bar.
             layout.prop(rd, "engine", text="")
-#end of BFA render dropdown panel
+
+#end of BFA renderer panel
 
 class RENDER_PT_embedded(RenderButtonsPanel, Panel):
     bl_label = "Embedded Player"
