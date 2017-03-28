@@ -148,7 +148,6 @@ class GreasePencilDrawingToolsPanel:
             col.separator()
 
             col.label(text="Tools:")
-            col.operator_menu_enum("gpencil.convert", text="Convert to Geometry...", property="type")
             col.operator("view3d.ruler", icon= 'RULER')
 
 
@@ -192,8 +191,6 @@ class GreasePencilStrokeEditPanel:
         layout.label(text="Edit:")
 
         col = layout.column(align=True)
-        col.operator("gpencil.delete")
-        col.operator("gpencil.duplicate_move", text="Duplicate")
         if is_3d_view:
             col.operator("gpencil.stroke_cyclical_set", text="Toggle Cyclic").type = 'TOGGLE'
 
@@ -212,6 +209,7 @@ class GreasePencilStrokeEditPanel:
         col.operator("transform.mirror", text="Mirror")
         col.operator("transform.shear", text="Shear")
         col.operator("transform.tosphere", text="To Sphere")
+        col.operator("transform.transform", text="Shrink Fatten").mode = 'GPENCIL_SHRINKFATTEN'
 
         layout.separator()
         col = layout.column(align=True)
@@ -378,6 +376,7 @@ class GreasePencilStrokeSculptPanel:
         tool = settings.tool
         brush = settings.brush
 
+        layout.operator("gpencil.brush_paint", text="Sculpt Strokes").wait_for_input = True
         layout.column().prop(settings, "tool")
 
         col = layout.column()
