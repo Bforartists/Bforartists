@@ -1238,8 +1238,16 @@ class CLIP_MT_view(Menu):
                 layout.operator("clip.graph_view_all")
                 layout.operator_context = 'INVOKE_DEFAULT'
 
+                layout.separator()
+
             layout.prop(sc, "show_seconds")
             layout.prop(sc, "show_locked_time")
+
+        if sc.view == 'DOPESHEET':
+
+            layout.separator()
+
+            layout.operator("clip.dopesheet_view_all")    
 
         layout.separator()
 
