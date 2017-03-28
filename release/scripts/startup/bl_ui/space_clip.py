@@ -1420,6 +1420,35 @@ class CLIP_MT_select_grouped(Menu):
 
         layout.operator_enum("clip.select_grouped", "group")
 
+class CLIP_MT_tracking_specials(Menu):
+    bl_label = "Specials"
+
+    @classmethod
+    def poll(cls, context):
+        return context.space_data.clip
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("clip.disable_markers",
+                        text="Enable Markers").action = 'ENABLE'
+
+        layout.operator("clip.disable_markers",
+                        text="Disable markers").action = 'DISABLE'
+
+        layout.separator()
+        layout.operator("clip.set_origin")
+
+        layout.separator()
+        layout.operator("clip.hide_tracks")
+        layout.operator("clip.hide_tracks_clear", text="Show Tracks")
+
+        layout.separator()
+        layout.operator("clip.lock_tracks", text="Lock Tracks").action = 'LOCK'
+
+        layout.operator("clip.lock_tracks",
+                        text="Unlock Tracks").action = 'UNLOCK'
+
 
 class CLIP_MT_camera_presets(Menu):
     """Predefined tracking camera intrinsics"""
