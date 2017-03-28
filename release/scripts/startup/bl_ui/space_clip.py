@@ -262,9 +262,6 @@ class CLIP_PT_tools_clip(Panel):
     def draw(self, context):
         layout = self.layout
         col = layout.column(align=True)
-        row = col.row(align=True)
-        row.operator("clip.prefetch", text="Prefetch")
-        row.operator("clip.reload", text="Reload")
         col.operator("clip.set_scene_frames")
 
 
