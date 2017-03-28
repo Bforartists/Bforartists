@@ -119,15 +119,6 @@ class VIEW3D_HT_header(Header):
             if (mode == 'EDIT' and obj.type == 'MESH'):
                 layout.prop(toolsettings, "use_mesh_automerge", text="", icon='AUTOMERGE_ON')
 
-        # GPencil
-        if context.gpencil_data and context.gpencil_data.use_stroke_edit_mode:
-
-            # XXX: icon
-            layout.prop(context.gpencil_data, "use_onion_skinning", text="Onion Skins", icon='PARTICLE_PATH')
-
-            row = layout.row(align=True)
-            row.prop(context.tool_settings.gpencil_sculpt, "use_select_mask")
-            row.prop(context.tool_settings.gpencil_sculpt, "selection_alpha", slider=True)
 
 # bfa - show hide the editormenu
 class ALL_MT_editormenu(Menu):
@@ -3241,30 +3232,17 @@ class VIEW3D_MT_edit_gpencil(Menu):
 
         layout.separator()
 
-        layout.operator("gpencil.brush_paint", text="Sculpt Strokes").wait_for_input = True
-        layout.prop_menu_enum(toolsettings.gpencil_sculpt, "tool", text="Sculpt Brush")
+        layout.menu("VIEW3D_MT_edit_gpencil_delete")
+        layout.operator("gpencil.duplicate_move", text="Duplicate")
 
         layout.separator()
 
         layout.menu("VIEW3D_MT_edit_gpencil_transform")
-        layout.operator("transform.mirror", text="Mirror")
         layout.menu("GPENCIL_MT_snap")
 
         layout.separator()
 
         layout.menu("VIEW3D_MT_object_animation")   # NOTE: provides keyingset access...
-        layout.menu("VIEW3D_MT_edit_gpencil_interpolate")
-
-        layout.separator()
-
-        layout.menu("VIEW3D_MT_edit_gpencil_delete")
-        layout.operator("gpencil.duplicate_move", text="Duplicate")
-        layout.operator("gpencil.stroke_subdivide", text="Subdivide")
-
-        layout.separator()
-
-        layout.operator_menu_enum("gpencil.stroke_join", "type", text="Join...")
-        layout.operator("gpencil.stroke_flip", text="Flip Direction")      
 
         layout.separator()
 
@@ -3280,8 +3258,6 @@ class VIEW3D_MT_edit_gpencil(Menu):
         layout.separator()
 
         layout.operator_menu_enum("gpencil.move_to_layer", "layer", text="Move to Layer")
-        layout.operator("gpencil.stroke_change_color", text="Move to Color")
-        layout.operator_menu_enum("gpencil.stroke_arrange", "direction", text="Arrange Strokes...")
 
         layout.separator()
 
@@ -3297,17 +3273,6 @@ class VIEW3D_MT_edit_gpencil_transform(Menu):
         layout.operator("transform.translate")
         layout.operator("transform.rotate")
         layout.operator("transform.resize", text="Scale")
-
-        layout.separator()
-
-        layout.operator("transform.bend", text="Bend")
-        layout.operator("transform.shear", text="Shear")
-        layout.operator("transform.tosphere", text="To Sphere")
-        layout.operator("transform.transform", text="Shrink Fatten").mode = 'GPENCIL_SHRINKFATTEN'
-
-        layout.separator()
-
-        layout.operator("gpencil.reproject")
 
 
 class VIEW3D_MT_edit_gpencil_interpolate(Menu):
