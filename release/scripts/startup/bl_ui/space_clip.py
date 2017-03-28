@@ -1389,6 +1389,8 @@ class CLIP_MT_track_transform(Menu):
 
         layout.operator("transform.translate")
         layout.operator("transform.resize")
+        layout.operator("transform.rotate")
+        
 
 
 class CLIP_MT_select(Menu):
