@@ -1321,6 +1321,10 @@ class CLIP_MT_track(Menu):
         layout.operator("clip.paste_tracks")
 
         layout.separator()
+        layout.operator("clip.keyframe_insert")
+        layout.operator("clip.keyframe_delete")
+
+        layout.separator()
         props = layout.operator("clip.track_markers", text="Track Frame Backwards")
         props.backwards = True
         props.sequence = False
