@@ -299,6 +299,8 @@ class DOPESHEET_MT_select(Menu):
     def draw(self, context):
         layout = self.layout       
         
+        myvar = layout.operator("action.select_lasso", icon='BORDER_LASSO')
+        myvar.deselect = False
         layout.operator("action.select_border", icon='BORDER_RECT').axis_range = False
         layout.operator("action.select_border", text="Border Axis Range", icon='BORDER_RECT').axis_range = True
         layout.operator("action.select_circle", icon = 'CIRCLE_SELECT')
