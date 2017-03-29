@@ -281,12 +281,12 @@ class CLIP_PT_tools_marker(CLIP_PT_tracking_panel, Panel):
         row = col.row(align=True)
         row.operator("clip.disable_markers", text="Enable Markers").action = 'ENABLE'
         row.operator("clip.disable_markers", text="Disable markers").action = 'DISABLE'
-        row = col.row(align=True)
-        row.operator("clip.add_marker_at_click", text="Add Marker")
-        row.operator("clip.delete_track", text="Delete")
+        
+        col.operator("clip.add_marker_at_click", text="Add Marker")
+        row = col.row(align=True)    
+        row.operator("clip.delete_track", text="Delete Track")
+        row.operator("clip.delete_marker", text="Delete Marker")
         col.operator("clip.detect_features")
-
-
 
 class CLIP_PT_tracking_settings(CLIP_PT_tracking_panel, Panel):
     bl_space_type = 'CLIP_EDITOR'
@@ -1343,12 +1343,8 @@ class CLIP_MT_track(Menu):
         props.backwards = False
         props.sequence = False
 
-        layout.separator()
-        layout.operator("clip.delete_track")
-        layout.operator("clip.delete_marker")
-
-        layout.separator()
-        layout.operator("clip.add_marker_move")
+        #layout.separator()
+        #layout.operator("clip.add_marker_move")
 
         layout.separator()
         layout.menu("CLIP_MT_track_visibility")
