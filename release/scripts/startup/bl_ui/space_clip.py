@@ -1270,6 +1270,11 @@ class CLIP_MT_clip(Menu):
             layout.operator("clip.reload")
             layout.menu("CLIP_MT_proxy")
 
+            layout.operator("clip.set_solver_keyframe", text = "Set Solver Keyframe A").keyframe = "KEYFRAME_A"
+            layout.operator("clip.set_solver_keyframe", text = "Set Solver Keyframe B").keyframe = "KEYFRAME_B"
+
+
+
 
 class CLIP_MT_proxy(Menu):
     bl_label = "Proxy"
