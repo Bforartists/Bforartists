@@ -185,14 +185,14 @@ class IMAGE_MT_select(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("uv.select_border").pinned = False
-        layout.operator("uv.select_border", text="Border Select Pinned").pinned = True
-        layout.operator("uv.circle_select")
+        layout.operator("uv.select_border", text = "Border Select", icon='BORDER_RECT').pinned = False
+        layout.operator("uv.select_border", text="Border Select Pinned", icon='BORDER_RECT').pinned = True
+        layout.operator("uv.circle_select", icon = 'CIRCLE_SELECT')
 
         layout.separator()
 
-        layout.operator("uv.select_all").action = 'TOGGLE'
-        layout.operator("uv.select_all_inverse", text="Inverse")
+        layout.operator("uv.select_all", icon='SELECT_ALL').action = 'TOGGLE'
+        layout.operator("uv.select_all_inverse", text="Inverse", icon = 'INVERSE')
 
         layout.separator()
 
@@ -205,12 +205,12 @@ class IMAGE_MT_select(Menu):
 
         layout.separator()
 
-        layout.operator("uv.select_less", text="Less")
-        layout.operator("uv.select_more", text="More")
+        layout.operator("uv.select_split",text = "Split")
 
         layout.separator()
 
-        layout.operator("uv.select_split",text = "Split")
+        layout.operator("uv.select_more", text="More")
+        layout.operator("uv.select_less", text="Less")
 
 
 class IMAGE_MT_brush(Menu):

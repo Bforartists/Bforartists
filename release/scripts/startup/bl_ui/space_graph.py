@@ -164,35 +164,40 @@ class GRAPH_MT_select(Menu):
 
     def draw(self, context):
         layout = self.layout
-
-        # This is a bit misleading as the operator's default text is "Select All" while it actually *toggles* All/None
-        layout.operator("graph.select_all_toggle").invert = False
-        layout.operator("graph.select_all_toggle", text="Invert Selection").invert = True
-
-        layout.separator()
-        props = layout.operator("graph.select_border")
+     
+        props = layout.operator("graph.select_border", icon='BORDER_RECT')
         props.axis_range = False
         props.include_handles = False
-        props = layout.operator("graph.select_border", text="Border Axis Range")
+        props = layout.operator("graph.select_border", text="Border Axis Range", icon='BORDER_RECT')
         props.axis_range = True
         props.include_handles = False
-        props = layout.operator("graph.select_border", text="Border (Include Handles)")
+        props = layout.operator("graph.select_border", text="Border (Include Handles)", icon='BORDER_RECT')
         props.axis_range = False
         props.include_handles = True
-        props = layout.operator("graph.select_border", text="Border (Axis + Handles)")
+        props = layout.operator("graph.select_border", text="Border (Axis + Handles)", icon='BORDER_RECT')
         props.axis_range = False
         props.include_handles = True
-
-        layout.operator("graph.select_circle")
+        layout.operator("graph.select_circle", icon = 'CIRCLE_SELECT')
+        
+        layout.separator()
+        
+        layout.operator("graph.select_all_toggle", text = "(De)Select All", icon='SELECT_ALL').invert = False
+        layout.operator("graph.select_all_toggle", text="Inverse", icon = 'INVERSE').invert = True     
 
         layout.separator()
+        
         layout.operator("graph.select_column", text="Columns on Selected Keys").mode = 'KEYS'
         layout.operator("graph.select_column", text="Column on Current Frame").mode = 'CFRA'
 
         layout.operator("graph.select_column", text="Columns on Selected Markers").mode = 'MARKERS_COLUMN'
         layout.operator("graph.select_column", text="Between Selected Markers").mode = 'MARKERS_BETWEEN'
+        
+        layout.separator()
+
+        layout.operator("graph.select_linked",text = "Linked")
 
         layout.separator()
+        
         props = layout.operator("graph.select_leftright", text="Before Current Frame")
         props.extend = False
         props.mode = 'LEFT'
@@ -205,9 +210,6 @@ class GRAPH_MT_select(Menu):
         layout.operator("graph.select_more",text = "More")
         layout.operator("graph.select_less",text = "Less")
 
-        layout.separator()
-
-        layout.operator("graph.select_linked",text = "Linked")
 
 
 class GRAPH_MT_marker(Menu):
