@@ -1400,15 +1400,15 @@ class CLIP_MT_select(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("clip.select_border")
-        layout.operator("clip.select_circle")
+        layout.operator("clip.select_border", icon = 'BORDER_RECT')
+        layout.operator("clip.select_circle", icon = 'CIRCLE_SELECT')
 
         layout.separator()
 
-        layout.operator("clip.select_all"
-                        ).action = 'TOGGLE'
-        layout.operator("clip.select_all",
-                        text="Inverse").action = 'INVERT'
+        layout.operator("clip.select_all", icon = 'SELECT_ALL').action = 'TOGGLE'
+        layout.operator("clip.select_all", text ="Inverse", icon = 'INVERSE').action = 'INVERT'
+        
+        layout.separator()
 
         layout.menu("CLIP_MT_select_grouped")
 

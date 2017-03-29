@@ -213,12 +213,15 @@ class NODE_MT_select(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("node.select_border").tweak = False
-        layout.operator("node.select_circle")
+        layout.operator("node.select_border", icon = 'BORDER_RECT').tweak = False
+        layout.operator("node.select_circle", icon = 'CIRCLE_SELECT')
 
         layout.separator()
-        layout.operator("node.select_all").action = 'TOGGLE'
-        layout.operator("node.select_all", text="Inverse").action = 'INVERT'
+        layout.operator("node.select_all", icon = 'SELECT_ALL').action = 'TOGGLE'
+        layout.operator("node.select_all", text="Inverse", icon = 'INVERSE').action = 'INVERT'
+        
+        layout.separator()
+        
         layout.operator("node.select_linked_from", text = "Linked From")
         layout.operator("node.select_linked_to", text = "Linked To")
 
