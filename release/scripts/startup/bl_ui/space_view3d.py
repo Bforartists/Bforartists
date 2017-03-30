@@ -662,8 +662,8 @@ class VIEW3D_MT_select_object(Menu):
 
         layout.separator()
         
-        layout.operator("object.select_more", text="More")
-        layout.operator("object.select_less", text="Less")
+        layout.operator("object.select_more", text="More", icon = "SELECTMORE")
+        layout.operator("object.select_less", text="Less", icon = "SELECTLESS")
 
 # Workaround to separate the tooltips
 class VIEW3D_MT_select_pose_inverse(bpy.types.Operator):
@@ -763,8 +763,8 @@ class VIEW3D_MT_select_particle(Menu):
         layout.operator("particle.select_linked", text="Deselect Linked").deselect = True
         layout.separator()
 
-        layout.operator("particle.select_more", text="More")
-        layout.operator("particle.select_less", text="Less")
+        layout.operator("particle.select_more", text="More", icon = "SELECTMORE")
+        layout.operator("particle.select_less", text="Less", icon = "SELECTLESS")
 
 
 class VIEW3D_MT_edit_mesh_select_similar(Menu):
@@ -802,8 +802,8 @@ class VIEW3D_MT_edit_mesh_select_more_less(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("mesh.select_more", text="More")
-        layout.operator("mesh.select_less", text="Less")
+        layout.operator("mesh.select_more", text="More", icon = "SELECTMORE")
+        layout.operator("mesh.select_less", text="Less", icon = "SELECTLESS")
 
         layout.separator()
 
@@ -935,8 +935,8 @@ class VIEW3D_MT_select_edit_curve(Menu):
 
         layout.separator()
 
-        layout.operator("curve.select_more", text = "More")
-        layout.operator("curve.select_less", text = "Less")
+        layout.operator("curve.select_more", text = "More", icon = "SELECTMORE")
+        layout.operator("curve.select_less", text = "Less", icon = "SELECTLESS")
 
         layout.separator()
 
@@ -975,8 +975,8 @@ class VIEW3D_MT_select_edit_surface(Menu):
 
         layout.separator()
 
-        layout.operator("curve.select_more", text = "More")
-        layout.operator("curve.select_less", text = "Less")
+        layout.operator("curve.select_more", text = "More", icon = "SELECTMORE")
+        layout.operator("curve.select_less", text = "Less", icon = "SELECTLESS")
 
         layout.separator()
 
@@ -1076,8 +1076,8 @@ class VIEW3D_MT_select_edit_lattice(Menu):
 
         layout.separator()
 
-        layout.operator("lattice.select_more", text ="More")
-        layout.operator("lattice.select_less", text ="Less")
+        layout.operator("lattice.select_more", text ="More", icon = "SELECTMORE")
+        layout.operator("lattice.select_less", text ="Less", icon = "SELECTLESS")
 
         layout.separator()
 
@@ -1141,8 +1141,8 @@ class VIEW3D_MT_select_edit_armature(Menu):
 
         layout.separator()
 
-        layout.operator("armature.select_more", text="More")
-        layout.operator("armature.select_less", text="Less")
+        layout.operator("armature.select_more", text="More", icon = "SELECTMORE")
+        layout.operator("armature.select_less", text="Less", icon = "SELECTLESS")
 
         layout.separator()
 
@@ -1172,8 +1172,8 @@ class VIEW3D_MT_select_gpencil(Menu):
 
         layout.separator()
 
-        layout.operator("gpencil.select_more")
-        layout.operator("gpencil.select_less")
+        layout.operator("gpencil.select_more", icon = "SELECTMORE")
+        layout.operator("gpencil.select_less", icon = "SELECTLESS")
 
 
 # Workaround to separate the tooltips
@@ -2189,8 +2189,8 @@ class VIEW3D_MT_particle_specials(Menu):
 
             layout.separator()
 
-            layout.operator("particle.select_more")
-            layout.operator("particle.select_less")
+            layout.operator("particle.select_more", icon = "SELECTMORE")
+            layout.operator("particle.select_less", icon = "SELECTLESS")
 
             layout.separator()
 
