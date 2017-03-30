@@ -1152,13 +1152,16 @@ class VIEW3D_MT_select_gpencil(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("gpencil.select_border")
-        layout.operator("gpencil.select_circle")
+        layout.operator("gpencil.select_border", icon = 'BORDER_RECT')
+        layout.operator("gpencil.select_circle", icon = 'CIRCLE_SELECT')
 
         layout.separator()
 
-        layout.operator("gpencil.select_all", text="(De)select All").action = 'TOGGLE'
-        layout.operator("gpencil.select_all", text="Inverse").action = 'INVERT'
+        layout.operator("gpencil.select_all", text="(De)select All", icon = "SELECT_ALL").action = 'TOGGLE'
+        layout.operator("gpencil.select_all", text="Inverse", icon='INVERSE').action = 'INVERT'
+
+        layout.separator()
+
         layout.operator("gpencil.select_linked", text="Linked")
         layout.operator_menu_enum("gpencil.select_grouped", "type", text="Grouped")
 
@@ -2193,7 +2196,7 @@ class VIEW3D_MT_particle_specials(Menu):
 
             layout.operator("particle.select_all", icon = "SELECT_ALL").action = 'TOGGLE'
             layout.operator("particle.select_linked")
-            layout.operator("particle.select_all", text="Inverse").action = 'INVERT'
+            layout.operator("particle.select_all", text="Inverse", icon='INVERSE').action = 'INVERT'
 
 # ********** Pose Menu **********
 
@@ -2558,7 +2561,7 @@ class VIEW3D_MT_edit_mesh_specials(Menu):
 
         layout.operator("mesh.hide", text="Hide").unselected = False
         layout.operator("mesh.reveal", text="Reveal")
-        layout.operator("mesh.select_all", text="Select Inverse").action = 'INVERT'
+        layout.operator("mesh.select_all", text="Select Inverse", icon='INVERSE').action = 'INVERT'
 
         layout.separator()
 
