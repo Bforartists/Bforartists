@@ -13,6 +13,27 @@ def kmi_props_setattr(kmi_props, attr, value):
 wm = bpy.context.window_manager
 kc = wm.keyconfigs.new(os.path.splitext(os.path.basename(__file__))[0])
 
+# Map Paint Curve
+km = kc.keymaps.new('Paint Curve', space_type='EMPTY', region_type='WINDOW', modal=False)
+
+kmi = km.keymap_items.new('paintcurve.add_point_slide', 'SELECTMOUSE', 'PRESS', ctrl=True)
+kmi = km.keymap_items.new('paintcurve.select', 'SELECTMOUSE', 'PRESS')
+kmi = km.keymap_items.new('paintcurve.select', 'SELECTMOUSE', 'PRESS', shift=True)
+kmi_props_setattr(kmi.properties, 'extend', True)
+kmi = km.keymap_items.new('paintcurve.slide', 'ACTIONMOUSE', 'PRESS')
+kmi = km.keymap_items.new('paintcurve.slide', 'ACTIONMOUSE', 'PRESS', shift=True)
+kmi_props_setattr(kmi.properties, 'align', True)
+kmi = km.keymap_items.new('paintcurve.select', 'A', 'PRESS')
+kmi_props_setattr(kmi.properties, 'toggle', True)
+kmi = km.keymap_items.new('paintcurve.cursor', 'ACTIONMOUSE', 'PRESS', alt=True)
+kmi = km.keymap_items.new('paintcurve.delete_point', 'DEL', 'PRESS')
+kmi = km.keymap_items.new('paintcurve.draw', 'RET', 'PRESS')
+kmi = km.keymap_items.new('paintcurve.draw', 'NUMPAD_ENTER', 'PRESS')
+kmi = km.keymap_items.new('transform.translate', 'W', 'PRESS')
+kmi = km.keymap_items.new('transform.translate', 'EVT_TWEAK_S', 'ANY')
+kmi = km.keymap_items.new('transform.rotate', 'E', 'PRESS')
+kmi = km.keymap_items.new('transform.resize', 'R', 'PRESS')
+
 # Map Clip Editor
 km = kc.keymaps.new('Clip Editor', space_type='CLIP_EDITOR', region_type='WINDOW', modal=False)
 
@@ -478,7 +499,7 @@ kmi_props_setattr(kmi.properties, 'mode', 'WEIGHT_PAINT')
 kmi = km.keymap_items.new('object.mode_set', 'SIX', 'PRESS')
 kmi_props_setattr(kmi.properties, 'mode', 'TEXTURE_PAINT')
 kmi = km.keymap_items.new('object.mode_set', 'SEVEN', 'PRESS')
-kmi_props_setattr(kmi.properties, 'mode', 'POSE')
+kmi_props_setattr(kmi.properties, 'mode', 'OBJECT')
 kmi = km.keymap_items.new('object.mode_set', 'ONE', 'PRESS')
 kmi_props_setattr(kmi.properties, 'mode', 'OBJECT')
 
@@ -1246,27 +1267,6 @@ kmi_props_setattr(kmi.properties, 'level', 4)
 kmi = km.keymap_items.new('object.subdivision_set', 'FIVE', 'PRESS', ctrl=True)
 kmi_props_setattr(kmi.properties, 'level', 5)
 kmi = km.keymap_items.new('object.select_all_inverse', 'I', 'PRESS', ctrl=True)
-
-# Map Paint Curve
-km = kc.keymaps.new('Paint Curve', space_type='EMPTY', region_type='WINDOW', modal=False)
-
-kmi = km.keymap_items.new('paintcurve.add_point_slide', 'ACTIONMOUSE', 'PRESS', ctrl=True)
-kmi = km.keymap_items.new('paintcurve.select', 'SELECTMOUSE', 'PRESS')
-kmi = km.keymap_items.new('paintcurve.select', 'SELECTMOUSE', 'PRESS', shift=True)
-kmi_props_setattr(kmi.properties, 'extend', True)
-kmi = km.keymap_items.new('paintcurve.slide', 'ACTIONMOUSE', 'PRESS')
-kmi = km.keymap_items.new('paintcurve.slide', 'ACTIONMOUSE', 'PRESS', shift=True)
-kmi_props_setattr(kmi.properties, 'align', True)
-kmi = km.keymap_items.new('paintcurve.select', 'A', 'PRESS')
-kmi_props_setattr(kmi.properties, 'toggle', True)
-kmi = km.keymap_items.new('paintcurve.cursor', 'ACTIONMOUSE', 'PRESS')
-kmi = km.keymap_items.new('paintcurve.delete_point', 'DEL', 'PRESS')
-kmi = km.keymap_items.new('paintcurve.draw', 'RET', 'PRESS')
-kmi = km.keymap_items.new('paintcurve.draw', 'NUMPAD_ENTER', 'PRESS')
-kmi = km.keymap_items.new('transform.translate', 'W', 'PRESS')
-kmi = km.keymap_items.new('transform.translate', 'EVT_TWEAK_S', 'ANY')
-kmi = km.keymap_items.new('transform.rotate', 'E', 'PRESS')
-kmi = km.keymap_items.new('transform.resize', 'R', 'PRESS')
 
 # Map Image Paint
 km = kc.keymaps.new('Image Paint', space_type='EMPTY', region_type='WINDOW', modal=False)
