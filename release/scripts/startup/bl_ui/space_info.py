@@ -415,16 +415,16 @@ class INFO_MT_help(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("wm.url_open", text="Manual", icon='HELP').url = "http://www.bforartists.de/wiki/Manual"
-        layout.operator("wm.url_open", text="Release notes", icon='URL').url = "http://www.bforartists.de/wiki/release-notes"
+        layout.operator("wm.url_open", text="Manual", icon='HELP').url = "https://www.bforartists.de/wiki/Manual"
+        layout.operator("wm.url_open", text="Release notes", icon='URL').url = "https://www.bforartists.de/wiki/release-notes"
         layout.separator()
 
-        layout.operator("wm.url_open", text="Bforartists Website", icon='URL').url = "http://www.bforartists.de"
+        layout.operator("wm.url_open", text="Bforartists Website", icon='URL').url = "https://www.bforartists.de"
         layout.separator()
-        layout.operator("wm.url_open", text="Report a Bug", icon='URL').url = "http://www.bforartists.de/node/add/project-issue/bforartists_bugtracker"
+        layout.operator("wm.url_open", text="Report a Bug", icon='URL').url = "https://www.bforartists.de/node/add/project-issue/bforartists_bugtracker"
         layout.separator()
 
-        layout.operator("wm.url_open", text="Python API Reference", icon='URL').url = "http://www.bforartists.de/pythonapi/contents.html"
+        layout.operator("wm.url_open", text="Python API Reference", icon='URL').url = "https://www.bforartists.de/pythonapi/contents.html"
         layout.operator("wm.sysinfo", icon='TEXT')
         layout.separator()
 
