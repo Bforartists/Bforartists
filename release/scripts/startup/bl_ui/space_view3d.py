@@ -3273,9 +3273,9 @@ class VIEW3D_MT_edit_gpencil_transform(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("transform.translate")
-        layout.operator("transform.rotate")
-        layout.operator("transform.resize", text="Scale")
+        layout.operator("transform.translate", icon = "TRANSFORM_MOVE")
+        layout.operator("transform.rotate", icon = "TRANSFORM_ROTATE")
+        layout.operator("transform.resize", text="Scale",  icon = "TRANSFORM_SCALE")
 
 
 class VIEW3D_MT_edit_gpencil_interpolate(Menu):
