@@ -172,68 +172,154 @@ class GreasePencilStrokeEditPanel:
         layout = self.layout
 
         is_3d_view = context.space_data.type == 'VIEW_3D'
+        
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
+        
+        if not view.show_iconbuttons: 
 
-        if not is_3d_view:
-            layout.label(text="Select:")
+            if not is_3d_view:
+                layout.label(text="Select:")
+                col = layout.column(align=True)
+                col.operator("gpencil.select_all", text="Select All")
+                col.operator("gpencil.select_border")
+                col.operator("gpencil.select_circle")
+
+                layout.separator()
+
+                col = layout.column(align=True)
+                col.operator("gpencil.select_linked")
+                col.operator("gpencil.select_more")
+                col.operator("gpencil.select_less")
+                col.operator("gpencil.palettecolor_select")
+
+            layout.label(text="Edit:")
+
             col = layout.column(align=True)
-            col.operator("gpencil.select_all", text="Select All")
-            col.operator("gpencil.select_border")
-            col.operator("gpencil.select_circle")
+            if is_3d_view:
+                col.operator("gpencil.stroke_cyclical_set", text="Toggle Cyclic", icon = "TOGGLE_CYCLIC").type = 'TOGGLE'
 
             layout.separator()
 
+            if not is_3d_view:
+                col = layout.column(align=True)
+                col.operator("transform.translate")                # icon='MAN_TRANS'
+                col.operator("transform.rotate")                   # icon='MAN_ROT'
+                col.operator("transform.resize", text="Scale")     # icon='MAN_SCALE'
+
+                layout.separator()
+
             col = layout.column(align=True)
-            col.operator("gpencil.select_linked")
-            col.operator("gpencil.select_more")
-            col.operator("gpencil.select_less")
-            col.operator("gpencil.palettecolor_select")
-
-        layout.label(text="Edit:")
-
-        col = layout.column(align=True)
-        if is_3d_view:
-            col.operator("gpencil.stroke_cyclical_set", text="Toggle Cyclic").type = 'TOGGLE'
-
-        layout.separator()
-
-        if not is_3d_view:
+            
+            col.operator("transform.mirror", text="Mirror",icon = "TRANSFORM_MIRROR")
+            col.operator("transform.transform", text="Shrink Fatten", icon = "SHRINK_FATTEN" ).mode = 'GPENCIL_SHRINKFATTEN'
+            
             col = layout.column(align=True)
-            col.operator("transform.translate")                # icon='MAN_TRANS'
-            col.operator("transform.rotate")                   # icon='MAN_ROT'
-            col.operator("transform.resize", text="Scale")     # icon='MAN_SCALE'
+            col.operator("transform.bend", text="Bend", icon = "BEND")
+            col.operator("transform.shear", text="Shear", icon = "SHEAR")
+            col.operator("transform.tosphere", text="To Sphere", icon = "TOSPHERE")
+            col.operator("gpencil.stroke_change_color", text="Move to Color", icon = "COLOR")        
 
             layout.separator()
-
-        col = layout.column(align=True)
-        col.operator("transform.bend", text="Bend")
-        col.operator("transform.mirror", text="Mirror")
-        col.operator("transform.shear", text="Shear")
-        col.operator("transform.tosphere", text="To Sphere")
-        col.operator("transform.transform", text="Shrink Fatten").mode = 'GPENCIL_SHRINKFATTEN'
-
-        layout.separator()
-        col = layout.column(align=True)
-        col.operator_menu_enum("gpencil.stroke_arrange", text="Arrange Strokes...", property="direction")
-        col.operator("gpencil.stroke_change_color", text="Move to Color")
-
-        if is_3d_view:
-            layout.separator()
+            col = layout.column(align=True)
+            col.operator_menu_enum("gpencil.stroke_arrange", text="Arrange Strokes...", property="direction")
             
 
-        layout.separator()
-        col = layout.column(align=True)
-        col.operator("gpencil.stroke_subdivide", text="Subdivide")
-        col.operator("gpencil.stroke_join", text="Join").type = 'JOIN'
-        col.operator("gpencil.stroke_join", text="Join & Copy").type = 'JOINCOPY'
-        col.operator("gpencil.stroke_flip", text="Flip Direction")
+            if is_3d_view:
+                layout.separator()
+                
 
-        gpd = context.gpencil_data
-        if gpd:
-            col.prop(gpd, "show_stroke_direction", text="Show Directions")
-
-        if is_3d_view:
             layout.separator()
-            layout.operator_menu_enum("gpencil.reproject", text="Reproject Strokes...", property="type")
+            col = layout.column(align=True)
+            col.operator("gpencil.stroke_subdivide", text="Subdivide", icon = "SUBDIVIDE_EDGES")
+            col.operator("gpencil.stroke_join", text="Join", icon = "JOIN").type = 'JOIN'
+            col.operator("gpencil.stroke_join", text="Join & Copy", icon = "JOINCOPY").type = 'JOINCOPY'
+            col.operator("gpencil.stroke_flip", text="Flip Direction", icon = "SWITCH_DIRECTION")
+
+            gpd = context.gpencil_data
+            if gpd:
+                col.prop(gpd, "show_stroke_direction", text="Show Directions")
+
+            if is_3d_view:
+                layout.separator()
+                layout.operator_menu_enum("gpencil.reproject", text="Reproject Strokes...", property="type")
+                
+        else:
+
+            if not is_3d_view:
+                layout.label(text="Select:")
+                col = layout.column(align=True)
+                col.operator("gpencil.select_all", text="Select All")
+                col.operator("gpencil.select_border")
+                col.operator("gpencil.select_circle")
+
+                layout.separator()
+
+                col = layout.column(align=True)
+                col.operator("gpencil.select_linked")
+                col.operator("gpencil.select_more")
+                col.operator("gpencil.select_less")
+                col.operator("gpencil.palettecolor_select")
+
+            layout.label(text="Edit:")
+
+            col = layout.column(align=True)
+            
+            if is_3d_view:
+                
+                subrow = col.row(align=False)
+                subrow.alignment = 'LEFT'
+                subrow.operator("gpencil.stroke_cyclical_set", text="", icon = "TOGGLE_CYCLIC").type = 'TOGGLE'
+
+            col.separator()
+
+            if not is_3d_view:
+                col = layout.column(align=True)
+                col.operator("transform.translate")                # icon='MAN_TRANS'
+                col.operator("transform.rotate")                   # icon='MAN_ROT'
+                col.operator("transform.resize", text="Scale")     # icon='MAN_SCALE'
+
+                layout.separator()
+
+            col = layout.column(align=True)
+   
+            subrow = col.row(align=False)
+            subrow.alignment = 'LEFT'
+            
+            subrow.operator("transform.mirror", text="",icon = "TRANSFORM_MIRROR")
+            subrow.operator("transform.transform", text="", icon = "SHRINK_FATTEN" ).mode = 'GPENCIL_SHRINKFATTEN'
+            
+            col.separator()
+            
+            subrow = col.row(align=False)
+            subrow.alignment = 'LEFT'
+            subrow.operator("transform.bend", text="", icon = "BEND")
+            subrow.operator("transform.shear", text="", icon = "SHEAR")
+            subrow.operator("transform.tosphere", text="", icon = "TOSPHERE")
+            subrow.operator("gpencil.stroke_change_color", text="", icon = "COLOR")
+
+            layout.separator()
+            col = layout.column(align=True)
+            col.operator_menu_enum("gpencil.stroke_arrange", text="Arrange Strokes...", property="direction")
+            
+            if is_3d_view:
+                layout.separator()          
+
+            col = layout.column(align=True)
+            
+            subrow = col.row(align=False)
+            subrow.alignment = 'LEFT'
+            subrow.operator("gpencil.stroke_subdivide", text="", icon = "SUBDIVIDE_EDGES")
+            subrow.operator("gpencil.stroke_join", text="", icon = "JOIN").type = 'JOIN'
+            subrow.operator("gpencil.stroke_join", text="", icon = "JOINCOPY").type = 'JOINCOPY'
+            subrow.operator("gpencil.stroke_flip", text="", icon = "SWITCH_DIRECTION")
+
+            gpd = context.gpencil_data
+            if gpd:
+                col.prop(gpd, "show_stroke_direction", text="Show Directions")
+
+            if is_3d_view:
+                layout.separator()
+                layout.operator_menu_enum("gpencil.reproject", text="Reproject Strokes...", property="type")
 
 
 class GreasePencilInterpolatePanel:
