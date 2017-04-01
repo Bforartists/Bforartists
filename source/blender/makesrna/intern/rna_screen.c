@@ -247,10 +247,10 @@ static void rna_def_area(BlenderRNA *brna)
 	RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_TOOLBAR_FILE);
 	RNA_def_property_ui_text(prop, "File Toolbars", "Shows or hides the File Toolbars");
 
-	// bfa - show hide the View toolbars
-	prop = RNA_def_property(srna, "view_toolbars", PROP_BOOLEAN, PROP_NONE);
-	RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_TOOLBAR_VIEW);
-	RNA_def_property_ui_text(prop, "View Toolbars", "Shows or hides the View Toolbars");
+	// bfa - show hide the Meshedit toolbars
+	prop = RNA_def_property(srna, "meshedit_toolbars", PROP_BOOLEAN, PROP_NONE);
+	RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", HEADER_TOOLBAR_MESHEDIT);
+	RNA_def_property_ui_text(prop, "Mesh Edit Toolbars", "Shows or hides the Mesh Edit Toolbars");
 
 	// bfa - show hide the Primitives toolbars
 	prop = RNA_def_property(srna, "primitives_toolbars", PROP_BOOLEAN, PROP_NONE);

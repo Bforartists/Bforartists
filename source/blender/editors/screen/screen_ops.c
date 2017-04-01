@@ -3352,27 +3352,27 @@ static void SCREEN_OT_header_toolbar_file(wmOperatorType *ot)
 	ot->flag = 0;
 }
 
-// bfa - show hide the view toolbar menus
-static int header_toolbar_view_exec(bContext *C, wmOperator *UNUSED(op))
+// bfa - show hide the meshedit toolbar menus
+static int header_toolbar_meshedit_exec(bContext *C, wmOperator *UNUSED(op))
 {
 	ScrArea *sa = CTX_wm_area(C);
 
-	sa->flag = sa->flag ^ HEADER_TOOLBAR_VIEW;
+	sa->flag = sa->flag ^ HEADER_TOOLBAR_MESHEDIT;
 
 	ED_area_tag_redraw(sa);
 	WM_event_add_notifier(C, NC_SCREEN | NA_EDITED, NULL);
 
 	return OPERATOR_FINISHED;
 }
-static void SCREEN_OT_header_toolbar_view(wmOperatorType *ot)
+static void SCREEN_OT_header_toolbar_meshedit(wmOperatorType *ot)
 {
 	/* identifiers */
-	ot->name = "Toolbar View";
-	ot->idname = "SCREEN_OT_header_toolbar_view";
-	ot->description = "Show or Hide the View toolbars";
+	ot->name = "Toolbar Meshedit";
+	ot->idname = "SCREEN_OT_header_toolbar_meshedit";
+	ot->description = "Show or Hide the Meshedit toolbars";
 
 	/* api callbacks */
-	ot->exec = header_toolbar_view_exec;
+	ot->exec = header_toolbar_meshedit_exec;
 	ot->poll = ED_operator_areaactive;
 	ot->flag = 0;
 }
@@ -3599,10 +3599,10 @@ void ED_screens_toolbar_tools_menu_create(bContext *C, uiLayout *layout, void *U
 		(sa->flag & HEADER_TOOLBAR_FILE) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
 		"SCREEN_OT_header_toolbar_file");
 
-	// bfa - show hide the View toolbar
-	uiItemO(layout, IFACE_("Toolbar View"),
-		(sa->flag & HEADER_TOOLBAR_VIEW) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
-		"SCREEN_OT_header_toolbar_view");
+	// bfa - show hide the Meshedit toolbar
+	uiItemO(layout, IFACE_("Toolbar Meshedit"),
+		(sa->flag & HEADER_TOOLBAR_MESHEDIT) ? ICON_CHECKBOX_HLT : ICON_CHECKBOX_DEHLT,
+		"SCREEN_OT_header_toolbar_meshedit");
 
 	// bfa - show hide the Primitives toolbar
 	uiItemO(layout, IFACE_("Toolbar Primitives"),
@@ -4605,7 +4605,7 @@ void ED_operatortypes_screen(void)
 	WM_operatortype_append(SCREEN_OT_header_toggle_menus);
 	WM_operatortype_append(SCREEN_OT_header_toggle_editortypemenu); // bfa - show hide the editorsmenu
 	WM_operatortype_append(SCREEN_OT_header_toolbar_file); // bfa - show hide the file toolbar
-	WM_operatortype_append(SCREEN_OT_header_toolbar_view); // bfa - show hide the view toolbar
+	WM_operatortype_append(SCREEN_OT_header_toolbar_meshedit); // bfa - show hide the meshedit toolbar
 	WM_operatortype_append(SCREEN_OT_header_toolbar_primitives); // bfa - show hide the primitives toolbar
 	WM_operatortype_append(SCREEN_OT_header_toolbar_image); // bfa - show hide the primitives toolbar
 	WM_operatortype_append(SCREEN_OT_header_toolbar_tools); // bfa - show hide the primitives toolbar

@@ -805,10 +805,10 @@ class Menu(StructRNA, _GenericUI, metaclass=RNAMeta):
         if not context.area.file_toolbars:
             cls.draw_menus(layout, context)
 
-    # bfa - show hide the view toolbar
+    # bfa - show hide the meshedit toolbar
     @classmethod
-    def hide_view_toolbar(cls, context, layout):
-        if not context.area.view_toolbars:
+    def hide_meshedit_toolbar(cls, context, layout):
+        if not context.area.meshedit_toolbars:
             cls.draw_menus(layout, context)
 
     # bfa - show hide the primitives toolbar
