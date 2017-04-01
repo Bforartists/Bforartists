@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -351,13 +351,13 @@ class INFO_MT_render(Menu):
 
         layout.separator()
 
-        layout.operator("render.opengl", text="OpenGL Render Image")
-        layout.operator("render.opengl", text="OpenGL Render Animation").animation = True
+        layout.operator("render.opengl", text="OpenGL Render Image", icon = 'RENDER_STILL_VIEW')
+        layout.operator("render.opengl", text="OpenGL Render Animation", icon = 'RENDER_ANI_VIEW').animation = True
         layout.menu("INFO_MT_opengl_render")
 
         layout.separator()
 
-        layout.operator("render.view_show")
+        layout.operator("render.view_show",icon = 'HIDE_RENDERVIEW')
         layout.operator("render.play_rendered_anim", icon='PLAY')
 
 
@@ -407,7 +407,7 @@ class INFO_MT_window(Menu):
 
         layout.separator()
         
-        layout.operator("wm.search_menu") # The search menu. Note that this just calls the pure search menu, and not the whole search menu addon.
+        layout.operator("wm.search_menu", icon='VIEWZOOM') # The search menu. Note that this just calls the pure search menu, and not the whole search menu addon.
 
 class INFO_MT_help(Menu):
     bl_label = "Help"
