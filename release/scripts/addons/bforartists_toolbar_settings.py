@@ -51,6 +51,7 @@ class bforartists_toolbar_settings(AddonPreferences):
     file_render = BoolProperty(name="Render", default=True, description = "Display the Render Toolbar\nAll Modes", )
     file_render_opengl = BoolProperty(name="Render Open GL", default=False, description = "Display the Render Open GL Toolbar\nAll Modes", )
     file_render_misc = BoolProperty(name="Render Misc", default=False, description = "Display the Render Misc Toolbar\nAll Modes", )
+    file_window_search = BoolProperty(name="Window Search", default=False, description = "Display the Search Toolbar\nAll Modes", )
 
     # view
 
@@ -127,6 +128,7 @@ class bforartists_toolbar_settings(AddonPreferences):
         row = layout.row()
 
         row.prop(self, "file_render_misc")
+        row.prop(self, "file_window_search")
 
         layout.label(text="The View toolbar container")
 

@@ -124,6 +124,7 @@ class TOOLBAR_MT_toolbars_file_menu(Menu):
         layout.prop(addon_prefs, "file_render")
         layout.prop(addon_prefs, "file_render_opengl")
         layout.prop(addon_prefs, "file_render_misc")
+        layout.prop(addon_prefs, "file_window_search")
 
             
 ############### bfa - Load Save menu hidable by the flag in the right click menu
@@ -252,6 +253,15 @@ class TOOLBAR_MT_file(Menu):
 
             row.operator("render.view_show", text="", icon = 'HIDE_RENDERVIEW')
             row.operator("render.play_rendered_anim", icon='PLAY', text="")
+
+        ## ------------------ Search
+
+        if addon_prefs.file_window_search:
+
+            row = layout.row(align=True)
+
+            row.operator("wm.search_menu", text= "", icon='VIEWZOOM') # The search menu. Note that this just calls the pure search menu, and not the whole search menu addon.
+
 
 ######################################## View ##############################################
 
