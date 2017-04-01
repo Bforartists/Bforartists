@@ -77,8 +77,8 @@ class bforartists_toolbar_settings(AddonPreferences):
 
     # Tools
 
-    tools_relations = BoolProperty(name="Relations", default=True, description = "Display the Forcefield Toolbar\nDisplay is mode and content dependant", )
-    tools_edit = BoolProperty(name="Edit", default=False, description = "Display the Forcefield Toolbar\nDisplay is mode and content dependant", )
+    tools_relations = BoolProperty(name="Relations", default=True, description = "Display the Relations Toolbar\nDisplay is mode and content dependant", )
+    tools_edit = BoolProperty(name="Edit", default=False, description = "Display the Edit Toolbar\nDisplay is mode and content dependant", )
 
     # Animation
 
