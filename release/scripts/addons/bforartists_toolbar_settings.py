@@ -53,7 +53,7 @@ class bforartists_toolbar_settings(AddonPreferences):
     file_render_misc = BoolProperty(name="Render Misc", default=False, description = "Display the Render Misc Toolbar\nAll Modes", )
     file_window_search = BoolProperty(name="Window Search", default=False, description = "Display the Search Toolbar\nAll Modes", )
 
-    # view
+    # meshedit
 
     mesh_vertices = BoolProperty(name="Vertices", default=False, description = "Display the the Mesh Edit Vertices Toolbar\nMesh Object, Edit Mode", )
     mesh_edges = BoolProperty(name="Edges", default=False, description = "Display the the Mesh Edit Edges Toolbar\nMesh Object, Edit Mode", )
