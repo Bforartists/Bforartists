@@ -55,8 +55,10 @@ class bforartists_toolbar_settings(AddonPreferences):
 
     # view
 
-    view_align = BoolProperty(name="Align", default=False, description = "Display the Align Toolbar\nAll Modes", )
-    view_camera = BoolProperty(name="Camera", default=False, description = "Display the Camera Toolbar\nAll Modes", )
+    mesh_vertices = BoolProperty(name="Vertices", default=False, description = "Display the the Mesh Edit Vertices Toolbar\nMesh Object, Edit Mode", )
+    mesh_edges = BoolProperty(name="Edges", default=False, description = "Display the the Mesh Edit Edges Toolbar\nMesh Object, Edit Mode", )
+    mesh_faces = BoolProperty(name="Faces", default=False, description = "Display the Mesh Edit Faces Toolbar\nMesh Object, Edit Mode", )
+    mesh_cleanup = BoolProperty(name="Cleanup", default=False, description = "Display the Mesh Edit Cleanup Toolbar\nMesh Object, Edit Mode", )
 
     # primitives
 
@@ -130,12 +132,14 @@ class bforartists_toolbar_settings(AddonPreferences):
         row.prop(self, "file_render_misc")
         row.prop(self, "file_window_search")
 
-        layout.label(text="The View toolbar container")
+        layout.label(text="The Mesh Edit toolbar container")
 
         row = layout.row()
 
-        row.prop(self, "view_align")
-        row.prop(self, "view_camera")
+        row.prop(self, "mesh_vertices")
+        row.prop(self, "mesh_edges")
+        row.prop(self, "mesh_faces")
+        row.prop(self, "mesh_cleanup")
 
         layout.label(text="The Primitives toolbar container")
 

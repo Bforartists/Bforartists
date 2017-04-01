@@ -263,10 +263,10 @@ class TOOLBAR_MT_file(Menu):
             row.operator("wm.search_menu", text= "", icon='VIEWZOOM') # The search menu. Note that this just calls the pure search menu, and not the whole search menu addon.
 
 
-######################################## View ##############################################
+######################################## Mesh Edit ##############################################
 
 
-#################### Holds the Toolbars menu for view, collapsible
+#################### Holds the Toolbars menu for Mesh Edit, collapsible
 
 class TOOLBAR_MT_menu_view(Menu):
     bl_idname = "TOOLBAR_MT_menu_view"
@@ -281,13 +281,13 @@ class TOOLBAR_MT_menu_view(Menu):
         scene = context.scene
         rd = scene.render
 
-        layout.menu("TOOLBAR_MT_toolbars_view_menu") # see class TOOLBAR_MT_file below
+        layout.menu("TOOLBAR_MT_toolbars_meshedit_menu") # see class TOOLBAR_MT_file below
 
 
 ##################### Load Save sub toolbars menu
 
-class TOOLBAR_MT_toolbars_view_menu(Menu):
-    bl_label = "Toolbars View"
+class TOOLBAR_MT_toolbars_meshedit_menu(Menu):
+    bl_label = "Toolbars Mesh Edit"
 
     def draw(self, context):
         layout = self.layout
@@ -295,9 +295,10 @@ class TOOLBAR_MT_toolbars_view_menu(Menu):
         user_preferences = context.user_preferences
         addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
 
-        layout.prop(addon_prefs, "view_align")
-        layout.prop(addon_prefs, "view_camera")
-
+        layout.prop(addon_prefs, "mesh_vertices")
+        layout.prop(addon_prefs, "mesh_edges")
+        layout.prop(addon_prefs, "mesh_faces")
+        layout.prop(addon_prefs, "mesh_cleanup")
 
             
 ############### bfa - Load Save menu hidable by the flag in the right click menu
@@ -315,24 +316,127 @@ class TOOLBAR_MT_view(Menu):
 
         TOOLBAR_MT_menu_view.draw_collapsible(context, layout)
 
-        ## ------------------ View toolbar Align
+        ## ------------------ Vertices
 
         user_preferences = context.user_preferences
         addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
 
-        if addon_prefs.view_align: 
-
-            row = layout.row(align=True)
-            
-            row.label(text=" - Align is Empty - ")
-            
-        ## ------------------ View toolbar Camera
-
-        if addon_prefs.view_camera:
+        if addon_prefs.mesh_vertices: 
 
             row = layout.row(align=True)
 
-            row.label(text=" - Camera is Empty - ")
+            row.operator("mesh.split", text = "", icon = "DELETE")
+            row.operator("mesh.vert_connect_path", text = "", icon = "DELETE")
+            row.operator("mesh.vert_connect", text = "", icon = "DELETE")
+
+            row = layout.row(align=True)
+
+            row.operator("mesh.mark_sharp", text="", icon = "DELETE").use_verts = True
+            props = row.operator("mesh.mark_sharp", text="", icon = "DELETE")
+            props.use_verts = True
+            props.clear = True
+
+            row = layout.row(align=True)
+
+            with_bullet = bpy.app.build_options.bullet
+
+            if with_bullet:
+                row.operator("mesh.convex_hull", text = "", icon = "DELETE")
+
+            row.operator("mesh.blend_from_shape", text = "", icon = "DELETE")
+
+            row.operator("object.vertex_group_smooth", text = "", icon = "DELETE")
+            row.operator("mesh.shape_propagate_to_all", text = "", icon = "DELETE")
+
+
+            
+        ## ------------------ Edges
+
+        if addon_prefs.mesh_edges:
+
+            row = layout.row(align=True)
+
+            row.operator("mesh.subdivide_edgering", text = "", icon = "DELETE")
+            row.operator("mesh.unsubdivide", text = "", icon = "DELETE")
+
+            row = layout.row(align=True)
+
+            row.operator("mesh.mark_sharp", text = "", icon = "DELETE")
+            row.operator("mesh.mark_sharp", text = "", icon = "DELETE").clear = True
+
+            row = layout.row(align=True)
+
+            with_freestyle = bpy.app.build_options.freestyle
+
+            if with_freestyle:
+                row.operator("mesh.mark_freestyle_edge", text = "", icon = "DELETE").clear = False
+                row.operator("mesh.mark_freestyle_edge", text = "", icon = "DELETE").clear = True
+                row.separator()
+
+            row.operator("mesh.edge_rotate", text = "", icon = "DELETE").use_ccw = False
+            row.operator("mesh.edge_rotate", text = "", icon = "DELETE").use_ccw = True
+
+            row = layout.row(align=True)
+
+            row.operator("mesh.edge_split", text = "", icon = "DELETE")
+            row.operator("mesh.bridge_edge_loops", text = "", icon = "DELETE")
+
+        ## ------------------ Faces
+
+        if addon_prefs.mesh_faces: 
+
+            row = layout.row(align=True)
+            
+            with_freestyle = bpy.app.build_options.freestyle
+
+            row.operator("mesh.fill", text = "", icon = "DELETE")
+            row.operator("mesh.fill_grid", text = "", icon = "DELETE")
+            row.operator("mesh.beautify_fill", text = "", icon = "DELETE")
+            row.operator("mesh.solidify", text = "", icon = "DELETE")
+            row.operator("mesh.intersect", text = "", icon = "DELETE")
+            row.operator("mesh.intersect_boolean", text = "", icon = "DELETE")
+            row.operator("mesh.wireframe", text = "", icon = "DELETE")
+
+            row = layout.row(align=True)
+
+            if with_freestyle:
+                row.operator("mesh.mark_freestyle_face", text = "", icon = "DELETE").clear = False
+                row.operator("mesh.mark_freestyle_face", text = "", icon = "DELETE").clear = True
+                row.separator()
+
+            row.operator("mesh.poke", text = "", icon = "DELETE")
+            props = row.operator("mesh.quads_convert_to_tris", text = "", icon = "DELETE")
+            props.quad_method = props.ngon_method = 'BEAUTY'
+            row.operator("mesh.tris_convert_to_quads", text = "", icon = "DELETE")
+            row.operator("mesh.face_split_by_edges", text = "", icon = "DELETE")
+
+            row = layout.row(align=True)
+
+            row.operator("mesh.edge_rotate", text = "", icon = "DELETE").use_ccw = False
+
+            row = layout.row(align=True)
+
+            row.operator("mesh.uvs_rotate", text = "", icon = "DELETE")
+            row.operator("mesh.uvs_reverse", text = "", icon = "DELETE")
+            row.operator("mesh.colors_rotate", text = "", icon = "DELETE")
+            row.operator("mesh.colors_reverse", text = "", icon = "DELETE")
+            
+        ## ------------------ Cleanup
+
+        if addon_prefs.mesh_cleanup:
+
+            row = layout.row(align=True)
+
+            row.operator("mesh.delete_loose", text = "", icon = "DELETE")
+
+            row = layout.row(align=True)
+
+            row.operator("mesh.decimate", text = "", icon = "DELETE")
+            row.operator("mesh.dissolve_degenerate", text = "", icon = "DELETE")
+            row.operator("mesh.face_make_planar", text = "", icon = "DELETE")
+            row.operator("mesh.vert_connect_nonplanar", text = "", icon = "DELETE")
+            row.operator("mesh.vert_connect_concave", text = "", icon = "DELETE")
+            row.operator("mesh.fill_holes", text = "", icon = "DELETE")
 
             
             
