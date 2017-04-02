@@ -295,9 +295,22 @@ class TOOLBAR_MT_toolbars_meshedit_menu(Menu):
         user_preferences = context.user_preferences
         addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
 
-        layout.prop(addon_prefs, "mesh_vertices")
-        layout.prop(addon_prefs, "mesh_edges")
-        layout.prop(addon_prefs, "mesh_faces")
+        layout.prop(addon_prefs, "mesh_vertices_splitconnect")
+        layout.prop(addon_prefs, "mesh_vertices_sharpedges")
+        layout.prop(addon_prefs, "mesh_vertices_misc")
+
+        layout.prop(addon_prefs, "mesh_edges_subdiv")
+        layout.prop(addon_prefs, "mesh_edges_sharp")
+        layout.prop(addon_prefs, "mesh_edges_freestyle")
+        layout.prop(addon_prefs, "mesh_edges_rotate")
+        layout.prop(addon_prefs, "mesh_edges_misc")
+
+        layout.prop(addon_prefs, "mesh_faces_general")
+        layout.prop(addon_prefs, "mesh_faces_freestyle")
+        layout.prop(addon_prefs, "mesh_faces_tris")
+        layout.prop(addon_prefs, "mesh_faces_rotateedge")
+        layout.prop(addon_prefs, "mesh_faces_rotatemisc")
+
         layout.prop(addon_prefs, "mesh_cleanup")
 
             
@@ -323,10 +336,11 @@ class TOOLBAR_MT_meshedit(Menu):
 
         obj = context.object 
         mode = obj.mode
+        with_freestyle = bpy.app.build_options.freestyle
 
         if mode == 'EDIT':
 
-            if addon_prefs.mesh_vertices: 
+            if addon_prefs.mesh_vertices_splitconnect: 
 
                 row = layout.row(align=True)
 
@@ -334,12 +348,16 @@ class TOOLBAR_MT_meshedit(Menu):
                 row.operator("mesh.vert_connect_path", text = "", icon = "DELETE")
                 row.operator("mesh.vert_connect", text = "", icon = "DELETE")
 
+            if addon_prefs.mesh_vertices_sharpedges: 
+
                 row = layout.row(align=True)
 
                 row.operator("mesh.mark_sharp", text="", icon = "DELETE").use_verts = True
                 props = row.operator("mesh.mark_sharp", text="", icon = "DELETE")
                 props.use_verts = True
                 props.clear = True
+
+            if addon_prefs.mesh_vertices_misc:
 
                 row = layout.row(align=True)
 
@@ -353,33 +371,39 @@ class TOOLBAR_MT_meshedit(Menu):
                 row.operator("object.vertex_group_smooth", text = "", icon = "DELETE")
                 row.operator("mesh.shape_propagate_to_all", text = "", icon = "DELETE")
 
-
             
             ## ------------------ Edges
 
-            if addon_prefs.mesh_edges:
+            if addon_prefs.mesh_edges_subdiv:
 
                 row = layout.row(align=True)
 
                 row.operator("mesh.subdivide_edgering", text = "", icon = "DELETE")
                 row.operator("mesh.unsubdivide", text = "", icon = "DELETE")
 
+            if addon_prefs.mesh_edges_sharp:
+
                 row = layout.row(align=True)
 
                 row.operator("mesh.mark_sharp", text = "", icon = "DELETE")
                 row.operator("mesh.mark_sharp", text = "", icon = "DELETE").clear = True
 
-                row = layout.row(align=True)
+            if addon_prefs.mesh_edges_freestyle:
 
-                with_freestyle = bpy.app.build_options.freestyle
+                row = layout.row(align=True)
 
                 if with_freestyle:
                     row.operator("mesh.mark_freestyle_edge", text = "", icon = "DELETE").clear = False
                     row.operator("mesh.mark_freestyle_edge", text = "", icon = "DELETE").clear = True
-                    row.separator()
+
+            if addon_prefs.mesh_edges_rotate:
+
+                row = layout.row(align=True)
 
                 row.operator("mesh.edge_rotate", text = "", icon = "DELETE").use_ccw = False
                 row.operator("mesh.edge_rotate", text = "", icon = "DELETE").use_ccw = True
+
+            if addon_prefs.mesh_edges_misc:
 
                 row = layout.row(align=True)
 
@@ -388,7 +412,7 @@ class TOOLBAR_MT_meshedit(Menu):
 
             ## ------------------ Faces
 
-            if addon_prefs.mesh_faces: 
+            if addon_prefs.mesh_faces_general: 
 
                 row = layout.row(align=True)
             
@@ -402,12 +426,17 @@ class TOOLBAR_MT_meshedit(Menu):
                 row.operator("mesh.intersect_boolean", text = "", icon = "DELETE")
                 row.operator("mesh.wireframe", text = "", icon = "DELETE")
 
+            if addon_prefs.mesh_faces_freestyle: 
+
                 row = layout.row(align=True)
 
                 if with_freestyle:
                     row.operator("mesh.mark_freestyle_face", text = "", icon = "DELETE").clear = False
                     row.operator("mesh.mark_freestyle_face", text = "", icon = "DELETE").clear = True
-                    row.separator()
+
+            if addon_prefs.mesh_faces_tris: 
+
+                row = layout.row(align=True)
 
                 row.operator("mesh.poke", text = "", icon = "DELETE")
                 props = row.operator("mesh.quads_convert_to_tris", text = "", icon = "DELETE")
@@ -415,9 +444,13 @@ class TOOLBAR_MT_meshedit(Menu):
                 row.operator("mesh.tris_convert_to_quads", text = "", icon = "DELETE")
                 row.operator("mesh.face_split_by_edges", text = "", icon = "DELETE")
 
+            if addon_prefs.mesh_faces_rotateedge: 
+
                 row = layout.row(align=True)
 
                 row.operator("mesh.edge_rotate", text = "", icon = "DELETE").use_ccw = False
+
+            if addon_prefs.mesh_faces_rotatemisc: 
 
                 row = layout.row(align=True)
 
