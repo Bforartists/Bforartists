@@ -335,146 +335,150 @@ class TOOLBAR_MT_meshedit(Menu):
         addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
 
         obj = context.object 
-        mode = obj.mode
-        with_freestyle = bpy.app.build_options.freestyle
+        if obj is not None:
+       
+            mode = obj.mode
+            with_freestyle = bpy.app.build_options.freestyle
 
-        if mode == 'EDIT':
+            if mode == 'EDIT':
 
-            if addon_prefs.mesh_vertices_splitconnect: 
+                if obj.type == 'MESH':
 
-                row = layout.row(align=True)
+                    if addon_prefs.mesh_vertices_splitconnect: 
 
-                row.operator("mesh.split", text = "", icon = "DELETE")
-                row.operator("mesh.vert_connect_path", text = "", icon = "DELETE")
-                row.operator("mesh.vert_connect", text = "", icon = "DELETE")
+                        row = layout.row(align=True)
 
-            if addon_prefs.mesh_vertices_sharpedges: 
+                        row.operator("mesh.split", text = "", icon = "SPLIT")
+                        row.operator("mesh.vert_connect_path", text = "", icon = "VERTEXCONNECTPATH")
+                        row.operator("mesh.vert_connect", text = "", icon = "VERTEXCONNECT")
 
-                row = layout.row(align=True)
+                    if addon_prefs.mesh_vertices_sharpedges: 
 
-                row.operator("mesh.mark_sharp", text="", icon = "DELETE").use_verts = True
-                props = row.operator("mesh.mark_sharp", text="", icon = "DELETE")
-                props.use_verts = True
-                props.clear = True
+                        row = layout.row(align=True)
 
-            if addon_prefs.mesh_vertices_misc:
+                        row.operator("mesh.mark_sharp", text="", icon = "MARKSHARPEDGES").use_verts = True
+                        props = row.operator("mesh.mark_sharp", text="", icon = "CLEARSHARPEDGES")
+                        props.use_verts = True
+                        props.clear = True
 
-                row = layout.row(align=True)
+                    if addon_prefs.mesh_vertices_misc:
 
-                with_bullet = bpy.app.build_options.bullet
+                        row = layout.row(align=True)
 
-                if with_bullet:
-                    row.operator("mesh.convex_hull", text = "", icon = "DELETE")
+                        with_bullet = bpy.app.build_options.bullet
 
-                row.operator("mesh.blend_from_shape", text = "", icon = "DELETE")
+                        if with_bullet:
+                            row.operator("mesh.convex_hull", text = "", icon = "CONVEXHULL")
 
-                row.operator("object.vertex_group_smooth", text = "", icon = "DELETE")
-                row.operator("mesh.shape_propagate_to_all", text = "", icon = "DELETE")
+                        row.operator("mesh.blend_from_shape", text = "", icon = "BLENDFROMSHAPE")
+
+                        row.operator("object.vertex_group_smooth", text = "", icon = "DELETE")
+                        row.operator("mesh.shape_propagate_to_all", text = "", icon = "SHAPEPROPAGATE")
 
             
-            ## ------------------ Edges
+                    ## ------------------ Edges
 
-            if addon_prefs.mesh_edges_subdiv:
+                    if addon_prefs.mesh_edges_subdiv:
 
-                row = layout.row(align=True)
+                        row = layout.row(align=True)
 
-                row.operator("mesh.subdivide_edgering", text = "", icon = "DELETE")
-                row.operator("mesh.unsubdivide", text = "", icon = "DELETE")
+                        row.operator("mesh.subdivide_edgering", text = "", icon = "SUBDIVEDGELOOP")
+                        row.operator("mesh.unsubdivide", text = "", icon = "UNSUBDIVIDE")
 
-            if addon_prefs.mesh_edges_sharp:
+                    if addon_prefs.mesh_edges_sharp:
 
-                row = layout.row(align=True)
+                        row = layout.row(align=True)
 
-                row.operator("mesh.mark_sharp", text = "", icon = "DELETE")
-                row.operator("mesh.mark_sharp", text = "", icon = "DELETE").clear = True
+                        row.operator("mesh.mark_sharp", text = "", icon = "MARKSHARPEDGES")
+                        row.operator("mesh.mark_sharp", text = "", icon = "CLEARSHARPEDGES").clear = True
 
-            if addon_prefs.mesh_edges_freestyle:
+                    if addon_prefs.mesh_edges_freestyle:
 
-                row = layout.row(align=True)
+                        row = layout.row(align=True)
 
-                if with_freestyle:
-                    row.operator("mesh.mark_freestyle_edge", text = "", icon = "DELETE").clear = False
-                    row.operator("mesh.mark_freestyle_edge", text = "", icon = "DELETE").clear = True
+                        if with_freestyle:
+                            row.operator("mesh.mark_freestyle_edge", text = "", icon = "MARK_FS_EDGE").clear = False
+                            row.operator("mesh.mark_freestyle_edge", text = "", icon = "CLEAR_FS_EDGE").clear = True
 
-            if addon_prefs.mesh_edges_rotate:
+                    if addon_prefs.mesh_edges_rotate:
 
-                row = layout.row(align=True)
+                        row = layout.row(align=True)
 
-                row.operator("mesh.edge_rotate", text = "", icon = "DELETE").use_ccw = False
-                row.operator("mesh.edge_rotate", text = "", icon = "DELETE").use_ccw = True
+                        row.operator("mesh.edge_rotate", text = "", icon = "ROTATECW").use_ccw = False
+                        row.operator("mesh.edge_rotate", text = "", icon = "ROTATECCW").use_ccw = True
 
-            if addon_prefs.mesh_edges_misc:
+                    if addon_prefs.mesh_edges_misc:
 
-                row = layout.row(align=True)
+                        row = layout.row(align=True)
 
-                row.operator("mesh.edge_split", text = "", icon = "DELETE")
-                row.operator("mesh.bridge_edge_loops", text = "", icon = "DELETE")
+                        row.operator("mesh.edge_split", text = "", icon = "SPLITEDGE")
+                        row.operator("mesh.bridge_edge_loops", text = "", icon = "BRIDGE_EDGELOOPS")
 
-            ## ------------------ Faces
+                    ## ------------------ Faces
 
-            if addon_prefs.mesh_faces_general: 
+                    if addon_prefs.mesh_faces_general: 
 
-                row = layout.row(align=True)
+                        row = layout.row(align=True)
             
-                with_freestyle = bpy.app.build_options.freestyle
+                        with_freestyle = bpy.app.build_options.freestyle
 
-                row.operator("mesh.fill", text = "", icon = "DELETE")
-                row.operator("mesh.fill_grid", text = "", icon = "DELETE")
-                row.operator("mesh.beautify_fill", text = "", icon = "DELETE")
-                row.operator("mesh.solidify", text = "", icon = "DELETE")
-                row.operator("mesh.intersect", text = "", icon = "DELETE")
-                row.operator("mesh.intersect_boolean", text = "", icon = "DELETE")
-                row.operator("mesh.wireframe", text = "", icon = "DELETE")
+                        row.operator("mesh.fill", text = "", icon = "FILL")
+                        row.operator("mesh.fill_grid", text = "", icon = "GRIDFILL")
+                        row.operator("mesh.beautify_fill", text = "", icon = "BEAUTIFY")
+                        row.operator("mesh.solidify", text = "", icon = "SOLIDIFY")
+                        row.operator("mesh.intersect", text = "", icon = "INTERSECT")
+                        row.operator("mesh.intersect_boolean", text = "", icon = "BOOLEAN_INTERSECT")
+                        row.operator("mesh.wireframe", text = "", icon = "WIREFRAME")
 
-            if addon_prefs.mesh_faces_freestyle: 
+                    if addon_prefs.mesh_faces_freestyle: 
 
-                row = layout.row(align=True)
+                        row = layout.row(align=True)
 
-                if with_freestyle:
-                    row.operator("mesh.mark_freestyle_face", text = "", icon = "DELETE").clear = False
-                    row.operator("mesh.mark_freestyle_face", text = "", icon = "DELETE").clear = True
+                        if with_freestyle:
+                            row.operator("mesh.mark_freestyle_face", text = "", icon = "MARKFSFACE").clear = False
+                            row.operator("mesh.mark_freestyle_face", text = "", icon = "CLEARFSFACE").clear = True
 
-            if addon_prefs.mesh_faces_tris: 
+                    if addon_prefs.mesh_faces_tris: 
 
-                row = layout.row(align=True)
+                        row = layout.row(align=True)
 
-                row.operator("mesh.poke", text = "", icon = "DELETE")
-                props = row.operator("mesh.quads_convert_to_tris", text = "", icon = "DELETE")
-                props.quad_method = props.ngon_method = 'BEAUTY'
-                row.operator("mesh.tris_convert_to_quads", text = "", icon = "DELETE")
-                row.operator("mesh.face_split_by_edges", text = "", icon = "DELETE")
+                        row.operator("mesh.poke", text = "", icon = "POKEFACES")
+                        props = row.operator("mesh.quads_convert_to_tris", text = "", icon = "TRIANGULATE")
+                        props.quad_method = props.ngon_method = 'BEAUTY'
+                        row.operator("mesh.tris_convert_to_quads", text = "", icon = "TRISTOQUADS")
+                        row.operator("mesh.face_split_by_edges", text = "", icon = "SPLITBYEDGES")
 
-            if addon_prefs.mesh_faces_rotateedge: 
+                    if addon_prefs.mesh_faces_rotateedge: 
 
-                row = layout.row(align=True)
+                        row = layout.row(align=True)
 
-                row.operator("mesh.edge_rotate", text = "", icon = "DELETE").use_ccw = False
+                        row.operator("mesh.edge_rotate", text = "", icon = "ROTATECW").use_ccw = False
 
-            if addon_prefs.mesh_faces_rotatemisc: 
+                    if addon_prefs.mesh_faces_rotatemisc: 
 
-                row = layout.row(align=True)
+                        row = layout.row(align=True)
 
-                row.operator("mesh.uvs_rotate", text = "", icon = "DELETE")
-                row.operator("mesh.uvs_reverse", text = "", icon = "DELETE")
-                row.operator("mesh.colors_rotate", text = "", icon = "DELETE")
-                row.operator("mesh.colors_reverse", text = "", icon = "DELETE")
+                        row.operator("mesh.uvs_rotate", text = "", icon = "ROTATE_UVS")
+                        row.operator("mesh.uvs_reverse", text = "", icon = "REVERSE_UVS")
+                        row.operator("mesh.colors_rotate", text = "", icon = "ROTATE_COLORS")
+                        row.operator("mesh.colors_reverse", text = "", icon = "REVERSE_COLORS")
             
-            ## ------------------ Cleanup
+                    ## ------------------ Cleanup
 
-            if addon_prefs.mesh_cleanup:
+                    if addon_prefs.mesh_cleanup:
 
-                row = layout.row(align=True)
+                        row = layout.row(align=True)
 
-                row.operator("mesh.delete_loose", text = "", icon = "DELETE")
+                        row.operator("mesh.delete_loose", text = "", icon = "DELETE_LOOSE")
 
-                row = layout.row(align=True)
+                        row = layout.row(align=True)
 
-                row.operator("mesh.decimate", text = "", icon = "DELETE")
-                row.operator("mesh.dissolve_degenerate", text = "", icon = "DELETE")
-                row.operator("mesh.face_make_planar", text = "", icon = "DELETE")
-                row.operator("mesh.vert_connect_nonplanar", text = "", icon = "DELETE")
-                row.operator("mesh.vert_connect_concave", text = "", icon = "DELETE")
-                row.operator("mesh.fill_holes", text = "", icon = "DELETE")
+                        row.operator("mesh.decimate", text = "", icon = "DECIMATE")
+                        row.operator("mesh.dissolve_degenerate", text = "", icon = "DEGENERATE_DISSOLVE")
+                        row.operator("mesh.face_make_planar", text = "", icon = "MAKE_PLANAR")
+                        row.operator("mesh.vert_connect_nonplanar", text = "", icon = "SPLIT_NONPLANAR")
+                        row.operator("mesh.vert_connect_concave", text = "", icon = "SPLIT_CONCAVE")
+                        row.operator("mesh.fill_holes", text = "", icon = "FILL_HOLE")
 
             
             

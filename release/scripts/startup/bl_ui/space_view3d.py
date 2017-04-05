@@ -193,9 +193,9 @@ class VIEW3D_MT_transform_base(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("transform.tosphere", text="To Sphere")
-        layout.operator("transform.shear", text="Shear")
-        layout.operator("transform.bend", text="Bend")
+        layout.operator("transform.tosphere", text="To Sphere", icon = "TOSPHERE")
+        layout.operator("transform.shear", text="Shear", icon = "SHEAR")
+        layout.operator("transform.bend", text="Bend", icon = "BEND")
 
         if context.mode != 'OBJECT':
             layout.operator("transform.vertex_warp", text="Warp")
@@ -2679,26 +2679,26 @@ class VIEW3D_MT_edit_mesh_vertices(Menu):
         layout.operator("mesh.rip_move")
         layout.operator("mesh.rip_move_fill")
         layout.operator("mesh.rip_edge_move")
-        layout.operator("mesh.split")
-        layout.operator("mesh.vert_connect_path", text="Connect Vertex Path")
-        layout.operator("mesh.vert_connect", text="Connect Vertices")
+        layout.operator("mesh.split", icon = "SPLIT")
+        layout.operator("mesh.vert_connect_path", text="Connect Vertex Path", icon = "VERTEXCONNECTPATH")
+        layout.operator("mesh.vert_connect", text="Connect Vertices", icon = "VERTEXCONNECT")
 
         layout.separator()
 
-        layout.operator("mesh.mark_sharp", text="Mark Sharp Edges").use_verts = True
-        props = layout.operator("mesh.mark_sharp", text="Clear Sharp Edges")
+        layout.operator("mesh.mark_sharp", text="Mark Sharp Edges", icon = "MARKSHARPEDGES").use_verts = True
+        props = layout.operator("mesh.mark_sharp", text="Clear Sharp Edges", icon = "CLEARSHARPEDGES")
         props.use_verts = True
         props.clear = True
 
         layout.separator()
 
         if with_bullet:
-            layout.operator("mesh.convex_hull")
+            layout.operator("mesh.convex_hull", icon = "CONVEXHULL")
 
-        layout.operator("mesh.blend_from_shape")
+        layout.operator("mesh.blend_from_shape", icon = "BLENDFROMSHAPE")
 
         layout.operator("object.vertex_group_smooth")
-        layout.operator("mesh.shape_propagate_to_all")
+        layout.operator("mesh.shape_propagate_to_all", icon = "SHAPEPROPAGATE")
 
         layout.separator()
 
@@ -2718,8 +2718,8 @@ class VIEW3D_MT_edit_mesh_edges(Menu):
 
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        layout.operator("mesh.subdivide_edgering")
-        layout.operator("mesh.unsubdivide")
+        layout.operator("mesh.subdivide_edgering", icon = "SUBDIV_EDGERING")
+        layout.operator("mesh.unsubdivide", icon = "UNSUBDIVIDE")
 
         layout.separator()
 
@@ -2728,23 +2728,23 @@ class VIEW3D_MT_edit_mesh_edges(Menu):
 
         layout.separator()
 
-        layout.operator("mesh.mark_sharp")
-        layout.operator("mesh.mark_sharp", text="Clear Sharp").clear = True
+        layout.operator("mesh.mark_sharp", icon = "MARKSHARPEDGES")
+        layout.operator("mesh.mark_sharp", text="Clear Sharp", icon = "CLEARSHARPEDGES").clear = True
 
         layout.separator()
 
         if with_freestyle:
-            layout.operator("mesh.mark_freestyle_edge").clear = False
-            layout.operator("mesh.mark_freestyle_edge", text="Clear Freestyle Edge").clear = True
+            layout.operator("mesh.mark_freestyle_edge", icon = "MARK_FS_EDGE").clear = False
+            layout.operator("mesh.mark_freestyle_edge", text="Clear Freestyle Edge", icon = "CLEAR_FS_EDGE").clear = True
             layout.separator()
 
-        layout.operator("mesh.edge_rotate", text="Rotate Edge CW").use_ccw = False
-        layout.operator("mesh.edge_rotate", text="Rotate Edge CCW").use_ccw = True
+        layout.operator("mesh.edge_rotate", text="Rotate Edge CW", icon = "ROTATECW").use_ccw = False
+        layout.operator("mesh.edge_rotate", text="Rotate Edge CCW", icon = "ROTATECCW").use_ccw = True
 
         layout.separator()
 
-        layout.operator("mesh.edge_split")
-        layout.operator("mesh.bridge_edge_loops")
+        layout.operator("mesh.edge_split", icon = "SPLITEDGE")
+        layout.operator("mesh.bridge_edge_loops", icon = "BRIDGE_EDGELOOPS")
 
 
 class VIEW3D_MT_edit_mesh_faces(Menu):
@@ -2758,37 +2758,37 @@ class VIEW3D_MT_edit_mesh_faces(Menu):
 
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        layout.operator("mesh.fill")
-        layout.operator("mesh.fill_grid")
-        layout.operator("mesh.beautify_fill")
-        layout.operator("mesh.solidify")
-        layout.operator("mesh.intersect")
-        layout.operator("mesh.intersect_boolean")
-        layout.operator("mesh.wireframe")
+        layout.operator("mesh.fill", icon = "FILL")
+        layout.operator("mesh.fill_grid", icon = "GRIDFILL")
+        layout.operator("mesh.beautify_fill", icon = "BEAUTIFY")
+        layout.operator("mesh.solidify", icon = "SOLIDIFY")
+        layout.operator("mesh.intersect", icon = "INTERSECT")
+        layout.operator("mesh.intersect_boolean", icon = "BOOLEAN_INTERSECT")
+        layout.operator("mesh.wireframe", icon = "WIREFRAME")
 
         layout.separator()
 
         if with_freestyle:
-            layout.operator("mesh.mark_freestyle_face").clear = False
-            layout.operator("mesh.mark_freestyle_face", text="Clear Freestyle Face").clear = True
+            layout.operator("mesh.mark_freestyle_face", icon = "MARKFSFACE").clear = False
+            layout.operator("mesh.mark_freestyle_face", text="Clear Freestyle Face", icon = "CLEARFSFACE").clear = True
             layout.separator()
 
-        layout.operator("mesh.poke")
-        props = layout.operator("mesh.quads_convert_to_tris")
+        layout.operator("mesh.poke", icon = "POKEFACES")
+        props = layout.operator("mesh.quads_convert_to_tris", icon = "TRIANGULATE")
         props.quad_method = props.ngon_method = 'BEAUTY'
-        layout.operator("mesh.tris_convert_to_quads")
-        layout.operator("mesh.face_split_by_edges")
+        layout.operator("mesh.tris_convert_to_quads", icon = "TRISTOQUADS")
+        layout.operator("mesh.face_split_by_edges", icon = "SPLITBYEDGES")
 
         layout.separator()
 
-        layout.operator("mesh.edge_rotate", text="Rotate Edge CW").use_ccw = False
+        layout.operator("mesh.edge_rotate", text="Rotate Edge CW", icon = "ROTATECW").use_ccw = False
 
         layout.separator()
 
-        layout.operator("mesh.uvs_rotate")
-        layout.operator("mesh.uvs_reverse")
-        layout.operator("mesh.colors_rotate")
-        layout.operator("mesh.colors_reverse")
+        layout.operator("mesh.uvs_rotate", icon = "ROTATE_UVS")
+        layout.operator("mesh.uvs_reverse", icon = "REVERSE_UVS")
+        layout.operator("mesh.colors_rotate", icon = "ROTATE_COLORS")
+        layout.operator("mesh.colors_reverse", icon = "REVERSE_COLORS")
 
 
 class VIEW3D_MT_edit_mesh_clean(Menu):
@@ -2797,16 +2797,16 @@ class VIEW3D_MT_edit_mesh_clean(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("mesh.delete_loose")
+        layout.operator("mesh.delete_loose", icon = "DELETE_LOOSE")
 
         layout.separator()
 
-        layout.operator("mesh.decimate")
-        layout.operator("mesh.dissolve_degenerate")
-        layout.operator("mesh.face_make_planar")
-        layout.operator("mesh.vert_connect_nonplanar")
-        layout.operator("mesh.vert_connect_concave")
-        layout.operator("mesh.fill_holes")
+        layout.operator("mesh.decimate", icon = "DECIMATE")
+        layout.operator("mesh.dissolve_degenerate", icon = "DEGENERATE_DISSOLVE")
+        layout.operator("mesh.face_make_planar", icon = "MAKE_PLANAR")
+        layout.operator("mesh.vert_connect_nonplanar", icon = "SPLIT_NONPLANAR")
+        layout.operator("mesh.vert_connect_concave", icon = "SPLIT_CONCAVE")
+        layout.operator("mesh.fill_holes", icon = "FILL_HOLE")
 
 
 # Delete menu quiz
