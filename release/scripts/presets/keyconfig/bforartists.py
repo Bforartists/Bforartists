@@ -499,7 +499,7 @@ kmi_props_setattr(kmi.properties, 'mode', 'WEIGHT_PAINT')
 kmi = km.keymap_items.new('object.mode_set', 'SIX', 'PRESS')
 kmi_props_setattr(kmi.properties, 'mode', 'TEXTURE_PAINT')
 kmi = km.keymap_items.new('object.mode_set', 'SEVEN', 'PRESS')
-kmi_props_setattr(kmi.properties, 'mode', 'OBJECT')
+kmi_props_setattr(kmi.properties, 'mode', 'POSE')
 kmi = km.keymap_items.new('object.mode_set', 'ONE', 'PRESS')
 kmi_props_setattr(kmi.properties, 'mode', 'OBJECT')
 
