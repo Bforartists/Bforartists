@@ -2509,6 +2509,7 @@ class VIEW3D_MT_edit_mesh(Menu):
         layout.menu("VIEW3D_MT_transform")
         layout.operator("object.vertex_group_mirror")
         layout.menu("VIEW3D_MT_snap")
+        layout.operator("mesh.symmetry_snap")
 
         layout.separator()
 
@@ -2527,8 +2528,7 @@ class VIEW3D_MT_edit_mesh(Menu):
 
         layout.menu("VIEW3D_subdivision_set")
         layout.operator("mesh.symmetrize")
-        layout.operator("mesh.noise", icon='NOISE')
-        layout.operator("mesh.symmetry_snap")
+        layout.operator("mesh.noise", icon='NOISE')      
         layout.operator_menu_enum("mesh.sort_elements", "type", text="Sort Elements...")
 
         layout.separator()
