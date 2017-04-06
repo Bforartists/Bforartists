@@ -371,8 +371,6 @@ class TOOLBAR_MT_meshedit(Menu):
                             row.operator("mesh.convex_hull", text = "", icon = "CONVEXHULL")
 
                         row.operator("mesh.blend_from_shape", text = "", icon = "BLENDFROMSHAPE")
-
-                        row.operator("object.vertex_group_smooth", text = "", icon = "DELETE")
                         row.operator("mesh.shape_propagate_to_all", text = "", icon = "SHAPEPROPAGATE")
 
             

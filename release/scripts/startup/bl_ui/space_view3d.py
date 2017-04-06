@@ -2696,8 +2696,6 @@ class VIEW3D_MT_edit_mesh_vertices(Menu):
             layout.operator("mesh.convex_hull", icon = "CONVEXHULL")
 
         layout.operator("mesh.blend_from_shape", icon = "BLENDFROMSHAPE")
-
-        layout.operator("object.vertex_group_smooth")
         layout.operator("mesh.shape_propagate_to_all", icon = "SHAPEPROPAGATE")
 
         layout.separator()
