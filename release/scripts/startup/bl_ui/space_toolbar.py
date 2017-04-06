@@ -307,7 +307,6 @@ class TOOLBAR_MT_toolbars_meshedit_menu(Menu):
         layout.prop(addon_prefs, "mesh_faces_general")
         layout.prop(addon_prefs, "mesh_faces_freestyle")
         layout.prop(addon_prefs, "mesh_faces_tris")
-        layout.prop(addon_prefs, "mesh_faces_rotateedge")
         layout.prop(addon_prefs, "mesh_faces_rotatemisc")
 
         layout.prop(addon_prefs, "mesh_cleanup")
@@ -393,7 +392,6 @@ class TOOLBAR_MT_meshedit(Menu):
                         row = layout.row(align=True)
 
                         row.operator("mesh.edge_rotate", text = "", icon = "ROTATECW").use_ccw = False
-                        row.operator("mesh.edge_rotate", text = "", icon = "ROTATECCW").use_ccw = True
 
                     if addon_prefs.mesh_edges_misc:
 
@@ -435,12 +433,6 @@ class TOOLBAR_MT_meshedit(Menu):
                         props.quad_method = props.ngon_method = 'BEAUTY'
                         row.operator("mesh.tris_convert_to_quads", text = "", icon = "TRISTOQUADS")
                         row.operator("mesh.face_split_by_edges", text = "", icon = "SPLITBYEDGES")
-
-                    if addon_prefs.mesh_faces_rotateedge: 
-
-                        row = layout.row(align=True)
-
-                        row.operator("mesh.edge_rotate", text = "", icon = "ROTATECW").use_ccw = False
 
                     if addon_prefs.mesh_faces_rotatemisc: 
 
