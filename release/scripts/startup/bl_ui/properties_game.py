@@ -284,6 +284,7 @@ class RENDER_PT_renderer(Panel):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_label = "Renderer"
+    bl_context = "render"
 
     def draw(self, context):
         layout = self.layout
