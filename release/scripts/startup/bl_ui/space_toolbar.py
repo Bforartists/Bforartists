@@ -989,7 +989,6 @@ class TOOLBAR_MT_tools(Menu):
 
                     row = layout.row(align=True)
 
-                    row.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="")
                     if obj_type in {'MESH', 'CURVE', 'SURFACE', 'ARMATURE'}:
                         row.operator("object.join", icon ='JOIN', text= "" )
 
