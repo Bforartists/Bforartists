@@ -483,7 +483,7 @@ void WM_OT_link(wmOperatorType *ot)
 {
 	ot->name = "Link from Library";
 	ot->idname = "WM_OT_link";
-	ot->description = "Link from a Library .blend file";
+	ot->description = "Link from Library\nLink from a Library .blend file";
 	
 	ot->invoke = wm_link_append_invoke;
 	ot->exec = wm_link_append_exec;
@@ -503,7 +503,7 @@ void WM_OT_append(wmOperatorType *ot)
 {
 	ot->name = "Append from Library";
 	ot->idname = "WM_OT_append";
-	ot->description = "Append from a Library .blend file";
+	ot->description = "Append from Library\nAppend from a Library .blend file";
 
 	ot->invoke = wm_link_append_invoke;
 	ot->exec = wm_link_append_exec;

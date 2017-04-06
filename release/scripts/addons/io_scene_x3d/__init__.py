@@ -58,7 +58,7 @@ IOX3DOrientationHelper = orientation_helper_factory("IOX3DOrientationHelper", ax
 
 
 class ImportX3D(bpy.types.Operator, ImportHelper, IOX3DOrientationHelper):
-    """Import an X3D or VRML2 file"""
+    """Import X3D / VRML2\nImport an X3D or VRML2 file"""
     bl_idname = "import_scene.x3d"
     bl_label = "Import X3D/VRML2"
     bl_options = {'PRESET', 'UNDO'}
@@ -82,7 +82,7 @@ class ImportX3D(bpy.types.Operator, ImportHelper, IOX3DOrientationHelper):
 
 
 class ExportX3D(bpy.types.Operator, ExportHelper, IOX3DOrientationHelper):
-    """Export selection to Extensible 3D file (.x3d)"""
+    """Export X3D\nExport selection to Extensible 3D file (.x3d)"""
     bl_idname = "export_scene.x3d"
     bl_label = 'Export X3D'
     bl_options = {'PRESET'}

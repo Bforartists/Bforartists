@@ -58,7 +58,7 @@ IO3DSOrientationHelper = orientation_helper_factory("IO3DSOrientationHelper", ax
 
 
 class Import3DS(bpy.types.Operator, ImportHelper, IO3DSOrientationHelper):
-    """Import from 3DS file format (.3ds)"""
+    """Import 3DS\nImport from 3DS file format (.3ds)"""
     bl_idname = "import_scene.autodesk_3ds"
     bl_label = 'Import 3DS'
     bl_options = {'UNDO'}
@@ -104,7 +104,7 @@ class Import3DS(bpy.types.Operator, ImportHelper, IO3DSOrientationHelper):
 
 
 class Export3DS(bpy.types.Operator, ExportHelper, IO3DSOrientationHelper):
-    """Export to 3DS file format (.3ds)"""
+    """Export 3DS\nExport to 3DS file format (.3ds)"""
     bl_idname = "export_scene.autodesk_3ds"
     bl_label = 'Export 3DS'
 
