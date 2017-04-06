@@ -2730,7 +2730,6 @@ class VIEW3D_MT_edit_mesh_edges(Menu):
             layout.separator()
 
         layout.operator("mesh.edge_rotate", text="Rotate Edge CW", icon = "ROTATECW").use_ccw = False
-        layout.operator("mesh.edge_rotate", text="Rotate Edge CCW", icon = "ROTATECCW").use_ccw = True
 
         layout.separator()
 
@@ -2769,10 +2768,6 @@ class VIEW3D_MT_edit_mesh_faces(Menu):
         props.quad_method = props.ngon_method = 'BEAUTY'
         layout.operator("mesh.tris_convert_to_quads", icon = "TRISTOQUADS")
         layout.operator("mesh.face_split_by_edges", icon = "SPLITBYEDGES")
-
-        layout.separator()
-
-        layout.operator("mesh.edge_rotate", text="Rotate Edge CW", icon = "ROTATECW").use_ccw = False
 
         layout.separator()
 

@@ -67,7 +67,6 @@ class bforartists_toolbar_settings(AddonPreferences):
     mesh_faces_general = BoolProperty(name="Faces General", default=False, description = "Display the Mesh Edit Faces General Toolbar\nMesh Object, Edit Mode", )
     mesh_faces_freestyle = BoolProperty(name="Faces Freestyle", default=False, description = "Display the Mesh Edit Faces Freestyle Toolbar\nMesh Object, Edit Mode", )
     mesh_faces_tris = BoolProperty(name="Faces Tris", default=True, description = "Display the Mesh Edit Faces Tris Toolbar\nMesh Object, Edit Mode", )
-    mesh_faces_rotateedge = BoolProperty(name="Faces Rotate Edge", default=False, description = "Display the Mesh Edit Faces Rotate Edge Toolbar\nMesh Object, Edit Mode", )
     mesh_faces_rotatemisc = BoolProperty(name="Faces Rotate Misc", default=False, description = "Display the Mesh Edit Faces Rotate Misc Toolbar\nMesh Object, Edit Mode", )
 
     mesh_cleanup = BoolProperty(name="Cleanup", default=False, description = "Display the Mesh Edit Cleanup Toolbar\nMesh Object, Edit Mode", )
@@ -149,7 +148,6 @@ class bforartists_toolbar_settings(AddonPreferences):
         row = layout.row()
 
         row.prop(self, "mesh_vertices_splitconnect")
-        row.prop(self, "mesh_vertices_sharpedges")
         row.prop(self, "mesh_vertices_misc")
 
         row.prop(self, "mesh_edges_subdiv")
@@ -166,7 +164,6 @@ class bforartists_toolbar_settings(AddonPreferences):
         row.prop(self, "mesh_faces_general")
         row.prop(self, "mesh_faces_freestyle")
         row.prop(self, "mesh_faces_tris")
-        row.prop(self, "mesh_faces_rotateedge")
 
         row = layout.row()
 
