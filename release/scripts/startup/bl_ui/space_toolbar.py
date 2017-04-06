@@ -296,7 +296,6 @@ class TOOLBAR_MT_toolbars_meshedit_menu(Menu):
         addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
 
         layout.prop(addon_prefs, "mesh_vertices_splitconnect")
-        layout.prop(addon_prefs, "mesh_vertices_sharpedges")
         layout.prop(addon_prefs, "mesh_vertices_misc")
 
         layout.prop(addon_prefs, "mesh_edges_subdiv")
@@ -351,15 +350,6 @@ class TOOLBAR_MT_meshedit(Menu):
                         row.operator("mesh.split", text = "", icon = "SPLIT")
                         row.operator("mesh.vert_connect_path", text = "", icon = "VERTEXCONNECTPATH")
                         row.operator("mesh.vert_connect", text = "", icon = "VERTEXCONNECT")
-
-                    if addon_prefs.mesh_vertices_sharpedges: 
-
-                        row = layout.row(align=True)
-
-                        row.operator("mesh.mark_sharp", text="", icon = "MARKSHARPEDGES").use_verts = True
-                        props = row.operator("mesh.mark_sharp", text="", icon = "CLEARSHARPEDGES")
-                        props.use_verts = True
-                        props.clear = True
 
                     if addon_prefs.mesh_vertices_misc:
 

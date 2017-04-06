@@ -56,7 +56,6 @@ class bforartists_toolbar_settings(AddonPreferences):
     # meshedit
 
     mesh_vertices_splitconnect = BoolProperty(name="Vertices Splitconnect", default=True, description = "Display the the Mesh Edit Vertices Split / Connect\nMesh Object, Edit Mode", )
-    mesh_vertices_sharpedges = BoolProperty(name="Vertices Sharp Edges", default=False, description = "Display the the Mesh Edit Vertices Sharp Edges Toolbar\nMesh Object, Edit Mode", )
     mesh_vertices_misc = BoolProperty(name="Vertices Misc", default=False, description = "Display the the Mesh Edit Vertices Misc Toolbar with misc tools\nMesh Object, Edit Mode", )
 
     mesh_edges_subdiv = BoolProperty(name="Edges Subdiv", default=False, description = "Display the the Mesh Edit Edges Subdiv Toolbar\nMesh Object, Edit Mode", )
