@@ -2685,13 +2685,6 @@ class VIEW3D_MT_edit_mesh_vertices(Menu):
 
         layout.separator()
 
-        layout.operator("mesh.mark_sharp", text="Mark Sharp Edges", icon = "MARKSHARPEDGES").use_verts = True
-        props = layout.operator("mesh.mark_sharp", text="Clear Sharp Edges", icon = "CLEARSHARPEDGES")
-        props.use_verts = True
-        props.clear = True
-
-        layout.separator()
-
         if with_bullet:
             layout.operator("mesh.convex_hull", icon = "CONVEXHULL")
 
