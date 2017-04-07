@@ -1364,6 +1364,7 @@ class VIEW3D_PT_tools_textedit(View3DPanel, Panel):
             col.operator("font.style_toggle", icon = 'BOLD', text="Bold                 ").style = 'BOLD'
             col.operator("font.style_toggle", icon = 'ITALIC', text="Italic                ").style = 'ITALIC'
             col.operator("font.style_toggle", icon = 'UNDERLINED', text="Underline         ").style = 'UNDERLINE'
+            col.operator("font.style_toggle", text="Toggle Small Caps", icon = "SMALL_CAPS").style = 'SMALL_CAPS'
 
         else: 
             col = layout.column(align=True)
@@ -1380,6 +1381,7 @@ class VIEW3D_PT_tools_textedit(View3DPanel, Panel):
             row.operator("font.style_toggle", icon = 'BOLD', text="").style = 'BOLD'
             row.operator("font.style_toggle", icon = 'ITALIC', text="").style = 'ITALIC'
             row.operator("font.style_toggle", icon = 'UNDERLINED', text="").style = 'UNDERLINE'
+            row.operator("font.style_toggle", text="", icon = "SMALL_CAPS").style = 'SMALL_CAPS'
 
 
 # ********** default tools for editmode_armature ****************
