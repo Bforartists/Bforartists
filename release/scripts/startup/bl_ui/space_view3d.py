@@ -1519,10 +1519,10 @@ class VIEW3D_MT_object_clear(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("object.location_clear", text="Location").clear_delta = False
-        layout.operator("object.rotation_clear", text="Rotation").clear_delta = False
-        layout.operator("object.scale_clear", text="Scale").clear_delta = False
-        layout.operator("object.origin_clear", text="Origin")
+        layout.operator("object.location_clear", text="Location", icon = "CLEARMOVE").clear_delta = False
+        layout.operator("object.rotation_clear", text="Rotation", icon = "CLEARROTATE").clear_delta = False
+        layout.operator("object.scale_clear", text="Scale", icon = "CLEARSCALE").clear_delta = False
+        layout.operator("object.origin_clear", text="Origin", icon = "CLEARORIGIN")
 
 
 class VIEW3D_MT_object_specials(Menu):
@@ -1683,13 +1683,13 @@ class VIEW3D_MT_object_apply(Menu):
     def draw(self, context):
         layout = self.layout
 
-        props = layout.operator("object.transform_apply", text="Location", text_ctxt=i18n_contexts.default)
+        props = layout.operator("object.transform_apply", text="Location", text_ctxt=i18n_contexts.default, icon = "APPLYMOVE") 
         props.location, props.rotation, props.scale = True, False, False
 
-        props = layout.operator("object.transform_apply", text="Rotation", text_ctxt=i18n_contexts.default)
+        props = layout.operator("object.transform_apply", text="Rotation", text_ctxt=i18n_contexts.default, icon = "APPLYROTATE")
         props.location, props.rotation, props.scale = False, True, False
 
-        props = layout.operator("object.transform_apply", text="Scale", text_ctxt=i18n_contexts.default)
+        props = layout.operator("object.transform_apply", text="Scale", text_ctxt=i18n_contexts.default, icon = "APPLYSCALE")
         props.location, props.rotation, props.scale = False, False, True
         props = layout.operator("object.transform_apply", text="Rotation & Scale", text_ctxt=i18n_contexts.default)
         props.location, props.rotation, props.scale = False, True, True
@@ -1705,8 +1705,8 @@ class VIEW3D_MT_object_apply(Menu):
 
         layout.separator()
 
-        layout.operator("object.visual_transform_apply", text="Visual Transform", text_ctxt=i18n_contexts.default)
-        layout.operator("object.duplicates_make_real")
+        layout.operator("object.visual_transform_apply", text="Visual Transform", text_ctxt=i18n_contexts.default, icon = "VISUALTRANSFORM")
+        layout.operator("object.duplicates_make_real", icon = "MAKEDUPLIREAL")
 
 
 class VIEW3D_MT_object_track(Menu):
