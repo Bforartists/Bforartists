@@ -2960,13 +2960,6 @@ class VIEW3D_MT_edit_font(Menu):
 
         layout.separator()
 
-        layout.operator("font.style_toggle", text="Toggle Bold").style = 'BOLD'
-        layout.operator("font.style_toggle", text="Toggle Italic").style = 'ITALIC'
-        layout.operator("font.style_toggle", text="Toggle Underline").style = 'UNDERLINE'
-        layout.operator("font.style_toggle", text="Toggle Small Caps").style = 'SMALL_CAPS'
-
-        layout.separator()
-
         layout.operator("font.delete").type = 'NEXT_OR_SELECTION'
 
 
