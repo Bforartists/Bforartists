@@ -3061,10 +3061,6 @@ class VIEW3D_MT_edit_lattice(Menu):
 
         layout.separator()
 
-        layout.operator("lattice.make_regular")
-
-        layout.separator()
-
         layout.menu("VIEW3D_MT_edit_proportional")
 
 
