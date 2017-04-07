@@ -196,10 +196,11 @@ class VIEW3D_MT_transform_base(Menu):
         layout.operator("transform.tosphere", text="To Sphere", icon = "TOSPHERE")
         layout.operator("transform.shear", text="Shear", icon = "SHEAR")
         layout.operator("transform.bend", text="Bend", icon = "BEND")
+        layout.operator("transform.push_pull", text="Push/Pull", icon = 'PUSH_PULL')
 
         if context.mode != 'OBJECT':
             layout.operator("transform.vertex_warp", text="Warp")
-
+            layout.operator("transform.vertex_random", text="Randomize", icon = 'RANDOMIZE')
 
 # Generic transform menu - geometry types
 class VIEW3D_MT_transform(VIEW3D_MT_transform_base):

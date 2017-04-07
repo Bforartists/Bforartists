@@ -749,7 +749,6 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
 
             col = layout.column(align=True)
             col.operator("transform.shrink_fatten", icon = 'SHRINK_FATTEN', text="Shrink/Fatten   ")
-            col.operator("transform.push_pull",icon = 'PUSH_PULL', text="Push/Pull          ")
             col = layout.column(align=True)
             col.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="Mirror              ")
  
@@ -760,7 +759,6 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
             col.operator("transform.vert_slide", icon='SLIDE_VERTEX', text="Vertex Slide    ")
             col.operator("mesh.vertices_smooth", icon='SMOOTH_VERTEX')
             col.operator("mesh.vertices_smooth_laplacian", icon='LAPLACIAN_SMOOTH_VERTEX')
-            col.operator("transform.vertex_random", icon='RANDOMIZE', text="Randomize      ")
 
             col = layout.column(align=True)
             col.label(text="Add:")
@@ -815,7 +813,6 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
             row = layout.row(align=False)
             row.alignment = 'LEFT'
             row.operator("transform.shrink_fatten", icon = 'SHRINK_FATTEN', text="")
-            row.operator("transform.push_pull",icon = 'PUSH_PULL', text="")
             row.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="")
 
 
@@ -826,12 +823,8 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
             row.operator("transform.edge_slide", icon='SLIDE_EDGE', text="")
             row.operator("transform.vert_slide", icon='SLIDE_VERTEX', text="")
             row.operator("mesh.vertices_smooth", icon='SMOOTH_VERTEX', text="")
-
-            col.separator()
-
-            row = layout.row(align=False)
             row.operator("mesh.vertices_smooth_laplacian", icon='LAPLACIAN_SMOOTH_VERTEX', text="")
-            row.operator("transform.vertex_random", icon='RANDOMIZE', text="")
+
 
             col = layout.column(align=False)
             col.label(text="Add:")
@@ -1156,7 +1149,6 @@ class VIEW3D_PT_tools_curveedit(View3DPanel, Panel):
             col.operator("curve.extrude_move", icon = 'EXTRUDE_REGION', text="Extrude            ")
             col.operator("curve.subdivide", icon = 'SUBDIVIDE_EDGES', text="Subdivide        ")
             col.operator("curve.smooth", icon = 'SHADING_SMOOTH', text="Smooth           ")
-            col.operator("transform.vertex_random", icon = 'RANDOMIZE', text="Randomize      ")
 
         else:
 
@@ -1197,7 +1189,6 @@ class VIEW3D_PT_tools_curveedit(View3DPanel, Panel):
             row.operator("curve.extrude_move", icon = 'EXTRUDE_REGION', text = "")
             row.operator("curve.subdivide", icon = 'SUBDIVIDE_EDGES', text = "")
             row.operator("curve.smooth", icon = 'SHADING_SMOOTH', text = "")
-            row.operator("transform.vertex_random", icon = 'RANDOMIZE', text = "")
 
 
 class VIEW3D_PT_tools_add_curve_edit(View3DPanel, Panel):
@@ -1412,10 +1403,7 @@ class VIEW3D_PT_tools_armatureedit(View3DPanel, Panel):
             col.label(text="Modeling:")
             col.operator("armature.extrude_move", icon = 'EXTRUDE_REGION', text="Extrude            ")
             col.operator("armature.subdivide", icon = 'SUBDIVIDE_EDGES', text="Subdivide        ")
-            1
-            col = layout.column(align=True)
-            col.label(text="Deform:")
-            col.operator("transform.vertex_random", icon = 'RANDOMIZE', text="Randomize      ")
+
 
         else:
             col = layout.column(align=True)
@@ -1430,12 +1418,6 @@ class VIEW3D_PT_tools_armatureedit(View3DPanel, Panel):
             row.alignment = 'LEFT'
             row.operator("armature.extrude_move", icon = 'EXTRUDE_REGION', text="")
             row.operator("armature.subdivide", icon = 'SUBDIVIDE_EDGES', text="")
-
-            col = layout.column(align=True)
-            col.label(text="Deform:")
-            row = col.row(align=False)
-            row.alignment = 'LEFT'
-            row.operator("transform.vertex_random", icon = 'RANDOMIZE', text="")
 
 
 class VIEW3D_PT_tools_armatureedit_options(View3DPanel, Panel):
@@ -1465,19 +1447,12 @@ class VIEW3D_PT_tools_mballedit(View3DPanel, Panel):
 
             col = layout.column(align=True)
             col.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="Mirror                ")
-            col.label(text="Deform:")
-            col.operator("transform.vertex_random", icon = 'RANDOMIZE', text = "Randomize       ")
 
         else:
             
             col = layout.column(align=True)
             row = col.row(align=False)
             row.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="")
-            
-            col.label(text="Deform:")
-            row = col.row(align=False)
-            row.alignment = 'LEFT'
-            row.operator("transform.vertex_random", icon = 'RANDOMIZE', text = "")
 
 
 class VIEW3D_PT_tools_add_mball_edit(View3DPanel, Panel):
@@ -1488,6 +1463,8 @@ class VIEW3D_PT_tools_add_mball_edit(View3DPanel, Panel):
     def draw(self, context):
         layout = self.layout
         scene = context.scene # Our data is in the current scene
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
+
         col = layout.column(align=True)
 
         # bfa - icon or text buttons
@@ -1514,22 +1491,13 @@ class VIEW3D_PT_tools_latticeedit(View3DPanel, Panel):
             col = layout.column(align=True)
             col.operator("lattice.make_regular", icon = 'MAKE_REGULAR', text = "Make Regular  ")
 
-            col = layout.column(align=True)
-            col.label(text="Deform:")
-            col.operator("transform.vertex_random", icon = 'RANDOMIZE', text = "Randomize      ")
+
         else:
             col = layout.column(align=True)
-            col.label(text="Transform:")
 
             row = col.row(align=False)
             row.alignment = 'LEFT'
             row.operator("lattice.make_regular", icon = 'MAKE_REGULAR', text = "")
-
-            col = layout.column(align=True)
-            col.label(text="Deform:")
-            row = col.row(align=False)
-            row.alignment = 'LEFT'
-            row.operator("transform.vertex_random", icon = 'RANDOMIZE', text = "")
 
 
 # ********** default tools for pose-mode ****************
