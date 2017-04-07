@@ -1398,6 +1398,8 @@ class VIEW3D_PT_tools_armatureedit(View3DPanel, Panel):
 
         if not view.show_iconbuttons: 
             col = layout.column(align=True)
+            col.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="Mirror                   ")
+            col = layout.column(align=True)
             col.label(text="Bones:")
             col.operator("armature.bone_primitive_add", icon = 'BONE_DATA', text="Add                  ")
 
@@ -1406,8 +1408,11 @@ class VIEW3D_PT_tools_armatureedit(View3DPanel, Panel):
             col.operator("armature.extrude_move", icon = 'EXTRUDE_REGION', text="Extrude            ")
             col.operator("armature.subdivide", icon = 'SUBDIVIDE_EDGES', text="Subdivide        ")
 
-
         else:
+            col = layout.column(align=True)
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="")
             col = layout.column(align=True)
             col.label(text="Bones:")
             row = col.row(align=False)
