@@ -271,24 +271,6 @@ class VIEW3D_MT_transform_armature(VIEW3D_MT_transform_base):
             layout.operator("armature.align")
 
 
-class VIEW3D_MT_mirror(Menu):
-    bl_label = "Mirror"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("transform.mirror", text="Interactive Mirror")
-
-        layout.separator()
-
-        layout.operator_context = 'INVOKE_REGION_WIN'
-
-        if context.edit_object:
-            layout.separator()
-
-            layout.operator("object.vertex_group_mirror")
-
-
 class VIEW3D_MT_snap(Menu):
     bl_label = "Snap"
 
@@ -3035,7 +3017,7 @@ class VIEW3D_MT_edit_lattice(Menu):
         toolsettings = context.tool_settings
 
         layout.menu("VIEW3D_MT_transform")
-        layout.menu("VIEW3D_MT_mirror")
+        layout.operator("object.vertex_group_mirror")
         layout.menu("VIEW3D_MT_snap")
         layout.operator_menu_enum("lattice.flip", "axis")
 

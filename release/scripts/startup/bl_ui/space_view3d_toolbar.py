@@ -1496,6 +1496,7 @@ class VIEW3D_PT_tools_latticeedit(View3DPanel, Panel):
         if not view.show_iconbuttons: 
 
             col = layout.column(align=True)
+            col.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="Mirror                   ")
             col.operator("lattice.make_regular", icon = 'MAKE_REGULAR', text = "Make Regular  ")
 
 
@@ -1504,6 +1505,7 @@ class VIEW3D_PT_tools_latticeedit(View3DPanel, Panel):
 
             row = col.row(align=False)
             row.alignment = 'LEFT'
+            row.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="")
             row.operator("lattice.make_regular", icon = 'MAKE_REGULAR', text = "")
 
 
