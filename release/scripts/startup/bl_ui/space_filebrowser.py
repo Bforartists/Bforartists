@@ -269,9 +269,20 @@ class FILEBROWSER_MT_select(Menu):
         layout = self.layout
 
         space = context.space_data
+        
+        layout.operator("file.bookmark_toggle")
+        
+        layout.separator()
 
-        layout.operator("file.select_all_toggle")
-        layout.operator("file.select_border", text = "Border Select")
+        layout.operator("file.select_all_toggle", icon = 'SELECT_ALL')
+        layout.operator("file.select_border", text = "Border Select", icon = 'BORDER_RECT')
+        
+        layout.separator()
+        
+        layout.operator("file.select_walk", text = "Previous").direction = "UP"
+        layout.operator("file.select_walk", text = "Next").direction = "DOWN"
+        layout.operator("file.select_walk", text = "Left").direction = "LEFT"
+        layout.operator("file.select_walk", text = "Right").direction = "RIGHT"
 
 # collapsible text menus. This is the master class
 class FILEBROWSER_MT_editor_menus(Menu):

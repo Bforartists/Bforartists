@@ -1434,7 +1434,7 @@ void WM_OT_read_homefile(wmOperatorType *ot)
 	PropertyRNA *prop;
 	ot->name = "Reload Start-Up File";
 	ot->idname = "WM_OT_read_homefile";
-	ot->description = "Open the default file (doesn't save the current file)";
+	ot->description = "New Scene\nOpen the default file (doesn't save the current file)";
 
 	ot->invoke = WM_operator_confirm;
 	ot->exec = wm_homefile_read_exec;
@@ -1611,7 +1611,7 @@ void WM_OT_open_mainfile(wmOperatorType *ot)
 {
 	ot->name = "Open Blender File";
 	ot->idname = "WM_OT_open_mainfile";
-	ot->description = "Open a Blender file";
+	ot->description = "Open Blender File\nOpen a Blender file";
 
 	ot->invoke = wm_open_mainfile_invoke;
 	ot->exec = wm_open_mainfile_exec;
@@ -1960,7 +1960,7 @@ void WM_OT_save_mainfile(wmOperatorType *ot)
 {
 	ot->name = "Save Blender File";
 	ot->idname = "WM_OT_save_mainfile";
-	ot->description = "Save the current Blender file";
+	ot->description = "Save Blender File\nSave the current Blender file";
 
 	ot->invoke = wm_save_mainfile_invoke;
 	ot->exec = wm_save_as_mainfile_exec;

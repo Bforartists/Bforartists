@@ -262,9 +262,6 @@ class CLIP_PT_tools_clip(Panel):
     def draw(self, context):
         layout = self.layout
         col = layout.column(align=True)
-        row = col.row(align=True)
-        row.operator("clip.prefetch", text="Prefetch")
-        row.operator("clip.reload", text="Reload")
         col.operator("clip.set_scene_frames")
 
 
@@ -284,12 +281,12 @@ class CLIP_PT_tools_marker(CLIP_PT_tracking_panel, Panel):
         row = col.row(align=True)
         row.operator("clip.disable_markers", text="Enable Markers").action = 'ENABLE'
         row.operator("clip.disable_markers", text="Disable markers").action = 'DISABLE'
-        row = col.row(align=True)
-        row.operator("clip.add_marker_at_click", text="Add Marker")
-        row.operator("clip.delete_track", text="Delete")
+        
+        col.operator("clip.add_marker_at_click", text="Add Marker")
+        row = col.row(align=True)    
+        row.operator("clip.delete_track", text="Delete Track")
+        row.operator("clip.delete_marker", text="Delete Marker")
         col.operator("clip.detect_features")
-
-
 
 class CLIP_PT_tracking_settings(CLIP_PT_tracking_panel, Panel):
     bl_space_type = 'CLIP_EDITOR'
@@ -1066,8 +1063,6 @@ from bl_ui.properties_mask_common import (
         MASK_PT_point,
         MASK_PT_display,
         MASK_PT_tools,
-        MASK_PT_transforms,
-        MASK_PT_add,
         )
 
 
@@ -1094,16 +1089,6 @@ class CLIP_PT_active_mask_point(MASK_PT_point, Panel):
 class CLIP_PT_mask(MASK_PT_mask, Panel):
     bl_space_type = 'CLIP_EDITOR'
     bl_region_type = 'UI'
-
-
-class CLIP_PT_tools_mask_add(MASK_PT_add, Panel):
-    bl_space_type = 'CLIP_EDITOR'
-    bl_region_type = 'TOOLS'
-
-
-class CLIP_PT_tools_mask_transforms(MASK_PT_transforms, Panel):
-    bl_space_type = 'CLIP_EDITOR'
-    bl_region_type = 'TOOLS'
 
 
 class CLIP_PT_tools_mask(MASK_PT_tools, Panel):
@@ -1250,11 +1235,19 @@ class CLIP_MT_view(Menu):
                 layout.operator("clip.graph_view_all")
                 layout.operator_context = 'INVOKE_DEFAULT'
 
+                layout.separator()
+
             layout.prop(sc, "show_seconds")
             layout.prop(sc, "show_locked_time")
+
+        if sc.view == 'DOPESHEET':
+
             layout.separator()
 
+            layout.operator("clip.dopesheet_view_all")    
+
         layout.separator()
+
         layout.operator("screen.area_dupli")
         layout.operator("screen.screen_full_area")
         layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area").use_hide_panels = True
@@ -1276,6 +1269,11 @@ class CLIP_MT_clip(Menu):
             layout.operator("clip.prefetch")
             layout.operator("clip.reload")
             layout.menu("CLIP_MT_proxy")
+
+            layout.operator("clip.set_solver_keyframe", text = "Set Solver Keyframe A").keyframe = "KEYFRAME_A"
+            layout.operator("clip.set_solver_keyframe", text = "Set Solver Keyframe B").keyframe = "KEYFRAME_B"
+
+
 
 
 class CLIP_MT_proxy(Menu):
@@ -1325,6 +1323,10 @@ class CLIP_MT_track(Menu):
         layout.operator("clip.paste_tracks")
 
         layout.separator()
+        layout.operator("clip.keyframe_insert")
+        layout.operator("clip.keyframe_delete")
+
+        layout.separator()
         props = layout.operator("clip.track_markers", text="Track Frame Backwards")
         props.backwards = True
         props.sequence = False
@@ -1341,12 +1343,8 @@ class CLIP_MT_track(Menu):
         props.backwards = False
         props.sequence = False
 
-        layout.separator()
-        layout.operator("clip.delete_track")
-        layout.operator("clip.delete_marker")
-
-        layout.separator()
-        layout.operator("clip.add_marker_move")
+        #layout.separator()
+        #layout.operator("clip.add_marker_move")
 
         layout.separator()
         layout.menu("CLIP_MT_track_visibility")
@@ -1393,6 +1391,8 @@ class CLIP_MT_track_transform(Menu):
 
         layout.operator("transform.translate")
         layout.operator("transform.resize")
+        layout.operator("transform.rotate")
+        
 
 
 class CLIP_MT_select(Menu):
@@ -1401,15 +1401,15 @@ class CLIP_MT_select(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("clip.select_border")
-        layout.operator("clip.select_circle")
+        layout.operator("clip.select_border", icon = 'BORDER_RECT')
+        layout.operator("clip.select_circle", icon = 'CIRCLE_SELECT')
 
         layout.separator()
 
-        layout.operator("clip.select_all"
-                        ).action = 'TOGGLE'
-        layout.operator("clip.select_all",
-                        text="Inverse").action = 'INVERT'
+        layout.operator("clip.select_all", icon = 'SELECT_ALL').action = 'TOGGLE'
+        layout.operator("clip.select_all", text ="Inverse", icon = 'INVERSE').action = 'INVERT'
+        
+        layout.separator()
 
         layout.menu("CLIP_MT_select_grouped")
 
@@ -1421,6 +1421,35 @@ class CLIP_MT_select_grouped(Menu):
         layout = self.layout
 
         layout.operator_enum("clip.select_grouped", "group")
+
+class CLIP_MT_tracking_specials(Menu):
+    bl_label = "Specials"
+
+    @classmethod
+    def poll(cls, context):
+        return context.space_data.clip
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("clip.disable_markers",
+                        text="Enable Markers").action = 'ENABLE'
+
+        layout.operator("clip.disable_markers",
+                        text="Disable markers").action = 'DISABLE'
+
+        layout.separator()
+        layout.operator("clip.set_origin")
+
+        layout.separator()
+        layout.operator("clip.hide_tracks")
+        layout.operator("clip.hide_tracks_clear", text="Show Tracks")
+
+        layout.separator()
+        layout.operator("clip.lock_tracks", text="Lock Tracks").action = 'LOCK'
+
+        layout.operator("clip.lock_tracks",
+                        text="Unlock Tracks").action = 'UNLOCK'
 
 
 class CLIP_MT_camera_presets(Menu):

@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -101,7 +101,7 @@ class ExportUVLayout(bpy.types.Operator):
     opacity = FloatProperty(
             name="Fill Opacity",
             min=0.0, max=1.0,
-            default=0.25,
+            default=1.0, # bfa set default from 0.25 to 1
             description="Set amount of opacity for exported UV layout"
             )
     tessellated = BoolProperty(

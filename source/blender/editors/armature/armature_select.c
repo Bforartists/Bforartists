@@ -262,7 +262,7 @@ void ARMATURE_OT_select_linked(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Select Connected";
 	ot->idname = "ARMATURE_OT_select_linked";
-	ot->description = "Select Connected\nSelect bones related to selected ones by parent/child relationships";
+	ot->description = "Select Connected\nSelect bones that are connected with the bone under the mouse\nHOTKEY ONLY TOOL! Move the mouse over the armature, then press the hotkey";
 	
 	/* api callbacks */
 	/* leave 'exec' unset */

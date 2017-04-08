@@ -326,7 +326,7 @@ void NLA_OT_select_border(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Border Select";
 	ot->idname = "NLA_OT_select_border";
-	ot->description = "Border Select\nUse box selection to grab NLA-Strips";
+	ot->description = "Border Select\nBorder Select selects all NLA Strips inside the Rectangle\nBorder Axis Range selects all NLA Strips within the width of the rectangle";
 	
 	/* api callbacks */
 	ot->invoke = WM_border_select_invoke;
