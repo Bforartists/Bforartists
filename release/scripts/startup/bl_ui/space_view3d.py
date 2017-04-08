@@ -271,25 +271,6 @@ class VIEW3D_MT_transform_armature(VIEW3D_MT_transform_base):
             layout.operator("armature.align")
 
 
-class VIEW3D_MT_snap(Menu):
-    bl_label = "Snap"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("view3d.snap_selected_to_grid", text="Selection to Grid")
-        layout.operator("view3d.snap_selected_to_cursor", text="Selection to Cursor").use_offset = False
-        layout.operator("view3d.snap_selected_to_cursor", text="Selection to Cursor (Offset)").use_offset = True
-        layout.operator("view3d.snap_selected_to_active", text="Selection to Active")
-
-        layout.separator()
-
-        layout.operator("view3d.snap_cursor_to_selected", text="Cursor to Selected")
-        layout.operator("view3d.snap_cursor_to_center", text="Cursor to Center")
-        layout.operator("view3d.snap_cursor_to_grid", text="Cursor to Grid")
-        layout.operator("view3d.snap_cursor_to_active", text="Cursor to Active")
-
-
 class VIEW3D_MT_uv_map(Menu):
     bl_label = "UV Mapping"
 
@@ -1417,8 +1398,6 @@ class VIEW3D_MT_object(Menu):
         layout.menu("VIEW3D_MT_transform_object")
         layout.menu("VIEW3D_MT_object_clear")
         layout.menu("VIEW3D_MT_object_apply")
-        layout.menu("VIEW3D_MT_snap")
-
 
         layout.separator()
 
@@ -2198,8 +2177,6 @@ class VIEW3D_MT_pose(Menu):
         layout.menu("VIEW3D_MT_pose_transform")
         layout.menu("VIEW3D_MT_pose_apply")
 
-        layout.menu("VIEW3D_MT_snap")
-
         layout.separator()
 
         layout.operator("pose.copy")
@@ -2471,7 +2448,6 @@ class VIEW3D_MT_edit_mesh(Menu):
 
         layout.menu("VIEW3D_MT_transform")
         layout.operator("object.vertex_group_mirror")
-        layout.menu("VIEW3D_MT_snap")
         layout.operator("mesh.symmetry_snap")
 
         layout.separator()
@@ -2822,7 +2798,6 @@ def draw_curve(self, context):
 
     layout.menu("VIEW3D_MT_transform")
     layout.operator("object.vertex_group_mirror")
-    layout.menu("VIEW3D_MT_snap")
 
     layout.separator()
 
@@ -2969,7 +2944,6 @@ class VIEW3D_MT_edit_meta(Menu):
 
         layout.menu("VIEW3D_MT_transform")
         layout.operator("object.vertex_group_mirror")
-        layout.menu("VIEW3D_MT_snap")
 
         layout.separator()
 
@@ -3018,7 +2992,6 @@ class VIEW3D_MT_edit_lattice(Menu):
 
         layout.menu("VIEW3D_MT_transform")
         layout.operator("object.vertex_group_mirror")
-        layout.menu("VIEW3D_MT_snap")
         layout.operator_menu_enum("lattice.flip", "axis")
 
         layout.separator()
@@ -3060,7 +3033,6 @@ class VIEW3D_MT_edit_armature(Menu):
 
         layout.menu("VIEW3D_MT_transform_armature")
         layout.operator("object.vertex_group_mirror")
-        layout.menu("VIEW3D_MT_snap")
         layout.menu("VIEW3D_MT_edit_armature_roll")
 
         layout.separator()
