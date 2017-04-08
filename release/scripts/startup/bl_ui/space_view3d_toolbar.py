@@ -1449,12 +1449,17 @@ class VIEW3D_PT_tools_armatureedit(View3DPanel, Panel):
             col.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="Mirror                   ")
             col = layout.column(align=True)
             col.label(text="Bones:")
-            col.operator("armature.bone_primitive_add", icon = 'BONE_DATA', text="Add                  ")
+            col.operator("armature.bone_primitive_add", icon = 'BONE_DATA', text="Add                      ")
+            col.operator("armature.merge", text="Merge Bones        ", icon = "MERGE")
+            col.operator("armature.fill", text="Fill between Joints", icon = "FILLBETWEEN")
+            col.operator("armature.split",  text="Split                     ", icon = "SPLIT")
+            col.operator("armature.separate", text="Separate                ", icon = "SEPARATE")
+            col.operator("armature.switch_direction", text="Switch Direction  ", icon = "SWITCH_DIRECTION")
 
             col = layout.column(align=True)
             col.label(text="Modeling:")
-            col.operator("armature.extrude_move", icon = 'EXTRUDE_REGION', text="Extrude            ")
-            col.operator("armature.subdivide", icon = 'SUBDIVIDE_EDGES', text="Subdivide        ")
+            col.operator("armature.extrude_move", icon = 'EXTRUDE_REGION', text="Extrude                ")
+            col.operator("armature.subdivide", icon = 'SUBDIVIDE_EDGES', text="Subdivide            ")
 
         else:
             col = layout.column(align=True)
@@ -1466,6 +1471,16 @@ class VIEW3D_PT_tools_armatureedit(View3DPanel, Panel):
             row = col.row(align=False)
             row.alignment = 'LEFT'
             row.operator("armature.bone_primitive_add", icon = 'BONE_DATA', text = "")
+            row.operator("armature.merge", text = "", icon = "MERGE")
+            row.operator("armature.fill", text = "", icon = "FILLBETWEEN")
+            row.operator("armature.split", text = "", icon = "SPLIT")
+
+            col = layout.column(align=True)
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+
+            row.operator("armature.separate", text = "", icon = "SEPARATE")
+            row.operator("armature.switch_direction", text="", icon = "SWITCH_DIRECTION")
 
             col = layout.column(align=True)
             col.label(text="Modeling:")

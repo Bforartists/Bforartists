@@ -2859,7 +2859,7 @@ class VIEW3D_MT_edit_curve_specials(Menu):
         layout = self.layout
 
         layout.operator("curve.subdivide")
-        layout.operator("curve.switch_direction")
+        layout.operator("curve.switch_direction", icon = "SWITCH_DIRECTION")
         layout.operator("curve.spline_weight_set")
         layout.operator("curve.radius_set")
         layout.operator("curve.smooth")
@@ -3041,15 +3041,7 @@ class VIEW3D_MT_edit_armature(Menu):
             layout.operator("armature.extrude_forked")
 
         layout.operator("armature.duplicate_move")
-        layout.operator("armature.merge")
-        layout.operator("armature.fill")
-        layout.operator("armature.delete")
-        layout.operator("armature.split")
-        layout.operator("armature.separate")
-
-        layout.separator()
-
-        layout.operator("armature.switch_direction", text="Switch Direction")
+        layout.operator("armature.delete", icon = "DELETE")
 
         layout.separator()
 
