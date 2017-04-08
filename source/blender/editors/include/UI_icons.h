@@ -493,11 +493,8 @@ DEF_ICON(KEYFRAMES_CLEAR)
 DEF_ICON(REMOVE_FROM_ALL_GROUPS)
 DEF_ICON(REMOVE_SELECTED_FROM_ACTIVE_GROUP)
 
-#ifndef DEF_ICON_BLANK_SKIP
+DEF_ICON(FILLBETWEEN)
 
-	DEF_ICON(BLANK685)
-
-#endif
 
 /*----------------- newline -------------------------------------*/
 
@@ -664,10 +661,8 @@ DEF_ICON(MAKE_PLANAR)
 DEF_ICON(SPLIT_CONCAVE)
 DEF_ICON(SPLIT_NONPLANAR)
 
-#ifndef DEF_ICON_BLANK_SKIP
-	DEF_ICON(BLANK176)
-	DEF_ICON(BLANK177)
-#endif
+DEF_ICON(MERGE)
+DEF_ICON(SEPARATE)
 
 	/*----------------- newline -------------------------------------*/
 	
