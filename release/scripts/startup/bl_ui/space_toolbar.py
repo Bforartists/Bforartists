@@ -37,7 +37,7 @@ class TOOLBAR_HT_header(Header):
         ############## toolbars ##########################################################################
 
         TOOLBAR_MT_file.hide_file_toolbar(context, layout) # bfa - show hide the complete toolbar container
-        TOOLBAR_MT_view.hide_view_toolbar(context, layout)
+        TOOLBAR_MT_meshedit.hide_meshedit_toolbar(context, layout)
         TOOLBAR_MT_primitives.hide_primitives_toolbar(context, layout)
         TOOLBAR_MT_image.hide_image_toolbar(context, layout)
         TOOLBAR_MT_tools.hide_tools_toolbar(context, layout)
@@ -124,6 +124,7 @@ class TOOLBAR_MT_toolbars_file_menu(Menu):
         layout.prop(addon_prefs, "file_render")
         layout.prop(addon_prefs, "file_render_opengl")
         layout.prop(addon_prefs, "file_render_misc")
+        layout.prop(addon_prefs, "file_window_search")
 
             
 ############### bfa - Load Save menu hidable by the flag in the right click menu
@@ -253,13 +254,22 @@ class TOOLBAR_MT_file(Menu):
             row.operator("render.view_show", text="", icon = 'HIDE_RENDERVIEW')
             row.operator("render.play_rendered_anim", icon='PLAY', text="")
 
-######################################## View ##############################################
+        ## ------------------ Search
+
+        if addon_prefs.file_window_search:
+
+            row = layout.row(align=True)
+
+            row.operator("wm.search_menu", text= "", icon='VIEWZOOM') # The search menu. Note that this just calls the pure search menu, and not the whole search menu addon.
 
 
-#################### Holds the Toolbars menu for view, collapsible
+######################################## Mesh Edit ##############################################
 
-class TOOLBAR_MT_menu_view(Menu):
-    bl_idname = "TOOLBAR_MT_menu_view"
+
+#################### Holds the Toolbars menu for Mesh Edit, collapsible
+
+class TOOLBAR_MT_menu_meshedit(Menu):
+    bl_idname = "TOOLBAR_MT_menu_meshedit"
     bl_label = ""
 
     def draw(self, context):
@@ -271,13 +281,13 @@ class TOOLBAR_MT_menu_view(Menu):
         scene = context.scene
         rd = scene.render
 
-        layout.menu("TOOLBAR_MT_toolbars_view_menu") # see class TOOLBAR_MT_file below
+        layout.menu("TOOLBAR_MT_toolbars_meshedit_menu") # see class TOOLBAR_MT_file below
 
 
 ##################### Load Save sub toolbars menu
 
-class TOOLBAR_MT_toolbars_view_menu(Menu):
-    bl_label = "Toolbars View"
+class TOOLBAR_MT_toolbars_meshedit_menu(Menu):
+    bl_label = "Toolbars Mesh Edit"
 
     def draw(self, context):
         layout = self.layout
@@ -285,160 +295,27 @@ class TOOLBAR_MT_toolbars_view_menu(Menu):
         user_preferences = context.user_preferences
         addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
 
-        layout.prop(addon_prefs, "view_align")
-        layout.prop(addon_prefs, "view_camera")
+        layout.prop(addon_prefs, "mesh_vertices_splitconnect")
+        layout.prop(addon_prefs, "mesh_vertices_misc")
 
+        layout.prop(addon_prefs, "mesh_edges_subdiv")
+        layout.prop(addon_prefs, "mesh_edges_sharp")
+        layout.prop(addon_prefs, "mesh_edges_freestyle")
+        layout.prop(addon_prefs, "mesh_edges_rotate")
+        layout.prop(addon_prefs, "mesh_edges_misc")
 
-############### Change view classes
+        layout.prop(addon_prefs, "mesh_faces_general")
+        layout.prop(addon_prefs, "mesh_faces_freestyle")
+        layout.prop(addon_prefs, "mesh_faces_tris")
+        layout.prop(addon_prefs, "mesh_faces_rotatemisc")
 
-class VIEW3D_MT_totop(bpy.types.Operator):
-    """Change view to Top\nThis button is global, and changes all available 3D views\nUse the View menu to change the view just in selected 3d view"""
-    bl_idname = "view3d.totop"
-    bl_label = "view from top"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context): 
-        for area in bpy.context.screen.areas:
-                if area.type == 'VIEW_3D':
-                    for region in area.regions:
-                        if region.type == 'WINDOW':
-                            override = bpy.context.copy()
-                            override['area'] = area
-                            override['region'] = region
-                            bpy.ops.view3d.viewnumpad(override, type='TOP', align_active=False)
-        return {'FINISHED'}
-
-class VIEW3D_MT_tobottom(bpy.types.Operator):
-    """Change view to Bottom\nThis button is global, and changes all available 3D views\nUse the View menu to change the view just in selected 3d view"""
-    bl_idname = "view3d.tobottom"
-    bl_label = "view from bottom"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context): 
-        for area in bpy.context.screen.areas:
-                if area.type == 'VIEW_3D':
-                    for region in area.regions:
-                        if region.type == 'WINDOW':
-                            override = bpy.context.copy()
-                            override['area'] = area
-                            override['region'] = region
-                            bpy.ops.view3d.viewnumpad(override, type='BOTTOM', align_active=False)
-        return {'FINISHED'}
-
-class VIEW3D_MT_tofront(bpy.types.Operator):
-    """Change view to Front\nThis button is global, and changes all available 3D views\nUse the View menu to change the view just in selected 3d view"""
-    bl_idname = "view3d.tofront"
-    bl_label = "view from front"
-    bl_options = {'REGISTER', 'UNDO'}
-    def execute(self, context):
-        for area in bpy.context.screen.areas:
-                if area.type == 'VIEW_3D':
-                    for region in area.regions:
-                        if region.type == 'WINDOW':
-                            override = bpy.context.copy()
-                            override['area'] = area
-                            override['region'] = region
-                            bpy.ops.view3d.viewnumpad(override, type='FRONT', align_active=False)
-        return {'FINISHED'}
-class VIEW3D_MT_tobback(bpy.types.Operator):
-    """Change view to Back\nThis button is global, and changes all available 3D views\nUse the View menu to change the view just in selected 3d view"""
-    bl_idname = "view3d.toback"
-    bl_label = "view from back"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context): 
-        for area in bpy.context.screen.areas:
-                if area.type == 'VIEW_3D':
-                    for region in area.regions:
-                        if region.type == 'WINDOW':
-                            override = bpy.context.copy()
-                            override['area'] = area
-                            override['region'] = region
-                            bpy.ops.view3d.viewnumpad(override, type='BACK', align_active=False)
-        return {'FINISHED'}
-
-class VIEW3D_MT_toleft(bpy.types.Operator):
-    """Change view to Left\nThis button is global, and changes all available 3D views\nUse the View menu to change the view just in selected 3d view"""
-    bl_idname = "view3d.toleft"
-    bl_label = "view from left"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context): 
-        for area in bpy.context.screen.areas:
-                if area.type == 'VIEW_3D':
-                    for region in area.regions:
-                        if region.type == 'WINDOW':
-                            override = bpy.context.copy()
-                            override['area'] = area
-                            override['region'] = region
-                            bpy.ops.view3d.viewnumpad(override, type='LEFT', align_active=False)
-        return {'FINISHED'}
-
-class VIEW3D_MT_toright(bpy.types.Operator):
-    """Change view to Right\nThis button is global, and changes all available 3D views\nUse the View menu to change the view just in selected 3d view"""
-    bl_idname = "view3d.toright"
-    bl_label = "view from right"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context): 
-        for area in bpy.context.screen.areas:
-                if area.type == 'VIEW_3D':
-                    for region in area.regions:
-                        if region.type == 'WINDOW':
-                            override = bpy.context.copy()
-                            override['area'] = area
-                            override['region'] = region
-                            bpy.ops.view3d.viewnumpad(override, type='RIGHT', align_active=False)
-        return {'FINISHED'}
-
-class VIEW3D_MT_reset3dview(bpy.types.Operator):
-    """Reset 3D View \nThis button is global, and changes all available 3D views\nUse the View menu to change the view just in selected 3d view"""
-    bl_idname = "view3d.rese3dtview"
-    bl_label = "view from right"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context): 
-        for area in bpy.context.screen.areas:
-            if area.type == 'VIEW_3D':
-                override = bpy.context.copy()
-                override['area'] = area
-                bpy.ops.view.reset_3d_view()
-        return {'FINISHED'} 
-
-class VIEW3D_MT_tocam(bpy.types.Operator):
-    """Switch to / from Camera view\nSwitches the scene display between active camera and world camera\nThis button is global, and changes all available 3D views\nUse the View menu to change the view just in selected 3d view"""
-    bl_idname = "view3d.tocam"
-    bl_label = "view from active camera"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context): 
-        for area in bpy.context.screen.areas:
-            if area.type == 'VIEW_3D':
-                override = bpy.context.copy()
-                override['area'] = area
-                bpy.ops.view3d.viewnumpad(override, type='CAMERA', align_active=False)
-        return {'FINISHED'} 
-
-class VIEW3D_MT_switchactivecam(bpy.types.Operator):
-    """Set Active Camera\nSets the current selected camera as the active camera to render from\nYou need to have a camera object selected"""
-    bl_idname = "view3d.switchactivecam"
-    bl_label = "Set active Camera"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context): 
-
-        context = bpy.context
-        scene = context.scene
-        if context.active_object is not None:
-            currentCameraObj = bpy.data.objects[bpy.context.active_object.name]
-            scene.camera = currentCameraObj     
-        return {'FINISHED'} 
+        layout.prop(addon_prefs, "mesh_cleanup")
 
             
 ############### bfa - Load Save menu hidable by the flag in the right click menu
 
-class TOOLBAR_MT_view(Menu):
-    bl_idname = "TOOLBAR_MT_view"
+class TOOLBAR_MT_meshedit(Menu):
+    bl_idname = "TOOLBAR_MT_meshedit"
     bl_label = ""
 
     def draw(self, context):
@@ -448,54 +325,140 @@ class TOOLBAR_MT_view(Menu):
     def draw_menus(layout, context):
         scene = context.scene
 
-        TOOLBAR_MT_menu_view.draw_collapsible(context, layout)
+        TOOLBAR_MT_menu_meshedit.draw_collapsible(context, layout)
 
-        ## ------------------ Load / Save sub toolbars
+        ## ------------------ Vertices
 
         user_preferences = context.user_preferences
         addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
 
-        if addon_prefs.view_align: 
+        obj = context.object 
+        if obj is not None:
+       
+            mode = obj.mode
+            with_freestyle = bpy.app.build_options.freestyle
 
-            row = layout.row(align=True)
+            if mode == 'EDIT':
+
+                if obj.type == 'MESH':
+
+                    if addon_prefs.mesh_vertices_splitconnect: 
+
+                        row = layout.row(align=True)
+
+                        row.operator("mesh.split", text = "", icon = "SPLIT")
+                        row.operator("mesh.vert_connect_path", text = "", icon = "VERTEXCONNECTPATH")
+                        row.operator("mesh.vert_connect", text = "", icon = "VERTEXCONNECT")
+
+                    if addon_prefs.mesh_vertices_misc:
+
+                        row = layout.row(align=True)
+
+                        with_bullet = bpy.app.build_options.bullet
+
+                        if with_bullet:
+                            row.operator("mesh.convex_hull", text = "", icon = "CONVEXHULL")
+
+                        row.operator("mesh.blend_from_shape", text = "", icon = "BLENDFROMSHAPE")
+                        row.operator("mesh.shape_propagate_to_all", text = "", icon = "SHAPEPROPAGATE")
+
             
-            row.operator("view3d.tofront", text="", icon ="VIEW_FRONT")
-            row.operator("view3d.toback", text="", icon ="VIEW_BACK")
-            row.operator("view3d.toleft", text="", icon ="VIEW_LEFT")
-            row.operator("view3d.toright", text="", icon ="VIEW_RIGHT")
-            row.operator("view3d.totop", text="", icon ="VIEW_TOP")
-            row.operator("view3d.tobottom", text="", icon ="VIEW_BOTTOM")
-            row.operator("view3d.rese3dtview", text="", icon ="VIEW_RESET")
+                    ## ------------------ Edges
 
-        ## ------------------ Load / Save sub toolbars
+                    if addon_prefs.mesh_edges_subdiv:
 
-        if addon_prefs.view_camera:
+                        row = layout.row(align=True)
 
-            row = layout.row(align=True)
+                        row.operator("mesh.subdivide_edgering", text = "", icon = "SUBDIVEDGELOOP")
+                        row.operator("mesh.unsubdivide", text = "", icon = "UNSUBDIVIDE")
 
-            obj = context.object 
+                    if addon_prefs.mesh_edges_sharp:
 
-            row.operator("view3d.tocam", text="", icon ="VIEW_SWITCHTOCAM")
+                        row = layout.row(align=True)
 
-            row = layout.row(align=True)
+                        row.operator("mesh.mark_sharp", text = "", icon = "MARKSHARPEDGES")
+                        row.operator("mesh.mark_sharp", text = "", icon = "CLEARSHARPEDGES").clear = True
 
-            # Set active camera. Just enabled when a camera object is selected.
-            if obj is not None:
+                    if addon_prefs.mesh_edges_freestyle:
 
-                obj_type = obj.type
+                        row = layout.row(align=True)
 
-                if obj_type == 'CAMERA':
+                        if with_freestyle:
+                            row.operator("mesh.mark_freestyle_edge", text = "", icon = "MARK_FS_EDGE").clear = False
+                            row.operator("mesh.mark_freestyle_edge", text = "", icon = "CLEAR_FS_EDGE").clear = True
 
-                    row.operator("view3d.switchactivecam", text="", icon ="VIEW_SWITCHACTIVECAM")
-   
-                else:
-                    
-                    row.enabled = False
-                    row.operator("view3d.switchactivecam", text="", icon ="VIEW_SWITCHACTIVECAM")
+                    if addon_prefs.mesh_edges_rotate:
 
-            else:
-                row.enabled = False
-                row.operator("view3d.switchactivecam", text="", icon ="VIEW_SWITCHACTIVECAM")
+                        row = layout.row(align=True)
+
+                        row.operator("mesh.edge_rotate", text = "", icon = "ROTATECW").use_ccw = False
+
+                    if addon_prefs.mesh_edges_misc:
+
+                        row = layout.row(align=True)
+
+                        row.operator("mesh.edge_split", text = "", icon = "SPLITEDGE")
+                        row.operator("mesh.bridge_edge_loops", text = "", icon = "BRIDGE_EDGELOOPS")
+
+                    ## ------------------ Faces
+
+                    if addon_prefs.mesh_faces_general: 
+
+                        row = layout.row(align=True)
+            
+                        with_freestyle = bpy.app.build_options.freestyle
+
+                        row.operator("mesh.fill", text = "", icon = "FILL")
+                        row.operator("mesh.fill_grid", text = "", icon = "GRIDFILL")
+                        row.operator("mesh.beautify_fill", text = "", icon = "BEAUTIFY")
+                        row.operator("mesh.solidify", text = "", icon = "SOLIDIFY")
+                        row.operator("mesh.intersect", text = "", icon = "INTERSECT")
+                        row.operator("mesh.intersect_boolean", text = "", icon = "BOOLEAN_INTERSECT")
+                        row.operator("mesh.wireframe", text = "", icon = "WIREFRAME")
+
+                    if addon_prefs.mesh_faces_freestyle: 
+
+                        row = layout.row(align=True)
+
+                        if with_freestyle:
+                            row.operator("mesh.mark_freestyle_face", text = "", icon = "MARKFSFACE").clear = False
+                            row.operator("mesh.mark_freestyle_face", text = "", icon = "CLEARFSFACE").clear = True
+
+                    if addon_prefs.mesh_faces_tris: 
+
+                        row = layout.row(align=True)
+
+                        row.operator("mesh.poke", text = "", icon = "POKEFACES")
+                        props = row.operator("mesh.quads_convert_to_tris", text = "", icon = "TRIANGULATE")
+                        props.quad_method = props.ngon_method = 'BEAUTY'
+                        row.operator("mesh.tris_convert_to_quads", text = "", icon = "TRISTOQUADS")
+                        row.operator("mesh.face_split_by_edges", text = "", icon = "SPLITBYEDGES")
+
+                    if addon_prefs.mesh_faces_rotatemisc: 
+
+                        row = layout.row(align=True)
+
+                        row.operator("mesh.uvs_rotate", text = "", icon = "ROTATE_UVS")
+                        row.operator("mesh.uvs_reverse", text = "", icon = "REVERSE_UVS")
+                        row.operator("mesh.colors_rotate", text = "", icon = "ROTATE_COLORS")
+                        row.operator("mesh.colors_reverse", text = "", icon = "REVERSE_COLORS")
+            
+                    ## ------------------ Cleanup
+
+                    if addon_prefs.mesh_cleanup:
+
+                        row = layout.row(align=True)
+
+                        row.operator("mesh.delete_loose", text = "", icon = "DELETE_LOOSE")
+
+                        row = layout.row(align=True)
+
+                        row.operator("mesh.decimate", text = "", icon = "DECIMATE")
+                        row.operator("mesh.dissolve_degenerate", text = "", icon = "DEGENERATE_DISSOLVE")
+                        row.operator("mesh.face_make_planar", text = "", icon = "MAKE_PLANAR")
+                        row.operator("mesh.vert_connect_nonplanar", text = "", icon = "SPLIT_NONPLANAR")
+                        row.operator("mesh.vert_connect_concave", text = "", icon = "SPLIT_CONCAVE")
+                        row.operator("mesh.fill_holes", text = "", icon = "FILL_HOLE")
 
             
             
@@ -1026,7 +989,6 @@ class TOOLBAR_MT_tools(Menu):
 
                     row = layout.row(align=True)
 
-                    row.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="")
                     if obj_type in {'MESH', 'CURVE', 'SURFACE', 'ARMATURE'}:
                         row.operator("object.join", icon ='JOIN', text= "" )
 

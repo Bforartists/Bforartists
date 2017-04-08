@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -64,7 +64,7 @@ IOPLYOrientationHelper = orientation_helper_factory("IOPLYOrientationHelper", ax
 
 
 class ImportPLY(bpy.types.Operator, ImportHelper):
-    """Load a PLY geometry file"""
+    """Import PLY\nLoad a PLY geometry file"""
     bl_idname = "import_mesh.ply"
     bl_label = "Import PLY"
     bl_options = {'UNDO'}
@@ -94,7 +94,7 @@ class ImportPLY(bpy.types.Operator, ImportHelper):
 
 
 class ExportPLY(bpy.types.Operator, ExportHelper, IOPLYOrientationHelper):
-    """Export a single object as a Stanford PLY with normals, """ \
+    """Export PLY\nExport a single object as a Stanford PLY with normals, """ \
     """colors and texture coordinates"""
     bl_idname = "export_mesh.ply"
     bl_label = "Export PLY"

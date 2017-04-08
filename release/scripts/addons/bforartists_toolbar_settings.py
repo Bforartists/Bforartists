@@ -51,11 +51,25 @@ class bforartists_toolbar_settings(AddonPreferences):
     file_render = BoolProperty(name="Render", default=True, description = "Display the Render Toolbar\nAll Modes", )
     file_render_opengl = BoolProperty(name="Render Open GL", default=False, description = "Display the Render Open GL Toolbar\nAll Modes", )
     file_render_misc = BoolProperty(name="Render Misc", default=False, description = "Display the Render Misc Toolbar\nAll Modes", )
+    file_window_search = BoolProperty(name="Window Search", default=False, description = "Display the Search Toolbar\nAll Modes", )
 
-    # view
+    # meshedit
 
-    view_align = BoolProperty(name="Align", default=False, description = "Display the Align Toolbar\nAll Modes", )
-    view_camera = BoolProperty(name="Camera", default=False, description = "Display the Camera Toolbar\nAll Modes", )
+    mesh_vertices_splitconnect = BoolProperty(name="Vertices Splitconnect", default=True, description = "Display the the Mesh Edit Vertices Split / Connect\nMesh Object, Edit Mode", )
+    mesh_vertices_misc = BoolProperty(name="Vertices Misc", default=False, description = "Display the the Mesh Edit Vertices Misc Toolbar with misc tools\nMesh Object, Edit Mode", )
+
+    mesh_edges_subdiv = BoolProperty(name="Edges Subdiv", default=False, description = "Display the the Mesh Edit Edges Subdiv Toolbar\nMesh Object, Edit Mode", )
+    mesh_edges_sharp = BoolProperty(name="Edges Sharp", default=True, description = "Display the the Mesh Edit Edges Sharp Toolbar\nMesh Object, Edit Mode", )
+    mesh_edges_freestyle = BoolProperty(name="Edges Freestyle", default=False, description = "Display the the Mesh Edit Edges Freestyle Toolbar\nMesh Object, Edit Mode", )
+    mesh_edges_rotate = BoolProperty(name="Edges Rotate", default=True, description = "Display the the Mesh Edit Edges Rotate Toolbar\nMesh Object, Edit Mode", )
+    mesh_edges_misc = BoolProperty(name="Edges Misc", default=True, description = "Display the the Mesh Edit Edges MiscToolbar\nMesh Object, Edit Mode", )
+
+    mesh_faces_general = BoolProperty(name="Faces General", default=False, description = "Display the Mesh Edit Faces General Toolbar\nMesh Object, Edit Mode", )
+    mesh_faces_freestyle = BoolProperty(name="Faces Freestyle", default=False, description = "Display the Mesh Edit Faces Freestyle Toolbar\nMesh Object, Edit Mode", )
+    mesh_faces_tris = BoolProperty(name="Faces Tris", default=True, description = "Display the Mesh Edit Faces Tris Toolbar\nMesh Object, Edit Mode", )
+    mesh_faces_rotatemisc = BoolProperty(name="Faces Rotate Misc", default=False, description = "Display the Mesh Edit Faces Rotate Misc Toolbar\nMesh Object, Edit Mode", )
+
+    mesh_cleanup = BoolProperty(name="Cleanup", default=False, description = "Display the Mesh Edit Cleanup Toolbar\nMesh Object, Edit Mode", )
 
     # primitives
 
@@ -76,8 +90,8 @@ class bforartists_toolbar_settings(AddonPreferences):
 
     # Tools
 
-    tools_relations = BoolProperty(name="Relations", default=True, description = "Display the Forcefield Toolbar\nDisplay is mode and content dependant", )
-    tools_edit = BoolProperty(name="Edit", default=False, description = "Display the Forcefield Toolbar\nDisplay is mode and content dependant", )
+    tools_relations = BoolProperty(name="Relations", default=True, description = "Display the Relations Toolbar\nDisplay is mode and content dependant", )
+    tools_edit = BoolProperty(name="Edit", default=False, description = "Display the Edit Toolbar\nDisplay is mode and content dependant", )
 
     # Animation
 
@@ -127,13 +141,34 @@ class bforartists_toolbar_settings(AddonPreferences):
         row = layout.row()
 
         row.prop(self, "file_render_misc")
+        row.prop(self, "file_window_search")
 
-        layout.label(text="The View toolbar container")
+        layout.label(text="The Mesh Edit toolbar container")
 
         row = layout.row()
 
-        row.prop(self, "view_align")
-        row.prop(self, "view_camera")
+        row.prop(self, "mesh_vertices_splitconnect")
+        row.prop(self, "mesh_vertices_misc")
+
+        row.prop(self, "mesh_edges_subdiv")
+
+        row = layout.row()
+
+        row.prop(self, "mesh_edges_sharp")
+        row.prop(self, "mesh_edges_freestyle")
+        row.prop(self, "mesh_edges_rotate")
+        row.prop(self, "mesh_edges_misc")
+
+        row = layout.row()
+
+        row.prop(self, "mesh_faces_general")
+        row.prop(self, "mesh_faces_freestyle")
+        row.prop(self, "mesh_faces_tris")
+
+        row = layout.row()
+
+        row.prop(self, "mesh_faces_rotatemisc")
+        row.prop(self, "mesh_cleanup")      
 
         layout.label(text="The Primitives toolbar container")
 

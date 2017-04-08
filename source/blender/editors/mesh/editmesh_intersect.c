@@ -265,7 +265,7 @@ void MESH_OT_intersect_boolean(struct wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Intersect (Boolean)";
-	ot->description = "Cut solid geometry from selected to unselected";
+	ot->description = "Boolean Intersect\nCut solid geometry from selected to unselected";
 	ot->idname = "MESH_OT_intersect_boolean";
 
 	/* api callbacks */
