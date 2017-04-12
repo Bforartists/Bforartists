@@ -384,6 +384,10 @@ class SCENE_PT_layer_manager(bpy.types.Panel):
         scene = context.scene
         view_3d = context.area.spaces.active
 
+        layout = self.layout
+        view = context.space_data
+        is_local_view = (view.local_view is not None)
+
         # Check for lock camera and layer is active
         if view_3d.lock_camera_and_layers:
             layer_cont = scene
@@ -393,10 +397,16 @@ class SCENE_PT_layer_manager(bpy.types.Panel):
             use_spacecheck = True
 
         layout = self.layout
-        
-        
+             
         col = layout.column(align=True)
-        col.operator("object.move_to_layer", text="Move to Layer") # bfa - move to layer button
+
+        # bfa - move to layer button, with different local /global view text
+        if is_local_view:
+            col.operator_context = 'EXEC_REGION_WIN'
+            col.operator("object.move_to_layer", text="Move out of Local View")
+            col.operator_context = 'INVOKE_REGION_WIN'
+        else:
+            col.operator("object.move_to_layer", text="Move to Layer...")
        
         row = layout.row()
         row.alignment = 'LEFT'

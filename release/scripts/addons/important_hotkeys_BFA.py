@@ -20,7 +20,7 @@ import blf
 bl_info = {
     "name": "Important Hotkeys BFA",
     "author": "Reiner 'Tiles' Prokein",
-    "version": (1, 0, 0),
+    "version": (1, 0, 1),
     "blender": (2, 76, 0),
     "location": "3D View > Properties Panel > Important Hotkeys",
     "description": "This addon displays some important hotkeys in the upper left corner",
@@ -302,7 +302,17 @@ def draw_modetext(self, context, obj):
                  # ------------- Stencil Brush control Rotation Secondary
                 elif km.properties.mode == 'ROTATION' and km.properties.texmode == 'SECONDARY':
                     self.weightpaint_stencil_control_rotate_sec = handle_keys(km, self.weightpaint_stencil_control_rotate_sec)
-                
+
+      # ----------------------------------------- Paint Curve section -------------------------------------    
+    keymaps_PAINTCURVE = wm.keyconfigs['Blender User'].keymaps['Paint Curve']
+    
+    if not self._flag:
+        #print(tuple(keymaps_PAINTCURVE.keymap_items.keys()))      # debug. prints the tuple content for the 3d view keymaps.
+        for item, km in keymaps_PAINTCURVE.keymap_items.items(): # all the items in the tuple
+            
+            # ------------- Select bone
+            if item == 'paintcurve.add_point_slide':
+                self.texturepaint_strokemethod_curve = handle_keys(km, self.texturepaint_strokemethod_curve)               
                 
  # ----------------------------------------- texturepaint section -------------------------------------    
     keymaps_TEXTUREPAINT = wm.keyconfigs['Blender User'].keymaps['Image Paint']
@@ -624,13 +634,16 @@ def draw_modetext(self, context, obj):
             "Angle - " + self.texturepaint_brush_angle,
             "Mask Angle - " + self.texturepaint_mask_angle,
             "------",
-            "Texture, Brush Mapping in Stencil mode:", 
+            "Texture Paint, Brush Mapping in Stencil mode:", 
             "Move - " + self.texturepaint_stencil_control_translate,
             "Rotate - " + self.texturepaint_stencil_control_rotate,
             "Scale - " + self.texturepaint_stencil_control_scale,
             "Move secondary - " + self.texturepaint_stencil_control_translate_sec,
             "Rotate secondary - " + self.texturepaint_stencil_control_rotate_sec,
-            "Scale secondary - " + self.texturepaint_stencil_control_scale_sec
+            "Scale secondary - " + self.texturepaint_stencil_control_scale_sec,
+            "------",
+            "Texture Paint, Stroke, Stroke Method Curve:", 
+            "Add Curve Point - " + self.texturepaint_strokemethod_curve,
             ]))
     elif mode == 'PARTICLE_EDIT':
         texts.append(([
@@ -867,6 +880,7 @@ class ModalDrawOperator(bpy.types.Operator):
         self.texturepaint_stencil_control_translate_sec = "Not found"
         self.texturepaint_stencil_control_rotate_sec = "Not found"
         self.texturepaint_stencil_control_scale_sec = "Not found"
+        self.texturepaint_strokemethod_curve = "Not found"
         # Particle Edit
         self.particle_brush_size = "Not found"
         self.particle_brush_strength = "Not found"

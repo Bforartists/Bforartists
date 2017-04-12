@@ -237,7 +237,7 @@ void MESH_OT_subdivide_edgering(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Subdivide Edge-Ring";
-	ot->description = "Subdivide Edge-Ring";
+	ot->description = "Subdivide Edge-Ring\nSubdivide an Edge-Ring";
 	ot->idname = "MESH_OT_subdivide_edgering";
 
 	/* api callbacks */
@@ -4174,7 +4174,7 @@ void MESH_OT_decimate(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Decimate Geometry";
 	ot->idname = "MESH_OT_decimate";
-	ot->description = "Simplify geometry by collapsing edges";
+	ot->description = "Decimate Geometry\nSimplify geometry by collapsing edges";
 
 	/* api callbacks */
 	ot->exec = edbm_decimate_exec;

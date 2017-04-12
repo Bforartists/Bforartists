@@ -32,6 +32,8 @@
  * once from UI_resources.h for the internal icon enum and
  * once for interface_api.c for the definition of the RNA enum for the icons */
 
+/*26 icons per line*/
+
 /* ICON_ prefix added */
 DEF_ICON(NONE)
 DEF_ICON(QUESTION)
@@ -61,6 +63,8 @@ DEF_ICON(PLUG)
 DEF_ICON(UI)
 DEF_ICON(NODE)
 DEF_ICON(NODE_SEL)
+
+/* ------------------------- New Line  ---------------------------*/
 	
 	/* ui */
 DEF_ICON(FULLSCREEN)
@@ -89,6 +93,8 @@ DEF_ICON(DOTSDOWN)
 DEF_ICON(LINK)
 DEF_ICON(INLINK)
 DEF_ICON(PLUGIN)
+
+/* ------------------------- New Line  ---------------------------*/
 	
 	/* various ui */
 DEF_ICON(HELP)
@@ -117,6 +123,8 @@ DEF_ICON(DUPLICATE) //bfa
 DEF_ICON(FULLSCREEN_ENTER)
 DEF_ICON(FULLSCREEN_EXIT)
 DEF_ICON(BLANK1)	// Not actually blank - this is used all over the place
+
+/* ------------------------- New Line  ---------------------------*/
 	
 	/* BUTTONS */
 DEF_ICON(LAMP)
@@ -145,11 +153,11 @@ DEF_ICON(VIEW_RESET)
 DEF_ICON(VIEW_SWITCHTOCAM)
 DEF_ICON(VIEW_SWITCHACTIVECAM)
 DEF_ICON(DELETE) // bfa
+DEF_ICON(PERSP_ORTHO)
+DEF_ICON(WIREFRAME)
 
-#ifndef DEF_ICON_BLANK_SKIP	
-	DEF_ICON(BLANK052)
-	DEF_ICON(BLANK052b)
-#endif
+/* ------------------------- New Line  ---------------------------*/
+
 /* EDITORS */
 DEF_ICON(VIEW3D)
 DEF_ICON(IPO) // Graph Editor
@@ -179,6 +187,7 @@ DEF_ICON(SELECT_ALL)
 DEF_ICON(STROKE_SELECT)
 
 /* ----------------- new line ---------------------------------------*/
+
 	/* MODES */
 DEF_ICON(OBJECT_DATAMODE)	// XXX fix this up
 DEF_ICON(EDITMODE_HLT)
@@ -191,19 +200,20 @@ DEF_ICON(POSE_HLT)
 DEF_ICON(PARTICLEMODE)
 DEF_ICON(LIGHTPAINT) // deprecated
 
-#ifndef DEF_ICON_BLANK_SKIP
-DEF_ICON(BLANK063)
-DEF_ICON(BLANK064)
-DEF_ICON(BLANK065)
-DEF_ICON(BLANK066)
-DEF_ICON(BLANK067)
-DEF_ICON(BLANK068)
-DEF_ICON(BLANK069)
-DEF_ICON(BLANK070)
-DEF_ICON(BLANK071)
-DEF_ICON(BLANK072)
-#endif
+/*bfa - select more less icons*/
+DEF_ICON(SELECTLESS)
+DEF_ICON(SELECTMORE)
 
+/*bfa - Gpencil Edit Panel*/
+DEF_ICON(BEND)
+DEF_ICON(SHEAR)
+DEF_ICON(TOSPHERE)
+DEF_ICON(JOINCOPY)
+
+DEF_ICON(SPLITEDGE)
+DEF_ICON(VERTEXCONNECTPATH)
+DEF_ICON(VERTEXCONNECT)
+DEF_ICON(MARKSHARPEDGES)
 
 /* bfa - EDITORS active icons*/
 DEF_ICON(BUTS_ACTIVE) // Properties
@@ -213,7 +223,7 @@ DEF_ICON(DOPESHEET_ACTIVE)
 DEF_ICON(GRAPH_ACTIVE)
 DEF_ICON(TIME_ACTIVE)
 
-// ----------------------------
+/* ------------------------- New Line  ---------------------------*/
 
 	/* DATA */
 DEF_ICON(SCENE_DATA)
@@ -241,9 +251,10 @@ DEF_ICON(CONSTRAINT_BONE)
 DEF_ICON(CAMERA_STEREO)
 DEF_ICON(PACKAGE)
 DEF_ICON(UGLYPACKAGE)
-#ifndef DEF_ICON_BLANK_SKIP
-	DEF_ICON(BLANK079b)
-#endif
+
+DEF_ICON(SOLIDIFY)
+
+/* ------------------------- New Line  ---------------------------*/
 
 	/* DATA */
 DEF_ICON(BRUSH_DATA)
@@ -273,28 +284,34 @@ DEF_ICON(RENDER_ANI_VIEW)
 DEF_ICON(RNA)
 DEF_ICON(RNA_ADD)
 
-	/* available */
+/* -------------------------- Newline -----------------------------*/
+
+DEF_ICON(CLEARSHARPEDGES)
+DEF_ICON(CONVEXHULL)
+DEF_ICON(BLENDFROMSHAPE)
+DEF_ICON(SHAPEPROPAGATE)
+
+DEF_ICON(BRIDGE_EDGELOOPS)
+DEF_ICON(CLEAR_FS_EDGE)
+DEF_ICON(MARK_FS_EDGE)
+
 #ifndef DEF_ICON_BLANK_SKIP
 
-	DEF_ICON(BLANK092)
-	DEF_ICON(BLANK093)
-	DEF_ICON(BLANK094)
-	DEF_ICON(BLANK095)
-	DEF_ICON(BLANK096)
-	DEF_ICON(BLANK097)
-	DEF_ICON(BLANK098)
 	DEF_ICON(BLANK099)
-	DEF_ICON(BLANK100)
-	DEF_ICON(BLANK101)
-	DEF_ICON(BLANK102)
-	DEF_ICON(BLANK103)
-	DEF_ICON(BLANK104)
-	DEF_ICON(BLANK105)
-	DEF_ICON(BLANK106)
-	DEF_ICON(BLANK107)
-	DEF_ICON(BLANK108)
 
 #endif
+
+DEF_ICON(ROTATECW)
+DEF_ICON(SPLIT)
+DEF_ICON(SUBDIVEDGELOOP)
+DEF_ICON(UNSUBDIVIDE)
+DEF_ICON(SUBDIV_EDGERING)
+
+DEF_ICON(REVERSE_COLORS)
+DEF_ICON(ROTATE_COLORS)
+DEF_ICON(REVERSE_UVS)
+DEF_ICON(ROTATE_UVS)
+
 	/*bfa - UV icons */
 DEF_ICON(ALIGNAUTO)
 DEF_ICON(ALIGNHORIZONTAL)
@@ -356,6 +373,7 @@ DEF_ICON(OUTLINER_DATA_FONT)
 DEF_ICON(OUTLINER_DATA_SURFACE)
 DEF_ICON(OUTLINER_DATA_SPEAKER)
 DEF_ICON(OUTLINER_DATA_POSE)
+
 /* bfa - apply */
 DEF_ICON(APPLYALL)
 DEF_ICON(APPLYMOVE)
@@ -368,13 +386,12 @@ DEF_ICON(CLEARSCALE)
 DEF_ICON(MAKEDUPLIREAL)
 DEF_ICON(VISUALTRANSFORM)
 
-#ifndef DEF_ICON_BLANK_SKIP
+DEF_ICON(POKEFACES)
+DEF_ICON(SPLITBYEDGES)
+DEF_ICON(TRIANGULATE)
+DEF_ICON(TRISTOQUADS)
 
-	DEF_ICON(BLANK140)
-	DEF_ICON(BLANK141)
-	DEF_ICON(BLANK142)
-	DEF_ICON(BLANK142b)
-#endif
+/*----------------- newline -------------------------------------*/
 	
 	/* PRIMITIVES */
 DEF_ICON(MESH_PLANE)
@@ -388,27 +405,28 @@ DEF_ICON(MESH_CYLINDER)
 DEF_ICON(MESH_TORUS)
 DEF_ICON(MESH_CONE)
 DEF_ICON(MESH_CAPSULE)
-#ifndef DEF_ICON_BLANK_SKIP
-	DEF_ICON(BLANK611)
-#endif
+
+DEF_ICON(INTERSECT)
+
 DEF_ICON(LAMP_POINT)
 DEF_ICON(LAMP_SUN)
 DEF_ICON(LAMP_SPOT)
 DEF_ICON(LAMP_HEMI)
 DEF_ICON(LAMP_AREA)
-#ifndef DEF_ICON_BLANK_SKIP
-	DEF_ICON(BLANK617)
-	DEF_ICON(BLANK618)
-#endif
+
+DEF_ICON(MARKFSFACE)
+DEF_ICON(CLEARFSFACE)
+
 DEF_ICON(META_EMPTY)
 DEF_ICON(META_PLANE)
 DEF_ICON(META_CUBE)
 DEF_ICON(META_BALL)
 DEF_ICON(META_ELLIPSOID)
 DEF_ICON(META_CAPSULE)
-#ifndef DEF_ICON_BLANK_SKIP
-	DEF_ICON(BLANK625)
-#endif
+
+DEF_ICON(BOOLEAN_INTERSECT)
+
+/*----------------- newline -------------------------------------*/
 	
 	/* PRIMITIVES */
 DEF_ICON(SURFACE_NCURVE)
@@ -417,11 +435,11 @@ DEF_ICON(SURFACE_NSURFACE)
 DEF_ICON(SURFACE_NCYLINDER)
 DEF_ICON(SURFACE_NSPHERE)
 DEF_ICON(SURFACE_NTORUS)
-#ifndef DEF_ICON_BLANK_SKIP
-	DEF_ICON(BLANK636)
-	DEF_ICON(BLANK637)
-	DEF_ICON(BLANK638)
-#endif
+
+DEF_ICON(BEAUTIFY)
+DEF_ICON(FILL)
+DEF_ICON(GRIDFILL)
+
 DEF_ICON(CURVE_BEZCURVE)
 DEF_ICON(CURVE_BEZCIRCLE)
 DEF_ICON(CURVE_NCURVE)
@@ -441,6 +459,8 @@ DEF_ICON(TRIA_RIGHT_BAR)
 DEF_ICON(TRIA_DOWN_BAR)
 DEF_ICON(TRIA_LEFT_BAR)
 DEF_ICON(TRIA_UP_BAR)
+
+/*----------------- newline -------------------------------------*/
 
 	/* EMPTY */
 DEF_ICON(FORCE_FORCE)
@@ -473,15 +493,19 @@ DEF_ICON(KEYFRAMES_CLEAR)
 DEF_ICON(REMOVE_FROM_ALL_GROUPS)
 DEF_ICON(REMOVE_SELECTED_FROM_ACTIVE_GROUP)
 
-#ifndef DEF_ICON_BLANK_SKIP
+DEF_ICON(FILLBETWEEN)
 
-	DEF_ICON(BLANK685)
+
+/*----------------- newline -------------------------------------*/
+
+#ifndef DEF_ICON_BLANK_SKIP
 
 	/* EMPTY */
 	DEF_ICON(BLANK690)  /* XXX 'Temperature' icon! */
 	DEF_ICON(BLANK691)  /* XXX 'Temperature' icon! */
 	DEF_ICON(BLANK692)  /* XXX 'Gear' icon! */
 #endif
+
 DEF_ICON(NODE_INSERT_ON)
 DEF_ICON(NODE_INSERT_OFF)
 /*bfa - new icons. Tool Shelf - Object mode - Physics Tools*/
@@ -509,6 +533,8 @@ DEF_ICON(HANDLE_VECTOR)
 DEF_ICON(HANDLE_ALIGN)
 DEF_ICON(HANDLE_FREE)
 DEF_ICON(RADIUS)
+
+/*----------------- newline -------------------------------------*/
 
 /*bfa - new icons. Tool Shelf - Edit Mode - Tools - Weight Tools*/
 DEF_ICON(WEIGHT_GRADIENT)
@@ -543,7 +569,7 @@ DEF_ICON(RULER)
 DEF_ICON(VERTEX_PARENT)
 
 
-	/* ---------------------------- Newline -------------------------- */
+/* ---------------------------- Newline -------------------------- */
 
 
 /*bfa - new icons. Tool Shelf - Edit Mode - Tools - Mesh Tools - Add section  */
@@ -576,7 +602,7 @@ DEF_ICON(WEIGHT_SMOOTH)
 DEF_ICON(WEIGHT_LIMIT_TOTAL)
 DEF_ICON(WEIGHT_FIX_DEFORMS)
 
-// --------------------------
+/*----------------- newline -------------------------------------*/
 
 	/* MODIFIERS */
 DEF_ICON(MODIFIER)
@@ -606,6 +632,8 @@ DEF_ICON(MOD_SMOOTH)
 DEF_ICON(MOD_SIMPLEDEFORM)
 DEF_ICON(MOD_MASK)
 
+/*----------------- newline -------------------------------------*/
+
 	/* MODIFIERS */
 DEF_ICON(MOD_CLOTH)
 DEF_ICON(MOD_EXPLODE)
@@ -624,17 +652,19 @@ DEF_ICON(MOD_TRIANGULATE)
 DEF_ICON(MOD_WIREFRAME)
 DEF_ICON(MOD_DATA_TRANSFER)
 DEF_ICON(MOD_NORMALEDIT)
-#ifndef DEF_ICON_BLANK_SKIP
-	DEF_ICON(BLANK169)
-	DEF_ICON(BLANK170)
-	DEF_ICON(BLANK171)
-	DEF_ICON(BLANK172)
-	DEF_ICON(BLANK173)
-	DEF_ICON(BLANK174)
-	DEF_ICON(BLANK175)
-	DEF_ICON(BLANK176)
-	DEF_ICON(BLANK177)
-#endif
+
+DEF_ICON(DECIMATE)
+DEF_ICON(DEGENERATE_DISSOLVE)
+DEF_ICON(DELETE_LOOSE)
+DEF_ICON(FILL_HOLE)
+DEF_ICON(MAKE_PLANAR)
+DEF_ICON(SPLIT_CONCAVE)
+DEF_ICON(SPLIT_NONPLANAR)
+
+DEF_ICON(MERGE)
+DEF_ICON(SEPARATE)
+
+	/*----------------- newline -------------------------------------*/
 	
 	/* ANIMATION */
 DEF_ICON(REC)
@@ -663,6 +693,8 @@ DEF_ICON(MUTE_IPO_ON)
 DEF_ICON(VISIBLE_IPO_OFF)
 DEF_ICON(VISIBLE_IPO_ON)
 DEF_ICON(DRIVER)
+
+/*----------------- newline -------------------------------------*/
 
 	/* ANIMATION */
 DEF_ICON(SOLO_OFF)
@@ -695,6 +727,8 @@ DEF_ICON(NORMALIZE_FCURVES)
 	DEF_ICON(BLANK207)
 #endif
 
+	/*----------------- newline -------------------------------------*/
+
 	/* EDITING */
 DEF_ICON(VERTEXSEL)
 DEF_ICON(EDGESEL)
@@ -726,6 +760,8 @@ DEF_ICON(SCULPT_DYNTOPO)  /* XXX Empty icon! */
 DEF_ICON(PARTICLE_POINT)
 DEF_ICON(PARTICLE_TIP)
 DEF_ICON(PARTICLE_PATH)
+
+/*----------------- newline -------------------------------------*/
 	
 	/* EDITING */
 DEF_ICON(MAN_TRANS)
@@ -756,7 +792,7 @@ DEF_ICON(UNDO_HISTORY)
 DEF_ICON(REDO_HISTORY)
 DEF_ICON(BEVEL)
 
-/*########################## end of row / next row ########################################*/
+/*----------------- newline -------------------------------------*/
 
 	/* EDITING */
 DEF_ICON(PASTEDOWN)
@@ -791,7 +827,7 @@ DEF_ICON(SCREW)
 /*bfa - new icons. Tool Shelf - Edit Mode - Tools - Lattice Tools section  */
 DEF_ICON(MAKE_REGULAR)
 
-// -----------------
+/*----------------- newline -------------------------------------*/
 
 	/* 3D VIEW */
 DEF_ICON(BBOX)
@@ -833,7 +869,7 @@ DEF_ICON(TRANSFORM_SCALE)
 	DEF_ICON(BLANK257b)
 #endif
 
-// --------------- newline ------------------------------
+/*----------------- newline -------------------------------------*/
 
 // import export icons
 
@@ -868,6 +904,8 @@ DEF_ICON(SAVE_ABC) // alembic
 	DEF_ICON(BLANK282b)
 #endif
 
+/*----------------- newline -------------------------------------*/
+
 	/* FILE SELECT */
 DEF_ICON(SORTALPHA)
 DEF_ICON(SORTBYEXT)
@@ -895,6 +933,8 @@ DEF_ICON(FILE_SCRIPT)
 DEF_ICON(FILE_SOUND)
 DEF_ICON(FILE_FONT)
 DEF_ICON(FILE_TEXT)
+
+/*----------------- newline -------------------------------------*/
 
 	/* FILE SELECT */
 DEF_ICON(RECOVER_AUTO)
@@ -927,6 +967,8 @@ DEF_ICON(FORWARD)
 DEF_ICON(FILE_HIDDEN)
 DEF_ICON(FILE_BACKUP)
 DEF_ICON(DISK_DRIVE)
+
+/*----------------- newline -------------------------------------*/
 	
 	/* SHADING / TEXT */
 DEF_ICON(MATPLANE)
@@ -956,12 +998,13 @@ DEF_ICON(ITALIC)
 DEF_ICON(UNDERLINED)
 DEF_ICON(SET_LOWERCASE)
 DEF_ICON(SET_UPPERCASE)
+DEF_ICON(SMALL_CAPS)
 
 #ifndef DEF_ICON_BLANK_SKIP
-
-	DEF_ICON(BLANK328)
 	DEF_ICON(BLANK328b)
 #endif
+
+/*----------------- newline -------------------------------------*/
 	
 	/* SEQUENCE / IMAGE EDITOR */
 DEF_ICON(SEQ_SEQUENCER)
@@ -980,20 +1023,25 @@ DEF_ICON(IMAGE_RGB_ALPHA)
 DEF_ICON(IMAGE_ALPHA)
 DEF_ICON(IMAGE_ZDEPTH)
 DEF_ICON(IMAGEFILE)
+
+/*bfa -snap icons */
+DEF_ICON(CURSORTOACTIVE)
+DEF_ICON(CURSORTOCENTER)
+DEF_ICON(CURSORTOGRID)
+DEF_ICON(CURSORTOSELECTION)
+DEF_ICON(SELECTIONTOCURSOROFFSET)
+DEF_ICON(SELECTIONTOACTIVE)
+DEF_ICON(SELECTIONTOCURSOR)
+DEF_ICON(SELECTIONTOGRID)
+
 #ifndef DEF_ICON_BLANK_SKIP
-	DEF_ICON(BLANK336)
-	DEF_ICON(BLANK337)
-	DEF_ICON(BLANK338)
-	DEF_ICON(BLANK339)
-	DEF_ICON(BLANK340)
-	DEF_ICON(BLANK341)
-	DEF_ICON(BLANK342)
-	DEF_ICON(BLANK343)
 	DEF_ICON(BLANK344)
 	DEF_ICON(BLANK345)
 	DEF_ICON(BLANK346)
 	DEF_ICON(BLANK346b)
 #endif
+
+/*----------------- newline END OF ICONSHEET -------------------------------------*/
 
 	/* brush icons */
 

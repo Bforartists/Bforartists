@@ -297,24 +297,29 @@ class DOPESHEET_MT_select(Menu):
     bl_label = "Select"
 
     def draw(self, context):
-        layout = self.layout
-
-        # This is a bit misleading as the operator's default text is "Select All" while it actually *toggles* All/None
-        layout.operator("action.select_all_toggle").invert = False
-        layout.operator("action.select_all_toggle", text="Invert Selection").invert = True
+        layout = self.layout       
+        
+        myvar = layout.operator("action.select_lasso", icon='BORDER_LASSO')
+        myvar.deselect = False
+        layout.operator("action.select_border", icon='BORDER_RECT').axis_range = False
+        layout.operator("action.select_border", text="Border Axis Range", icon='BORDER_RECT').axis_range = True
+        layout.operator("action.select_circle", icon = 'CIRCLE_SELECT')
+        
+        layout.separator()
+        
+        layout.operator("action.select_all_toggle", text = "(De)Select all", icon='SELECT_ALL').invert = False
+        layout.operator("action.select_all_toggle", text="Inverse", icon='INVERSE').invert = True 
 
         layout.separator()
-        layout.operator("action.select_border").axis_range = False
-        layout.operator("action.select_border", text="Border Axis Range").axis_range = True
-
-        layout.operator("action.select_circle")
-
-        layout.separator()
+        
         layout.operator("action.select_column", text="Columns on Selected Keys").mode = 'KEYS'
         layout.operator("action.select_column", text="Column on Current Frame").mode = 'CFRA'
-
         layout.operator("action.select_column", text="Columns on Selected Markers").mode = 'MARKERS_COLUMN'
         layout.operator("action.select_column", text="Between Selected Markers").mode = 'MARKERS_BETWEEN'
+        
+        layout.separator()
+        
+        layout.operator("action.select_linked", text = "Linked")
 
         layout.separator()
         
@@ -327,8 +332,7 @@ class DOPESHEET_MT_select(Menu):
             layout.operator("action.select_more",text = "More")
             layout.operator("action.select_less",text = "Less")
 
-            layout.separator()
-            layout.operator("action.select_linked", text = "Linked")
+            
 
 
 class DOPESHEET_MT_marker(Menu):

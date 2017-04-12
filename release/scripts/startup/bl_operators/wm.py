@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -1008,7 +1008,7 @@ class WM_OT_doc_view(Operator):
 
     doc_id = doc_id
     #if bpy.app.version_cycle == "release":
-    _prefix = "http://www.bforartists.de/pythonapi/"
+    _prefix = "https://www.bforartists.de/pythonapi/"
         
         #("http://www.blender.org/documentation/blender_python_api_%s%s_release" %
         #           ("_".join(str(v) for v in bpy.app.version[:2]), bpy.app.version_char))
