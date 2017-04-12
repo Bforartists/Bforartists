@@ -55,7 +55,7 @@ static PyStructSequence_Field app_sdl_info_fields[] = {
 	{(char *)"version_string", (char *)("The SDL version formatted as a string")},
 	{(char *)"available", (char *)("Boolean, True when SDL is available. This is False when "
 	                               "either *supported* is False, or *dynload* is True and "
-	                               "Blender cannot find the correct library.")},
+	                               "Bforartists cannot find the correct library.")},
     {NULL}
 };
 

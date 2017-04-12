@@ -71,7 +71,7 @@ BrandingText "Bforartists | http://www.blender.org"
 ComponentText "This will install Blender [VERSION] on your computer."
 
 VIAddVersionKey "ProductName" "Blender"
-VIAddVersionKey "CompanyName" "http://www.bforartists.de"
+VIAddVersionKey "CompanyName" "https://www.bforartists.de"
 VIAddVersionKey "FileDescription" "Free open source 3D content creation suite."
 VIAddVersionKey "FileVersion" "[SHORTVERSION].0.0"
 
@@ -162,7 +162,7 @@ Section "Blender [VERSION] (required)" InstallFiles
   ; Write the uninstall keys for Windows
   WriteRegStr   HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Blender" "DisplayName" "Bforartists"
   WriteRegStr   HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Blender" "Publisher" "Bforartists"
-  WriteRegStr   HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Blender" "URLInfoAbout" "http://www.bforartists.de"
+  WriteRegStr   HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Blender" "URLInfoAbout" "https://www.bforartists.de"
   WriteRegStr   HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Blender" "DisplayVersion" "[VERSION]"
   WriteRegStr   HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Blender" "DisplayIcon" "$INSTDIR\bforartists.exe"
   WriteRegStr   HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Blender" "UninstallString" '"$INSTDIR\uninstall.exe"'

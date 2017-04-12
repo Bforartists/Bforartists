@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -80,7 +80,7 @@ IOSTLOrientationHelper = orientation_helper_factory("IOSTLOrientationHelper", ax
 
 
 class ImportSTL(Operator, ImportHelper, IOSTLOrientationHelper):
-    """Load STL triangle mesh data"""
+    """Import STL\nLoad STL triangle mesh data"""
     bl_idname = "import_mesh.stl"
     bl_label = "Import STL"
     bl_options = {'UNDO'}
@@ -156,7 +156,7 @@ class ImportSTL(Operator, ImportHelper, IOSTLOrientationHelper):
 
 
 class ExportSTL(Operator, ExportHelper, IOSTLOrientationHelper):
-    """Save STL triangle mesh data from the active object"""
+    """Export STL\nSave STL triangle mesh data from the active object"""
     bl_idname = "export_mesh.stl"
     bl_label = "Export STL"
 

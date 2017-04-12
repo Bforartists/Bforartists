@@ -296,7 +296,7 @@ enum {
 	// bfa - show hide the File toolbars
 	HEADER_TOOLBAR_FILE = (1 << 10),
 	// bfa - show hide the View toolbars
-	HEADER_TOOLBAR_VIEW = (1 << 11),
+	HEADER_TOOLBAR_MESHEDIT = (1 << 11),
 	// bfa - show hide the Primitives toolbars
 	HEADER_TOOLBAR_PRIMITIVES = (1 << 12),
 	// bfa - show hide the Image toolbars
@@ -305,13 +305,11 @@ enum {
 	HEADER_TOOLBAR_TOOLS = (1 << 14),
 	// bfa - show hide the Animation toolbars
 	HEADER_TOOLBAR_ANIMATION = (1 << 15),
-
-	//// bfa- This below does not work, it just fucks up things. It's a short. 15 is end of road. 
-	////So the next flags for our editors are in the Panel->flag enums
-	//// bfa - show hide the Edit toolbars
-	//HEADER_TOOLBAR_EDIT = (2 << 11),
-	//// bfa - show hide the Misc toolbars
-	//HEADER_TOOLBAR_MISC = (2 << 12),
+	/*Other flags see above in the area->flag enum*/
+	// bfa - show hide the Edit toolbars
+	HEADER_TOOLBAR_EDIT = (1 << 16),
+	// bfa - show hide the Misc toolbars
+	HEADER_TOOLBAR_MISC = (1 << 17),
 };
 
 #define EDGEWIDTH	1
@@ -339,11 +337,7 @@ enum {
 	PNL_OVERLAP     = (1 << 4),
 	PNL_PIN         = (1 << 5),
 
-	/*Other flags see above in the area->flag enum*/
-	// bfa - show hide the Edit toolbars
-	HEADER_TOOLBAR_EDIT = (1 << 6),
-	// bfa - show hide the Misc toolbars
-	HEADER_TOOLBAR_MISC = (1 << 7),
+
 };
 
 /* Panel->snap - for snapping to screen edges */

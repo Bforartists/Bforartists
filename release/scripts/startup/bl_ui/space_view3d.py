@@ -119,18 +119,6 @@ class VIEW3D_HT_header(Header):
             if (mode == 'EDIT' and obj.type == 'MESH'):
                 layout.prop(toolsettings, "use_mesh_automerge", text="", icon='AUTOMERGE_ON')
 
-        # GPencil
-        if context.gpencil_data and context.gpencil_data.use_stroke_edit_mode:
-            row = layout.row(align=True)
-            row.operator("gpencil.copy", text="", icon='COPYDOWN')
-            row.operator("gpencil.paste", text="", icon='PASTEDOWN')
-
-            # XXX: icon
-            layout.prop(context.gpencil_data, "use_onion_skinning", text="Onion Skins", icon='PARTICLE_PATH')
-
-            row = layout.row(align=True)
-            row.prop(context.tool_settings.gpencil_sculpt, "use_select_mask")
-            row.prop(context.tool_settings.gpencil_sculpt, "selection_alpha", slider=True)
 
 # bfa - show hide the editormenu
 class ALL_MT_editormenu(Menu):
@@ -205,13 +193,14 @@ class VIEW3D_MT_transform_base(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("transform.tosphere", text="To Sphere")
-        layout.operator("transform.shear", text="Shear")
-        layout.operator("transform.bend", text="Bend")
+        layout.operator("transform.tosphere", text="To Sphere", icon = "TOSPHERE")
+        layout.operator("transform.shear", text="Shear", icon = "SHEAR")
+        layout.operator("transform.bend", text="Bend", icon = "BEND")
+        layout.operator("transform.push_pull", text="Push/Pull", icon = 'PUSH_PULL')
 
         if context.mode != 'OBJECT':
             layout.operator("transform.vertex_warp", text="Warp")
-
+            layout.operator("transform.vertex_random", text="Randomize", icon = 'RANDOMIZE')
 
 # Generic transform menu - geometry types
 class VIEW3D_MT_transform(VIEW3D_MT_transform_base):
@@ -280,59 +269,6 @@ class VIEW3D_MT_transform_armature(VIEW3D_MT_transform_base):
 
         if context.edit_object and context.edit_object.type == 'ARMATURE':
             layout.operator("armature.align")
-
-
-class VIEW3D_MT_mirror(Menu):
-    bl_label = "Mirror"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator_context = 'INVOKE_REGION_WIN'
-
-        props = layout.operator("transform.mirror", text="X Global")
-        props.constraint_axis = (True, False, False)
-        props.constraint_orientation = 'GLOBAL'
-        props = layout.operator("transform.mirror", text="Y Global")
-        props.constraint_axis = (False, True, False)
-        props.constraint_orientation = 'GLOBAL'
-        props = layout.operator("transform.mirror", text="Z Global")
-        props.constraint_axis = (False, False, True)
-        props.constraint_orientation = 'GLOBAL'
-
-        if context.edit_object:
-            layout.separator()
-
-            props = layout.operator("transform.mirror", text="X Local")
-            props.constraint_axis = (True, False, False)
-            props.constraint_orientation = 'LOCAL'
-            props = layout.operator("transform.mirror", text="Y Local")
-            props.constraint_axis = (False, True, False)
-            props.constraint_orientation = 'LOCAL'
-            props = layout.operator("transform.mirror", text="Z Local")
-            props.constraint_axis = (False, False, True)
-            props.constraint_orientation = 'LOCAL'
-
-            layout.operator("object.vertex_group_mirror")
-
-
-class VIEW3D_MT_snap(Menu):
-    bl_label = "Snap"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("view3d.snap_selected_to_grid", text="Selection to Grid")
-        layout.operator("view3d.snap_selected_to_cursor", text="Selection to Cursor").use_offset = False
-        layout.operator("view3d.snap_selected_to_cursor", text="Selection to Cursor (Offset)").use_offset = True
-        layout.operator("view3d.snap_selected_to_active", text="Selection to Active")
-
-        layout.separator()
-
-        layout.operator("view3d.snap_cursor_to_selected", text="Cursor to Selected")
-        layout.operator("view3d.snap_cursor_to_center", text="Cursor to Center")
-        layout.operator("view3d.snap_cursor_to_grid", text="Cursor to Grid")
-        layout.operator("view3d.snap_cursor_to_active", text="Cursor to Active")
 
 
 class VIEW3D_MT_uv_map(Menu):
@@ -552,7 +488,7 @@ class VIEW3D_MT_view_align(Menu):
 
         # Rest of align
 
-        layout.operator("view3d.view_persportho")
+        layout.operator("view3d.view_persportho", icon = "PERSP_ORTHO")
 
         layout.separator()
 
@@ -670,8 +606,8 @@ class VIEW3D_MT_select_object(Menu):
 
         layout.separator()
         
-        layout.operator("object.select_more", text="More")
-        layout.operator("object.select_less", text="Less")
+        layout.operator("object.select_more", text="More", icon = "SELECTMORE")
+        layout.operator("object.select_less", text="Less", icon = "SELECTLESS")
 
 # Workaround to separate the tooltips
 class VIEW3D_MT_select_pose_inverse(bpy.types.Operator):
@@ -709,7 +645,7 @@ class VIEW3D_MT_select_pose(Menu):
         layout.separator()
 
         layout.operator_menu_enum("pose.select_grouped", "type", text="Grouped")
-        layout.operator("pose.select_linked", text="Linked")      
+        layout.operator("pose.select_linked", text="Connected")      
         layout.operator("object.select_pattern", text="By Pattern...")
 
         layout.separator()
@@ -771,8 +707,8 @@ class VIEW3D_MT_select_particle(Menu):
         layout.operator("particle.select_linked", text="Deselect Linked").deselect = True
         layout.separator()
 
-        layout.operator("particle.select_more", text="More")
-        layout.operator("particle.select_less", text="Less")
+        layout.operator("particle.select_more", text="More", icon = "SELECTMORE")
+        layout.operator("particle.select_less", text="Less", icon = "SELECTLESS")
 
 
 class VIEW3D_MT_edit_mesh_select_similar(Menu):
@@ -810,8 +746,8 @@ class VIEW3D_MT_edit_mesh_select_more_less(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("mesh.select_more", text="More")
-        layout.operator("mesh.select_less", text="Less")
+        layout.operator("mesh.select_more", text="More", icon = "SELECTMORE")
+        layout.operator("mesh.select_less", text="Less", icon = "SELECTLESS")
 
         layout.separator()
 
@@ -943,8 +879,8 @@ class VIEW3D_MT_select_edit_curve(Menu):
 
         layout.separator()
 
-        layout.operator("curve.select_more", text = "More")
-        layout.operator("curve.select_less", text = "Less")
+        layout.operator("curve.select_more", text = "More", icon = "SELECTMORE")
+        layout.operator("curve.select_less", text = "Less", icon = "SELECTLESS")
 
         layout.separator()
 
@@ -983,8 +919,8 @@ class VIEW3D_MT_select_edit_surface(Menu):
 
         layout.separator()
 
-        layout.operator("curve.select_more", text = "More")
-        layout.operator("curve.select_less", text = "Less")
+        layout.operator("curve.select_more", text = "More", icon = "SELECTMORE")
+        layout.operator("curve.select_less", text = "Less", icon = "SELECTLESS")
 
         layout.separator()
 
@@ -1084,8 +1020,8 @@ class VIEW3D_MT_select_edit_lattice(Menu):
 
         layout.separator()
 
-        layout.operator("lattice.select_more", text ="More")
-        layout.operator("lattice.select_less", text ="Less")
+        layout.operator("lattice.select_more", text ="More", icon = "SELECTMORE")
+        layout.operator("lattice.select_less", text ="Less", icon = "SELECTLESS")
 
         layout.separator()
 
@@ -1121,6 +1057,7 @@ class VIEW3D_MT_select_edit_armature(Menu):
         layout.separator()
 
         layout.operator("armature.select_mirror", text="Mirror").extend = False
+        layout.operator("armature.select_linked", text="Connected")
 
         layout.separator()
 
@@ -1142,13 +1079,14 @@ class VIEW3D_MT_select_edit_armature(Menu):
 
         layout.separator()
 
+        layout.operator("armature.select_linked", text = "Connected")
         layout.operator_menu_enum("armature.select_similar", "type", text="Similar")
         layout.operator("object.select_pattern", text="Pattern...")
 
         layout.separator()
 
-        layout.operator("armature.select_more", text="More")
-        layout.operator("armature.select_less", text="Less")
+        layout.operator("armature.select_more", text="More", icon = "SELECTMORE")
+        layout.operator("armature.select_less", text="Less", icon = "SELECTLESS")
 
         layout.separator()
 
@@ -1158,13 +1096,16 @@ class VIEW3D_MT_select_gpencil(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("gpencil.select_border")
-        layout.operator("gpencil.select_circle")
+        layout.operator("gpencil.select_border", icon = 'BORDER_RECT')
+        layout.operator("gpencil.select_circle", icon = 'CIRCLE_SELECT')
 
         layout.separator()
 
-        layout.operator("gpencil.select_all", text="(De)select All").action = 'TOGGLE'
-        layout.operator("gpencil.select_all", text="Inverse").action = 'INVERT'
+        layout.operator("gpencil.select_all", text="(De)select All", icon = "SELECT_ALL").action = 'TOGGLE'
+        layout.operator("gpencil.select_all", text="Inverse", icon='INVERSE').action = 'INVERT'
+
+        layout.separator()
+
         layout.operator("gpencil.select_linked", text="Linked")
         layout.operator_menu_enum("gpencil.select_grouped", "type", text="Grouped")
 
@@ -1175,8 +1116,8 @@ class VIEW3D_MT_select_gpencil(Menu):
 
         layout.separator()
 
-        layout.operator("gpencil.select_more")
-        layout.operator("gpencil.select_less")
+        layout.operator("gpencil.select_more", icon = "SELECTMORE")
+        layout.operator("gpencil.select_less", icon = "SELECTLESS")
 
 
 # Workaround to separate the tooltips
@@ -1344,8 +1285,6 @@ class VIEW3D_MT_object(Menu):
                         props.header_text = "DOF Distance: %.3f"
                     del view
 
-                    layout.separator()
-
             if obj.type in {'CURVE', 'FONT'}:
                 layout.operator_context = 'INVOKE_REGION_WIN'
                 layout.separator()
@@ -1362,7 +1301,6 @@ class VIEW3D_MT_object(Menu):
                 props.input_scale = 0.01
                 props.header_text = "Width Size: %.3f"
 
-                layout.separator()
 
             if obj.type == 'EMPTY':
                 layout.operator_context = 'INVOKE_REGION_WIN'
@@ -1374,7 +1312,6 @@ class VIEW3D_MT_object(Menu):
                 props.input_scale = 0.01
                 props.header_text = "Empty Draw Size: %.3f"
 
-                layout.separator()
 
             if obj.type == 'LAMP':
                 lamp = obj.data
@@ -1461,8 +1398,6 @@ class VIEW3D_MT_object(Menu):
         layout.menu("VIEW3D_MT_transform_object")
         layout.menu("VIEW3D_MT_object_clear")
         layout.menu("VIEW3D_MT_object_apply")
-        layout.menu("VIEW3D_MT_snap")
-
 
         layout.separator()
 
@@ -1497,13 +1432,6 @@ class VIEW3D_MT_object(Menu):
 
         layout.separator()
 
-        if is_local_view:
-            layout.operator_context = 'EXEC_REGION_WIN'
-            layout.operator("object.move_to_layer", text="Move out of Local View")
-            layout.operator_context = 'INVOKE_REGION_WIN'
-        else:
-            layout.operator("object.move_to_layer", text="Move to Layer...")
-
         layout.menu("VIEW3D_MT_object_showhide")
 
         layout.operator_menu_enum("object.convert", "target")
@@ -1532,10 +1460,10 @@ class VIEW3D_MT_object_clear(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("object.location_clear", text="Location").clear_delta = False
-        layout.operator("object.rotation_clear", text="Rotation").clear_delta = False
-        layout.operator("object.scale_clear", text="Scale").clear_delta = False
-        layout.operator("object.origin_clear", text="Origin")
+        layout.operator("object.location_clear", text="Location", icon = "CLEARMOVE").clear_delta = False
+        layout.operator("object.rotation_clear", text="Rotation", icon = "CLEARROTATE").clear_delta = False
+        layout.operator("object.scale_clear", text="Scale", icon = "CLEARSCALE").clear_delta = False
+        layout.operator("object.origin_clear", text="Origin", icon = "CLEARORIGIN")
 
 
 class VIEW3D_MT_object_specials(Menu):
@@ -1696,13 +1624,13 @@ class VIEW3D_MT_object_apply(Menu):
     def draw(self, context):
         layout = self.layout
 
-        props = layout.operator("object.transform_apply", text="Location", text_ctxt=i18n_contexts.default)
+        props = layout.operator("object.transform_apply", text="Location", text_ctxt=i18n_contexts.default, icon = "APPLYMOVE") 
         props.location, props.rotation, props.scale = True, False, False
 
-        props = layout.operator("object.transform_apply", text="Rotation", text_ctxt=i18n_contexts.default)
+        props = layout.operator("object.transform_apply", text="Rotation", text_ctxt=i18n_contexts.default, icon = "APPLYROTATE")
         props.location, props.rotation, props.scale = False, True, False
 
-        props = layout.operator("object.transform_apply", text="Scale", text_ctxt=i18n_contexts.default)
+        props = layout.operator("object.transform_apply", text="Scale", text_ctxt=i18n_contexts.default, icon = "APPLYSCALE")
         props.location, props.rotation, props.scale = False, False, True
         props = layout.operator("object.transform_apply", text="Rotation & Scale", text_ctxt=i18n_contexts.default)
         props.location, props.rotation, props.scale = False, True, True
@@ -1718,9 +1646,8 @@ class VIEW3D_MT_object_apply(Menu):
 
         layout.separator()
 
-        layout.operator("object.visual_transform_apply", text="Visual Transform", text_ctxt=i18n_contexts.default)
-        layout.operator("object.convert", text="Visual Geometry to Mesh", text_ctxt=i18n_contexts.default).target = 'MESH'
-        layout.operator("object.duplicates_make_real")
+        layout.operator("object.visual_transform_apply", text="Visual Transform", text_ctxt=i18n_contexts.default, icon = "VISUALTRANSFORM")
+        layout.operator("object.duplicates_make_real", icon = "MAKEDUPLIREAL")
 
 
 class VIEW3D_MT_object_track(Menu):
@@ -2204,14 +2131,14 @@ class VIEW3D_MT_particle_specials(Menu):
 
             layout.separator()
 
-            layout.operator("particle.select_more")
-            layout.operator("particle.select_less")
+            layout.operator("particle.select_more", icon = "SELECTMORE")
+            layout.operator("particle.select_less", icon = "SELECTLESS")
 
             layout.separator()
 
             layout.operator("particle.select_all", icon = "SELECT_ALL").action = 'TOGGLE'
             layout.operator("particle.select_linked")
-            layout.operator("particle.select_all", text="Inverse").action = 'INVERT'
+            layout.operator("particle.select_all", text="Inverse", icon='INVERSE').action = 'INVERT'
 
 # ********** Pose Menu **********
 
@@ -2249,8 +2176,6 @@ class VIEW3D_MT_pose(Menu):
 
         layout.menu("VIEW3D_MT_pose_transform")
         layout.menu("VIEW3D_MT_pose_apply")
-
-        layout.menu("VIEW3D_MT_snap")
 
         layout.separator()
 
@@ -2523,7 +2448,7 @@ class VIEW3D_MT_edit_mesh(Menu):
 
         layout.menu("VIEW3D_MT_transform")
         layout.operator("object.vertex_group_mirror")
-        layout.menu("VIEW3D_MT_snap")
+        layout.operator("mesh.symmetry_snap")
 
         layout.separator()
 
@@ -2542,8 +2467,7 @@ class VIEW3D_MT_edit_mesh(Menu):
 
         layout.menu("VIEW3D_subdivision_set")
         layout.operator("mesh.symmetrize")
-        layout.operator("mesh.noise", icon='NOISE')
-        layout.operator("mesh.symmetry_snap")
+        layout.operator("mesh.noise", icon='NOISE')      
         layout.operator_menu_enum("mesh.sort_elements", "type", text="Sort Elements...")
 
         layout.separator()
@@ -2576,7 +2500,7 @@ class VIEW3D_MT_edit_mesh_specials(Menu):
 
         layout.operator("mesh.hide", text="Hide").unselected = False
         layout.operator("mesh.reveal", text="Reveal")
-        layout.operator("mesh.select_all", text="Select Inverse").action = 'INVERT'
+        layout.operator("mesh.select_all", text="Select Inverse", icon='INVERSE').action = 'INVERT'
 
         layout.separator()
 
@@ -2694,26 +2618,17 @@ class VIEW3D_MT_edit_mesh_vertices(Menu):
         layout.operator("mesh.rip_move")
         layout.operator("mesh.rip_move_fill")
         layout.operator("mesh.rip_edge_move")
-        layout.operator("mesh.split")
-        layout.operator("mesh.vert_connect_path", text="Connect Vertex Path")
-        layout.operator("mesh.vert_connect", text="Connect Vertices")
-
-        layout.separator()
-
-        layout.operator("mesh.mark_sharp", text="Mark Sharp Edges").use_verts = True
-        props = layout.operator("mesh.mark_sharp", text="Clear Sharp Edges")
-        props.use_verts = True
-        props.clear = True
+        layout.operator("mesh.split", icon = "SPLIT")
+        layout.operator("mesh.vert_connect_path", text="Connect Vertex Path", icon = "VERTEXCONNECTPATH")
+        layout.operator("mesh.vert_connect", text="Connect Vertices", icon = "VERTEXCONNECT")
 
         layout.separator()
 
         if with_bullet:
-            layout.operator("mesh.convex_hull")
+            layout.operator("mesh.convex_hull", icon = "CONVEXHULL")
 
-        layout.operator("mesh.blend_from_shape")
-
-        layout.operator("object.vertex_group_smooth")
-        layout.operator("mesh.shape_propagate_to_all")
+        layout.operator("mesh.blend_from_shape", icon = "BLENDFROMSHAPE")
+        layout.operator("mesh.shape_propagate_to_all", icon = "SHAPEPROPAGATE")
 
         layout.separator()
 
@@ -2733,8 +2648,8 @@ class VIEW3D_MT_edit_mesh_edges(Menu):
 
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        layout.operator("mesh.subdivide_edgering")
-        layout.operator("mesh.unsubdivide")
+        layout.operator("mesh.subdivide_edgering", icon = "SUBDIV_EDGERING")
+        layout.operator("mesh.unsubdivide", icon = "UNSUBDIVIDE")
 
         layout.separator()
 
@@ -2743,23 +2658,22 @@ class VIEW3D_MT_edit_mesh_edges(Menu):
 
         layout.separator()
 
-        layout.operator("mesh.mark_sharp")
-        layout.operator("mesh.mark_sharp", text="Clear Sharp").clear = True
+        layout.operator("mesh.mark_sharp", icon = "MARKSHARPEDGES")
+        layout.operator("mesh.mark_sharp", text="Clear Sharp", icon = "CLEARSHARPEDGES").clear = True
 
         layout.separator()
 
         if with_freestyle:
-            layout.operator("mesh.mark_freestyle_edge").clear = False
-            layout.operator("mesh.mark_freestyle_edge", text="Clear Freestyle Edge").clear = True
+            layout.operator("mesh.mark_freestyle_edge", icon = "MARK_FS_EDGE").clear = False
+            layout.operator("mesh.mark_freestyle_edge", text="Clear Freestyle Edge", icon = "CLEAR_FS_EDGE").clear = True
             layout.separator()
 
-        layout.operator("mesh.edge_rotate", text="Rotate Edge CW").use_ccw = False
-        layout.operator("mesh.edge_rotate", text="Rotate Edge CCW").use_ccw = True
+        layout.operator("mesh.edge_rotate", text="Rotate Edge CW", icon = "ROTATECW").use_ccw = False
 
         layout.separator()
 
-        layout.operator("mesh.edge_split")
-        layout.operator("mesh.bridge_edge_loops")
+        layout.operator("mesh.edge_split", icon = "SPLITEDGE")
+        layout.operator("mesh.bridge_edge_loops", icon = "BRIDGE_EDGELOOPS")
 
 
 class VIEW3D_MT_edit_mesh_faces(Menu):
@@ -2773,37 +2687,33 @@ class VIEW3D_MT_edit_mesh_faces(Menu):
 
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        layout.operator("mesh.fill")
-        layout.operator("mesh.fill_grid")
-        layout.operator("mesh.beautify_fill")
-        layout.operator("mesh.solidify")
-        layout.operator("mesh.intersect")
-        layout.operator("mesh.intersect_boolean")
-        layout.operator("mesh.wireframe")
+        layout.operator("mesh.fill", icon = "FILL")
+        layout.operator("mesh.fill_grid", icon = "GRIDFILL")
+        layout.operator("mesh.beautify_fill", icon = "BEAUTIFY")
+        layout.operator("mesh.solidify", icon = "SOLIDIFY")
+        layout.operator("mesh.intersect", icon = "INTERSECT")
+        layout.operator("mesh.intersect_boolean", icon = "BOOLEAN_INTERSECT")
+        layout.operator("mesh.wireframe", icon = "WIREFRAME")
 
         layout.separator()
 
         if with_freestyle:
-            layout.operator("mesh.mark_freestyle_face").clear = False
-            layout.operator("mesh.mark_freestyle_face", text="Clear Freestyle Face").clear = True
+            layout.operator("mesh.mark_freestyle_face", icon = "MARKFSFACE").clear = False
+            layout.operator("mesh.mark_freestyle_face", text="Clear Freestyle Face", icon = "CLEARFSFACE").clear = True
             layout.separator()
 
-        layout.operator("mesh.poke")
-        props = layout.operator("mesh.quads_convert_to_tris")
+        layout.operator("mesh.poke", icon = "POKEFACES")
+        props = layout.operator("mesh.quads_convert_to_tris", icon = "TRIANGULATE")
         props.quad_method = props.ngon_method = 'BEAUTY'
-        layout.operator("mesh.tris_convert_to_quads")
-        layout.operator("mesh.face_split_by_edges")
+        layout.operator("mesh.tris_convert_to_quads", icon = "TRISTOQUADS")
+        layout.operator("mesh.face_split_by_edges", icon = "SPLITBYEDGES")
 
         layout.separator()
 
-        layout.operator("mesh.edge_rotate", text="Rotate Edge CW").use_ccw = False
-
-        layout.separator()
-
-        layout.operator("mesh.uvs_rotate")
-        layout.operator("mesh.uvs_reverse")
-        layout.operator("mesh.colors_rotate")
-        layout.operator("mesh.colors_reverse")
+        layout.operator("mesh.uvs_rotate", icon = "ROTATE_UVS")
+        layout.operator("mesh.uvs_reverse", icon = "REVERSE_UVS")
+        layout.operator("mesh.colors_rotate", icon = "ROTATE_COLORS")
+        layout.operator("mesh.colors_reverse", icon = "REVERSE_COLORS")
 
 
 class VIEW3D_MT_edit_mesh_clean(Menu):
@@ -2812,16 +2722,16 @@ class VIEW3D_MT_edit_mesh_clean(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("mesh.delete_loose")
+        layout.operator("mesh.delete_loose", icon = "DELETE_LOOSE")
 
         layout.separator()
 
-        layout.operator("mesh.decimate")
-        layout.operator("mesh.dissolve_degenerate")
-        layout.operator("mesh.face_make_planar")
-        layout.operator("mesh.vert_connect_nonplanar")
-        layout.operator("mesh.vert_connect_concave")
-        layout.operator("mesh.fill_holes")
+        layout.operator("mesh.decimate", icon = "DECIMATE")
+        layout.operator("mesh.dissolve_degenerate", icon = "DEGENERATE_DISSOLVE")
+        layout.operator("mesh.face_make_planar", icon = "MAKE_PLANAR")
+        layout.operator("mesh.vert_connect_nonplanar", icon = "SPLIT_NONPLANAR")
+        layout.operator("mesh.vert_connect_concave", icon = "SPLIT_CONCAVE")
+        layout.operator("mesh.fill_holes", icon = "FILL_HOLE")
 
 
 # Delete menu quiz
@@ -2888,7 +2798,6 @@ def draw_curve(self, context):
 
     layout.menu("VIEW3D_MT_transform")
     layout.operator("object.vertex_group_mirror")
-    layout.menu("VIEW3D_MT_snap")
 
     layout.separator()
 
@@ -2950,7 +2859,7 @@ class VIEW3D_MT_edit_curve_specials(Menu):
         layout = self.layout
 
         layout.operator("curve.subdivide")
-        layout.operator("curve.switch_direction")
+        layout.operator("curve.switch_direction", icon = "SWITCH_DIRECTION")
         layout.operator("curve.spline_weight_set")
         layout.operator("curve.radius_set")
         layout.operator("curve.smooth")
@@ -2985,13 +2894,6 @@ class VIEW3D_MT_edit_font(Menu):
         layout = self.layout
 
         layout.menu("VIEW3D_MT_edit_text_chars")
-
-        layout.separator()
-
-        layout.operator("font.style_toggle", text="Toggle Bold").style = 'BOLD'
-        layout.operator("font.style_toggle", text="Toggle Italic").style = 'ITALIC'
-        layout.operator("font.style_toggle", text="Toggle Underline").style = 'UNDERLINE'
-        layout.operator("font.style_toggle", text="Toggle Small Caps").style = 'SMALL_CAPS'
 
         layout.separator()
 
@@ -3042,7 +2944,6 @@ class VIEW3D_MT_edit_meta(Menu):
 
         layout.menu("VIEW3D_MT_transform")
         layout.operator("object.vertex_group_mirror")
-        layout.menu("VIEW3D_MT_snap")
 
         layout.separator()
 
@@ -3090,13 +2991,8 @@ class VIEW3D_MT_edit_lattice(Menu):
         toolsettings = context.tool_settings
 
         layout.menu("VIEW3D_MT_transform")
-        layout.menu("VIEW3D_MT_mirror")
-        layout.menu("VIEW3D_MT_snap")
+        layout.operator("object.vertex_group_mirror")
         layout.operator_menu_enum("lattice.flip", "axis")
-
-        layout.separator()
-
-        layout.operator("lattice.make_regular")
 
         layout.separator()
 
@@ -3136,28 +3032,16 @@ class VIEW3D_MT_edit_armature(Menu):
         arm = edit_object.data
 
         layout.menu("VIEW3D_MT_transform_armature")
-        layout.menu("VIEW3D_MT_mirror")
-        layout.menu("VIEW3D_MT_snap")
+        layout.operator("object.vertex_group_mirror")
         layout.menu("VIEW3D_MT_edit_armature_roll")
 
         layout.separator()
-
-        layout.operator("armature.extrude_move")
 
         if arm.use_mirror_x:
             layout.operator("armature.extrude_forked")
 
         layout.operator("armature.duplicate_move")
-        layout.operator("armature.merge")
-        layout.operator("armature.fill")
-        layout.operator("armature.delete")
-        layout.operator("armature.split")
-        layout.operator("armature.separate")
-
-        layout.separator()
-
-        layout.operator("armature.subdivide", text="Subdivide")
-        layout.operator("armature.switch_direction", text="Switch Direction")
+        layout.operator("armature.delete", icon = "DELETE")
 
         layout.separator()
 
@@ -3173,8 +3057,6 @@ class VIEW3D_MT_edit_armature(Menu):
         layout.operator_context = 'INVOKE_DEFAULT'
         layout.operator("armature.armature_layers")
         layout.operator("armature.bone_layers")
-
-        layout.separator()
 
         layout.separator()
 
@@ -3247,35 +3129,22 @@ class VIEW3D_MT_edit_gpencil(Menu):
 
         layout.separator()
 
-        layout.operator("gpencil.brush_paint", text="Sculpt Strokes").wait_for_input = True
-        layout.prop_menu_enum(toolsettings.gpencil_sculpt, "tool", text="Sculpt Brush")
-
-        layout.separator()
-
-        layout.menu("VIEW3D_MT_edit_gpencil_transform")
-        layout.operator("transform.mirror", text="Mirror")
-        layout.menu("GPENCIL_MT_snap")
-
-        layout.separator()
-
-        layout.menu("VIEW3D_MT_object_animation")   # NOTE: provides keyingset access...
-        layout.menu("VIEW3D_MT_edit_gpencil_interpolate")
+        layout.operator("gpencil.copy", text="Copy")
+        layout.operator("gpencil.paste", text="Paste")
 
         layout.separator()
 
         layout.menu("VIEW3D_MT_edit_gpencil_delete")
         layout.operator("gpencil.duplicate_move", text="Duplicate")
-        layout.operator("gpencil.stroke_subdivide", text="Subdivide")
 
         layout.separator()
 
-        layout.operator_menu_enum("gpencil.stroke_join", "type", text="Join...")
-        layout.operator("gpencil.stroke_flip", text="Flip Direction")
+        layout.menu("VIEW3D_MT_edit_gpencil_transform")
+        layout.menu("GPENCIL_MT_snap")
 
         layout.separator()
 
-        layout.operator("gpencil.copy", text="Copy")
-        layout.operator("gpencil.paste", text="Paste")
+        layout.menu("VIEW3D_MT_object_animation")   # NOTE: provides keyingset access...
 
         layout.separator()
 
@@ -3283,6 +3152,7 @@ class VIEW3D_MT_edit_gpencil(Menu):
 
         layout.separator()
 
+        layout.operator("gpencil.layer_isolate")
         layout.operator("gpencil.reveal")
         layout.operator("gpencil.hide", text="Show Active Layer Only").unselected = True
         layout.operator("gpencil.hide", text="Hide Active Layer").unselected = False
@@ -3290,8 +3160,6 @@ class VIEW3D_MT_edit_gpencil(Menu):
         layout.separator()
 
         layout.operator_menu_enum("gpencil.move_to_layer", "layer", text="Move to Layer")
-        layout.operator("gpencil.stroke_change_color", text="Move to Color")
-        layout.operator_menu_enum("gpencil.stroke_arrange", "direction", text="Arrange Strokes...")
 
         layout.separator()
 
@@ -3304,20 +3172,9 @@ class VIEW3D_MT_edit_gpencil_transform(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("transform.translate")
-        layout.operator("transform.rotate")
-        layout.operator("transform.resize", text="Scale")
-
-        layout.separator()
-
-        layout.operator("transform.bend", text="Bend")
-        layout.operator("transform.shear", text="Shear")
-        layout.operator("transform.tosphere", text="To Sphere")
-        layout.operator("transform.transform", text="Shrink Fatten").mode = 'GPENCIL_SHRINKFATTEN'
-
-        layout.separator()
-
-        layout.operator("gpencil.reproject")
+        layout.operator("transform.translate", icon = "TRANSFORM_MOVE")
+        layout.operator("transform.rotate", icon = "TRANSFORM_ROTATE")
+        layout.operator("transform.resize", text="Scale",  icon = "TRANSFORM_SCALE")
 
 
 class VIEW3D_MT_edit_gpencil_interpolate(Menu):

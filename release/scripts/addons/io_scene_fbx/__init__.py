@@ -62,7 +62,7 @@ IOFBXOrientationHelper = orientation_helper_factory("IOFBXOrientationHelper", ax
 
 
 class ImportFBX(bpy.types.Operator, ImportHelper, IOFBXOrientationHelper):
-    """Load a FBX file"""
+    """Import FBX\nLoad a FBX file"""
     bl_idname = "import_scene.fbx"
     bl_label = "Import FBX"
     bl_options = {'UNDO', 'PRESET'}
@@ -235,7 +235,7 @@ class ImportFBX(bpy.types.Operator, ImportHelper, IOFBXOrientationHelper):
 
 
 class ExportFBX(bpy.types.Operator, ExportHelper, IOFBXOrientationHelper):
-    """Write a FBX file"""
+    """Export FBX\nWrite a FBX file"""
     bl_idname = "export_scene.fbx"
     bl_label = "Export FBX"
     bl_options = {'UNDO', 'PRESET'}

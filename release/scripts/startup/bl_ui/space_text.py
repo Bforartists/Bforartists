@@ -102,7 +102,7 @@ class TEXT_MT_editor_menus(Menu):
         st = context.space_data
         text = st.text
 
-        layout.menu("TEXT_MT_File")
+        layout.menu("TEXT_MT_text")
         layout.menu("TEXT_MT_view")
 
         if text:
@@ -120,6 +120,7 @@ class TEXT_PT_properties(Panel):
 
         st = context.space_data
 
+        flow = layout.column_flow()
         flow.prop(st, "show_line_highlight")
         flow.prop(st, "use_live_edit")
 
@@ -204,7 +205,7 @@ class TEXT_MT_view(Menu):
         layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area").use_hide_panels = True
 
 
-class TEXT_MT_File(Menu):
+class TEXT_MT_text(Menu):
     bl_label = "File"
 
     def draw(self, context):

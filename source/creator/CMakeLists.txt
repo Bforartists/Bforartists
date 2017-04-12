@@ -317,10 +317,10 @@ elseif(APPLE)
 	if(WITH_PYTHON_MODULE)
 		set(TARGETDIR_VER ${BLENDER_VERSION})
 	else()
-		set(TARGETDIR_VER blender.app/Contents/Resources/${BLENDER_VERSION})
+		set(TARGETDIR_VER bforartists.app/Contents/Resources/${BLENDER_VERSION})
 	endif()
 	# Skip relinking on cpack / install
-	set_target_properties(blender PROPERTIES BUILD_WITH_INSTALL_RPATH true)
+	set_target_properties(bforartists PROPERTIES BUILD_WITH_INSTALL_RPATH true)
 endif()
 
 
@@ -336,7 +336,7 @@ install(
 
 if(WITH_PYTHON)
 	# install(CODE "message(\"copying blender scripts...\")")
-	
+
 	# exclude addons_contrib if release
 	if("${BLENDER_VERSION_CYCLE}" STREQUAL "release" OR
 	   "${BLENDER_VERSION_CYCLE}" STREQUAL "rc")
@@ -362,7 +362,7 @@ if(WITH_PYTHON)
 		PATTERN "${ADDON_EXCLUDE_CONDITIONAL}" EXCLUDE
 		PATTERN "${FREESTYLE_EXCLUDE_CONDITIONAL}" EXCLUDE
 	)
-	
+
 	unset(ADDON_EXCLUDE_CONDITIONAL)
 	unset(FREESTYLE_EXCLUDE_CONDITIONAL)
 endif()
@@ -427,7 +427,7 @@ endif()
 if("${CMAKE_GENERATOR}" MATCHES ".*Makefiles.*")
 	# message after building.
 	add_custom_command(
-		TARGET blender POST_BUILD MAIN_DEPENDENCY blender
+		TARGET bforartists POST_BUILD MAIN_DEPENDENCY bforartists
 		COMMAND ${CMAKE_COMMAND} -E
 		        echo 'now run: \"make install\" to copy runtime files and scripts to ${TARGETDIR_VER}'
 	)
@@ -642,7 +642,7 @@ if(UNIX AND NOT APPLE)
 				unset(_suffix)
 			endif()
 			unset(_target_LIB)
-			
+
 		endif()
 	endif()
 elseif(WIN32)
@@ -794,16 +794,16 @@ elseif(WIN32)
 			)
 		elseif(WITH_MINGW64)
 			install(
-				FILES 
+				FILES
 					${LIBDIR}/binaries/libgcc_s_sjlj-1.dll
 					${LIBDIR}/binaries/libwinpthread-1.dll
 					${LIBDIR}/binaries/libstdc++-6.dll
 				DESTINATION "."
 			)
-			
+
 			if(WITH_OPENMP)
 				install(
-					FILES 
+					FILES
 					${LIBDIR}/binaries/libgomp-1.dll
 					DESTINATION "."
 				)
@@ -876,7 +876,7 @@ elseif(WIN32)
 			)
 		endif()
 	endif()
-	
+
 	if(WITH_SYSTEM_AUDASPACE)
 		install(
 			FILES
@@ -893,7 +893,7 @@ elseif(WIN32)
 			DESTINATION "."
 		)
 	endif()
-		
+
 	install( # x86 builds can run on x64 Windows, so this is required at all times
 		FILES ${LIBDIR}/thumbhandler/lib/BlendThumb64.dll
 		DESTINATION "."
@@ -937,14 +937,14 @@ elseif(APPLE)
 		)
 	endmacro()
 
-	set(OSX_APP_SOURCEDIR ${CMAKE_SOURCE_DIR}/release/darwin/bforartists.app)
+	set(OSX_APP_SOURCEDIR ${CMAKE_SOURCE_DIR}/release/darwin/blender.app)
 
 	# setup Info.plist
 	execute_process(COMMAND date "+%Y-%m-%d"
 	                OUTPUT_VARIABLE BLENDER_DATE
 	                OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-	set_target_properties(blender PROPERTIES
+	set_target_properties(bforartists PROPERTIES
 		MACOSX_BUNDLE_INFO_PLIST ${OSX_APP_SOURCEDIR}/Contents/Info.plist
 		MACOSX_BUNDLE_SHORT_VERSION_STRING ${BLENDER_VERSION}
 		MACOSX_BUNDLE_LONG_VERSION_STRING "${BLENDER_VERSION} ${BLENDER_DATE}")
@@ -1015,7 +1015,7 @@ elseif(APPLE)
 			        ${CMAKE_COMMAND} -E tar xzfv "${LIBDIR}/release/${PYTHON_ZIP}"
 			DEPENDS ${LIBDIR}/release/${PYTHON_ZIP})
 
-		add_dependencies(blender extractpyzip)
+		add_dependencies(bforartists extractpyzip)
 
 		# copy extracted python files
 		install_dir(
@@ -1042,8 +1042,8 @@ elseif(APPLE)
 		)
 		unset(_py_inc_suffix)
 	endif()
-	
-	# install blenderplayer bundle - copy of blender.app above. re-using macros et al
+
+	# install blenderplayer bundle - copy of bforartists.app above. re-using macros et al
 	# note we are using OSX Bundle as base and copying Blender dummy bundle on top of it
 	if(WITH_GAMEENGINE AND WITH_PLAYER)
 		set(OSX_APP_PLAYER_SOURCEDIR ${CMAKE_SOURCE_DIR}/release/darwin/blenderplayer.app)
@@ -1170,7 +1170,7 @@ if(WIN32 AND NOT WITH_PYTHON_MODULE)
 			)
 		endif()
 	endif()
-	
+
 	if(MSVC14_REDIST_DIR)
 		set(KITSDIRx86 "$ENV{${ProgramFilesX86_NAME}}/Windows Kits/10/")
 		set(KITSDIR "$ENV{ProgramFiles}/Windows Kits/10/")

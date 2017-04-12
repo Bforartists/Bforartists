@@ -58,7 +58,7 @@ IOOBJOrientationHelper = orientation_helper_factory("IOOBJOrientationHelper", ax
 
 
 class ImportOBJ(bpy.types.Operator, ImportHelper, IOOBJOrientationHelper):
-    """Load a Wavefront OBJ File"""
+    """Import OBJ\nLoad a Wavefront OBJ File"""
     bl_idname = "import_scene.obj"
     bl_label = "Import OBJ"
     bl_options = {'PRESET', 'UNDO'}
@@ -174,7 +174,7 @@ class ImportOBJ(bpy.types.Operator, ImportHelper, IOOBJOrientationHelper):
 
 
 class ExportOBJ(bpy.types.Operator, ExportHelper, IOOBJOrientationHelper):
-    """Save a Wavefront OBJ File"""
+    """Export Obj\nSave a Wavefront OBJ File"""
 
     bl_idname = "export_scene.obj"
     bl_label = 'Export OBJ'

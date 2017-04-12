@@ -2,7 +2,7 @@
 # This script is under apache license
 
 bl_info = {
-    "name": "Reset 3D View",
+    "name": "Reset 3D View - Bforartists version",
     "description": "Resets the views of all 3D windows to standard view",
     "author": "Reiner 'Tiles' Prokein",
     "version": (1, 0, 2),
@@ -77,16 +77,16 @@ class Reset3dView(bpy.types.Operator):
         return {'FINISHED'}
     
 def menu_func(self, context):
-    self.layout.operator(Reset3dView.bl_idname, icon ="VIEW_RESET")
+    self.layout.operator(Reset3dView.bl_idname, text="",icon ="VIEW_RESET")
    
 
 def register():
     bpy.utils.register_class(Reset3dView)
-    bpy.types.VIEW3D_MT_view.append(menu_func)
+    bpy.types.VIEW3D_HT_header.append(menu_func)
 
 def unregister():
     bpy.utils.unregister_class(Reset3dView)
-    bpy.types.VIEW3D_MT_view.remove(menu_func)
+    bpy.types.VIEW3D_HT_header.remove(menu_func)
     
 
 if __name__ == "__main__":

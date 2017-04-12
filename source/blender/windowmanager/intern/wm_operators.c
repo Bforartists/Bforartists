@@ -1837,13 +1837,13 @@ static uiBlock *wm_block_create_splash(bContext *C, ARegion *ar, void *UNUSED(ar
 	uiItemL(col, IFACE_("Links"), ICON_NONE);
 
 	// bfa - changed the menu itemas to link ot bforartists page
-	uiItemStringO(col, IFACE_("Credits Bforartists"), ICON_URL, "WM_OT_url_open", "url", "http://www.bforartists.de/wiki/credits-page-bforartists");
-	uiItemStringO(col, IFACE_("Release notes"), ICON_URL, "WM_OT_url_open", "url", "http://www.bforartists.de/wiki/release-notes");
-	uiItemStringO(col, IFACE_("Manual"), ICON_URL, "WM_OT_url_open", "url", "http://www.bforartists.de/wiki/Manual");
-	uiItemStringO(col, IFACE_("Bforartists Website"), ICON_URL, "WM_OT_url_open", "url", "http://www.bforartists.de/");
-	uiItemStringO(col, IFACE_("Report a bug"), ICON_URL, "WM_OT_url_open", "url", "http://www.bforartists.de/node/add/project-issue/bforartists_bugtracker");
+	uiItemStringO(col, IFACE_("Credits Bforartists"), ICON_URL, "WM_OT_url_open", "url", "https://www.bforartists.de/wiki/credits-page-bforartists");
+	uiItemStringO(col, IFACE_("Release notes"), ICON_URL, "WM_OT_url_open", "url", "https://www.bforartists.de/wiki/release-notes");
+	uiItemStringO(col, IFACE_("Manual"), ICON_URL, "WM_OT_url_open", "url", "https://www.bforartists.de/wiki/Manual");
+	uiItemStringO(col, IFACE_("Bforartists Website"), ICON_URL, "WM_OT_url_open", "url", "https://www.bforartists.de/");
+	uiItemStringO(col, IFACE_("Report a bug"), ICON_URL, "WM_OT_url_open", "url", "https://www.bforartists.de/node/add/project-issue/bforartists_bugtracker");
 
-	uiItemStringO(col, IFACE_("Python API Reference"), ICON_URL, "WM_OT_url_open", "url", "http://www.bforartists.de/pythonapi/contents.html"); // bfa - link to new api page
+	uiItemStringO(col, IFACE_("Python API Reference"), ICON_URL, "WM_OT_url_open", "url", "https://www.bforartists.de/pythonapi/contents.html"); // bfa - link to new api page
 	uiItemL(col, "", ICON_NONE);
 	uiItemL(col, "", ICON_NONE);
 
