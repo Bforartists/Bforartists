@@ -870,9 +870,11 @@ class OBJECT_PT_levels_of_detail(ObjectButtonsPanel, Panel):
 
 
 classes = (
+
     PHYSICS_PT_game_physics,
     PHYSICS_PT_game_collision_bounds,
     PHYSICS_PT_game_obstacles,
+    RENDER_PT_renderer,
     RENDER_PT_embedded,
     RENDER_PT_game_player,
     RENDER_PT_game_stereo,
