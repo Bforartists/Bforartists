@@ -157,6 +157,7 @@ def add_scrollback(text, text_type):
 classes = (
     CONSOLE_HT_header,
     ALL_MT_editormenu,
+    CONSOLE_MT_edit,
     CONSOLE_MT_editor_menus,
     CONSOLE_MT_console,
     CONSOLE_MT_language,
