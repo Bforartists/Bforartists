@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -198,5 +198,21 @@ class OUTLINER_MT_edit_datablocks(Menu):
         layout.operator("outliner.drivers_add_selected")
         layout.operator("outliner.drivers_delete_selected")
 
+
+classes = (
+    switch_editors_to_properties,
+    switch_editors_to_outliner,
+    switch_editors_in_outliner,
+    OUTLINER_HT_header,
+    ALL_MT_editormenu,
+    OUTLINER_MT_editor_menus,
+    OUTLINER_MT_view_hide_one_level,
+    OUTLINER_MT_view,
+    OUTLINER_MT_search,
+    OUTLINER_MT_edit_datablocks,
+)
+
 if __name__ == "__main__":  # only for live edit.
-    bpy.utils.register_module(__name__)
+    from bpy.utils import register_class
+    for cls in classes:
+        register_class(cls)

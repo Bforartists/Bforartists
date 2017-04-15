@@ -23,8 +23,7 @@
 # support reloading sub-modules
 if "bpy" in locals():
     from importlib import reload
-    for val in _modules_loaded:
-        reload(val)
+    _modules_loaded[:] = [reload(val) for val in _modules_loaded]
     del reload
 _modules = [
     "properties_animviz",
@@ -94,6 +93,10 @@ del _namespace
 
 
 def register():
+    from bpy.utils import register_class
+    for mod in _modules_loaded:
+        for cls in mod.classes:
+            register_class(cls)
     
     # Subtab bools
     bpy.types.WindowManager.subtab_3dview_properties_view_lock = bpy.props.BoolProperty(name="Lock", description="Contains the Lock Items", default = False)
@@ -127,8 +130,6 @@ def register():
     bpy.types.WindowManager.SP_material_settings_options = bpy.props.BoolProperty(name="Viewport Options", description="Contains some Viewport options", default = False)
     bpy.types.WindowManager.SP_material_shading_diffuseramp = bpy.props.BoolProperty(name="Ramp Options", description="Contains some Ramp options", default = False)
     bpy.types.WindowManager.SP_material_shading_specularramp = bpy.props.BoolProperty(name="Ramp Options", description="Contains some Ramp options", default = False)
-
-    bpy.utils.register_module(__name__)
 
     # space_userprefs.py
     from bpy.props import StringProperty, EnumProperty
@@ -177,6 +178,11 @@ def register():
 
 
 def unregister():
+    from bpy.utils import unregister_class
+    for mod in reversed(_modules_loaded):
+        for cls in reversed(mod.classes):
+            if cls.is_registered:
+                unregister_class(cls)
 
     # Subtab Bools
     del bpy.types.WindowManager.subtab_3dview_properties_view_lock # Unregister our flag when unregister.    
@@ -210,8 +216,6 @@ def unregister():
     del bpy.types.WindowManager.SP_material_settings_options   
     del bpy.types.WindowManager.SP_material_shading_diffuseramp
     del bpy.types.WindowManager.SP_material_shading_specularramp
-
-    bpy.utils.unregister_module(__name__)
 
 # Define a default UIList, when a list does not need any custom drawing...
 # Keep in sync with its #defined name in UI_interface.h

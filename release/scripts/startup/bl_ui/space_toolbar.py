@@ -1456,10 +1456,38 @@ class TOOLBAR_MT_misc(Menu):
 
             row.label(text=" - Misc Toolbar, Nothing yet - ")
 
-            
+classes = (
+
+    TOOLBAR_HT_header,
+    ALL_MT_editormenu,
+    TOOLBAR_MT_toolbar_type,
+    TOOLBAR_MT_menu_file,
+    TOOLBAR_MT_toolbars_file_menu,
+    TOOLBAR_MT_menu_misc,
+    TOOLBAR_MT_toolbars_misc_menu,
+    TOOLBAR_MT_menu_edit,
+    TOOLBAR_MT_toolbars_edit_menu,
+    VIEW3D_MT_object_apply_location,
+    VIEW3D_MT_object_apply_rotate,
+    VIEW3D_MT_object_apply_scale,
+    VIEW3D_MT_object_apply_all,
+    TOOLBAR_MT_menu_animation,
+    TOOLBAR_MT_toolbars_animation_menu,
+    TOOLBAR_MT_menu_tools,
+    TOOLBAR_MT_toolbars_tools_menu,
+    TOOLBAR_MT_menu_image,
+    TOOLBAR_MT_toolbars_image_menu,
+    TOOLBAR_MT_menu_primitives,
+    TOOLBAR_MT_toolbars_primitives_menu,
+    TOOLBAR_MT_menu_meshedit,
+    TOOLBAR_MT_toolbars_meshedit_menu,
+
+)         
 
 
 # -------------------- Register -------------------------------------------------------------------
 
 if __name__ == "__main__":  # only for live edit.
-    bpy.utils.register_module(__name__)
+    from bpy.utils import register_class
+    for cls in classes:
+        register_class(cls)

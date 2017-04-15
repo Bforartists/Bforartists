@@ -17,9 +17,9 @@
 #ifndef __KERNEL_TYPES_H__
 #define __KERNEL_TYPES_H__
 
-#include "kernel_math.h"
-#include "svm/svm_types.h"
-#include "util_static_assert.h"
+#include "kernel/kernel_math.h"
+#include "kernel/svm/svm_types.h"
+#include "util/util_static_assert.h"
 
 #ifndef __KERNEL_GPU__
 #  define __KERNEL_CPU__
@@ -30,11 +30,6 @@
  */
 #ifndef ccl_addr_space
 #  define ccl_addr_space
-#endif
-
-#if defined(__SPLIT_KERNEL__) && !defined(__COMPUTE_DEVICE_GPU__)
-/* TODO(mai): need to investigate how this effects the kernel, as cpu kernel crashes without this right now */
-#define __COMPUTE_DEVICE_GPU__
 #endif
 
 CCL_NAMESPACE_BEGIN
@@ -61,7 +56,13 @@ CCL_NAMESPACE_BEGIN
 
 #define VOLUME_STACK_SIZE		16
 
-#define WORK_POOL_SIZE 64
+#define WORK_POOL_SIZE_GPU 64
+#define WORK_POOL_SIZE_CPU 1
+#ifdef __KERNEL_GPU__
+#  define WORK_POOL_SIZE WORK_POOL_SIZE_GPU
+#else
+#  define WORK_POOL_SIZE WORK_POOL_SIZE_CPU
+#endif
 
 /* device capabilities */
 #ifdef __KERNEL_CPU__
@@ -162,6 +163,7 @@ CCL_NAMESPACE_BEGIN
 #define __INTERSECTION_REFINE__
 #define __CLAMP_SAMPLE__
 #define __PATCH_EVAL__
+#define __SHADOW_TRICKS__
 
 #ifdef __KERNEL_SHADING__
 #  define __SVM__
@@ -216,6 +218,9 @@ CCL_NAMESPACE_BEGIN
 #endif
 #ifdef __NO_TRANSPARENT__
 #  undef __TRANSPARENT_SHADOWS__
+#endif
+#ifdef __NO_SHADOW_TRICKS__
+#undef __SHADOW_TRICKS__
 #endif
 
 /* Random Numbers */
@@ -321,6 +326,8 @@ enum PathRayFlag {
 	PATH_RAY_MIS_SKIP = 4096,
 	PATH_RAY_DIFFUSE_ANCESTOR = 8192,
 	PATH_RAY_SINGLE_PASS_DONE = 16384,
+	PATH_RAY_SHADOW_CATCHER = 32768,
+	PATH_RAY_SHADOW_CATCHER_ONLY = 65536,
 };
 
 /* Closure Label */
@@ -450,6 +457,20 @@ typedef ccl_addr_space struct PathRadiance {
 	float4 shadow;
 	float mist;
 #endif
+
+#ifdef __SHADOW_TRICKS__
+	/* Total light reachable across the path, ignoring shadow blocked queries. */
+	float3 path_total;
+	/* Total light reachable across the path with shadow blocked queries
+	 * applied here.
+	 *
+	 * Dividing this figure by path_total will give estimate of shadow pass.
+	 */
+	float3 path_total_shaded;
+
+	/* Color of the background on which shadow is alpha-overed. */
+	float3 shadow_color;
+#endif
 } PathRadiance;
 
 typedef struct BsdfEval {
@@ -464,6 +485,9 @@ typedef struct BsdfEval {
 	float3 transparent;
 	float3 subsurface;
 	float3 scatter;
+#endif
+#ifdef __SHADOW_TRICKS__
+	float3 sum_no_mis;
 #endif
 } BsdfEval;
 
@@ -810,13 +834,16 @@ enum ShaderDataObjectFlag {
 	SD_OBJECT_INTERSECTS_VOLUME      = (1 << 5),
 	/* Has position for motion vertices. */
 	SD_OBJECT_HAS_VERTEX_MOTION      = (1 << 6),
+	/* object is used to catch shadows */
+	SD_OBJECT_SHADOW_CATCHER         = (1 << 7),
 
 	SD_OBJECT_FLAGS = (SD_OBJECT_HOLDOUT_MASK |
 	                   SD_OBJECT_MOTION |
 	                   SD_OBJECT_TRANSFORM_APPLIED |
 	                   SD_OBJECT_NEGATIVE_SCALE_APPLIED |
 	                   SD_OBJECT_HAS_VOLUME |
-	                   SD_OBJECT_INTERSECTS_VOLUME)
+	                   SD_OBJECT_INTERSECTS_VOLUME |
+	                   SD_OBJECT_SHADOW_CATCHER)
 };
 
 typedef ccl_addr_space struct ShaderData {
@@ -934,6 +961,10 @@ typedef struct PathState {
 	int volume_bounce;
 	RNG rng_congruential;
 	VolumeStack volume_stack[VOLUME_STACK_SIZE];
+#endif
+
+#ifdef __SHADOW_TRICKS__
+	int catcher_object;
 #endif
 } PathState;
 
@@ -1297,20 +1328,19 @@ enum QueueNumber {
 #define RAY_STATE_MASK 0x007
 #define RAY_FLAG_MASK 0x0F8
 enum RayState {
+	RAY_INVALID = 0,
 	/* Denotes ray is actively involved in path-iteration. */
-	RAY_ACTIVE = 0,
+	RAY_ACTIVE,
 	/* Denotes ray has completed processing all samples and is inactive. */
-	RAY_INACTIVE = 1,
+	RAY_INACTIVE,
 	/* Denoted ray has exited path-iteration and needs to update output buffer. */
-	RAY_UPDATE_BUFFER = 2,
+	RAY_UPDATE_BUFFER,
 	/* Donotes ray has hit background */
-	RAY_HIT_BACKGROUND = 3,
+	RAY_HIT_BACKGROUND,
 	/* Denotes ray has to be regenerated */
-	RAY_TO_REGENERATE = 4,
+	RAY_TO_REGENERATE,
 	/* Denotes ray has been regenerated */
-	RAY_REGENERATED = 5,
-	/* Denotes ray should skip direct lighting */
-	RAY_SKIP_DL = 6,
+	RAY_REGENERATED,
 	/* Flag's ray has to execute shadow blocked function in AO part */
 	RAY_SHADOW_RAY_CAST_AO = 16,
 	/* Flag's ray has to execute shadow blocked function in direct lighting part. */

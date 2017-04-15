@@ -32,7 +32,7 @@
 #  include <libkern/OSAtomic.h>
 #endif
 
-#include "util_function.h"
+#include "util/util_function.h"
 
 CCL_NAMESPACE_BEGIN
 
@@ -104,6 +104,23 @@ protected:
 #else
 	pthread_spinlock_t spin_;
 #endif
+};
+
+class thread_scoped_spin_lock {
+public:
+	explicit thread_scoped_spin_lock(thread_spin_lock& lock)
+	        : lock_(lock) {
+		lock_.lock();
+	}
+
+	~thread_scoped_spin_lock() {
+		lock_.unlock();
+	}
+
+	/* TODO(sergey): Implement manual control over lock/unlock. */
+
+protected:
+	thread_spin_lock& lock_;
 };
 
 CCL_NAMESPACE_END

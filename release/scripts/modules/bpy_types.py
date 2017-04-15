@@ -683,6 +683,10 @@ class _GenericUI:
         return draw_funcs
 
     @classmethod
+    def is_extended(cls):
+        return bool(getattr(cls.draw, "_draw_funcs", None))
+
+    @classmethod
     def append(cls, draw_func):
         """
         Append a draw function to this menu,
@@ -725,11 +729,30 @@ class Header(StructRNA, _GenericUI, metaclass=RNAMeta):
 class Menu(StructRNA, _GenericUI, metaclass=RNAMeta):
     __slots__ = ()
 
-    def path_menu(self, searchpaths, operator,
-                  props_default=None, filter_ext=None):
+    def path_menu(self, searchpaths, operator, *,
+                  props_default=None, prop_filepath="filepath",
+                  filter_ext=None, filter_path=None, display_name=None):
+        """
+        Populate a menu from a list of paths.
+
+        :arg searchpaths: Paths to scan.
+        :type searchpaths: sequence of strings.
+        :arg operator: The operator id to use with each file.
+        :type operator: string
+        :arg prop_filepath: Optional operator filepath property (defaults to "filepath").
+        :type prop_filepath: string
+        :arg props_default: Properties to assign to each operator.
+        :type props_default: dict
+        :arg filter_ext: Optional callback that takes the file extensions.
+
+           Returning false excludes the file from the list.
+
+        :type filter_ext: Callable that takes a string and returns a bool.
+        :arg display_name: Optional callback that takes the full path, returns the name to display.
+        :type display_name: Callable that takes a string and returns a string.
+        """
 
         layout = self.layout
-        # hard coded to set the operators 'filepath' to the filename.
 
         import os
         import bpy.utils
@@ -742,25 +765,32 @@ class Menu(StructRNA, _GenericUI, metaclass=RNAMeta):
         # collect paths
         files = []
         for directory in searchpaths:
-            files.extend([(f, os.path.join(directory, f))
-                          for f in os.listdir(directory)
-                          if (not f.startswith("."))
-                          if ((filter_ext is None) or
-                              (filter_ext(os.path.splitext(f)[1])))
-                          ])
+            files.extend(
+                [(f, os.path.join(directory, f))
+                 for f in os.listdir(directory)
+                 if (not f.startswith("."))
+                 if ((filter_ext is None) or
+                     (filter_ext(os.path.splitext(f)[1])))
+                 if ((filter_path is None) or
+                     (filter_path(f)))
+                 ])
 
         files.sort()
 
         for f, filepath in files:
-            props = layout.operator(operator,
-                                    text=bpy.path.display_name(f),
-                                    translate=False)
+            # Intentionally pass the full path to 'display_name' callback,
+            # since the callback may want to use part a directory in the name.
+            props = layout.operator(
+                operator,
+                text=display_name(filepath) if display_name else bpy.path.display_name(f),
+                translate=False,
+            )
 
             if props_default is not None:
                 for attr, value in props_default.items():
                     setattr(props, attr, value)
 
-            props.filepath = filepath
+            setattr(props, prop_filepath, filepath)
             if operator == "script.execute_preset":
                 props.menu_idname = self.bl_idname
 

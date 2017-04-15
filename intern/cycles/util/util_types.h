@@ -55,6 +55,7 @@
 #endif
 #define ccl_may_alias
 #define ccl_always_inline __forceinline
+#define ccl_never_inline __declspec(noinline)
 #define ccl_maybe_unused
 
 #else
@@ -68,6 +69,7 @@
 #define ccl_try_align(...) __attribute__((aligned(__VA_ARGS__)))
 #define ccl_may_alias __attribute__((__may_alias__))
 #define ccl_always_inline __attribute__((always_inline))
+#define ccl_never_inline __attribute__((noinline))
 #define ccl_maybe_unused __attribute__((used))
 
 #endif
@@ -85,7 +87,7 @@
 
 /* SIMD Types */
 
-#include "util_optimization.h"
+#include "util/util_optimization.h"
 
 #endif
 
@@ -180,7 +182,7 @@ struct ccl_try_align(16) int3 {
 	};
 
 	__forceinline int3() {}
-	__forceinline int3(const __m128i a) : m128(a) {}
+	__forceinline int3(const __m128i& a) : m128(a) {}
 	__forceinline operator const __m128i&(void) const { return m128; }
 	__forceinline operator __m128i&(void) { return m128; }
 
@@ -202,7 +204,7 @@ struct ccl_try_align(16) int4 {
 	};
 
 	__forceinline int4() {}
-	__forceinline int4(const __m128i a) : m128(a) {}
+	__forceinline int4(const __m128i& a) : m128(a) {}
 	__forceinline operator const __m128i&(void) const { return m128; }
 	__forceinline operator __m128i&(void) { return m128; }
 
@@ -274,7 +276,7 @@ struct ccl_try_align(16) float4 {
 	};
 
 	__forceinline float4() {}
-	__forceinline float4(const __m128 a) : m128(a) {}
+	__forceinline float4(const __m128& a) : m128(a) {}
 	__forceinline operator const __m128&(void) const { return m128; }
 	__forceinline operator __m128&(void) { return m128; }
 

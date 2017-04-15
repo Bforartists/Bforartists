@@ -1,4 +1,4 @@
-﻿# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -22,22 +22,6 @@ import bpy
 from bpy.types import Header, Menu
 
 
-################################ Switch between the editors ##########################################
-
-
-class switch_editors_in_nla(bpy.types.Operator):
-    """You are in NLA editor"""      # blender will use this as a tooltip for menu items and buttons.
-    bl_idname = "wm.switch_editor_in_nla"        # unique identifier for buttons and menu items to reference.
-    bl_label = "NLA Editor"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
-
-    #def execute(self, context):        # execute() is called by blender when running the operator.
-    #    bpy.ops.wm.context_set_enum(data_path="area.type", value="NLA_EDITOR")
-    #    return {'FINISHED'}  
-
-##########################################################################
-
-
 class NLA_HT_header(Header):
     bl_space_type = 'NLA_EDITOR'
 
@@ -48,33 +32,15 @@ class NLA_HT_header(Header):
 
         st = context.space_data
 
-        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
-
-        # bfa - The tabs to switch between the four animation editors. The classes are in space_time.py
         row = layout.row(align=True)
-        row.operator("wm.switch_editor_to_timeline", text="", icon='TIME')
-        row.operator("wm.switch_editor_to_graph", text="", icon='IPO')
-        row.operator("wm.switch_editor_to_dopesheet", text="", icon='ACTION')     
-        row.operator("wm.switch_editor_in_nla", text="", icon='NLA_ACTIVE')
-  
+        row.template_header()
+
         NLA_MT_editor_menus.draw_collapsible(context, layout)
 
         dopesheet_filter(layout, context)
 
         layout.prop(st, "auto_snap", text="")
 
-# bfa - show hide the editormenu
-class ALL_MT_editormenu(Menu):
-    bl_label = ""
-
-    def draw(self, context):
-        self.draw_menus(self.layout, context)
-
-    @staticmethod
-    def draw_menus(layout, context):
-
-        row = layout.row(align=True)
-        row.template_header() # editor type menus
 
 class NLA_MT_editor_menus(Menu):
     bl_idname = "NLA_MT_editor_menus"
@@ -134,17 +100,16 @@ class NLA_MT_select(Menu):
 
     def draw(self, context):
         layout = self.layout
-        
-        layout.operator("nla.select_border", icon='BORDER_RECT').axis_range = False
-        layout.operator("nla.select_border", text="Border Axis Range", icon='BORDER_RECT').axis_range = True
+
+        # This is a bit misleading as the operator's default text is "Select All" while it actually *toggles* All/None
+        layout.operator("nla.select_all_toggle").invert = False
+        layout.operator("nla.select_all_toggle", text="Invert Selection").invert = True
 
         layout.separator()
-
-        layout.operator("nla.select_all_toggle", text = "(De)Select All", icon = 'SELECT_ALL').invert = False
-        layout.operator("nla.select_all_toggle", text = "Invert Selection", icon = 'INVERSE').invert = True
+        layout.operator("nla.select_border").axis_range = False
+        layout.operator("nla.select_border", text="Border Axis Range").axis_range = True
 
         layout.separator()
-        
         props = layout.operator("nla.select_leftright", text="Before Current Frame")
         props.extend = False
         props.mode = 'LEFT'
@@ -211,22 +176,6 @@ class NLA_MT_edit(Menu):
             layout.operator("nla.tweakmode_enter", text="Start Editing Stashed Action").isolate_action = True
             layout.operator("nla.tweakmode_enter", text="Start Tweaking Strip Actions")
 
-#Add F-Modifier submenu
-class NLA_OT_fmodifier_add(Menu):
-    bl_label = "Add F-Modifier"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("nla.fmodifier_add", text = "Generator" ).type = 'GENERATOR'
-        layout.operator("nla.fmodifier_add", text = "Built-In Function" ).type = 'FNGENERATOR'
-        layout.operator("nla.fmodifier_add", text = "Envelope" ).type = 'ENVELOPE'
-        layout.operator("nla.fmodifier_add", text = "Cycles" ).type = 'CYCLES'
-        layout.operator("nla.fmodifier_add", text = "Noise" ).type = 'NOISE'
-        layout.operator("nla.fmodifier_add", text = "Python" ).type = 'PYTHON'
-        layout.operator("nla.fmodifier_add", text = "Limits" ).type = 'LIMITS'
-        layout.operator("nla.fmodifier_add", text = "Stepped Interpolation" ).type = 'STEPPED'
-
 
 class NLA_MT_add(Menu):
     bl_label = "Add"
@@ -248,7 +197,6 @@ class NLA_MT_add(Menu):
 
         layout.separator()
         layout.operator("nla.selected_objects_add")
-        layout.menu("NLA_OT_fmodifier_add") #Add F-Modifier submenu
 
 
 class NLA_MT_edit_transform(Menu):
@@ -261,5 +209,19 @@ class NLA_MT_edit_transform(Menu):
         layout.operator("transform.transform", text="Extend").mode = 'TIME_EXTEND'
         layout.operator("transform.transform", text="Scale").mode = 'TIME_SCALE'
 
+
+classes = (
+    NLA_HT_header,
+    NLA_MT_edit,
+    NLA_MT_editor_menus,
+    NLA_MT_view,
+    NLA_MT_select,
+    NLA_MT_marker,
+    NLA_MT_add,
+    NLA_MT_edit_transform,
+)
+
 if __name__ == "__main__":  # only for live edit.
-    bpy.utils.register_module(__name__)
+    from bpy.utils import register_class
+    for cls in classes:
+        register_class(cls)

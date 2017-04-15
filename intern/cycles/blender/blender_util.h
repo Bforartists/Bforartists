@@ -17,15 +17,15 @@
 #ifndef __BLENDER_UTIL_H__
 #define __BLENDER_UTIL_H__
 
-#include "mesh.h"
+#include "render/mesh.h"
 
-#include "util_algorithm.h"
-#include "util_map.h"
-#include "util_path.h"
-#include "util_set.h"
-#include "util_transform.h"
-#include "util_types.h"
-#include "util_vector.h"
+#include "util/util_algorithm.h"
+#include "util/util_map.h"
+#include "util/util_path.h"
+#include "util/util_set.h"
+#include "util/util_transform.h"
+#include "util/util_types.h"
+#include "util/util_vector.h"
 
 /* Hacks to hook into Blender API
  * todo: clean this up ... */
@@ -174,22 +174,19 @@ static inline void curvemapping_color_to_array(BL::CurveMapping& cumap,
 
 	if(rgb_curve) {
 		BL::CurveMap mapI = cumap.curves[3];
-
 		for(int i = 0; i < size; i++) {
-			float t = min_x + (float)i/(float)(size-1) * range_x;
-
-			data[i][0] = mapR.evaluate(mapI.evaluate(t));
-			data[i][1] = mapG.evaluate(mapI.evaluate(t));
-			data[i][2] = mapB.evaluate(mapI.evaluate(t));
+			const float t = min_x + (float)i/(float)(size-1) * range_x;
+			data[i] = make_float3(mapR.evaluate(mapI.evaluate(t)),
+			                      mapG.evaluate(mapI.evaluate(t)),
+			                      mapB.evaluate(mapI.evaluate(t)));
 		}
 	}
 	else {
 		for(int i = 0; i < size; i++) {
 			float t = min_x + (float)i/(float)(size-1) * range_x;
-
-			data[i][0] = mapR.evaluate(t);
-			data[i][1] = mapG.evaluate(t);
-			data[i][2] = mapB.evaluate(t);
+			data[i] = make_float3(mapR.evaluate(t),
+			                      mapG.evaluate(t),
+			                      mapB.evaluate(t));
 		}
 	}
 }

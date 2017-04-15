@@ -71,6 +71,7 @@ class MATERIAL_MT_specials(Menu):
 
 
 class MATERIAL_UL_matslots(UIList):
+
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
         # assert(isinstance(item, bpy.types.MaterialSlot)
         # ob = data
@@ -253,9 +254,8 @@ class MATERIAL_PT_pipeline(MaterialButtonsPanel, Panel):
         col.prop(mat, "use_cast_approximate")
 
 
-class MATERIAL_PT_shading(MaterialButtonsPanel, Panel):
-    bl_label = "Shading"
-    bl_options = {'DEFAULT_CLOSED'}
+class MATERIAL_PT_diffuse(MaterialButtonsPanel, Panel):
+    bl_label = "Diffuse"
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
 
     @classmethod
@@ -324,11 +324,21 @@ class MATERIAL_PT_shading(MaterialButtonsPanel, Panel):
 
                 col.prop(mat, "diffuse_ramp_factor", text="Factor")
 
-                col.separator()
-        
-        ############################## Specular
-        
-        layout.separator()
+
+class MATERIAL_PT_specular(MaterialButtonsPanel, Panel):
+    bl_label = "Specular"
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+
+    @classmethod
+    def poll(cls, context):
+        mat = context.material
+        engine = context.scene.render.engine
+        return check_material(mat) and (mat.type in {'SURFACE', 'WIRE'}) and (engine in cls.COMPAT_ENGINES)
+
+    def draw(self, context):
+        layout = self.layout
+
+        mat = active_node_mat(context.material)
 
         layout.active = (not mat.use_shadeless)
 
@@ -376,13 +386,23 @@ class MATERIAL_PT_shading(MaterialButtonsPanel, Panel):
                 row.prop(mat, "specular_ramp_input", text="Input")
                 row.prop(mat, "specular_ramp_blend", text="Blend")
 
-                layout.prop(mat, "specular_ramp_factor", text="Factor")
-                
-                col.separator()
-            
-        layout.separator()    
-        
-        ############### Misc shading ##################
+            layout.prop(mat, "specular_ramp_factor", text="Factor")
+
+
+class MATERIAL_PT_shading(MaterialButtonsPanel, Panel):
+    bl_label = "Shading"
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+
+    @classmethod
+    def poll(cls, context):
+        mat = context.material
+        engine = context.scene.render.engine
+        return check_material(mat) and (mat.type in {'SURFACE', 'WIRE'}) and (engine in cls.COMPAT_ENGINES)
+
+    def draw(self, context):
+        layout = self.layout
+
+        mat = active_node_mat(context.material)
 
         if mat.type in {'SURFACE', 'WIRE'}:
             split = layout.split()
@@ -1072,5 +1092,38 @@ class MATERIAL_PT_custom_props(MaterialButtonsPanel, PropertyPanel, Panel):
     _context_path = "material"
     _property_type = bpy.types.Material
 
+
+classes = (
+    MATERIAL_MT_sss_presets,
+    MATERIAL_MT_specials,
+    MATERIAL_UL_matslots,
+    MATERIAL_PT_context_material,
+    MATERIAL_PT_preview,
+    MATERIAL_PT_pipeline,
+    MATERIAL_PT_diffuse,
+    MATERIAL_PT_specular,
+    MATERIAL_PT_shading,
+    MATERIAL_PT_transp,
+    MATERIAL_PT_mirror,
+    MATERIAL_PT_sss,
+    MATERIAL_PT_halo,
+    MATERIAL_PT_flare,
+    MATERIAL_PT_game_settings,
+    MATERIAL_PT_physics,
+    MATERIAL_PT_strand,
+    MATERIAL_PT_options,
+    MATERIAL_PT_shadow,
+    MATERIAL_PT_transp_game,
+    MATERIAL_PT_volume_density,
+    MATERIAL_PT_volume_shading,
+    MATERIAL_PT_volume_lighting,
+    MATERIAL_PT_volume_transp,
+    MATERIAL_PT_volume_integration,
+    MATERIAL_PT_volume_options,
+    MATERIAL_PT_custom_props,
+)
+
 if __name__ == "__main__":  # only for live edit.
-    bpy.utils.register_module(__name__)
+    from bpy.utils import register_class
+    for cls in classes:
+        register_class(cls)
