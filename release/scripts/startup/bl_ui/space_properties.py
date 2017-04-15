@@ -61,13 +61,13 @@ class ALL_MT_editormenu(Menu):
         row = layout.row(align=True)
         row.template_header() # editor type menus
 
-def register():
-    bpy.utils.register_module(__name__)
+classes = (
+    switch_editors_in_properties,
+    PROPERTIES_HT_header,
+    ALL_MT_editormenu,
+)
 
-
-def unregister():
-    bpy.utils.unregister_module(__name__)
-
-
-if __name__ == "__main__":
-    register()
+if __name__ == "__main__":  # only for live edit.
+    from bpy.utils import register_class
+    for cls in classes:
+        register_class(cls)

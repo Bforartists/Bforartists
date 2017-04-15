@@ -1063,6 +1063,8 @@ from bl_ui.properties_mask_common import (
         MASK_PT_point,
         MASK_PT_display,
         MASK_PT_tools,
+        MASK_PT_transforms,
+        MASK_PT_add,
         )
 
 
@@ -1089,6 +1091,15 @@ class CLIP_PT_active_mask_point(MASK_PT_point, Panel):
 class CLIP_PT_mask(MASK_PT_mask, Panel):
     bl_space_type = 'CLIP_EDITOR'
     bl_region_type = 'UI'
+
+class CLIP_PT_tools_mask_add(MASK_PT_add, Panel):
+    bl_space_type = 'CLIP_EDITOR'
+    bl_region_type = 'TOOLS'
+
+
+class CLIP_PT_tools_mask_transforms(MASK_PT_transforms, Panel):
+    bl_space_type = 'CLIP_EDITOR'
+    bl_region_type = 'TOOLS'
 
 
 class CLIP_PT_tools_mask(MASK_PT_tools, Panel):
@@ -1503,5 +1514,69 @@ class CLIP_MT_stabilize_2d_rotation_specials(Menu):
         layout.operator("clip.stabilize_2d_rotation_select")
 
 
+classes = (
+    CLIP_UL_tracking_objects,
+    CLIP_HT_header,
+    CLIP_MT_track,
+    CLIP_MT_tracking_editor_menus,
+    CLIP_MT_masking_editor_menus,
+    CLIP_PT_track,
+    CLIP_PT_tools_clip,
+    CLIP_PT_tools_marker,
+    CLIP_PT_tracking_settings,
+    CLIP_PT_tools_tracking,
+    CLIP_PT_tools_plane_tracking,
+    CLIP_PT_tools_solve,
+    CLIP_PT_tools_cleanup,
+    CLIP_PT_tools_geometry,
+    CLIP_PT_tools_orientation,
+    CLIP_PT_tools_object,
+    CLIP_PT_objects,
+    CLIP_PT_plane_track,
+    CLIP_PT_track_settings,
+    CLIP_PT_tracking_camera,
+    CLIP_PT_tracking_lens,
+    CLIP_PT_display,
+    CLIP_PT_marker,
+    CLIP_PT_marker_display,
+    CLIP_PT_stabilization,
+    CLIP_PT_proxy,
+    CLIP_PT_mask,
+    CLIP_PT_mask_layers,
+    CLIP_PT_mask_display,
+    CLIP_PT_active_mask_spline,
+    CLIP_PT_active_mask_point,
+    CLIP_PT_tools_mask,
+    CLIP_PT_tools_mask_add,
+    CLIP_PT_tools_mask_transforms,
+    CLIP_PT_footage,
+    CLIP_PT_footage_info,
+    CLIP_PT_tools_scenesetup,
+    CLIP_PT_grease_pencil,
+    CLIP_PT_grease_pencil_palettecolor,
+    CLIP_PT_tools_grease_pencil_draw,
+    CLIP_PT_tools_grease_pencil_edit,
+    CLIP_PT_tools_grease_pencil_sculpt,
+    CLIP_PT_tools_grease_pencil_brush,
+    CLIP_PT_tools_grease_pencil_brushcurves,
+    CLIP_MT_view,
+    CLIP_MT_clip,
+    CLIP_MT_proxy,
+    CLIP_MT_reconstruction,
+    CLIP_MT_track_visibility,
+    CLIP_MT_track_transform,
+    CLIP_MT_select,
+    CLIP_MT_select_grouped,
+    CLIP_MT_tracking_specials,
+    CLIP_MT_camera_presets,
+    CLIP_MT_track_color_presets,
+    CLIP_MT_tracking_settings_presets,
+    CLIP_MT_track_color_specials,
+    CLIP_MT_stabilize_2d_specials,
+    CLIP_MT_stabilize_2d_rotation_specials,
+)
+
 if __name__ == "__main__":  # only for live edit.
-    bpy.utils.register_module(__name__)
+    from bpy.utils import register_class
+    for cls in classes:
+        register_class(cls)

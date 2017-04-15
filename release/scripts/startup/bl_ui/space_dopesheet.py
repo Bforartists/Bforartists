@@ -517,5 +517,26 @@ class DOPESHEET_MT_delete(Menu):
         layout.operator("action.clean", text="Clean Channels").channels = True
 
 
+classes = (
+    switch_editors_in_dopesheet,
+    DOPESHEET_HT_header,
+    ALL_MT_editormenu,
+    DOPESHEET_MT_editor_menus,
+    DOPESHEET_MT_view,
+    DOPESHEET_MT_select_before_current_frame,
+    DOPESHEET_MT_select_after_current_frame,
+    DOPESHEET_MT_select,
+    DOPESHEET_MT_marker,
+    DOPESHEET_MT_channel,
+    DOPESHEET_MT_key_clean_channels,
+    DOPESHEET_MT_key,
+    DOPESHEET_MT_key_transform,
+    DOPESHEET_MT_gpencil_channel,
+    DOPESHEET_MT_gpencil_frame,
+    DOPESHEET_MT_delete,
+)
+
 if __name__ == "__main__":  # only for live edit.
-    bpy.utils.register_module(__name__)
+    from bpy.utils import register_class
+    for cls in classes:
+        register_class(cls)

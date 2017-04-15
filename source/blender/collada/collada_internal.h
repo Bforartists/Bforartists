@@ -85,12 +85,6 @@ public:
 
 };
 
-class TransformBase
-{
-public:
-	void decompose(float mat[4][4], float *loc, float eul[3], float quat[4], float *size);
-};
-
 extern void clear_global_id_map();
 /** Look at documentation of translate_map */
 extern std::string translate_id(const std::string &id);
@@ -104,6 +98,7 @@ extern std::string get_geometry_id(Object *ob, bool use_instantiation);
 extern std::string get_light_id(Object *ob);
 
 extern std::string get_joint_id(Bone *bone, Object *ob_arm);
+extern std::string get_joint_sid(Bone *bone, Object *ob_arm);
 
 extern std::string get_camera_id(Object *ob);
 

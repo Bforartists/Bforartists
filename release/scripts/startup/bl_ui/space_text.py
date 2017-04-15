@@ -239,20 +239,22 @@ class TEXT_MT_templates_py(Menu):
     bl_label = "Python"
 
     def draw(self, context):
-        self.path_menu(bpy.utils.script_paths("templates_py"),
-                       "text.open",
-                       {"internal": True},
-                       )
+        self.path_menu(
+            bpy.utils.script_paths("templates_py"),
+            "text.open",
+            props_default={"internal": True},
+        )
 
 
 class TEXT_MT_templates_osl(Menu):
     bl_label = "Open Shading Language"
 
     def draw(self, context):
-        self.path_menu(bpy.utils.script_paths("templates_osl"),
-                       "text.open",
-                       {"internal": True},
-                       )
+        self.path_menu(
+            bpy.utils.script_paths("templates_osl"),
+            "text.open",
+            props_default={"internal": True},
+        )
 
 
 class TEXT_MT_templates(Menu):
@@ -365,5 +367,27 @@ class TEXT_MT_toolbox(Menu):
 
         layout.operator("text.run_script")
 
+
+classes = (
+    TEXT_HT_header,
+    ALL_MT_editormenu,
+    TEXT_MT_edit,
+    TEXT_MT_editor_menus,
+    TEXT_PT_properties,
+    TEXT_PT_find,
+    TEXT_Toggle_Maximize_Area,
+    TEXT_MT_view,
+    TEXT_MT_text,
+    TEXT_MT_templates,
+    TEXT_MT_templates_py,
+    TEXT_MT_templates_osl,
+    TEXT_MT_edit_select,
+    TEXT_MT_format,
+    TEXT_MT_edit_to3d,
+    TEXT_MT_toolbox,
+)
+
 if __name__ == "__main__":  # only for live edit.
-    bpy.utils.register_module(__name__)
+    from bpy.utils import register_class
+    for cls in classes:
+        register_class(cls)

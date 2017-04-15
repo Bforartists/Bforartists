@@ -227,6 +227,30 @@ class MASK_PT_display:
         sub.prop(space_data, "mask_overlay_mode", text="")
 
 
+class MASK_PT_transforms:
+    # subclasses must define...
+    #~ bl_space_type = 'CLIP_EDITOR'
+    #~ bl_region_type = 'TOOLS'
+    bl_label = "Transforms"
+    bl_category = "Mask"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        space_data = context.space_data
+        return space_data.mask and space_data.mode == 'MASK'
+
+    def draw(self, context):
+        layout = self.layout
+
+        col = layout.column(align=True)
+        col.label(text="Transform:")
+        col.operator("transform.translate")
+        col.operator("transform.rotate")
+        col.operator("transform.resize", text="Scale")
+        col.operator("transform.transform", text="Scale Feather").mode = 'MASK_SHRINKFATTEN'
+
+
 class MASK_PT_tools:
     # subclasses must define...
     #~ bl_space_type = 'CLIP_EDITOR'
@@ -249,9 +273,10 @@ class MASK_PT_tools:
 
         col = layout.column(align=True)
         col.label(text="Spline:")
+        col.operator("mask.delete")
         col.operator("mask.cyclic_toggle")
         col.operator("mask.switch_direction")
-        col.operator_menu_enum("mask.handle_type_set", "type", text="Set Handle Type")
+        col.operator("mask.handle_type_set")
         col.operator("mask.feather_weight_clear")
 
         col = layout.column(align=True)
@@ -269,6 +294,26 @@ class MASK_PT_tools:
         col.operator("mask.shape_key_rekey", text="Re-Key Shape Points")
 
 
+class MASK_PT_add:
+    # subclasses must define...
+    #~ bl_space_type = 'CLIP_EDITOR'
+    #~ bl_region_type = 'TOOLS'
+    bl_label = "Add"
+    bl_category = "Mask"
+
+    @classmethod
+    def poll(cls, context):
+        space_data = context.space_data
+        return space_data.mode == 'MASK'
+
+    def draw(self, context):
+        layout = self.layout
+
+        col = layout.column(align=True)
+        col.operator("mask.primitive_circle_add", icon='MESH_CIRCLE')
+        col.operator("mask.primitive_square_add", icon='MESH_PLANE')
+
+
 class MASK_MT_mask(Menu):
     bl_label = "Mask"
 
@@ -279,20 +324,23 @@ class MASK_MT_mask(Menu):
         layout.operator("mask.duplicate_move", text = "Duplicate")
 
         layout.separator()
+        layout.operator("mask.cyclic_toggle")
+        layout.operator("mask.switch_direction")
+        layout.operator("mask.normals_make_consistent")
+        layout.operator("mask.feather_weight_clear")  # TODO, better place?
 
+        layout.separator()
+        layout.operator("mask.parent_clear")
+        layout.operator("mask.parent_set")
+
+        layout.separator()
         layout.operator("mask.copy_splines")
         layout.operator("mask.paste_splines")
 
         layout.separator()
-
-        layout.operator("transform.translate")
-        layout.operator("transform.rotate")
-        layout.operator("transform.resize")
-        layout.operator("transform.transform", text="Scale Feather").mode = 'MASK_SHRINKFATTEN'
-
-        layout.separator()
-
         layout.menu("MASK_MT_visibility")
+        layout.menu("MASK_MT_transform")
+        layout.menu("MASK_MT_animation")
 
 
 class MASK_MT_visibility(Menu):
@@ -304,6 +352,30 @@ class MASK_MT_visibility(Menu):
         layout.operator("mask.hide_view_clear", text="Show Hidden")
         layout.operator("mask.hide_view_set", text="Hide Selected").unselected = False
         layout.operator("mask.hide_view_set", text="Hide Unselected").unselected = True
+
+
+class MASK_MT_transform(Menu):
+    bl_label = "Transform"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("transform.translate")
+        layout.operator("transform.rotate")
+        layout.operator("transform.resize")
+        layout.operator("transform.transform", text="Scale Feather").mode = 'MASK_SHRINKFATTEN'
+
+
+class MASK_MT_animation(Menu):
+    bl_label = "Animation"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("mask.shape_key_clear")
+        layout.operator("mask.shape_key_insert")
+        layout.operator("mask.shape_key_feather_reset")
+        layout.operator("mask.shape_key_rekey")
 
 
 class MASK_MT_select(Menu):
@@ -326,5 +398,17 @@ class MASK_MT_select(Menu):
         layout.operator("mask.select_all", text="Inverse").action = 'INVERT'
         layout.operator("mask.select_linked", text="Select Linked")
 
+
+classes = (
+    MASK_UL_layers,
+    MASK_MT_mask,
+    MASK_MT_visibility,
+    MASK_MT_transform,
+    MASK_MT_animation,
+    MASK_MT_select,
+)
+
 if __name__ == "__main__":  # only for live edit.
-    bpy.utils.register_module(__name__)
+    from bpy.utils import register_class
+    for cls in classes:
+        register_class(cls)

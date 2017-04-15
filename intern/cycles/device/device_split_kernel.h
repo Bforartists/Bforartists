@@ -17,8 +17,8 @@
 #ifndef __DEVICE_SPLIT_KERNEL_H__
 #define __DEVICE_SPLIT_KERNEL_H__
 
-#include "device.h"
-#include "buffers.h"
+#include "device/device.h"
+#include "render/buffers.h"
 
 CCL_NAMESPACE_BEGIN
 
@@ -94,6 +94,9 @@ private:
 
 	/* Marked True in constructor and marked false at the end of path_trace(). */
 	bool first_tile;
+
+	/* Cached global size */
+	size_t global_size[2];
 
 public:
 	explicit DeviceSplitKernel(Device* device);

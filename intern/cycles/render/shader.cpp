@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-#include "background.h"
-#include "camera.h"
-#include "device.h"
-#include "graph.h"
-#include "integrator.h"
-#include "light.h"
-#include "mesh.h"
-#include "nodes.h"
-#include "object.h"
-#include "osl.h"
-#include "scene.h"
-#include "shader.h"
-#include "svm.h"
-#include "tables.h"
+#include "render/background.h"
+#include "render/camera.h"
+#include "device/device.h"
+#include "render/graph.h"
+#include "render/integrator.h"
+#include "render/light.h"
+#include "render/mesh.h"
+#include "render/nodes.h"
+#include "render/object.h"
+#include "render/osl.h"
+#include "render/scene.h"
+#include "render/shader.h"
+#include "render/svm.h"
+#include "render/tables.h"
 
-#include "util_foreach.h"
+#include "util/util_foreach.h"
 
 CCL_NAMESPACE_BEGIN
 
@@ -332,6 +332,8 @@ ShaderManager *ShaderManager::create(Scene *scene, int shadingsystem)
 
 uint ShaderManager::get_attribute_id(ustring name)
 {
+	thread_scoped_spin_lock lock(attribute_lock_);
+
 	/* get a unique id for each name, for SVM attribute lookup */
 	AttributeIDMap::iterator it = unique_attribute_id.find(name);
 

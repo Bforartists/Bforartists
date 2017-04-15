@@ -238,7 +238,8 @@ class VIEW3D_MT_transform_object(VIEW3D_MT_transform_base):
         layout.separator()
 
         layout.operator_context = 'EXEC_REGION_WIN'
-        layout.operator("transform.transform", text="Align to Transform Orientation").mode = 'ALIGN'  # XXX see alignmenu() in edit.c of b2.4x to get this working
+        # XXX see alignmenu() in edit.c of b2.4x to get this working
+        layout.operator("transform.transform", text="Align to Transform Orientation").mode = 'ALIGN'
 
         layout.separator()
 
@@ -1392,6 +1393,85 @@ class VIEW3D_MT_object(Menu):
 
         # End former Specials menu content.
 
+
+        layout.operator_context = 'INVOKE_REGION_WIN'
+        layout.operator_enum("object.lamp_add", "type")
+
+
+class INFO_MT_camera_add(Menu):
+    bl_idname = "INFO_MT_camera_add"
+    bl_label = "Camera"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.operator_context = 'EXEC_REGION_WIN'
+        layout.operator("object.camera_add", text="Camera", icon='OUTLINER_OB_CAMERA')
+
+
+class INFO_MT_add(Menu):
+    bl_label = "Add"
+
+    def draw(self, context):
+        layout = self.layout
+
+        # note, don't use 'EXEC_SCREEN' or operators wont get the 'v3d' context.
+
+        # Note: was EXEC_AREA, but this context does not have the 'rv3d', which prevents
+        #       "align_view" to work on first call (see [#32719]).
+        layout.operator_context = 'EXEC_REGION_WIN'
+
+        #layout.operator_menu_enum("object.mesh_add", "type", text="Mesh", icon='OUTLINER_OB_MESH')
+        layout.menu("INFO_MT_mesh_add", icon='OUTLINER_OB_MESH')
+
+        #layout.operator_menu_enum("object.curve_add", "type", text="Curve", icon='OUTLINER_OB_CURVE')
+        layout.menu("INFO_MT_curve_add", icon='OUTLINER_OB_CURVE')
+        #layout.operator_menu_enum("object.surface_add", "type", text="Surface", icon='OUTLINER_OB_SURFACE')
+        layout.menu("INFO_MT_surface_add", icon='OUTLINER_OB_SURFACE')
+        layout.menu("INFO_MT_metaball_add", text="Metaball", icon='OUTLINER_OB_META')
+        layout.operator("object.text_add", text="Text", icon='OUTLINER_OB_FONT')
+        layout.separator()
+
+        layout.menu("INFO_MT_armature_add", icon='OUTLINER_OB_ARMATURE')
+        layout.operator("object.add", text="Lattice", icon='OUTLINER_OB_LATTICE').type = 'LATTICE'
+        layout.operator_menu_enum("object.empty_add", "type", text="Empty", icon='OUTLINER_OB_EMPTY')
+        layout.separator()
+
+        layout.operator("object.speaker_add", text="Speaker", icon='OUTLINER_OB_SPEAKER')
+        layout.separator()
+
+        if INFO_MT_camera_add.is_extended():
+            layout.menu("INFO_MT_camera_add", icon='OUTLINER_OB_CAMERA')
+        else:
+            INFO_MT_camera_add.draw(self, context)
+
+        layout.menu("INFO_MT_lamp_add", icon='OUTLINER_OB_LAMP')
+        layout.separator()
+
+        layout.operator_menu_enum("object.effector_add", "type", text="Force Field", icon='OUTLINER_OB_EMPTY')
+        layout.separator()
+
+        if len(bpy.data.groups) > 10:
+            layout.operator_context = 'INVOKE_REGION_WIN'
+            layout.operator("object.group_instance_add", text="Group Instance...", icon='OUTLINER_OB_EMPTY')
+        else:
+            layout.operator_menu_enum("object.group_instance_add", "group", text="Group Instance", icon='OUTLINER_OB_EMPTY')
+
+
+# ********** Object menu **********
+
+
+class VIEW3D_MT_object(Menu):
+    bl_context = "objectmode"
+    bl_label = "Object"
+
+    def draw(self, context):
+        layout = self.layout
+        view = context.space_data
+        is_local_view = (view.local_view is not None)
+
+        layout.operator("ed.undo")
+        layout.operator("ed.redo")
+        layout.operator("ed.undo_history")
 
         layout.separator()
 
@@ -3892,13 +3972,152 @@ class VIEW3D_PT_context_properties(Panel):
             # Draw with no edit button
             rna_prop_ui.draw(self.layout, context, member, object, False)
 
+classes = (
+    VIEW3D_HT_header,
+    ALL_MT_editormenu,
+    VIEW3D_MT_editor_menus,
+    VIEW3D_MT_transform,
+    VIEW3D_MT_transform_base,
+    VIEW3D_MT_transform_object,
+    VIEW3D_MT_transform_armature,
+    VIEW3D_MT_uv_map,
+    VIEW3D_MT_edit_proportional,
+    VIEW3D_MT_view_all_all_regions,
+    VIEW3D_MT_view_center_cursor_and_view_all,
+    VIEW3D_MT_view_view_selected_all_regions,
+    VIEW3D_MT_view,
+    VIEW3D_MT_view_navigation,
+    VIEW3D_MT_view_align,
+    VIEW3D_MT_view_align_selected,
+    VIEW3D_MT_view_cameras,
+    VIEW3D_MT_select_object_inverse,
+    VIEW3D_MT_select_object,
+    VIEW3D_MT_select_pose_inverse,
+    VIEW3D_MT_select_pose,
+    VIEW3D_MT_select_particle_inverse,
+    VIEW3D_MT_select_particle,
+    VIEW3D_mesh_hide_unselected,
+    VIEW3D_MT_edit_mesh_show_hide,
+    VIEW3D_MT_edit_mesh,
+    VIEW3D_MT_edit_mesh_select_similar,
+    VIEW3D_MT_edit_mesh_select_by_trait,
+    VIEW3D_MT_edit_mesh_select_more_less,
+    VIEW3D_MT_select_edit_mesh_inverse,
+    VIEW3D_MT_select_edit_mesh,
+    VIEW3D_MT_select_edit_curve_inverse,
+    VIEW3D_MT_select_edit_curve,
+    VIEW3D_MT_select_edit_surface,
+    VIEW3D_MT_select_edit_text,
+    VIEW3D_MT_select_edit_metaball_inverse,
+    VIEW3D_MT_select_edit_metaball,
+    VIEW3D_MT_select_edit_lattice_inverse,
+    VIEW3D_MT_select_edit_lattice,
+    VIEW3D_MT_select_edit_armature_inverse,
+    VIEW3D_MT_select_edit_armature,
+    VIEW3D_MT_select_gpencil,
+    VIEW3D_MT_select_paint_mask_inverse,
+    VIEW3D_MT_select_paint_mask,
+    VIEW3D_MT_select_paint_mask_vertex_inverse,
+    VIEW3D_MT_select_paint_mask_vertex,
+    VIEW3D_MT_angle_control,
+    INFO_MT_camera_add,
+    INFO_MT_add,
+    VIEW3D_MT_object_delete_global,
+    VIEW3D_MT_object,
+    VIEW3D_MT_object_animation,
+    VIEW3D_MT_object_clear,
+    VIEW3D_MT_object_specials,
+    VIEW3D_MT_object_apply,
+    VIEW3D_MT_object_track,
+    VIEW3D_MT_object_constraints,
+    VIEW3D_MT_object_quick_effects,
+    VIEW3D_subdivision_set,
+    VIEW3D_hide_view_set_unselected,
+    VIEW3D_MT_object_showhide,
+    VIEW3D_MT_make_single_user,
+    VIEW3D_MT_make_links,
+    VIEW3D_MT_object_game,
+    VIEW3D_MT_facemask_showhide,
+    VIEW3D_MT_brush,
+    VIEW3D_MT_brush_paint_modes,
+    VIEW3D_MT_paint_vertex,
+    VIEW3D_MT_hook,
+    VIEW3D_MT_vertex_group,
+    VIEW3D_MT_paint_weight,
+    VIEW3D_MT_sculpt,
+    VIEW3D_MT_hide_mask,
+    VIEW3D_particle_hide_unselected,
+    VIEW3D_MT_particle_show_hide,
+    VIEW3D_MT_particle,
+    VIEW3D_MT_particle_specials,
+    VIEW3D_pose_hide_unselected,
+    VIEW3D_MT_pose_show_hide,
+    VIEW3D_MT_pose,
+    VIEW3D_MT_pose_transform,
+    VIEW3D_MT_pose_slide,
+    VIEW3D_MT_pose_propagate,
+    VIEW3D_MT_pose_library,
+    VIEW3D_MT_pose_motion,
+    VIEW3D_MT_pose_group,
+    VIEW3D_MT_pose_ik,
+    VIEW3D_MT_pose_constraints,
+    VIEW3D_MT_pose_apply,
+    VIEW3D_MT_pose_specials,
+    VIEW3D_MT_bone_options_toggle,
+    VIEW3D_MT_bone_options_enable,
+    VIEW3D_MT_bone_options_disable,
+    VIEW3D_MT_edit_mesh_specials,
+    VIEW3D_MT_edit_mesh_select_mode,
+    VIEW3D_MT_edit_mesh_extrude_dupli,
+    VIEW3D_MT_edit_mesh_extrude_dupli_rotate,
+    VIEW3D_MT_edit_mesh_extrude,
+    VIEW3D_MT_edit_mesh_vertices,
+    VIEW3D_MT_edit_mesh_edges,
+    VIEW3D_MT_edit_mesh_faces,
+    VIEW3D_MT_edit_mesh_clean,
+    VIEW3D_MT_edit_mesh_delete,
+    VIEW3D_MT_edit_gpencil,
+    VIEW3D_MT_edit_gpencil_delete,
+    VIEW3D_curve_hide_unselected,
+    VIEW3D_MT_edit_curve_show_hide,
+    VIEW3D_MT_edit_curve,
+    VIEW3D_MT_edit_curve_ctrlpoints,
+    VIEW3D_MT_edit_curve_specials,
+    VIEW3D_MT_edit_curve_delete,
+    VIEW3D_MT_edit_surface,
+    VIEW3D_MT_edit_font,
+    VIEW3D_MT_edit_text_chars,
+    VIEW3D_MT_edit_meta,
+    VIEW3D_MT_edit_meta_showhide_unselected,
+    VIEW3D_MT_edit_meta_showhide,
+    VIEW3D_MT_edit_lattice,
+    VIEW3D_armature_hide_unselected,
+    VIEW3D_MT_armature_show_hide,
+    VIEW3D_MT_edit_armature,
+    VIEW3D_MT_armature_specials,
+    VIEW3D_MT_edit_armature_roll,
+    VIEW3D_MT_edit_armature_delete,
+    VIEW3D_MT_edit_gpencil_transform,
+    VIEW3D_MT_edit_gpencil_interpolate,
+    VIEW3D_PT_grease_pencil,
+    VIEW3D_PT_grease_pencil_palettecolor,
+    VIEW3D_PT_view3d_properties,
+    VIEW3D_PT_view3d_cursor,
+    VIEW3D_PT_view3d_name,
+    VIEW3D_PT_view3d_display,
+    VIEW3D_PT_view3d_stereo,
+    VIEW3D_PT_view3d_shading,
+    VIEW3D_PT_view3d_motion_tracking,
+    VIEW3D_PT_view3d_meshdisplay,
+    VIEW3D_PT_view3d_meshstatvis,
+    VIEW3D_PT_view3d_curvedisplay,
+    VIEW3D_PT_background_image,
+    VIEW3D_PT_etch_a_ton,
+    VIEW3D_PT_context_properties,
+)
 
-def register():
-    bpy.utils.register_module(__name__)
 
-
-def unregister():
-    bpy.utils.unregister_module(__name__)
-
-if __name__ == "__main__":
-    register()
+if __name__ == "__main__":  # only for live edit.
+    from bpy.utils import register_class
+    for cls in classes:
+        register_class(cls)

@@ -567,5 +567,23 @@ class RENDER_PT_encoding(RenderButtonsPanel, Panel):
 
 
 
+classes = (
+    RENDER_MT_presets,
+    RENDER_MT_ffmpeg_presets,
+    RENDER_MT_framerate_presets,
+    RENDER_PT_render,
+    RENDER_PT_dimensions,
+    RENDER_PT_antialiasing,
+    RENDER_PT_motion_blur,
+    RENDER_PT_shading,
+    RENDER_PT_performance,
+    RENDER_PT_post_processing,
+    RENDER_PT_stamp,
+    RENDER_PT_output,
+    RENDER_PT_encoding,
+)
+
 if __name__ == "__main__":  # only for live edit.
-    bpy.utils.register_module(__name__)
+    from bpy.utils import register_class
+    for cls in classes:
+        register_class(cls)

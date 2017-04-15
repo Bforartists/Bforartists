@@ -1885,16 +1885,16 @@ static void drawcamera_volume(float near_plane[4][3], float far_plane[4][3], con
 
 	glBegin(mode);
 	glVertex3fv(near_plane[2]);
-	glVertex3fv(near_plane[1]);
-	glVertex3fv(far_plane[1]);
 	glVertex3fv(far_plane[2]);
+	glVertex3fv(far_plane[3]);
+	glVertex3fv(near_plane[3]);
 	glEnd();
 
 	glBegin(mode);
-	glVertex3fv(far_plane[0]);
-	glVertex3fv(near_plane[0]);
-	glVertex3fv(near_plane[3]);
 	glVertex3fv(far_plane[3]);
+	glVertex3fv(near_plane[3]);
+	glVertex3fv(near_plane[0]);
+	glVertex3fv(far_plane[0]);
 	glEnd();
 }
 
@@ -4289,7 +4289,6 @@ static void draw_mesh_fancy(Scene *scene, ARegion *ar, View3D *v3d, RegionView3D
 	
 	if (is_obact && BKE_paint_select_vert_test(ob)) {
 		const bool use_depth = (v3d->flag & V3D_ZBUF_SELECT) != 0;
-		glColor3f(0.0f, 0.0f, 0.0f);
 		glPointSize(UI_GetThemeValuef(TH_VERTEX_SIZE));
 
 		if (!use_depth) glDisable(GL_DEPTH_TEST);
