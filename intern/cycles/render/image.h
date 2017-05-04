@@ -37,17 +37,6 @@ public:
 	explicit ImageManager(const DeviceInfo& info);
 	~ImageManager();
 
-	enum ImageDataType {
-		IMAGE_DATA_TYPE_FLOAT4 = 0,
-		IMAGE_DATA_TYPE_BYTE4 = 1,
-		IMAGE_DATA_TYPE_HALF4 = 2,
-		IMAGE_DATA_TYPE_FLOAT = 3,
-		IMAGE_DATA_TYPE_BYTE = 4,
-		IMAGE_DATA_TYPE_HALF = 5,
-
-		IMAGE_DATA_NUM_TYPES
-	};
-
 	int add_image(const string& filename,
 	              void *builtin_data,
 	              bool animated,
@@ -70,6 +59,7 @@ public:
 	                      bool use_alpha);
 	ImageDataType get_image_metadata(const string& filename, void *builtin_data, bool& is_linear);
 
+	void device_prepare_update(DeviceScene *dscene);
 	void device_update(Device *device,
 	                   DeviceScene *dscene,
 	                   Scene *scene,
@@ -124,7 +114,9 @@ public:
 
 private:
 	int tex_num_images[IMAGE_DATA_NUM_TYPES];
-	int tex_start_images[IMAGE_DATA_NUM_TYPES];
+	int max_num_images;
+	bool has_half_images;
+	bool cuda_fermi_limits;
 
 	thread_mutex device_mutex;
 	int animation_frame;
@@ -143,6 +135,7 @@ private:
 	                     int texture_limit,
 	                     device_vector<DeviceType>& tex_img);
 
+	int max_flattened_slot(ImageDataType type);
 	int type_index_to_flattened_slot(int slot, ImageDataType type);
 	int flattened_slot_to_type_index(int flat_slot, ImageDataType *type);
 	string name_from_type(int type);
@@ -159,6 +152,13 @@ private:
 	                       DeviceScene *dscene,
 	                       ImageDataType type,
 	                       int slot);
+
+	template<typename T>
+	void device_pack_images_type(
+	        ImageDataType type,
+	        const vector<device_vector<T>*>& cpu_textures,
+	        device_vector<T> *device_image,
+	        uint4 *info);
 
 	void device_pack_images(Device *device,
 	                        DeviceScene *dscene,

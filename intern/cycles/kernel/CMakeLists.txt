@@ -21,6 +21,8 @@ set(SRC
 	kernels/opencl/kernel_lamp_emission.cl
 	kernels/opencl/kernel_do_volume.cl
 	kernels/opencl/kernel_indirect_background.cl
+	kernels/opencl/kernel_shader_setup.cl
+	kernels/opencl/kernel_shader_sort.cl
 	kernels/opencl/kernel_shader_eval.cl
 	kernels/opencl/kernel_holdout_emission_blurring_pathtermination_ao.cl
 	kernels/opencl/kernel_subsurface_scatter.cl
@@ -120,6 +122,8 @@ set(SRC_CLOSURE_HEADERS
 	closure/bssrdf.h
 	closure/emissive.h
 	closure/volume.h
+	closure/bsdf_principled_diffuse.h
+	closure/bsdf_principled_sheen.h
 )
 
 set(SRC_SVM_HEADERS
@@ -194,13 +198,46 @@ set(SRC_UTIL_HEADERS
 	../util/util_math.h
 	../util/util_math_fast.h
 	../util/util_math_intersect.h
+	../util/util_math_float2.h
+	../util/util_math_float3.h
+	../util/util_math_float4.h
+	../util/util_math_int2.h
+	../util/util_math_int3.h
+	../util/util_math_int4.h
 	../util/util_static_assert.h
 	../util/util_transform.h
 	../util/util_texture.h
 	../util/util_types.h
+	../util/util_types_float2.h
+	../util/util_types_float2_impl.h
+	../util/util_types_float3.h
+	../util/util_types_float3_impl.h
+	../util/util_types_float4.h
+	../util/util_types_float4_impl.h
+	../util/util_types_int2.h
+	../util/util_types_int2_impl.h
+	../util/util_types_int3.h
+	../util/util_types_int3_impl.h
+	../util/util_types_int4.h
+	../util/util_types_int4_impl.h
+	../util/util_types_uchar2.h
+	../util/util_types_uchar2_impl.h
+	../util/util_types_uchar3.h
+	../util/util_types_uchar3_impl.h
+	../util/util_types_uchar4.h
+	../util/util_types_uchar4_impl.h
+	../util/util_types_uint2.h
+	../util/util_types_uint2_impl.h
+	../util/util_types_uint3.h
+	../util/util_types_uint3_impl.h
+	../util/util_types_uint4.h
+	../util/util_types_uint4_impl.h
+	../util/util_types_vector3.h
+	../util/util_types_vector3_impl.h
 )
 
 set(SRC_SPLIT_HEADERS
+	split/kernel_branched.h
 	split/kernel_buffer_update.h
 	split/kernel_data_init.h
 	split/kernel_direct_lighting.h
@@ -213,6 +250,8 @@ set(SRC_SPLIT_HEADERS
 	split/kernel_path_init.h
 	split/kernel_queue_enqueue.h
 	split/kernel_scene_intersect.h
+	split/kernel_shader_setup.h
+	split/kernel_shader_sort.h
 	split/kernel_shader_eval.h
 	split/kernel_shadow_blocked_ao.h
 	split/kernel_shadow_blocked_dl.h
@@ -422,6 +461,8 @@ delayed_install(${CMAKE_CURRENT_SOURCE_DIR} "kernels/opencl/kernel_scene_interse
 delayed_install(${CMAKE_CURRENT_SOURCE_DIR} "kernels/opencl/kernel_lamp_emission.cl" ${CYCLES_INSTALL_PATH}/source/kernel/kernels/opencl)
 delayed_install(${CMAKE_CURRENT_SOURCE_DIR} "kernels/opencl/kernel_do_volume.cl" ${CYCLES_INSTALL_PATH}/source/kernel/kernels/opencl)
 delayed_install(${CMAKE_CURRENT_SOURCE_DIR} "kernels/opencl/kernel_indirect_background.cl" ${CYCLES_INSTALL_PATH}/source/kernel/kernels/opencl)
+delayed_install(${CMAKE_CURRENT_SOURCE_DIR} "kernels/opencl/kernel_shader_setup.cl" ${CYCLES_INSTALL_PATH}/source/kernel/kernels/opencl)
+delayed_install(${CMAKE_CURRENT_SOURCE_DIR} "kernels/opencl/kernel_shader_sort.cl" ${CYCLES_INSTALL_PATH}/source/kernel/kernels/opencl)
 delayed_install(${CMAKE_CURRENT_SOURCE_DIR} "kernels/opencl/kernel_shader_eval.cl" ${CYCLES_INSTALL_PATH}/source/kernel/kernels/opencl)
 delayed_install(${CMAKE_CURRENT_SOURCE_DIR} "kernels/opencl/kernel_holdout_emission_blurring_pathtermination_ao.cl" ${CYCLES_INSTALL_PATH}/source/kernel/kernels/opencl)
 delayed_install(${CMAKE_CURRENT_SOURCE_DIR} "kernels/opencl/kernel_subsurface_scatter.cl" ${CYCLES_INSTALL_PATH}/source/kernel/kernels/opencl)
