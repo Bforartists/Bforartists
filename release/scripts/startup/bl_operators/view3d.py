@@ -1,4 +1,4 @@
-﻿# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -128,7 +128,7 @@ class VIEW3D_OT_edit_mesh_extrude_shrink_fatten(Operator):
 
 
 class VIEW3D_OT_select_or_deselect_all(Operator):
-    "Select element under the mouse, deselect everything is there's nothing under the mouse"
+    """Select element under the mouse, deselect everything is there's nothing under the mouse"""
     bl_label = "Select or Deselect All"
     bl_idname = "view3d.select_or_deselect_all"
     bl_options = {'UNDO'}

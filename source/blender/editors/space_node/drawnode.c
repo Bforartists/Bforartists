@@ -1234,6 +1234,7 @@ static void node_shader_set_butfunc(bNodeType *ntype)
 		case SH_NODE_BSDF_GLOSSY:
 		case SH_NODE_BSDF_GLASS:
 		case SH_NODE_BSDF_REFRACTION:
+		case SH_NODE_BSDF_PRINCIPLED:
 			ntype->draw_buttons = node_shader_buts_glossy;
 			break;
 		case SH_NODE_BSDF_ANISOTROPIC:
@@ -3068,6 +3069,7 @@ static void std_node_socket_draw(bContext *C, uiLayout *layout, PointerRNA *ptr,
 	bNode *node = node_ptr->data;
 	bNodeSocket *sock = ptr->data;
 	int type = sock->typeinfo->type;
+	bool connected_to_virtual = (sock->link && (sock->link->fromsock->flag & SOCK_VIRTUAL));
 	/*int subtype = sock->typeinfo->subtype;*/
 	
 	/* XXX not nice, eventually give this node its own socket type ... */
@@ -3075,8 +3077,8 @@ static void std_node_socket_draw(bContext *C, uiLayout *layout, PointerRNA *ptr,
 		node_file_output_socket_draw(C, layout, ptr, node_ptr);
 		return;
 	}
-	
-	if ((sock->in_out == SOCK_OUT) || (sock->flag & SOCK_IN_USE) || (sock->flag & SOCK_HIDE_VALUE)) {
+
+	if ((sock->in_out == SOCK_OUT) || ((sock->flag & SOCK_IN_USE) && !connected_to_virtual) || (sock->flag & SOCK_HIDE_VALUE)) {
 		node_socket_button_label(C, layout, ptr, node_ptr, text);
 		return;
 	}
@@ -3424,7 +3426,6 @@ void node_draw_link_bezier(View2D *v2d, SpaceNode *snode, bNodeLink *link,
 		/* store current linewidth */
 		float linew;
 		float arrow[2], arrow1[2], arrow2[2];
-		const float px_fac = UI_DPI_WINDOW_FAC;
 		glGetFloatv(GL_LINE_WIDTH, &linew);
 		
 		/* we can reuse the dist variable here to increment the GL curve eval amount*/
@@ -3451,7 +3452,7 @@ void node_draw_link_bezier(View2D *v2d, SpaceNode *snode, bNodeLink *link,
 		}
 		if (do_triple) {
 			UI_ThemeColorShadeAlpha(th_col3, -80, -120);
-			glLineWidth(4.0f * px_fac);
+			glLineWidth(4.0f);
 			
 			glBegin(GL_LINE_STRIP);
 			for (i = 0; i <= LINK_RESOL; i++) {
@@ -3471,7 +3472,7 @@ void node_draw_link_bezier(View2D *v2d, SpaceNode *snode, bNodeLink *link,
 		 * for Intel hardware, this breaks with GL_LINE_STRIP and
 		 * changing color in begin/end blocks.
 		 */
-		glLineWidth(1.5f * px_fac);
+		glLineWidth(1.5f);
 		if (do_shaded) {
 			glBegin(GL_LINES);
 			for (i = 0; i < LINK_RESOL; i++) {
@@ -3590,6 +3591,7 @@ void node_draw_link(View2D *v2d, SpaceNode *snode, bNodeLink *link)
 {
 	bool do_shaded = false;
 	bool do_triple = false;
+	bool do_dashed = false;
 	int th_col1 = TH_WIRE_INNER, th_col2 = TH_WIRE_INNER, th_col3 = TH_WIRE;
 	
 	if (link->fromsock == NULL && link->tosock == NULL)
@@ -3606,7 +3608,9 @@ void node_draw_link(View2D *v2d, SpaceNode *snode, bNodeLink *link)
 			return;
 		if (link->fromsock->flag & SOCK_UNAVAIL)
 			return;
-		
+		if ((link->fromsock->flag & SOCK_VIRTUAL) || (link->fromsock->flag & SOCK_VIRTUAL))
+			do_dashed = true;
+
 		if (link->flag & NODE_LINK_VALID) {
 			/* special indicated link, on drop-node */
 			if (link->flag & NODE_LINKFLAG_HILITE) {
@@ -3626,8 +3630,10 @@ void node_draw_link(View2D *v2d, SpaceNode *snode, bNodeLink *link)
 			th_col1 = TH_REDALERT;
 		}
 	}
-	
+
+	if (do_dashed) setlinestyle(3);
 	node_draw_link_bezier(v2d, snode, link, th_col1, do_shaded, th_col2, do_triple, th_col3);
+	if (do_dashed) setlinestyle(0);
 //	node_draw_link_straight(v2d, snode, link, th_col1, do_shaded, th_col2, do_triple, th_col3);
 }
 

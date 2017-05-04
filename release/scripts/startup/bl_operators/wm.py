@@ -845,7 +845,7 @@ class WM_OT_context_modal_mouse(Operator):
 
 
 class WM_OT_url_open(Operator):
-    "Open a website in the web-browser"
+    """Open a website in the web-browser"""
     bl_idname = "wm.url_open"
     bl_label = ""
     bl_options = {'INTERNAL'}
@@ -862,7 +862,7 @@ class WM_OT_url_open(Operator):
 
 
 class WM_OT_path_open(Operator):
-    "Open a path in a file browser"
+    """Open a path in a file browser"""
     bl_idname = "wm.path_open"
     bl_label = ""
     bl_options = {'INTERNAL'}
@@ -1328,7 +1328,7 @@ class WM_OT_properties_add(Operator):
 
 
 class WM_OT_properties_context_change(Operator):
-    "Jump to a different tab inside the properties editor"
+    """Jump to a different tab inside the properties editor"""
     bl_idname = "wm.properties_context_change"
     bl_label = ""
     bl_options = {'INTERNAL'}
@@ -1536,7 +1536,7 @@ class WM_OT_blenderplayer_start(Operator):
 
 
 class WM_OT_keyconfig_test(Operator):
-    "Test key-config for conflicts"
+    """Test key-config for conflicts"""
     bl_idname = "wm.keyconfig_test"
     bl_label = "Test Key Configuration for Conflicts"
 
@@ -1553,7 +1553,7 @@ class WM_OT_keyconfig_test(Operator):
 
 
 class WM_OT_keyconfig_import(Operator):
-    "Import key configuration from a python script"
+    """Import key configuration from a python script"""
     bl_idname = "wm.keyconfig_import"
     bl_label = "Import Key Configuration..."
 
@@ -1620,7 +1620,7 @@ class WM_OT_keyconfig_import(Operator):
 
 
 class WM_OT_keyconfig_export(Operator):
-    "Export key configuration to a python script"
+    """Export key configuration to a python script"""
     bl_idname = "wm.keyconfig_export"
     bl_label = "Export Key Configuration..."
 
@@ -1670,7 +1670,7 @@ class WM_OT_keyconfig_export(Operator):
 
 
 class WM_OT_keymap_restore(Operator):
-    "Restore key map(s)"
+    """Restore key map(s)"""
     bl_idname = "wm.keymap_restore"
     bl_label = "Restore Key Map(s)"
 
@@ -1693,7 +1693,7 @@ class WM_OT_keymap_restore(Operator):
 
 
 class WM_OT_keyitem_restore(Operator):
-    "Restore key map item"
+    """Restore key map item"""
     bl_idname = "wm.keyitem_restore"
     bl_label = "Restore Key Map Item"
 
@@ -1718,7 +1718,7 @@ class WM_OT_keyitem_restore(Operator):
 
 
 class WM_OT_keyitem_add(Operator):
-    "Add key map item"
+    """Add key map item"""
     bl_idname = "wm.keyitem_add"
     bl_label = "Add Key Map Item"
 
@@ -1740,7 +1740,7 @@ class WM_OT_keyitem_add(Operator):
 
 
 class WM_OT_keyitem_remove(Operator):
-    "Remove key map item"
+    """Remove key map item"""
     bl_idname = "wm.keyitem_remove"
     bl_label = "Remove Key Map Item"
 
@@ -1761,7 +1761,7 @@ class WM_OT_keyitem_remove(Operator):
 
 
 class WM_OT_keyconfig_remove(Operator):
-    "Remove key config"
+    """Remove key config"""
     bl_idname = "wm.keyconfig_remove"
     bl_label = "Remove Key Config"
 
@@ -1779,6 +1779,7 @@ class WM_OT_keyconfig_remove(Operator):
 
 
 class WM_OT_operator_cheat_sheet(Operator):
+    """List all the Operators in a text-block, useful for scripting"""
     bl_idname = "wm.operator_cheat_sheet"
     bl_label = "Operator Cheat Sheet"
 
@@ -1807,7 +1808,7 @@ class WM_OT_operator_cheat_sheet(Operator):
 # Add-on Operators
 
 class WM_OT_addon_enable(Operator):
-    "Enable an add-on"
+    """Enable an add-on"""
     bl_idname = "wm.addon_enable"
     bl_label = "Enable Add-on"
 
@@ -1851,7 +1852,7 @@ class WM_OT_addon_enable(Operator):
 
 
 class WM_OT_addon_disable(Operator):
-    "Disable an add-on"
+    """Disable an add-on"""
     bl_idname = "wm.addon_disable"
     bl_label = "Disable Add-on"
 
@@ -1880,7 +1881,7 @@ class WM_OT_addon_disable(Operator):
 
 
 class WM_OT_theme_install(Operator):
-    "Load and apply a Blender XML theme file"
+    """Load and apply a Blender XML theme file"""
     bl_idname = "wm.theme_install"
     bl_label = "Install Theme..."
 
@@ -1942,7 +1943,7 @@ class WM_OT_theme_install(Operator):
 
 
 class WM_OT_addon_refresh(Operator):
-    "Scan add-on directories for new modules"
+    """Scan add-on directories for new modules"""
     bl_idname = "wm.addon_refresh"
     bl_label = "Refresh"
 
@@ -1957,7 +1958,7 @@ class WM_OT_addon_refresh(Operator):
 # Note: shares some logic with WM_OT_app_template_install
 # but not enough to de-duplicate. Fixed here may apply to both.
 class WM_OT_addon_install(Operator):
-    "Install an add-on"
+    """Install an add-on"""
     bl_idname = "wm.addon_install"
     bl_label = "Install Add-on from File..."
 
@@ -2111,7 +2112,7 @@ class WM_OT_addon_install(Operator):
 
 
 class WM_OT_addon_remove(Operator):
-    "Delete the add-on from the file system"
+    """Delete the add-on from the file system"""
     bl_idname = "wm.addon_remove"
     bl_label = "Remove Add-on"
 
@@ -2170,7 +2171,7 @@ class WM_OT_addon_remove(Operator):
 
 
 class WM_OT_addon_expand(Operator):
-    "Display information and preferences for this add-on"
+    """Display information and preferences for this add-on"""
     bl_idname = "wm.addon_expand"
     bl_label = ""
     bl_options = {'INTERNAL'}
@@ -2194,7 +2195,7 @@ class WM_OT_addon_expand(Operator):
 
 
 class WM_OT_addon_userpref_show(Operator):
-    "Show add-on user preferences"
+    """Show add-on user preferences"""
     bl_idname = "wm.addon_userpref_show"
     bl_label = ""
     bl_options = {'INTERNAL'}
@@ -2226,7 +2227,7 @@ class WM_OT_addon_userpref_show(Operator):
 # Note: shares some logic with WM_OT_addon_install
 # but not enough to de-duplicate. Fixes here may apply to both.
 class WM_OT_app_template_install(Operator):
-    "Install an application-template"
+    """Install an application-template"""
     bl_idname = "wm.app_template_install"
     bl_label = "Install Template from File..."
 

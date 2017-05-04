@@ -163,6 +163,7 @@ set(SRC
 	shader/nodes/node_shader_background.c
 	shader/nodes/node_shader_bsdf_anisotropic.c
 	shader/nodes/node_shader_bsdf_diffuse.c
+	shader/nodes/node_shader_bsdf_principled.c
 	shader/nodes/node_shader_bsdf_glass.c
 	shader/nodes/node_shader_bsdf_glossy.c
 	shader/nodes/node_shader_bsdf_toon.c
@@ -286,10 +287,6 @@ add_definitions(${GL_DEFINITIONS})
 
 if(WITH_FREESTYLE)
 	add_definitions(-DWITH_FREESTYLE)
-endif()
-
-if(WITH_CYCLES AND WITH_CYCLES_DEBUG)
-	add_definitions(-DWITH_CYCLES_DEBUG)
 endif()
 
 blender_add_lib(bf_nodes "${SRC}" "${INC}" "${INC_SYS}")
