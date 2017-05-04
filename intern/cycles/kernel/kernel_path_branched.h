@@ -22,7 +22,7 @@ ccl_device_inline void kernel_branched_path_ao(KernelGlobals *kg,
                                                ShaderData *sd,
                                                ShaderData *emission_sd,
                                                PathRadiance *L,
-                                               PathState *state,
+                                               ccl_addr_space PathState *state,
                                                RNG *rng,
                                                float3 throughput)
 {
@@ -65,6 +65,7 @@ ccl_device_inline void kernel_branched_path_ao(KernelGlobals *kg,
 	}
 }
 
+#ifndef __SPLIT_KERNEL__
 
 /* bounce off surface and integrate indirect light */
 ccl_device_noinline void kernel_branched_path_surface_indirect_light(KernelGlobals *kg,
@@ -337,11 +338,6 @@ ccl_device float4 kernel_branched_path_integrate(KernelGlobals *kg, RNG *rng, in
 				float num_samples_inv = 1.0f/num_samples;
 
 				for(int j = 0; j < num_samples; j++) {
-					/* workaround to fix correlation bug in T38710, can find better solution
-					 * in random number generator later, for now this is done here to not impact
-					 * performance of rendering without volumes */
-					RNG tmp_rng = cmj_hash(*rng, state.rng_offset);
-
 					PathState ps = state;
 					Ray pray = ray;
 					float3 tp = throughput;
@@ -352,8 +348,8 @@ ccl_device float4 kernel_branched_path_integrate(KernelGlobals *kg, RNG *rng, in
 					/* scatter sample. if we use distance sampling and take just one
 					 * sample for direct and indirect light, we could share this
 					 * computation, but makes code a bit complex */
-					float rphase = path_state_rng_1D_for_decision(kg, &tmp_rng, &ps, PRNG_PHASE);
-					float rscatter = path_state_rng_1D_for_decision(kg, &tmp_rng, &ps, PRNG_SCATTER_DISTANCE);
+					float rphase = path_state_rng_1D_for_decision(kg, rng, &ps, PRNG_PHASE);
+					float rscatter = path_state_rng_1D_for_decision(kg, rng, &ps, PRNG_SCATTER_DISTANCE);
 
 					VolumeIntegrateResult result = kernel_volume_decoupled_scatter(kg,
 						&ps, &pray, &sd, &tp, rphase, rscatter, &volume_segment, NULL, false);
@@ -652,6 +648,8 @@ ccl_device void kernel_branched_path_trace(KernelGlobals *kg,
 
 	path_rng_end(kg, rng_state, rng);
 }
+
+#endif  /* __SPLIT_KERNEL__ */
 
 #endif  /* __BRANCHED_PATH__ */
 
