@@ -1,4 +1,4 @@
-﻿# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -1250,10 +1250,6 @@ class CLIP_MT_view(Menu):
 
             layout.prop(sc, "show_seconds")
             layout.prop(sc, "show_locked_time")
-
-        if sc.view == 'DOPESHEET':
-
-            layout.separator()
 
             layout.operator("clip.dopesheet_view_all")    
 

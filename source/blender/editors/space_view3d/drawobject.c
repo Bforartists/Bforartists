@@ -928,7 +928,7 @@ void view3d_cached_text_draw_add(const float co[3],
 	memcpy(vos->str, str, alloc_len);
 }
 
-void view3d_cached_text_draw_end(View3D *v3d, ARegion *ar, bool depth_write, float mat[4][4])
+void view3d_cached_text_draw_end(View3D *v3d, ARegion *ar, bool depth_write)
 {
 	RegionView3D *rv3d = ar->regiondata;
 	ViewCachedString *vos;
@@ -938,9 +938,6 @@ void view3d_cached_text_draw_end(View3D *v3d, ARegion *ar, bool depth_write, flo
 
 	/* project first and test */
 	for (vos = g_v3d_strings[g_v3d_string_level]; vos; vos = vos->next) {
-		if (mat && !(vos->flag & V3D_CACHE_TEXT_WORLDSPACE))
-			mul_m4_v3(mat, vos->vec);
-
 		if (ED_view3d_project_short_ex(ar,
 		                               (vos->flag & V3D_CACHE_TEXT_GLOBALSPACE) ? rv3d->persmat : rv3d->persmatob,
 		                               (vos->flag & V3D_CACHE_TEXT_LOCALCLIP) != 0,
@@ -6496,18 +6493,15 @@ static void draw_editnurb(
 				vec_a[0] = fac;
 				vec_a[1] = 0.0f;
 				vec_a[2] = 0.0f;
-
-				vec_b[0] = -fac;
-				vec_b[1] = 0.0f;
-				vec_b[2] = 0.0f;
 				
 				mul_qt_v3(bevp->quat, vec_a);
-				mul_qt_v3(bevp->quat, vec_b);
+				madd_v3_v3fl(vec_a, bevp->dir, -fac);
+
+				reflect_v3_v3v3(vec_b, vec_a, bevp->dir);
+				negate_v3(vec_b);
+
 				add_v3_v3(vec_a, bevp->vec);
 				add_v3_v3(vec_b, bevp->vec);
-
-				madd_v3_v3fl(vec_a, bevp->dir, -fac);
-				madd_v3_v3fl(vec_b, bevp->dir, -fac);
 
 				glBegin(GL_LINE_STRIP);
 				glVertex3fv(vec_a);
@@ -6552,7 +6546,6 @@ static void draw_editfont(Scene *scene, View3D *v3d, RegionView3D *rv3d, Base *b
 	Curve *cu = ob->data;
 	EditFont *ef = cu->editfont;
 	float vec1[3], vec2[3];
-	int selstart, selend;
 
 	draw_editfont_textcurs(rv3d, ef->textcurs);
 
@@ -6605,17 +6598,16 @@ static void draw_editfont(Scene *scene, View3D *v3d, RegionView3D *rv3d, Base *b
 	setlinestyle(0);
 
 
-	if (BKE_vfont_select_get(ob, &selstart, &selend) && ef->selboxes) {
-		const int seltot = selend - selstart;
+	if (ef->selboxes && ef->selboxes_len) {
 		float selboxw;
 
 		cpack(0xffffff);
 		set_inverted_drawing(1);
-		for (int i = 0; i <= seltot; i++) {
+		for (int i = 0; i < ef->selboxes_len; i++) {
 			EditFontSelBox *sb = &ef->selboxes[i];
 			float tvec[3];
 
-			if (i != seltot) {
+			if (i + 1 != ef->selboxes_len) {
 				if (ef->selboxes[i + 1].y == sb->y)
 					selboxw = ef->selboxes[i + 1].x - sb->x;
 				else
@@ -7913,7 +7905,7 @@ void draw_object(Scene *scene, ARegion *ar, View3D *v3d, Base *base, const short
 			draw_new_particle_system(scene, v3d, rv3d, base, psys, dt, dflag);
 		}
 		invert_m4_m4(ob->imat, ob->obmat);
-		view3d_cached_text_draw_end(v3d, ar, 0, NULL);
+		view3d_cached_text_draw_end(v3d, ar, 0);
 
 		glMultMatrixf(ob->obmat);
 		
@@ -8088,7 +8080,7 @@ void draw_object(Scene *scene, ARegion *ar, View3D *v3d, Base *base, const short
 	
 	/* return warning, this is cached text draw */
 	invert_m4_m4(ob->imat, ob->obmat);
-	view3d_cached_text_draw_end(v3d, ar, 1, NULL);
+	view3d_cached_text_draw_end(v3d, ar, 1);
 	/* return warning, clear temp flag */
 	v3d->flag2 &= ~V3D_SHOW_SOLID_MATCAP;
 	
