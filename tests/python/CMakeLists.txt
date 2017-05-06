@@ -408,9 +408,9 @@ if(WITH_CYCLES)
 			if(MSVC)
 				add_test(NAME cycles_${subject}_test
 					COMMAND
-						"$<TARGET_FILE_DIR:blender>/${BLENDER_VERSION_MAJOR}.${BLENDER_VERSION_MINOR}/python/bin/python$<$<CONFIG:Debug>:_d>"
+						"$<TARGET_FILE_DIR:bforartists>/${BLENDER_VERSION_MAJOR}.${BLENDER_VERSION_MINOR}/python/bin/python$<$<CONFIG:Debug>:_d>"
 						${CMAKE_CURRENT_LIST_DIR}/cycles_render_tests.py
-					-blender "$<TARGET_FILE:blender>"
+					-blender "$<TARGET_FILE:bforartists>"
 					-testdir "${TEST_SRC_DIR}/cycles/ctests/${subject}"
 					-idiff "${OPENIMAGEIO_IDIFF}"
 				)
