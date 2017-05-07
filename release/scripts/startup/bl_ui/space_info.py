@@ -386,6 +386,27 @@ class INFO_MT_opengl_render(Menu):
         layout.prop_menu_enum(rd, "antialiasing_samples")
         layout.prop_menu_enum(rd, "alpha_mode")
 
+class INFO_MT_help(Menu):
+    bl_label = "Help"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("wm.url_open", text="Manual", icon='HELP').url = "https://www.bforartists.de/wiki/Manual"
+        layout.operator("wm.url_open", text="Release notes", icon='URL').url = "https://www.bforartists.de/wiki/release-notes"
+        layout.separator()
+
+        layout.operator("wm.url_open", text="Bforartists Website", icon='URL').url = "https://www.bforartists.de"
+        layout.separator()
+        layout.operator("wm.url_open", text="Report a Bug", icon='URL').url = "https://www.bforartists.de/node/add/project-issue/bforartists_bugtracker"
+        layout.separator()
+
+        layout.operator("wm.url_open", text="Python API Reference", icon='URL').url = "https://www.bforartists.de/pythonapi/contents.html"
+        layout.operator("wm.sysinfo", icon='TEXT')
+        layout.separator()
+
+        layout.operator("wm.splash", icon='BLENDER')
+
 
 class INFO_MT_window(Menu):
     bl_label = "Window"
@@ -421,27 +442,21 @@ class INFO_MT_window(Menu):
         
         layout.operator("wm.search_menu", icon='VIEWZOOM') # The search menu. Note that this just calls the pure search menu, and not the whole search menu addon.
 
-class INFO_MT_help(Menu):
-    bl_label = "Help"
+
+#Redraw timer sub menu - Debug stuff
+class WM_OT_redraw_timer(Menu):
+    bl_label = "Redraw Timer"
 
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("wm.url_open", text="Manual", icon='HELP').url = "https://www.bforartists.de/wiki/Manual"
-        layout.operator("wm.url_open", text="Release notes", icon='URL').url = "https://www.bforartists.de/wiki/release-notes"
-        layout.separator()
-
-        layout.operator("wm.url_open", text="Bforartists Website", icon='URL').url = "https://www.bforartists.de"
-        layout.separator()
-        layout.operator("wm.url_open", text="Report a Bug", icon='URL').url = "https://www.bforartists.de/node/add/project-issue/bforartists_bugtracker"
-        layout.separator()
-
-        layout.operator("wm.url_open", text="Python API Reference", icon='URL').url = "https://www.bforartists.de/pythonapi/contents.html"
-        layout.operator("wm.sysinfo", icon='TEXT')
-        layout.separator()
-
-        layout.operator("wm.splash", icon='BLENDER')
-
+        layout.operator("wm.redraw_timer", text = 'Draw Region').type ='DRAW'
+        layout.operator("wm.redraw_timer", text = 'Draw Region  Swap').type ='DRAW_SWAP'
+        layout.operator("wm.redraw_timer", text = 'Draw Window').type ='DRAW_WIN'
+        layout.operator("wm.redraw_timer", text = 'Draw Window  Swap').type ='DRAW_WIN_SWAP'
+        layout.operator("wm.redraw_timer", text = 'Anim Step').type ='ANIM_STEP'
+        layout.operator("wm.redraw_timer", text = 'Anim Play').type ='ANIM_PLAY'
+        layout.operator("wm.redraw_timer", text = 'Undo/Redo').type ='UNDO'
 
 classes = (
     switch_layout_to_default,
@@ -463,22 +478,10 @@ classes = (
     INFO_MT_opengl_render,
     INFO_MT_window,
     INFO_MT_help,
+    WM_OT_redraw_timer,
 )
 
-#Redraw timer sub menu - Debug stuff
-class WM_OT_redraw_timer(Menu):
-    bl_label = "Redraw Timer"
 
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("wm.redraw_timer", text = 'Draw Region').type ='DRAW'
-        layout.operator("wm.redraw_timer", text = 'Draw Region  Swap').type ='DRAW_SWAP'
-        layout.operator("wm.redraw_timer", text = 'Draw Window').type ='DRAW_WIN'
-        layout.operator("wm.redraw_timer", text = 'Draw Window  Swap').type ='DRAW_WIN_SWAP'
-        layout.operator("wm.redraw_timer", text = 'Anim Step').type ='ANIM_STEP'
-        layout.operator("wm.redraw_timer", text = 'Anim Play').type ='ANIM_PLAY'
-        layout.operator("wm.redraw_timer", text = 'Undo/Redo').type ='UNDO'
 
 if __name__ == "__main__":  # only for live edit.
     from bpy.utils import register_class
