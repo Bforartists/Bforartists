@@ -2838,6 +2838,7 @@ class RENDER_PT_bake(bpy.types.Panel):
     bl_region_type = "TOOLS"
     bl_category = "Tools"
     bl_options = {'DEFAULT_CLOSED'}
+    bl_context = "objectmode"
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
     
     @classmethod
