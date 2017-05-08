@@ -1007,7 +1007,7 @@ class VIEW3D_MT_select_edit_lattice(Menu):
         layout.separator()
 
         layout.operator("lattice.select_all", icon='SELECT_ALL').action = 'TOGGLE'
-        layout.operator("uv.select_all_inverse", text="Inverse", icon='INVERSE')
+        layout.operator("lattice.select_all_inverse", text="Inverse", icon='INVERSE')
 
         layout.separator()
 

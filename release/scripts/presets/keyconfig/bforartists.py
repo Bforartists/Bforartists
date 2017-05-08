@@ -1568,6 +1568,7 @@ kmi_props_setattr(kmi.properties, 'action', 'INVERT')
 kmi = km.keymap_items.new('lattice.select_more', 'NUMPAD_PLUS', 'PRESS', ctrl=True)
 kmi = km.keymap_items.new('lattice.select_less', 'NUMPAD_MINUS', 'PRESS', ctrl=True)
 kmi = km.keymap_items.new('object.vertex_parent_set', 'P', 'PRESS', ctrl=True)
+kmi = km.keymap_items.new('lattice.select_all_inverse', 'I', 'PRESS', ctrl=True)
 
 # Map Particle
 km = kc.keymaps.new('Particle', space_type='EMPTY', region_type='WINDOW', modal=False)
