@@ -1002,7 +1002,7 @@ class VIEW3D_MT_select_edit_lattice(Menu):
         myvar = layout.operator("view3d.select_lasso", icon='BORDER_LASSO')
         myvar.deselect = False
         layout.operator("view3d.select_border", icon='BORDER_RECT')
-        layout.operator("view3d.select_circle", icon = 'CIRCL_SELECTE')
+        layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
 
         layout.separator()
 
