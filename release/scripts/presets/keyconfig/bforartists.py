@@ -925,6 +925,8 @@ kmi = km.keymap_items.new('armature.delete', 'DEL', 'PRESS')
 kmi = km.keymap_items.new('armature.parent_set', 'P', 'PRESS', ctrl=True)
 kmi = km.keymap_items.new('armature.parent_clear', 'P', 'PRESS', alt=True)
 kmi = km.keymap_items.new('armature.separate', 'P', 'PRESS')
+kmi = km.keymap_items.new('armature.select_all', 'A', 'PRESS')
+kmi_props_setattr(kmi.properties, 'action', 'TOGGLE')
 
 # Map Curve
 km = kc.keymaps.new('Curve', space_type='EMPTY', region_type='WINDOW', modal=False)
