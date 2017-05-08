@@ -528,6 +528,11 @@ class VIEW3D_PT_tools_add_misc(View3DPanel, Panel):
         layout = self.layout
         view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
 
+        obj = context.active_object
+        mode_string = context.mode
+        edit_object = context.edit_object
+        gp_edit = context.gpencil_data and context.gpencil_data.use_stroke_edit_mode
+
         col = layout.column(align=True)
         col.label(text="Lamp:")
         if not view.show_iconbuttons: 
@@ -555,6 +560,25 @@ class VIEW3D_PT_tools_add_misc(View3DPanel, Panel):
             self.draw_add_force_field(col)
         else:
             self.draw_add_force_field_icons(col)
+
+        # Add menu for addons.
+        col = layout.column(align=True)
+        col.label(text="Addons add:")
+        if gp_edit:
+            pass
+        elif mode_string == 'OBJECT':
+            col.menu("INFO_MT_add", text="Add")
+        elif mode_string == 'EDIT_MESH':
+            col.menu("INFO_MT_mesh_add", text="Add")
+        elif mode_string == 'EDIT_CURVE':
+            col.menu("INFO_MT_curve_add", text="Add")
+        elif mode_string == 'EDIT_SURFACE':
+            col.menu("INFO_MT_surface_add", text="Add")
+        elif mode_string == 'EDIT_METABALL':
+            col.menu("INFO_MT_metaball_add", text="Add")
+        elif mode_string == 'EDIT_ARMATURE':
+            col.menu("INFO_MT_edit_armature_add", text="Add")
+
 
 class VIEW3D_PT_tools_relations(View3DPanel, Panel):
     bl_category = "Relations"
