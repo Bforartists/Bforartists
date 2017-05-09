@@ -1353,8 +1353,6 @@ class VIEW3D_PT_tools_surfaceedit(View3DPanel, Panel):
             col = layout.column(align=True)
             col.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="Mirror              ")
             col.label(text="Curve:")
-            col.operator("curve.duplicate_move", icon = 'DUPLICATE', text="Duplicate        ")
-            col.operator("curve.delete", icon = 'DELETE', text="Delete             ")
             col.operator("curve.cyclic_toggle", icon = 'TOGGLE_CYCLIC', text="Toggle Cyclic  ")
             col.operator("curve.switch_direction", icon = 'SWITCH_DIRECTION', text="Switch Direction")
 
@@ -1376,8 +1374,6 @@ class VIEW3D_PT_tools_surfaceedit(View3DPanel, Panel):
             col.label(text="Curve:")
             row = col.row(align=False)
             row.alignment = 'LEFT'
-            row.operator("curve.duplicate_move", icon = 'DUPLICATE', text = "")
-            row.operator("curve.delete", icon = 'DELETE', text = "")
             row.operator("curve.cyclic_toggle", icon = 'TOGGLE_CYCLIC', text = "")
             row.operator("curve.switch_direction", icon = 'SWITCH_DIRECTION', text = "")
 
