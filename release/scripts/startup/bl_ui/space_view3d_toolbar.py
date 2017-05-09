@@ -1362,10 +1362,6 @@ class VIEW3D_PT_tools_surfaceedit(View3DPanel, Panel):
             col.operator("curve.spin", icon = 'SPIN', text="Spin                 ")  
             col.operator("curve.subdivide", icon='SUBDIVIDE_EDGES', text="Subdivide        ")
 
-            col = layout.column(align=True)
-            col.label(text="Deform:")
-            col.operator("transform.vertex_random", icon = 'RANDOMIZE', text="Randomize      ")
-
         else:
 
             col = layout.column(align=True)
@@ -1384,12 +1380,6 @@ class VIEW3D_PT_tools_surfaceedit(View3DPanel, Panel):
             row.operator("curve.extrude", icon='EXTRUDE_REGION', text = "")
             row.operator("curve.spin", icon = 'SPIN', text = "")
             row.operator("curve.subdivide", icon='SUBDIVIDE_EDGES', text = "")
-
-            col = layout.column(align=True)
-            col.label(text="Deform:")
-            row = col.row(align=False)
-            row.alignment = 'LEFT'
-            row.operator("transform.vertex_random", icon = 'RANDOMIZE', text = "")
 
 
 class VIEW3D_PT_tools_add_surface_edit(View3DPanel, Panel):
