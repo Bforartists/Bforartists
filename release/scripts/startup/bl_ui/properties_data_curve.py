@@ -156,6 +156,7 @@ class DATA_PT_curve_texture_space(CurveButtonsPanel, Panel):
 
 class DATA_PT_geometry_curve(CurveButtonsPanelCurve, Panel):
     bl_label = "Geometry"
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -210,6 +211,7 @@ class DATA_PT_geometry_curve(CurveButtonsPanelCurve, Panel):
 
 class DATA_PT_pathanim(CurveButtonsPanelCurve, Panel):
     bl_label = "Path Animation"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw_header(self, context):
         curve = context.curve
@@ -234,6 +236,7 @@ class DATA_PT_pathanim(CurveButtonsPanelCurve, Panel):
 
 class DATA_PT_active_spline(CurveButtonsPanelActive, Panel):
     bl_label = "Active Spline"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
