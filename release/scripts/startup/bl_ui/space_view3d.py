@@ -2936,11 +2936,11 @@ def draw_curve(self, context):
     layout.separator()
 
     layout.operator("curve.spin")
-    layout.operator("curve.duplicate_move")
+    layout.operator("curve.duplicate_move", icon = "DUPLICATE")
     layout.operator("curve.split")
     layout.operator("curve.separate")
     layout.operator("curve.make_segment")
-    layout.operator("curve.delete", text="Delete...")
+    layout.operator("curve.delete", text="Delete...", icon = "DELETE")
 
     layout.separator()
 
