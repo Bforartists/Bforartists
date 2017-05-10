@@ -2935,7 +2935,6 @@ def draw_curve(self, context):
 
     layout.separator()
 
-    layout.operator("curve.spin")
     layout.operator("curve.duplicate_move", icon = "DUPLICATE")
     layout.operator("curve.split")
     layout.operator("curve.separate")
