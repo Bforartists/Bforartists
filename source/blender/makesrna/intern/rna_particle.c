@@ -2300,7 +2300,7 @@ static void rna_def_particle_settings(BlenderRNA *brna)
 
 	prop = RNA_def_property(srna, "use_render_adaptive", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_sdna(prop, NULL, "draw", PART_DRAW_REN_ADAPT);
-	RNA_def_property_ui_text(prop, "Adaptive render", "Draw steps of the particle path");
+	RNA_def_property_ui_text(prop, "Adaptive Render", "Draw steps of the particle path");
 	RNA_def_property_update(prop, 0, "rna_Particle_redo");
 
 	prop = RNA_def_property(srna, "use_velocity_length", PROP_BOOLEAN, PROP_NONE);
@@ -2315,7 +2315,7 @@ static void rna_def_particle_settings(BlenderRNA *brna)
 
 	prop = RNA_def_property(srna, "use_strand_primitive", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_sdna(prop, NULL, "draw", PART_DRAW_REN_STRAND);
-	RNA_def_property_ui_text(prop, "Strand render", "Use the strand primitive for rendering");
+	RNA_def_property_ui_text(prop, "Strand Render", "Use the strand primitive for rendering");
 	RNA_def_property_update(prop, 0, "rna_Particle_redo");
 
 	prop = RNA_def_property(srna, "draw_method", PROP_ENUM, PROP_NONE);
@@ -2363,7 +2363,8 @@ static void rna_def_particle_settings(BlenderRNA *brna)
 	RNA_def_property_ui_text(prop, "Render", "How many steps paths are rendered with (power of 2)");
 
 	prop = RNA_def_property(srna, "hair_step", PROP_INT, PROP_NONE);
-	RNA_def_property_range(prop, 2, 50);
+	RNA_def_property_range(prop, 2, SHRT_MAX);
+	RNA_def_property_ui_range(prop, 2, 50, 1, 1);
 	RNA_def_property_ui_text(prop, "Segments", "Number of hair segments");
 	RNA_def_property_update(prop, 0, "rna_Particle_reset");
 

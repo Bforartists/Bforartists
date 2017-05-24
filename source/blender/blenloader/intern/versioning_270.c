@@ -1615,6 +1615,8 @@ void blo_do_versions_270(FileData *fd, Library *UNUSED(lib), Main *main)
 				bNode *node;
 				for (node = ntree->nodes.first; node; node = node->next) {
 					if (node->type == CMP_NODE_R_LAYERS) {
+						/* Make sure new sockets are properly created. */
+						node_verify_socket_templates(ntree, node);
 						int pass_index = 0;
 						const char *sockname;
 						for (bNodeSocket *sock = node->outputs.first; sock && pass_index < 31; sock = sock->next, pass_index++) {
@@ -1633,6 +1635,19 @@ void blo_do_versions_270(FileData *fd, Library *UNUSED(lib), Main *main)
 				}
 			}
 		} FOREACH_NODETREE_END
+	}
+
+	{
+		for (Scene *scene = main->scene.first; scene; scene = scene->id.next) {
+			if (scene->r.im_format.exr_codec == R_IMF_EXR_CODEC_DWAB) {
+				scene->r.im_format.exr_codec = R_IMF_EXR_CODEC_DWAA;
+			}
+		}
+
+		/* Fix related to VGroup modifiers creating named defgroup CD layers! See T51520. */
+		for (Mesh *me = main->mesh.first; me; me = me->id.next) {
+			CustomData_set_layer_name(&me->vdata, CD_MDEFORMVERT, 0, "");
+		}
 	}
 }
 
