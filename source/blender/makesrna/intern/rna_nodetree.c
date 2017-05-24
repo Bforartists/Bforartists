@@ -5239,6 +5239,16 @@ static void def_cmp_luma_matte(StructRNA *srna)
 	RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
 }
 
+static void def_cmp_brightcontrast(StructRNA *srna)
+{
+	PropertyRNA *prop;
+
+	prop = RNA_def_property(srna, "use_premultiply", PROP_BOOLEAN, PROP_NONE);
+	RNA_def_property_boolean_sdna(prop, NULL, "custom1", 1);
+	RNA_def_property_ui_text(prop, "Convert Premul", "Keep output image premultiplied alpha");
+	RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_Node_update");
+}
+
 static void def_cmp_chroma_matte(StructRNA *srna)
 {
 	PropertyRNA *prop;
@@ -6922,11 +6932,6 @@ static void rna_def_node_socket(BlenderRNA *brna)
 	prop = RNA_def_property(srna, "enabled", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", SOCK_UNAVAIL);
 	RNA_def_property_ui_text(prop, "Enabled", "Enable the socket");
-	RNA_def_property_update(prop, NC_NODE | ND_DISPLAY, NULL);
-
-	prop = RNA_def_property(srna, "is_virtual", PROP_BOOLEAN, PROP_NONE);
-	RNA_def_property_boolean_sdna(prop, NULL, "flag", SOCK_VIRTUAL);
-	RNA_def_property_ui_text(prop, "Virtual", "Socket is Virtual");
 	RNA_def_property_update(prop, NC_NODE | ND_DISPLAY, NULL);
 
 	prop = RNA_def_property(srna, "link_limit", PROP_INT, PROP_NONE);

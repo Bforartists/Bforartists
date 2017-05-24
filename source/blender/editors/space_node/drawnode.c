@@ -2478,6 +2478,11 @@ static void node_composit_buts_sunbeams(uiLayout *layout, bContext *UNUSED(C), P
 	uiItemR(layout, ptr, "ray_length", UI_ITEM_R_SLIDER, NULL, ICON_NONE);
 }
 
+static void node_composit_buts_brightcontrast(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
+{
+	uiItemR(layout, ptr, "use_premultiply", 0, NULL, ICON_NONE);
+}
+
 /* only once called */
 static void node_composit_set_butfunc(bNodeType *ntype)
 {
@@ -2705,6 +2710,8 @@ static void node_composit_set_butfunc(bNodeType *ntype)
 		case CMP_NODE_SUNBEAMS:
 			ntype->draw_buttons = node_composit_buts_sunbeams;
 			break;
+		case CMP_NODE_BRIGHTCONTRAST:
+			ntype->draw_buttons = node_composit_buts_brightcontrast;
 	}
 }
 
@@ -3069,7 +3076,6 @@ static void std_node_socket_draw(bContext *C, uiLayout *layout, PointerRNA *ptr,
 	bNode *node = node_ptr->data;
 	bNodeSocket *sock = ptr->data;
 	int type = sock->typeinfo->type;
-	bool connected_to_virtual = (sock->link && (sock->link->fromsock->flag & SOCK_VIRTUAL));
 	/*int subtype = sock->typeinfo->subtype;*/
 	
 	/* XXX not nice, eventually give this node its own socket type ... */
@@ -3078,7 +3084,7 @@ static void std_node_socket_draw(bContext *C, uiLayout *layout, PointerRNA *ptr,
 		return;
 	}
 
-	if ((sock->in_out == SOCK_OUT) || ((sock->flag & SOCK_IN_USE) && !connected_to_virtual) || (sock->flag & SOCK_HIDE_VALUE)) {
+	if ((sock->in_out == SOCK_OUT) || (sock->flag & SOCK_IN_USE) || (sock->flag & SOCK_HIDE_VALUE)) {
 		node_socket_button_label(C, layout, ptr, node_ptr, text);
 		return;
 	}
@@ -3591,7 +3597,6 @@ void node_draw_link(View2D *v2d, SpaceNode *snode, bNodeLink *link)
 {
 	bool do_shaded = false;
 	bool do_triple = false;
-	bool do_dashed = false;
 	int th_col1 = TH_WIRE_INNER, th_col2 = TH_WIRE_INNER, th_col3 = TH_WIRE;
 	
 	if (link->fromsock == NULL && link->tosock == NULL)
@@ -3608,8 +3613,6 @@ void node_draw_link(View2D *v2d, SpaceNode *snode, bNodeLink *link)
 			return;
 		if (link->fromsock->flag & SOCK_UNAVAIL)
 			return;
-		if ((link->fromsock->flag & SOCK_VIRTUAL) || (link->fromsock->flag & SOCK_VIRTUAL))
-			do_dashed = true;
 
 		if (link->flag & NODE_LINK_VALID) {
 			/* special indicated link, on drop-node */
@@ -3631,9 +3634,7 @@ void node_draw_link(View2D *v2d, SpaceNode *snode, bNodeLink *link)
 		}
 	}
 
-	if (do_dashed) setlinestyle(3);
 	node_draw_link_bezier(v2d, snode, link, th_col1, do_shaded, th_col2, do_triple, th_col3);
-	if (do_dashed) setlinestyle(0);
 //	node_draw_link_straight(v2d, snode, link, th_col1, do_shaded, th_col2, do_triple, th_col3);
 }
 

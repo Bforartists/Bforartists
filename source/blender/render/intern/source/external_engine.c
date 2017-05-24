@@ -259,7 +259,7 @@ void RE_engine_add_pass(RenderEngine *engine, const char *name, int channels, co
 	render_result_add_pass(re->result, name, channels, chan_id, layername, NULL);
 }
 
-void RE_engine_end_result(RenderEngine *engine, RenderResult *result, int cancel, int merge_results)
+void RE_engine_end_result(RenderEngine *engine, RenderResult *result, int cancel, int highlight, int merge_results)
 {
 	Render *re = engine->re;
 
@@ -268,7 +268,7 @@ void RE_engine_end_result(RenderEngine *engine, RenderResult *result, int cancel
 	}
 
 	/* merge. on break, don't merge in result for preview renders, looks nicer */
-	if (!cancel) {
+	if (!highlight) {
 		/* for exr tile render, detect tiles that are done */
 		RenderPart *pa = get_part_from_result(re, result);
 
@@ -783,7 +783,13 @@ void RE_engine_register_pass(struct RenderEngine *engine, struct Scene *scene, s
 		return;
 	}
 
-	if (scene->nodetree) {
-		ntreeCompositRegisterPass(scene->nodetree, scene, srl, name, type);
+	/* Register the pass in all scenes that have a render layer node for this layer.
+	 * Since multiple scenes can be used in the compositor, the code must loop over all scenes
+	 * and check whether their nodetree has a node that needs to be updated. */
+	Scene *sce;
+	for (sce = G.main->scene.first; sce; sce = sce->id.next) {
+		if (sce->nodetree) {
+			ntreeCompositRegisterPass(sce->nodetree, scene, srl, name, type);
+		}
 	}
 }
