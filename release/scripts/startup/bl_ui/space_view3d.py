@@ -1003,12 +1003,12 @@ class VIEW3D_MT_select_edit_lattice(Menu):
         myvar = layout.operator("view3d.select_lasso", icon='BORDER_LASSO')
         myvar.deselect = False
         layout.operator("view3d.select_border", icon='BORDER_RECT')
-        layout.operator("view3d.select_circle", icon = 'CIRCL_SELECTE')
+        layout.operator("view3d.select_circle", icon = 'CIRCLE_SELECT')
 
         layout.separator()
 
         layout.operator("lattice.select_all", icon='SELECT_ALL').action = 'TOGGLE'
-        layout.operator("uv.select_all_inverse", text="Inverse", icon='INVERSE')
+        layout.operator("lattice.select_all_inverse", text="Inverse", icon='INVERSE')
 
         layout.separator()
 
@@ -1221,6 +1221,140 @@ class VIEW3D_MT_angle_control(Menu):
                     layout.prop(tex_slot, "use_random", text="Random")
             else:
                 layout.prop(tex_slot, "use_random", text="Random")
+
+# ********** Add menu **********
+
+# XXX: INFO_MT_ names used to keep backwards compatibility (Addons etc that hook into the menu)
+# XXX: bfa - the whole add menu is just 
+
+
+class INFO_MT_mesh_add(Menu):
+    bl_idname = "INFO_MT_mesh_add"
+    bl_label = "Mesh"
+
+    def draw(self, context):
+        #from .space_view3d_toolbar import VIEW3D_PT_tools_add_object
+
+        layout = self.layout
+
+        layout.operator_context = 'INVOKE_REGION_WIN'
+
+        #VIEW3D_PT_tools_add_object.draw_add_mesh(layout)
+
+
+class INFO_MT_curve_add(Menu):
+    bl_idname = "INFO_MT_curve_add"
+    bl_label = "Curve"
+
+    def draw(self, context):
+        #from .space_view3d_toolbar import VIEW3D_PT_tools_add_object
+        layout = self.layout
+
+        layout.operator_context = 'INVOKE_REGION_WIN'
+
+        #VIEW3D_PT_tools_add_object.draw_add_curve(layout)
+
+
+class INFO_MT_surface_add(Menu):
+    bl_idname = "INFO_MT_surface_add"
+    bl_label = "Surface"
+
+    def draw(self, context):
+        #from .space_view3d_toolbar import VIEW3D_PT_tools_add_object
+        layout = self.layout
+
+        layout.operator_context = 'INVOKE_REGION_WIN'
+
+        #VIEW3D_PT_tools_add_object.draw_add_surface(layout)
+
+
+class INFO_MT_metaball_add(Menu):
+    bl_idname = "INFO_MT_metaball_add"
+    bl_label = "Metaball"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator_context = 'INVOKE_REGION_WIN'
+        #layout.operator_enum("object.metaball_add", "type")
+
+
+class INFO_MT_edit_curve_add(Menu):
+    bl_idname = "INFO_MT_edit_curve_add"
+    bl_label = "Add"
+
+    def draw(self, context):
+        is_surf = context.active_object.type == 'SURFACE'
+
+        layout = self.layout
+        layout.operator_context = 'EXEC_REGION_WIN'
+
+        #if is_surf:
+        #    INFO_MT_surface_add.draw(self, context)
+        #else:
+        #    INFO_MT_curve_add.draw(self, context)
+
+
+class INFO_MT_edit_armature_add(Menu):
+    bl_idname = "INFO_MT_edit_armature_add"
+    bl_label = "Armature"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator_context = 'EXEC_REGION_WIN'
+        #layout.operator("armature.bone_primitive_add", text="Single Bone", icon='BONE_DATA')
+
+
+class INFO_MT_armature_add(Menu):
+    bl_idname = "INFO_MT_armature_add"
+    bl_label = "Armature"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator_context = 'EXEC_REGION_WIN'
+        #layout.operator("object.armature_add", text="Single Bone", icon='BONE_DATA')
+
+
+class INFO_MT_lamp_add(Menu):
+    bl_idname = "INFO_MT_lamp_add"
+    bl_label = "Lamp"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator_context = 'INVOKE_REGION_WIN'
+        #layout.operator_enum("object.lamp_add", "type")
+
+
+class INFO_MT_add(Menu):
+    bl_label = "Add"
+
+    def draw(self, context):
+        layout = self.layout
+
+        # note, don't use 'EXEC_SCREEN' or operators wont get the 'v3d' context.
+
+        # Note: was EXEC_AREA, but this context does not have the 'rv3d', which prevents
+        #       "align_view" to work on first call (see [#32719]).
+        layout.operator_context = 'EXEC_REGION_WIN'
+
+        layout.menu("INFO_MT_mesh_add", icon='OUTLINER_OB_MESH')
+        layout.menu("INFO_MT_curve_add", icon='OUTLINER_OB_CURVE')
+        layout.menu("INFO_MT_surface_add", icon='OUTLINER_OB_SURFACE')
+        layout.menu("INFO_MT_metaball_add", text="Metaball", icon='OUTLINER_OB_META')
+        layout.separator()
+
+        layout.menu("INFO_MT_armature_add", icon='OUTLINER_OB_ARMATURE')
+        #layout.operator_menu_enum("object.empty_add", "type", text="Empty", icon='OUTLINER_OB_EMPTY')
+        layout.separator()
+
+        layout.menu("INFO_MT_lamp_add", icon='OUTLINER_OB_LAMP')
+        #layout.separator()
+
+        #layout.operator_menu_enum("object.effector_add", "type", text="Force Field", icon='OUTLINER_OB_EMPTY')
+
 
 
 # ********** Object menu **********
@@ -2882,12 +3016,11 @@ def draw_curve(self, context):
 
     layout.separator()
 
-    layout.operator("curve.spin")
-    layout.operator("curve.duplicate_move")
+    layout.operator("curve.duplicate_move", icon = "DUPLICATE")
     layout.operator("curve.split")
     layout.operator("curve.separate")
     layout.operator("curve.make_segment")
-    layout.operator("curve.delete", text="Delete...")
+    layout.operator("curve.delete", text="Delete...", icon = "DELETE")
 
     layout.separator()
 

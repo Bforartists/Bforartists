@@ -13,6 +13,84 @@ def kmi_props_setattr(kmi_props, attr, value):
 wm = bpy.context.window_manager
 kc = wm.keyconfigs.new(os.path.splitext(os.path.basename(__file__))[0])
 
+# Map 3D View Generic
+km = kc.keymaps.new('3D View Generic', space_type='VIEW_3D', region_type='WINDOW', modal=False)
+
+kmi = km.keymap_items.new('view3d.properties', 'T', 'PRESS', ctrl=True)
+kmi = km.keymap_items.new('view3d.toolshelf', 'T', 'PRESS')
+
+# Map Graph Editor Generic
+km = kc.keymaps.new('Graph Editor Generic', space_type='GRAPH_EDITOR', region_type='WINDOW', modal=False)
+
+kmi = km.keymap_items.new('graph.properties', 'T', 'PRESS', ctrl=True)
+kmi = km.keymap_items.new('graph.hide', 'H', 'PRESS')
+kmi_props_setattr(kmi.properties, 'unselected', False)
+kmi = km.keymap_items.new('graph.hide_unselected_curves', 'H', 'PRESS', shift=True)
+kmi = km.keymap_items.new('graph.reveal', 'H', 'PRESS', alt=True)
+
+# Map Image Generic
+km = kc.keymaps.new('Image Generic', space_type='IMAGE_EDITOR', region_type='WINDOW', modal=False)
+
+kmi = km.keymap_items.new('image.new', 'N', 'PRESS', ctrl=True)
+kmi = km.keymap_items.new('image.open', 'O', 'PRESS', ctrl=True)
+kmi = km.keymap_items.new('image.save', 'S', 'PRESS', ctrl=True)
+kmi = km.keymap_items.new('image.properties', 'T', 'PRESS', ctrl=True)
+kmi = km.keymap_items.new('image.toolshelf', 'T', 'PRESS')
+
+# Map Node Generic
+km = kc.keymaps.new('Node Generic', space_type='NODE_EDITOR', region_type='WINDOW', modal=False)
+
+kmi = km.keymap_items.new('node.properties', 'T', 'PRESS', ctrl=True)
+kmi = km.keymap_items.new('node.toolbar', 'T', 'PRESS')
+
+# Map Dopesheet Generic
+km = kc.keymaps.new('Dopesheet Generic', space_type='DOPESHEET_EDITOR', region_type='WINDOW', modal=False)
+
+kmi = km.keymap_items.new('action.properties', 'T', 'PRESS', ctrl=True)
+
+# Map NLA Generic
+km = kc.keymaps.new('NLA Generic', space_type='NLA_EDITOR', region_type='WINDOW', modal=False)
+
+kmi = km.keymap_items.new('nla.properties', 'T', 'PRESS', ctrl=True)
+kmi = km.keymap_items.new('nla.tweakmode_enter', 'TAB', 'PRESS')
+kmi = km.keymap_items.new('nla.tweakmode_exit', 'TAB', 'PRESS')
+kmi = km.keymap_items.new('nla.tweakmode_enter', 'TAB', 'PRESS', shift=True)
+kmi_props_setattr(kmi.properties, 'isolate_action', True)
+kmi = km.keymap_items.new('nla.tweakmode_exit', 'TAB', 'PRESS', shift=True)
+kmi_props_setattr(kmi.properties, 'isolate_action', True)
+
+# Map Text Generic
+km = kc.keymaps.new('Text Generic', space_type='TEXT_EDITOR', region_type='WINDOW', modal=False)
+
+kmi = km.keymap_items.new('text.start_find', 'F', 'PRESS', ctrl=True)
+kmi = km.keymap_items.new('text.properties', 'T', 'PRESS', ctrl=True)
+
+# Map Logic Editor
+km = kc.keymaps.new('Logic Editor', space_type='LOGIC_EDITOR', region_type='WINDOW', modal=False)
+
+kmi = km.keymap_items.new('logic.properties', 'T', 'PRESS', ctrl=True)
+kmi = km.keymap_items.new('logic.links_cut', 'LEFTMOUSE', 'PRESS', ctrl=True)
+kmi = km.keymap_items.new('wm.call_menu', 'A', 'PRESS', shift=True)
+kmi_props_setattr(kmi.properties, 'name', 'LOGIC_MT_logicbricks_add')
+kmi = km.keymap_items.new('logic.view_all', 'HOME', 'PRESS')
+kmi = km.keymap_items.new('logic.view_all', 'NDOF_BUTTON_FIT', 'PRESS')
+
+# Map Clip
+km = kc.keymaps.new('Clip', space_type='CLIP_EDITOR', region_type='WINDOW', modal=False)
+
+kmi = km.keymap_items.new('clip.open', 'O', 'PRESS', alt=True)
+kmi = km.keymap_items.new('clip.tools', 'T', 'PRESS')
+kmi = km.keymap_items.new('clip.properties', 'T', 'PRESS', ctrl=True)
+kmi = km.keymap_items.new('clip.set_solver_keyframe', 'Q', 'PRESS')
+kmi_props_setattr(kmi.properties, 'keyframe', 'KEYFRAME_A')
+kmi = km.keymap_items.new('clip.set_solver_keyframe', 'E', 'PRESS', shift=True)
+kmi_props_setattr(kmi.properties, 'keyframe', 'KEYFRAME_B')
+
+# Map SequencerCommon
+km = kc.keymaps.new('SequencerCommon', space_type='SEQUENCE_EDITOR', region_type='WINDOW', modal=False)
+
+kmi = km.keymap_items.new('sequencer.properties', 'T', 'PRESS', shift=True)
+
 # Map Paint Curve
 km = kc.keymaps.new('Paint Curve', space_type='EMPTY', region_type='WINDOW', modal=False)
 
@@ -925,6 +1003,8 @@ kmi = km.keymap_items.new('armature.delete', 'DEL', 'PRESS')
 kmi = km.keymap_items.new('armature.parent_set', 'P', 'PRESS', ctrl=True)
 kmi = km.keymap_items.new('armature.parent_clear', 'P', 'PRESS', alt=True)
 kmi = km.keymap_items.new('armature.separate', 'P', 'PRESS')
+kmi = km.keymap_items.new('armature.select_all', 'A', 'PRESS')
+kmi_props_setattr(kmi.properties, 'action', 'TOGGLE')
 
 # Map Curve
 km = kc.keymaps.new('Curve', space_type='EMPTY', region_type='WINDOW', modal=False)
@@ -1075,7 +1155,6 @@ kmi = km.keymap_items.new('wm.context_scale_float', 'NDOF_BUTTON_MINUS', 'PRESS'
 kmi_props_setattr(kmi.properties, 'data_path', 'user_preferences.inputs.ndof_sensitivity')
 kmi_props_setattr(kmi.properties, 'value', 0.6666666865348816)
 kmi = km.keymap_items.new('info.reports_display_update', 'TIMER_REPORT', 'ANY', any=True)
-kmi = km.keymap_items.new('wm.console_toggle', 'F2', 'PRESS')
 
 # Map Screen
 km = kc.keymaps.new('Screen', space_type='EMPTY', region_type='WINDOW', modal=False)
@@ -1176,12 +1255,6 @@ kmi = km.keymap_items.new('outliner.scroll_page', 'PAGE_UP', 'PRESS')
 kmi_props_setattr(kmi.properties, 'up', True)
 kmi = km.keymap_items.new('outliner.selected_toggle', 'A', 'PRESS')
 kmi = km.keymap_items.new('outliner.expanded_toggle', 'A', 'PRESS', shift=True)
-
-# Map 3D View Generic
-km = kc.keymaps.new('3D View Generic', space_type='VIEW_3D', region_type='WINDOW', modal=False)
-
-kmi = km.keymap_items.new('view3d.properties', 'T', 'PRESS', shift=True)
-kmi = km.keymap_items.new('view3d.toolshelf', 'T', 'PRESS')
 
 # Map Grease Pencil
 km = kc.keymaps.new('Grease Pencil', space_type='EMPTY', region_type='WINDOW', modal=False)
@@ -1567,6 +1640,7 @@ kmi_props_setattr(kmi.properties, 'action', 'INVERT')
 kmi = km.keymap_items.new('lattice.select_more', 'NUMPAD_PLUS', 'PRESS', ctrl=True)
 kmi = km.keymap_items.new('lattice.select_less', 'NUMPAD_MINUS', 'PRESS', ctrl=True)
 kmi = km.keymap_items.new('object.vertex_parent_set', 'P', 'PRESS', ctrl=True)
+kmi = km.keymap_items.new('lattice.select_all_inverse', 'I', 'PRESS', ctrl=True)
 
 # Map Particle
 km = kc.keymaps.new('Particle', space_type='EMPTY', region_type='WINDOW', modal=False)
@@ -1799,15 +1873,6 @@ km = kc.keymaps.new('Timeline', space_type='TIMELINE', region_type='WINDOW', mod
 kmi = km.keymap_items.new('time.view_all', 'HOME', 'PRESS')
 kmi = km.keymap_items.new('time.view_all', 'NDOF_BUTTON_FIT', 'PRESS')
 
-# Map Graph Editor Generic
-km = kc.keymaps.new('Graph Editor Generic', space_type='GRAPH_EDITOR', region_type='WINDOW', modal=False)
-
-kmi = km.keymap_items.new('graph.properties', 'N', 'PRESS')
-kmi = km.keymap_items.new('graph.hide', 'H', 'PRESS')
-kmi_props_setattr(kmi.properties, 'unselected', False)
-kmi = km.keymap_items.new('graph.hide_unselected_curves', 'H', 'PRESS', shift=True)
-kmi = km.keymap_items.new('graph.reveal', 'H', 'PRESS', alt=True)
-
 # Map Graph Editor
 km = kc.keymaps.new('Graph Editor', space_type='GRAPH_EDITOR', region_type='WINDOW', modal=False)
 
@@ -1874,15 +1939,6 @@ kmi = km.keymap_items.new('transform.translate', 'EVT_TWEAK_S', 'ANY')
 kmi = km.keymap_items.new('transform.rotate', 'E', 'PRESS')
 kmi = km.keymap_items.new('transform.resize', 'R', 'PRESS')
 kmi = km.keymap_items.new('graph.delete', 'DEL', 'PRESS')
-
-# Map Image Generic
-km = kc.keymaps.new('Image Generic', space_type='IMAGE_EDITOR', region_type='WINDOW', modal=False)
-
-kmi = km.keymap_items.new('image.new', 'N', 'PRESS', ctrl=True)
-kmi = km.keymap_items.new('image.open', 'O', 'PRESS', ctrl=True)
-kmi = km.keymap_items.new('image.save', 'S', 'PRESS', ctrl=True)
-kmi = km.keymap_items.new('image.properties', 'N', 'PRESS')
-kmi = km.keymap_items.new('image.toolshelf', 'T', 'PRESS')
 
 # Map Info
 km = kc.keymaps.new('Info', space_type='INFO', region_type='WINDOW', modal=False)
@@ -2042,17 +2098,6 @@ kmi = km.keymap_items.new('transform.transform', 'T', 'PRESS', shift=True)
 kmi_props_setattr(kmi.properties, 'mode', 'TIME_SLIDE')
 kmi = km.keymap_items.new('action.delete', 'DEL', 'PRESS')
 
-# Map NLA Generic
-km = kc.keymaps.new('NLA Generic', space_type='NLA_EDITOR', region_type='WINDOW', modal=False)
-
-kmi = km.keymap_items.new('nla.properties', 'N', 'PRESS')
-kmi = km.keymap_items.new('nla.tweakmode_enter', 'TAB', 'PRESS')
-kmi = km.keymap_items.new('nla.tweakmode_exit', 'TAB', 'PRESS')
-kmi = km.keymap_items.new('nla.tweakmode_enter', 'TAB', 'PRESS', shift=True)
-kmi_props_setattr(kmi.properties, 'isolate_action', True)
-kmi = km.keymap_items.new('nla.tweakmode_exit', 'TAB', 'PRESS', shift=True)
-kmi_props_setattr(kmi.properties, 'isolate_action', True)
-
 # Map NLA Channels
 km = kc.keymaps.new('NLA Channels', space_type='NLA_EDITOR', region_type='WINDOW', modal=False)
 
@@ -2061,28 +2106,6 @@ kmi_props_setattr(kmi.properties, 'extend', False)
 kmi = km.keymap_items.new('nla.channels_click', 'LEFTMOUSE', 'PRESS', shift=True)
 kmi_props_setattr(kmi.properties, 'extend', True)
 kmi = km.keymap_items.new('nla.tracks_delete', 'DEL', 'PRESS')
-
-# Map Text Generic
-km = kc.keymaps.new('Text Generic', space_type='TEXT_EDITOR', region_type='WINDOW', modal=False)
-
-kmi = km.keymap_items.new('text.start_find', 'F', 'PRESS', ctrl=True)
-kmi = km.keymap_items.new('text.properties', 'T', 'PRESS', ctrl=True)
-
-# Map SequencerCommon
-km = kc.keymaps.new('SequencerCommon', space_type='SEQUENCE_EDITOR', region_type='WINDOW', modal=False)
-
-kmi = km.keymap_items.new('sequencer.properties', 'N', 'PRESS')
-
-# Map Clip
-km = kc.keymaps.new('Clip', space_type='CLIP_EDITOR', region_type='WINDOW', modal=False)
-
-kmi = km.keymap_items.new('clip.open', 'O', 'PRESS', alt=True)
-kmi = km.keymap_items.new('clip.tools', 'T', 'PRESS')
-kmi = km.keymap_items.new('clip.properties', 'N', 'PRESS')
-kmi = km.keymap_items.new('clip.set_solver_keyframe', 'Q', 'PRESS')
-kmi_props_setattr(kmi.properties, 'keyframe', 'KEYFRAME_A')
-kmi = km.keymap_items.new('clip.set_solver_keyframe', 'E', 'PRESS', shift=True)
-kmi_props_setattr(kmi.properties, 'keyframe', 'KEYFRAME_B')
 
 # Map Clip Graph Editor
 km = kc.keymaps.new('Clip Graph Editor', space_type='CLIP_EDITOR', region_type='WINDOW', modal=False)

@@ -1429,6 +1429,7 @@ class CyclesRender_PT_bake(CyclesButtonsPanel, Panel):
     bl_label = "Bake"
     bl_context = "render"
     bl_options = {'DEFAULT_CLOSED'}
+    bl_context = "objectmode"
     COMPAT_ENGINES = {'CYCLES'}
 
     def draw(self, context):

@@ -1,4 +1,4 @@
-﻿# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -21,11 +21,11 @@
 # Script copyright (C) Campbell Barton
 
 bl_info = {
-    "name": "Grease Scatter Objects - Bforartists Version",
+    "name": "Grease Scatter Objects",
     "author": "Campbell Barton",
     "version": (0, 1),
     "blender": (2, 58, 0),
-    "location": "View3D > Tool Shelf > Create > Add Misc",
+    "location": "3D View, Add Mesh",
     "description": "Scatter a group of objects onto the active mesh using "
                    "the grease pencil lines",
     "warning": "",
@@ -390,12 +390,12 @@ def menu_func(self, context):
 
 def register():
     bpy.utils.register_class(Scatter)
-    bpy.types.VIEW3D_PT_tools_add_misc.append(menu_func)
+    bpy.types.INFO_MT_mesh_add.append(menu_func)
 
 
 def unregister():
     bpy.utils.unregister_class(Scatter)
-    bpy.types.VIEW3D_PT_tools_add_misc.remove(menu_func)
+    bpy.types.INFO_MT_mesh_add.remove(menu_func)
 
 #if __name__ == "__main__":
 #    _main()

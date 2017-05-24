@@ -1,4 +1,4 @@
-﻿# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -114,7 +114,7 @@ def register():
         bpy.utils.register_class(mop)
 
     for mf in menu_funcs:
-        bpy.types.VIEW3D_PT_tools_add_misc.append(mf)
+        bpy.types.INFO_MT_armature_add.append(mf)
 
 
 def unregister():
@@ -122,4 +122,4 @@ def unregister():
         bpy.utils.unregister_class(mop)
 
     for mf in menu_funcs:
-        bpy.types.VIEW3D_PT_tools_add_misc.remove(mf)
+        bpy.types.INFO_MT_armature_add.remove(mf)
