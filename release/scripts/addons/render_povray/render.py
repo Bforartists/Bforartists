@@ -34,7 +34,6 @@ from imghdr import what #imghdr is a python lib to identify image file types
 from . import df3 # for smoke rendering
 from . import shading # for BI POV haders emulation
 from . import primitives # for import and export of POV specific primitives
-from . import nodes # for POV specific nodes
 ##############################SF###########################
 ##############find image texture
 def imageFormat(imgF):
@@ -205,27 +204,30 @@ smokePath = os.path.join(preview_dir, "smoke.df3")
 def write_global_setting(scene,file):
     file.write("global_settings {\n")
     file.write("    assumed_gamma %.6f\n"%scene.pov.assumed_gamma)
-    if scene.pov.global_settings_advanced:
-        if scene.pov.radio_enable == False:
+    if scene.pov.global_settings_default == False:
+        if scene.pov.adc_bailout_enable and scene.pov.radio_enable == False:
             file.write("    adc_bailout %.6f\n"%scene.pov.adc_bailout)
-        file.write("    ambient_light <%.6f,%.6f,%.6f>\n"%scene.pov.ambient_light[:])
-        file.write("    irid_wavelength <%.6f,%.6f,%.6f>\n"%scene.pov.irid_wavelength[:])
-        file.write("    charset %s\n"%scene.pov.charset)
-        file.write("    max_trace_level %s\n"%scene.pov.max_trace_level)    
-        file.write("    max_intersections %s\n"%scene.pov.max_intersections)
-        file.write("    number_of_waves %s\n"%scene.pov.number_of_waves)
-        file.write("    noise_generator %s\n"%scene.pov.noise_generator) 
-
-    # below properties not added to __init__ yet to avoid conflicts with material sss scale 
-    # unless it would override then should be interfaced also in scene units property tab
-
-    # if scene.pov.sslt_enable:
-        # file.write("    mm_per_unit %s\n"%scene.pov.mm_per_unit) 
-        # file.write("    subsurface {\n")
-        # file.write("        samples %s, %s\n"%(scene.pov.sslt_samples_max,scene.pov.sslt_samples_min))
-        # if scene.pov.sslt_radiosity:
-            # file.write("        radiosity on\n")
-        # file.write("}\n")
+        if scene.pov.ambient_light_enable:
+            file.write("    ambient_light <%.6f,%.6f,%.6f>\n"%scene.pov.ambient_light[:])
+        if scene.pov.irid_wavelength_enable:
+            file.write("    irid_wavelength <%.6f,%.6f,%.6f>\n"%scene.pov.irid_wavelength[:])
+        if scene.pov.charset_enable:
+            file.write("    charset %s\n"%scene.pov.charset)
+        if scene.pov.max_trace_level_enable:
+            file.write("    max_trace_level %s\n"%scene.pov.max_trace_level)    
+        if scene.pov.max_intersections_enable:
+            file.write("    max_intersections %s\n"%scene.pov.max_intersections)
+        if scene.pov.number_of_waves_enable:
+            file.write("    number_of_waves %s\n"%scene.pov.number_of_waves)
+        if scene.pov.noise_generator_enable:
+            file.write("    noise_generator %s\n"%scene.pov.noise_generator) 
+    if scene.pov.sslt_enable:
+        file.write("    mm_per_unit %s\n"%scene.pov.mm_per_unit) 
+        file.write("    subsurface {\n")
+        file.write("        samples %s, %s\n"%(scene.pov.sslt_samples_max,scene.pov.sslt_samples_min))
+        if scene.pov.sslt_radiosity:
+            file.write("        radiosity on\n")
+        file.write("}\n")
 
     if scene.pov.radio_enable:
         file.write("    radiosity {\n")
@@ -268,21 +270,12 @@ def write_global_setting(scene,file):
             file.write("        adc_bailout %.6f\n"%scene.pov.photon_adc_bailout)
         if scene.pov.photon_media_enable:
             file.write("        media %s, %s\n"%(scene.pov.photon_media_steps,scene.pov.photon_media_factor))
-        if scene.pov.photon_map_file_save_load in {'save'}:
-            filePhName = 'Photon_map_file.ph'
-            if scene.pov.photon_map_file != '':
-                filePhName = scene.pov.photon_map_file+'.ph'
-            filePhDir = tempfile.gettempdir()
-            path = bpy.path.abspath(scene.pov.photon_map_dir)
-            if os.path.exists(path):
-                filePhDir = path
-            fullFileName = os.path.join(filePhDir,filePhName)
-            file.write('        save_file "%s"\n'%fullFileName)
-            scene.pov.photon_map_file = fullFileName
-        if scene.pov.photon_map_file_save_load in {'load'}:
-            fullFileName = bpy.path.abspath(scene.pov.photon_map_file)
-            if os.path.exists(fullFileName):
-                file.write('        load_file "%s"\n'%fullFileName)
+        if scene.pov.photon_savefile or scene.pov.photon_loadfile:
+            filePh = bpy.path.abspath(scene.pov.photon_map_file)
+            if scene.pov.photon_savefile:
+                file.write('save_file "%s"\n'%filePh)
+            if scene.pov.photon_loadfile and os.path.exists(filePh):
+                file.write('load_file "%s"\n'%filePh)
         file.write("}\n")
     file.write("}\n")
 
@@ -522,27 +515,16 @@ def write_pov(filename, scene=None, info_callback=None):
             tabWrite("rotate  <%.6f, %.6f, %.6f>\n" % \
                      tuple([degrees(e) for e in matrix.to_3x3().to_euler()]))
             tabWrite("translate <%.6f, %.6f, %.6f>\n" % matrix.translation[:])
-            if camera.data.pov.dof_enable and (focal_point != 0 or camera.data.dof_object):
+            if camera.data.pov.dof_enable and focal_point != 0:
                 tabWrite("aperture %.3g\n" % camera.data.pov.dof_aperture)
                 tabWrite("blur_samples %d %d\n" % \
                          (camera.data.pov.dof_samples_min, camera.data.pov.dof_samples_max))
                 tabWrite("variance 1/%d\n" % camera.data.pov.dof_variance)
                 tabWrite("confidence %.3g\n" % camera.data.pov.dof_confidence)
-                if camera.data.dof_object:
-                    focalOb = scene.objects[camera.data.dof_object.name]
-                    matrixBlur = global_matrix * focalOb.matrix_world
-                    tabWrite("focal_point <%.4f,%.4f,%.4f>\n"% matrixBlur.translation[:])
-                else:
-                    tabWrite("focal_point <0, 0, %f>\n" % focal_point)
-        if camera.data.pov.normal_enable:
-            tabWrite("normal {%s %.4f turbulence %.4f scale %.4f}\n"%
-                    (camera.data.pov.normal_patterns,
-                    camera.data.pov.cam_normal,
-                    camera.data.pov.turbulence,
-                    camera.data.pov.scale))
+                tabWrite("focal_point <0, 0, %f>\n" % focal_point)
         tabWrite("}\n")
-        
 
+        
         
     def exportLamps(lamps):
         # Incremented after each lamp export to declare its target
@@ -2874,15 +2856,10 @@ def write_pov(filename, scene=None, info_callback=None):
 
                         tabWrite("}\n")  # End of mesh block
                     else:
-                        facesMaterials = [] # WARNING!!!!!!!!!!!!!!!!!!!!!!
-                        if me_materials:
-                            for f in me_faces:
-                                if f.material_index not in facesMaterials:
-                                    facesMaterials.append(f.material_index)
                         # No vertex colors, so write material colors as vertex colors
                         for i, material in enumerate(me_materials):
 
-                            if material and material.pov.material_use_nodes == False:  # WARNING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                            if material:
                                 # Multiply diffuse with SSS Color
                                 if material.subsurface_scattering.use:
                                     diffuse_color = [i * j for i, j in zip(material.subsurface_scattering.color[:], material.diffuse_color[:])]
@@ -2937,8 +2914,8 @@ def write_pov(filename, scene=None, info_callback=None):
                             #when no material slot exists,                         
                             material=None
 
-                        # WARNING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                        if material and ob.active_material is not None and material.pov.material_use_nodes == False:
+
+                        if material and ob.active_material is not None:
                             if material.pov.replacement_text != "":
                                 file.write("\n")
                                 file.write(" texture{%s}\n" % material.pov.replacement_text)
@@ -2950,11 +2927,6 @@ def write_pov(filename, scene=None, info_callback=None):
                                         file.write("\n texture{MAT_%s}\n" % cMN)
                                         #use string_strip_hyphen(materialNames[material])) 
                                         #or Something like that to clean up the above?
-                        elif material and material.pov.material_use_nodes:
-                            for index in facesMaterials:
-                                faceMaterial = string_strip_hyphen(bpy.path.clean_name(me_materials[index].name))
-                                file.write("\n texture{%s}\n" % faceMaterial)
-                        # END!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                         else:
                             file.write(" texture{}\n")                
                         tabWrite("}\n")
@@ -2992,7 +2964,6 @@ def write_pov(filename, scene=None, info_callback=None):
                             else:
                                 material = me_materials[material_index]
                                 for i1, i2, i3 in indices:
-                                    ci1 = ci2 = ci3 = f.material_index
                                     if me.vertex_colors: #and material.use_vertex_color_paint:
                                         # Color per vertex - vertex color
 
@@ -3003,8 +2974,6 @@ def write_pov(filename, scene=None, info_callback=None):
                                         ci1 = vertCols[col1[0], col1[1], col1[2], material_index][0]
                                         ci2 = vertCols[col2[0], col2[1], col2[2], material_index][0]
                                         ci3 = vertCols[col3[0], col3[1], col3[2], material_index][0]
-                                    elif material.pov.material_use_nodes:
-                                        ci1 = ci2 = ci3 = 0
                                     else:
                                         # Color per material - flat material color
                                         if material.subsurface_scattering.use:
@@ -3305,39 +3274,22 @@ def write_pov(filename, scene=None, info_callback=None):
         tabWrite("assumed_gamma 1.0\n")
         tabWrite("max_trace_level %d\n" % scene.pov.max_trace_level)
 
-        if scene.pov.charset != 'ascii':
-            file.write("    charset %s\n"%scene.pov.charset)
-        if scene.pov.global_settings_advanced:
-            if scene.pov.adc_bailout_enable and scene.pov.radio_enable == False:
-                file.write("    adc_bailout %.6f\n"%scene.pov.adc_bailout)
-            if scene.pov.ambient_light_enable:
-                file.write("    ambient_light <%.6f,%.6f,%.6f>\n"%scene.pov.ambient_light[:])
-            if scene.pov.irid_wavelength_enable:
-                file.write("    irid_wavelength <%.6f,%.6f,%.6f>\n"%scene.pov.irid_wavelength[:])
-            if scene.pov.max_intersections_enable:
-                file.write("    max_intersections %s\n"%scene.pov.max_intersections)
-            if scene.pov.number_of_waves_enable:
-                file.write("    number_of_waves %s\n"%scene.pov.number_of_waves)
-            if scene.pov.noise_generator_enable:
-                file.write("    noise_generator %s\n"%scene.pov.noise_generator) 
         if scene.pov.radio_enable:
             tabWrite("radiosity {\n")
             tabWrite("adc_bailout %.4g\n" % scene.pov.radio_adc_bailout)
+            tabWrite("always_sample %d\n" % scene.pov.radio_always_sample)
             tabWrite("brightness %.4g\n" % scene.pov.radio_brightness)
             tabWrite("count %d\n" % scene.pov.radio_count)
             tabWrite("error_bound %.4g\n" % scene.pov.radio_error_bound)
             tabWrite("gray_threshold %.4g\n" % scene.pov.radio_gray_threshold)
             tabWrite("low_error_factor %.4g\n" % scene.pov.radio_low_error_factor)
-            tabWrite("maximum_reuse %.4g\n" % scene.pov.radio_maximum_reuse)            
+            tabWrite("media %d\n" % scene.pov.radio_media)
             tabWrite("minimum_reuse %.4g\n" % scene.pov.radio_minimum_reuse)
             tabWrite("nearest_count %d\n" % scene.pov.radio_nearest_count)
+            tabWrite("normal %d\n" % scene.pov.radio_normal)
             tabWrite("pretrace_start %.3g\n" % scene.pov.radio_pretrace_start)
             tabWrite("pretrace_end %.3g\n" % scene.pov.radio_pretrace_end)
             tabWrite("recursion_limit %d\n" % scene.pov.radio_recursion_limit)
-            tabWrite("always_sample %d\n" % scene.pov.radio_always_sample)
-            tabWrite("normal %d\n" % scene.pov.radio_normal)
-            tabWrite("media %d\n" % scene.pov.radio_media)
-            tabWrite("subsurface %d\n" % scene.pov.radio_subsurface)
             tabWrite("}\n")
         onceSss = 1
         onceAmbient = 1
@@ -3362,18 +3314,17 @@ def write_pov(filename, scene=None, info_callback=None):
                 tabWrite("ambient_light rgb<%.3g, %.3g, %.3g>\n" % world.ambient_color[:])
                 onceAmbient = 0
 
-            if scene.pov.photon_enable:
-                if (oncePhotons and
-                        (material.pov.refraction_type == "2" or
-                        material.pov.photons_reflection == True)):
-                    tabWrite("photons {\n")
-                    tabWrite("spacing %.6f\n" % scene.pov.photon_spacing)
-                    tabWrite("max_trace_level %d\n" % scene.pov.photon_max_trace_level)
-                    tabWrite("adc_bailout %.3g\n" % scene.pov.photon_adc_bailout)
-                    tabWrite("gather %d, %d\n" % (scene.pov.photon_gather_min,
-                        scene.pov.photon_gather_max))
-                    tabWrite("}\n")
-                    oncePhotons = 0
+            if (oncePhotons and
+                    (material.pov.refraction_type == "2" or
+                    material.pov.photons_reflection == True)):
+                tabWrite("photons {\n")
+                tabWrite("spacing %.6f\n" % scene.pov.photon_spacing)
+                tabWrite("max_trace_level %d\n" % scene.pov.photon_max_trace_level)
+                tabWrite("adc_bailout %.3g\n" % scene.pov.photon_adc_bailout)
+                tabWrite("gather %d, %d\n" % (scene.pov.photon_gather_min,
+                    scene.pov.photon_gather_max))
+                tabWrite("}\n")
+                oncePhotons = 0
 
         tabWrite("}\n")
 
@@ -3457,25 +3408,7 @@ def write_pov(filename, scene=None, info_callback=None):
     shading.writeMaterial(using_uberpov, DEF_MAT_NAME, scene, tabWrite, safety, comments, uniqueName, materialNames, None)  # default material
     for material in bpy.data.materials:
         if material.users > 0:
-            if material.pov.material_use_nodes:
-                ntree = material.node_tree
-                povMatName=string_strip_hyphen(bpy.path.clean_name(material.name))
-                if len(ntree.nodes)==0:
-                    file.write('#declare %s = texture {%s}\n'%(povMatName,color))
-                else:
-                    shading.write_nodes(scene,povMatName,ntree,file)
-
-                for node in ntree.nodes:
-                    if node:
-                        if node.bl_idname == "PovrayOutputNode":
-                            if node.inputs["Texture"].is_linked:
-                                for link in ntree.links:
-                                    if link.to_node.bl_idname == "PovrayOutputNode":
-                                        povMatName=string_strip_hyphen(bpy.path.clean_name(link.from_node.name))+"_%s"%povMatName
-                            else:
-                                file.write('#declare %s = texture {%s}\n'%(povMatName,color))
-            else:
-                shading.writeMaterial(using_uberpov, DEF_MAT_NAME, scene, tabWrite, safety, comments, uniqueName, materialNames, material)
+            shading.writeMaterial(using_uberpov, DEF_MAT_NAME, scene, tabWrite, safety, comments, uniqueName, materialNames, material)
             # attributes are all the variables needed by the other python file...
     if comments:
         file.write("\n")
@@ -3993,7 +3926,7 @@ class PovrayRender(bpy.types.RenderEngine):
         else:
             print("***POV FILE NOT FOUND***")
 
-        print("***POV FILE FINISHED***")
+        print("***POV FINISHED***")
 
         #print(filename_log) #bring the pov log to blender console with proper path?
         with open(self._temp_file_log) as f: # The with keyword automatically closes the file when you are done

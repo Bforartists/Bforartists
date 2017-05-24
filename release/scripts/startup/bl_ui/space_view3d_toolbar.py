@@ -216,6 +216,7 @@ class VIEW3D_PT_tools_object(View3DPanel, Panel):
                     sub = col.column()
                     sub.active = mesh.use_auto_smooth and not mesh.has_custom_normals
                     sub.prop(mesh, "auto_smooth_angle", text="Angle")
+                    col.prop(mesh, "show_double_sided")
 
                     # data transfer
                     col = layout.column(align=True)
@@ -527,6 +528,11 @@ class VIEW3D_PT_tools_add_misc(View3DPanel, Panel):
         layout = self.layout
         view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
 
+        obj = context.active_object
+        mode_string = context.mode
+        edit_object = context.edit_object
+        gp_edit = context.gpencil_data and context.gpencil_data.use_stroke_edit_mode
+
         col = layout.column(align=True)
         col.label(text="Lamp:")
         if not view.show_iconbuttons: 
@@ -554,6 +560,25 @@ class VIEW3D_PT_tools_add_misc(View3DPanel, Panel):
             self.draw_add_force_field(col)
         else:
             self.draw_add_force_field_icons(col)
+
+        # Add menu for addons.
+        col = layout.column(align=True)
+        col.label(text="Addons add:")
+        if gp_edit:
+            pass
+        elif mode_string == 'OBJECT':
+            col.menu("INFO_MT_add", text="Add")
+        elif mode_string == 'EDIT_MESH':
+            col.menu("INFO_MT_mesh_add", text="Add")
+        elif mode_string == 'EDIT_CURVE':
+            col.menu("INFO_MT_curve_add", text="Add")
+        elif mode_string == 'EDIT_SURFACE':
+            col.menu("INFO_MT_surface_add", text="Add")
+        elif mode_string == 'EDIT_METABALL':
+            col.menu("INFO_MT_metaball_add", text="Add")
+        elif mode_string == 'EDIT_ARMATURE':
+            col.menu("INFO_MT_edit_armature_add", text="Add")
+
 
 class VIEW3D_PT_tools_relations(View3DPanel, Panel):
     bl_category = "Relations"
@@ -1328,8 +1353,6 @@ class VIEW3D_PT_tools_surfaceedit(View3DPanel, Panel):
             col = layout.column(align=True)
             col.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="Mirror              ")
             col.label(text="Curve:")
-            col.operator("curve.duplicate_move", icon = 'DUPLICATE', text="Duplicate        ")
-            col.operator("curve.delete", icon = 'DELETE', text="Delete             ")
             col.operator("curve.cyclic_toggle", icon = 'TOGGLE_CYCLIC', text="Toggle Cyclic  ")
             col.operator("curve.switch_direction", icon = 'SWITCH_DIRECTION', text="Switch Direction")
 
@@ -1339,10 +1362,6 @@ class VIEW3D_PT_tools_surfaceedit(View3DPanel, Panel):
             col.operator("curve.spin", icon = 'SPIN', text="Spin                 ")  
             col.operator("curve.subdivide", icon='SUBDIVIDE_EDGES', text="Subdivide        ")
 
-            col = layout.column(align=True)
-            col.label(text="Deform:")
-            col.operator("transform.vertex_random", icon = 'RANDOMIZE', text="Randomize      ")
-
         else:
 
             col = layout.column(align=True)
@@ -1351,8 +1370,6 @@ class VIEW3D_PT_tools_surfaceedit(View3DPanel, Panel):
             col.label(text="Curve:")
             row = col.row(align=False)
             row.alignment = 'LEFT'
-            row.operator("curve.duplicate_move", icon = 'DUPLICATE', text = "")
-            row.operator("curve.delete", icon = 'DELETE', text = "")
             row.operator("curve.cyclic_toggle", icon = 'TOGGLE_CYCLIC', text = "")
             row.operator("curve.switch_direction", icon = 'SWITCH_DIRECTION', text = "")
 
@@ -1363,12 +1380,6 @@ class VIEW3D_PT_tools_surfaceedit(View3DPanel, Panel):
             row.operator("curve.extrude", icon='EXTRUDE_REGION', text = "")
             row.operator("curve.spin", icon = 'SPIN', text = "")
             row.operator("curve.subdivide", icon='SUBDIVIDE_EDGES', text = "")
-
-            col = layout.column(align=True)
-            col.label(text="Deform:")
-            row = col.row(align=False)
-            row.alignment = 'LEFT'
-            row.operator("transform.vertex_random", icon = 'RANDOMIZE', text = "")
 
 
 class VIEW3D_PT_tools_add_surface_edit(View3DPanel, Panel):
@@ -2838,6 +2849,7 @@ class RENDER_PT_bake(bpy.types.Panel):
     bl_region_type = "TOOLS"
     bl_category = "Tools"
     bl_options = {'DEFAULT_CLOSED'}
+    bl_context = "objectmode"
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
     
     @classmethod
