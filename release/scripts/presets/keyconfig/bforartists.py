@@ -817,7 +817,7 @@ kmi = km.keymap_items.new('sequencer.select_border', 'B', 'PRESS')
 kmi = km.keymap_items.new('wm.context_set_int', 'O', 'PRESS')
 kmi_props_setattr(kmi.properties, 'data_path', 'scene.sequence_editor.overlay_frame')
 kmi_props_setattr(kmi.properties, 'value', 0)
-kmi = km.keymap_items.new('transform.seq_slide', 'G', 'PRESS')
+kmi = km.keymap_items.new('transform.seq_slide', 'W', 'PRESS')
 kmi = km.keymap_items.new('transform.seq_slide', 'EVT_TWEAK_S', 'ANY')
 
 # Map Node Editor
