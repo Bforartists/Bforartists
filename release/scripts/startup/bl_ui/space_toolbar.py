@@ -745,6 +745,7 @@ class TOOLBAR_MT_primitives(Menu):
                         row.operator("mesh.primitive_cylinder_add", text="", icon='MESH_CYLINDER')
                         row.operator("mesh.primitive_cone_add", text="", icon='MESH_CONE')
                         row.operator("mesh.primitive_torus_add", text="", icon='MESH_TORUS')
+                        row.operator("mesh.primitive_grid_add", text = "", icon='MESH_GRID')
 
                 if obj.type == 'CURVE':
 
