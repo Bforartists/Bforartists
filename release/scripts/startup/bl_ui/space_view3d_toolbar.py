@@ -2519,13 +2519,28 @@ class VIEW3D_PT_tools_weightpaint(View3DPanel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        VIEW3D_PT_tools_meshweight.draw_generic(layout)
+        scene = context.scene # Our data for the icon_or_text flag is in the current scene
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
 
-        col = layout.column()
-        col.operator("paint.weight_gradient")
-        props = col.operator("object.data_transfer", text="Transfer Weights")
-        props.use_reverse_transfer = True
-        props.data_type = 'VGROUP_WEIGHTS'
+        if not view.show_iconbuttons:
+            VIEW3D_PT_tools_meshweight.draw_generic(layout)
+
+            col = layout.column()
+            col.operator("paint.weight_gradient", icon = 'WEIGHT_GRADIENT')
+            props = col.operator("object.data_transfer", icon = 'WEIGHT_TRANSFER_WEIGHTS', text="Transfer Weights")
+            props.use_reverse_transfer = True
+            props.data_type = 'VGROUP_WEIGHTS'
+            
+        else:
+            VIEW3D_PT_tools_meshweight.draw_generic_icons(layout)
+
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("paint.weight_gradient", icon = 'WEIGHT_GRADIENT', text = "")
+            props = row.operator("object.data_transfer", icon = 'WEIGHT_TRANSFER_WEIGHTS', text="")
+            props.use_reverse_transfer = True
+            props.data_type = 'VGROUP_WEIGHTS'
+
 
 
 class VIEW3D_PT_tools_weightpaint_options(Panel, View3DPaintPanel):
