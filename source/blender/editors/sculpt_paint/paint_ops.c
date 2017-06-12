@@ -1275,8 +1275,8 @@ void ED_operatormacros_paint(void)
 	wmOperatorTypeMacro *otmacro;
 
 	ot = WM_operatortype_append_macro("PAINTCURVE_OT_add_point_slide", "Add Curve Point and Slide",
-	                                  "Add Curve Point and Slide\nAdd new curve point and slide it", OPTYPE_UNDO);
-	ot->description = "Add Curve Point\nAdd new curve point and slide it";
+	                                  "Add Curve Point and Slide\nAdd new curve point and slide it\nHotkey Only Tool! Please use the hotkey!", OPTYPE_UNDO);
+	ot->description = "Add Curve Point\nAdd new curve point and slide it\nHotkey Only Tool! Please use the hotkey!";
 	WM_operatortype_macro_define(ot, "PAINTCURVE_OT_add_point");
 	otmacro = WM_operatortype_macro_define(ot, "PAINTCURVE_OT_slide");
 	RNA_boolean_set(otmacro->ptr, "align", true);
