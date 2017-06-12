@@ -2263,6 +2263,7 @@ class VIEW3D_PT_tools_brush_stroke(Panel, View3DPaintPanel):
 
         if brush.use_curve:
             col.separator()
+            col.operator("paintcurve.add_point_slide")
             col.template_ID(brush, "paint_curve", new="paintcurve.new")
             col.operator("paintcurve.draw")
 
