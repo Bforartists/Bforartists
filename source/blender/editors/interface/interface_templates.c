@@ -347,34 +347,34 @@ static const char *template_id_browse_tip(StructRNA *type)
 {
 	if (type) {
 		switch (RNA_type_to_ID_code(type)) {
-			case ID_SCE: return N_("Browse Scene to be linked");
-			case ID_OB:  return N_("Browse Object to be linked");
-			case ID_ME:  return N_("Browse Mesh Data to be linked");
-			case ID_CU:  return N_("Browse Curve Data to be linked");
-			case ID_MB:  return N_("Browse Metaball Data to be linked");
-			case ID_MA:  return N_("Browse Material to be linked");
-			case ID_TE:  return N_("Texture Browser\nBrowse Texture to use\nCreate a Material first in the Properties Editor\nLoad a Texture into the material\nThis texture becomes available in this browser then");
-			case ID_IM:  return N_("Browse Image to be linked");
-			case ID_LS:  return N_("Browse Line Style Data to be linked");
-			case ID_LT:  return N_("Browse Lattice Data to be linked");
-			case ID_LA:  return N_("Browse Lamp Data to be linked");
-			case ID_CA:  return N_("Browse Camera Data to be linked");
-			case ID_WO:  return N_("Browse World Settings to be linked");
-			case ID_SCR: return N_("Choose Screen layout");
-			case ID_TXT: return N_("Browse Text to be linked");
-			case ID_SPK: return N_("Browse Speaker Data to be linked");
-			case ID_SO:  return N_("Browse Sound to be linked");
-			case ID_AR:  return N_("Browse Armature data to be linked");
-			case ID_AC:  return N_("Browse Action to be linked");
-			case ID_NT:  return N_("Browse Node Tree to be linked");
-			case ID_BR:  return N_("Browse Brush to be linked");
-			case ID_PA:  return N_("Browse Particle Settings to be linked");
-			case ID_GD:  return N_("Browse Grease Pencil Data to be linked");
-			case ID_MC:  return N_("Browse Movie Clip to be linked");
-			case ID_MSK: return N_("Browse Mask to be linked");
-			case ID_PAL: return N_("Browse Palette Data to be linked");
-			case ID_PC:  return N_("Browse Paint Curve Data to be linked");
-			case ID_CF:  return N_("Browse Cache Files to be linked");
+			case ID_SCE: return N_("Scene Browser\nChoose Scene to use");
+			case ID_OB:  return N_("Object Browser\nChoose Object to use");
+			case ID_ME:  return N_("Data Browser\nChoose Mesh Data to use");
+			case ID_CU:  return N_("Data Browser\nChoose Curve Data to use");
+			case ID_MB:  return N_("Data Browser\nChoose Metaball Data to use");
+			case ID_MA:  return N_("Material Browser\nChoose Material to use");
+			case ID_TE:  return N_("Texture Browser\nChoose Texture to use");
+			case ID_IM:  return N_("Image Browser\nChoose Image to use");
+			case ID_LS:  return N_("Data Browser\nBrowse Line Style Data to use");
+			case ID_LT:  return N_("Data Browser\nChoose Lattice Data to use");
+			case ID_LA:  return N_("Data Browser\nChoose Lamp Data to use");
+			case ID_CA:  return N_("Data Browser\nChoose Camera Data to use");
+			case ID_WO:  return N_("Data Browser\nChoose World Settings to use");
+			case ID_SCR: return N_("Layout Browser\nChoose Screen layout");
+			case ID_TXT: return N_("Text file Browser\nChooseText file to use");
+			case ID_SPK: return N_("Data Browser\nChoose Speaker Data to use");
+			case ID_SO:  return N_("Data Browser\nChoose Sound to use");
+			case ID_AR:  return N_("Data Browser\nChoose Armature data to use");
+			case ID_AC:  return N_("Data Browser\nChoose Action to use");
+			case ID_NT:  return N_("Data Browser\nChoose Node Tree to use");
+			case ID_BR:  return N_("Brush Browser\nChoose Brush to use");
+			case ID_PA:  return N_("Particle Settings Browser\nChoose Particle Settings to use");
+			case ID_GD:  return N_("Data Browser\nChoose Grease Pencil Data to use");
+			case ID_MC:  return N_("Clip Browser\nChoose Movie Clip to use");
+			case ID_MSK: return N_("Data Browser\nChoose Mask to use");
+			case ID_PAL: return N_("Data Browser\nChoose Palette Data to use");
+			case ID_PC:  return N_("Data Browser\nChoose Paint Curve Data to use");
+			case ID_CF:  return N_("Data Browser\nChoose Cache Files to use");
 		}
 	}
 	return N_("Browse ID data to be linked");
