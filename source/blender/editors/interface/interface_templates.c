@@ -353,7 +353,7 @@ static const char *template_id_browse_tip(StructRNA *type)
 			case ID_CU:  return N_("Browse Curve Data to be linked");
 			case ID_MB:  return N_("Browse Metaball Data to be linked");
 			case ID_MA:  return N_("Browse Material to be linked");
-			case ID_TE:  return N_("Browse Texture to be linked");
+			case ID_TE:  return N_("Texture Browser\nBrowse Texture to use\nCreate a Material first in the Properties Editor\nLoad a Texture into the material\nThis texture becomes available in this browser then");
 			case ID_IM:  return N_("Browse Image to be linked");
 			case ID_LS:  return N_("Browse Line Style Data to be linked");
 			case ID_LT:  return N_("Browse Lattice Data to be linked");
