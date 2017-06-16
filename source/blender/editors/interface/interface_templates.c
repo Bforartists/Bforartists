@@ -361,7 +361,7 @@ static const char *template_id_browse_tip(StructRNA *type)
 			case ID_CA:  return N_("Data Browser\nChoose Camera Data to use");
 			case ID_WO:  return N_("Data Browser\nChoose World Settings to use");
 			case ID_SCR: return N_("Layout Browser\nChoose Screen layout");
-			case ID_TXT: return N_("Text file Browser\nChooseText file to use");
+			case ID_TXT: return N_("Text file Browser\nChoose Text file to use");
 			case ID_SPK: return N_("Data Browser\nChoose Speaker Data to use");
 			case ID_SO:  return N_("Data Browser\nChoose Sound to use");
 			case ID_AR:  return N_("Data Browser\nChoose Armature data to use");
