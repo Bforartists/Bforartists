@@ -1616,6 +1616,60 @@ void UV_OT_cylinder_project(wmOperatorType *ot)
 
 /******************* Cube Project operator ****************/
 
+/*bfa - This class gets used to have a six sided cubic mapping that doesn't go outside of the UV space of 0 to 1*/
+
+void ED_uvedit_unwrap_cube_project_sixsided(Object *ob, BMesh *bm, float cube_size, bool use_select)
+{
+	BMFace *efa;
+	BMLoop *l;
+	BMIter iter, liter;
+	/* MTexPoly *tf; */ /* UNUSED */
+	MLoopUV *luv;
+	float *loc, dx, dy;
+	int cox, coy;
+
+	int cd_loop_uv_offset;
+
+	cd_loop_uv_offset = CustomData_get_offset(&bm->ldata, CD_MLOOPUV);
+
+	loc = ob->obmat[3];
+
+	/* choose x,y,z axis for projection depending on the largest normal
+	* component, but clusters all together around the center of map. */
+
+	BM_ITER_MESH(efa, &iter, bm, BM_FACES_OF_MESH) {
+		int first = 1;
+
+		/* tf = CustomData_bmesh_get(&em->bm->pdata, efa->head.data, CD_MTEXPOLY); */ /* UNUSED */
+		if (use_select && !BM_elem_flag_test(efa, BM_ELEM_SELECT))
+			continue;
+
+		axis_dominant_v3(&cox, &coy, efa->no);
+
+		dx = dy = 0;
+		BM_ITER_ELEM(l, &liter, efa, BM_LOOPS_OF_FACE) {
+			luv = BM_ELEM_CD_GET_VOID_P(l, cd_loop_uv_offset);
+
+			luv->uv[0] = 0.5f + 0.5f * cube_size * (loc[cox] + l->v->co[cox]);
+			luv->uv[1] = 0.5f + 0.5f * cube_size * (loc[coy] + l->v->co[coy]);
+
+			if (first) {
+				dx = floor(luv->uv[0]);
+				dy = floor(luv->uv[1]);
+				first = 0;
+			}
+
+			// bfa - turned off. Puts the UV for those faces outside of the UV space for no reason
+
+			//luv->uv[0] -= dx;
+			//luv->uv[1] -= dy;
+		}
+	}
+
+}
+
+/*This class gets used to add simple UV's in texture paint mode*/
+
 void ED_uvedit_unwrap_cube_project(Object *ob, BMesh *bm, float cube_size, bool use_select)
 {
 	BMFace *efa;
@@ -1657,10 +1711,8 @@ void ED_uvedit_unwrap_cube_project(Object *ob, BMesh *bm, float cube_size, bool 
 				first = 0;
 			}
 
-			// bfa - turned off. Puts the UV for those faces outside of the UV space for no reason
-
-			//luv->uv[0] -= dx;
-			//luv->uv[1] -= dy;
+			luv->uv[0] -= dx;
+			luv->uv[1] -= dy;
 		}
 	}
 
@@ -1678,7 +1730,7 @@ static int cube_project_exec(bContext *C, wmOperator *op)
 		return OPERATOR_CANCELLED;
 	}
 
-	ED_uvedit_unwrap_cube_project(obedit, em->bm, cube_size, true);
+	ED_uvedit_unwrap_cube_project_sixsided(obedit, em->bm, cube_size, true); /*bfa - Use the six sided mapping*/
 	uv_map_clip_correct(scene, obedit, em, op);
 
 	DAG_id_tag_update(obedit->data, 0);
