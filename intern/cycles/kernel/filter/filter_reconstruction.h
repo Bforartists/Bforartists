@@ -22,8 +22,6 @@ ccl_device_inline void kernel_filter_construct_gramian(int x, int y,
                                                        int w, int h,
                                                        int pass_stride,
                                                        const ccl_global float *ccl_restrict buffer,
-                                                       ccl_global float *color_pass,
-                                                       ccl_global float *variance_pass,
                                                        const ccl_global float *ccl_restrict transform,
                                                        ccl_global int *rank,
                                                        float weight,
@@ -31,38 +29,31 @@ ccl_device_inline void kernel_filter_construct_gramian(int x, int y,
                                                        ccl_global float3 *XtWY,
                                                        int localIdx)
 {
+	if(weight < 1e-3f) {
+		return;
+	}
+
 	int p_offset =  y    *w +  x;
 	int q_offset = (y+dy)*w + (x+dx);
 
-#ifdef __KERNEL_CPU__
-	const int stride = 1;
-	(void)storage_stride;
-	(void)localIdx;
-	float design_row[DENOISE_FEATURES+1];
-#elif defined(__KERNEL_CUDA__)
+#ifdef __KERNEL_GPU__
 	const int stride = storage_stride;
+#else
+	const int stride = 1;
+	(void) storage_stride;
+#endif
+
+#ifdef __KERNEL_CUDA__
 	ccl_local float shared_design_row[(DENOISE_FEATURES+1)*CCL_MAX_LOCAL_SIZE];
 	ccl_local_param float *design_row = shared_design_row + localIdx*(DENOISE_FEATURES+1);
 #else
-	const int stride = storage_stride;
 	float design_row[DENOISE_FEATURES+1];
 #endif
 
-	float3 p_color = filter_get_pixel_color(color_pass + p_offset, pass_stride);
-	float3 q_color = filter_get_pixel_color(color_pass + q_offset, pass_stride);
+	float3 q_color = filter_get_color(buffer + q_offset, pass_stride);
 
-	float p_std_dev = sqrtf(filter_get_pixel_variance(variance_pass + p_offset, pass_stride));
-	float q_std_dev = sqrtf(filter_get_pixel_variance(variance_pass + q_offset, pass_stride));
-
-	/* If the pixel was flagged as an outlier during prefiltering, skip it.
-	 * Otherwise, perform the regular confidence interval test unless
-	 * the center pixel is an outlier (in that case, using the confidence
-	 * interval test could result in no pixels being used at all). */
-	bool p_outlier = (ccl_get_feature(buffer + p_offset, 0) < 0.0f);
-	bool q_outlier = (ccl_get_feature(buffer + q_offset, 0) < 0.0f);
-	bool outside_of_interval = (average(fabs(p_color - q_color)) > 2.0f*(p_std_dev + q_std_dev + 1e-3f));
-
-	if(q_outlier || (!p_outlier && outside_of_interval)) {
+	/* If the pixel was flagged as an outlier during prefiltering, skip it. */
+	if(ccl_get_feature(buffer + q_offset, 0) < 0.0f) {
 		return;
 	}
 
@@ -83,12 +74,18 @@ ccl_device_inline void kernel_filter_finalize(int x, int y, int w, int h,
                                               int4 buffer_params,
                                               int sample)
 {
-#ifdef __KERNEL_CPU__
-	const int stride = 1;
-	(void)storage_stride;
-#else
+#ifdef __KERNEL_GPU__
 	const int stride = storage_stride;
+#else
+	const int stride = 1;
+	(void) storage_stride;
 #endif
+
+	if(XtWX[0] < 1e-3f) {
+		/* There is not enough information to determine a denoised result.
+		 * As a fallback, keep the original value of the pixel. */
+		 return;
+	}
 
 	/* The weighted average of pixel colors (essentially, the NLM-filtered image).
 	 * In case the solution of the linear model fails due to numerical issues,
@@ -102,6 +99,9 @@ ccl_device_inline void kernel_filter_finalize(int x, int y, int w, int h,
 		final_color = mean_color;
 	}
 
+	/* Clamp pixel value to positive values. */
+	final_color = max(final_color, make_float3(0.0f, 0.0f, 0.0f));
+
 	ccl_global float *combined_buffer = buffer + (y*buffer_params.y + x + buffer_params.x)*buffer_params.z;
 	final_color *= sample;
 	if(buffer_params.w) {
@@ -113,7 +113,5 @@ ccl_device_inline void kernel_filter_finalize(int x, int y, int w, int h,
 	combined_buffer[1] = final_color.y;
 	combined_buffer[2] = final_color.z;
 }
-
-#undef STORAGE_TYPE
 
 CCL_NAMESPACE_END

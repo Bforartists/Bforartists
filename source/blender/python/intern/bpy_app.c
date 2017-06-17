@@ -37,6 +37,7 @@
 #include "bpy_app_ffmpeg.h"
 #include "bpy_app_ocio.h"
 #include "bpy_app_oiio.h"
+#include "bpy_app_opensubdiv.h"
 #include "bpy_app_openvdb.h"
 #include "bpy_app_sdl.h"
 #include "bpy_app_build_options.h"
@@ -109,6 +110,7 @@ static PyStructSequence_Field app_info_fields[] = {
 	{(char *)"ffmpeg", (char *)"FFmpeg library information backend"},
 	{(char *)"ocio", (char *)"OpenColorIO library information backend"},
 	{(char *)"oiio", (char *)"OpenImageIO library information backend"},
+	{(char *)"opensubdiv", (char *)"OpenSubdiv library information backend"},
 	{(char *)"openvdb", (char *)"OpenVDB library information backend"},
 	{(char *)"sdl", (char *)"SDL library information backend"},
 	{(char *)"build_options", (char *)"A set containing most important enabled optional build features"},
@@ -117,9 +119,21 @@ static PyStructSequence_Field app_info_fields[] = {
 	{NULL},
 };
 
+PyDoc_STRVAR(bpy_app_doc,
+"This module contains application values that remain unchanged during runtime.\n"
+"\n"
+"Submodules:\n"
+"\n"
+".. toctree::\n"
+"   :maxdepth: 1\n"
+"\n"
+"   bpy.app.handlers.rst\n"
+"   bpy.app.translations.rst\n"
+);
+
 static PyStructSequence_Desc app_info_desc = {
 	(char *)"bpy.app",     /* name */
-	(char *)"This module contains application values that remain unchanged during runtime.",    /* doc */
+	bpy_app_doc,    /* doc */
 	app_info_fields,    /* fields */
 	ARRAY_SIZE(app_info_fields) - 1
 };
@@ -188,6 +202,7 @@ static PyObject *make_app_info(void)
 	SetObjItem(BPY_app_ffmpeg_struct());
 	SetObjItem(BPY_app_ocio_struct());
 	SetObjItem(BPY_app_oiio_struct());
+	SetObjItem(BPY_app_opensubdiv_struct());
 	SetObjItem(BPY_app_openvdb_struct());
 	SetObjItem(BPY_app_sdl_struct());
 	SetObjItem(BPY_app_build_options_struct());

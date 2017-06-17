@@ -101,7 +101,7 @@ ccl_device_inline void kernel_filter_nlm_calc_weight(const float *ccl_restrict d
 		for(int x = rect.x; x < rect.z; x++) {
 			const int low = max(rect.x, x-f);
 			const int high = min(rect.z, x+f+1);
-			out_image[y*w+x] = expf(-max(out_image[y*w+x] * (1.0f/(high - low)), 0.0f));
+			out_image[y*w+x] = fast_expf(-max(out_image[y*w+x] * (1.0f/(high - low)), 0.0f));
 		}
 	}
 }
@@ -133,8 +133,6 @@ ccl_device_inline void kernel_filter_nlm_update_output(int dx, int dy,
 ccl_device_inline void kernel_filter_nlm_construct_gramian(int dx, int dy,
                                                            const float *ccl_restrict difference_image,
                                                            const float *ccl_restrict buffer,
-                                                           float *color_pass,
-                                                           float *variance_pass,
                                                            float *transform,
                                                            int *rank,
                                                            float *XtWX,
@@ -167,7 +165,6 @@ ccl_device_inline void kernel_filter_nlm_construct_gramian(int dx, int dy,
 			                                dx, dy, w, h,
 			                                pass_stride,
 			                                buffer,
-			                                color_pass, variance_pass,
 			                                l_transform, l_rank,
 			                                weight, l_XtWX, l_XtWY, 0);
 		}

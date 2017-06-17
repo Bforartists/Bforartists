@@ -1,4 +1,4 @@
-﻿# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -52,6 +52,12 @@ def gpencil_stroke_placement_settings(context, layout):
         row.active = getattr(ts, propname) in {'SURFACE', 'STROKE'}
         row.prop(ts, "use_gpencil_stroke_endpoints")
 
+        if context.scene.tool_settings.gpencil_stroke_placement_view3d == 'CURSOR':
+            row = col.row(align=True)
+            row.label("Lock axis:")
+            row = col.row(align=True)
+            row.prop(ts.gpencil_sculpt, "lockaxis", expand=True)
+
 
 def gpencil_active_brush_settings_simple(context, layout):
     brush = context.active_gpencil_brush
@@ -99,18 +105,21 @@ class GreasePencilDrawingToolsPanel:
         is_clip_editor = context.space_data.type == 'CLIP_EDITOR'
 
         col = layout.column(align=True)
-
+        
         col.label(text="Draw:")
 
         row = col.row(align=False)
         row.alignment = 'LEFT'
-        row.operator("gpencil.draw", icon='GREASEPENCIL',text="").mode = 'DRAW'
-        row.operator("gpencil.draw", icon= 'ERASE',  text="").mode = 'ERASER'
-        row.operator("gpencil.draw", icon= 'GREASEPENCIL_LINE', text="").mode = 'DRAW_STRAIGHT'
-        row.operator("gpencil.draw", icon= 'GREASEPENCIL_POLY', text="").mode = 'DRAW_POLY'
-        col.separator()
+        row.operator("gpencil.draw", icon='GREASEPENCIL', text="").mode = 'DRAW'
+        row.operator("gpencil.draw", icon='ERASE', text="").mode = 'ERASER'  # XXX: Needs a dedicated icon
+        row.operator("gpencil.draw", icon='LINE_DATA', text="").mode = 'DRAW_STRAIGHT'
+        row.operator("gpencil.draw", icon='MESH_DATA', text="").mode = 'DRAW_POLY'
 
         col.separator()
+
+        sub = col.column(align=True)
+        sub.operator("gpencil.blank_frame_add", icon='NEW')
+        sub.operator("gpencil.active_frames_delete_all", icon='DELETE', text="Delete Frame(s)")
 
         sub = col.column(align=True)
         sub.prop(context.tool_settings, "use_gpencil_additive_drawing", text="Additive Drawing")
@@ -148,7 +157,7 @@ class GreasePencilDrawingToolsPanel:
             col.separator()
 
             col.label(text="Tools:")
-            col.operator("view3d.ruler", icon= 'RULER')
+            col.operator("view3d.ruler")
 
 
 class GreasePencilStrokeEditPanel:
@@ -322,6 +331,7 @@ class GreasePencilStrokeEditPanel:
                 layout.operator_menu_enum("gpencil.reproject", text="Reproject Strokes...", property="type")
 
 
+
 class GreasePencilInterpolatePanel:
     bl_space_type = 'VIEW_3D'
     bl_label = "Interpolate"
@@ -458,11 +468,11 @@ class GreasePencilStrokeSculptPanel:
     def draw(self, context):
         layout = self.layout
 
+        layout.operator("gpencil.brush_paint", text="Sculpt Strokes").wait_for_input = True
         settings = context.tool_settings.gpencil_sculpt
         tool = settings.tool
         brush = settings.brush
 
-        layout.operator("gpencil.brush_paint", text="Sculpt Strokes").wait_for_input = True
         layout.column().prop(settings, "tool")
 
         col = layout.column()
@@ -955,8 +965,10 @@ class GreasePencilDataPanel:
         gpd = context.gpencil_data
 
         # Owner Selector
-        if context.space_data.type == 'CLIP_EDITOR':
-            layout.prop(context.space_data, "grease_pencil_source", expand=True)
+        if context.space_data.type == 'VIEW_3D':
+            layout.row().prop(context.tool_settings, "grease_pencil_source", expand=True)
+        elif context.space_data.type == 'CLIP_EDITOR':
+            layout.row().prop(context.space_data, "grease_pencil_source", expand=True)
 
         # Grease Pencil data selector
         layout.template_ID(gpd_owner, "grease_pencil", new="gpencil.data_add", unlink="gpencil.data_unlink")
@@ -1033,7 +1045,7 @@ class GreasePencilDataPanel:
         row.prop(gpl, "line_change", text="Thickness Change", slider=True)
         row.operator("gpencil.stroke_apply_thickness", icon='STYLUS_PRESSURE', text="")
 
-        # Parenting 
+        # Parenting
         if context.space_data.type == 'VIEW_3D':
             col = split.column(align=True)
             col.label(text="Parent:")

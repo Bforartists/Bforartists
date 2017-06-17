@@ -66,7 +66,7 @@ ccl_device_inline void kernel_filter_nlm_calc_weight(int x, int y,
 		sum += difference_image[y*w+x1];
 	}
 	sum *= 1.0f/(high-low);
-	out_image[y*w+x] = expf(-max(sum, 0.0f));
+	out_image[y*w+x] = fast_expf(-max(sum, 0.0f));
 }
 
 ccl_device_inline void kernel_filter_nlm_update_output(int x, int y,
@@ -97,8 +97,6 @@ ccl_device_inline void kernel_filter_nlm_construct_gramian(int fx, int fy,
                                                            int dx, int dy,
                                                            const ccl_global float *ccl_restrict difference_image,
                                                            const ccl_global float *ccl_restrict buffer,
-                                                           ccl_global float *color_pass,
-                                                           ccl_global float *variance_pass,
                                                            const ccl_global float *ccl_restrict transform,
                                                            ccl_global int *rank,
                                                            ccl_global float *XtWX,
@@ -130,7 +128,6 @@ ccl_device_inline void kernel_filter_nlm_construct_gramian(int fx, int fy,
 	                                dx, dy, w, h,
 	                                pass_stride,
 	                                buffer,
-	                                color_pass, variance_pass,
 	                                transform, rank,
 	                                weight, XtWX, XtWY,
 	                                localIdx);

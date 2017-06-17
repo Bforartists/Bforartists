@@ -50,6 +50,7 @@
 #include "BKE_curve.h"
 #include "BKE_library_query.h"
 #include "BKE_modifier.h"
+#include "BKE_mesh.h"
 
 #include "MOD_util.h"
 
@@ -137,7 +138,7 @@ static void updateDepgraph(ModifierData *md, DagForest *forest,
 
 static void updateDepsgraph(ModifierData *md,
                             struct Main *UNUSED(bmain),
-                            struct Scene *scene,
+                            struct Scene *UNUSED(scene),
                             Object *UNUSED(ob),
                             struct DepsNodeHandle *node)
 {
@@ -149,31 +150,13 @@ static void updateDepsgraph(ModifierData *md,
 		DEG_add_object_relation(node, amd->end_cap, DEG_OB_COMP_TRANSFORM, "Array Modifier End Cap");
 	}
 	if (amd->curve_ob) {
+		struct Depsgraph *depsgraph = DEG_get_graph_from_handle(node);
 		DEG_add_object_relation(node, amd->curve_ob, DEG_OB_COMP_GEOMETRY, "Array Modifier Curve");
-		DEG_add_special_eval_flag(scene->depsgraph, &amd->curve_ob->id, DAG_EVAL_NEED_CURVE_PATH);
+		DEG_add_special_eval_flag(depsgraph, &amd->curve_ob->id, DAG_EVAL_NEED_CURVE_PATH);
 	}
 	if (amd->offset_ob != NULL) {
 		DEG_add_object_relation(node, amd->offset_ob, DEG_OB_COMP_TRANSFORM, "Array Modifier Offset");
 	}
-}
-
-static float vertarray_size(const MVert *mvert, int numVerts, int axis)
-{
-	int i;
-	float min_co, max_co;
-
-	/* if there are no vertices, width is 0 */
-	if (numVerts == 0) return 0;
-
-	/* find the minimum and maximum coordinates on the desired axis */
-	min_co = max_co = mvert->co[axis];
-	mvert++;
-	for (i = 1; i < numVerts; ++i, ++mvert) {
-		if (mvert->co[axis] < min_co) min_co = mvert->co[axis];
-		if (mvert->co[axis] > max_co) max_co = mvert->co[axis];
-	}
-
-	return max_co - min_co;
 }
 
 BLI_INLINE float sum_v3(const float v[3])
@@ -472,12 +455,22 @@ static DerivedMesh *arrayModifier_doArray(
 	unit_m4(offset);
 	src_mvert = dm->getVertArray(dm);
 
-	if (amd->offset_type & MOD_ARR_OFF_CONST)
-		add_v3_v3v3(offset[3], offset[3], amd->offset);
+	if (amd->offset_type & MOD_ARR_OFF_CONST) {
+		add_v3_v3(offset[3], amd->offset);
+	}
 
 	if (amd->offset_type & MOD_ARR_OFF_RELATIVE) {
-		for (j = 0; j < 3; j++)
-			offset[3][j] += amd->scale[j] * vertarray_size(src_mvert, chunk_nverts, j);
+		float min[3], max[3];
+		const MVert *src_mv;
+
+		INIT_MINMAX(min, max);
+		for (src_mv = src_mvert, j = chunk_nverts; j--; src_mv++) {
+			minmax_v3v3_v3(min, max, src_mv->co);
+		}
+
+		for (j = 3; j--; ) {
+			offset[3][j] += amd->scale[j] * (max[j] - min[j]);
+		}
 	}
 
 	if (use_offset_ob) {

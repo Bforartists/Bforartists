@@ -1172,7 +1172,9 @@ int view3d_opengl_select(
 
 	G.f |= G_PICKSEL;
 
-	ED_view3d_draw_setup_view(vc->win, scene, ar, v3d, NULL, NULL, &rect);
+	/* Important we use the 'viewmat' and don't re-calculate since
+	 * the object & bone view locking takes 'rect' into account, see: T51629. */
+	ED_view3d_draw_setup_view(vc->win, scene, ar, v3d, vc->rv3d->viewmat, NULL, &rect);
 
 	if (v3d->drawtype > OB_WIRE) {
 		v3d->zbuf = true;
@@ -1189,7 +1191,7 @@ int view3d_opengl_select(
 	hits = GPU_select_end();
 	
 	/* second pass, to get the closest object to camera */
-	if (do_passes) {
+	if (do_passes && (hits > 0)) {
 		GPU_select_begin(buffer, bufsize, &rect, GPU_SELECT_NEAREST_SECOND_PASS, hits);
 
 		ED_view3d_draw_select_loop(vc, scene, v3d, ar, use_obedit_skip, use_nearest);
@@ -1198,7 +1200,7 @@ int view3d_opengl_select(
 	}
 
 	G.f &= ~G_PICKSEL;
-	ED_view3d_draw_setup_view(vc->win, scene, ar, v3d, NULL, NULL, NULL);
+	ED_view3d_draw_setup_view(vc->win, scene, ar, v3d, vc->rv3d->viewmat, NULL, NULL);
 	
 	if (v3d->drawtype > OB_WIRE) {
 		v3d->zbuf = 0;

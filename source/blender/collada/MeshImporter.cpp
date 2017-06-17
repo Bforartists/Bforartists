@@ -27,7 +27,7 @@
 
 #include <algorithm>
 
-#if !defined(WIN32) || defined(FREE_WINDOWS)
+#if !defined(WIN32)
 #include <iostream>
 #endif
 
@@ -1173,8 +1173,9 @@ Object *MeshImporter::create_mesh_object(COLLADAFW::Node *node, COLLADAFW::Insta
 	BKE_mesh_assign_object(ob, new_mesh);
 	BKE_mesh_calc_normals(new_mesh);
 
-	if (old_mesh->id.us == 0) BKE_libblock_free(G.main, old_mesh);
-	
+	id_us_plus(&old_mesh->id);  /* Because BKE_mesh_assign_object would have already decreased it... */
+	BKE_libblock_free_us(G.main, old_mesh);
+
 	char layername[100];
 	layername[0] = '\0';
 	MTFace *texture_face = NULL;

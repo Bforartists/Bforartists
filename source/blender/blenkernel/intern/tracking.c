@@ -190,7 +190,7 @@ void BKE_tracking_free(MovieTracking *tracking)
 }
 
 /* Copy the whole list of tracks. */
-static void tracking_tracks_copy(ListBase *tracks_dst, ListBase *tracks_src, GHash *tracks_mapping)
+static void tracking_tracks_copy(ListBase *tracks_dst, const ListBase *tracks_src, GHash *tracks_mapping)
 {
 	MovieTrackingTrack *track_dst, *track_src;
 
@@ -210,7 +210,7 @@ static void tracking_tracks_copy(ListBase *tracks_dst, ListBase *tracks_src, GHa
 
 /* copy the whole list of plane tracks (need whole MovieTracking structures due to embedded pointers to tracks).
  * WARNING: implies tracking_[dst/src] and their tracks have already been copied. */
-static void tracking_plane_tracks_copy(ListBase *plane_tracks_dst, ListBase *plane_tracks_src, GHash *tracks_mapping)
+static void tracking_plane_tracks_copy(ListBase *plane_tracks_dst, const ListBase *plane_tracks_src, GHash *tracks_mapping)
 {
 	MovieTrackingPlaneTrack *plane_track_dst, *plane_track_src;
 
@@ -232,7 +232,7 @@ static void tracking_plane_tracks_copy(ListBase *plane_tracks_dst, ListBase *pla
 
 /* Copy reconstruction structure. */
 static void tracking_reconstruction_copy(
-        MovieTrackingReconstruction *reconstruction_dst, MovieTrackingReconstruction *reconstruction_src)
+        MovieTrackingReconstruction *reconstruction_dst, const MovieTrackingReconstruction *reconstruction_src)
 {
 	*reconstruction_dst = *reconstruction_src;
 	if (reconstruction_src->cameras) {
@@ -242,14 +242,14 @@ static void tracking_reconstruction_copy(
 
 /* Copy stabilization structure. */
 static void tracking_stabilization_copy(
-        MovieTrackingStabilization *stabilization_dst, MovieTrackingStabilization *stabilization_src)
+        MovieTrackingStabilization *stabilization_dst, const MovieTrackingStabilization *stabilization_src)
 {
 	*stabilization_dst = *stabilization_src;
 }
 
 /* Copy tracking object. */
 static void tracking_object_copy(
-        MovieTrackingObject *object_dst, MovieTrackingObject *object_src, GHash *tracks_mapping)
+        MovieTrackingObject *object_dst, const MovieTrackingObject *object_src, GHash *tracks_mapping)
 {
 	*object_dst = *object_src;
 	tracking_tracks_copy(&object_dst->tracks, &object_src->tracks, tracks_mapping);
@@ -258,7 +258,7 @@ static void tracking_object_copy(
 }
 
 /* Copy list of tracking objects. */
-static void tracking_objects_copy(ListBase *objects_dst, ListBase *objects_src, GHash *tracks_mapping)
+static void tracking_objects_copy(ListBase *objects_dst, const ListBase *objects_src, GHash *tracks_mapping)
 {
 	MovieTrackingObject *object_dst, *object_src;
 
@@ -272,7 +272,7 @@ static void tracking_objects_copy(ListBase *objects_dst, ListBase *objects_src, 
 }
 
 /* Copy tracking structure content. */
-void BKE_tracking_copy(MovieTracking *tracking_dst, MovieTracking *tracking_src)
+void BKE_tracking_copy(MovieTracking *tracking_dst, const MovieTracking *tracking_src)
 {
 	GHash *tracks_mapping = BLI_ghash_ptr_new(__func__);
 
@@ -974,8 +974,11 @@ static void track_mask_set_pixel_cb(int x, int x_end, int y, void *user_data)
 }
 
 static void track_mask_gpencil_layer_rasterize(int frame_width, int frame_height,
-                                               MovieTrackingMarker *marker, bGPDlayer *layer,
-                                               float *mask, int mask_width, int mask_height)
+                                               const float region_min[2],
+                                               bGPDlayer *layer,
+                                               float *mask,
+                                               int mask_width,
+                                               int mask_height)
 {
 	bGPDframe *frame = layer->frames.first;
 	TrackMaskSetPixelData data;
@@ -994,8 +997,8 @@ static void track_mask_gpencil_layer_rasterize(int frame_width, int frame_height
 				point = mask_points = MEM_callocN(2 * stroke->totpoints * sizeof(int),
 				                               "track mask rasterization points");
 				for (int i = 0; i < stroke->totpoints; i++, point += 2) {
-					point[0] = (stroke_points[i].x - marker->search_min[0]) * frame_width;
-					point[1] = (stroke_points[i].y - marker->search_min[1]) * frame_height;
+					point[0] = stroke_points[i].x * frame_width - region_min[0];
+					point[1] = stroke_points[i].y * frame_height - region_min[1];
 				}
 				/* TODO: add an option to control whether AA is enabled or not */
 				BLI_bitmap_draw_2d_poly_v2i_n(
@@ -1010,24 +1013,40 @@ static void track_mask_gpencil_layer_rasterize(int frame_width, int frame_height
 	}
 }
 
-float *BKE_tracking_track_get_mask(int frame_width, int frame_height,
-                                   MovieTrackingTrack *track, MovieTrackingMarker *marker)
+/* Region is in pixel space, relative to marker's center. */
+float *tracking_track_get_mask_for_region(int frame_width, int frame_height,
+                                          const float region_min[2],
+                                          const float region_max[2],
+                                          MovieTrackingTrack *track)
 {
 	float *mask = NULL;
 	bGPDlayer *layer = track_mask_gpencil_layer_get(track);
-	int mask_width, mask_height;
-
-	mask_width = (marker->search_max[0] - marker->search_min[0]) * frame_width;
-	mask_height = (marker->search_max[1] - marker->search_min[1]) * frame_height;
-
-	if (layer) {
+	if (layer != NULL) {
+		const int mask_width = region_max[0] - region_min[0];
+		const int mask_height = region_max[1] - region_min[1];
 		mask = MEM_callocN(mask_width * mask_height * sizeof(float), "track mask");
-
-		track_mask_gpencil_layer_rasterize(frame_width, frame_height, marker, layer,
-		                                   mask, mask_width, mask_height);
+		track_mask_gpencil_layer_rasterize(frame_width, frame_height,
+		                                   region_min,
+		                                   layer,
+		                                   mask,
+		                                   mask_width, mask_height);
 	}
-
 	return mask;
+}
+
+float *BKE_tracking_track_get_mask(int frame_width, int frame_height,
+                                   MovieTrackingTrack *track,
+                                   MovieTrackingMarker *marker)
+{
+	/* Convert normalized space marker's search area to pixel-space region. */
+	const float region_min[2] = {marker->search_min[0] * frame_width,
+	                             marker->search_min[1] * frame_height};
+	const float region_max[2] = {marker->search_max[0] * frame_width,
+	                             marker->search_max[1] * frame_height};
+	return tracking_track_get_mask_for_region(frame_width, frame_height,
+	                                          region_min,
+	                                          region_max,
+	                                          track);
 }
 
 float BKE_tracking_track_get_weight_for_marker(MovieClip *clip, MovieTrackingTrack *track, MovieTrackingMarker *marker)
