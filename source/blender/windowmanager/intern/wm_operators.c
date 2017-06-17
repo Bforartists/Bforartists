@@ -1844,7 +1844,7 @@ static uiBlock *wm_block_create_splash(bContext *C, ARegion *ar, void *UNUSED(ar
 
 	uiItemStringO(col, IFACE_("Python API Reference"), ICON_URL, "WM_OT_url_open", "url", "https://www.bforartists.de/pythonapi/contents.html"); // bfa - link to new api page
 	uiItemL(col, "", ICON_NONE);
-	uiItemL(col, "", ICON_NONE);
+	uiItemL(col, "Bforartists 0.9.2 is based at Blender 2.78c", ICON_NONE);
 
 	col = uiLayoutColumn(split, false);
 
