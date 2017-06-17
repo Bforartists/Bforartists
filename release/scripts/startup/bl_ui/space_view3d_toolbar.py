@@ -1610,7 +1610,6 @@ class VIEW3D_PT_tools_posemode(View3DPanel, Panel):
 
             row = layout.row(align=True)
             row.operator("pose.propagate", text="Propagate")
-            row.menu("VIEW3D_MT_pose_propagate", icon='TRIA_RIGHT', text = "")
 
             # bfa - Double menu entry. But stays available for further modifications
             #col = layout.column(align=True)
@@ -1642,7 +1641,6 @@ class VIEW3D_PT_tools_posemode(View3DPanel, Panel):
 
             row = col.row(align=True)
             row.operator("pose.propagate", text="Propagate")
-            row.menu("VIEW3D_MT_pose_propagate", icon='TRIA_RIGHT', text = "")
 
             draw_keyframing_tools_icons(context, layout)
 
