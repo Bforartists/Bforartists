@@ -69,26 +69,22 @@ static DEG_EditorUpdateSceneCb deg_editor_update_scene_cb = NULL;
 static DEG_EditorUpdateScenePreCb deg_editor_update_scene_pre_cb = NULL;
 
 Depsgraph::Depsgraph()
-  : root_node(NULL),
+  : time_source(NULL),
     need_update(false),
     layers(0)
 {
 	BLI_spin_init(&lock);
 	id_hash = BLI_ghash_ptr_new("Depsgraph id hash");
-	subgraphs = BLI_gset_ptr_new("Depsgraph subgraphs");
 	entry_tags = BLI_gset_ptr_new("Depsgraph entry_tags");
 }
 
 Depsgraph::~Depsgraph()
 {
-	/* Free root node - it won't have been freed yet... */
 	clear_id_nodes();
-	clear_subgraph_nodes();
 	BLI_ghash_free(id_hash, NULL, NULL);
-	BLI_gset_free(subgraphs, NULL);
 	BLI_gset_free(entry_tags, NULL);
-	if (this->root_node != NULL) {
-		OBJECT_GUARDED_DELETE(this->root_node, RootDepsNode);
+	if (time_source != NULL) {
+		OBJECT_GUARDED_DELETE(time_source, TimeSourceDepsNode);
 	}
 	BLI_spin_end(&lock);
 }
@@ -131,7 +127,7 @@ static bool pointer_to_component_node_criteria(const PointerRNA *ptr,
 		bPoseChannel *pchan = (bPoseChannel *)ptr->data;
 
 		/* Bone - generally, we just want the bone component... */
-		*type = DEPSNODE_TYPE_BONE;
+		*type = DEG_NODE_TYPE_BONE;
 		*subdata = pchan->name;
 
 		return true;
@@ -141,7 +137,7 @@ static bool pointer_to_component_node_criteria(const PointerRNA *ptr,
 
 		/* armature-level bone, but it ends up going to bone component anyway */
 		// TODO: the ID in thise case will end up being bArmature, not Object as needed!
-		*type = DEPSNODE_TYPE_BONE;
+		*type = DEG_NODE_TYPE_BONE;
 		*subdata = bone->name;
 		//*id = ...
 
@@ -155,7 +151,7 @@ static bool pointer_to_component_node_criteria(const PointerRNA *ptr,
 		if (BLI_findindex(&ob->constraints, con) != -1) {
 			/* object transform */
 			// XXX: for now, we can't address the specific constraint or the constraint stack...
-			*type = DEPSNODE_TYPE_TRANSFORM;
+			*type = DEG_NODE_TYPE_TRANSFORM;
 			return true;
 		}
 		else if (ob->pose) {
@@ -163,7 +159,7 @@ static bool pointer_to_component_node_criteria(const PointerRNA *ptr,
 			for (pchan = (bPoseChannel *)ob->pose->chanbase.first; pchan; pchan = pchan->next) {
 				if (BLI_findindex(&pchan->constraints, con) != -1) {
 					/* bone transforms */
-					*type = DEPSNODE_TYPE_BONE;
+					*type = DEG_NODE_TYPE_BONE;
 					*subdata = pchan->name;
 					return true;
 				}
@@ -178,7 +174,7 @@ static bool pointer_to_component_node_criteria(const PointerRNA *ptr,
 		 * so although we have unique ops for modifiers,
 		 * we can't lump them together
 		 */
-		*type = DEPSNODE_TYPE_BONE;
+		*type = DEG_NODE_TYPE_BONE;
 		//*subdata = md->name;
 
 		return true;
@@ -195,14 +191,14 @@ static bool pointer_to_component_node_criteria(const PointerRNA *ptr,
 			    strstr(prop_identifier, "scale") ||
 			    strstr(prop_identifier, "matrix_"))
 			{
-				*type = DEPSNODE_TYPE_TRANSFORM;
+				*type = DEG_NODE_TYPE_TRANSFORM;
 				return true;
 			}
 			else if (strstr(prop_identifier, "data")) {
 				/* We access object.data, most likely a geometry.
 				 * Might be a bone tho..
 				 */
-				*type = DEPSNODE_TYPE_GEOMETRY;
+				*type = DEG_NODE_TYPE_GEOMETRY;
 				return true;
 			}
 		}
@@ -212,21 +208,21 @@ static bool pointer_to_component_node_criteria(const PointerRNA *ptr,
 
 		/* ShapeKeys are currently handled as geometry on the geometry that owns it */
 		*id = key->from; // XXX
-		*type = DEPSNODE_TYPE_PARAMETERS;
+		*type = DEG_NODE_TYPE_PARAMETERS;
 
 		return true;
 	}
 	else if (RNA_struct_is_a(ptr->type, &RNA_Sequence)) {
 		Sequence *seq = (Sequence *)ptr->data;
 		/* Sequencer strip */
-		*type = DEPSNODE_TYPE_SEQUENCER;
+		*type = DEG_NODE_TYPE_SEQUENCER;
 		*subdata = seq->name; // xxx?
 		return true;
 	}
 
 	if (prop) {
 		/* All unknown data effectively falls under "parameter evaluation" */
-		*type = DEPSNODE_TYPE_PARAMETERS;
+		*type = DEG_NODE_TYPE_PARAMETERS;
 		return true;
 	}
 
@@ -263,72 +259,18 @@ static void id_node_deleter(void *value)
 	OBJECT_GUARDED_DELETE(id_node, IDDepsNode);
 }
 
-RootDepsNode *Depsgraph::add_root_node()
+TimeSourceDepsNode *Depsgraph::add_time_source()
 {
-	if (!root_node) {
-		DepsNodeFactory *factory = deg_get_node_factory(DEPSNODE_TYPE_ROOT);
-		root_node = (RootDepsNode *)factory->create_node(NULL, "", "Root (Scene)");
+	if (time_source == NULL) {
+		DepsNodeFactory *factory = deg_get_node_factory(DEG_NODE_TYPE_TIMESOURCE);
+		time_source = (TimeSourceDepsNode *)factory->create_node(NULL, "", "Time Source");
 	}
-	return root_node;
+	return time_source;
 }
 
-TimeSourceDepsNode *Depsgraph::find_time_source(const ID *id) const
+TimeSourceDepsNode *Depsgraph::find_time_source() const
 {
-	/* Search for one attached to a particular ID? */
-	if (id) {
-		/* Check if it was added as a component
-		 * (as may be done for subgraphs needing timeoffset).
-		 */
-		IDDepsNode *id_node = find_id_node(id);
-		if (id_node) {
-			// XXX: review this
-//			return id_node->find_component(DEPSNODE_TYPE_TIMESOURCE);
-		}
-		BLI_assert(!"Not implemented yet");
-	}
-	else {
-		/* Use "official" timesource. */
-		return root_node->time_source;
-	}
-	return NULL;
-}
-
-SubgraphDepsNode *Depsgraph::add_subgraph_node(const ID *id)
-{
-	DepsNodeFactory *factory = deg_get_node_factory(DEPSNODE_TYPE_SUBGRAPH);
-	SubgraphDepsNode *subgraph_node =
-		(SubgraphDepsNode *)factory->create_node(id, "", id->name + 2);
-
-	/* Add to subnodes list. */
-	BLI_gset_insert(subgraphs, subgraph_node);
-
-	/* if there's an ID associated, add to ID-nodes lookup too */
-	if (id) {
-#if 0
-		/* XXX subgraph node is NOT a true IDDepsNode - what is this supposed to do? */
-		// TODO: what to do if subgraph's ID has already been added?
-		BLI_assert(!graph->find_id_node(id));
-		graph->id_hash[id] = this;
-#endif
-	}
-
-	return subgraph_node;
-}
-
-void Depsgraph::remove_subgraph_node(SubgraphDepsNode *subgraph_node)
-{
-	BLI_gset_remove(subgraphs, subgraph_node, NULL);
-	OBJECT_GUARDED_DELETE(subgraph_node, SubgraphDepsNode);
-}
-
-void Depsgraph::clear_subgraph_nodes()
-{
-	GSET_FOREACH_BEGIN(SubgraphDepsNode *, subgraph_node, subgraphs)
-	{
-		OBJECT_GUARDED_DELETE(subgraph_node, SubgraphDepsNode);
-	}
-	GSET_FOREACH_END();
-	BLI_gset_clear(subgraphs, NULL);
+	return time_source;
 }
 
 IDDepsNode *Depsgraph::find_id_node(const ID *id) const
@@ -340,23 +282,13 @@ IDDepsNode *Depsgraph::add_id_node(ID *id, const char *name)
 {
 	IDDepsNode *id_node = find_id_node(id);
 	if (!id_node) {
-		DepsNodeFactory *factory = deg_get_node_factory(DEPSNODE_TYPE_ID_REF);
+		DepsNodeFactory *factory = deg_get_node_factory(DEG_NODE_TYPE_ID_REF);
 		id_node = (IDDepsNode *)factory->create_node(id, "", name);
 		id->tag |= LIB_TAG_DOIT;
 		/* register */
 		BLI_ghash_insert(id_hash, id, id_node);
 	}
 	return id_node;
-}
-
-void Depsgraph::remove_id_node(const ID *id)
-{
-	IDDepsNode *id_node = find_id_node(id);
-	if (id_node) {
-		/* unregister */
-		BLI_ghash_remove(id_hash, id, NULL, NULL);
-		OBJECT_GUARDED_DELETE(id_node, IDDepsNode);
-	}
 }
 
 void Depsgraph::clear_id_nodes()
@@ -367,15 +299,14 @@ void Depsgraph::clear_id_nodes()
 /* Add new relationship between two nodes. */
 DepsRelation *Depsgraph::add_new_relation(OperationDepsNode *from,
                                           OperationDepsNode *to,
-                                          eDepsRelation_Type type,
                                           const char *description)
 {
 	/* Create new relation, and add it to the graph. */
-	DepsRelation *rel = OBJECT_GUARDED_NEW(DepsRelation, from, to, type, description);
+	DepsRelation *rel = OBJECT_GUARDED_NEW(DepsRelation, from, to, description);
 	/* TODO(sergey): Find a better place for this. */
 #ifdef WITH_OPENSUBDIV
 	ComponentDepsNode *comp_node = from->owner;
-	if (comp_node->type == DEPSNODE_TYPE_GEOMETRY) {
+	if (comp_node->type == DEG_NODE_TYPE_GEOMETRY) {
 		IDDepsNode *id_to = to->owner->owner;
 		IDDepsNode *id_from = from->owner->owner;
 		if (id_to != id_from && (id_to->id->tag & LIB_TAG_ID_RECALC_ALL)) {
@@ -391,11 +322,10 @@ DepsRelation *Depsgraph::add_new_relation(OperationDepsNode *from,
 
 /* Add new relation between two nodes */
 DepsRelation *Depsgraph::add_new_relation(DepsNode *from, DepsNode *to,
-                                          eDepsRelation_Type type,
                                           const char *description)
 {
 	/* Create new relation, and add it to the graph. */
-	DepsRelation *rel = OBJECT_GUARDED_NEW(DepsRelation, from, to, type, description);
+	DepsRelation *rel = OBJECT_GUARDED_NEW(DepsRelation, from, to, description);
 	return rel;
 }
 
@@ -404,12 +334,10 @@ DepsRelation *Depsgraph::add_new_relation(DepsNode *from, DepsNode *to,
 
 DepsRelation::DepsRelation(DepsNode *from,
                            DepsNode *to,
-                           eDepsRelation_Type type,
                            const char *description)
   : from(from),
     to(to),
     name(description),
-    type(type),
     flag(0)
 {
 #ifndef NDEBUG
@@ -472,11 +400,10 @@ void Depsgraph::add_entry_tag(OperationDepsNode *node)
 void Depsgraph::clear_all_nodes()
 {
 	clear_id_nodes();
-	clear_subgraph_nodes();
 	BLI_ghash_clear(id_hash, NULL, NULL);
-	if (this->root_node) {
-		OBJECT_GUARDED_DELETE(this->root_node, RootDepsNode);
-		root_node = NULL;
+	if (time_source != NULL) {
+		OBJECT_GUARDED_DELETE(time_source, TimeSourceDepsNode);
+		time_source = NULL;
 	}
 }
 

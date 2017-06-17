@@ -695,7 +695,11 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
             update=devices_update_callback
             )
 
-        cls.debug_opencl_kernel_single_program = BoolProperty(name="Single Program", default=True, update=devices_update_callback);
+        cls.debug_opencl_kernel_single_program = BoolProperty(
+            name="Single Program",
+            default=True,
+            update=devices_update_callback,
+            )
 
         cls.debug_use_opencl_debug = BoolProperty(name="Debug OpenCL", default=False)
 
@@ -1166,6 +1170,12 @@ class CyclesCurveRenderSettings(bpy.types.PropertyGroup):
     def unregister(cls):
         del bpy.types.Scene.cycles_curves
 
+def update_render_passes(self, context):
+    scene = context.scene
+    rd = scene.render
+    rl = rd.layers.active
+    rl.update_render_passes()
+
 class CyclesRenderLayerSettings(bpy.types.PropertyGroup):
     @classmethod
     def register(cls):
@@ -1178,27 +1188,32 @@ class CyclesRenderLayerSettings(bpy.types.PropertyGroup):
                 name="Debug BVH Traversed Nodes",
                 description="Store Debug BVH Traversed Nodes pass",
                 default=False,
+                update=update_render_passes,
                 )
         cls.pass_debug_bvh_traversed_instances = BoolProperty(
                 name="Debug BVH Traversed Instances",
                 description="Store Debug BVH Traversed Instances pass",
                 default=False,
+                update=update_render_passes,
                 )
         cls.pass_debug_bvh_intersections = BoolProperty(
                 name="Debug BVH Intersections",
                 description="Store Debug BVH Intersections",
                 default=False,
+                update=update_render_passes,
                 )
         cls.pass_debug_ray_bounces = BoolProperty(
                 name="Debug Ray Bounces",
                 description="Store Debug Ray Bounces pass",
                 default=False,
+                update=update_render_passes,
                 )
 
         cls.use_denoising = BoolProperty(
                 name="Use Denoising",
                 description="Denoise the rendered image",
                 default=False,
+                update=update_render_passes,
                 )
         cls.denoising_diffuse_direct = BoolProperty(
                 name="Diffuse Direct",
@@ -1267,6 +1282,7 @@ class CyclesRenderLayerSettings(bpy.types.PropertyGroup):
                 name="Store denoising passes",
                 description="Store the denoising feature passes and the noisy image",
                 default=False,
+                update=update_render_passes,
         )
 
     @classmethod

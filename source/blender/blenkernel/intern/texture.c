@@ -846,7 +846,7 @@ MTex *BKE_texture_mtex_add_id(ID *id, int slot)
 
 /* ------------------------------------------------------------------------- */
 
-Tex *BKE_texture_copy(Main *bmain, Tex *tex)
+Tex *BKE_texture_copy(Main *bmain, const Tex *tex)
 {
 	Tex *texn;
 	
@@ -1263,7 +1263,7 @@ EnvMap *BKE_texture_envmap_add(void)
 
 /* ------------------------------------------------------------------------- */
 
-EnvMap *BKE_texture_envmap_copy(EnvMap *env)
+EnvMap *BKE_texture_envmap_copy(const EnvMap *env)
 {
 	EnvMap *envn;
 	int a;
@@ -1336,7 +1336,7 @@ PointDensity *BKE_texture_pointdensity_add(void)
 	return pd;
 } 
 
-PointDensity *BKE_texture_pointdensity_copy(PointDensity *pd)
+PointDensity *BKE_texture_pointdensity_copy(const PointDensity *pd)
 {
 	PointDensity *pdn;
 
@@ -1430,7 +1430,7 @@ OceanTex *BKE_texture_ocean_add(void)
 	return ot;
 }
 
-OceanTex *BKE_texture_ocean_copy(struct OceanTex *ot)
+OceanTex *BKE_texture_ocean_copy(const OceanTex *ot)
 {
 	OceanTex *otn = MEM_dupallocN(ot);
 	
@@ -1518,4 +1518,34 @@ void BKE_texture_get_value(
         float *tex_co, TexResult *texres, bool use_color_management)
 {
 	BKE_texture_get_value_ex(scene, texture, tex_co, texres, NULL, use_color_management);
+}
+
+static void texture_nodes_fetch_images_for_pool(bNodeTree *ntree, struct ImagePool *pool)
+{
+	for (bNode *node = ntree->nodes.first; node; node = node->next) {
+		if (node->type == SH_NODE_TEX_IMAGE && node->id != NULL) {
+			Image *image = (Image *)node->id;
+			BKE_image_pool_acquire_ibuf(image, NULL, pool);
+		}
+		else if (node->type == NODE_GROUP && node->id != NULL) {
+			/* TODO(sergey): Do we need to control recursion here? */
+			bNodeTree *nested_tree = (bNodeTree *)node->id;
+			texture_nodes_fetch_images_for_pool(nested_tree, pool);
+		}
+	}
+}
+
+/* Make sure all images used by texture are loaded into pool. */
+void BKE_texture_fetch_images_for_pool(Tex *texture, struct ImagePool *pool)
+{
+	if (texture->nodetree != NULL) {
+		texture_nodes_fetch_images_for_pool(texture->nodetree, pool);
+	}
+	else {
+		if (texture->type == TEX_IMAGE) {
+			if (texture->ima != NULL) {
+				BKE_image_pool_acquire_ibuf(texture->ima, NULL, pool);
+			}
+		}
+	}
 }

@@ -1775,7 +1775,7 @@ static ImBuf *seq_proxy_fetch(const SeqRenderData *context, Sequence *seq, int c
 		if (proxy->anim == NULL) {
 			return NULL;
 		}
- 
+
 		seq_open_anim_file(context->scene, seq, true);
 		sanim = seq->anims.first;
 
@@ -1783,7 +1783,7 @@ static ImBuf *seq_proxy_fetch(const SeqRenderData *context, Sequence *seq, int c
 
 		return IMB_anim_absolute(proxy->anim, frameno, IMB_TC_NONE, IMB_PROXY_NONE);
 	}
- 
+
 	if (seq_proxy_get_fname(ed, seq, cfra, render_size, name, context->view_id) == 0) {
 		return NULL;
 	}
@@ -4190,9 +4190,10 @@ static bool update_changed_seq_recurs(Scene *scene, Sequence *seq, Sequence *cha
 	
 	if (free_imbuf) {
 		if (ibuf_change) {
-			if (seq->type == SEQ_TYPE_MOVIE)
+			if (seq->type == SEQ_TYPE_MOVIE) {
 				BKE_sequence_free_anim(seq);
-			if (seq->type == SEQ_TYPE_SPEED) {
+			}
+			else if (seq->type == SEQ_TYPE_SPEED) {
 				BKE_sequence_effect_speed_rebuild_map(scene, seq, true);
 			}
 		}
@@ -5182,6 +5183,7 @@ Sequence *BKE_sequencer_add_sound_strip(bContext *C, ListBase *seqbasep, SeqLoad
 	sound = BKE_sound_new_file(bmain, seq_load->path); /* handles relative paths */
 
 	if (sound->playback_handle == NULL) {
+		BKE_libblock_free(bmain, sound);
 #if 0
 		if (op)
 			BKE_report(op->reports, RPT_ERROR, "Unsupported audio format");

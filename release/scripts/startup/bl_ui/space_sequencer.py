@@ -350,19 +350,19 @@ class SEQUENCER_MT_add(Menu):
             layout.operator_context = 'INVOKE_DEFAULT'
             layout.operator("sequencer.scene_strip_add", text="Scene...")
         else:
-            layout.operator_menu_enum("sequencer.scene_strip_add", "scene", text="Scene...")
+            layout.operator_menu_enum("sequencer.scene_strip_add", "scene", text="Scene")
 
         if len(bpy.data.movieclips) > 10:
             layout.operator_context = 'INVOKE_DEFAULT'
             layout.operator("sequencer.movieclip_strip_add", text="Clips...")
         else:
-            layout.operator_menu_enum("sequencer.movieclip_strip_add", "clip", text="Clip...")
+            layout.operator_menu_enum("sequencer.movieclip_strip_add", "clip", text="Clip")
 
         if len(bpy.data.masks) > 10:
             layout.operator_context = 'INVOKE_DEFAULT'
             layout.operator("sequencer.mask_strip_add", text="Masks...")
         else:
-            layout.operator_menu_enum("sequencer.mask_strip_add", "mask", text="Mask...")
+            layout.operator_menu_enum("sequencer.mask_strip_add", "mask", text="Mask")
 
         layout.operator("sequencer.movie_strip_add", text="Movie")
         layout.operator("sequencer.image_strip_add", text="Image")
@@ -372,7 +372,7 @@ class SEQUENCER_MT_add(Menu):
 
 
 class SEQUENCER_MT_add_effect(Menu):
-    bl_label = "Effect Strip..."
+    bl_label = "Effect Strip"
 
     def draw(self, context):
         layout = self.layout

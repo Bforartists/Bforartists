@@ -360,7 +360,7 @@ class RENDER_PT_game_stereo(RenderButtonsPanel, Panel):
         stereo_mode = gs.stereo
 
         # stereo options:
-        layout.prop(gs, "stereo", expand=True)
+        layout.row().prop(gs, "stereo", expand=True)
 
         # stereo:
         if stereo_mode == 'STEREO':
@@ -409,7 +409,7 @@ class RENDER_PT_game_shading(RenderButtonsPanel, Panel):
 
         gs = context.scene.game_settings
 
-        layout.prop(gs, "material_mode", expand=True)
+        layout.row().prop(gs, "material_mode", expand=True)
 
         if gs.material_mode == 'GLSL':
             split = layout.split()

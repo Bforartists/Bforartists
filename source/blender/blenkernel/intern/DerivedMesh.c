@@ -2123,6 +2123,8 @@ static void mesh_calc_modifiers(
 				DM_update_weight_mcol(ob, dm, draw_flag, NULL, 0, NULL);
 				append_mask |= CD_MASK_PREVIEW_MLOOPCOL;
 			}
+
+			dm->deformedOnly = false;
 		}
 
 		isPrevDeform = (mti->type == eModifierTypeType_OnlyDeform);
@@ -2463,6 +2465,8 @@ static void editbmesh_calc_modifiers(
 					deformedVerts = NULL;
 				}
 			}
+
+			dm->deformedOnly = false;
 		}
 
 		/* In case of active preview modifier, make sure preview mask remains for following modifiers. */
@@ -3318,7 +3322,8 @@ void DM_calc_loop_tangents_step_0(
         const CustomData *loopData, bool calc_active_tangent,
         const char (*tangent_names)[MAX_NAME], int tangent_names_count,
         bool *rcalc_act, bool *rcalc_ren, int *ract_uv_n, int *rren_uv_n,
-        char *ract_uv_name, char *rren_uv_name, char *rtangent_mask) {
+        char *ract_uv_name, char *rren_uv_name, char *rtangent_mask)
+{
 	/* Active uv in viewport */
 	int layer_index = CustomData_get_layer_index(loopData, CD_MLOOPUV);
 	*ract_uv_n = CustomData_get_active_layer(loopData, CD_MLOOPUV);
@@ -3456,7 +3461,7 @@ void DM_calc_loop_tangents(
 				 * have to check this is valid...
 				 */
 				mesh2tangent->precomputedLoopNormals = dm->getLoopDataArray(dm, CD_NORMAL);
-				mesh2tangent->precomputedFaceNormals = CustomData_get_layer(&dm->faceData, CD_NORMAL);
+				mesh2tangent->precomputedFaceNormals = CustomData_get_layer(&dm->polyData, CD_NORMAL);
 
 				mesh2tangent->orco = NULL;
 				mesh2tangent->mloopuv = CustomData_get_layer_named(&dm->loopData, CD_MLOOPUV, dm->loopData.layers[index].name);
