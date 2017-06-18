@@ -106,8 +106,8 @@ class GreasePencilDrawingToolsPanel:
         row.alignment = 'LEFT'
         row.operator("gpencil.draw", icon='GREASEPENCIL',text="").mode = 'DRAW'
         row.operator("gpencil.draw", icon= 'ERASE',  text="").mode = 'ERASER'
-        row.operator("gpencil.draw", icon= 'GREASEPENCIL_LINE', text="").mode = 'DRAW_STRAIGHT'
-        row.operator("gpencil.draw", icon= 'GREASEPENCIL_POLY', text="").mode = 'DRAW_POLY'
+        row.operator("gpencil.draw", icon= 'LINE_DATA', text="").mode = 'DRAW_STRAIGHT'
+        row.operator("gpencil.draw", icon= 'MESH_DATA', text="").mode = 'DRAW_POLY'
         col.separator()
 
         col.separator()
