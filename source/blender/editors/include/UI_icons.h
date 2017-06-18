@@ -561,16 +561,16 @@ DEF_ICON(MAKE_LOCAL)
 DEF_ICON(MAKE_PROXY)
 /*bfa - new icons. Tool Shelf - Object Mode - Grease Pencil*/
 DEF_ICON(ERASE)
-DEF_ICON(GREASEPENCIL_LINE)
-DEF_ICON(GREASEPENCIL_POLY)
+#ifndef DEF_ICON_BLANK_SKIP
+	/* EMPTY */
+	DEF_ICON(BLANK693)
+	DEF_ICON(BLANK694)
+#endif
 DEF_ICON(GREASEPENCIL_CONVERT)
 DEF_ICON(RULER)
-
 DEF_ICON(VERTEX_PARENT)
 
-
 /* ---------------------------- Newline -------------------------- */
-
 
 /*bfa - new icons. Tool Shelf - Edit Mode - Tools - Mesh Tools - Add section  */
 DEF_ICON(INSET_FACES)
