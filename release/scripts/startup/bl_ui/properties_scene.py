@@ -272,15 +272,16 @@ class SCENE_PT_color_management(SceneButtonsPanel, Panel):
         row.label(text="Sequencer Color Space:")
         row.prop(scene.sequencer_colorspace_settings, "name", text = "")
 
-        wm = context.window_manager # Our bool is in the windows_manager
-  
-        # The subtab is closed by default.
-        # When the click at it then it opens. And shows the hidden elements.
-        if not wm.SP_scene_colmanagement_render:
-            layout.prop(wm,"SP_scene_colmanagement_render", emboss=False, icon="TRIA_RIGHT", text="- Render -")
+        ############## Subtab #####################
+        
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
+
+        if not addon_prefs.SP_scene_colmanagement_render:
+            layout.prop(addon_prefs,"SP_scene_colmanagement_render", emboss=False, icon="TRIA_RIGHT", text="- Render -")
 
         else:
-            layout.prop(wm,"SP_scene_colmanagement_render", emboss=False, icon="TRIA_DOWN", text="+ Render +")
+            layout.prop(addon_prefs,"SP_scene_colmanagement_render", emboss=False, icon="TRIA_DOWN", text="+ Render +")
 
             col = layout.column()
             col.template_colormanaged_view_settings(scene, "view_settings")
@@ -301,15 +302,16 @@ class SCENE_PT_audio(SceneButtonsPanel, Panel):
         layout.prop(scene, "audio_volume")
         layout.operator("sound.bake_animation")
         
-        wm = context.window_manager # Our bool is in the windows_manager
-  
-        # The subtab is closed by default.
-        # When the click at it then it opens. And shows the hidden elements.
-        if not wm.SP_scene_audio_options:
-            layout.prop(wm,"SP_scene_audio_options", emboss=False, icon="TRIA_RIGHT", text="- Options -")
+        ############## Subtab #####################
+        
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
+
+        if not addon_prefs.SP_scene_audio_options:
+            layout.prop(addon_prefs,"SP_scene_audio_options", emboss=False, icon="TRIA_RIGHT", text="- Options -")
 
         else:
-            layout.prop(wm,"SP_scene_audio_options", emboss=False, icon="TRIA_DOWN", text="+ Options +")      
+            layout.prop(addon_prefs,"SP_scene_audio_options", emboss=False, icon="TRIA_DOWN", text="+ Options +")      
 
             split = layout.split()
 

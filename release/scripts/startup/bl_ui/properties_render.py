@@ -150,15 +150,16 @@ class RENDER_PT_dimensions(RenderButtonsPanel, Panel):
 
         self.draw_framerate(sub, rd)
 
-        wm = context.window_manager # Our bool is in the windows_manager
-  
-        # The subtab is closed by default.
-        # When the click at it then it opens. And shows the hidden ui elements.
-        if not wm.SP_render_dimensions_options:
-            layout.prop(wm,"SP_render_dimensions_options", emboss=False, icon="TRIA_RIGHT", text="- Advanced -")
+        ############## Subtab #####################
+        
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
+
+        if not addon_prefs.SP_render_dimensions_options:
+            layout.prop(addon_prefs,"SP_render_dimensions_options", emboss=False, icon="TRIA_RIGHT", text="- Advanced -")
 
         else:
-            layout.prop(wm,"SP_render_dimensions_options", emboss=False, icon="TRIA_DOWN", text="+ Advanced +")
+            layout.prop(addon_prefs,"SP_render_dimensions_options", emboss=False, icon="TRIA_DOWN", text="+ Advanced +")
             
             split = layout.split()
 
@@ -327,15 +328,16 @@ class RENDER_PT_post_processing(RenderButtonsPanel, Panel):
         split.prop(rd, "dither_intensity", text="Dither", slider=True)
 
         
-        wm = context.window_manager # Our bool is in the windows_manager
-  
-        # The subtab is closed by default.
-        # When the click at it then it opens. And shows the hidden ui elements.
-        if not wm.SP_render_postpro_BI_options:
-            layout.prop(wm,"SP_render_postpro_BI_options", emboss=False, icon="TRIA_RIGHT", text="- Advanced -")
+        ############## Subtab #####################
+        
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
+
+        if not addon_prefs.SP_render_postpro_BI_options:
+            layout.prop(addon_prefs,"SP_render_postpro_BI_options", emboss=False, icon="TRIA_RIGHT", text="- Advanced -")
 
         else:
-            layout.prop(wm,"SP_render_postpro_BI_options", emboss=False, icon="TRIA_DOWN", text="+ Advanced +")
+            layout.prop(addon_prefs,"SP_render_postpro_BI_options", emboss=False, icon="TRIA_DOWN", text="+ Advanced +")
 
             split = layout.split()
 
@@ -366,15 +368,16 @@ class RENDER_PT_stamp(RenderButtonsPanel, Panel):
 
         layout.prop(rd, "use_stamp")
 
-        wm = context.window_manager # Our bool is in the windows_manager
-  
-        # The subtab is closed by default.
-        # When the click at it then it opens. And shows the hidden ui elements.
-        if not wm.SP_render_metadata_stampoptions:
-            layout.prop(wm,"SP_render_metadata_stampoptions", emboss=False, icon="TRIA_RIGHT", text="- Stamp Options -")
+        ############## Subtab #####################
+        
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
+
+        if not addon_prefs.SP_render_metadata_stampoptions:
+            layout.prop(addon_prefs,"SP_render_metadata_stampoptions", emboss=False, icon="TRIA_RIGHT", text="- Stamp Options -")
 
         else:
-            layout.prop(wm,"SP_render_metadata_stampoptions", emboss=False, icon="TRIA_DOWN", text="+ Stamp Options +") 
+            layout.prop(addon_prefs,"SP_render_metadata_stampoptions", emboss=False, icon="TRIA_DOWN", text="+ Stamp Options +") 
 
             col = layout.column()
             col.active = rd.use_stamp
@@ -386,13 +389,16 @@ class RENDER_PT_stamp(RenderButtonsPanel, Panel):
             row.column().prop(rd, "stamp_foreground", slider=True)
             row.column().prop(rd, "stamp_background", slider=True)
 
-        # The subtab is closed by default.
-        # When the click at it then it opens. And shows the hidden ui elements.
-        if not wm.SP_render_metadata_enabled:
-            layout.prop(wm,"SP_render_metadata_enabled", emboss=False, icon="TRIA_RIGHT", text="- Enabled Metadata -")
+        ############## Subtab #####################
+        
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
+
+        if not addon_prefs.SP_render_metadata_enabled:
+            layout.prop(addon_prefs,"SP_render_metadata_enabled", emboss=False, icon="TRIA_RIGHT", text="- Enabled Metadata -")
 
         else:
-            layout.prop(wm,"SP_render_metadata_enabled", emboss=False, icon="TRIA_DOWN", text="+ Enabled Metadata +") 
+            layout.prop(addon_prefs,"SP_render_metadata_enabled", emboss=False, icon="TRIA_DOWN", text="+ Enabled Metadata +") 
 
             layout.label("Enabled Metadata")
             split = layout.split()
@@ -436,15 +442,16 @@ class RENDER_PT_output(RenderButtonsPanel, Panel):
 
         layout.prop(rd, "filepath", text="")
 
-        wm = context.window_manager # Our bool is in the windows_manager
-  
-        # The subtab is closed by default.
-        # When the click at it then it opens. And shows the hidden ui elements.
-        if not wm.SP_render_output_options:
-            layout.prop(wm,"SP_render_output_options", emboss=False, icon="TRIA_RIGHT", text="- Options -")
+        ############## Subtab #####################
+        
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
+
+        if not addon_prefs.SP_render_output_options:
+            layout.prop(addon_prefs,"SP_render_output_options", emboss=False, icon="TRIA_RIGHT", text="- Options -")
 
         else:
-            layout.prop(wm,"SP_render_output_options", emboss=False, icon="TRIA_DOWN", text="+ Options +")
+            layout.prop(addon_prefs,"SP_render_output_options", emboss=False, icon="TRIA_DOWN", text="+ Options +")
 
             split = layout.split()
 

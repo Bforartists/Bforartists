@@ -94,39 +94,6 @@ del _namespace
 
 
 def register():
-    
-    # Subtab bools
-    bpy.types.WindowManager.subtab_3dview_properties_view_lock = bpy.props.BoolProperty(name="Lock", description="Contains the Lock Items", default = False)
-    bpy.types.WindowManager.subtab_3dview_properties_display_misc = bpy.props.BoolProperty(name="Miscellaneous", description="Contains miscellaneous settings", default = False)
-    bpy.types.WindowManager.subtab_3dview_properties_bgimg_settings = bpy.props.BoolProperty(name="Settings", description="Contains Settings", default = False)
-    bpy.types.WindowManager.subtab_3dview_properties_bgimg_align = bpy.props.BoolProperty(name="Align", description="Contains Align Tools", default = False)
-    bpy.types.WindowManager.subtab_3dview_properties_meshdisplay_overlay = bpy.props.BoolProperty(name="Overlay Options", description="Contains Overlay Settings", default = False)
-    bpy.types.WindowManager.subtab_3dview_properties_meshdisplay_info = bpy.props.BoolProperty(name="Info Options", description="Contains Info Settings", default = False)
-
-    # Subtab bools Rendertab panels
-    bpy.types.WindowManager.SP_render_output_options = bpy.props.BoolProperty(name="Options", description="Contains Options", default = False)
-    bpy.types.WindowManager.SP_render_metadata_stampoptions = bpy.props.BoolProperty(name="Stamp Options", description="Contains Options for Stamp output", default = False)
-    bpy.types.WindowManager.SP_render_metadata_enabled = bpy.props.BoolProperty(name="Enabled Metadata", description="Contains the enabled / disabled Metadata Options", default = False)
-    bpy.types.WindowManager.SP_render_dimensions_options = bpy.props.BoolProperty(name="Advanced", description="Contains advanced Options", default = False)
-    bpy.types.WindowManager.SP_render_sampling_options = bpy.props.BoolProperty(name="Options", description="Contains Options", default = False)
-    bpy.types.WindowManager.SP_render_light_paths_options = bpy.props.BoolProperty(name="Options", description="Contains Options", default = False)
-    bpy.types.WindowManager.SP_render_postpro_BI_options = bpy.props.BoolProperty(name="Advanced", description="Contains more settings", default = False)
-
-    #Subtab Bools Scene Panel
-    bpy.types.WindowManager.SP_scene_colmanagement_render = bpy.props.BoolProperty(name="Render", description="Contains Color Management Render Settings", default = False)
-    bpy.types.WindowManager.SP_scene_audio_options = bpy.props.BoolProperty(name="Options", description="Contains Audio Options", default = False)
-
-    #Subtab Bools Object Panel
-    bpy.types.WindowManager.SP_object_display_options = bpy.props.BoolProperty(name="Options", description="Contains some more options", default = False)
-
-    #Subtab Bools Data Panel
-    bpy.types.WindowManager.SP_data_texspace_manual = bpy.props.BoolProperty(name="Manual Transform", description="Contains the transform edit boxes for manual Texture space", default = False)
-
-    #Subtab Bools Material Panel
-    bpy.types.WindowManager.SP_material_options = bpy.props.BoolProperty(name="Options", description="Contains some more options", default = False)
-    bpy.types.WindowManager.SP_material_settings_options = bpy.props.BoolProperty(name="Viewport Options", description="Contains some Viewport options", default = False)
-    bpy.types.WindowManager.SP_material_shading_diffuseramp = bpy.props.BoolProperty(name="Ramp Options", description="Contains some Ramp options", default = False)
-    bpy.types.WindowManager.SP_material_shading_specularramp = bpy.props.BoolProperty(name="Ramp Options", description="Contains some Ramp options", default = False)
 
     bpy.utils.register_module(__name__)
 
@@ -177,39 +144,6 @@ def register():
 
 
 def unregister():
-
-    # Subtab Bools
-    del bpy.types.WindowManager.subtab_3dview_properties_view_lock # Unregister our flag when unregister.    
-    del bpy.types.WindowManager.subtab_3dview_properties_display_misc # Unregister our flag when unregister.  
-    del bpy.types.WindowManager.subtab_3dview_properties_bgimg_settings
-    del bpy.types.WindowManager.subtab_3dview_properties_bgimg_align
-    del bpy.types.WindowManager.subtab_3dview_properties_meshdisplay_overlay
-    del bpy.types.WindowManager.subtab_3dview_properties_meshdisplay_info
-
-    # Subtab bools Rendertab panels
-    del bpy.types.WindowManager.SP_render_output_options
-    del bpy.types.WindowManager.SP_render_metadata_stampoptions
-    del bpy.types.WindowManager.SP_render_metadata_enabled
-    del bpy.types.WindowManager.SP_render_dimensions_options
-    del bpy.types.WindowManager.SP_render_sampling_options
-    del bpy.types.WindowManager.SP_render_light_paths_options
-    del bpy.types.WindowManager.SP_render_postpro_BI_options
-
-    #Subtab Bools Scene Panel
-    del bpy.types.WindowManager.SP_scene_colmanagement_render
-    del bpy.types.WindowManager.SP_scene_audio_options
-
-    #Subtab Bools Object Panel
-    del bpy.types.WindowManager.SP_object_display_options
-
-    #Subtab Bools Data Panel
-    del bpy.types.WindowManager.SP_data_texspace_manual
-
-    #Subtab Bools Material Panel
-    del bpy.types.WindowManager.SP_material_options   
-    del bpy.types.WindowManager.SP_material_settings_options   
-    del bpy.types.WindowManager.SP_material_shading_diffuseramp
-    del bpy.types.WindowManager.SP_material_shading_specularramp
 
     bpy.utils.unregister_module(__name__)
 

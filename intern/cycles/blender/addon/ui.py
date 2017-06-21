@@ -189,15 +189,16 @@ class CyclesRender_PT_sampling(CyclesButtonsPanel, Panel):
             sub.prop(cscene, "subsurface_samples", text="Subsurface")
             sub.prop(cscene, "volume_samples", text="Volume")
 
-        wm = context.window_manager # Our bool is in the windows_manager
-  
-        # The subtab is closed by default.
-        # When the click at it then it opens. And shows the hidden ui elements.
-        if not wm.SP_render_sampling_options:
-            layout.prop(wm,"SP_render_sampling_options", emboss=False, icon="TRIA_RIGHT", text="- Options -")
+        ############## Subtab Lock #####################
+        
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
+
+        if not addon_prefs.SP_render_sampling_options:
+            layout.prop(addon_prefs,"SP_render_sampling_options", emboss=False, icon="TRIA_RIGHT", text="- Options -")
 
         else:
-            layout.prop(wm,"SP_render_sampling_options", emboss=False, icon="TRIA_DOWN", text="+ Options +")
+            layout.prop(addon_prefs,"SP_render_sampling_options", emboss=False, icon="TRIA_DOWN", text="+ Options +")
 
             split = layout.split()
 
@@ -340,15 +341,16 @@ class CyclesRender_PT_light_paths(CyclesButtonsPanel, Panel):
         sub.prop(cscene, "max_bounces", text="Max")
         sub.prop(cscene, "min_bounces", text="Min")
 
-        wm = context.window_manager # Our bool is in the windows_manager
-  
-        # The subtab is closed by default.
-        # When the click at it then it opens. And shows the hidden ui elements.
-        if not wm.SP_render_light_paths_options:
-            layout.prop(wm,"SP_render_light_paths_options", emboss=False, icon="TRIA_RIGHT", text="- Advanced -")
+        ############## Subtab  #####################
+        
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
+
+        if not addon_prefs.SP_render_light_paths_options:
+            layout.prop(addon_prefs,"SP_render_light_paths_options", emboss=False, icon="TRIA_RIGHT", text="- Advanced -")
 
         else:
-            layout.prop(wm,"SP_render_light_paths_options", emboss=False, icon="TRIA_DOWN", text="+ Advanced +")
+            layout.prop(addon_prefs,"SP_render_light_paths_options", emboss=False, icon="TRIA_DOWN", text="+ Advanced +")
 
             split = layout.split()
 
@@ -1297,15 +1299,16 @@ class CyclesMaterial_PT_settings(CyclesButtonsPanel, Panel):
         layout.separator()
 
 
-        wm = context.window_manager # Our bool is in the windows_manager
-  
-        # The subtab is closed by default.
-        # When the click at it then it opens. And shows the hidden ui elements.
-        if not wm.SP_material_settings_options:
-            layout.prop(wm,"SP_material_settings_options", emboss=False, icon="TRIA_RIGHT", text="- Viewport Options -")
+        ############## Subtab #####################
+        
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
+
+        if not addon_prefs.SP_material_settings_options:
+            layout.prop(addon_prefs,"SP_material_settings_options", emboss=False, icon="TRIA_RIGHT", text="- Viewport Options -")
 
         else:
-            layout.prop(wm,"SP_material_settings_options", emboss=False, icon="TRIA_DOWN", text="+ Viewport Options +")
+            layout.prop(addon_prefs,"SP_material_settings_options", emboss=False, icon="TRIA_DOWN", text="+ Viewport Options +")
 
             split = layout.split()
 
