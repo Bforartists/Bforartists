@@ -171,15 +171,16 @@ class MATERIAL_PT_context_material(MaterialButtonsPanel, Panel):
                 
             if mat:
                 
-                wm = context.window_manager # Our bool is in the windows_manager
-          
-                # The subtab is closed by default.
-                # When the click at it then it opens. And shows the hidden ui elements.
-                if not wm.SP_material_options:
-                    layout.prop(wm,"SP_material_options", emboss=False, icon="TRIA_RIGHT", text="- Options -")
+                ############## Subtab #####################
+        
+                user_preferences = context.user_preferences
+                addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
+
+                if not addon_prefs.SP_material_options:
+                    layout.prop(addon_prefs,"SP_material_options", emboss=False, icon="TRIA_RIGHT", text="- Options -")
 
                 else:
-                    layout.prop(wm,"SP_material_options", emboss=False, icon="TRIA_DOWN", text="+ Options +")               
+                    layout.prop(addon_prefs,"SP_material_options", emboss=False, icon="TRIA_DOWN", text="+ Options +")               
             
                     layout.prop(mat, "type", expand=True)
                     if mat.use_nodes:
@@ -308,15 +309,16 @@ class MATERIAL_PT_shading(MaterialButtonsPanel, Panel):
             col.separator()
             col.template_color_ramp(mat, "diffuse_ramp", expand=True)
             
-            wm = context.window_manager # Our bool is in the windows_manager
-      
-            # The subtab is closed by default.
-            # When the click at it then it opens. And shows the hidden ui elements.
-            if not wm.SP_material_shading_diffuseramp:
-                layout.prop(wm,"SP_material_shading_diffuseramp", emboss=False, icon="TRIA_RIGHT", text="- Ramp Options -")
+            ############## Subtab #####################
+        
+            user_preferences = context.user_preferences
+            addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
+
+            if not addon_prefs.SP_material_shading_diffuseramp:
+                layout.prop(addon_prefs,"SP_material_shading_diffuseramp", emboss=False, icon="TRIA_RIGHT", text="- Ramp Options -")
 
             else:
-                layout.prop(wm,"SP_material_shading_diffuseramp", emboss=False, icon="TRIA_DOWN", text="+ Ramp Options +")
+                layout.prop(addon_prefs,"SP_material_shading_diffuseramp", emboss=False, icon="TRIA_DOWN", text="+ Ramp Options +")
                 col = layout.column()
                 row = col.row()               
                 row.prop(mat, "diffuse_ramp_input", text="Input")
@@ -362,15 +364,16 @@ class MATERIAL_PT_shading(MaterialButtonsPanel, Panel):
         if mat.use_specular_ramp:
             layout.template_color_ramp(mat, "specular_ramp", expand=True)
             
-            wm = context.window_manager # Our bool is in the windows_manager
-      
-            # The subtab is closed by default.
-            # When the click at it then it opens. And shows the hidden ui elements.
-            if not wm.SP_material_shading_specularramp:
-                layout.prop(wm,"SP_material_shading_specularramp", emboss=False, icon="TRIA_RIGHT", text="- Ramp Options -")
+            ############## Subtab #####################
+        
+            user_preferences = context.user_preferences
+            addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
+
+            if not addon_prefs.SP_material_shading_specularramp:
+                layout.prop(addon_prefs,"SP_material_shading_specularramp", emboss=False, icon="TRIA_RIGHT", text="- Ramp Options -")
 
             else:
-                layout.prop(wm,"SP_material_shading_specularramp", emboss=False, icon="TRIA_DOWN", text="+ Ramp Options +")
+                layout.prop(addon_prefs,"SP_material_shading_specularramp", emboss=False, icon="TRIA_DOWN", text="+ Ramp Options +")
                 col = layout.column()   
                 row = layout.row()
                 row.prop(mat, "specular_ramp_input", text="Input")

@@ -272,15 +272,16 @@ class OBJECT_PT_display(ObjectButtonsPanel, Panel):
         if obj_type == 'MESH' or is_empty_image:
             col.prop(obj, "show_transparent", text="Transparency")
 
-        wm = context.window_manager # Our bool is in the windows_manager
-  
-        # The subtab is closed by default.
-        # When the click at it then it opens. And shows the hidden ui elements.
-        if not wm.SP_object_display_options:
-            layout.prop(wm,"SP_object_display_options", emboss=False, icon="TRIA_RIGHT", text="- Options -")
+        ############## Subtab #####################
+        
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
+
+        if not addon_prefs.SP_object_display_options:
+            layout.prop(addon_prefs,"SP_object_display_options", emboss=False, icon="TRIA_RIGHT", text="- Options -")
 
         else:
-            layout.prop(wm,"SP_object_display_options", emboss=False, icon="TRIA_DOWN", text="+ Options +")
+            layout.prop(addon_prefs,"SP_object_display_options", emboss=False, icon="TRIA_DOWN", text="+ Options +")
 
             split = layout.split()
 

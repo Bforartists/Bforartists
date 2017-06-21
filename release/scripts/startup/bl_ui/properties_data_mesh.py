@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -177,15 +177,16 @@ class DATA_PT_texture_space(MeshButtonsPanel, Panel):
 
         layout.prop(mesh, "use_auto_texspace")
         
-        wm = context.window_manager # Our bool is in the windows_manager
-  
-        # The subtab is closed by default.
-        # When the click at it then it opens. And shows the hidden elements.
-        if not wm.SP_data_texspace_manual:
-            layout.prop(wm,"SP_data_texspace_manual", emboss=False, icon="TRIA_RIGHT", text="- Manual Transform -")
+        ############## Subtab #####################
+        
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
+
+        if not addon_prefs.SP_data_texspace_manual:
+            layout.prop(addon_prefs,"SP_data_texspace_manual", emboss=False, icon="TRIA_RIGHT", text="- Manual Transform -")
 
         else:
-            layout.prop(wm,"SP_data_texspace_manual", emboss=False, icon="TRIA_DOWN", text="+ Manual Transform +")       
+            layout.prop(addon_prefs,"SP_data_texspace_manual", emboss=False, icon="TRIA_DOWN", text="+ Manual Transform +")       
         
             row = layout.row()
             row.column().prop(mesh, "texspace_location", text="Location")

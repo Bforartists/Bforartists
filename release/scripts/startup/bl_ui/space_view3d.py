@@ -3366,15 +3366,16 @@ class VIEW3D_PT_view3d_properties(Panel):
         col = layout.column(align=True)
         col.prop(view, "use_render_border")
         
-        wm = context.window_manager # Our bool is in the windows_manager
-  
-        # The subtab is closed by default.
-        # When the click at it then it opens. And shows the hidden ui elements.
-        if not wm.subtab_3dview_properties_view_lock:
-            layout.prop(wm,"subtab_3dview_properties_view_lock", emboss=False, icon="TRIA_RIGHT", text="- Lock -")
+        ############## Subtab Lock #####################
+        
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
+        
+        if not addon_prefs.subtab_3dview_properties_view_lock:
+            layout.prop(addon_prefs,"subtab_3dview_properties_view_lock", emboss=False, icon="TRIA_RIGHT", text="- Lock -")
 
         else:
-            layout.prop(wm,"subtab_3dview_properties_view_lock", emboss=False, icon="TRIA_DOWN", text="+ Lock +")
+            layout.prop(addon_prefs,"subtab_3dview_properties_view_lock", emboss=False, icon="TRIA_DOWN", text="+ Lock +")
             
             col = layout.column()
             col.prop(view, "lock_camera_and_layers")
@@ -3402,6 +3403,10 @@ class VIEW3D_PT_view3d_properties(Panel):
                                     text="")
             else:
                 col.prop(view, "lock_cursor", text="Lock to Cursor")
+      
+        
+        ################################################
+        
 
 
 class VIEW3D_PT_view3d_cursor(Panel):
@@ -3505,14 +3510,16 @@ class VIEW3D_PT_view3d_display(Panel):
             row.enabled = region.lock_rotation and region.show_sync_view
             row.prop(region, "use_box_clip")
 
-        wm = context.window_manager # Our bool is in the windows_manager
-        # The subtab is closed by default.
-        # When the click at it then it opens. And shows the hidden ui elements.
-        if not wm.subtab_3dview_properties_display_misc:
-            layout.prop(wm,"subtab_3dview_properties_display_misc", emboss=False, icon="TRIA_RIGHT", text="- Miscellaneous -")
+        ############## Subtab Lock #####################
+        
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
+
+        if not addon_prefs.subtab_3dview_properties_display_misc:
+            layout.prop(addon_prefs,"subtab_3dview_properties_display_misc", emboss=False, icon="TRIA_RIGHT", text="- Miscellaneous -")
 
         else:
-            layout.prop(wm,"subtab_3dview_properties_display_misc", emboss=False, icon="TRIA_DOWN", text="+ Miscellaneous +")
+            layout.prop(addon_prefs,"subtab_3dview_properties_display_misc", emboss=False, icon="TRIA_DOWN", text="+ Miscellaneous +")
 
             col = layout.column()
             col.prop(view, "show_only_render")
@@ -3522,6 +3529,8 @@ class VIEW3D_PT_view3d_display(Panel):
             col.prop(view, "show_relationship_lines")
             
             col.prop(view, "lock_3d_cursor", text="Lock 3D Cursor") # bfa - show hide lock 3d cursor checkbox
+
+        ################################################
 
 
 class VIEW3D_PT_view3d_stereo(Panel):
@@ -3679,17 +3688,17 @@ class VIEW3D_PT_view3d_meshdisplay(Panel):
         sub.active = mesh.show_normal_vertex or mesh.show_normal_face or mesh.show_normal_loop
         sub.prop(scene.tool_settings, "normal_size", text="Size")
         
-        wm = context.window_manager # Our bool is in the windows_manager
-        
-        ################ Overlay Options
+        ################ Overlay Options #############################
   
-        # The subtab is closed by default.
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
+
         # When the click at it then it opens. And shows the hidden ui elements.
-        if not wm.subtab_3dview_properties_meshdisplay_overlay:
-            layout.prop(wm,"subtab_3dview_properties_meshdisplay_overlay", emboss=False, icon="TRIA_RIGHT", text="- Overlay Options -")
+        if not addon_prefs.subtab_3dview_properties_meshdisplay_overlay:
+            layout.prop(addon_prefs,"subtab_3dview_properties_meshdisplay_overlay", emboss=False, icon="TRIA_RIGHT", text="- Overlay Options -")
 
         else:
-            layout.prop(wm,"subtab_3dview_properties_meshdisplay_overlay", emboss=False, icon="TRIA_DOWN", text="+ Overlay Options +")
+            layout.prop(addon_prefs,"subtab_3dview_properties_meshdisplay_overlay", emboss=False, icon="TRIA_DOWN", text="+ Overlay Options +")
             
             split = layout.split()
             col = split.column()
@@ -3711,16 +3720,16 @@ class VIEW3D_PT_view3d_meshdisplay(Panel):
                 col.prop(mesh, "show_freestyle_face_marks", text="Face Marks")
                 
         
-        ################## Info options
+        ################## Info options #########################
 
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
   
-        # The subtab is closed by default.
-        # When the click at it then it opens. And shows the hidden ui elements.
-        if not wm.subtab_3dview_properties_meshdisplay_info:
-            layout.prop(wm,"subtab_3dview_properties_meshdisplay_info", emboss=False, icon="TRIA_RIGHT", text="- Info Options -")
+        if not addon_prefs.subtab_3dview_properties_meshdisplay_info:
+            layout.prop(addon_prefs,"subtab_3dview_properties_meshdisplay_info", emboss=False, icon="TRIA_RIGHT", text="- Info Options -")
 
         else:
-            layout.prop(wm,"subtab_3dview_properties_meshdisplay_info", emboss=False, icon="TRIA_DOWN", text="+ Info Options +")
+            layout.prop(addon_prefs,"subtab_3dview_properties_meshdisplay_info", emboss=False, icon="TRIA_DOWN", text="+ Info Options +")
 
             split = layout.split()
             col = split.column()
@@ -3853,14 +3862,17 @@ class VIEW3D_PT_background_image(Panel):
                     row.template_ID(bg, "image", open="image.open")
                     if bg.image is not None:
                         has_bg = True
+
+                        ############## Subtab Settings #####################
+        
+                        user_preferences = context.user_preferences
+                        addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
                         
-                        # Settings subtab
-                        wm = context.window_manager # Our bool is in the windows_manager
-                        if not wm.subtab_3dview_properties_bgimg_settings:
-                            box.prop(wm,"subtab_3dview_properties_bgimg_settings", emboss=False, icon="TRIA_RIGHT", text="- Settings -")
+                        if not addon_prefs.subtab_3dview_properties_bgimg_settings:
+                            box.prop(addon_prefs,"subtab_3dview_properties_bgimg_settings", emboss=False, icon="TRIA_RIGHT", text="- Settings -")
 
                         else:
-                            box.prop(wm,"subtab_3dview_properties_bgimg_settings", emboss=False, icon="TRIA_DOWN", text="+ Settings +")
+                            box.prop(addon_prefs,"subtab_3dview_properties_bgimg_settings", emboss=False, icon="TRIA_DOWN", text="+ Settings +")
                             
                             box.prop(bg, "opacity", slider=True)
                             box.prop(bg, "view_axis", text="Axis")
@@ -3878,6 +3890,8 @@ class VIEW3D_PT_background_image(Panel):
                                 sub = column.box()
                                 sub.active = bg.image.views_format == 'STEREO_3D'
                                 sub.template_image_stereo_3d(bg.image.stereo_3d_format)
+
+                        #######################################################
 
                 elif bg.source == 'MOVIE_CLIP':
                 
@@ -3902,13 +3916,16 @@ class VIEW3D_PT_background_image(Panel):
                     
                 if has_bg:
                     
-                    # Align Subtab
-                    wm = context.window_manager # Our bool is in the windows_manager
-                    if not wm.subtab_3dview_properties_bgimg_align:
-                        box.prop(wm,"subtab_3dview_properties_bgimg_align", emboss=False, icon="TRIA_RIGHT", text="- Align -")
+                    ################## Align Subtab ##########################
+        
+                    user_preferences = context.user_preferences
+                    addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
+
+                    if not addon_prefs.subtab_3dview_properties_bgimg_align:
+                        box.prop(addon_prefs,"subtab_3dview_properties_bgimg_align", emboss=False, icon="TRIA_RIGHT", text="- Align -")
 
                     else:
-                        box.prop(wm,"subtab_3dview_properties_bgimg_align", emboss=False, icon="TRIA_DOWN", text="+ Align +")
+                        box.prop(addon_prefs,"subtab_3dview_properties_bgimg_align", emboss=False, icon="TRIA_DOWN", text="+ Align +")
 
                         col = box.column()
                         col.row().prop(bg, "draw_depth", expand=True)
@@ -3929,6 +3946,8 @@ class VIEW3D_PT_background_image(Panel):
                         if bg.view_axis != 'CAMERA':
                             row.prop(bg, "rotation")
                             row.prop(bg, "size")
+
+                    ###########################################################
 
 class VIEW3D_PT_etch_a_ton(Panel):
     bl_space_type = 'VIEW_3D'
