@@ -73,7 +73,7 @@
 
 #ifndef WITH_HEADLESS
 #define ICON_GRID_COLS      30
-#define ICON_GRID_ROWS      30
+#define ICON_GRID_ROWS      30 /* bfa - Icon sheet row, changed from 26 to 30 */
 
 #define ICON_GRID_MARGIN    10
 #define ICON_GRID_W         32
