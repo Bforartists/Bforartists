@@ -71,6 +71,8 @@ DEF_ICON(NODE_SEL)
 
 DEF_ICON(TEST_001)
 DEF_ICON(TEST_002)
+DEF_ICON(TEST_061)
+DEF_ICON(TEST_062)
 
 /* ------------------------- Row 2 - 0027 to 0052 --------------------------*/
 	
@@ -104,6 +106,8 @@ DEF_ICON(PLUGIN)
 
 DEF_ICON(TEST_003)
 DEF_ICON(TEST_004)
+DEF_ICON(TEST_063)
+DEF_ICON(TEST_064)
 
 /* ------------------------- Row 3 - 0053 to 0078 --------------------------*/
 	
@@ -137,6 +141,8 @@ DEF_ICON(BLANK1)	// Not actually blank - this is used all over the place
 
 DEF_ICON(TEST_005)
 DEF_ICON(TEST_006)
+DEF_ICON(TEST_065)
+DEF_ICON(TEST_066)
 
 /* ------------------------- Row 4 - 0079 to 0104 --------------------------*/
 	
@@ -172,6 +178,8 @@ DEF_ICON(WIREFRAME)
 
 DEF_ICON(TEST_007)
 DEF_ICON(TEST_008)
+DEF_ICON(TEST_067)
+DEF_ICON(TEST_068)
 
 /* ------------------------- Row 5 - 0105 to 0130 --------------------------*/
 
@@ -205,6 +213,8 @@ DEF_ICON(STROKE_SELECT)
 
 DEF_ICON(TEST_009)
 DEF_ICON(TEST_010)
+DEF_ICON(TEST_069)
+DEF_ICON(TEST_070)
 
 /* ------------------------- Row 6 - 0131 to 0156 --------------------------*/
 
@@ -245,6 +255,8 @@ DEF_ICON(TIME_ACTIVE)
 
 DEF_ICON(TEST_011)
 DEF_ICON(TEST_012)
+DEF_ICON(TEST_071)
+DEF_ICON(TEST_072)
 
 /* ------------------------- Row 7 - 0157 to 0182 --------------------------*/
 
@@ -279,6 +291,8 @@ DEF_ICON(SOLIDIFY)
 
 DEF_ICON(TEST_013)
 DEF_ICON(TEST_014)
+DEF_ICON(TEST_073)
+DEF_ICON(TEST_074)
 
 /* ------------------------- Row 8 - 0183 to 0208 --------------------------*/
 
@@ -312,6 +326,8 @@ DEF_ICON(RNA_ADD)
 
 DEF_ICON(TEST_015)
 DEF_ICON(TEST_016)
+DEF_ICON(TEST_075)
+DEF_ICON(TEST_076)
 
 /* ------------------------- Row 9 - 0209 to 0234 --------------------------*/
 
@@ -353,6 +369,8 @@ DEF_ICON(WELD)
 
 DEF_ICON(TEST_017)
 DEF_ICON(TEST_018)
+DEF_ICON(TEST_077)
+DEF_ICON(TEST_078)
 
 /* ------------------------- Row 10 - 0235 to 0260 --------------------------*/
 	
@@ -391,6 +409,8 @@ DEF_ICON(RESTRICT_COLOR_OFF)
 
 DEF_ICON(TEST_019)
 DEF_ICON(TEST_020)
+DEF_ICON(TEST_079)
+DEF_ICON(TEST_080)
 
 /* ------------------------- Row 11 - 0261 to 0286 --------------------------*/
 
@@ -427,6 +447,8 @@ DEF_ICON(TRISTOQUADS)
 
 DEF_ICON(TEST_021)
 DEF_ICON(TEST_022)
+DEF_ICON(TEST_081)
+DEF_ICON(TEST_082)
 
 /* ------------------------- Row 12 - 0287 to 0312 --------------------------*/
 	
@@ -465,6 +487,8 @@ DEF_ICON(BOOLEAN_INTERSECT)
 
 DEF_ICON(TEST_023)
 DEF_ICON(TEST_024)
+DEF_ICON(TEST_083)
+DEF_ICON(TEST_084)
 
 /* ------------------------- Row 13 - 0313 to 0338 --------------------------*/
 	
@@ -502,6 +526,8 @@ DEF_ICON(TRIA_UP_BAR)
 
 DEF_ICON(TEST_025)
 DEF_ICON(TEST_026)
+DEF_ICON(TEST_085)
+DEF_ICON(TEST_086)
 
 /* ------------------------- Row 14 - 0339 to 0364 --------------------------*/
 
@@ -540,6 +566,8 @@ DEF_ICON(FILLBETWEEN)
 
 DEF_ICON(TEST_027)
 DEF_ICON(TEST_028)
+DEF_ICON(TEST_087)
+DEF_ICON(TEST_088)
 
 
 /* ------------------------- Row 15 - 0365 to 0390 --------------------------*/
@@ -582,6 +610,8 @@ DEF_ICON(RADIUS)
 
 DEF_ICON(TEST_029)
 DEF_ICON(TEST_030)
+DEF_ICON(TEST_089)
+DEF_ICON(TEST_090)
 
 /* ------------------------- Row 16 - 0391 to 0416 --------------------------*/
 
@@ -619,6 +649,8 @@ DEF_ICON(VERTEX_PARENT)
 
 DEF_ICON(TEST_031)
 DEF_ICON(TEST_032)
+DEF_ICON(TEST_091)
+DEF_ICON(TEST_092)
 
 
 /* ------------------------- Row 17 - 0417 to 0442 --------------------------*/
@@ -656,6 +688,8 @@ DEF_ICON(WEIGHT_FIX_DEFORMS)
 
 DEF_ICON(TEST_033)
 DEF_ICON(TEST_034)
+DEF_ICON(TEST_093)
+DEF_ICON(TEST_094)
 
 /* ------------------------- Row 18 - 0443 to 0468 --------------------------*/
 
@@ -689,6 +723,8 @@ DEF_ICON(MOD_MASK)
 
 DEF_ICON(TEST_035)
 DEF_ICON(TEST_036)
+DEF_ICON(TEST_095)
+DEF_ICON(TEST_096)
 
 /* ------------------------- Row 19 - 0469 to 0494 --------------------------*/
 
@@ -724,6 +760,8 @@ DEF_ICON(SEPARATE)
 
 DEF_ICON(TEST_037)
 DEF_ICON(TEST_038)
+DEF_ICON(TEST_097)
+DEF_ICON(TEST_098)
 
 /* ------------------------- Row 20 - 0495 to 0520 --------------------------*/
 	
@@ -757,6 +795,8 @@ DEF_ICON(DRIVER)
 
 DEF_ICON(TEST_039)
 DEF_ICON(TEST_040)
+DEF_ICON(TEST_099)
+DEF_ICON(TEST_100)
 
 /* ------------------------- Row 21 - 0521 to 0546 --------------------------*/
 
@@ -793,6 +833,8 @@ DEF_ICON(NORMALIZE_FCURVES)
 
 DEF_ICON(TEST_041)
 DEF_ICON(TEST_042)
+DEF_ICON(TEST_101)
+DEF_ICON(TEST_102)
 
 /* ------------------------- Row 22 - 0547 to 0572 --------------------------*/
 
@@ -832,6 +874,8 @@ DEF_ICON(PARTICLE_PATH)
 
 DEF_ICON(TEST_043)
 DEF_ICON(TEST_044)
+DEF_ICON(TEST_103)
+DEF_ICON(TEST_104)
 
 /* ------------------------- Row 23 - 0573 to 0598 --------------------------*/
 	
@@ -866,6 +910,8 @@ DEF_ICON(BEVEL)
 
 DEF_ICON(TEST_045)
 DEF_ICON(TEST_046)
+DEF_ICON(TEST_105)
+DEF_ICON(TEST_106)
 
 /* ------------------------- Row 24 - 0599 to 0624 --------------------------*/
 
@@ -904,6 +950,8 @@ DEF_ICON(MAKE_REGULAR)
 
 DEF_ICON(TEST_047)
 DEF_ICON(TEST_048)
+DEF_ICON(TEST_107)
+DEF_ICON(TEST_108)
 
 /* ------------------------- Row 25 - 0625 to 0650 --------------------------*/
 
@@ -949,6 +997,8 @@ DEF_ICON(TRANSFORM_SCALE)
 
 DEF_ICON(TEST_049)
 DEF_ICON(TEST_050)
+DEF_ICON(TEST_109)
+DEF_ICON(TEST_110)
 
 /* ------------------------- Row 26 - 0651 to 0676 --------------------------*/
 
@@ -987,6 +1037,8 @@ DEF_ICON(SAVE_ABC) // alembic
 
 DEF_ICON(TEST_051)
 DEF_ICON(TEST_052)
+DEF_ICON(TEST_111)
+DEF_ICON(TEST_112)
 
 /* ------------------------- Row 27 - 0677 to 0702 --------------------------*/
 
@@ -1020,6 +1072,8 @@ DEF_ICON(FILE_TEXT)
 
 DEF_ICON(TEST_053)
 DEF_ICON(TEST_054)
+DEF_ICON(TEST_113)
+DEF_ICON(TEST_114)
 
 /* ------------------------- Row 28 - 0703 to 0728 --------------------------*/
 
@@ -1057,6 +1111,8 @@ DEF_ICON(DISK_DRIVE)
 
 DEF_ICON(TEST_055)
 DEF_ICON(TEST_056)
+DEF_ICON(TEST_115)
+DEF_ICON(TEST_116)
 
 /* ------------------------- Row 29 - 0729 to 0754 --------------------------*/
 	
@@ -1096,6 +1152,8 @@ DEF_ICON(SMALL_CAPS)
 
 DEF_ICON(TEST_057)
 DEF_ICON(TEST_058)
+DEF_ICON(TEST_117)
+DEF_ICON(TEST_118)
 
 	/* ------------------------- Row 30 - 0755 to 0780 --------------------------*/
 	
@@ -1136,6 +1194,8 @@ DEF_ICON(SELECTIONTOGRID)
 
 DEF_ICON(TEST_059)
 DEF_ICON(TEST_060)
+DEF_ICON(TEST_119)
+DEF_ICON(TEST_120)
 
 /*----------------- newline END OF ICONSHEET -------------------------------------*/
 
