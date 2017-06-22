@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 
 # This script updates icons from the SVG file
 import os
@@ -38,10 +38,10 @@ cmd = (
     "--output=" + BASEDIR + "blender_icons16 "
     "--output_prefix=icon16_ "
     "--name_style=UI_ICONS "
-    "--parts_x 26 --parts_y 30 "
-    "--minx 3 --maxx 53 --miny 3 --maxy 8 "
-    "--minx_icon 2 --maxx_icon 2 --miny_icon 2 --maxy_icon 2 "
-    "--spacex_icon 1 --spacey_icon 1"
+    "--parts_x 28 --parts_y 30 " # Icon parts
+    "--minx 3 --maxx 5 --miny 3 --maxy 8 " # min x and y what? max x and y what?
+    "--minx_icon 2 --maxx_icon 2 --miny_icon 2 --maxy_icon 2 " # and what the heck is this line good for?
+    "--spacex_icon 1 --spacey_icon 1" # And this one?
     )
 run(cmd)
 
@@ -53,8 +53,8 @@ cmd = (
     "--output=" + BASEDIR + "blender_icons32 "
     "--output_prefix=icon32_ "
     "--name_style=UI_ICONS "
-    "--parts_x 26 --parts_y 30 "
-    "--minx 6 --maxx 106 --miny 6 --maxy 16 "
+    "--parts_x 28 --parts_y 30 "
+    "--minx 6 --maxx 10 --miny 6 --maxy 16 "
     "--minx_icon 4 --maxx_icon 4 --miny_icon 4 --maxy_icon 4 "
     "--spacex_icon 2 --spacey_icon 2"
 

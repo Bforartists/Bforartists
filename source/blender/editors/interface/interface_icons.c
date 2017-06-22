@@ -72,7 +72,7 @@
 #include "interface_intern.h"
 
 #ifndef WITH_HEADLESS
-#define ICON_GRID_COLS      26
+#define ICON_GRID_COLS      28
 #define ICON_GRID_ROWS      30
 
 #define ICON_GRID_MARGIN    10
