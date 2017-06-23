@@ -1561,8 +1561,8 @@ class VIEW3D_MT_object(Menu):
 
         layout.separator()
 
-        layout.operator("object.data_transfer")
-        layout.operator("object.datalayout_transfer")
+        layout.operator("object.data_transfer", icon ='TRANSFER_DATA')
+        layout.operator("object.datalayout_transfer", icon ='TRANSFER_DATA_LAYOUT')
 
         layout.separator()
 
