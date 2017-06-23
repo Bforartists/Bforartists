@@ -32,9 +32,11 @@
  * once from UI_resources.h for the internal icon enum and
  * once for interface_api.c for the definition of the RNA enum for the icons */
 
-/*26 icons per line*/
+/*30 icons per row*/
 
 /* ICON_ prefix added */
+
+/* ------------------------- Row 1 ---------------------------*/
 DEF_ICON(NONE)
 DEF_ICON(QUESTION)
 DEF_ICON(ERROR)
@@ -55,16 +57,28 @@ DEF_ICON(GRIP)
 DEF_ICON(DOT)
 DEF_ICON(COLLAPSEMENU)
 DEF_ICON(X)
+
 #ifndef DEF_ICON_BLANK_SKIP
-	DEF_ICON(BLANK005)  /* XXX 'DOWNARROW' icon! */
+	DEF_ICON(BLANK0021) /* XXX 'DOWNARROW' icon! BFA - no idea why this icon is still there but listed as blank */
+	/* BFA - Even more interesting, this icon gets created instead skipped. Most probably because the position is in fact not blank. */
 #endif
+
 DEF_ICON(GO_LEFT)
 DEF_ICON(PLUG)
 DEF_ICON(UI)
 DEF_ICON(NODE)
 DEF_ICON(NODE_SEL)
 
-/* ------------------------- New Line  ---------------------------*/
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(TEST_001)
+	DEF_ICON(TEST_002)
+	DEF_ICON(TEST_061)
+	DEF_ICON(TEST_062)
+
+#endif
+
+/* ------------------------- Row 2 --------------------------*/
 	
 	/* ui */
 DEF_ICON(FULLSCREEN)
@@ -94,7 +108,16 @@ DEF_ICON(LINK)
 DEF_ICON(INLINK)
 DEF_ICON(PLUGIN)
 
-/* ------------------------- New Line  ---------------------------*/
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(TEST_003)
+	DEF_ICON(TEST_004)
+	DEF_ICON(TEST_063)
+	DEF_ICON(TEST_064)
+
+#endif
+
+/* ------------------------- Row 3 --------------------------*/
 	
 	/* various ui */
 DEF_ICON(HELP)
@@ -119,12 +142,21 @@ DEF_ICON(FILE_TICK)
 DEF_ICON(QUIT)
 DEF_ICON(URL)
 DEF_ICON(RECOVER_LAST)
-DEF_ICON(DUPLICATE) //bfa
+DEF_ICON(DUPLICATE) //bfa, duplicate icon
 DEF_ICON(FULLSCREEN_ENTER)
 DEF_ICON(FULLSCREEN_EXIT)
 DEF_ICON(BLANK1)	// Not actually blank - this is used all over the place
 
-/* ------------------------- New Line  ---------------------------*/
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(TEST_005)
+	DEF_ICON(TEST_006)
+	DEF_ICON(TEST_065)
+	DEF_ICON(TEST_066)
+
+#endif
+
+/* ------------------------- Row 4 --------------------------*/
 	
 	/* BUTTONS */
 DEF_ICON(LAMP)
@@ -156,7 +188,16 @@ DEF_ICON(DELETE) // bfa
 DEF_ICON(PERSP_ORTHO)
 DEF_ICON(WIREFRAME)
 
-/* ------------------------- New Line  ---------------------------*/
+#ifndef DEF_ICON_BLANK_SKIP
+
+		DEF_ICON(TEST_007)
+		DEF_ICON(TEST_008)
+		DEF_ICON(TEST_067)
+		DEF_ICON(TEST_068)
+
+#endif
+
+/* ------------------------- Row 5 --------------------------*/
 
 /* EDITORS */
 DEF_ICON(VIEW3D)
@@ -186,7 +227,16 @@ DEF_ICON(INVERSE)
 DEF_ICON(SELECT_ALL)
 DEF_ICON(STROKE_SELECT)
 
-/* ----------------- new line ---------------------------------------*/
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(TEST_009)
+	DEF_ICON(TEST_010)
+	DEF_ICON(TEST_069)
+	DEF_ICON(TEST_070)
+
+#endif
+
+/* ------------------------- Row 6 --------------------------*/
 
 	/* MODES */
 DEF_ICON(OBJECT_DATAMODE)	// XXX fix this up
@@ -223,7 +273,16 @@ DEF_ICON(DOPESHEET_ACTIVE)
 DEF_ICON(GRAPH_ACTIVE)
 DEF_ICON(TIME_ACTIVE)
 
-/* ------------------------- New Line  ---------------------------*/
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(TEST_011)
+	DEF_ICON(TEST_012)
+	DEF_ICON(TEST_071)
+	DEF_ICON(TEST_072)
+
+#endif
+
+/* ------------------------- Row 7  --------------------------*/
 
 	/* DATA */
 DEF_ICON(SCENE_DATA)
@@ -254,7 +313,16 @@ DEF_ICON(UGLYPACKAGE)
 
 DEF_ICON(SOLIDIFY)
 
-/* ------------------------- New Line  ---------------------------*/
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(TEST_013)
+	DEF_ICON(TEST_014)
+	DEF_ICON(TEST_073)
+	DEF_ICON(TEST_074)
+
+#endif
+
+/* ------------------------- Row 8 --------------------------*/
 
 	/* DATA */
 DEF_ICON(BRUSH_DATA)
@@ -284,10 +352,20 @@ DEF_ICON(RENDER_ANI_VIEW)
 DEF_ICON(RNA)
 DEF_ICON(RNA_ADD)
 
-/* -------------------------- Newline -----------------------------*/
+#ifndef DEF_ICON_BLANK_SKIP
+
+DEF_ICON(TEST_015)
+DEF_ICON(TEST_016)
+DEF_ICON(TEST_075)
+DEF_ICON(TEST_076)
+
+#endif
+
+/* ------------------------- Row 9 --------------------------*/
 
 DEF_ICON(CLEARSHARPEDGES)
 DEF_ICON(CONVEXHULL)
+
 DEF_ICON(BLENDFROMSHAPE)
 DEF_ICON(SHAPEPROPAGATE)
 
@@ -296,9 +374,7 @@ DEF_ICON(CLEAR_FS_EDGE)
 DEF_ICON(MARK_FS_EDGE)
 
 #ifndef DEF_ICON_BLANK_SKIP
-
-	DEF_ICON(BLANK099)
-
+	DEF_ICON(BLANK0217)
 #endif
 
 DEF_ICON(ROTATECW)
@@ -323,7 +399,16 @@ DEF_ICON(UNWRAP_ABF)
 DEF_ICON(UNWRAP_LSCM)
 DEF_ICON(WELD)
 
-	/*-----------------------*New line ---------------------------------------*/
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(TEST_017)
+	DEF_ICON(TEST_018)
+	DEF_ICON(TEST_077)
+	DEF_ICON(TEST_078)
+
+#endif
+
+/* ------------------------- Row 10 --------------------------*/
 	
 	/* OUTLINER */
 DEF_ICON(OUTLINER_OB_EMPTY)
@@ -358,7 +443,16 @@ DEF_ICON(RESTRICT_RENDER_ON)
 
 DEF_ICON(RESTRICT_COLOR_OFF)
 
-/*----------------- newline -------------------------------------*/
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(TEST_019)
+	DEF_ICON(TEST_020)
+	DEF_ICON(TEST_079)
+	DEF_ICON(TEST_080)
+
+#endif
+
+/* ------------------------- Row 11 --------------------------*/
 
 	/* OUTLINER */
 DEF_ICON(OUTLINER_DATA_EMPTY)
@@ -391,7 +485,16 @@ DEF_ICON(SPLITBYEDGES)
 DEF_ICON(TRIANGULATE)
 DEF_ICON(TRISTOQUADS)
 
-/*----------------- newline -------------------------------------*/
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(TEST_021)
+	DEF_ICON(TEST_022)
+	DEF_ICON(TEST_081)
+	DEF_ICON(TEST_082)
+
+#endif
+
+/* ------------------------- Row 12 --------------------------*/
 	
 	/* PRIMITIVES */
 DEF_ICON(MESH_PLANE)
@@ -426,7 +529,16 @@ DEF_ICON(META_CAPSULE)
 
 DEF_ICON(BOOLEAN_INTERSECT)
 
-/*----------------- newline -------------------------------------*/
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(TEST_023)
+	DEF_ICON(TEST_024)
+	DEF_ICON(TEST_083)
+	DEF_ICON(TEST_084)
+
+#endif
+
+/* ------------------------- Row 13 --------------------------*/
 	
 	/* PRIMITIVES */
 DEF_ICON(SURFACE_NCURVE)
@@ -460,7 +572,16 @@ DEF_ICON(TRIA_DOWN_BAR)
 DEF_ICON(TRIA_LEFT_BAR)
 DEF_ICON(TRIA_UP_BAR)
 
-/*----------------- newline -------------------------------------*/
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(TEST_025)
+	DEF_ICON(TEST_026)
+	DEF_ICON(TEST_085)
+	DEF_ICON(TEST_086)
+
+#endif
+
+/* ------------------------- Row 14 --------------------------*/
 
 	/* EMPTY */
 DEF_ICON(FORCE_FORCE)
@@ -495,15 +616,24 @@ DEF_ICON(REMOVE_SELECTED_FROM_ACTIVE_GROUP)
 
 DEF_ICON(FILLBETWEEN)
 
-
-/*----------------- newline -------------------------------------*/
-
 #ifndef DEF_ICON_BLANK_SKIP
 
-	/* EMPTY */
-	DEF_ICON(BLANK690)  /* XXX 'Temperature' icon! */
-	DEF_ICON(BLANK691)  /* XXX 'Temperature' icon! */
-	DEF_ICON(BLANK692)  /* XXX 'Gear' icon! */
+	DEF_ICON(TEST_027)
+	DEF_ICON(TEST_028)
+	DEF_ICON(TEST_087)
+	DEF_ICON(TEST_088)
+
+#endif
+
+
+/* ------------------------- Row 15 --------------------------*/
+
+/*this icons gets created instead skipped. Most probably because the position is in fact not blank. */
+#ifndef DEF_ICON_BLANK_SKIP
+	/* available */
+	DEF_ICON(BLANK0365)
+	DEF_ICON(BLANK0366)
+	DEF_ICON(BLANK0367)
 #endif
 
 DEF_ICON(NODE_INSERT_ON)
@@ -534,7 +664,16 @@ DEF_ICON(HANDLE_ALIGN)
 DEF_ICON(HANDLE_FREE)
 DEF_ICON(RADIUS)
 
-/*----------------- newline -------------------------------------*/
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(TEST_029)
+	DEF_ICON(TEST_030)
+	DEF_ICON(TEST_089)
+	DEF_ICON(TEST_090)
+
+#endif
+
+/* ------------------------- Row 16 --------------------------*/
 
 /*bfa - new icons. Tool Shelf - Edit Mode - Tools - Weight Tools*/
 DEF_ICON(WEIGHT_GRADIENT)
@@ -561,16 +700,31 @@ DEF_ICON(MAKE_LOCAL)
 DEF_ICON(MAKE_PROXY)
 /*bfa - new icons. Tool Shelf - Object Mode - Grease Pencil*/
 DEF_ICON(ERASE)
+
 #ifndef DEF_ICON_BLANK_SKIP
-	/* EMPTY */
-	DEF_ICON(BLANK693)
-	DEF_ICON(BLANK694)
+
+	DEF_ICON(BLANK0368)
+	DEF_ICON(BLANK0369)
+
 #endif
+
 DEF_ICON(GREASEPENCIL_CONVERT)
 DEF_ICON(RULER)
+
 DEF_ICON(VERTEX_PARENT)
 
-/* ---------------------------- Newline -------------------------- */
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(TEST_031)
+	DEF_ICON(TEST_032)
+	DEF_ICON(TEST_091)
+	DEF_ICON(TEST_092)
+
+#endif
+
+
+/* ------------------------- Row 17 --------------------------*/
+
 
 /*bfa - new icons. Tool Shelf - Edit Mode - Tools - Mesh Tools - Add section  */
 DEF_ICON(INSET_FACES)
@@ -602,7 +756,16 @@ DEF_ICON(WEIGHT_SMOOTH)
 DEF_ICON(WEIGHT_LIMIT_TOTAL)
 DEF_ICON(WEIGHT_FIX_DEFORMS)
 
-/*----------------- newline -------------------------------------*/
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(TEST_033)
+	DEF_ICON(TEST_034)
+	DEF_ICON(TEST_093)
+	DEF_ICON(TEST_094)
+
+#endif
+
+/* ------------------------- Row 18 --------------------------*/
 
 	/* MODIFIERS */
 DEF_ICON(MODIFIER)
@@ -632,7 +795,16 @@ DEF_ICON(MOD_SMOOTH)
 DEF_ICON(MOD_SIMPLEDEFORM)
 DEF_ICON(MOD_MASK)
 
-/*----------------- newline -------------------------------------*/
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(TEST_035)
+	DEF_ICON(TEST_036)
+	DEF_ICON(TEST_095)
+	DEF_ICON(TEST_096)
+
+#endif
+
+/* ------------------------- Row 19 --------------------------*/
 
 	/* MODIFIERS */
 DEF_ICON(MOD_CLOTH)
@@ -664,7 +836,16 @@ DEF_ICON(SPLIT_NONPLANAR)
 DEF_ICON(MERGE)
 DEF_ICON(SEPARATE)
 
-	/*----------------- newline -------------------------------------*/
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(TEST_037)
+	DEF_ICON(TEST_038)
+	DEF_ICON(TEST_097)
+	DEF_ICON(TEST_098)
+
+#endif
+
+/* ------------------------- Row 20 --------------------------*/
 	
 	/* ANIMATION */
 DEF_ICON(REC)
@@ -694,7 +875,16 @@ DEF_ICON(VISIBLE_IPO_OFF)
 DEF_ICON(VISIBLE_IPO_ON)
 DEF_ICON(DRIVER)
 
-/*----------------- newline -------------------------------------*/
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(TEST_039)
+	DEF_ICON(TEST_040)
+	DEF_ICON(TEST_099)
+	DEF_ICON(TEST_100)
+
+#endif
+
+/* ------------------------- Row 21 --------------------------*/
 
 	/* ANIMATION */
 DEF_ICON(SOLO_OFF)
@@ -719,15 +909,21 @@ DEF_ICON(IPO_EASE_IN)
 DEF_ICON(IPO_EASE_OUT)
 DEF_ICON(IPO_EASE_IN_OUT)
 DEF_ICON(NORMALIZE_FCURVES)
+
 #ifndef DEF_ICON_BLANK_SKIP
-	/* available */
-	DEF_ICON(BLANK204)
-	DEF_ICON(BLANK205)
-	DEF_ICON(BLANK206)
-	DEF_ICON(BLANK207)
+
+	DEF_ICON(BLANK0543)
+	DEF_ICON(BLANK0544)
+	DEF_ICON(BLANK0545)
+	DEF_ICON(BLANK0546)
+	DEF_ICON(TEST_041)
+	DEF_ICON(TEST_042)
+	DEF_ICON(TEST_101)
+	DEF_ICON(TEST_102)
+
 #endif
 
-	/*----------------- newline -------------------------------------*/
+/* ------------------------- Row 22 --------------------------*/
 
 	/* EDITING */
 DEF_ICON(VERTEXSEL)
@@ -735,7 +931,7 @@ DEF_ICON(EDGESEL)
 DEF_ICON(FACESEL)
 DEF_ICON(LOOPSEL)
 #ifndef DEF_ICON_BLANK_SKIP
-	DEF_ICON(BLANK210)
+	DEF_ICON(BLANK0051)
 #endif
 DEF_ICON(ROTATE)
 DEF_ICON(CURSOR)
@@ -744,7 +940,7 @@ DEF_ICON(ROTATECENTER)
 DEF_ICON(ROTACTIVE)
 DEF_ICON(ALIGN)
 #ifndef DEF_ICON_BLANK_SKIP
-	DEF_ICON(BLANK211)
+	DEF_ICON(BLANK0058)
 #endif
 DEF_ICON(SMOOTHCURVE)
 DEF_ICON(SPHERECURVE)
@@ -756,12 +952,23 @@ DEF_ICON(RNDCURVE)
 DEF_ICON(PROP_OFF)
 DEF_ICON(PROP_ON)
 DEF_ICON(PROP_CON)
-DEF_ICON(SCULPT_DYNTOPO)  /* XXX Empty icon! */
+#ifndef DEF_ICON_BLANK_SKIP
+	DEF_ICON(BLANK0569)  /* XXX Empty icon! */
+#endif
 DEF_ICON(PARTICLE_POINT)
 DEF_ICON(PARTICLE_TIP)
 DEF_ICON(PARTICLE_PATH)
 
-/*----------------- newline -------------------------------------*/
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(TEST_043)
+	DEF_ICON(TEST_044)
+	DEF_ICON(TEST_103)
+	DEF_ICON(TEST_104)
+
+#endif
+
+/* ------------------------- Row 23 --------------------------*/
 	
 	/* EDITING */
 DEF_ICON(MAN_TRANS)
@@ -792,7 +999,16 @@ DEF_ICON(UNDO_HISTORY)
 DEF_ICON(REDO_HISTORY)
 DEF_ICON(BEVEL)
 
-/*----------------- newline -------------------------------------*/
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(TEST_045)
+	DEF_ICON(TEST_046)
+	DEF_ICON(TEST_105)
+	DEF_ICON(TEST_106)
+
+#endif
+
+/* ------------------------- Row 24 --------------------------*/
 
 	/* EDITING */
 DEF_ICON(PASTEDOWN)
@@ -827,7 +1043,16 @@ DEF_ICON(SCREW)
 /*bfa - new icons. Tool Shelf - Edit Mode - Tools - Lattice Tools section  */
 DEF_ICON(MAKE_REGULAR)
 
-/*----------------- newline -------------------------------------*/
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(TEST_047)
+	DEF_ICON(TEST_048)
+	DEF_ICON(TEST_107)
+	DEF_ICON(TEST_108)
+
+#endif
+
+/* ------------------------- Row 25 --------------------------*/
 
 	/* 3D VIEW */
 DEF_ICON(BBOX)
@@ -865,11 +1090,17 @@ DEF_ICON(TRANSFORM_ROTATE)
 DEF_ICON(TRANSFORM_SCALE)
 // ----------------
 #ifndef DEF_ICON_BLANK_SKIP
-	/* available */
-	DEF_ICON(BLANK257b)
+
+	DEF_ICON(BLANK0650)
+
+	DEF_ICON(TEST_049)
+	DEF_ICON(TEST_050)
+	DEF_ICON(TEST_109)
+	DEF_ICON(TEST_110)
+
 #endif
 
-/*----------------- newline -------------------------------------*/
+/* ------------------------- Row 26 --------------------------*/
 
 // import export icons
 
@@ -895,16 +1126,22 @@ DEF_ICON(SAVE_ABC) // alembic
 
 #ifndef DEF_ICON_BLANK_SKIP
 	
-	DEF_ICON(BLANK277)
-	DEF_ICON(BLANK278)
-	DEF_ICON(BLANK279)
-	DEF_ICON(BLANK280)
-	DEF_ICON(BLANK281)
-	DEF_ICON(BLANK282)
-	DEF_ICON(BLANK282b)
+	DEF_ICON(BLANK0670)
+	DEF_ICON(BLANK0671)
+	DEF_ICON(BLANK0672)
+	DEF_ICON(BLANK0673)
+	DEF_ICON(BLANK0674)
+	DEF_ICON(BLANK0675)
+	DEF_ICON(BLANK0676)
+
+	DEF_ICON(TEST_051)
+	DEF_ICON(TEST_052)
+	DEF_ICON(TEST_111)
+	DEF_ICON(TEST_112)
+
 #endif
 
-/*----------------- newline -------------------------------------*/
+/* ------------------------- Row 27  --------------------------*/
 
 	/* FILE SELECT */
 DEF_ICON(SORTALPHA)
@@ -934,7 +1171,16 @@ DEF_ICON(FILE_SOUND)
 DEF_ICON(FILE_FONT)
 DEF_ICON(FILE_TEXT)
 
-/*----------------- newline -------------------------------------*/
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(TEST_053)
+	DEF_ICON(TEST_054)
+	DEF_ICON(TEST_113)
+	DEF_ICON(TEST_114)
+
+#endif
+
+/* ------------------------- Row 28 --------------------------*/
 
 	/* FILE SELECT */
 DEF_ICON(RECOVER_AUTO)
@@ -946,29 +1192,38 @@ DEF_ICON(EXPORT)
 DEF_ICON(EXTERNAL_DATA)
 DEF_ICON(LOAD_FACTORY)
 #ifndef DEF_ICON_BLANK_SKIP
-	DEF_ICON(BLANK300)
-	DEF_ICON(BLANK301)
-	DEF_ICON(BLANK302)
-	DEF_ICON(BLANK303)
-	DEF_ICON(BLANK304)
+	DEF_ICON(BLANK0711)
+	DEF_ICON(BLANK0712)
+	DEF_ICON(BLANK0713)
+	DEF_ICON(BLANK0714)
+	DEF_ICON(BLANK0715)
 #endif
 DEF_ICON(LOOP_BACK)
 DEF_ICON(LOOP_FORWARDS)
 DEF_ICON(BACK)
 DEF_ICON(FORWARD)
 #ifndef DEF_ICON_BLANK_SKIP
-	DEF_ICON(BLANK309)
-	DEF_ICON(BLANK310)
-	DEF_ICON(BLANK311)
-	DEF_ICON(BLANK312)
-	DEF_ICON(BLANK313)
-	DEF_ICON(BLANK314)
+	DEF_ICON(BLANK0720)
+	DEF_ICON(BLANK0721)
+	DEF_ICON(BLANK0722)
+	DEF_ICON(BLANK0723)
+	DEF_ICON(BLANK0724)
+	DEF_ICON(BLANK0725)
 #endif
 DEF_ICON(FILE_HIDDEN)
 DEF_ICON(FILE_BACKUP)
 DEF_ICON(DISK_DRIVE)
 
-/*----------------- newline -------------------------------------*/
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(TEST_055)
+	DEF_ICON(TEST_056)
+	DEF_ICON(TEST_115)
+	DEF_ICON(TEST_116)
+
+#endif
+
+/* ------------------------- Row 29 --------------------------*/
 	
 	/* SHADING / TEXT */
 DEF_ICON(MATPLANE)
@@ -980,10 +1235,10 @@ DEF_ICON(ALIASED)
 DEF_ICON(ANTIALIASED)
 DEF_ICON(MAT_SPHERE_SKY)
 #ifndef DEF_ICON_BLANK_SKIP
-	DEF_ICON(BLANK319)
-	DEF_ICON(BLANK320)
-	DEF_ICON(BLANK321)
-	DEF_ICON(BLANK322)
+	DEF_ICON(BLANK0737)
+	DEF_ICON(BLANK0738)
+	DEF_ICON(BLANK0739)
+	DEF_ICON(BLANK0740)
 #endif
 DEF_ICON(WORDWRAP_OFF)
 DEF_ICON(WORDWRAP_ON)
@@ -1001,10 +1256,17 @@ DEF_ICON(SET_UPPERCASE)
 DEF_ICON(SMALL_CAPS)
 
 #ifndef DEF_ICON_BLANK_SKIP
-	DEF_ICON(BLANK328b)
+
+	DEF_ICON(BLANK0754)
+
+	DEF_ICON(TEST_057)
+	DEF_ICON(TEST_058)
+	DEF_ICON(TEST_117)
+	DEF_ICON(TEST_118)
+
 #endif
 
-/*----------------- newline -------------------------------------*/
+	/* ------------------------- Row 30 --------------------------*/
 	
 	/* SEQUENCE / IMAGE EDITOR */
 DEF_ICON(SEQ_SEQUENCER)
@@ -1014,9 +1276,9 @@ DEF_ICON(SEQ_CHROMA_SCOPE)
 DEF_ICON(SEQ_HISTOGRAM)
 DEF_ICON(SEQ_SPLITVIEW)
 #ifndef DEF_ICON_BLANK_SKIP
-	DEF_ICON(BLANK331)
-	DEF_ICON(BLANK332)
-	DEF_ICON(BLANK333)
+	DEF_ICON(BLANK0761)
+	DEF_ICON(BLANK0762)
+	DEF_ICON(BLANK0763)
 #endif
 DEF_ICON(IMAGE_RGB)	// XXX CHANGE TO STRAIGHT ALPHA, Z ETC
 DEF_ICON(IMAGE_RGB_ALPHA)
@@ -1035,10 +1297,16 @@ DEF_ICON(SELECTIONTOCURSOR)
 DEF_ICON(SELECTIONTOGRID)
 
 #ifndef DEF_ICON_BLANK_SKIP
-	DEF_ICON(BLANK344)
-	DEF_ICON(BLANK345)
-	DEF_ICON(BLANK346)
-	DEF_ICON(BLANK346b)
+	DEF_ICON(BLANK0777)
+	DEF_ICON(BLANK0778)
+	DEF_ICON(BLANK0779)
+	DEF_ICON(BLANK0780)
+
+	DEF_ICON(TEST_059)
+	DEF_ICON(TEST_060)
+	DEF_ICON(TEST_119)
+	DEF_ICON(TEST_120)
+
 #endif
 
 /*----------------- newline END OF ICONSHEET -------------------------------------*/
