@@ -1835,7 +1835,8 @@ static uiBlock *wm_block_create_splash(bContext *C, ARegion *ar, void *UNUSED(ar
 	col = uiLayoutColumn(split, false);
 	uiItemL(col, IFACE_("Links"), ICON_NONE);
 
-	// bfa - changed the menu itemas to link ot bforartists page
+	// bfa - changed the menu itemas to link to bforartists pages
+	uiItemStringO(col, IFACE_("Quickstart Learning Videos"), ICON_URL, "WM_OT_url_open", "url", "https://www.youtube.com/playlist?list=PLB0iqEbIPQTZEkNWmGcIFGubrLYSDi5Og");
 	uiItemStringO(col, IFACE_("Credits Bforartists"), ICON_URL, "WM_OT_url_open", "url", "https://www.bforartists.de/wiki/credits-page-bforartists");
 	uiItemStringO(col, IFACE_("Release notes"), ICON_URL, "WM_OT_url_open", "url", "https://www.bforartists.de/wiki/release-notes");
 	uiItemStringO(col, IFACE_("Manual"), ICON_URL, "WM_OT_url_open", "url", "https://www.bforartists.de/wiki/Manual");
