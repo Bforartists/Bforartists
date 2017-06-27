@@ -1423,13 +1423,13 @@ class VIEW3D_MT_object(Menu):
                 layout.operator_context = 'INVOKE_REGION_WIN'
                 layout.separator()
 
-                props = layout.operator("wm.context_modal_mouse", text="Extrude Size")
+                props = layout.operator("wm.context_modal_mouse", text="Extrude Size", icon = "EXTRUDESIZE")
                 props.data_path_iter = "selected_editable_objects"
                 props.data_path_item = "data.extrude"
                 props.input_scale = 0.01
                 props.header_text = "Extrude Size: %.3f"
 
-                props = layout.operator("wm.context_modal_mouse", text="Width Size")
+                props = layout.operator("wm.context_modal_mouse", text="Width Size", icon = "WIDTH_SIZE" )
                 props.data_path_iter = "selected_editable_objects"
                 props.data_path_item = "data.offset"
                 props.input_scale = 0.01
@@ -1649,13 +1649,13 @@ class VIEW3D_MT_object_specials(Menu):
         if obj.type in {'CURVE', 'FONT'}:
             layout.operator_context = 'INVOKE_REGION_WIN'
 
-            props = layout.operator("wm.context_modal_mouse", text="Extrude Size")
+            props = layout.operator("wm.context_modal_mouse", text="Extrude Size", icon = "EXTRUDESIZE")
             props.data_path_iter = "selected_editable_objects"
             props.data_path_item = "data.extrude"
             props.input_scale = 0.01
             props.header_text = "Extrude Size: %.3f"
 
-            props = layout.operator("wm.context_modal_mouse", text="Width Size")
+            props = layout.operator("wm.context_modal_mouse", text="Width Size", icon = "WIDTH_SIZE")
             props.data_path_iter = "selected_editable_objects"
             props.data_path_item = "data.offset"
             props.input_scale = 0.01
