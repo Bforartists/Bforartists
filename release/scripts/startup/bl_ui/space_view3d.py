@@ -933,9 +933,9 @@ class VIEW3D_MT_select_edit_text(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("font.text_copy", text="Copy")
+        layout.operator("font.text_copy", text="Copy", icon = "COPYDOWN")
         layout.operator("font.text_cut", text="Cut")
-        layout.operator("font.text_paste", text="Paste")
+        layout.operator("font.text_paste", text="Paste", icon = "PASTEDOWN")
 
         layout.separator()
 
@@ -1535,14 +1535,14 @@ class VIEW3D_MT_object(Menu):
 
         layout.separator()
 
-        layout.operator("view3d.pastebuffer", text = "Paste")
-        layout.operator("view3d.copybuffer", text = "Copy")
-        layout.operator("object.duplicate_move")
-        layout.operator("object.duplicate_move_linked")
-        layout.operator("object.delete_global", text="Delete Global") # bfa - separated tooltip
-        layout.operator("object.delete", text="Delete...").use_global = False
+        layout.operator("view3d.pastebuffer", text = "Paste", icon = "PASTEDOWN")
+        layout.operator("view3d.copybuffer", text = "Copy", icon = "COPYDOWN")
+        layout.operator("object.duplicate_move", icon = "DUPLICATE")
+        layout.operator("object.duplicate_move_linked", icon = "DUPLICATE")
+        layout.operator("object.delete_global", text="Delete Global", icon = "DELETE") # bfa - separated tooltip
+        layout.operator("object.delete", text="Delete...", icon = "DELETE").use_global = False
         layout.menu("VIEW3D_MT_make_links", text="Make Links...")
-        layout.operator("object.make_dupli_face")
+        layout.operator("object.make_dupli_face", icon = "MAKEDUPLIFACE")
         layout.menu("VIEW3D_MT_make_single_user")
 
         layout.separator()
@@ -2219,7 +2219,7 @@ class VIEW3D_MT_particle(Menu):
         layout.separator()
 
         layout.operator("particle.remove_doubles")
-        layout.operator("particle.delete")
+        layout.operator("particle.delete", icon = "DELETE")
 
         if particle_edit.select_mode == 'POINT':
             layout.operator("particle.subdivide")
@@ -2242,7 +2242,7 @@ class VIEW3D_MT_particle_specials(Menu):
         particle_edit = context.tool_settings.particle_edit
 
         layout.operator("particle.rekey")
-        layout.operator("particle.delete")
+        layout.operator("particle.delete", icon = "DELETE")
         layout.operator("particle.remove_doubles")
         layout.operator("particle.unify_length")
 
@@ -3080,8 +3080,8 @@ class VIEW3D_MT_edit_meta(Menu):
 
         layout.separator()
 
-        layout.operator("mball.delete_metaelems", text="Delete...")
-        layout.operator("mball.duplicate_metaelems")
+        layout.operator("mball.delete_metaelems", text="Delete...", icon = "DELETE")
+        layout.operator("mball.duplicate_metaelems", icon = "DUPLICATE")
 
         layout.separator()
 
@@ -3173,7 +3173,7 @@ class VIEW3D_MT_edit_armature(Menu):
         if arm.use_mirror_x:
             layout.operator("armature.extrude_forked")
 
-        layout.operator("armature.duplicate_move")
+        layout.operator("armature.duplicate_move", icon = "DUPLICATE")
         layout.operator("armature.delete", icon = "DELETE")
 
         layout.separator()
@@ -3238,7 +3238,7 @@ class VIEW3D_MT_edit_armature_delete(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("armature.delete", text="Delete Bones")
+        layout.operator("armature.delete", text="Delete Bones", icon = "DELETE")
 
         layout.separator()
 
@@ -3262,13 +3262,13 @@ class VIEW3D_MT_edit_gpencil(Menu):
 
         layout.separator()
 
-        layout.operator("gpencil.copy", text="Copy")
-        layout.operator("gpencil.paste", text="Paste")
+        layout.operator("gpencil.copy", text="Copy", icon = "COPYDOWN")
+        layout.operator("gpencil.paste", text="Paste", icon = "PASTEDOWN")
 
         layout.separator()
 
         layout.menu("VIEW3D_MT_edit_gpencil_delete")
-        layout.operator("gpencil.duplicate_move", text="Duplicate")
+        layout.operator("gpencil.duplicate_move", text="Duplicate", icon = "DUPLICATE")
 
         layout.separator()
 
