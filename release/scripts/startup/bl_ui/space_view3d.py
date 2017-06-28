@@ -1460,7 +1460,7 @@ class VIEW3D_MT_object(Menu):
                         value = None
 
                     if value is not None:
-                        props = layout.operator("wm.context_modal_mouse", text="Strength")
+                        props = layout.operator("wm.context_modal_mouse", text="Strength", icon = "LIGHT_STRENGTH")
                         props.data_path_iter = "selected_editable_objects"
                         props.data_path_item = "data.node_tree.nodes[\"Emission\"].inputs[\"Strength\"].default_value"
                         props.header_text = "Lamp Strength: %.3f"
@@ -1468,19 +1468,19 @@ class VIEW3D_MT_object(Menu):
                     del value
 
                     if lamp.type == 'AREA':
-                        props = layout.operator("wm.context_modal_mouse", text="Size X")
+                        props = layout.operator("wm.context_modal_mouse", text="Size X", icon = "LIGHT_SIZE")
                         props.data_path_iter = "selected_editable_objects"
                         props.data_path_item = "data.size"
                         props.header_text = "Lamp Size X: %.3f"
 
                         if lamp.shape == 'RECTANGLE':
-                            props = layout.operator("wm.context_modal_mouse", text="Size Y")
+                            props = layout.operator("wm.context_modal_mouse", text="Size Y", icon = "LIGHT_SIZE")
                             props.data_path_iter = "selected_editable_objects"
                             props.data_path_item = "data.size_y"
                             props.header_text = "Lamp Size Y: %.3f"
 
                     elif lamp.type in {'SPOT', 'POINT', 'SUN'}:
-                        props = layout.operator("wm.context_modal_mouse", text="Size")
+                        props = layout.operator("wm.context_modal_mouse", text="Size", icon = "LIGHT_SIZE")
                         props.data_path_iter = "selected_editable_objects"
                         props.data_path_item = "data.shadow_soft_size"
                         props.header_text = "Lamp Size: %.3f"
@@ -1682,7 +1682,7 @@ class VIEW3D_MT_object_specials(Menu):
                     value = None
 
                 if value is not None:
-                    props = layout.operator("wm.context_modal_mouse", text="Strength")
+                    props = layout.operator("wm.context_modal_mouse", text="Strength", icon = "LIGHT_STRENGTH")
                     props.data_path_iter = "selected_editable_objects"
                     props.data_path_item = "data.node_tree.nodes[\"Emission\"].inputs[\"Strength\"].default_value"
                     props.header_text = "Lamp Strength: %.3f"
@@ -1690,19 +1690,19 @@ class VIEW3D_MT_object_specials(Menu):
                 del value
 
                 if lamp.type == 'AREA':
-                    props = layout.operator("wm.context_modal_mouse", text="Size X")
+                    props = layout.operator("wm.context_modal_mouse", text="Size X", icon = "LIGHT_SIZE")
                     props.data_path_iter = "selected_editable_objects"
                     props.data_path_item = "data.size"
                     props.header_text = "Lamp Size X: %.3f"
 
                     if lamp.shape == 'RECTANGLE':
-                        props = layout.operator("wm.context_modal_mouse", text="Size Y")
+                        props = layout.operator("wm.context_modal_mouse", text="Size Y", icon = "LIGHT_SIZE")
                         props.data_path_iter = "selected_editable_objects"
                         props.data_path_item = "data.size_y"
                         props.header_text = "Lamp Size Y: %.3f"
 
                 elif lamp.type in {'SPOT', 'POINT', 'SUN'}:
-                    props = layout.operator("wm.context_modal_mouse", text="Size")
+                    props = layout.operator("wm.context_modal_mouse", text="Size", icon = "LIGHT_SIZE")
                     props.data_path_iter = "selected_editable_objects"
                     props.data_path_item = "data.shadow_soft_size"
                     props.header_text = "Lamp Size: %.3f"
