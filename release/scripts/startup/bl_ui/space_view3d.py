@@ -1391,7 +1391,7 @@ class VIEW3D_MT_object(Menu):
                 layout.separator()
 
                 if obj.data.type == 'PERSP':
-                    props = layout.operator("wm.context_modal_mouse", text="Camera Lens Angle")
+                    props = layout.operator("wm.context_modal_mouse", text="Camera Lens Angle", icon = "LENS_ANGLE")
                     props.data_path_iter = "selected_editable_objects"
                     props.data_path_item = "data.lens"
                     props.input_scale = 0.1
@@ -1410,9 +1410,9 @@ class VIEW3D_MT_object(Menu):
                 if not obj.data.dof_object:
                     view = context.space_data
                     if view and view.camera == obj and view.region_3d.view_perspective == 'CAMERA':
-                        props = layout.operator("ui.eyedropper_depth", text="DOF Distance (Pick)")
+                        props = layout.operator("ui.eyedropper_depth", text="DOF Distance (Pick)", icon = "DOF")
                     else:
-                        props = layout.operator("wm.context_modal_mouse", text="DOF Distance")
+                        props = layout.operator("wm.context_modal_mouse", text="DOF Distance", icon = "DOF")
                         props.data_path_iter = "selected_editable_objects"
                         props.data_path_item = "data.dof_distance"
                         props.input_scale = 0.02
@@ -1618,7 +1618,7 @@ class VIEW3D_MT_object_specials(Menu):
             layout.operator_context = 'INVOKE_REGION_WIN'
 
             if obj.data.type == 'PERSP':
-                props = layout.operator("wm.context_modal_mouse", text="Camera Lens Angle")
+                props = layout.operator("wm.context_modal_mouse", text="Camera Lens Angle", icon = "LENS_ANGLE")
                 props.data_path_iter = "selected_editable_objects"
                 props.data_path_item = "data.lens"
                 props.input_scale = 0.1
@@ -1637,9 +1637,9 @@ class VIEW3D_MT_object_specials(Menu):
             if not obj.data.dof_object:
                 view = context.space_data
                 if view and view.camera == obj and view.region_3d.view_perspective == 'CAMERA':
-                    props = layout.operator("ui.eyedropper_depth", text="DOF Distance (Pick)")
+                    props = layout.operator("ui.eyedropper_depth", text="DOF Distance (Pick)", icon = "DOF")
                 else:
-                    props = layout.operator("wm.context_modal_mouse", text="DOF Distance")
+                    props = layout.operator("wm.context_modal_mouse", text="DOF Distance", icon = "DOF")
                     props.data_path_iter = "selected_editable_objects"
                     props.data_path_item = "data.dof_distance"
                     props.input_scale = 0.02
