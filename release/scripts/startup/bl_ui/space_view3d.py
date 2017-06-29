@@ -1440,7 +1440,7 @@ class VIEW3D_MT_object(Menu):
                 layout.operator_context = 'INVOKE_REGION_WIN'
                 layout.separator()
 
-                props = layout.operator("wm.context_modal_mouse", text="Empty Draw Size")
+                props = layout.operator("wm.context_modal_mouse", text="Empty Draw Size", icon = "DRAWSIZE")
                 props.data_path_iter = "selected_editable_objects"
                 props.data_path_item = "empty_draw_size"
                 props.input_scale = 0.01
@@ -1664,7 +1664,7 @@ class VIEW3D_MT_object_specials(Menu):
         if obj.type == 'EMPTY':
             layout.operator_context = 'INVOKE_REGION_WIN'
 
-            props = layout.operator("wm.context_modal_mouse", text="Empty Draw Size")
+            props = layout.operator("wm.context_modal_mouse", text="Empty Draw Size", icon = "DRAWSIZE")
             props.data_path_iter = "selected_editable_objects"
             props.data_path_item = "empty_draw_size"
             props.input_scale = 0.01
