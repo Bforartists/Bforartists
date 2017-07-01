@@ -1812,10 +1812,10 @@ class VIEW3D_MT_object_quick_effects(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("object.quick_fur")
-        layout.operator("object.quick_explode")
-        layout.operator("object.quick_smoke")
-        layout.operator("object.quick_fluid")
+        layout.operator("object.quick_fur", icon = "HAIR")
+        layout.operator("object.quick_explode", icon = "MOD_EXPLODE")
+        layout.operator("object.quick_smoke", icon = "MOD_SMOKE")
+        layout.operator("object.quick_fluid", icon = "MOD_FLUIDSIM")
 
 class VIEW3D_subdivision_set(Menu):
     bl_label = "Subdivide"
