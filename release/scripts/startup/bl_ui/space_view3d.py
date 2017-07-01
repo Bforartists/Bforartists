@@ -1849,9 +1849,9 @@ class VIEW3D_MT_object_showhide(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("object.hide_view_clear", text="Show Hidden")
-        layout.operator("object.hide_view_set", text="Hide Selected").unselected = False
-        layout.operator("object.hide_unselected", text="Hide Unselected") # hide unselected with new tooltip
+        layout.operator("object.hide_view_clear", text="Show Hidden", icon = "RESTRICT_VIEW_OFF")
+        layout.operator("object.hide_view_set", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
+        layout.operator("object.hide_unselected", text="Hide Unselected", icon = "HIDE_UNSELECTED") # hide unselected with new tooltip
 
 
 class VIEW3D_MT_make_single_user(Menu):
