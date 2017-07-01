@@ -1415,6 +1415,7 @@ class TOOLBAR_MT_toolbars_misc_menu(Menu):
         addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
 
         layout.prop(addon_prefs, "misc_history")
+        layout.prop(addon_prefs, "misc_scene")
         layout.prop(addon_prefs, "misc_misc")
             
 ############### bfa - menu hidable by the flag in the right click menu
@@ -1452,6 +1453,12 @@ class TOOLBAR_MT_misc(Menu):
 
             row.operator("screen.repeat_last", icon='REPEAT', text="")
             row.operator("screen.repeat_history", icon='REDO_HISTORY', text="")
+
+        if addon_prefs.misc_scene:
+
+            row = layout.row(align=True)
+
+            layout.template_ID(context.screen, "scene", new="scene.new", unlink="scene.delete") # bfa - the scene drodpown box from the info menu bar
 
         if addon_prefs.misc_misc:
 

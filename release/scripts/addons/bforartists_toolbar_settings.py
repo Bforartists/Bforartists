@@ -112,6 +112,7 @@ class bforartists_toolbar_settings(AddonPreferences):
     # misc
 
     misc_history = BoolProperty(name="History", default=True, description = "Display the History Toolbar\nAll Modes", )
+    misc_scene = BoolProperty(name="Scene", default=True, description = "Display the Scene dropdown box", )
     misc_misc = BoolProperty(name="Misc", default=False, description = "Display the Misc Toolbar\nAll Modes", )
 
 
@@ -229,6 +230,7 @@ class bforartists_toolbar_settings(AddonPreferences):
         row = layout.row()
 
         row.prop(self, "misc_history")
+        row.prop(self, "misc_scene")
         row.prop(self, "misc_misc")
         
 
