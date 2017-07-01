@@ -1766,7 +1766,7 @@ class VIEW3D_MT_object_apply(Menu):
 
         props = layout.operator("object.transform_apply", text="Scale", text_ctxt=i18n_contexts.default, icon = "APPLYSCALE")
         props.location, props.rotation, props.scale = False, False, True
-        props = layout.operator("object.transform_apply", text="Rotation & Scale", text_ctxt=i18n_contexts.default)
+        props = layout.operator("object.transform_apply", text="Rotation & Scale", text_ctxt=i18n_contexts.default, icon = "APPLYALL")
         props.location, props.rotation, props.scale = False, True, True
 
         layout.separator()
