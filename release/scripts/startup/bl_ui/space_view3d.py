@@ -1823,12 +1823,12 @@ class VIEW3D_subdivision_set(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("object.subdivision_set").level = 0
-        layout.operator("object.subdivision_set").level = 1
-        layout.operator("object.subdivision_set").level = 2
-        layout.operator("object.subdivision_set").level = 3
-        layout.operator("object.subdivision_set").level = 4
-        layout.operator("object.subdivision_set").level = 5
+        layout.operator("object.subdivision_set", icon = "SUBDIVIDE_EDGES").level = 0
+        layout.operator("object.subdivision_set", icon = "SUBDIVIDE_EDGES").level = 1
+        layout.operator("object.subdivision_set", icon = "SUBDIVIDE_EDGES").level = 2
+        layout.operator("object.subdivision_set", icon = "SUBDIVIDE_EDGES").level = 3
+        layout.operator("object.subdivision_set", icon = "SUBDIVIDE_EDGES").level = 4
+        layout.operator("object.subdivision_set", icon = "SUBDIVIDE_EDGES").level = 5
 
 
 # Workaround to separate the tooltips for Show Hide
