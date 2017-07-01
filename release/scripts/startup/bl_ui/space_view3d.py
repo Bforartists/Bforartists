@@ -1801,9 +1801,9 @@ class VIEW3D_MT_object_constraints(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("object.constraint_add_with_targets")
-        layout.operator("object.constraints_copy")
-        layout.operator("object.constraints_clear")
+        layout.operator("object.constraint_add_with_targets", icon = "CONSTRAINT_DATA")
+        layout.operator("object.constraints_copy", icon = "CONSTRAINT_DATA")
+        layout.operator("object.constraints_clear", icon = "CONSTRAINT_DATA")
 
 
 class VIEW3D_MT_object_quick_effects(Menu):
