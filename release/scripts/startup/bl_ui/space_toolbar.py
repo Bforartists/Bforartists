@@ -1246,14 +1246,14 @@ class VIEW3D_MT_object_apply_scale(bpy.types.Operator):
         bpy.ops.object.transform_apply(location=True, rotation=False, scale=True)
         return {'FINISHED'}
 
-class VIEW3D_MT_object_apply_all(bpy.types.Operator):
-    """Apply All\nApplies the current location, rotation and scale"""
-    bl_idname = "3dview.tb_apply_all"
+class VIEW3D_MT_object_apply_rotscale(bpy.types.Operator):
+    """Apply Rotation & Scale\nApplies the current rotation and scale"""
+    bl_idname = "3dview.tb_apply_rotscale"
     bl_label = "Apply All"
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
+        bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
         return {'FINISHED'}
 
 #################### Holds the Toolbars menu for Edit, collapsible
@@ -1365,7 +1365,7 @@ class TOOLBAR_MT_edit(Menu):
                     row.operator("3dview.tb_apply_location", text="", icon = "APPLYMOVE") # needed a tooltip, so see above ...
                     row.operator("3dview.tb_apply_rotate", text="", icon = "APPLYROTATE")
                     row.operator("3dview.tb_apply_scale", text="", icon = "APPLYSCALE")
-                    row.operator("3dview.tb_apply_all", text="", icon = "APPLYALL")
+                    row.operator("3dview.tb_apply_rotscale", text="", icon = "APPLYALL")
 
                     row = layout.row(align=True)
 
