@@ -1790,9 +1790,18 @@ class VIEW3D_MT_object_track(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator_enum("object.track_set", "type")
+        #layout.operator_enum("object.track_set", "type")
+        #layout.separator()
+        #layout.operator_enum("object.track_clear", "type")
+
+        #layout.separator()
+
+        layout.operator("object.track_set", text= "Damped Track Constraint", icon = "CONSTRAINT").type = 'DAMPTRACK'
+        layout.operator("object.track_set", text= "Track to Constraint", icon = "CONSTRAINT").type = 'TRACKTO'
+        layout.operator("object.track_set", text= "Lock Track Constraint", icon = "CONSTRAINT").type = 'LOCKTRACK'
         layout.separator()
-        layout.operator_enum("object.track_clear", "type")
+        layout.operator("object.track_clear", text= "Clear Track", icon = "CLEAR_TRACK").type = 'CLEAR'
+        layout.operator("object.track_clear", text= "Clear Track - Keep Transformation", icon = "CLEAR_TRACK").type = 'CLEAR_KEEP_TRANSFORM'
 
 
 class VIEW3D_MT_object_constraints(Menu):
