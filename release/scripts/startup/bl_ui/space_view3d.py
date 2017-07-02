@@ -1563,6 +1563,7 @@ class VIEW3D_MT_object(Menu):
 
         layout.operator("object.data_transfer", icon ='TRANSFER_DATA')
         layout.operator("object.datalayout_transfer", icon ='TRANSFER_DATA_LAYOUT')
+        layout.operator("object.join_uvs", icon ='TRANSFER_UV')
 
         layout.separator()
 
@@ -1905,8 +1906,6 @@ class VIEW3D_MT_make_links(Menu):
         layout.operator_context = operator_context_default
 
         layout.operator_enum("object.make_links_data", "type")  # inline
-
-        layout.operator("object.join_uvs")  # stupid place to add this!
 
 
 class VIEW3D_MT_object_game(Menu):
