@@ -1869,23 +1869,23 @@ class VIEW3D_MT_make_single_user(Menu):
     def draw(self, context):
         layout = self.layout
 
-        props = layout.operator("object.make_single_user", text="Object")
+        props = layout.operator("object.make_single_user", text="Object", icon='MAKE_SINGLE_USER')
         props.object = True
         props.obdata = props.material = props.texture = props.animation = False
 
-        props = layout.operator("object.make_single_user", text="Object & Data")
+        props = layout.operator("object.make_single_user", text="Object & Data", icon='MAKE_SINGLE_USER')
         props.object = props.obdata = True
         props.material = props.texture = props.animation = False
 
-        props = layout.operator("object.make_single_user", text="Object & Data & Materials+Tex")
+        props = layout.operator("object.make_single_user", text="Object & Data & Materials+Tex", icon='MAKE_SINGLE_USER')
         props.object = props.obdata = props.material = props.texture = True
         props.animation = False
 
-        props = layout.operator("object.make_single_user", text="Materials+Tex")
+        props = layout.operator("object.make_single_user", text="Materials+Tex", icon='MAKE_SINGLE_USER')
         props.material = props.texture = True
         props.object = props.obdata = props.animation = False
 
-        props = layout.operator("object.make_single_user", text="Object Animation")
+        props = layout.operator("object.make_single_user", text="Object Animation", icon='MAKE_SINGLE_USER')
         props.animation = True
         props.object = props.obdata = props.material = props.texture = False
 
