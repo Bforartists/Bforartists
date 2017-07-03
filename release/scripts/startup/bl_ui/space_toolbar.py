@@ -930,7 +930,8 @@ class TOOLBAR_MT_toolbars_tools_menu(Menu):
 
         layout.prop(addon_prefs, "tools_relations")
         layout.prop(addon_prefs, "tools_edit")
-            
+
+
 ############### bfa - menu hidable by the flag in the right click menu
 
 class TOOLBAR_MT_tools(Menu):
@@ -980,6 +981,14 @@ class TOOLBAR_MT_tools(Menu):
 
                     row.operator("object.make_links_data", icon='LINK_DATA', text="")
                     row.operator("object.make_single_user", icon='MAKE_SINGLE_USER', text="")
+                    
+                    operator_context_default = layout.operator_context
+                    if len(bpy.data.scenes) > 10:
+                        layout.operator_context = 'INVOKE_REGION_WIN'
+                        layout.operator("object.make_links_scene", text="Link to SCN", icon='OUTLINER_OB_EMPTY')
+                    else:
+                        layout.operator_context = 'EXEC_REGION_WIN'
+                        layout.operator_menu_enum("object.make_links_scene", "scene", text="Link to SCN")
 
                     row = layout.row(align=True)
 
