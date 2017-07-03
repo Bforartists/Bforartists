@@ -1543,7 +1543,6 @@ class VIEW3D_MT_object(Menu):
         layout.operator("object.delete", text="Delete...", icon = "DELETE").use_global = False
         layout.menu("VIEW3D_MT_make_links", text="Make Links...")
         layout.operator("object.make_dupli_face", icon = "MAKEDUPLIFACE")
-        layout.menu("VIEW3D_MT_make_single_user")
 
         layout.separator()
 
@@ -1862,33 +1861,6 @@ class VIEW3D_MT_object_showhide(Menu):
         layout.operator("object.hide_view_clear", text="Show Hidden", icon = "RESTRICT_VIEW_OFF")
         layout.operator("object.hide_view_set", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
         layout.operator("object.hide_unselected", text="Hide Unselected", icon = "HIDE_UNSELECTED") # hide unselected with new tooltip
-
-
-class VIEW3D_MT_make_single_user(Menu):
-    bl_label = "Make Single User"
-
-    def draw(self, context):
-        layout = self.layout
-
-        props = layout.operator("object.make_single_user", text="Object", icon='MAKE_SINGLE_USER')
-        props.object = True
-        props.obdata = props.material = props.texture = props.animation = False
-
-        props = layout.operator("object.make_single_user", text="Object & Data", icon='MAKE_SINGLE_USER')
-        props.object = props.obdata = True
-        props.material = props.texture = props.animation = False
-
-        props = layout.operator("object.make_single_user", text="Object & Data & Materials+Tex", icon='MAKE_SINGLE_USER')
-        props.object = props.obdata = props.material = props.texture = True
-        props.animation = False
-
-        props = layout.operator("object.make_single_user", text="Materials+Tex", icon='MAKE_SINGLE_USER')
-        props.material = props.texture = True
-        props.object = props.obdata = props.animation = False
-
-        props = layout.operator("object.make_single_user", text="Object Animation", icon='MAKE_SINGLE_USER')
-        props.animation = True
-        props.object = props.obdata = props.material = props.texture = False
 
 
 class VIEW3D_MT_make_links(Menu):
