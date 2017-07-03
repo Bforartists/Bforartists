@@ -609,6 +609,14 @@ class VIEW3D_PT_tools_relations(View3DPanel, Panel):
                     col.label(text="Object Data:")
                     col.operator("object.make_links_data", icon='LINK_DATA', text = "Link Data             ")
                     col.operator("object.make_single_user", icon='MAKE_SINGLE_USER', text = "Make Single User ")
+                    
+                    operator_context_default = layout.operator_context
+                    if len(bpy.data.scenes) > 10:
+                        col.operator_context = 'INVOKE_REGION_WIN'
+                        col.operator("object.make_links_scene", text="Link to SCN", icon='OUTLINER_OB_EMPTY')
+                    else:
+                        col.operator_context = 'EXEC_REGION_WIN'
+                        col.operator_menu_enum("object.make_links_scene", "scene", text="Link to SCN")
 
                     col.separator()
 
@@ -646,6 +654,14 @@ class VIEW3D_PT_tools_relations(View3DPanel, Panel):
                     row.alignment = 'LEFT'
                     row.operator("object.make_links_data", icon='LINK_DATA', text = "")
                     row.operator("object.make_single_user", icon='MAKE_SINGLE_USER', text = "")
+                
+                    operator_context_default = layout.operator_context
+                    if len(bpy.data.scenes) > 10:
+                        layout.operator_context = 'INVOKE_REGION_WIN'
+                        layout.operator("object.make_links_scene", text="Link to SCN", icon='OUTLINER_OB_EMPTY')
+                    else:
+                        layout.operator_context = 'EXEC_REGION_WIN'
+                        layout.operator_menu_enum("object.make_links_scene", "scene", text="Link to SCN")
 
                     col = layout.column(align=True)
                     col.label(text="Linked Objects:")
