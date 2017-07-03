@@ -1295,6 +1295,7 @@ class TOOLBAR_MT_toolbars_edit_menu(Menu):
         layout.prop(addon_prefs, "edit_edit")
         layout.prop(addon_prefs, "edit_weightinedit")
         layout.prop(addon_prefs, "edit_objectapply")
+        layout.prop(addon_prefs, "edit_objectapplydeltas")
         layout.prop(addon_prefs, "edit_objectclear")
             
 ############### bfa - menu hidable by the flag in the right click menu
@@ -1380,6 +1381,20 @@ class TOOLBAR_MT_edit(Menu):
 
                     row.operator("object.visual_transform_apply", text = "", text_ctxt=i18n_contexts.default, icon = "VISUALTRANSFORM")
                     row.operator("object.duplicates_make_real", text = "", icon = "MAKEDUPLIREAL")
+
+            if addon_prefs.edit_objectapplydeltas:
+
+                if mode == 'OBJECT':
+
+                    row = layout.row(align=True)
+
+                    # TO DO - Useful tooltips
+                    row.operator("object.transforms_to_deltas", text="", text_ctxt=i18n_contexts.default, icon = "APPLYROTATEDELTA").mode = 'LOC'
+                    row.operator("object.transforms_to_deltas", text="", text_ctxt=i18n_contexts.default, icon = "APPLYMOVEDELTA").mode = 'ROT'
+                    row.operator("object.transforms_to_deltas", text="", text_ctxt=i18n_contexts.default, icon = "APPLYALLDELTA").mode = 'SCALE'
+
+                    row.operator("object.transforms_to_deltas", text="", text_ctxt=i18n_contexts.default, icon = "APPLYALLDELTA").mode = 'ALL'
+                    row.operator("object.anim_transforms_to_deltas", text = "", icon = "APPLYANIDELTA")
 
             if addon_prefs.edit_objectclear:
 

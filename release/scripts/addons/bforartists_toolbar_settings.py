@@ -107,6 +107,7 @@ class bforartists_toolbar_settings(AddonPreferences):
     edit_edit = BoolProperty(name="Edit", default=True, description = "Display the Edit Toolbar\nDisplay is mode and content dependant", )
     edit_weightinedit = BoolProperty(name="Weight in Edit", default=True, description = "Display the Weight in Edit Toolbar\nDisplay is mode and content dependant", )
     edit_objectapply = BoolProperty(name="Object Apply", default=True, description = "Display the Object Apply Toolbar\nDisplay is mode and content dependant", )
+    edit_objectapplydeltas = BoolProperty(name="Object Apply Deltas", default=False, description = "Display the Object Apply Deltas Toolbar\nDisplay is mode and content dependant", )
     edit_objectclear = BoolProperty(name="Object Clear", default=True, description = "Display the Object Clear Toolbar\nDisplay is mode and content dependant", )
 
     # misc
@@ -223,7 +224,9 @@ class bforartists_toolbar_settings(AddonPreferences):
         row.prop(self, "edit_edit")
         row.prop(self, "edit_weightinedit")
         row.prop(self, "edit_objectapply")
-        row.prop(self, "edit_objectclear")
+        row.prop(self, "edit_objectapplydeltas")
+
+        edit_objectapplydeltas
 
         layout.label(text="The Misc toolbar container")
 
