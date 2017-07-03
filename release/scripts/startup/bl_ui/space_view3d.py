@@ -1541,7 +1541,6 @@ class VIEW3D_MT_object(Menu):
         layout.operator("object.duplicate_move_linked", icon = "DUPLICATE")
         layout.operator("object.delete_global", text="Delete Global", icon = "DELETE") # bfa - separated tooltip
         layout.operator("object.delete", text="Delete...", icon = "DELETE").use_global = False
-        layout.menu("VIEW3D_MT_make_links", text="Make Links...")
         layout.operator("object.make_dupli_face", icon = "MAKEDUPLIFACE")
 
         layout.separator()
@@ -1861,23 +1860,6 @@ class VIEW3D_MT_object_showhide(Menu):
         layout.operator("object.hide_view_clear", text="Show Hidden", icon = "RESTRICT_VIEW_OFF")
         layout.operator("object.hide_view_set", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
         layout.operator("object.hide_unselected", text="Hide Unselected", icon = "HIDE_UNSELECTED") # hide unselected with new tooltip
-
-
-class VIEW3D_MT_make_links(Menu):
-    bl_label = "Make Links"
-
-    def draw(self, context):
-        layout = self.layout
-        operator_context_default = layout.operator_context
-        if len(bpy.data.scenes) > 10:
-            layout.operator_context = 'INVOKE_REGION_WIN'
-            layout.operator("object.make_links_scene", text="Objects to Scene...", icon='OUTLINER_OB_EMPTY')
-        else:
-            layout.operator_context = 'EXEC_REGION_WIN'
-            layout.operator_menu_enum("object.make_links_scene", "scene", text="Objects to Scene...")
-        layout.operator_context = operator_context_default
-
-        layout.operator_enum("object.make_links_data", "type")  # inline
 
 
 class VIEW3D_MT_object_game(Menu):
