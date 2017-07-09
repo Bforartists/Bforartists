@@ -1912,20 +1912,11 @@ class VIEW3D_MT_brush(Menu):
         # brush paint modes
         layout.menu("VIEW3D_MT_brush_paint_modes")
 
-        # brush tool
-        if context.sculpt_object:
-            layout.operator("brush.reset")
-            layout.prop_menu_enum(brush, "sculpt_tool")
-        elif context.image_paint_object:
-            layout.prop_menu_enum(brush, "image_tool")
-        elif context.vertex_paint_object or context.weight_paint_object:
-            layout.prop_menu_enum(brush, "vertex_tool")
-
         # skip if no active brush
         if not brush:
             return
 
-        # TODO: still missing a lot of brush options here
+        # TODO: still missing a lot of brush options here #### bfa - FUCK NO! NOT HERE!
 
         # sculpt options
         if context.sculpt_object:
