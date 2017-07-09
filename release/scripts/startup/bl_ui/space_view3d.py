@@ -2039,22 +2039,6 @@ class VIEW3D_MT_paint_weight(Menu):
 
         layout.separator()
 
-        layout.operator("object.vertex_group_normalize_all", text="Normalize All")
-        layout.operator("object.vertex_group_normalize", text="Normalize")
-        layout.operator("object.vertex_group_mirror", text="Mirror")
-        layout.operator("object.vertex_group_invert", text="Invert")
-        layout.operator("object.vertex_group_clean", text="Clean")
-        layout.operator("object.vertex_group_quantize", text="Quantize")
-        layout.operator("object.vertex_group_levels", text="Levels")
-        layout.operator("object.vertex_group_smooth", text="Smooth")
-        props = layout.operator("object.data_transfer", text="Transfer Weights")
-        props.use_reverse_transfer = True
-        props.data_type = 'VGROUP_WEIGHTS'
-        layout.operator("object.vertex_group_limit_total", text="Limit Total")
-        layout.operator("object.vertex_group_fix", text="Fix Deforms")
-
-        layout.separator()
-
         layout.operator("paint.weight_set")
 
 # ********** Sculpt menu **********
