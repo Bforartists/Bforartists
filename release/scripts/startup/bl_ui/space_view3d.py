@@ -1923,12 +1923,7 @@ class VIEW3D_MT_brush(Menu):
 
             sculpt_tool = brush.sculpt_tool
 
-            layout.separator()
-
             if sculpt_tool != 'GRAB':
-
-                if sculpt_tool in {'DRAW', 'PINCH', 'INFLATE', 'LAYER', 'CLAY'}:
-                    layout.prop_menu_enum(brush, "direction")
 
                 if sculpt_tool == 'LAYER':
                     layout.prop(brush, "use_persistent")
