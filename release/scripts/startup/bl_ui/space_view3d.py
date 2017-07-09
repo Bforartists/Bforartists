@@ -365,6 +365,12 @@ class VIEW3D_MT_view(Menu):
 
         layout.separator()
 
+         # OpenGL render
+        layout.operator("render.opengl", text="OpenGL Render Image", icon='RENDER_STILL')
+        layout.operator("render.opengl", text="OpenGL Render Animation", icon='RENDER_ANIMATION').animation = True
+
+        layout.separator()
+
         layout.operator("view3d.object_as_camera", icon = 'VIEW_SWITCHACTIVECAM')
         layout.operator("view3d.viewnumpad", text="Active Camera", icon = 'VIEW_SWITCHTOCAM').type = 'CAMERA'
         layout.operator("view3d.view_center_camera")
