@@ -1926,7 +1926,6 @@ class VIEW3D_MT_brush(Menu):
             layout.separator()
 
             if sculpt_tool != 'GRAB':
-                layout.prop_menu_enum(brush, "stroke_method")
 
                 if sculpt_tool in {'DRAW', 'PINCH', 'INFLATE', 'LAYER', 'CLAY'}:
                     layout.prop_menu_enum(brush, "direction")
