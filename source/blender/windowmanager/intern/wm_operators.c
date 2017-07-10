@@ -1848,7 +1848,8 @@ static uiBlock *wm_block_create_splash(bContext *C, ARegion *ar, void *UNUSED(ar
 	col = uiLayoutColumn(split, false);
 	uiItemL(col, IFACE_("Links"), ICON_NONE);
 
-	// bfa - changed the menu itemas to link ot bforartists page
+	// bfa - changed the menu itemas to link to bforartists pages
+	uiItemStringO(col, IFACE_("Quickstart Learning Videos"), ICON_URL, "WM_OT_url_open", "url", "https://www.youtube.com/playlist?list=PLB0iqEbIPQTZEkNWmGcIFGubrLYSDi5Og");
 	uiItemStringO(col, IFACE_("Credits Bforartists"), ICON_URL, "WM_OT_url_open", "url", "https://www.bforartists.de/wiki/credits-page-bforartists");
 	uiItemStringO(col, IFACE_("Release notes"), ICON_URL, "WM_OT_url_open", "url", "https://www.bforartists.de/wiki/release-notes");
 	uiItemStringO(col, IFACE_("Manual"), ICON_URL, "WM_OT_url_open", "url", "https://www.bforartists.de/wiki/Manual");
@@ -1857,7 +1858,7 @@ static uiBlock *wm_block_create_splash(bContext *C, ARegion *ar, void *UNUSED(ar
 
 	uiItemStringO(col, IFACE_("Python API Reference"), ICON_URL, "WM_OT_url_open", "url", "https://www.bforartists.de/pythonapi/contents.html"); // bfa - link to new api page
 	uiItemL(col, "", ICON_NONE);
-	uiItemL(col, "", ICON_NONE);
+	uiItemL(col, "Bforartists 0.9.2 is based at Blender 2.78c", ICON_NONE);
 
 	col = uiLayoutColumn(split, false);
 

@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -110,10 +110,11 @@ class GreasePencilDrawingToolsPanel:
 
         row = col.row(align=False)
         row.alignment = 'LEFT'
-        row.operator("gpencil.draw", icon='GREASEPENCIL', text="").mode = 'DRAW'
-        row.operator("gpencil.draw", icon='ERASE', text="").mode = 'ERASER'  # XXX: Needs a dedicated icon
-        row.operator("gpencil.draw", icon='LINE_DATA', text="").mode = 'DRAW_STRAIGHT'
-        row.operator("gpencil.draw", icon='MESH_DATA', text="").mode = 'DRAW_POLY'
+        row.operator("gpencil.draw", icon='GREASEPENCIL',text="").mode = 'DRAW'
+        row.operator("gpencil.draw", icon= 'ERASE',  text="").mode = 'ERASER'
+        row.operator("gpencil.draw", icon= 'LINE_DATA', text="").mode = 'DRAW_STRAIGHT'
+        row.operator("gpencil.draw", icon= 'MESH_DATA', text="").mode = 'DRAW_POLY'
+        col.separator()
 
         col.separator()
 

@@ -213,8 +213,8 @@ class VIEW3D_MT_transform(VIEW3D_MT_transform_base):
 
         layout.separator()
 
-        layout.operator("transform.translate", text="Move Texture Space").texture_space = True
-        layout.operator("transform.resize", text="Scale Texture Space").texture_space = True
+        layout.operator("transform.translate", text="Move Texture Space", icon = "MOVE_TEXTURESPACE").texture_space = True
+        layout.operator("transform.resize", text="Scale Texture Space", icon = "SCALE_TEXTURESPACE").texture_space = True
 
         layout.separator()
 
@@ -232,21 +232,20 @@ class VIEW3D_MT_transform_object(VIEW3D_MT_transform_base):
         # object-specific option follow...
         layout.separator()
 
-        layout.operator("transform.translate", text="Move Texture Space").texture_space = True
-        layout.operator("transform.resize", text="Scale Texture Space").texture_space = True
+        layout.operator("transform.translate", text="Move Texture Space", icon = "MOVE_TEXTURESPACE").texture_space = True
+        layout.operator("transform.resize", text="Scale Texture Space", icon = "SCALE_TEXTURESPACE").texture_space = True
 
         layout.separator()
 
         layout.operator_context = 'EXEC_REGION_WIN'
-        # XXX see alignmenu() in edit.c of b2.4x to get this working
-        layout.operator("transform.transform", text="Align to Transform Orientation").mode = 'ALIGN'
+        layout.operator("transform.transform", text="Align to Transform Orientation", icon = "ALIGN_TRANSFORM").mode = 'ALIGN'  # XXX see alignmenu() in edit.c of b2.4x to get this working
 
         layout.separator()
 
         layout.operator_context = 'EXEC_AREA'
 
-        layout.operator("object.randomize_transform")
-        layout.operator("object.align")
+        layout.operator("object.randomize_transform", icon = "RANDOMIZE_TRANSFORM")
+        layout.operator("object.align", icon = "ALIGN")
 
 
 # Armature EditMode extensions to Transform menu
@@ -303,21 +302,6 @@ class VIEW3D_MT_uv_map(Menu):
 
         layout.operator("uv.reset")
 
-
-class VIEW3D_MT_edit_proportional(Menu):
-    bl_label = "Proportional Editing"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.props_enum(context.tool_settings, "proportional_edit")
-
-        layout.separator()
-
-        layout.label("Falloff:")
-        layout.props_enum(context.tool_settings, "proportional_edit_falloff")
-
-
 # ********** View menus **********
 
 
@@ -363,6 +347,12 @@ class VIEW3D_MT_view(Menu):
 
         layout.operator("view3d.properties", icon='MENU_PANEL')
         layout.operator("view3d.toolshelf", icon='MENU_PANEL')
+
+        layout.separator()
+
+         # OpenGL render
+        layout.operator("render.opengl", text="OpenGL Render Image", icon='RENDER_STILL')
+        layout.operator("render.opengl", text="OpenGL Render Animation", icon='RENDER_ANIMATION').animation = True
 
         layout.separator()
 
@@ -934,9 +924,9 @@ class VIEW3D_MT_select_edit_text(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("font.text_copy", text="Copy")
+        layout.operator("font.text_copy", text="Copy", icon = "COPYDOWN")
         layout.operator("font.text_cut", text="Cut")
-        layout.operator("font.text_paste", text="Paste")
+        layout.operator("font.text_paste", text="Paste", icon = "PASTEDOWN")
 
         layout.separator()
 
@@ -1392,7 +1382,7 @@ class VIEW3D_MT_object(Menu):
                 layout.separator()
 
                 if obj.data.type == 'PERSP':
-                    props = layout.operator("wm.context_modal_mouse", text="Camera Lens Angle")
+                    props = layout.operator("wm.context_modal_mouse", text="Camera Lens Angle", icon = "LENS_ANGLE")
                     props.data_path_iter = "selected_editable_objects"
                     props.data_path_item = "data.lens"
                     props.input_scale = 0.1
@@ -1411,9 +1401,9 @@ class VIEW3D_MT_object(Menu):
                 if not obj.data.dof_object:
                     view = context.space_data
                     if view and view.camera == obj and view.region_3d.view_perspective == 'CAMERA':
-                        props = layout.operator("ui.eyedropper_depth", text="DOF Distance (Pick)")
+                        props = layout.operator("ui.eyedropper_depth", text="DOF Distance (Pick)", icon = "DOF")
                     else:
-                        props = layout.operator("wm.context_modal_mouse", text="DOF Distance")
+                        props = layout.operator("wm.context_modal_mouse", text="DOF Distance", icon = "DOF")
                         props.data_path_iter = "selected_editable_objects"
                         props.data_path_item = "data.dof_distance"
                         props.input_scale = 0.02
@@ -1424,13 +1414,13 @@ class VIEW3D_MT_object(Menu):
                 layout.operator_context = 'INVOKE_REGION_WIN'
                 layout.separator()
 
-                props = layout.operator("wm.context_modal_mouse", text="Extrude Size")
+                props = layout.operator("wm.context_modal_mouse", text="Extrude Size", icon = "EXTRUDESIZE")
                 props.data_path_iter = "selected_editable_objects"
                 props.data_path_item = "data.extrude"
                 props.input_scale = 0.01
                 props.header_text = "Extrude Size: %.3f"
 
-                props = layout.operator("wm.context_modal_mouse", text="Width Size")
+                props = layout.operator("wm.context_modal_mouse", text="Width Size", icon = "WIDTH_SIZE" )
                 props.data_path_iter = "selected_editable_objects"
                 props.data_path_item = "data.offset"
                 props.input_scale = 0.01
@@ -1441,7 +1431,7 @@ class VIEW3D_MT_object(Menu):
                 layout.operator_context = 'INVOKE_REGION_WIN'
                 layout.separator()
 
-                props = layout.operator("wm.context_modal_mouse", text="Empty Draw Size")
+                props = layout.operator("wm.context_modal_mouse", text="Empty Draw Size", icon = "DRAWSIZE")
                 props.data_path_iter = "selected_editable_objects"
                 props.data_path_item = "empty_draw_size"
                 props.input_scale = 0.01
@@ -1461,7 +1451,7 @@ class VIEW3D_MT_object(Menu):
                         value = None
 
                     if value is not None:
-                        props = layout.operator("wm.context_modal_mouse", text="Strength")
+                        props = layout.operator("wm.context_modal_mouse", text="Strength", icon = "LIGHT_STRENGTH")
                         props.data_path_iter = "selected_editable_objects"
                         props.data_path_item = "data.node_tree.nodes[\"Emission\"].inputs[\"Strength\"].default_value"
                         props.header_text = "Lamp Strength: %.3f"
@@ -1469,19 +1459,19 @@ class VIEW3D_MT_object(Menu):
                     del value
 
                     if lamp.type == 'AREA':
-                        props = layout.operator("wm.context_modal_mouse", text="Size X")
+                        props = layout.operator("wm.context_modal_mouse", text="Size X", icon = "LIGHT_SIZE")
                         props.data_path_iter = "selected_editable_objects"
                         props.data_path_item = "data.size"
                         props.header_text = "Lamp Size X: %.3f"
 
                         if lamp.shape == 'RECTANGLE':
-                            props = layout.operator("wm.context_modal_mouse", text="Size Y")
+                            props = layout.operator("wm.context_modal_mouse", text="Size Y", icon = "LIGHT_SIZE")
                             props.data_path_iter = "selected_editable_objects"
                             props.data_path_item = "data.size_y"
                             props.header_text = "Lamp Size Y: %.3f"
 
                     elif lamp.type in {'SPOT', 'POINT', 'SUN'}:
-                        props = layout.operator("wm.context_modal_mouse", text="Size")
+                        props = layout.operator("wm.context_modal_mouse", text="Size", icon = "LIGHT_SIZE")
                         props.data_path_iter = "selected_editable_objects"
                         props.data_path_item = "data.shadow_soft_size"
                         props.header_text = "Lamp Size: %.3f"
@@ -1615,15 +1605,13 @@ class VIEW3D_MT_object(Menu):
 
         layout.separator()
 
-        layout.operator("view3d.pastebuffer", text = "Paste")
-        layout.operator("view3d.copybuffer", text = "Copy")
-        layout.operator("object.duplicate_move")
-        layout.operator("object.duplicate_move_linked")
-        layout.operator("object.delete_global", text="Delete Global") # bfa - separated tooltip
-        layout.operator("object.delete", text="Delete...").use_global = False
-        layout.menu("VIEW3D_MT_make_links", text="Make Links...")
-        layout.operator("object.make_dupli_face")
-        layout.menu("VIEW3D_MT_make_single_user")
+        layout.operator("view3d.pastebuffer", text = "Paste", icon = "PASTEDOWN")
+        layout.operator("view3d.copybuffer", text = "Copy", icon = "COPYDOWN")
+        layout.operator("object.duplicate_move", icon = "DUPLICATE")
+        layout.operator("object.duplicate_move_linked", icon = "DUPLICATE")
+        layout.operator("object.delete_global", text="Delete Global", icon = "DELETE") # bfa - separated tooltip
+        layout.operator("object.delete", text="Delete...", icon = "DELETE").use_global = False
+        layout.operator("object.make_dupli_face", icon = "MAKEDUPLIFACE")
 
         layout.separator()
 
@@ -1641,8 +1629,9 @@ class VIEW3D_MT_object(Menu):
 
         layout.separator()
 
-        layout.operator("object.data_transfer")
-        layout.operator("object.datalayout_transfer")
+        layout.operator("object.data_transfer", icon ='TRANSFER_DATA')
+        layout.operator("object.datalayout_transfer", icon ='TRANSFER_DATA_LAYOUT')
+        layout.operator("object.join_uvs", icon ='TRANSFER_UV')
 
         layout.separator()
 
@@ -1698,7 +1687,7 @@ class VIEW3D_MT_object_specials(Menu):
             layout.operator_context = 'INVOKE_REGION_WIN'
 
             if obj.data.type == 'PERSP':
-                props = layout.operator("wm.context_modal_mouse", text="Camera Lens Angle")
+                props = layout.operator("wm.context_modal_mouse", text="Camera Lens Angle", icon = "LENS_ANGLE")
                 props.data_path_iter = "selected_editable_objects"
                 props.data_path_item = "data.lens"
                 props.input_scale = 0.1
@@ -1717,9 +1706,9 @@ class VIEW3D_MT_object_specials(Menu):
             if not obj.data.dof_object:
                 view = context.space_data
                 if view and view.camera == obj and view.region_3d.view_perspective == 'CAMERA':
-                    props = layout.operator("ui.eyedropper_depth", text="DOF Distance (Pick)")
+                    props = layout.operator("ui.eyedropper_depth", text="DOF Distance (Pick)", icon = "DOF")
                 else:
-                    props = layout.operator("wm.context_modal_mouse", text="DOF Distance")
+                    props = layout.operator("wm.context_modal_mouse", text="DOF Distance", icon = "DOF")
                     props.data_path_iter = "selected_editable_objects"
                     props.data_path_item = "data.dof_distance"
                     props.input_scale = 0.02
@@ -1729,13 +1718,13 @@ class VIEW3D_MT_object_specials(Menu):
         if obj.type in {'CURVE', 'FONT'}:
             layout.operator_context = 'INVOKE_REGION_WIN'
 
-            props = layout.operator("wm.context_modal_mouse", text="Extrude Size")
+            props = layout.operator("wm.context_modal_mouse", text="Extrude Size", icon = "EXTRUDESIZE")
             props.data_path_iter = "selected_editable_objects"
             props.data_path_item = "data.extrude"
             props.input_scale = 0.01
             props.header_text = "Extrude Size: %.3f"
 
-            props = layout.operator("wm.context_modal_mouse", text="Width Size")
+            props = layout.operator("wm.context_modal_mouse", text="Width Size", icon = "WIDTH_SIZE")
             props.data_path_iter = "selected_editable_objects"
             props.data_path_item = "data.offset"
             props.input_scale = 0.01
@@ -1744,7 +1733,7 @@ class VIEW3D_MT_object_specials(Menu):
         if obj.type == 'EMPTY':
             layout.operator_context = 'INVOKE_REGION_WIN'
 
-            props = layout.operator("wm.context_modal_mouse", text="Empty Draw Size")
+            props = layout.operator("wm.context_modal_mouse", text="Empty Draw Size", icon = "DRAWSIZE")
             props.data_path_iter = "selected_editable_objects"
             props.data_path_item = "empty_draw_size"
             props.input_scale = 0.01
@@ -1762,7 +1751,7 @@ class VIEW3D_MT_object_specials(Menu):
                     value = None
 
                 if value is not None:
-                    props = layout.operator("wm.context_modal_mouse", text="Strength")
+                    props = layout.operator("wm.context_modal_mouse", text="Strength", icon = "LIGHT_STRENGTH")
                     props.data_path_iter = "selected_editable_objects"
                     props.data_path_item = "data.node_tree.nodes[\"Emission\"].inputs[\"Strength\"].default_value"
                     props.header_text = "Lamp Strength: %.3f"
@@ -1770,19 +1759,19 @@ class VIEW3D_MT_object_specials(Menu):
                 del value
 
                 if lamp.type == 'AREA':
-                    props = layout.operator("wm.context_modal_mouse", text="Size X")
+                    props = layout.operator("wm.context_modal_mouse", text="Size X", icon = "LIGHT_SIZE")
                     props.data_path_iter = "selected_editable_objects"
                     props.data_path_item = "data.size"
                     props.header_text = "Lamp Size X: %.3f"
 
                     if lamp.shape == 'RECTANGLE':
-                        props = layout.operator("wm.context_modal_mouse", text="Size Y")
+                        props = layout.operator("wm.context_modal_mouse", text="Size Y", icon = "LIGHT_SIZE")
                         props.data_path_iter = "selected_editable_objects"
                         props.data_path_item = "data.size_y"
                         props.header_text = "Lamp Size Y: %.3f"
 
                 elif lamp.type in {'SPOT', 'POINT', 'SUN'}:
-                    props = layout.operator("wm.context_modal_mouse", text="Size")
+                    props = layout.operator("wm.context_modal_mouse", text="Size", icon = "LIGHT_SIZE")
                     props.data_path_iter = "selected_editable_objects"
                     props.data_path_item = "data.shadow_soft_size"
                     props.header_text = "Lamp Size: %.3f"
@@ -1846,17 +1835,17 @@ class VIEW3D_MT_object_apply(Menu):
 
         props = layout.operator("object.transform_apply", text="Scale", text_ctxt=i18n_contexts.default, icon = "APPLYSCALE")
         props.location, props.rotation, props.scale = False, False, True
-        props = layout.operator("object.transform_apply", text="Rotation & Scale", text_ctxt=i18n_contexts.default)
+        props = layout.operator("object.transform_apply", text="Rotation & Scale", text_ctxt=i18n_contexts.default, icon = "APPLYALL")
         props.location, props.rotation, props.scale = False, True, True
 
         layout.separator()
 
-        layout.operator("object.transforms_to_deltas", text="Location to Deltas", text_ctxt=i18n_contexts.default).mode = 'LOC'
-        layout.operator("object.transforms_to_deltas", text="Rotation to Deltas", text_ctxt=i18n_contexts.default).mode = 'ROT'
-        layout.operator("object.transforms_to_deltas", text="Scale to Deltas", text_ctxt=i18n_contexts.default).mode = 'SCALE'
+        layout.operator("object.transforms_to_deltas", text="Location to Deltas", text_ctxt=i18n_contexts.default, icon = "APPLYMOVEDELTA").mode = 'LOC'
+        layout.operator("object.transforms_to_deltas", text="Rotation to Deltas", text_ctxt=i18n_contexts.default, icon = "APPLYROTATEDELTA").mode = 'ROT'
+        layout.operator("object.transforms_to_deltas", text="Scale to Deltas", text_ctxt=i18n_contexts.default, icon = "APPLYSCALEDELTA").mode = 'SCALE'
 
-        layout.operator("object.transforms_to_deltas", text="All Transforms to Deltas", text_ctxt=i18n_contexts.default).mode = 'ALL'
-        layout.operator("object.anim_transforms_to_deltas")
+        layout.operator("object.transforms_to_deltas", text="All Transforms to Deltas", text_ctxt=i18n_contexts.default, icon = "APPLYALLDELTA").mode = 'ALL'
+        layout.operator("object.anim_transforms_to_deltas", icon = "APPLYANIDELTA")
 
         layout.separator()
 
@@ -1870,9 +1859,18 @@ class VIEW3D_MT_object_track(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator_enum("object.track_set", "type")
+        #layout.operator_enum("object.track_set", "type")
+        #layout.separator()
+        #layout.operator_enum("object.track_clear", "type")
+
+        #layout.separator()
+
+        layout.operator("object.track_set", text= "Damped Track Constraint", icon = "CONSTRAINT").type = 'DAMPTRACK'
+        layout.operator("object.track_set", text= "Track to Constraint", icon = "CONSTRAINT").type = 'TRACKTO'
+        layout.operator("object.track_set", text= "Lock Track Constraint", icon = "CONSTRAINT").type = 'LOCKTRACK'
         layout.separator()
-        layout.operator_enum("object.track_clear", "type")
+        layout.operator("object.track_clear", text= "Clear Track", icon = "CLEAR_TRACK").type = 'CLEAR'
+        layout.operator("object.track_clear", text= "Clear Track - Keep Transformation", icon = "CLEAR_TRACK").type = 'CLEAR_KEEP_TRANSFORM'
 
 
 class VIEW3D_MT_object_constraints(Menu):
@@ -1881,9 +1879,9 @@ class VIEW3D_MT_object_constraints(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("object.constraint_add_with_targets")
-        layout.operator("object.constraints_copy")
-        layout.operator("object.constraints_clear")
+        layout.operator("object.constraint_add_with_targets", icon = "CONSTRAINT_DATA")
+        layout.operator("object.constraints_copy", icon = "CONSTRAINT_DATA")
+        layout.operator("object.constraints_clear", icon = "CONSTRAINT_DATA")
 
 
 class VIEW3D_MT_object_quick_effects(Menu):
@@ -1892,10 +1890,10 @@ class VIEW3D_MT_object_quick_effects(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("object.quick_fur")
-        layout.operator("object.quick_explode")
-        layout.operator("object.quick_smoke")
-        layout.operator("object.quick_fluid")
+        layout.operator("object.quick_fur", icon = "HAIR")
+        layout.operator("object.quick_explode", icon = "MOD_EXPLODE")
+        layout.operator("object.quick_smoke", icon = "MOD_SMOKE")
+        layout.operator("object.quick_fluid", icon = "MOD_FLUIDSIM")
 
 class VIEW3D_subdivision_set(Menu):
     bl_label = "Subdivide"
@@ -1903,12 +1901,12 @@ class VIEW3D_subdivision_set(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("object.subdivision_set").level = 0
-        layout.operator("object.subdivision_set").level = 1
-        layout.operator("object.subdivision_set").level = 2
-        layout.operator("object.subdivision_set").level = 3
-        layout.operator("object.subdivision_set").level = 4
-        layout.operator("object.subdivision_set").level = 5
+        layout.operator("object.subdivision_set", icon = "SUBDIVIDE_EDGES").level = 0
+        layout.operator("object.subdivision_set", icon = "SUBDIVIDE_EDGES").level = 1
+        layout.operator("object.subdivision_set", icon = "SUBDIVIDE_EDGES").level = 2
+        layout.operator("object.subdivision_set", icon = "SUBDIVIDE_EDGES").level = 3
+        layout.operator("object.subdivision_set", icon = "SUBDIVIDE_EDGES").level = 4
+        layout.operator("object.subdivision_set", icon = "SUBDIVIDE_EDGES").level = 5
 
 
 # Workaround to separate the tooltips for Show Hide
@@ -1929,55 +1927,9 @@ class VIEW3D_MT_object_showhide(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("object.hide_view_clear", text="Show Hidden")
-        layout.operator("object.hide_view_set", text="Hide Selected").unselected = False
-        layout.operator("object.hide_unselected", text="Hide Unselected") # hide unselected with new tooltip
-
-
-class VIEW3D_MT_make_single_user(Menu):
-    bl_label = "Make Single User"
-
-    def draw(self, context):
-        layout = self.layout
-
-        props = layout.operator("object.make_single_user", text="Object")
-        props.object = True
-        props.obdata = props.material = props.texture = props.animation = False
-
-        props = layout.operator("object.make_single_user", text="Object & Data")
-        props.object = props.obdata = True
-        props.material = props.texture = props.animation = False
-
-        props = layout.operator("object.make_single_user", text="Object & Data & Materials+Tex")
-        props.object = props.obdata = props.material = props.texture = True
-        props.animation = False
-
-        props = layout.operator("object.make_single_user", text="Materials+Tex")
-        props.material = props.texture = True
-        props.object = props.obdata = props.animation = False
-
-        props = layout.operator("object.make_single_user", text="Object Animation")
-        props.animation = True
-        props.object = props.obdata = props.material = props.texture = False
-
-
-class VIEW3D_MT_make_links(Menu):
-    bl_label = "Make Links"
-
-    def draw(self, context):
-        layout = self.layout
-        operator_context_default = layout.operator_context
-        if len(bpy.data.scenes) > 10:
-            layout.operator_context = 'INVOKE_REGION_WIN'
-            layout.operator("object.make_links_scene", text="Objects to Scene...", icon='OUTLINER_OB_EMPTY')
-        else:
-            layout.operator_context = 'EXEC_REGION_WIN'
-            layout.operator_menu_enum("object.make_links_scene", "scene", text="Objects to Scene")
-        layout.operator_context = operator_context_default
-
-        layout.operator_enum("object.make_links_data", "type")  # inline
-
-        layout.operator("object.join_uvs")  # stupid place to add this!
+        layout.operator("object.hide_view_clear", text="Show Hidden", icon = "RESTRICT_VIEW_OFF")
+        layout.operator("object.hide_view_set", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
+        layout.operator("object.hide_unselected", text="Hide Unselected", icon = "HIDE_UNSELECTED") # hide unselected with new tooltip
 
 
 class VIEW3D_MT_object_game(Menu):
@@ -2021,13 +1973,6 @@ class VIEW3D_MT_brush(Menu):
         settings = UnifiedPaintPanel.paint_settings(context)
         brush = getattr(settings, "brush", None)
 
-        ups = context.tool_settings.unified_paint_settings
-        layout.prop(ups, "use_unified_size", text="Unified Size")
-        layout.prop(ups, "use_unified_strength", text="Unified Strength")
-        if context.image_paint_object or context.vertex_paint_object:
-            layout.prop(ups, "use_unified_color", text="Unified Color")
-        layout.separator()
-
         # skip if no active brush
         if not brush:
             layout.label(text="No Brushes currently available", icon="INFO")
@@ -2036,31 +1981,14 @@ class VIEW3D_MT_brush(Menu):
         # brush paint modes
         layout.menu("VIEW3D_MT_brush_paint_modes")
 
-        # brush tool
-        if context.sculpt_object:
-            layout.operator("brush.reset")
-            layout.prop_menu_enum(brush, "sculpt_tool")
-        elif context.image_paint_object:
-            layout.prop_menu_enum(brush, "image_tool")
-        elif context.vertex_paint_object or context.weight_paint_object:
-            layout.prop_menu_enum(brush, "vertex_tool")
-
-        # TODO: still missing a lot of brush options here
+        # TODO: still missing a lot of brush options here #### bfa - FUCK NO! NOT HERE!
 
         # sculpt options
         if context.sculpt_object:
 
             sculpt_tool = brush.sculpt_tool
 
-            layout.separator()
-            layout.operator_menu_enum("brush.curve_preset", "shape", text="Curve Preset")
-            layout.separator()
-
             if sculpt_tool != 'GRAB':
-                layout.prop_menu_enum(brush, "stroke_method")
-
-                if sculpt_tool in {'DRAW', 'PINCH', 'INFLATE', 'LAYER', 'CLAY'}:
-                    layout.prop_menu_enum(brush, "direction")
 
                 if sculpt_tool == 'LAYER':
                     layout.prop(brush, "use_persistent")
@@ -2168,22 +2096,6 @@ class VIEW3D_MT_paint_weight(Menu):
 
         layout.separator()
 
-        layout.operator("object.vertex_group_normalize_all", text="Normalize All")
-        layout.operator("object.vertex_group_normalize", text="Normalize")
-        layout.operator("object.vertex_group_mirror", text="Mirror")
-        layout.operator("object.vertex_group_invert", text="Invert")
-        layout.operator("object.vertex_group_clean", text="Clean")
-        layout.operator("object.vertex_group_quantize", text="Quantize")
-        layout.operator("object.vertex_group_levels", text="Levels")
-        layout.operator("object.vertex_group_smooth", text="Smooth")
-        props = layout.operator("object.data_transfer", text="Transfer Weights")
-        props.use_reverse_transfer = True
-        props.data_type = 'VGROUP_WEIGHTS'
-        layout.operator("object.vertex_group_limit_total", text="Limit Total")
-        layout.operator("object.vertex_group_fix", text="Fix Deforms")
-
-        layout.separator()
-
         layout.operator("paint.weight_set")
 
 # ********** Sculpt menu **********
@@ -2200,16 +2112,6 @@ class VIEW3D_MT_sculpt(Menu):
 
         layout.operator("ed.undo")
         layout.operator("ed.redo")
-
-        layout.separator()
-
-        layout.prop(sculpt, "use_symmetry_x")
-        layout.prop(sculpt, "use_symmetry_y")
-        layout.prop(sculpt, "use_symmetry_z")
-        layout.separator()
-        layout.prop(sculpt, "lock_x")
-        layout.prop(sculpt, "lock_y")
-        layout.prop(sculpt, "lock_z")
 
         layout.separator()
         layout.prop(sculpt, "use_threaded", text="Threaded Sculpt")
@@ -2300,7 +2202,7 @@ class VIEW3D_MT_particle(Menu):
         layout.separator()
 
         layout.operator("particle.remove_doubles")
-        layout.operator("particle.delete")
+        layout.operator("particle.delete", icon = "DELETE")
 
         if particle_edit.select_mode == 'POINT':
             layout.operator("particle.subdivide")
@@ -2323,7 +2225,7 @@ class VIEW3D_MT_particle_specials(Menu):
         particle_edit = context.tool_settings.particle_edit
 
         layout.operator("particle.rekey")
-        layout.operator("particle.delete")
+        layout.operator("particle.delete", icon = "DELETE")
         layout.operator("particle.remove_doubles")
         layout.operator("particle.unify_length")
 
@@ -2688,7 +2590,6 @@ class VIEW3D_MT_edit_mesh(Menu):
         layout.separator()
 
         layout.prop(toolsettings, "use_mesh_automerge")
-        layout.menu("VIEW3D_MT_edit_proportional")
 
         layout.separator()
 
@@ -3161,12 +3062,8 @@ class VIEW3D_MT_edit_meta(Menu):
 
         layout.separator()
 
-        layout.operator("mball.delete_metaelems", text="Delete...")
-        layout.operator("mball.duplicate_metaelems")
-
-        layout.separator()
-
-        layout.menu("VIEW3D_MT_edit_proportional")
+        layout.operator("mball.delete_metaelems", text="Delete...", icon = "DELETE")
+        layout.operator("mball.duplicate_metaelems", icon = "DUPLICATE")
 
         layout.separator()
 
@@ -3207,10 +3104,6 @@ class VIEW3D_MT_edit_lattice(Menu):
         layout.menu("VIEW3D_MT_transform")
         layout.operator("object.vertex_group_mirror")
         layout.operator_menu_enum("lattice.flip", "axis")
-
-        layout.separator()
-
-        layout.menu("VIEW3D_MT_edit_proportional")
 
 
 # Workaround to separate the tooltips for Show Hide for Armature in Edit Mode
@@ -3254,7 +3147,7 @@ class VIEW3D_MT_edit_armature(Menu):
         if arm.use_mirror_x:
             layout.operator("armature.extrude_forked")
 
-        layout.operator("armature.duplicate_move")
+        layout.operator("armature.duplicate_move", icon = "DUPLICATE")
         layout.operator("armature.delete", icon = "DELETE")
 
         layout.separator()
@@ -3319,7 +3212,7 @@ class VIEW3D_MT_edit_armature_delete(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("armature.delete", text="Delete Bones")
+        layout.operator("armature.delete", text="Delete Bones", icon = "DELETE")
 
         layout.separator()
 
@@ -3343,13 +3236,13 @@ class VIEW3D_MT_edit_gpencil(Menu):
 
         layout.separator()
 
-        layout.operator("gpencil.copy", text="Copy")
-        layout.operator("gpencil.paste", text="Paste")
+        layout.operator("gpencil.copy", text="Copy", icon = "COPYDOWN")
+        layout.operator("gpencil.paste", text="Paste", icon = "PASTEDOWN")
 
         layout.separator()
 
         layout.menu("VIEW3D_MT_edit_gpencil_delete")
-        layout.operator("gpencil.duplicate_move", text="Duplicate")
+        layout.operator("gpencil.duplicate_move", text="Duplicate", icon = "DUPLICATE")
 
         layout.separator()
 
@@ -3359,10 +3252,6 @@ class VIEW3D_MT_edit_gpencil(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_object_animation")   # NOTE: provides keyingset access...
-
-        layout.separator()
-
-        layout.menu("VIEW3D_MT_edit_proportional")
 
         layout.separator()
 
@@ -3447,15 +3336,16 @@ class VIEW3D_PT_view3d_properties(Panel):
         col = layout.column(align=True)
         col.prop(view, "use_render_border")
         
-        wm = context.window_manager # Our bool is in the windows_manager
-  
-        # The subtab is closed by default.
-        # When the click at it then it opens. And shows the hidden ui elements.
-        if not wm.subtab_3dview_properties_view_lock:
-            layout.prop(wm,"subtab_3dview_properties_view_lock", emboss=False, icon="TRIA_RIGHT", text="- Lock -")
+        ############## Subtab Lock #####################
+        
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
+        
+        if not addon_prefs.subtab_3dview_properties_view_lock:
+            layout.prop(addon_prefs,"subtab_3dview_properties_view_lock", emboss=False, icon="TRIA_RIGHT", text="- Lock -")
 
         else:
-            layout.prop(wm,"subtab_3dview_properties_view_lock", emboss=False, icon="TRIA_DOWN", text="+ Lock +")
+            layout.prop(addon_prefs,"subtab_3dview_properties_view_lock", emboss=False, icon="TRIA_DOWN", text="+ Lock +")
             
             col = layout.column()
             col.prop(view, "lock_camera_and_layers")
@@ -3483,6 +3373,10 @@ class VIEW3D_PT_view3d_properties(Panel):
                                     text="")
             else:
                 col.prop(view, "lock_cursor", text="Lock to Cursor")
+      
+        
+        ################################################
+        
 
 
 class VIEW3D_PT_view3d_cursor(Panel):
@@ -3586,14 +3480,16 @@ class VIEW3D_PT_view3d_display(Panel):
             row.enabled = region.lock_rotation and region.show_sync_view
             row.prop(region, "use_box_clip")
 
-        wm = context.window_manager # Our bool is in the windows_manager
-        # The subtab is closed by default.
-        # When the click at it then it opens. And shows the hidden ui elements.
-        if not wm.subtab_3dview_properties_display_misc:
-            layout.prop(wm,"subtab_3dview_properties_display_misc", emboss=False, icon="TRIA_RIGHT", text="- Miscellaneous -")
+        ############## Subtab Lock #####################
+        
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
+
+        if not addon_prefs.subtab_3dview_properties_display_misc:
+            layout.prop(addon_prefs,"subtab_3dview_properties_display_misc", emboss=False, icon="TRIA_RIGHT", text="- Miscellaneous -")
 
         else:
-            layout.prop(wm,"subtab_3dview_properties_display_misc", emboss=False, icon="TRIA_DOWN", text="+ Miscellaneous +")
+            layout.prop(addon_prefs,"subtab_3dview_properties_display_misc", emboss=False, icon="TRIA_DOWN", text="+ Miscellaneous +")
 
             col = layout.column()
             col.prop(view, "show_only_render")
@@ -3603,6 +3499,8 @@ class VIEW3D_PT_view3d_display(Panel):
             col.prop(view, "show_relationship_lines")
             
             col.prop(view, "lock_3d_cursor", text="Lock 3D Cursor") # bfa - show hide lock 3d cursor checkbox
+
+        ################################################
 
 
 class VIEW3D_PT_view3d_stereo(Panel):
@@ -3760,17 +3658,17 @@ class VIEW3D_PT_view3d_meshdisplay(Panel):
         sub.active = mesh.show_normal_vertex or mesh.show_normal_face or mesh.show_normal_loop
         sub.prop(scene.tool_settings, "normal_size", text="Size")
         
-        wm = context.window_manager # Our bool is in the windows_manager
-        
-        ################ Overlay Options
+        ################ Overlay Options #############################
   
-        # The subtab is closed by default.
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
+
         # When the click at it then it opens. And shows the hidden ui elements.
-        if not wm.subtab_3dview_properties_meshdisplay_overlay:
-            layout.prop(wm,"subtab_3dview_properties_meshdisplay_overlay", emboss=False, icon="TRIA_RIGHT", text="- Overlay Options -")
+        if not addon_prefs.subtab_3dview_properties_meshdisplay_overlay:
+            layout.prop(addon_prefs,"subtab_3dview_properties_meshdisplay_overlay", emboss=False, icon="TRIA_RIGHT", text="- Overlay Options -")
 
         else:
-            layout.prop(wm,"subtab_3dview_properties_meshdisplay_overlay", emboss=False, icon="TRIA_DOWN", text="+ Overlay Options +")
+            layout.prop(addon_prefs,"subtab_3dview_properties_meshdisplay_overlay", emboss=False, icon="TRIA_DOWN", text="+ Overlay Options +")
             
             split = layout.split()
             col = split.column()
@@ -3792,16 +3690,16 @@ class VIEW3D_PT_view3d_meshdisplay(Panel):
                 col.prop(mesh, "show_freestyle_face_marks", text="Face Marks")
                 
         
-        ################## Info options
+        ################## Info options #########################
 
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
   
-        # The subtab is closed by default.
-        # When the click at it then it opens. And shows the hidden ui elements.
-        if not wm.subtab_3dview_properties_meshdisplay_info:
-            layout.prop(wm,"subtab_3dview_properties_meshdisplay_info", emboss=False, icon="TRIA_RIGHT", text="- Info Options -")
+        if not addon_prefs.subtab_3dview_properties_meshdisplay_info:
+            layout.prop(addon_prefs,"subtab_3dview_properties_meshdisplay_info", emboss=False, icon="TRIA_RIGHT", text="- Info Options -")
 
         else:
-            layout.prop(wm,"subtab_3dview_properties_meshdisplay_info", emboss=False, icon="TRIA_DOWN", text="+ Info Options +")
+            layout.prop(addon_prefs,"subtab_3dview_properties_meshdisplay_info", emboss=False, icon="TRIA_DOWN", text="+ Info Options +")
 
             split = layout.split()
             col = split.column()
@@ -3934,14 +3832,17 @@ class VIEW3D_PT_background_image(Panel):
                     row.template_ID(bg, "image", open="image.open")
                     if bg.image is not None:
                         has_bg = True
+
+                        ############## Subtab Settings #####################
+        
+                        user_preferences = context.user_preferences
+                        addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
                         
-                        # Settings subtab
-                        wm = context.window_manager # Our bool is in the windows_manager
-                        if not wm.subtab_3dview_properties_bgimg_settings:
-                            box.prop(wm,"subtab_3dview_properties_bgimg_settings", emboss=False, icon="TRIA_RIGHT", text="- Settings -")
+                        if not addon_prefs.subtab_3dview_properties_bgimg_settings:
+                            box.prop(addon_prefs,"subtab_3dview_properties_bgimg_settings", emboss=False, icon="TRIA_RIGHT", text="- Settings -")
 
                         else:
-                            box.prop(wm,"subtab_3dview_properties_bgimg_settings", emboss=False, icon="TRIA_DOWN", text="+ Settings +")
+                            box.prop(addon_prefs,"subtab_3dview_properties_bgimg_settings", emboss=False, icon="TRIA_DOWN", text="+ Settings +")
                             
                             box.prop(bg, "opacity", slider=True)
                             box.prop(bg, "view_axis", text="Axis")
@@ -3959,6 +3860,8 @@ class VIEW3D_PT_background_image(Panel):
                                 sub = column.box()
                                 sub.active = bg.image.views_format == 'STEREO_3D'
                                 sub.template_image_stereo_3d(bg.image.stereo_3d_format)
+
+                        #######################################################
 
                 elif bg.source == 'MOVIE_CLIP':
                 
@@ -3983,13 +3886,16 @@ class VIEW3D_PT_background_image(Panel):
                     
                 if has_bg:
                     
-                    # Align Subtab
-                    wm = context.window_manager # Our bool is in the windows_manager
-                    if not wm.subtab_3dview_properties_bgimg_align:
-                        box.prop(wm,"subtab_3dview_properties_bgimg_align", emboss=False, icon="TRIA_RIGHT", text="- Align -")
+                    ################## Align Subtab ##########################
+        
+                    user_preferences = context.user_preferences
+                    addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
+
+                    if not addon_prefs.subtab_3dview_properties_bgimg_align:
+                        box.prop(addon_prefs,"subtab_3dview_properties_bgimg_align", emboss=False, icon="TRIA_RIGHT", text="- Align -")
 
                     else:
-                        box.prop(wm,"subtab_3dview_properties_bgimg_align", emboss=False, icon="TRIA_DOWN", text="+ Align +")
+                        box.prop(addon_prefs,"subtab_3dview_properties_bgimg_align", emboss=False, icon="TRIA_DOWN", text="+ Align +")
 
                         col = box.column()
                         col.row().prop(bg, "draw_depth", expand=True)
@@ -4010,6 +3916,8 @@ class VIEW3D_PT_background_image(Panel):
                         if bg.view_axis != 'CAMERA':
                             row.prop(bg, "rotation")
                             row.prop(bg, "size")
+
+                    ###########################################################
 
 class VIEW3D_PT_etch_a_ton(Panel):
     bl_space_type = 'VIEW_3D'
@@ -4115,7 +4023,6 @@ classes = (
     VIEW3D_MT_transform_object,
     VIEW3D_MT_transform_armature,
     VIEW3D_MT_uv_map,
-    VIEW3D_MT_edit_proportional,
     VIEW3D_MT_view_all_all_regions,
     VIEW3D_MT_view_center_cursor_and_view_all,
     VIEW3D_MT_view_view_selected_all_regions,
@@ -4168,8 +4075,6 @@ classes = (
     VIEW3D_subdivision_set,
     VIEW3D_hide_view_set_unselected,
     VIEW3D_MT_object_showhide,
-    VIEW3D_MT_make_single_user,
-    VIEW3D_MT_make_links,
     VIEW3D_MT_object_game,
     VIEW3D_MT_facemask_showhide,
     VIEW3D_MT_brush,

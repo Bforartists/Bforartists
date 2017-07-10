@@ -170,12 +170,7 @@ class VIEW3D_PT_tools_object(View3DPanel, Panel):
                     sub.active = mesh.use_auto_smooth and not mesh.has_custom_normals
                     sub.prop(mesh, "auto_smooth_angle", text="Angle")
                     col.prop(mesh, "show_double_sided")
-                    
-                    col = layout.column(align=True)
-                    col.label(text="Data Transfer:")
-                    #row = col.row(align=True)
-                    col.operator("object.data_transfer", icon ='TRANSFER_DATA', text="Data                     ")
-                    col.operator("object.datalayout_transfer", icon ='TRANSFER_DATA_LAYOUT', text="Data Layout         ")
+                   
             
             # icons
             else:
@@ -217,14 +212,6 @@ class VIEW3D_PT_tools_object(View3DPanel, Panel):
                     sub.active = mesh.use_auto_smooth and not mesh.has_custom_normals
                     sub.prop(mesh, "auto_smooth_angle", text="Angle")
                     col.prop(mesh, "show_double_sided")
-
-                    # data transfer
-                    col = layout.column(align=True)
-                    col.label(text="Data Transfer:")
-                    row = col.row(align=False)
-                    row.alignment = 'LEFT'
-                    row.operator("object.data_transfer", icon ='TRANSFER_DATA', text = "")
-                    row.operator("object.datalayout_transfer", icon ='TRANSFER_DATA_LAYOUT', text = "")
 
 
 class VIEW3D_PT_tools_add_object(View3DPanel, Panel):
@@ -622,6 +609,14 @@ class VIEW3D_PT_tools_relations(View3DPanel, Panel):
                     col.label(text="Object Data:")
                     col.operator("object.make_links_data", icon='LINK_DATA', text = "Link Data             ")
                     col.operator("object.make_single_user", icon='MAKE_SINGLE_USER', text = "Make Single User ")
+                    
+                    operator_context_default = layout.operator_context
+                    if len(bpy.data.scenes) > 10:
+                        col.operator_context = 'INVOKE_REGION_WIN'
+                        col.operator("object.make_links_scene", text="Link to SCN", icon='OUTLINER_OB_EMPTY')
+                    else:
+                        col.operator_context = 'EXEC_REGION_WIN'
+                        col.operator_menu_enum("object.make_links_scene", "scene", text="Link to SCN")
 
                     col.separator()
 
@@ -659,6 +654,14 @@ class VIEW3D_PT_tools_relations(View3DPanel, Panel):
                     row.alignment = 'LEFT'
                     row.operator("object.make_links_data", icon='LINK_DATA', text = "")
                     row.operator("object.make_single_user", icon='MAKE_SINGLE_USER', text = "")
+                
+                    operator_context_default = layout.operator_context
+                    if len(bpy.data.scenes) > 10:
+                        layout.operator_context = 'INVOKE_REGION_WIN'
+                        layout.operator("object.make_links_scene", text="Link to SCN", icon='OUTLINER_OB_EMPTY')
+                    else:
+                        layout.operator_context = 'EXEC_REGION_WIN'
+                        layout.operator_menu_enum("object.make_links_scene", "scene", text="Link to SCN")
 
                     col = layout.column(align=True)
                     col.label(text="Linked Objects:")
@@ -1610,7 +1613,6 @@ class VIEW3D_PT_tools_posemode(View3DPanel, Panel):
 
             row = layout.row(align=True)
             row.operator("pose.propagate", text="Propagate")
-            row.menu("VIEW3D_MT_pose_propagate", icon='TRIA_RIGHT', text = "")
 
             # bfa - Double menu entry. But stays available for further modifications
             #col = layout.column(align=True)
@@ -1642,7 +1644,6 @@ class VIEW3D_PT_tools_posemode(View3DPanel, Panel):
 
             row = col.row(align=True)
             row.operator("pose.propagate", text="Propagate")
-            row.menu("VIEW3D_MT_pose_propagate", icon='TRIA_RIGHT', text = "")
 
             draw_keyframing_tools_icons(context, layout)
 
