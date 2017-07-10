@@ -930,7 +930,8 @@ class TOOLBAR_MT_toolbars_tools_menu(Menu):
 
         layout.prop(addon_prefs, "tools_relations")
         layout.prop(addon_prefs, "tools_edit")
-            
+
+
 ############### bfa - menu hidable by the flag in the right click menu
 
 class TOOLBAR_MT_tools(Menu):
@@ -980,6 +981,14 @@ class TOOLBAR_MT_tools(Menu):
 
                     row.operator("object.make_links_data", icon='LINK_DATA', text="")
                     row.operator("object.make_single_user", icon='MAKE_SINGLE_USER', text="")
+                    
+                    operator_context_default = layout.operator_context
+                    if len(bpy.data.scenes) > 10:
+                        layout.operator_context = 'INVOKE_REGION_WIN'
+                        layout.operator("object.make_links_scene", text="Link to SCN", icon='OUTLINER_OB_EMPTY')
+                    else:
+                        layout.operator_context = 'EXEC_REGION_WIN'
+                        layout.operator_menu_enum("object.make_links_scene", "scene", text="Link to SCN")
 
                     row = layout.row(align=True)
 
@@ -1246,14 +1255,14 @@ class VIEW3D_MT_object_apply_scale(bpy.types.Operator):
         bpy.ops.object.transform_apply(location=True, rotation=False, scale=True)
         return {'FINISHED'}
 
-class VIEW3D_MT_object_apply_all(bpy.types.Operator):
-    """Apply All\nApplies the current location, rotation and scale"""
-    bl_idname = "3dview.tb_apply_all"
+class VIEW3D_MT_object_apply_rotscale(bpy.types.Operator):
+    """Apply Rotation & Scale\nApplies the current rotation and scale"""
+    bl_idname = "3dview.tb_apply_rotscale"
     bl_label = "Apply All"
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
+        bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
         return {'FINISHED'}
 
 #################### Holds the Toolbars menu for Edit, collapsible
@@ -1286,6 +1295,7 @@ class TOOLBAR_MT_toolbars_edit_menu(Menu):
         layout.prop(addon_prefs, "edit_edit")
         layout.prop(addon_prefs, "edit_weightinedit")
         layout.prop(addon_prefs, "edit_objectapply")
+        layout.prop(addon_prefs, "edit_objectapplydeltas")
         layout.prop(addon_prefs, "edit_objectclear")
             
 ############### bfa - menu hidable by the flag in the right click menu
@@ -1365,12 +1375,26 @@ class TOOLBAR_MT_edit(Menu):
                     row.operator("3dview.tb_apply_location", text="", icon = "APPLYMOVE") # needed a tooltip, so see above ...
                     row.operator("3dview.tb_apply_rotate", text="", icon = "APPLYROTATE")
                     row.operator("3dview.tb_apply_scale", text="", icon = "APPLYSCALE")
-                    row.operator("3dview.tb_apply_all", text="", icon = "APPLYALL")
+                    row.operator("3dview.tb_apply_rotscale", text="", icon = "APPLYALL")
 
                     row = layout.row(align=True)
 
                     row.operator("object.visual_transform_apply", text = "", text_ctxt=i18n_contexts.default, icon = "VISUALTRANSFORM")
                     row.operator("object.duplicates_make_real", text = "", icon = "MAKEDUPLIREAL")
+
+            if addon_prefs.edit_objectapplydeltas:
+
+                if mode == 'OBJECT':
+
+                    row = layout.row(align=True)
+
+                    # TO DO - Useful tooltips
+                    row.operator("object.transforms_to_deltas", text="", text_ctxt=i18n_contexts.default, icon = "APPLYMOVEDELTA").mode = 'LOC'
+                    row.operator("object.transforms_to_deltas", text="", text_ctxt=i18n_contexts.default, icon = "APPLYROTATEDELTA").mode = 'ROT'
+                    row.operator("object.transforms_to_deltas", text="", text_ctxt=i18n_contexts.default, icon = "APPLYSCALEDELTA").mode = 'SCALE'
+
+                    row.operator("object.transforms_to_deltas", text="", text_ctxt=i18n_contexts.default, icon = "APPLYALLDELTA").mode = 'ALL'
+                    row.operator("object.anim_transforms_to_deltas", text = "", icon = "APPLYANIDELTA")
 
             if addon_prefs.edit_objectclear:
 
@@ -1415,6 +1439,7 @@ class TOOLBAR_MT_toolbars_misc_menu(Menu):
         addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
 
         layout.prop(addon_prefs, "misc_history")
+        layout.prop(addon_prefs, "misc_scene")
         layout.prop(addon_prefs, "misc_misc")
             
 ############### bfa - menu hidable by the flag in the right click menu
@@ -1453,6 +1478,12 @@ class TOOLBAR_MT_misc(Menu):
             row.operator("screen.repeat_last", icon='REPEAT', text="")
             row.operator("screen.repeat_history", icon='REDO_HISTORY', text="")
 
+        if addon_prefs.misc_scene:
+
+            row = layout.row(align=True)
+
+            layout.template_ID(context.screen, "scene", new="scene.new", unlink="scene.delete") # bfa - the scene drodpown box from the info menu bar
+
         if addon_prefs.misc_misc:
 
             row = layout.row(align=True)
@@ -1473,7 +1504,7 @@ classes = (
     VIEW3D_MT_object_apply_location,
     VIEW3D_MT_object_apply_rotate,
     VIEW3D_MT_object_apply_scale,
-    VIEW3D_MT_object_apply_all,
+    VIEW3D_MT_object_apply_rotscale,
     TOOLBAR_MT_menu_animation,
     TOOLBAR_MT_toolbars_animation_menu,
     TOOLBAR_MT_menu_tools,

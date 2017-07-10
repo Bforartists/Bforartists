@@ -1,4 +1,4 @@
-#
+﻿#
 # Copyright 2011-2013 Blender Foundation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -199,11 +199,16 @@ class CyclesRender_PT_sampling(CyclesButtonsPanel, Panel):
             sub.prop(cscene, "subsurface_samples", text="Subsurface")
             sub.prop(cscene, "volume_samples", text="Volume")
 
-            col = layout.column(align=True)
-            col.prop(cscene, "sample_all_lights_direct")
-            col.prop(cscene, "sample_all_lights_indirect")
+        ############## Subtab Lock #####################
+        
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
 
-        layout.row().prop(cscene, "sampling_pattern", text="Pattern")
+        if not addon_prefs.SP_render_sampling_options:
+            layout.prop(addon_prefs,"SP_render_sampling_options", emboss=False, icon="TRIA_RIGHT", text="- Options -")
+
+        else:
+            layout.prop(addon_prefs,"SP_render_sampling_options", emboss=False, icon="TRIA_DOWN", text="+ Options +")
 
         for rl in scene.render.layers:
             if rl.samples > 0:
@@ -308,12 +313,16 @@ class CyclesRender_PT_light_paths(CyclesButtonsPanel, Panel):
         sub.prop(cscene, "max_bounces", text="Max")
         sub.prop(cscene, "min_bounces", text="Min")
 
-        sub = col.column(align=True)
-        sub.prop(cscene, "diffuse_bounces", text="Diffuse")
-        sub.prop(cscene, "glossy_bounces", text="Glossy")
-        sub.prop(cscene, "transmission_bounces", text="Transmission")
-        sub.prop(cscene, "volume_bounces", text="Volume")
+        ############## Subtab  #####################
+        
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
 
+        if not addon_prefs.SP_render_light_paths_options:
+            layout.prop(addon_prefs,"SP_render_light_paths_options", emboss=False, icon="TRIA_RIGHT", text="- Advanced -")
+
+        else:
+            layout.prop(addon_prefs,"SP_render_light_paths_options", emboss=False, icon="TRIA_DOWN", text="+ Advanced +")
 
 class CyclesRender_PT_motion_blur(CyclesButtonsPanel, Panel):
     bl_label = "Motion Blur"
@@ -1323,14 +1332,16 @@ class CyclesMaterial_PT_settings(CyclesButtonsPanel, Panel):
         col.prop(mat, "diffuse_color", text="")
         col.prop(mat, "alpha")
 
-        col.separator()
-        col.label("Viewport Alpha:")
-        col.prop(mat.game_settings, "alpha_blend", text="")
+        ############## Subtab #####################
+        
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
 
-        col = split.column(align=True)
-        col.label("Viewport Specular:")
-        col.prop(mat, "specular_color", text="")
-        col.prop(mat, "specular_hardness", text="Hardness")
+        if not addon_prefs.SP_material_settings_options:
+            layout.prop(addon_prefs,"SP_material_settings_options", emboss=False, icon="TRIA_RIGHT", text="- Viewport Options -")
+
+        else:
+            layout.prop(addon_prefs,"SP_material_settings_options", emboss=False, icon="TRIA_DOWN", text="+ Viewport Options +")
 
         col.separator()
         col.prop(mat, "pass_index")

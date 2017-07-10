@@ -535,8 +535,8 @@ void MESH_OT_uv_texture_add(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Add UV Map";
-	ot->description = "Add UV Map";
-	ot->idname = "Add UV Map\nMESH_OT_uv_texture_add";
+	ot->description = "Add UV Map\nAdd a new UV Map";
+	ot->idname = "MESH_OT_uv_texture_add";
 	
 	/* api callbacks */
 	ot->poll = layers_poll;
