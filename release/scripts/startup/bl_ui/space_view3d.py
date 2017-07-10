@@ -302,21 +302,6 @@ class VIEW3D_MT_uv_map(Menu):
 
         layout.operator("uv.reset")
 
-
-class VIEW3D_MT_edit_proportional(Menu):
-    bl_label = "Proportional Editing"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.props_enum(context.tool_settings, "proportional_edit")
-
-        layout.separator()
-
-        layout.label("Falloff:")
-        layout.props_enum(context.tool_settings, "proportional_edit_falloff")
-
-
 # ********** View menus **********
 
 
@@ -2525,7 +2510,6 @@ class VIEW3D_MT_edit_mesh(Menu):
         layout.separator()
 
         layout.prop(toolsettings, "use_mesh_automerge")
-        layout.menu("VIEW3D_MT_edit_proportional")
 
         layout.separator()
 
@@ -3003,10 +2987,6 @@ class VIEW3D_MT_edit_meta(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_edit_proportional")
-
-        layout.separator()
-
         layout.menu("VIEW3D_MT_edit_meta_showhide")
 
 
@@ -3044,10 +3024,6 @@ class VIEW3D_MT_edit_lattice(Menu):
         layout.menu("VIEW3D_MT_transform")
         layout.operator("object.vertex_group_mirror")
         layout.operator_menu_enum("lattice.flip", "axis")
-
-        layout.separator()
-
-        layout.menu("VIEW3D_MT_edit_proportional")
 
 
 # Workaround to separate the tooltips for Show Hide for Armature in Edit Mode
@@ -3196,10 +3172,6 @@ class VIEW3D_MT_edit_gpencil(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_object_animation")   # NOTE: provides keyingset access...
-
-        layout.separator()
-
-        layout.menu("VIEW3D_MT_edit_proportional")
 
         layout.separator()
 
