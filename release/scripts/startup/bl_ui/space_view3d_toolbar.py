@@ -847,6 +847,7 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
             col.operator("mesh.spin", icon='SPIN', text="Spin                 ")
             col.operator("mesh.screw", icon='SCREW', text="Screw              ")
             col.operator("mesh.bevel", icon='BEVEL', text="Bevel               ")
+            col.operator("mesh.bevel", icon='VERTEXBEVEL',text = "Vertex Bevel    ").vertex_only = True
 
             layout.separator()
 
@@ -923,6 +924,7 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
             row.operator("mesh.inset", icon='INSET_FACES', text = "")
             row.operator("mesh.edge_face_add", icon='MAKE_EDGEFACE', text = "")   
             row.operator("mesh.bevel", icon='BEVEL', text = "")
+            row.operator("mesh.bevel", icon='VERTEXBEVEL',text = "").vertex_only = True
 
             col.separator()
 
