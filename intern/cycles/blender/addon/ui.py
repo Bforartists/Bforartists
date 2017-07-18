@@ -430,7 +430,6 @@ class CyclesRender_PT_film(CyclesButtonsPanel, Panel):
 
         col = split.column()
         col.prop(cscene, "film_exposure")
-        col.prop(cscene, "film_transparent")
 
         col = split.column()
         sub = col.column(align=True)
