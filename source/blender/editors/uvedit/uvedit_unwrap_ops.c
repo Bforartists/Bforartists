@@ -1243,7 +1243,7 @@ void UV_OT_unwrap(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Unwrap";
-	ot->description = "Unwrap\nUnwrap the mesh of the object being edited";
+	ot->description = "Unwrap\nUnwrap is an automated process to unfold your mesh along the marked seams\nUnwrap ABF unwraps the mesh with the method Angle Based Flattening (ABF)\nUnwrap LSCM unwraps the mesh with the method Least Square Conformal Mapping (LSCM)\n";
 	ot->idname = "UV_OT_unwrap";
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 	
