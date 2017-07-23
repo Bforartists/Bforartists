@@ -130,6 +130,7 @@ CCL_NAMESPACE_BEGIN
 #  ifdef __KERNEL_OPENCL_APPLE__
 #    define __KERNEL_SHADING__
 #    define __KERNEL_ADV_SHADING__
+#    define __PRINCIPLED__
 #    define __CMJ__
 /* TODO(sergey): Currently experimental section is ignored here,
  * this is because megakernel in device_opencl does not support
@@ -154,6 +155,7 @@ CCL_NAMESPACE_BEGIN
 #    define __CL_USE_NATIVE__
 #    define __KERNEL_SHADING__
 #    define __KERNEL_ADV_SHADING__
+#    define __PRINCIPLED__
 #    define __CMJ__
 #  endif  /* __KERNEL_OPENCL_INTEL_CPU__ */
 
@@ -515,7 +517,13 @@ typedef ccl_addr_space struct PathRadiance {
 	float3 path_total_shaded;
 
 	/* Color of the background on which shadow is alpha-overed. */
-	float3 shadow_color;
+	float3 shadow_background_color;
+
+	/* Path radiance sum and throughput at the moment when ray hits shadow
+	 * catcher object.
+	 */
+	float3 shadow_radiance_sum;
+	float shadow_throughput;
 #endif
 
 #ifdef __DENOISING_FEATURES__
