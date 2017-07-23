@@ -847,6 +847,7 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
             col.operator("mesh.spin", icon='SPIN', text="Spin                 ")
             col.operator("mesh.screw", icon='SCREW', text="Screw              ")
             col.operator("mesh.bevel", icon='BEVEL', text="Bevel               ")
+            col.operator("mesh.bevel", icon='VERTEXBEVEL',text = "Vertex Bevel    ").vertex_only = True
 
             layout.separator()
 
@@ -855,6 +856,7 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
             col.operator("mesh.subdivide", icon='SUBDIVIDE_EDGES', text="Subdivide        ")
             col.operator("mesh.loopcut_slide", icon='LOOP_CUT_AND_SLIDE', text="Loop Cut n Slide  ")
             col.operator("mesh.offset_edge_loops_slide", icon='OFFSET_EDGE_SLIDE')
+            col.operator("mesh.bridge_edge_loops", icon = "BRIDGE_EDGELOOPS")
 
             props = col.operator("mesh.knife_tool", icon='KNIFE', text="Knife                ")
             props.use_occlude_geometry = True
@@ -923,6 +925,7 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
             row.operator("mesh.inset", icon='INSET_FACES', text = "")
             row.operator("mesh.edge_face_add", icon='MAKE_EDGEFACE', text = "")   
             row.operator("mesh.bevel", icon='BEVEL', text = "")
+            row.operator("mesh.bevel", icon='VERTEXBEVEL',text = "").vertex_only = True
 
             col.separator()
 
@@ -930,6 +933,7 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
             row.operator("mesh.subdivide", icon='SUBDIVIDE_EDGES', text = "")
             row.operator("mesh.loopcut_slide", icon='LOOP_CUT_AND_SLIDE', text = "")
             row.operator("mesh.offset_edge_loops_slide", icon='OFFSET_EDGE_SLIDE', text = "")
+            row.operator("mesh.bridge_edge_loops", icon = "BRIDGE_EDGELOOPS", text = "")
 
             col.separator()
 

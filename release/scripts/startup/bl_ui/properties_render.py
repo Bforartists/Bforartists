@@ -256,11 +256,10 @@ class RENDER_PT_shading(RenderButtonsPanel, Panel):
         col.prop(rd, "use_textures", text="Textures")
         col.prop(rd, "use_shadows", text="Shadows")
         col.prop(rd, "use_sss", text="Subsurface Scattering")
-        col.prop(rd, "use_envmaps", text="Environment Map")
-
+        
         col = split.column()
+        col.prop(rd, "use_envmaps", text="Environment Map")
         col.prop(rd, "use_raytrace", text="Ray Tracing")
-        col.prop(rd, "alpha_mode", text="Alpha")
         col.prop(rd, "use_world_space_shading", text="World Space Shading")
 
 
@@ -431,7 +430,7 @@ class RENDER_PT_stamp(RenderButtonsPanel, Panel):
 class RENDER_PT_output(RenderButtonsPanel, Panel):
     bl_label = "Output"
     bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'CYCLES'}
 
     def draw(self, context):
         layout = self.layout
@@ -465,6 +464,23 @@ class RENDER_PT_output(RenderButtonsPanel, Panel):
             col.prop(rd, "use_render_cache")
 
         layout.template_image_settings(image_settings, color_management=False)
+
+        ##### Cycles or BI transparency settings for background ##########
+
+        scene = context.scene      
+        if scene.render.engine == 'CYCLES':
+        
+            ## Cycles transparent background.
+            scene = context.scene
+            cscene = scene.cycles  
+            layout.prop(cscene, "film_transparent", text = "Transparent Background")
+            
+        else:
+        
+            ## BI transparent background  
+            layout.prop(rd, "alpha_mode", text="Transparency")
+
+        ##################################################################
 
         if rd.use_multiview:
             layout.template_image_views(image_settings)
