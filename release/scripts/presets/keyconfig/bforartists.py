@@ -1130,6 +1130,7 @@ kmi = km.keymap_items.new('mesh.clear_seam', 'N', 'PRESS')
 kmi = km.keymap_items.new('mesh.separate', 'P', 'PRESS')
 kmi = km.keymap_items.new('mesh.mark_seam', 'M', 'PRESS')
 kmi_props_setattr(kmi.properties, 'clear', False)
+kmi = km.keymap_items.new('mesh.loopcut_slide', 'R', 'PRESS', ctrl=True)
 
 # Map Window
 km = kc.keymaps.new('Window', space_type='EMPTY', region_type='WINDOW', modal=False)

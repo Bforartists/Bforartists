@@ -2789,7 +2789,6 @@ class VIEW3D_MT_edit_mesh_edges(Menu):
         layout.separator()
 
         layout.operator("mesh.edge_split", icon = "SPLITEDGE")
-        layout.operator("mesh.bridge_edge_loops", icon = "BRIDGE_EDGELOOPS")
 
 
 class VIEW3D_MT_edit_mesh_faces(Menu):
