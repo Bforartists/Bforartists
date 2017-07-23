@@ -365,7 +365,8 @@ void ImageTextureNode::compile(OSLCompiler& compiler)
 	if(is_float == -1) {
 		if(builtin_data == NULL) {
 			ImageDataType type;
-			type = image_manager->get_image_metadata(filename.string(), NULL, is_linear);
+			bool builtin_free_cache;
+			type = image_manager->get_image_metadata(filename.string(), NULL, is_linear, builtin_free_cache);
 			if(type == IMAGE_DATA_TYPE_FLOAT || type == IMAGE_DATA_TYPE_FLOAT4)
 				is_float = 1;
 		}
@@ -554,7 +555,8 @@ void EnvironmentTextureNode::compile(OSLCompiler& compiler)
 	if(is_float == -1) {
 		if(builtin_data == NULL) {
 			ImageDataType type;
-			type = image_manager->get_image_metadata(filename.string(), NULL, is_linear);
+			bool builtin_free_cache;
+			type = image_manager->get_image_metadata(filename.string(), NULL, is_linear, builtin_free_cache);
 			if(type == IMAGE_DATA_TYPE_FLOAT || type == IMAGE_DATA_TYPE_FLOAT4)
 				is_float = 1;
 		}
@@ -2335,6 +2337,12 @@ PrincipledBsdfNode::PrincipledBsdfNode()
 	closure = CLOSURE_BSDF_PRINCIPLED_ID;
 	distribution = CLOSURE_BSDF_MICROFACET_MULTI_GGX_GLASS_ID;
 	distribution_orig = NBUILTIN_CLOSURES;
+}
+
+bool PrincipledBsdfNode::has_surface_bssrdf()
+{
+	ShaderInput *subsurface_in = input("Subsurface");
+	return (subsurface_in->link != NULL || subsurface > CLOSURE_WEIGHT_CUTOFF);
 }
 
 void PrincipledBsdfNode::attributes(Shader *shader, AttributeRequestSet *attributes)
