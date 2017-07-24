@@ -1,4 +1,4 @@
-﻿# #####BEGIN GPL LICENSE BLOCK #####
+# #####BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -21,7 +21,7 @@ bl_info = {
     "name": "Material Library VX",
     "author": "Mackraken",
     "version": (1, 0, 0),
-    "blender": (2, 76, 0),
+    "blender": (2, 77, 0),
     "location": "Properties > Material",
     "description": "Material Library VX",
     "warning": "",
