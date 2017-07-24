@@ -11,5 +11,5 @@ for cat in bpy.context.scene.matlib_categories:
         if "category" in mat.keys() and mat['category'] == cat.name:
             materials.append(mat.name)
     cats.append([cat.name, materials])
-with open("C:\\Users\\x\\Downloads\\blender-2.78.0-git.0e5089c-windows64\\2.78\\scripts\\addons_contrib\\materials_library_vx\\categories.txt", "w") as f: 
+with open("C:\\Users\\Dell\\Downloads\\blender-2.77-300716-win64\\blender-2.77.0-git.3d7cf80-AMD64\\2.77\\scripts\\addons_contrib\\materials_library_vx\\categories.txt", "w") as f: 
     f.write(json.dumps(cats, sort_keys=True, indent=4))
