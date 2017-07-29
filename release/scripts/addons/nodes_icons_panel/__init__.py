@@ -162,7 +162,7 @@ class NodesIconPanel(bpy.types.Panel):
         
             props = row.operator("node.add_node", text=" Glas               ", text_ctxt=default_context, icon_value = custom_icons["glasshader"].icon_id)
             props.use_transform = True
-            props.type = "ShaderNodeLayerWeight"   
+            props.type = "ShaderNodeBsdfGlass"   
          
             props = row.operator("node.add_node", text=" Glossy          ", text_ctxt=default_context, icon_value = custom_icons["glossyshader"].icon_id)
             props.use_transform = True
