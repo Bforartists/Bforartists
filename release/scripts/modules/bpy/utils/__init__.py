@@ -37,6 +37,7 @@ __all__ = (
     "register_module",
     "register_manual_map",
     "unregister_manual_map",
+    "register_submodule_factory",
     "make_rna_paths",
     "manual_map",
     "previews",
@@ -71,6 +72,7 @@ import addon_utils as _addon_utils
 
 _user_preferences = _bpy.context.user_preferences
 _script_module_dirs = "startup", "modules"
+_is_factory_startup = _bpy.app.factory_startup
 
 
 def _test_import(module_name, loaded_modules):
@@ -144,6 +146,7 @@ def load_scripts(reload_scripts=False, refresh_scripts=False):
     :type refresh_scripts: bool
     """
     use_time = use_class_register_check = _bpy.app.debug_python
+    use_user = not _is_factory_startup
 
     if use_time:
         import time
@@ -234,7 +237,7 @@ def load_scripts(reload_scripts=False, refresh_scripts=False):
     from bpy_restrict_state import RestrictBlend
 
     with RestrictBlend():
-        for base_path in script_paths():
+        for base_path in script_paths(use_user=use_user):
             for path_subdir in _script_module_dirs:
                 path = _os.path.join(base_path, path_subdir)
                 if _os.path.isdir(path):
@@ -306,7 +309,7 @@ def script_path_pref():
     return _os.path.normpath(path) if path else None
 
 
-def script_paths(subdir=None, user_pref=True, check_all=False):
+def script_paths(subdir=None, user_pref=True, check_all=False, use_user=True):
     """
     Returns a list of valid script paths.
 
@@ -328,15 +331,30 @@ def script_paths(subdir=None, user_pref=True, check_all=False):
     # so the 'BLENDER_SYSTEM_SCRIPTS' environment variable will be used.
     base_paths = _bpy_script_paths()
 
+    # Defined to be (system, user) so we can skip the second if needed.
+    if not use_user:
+        base_paths = base_paths[:1]
+
     if check_all:
         # All possible paths, no duplicates, keep order.
-        base_paths = (
-            *(path for path in (_os.path.join(resource_path(res), "scripts")
-              for res in ('LOCAL', 'USER', 'SYSTEM')) if path not in base_paths),
-            *base_paths,
-            )
+        if use_user:
+            test_paths = ('LOCAL', 'USER', 'SYSTEM')
+        else:
+            test_paths = ('LOCAL', 'SYSTEM')
 
-    for path in (*base_paths, script_path_user(), script_path_pref()):
+        base_paths = (
+            *(path for path in (
+                _os.path.join(resource_path(res), "scripts")
+                for res in test_paths) if path not in base_paths),
+            *base_paths,
+        )
+
+    if use_user:
+        test_paths = (*base_paths, script_path_user(), script_path_pref())
+    else:
+        test_paths = (*base_paths, script_path_pref())
+
+    for path in test_paths:
         if path:
             path = _os.path.normpath(path)
             if path not in scripts and _os.path.isdir(path):
@@ -682,6 +700,47 @@ def unregister_module(module, verbose=False):
             traceback.print_exc()
     if verbose:
         print("done.\n")
+
+
+def register_submodule_factory(module_name, submodule_names):
+    """
+    Utility function to create register and unregister functions
+    which simply load submodules,
+    calling their register & unregister functions.
+
+    .. note::
+
+       Modules are registered in the order given,
+       unregistered in reverse order.
+
+    :arg module_name: The module name, typically ``__name__``.
+    :type module_name: string
+    :arg submodule_names: List of submodule names to load and unload.
+    :type submodule_names: list of strings
+    :return: register and unregister functions.
+    :rtype: tuple pair of functions
+    """
+
+    module = None
+    submodules = []
+
+    def register():
+        nonlocal module
+        module = __import__(name=module_name, fromlist=submodule_names)
+        submodules[:] = [getattr(module, name) for name in submodule_names]
+        for mod in submodules:
+            mod.register()
+
+    def unregister():
+        from sys import modules
+        for mod in reversed(submodules):
+            mod.unregister()
+            name = mod.__name__
+            delattr(module, name.partition(".")[2])
+            del modules[name]
+        submodules.clear()
+
+    return register, unregister
 
 
 # -----------------------------------------------------------------------------
