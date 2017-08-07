@@ -297,7 +297,6 @@ class CyclesRender_PT_light_paths(CyclesButtonsPanel, Panel):
         sub = col.column(align=True)
         sub.label("Transparency:")
         sub.prop(cscene, "transparent_max_bounces", text="Max")
-        sub.prop(cscene, "transparent_min_bounces", text="Min")
         sub.prop(cscene, "use_transparent_shadows", text="Shadows")
 
         col.separator()
@@ -311,7 +310,6 @@ class CyclesRender_PT_light_paths(CyclesButtonsPanel, Panel):
         sub = col.column(align=True)
         sub.label(text="Bounces:")
         sub.prop(cscene, "max_bounces", text="Max")
-        sub.prop(cscene, "min_bounces", text="Min")
 
         ############## Subtab  #####################
         

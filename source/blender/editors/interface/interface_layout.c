@@ -128,6 +128,8 @@ typedef struct uiItem {
 enum {
 	UI_ITEM_FIXED     = 1 << 0,
 	UI_ITEM_MIN       = 1 << 1,
+
+	UI_ITEM_BOX_ITEM  = 1 << 2, /* The item is "inside" a box item */
 };
 
 typedef struct uiButtonItem {
@@ -192,8 +194,9 @@ static const char *ui_item_name_add_colon(const char *name, char namestr[UI_MAX_
 static int ui_item_fit(int item, int pos, int all, int available, bool is_last, int alignment, float *extra_pixel)
 {
 	/* available == 0 is unlimited */
-	if (available == 0)
+	if (ELEM(0, available, all)) {
 		return item;
+	}
 
 	if (all > available) {
 		/* contents is bigger than available space */
@@ -216,8 +219,9 @@ static int ui_item_fit(int item, int pos, int all, int available, bool is_last, 
 				return (int)width;
 			}
 		}
-		else
+		else {
 			return item;
+		}
 	}
 }
 
@@ -700,7 +704,7 @@ static uiBut *ui_item_with_label(uiLayout *layout, uiBlock *block, const char *n
 		              WM_OP_INVOKE_DEFAULT, ICON_FILESEL, x, y, UI_UNIT_X, h, NULL);
 	}
 	else if (flag & UI_ITEM_R_EVENT) {
-		uiDefButR_prop(block, UI_BTYPE_KEY_EVENT, 0, name, x, y, w, h, ptr, prop, index, 0, 0, -1, -1, NULL);
+		but = uiDefButR_prop(block, UI_BTYPE_KEY_EVENT, 0, name, x, y, w, h, ptr, prop, index, 0, 0, -1, -1, NULL);
 	}
 	else if (flag & UI_ITEM_R_FULL_EVENT) {
 		if (RNA_struct_is_a(ptr->type, &RNA_KeyMapItem)) {
@@ -2306,6 +2310,10 @@ static void ui_litem_layout_column(uiLayout *litem, bool is_box)
 
 		if (item->next && (!is_box || item != litem->items.first))
 			y -= litem->space;
+
+		if (is_box) {
+			item->flag |= UI_ITEM_BOX_ITEM;
+		}
 	}
 
 	litem->h = litem->y - y;
@@ -3266,8 +3274,18 @@ static void ui_item_layout(uiItem *item)
 				break;
 		}
 
-		for (subitem = litem->items.first; subitem; subitem = subitem->next)
+		for (subitem = litem->items.first; subitem; subitem = subitem->next) {
+			if (item->flag & UI_ITEM_BOX_ITEM) {
+				subitem->flag |= UI_ITEM_BOX_ITEM;
+			}
 			ui_item_layout(subitem);
+		}
+	}
+	else {
+		if (item->flag & UI_ITEM_BOX_ITEM) {
+			uiButtonItem *bitem = (uiButtonItem *)item;
+			bitem->but->drawflag |= UI_BUT_BOX_ITEM;
+		}
 	}
 }
 
