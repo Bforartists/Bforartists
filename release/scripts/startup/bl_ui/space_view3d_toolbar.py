@@ -76,7 +76,7 @@ def draw_keyframing_tools_icons(context, layout):
 
 # ********** default tools for object-mode ****************
 
-class VIEW3D_PT_tools_snap(View3DPanel, Panel):
+class VIEW3D_MT_snap(View3DPanel, Panel):
     """Snap Tools"""
     bl_label = "Snap"
     bl_category = "Tools"
