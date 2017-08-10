@@ -58,7 +58,7 @@ import bgl
 import mathutils as M
 from re import compile as re_compile
 from itertools import chain, repeat
-from math import pi
+from math import pi, ceil
 
 try:
     import os.path as os_path
@@ -153,6 +153,57 @@ def create_blank_image(image_name, dimensions, alpha=1):
     return image
 
 
+def bake(face_indices, uvmap, image):
+    import bpy
+    is_cycles = (bpy.context.scene.render.engine == 'CYCLES')
+    if is_cycles:
+        # please excuse the following mess. Cycles baking API does not seem to allow better.
+        ob = bpy.context.active_object
+        me = ob.data
+        mat = bpy.data.materials.new("unfolder dummy")
+        mat.use_nodes = True
+        img = mat.node_tree.nodes.new('ShaderNodeTexImage')
+        img.image = image
+        mat.node_tree.nodes.active = img
+        uv = mat.node_tree.nodes.new('ShaderNodeUVMap')
+        uv.uv_map = uvmap.name
+        mat.node_tree.links.new(uv.outputs['UV'], img.inputs['Vector'])
+        uvmap.active = True
+        recall_object_slots, recall_mesh_slots = [slot.material for slot in ob.material_slots], me.materials[:]
+        for i, slot in enumerate(ob.material_slots):
+            slot.material = me.materials[i] = mat
+        me.materials.append(mat)
+        loop = me.uv_layers[me.uv_layers.active_index].data
+        face_indices = set(face_indices)
+        ignored_uvs = [face.loop_start + i for face in me.polygons if face.index not in face_indices for i, v in enumerate(face.vertices)]
+        for vid in ignored_uvs:
+            loop[vid].uv[0] *= -1
+            loop[vid].uv[1] *= -1
+        bake_type = bpy.context.scene.cycles.bake_type
+        sta = bpy.context.scene.render.bake.use_selected_to_active
+        try:
+            bpy.ops.object.bake(type=bake_type, margin=0, use_selected_to_active=sta, cage_extrusion=100, use_clear=False)
+        except RuntimeError as e:
+            raise UnfoldError(*e.args)
+        finally:
+            me.materials.pop()
+            for slot, recall in zip(ob.material_slots, recall_object_slots):
+                slot.material = recall
+            for i, recall in enumerate(recall_mesh_slots):
+                me.materials[i] = recall
+            bpy.data.materials.remove(mat)
+        for vid in ignored_uvs:
+            loop[vid].uv[0] *= -1
+            loop[vid].uv[1] *= -1
+    else:
+        texfaces = uvmap.data
+        for fid in face_indices:
+            texfaces[fid].image = image
+        bpy.ops.object.bake_image()
+        for fid in face_indices:
+            texfaces[fid].image = None
+
+
 class UnfoldError(ValueError):
     pass
 
@@ -161,12 +212,14 @@ class Unfolder:
     def __init__(self, ob):
         self.ob = ob
         self.mesh = Mesh(ob.data, ob.matrix_world)
+        self.mesh.check_correct()
         self.tex = None
 
     def prepare(self, cage_size=None, create_uvmap=False, mark_seams=False, priority_effect=default_priority_effect, scale=1):
         """Create the islands of the net"""
         self.mesh.generate_cuts(cage_size / scale if cage_size else None, priority_effect)
-        self.mesh.finalize_islands()
+        is_landscape = cage_size and cage_size.x > cage_size.y
+        self.mesh.finalize_islands(is_landscape)
         self.mesh.enumerate_islands()
         if create_uvmap:
             self.tex = self.mesh.save_uv()
@@ -215,7 +268,7 @@ class Unfolder:
         text_height = properties.sticker_width if (properties.do_create_numbers and len(self.mesh.islands) > 1) else 0
         aspect_ratio = printable_size.x / printable_size.y
         # title height must be somewhat larger that text size, glyphs go below the baseline
-        self.mesh.finalize_islands(title_height=text_height * 1.2)
+        self.mesh.finalize_islands(is_landscape=(printable_size.x > printable_size.y), title_height=text_height * 1.2)
         self.mesh.fit_islands(cage_size=printable_size)
 
         if properties.output_type != 'NONE':
@@ -225,13 +278,24 @@ class Unfolder:
             tex = self.mesh.save_uv(cage_size=printable_size, separate_image=use_separate_images, tex=self.tex)
             if not tex:
                 raise UnfoldError("The mesh has no UV Map slots left. Either delete a UV Map or export the net without textures.")
-            rd = bpy.context.scene.render
-            recall = rd.bake_type, rd.use_bake_to_vertex_color, rd.use_bake_selected_to_active, rd.bake_distance, rd.bake_bias, rd.bake_margin, rd.use_bake_clear
 
-            rd.bake_type = 'TEXTURE' if properties.output_type == 'TEXTURE' else 'FULL'
-            rd.use_bake_selected_to_active = (properties.output_type == 'SELECTED_TO_ACTIVE')
+            sce = bpy.context.scene
+            rd = sce.render
+            bk = rd.bake
+            if rd.engine == 'CYCLES':
+                recall = sce.cycles.bake_type, bk.use_selected_to_active, bk.margin, bk.cage_extrusion, bk.use_cage, bk.use_clear
+                lookup = {'TEXTURE': 'DIFFUSE_COLOR', 'AMBIENT_OCCLUSION': 'AO', 'RENDER': 'COMBINED', 'SELECTED_TO_ACTIVE': 'COMBINED'}
+                sce.cycles.bake_type = lookup[properties.output_type]
+                bk.use_selected_to_active = (properties.output_type == 'SELECTED_TO_ACTIVE')
+                bk.margin, bk.cage_extrusion, bk.use_cage, bk.use_clear = 0, 10, False, False
+            else:
+                recall = rd.engine, rd.bake_type, rd.use_bake_to_vertex_color, rd.use_bake_selected_to_active, rd.bake_distance, rd.bake_bias, rd.bake_margin, rd.use_bake_clear
+                rd.engine = 'BLENDER_RENDER'
+                lookup = {'TEXTURE': 'TEXTURE', 'AMBIENT_OCCLUSION': 'AO', 'RENDER': 'FULL', 'SELECTED_TO_ACTIVE': 'FULL'}
+                rd.bake_type = lookup[properties.output_type]
+                rd.use_bake_selected_to_active = (properties.output_type == 'SELECTED_TO_ACTIVE')
+                rd.bake_margin, rd.bake_distance, rd.bake_bias, rd.use_bake_to_vertex_color, rd.use_bake_clear = 0, 0, 0.001, False, False
 
-            rd.bake_margin, rd.bake_distance, rd.bake_bias, rd.use_bake_to_vertex_color, rd.use_bake_clear = 0, 0, 0.001, False, False
             if image_packing == 'PAGE_LINK':
                 self.mesh.save_image(tex, printable_size * ppm, filepath)
             elif image_packing == 'ISLAND_LINK':
@@ -240,12 +304,15 @@ class Unfolder:
                 self.mesh.save_separate_images(tex, ppm, filepath, embed=Exporter.encode_image)
 
             # revoke settings
-            rd.bake_type, rd.use_bake_to_vertex_color, rd.use_bake_selected_to_active, rd.bake_distance, rd.bake_bias, rd.bake_margin, rd.use_bake_clear = recall
+            if rd.engine == 'CYCLES':
+                sce.cycles.bake_type, bk.use_selected_to_active, bk.margin, bk.cage_extrusion, bk.use_cage, bk.use_clear = recall
+            else:
+                rd.engine, rd.bake_type, rd.use_bake_to_vertex_color, rd.use_bake_selected_to_active, rd.bake_distance, rd.bake_bias, rd.bake_margin, rd.use_bake_clear = recall
             if not properties.do_create_uvmap:
                 tex.active = True
                 bpy.ops.mesh.uv_texture_remove()
 
-        exporter = Exporter(page_size, properties.style, properties.output_margin, (properties.output_type == 'NONE'))
+        exporter = Exporter(page_size, properties.style, properties.output_margin, (properties.output_type == 'NONE'), properties.angle_epsilon)
         exporter.do_create_stickers = properties.do_create_stickers
         exporter.text_size = properties.sticker_width
         exporter.write(self.mesh, filepath)
@@ -276,6 +343,27 @@ class Mesh:
             edge.choose_main_faces()
             if edge.main_faces:
                 edge.calculate_angle()
+
+    def check_correct(self, epsilon=1e-6):
+        """Check for invalid geometry"""
+        null_edges = {i for i, e in self.edges.items() if e.length < epsilon and e.faces}
+        null_faces = {i for i, f in self.faces.items() if f.normal.length_squared < epsilon}
+        twisted_faces = {i for i, f in self.faces.items() if f.is_twisted()}
+        if not (null_edges or null_faces or twisted_faces):
+            return
+        bpy.context.tool_settings.mesh_select_mode = False, bool(null_edges), bool(null_faces or twisted_faces)
+        for vertex in self.data.vertices:
+            vertex.select = False
+        for edge in self.data.edges:
+            edge.select = (edge.index in null_edges)
+        for face in self.data.polygons:
+            face.select = (face.index in null_faces or face.index in twisted_faces)
+        cure = "Remove Doubles and Triangulate" if (null_edges or null_faces) and twisted_faces else "Triangulate" if twisted_faces else "Remove Doubles"
+        raise UnfoldError("The model contains:\n" +
+            (" {} zero-length edge(s)\n".format(len(null_edges)) if null_edges else "") +
+            (" {} zero-area face(s)\n".format(len(null_faces)) if null_faces else "") +
+            (" {} twisted polygon(s)\n".format(len(twisted_faces)) if twisted_faces else "") +
+            "The offenders are selected and you can use {} to fix them. Export failed.".format(cure))
 
     def generate_cuts(self, page_size, priority_effect):
         """Cut the mesh so that it can be unfolded to a flat net."""
@@ -436,13 +524,17 @@ class Mesh:
             for point in chain((vertex.co for vertex in island.verts), island.fake_verts):
                 point *= scale
 
-    def finalize_islands(self, title_height=0):
+    def finalize_islands(self, is_landscape=False, title_height=0):
         for island in self.islands:
             if title_height:
                 island.title = "[{}] {}".format(island.abbreviation, island.label)
             points = list(vertex.co for vertex in island.verts) + island.fake_verts
             angle = M.geometry.box_fit_2d(points)
             rot = M.Matrix.Rotation(angle, 2)
+            # ensure that the island matches page orientation (portrait/landscape)
+            dimensions = M.Vector(max(r * v for v in points) - min(r * v for v in points) for r in rot)
+            if dimensions.x > dimensions.y != is_landscape:
+                rot = M.Matrix.Rotation(angle + pi / 2, 2)
             for point in points:
                 # note: we need an in-place operation, and Vector.rotate() seems to work for 3d vectors only
                 point[:] = rot * point
@@ -454,7 +546,7 @@ class Mesh:
             island.bounding_box = M.Vector((max(v.x for v in points), max(v.y for v in points)))
 
     def largest_island_ratio(self, page_size):
-        return max(max(island.bounding_box.x / page_size.x, island.bounding_box.y / page_size.y) for island in self.islands)
+        return max(i / p for island in self.islands for (i, p) in zip(island.bounding_box, page_size))
 
     def fit_islands(self, cage_size):
         """Move islands so that they fit onto pages, based on their bounding boxes"""
@@ -543,42 +635,20 @@ class Mesh:
         return tex
 
     def save_image(self, tex, page_size_pixels: M.Vector, filename):
-        texfaces = tex.data
-        # omitting this causes a "Circular reference in texture stack" error
-        for island in self.islands:
-            for uvface in island.faces:
-                texfaces[uvface.face.index].image = None
-
         for page in self.pages:
             image = create_blank_image("{} {} Unfolded".format(self.data.name[:14], page.name), page_size_pixels, alpha=1)
             image.filepath_raw = page.image_path = "{}_{}.png".format(filename, page.name)
-            for island in page.islands:
-                for uvface in island.faces:
-                    texfaces[uvface.face.index].image = image
-            try:
-                bpy.ops.object.bake_image()
-                image.save()
-            finally:
-                for island in page.islands:
-                    for uvface in island.faces:
-                        texfaces[uvface.face.index].image = None
-                image.user_clear()
-                bpy.data.images.remove(image)
+            faces = [uvface.face.index for island in page.islands for uvface in island.faces]
+            bake(faces, tex, image)
+            image.save()
+            image.user_clear()
+            bpy.data.images.remove(image)
 
     def save_separate_images(self, tex, scale, filepath, embed=None):
-        texfaces = tex.data
-        # omitting these 3 lines causes a "Circular reference in texture stack" error
-        for island in self.islands:
-            for uvface in island.faces:
-                texfaces[uvface.face.index].image = None
-
         for i, island in enumerate(self.islands, 1):
             image_name = "{} isl{}".format(self.data.name[:15], i)
             image = create_blank_image(image_name, island.bounding_box * scale, alpha=0)
-            for uvface in island.faces:
-                texfaces[uvface.face.index].image = image
-            bpy.ops.object.bake_image()
-
+            bake([uvface.face.index for uvface in island.faces], tex, image)
             if embed:
                 island.embedded_image = embed(image)
             else:
@@ -589,8 +659,6 @@ class Mesh:
                 image.filepath_raw = image_path
                 image.save()
                 island.image_path = image.path
-            for uvface in island.faces:
-                texfaces[uvface.face.index].image = None
             image.user_clear()
             bpy.data.images.remove(image)
 
@@ -705,26 +773,14 @@ class Face:
     __slots__ = ('index', 'edges', 'verts', 'uvface',
         'loop_start', 'area', 'normal')
 
-    def __init__(self, bpy_face, mesh, matrix=1):
+    def __init__(self, bpy_face, mesh):
         self.index = bpy_face.index
         self.edges = list()
         self.verts = [mesh.verts[i] for i in bpy_face.vertices]
         self.loop_start = bpy_face.loop_start
         self.area = bpy_face.area
         self.uvface = None
-
-        # calculate the face normal explicitly
-        if len(self.verts) == 3:
-            # normal of a triangle can be calculated directly
-            self.normal = (self.verts[1].co - self.verts[0].co).cross(self.verts[2].co - self.verts[0].co).normalized()
-        else:
-            # Newell's method
-            nor = M.Vector((0, 0, 0))
-            for a, b in pairs(self.verts):
-                p, m = a.co + b.co, a.co - b.co
-                nor.x, nor.y, nor.z = nor.x + m.y*p.z, nor.y + m.z*p.x, nor.z + m.x*p.y
-            self.normal = nor.normalized()
-
+        self.normal = M.geometry.normal(v.co for v in self.verts)
         for verts_indices in bpy_face.edge_keys:
             edge = mesh.edges_by_verts_indices[verts_indices]
             self.edges.append(edge)
@@ -732,7 +788,7 @@ class Face:
 
     def is_twisted(self):
         if len(self.verts) > 3:
-            center = sum(vertex.co for vertex in self.verts) / len(self.verts)
+            center = sum((vertex.co for vertex in self.verts), M.Vector((0, 0, 0))) / len(self.verts)
             plane_d = center.dot(self.normal)
             diameter = max((center - vertex.co).length for vertex in self.verts)
             for vertex in self.verts:
@@ -1198,11 +1254,8 @@ class UVFace:
         self.flipped = False  # a flipped UVFace has edges clockwise
 
         rot = z_up_matrix(face.normal)
-        self.uvvertex_by_id = dict()  # link vertex id -> UVVertex
-        for vertex in face.verts:
-            uvvertex = UVVertex(rot * vertex.co, vertex)
-            self.verts.append(uvvertex)
-            self.uvvertex_by_id[vertex.index] = uvvertex
+        self.uvvertex_by_id = {vertex.index: UVVertex(rot * vertex.co, vertex) for vertex in face.verts}
+        self.verts = [self.uvvertex_by_id[vertex.index] for vertex in face.verts]
         self.edges = list()
         edge_by_verts = dict()
         for edge in face.edges:
@@ -1315,7 +1368,7 @@ class NumberAlone:
 class SVG:
     """Simple SVG exporter"""
 
-    def __init__(self, page_size: M.Vector, style, margin, pure_net=True):
+    def __init__(self, page_size: M.Vector, style, margin, pure_net=True, angle_epsilon=0.01):
         """Initialize document settings.
         page_size: document dimensions in meters
         pure_net: if True, do not use image"""
@@ -1324,16 +1377,17 @@ class SVG:
         self.style = style
         self.margin = margin
         self.text_size = 12
+        self.angle_epsilon = angle_epsilon
 
     @classmethod
     def encode_image(cls, bpy_image):
         import tempfile
         import base64
-        tempfile_manager = tempfile.NamedTemporaryFile("rb", suffix=".png")
-        bpy_image.filepath_raw = tempfile_manager.name
-        bpy_image.save()
-        with tempfile_manager as imgfile:
-            return base64.encodebytes(imgfile.read()).decode('ascii')
+        with tempfile.TemporaryDirectory() as directory:
+            filename = directory + "/i.png"
+            bpy_image.filepath_raw = filename
+            bpy_image.save()
+            return base64.encodebytes(open(filename, "rb").read()).decode('ascii')
 
     def format_vertex(self, vector, pos=M.Vector((0, 0))):
         """Return a string with both coordinates of the given vertex."""
@@ -1469,9 +1523,9 @@ class SVG:
                             data_freestyle.append(data_uvedge)
                         # each uvedge is in two opposite-oriented variants; we want to add each only once
                         if uvedge.sticker or uvedge.uvface.flipped != (uvedge.va.vertex.index > uvedge.vb.vertex.index):
-                            if edge.angle > 0.01:
+                            if edge.angle > self.angle_epsilon:
                                 data_convex.append(data_uvedge)
-                            elif edge.angle < -0.01:
+                            elif edge.angle < -self.angle_epsilon:
                                 data_concave.append(data_uvedge)
                     if island.is_inside_out:
                         data_convex, data_concave = data_concave, data_convex
@@ -1576,11 +1630,12 @@ class PDF:
     """Simple PDF exporter"""
 
     mm_to_pt = 72 / 25.4
-    def __init__(self, page_size: M.Vector, style, margin, pure_net=True):
+    def __init__(self, page_size: M.Vector, style, margin, pure_net=True, angle_epsilon=0.01):
         self.page_size = page_size
         self.style = style
         self.margin = M.Vector((margin, margin))
         self.pure_net = pure_net
+        self.angle_epsilon = angle_epsilon
 
     character_width_packed = {833: 'mM', 834: '¼½¾', 260: '¦|', 389: '*', 584: '>~+¬±<×÷=', 778: 'ÒGÖÕQÔØÓO', 333: '¹\xad\x98\x84²¨\x94\x9b¯¡´()\x8b\x93¸³-\x88`r', 334: '{}', 400: '°', 722: 'DÛÚUÑwRÐÜCÇNÙH', 611: '¿øTßZF\x8e', 469: '^', 278: 'ì\x05\x06 ;\x01/\x08I\x07,\x13\x11\x04\\.![\x15\r\x10:\x18]\x0c\x00\x1bÍf\xa0\x14\x1c\n\t\x1e\x1dïí\x12·\x16\x0bî\x0e\x03tÏ\x17\x1fÎ\x19\x0f\x02Ì\x1a', 537: '¶', 667: 'ÄË\x8aÃÀBÊVX&AKSÈÞPÁYÉ\x9fÝEÅÂ', 222: 'jl\x92\x91i\x82', 737: '©®', 355: '"', 1000: '\x89\x97\x8c\x99\x85Æ', 556: 'éhòúd»§ùþ5\x803õ¢åëûa64_ã\x83ñ¤8n?g2e#9«oqL$âö1päuð\x86¥µ\x967üóê\x87bá0àèô£', 365: 'º', 944: '\x9cW', 370: 'ª', 500: 'Js\x9eçyÿ\x9aývckzx', 350: '\x90\x8d\x81\x8f\x95\x7f\x9d', 1015: '@', 889: 'æ%', 191: "'"}
     character_width = {c: value for (value, chars) in character_width_packed.items() for c in chars}
@@ -1654,13 +1709,13 @@ class PDF:
             "Gsticker": {"ca": self.style.sticker_fill[3]}}
         for name in ("outer", "convex", "concave", "freestyle"):
             gs = {
-                "LW": self.style.line_width * getattr(self.style, name + "_width"),
+                "LW": self.style.line_width * 1000 * getattr(self.style, name + "_width"),
                 "CA": getattr(self.style, name + "_color")[3],
                 "D": [format_style[getattr(self.style, name + "_style")], 0]}
             styles["G" + name] = gs
         for name in ("outbg", "inbg"):
             gs = {
-                "LW": self.style.line_width * getattr(self.style, name + "_width"),
+                "LW": self.style.line_width * 1000 * getattr(self.style, name + "_width"),
                 "CA": getattr(self.style, name + "_color")[3],
                 "D": [format_style['SOLID'], 0]}
             styles["G" + name] = gs
@@ -1710,7 +1765,7 @@ class PDF:
                         data_markers.append("q {mat[0][0]:.6f} {mat[1][0]:.6f} {mat[0][1]:.6f} {mat[1][1]:.6f} {pos.x:.6f} {pos.y:.6f} cm BT /F1 {size:.6f} Tf ({label}) Tj ET Q".format(
                             label=marker.text,
                             pos=1000*marker.center,
-                            mat=format_matrix(marker.rot),
+                            mat = marker.rot,
                             size=1000*marker.size))
 
                 outer_edges = set(island.boundary)
@@ -1739,9 +1794,9 @@ class PDF:
                         data_freestyle.append(data_uvedge)
                     # each uvedge is in two opposite-oriented variants; we want to add each only once
                     if uvedge.sticker or uvedge.uvface.flipped != (uvedge.va.vertex.index > uvedge.vb.vertex.index):
-                        if edge.angle > 0.01:
+                        if edge.angle > self.angle_epsilon:
                             data_convex.append(data_uvedge)
-                        elif edge.angle < -0.01:
+                        elif edge.angle < -self.angle_epsilon:
                             data_concave.append(data_uvedge)
                 if island.is_inside_out:
                     data_convex, data_concave = data_concave, data_convex
@@ -1841,8 +1896,14 @@ class Unfold(bpy.types.Operator):
 
         cage_size = M.Vector((settings.output_size_x, settings.output_size_y)) if settings.limit_by_page else None
         priority_effect = {'CONVEX': self.priority_effect_convex, 'CONCAVE': self.priority_effect_concave, 'LENGTH': self.priority_effect_length}
-        unfolder = Unfolder(self.object)
-        unfolder.prepare(cage_size, self.do_create_uvmap, mark_seams=True, priority_effect=priority_effect, scale=sce.unit_settings.scale_length/settings.scale)
+        try:
+            unfolder = Unfolder(self.object)
+            unfolder.prepare(cage_size, self.do_create_uvmap, mark_seams=True, priority_effect=priority_effect, scale=sce.unit_settings.scale_length/settings.scale)
+        except UnfoldError as error:
+            self.report(type={'ERROR_INVALID_INPUT'}, message=error.args[0])
+            bpy.ops.object.mode_set(mode=recall_mode)
+            sce.paper_model.display_islands = recall_display_islands
+            return {'CANCELLED'}
         if mesh.paper_island_list:
             unfolder.copy_island_names(mesh.paper_island_list)
 
@@ -1986,6 +2047,14 @@ bpy.utils.register_class(PaperModelStyle)
 class ExportPaperModel(bpy.types.Operator):
     """Blender Operator: save the selected object's net and optionally bake its texture"""
 
+    def scaled_getter(name):
+        return lambda self: self[name] / bpy.context.scene.unit_settings.scale_length
+
+    def scaled_setter(name):
+        def setter(self, value):
+            self[name] = value * bpy.context.scene.unit_settings.scale_length
+        return setter
+
     bl_idname = "export_mesh.paper_model"
     bl_label = "Export Paper Model"
     bl_description = "Export the selected object's net and optionally bake its texture"
@@ -2012,12 +2081,13 @@ class ExportPaperModel(bpy.types.Operator):
         default=0.297, soft_min=0.148, soft_max=1.189, subtype="UNSIGNED", unit="LENGTH")
     output_margin = bpy.props.FloatProperty(name="Page Margin",
         description="Distance from page borders to the printable area",
-        default=0.005, min=0, soft_max=0.1, step=0.1, subtype="UNSIGNED", unit="LENGTH")
+        default=0.005, min=0, soft_max=0.1, step=0.1, subtype="DISTANCE", unit="LENGTH", get=scaled_getter("output_margin"), set=scaled_setter("output_margin"))
     output_type = bpy.props.EnumProperty(name="Textures",
         description="Source of a texture for the model",
         default='NONE', items=[
             ('NONE', "No Texture", "Export the net only"),
             ('TEXTURE', "From Materials", "Render the diffuse color and all painted textures"),
+            ('AMBIENT_OCCLUSION', "Ambient Occlusion", "Render the Ambient Occlusion pass"),
             ('RENDER', "Full Render", "Render the material in actual scene illumination"),
             ('SELECTED_TO_ACTIVE', "Selected to Active", "Render all selected surrounding objects as a texture")
         ])
@@ -2030,6 +2100,9 @@ class ExportPaperModel(bpy.types.Operator):
     sticker_width = bpy.props.FloatProperty(name="Tabs and Text Size",
         description="Width of gluing tabs and their numbers",
         default=0.005, soft_min=0, soft_max=0.05, step=0.1, subtype="UNSIGNED", unit="LENGTH")
+    angle_epsilon = bpy.props.FloatProperty(name="Hidden Edge Angle",
+        description="Folds with angle below this limit will not be drawn",
+        default=pi/360, min=0, soft_max=pi/4, step=0.01, subtype="ANGLE", unit="ROTATION")
     output_dpi = bpy.props.FloatProperty(name="Resolution (DPI)",
         description="Resolution of images in pixels per inch",
         default=90, min=1, soft_min=30, soft_max=600, subtype="UNSIGNED")
@@ -2048,7 +2121,7 @@ class ExportPaperModel(bpy.types.Operator):
         ])
     scale = bpy.props.FloatProperty(name="Scale",
         description="Divisor of all dimensions when exporting",
-        default=1, soft_min=1.0, soft_max=10000.0, step=100, subtype='UNSIGNED', precision=0)
+        default=1, soft_min=1.0, soft_max=10000.0, step=100, subtype='UNSIGNED', precision=1)
     do_create_uvmap = bpy.props.BoolProperty(name="Create UVMap",
         description="Create a new UV Map showing the islands and page layout",
         default=False, options={'SKIP_SAVE'})
@@ -2095,12 +2168,17 @@ class ExportPaperModel(bpy.types.Operator):
 
         self.scale = sce.paper_model.scale
         self.object = context.active_object
-        self.unfolder = Unfolder(self.object)
         cage_size = M.Vector((sce.paper_model.output_size_x, sce.paper_model.output_size_y)) if sce.paper_model.limit_by_page else None
-        self.unfolder.prepare(cage_size, create_uvmap=self.do_create_uvmap, scale=sce.unit_settings.scale_length/self.scale)
+        try:
+            self.unfolder = Unfolder(self.object)
+            self.unfolder.prepare(cage_size, create_uvmap=self.do_create_uvmap, scale=sce.unit_settings.scale_length/self.scale)
+        except UnfoldError as error:
+            self.report(type={'ERROR_INVALID_INPUT'}, message=error.args[0])
+            bpy.ops.object.mode_set(mode=recall_mode)
+            return {'CANCELLED'}
         scale_ratio = self.get_scale_ratio(sce)
         if scale_ratio > 1:
-            self.scale *= scale_ratio
+            self.scale = ceil(self.scale * scale_ratio)
         wm = context.window_manager
         wm.fileselect_add(self)
 
@@ -2145,13 +2223,14 @@ class ExportPaperModel(bpy.types.Operator):
             col = box.column()
             col.active = self.do_create_stickers or self.do_create_numbers
             col.prop(self.properties, "sticker_width")
+            box.prop(self.properties, "angle_epsilon")
 
             box.prop(self.properties, "output_type")
             col = box.column()
             col.active = (self.output_type != 'NONE')
             if len(self.object.data.uv_textures) == 8:
                 col.label(text="No UV slots left, No Texture is the only option.", icon='ERROR')
-            elif context.scene.render.engine != 'BLENDER_RENDER' and self.output_type != 'NONE':
+            elif context.scene.render.engine not in ('BLENDER_RENDER', 'CYCLES') and self.output_type != 'NONE':
                 col.label(text="Blender Internal engine will be used for texture baking.", icon='ERROR')
             col.prop(self.properties, "output_dpi")
             row = col.row()
@@ -2412,7 +2491,7 @@ class PaperModelSettings(bpy.types.PropertyGroup):
         default=0.29, soft_min=0.148, soft_max=1.189, subtype="UNSIGNED", unit="LENGTH")
     scale = bpy.props.FloatProperty(name="Scale",
         description="Divisor of all dimensions when exporting",
-        default=1, soft_min=1.0, soft_max=10000.0, subtype='UNSIGNED', precision=0)
+        default=1, soft_min=1.0, soft_max=10000.0, step=100, subtype='UNSIGNED', precision=1)
 bpy.utils.register_class(PaperModelSettings)
 
 
