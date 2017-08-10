@@ -20,12 +20,14 @@
 
 __author__ = "Keith (Wahooney) Boshoff, Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "4.1"
-__date__ = "13 Nov 2016"
-
+__version__ = "4.3.1"
+__date__ = "6 June 2017"
 
 import bpy
-from bpy.props import EnumProperty, FloatProperty
+from bpy.props import (
+        EnumProperty,
+        FloatProperty,
+        )
 import bmesh
 from mathutils import Vector
 from . import muv_common
@@ -41,23 +43,24 @@ class MUV_MirrorUV(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     axis = EnumProperty(
-            items=(
-                ('X', "X", "Mirror Along X axis"),
-                ('Y', "Y", "Mirror Along Y axis"),
-                ('Z', "Z", "Mirror Along Z axis")),
-            name="Axis",
-            description="Mirror Axis",
-            default='X')
-
+        items=(
+            ('X', "X", "Mirror Along X axis"),
+            ('Y', "Y", "Mirror Along Y axis"),
+            ('Z', "Z", "Mirror Along Z axis")
+        ),
+        name="Axis",
+        description="Mirror Axis",
+        default='X'
+    )
     error = FloatProperty(
-            name="Error",
-            description="Error threshold",
-            default=0.001,
-            min=0.0,
-            max=100.0,
-            soft_min=0.0,
-            soft_max=1.0)
-
+        name="Error",
+        description="Error threshold",
+        default=0.001,
+        min=0.0,
+        max=100.0,
+        soft_min=0.0,
+        soft_max=1.0
+    )
 
     def __is_vector_similar(self, v1, v2, error):
         """
@@ -68,7 +71,6 @@ class MUV_MirrorUV(bpy.types.Operator):
         within_err_z = abs(v2.z - v1.z) < error
 
         return within_err_x and within_err_y and within_err_z
-
 
     def __mirror_uvs(self, uv_layer, src, dst, axis, error):
         """
@@ -89,7 +91,6 @@ class MUV_MirrorUV(bpy.types.Operator):
                 if self.__is_vector_similar(svco, dvco, error):
                     dl[uv_layer].uv = suv.copy()
 
-
     def __get_face_center(self, face):
         """
         Get center coordinate of the face
@@ -100,12 +101,10 @@ class MUV_MirrorUV(bpy.types.Operator):
 
         return center / len(face.verts)
 
-
     @classmethod
     def poll(cls, context):
         obj = context.active_object
-        return (obj and obj.type == 'MESH')
-
+        return obj and obj.type == 'MESH'
 
     def execute(self, context):
         obj = context.active_object
@@ -117,8 +116,7 @@ class MUV_MirrorUV(bpy.types.Operator):
         if muv_common.check_version(2, 73, 0) >= 0:
             bm.faces.ensure_lookup_table()
         if not bm.loops.layers.uv:
-            self.report(
-                {'WARNING'}, "Object must have more than one UV map")
+            self.report({'WARNING'}, "Object must have more than one UV map")
             return {'CANCELLED'}
         uv_layer = bm.loops.layers.uv.verify()
 
@@ -126,7 +124,6 @@ class MUV_MirrorUV(bpy.types.Operator):
         for f_dst in faces:
             count = len(f_dst.verts)
             for f_src in bm.faces:
-
                 # check if this is a candidate to do mirror UV
                 if f_src.index == f_dst.index:
                     continue

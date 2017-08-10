@@ -20,19 +20,23 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "4.1"
-__date__ = "13 Nov 2016"
+__version__ = "4.3.1"
+__date__ = "6 June 2017"
 
+from math import fabs
+from collections import defaultdict
 
 import bpy
 import bmesh
 import mathutils
-from bpy.props import FloatProperty, FloatVectorProperty, BoolProperty
+from bpy.props import (
+        FloatProperty,
+        FloatVectorProperty,
+        BoolProperty,
+        )
 from mathutils import Vector
-from math import fabs
-from collections import defaultdict
+
 from . import muv_common
-import time
 
 
 class MUV_PackUV(bpy.types.Operator):
@@ -49,21 +53,16 @@ class MUV_PackUV(bpy.types.Operator):
     bl_description = "Pack UV (Same UV Islands are integrated)"
     bl_options = {'REGISTER', 'UNDO'}
 
-    __face_to_verts = defaultdict(set)
-    __vert_to_faces = defaultdict(set)
-
     rotate = BoolProperty(
         name="Rotate",
         description="Rotate option used by default pack UV function",
         default=False)
-
     margin = FloatProperty(
         name="Margin",
         description="Margin used by default pack UV function",
         min=0,
         max=1,
         default=0.001)
-
     allowable_center_deviation = FloatVectorProperty(
         name="Allowable Center Deviation",
         description="Allowable center deviation to judge same UV island",
@@ -71,7 +70,6 @@ class MUV_PackUV(bpy.types.Operator):
         max=0.1,
         default=(0.001, 0.001),
         size=2)
-
     allowable_size_deviation = FloatVectorProperty(
         name="Allowable Size Deviation",
         description="Allowable sizse deviation to judge same UV island",
@@ -84,7 +82,7 @@ class MUV_PackUV(bpy.types.Operator):
         self.__face_to_verts = defaultdict(set)
         self.__vert_to_faces = defaultdict(set)
 
-    def execute(self, context):
+    def execute(self, _):
         obj = bpy.context.active_object
         bm = bmesh.from_edit_mesh(obj.data)
         if muv_common.check_version(2, 73, 0) >= 0:
@@ -99,9 +97,9 @@ class MUV_PackUV(bpy.types.Operator):
         # create mesh database
         for f in selected_faces:
             for l in f.loops:
-                id = l[uv_layer].uv.to_tuple(5), l.vert.index
-                self.__face_to_verts[f.index].add(id)
-                self.__vert_to_faces[id].add(f.index)
+                id_ = l[uv_layer].uv.to_tuple(5), l.vert.index
+                self.__face_to_verts[f.index].add(id_)
+                self.__vert_to_faces[id_].add(f.index)
 
         # Group island
         uv_island_lists = self.__get_island(bm)
@@ -113,7 +111,8 @@ class MUV_PackUV(bpy.types.Operator):
 
         # pack UV
         for gidx in range(num_group):
-            group = list(filter(lambda i:i['group']==gidx, island_info))
+            group = list(filter(
+                lambda i, idx=gidx: i['group'] == idx, island_info))
             for f in group[0]['faces']:
                 f['face'].select = True
         bmesh.update_edit_mesh(obj.data)
@@ -122,14 +121,15 @@ class MUV_PackUV(bpy.types.Operator):
 
         # copy/paste UV among same islands
         for gidx in range(num_group):
-            group = list(filter(lambda i:i['group']==gidx, island_info))
+            group = list(filter(
+                lambda i, idx=gidx: i['group'] == idx, island_info))
             if len(group) <= 1:
                 continue
             for g in group[1:]:
                 for (src_face, dest_face) in zip(
-                    group[0]['sorted'], g['sorted']):
+                        group[0]['sorted'], g['sorted']):
                     for (src_loop, dest_loop) in zip(
-                        src_face['face'].loops, dest_face['face'].loops):
+                            src_face['face'].loops, dest_face['face'].loops):
                         loop_lists[dest_loop.index][uv_layer].uv = loop_lists[
                             src_loop.index][uv_layer].uv
 
@@ -151,7 +151,7 @@ class MUV_PackUV(bpy.types.Operator):
 
         sorted_faces = []
         for f in isl1['sorted']:
-            uv, idx, dist = kd.find(
+            _, idx, _ = kd.find(
                 Vector((f['ave_uv'].x, f['ave_uv'].y, 0.0)))
             sorted_faces.append(isl2['faces'][uvs[idx]['face_idx']])
         return sorted_faces
@@ -164,11 +164,14 @@ class MUV_PackUV(bpy.types.Operator):
         num_group = 0
         while True:
             # search islands which is not parsed yet
+            isl_1 = None
             for isl_1 in island_info:
                 if isl_1['group'] == -1:
                     break
             else:
                 break   # all faces are parsed
+            if isl_1 is None:
+                break
             isl_1['group'] = num_group
             isl_1['sorted'] = isl_1['faces']
 
@@ -194,10 +197,14 @@ class MUV_PackUV(bpy.types.Operator):
                     if center_matched and size_matched and num_uv_matched:
                         isl_2['group'] = num_group
                         kd = mathutils.kdtree.KDTree(len(isl_2['faces']))
-                        uvs = [{
-                            'uv': Vector((f['ave_uv'].x, f['ave_uv'].y, 0.0)),
-                            'face_idx': fidx}
-                            for fidx, f in enumerate(isl_2['faces'])]
+                        uvs = [
+                            {
+                                'uv': Vector(
+                                    (f['ave_uv'].x, f['ave_uv'].y, 0.0)
+                                ),
+                                'face_idx': fidx
+                            } for fidx, f in enumerate(isl_2['faces'])
+                        ]
                         for i, uv in enumerate(uvs):
                             kd.insert(uv['uv'], i)
                         kd.balance()

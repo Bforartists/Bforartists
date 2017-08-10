@@ -20,13 +20,15 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "4.0"
-__date__ = "13 Nov 2016"
-
+__version__ = "4.3.1"
+__date__ = "6 June 2017"
 
 import bpy
 import bmesh
-from bpy.props import BoolProperty, IntProperty
+from bpy.props import (
+        BoolProperty,
+        IntProperty,
+        )
 from . import muv_common
 
 
@@ -43,13 +45,14 @@ class MUV_FlipRot(bpy.types.Operator):
     flip = BoolProperty(
         name="Flip UV",
         description="Flip UV...",
-        default=False)
-
+        default=False
+    )
     rotate = IntProperty(
         default=0,
         name="Rotate UV",
         min=0,
-        max=30)
+        max=30
+    )
 
     def execute(self, context):
         self.report({'INFO'}, "Flip/Rotate UV")
@@ -89,7 +92,7 @@ class MUV_FlipRot(bpy.types.Operator):
                 duvs_fr.reverse()
                 dpuvs_fr.reverse()
             # rotate UVs
-            for n in range(self.rotate):
+            for _ in range(self.rotate):
                 uv = duvs_fr.pop()
                 pin_uv = dpuvs_fr.pop()
                 duvs_fr.insert(0, uv)
@@ -98,6 +101,7 @@ class MUV_FlipRot(bpy.types.Operator):
             for l, duv, dpuv in zip(bm.faces[idx].loops, duvs_fr, dpuvs_fr):
                 l[uv_layer].uv = duv
                 l[uv_layer].pin_uv = dpuv
+
         self.report({'INFO'}, "%d face(s) are flipped/rotated" % len(dest_uvs))
 
         bmesh.update_edit_mesh(obj.data)

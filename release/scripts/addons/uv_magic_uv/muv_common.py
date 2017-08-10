@@ -20,15 +20,11 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "4.1"
-__date__ = "13 Nov 2016"
-
+__version__ = "4.3.1"
+__date__ = "6 June 2017"
 
 import bpy
 from . import muv_props
-
-
-PHI = 3.1415926535
 
 
 def debug_print(*s):
@@ -40,7 +36,7 @@ def debug_print(*s):
         print(s)
 
 
-def check_version(major, minor, unused):
+def check_version(major, minor, _):
     """
     Check blender version
     """
@@ -70,9 +66,15 @@ def get_space(area_type, region_type, space_type):
     Get current area/region/space
     """
 
+    area = None
+    region = None
+    space = None
+
     for area in bpy.context.screen.areas:
         if area.type == area_type:
             break
+    else:
+        return (None, None, None)
     for region in area.regions:
         if region.type == region_type:
             break
