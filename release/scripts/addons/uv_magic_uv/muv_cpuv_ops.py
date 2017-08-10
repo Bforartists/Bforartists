@@ -18,15 +18,19 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-__author__ = "Nutti <nutti.metro@gmail.com>"
+__author__ = "Nutti <nutti.metro@gmail.com>, Jace Priester"
 __status__ = "production"
-__version__ = "4.1"
-__date__ = "13 Nov 2016"
-
+__version__ = "4.3.1"
+__date__ = "1 Apr 2017"
 
 import bpy
 import bmesh
-from bpy.props import StringProperty, BoolProperty, IntProperty, EnumProperty
+from bpy.props import (
+        StringProperty,
+        BoolProperty,
+        IntProperty,
+        EnumProperty,
+        )
 from . import muv_common
 
 
@@ -49,7 +53,7 @@ class MUV_CPUVCopyUV(bpy.types.Operator):
     bl_description = "Copy UV coordinate (Operation)"
     bl_options = {'REGISTER', 'UNDO'}
 
-    uv_map = bpy.props.StringProperty(options={'HIDDEN'})
+    uv_map = StringProperty(options={'HIDDEN'})
 
     def execute(self, context):
         props = context.scene.muv_props.cpuv
@@ -57,7 +61,7 @@ class MUV_CPUVCopyUV(bpy.types.Operator):
             self.report({'INFO'}, "Copy UV coordinate")
         else:
             self.report(
-                {'INFO'}, "Copy UV coordinate (UV map:" + self.uv_map + ")")
+                {'INFO'}, "Copy UV coordinate (UV map:%s)" % (self.uv_map))
         obj = context.active_object
         bm = bmesh.from_edit_mesh(obj.data)
         if muv_common.check_version(2, 73, 0) >= 0:
@@ -107,11 +111,15 @@ class MUV_CPUVCopyUVMenu(bpy.types.Menu):
         uv_maps = bm.loops.layers.uv.keys()
         layout.operator(
             MUV_CPUVCopyUV.bl_idname,
-            text="[Default]", icon="PLUGIN").uv_map = ""
+            text="[Default]",
+            icon="IMAGE_COL"
+        ).uv_map = ""
         for m in uv_maps:
             layout.operator(
                 MUV_CPUVCopyUV.bl_idname,
-                text=m, icon="PLUGIN").uv_map = m
+                text=m,
+                icon="IMAGE_COL"
+            ).uv_map = m
 
 
 class MUV_CPUVPasteUV(bpy.types.Operator):
@@ -124,26 +132,27 @@ class MUV_CPUVPasteUV(bpy.types.Operator):
     bl_description = "Paste UV coordinate (Operation)"
     bl_options = {'REGISTER', 'UNDO'}
 
-    uv_map = bpy.props.StringProperty(options={'HIDDEN'})
-
+    uv_map = StringProperty(options={'HIDDEN'})
     strategy = EnumProperty(
         name="Strategy",
         description="Paste Strategy",
         items=[
             ('N_N', 'N:N', 'Number of faces must be equal to source'),
-            ('N_M', 'N:M', 'Number of faces must not be equal to source')],
-        default="N_M")
-
+            ('N_M', 'N:M', 'Number of faces must not be equal to source')
+        ],
+        default="N_M"
+    )
     flip_copied_uv = BoolProperty(
         name="Flip Copied UV",
         description="Flip Copied UV...",
-        default=False)
-
+        default=False
+    )
     rotate_copied_uv = IntProperty(
         default=0,
         name="Rotate Copied UV",
         min=0,
-        max=30)
+        max=30
+    )
 
     def execute(self, context):
         props = context.scene.muv_props.cpuv
@@ -154,7 +163,7 @@ class MUV_CPUVPasteUV(bpy.types.Operator):
             self.report({'INFO'}, "Paste UV coordinate")
         else:
             self.report(
-                {'INFO'}, "Paste UV coordinate (UV map:" + self.uv_map + ")")
+                {'INFO'}, "Paste UV coordinate (UV map:%s)" % (self.uv_map))
         obj = context.active_object
         bm = bmesh.from_edit_mesh(obj.data)
         if muv_common.check_version(2, 73, 0) >= 0:
@@ -163,8 +172,8 @@ class MUV_CPUVPasteUV(bpy.types.Operator):
         # get UV layer
         if self.uv_map == "":
             if not bm.loops.layers.uv:
-                self.report({'WARNING'},
-                    "Object must have more than one UV map")
+                self.report(
+                    {'WARNING'}, "Object must have more than one UV map")
                 return {'CANCELLED'}
             uv_layer = bm.loops.layers.uv.verify()
         else:
@@ -215,7 +224,7 @@ class MUV_CPUVPasteUV(bpy.types.Operator):
                 suvs_fr.reverse()
                 spuvs_fr.reverse()
             # rotate UVs
-            for n in range(self.rotate_copied_uv):
+            for _ in range(self.rotate_copied_uv):
                 uv = suvs_fr.pop()
                 pin_uv = spuvs_fr.pop()
                 suvs_fr.insert(0, uv)
@@ -248,11 +257,11 @@ class MUV_CPUVPasteUVMenu(bpy.types.Menu):
         uv_maps = bm.loops.layers.uv.keys()
         layout.operator(
             MUV_CPUVPasteUV.bl_idname,
-            text="[Default]", icon="PLUGIN").uv_map = ""
+            text="[Default]", icon="IMAGE_COL").uv_map = ""
         for m in uv_maps:
             layout.operator(
                 MUV_CPUVPasteUV.bl_idname,
-                text=m, icon="PLUGIN").uv_map = m
+                text=m, icon="IMAGE_COL").uv_map = m
 
 
 class MUV_CPUVObjCopyUV(bpy.types.Operator):
@@ -265,7 +274,7 @@ class MUV_CPUVObjCopyUV(bpy.types.Operator):
     bl_description = "Copy UV coordinate"
     bl_options = {'REGISTER', 'UNDO'}
 
-    uv_map = bpy.props.StringProperty(options={'HIDDEN'})
+    uv_map = StringProperty(options={'HIDDEN'})
 
     @memorize_view_3d_mode
     def execute(self, context):
@@ -275,8 +284,7 @@ class MUV_CPUVObjCopyUV(bpy.types.Operator):
         else:
             self.report(
                 {'INFO'},
-                "Copy UV coordinate per object (UV map:" + self.uv_map + ")")
-
+                "Copy UV coordinate per object (UV map:%s)" % (self.uv_map))
         bpy.ops.object.mode_set(mode='EDIT')
 
         obj = context.active_object
@@ -317,18 +325,17 @@ class MUV_CPUVObjCopyUVMenu(bpy.types.Menu):
     bl_label = "Copy UV"
     bl_description = "Copy UV coordinate per object"
 
-    def draw(self, context):
+    def draw(self, _):
         layout = self.layout
         # create sub menu
-        obj = context.active_object
         uv_maps = bpy.context.active_object.data.uv_textures.keys()
         layout.operator(
             MUV_CPUVObjCopyUV.bl_idname,
-            text="[Default]", icon="PLUGIN").uv_map = ""
+            text="[Default]", icon="IMAGE_COL").uv_map = ""
         for m in uv_maps:
             layout.operator(
                 MUV_CPUVObjCopyUV.bl_idname,
-                text=m, icon="PLUGIN").uv_map = m
+                text=m, icon="IMAGE_COL").uv_map = m
 
 
 class MUV_CPUVObjPasteUV(bpy.types.Operator):
@@ -341,7 +348,7 @@ class MUV_CPUVObjPasteUV(bpy.types.Operator):
     bl_description = "Paste UV coordinate"
     bl_options = {'REGISTER', 'UNDO'}
 
-    uv_map = bpy.props.StringProperty(options={'HIDDEN'})
+    uv_map = StringProperty(options={'HIDDEN'})
 
     @memorize_view_3d_mode
     def execute(self, context):
@@ -349,8 +356,6 @@ class MUV_CPUVObjPasteUV(bpy.types.Operator):
         if len(props.src_uvs) == 0 or len(props.src_pin_uvs) == 0:
             self.report({'WARNING'}, "Need copy UV at first")
             return {'CANCELLED'}
-
-        obj_names = []
 
         for o in bpy.data.objects:
             if not hasattr(o.data, "uv_textures") or not o.select:
@@ -365,19 +370,21 @@ class MUV_CPUVObjPasteUV(bpy.types.Operator):
             if muv_common.check_version(2, 73, 0) >= 0:
                 bm.faces.ensure_lookup_table()
 
-            if self.uv_map == "" or not self.uv_map in bm.loops.layers.uv.keys():
+            if (self.uv_map == "" or
+                    self.uv_map not in bm.loops.layers.uv.keys()):
                 self.report({'INFO'}, "Paste UV coordinate per object")
             else:
                 self.report(
                     {'INFO'},
-                    "Paste UV coordinate per object (UV map: %s)" %
-                    (self.uv_map))
+                    "Paste UV coordinate per object (UV map: %s)"
+                    % (self.uv_map))
 
             # get UV layer
-            if self.uv_map == "" or not self.uv_map in bm.loops.layers.uv.keys():
+            if (self.uv_map == "" or
+                    self.uv_map not in bm.loops.layers.uv.keys()):
                 if not bm.loops.layers.uv:
-                    self.report({'WARNING'},
-                        "Object must have more than one UV map")
+                    self.report(
+                        {'WARNING'}, "Object must have more than one UV map")
                     return {'CANCELLED'}
                 uv_layer = bm.loops.layers.uv.verify()
             else:
@@ -396,9 +403,10 @@ class MUV_CPUVObjPasteUV(bpy.types.Operator):
             if len(props.src_uvs) != len(dest_uvs):
                 self.report(
                     {'WARNING'},
-                    "Number of faces is different from copied" +
-                    "(src:%d, dest:%d)" %
-                    (len(props.src_uvs), len(dest_uvs)))
+                    "Number of faces is different from copied " +
+                    "(src:%d, dest:%d)"
+                    % (len(props.src_uvs), len(dest_uvs))
+                )
                 return {'CANCELLED'}
 
             # paste
@@ -412,13 +420,15 @@ class MUV_CPUVObjPasteUV(bpy.types.Operator):
                 suvs_fr = [uv for uv in suv]
                 spuvs_fr = [pin_uv for pin_uv in spuv]
                 # paste UVs
-                for l, suv, spuv in zip(bm.faces[idx].loops, suvs_fr, spuvs_fr):
+                for l, suv, spuv in zip(
+                        bm.faces[idx].loops, suvs_fr, spuvs_fr):
                     l[uv_layer].uv = suv
                     l[uv_layer].pin_uv = spuv
 
             bmesh.update_edit_mesh(obj.data)
 
-            self.report({'INFO'}, "%s's UV coordinates are pasted" % (obj.name))
+            self.report(
+                {'INFO'}, "%s's UV coordinates are pasted" % (obj.name))
 
         return {'FINISHED'}
 
@@ -432,7 +442,7 @@ class MUV_CPUVObjPasteUVMenu(bpy.types.Menu):
     bl_label = "Paste UV"
     bl_description = "Paste UV coordinate per object"
 
-    def draw(self, context):
+    def draw(self, _):
         layout = self.layout
         # create sub menu
         uv_maps = []
@@ -442,8 +452,8 @@ class MUV_CPUVObjPasteUVMenu(bpy.types.Menu):
         uv_maps = list(set(uv_maps))
         layout.operator(
             MUV_CPUVObjPasteUV.bl_idname,
-            text="[Default]", icon="PLUGIN").uv_map = ""
+            text="[Default]", icon="IMAGE_COL").uv_map = ""
         for m in uv_maps:
             layout.operator(
                 MUV_CPUVObjPasteUV.bl_idname,
-                text=m, icon="PLUGIN").uv_map = m
+                text=m, icon="IMAGE_COL").uv_map = m

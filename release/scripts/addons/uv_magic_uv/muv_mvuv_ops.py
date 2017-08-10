@@ -20,9 +20,8 @@
 
 __author__ = "kgeogeo, mem, Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "4.1"
-__date__ = "13 Nov 2016"
-
+__version__ = "4.3.1"
+__date__ = "6 June 2017"
 
 import bpy
 import bmesh
@@ -38,19 +37,18 @@ class MUV_MVUV(bpy.types.Operator):
     bl_label = "Move the UV from View3D"
     bl_options = {'REGISTER', 'UNDO'}
 
-    __topology_dict = []
-    __prev_mouse = Vector((0.0, 0.0))
-    __offset_uv = Vector((0.0, 0.0))
-    __prev_offset_uv = Vector((0.0, 0.0))
-    __first_time = True
-    __ini_uvs = []
-    __running = False
+    def __init__(self):
+        self.__topology_dict = []
+        self.__prev_mouse = Vector((0.0, 0.0))
+        self.__offset_uv = Vector((0.0, 0.0))
+        self.__prev_offset_uv = Vector((0.0, 0.0))
+        self.__first_time = True
+        self.__ini_uvs = []
+        self.__running = False
 
     def __find_uv(self, context):
         bm = bmesh.from_edit_mesh(context.object.data)
         topology_dict = []
-        first = True
-        diff = 0
         uvs = []
         active_uv = bm.loops.layers.uv.active
         for fidx, f in enumerate(bm.faces):
@@ -58,32 +56,12 @@ class MUV_MVUV(bpy.types.Operator):
                 if v.select:
                     uvs.append(f.loops[vidx][active_uv].uv.copy())
                     topology_dict.append([fidx, vidx])
-                    if first:
-                        v1 = v.link_loops[0].vert.co
-                        sv1 = view3d_utils.location_3d_to_region_2d(
-                            context.region,
-                            context.space_data.region_3d,
-                            v1)
-                        v2 = v.link_loops[0].link_loop_next.vert.co
-                        sv2 = view3d_utils.location_3d_to_region_2d(
-                            context.region,
-                            context.space_data.region_3d,
-                            v2)
-                        vres = sv2 - sv1
-                        va = vres.angle(Vector((0.0, 1.0)))
-
-                        uv1 = v.link_loops[0][active_uv].uv
-                        uv2 = v.link_loops[0].link_loop_next[active_uv].uv
-                        uvres = uv2 - uv1
-                        uva = uvres.angle(Vector((0.0,1.0)))
-                        diff = uva - va
-                        first = False
 
         return topology_dict, uvs
 
     @classmethod
     def poll(cls, context):
-        return (context.edit_object)
+        return context.edit_object
 
     def modal(self, context, event):
         if self.__first_time is True:

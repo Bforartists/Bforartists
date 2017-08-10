@@ -20,14 +20,15 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>, Mifth, MaxRobinot"
 __status__ = "production"
-__version__ = "4.1"
-__date__ = "13 Nov 2016"
+__version__ = "4.3.1"
+__date__ = "6 June 2017"
 
+from collections import OrderedDict
 
 import bpy
 import bmesh
 from bpy.props import BoolProperty
-from collections import OrderedDict
+
 from . import muv_props
 from . import muv_common
 
@@ -71,7 +72,7 @@ class MUV_TransUVCopy(bpy.types.Operator):
         # parse all faces according to selection
         active_face_nor = active_face.normal.copy()
         all_sorted_faces = main_parse(
-            self, active_obj, bm, uv_layer, sel_faces, active_face,
+            self, uv_layer, sel_faces, active_face,
             active_face_nor)
 
         if all_sorted_faces:
@@ -124,7 +125,7 @@ class MUV_TransUVPaste(bpy.types.Operator):
             return {'CANCELLED'}
 
         # parse selection history
-        for i in range(len(all_sel_faces)):
+        for i, _ in enumerate(all_sel_faces):
             if i > 0 and i % 2 != 0:
                 sel_faces = [all_sel_faces[i - 1], all_sel_faces[i]]
                 active_face = all_sel_faces[i]
@@ -134,14 +135,16 @@ class MUV_TransUVPaste(bpy.types.Operator):
                 if self.invert_normals:
                     active_face_nor.negate()
                 all_sorted_faces = main_parse(
-                    self, active_obj, bm, uv_layer, sel_faces, active_face,
+                    self, uv_layer, sel_faces, active_face,
                     active_face_nor)
 
                 if all_sorted_faces:
                     # check amount of copied/pasted faces
                     if len(all_sorted_faces) != len(props.topology_copied):
-                        self.report({'WARNING'},
-                            "Mesh has different amount of faces")
+                        self.report(
+                            {'WARNING'},
+                            "Mesh has different amount of faces"
+                        )
                         return {'FINISHED'}
 
                     for i, face_data in enumerate(all_sorted_faces.values()):
@@ -152,8 +155,10 @@ class MUV_TransUVPaste(bpy.types.Operator):
                             bpy.ops.mesh.select_all(action='DESELECT')
                             # select problematic face
                             list(all_sorted_faces.keys())[i].select = True
-                            self.report({'WARNING'},
-                                "Face have different amount of vertices")
+                            self.report(
+                                {'WARNING'},
+                                "Face have different amount of vertices"
+                            )
                             return {'FINISHED'}
 
                         for j, uvloop in enumerate(face_data[2]):
@@ -166,7 +171,8 @@ class MUV_TransUVPaste(bpy.types.Operator):
 
 
 def main_parse(
-    self, active_obj, bm, uv_layer, sel_faces, active_face, active_face_nor):
+        self, uv_layer, sel_faces,
+        active_face, active_face_nor):
     all_sorted_faces = OrderedDict()  # This is the main stuff
 
     used_verts = set()
@@ -230,30 +236,26 @@ def main_parse(
     # parse all faces
     while True:
         new_parsed_faces = []
-
         if not faces_to_parse:
             break
-
         for face in faces_to_parse:
             face_stuff = all_sorted_faces.get(face)
             new_faces = parse_faces(
                 face, face_stuff, used_verts, used_edges, all_sorted_faces,
-                uv_layer, self)
-
+                uv_layer)
             if new_faces == 'CANCELLED':
                 self.report({'WARNING'}, "More than 2 faces share edge")
                 return None
 
             new_parsed_faces += new_faces
-
         faces_to_parse = new_parsed_faces
 
     return all_sorted_faces
 
 
 def parse_faces(
-    check_face, face_stuff, used_verts, used_edges, all_sorted_faces,
-    uv_layer, self):
+        check_face, face_stuff, used_verts, used_edges, all_sorted_faces,
+        uv_layer):
     """recurse faces around the new_grow only"""
 
     new_shared_faces = []
@@ -316,7 +318,7 @@ def get_other_verts_edges(face, vert1, vert2, first_edge, uv_layer):
 
     other_edges = [edge for edge in face.edges if edge not in face_edges]
 
-    for i in range(len(other_edges)):
+    for _ in range(len(other_edges)):
         found_edge = None
         # get sorted verts and edges
         for edge in other_edges:

@@ -20,14 +20,18 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "4.1"
-__date__ = "13 Nov 2016"
+__version__ = "4.3.1"
+__date__ = "6 June 2017"
 
+import math
+from math import (
+        atan2, cos,
+        sqrt, sin, fabs,
+        )
 
 import bpy
 import bmesh
 from mathutils import Vector
-from math import tan, atan2, cos, sqrt, sin, fabs
 from bpy.props import BoolProperty
 from . import muv_common
 
@@ -37,7 +41,7 @@ def get_vco(verts_orig, loop):
     Get vertex original coordinate from loop
     """
     for vo in verts_orig:
-        if vo["vidx"] == loop.vert.index and vo["moved"] == False:
+        if vo["vidx"] == loop.vert.index and vo["moved"] is False:
             return vo["vco"]
     return loop.vert.co
 
@@ -73,10 +77,8 @@ def get_ini_geom(link_loop, uv_layer, verts_orig, v_orig):
     u = link_loop["l"][uv_layer].uv
     v0 = get_vco(verts_orig, link_loop["l0"])
     u0 = link_loop["l0"][uv_layer].uv
-    lo0 = link_loop["l0"]
     v1 = get_vco(verts_orig, link_loop["l1"])
     u1 = link_loop["l1"][uv_layer].uv
-    lo1 = link_loop["l1"]
 
     # get interior angle of face in vertex space
     v0v1 = v1 - v0
@@ -84,7 +86,7 @@ def get_ini_geom(link_loop, uv_layer, verts_orig, v_orig):
     v1v = v_orig["vco"] - v1
     theta0 = v0v1.angle(v0v)
     theta1 = v0v1.angle(-v1v)
-    if (theta0 + theta1) > muv_common.PHI:
+    if (theta0 + theta1) > math.pi:
         theta0 = v0v1.angle(-v0v)
         theta1 = v0v1.angle(v1v)
 
@@ -94,7 +96,7 @@ def get_ini_geom(link_loop, uv_layer, verts_orig, v_orig):
     u1u = u - u1
     phi0 = u0u1.angle(u0u)
     phi1 = u0u1.angle(-u1u)
-    if (phi0 + phi1) > muv_common.PHI:
+    if (phi0 + phi1) > math.pi:
         phi0 = u0u1.angle(-u0u)
         phi1 = u0u1.angle(u1u)
 
@@ -117,10 +119,8 @@ def get_target_uv(link_loop, uv_layer, verts_orig, v, ini_geom):
     Get target UV coordinate
     """
     v0 = get_vco(verts_orig, link_loop["l0"])
-    u0 = link_loop["l0"][uv_layer].uv
     lo0 = link_loop["l0"]
     v1 = get_vco(verts_orig, link_loop["l1"])
-    u1 = link_loop["l1"][uv_layer].uv
     lo1 = link_loop["l1"]
 
     # get interior angle of face in vertex space
@@ -129,7 +129,7 @@ def get_target_uv(link_loop, uv_layer, verts_orig, v, ini_geom):
     v1v = v.co - v1
     theta0 = v0v1.angle(v0v)
     theta1 = v0v1.angle(-v1v)
-    if (theta0 + theta1) > muv_common.PHI:
+    if (theta0 + theta1) > math.pi:
         theta0 = v0v1.angle(-v0v)
         theta1 = v0v1.angle(v1v)
 
@@ -160,7 +160,7 @@ def calc_tri_vert(v0, v1, angle0, angle1):
     """
     Calculate rest coordinate from other coordinates and angle of end
     """
-    angle = muv_common.PHI - angle0 - angle1
+    angle = math.pi - angle0 - angle1
 
     alpha = atan2(v1.y - v0.y, v1.x - v0.x)
     d = (v1.x - v0.x) / cos(alpha)
@@ -204,7 +204,6 @@ class MUV_TexLockStart(bpy.types.Operator):
             self.report(
                 {'WARNING'}, "Object must have more than one UV map")
             return {'CANCELLED'}
-        uv_layer = bm.loops.layers.uv.verify()
 
         props.verts_orig = [
             {"vidx": v.index, "vco": v.co.copy(), "moved": False}
@@ -220,7 +219,7 @@ class MUV_TexLockStop(bpy.types.Operator):
 
     bl_idname = "uv.muv_texlock_stop"
     bl_label = "Stop"
-    bl_description = "Start Texture Lock"
+    bl_description = "Stop Texture Lock"
     bl_options = {'REGISTER', 'UNDO'}
 
     connect = BoolProperty(
@@ -258,7 +257,8 @@ class MUV_TexLockStop(bpy.types.Operator):
 
             for ll in link_loops:
                 ini_geom = get_ini_geom(ll, uv_layer, verts_orig, v_orig)
-                target_uv = get_target_uv(ll, uv_layer, verts_orig, v, ini_geom)
+                target_uv = get_target_uv(
+                    ll, uv_layer, verts_orig, v, ini_geom)
                 result.append({"l": ll["l"], "uv": target_uv})
 
             # connect other face's UV
@@ -287,7 +287,8 @@ class MUV_TexLockUpdater(bpy.types.Operator):
     bl_label = "Texture Lock Updater"
     bl_description = "Texture Lock Updater"
 
-    __timer = None
+    def __init__(self):
+        self.__timer = None
 
     def __update_uv(self, context):
         """
@@ -302,8 +303,7 @@ class MUV_TexLockUpdater(bpy.types.Operator):
             bm.faces.ensure_lookup_table()
 
         if not bm.loops.layers.uv:
-            self.report(
-                {'WARNING'}, "Object must have more than one UV map")
+            self.report({'WARNING'}, "Object must have more than one UV map")
             return {'CANCELLED'}
         uv_layer = bm.loops.layers.uv.verify()
 
@@ -319,13 +319,14 @@ class MUV_TexLockUpdater(bpy.types.Operator):
             link_loops = get_link_loops(v)
 
             result = []
-
             for ll in link_loops:
                 ini_geom = get_ini_geom(ll, uv_layer, verts_orig, v_orig)
-                target_uv = get_target_uv(ll, uv_layer, verts_orig, v, ini_geom)
+                target_uv = get_target_uv(
+                    ll, uv_layer, verts_orig, v, ini_geom)
                 result.append({"l": ll["l"], "uv": target_uv})
 
-            # UV connect option is always true, because it raises unexpected behavior
+            # UV connect option is always true, because it raises
+            # unexpected behavior
             ave = Vector((0.0, 0.0))
             for r in result:
                 ave = ave + r["uv"]
@@ -340,37 +341,36 @@ class MUV_TexLockUpdater(bpy.types.Operator):
             {"vidx": v.index, "vco": v.co.copy(), "moved": False}
             for v in bm.verts if v.select]
 
-
     def modal(self, context, event):
         props = context.scene.muv_props.texlock
         if context.area:
             context.area.tag_redraw()
         if props.intr_running is False:
+            self.__handle_remove(context)
             return {'FINISHED'}
         if event.type == 'TIMER':
             self.__update_uv(context)
 
         return {'PASS_THROUGH'}
 
-    def handle_add(self, context):
+    def __handle_add(self, context):
         if self.__timer is None:
             self.__timer = context.window_manager.event_timer_add(
                 0.10, context.window)
             context.window_manager.modal_handler_add(self)
 
-    def handle_remove(self, context):
+    def __handle_remove(self, context):
         if self.__timer is not None:
             context.window_manager.event_timer_remove(self.__timer)
             self.__timer = None
 
     def execute(self, context):
         props = context.scene.muv_props.texlock
-        if props.intr_running == False:
-            self.handle_add(context)
+        if props.intr_running is False:
+            self.__handle_add(context)
             props.intr_running = True
             return {'RUNNING_MODAL'}
         else:
-            self.handle_remove(context)
             props.intr_running = False
         if context.area:
             context.area.tag_redraw()
@@ -401,10 +401,8 @@ class MUV_TexLockIntrStart(bpy.types.Operator):
             bm.faces.ensure_lookup_table()
 
         if not bm.loops.layers.uv:
-            self.report(
-                {'WARNING'}, "Object must have more than one UV map")
+            self.report({'WARNING'}, "Object must have more than one UV map")
             return {'CANCELLED'}
-        uv_layer = bm.loops.layers.uv.verify()
 
         props.intr_verts_orig = [
             {"vidx": v.index, "vco": v.co.copy(), "moved": False}
@@ -413,6 +411,7 @@ class MUV_TexLockIntrStart(bpy.types.Operator):
         bpy.ops.uv.muv_texlock_updater()
 
         return {'FINISHED'}
+
 
 # Texture lock (Stop, Interactive mode)
 class MUV_TexLockIntrStop(bpy.types.Operator):
@@ -426,10 +425,10 @@ class MUV_TexLockIntrStop(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-       props = context.scene.muv_props.texlock
-       if props.intr_running is False:
-           return {'CANCELLED'}
+        props = context.scene.muv_props.texlock
+        if props.intr_running is False:
+            return {'CANCELLED'}
 
-       bpy.ops.uv.muv_texlock_updater()
+        bpy.ops.uv.muv_texlock_updater()
 
-       return {'FINISHED'}
+        return {'FINISHED'}
