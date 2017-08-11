@@ -36,8 +36,8 @@ from bpy.props import (
 
 
 
-############### object        
-        
+############### object
+
 class ObjectNodeTree(bpy.types.NodeTree):
     '''Povray Material Nodes'''
 
@@ -54,7 +54,7 @@ class ObjectNodeTree(bpy.types.NodeTree):
         ob = context.active_object
         if ob and ob.type not in {'LAMP'}:
             ma = ob.active_material
-            if ma != None:
+            if ma is not None:
                 nt_name = ma.node_tree
                 if nt_name != '':
                     return nt_name, ma, ma
@@ -305,7 +305,7 @@ class PovrayMappingNode(Node, ObjectNodeTree):
             name="Distance exponent",
             description="Distance exponent",
             min=0.0, max=100.0, default=1.0)
-            
+
     warp_tor_major_radius = FloatProperty(
             name="Major radius",
             description="Torus is distance from major radius",
@@ -357,7 +357,7 @@ class PovrayMultiplyNode(Node, ObjectNodeTree):
             name="Z",
             description="Number of repeats",
             min=1.0, max=10000.0, default=1.0)
-            
+
 
     def init(self, context):
         self.outputs.new('NodeSocketVector', "Amount")
@@ -476,20 +476,22 @@ class PovrayColorImageNode(Node, ObjectNodeTree):
             name="Map type",
             description="",
             items=( ('uv_mapping', "UV", ""),
-                    ('0', "Planar", "Default planar mapping."),
-                    ('1', "Spherical", "Spherical mapping."),
-                    ('2', "Cylindrical", "Cylindrical mapping."),
-                    ('5', "Torroidal", "Torus or donut shaped mapping.")),
+                    ('0', "Planar", "Default planar mapping"),
+                    ('1', "Spherical", "Spherical mapping"),
+                    ('2', "Cylindrical", "Cylindrical mapping"),
+                    ('5', "Torroidal", "Torus or donut shaped mapping")),
             default='0')
     image = StringProperty(maxlen=1024) # , subtype="FILE_PATH"
     interpolate = EnumProperty(
             name="Interpolate",
-            description="Adding the interpolate keyword can smooth the jagged look of a bitmap.",
-            items=(('2', "Bilinear", "Gives bilinear interpolation."),
-                    ('4', "Normalized", "Gives normalized distance.")),
+            description="Adding the interpolate keyword can smooth the jagged look of a bitmap",
+            items=(
+                ('2', "Bilinear", "Gives bilinear interpolation"),
+                ('4', "Normalized", "Gives normalized distance"),
+            ),
             default='2')
     premultiplied = BoolProperty(default=False)
-    once = BoolProperty(description="Not to repeat.", default=False)
+    once = BoolProperty(description="Not to repeat", default=False)
 
     def init(self, context):
 
@@ -516,7 +518,7 @@ class PovrayColorImageNode(Node, ObjectNodeTree):
         split = column.split(percentage=0.8,align=True)
         split.prop_search(self,"image",context.blend_data,"images",text="")
         split.operator("pov.imageopen",text="",icon="FILESEL")
-        if im != None:
+        if im is not None:
             column.prop(im,"source",text="")
         column.prop(self,"map_type",text="")
         column.prop(self,"interpolate",text="")
@@ -534,7 +536,7 @@ class PovrayColorImageNode(Node, ObjectNodeTree):
         split = column.split(percentage=0.8,align=True)
         split.prop_search(self,"image",context.blend_data,"images",text="")
         split.operator("pov.imageopen",text="",icon="FILESEL")
-        if im != None:
+        if im is not None:
             column.prop(im,"source",text="")
         column.prop(self,"map_type",text="")
         column.prop(self,"interpolate",text="")
@@ -554,20 +556,24 @@ class PovrayBumpMapNode(Node, ObjectNodeTree):
     map_type = bpy.props.EnumProperty(
             name="Map type",
             description="",
-            items=( ('uv_mapping', "UV", ""),
-                    ('0', "Planar", "Default planar mapping."),
-                    ('1', "Spherical", "Spherical mapping."),
-                    ('2', "Cylindrical", "Cylindrical mapping."),
-                    ('5', "Torroidal", "Torus or donut shaped mapping.")),
+            items=(
+                ('uv_mapping', "UV", ""),
+                ('0', "Planar", "Default planar mapping"),
+                ('1', "Spherical", "Spherical mapping"),
+                ('2', "Cylindrical", "Cylindrical mapping"),
+                ('5', "Torroidal", "Torus or donut shaped mapping")
+            ),
             default='0')
     image = StringProperty(maxlen=1024) # , subtype="FILE_PATH"
     interpolate = EnumProperty(
             name="Interpolate",
-            description="Adding the interpolate keyword can smooth the jagged look of a bitmap.",
-            items=(('2', "Bilinear", "Gives bilinear interpolation."),
-                    ('4', "Normalized", "Gives normalized distance.")),
+            description="Adding the interpolate keyword can smooth the jagged look of a bitmap",
+            items=(
+                ('2', "Bilinear", "Gives bilinear interpolation"),
+                ('4', "Normalized", "Gives normalized distance"),
+            ),
             default='2')
-    once = BoolProperty(description="Not to repeat.", default=False)
+    once = BoolProperty(description="Not to repeat", default=False)
 
     def init(self, context):
 
@@ -592,7 +598,7 @@ class PovrayBumpMapNode(Node, ObjectNodeTree):
         split = column.split(percentage=0.8,align=True)
         split.prop_search(self,"image",context.blend_data,"images",text="")
         split.operator("pov.imageopen",text="",icon="FILESEL")
-        if im != None:
+        if im is not None:
             column.prop(im,"source",text="")
         column.prop(self,"map_type",text="")
         column.prop(self,"interpolate",text="")
@@ -608,7 +614,7 @@ class PovrayBumpMapNode(Node, ObjectNodeTree):
         split = column.split(percentage=0.8,align=True)
         split.prop_search(self,"image",context.blend_data,"images",text="")
         split.operator("pov.imageopen",text="",icon="FILESEL")
-        if im != None:
+        if im is not None:
             column.prop(im,"source",text="")
         column.prop(self,"map_type",text="")
         column.prop(self,"interpolate",text="")
@@ -626,21 +632,25 @@ class PovrayImagePatternNode(Node, ObjectNodeTree):
     map_type = bpy.props.EnumProperty(
             name="Map type",
             description="",
-            items=( ('uv_mapping', "UV", ""),
-                    ('0', "Planar", "Default planar mapping."),
-                    ('1', "Spherical", "Spherical mapping."),
-                    ('2', "Cylindrical", "Cylindrical mapping."),
-                    ('5', "Torroidal", "Torus or donut shaped mapping.")),
+            items=(
+                ('uv_mapping', "UV", ""),
+                ('0', "Planar", "Default planar mapping"),
+                ('1', "Spherical", "Spherical mapping"),
+                ('2', "Cylindrical", "Cylindrical mapping"),
+                ('5', "Torroidal", "Torus or donut shaped mapping"),
+            ),
             default='0')
     image = StringProperty(maxlen=1024) # , subtype="FILE_PATH"
     interpolate = EnumProperty(
             name="Interpolate",
-            description="Adding the interpolate keyword can smooth the jagged look of a bitmap.",
-            items=(('2', "Bilinear", "Gives bilinear interpolation."),
-                    ('4', "Normalized", "Gives normalized distance.")),
+            description="Adding the interpolate keyword can smooth the jagged look of a bitmap",
+            items=(
+                ('2', "Bilinear", "Gives bilinear interpolation"),
+                ('4', "Normalized", "Gives normalized distance"),
+            ),
             default='2')
     premultiplied = BoolProperty(default=False)
-    once = BoolProperty(description="Not to repeat.", default=False)
+    once = BoolProperty(description="Not to repeat", default=False)
     use_alpha = BoolProperty(default=True)
     def init(self, context):
 
@@ -659,7 +669,7 @@ class PovrayImagePatternNode(Node, ObjectNodeTree):
         split = column.split(percentage=0.8,align=True)
         split.prop_search(self,"image",context.blend_data,"images",text="")
         split.operator("pov.imageopen",text="",icon="FILESEL")
-        if im != None:
+        if im is not None:
             column.prop(im,"source",text="")
         column.prop(self,"map_type",text="")
         column.prop(self,"interpolate",text="")
@@ -678,7 +688,7 @@ class PovrayImagePatternNode(Node, ObjectNodeTree):
         split = column.split(percentage=0.8,align=True)
         split.prop_search(self,"image",context.blend_data,"images",text="")
         split.operator("pov.imageopen",text="",icon="FILESEL")
-        if im != None:
+        if im is not None:
             column.prop(im,"source",text="")
         column.prop(self,"map_type",text="")
         column.prop(self,"interpolate",text="")
@@ -737,12 +747,12 @@ class ShaderPatternNode(Node, ObjectNodeTree):
     spiral_arms = FloatProperty(
             name="Number",
             description="",
-            min=0.0, max=256.0, default=2.0) 
+            min=0.0, max=256.0, default=2.0)
 
     tiling_number = IntProperty(
             name="Number",
             description="",
-            min=1, max=27, default=1) 
+            min=1, max=27, default=1)
 
     gradient_orient = EnumProperty(
             name="Orient",
@@ -750,7 +760,7 @@ class ShaderPatternNode(Node, ObjectNodeTree):
             items=(('x', "X", ""),
                    ('y', "Y", ""),
                    ('z', "Z", "")),
-            default='x') 
+            default='x')
 
     def init(self, context):
 
@@ -788,17 +798,17 @@ class ShaderTextureMapNode(Node, ObjectNodeTree):
     brick_size_x = FloatProperty(
             name="X",
             description="",
-            min=0.0000, max=1.0000, default=0.2500) 
+            min=0.0000, max=1.0000, default=0.2500)
 
     brick_size_y = FloatProperty(
             name="Y",
             description="",
             min=0.0000, max=1.0000, default=0.0525)
-            
+
     brick_size_z = FloatProperty(
             name="Z",
             description="",
-            min=0.0000, max=1.0000, default=0.1250) 
+            min=0.0000, max=1.0000, default=0.1250)
 
     brick_mortar = FloatProperty(
             name="Mortar",
@@ -850,17 +860,17 @@ class ShaderNormalMapNode(Node, ObjectNodeTree):
     brick_size_x = FloatProperty(
             name="X",
             description="",
-            min=0.0000, max=1.0000, default=0.2500) 
+            min=0.0000, max=1.0000, default=0.2500)
 
     brick_size_y = FloatProperty(
             name="Y",
             description="",
             min=0.0000, max=1.0000, default=0.0525)
-            
+
     brick_size_z = FloatProperty(
             name="Z",
             description="",
-            min=0.0000, max=1.0000, default=0.1250) 
+            min=0.0000, max=1.0000, default=0.1250)
 
     brick_mortar = FloatProperty(
             name="Mortar",
@@ -878,7 +888,7 @@ class ShaderNormalMapNode(Node, ObjectNodeTree):
 
     def draw_buttons(self, context, layout):
         #for i, inp in enumerate(self.inputs):
-            
+
         if self.inputs[0].default_value =='brick':
             layout.prop(self, "brick_mortar")
             layout.label("Brick size:")
@@ -1015,7 +1025,7 @@ class TextureOutputNode(Node, TextureNodeTree):
 #################################Operators########################################
 ##################################################################################
 
- 
+
 class NODE_OT_iso_add(bpy.types.Operator):
     bl_idname = "pov.nodeisoadd"
     bl_label = "Create iso props"
@@ -1088,7 +1098,7 @@ class NODE_OT_povray_node_output_add(bpy.types.Operator):
 
     def execute(self, context):
         tree=bpy.context.object.active_material.node_tree
-        tmap = tree.nodes.new('ShaderNodeOutputMaterial')      
+        tmap = tree.nodes.new('ShaderNodeOutputMaterial')
         bpy.context.object.active_material.node_tree.nodes.active=tmap
         for inp in tmap.inputs:
             tmap.inputs.remove(inp)
@@ -1249,7 +1259,7 @@ class PovrayPatternNode(bpy.types.Operator):
     def invoke(self, context, event):
         context.window_manager.modal_handler_add(self)
         return {'RUNNING_MODAL'}
-        
+
 class UpdatePreviewMaterial(bpy.types.Operator):
     '''Operator update preview material'''
     bl_idname = "node.updatepreview"
@@ -1294,6 +1304,5 @@ class UpdatePreviewKey(bpy.types.Operator):
         mapstr = "Node Editor"
         map = conf.keymaps[mapstr]
         map.keymap_items.new("node.updatepreview",type='RIGHTMOUSE',value="PRESS")
-        return {'FINISHED'}        
-        
-        
+        return {'FINISHED'}
+
