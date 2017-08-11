@@ -21,32 +21,32 @@
 bl_info = {
     "name": "Clay Render",
     "author": "Fabio Russo <ruesp83@libero.it>",
-    "version": (1, 2),
+    "version": (1, 2, 1),
     "blender": (2, 56, 0),
     "location": "Render > Clay Render",
-    "description": "This script, applies a temporary material to all objects"\
-        " of the scene.",
-    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
-        "Scripts/Clay_Render",
-    "tracker_url": "https://developer.blender.org/maniphest/task/edit/form/2/",
+    "description": "This script, applies a temporary material to all objects"
+                   " of the scene",
+    "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
+                "Scripts/Clay_Render",
     "category": "Render"}
 
 import bpy
+from bpy.types import Operator
 from bpy.props import BoolProperty
 
 
 def Create_Mat():
-    id = bpy.data.materials.new("Clay_Render")
-    #diffuse
-    id.diffuse_shader = "OREN_NAYAR"
-    id.diffuse_color = 0.800, 0.741, 0.536
-    id.diffuse_intensity = 1
-    id.roughness = 0.909
-    #specular
-    id.specular_shader = "COOKTORR"
-    id.specular_color = 1, 1, 1
-    id.specular_hardness = 10
-    id.specular_intensity = 0.115
+    mat_id = bpy.data.materials.new("Clay_Render")
+    # diffuse
+    mat_id.diffuse_shader = "OREN_NAYAR"
+    mat_id.diffuse_color = 0.800, 0.741, 0.536
+    mat_id.diffuse_intensity = 1
+    mat_id.roughness = 0.909
+    # specular
+    mat_id.specular_shader = "COOKTORR"
+    mat_id.specular_color = 1, 1, 1
+    mat_id.specular_hardness = 10
+    mat_id.specular_intensity = 0.115
 
 
 def Alternative_Clay(self, msg):
@@ -58,19 +58,19 @@ def Alternative_Clay(self, msg):
             Find = True
             AM = mat
             i += 1
-
         else:
             if (mat.Mat_Clay):
                 i += 1
 
     if msg is True:
         if (i == 1):
-            self.report({'INFO'}, "The material \"" + AM.name + "\" is set "\
-                "as Clay!")
+            self.report({'INFO'},
+                        "The material \"" + AM.name + "\" is set as Clay")
         else:
             if (i > 1):
-                self.report({'WARNING'}, "Two or more materials are set as "\
-                    "Clay. \"" + AM.name + "\" will be used!")
+                self.report({'WARNING'},
+                            "Two or more materials are set as "
+                            "Clay. \"" + AM.name + "\" will be used")
 
     return AM
 
@@ -84,14 +84,15 @@ def Exist_Mat():
     if bpy.data.materials.get("Clay_Render"):
         return True
 
-    else:
-        return False
+    return False
 
 
-class ClayPinned(bpy.types.Operator):
+class ClayPinned(Operator):
     bl_idname = "render.clay_pinned"
     bl_label = "Clay Pinned"
-    bl_description = "Clay Material Stores"
+    bl_description = ("Keep current Clay Material settings if Clay Render is disabled\n"
+                      "The Material will not have a Fake User set, so it'll be lost\n"
+                      "on quitting Blender or loading / reloading a blend file")
 
     def execute(self, context):
         if bpy.types.Scene.Clay_Pinned:
@@ -101,21 +102,20 @@ class ClayPinned(bpy.types.Operator):
                 if bpy.data.materials[0].users == 0:
                     bpy.data.materials.remove(Get_Mat())
                     bpy.types.Scene.Clay_Pinned = True
-
             else:
                 bpy.types.Scene.Clay_Pinned = True
 
         return {'FINISHED'}
 
 
-class CheckClay(bpy.types.Operator):
+class CheckClay(Operator):
     bl_idname = "render.clay"
     bl_label = "Clay Render"
-    bl_description = "Use Clay Render"
+    bl_description = "Enable Clay render override"
 
     def execute(self, context):
         if bpy.types.Scene.Clay:
-            #Clay Attivato
+            # Clay activated
             ac = Alternative_Clay(self, True)
             if ac is None:
                 if not Exist_Mat():
@@ -142,63 +142,58 @@ def draw_clay_render(self, context):
     ok_clay = not bpy.types.Scene.Clay
     pin = not bpy.types.Scene.Clay_Pinned
 
-    rnl = context.scene.render.layers.active
-    split = self.layout.split()
-    col = split.column()
+    box = self.layout.box()
+    row = box.row(align=True)
+    row.operator(CheckClay.bl_idname, emboss=True, icon='RADIOBUT_ON' if
+                 ok_clay else 'RADIOBUT_OFF')
 
-    col.operator(CheckClay.bl_idname, emboss=False, icon='CHECKBOX_HLT'\
-        if ok_clay else 'CHECKBOX_DEHLT')
-    col = split.column()
     if Alternative_Clay(self, False) is None:
         if Exist_Mat():
-            if (bpy.data.materials[0].users == 0) or (ok_clay):
-                row = col.row(align=True)
+            if (bpy.data.materials[0].users == 0) or ok_clay:
                 im = Get_Mat()
                 row.prop(im, "diffuse_color", text="")
-                row.operator(ClayPinned.bl_idname, text="", icon='PINNED'\
-                    if pin else 'UNPINNED')
-
-                if ok_clay:
-                    row.active = True
-
-                else:
-                    row.active = False
-
+                row.operator(ClayPinned.bl_idname, text="", icon='PINNED' if
+                             pin else 'UNPINNED')
+                row.active = ok_clay
             else:
-                col.label('Clay Material applied to an object')
-
+                spacer_box = row.box()
+                sub_row = spacer_box.row(align=True)
+                sub_row.scale_y = 0.5
+                sub_row.label(text="Clay Material applied to an Object", icon="INFO")
     else:
-        col.label('Custom Material Clay')
-
-    self.layout.separator()
+        spacer_box = row.box()
+        sub_row = spacer_box.row(align=True)
+        sub_row.scale_y = 0.5
+        sub_row.label(text="Custom Material Clay", icon="INFO")
 
 
 def draw_clay_options(self, context):
     cm = context.material
     layout = self.layout
-    layout.prop(cm, "Mat_Clay", text="Clay")
+    layout.prop(cm, "Mat_Clay", text="Use as Clay", icon="META_EMPTY", toggle=True)
 
 
 def draw_clay_warning(self, context):
     if not bpy.types.Scene.Clay:
-        self.layout.label("Render Clay Enabled", "ERROR")
+        self.layout.label(text="Clay Render Enabled", icon="INFO")
 
 
 def register():
     bpy.types.Scene.Clay = BoolProperty(
-    name='Clay Render',
-    description='Use Clay Render',
-    default=False)
-
+            name="Clay Render",
+            description="Use Clay Render",
+            default=False
+            )
     bpy.types.Scene.Clay_Pinned = BoolProperty(
-    name='Clay Pinned',
-    description='Clay Material Stores',
-    default=False)
-
-    bpy.types.Material.Mat_Clay = bpy.props.BoolProperty(
-        name='Use as Clay',
-        description='Use as Clay',
-        default=False)
+            name="Clay Pinned",
+            description="Keep Clay Material",
+            default=False
+            )
+    bpy.types.Material.Mat_Clay = BoolProperty(
+            name="Use as Clay",
+            description="Use as Clay Material render override",
+            default=False
+            )
 
     bpy.utils.register_class(ClayPinned)
     bpy.utils.register_class(CheckClay)
@@ -211,14 +206,15 @@ def unregister():
     bpy.context.scene.render.layers.active.material_override = None
     if (Exist_Mat()) and (bpy.data.materials[0].users == 0):
         bpy.data.materials.remove(Get_Mat())
-    del bpy.types.Scene.Clay
-    del bpy.types.Scene.Clay_Pinned
-    del bpy.types.Material.Mat_Clay
     bpy.utils.unregister_class(ClayPinned)
     bpy.utils.unregister_class(CheckClay)
     bpy.types.RENDER_PT_render.remove(draw_clay_render)
     bpy.types.MATERIAL_PT_options.remove(draw_clay_options)
     bpy.types.INFO_HT_header.remove(draw_clay_warning)
+
+    del bpy.types.Scene.Clay
+    del bpy.types.Scene.Clay_Pinned
+    del bpy.types.Material.Mat_Clay
 
 
 if __name__ == "__main__":
