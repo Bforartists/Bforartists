@@ -21,8 +21,8 @@
 bl_info = {
     "name": "Hotkey: 'Ctrl Space'",
     "description": "Extended Manipulator Menu",
-    #    "author": "pitiwazou, meta-androcto",
-    #    "version": (0, 1, 0),
+    "author": "pitiwazou, meta-androcto",
+    "version": (0, 1, 1),
     "blender": (2, 77, 0),
     "location": "3D View",
     "warning": "",
@@ -44,7 +44,7 @@ class ManipTranslate(Operator):
     bl_description = " Show Translate"
 
     def execute(self, context):
-        if context.space_data.show_manipulator == False:
+        if context.space_data.show_manipulator is False:
             context.space_data.show_manipulator = True
             context.space_data.transform_manipulators = {'TRANSLATE'}
         if context.space_data.transform_manipulators != {'TRANSLATE'}:
@@ -59,7 +59,7 @@ class ManipRotate(Operator):
     bl_description = " Show Rotate"
 
     def execute(self, context):
-        if context.space_data.show_manipulator == False:
+        if context.space_data.show_manipulator is False:
             context.space_data.show_manipulator = True
             context.space_data.transform_manipulators = {'ROTATE'}
         if context.space_data.transform_manipulators != {'ROTATE'}:
@@ -74,7 +74,7 @@ class ManipScale(Operator):
     bl_description = " Show Scale"
 
     def execute(self, context):
-        if context.space_data.show_manipulator == False:
+        if context.space_data.show_manipulator is False:
             context.space_data.show_manipulator = True
             context.space_data.transform_manipulators = {'SCALE'}
         if context.space_data.transform_manipulators != {'SCALE'}:
@@ -89,7 +89,7 @@ class TranslateRotate(Operator):
     bl_description = " Show Translate/Rotate"
 
     def execute(self, context):
-        if context.space_data.show_manipulator == False:
+        if context.space_data.show_manipulator is False:
             context.space_data.show_manipulator = True
             context.space_data.transform_manipulators = {'TRANSLATE', 'ROTATE'}
         if context.space_data.transform_manipulators != {'TRANSLATE', 'ROTATE'}:
@@ -104,7 +104,7 @@ class TranslateScale(Operator):
     bl_description = " Show Translate/Scale"
 
     def execute(self, context):
-        if context.space_data.show_manipulator == False:
+        if context.space_data.show_manipulator is False:
             context.space_data.show_manipulator = True
             context.space_data.transform_manipulators = {'TRANSLATE', 'SCALE'}
         if context.space_data.transform_manipulators != {'TRANSLATE', 'SCALE'}:
@@ -119,7 +119,7 @@ class RotateScale(Operator):
     bl_description = " Show Rotate/Scale"
 
     def execute(self, context):
-        if context.space_data.show_manipulator == False:
+        if context.space_data.show_manipulator is False:
             context.space_data.show_manipulator = True
             context.space_data.transform_manipulators = {'ROTATE', 'SCALE'}
         if context.space_data.transform_manipulators != {'ROTATE', 'SCALE'}:
@@ -134,7 +134,7 @@ class TranslateRotateScale(Operator):
     bl_description = "Show All"
 
     def execute(self, context):
-        if context.space_data.show_manipulator == False:
+        if context.space_data.show_manipulator is False:
             context.space_data.show_manipulator = True
             context.space_data.transform_manipulators = {'TRANSLATE', 'ROTATE', 'SCALE'}
         if context.space_data.transform_manipulators != {'TRANSLATE', 'ROTATE', 'SCALE'}:
@@ -150,17 +150,16 @@ class WManupulators(Operator):
 
     def execute(self, context):
 
-        if context.space_data.show_manipulator == True:
+        if context.space_data.show_manipulator is True:
             context.space_data.show_manipulator = False
 
-        elif context.space_data.show_manipulator == False:
+        elif context.space_data.show_manipulator is False:
             context.space_data.show_manipulator = True
 
         return {'FINISHED'}
 
+
 # Pie Manipulators - Ctrl + Space
-
-
 class PieManipulator(Menu):
     bl_idname = "pie.manipulator"
     bl_label = "Pie Manipulator"
@@ -185,7 +184,6 @@ class PieManipulator(Menu):
         # 3 - BOTTOM - RIGHT
         pie.operator("manip.scale", text="Scale", icon='MAN_SCALE')
 
-# Pie Snapping - Shift + Tab
 
 classes = (
     PieManipulator,
@@ -205,29 +203,27 @@ addon_keymaps = []
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
-    wm = bpy.context.window_manager
 
+    wm = bpy.context.window_manager
     if wm.keyconfigs.addon:
         # Manipulators
         km = wm.keyconfigs.addon.keymaps.new(name='3D View Generic', space_type='VIEW_3D')
         kmi = km.keymap_items.new('wm.call_menu_pie', 'SPACE', 'PRESS', ctrl=True)
         kmi.properties.name = "pie.manipulator"
-#        kmi.active = True
         addon_keymaps.append((km, kmi))
 
 
 def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
-    wm = bpy.context.window_manager
 
+    wm = bpy.context.window_manager
     kc = wm.keyconfigs.addon
     if kc:
-        km = kc.keymaps['3D View Generic']
-        for kmi in km.keymap_items:
-            if kmi.idname == 'wm.call_menu_pie':
-                if kmi.properties.name == "pie.manipulator":
-                    km.keymap_items.remove(kmi)
+        for km, kmi in addon_keymaps:
+            km.keymap_items.remove(kmi)
+    addon_keymaps.clear()
+
 
 if __name__ == "__main__":
     register()

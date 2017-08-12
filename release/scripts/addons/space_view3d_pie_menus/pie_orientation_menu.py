@@ -22,8 +22,8 @@
 
 bl_info = {
     "name": "Hotkey: 'Alt + Spacebar'",
-    #    "author": "Italic_",
-    #    "version": (1, 1, 0),
+    "author": "Italic_",
+    "version": (1, 1, 0),
     "blender": (2, 77, 0),
     "description": "Set Transform Orientations",
     "location": "3D View",
@@ -38,12 +38,13 @@ from bpy.props import (
         StringProperty,
         )
 
+
 class OrientPoll(Operator):
     bl_idname = "pie.orientation"
     bl_label = "Orientation Poll"
     bl_options = {'INTERNAL'}
 
-    space = bpy.props.StringProperty()
+    space = StringProperty()
 
     @classmethod
     def poll(cls, context):
@@ -89,13 +90,11 @@ def register():
         bpy.utils.register_class(cls)
 
     wm = bpy.context.window_manager
-
     if wm.keyconfigs.addon:
         # Manipulators
         km = wm.keyconfigs.addon.keymaps.new(name='3D View Generic', space_type='VIEW_3D')
         kmi = km.keymap_items.new('wm.call_menu_pie', 'SPACE', 'PRESS', alt=True)
         kmi.properties.name = "pie.orient"
-#        kmi.active = True
         addon_keymaps.append((km, kmi))
 
 
@@ -106,11 +105,9 @@ def unregister():
     wm = bpy.context.window_manager
     kc = wm.keyconfigs.addon
     if kc:
-        km = kc.keymaps['3D View Generic']
-        for kmi in km.keymap_items:
-            if kmi.idname == 'wm.call_menu_pie':
-                if kmi.properties.name == "pie.orient":
-                    km.keymap_items.remove(kmi)
+        for km, kmi in addon_keymaps:
+            km.keymap_items.remove(kmi)
+    addon_keymaps.clear()
 
 
 if __name__ == "__main__":

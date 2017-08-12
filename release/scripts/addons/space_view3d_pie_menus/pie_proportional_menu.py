@@ -21,8 +21,8 @@
 bl_info = {
     "name": "Hotkey: 'O'",
     "description": "Proportional Object/Edit Tools",
-    #    "author": "pitiwazou, meta-androcto",
-    #    "version": (0, 1, 0),
+    "author": "pitiwazou, meta-androcto",
+    "version": (0, 1, 1),
     "blender": (2, 77, 0),
     "location": "3D View Object & Edit modes",
     "warning": "",
@@ -36,11 +36,8 @@ from bpy.types import (
         Operator,
         )
 
-#####################################
-#      Proportional Edit Object     #
-#####################################
 
-
+# Proportional Edit Object
 class ProportionalEditObj(Operator):
     bl_idname = "proportional_obj.active"
     bl_label = "Proportional Edit Object"
@@ -49,10 +46,10 @@ class ProportionalEditObj(Operator):
     def execute(self, context):
         ts = context.tool_settings
 
-        if ts.use_proportional_edit_objects == True:
+        if ts.use_proportional_edit_objects is True:
             ts.use_proportional_edit_objects = False
 
-        elif ts.use_proportional_edit_objects == False:
+        elif ts.use_proportional_edit_objects is False:
             ts.use_proportional_edit_objects = True
 
         return {'FINISHED'}
@@ -65,7 +62,7 @@ class ProportionalSmoothObj(Operator):
 
     def execute(self, context):
         ts = context.tool_settings
-        if ts.use_proportional_edit_objects == False:
+        if ts.use_proportional_edit_objects is False:
             ts.use_proportional_edit_objects = True
             ts.proportional_edit_falloff = 'SMOOTH'
 
@@ -81,7 +78,7 @@ class ProportionalSphereObj(Operator):
 
     def execute(self, context):
         ts = context.tool_settings
-        if ts.use_proportional_edit_objects == False:
+        if ts.use_proportional_edit_objects is False:
             ts.use_proportional_edit_objects = True
             ts.proportional_edit_falloff = 'SPHERE'
 
@@ -97,7 +94,7 @@ class ProportionalRootObj(Operator):
 
     def execute(self, context):
         ts = context.tool_settings
-        if ts.use_proportional_edit_objects == False:
+        if ts.use_proportional_edit_objects is False:
             ts.use_proportional_edit_objects = True
             ts.proportional_edit_falloff = 'ROOT'
 
@@ -113,7 +110,7 @@ class ProportionalSharpObj(Operator):
 
     def execute(self, context):
         ts = context.tool_settings
-        if ts.use_proportional_edit_objects == False:
+        if ts.use_proportional_edit_objects is False:
             ts.use_proportional_edit_objects = True
             ts.proportional_edit_falloff = 'SHARP'
 
@@ -129,7 +126,7 @@ class ProportionalLinearObj(Operator):
 
     def execute(self, context):
         ts = context.tool_settings
-        if ts.use_proportional_edit_objects == False:
+        if ts.use_proportional_edit_objects is False:
             ts.use_proportional_edit_objects = True
             ts.proportional_edit_falloff = 'LINEAR'
 
@@ -145,7 +142,7 @@ class ProportionalConstantObj(Operator):
 
     def execute(self, context):
         ts = context.tool_settings
-        if ts.use_proportional_edit_objects == False:
+        if ts.use_proportional_edit_objects is False:
             ts.use_proportional_edit_objects = True
             ts.proportional_edit_falloff = 'CONSTANT'
 
@@ -161,7 +158,7 @@ class ProportionalRandomObj(Operator):
 
     def execute(self, context):
         ts = context.tool_settings
-        if ts.use_proportional_edit_objects == False:
+        if ts.use_proportional_edit_objects is False:
             ts.use_proportional_edit_objects = True
             ts.proportional_edit_falloff = 'RANDOM'
 
@@ -169,11 +166,8 @@ class ProportionalRandomObj(Operator):
             ts.proportional_edit_falloff = 'RANDOM'
         return {'FINISHED'}
 
-#######################################
-#     Proportional Edit Edit Mode     #
-#######################################
 
-
+# Proportional Edit Edit Mode
 class ProportionalEditEdt(Operator):
     bl_idname = "proportional_edt.active"
     bl_label = "Proportional Edit EditMode"
@@ -325,9 +319,8 @@ class ProportionalRandomEdt(Operator):
             ts.proportional_edit_falloff = 'RANDOM'
         return {'FINISHED'}
 
+
 # Pie ProportionalEditObj - O
-
-
 class PieProportionalObj(Menu):
     bl_idname = "pie.proportional_obj"
     bl_label = "Pie Proportional Obj"
@@ -352,9 +345,8 @@ class PieProportionalObj(Menu):
         # 3 - BOTTOM - RIGHT
         pie.operator("proportional_obj.random", text="Random", icon='RNDCURVE')
 
+
 # Pie ProportionalEditEdt - O
-
-
 class PieProportionalEdt(Menu):
     bl_idname = "pie.proportional_edt"
     bl_label = "Pie Proportional Edit"
@@ -379,9 +371,8 @@ class PieProportionalEdt(Menu):
         # 3 - BOTTOM - RIGHT
         pie.menu("pie.proportional_more", text="More", icon='LINCURVE')
 
+
 # Pie ProportionalEditEdt - O
-
-
 class PieProportionalMore(Menu):
     bl_idname = "pie.proportional_more"
     bl_label = "Pie Proportional More"
@@ -390,10 +381,10 @@ class PieProportionalMore(Menu):
         layout = self.layout
         pie = layout.menu_pie()
         box = pie.split().column()
-        row = box.row(align=True)
         box.operator("proportional_edt.linear", text="Linear", icon='LINCURVE')
         box.operator("proportional_edt.sharp", text="Sharp", icon='SHARPCURVE')
         box.operator("proportional_edt.random", text="Random", icon='RNDCURVE')
+
 
 classes = (
     ProportionalEditObj,
@@ -425,44 +416,33 @@ addon_keymaps = []
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
-    wm = bpy.context.window_manager
 
+    wm = bpy.context.window_manager
     if wm.keyconfigs.addon:
         # ProportionalEditObj
         km = wm.keyconfigs.addon.keymaps.new(name='Object Mode')
         kmi = km.keymap_items.new('wm.call_menu_pie', 'O', 'PRESS')
         kmi.properties.name = "pie.proportional_obj"
-#        kmi.active = True
         addon_keymaps.append((km, kmi))
 
         # ProportionalEditEdt
         km = wm.keyconfigs.addon.keymaps.new(name='Mesh')
         kmi = km.keymap_items.new('wm.call_menu_pie', 'O', 'PRESS')
         kmi.properties.name = "pie.proportional_edt"
-#        kmi.active = True
         addon_keymaps.append((km, kmi))
 
 
 def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
+
     wm = bpy.context.window_manager
-
     kc = wm.keyconfigs.addon
     if kc:
-        km = kc.keymaps['Object Mode']
-        for kmi in km.keymap_items:
-            if kmi.idname == 'wm.call_menu_pie':
-                if kmi.properties.name == "pie.proportional_obj":
-                    km.keymap_items.remove(kmi)
+        for km, kmi in addon_keymaps:
+            km.keymap_items.remove(kmi)
+    addon_keymaps.clear()
 
-    kc = wm.keyconfigs.addon
-    if kc:
-        km = kc.keymaps['Mesh']
-        for kmi in km.keymap_items:
-            if kmi.idname == 'wm.call_menu_pie':
-                if kmi.properties.name == "pie.proportional_edt":
-                    km.keymap_items.remove(kmi)
 
 if __name__ == "__main__":
     register()
