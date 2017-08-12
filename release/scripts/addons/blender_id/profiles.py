@@ -21,6 +21,8 @@
 import os
 import bpy
 
+from . import communication
+
 # Set/created upon register.
 profiles_path = ''
 profiles_file = ''
@@ -44,23 +46,32 @@ class BlenderIdProfile(metaclass=_BIPMeta):
     user_id = ''
     username = ''
     token = ''
+    expires = ''
     subclients = {}
+
+    @classmethod
+    def reset(cls):
+        cls.user_id = ''
+        cls.username = ''
+        cls.token = ''
+        cls.expires = ''
+        cls.subclients = {}
 
     @classmethod
     def read_json(cls):
         """Updates the active profile information from the JSON file."""
 
+        cls.reset()
+
         active_profile = get_active_profile()
-        if active_profile:
-            cls.user_id = active_profile['user_id']
-            cls.username = active_profile['username']
-            cls.token = active_profile['token']
-            cls.subclients = active_profile.get('subclients', {})
-        else:
-            cls.user_id = ''
-            cls.username = ''
-            cls.token = ''
-            cls.subclients = {}  # mapping from subclient-ID to user info dict.
+        if not active_profile:
+            return
+
+        for key, value in active_profile.items():
+            if hasattr(cls, key):
+                setattr(cls, key, value)
+            else:
+                print('Skipping key %r from profile JSON' % key)
 
     @classmethod
     def save_json(cls, make_active_profile=False):
@@ -70,6 +81,7 @@ class BlenderIdProfile(metaclass=_BIPMeta):
         jsonfile['profiles'][cls.user_id] = {
             'username': cls.username,
             'token': cls.token,
+            'expires': cls.expires,
             'subclients': cls.subclients,
         }
 
@@ -184,11 +196,13 @@ def save_profiles_data(all_profiles: dict):
         json.dump(all_profiles, outfile, sort_keys=True)
 
 
-def save_as_active_profile(user_id, token, username, subclients):
+def save_as_active_profile(auth_result: communication.AuthResult, username, subclients):
     """Saves the given info as the active profile."""
 
-    BlenderIdProfile.user_id = user_id
-    BlenderIdProfile.token = token
+    BlenderIdProfile.user_id = auth_result.user_id
+    BlenderIdProfile.token = auth_result.token
+    BlenderIdProfile.expires = auth_result.expires
+
     BlenderIdProfile.username = username
     BlenderIdProfile.subclients = subclients
 

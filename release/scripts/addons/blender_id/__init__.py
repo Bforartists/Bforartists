@@ -21,7 +21,7 @@
 bl_info = {
     'name': 'Blender ID authentication',
     'author': 'Francesco Siddi, Inês Almeida and Sybren A. Stüvel',
-    'version': (1, 2, 0),
+    'version': (1, 3, 0),
     'blender': (2, 77, 0),
     'location': 'Add-on preferences',
     'description':
@@ -31,6 +31,9 @@ bl_info = {
     'category': 'System',
     'support': 'OFFICIAL',
 }
+
+import datetime
+import typing
 
 import bpy
 from bpy.types import AddonPreferences, Operator, PropertyGroup
@@ -123,6 +126,53 @@ def get_subclient_user_id(subclient_id: str) -> str:
     return BlenderIdProfile.subclients[subclient_id]['subclient_user_id']
 
 
+def validate_token() -> typing.Optional[str]:
+    """Validates the current user's token with Blender ID.
+
+    Also refreshes the stored token expiry time.
+
+    :returns: None if everything was ok, otherwise returns an error message.
+    """
+
+    expires, err = communication.blender_id_server_validate(token=BlenderIdProfile.token)
+    if err is not None:
+        return err
+
+    BlenderIdProfile.expires = expires
+    BlenderIdProfile.save_json()
+
+    return None
+
+
+def token_expires() -> typing.Optional[datetime.datetime]:
+    """Returns the token expiry timestamp.
+
+    Returns None if the token expiry is unknown. This can happen when
+    the last login/validation was performed using a version of this
+    add-on that was older than 1.3.
+    """
+
+    exp = BlenderIdProfile.expires
+    if not exp:
+        return None
+
+    # Try parsing as different formats. A new Blender ID is coming,
+    # which may change the format in which timestamps are sent.
+    formats = [
+        '%Y-%m-%dT%H:%M:%S.%fZ', # ISO 8601 with Z-suffix, used by new Blender ID
+        '%a, %d %b %Y %H:%M:%S GMT', # RFC 1123, used by current Blender ID
+    ]
+    for fmt in formats:
+        try:
+            return datetime.datetime.strptime(exp, fmt)
+        except ValueError:
+            # Just use the next format string and try again.
+            pass
+
+    # Unable to parse, may as well not be there then.
+    return None
+
+
 class BlenderIdPreferences(AddonPreferences):
     bl_idname = __name__
 
@@ -165,11 +215,41 @@ class BlenderIdPreferences(AddonPreferences):
 
         active_profile = get_active_profile()
         if active_profile:
-            text = 'You are logged in as {0}'.format(active_profile.username)
-            layout.label(text=text, icon='WORLD_DATA')
+            expiry = token_expires()
+            now = datetime.datetime.utcnow()
+            show_validate_button = bpy.app.debug
+
+            if expiry is None:
+                layout.label(text='We do not know when your token expires, please validate it.')
+                show_validate_button = True
+            elif now >= expiry:
+                layout.label(text='Your login has expired! Log out and log in again to refresh it.',
+                             icon='ERROR')
+            else:
+                time_left = expiry - now
+                if time_left.days > 14:
+                    exp_str = 'on {:%Y-%m-%d}'.format(expiry)
+                elif time_left.days > 1:
+                    exp_str = 'in %i days.' % time_left.days
+                elif time_left.seconds >= 7200:
+                    exp_str = 'in %i hours.' % round(time_left.seconds / 3600)
+                elif time_left.seconds >= 120:
+                    exp_str = 'in %i minutes.' % round(time_left.seconds / 60)
+                else:
+                    exp_str = 'within seconds'
+
+                if time_left.days < 14:
+                    layout.label('You are logged in as %s.' % active_profile.username,
+                                 icon='WORLD_DATA')
+                    layout.label(text='Your token will expire %s. Please log out and log in again '
+                                 'to refresh it.' % exp_str, icon='PREVIEW_RANGE')
+                else:
+                    layout.label('You are logged in as %s. Your authentication token expires %s.'
+                                 % (active_profile.username, exp_str), icon='WORLD_DATA')
+
             row = layout.row()
             row.operator('blender_id.logout')
-            if bpy.app.debug:
+            if show_validate_button:
                 row.operator('blender_id.validate')
         else:
             layout.prop(self, 'blender_id_username')
@@ -196,12 +276,12 @@ class BlenderIdLogin(BlenderIdMixin, Operator):
 
         addon_prefs = self.addon_prefs(context)
 
-        resp = communication.blender_id_server_authenticate(
+        auth_result = communication.blender_id_server_authenticate(
             username=addon_prefs.blender_id_username,
             password=addon_prefs.blender_id_password
         )
 
-        if resp['status'] == 'success':
+        if auth_result.success:
             # Prevent saving the password in user preferences. Overwrite the password with a
             # random string, as just setting to '' might only replace the first byte with 0.
             pwlen = len(addon_prefs.blender_id_password)
@@ -211,14 +291,13 @@ class BlenderIdLogin(BlenderIdMixin, Operator):
             addon_prefs.blender_id_password = ''
 
             profiles.save_as_active_profile(
-                resp['user_id'],
-                resp['token'],
+                auth_result,
                 addon_prefs.blender_id_username,
                 {}
             )
             addon_prefs.ok_message = 'Logged in'
         else:
-            addon_prefs.error_message = resp['error_message']
+            addon_prefs.error_message = auth_result.error_message
             if BlenderIdProfile.user_id:
                 profiles.logout(BlenderIdProfile.user_id)
 
@@ -234,11 +313,11 @@ class BlenderIdValidate(BlenderIdMixin, Operator):
     def execute(self, context):
         addon_prefs = self.addon_prefs(context)
 
-        resp = communication.blender_id_server_validate(token=BlenderIdProfile.token)
-        if resp is None:
+        err = validate_token()
+        if err is None:
             addon_prefs.ok_message = 'Authentication token is valid.'
         else:
-            addon_prefs.error_message = '%s; you probably want to log out and log in again.' % resp
+            addon_prefs.error_message = '%s; you probably want to log out and log in again.' % err
 
         BlenderIdProfile.read_json()
 
@@ -250,12 +329,15 @@ class BlenderIdLogout(BlenderIdMixin, Operator):
     bl_label = 'Logout'
 
     def execute(self, context):
+        addon_prefs = self.addon_prefs(context)
+
         communication.blender_id_server_logout(BlenderIdProfile.user_id,
                                                BlenderIdProfile.token)
 
         profiles.logout(BlenderIdProfile.user_id)
         BlenderIdProfile.read_json()
 
+        addon_prefs.ok_message = 'You have been logged out.'
         return {'FINISHED'}
 
 
