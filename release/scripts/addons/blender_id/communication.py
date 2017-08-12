@@ -19,10 +19,22 @@
 # <pep8 compliant>
 
 import functools
+import typing
 
 
 class BlenderIdCommError(RuntimeError):
     """Raised when there was an error communicating with Blender ID"""
+
+
+class AuthResult:
+    def __init__(self, *, success: bool,
+                 user_id: str=None, token: str=None, expires: str=None,
+                 error_message: typing.Any=None):  # when success=False
+        self.success = success
+        self.user_id = user_id
+        self.token = token
+        self.error_message = str(error_message)
+        self.expires = expires
 
 
 @functools.lru_cache(maxsize=None)
@@ -46,7 +58,7 @@ def blender_id_endpoint(endpoint_path=None):
     return urllib.parse.urljoin(base_url, endpoint_path)
 
 
-def blender_id_server_authenticate(username, password):
+def blender_id_server_authenticate(username, password) -> AuthResult:
     """Authenticate the user with the server with a single transaction
     containing username and password (must happen via HTTPS).
 
@@ -73,45 +85,33 @@ def blender_id_server_authenticate(username, password):
             requests.exceptions.HTTPError,
             requests.exceptions.ConnectionError) as e:
         print('Exception POSTing to {}: {}'.format(url, e))
-        return dict(
-            status='fail',
-            user_id=None,
-            token=None,
-            error_message=str(e)
-        )
-
-    user_id = None
-    token = None
-    error_message = None
+        return AuthResult(status, error_message=e)
 
     if r.status_code == 200:
         resp = r.json()
         status = resp['status']
         if status == 'success':
-            user_id = str(resp['data']['user_id'])
-            # We just use the access token for now.
-            token = resp['data']['oauth_token']['access_token']
-        elif status == 'fail':
-            error_message = 'Username and/or password is incorrect'
-    else:
-        status = 'fail'
-        error_message = format('There was a problem communicating with'
-                               ' the server. Error code is: %s' % r.status_code)
+            return AuthResult(success=True,
+                user_id=str(resp['data']['user_id']),
+                token=resp['data']['oauth_token']['access_token'],
+                expires=resp['data']['oauth_token']['expires'],
+            )
+        if status == 'fail':
+            return AuthResult(success=False, error_message='Username and/or password is incorrect')
 
-    return dict(
-        status=status,
-        user_id=user_id,
-        token=token,
-        error_message=error_message
-    )
+    return AuthResult(success=False,
+                      error_message='There was a problem communicating with'
+                                    ' the server. Error code is: %s' % r.status_code)
 
 
-def blender_id_server_validate(token):
+def blender_id_server_validate(token) -> typing.Tuple[typing.Optional[str], typing.Optional[str]]:
     """Validate the auth token with the server.
 
     @param token: the authentication token
     @type token: str
-    @returns: None if the token is valid, or an error message when it's invalid.
+    @returns: tuple (expiry, error).
+        The expiry is the expiry date of the token if it is valid, else None.
+        The error is None if the token is valid, or an error message when it's invalid.
     """
 
     import requests
@@ -121,12 +121,13 @@ def blender_id_server_validate(token):
         r = requests.post(blender_id_endpoint('u/validate_token'),
                           data={'token': token}, verify=True)
     except requests.exceptions.RequestException as e:
-        return str(e)
+        return (str(e), None)
 
-    if r.status_code == 200:
-        return None
+    if r.status_code != 200:
+        return (None, 'Authentication token invalid')
 
-    return 'Authentication token invalid'
+    response = r.json()
+    return (response['token_expires'], None)
 
 
 def blender_id_server_logout(user_id, token):
