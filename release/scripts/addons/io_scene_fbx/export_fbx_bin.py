@@ -2176,7 +2176,7 @@ def fbx_data_from_scene(scene, settings):
 
         if settings.use_mesh_modifiers or ob.type in BLENDER_OTHER_OBJECT_TYPES or is_ob_material:
             # We cannot use default mesh in that case, or material would not be the right ones...
-            use_org_data = not is_ob_material
+            use_org_data = not (is_ob_material or ob.type in BLENDER_OTHER_OBJECT_TYPES)
             tmp_mods = []
             if use_org_data and ob.type == 'MESH':
                 # No need to create a new mesh in this case, if no modifier is active!
@@ -2673,15 +2673,16 @@ def fbx_header_elements(root, scene_data, time=None):
 
     props = elem_properties(global_settings)
     up_axis, front_axis, coord_axis = RIGHT_HAND_AXES[scene_data.settings.to_axes]
-    # DO NOT take into account global scale here! That setting is applied to object transformations during export
-    # (in other words, this is pure blender-exporter feature, and has nothing to do with FBX data).
-    if scene_data.settings.apply_unit_scale:
-        # Unit scaling is applied to objects' scale, so our unit is effectively FBX one (centimeter).
-        scale_factor_org = 1.0
-        scale_factor = 1.0 / units_blender_to_fbx_factor(scene)
-    else:
-        scale_factor_org = units_blender_to_fbx_factor(scene)
-        scale_factor = scale_factor_org
+    #~ # DO NOT take into account global scale here! That setting is applied to object transformations during export
+    #~ # (in other words, this is pure blender-exporter feature, and has nothing to do with FBX data).
+    #~ if scene_data.settings.apply_unit_scale:
+        #~ # Unit scaling is applied to objects' scale, so our unit is effectively FBX one (centimeter).
+        #~ scale_factor_org = 1.0
+        #~ scale_factor = 1.0 / units_blender_to_fbx_factor(scene)
+    #~ else:
+        #~ scale_factor_org = units_blender_to_fbx_factor(scene)
+        #~ scale_factor = scale_factor_org
+    scale_factor = scale_factor_org = scene_data.settings.unit_scale
     elem_props_set(props, "p_integer", b"UpAxis", up_axis[0])
     elem_props_set(props, "p_integer", b"UpAxisSign", up_axis[1])
     elem_props_set(props, "p_integer", b"FrontAxis", front_axis[0])
@@ -2867,6 +2868,8 @@ def fbx_takes_elements(root, scene_data):
 def save_single(operator, scene, filepath="",
                 global_matrix=Matrix(),
                 apply_unit_scale=False,
+                global_scale=1.0,
+                apply_scale_options='FBX_SCALE_NONE',
                 axis_up="Z",
                 axis_forward="Y",
                 context_objects=None,
@@ -2905,8 +2908,19 @@ def save_single(operator, scene, filepath="",
     if 'OTHER' in object_types:
         object_types |= BLENDER_OTHER_OBJECT_TYPES
 
-    if apply_unit_scale:
-        global_matrix = global_matrix * Matrix.Scale(units_blender_to_fbx_factor(scene), 4)
+    # Default Blender unit is equivalent to meter, while FBX one is centimeter...
+    unit_scale = units_blender_to_fbx_factor(scene) if apply_unit_scale else 100.0
+    if apply_scale_options == 'FBX_SCALE_NONE':
+        global_matrix = Matrix.Scale(unit_scale * global_scale, 4) * global_matrix
+        unit_scale = 1.0
+    elif apply_scale_options == 'FBX_SCALE_UNITS':
+        global_matrix = Matrix.Scale(global_scale, 4) * global_matrix
+    elif apply_scale_options == 'FBX_SCALE_CUSTOM':
+        global_matrix = Matrix.Scale(unit_scale, 4) * global_matrix
+        unit_scale = global_scale
+    else: # if apply_scale_options == 'FBX_SCALE_ALL':
+        unit_scale = global_scale * unit_scale
+
     global_scale = global_matrix.median_scale
     global_matrix_inv = global_matrix.inverted()
     # For transforming mesh normals.
@@ -2941,7 +2955,7 @@ def save_single(operator, scene, filepath="",
     )
 
     settings = FBXExportSettings(
-        operator.report, (axis_up, axis_forward), global_matrix, global_scale, apply_unit_scale,
+        operator.report, (axis_up, axis_forward), global_matrix, global_scale, apply_unit_scale, unit_scale,
         bake_space_transform, global_matrix_inv, global_matrix_inv_transposed,
         context_objects, object_types, use_mesh_modifiers, use_mesh_modifiers_render,
         mesh_smooth_type, use_mesh_edges, use_tspace,
