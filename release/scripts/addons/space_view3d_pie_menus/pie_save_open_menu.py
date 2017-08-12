@@ -50,7 +50,7 @@ class PieSaveOpen(Menu):
         # 6 - RIGHT
         pie.menu("pie.link", text="Link", icon='LINK_BLEND')
         # 2 - BOTTOM
-        pie.menu("pie.fileio", text="Import/Export", icon='IMPORT')
+        pie.menu("pie.fileio", text="Import/Export Menu", icon='IMPORT')
         # 8 - TOP
         pie.operator("file.save_incremental", text="Incremental Save", icon='SAVE_COPY')
         # 7 - TOP - LEFT
@@ -60,7 +60,7 @@ class PieSaveOpen(Menu):
         # 1 - BOTTOM - LEFT
         pie.operator("wm.open_mainfile", text="Open file", icon='FILE_FOLDER')
         # 3 - BOTTOM - RIGHT
-        pie.menu("pie.recover", text="Recovery", icon='RECOVER_LAST')
+        pie.menu("pie.recover", text="Recovery Menu", icon='RECOVER_LAST')
 
 
 class pie_link(Menu):
@@ -71,7 +71,6 @@ class pie_link(Menu):
         layout = self.layout
         pie = layout.menu_pie()
         box = pie.split().column()
-        row = box.row(align=True)
         box.operator("wm.link", text="Link", icon='LINK_BLEND')
         box.operator("wm.append", text="Append", icon='APPEND_BLEND')
         box.menu("external.data", text="External Data", icon='EXTERNAL_DATA')
@@ -85,7 +84,6 @@ class pie_recover(Menu):
         layout = self.layout
         pie = layout.menu_pie()
         box = pie.split().column()
-        row = box.row(align=True)
         box.operator("wm.recover_auto_save", text="Recover Auto Save...", icon='RECOVER_AUTO')
         box.operator("wm.recover_last_session", text="Recover Last Session", icon='RECOVER_LAST')
         box.operator("wm.revert_mainfile", text="Revert", icon='FILE_REFRESH')
@@ -99,7 +97,6 @@ class pie_fileio(Menu):
         layout = self.layout
         pie = layout.menu_pie()
         box = pie.split().column()
-        row = box.row(align=True)
         box.menu("INFO_MT_file_import", icon='IMPORT')
         box.separator()
         box.menu("INFO_MT_file_export", icon='EXPORT')
@@ -128,7 +125,7 @@ class ExternalData(Menu):
 class FileIncrementalSave(Operator):
     bl_idname = "file.save_incremental"
     bl_label = "Save Incremental"
-    bl_description = "Save First!then Incremental, .blend will get _001 extension"
+    bl_description = "Save First! then Incremental, .blend will get _001 extension"
     bl_options = {"REGISTER"}
 
     @classmethod
@@ -163,7 +160,8 @@ class FileIncrementalSave(Operator):
         try:
             bpy.ops.wm.save_as_mainfile(filepath=output)
         except:
-            self.report({'WARNING'}, "File could not be saved. Check the System Console for errors")
+            self.report({'WARNING'},
+                        "File could not be saved. Check the System Console for errors")
             return {'CANCELLED'}
 
         self.report(
@@ -189,29 +187,27 @@ addon_keymaps = []
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
-    wm = bpy.context.window_manager
 
+    wm = bpy.context.window_manager
     if wm.keyconfigs.addon:
         # Save/Open/...
         km = wm.keyconfigs.addon.keymaps.new(name='Window')
         kmi = km.keymap_items.new('wm.call_menu_pie', 'S', 'PRESS', ctrl=True)
         kmi.properties.name = "pie.saveopen"
-#        kmi.active = True
         addon_keymaps.append((km, kmi))
 
 
 def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
-    wm = bpy.context.window_manager
 
+    wm = bpy.context.window_manager
     kc = wm.keyconfigs.addon
     if kc:
-        km = kc.keymaps['Window']
-        for kmi in km.keymap_items:
-            if kmi.idname == 'wm.call_menu_pie':
-                if kmi.properties.name == "pie.saveopen":
-                    km.keymap_items.remove(kmi)
+        for km, kmi in addon_keymaps:
+            km.keymap_items.remove(kmi)
+    addon_keymaps.clear()
+
 
 if __name__ == "__main__":
     register()

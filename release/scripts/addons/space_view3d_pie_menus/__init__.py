@@ -18,20 +18,6 @@
 
 # <pep8 compliant>
 
-bl_info = {
-    "name": "3D Viewport Pie Menus",
-    "author": "meta-androcto, pitiwazou, chromoly, italic",
-    "version": (1, 1, 3),
-    "blender": (2, 7, 7),
-    "description": "Individual Pie Menu Activation List",
-    "location": "Addons Preferences",
-    "warning": "",
-    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
-    "Scripts/3D_interaction/viewport_pies",
-    "tracker_url": "https://developer.blender.org/maniphest/task/edit/form/2/",
-    "category": "Pie Menu"
-    }
-
 
 import bpy
 from bpy.props import (
@@ -43,11 +29,26 @@ from bpy.types import (
         AddonPreferences,
         )
 
+
+bl_info = {
+    "name": "3D Viewport Pie Menus",
+    "author": "meta-androcto, pitiwazou, chromoly, italic",
+    "version": (1, 1, 6),
+    "blender": (2, 7, 7),
+    "description": "Individual Pie Menu Activation List",
+    "location": "Addons Preferences",
+    "warning": "",
+    "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
+                "Scripts/3D_interaction/viewport_pies",
+    "category": "Pie Menu"
+    }
+
 sub_modules_names = (
     "pie_modes_menu",
     "pie_views_numpad_menu",
     "pie_sculpt_menu",
-    "pie_origin_cursor",
+    "pie_origin",
+    "pie_cursor",
     "pie_manipulator_menu",
     "pie_snap_menu",
     "pie_orientation_menu",
@@ -64,7 +65,8 @@ sub_modules_names = (
     )
 
 
-sub_modules = [__import__(__package__ + "." + submod, {}, {}, submod) for submod in sub_modules_names]
+sub_modules = [__import__(__package__ + "." + submod, {}, {}, submod) for
+              submod in sub_modules_names]
 sub_modules.sort(key=lambda mod: (mod.bl_info['category'], mod.bl_info['name']))
 
 
@@ -122,11 +124,60 @@ def unregister_submodule(mod):
                     del prefs[name]
 
 
+def enable_all_modules(self, context):
+    for mod in sub_modules:
+        mod_name = mod.__name__.split('.')[-1]
+        setattr(self, 'use_' + mod_name, False)
+        if not mod.__addon_enabled__:
+            setattr(self, 'use_' + mod_name, True)
+            mod.__addon_enabled__ = True
+
+    return None
+
+
+def disable_all_modules(self, context):
+    for mod in sub_modules:
+        mod_name = mod.__name__.split('.')[-1]
+
+        if mod.__addon_enabled__:
+            setattr(self, 'use_' + mod_name, False)
+            mod.__addon_enabled__ = False
+
+    return None
+
+
 class PieToolsPreferences(AddonPreferences):
     bl_idname = __name__
 
+    enable_all = BoolProperty(
+            name="Enable all",
+            description="Enable all Pie Modules",
+            default=False,
+            update=enable_all_modules
+            )
+    disable_all = BoolProperty(
+            name="Disable all",
+            description="Disable all Pie Modules",
+            default=False,
+            update=disable_all_modules
+            )
+
     def draw(self, context):
         layout = self.layout
+        split = layout.split(percentage=0.5, align=True)
+        row = split.row()
+        row.alignment = "LEFT"
+        sub_box = row.box()
+        sub_box.prop(self, "enable_all", emboss=False,
+                    icon="VISIBLE_IPO_ON", icon_only=True)
+        row.label("Enable All")
+
+        row = split.row()
+        row.alignment = "RIGHT"
+        row.label("Disable All")
+        sub_box = row.box()
+        sub_box.prop(self, "disable_all", emboss=False,
+                    icon="VISIBLE_IPO_OFF", icon_only=True)
 
         for mod in sub_modules:
             mod_name = mod.__name__.split('.')[-1]
@@ -161,10 +212,12 @@ class PieToolsPreferences(AddonPreferences):
                     split = col.row().split(percentage=0.15)
                     split.label('Location:')
                     split.label(info['location'])
-                if info.get('author') and info.get('author') != 'chromoly':
+                """
+                if info.get('author'):
                     split = col.row().split(percentage=0.15)
                     split.label('Author:')
                     split.label(info['author'])
+                """
                 if info.get('version'):
                     split = col.row().split(percentage=0.15)
                     split.label('Version:')
@@ -196,12 +249,14 @@ class PieToolsPreferences(AddonPreferences):
                         try:
                             prefs.draw(context)
                         except:
+                            import traceback
                             traceback.print_exc()
                             box.label(text='Error (see console)', icon='ERROR')
                         del prefs.layout
 
         row = layout.row()
-        row.label("End of Pie Menu Activations")
+        row.label(text="End of Advanced Object Panels Activations",
+                  icon="FILE_PARENT")
 
 
 for mod in sub_modules:
@@ -219,10 +274,10 @@ for mod in sub_modules:
         return update
 
     prop = BoolProperty(
-        name=info['name'],
-        description=info.get('description', ''),
-        update=gen_update(mod),
-    )
+            name=info['name'],
+            description=info.get('description', ''),
+            update=gen_update(mod),
+            )
     setattr(PieToolsPreferences, 'use_' + mod_name, prop)
     prop = BoolProperty()
     setattr(PieToolsPreferences, 'show_expanded_' + mod_name, prop)
@@ -252,6 +307,7 @@ def unregister():
 
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
+
 
 if __name__ == "__main__":
     register()
