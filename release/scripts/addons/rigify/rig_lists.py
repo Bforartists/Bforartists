@@ -24,7 +24,9 @@ from . import utils
 def get_rig_list(path):
     """ Recursively searches for rig types, and returns a list.
     """
+    rigs_dict = dict()
     rigs = []
+    implementation_rigs = []
     MODULE_DIR = os.path.dirname(__file__)
     RIG_DIR_ABS = os.path.join(MODULE_DIR, utils.RIG_DIR)
     SEARCH_DIR_ABS = os.path.join(RIG_DIR_ABS, path)
@@ -50,8 +52,9 @@ def get_rig_list(path):
                 rigs += [f]
             else:
                 # Check for sub-rigs
-                ls = get_rig_list(os.path.join(path, f, ""))  # "" adds a final slash
-                rigs.extend(["%s.%s" % (f, l) for l in ls])
+                sub_dict = get_rig_list(os.path.join(path, f, ""))  # "" adds a final slash
+                rigs.extend(["%s.%s" % (f, l) for l in sub_dict['rig_list']])
+                implementation_rigs.extend(["%s.%s" % (f, l) for l in sub_dict['implementation_rigs']])
         elif f.endswith(".py"):
             # Check straight-up python files
             t = f[:-3]
@@ -59,8 +62,14 @@ def get_rig_list(path):
             rig = utils.get_rig_type(module_name)
             if hasattr(rig, "Rig"):
                 rigs += [t]
+            if hasattr(rig, 'IMPLEMENTATION') and rig.IMPLEMENTATION:
+                implementation_rigs += [t]
     rigs.sort()
-    return rigs
+
+    rigs_dict['rig_list'] = rigs
+    rigs_dict['implementation_rigs'] = implementation_rigs
+
+    return rigs_dict
 
 
 def get_collection_list(rig_list):
@@ -73,6 +82,8 @@ def get_collection_list(rig_list):
 
 
 # Public variables
-rig_list = get_rig_list("")
+rigs_dict = get_rig_list("")
+rig_list = rigs_dict['rig_list']
+implementation_rigs = rigs_dict['implementation_rigs']
 collection_list = get_collection_list(rig_list)
 col_enum_list = [("All", "All", ""), ("None", "None", "")] + [(c, c, "") for c in collection_list]

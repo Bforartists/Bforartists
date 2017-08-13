@@ -21,8 +21,8 @@
 bl_info = {
     "name": "Hotkey: 'Ctrl Shift Tab'",
     "description": "Snap Element Menu",
-    #    "author": "pitiwazou, meta-androcto",
-    #    "version": (0, 1, 0),
+    "author": "pitiwazou, meta-androcto",
+    "version": (0, 1, 1),
     "blender": (2, 77, 0),
     "location": "3d View",
     "warning": "",
@@ -36,9 +36,8 @@ from bpy.types import (
         Operator,
         )
 
+
 # Pie Snap - Shift + Tab
-
-
 class PieSnaping(Menu):
     bl_idname = "pie.snapping"
     bl_label = "Pie Snapping"
@@ -72,10 +71,10 @@ class SnapActive(Operator):
     def execute(self, context):
         ts = context.tool_settings
 
-        if ts.use_snap == True:
+        if ts.use_snap is True:
             ts.use_snap = False
 
-        elif ts.use_snap == False:
+        elif ts.use_snap is False:
             ts.use_snap = True
 
         return {'FINISHED'}
@@ -88,7 +87,7 @@ class SnapVolume(Operator):
 
     def execute(self, context):
         ts = context.tool_settings
-        if ts.use_snap == False:
+        if ts.use_snap is False:
             ts.use_snap = True
             ts.snap_element = 'VOLUME'
 
@@ -105,7 +104,7 @@ class SnapFace(Operator):
     def execute(self, context):
         ts = context.tool_settings
 
-        if ts.use_snap == False:
+        if ts.use_snap is False:
             ts.use_snap = True
             ts.snap_element = 'FACE'
 
@@ -122,7 +121,7 @@ class SnapEdge(Operator):
     def execute(self, context):
         ts = context.tool_settings
 
-        if ts.use_snap == False:
+        if ts.use_snap is False:
             ts.use_snap = True
             ts.snap_element = 'EDGE'
 
@@ -139,7 +138,7 @@ class SnapVertex(Operator):
     def execute(self, context):
         ts = context.tool_settings
 
-        if ts.use_snap == False:
+        if ts.use_snap is False:
             ts.use_snap = True
             ts.snap_element = 'VERTEX'
 
@@ -156,7 +155,7 @@ class SnapIncrement(Operator):
     def execute(self, context):
         ts = context.tool_settings
 
-        if ts.use_snap == False:
+        if ts.use_snap is False:
             ts.use_snap = True
             ts.snap_element = 'INCREMENT'
 
@@ -173,10 +172,10 @@ class SnapAlignRotation(Operator):
     def execute(self, context):
         ts = context.tool_settings
 
-        if ts.use_snap_align_rotation == True:
+        if ts.use_snap_align_rotation is True:
             ts.use_snap_align_rotation = False
 
-        elif ts.use_snap_align_rotation == False:
+        elif ts.use_snap_align_rotation is False:
             ts.use_snap_align_rotation = True
 
         return {'FINISHED'}
@@ -220,6 +219,8 @@ class SnapTargetMenu(Menu):
         # 9 - TOP - RIGHT
         # 1 - BOTTOM - LEFT
         # 3 - BOTTOM - RIGHT
+
+
 # Pie Snapping - Shift + Tab
 
 classes = (
@@ -241,29 +242,27 @@ addon_keymaps = []
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
-    wm = bpy.context.window_manager
 
+    wm = bpy.context.window_manager
     if wm.keyconfigs.addon:
         # Snapping
         km = wm.keyconfigs.addon.keymaps.new(name='3D View Generic', space_type='VIEW_3D')
         kmi = km.keymap_items.new('wm.call_menu_pie', 'TAB', 'PRESS', ctrl=True, shift=True)
         kmi.properties.name = "pie.snapping"
-#        kmi.active = True
         addon_keymaps.append((km, kmi))
 
 
 def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
-    wm = bpy.context.window_manager
 
+    wm = bpy.context.window_manager
     kc = wm.keyconfigs.addon
     if kc:
-        km = kc.keymaps['3D View Generic']
-        for kmi in km.keymap_items:
-            if kmi.idname == 'wm.call_menu_pie':
-                if kmi.properties.name == "pie.snapping":
-                    km.keymap_items.remove(kmi)
+        for km, kmi in addon_keymaps:
+            km.keymap_items.remove(kmi)
+    addon_keymaps.clear()
+
 
 if __name__ == "__main__":
     register()

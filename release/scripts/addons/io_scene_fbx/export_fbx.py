@@ -1571,7 +1571,7 @@ def save_single(operator, scene, filepath="",
                 if do_textures:
                     fw('\n\t\tLayerElementTexture: %d {'
                        '\n\t\t\tVersion: 101'
-                       '\n\t\t\tName: "%s"' 
+                       '\n\t\t\tName: "%s"'
                        '\n\t\t\tMappingInformationType: "%s"'
                        '\n\t\t\tReferenceInformationType: "IndexToDirect"'
                        '\n\t\t\tBlendMode: "Translucent"'
