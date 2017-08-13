@@ -110,8 +110,8 @@
                              inner="#808080ff"
                              inner_sel="#394c66ff"
                              item="#ffffffff"
-                             text="#000000"
-                             text_sel="#ffffff"
+                             text="#ffffff"
+                             text_sel="#000000"
                              show_shaded="TRUE"
                              shadetop="-40"
                              shadedown="-40">
