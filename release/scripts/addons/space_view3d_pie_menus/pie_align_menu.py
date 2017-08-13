@@ -21,8 +21,8 @@
 bl_info = {
     "name": "Hotkey: 'Alt X'",
     "description": "V/E/F Align tools",
-    #    "author": "pitiwazou, meta-androcto",
-    #    "version": (0, 1, 0),
+    "author": "pitiwazou, meta-androcto",
+    "version": (0, 1, 2),
     "blender": (2, 77, 0),
     "location": "Mesh Edit Mode",
     "warning": "",
@@ -35,11 +35,10 @@ from bpy.types import (
         Menu,
         Operator,
         )
+from bpy.props import EnumProperty
 
 
 # Pie Align - Alt + X
-
-
 class PieAlign(Menu):
     bl_idname = "pie.align"
     bl_label = "Pie Align"
@@ -48,344 +47,199 @@ class PieAlign(Menu):
         layout = self.layout
         pie = layout.menu_pie()
         # 4 - LEFT
-        pie.operator("align.x", text="Align X", icon='TRIA_LEFT')
+        pie.operator("align.selected2xyz",
+                    text="Align X", icon='TRIA_LEFT').axis = 'X'
         # 6 - RIGHT
-        pie.operator("align.z", text="Align Z", icon='TRIA_DOWN')
+        pie.operator("align.selected2xyz",
+                    text="Align Z", icon='TRIA_DOWN').axis = 'Z'
         # 2 - BOTTOM
-        pie.operator("align.y", text="Align Y", icon='PLUS')
+        pie.operator("align.selected2xyz",
+                    text="Align Y", icon='PLUS').axis = 'Y'
         # 8 - TOP
-        pie.operator("align.2y0", text="Align To Y-0")
+        pie.operator("align.2xyz", text="Align To Y-0").axis = '1'
         # 7 - TOP - LEFT
-        pie.operator("align.2x0", text="Align To X-0")
+        pie.operator("align.2xyz", text="Align To X-0").axis = '0'
         # 9 - TOP - RIGHT
-        pie.operator("align.2z0", text="Align To Z-0")
+        pie.operator("align.2xyz", text="Align To Z-0").axis = '2'
         # 1 - BOTTOM - LEFT
+        pie.separator()
+        # 3 - BOTTOM - RIGHT
         # pie.menu("align.xyz")
         box = pie.split().box().column()
+
         row = box.row(align=True)
         row.label("X")
-        row.operator("alignx.left", text="Neg")
-        row.operator("alignx.right", text="Pos")
+        align_1 = row.operator("alignxyz.all", text="Neg")
+        align_1.axis = '0'
+        align_1.side = 'NEGATIVE'
+        align_2 = row.operator("alignxyz.all", text="Pos")
+        align_2.axis = '0'
+        align_2.side = 'POSITIVE'
+
         row = box.row(align=True)
         row.label("Y")
-        row.operator("aligny.front", text="Neg")
-        row.operator("aligny.back", text="Pos")
+        align_3 = row.operator("alignxyz.all", text="Neg")
+        align_3.axis = '1'
+        align_3.side = 'NEGATIVE'
+        align_4 = row.operator("alignxyz.all", text="Pos")
+        align_4.axis = '1'
+        align_4.side = 'POSITIVE'
+
         row = box.row(align=True)
         row.label("Z")
-        row.operator("alignz.bottom", text="Neg")
-        row.operator("alignz.top", text="Pos")
-        # 3 - BOTTOM - RIGHT
-#        box = pie.split().column()
-#        row = box.row(align=True)
-#        box.operator("mesh.vertex_align", icon='ALIGN', text="Align")
-#        box.operator("retopo.space", icon='ALIGN', text="Distribute")
-#        box.operator("mesh.vertex_inline", icon='ALIGN', text="Align & Distribute")
-
-# Align X
+        align_5 = row.operator("alignxyz.all", text="Neg")
+        align_5.axis = '2'
+        align_5.side = 'NEGATIVE'
+        align_6 = row.operator("alignxyz.all", text="Pos")
+        align_6.axis = '2'
+        align_6.side = 'POSITIVE'
 
 
-class AlignX(Operator):
-    bl_idname = "align.x"
-    bl_label = "Align  X"
-    bl_description = "Align Selected Along X"
+# Align to X, Y, Z
+class AlignSelectedXYZ(Operator):
+    bl_idname = "align.selected2xyz"
+    bl_label = "Align to X, Y, Z"
+    bl_description = "Align Selected Along the chosen axis"
     bl_options = {'REGISTER', 'UNDO'}
 
-    def execute(self, context):
+    axis = EnumProperty(
+        name="Axis",
+        items=[
+            ('X', "X", "X Axis"),
+            ('Y', "Y", "Y Axis"),
+            ('Z', "Z", "Z Axis")
+            ],
+        description="Choose an axis for alignment",
+        default='X'
+        )
 
-        for vert in bpy.context.object.data.vertices:
-            bpy.ops.transform.resize(value=(0, 1, 1), constraint_axis=(True, False, False), constraint_orientation='GLOBAL',
-                                     mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
-        return {'FINISHED'}
-
-# Align Y
-
-
-class AlignY(Operator):
-    bl_idname = "align.y"
-    bl_label = "Align  Y"
-    bl_description = "Align Selected Along Y"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context):
-
-        for vert in bpy.context.object.data.vertices:
-            bpy.ops.transform.resize(value=(1, 0, 1), constraint_axis=(False, True, False), constraint_orientation='GLOBAL',
-                                     mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
-        return {'FINISHED'}
-
-# Align Z
-
-
-class AlignZ(Operator):
-    bl_idname = "align.z"
-    bl_label = "Align  Z"
-    bl_description = "Align Selected Along Z"
-    bl_options = {'REGISTER', 'UNDO'}
+    @classmethod
+    def poll(cls, context):
+        obj = context.active_object
+        return obj and obj.type == "MESH"
 
     def execute(self, context):
-
+        values = {
+            'X': [(0, 1, 1), (True, False, False)],
+            'Y': [(1, 0, 1), (False, True, False)],
+            'Z': [(1, 1, 0), (False, False, True)]
+            }
+        chosen_value = values[self.axis][0]
+        constraint_value = values[self.axis][1]
         for vert in bpy.context.object.data.vertices:
-            bpy.ops.transform.resize(value=(1, 1, 0), constraint_axis=(False, False, True), constraint_orientation='GLOBAL',
-                                     mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH', proportional_size=1)
+            bpy.ops.transform.resize(
+                    value=chosen_value, constraint_axis=constraint_value,
+                    constraint_orientation='GLOBAL',
+                    mirror=False, proportional='DISABLED',
+                    proportional_edit_falloff='SMOOTH',
+                    proportional_size=1
+                    )
         return {'FINISHED'}
 
-#####################
+
+# ################# #
 #    Align To 0     #
-#####################
+# ################# #
 
-# Align to X - 0
-
-
-class AlignToX0(Operator):
-    bl_idname = "align.2x0"
-    bl_label = "Align To X = 0"
-    bl_description = "Align Selected To Location X = 0"
+class AlignToXYZ0(Operator):
+    bl_idname = "align.2xyz"
+    bl_label = "Align To X, Y or Z = 0"
+    bl_description = "Align Active Object To a chosen X, Y or Z equals 0 Location"
     bl_options = {'REGISTER', 'UNDO'}
+
+    axis = EnumProperty(
+            name="Axis",
+            items=[
+                ('0', "X", "X Axis"),
+                ('1', "Y", "Y Axis"),
+                ('2', "Z", "Z Axis")
+                ],
+            description="Choose an axis for alignment",
+            default='0'
+            )
+
+    @classmethod
+    def poll(cls, context):
+        obj = context.active_object
+        return obj and obj.type == "MESH"
 
     def execute(self, context):
         bpy.ops.object.mode_set(mode='OBJECT')
-
+        align = int(self.axis)
         for vert in bpy.context.object.data.vertices:
             if vert.select:
-                vert.co[0] = 0
+                vert.co[align] = 0
         bpy.ops.object.editmode_toggle()
+
         return {'FINISHED'}
 
-# Align to Z - 0
-
-
-class AlignToY0(Operator):
-    bl_idname = "align.2y0"
-    bl_label = "Align To Y = 0"
-    bl_description = "Align Selected To Location Y = 0"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context):
-        bpy.ops.object.mode_set(mode='OBJECT')
-
-        for vert in bpy.context.object.data.vertices:
-            if vert.select:
-                vert.co[1] = 0
-        bpy.ops.object.editmode_toggle()
-        return {'FINISHED'}
-
-# Align to Z - 0
-
-
-class AlignToZ0(Operator):
-    bl_idname = "align.2z0"
-    bl_label = "Align To Z = 0"
-    bl_description = "Align Selected To Location Z = 0"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context):
-        bpy.ops.object.mode_set(mode='OBJECT')
-
-        for vert in bpy.context.object.data.vertices:
-            if vert.select:
-                vert.co[2] = 0
-        bpy.ops.object.editmode_toggle()
-        return {'FINISHED'}
 
 # Align X Left
-
-
-class AlignXLeft(Operator):
-    bl_idname = "alignx.left"
-    bl_label = "Align X Left"
+class AlignXYZAll(Operator):
+    bl_idname = "alignxyz.all"
+    bl_label = "Align to Front/Back Axis"
+    bl_description = "Align to a Front or Back along the chosen Axis"
     bl_options = {'REGISTER', 'UNDO'}
 
-    def execute(self, context):
+    axis = EnumProperty(
+            name="Axis",
+            items=[
+                ('0', "X", "X Axis"),
+                ('1', "Y", "Y Axis"),
+                ('2', "Z", "Z Axis")
+                ],
+            description="Choose an axis for alignment",
+            default='0'
+            )
+    side = EnumProperty(
+            name="Side",
+            items=[
+                ('POSITIVE', "Front", "Align on the positive chosen axis"),
+                ('NEGATIVE', "Back", "Align acriss the negative chosen axis"),
+                ],
+            description="Choose a side for alignment",
+            default='POSITIVE'
+            )
 
-        bpy.ops.object.mode_set(mode='OBJECT')
-        count = 0
-        axe = 0
-        for vert in bpy.context.object.data.vertices:
-            if vert.select:
-                if count == 0:
-                    max = vert.co[axe]
-                    count += 1
-                    continue
-                count += 1
-                if vert.co[axe] < max:
-                    max = vert.co[axe]
-
-        bpy.ops.object.mode_set(mode='OBJECT')
-
-        for vert in bpy.context.object.data.vertices:
-            if vert.select:
-                vert.co[axe] = max
-        bpy.ops.object.mode_set(mode='EDIT')
-        return {'FINISHED'}
-
-# Align X Right
-
-
-class AlignXRight(Operator):
-    bl_idname = "alignx.right"
-    bl_label = "Align X Right"
+    @classmethod
+    def poll(cls, context):
+        obj = context.active_object
+        return obj and obj.type == "MESH"
 
     def execute(self, context):
 
         bpy.ops.object.mode_set(mode='OBJECT')
         count = 0
-        axe = 0
+        axe = int(self.axis)
         for vert in bpy.context.object.data.vertices:
             if vert.select:
                 if count == 0:
-                    max = vert.co[axe]
+                    maxv = vert.co[axe]
                     count += 1
                     continue
                 count += 1
-                if vert.co[axe] > max:
-                    max = vert.co[axe]
+                if self.side == 'POSITIVE':
+                    if vert.co[axe] > maxv:
+                        maxv = vert.co[axe]
+                else:
+                    if vert.co[axe] < maxv:
+                        maxv = vert.co[axe]
 
         bpy.ops.object.mode_set(mode='OBJECT')
 
         for vert in bpy.context.object.data.vertices:
             if vert.select:
-                vert.co[axe] = max
+                vert.co[axe] = maxv
         bpy.ops.object.mode_set(mode='EDIT')
+
         return {'FINISHED'}
 
-# Align Y Back
-
-
-class AlignYBack(Operator):
-    bl_idname = "aligny.back"
-    bl_label = "Align Y back"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context):
-
-        bpy.ops.object.mode_set(mode='OBJECT')
-        count = 0
-        axe = 1
-        for vert in bpy.context.object.data.vertices:
-            if vert.select:
-                if count == 0:
-                    max = vert.co[axe]
-                    count += 1
-                    continue
-                count += 1
-                if vert.co[axe] > max:
-                    max = vert.co[axe]
-
-        bpy.ops.object.mode_set(mode='OBJECT')
-
-        for vert in bpy.context.object.data.vertices:
-            if vert.select:
-                vert.co[axe] = max
-        bpy.ops.object.mode_set(mode='EDIT')
-        return {'FINISHED'}
-
-# Align Y Front
-
-
-class AlignYFront(Operator):
-    bl_idname = "aligny.front"
-    bl_label = "Align Y Front"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context):
-
-        bpy.ops.object.mode_set(mode='OBJECT')
-        count = 0
-        axe = 1
-        for vert in bpy.context.object.data.vertices:
-            if vert.select:
-                if count == 0:
-                    max = vert.co[axe]
-                    count += 1
-                    continue
-                count += 1
-                if vert.co[axe] < max:
-                    max = vert.co[axe]
-
-        bpy.ops.object.mode_set(mode='OBJECT')
-
-        for vert in bpy.context.object.data.vertices:
-            if vert.select:
-                vert.co[axe] = max
-        bpy.ops.object.mode_set(mode='EDIT')
-        return {'FINISHED'}
-
-# Align Z Top
-
-
-class AlignZTop(Operator):
-    bl_idname = "alignz.top"
-    bl_label = "Align Z Top"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context):
-
-        bpy.ops.object.mode_set(mode='OBJECT')
-        count = 0
-        axe = 2
-        for vert in bpy.context.object.data.vertices:
-            if vert.select:
-                if count == 0:
-                    max = vert.co[axe]
-                    count += 1
-                    continue
-                count += 1
-                if vert.co[axe] > max:
-                    max = vert.co[axe]
-
-        bpy.ops.object.mode_set(mode='OBJECT')
-
-        for vert in bpy.context.object.data.vertices:
-            if vert.select:
-                vert.co[axe] = max
-        bpy.ops.object.mode_set(mode='EDIT')
-        return {'FINISHED'}
-
-# Align Z Bottom
-
-
-class AlignZBottom(Operator):
-    bl_idname = "alignz.bottom"
-    bl_label = "Align Z Bottom"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    def execute(self, context):
-
-        bpy.ops.object.mode_set(mode='OBJECT')
-        count = 0
-        axe = 2
-        for vert in bpy.context.object.data.vertices:
-            if vert.select:
-                if count == 0:
-                    max = vert.co[axe]
-                    count += 1
-                    continue
-                count += 1
-                if vert.co[axe] < max:
-                    max = vert.co[axe]
-
-        bpy.ops.object.mode_set(mode='OBJECT')
-
-        for vert in bpy.context.object.data.vertices:
-            if vert.select:
-                vert.co[axe] = max
-        bpy.ops.object.mode_set(mode='EDIT')
-        return {'FINISHED'}
 
 classes = (
     PieAlign,
-    AlignX,
-    AlignY,
-    AlignZ,
-    AlignToX0,
-    AlignToY0,
-    AlignToZ0,
-    AlignXLeft,
-    AlignXRight,
-    AlignYBack,
-    AlignYFront,
-    AlignZTop,
-    AlignZBottom,
+    AlignSelectedXYZ,
+    AlignToXYZ0,
+    AlignXYZAll,
     )
 
 addon_keymaps = []
@@ -394,29 +248,27 @@ addon_keymaps = []
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
-    wm = bpy.context.window_manager
 
+    wm = bpy.context.window_manager
     if wm.keyconfigs.addon:
         # Align
         km = wm.keyconfigs.addon.keymaps.new(name='Mesh')
         kmi = km.keymap_items.new('wm.call_menu_pie', 'X', 'PRESS', alt=True)
         kmi.properties.name = "pie.align"
-#        kmi.active = True
         addon_keymaps.append((km, kmi))
 
 
 def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
-    wm = bpy.context.window_manager
 
+    wm = bpy.context.window_manager
     kc = wm.keyconfigs.addon
     if kc:
-        km = kc.keymaps['Mesh']
-        for kmi in km.keymap_items:
-            if kmi.idname == 'wm.call_menu_pie':
-                if kmi.properties.name == "pie.align":
-                    km.keymap_items.remove(kmi)
+        for km, kmi in addon_keymaps:
+            km.keymap_items.remove(kmi)
+    addon_keymaps.clear()
+
 
 if __name__ == "__main__":
     register()

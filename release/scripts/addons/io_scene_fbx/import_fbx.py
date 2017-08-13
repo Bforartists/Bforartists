@@ -290,7 +290,7 @@ from collections import namedtuple
 
 
 FBXTransformData = namedtuple("FBXTransformData", (
-    "loc", "geom_loc", 
+    "loc", "geom_loc",
     "rot", "rot_ofs", "rot_piv", "pre_rot", "pst_rot", "rot_ord", "rot_alt_mat", "geom_rot",
     "sca", "sca_ofs", "sca_piv", "geom_sca",
 ))
@@ -1292,7 +1292,7 @@ def blen_read_material(fbx_tmpl, fbx_obj, settings):
     ma_refl_color = elem_props_get_color_rgb(fbx_props, b'ReflectionColor', const_color_white)
 
     if settings.use_cycles:
-        from . import cycles_shader_compat
+        from modules import cycles_shader_compat
         # viewport color
         ma.diffuse_color = ma_diff
 
@@ -1923,7 +1923,7 @@ class FbxImportHelperNode:
         obj.matrix_basis = self.get_matrix()
 
         if settings.use_custom_props:
-            blen_read_custom_properties(fbx_props[0], obj, settings)
+            blen_read_custom_properties(self.fbx_elem, obj, settings)
 
         return obj
 
@@ -2072,7 +2072,7 @@ class FbxImportHelperNode:
                 assert(fbx_props[0] is not None)
 
                 if settings.use_custom_props:
-                    blen_read_custom_properties(fbx_props[0], arm, settings)
+                    blen_read_custom_properties(self.fbx_elem, arm, settings)
 
             # instance in scene
             obj_base = scene.objects.link(arm)

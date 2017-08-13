@@ -28,7 +28,7 @@ def writeMaterial(using_uberpov, DEF_MAT_NAME, scene, tabWrite, safety, comments
             else:
                 tabWrite("\n")
             tabWrite("#declare %s = finish {\n" % safety(name, Level=1))
-            
+
         elif Level == 2:
             if comments:
                 tabWrite("//--translation of spec and mir levels for when no map " \
@@ -150,7 +150,7 @@ def writeMaterial(using_uberpov, DEF_MAT_NAME, scene, tabWrite, safety, comments
                 tabWrite("conserve_energy\n")
 
             if colored_specular_found == True:
-                 tabWrite("metallic\n")          
+                 tabWrite("metallic\n")
 
             # 'phong 70.0 '
             if Level != 1:
@@ -158,7 +158,7 @@ def writeMaterial(using_uberpov, DEF_MAT_NAME, scene, tabWrite, safety, comments
                     raytrace_mirror = material.raytrace_mirror
                     if raytrace_mirror.reflect_factor:
                         tabWrite("reflection {\n")
-                        tabWrite("rgb <%.3g, %.3g, %.3g>\n" % material.mirror_color[:])                          
+                        tabWrite("rgb <%.3g, %.3g, %.3g>\n" % material.mirror_color[:])
                         if material.pov.mirror_metallic:
                             tabWrite("metallic %.3g\n" % (raytrace_mirror.reflect_factor))
                         # Blurry reflections for UberPOV
@@ -173,7 +173,7 @@ def writeMaterial(using_uberpov, DEF_MAT_NAME, scene, tabWrite, safety, comments
                             tabWrite("fresnel 1 ")
                         tabWrite("falloff %.3g exponent %.3g} " % \
                                  (raytrace_mirror.fresnel, raytrace_mirror.fresnel_factor))
-                            
+
             if material.subsurface_scattering.use:
                 subsurface_scattering = material.subsurface_scattering
                 tabWrite("subsurface { translucency <%.3g, %.3g, %.3g> }\n" % (
@@ -241,7 +241,7 @@ def exportPattern(texture, string_strip_hyphen):
     texStrg=""
     def exportColorRamp(texture):
         tex=texture
-        pat = tex.pov      
+        pat = tex.pov
         colRampStrg="color_map {\n"
         numColor=0
         for el in tex.color_ramp.elements:
@@ -259,7 +259,7 @@ def exportPattern(texture, string_strip_hyphen):
                 colRampStrg+="color rgbf<%.4g,%.4g,%.4g,%.4g> \n"%(colR,colG,colB,colA)
             if pat.tex_pattern_type == 'triangular' and numColor < 7 :
                 colRampStrg+="color rgbf<%.4g,%.4g,%.4g,%.4g> \n"%(colR,colG,colB,colA)
-                      
+
         colRampStrg+="} \n"
         #end color map
         return colRampStrg
@@ -268,50 +268,50 @@ def exportPattern(texture, string_strip_hyphen):
     if tex.type not in {'NONE', 'IMAGE'} and pat.tex_pattern_type == 'emulator':
         texStrg+="pigment {\n"
         ####################### EMULATE BLENDER VORONOI TEXTURE ####################
-        if tex.type == 'VORONOI':  
+        if tex.type == 'VORONOI':
             texStrg+="crackle\n"
             texStrg+="    offset %.4g\n"%tex.nabla
             texStrg+="    form <%.4g,%.4g,%.4g>\n"%(tex.weight_1, tex.weight_2, tex.weight_3)
             if tex.distance_metric == 'DISTANCE':
-                texStrg+="    metric 2.5\n"          
+                texStrg+="    metric 2.5\n"
             if tex.distance_metric == 'DISTANCE_SQUARED':
                 texStrg+="    metric 2.5\n"
-                texStrg+="    poly_wave 2\n"                
-            if tex.distance_metric == 'MINKOVSKY': 
-                texStrg+="    metric %s\n"%tex.minkovsky_exponent             
-            if tex.distance_metric == 'MINKOVSKY_FOUR': 
+                texStrg+="    poly_wave 2\n"
+            if tex.distance_metric == 'MINKOVSKY':
+                texStrg+="    metric %s\n"%tex.minkovsky_exponent
+            if tex.distance_metric == 'MINKOVSKY_FOUR':
                 texStrg+="    metric 4\n"
-            if tex.distance_metric == 'MINKOVSKY_HALF': 
+            if tex.distance_metric == 'MINKOVSKY_HALF':
                 texStrg+="    metric 0.5\n"
-            if tex.distance_metric == 'CHEBYCHEV': 
+            if tex.distance_metric == 'CHEBYCHEV':
                 texStrg+="    metric 10\n"
-            if tex.distance_metric == 'MANHATTAN': 
+            if tex.distance_metric == 'MANHATTAN':
                 texStrg+="    metric 1\n"
 
             if tex.color_mode == 'POSITION':
                 texStrg+="solid\n"
-            texStrg+="scale 0.25\n"     
+            texStrg+="scale 0.25\n"
             if tex.use_color_ramp == True:
                 texStrg+=exportColorRamp(tex)
             else:
                 texStrg+="color_map {\n"
                 texStrg+="[0 color rgbt<0,0,0,1>]\n"
-                texStrg+="[1 color rgbt<1,1,1,0>]\n" 
-                texStrg+="}\n"            
+                texStrg+="[1 color rgbt<1,1,1,0>]\n"
+                texStrg+="}\n"
 
         ####################### EMULATE BLENDER CLOUDS TEXTURE ####################
-        if tex.type == 'CLOUDS':  
+        if tex.type == 'CLOUDS':
             if tex.noise_type == 'SOFT_NOISE':
                 texStrg+="wrinkles\n"
                 texStrg+="scale 0.25\n"
             else:
-                texStrg+="granite\n"               
+                texStrg+="granite\n"
             if tex.use_color_ramp == True:
                 texStrg+=exportColorRamp(tex)
             else:
                 texStrg+="color_map {\n"
                 texStrg+="[0 color rgbt<0,0,0,1>]\n"
-                texStrg+="[1 color rgbt<1,1,1,0>]\n" 
+                texStrg+="[1 color rgbt<1,1,1,0>]\n"
                 texStrg+="}\n"
 
         ####################### EMULATE BLENDER WOOD TEXTURE ####################
@@ -332,7 +332,7 @@ def exportPattern(texture, string_strip_hyphen):
                 texStrg+="scale 0.25\n"
                 texStrg+="rotate <45,-45,45>\n"
                 texStrg+="turbulence %.4g\n"%(tex.turbulence/10)
-            
+
             if tex.noise_basis_2 == 'SIN':
                 texStrg+="sine_wave\n"
             if tex.noise_basis_2 == 'TRI':
@@ -344,11 +344,11 @@ def exportPattern(texture, string_strip_hyphen):
             else:
                 texStrg+="color_map {\n"
                 texStrg+="[0 color rgbt<0,0,0,0>]\n"
-                texStrg+="[1 color rgbt<1,1,1,0>]\n" 
+                texStrg+="[1 color rgbt<1,1,1,0>]\n"
                 texStrg+="}\n"
- 
+
         ####################### EMULATE BLENDER STUCCI TEXTURE ####################
-        if tex.type == 'STUCCI':  
+        if tex.type == 'STUCCI':
             texStrg+="bozo\n"
             texStrg+="scale 0.25\n"
             if tex.noise_type == 'HARD_NOISE':
@@ -368,9 +368,9 @@ def exportPattern(texture, string_strip_hyphen):
                     texStrg+="[0 color rgbf<0,0,0,1>]\n"
                     texStrg+="[1 color rgbt<1,1,1,0>]\n"
                     texStrg+="}\n"
- 
+
         ####################### EMULATE BLENDER MAGIC TEXTURE ####################
-        if tex.type == 'MAGIC':  
+        if tex.type == 'MAGIC':
             texStrg+="leopard\n"
             if tex.use_color_ramp == True:
                 texStrg+=exportColorRamp(tex)
@@ -382,10 +382,10 @@ def exportPattern(texture, string_strip_hyphen):
                 texStrg+="[0.75 color rgbf<1,0,1,0.75>]\n"
                 texStrg+="[1 color rgbf<0,1,0,0.75>]\n"
                 texStrg+="}\n"
-            texStrg+="scale 0.1\n"            
- 
+            texStrg+="scale 0.1\n"
+
         ####################### EMULATE BLENDER MARBLE TEXTURE ####################
-        if tex.type == 'MARBLE':  
+        if tex.type == 'MARBLE':
             texStrg+="marble\n"
             texStrg+="turbulence 0.5\n"
             texStrg+="noise_generator 3\n"
@@ -408,7 +408,7 @@ def exportPattern(texture, string_strip_hyphen):
                     texStrg+="}\n"
                 else:
                     texStrg+="[0 color rgbt<0,0,0,0>]\n"
-                    texStrg+="[1 color rgbt<1,1,1,0>]\n"            
+                    texStrg+="[1 color rgbt<1,1,1,0>]\n"
                     texStrg+="}\n"
             if tex.noise_basis_2 == 'SIN':
                 texStrg+="sine_wave\n"
@@ -416,7 +416,7 @@ def exportPattern(texture, string_strip_hyphen):
                 texStrg+="triangle_wave\n"
             if tex.noise_basis_2 == 'SAW':
                 texStrg+="ramp_wave\n"
- 
+
         ####################### EMULATE BLENDER BLEND TEXTURE ####################
         if tex.type == 'BLEND':
             if tex.progression=='RADIAL':
@@ -437,7 +437,7 @@ def exportPattern(texture, string_strip_hyphen):
             elif tex.progression=='DIAGONAL':
                 texStrg+="gradient <1,1,0>\n"
                 texStrg+="scale 3\n"
-            elif tex.use_flip_axis=='HORIZONTAL':        
+            elif tex.use_flip_axis=='HORIZONTAL':
                 texStrg+="gradient x\n"
                 texStrg+="scale 2.01\n"
             elif tex.use_flip_axis=='VERTICAL':
@@ -453,16 +453,16 @@ def exportPattern(texture, string_strip_hyphen):
                 texStrg+="[0 color rgbt<1,1,1,0>]\n"
                 texStrg+="[1 color rgbf<0,0,0,1>]\n"
                 texStrg+="}\n"
-            if tex.progression == 'LINEAR': 
+            if tex.progression == 'LINEAR':
                 texStrg+="    poly_wave 1\n"
-            if tex.progression == 'QUADRATIC': 
+            if tex.progression == 'QUADRATIC':
                 texStrg+="    poly_wave 2\n"
             if tex.progression == 'EASING':
                 texStrg+="    poly_wave 1.5\n"
-                
+
 
         ####################### EMULATE BLENDER MUSGRAVE TEXTURE ####################
-        # if tex.type == 'MUSGRAVE':  
+        # if tex.type == 'MUSGRAVE':
             # texStrg+="function{ f_ridged_mf( x, y, 0, 1, 2, 9, -0.5, 3,3 )*0.5}\n"
             # texStrg+="color_map {\n"
             # texStrg+="[0 color rgbf<0,0,0,1>]\n"
@@ -474,17 +474,17 @@ def exportPattern(texture, string_strip_hyphen):
             texStrg+="bozo scale 0.25 \n"
             if tex.use_color_ramp == True:
                 texStrg+=exportColorRamp(tex)
-            else: 
+            else:
                 texStrg+="color_map {[0.5 color rgbf<0,0,0,1>][1 color rgbt<1,1,1,0>]}ramp_wave \n"
-               
+
         ####################### EMULATE BLENDER DISTORTED NOISE TEXTURE ####################
-        if tex.type == 'DISTORTED_NOISE':  
+        if tex.type == 'DISTORTED_NOISE':
             texStrg+="average\n"
             texStrg+="  pigment_map {\n"
             texStrg+="  [1 bozo scale 0.25 turbulence %.4g\n" %tex.distortion
             if tex.use_color_ramp == True:
                 texStrg+=exportColorRamp(tex)
-            else: 
+            else:
                 texStrg+="color_map {\n"
                 texStrg+="[0 color rgbt<1,1,1,0>]\n"
                 texStrg+="[1 color rgbf<0,0,0,1>]\n"
@@ -495,37 +495,37 @@ def exportPattern(texture, string_strip_hyphen):
                 texStrg+="  [1 cells scale 0.1\n"
                 if tex.use_color_ramp == True:
                     texStrg+=exportColorRamp(tex)
-                else: 
+                else:
                     texStrg+="color_map {\n"
                     texStrg+="[0 color rgbt<1,1,1,0>]\n"
                     texStrg+="[1 color rgbf<0,0,0,1>]\n"
                     texStrg+="}\n"
-                texStrg+="]\n"                
+                texStrg+="]\n"
             if tex.noise_distortion=='VORONOI_CRACKLE':
                 texStrg+="  [1 crackle scale 0.25\n"
                 if tex.use_color_ramp == True:
                     texStrg+=exportColorRamp(tex)
-                else: 
+                else:
                     texStrg+="color_map {\n"
                     texStrg+="[0 color rgbt<1,1,1,0>]\n"
                     texStrg+="[1 color rgbf<0,0,0,1>]\n"
                     texStrg+="}\n"
-                texStrg+="]\n"                
+                texStrg+="]\n"
             if tex.noise_distortion in ['VORONOI_F1','VORONOI_F2','VORONOI_F3','VORONOI_F4','VORONOI_F2_F1']:
                 texStrg+="  [1 crackle metric 2.5 scale 0.25 turbulence %.4g\n" %(tex.distortion/2)
                 if tex.use_color_ramp == True:
                     texStrg+=exportColorRamp(tex)
-                else: 
+                else:
                     texStrg+="color_map {\n"
                     texStrg+="[0 color rgbt<1,1,1,0>]\n"
                     texStrg+="[1 color rgbf<0,0,0,1>]\n"
                     texStrg+="}\n"
-                texStrg+="]\n"                
+                texStrg+="]\n"
             else:
-                texStrg+="  [1 wrinkles scale 0.25\n" 
+                texStrg+="  [1 wrinkles scale 0.25\n"
                 if tex.use_color_ramp == True:
                     texStrg+=exportColorRamp(tex)
-                else: 
+                else:
                     texStrg+="color_map {\n"
                     texStrg+="[0 color rgbt<1,1,1,0>]\n"
                     texStrg+="[1 color rgbf<0,0,0,1>]\n"
@@ -534,13 +534,13 @@ def exportPattern(texture, string_strip_hyphen):
             texStrg+="  }\n"
 
         ####################### EMULATE BLENDER NOISE TEXTURE ####################
-        if tex.type == 'NOISE':  
+        if tex.type == 'NOISE':
             texStrg+="cells\n"
             texStrg+="turbulence 3\n"
             texStrg+="omega 3\n"
             if tex.use_color_ramp == True:
                 texStrg+=exportColorRamp(tex)
-            else: 
+            else:
                 texStrg+="color_map {\n"
                 texStrg+="[0.75 color rgb<0,0,0,>]\n"
                 texStrg+="[1 color rgb<1,1,1,>]\n"
@@ -549,81 +549,81 @@ def exportPattern(texture, string_strip_hyphen):
         ####################### IGNORE OTHER BLENDER TEXTURE ####################
         else: #non translated textures
             pass
-        texStrg+="}\n\n"            
+        texStrg+="}\n\n"
 
         texStrg+="#declare f%s=\n"%PATname
-        texStrg+="function{pigment{%s}}\n"%PATname       
+        texStrg+="function{pigment{%s}}\n"%PATname
         texStrg+="\n"
-        
+
     elif pat.tex_pattern_type != 'emulator':
         texStrg+="pigment {\n"
         texStrg+="%s\n"%pat.tex_pattern_type
-        if pat.tex_pattern_type == 'agate': 
-            texStrg+="agate_turb %.4g\n"%pat.modifier_turbulence                           
-        if pat.tex_pattern_type in {'spiral1', 'spiral2', 'tiling'}: 
+        if pat.tex_pattern_type == 'agate':
+            texStrg+="agate_turb %.4g\n"%pat.modifier_turbulence
+        if pat.tex_pattern_type in {'spiral1', 'spiral2', 'tiling'}:
             texStrg+="%s\n"%pat.modifier_numbers
-        if pat.tex_pattern_type == 'quilted': 
-            texStrg+="control0 %s control1 %s\n"%(pat.modifier_control0, pat.modifier_control1)                           
-        if pat.tex_pattern_type == 'mandel': 
-            texStrg+="%s exponent %s \n"%(pat.f_iter, pat.f_exponent)  
-        if pat.tex_pattern_type == 'julia': 
-            texStrg+="<%.4g, %.4g> %s exponent %s \n"%(pat.julia_complex_1, pat.julia_complex_2, pat.f_iter, pat.f_exponent)   
-        if pat.tex_pattern_type == 'magnet' and pat.magnet_style == 'mandel': 
+        if pat.tex_pattern_type == 'quilted':
+            texStrg+="control0 %s control1 %s\n"%(pat.modifier_control0, pat.modifier_control1)
+        if pat.tex_pattern_type == 'mandel':
+            texStrg+="%s exponent %s \n"%(pat.f_iter, pat.f_exponent)
+        if pat.tex_pattern_type == 'julia':
+            texStrg+="<%.4g, %.4g> %s exponent %s \n"%(pat.julia_complex_1, pat.julia_complex_2, pat.f_iter, pat.f_exponent)
+        if pat.tex_pattern_type == 'magnet' and pat.magnet_style == 'mandel':
             texStrg+="%s mandel %s \n"%(pat.magnet_type, pat.f_iter)
-        if pat.tex_pattern_type == 'magnet' and pat.magnet_style == 'julia':  
-            texStrg+="%s julia <%.4g, %.4g> %s\n"%(pat.magnet_type, pat.julia_complex_1, pat.julia_complex_2, pat.f_iter) 
+        if pat.tex_pattern_type == 'magnet' and pat.magnet_style == 'julia':
+            texStrg+="%s julia <%.4g, %.4g> %s\n"%(pat.magnet_type, pat.julia_complex_1, pat.julia_complex_2, pat.f_iter)
         if pat.tex_pattern_type in {'mandel', 'julia', 'magnet'}:
-            texStrg+="interior %s, %.4g\n"%(pat.f_ior, pat.f_ior_fac) 
+            texStrg+="interior %s, %.4g\n"%(pat.f_ior, pat.f_ior_fac)
             texStrg+="exterior %s, %.4g\n"%(pat.f_eor, pat.f_eor_fac)
-        if pat.tex_pattern_type == 'gradient': 
+        if pat.tex_pattern_type == 'gradient':
             texStrg+="<%s, %s, %s> \n"%(pat.grad_orient_x, pat.grad_orient_y, pat.grad_orient_z)
         if pat.tex_pattern_type == 'pavement':
             numTiles=pat.pave_tiles
             numPattern=1
-            if pat.pave_sides == '4' and pat.pave_tiles == 3: 
+            if pat.pave_sides == '4' and pat.pave_tiles == 3:
                  numPattern = pat.pave_pat_2
-            if pat.pave_sides == '6' and pat.pave_tiles == 3: 
+            if pat.pave_sides == '6' and pat.pave_tiles == 3:
                 numPattern = pat.pave_pat_3
-            if pat.pave_sides == '3' and pat.pave_tiles == 4: 
+            if pat.pave_sides == '3' and pat.pave_tiles == 4:
                 numPattern = pat.pave_pat_3
-            if pat.pave_sides == '3' and pat.pave_tiles == 5: 
+            if pat.pave_sides == '3' and pat.pave_tiles == 5:
                 numPattern = pat.pave_pat_4
-            if pat.pave_sides == '4' and pat.pave_tiles == 4: 
+            if pat.pave_sides == '4' and pat.pave_tiles == 4:
                 numPattern = pat.pave_pat_5
-            if pat.pave_sides == '6' and pat.pave_tiles == 4: 
+            if pat.pave_sides == '6' and pat.pave_tiles == 4:
                 numPattern = pat.pave_pat_7
-            if pat.pave_sides == '4' and pat.pave_tiles == 5: 
+            if pat.pave_sides == '4' and pat.pave_tiles == 5:
                 numPattern = pat.pave_pat_12
-            if pat.pave_sides == '3' and pat.pave_tiles == 6: 
+            if pat.pave_sides == '3' and pat.pave_tiles == 6:
                 numPattern = pat.pave_pat_12
-            if pat.pave_sides == '6' and pat.pave_tiles == 5: 
+            if pat.pave_sides == '6' and pat.pave_tiles == 5:
                 numPattern = pat.pave_pat_22
-            if pat.pave_sides == '4' and pat.pave_tiles == 6: 
+            if pat.pave_sides == '4' and pat.pave_tiles == 6:
                 numPattern = pat.pave_pat_35
-            if pat.pave_sides == '6' and pat.pave_tiles == 6: 
-                numTiles = 5                                
+            if pat.pave_sides == '6' and pat.pave_tiles == 6:
+                numTiles = 5
             texStrg+="number_of_sides %s number_of_tiles %s pattern %s form %s \n"%(pat.pave_sides, numTiles, numPattern, pat.pave_form)
         ################ functions #####################################################################################################
-        if pat.tex_pattern_type == 'function':                 
+        if pat.tex_pattern_type == 'function':
             texStrg+="{ %s"%pat.func_list
             texStrg+="(x"
             if pat.func_plus_x != "NONE":
                 if pat.func_plus_x =='increase':
-                    texStrg+="*"                                    
+                    texStrg+="*"
                 if pat.func_plus_x =='plus':
                     texStrg+="+"
                 texStrg+="%.4g"%pat.func_x
             texStrg+=",y"
             if pat.func_plus_y != "NONE":
                 if pat.func_plus_y =='increase':
-                    texStrg+="*"                                   
+                    texStrg+="*"
                 if pat.func_plus_y =='plus':
                     texStrg+="+"
                 texStrg+="%.4g"%pat.func_y
             texStrg+=",z"
             if pat.func_plus_z != "NONE":
                 if pat.func_plus_z =='increase':
-                    texStrg+="*"                                    
+                    texStrg+="*"
                 if pat.func_plus_z =='plus':
                     texStrg+="+"
                 texStrg+="%.4g"%pat.func_z
@@ -672,7 +672,7 @@ def exportPattern(texture, string_strip_hyphen):
                 texStrg+=",%.4g"%pat.func_P9
             texStrg+=")}\n"
         ############## end functions ###############################################################
-        if pat.tex_pattern_type not in {'checker', 'hexagon', 'square', 'triangular', 'brick'}:                        
+        if pat.tex_pattern_type not in {'checker', 'hexagon', 'square', 'triangular', 'brick'}:
             texStrg+="color_map {\n"
         numColor=0
         if tex.use_color_ramp == True:
@@ -694,9 +694,9 @@ def exportPattern(texture, string_strip_hyphen):
         else:
             texStrg+="[0 color rgbf<0,0,0,1>]\n"
             texStrg+="[1 color rgbf<1,1,1,0>]\n"
-        if pat.tex_pattern_type not in {'checker', 'hexagon', 'square', 'triangular', 'brick'} :                        
-            texStrg+="} \n"                       
-        if pat.tex_pattern_type == 'brick':                        
+        if pat.tex_pattern_type not in {'checker', 'hexagon', 'square', 'triangular', 'brick'} :
+            texStrg+="} \n"
+        if pat.tex_pattern_type == 'brick':
             texStrg+="brick_size <%.4g, %.4g, %.4g> mortar %.4g \n"%(pat.brick_size_x, pat.brick_size_y, pat.brick_size_z, pat.brick_mortar)
         texStrg+="%s \n"%mappingDif
         texStrg+="rotate <%.4g,%.4g,%.4g> \n"%(pat.tex_rot_x, pat.tex_rot_y, pat.tex_rot_z)
@@ -705,22 +705,22 @@ def exportPattern(texture, string_strip_hyphen):
         texStrg+="lambda %.4g \n"%pat.modifier_lambda
         texStrg+="omega %.4g \n"%pat.modifier_omega
         texStrg+="frequency %.4g \n"%pat.modifier_frequency
-        texStrg+="phase %.4g \n"%pat.modifier_phase                       
+        texStrg+="phase %.4g \n"%pat.modifier_phase
         texStrg+="}\n\n"
         texStrg+="#declare f%s=\n"%PATname
-        texStrg+="function{pigment{%s}}\n"%PATname       
+        texStrg+="function{pigment{%s}}\n"%PATname
         texStrg+="\n"
     return(texStrg)
-    
-    
+
+
 def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, lampCount,
                             imageFormat, imgMap, imgMapTransforms, tabWrite, comments,
                             string_strip_hyphen, safety, col, os, preview_dir, unpacked_images):
-    material_finish = materialNames[mater.name]                        
+    material_finish = materialNames[mater.name]
     if mater.use_transparency:
         trans = 1.0 - mater.alpha
     else:
-        trans = 0.0                            
+        trans = 0.0
     if ((mater.specular_color.s == 0.0) or (mater.diffuse_shader == 'MINNAERT')):
     # No layered texture because of aoi pattern used for minnaert and pov can't layer patterned
         colored_specular_found = False
@@ -732,7 +732,7 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
         trans = (1.0 - mater.alpha) - povFilter
     else:
         povFilter = 0.0
-        
+
     ##############SF
     texturesDif = ""
     texturesSpec = ""
@@ -772,7 +772,7 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
                         #was the above used? --MR
                         t_alpha = t
 
-            # RASTER IMAGE            
+            # RASTER IMAGE
             elif (t.texture.type == 'IMAGE' and t.texture.image and t.texture.pov.tex_pattern_type == 'emulator'):
                 proceduralFlag=False
                 #PACKED
@@ -782,11 +782,11 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
                     if not os.path.exists(unpackedfilename):
                         # record which images that were newly copied and can be safely
                         # cleaned up
-                        unpacked_images.append(unpackedfilename)                                            
+                        unpacked_images.append(unpackedfilename)
                     t.texture.image.filepath_raw=unpackedfilename
                     t.texture.image.save()
                     image_filename = unpackedfilename.replace("\\","/")
-                    # .replace("\\","/") to get only forward slashes as it's what POV prefers, 
+                    # .replace("\\","/") to get only forward slashes as it's what POV prefers,
                     # even on windows
                     t.texture.image.filepath_raw=orig_image_filename
                 #FILE
@@ -824,7 +824,7 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
                         #textDispName=t.texture.image.name + ".displ"
                         #was the above used? --MR
                         t_alpha = t
-        
+
     ####################################################################################
 
 
@@ -835,7 +835,7 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
     LocalMaterialNames.append(currentMatName)
     tabWrite("\n#declare MAT_%s = \ntexture{\n" % currentMatName)
     ################################################################################
-    
+
     if mater.pov.replacement_text != "":
         tabWrite("%s\n" % mater.pov.replacement_text)
     #################################################################################
@@ -873,11 +873,11 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
         if texturesSpec != "":
             # tabWrite("\n")
             tabWrite("pigment_pattern {\n")
-            
+
             mappingSpec =imgMapTransforms(t_spec)
             if texturesSpec and texturesSpec.startswith("PAT_"):
-                tabWrite("function{f%s(x,y,z).grey}\n" %texturesSpec) 
-                tabWrite("%s\n" % mappingSpec)                
+                tabWrite("function{f%s(x,y,z).grey}\n" %texturesSpec)
+                tabWrite("%s\n" % mappingSpec)
             else:
 
                 tabWrite("uv_mapping image_map{%s \"%s\" %s}\n" % \
@@ -894,9 +894,9 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
                 mappingAlpha = imgMapTransforms(t_alpha)
 
                 if texturesAlpha and texturesAlpha.startswith("PAT_"):
-                    tabWrite("function{f%s(x,y,z).transmit}%s\n" %(texturesAlpha, mappingAlpha)) 
+                    tabWrite("function{f%s(x,y,z).transmit}%s\n" %(texturesAlpha, mappingAlpha))
                 else:
- 
+
                     tabWrite("pigment {pigment_pattern {uv_mapping image_map" \
                              "{%s \"%s\" %s}%s" % \
                              (imageFormat(texturesAlpha), texturesAlpha,
@@ -931,7 +931,7 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
                 tabWrite("pigment {\n")
                 tabWrite("pigment_pattern {\n")
                 if texturesAlpha and texturesAlpha.startswith("PAT_"):
-                    tabWrite("function{f%s(x,y,z).transmit}%s\n" %(texturesAlpha, mappingAlpha)) 
+                    tabWrite("function{f%s(x,y,z).transmit}%s\n" %(texturesAlpha, mappingAlpha))
                 else:
                     tabWrite("uv_mapping image_map{%s \"%s\" %s}%s}\n" % \
                              (imageFormat(texturesAlpha), texturesAlpha,
@@ -939,13 +939,13 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
                 tabWrite("pigment_map {\n")
                 tabWrite("[0 color rgbft<0,0,0,1,1>]\n")
                 #if texturesAlpha and texturesAlpha.startswith("PAT_"):
-                    #tabWrite("[1 pigment{%s}]\n" %texturesDif) 
+                    #tabWrite("[1 pigment{%s}]\n" %texturesDif)
                 if texturesDif and not texturesDif.startswith("PAT_"):
                     tabWrite("[1 uv_mapping image_map {%s \"%s\" %s} %s]\n" % \
                              (imageFormat(texturesDif), texturesDif,
                               (imgGamma + imgMap(t_dif)), mappingDif))
                 elif texturesDif and texturesDif.startswith("PAT_"):
-                    tabWrite("[1 %s]\n" %texturesDif)                                                          
+                    tabWrite("[1 %s]\n" %texturesDif)
                 tabWrite("}\n")
                 tabWrite("}\n")
                 if texturesAlpha and texturesAlpha.startswith("PAT_"):
@@ -953,7 +953,7 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
 
             else:
                 if texturesDif and texturesDif.startswith("PAT_"):
-                    tabWrite("pigment{%s}\n" %texturesDif) 
+                    tabWrite("pigment{%s}\n" %texturesDif)
                 else:
                     tabWrite("pigment {uv_mapping image_map {%s \"%s\" %s}%s}\n" % \
                              (imageFormat(texturesDif), texturesDif,
@@ -982,7 +982,7 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
             mappingNor =imgMapTransforms(t_nor)
 
             if texturesNorm and texturesNorm.startswith("PAT_"):
-                tabWrite("normal{function{f%s(x,y,z).grey} bump_size %.4g %s}\n" %(texturesNorm, t_nor.normal_factor/10, mappingNor)) 
+                tabWrite("normal{function{f%s(x,y,z).grey} bump_size %.4g %s}\n" %(texturesNorm, t_nor.normal_factor/10, mappingNor))
             else:
                 tabWrite("normal {uv_mapping bump_map " \
                          "{%s \"%s\" %s  bump_size %.4g }%s}\n" % \
@@ -998,7 +998,7 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
             mappingAlpha = imgMapTransforms(t_alpha)
 
             if texturesAlpha and texturesAlpha.startswith("PAT_"):
-                tabWrite("function{f%s(x,y,z).transmit %s}\n" %(texturesAlpha, mappingAlpha)) 
+                tabWrite("function{f%s(x,y,z).transmit %s}\n" %(texturesAlpha, mappingAlpha))
             else:
                 tabWrite("pigment {pigment_pattern {uv_mapping image_map" \
                          "{%s \"%s\" %s}%s}\n" % \
@@ -1014,12 +1014,12 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
         else:
             tabWrite("pigment {rgbft<%.3g, %.3g, %.3g, %.3g, %.3g>}\n" % \
                      (col[0], col[1], col[2], povFilter, trans))
-                     
-                                    
+
+
         if texturesSpec != "":
             # Level 3 is full specular
             tabWrite("finish {%s}\n" % (safety(material_finish, Level=3)))
-            
+
         elif colored_specular_found:
             # Level 1 is no specular
             tabWrite("finish {%s}\n" % (safety(material_finish, Level=1)))
@@ -1045,8 +1045,8 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
             tabWrite("pigment_map {\n")
             tabWrite("[0 color rgbft<0,0,0,1,1>]\n")
             if texturesAlpha and texturesAlpha.startswith("PAT_"):
-                tabWrite("[1 function{f%s(x,y,z).transmit}%s]\n" %(texturesAlpha, mappingAlpha)) 
-            elif texturesDif and not texturesDif.startswith("PAT_"):                                       
+                tabWrite("[1 function{f%s(x,y,z).transmit}%s]\n" %(texturesAlpha, mappingAlpha))
+            elif texturesDif and not texturesDif.startswith("PAT_"):
                 tabWrite("[1 uv_mapping image_map {%s \"%s\" %s} %s]\n" % \
                          (imageFormat(texturesDif), texturesDif,
                           (imgMap(t_dif) + imgGamma), mappingDif))
@@ -1057,9 +1057,9 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
 
         else:
             if texturesDif and texturesDif.startswith("PAT_"):
-                tabWrite("pigment{%s %s}\n" %(texturesDif, mappingDif)) 
+                tabWrite("pigment{%s %s}\n" %(texturesDif, mappingDif))
                 print('XXXMEEEERDE!')
-            else:                                    
+            else:
                 tabWrite("pigment {\n")
                 tabWrite("uv_mapping image_map {\n")
                 #tabWrite("%s \"%s\" %s}%s\n" % \
@@ -1070,10 +1070,10 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
                 tabWrite("}\n")
                 tabWrite("%s\n" % mappingDif)
                 tabWrite("}\n")
-              
+
         if texturesSpec != "":
             # Level 3 is full specular
-            tabWrite("finish {%s}\n" % (safety(material_finish, Level=3)))                  
+            tabWrite("finish {%s}\n" % (safety(material_finish, Level=3)))
         else:
             # Level 2 is translated specular
             tabWrite("finish {%s}\n" % (safety(material_finish, Level=2)))
@@ -1094,7 +1094,7 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
 
         if texturesNorm and texturesNorm.startswith("PAT_"):
             tabWrite("normal{function{f%s(x,y,z).grey} bump_size %.4g %s}\n" %(texturesNorm, t_nor.normal_factor/10, mappingNor))
-        else:                                    
+        else:
             tabWrite("normal {uv_mapping bump_map {%s \"%s\" %s  bump_size %.4g }%s}\n" % \
                      (imageFormat(texturesNorm), texturesNorm, imgMap(t_nor),
                       t_nor.normal_factor/10, mappingNor))
@@ -1114,18 +1114,18 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
             tabWrite("}\n")
             c += 1
 
-      
-            
+
+
     # Close first layer of POV "texture" (Blender material)
     tabWrite("}\n")
-    
+
     if ((mater.specular_color.s > 0.0) and (mater.diffuse_shader != 'MINNAERT')):
-    
+
         colored_specular_found = True
     else:
         colored_specular_found = False
-        
-    # Write another layered texture using invisible diffuse and metallic trick 
+
+    # Write another layered texture using invisible diffuse and metallic trick
     # to emulate colored specular highlights
     special_texture_found = False
     for t in mater.texture_slots:
@@ -1134,13 +1134,13 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
             # Specular mapped textures would conflict with colored specular
             # because POV can't layer over or under pigment patterned textures
             special_texture_found = True
-    
+
     if colored_specular_found and not special_texture_found:
         if comments:
             tabWrite("  // colored highlights with a stransparent metallic layer\n")
         else:
             tabWrite("\n")
-    
+
         tabWrite("texture {\n")
         tabWrite("pigment {rgbft<%.3g, %.3g, %.3g, 0, 1>}\n" % \
                          (mater.specular_color[0], mater.specular_color[1], mater.specular_color[2]))
@@ -1155,7 +1155,7 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
             if (t and t.texture.type == 'IMAGE' and
                     t.use and t.texture.image and
                     t.texture.pov.tex_pattern_type == 'emulator'):
-                proceduralFlag=False 
+                proceduralFlag=False
                 image_filename = path_image(t.texture.image)
                 imgGamma = ""
                 if image_filename:
@@ -1177,5 +1177,525 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
                                      texturesNorm, imgMap(t_nor),
                                      t_nor.normal_factor/10,
                                      mappingNor))
-                                      
+
         tabWrite("}\n") # THEN IT CAN CLOSE LAST LAYER OF TEXTURE
+
+def string_strip_hyphen(name):
+    return name.replace("-", "")
+# WARNING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+def write_nodes(scene,povMatName,ntree,file):
+    declareNodes=[]
+    scene=bpy.context.scene
+    for node in ntree.nodes:
+        povNodeName=string_strip_hyphen(bpy.path.clean_name(node.name))+"_%s"%povMatName
+        if node.bl_idname == "PovrayFinishNode" and node.outputs["Finish"].is_linked:
+            file.write('#declare %s = finish {\n'%povNodeName)
+            emission=node.inputs["Emission"].default_value
+            if node.inputs["Emission"].is_linked:
+                pass
+            file.write('    emission %.4g\n'%emission)
+            for link in ntree.links:
+                if link.to_node == node:
+
+                    if link.from_node.bl_idname == 'PovrayDiffuseNode':
+                        intensity=0
+                        albedo=""
+                        brilliance=0
+                        crand=0
+                        if link.from_node.inputs["Intensity"].is_linked:
+                            pass
+                        else:
+                            intensity=link.from_node.inputs["Intensity"].default_value
+                        if link.from_node.inputs["Albedo"].is_linked:
+                            pass
+                        else:
+                            if link.from_node.inputs["Albedo"].default_value == True:
+                                albedo = "albedo"
+                        file.write('    diffuse %s %.4g\n'%(albedo,intensity))
+                        if link.from_node.inputs["Brilliance"].is_linked:
+                            pass
+                        else:
+                            brilliance=link.from_node.inputs["Brilliance"].default_value
+                        file.write('    brilliance %.4g\n'%brilliance)
+                        if link.from_node.inputs["Crand"].is_linked:
+                            pass
+                        else:
+                            crand=link.from_node.inputs["Crand"].default_value
+                        if crand > 0:
+                            file.write('    crand %.4g\n'%crand)
+
+
+                    if link.from_node.bl_idname == 'PovraySubsurfaceNode':
+                        if scene.povray.sslt_enable:
+                            energy = 0
+                            r = g = b = 0
+                            if link.from_node.inputs["Translucency"].is_linked:
+                                pass
+                            else:
+                                r,g,b,a=link.from_node.inputs["Translucency"].default_value[:]
+                            if link.from_node.inputs["Energy"].is_linked:
+                                pass
+                            else:
+                                energy=link.from_node.inputs["Energy"].default_value
+                            file.write('    subsurface { translucency <%.4g,%.4g,%.4g>*%s }\n'%(r,g,b,energy))
+
+
+
+                    if link.from_node.bl_idname in {'PovraySpecularNode','PovrayPhongNode'}:
+                        intensity=0
+                        albedo=""
+                        roughness=0
+                        metallic=0
+                        phong_size=0
+                        highlight="specular"
+                        if link.from_node.inputs["Intensity"].is_linked:
+                            pass
+                        else:
+                            intensity=link.from_node.inputs["Intensity"].default_value
+
+                        if link.from_node.inputs["Albedo"].is_linked:
+                            pass
+                        else:
+                            if link.from_node.inputs["Albedo"].default_value == True:
+                                albedo = "albedo"
+                        if link.from_node.bl_idname in {'PovrayPhongNode'}:
+                            highlight="phong"
+                        file.write('    %s %s %.4g\n'%(highlight,albedo,intensity))
+
+                        if link.from_node.bl_idname in {'PovraySpecularNode'}:
+                            if link.from_node.inputs["Roughness"].is_linked:
+                                pass
+                            else:
+                                roughness=link.from_node.inputs["Roughness"].default_value
+                            file.write('    roughness %.6g\n'%roughness)
+
+                        if link.from_node.bl_idname in {'PovrayPhongNode'}:
+                            if link.from_node.inputs["Size"].is_linked:
+                                pass
+                            else:
+                                phong_size=link.from_node.inputs["Size"].default_value
+                            file.write('    phong_size %s\n'%phong_size)
+
+                        if link.from_node.inputs["Metallic"].is_linked:
+                            pass
+                        else:
+                            metallic=link.from_node.inputs["Metallic"].default_value
+                        file.write('    metallic %.4g\n'%metallic)
+
+                    if link.from_node.bl_idname in {'PovrayMirrorNode'}:
+                        file.write('    reflection {\n')
+                        color=None
+                        exponent=0
+                        metallic=0
+                        falloff=0
+                        fresnel=""
+                        conserve=""
+                        if link.from_node.inputs["Color"].is_linked:
+                            pass
+                        else:
+                            color=link.from_node.inputs["Color"].default_value[:]
+                        file.write('    <%.4g,%.4g,%.4g>\n'%color)
+
+                        if link.from_node.inputs["Exponent"].is_linked:
+                            pass
+                        else:
+                            exponent=link.from_node.inputs["Exponent"].default_value
+                        file.write('    exponent %.4g\n'%exponent)
+
+                        if link.from_node.inputs["Falloff"].is_linked:
+                            pass
+                        else:
+                            falloff=link.from_node.inputs["Falloff"].default_value
+                        file.write('    falloff %.4g\n'%falloff)
+
+                        if link.from_node.inputs["Metallic"].is_linked:
+                            pass
+                        else:
+                            metallic=link.from_node.inputs["Metallic"].default_value
+                        file.write('    metallic %.4g'%metallic)
+
+                        if link.from_node.inputs["Fresnel"].is_linked:
+                            pass
+                        else:
+                            if link.from_node.inputs["Fresnel"].default_value==True:
+                                fresnel="fresnel"
+
+                        if link.from_node.inputs["Conserve energy"].is_linked:
+                            pass
+                        else:
+                            if link.from_node.inputs["Conserve energy"].default_value==True:
+                                conserve="conserve_energy"
+
+                        file.write('    %s}\n    %s\n'%(fresnel,conserve))
+
+                    if link.from_node.bl_idname == 'PovrayAmbientNode':
+                        ambient=(0,0,0)
+                        if link.from_node.inputs["Ambient"].is_linked:
+                            pass
+                        else:
+                            ambient=link.from_node.inputs["Ambient"].default_value[:]
+                        file.write('    ambient <%.4g,%.4g,%.4g>\n'%ambient)
+
+                    if link.from_node.bl_idname in {'PovrayIridescenceNode'}:
+                        file.write('    irid {\n')
+                        amount=0
+                        thickness=0
+                        turbulence=0
+                        if link.from_node.inputs["Amount"].is_linked:
+                            pass
+                        else:
+                            amount=link.from_node.inputs["Amount"].default_value
+                        file.write('    %.4g\n'%amount)
+
+                        if link.from_node.inputs["Thickness"].is_linked:
+                            pass
+                        else:
+                            exponent=link.from_node.inputs["Thickness"].default_value
+                        file.write('    thickness %.4g\n'%thickness)
+
+                        if link.from_node.inputs["Turbulence"].is_linked:
+                            pass
+                        else:
+                            falloff=link.from_node.inputs["Turbulence"].default_value
+                        file.write('    turbulence %.4g}\n'%turbulence)
+
+            file.write('}\n')
+
+    for node in ntree.nodes:
+        povNodeName=string_strip_hyphen(bpy.path.clean_name(node.name))+"_%s"%povMatName
+        if node.bl_idname == "PovrayTransformNode" and node.outputs["Transform"].is_linked:
+            tx=node.inputs["Translate x"].default_value
+            ty=node.inputs["Translate y"].default_value
+            tz=node.inputs["Translate z"].default_value
+            rx=node.inputs["Rotate x"].default_value
+            ry=node.inputs["Rotate y"].default_value
+            rz=node.inputs["Rotate z"].default_value
+            sx=node.inputs["Scale x"].default_value
+            sy=node.inputs["Scale y"].default_value
+            sz=node.inputs["Scale z"].default_value
+            file.write('#declare %s = transform {\n    translate<%.4g,%.4g,%.4g>\n    rotate<%.4g,%.4g,%.4g>\n    scale<%.4g,%.4g,%.4g>}\n'%(povNodeName,tx,ty,tz,rx,ry,rz,sx,sy,sz))
+
+    for node in ntree.nodes:
+        povNodeName=string_strip_hyphen(bpy.path.clean_name(node.name))+"_%s"%povMatName
+        if node.bl_idname == "PovrayColorImageNode" and node.outputs["Pigment"].is_linked:
+            declareNodes.append(node.name)
+            if node.image == "":
+                file.write('#declare %s = pigment { color rgb 0.8}\n'%(povNodeName))
+            else:
+                im=bpy.data.images[node.image]
+                if im.filepath and os.path.exists(bpy.path.abspath(im.filepath)):
+                    transform = ""
+                    for link in ntree.links:
+                        if link.from_node.bl_idname=='PovrayTransformNode' and link.to_node==node:
+                            povTransName=string_strip_hyphen(bpy.path.clean_name(link.from_node.name))+"_%s"%povMatName
+                            transform="transform {%s}"%povTransName
+                    uv=""
+                    if node.map_type=="uv_mapping":
+                        uv="uv_mapping"
+                    filepath=bpy.path.abspath(im.filepath)
+                    file.write('#declare %s = pigment {%s image_map {\n'%(povNodeName,uv))
+                    premul="off"
+                    if node.premultiplied:
+                        premul="on"
+                    once=""
+                    if node.once:
+                        once="once"
+                    file.write('    "%s"\n    gamma %.6g\n    premultiplied %s\n'%(filepath,node.inputs["Gamma"].default_value,premul))
+                    file.write('    %s\n'%once)
+                    if node.map_type!="uv_mapping":
+                        file.write('    map_type %s\n'%(node.map_type))
+                    file.write('    interpolate %s\n    filter all %.4g\n    transmit all %.4g\n'%
+                        (node.interpolate,node.inputs["Filter"].default_value,node.inputs["Transmit"].default_value))
+                    file.write('    }\n')
+                    file.write('    %s\n'%transform)
+                    file.write('    }\n')
+
+    for node in ntree.nodes:
+        povNodeName=string_strip_hyphen(bpy.path.clean_name(node.name))+"_%s"%povMatName
+        if node.bl_idname == "PovrayImagePatternNode" and node.outputs["Pattern"].is_linked:
+            declareNodes.append(node.name)
+            if node.image != "":
+                im=bpy.data.images[node.image]
+                if im.filepath and os.path.exists(bpy.path.abspath(im.filepath)):
+                    transform = ""
+                    for link in ntree.links:
+                        if link.from_node.bl_idname=='PovrayTransformNode' and link.to_node==node:
+                            povTransName=string_strip_hyphen(bpy.path.clean_name(link.from_node.name))+"_%s"%povMatName
+                            transform="transform {%s}"%povTransName
+                    uv=""
+                    if node.map_type=="uv_mapping":
+                        uv="uv_mapping"
+                    filepath=bpy.path.abspath(im.filepath)
+                    file.write('#macro %s() %s image_pattern {\n'%(povNodeName,uv))
+                    premul="off"
+                    if node.premultiplied:
+                        premul="on"
+                    once=""
+                    if node.once:
+                        once="once"
+                    file.write('    "%s"\n    gamma %.6g\n    premultiplied %s\n'%(filepath,node.inputs["Gamma"].default_value,premul))
+                    file.write('    %s\n'%once)
+                    if node.map_type!="uv_mapping":
+                        file.write('    map_type %s\n'%(node.map_type))
+                    file.write('    interpolate %s\n'%node.interpolate)
+                    file.write('    }\n')
+                    file.write('    %s\n'%transform)
+                    file.write('#end\n')
+
+    for node in ntree.nodes:
+        povNodeName=string_strip_hyphen(bpy.path.clean_name(node.name))+"_%s"%povMatName
+        if node.bl_idname == "PovrayBumpMapNode" and node.outputs["Normal"].is_linked:
+            if node.image != "":
+                im=bpy.data.images[node.image]
+                if im.filepath and os.path.exists(bpy.path.abspath(im.filepath)):
+                    transform = ""
+                    for link in ntree.links:
+                        if link.from_node.bl_idname=='PovrayTransformNode' and link.to_node==node:
+                            povTransName=string_strip_hyphen(bpy.path.clean_name(link.from_node.name))+"_%s"%povMatName
+                            transform="transform {%s}"%povTransName
+                    uv=""
+                    if node.map_type=="uv_mapping":
+                        uv="uv_mapping"
+                    filepath=bpy.path.abspath(im.filepath)
+                    file.write('#declare %s = normal {%s bump_map {\n'%(povNodeName,uv))
+                    once=""
+                    if node.once:
+                        once="once"
+                    file.write('    "%s"\n'%filepath)
+                    file.write('    %s\n'%once)
+                    if node.map_type!="uv_mapping":
+                        file.write('    map_type %s\n'%(node.map_type))
+                    bump_size=node.inputs["Normal"].default_value
+                    if node.inputs["Normal"].is_linked:
+                        pass
+                    file.write('    interpolate %s\n    bump_size %.4g\n'%(node.interpolate,bump_size))
+                    file.write('    }\n')
+                    file.write('    %s\n'%transform)
+                    file.write('    }\n')
+                    declareNodes.append(node.name)
+
+
+
+    for node in ntree.nodes:
+        povNodeName=string_strip_hyphen(bpy.path.clean_name(node.name))+"_%s"%povMatName
+        if node.bl_idname == "PovrayPigmentNode" and node.outputs["Pigment"].is_linked:
+            declareNodes.append(node.name)
+            r,g,b=node.inputs["Color"].default_value[:]
+            f=node.inputs["Filter"].default_value
+            t=node.inputs["Transmit"].default_value
+            if node.inputs["Color"].is_linked:
+                pass
+            file.write('#declare %s = pigment{color srgbft <%.4g,%.4g,%.4g,%.4g,%.4g>}\n'%(povNodeName,r,g,b,f,t))
+
+
+    for node in ntree.nodes:
+        povNodeName=string_strip_hyphen(bpy.path.clean_name(node.name))+"_%s"%povMatName
+        if node.bl_idname == "PovrayTextureNode" and node.outputs["Texture"].is_linked:
+            declareNodes.append(node.name)
+            r,g,b=node.inputs["Pigment"].default_value[:]
+            povColName="color rgb <%.4g,%.4g,%.4g>"%(r,g,b)
+            if node.inputs["Pigment"].is_linked:
+                for link in ntree.links:
+                    if link.to_node==node and link.to_socket.name=="Pigment":
+                        povColName=string_strip_hyphen(bpy.path.clean_name(link.from_node.name))+"_%s"%povMatName
+            file.write('#declare %s = texture{\n    pigment{%s}\n'%(povNodeName,povColName))
+            if node.inputs["Normal"].is_linked:
+                for link in ntree.links:
+                    if link.to_node==node and link.to_socket.name=="Normal" and link.from_node.name in declareNodes:
+                        povNorName=string_strip_hyphen(bpy.path.clean_name(link.from_node.name))+"_%s"%povMatName
+                        file.write('    normal{%s}\n'%povNorName)
+            if node.inputs["Finish"].is_linked:
+                for link in ntree.links:
+                    if link.to_node==node and link.to_socket.name=="Finish":
+                        povFinName=string_strip_hyphen(bpy.path.clean_name(link.from_node.name))+"_%s"%povMatName
+                        file.write('    finish{%s}\n'%povFinName)
+            file.write('}\n')
+            declareNodes.append(node.name)
+
+    for i in range(0,len(ntree.nodes)):
+        for node in ntree.nodes:
+            if node.bl_idname in {"ShaderNodeGroup","ShaderTextureMapNode"}:
+                for output in node.outputs:
+                    if output.name=="Texture" and output.is_linked and (node.name not in declareNodes):
+                        declare=True
+                        for link in ntree.links:
+                            if link.to_node==node and link.to_socket.name not in {"","Color ramp","Mapping","Transform","Modifier"}:
+                                if link.from_node.name not in declareNodes:
+                                    declare=False
+                        if declare:
+                            povNodeName=string_strip_hyphen(bpy.path.clean_name(node.name))+"_%s"%povMatName
+                            uv=""
+                            warp=""
+                            for link in ntree.links:
+                                if link.to_node==node and link.from_node.bl_idname=='PovrayMappingNode' and link.from_node.warp_type!="NONE":
+                                    w_type = link.from_node.warp_type
+                                    if w_type=="uv_mapping":
+                                        uv="uv_mapping"
+                                    else:
+                                        tor=""
+                                        if w_type=="toroidal":
+                                            tor="major_radius %.4g"%link.from_node.warp_tor_major_radius
+                                        orient=link.from_node.warp_orientation
+                                        exp=link.from_node.warp_dist_exp
+                                        warp="warp{%s orientation %s dist_exp %.4g %s}"%(w_type,orient,exp,tor)
+                                        if link.from_node.warp_type=="planar":
+                                            warp="warp{%s %s %.4g}"%(w_type,orient,exp)
+                                        if link.from_node.warp_type=="cubic":
+                                            warp="warp{%s}"%w_type
+                            file.write('#declare %s = texture {%s\n'%(povNodeName,uv))
+                            pattern=node.inputs[0].default_value
+                            advanced=""
+                            if node.inputs[0].is_linked:
+                                for link in ntree.links:
+                                    if link.to_node==node and link.from_node.bl_idname=='ShaderPatternNode':
+                                        ########### advanced ###############################################
+                                        lfn=link.from_node
+                                        pattern=lfn.pattern
+                                        if pattern == 'agate':
+                                            advanced = 'agate_turb %.4g'%lfn.agate_turb
+                                        if pattern == 'crackle':
+                                            advanced="form <%.4g,%.4g,%.4g>"%(lfn.crackle_form_x,lfn.crackle_form_y,lfn.crackle_form_z)
+                                            advanced+=" metric %.4g"%lfn.crackle_metric
+                                            if lfn.crackle_solid:
+                                                advanced+=" solid"
+                                        if pattern in {'spiral1', 'spiral2'}:
+                                            advanced='%.4g'%lfn.spiral_arms
+                                        if pattern in {'tiling'}:
+                                            advanced='%.4g'%lfn.tiling_number
+                                        if pattern in {'gradient'}:
+                                            advanced='%s'%lfn.gradient_orient
+                                    if link.to_node==node and link.from_node.bl_idname=='PovrayImagePatternNode':
+                                        povMacroName=string_strip_hyphen(bpy.path.clean_name(link.from_node.name))+"_%s"%povMatName
+                                        pattern = "%s()"%povMacroName
+                            file.write('    %s %s %s\n'%(pattern,advanced,warp))
+
+                            repeat=""
+                            for link in ntree.links:
+                                if link.to_node==node and link.from_node.bl_idname=='PovrayMultiplyNode':
+                                    if link.from_node.amount_x > 1:
+                                        repeat+="warp{repeat %.4g * x}"%link.from_node.amount_x
+                                    if link.from_node.amount_y > 1:
+                                        repeat+=" warp{repeat %.4g * y}"%link.from_node.amount_y
+                                    if link.from_node.amount_z > 1:
+                                        repeat+=" warp{repeat %.4g * z}"%link.from_node.amount_z
+
+                            transform=""
+                            for link in ntree.links:
+                                if link.to_node==node and link.from_node.bl_idname=='PovrayTransformNode':
+                                    povTransName=string_strip_hyphen(bpy.path.clean_name(link.from_node.name))+"_%s"%povMatName
+                                    transform="transform {%s}"%povTransName
+                            x=0
+                            y=0
+                            z=0
+                            d=0
+                            e=0
+                            f=0
+                            g=0
+                            h=0
+                            modifier=False
+                            for link in ntree.links:
+                                if link.to_node==node and link.from_node.bl_idname=='PovrayModifierNode':
+                                    modifier=True
+                                    if link.from_node.inputs["Turb X"].is_linked:
+                                        pass
+                                    else:
+                                        x = link.from_node.inputs["Turb X"].default_value
+
+                                    if link.from_node.inputs["Turb Y"].is_linked:
+                                        pass
+                                    else:
+                                        y = link.from_node.inputs["Turb Y"].default_value
+
+                                    if link.from_node.inputs["Turb Z"].is_linked:
+                                        pass
+                                    else:
+                                        z = link.from_node.inputs["Turb Z"].default_value
+
+                                    if link.from_node.inputs["Octaves"].is_linked:
+                                        pass
+                                    else:
+                                        d = link.from_node.inputs["Octaves"].default_value
+
+                                    if link.from_node.inputs["Lambda"].is_linked:
+                                        pass
+                                    else:
+                                        e = link.from_node.inputs["Lambda"].default_value
+
+                                    if link.from_node.inputs["Omega"].is_linked:
+                                        pass
+                                    else:
+                                        f = link.from_node.inputs["Omega"].default_value
+
+                                    if link.from_node.inputs["Frequency"].is_linked:
+                                        pass
+                                    else:
+                                        g = link.from_node.inputs["Frequency"].default_value
+
+                                    if link.from_node.inputs["Phase"].is_linked:
+                                        pass
+                                    else:
+                                        h = link.from_node.inputs["Phase"].default_value
+
+                            turb = "turbulence <%.4g,%.4g,%.4g>"%(x,y,z)
+                            octv = "octaves %s"%d
+                            lmbd = "lambda %.4g"%e
+                            omg = "omega %.4g"%f
+                            freq = "frequency %.4g"%g
+                            pha = "phase %.4g"%h
+
+
+                            file.write('\n')
+                            if pattern not in {'checker', 'hexagon', 'square', 'triangular', 'brick'}:
+                                file.write('    texture_map {\n')
+                            if node.inputs["Color ramp"].is_linked:
+                                for link in ntree.links:
+                                    if link.to_node==node and link.from_node.bl_idname=="ShaderNodeValToRGB":
+                                        els = link.from_node.color_ramp.elements
+                                        n=-1
+                                        for el in els:
+                                            n+=1
+                                            povInMatName=string_strip_hyphen(bpy.path.clean_name(link.from_node.name))+"_%s_%s"%(n,povMatName)
+                                            default=True
+                                            for ilink in ntree.links:
+                                                if ilink.to_node==node and ilink.to_socket.name == str(n):
+                                                    default=False
+                                                    povInMatName=string_strip_hyphen(bpy.path.clean_name(ilink.from_node.name))+"_%s"%povMatName
+                                            if default:
+                                                r,g,b,a=el.color[:]
+                                                file.write('    #declare %s = texture{pigment{color srgbt <%.4g,%.4g,%.4g,%.4g>}};\n'%(povInMatName,r,g,b,1-a))
+                                            file.write('    [%s %s]\n'%(el.position,povInMatName))
+                            else:
+                                els=[[0,0,0,0],[1,1,1,1]]
+                                for i in range(0,2):
+                                    povInMatName=string_strip_hyphen(bpy.path.clean_name(link.from_node.name))+"_%s_%s"%(i,povMatName)
+                                    default=True
+                                    for ilink in ntree.links:
+                                        if ilink.to_node==node and ilink.to_socket.name == str(i):
+                                            default=False
+                                            povInMatName=string_strip_hyphen(bpy.path.clean_name(ilink.from_node.name))+"_%s"%povMatName
+                                    if default:
+                                        r,g,b=els[i][1],els[i][2],els[i][3]
+                                        if pattern not in {'checker', 'hexagon', 'square', 'triangular', 'brick'}:
+                                            file.write('    #declare %s = texture{pigment{color rgb <%.4g,%.4g,%.4g>}};\n'%(povInMatName,r,g,b))
+                                        else:
+                                            file.write('    texture{pigment{color rgb <%.4g,%.4g,%.4g>}}\n'%(r,g,b))
+                                    if pattern not in {'checker', 'hexagon', 'square', 'triangular', 'brick'}:
+                                        file.write('    [%s %s]\n'%(els[i][0],povInMatName))
+                                    else:
+                                        if default==False:
+                                            file.write('    texture{%s}\n'%povInMatName)
+                            if pattern not in {'checker', 'hexagon', 'square', 'triangular', 'brick'}:
+                                file.write('}\n')
+                            if pattern == 'brick':
+                                file.write("brick_size <%.4g, %.4g, %.4g> mortar %.4g \n"%(node.brick_size_x,
+                                                        node.brick_size_y, node.brick_size_z, node.brick_mortar))
+                            file.write('    %s %s'%(repeat,transform))
+                            if modifier:
+                                file.write(' %s %s %s %s %s %s'%(turb,octv,lmbd,omg,freq,pha))
+                            file.write('}\n')
+                            declareNodes.append(node.name)
+
+    for link in ntree.links:
+        if link.to_node.bl_idname == "PovrayOutputNode" and link.from_node.name in declareNodes:
+            povMatNodeName=string_strip_hyphen(bpy.path.clean_name(link.from_node.name))+"_%s"%povMatName
+            file.write('#declare %s = %s\n'%(povMatName,povMatNodeName))
