@@ -242,7 +242,6 @@ void BlenderSync::sync_integrator()
 	integrator->max_volume_bounce = get_int(cscene, "volume_bounces");
 
 	integrator->transparent_max_bounce = get_int(cscene, "transparent_max_bounces");
-	integrator->transparent_shadows = get_boolean(cscene, "use_transparent_shadows");
 
 	integrator->volume_max_steps = get_int(cscene, "volume_max_steps");
 	integrator->volume_step_size = get_float(cscene, "volume_step_size");
@@ -808,6 +807,7 @@ SessionParams BlenderSync::get_session_params(BL::RenderEngine& b_engine,
 	}
 
 	params.start_resolution = get_int(cscene, "preview_start_resolution");
+	params.pixel_size = b_engine.get_preview_pixel_size(b_scene);
 
 	/* other parameters */
 	if(b_scene.render().threads_mode() == BL::RenderSettings::threads_mode_FIXED)
@@ -828,6 +828,7 @@ SessionParams BlenderSync::get_session_params(BL::RenderEngine& b_engine,
 			params.progressive = false;
 
 		params.start_resolution = INT_MAX;
+		params.pixel_size = 1;
 	}
 	else
 		params.progressive = true;

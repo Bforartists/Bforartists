@@ -438,10 +438,8 @@ void BVH4::refit_node(int idx, bool leaf, BoundBox& bbox, uint& visibility)
 					}
 				}
 			}
-
-			visibility |= ob->visibility;
+			visibility |= ob->visibility_for_tracing();
 		}
-
 		/* TODO(sergey): This is actually a copy of pack_leaf(),
 		 * but this chunk of code only knows actual data and has
 		 * no idea about BVHNode.

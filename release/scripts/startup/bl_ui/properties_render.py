@@ -288,6 +288,7 @@ class RENDER_PT_performance(RenderButtonsPanel, Panel):
 
         col.separator()
         col.prop(rd, "preview_start_resolution")
+        col.prop(rd, "preview_pixel_size", text="")
 
         col = split.column()
         col.label(text="Memory:")

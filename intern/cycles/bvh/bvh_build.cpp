@@ -865,7 +865,7 @@ BVHNode *BVHBuild::create_object_leaf_nodes(const BVHReference *ref, int start, 
 			prim_time[start] = make_float2(ref->time_from(), ref->time_to());
 		}
 
-		uint visibility = objects[ref->prim_object()]->visibility;
+		const uint visibility = objects[ref->prim_object()]->visibility_for_tracing();
 		BVHNode *leaf_node =  new LeafNode(ref->bounds(), visibility, start, start+1);
 		leaf_node->time_from = ref->time_from();
 		leaf_node->time_to = ref->time_to();
@@ -939,7 +939,7 @@ BVHNode* BVHBuild::create_leaf_node(const BVHRange& range,
 			                                         ref.time_to()));
 
 			bounds[type_index].grow(ref.bounds());
-			visibility[type_index] |= objects[ref.prim_object()]->visibility;
+			visibility[type_index] |= objects[ref.prim_object()]->visibility_for_tracing();
 			if(ref.prim_type() & PRIMITIVE_ALL_CURVE) {
 				visibility[type_index] |= PATH_RAY_CURVE;
 			}
@@ -1040,7 +1040,6 @@ BVHNode* BVHBuild::create_leaf_node(const BVHRange& range,
 		 */
 		start_index = spatial_free_index;
 		spatial_free_index += range.size();
-
 		/* Extend an array when needed. */
 		const size_t range_end = start_index + range.size();
 		if(prim_type.size() < range_end) {
@@ -1066,8 +1065,6 @@ BVHNode* BVHBuild::create_leaf_node(const BVHRange& range,
 				prim_time.resize(range_end);
 			}
 		}
-		spatial_spin_lock.unlock();
-
 		/* Perform actual data copy. */
 		if(new_leaf_data_size > 0) {
 			memcpy(&prim_type[start_index], &local_prim_type[0], new_leaf_data_size);
@@ -1077,6 +1074,7 @@ BVHNode* BVHBuild::create_leaf_node(const BVHRange& range,
 				memcpy(&prim_time[start_index], &local_prim_time[0], sizeof(float2)*num_new_leaf_data);
 			}
 		}
+		spatial_spin_lock.unlock();
 	}
 	else {
 		/* For the regular BVH builder we simply copy new data starting at the

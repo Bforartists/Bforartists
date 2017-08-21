@@ -247,7 +247,9 @@ static int ui_text_icon_width(uiLayout *layout, const char *name, int icon, bool
 	variable = (ui_layout_vary_direction(layout) == UI_ITEM_VARY_X);
 
 	if (variable) {
-		layout->item.flag |= UI_ITEM_MIN;
+		if (layout->alignment != UI_LAYOUT_ALIGN_EXPAND) {
+			layout->item.flag |= UI_ITEM_MIN;
+		}
 		const uiFontStyle *fstyle = UI_FSTYLE_WIDGET;
 		/* it may seem odd that the icon only adds (UI_UNIT_X / 4)
 		 * but taking margins into account its fine */
@@ -2465,7 +2467,6 @@ static void ui_litem_estimate_box(uiLayout *litem)
 	uiStyle *style = litem->root->style;
 
 	ui_litem_estimate_column(litem, true);
-	litem->item.flag &= ~UI_ITEM_MIN;
 	litem->w += 2 * style->boxspace;
 	litem->h += 2 * style->boxspace;
 }
@@ -3137,8 +3138,11 @@ static void ui_item_estimate(uiItem *item)
 		for (subitem = litem->items.first; subitem; subitem = subitem->next)
 			ui_item_estimate(subitem);
 
-		if (BLI_listbase_is_empty(&litem->items))
+		if (BLI_listbase_is_empty(&litem->items)) {
+			litem->w = 0;
+			litem->h = 0;
 			return;
+		}
 
 		if (litem->scale[0] != 0.0f || litem->scale[1] != 0.0f)
 			ui_item_scale(litem, litem->scale);
@@ -3402,8 +3406,9 @@ void ui_layout_add_but(uiLayout *layout, uiBut *but)
 	ui_item_size((uiItem *)bitem, &w, &h);
 	/* XXX uiBut hasn't scaled yet
 	 * we can flag the button as not expandable, depending on its size */
-	if (w <= 2 * UI_UNIT_X)
+	if (w <= 2 * UI_UNIT_X && (!but->str || but->str[0] == '\0')) {
 		bitem->item.flag |= UI_ITEM_MIN;
+	}
 
 	BLI_addtail(&layout->items, bitem);
 

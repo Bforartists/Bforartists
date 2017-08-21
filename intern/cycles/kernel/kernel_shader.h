@@ -83,7 +83,7 @@ ccl_device_noinline void shader_setup_from_ray(KernelGlobals *kg,
 		float4 curvedata = kernel_tex_fetch(__curves, sd->prim);
 
 		sd->shader = __float_as_int(curvedata.z);
-		sd->P = bvh_curve_refine(kg, sd, isect, ray);
+		sd->P = curve_refine(kg, sd, isect, ray);
 	}
 	else
 #endif
@@ -669,7 +669,7 @@ ccl_device void shader_bsdf_blur(KernelGlobals *kg, ShaderData *sd, float roughn
 	}
 }
 
-ccl_device float3 shader_bsdf_transparency(KernelGlobals *kg, ShaderData *sd)
+ccl_device float3 shader_bsdf_transparency(KernelGlobals *kg, const ShaderData *sd)
 {
 	if(sd->flag & SD_HAS_ONLY_VOLUME)
 		return make_float3(1.0f, 1.0f, 1.0f);
@@ -677,7 +677,7 @@ ccl_device float3 shader_bsdf_transparency(KernelGlobals *kg, ShaderData *sd)
 	float3 eval = make_float3(0.0f, 0.0f, 0.0f);
 
 	for(int i = 0; i < sd->num_closure; i++) {
-		ShaderClosure *sc = &sd->closure[i];
+		const ShaderClosure *sc = &sd->closure[i];
 
 		if(sc->type == CLOSURE_BSDF_TRANSPARENT_ID) // todo: make this work for osl
 			eval += sc->weight;
@@ -764,6 +764,19 @@ ccl_device float3 shader_bsdf_subsurface(KernelGlobals *kg, ShaderData *sd)
 	return eval;
 }
 
+ccl_device float3 shader_bsdf_average_normal(KernelGlobals *kg, ShaderData *sd)
+{
+	float3 N = make_float3(0.0f, 0.0f, 0.0f);
+
+	for(int i = 0; i < sd->num_closure; i++) {
+		ShaderClosure *sc = &sd->closure[i];
+		if(CLOSURE_IS_BSDF_OR_BSSRDF(sc->type))
+			N += sc->N*average(sc->weight);
+	}
+
+	return (is_zero(N))? sd->N : normalize(N);
+}
+
 ccl_device float3 shader_bsdf_ao(KernelGlobals *kg, ShaderData *sd, float ao_factor, float3 *N_)
 {
 	float3 eval = make_float3(0.0f, 0.0f, 0.0f);
@@ -783,12 +796,7 @@ ccl_device float3 shader_bsdf_ao(KernelGlobals *kg, ShaderData *sd, float ao_fac
 		}
 	}
 
-	if(is_zero(N))
-		N = sd->N;
-	else
-		N = normalize(N);
-
-	*N_ = N;
+	*N_ = (is_zero(N))? sd->N : normalize(N);
 	return eval;
 }
 
@@ -863,7 +871,7 @@ ccl_device float3 shader_holdout_eval(KernelGlobals *kg, ShaderData *sd)
 
 /* Surface Evaluation */
 
-ccl_device void shader_eval_surface(KernelGlobals *kg, ShaderData *sd, RNG *rng,
+ccl_device void shader_eval_surface(KernelGlobals *kg, ShaderData *sd,
 	ccl_addr_space PathState *state, float randb, int path_flag, ShaderContext ctx)
 {
 	sd->num_closure = 0;
@@ -887,8 +895,8 @@ ccl_device void shader_eval_surface(KernelGlobals *kg, ShaderData *sd, RNG *rng,
 #endif
 	}
 
-	if(rng && (sd->flag & SD_BSDF_NEEDS_LCG)) {
-		sd->lcg_state = lcg_state_init(rng, state->rng_offset, state->sample, 0xb4bc3953);
+	if(sd->flag & SD_BSDF_NEEDS_LCG) {
+		sd->lcg_state = lcg_state_init_addrspace(state, 0xb4bc3953);
 	}
 }
 
