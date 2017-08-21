@@ -59,9 +59,6 @@ ccl_device void kernel_scene_intersect(KernelGlobals *kg)
 		return;
 	}
 
-#ifdef __KERNEL_DEBUG__
-	DebugData *debug_data = &kernel_split_state.debug_data[ray_index];
-#endif
 	Intersection isect;
 	PathState state = kernel_split_state.path_state[ray_index];
 	Ray ray = kernel_split_state.ray[ray_index];
@@ -77,7 +74,6 @@ ccl_device void kernel_scene_intersect(KernelGlobals *kg)
 #ifdef __HAIR__
 	float difl = 0.0f, extmax = 0.0f;
 	uint lcg_state = 0;
-	RNG rng = kernel_split_state.rng[ray_index];
 
 	if(kernel_data.bvh.have_curves) {
 		if((kernel_data.cam.resolution == 1) && (state.flag & PATH_RAY_CAMERA)) {
@@ -87,7 +83,7 @@ ccl_device void kernel_scene_intersect(KernelGlobals *kg)
 		}
 
 		extmax = kernel_data.curve.maximum_width;
-		lcg_state = lcg_state_init(&rng, state.rng_offset, state.sample, 0x51633e2d);
+		lcg_state = lcg_state_init(&state, 0x51633e2d);
 	}
 
 	bool hit = scene_intersect(kg, ray, visibility, &isect, &lcg_state, difl, extmax);
@@ -97,12 +93,14 @@ ccl_device void kernel_scene_intersect(KernelGlobals *kg)
 	kernel_split_state.isect[ray_index] = isect;
 
 #ifdef __KERNEL_DEBUG__
+	PathRadiance *L = &kernel_split_state.path_radiance[ray_index];
+
 	if(state.flag & PATH_RAY_CAMERA) {
-		debug_data->num_bvh_traversed_nodes += isect.num_traversed_nodes;
-		debug_data->num_bvh_traversed_instances += isect.num_traversed_instances;
-		debug_data->num_bvh_intersections += isect.num_intersections;
+		L->debug_data.num_bvh_traversed_nodes += isect.num_traversed_nodes;
+		L->debug_data.num_bvh_traversed_instances += isect.num_traversed_instances;
+		L->debug_data.num_bvh_intersections += isect.num_intersections;
 	}
-	debug_data->num_ray_bounces++;
+	L->debug_data.num_ray_bounces++;
 #endif
 
 	if(!hit) {

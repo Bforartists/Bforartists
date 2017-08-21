@@ -1395,7 +1395,7 @@ static PyObject *pyrna_enum_to_py(PointerRNA *ptr, PropertyRNA *prop, int val)
 		}
 		else {
 			EnumPropertyItem *enum_item;
-			bool free = false;
+			bool free;
 
 			/* don't throw error here, can't trust blender 100% to give the
 			 * right values, python code should not generate error for that */
@@ -1404,6 +1404,9 @@ static PyObject *pyrna_enum_to_py(PointerRNA *ptr, PropertyRNA *prop, int val)
 				ret = PyUnicode_FromString(enum_item->identifier);
 			}
 			else {
+				if (free) {
+					MEM_freeN(enum_item);
+				}
 				RNA_property_enum_items(NULL, ptr, prop, &enum_item, NULL, &free);
 
 				/* Do not print warning in case of DummyRNA_NULL_items, this one will never match any value... */
@@ -1640,7 +1643,7 @@ static int pyrna_py_to_prop(
 					param = PyObject_IsTrue(value);
 				}
 				else {
-					param = PyLong_AsLong(value);
+					param = PyC_Long_AsI32(value);
 
 					if (UNLIKELY(param & ~1)) {  /* only accept 0/1 */
 						param = -1;              /* error out below */
@@ -2076,10 +2079,10 @@ static int pyrna_py_to_prop_array_index(BPy_PropertyArrayRNA *self, int index, P
 		switch (RNA_property_type(prop)) {
 			case PROP_BOOLEAN:
 			{
-				int param = PyLong_AsLong(value);
+				int param = PyC_Long_AsBool(value);
 
-				if (param < 0 || param > 1) {
-					PyErr_SetString(PyExc_TypeError, "expected True/False or 0/1");
+				if (param == -1) {
+					/* error is set */
 					ret = -1;
 				}
 				else {
@@ -2089,7 +2092,7 @@ static int pyrna_py_to_prop_array_index(BPy_PropertyArrayRNA *self, int index, P
 			}
 			case PROP_INT:
 			{
-				int param = PyLong_AsLong(value);
+				int param = PyC_Long_AsI32(value);
 				if (param == -1 && PyErr_Occurred()) {
 					PyErr_SetString(PyExc_TypeError, "expected an int type");
 					ret = -1;
@@ -2709,7 +2712,7 @@ static PyObject *pyrna_prop_array_subscript(BPy_PropertyArrayRNA *self, PyObject
 		Py_ssize_t i = PyNumber_AsSsize_t(key, PyExc_IndexError);
 		if (i == -1 && PyErr_Occurred())
 			return NULL;
-		return pyrna_prop_array_subscript_int(self, PyLong_AsLong(key));
+		return pyrna_prop_array_subscript_int(self, i);
 	}
 	else if (PySlice_Check(key)) {
 		Py_ssize_t step = 1;

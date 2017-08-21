@@ -297,7 +297,6 @@ class CyclesRender_PT_light_paths(CyclesButtonsPanel, Panel):
         sub = col.column(align=True)
         sub.label("Transparency:")
         sub.prop(cscene, "transparent_max_bounces", text="Max")
-        sub.prop(cscene, "use_transparent_shadows", text="Shadows")
 
         col.separator()
 
@@ -424,6 +423,7 @@ class CyclesRender_PT_performance(CyclesButtonsPanel, Panel):
         col.prop(cscene, "debug_bvh_type", text="")
         col.separator()
         col.prop(cscene, "preview_start_resolution")
+        col.prop(rd, "preview_pixel_size", text="")
 
         col.separator()
 

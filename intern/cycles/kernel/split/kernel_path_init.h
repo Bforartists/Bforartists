@@ -60,35 +60,30 @@ ccl_device void kernel_path_init(KernelGlobals *kg) {
 	ccl_global float *buffer = kernel_split_params.buffer;
 	buffer += (kernel_split_params.offset + pixel_x + pixel_y * kernel_split_params.stride) * kernel_data.film.pass_stride;
 
-	RNG rng = kernel_split_state.rng[ray_index];
+	uint rng_hash;
 
 	/* Initialize random numbers and ray. */
 	kernel_path_trace_setup(kg,
 	                        rng_state,
 	                        my_sample,
 	                        pixel_x, pixel_y,
-	                        &rng,
+	                        &rng_hash,
 	                        &kernel_split_state.ray[ray_index]);
 
 	if(kernel_split_state.ray[ray_index].t != 0.0f) {
-		/* Initialize throughput, L_transparent, Ray, PathState;
+		/* Initialize throughput, path radiance, Ray, PathState;
 		 * These rays proceed with path-iteration.
 		 */
 		kernel_split_state.throughput[ray_index] = make_float3(1.0f, 1.0f, 1.0f);
-		kernel_split_state.L_transparent[ray_index] = 0.0f;
 		path_radiance_init(&kernel_split_state.path_radiance[ray_index], kernel_data.film.use_light_pass);
 		path_state_init(kg,
 		                &kernel_split_state.sd_DL_shadow[ray_index],
 		                &kernel_split_state.path_state[ray_index],
-		                &rng,
+		                rng_hash,
 		                my_sample,
 		                &kernel_split_state.ray[ray_index]);
 #ifdef __SUBSURFACE__
 		kernel_path_subsurface_init_indirect(&kernel_split_state.ss_rays[ray_index]);
-#endif
-
-#ifdef __KERNEL_DEBUG__
-		debug_data_init(&kernel_split_state.debug_data[ray_index]);
 #endif
 	}
 	else {
@@ -96,10 +91,8 @@ ccl_device void kernel_path_init(KernelGlobals *kg) {
 		float4 L_rad = make_float4(0.0f, 0.0f, 0.0f, 0.0f);
 		/* Accumulate result in output buffer. */
 		kernel_write_pass_float4(buffer, my_sample, L_rad);
-		path_rng_end(kg, rng_state, kernel_split_state.rng[ray_index]);
 		ASSIGN_RAY_STATE(kernel_split_state.ray_state, ray_index, RAY_TO_REGENERATE);
 	}
-	kernel_split_state.rng[ray_index] = rng;
 }
 
 CCL_NAMESPACE_END

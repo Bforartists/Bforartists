@@ -194,6 +194,36 @@ ccl_device_inline void kernel_update_denoising_features(KernelGlobals *kg,
 #endif  /* __DENOISING_FEATURES__ */
 }
 
+#ifdef __KERNEL_DEBUG__
+ccl_device_inline void kernel_write_debug_passes(KernelGlobals *kg,
+                                                 ccl_global float *buffer,
+                                                 PathRadiance *L,
+                                                 int sample)
+{
+	int flag = kernel_data.film.pass_flag;
+	if(flag & PASS_BVH_TRAVERSED_NODES) {
+		kernel_write_pass_float(buffer + kernel_data.film.pass_bvh_traversed_nodes,
+		                        sample,
+		                        L->debug_data.num_bvh_traversed_nodes);
+	}
+	if(flag & PASS_BVH_TRAVERSED_INSTANCES) {
+		kernel_write_pass_float(buffer + kernel_data.film.pass_bvh_traversed_instances,
+		                        sample,
+		                        L->debug_data.num_bvh_traversed_instances);
+	}
+	if(flag & PASS_BVH_INTERSECTIONS) {
+		kernel_write_pass_float(buffer + kernel_data.film.pass_bvh_intersections,
+		                        sample,
+		                        L->debug_data.num_bvh_intersections);
+	}
+	if(flag & PASS_RAY_BOUNCES) {
+		kernel_write_pass_float(buffer + kernel_data.film.pass_ray_bounces,
+		                        sample,
+		                        L->debug_data.num_ray_bounces);
+	}
+}
+#endif /* __KERNEL_DEBUG__ */
+
 ccl_device_inline void kernel_write_data_passes(KernelGlobals *kg, ccl_global float *buffer, PathRadiance *L,
 	ShaderData *sd, int sample, ccl_addr_space PathState *state, float3 throughput)
 {
@@ -230,7 +260,7 @@ ccl_device_inline void kernel_write_data_passes(KernelGlobals *kg, ccl_global fl
 			}
 
 			if(flag & PASS_NORMAL) {
-				float3 normal = sd->N;
+				float3 normal = shader_bsdf_average_normal(kg, sd);
 				kernel_write_pass_float3(buffer + kernel_data.film.pass_normal, sample, normal);
 			}
 			if(flag & PASS_UV) {
@@ -334,10 +364,12 @@ ccl_device_inline void kernel_write_light_passes(KernelGlobals *kg, ccl_global f
 }
 
 ccl_device_inline void kernel_write_result(KernelGlobals *kg, ccl_global float *buffer,
-	int sample, PathRadiance *L, float alpha, bool is_shadow_catcher)
+	int sample, PathRadiance *L, bool is_shadow_catcher)
 {
 	if(L) {
 		float3 L_sum;
+		float alpha = 1.0f - L->transparent;
+
 #ifdef __SHADOW_TRICKS__
 		if(is_shadow_catcher) {
 			L_sum = path_radiance_sum_shadowcatcher(kg, L, &alpha);
@@ -389,6 +421,11 @@ ccl_device_inline void kernel_write_result(KernelGlobals *kg, ccl_global float *
 			                                 sample, L->denoising_depth);
 		}
 #endif  /* __DENOISING_FEATURES__ */
+
+
+#ifdef __KERNEL_DEBUG__
+		kernel_write_debug_passes(kg, buffer, L, sample);
+#endif
 	}
 	else {
 		kernel_write_pass_float4(buffer, sample, make_float4(0.0f, 0.0f, 0.0f, 0.0f));

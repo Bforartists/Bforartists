@@ -48,6 +48,7 @@
 #include "util/util_logging.h"
 #include "util/util_map.h"
 #include "util/util_opengl.h"
+#include "util/util_optimization.h"
 #include "util/util_progress.h"
 #include "util/util_system.h"
 #include "util/util_thread.h"
@@ -976,7 +977,6 @@ void device_cpu_info(vector<DeviceInfo>& devices)
 	info.id = "CPU";
 	info.num = 0;
 	info.advanced_shading = true;
-	info.pack_images = false;
 
 	devices.insert(devices.begin(), info);
 }

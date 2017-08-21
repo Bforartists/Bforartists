@@ -606,9 +606,9 @@ static void rna_AddonPref_unregister(Main *UNUSED(bmain), StructRNA *type)
 		return;
 
 	RNA_struct_free_extension(type, &apt->ext);
+	RNA_struct_free(&BLENDER_RNA, type);
 
 	BKE_addon_pref_type_remove(apt);
-	RNA_struct_free(&BLENDER_RNA, type);
 
 	/* update while blender is running */
 	WM_main_add_notifier(NC_WINDOW, NULL);
@@ -3305,6 +3305,13 @@ static void rna_def_userdef_view(BlenderRNA *brna)
 		{0, NULL, 0, NULL, NULL}
 	};
 
+	static EnumPropertyItem line_width[] = {
+		{-1, "THIN", 0, "Thin", "Thinner lines than the default"},
+		{ 0, "AUTO", 0, "Auto", "Automatic line width based on UI scale"},
+		{ 1, "THICK", 0, "Thick", "Thicker lines than the default"},
+		{0, NULL, 0, NULL, NULL}
+	};
+
 	PropertyRNA *prop;
 	StructRNA *srna;
 	
@@ -3320,6 +3327,12 @@ static void rna_def_userdef_view(BlenderRNA *brna)
 	RNA_def_property_range(prop, 0.25f, 4.0f);
 	RNA_def_property_ui_range(prop, 0.5f, 2.0f, 1, 2);
 	RNA_def_property_float_default(prop, 1.0f);
+	RNA_def_property_update(prop, 0, "rna_userdef_dpi_update");
+
+	prop = RNA_def_property(srna, "ui_line_width", PROP_ENUM, PROP_NONE);
+	RNA_def_property_enum_items(prop, line_width);
+	RNA_def_property_ui_text(prop, "UI Line Width",
+	                         "Changes the thickness of lines and points in the interface");
 	RNA_def_property_update(prop, 0, "rna_userdef_dpi_update");
 
 	/* display */
