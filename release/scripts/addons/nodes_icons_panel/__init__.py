@@ -139,7 +139,14 @@ class NodesIconsPanelInput(bpy.types.Panel):
                     layout.label(text="Shader:")
 
                     col = layout.column(align=True)
-                    row = col.row(align=True)       
+                    row = col.row(align=True)
+                    
+                    props = row.operator("node.add_node", text=" Principled        ", icon_value = custom_icons["node_principled_shader"].icon_id)
+                    props.use_transform = True
+                    props.type = "ShaderNodeBsdfPrincipled"
+
+                    col = layout.column(align=True)
+                    row = col.row(align=True)     
         
                     props = row.operator("node.add_node", text=" Diffuse          ", icon_value = custom_icons["diffuseshader"].icon_id)
                     props.use_transform = True
@@ -291,6 +298,13 @@ class NodesIconsPanelInput(bpy.types.Panel):
                 if context.space_data.shader_type == 'OBJECT':
 
                     layout.label(text="Shader:")
+
+                    row = layout.row()
+                    row.alignment = 'LEFT' 
+
+                    props = row.operator("node.add_node", text="", icon_value = custom_icons["node_principled_shader"].icon_id)
+                    props.use_transform = True
+                    props.type = "ShaderNodeBsdfPrincipled"
 
                     row = layout.row()
                     row.alignment = 'LEFT' 
@@ -2692,6 +2706,8 @@ def register():
     custom_icons.load("despeckle", os.path.join(icons_dir, "despeckle.png"), 'IMAGE')
 
     # Shaders
+
+    custom_icons.load("node_principled_shader", os.path.join(icons_dir, "node_principled_shader.png"), 'IMAGE')
 
     custom_icons.load("addshader", os.path.join(icons_dir, "addshader.png"), 'IMAGE')
     custom_icons.load("anisotopicshader", os.path.join(icons_dir, "anisotopicshader.png"), 'IMAGE')
