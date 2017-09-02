@@ -434,7 +434,7 @@ class INFO_MT_window(Menu):
 
         layout.separator()
 
-        layout.menu("WM_OT_redraw_timer", icon='BLENDER') #Redraw timer sub menu - Debug stuff
+        layout.menu("WM_OT_redraw_timer_info", icon='BLENDER') #Redraw timer sub menu - Debug stuff
         layout.operator("wm.debug_menu") # debug menu
         layout.operator("script.reload") # Reload all python scripts. Mainly meant for the UI scripts.
 
@@ -444,7 +444,7 @@ class INFO_MT_window(Menu):
 
 
 #Redraw timer sub menu - Debug stuff
-class WM_OT_redraw_timer(Menu):
+class WM_OT_redraw_timer_info(Menu):
     bl_label = "Redraw Timer"
 
     def draw(self, context):
@@ -478,7 +478,7 @@ classes = (
     INFO_MT_opengl_render,
     INFO_MT_window,
     INFO_MT_help,
-    WM_OT_redraw_timer,
+    WM_OT_redraw_timer_info,
 )
 
 
