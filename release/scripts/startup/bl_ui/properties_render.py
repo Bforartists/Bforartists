@@ -1,4 +1,4 @@
-﻿# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE BLOCK #####
 
 #
 #  This program is free software; you can redistribute it and/or
@@ -300,7 +300,7 @@ class RENDER_PT_performance(RenderButtonsPanel, Panel):
         sub.prop(rd, "use_free_image_textures")
         sub = col.column()
         sub.active = rd.use_raytrace
-        sub.label(text="Acceleration structure:")
+        sub.label(text="Acceleration Structure:")
         sub.prop(rd, "raytrace_method", text="")
         if rd.raytrace_method == 'OCTREE':
             sub.prop(rd, "octree_resolution", text="Resolution")
@@ -367,6 +367,11 @@ class RENDER_PT_stamp(RenderButtonsPanel, Panel):
         rd = context.scene.render
 
         layout.prop(rd, "use_stamp")
+        col = layout.column()
+        col.active = rd.use_stamp
+        row = col.row()
+        row.prop(rd, "stamp_font_size", text="Font Size")
+        row.prop(rd, "use_stamp_labels", text="Draw Labels")
 
         ############## Subtab #####################
         
@@ -559,9 +564,9 @@ class RENDER_PT_encoding(RenderButtonsPanel, Panel):
         layout.prop(ffmpeg, "gopsize")
         # B-Frames
         row = layout.row()
-        row.prop(ffmpeg, "use_max_b_frames", text='Max B-frames')
+        row.prop(ffmpeg, "use_max_b_frames", text="Max B-frames")
         pbox = row.split()
-        pbox.prop(ffmpeg, "max_b_frames", text='')
+        pbox.prop(ffmpeg, "max_b_frames", text="")
         pbox.enabled = ffmpeg.use_max_b_frames
 
         split = layout.split()

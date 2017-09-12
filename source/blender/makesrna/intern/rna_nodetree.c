@@ -73,6 +73,13 @@ EnumPropertyItem rna_enum_node_socket_in_out_items[] = {
 };
 
 #ifndef RNA_RUNTIME
+static EnumPropertyItem rna_enum_node_socket_draw_shape_items[] = {
+	{SOCK_DRAW_SHAPE_CIRCLE, "CIRCLE", 0, "Circle", ""},
+	{SOCK_DRAW_SHAPE_SQUARE, "SQUARE", 0, "Square", ""},
+	{SOCK_DRAW_SHAPE_DIAMOND, "DIAMOND", 0, "Diamond", ""},
+	{0, NULL, 0, NULL, NULL }
+};
+
 static EnumPropertyItem node_socket_type_items[] = {
 	{SOCK_CUSTOM,  "CUSTOM",    0,    "Custom",    ""},
 	{SOCK_FLOAT,   "VALUE",     0,    "Value",     ""},
@@ -632,9 +639,6 @@ static StructRNA *rna_NodeTree_register(
 	nt = ntreeTypeFind(dummynt.idname);
 	if (nt) {
 		rna_NodeTree_unregister(bmain, nt->ext.srna);
-	}
-	if (!RNA_struct_available_or_report(reports, identifier)) {
-		return NULL;
 	}
 
 	/* create a new node tree type */
@@ -1393,17 +1397,11 @@ static bNodeType *rna_Node_register_base(Main *bmain, ReportList *reports, Struc
 		            identifier, (int)sizeof(dummynt.idname));
 		return NULL;
 	}
-	if (!RNA_struct_available_or_report(reports, identifier)) {
-		return NULL;
-	}
 
 	/* check if we have registered this node type before, and remove it */
 	nt = nodeTypeFind(dummynt.idname);
 	if (nt) {
 		rna_Node_unregister(bmain, nt->ext.srna);
-	}
-	if (!RNA_struct_available_or_report(reports, identifier)) {
-		return NULL;
 	}
 	
 	/* create a new node type */
@@ -6994,6 +6992,13 @@ static void rna_def_node_socket(BlenderRNA *brna)
 	RNA_def_property_enum_items(prop, node_socket_type_items);
 	RNA_def_property_enum_default(prop, SOCK_FLOAT);
 	RNA_def_property_ui_text(prop, "Type", "Data type");
+	RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_NodeSocket_update");
+
+	prop = RNA_def_property(srna, "draw_shape", PROP_ENUM, PROP_NONE);
+	RNA_def_property_enum_sdna(prop, NULL, "draw_shape");
+	RNA_def_property_enum_items(prop, rna_enum_node_socket_draw_shape_items);
+	RNA_def_property_enum_default(prop, SOCK_DRAW_SHAPE_CIRCLE);
+	RNA_def_property_ui_text(prop, "Shape", "Socket shape");
 	RNA_def_property_update(prop, NC_NODE | NA_EDITED, "rna_NodeSocket_update");
 
 	/* registration */
