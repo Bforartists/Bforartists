@@ -1154,18 +1154,21 @@ static StructRNA *rna_Operator_register(
 		if (ot && ot->ext.srna)
 			rna_Operator_unregister(bmain, ot->ext.srna);
 	}
-	if (!RNA_struct_available_or_report(reports, identifier)) {
+
+	if (!WM_operator_py_idname_ok_or_report(reports, identifier, dummyot.idname)) {
 		return NULL;
 	}
-	if (!WM_operator_py_idname_ok_or_report(reports, identifier, temp_buffers.idname)) {
+
+	char idname_conv[sizeof(dummyop.idname)];
+	WM_operator_bl_idname(idname_conv, dummyot.idname); /* convert the idname from python */
+
+	if (!RNA_struct_available_or_report(reports, idname_conv)) {
 		return NULL;
 	}
 
 	/* Convert foo.bar to FOO_OT_bar
 	 * allocate all strings at once. */
 	{
-		char idname_conv[sizeof(dummyop.idname)];
-		WM_operator_bl_idname(idname_conv, temp_buffers.idname); /* convert the idname from python */
 		const char *strings[] = {
 			idname_conv,
 			temp_buffers.name,
@@ -1292,18 +1295,21 @@ static StructRNA *rna_MacroOperator_register(
 		if (ot && ot->ext.srna)
 			rna_Operator_unregister(bmain, ot->ext.srna);
 	}
-	if (!RNA_struct_available_or_report(reports, identifier)) {
+
+	if (!WM_operator_py_idname_ok_or_report(reports, identifier, dummyot.idname)) {
 		return NULL;
 	}
-	if (!WM_operator_py_idname_ok_or_report(reports, identifier, temp_buffers.idname)) {
+
+	char idname_conv[sizeof(dummyop.idname)];
+	WM_operator_bl_idname(idname_conv, dummyot.idname); /* convert the idname from python */
+
+	if (!RNA_struct_available_or_report(reports, idname_conv)) {
 		return NULL;
 	}
 
 	/* Convert foo.bar to FOO_OT_bar
 	 * allocate all strings at once. */
 	{
-		char idname_conv[sizeof(dummyop.idname)];
-		WM_operator_bl_idname(idname_conv, temp_buffers.idname); /* convert the idname from python */
 		const char *strings[] = {
 			idname_conv,
 			temp_buffers.name,
@@ -1455,6 +1461,7 @@ static void rna_def_operator(BlenderRNA *brna)
 	RNA_def_struct_register_funcs(srna, "rna_Operator_register", "rna_Operator_unregister", "rna_Operator_instance");
 #endif
 	RNA_def_struct_translation_context(srna, BLT_I18NCONTEXT_OPERATOR_DEFAULT);
+	RNA_def_struct_flag(srna, STRUCT_PUBLIC_NAMESPACE_INHERIT);
 
 	prop = RNA_def_property(srna, "name", PROP_STRING, PROP_NONE);
 	RNA_def_property_clear_flag(prop, PROP_EDITABLE);
@@ -1558,6 +1565,7 @@ static void rna_def_macro_operator(BlenderRNA *brna)
 	                              "rna_Operator_instance");
 #endif
 	RNA_def_struct_translation_context(srna, BLT_I18NCONTEXT_OPERATOR_DEFAULT);
+	RNA_def_struct_flag(srna, STRUCT_PUBLIC_NAMESPACE_INHERIT);
 
 	prop = RNA_def_property(srna, "name", PROP_STRING, PROP_NONE);
 	RNA_def_property_clear_flag(prop, PROP_EDITABLE);

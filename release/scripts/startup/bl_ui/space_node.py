@@ -193,9 +193,9 @@ class NODE_MT_view(Menu):
         if context.space_data.show_backdrop:
             layout.separator()
 
-            layout.operator("node.backimage_move", text="Backdrop move")
-            layout.operator("node.backimage_zoom", text="Backdrop zoom in").factor = 1.2
-            layout.operator("node.backimage_zoom", text="Backdrop zoom out").factor = 0.83333
+            layout.operator("node.backimage_move", text="Backdrop Move")
+            layout.operator("node.backimage_zoom", text="Backdrop Zoom in").factor = 1.2
+            layout.operator("node.backimage_zoom", text="Backdrop Zoom out").factor = 0.83333
             layout.operator("node.backimage_fit", text="Fit Backdrop")
             layout.operator("node.clear_viewer_border")
             layout.operator("node.viewer_border")
@@ -273,7 +273,7 @@ class NODE_MT_node(Menu):
 
         layout.separator()
 
-        layout.operator("node.join", text="Join in new Frame")
+        layout.operator("node.join", text="Join in New Frame")
         layout.operator("node.detach", text="Remove from Frame")
 
         layout.separator()
