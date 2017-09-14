@@ -3001,6 +3001,7 @@ classes = (
     VIEW3D_PT_tools_grease_pencil_brush,
     VIEW3D_PT_tools_grease_pencil_brushcurves,
     VIEW3D_PT_tools_history,
+    RENDER_PT_bake,
 )
 
 if __name__ == "__main__":  # only for live edit.

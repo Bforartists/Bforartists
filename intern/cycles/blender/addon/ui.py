@@ -1751,6 +1751,86 @@ def draw_pause(self, context):
             layout.prop(cscene, "preview_pause", icon="PAUSE", text="")
             layout.prop(cscene, "preview_active_layer", icon="RENDERLAYERS", text=layername)
 
+class CyclesRender_PT_bake(bpy.types.Panel):
+    bl_label = "Bake Cycles"
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = "TOOLS"
+    bl_category = "Tools"
+    bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {'CYCLES'}
+    
+    @classmethod
+    def poll(cls, context):
+        scene = context.scene
+        return scene and (scene.render.engine in cls.COMPAT_ENGINES)
+
+    def draw(self, context):
+        layout = self.layout
+
+        scene = context.scene
+        cscene = scene.cycles
+        cbk = scene.render.bake
+
+        layout.operator("object.bake", icon='RENDER_STILL').type = cscene.bake_type
+
+        col = layout.column()
+        col.prop(cscene, "bake_type", text = "")
+
+        col = layout.column()
+
+        if cscene.bake_type == 'NORMAL':
+            col.prop(cbk, "normal_space", text="Space")
+
+            row = col.row(align=True)
+            row.label(text="Swizzle:")
+            row.prop(cbk, "normal_r", text="")
+            row.prop(cbk, "normal_g", text="")
+            row.prop(cbk, "normal_b", text="")
+
+        elif cscene.bake_type == 'COMBINED':
+            row = col.row(align=True)
+            row.prop(cbk, "use_pass_direct", toggle=True)
+            row.prop(cbk, "use_pass_indirect", toggle=True)
+
+            split = col.split()
+            split.active = cbk.use_pass_direct or cbk.use_pass_indirect
+
+            col = split.column()
+            col.prop(cbk, "use_pass_diffuse")
+            col.prop(cbk, "use_pass_glossy")
+            col.prop(cbk, "use_pass_transmission")
+
+            col = split.column()
+            col.prop(cbk, "use_pass_subsurface")
+            col.prop(cbk, "use_pass_ambient_occlusion")
+            col.prop(cbk, "use_pass_emit")
+
+        elif cscene.bake_type in {'DIFFUSE', 'GLOSSY', 'TRANSMISSION', 'SUBSURFACE'}:
+            row = col.row(align=True)
+            row.prop(cbk, "use_pass_direct", toggle=True)
+            row.prop(cbk, "use_pass_indirect", toggle=True)
+            row.prop(cbk, "use_pass_color", toggle=True)
+
+        layout.separator()
+
+        col = layout.column()
+
+        col.prop(cbk, "margin")
+        col.prop(cbk, "use_clear")
+
+        col.prop(cbk, "use_selected_to_active")
+        sub = col.column()
+        sub.active = cbk.use_selected_to_active
+        sub.prop(cbk, "use_cage", text="Cage")
+
+
+
+        if cbk.use_cage:
+            sub.prop(cbk, "cage_extrusion", text="Extrusion")
+            sub.prop_search(cbk, "cage_object", scene, "objects", text="")
+        else:
+            sub.prop(cbk, "cage_extrusion", text="Ray Distance")
+
 
 def get_panels():
     exclude_panels = {
@@ -1855,6 +1935,7 @@ classes = (
     CYCLES_RENDER_PT_debug,
     CYCLES_PARTICLE_PT_curve_settings,
     CYCLES_SCENE_PT_simplify,
+    CyclesRender_PT_bake,
 )
 
 
