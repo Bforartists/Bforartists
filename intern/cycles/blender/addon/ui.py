@@ -209,6 +209,52 @@ class CYCLES_RENDER_PT_sampling(CyclesButtonsPanel, Panel):
 
         else:
             layout.prop(addon_prefs,"SP_render_sampling_options", emboss=False, icon="TRIA_DOWN", text="+ Options +")
+            
+            split = layout.split()
+
+            if cscene.progressive == 'PATH' or use_branched_path(context) is False:
+
+                col = split.column()
+                sub = col.column(align=True)
+
+                seed_sub = sub.row(align=True)
+                seed_sub.prop(cscene, "seed")
+                seed_sub.prop(cscene, "use_animated_seed", text="", icon="TIME")
+
+                col = split.column()
+                sub = col.column(align=True)
+                sub.prop(cscene, "sample_clamp_direct")
+                sub.prop(cscene, "sample_clamp_indirect")            
+
+            else:
+
+                col = split.column()
+                sub = col.column(align=True)
+
+                seed_sub = sub.row(align=True)
+                seed_sub.prop(cscene, "seed")
+                seed_sub.prop(cscene, "use_animated_seed", text="", icon="TIME")
+
+                sub.separator()
+
+                sub.label(text="AA Samples:")
+                sub.prop(cscene, "aa_samples", text="Render")
+                sub.prop(cscene, "preview_aa_samples", text="Preview")
+
+                col = split.column()
+                sub = col.column(align=True)
+                sub.prop(cscene, "sample_clamp_direct")
+                sub.prop(cscene, "sample_clamp_indirect")
+               
+                sub.separator()
+
+                sub.prop(cscene, "sample_all_lights_direct")
+                sub.prop(cscene, "sample_all_lights_indirect")
+
+
+        if not (use_opencl(context) and cscene.feature_set != 'EXPERIMENTAL'):
+            layout.row().prop(cscene, "sampling_pattern", text="Pattern")       
+            
 
         for rl in scene.render.layers:
             if rl.samples > 0:
@@ -300,10 +346,6 @@ class CYCLES_RENDER_PT_light_paths(CyclesButtonsPanel, Panel):
 
         col.separator()
 
-        col.prop(cscene, "caustics_reflective")
-        col.prop(cscene, "caustics_refractive")
-        col.prop(cscene, "blur_glossy")
-
         col = split.column()
 
         sub = col.column(align=True)
@@ -320,6 +362,27 @@ class CYCLES_RENDER_PT_light_paths(CyclesButtonsPanel, Panel):
 
         else:
             layout.prop(addon_prefs,"SP_render_light_paths_options", emboss=False, icon="TRIA_DOWN", text="+ Advanced +")
+            
+            split = layout.split()
+
+            col = split.column()
+
+            sub = col.column(align=True)
+            sub.label("Transparency:")
+            col.prop(cscene, "caustics_reflective")
+            col.prop(cscene, "caustics_refractive")
+            col.prop(cscene, "blur_glossy")
+
+            col.separator()
+
+            col = split.column()
+
+            sub = col.column(align=True)
+            sub.label(text="Bounces:")
+            sub.prop(cscene, "diffuse_bounces", text="Diffuse")
+            sub.prop(cscene, "glossy_bounces", text="Glossy")
+            sub.prop(cscene, "transmission_bounces", text="Transmission")
+            sub.prop(cscene, "volume_bounces", text="Volume")
 
 class CYCLES_RENDER_PT_motion_blur(CyclesButtonsPanel, Panel):
     bl_label = "Motion Blur"
