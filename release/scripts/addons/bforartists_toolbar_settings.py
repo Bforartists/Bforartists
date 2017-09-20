@@ -226,8 +226,6 @@ class bforartists_toolbar_settings(AddonPreferences):
         row.prop(self, "edit_objectapply")
         row.prop(self, "edit_objectapplydeltas")
 
-        edit_objectapplydeltas
-
         layout.label(text="The Misc toolbar container")
 
         row = layout.row()
