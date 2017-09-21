@@ -759,9 +759,9 @@ class TOOLBAR_MT_primitives(Menu):
                         row.operator("curve.primitive_nurbs_circle_add", text="", icon='CURVE_NCIRCLE')
                         row.operator("curve.primitive_nurbs_path_add", text="", icon='CURVE_PATH')
 
-                if addon_prefs.primitives_surface: 
+                if obj.type == 'SURFACE':
 
-                    if scene.toolbar_primitives_surface.bool: 
+                    if addon_prefs.primitives_surface:
 
                         row = layout.row(align=True)
 
