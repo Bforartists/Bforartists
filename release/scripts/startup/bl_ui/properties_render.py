@@ -367,11 +367,6 @@ class RENDER_PT_stamp(RenderButtonsPanel, Panel):
         rd = context.scene.render
 
         layout.prop(rd, "use_stamp")
-        col = layout.column()
-        col.active = rd.use_stamp
-        row = col.row()
-        row.prop(rd, "stamp_font_size", text="Font Size")
-        row.prop(rd, "use_stamp_labels", text="Draw Labels")
 
         ############## Subtab #####################
         
