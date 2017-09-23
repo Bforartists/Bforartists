@@ -163,22 +163,14 @@ class CYCLES_RENDER_PT_sampling(CyclesButtonsPanel, Panel):
 
         col = split.column()
         sub = col.column(align=True)
-        sub.label("Settings:")
-
-        seed_sub = sub.row(align=True)
-        seed_sub.prop(cscene, "seed")
-        seed_sub.prop(cscene, "use_animated_seed", text="", icon="TIME")
-
-        sub.prop(cscene, "sample_clamp_direct")
-        sub.prop(cscene, "sample_clamp_indirect")
-        sub.prop(cscene, "light_sampling_threshold")
 
         if cscene.progressive == 'PATH' or use_branched_path(context) is False:
-            col = split.column()
-            sub = col.column(align=True)
-            sub.label(text="Samples:")
-            sub.prop(cscene, "samples", text="Render")
-            sub.prop(cscene, "preview_samples", text="Preview")
+            row = layout.row()
+            row.label("Samples:")
+            row = layout.row()
+            row.prop(cscene, "samples", text="Render")
+            row.prop(cscene, "preview_samples", text="Preview")
+            
         else:
             sub.label(text="AA Samples:")
             sub.prop(cscene, "aa_samples", text="Render")
@@ -220,6 +212,7 @@ class CYCLES_RENDER_PT_sampling(CyclesButtonsPanel, Panel):
                 seed_sub = sub.row(align=True)
                 seed_sub.prop(cscene, "seed")
                 seed_sub.prop(cscene, "use_animated_seed", text="", icon="TIME")
+                sub.prop(cscene, "light_sampling_threshold")
 
                 col = split.column()
                 sub = col.column(align=True)
@@ -234,6 +227,7 @@ class CYCLES_RENDER_PT_sampling(CyclesButtonsPanel, Panel):
                 seed_sub = sub.row(align=True)
                 seed_sub.prop(cscene, "seed")
                 seed_sub.prop(cscene, "use_animated_seed", text="", icon="TIME")
+                sub.prop(cscene, "light_sampling_threshold")
 
                 sub.separator()
 
