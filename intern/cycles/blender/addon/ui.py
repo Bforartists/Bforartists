@@ -1376,13 +1376,6 @@ class CYCLES_MATERIAL_PT_settings(CyclesButtonsPanel, Panel):
         sub.prop(cmat, "volume_interpolation", text="")
         col.prop(cmat, "homogeneous_volume", text="Homogeneous")
 
-        layout.separator()
-        split = layout.split()
-
-        col = split.column(align=True)
-        col.label("Viewport Color:")
-        col.prop(mat, "diffuse_color", text="")
-        col.prop(mat, "alpha")
 
         ############## Subtab #####################
         
@@ -1395,8 +1388,24 @@ class CYCLES_MATERIAL_PT_settings(CyclesButtonsPanel, Panel):
         else:
             layout.prop(addon_prefs,"SP_material_settings_options", emboss=False, icon="TRIA_DOWN", text="+ Viewport Options +")
 
-        col.separator()
-        col.prop(mat, "pass_index")
+            split = layout.split()
+
+            col = split.column(align=True)
+            col.label("Viewport Color:")
+            col.prop(mat, "diffuse_color", text="")
+            col.prop(mat, "alpha")
+
+            col.separator()
+            col.label("Viewport Alpha:")
+            col.prop(mat.game_settings, "alpha_blend", text="")
+
+            col = split.column(align=True)
+            col.label("Viewport Specular:")
+            col.prop(mat, "specular_color", text="")
+            col.prop(mat, "specular_hardness", text="Hardness")
+
+            col.separator()
+            col.prop(mat, "pass_index")
 
 
 class CYCLES_TEXTURE_PT_context(CyclesButtonsPanel, Panel):
