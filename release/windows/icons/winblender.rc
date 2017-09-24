@@ -35,8 +35,8 @@ BEGIN
       //VALUE "ProductName", "Blender"
 
 	  // bfa - changed the detail settings
-	  VALUE "FileVersion", "0.9.4"
-	  VALUE "ProductVersion", "0.9.4"
+	  VALUE "FileVersion", "0.9.5"
+	  VALUE "ProductVersion", "0.9.5"
 	  VALUE "CompanyName", "Bforartists"
 	  VALUE "FileDescription", "Bforartists"
 	  VALUE "LegalCopyright", "GPLv2/v3"
