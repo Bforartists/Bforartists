@@ -2840,7 +2840,6 @@ def register():
 def unregister():
     global custom_icons
     bpy.utils.previews.remove(custom_icons)
-    bpy.utils.unregister_class(NodesIconPanel)
 
     bpy.utils.unregister_class(NodesIconsPanelProp)
     bpy.utils.unregister_class(NodesIconsPanelInput)
