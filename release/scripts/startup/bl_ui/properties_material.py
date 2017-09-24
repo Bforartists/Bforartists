@@ -255,8 +255,9 @@ class MATERIAL_PT_pipeline(MaterialButtonsPanel, Panel):
         col.prop(mat, "use_cast_approximate")
 
 
-class MATERIAL_PT_diffuse(MaterialButtonsPanel, Panel):
-    bl_label = "Diffuse"
+class MATERIAL_PT_shading(MaterialButtonsPanel, Panel):
+    bl_label = "Shading"
+    bl_options = {'DEFAULT_CLOSED'}
     COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
 
     @classmethod
@@ -309,8 +310,6 @@ class MATERIAL_PT_diffuse(MaterialButtonsPanel, Panel):
             col.separator()
             col.template_color_ramp(mat, "diffuse_ramp", expand=True)
             
-            ############## Subtab #####################
-        
             user_preferences = context.user_preferences
             addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
 
@@ -326,21 +325,11 @@ class MATERIAL_PT_diffuse(MaterialButtonsPanel, Panel):
 
                 col.prop(mat, "diffuse_ramp_factor", text="Factor")
 
-
-class MATERIAL_PT_specular(MaterialButtonsPanel, Panel):
-    bl_label = "Specular"
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
-
-    @classmethod
-    def poll(cls, context):
-        mat = context.material
-        engine = context.scene.render.engine
-        return check_material(mat) and (mat.type in {'SURFACE', 'WIRE'}) and (engine in cls.COMPAT_ENGINES)
-
-    def draw(self, context):
-        layout = self.layout
-
-        mat = active_node_mat(context.material)
+                col.separator()
+        
+        ############################## Specular
+        
+        layout.separator()
 
         layout.active = (not mat.use_shadeless)
 
@@ -374,8 +363,6 @@ class MATERIAL_PT_specular(MaterialButtonsPanel, Panel):
         if mat.use_specular_ramp:
             layout.template_color_ramp(mat, "specular_ramp", expand=True)
             
-            ############## Subtab #####################
-        
             user_preferences = context.user_preferences
             addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
 
@@ -389,23 +376,13 @@ class MATERIAL_PT_specular(MaterialButtonsPanel, Panel):
                 row.prop(mat, "specular_ramp_input", text="Input")
                 row.prop(mat, "specular_ramp_blend", text="Blend")
 
-            layout.prop(mat, "specular_ramp_factor", text="Factor")
-
-
-class MATERIAL_PT_shading(MaterialButtonsPanel, Panel):
-    bl_label = "Shading"
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
-
-    @classmethod
-    def poll(cls, context):
-        mat = context.material
-        engine = context.scene.render.engine
-        return check_material(mat) and (mat.type in {'SURFACE', 'WIRE'}) and (engine in cls.COMPAT_ENGINES)
-
-    def draw(self, context):
-        layout = self.layout
-
-        mat = active_node_mat(context.material)
+                layout.prop(mat, "specular_ramp_factor", text="Factor")
+                
+                col.separator()
+            
+        layout.separator()    
+        
+        ############### Misc shading ##################
 
         if mat.type in {'SURFACE', 'WIRE'}:
             split = layout.split()
@@ -424,6 +401,8 @@ class MATERIAL_PT_shading(MaterialButtonsPanel, Panel):
             sub.active = not mat.use_shadeless
             sub.prop(mat, "use_tangent_shading")
             sub.prop(mat, "use_cubic")
+
+            
 
 
 class MATERIAL_PT_transp(MaterialButtonsPanel, Panel):
@@ -1103,8 +1082,6 @@ classes = (
     MATERIAL_PT_context_material,
     MATERIAL_PT_preview,
     MATERIAL_PT_pipeline,
-    MATERIAL_PT_diffuse,
-    MATERIAL_PT_specular,
     MATERIAL_PT_shading,
     MATERIAL_PT_transp,
     MATERIAL_PT_mirror,
