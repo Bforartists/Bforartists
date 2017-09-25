@@ -31,7 +31,7 @@ if len(sys.argv) < 2:
 builder = sys.argv[1]
 
 # we run from build/ directory
-blender_dir = os.path.join('..', 'blender.git')
+blender_dir = os.path.join('..', 'bforartists.git')
 
 
 def parse_header_file(filename, define):
@@ -112,8 +112,8 @@ if 'cmake' in builder:
             chroot_name = 'buildbot_' + deb_name + '_i686'
             cuda_chroot_name = 'buildbot_' + deb_name + '_x86_64'
             targets = ['player', 'blender', 'cuda']
-        cmake_extra_options.extend(["-DCMAKE_C_COMPILER=/usr/bin/gcc-7",
-                                    "-DCMAKE_CXX_COMPILER=/usr/bin/g++-7"])
+        #cmake_extra_options.extend(["-DCMAKE_C_COMPILER=/usr/bin/gcc-7",
+        #                            "-DCMAKE_CXX_COMPILER=/usr/bin/g++-7"])
 
     cmake_options.append("-C" + os.path.join(blender_dir, cmake_config_file))
 

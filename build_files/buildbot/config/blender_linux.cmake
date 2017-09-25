@@ -66,6 +66,7 @@ set(FFMPEG_LIBRARIES
 	/usr/lib${MULTILIB}/libtheora.a
 	/usr/lib${MULTILIB}/libschroedinger-1.0.a
 	/usr/lib${MULTILIB}/liborc-0.4.a
+	/usr/lib${MULTILIB}/liblzma.a
 	CACHE STRING "" FORCE
 )
 
@@ -141,6 +142,12 @@ set(ZLIB_LIBRARY        "/usr/lib${MULTILIB}/libz.a"     CACHE STRING "" FORCE)
 set(OPENVDB_LIBRARY
 	/opt/lib/openvdb/lib/libopenvdb.a
 	/opt/lib/blosc/lib/libblosc.a
+	CACHE BOOL "" FORCE
+)
+
+# TBB
+set(TBB_LIBRARY
+	/opt/lib/tbb/lib/libtbb.a
 	CACHE BOOL "" FORCE
 )
 
