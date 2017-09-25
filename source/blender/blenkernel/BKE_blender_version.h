@@ -39,6 +39,8 @@
 /* alpha/beta/rc/release, docs use this */
 #define BLENDER_VERSION_CYCLE   alpha
 
+#define BFORARTISTS_VERSION     095
+
 extern char versionstr[]; /* from blender.c */
 
 #endif  /* __BKE_BLENDER_VERSION_H__ */
