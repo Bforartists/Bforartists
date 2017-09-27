@@ -268,6 +268,12 @@ void ED_object_add_unit_props(wmOperatorType *ot)
 	RNA_def_float_distance(ot->srna, "radius", 1.0f, 0.0, OBJECT_ADD_SIZE_MAXF, "Radius", "", 0.001, 100.00);
 }
 
+/*bfa - Cube has no radius. But size*/
+void ED_object_add_unit_props_cube(wmOperatorType *ot)
+{
+	RNA_def_float_distance(ot->srna, "radius", 1.0f, 0.0, OBJECT_ADD_SIZE_MAXF, "Radius (Half Size)", "", 0.001, 100.00);
+}
+
 void ED_object_add_generic_props(wmOperatorType *ot, bool do_editmode)
 {
 	PropertyRNA *prop;

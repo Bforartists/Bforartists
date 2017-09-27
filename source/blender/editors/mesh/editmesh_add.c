@@ -145,7 +145,7 @@ void MESH_OT_primitive_plane_add(wmOperatorType *ot)
 	/* flags */
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
-	ED_object_add_unit_props(ot);
+	ED_object_add_unit_props_cube(ot);
 	ED_object_add_mesh_props(ot);
 	ED_object_add_generic_props(ot, true);
 }
@@ -197,7 +197,7 @@ void MESH_OT_primitive_cube_add(wmOperatorType *ot)
 	/* flags */
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
-	ED_object_add_unit_props(ot);
+	ED_object_add_unit_props_cube(ot);
 	ED_object_add_mesh_props(ot);
 	ED_object_add_generic_props(ot, true);
 }
@@ -445,7 +445,7 @@ void MESH_OT_primitive_grid_add(wmOperatorType *ot)
 	 * impossible values (10^12 vertices or so...). */
 	RNA_def_int(ot->srna, "x_subdivisions", 10, 2, MESH_ADD_VERTS_MAXI, "X Subdivisions", "", 2, 1000);
 	RNA_def_int(ot->srna, "y_subdivisions", 10, 2, MESH_ADD_VERTS_MAXI, "Y Subdivisions", "", 2, 1000);
-	ED_object_add_unit_props(ot);
+	ED_object_add_unit_props_cube(ot);
 
 	ED_object_add_mesh_props(ot);
 	ED_object_add_generic_props(ot, true);
@@ -558,7 +558,7 @@ void MESH_OT_primitive_uv_sphere_add(wmOperatorType *ot)
 	/* props */
 	RNA_def_int(ot->srna, "segments", 32, 3, MESH_ADD_VERTS_MAXI / 100, "Segments", "", 3, 500);
 	RNA_def_int(ot->srna, "ring_count", 16, 3, MESH_ADD_VERTS_MAXI / 100, "Rings", "", 3, 500);
-	RNA_def_float_distance(ot->srna, "size", 1.0f, 0.0, OBJECT_ADD_SIZE_MAXF, "Size", "", 0.001, 100.00);
+	RNA_def_float_distance(ot->srna, "size", 1.0f, 0.0, OBJECT_ADD_SIZE_MAXF, "Radius", "", 0.001, 100.00);
 
 	ED_object_add_mesh_props(ot);
 	ED_object_add_generic_props(ot, true);
@@ -613,7 +613,7 @@ void MESH_OT_primitive_ico_sphere_add(wmOperatorType *ot)
 
 	/* props */
 	RNA_def_int(ot->srna, "subdivisions", 2, 1, 10, "Subdivisions", "", 1, 8);
-	RNA_def_float_distance(ot->srna, "size", 1.0f, 0.0f, OBJECT_ADD_SIZE_MAXF, "Size", "", 0.001f, 100.00);
+	RNA_def_float_distance(ot->srna, "size", 1.0f, 0.0f, OBJECT_ADD_SIZE_MAXF, "Radius", "", 0.001f, 100.00);
 
 	ED_object_add_mesh_props(ot);
 	ED_object_add_generic_props(ot, true);
