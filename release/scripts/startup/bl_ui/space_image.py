@@ -346,29 +346,6 @@ class IMAGE_MT_uvs_snap(Menu):
         layout.operator("uv.snap_cursor", text="Cursor to Selected").target = 'SELECTED'
 
 
-class IMAGE_MT_uvs_mirror(Menu):
-    bl_label = "Mirror"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator_context = 'EXEC_REGION_WIN'
-
-        layout.operator("transform.mirror", text="X Axis").constraint_axis[0] = True
-        layout.operator("transform.mirror", text="Y Axis").constraint_axis[1] = True
-
-
-class IMAGE_MT_uvs_weldalign(Menu):
-    bl_label = "Weld/Align"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("uv.weld")  # W, 1
-        layout.operator("uv.remove_doubles")
-        layout.operator_enum("uv.align", "axis")  # W, 2/3/4
-
-
 class IMAGE_MT_uvs(Menu):
     bl_label = "UVs"
 
@@ -389,26 +366,10 @@ class IMAGE_MT_uvs(Menu):
         layout.separator()
 
         layout.prop(uv, "use_live_unwrap")
-        layout.operator("uv.unwrap", icon='UNWRAP_ABF')
-        layout.operator("uv.pin", text="Unpin", icon = "UNPINNED").clear = True
-        layout.operator("uv.pin", icon = "PINNED").clear = False
 
         layout.separator()
 
-        layout.operator("uv.pack_islands", icon ="PACKISLAND")
-        layout.operator("uv.average_islands_scale", icon ="AVERAGEISLANDSCALE")
-        layout.operator("uv.minimize_stretch", icon = "MINIMIZESTRETCH")
-        layout.operator("uv.stitch")
-        layout.operator("uv.mark_seam", icon ="MARK_SEAM").clear = False
-        layout.operator("uv.mark_seam", text="Clear Seam", icon ="CLEAR_SEAM").clear = True
-        layout.operator("uv.seams_from_islands", icon ="SEAMSFROMISLAND")
-        layout.operator("mesh.faces_mirror_uv", icon ="COPYMIRRORED")
-
-        layout.separator()
-
-        layout.menu("IMAGE_MT_uvs_mirror")
         layout.menu("IMAGE_MT_uvs_snap")
-        layout.menu("IMAGE_MT_uvs_weldalign")
 
         layout.separator()
 
@@ -807,13 +768,13 @@ class IMAGE_PT_tools_align_uvs(Panel, UVToolsPanel):
 
         split = layout.split()
         col = split.column(align=True)
-        col.operator("uv.align", text="Straighten").axis = 'ALIGN_S'
-        col.operator("uv.align", text="Straighten X").axis = 'ALIGN_T'
-        col.operator("uv.align", text="Straighten Y").axis = 'ALIGN_U'
+        col.operator("uv.align", text="Straighten", icon = "STRAIGHTEN").axis = 'ALIGN_S'
+        col.operator("uv.align", text="Straighten X", icon = "STRAIGHTEN_X").axis = 'ALIGN_T'
+        col.operator("uv.align", text="Straighten Y", icon = "STRAIGHTEN_Y").axis = 'ALIGN_U'
         col = split.column(align=True)
-        col.operator("uv.align", text="Align Auto").axis = 'ALIGN_AUTO'
-        col.operator("uv.align", text="Align X").axis = 'ALIGN_X'
-        col.operator("uv.align", text="Align Y").axis = 'ALIGN_Y'
+        col.operator("uv.align", text="Align Auto", icon = "ALIGNAUTO").axis = 'ALIGN_AUTO'
+        col.operator("uv.align", text="Align X", icon = "ALIGNHORIZONTAL").axis = 'ALIGN_X'
+        col.operator("uv.align", text="Align Y", icon = "ALIGNVERTICAL").axis = 'ALIGN_Y'
 
 
 class IMAGE_PT_tools_uvs(Panel, UVToolsPanel):
@@ -829,24 +790,26 @@ class IMAGE_PT_tools_uvs(Panel, UVToolsPanel):
 
         col = layout.column(align=True)
         row = col.row(align=True)
-        row.operator("uv.weld")
+        row.operator("uv.weld", icon='WELD')
         row.operator("uv.stitch")
-        col.operator("uv.remove_doubles")
-        col.operator("uv.average_islands_scale")
-        col.operator("uv.pack_islands")
-        col.operator("mesh.faces_mirror_uv")
-        col.operator("uv.minimize_stretch")
+        col.operator("uv.remove_doubles", icon='REMOVE_DOUBLES')
+        col.operator("uv.average_islands_scale", icon ="AVERAGEISLANDSCALE")
+        col.operator("uv.pack_islands", icon ="PACKISLAND")
+        col.operator("mesh.faces_mirror_uv", icon ="COPYMIRRORED")
+
+        col.operator("uv.minimize_stretch", icon = "MINIMIZESTRETCH")
 
         layout.label(text="UV Unwrap:")
         row = layout.row(align=True)
-        row.operator("uv.pin").clear = False
-        row.operator("uv.pin", text="Unpin").clear = True
+        row.operator("uv.pin", icon = "PINNED").clear = False
+        row.operator("uv.pin", text="Unpin", icon = "UNPINNED").clear = True
         col = layout.column(align=True)
         row = col.row(align=True)
-        row.operator("uv.mark_seam", text="Mark Seam").clear = False
-        row.operator("uv.mark_seam", text="Clear Seam").clear = True
-        col.operator("uv.seams_from_islands", text="Mark Seams from Islands")
-        col.operator("uv.unwrap")
+        row.operator("uv.mark_seam", text="Mark Seam", icon ="MARK_SEAM").clear = False
+        row.operator("uv.mark_seam", text="Clear Seam", icon ="CLEAR_SEAM").clear = True
+        col.operator("uv.seams_from_islands", text="Mark Seams from Islands", icon ="SEAMSFROMISLAND")
+        col.operator("uv.unwrap", text = "Unwrap ABF", icon='UNWRAP_ABF').method='ANGLE_BASED'
+        col.operator("uv.unwrap", text = "Unwrap LSCM", icon='UNWRAP_LSCM').method='CONFORMAL'  
 
 
 class IMAGE_PT_paint(Panel, ImagePaintPanel):
@@ -1396,8 +1359,6 @@ classes = (
     IMAGE_MT_uvs_showhide,
     IMAGE_MT_uvs_proportional,
     IMAGE_MT_uvs_snap,
-    IMAGE_MT_uvs_mirror,
-    IMAGE_MT_uvs_weldalign,
     IMAGE_MT_uvs_select_mode,
     IMAGE_HT_header,
     MASK_MT_editor_menus,
