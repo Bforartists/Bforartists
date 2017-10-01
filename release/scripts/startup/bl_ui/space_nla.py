@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -21,6 +21,21 @@
 import bpy
 from bpy.types import Header, Menu
 
+################################ Switch between the editors ##########################################
+
+
+class switch_editors_in_nla(bpy.types.Operator):
+    """You are in NLA editor"""      # blender will use this as a tooltip for menu items and buttons.
+    bl_idname = "wm.switch_editor_in_nla"        # unique identifier for buttons and menu items to reference.
+    bl_label = "NLA Editor"         # display name in the interface.
+    bl_options = {'REGISTER', 'UNDO'}  # enable undo for the operator.
+
+    #def execute(self, context):        # execute() is called by blender when running the operator.
+    #    bpy.ops.wm.context_set_enum(data_path="area.type", value="NLA_EDITOR")
+    #    return {'FINISHED'}  
+
+##########################################################################
+
 
 class NLA_HT_header(Header):
     bl_space_type = 'NLA_EDITOR'
@@ -32,14 +47,33 @@ class NLA_HT_header(Header):
 
         st = context.space_data
 
-        row = layout.row(align=True)
-        row.template_header()
+        ALL_MT_editormenu.draw_hidden(context, layout) # bfa - show hide the editormenu
 
+        # bfa - The tabs to switch between the four animation editors. The classes are in space_time.py
+        row = layout.row(align=True)
+        row.operator("wm.switch_editor_to_timeline", text="", icon='TIME')
+        row.operator("wm.switch_editor_to_graph", text="", icon='IPO')
+        row.operator("wm.switch_editor_to_dopesheet", text="", icon='ACTION')     
+        row.operator("wm.switch_editor_in_nla", text="", icon='NLA_ACTIVE')
+  
         NLA_MT_editor_menus.draw_collapsible(context, layout)
 
         dopesheet_filter(layout, context)
 
         layout.prop(st, "auto_snap", text="")
+
+# bfa - show hide the editormenu
+class ALL_MT_editormenu(Menu):
+    bl_label = ""
+
+    def draw(self, context):
+        self.draw_menus(self.layout, context)
+
+    @staticmethod
+    def draw_menus(layout, context):
+
+        row = layout.row(align=True)
+        row.template_header() # editor type menus
 
 
 class NLA_MT_editor_menus(Menu):
@@ -211,7 +245,9 @@ class NLA_MT_edit_transform(Menu):
 
 
 classes = (
+    switch_editors_in_nla,
     NLA_HT_header,
+    ALL_MT_editormenu,
     NLA_MT_edit,
     NLA_MT_editor_menus,
     NLA_MT_view,
