@@ -63,9 +63,8 @@ inline void face_split_tri_indices(const int face_flag,
 		tri_b[1] = 3;
 		tri_b[2] = 1;
 	}
-	else /*if(face_flag & FACE_FLAG_DIVIDE_13)*/ {
-		assert(face_flag & FACE_FLAG_DIVIDE_13);
-
+	else {
+		/* Quad with FACE_FLAG_DIVIDE_13 or single triangle. */
 		tri_a[0] = 0;
 		tri_a[1] = 1;
 		tri_a[2] = 2;
@@ -720,6 +719,11 @@ static void create_mesh(Scene *scene,
 	int numngons = 0;
 	bool use_loop_normals = b_mesh.use_auto_smooth() && (mesh->subdivision_type != Mesh::SUBDIVISION_CATMULL_CLARK);
 
+	/* If no faces, create empty mesh. */
+	if(numfaces == 0) {
+		return;
+	}
+
 	BL::Mesh::vertices_iterator v;
 	BL::Mesh::tessfaces_iterator f;
 	BL::Mesh::polygons_iterator p;
@@ -1080,7 +1084,7 @@ Mesh *BlenderSync::sync_mesh(BL::Object& b_ob,
 			}
 
 			/* free derived mesh */
-			b_data.meshes.remove(b_mesh, false);
+			b_data.meshes.remove(b_mesh, false, true, false);
 		}
 	}
 	mesh->geometry_flags = requested_geometry_flags;
@@ -1300,7 +1304,7 @@ void BlenderSync::sync_mesh_motion(BL::Object& b_ob,
 		sync_curves(mesh, b_mesh, b_ob, true, time_index);
 
 	/* free derived mesh */
-	b_data.meshes.remove(b_mesh, false);
+	b_data.meshes.remove(b_mesh, false, true, false);
 }
 
 CCL_NAMESPACE_END

@@ -1129,7 +1129,7 @@ static const char arg_handle_image_type_set_doc[] =
 "\t\tTGA RAWTGA JPEG IRIS IRIZ\n"
 "\t\tAVIRAW AVIJPEG PNG BMP\n"
 "\t(formats that can be compiled into blender, not available on all systems)\n"
-"\t\tHDR TIFF EXR MULTILAYER MPEG FRAMESERVER QUICKTIME CINEON DPX DDS JP2"
+"\t\tHDR TIFF EXR MULTILAYER MPEG FRAMESERVER CINEON DPX DDS JP2"
 ;
 static int arg_handle_image_type_set(int argc, const char **argv, void *data)
 {
@@ -1362,7 +1362,7 @@ static int arg_handle_render_frame(int argc, const char **argv, void *data)
 				return 1;
 			}
 
-			re = RE_NewRender(scene->id.name);
+			re = RE_NewSceneRender(scene);
 			BLI_begin_threaded_malloc();
 			BKE_reports_init(&reports, RPT_STORE);
 
@@ -1404,7 +1404,7 @@ static int arg_handle_render_animation(int UNUSED(argc), const char **UNUSED(arg
 	Scene *scene = CTX_data_scene(C);
 	if (scene) {
 		Main *bmain = CTX_data_main(C);
-		Render *re = RE_NewRender(scene->id.name);
+		Render *re = RE_NewSceneRender(scene);
 		ReportList reports;
 		BLI_begin_threaded_malloc();
 		BKE_reports_init(&reports, RPT_STORE);

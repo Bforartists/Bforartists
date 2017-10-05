@@ -51,8 +51,7 @@ ccl_device_inline void compute_light_pass(KernelGlobals *kg,
 	path_state_init(kg, &emission_sd, &state, rng_hash, sample, NULL);
 
 	/* evaluate surface shader */
-	float rbsdf = path_state_rng_1D(kg, &state, PRNG_BSDF);
-	shader_eval_surface(kg, sd, &state, rbsdf, state.flag);
+	shader_eval_surface(kg, sd, &state, state.flag);
 
 	/* TODO, disable more closures we don't need besides transparent */
 	shader_bsdf_disable_transparency(kg, sd);
@@ -70,7 +69,7 @@ ccl_device_inline void compute_light_pass(KernelGlobals *kg,
 		/* sample emission */
 		if((pass_filter & BAKE_FILTER_EMISSION) && (sd->flag & SD_EMISSION)) {
 			float3 emission = indirect_primitive_emission(kg, sd, 0.0f, state.flag, state.ray_pdf);
-			path_radiance_accum_emission(&L_sample, throughput, emission, state.bounce);
+			path_radiance_accum_emission(&L_sample, &state, throughput, emission);
 		}
 
 		bool is_sss_sample = false;
@@ -102,10 +101,8 @@ ccl_device_inline void compute_light_pass(KernelGlobals *kg,
 					                     &emission_sd,
 					                     &ray,
 					                     throughput,
-					                     state.num_samples,
 					                     &state,
 					                     &L_sample);
-					kernel_path_subsurface_accum_indirect(&ss_indirect, &L_sample);
 				}
 				is_sss_sample = true;
 			}
@@ -116,12 +113,12 @@ ccl_device_inline void compute_light_pass(KernelGlobals *kg,
 		if(!is_sss_sample && (pass_filter & (BAKE_FILTER_DIRECT | BAKE_FILTER_INDIRECT))) {
 			kernel_path_surface_connect_light(kg, sd, &emission_sd, throughput, &state, &L_sample);
 
-			if(kernel_path_surface_bounce(kg, sd, &throughput, &state, &L_sample, &ray)) {
+			if(kernel_path_surface_bounce(kg, sd, &throughput, &state, &L_sample.state, &ray)) {
 #ifdef __LAMP_MIS__
 				state.ray_t = 0.0f;
 #endif
 				/* compute indirect light */
-				kernel_path_indirect(kg, &indirect_sd, &emission_sd, &ray, throughput, 1, &state, &L_sample);
+				kernel_path_indirect(kg, &indirect_sd, &emission_sd, &ray, throughput, &state, &L_sample);
 
 				/* sum and reset indirect light pass variables for the next samples */
 				path_radiance_sum_indirect(&L_sample);
@@ -141,7 +138,7 @@ ccl_device_inline void compute_light_pass(KernelGlobals *kg,
 		/* sample emission */
 		if((pass_filter & BAKE_FILTER_EMISSION) && (sd->flag & SD_EMISSION)) {
 			float3 emission = indirect_primitive_emission(kg, sd, 0.0f, state.flag, state.ray_pdf);
-			path_radiance_accum_emission(&L_sample, throughput, emission, state.bounce);
+			path_radiance_accum_emission(&L_sample, &state, throughput, emission);
 		}
 
 #ifdef __SUBSURFACE__
@@ -172,7 +169,7 @@ ccl_device_inline void compute_light_pass(KernelGlobals *kg,
 #endif
 
 	/* accumulate into master L */
-	path_radiance_accum_sample(L, &L_sample, 1);
+	path_radiance_accum_sample(L, &L_sample);
 }
 
 ccl_device bool is_aa_pass(ShaderEvalType type)
@@ -242,12 +239,12 @@ ccl_device float3 kernel_bake_evaluate_direct_indirect(KernelGlobals *kg,
 		}
 		else {
 			/* surface color of the pass only */
-			shader_eval_surface(kg, sd, state, 0.0f, 0);
+			shader_eval_surface(kg, sd, state, 0);
 			return kernel_bake_shader_bsdf(kg, sd, type);
 		}
 	}
 	else {
-		shader_eval_surface(kg, sd, state, 0.0f, 0);
+		shader_eval_surface(kg, sd, state, 0);
 		color = kernel_bake_shader_bsdf(kg, sd, type);
 	}
 
@@ -339,7 +336,7 @@ ccl_device void kernel_bake_evaluate(KernelGlobals *kg, ccl_global uint4 *input,
 		case SHADER_EVAL_NORMAL:
 		{
 			if((sd.flag & SD_HAS_BUMP)) {
-				shader_eval_surface(kg, &sd, &state, 0.f, 0);
+				shader_eval_surface(kg, &sd, &state, 0);
 			}
 
 			/* encoding: normal = (2 * color) - 1 */
@@ -353,7 +350,7 @@ ccl_device void kernel_bake_evaluate(KernelGlobals *kg, ccl_global uint4 *input,
 		}
 		case SHADER_EVAL_EMISSION:
 		{
-			shader_eval_surface(kg, &sd, &state, 0.f, 0);
+			shader_eval_surface(kg, &sd, &state, 0);
 			out = shader_emissive_eval(kg, &sd);
 			break;
 		}
@@ -368,7 +365,8 @@ ccl_device void kernel_bake_evaluate(KernelGlobals *kg, ccl_global uint4 *input,
 		case SHADER_EVAL_COMBINED:
 		{
 			if((pass_filter & BAKE_FILTER_COMBINED) == BAKE_FILTER_COMBINED) {
-				out = path_radiance_clamp_and_sum(kg, &L);
+				float alpha;
+				out = path_radiance_clamp_and_sum(kg, &L, &alpha);
 				break;
 			}
 

@@ -65,14 +65,13 @@ ccl_device_noinline bool kernel_split_branched_path_volume_indirect_light_iter(K
 			kernel_path_volume_connect_light(kg, sd, emission_sd, *tp, &branched_state->path_state, L);
 
 			/* indirect light bounce */
-			if(!kernel_path_volume_bounce(kg, sd, tp, ps, L, pray)) {
+			if(!kernel_path_volume_bounce(kg, sd, tp, ps, &L->state, pray)) {
 				continue;
 			}
 
 			/* start the indirect path */
 			branched_state->next_closure = 0;
 			branched_state->next_sample = j+1;
-			branched_state->num_samples = num_samples;
 
 			/* Attempting to share too many samples is slow for volumes as it causes us to
 			 * loop here more and have many calls to kernel_volume_integrate which evaluates
@@ -171,7 +170,7 @@ ccl_device void kernel_do_volume(KernelGlobals *kg)
 						kernel_path_volume_connect_light(kg, sd, emission_sd, *throughput, state, L);
 
 						/* indirect light bounce */
-						if(kernel_path_volume_bounce(kg, sd, throughput, state, L, ray)) {
+						if(kernel_path_volume_bounce(kg, sd, throughput, state, &L->state, ray)) {
 							ASSIGN_RAY_STATE(ray_state, ray_index, RAY_REGENERATED);
 						}
 						else {

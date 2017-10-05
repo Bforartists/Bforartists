@@ -2385,8 +2385,8 @@ static int image_new_exec(bContext *C, wmOperator *op)
 	Main *bmain;
 	PointerRNA ptr, idptr;
 	PropertyRNA *prop;
-	char _name[MAX_ID_NAME - 2];
-	char *name = _name;
+	char name_buffer[MAX_ID_NAME - 2];
+	const char *name;
 	float color[4];
 	int width, height, floatbuf, gen_type, alpha;
 	int gen_context;
@@ -2399,10 +2399,13 @@ static int image_new_exec(bContext *C, wmOperator *op)
 	bmain = CTX_data_main(C);
 
 	prop = RNA_struct_find_property(op->ptr, "name");
-	RNA_property_string_get(op->ptr, prop, name);
+	RNA_property_string_get(op->ptr, prop, name_buffer);
 	if (!RNA_property_is_set(op->ptr, prop)) {
 		/* Default value, we can translate! */
-		name = (char *)DATA_(name);
+		name = DATA_(name_buffer);
+	}
+	else {
+		name = name_buffer;
 	}
 	width = RNA_int_get(op->ptr, "width");
 	height = RNA_int_get(op->ptr, "height");
@@ -3526,7 +3529,7 @@ static int frame_from_event(bContext *C, const wmEvent *event)
 
 		UI_view2d_region_to_view(&ar->v2d, event->mval[0], event->mval[1], &viewx, &viewy);
 
-		framenr = iroundf(viewx);
+		framenr = round_fl_to_int(viewx);
 	}
 
 	return framenr;
@@ -3632,7 +3635,7 @@ static int render_border_exec(bContext *C, wmOperator *op)
 {
 	ARegion *ar = CTX_wm_region(C);
 	Scene *scene = CTX_data_scene(C);
-	Render *re = RE_GetRender(scene->id.name);
+	Render *re = RE_GetSceneRender(scene);
 	RenderData *rd;
 	rctf border;
 

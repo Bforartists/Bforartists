@@ -252,7 +252,7 @@ void ED_mesh_uv_loop_reset(struct bContext *C, struct Mesh *me)
 {
 	/* could be ldata or pdata */
 	CustomData *pdata = GET_CD_DATA(me, pdata);
-	const int layernum = CustomData_get_active_layer_index(pdata, CD_MTEXPOLY);
+	const int layernum = CustomData_get_active_layer(pdata, CD_MTEXPOLY);
 	ED_mesh_uv_loop_reset_ex(me, layernum);
 	
 	WM_event_add_notifier(C, NC_GEOM | ND_DATA, me);
@@ -462,6 +462,20 @@ int ED_mesh_color_add(Mesh *me, const char *name, const bool active_set)
 	WM_main_add_notifier(NC_GEOM | ND_DATA, me);
 
 	return layernum;
+}
+
+bool ED_mesh_color_ensure(struct Mesh *me, const char *name)
+{
+	BLI_assert(me->edit_btmesh == NULL);
+
+	if (!me->mloopcol && me->totloop) {
+		CustomData_add_layer_named(&me->ldata, CD_MLOOPCOL, CD_DEFAULT, NULL, me->totloop, name);
+		BKE_mesh_update_customdata_pointers(me, true);
+	}
+
+	DAG_id_tag_update(&me->id, 0);
+
+	return (me->mloopcol != NULL);
 }
 
 bool ED_mesh_color_remove_index(Mesh *me, const int n)

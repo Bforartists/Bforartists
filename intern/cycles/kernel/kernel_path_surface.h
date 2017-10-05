@@ -85,17 +85,16 @@ ccl_device_noinline void kernel_branched_path_surface_connect_light(
 			float num_samples_inv = num_samples_adjust/num_samples;
 
 			for(int j = 0; j < num_samples; j++) {
-				float light_t = path_branched_rng_1D(kg, state->rng_hash, state, j, num_samples, PRNG_LIGHT);
 				float light_u, light_v;
 				path_branched_rng_2D(kg, state->rng_hash, state, j, num_samples, PRNG_LIGHT_U, &light_u, &light_v);
 				float terminate = path_branched_rng_light_termination(kg, state->rng_hash, state, j, num_samples);
 
 				/* only sample triangle lights */
 				if(kernel_data.integrator.num_all_lights)
-					light_t = 0.5f*light_t;
+					light_u = 0.5f*light_u;
 
 				LightSample ls;
-				if(light_sample(kg, light_t, light_u, light_v, sd->time, sd->P, state->bounce, &ls)) {
+				if(light_sample(kg, light_u, light_v, sd->time, sd->P, state->bounce, &ls)) {
 					/* Same as above, probability needs to be corrected since the sampling was forced to select a mesh light. */
 					if(kernel_data.integrator.num_all_lights)
 						ls.pdf *= 2.0f;
@@ -118,13 +117,12 @@ ccl_device_noinline void kernel_branched_path_surface_connect_light(
 	}
 	else {
 		/* sample one light at random */
-		float light_t = path_state_rng_1D(kg, state, PRNG_LIGHT);
 		float light_u, light_v;
 		path_state_rng_2D(kg, state, PRNG_LIGHT_U, &light_u, &light_v);
 		float terminate = path_state_rng_light_termination(kg, state);
 
 		LightSample ls;
-		if(light_sample(kg, light_t, light_u, light_v, sd->time, sd->P, state->bounce, &ls)) {
+		if(light_sample(kg, light_u, light_v, sd->time, sd->P, state->bounce, &ls)) {
 			/* sample random light */
 			if(direct_emission(kg, sd, emission_sd, &ls, state, &light_ray, &L_light, &is_lamp, terminate)) {
 				/* trace shadow ray */
@@ -152,7 +150,7 @@ ccl_device bool kernel_branched_path_surface_bounce(
         int num_samples,
         ccl_addr_space float3 *throughput,
         ccl_addr_space PathState *state,
-        PathRadiance *L,
+        PathRadianceState *L_state,
         ccl_addr_space Ray *ray,
         float sum_sample_weight)
 {
@@ -172,7 +170,7 @@ ccl_device bool kernel_branched_path_surface_bounce(
 		return false;
 
 	/* modify throughput */
-	path_radiance_bsdf_bounce(L, throughput, &bsdf_eval, bsdf_pdf, state->bounce, label);
+	path_radiance_bsdf_bounce(kg, L_state, throughput, &bsdf_eval, bsdf_pdf, state->bounce, label);
 
 #ifdef __DENOISING_FEATURES__
 	state->denoising_feature_weight *= sc->sample_weight / (sum_sample_weight * num_samples);
@@ -238,7 +236,6 @@ ccl_device_inline void kernel_path_surface_connect_light(KernelGlobals *kg,
 #endif
 
 	/* sample illumination from lights to find path contribution */
-	float light_t = path_state_rng_1D(kg, state, PRNG_LIGHT);
 	float light_u, light_v;
 	path_state_rng_2D(kg, state, PRNG_LIGHT_U, &light_u, &light_v);
 
@@ -251,7 +248,7 @@ ccl_device_inline void kernel_path_surface_connect_light(KernelGlobals *kg,
 #endif
 
 	LightSample ls;
-	if(light_sample(kg, light_t, light_u, light_v, sd->time, sd->P, state->bounce, &ls)) {
+	if(light_sample(kg, light_u, light_v, sd->time, sd->P, state->bounce, &ls)) {
 		float terminate = path_state_rng_light_termination(kg, state);
 		if(direct_emission(kg, sd, emission_sd, &ls, state, &light_ray, &L_light, &is_lamp, terminate)) {
 			/* trace shadow ray */
@@ -274,7 +271,7 @@ ccl_device bool kernel_path_surface_bounce(KernelGlobals *kg,
                                            ShaderData *sd,
                                            ccl_addr_space float3 *throughput,
                                            ccl_addr_space PathState *state,
-                                           PathRadiance *L,
+                                           PathRadianceState *L_state,
                                            ccl_addr_space Ray *ray)
 {
 	/* no BSDF? we can stop here */
@@ -295,7 +292,7 @@ ccl_device bool kernel_path_surface_bounce(KernelGlobals *kg,
 			return false;
 
 		/* modify throughput */
-		path_radiance_bsdf_bounce(L, throughput, &bsdf_eval, bsdf_pdf, state->bounce, label);
+		path_radiance_bsdf_bounce(kg, L_state, throughput, &bsdf_eval, bsdf_pdf, state->bounce, label);
 
 		/* set labels */
 		if(!(label & LABEL_TRANSPARENT)) {
