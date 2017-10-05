@@ -16,6 +16,42 @@
 
 CCL_NAMESPACE_BEGIN
 
+#ifdef __VOLUME__
+typedef struct VolumeState {
+#  ifdef __SPLIT_KERNEL__
+#  else
+	PathState ps;
+#  endif
+} VolumeState;
+
+/* Get PathState ready for use for volume stack evaluation. */
+#  ifdef __SPLIT_KERNEL__
+ccl_addr_space
+#  endif
+ccl_device_inline PathState *shadow_blocked_volume_path_state(
+        KernelGlobals *kg,
+        VolumeState *volume_state,
+        ccl_addr_space PathState *state,
+        ShaderData *sd,
+        Ray *ray)
+{
+#  ifdef __SPLIT_KERNEL__
+	ccl_addr_space PathState *ps =
+	        &kernel_split_state.state_shadow[ccl_global_id(1) * ccl_global_size(0) + ccl_global_id(0)];
+#  else
+	PathState *ps = &volume_state->ps;
+#  endif
+	*ps = *state;
+	/* We are checking for shadow on the "other" side of the surface, so need
+	 * to discard volume we are currently at.
+	 */
+	if(dot(sd->Ng, ray->D) < 0.0f) {
+		kernel_volume_stack_enter_exit(kg, sd, ps->volume_stack);
+	}
+	return ps;
+}
+#endif  /* __VOLUME__ */
+
 /* Attenuate throughput accordingly to the given intersection event.
  * Returns true if the throughput is zero and traversal can be aborted.
  */
@@ -50,7 +86,6 @@ ccl_device_forceinline bool shadow_handle_transparent_isect(
 		shader_eval_surface(kg,
 		                    shadow_sd,
 		                    state,
-		                    0.0f,
 		                    PATH_RAY_SHADOW);
 		path_state_modify_bounce(state, false);
 		*throughput *= shader_bsdf_transparency(kg, shadow_sd);
@@ -119,39 +154,6 @@ ccl_device bool shadow_blocked_opaque(KernelGlobals *kg,
 
 #    define SHADOW_STACK_MAX_HITS 64
 
-#    ifdef __VOLUME__
-struct VolumeState {
-#      ifdef __SPLIT_KERNEL__
-#      else
-		PathState ps;
-#      endif
-};
-
-/* Get PathState ready for use for volume stack evaluation. */
-ccl_device_inline PathState *shadow_blocked_volume_path_state(
-        KernelGlobals *kg,
-        VolumeState *volume_state,
-        ccl_addr_space PathState *state,
-        ShaderData *sd,
-        Ray *ray)
-{
-#      ifdef __SPLIT_KERNEL__
-	ccl_addr_space PathState *ps =
-	        &kernel_split_state.state_shadow[ccl_global_id(1) * ccl_global_size(0) + ccl_global_id(0)];
-#      else
-	PathState *ps = &volume_state->ps;
-#      endif
-	*ps = *state;
-	/* We are checking for shadow on the "other" side of the surface, so need
-	 * to discard volume we are currently at.
-	 */
-	if(dot(sd->Ng, ray->D) < 0.0f) {
-		kernel_volume_stack_enter_exit(kg, sd, ps->volume_stack);
-	}
-	return ps;
-}
-#endif  //   __VOLUME__
-
 /* Actual logic with traversal loop implementation which is free from device
  * specific tweaks.
  *
@@ -190,6 +192,9 @@ ccl_device bool shadow_blocked_transparent_all_loop(KernelGlobals *kg,
 		int bounce = state->transparent_bounce;
 		Intersection *isect = hits;
 #    ifdef __VOLUME__
+#      ifdef __SPLIT_KERNEL__
+		ccl_addr_space
+#      endif
 		PathState *ps = shadow_blocked_volume_path_state(kg,
 		                                                 &volume_state,
 		                                                 state,
@@ -240,6 +245,9 @@ ccl_device bool shadow_blocked_transparent_all_loop(KernelGlobals *kg,
 #    ifdef __VOLUME__
 	if(!blocked && state->volume_stack[0].shader != SHADER_NONE) {
 		/* Apply attenuation from current volume shader. */
+#      ifdef __SPLIT_KERNEL__
+		ccl_addr_space
+#      endif
 		PathState *ps = shadow_blocked_volume_path_state(kg,
 		                                                 &volume_state,
 		                                                 state,
@@ -335,6 +343,9 @@ ccl_device bool shadow_blocked_transparent_stepped_loop(
 		float3 Pend = ray->P + ray->D*ray->t;
 		int bounce = state->transparent_bounce;
 #    ifdef __VOLUME__
+#      ifdef __SPLIT_KERNEL__
+		ccl_addr_space
+#      endif
 		PathState *ps = shadow_blocked_volume_path_state(kg,
 		                                                 &volume_state,
 		                                                 state,
@@ -389,6 +400,9 @@ ccl_device bool shadow_blocked_transparent_stepped_loop(
 #    ifdef __VOLUME__
 	if(!blocked && state->volume_stack[0].shader != SHADER_NONE) {
 		/* Apply attenuation from current volume shader. */
+#      ifdef __SPLIT_KERNEL__
+		ccl_addr_space
+#      endif
 		PathState *ps = shadow_blocked_volume_path_state(kg,
 		                                                 &volume_state,
 		                                                 state,
@@ -526,6 +540,7 @@ ccl_device_inline bool shadow_blocked(KernelGlobals *kg,
 #  else  /* __SHADOW_RECORD_ALL__ */
 	/* Fallback to a slowest version which works on all devices. */
 	return shadow_blocked_transparent_stepped(kg,
+	                                          sd,
 	                                          shadow_sd,
 	                                          state,
 	                                          visibility,

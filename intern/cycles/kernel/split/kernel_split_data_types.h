@@ -72,7 +72,6 @@ typedef ccl_global struct SplitBranchedState {
 	/* indirect loop state */
 	int next_closure;
 	int next_sample;
-	int num_samples;
 
 #ifdef __SUBSURFACE__
 	int ss_next_closure;
@@ -123,7 +122,7 @@ typedef ccl_global struct SplitBranchedState {
 	SPLIT_DATA_ENTRY(ccl_global int, is_lamp, 1) \
 	SPLIT_DATA_ENTRY(ccl_global Ray, light_ray, 1) \
 	SPLIT_DATA_ENTRY(ccl_global int, queue_data, (NUM_QUEUES*2)) /* TODO(mai): this is too large? */ \
-	SPLIT_DATA_ENTRY(ccl_global uint, work_array, 1) \
+	SPLIT_DATA_ENTRY(ccl_global uint, buffer_offset, 1) \
 	SPLIT_DATA_ENTRY(ShaderData, sd, 1) \
 	SPLIT_DATA_ENTRY(ShaderData, sd_DL_shadow, 1) \
 	SPLIT_DATA_SUBSURFACE_ENTRIES \

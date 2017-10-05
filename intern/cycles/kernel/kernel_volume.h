@@ -379,13 +379,12 @@ ccl_device VolumeIntegrateResult kernel_volume_integrate_homogeneous(
 
 		/* pick random color channel, we use the Veach one-sample
 		 * model with balance heuristic for the channels */
-		float rphase = path_state_rng_1D_for_decision(kg, state, PRNG_PHASE);
+		float rphase = path_state_rng_1D(kg, state, PRNG_PHASE_CHANNEL);
 		int channel = (int)(rphase*3.0f);
-		sd->randb_closure = rphase*3.0f - channel;
 
 		/* decide if we will hit or miss */
 		bool scatter = true;
-		float xi = path_state_rng_1D_for_decision(kg, state, PRNG_SCATTER_DISTANCE);
+		float xi = path_state_rng_1D(kg, state, PRNG_SCATTER_DISTANCE);
 
 		if(probalistic_scatter) {
 			float sample_sigma_t = kernel_volume_channel_get(sigma_t, channel);
@@ -438,7 +437,7 @@ ccl_device VolumeIntegrateResult kernel_volume_integrate_homogeneous(
 		float3 sigma_t = coeff.sigma_a + coeff.sigma_s;
 		float3 transmittance = volume_color_transmittance(sigma_t, ray->t);
 		float3 emission = kernel_volume_emission_integrate(&coeff, closure_flag, transmittance, ray->t);
-		path_radiance_accum_emission(L, *throughput, emission, state->bounce);
+		path_radiance_accum_emission(L, state, *throughput, emission);
 	}
 
 	/* modify throughput */
@@ -483,10 +482,9 @@ ccl_device VolumeIntegrateResult kernel_volume_integrate_heterogeneous_distance(
 
 	/* pick random color channel, we use the Veach one-sample
 	 * model with balance heuristic for the channels */
-	float xi = path_state_rng_1D_for_decision(kg, state, PRNG_SCATTER_DISTANCE);
-	float rphase = path_state_rng_1D_for_decision(kg, state, PRNG_PHASE);
+	float xi = path_state_rng_1D(kg, state, PRNG_SCATTER_DISTANCE);
+	float rphase = path_state_rng_1D(kg, state, PRNG_PHASE_CHANNEL);
 	int channel = (int)(rphase*3.0f);
-	sd->randb_closure = rphase*3.0f - channel;
 	bool has_scatter = false;
 
 	for(int i = 0; i < max_steps; i++) {
@@ -558,7 +556,7 @@ ccl_device VolumeIntegrateResult kernel_volume_integrate_heterogeneous_distance(
 			/* integrate emission attenuated by absorption */
 			if(L && (closure_flag & SD_EMISSION)) {
 				float3 emission = kernel_volume_emission_integrate(&coeff, closure_flag, transmittance, dt);
-				path_radiance_accum_emission(L, tp, emission, state->bounce);
+				path_radiance_accum_emission(L, state, tp, emission);
 			}
 
 			/* modify throughput */
@@ -843,7 +841,6 @@ ccl_device VolumeIntegrateResult kernel_volume_decoupled_scatter(
 	/* pick random color channel, we use the Veach one-sample
 	 * model with balance heuristic for the channels */
 	int channel = (int)(rphase*3.0f);
-	sd->randb_closure = rphase*3.0f - channel;
 	float xi = rscatter;
 
 	/* probabilistic scattering decision based on transmittance */
@@ -997,8 +994,8 @@ ccl_device VolumeIntegrateResult kernel_volume_decoupled_scatter(
 			mis_weight = 2.0f*power_heuristic(pdf, distance_pdf);
 		}
 	}
-	if(sample_t < 1e-6f || pdf == 0.0f) {
-		return VOLUME_PATH_SCATTERED;
+	if(sample_t < 0.0f || pdf == 0.0f) {
+		return VOLUME_PATH_MISSED;
 	}
 
 	/* compute transmittance up to this step */
