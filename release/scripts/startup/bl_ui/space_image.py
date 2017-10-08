@@ -313,20 +313,6 @@ class IMAGE_MT_uvs_showhide(Menu):
         layout.operator("uv.hide", text="Hide Unselected").unselected = True
 
 
-class IMAGE_MT_uvs_proportional(Menu):
-    bl_label = "Proportional Editing"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.props_enum(context.tool_settings, "proportional_edit")
-
-        layout.separator()
-
-        layout.label("Falloff:")
-        layout.props_enum(context.tool_settings, "proportional_edit_falloff")
-
-
 class IMAGE_MT_uvs_snap(Menu):
     bl_label = "Snap"
 
@@ -370,10 +356,6 @@ class IMAGE_MT_uvs(Menu):
         layout.separator()
 
         layout.menu("IMAGE_MT_uvs_snap")
-
-        layout.separator()
-
-        layout.menu("IMAGE_MT_uvs_proportional")
 
         layout.separator()
 
@@ -1357,7 +1339,6 @@ classes = (
     IMAGE_MT_image_invert,
     IMAGE_MT_uvs,
     IMAGE_MT_uvs_showhide,
-    IMAGE_MT_uvs_proportional,
     IMAGE_MT_uvs_snap,
     IMAGE_MT_uvs_select_mode,
     IMAGE_HT_header,
