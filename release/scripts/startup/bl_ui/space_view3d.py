@@ -3383,6 +3383,7 @@ class VIEW3D_PT_view3d_cursor(Panel):
 
         view = context.space_data
         layout.column().prop(view, "cursor_location", text="Location")
+        layout.prop(view, "lock_3d_cursor", text="Lock 3D Cursor") # bfa - show hide lock 3d cursor checkbox
 
 
 class VIEW3D_PT_view3d_name(Panel):
@@ -3468,7 +3469,7 @@ class VIEW3D_PT_view3d_display(Panel):
             row.enabled = region.lock_rotation and region.show_sync_view
             row.prop(region, "use_box_clip")
 
-        ############## Subtab Lock #####################
+        ############## Subtab Miscellaneous #####################
         
         user_preferences = context.user_preferences
         addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
@@ -3484,8 +3485,6 @@ class VIEW3D_PT_view3d_display(Panel):
             col.prop(view, "show_outline_selected")
             col.prop(view, "show_all_objects_origin")
             col.prop(view, "show_relationship_lines")
-            
-            col.prop(view, "lock_3d_cursor", text="Lock 3D Cursor") # bfa - show hide lock 3d cursor checkbox
 
         ################################################
 
