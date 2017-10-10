@@ -350,20 +350,11 @@ class IMAGE_MT_uvs(Menu):
         uv = sima.uv_editor
         toolsettings = context.tool_settings
 
-        layout.prop(uv, "use_snap_to_pixels")
-        layout.prop(uv, "lock_bounds")
-
-        layout.separator()
-
-        layout.prop(toolsettings, "use_uv_sculpt")
-
-        layout.separator()
-
-        layout.prop(uv, "use_live_unwrap")
-
-        layout.separator()
-
         layout.menu("IMAGE_MT_uvs_showhide")
+
+        layout.separator()
+
+        # Export UV layout is an addon
 
 
 class IMAGE_MT_uvs_select_mode(Menu):
