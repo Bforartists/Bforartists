@@ -112,7 +112,9 @@ class bforartists_toolbar_settings(AddonPreferences):
 
     # misc
 
-    misc_history = BoolProperty(name="History", default=True, description = "Display the History Toolbar\nAll Modes", )
+    misc_undoredo = BoolProperty(name="Undo / Redo", default=True, description = "Display the Undo Redo toolbar\nAll Modes", )
+    misc_undohistory = BoolProperty(name="Undo History", default=True, description = "Display the Undo History Toolbar\nAll Modes", )
+    misc_repeat = BoolProperty(name="Repeat", default=True, description = "Display the Repeat Toolbar\nAll Modes", )
     misc_scene = BoolProperty(name="Scene", default=True, description = "Display the Scene dropdown box", )
     misc_misc = BoolProperty(name="Misc", default=False, description = "Display the Misc Toolbar\nAll Modes", )
 
@@ -230,7 +232,9 @@ class bforartists_toolbar_settings(AddonPreferences):
 
         row = layout.row()
 
-        row.prop(self, "misc_history")
+        row.prop(addon_prefs, "misc_undoredo")
+        row.prop(addon_prefs, "misc_undohistory")
+        row.prop(addon_prefs, "misc_repeat")
         row.prop(self, "misc_scene")
         row.prop(self, "misc_misc")
         

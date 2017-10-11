@@ -1438,7 +1438,9 @@ class TOOLBAR_MT_toolbars_misc_menu(Menu):
         user_preferences = context.user_preferences
         addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
 
-        layout.prop(addon_prefs, "misc_history")
+        layout.prop(addon_prefs, "misc_undoredo")
+        layout.prop(addon_prefs, "misc_undohistory")
+        layout.prop(addon_prefs, "misc_repeat")
         layout.prop(addon_prefs, "misc_scene")
         layout.prop(addon_prefs, "misc_misc")
             
@@ -1463,15 +1465,22 @@ class TOOLBAR_MT_misc(Menu):
 
         ## ------------------ Misc sub toolbars
 
-        if addon_prefs.misc_history:
+        if addon_prefs.misc_undoredo:
 
             row = layout.row(align=True)
 
             row.operator("ed.undo", icon='UNDO',text="")
             row.operator("ed.redo", icon='REDO',text="")
+            
+        if addon_prefs.misc_undohistory:
+
+            row = layout.row(align=True)
+
             if obj is None or obj.mode != 'SCULPT':
                 # Sculpt mode does not generate an undo menu it seems...
                 row.operator("ed.undo_history", icon='UNDO_HISTORY',text="")
+            
+        if addon_prefs.misc_repeat:
 
             row = layout.row(align=True)
 
