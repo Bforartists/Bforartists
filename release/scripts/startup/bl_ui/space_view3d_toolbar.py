@@ -170,6 +170,12 @@ class VIEW3D_PT_tools_object(View3DPanel, Panel):
                     sub.active = mesh.use_auto_smooth and not mesh.has_custom_normals
                     sub.prop(mesh, "auto_smooth_angle", text="Angle")
                     col.prop(mesh, "show_double_sided")
+                    
+                    # data transfer
+                    col = layout.column(align=True)
+                    col.label(text="Data Transfer:")
+                    col.operator("object.data_transfer", icon ='TRANSFER_DATA', text="Data                     ")
+                    col.operator("object.datalayout_transfer", icon ='TRANSFER_DATA_LAYOUT', text="Data Layout         ")
                    
             
             # icons
@@ -212,6 +218,14 @@ class VIEW3D_PT_tools_object(View3DPanel, Panel):
                     sub.active = mesh.use_auto_smooth and not mesh.has_custom_normals
                     sub.prop(mesh, "auto_smooth_angle", text="Angle")
                     col.prop(mesh, "show_double_sided")
+                    
+                    # data transfer
+                    col = layout.column(align=True)
+                    col.label(text="Data Transfer:")
+                    row = col.row(align=False)
+                    row.alignment = 'LEFT'
+                    row.operator("object.data_transfer", icon ='TRANSFER_DATA', text = "")
+                    row.operator("object.datalayout_transfer", icon ='TRANSFER_DATA_LAYOUT', text = "")
 
 
 class VIEW3D_PT_tools_add_object(View3DPanel, Panel):
