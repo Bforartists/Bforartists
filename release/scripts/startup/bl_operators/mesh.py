@@ -206,7 +206,7 @@ class MeshSelectPrev(Operator):
 # XXX This is hackish (going forth and back from Object mode...), to be redone once we have proper support of
 #     custom normals in BMesh/edit mode.
 class MehsSetNormalsFromFaces(Operator):
-    """Set the custom vertex normals from the selected faces ones"""
+    """Set Normals from Faces\nSet the custom vertex normals from the selected faces ones\nThis tool requires to have Autosmooth activated"""
     bl_idname = "mesh.set_normals_from_faces"
     bl_label = "Set Normals From Faces"
     bl_options = {'REGISTER', 'UNDO'}

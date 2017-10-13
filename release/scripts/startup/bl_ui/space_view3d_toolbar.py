@@ -1098,6 +1098,7 @@ class VIEW3D_PT_tools_shading(View3DPanel, Panel):
             col.operator("mesh.normals_make_consistent", icon = 'RECALC_NORMALS', text="Recalc Outside      ")
             col.operator("mesh.normals_recalculate_inside", icon = 'RECALC_NORMALS_INSIDE', text="Recalc Inside        ")
             col.operator("mesh.flip_normals", icon = 'FLIP_NORMALS', text="Flip Direction        ")
+            col.operator("mesh.set_normals_from_faces", text=" Set From Faces        ", icon = 'SET_FROM_FACES')
 
         else:
             col = layout.column(align=True)
@@ -1126,6 +1127,7 @@ class VIEW3D_PT_tools_shading(View3DPanel, Panel):
             row.operator("mesh.normals_make_consistent", icon = 'RECALC_NORMALS', text = "")
             row.operator("mesh.normals_recalculate_inside", icon = 'RECALC_NORMALS_INSIDE', text = "")
             row.operator("mesh.flip_normals", icon = 'FLIP_NORMALS', text = "")
+            row.operator("mesh.set_normals_from_faces", text = "", icon = 'SET_FROM_FACES')
 
 
 # Tooltip and operator for Clear Seam.
