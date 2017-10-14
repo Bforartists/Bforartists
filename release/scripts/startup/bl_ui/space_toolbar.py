@@ -928,8 +928,15 @@ class TOOLBAR_MT_toolbars_tools_menu(Menu):
         user_preferences = context.user_preferences
         addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
 
-        layout.prop(addon_prefs, "tools_relations")
-        layout.prop(addon_prefs, "tools_edit")
+        layout.prop(addon_prefs, "tools_group")
+        layout.prop(addon_prefs, "tools_parent")
+        layout.prop(addon_prefs, "tools_objectdata")
+        layout.prop(addon_prefs, "tools_link_to_scn")
+        layout.prop(addon_prefs, "tools_linked_objects")
+        layout.prop(addon_prefs, "tools_join")
+        layout.prop(addon_prefs, "tools_origin")
+        layout.prop(addon_prefs, "tools_shading")
+        layout.prop(addon_prefs, "tools_datatransfer")
 
 
 ############### bfa - menu hidable by the flag in the right click menu
@@ -960,7 +967,7 @@ class TOOLBAR_MT_tools(Menu):
 
             if mode == 'OBJECT':
 
-                if addon_prefs.tools_relations:
+                if addon_prefs.tools_group:
 
                     row = layout.row(align=True)
 
@@ -972,30 +979,39 @@ class TOOLBAR_MT_tools(Menu):
                     row.operator("group.objects_remove_active", icon='REMOVE_SELECTED_FROM_ACTIVE_GROUP', text="")
                     row.operator("group.objects_remove_all", icon='REMOVE_FROM_ALL_GROUPS', text="")
 
+                if addon_prefs.tools_parent:
+
                     row = layout.row(align=True)
 
                     row.operator("object.parent_set", icon='PARENT_SET', text="")
                     row.operator("object.parent_clear", icon='PARENT_CLEAR', text="")
 
+                if addon_prefs.tools_objectdata:
+
                     row = layout.row(align=True)
 
                     row.operator("object.make_links_data", icon='LINK_DATA', text="")
                     row.operator("object.make_single_user", icon='MAKE_SINGLE_USER', text="")
-                    
+                                      
+
+                if addon_prefs.tools_link_to_scn:
+
                     operator_context_default = layout.operator_context
                     if len(bpy.data.scenes) > 10:
                         layout.operator_context = 'INVOKE_REGION_WIN'
                         layout.operator("object.make_links_scene", text="Link to SCN", icon='OUTLINER_OB_EMPTY')
                     else:
                         layout.operator_context = 'EXEC_REGION_WIN'
-                        layout.operator_menu_enum("object.make_links_scene", "scene", text="Link to SCN")
+                        layout.operator_menu_enum("object.make_links_scene", "scene", text="Link to SCN")  
+
+                if addon_prefs.tools_linked_objects:
 
                     row = layout.row(align=True)
 
                     row.operator("object.make_local", icon='MAKE_LOCAL', text="")
-                    row.operator("object.proxy_make", icon='MAKE_PROXY', text="")
+                    row.operator("object.proxy_make", icon='MAKE_PROXY', text="")                  
 
-                if addon_prefs.tools_edit:
+                if addon_prefs.tools_join:
 
                     obj_type = obj.type
 
@@ -1003,6 +1019,12 @@ class TOOLBAR_MT_tools(Menu):
 
                     if obj_type in {'MESH', 'CURVE', 'SURFACE', 'ARMATURE'}:
                         row.operator("object.join", icon ='JOIN', text= "" )
+
+                if addon_prefs.tools_origin:
+
+                    obj_type = obj.type
+
+                    row = layout.row(align=True)
 
                     if obj_type in {'MESH', 'CURVE', 'SURFACE', 'ARMATURE', 'FONT', 'LATTICE'}:
                         
@@ -1013,6 +1035,12 @@ class TOOLBAR_MT_tools(Menu):
                         row.operator("object.origin_set", icon ='ORIGIN_TO_CURSOR', text="").type='ORIGIN_CURSOR'
                         row.operator("object.origin_set", icon ='ORIGIN_TO_CENTEROFMASS', text="").type='ORIGIN_CENTER_OF_MASS'
 
+                if addon_prefs.tools_shading:
+
+                    obj_type = obj.type
+
+                    row = layout.row(align=True)
+
                     if obj_type in {'MESH', 'CURVE', 'SURFACE'}:
                         
                         row = layout.row(align=True)
@@ -1020,12 +1048,19 @@ class TOOLBAR_MT_tools(Menu):
                         row.operator("object.shade_smooth", icon ='SHADING_SMOOTH', text="")
                         row.operator("object.shade_flat", icon ='SHADING_FLAT', text="")
 
+                if addon_prefs.tools_datatransfer:
+
+                    obj_type = obj.type
+
+                    row = layout.row(align=True)
+
                     if obj_type == 'MESH':
                         
                         row = layout.row(align=True)
 
                         row.operator("object.data_transfer", icon ='TRANSFER_DATA', text="")
                         row.operator("object.datalayout_transfer", icon ='TRANSFER_DATA_LAYOUT', text="")
+
 
             if mode == 'EDIT':
 
