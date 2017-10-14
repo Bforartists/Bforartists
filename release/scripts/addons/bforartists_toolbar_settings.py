@@ -90,8 +90,15 @@ class bforartists_toolbar_settings(AddonPreferences):
 
     # Tools
 
-    tools_relations = BoolProperty(name="Relations", default=True, description = "Display the Relations Toolbar\nDisplay is mode and content dependant", )
-    tools_edit = BoolProperty(name="Edit", default=False, description = "Display the Edit Toolbar\nDisplay is mode and content dependant", )
+    tools_group = BoolProperty(name="Group", default=True, description = "Display the Group Toolbar\nDisplay is mode and content dependant", )
+    tools_parent = BoolProperty(name="Parent", default=True, description = "Display the Parent Toolbar\nDisplay is mode and content dependant", )
+    tools_objectdata = BoolProperty(name="Object Data", default=False, description = "Display the Object Data Toolbar\nDisplay is mode and content dependant", )
+    tools_link_to_scn = BoolProperty(name="Link to SCN", default=False, description = "Display the Link to SCN dropdown box\nDisplay is mode and content dependant", )
+    tools_linked_objects = BoolProperty(name="Linked Objects", default=True, description = "Display the Linked objects Toolbar\nDisplay is mode and content dependant", )
+    tools_join = BoolProperty(name="Join", default=True, description = "Display the Join Toolbar\nDisplay is mode and content dependant", )
+    tools_origin = BoolProperty(name="Origin", default=True, description = "Display the Origin Toolbar\nDisplay is mode and content dependant", )
+    tools_shading = BoolProperty(name="Shading", default=True, description = "Display the Edit Toolbar\nDisplay is mode and content dependant", )
+    tools_datatransfer = BoolProperty(name="Data Transfer", default=False, description = "Display the Edit Toolbar\nDisplay is mode and content dependant", )
 
     # Animation
 
@@ -202,8 +209,21 @@ class bforartists_toolbar_settings(AddonPreferences):
 
         row = layout.row()
 
-        row.prop(self, "tools_relations")
-        row.prop(self, "tools_edit")     
+        row.prop(self, "tools_group")
+        row.prop(self, "tools_parent")
+        row.prop(self, "tools_objectdata")
+        row.prop(self, "tools_link_to_scn")
+
+        row = layout.row()
+
+        row.prop(self, "tools_linked_objects")
+        row.prop(self, "tools_join")
+        row.prop(self, "tools_origin")
+        row.prop(self, "tools_shading")
+
+        row = layout.row()
+
+        row.prop(self, "tools_datatransfer")
 
         layout.label(text="The Animation toolbar container")
 
