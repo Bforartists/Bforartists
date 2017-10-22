@@ -3384,6 +3384,7 @@ class VIEW3D_PT_view3d_cursor(Panel):
 
         view = context.space_data
         layout.column().prop(view, "cursor_location", text="Location")
+        layout.prop(view, "lock_3d_cursor", text="Lock 3D Cursor") # bfa - show hide lock 3d cursor checkbox
 
 
 class VIEW3D_PT_view3d_name(Panel):
@@ -3429,9 +3430,9 @@ class VIEW3D_PT_view3d_display(Panel):
         scene = context.scene
 
         col = layout.column()
-        col.prop(view, "show_iconbuttons", text="Icon or Text Buttons") # bfa - show hide cursor checkbox
-        #col = layout.column()
-        col.prop(view, "show_cursor", text="3D Cursor") # bfa - show hide cursor checkbox
+        col.prop(view, "show_iconbuttons", text="Icon or Text Buttons") # bfa - show hide icon or text checkbox
+        col.prop(view, "show_cursor", text="3D Cursor") # bfa - show hide cursor checkbox       
+        col.prop(view, "show_only_render")
   
         col = layout.column()
         display_all = not view.show_only_render
@@ -3469,7 +3470,7 @@ class VIEW3D_PT_view3d_display(Panel):
             row.enabled = region.lock_rotation and region.show_sync_view
             row.prop(region, "use_box_clip")
 
-        ############## Subtab Lock #####################
+        ############## Subtab Miscellaneous #####################
         
         user_preferences = context.user_preferences
         addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
@@ -3481,13 +3482,10 @@ class VIEW3D_PT_view3d_display(Panel):
             layout.prop(addon_prefs,"subtab_3dview_properties_display_misc", emboss=False, icon="TRIA_DOWN", text="+ Miscellaneous +")
 
             col = layout.column()
-            col.prop(view, "show_only_render")
             col.prop(view, "show_world")
             col.prop(view, "show_outline_selected")
             col.prop(view, "show_all_objects_origin")
             col.prop(view, "show_relationship_lines")
-            
-            col.prop(view, "lock_3d_cursor", text="Lock 3D Cursor") # bfa - show hide lock 3d cursor checkbox
 
         ################################################
 

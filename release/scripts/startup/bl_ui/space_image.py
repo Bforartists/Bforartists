@@ -136,8 +136,6 @@ class IMAGE_MT_view(Menu):
 
             layout.operator("image.cycle_render_slot", text="Render Slot Cycle Next")
             layout.operator("image.cycle_render_slot", text="Render Slot Cycle Previous").reverse = True
-            layout.operator("image.clear_render_border", text = "Clear Render Border")
-            layout.operator("image.render_border", text = "Render Border")
 
             layout.separator()
 
@@ -313,37 +311,31 @@ class IMAGE_MT_uvs_showhide(Menu):
         layout.operator("uv.hide", text="Hide Unselected").unselected = True
 
 
-class IMAGE_MT_uvs_proportional(Menu):
-    bl_label = "Proportional Editing"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.props_enum(context.tool_settings, "proportional_edit")
-
-        layout.separator()
-
-        layout.label("Falloff:")
-        layout.props_enum(context.tool_settings, "proportional_edit_falloff")
-
-
-class IMAGE_MT_uvs_snap(Menu):
+class IMAGE_MT_uvs_snap(Panel, UVToolsPanel):
     bl_label = "Snap"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        sima = context.space_data
+        return sima.show_uvedit and not context.tool_settings.use_uv_sculpt
 
     def draw(self, context):
         layout = self.layout
 
         layout.operator_context = 'EXEC_REGION_WIN'
 
-        layout.operator("uv.snap_selected", text="Selected to Pixels").target = 'PIXELS'
-        layout.operator("uv.snap_selected", text="Selected to Cursor").target = 'CURSOR'
-        layout.operator("uv.snap_selected", text="Selected to Cursor (Offset)").target = 'CURSOR_OFFSET'
-        layout.operator("uv.snap_selected", text="Selected to Adjacent Unselected").target = 'ADJACENT_UNSELECTED'
+        col = layout.column(align=True)
 
-        layout.separator()
+        col.operator("uv.snap_selected", text="Selected to Pixels").target = 'PIXELS'
+        col.operator("uv.snap_selected", text="Selected to Cursor").target = 'CURSOR'
+        col.operator("uv.snap_selected", text="Selected to Cursor (Offset)").target = 'CURSOR_OFFSET'
+        col.operator("uv.snap_selected", text="Selected to Adjacent Unselected").target = 'ADJACENT_UNSELECTED'
 
-        layout.operator("uv.snap_cursor", text="Cursor to Pixels").target = 'PIXELS'
-        layout.operator("uv.snap_cursor", text="Cursor to Selected").target = 'SELECTED'
+        col = layout.column(align=True)
+
+        col.operator("uv.snap_cursor", text="Cursor to Pixels").target = 'PIXELS'
+        col.operator("uv.snap_cursor", text="Cursor to Selected").target = 'SELECTED'
 
 
 class IMAGE_MT_uvs(Menu):
@@ -356,28 +348,11 @@ class IMAGE_MT_uvs(Menu):
         uv = sima.uv_editor
         toolsettings = context.tool_settings
 
-        layout.prop(uv, "use_snap_to_pixels")
-        layout.prop(uv, "lock_bounds")
-
-        layout.separator()
-
-        layout.prop(toolsettings, "use_uv_sculpt")
-
-        layout.separator()
-
-        layout.prop(uv, "use_live_unwrap")
-
-        layout.separator()
-
-        layout.menu("IMAGE_MT_uvs_snap")
-
-        layout.separator()
-
-        layout.menu("IMAGE_MT_uvs_proportional")
-
-        layout.separator()
-
         layout.menu("IMAGE_MT_uvs_showhide")
+
+        layout.separator()
+
+        # Export UV layout is an addon
 
 
 class IMAGE_MT_uvs_select_mode(Menu):
@@ -725,25 +700,6 @@ class IMAGE_PT_view_properties(Panel):
             layout.prop(render_slot, "name", text="Slot Name")
 
 
-class IMAGE_PT_tools_transform_uvs(Panel, UVToolsPanel):
-    bl_label = "Transform"
-
-    @classmethod
-    def poll(cls, context):
-        sima = context.space_data
-        return sima.show_uvedit and not context.tool_settings.use_uv_sculpt
-
-    def draw(self, context):
-        layout = self.layout
-
-        col = layout.column(align=True)
-        col.label(text="Transform:")
-        row = col.row(align=False)
-        row.alignment = 'LEFT'
-        row.operator("transform.translate", icon ='TRANSFORM_MOVE', text = "")
-        row.operator("transform.rotate", icon ='TRANSFORM_ROTATE', text = "")
-        row.operator("transform.resize", icon ='TRANSFORM_SCALE', text = "")
-        row.operator("transform.shear", icon = 'SHEAR', text = "")
 
 
 class IMAGE_PT_tools_align_uvs(Panel, UVToolsPanel):
@@ -1344,6 +1300,28 @@ class IMAGE_PT_tools_grease_pencil_brush(GreasePencilBrushPanel, Panel):
 class IMAGE_PT_tools_grease_pencil_brushcurves(GreasePencilBrushCurvesPanel, Panel):
     bl_space_type = 'IMAGE_EDITOR'
 
+class IMAGE_PT_tools_transform_uvs(Panel, UVToolsPanel):
+    bl_label = "Transform"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        sima = context.space_data
+        return sima.show_uvedit and not context.tool_settings.use_uv_sculpt
+
+    def draw(self, context):
+        layout = self.layout
+
+        col = layout.column(align=True)
+        col.label(text="Transform:")
+        row = col.row(align=False)
+        row.alignment = 'LEFT'
+        row.operator("transform.translate", icon ='TRANSFORM_MOVE', text = "")
+        row.operator("transform.rotate", icon ='TRANSFORM_ROTATE', text = "")
+        row.operator("transform.resize", icon ='TRANSFORM_SCALE', text = "")
+        row.operator("transform.shear", icon = 'SHEAR', text = "")
+
+
 
 classes = (
     IMAGE_MT_view,
@@ -1357,7 +1335,6 @@ classes = (
     IMAGE_MT_image_invert,
     IMAGE_MT_uvs,
     IMAGE_MT_uvs_showhide,
-    IMAGE_MT_uvs_proportional,
     IMAGE_MT_uvs_snap,
     IMAGE_MT_uvs_select_mode,
     IMAGE_HT_header,
@@ -1370,8 +1347,7 @@ classes = (
     IMAGE_PT_active_mask_point,
     IMAGE_PT_image_properties,
     IMAGE_PT_game_properties,
-    IMAGE_PT_view_properties,
-    IMAGE_PT_tools_transform_uvs,
+    IMAGE_PT_view_properties,   
     IMAGE_PT_tools_align_uvs,
     IMAGE_PT_tools_uvs,
     IMAGE_PT_options_uvs,
@@ -1400,6 +1376,7 @@ classes = (
     IMAGE_PT_tools_grease_pencil_sculpt,
     IMAGE_PT_tools_grease_pencil_brush,
     IMAGE_PT_tools_grease_pencil_brushcurves,
+    IMAGE_PT_tools_transform_uvs,
 )
 
 if __name__ == "__main__":  # only for live edit.
