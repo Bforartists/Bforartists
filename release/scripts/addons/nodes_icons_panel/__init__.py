@@ -927,7 +927,8 @@ class NodesIconsPanelInputAdvanced(bpy.types.Panel):
         
                 props = row.operator("node.add_node", text=" Volume Scatter    ", icon_value = custom_icons["volumescatter"].icon_id)
                 props.use_transform = True
-
+                props.type = "ShaderNodeVolumeScatter"
+                
             else:
                 ##### --------------------------------- Textures ------------------------------------------- ####
          
@@ -972,7 +973,7 @@ class NodesIconsPanelInputAdvanced(bpy.types.Panel):
                 props.type = "ShaderNodeTexPointDensity"
 
  
-                props.type = "ShaderNodeVolumeScatter"
+                
 
 
                 ##### --------------------------------- Shader ------------------------------------------- ####
