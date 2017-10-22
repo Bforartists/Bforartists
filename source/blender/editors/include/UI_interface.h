@@ -439,7 +439,7 @@ void UI_popup_block_close(struct bContext *C, struct wmWindow *win, uiBlock *blo
  * */
 
 uiBlock *UI_block_begin(const struct bContext *C, struct ARegion *region, const char *name, short dt);
-void UI_block_end_ex(const struct bContext *C, uiBlock *block, const int xy[2]);
+void UI_block_end_ex(const struct bContext *C, uiBlock *block, const int xy[2], int r_xy[2]);
 void UI_block_end(const struct bContext *C, uiBlock *block);
 void UI_block_draw(const struct bContext *C, struct uiBlock *block);
 void UI_block_update_from_old(const struct bContext *C, struct uiBlock *block);
@@ -829,9 +829,9 @@ void UI_exit(void);
 #define UI_ITEM_R_NO_BG         (1 << 7)
 #define UI_ITEM_R_IMMEDIATE     (1 << 8)
 
-/* uiLayoutOperatorButs flags */
-#define UI_LAYOUT_OP_SHOW_TITLE 1
-#define UI_LAYOUT_OP_SHOW_EMPTY 2
+/* uiTemplateOperatorPropertyButs flags */
+#define UI_TEMPLATE_OP_PROPS_SHOW_TITLE 1
+#define UI_TEMPLATE_OP_PROPS_SHOW_EMPTY 2
 
 /* used for transp checkers */
 #define UI_ALPHA_CHECKER_DARK 100
@@ -866,9 +866,6 @@ void uiLayoutSetFunc(uiLayout *layout, uiMenuHandleFunc handlefunc, void *argv);
 void uiLayoutSetContextPointer(uiLayout *layout, const char *name, struct PointerRNA *ptr);
 void uiLayoutContextCopy(uiLayout *layout, struct bContextStore *context);
 const char *uiLayoutIntrospect(uiLayout *layout); // XXX - testing
-void uiLayoutOperatorButs(const struct bContext *C, struct uiLayout *layout, struct wmOperator *op,
-                          bool (*check_prop)(struct PointerRNA *, struct PropertyRNA *),
-                          const char label_align, const short flag);
 struct MenuType *UI_but_menutype_get(uiBut *but);
 
 void uiLayoutSetOperatorContext(uiLayout *layout, int opcontext);
@@ -942,6 +939,9 @@ void uiTemplateImageInfo(uiLayout *layout, struct bContext *C, struct Image *ima
 void uiTemplateRunningJobs(uiLayout *layout, struct bContext *C);
 void UI_but_func_operator_search(uiBut *but);
 void uiTemplateOperatorSearch(uiLayout *layout);
+void uiTemplateOperatorPropertyButs(const struct bContext *C, uiLayout *layout, struct wmOperator *op,
+                                    bool (*check_prop)(struct PointerRNA *, struct PropertyRNA *),
+                                    const char label_align, const short flag);
 void uiTemplateHeader3D(uiLayout *layout, struct bContext *C);
 void uiTemplateLayer3D(uiLayout *layout, struct bContext *C); // bfa - the layer widget as a single template
 void uiTemplateEditModeSelection(uiLayout *layout, struct bContext *C);

@@ -27,13 +27,14 @@
  * General operations for brushes.
  */
 
+enum eCurveMappingPreset;
 struct Brush;
 struct ImBuf;
 struct ImagePool;
 struct Main;
 struct Scene;
 struct UnifiedPaintSettings;
-// enum CurveMappingPreset;
+// enum eCurveMappingPreset;
 
 
 /* globals for brush execution */
@@ -68,7 +69,7 @@ void BKE_brush_jitter_pos(
 void BKE_brush_randomize_texture_coords(struct UnifiedPaintSettings *ups, bool mask);
 
 /* brush curve */
-void BKE_brush_curve_preset(struct Brush *b, int preset);
+void BKE_brush_curve_preset(struct Brush *b, enum eCurveMappingPreset preset);
 float BKE_brush_curve_strength_clamped(struct Brush *br, float p, const float len);
 float BKE_brush_curve_strength(const struct Brush *br, float p, const float len);
 
@@ -103,9 +104,11 @@ void BKE_brush_alpha_set(struct Scene *scene, struct Brush *brush, float alpha);
 float BKE_brush_weight_get(const struct Scene *scene, const struct Brush *brush);
 void BKE_brush_weight_set(const struct Scene *scene, struct Brush *brush, float value);
 
-int  BKE_brush_use_locked_size(const struct Scene *scene, const struct Brush *brush);
-int  BKE_brush_use_alpha_pressure(const struct Scene *scene, const struct Brush *brush);
-int  BKE_brush_use_size_pressure(const struct Scene *scene, const struct Brush *brush);
+bool BKE_brush_use_locked_size(const struct Scene *scene, const struct Brush *brush);
+bool BKE_brush_use_alpha_pressure(const struct Scene *scene, const struct Brush *brush);
+bool BKE_brush_use_size_pressure(const struct Scene *scene, const struct Brush *brush);
+
+bool BKE_brush_sculpt_has_secondary_color(const struct Brush *brush);
 
 /* scale unprojected radius to reflect a change in the brush's 2D size */
 void BKE_brush_scale_unprojected_radius(

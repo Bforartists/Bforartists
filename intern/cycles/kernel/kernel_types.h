@@ -409,7 +409,7 @@ typedef enum DenoisingPassOffsets {
 	DENOISING_PASS_SIZE_CLEAN         = 3,
 } DenoisingPassOffsets;
 
-typedef enum BakePassFilter {
+typedef enum eBakePassFilter {
 	BAKE_FILTER_NONE = 0,
 	BAKE_FILTER_DIRECT = (1 << 0),
 	BAKE_FILTER_INDIRECT = (1 << 1),
@@ -420,7 +420,7 @@ typedef enum BakePassFilter {
 	BAKE_FILTER_SUBSURFACE = (1 << 6),
 	BAKE_FILTER_EMISSION = (1 << 7),
 	BAKE_FILTER_AO = (1 << 8),
-} BakePassFilter;
+} eBakePassFilter;
 
 typedef enum BakePassFilterCombos {
 	BAKE_FILTER_COMBINED = (
@@ -1262,6 +1262,7 @@ typedef struct KernelIntegrator {
 
 	/* branched path */
 	int branched;
+	int volume_decoupled;
 	int diffuse_samples;
 	int glossy_samples;
 	int transmission_samples;
@@ -1287,7 +1288,6 @@ typedef struct KernelIntegrator {
 	float light_inv_rr_threshold;
 
 	int start_sample;
-	int pad1;
 } KernelIntegrator;
 static_assert_align(KernelIntegrator, 16);
 
@@ -1447,6 +1447,20 @@ enum RayState {
 #define PATCH_MAP_NODE_IS_SET (1 << 30)
 #define PATCH_MAP_NODE_IS_LEAF (1u << 31)
 #define PATCH_MAP_NODE_INDEX_MASK (~(PATCH_MAP_NODE_IS_SET | PATCH_MAP_NODE_IS_LEAF))
+
+/* Work Tiles */
+
+typedef struct WorkTile {
+	uint x, y, w, h;
+
+	uint start_sample;
+	uint num_samples;
+
+	uint offset;
+	uint stride;
+
+	ccl_global float *buffer;
+} WorkTile;
 
 CCL_NAMESPACE_END
 

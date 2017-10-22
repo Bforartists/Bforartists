@@ -60,6 +60,7 @@ static void shade_background_pixels(Device *device, DeviceScene *dscene, int res
 	device->mem_alloc("shade_background_pixels_input", d_input, MEM_READ_ONLY);
 	device->mem_copy_to(d_input);
 	device->mem_alloc("shade_background_pixels_output", d_output, MEM_WRITE_ONLY);
+	device->mem_zero(d_output);
 
 	DeviceTask main_task(DeviceTask::SHADER);
 	main_task.shader_input = d_input.device_pointer;
@@ -344,6 +345,9 @@ void LightManager::device_update_distribution(Device *device, DeviceScene *dscen
 				offset++;
 
 				Mesh::Triangle t = mesh->get_triangle(i);
+				if(!t.valid(&mesh->verts[0])) {
+					continue;
+				}
 				float3 p1 = mesh->verts[t.v[0]];
 				float3 p2 = mesh->verts[t.v[1]];
 				float3 p3 = mesh->verts[t.v[2]];

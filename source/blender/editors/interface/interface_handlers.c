@@ -2816,8 +2816,8 @@ static bool ui_textedit_insert_ascii(uiBut *but, uiHandleButtonData *data, char 
 }
 
 static void ui_textedit_move(
-        uiBut *but, uiHandleButtonData *data, strCursorJumpDirection direction,
-        const bool select, strCursorJumpType jump)
+        uiBut *but, uiHandleButtonData *data, eStrCursorJumpDirection direction,
+        const bool select, eStrCursorJumpType jump)
 {
 	const char *str = data->str;
 	const int len = strlen(str);
@@ -2893,7 +2893,7 @@ static void ui_textedit_move(
 	}
 }
 
-static bool ui_textedit_delete(uiBut *but, uiHandleButtonData *data, int direction, strCursorJumpType jump)
+static bool ui_textedit_delete(uiBut *but, uiHandleButtonData *data, int direction, eStrCursorJumpType jump)
 {
 	char *str = data->str;
 	const int len = strlen(str);
@@ -9245,11 +9245,17 @@ static int ui_handle_menu_event(
 									doit = true;
 								}
 							}
-							else if (count == act) {
+							else if (ELEM(but->type,
+							              UI_BTYPE_BUT,
+							              UI_BTYPE_BUT_MENU,
+							              UI_BTYPE_MENU, UI_BTYPE_BLOCK,
+							              UI_BTYPE_PULLDOWN) &&
+							         count == act)
+							{
 								doit = true;
 							}
 
-							if (doit) {
+							if (!(but->flag & UI_BUT_DISABLED) && doit) {
 								/* activate buttons but open menu's */
 								uiButtonActivateType activate;
 								if (but->type == UI_BTYPE_PULLDOWN) {
@@ -9303,8 +9309,7 @@ static int ui_handle_menu_event(
 							break;
 
 						for (but = block->buttons.first; but; but = but->next) {
-
-							if (but->menu_key == event->type) {
+							if (!(but->flag & UI_BUT_DISABLED) && but->menu_key == event->type) {
 								if (ELEM(but->type, UI_BTYPE_BUT, UI_BTYPE_BUT_MENU)) {
 									/* mainly for operator buttons */
 									ui_handle_button_activate(C, ar, but, BUTTON_ACTIVATE_APPLY);
@@ -10225,9 +10230,9 @@ void UI_popup_handlers_remove(ListBase *handlers, uiPopupBlockHandle *popup)
 		    handler->ui_userdata == popup)
 		{
 			/* tag refresh parent popup */
-			if (handler->next && 
-				handler->next->ui_handle == ui_popup_handler && 
-				handler->next->ui_remove == ui_popup_handler_remove) 
+			if (handler->next &&
+			    handler->next->ui_handle == ui_popup_handler &&
+			    handler->next->ui_remove == ui_popup_handler_remove)
 			{
 				uiPopupBlockHandle *parent_popup = handler->next->ui_userdata;
 				ED_region_tag_refresh_ui(parent_popup->region);

@@ -23,9 +23,11 @@
 #include "util/util_debug.h"
 #include "util/util_foreach.h"
 #include "util/util_half.h"
+#include "util/util_logging.h"
 #include "util/util_math.h"
 #include "util/util_opengl.h"
 #include "util/util_time.h"
+#include "util/util_system.h"
 #include "util/util_types.h"
 #include "util/util_vector.h"
 #include "util/util_string.h"
@@ -34,6 +36,7 @@ CCL_NAMESPACE_BEGIN
 
 bool Device::need_types_update = true;
 bool Device::need_devices_update = true;
+thread_mutex Device::device_mutex;
 vector<DeviceType> Device::types;
 vector<DeviceInfo> Device::devices;
 
@@ -296,53 +299,49 @@ string Device::string_from_type(DeviceType type)
 
 vector<DeviceType>& Device::available_types()
 {
+	thread_scoped_lock lock(device_mutex);
 	if(need_types_update) {
 		types.clear();
 		types.push_back(DEVICE_CPU);
-
 #ifdef WITH_CUDA
-		if(device_cuda_init())
+		if(device_cuda_init()) {
 			types.push_back(DEVICE_CUDA);
+		}
 #endif
-
 #ifdef WITH_OPENCL
-		if(device_opencl_init())
+		if(device_opencl_init()) {
 			types.push_back(DEVICE_OPENCL);
+		}
 #endif
-
 #ifdef WITH_NETWORK
 		types.push_back(DEVICE_NETWORK);
 #endif
-
 		need_types_update = false;
 	}
-
 	return types;
 }
 
 vector<DeviceInfo>& Device::available_devices()
 {
+	thread_scoped_lock lock(device_mutex);
 	if(need_devices_update) {
 		devices.clear();
-#ifdef WITH_CUDA
-		if(device_cuda_init())
-			device_cuda_info(devices);
-#endif
-
 #ifdef WITH_OPENCL
-		if(device_opencl_init())
+		if(device_opencl_init()) {
 			device_opencl_info(devices);
+		}
 #endif
-
+#ifdef WITH_CUDA
+		if(device_cuda_init()) {
+			device_cuda_info(devices);
+		}
+#endif
 		device_cpu_info(devices);
-
 #ifdef WITH_NETWORK
 		device_network_info(devices);
 #endif
-
 		need_devices_update = false;
 	}
-
 	return devices;
 }
 
@@ -350,12 +349,6 @@ string Device::device_capabilities()
 {
 	string capabilities = "CPU device capabilities: ";
 	capabilities += device_cpu_capabilities() + "\n";
-#ifdef WITH_CUDA
-	if(device_cuda_init()) {
-		capabilities += "\nCUDA device capabilities:\n";
-		capabilities += device_cuda_capabilities();
-	}
-#endif
 
 #ifdef WITH_OPENCL
 	if(device_opencl_init()) {
@@ -364,10 +357,17 @@ string Device::device_capabilities()
 	}
 #endif
 
+#ifdef WITH_CUDA
+	if(device_cuda_init()) {
+		capabilities += "\nCUDA device capabilities:\n";
+		capabilities += device_cuda_capabilities();
+	}
+#endif
+
 	return capabilities;
 }
 
-DeviceInfo Device::get_multi_device(vector<DeviceInfo> subdevices)
+DeviceInfo Device::get_multi_device(const vector<DeviceInfo>& subdevices, int threads, bool background)
 {
 	assert(subdevices.size() > 1);
 
@@ -375,14 +375,38 @@ DeviceInfo Device::get_multi_device(vector<DeviceInfo> subdevices)
 	info.type = DEVICE_MULTI;
 	info.id = "MULTI";
 	info.description = "Multi Device";
-	info.multi_devices = subdevices;
 	info.num = 0;
 
 	info.has_bindless_textures = true;
-	foreach(DeviceInfo &device, subdevices) {
-		assert(device.type == info.multi_devices[0].type);
-
+	info.has_volume_decoupled = true;
+	info.has_qbvh = true;
+	foreach(const DeviceInfo &device, subdevices) {
 		info.has_bindless_textures &= device.has_bindless_textures;
+		info.has_volume_decoupled &= device.has_volume_decoupled;
+		info.has_qbvh &= device.has_qbvh;
+
+		if(device.type == DEVICE_CPU && subdevices.size() > 1) {
+			if(background) {
+				int orig_cpu_threads = (threads)? threads: system_cpu_thread_count();
+				int cpu_threads = max(orig_cpu_threads - (subdevices.size() - 1), 0);
+
+				if(cpu_threads >= 1) {
+					DeviceInfo cpu_device = device;
+					cpu_device.cpu_threads = cpu_threads;
+					info.multi_devices.push_back(cpu_device);
+				}
+
+				VLOG(1) << "CPU render threads reduced from "
+						<< orig_cpu_threads << " to " << cpu_threads
+						<< ", to dedicate to GPU.";
+			}
+			else {
+				VLOG(1) << "CPU render threads disabled for interactive render.";
+			}
+		}
+		else {
+			info.multi_devices.push_back(device);
+		}
 	}
 
 	return info;

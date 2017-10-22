@@ -366,10 +366,10 @@ static void ui_block_bounds_calc_centered_pie(uiBlock *block)
 
 static void ui_block_bounds_calc_popup(
         wmWindow *window, uiBlock *block,
-        eBlockBoundsCalc bounds_calc, const int xy[2])
+        eBlockBoundsCalc bounds_calc, const int xy[2], int r_xy[2])
 {
 	int width, height, oldwidth, oldheight;
-	int oldbounds, xmax, ymax;
+	int oldbounds, xmax, ymax, raw_x, raw_y;
 	const int margin = UI_SCREEN_MARGIN;
 	rcti rect, rect_bounds;
 	int ofs_dummy[2];
@@ -407,8 +407,8 @@ static void ui_block_bounds_calc_popup(
 
 	/* offset block based on mouse position, user offset is scaled
 	 * along in case we resized the block in ui_block_bounds_calc_text */
-	rect.xmin = xy[0] + block->rect.xmin + (block->mx * width) / oldwidth;
-	rect.ymin = xy[1] + block->rect.ymin + (block->my * height) / oldheight;
+	raw_x = rect.xmin = xy[0] + block->rect.xmin + (block->mx * width) / oldwidth;
+	raw_y = rect.ymin = xy[1] + block->rect.ymin + (block->my * height) / oldheight;
 	rect.xmax = rect.xmin + width;
 	rect.ymax = rect.ymin + height;
 
@@ -422,6 +422,13 @@ static void ui_block_bounds_calc_popup(
 
 	/* now recompute bounds and safety */
 	ui_block_bounds_calc(block);
+
+	/* If given, adjust input coordinates such that they would generate real final popup position.
+	 * Needed to handle correctly floating panels once they have been dragged around, see T52999. */
+	if (r_xy) {
+		r_xy[0] = xy[0] + block->rect.xmin - raw_x;
+		r_xy[1] = xy[1] + block->rect.ymin - raw_y;
+	}
 }
 
 /* used for various cases */
@@ -1231,7 +1238,7 @@ void UI_block_update_from_old(const bContext *C, uiBlock *block)
 	block->oldblock = NULL;
 }
 
-void UI_block_end_ex(const bContext *C, uiBlock *block, const int xy[2])
+void UI_block_end_ex(const bContext *C, uiBlock *block, const int xy[2], int r_xy[2])
 {
 	wmWindow *window = CTX_wm_window(C);
 	Scene *scene = CTX_data_scene(C);
@@ -1299,7 +1306,7 @@ void UI_block_end_ex(const bContext *C, uiBlock *block, const int xy[2])
 			/* fallback */
 		case UI_BLOCK_BOUNDS_POPUP_MOUSE:
 		case UI_BLOCK_BOUNDS_POPUP_MENU:
-			ui_block_bounds_calc_popup(window, block, block->bounds_type, xy);
+			ui_block_bounds_calc_popup(window, block, block->bounds_type, xy, r_xy);
 			break;
 	}
 
@@ -1317,7 +1324,7 @@ void UI_block_end(const bContext *C, uiBlock *block)
 {
 	wmWindow *window = CTX_wm_window(C);
 
-	UI_block_end_ex(C, block, &window->eventstate->x);
+	UI_block_end_ex(C, block, &window->eventstate->x, NULL);
 }
 
 /* ************** BLOCK DRAWING FUNCTION ************* */
@@ -3283,7 +3290,7 @@ static void ui_def_but_rna__menu(bContext *UNUSED(C), uiLayout *layout, void *bu
 	uiBut *but = (uiBut *)but_p;
 
 	/* see comment in ui_item_enum_expand, re: uiname  */
-	EnumPropertyItem *item, *item_array;
+	const EnumPropertyItem *item, *item_array;
 	bool free;
 
 	uiLayout *split, *column = NULL;
@@ -3393,9 +3400,8 @@ static void ui_def_but_rna__menu(bContext *UNUSED(C), uiLayout *layout, void *bu
 	UI_block_layout_set_current(block, layout);
 
 	if (free) {
-		MEM_freeN(item_array);
+		MEM_freeN((void *)item_array);
 	}
-
 	BLI_assert((block->flag & UI_BLOCK_IS_FLIP) == 0);
 	block->flag |= UI_BLOCK_IS_FLIP;
 }
@@ -3426,7 +3432,7 @@ static uiBut *ui_def_but_rna(
 	/* use rna values if parameters are not specified */
 	if ((proptype == PROP_ENUM) && ELEM(type, UI_BTYPE_MENU, UI_BTYPE_ROW, UI_BTYPE_LISTROW)) {
 		/* UI_BTYPE_MENU is handled a little differently here */
-		EnumPropertyItem *item;
+		const EnumPropertyItem *item;
 		int value;
 		bool free;
 		int i;
@@ -3468,7 +3474,7 @@ static uiBut *ui_def_but_rna(
 		}
 
 		if (free) {
-			MEM_freeN(item);
+			MEM_freeN((void *)item);
 		}
 	}
 	else {
@@ -4430,7 +4436,7 @@ static void operator_enum_search_cb(const struct bContext *C, void *but, const c
 	}
 	else {
 		PointerRNA *ptr = UI_but_operator_ptr_get(but);  /* Will create it if needed! */
-		EnumPropertyItem *item, *item_array;
+		const EnumPropertyItem *item, *item_array;
 		bool do_free;
 
 		RNA_property_enum_items_gettexted((bContext *)C, ptr, prop, &item_array, NULL, &do_free);
@@ -4443,8 +4449,9 @@ static void operator_enum_search_cb(const struct bContext *C, void *but, const c
 			}
 		}
 
-		if (do_free)
-			MEM_freeN(item_array);
+		if (do_free) {
+			MEM_freeN((void *)item_array);
+		}
 	}
 }
 
@@ -4518,7 +4525,7 @@ void UI_but_string_info_get(bContext *C, uiBut *but, ...)
 	va_list args;
 	uiStringInfo *si;
 
-	EnumPropertyItem *items = NULL, *item = NULL;
+	const EnumPropertyItem *items = NULL, *item = NULL;
 	int totitems;
 	bool free_items = false;
 
@@ -4694,8 +4701,9 @@ void UI_but_string_info_get(bContext *C, uiBut *but, ...)
 	}
 	va_end(args);
 
-	if (free_items && items)
-		MEM_freeN(items);
+	if (free_items && items) {
+		MEM_freeN((void *)items);
+	}
 }
 
 /* Program Init/Exit */
