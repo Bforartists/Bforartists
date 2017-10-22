@@ -46,6 +46,7 @@ enum MemoryType {
 /* Supported Data Types */
 
 enum DataType {
+	TYPE_UNKNOWN,
 	TYPE_UCHAR,
 	TYPE_UINT,
 	TYPE_INT,
@@ -57,6 +58,7 @@ enum DataType {
 static inline size_t datatype_size(DataType datatype) 
 {
 	switch(datatype) {
+		case TYPE_UNKNOWN: return 1;
 		case TYPE_UCHAR: return sizeof(uchar);
 		case TYPE_FLOAT: return sizeof(float);
 		case TYPE_UINT: return sizeof(uint);
@@ -70,8 +72,8 @@ static inline size_t datatype_size(DataType datatype)
 /* Traits for data types */
 
 template<typename T> struct device_type_traits {
-	static const DataType data_type = TYPE_UCHAR;
-	static const int num_elements = 0;
+	static const DataType data_type = TYPE_UNKNOWN;
+	static const int num_elements = sizeof(T);
 };
 
 template<> struct device_type_traits<uchar> {
@@ -268,31 +270,14 @@ public:
 		return &data[0];
 	}
 
-	T *copy(T *ptr, size_t width, size_t height = 0, size_t depth = 0)
+	void steal_data(array<T>& from)
 	{
-		T *mem = resize(width, height, depth);
-		if(mem != NULL) {
-			memcpy(mem, ptr, memory_size());
-		}
-		return mem;
-	}
-
-	void copy_at(T *ptr, size_t offset, size_t size)
-	{
-		if(size > 0) {
-			size_t mem_size = size*data_elements*datatype_size(data_type);
-			memcpy(&data[0] + offset, ptr, mem_size);
-		}
-	}
-
-	void reference(T *ptr, size_t width, size_t height = 0, size_t depth = 0)
-	{
-		data.clear();
-		data_size = width * ((height == 0)? 1: height) * ((depth == 0)? 1: depth);
-		data_pointer = (device_ptr)ptr;
-		data_width = width;
-		data_height = height;
-		data_depth = depth;
+		data.steal_data(from);
+		data_size = data.size();
+		data_pointer = (data_size)? (device_ptr)&data[0]: 0;
+		data_width = data_size;
+		data_height = 0;
+		data_depth = 0;
 	}
 
 	void clear()
@@ -314,6 +299,11 @@ public:
 	T* get_data()
 	{
 		return &data[0];
+	}
+
+	T& operator[](size_t i)
+	{
+		return data[i];
 	}
 
 private:

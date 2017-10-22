@@ -115,8 +115,7 @@ void BlenderSession::create()
 void BlenderSession::create_session()
 {
 	SessionParams session_params = BlenderSync::get_session_params(b_engine, b_userpref, b_scene, background);
-	bool is_cpu = session_params.device.type == DEVICE_CPU;
-	SceneParams scene_params = BlenderSync::get_scene_params(b_scene, background, is_cpu);
+	SceneParams scene_params = BlenderSync::get_scene_params(b_scene, background);
 	bool session_pause = BlenderSync::get_session_pause(b_scene, background);
 
 	/* reset status/progress */
@@ -141,7 +140,7 @@ void BlenderSession::create_session()
 	session->set_pause(session_pause);
 
 	/* create sync */
-	sync = new BlenderSync(b_engine, b_data, b_scene, scene, !background, session->progress, is_cpu);
+	sync = new BlenderSync(b_engine, b_data, b_scene, scene, !background, session->progress);
 	BL::Object b_camera_override(b_engine.camera_override());
 	if(b_v3d) {
 		if(session_pause == false) {
@@ -179,8 +178,7 @@ void BlenderSession::reset_session(BL::BlendData& b_data_, BL::Scene& b_scene_)
 	b_scene = b_scene_;
 
 	SessionParams session_params = BlenderSync::get_session_params(b_engine, b_userpref, b_scene, background);
-	const bool is_cpu = session_params.device.type == DEVICE_CPU;
-	SceneParams scene_params = BlenderSync::get_scene_params(b_scene, background, is_cpu);
+	SceneParams scene_params = BlenderSync::get_scene_params(b_scene, background);
 
 	width = render_resolution_x(b_render);
 	height = render_resolution_y(b_render);
@@ -211,7 +209,7 @@ void BlenderSession::reset_session(BL::BlendData& b_data_, BL::Scene& b_scene_)
 	session->stats.mem_peak = session->stats.mem_used;
 
 	/* sync object should be re-created */
-	sync = new BlenderSync(b_engine, b_data, b_scene, scene, !background, session->progress, is_cpu);
+	sync = new BlenderSync(b_engine, b_data, b_scene, scene, !background, session->progress);
 
 	/* for final render we will do full data sync per render layer, only
 	 * do some basic syncing here, no objects or materials for speed */
@@ -307,11 +305,10 @@ static void end_render_result(BL::RenderEngine& b_engine,
 
 void BlenderSession::do_write_update_render_tile(RenderTile& rtile, bool do_update_only, bool highlight)
 {
-	BufferParams& params = rtile.buffers->params;
-	int x = params.full_x - session->tile_manager.params.full_x;
-	int y = params.full_y - session->tile_manager.params.full_y;
-	int w = params.width;
-	int h = params.height;
+	int x = rtile.x - session->tile_manager.params.full_x;
+	int y = rtile.y - session->tile_manager.params.full_y;
+	int w = rtile.w;
+	int h = rtile.h;
 
 	/* get render result */
 	BL::RenderResult b_rr = begin_render_result(b_engine, x, y, w, h, b_rlay_name.c_str(), b_rview_name.c_str());
@@ -403,7 +400,7 @@ void BlenderSession::render()
 		buffer_params.passes = passes;
 
 		PointerRNA crl = RNA_pointer_get(&b_layer_iter->ptr, "cycles");
-		bool use_denoising = !session_params.progressive_refine && get_boolean(crl, "use_denoising");
+		bool use_denoising = get_boolean(crl, "use_denoising");
 		buffer_params.denoising_data_pass = use_denoising;
 		session->tile_manager.schedule_denoising = use_denoising;
 		session->params.use_denoising = use_denoising;
@@ -661,10 +658,9 @@ void BlenderSession::do_write_update_render_result(BL::RenderResult& b_rr,
 	if(!buffers->copy_from_device())
 		return;
 
-	BufferParams& params = buffers->params;
 	float exposure = scene->film->exposure;
 
-	vector<float> pixels(params.width*params.height*4);
+	vector<float> pixels(rtile.w*rtile.h*4);
 
 	/* Adjust absolute sample number to the range. */
 	int sample = rtile.sample;
@@ -736,8 +732,7 @@ void BlenderSession::synchronize()
 
 	/* on session/scene parameter changes, we recreate session entirely */
 	SessionParams session_params = BlenderSync::get_session_params(b_engine, b_userpref, b_scene, background);
-	const bool is_cpu = session_params.device.type == DEVICE_CPU;
-	SceneParams scene_params = BlenderSync::get_scene_params(b_scene, background, is_cpu);
+	SceneParams scene_params = BlenderSync::get_scene_params(b_scene, background);
 	bool session_pause = BlenderSync::get_session_pause(b_scene, background);
 
 	if(session->params.modified(session_params) ||

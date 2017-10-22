@@ -180,6 +180,8 @@ void BKE_scene_copy_data(Main *bmain, Scene *sce_dst, const Scene *sce_src, cons
 	BKE_keyingsets_copy(&(sce_dst->keyingsets), &(sce_src->keyingsets));
 
 	if (sce_src->nodetree) {
+		/* Note: nodetree is *not* in bmain, however this specific case is handled at lower level
+		 *       (see BKE_libblock_copy_ex()). */
 		BKE_id_copy_ex(bmain, (ID *)sce_src->nodetree, (ID **)&sce_dst->nodetree, flag, false);
 		BKE_libblock_relink_ex(bmain, sce_dst->nodetree, (void *)(&sce_src->id), &sce_dst->id, false);
 	}
@@ -290,7 +292,7 @@ Scene *BKE_scene_copy(Main *bmain, Scene *sce, int type)
 		ListBase rl, rv;
 
 		sce_copy = BKE_scene_add(bmain, sce->id.name + 2);
-		
+
 		rl = sce_copy->r.layers;
 		rv = sce_copy->r.views;
 		curvemapping_free_data(&sce_copy->r.mblur_shutter_curve);
@@ -387,6 +389,8 @@ Scene *BKE_scene_copy(Main *bmain, Scene *sce, int type)
 	}
 	else {
 		BKE_id_copy_ex(bmain, (ID *)sce, (ID **)&sce_copy, LIB_ID_COPY_ACTIONS, false);
+		id_us_min(&sce_copy->id);
+		id_us_ensure_real(&sce_copy->id);
 
 		/* Extra actions, most notably SCE_FULL_COPY also duplicates several 'children' datablocks... */
 
@@ -2371,7 +2375,7 @@ int BKE_scene_num_threads(const Scene *scene)
 int BKE_render_preview_pixel_size(const RenderData *r)
 {
 	if (r->preview_pixel_size == 0) {
-		return (U.pixelsize > 1.5f)? 2 : 1;
+		return (U.pixelsize > 1.5f) ? 2 : 1;
 	}
 	return r->preview_pixel_size;
 }

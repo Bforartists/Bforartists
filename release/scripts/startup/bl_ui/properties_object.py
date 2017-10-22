@@ -349,10 +349,10 @@ class OBJECT_PT_duplication(ObjectButtonsPanel, Panel):
             layout.prop(ob, "dupli_group", text="Group")
 
 
-from bl_ui.properties_animviz import (
-        MotionPathButtonsPanel,
-        OnionSkinButtonsPanel,
-        )
+from .properties_animviz import (
+    MotionPathButtonsPanel,
+    OnionSkinButtonsPanel,
+)
 
 
 class OBJECT_PT_motion_paths(MotionPathButtonsPanel, Panel):

@@ -136,11 +136,11 @@ OpenCLDeviceBase::OpenCLDeviceBase(DeviceInfo& info, Stats &stats, bool backgrou
 		return;
 	}
 
-	/* Allocate this right away so that texture_descriptors_buffer is placed at offset 0 in the device memory buffers */
-	texture_descriptors.resize(1);
-	texture_descriptors_buffer.resize(1);
-	texture_descriptors_buffer.data_pointer = (device_ptr)&texture_descriptors[0];
-	memory_manager.alloc("texture_descriptors", texture_descriptors_buffer);
+	/* Allocate this right away so that texture_info_buffer is placed at offset 0 in the device memory buffers */
+	texture_info.resize(1);
+	texture_info_buffer.resize(1);
+	texture_info_buffer.data_pointer = (device_ptr)&texture_info[0];
+	memory_manager.alloc("texture_info", texture_info_buffer);
 
 	fprintf(stderr, "Device init success\n");
 	device_initialized = true;
@@ -228,7 +228,8 @@ bool OpenCLDeviceBase::load_kernels(const DeviceRequestedFeatures& requested_fea
 	base_program = OpenCLProgram(this, "base", "kernel.cl", build_options_for_base_program(requested_features));
 	base_program.add_kernel(ustring("convert_to_byte"));
 	base_program.add_kernel(ustring("convert_to_half_float"));
-	base_program.add_kernel(ustring("shader"));
+	base_program.add_kernel(ustring("displace"));
+	base_program.add_kernel(ustring("background"));
 	base_program.add_kernel(ustring("bake"));
 	base_program.add_kernel(ustring("zero_buffer"));
 
@@ -493,20 +494,21 @@ void OpenCLDeviceBase::mem_free_sub_ptr(device_ptr device_pointer)
 void OpenCLDeviceBase::const_copy_to(const char *name, void *host, size_t size)
 {
 	ConstMemMap::iterator i = const_mem_map.find(name);
+	device_vector<uchar> *data;
 
 	if(i == const_mem_map.end()) {
-		device_vector<uchar> *data = new device_vector<uchar>();
-		data->copy((uchar*)host, size);
+		data = new device_vector<uchar>();
+		data->resize(size);
 
 		mem_alloc(name, *data, MEM_READ_ONLY);
-		i = const_mem_map.insert(ConstMemMap::value_type(name, data)).first;
+		const_mem_map.insert(ConstMemMap::value_type(name, data));
 	}
 	else {
-		device_vector<uchar> *data = i->second;
-		data->copy((uchar*)host, size);
+		data = i->second;
 	}
 
-	mem_copy_to(*i->second);
+	memcpy(data->get_data(), host, size);
+	mem_copy_to(*data);
 }
 
 void OpenCLDeviceBase::tex_alloc(const char *name,
@@ -624,7 +626,7 @@ void OpenCLDeviceBase::flush_texture_buffers()
 
 	vector<texture_slot_t> texture_slots;
 
-#define KERNEL_TEX(type, ttype, name) \
+#define KERNEL_TEX(type, name) \
 	if(textures.find(#name) != textures.end()) { \
 		texture_slots.push_back(texture_slot_t(#name, num_slots)); \
 	} \
@@ -646,55 +648,38 @@ void OpenCLDeviceBase::flush_texture_buffers()
 	}
 
 	/* Realloc texture descriptors buffer. */
-	memory_manager.free(texture_descriptors_buffer);
+	memory_manager.free(texture_info_buffer);
 
-	texture_descriptors.resize(num_slots);
-	texture_descriptors_buffer.resize(num_slots * sizeof(tex_info_t));
-	texture_descriptors_buffer.data_pointer = (device_ptr)&texture_descriptors[0];
+	texture_info.resize(num_slots);
+	texture_info_buffer.resize(num_slots * sizeof(TextureInfo));
+	texture_info_buffer.data_pointer = (device_ptr)&texture_info[0];
 
-	memory_manager.alloc("texture_descriptors", texture_descriptors_buffer);
+	memory_manager.alloc("texture_info", texture_info_buffer);
 
 	/* Fill in descriptors */
 	foreach(texture_slot_t& slot, texture_slots) {
 		Texture& tex = textures[slot.name];
 
-		tex_info_t& info = texture_descriptors[slot.slot];
+		TextureInfo& info = texture_info[slot.slot];
 
 		MemoryManager::BufferDescriptor desc = memory_manager.get_descriptor(slot.name);
 
-		info.offset = desc.offset;
-		info.buffer = desc.device_buffer;
+		info.data = desc.offset;
+		info.cl_buffer = desc.device_buffer;
 
 		if(string_startswith(slot.name, "__tex_image")) {
 			info.width = tex.mem->data_width;
 			info.height = tex.mem->data_height;
 			info.depth = tex.mem->data_depth;
 
-			info.options = 0;
-
-			if(tex.interpolation == INTERPOLATION_CLOSEST) {
-				info.options |= (1 << 0);
-			}
-
-			switch(tex.extension) {
-				case EXTENSION_REPEAT:
-					info.options |= (1 << 1);
-					break;
-				case EXTENSION_EXTEND:
-					info.options |= (1 << 2);
-					break;
-				case EXTENSION_CLIP:
-					info.options |= (1 << 3);
-					break;
-				default:
-					break;
-			}
+			info.interpolation = tex.interpolation;
+			info.extension = tex.extension;
 		}
 	}
 
 	/* Force write of descriptors. */
-	memory_manager.free(texture_descriptors_buffer);
-	memory_manager.alloc("texture_descriptors", texture_descriptors_buffer);
+	memory_manager.free(texture_info_buffer);
+	memory_manager.alloc("texture_info", texture_info_buffer);
 }
 
 void OpenCLDeviceBase::film_convert(DeviceTask& task, device_ptr buffer, device_ptr rgba_byte, device_ptr rgba_half)
@@ -982,7 +967,6 @@ bool OpenCLDeviceBase::denoising_divide_shadow(device_ptr a_ptr,
 
 	cl_kernel ckFilterDivideShadow = denoising_program(ustring("filter_divide_shadow"));
 
-	char split_kernel = is_split_kernel()? 1 : 0;
 	kernel_set_args(ckFilterDivideShadow, 0,
 	                task->render_buffer.samples,
 	                tiles_mem,
@@ -993,8 +977,7 @@ bool OpenCLDeviceBase::denoising_divide_shadow(device_ptr a_ptr,
 	                buffer_variance_mem,
 	                task->rect,
 	                task->render_buffer.pass_stride,
-	                task->render_buffer.denoising_data_offset,
-	                split_kernel);
+	                task->render_buffer.denoising_data_offset);
 	enqueue_kernel(ckFilterDivideShadow,
 	               task->rect.z-task->rect.x,
 	               task->rect.w-task->rect.y);
@@ -1015,7 +998,6 @@ bool OpenCLDeviceBase::denoising_get_feature(int mean_offset,
 
 	cl_kernel ckFilterGetFeature = denoising_program(ustring("filter_get_feature"));
 
-	char split_kernel = is_split_kernel()? 1 : 0;
 	kernel_set_args(ckFilterGetFeature, 0,
 	                task->render_buffer.samples,
 	                tiles_mem,
@@ -1025,8 +1007,7 @@ bool OpenCLDeviceBase::denoising_get_feature(int mean_offset,
 	                variance_mem,
 	                task->rect,
 	                task->render_buffer.pass_stride,
-	                task->render_buffer.denoising_data_offset,
-	                split_kernel);
+	                task->render_buffer.denoising_data_offset);
 	enqueue_kernel(ckFilterGetFeature,
 	               task->rect.z-task->rect.x,
 	               task->rect.w-task->rect.y);
@@ -1116,7 +1097,6 @@ void OpenCLDeviceBase::shader(DeviceTask& task)
 	cl_mem d_data = CL_MEM_PTR(const_mem_map["__data"]->device_pointer);
 	cl_mem d_input = CL_MEM_PTR(task.shader_input);
 	cl_mem d_output = CL_MEM_PTR(task.shader_output);
-	cl_mem d_output_luma = CL_MEM_PTR(task.shader_output_luma);
 	cl_int d_shader_eval_type = task.shader_eval_type;
 	cl_int d_shader_filter = task.shader_filter;
 	cl_int d_shader_x = task.shader_x;
@@ -1125,10 +1105,15 @@ void OpenCLDeviceBase::shader(DeviceTask& task)
 
 	cl_kernel kernel;
 
-	if(task.shader_eval_type >= SHADER_EVAL_BAKE)
+	if(task.shader_eval_type >= SHADER_EVAL_BAKE) {
 		kernel = base_program(ustring("bake"));
-	else
-		kernel = base_program(ustring("shader"));
+	}
+	else if(task.shader_eval_type == SHADER_EVAL_DISPLACE) {
+		kernel = base_program(ustring("displace"));
+	}
+	else {
+		kernel = base_program(ustring("background"));
+	}
 
 	cl_uint start_arg_index =
 		kernel_set_args(kernel,
@@ -1136,12 +1121,6 @@ void OpenCLDeviceBase::shader(DeviceTask& task)
 		                d_data,
 		                d_input,
 		                d_output);
-
-	if(task.shader_eval_type < SHADER_EVAL_BAKE) {
-		start_arg_index += kernel_set_args(kernel,
-		                                   start_arg_index,
-		                                   d_output_luma);
-	}
 
 	set_kernel_arg_buffers(kernel, &start_arg_index);
 
