@@ -25,6 +25,7 @@ if "bpy" in locals():
     from importlib import reload
     _modules_loaded[:] = [reload(val) for val in _modules_loaded]
     del reload
+
 _modules = [
     "properties_animviz",
     "properties_constraint",
