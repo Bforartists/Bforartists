@@ -32,7 +32,7 @@ from bpy import context
 bl_info = {
     "name": "Nodes Icons Panel",
     "author": "Reiner 'Tiles' Prokein",
-    "version": (0, 9, 5),
+    "version": (0, 9, 6),
     "blender": (2, 76, 0),
     "location": "Node Editor -> Tool Shelf + Properties Sidebar",
     "description": "Adds panels with Icon buttons in the Node editor",
@@ -927,7 +927,8 @@ class NodesIconsPanelInputAdvanced(bpy.types.Panel):
         
                 props = row.operator("node.add_node", text=" Volume Scatter    ", icon_value = custom_icons["volumescatter"].icon_id)
                 props.use_transform = True
-
+                props.type = "ShaderNodeVolumeScatter"
+                
             else:
                 ##### --------------------------------- Textures ------------------------------------------- ####
          
@@ -972,7 +973,7 @@ class NodesIconsPanelInputAdvanced(bpy.types.Panel):
                 props.type = "ShaderNodeTexPointDensity"
 
  
-                props.type = "ShaderNodeVolumeScatter"
+                
 
 
                 ##### --------------------------------- Shader ------------------------------------------- ####
