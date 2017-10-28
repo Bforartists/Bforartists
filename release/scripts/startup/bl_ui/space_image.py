@@ -327,15 +327,15 @@ class IMAGE_MT_uvs_snap(Panel, UVToolsPanel):
 
         col = layout.column(align=True)
 
-        col.operator("uv.snap_selected", text="Selected to Pixels").target = 'PIXELS'
-        col.operator("uv.snap_selected", text="Selected to Cursor").target = 'CURSOR'
-        col.operator("uv.snap_selected", text="Selected to Cursor (Offset)").target = 'CURSOR_OFFSET'
-        col.operator("uv.snap_selected", text="Selected to Adjacent Unselected").target = 'ADJACENT_UNSELECTED'
+        col.operator("uv.snap_selected", text="Selected to Pixels", icon = "SNAP_TO_PIXELS").target = 'PIXELS'
+        col.operator("uv.snap_selected", text="Selected to Cursor", icon = "SELECTIONTOCURSOR").target = 'CURSOR'
+        col.operator("uv.snap_selected", text="Selected to Cursor (Offset)", icon = "SELECTIONTOCURSOROFFSET").target = 'CURSOR_OFFSET'
+        col.operator("uv.snap_selected", text="Selected to Adjacent Unselected", icon = "SNAP_TO_ADJACENT").target = 'ADJACENT_UNSELECTED'
 
         col = layout.column(align=True)
 
-        col.operator("uv.snap_cursor", text="Cursor to Pixels").target = 'PIXELS'
-        col.operator("uv.snap_cursor", text="Cursor to Selected").target = 'SELECTED'
+        col.operator("uv.snap_cursor", text="Cursor to Pixels", icon = "CURSOR_TO_PIXELS").target = 'PIXELS'
+        col.operator("uv.snap_cursor", text="Cursor to Selected", icon = "CURSORTOSELECTION").target = 'SELECTED'
 
 
 class IMAGE_MT_uvs(Menu):
