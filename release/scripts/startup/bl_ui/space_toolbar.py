@@ -937,6 +937,7 @@ class TOOLBAR_MT_toolbars_tools_menu(Menu):
         layout.prop(addon_prefs, "tools_origin")
         layout.prop(addon_prefs, "tools_shading")
         layout.prop(addon_prefs, "tools_datatransfer")
+        layout.prop(addon_prefs, "tools_relations")
 
 
 ############### bfa - menu hidable by the flag in the right click menu
