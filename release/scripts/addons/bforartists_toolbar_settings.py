@@ -99,6 +99,7 @@ class bforartists_toolbar_settings(AddonPreferences):
     tools_origin = BoolProperty(name="Origin", default=True, description = "Display the Origin Toolbar\nDisplay is mode and content dependant", )
     tools_shading = BoolProperty(name="Shading", default=True, description = "Display the Edit Toolbar\nDisplay is mode and content dependant", )
     tools_datatransfer = BoolProperty(name="Data Transfer", default=False, description = "Display the Edit Toolbar\nDisplay is mode and content dependant", )
+    tools_relations = BoolProperty(name="Relations", default=False, description = "Display the Relations Toolbar\nDisplay is mode and content dependant", )
 
     # Animation
 
@@ -224,6 +225,7 @@ class bforartists_toolbar_settings(AddonPreferences):
         row = layout.row()
 
         row.prop(self, "tools_datatransfer")
+        row.prop(self, "tools_relations")
 
         layout.label(text="The Animation toolbar container")
 
