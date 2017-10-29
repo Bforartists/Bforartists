@@ -716,11 +716,11 @@ class IMAGE_PT_tools_align_uvs(Panel, UVToolsPanel):
 
         split = layout.split()
         col = split.column(align=True)
-        col.operator("transform.mirror", text="Mirror X").constraint_axis[0] = True
-        col.operator("transform.mirror", text="Mirror Y").constraint_axis[1] = True
+        col.operator("transform.mirror", text="Mirror X", icon = "MIRROR_X").constraint_axis[0] = True
+        col.operator("transform.mirror", text="Mirror Y", icon = "MIRROR_Y").constraint_axis[1] = True
         col = split.column(align=True)
-        col.operator("transform.rotate", text="Rotate +90°").value = math.pi / 2
-        col.operator("transform.rotate", text="Rotate  - 90°").value = math.pi / -2
+        col.operator("transform.rotate", text="Rotate +90°", icon = "ROTATE_PLUS_90").value = math.pi / 2
+        col.operator("transform.rotate", text="Rotate  - 90°", icon = "ROTATE_MINUS_90").value = math.pi / -2
 
         split = layout.split()
         col = split.column(align=True)
