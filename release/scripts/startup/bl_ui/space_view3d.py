@@ -385,12 +385,7 @@ class VIEW3D_MT_view(Menu):
         layout.operator("view3d.render_border", text="Render Border").camera_only = False
 
         layout.separator()
-
-        layout.operator("view3d.layers", text="Show All Layers").nr = 0
-
-        layout.separator()
-
-        
+      
         myvar= layout.operator("transform.create_orientation", text="Create Orientation")
         myvar.use_view = True
         myvar.use = True
