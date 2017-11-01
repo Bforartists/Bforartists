@@ -460,15 +460,15 @@ class VIEW3D_MT_view_align(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("view3d.camera_to_view", text="Align Active Camera to View")
-        layout.operator("view3d.camera_to_view_selected", text="Align Active Camera to Selected")
-        layout.operator("view3d.view_center_cursor")
+        layout.operator("view3d.camera_to_view", text="Align Active Camera to View", icon = "ALIGNCAMERA_VIEW")
+        layout.operator("view3d.camera_to_view_selected", text="Align Active Camera to Selected", icon = "ALIGNCAMERA_ACTIVE")
+        layout.operator("view3d.view_center_cursor", icon = "CENTERTOCURSOR")
 
         layout.separator()
 
-        layout.operator("view3d.view_lock_to_active")
-        layout.operator("view3d.view_center_lock")
-        layout.operator("view3d.view_lock_clear")
+        layout.operator("view3d.view_lock_to_active", icon = "LOCKTOACTIVE")
+        layout.operator("view3d.view_center_lock", icon = "LOCKTOCENTER")
+        layout.operator("view3d.view_lock_clear", icon = "LOCK_CLEAR")
 
         layout.separator()
 
