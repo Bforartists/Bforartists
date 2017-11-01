@@ -358,7 +358,7 @@ class VIEW3D_MT_view(Menu):
 
         layout.operator("view3d.object_as_camera", icon = 'VIEW_SWITCHACTIVECAM')
         layout.operator("view3d.viewnumpad", text="Active Camera", icon = 'VIEW_SWITCHTOCAM').type = 'CAMERA'
-        layout.operator("view3d.view_center_camera")
+        layout.operator("view3d.view_center_camera", icon = "VIEWCAMERACENTER")
 
         layout.separator()
 
@@ -374,37 +374,37 @@ class VIEW3D_MT_view(Menu):
         # So for now we simply hide the two menu items when there is no object selected.
 
         if context.object :
-            props = layout.operator("object.hide_render_set")
-            props = layout.operator("object.isolate_type_render")
-            props = layout.operator("object.hide_render_clear_all")
+            props = layout.operator("object.hide_render_set", icon = "RESTRICT_RENDER_OFF")
+            props = layout.operator("object.isolate_type_render", icon = "RESTRICT_RENDER_OFF")
+            props = layout.operator("object.hide_render_clear_all", icon = "RESTRICT_RENDER_OFF")
 
             layout.separator()
 
-        layout.operator("view3d.clip_border", text="Clipping Border")
-        layout.operator("view3d.clear_render_border", text="Clear Render Border")
-        layout.operator("view3d.render_border", text="Render Border").camera_only = False
+        layout.operator("view3d.clip_border", text="Clipping Border", icon = "CLIPPINGBORDER")
+        layout.operator("view3d.clear_render_border", text="Clear Render Border", icon = "RENDERBORDER_CLEAR")
+        layout.operator("view3d.render_border", text="Render Border", icon = "RENDERBORDER").camera_only = False
 
         layout.separator()
       
-        myvar= layout.operator("transform.create_orientation", text="Create Orientation")
+        myvar= layout.operator("transform.create_orientation", text="Create Orientation", icon = "MANIPUL")
         myvar.use_view = True
         myvar.use = True
 
         layout.separator()
 
-        layout.operator("view3d.localview", text="View Global/Local")
-        layout.operator("view3d.view_selected_all_regions", text = "View Selected all Regions" )
-        layout.operator("view3d.view_selected").use_all_regions = False
-        layout.operator("view3d.view_all_all_regions", text = "View All all Regions" ) # bfa - separated tooltip
-        layout.operator("view3d.view_all_center_cursor", text="Center Cursor and View All") # bfa - separated tooltip
-        layout.operator("view3d.view_all").center = False
+        layout.operator("view3d.localview", text="View Global/Local", icon = "VIEW_GLOBAL_LOCAL")
+        layout.operator("view3d.view_selected_all_regions", text = "View Selected all Regions", icon = "VIEW_SELECTED" )
+        layout.operator("view3d.view_selected", icon = "VIEW_SELECTED").use_all_regions = False
+        layout.operator("view3d.view_all_all_regions", text = "View All all Regions", icon = "VIEWALL" ) # bfa - separated tooltip
+        layout.operator("view3d.view_all_center_cursor", text="Center Cursor and View All", icon = "VIEWALL_RESETCURSOR") # bfa - separated tooltip
+        layout.operator("view3d.view_all", icon = "VIEWALL").center = False
 
         layout.separator()
 
-        layout.operator("screen.area_dupli")
-        layout.operator("screen.region_quadview")
-        layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area") # bfa - the separated tooltip. Class is in space_text.py
-        layout.operator("screen.screen_full_area").use_hide_panels = True
+        layout.operator("screen.area_dupli", icon = "NEW_WINDOW")
+        layout.operator("screen.region_quadview", icon = "QUADVIEW")
+        layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area", icon = "MAXIMIZE_AREA") # bfa - the separated tooltip. Class is in space_text.py
+        layout.operator("screen.screen_full_area", icon = "FULLSCREEN_AREA").use_hide_panels = True
 
 
 class VIEW3D_MT_view_navigation(Menu):
