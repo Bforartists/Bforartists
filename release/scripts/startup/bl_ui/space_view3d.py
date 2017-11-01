@@ -492,27 +492,27 @@ class VIEW3D_MT_view_align_selected(Menu):
     def draw(self, context):
         layout = self.layout
 
-        props = layout.operator("view3d.viewnumpad", text="Top")
+        props = layout.operator("view3d.viewnumpad", text="Top", icon = "VIEW_ACTIVE_TOP")
         props.align_active = True
         props.type = 'TOP'
 
-        props = layout.operator("view3d.viewnumpad", text="Bottom")
+        props = layout.operator("view3d.viewnumpad", text="Bottom", icon ="VIEW_ACTIVE_BOTTOM")
         props.align_active = True
         props.type = 'BOTTOM'
 
-        props = layout.operator("view3d.viewnumpad", text="Front")
+        props = layout.operator("view3d.viewnumpad", text="Front", icon ="VIEW_ACTIVE_FRONT")
         props.align_active = True
         props.type = 'FRONT'
 
-        props = layout.operator("view3d.viewnumpad", text="Back")
+        props = layout.operator("view3d.viewnumpad", text="Back", icon ="VIEW_ACTIVE_BACK")
         props.align_active = True
         props.type = 'BACK'
 
-        props = layout.operator("view3d.viewnumpad", text="Right")
+        props = layout.operator("view3d.viewnumpad", text="Right" , icon ="VIEW_ACTIVE_RIGHT")
         props.align_active = True
         props.type = 'RIGHT'
 
-        props = layout.operator("view3d.viewnumpad", text="Left")
+        props = layout.operator("view3d.viewnumpad", text="Left", icon ="VIEW_ACTIVE_LEFT")
         props.align_active = True
         props.type = 'LEFT'
 
