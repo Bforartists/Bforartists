@@ -414,38 +414,44 @@ class VIEW3D_MT_view_navigation(Menu):
         from math import pi
         layout = self.layout
 
-        layout.operator_enum("view3d.view_orbit", "type")
-        props = layout.operator("view3d.view_orbit", "Orbit Opposite")
+        layout.operator("view3d.view_orbit", text= "Orbit Down", icon = "ORBIT_DOWN").type='ORBITDOWN'
+        layout.operator("view3d.view_orbit", text= "Orbit Up", icon = "ORBIT_UP").type='ORBITUP'
+        layout.operator("view3d.view_orbit", text= "Orbit Right", icon = "ORBIT_RIGHT").type='ORBITRIGHT'
+        layout.operator("view3d.view_orbit", text= "Orbit Left", icon = "ORBIT_LEFT").type='ORBITLEFT'
+        props = layout.operator("view3d.view_orbit", "Orbit Opposite", icon = "ORBIT_OPPOSITE")
         props.type = 'ORBITRIGHT'
         props.angle = pi
 
         layout.separator()
 
-        layout.operator("view3d.view_roll", text="Roll Left").angle = pi / -12.0
-        layout.operator("view3d.view_roll", text="Roll Right").angle = pi / 12.0
+        layout.operator("view3d.view_roll", text="Roll Left", icon = "ROLL_LEFT").angle = pi / -12.0
+        layout.operator("view3d.view_roll", text="Roll Right", icon = "ROLL_RIGHT").angle = pi / 12.0
 
         layout.separator()
 
-        layout.operator_enum("view3d.view_pan", "type")
+        layout.operator("view3d.view_pan", text= "Pan Down", icon = "PAN_DOWN").type = 'PANDOWN'
+        layout.operator("view3d.view_pan", text= "Pan Up", icon = "PAN_UP").type = 'PANUP'
+        layout.operator("view3d.view_pan", text= "Pan Right", icon = "PAN_RIGHT").type = 'PANRIGHT'
+        layout.operator("view3d.view_pan", text= "Pan Left", icon = "PAN_LEFT").type = 'PANLEFT'
 
         layout.separator()
 
-        layout.operator("view3d.zoom_border", text="Zoom Border")
-        layout.operator("view3d.zoom", text="Zoom In").delta = 1
-        layout.operator("view3d.zoom", text="Zoom Out").delta = -1
-        layout.operator("view3d.zoom_camera_1_to_1", text="Zoom Camera 1:1")
-        layout.operator("view3d.dolly", text="Dolly View")
-        layout.operator("view3d.view_center_pick")
+        layout.operator("view3d.zoom_border", text="Zoom Border", icon = "ZOOM_BORDER")
+        layout.operator("view3d.zoom", text="Zoom In", icon = "ZOOM_IN").delta = 1
+        layout.operator("view3d.zoom", text="Zoom Out", icon = "ZOOM_OUT").delta = -1
+        layout.operator("view3d.zoom_camera_1_to_1", text="Zoom Camera 1:1", icon = "ZOOM_CAMERA")
+        layout.operator("view3d.dolly", text="Dolly View", icon = "DOLLY")
+        layout.operator("view3d.view_center_pick", icon = "CENTERTOMOUSE")
 
         layout.separator()
 
-        layout.operator("view3d.fly")
-        layout.operator("view3d.walk")
-        layout.operator("view3d.navigate")
+        layout.operator("view3d.fly", icon = "FLY_NAVIGATION")
+        layout.operator("view3d.walk", icon = "WALK_NAVIGATION")
+        layout.operator("view3d.navigate", icon = "VIEW_NAVIGATION")
 
         layout.separator()
 
-        layout.operator("screen.animation_play", text="Playback Animation")
+        layout.operator("screen.animation_play", text="Playback Animation", icon = "TRIA_RIGHT")
 
         layout.separator()
 
