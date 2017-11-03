@@ -579,7 +579,7 @@ class VIEW3D_MT_select_object(Menu):
         layout.operator_menu_enum("object.select_linked", "type", text="Linked")
         layout.operator("object.select_pattern", text="By Pattern...")
         layout.operator("object.select_by_layer", text="All by Layer")
-        layout.operator_menu_enum("object.select_by_type", "type", text="All by Type ...")
+        layout.menu ("VIEW_3D_select_by_type")
         layout.separator()
 
         myvar = layout.operator("object.select_hierarchy", text="Parent")
@@ -600,6 +600,32 @@ class VIEW3D_MT_select_object(Menu):
         
         layout.operator("object.select_more", text="More", icon = "SELECTMORE")
         layout.operator("object.select_less", text="Less", icon = "SELECTLESS")
+
+class VIEW_3D_select_by_type(Menu):
+    bl_label = "All by Type"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("object.select_by_type", text= "Mesh", icon = "OUTLINER_OB_MESH").type = 'MESH'
+        layout.operator("object.select_by_type", text= "Curve", icon = "OUTLINER_OB_CURVE").type = 'CURVE'
+        layout.operator("object.select_by_type", text= "Surface", icon = "OUTLINER_OB_SURFACE").type = 'SURFACE'
+        layout.operator("object.select_by_type", text= "Meta", icon = "OUTLINER_OB_META").type = 'META'
+        layout.operator("object.select_by_type", text= "Font", icon = "OUTLINER_OB_FONT").type = 'FONT'
+
+        layout.separator()
+
+        layout.operator("object.select_by_type", text= "Armature", icon = "OUTLINER_OB_ARMATURE").type = 'ARMATURE'
+        layout.operator("object.select_by_type", text= "Lattice", icon = "OUTLINER_OB_LATTICE").type = 'LATTICE'
+        layout.operator("object.select_by_type", text= "Empty", icon = "OUTLINER_OB_EMPTY").type = 'EMPTY'
+
+        layout.separator()
+
+        layout.operator("object.select_by_type", text= "Camera", icon = "OUTLINER_OB_CAMERA").type = 'CAMERA'
+        layout.operator("object.select_by_type", text= "Lamp", icon = "OUTLINER_OB_LAMP").type = 'LAMP'
+        layout.operator("object.select_by_type", text= "Speaker", icon = "OUTLINER_OB_SPEAKER").type = 'SPEAKER'
+
+
 
 # Workaround to separate the tooltips
 class VIEW3D_MT_select_pose_inverse(bpy.types.Operator):
@@ -4020,6 +4046,7 @@ classes = (
     VIEW3D_MT_view_cameras,
     VIEW3D_MT_select_object_inverse,
     VIEW3D_MT_select_object,
+    VIEW_3D_select_by_type,
     VIEW3D_MT_select_pose_inverse,
     VIEW3D_MT_select_pose,
     VIEW3D_MT_select_particle_inverse,
