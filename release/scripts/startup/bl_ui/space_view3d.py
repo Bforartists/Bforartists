@@ -575,7 +575,7 @@ class VIEW3D_MT_select_object(Menu):
 
         layout.separator()
 
-        layout.operator_menu_enum("object.select_grouped", "type", text="Grouped")
+        layout.menu ("VIEW_3D_select_grouped")
         layout.menu ("VIEW_3D_select_linked")
         layout.operator("object.select_pattern", text="By Pattern...")
         layout.operator("object.select_by_layer", text="All by Layer")
@@ -600,6 +600,26 @@ class VIEW3D_MT_select_object(Menu):
         
         layout.operator("object.select_more", text="More", icon = "SELECTMORE")
         layout.operator("object.select_less", text="Less", icon = "SELECTLESS")
+
+class VIEW_3D_select_grouped(Menu):
+    bl_label = "Grouped"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("object.select_grouped", text= "Lamp Type", icon = "LAMP").type = 'LAMP_TYPE'
+        layout.operator("object.select_grouped", text= "Keying Set", icon = "KEYINGSET").type = 'KEYINGSET'
+        layout.operator("object.select_grouped", text= "Properties", icon = "BUTS").type = 'PROPERTIES'
+        layout.operator("object.select_grouped", text= "Color", icon = "COLOR").type = 'COLOR'
+        layout.operator("object.select_grouped", text= "Pass", icon = "PASS").type = 'PASS'
+        layout.operator("object.select_grouped", text= "Hook", icon = "HOOK").type = 'HOOK'
+        layout.operator("object.select_grouped", text= "Group", icon = "GROUP").type = 'GROUP'
+        layout.operator("object.select_grouped", text= "Layer", icon = "LAYER").type = 'LAYER'
+        layout.operator("object.select_grouped", text= "Type", icon = "TYPE").type = 'TYPE'
+        layout.operator("object.select_grouped", text= "Siblings", icon = "SIBLINGS").type = 'SIBLINGS'
+        layout.operator("object.select_grouped", text= "Parent", icon = "PARENT").type = 'PARENT'
+        layout.operator("object.select_grouped", text= "Immediate Children", icon = "CHILD").type = 'CHILDREN'
+        layout.operator("object.select_grouped", text= "Children", icon = "CHILD_RECURSIVE").type = 'CHILDREN_RECURSIVE'
 
 class VIEW_3D_select_by_type(Menu):
     bl_label = "All by Type"
@@ -4060,6 +4080,7 @@ classes = (
     VIEW3D_MT_view_cameras,
     VIEW3D_MT_select_object_inverse,
     VIEW3D_MT_select_object,
+    VIEW_3D_select_grouped,
     VIEW_3D_select_by_type,
     VIEW_3D_select_linked,
     VIEW3D_MT_select_pose_inverse,
