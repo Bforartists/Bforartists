@@ -576,7 +576,7 @@ class VIEW3D_MT_select_object(Menu):
         layout.separator()
 
         layout.operator_menu_enum("object.select_grouped", "type", text="Grouped")
-        layout.operator_menu_enum("object.select_linked", "type", text="Linked")
+        layout.menu ("VIEW_3D_select_linked")
         layout.operator("object.select_pattern", text="By Pattern...")
         layout.operator("object.select_by_layer", text="All by Layer")
         layout.menu ("VIEW_3D_select_by_type")
@@ -624,6 +624,20 @@ class VIEW_3D_select_by_type(Menu):
         layout.operator("object.select_by_type", text= "Camera", icon = "OUTLINER_OB_CAMERA").type = 'CAMERA'
         layout.operator("object.select_by_type", text= "Lamp", icon = "OUTLINER_OB_LAMP").type = 'LAMP'
         layout.operator("object.select_by_type", text= "Speaker", icon = "OUTLINER_OB_SPEAKER").type = 'SPEAKER'
+
+class VIEW_3D_select_linked(Menu):
+    bl_label = "Linked"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("object.select_linked", text= "Object Data", icon = "OBJECT_DATA").type = 'OBDATA'
+        layout.operator("object.select_linked", text= "Material", icon = "MATERIAL_DATA").type = 'MATERIAL'
+        layout.operator("object.select_linked", text= "Texture", icon = "TEXTURE_DATA").type = 'TEXTURE'
+        layout.operator("object.select_linked", text= "Dupli Group", icon = "GROUP").type = 'DUPGROUP'
+        layout.operator("object.select_linked", text= "Particle System", icon = "PARTICLES").type = 'PARTICLE'
+        layout.operator("object.select_linked", text= "Library", icon = "LIBRARY").type = 'LIBRARY'
+        layout.operator("object.select_linked", text= "Library (Object Data)", icon = "LIBRARY_OBJECT").type = 'LIBRARY_OBDATA'
 
 
 
@@ -4047,6 +4061,7 @@ classes = (
     VIEW3D_MT_select_object_inverse,
     VIEW3D_MT_select_object,
     VIEW_3D_select_by_type,
+    VIEW_3D_select_linked,
     VIEW3D_MT_select_pose_inverse,
     VIEW3D_MT_select_pose,
     VIEW3D_MT_select_particle_inverse,
