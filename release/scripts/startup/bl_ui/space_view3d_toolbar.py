@@ -187,6 +187,7 @@ class VIEW3D_PT_tools_object(View3DPanel, Panel):
                     col.label(text="Data Transfer:")
                     col.operator("object.data_transfer", icon ='TRANSFER_DATA', text="Data                     ")
                     col.operator("object.datalayout_transfer", icon ='TRANSFER_DATA_LAYOUT', text="Data Layout         ")
+                    col.operator("object.join_uvs", icon ='TRANSFER_UV', text = "UV Map                ")
                    
             
             # icons
@@ -237,6 +238,7 @@ class VIEW3D_PT_tools_object(View3DPanel, Panel):
                     row.alignment = 'LEFT'
                     row.operator("object.data_transfer", icon ='TRANSFER_DATA', text = "")
                     row.operator("object.datalayout_transfer", icon ='TRANSFER_DATA_LAYOUT', text = "")
+                    row.operator("object.join_uvs", icon ='TRANSFER_UV', text = "")
 
 
 class VIEW3D_PT_tools_add_object(View3DPanel, Panel):
