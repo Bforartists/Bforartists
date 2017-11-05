@@ -327,15 +327,15 @@ class IMAGE_MT_uvs_snap(Panel, UVToolsPanel):
 
         col = layout.column(align=True)
 
-        col.operator("uv.snap_selected", text="Selected to Pixels").target = 'PIXELS'
-        col.operator("uv.snap_selected", text="Selected to Cursor").target = 'CURSOR'
-        col.operator("uv.snap_selected", text="Selected to Cursor (Offset)").target = 'CURSOR_OFFSET'
-        col.operator("uv.snap_selected", text="Selected to Adjacent Unselected").target = 'ADJACENT_UNSELECTED'
+        col.operator("uv.snap_selected", text="Selected to Pixels", icon = "SNAP_TO_PIXELS").target = 'PIXELS'
+        col.operator("uv.snap_selected", text="Selected to Cursor", icon = "SELECTIONTOCURSOR").target = 'CURSOR'
+        col.operator("uv.snap_selected", text="Selected to Cursor (Offset)", icon = "SELECTIONTOCURSOROFFSET").target = 'CURSOR_OFFSET'
+        col.operator("uv.snap_selected", text="Selected to Adjacent Unselected", icon = "SNAP_TO_ADJACENT").target = 'ADJACENT_UNSELECTED'
 
         col = layout.column(align=True)
 
-        col.operator("uv.snap_cursor", text="Cursor to Pixels").target = 'PIXELS'
-        col.operator("uv.snap_cursor", text="Cursor to Selected").target = 'SELECTED'
+        col.operator("uv.snap_cursor", text="Cursor to Pixels", icon = "CURSOR_TO_PIXELS").target = 'PIXELS'
+        col.operator("uv.snap_cursor", text="Cursor to Selected", icon = "CURSORTOSELECTION").target = 'SELECTED'
 
 
 class IMAGE_MT_uvs(Menu):
@@ -716,11 +716,11 @@ class IMAGE_PT_tools_align_uvs(Panel, UVToolsPanel):
 
         split = layout.split()
         col = split.column(align=True)
-        col.operator("transform.mirror", text="Mirror X").constraint_axis[0] = True
-        col.operator("transform.mirror", text="Mirror Y").constraint_axis[1] = True
+        col.operator("transform.mirror", text="Mirror X", icon = "MIRROR_X").constraint_axis[0] = True
+        col.operator("transform.mirror", text="Mirror Y", icon = "MIRROR_Y").constraint_axis[1] = True
         col = split.column(align=True)
-        col.operator("transform.rotate", text="Rotate +90°").value = math.pi / 2
-        col.operator("transform.rotate", text="Rotate  - 90°").value = math.pi / -2
+        col.operator("transform.rotate", text="Rotate +90°", icon = "ROTATE_PLUS_90").value = math.pi / 2
+        col.operator("transform.rotate", text="Rotate  - 90°", icon = "ROTATE_MINUS_90").value = math.pi / -2
 
         split = layout.split()
         col = split.column(align=True)
