@@ -6,14 +6,15 @@
 
 extern "C" {
 #include "BLI_utildefines.h"
+#include "BKE_library.h"
 #include "BLI_math.h"
 #include "DNA_scene_types.h"
 }
 
 class TestableAbcExporter : public AbcExporter {
 public:
-	TestableAbcExporter(Scene *scene, const char *filename, ExportSettings &settings)
-	    : AbcExporter(scene, filename, settings)
+	TestableAbcExporter(Main *bmain, Scene *scene, const char *filename, ExportSettings &settings)
+	    : AbcExporter(bmain, scene, filename, settings)
 	{}
 
 	void getShutterSamples(unsigned int nr_of_samples,
@@ -36,6 +37,7 @@ protected:
 	ExportSettings settings;
 	Scene scene;
 	TestableAbcExporter *exporter;
+	Main *bmain;
 
 	virtual void SetUp()
 	{
@@ -46,18 +48,21 @@ protected:
 		scene.r.frs_sec = 50;
 		scene.r.frs_sec_base = 2;
 
+		bmain = BKE_main_new();
+
 		exporter = NULL;
 	}
 
 	virtual void TearDown()
 	{
+		BKE_main_free(bmain);
 		delete exporter;
 	}
 
 	// Call after setting up the settings.
 	void createExporter()
 	{
-		exporter = new TestableAbcExporter(&scene, "somefile.abc", settings);
+		exporter = new TestableAbcExporter(bmain, &scene, "somefile.abc", settings);
 	}
 };
 

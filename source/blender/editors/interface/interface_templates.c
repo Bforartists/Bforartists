@@ -3442,10 +3442,10 @@ void uiTemplateOperatorPropertyButs(
 		uiItemM(row, (bContext *)C, "WM_MT_operator_presets", NULL, ICON_NONE);
 
 		wmOperatorType *ot = WM_operatortype_find("WM_OT_operator_preset_add", false);
-		op_ptr = uiItemFullO_ptr(row, ot, "", ICON_ZOOMIN, NULL, WM_OP_INVOKE_DEFAULT, UI_ITEM_O_RETURN_PROPS);
+		uiItemFullO_ptr(row, ot, "", ICON_ZOOMIN, NULL, WM_OP_INVOKE_DEFAULT, 0, &op_ptr);
 		RNA_string_set(&op_ptr, "operator", op->type->idname);
 
-		op_ptr = uiItemFullO_ptr(row, ot, "", ICON_ZOOMOUT, NULL, WM_OP_INVOKE_DEFAULT, UI_ITEM_O_RETURN_PROPS);
+		uiItemFullO_ptr(row, ot, "", ICON_ZOOMOUT, NULL, WM_OP_INVOKE_DEFAULT, 0, &op_ptr);
 		RNA_string_set(&op_ptr, "operator", op->type->idname);
 		RNA_boolean_set(&op_ptr, "remove_active", true);
 	}
@@ -4040,6 +4040,9 @@ void uiTemplateCacheFile(uiLayout *layout, bContext *C, PointerRNA *ptr, const c
 	row = uiLayoutRow(layout, false);
 	uiLayoutSetEnabled(row, RNA_boolean_get(&fileptr, "override_frame"));
 	uiItemR(row, &fileptr, "frame", 0, "Frame", ICON_NONE);
+
+	row = uiLayoutRow(layout, false);
+	uiItemR(row, &fileptr, "frame_offset", 0, "Frame Offset", ICON_NONE);
 
 	row = uiLayoutRow(layout, false);
 	uiItemL(row, IFACE_("Manual Transform:"), ICON_NONE);
