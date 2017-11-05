@@ -358,7 +358,7 @@ class VIEW3D_MT_view(Menu):
 
         layout.operator("view3d.object_as_camera", icon = 'VIEW_SWITCHACTIVECAM')
         layout.operator("view3d.viewnumpad", text="Active Camera", icon = 'VIEW_SWITCHTOCAM').type = 'CAMERA'
-        layout.operator("view3d.view_center_camera")
+        layout.operator("view3d.view_center_camera", icon = "VIEWCAMERACENTER")
 
         layout.separator()
 
@@ -374,42 +374,37 @@ class VIEW3D_MT_view(Menu):
         # So for now we simply hide the two menu items when there is no object selected.
 
         if context.object :
-            props = layout.operator("object.hide_render_set")
-            props = layout.operator("object.isolate_type_render")
-            props = layout.operator("object.hide_render_clear_all")
+            props = layout.operator("object.hide_render_set", icon = "RESTRICT_RENDER_OFF")
+            props = layout.operator("object.isolate_type_render", icon = "RESTRICT_RENDER_OFF")
+            props = layout.operator("object.hide_render_clear_all", icon = "RESTRICT_RENDER_OFF")
 
             layout.separator()
 
-        layout.operator("view3d.clip_border", text="Clipping Border")
-        layout.operator("view3d.clear_render_border", text="Clear Render Border")
-        layout.operator("view3d.render_border", text="Render Border").camera_only = False
+        layout.operator("view3d.clip_border", text="Clipping Border", icon = "CLIPPINGBORDER")
+        layout.operator("view3d.clear_render_border", text="Clear Render Border", icon = "RENDERBORDER_CLEAR")
+        layout.operator("view3d.render_border", text="Render Border", icon = "RENDERBORDER").camera_only = False
 
         layout.separator()
-
-        layout.operator("view3d.layers", text="Show All Layers").nr = 0
-
-        layout.separator()
-
-        
-        myvar= layout.operator("transform.create_orientation", text="Create Orientation")
+      
+        myvar= layout.operator("transform.create_orientation", text="Create Orientation", icon = "MANIPUL")
         myvar.use_view = True
         myvar.use = True
 
         layout.separator()
 
-        layout.operator("view3d.localview", text="View Global/Local")
-        layout.operator("view3d.view_selected_all_regions", text = "View Selected all Regions" )
-        layout.operator("view3d.view_selected").use_all_regions = False
-        layout.operator("view3d.view_all_all_regions", text = "View All all Regions" ) # bfa - separated tooltip
-        layout.operator("view3d.view_all_center_cursor", text="Center Cursor and View All") # bfa - separated tooltip
-        layout.operator("view3d.view_all").center = False
+        layout.operator("view3d.localview", text="View Global/Local", icon = "VIEW_GLOBAL_LOCAL")
+        layout.operator("view3d.view_selected_all_regions", text = "View Selected all Regions", icon = "VIEW_SELECTED" )
+        layout.operator("view3d.view_selected", icon = "VIEW_SELECTED").use_all_regions = False
+        layout.operator("view3d.view_all_all_regions", text = "View All all Regions", icon = "VIEWALL" ) # bfa - separated tooltip
+        layout.operator("view3d.view_all_center_cursor", text="Center Cursor and View All", icon = "VIEWALL_RESETCURSOR") # bfa - separated tooltip
+        layout.operator("view3d.view_all", icon = "VIEWALL").center = False
 
         layout.separator()
 
-        layout.operator("screen.area_dupli")
-        layout.operator("screen.region_quadview")
-        layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area") # bfa - the separated tooltip. Class is in space_text.py
-        layout.operator("screen.screen_full_area").use_hide_panels = True
+        layout.operator("screen.area_dupli", icon = "NEW_WINDOW")
+        layout.operator("screen.region_quadview", icon = "QUADVIEW")
+        layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area", icon = "MAXIMIZE_AREA") # bfa - the separated tooltip. Class is in space_text.py
+        layout.operator("screen.screen_full_area", icon = "FULLSCREEN_AREA").use_hide_panels = True
 
 
 class VIEW3D_MT_view_navigation(Menu):
@@ -419,38 +414,44 @@ class VIEW3D_MT_view_navigation(Menu):
         from math import pi
         layout = self.layout
 
-        layout.operator_enum("view3d.view_orbit", "type")
-        props = layout.operator("view3d.view_orbit", "Orbit Opposite")
+        layout.operator("view3d.view_orbit", text= "Orbit Down", icon = "ORBIT_DOWN").type='ORBITDOWN'
+        layout.operator("view3d.view_orbit", text= "Orbit Up", icon = "ORBIT_UP").type='ORBITUP'
+        layout.operator("view3d.view_orbit", text= "Orbit Right", icon = "ORBIT_RIGHT").type='ORBITRIGHT'
+        layout.operator("view3d.view_orbit", text= "Orbit Left", icon = "ORBIT_LEFT").type='ORBITLEFT'
+        props = layout.operator("view3d.view_orbit", "Orbit Opposite", icon = "ORBIT_OPPOSITE")
         props.type = 'ORBITRIGHT'
         props.angle = pi
 
         layout.separator()
 
-        layout.operator("view3d.view_roll", text="Roll Left").angle = pi / -12.0
-        layout.operator("view3d.view_roll", text="Roll Right").angle = pi / 12.0
+        layout.operator("view3d.view_roll", text="Roll Left", icon = "ROLL_LEFT").angle = pi / -12.0
+        layout.operator("view3d.view_roll", text="Roll Right", icon = "ROLL_RIGHT").angle = pi / 12.0
 
         layout.separator()
 
-        layout.operator_enum("view3d.view_pan", "type")
+        layout.operator("view3d.view_pan", text= "Pan Down", icon = "PAN_DOWN").type = 'PANDOWN'
+        layout.operator("view3d.view_pan", text= "Pan Up", icon = "PAN_UP").type = 'PANUP'
+        layout.operator("view3d.view_pan", text= "Pan Right", icon = "PAN_RIGHT").type = 'PANRIGHT'
+        layout.operator("view3d.view_pan", text= "Pan Left", icon = "PAN_LEFT").type = 'PANLEFT'
 
         layout.separator()
 
-        layout.operator("view3d.zoom_border", text="Zoom Border")
-        layout.operator("view3d.zoom", text="Zoom In").delta = 1
-        layout.operator("view3d.zoom", text="Zoom Out").delta = -1
-        layout.operator("view3d.zoom_camera_1_to_1", text="Zoom Camera 1:1")
-        layout.operator("view3d.dolly", text="Dolly View")
-        layout.operator("view3d.view_center_pick")
+        layout.operator("view3d.zoom_border", text="Zoom Border", icon = "ZOOM_BORDER")
+        layout.operator("view3d.zoom", text="Zoom In", icon = "ZOOM_IN").delta = 1
+        layout.operator("view3d.zoom", text="Zoom Out", icon = "ZOOM_OUT").delta = -1
+        layout.operator("view3d.zoom_camera_1_to_1", text="Zoom Camera 1:1", icon = "ZOOM_CAMERA")
+        layout.operator("view3d.dolly", text="Dolly View", icon = "DOLLY")
+        layout.operator("view3d.view_center_pick", icon = "CENTERTOMOUSE")
 
         layout.separator()
 
-        layout.operator("view3d.fly")
-        layout.operator("view3d.walk")
-        layout.operator("view3d.navigate")
+        layout.operator("view3d.fly", icon = "FLY_NAVIGATION")
+        layout.operator("view3d.walk", icon = "WALK_NAVIGATION")
+        layout.operator("view3d.navigate", icon = "VIEW_NAVIGATION")
 
         layout.separator()
 
-        layout.operator("screen.animation_play", text="Playback Animation")
+        layout.operator("screen.animation_play", text="Playback Animation", icon = "TRIA_RIGHT")
 
         layout.separator()
 
@@ -465,15 +466,15 @@ class VIEW3D_MT_view_align(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("view3d.camera_to_view", text="Align Active Camera to View")
-        layout.operator("view3d.camera_to_view_selected", text="Align Active Camera to Selected")
-        layout.operator("view3d.view_center_cursor")
+        layout.operator("view3d.camera_to_view", text="Align Active Camera to View", icon = "ALIGNCAMERA_VIEW")
+        layout.operator("view3d.camera_to_view_selected", text="Align Active Camera to Selected", icon = "ALIGNCAMERA_ACTIVE")
+        layout.operator("view3d.view_center_cursor", icon = "CENTERTOCURSOR")
 
         layout.separator()
 
-        layout.operator("view3d.view_lock_to_active")
-        layout.operator("view3d.view_center_lock")
-        layout.operator("view3d.view_lock_clear")
+        layout.operator("view3d.view_lock_to_active", icon = "LOCKTOACTIVE")
+        layout.operator("view3d.view_center_lock", icon = "LOCKTOCENTER")
+        layout.operator("view3d.view_lock_clear", icon = "LOCK_CLEAR")
 
         layout.separator()
 
@@ -497,27 +498,27 @@ class VIEW3D_MT_view_align_selected(Menu):
     def draw(self, context):
         layout = self.layout
 
-        props = layout.operator("view3d.viewnumpad", text="Top")
+        props = layout.operator("view3d.viewnumpad", text="Top", icon = "VIEW_ACTIVE_TOP")
         props.align_active = True
         props.type = 'TOP'
 
-        props = layout.operator("view3d.viewnumpad", text="Bottom")
+        props = layout.operator("view3d.viewnumpad", text="Bottom", icon ="VIEW_ACTIVE_BOTTOM")
         props.align_active = True
         props.type = 'BOTTOM'
 
-        props = layout.operator("view3d.viewnumpad", text="Front")
+        props = layout.operator("view3d.viewnumpad", text="Front", icon ="VIEW_ACTIVE_FRONT")
         props.align_active = True
         props.type = 'FRONT'
 
-        props = layout.operator("view3d.viewnumpad", text="Back")
+        props = layout.operator("view3d.viewnumpad", text="Back", icon ="VIEW_ACTIVE_BACK")
         props.align_active = True
         props.type = 'BACK'
 
-        props = layout.operator("view3d.viewnumpad", text="Right")
+        props = layout.operator("view3d.viewnumpad", text="Right" , icon ="VIEW_ACTIVE_RIGHT")
         props.align_active = True
         props.type = 'RIGHT'
 
-        props = layout.operator("view3d.viewnumpad", text="Left")
+        props = layout.operator("view3d.viewnumpad", text="Left", icon ="VIEW_ACTIVE_LEFT")
         props.align_active = True
         props.type = 'LEFT'
 
@@ -574,11 +575,11 @@ class VIEW3D_MT_select_object(Menu):
 
         layout.separator()
 
-        layout.operator_menu_enum("object.select_grouped", "type", text="Grouped")
-        layout.operator_menu_enum("object.select_linked", "type", text="Linked")
+        layout.menu ("VIEW_3D_select_grouped")
+        layout.menu ("VIEW_3D_select_linked")
         layout.operator("object.select_pattern", text="By Pattern...")
         layout.operator("object.select_by_layer", text="All by Layer")
-        layout.operator_menu_enum("object.select_by_type", "type", text="All by Type ...")
+        layout.menu ("VIEW_3D_select_by_type")
         layout.separator()
 
         myvar = layout.operator("object.select_hierarchy", text="Parent")
@@ -599,6 +600,66 @@ class VIEW3D_MT_select_object(Menu):
         
         layout.operator("object.select_more", text="More", icon = "SELECTMORE")
         layout.operator("object.select_less", text="Less", icon = "SELECTLESS")
+
+class VIEW_3D_select_grouped(Menu):
+    bl_label = "Grouped"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("object.select_grouped", text= "Lamp Type", icon = "LAMP").type = 'LAMP_TYPE'
+        layout.operator("object.select_grouped", text= "Keying Set", icon = "KEYINGSET").type = 'KEYINGSET'
+        layout.operator("object.select_grouped", text= "Properties", icon = "BUTS").type = 'PROPERTIES'
+        layout.operator("object.select_grouped", text= "Color", icon = "COLOR").type = 'COLOR'
+        layout.operator("object.select_grouped", text= "Pass", icon = "PASS").type = 'PASS'
+        layout.operator("object.select_grouped", text= "Hook", icon = "HOOK").type = 'HOOK'
+        layout.operator("object.select_grouped", text= "Group", icon = "GROUP").type = 'GROUP'
+        layout.operator("object.select_grouped", text= "Layer", icon = "LAYER").type = 'LAYER'
+        layout.operator("object.select_grouped", text= "Type", icon = "TYPE").type = 'TYPE'
+        layout.operator("object.select_grouped", text= "Siblings", icon = "SIBLINGS").type = 'SIBLINGS'
+        layout.operator("object.select_grouped", text= "Parent", icon = "PARENT").type = 'PARENT'
+        layout.operator("object.select_grouped", text= "Immediate Children", icon = "CHILD").type = 'CHILDREN'
+        layout.operator("object.select_grouped", text= "Children", icon = "CHILD_RECURSIVE").type = 'CHILDREN_RECURSIVE'
+
+class VIEW_3D_select_by_type(Menu):
+    bl_label = "All by Type"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("object.select_by_type", text= "Mesh", icon = "OUTLINER_OB_MESH").type = 'MESH'
+        layout.operator("object.select_by_type", text= "Curve", icon = "OUTLINER_OB_CURVE").type = 'CURVE'
+        layout.operator("object.select_by_type", text= "Surface", icon = "OUTLINER_OB_SURFACE").type = 'SURFACE'
+        layout.operator("object.select_by_type", text= "Meta", icon = "OUTLINER_OB_META").type = 'META'
+        layout.operator("object.select_by_type", text= "Font", icon = "OUTLINER_OB_FONT").type = 'FONT'
+
+        layout.separator()
+
+        layout.operator("object.select_by_type", text= "Armature", icon = "OUTLINER_OB_ARMATURE").type = 'ARMATURE'
+        layout.operator("object.select_by_type", text= "Lattice", icon = "OUTLINER_OB_LATTICE").type = 'LATTICE'
+        layout.operator("object.select_by_type", text= "Empty", icon = "OUTLINER_OB_EMPTY").type = 'EMPTY'
+
+        layout.separator()
+
+        layout.operator("object.select_by_type", text= "Camera", icon = "OUTLINER_OB_CAMERA").type = 'CAMERA'
+        layout.operator("object.select_by_type", text= "Lamp", icon = "OUTLINER_OB_LAMP").type = 'LAMP'
+        layout.operator("object.select_by_type", text= "Speaker", icon = "OUTLINER_OB_SPEAKER").type = 'SPEAKER'
+
+class VIEW_3D_select_linked(Menu):
+    bl_label = "Linked"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("object.select_linked", text= "Object Data", icon = "OBJECT_DATA").type = 'OBDATA'
+        layout.operator("object.select_linked", text= "Material", icon = "MATERIAL_DATA").type = 'MATERIAL'
+        layout.operator("object.select_linked", text= "Texture", icon = "TEXTURE_DATA").type = 'TEXTURE'
+        layout.operator("object.select_linked", text= "Dupli Group", icon = "GROUP").type = 'DUPGROUP'
+        layout.operator("object.select_linked", text= "Particle System", icon = "PARTICLES").type = 'PARTICLE'
+        layout.operator("object.select_linked", text= "Library", icon = "LIBRARY").type = 'LIBRARY'
+        layout.operator("object.select_linked", text= "Library (Object Data)", icon = "LIBRARY_OBJECT").type = 'LIBRARY_OBDATA'
+
+
 
 # Workaround to separate the tooltips
 class VIEW3D_MT_select_pose_inverse(bpy.types.Operator):
@@ -1584,12 +1645,6 @@ class VIEW3D_MT_object(Menu):
         view = context.space_data
         is_local_view = (view.local_view is not None)
 
-        layout.operator("ed.undo")
-        layout.operator("ed.redo")
-        layout.operator("ed.undo_history")
-
-        layout.separator()
-
         layout.menu("VIEW3D_MT_transform_object")
         layout.menu("VIEW3D_MT_object_clear")
         layout.menu("VIEW3D_MT_object_apply")
@@ -1617,12 +1672,6 @@ class VIEW3D_MT_object(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_object_game")
-
-        layout.separator()
-
-        layout.operator("object.data_transfer", icon ='TRANSFER_DATA')
-        layout.operator("object.datalayout_transfer", icon ='TRANSFER_DATA_LAYOUT')
-        layout.operator("object.join_uvs", icon ='TRANSFER_UV')
 
         layout.separator()
 
@@ -3219,12 +3268,6 @@ class VIEW3D_MT_edit_gpencil(Menu):
 
         layout = self.layout
 
-        layout.operator("ed.undo")
-        layout.operator("ed.redo")
-        layout.operator("ed.undo_history")
-
-        layout.separator()
-
         layout.operator("gpencil.copy", text="Copy", icon = "COPYDOWN")
         layout.operator("gpencil.paste", text="Paste", icon = "PASTEDOWN")
 
@@ -4020,6 +4063,9 @@ classes = (
     VIEW3D_MT_view_cameras,
     VIEW3D_MT_select_object_inverse,
     VIEW3D_MT_select_object,
+    VIEW_3D_select_grouped,
+    VIEW_3D_select_by_type,
+    VIEW_3D_select_linked,
     VIEW3D_MT_select_pose_inverse,
     VIEW3D_MT_select_pose,
     VIEW3D_MT_select_particle_inverse,
