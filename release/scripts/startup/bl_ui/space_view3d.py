@@ -577,8 +577,8 @@ class VIEW3D_MT_select_object(Menu):
 
         layout.menu ("VIEW_3D_select_grouped")
         layout.menu ("VIEW_3D_select_linked")
-        layout.operator("object.select_pattern", text="By Pattern...")
-        layout.operator("object.select_by_layer", text="All by Layer")
+        layout.operator("object.select_pattern", text="By Pattern...", icon = "PATTERN")
+        layout.operator("object.select_by_layer", text="All by Layer", icon = "LAYER")
         layout.menu ("VIEW_3D_select_by_type")
         layout.separator()
 
