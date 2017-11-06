@@ -568,10 +568,10 @@ class VIEW3D_MT_select_object(Menu):
 
         layout.separator()
 
-        layout.operator("object.select_random", text="Random")
-        layout.operator("object.select_mirror", text="Mirror")
+        layout.operator("object.select_random", text="Random", icon = "RANDOMIZE")
+        layout.operator("object.select_mirror", text="Mirror", icon = "TRANSFORM_MIRROR")
 
-        layout.operator("object.select_camera", text="Camera")
+        layout.operator("object.select_camera", text="Camera", icon = "CAMERA_DATA")
 
         layout.separator()
 
@@ -582,17 +582,17 @@ class VIEW3D_MT_select_object(Menu):
         layout.menu ("VIEW_3D_select_by_type")
         layout.separator()
 
-        myvar = layout.operator("object.select_hierarchy", text="Parent")
+        myvar = layout.operator("object.select_hierarchy", text="Parent", icon = "PARENT")
         myvar.direction = 'PARENT'
         myvar.extend = False
-        myvar = layout.operator("object.select_hierarchy", text="Child")
+        myvar = layout.operator("object.select_hierarchy", text="Child", icon = "CHILD")
         myvar.direction = 'CHILD'
         myvar.extend = False
 
-        myvar = layout.operator("object.select_hierarchy", text="Parent Extended")
+        myvar = layout.operator("object.select_hierarchy", text="Parent Extended", icon = "PARENT")
         myvar.direction = 'PARENT'
         myvar.extend = True
-        myvar = layout.operator("object.select_hierarchy", text="Child Extended")
+        myvar = layout.operator("object.select_hierarchy", text="Child Extended", icon = "CHILD")
         myvar.direction = 'CHILD'
         myvar.extend = True
 
