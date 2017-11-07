@@ -782,14 +782,14 @@ class VIEW3D_MT_edit_mesh_select_by_trait(Menu):
     def draw(self, context):
         layout = self.layout
         if context.scene.tool_settings.mesh_select_mode[2] is False:
-            layout.operator("mesh.select_non_manifold", text="Non Manifold")
-        layout.operator("mesh.select_loose", text="Loose Geometry")
-        layout.operator("mesh.select_interior_faces", text="Interior Faces")
-        layout.operator("mesh.select_face_by_sides", text = "Faces by Side")
+            layout.operator("mesh.select_non_manifold", text="Non Manifold", icon = "SELECT_NONMANIFOLD")
+        layout.operator("mesh.select_loose", text="Loose Geometry", icon = "SELECT_LOOSE")
+        layout.operator("mesh.select_interior_faces", text="Interior Faces", icon = "SLEECT_INTERIOR")
+        layout.operator("mesh.select_face_by_sides", text = "Faces by Side", icon = "SELECT_FACES_BY_SIDE")
 
         layout.separator()
 
-        layout.operator("mesh.select_ungrouped", text="Ungrouped Verts")
+        layout.operator("mesh.select_ungrouped", text="Ungrouped Verts", icon = "SELECT_UNGROUPED_VERTS")
 
 
 class VIEW3D_MT_edit_mesh_select_more_less(Menu):
@@ -837,11 +837,11 @@ class VIEW3D_MT_select_edit_mesh(Menu):
         layout.separator()
 
         # numeric
-        layout.operator("mesh.select_random", text="Random")   
-        layout.operator("mesh.select_mirror", text="Mirror")
-        layout.operator("mesh.select_nth")
-        layout.operator("mesh.shortest_path_select", text="Shortest Path")
-        layout.operator("mesh.select_axis", text="Side of Active")
+        layout.operator("mesh.select_random", text="Random", icon = "RANDOMIZE")   
+        layout.operator("mesh.select_mirror", text="Mirror", icon = "TRANSFORM_MIRROR")
+        layout.operator("mesh.select_nth", icon = "CHECKER_DESELECT")
+        layout.operator("mesh.shortest_path_select", text="Shortest Path", icon = "SELECT_SHORTESTPATH")
+        layout.operator("mesh.select_axis", text="Side of Active", icon = "SELECT_SIDEOFACTIVE")
 
 
         layout.separator()
@@ -851,33 +851,33 @@ class VIEW3D_MT_select_edit_mesh(Menu):
         layout.separator()
 
         # geometric
-        layout.operator("mesh.edges_select_sharp", text="Sharp Edges")
+        layout.operator("mesh.edges_select_sharp", text="Sharp Edges", icon = "SELECT_SHARPEDGES")
         
 
         # topology
-        layout.operator("mesh.select_loose", text="Loose Geometry")
+        layout.operator("mesh.select_loose", text="Loose Geometry", icon = "SELECT_LOOSE")
         if context.scene.tool_settings.mesh_select_mode[2] is False:
-            layout.operator("mesh.select_non_manifold", text="Non Manifold")
-        layout.operator("mesh.select_interior_faces", text="Interior Faces")
-        layout.operator("mesh.select_face_by_sides", text = "Faces by Side")
+            layout.operator("mesh.select_non_manifold", text="Non Manifold", icon = "SELECT_NONMANIFOLD")
+        layout.operator("mesh.select_interior_faces", text="Interior Faces", icon = "SLEECT_INTERIOR")
+        layout.operator("mesh.select_face_by_sides", text = "Faces by Side", icon = "SELECT_FACES_BY_SIDE")
         
 
         layout.separator()
 
-        layout.operator("mesh.loop_multi_select", text="Edge Loops").ring = False
-        layout.operator("mesh.loop_multi_select", text="Edge Rings").ring = True
-        layout.operator("mesh.loop_to_region", text = "Loop Inner-Region")
-        layout.operator("mesh.region_to_loop", text = "Boundary Loop")
+        layout.operator("mesh.loop_multi_select", text="Edge Loops", icon = "SELECT_EDGELOOP").ring = False
+        layout.operator("mesh.loop_multi_select", text="Edge Rings", icon = "SELECT_EDGERING").ring = True
+        layout.operator("mesh.loop_to_region", text = "Loop Inner-Region", icon = "SELECT_LOOPINNER")
+        layout.operator("mesh.region_to_loop", text = "Boundary Loop", icon = "SELECT_BOUNDARY")
 
         layout.separator()
 
         # other ...
-        layout.operator("mesh.select_ungrouped", text="Ungrouped Verts")
+        layout.operator("mesh.select_ungrouped", text="Ungrouped Verts", icon = "SELECT_UNGROUPED_VERTS")
         layout.menu("VIEW3D_MT_edit_mesh_select_similar")
-        layout.operator("mesh.faces_select_linked_flat", text="Linked Flat Faces")
-        layout.operator("mesh.select_linked", text="Linked")
-        layout.operator("mesh.select_linked_pick", text="Linked Pick Select").deselect = False
-        layout.operator("mesh.select_linked_pick", text="Linked Pick Deselect").deselect = True
+        layout.operator("mesh.faces_select_linked_flat", text="Linked Flat Faces", icon = "LINKED")
+        layout.operator("mesh.select_linked", text="Linked", icon = "LINKED")
+        layout.operator("mesh.select_linked_pick", text="Linked Pick Select", icon = "LINKED").deselect = False
+        layout.operator("mesh.select_linked_pick", text="Linked Pick Deselect", icon = "LINKED").deselect = True
    
 
 
@@ -913,7 +913,7 @@ class VIEW3D_MT_select_edit_curve(Menu):
         layout.separator()
 
         layout.operator("curve.select_random", text="Random")
-        layout.operator("curve.select_nth")
+        layout.operator("curve.select_nth", icon = "CHECKER_DESELECT")
 
         layout.separator()
 
@@ -956,7 +956,7 @@ class VIEW3D_MT_select_edit_surface(Menu):
         layout.separator()
 
         layout.operator("curve.select_random", text="Random")
-        layout.operator("curve.select_nth")
+        layout.operator("curve.select_nth", icon = "CHECKER_DESELECT")
 
         layout.separator()
 
@@ -1068,7 +1068,7 @@ class VIEW3D_MT_select_edit_lattice(Menu):
 
         layout.separator()
 
-        layout.operator("lattice.select_ungrouped", text="Ungrouped Verts")
+        layout.operator("lattice.select_ungrouped", text="Ungrouped Verts", icon = "SELECT_UNGROUPED_VERTS")
 
         layout.separator()
 
@@ -1237,7 +1237,7 @@ class VIEW3D_MT_select_paint_mask_vertex(Menu):
 
         layout.separator()
 
-        layout.operator("paint.vert_select_ungrouped", text="Ungrouped Verts")
+        layout.operator("paint.vert_select_ungrouped", text="Ungrouped Verts", icon = "SELECT_UNGROUPED_VERTS")
 
 
 class VIEW3D_MT_angle_control(Menu):
