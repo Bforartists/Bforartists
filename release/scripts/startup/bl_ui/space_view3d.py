@@ -839,8 +839,8 @@ class VIEW3D_MT_edit_mesh_select_more_less(Menu):
 
         layout.separator()
 
-        layout.operator("mesh.select_next_item", text="Next Active")
-        layout.operator("mesh.select_prev_item", text="Previous Active")
+        layout.operator("mesh.select_next_item", text="Next Active", icon = "NEXTACTIVE")
+        layout.operator("mesh.select_prev_item", text="Previous Active", icon = "PREVIOUSACTIVE")
 
 # Workaround to separate the tooltips
 class VIEW3D_MT_select_edit_mesh_inverse(bpy.types.Operator):
