@@ -2674,7 +2674,7 @@ class VIEW3D_MT_edit_mesh(Menu):
         layout.menu("VIEW3D_subdivision_set")
         layout.operator("mesh.symmetrize", icon = "SYMMETRIZE")
         layout.operator("mesh.noise", icon='NOISE')      
-        layout.operator_menu_enum("mesh.sort_elements", "type", text="Sort Elements...")
+        layout.menu("VIEW3D_MT_edit_mesh_sort_elements")
 
         layout.separator()
 
@@ -2683,6 +2683,20 @@ class VIEW3D_MT_edit_mesh(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_edit_mesh_show_hide")
+
+class VIEW3D_MT_edit_mesh_sort_elements(Menu):
+    bl_label = "Sort Elements"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("mesh.sort_elements", text="View Z Axis", icon = "Z_ICON").type = 'VIEW_ZAXIS'
+        layout.operator("mesh.sort_elements", text="View Y Axis", icon = "Y_ICON").type = 'VIEW_XAXIS'
+        layout.operator("mesh.sort_elements", text="Cursor Distance", icon = "CURSOR").type = 'CURSOR_DISTANCE'
+        layout.operator("mesh.sort_elements", text="Material", icon = "MATERIAL").type = 'MATERIAL'
+        layout.operator("mesh.sort_elements", text="Selected", icon = "RESTRICT_SELECT_OFF").type = 'SELECTED'
+        layout.operator("mesh.sort_elements", text="Randomize", icon = "RANDOMIZE").type = 'RANDOMIZE'
+        layout.operator("mesh.sort_elements", text="Reverse", icon = "SWITCH_DIRECTION").type = 'REVERSE'
 
 
 class VIEW3D_MT_edit_mesh_specials(Menu):
@@ -4126,6 +4140,7 @@ classes = (
     VIEW3D_mesh_hide_unselected,
     VIEW3D_MT_edit_mesh_show_hide,
     VIEW3D_MT_edit_mesh,
+    VIEW3D_MT_edit_mesh_sort_elements,
     VIEW3D_MT_edit_mesh_select_similar,
     VIEW3D_MT_edit_mesh_select_by_trait,
     VIEW3D_MT_edit_mesh_select_more_less,
