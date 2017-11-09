@@ -2869,8 +2869,8 @@ class VIEW3D_MT_edit_mesh_edges(Menu):
 
         layout.separator()
 
-        layout.operator("transform.edge_crease")
-        layout.operator("transform.edge_bevelweight")
+        layout.operator("transform.edge_crease", icon = "CREASE")
+        layout.operator("transform.edge_bevelweight", icon = "BEVEL")
 
         layout.separator()
 
