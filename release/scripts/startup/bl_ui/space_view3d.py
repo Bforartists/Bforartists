@@ -2272,9 +2272,9 @@ class VIEW3D_MT_particle_show_hide(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("particle.reveal", text="Show Hidden")
-        layout.operator("particle.hide", text="Hide Selected").unselected = False
-        layout.operator("particle.hide_unselected", text="Hide Unselected")
+        layout.operator("particle.reveal", text="Show Hidden", icon = "RESTRICT_VIEW_OFF")
+        layout.operator("particle.hide", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
+        layout.operator("particle.hide_unselected", text="Hide Unselected", icon = "HIDE_UNSELECTED")
 
 
 class VIEW3D_MT_particle(Menu):
@@ -2366,9 +2366,9 @@ class VIEW3D_MT_pose_show_hide(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("pose.reveal", text="Show Hidden")
-        layout.operator("pose.hide", text="Hide Selected").unselected = False
-        layout.operator("pose.hide_unselected", text="Hide Unselected")
+        layout.operator("pose.reveal", text="Show Hidden", icon = "RESTRICT_VIEW_OFF")
+        layout.operator("pose.hide", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
+        layout.operator("pose.hide_unselected", text="Hide Unselected", icon = "HIDE_UNSELECTED")
 
 
 class VIEW3D_MT_pose(Menu):
@@ -2638,9 +2638,9 @@ class VIEW3D_MT_edit_mesh_show_hide(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("mesh.reveal", text="Show Hidden")
-        layout.operator("mesh.hide", text="Hide Selected").unselected = False
-        layout.operator("mesh.hide_unselected", text="Hide Unselected")
+        layout.operator("mesh.reveal", text="Show Hidden", icon = "RESTRICT_VIEW_OFF")
+        layout.operator("mesh.hide", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
+        layout.operator("mesh.hide_unselected", text="Hide Unselected", icon = "HIDE_UNSELECTED")
 
 
 class VIEW3D_MT_edit_mesh(Menu):
@@ -2987,9 +2987,9 @@ class VIEW3D_MT_edit_curve_show_hide(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("curve.reveal", text="Show Hidden")
-        layout.operator("curve.hide", text="Hide Selected").unselected = False
-        layout.operator("curve.hide_unselected", text="Hide Unselected")
+        layout.operator("curve.reveal", text="Show Hidden", icon = "RESTRICT_VIEW_OFF")
+        layout.operator("curve.hide", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
+        layout.operator("curve.hide_unselected", text="Hide Unselected", icon = "HIDE_UNSELECTED")
 
 
 def draw_curve(self, context):
@@ -3173,8 +3173,8 @@ class VIEW3D_MT_edit_meta_showhide(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("mball.reveal_metaelems", text="Show Hidden")
-        layout.operator("mball.hide_metaelems", text="Hide Selected").unselected = False
+        layout.operator("mball.reveal_metaelems", text="Show Hidden", icon = "RESTRICT_VIEW_OFF")
+        layout.operator("mball.hide_metaelems", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
         layout.operator("mball.hide_metaelems_unselected", text="Hide Unselected")
 
 
@@ -3209,9 +3209,9 @@ class VIEW3D_MT_armature_show_hide(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("armature.reveal", text="Show Hidden")
-        layout.operator("armature.hide", text="Hide Selected").unselected = False
-        layout.operator("armature.hide_unselected", text="Hide Unselected")
+        layout.operator("armature.reveal", text="Show Hidden", icon = "RESTRICT_VIEW_OFF")
+        layout.operator("armature.hide", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
+        layout.operator("armature.hide_unselected", text="Hide Unselected", icon = "HIDE_UNSELECTED")
 
 
 class VIEW3D_MT_edit_armature(Menu):
