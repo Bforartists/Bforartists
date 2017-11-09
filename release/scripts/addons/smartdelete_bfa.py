@@ -130,7 +130,7 @@ class MeshDissolveContextual_bfa(bpy.types.Operator):
 
 
 def menu_func(self, context):
-    self.layout.operator(MeshDissolveContextual_bfa.bl_idname)
+    self.layout.operator(MeshDissolveContextual_bfa.bl_idname, icon = "DELETE")
 
 def register():
     bpy.utils.register_class(MeshDissolveContextual_bfa)

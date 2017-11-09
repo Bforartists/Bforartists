@@ -2652,12 +2652,12 @@ class VIEW3D_MT_edit_mesh(Menu):
         toolsettings = context.tool_settings
 
         layout.menu("VIEW3D_MT_transform")
-        layout.operator("object.vertex_group_mirror")
-        layout.operator("mesh.symmetry_snap")
+        layout.operator("object.vertex_group_mirror", icon = "MIRROR_VERTEXGROUP")
+        layout.operator("mesh.symmetry_snap", icon = "SNAP_SYMMETRY")
 
         layout.separator()
 
-        layout.operator("mesh.duplicate_move")
+        layout.operator("mesh.duplicate_move", icon = "DUPLICATE")
         layout.menu("VIEW3D_MT_edit_mesh_delete")
 
         layout.separator()
@@ -2672,7 +2672,7 @@ class VIEW3D_MT_edit_mesh(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_subdivision_set")
-        layout.operator("mesh.symmetrize")
+        layout.operator("mesh.symmetrize", icon = "SYMMETRIZE")
         layout.operator("mesh.noise", icon='NOISE')      
         layout.operator_menu_enum("mesh.sort_elements", "type", text="Sort Elements...")
 
