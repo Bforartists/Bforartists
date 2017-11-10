@@ -2834,9 +2834,9 @@ class VIEW3D_MT_edit_mesh_vertices(Menu):
 
         with_bullet = bpy.app.build_options.bullet
 
-        layout.operator("mesh.rip_move")
-        layout.operator("mesh.rip_move_fill")
-        layout.operator("mesh.rip_edge_move")
+        layout.operator("mesh.rip_move", icon = "RIP")
+        layout.operator("mesh.rip_move_fill", icon = "RIP_FILL")
+        layout.operator("mesh.rip_edge_move", icon = "EXTEND_VERTICES")
         layout.operator("mesh.split", icon = "SPLIT")
         layout.operator("mesh.vert_connect_path", text="Connect Vertex Path", icon = "VERTEXCONNECTPATH")
         layout.operator("mesh.vert_connect", text="Connect Vertices", icon = "VERTEXCONNECT")
