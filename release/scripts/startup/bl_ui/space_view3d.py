@@ -1681,9 +1681,9 @@ class VIEW3D_MT_object(Menu):
         view = context.space_data
         is_local_view = (view.local_view is not None)
 
-        layout.operator("ed.undo")
-        layout.operator("ed.redo")
-        layout.operator("ed.undo_history")
+        layout.operator("ed.undo", icon = "UNDO")
+        layout.operator("ed.redo", icon = "REDO")
+        layout.operator("ed.undo_history", icon = "UNDO_HISTORY")
 
         layout.separator()
 
@@ -2110,8 +2110,8 @@ class VIEW3D_MT_paint_vertex(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("ed.undo")
-        layout.operator("ed.redo")
+        layout.operator("ed.undo", icon = "UNDO")
+        layout.operator("ed.redo", icon = "REDO")
 
         layout.separator()
 
@@ -2198,8 +2198,8 @@ class VIEW3D_MT_sculpt(Menu):
         toolsettings = context.tool_settings
         sculpt = toolsettings.sculpt
 
-        layout.operator("ed.undo")
-        layout.operator("ed.redo")
+        layout.operator("ed.undo", icon = "UNDO")
+        layout.operator("ed.redo", icon = "REDO")
 
         layout.separator()
         layout.prop(sculpt, "use_threaded", text="Threaded Sculpt")
@@ -3329,9 +3329,9 @@ class VIEW3D_MT_edit_gpencil(Menu):
 
         layout = self.layout
 
-        layout.operator("ed.undo")
-        layout.operator("ed.redo")
-        layout.operator("ed.undo_history")
+        layout.operator("ed.undo", icon = "UNDO")
+        layout.operator("ed.redo", icon = "REDO")
+        layout.operator("ed.undo_history", icon = "UNDO_HISTORY")
 
         layout.separator()
 
