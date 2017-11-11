@@ -2046,9 +2046,9 @@ class VIEW3D_MT_facemask_showhide(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("paint.face_select_reveal", text="Show Hidden")
-        layout.operator("paint.face_select_hide", text="Hide Selected").unselected = False
-        layout.operator("paint.face_select_hide", text="Hide Unselected").unselected = True
+        layout.operator("paint.face_select_reveal", text="Show Hidden", icon = "RESTRICT_VIEW_OFF")
+        layout.operator("paint.face_select_hide", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
+        layout.operator("paint.face_select_hide", text="Hide Unselected", icon = "HIDE_UNSELECTED").unselected = True
 
 
 # ********** Brush menu **********
