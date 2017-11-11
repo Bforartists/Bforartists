@@ -2061,6 +2061,10 @@ class VIEW3D_MT_brush(Menu):
         settings = UnifiedPaintPanel.paint_settings(context)
         brush = getattr(settings, "brush", None)
 
+        # brush tool
+        if context.sculpt_object:
+            layout.operator("brush.reset", icon = "BRUSH_RESET")
+
         # skip if no active brush
         if not brush:
             layout.label(text="No Brushes currently available", icon='INFO')
