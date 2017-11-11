@@ -199,7 +199,7 @@ class VIEW3D_MT_transform_base(Menu):
         layout.operator("transform.push_pull", text="Push/Pull", icon = 'PUSH_PULL')
 
         if context.mode != 'OBJECT':
-            layout.operator("transform.vertex_warp", text="Warp")
+            layout.operator("transform.vertex_warp", text="Warp", icon = "MOD_WARP")
             layout.operator("transform.vertex_random", text="Randomize", icon = 'RANDOMIZE')
 
 # Generic transform menu - geometry types
@@ -218,7 +218,7 @@ class VIEW3D_MT_transform(VIEW3D_MT_transform_base):
 
         layout.separator()
 
-        layout.operator("transform.skin_resize", text="Skin Resize")
+        layout.operator("transform.skin_resize", text="Skin Resize", icon = "MOD_SKIN")
 
 
 # Object-specific extensions to Transform menu
