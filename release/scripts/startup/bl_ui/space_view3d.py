@@ -199,7 +199,7 @@ class VIEW3D_MT_transform_base(Menu):
         layout.operator("transform.push_pull", text="Push/Pull", icon = 'PUSH_PULL')
 
         if context.mode != 'OBJECT':
-            layout.operator("transform.vertex_warp", text="Warp")
+            layout.operator("transform.vertex_warp", text="Warp", icon = "MOD_WARP")
             layout.operator("transform.vertex_random", text="Randomize", icon = 'RANDOMIZE')
 
 # Generic transform menu - geometry types
@@ -218,7 +218,7 @@ class VIEW3D_MT_transform(VIEW3D_MT_transform_base):
 
         layout.separator()
 
-        layout.operator("transform.skin_resize", text="Skin Resize")
+        layout.operator("transform.skin_resize", text="Skin Resize", icon = "MOD_SKIN")
 
 
 # Object-specific extensions to Transform menu
@@ -568,31 +568,31 @@ class VIEW3D_MT_select_object(Menu):
 
         layout.separator()
 
-        layout.operator("object.select_random", text="Random")
-        layout.operator("object.select_mirror", text="Mirror")
+        layout.operator("object.select_random", text="Random", icon = "RANDOMIZE")
+        layout.operator("object.select_mirror", text="Mirror", icon = "TRANSFORM_MIRROR")
 
-        layout.operator("object.select_camera", text="Camera")
+        layout.operator("object.select_camera", text="Camera", icon = "CAMERA_DATA")
 
         layout.separator()
 
         layout.menu ("VIEW_3D_select_grouped")
         layout.menu ("VIEW_3D_select_linked")
-        layout.operator("object.select_pattern", text="By Pattern...")
-        layout.operator("object.select_by_layer", text="All by Layer")
+        layout.operator("object.select_pattern", text="By Pattern...", icon = "PATTERN")
+        layout.operator("object.select_by_layer", text="All by Layer", icon = "LAYER")
         layout.menu ("VIEW_3D_select_by_type")
         layout.separator()
 
-        myvar = layout.operator("object.select_hierarchy", text="Parent")
+        myvar = layout.operator("object.select_hierarchy", text="Parent", icon = "PARENT")
         myvar.direction = 'PARENT'
         myvar.extend = False
-        myvar = layout.operator("object.select_hierarchy", text="Child")
+        myvar = layout.operator("object.select_hierarchy", text="Child", icon = "CHILD")
         myvar.direction = 'CHILD'
         myvar.extend = False
 
-        myvar = layout.operator("object.select_hierarchy", text="Parent Extended")
+        myvar = layout.operator("object.select_hierarchy", text="Parent Extended", icon = "PARENT")
         myvar.direction = 'PARENT'
         myvar.extend = True
-        myvar = layout.operator("object.select_hierarchy", text="Child Extended")
+        myvar = layout.operator("object.select_hierarchy", text="Child Extended", icon = "CHILD")
         myvar.direction = 'CHILD'
         myvar.extend = True
 
@@ -769,11 +769,47 @@ class VIEW3D_MT_edit_mesh_select_similar(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator_enum("mesh.select_similar", "type")
+        select_mode = context.tool_settings.mesh_select_mode 
+
+        #layout.operator_enum("mesh.select_similar", "type") #bfa - The Blender way. Short, elegant, and crap. Enums cannot have icons ...
+
+        # Vertices select mode
+        if tuple(select_mode) == (True, False, False):
+
+            layout.operator("mesh.select_similar", text= "Normal", icon = "RECALC_NORMALS").type='NORMAL'
+            layout.operator("mesh.select_similar", text= "Amount of Adjacent Faces", icon = "FACESEL").type='FACE'
+            layout.operator("mesh.select_similar", text= "Vertex Groups", icon = "GROUP_VERTEX").type='VGROUP'
+            layout.operator("mesh.select_similar", text= "Amount of connecting Edges", icon = "EDGESEL").type='EDGE'
+        
+        # Edges select mode
+        if tuple(select_mode) == (False, True, False):
+
+            layout.operator("mesh.select_similar", text= "Length", icon = "RULER").type='LENGTH'
+            layout.operator("mesh.select_similar", text= "Direction", icon = "SWITCH_DIRECTION").type='DIR'
+            layout.operator("mesh.select_similar", text= "Amount of Faces around an edge", icon = "FACESEL").type='FACE'
+            layout.operator("mesh.select_similar", text= "Face Angles", icon = "ANGLE").type='FACE_ANGLE'
+            layout.operator("mesh.select_similar", text= "Crease", icon = "CREASE").type='CREASE'
+            layout.operator("mesh.select_similar", text= "Bevel", icon = "BEVEL").type='BEVEL'
+            layout.operator("mesh.select_similar", text= "Seam", icon = "MARK_SEAM").type='SEAM'
+            layout.operator("mesh.select_similar", text= "Sharpness", icon = "SELECT_SHARPEDGES").type='SHARP'
+            layout.operator("mesh.select_similar", text= "Freestyle Edge Marks", icon = "MARK_FS_EDGE").type='FREESTYLE_EDGE'
+        
+        # Faces select mode
+        if tuple(select_mode) == (False, False, True ):
+
+            layout.operator("mesh.select_similar", text= "Material", icon = "MATERIAL").type='MATERIAL'
+            layout.operator("mesh.select_similar", text= "Image", icon = "TEXTURE").type='IMAGE'
+            layout.operator("mesh.select_similar", text= "Area", icon = "AREA").type='AREA'
+            layout.operator("mesh.select_similar", text= "Polygon Sides", icon = "POLYGONSIDES").type='SIDES'
+            layout.operator("mesh.select_similar", text= "Perimeter", icon = "PERIMETER").type='PERIMETER'
+            layout.operator("mesh.select_similar", text= "Normal", icon = "RECALC_NORMALS").type='NORMAL'
+            layout.operator("mesh.select_similar", text= "Co-Planar", icon = "MAKE_PLANAR").type='COPLANAR'
+            layout.operator("mesh.select_similar", text= "Flat / Smooth", icon = "SHADING_SMOOTH").type='SMOOTH'
+            layout.operator("mesh.select_similar", text= "Freestyle Face Marks", icon = "MARKFSFACE").type='FREESTYLE_FACE'
 
         layout.separator()
 
-        layout.operator("mesh.select_similar_region", text="Face Regions")
+        layout.operator("mesh.select_similar_region", text="Face Regions", icon = "FACEREGIONS")
 
 
 class VIEW3D_MT_edit_mesh_select_by_trait(Menu):
@@ -782,14 +818,14 @@ class VIEW3D_MT_edit_mesh_select_by_trait(Menu):
     def draw(self, context):
         layout = self.layout
         if context.scene.tool_settings.mesh_select_mode[2] is False:
-            layout.operator("mesh.select_non_manifold", text="Non Manifold")
-        layout.operator("mesh.select_loose", text="Loose Geometry")
-        layout.operator("mesh.select_interior_faces", text="Interior Faces")
-        layout.operator("mesh.select_face_by_sides", text = "Faces by Side")
+            layout.operator("mesh.select_non_manifold", text="Non Manifold", icon = "SELECT_NONMANIFOLD")
+        layout.operator("mesh.select_loose", text="Loose Geometry", icon = "SELECT_LOOSE")
+        layout.operator("mesh.select_interior_faces", text="Interior Faces", icon = "SLEECT_INTERIOR")
+        layout.operator("mesh.select_face_by_sides", text = "Faces by Side", icon = "SELECT_FACES_BY_SIDE")
 
         layout.separator()
 
-        layout.operator("mesh.select_ungrouped", text="Ungrouped Verts")
+        layout.operator("mesh.select_ungrouped", text="Ungrouped Verts", icon = "SELECT_UNGROUPED_VERTS")
 
 
 class VIEW3D_MT_edit_mesh_select_more_less(Menu):
@@ -803,8 +839,8 @@ class VIEW3D_MT_edit_mesh_select_more_less(Menu):
 
         layout.separator()
 
-        layout.operator("mesh.select_next_item", text="Next Active")
-        layout.operator("mesh.select_prev_item", text="Previous Active")
+        layout.operator("mesh.select_next_item", text="Next Active", icon = "NEXTACTIVE")
+        layout.operator("mesh.select_prev_item", text="Previous Active", icon = "PREVIOUSACTIVE")
 
 # Workaround to separate the tooltips
 class VIEW3D_MT_select_edit_mesh_inverse(bpy.types.Operator):
@@ -837,11 +873,11 @@ class VIEW3D_MT_select_edit_mesh(Menu):
         layout.separator()
 
         # numeric
-        layout.operator("mesh.select_random", text="Random")   
-        layout.operator("mesh.select_mirror", text="Mirror")
-        layout.operator("mesh.select_nth")
-        layout.operator("mesh.shortest_path_select", text="Shortest Path")
-        layout.operator("mesh.select_axis", text="Side of Active")
+        layout.operator("mesh.select_random", text="Random", icon = "RANDOMIZE")   
+        layout.operator("mesh.select_mirror", text="Mirror", icon = "TRANSFORM_MIRROR")
+        layout.operator("mesh.select_nth", icon = "CHECKER_DESELECT")
+        layout.operator("mesh.shortest_path_select", text="Shortest Path", icon = "SELECT_SHORTESTPATH")
+        layout.operator("mesh.select_axis", text="Side of Active", icon = "SELECT_SIDEOFACTIVE")
 
 
         layout.separator()
@@ -851,33 +887,33 @@ class VIEW3D_MT_select_edit_mesh(Menu):
         layout.separator()
 
         # geometric
-        layout.operator("mesh.edges_select_sharp", text="Sharp Edges")
+        layout.operator("mesh.edges_select_sharp", text="Sharp Edges", icon = "SELECT_SHARPEDGES")
         
 
         # topology
-        layout.operator("mesh.select_loose", text="Loose Geometry")
+        layout.operator("mesh.select_loose", text="Loose Geometry", icon = "SELECT_LOOSE")
         if context.scene.tool_settings.mesh_select_mode[2] is False:
-            layout.operator("mesh.select_non_manifold", text="Non Manifold")
-        layout.operator("mesh.select_interior_faces", text="Interior Faces")
-        layout.operator("mesh.select_face_by_sides", text = "Faces by Side")
+            layout.operator("mesh.select_non_manifold", text="Non Manifold", icon = "SELECT_NONMANIFOLD")
+        layout.operator("mesh.select_interior_faces", text="Interior Faces", icon = "SLEECT_INTERIOR")
+        layout.operator("mesh.select_face_by_sides", text = "Faces by Side", icon = "SELECT_FACES_BY_SIDE")
         
 
         layout.separator()
 
-        layout.operator("mesh.loop_multi_select", text="Edge Loops").ring = False
-        layout.operator("mesh.loop_multi_select", text="Edge Rings").ring = True
-        layout.operator("mesh.loop_to_region", text = "Loop Inner-Region")
-        layout.operator("mesh.region_to_loop", text = "Boundary Loop")
+        layout.operator("mesh.loop_multi_select", text="Edge Loops", icon = "SELECT_EDGELOOP").ring = False
+        layout.operator("mesh.loop_multi_select", text="Edge Rings", icon = "SELECT_EDGERING").ring = True
+        layout.operator("mesh.loop_to_region", text = "Loop Inner-Region", icon = "SELECT_LOOPINNER")
+        layout.operator("mesh.region_to_loop", text = "Boundary Loop", icon = "SELECT_BOUNDARY")
 
         layout.separator()
 
         # other ...
-        layout.operator("mesh.select_ungrouped", text="Ungrouped Verts")
+        layout.operator("mesh.select_ungrouped", text="Ungrouped Verts", icon = "SELECT_UNGROUPED_VERTS")
         layout.menu("VIEW3D_MT_edit_mesh_select_similar")
-        layout.operator("mesh.faces_select_linked_flat", text="Linked Flat Faces")
-        layout.operator("mesh.select_linked", text="Linked")
-        layout.operator("mesh.select_linked_pick", text="Linked Pick Select").deselect = False
-        layout.operator("mesh.select_linked_pick", text="Linked Pick Deselect").deselect = True
+        layout.operator("mesh.faces_select_linked_flat", text="Linked Flat Faces", icon = "LINKED")
+        layout.operator("mesh.select_linked", text="Linked", icon = "LINKED")
+        layout.operator("mesh.select_linked_pick", text="Linked Pick Select", icon = "LINKED").deselect = False
+        layout.operator("mesh.select_linked_pick", text="Linked Pick Deselect", icon = "LINKED").deselect = True
    
 
 
@@ -913,7 +949,7 @@ class VIEW3D_MT_select_edit_curve(Menu):
         layout.separator()
 
         layout.operator("curve.select_random", text="Random")
-        layout.operator("curve.select_nth")
+        layout.operator("curve.select_nth", icon = "CHECKER_DESELECT")
 
         layout.separator()
 
@@ -956,7 +992,7 @@ class VIEW3D_MT_select_edit_surface(Menu):
         layout.separator()
 
         layout.operator("curve.select_random", text="Random")
-        layout.operator("curve.select_nth")
+        layout.operator("curve.select_nth", icon = "CHECKER_DESELECT")
 
         layout.separator()
 
@@ -1068,7 +1104,7 @@ class VIEW3D_MT_select_edit_lattice(Menu):
 
         layout.separator()
 
-        layout.operator("lattice.select_ungrouped", text="Ungrouped Verts")
+        layout.operator("lattice.select_ungrouped", text="Ungrouped Verts", icon = "SELECT_UNGROUPED_VERTS")
 
         layout.separator()
 
@@ -1237,7 +1273,7 @@ class VIEW3D_MT_select_paint_mask_vertex(Menu):
 
         layout.separator()
 
-        layout.operator("paint.vert_select_ungrouped", text="Ungrouped Verts")
+        layout.operator("paint.vert_select_ungrouped", text="Ungrouped Verts", icon = "SELECT_UNGROUPED_VERTS")
 
 
 class VIEW3D_MT_angle_control(Menu):
@@ -1645,6 +1681,12 @@ class VIEW3D_MT_object(Menu):
         view = context.space_data
         is_local_view = (view.local_view is not None)
 
+        layout.operator("ed.undo", icon = "UNDO")
+        layout.operator("ed.redo", icon = "REDO")
+        layout.operator("ed.undo_history", icon = "UNDO_HISTORY")
+
+        layout.separator()
+
         layout.menu("VIEW3D_MT_transform_object")
         layout.menu("VIEW3D_MT_object_clear")
         layout.menu("VIEW3D_MT_object_apply")
@@ -1998,9 +2040,9 @@ class VIEW3D_MT_facemask_showhide(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("paint.face_select_reveal", text="Show Hidden")
-        layout.operator("paint.face_select_hide", text="Hide Selected").unselected = False
-        layout.operator("paint.face_select_hide", text="Hide Unselected").unselected = True
+        layout.operator("paint.face_select_reveal", text="Show Hidden", icon = "RESTRICT_VIEW_OFF")
+        layout.operator("paint.face_select_hide", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
+        layout.operator("paint.face_select_hide", text="Hide Unselected", icon = "HIDE_UNSELECTED").unselected = True
 
 
 # ********** Brush menu **********
@@ -2012,6 +2054,10 @@ class VIEW3D_MT_brush(Menu):
 
         settings = UnifiedPaintPanel.paint_settings(context)
         brush = getattr(settings, "brush", None)
+
+        # brush tool
+        if context.sculpt_object:
+            layout.operator("brush.reset", icon = "BRUSH_RESET")
 
         # skip if no active brush
         if not brush:
@@ -2062,8 +2108,8 @@ class VIEW3D_MT_paint_vertex(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("ed.undo")
-        layout.operator("ed.redo")
+        layout.operator("ed.undo", icon = "UNDO")
+        layout.operator("ed.redo", icon = "REDO")
 
         layout.separator()
 
@@ -2085,18 +2131,18 @@ class VIEW3D_MT_hook(Menu):
     def draw(self, context):
         layout = self.layout
         layout.operator_context = 'EXEC_AREA'
-        layout.operator("object.hook_add_newob")
-        layout.operator("object.hook_add_selob").use_bone = False
-        layout.operator("object.hook_add_selob", text="Hook to Selected Object Bone").use_bone = True
+        layout.operator("object.hook_add_newob", icon = "HOOK_NEW")
+        layout.operator("object.hook_add_selob", icon = "HOOK_SELECTED").use_bone = False
+        layout.operator("object.hook_add_selob", text="Hook to Selected Object Bone", icon = "HOOK_BONE").use_bone = True
 
         if [mod.type == 'HOOK' for mod in context.active_object.modifiers]:
             layout.separator()
-            layout.operator_menu_enum("object.hook_assign", "modifier")
-            layout.operator_menu_enum("object.hook_remove", "modifier")
+            layout.operator_menu_enum("object.hook_assign", "modifier", icon = "HOOK_ASSIGN")
+            layout.operator_menu_enum("object.hook_remove", "modifier", icon = "HOOK_REMOVE")
             layout.separator()
-            layout.operator_menu_enum("object.hook_select", "modifier")
-            layout.operator_menu_enum("object.hook_reset", "modifier")
-            layout.operator_menu_enum("object.hook_recenter", "modifier")
+            layout.operator_menu_enum("object.hook_select", "modifier", icon = "HOOK_SELECT")
+            layout.operator_menu_enum("object.hook_reset", "modifier", icon = "HOOK_RESET")
+            layout.operator_menu_enum("object.hook_recenter", "modifier", icon = "HOOK_RECENTER")
 
 
 class VIEW3D_MT_vertex_group(Menu):
@@ -2150,8 +2196,8 @@ class VIEW3D_MT_sculpt(Menu):
         toolsettings = context.tool_settings
         sculpt = toolsettings.sculpt
 
-        layout.operator("ed.undo")
-        layout.operator("ed.redo")
+        layout.operator("ed.undo", icon = "UNDO")
+        layout.operator("ed.redo", icon = "REDO")
 
         layout.separator()
         layout.prop(sculpt, "use_threaded", text="Threaded Sculpt")
@@ -2224,9 +2270,9 @@ class VIEW3D_MT_particle_show_hide(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("particle.reveal", text="Show Hidden")
-        layout.operator("particle.hide", text="Hide Selected").unselected = False
-        layout.operator("particle.hide_unselected", text="Hide Unselected")
+        layout.operator("particle.reveal", text="Show Hidden", icon = "RESTRICT_VIEW_OFF")
+        layout.operator("particle.hide", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
+        layout.operator("particle.hide_unselected", text="Hide Unselected", icon = "HIDE_UNSELECTED")
 
 
 class VIEW3D_MT_particle(Menu):
@@ -2318,9 +2364,9 @@ class VIEW3D_MT_pose_show_hide(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("pose.reveal", text="Show Hidden")
-        layout.operator("pose.hide", text="Hide Selected").unselected = False
-        layout.operator("pose.hide_unselected", text="Hide Unselected")
+        layout.operator("pose.reveal", text="Show Hidden", icon = "RESTRICT_VIEW_OFF")
+        layout.operator("pose.hide", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
+        layout.operator("pose.hide_unselected", text="Hide Unselected", icon = "HIDE_UNSELECTED")
 
 
 class VIEW3D_MT_pose(Menu):
@@ -2590,9 +2636,9 @@ class VIEW3D_MT_edit_mesh_show_hide(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("mesh.reveal", text="Show Hidden")
-        layout.operator("mesh.hide", text="Hide Selected").unselected = False
-        layout.operator("mesh.hide_unselected", text="Hide Unselected")
+        layout.operator("mesh.reveal", text="Show Hidden", icon = "RESTRICT_VIEW_OFF")
+        layout.operator("mesh.hide", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
+        layout.operator("mesh.hide_unselected", text="Hide Unselected", icon = "HIDE_UNSELECTED")
 
 
 class VIEW3D_MT_edit_mesh(Menu):
@@ -2604,12 +2650,12 @@ class VIEW3D_MT_edit_mesh(Menu):
         toolsettings = context.tool_settings
 
         layout.menu("VIEW3D_MT_transform")
-        layout.operator("object.vertex_group_mirror")
-        layout.operator("mesh.symmetry_snap")
+        layout.operator("object.vertex_group_mirror", icon = "MIRROR_VERTEXGROUP")
+        layout.operator("mesh.symmetry_snap", icon = "SNAP_SYMMETRY")
 
         layout.separator()
 
-        layout.operator("mesh.duplicate_move")
+        layout.operator("mesh.duplicate_move", icon = "DUPLICATE")
         layout.menu("VIEW3D_MT_edit_mesh_delete")
 
         layout.separator()
@@ -2624,9 +2670,9 @@ class VIEW3D_MT_edit_mesh(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_subdivision_set")
-        layout.operator("mesh.symmetrize")
+        layout.operator("mesh.symmetrize", icon = "SYMMETRIZE")
         layout.operator("mesh.noise", icon='NOISE')      
-        layout.operator_menu_enum("mesh.sort_elements", "type", text="Sort Elements...")
+        layout.menu("VIEW3D_MT_edit_mesh_sort_elements")
 
         layout.separator()
 
@@ -2635,6 +2681,20 @@ class VIEW3D_MT_edit_mesh(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_edit_mesh_show_hide")
+
+class VIEW3D_MT_edit_mesh_sort_elements(Menu):
+    bl_label = "Sort Elements"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("mesh.sort_elements", text="View Z Axis", icon = "Z_ICON").type = 'VIEW_ZAXIS'
+        layout.operator("mesh.sort_elements", text="View Y Axis", icon = "Y_ICON").type = 'VIEW_XAXIS'
+        layout.operator("mesh.sort_elements", text="Cursor Distance", icon = "CURSOR").type = 'CURSOR_DISTANCE'
+        layout.operator("mesh.sort_elements", text="Material", icon = "MATERIAL").type = 'MATERIAL'
+        layout.operator("mesh.sort_elements", text="Selected", icon = "RESTRICT_SELECT_OFF").type = 'SELECTED'
+        layout.operator("mesh.sort_elements", text="Randomize", icon = "RANDOMIZE").type = 'RANDOMIZE'
+        layout.operator("mesh.sort_elements", text="Reverse", icon = "SWITCH_DIRECTION").type = 'REVERSE'
 
 
 class VIEW3D_MT_edit_mesh_specials(Menu):
@@ -2772,9 +2832,9 @@ class VIEW3D_MT_edit_mesh_vertices(Menu):
 
         with_bullet = bpy.app.build_options.bullet
 
-        layout.operator("mesh.rip_move")
-        layout.operator("mesh.rip_move_fill")
-        layout.operator("mesh.rip_edge_move")
+        layout.operator("mesh.rip_move", icon = "RIP")
+        layout.operator("mesh.rip_move_fill", icon = "RIP_FILL")
+        layout.operator("mesh.rip_edge_move", icon = "EXTEND_VERTICES")
         layout.operator("mesh.split", icon = "SPLIT")
         layout.operator("mesh.vert_connect_path", text="Connect Vertex Path", icon = "VERTEXCONNECTPATH")
         layout.operator("mesh.vert_connect", text="Connect Vertices", icon = "VERTEXCONNECT")
@@ -2807,8 +2867,8 @@ class VIEW3D_MT_edit_mesh_edges(Menu):
 
         layout.separator()
 
-        layout.operator("transform.edge_crease")
-        layout.operator("transform.edge_bevelweight")
+        layout.operator("transform.edge_crease", icon = "CREASE")
+        layout.operator("transform.edge_bevelweight", icon = "BEVEL")
 
         layout.separator()
 
@@ -2939,9 +2999,9 @@ class VIEW3D_MT_edit_curve_show_hide(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("curve.reveal", text="Show Hidden")
-        layout.operator("curve.hide", text="Hide Selected").unselected = False
-        layout.operator("curve.hide_unselected", text="Hide Unselected")
+        layout.operator("curve.reveal", text="Show Hidden", icon = "RESTRICT_VIEW_OFF")
+        layout.operator("curve.hide", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
+        layout.operator("curve.hide_unselected", text="Hide Unselected", icon = "HIDE_UNSELECTED")
 
 
 def draw_curve(self, context):
@@ -3125,8 +3185,8 @@ class VIEW3D_MT_edit_meta_showhide(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("mball.reveal_metaelems", text="Show Hidden")
-        layout.operator("mball.hide_metaelems", text="Hide Selected").unselected = False
+        layout.operator("mball.reveal_metaelems", text="Show Hidden", icon = "RESTRICT_VIEW_OFF")
+        layout.operator("mball.hide_metaelems", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
         layout.operator("mball.hide_metaelems_unselected", text="Hide Unselected")
 
 
@@ -3161,9 +3221,9 @@ class VIEW3D_MT_armature_show_hide(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("armature.reveal", text="Show Hidden")
-        layout.operator("armature.hide", text="Hide Selected").unselected = False
-        layout.operator("armature.hide_unselected", text="Hide Unselected")
+        layout.operator("armature.reveal", text="Show Hidden", icon = "RESTRICT_VIEW_OFF")
+        layout.operator("armature.hide", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
+        layout.operator("armature.hide_unselected", text="Hide Unselected", icon = "HIDE_UNSELECTED")
 
 
 class VIEW3D_MT_edit_armature(Menu):
@@ -3266,6 +3326,12 @@ class VIEW3D_MT_edit_gpencil(Menu):
         toolsettings = context.tool_settings
 
         layout = self.layout
+
+        layout.operator("ed.undo", icon = "UNDO")
+        layout.operator("ed.redo", icon = "REDO")
+        layout.operator("ed.undo_history", icon = "UNDO_HISTORY")
+
+        layout.separator()
 
         layout.operator("gpencil.copy", text="Copy", icon = "COPYDOWN")
         layout.operator("gpencil.paste", text="Paste", icon = "PASTEDOWN")
@@ -4072,6 +4138,7 @@ classes = (
     VIEW3D_mesh_hide_unselected,
     VIEW3D_MT_edit_mesh_show_hide,
     VIEW3D_MT_edit_mesh,
+    VIEW3D_MT_edit_mesh_sort_elements,
     VIEW3D_MT_edit_mesh_select_similar,
     VIEW3D_MT_edit_mesh_select_by_trait,
     VIEW3D_MT_edit_mesh_select_more_less,
