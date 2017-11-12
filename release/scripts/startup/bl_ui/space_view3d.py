@@ -1717,12 +1717,6 @@ class VIEW3D_MT_object(Menu):
 
         layout.separator()
 
-        layout.operator("object.data_transfer", icon ='TRANSFER_DATA')
-        layout.operator("object.datalayout_transfer", icon ='TRANSFER_DATA_LAYOUT')
-        layout.operator("object.join_uvs", icon ='TRANSFER_UV')
-
-        layout.separator()
-
         layout.menu("VIEW3D_MT_object_showhide")
 
         layout.operator_menu_enum("object.convert", "target")
