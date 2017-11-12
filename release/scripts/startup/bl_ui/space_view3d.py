@@ -2223,37 +2223,37 @@ class VIEW3D_MT_hide_mask(Menu):
     def draw(self, context):
         layout = self.layout
 
-        props = layout.operator("paint.hide_show", text="Show All")
+        props = layout.operator("paint.hide_show", text="Show All", icon = "RESTRICT_VIEW_OFF")
         props.action = 'SHOW'
         props.area = 'ALL'
 
-        props = layout.operator("paint.hide_show", text="Hide Bounding Box")
+        props = layout.operator("paint.hide_show", text="Hide Bounding Box", icon = "RESTRICT_VIEW_ON")
         props.action = 'HIDE'
         props.area = 'INSIDE'
 
-        props = layout.operator("paint.hide_show", text="Show Bounding Box")
+        props = layout.operator("paint.hide_show", text="Show Bounding Box", icon = "RESTRICT_VIEW_OFF")
         props.action = 'SHOW'
         props.area = 'INSIDE'
 
-        props = layout.operator("paint.hide_show", text="Hide Masked")
+        props = layout.operator("paint.hide_show", text="Hide Masked", icon = "RESTRICT_VIEW_ON")
         props.area = 'MASKED'
         props.action = 'HIDE'
 
         layout.separator()
 
-        props = layout.operator("paint.mask_flood_fill", text="Invert Mask")
+        props = layout.operator("paint.mask_flood_fill", text="Invert Mask", icon = "INVERT_MASK")
         props.mode = 'INVERT'
 
-        props = layout.operator("paint.mask_flood_fill", text="Fill Mask")
+        props = layout.operator("paint.mask_flood_fill", text="Fill Mask", icon = "FILL_MASK")
         props.mode = 'VALUE'
         props.value = 1
 
-        props = layout.operator("paint.mask_flood_fill", text="Clear Mask")
+        props = layout.operator("paint.mask_flood_fill", text="Clear Mask", icon = "CLEAR_MASK")
         props.mode = 'VALUE'
         props.value = 0
 
-        props = layout.operator("view3d.select_border", text="Box Mask")
-        props = layout.operator("paint.mask_lasso_gesture", text="Lasso Mask")
+        props = layout.operator("view3d.select_border", text="Box Mask", icon = "BOX_MASK")
+        props = layout.operator("paint.mask_lasso_gesture", text="Lasso Mask", icon = "LASSO_MASK")
 
 
 # ********** Particle menu **********
