@@ -63,7 +63,7 @@ extern "C" {
 
 namespace DEG {
 
-void DepsgraphNodeBuilder::build_scene(Main *bmain, Scene *scene)
+void DepsgraphNodeBuilder::build_scene(Scene *scene)
 {
 	/* scene ID block */
 	add_id_node(&scene->id);
@@ -75,13 +75,16 @@ void DepsgraphNodeBuilder::build_scene(Main *bmain, Scene *scene)
 	// XXX: depending on how this goes, that scene itself could probably store its
 	//      own little partial depsgraph?
 	if (scene->set) {
-		build_scene(bmain, scene->set);
+		build_scene(scene->set);
 	}
+
+	/* Setup currently building context. */
+	scene_ = scene;
 
 	/* scene objects */
 	LINKLIST_FOREACH (Base *, base, &scene->base) {
 		Object *ob = base->object;
-		build_object(scene, base, ob);
+		build_object(base, ob);
 	}
 
 	/* rigidbody */
@@ -113,17 +116,17 @@ void DepsgraphNodeBuilder::build_scene(Main *bmain, Scene *scene)
 	}
 
 	/* Cache file. */
-	LINKLIST_FOREACH (CacheFile *, cachefile, &bmain->cachefiles) {
+	LINKLIST_FOREACH (CacheFile *, cachefile, &bmain_->cachefiles) {
 		build_cachefile(cachefile);
 	}
 
 	/* Masks. */
-	LINKLIST_FOREACH (Mask *, mask, &bmain->mask) {
+	LINKLIST_FOREACH (Mask *, mask, &bmain_->mask) {
 		build_mask(mask);
 	}
 
 	/* Movie clips. */
-	LINKLIST_FOREACH (MovieClip *, clip, &bmain->movieclip) {
+	LINKLIST_FOREACH (MovieClip *, clip, &bmain_->movieclip) {
 		build_movieclip(clip);
 	}
 

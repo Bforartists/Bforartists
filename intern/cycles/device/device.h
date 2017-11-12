@@ -91,9 +91,6 @@ public:
 	/* Use experimental feature set. */
 	bool experimental;
 
-	/* Maximum number of closures in shader trees. */
-	int max_closure;
-
 	/* Selective nodes compilation. */
 
 	/* Identifier of a node group up to which all the nodes needs to be
@@ -139,11 +136,13 @@ public:
 	/* Denoising features. */
 	bool use_denoising;
 
+	/* Use raytracing in shaders. */
+	bool use_shader_raytrace;
+
 	DeviceRequestedFeatures()
 	{
 		/* TODO(sergey): Find more meaningful defaults. */
 		experimental = false;
-		max_closure = 0;
 		max_nodes_group = 0;
 		nodes_features = 0;
 		use_hair = false;
@@ -158,12 +157,12 @@ public:
 		use_shadow_tricks = false;
 		use_principled = false;
 		use_denoising = false;
+		use_shader_raytrace = false;
 	}
 
 	bool modified(const DeviceRequestedFeatures& requested_features)
 	{
 		return !(experimental == requested_features.experimental &&
-		         max_closure == requested_features.max_closure &&
 		         max_nodes_group == requested_features.max_nodes_group &&
 		         nodes_features == requested_features.nodes_features &&
 		         use_hair == requested_features.use_hair &&
@@ -177,7 +176,8 @@ public:
 		         use_transparent == requested_features.use_transparent &&
 		         use_shadow_tricks == requested_features.use_shadow_tricks &&
 		         use_principled == requested_features.use_principled &&
-		         use_denoising == requested_features.use_denoising);
+		         use_denoising == requested_features.use_denoising &&
+		         use_shader_raytrace == requested_features.use_shader_raytrace);
 	}
 
 	/* Convert the requested features structure to a build options,
@@ -193,7 +193,6 @@ public:
 			string_printf("%d", max_nodes_group);
 		build_options += " -D__NODES_FEATURES__=" +
 			string_printf("%d", nodes_features);
-		build_options += string_printf(" -D__MAX_CLOSURE__=%d", max_closure);
 		if(!use_hair) {
 			build_options += " -D__NO_HAIR__";
 		}
@@ -229,6 +228,9 @@ public:
 		}
 		if(!use_denoising) {
 			build_options += " -D__NO_DENOISING__";
+		}
+		if(!use_shader_raytrace) {
+			build_options += " -D__NO_SHADER_RAYTRACE__";
 		}
 		return build_options;
 	}

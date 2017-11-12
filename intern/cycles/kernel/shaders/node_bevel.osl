@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2016 Blender Foundation
+ * Copyright 2011-2013 Blender Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,18 @@
  * limitations under the License.
  */
 
-#pragma once
+#include "stdosl.h"
 
-#include "graph/node.h"
+shader node_bevel(
+	int samples = 4,
+	float Radius = 0.05,
+	normal NormalIn = N,
+	output normal NormalOut = N)
+{
+	/* Abuse texture call with special @bevel token. */
+	NormalOut = (normal)(color)texture("@bevel", samples, Radius);
 
-#include "util/util_map.h"
-#include "util/util_string.h"
-#include "util/util_xml.h"
-
-CCL_NAMESPACE_BEGIN
-
-struct XMLReader {
-	map<ustring, Node*> node_map;
-};
-
-void xml_read_node(XMLReader& reader, Node *node, xml_node xml_node);
-xml_node xml_write_node(Node *node, xml_node xml_root);
-
-CCL_NAMESPACE_END
+	/* Preserve input normal. */
+	NormalOut = normalize(N + (NormalOut - NormalIn));
+}
 

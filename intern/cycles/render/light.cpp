@@ -79,7 +79,7 @@ static void shade_background_pixels(Device *device, DeviceScene *dscene, int res
 
 	d_input.free();
 
-	float4 *d_output_data = reinterpret_cast<float4*>(d_output.data_pointer);
+	float4 *d_output_data = d_output.data();
 
 	pixels.resize(width*height);
 
@@ -414,7 +414,6 @@ void LightManager::device_update_distribution(Device *, DeviceScene *dscene, Sce
 		/* precompute pdfs */
 		kintegrator->pdf_triangles = 0.0f;
 		kintegrator->pdf_lights = 0.0f;
-		kintegrator->inv_pdf_lights = 0.0f;
 
 		/* sample one, with 0.5 probability of light or triangle */
 		kintegrator->num_all_lights = num_lights;
@@ -429,8 +428,6 @@ void LightManager::device_update_distribution(Device *, DeviceScene *dscene, Sce
 			kintegrator->pdf_lights = 1.0f/num_lights;
 			if(trianglearea > 0.0f)
 				kintegrator->pdf_lights *= 0.5f;
-
-			kintegrator->inv_pdf_lights = 1.0f/kintegrator->pdf_lights;
 		}
 
 		kintegrator->use_lamp_mis = use_lamp_mis;
@@ -467,7 +464,6 @@ void LightManager::device_update_distribution(Device *, DeviceScene *dscene, Sce
 		kintegrator->num_all_lights = 0;
 		kintegrator->pdf_triangles = 0.0f;
 		kintegrator->pdf_lights = 0.0f;
-		kintegrator->inv_pdf_lights = 0.0f;
 		kintegrator->use_lamp_mis = false;
 		kintegrator->num_portals = 0;
 		kintegrator->portal_offset = 0;
