@@ -32,7 +32,7 @@
  * once from UI_resources.h for the internal icon enum and
  * once for interface_api.c for the definition of the RNA enum for the icons */
 
-/*30 icons per row*/
+/*40 icons per row*/
 
 /* ICON_ prefix added */
 
@@ -59,8 +59,10 @@ DEF_ICON(COLLAPSEMENU)
 DEF_ICON(X)
 
 #ifndef DEF_ICON_BLANK_SKIP
+
 	DEF_ICON(BLANK0021) /* XXX 'DOWNARROW' icon! BFA - no idea why this icon is still there but listed as blank */
 	/* BFA - Even more interesting, this icon gets created instead skipped. Most probably because the position is in fact not blank. */
+
 #endif
 
 DEF_ICON(GO_LEFT)
@@ -73,6 +75,21 @@ DEF_ICON(BLEND_TEX)
 DEF_ICON(CLOUD_TEX)
 DEF_ICON(DISTORTED_NOISE_TEX)
 DEF_ICON(ENVIRONMENT_TEX)
+
+#ifndef DEF_ICON_BLANK_SKIP
+
+DEF_ICON(extend_001)
+DEF_ICON(extend_002)
+DEF_ICON(extend_003)
+DEF_ICON(extend_004)
+DEF_ICON(extend_005)
+DEF_ICON(extend_006)
+DEF_ICON(extend_007)
+DEF_ICON(extend_008)
+DEF_ICON(extend_009)
+DEF_ICON(extend_010)
+
+#endif
 
 /* ------------------------- Row 2 --------------------------*/
 	
@@ -104,14 +121,26 @@ DEF_ICON(LINK)
 DEF_ICON(INLINK)
 DEF_ICON(PLUGIN)
 
-#ifndef DEF_ICON_BLANK_SKIP
-
 DEF_ICON(MAGIC_TEX)
 DEF_ICON(MARBLE_TEX)
 DEF_ICON(MUSGRAVE_TEX)
 DEF_ICON(NOISE_TEX)
 
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(extend_011)
+	DEF_ICON(extend_012)
+	DEF_ICON(extend_013)
+	DEF_ICON(extend_014)
+	DEF_ICON(extend_015)
+	DEF_ICON(extend_016)
+	DEF_ICON(extend_017)
+	DEF_ICON(extend_018)
+	DEF_ICON(extend_019)
+	DEF_ICON(extend_020)
+
 #endif
+
 
 /* ------------------------- Row 3 --------------------------*/
 	
@@ -147,6 +176,21 @@ DEF_ICON(OCEAN_TEX)
 DEF_ICON(POINT_DENSITY_TEX)
 DEF_ICON(STUCCI_TEX)
 DEF_ICON(VORONI_TEX)
+
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(extend_021)
+	DEF_ICON(extend_022)
+	DEF_ICON(extend_023)
+	DEF_ICON(extend_024)
+	DEF_ICON(extend_025)
+	DEF_ICON(extend_026)
+	DEF_ICON(extend_027)
+	DEF_ICON(extend_028)
+	DEF_ICON(extend_029)
+	DEF_ICON(extend_030)
+
+#endif
 
 /* ------------------------- Row 4 --------------------------*/
 	
@@ -186,6 +230,21 @@ DEF_ICON(RENDERBORDER_CLEAR)
 DEF_ICON(RENDERBORDER)
 DEF_ICON(CLIPPINGBORDER)
 
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(extend_031)
+	DEF_ICON(extend_032)
+	DEF_ICON(extend_033)
+	DEF_ICON(extend_034)
+	DEF_ICON(extend_035)
+	DEF_ICON(extend_036)
+	DEF_ICON(extend_037)
+	DEF_ICON(extend_038)
+	DEF_ICON(extend_039)
+	DEF_ICON(extend_040)
+
+#endif
+
 /* ------------------------- Row 5 --------------------------*/
 
 /* EDITORS */
@@ -220,6 +279,21 @@ DEF_ICON(FULLSCREEN_AREA)
 DEF_ICON(MAXIMIZE_AREA)
 DEF_ICON(NEW_WINDOW)
 DEF_ICON(QUADVIEW)
+
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(extend_041)
+	DEF_ICON(extend_042)
+	DEF_ICON(extend_043)
+	DEF_ICON(extend_044)
+	DEF_ICON(extend_045)
+	DEF_ICON(extend_046)
+	DEF_ICON(extend_047)
+	DEF_ICON(extend_048)
+	DEF_ICON(extend_049)
+	DEF_ICON(extend_050)
+
+#endif
 
 /* ------------------------- Row 6 --------------------------*/
 
@@ -263,6 +337,21 @@ DEF_ICON(VIEWALL_RESETCURSOR)
 DEF_ICON(VIEW_GLOBAL_LOCAL)
 DEF_ICON(VIEW_SELECTED)
 
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(extend_051)
+	DEF_ICON(extend_052)
+	DEF_ICON(extend_053)
+	DEF_ICON(extend_054)
+	DEF_ICON(extend_055)
+	DEF_ICON(extend_056)
+	DEF_ICON(extend_057)
+	DEF_ICON(extend_058)
+	DEF_ICON(extend_059)
+	DEF_ICON(extend_060)
+
+#endif
+
 /* ------------------------- Row 7  --------------------------*/
 
 	/* DATA */
@@ -299,6 +388,21 @@ DEF_ICON(VIEW_ACTIVE_BACK)
 DEF_ICON(VIEW_ACTIVE_BOTTOM)
 DEF_ICON(VIEW_ACTIVE_FRONT)
 
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(extend_061)
+	DEF_ICON(extend_062)
+	DEF_ICON(extend_063)
+	DEF_ICON(extend_064)
+	DEF_ICON(extend_065)
+	DEF_ICON(extend_066)
+	DEF_ICON(extend_067)
+	DEF_ICON(extend_068)
+	DEF_ICON(extend_069)
+	DEF_ICON(extend_070)
+
+#endif
+
 /* ------------------------- Row 8 --------------------------*/
 
 	/* DATA */
@@ -334,6 +438,21 @@ DEF_ICON(VIEW_ACTIVE_RIGHT)
 DEF_ICON(VIEW_ACTIVE_TOP)
 
 DEF_ICON(CENTERTOMOUSE)
+
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(extend_071)
+	DEF_ICON(extend_072)
+	DEF_ICON(extend_073)
+	DEF_ICON(extend_074)
+	DEF_ICON(extend_075)
+	DEF_ICON(extend_076)
+	DEF_ICON(extend_077)
+	DEF_ICON(extend_078)
+	DEF_ICON(extend_079)
+	DEF_ICON(extend_080)
+
+#endif
 
 
 /* ------------------------- Row 9 --------------------------*/
@@ -377,6 +496,21 @@ DEF_ICON(FLY_NAVIGATION)
 DEF_ICON(VIEW_NAVIGATION)
 DEF_ICON(WALK_NAVIGATION)
 
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(extend_081)
+	DEF_ICON(extend_082)
+	DEF_ICON(extend_083)
+	DEF_ICON(extend_084)
+	DEF_ICON(extend_085)
+	DEF_ICON(extend_086)
+	DEF_ICON(extend_087)
+	DEF_ICON(extend_088)
+	DEF_ICON(extend_089)
+	DEF_ICON(extend_090)
+
+#endif
+
 /* ------------------------- Row 10 --------------------------*/
 	
 	/* OUTLINER */
@@ -418,6 +552,21 @@ DEF_ICON(OUTLINER_OB_GROUP_INSTANCE)
 DEF_ICON(ZOOM_CAMERA)
 DEF_ICON(ZOOM_BORDER)
 
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(extend_091)
+	DEF_ICON(extend_092)
+	DEF_ICON(extend_093)
+	DEF_ICON(extend_094)
+	DEF_ICON(extend_095)
+	DEF_ICON(extend_096)
+	DEF_ICON(extend_097)
+	DEF_ICON(extend_098)
+	DEF_ICON(extend_099)
+	DEF_ICON(extend_100)
+
+#endif
+
 /* ------------------------- Row 11 --------------------------*/
 
 	/* OUTLINER */
@@ -455,6 +604,21 @@ DEF_ICON(PAN_DOWN)
 DEF_ICON(PAN_LEFT)
 DEF_ICON(PAN_RIGHT)
 DEF_ICON(PAN_UP)
+
+#ifndef DEF_ICON_BLANK_SKIP
+
+	 DEF_ICON(extend_101)
+	 DEF_ICON(extend_102)
+	 DEF_ICON(extend_103)
+	 DEF_ICON(extend_104)
+	 DEF_ICON(extend_105)
+	 DEF_ICON(extend_106)
+	 DEF_ICON(extend_107)
+	 DEF_ICON(extend_108)
+	 DEF_ICON(extend_109)
+	 DEF_ICON(extend_110)
+
+#endif
 
 /* ------------------------- Row 12 --------------------------*/
 	
@@ -496,6 +660,21 @@ DEF_ICON(ORBIT_LEFT)
 DEF_ICON(ORBIT_RIGHT)
 DEF_ICON(ORBIT_UP)
 
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(extend_111)
+	DEF_ICON(extend_112)
+	DEF_ICON(extend_113)
+	DEF_ICON(extend_114)
+	DEF_ICON(extend_115)
+	DEF_ICON(extend_116)
+	DEF_ICON(extend_117)
+	DEF_ICON(extend_118)
+	DEF_ICON(extend_119)
+	DEF_ICON(extend_120)
+
+#endif
+
 /* ------------------------- Row 13 --------------------------*/
 	
 	/* PRIMITIVES */
@@ -534,6 +713,21 @@ DEF_ICON(ORBIT_OPPOSITE)
 DEF_ICON(ROLL_LEFT)
 DEF_ICON(ROLL_RIGHT)
 DEF_ICON(LAYER)
+
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(extend_121)
+	DEF_ICON(extend_122)
+	DEF_ICON(extend_123)
+	DEF_ICON(extend_124)
+	DEF_ICON(extend_125)
+	DEF_ICON(extend_126)
+	DEF_ICON(extend_127)
+	DEF_ICON(extend_128)
+	DEF_ICON(extend_129)
+	DEF_ICON(extend_130)
+
+#endif
 
 /* ------------------------- Row 14 --------------------------*/
 
@@ -574,6 +768,21 @@ DEF_ICON(PARENT)
 DEF_ICON(CHILD)
 DEF_ICON(CHILD_RECURSIVE)
 DEF_ICON(SIBLINGS)
+
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(extend_131)
+	DEF_ICON(extend_132)
+	DEF_ICON(extend_133)
+	DEF_ICON(extend_134)
+	DEF_ICON(extend_135)
+	DEF_ICON(extend_136)
+	DEF_ICON(extend_137)
+	DEF_ICON(extend_138)
+	DEF_ICON(extend_139)
+	DEF_ICON(extend_140)
+
+#endif
 
 /* ------------------------- Row 15 --------------------------*/
 
@@ -619,6 +828,21 @@ DEF_ICON(PASS)
 DEF_ICON(SELECT_FACES_BY_SIDE)
 DEF_ICON(CHECKER_DESELECT)
 
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(extend_141)
+	DEF_ICON(extend_142)
+	DEF_ICON(extend_143)
+	DEF_ICON(extend_144)
+	DEF_ICON(extend_145)
+	DEF_ICON(extend_146)
+	DEF_ICON(extend_147)
+	DEF_ICON(extend_148)
+	DEF_ICON(extend_149)
+	DEF_ICON(extend_150)
+
+#endif
+
 /* ------------------------- Row 16 --------------------------*/
 
 /*bfa - new icons. Tool Shelf - Edit Mode - Tools - Weight Tools*/
@@ -660,6 +884,21 @@ DEF_ICON(SELECT_BOUNDARY)
 DEF_ICON(SELECT_EDGELOOP)
 DEF_ICON(SELECT_EDGERING)
 
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(extend_151)
+	DEF_ICON(extend_152)
+	DEF_ICON(extend_153)
+	DEF_ICON(extend_154)
+	DEF_ICON(extend_155)
+	DEF_ICON(extend_156)
+	DEF_ICON(extend_157)
+	DEF_ICON(extend_158)
+	DEF_ICON(extend_159)
+	DEF_ICON(extend_160)
+
+#endif
+
 
 /* ------------------------- Row 17 --------------------------*/
 
@@ -699,6 +938,21 @@ DEF_ICON(SELECT_LOOPINNER)
 DEF_ICON(SELECT_LOOSE)
 DEF_ICON(SELECT_SHARPEDGES)
 
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(extend_161)
+	DEF_ICON(extend_162)
+	DEF_ICON(extend_163)
+	DEF_ICON(extend_164)
+	DEF_ICON(extend_165)
+	DEF_ICON(extend_166)
+	DEF_ICON(extend_167)
+	DEF_ICON(extend_168)
+	DEF_ICON(extend_169)
+	DEF_ICON(extend_170)
+
+#endif
+
 /* ------------------------- Row 18 --------------------------*/
 
 	/* MODIFIERS */
@@ -734,6 +988,21 @@ DEF_ICON(SELECT_SIDEOFACTIVE)
 DEF_ICON(SELECT_UNGROUPED_VERTS)
 
 DEF_ICON(ANGLE)
+
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(extend_171)
+	DEF_ICON(extend_172)
+	DEF_ICON(extend_173)
+	DEF_ICON(extend_174)
+	DEF_ICON(extend_175)
+	DEF_ICON(extend_176)
+	DEF_ICON(extend_177)
+	DEF_ICON(extend_178)
+	DEF_ICON(extend_179)
+	DEF_ICON(extend_180)
+
+#endif
 
 /* ------------------------- Row 19 --------------------------*/
 
@@ -772,6 +1041,21 @@ DEF_ICON(FACEREGIONS)
 DEF_ICON(PERIMETER)
 DEF_ICON(POLYGONSIDES)
 
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(extend_181)
+	DEF_ICON(extend_182)
+	DEF_ICON(extend_183)
+	DEF_ICON(extend_184)
+	DEF_ICON(extend_185)
+	DEF_ICON(extend_186)
+	DEF_ICON(extend_187)
+	DEF_ICON(extend_188)
+	DEF_ICON(extend_189)
+	DEF_ICON(extend_190)
+
+#endif
+
 /* ------------------------- Row 20 --------------------------*/
 	
 	/* ANIMATION */
@@ -806,6 +1090,21 @@ DEF_ICON(AREA)
 DEF_ICON(MIRROR_VERTEXGROUP)
 DEF_ICON(SNAP_SYMMETRY)
 DEF_ICON(SYMMETRIZE)
+
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(extend_191)
+	DEF_ICON(extend_192)
+	DEF_ICON(extend_193)
+	DEF_ICON(extend_194)
+	DEF_ICON(extend_195)
+	DEF_ICON(extend_196)
+	DEF_ICON(extend_197)
+	DEF_ICON(extend_198)
+	DEF_ICON(extend_199)
+	DEF_ICON(extend_200)
+
+#endif
 
 /* ------------------------- Row 21 --------------------------*/
 
@@ -842,6 +1141,21 @@ DEF_ICON(X_ICON)
 DEF_ICON(Y_ICON)
 DEF_ICON(Z_ICON)
 DEF_ICON(EXTEND_VERTICES)
+
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(extend_201)
+	DEF_ICON(extend_202)
+	DEF_ICON(extend_203)
+	DEF_ICON(extend_204)
+	DEF_ICON(extend_205)
+	DEF_ICON(extend_206)
+	DEF_ICON(extend_207)
+	DEF_ICON(extend_208)
+	DEF_ICON(extend_209)
+	DEF_ICON(extend_210)
+
+#endif
 
 /* ------------------------- Row 22 --------------------------*/
 
@@ -884,6 +1198,21 @@ DEF_ICON(RIP_FILL)
 DEF_ICON(HOOK_NEW)
 DEF_ICON(HOOK_SELECTED)
 
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(extend_211)
+	DEF_ICON(extend_212)
+	DEF_ICON(extend_213)
+	DEF_ICON(extend_214)
+	DEF_ICON(extend_215)
+	DEF_ICON(extend_216)
+	DEF_ICON(extend_217)
+	DEF_ICON(extend_218)
+	DEF_ICON(extend_219)
+	DEF_ICON(extend_220)
+
+#endif
+
 /* ------------------------- Row 23 --------------------------*/
 	
 	/* EDITING */
@@ -919,6 +1248,21 @@ DEF_ICON(HOOK_BONE)
 DEF_ICON(HOOK_ASSIGN)
 DEF_ICON(HOOK_RESET)
 DEF_ICON(HOOK_RECENTER)
+
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(extend_221)
+	DEF_ICON(extend_222)
+	DEF_ICON(extend_223)
+	DEF_ICON(extend_224)
+	DEF_ICON(extend_225)
+	DEF_ICON(extend_226)
+	DEF_ICON(extend_227)
+	DEF_ICON(extend_228)
+	DEF_ICON(extend_229)
+	DEF_ICON(extend_230)
+
+#endif
 
 /* ------------------------- Row 24 --------------------------*/
 
@@ -959,6 +1303,21 @@ DEF_ICON(HOOK_REMOVE)
 DEF_ICON(HOOK_SELECT)
 DEF_ICON(BOX_MASK)
 DEF_ICON(CLEAR_MASK)
+
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(extend_231)
+	DEF_ICON(extend_232)
+	DEF_ICON(extend_233)
+	DEF_ICON(extend_234)
+	DEF_ICON(extend_235)
+	DEF_ICON(extend_236)
+	DEF_ICON(extend_237)
+	DEF_ICON(extend_238)
+	DEF_ICON(extend_239)
+	DEF_ICON(extend_240)
+
+#endif
 
 /* ------------------------- Row 25 --------------------------*/
 
@@ -1004,6 +1363,21 @@ DEF_ICON(INVERT_MASK)
 DEF_ICON(LASSO_MASK)
 DEF_ICON(BRIGHTNESS_CONTRAST)
 
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(extend_241)
+	DEF_ICON(extend_242)
+	DEF_ICON(extend_243)
+	DEF_ICON(extend_244)
+	DEF_ICON(extend_245)
+	DEF_ICON(extend_246)
+	DEF_ICON(extend_247)
+	DEF_ICON(extend_248)
+	DEF_ICON(extend_249)
+	DEF_ICON(extend_250)
+
+#endif
+
 /* ------------------------- Row 26 --------------------------*/
 
 // import export icons
@@ -1047,6 +1421,21 @@ DEF_ICON(LEVELS)
 
 #endif
 
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(extend_251)
+	DEF_ICON(extend_252)
+	DEF_ICON(extend_253)
+	DEF_ICON(extend_254)
+	DEF_ICON(extend_255)
+	DEF_ICON(extend_256)
+	DEF_ICON(extend_257)
+	DEF_ICON(extend_258)
+	DEF_ICON(extend_259)
+	DEF_ICON(extend_260)
+
+#endif
+
 /* ------------------------- Row 27  --------------------------*/
 
 	/* FILE SELECT */
@@ -1083,6 +1472,21 @@ DEF_ICON(FILE_TEXT)
 	DEF_ICON(TEST_054)
 	DEF_ICON(TEST_113)
 	DEF_ICON(TEST_114)
+
+#endif
+
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(extend_261)
+	DEF_ICON(extend_262)
+	DEF_ICON(extend_263)
+	DEF_ICON(extend_264)
+	DEF_ICON(extend_265)
+	DEF_ICON(extend_266)
+	DEF_ICON(extend_267)
+	DEF_ICON(extend_268)
+	DEF_ICON(extend_269)
+	DEF_ICON(extend_270)
 
 #endif
 
@@ -1129,6 +1533,20 @@ DEF_ICON(DISK_DRIVE)
 
 #endif
 
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(extend_271)
+	DEF_ICON(extend_272)
+	DEF_ICON(extend_273)
+	DEF_ICON(extend_274)
+	DEF_ICON(extend_275)
+	DEF_ICON(extend_276)
+	DEF_ICON(extend_277)
+	DEF_ICON(extend_278)
+	DEF_ICON(extend_279)
+	DEF_ICON(extend_280)
+
+#endif
 /* ------------------------- Row 29 --------------------------*/
 	
 	/* SHADING / TEXT */
@@ -1168,6 +1586,21 @@ DEF_ICON(SET_FROM_FACES)
 	DEF_ICON(TEST_058)
 	DEF_ICON(TEST_117)
 	DEF_ICON(TEST_118)
+
+#endif
+
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(extend_281)
+	DEF_ICON(extend_282)
+	DEF_ICON(extend_283)
+	DEF_ICON(extend_284)
+	DEF_ICON(extend_285)
+	DEF_ICON(extend_286)
+	DEF_ICON(extend_287)
+	DEF_ICON(extend_288)
+	DEF_ICON(extend_289)
+	DEF_ICON(extend_290)
 
 #endif
 
@@ -1211,6 +1644,21 @@ DEF_ICON(PATTERN)
 	DEF_ICON(TEST_060)
 	DEF_ICON(TEST_119)
 	DEF_ICON(TEST_120)
+
+#endif
+
+#ifndef DEF_ICON_BLANK_SKIP
+
+	DEF_ICON(extend_291)
+	DEF_ICON(extend_292)
+	DEF_ICON(extend_293)
+	DEF_ICON(extend_294)
+	DEF_ICON(extend_295)
+	DEF_ICON(extend_296)
+	DEF_ICON(extend_297)
+	DEF_ICON(extend_298)
+	DEF_ICON(extend_299)
+	DEF_ICON(extend_300)
 
 #endif
 
