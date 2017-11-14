@@ -749,7 +749,7 @@ class VIEW3D_MT_select_particle(Menu):
 
         layout.separator()
 
-        layout.operator("particle.select_random", text="Random")
+        layout.operator("particle.select_random", text="Random", icon = "RANDOMIZE")
         layout.operator("particle.select_roots", text="Roots")
         layout.operator("particle.select_tips", text="Tips")
         
@@ -989,7 +989,7 @@ class VIEW3D_MT_select_edit_surface(Menu):
 
         layout.separator()
 
-        layout.operator("curve.select_random", text="Random")
+        layout.operator("curve.select_random", text="Random", icon = "RANDOMIZE")
         layout.operator("curve.select_nth", icon = "CHECKER_DESELECT")
 
         layout.separator()
@@ -1001,14 +1001,12 @@ class VIEW3D_MT_select_edit_surface(Menu):
 
         layout.separator()
 
-        layout.operator("curve.select_row")
+        layout.operator("curve.select_row", icon = "CONTROLPOINTROW")
 
         layout.separator()
 
         layout.operator("curve.select_more", text = "More", icon = "SELECTMORE")
         layout.operator("curve.select_less", text = "Less", icon = "SELECTLESS")
-
-        layout.separator()
 
 
 class VIEW3D_MT_select_edit_text(Menu):
@@ -1060,7 +1058,7 @@ class VIEW3D_MT_select_edit_metaball(Menu):
 
         layout.separator()
 
-        layout.operator("mball.select_random_metaelems", text="Random")
+        layout.operator("mball.select_random_metaelems", text="Random", icon = "RANDOMIZE")
 
         layout.separator()
 
@@ -1097,7 +1095,7 @@ class VIEW3D_MT_select_edit_lattice(Menu):
 
         layout.separator()
 
-        layout.operator("lattice.select_random", text="Random")
+        layout.operator("lattice.select_random", text="Random", icon = "RANDOMIZE")
         layout.operator("lattice.select_mirror", text ="Mirror")
 
         layout.separator()
@@ -1142,7 +1140,7 @@ class VIEW3D_MT_select_edit_armature(Menu):
 
         layout.separator()
 
-        layout.operator("armature.select_mirror", text="Mirror").extend = False
+        layout.operator("armature.select_mirror", text="Mirror", icon = "TRANSFORM_MIRROR").extend = False
         layout.operator("armature.select_linked", text="Connected")
 
         layout.separator()
@@ -1303,9 +1301,9 @@ class VIEW3D_MT_angle_control(Menu):
         if brush.brush_capabilities.has_random_texture_angle and tex_slot.has_random_texture_angle:
             if sculpt:
                 if brush.sculpt_capabilities.has_random_texture_angle:
-                    layout.prop(tex_slot, "use_random", text="Random")
+                    layout.prop(tex_slot, "use_random", text="Random", icon = "RANDOMIZE")
             else:
-                layout.prop(tex_slot, "use_random", text="Random")
+                layout.prop(tex_slot, "use_random", text="Random", icon = "RANDOMIZE")
 
 # ********** Add menu **********
 
