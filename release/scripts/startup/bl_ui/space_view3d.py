@@ -948,29 +948,27 @@ class VIEW3D_MT_select_edit_curve(Menu):
 
         layout.separator()
 
-        layout.operator("curve.select_random", text="Random")
+        layout.operator("curve.select_random", text="Random", icon = "RANDOMIZE")
         layout.operator("curve.select_nth", icon = "CHECKER_DESELECT")
 
         layout.separator()
 
-        layout.operator("curve.select_linked", text="Linked")
-        layout.operator("curve.select_linked_pick", text="Linked Pick Select").deselect = False
-        layout.operator("curve.select_linked_pick", text="Linked Pick Deselect").deselect = True
-        layout.operator("curve.select_similar", text="Similar")
+        layout.operator("curve.select_linked", text="Linked", icon = "LINKED")
+        layout.operator("curve.select_linked_pick", text="Linked Pick Select", icon = "LINKED").deselect = False
+        layout.operator("curve.select_linked_pick", text="Linked Pick Deselect", icon = "LINKED").deselect = True
+        layout.operator("curve.select_similar", text="Similar", icon = "SELECT_SIMILAR")
 
         layout.separator()
 
-        layout.operator("curve.de_select_first")
-        layout.operator("curve.de_select_last")
-        layout.operator("curve.select_next", text = "Next")
-        layout.operator("curve.select_previous", text = "Previous")
+        layout.operator("curve.de_select_first", icon = "SELECT_FIRST")
+        layout.operator("curve.de_select_last", icon = "SELECT_LAST")
+        layout.operator("curve.select_next", text = "Next", icon = "NEXTACTIVE")
+        layout.operator("curve.select_previous", text = "Previous", icon = "PREVIOUSACTIVE")
 
         layout.separator()
 
         layout.operator("curve.select_more", text = "More", icon = "SELECTMORE")
         layout.operator("curve.select_less", text = "Less", icon = "SELECTLESS")
-
-        layout.separator()
 
 
 class VIEW3D_MT_select_edit_surface(Menu):
@@ -996,10 +994,10 @@ class VIEW3D_MT_select_edit_surface(Menu):
 
         layout.separator()
 
-        layout.operator("curve.select_linked", text="Linked")
-        layout.operator("curve.select_linked_pick", text="Linked Pick Select").deselect = False
-        layout.operator("curve.select_linked_pick", text="Linked Pick Deselect").deselect = True
-        layout.operator("curve.select_similar", text="Similar")
+        layout.operator("curve.select_linked", text="Linked", icon = "LINKED")
+        layout.operator("curve.select_linked_pick", text="Linked Pick Select", icon = "LINKED").deselect = False
+        layout.operator("curve.select_linked_pick", text="Linked Pick Deselect", icon = "LINKED").deselect = True
+        layout.operator("curve.select_similar", text="Similar", icon = "SELECT_SIMILAR")
 
         layout.separator()
 
@@ -1066,7 +1064,7 @@ class VIEW3D_MT_select_edit_metaball(Menu):
 
         layout.separator()
 
-        layout.operator_menu_enum("mball.select_similar", "type", text="Similar")
+        layout.operator_menu_enum("mball.select_similar", "type", text="Similar", icon = "SELECT_SIMILAR")
 
 
 # Workaround to separate the tooltips
@@ -1168,7 +1166,7 @@ class VIEW3D_MT_select_edit_armature(Menu):
         layout.separator()
 
         layout.operator("armature.select_linked", text = "Connected")
-        layout.operator_menu_enum("armature.select_similar", "type", text="Similar")
+        layout.operator_menu_enum("armature.select_similar", "type", text="Similar", icon = "SELECT_SIMILAR")
         layout.operator("object.select_pattern", text="Pattern...")
 
         layout.separator()
@@ -1199,8 +1197,8 @@ class VIEW3D_MT_select_gpencil(Menu):
 
         layout.separator()
 
-        layout.operator("gpencil.select_first")
-        layout.operator("gpencil.select_last")
+        layout.operator("gpencil.select_first", icon = "SELECT_FIRST")
+        layout.operator("gpencil.select_last", icon = "SELECT_LAST")
 
         layout.separator()
 
