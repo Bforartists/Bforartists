@@ -3189,7 +3189,7 @@ class VIEW3D_MT_edit_meta_showhide(Menu):
 
         layout.operator("mball.reveal_metaelems", text="Show Hidden", icon = "RESTRICT_VIEW_OFF")
         layout.operator("mball.hide_metaelems", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
-        layout.operator("mball.hide_metaelems_unselected", text="Hide Unselected")
+        layout.operator("mball.hide_metaelems_unselected", text="Hide Unselected", icon = "HIDE_UNSELECTED") 
 
 
 class VIEW3D_MT_edit_lattice(Menu):
