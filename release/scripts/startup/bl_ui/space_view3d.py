@@ -3012,22 +3012,22 @@ def draw_curve(self, context):
     toolsettings = context.tool_settings
 
     layout.menu("VIEW3D_MT_transform")
-    layout.operator("object.vertex_group_mirror")
+    layout.operator("object.vertex_group_mirror", icon = "MIRROR_VERTEXGROUP")
 
     layout.separator()
 
     layout.operator("curve.duplicate_move", icon = "DUPLICATE")
-    layout.operator("curve.split")
-    layout.operator("curve.separate")
-    layout.operator("curve.make_segment")
+    layout.operator("curve.split", icon = "SPLIT")
+    layout.operator("curve.separate", icon = "SEPARATE")
+    layout.operator("curve.make_segment", icon = "MAKE_CURVESEGMENT")
     layout.operator("curve.delete", text="Delete...", icon = "DELETE")
 
     layout.separator()
 
-    layout.operator("curve.smooth_tilt")
-    layout.operator("curve.smooth_radius")
-    layout.operator("curve.smooth_weight")
-    layout.operator("curve.spline_weight_set")
+    layout.operator("curve.smooth_tilt", icon = "SMOOTH_TILT")
+    layout.operator("curve.smooth_radius", icon = "SMOOTH_RADIUS")
+    layout.operator("curve.smooth_weight", icon = "SMOOTH_WEIGHT")
+    layout.operator("curve.spline_weight_set", icon = "WEIGHT_TRANSFER_WEIGHTS")
     
     layout.separator()
 
@@ -3157,7 +3157,7 @@ class VIEW3D_MT_edit_meta(Menu):
         toolsettings = context.tool_settings
 
         layout.menu("VIEW3D_MT_transform")
-        layout.operator("object.vertex_group_mirror")
+        layout.operator("object.vertex_group_mirror", icon = "MIRROR_VERTEXGROUP")
 
         layout.separator()
 
@@ -3201,7 +3201,7 @@ class VIEW3D_MT_edit_lattice(Menu):
         toolsettings = context.tool_settings
 
         layout.menu("VIEW3D_MT_transform")
-        layout.operator("object.vertex_group_mirror")
+        layout.operator("object.vertex_group_mirror", icon = "MIRROR_VERTEXGROUP")
         layout.operator_menu_enum("lattice.flip", "axis")
 
 
@@ -3238,7 +3238,7 @@ class VIEW3D_MT_edit_armature(Menu):
         arm = edit_object.data
 
         layout.menu("VIEW3D_MT_transform_armature")
-        layout.operator("object.vertex_group_mirror")
+        layout.operator("object.vertex_group_mirror", icon = "MIRROR_VERTEXGROUP")
         layout.menu("VIEW3D_MT_edit_armature_roll")
 
         layout.separator()
