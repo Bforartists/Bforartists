@@ -1018,12 +1018,12 @@ class VIEW3D_MT_select_edit_text(Menu):
         layout = self.layout
 
         layout.operator("font.text_copy", text="Copy", icon = "COPYDOWN")
-        layout.operator("font.text_cut", text="Cut")
+        layout.operator("font.text_cut", text="Cut", icon = "CUT")
         layout.operator("font.text_paste", text="Paste", icon = "PASTEDOWN")
 
         layout.separator()
 
-        layout.operator("font.text_paste_from_file")
+        layout.operator("font.text_paste_from_file", icon = "PASTEFILE")
 
         layout.separator()
 
