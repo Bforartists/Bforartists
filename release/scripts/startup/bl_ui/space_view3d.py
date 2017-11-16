@@ -3111,7 +3111,7 @@ class VIEW3D_MT_edit_font(Menu):
 
         layout.separator()
 
-        layout.operator("font.delete").type = 'NEXT_OR_SELECTION'
+        layout.operator("font.delete", icon = "DELETE").type = 'NEXT_OR_SELECTION'
 
 
 class VIEW3D_MT_edit_text_chars(Menu):
