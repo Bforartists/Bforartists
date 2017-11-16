@@ -698,23 +698,23 @@ class VIEW3D_MT_select_pose(Menu):
 
         layout.operator_menu_enum("pose.select_grouped", "type", text="Grouped")
         layout.operator("pose.select_linked", text="Connected")      
-        layout.operator("object.select_pattern", text="By Pattern...")
+        layout.operator("object.select_pattern", text="By Pattern", icon = "PATTERN")
 
         layout.separator()
 
-        props = layout.operator("pose.select_hierarchy", text="Parent")
+        props = layout.operator("pose.select_hierarchy", text="Parent", icon = "PARENT")
         props.extend = False
         props.direction = 'PARENT'
 
-        props = layout.operator("pose.select_hierarchy", text="Child")
+        props = layout.operator("pose.select_hierarchy", text="Child", icon = "CHILD")
         props.extend = False
         props.direction = 'CHILD'
 
-        props = layout.operator("pose.select_hierarchy", text="Parent Extended")
+        props = layout.operator("pose.select_hierarchy", text="Parent Extended", icon = "PARENT")
         props.extend = True
         props.direction = 'PARENT'
 
-        props = layout.operator("pose.select_hierarchy", text="Child Extended")
+        props = layout.operator("pose.select_hierarchy", text="Child Extended", icon = "CHILD")
         props.extend = True
         props.direction = 'CHILD'
 
@@ -1141,38 +1141,35 @@ class VIEW3D_MT_select_edit_armature(Menu):
         layout.separator()
 
         layout.operator("armature.select_mirror", text="Mirror", icon = "TRANSFORM_MIRROR").extend = False
-        layout.operator("armature.select_linked", text="Connected")
 
         layout.separator()
 
-        props = layout.operator("armature.select_hierarchy", text="Parent")
+        props = layout.operator("armature.select_hierarchy", text="Parent", icon = "PARENT")
         props.extend = False
         props.direction = 'PARENT'
 
-        props = layout.operator("armature.select_hierarchy", text="Child")
+        props = layout.operator("armature.select_hierarchy", text="Child", icon = "CHILD")
         props.extend = False
         props.direction = 'CHILD'
 
-        props = layout.operator("armature.select_hierarchy", text="Parent Extended")
+        props = layout.operator("armature.select_hierarchy", text="Parent Extended", icon = "PARENT")
         props.extend = True
         props.direction = 'PARENT'
 
-        props = layout.operator("armature.select_hierarchy", text="Child Extended")
+        props = layout.operator("armature.select_hierarchy", text="Child Extended", icon = "CHILD")
         props.extend = True
         props.direction = 'CHILD'
 
         layout.separator()
 
         layout.operator("armature.select_linked", text = "Connected")
-        layout.operator_menu_enum("armature.select_similar", "type", text="Similar", icon = "SELECT_SIMILAR")
-        layout.operator("object.select_pattern", text="Pattern...")
+        layout.operator_menu_enum("armature.select_similar", "type", text="Similar")
+        layout.operator("object.select_pattern", text="By Pattern", icon = "PATTERN")
 
         layout.separator()
 
         layout.operator("armature.select_more", text="More", icon = "SELECTMORE")
         layout.operator("armature.select_less", text="Less", icon = "SELECTLESS")
-
-        layout.separator()
 
 class VIEW3D_MT_select_gpencil(Menu):
     bl_label = "Select"
