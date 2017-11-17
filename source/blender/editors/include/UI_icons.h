@@ -81,16 +81,11 @@ DEF_ICON(PREFIX)
 DEF_ICON(SUFFIX)
 DEF_ICON(FLIP)
 DEF_ICON(STRING)
-
-#ifndef DEF_ICON_BLANK_SKIP
-
-	DEF_ICON(extend_006)
-	DEF_ICON(extend_007)
-	DEF_ICON(extend_008)
-	DEF_ICON(extend_009)
-	DEF_ICON(extend_010)
-
-#endif
+DEF_ICON(SET_ROLL)
+DEF_ICON(CLEAR_ROLL)
+DEF_ICON(ROLL_X_NEG)
+DEF_ICON(ROLL_X_POS)
+DEF_ICON(ROLL_X_TANG_NEG)
 
 /* ------------------------- Row 2 --------------------------*/
 	
@@ -127,21 +122,21 @@ DEF_ICON(MARBLE_TEX)
 DEF_ICON(MUSGRAVE_TEX)
 DEF_ICON(NOISE_TEX)
 
+DEF_ICON(ROLL_X_TANG_POS)
+DEF_ICON(ROLL_Y_NEG)
+DEF_ICON(ROLL_Y_POS)
+DEF_ICON(ROLL_Z_NEG)
+DEF_ICON(ROLL_Z_POS)
+DEF_ICON(ROLL_Z_TANG_NEG)
+DEF_ICON(ROLL_Z_TANG_POS)
+
 #ifndef DEF_ICON_BLANK_SKIP
 
-	DEF_ICON(extend_011)
-	DEF_ICON(extend_012)
-	DEF_ICON(extend_013)
-	DEF_ICON(extend_014)
-	DEF_ICON(extend_015)
-	DEF_ICON(extend_016)
-	DEF_ICON(extend_017)
 	DEF_ICON(extend_018)
 	DEF_ICON(extend_019)
 	DEF_ICON(extend_020)
 
 #endif
-
 
 /* ------------------------- Row 3 --------------------------*/
 	
