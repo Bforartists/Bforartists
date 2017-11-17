@@ -3256,7 +3256,7 @@ class VIEW3D_MT_edit_armature(Menu):
         layout.separator()
 
         if arm.use_mirror_x:
-            layout.operator("armature.extrude_forked")
+            layout.operator("armature.extrude_forked" , icon = "EXTRUDE_REGION")
 
         layout.operator("armature.duplicate_move", icon = "DUPLICATE")
         layout.operator("armature.delete", icon = "DELETE")
@@ -3264,17 +3264,17 @@ class VIEW3D_MT_edit_armature(Menu):
         layout.separator()
 
         layout.operator_context = 'EXEC_AREA'
-        layout.operator("armature.symmetrize")
-        layout.operator("armature.autoside_names", text="AutoName Left/Right").type = 'XAXIS'
-        layout.operator("armature.autoside_names", text="AutoName Front/Back").type = 'YAXIS'
-        layout.operator("armature.autoside_names", text="AutoName Top/Bottom").type = 'ZAXIS'
-        layout.operator("armature.flip_names")
+        layout.operator("armature.symmetrize", icon = "SYMMETRIZE")
+        layout.operator("armature.autoside_names", text="AutoName Left/Right", icon = "STRING").type = 'XAXIS'
+        layout.operator("armature.autoside_names", text="AutoName Front/Back", icon = "STRING").type = 'YAXIS'
+        layout.operator("armature.autoside_names", text="AutoName Top/Bottom", icon = "STRING").type = 'ZAXIS'
+        layout.operator("armature.flip_names", icon = "FLIP")
 
         layout.separator()
 
         layout.operator_context = 'INVOKE_DEFAULT'
-        layout.operator("armature.armature_layers")
-        layout.operator("armature.bone_layers")
+        layout.operator("armature.armature_layers", icon = "LAYER")
+        layout.operator("armature.bone_layers", icon = "LAYER")
 
         layout.separator()
 
