@@ -697,7 +697,7 @@ class VIEW3D_MT_select_pose(Menu):
         layout.separator()
 
         layout.operator_menu_enum("pose.select_grouped", "type", text="Grouped")
-        layout.operator("pose.select_linked", text="Connected")      
+        layout.operator("pose.select_linked", text="Connected", icon = "CONNECTED")   
         layout.operator("object.select_pattern", text="By Pattern", icon = "PATTERN")
 
         layout.separator()
@@ -1162,14 +1162,29 @@ class VIEW3D_MT_select_edit_armature(Menu):
 
         layout.separator()
 
-        layout.operator("armature.select_linked", text = "Connected")
-        layout.operator_menu_enum("armature.select_similar", "type", text="Similar")
+        layout.operator("armature.select_linked", text = "Connected", icon = "CONNECTED")   
+        layout.menu("VIEW3D_MT_select_edit_armature_similar")
         layout.operator("object.select_pattern", text="By Pattern", icon = "PATTERN")
 
         layout.separator()
 
         layout.operator("armature.select_more", text="More", icon = "SELECTMORE")
         layout.operator("armature.select_less", text="Less", icon = "SELECTLESS")
+
+class VIEW3D_MT_select_edit_armature_similar(Menu):
+    bl_label = "Similar"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("armature.select_similar", text="Children", icon = "CHILD").type = 'CHILDREN'
+        layout.operator("armature.select_similar", text="Immediate Children", icon = "CHILD").type = 'CHILDREN_IMMEDIATE'
+        layout.operator("armature.select_similar", text="Siblings", icon = "SIBLINGS").type = 'SIBLINGS'
+        layout.operator("armature.select_similar", text="Length", icon = "RULER").type = 'LENGTH'
+        layout.operator("armature.select_similar", text="Direction (Y Axis)", icon = "Y_ICON").type = 'DIRECTION'
+        layout.operator("armature.select_similar", text="Prefix", icon = "PREFIX").type = 'PREFIX'
+        layout.operator("armature.select_similar", text="Suffix", icon = "SUFFIX").type = 'SUFFIX'
+        layout.operator("armature.select_similar", text="Layer", icon = "LAYER").type = 'LAYER'
 
 class VIEW3D_MT_select_gpencil(Menu):
     bl_label = "Select"
@@ -4153,6 +4168,7 @@ classes = (
     VIEW3D_MT_select_edit_lattice,
     VIEW3D_MT_select_edit_armature_inverse,
     VIEW3D_MT_select_edit_armature,
+    VIEW3D_MT_select_edit_armature_similar,
     VIEW3D_MT_select_gpencil,
     VIEW3D_MT_select_paint_mask_inverse,
     VIEW3D_MT_select_paint_mask,
