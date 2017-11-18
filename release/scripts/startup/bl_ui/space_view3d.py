@@ -1974,8 +1974,8 @@ class VIEW3D_MT_object_constraints(Menu):
         layout = self.layout
 
         layout.operator("object.constraint_add_with_targets", icon = "CONSTRAINT_DATA")
-        layout.operator("object.constraints_copy", icon = "CONSTRAINT_DATA")
-        layout.operator("object.constraints_clear", icon = "CONSTRAINT_DATA")
+        layout.operator("object.constraints_copy", icon = "COPYDOWN")
+        layout.operator("object.constraints_clear", icon = "CLEAR_CONSTRAINT")
 
 
 class VIEW3D_MT_object_quick_effects(Menu):
@@ -2544,9 +2544,9 @@ class VIEW3D_MT_pose_constraints(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("pose.constraint_add_with_targets", text="Add (With Targets)...")
-        layout.operator("pose.constraints_copy")
-        layout.operator("pose.constraints_clear")
+        layout.operator("pose.constraint_add_with_targets", text="Add (With Targets)...", icon = "CONSTRAINT_DATA")
+        layout.operator("pose.constraints_copy", icon = "COPYDOWN")
+        layout.operator("pose.constraints_clear", icon = "CLEAR_CONSTRAINT")
 
 
 class VIEW3D_MT_pose_apply(Menu):
