@@ -2555,8 +2555,8 @@ class VIEW3D_MT_pose_apply(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("pose.armature_apply")
-        layout.operator("pose.visual_transform_apply")
+        layout.operator("pose.armature_apply", icon = "MOD_ARMATURE")
+        layout.operator("pose.visual_transform_apply", icon = "APPLYMOVE")
 
 
 class VIEW3D_MT_pose_specials(Menu):
