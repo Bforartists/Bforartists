@@ -268,7 +268,7 @@ class VIEW3D_MT_transform_armature(VIEW3D_MT_transform_base):
                 layout.operator("transform.transform", text="Scale Radius").mode = 'BONE_ENVELOPE'
 
         if context.edit_object and context.edit_object.type == 'ARMATURE':
-            layout.operator("armature.align")
+            layout.operator("armature.align",icon = "ALIGN")
 
 
 class VIEW3D_MT_uv_map(Menu):
