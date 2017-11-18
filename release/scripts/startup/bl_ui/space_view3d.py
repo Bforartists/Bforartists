@@ -2488,13 +2488,13 @@ class VIEW3D_MT_pose_library(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("poselib.browse_interactive", text="Browse Poses...")
+        layout.operator("poselib.browse_interactive", text="Browse Poses", icon = "FILESEL")
 
         layout.separator()
 
-        layout.operator("poselib.pose_add", text="Add Pose...")
-        layout.operator("poselib.pose_rename", text="Rename Pose...")
-        layout.operator("poselib.pose_remove", text="Remove Pose...")
+        layout.operator("poselib.pose_add", text="Add Pose", icon = "LIBRARY")
+        layout.operator("poselib.pose_rename", text="Rename Pose", icon = "STRING")
+        layout.operator("poselib.pose_remove", text="Remove Pose", icon = "DELETE")
 
 
 class VIEW3D_MT_pose_motion(Menu):
