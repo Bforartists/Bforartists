@@ -2394,9 +2394,9 @@ class VIEW3D_MT_pose(Menu):
 
         layout.separator()
 
-        layout.operator("pose.copy")
-        layout.operator("pose.paste").flipped = False
-        layout.operator("pose.paste", text="Paste X-Flipped Pose").flipped = True
+        layout.operator("pose.copy", icon = "COPYDOWN")
+        layout.operator("pose.paste", icon = "PASTEDOWN").flipped = False
+        layout.operator("pose.paste", text="Paste X-Flipped Pose", icon = "PASTEDOWN").flipped = True
 
         layout.separator()
 
@@ -2411,19 +2411,18 @@ class VIEW3D_MT_pose(Menu):
         layout.separator()
 
         layout.operator_context = 'EXEC_AREA'
-        layout.operator("pose.autoside_names", text="AutoName Left/Right").axis = 'XAXIS'
-        layout.operator("pose.autoside_names", text="AutoName Front/Back").axis = 'YAXIS'
-        layout.operator("pose.autoside_names", text="AutoName Top/Bottom").axis = 'ZAXIS'
+        layout.operator("pose.autoside_names", text="AutoName Left/Right", icon = "STRING").axis = 'XAXIS'
+        layout.operator("pose.autoside_names", text="AutoName Front/Back", icon = "STRING").axis = 'YAXIS'
+        layout.operator("pose.autoside_names", text="AutoName Top/Bottom", icon = "STRING").axis = 'ZAXIS'
 
-        layout.operator("pose.flip_names")
-
-        layout.operator("pose.quaternions_flip")
+        layout.operator("pose.flip_names", icon = "FLIP")
+        layout.operator("pose.quaternions_flip", icon = "FLIP")
 
         layout.separator()
 
         layout.operator_context = 'INVOKE_AREA'
-        layout.operator("armature.armature_layers", text="Change Armature Layers...")
-        layout.operator("pose.bone_layers", text="Change Bone Layers...")
+        layout.operator("armature.armature_layers", text="Change Armature Layers", icon = "LAYER")
+        layout.operator("pose.bone_layers", text="Change Bone Layers", icon = "LAYER")
 
         layout.separator()
 
