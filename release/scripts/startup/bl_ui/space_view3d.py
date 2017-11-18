@@ -691,8 +691,8 @@ class VIEW3D_MT_select_pose(Menu):
 
         layout.separator()
 
-        layout.operator("pose.select_mirror", text="Flip Active")
-        layout.operator("pose.select_constraint_target", text="Constraint Target")
+        layout.operator("pose.select_mirror", text="Flip Active", icon = "FLIP")
+        layout.operator("pose.select_constraint_target", text="Constraint Target", icon = "CONSTRAINT_BONE")
 
         layout.separator()
 
@@ -717,8 +717,6 @@ class VIEW3D_MT_select_pose(Menu):
         props = layout.operator("pose.select_hierarchy", text="Child Extended", icon = "CHILD")
         props.extend = True
         props.direction = 'CHILD'
-
-        layout.separator()
 
 
 # Workaround to separate the tooltips
