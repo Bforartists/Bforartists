@@ -2436,17 +2436,17 @@ class VIEW3D_MT_pose_transform(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("pose.transforms_clear", text="All")
+        layout.operator("pose.transforms_clear", text="All", icon = "CLEAR")
 
         layout.separator()
 
-        layout.operator("pose.loc_clear", text="Location")
-        layout.operator("pose.rot_clear", text="Rotation")
-        layout.operator("pose.scale_clear", text="Scale")
+        layout.operator("pose.loc_clear", text="Location", icon = "CLEARMOVE")
+        layout.operator("pose.rot_clear", text="Rotation", icon = "CLEARROTATE")
+        layout.operator("pose.scale_clear", text="Scale", icon = "CLEARSCALE")
 
         layout.separator()
 
-        layout.operator("pose.user_transforms_clear", text="Reset Unkeyed")
+        layout.operator("pose.user_transforms_clear", text="Reset Unkeyed", icon = "RESET")
 
 
 class VIEW3D_MT_pose_slide(Menu):
