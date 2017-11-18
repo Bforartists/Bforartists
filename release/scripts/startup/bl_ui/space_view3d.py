@@ -2534,8 +2534,8 @@ class VIEW3D_MT_pose_ik(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("pose.ik_add")
-        layout.operator("pose.ik_clear")
+        layout.operator("pose.ik_add", icon= "ADD_IK")
+        layout.operator("pose.ik_clear", icon = "CLEAR_IK")
 
 
 class VIEW3D_MT_pose_constraints(Menu):
