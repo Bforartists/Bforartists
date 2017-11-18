@@ -2164,7 +2164,7 @@ class VIEW3D_MT_vertex_group(Menu):
         layout = self.layout
 
         layout.operator_context = 'EXEC_AREA'
-        layout.operator("object.vertex_group_assign_new")
+        layout.operator("object.vertex_group_assign_new", icon = "NEW_GROUP")
 
         ob = context.active_object
         if ob.mode == 'EDIT' or (ob.mode == 'WEIGHT_PAINT' and ob.type == 'MESH' and ob.data.use_paint_mask_vertex):
@@ -2516,16 +2516,16 @@ class VIEW3D_MT_pose_group(Menu):
         pose = context.active_object.pose
 
         layout.operator_context = 'EXEC_AREA'
-        layout.operator("pose.group_assign", text="Assign to New Group").type = 0
+        layout.operator("pose.group_assign", text="Assign to New Group", icon = "NEW_GROUP").type = 0
         if pose.bone_groups:
             active_group = pose.bone_groups.active_index + 1
-            layout.operator("pose.group_assign", text="Assign to Group").type = active_group
+            layout.operator("pose.group_assign", text="Assign to Group", icon = "ADD_TO_ACTIVE").type = active_group
 
             layout.separator()
 
             # layout.operator_context = 'INVOKE_AREA'
-            layout.operator("pose.group_unassign")
-            layout.operator("pose.group_remove")
+            layout.operator("pose.group_unassign", icon = "REMOVE_SELECTED_FROM_ACTIVE_GROUP")
+            layout.operator("pose.group_remove", icon = "REMOVE_FROM_ALL_GROUPS")
 
 
 class VIEW3D_MT_pose_ik(Menu):
