@@ -131,12 +131,8 @@ DEF_ICON(ROLL_Z_TANG_NEG)
 DEF_ICON(ROLL_Z_TANG_POS)
 DEF_ICON(CLEAR_CONSTRAINT)
 
-#ifndef DEF_ICON_BLANK_SKIP
-
-	DEF_ICON(extend_019)
-	DEF_ICON(extend_020)
-
-#endif
+DEF_ICON(ADD_IK)
+DEF_ICON(CLEAR_IK)
 
 /* ------------------------- Row 3 --------------------------*/
 	
