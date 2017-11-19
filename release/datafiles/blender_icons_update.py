@@ -38,7 +38,7 @@ cmd = (
     "--output=" + BASEDIR + "blender_icons16 "
     "--output_prefix=icon16_ "
     "--name_style=UI_ICONS "
-    "--parts_x 30 --parts_y 30 " # bfa - Icon sheet, row and column. Don't forget to change values in \source\blender\editors\interface\interface_icons.c too.
+    "--parts_x 40 --parts_y 30 " # bfa - Icon sheet, row and column. Don't forget to change values in \source\blender\editors\interface\interface_icons.c too. Line 75 - #define ICON_GRID_COLS
     "--minx 3 --maxx 8 --miny 3 --maxy 8 " # bfa - maxx needs to be readjusted when resizing the iconsheet. No idea what the values here does though.
     "--minx_icon 2 --maxx_icon 2 --miny_icon 2 --maxy_icon 2 " # bfa - and what the heck is this line good for?
     "--spacex_icon 1 --spacey_icon 1" # bfa - And this one? No explanation here, no explanation in datatoc_icon_split.py.
@@ -53,7 +53,7 @@ cmd = (
     "--output=" + BASEDIR + "blender_icons32 "
     "--output_prefix=icon32_ "
     "--name_style=UI_ICONS "
-    "--parts_x 30 --parts_y 30 "
+    "--parts_x 40 --parts_y 30 "
     "--minx 6 --maxx 16 --miny 6 --maxy 16 " # bfa - maxx needs to be readjusted when resizing the iconsheet. No idea what the values here does though.
     "--minx_icon 4 --maxx_icon 4 --miny_icon 4 --maxy_icon 4 "
     "--spacex_icon 2 --spacey_icon 2"
