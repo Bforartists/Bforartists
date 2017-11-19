@@ -268,7 +268,7 @@ class VIEW3D_MT_transform_armature(VIEW3D_MT_transform_base):
                 layout.operator("transform.transform", text="Scale Radius").mode = 'BONE_ENVELOPE'
 
         if context.edit_object and context.edit_object.type == 'ARMATURE':
-            layout.operator("armature.align")
+            layout.operator("armature.align",icon = "ALIGN")
 
 
 class VIEW3D_MT_uv_map(Menu):
@@ -691,34 +691,32 @@ class VIEW3D_MT_select_pose(Menu):
 
         layout.separator()
 
-        layout.operator("pose.select_mirror", text="Flip Active")
-        layout.operator("pose.select_constraint_target", text="Constraint Target")
+        layout.operator("pose.select_mirror", text="Flip Active", icon = "FLIP")
+        layout.operator("pose.select_constraint_target", text="Constraint Target", icon = "CONSTRAINT_BONE")
 
         layout.separator()
 
         layout.operator_menu_enum("pose.select_grouped", "type", text="Grouped")
-        layout.operator("pose.select_linked", text="Connected")      
-        layout.operator("object.select_pattern", text="By Pattern...")
+        layout.operator("pose.select_linked", text="Connected", icon = "CONNECTED")   
+        layout.operator("object.select_pattern", text="By Pattern", icon = "PATTERN")
 
         layout.separator()
 
-        props = layout.operator("pose.select_hierarchy", text="Parent")
+        props = layout.operator("pose.select_hierarchy", text="Parent", icon = "PARENT")
         props.extend = False
         props.direction = 'PARENT'
 
-        props = layout.operator("pose.select_hierarchy", text="Child")
+        props = layout.operator("pose.select_hierarchy", text="Child", icon = "CHILD")
         props.extend = False
         props.direction = 'CHILD'
 
-        props = layout.operator("pose.select_hierarchy", text="Parent Extended")
+        props = layout.operator("pose.select_hierarchy", text="Parent Extended", icon = "PARENT")
         props.extend = True
         props.direction = 'PARENT'
 
-        props = layout.operator("pose.select_hierarchy", text="Child Extended")
+        props = layout.operator("pose.select_hierarchy", text="Child Extended", icon = "CHILD")
         props.extend = True
         props.direction = 'CHILD'
-
-        layout.separator()
 
 
 # Workaround to separate the tooltips
@@ -749,7 +747,7 @@ class VIEW3D_MT_select_particle(Menu):
 
         layout.separator()
 
-        layout.operator("particle.select_random", text="Random")
+        layout.operator("particle.select_random", text="Random", icon = "RANDOMIZE")
         layout.operator("particle.select_roots", text="Roots")
         layout.operator("particle.select_tips", text="Tips")
         
@@ -948,29 +946,27 @@ class VIEW3D_MT_select_edit_curve(Menu):
 
         layout.separator()
 
-        layout.operator("curve.select_random", text="Random")
+        layout.operator("curve.select_random", text="Random", icon = "RANDOMIZE")
         layout.operator("curve.select_nth", icon = "CHECKER_DESELECT")
 
         layout.separator()
 
-        layout.operator("curve.select_linked", text="Linked")
-        layout.operator("curve.select_linked_pick", text="Linked Pick Select").deselect = False
-        layout.operator("curve.select_linked_pick", text="Linked Pick Deselect").deselect = True
-        layout.operator("curve.select_similar", text="Similar")
+        layout.operator("curve.select_linked", text="Linked", icon = "LINKED")
+        layout.operator("curve.select_linked_pick", text="Linked Pick Select", icon = "LINKED").deselect = False
+        layout.operator("curve.select_linked_pick", text="Linked Pick Deselect", icon = "LINKED").deselect = True
+        layout.operator("curve.select_similar", text="Similar", icon = "SELECT_SIMILAR")
 
         layout.separator()
 
-        layout.operator("curve.de_select_first")
-        layout.operator("curve.de_select_last")
-        layout.operator("curve.select_next", text = "Next")
-        layout.operator("curve.select_previous", text = "Previous")
+        layout.operator("curve.de_select_first", icon = "SELECT_FIRST")
+        layout.operator("curve.de_select_last", icon = "SELECT_LAST")
+        layout.operator("curve.select_next", text = "Next", icon = "NEXTACTIVE")
+        layout.operator("curve.select_previous", text = "Previous", icon = "PREVIOUSACTIVE")
 
         layout.separator()
 
         layout.operator("curve.select_more", text = "More", icon = "SELECTMORE")
         layout.operator("curve.select_less", text = "Less", icon = "SELECTLESS")
-
-        layout.separator()
 
 
 class VIEW3D_MT_select_edit_surface(Menu):
@@ -991,26 +987,24 @@ class VIEW3D_MT_select_edit_surface(Menu):
 
         layout.separator()
 
-        layout.operator("curve.select_random", text="Random")
+        layout.operator("curve.select_random", text="Random", icon = "RANDOMIZE")
         layout.operator("curve.select_nth", icon = "CHECKER_DESELECT")
 
         layout.separator()
 
-        layout.operator("curve.select_linked", text="Linked")
-        layout.operator("curve.select_linked_pick", text="Linked Pick Select").deselect = False
-        layout.operator("curve.select_linked_pick", text="Linked Pick Deselect").deselect = True
-        layout.operator("curve.select_similar", text="Similar")
+        layout.operator("curve.select_linked", text="Linked", icon = "LINKED")
+        layout.operator("curve.select_linked_pick", text="Linked Pick Select", icon = "LINKED").deselect = False
+        layout.operator("curve.select_linked_pick", text="Linked Pick Deselect", icon = "LINKED").deselect = True
+        layout.operator("curve.select_similar", text="Similar", icon = "SELECT_SIMILAR")
 
         layout.separator()
 
-        layout.operator("curve.select_row")
+        layout.operator("curve.select_row", icon = "CONTROLPOINTROW")
 
         layout.separator()
 
         layout.operator("curve.select_more", text = "More", icon = "SELECTMORE")
         layout.operator("curve.select_less", text = "Less", icon = "SELECTLESS")
-
-        layout.separator()
 
 
 class VIEW3D_MT_select_edit_text(Menu):
@@ -1022,12 +1016,12 @@ class VIEW3D_MT_select_edit_text(Menu):
         layout = self.layout
 
         layout.operator("font.text_copy", text="Copy", icon = "COPYDOWN")
-        layout.operator("font.text_cut", text="Cut")
+        layout.operator("font.text_cut", text="Cut", icon = "CUT")
         layout.operator("font.text_paste", text="Paste", icon = "PASTEDOWN")
 
         layout.separator()
 
-        layout.operator("font.text_paste_from_file")
+        layout.operator("font.text_paste_from_file", icon = "PASTEFILE")
 
         layout.separator()
 
@@ -1062,11 +1056,11 @@ class VIEW3D_MT_select_edit_metaball(Menu):
 
         layout.separator()
 
-        layout.operator("mball.select_random_metaelems", text="Random")
+        layout.operator("mball.select_random_metaelems", text="Random", icon = "RANDOMIZE")
 
         layout.separator()
 
-        layout.operator_menu_enum("mball.select_similar", "type", text="Similar")
+        layout.operator_menu_enum("mball.select_similar", "type", text="Similar", icon = "SELECT_SIMILAR")
 
 
 # Workaround to separate the tooltips
@@ -1099,7 +1093,7 @@ class VIEW3D_MT_select_edit_lattice(Menu):
 
         layout.separator()
 
-        layout.operator("lattice.select_random", text="Random")
+        layout.operator("lattice.select_random", text="Random", icon = "RANDOMIZE")
         layout.operator("lattice.select_mirror", text ="Mirror")
 
         layout.separator()
@@ -1144,39 +1138,51 @@ class VIEW3D_MT_select_edit_armature(Menu):
 
         layout.separator()
 
-        layout.operator("armature.select_mirror", text="Mirror").extend = False
-        layout.operator("armature.select_linked", text="Connected")
+        layout.operator("armature.select_mirror", text="Mirror", icon = "TRANSFORM_MIRROR").extend = False
 
         layout.separator()
 
-        props = layout.operator("armature.select_hierarchy", text="Parent")
+        props = layout.operator("armature.select_hierarchy", text="Parent", icon = "PARENT")
         props.extend = False
         props.direction = 'PARENT'
 
-        props = layout.operator("armature.select_hierarchy", text="Child")
+        props = layout.operator("armature.select_hierarchy", text="Child", icon = "CHILD")
         props.extend = False
         props.direction = 'CHILD'
 
-        props = layout.operator("armature.select_hierarchy", text="Parent Extended")
+        props = layout.operator("armature.select_hierarchy", text="Parent Extended", icon = "PARENT")
         props.extend = True
         props.direction = 'PARENT'
 
-        props = layout.operator("armature.select_hierarchy", text="Child Extended")
+        props = layout.operator("armature.select_hierarchy", text="Child Extended", icon = "CHILD")
         props.extend = True
         props.direction = 'CHILD'
 
         layout.separator()
 
-        layout.operator("armature.select_linked", text = "Connected")
-        layout.operator_menu_enum("armature.select_similar", "type", text="Similar")
-        layout.operator("object.select_pattern", text="Pattern...")
+        layout.operator("armature.select_linked", text = "Connected", icon = "CONNECTED")   
+        layout.menu("VIEW3D_MT_select_edit_armature_similar")
+        layout.operator("object.select_pattern", text="By Pattern", icon = "PATTERN")
 
         layout.separator()
 
         layout.operator("armature.select_more", text="More", icon = "SELECTMORE")
         layout.operator("armature.select_less", text="Less", icon = "SELECTLESS")
 
-        layout.separator()
+class VIEW3D_MT_select_edit_armature_similar(Menu):
+    bl_label = "Similar"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("armature.select_similar", text="Children", icon = "CHILD").type = 'CHILDREN'
+        layout.operator("armature.select_similar", text="Immediate Children", icon = "CHILD").type = 'CHILDREN_IMMEDIATE'
+        layout.operator("armature.select_similar", text="Siblings", icon = "SIBLINGS").type = 'SIBLINGS'
+        layout.operator("armature.select_similar", text="Length", icon = "RULER").type = 'LENGTH'
+        layout.operator("armature.select_similar", text="Direction (Y Axis)", icon = "Y_ICON").type = 'DIRECTION'
+        layout.operator("armature.select_similar", text="Prefix", icon = "PREFIX").type = 'PREFIX'
+        layout.operator("armature.select_similar", text="Suffix", icon = "SUFFIX").type = 'SUFFIX'
+        layout.operator("armature.select_similar", text="Layer", icon = "LAYER").type = 'LAYER'
 
 class VIEW3D_MT_select_gpencil(Menu):
     bl_label = "Select"
@@ -1199,8 +1205,8 @@ class VIEW3D_MT_select_gpencil(Menu):
 
         layout.separator()
 
-        layout.operator("gpencil.select_first")
-        layout.operator("gpencil.select_last")
+        layout.operator("gpencil.select_first", icon = "SELECT_FIRST")
+        layout.operator("gpencil.select_last", icon = "SELECT_LAST")
 
         layout.separator()
 
@@ -1305,9 +1311,9 @@ class VIEW3D_MT_angle_control(Menu):
         if brush.brush_capabilities.has_random_texture_angle and tex_slot.has_random_texture_angle:
             if sculpt:
                 if brush.sculpt_capabilities.has_random_texture_angle:
-                    layout.prop(tex_slot, "use_random", text="Random")
+                    layout.prop(tex_slot, "use_random", text="Random", icon = "RANDOMIZE")
             else:
-                layout.prop(tex_slot, "use_random", text="Random")
+                layout.prop(tex_slot, "use_random", text="Random", icon = "RANDOMIZE")
 
 # ********** Add menu **********
 
@@ -1717,6 +1723,12 @@ class VIEW3D_MT_object(Menu):
 
         layout.separator()
 
+        layout.operator("object.data_transfer", icon ='TRANSFER_DATA')
+        layout.operator("object.datalayout_transfer", icon ='TRANSFER_DATA_LAYOUT')
+        layout.operator("object.join_uvs", icon ='TRANSFER_UV')
+
+        layout.separator()
+
         layout.menu("VIEW3D_MT_object_showhide")
 
         layout.operator_menu_enum("object.convert", "target")
@@ -1962,8 +1974,8 @@ class VIEW3D_MT_object_constraints(Menu):
         layout = self.layout
 
         layout.operator("object.constraint_add_with_targets", icon = "CONSTRAINT_DATA")
-        layout.operator("object.constraints_copy", icon = "CONSTRAINT_DATA")
-        layout.operator("object.constraints_clear", icon = "CONSTRAINT_DATA")
+        layout.operator("object.constraints_copy", icon = "COPYDOWN")
+        layout.operator("object.constraints_clear", icon = "CLEAR_CONSTRAINT")
 
 
 class VIEW3D_MT_object_quick_effects(Menu):
@@ -2113,17 +2125,17 @@ class VIEW3D_MT_paint_vertex(Menu):
 
         layout.separator()
 
-        layout.operator("paint.vertex_color_set")
-        layout.operator("paint.vertex_color_smooth")
-        layout.operator("paint.vertex_color_dirt")
+        layout.operator("paint.vertex_color_set", icon = "COLOR")
+        layout.operator("paint.vertex_color_smooth", icon = "SMOOTH")
+        layout.operator("paint.vertex_color_dirt", icon = "DIRTY_VERTEX")
         layout.operator("paint.vertex_color_from_weight")
 
         layout.separator()
 
-        layout.operator("paint.vertex_color_invert", text="Invert")
-        layout.operator("paint.vertex_color_levels", text="Levels")
-        layout.operator("paint.vertex_color_hsv", text="Hue Saturation Value")
-        layout.operator("paint.vertex_color_brightness_contrast", text="Bright/Contrast")
+        layout.operator("paint.vertex_color_invert", text="Invert", icon = "REVERSE_COLORS")
+        layout.operator("paint.vertex_color_levels", text="Levels", icon = "LEVELS")
+        layout.operator("paint.vertex_color_hsv", text="Hue Saturation Value", icon = "HUESATVAL")
+        layout.operator("paint.vertex_color_brightness_contrast", text="Bright/Contrast", icon = "BRIGHTNESS_CONTRAST")
 
 
 class VIEW3D_MT_hook(Menu):
@@ -2153,7 +2165,7 @@ class VIEW3D_MT_vertex_group(Menu):
         layout = self.layout
 
         layout.operator_context = 'EXEC_AREA'
-        layout.operator("object.vertex_group_assign_new")
+        layout.operator("object.vertex_group_assign_new", icon = "NEW_GROUP")
 
         ob = context.active_object
         if ob.mode == 'EDIT' or (ob.mode == 'WEIGHT_PAINT' and ob.type == 'MESH' and ob.data.use_paint_mask_vertex):
@@ -2218,37 +2230,37 @@ class VIEW3D_MT_hide_mask(Menu):
     def draw(self, context):
         layout = self.layout
 
-        props = layout.operator("paint.hide_show", text="Show All")
+        props = layout.operator("paint.hide_show", text="Show All", icon = "RESTRICT_VIEW_OFF")
         props.action = 'SHOW'
         props.area = 'ALL'
 
-        props = layout.operator("paint.hide_show", text="Hide Bounding Box")
+        props = layout.operator("paint.hide_show", text="Hide Bounding Box", icon = "RESTRICT_VIEW_ON")
         props.action = 'HIDE'
         props.area = 'INSIDE'
 
-        props = layout.operator("paint.hide_show", text="Show Bounding Box")
+        props = layout.operator("paint.hide_show", text="Show Bounding Box", icon = "RESTRICT_VIEW_OFF")
         props.action = 'SHOW'
         props.area = 'INSIDE'
 
-        props = layout.operator("paint.hide_show", text="Hide Masked")
+        props = layout.operator("paint.hide_show", text="Hide Masked", icon = "RESTRICT_VIEW_ON")
         props.area = 'MASKED'
         props.action = 'HIDE'
 
         layout.separator()
 
-        props = layout.operator("paint.mask_flood_fill", text="Invert Mask")
+        props = layout.operator("paint.mask_flood_fill", text="Invert Mask", icon = "INVERT_MASK")
         props.mode = 'INVERT'
 
-        props = layout.operator("paint.mask_flood_fill", text="Fill Mask")
+        props = layout.operator("paint.mask_flood_fill", text="Fill Mask", icon = "FILL_MASK")
         props.mode = 'VALUE'
         props.value = 1
 
-        props = layout.operator("paint.mask_flood_fill", text="Clear Mask")
+        props = layout.operator("paint.mask_flood_fill", text="Clear Mask", icon = "CLEAR_MASK")
         props.mode = 'VALUE'
         props.value = 0
 
-        props = layout.operator("view3d.select_border", text="Box Mask")
-        props = layout.operator("paint.mask_lasso_gesture", text="Lasso Mask")
+        props = layout.operator("view3d.select_border", text="Box Mask", icon = "BOX_MASK")
+        props = layout.operator("paint.mask_lasso_gesture", text="Lasso Mask", icon = "LASSO_MASK")
 
 
 # ********** Particle menu **********
@@ -2383,9 +2395,9 @@ class VIEW3D_MT_pose(Menu):
 
         layout.separator()
 
-        layout.operator("pose.copy")
-        layout.operator("pose.paste").flipped = False
-        layout.operator("pose.paste", text="Paste X-Flipped Pose").flipped = True
+        layout.operator("pose.copy", icon = "COPYDOWN")
+        layout.operator("pose.paste", icon = "PASTEDOWN").flipped = False
+        layout.operator("pose.paste", text="Paste X-Flipped Pose", icon = "PASTEDOWN").flipped = True
 
         layout.separator()
 
@@ -2400,19 +2412,18 @@ class VIEW3D_MT_pose(Menu):
         layout.separator()
 
         layout.operator_context = 'EXEC_AREA'
-        layout.operator("pose.autoside_names", text="AutoName Left/Right").axis = 'XAXIS'
-        layout.operator("pose.autoside_names", text="AutoName Front/Back").axis = 'YAXIS'
-        layout.operator("pose.autoside_names", text="AutoName Top/Bottom").axis = 'ZAXIS'
+        layout.operator("pose.autoside_names", text="AutoName Left/Right", icon = "STRING").axis = 'XAXIS'
+        layout.operator("pose.autoside_names", text="AutoName Front/Back", icon = "STRING").axis = 'YAXIS'
+        layout.operator("pose.autoside_names", text="AutoName Top/Bottom", icon = "STRING").axis = 'ZAXIS'
 
-        layout.operator("pose.flip_names")
-
-        layout.operator("pose.quaternions_flip")
+        layout.operator("pose.flip_names", icon = "FLIP")
+        layout.operator("pose.quaternions_flip", icon = "FLIP")
 
         layout.separator()
 
         layout.operator_context = 'INVOKE_AREA'
-        layout.operator("armature.armature_layers", text="Change Armature Layers...")
-        layout.operator("pose.bone_layers", text="Change Bone Layers...")
+        layout.operator("armature.armature_layers", text="Change Armature Layers", icon = "LAYER")
+        layout.operator("pose.bone_layers", text="Change Bone Layers", icon = "LAYER")
 
         layout.separator()
 
@@ -2426,17 +2437,17 @@ class VIEW3D_MT_pose_transform(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("pose.transforms_clear", text="All")
+        layout.operator("pose.transforms_clear", text="All", icon = "CLEAR")
 
         layout.separator()
 
-        layout.operator("pose.loc_clear", text="Location")
-        layout.operator("pose.rot_clear", text="Rotation")
-        layout.operator("pose.scale_clear", text="Scale")
+        layout.operator("pose.loc_clear", text="Location", icon = "CLEARMOVE")
+        layout.operator("pose.rot_clear", text="Rotation", icon = "CLEARROTATE")
+        layout.operator("pose.scale_clear", text="Scale", icon = "CLEARSCALE")
 
         layout.separator()
 
-        layout.operator("pose.user_transforms_clear", text="Reset Unkeyed")
+        layout.operator("pose.user_transforms_clear", text="Reset Unkeyed", icon = "RESET")
 
 
 class VIEW3D_MT_pose_slide(Menu):
@@ -2478,13 +2489,13 @@ class VIEW3D_MT_pose_library(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("poselib.browse_interactive", text="Browse Poses...")
+        layout.operator("poselib.browse_interactive", text="Browse Poses", icon = "FILESEL")
 
         layout.separator()
 
-        layout.operator("poselib.pose_add", text="Add Pose...")
-        layout.operator("poselib.pose_rename", text="Rename Pose...")
-        layout.operator("poselib.pose_remove", text="Remove Pose...")
+        layout.operator("poselib.pose_add", text="Add Pose", icon = "LIBRARY")
+        layout.operator("poselib.pose_rename", text="Rename Pose", icon = "STRING")
+        layout.operator("poselib.pose_remove", text="Remove Pose", icon = "DELETE")
 
 
 class VIEW3D_MT_pose_motion(Menu):
@@ -2506,16 +2517,16 @@ class VIEW3D_MT_pose_group(Menu):
         pose = context.active_object.pose
 
         layout.operator_context = 'EXEC_AREA'
-        layout.operator("pose.group_assign", text="Assign to New Group").type = 0
+        layout.operator("pose.group_assign", text="Assign to New Group", icon = "NEW_GROUP").type = 0
         if pose.bone_groups:
             active_group = pose.bone_groups.active_index + 1
-            layout.operator("pose.group_assign", text="Assign to Group").type = active_group
+            layout.operator("pose.group_assign", text="Assign to Group", icon = "ADD_TO_ACTIVE").type = active_group
 
             layout.separator()
 
             # layout.operator_context = 'INVOKE_AREA'
-            layout.operator("pose.group_unassign")
-            layout.operator("pose.group_remove")
+            layout.operator("pose.group_unassign", icon = "REMOVE_SELECTED_FROM_ACTIVE_GROUP")
+            layout.operator("pose.group_remove", icon = "REMOVE_FROM_ALL_GROUPS")
 
 
 class VIEW3D_MT_pose_ik(Menu):
@@ -2524,8 +2535,8 @@ class VIEW3D_MT_pose_ik(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("pose.ik_add")
-        layout.operator("pose.ik_clear")
+        layout.operator("pose.ik_add", icon= "ADD_IK")
+        layout.operator("pose.ik_clear", icon = "CLEAR_IK")
 
 
 class VIEW3D_MT_pose_constraints(Menu):
@@ -2534,9 +2545,9 @@ class VIEW3D_MT_pose_constraints(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("pose.constraint_add_with_targets", text="Add (With Targets)...")
-        layout.operator("pose.constraints_copy")
-        layout.operator("pose.constraints_clear")
+        layout.operator("pose.constraint_add_with_targets", text="Add (With Targets)...", icon = "CONSTRAINT_DATA")
+        layout.operator("pose.constraints_copy", icon = "COPYDOWN")
+        layout.operator("pose.constraints_clear", icon = "CLEAR_CONSTRAINT")
 
 
 class VIEW3D_MT_pose_apply(Menu):
@@ -2545,8 +2556,8 @@ class VIEW3D_MT_pose_apply(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("pose.armature_apply")
-        layout.operator("pose.visual_transform_apply")
+        layout.operator("pose.armature_apply", icon = "MOD_ARMATURE")
+        layout.operator("pose.visual_transform_apply", icon = "APPLYMOVE")
 
 
 class VIEW3D_MT_pose_specials(Menu):
@@ -3011,22 +3022,22 @@ def draw_curve(self, context):
     toolsettings = context.tool_settings
 
     layout.menu("VIEW3D_MT_transform")
-    layout.operator("object.vertex_group_mirror")
+    layout.operator("object.vertex_group_mirror", icon = "MIRROR_VERTEXGROUP")
 
     layout.separator()
 
     layout.operator("curve.duplicate_move", icon = "DUPLICATE")
-    layout.operator("curve.split")
-    layout.operator("curve.separate")
-    layout.operator("curve.make_segment")
+    layout.operator("curve.split", icon = "SPLIT")
+    layout.operator("curve.separate", icon = "SEPARATE")
+    layout.operator("curve.make_segment", icon = "MAKE_CURVESEGMENT")
     layout.operator("curve.delete", text="Delete...", icon = "DELETE")
 
     layout.separator()
 
-    layout.operator("curve.smooth_tilt")
-    layout.operator("curve.smooth_radius")
-    layout.operator("curve.smooth_weight")
-    layout.operator("curve.spline_weight_set")
+    layout.operator("curve.smooth_tilt", icon = "SMOOTH_TILT")
+    layout.operator("curve.smooth_radius", icon = "SMOOTH_RADIUS")
+    layout.operator("curve.smooth_weight", icon = "SMOOTH_WEIGHT")
+    layout.operator("curve.spline_weight_set", icon = "WEIGHT_TRANSFER_WEIGHTS")
     
     layout.separator()
 
@@ -3057,8 +3068,8 @@ class VIEW3D_MT_edit_curve_ctrlpoints(Menu):
         edit_object = context.edit_object
 
         if edit_object.type == 'CURVE':
-            layout.operator("transform.tilt")
-            layout.operator("curve.tilt_clear")
+            layout.operator("transform.tilt", icon = "TILT")
+            layout.operator("curve.tilt_clear",icon = "CLEAR_TILT")
 
             layout.separator()
 
@@ -3110,7 +3121,7 @@ class VIEW3D_MT_edit_font(Menu):
 
         layout.separator()
 
-        layout.operator("font.delete").type = 'NEXT_OR_SELECTION'
+        layout.operator("font.delete", icon = "DELETE").type = 'NEXT_OR_SELECTION'
 
 
 class VIEW3D_MT_edit_text_chars(Menu):
@@ -3119,32 +3130,32 @@ class VIEW3D_MT_edit_text_chars(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("font.text_insert", text="Copyright").text = "\u00A9"
-        layout.operator("font.text_insert", text="Registered Trademark").text = "\u00AE"
+        layout.operator("font.text_insert", text="Copyright", icon = "COPYRIGHT").text = "\u00A9"
+        layout.operator("font.text_insert", text="Registered Trademark", icon = "TRADEMARK").text = "\u00AE"
 
         layout.separator()
 
-        layout.operator("font.text_insert", text="Degree Sign").text = "\u00B0"
-        layout.operator("font.text_insert", text="Multiplication Sign").text = "\u00D7"
-        layout.operator("font.text_insert", text="Circle").text = "\u008A"
-        layout.operator("font.text_insert", text="Superscript 1").text = "\u00B9"
-        layout.operator("font.text_insert", text="Superscript 2").text = "\u00B2"
-        layout.operator("font.text_insert", text="Superscript 3").text = "\u00B3"
-        layout.operator("font.text_insert", text="Double >>").text = "\u00BB"
-        layout.operator("font.text_insert", text="Double <<").text = "\u00AB"
-        layout.operator("font.text_insert", text="Promillage").text = "\u2030"
+        layout.operator("font.text_insert", text="Degree Sign", icon = "DEGREE").text = "\u00B0"
+        layout.operator("font.text_insert", text="Multiplication Sign", icon = "MULTIPLICATION").text = "\u00D7"
+        layout.operator("font.text_insert", text="Circle", icon = "CIRCLE").text = "\u008A"
+        layout.operator("font.text_insert", text="Superscript 1", icon = "SUPER_ONE").text = "\u00B9"
+        layout.operator("font.text_insert", text="Superscript 2", icon = "SUPER_TWO").text = "\u00B2"
+        layout.operator("font.text_insert", text="Superscript 3", icon = "SUPER_THREE").text = "\u00B3"
+        layout.operator("font.text_insert", text="Double >>", icon = "DOUBLE_RIGHT").text = "\u00BB"
+        layout.operator("font.text_insert", text="Double <<", icon = "DOUBLE_LEFT").text = "\u00AB"
+        layout.operator("font.text_insert", text="Promillage", icon = "PROMILLE").text = "\u2030"
 
         layout.separator()
 
-        layout.operator("font.text_insert", text="Dutch Florin").text = "\u00A4"
-        layout.operator("font.text_insert", text="British Pound").text = "\u00A3"
-        layout.operator("font.text_insert", text="Japanese Yen").text = "\u00A5"
+        layout.operator("font.text_insert", text="Dutch Florin", icon = "DUTCH_FLORIN").text = "\u00A4"
+        layout.operator("font.text_insert", text="British Pound", icon = "POUND").text = "\u00A3"
+        layout.operator("font.text_insert", text="Japanese Yen", icon = "YEN").text = "\u00A5"
 
         layout.separator()
 
-        layout.operator("font.text_insert", text="German S").text = "\u00DF"
-        layout.operator("font.text_insert", text="Spanish Question Mark").text = "\u00BF"
-        layout.operator("font.text_insert", text="Spanish Exclamation Mark").text = "\u00A1"
+        layout.operator("font.text_insert", text="German S", icon = "GERMAN_S").text = "\u00DF"
+        layout.operator("font.text_insert", text="Spanish Question Mark", icon = "SPANISH_QUESTION").text = "\u00BF"
+        layout.operator("font.text_insert", text="Spanish Exclamation Mark", icon = "SPANISH_EXCLAMATION").text = "\u00A1"
 
 
 class VIEW3D_MT_edit_meta(Menu):
@@ -3156,7 +3167,7 @@ class VIEW3D_MT_edit_meta(Menu):
         toolsettings = context.tool_settings
 
         layout.menu("VIEW3D_MT_transform")
-        layout.operator("object.vertex_group_mirror")
+        layout.operator("object.vertex_group_mirror", icon = "MIRROR_VERTEXGROUP")
 
         layout.separator()
 
@@ -3188,7 +3199,7 @@ class VIEW3D_MT_edit_meta_showhide(Menu):
 
         layout.operator("mball.reveal_metaelems", text="Show Hidden", icon = "RESTRICT_VIEW_OFF")
         layout.operator("mball.hide_metaelems", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
-        layout.operator("mball.hide_metaelems_unselected", text="Hide Unselected")
+        layout.operator("mball.hide_metaelems_unselected", text="Hide Unselected", icon = "HIDE_UNSELECTED") 
 
 
 class VIEW3D_MT_edit_lattice(Menu):
@@ -3200,7 +3211,7 @@ class VIEW3D_MT_edit_lattice(Menu):
         toolsettings = context.tool_settings
 
         layout.menu("VIEW3D_MT_transform")
-        layout.operator("object.vertex_group_mirror")
+        layout.operator("object.vertex_group_mirror", icon = "MIRROR_VERTEXGROUP")
         layout.operator_menu_enum("lattice.flip", "axis")
 
 
@@ -3237,13 +3248,13 @@ class VIEW3D_MT_edit_armature(Menu):
         arm = edit_object.data
 
         layout.menu("VIEW3D_MT_transform_armature")
-        layout.operator("object.vertex_group_mirror")
+        layout.operator("object.vertex_group_mirror", icon = "MIRROR_VERTEXGROUP")
         layout.menu("VIEW3D_MT_edit_armature_roll")
 
         layout.separator()
 
         if arm.use_mirror_x:
-            layout.operator("armature.extrude_forked")
+            layout.operator("armature.extrude_forked" , icon = "EXTRUDE_REGION")
 
         layout.operator("armature.duplicate_move", icon = "DUPLICATE")
         layout.operator("armature.delete", icon = "DELETE")
@@ -3251,17 +3262,17 @@ class VIEW3D_MT_edit_armature(Menu):
         layout.separator()
 
         layout.operator_context = 'EXEC_AREA'
-        layout.operator("armature.symmetrize")
-        layout.operator("armature.autoside_names", text="AutoName Left/Right").type = 'XAXIS'
-        layout.operator("armature.autoside_names", text="AutoName Front/Back").type = 'YAXIS'
-        layout.operator("armature.autoside_names", text="AutoName Top/Bottom").type = 'ZAXIS'
-        layout.operator("armature.flip_names")
+        layout.operator("armature.symmetrize", icon = "SYMMETRIZE")
+        layout.operator("armature.autoside_names", text="AutoName Left/Right", icon = "STRING").type = 'XAXIS'
+        layout.operator("armature.autoside_names", text="AutoName Front/Back", icon = "STRING").type = 'YAXIS'
+        layout.operator("armature.autoside_names", text="AutoName Top/Bottom", icon = "STRING").type = 'ZAXIS'
+        layout.operator("armature.flip_names", icon = "FLIP")
 
         layout.separator()
 
         layout.operator_context = 'INVOKE_DEFAULT'
-        layout.operator("armature.armature_layers")
-        layout.operator("armature.bone_layers")
+        layout.operator("armature.armature_layers", icon = "LAYER")
+        layout.operator("armature.bone_layers", icon = "LAYER")
 
         layout.separator()
 
@@ -3296,13 +3307,34 @@ class VIEW3D_MT_edit_armature_roll(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator_menu_enum("armature.calculate_roll", "type")
+        layout.menu("VIEW3D_MT_edit_recalc_roll")
 
         layout.separator()
 
-        layout.operator("transform.transform", text="Set Roll").mode = 'BONE_ROLL'
-        layout.operator("armature.roll_clear")
+        layout.operator("transform.transform", text="Set Roll", icon = "SET_ROLL").mode = 'BONE_ROLL'
+        layout.operator("armature.roll_clear", icon = "CLEAR_ROLL")
 
+class VIEW3D_MT_edit_recalc_roll(Menu):
+    bl_label = "Recalculate Roll"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.label(text="- Positive: -")
+        layout.operator("armature.calculate_roll", text= "Local + X Tangent", icon = "ROLL_X_TANG_POS").type = 'POS_X'
+        layout.operator("armature.calculate_roll", text= "Local + Z Tangent", icon = "ROLL_Z_TANG_POS").type = 'POS_Z'
+        layout.operator("armature.calculate_roll", text= "Global + X Axis", icon = "ROLL_X_POS").type = 'GLOBAL_POS_X'
+        layout.operator("armature.calculate_roll", text= "Global + Y Axis", icon = "ROLL_Y_POS").type = 'GLOBAL_POS_Y'
+        layout.operator("armature.calculate_roll", text= "Global + Z Axis", icon = "ROLL_Z_POS").type = 'GLOBAL_POS_Z'
+        layout.label(text="- Negative: -")
+        layout.operator("armature.calculate_roll", text= "Local - X Tangent", icon = "ROLL_X_TANG_NEG").type = 'NEG_X'
+        layout.operator("armature.calculate_roll", text= "Local - Z Tangent", icon = "ROLL_Z_TANG_NEG").type = 'NEG_Z'
+        layout.operator("armature.calculate_roll", text= "Global - X Axis", icon = "ROLL_X_NEG").type = 'GLOBAL_NEG_X'
+        layout.operator("armature.calculate_roll", text= "Global - Y Axis", icon = "ROLL_Y_NEG").type = 'GLOBAL_NEG_Y'
+        layout.operator("armature.calculate_roll", text= "Global - Z Axis", icon = "ROLL_Z_NEG").type = 'GLOBAL_NEG_Z'
+        layout.label(text="- Other: -")
+        layout.operator("armature.calculate_roll", text= "Active Bone", icon = "BONE_DATA").type = 'ACTIVE'
+        layout.operator("armature.calculate_roll", text= "View Axis", icon = "MANIPUL").type = 'VIEW'
+        layout.operator("armature.calculate_roll", text= "Cursor", icon = "CURSOR").type = 'CURSOR'
 
 class VIEW3D_MT_edit_armature_delete(Menu):
     bl_label = "Delete"
@@ -4155,6 +4187,7 @@ classes = (
     VIEW3D_MT_select_edit_lattice,
     VIEW3D_MT_select_edit_armature_inverse,
     VIEW3D_MT_select_edit_armature,
+    VIEW3D_MT_select_edit_armature_similar,
     VIEW3D_MT_select_gpencil,
     VIEW3D_MT_select_paint_mask_inverse,
     VIEW3D_MT_select_paint_mask,
@@ -4241,6 +4274,7 @@ classes = (
     VIEW3D_MT_edit_armature,
     VIEW3D_MT_armature_specials,
     VIEW3D_MT_edit_armature_roll,
+    VIEW3D_MT_edit_recalc_roll,
     VIEW3D_MT_edit_armature_delete,
     VIEW3D_MT_edit_gpencil_transform,
     VIEW3D_MT_edit_gpencil_interpolate,
