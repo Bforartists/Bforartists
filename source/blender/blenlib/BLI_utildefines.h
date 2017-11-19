@@ -609,6 +609,9 @@ extern bool BLI_memory_is_zero(const void *arr, const size_t arr_size);
 /* BLI_assert(), default only to print
  * for aborting need to define WITH_ASSERT_ABORT
  */
+/* For 'abort' only. */
+#include <stdlib.h>
+
 #ifndef NDEBUG
 #  include "BLI_system.h"
 #  ifdef WITH_ASSERT_ABORT
@@ -650,6 +653,9 @@ extern bool BLI_memory_is_zero(const void *arr, const size_t arr_size);
    /* TODO msvc, clang */
 #  define BLI_STATIC_ASSERT(a, msg)
 #endif
+
+#define BLI_STATIC_ASSERT_ALIGN(st, align) \
+  BLI_STATIC_ASSERT((sizeof(st) % (align) == 0), "Structure must be strictly aligned")
 
 /* hints for branch prediction, only use in code that runs a _lot_ where */
 #ifdef __GNUC__
