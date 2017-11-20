@@ -108,40 +108,40 @@ class IMAGE_MT_view(Menu):
 
         layout.separator()
 
-        layout.operator("image.view_zoom_in")
-        layout.operator("image.view_zoom_out")
+        layout.operator("image.view_zoom_in", icon = "ZOOM_IN")
+        layout.operator("image.view_zoom_out", icon = "ZOOM_OUT")
 
         layout.separator()
 
         ratios = ((1, 8), (1, 4), (1, 2), (1, 1), (2, 1), (4, 1), (8, 1))
 
         for a, b in ratios:
-            layout.operator("image.view_zoom_ratio", text=iface_("Zoom %d:%d") % (a, b), translate=False).ratio = a / b
+            layout.operator("image.view_zoom_ratio", text=iface_("Zoom %d:%d") % (a, b), translate=False, icon = "ZOOM_SET").ratio = a / b
 
         layout.separator()
 
         if show_uvedit:
-            layout.operator("image.view_selected")
+            layout.operator("image.view_selected", icon = "VIEW_SELECTED")
 
-        layout.operator("image.view_all")
-        layout.operator("image.view_all_fit", text="View Fit")
+        layout.operator("image.view_all", icon = "VIEWALL" )
+        layout.operator("image.view_all_fit", text="View Fit", icon = "VIEW_FIT")
 
         layout.separator()
 
         if show_render:
-            layout.operator("image.render_border")
-            layout.operator("image.clear_render_border")
+            layout.operator("image.render_border", icon = "RENDERBORDER")
+            layout.operator("image.clear_render_border", icon = "RENDERBORDER_CLEAR")
 
             layout.separator()
 
-            layout.operator("image.cycle_render_slot", text="Render Slot Cycle Next")
-            layout.operator("image.cycle_render_slot", text="Render Slot Cycle Previous").reverse = True
+            layout.operator("image.cycle_render_slot", text="Render Slot Cycle Next", icon = "FRAME_NEXT")
+            layout.operator("image.cycle_render_slot", text="Render Slot Cycle Previous", icon = "FRAME_PREV").reverse = True
 
             layout.separator()
 
-        layout.operator("screen.area_dupli")
-        layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area") # bfa - the separated tooltip. Class is in space_text.py
-        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area").use_hide_panels = True
+        layout.operator("screen.area_dupli", icon = "NEW_WINDOW")
+        layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area", icon = "MAXIMIZE_AREA") # bfa - the separated tooltip. Class is in space_text.py
+        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area", icon = "FULLSCREEN_AREA").use_hide_panels = True
 
 
 # Workaround to separate the tooltips
