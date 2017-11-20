@@ -245,23 +245,23 @@ class IMAGE_MT_image(Menu):
 
         show_render = sima.show_render
 
-        layout.operator("image.read_renderlayers")
+        layout.operator("image.read_renderlayers", icon = "RENDERLAYERS")
 
-        layout.operator("image.save_dirty", text="Save All Images")
+        layout.operator("image.save_dirty", text="Save All Images", icon = "SAVE_ALL")
 
         if ima:
             if not show_render:
-                layout.operator("image.replace")
-                layout.operator("image.reload")
+                layout.operator("image.replace", icon='FILE_FOLDER')
+                layout.operator("image.reload", icon = "FILE_REFRESH")
 
             layout.operator("image.save", icon='FILE_TICK')
             layout.operator("image.save_as", icon='SAVE_AS')
             layout.operator("image.save_as", text="Save a Copy", icon='SAVE_COPY').copy = True
 
             if ima.source == 'SEQUENCE':
-                layout.operator("image.save_sequence")
+                layout.operator("image.save_sequence", icon='SAVE_All')
 
-            layout.operator("image.external_edit", "Edit Externally")
+            layout.operator("image.external_edit", "Edit Externally", icon = "EDIT_EXTERNAL")
 
             layout.separator()
 
@@ -270,7 +270,7 @@ class IMAGE_MT_image(Menu):
             if not show_render:
                 if not ima.packed_file:
                     layout.separator()
-                    layout.operator("image.pack")
+                    layout.operator("image.pack", icon = "PACKAGE")
 
                 # only for dirty && specific image types, perhaps
                 # this could be done in operator poll too
@@ -278,7 +278,7 @@ class IMAGE_MT_image(Menu):
                     if ima.source in {'FILE', 'GENERATED'} and ima.type != 'OPEN_EXR_MULTILAYER':
                         if ima.packed_file:
                             layout.separator()
-                        layout.operator("image.pack", text="Pack As PNG").as_png = True
+                        layout.operator("image.pack", text="Pack As PNG", icon = "PACKAGE").as_png = True
 
 
 class IMAGE_MT_image_invert(Menu):
@@ -287,17 +287,17 @@ class IMAGE_MT_image_invert(Menu):
     def draw(self, context):
         layout = self.layout
 
-        props = layout.operator("image.invert", text="Invert Image Colors")
+        props = layout.operator("image.invert", text="Invert Image Colors", icon = "REVERSE_COLORS")
         props.invert_r = True
         props.invert_g = True
         props.invert_b = True
 
         layout.separator()
 
-        layout.operator("image.invert", text="Invert Red Channel").invert_r = True
-        layout.operator("image.invert", text="Invert Green Channel").invert_g = True
-        layout.operator("image.invert", text="Invert Blue Channel").invert_b = True
-        layout.operator("image.invert", text="Invert Alpha Channel").invert_a = True
+        layout.operator("image.invert", text="Invert Red Channel", icon = "REVERSE_RED").invert_r = True
+        layout.operator("image.invert", text="Invert Green Channel", icon = "REVERSE_GREEN").invert_g = True
+        layout.operator("image.invert", text="Invert Blue Channel", icon = "REVERSE_BLUE").invert_b = True
+        layout.operator("image.invert", text="Invert Alpha Channel", icon = "IMAGE_ALPHA").invert_a = True
 
 
 class IMAGE_MT_uvs_showhide(Menu):
