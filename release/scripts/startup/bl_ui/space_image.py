@@ -747,7 +747,7 @@ class IMAGE_PT_tools_uvs(Panel, UVToolsPanel):
         col = layout.column(align=True)
         row = col.row(align=True)
         row.operator("uv.weld", icon='WELD')
-        row.operator("uv.stitch")
+        row.operator("uv.stitch", icon = "STITCH")
         col.operator("uv.remove_doubles", icon='REMOVE_DOUBLES')
         col.operator("uv.average_islands_scale", icon ="AVERAGEISLANDSCALE")
         col.operator("uv.pack_islands", icon ="PACKISLAND")
