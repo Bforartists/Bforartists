@@ -306,9 +306,9 @@ class IMAGE_MT_uvs_showhide(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("uv.reveal")
-        layout.operator("uv.hide", text="Hide Selected").unselected = False
-        layout.operator("uv.hide", text="Hide Unselected").unselected = True
+        layout.operator("uv.reveal", icon = "RESTRICT_VIEW_OFF")
+        layout.operator("uv.hide", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
+        layout.operator("uv.hide", text="Hide Unselected", icon = "HIDE_UNSELECTED").unselected = True
 
 
 class IMAGE_MT_uvs_snap(Panel, UVToolsPanel):
