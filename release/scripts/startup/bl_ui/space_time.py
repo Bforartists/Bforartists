@@ -324,8 +324,8 @@ def marker_menu_generic(layout):
     # layout.operator_context = 'EXEC_REGION_WIN'
 
     layout.column()
-    layout.operator("marker.add", "Add Marker")
-    layout.operator("marker.duplicate", text="Duplicate Marker")
+    layout.operator("marker.add", "Add Marker", icon = "MARKER")
+    layout.operator("marker.duplicate", text="Duplicate Marker", icon = "DUPLICATE")
 
     if len(bpy.data.scenes) > 10:
         layout.operator_context = 'INVOKE_DEFAULT'
@@ -333,17 +333,17 @@ def marker_menu_generic(layout):
     else:
         layout.operator_menu_enum("marker.make_links_scene", "scene", text="Duplicate Marker to Scene")
 
-    layout.operator("marker.delete", text="Delete Marker")
+    layout.operator("marker.delete", text="Delete Marker", icon = "DELETE")
 
     layout.separator()
 
-    layout.operator("marker.rename", text="Rename Marker")
-    layout.operator("marker.move", text="Grab/Move Marker")
+    layout.operator("marker.rename", text="Rename Marker", icon = "STRING")
+    layout.operator("marker.move", text="Grab/Move Marker", icon = "TRANSFORM_MOVE")
 
     layout.separator()
 
-    layout.operator("screen.marker_jump", text="Jump to Next Marker").next = True
-    layout.operator("screen.marker_jump_previous", text="Jump to Previous Marker") # bfa - the separated tooltip
+    layout.operator("screen.marker_jump", text="Jump to Next Marker", icon = "NEXT_KEYFRAME").next = True
+    layout.operator("screen.marker_jump_previous", text="Jump to Previous Marker", icon = "PREV_KEYFRAME") # bfa - the separated tooltip
 
     layout.separator()
     ts = bpy.context.tool_settings
