@@ -215,18 +215,18 @@ class TIME_MT_view(Menu):
 
         layout.separator()
 
-        layout.operator("time.view_all")
-        layout.operator("time.view_frame")
+        layout.operator("time.view_all", icon = "VIEWALL")
+        layout.operator("time.view_frame", icon = "VIEW_SELECTED" )
 
         layout.separator()
 
-        layout.operator("marker.camera_bind")
+        layout.operator("marker.camera_bind", icon = "MARKER_BIND")
 
         layout.separator()
 
-        layout.operator("screen.area_dupli")
-        layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area") # bfa - the separated tooltip. Class is in space_text.py
-        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area").use_hide_panels = True
+        layout.operator("screen.area_dupli", icon = "NEW_WINDOW")
+        layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area", icon = "MAXIMIZE_AREA") # bfa - the separated tooltip. Class is in space_text.py
+        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area", icon = "FULLSCREEN_AREA").use_hide_panels = True
 
 
 class TIME_MT_cache(Menu):
