@@ -216,7 +216,7 @@ class TIME_MT_view(Menu):
         layout.separator()
 
         layout.operator("time.view_all", icon = "VIEWALL")
-        layout.operator("time.view_frame", icon = "VIEW_SELECTED" )
+        layout.operator("time.view_frame", icon = "VIEW_FRAME" )
 
         layout.separator()
 
