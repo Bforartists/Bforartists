@@ -243,11 +243,11 @@ class GRAPH_MT_channel(Menu):
 
         layout.operator_context = 'INVOKE_REGION_CHANNELS'
 
-        layout.operator("anim.channels_delete")
+        layout.operator("anim.channels_delete", icon = "DELETE")
 
         layout.separator()
-        layout.operator("anim.channels_group")
-        layout.operator("anim.channels_ungroup")
+        layout.operator("anim.channels_group", icon = "NEW_GROUP")
+        layout.operator("anim.channels_ungroup", icon = "REMOVE_FROM_ALL_GROUPS")
 
         layout.separator()
         layout.operator_menu_enum("anim.channels_setting_toggle", "type")
@@ -255,23 +255,23 @@ class GRAPH_MT_channel(Menu):
         layout.operator_menu_enum("anim.channels_setting_disable", "type")
 
         layout.separator()
-        layout.operator("anim.channels_editable_toggle")
+        layout.operator("anim.channels_editable_toggle", icon = "LOCKED")
         layout.operator_menu_enum("graph.extrapolation_type", "type", text="Extrapolation Mode")
 
         layout.separator()
-        layout.operator("graph.hide", text="Hide Selected Curves").unselected = False
-        layout.operator("graph.hide_unselected_curves", text="Hide Unselected Curves")
-        layout.operator("graph.reveal")
+        layout.operator("graph.hide", text="Hide Selected Curves", icon = "RESTRICT_VIEW_ON").unselected = False
+        layout.operator("graph.hide_unselected_curves", text="Hide Unselected Curves", icon = "HIDE_UNSELECTED")
+        layout.operator("graph.reveal", icon = "RESTRICT_VIEW_OFF")
 
         layout.separator()
-        layout.operator("anim.channels_expand")
-        layout.operator("anim.channels_collapse")
+        layout.operator("anim.channels_expand", icon = "EXPANDMENU")
+        layout.operator("anim.channels_collapse", icon = "COLLAPSEMENU")
 
         layout.separator()
         layout.operator_menu_enum("anim.channels_move", "direction", text="Move...")
 
         layout.separator()
-        layout.operator("anim.channels_fcurves_enable")
+        layout.operator("anim.channels_fcurves_enable", icon = "UNLOCKED")
 
 
 class GRAPH_MT_key(Menu):
