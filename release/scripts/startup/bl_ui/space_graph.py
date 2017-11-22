@@ -144,19 +144,19 @@ class GRAPH_MT_view(Menu):
         layout.prop(st, "show_locked_time")
 
         layout.separator()
-        layout.operator("anim.previewrange_set")
-        layout.operator("anim.previewrange_clear")
-        layout.operator("graph.previewrange_set")
+        layout.operator("anim.previewrange_set", icon='BORDER_RECT')
+        layout.operator("anim.previewrange_clear", icon = "CLEAR")
+        layout.operator("graph.previewrange_set", icon='BORDER_RECT')
 
         layout.separator()
-        layout.operator("graph.view_all")
-        layout.operator("graph.view_selected")
-        layout.operator("graph.view_frame")
+        layout.operator("graph.view_all", icon = "VIEWALL")
+        layout.operator("graph.view_selected", icon = "VIEW_SELECTED")
+        layout.operator("graph.view_frame", icon = "VIEW_FRAME" )
 
         layout.separator()
-        layout.operator("screen.area_dupli")
-        layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area") # bfa - the separated tooltip. Class is in space_text.py
-        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area").use_hide_panels = True
+        layout.operator("screen.area_dupli", icon = "NEW_WINDOW")
+        layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area", icon = "MAXIMIZE_AREA") # bfa - the separated tooltip. Class is in space_text.py
+        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area", icon = "FULLSCREEN_AREA").use_hide_panels = True
 
 
 class GRAPH_MT_select(Menu):
