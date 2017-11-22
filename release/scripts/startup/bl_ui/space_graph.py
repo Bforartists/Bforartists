@@ -186,29 +186,29 @@ class GRAPH_MT_select(Menu):
 
         layout.separator()
         
-        layout.operator("graph.select_column", text="Columns on Selected Keys").mode = 'KEYS'
-        layout.operator("graph.select_column", text="Column on Current Frame").mode = 'CFRA'
+        layout.operator("graph.select_column", text="Columns on Selected Keys", icon = "COLUMNS_KEYS").mode = 'KEYS'
+        layout.operator("graph.select_column", text="Column on Current Frame", icon = "COLUMN_CURRENT_FRAME").mode = 'CFRA'
 
-        layout.operator("graph.select_column", text="Columns on Selected Markers").mode = 'MARKERS_COLUMN'
-        layout.operator("graph.select_column", text="Between Selected Markers").mode = 'MARKERS_BETWEEN'
+        layout.operator("graph.select_column", text="Columns on Selected Markers", icon = "COLUMNS_MARKERS").mode = 'MARKERS_COLUMN'
+        layout.operator("graph.select_column", text="Between Selected Markers", icon = "BETWEEN_MARKERS").mode = 'MARKERS_BETWEEN'
         
         layout.separator()
 
-        layout.operator("graph.select_linked",text = "Linked")
+        layout.operator("graph.select_linked",text = "Linked", icon = "CONNECTED")   
 
         layout.separator()
         
-        props = layout.operator("graph.select_leftright", text="Before Current Frame")
+        props = layout.operator("graph.select_leftright", text="Before Current Frame", icon = "BEFORE_CURRENT_FRAME")
         props.extend = False
         props.mode = 'LEFT'
-        props = layout.operator("graph.select_leftright", text="After Current Frame")
+        props = layout.operator("graph.select_leftright", text="After Current Frame", icon = "AFTER_CURRENT_FRAME")
         props.extend = False
         props.mode = 'RIGHT'
 
         layout.separator()
 
-        layout.operator("graph.select_more",text = "More")
-        layout.operator("graph.select_less",text = "Less")
+        layout.operator("graph.select_more",text = "More", icon = "SELECTMORE")
+        layout.operator("graph.select_less",text = "Less", icon = "SELECTLESS")
 
 
 
