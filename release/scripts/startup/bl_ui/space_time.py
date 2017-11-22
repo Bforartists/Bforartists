@@ -260,8 +260,8 @@ class TIME_MT_frame(Menu):
         layout.operator("anim.previewrange_clear", icon = "CLEAR")
         layout.operator("anim.previewrange_set", icon='BORDER_RECT')
         layout.separator()
-        layout.operator("time.end_frame_set", icon='FF')
-        layout.operator("time.start_frame_set", icon='REW')
+        layout.operator("time.end_frame_set", icon='SET_START')
+        layout.operator("time.start_frame_set", icon='SET_END')
 
         layout.separator()
 
