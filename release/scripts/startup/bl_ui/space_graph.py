@@ -282,7 +282,7 @@ class GRAPH_MT_key(Menu):
 
         layout.menu("GRAPH_MT_key_transform", text="Transform")
 
-        layout.operator_menu_enum("graph.snap", "type", text="Snap")
+        layout.menu("GRAPH_MT_key_snap")
         layout.operator_menu_enum("graph.mirror", "type", text="Mirror")
 
         layout.separator()
@@ -316,6 +316,19 @@ class GRAPH_MT_key(Menu):
 
         layout.separator()
         layout.operator("graph.euler_filter", text="Discontinuity (Euler) Filter", icon = "DISCONTINUE_EULER")
+
+class GRAPH_MT_key_snap(Menu):
+    bl_label = "Snap"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("graph.snap", text="Current Frame", icon = "SNAP_CURRENTFRAME").type= 'CFRA'
+        layout.operator("graph.snap", text="Cursor Value", icon = "SNAP_CURSORVALUE").type= 'VALUE'
+        layout.operator("graph.snap", text="Nearest Frame", icon = "SNAP_NEARESTFRAME").type= 'NEAREST_FRAME'
+        layout.operator("graph.snap", text="Nearest Second", icon = "SNAP_NEARESTSECOND").type= 'NEAREST_SECOND'
+        layout.operator("graph.snap", text="Nearest Marker", icon = "SNAP_NEARESTMARKER").type= 'NEAREST_MARKER'
+        layout.operator("graph.snap", text="Flatten Handles", icon = "FLATTEN_HANDLER").type= 'HORIZONTAL'
 
 
 class GRAPH_MT_key_transform(Menu):
@@ -354,6 +367,7 @@ classes = (
     GRAPH_MT_channel_hide_unselected_curves,
     GRAPH_MT_channel,
     GRAPH_MT_key,
+    GRAPH_MT_key_snap,
     GRAPH_MT_key_transform,
     GRAPH_MT_delete,
 )
