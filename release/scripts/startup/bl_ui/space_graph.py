@@ -288,14 +288,14 @@ class GRAPH_MT_key(Menu):
         layout.separator()
         layout.operator_menu_enum("graph.keyframe_insert", "type")
         layout.operator_menu_enum("graph.fmodifier_add", "type")
-        layout.operator("graph.sound_bake")
+        layout.operator("graph.sound_bake", icon = "BAKE_SOUND")
 
         layout.separator()
-        layout.operator("graph.frame_jump")
+        layout.operator("graph.frame_jump", icon= 'JUMP_TO_KEYFRAMES' )
 
         layout.separator()
-        layout.operator("graph.duplicate_move")
-        layout.operator("graph.delete")
+        layout.operator("graph.duplicate_move", icon = "DUPLICATE")
+        layout.operator("graph.delete", icon = "DELETE")
 
         layout.separator()
         layout.operator_menu_enum("graph.handle_type", "type", text="Handle Type")
@@ -303,11 +303,11 @@ class GRAPH_MT_key(Menu):
         layout.operator_menu_enum("graph.easing_type", "type", text="Easing Type")
 
         layout.separator()
-        layout.operator("graph.clean").channels = False
-        layout.operator("graph.clean", text="Clean Channels").channels = True
-        layout.operator("graph.smooth")
-        layout.operator("graph.sample")
-        layout.operator("graph.bake")
+        layout.operator("graph.clean", icon = "CLEAN_KEYS").channels = False
+        layout.operator("graph.clean", text="Clean Channels", icon = "CLEAN_CHANNELS").channels = True
+        layout.operator("graph.smooth", icon = "SMOOTH_KEYFRAMES")
+        layout.operator("graph.sample", icon = "SAMPLE_KEYFRAMES")
+        layout.operator("graph.bake", icon = "BAKE_CURVE")
 
         layout.separator()
         layout.operator("graph.copy", text="Copy Keyframes", icon='COPYDOWN')
@@ -315,7 +315,7 @@ class GRAPH_MT_key(Menu):
         layout.operator("graph.paste", text="Paste Flipped", icon='PASTEFLIPDOWN').flipped = True
 
         layout.separator()
-        layout.operator("graph.euler_filter", text="Discontinuity (Euler) Filter")
+        layout.operator("graph.euler_filter", text="Discontinuity (Euler) Filter", icon = "DISCONTINUE_EULER")
 
 
 class GRAPH_MT_key_transform(Menu):
