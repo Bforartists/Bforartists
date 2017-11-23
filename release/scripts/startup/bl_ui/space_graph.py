@@ -324,10 +324,10 @@ class GRAPH_MT_key_transform(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("transform.translate", text="Grab/Move")
-        layout.operator("transform.transform", text="Extend").mode = 'TIME_EXTEND'
-        layout.operator("transform.rotate", text="Rotate")
-        layout.operator("transform.resize", text="Scale")
+        layout.operator("transform.translate", text="Grab/Move", icon = "TRANSFORM_MOVE")
+        layout.operator("transform.transform", text="Extend", icon = "SHRINK_FATTEN").mode = 'TIME_EXTEND'
+        layout.operator("transform.rotate", text="Rotate", icon = "TRANSFORM_ROTATE")
+        layout.operator("transform.resize", text="Scale", icon = "TRANSFORM_SCALE")
 
 
 class GRAPH_MT_delete(Menu):
