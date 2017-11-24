@@ -246,33 +246,39 @@ class GRAPH_MT_channel(Menu):
         layout.operator("anim.channels_delete", icon = "DELETE")
 
         layout.separator()
+
         layout.operator("anim.channels_group", icon = "NEW_GROUP")
         layout.operator("anim.channels_ungroup", icon = "REMOVE_FROM_ALL_GROUPS")
 
         layout.separator()
+
         layout.operator_menu_enum("anim.channels_setting_toggle", "type")
         layout.operator_menu_enum("anim.channels_setting_enable", "type")
         layout.operator_menu_enum("anim.channels_setting_disable", "type")
 
         layout.separator()
+
         layout.operator("anim.channels_editable_toggle", icon = "LOCKED")
         layout.operator_menu_enum("graph.extrapolation_type", "type", text="Extrapolation Mode")
 
         layout.separator()
+
         layout.operator("graph.hide", text="Hide Selected Curves", icon = "RESTRICT_VIEW_ON").unselected = False
         layout.operator("graph.hide_unselected_curves", text="Hide Unselected Curves", icon = "HIDE_UNSELECTED")
         layout.operator("graph.reveal", icon = "RESTRICT_VIEW_OFF")
 
         layout.separator()
+
         layout.operator("anim.channels_expand", icon = "EXPANDMENU")
         layout.operator("anim.channels_collapse", icon = "COLLAPSEMENU")
 
         layout.separator()
-        layout.operator_menu_enum("anim.channels_move", "direction", text="Move...")
+
+        layout.menu("GRAPH_MT_channel_move")
 
         layout.separator()
-        layout.operator("anim.channels_fcurves_enable", icon = "UNLOCKED")
 
+        layout.operator("anim.channels_fcurves_enable", icon = "UNLOCKED")
 
 class GRAPH_MT_key(Menu):
     bl_label = "Key"
@@ -405,6 +411,16 @@ class GRAPH_MT_key_handle_type(Menu):
         layout.operator("graph.handle_type", text= "Automatic", icon = "HANDLE_AUTO").type = 'AUTO'
         layout.operator("graph.handle_type", text= "Auto Clamped", icon = "HANDLE_AUTO_CLAMPED").type = 'AUTO_CLAMPED'
 
+class GRAPH_MT_channel_move(Menu):
+    bl_label = "Move"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.operator("anim.channels_move", text= "To Top", icon = "MOVE_TO_TOP").direction = 'TOP'
+        layout.operator("anim.channels_move", text= "Up", icon = "MOVE_UP").direction = 'UP'
+        layout.operator("anim.channels_move", text= "Down", icon = "MOVE_DOWN").direction = 'DOWN'
+        layout.operator("anim.channels_move", text= "To Bottom", icon = "MOVE_TO_BOTTOM").direction = 'BOTTOM'
+
 
 classes = (
     switch_editors_in_graph,
@@ -424,6 +440,7 @@ classes = (
     GRAPH_MT_key_keyframe,
     GRAPH_MT_key_fmodfier_add,
     GRAPH_MT_key_handle_type,
+    GRAPH_MT_channel_move,
 )
 
 if __name__ == "__main__":  # only for live edit.
