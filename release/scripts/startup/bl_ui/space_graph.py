@@ -298,7 +298,7 @@ class GRAPH_MT_key(Menu):
         layout.operator("graph.delete", icon = "DELETE")
 
         layout.separator()
-        layout.operator_menu_enum("graph.handle_type", "type", text="Handle Type")
+        layout.menu("GRAPH_MT_key_handle_type")
         layout.operator_menu_enum("graph.interpolation_type", "type", text="Interpolation Mode")
         layout.operator_menu_enum("graph.easing_type", "type", text="Easing Type")
 
@@ -394,6 +394,17 @@ class GRAPH_MT_key_fmodfier_add(Menu):
         layout.operator("graph.fmodifier_add", text = "Limits", icon = "MODIFIER").type = 'LIMITS'
         layout.operator("graph.fmodifier_add", text = "Stepped Interpolation", icon = "MODIFIER").type = 'STEPPED'
 
+class GRAPH_MT_key_handle_type(Menu):
+    bl_label = "Handle Type"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.operator("graph.handle_type", text= "Free", icon = "HANDLE_FREE").type = 'FREE'
+        layout.operator("graph.handle_type", text= "Vector", icon = "HANDLE_VECTOR").type = 'VECTOR'
+        layout.operator("graph.handle_type", text= "Aligned", icon = "HANDLE_ALIGN").type = 'ALIGNED'
+        layout.operator("graph.handle_type", text= "Automatic", icon = "HANDLE_AUTO").type = 'AUTO'
+        layout.operator("graph.handle_type", text= "Auto Clamped", icon = "HANDLE_AUTO_CLAMPED").type = 'AUTO_CLAMPED'
+
 
 classes = (
     switch_editors_in_graph,
@@ -412,6 +423,7 @@ classes = (
     GRAPH_MT_key_mirror,
     GRAPH_MT_key_keyframe,
     GRAPH_MT_key_fmodfier_add,
+    GRAPH_MT_key_handle_type,
 )
 
 if __name__ == "__main__":  # only for live edit.
