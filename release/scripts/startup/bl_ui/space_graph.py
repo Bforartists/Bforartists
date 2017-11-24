@@ -286,7 +286,7 @@ class GRAPH_MT_key(Menu):
         layout.menu("GRAPH_MT_key_mirror")
 
         layout.separator()
-        layout.operator_menu_enum("graph.keyframe_insert", "type")
+        layout.menu("GRAPH_MT_key_keyframe")
         layout.operator_menu_enum("graph.fmodifier_add", "type")
         layout.operator("graph.sound_bake", icon = "BAKE_SOUND")
 
@@ -368,6 +368,18 @@ class GRAPH_MT_key_mirror(Menu):
         layout.operator("graph.mirror", text="By Values over Value=0", icon = "MIRROR_CURSORVALUE").type = 'XAXIS'
         layout.operator("graph.mirror", text="By Times over First Selected Marker", icon = "MIRROR_MARKER").type = 'MARKER'
 
+class GRAPH_MT_key_keyframe(Menu):
+    bl_label = "Insert Keyframes"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("graph.keyframe_insert", text = "All Channels", icon = "KEYFRAMES_INSERT").type = 'ALL'
+        layout.operator("graph.keyframe_insert", text = "Only Selected Channels", icon = "KEYFRAMES_INSERT").type = 'SEL'
+        layout.operator("graph.keyframe_insert", text = "Active Channels at Cursor", icon = "KEYFRAMES_INSERT").type = 'CURSOR_ACTIVE'
+        layout.operator("graph.keyframe_insert", text = "Selected Channels at Cursor", icon = "KEYFRAMES_INSERT").type = 'CURSOR_SEL'
+
+
 
 classes = (
     switch_editors_in_graph,
@@ -384,6 +396,7 @@ classes = (
     GRAPH_MT_key_transform,
     GRAPH_MT_delete,
     GRAPH_MT_key_mirror,
+    GRAPH_MT_key_keyframe,
 )
 
 if __name__ == "__main__":  # only for live edit.
