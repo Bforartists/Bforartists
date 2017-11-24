@@ -283,7 +283,7 @@ class GRAPH_MT_key(Menu):
         layout.menu("GRAPH_MT_key_transform", text="Transform")
 
         layout.menu("GRAPH_MT_key_snap")
-        layout.operator_menu_enum("graph.mirror", "type", text="Mirror")
+        layout.menu("GRAPH_MT_key_mirror")
 
         layout.separator()
         layout.operator_menu_enum("graph.keyframe_insert", "type")
@@ -356,6 +356,19 @@ class GRAPH_MT_delete(Menu):
         layout.operator("graph.clean").channels = False
         layout.operator("graph.clean", text="Clean Channels").channels = True
 
+class GRAPH_MT_key_mirror(Menu):
+    bl_label = "Mirror"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("graph.mirror", text="By Times over Current Frame", icon = "MIRROR_TIME").type = 'CFRA'
+        layout.operator("graph.mirror", text="By Values over Cursor Value", icon = "MIRROR_CURSORVALUE").type = 'VALUE'
+        layout.operator("graph.mirror", text="By Times over Time=0", icon = "MIRROR_TIME").type = 'YAXIS'
+        layout.operator("graph.mirror", text="By Values over Value=0", icon = "MIRROR_CURSORVALUE").type = 'XAXIS'
+        layout.operator("graph.mirror", text="By Times over First Selected Marker", icon = "MIRROR_MARKER").type = 'MARKER'
+
+
 classes = (
     switch_editors_in_graph,
     GRAPH_HT_header,
@@ -370,6 +383,7 @@ classes = (
     GRAPH_MT_key_snap,
     GRAPH_MT_key_transform,
     GRAPH_MT_delete,
+    GRAPH_MT_key_mirror,
 )
 
 if __name__ == "__main__":  # only for live edit.
