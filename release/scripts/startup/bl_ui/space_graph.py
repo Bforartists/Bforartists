@@ -392,13 +392,13 @@ class GRAPH_MT_key_fmodfier_add(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("graph.fmodifier_add", text = "Generator", icon = "MODIFIER").type = 'GENERATOR'
-        layout.operator("graph.fmodifier_add", text = "Built-In Function", icon = "MODIFIER").type = 'FNGENERATOR'
-        layout.operator("graph.fmodifier_add", text = "Envelope", icon = "MODIFIER").type = 'ENVELOPE'
-        layout.operator("graph.fmodifier_add", text = "Cycles", icon = "MODIFIER").type = 'CYCLES'
-        layout.operator("graph.fmodifier_add", text = "Noise", icon = "MODIFIER").type = 'NOISE'
-        layout.operator("graph.fmodifier_add", text = "Limits", icon = "MODIFIER").type = 'LIMITS'
-        layout.operator("graph.fmodifier_add", text = "Stepped Interpolation", icon = "MODIFIER").type = 'STEPPED'
+        layout.operator("graph.fmodifier_add", text = "Generator", icon = "GENERATOR_MODIFIER").type = 'GENERATOR'
+        layout.operator("graph.fmodifier_add", text = "Built-In Function", icon = "BUILTIN_MODIFIER").type = 'FNGENERATOR'
+        layout.operator("graph.fmodifier_add", text = "Envelope", icon = "ENVELOPE_MODIFIER").type = 'ENVELOPE'
+        layout.operator("graph.fmodifier_add", text = "Cycles", icon = "CYCLES_MODIFIER").type = 'CYCLES'
+        layout.operator("graph.fmodifier_add", text = "Noise", icon = "NOISE_MODIFIER").type = 'NOISE'
+        layout.operator("graph.fmodifier_add", text = "Limits", icon = "LIMIT_MODIFIER").type = 'LIMITS'
+        layout.operator("graph.fmodifier_add", text = "Stepped Interpolation", icon = "STEPPED_MODIFIER").type = 'STEPPED'
 
 class GRAPH_MT_key_handle_type(Menu):
     bl_label = "Handle Type"
