@@ -259,7 +259,7 @@ class GRAPH_MT_channel(Menu):
         layout.separator()
 
         layout.operator("anim.channels_editable_toggle", icon = "LOCKED")
-        layout.operator_menu_enum("graph.extrapolation_type", "type", text="Extrapolation Mode")
+        layout.menu("GRAPH_MT_channel_extrapolation")
 
         layout.separator()
 
@@ -421,6 +421,17 @@ class GRAPH_MT_channel_move(Menu):
         layout.operator("anim.channels_move", text= "Down", icon = "MOVE_DOWN").direction = 'DOWN'
         layout.operator("anim.channels_move", text= "To Bottom", icon = "MOVE_TO_BOTTOM").direction = 'BOTTOM'
 
+class GRAPH_MT_channel_extrapolation(Menu):
+    bl_label = "Extrapolation Mode"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("graph.extrapolation_type", text = "Constant Extrapolation", icon = "EXTRAPOLATION_CONSTANT").type = 'CONSTANT'
+        layout.operator("graph.extrapolation_type", text = "Linear Extrapolation", icon = "EXTRAPOLATION_LINEAR").type = 'LINEAR'
+        layout.operator("graph.extrapolation_type", text = "Make Cyclic (F-Modifier)", icon = "EXTRAPOLATION_CYCLIC").type = 'MAKE_CYCLIC'
+        layout.operator("graph.extrapolation_type", text = "Clear Cyclic (F-Modifier)", icon = "EXTRAPOLATION_CYCLIC_CLEAR").type = 'CLEAR-CYCLIC'
+
 
 classes = (
     switch_editors_in_graph,
@@ -441,6 +452,7 @@ classes = (
     GRAPH_MT_key_fmodfier_add,
     GRAPH_MT_key_handle_type,
     GRAPH_MT_channel_move,
+    GRAPH_MT_channel_extrapolation,
 )
 
 if __name__ == "__main__":  # only for live edit.
