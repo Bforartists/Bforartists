@@ -252,9 +252,9 @@ class GRAPH_MT_channel(Menu):
 
         layout.separator()
 
-        layout.operator_menu_enum("anim.channels_setting_toggle", "type")
-        layout.operator_menu_enum("anim.channels_setting_enable", "type")
-        layout.operator_menu_enum("anim.channels_setting_disable", "type")
+        layout.menu("GRAPH_MT_channel_settings_toggle")
+        layout.menu("GRAPH_MT_channel_settings_enable")
+        layout.menu("GRAPH_MT_channel_settings_disable")
 
         layout.separator()
 
@@ -433,6 +433,37 @@ class GRAPH_MT_channel_extrapolation(Menu):
         layout.operator("graph.extrapolation_type", text = "Clear Cyclic (F-Modifier)", icon = "EXTRAPOLATION_CYCLIC_CLEAR").type = 'CLEAR-CYCLIC'
 
 
+class GRAPH_MT_channel_settings_toggle(Menu):
+    bl_label = "Toggle Channel Settings"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("anim.channels_setting_toggle", text = "Protect", icon = "LOCKED").type = 'PROTECT'
+        layout.operator("anim.channels_setting_toggle", text = "Mute", icon ="MUTE_IPO_ON").type = 'MUTE'
+
+class GRAPH_MT_channel_settings_enable(Menu):
+    bl_label = "Enable Channel Settings"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("anim.channels_setting_enable", text = "Protect", icon = "LOCKED").type = 'PROTECT'
+        layout.operator("anim.channels_setting_enable", text = "Mute", icon = "MUTE_IPO_ON").type = 'MUTE'
+
+class GRAPH_MT_channel_settings_disable(Menu):
+    bl_label = "Disable Channel Settings"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("anim.channels_setting_disable", text = "Protect", icon = "LOCKED").type = 'PROTECT'
+        layout.operator("anim.channels_setting_disable", text = "Mute", icon = "MUTE_IPO_ON").type = 'MUTE'
+        
+
+
+
+
 classes = (
     switch_editors_in_graph,
     GRAPH_HT_header,
@@ -453,6 +484,9 @@ classes = (
     GRAPH_MT_key_handle_type,
     GRAPH_MT_channel_move,
     GRAPH_MT_channel_extrapolation,
+    GRAPH_MT_channel_settings_toggle,
+    GRAPH_MT_channel_settings_enable,
+    GRAPH_MT_channel_settings_disable,
 )
 
 if __name__ == "__main__":  # only for live edit.
