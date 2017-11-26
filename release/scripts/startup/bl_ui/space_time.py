@@ -215,18 +215,18 @@ class TIME_MT_view(Menu):
 
         layout.separator()
 
-        layout.operator("time.view_all")
-        layout.operator("time.view_frame")
+        layout.operator("time.view_all", icon = "VIEWALL")
+        layout.operator("time.view_frame", icon = "VIEW_FRAME" )
 
         layout.separator()
 
-        layout.operator("marker.camera_bind")
+        layout.operator("marker.camera_bind", icon = "MARKER_BIND")
 
         layout.separator()
 
-        layout.operator("screen.area_dupli")
-        layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area") # bfa - the separated tooltip. Class is in space_text.py
-        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area").use_hide_panels = True
+        layout.operator("screen.area_dupli", icon = "NEW_WINDOW")
+        layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area", icon = "MAXIMIZE_AREA") # bfa - the separated tooltip. Class is in space_text.py
+        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area", icon = "FULLSCREEN_AREA").use_hide_panels = True
 
 
 class TIME_MT_cache(Menu):
@@ -257,11 +257,11 @@ class TIME_MT_frame(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("anim.previewrange_clear")
-        layout.operator("anim.previewrange_set")
+        layout.operator("anim.previewrange_clear", icon = "CLEAR")
+        layout.operator("anim.previewrange_set", icon='BORDER_RECT')
         layout.separator()
-        layout.operator("time.end_frame_set")
-        layout.operator("time.start_frame_set")
+        layout.operator("time.end_frame_set", icon='SET_START')
+        layout.operator("time.start_frame_set", icon='SET_END')
 
         layout.separator()
 
@@ -324,8 +324,8 @@ def marker_menu_generic(layout):
     # layout.operator_context = 'EXEC_REGION_WIN'
 
     layout.column()
-    layout.operator("marker.add", "Add Marker")
-    layout.operator("marker.duplicate", text="Duplicate Marker")
+    layout.operator("marker.add", "Add Marker", icon = "MARKER")
+    layout.operator("marker.duplicate", text="Duplicate Marker", icon = "DUPLICATE")
 
     if len(bpy.data.scenes) > 10:
         layout.operator_context = 'INVOKE_DEFAULT'
@@ -333,17 +333,17 @@ def marker_menu_generic(layout):
     else:
         layout.operator_menu_enum("marker.make_links_scene", "scene", text="Duplicate Marker to Scene")
 
-    layout.operator("marker.delete", text="Delete Marker")
+    layout.operator("marker.delete", text="Delete Marker", icon = "DELETE")
 
     layout.separator()
 
-    layout.operator("marker.rename", text="Rename Marker")
-    layout.operator("marker.move", text="Grab/Move Marker")
+    layout.operator("marker.rename", text="Rename Marker", icon = "STRING")
+    layout.operator("marker.move", text="Grab/Move Marker", icon = "TRANSFORM_MOVE")
 
     layout.separator()
 
-    layout.operator("screen.marker_jump", text="Jump to Next Marker").next = True
-    layout.operator("screen.marker_jump_previous", text="Jump to Previous Marker") # bfa - the separated tooltip
+    layout.operator("screen.marker_jump", text="Jump to Next Marker", icon = "NEXT_KEYFRAME").next = True
+    layout.operator("screen.marker_jump_previous", text="Jump to Previous Marker", icon = "PREV_KEYFRAME") # bfa - the separated tooltip
 
     layout.separator()
     ts = bpy.context.tool_settings
