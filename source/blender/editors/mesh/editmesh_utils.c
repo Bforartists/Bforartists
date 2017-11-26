@@ -1225,7 +1225,7 @@ void EDBM_mesh_hide(BMEditMesh *em, bool swap)
 }
 
 
-void EDBM_mesh_reveal(BMEditMesh *em)
+void EDBM_mesh_reveal(BMEditMesh *em, bool select)
 {
 	const char iter_types[3] = {BM_VERTS_OF_MESH,
 	                            BM_EDGES_OF_MESH,
@@ -1240,7 +1240,6 @@ void EDBM_mesh_reveal(BMEditMesh *em)
 
 	/* Use tag flag to remember what was hidden before all is revealed.
 	 * BM_ELEM_HIDDEN --> BM_ELEM_TAG */
-#pragma omp parallel for schedule(static) if (em->bm->totvert + em->bm->totedge + em->bm->totface >= BM_OMP_LIMIT)
 	for (i = 0; i < 3; i++) {
 		BMIter iter;
 		BMElem *ele;
@@ -1264,7 +1263,7 @@ void EDBM_mesh_reveal(BMEditMesh *em)
 
 		BM_ITER_MESH (ele, &iter, em->bm, iter_types[i]) {
 			if (BM_elem_flag_test(ele, BM_ELEM_TAG)) {
-				BM_elem_select_set(em->bm, ele, true);
+				BM_elem_select_set(em->bm, ele, select);
 			}
 		}
 	}

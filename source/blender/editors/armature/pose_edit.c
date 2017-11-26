@@ -265,8 +265,8 @@ void POSE_OT_paths_calculate(wmOperatorType *ot)
 static int pose_update_paths_poll(bContext *C)
 {
 	if (ED_operator_posemode_exclusive(C)) {
-		bPoseChannel *pchan = CTX_data_active_pose_bone(C);
-		return (pchan && pchan->mpath);
+		Object *ob = CTX_data_active_object(C);
+		return (ob->pose->avs.path_bakeflag & MOTIONPATH_BAKE_HAS_PATHS) != 0;
 	}
 	
 	return false;
@@ -1098,16 +1098,18 @@ void POSE_OT_hide(wmOperatorType *ot)
 	RNA_def_boolean(ot->srna, "unselected", 0, "Unselected", "");
 }
 
-static int show_pose_bone_cb(Object *ob, Bone *bone, void *UNUSED(ptr)) 
+static int show_pose_bone_cb(Object *ob, Bone *bone, void *data) 
 {
+	const bool select = GET_INT_FROM_POINTER(data);
+
 	bArmature *arm = ob->data;
 	
 	if (arm->layer & bone->layer) {
 		if (bone->flag & BONE_HIDDEN_P) {
-			bone->flag &= ~BONE_HIDDEN_P;
 			if (!(bone->flag & BONE_UNSELECTABLE)) {
-				bone->flag |= BONE_SELECTED;
+				SET_FLAG_FROM_TEST(bone->flag, select, BONE_SELECTED);
 			}
+			bone->flag &= ~BONE_HIDDEN_P;
 		}
 	}
 	
@@ -1115,12 +1117,13 @@ static int show_pose_bone_cb(Object *ob, Bone *bone, void *UNUSED(ptr))
 }
 
 /* active object is armature in posemode, poll checked */
-static int pose_reveal_exec(bContext *C, wmOperator *UNUSED(op)) 
+static int pose_reveal_exec(bContext *C, wmOperator *op) 
 {
 	Object *ob = BKE_object_pose_armature_get(CTX_data_active_object(C));
 	bArmature *arm = ob->data;
+	const bool select = RNA_boolean_get(op->ptr, "select");
 	
-	bone_looper(ob, arm->bonebase.first, NULL, show_pose_bone_cb);
+	bone_looper(ob, arm->bonebase.first, SET_INT_IN_POINTER(select), show_pose_bone_cb);
 	
 	/* note, notifier might evolve */
 	WM_event_add_notifier(C, NC_OBJECT | ND_BONE_SELECT, ob);
@@ -1141,6 +1144,8 @@ void POSE_OT_reveal(wmOperatorType *ot)
 	
 	/* flags */
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+
+	RNA_def_boolean(ot->srna, "select", true, "Select", "");
 }
 
 /* ********************************************** */
