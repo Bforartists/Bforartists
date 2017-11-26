@@ -144,19 +144,19 @@ class GRAPH_MT_view(Menu):
         layout.prop(st, "show_locked_time")
 
         layout.separator()
-        layout.operator("anim.previewrange_set")
-        layout.operator("anim.previewrange_clear")
-        layout.operator("graph.previewrange_set")
+        layout.operator("anim.previewrange_set", icon='BORDER_RECT')
+        layout.operator("anim.previewrange_clear", icon = "CLEAR")
+        layout.operator("graph.previewrange_set", icon='BORDER_RECT')
 
         layout.separator()
-        layout.operator("graph.view_all")
-        layout.operator("graph.view_selected")
-        layout.operator("graph.view_frame")
+        layout.operator("graph.view_all", icon = "VIEWALL")
+        layout.operator("graph.view_selected", icon = "VIEW_SELECTED")
+        layout.operator("graph.view_frame", icon = "VIEW_FRAME" )
 
         layout.separator()
-        layout.operator("screen.area_dupli")
-        layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area") # bfa - the separated tooltip. Class is in space_text.py
-        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area").use_hide_panels = True
+        layout.operator("screen.area_dupli", icon = "NEW_WINDOW")
+        layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area", icon = "MAXIMIZE_AREA") # bfa - the separated tooltip. Class is in space_text.py
+        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area", icon = "FULLSCREEN_AREA").use_hide_panels = True
 
 
 class GRAPH_MT_select(Menu):
@@ -186,29 +186,29 @@ class GRAPH_MT_select(Menu):
 
         layout.separator()
         
-        layout.operator("graph.select_column", text="Columns on Selected Keys").mode = 'KEYS'
-        layout.operator("graph.select_column", text="Column on Current Frame").mode = 'CFRA'
+        layout.operator("graph.select_column", text="Columns on Selected Keys", icon = "COLUMNS_KEYS").mode = 'KEYS'
+        layout.operator("graph.select_column", text="Column on Current Frame", icon = "COLUMN_CURRENT_FRAME").mode = 'CFRA'
 
-        layout.operator("graph.select_column", text="Columns on Selected Markers").mode = 'MARKERS_COLUMN'
-        layout.operator("graph.select_column", text="Between Selected Markers").mode = 'MARKERS_BETWEEN'
+        layout.operator("graph.select_column", text="Columns on Selected Markers", icon = "COLUMNS_MARKERS").mode = 'MARKERS_COLUMN'
+        layout.operator("graph.select_column", text="Between Selected Markers", icon = "BETWEEN_MARKERS").mode = 'MARKERS_BETWEEN'
         
         layout.separator()
 
-        layout.operator("graph.select_linked",text = "Linked")
+        layout.operator("graph.select_linked",text = "Linked", icon = "CONNECTED")   
 
         layout.separator()
         
-        props = layout.operator("graph.select_leftright", text="Before Current Frame")
+        props = layout.operator("graph.select_leftright", text="Before Current Frame", icon = "BEFORE_CURRENT_FRAME")
         props.extend = False
         props.mode = 'LEFT'
-        props = layout.operator("graph.select_leftright", text="After Current Frame")
+        props = layout.operator("graph.select_leftright", text="After Current Frame", icon = "AFTER_CURRENT_FRAME")
         props.extend = False
         props.mode = 'RIGHT'
 
         layout.separator()
 
-        layout.operator("graph.select_more",text = "More")
-        layout.operator("graph.select_less",text = "Less")
+        layout.operator("graph.select_more",text = "More", icon = "SELECTMORE")
+        layout.operator("graph.select_less",text = "Less", icon = "SELECTLESS")
 
 
 
@@ -243,36 +243,42 @@ class GRAPH_MT_channel(Menu):
 
         layout.operator_context = 'INVOKE_REGION_CHANNELS'
 
-        layout.operator("anim.channels_delete")
+        layout.operator("anim.channels_delete", icon = "DELETE")
 
         layout.separator()
-        layout.operator("anim.channels_group")
-        layout.operator("anim.channels_ungroup")
+
+        layout.operator("anim.channels_group", icon = "NEW_GROUP")
+        layout.operator("anim.channels_ungroup", icon = "REMOVE_FROM_ALL_GROUPS")
 
         layout.separator()
-        layout.operator_menu_enum("anim.channels_setting_toggle", "type")
-        layout.operator_menu_enum("anim.channels_setting_enable", "type")
-        layout.operator_menu_enum("anim.channels_setting_disable", "type")
+
+        layout.menu("GRAPH_MT_channel_settings_toggle")
+        layout.menu("GRAPH_MT_channel_settings_enable")
+        layout.menu("GRAPH_MT_channel_settings_disable")
 
         layout.separator()
-        layout.operator("anim.channels_editable_toggle")
-        layout.operator_menu_enum("graph.extrapolation_type", "type", text="Extrapolation Mode")
+
+        layout.operator("anim.channels_editable_toggle", icon = "LOCKED")
+        layout.menu("GRAPH_MT_channel_extrapolation")
 
         layout.separator()
-        layout.operator("graph.hide", text="Hide Selected Curves").unselected = False
-        layout.operator("graph.hide_unselected_curves", text="Hide Unselected Curves")
-        layout.operator("graph.reveal")
+
+        layout.operator("graph.hide", text="Hide Selected Curves", icon = "RESTRICT_VIEW_ON").unselected = False
+        layout.operator("graph.hide_unselected_curves", text="Hide Unselected Curves", icon = "HIDE_UNSELECTED")
+        layout.operator("graph.reveal", icon = "RESTRICT_VIEW_OFF")
 
         layout.separator()
-        layout.operator("anim.channels_expand")
-        layout.operator("anim.channels_collapse")
+
+        layout.operator("anim.channels_expand", icon = "EXPANDMENU")
+        layout.operator("anim.channels_collapse", icon = "COLLAPSEMENU")
 
         layout.separator()
-        layout.operator_menu_enum("anim.channels_move", "direction", text="Move...")
+
+        layout.menu("GRAPH_MT_channel_move")
 
         layout.separator()
-        layout.operator("anim.channels_fcurves_enable")
 
+        layout.operator("anim.channels_fcurves_enable", icon = "UNLOCKED")
 
 class GRAPH_MT_key(Menu):
     bl_label = "Key"
@@ -282,32 +288,32 @@ class GRAPH_MT_key(Menu):
 
         layout.menu("GRAPH_MT_key_transform", text="Transform")
 
-        layout.operator_menu_enum("graph.snap", "type", text="Snap")
-        layout.operator_menu_enum("graph.mirror", "type", text="Mirror")
+        layout.menu("GRAPH_MT_key_snap")
+        layout.menu("GRAPH_MT_key_mirror")
 
         layout.separator()
-        layout.operator_menu_enum("graph.keyframe_insert", "type")
-        layout.operator_menu_enum("graph.fmodifier_add", "type")
-        layout.operator("graph.sound_bake")
+        layout.menu("GRAPH_MT_key_keyframe")
+        layout.menu("GRAPH_MT_key_fmodfier_add")
+        layout.operator("graph.sound_bake", icon = "BAKE_SOUND")
 
         layout.separator()
-        layout.operator("graph.frame_jump")
+        layout.operator("graph.frame_jump", icon= 'JUMP_TO_KEYFRAMES' )
 
         layout.separator()
-        layout.operator("graph.duplicate_move")
-        layout.operator("graph.delete")
+        layout.operator("graph.duplicate_move", icon = "DUPLICATE")
+        layout.operator("graph.delete", icon = "DELETE")
 
         layout.separator()
-        layout.operator_menu_enum("graph.handle_type", "type", text="Handle Type")
+        layout.menu("GRAPH_MT_key_handle_type")
         layout.operator_menu_enum("graph.interpolation_type", "type", text="Interpolation Mode")
         layout.operator_menu_enum("graph.easing_type", "type", text="Easing Type")
 
         layout.separator()
-        layout.operator("graph.clean").channels = False
-        layout.operator("graph.clean", text="Clean Channels").channels = True
-        layout.operator("graph.smooth")
-        layout.operator("graph.sample")
-        layout.operator("graph.bake")
+        layout.operator("graph.clean", icon = "CLEAN_KEYS").channels = False
+        layout.operator("graph.clean", text="Clean Channels", icon = "CLEAN_CHANNELS").channels = True
+        layout.operator("graph.smooth", icon = "SMOOTH_KEYFRAMES")
+        layout.operator("graph.sample", icon = "SAMPLE_KEYFRAMES")
+        layout.operator("graph.bake", icon = "BAKE_CURVE")
 
         layout.separator()
         layout.operator("graph.copy", text="Copy Keyframes", icon='COPYDOWN')
@@ -315,7 +321,20 @@ class GRAPH_MT_key(Menu):
         layout.operator("graph.paste", text="Paste Flipped", icon='PASTEFLIPDOWN').flipped = True
 
         layout.separator()
-        layout.operator("graph.euler_filter", text="Discontinuity (Euler) Filter")
+        layout.operator("graph.euler_filter", text="Discontinuity (Euler) Filter", icon = "DISCONTINUE_EULER")
+
+class GRAPH_MT_key_snap(Menu):
+    bl_label = "Snap"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("graph.snap", text="Current Frame", icon = "SNAP_CURRENTFRAME").type= 'CFRA'
+        layout.operator("graph.snap", text="Cursor Value", icon = "SNAP_CURSORVALUE").type= 'VALUE'
+        layout.operator("graph.snap", text="Nearest Frame", icon = "SNAP_NEARESTFRAME").type= 'NEAREST_FRAME'
+        layout.operator("graph.snap", text="Nearest Second", icon = "SNAP_NEARESTSECOND").type= 'NEAREST_SECOND'
+        layout.operator("graph.snap", text="Nearest Marker", icon = "SNAP_NEARESTMARKER").type= 'NEAREST_MARKER'
+        layout.operator("graph.snap", text="Flatten Handles", icon = "FLATTEN_HANDLER").type= 'HORIZONTAL'
 
 
 class GRAPH_MT_key_transform(Menu):
@@ -324,10 +343,10 @@ class GRAPH_MT_key_transform(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("transform.translate", text="Grab/Move")
-        layout.operator("transform.transform", text="Extend").mode = 'TIME_EXTEND'
-        layout.operator("transform.rotate", text="Rotate")
-        layout.operator("transform.resize", text="Scale")
+        layout.operator("transform.translate", text="Grab/Move", icon = "TRANSFORM_MOVE")
+        layout.operator("transform.transform", text="Extend", icon = "SHRINK_FATTEN").mode = 'TIME_EXTEND'
+        layout.operator("transform.rotate", text="Rotate", icon = "TRANSFORM_ROTATE")
+        layout.operator("transform.resize", text="Scale", icon = "TRANSFORM_SCALE")
 
 
 class GRAPH_MT_delete(Menu):
@@ -343,6 +362,108 @@ class GRAPH_MT_delete(Menu):
         layout.operator("graph.clean").channels = False
         layout.operator("graph.clean", text="Clean Channels").channels = True
 
+class GRAPH_MT_key_mirror(Menu):
+    bl_label = "Mirror"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("graph.mirror", text="By Times over Current Frame", icon = "MIRROR_TIME").type = 'CFRA'
+        layout.operator("graph.mirror", text="By Values over Cursor Value", icon = "MIRROR_CURSORVALUE").type = 'VALUE'
+        layout.operator("graph.mirror", text="By Times over Time=0", icon = "MIRROR_TIME").type = 'YAXIS'
+        layout.operator("graph.mirror", text="By Values over Value=0", icon = "MIRROR_CURSORVALUE").type = 'XAXIS'
+        layout.operator("graph.mirror", text="By Times over First Selected Marker", icon = "MIRROR_MARKER").type = 'MARKER'
+
+class GRAPH_MT_key_keyframe(Menu):
+    bl_label = "Insert Keyframes"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("graph.keyframe_insert", text = "All Channels", icon = "KEYFRAMES_INSERT").type = 'ALL'
+        layout.operator("graph.keyframe_insert", text = "Only Selected Channels", icon = "KEYFRAMES_INSERT").type = 'SEL'
+        layout.operator("graph.keyframe_insert", text = "Active Channels at Cursor", icon = "KEYFRAMES_INSERT").type = 'CURSOR_ACTIVE'
+        layout.operator("graph.keyframe_insert", text = "Selected Channels at Cursor", icon = "KEYFRAMES_INSERT").type = 'CURSOR_SEL'
+
+
+class GRAPH_MT_key_fmodfier_add(Menu):
+    bl_label = "Add F-Curve Modifier"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("graph.fmodifier_add", text = "Generator", icon = "GENERATOR_MODIFIER").type = 'GENERATOR'
+        layout.operator("graph.fmodifier_add", text = "Built-In Function", icon = "BUILTIN_MODIFIER").type = 'FNGENERATOR'
+        layout.operator("graph.fmodifier_add", text = "Envelope", icon = "ENVELOPE_MODIFIER").type = 'ENVELOPE'
+        layout.operator("graph.fmodifier_add", text = "Cycles", icon = "CYCLES_MODIFIER").type = 'CYCLES'
+        layout.operator("graph.fmodifier_add", text = "Noise", icon = "NOISE_MODIFIER").type = 'NOISE'
+        layout.operator("graph.fmodifier_add", text = "Limits", icon = "LIMIT_MODIFIER").type = 'LIMITS'
+        layout.operator("graph.fmodifier_add", text = "Stepped Interpolation", icon = "STEPPED_MODIFIER").type = 'STEPPED'
+
+class GRAPH_MT_key_handle_type(Menu):
+    bl_label = "Handle Type"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.operator("graph.handle_type", text= "Free", icon = "HANDLE_FREE").type = 'FREE'
+        layout.operator("graph.handle_type", text= "Vector", icon = "HANDLE_VECTOR").type = 'VECTOR'
+        layout.operator("graph.handle_type", text= "Aligned", icon = "HANDLE_ALIGN").type = 'ALIGNED'
+        layout.operator("graph.handle_type", text= "Automatic", icon = "HANDLE_AUTO").type = 'AUTO'
+        layout.operator("graph.handle_type", text= "Auto Clamped", icon = "HANDLE_AUTO_CLAMPED").type = 'AUTO_CLAMPED'
+
+class GRAPH_MT_channel_move(Menu):
+    bl_label = "Move"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.operator("anim.channels_move", text= "To Top", icon = "MOVE_TO_TOP").direction = 'TOP'
+        layout.operator("anim.channels_move", text= "Up", icon = "MOVE_UP").direction = 'UP'
+        layout.operator("anim.channels_move", text= "Down", icon = "MOVE_DOWN").direction = 'DOWN'
+        layout.operator("anim.channels_move", text= "To Bottom", icon = "MOVE_TO_BOTTOM").direction = 'BOTTOM'
+
+class GRAPH_MT_channel_extrapolation(Menu):
+    bl_label = "Extrapolation Mode"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("graph.extrapolation_type", text = "Constant Extrapolation", icon = "EXTRAPOLATION_CONSTANT").type = 'CONSTANT'
+        layout.operator("graph.extrapolation_type", text = "Linear Extrapolation", icon = "EXTRAPOLATION_LINEAR").type = 'LINEAR'
+        layout.operator("graph.extrapolation_type", text = "Make Cyclic (F-Modifier)", icon = "EXTRAPOLATION_CYCLIC").type = 'MAKE_CYCLIC'
+        layout.operator("graph.extrapolation_type", text = "Clear Cyclic (F-Modifier)", icon = "EXTRAPOLATION_CYCLIC_CLEAR").type = 'CLEAR-CYCLIC'
+
+
+class GRAPH_MT_channel_settings_toggle(Menu):
+    bl_label = "Toggle Channel Settings"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("anim.channels_setting_toggle", text = "Protect", icon = "LOCKED").type = 'PROTECT'
+        layout.operator("anim.channels_setting_toggle", text = "Mute", icon ="MUTE_IPO_ON").type = 'MUTE'
+
+class GRAPH_MT_channel_settings_enable(Menu):
+    bl_label = "Enable Channel Settings"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("anim.channels_setting_enable", text = "Protect", icon = "LOCKED").type = 'PROTECT'
+        layout.operator("anim.channels_setting_enable", text = "Mute", icon = "MUTE_IPO_ON").type = 'MUTE'
+
+class GRAPH_MT_channel_settings_disable(Menu):
+    bl_label = "Disable Channel Settings"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("anim.channels_setting_disable", text = "Protect", icon = "LOCKED").type = 'PROTECT'
+        layout.operator("anim.channels_setting_disable", text = "Mute", icon = "MUTE_IPO_ON").type = 'MUTE'
+        
+
+
+
+
 classes = (
     switch_editors_in_graph,
     GRAPH_HT_header,
@@ -354,8 +475,18 @@ classes = (
     GRAPH_MT_channel_hide_unselected_curves,
     GRAPH_MT_channel,
     GRAPH_MT_key,
+    GRAPH_MT_key_snap,
     GRAPH_MT_key_transform,
     GRAPH_MT_delete,
+    GRAPH_MT_key_mirror,
+    GRAPH_MT_key_keyframe,
+    GRAPH_MT_key_fmodfier_add,
+    GRAPH_MT_key_handle_type,
+    GRAPH_MT_channel_move,
+    GRAPH_MT_channel_extrapolation,
+    GRAPH_MT_channel_settings_toggle,
+    GRAPH_MT_channel_settings_enable,
+    GRAPH_MT_channel_settings_disable,
 )
 
 if __name__ == "__main__":  # only for live edit.
