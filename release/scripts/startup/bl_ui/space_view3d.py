@@ -3212,7 +3212,18 @@ class VIEW3D_MT_edit_lattice(Menu):
 
         layout.menu("VIEW3D_MT_transform")
         layout.operator("object.vertex_group_mirror", icon = "MIRROR_VERTEXGROUP")
-        layout.operator_menu_enum("lattice.flip", "axis")
+        layout.menu("VIEW3D_MT_edit_lattice_flip")
+
+class VIEW3D_MT_edit_lattice_flip(Menu):
+    bl_label = "Flip ( Distortion Free)"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("lattice.flip", text = " U (X) axis", icon = "FLIP_X").axis = 'U'
+        layout.operator("lattice.flip", text = " V (Y) axis", icon = "FLIP_Y").axis = 'V'
+        layout.operator("lattice.flip", text = " W (Z) axis", icon = "FLIP_Z").axis = 'W'
+
 
 
 # Workaround to separate the tooltips for Show Hide for Armature in Edit Mode
@@ -4269,6 +4280,7 @@ classes = (
     VIEW3D_MT_edit_meta_showhide_unselected,
     VIEW3D_MT_edit_meta_showhide,
     VIEW3D_MT_edit_lattice,
+    VIEW3D_MT_edit_lattice_flip,
     VIEW3D_armature_hide_unselected,
     VIEW3D_MT_armature_show_hide,
     VIEW3D_MT_edit_armature,
