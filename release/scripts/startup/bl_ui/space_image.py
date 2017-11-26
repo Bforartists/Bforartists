@@ -108,40 +108,40 @@ class IMAGE_MT_view(Menu):
 
         layout.separator()
 
-        layout.operator("image.view_zoom_in")
-        layout.operator("image.view_zoom_out")
+        layout.operator("image.view_zoom_in", icon = "ZOOM_IN")
+        layout.operator("image.view_zoom_out", icon = "ZOOM_OUT")
 
         layout.separator()
 
         ratios = ((1, 8), (1, 4), (1, 2), (1, 1), (2, 1), (4, 1), (8, 1))
 
         for a, b in ratios:
-            layout.operator("image.view_zoom_ratio", text=iface_("Zoom %d:%d") % (a, b), translate=False).ratio = a / b
+            layout.operator("image.view_zoom_ratio", text=iface_("Zoom %d:%d") % (a, b), translate=False, icon = "ZOOM_SET").ratio = a / b
 
         layout.separator()
 
         if show_uvedit:
-            layout.operator("image.view_selected")
+            layout.operator("image.view_selected", icon = "VIEW_SELECTED")
 
-        layout.operator("image.view_all")
-        layout.operator("image.view_all_fit", text="View Fit")
+        layout.operator("image.view_all", icon = "VIEWALL" )
+        layout.operator("image.view_all_fit", text="View Fit", icon = "VIEW_FIT")
 
         layout.separator()
 
         if show_render:
-            layout.operator("image.render_border")
-            layout.operator("image.clear_render_border")
+            layout.operator("image.render_border", icon = "RENDERBORDER")
+            layout.operator("image.clear_render_border", icon = "RENDERBORDER_CLEAR")
 
             layout.separator()
 
-            layout.operator("image.cycle_render_slot", text="Render Slot Cycle Next")
-            layout.operator("image.cycle_render_slot", text="Render Slot Cycle Previous").reverse = True
+            layout.operator("image.cycle_render_slot", text="Render Slot Cycle Next", icon = "FRAME_NEXT")
+            layout.operator("image.cycle_render_slot", text="Render Slot Cycle Previous", icon = "FRAME_PREV").reverse = True
 
             layout.separator()
 
-        layout.operator("screen.area_dupli")
-        layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area") # bfa - the separated tooltip. Class is in space_text.py
-        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area").use_hide_panels = True
+        layout.operator("screen.area_dupli", icon = "NEW_WINDOW")
+        layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area", icon = "MAXIMIZE_AREA") # bfa - the separated tooltip. Class is in space_text.py
+        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area", icon = "FULLSCREEN_AREA").use_hide_panels = True
 
 
 # Workaround to separate the tooltips
@@ -245,23 +245,23 @@ class IMAGE_MT_image(Menu):
 
         show_render = sima.show_render
 
-        layout.operator("image.read_renderlayers")
+        layout.operator("image.read_renderlayers", icon = "RENDERLAYERS")
 
-        layout.operator("image.save_dirty", text="Save All Images")
+        layout.operator("image.save_dirty", text="Save All Images", icon = "SAVE_ALL")
 
         if ima:
             if not show_render:
-                layout.operator("image.replace")
-                layout.operator("image.reload")
+                layout.operator("image.replace", icon='FILE_FOLDER')
+                layout.operator("image.reload", icon = "FILE_REFRESH")
 
             layout.operator("image.save", icon='FILE_TICK')
             layout.operator("image.save_as", icon='SAVE_AS')
             layout.operator("image.save_as", text="Save a Copy", icon='SAVE_COPY').copy = True
 
             if ima.source == 'SEQUENCE':
-                layout.operator("image.save_sequence")
+                layout.operator("image.save_sequence", icon='SAVE_All')
 
-            layout.operator("image.external_edit", "Edit Externally")
+            layout.operator("image.external_edit", "Edit Externally", icon = "EDIT_EXTERNAL")
 
             layout.separator()
 
@@ -270,7 +270,7 @@ class IMAGE_MT_image(Menu):
             if not show_render:
                 if not ima.packed_file:
                     layout.separator()
-                    layout.operator("image.pack")
+                    layout.operator("image.pack", icon = "PACKAGE")
 
                 # only for dirty && specific image types, perhaps
                 # this could be done in operator poll too
@@ -278,7 +278,7 @@ class IMAGE_MT_image(Menu):
                     if ima.source in {'FILE', 'GENERATED'} and ima.type != 'OPEN_EXR_MULTILAYER':
                         if ima.packed_file:
                             layout.separator()
-                        layout.operator("image.pack", text="Pack As PNG").as_png = True
+                        layout.operator("image.pack", text="Pack As PNG", icon = "PACKAGE").as_png = True
 
 
 class IMAGE_MT_image_invert(Menu):
@@ -287,17 +287,17 @@ class IMAGE_MT_image_invert(Menu):
     def draw(self, context):
         layout = self.layout
 
-        props = layout.operator("image.invert", text="Invert Image Colors")
+        props = layout.operator("image.invert", text="Invert Image Colors", icon = "REVERSE_COLORS")
         props.invert_r = True
         props.invert_g = True
         props.invert_b = True
 
         layout.separator()
 
-        layout.operator("image.invert", text="Invert Red Channel").invert_r = True
-        layout.operator("image.invert", text="Invert Green Channel").invert_g = True
-        layout.operator("image.invert", text="Invert Blue Channel").invert_b = True
-        layout.operator("image.invert", text="Invert Alpha Channel").invert_a = True
+        layout.operator("image.invert", text="Invert Red Channel", icon = "REVERSE_RED").invert_r = True
+        layout.operator("image.invert", text="Invert Green Channel", icon = "REVERSE_GREEN").invert_g = True
+        layout.operator("image.invert", text="Invert Blue Channel", icon = "REVERSE_BLUE").invert_b = True
+        layout.operator("image.invert", text="Invert Alpha Channel", icon = "IMAGE_ALPHA").invert_a = True
 
 
 class IMAGE_MT_uvs_showhide(Menu):
@@ -306,9 +306,9 @@ class IMAGE_MT_uvs_showhide(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("uv.reveal")
-        layout.operator("uv.hide", text="Hide Selected").unselected = False
-        layout.operator("uv.hide", text="Hide Unselected").unselected = True
+        layout.operator("uv.reveal", icon = "RESTRICT_VIEW_OFF")
+        layout.operator("uv.hide", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
+        layout.operator("uv.hide", text="Hide Unselected", icon = "HIDE_UNSELECTED").unselected = True
 
 
 class IMAGE_MT_uvs_snap(Panel, UVToolsPanel):
@@ -747,7 +747,7 @@ class IMAGE_PT_tools_uvs(Panel, UVToolsPanel):
         col = layout.column(align=True)
         row = col.row(align=True)
         row.operator("uv.weld", icon='WELD')
-        row.operator("uv.stitch")
+        row.operator("uv.stitch", icon = "STITCH")
         col.operator("uv.remove_doubles", icon='REMOVE_DOUBLES')
         col.operator("uv.average_islands_scale", icon ="AVERAGEISLANDSCALE")
         col.operator("uv.pack_islands", icon ="PACKISLAND")
