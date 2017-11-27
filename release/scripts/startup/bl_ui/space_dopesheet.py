@@ -451,10 +451,10 @@ class DOPESHEET_MT_key_transform(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("transform.transform", text="Grab/Move").mode = 'TIME_TRANSLATE'
-        layout.operator("transform.transform", text="Extend").mode = 'TIME_EXTEND'
-        layout.operator("transform.transform", text="Slide").mode = 'TIME_SLIDE'
-        layout.operator("transform.transform", text="Scale").mode = 'TIME_SCALE'
+        layout.operator("transform.transform", text="Grab/Move", icon = "TRANSFORM_MOVE").mode = 'TIME_TRANSLATE'
+        layout.operator("transform.transform", text="Extend", icon = "SHRINK_FATTEN").mode = 'TIME_EXTEND'
+        layout.operator("transform.transform", text="Slide", icon = "PUSH_PULL").mode = 'TIME_SLIDE'
+        layout.operator("transform.transform", text="Scale", icon = "TRANSFORM_SCALE").mode = 'TIME_SCALE'
 
 
 #######################################
