@@ -415,14 +415,14 @@ class DOPESHEET_MT_key(Menu):
         layout.operator_menu_enum("action.mirror", "type", text="Mirror")
 
         layout.separator()
-        layout.operator("action.keyframe_insert")
+        layout.operator("action.keyframe_insert", icon = 'KEYFRAMES_INSERT')
 
         layout.separator()
-        layout.operator("action.frame_jump")
+        layout.operator("action.frame_jump", icon = 'JUMP_TO_KEYFRAMES')
 
         layout.separator()
-        layout.operator("action.duplicate_move")
-        layout.operator("action.delete")
+        layout.operator("action.duplicate_move", icon = "DUPLICATE")
+        layout.operator("action.delete", icon = "DELETE")
 
         layout.separator()
         layout.operator_menu_enum("action.keyframe_type", "type", text="Keyframe Type")
@@ -430,9 +430,9 @@ class DOPESHEET_MT_key(Menu):
         layout.operator_menu_enum("action.interpolation_type", "type", text="Interpolation Mode")
 
         layout.separator()
-        layout.operator("action.clean").channels = False
-        layout.operator("action.clean_channels", text="Clean Channels") # bfa -  separated tooltips
-        layout.operator("action.sample")
+        layout.operator("action.clean", icon = "CLEAN_KEYS").channels = False
+        layout.operator("action.clean_channels", text="Clean Channels", icon = "CLEAN_CHANNELS") # bfa -  separated tooltips
+        layout.operator("action.sample", icon = "SAMPLE_KEYFRAMES")
 
         layout.separator()
         layout.operator("action.copy", text="Copy Keyframes", icon='COPYDOWN')
