@@ -312,25 +312,25 @@ class DOPESHEET_MT_select(Menu):
 
         layout.separator()
         
-        layout.operator("action.select_column", text="Columns on Selected Keys").mode = 'KEYS'
-        layout.operator("action.select_column", text="Column on Current Frame").mode = 'CFRA'
-        layout.operator("action.select_column", text="Columns on Selected Markers").mode = 'MARKERS_COLUMN'
-        layout.operator("action.select_column", text="Between Selected Markers").mode = 'MARKERS_BETWEEN'
+        layout.operator("action.select_column", text="Columns on Selected Keys", icon = "COLUMNS_KEYS").mode = 'KEYS'
+        layout.operator("action.select_column", text="Column on Current Frame", icon = "COLUMN_CURRENT_FRAME").mode = 'CFRA'
+        layout.operator("action.select_column", text="Columns on Selected Markers", icon = "COLUMNS_MARKERS").mode = 'MARKERS_COLUMN'
+        layout.operator("action.select_column", text="Between Selected Markers", icon = "BETWEEN_MARKERS").mode = 'MARKERS_BETWEEN'
         
         layout.separator()
         
-        layout.operator("action.select_linked", text = "Linked")
+        layout.operator("action.select_linked", text = "Linked", icon = "CONNECTED")
 
         layout.separator()
         
-        layout.operator("action.select_leftright_before", text="Before Current Frame") # bfa - the separated tooltip
-        layout.operator("action.select_leftright_after", text="After Current Frame") # bfa - the separated tooltip
+        layout.operator("action.select_leftright_before", text="Before Current Frame", icon = "BEFORE_CURRENT_FRAME") # bfa - the separated tooltip
+        layout.operator("action.select_leftright_after", text="After Current Frame", icon = "AFTER_CURRENT_FRAME") # bfa - the separated tooltip
 
         # FIXME: grease pencil mode isn't supported for these yet, so skip for that mode only
         if context.space_data.mode != 'GPENCIL':
             layout.separator()
-            layout.operator("action.select_more",text = "More")
-            layout.operator("action.select_less",text = "Less")
+            layout.operator("action.select_more",text = "More", icon = "SELECTMORE")
+            layout.operator("action.select_less",text = "Less", icon = "SELECTLESS")
 
             
 
