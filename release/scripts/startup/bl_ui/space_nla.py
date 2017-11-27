@@ -114,19 +114,19 @@ class NLA_MT_view(Menu):
         layout.prop(st, "show_local_markers")
 
         layout.separator()
-        layout.operator("anim.previewrange_set")
-        layout.operator("anim.previewrange_clear")
-        layout.operator("nla.previewrange_set")
+        layout.operator("anim.previewrange_set", icon='BORDER_RECT')
+        layout.operator("anim.previewrange_clear", icon = "CLEAR")
+        layout.operator("nla.previewrange_set", icon='BORDER_RECT')
 
         layout.separator()
-        layout.operator("nla.view_all")
-        layout.operator("nla.view_selected")
-        layout.operator("nla.view_frame")
+        layout.operator("nla.view_all", icon = "VIEWALL")
+        layout.operator("nla.view_selected", icon = "VIEW_SELECTED")
+        layout.operator("nla.view_frame", icon = "VIEW_FRAME" )
 
         layout.separator()
-        layout.operator("screen.area_dupli")
-        layout.operator("screen.screen_full_area")
-        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area").use_hide_panels = True
+        layout.operator("screen.area_dupli", icon = "NEW_WINDOW")
+        layout.operator("screen.screen_full_area", icon = "MAXIMIZE_AREA")
+        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area", icon = "FULLSCREEN_AREA").use_hide_panels = True
 
 
 class NLA_MT_select(Menu):
