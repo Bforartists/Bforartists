@@ -365,30 +365,31 @@ class DOPESHEET_MT_channel(Menu):
 
         layout.operator_context = 'INVOKE_REGION_CHANNELS'
 
-        layout.operator("anim.channels_delete")
+        layout.operator("anim.channels_delete", icon = "DELETE")
 
         layout.separator()
-        layout.operator("anim.channels_group")
-        layout.operator("anim.channels_ungroup")
+        layout.operator("anim.channels_group", icon = "NEW_GROUP")
+        layout.operator("anim.channels_ungroup", icon = "REMOVE_FROM_ALL_GROUPS")
 
         layout.separator()
-        layout.operator_menu_enum("anim.channels_setting_toggle", "type")
-        layout.operator_menu_enum("anim.channels_setting_enable", "type")
-        layout.operator_menu_enum("anim.channels_setting_disable", "type")
+
+        layout.menu("GRAPH_MT_channel_settings_toggle")#bfa - menu comes from space_graph
+        layout.menu("GRAPH_MT_channel_settings_enable")#bfa - menu comes from space_graph
+        layout.menu("GRAPH_MT_channel_settings_disable")#bfa - menu comes from space_graph
 
         layout.separator()
-        layout.operator("anim.channels_editable_toggle")
-        layout.operator_menu_enum("action.extrapolation_type", "type", text="Extrapolation Mode")
+        layout.operator("anim.channels_editable_toggle", icon = "LOCKED")
+        layout.menu("DOPESHEET_MT_channel_extrapolation")
 
         layout.separator()
-        layout.operator("anim.channels_expand")
-        layout.operator("anim.channels_collapse")
+        layout.operator("anim.channels_expand", icon = "EXPANDMENU")
+        layout.operator("anim.channels_collapse", icon = "COLLAPSEMENU")
 
         layout.separator()
-        layout.operator_menu_enum("anim.channels_move", "direction", text="Move...")
+        layout.menu("GRAPH_MT_channel_move") #bfa - menu comes from space_graph
 
         layout.separator()
-        layout.operator("anim.channels_fcurves_enable")
+        layout.operator("anim.channels_fcurves_enable", icon = "UNLOCKED")
 
 # Workaround to separate the tooltips
 class DOPESHEET_MT_key_clean_channels(bpy.types.Operator):
@@ -516,6 +517,17 @@ class DOPESHEET_MT_delete(Menu):
         layout.operator("action.clean").channels = False
         layout.operator("action.clean", text="Clean Channels").channels = True
 
+class DOPESHEET_MT_channel_extrapolation(Menu):
+    bl_label = "Extrapolation Mode"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("action.extrapolation_type", text = "Constant Extrapolation", icon = "EXTRAPOLATION_CONSTANT").type = 'CONSTANT'
+        layout.operator("action.extrapolation_type", text = "Linear Extrapolation", icon = "EXTRAPOLATION_LINEAR").type = 'LINEAR'
+        layout.operator("action.extrapolation_type", text = "Make Cyclic (F-Modifier)", icon = "EXTRAPOLATION_CYCLIC").type = 'MAKE_CYCLIC'
+        layout.operator("action.extrapolation_type", text = "Clear Cyclic (F-Modifier)", icon = "EXTRAPOLATION_CYCLIC_CLEAR").type = 'CLEAR_CYCLIC'
+
 
 classes = (
     switch_editors_in_dopesheet,
@@ -534,6 +546,7 @@ classes = (
     DOPESHEET_MT_gpencil_channel,
     DOPESHEET_MT_gpencil_frame,
     DOPESHEET_MT_delete,
+    DOPESHEET_MT_channel_extrapolation,
 )
 
 if __name__ == "__main__":  # only for live edit.
