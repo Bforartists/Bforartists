@@ -136,18 +136,18 @@ class NLA_MT_select(Menu):
         layout = self.layout
 
         # This is a bit misleading as the operator's default text is "Select All" while it actually *toggles* All/None
-        layout.operator("nla.select_all_toggle").invert = False
-        layout.operator("nla.select_all_toggle", text="Invert Selection").invert = True
+        layout.operator("nla.select_all_toggle", icon='SELECT_ALL').invert = False
+        layout.operator("nla.select_all_toggle", text="Invert Selection", icon = 'INVERSE').invert = True
 
         layout.separator()
-        layout.operator("nla.select_border").axis_range = False
-        layout.operator("nla.select_border", text="Border Axis Range").axis_range = True
+        layout.operator("nla.select_border", icon='BORDER_RECT').axis_range = False
+        layout.operator("nla.select_border", text="Border Axis Range", icon='BORDER_RECT').axis_range = True
 
         layout.separator()
-        props = layout.operator("nla.select_leftright", text="Before Current Frame")
+        props = layout.operator("nla.select_leftright", text="Before Current Frame", icon = "BEFORE_CURRENT_FRAME")
         props.extend = False
         props.mode = 'LEFT'
-        props = layout.operator("nla.select_leftright", text="After Current Frame")
+        props = layout.operator("nla.select_leftright", text="After Current Frame", icon = "AFTER_CURRENT_FRAME")
         props.extend = False
         props.mode = 'RIGHT'
 
