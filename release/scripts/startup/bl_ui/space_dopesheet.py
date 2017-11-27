@@ -412,7 +412,8 @@ class DOPESHEET_MT_key(Menu):
         layout.menu("DOPESHEET_MT_key_transform", text="Transform")
 
         layout.operator_menu_enum("action.snap", "type", text="Snap")
-        layout.operator_menu_enum("action.mirror", "type", text="Mirror")
+
+        layout.menu("DOPESHEET_MT_key_mirror")
 
         layout.separator()
         layout.operator("action.keyframe_insert", icon = 'KEYFRAMES_INSERT')
@@ -528,6 +529,16 @@ class DOPESHEET_MT_channel_extrapolation(Menu):
         layout.operator("action.extrapolation_type", text = "Make Cyclic (F-Modifier)", icon = "EXTRAPOLATION_CYCLIC").type = 'MAKE_CYCLIC'
         layout.operator("action.extrapolation_type", text = "Clear Cyclic (F-Modifier)", icon = "EXTRAPOLATION_CYCLIC_CLEAR").type = 'CLEAR_CYCLIC'
 
+class DOPESHEET_MT_key_mirror(Menu):
+    bl_label = "Mirror"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("action.mirror", text="By Times over Current Frame", icon = "MIRROR_TIME").type = 'CFRA'
+        layout.operator("action.mirror", text="By Values over Value=0", icon = "MIRROR_CURSORVALUE").type = 'XAXIS'
+        layout.operator("action.mirror", text="By Times over First Selected Marker", icon = "MIRROR_MARKER").type = 'MARKER'
+
 
 classes = (
     switch_editors_in_dopesheet,
@@ -547,6 +558,7 @@ classes = (
     DOPESHEET_MT_gpencil_frame,
     DOPESHEET_MT_delete,
     DOPESHEET_MT_channel_extrapolation,
+    DOPESHEET_MT_key_mirror,
 )
 
 if __name__ == "__main__":  # only for live edit.
