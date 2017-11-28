@@ -153,23 +153,23 @@ class OUTLINER_MT_view(Menu):
             layout.prop(space, "use_sort_alpha")
             layout.prop(space, "show_restrict_columns")
             layout.separator()
-            layout.operator("outliner.show_active")
+            layout.operator("outliner.show_active", icon = "CENTER")
 
-        layout.operator("outliner.show_one_level", text="Show One Level")
-        layout.operator("outliner.show_one_level", text="Hide One Level").open = False
-        layout.operator("outliner.show_hierarchy")
-
-        layout.separator()
-
-        layout.operator("outliner.select_border")
-        layout.operator("outliner.selected_toggle")
-        layout.operator("outliner.expanded_toggle")
+        layout.operator("outliner.show_one_level", text="Show One Level", icon = "HIERARCHY_DOWN")
+        layout.operator("outliner.show_one_level", text="Hide One Level", icon = "HIERARCHY_UP").open = False
+        layout.operator("outliner.show_hierarchy", icon = "HIERARCHY")
 
         layout.separator()
 
-        layout.operator("screen.area_dupli")
-        layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area") # bfa - the separated tooltip. Class is in space_text.py
-        layout.operator("screen.screen_full_area").use_hide_panels = True
+        layout.operator("outliner.select_border", icon='BORDER_RECT')
+        layout.operator("outliner.selected_toggle", icon='SELECT_ALL')
+        layout.operator("outliner.expanded_toggle", icon='INVERSE')
+
+        layout.separator()
+
+        layout.operator("screen.area_dupli", icon = "NEW_WINDOW")
+        layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area", icon = "MAXIMIZE_AREA") # bfa - the separated tooltip. Class is in space_text.py
+        layout.operator("screen.screen_full_area", icon = "FULLSCREEN_AREA").use_hide_panels = True
 
 
 class OUTLINER_MT_search(Menu):
