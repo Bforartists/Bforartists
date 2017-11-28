@@ -216,20 +216,20 @@ class NLA_MT_add(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("nla.actionclip_add")
-        layout.operator("nla.transition_add")
-        layout.operator("nla.soundclip_add")
+        layout.operator("nla.actionclip_add", icon = "ADD_STRIP")
+        layout.operator("nla.transition_add", icon = "TRANSITION")
+        layout.operator("nla.soundclip_add", icon = "SOUND")
 
         layout.separator()
-        layout.operator("nla.meta_add")
-        layout.operator("nla.meta_remove")
+        layout.operator("nla.meta_add", icon = "ADD_METASTRIP")
+        layout.operator("nla.meta_remove", icon = "REMOVE_MTEASTRIP")
 
         layout.separator()
-        layout.operator("nla.tracks_add").above_selected = False
-        layout.operator("nla.tracks_add", text="Add Tracks Above Selected").above_selected = True
+        layout.operator("nla.tracks_add", icon = "ADD_TRACK").above_selected = False
+        layout.operator("nla.tracks_add", text="Add Tracks Above Selected", icon = "ADD_TRACK_ABOVE").above_selected = True
 
         layout.separator()
-        layout.operator("nla.selected_objects_add")
+        layout.operator("nla.selected_objects_add", icon = "ADD_SELECTED")
 
 
 class NLA_MT_edit_transform(Menu):
