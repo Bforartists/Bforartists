@@ -182,13 +182,13 @@ class NODE_MT_view(Menu):
 
         layout.separator()
 
-        layout.operator("view2d.zoom_in")
-        layout.operator("view2d.zoom_out")
+        layout.operator("view2d.zoom_in", icon = "ZOOM_IN")
+        layout.operator("view2d.zoom_out", icon = "ZOOM_OUT")
 
         layout.separator()
 
-        layout.operator("node.view_selected")
-        layout.operator("node.view_all")
+        layout.operator("node.view_selected", icon = "VIEW_SELECTED")
+        layout.operator("node.view_all", icon = "VIEWALL" )
 
         if context.space_data.show_backdrop:
             layout.separator()
@@ -197,14 +197,14 @@ class NODE_MT_view(Menu):
             layout.operator("node.backimage_zoom", text="Backdrop Zoom in").factor = 1.2
             layout.operator("node.backimage_zoom", text="Backdrop Zoom out").factor = 0.83333
             layout.operator("node.backimage_fit", text="Fit Backdrop")
-            layout.operator("node.clear_viewer_border")
-            layout.operator("node.viewer_border")
+            layout.operator("node.clear_viewer_border", icon = "RENDERBORDER_CLEAR")
+            layout.operator("node.viewer_border", icon = "RENDERBORDER")
 
         layout.separator()
 
-        layout.operator("screen.area_dupli")
-        layout.operator("screen.screen_full_area")
-        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area").use_hide_panels = True
+        layout.operator("screen.area_dupli", icon = "NEW_WINDOW")
+        layout.operator("screen.screen_full_area", icon = "MAXIMIZE_AREA")
+        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area", icon = "FULLSCREEN_AREA").use_hide_panels = True
 
 
 class NODE_MT_select(Menu):
