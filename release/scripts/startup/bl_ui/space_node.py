@@ -255,9 +255,9 @@ class NODE_MT_node(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("transform.translate")
-        layout.operator("transform.rotate")
-        layout.operator("transform.resize")
+        layout.operator("transform.translate", icon = "TRANSFORM_MOVE")
+        layout.operator("transform.rotate", icon = "TRANSFORM_ROTATE")
+        layout.operator("transform.resize",  icon = "TRANSFORM_SCALE")
 
         layout.separator()
 
@@ -266,40 +266,40 @@ class NODE_MT_node(Menu):
 
         layout.separator()
 
-        layout.operator("node.duplicate_move_keep_inputs", text = "Duplicate Keep Input")
-        layout.operator("node.duplicate_move")
-        layout.operator("node.delete")
-        layout.operator("node.delete_reconnect")
+        layout.operator("node.duplicate_move_keep_inputs", text = "Duplicate Keep Input", icon = "DUPLICATE")
+        layout.operator("node.duplicate_move", icon = "DUPLICATE")
+        layout.operator("node.delete", icon = "DELETE")
+        layout.operator("node.delete_reconnect", icon = "DELETE")
 
         layout.separator()
 
-        layout.operator("node.join", text="Join in New Frame")
-        layout.operator("node.detach", text="Remove from Frame")
+        layout.operator("node.join", text="Join in New Frame", icon = "JOIN")
+        layout.operator("node.detach", text="Remove from Frame", icon = "DELETE")
 
         layout.separator()
 
-        layout.operator("node.link_make").replace = False
-        layout.operator("node.link_make", text="Make and Replace Links").replace = True
-        layout.operator("node.links_cut")
-        layout.operator("node.links_detach")
-        layout.operator("node.move_detach_links", text = "Detach Links Move")
-        layout.operator("node.parent_set")
+        layout.operator("node.link_make", icon = "LINK_DATA").replace = False
+        layout.operator("node.link_make", text="Make and Replace Links", icon = "LINK_DATA").replace = True
+        layout.operator("node.links_cut", icon = "CUT_LINKS")
+        layout.operator("node.links_detach", icon = "DETACH_LINKS")
+        layout.operator("node.move_detach_links", text = "Detach Links Move", icon = "DETACH_LINKS")
+        layout.operator("node.parent_set", icon = "PARENT_SET")
         layout.menu("NODE_OT_group_separate")
 
         layout.separator()
 
-        layout.operator("node.hide_toggle")
-        layout.operator("node.mute_toggle")
-        layout.operator("node.preview_toggle")
-        layout.operator("node.hide_socket_toggle")
-        layout.operator("node.options_toggle")
-        layout.operator("node.collapse_hide_unused_toggle")
+        layout.operator("node.hide_toggle", icon = "RESTRICT_VIEW_ON")
+        layout.operator("node.mute_toggle", icon = "TOGGLE_NODE_MUTE")
+        layout.operator("node.preview_toggle", icon = "TOGGLE_NODE_PREVIEW")
+        layout.operator("node.hide_socket_toggle", icon = "RESTRICT_VIEW_OFF")
+        layout.operator("node.options_toggle", icon = "TOGGLE_NODE_OPTIONS")
+        layout.operator("node.collapse_hide_unused_toggle", icon = "HIDE_UNSELECTED")
 
         layout.separator()
 
-        layout.operator("node.read_renderlayers")
-        layout.operator("node.read_fullsamplelayers")
-        layout.operator("node.render_changed")
+        layout.operator("node.read_renderlayers", icon = "RENDERLAYERS")
+        layout.operator("node.read_fullsamplelayers", icon = "RENDERLAYERS")
+        layout.operator("node.render_changed", icon = "RENDERLAYERS")
 
 
 class NODE_MT_node_color_presets(Menu):
