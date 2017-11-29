@@ -64,18 +64,18 @@ class CONSOLE_MT_console(Menu):
     def draw(self, context):
         layout = self.layout
         
-        layout.operator("console.execute").interactive = True
+        layout.operator("console.execute", icon = "PLAY").interactive = True
         
         layout.separator()
 
-        layout.operator("console.clear")
-        layout.operator("console.clear_line")
+        layout.operator("console.clear", icon = "DELETE")
+        layout.operator("console.clear_line", icon = "DELETE")
 
         layout.separator()
 
-        layout.operator("console.copy_as_script", text = "Copy as Script")
-        layout.operator("console.copy", text ="Copy")
-        layout.operator("console.paste", text = "Paste")
+        layout.operator("console.copy_as_script", text = "Copy as Script", icon = "COPYDOWN")
+        layout.operator("console.copy", text ="Copy", icon = "COPYDOWN")
+        layout.operator("console.paste", text = "Paste", icon = "PASTEDOWN")
         
         layout.separator()
 
@@ -83,19 +83,19 @@ class CONSOLE_MT_console(Menu):
         
         layout.separator()
         
-        myvar = layout.operator("wm.context_cycle_int", text = "Zoom Text in")
+        myvar = layout.operator("wm.context_cycle_int", text = "Zoom Text in", icon = "ZOOM_IN")
         myvar.data_path = "space_data.font_size"
         myvar.reverse = False
         
-        myvar = layout.operator("wm.context_cycle_int", text = "Zoom Text Out")
+        myvar = layout.operator("wm.context_cycle_int", text = "Zoom Text Out", icon = "ZOOM_OUT")
         myvar.data_path = "space_data.font_size"
         myvar.reverse = True
 
         layout.separator()
 
-        layout.operator("screen.area_dupli")
-        layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area") # bfa - the separated tooltip. Class is in space_text.py
-        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area").use_hide_panels = True
+        layout.operator("screen.area_dupli", icon = "NEW_WINDOW")
+        layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area", icon = "MAXIMIZE_AREA") # bfa - the separated tooltip. Class is in space_text.py
+        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area", icon = "FULLSCREEN_AREA").use_hide_panels = True
         
 class CONSOLE_MT_edit(Menu):
     bl_label = "Edit"
