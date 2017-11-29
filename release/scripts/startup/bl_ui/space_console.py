@@ -103,17 +103,17 @@ class CONSOLE_MT_edit(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("console.indent")
-        layout.operator("console.unindent")
+        layout.operator("console.indent", icon = "INDENT")
+        layout.operator("console.unindent", icon = "UNINDENT")
         
         layout.separator()
         
-        layout.operator("console.move", text ="Cursor to Previous Word").type = "PREVIOUS_WORD"
-        layout.operator("console.move", text ="Cursor to Next Word").type = "NEXT_WORD"
-        layout.operator("console.move", text ="Cursor to Line Begin").type = "LINE_BEGIN"
-        layout.operator("console.move", text ="Cursor to Line Begin").type = "LINE_END"     
-        layout.operator("console.move", text ="Cursor to Previous Character").type = "PREVIOUS_CHARACTER"
-        layout.operator("console.move", text ="Cursor to Next Character").type = "NEXT_CHARACTER"
+        layout.operator("console.move", text ="Cursor to Previous Word", icon = "CARET_PREV_WORD").type = "PREVIOUS_WORD"
+        layout.operator("console.move", text ="Cursor to Next Word", icon = "CARET_NEXT_WORD").type = "NEXT_WORD"
+        layout.operator("console.move", text ="Cursor to Line Begin", icon = "CARET_LINE_BEGIN").type = "LINE_BEGIN"
+        layout.operator("console.move", text ="Cursor to Line Begin", icon = "CARET_LINE_END").type = "LINE_END"     
+        layout.operator("console.move", text ="Cursor to Previous Character", icon = "CARET_PREV_CHAR").type = "PREVIOUS_CHARACTER"
+        layout.operator("console.move", text ="Cursor to Next Character", icon = "CARET_NEXT_CHAR").type = "NEXT_CHARACTER"
         
         layout.separator()
         
@@ -121,8 +121,8 @@ class CONSOLE_MT_edit(Menu):
         
         layout.separator()
         
-        layout.operator("console.history_cycle").reverse = False
-        layout.operator("console.history_cycle").reverse = True
+        layout.operator("console.history_cycle", icon = "HISTORY_CYCLE_FORWARD").reverse = False
+        layout.operator("console.history_cycle", icon = "HISTORY_CYCLE_BACK").reverse = True
 
 
 class CONSOLE_MT_language(Menu):
