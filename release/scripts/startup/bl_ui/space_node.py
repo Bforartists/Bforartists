@@ -193,10 +193,10 @@ class NODE_MT_view(Menu):
         if context.space_data.show_backdrop:
             layout.separator()
 
-            layout.operator("node.backimage_move", text="Backdrop Move")
-            layout.operator("node.backimage_zoom", text="Backdrop Zoom in").factor = 1.2
-            layout.operator("node.backimage_zoom", text="Backdrop Zoom out").factor = 0.83333
-            layout.operator("node.backimage_fit", text="Fit Backdrop")
+            layout.operator("node.backimage_move", text="Backdrop Move", icon ='TRANSFORM_MOVE')
+            layout.operator("node.backimage_zoom", text="Backdrop Zoom in", icon = "ZOOM_IN").factor = 1.2
+            layout.operator("node.backimage_zoom", text="Backdrop Zoom out", icon = "ZOOM_OUT").factor = 0.83333
+            layout.operator("node.backimage_fit", text="Fit Backdrop", icon = "VIEW_FIT")
             layout.operator("node.clear_viewer_border", icon = "RENDERBORDER_CLEAR")
             layout.operator("node.viewer_border", icon = "RENDERBORDER")
 
@@ -222,23 +222,23 @@ class NODE_MT_select(Menu):
         
         layout.separator()
         
-        layout.operator("node.select_linked_from", text = "Linked From")
-        layout.operator("node.select_linked_to", text = "Linked To")
+        layout.operator("node.select_linked_from", text = "Linked From", icon = "LINKED")
+        layout.operator("node.select_linked_to", text = "Linked To", icon = "LINKED")
 
         layout.separator()
 
-        layout.operator("node.select_grouped", text = "Grouped Extend").extend = True
-        layout.operator("node.select_grouped", text = "Grouped").extend = False
-        layout.operator("node.select_same_type_step", text="Activate Same Type Previous").prev = True
-        layout.operator("node.select_same_type_step", text="Activate Same Type Next").prev = False
+        layout.operator("node.select_grouped", text = "Grouped Extend", icon = "GROUP").extend = True
+        layout.operator("node.select_grouped", text = "Grouped", icon = "GROUP").extend = False
+        layout.operator("node.select_same_type_step", text="Activate Same Type Previous", icon = "PREVIOUSACTIVE").prev = True
+        layout.operator("node.select_same_type_step", text="Activate Same Type Next", icon = "NEXTACTIVE").prev = False
 
         layout.separator()
 
-        layout.operator("node.find_node")
+        layout.operator("node.find_node", icon='VIEWZOOM') 
 
         layout.separator()
 
-        layout.operator("node.select_link_viewer")
+        layout.operator("node.select_link_viewer", icon = "LINK")
 
 class NODE_OT_group_separate(Menu):
     bl_label = "Separate"
