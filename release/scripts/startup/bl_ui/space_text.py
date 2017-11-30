@@ -191,18 +191,14 @@ class TEXT_MT_view(Menu):
 
         layout.separator()
 
-        layout.operator("text.move",
-                        text="Top of File",
-                        ).type = 'FILE_TOP'
-        layout.operator("text.move",
-                        text="Bottom of File",
-                        ).type = 'FILE_BOTTOM'
+        layout.operator("text.move", text="Top of File", icon = "MOVE_UP").type = 'FILE_TOP'
+        layout.operator("text.move", text="Bottom of File",icon = "MOVE_DOWN").type = 'FILE_BOTTOM'
 
         layout.separator()
 
-        layout.operator("screen.area_dupli")
-        layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area") # bfa - the new separated tooltip. Class is in space_text.py
-        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area").use_hide_panels = True
+        layout.operator("screen.area_dupli", icon = "NEW_WINDOW")
+        layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area", icon = "MAXIMIZE_AREA") # bfa - the new separated tooltip. Class is in space_text.py
+        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area", icon = "FULLSCREEN_AREA").use_hide_panels = True
 
 
 class TEXT_MT_text(Menu):
