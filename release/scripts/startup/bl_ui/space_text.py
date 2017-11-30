@@ -278,17 +278,18 @@ class TEXT_MT_format(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("text.indent")
-        layout.operator("text.unindent")
+        layout.operator("text.indent", icon = "INDENT")
+        layout.operator("text.unindent", icon = "UNINDENT")
 
         layout.separator()
 
-        layout.operator("text.comment")
-        layout.operator("text.uncomment")
+        layout.operator("text.comment", icon = "COMMENT")
+        layout.operator("text.uncomment", icon = "UNCOMMENT")
 
         layout.separator()
 
-        layout.operator_menu_enum("text.convert_whitespace", "type")
+        layout.operator("text.convert_whitespace", text = "Whitespace to Spaces", icon = "WHITESPACE_SPACES").type = 'SPACES'
+        layout.operator("text.convert_whitespace", text = "Whitespace to Tabs", icon = "WHITESPACE_TABS").type = 'TABS'
 
 
 class TEXT_MT_edit_to3d(Menu):
