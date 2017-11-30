@@ -218,7 +218,7 @@ class TEXT_MT_text(Menu):
         layout.operator("text.open", text = "Open Text", icon='FILE_FOLDER')
 
         if text:
-            layout.operator("text.reload")
+            layout.operator("text.reload", icon = "FILE_REFRESH")
 
             layout.column()
             layout.operator("text.save", icon='FILE_TICK')
@@ -228,7 +228,7 @@ class TEXT_MT_text(Menu):
                 layout.operator("text.make_internal")
 
             layout.column()
-            layout.operator("text.run_script")
+            layout.operator("text.run_script", icon = "PLAY")
 
         layout.separator()
 
