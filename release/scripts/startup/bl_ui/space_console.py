@@ -117,7 +117,7 @@ class CONSOLE_MT_edit(Menu):
         
         layout.separator()
         
-        layout.operator_menu_enum("console.delete", "type")
+        layout.menu("CONSOLE_MT_edit_delete")
         
         layout.separator()
         
@@ -147,6 +147,17 @@ class CONSOLE_MT_language(Menu):
                             text=language.title(),
                             translate=False).language = language
 
+class CONSOLE_MT_edit_delete(Menu):
+    bl_label = "Delete"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("console.delete", text = "Next Character", icon = "DELETE").type = 'NEXT_CHARACTER'
+        layout.operator("console.delete", text = "Previous Character", icon = "DELETE").type = 'PREVIOUS_CHARACTER'
+        layout.operator("console.delete", text = "Next Word", icon = "DELETE").type = 'NEXT_WORD'
+        layout.operator("console.delete", text = "Previous Word", icon = "DELETE").type = 'PREVIOUS_WORD'
+
 
 def add_scrollback(text, text_type):
     for l in text.split("\n"):
@@ -161,6 +172,7 @@ classes = (
     CONSOLE_MT_editor_menus,
     CONSOLE_MT_console,
     CONSOLE_MT_language,
+    CONSOLE_MT_edit_delete,
 )
 
 if __name__ == "__main__":  # only for live edit.
