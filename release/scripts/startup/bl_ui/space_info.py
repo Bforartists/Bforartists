@@ -416,13 +416,13 @@ class INFO_MT_window(Menu):
 
         layout = self.layout
 
-        layout.operator("wm.window_duplicate")
+        layout.operator("wm.window_duplicate", icon = "NEW_WINDOW")
         layout.operator("wm.window_fullscreen_toggle", icon='FULLSCREEN_ENTER')
 
         layout.separator()
 
-        layout.operator("screen.screenshot")
-        layout.operator("screen.screencast")
+        layout.operator("screen.screenshot", icon='MAKE_SCREENSHOT')
+        layout.operator("screen.screencast", icon='MAKE_SCREENCAST')
 
         if sys.platform[:3] == "win":
             layout.separator()
@@ -434,9 +434,9 @@ class INFO_MT_window(Menu):
 
         layout.separator()
 
-        layout.menu("WM_OT_redraw_timer_info", icon='BLENDER') #Redraw timer sub menu - Debug stuff
-        layout.operator("wm.debug_menu") # debug menu
-        layout.operator("script.reload") # Reload all python scripts. Mainly meant for the UI scripts.
+        layout.menu("WM_OT_redraw_timer_info", icon='TIME') #Redraw timer sub menu - Debug stuff
+        layout.operator("wm.debug_menu", icon='DEBUG') # debug menu
+        layout.operator("script.reload", icon='FILE_REFRESH') # Reload all python scripts. Mainly meant for the UI scripts.
 
         layout.separator()
         

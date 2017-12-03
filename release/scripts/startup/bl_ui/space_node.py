@@ -182,29 +182,29 @@ class NODE_MT_view(Menu):
 
         layout.separator()
 
-        layout.operator("view2d.zoom_in")
-        layout.operator("view2d.zoom_out")
+        layout.operator("view2d.zoom_in", icon = "ZOOM_IN")
+        layout.operator("view2d.zoom_out", icon = "ZOOM_OUT")
 
         layout.separator()
 
-        layout.operator("node.view_selected")
-        layout.operator("node.view_all")
+        layout.operator("node.view_selected", icon = "VIEW_SELECTED")
+        layout.operator("node.view_all", icon = "VIEWALL" )
 
         if context.space_data.show_backdrop:
             layout.separator()
 
-            layout.operator("node.backimage_move", text="Backdrop Move")
-            layout.operator("node.backimage_zoom", text="Backdrop Zoom in").factor = 1.2
-            layout.operator("node.backimage_zoom", text="Backdrop Zoom out").factor = 0.83333
-            layout.operator("node.backimage_fit", text="Fit Backdrop")
-            layout.operator("node.clear_viewer_border")
-            layout.operator("node.viewer_border")
+            layout.operator("node.backimage_move", text="Backdrop Move", icon ='TRANSFORM_MOVE')
+            layout.operator("node.backimage_zoom", text="Backdrop Zoom in", icon = "ZOOM_IN").factor = 1.2
+            layout.operator("node.backimage_zoom", text="Backdrop Zoom out", icon = "ZOOM_OUT").factor = 0.83333
+            layout.operator("node.backimage_fit", text="Fit Backdrop", icon = "VIEW_FIT")
+            layout.operator("node.clear_viewer_border", icon = "RENDERBORDER_CLEAR")
+            layout.operator("node.viewer_border", icon = "RENDERBORDER")
 
         layout.separator()
 
-        layout.operator("screen.area_dupli")
-        layout.operator("screen.screen_full_area")
-        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area").use_hide_panels = True
+        layout.operator("screen.area_dupli", icon = "NEW_WINDOW")
+        layout.operator("screen.screen_full_area", icon = "MAXIMIZE_AREA")
+        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area", icon = "FULLSCREEN_AREA").use_hide_panels = True
 
 
 class NODE_MT_select(Menu):
@@ -222,23 +222,23 @@ class NODE_MT_select(Menu):
         
         layout.separator()
         
-        layout.operator("node.select_linked_from", text = "Linked From")
-        layout.operator("node.select_linked_to", text = "Linked To")
+        layout.operator("node.select_linked_from", text = "Linked From", icon = "LINKED")
+        layout.operator("node.select_linked_to", text = "Linked To", icon = "LINKED")
 
         layout.separator()
 
-        layout.operator("node.select_grouped", text = "Grouped Extend").extend = True
-        layout.operator("node.select_grouped", text = "Grouped").extend = False
-        layout.operator("node.select_same_type_step", text="Activate Same Type Previous").prev = True
-        layout.operator("node.select_same_type_step", text="Activate Same Type Next").prev = False
+        layout.operator("node.select_grouped", text = "Grouped Extend", icon = "GROUP").extend = True
+        layout.operator("node.select_grouped", text = "Grouped", icon = "GROUP").extend = False
+        layout.operator("node.select_same_type_step", text="Activate Same Type Previous", icon = "PREVIOUSACTIVE").prev = True
+        layout.operator("node.select_same_type_step", text="Activate Same Type Next", icon = "NEXTACTIVE").prev = False
 
         layout.separator()
 
-        layout.operator("node.find_node")
+        layout.operator("node.find_node", icon='VIEWZOOM') 
 
         layout.separator()
 
-        layout.operator("node.select_link_viewer")
+        layout.operator("node.select_link_viewer", icon = "LINK")
 
 class NODE_OT_group_separate(Menu):
     bl_label = "Separate"
@@ -255,9 +255,9 @@ class NODE_MT_node(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("transform.translate")
-        layout.operator("transform.rotate")
-        layout.operator("transform.resize")
+        layout.operator("transform.translate", icon = "TRANSFORM_MOVE")
+        layout.operator("transform.rotate", icon = "TRANSFORM_ROTATE")
+        layout.operator("transform.resize",  icon = "TRANSFORM_SCALE")
 
         layout.separator()
 
@@ -266,40 +266,40 @@ class NODE_MT_node(Menu):
 
         layout.separator()
 
-        layout.operator("node.duplicate_move_keep_inputs", text = "Duplicate Keep Input")
-        layout.operator("node.duplicate_move")
-        layout.operator("node.delete")
-        layout.operator("node.delete_reconnect")
+        layout.operator("node.duplicate_move_keep_inputs", text = "Duplicate Keep Input", icon = "DUPLICATE")
+        layout.operator("node.duplicate_move", icon = "DUPLICATE")
+        layout.operator("node.delete", icon = "DELETE")
+        layout.operator("node.delete_reconnect", icon = "DELETE")
 
         layout.separator()
 
-        layout.operator("node.join", text="Join in New Frame")
-        layout.operator("node.detach", text="Remove from Frame")
+        layout.operator("node.join", text="Join in New Frame", icon = "JOIN")
+        layout.operator("node.detach", text="Remove from Frame", icon = "DELETE")
 
         layout.separator()
 
-        layout.operator("node.link_make").replace = False
-        layout.operator("node.link_make", text="Make and Replace Links").replace = True
-        layout.operator("node.links_cut")
-        layout.operator("node.links_detach")
-        layout.operator("node.move_detach_links", text = "Detach Links Move")
-        layout.operator("node.parent_set")
+        layout.operator("node.link_make", icon = "LINK_DATA").replace = False
+        layout.operator("node.link_make", text="Make and Replace Links", icon = "LINK_DATA").replace = True
+        layout.operator("node.links_cut", icon = "CUT_LINKS")
+        layout.operator("node.links_detach", icon = "DETACH_LINKS")
+        layout.operator("node.move_detach_links", text = "Detach Links Move", icon = "DETACH_LINKS")
+        layout.operator("node.parent_set", icon = "PARENT_SET")
         layout.menu("NODE_OT_group_separate")
 
         layout.separator()
 
-        layout.operator("node.hide_toggle")
-        layout.operator("node.mute_toggle")
-        layout.operator("node.preview_toggle")
-        layout.operator("node.hide_socket_toggle")
-        layout.operator("node.options_toggle")
-        layout.operator("node.collapse_hide_unused_toggle")
+        layout.operator("node.hide_toggle", icon = "RESTRICT_VIEW_ON")
+        layout.operator("node.mute_toggle", icon = "TOGGLE_NODE_MUTE")
+        layout.operator("node.preview_toggle", icon = "TOGGLE_NODE_PREVIEW")
+        layout.operator("node.hide_socket_toggle", icon = "RESTRICT_VIEW_OFF")
+        layout.operator("node.options_toggle", icon = "TOGGLE_NODE_OPTIONS")
+        layout.operator("node.collapse_hide_unused_toggle", icon = "HIDE_UNSELECTED")
 
         layout.separator()
 
-        layout.operator("node.read_renderlayers")
-        layout.operator("node.read_fullsamplelayers")
-        layout.operator("node.render_changed")
+        layout.operator("node.read_renderlayers", icon = "RENDERLAYERS")
+        layout.operator("node.read_fullsamplelayers", icon = "RENDERLAYERS")
+        layout.operator("node.render_changed", icon = "RENDERLAYERS")
 
 
 class NODE_MT_node_color_presets(Menu):
