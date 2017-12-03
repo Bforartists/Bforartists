@@ -191,18 +191,14 @@ class TEXT_MT_view(Menu):
 
         layout.separator()
 
-        layout.operator("text.move",
-                        text="Top of File",
-                        ).type = 'FILE_TOP'
-        layout.operator("text.move",
-                        text="Bottom of File",
-                        ).type = 'FILE_BOTTOM'
+        layout.operator("text.move", text="Top of File", icon = "MOVE_UP").type = 'FILE_TOP'
+        layout.operator("text.move", text="Bottom of File",icon = "MOVE_DOWN").type = 'FILE_BOTTOM'
 
         layout.separator()
 
-        layout.operator("screen.area_dupli")
-        layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area") # bfa - the new separated tooltip. Class is in space_text.py
-        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area").use_hide_panels = True
+        layout.operator("screen.area_dupli", icon = "NEW_WINDOW")
+        layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area", icon = "MAXIMIZE_AREA") # bfa - the new separated tooltip. Class is in space_text.py
+        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area", icon = "FULLSCREEN_AREA").use_hide_panels = True
 
 
 class TEXT_MT_text(Menu):
@@ -218,7 +214,7 @@ class TEXT_MT_text(Menu):
         layout.operator("text.open", text = "Open Text", icon='FILE_FOLDER')
 
         if text:
-            layout.operator("text.reload")
+            layout.operator("text.reload", icon = "FILE_REFRESH")
 
             layout.column()
             layout.operator("text.save", icon='FILE_TICK')
@@ -228,7 +224,7 @@ class TEXT_MT_text(Menu):
                 layout.operator("text.make_internal")
 
             layout.column()
-            layout.operator("text.run_script")
+            layout.operator("text.run_script", icon = "PLAY")
 
         layout.separator()
 
@@ -282,17 +278,18 @@ class TEXT_MT_format(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("text.indent")
-        layout.operator("text.unindent")
+        layout.operator("text.indent", icon = "INDENT")
+        layout.operator("text.unindent", icon = "UNINDENT")
 
         layout.separator()
 
-        layout.operator("text.comment")
-        layout.operator("text.uncomment")
+        layout.operator("text.comment", icon = "COMMENT")
+        layout.operator("text.uncomment", icon = "UNCOMMENT")
 
         layout.separator()
 
-        layout.operator_menu_enum("text.convert_whitespace", "type")
+        layout.operator("text.convert_whitespace", text = "Whitespace to Spaces", icon = "WHITESPACE_SPACES").type = 'SPACES'
+        layout.operator("text.convert_whitespace", text = "Whitespace to Tabs", icon = "WHITESPACE_TABS").type = 'TABS'
 
 
 class TEXT_MT_edit_to3d(Menu):
@@ -301,12 +298,8 @@ class TEXT_MT_edit_to3d(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("text.to_3d_object",
-                        text="One Object",
-                        ).split_lines = False
-        layout.operator("text.to_3d_object",
-                        text="One Object Per Line",
-                        ).split_lines = True
+        layout.operator("text.to_3d_object", text="One Object", icon = "OUTLINER_OB_FONT").split_lines = False
+        layout.operator("text.to_3d_object",text="One Object Per Line", icon = "OUTLINER_OB_FONT").split_lines = True
 
 
 class TEXT_MT_edit(Menu):
@@ -319,32 +312,35 @@ class TEXT_MT_edit(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("ed.undo")
-        layout.operator("ed.redo")
+        layout.operator("ed.undo", icon = "UNDO")
+        layout.operator("ed.redo", icon = "REDO")
 
         layout.separator()
 
-        layout.operator("text.cut")
-        layout.operator("text.copy")
-        layout.operator("text.paste")
-        layout.operator("text.duplicate_line")
+        layout.operator("text.cut", icon = "CUT")
+        layout.operator("text.copy", icon = "COPYDOWN")
+        layout.operator("text.paste", icon = "PASTEDOWN")
+        layout.operator("text.duplicate_line", icon = "DUPLICATE")
 
         layout.separator()
 
-        layout.operator("text.move_lines", text="Move line(s) up").direction = 'UP'
-        layout.operator("text.move_lines", text="Move line(s) down").direction = 'DOWN'
+        layout.operator("text.move_lines", text="Move line(s) up", icon = "MOVE_UP").direction = 'UP'
+        layout.operator("text.move_lines", text="Move line(s) down", icon = "MOVE_DOWN").direction = 'DOWN'
 
         layout.separator()
 
-        layout.operator("text.select_all")
-        layout.operator("text.select_line")
-        layout.operator_menu_enum("text.delete", "type")
+        layout.operator("text.select_all", icon = "SELECT_ALL")
+        layout.operator("text.select_line", icon = "SELECT_LINE")
 
         layout.separator()
 
-        layout.operator("text.jump")
-        layout.operator("text.start_find", text="Find...")
-        layout.operator("text.autocomplete")
+        layout.menu("TEXT_MT_edit_delete")
+
+        layout.separator()
+
+        layout.operator("text.jump", icon = "GOTO")
+        layout.operator("text.start_find", text="Find", icon = "ZOOM_SET")
+        layout.operator("text.autocomplete", icon = "AUTOCOMPLETE")
 
         layout.separator()
 
@@ -367,6 +363,16 @@ class TEXT_MT_toolbox(Menu):
 
         layout.operator("text.run_script")
 
+class TEXT_MT_edit_delete(Menu):
+    bl_label = "Delete"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("text.delete", text = "Next Character", icon = "DELETE").type = 'NEXT_CHARACTER'
+        layout.operator("text.delete", text = "Previous Character", icon = "DELETE").type = 'PREVIOUS_CHARACTER'
+        layout.operator("text.delete", text = "Next Word", icon = "DELETE").type = 'NEXT_WORD'
+        layout.operator("text.delete", text = "Previous Word", icon = "DELETE").type = 'PREVIOUS_WORD'
 
 classes = (
     TEXT_HT_header,
@@ -385,6 +391,7 @@ classes = (
     TEXT_MT_format,
     TEXT_MT_edit_to3d,
     TEXT_MT_toolbox,
+    TEXT_MT_edit_delete,
 )
 
 if __name__ == "__main__":  # only for live edit.
