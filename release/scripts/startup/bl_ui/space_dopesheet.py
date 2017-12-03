@@ -255,19 +255,19 @@ class DOPESHEET_MT_view(Menu):
         layout.prop(st, "show_locked_time")
 
         layout.separator()
-        layout.operator("anim.previewrange_set")
-        layout.operator("anim.previewrange_clear")
-        layout.operator("action.previewrange_set")
+        layout.operator("anim.previewrange_set", icon='BORDER_RECT')
+        layout.operator("anim.previewrange_clear", icon = "CLEAR")
+        layout.operator("action.previewrange_set", icon='BORDER_RECT')
 
         layout.separator()
-        layout.operator("action.view_all")
-        layout.operator("action.view_selected")
-        layout.operator("action.view_frame")
+        layout.operator("action.view_all", icon = "VIEWALL")
+        layout.operator("action.view_selected", icon = "VIEW_SELECTED")
+        layout.operator("action.view_frame", icon = "VIEW_FRAME" )
 
         layout.separator()
-        layout.operator("screen.area_dupli")
-        layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area") # bfa - the separated tooltip. Class is in space_text.py
-        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area").use_hide_panels = True
+        layout.operator("screen.area_dupli", icon = "NEW_WINDOW")
+        layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area", icon = "MAXIMIZE_AREA") # bfa - the separated tooltip. Class is in space_text.py
+        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area", icon = "FULLSCREEN_AREA").use_hide_panels = True
 
 
 # Workaround to separate the tooltips
@@ -312,25 +312,25 @@ class DOPESHEET_MT_select(Menu):
 
         layout.separator()
         
-        layout.operator("action.select_column", text="Columns on Selected Keys").mode = 'KEYS'
-        layout.operator("action.select_column", text="Column on Current Frame").mode = 'CFRA'
-        layout.operator("action.select_column", text="Columns on Selected Markers").mode = 'MARKERS_COLUMN'
-        layout.operator("action.select_column", text="Between Selected Markers").mode = 'MARKERS_BETWEEN'
+        layout.operator("action.select_column", text="Columns on Selected Keys", icon = "COLUMNS_KEYS").mode = 'KEYS'
+        layout.operator("action.select_column", text="Column on Current Frame", icon = "COLUMN_CURRENT_FRAME").mode = 'CFRA'
+        layout.operator("action.select_column", text="Columns on Selected Markers", icon = "COLUMNS_MARKERS").mode = 'MARKERS_COLUMN'
+        layout.operator("action.select_column", text="Between Selected Markers", icon = "BETWEEN_MARKERS").mode = 'MARKERS_BETWEEN'
         
         layout.separator()
         
-        layout.operator("action.select_linked", text = "Linked")
+        layout.operator("action.select_linked", text = "Linked", icon = "CONNECTED")
 
         layout.separator()
         
-        layout.operator("action.select_leftright_before", text="Before Current Frame") # bfa - the separated tooltip
-        layout.operator("action.select_leftright_after", text="After Current Frame") # bfa - the separated tooltip
+        layout.operator("action.select_leftright_before", text="Before Current Frame", icon = "BEFORE_CURRENT_FRAME") # bfa - the separated tooltip
+        layout.operator("action.select_leftright_after", text="After Current Frame", icon = "AFTER_CURRENT_FRAME") # bfa - the separated tooltip
 
         # FIXME: grease pencil mode isn't supported for these yet, so skip for that mode only
         if context.space_data.mode != 'GPENCIL':
             layout.separator()
-            layout.operator("action.select_more",text = "More")
-            layout.operator("action.select_less",text = "Less")
+            layout.operator("action.select_more",text = "More", icon = "SELECTMORE")
+            layout.operator("action.select_less",text = "Less", icon = "SELECTLESS")
 
             
 
@@ -365,30 +365,31 @@ class DOPESHEET_MT_channel(Menu):
 
         layout.operator_context = 'INVOKE_REGION_CHANNELS'
 
-        layout.operator("anim.channels_delete")
+        layout.operator("anim.channels_delete", icon = "DELETE")
 
         layout.separator()
-        layout.operator("anim.channels_group")
-        layout.operator("anim.channels_ungroup")
+        layout.operator("anim.channels_group", icon = "NEW_GROUP")
+        layout.operator("anim.channels_ungroup", icon = "REMOVE_FROM_ALL_GROUPS")
 
         layout.separator()
-        layout.operator_menu_enum("anim.channels_setting_toggle", "type")
-        layout.operator_menu_enum("anim.channels_setting_enable", "type")
-        layout.operator_menu_enum("anim.channels_setting_disable", "type")
+
+        layout.menu("GRAPH_MT_channel_settings_toggle")#bfa - menu comes from space_graph
+        layout.menu("GRAPH_MT_channel_settings_enable")#bfa - menu comes from space_graph
+        layout.menu("GRAPH_MT_channel_settings_disable")#bfa - menu comes from space_graph
 
         layout.separator()
-        layout.operator("anim.channels_editable_toggle")
-        layout.operator_menu_enum("action.extrapolation_type", "type", text="Extrapolation Mode")
+        layout.operator("anim.channels_editable_toggle", icon = "LOCKED")
+        layout.menu("DOPESHEET_MT_channel_extrapolation")
 
         layout.separator()
-        layout.operator("anim.channels_expand")
-        layout.operator("anim.channels_collapse")
+        layout.operator("anim.channels_expand", icon = "EXPANDMENU")
+        layout.operator("anim.channels_collapse", icon = "COLLAPSEMENU")
 
         layout.separator()
-        layout.operator_menu_enum("anim.channels_move", "direction", text="Move...")
+        layout.menu("GRAPH_MT_channel_move") #bfa - menu comes from space_graph
 
         layout.separator()
-        layout.operator("anim.channels_fcurves_enable")
+        layout.operator("anim.channels_fcurves_enable", icon = "UNLOCKED")
 
 # Workaround to separate the tooltips
 class DOPESHEET_MT_key_clean_channels(bpy.types.Operator):
@@ -409,31 +410,36 @@ class DOPESHEET_MT_key(Menu):
         layout = self.layout
 
         layout.menu("DOPESHEET_MT_key_transform", text="Transform")
-
-        layout.operator_menu_enum("action.snap", "type", text="Snap")
-        layout.operator_menu_enum("action.mirror", "type", text="Mirror")
-
-        layout.separator()
-        layout.operator("action.keyframe_insert")
+        layout.menu("DOPESHEET_MT_key_snap")
+        layout.menu("DOPESHEET_MT_key_mirror")
 
         layout.separator()
-        layout.operator("action.frame_jump")
+
+        layout.operator("action.keyframe_insert", icon = 'KEYFRAMES_INSERT')
 
         layout.separator()
-        layout.operator("action.duplicate_move")
-        layout.operator("action.delete")
+
+        layout.operator("action.frame_jump", icon = 'JUMP_TO_KEYFRAMES')
 
         layout.separator()
+
+        layout.operator("action.duplicate_move", icon = "DUPLICATE")
+        layout.operator("action.delete", icon = "DELETE")
+
+        layout.separator()
+
         layout.operator_menu_enum("action.keyframe_type", "type", text="Keyframe Type")
         layout.operator_menu_enum("action.handle_type", "type", text="Handle Type")
         layout.operator_menu_enum("action.interpolation_type", "type", text="Interpolation Mode")
 
         layout.separator()
-        layout.operator("action.clean").channels = False
-        layout.operator("action.clean_channels", text="Clean Channels") # bfa -  separated tooltips
-        layout.operator("action.sample")
+
+        layout.operator("action.clean", icon = "CLEAN_KEYS").channels = False
+        layout.operator("action.clean_channels", text="Clean Channels", icon = "CLEAN_CHANNELS") # bfa -  separated tooltips
+        layout.operator("action.sample", icon = "SAMPLE_KEYFRAMES")
 
         layout.separator()
+
         layout.operator("action.copy", text="Copy Keyframes", icon='COPYDOWN')
         layout.operator("action.paste", text="Paste Keyframes", icon='PASTEDOWN')
         layout.operator("action.paste", text="Paste Flipped", icon='PASTEFLIPDOWN').flipped = True
@@ -445,10 +451,10 @@ class DOPESHEET_MT_key_transform(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("transform.transform", text="Grab/Move").mode = 'TIME_TRANSLATE'
-        layout.operator("transform.transform", text="Extend").mode = 'TIME_EXTEND'
-        layout.operator("transform.transform", text="Slide").mode = 'TIME_SLIDE'
-        layout.operator("transform.transform", text="Scale").mode = 'TIME_SCALE'
+        layout.operator("transform.transform", text="Grab/Move", icon = "TRANSFORM_MOVE").mode = 'TIME_TRANSLATE'
+        layout.operator("transform.transform", text="Extend", icon = "SHRINK_FATTEN").mode = 'TIME_EXTEND'
+        layout.operator("transform.transform", text="Slide", icon = "PUSH_PULL").mode = 'TIME_SLIDE'
+        layout.operator("transform.transform", text="Scale", icon = "TRANSFORM_SCALE").mode = 'TIME_SCALE'
 
 
 #######################################
@@ -462,15 +468,15 @@ class DOPESHEET_MT_gpencil_channel(Menu):
 
         layout.operator_context = 'INVOKE_REGION_CHANNELS'
 
-        layout.operator("anim.channels_delete")
+        layout.operator("anim.channels_delete", icon = "DELETE")
 
         layout.separator()
-        layout.operator("anim.channels_setting_toggle")
-        layout.operator("anim.channels_setting_enable")
-        layout.operator("anim.channels_setting_disable")
+        layout.operator("anim.channels_setting_toggle", icon = "LOCKED")
+        layout.operator("anim.channels_setting_enable", icon = "UNLOCKED")
+        layout.operator("anim.channels_setting_disable", icon = "LOCKED")
 
         layout.separator()
-        layout.operator("anim.channels_editable_toggle")
+        layout.operator("anim.channels_editable_toggle", icon = "LOCKED")
 
         # XXX: to be enabled when these are ready for use!
         #layout.separator()
@@ -488,15 +494,15 @@ class DOPESHEET_MT_gpencil_frame(Menu):
         layout = self.layout
 
         layout.menu("DOPESHEET_MT_key_transform", text="Transform")
-        layout.operator_menu_enum("action.snap", "type", text="Snap")
-        layout.operator_menu_enum("action.mirror", "type", text="Mirror")
+        layout.menu("DOPESHEET_MT_key_snap")
+        layout.menu("DOPESHEET_MT_key_mirror")
+       
+        layout.separator()
+        layout.operator("action.duplicate", icon = "DUPLICATE")
+        layout.operator("action.delete", icon = "DELETE")
 
         layout.separator()
-        layout.operator("action.duplicate")
-        layout.operator("action.delete")
-
-        layout.separator()
-        layout.operator("action.keyframe_type")
+        layout.operator("action.keyframe_type", icon = "SPACE2")
 
         #layout.separator()
         #layout.operator("action.copy")
@@ -516,6 +522,38 @@ class DOPESHEET_MT_delete(Menu):
         layout.operator("action.clean").channels = False
         layout.operator("action.clean", text="Clean Channels").channels = True
 
+class DOPESHEET_MT_channel_extrapolation(Menu):
+    bl_label = "Extrapolation Mode"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("action.extrapolation_type", text = "Constant Extrapolation", icon = "EXTRAPOLATION_CONSTANT").type = 'CONSTANT'
+        layout.operator("action.extrapolation_type", text = "Linear Extrapolation", icon = "EXTRAPOLATION_LINEAR").type = 'LINEAR'
+        layout.operator("action.extrapolation_type", text = "Make Cyclic (F-Modifier)", icon = "EXTRAPOLATION_CYCLIC").type = 'MAKE_CYCLIC'
+        layout.operator("action.extrapolation_type", text = "Clear Cyclic (F-Modifier)", icon = "EXTRAPOLATION_CYCLIC_CLEAR").type = 'CLEAR_CYCLIC'
+
+class DOPESHEET_MT_key_mirror(Menu):
+    bl_label = "Mirror"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("action.mirror", text="By Times over Current Frame", icon = "MIRROR_TIME").type = 'CFRA'
+        layout.operator("action.mirror", text="By Values over Value=0", icon = "MIRROR_CURSORVALUE").type = 'XAXIS'
+        layout.operator("action.mirror", text="By Times over First Selected Marker", icon = "MIRROR_MARKER").type = 'MARKER'
+
+class DOPESHEET_MT_key_snap(Menu):
+    bl_label = "Snap"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("action.snap", text="Current Frame", icon = "SNAP_CURRENTFRAME").type= 'CFRA'
+        layout.operator("action.snap", text="Nearest Frame", icon = "SNAP_NEARESTFRAME").type= 'NEAREST_FRAME'
+        layout.operator("action.snap", text="Nearest Second", icon = "SNAP_NEARESTSECOND").type= 'NEAREST_SECOND'
+        layout.operator("action.snap", text="Nearest Marker", icon = "SNAP_NEARESTMARKER").type= 'NEAREST_MARKER'
+
 
 classes = (
     switch_editors_in_dopesheet,
@@ -534,6 +572,9 @@ classes = (
     DOPESHEET_MT_gpencil_channel,
     DOPESHEET_MT_gpencil_frame,
     DOPESHEET_MT_delete,
+    DOPESHEET_MT_channel_extrapolation,
+    DOPESHEET_MT_key_mirror,
+    DOPESHEET_MT_key_snap,
 )
 
 if __name__ == "__main__":  # only for live edit.

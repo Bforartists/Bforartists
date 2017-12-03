@@ -22,6 +22,8 @@
 # Here you can adjust if you want to display the buttons as text buttons with icons.
 # Or as pure icon buttons.
 
+# Note that this version is not compatible with Blender. It relies at icons in the Bfoartists iconsheet which doesn't exist in Blender.
+
 
 import bpy
 import os
@@ -32,10 +34,10 @@ from bpy import context
 bl_info = {
     "name": "Nodes Icons Panel",
     "author": "Reiner 'Tiles' Prokein",
-    "version": (0, 9, 6),
-    "blender": (2, 76, 0),
+    "version": (0, 9, 7),
+    "blender": (2, 79, 0),
     "location": "Node Editor -> Tool Shelf + Properties Sidebar",
-    "description": "Adds panels with Icon buttons in the Node editor",
+    "description": "DO NOT TURN OFF! - Adds panels with Icon buttons in the Node editor",
     "warning": "",
     "wiki_url": "",
     "tracker_url": "",
@@ -91,22 +93,22 @@ class NodesIconsPanelInput(bpy.types.Panel):
                 col = layout.column(align=True)
                 row = col.row(align=True)       
         
-                props = row.operator("node.add_node", text=" Image          ", icon_value = custom_icons["image"].icon_id)    
+                props = row.operator("node.add_node", text=" Image          ", icon = "NODE_IMAGE")    
                 props.use_transform = True
                 props.type = "ShaderNodeTexImage"
         
         
-                props = row.operator("node.add_node", text=" Environment", icon_value = custom_icons["environment"].icon_id)
+                props = row.operator("node.add_node", text=" Environment", icon = "NODE_ENVIRONMENT")
                 props.use_transform = True
                 props.type = "ShaderNodeTexEnvironment"
 
                 row = col.row(align=True)          
         
-                props = row.operator("node.add_node", text=" Sky              ", icon_value = custom_icons["sky"].icon_id)
+                props = row.operator("node.add_node", text=" Sky              ", icon = "NODE_SKY")
                 props.use_transform = True
                 props.type = "ShaderNodeTexSky"
          
-                props = row.operator("node.add_node", text=" Noise            ", icon_value = custom_icons["noise"].icon_id)
+                props = row.operator("node.add_node", text=" Noise            ", icon = "NODE_NOISE")
                 props.use_transform = True
                 props.type = "ShaderNodeTexNoise"
        
@@ -118,17 +120,17 @@ class NodesIconsPanelInput(bpy.types.Panel):
                 col = layout.column(align=True)
                 row = col.row(align=True)            
         
-                props = row.operator("node.add_node", text=" Add              ", icon_value = custom_icons["addshader"].icon_id)
+                props = row.operator("node.add_node", text=" Add              ", icon = "NODE_ADD_SHADER")
                 props.use_transform = True
                 props.type = "ShaderNodeAddShader" 
 
-                props = row.operator("node.add_node", text=" Mix            ", icon_value = custom_icons["mixshader"].icon_id)
+                props = row.operator("node.add_node", text=" Mix            ", icon = "NODE_MIXSHADER")
                 props.use_transform = True
                 props.type = "ShaderNodeMixShader"
 
                 row = col.row(align=True)    
 
-                props = row.operator("node.add_node", text=" Normal Map     ", icon_value = custom_icons["normalmap"].icon_id)
+                props = row.operator("node.add_node", text=" Normal Map     ", icon = "NODE_NORMALMAP")
                 props.use_transform = True
                 props.type = "ShaderNodeNormalMap"
 
@@ -141,66 +143,66 @@ class NodesIconsPanelInput(bpy.types.Panel):
                     col = layout.column(align=True)
                     row = col.row(align=True)
                     
-                    props = row.operator("node.add_node", text=" Principled        ", icon_value = custom_icons["node_principled_shader"].icon_id)
+                    props = row.operator("node.add_node", text=" Principled        ", icon = "NODE_PRINCIPLED")
                     props.use_transform = True
                     props.type = "ShaderNodeBsdfPrincipled"
 
                     col = layout.column(align=True)
                     row = col.row(align=True)     
         
-                    props = row.operator("node.add_node", text=" Diffuse          ", icon_value = custom_icons["diffuseshader"].icon_id)
+                    props = row.operator("node.add_node", text=" Diffuse          ", icon = "NODE_DIFFUSESHADER")
                     props.use_transform = True
                     props.type = "ShaderNodeBsdfDiffuse"
         
-                    props = row.operator("node.add_node", text=" Emission        ", icon_value = custom_icons["emission"].icon_id)
+                    props = row.operator("node.add_node", text=" Emission        ", icon = "NODE_EMISSION")
                     props.use_transform = True
                     props.type = "ShaderNodeEmission"
 
                     row = col.row(align=True)  
 
-                    props = row.operator("node.add_node", text=" Fresnel        ", icon_value = custom_icons["fresnel"].icon_id)
+                    props = row.operator("node.add_node", text=" Fresnel        ", icon = "NODE_FRESNEL")
                     props.use_transform = True
                     props.type = "ShaderNodeFresnel"
         
-                    props = row.operator("node.add_node", text=" Glass               ", icon_value = custom_icons["glasshader"].icon_id)
+                    props = row.operator("node.add_node", text=" Glass               ", icon = "NODE_GLASSHADER")
                     props.use_transform = True
                     props.type = "ShaderNodeBsdfGlass"   
 
                     col = layout.column(align=True)
                     row = col.row(align=True)  
          
-                    props = row.operator("node.add_node", text=" Glossy          ", icon_value = custom_icons["glossyshader"].icon_id)
+                    props = row.operator("node.add_node", text=" Glossy          ", icon = "NODE_GLOSSYSHADER")
                     props.use_transform = True
                     props.type = "ShaderNodeBsdfGlossy"
         
-                    props = row.operator("node.add_node", text=" Refraction     ", icon_value = custom_icons["refractionshader"].icon_id)
+                    props = row.operator("node.add_node", text=" Refraction     ", icon = "NODE_REFRACTIONSHADER")
                     props.use_transform = True
                     props.type = "ShaderNodeBsdfRefraction"
 
                     row = col.row(align=True)  
          
-                    props = row.operator("node.add_node", text=" Subsurface Scattering", icon_value = custom_icons["sss_shader"].icon_id)
+                    props = row.operator("node.add_node", text=" Subsurface Scattering", icon = "NODE_SSS")
                     props.use_transform = True
                     props.type = "ShaderNodeSubsurfaceScattering"
         
-                    props = row.operator("node.add_node", text=" Toon              ", icon_value = custom_icons["toonshader"].icon_id)
+                    props = row.operator("node.add_node", text=" Toon              ", icon = "NODE_TOONSHADER")
                     props.use_transform = True
                     props.type = "ShaderNodeBsdfToon"
 
                     col = layout.column(align=True)
                     row = col.row(align=True)  
         
-                    props = row.operator("node.add_node", text=" Translucent      ", icon_value = custom_icons["translucentshader"].icon_id)
+                    props = row.operator("node.add_node", text=" Translucent      ", icon = "NODE_TRANSLUCENT")
                     props.use_transform = True
                     props.type = "ShaderNodeBsdfTranslucent"
 
-                    props = row.operator("node.add_node", text=" Transparent    ", icon_value = custom_icons["transparentshader"].icon_id)
+                    props = row.operator("node.add_node", text=" Transparent    ", icon = "NODE_TRANSPARENT")
                     props.use_transform = True
                     props.type = "ShaderNodeBsdfTransparent"
 
                     row = col.row(align=True)  
 
-                    props = row.operator("node.add_node", text=" Velvet            ", icon_value = custom_icons["velvetshader"].icon_id)
+                    props = row.operator("node.add_node", text=" Velvet            ", icon = "NODE_VELVET")
                     props.use_transform = True
                     props.type = "ShaderNodeBsdfVelvet"
 
@@ -211,7 +213,7 @@ class NodesIconsPanelInput(bpy.types.Panel):
                     col = layout.column(align=True)
                     row = col.row(align=True)       
 
-                    props = row.operator("node.add_node", text=" Background            ", icon_value = custom_icons["backgroundshader"].icon_id)
+                    props = row.operator("node.add_node", text=" Background            ", icon = "NODE_BACKGROUNDSHADER")
                     props.use_transform = True
                     props.type = "ShaderNodeBackground"
 
@@ -224,24 +226,24 @@ class NodesIconsPanelInput(bpy.types.Panel):
                 
                 if context.space_data.shader_type == 'OBJECT':
         
-                    props = row.operator("node.add_node", text=" Material Output", icon_value = custom_icons["material_output"].icon_id)
+                    props = row.operator("node.add_node", text=" Material Output", icon = "NODE_MATERIALOUTPUT")
                     props.use_transform = True
                     props.type = "ShaderNodeOutputMaterial"
         
         
-                    props = row.operator("node.add_node", text=" Lamp Output", icon_value = custom_icons["lamp_output"].icon_id)
+                    props = row.operator("node.add_node", text=" Lamp Output", icon = "NODE_LAMP")
                     props.use_transform = True
                     props.type = "ShaderNodeOutputLamp"
 
                 elif context.space_data.shader_type == 'WORLD':
         
-                    props = row.operator("node.add_node", text=" World Output", icon_value = custom_icons["world_output"].icon_id)
+                    props = row.operator("node.add_node", text=" World Output", icon = "NODE_WORLDOUTPUT")
                     props.use_transform = True
                     props.type = "ShaderNodeOutputWorld"
 
                 elif context.space_data.shader_type == 'LINESTYLE':
         
-                    props = row.operator("node.add_node", text=" Line Style Output", icon_value = custom_icons["linestyle_output"].icon_id)
+                    props = row.operator("node.add_node", text=" Line Style Output", icon = "NODE_LINESTYLE_OUTPUT")
                     props.use_transform = True
                     props.type = "ShaderNodeOutputLineStyle"
 
@@ -256,20 +258,20 @@ class NodesIconsPanelInput(bpy.types.Panel):
                 row = layout.row()
                 row.alignment = 'LEFT'        
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["image"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_IMAGE")  
         
                 props.use_transform = True
                 props.type = "ShaderNodeTexImage"
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["environment"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_ENVIRONMENT")
                 props.use_transform = True
                 props.type = "ShaderNodeTexEnvironment"
    
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["sky"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_SKY")
                 props.use_transform = True
                 props.type = "ShaderNodeTexSky"
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["noise"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_NOISE")
                 props.use_transform = True
                 props.type = "ShaderNodeTexNoise"
 
@@ -281,15 +283,15 @@ class NodesIconsPanelInput(bpy.types.Panel):
                 row = layout.row()
                 row.alignment = 'LEFT'        
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["addshader"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_ADD_SHADER")
                 props.use_transform = True
                 props.type = "ShaderNodeAddShader"
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["mixshader"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_MIXSHADER")
                 props.use_transform = True
                 props.type = "ShaderNodeMixShader"
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["normalmap"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_NORMALMAP")
                 props.use_transform = True
                 props.type = "ShaderNodeNormalMap"
 
@@ -302,60 +304,60 @@ class NodesIconsPanelInput(bpy.types.Panel):
                     row = layout.row()
                     row.alignment = 'LEFT' 
 
-                    props = row.operator("node.add_node", text="", icon_value = custom_icons["node_principled_shader"].icon_id)
+                    props = row.operator("node.add_node", text="", icon = "NODE_PRINCIPLED")
                     props.use_transform = True
                     props.type = "ShaderNodeBsdfPrincipled"
 
                     row = layout.row()
                     row.alignment = 'LEFT' 
         
-                    props = row.operator("node.add_node", text = "", icon_value = custom_icons["diffuseshader"].icon_id)
+                    props = row.operator("node.add_node", text = "", icon = "NODE_DIFFUSESHADER")
                     props.use_transform = True
                     props.type = "ShaderNodeBsdfDiffuse"
         
-                    props = row.operator("node.add_node", text = "", icon_value = custom_icons["emission"].icon_id)
+                    props = row.operator("node.add_node", text = "", icon = "NODE_EMISSION")
                     props.use_transform = True
                     props.type = "ShaderNodeEmission"
 
-                    props = row.operator("node.add_node", text = "", icon_value = custom_icons["fresnel"].icon_id)
+                    props = row.operator("node.add_node", text = "", icon = "NODE_FRESNEL")
                     props.use_transform = True
                     props.type = "ShaderNodeFresnel"
         
-                    props = row.operator("node.add_node", text = "", icon_value = custom_icons["glasshader"].icon_id)
+                    props = row.operator("node.add_node", text = "", icon = "NODE_GLASSHADER")
                     props.use_transform = True
-                    props.type = "ShaderNodeLayerWeight"
+                    props.type = "ShaderNodeBsdfGlass"
 
                     row = layout.row()
                     row.alignment = 'LEFT' 
 
-                    props = row.operator("node.add_node", text = "", icon_value = custom_icons["glossyshader"].icon_id)
+                    props = row.operator("node.add_node", text = "", icon = "NODE_GLOSSYSHADER")
                     props.use_transform = True
                     props.type = "ShaderNodeBsdfGlossy"
         
-                    props = row.operator("node.add_node", text = "", icon_value = custom_icons["refractionshader"].icon_id)
+                    props = row.operator("node.add_node", text = "", icon = "NODE_REFRACTIONSHADER")
                     props.use_transform = True
                     props.type = "ShaderNodeBsdfRefraction"
         
-                    props = row.operator("node.add_node", text = "", icon_value = custom_icons["sss_shader"].icon_id)
+                    props = row.operator("node.add_node", text = "", icon = "NODE_SSS")
                     props.use_transform = True
                     props.type = "ShaderNodeSubsurfaceScattering"
 
-                    props = row.operator("node.add_node", text = "", icon_value = custom_icons["toonshader"].icon_id)
+                    props = row.operator("node.add_node", text = "", icon = "NODE_TOONSHADER")
                     props.use_transform = True
                     props.type = "ShaderNodeBsdfToon"
         
                     row = layout.row()
                     row.alignment = 'LEFT'  
                     
-                    props = row.operator("node.add_node", text = "", icon_value = custom_icons["translucentshader"].icon_id)
+                    props = row.operator("node.add_node", text = "", icon = "NODE_TRANSLUCENT")
                     props.use_transform = True
                     props.type = "ShaderNodeBsdfTranslucent"
         
-                    props = row.operator("node.add_node", text = "", icon_value = custom_icons["transparentshader"].icon_id)
+                    props = row.operator("node.add_node", text = "", icon = "NODE_TRANSPARENT")
                     props.use_transform = True
                     props.type = "ShaderNodeBsdfTransparent"
 
-                    props = row.operator("node.add_node", text = "", icon_value = custom_icons["velvetshader"].icon_id)
+                    props = row.operator("node.add_node", text = "", icon = "NODE_VELVET")
                     props.use_transform = True
                     props.type = "ShaderNodeBsdfVelvet"
 
@@ -366,7 +368,7 @@ class NodesIconsPanelInput(bpy.types.Panel):
                     row = layout.row()
                     row.alignment = 'LEFT' 
 
-                    props = row.operator("node.add_node", text = "", icon_value = custom_icons["backgroundshader"].icon_id)
+                    props = row.operator("node.add_node", text = "", icon = "NODE_BACKGROUNDSHADER")
                     props.use_transform = True
                     props.type = "ShaderNodeBackground"
 
@@ -379,23 +381,23 @@ class NodesIconsPanelInput(bpy.types.Panel):
 
                 if context.space_data.shader_type == 'OBJECT':
         
-                    props = row.operator("node.add_node", text = "", icon_value = custom_icons["material_output"].icon_id)
+                    props = row.operator("node.add_node", text = "", icon = "NODE_MATERIALOUTPUT")
                     props.use_transform = True
                     props.type = "ShaderNodeOutputMaterial"
 
-                    props = row.operator("node.add_node", text = "", icon_value = custom_icons["lamp_output"].icon_id)
+                    props = row.operator("node.add_node", text = "", icon = "NODE_LAMP")
                     props.use_transform = True
                     props.type = "ShaderNodeOutputLamp"
 
                 elif context.space_data.shader_type == 'WORLD':
         
-                    props = row.operator("node.add_node", text = "", icon_value = custom_icons["world_output"].icon_id)
+                    props = row.operator("node.add_node", text = "", icon = "NODE_WORLDOUTPUT")
                     props.use_transform = True
                     props.type = "ShaderNodeOutputWorld"
 
                 elif context.space_data.shader_type == 'LINESTYLE':
         
-                    props = row.operator("node.add_node", text = "", icon_value = custom_icons["linestyle_output"].icon_id)
+                    props = row.operator("node.add_node", text = "", icon = "NODE_LINESTYLE_OUTPUT")
                     props.use_transform = True
                     props.type = "ShaderNodeOutputLineStyle"
 
@@ -413,32 +415,32 @@ class NodesIconsPanelInput(bpy.types.Panel):
                 col = layout.column(align=True)
                 row = col.row(align=True)    
 
-                props = row.operator("node.add_node", text=" Image          ", icon_value = custom_icons["image"].icon_id)  
+                props = row.operator("node.add_node", text=" Image          ", icon = "NODE_IMAGE")  
                 props.use_transform = True
                 props.type = "CompositorNodeImage"
 
-                props = row.operator("node.add_node", text=" Texture          ", icon_value = custom_icons["node_texture"].icon_id)
+                props = row.operator("node.add_node", text=" Texture          ", icon = "NODE_TEXTURE")
                 props.use_transform = True
                 props.type = "CompositorNodeTexture"
 
                 col = layout.column(align=True)
                 row = col.row(align=True)  
 
-                props = row.operator("node.add_node", text=" Mask         ", icon_value = custom_icons["node_mask"].icon_id)
+                props = row.operator("node.add_node", text=" Mask         ", icon = "NODE_MASK") 
                 props.use_transform = True
                 props.type = "CompositorNodeMask"
             
-                props = row.operator("node.add_node", text=" Movie Clip         ", icon_value = custom_icons["node_movie"].icon_id)
+                props = row.operator("node.add_node", text=" Movie Clip         ", icon = "NODE_MOVIE")
                 props.use_transform = True
                 props.type = "CompositorNodeMovieClip"
 
                 row = col.row(align=True)  
             
-                props = row.operator("node.add_node", text=" Render Layers         ", icon_value = custom_icons["render_layer"].icon_id)
+                props = row.operator("node.add_node", text=" Render Layers         ", icon = "NODE_RENDERLAYER")
                 props.use_transform = True
                 props.type = "CompositorNodeRLayers"
             
-                props = row.operator("node.add_node", text=" RGB        ", icon_value = custom_icons["rgb"].icon_id)
+                props = row.operator("node.add_node", text=" RGB        ", icon = "NODE_RGB")
                 props.use_transform = True
                 props.type = "CompositorNodeRGB"
                           
@@ -450,32 +452,32 @@ class NodesIconsPanelInput(bpy.types.Panel):
                 col = layout.column(align=True)
                 row = col.row(align=True)   
 
-                props = row.operator("node.add_node", text=" Alpha Over          ", icon_value = custom_icons["alpha"].icon_id)
+                props = row.operator("node.add_node", text=" Alpha Over          ", icon = "NODE_ALPHA")
                 props.use_transform = True
                 props.type = "CompositorNodeAlphaOver"
 
-                props = row.operator("node.add_node", text=" Bright / Contrast        ", icon_value = custom_icons["brightcontrast"].icon_id)
+                props = row.operator("node.add_node", text=" Bright / Contrast        ", icon = "NODE_BRIGHT_CONTRAST")
                 props.use_transform = True
                 props.type = "CompositorNodeBrightContrast"
 
                 row = col.row(align=True)  
         
-                props = row.operator("node.add_node", text=" Color Balance         ", icon_value = custom_icons["colorbalance"].icon_id)
+                props = row.operator("node.add_node", text=" Color Balance         ", icon = "NODE_COLORBALANCE")
                 props.use_transform = True
                 props.type = "CompositorNodeColorBalance"
 
-                props = row.operator("node.add_node", text=" Hue Saturation Value        ", icon_value = custom_icons["huesaturation"].icon_id)   
+                props = row.operator("node.add_node", text=" Hue Saturation Value        ", icon = "NODE_HUESATURATION")   
                 props.use_transform = True
                 props.type = "CompositorNodeHueSat"
 
                 col = layout.column(align=True)
                 row = col.row(align=True)  
         
-                props = row.operator("node.add_node", text=" RGB Curves         ", icon_value = custom_icons["rgbcurve"].icon_id)
+                props = row.operator("node.add_node", text=" RGB Curves         ", icon = "NODE_RGBCURVE")
                 props.use_transform = True
                 props.type = "CompositorNodeCurveRGB"
         
-                props = row.operator("node.add_node", text=" Z Combine         ", icon_value = custom_icons["zcombine"].icon_id)
+                props = row.operator("node.add_node", text=" Z Combine         ", icon = "NODE_ZCOMBINE")
                 props.use_transform = True
                 props.type = "CompositorNodeZcombine"
 
@@ -487,11 +489,11 @@ class NodesIconsPanelInput(bpy.types.Panel):
                 row = col.row(align=True)   
 
          
-                props = row.operator("node.add_node", text=" Composite          ", icon_value = custom_icons["compositeoutput"].icon_id)
+                props = row.operator("node.add_node", text=" Composite          ", icon = "NODE_COMPOSITE_OUTPUT")
                 props.use_transform = True
                 props.type = "CompositorNodeComposite"
             
-                props = row.operator("node.add_node", text=" Viewer          ", icon_value = custom_icons["node_viewer"].icon_id)
+                props = row.operator("node.add_node", text=" Viewer          ", icon = "NODE_VIEWER")
                 props.use_transform = True
                 props.type = "CompositorNodeViewer"
 
@@ -506,30 +508,30 @@ class NodesIconsPanelInput(bpy.types.Panel):
                 row = layout.row()
                 row.alignment = 'LEFT'   
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["image"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_IMAGE")  
                 props.use_transform = True
                 props.type = "CompositorNodeImage"
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["node_texture"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_TEXTURE")
                 props.use_transform = True
                 props.type = "CompositorNodeTexture"
 
                 row = layout.row()
                 row.alignment = 'LEFT' 
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["node_mask"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_MASK") 
                 props.use_transform = True
                 props.type = "CompositorNodeMask"
             
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["node_movie"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_MOVIE")
                 props.use_transform = True
                 props.type = "CompositorNodeMovieClip"
             
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["render_layer"].icon_id) 
+                props = row.operator("node.add_node", text = "", icon = "NODE_RENDERLAYER") 
                 props.use_transform = True
                 props.type = "CompositorNodeRLayers"
             
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["rgb"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_RGB")
                 props.use_transform = True
                 props.type = "CompositorNodeRGB"
 
@@ -540,30 +542,30 @@ class NodesIconsPanelInput(bpy.types.Panel):
                 row = layout.row()
                 row.alignment = 'LEFT'  
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["alpha"].icon_id) 
+                props = row.operator("node.add_node", text = "", icon = "NODE_ALPHA") 
                 props.use_transform = True
                 props.type = "CompositorNodeAlphaOver"
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["brightcontrast"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_BRIGHT_CONTRAST")
                 props.use_transform = True
                 props.type = "CompositorNodeBrightContrast"
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["colorbalance"].icon_id) 
+                props = row.operator("node.add_node", text = "", icon = "NODE_COLORBALANCE")
                 props.use_transform = True
                 props.type = "CompositorNodeColorBalance"
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["huesaturation"].icon_id)   
+                props = row.operator("node.add_node", text = "", icon = "NODE_HUESATURATION")   
                 props.use_transform = True
                 props.type = "CompositorNodeHueSat"
 
                 row = layout.row()
                 row.alignment = 'LEFT'  
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["rgbcurve"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_RGBCURVE")
                 props.use_transform = True
                 props.type = "CompositorNodeCurveRGB"
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["zcombine"].icon_id) 
+                props = row.operator("node.add_node", text = "", icon = "NODE_ZCOMBINE")
                 props.use_transform = True
                 props.type = "CompositorNodeZcombine"
 
@@ -574,11 +576,11 @@ class NodesIconsPanelInput(bpy.types.Panel):
                 row = layout.row()
                 row.alignment = 'LEFT'  
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["compositeoutput"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_COMPOSITE_OUTPUT")
                 props.use_transform = True
                 props.type = "CompositorNodeComposite"
             
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["node_viewer"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_VIEWER")
                 props.use_transform = True
                 props.type = "CompositorNodeViewer"
 
@@ -595,11 +597,11 @@ class NodesIconsPanelInput(bpy.types.Panel):
                 col = layout.column(align=True)
                 row = col.row(align=True)    
 
-                props = row.operator("node.add_node", text=" Image          ", icon_value = custom_icons["image"].icon_id)
+                props = row.operator("node.add_node", text=" Image          ", icon = "NODE_IMAGE")  
                 props.use_transform = True
                 props.type = "TextureNodeImage"
 
-                props = row.operator("node.add_node", text=" Texture          ", icon_value = custom_icons["node_texture"].icon_id) 
+                props = row.operator("node.add_node", text=" Texture          ", icon = "NODE_TEXTURE")
                 props.use_transform = True
                 props.type = "TextureNodeTexture"
 
@@ -608,32 +610,32 @@ class NodesIconsPanelInput(bpy.types.Panel):
                 col = layout.column(align=True)
                 row = col.row(align=True)    
 
-                props = row.operator("node.add_node", text=" RGB Curves          ", icon_value = custom_icons["rgbcurve"].icon_id) 
+                props = row.operator("node.add_node", text=" RGB Curves          ", icon = "NODE_RGBCURVE")
                 props.use_transform = True
                 props.type = "TextureNodeCurveRGB"
 
-                props = row.operator("node.add_node", text=" Hue / Saturation         ", icon_value = custom_icons["huesaturation"].icon_id)   
+                props = row.operator("node.add_node", text=" Hue / Saturation         ", icon = "NODE_HUESATURATION")   
                 props.use_transform = True
                 props.type = "TextureNodeHueSaturation"
 
                 row = col.row(align=True)
 
-                props = row.operator("node.add_node", text=" Invert         ", icon_value = custom_icons["invert"].icon_id)  
+                props = row.operator("node.add_node", text=" Invert         ", icon = "NODE_INVERT")  
                 props.use_transform = True
                 props.type = "TextureNodeInvert"
 
-                props = row.operator("node.add_node", text=" Mix RGB          ", icon_value = custom_icons["mixrgb"].icon_id) 
+                props = row.operator("node.add_node", text=" Mix RGB          ", icon = "NODE_MIXRGB") 
                 props.use_transform = True
                 props.type = "TextureNodeMixRGB"
 
                 col = layout.column(align=True)
                 row = col.row(align=True)   
 
-                props = row.operator("node.add_node", text=" Combine RGBA         ", icon_value = custom_icons["combinergb"].icon_id)
+                props = row.operator("node.add_node", text=" Combine RGBA         ", icon = "NODE_COMBINERGB")
                 props.use_transform = True
                 props.type = "TextureNodeCompose"                
 
-                props = row.operator("node.add_node", text=" Separate RGBA         ", icon_value = custom_icons["separatergb"].icon_id)
+                props = row.operator("node.add_node", text=" Separate RGBA         ", icon = "NODE_SEPARATERGB")
                 props.use_transform = True
                 props.type = "TextureNodeDecompose"
 
@@ -642,53 +644,53 @@ class NodesIconsPanelInput(bpy.types.Panel):
                 col = layout.column(align=True)
                 row = col.row(align=True)    
 
-                props = row.operator("node.add_node", text=" Blend         ", icon_value = custom_icons["blend"].icon_id)
+                props = row.operator("node.add_node", text=" Blend         ", icon = "NODE_BLEND")
                 props.use_transform = True
                 props.type = "TextureNodeTexBlend"
 
-                props = row.operator("node.add_node", text=" Clouds         ", icon_value = custom_icons["clouds"].icon_id)
+                props = row.operator("node.add_node", text=" Clouds         ", icon = "NODE_CLOUDS")
                 props.use_transform = True
                 props.type = "TextureNodeTexClouds"
 
                 row = col.row(align=True)
 
-                props = row.operator("node.add_node", text=" Distorted Noise        ", icon_value = custom_icons["distortednoise"].icon_id)
+                props = row.operator("node.add_node", text=" Distorted Noise        ", icon = "NODE_DISTORTEDNOISE")
                 props.use_transform = True
                 props.type = "TextureNodeTexDistNoise"
 
-                props = row.operator("node.add_node", text=" Magic         ", icon_value = custom_icons["magic"].icon_id)
+                props = row.operator("node.add_node", text=" Magic         ", icon = "NODE_MAGIC")
                 props.use_transform = True
                 props.type = "TextureNodeTexMagic"
 
                 col = layout.column(align=True)
                 row = col.row(align=True)   
 
-                props = row.operator("node.add_node", text=" Marble         ", icon_value = custom_icons["marble"].icon_id)
+                props = row.operator("node.add_node", text=" Marble         ", icon = "NODE_MARBLE")
                 props.use_transform = True
                 props.type = "TextureNodeTexMarble"
 
-                props = row.operator("node.add_node", text=" Musgrave        ", icon_value = custom_icons["musgrave"].icon_id)
+                props = row.operator("node.add_node", text=" Musgrave        ", icon = "NODE_MUSGRAVE")
                 props.use_transform = True
                 props.type = "TextureNodeTexMusgrave"
 
                 row = col.row(align=True)
 
-                props = row.operator("node.add_node", text=" Noise        ", icon_value = custom_icons["noise"].icon_id)
+                props = row.operator("node.add_node", text=" Noise        ", icon = "NODE_NOISE")
                 props.use_transform = True
                 props.type = "TextureNodeTexNoise"
 
-                props = row.operator("node.add_node", text=" Stucci         ", icon_value = custom_icons["stucci"].icon_id)
+                props = row.operator("node.add_node", text=" Stucci         ", icon = "NODE_STUCCI")
                 props.use_transform = True
                 props.type = "TextureNodeTexStucci"
 
                 col = layout.column(align=True)
                 row = col.row(align=True)   
 
-                props = row.operator("node.add_node", text=" Voronoi         ", icon_value = custom_icons["voronoi"].icon_id)
+                props = row.operator("node.add_node", text=" Voronoi         ", icon = "NODE_VORONI")
                 props.use_transform = True
                 props.type = "TextureNodeTexVoronoi"
 
-                props = row.operator("node.add_node", text=" Wood        ", icon_value = custom_icons["wood"].icon_id)
+                props = row.operator("node.add_node", text=" Wood        ", icon = "NODE_WOOD")
                 props.use_transform = True
                 props.type = "TextureNodeTexWood"
 
@@ -697,11 +699,11 @@ class NodesIconsPanelInput(bpy.types.Panel):
                 col = layout.column(align=True)
                 row = col.row(align=True)    
 
-                props = row.operator("node.add_node", text=" Output         ", icon_value = custom_icons["output"].icon_id)
+                props = row.operator("node.add_node", text=" Output         ", icon = "NODE_OUTPUT")
                 props.use_transform = True
                 props.type = "TextureNodeOutput"
 
-                props = row.operator("node.add_node", text=" Viewer        ", icon_value = custom_icons["node_viewer"].icon_id)
+                props = row.operator("node.add_node", text=" Viewer        ", icon = "NODE_VIEWER")
                 props.use_transform = True
                 props.type = "TextureNodeViewer"
 
@@ -714,11 +716,11 @@ class NodesIconsPanelInput(bpy.types.Panel):
                 row = layout.row()
                 row.alignment = 'LEFT'       
 
-                props = row.operator("node.add_node", text="", icon_value = custom_icons["image"].icon_id)
+                props = row.operator("node.add_node", text="", icon = "NODE_IMAGE")  
                 props.use_transform = True
                 props.type = "TextureNodeImage"
 
-                props = row.operator("node.add_node", text="", icon_value = custom_icons["node_texture"].icon_id) 
+                props = row.operator("node.add_node", text="", icon = "NODE_TEXTURE")
                 props.use_transform = True
                 props.type = "TextureNodeTexture"
 
@@ -727,30 +729,30 @@ class NodesIconsPanelInput(bpy.types.Panel):
                 row = layout.row()
                 row.alignment = 'LEFT' 
 
-                props = row.operator("node.add_node", text="", icon_value = custom_icons["rgbcurve"].icon_id) 
+                props = row.operator("node.add_node", text="", icon = "NODE_RGBCURVE")
                 props.use_transform = True
                 props.type = "TextureNodeCurveRGB"
 
-                props = row.operator("node.add_node", text="", icon_value = custom_icons["huesaturation"].icon_id)   
+                props = row.operator("node.add_node", text="", icon = "NODE_HUESATURATION")   
                 props.use_transform = True
                 props.type = "TextureNodeHueSaturation"
 
-                props = row.operator("node.add_node", text="", icon_value = custom_icons["invert"].icon_id)  
+                props = row.operator("node.add_node", text="", icon = "NODE_INVERT")  
                 props.use_transform = True
                 props.type = "TextureNodeInvert"
 
-                props = row.operator("node.add_node", text="", icon_value = custom_icons["mixrgb"].icon_id) 
+                props = row.operator("node.add_node", text="", icon = "NODE_MIXRGB") 
                 props.use_transform = True
                 props.type = "TextureNodeMixRGB"
 
                 row = layout.row()
                 row.alignment = 'LEFT' 
 
-                props = row.operator("node.add_node", text="", icon_value = custom_icons["combinergb"].icon_id)
+                props = row.operator("node.add_node", text="", icon = "NODE_COMBINERGB")
                 props.use_transform = True
                 props.type = "TextureNodeCompose"
 
-                props = row.operator("node.add_node", text="", icon_value = custom_icons["separatergb"].icon_id)
+                props = row.operator("node.add_node", text="", icon = "NODE_SEPARATERGB")
                 props.use_transform = True
                 props.type = "TextureNodeDecompose"
 
@@ -759,49 +761,49 @@ class NodesIconsPanelInput(bpy.types.Panel):
                 row = layout.row()
                 row.alignment = 'LEFT'  
 
-                props = row.operator("node.add_node", text="", icon_value = custom_icons["blend"].icon_id)
+                props = row.operator("node.add_node", text="", icon = "NODE_BLEND")
                 props.use_transform = True
                 props.type = "TextureNodeTexBlend"
 
-                props = row.operator("node.add_node", text="", icon_value = custom_icons["clouds"].icon_id)
+                props = row.operator("node.add_node", text="", icon = "NODE_CLOUDS")
                 props.use_transform = True
                 props.type = "TextureNodeTexClouds"
 
-                props = row.operator("node.add_node", text="", icon_value = custom_icons["distortednoise"].icon_id)
+                props = row.operator("node.add_node", text="", icon = "NODE_DISTORTEDNOISE")
                 props.use_transform = True
                 props.type = "TextureNodeTexDistNoise"
 
-                props = row.operator("node.add_node", text="", icon_value = custom_icons["magic"].icon_id)
+                props = row.operator("node.add_node", text="", icon = "NODE_MAGIC")
                 props.use_transform = True
                 props.type = "TextureNodeTexMagic"
 
                 row = layout.row()
                 row.alignment = 'LEFT'    
 
-                props = row.operator("node.add_node", text="", icon_value = custom_icons["marble"].icon_id)
+                props = row.operator("node.add_node", text="", icon = "NODE_MARBLE")
                 props.use_transform = True
                 props.type = "TextureNodeTexMarble"
 
-                props = row.operator("node.add_node", text="", icon_value = custom_icons["musgrave"].icon_id)
+                props = row.operator("node.add_node", text="", icon = "NODE_MUSGRAVE")
                 props.use_transform = True
                 props.type = "TextureNodeTexMusgrave"
 
-                props = row.operator("node.add_node", text="", icon_value = custom_icons["noise"].icon_id)
+                props = row.operator("node.add_node", text="", icon = "NODE_NOISE")
                 props.use_transform = True
                 props.type = "TextureNodeTexNoise"
 
-                props = row.operator("node.add_node", text="", icon_value = custom_icons["stucci"].icon_id)
+                props = row.operator("node.add_node", text="", icon = "NODE_STUCCI")
                 props.use_transform = True
                 props.type = "TextureNodeTexStucci"
 
                 row = layout.row()
                 row.alignment = 'LEFT' 
 
-                props = row.operator("node.add_node", text="", icon_value = custom_icons["voronoi"].icon_id)
+                props = row.operator("node.add_node", text="", icon = "NODE_VORONI")
                 props.use_transform = True
                 props.type = "TextureNodeTexVoronoi"
 
-                props = row.operator("node.add_node", text="", icon_value = custom_icons["wood"].icon_id)
+                props = row.operator("node.add_node", text="", icon = "NODE_WOOD")
                 props.use_transform = True
                 props.type = "TextureNodeTexWood"
 
@@ -810,11 +812,11 @@ class NodesIconsPanelInput(bpy.types.Panel):
                 row = layout.row()
                 row.alignment = 'LEFT' 
 
-                props = row.operator("node.add_node", text="", icon_value = custom_icons["output"].icon_id)
+                props = row.operator("node.add_node", text="", icon = "NODE_OUTPUT")
                 props.use_transform = True
                 props.type = "TextureNodeOutput"
 
-                props = row.operator("node.add_node", text="", icon_value = custom_icons["node_viewer"].icon_id)
+                props = row.operator("node.add_node", text="", icon = "NODE_VIEWER")
                 props.use_transform = True
                 props.type = "TextureNodeViewer"
 
@@ -850,42 +852,42 @@ class NodesIconsPanelInputAdvanced(bpy.types.Panel):
                 col = layout.column(align=True)
                 row = col.row(align=True)       
         
-                props = row.operator("node.add_node", text=" Wave            ", icon_value = custom_icons["waves"].icon_id)
+                props = row.operator("node.add_node", text=" Wave            ", icon = "NODE_WAVES")
                 props.use_transform = True
                 props.type = "ShaderNodeTexWave"
         
-                props = row.operator("node.add_node", text=" Voronoi         ", icon_value = custom_icons["voronoi"].icon_id)
+                props = row.operator("node.add_node", text=" Voronoi         ", icon = "NODE_VORONI")
                 props.use_transform = True
                 props.type = "ShaderNodeTexVoronoi"
 
                 row = col.row(align=True)
         
-                props = row.operator("node.add_node", text=" Musgrave      ", icon_value = custom_icons["musgrave"].icon_id)
+                props = row.operator("node.add_node", text=" Musgrave      ", icon = "NODE_MUSGRAVE")
                 props.use_transform = True
                 props.type = "ShaderNodeTexMusgrave"
          
-                props = row.operator("node.add_node", text=" Gradient       ", icon_value = custom_icons["gradient"].icon_id)
+                props = row.operator("node.add_node", text=" Gradient       ", icon = "NODE_GRADIENT")
                 props.use_transform = True
                 props.type = "ShaderNodeTexGradient"
 
                 col = layout.column(align=True)
                 row = col.row(align=True)
          
-                props = row.operator("node.add_node", text=" Magic            ", icon_value = custom_icons["magic"].icon_id)
+                props = row.operator("node.add_node", text=" Magic            ", icon = "NODE_MAGIC")
                 props.use_transform = True
                 props.type = "ShaderNodeTexMagic"
         
-                props = row.operator("node.add_node", text=" Checker        ", icon_value = custom_icons["checker"].icon_id)
+                props = row.operator("node.add_node", text=" Checker        ", icon = "NODE_CHECKER")
                 props.use_transform = True
                 props.type = "ShaderNodeTexChecker"
 
                 row = col.row(align=True)
         
-                props = row.operator("node.add_node", text=" Brick             ", icon_value = custom_icons["brick"].icon_id)
+                props = row.operator("node.add_node", text=" Brick             ", icon = "NODE_BRICK")
                 props.use_transform = True 
                 props.type = "ShaderNodeTexBrick"
         
-                props = row.operator("node.add_node", text=" Point Density", icon_value = custom_icons["pointcloud"].icon_id)
+                props = row.operator("node.add_node", text=" Point Density", icon = "NODE_POINTCLOUD")
                 props.use_transform = True
                 props.type = "ShaderNodeTexPointDensity"
 
@@ -900,32 +902,32 @@ class NodesIconsPanelInputAdvanced(bpy.types.Panel):
                     col = layout.column(align=True)
                     row = col.row(align=True)   
                 
-                    props = row.operator("node.add_node", text=" Ambient Occlusion  ", icon_value = custom_icons["ambient_occlusion"].icon_id)
+                    props = row.operator("node.add_node", text=" Ambient Occlusion  ", icon = "NODE_AMBIENT_OCCLUSION")
                     props.use_transform = True
                     props.type = "ShaderNodeAmbientOcclusion"         
         
-                    props = row.operator("node.add_node", text=" Anisotopic    ", icon_value = custom_icons["anisotopicshader"].icon_id)
+                    props = row.operator("node.add_node", text=" Anisotopic    ", icon = "NODE_ANISOTOPIC")
                     props.use_transform = True
                     props.type = "ShaderNodeBsdfAnisotropic"
               
                     row = col.row(align=True) 
         
-                    props = row.operator("node.add_node", text=" Hair               ", icon_value = custom_icons["hairshader"].icon_id)
+                    props = row.operator("node.add_node", text=" Hair               ", icon = "NODE_HAIRSHADER")
                     props.use_transform = True
                     props.type = "ShaderNodeBsdfHair"       
         
-                    props = row.operator("node.add_node", text=" Holdout        ", icon_value = custom_icons["holdoutshader"].icon_id)
+                    props = row.operator("node.add_node", text=" Holdout        ", icon = "NODE_HOLDOUTSHADER")
                     props.use_transform = True
                     props.type = "ShaderNodeHoldout"
 
                 col = layout.column(align=True)
                 row = col.row(align=True)  
          
-                props = row.operator("node.add_node", text=" Volume Absorption ", icon_value = custom_icons["volumeabsorptionshader"].icon_id)
+                props = row.operator("node.add_node", text=" Volume Absorption ", icon = "NODE_VOLUMEABSORPTION")
                 props.use_transform = True
                 props.type = "ShaderNodeVolumeAbsorption"
         
-                props = row.operator("node.add_node", text=" Volume Scatter    ", icon_value = custom_icons["volumescatter"].icon_id)
+                props = row.operator("node.add_node", text=" Volume Scatter    ", icon = "NODE_VOLUMESCATTER")
                 props.use_transform = True
                 props.type = "ShaderNodeVolumeScatter"
                 
@@ -937,38 +939,38 @@ class NodesIconsPanelInputAdvanced(bpy.types.Panel):
                 row = layout.row()
                 row.alignment = 'LEFT'  
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["waves"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_WAVES")
                 props.use_transform = True
                 props.type = "ShaderNodeTexWave"
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["voronoi"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_VORONI")
                 props.use_transform = True
                 props.type = "ShaderNodeTexVoronoi"
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["musgrave"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_MUSGRAVE")
                 props.use_transform = True
                 props.type = "ShaderNodeTexMusgrave"
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["gradient"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_GRADIENT")
                 props.use_transform = True
                 props.type = "ShaderNodeTexGradient"
         
                 row = layout.row()
                 row.alignment = 'LEFT'  
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["magic"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_MAGIC")
                 props.use_transform = True
                 props.type = "ShaderNodeTexMagic"
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["checker"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_CHECKER")
                 props.use_transform = True
                 props.type = "ShaderNodeTexChecker"
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["brick"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_BRICK")
                 props.use_transform = True
                 props.type = "ShaderNodeTexBrick"
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["pointcloud"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_POINTCLOUD")
                 props.use_transform = True
                 props.type = "ShaderNodeTexPointDensity"
 
@@ -985,30 +987,30 @@ class NodesIconsPanelInputAdvanced(bpy.types.Panel):
                     row = layout.row()
                     row.alignment = 'LEFT'        
 
-                    props = row.operator("node.add_node", text = "", icon_value = custom_icons["anisotopicshader"].icon_id)
+                    props = row.operator("node.add_node", text = "", icon = "NODE_ANISOTOPIC")
                     props.use_transform = True
                     props.type = "ShaderNodeBsdfAnisotropic"
   
-                    props = row.operator("node.add_node", text = "", icon_value = custom_icons["ambient_occlusion"].icon_id)
+                    props = row.operator("node.add_node", text = "", icon = "NODE_AMBIENT_OCCLUSION")
                     props.use_transform = True
                     props.type = "ShaderNodeAmbientOcclusion"
         
-                    props = row.operator("node.add_node", text = "", icon_value = custom_icons["hairshader"].icon_id)
+                    props = row.operator("node.add_node", text = "", icon = "NODE_HAIRSHADER")
                     props.use_transform = True
                     props.type = "ShaderNodeBsdfHair"
         
-                    props = row.operator("node.add_node", text = "", icon_value = custom_icons["holdoutshader"].icon_id)
+                    props = row.operator("node.add_node", text = "", icon = "NODE_HOLDOUTSHADER")
                     props.use_transform = True
                     props.type = "ShaderNodeHoldout"
 
                 row = layout.row()
                 row.alignment = 'LEFT'  
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["volumeabsorptionshader"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_VOLUMEABSORPTION")
                 props.use_transform = True
                 props.type = "ShaderNodeVolumeAbsorption"
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["volumescatter"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_VOLUMESCATTER")
                 props.use_transform = True
                 props.type = "ShaderNodeVolumeScatter"
 
@@ -1027,21 +1029,21 @@ class NodesIconsPanelInputAdvanced(bpy.types.Panel):
                 col = layout.column(align=True)
                 row = col.row(align=True)    
 
-                props = row.operator("node.add_node", text=" Bokeh Image          ", icon_value = custom_icons["bokeh_image"].icon_id)    
+                props = row.operator("node.add_node", text=" Bokeh Image          ", icon = "NODE_BOKEH_IMAGE")    
                 props.use_transform = True
                 props.type = "CompositorNodeBokehImage"
            
-                props = row.operator("node.add_node", text=" Time         ", icon_value = custom_icons["node_time"].icon_id)
+                props = row.operator("node.add_node", text=" Time         ", icon = "NODE_TIME")
                 props.use_transform = True
                 props.type = "CompositorNodeTime"
 
                 row = col.row(align=True)  
             
-                props = row.operator("node.add_node", text=" Track Position         ", icon_value = custom_icons["trackposition"].icon_id)
+                props = row.operator("node.add_node", text=" Track Position         ", icon = "NODE_TRACKPOSITION")
                 props.use_transform = True
                 props.type = "CompositorNodeTrackPos"
            
-                props = row.operator("node.add_node", text=" Value          ", icon_value = custom_icons["value"].icon_id)
+                props = row.operator("node.add_node", text=" Value          ", icon = "NODE_VALUE")
                 props.use_transform = True
                 props.type = "CompositorNodeValue"
         
@@ -1052,32 +1054,32 @@ class NodesIconsPanelInputAdvanced(bpy.types.Panel):
                 col = layout.column(align=True)
                 row = col.row(align=True)   
             
-                props = row.operator("node.add_node", text=" Color Correction         ", icon_value = custom_icons["colorcorrection"].icon_id)
+                props = row.operator("node.add_node", text=" Color Correction         ", icon = "NODE_COLORCORRECTION")
                 props.use_transform = True
                 props.type = "CompositorNodeColorCorrection"
 
-                props = row.operator("node.add_node", text=" Gamma        ", icon_value = custom_icons["gamma"].icon_id)
+                props = row.operator("node.add_node", text=" Gamma        ", icon = "NODE_GAMMA")
                 props.use_transform = True
                 props.type = "CompositorNodeGamma"
 
                 row = col.row(align=True)  
 
-                props = row.operator("node.add_node", text=" Hue Correct        ", icon_value = custom_icons["huesaturation"].icon_id)
+                props = row.operator("node.add_node", text=" Hue Correct        ", icon = "NODE_HUESATURATION")   
                 props.use_transform = True
                 props.type = "CompositorNodeHueCorrect"
             
-                props = row.operator("node.add_node", text=" Invert         ", icon_value = custom_icons["invert"].icon_id)
+                props = row.operator("node.add_node", text=" Invert         ", icon = "NODE_INVERT")  
                 props.use_transform = True
                 props.type = "CompositorNodeInvert"
 
                 col = layout.column(align=True)
                 row = col.row(align=True)  
             
-                props = row.operator("node.add_node", text=" Mix          ", icon_value = custom_icons["mixrgb"].icon_id)
+                props = row.operator("node.add_node", text=" Mix          ", icon = "NODE_MIXRGB") 
                 props.use_transform = True
                 props.type = "CompositorNodeMixRGB"
 
-                props = row.operator("node.add_node", text=" Tonemap         ", icon_value = custom_icons["tonemap"].icon_id)
+                props = row.operator("node.add_node", text=" Tonemap         ", icon = "NODE_TONEMAP")
                 props.use_transform = True
                 props.type = "CompositorNodeTonemap"
 
@@ -1088,17 +1090,17 @@ class NodesIconsPanelInputAdvanced(bpy.types.Panel):
                 col = layout.column(align=True)
                 row = col.row(align=True)   
         
-                props = row.operator("node.add_node", text=" File Output         ", icon_value = custom_icons["fileoutput"].icon_id) 
+                props = row.operator("node.add_node", text=" File Output         ", icon = "NODE_FILEOUTPUT") 
                 props.use_transform = True
                 props.type = "CompositorNodeOutputFile"
 
-                props = row.operator("node.add_node", text=" Levels         ", icon_value = custom_icons["node_levels"].icon_id)
+                props = row.operator("node.add_node", text=" Levels         ", icon = "NODE_LEVELS")
                 props.use_transform = True
                 props.type = "CompositorNodeLevels"
 
                 row = col.row(align=True)  
         
-                props = row.operator("node.add_node", text=" Split Viewer         ", icon_value = custom_icons["node_viewersplit"].icon_id)
+                props = row.operator("node.add_node", text=" Split Viewer         ", icon = "NODE_VIWERSPLIT")
                 props.use_transform = True
                 props.type = "CompositorNodeSplitViewer"
 
@@ -1114,19 +1116,19 @@ class NodesIconsPanelInputAdvanced(bpy.types.Panel):
                 row = layout.row()
                 row.alignment = 'LEFT'  
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["bokeh_image"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_BOKEH_IMAGE")
                 props.use_transform = True
                 props.type = "CompositorNodeBokehImage"
            
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["node_time"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_TIME")
                 props.use_transform = True
                 props.type = "CompositorNodeTime" 
             
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["trackposition"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_TRACKPOSITION")
                 props.use_transform = True
                 props.type = "CompositorNodeTrackPos"
            
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["value"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_VALUE")
                 props.use_transform = True
                 props.type = "CompositorNodeValue"
 
@@ -1137,30 +1139,30 @@ class NodesIconsPanelInputAdvanced(bpy.types.Panel):
                 row = layout.row()
                 row.alignment = 'LEFT' 
             
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["colorcorrection"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_COLORCORRECTION")
                 props.use_transform = True
                 props.type = "CompositorNodeColorCorrection"
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["gamma"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_GAMMA")
                 props.use_transform = True
                 props.type = "CompositorNodeGamma"
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["huesaturation"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_HUESATURATION")   
                 props.use_transform = True
                 props.type = "CompositorNodeHueCorrect"
             
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["invert"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_INVERT")  
                 props.use_transform = True
                 props.type = "CompositorNodeInvert"
 
                 row = layout.row()
                 row.alignment = 'LEFT' 
             
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["mixrgb"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_MIXRGB") 
                 props.use_transform = True
                 props.type = "CompositorNodeMixRGB"
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["tonemap"].icon_id) 
+                props = row.operator("node.add_node", text = "", icon = "NODE_TONEMAP")
                 props.use_transform = True
                 props.type = "CompositorNodeTonemap"
 
@@ -1171,15 +1173,15 @@ class NodesIconsPanelInputAdvanced(bpy.types.Panel):
                 row = layout.row()
                 row.alignment = 'LEFT' 
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["fileoutput"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_FILEOUTPUT") 
                 props.use_transform = True
                 props.type = "CompositorNodeOutputFile"
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["node_levels"].icon_id) 
+                props = row.operator("node.add_node", text = "", icon = "NODE_LEVELS")
                 props.use_transform = True
                 props.type = "CompositorNodeLevels"
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["node_viewersplit"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_VIWERSPLIT")
                 props.use_transform = True
                 props.type = "CompositorNodeSplitViewer"
 
@@ -1196,11 +1198,11 @@ class NodesIconsPanelInputAdvanced(bpy.types.Panel):
                 col = layout.column(align=True)
                 row = col.row(align=True)    
 
-                props = row.operator("node.add_node", text=" Coordinates          ", icon_value = custom_icons["texcoordinate"].icon_id) 
+                props = row.operator("node.add_node", text=" Coordinates          ", icon = "NODE_TEXCOORDINATE") 
                 props.use_transform = True
                 props.type = "TextureNodeCoordinates"
 
-                props = row.operator("node.add_node", text=" Curve Time          ", icon_value = custom_icons["curve_time"].icon_id)
+                props = row.operator("node.add_node", text=" Curve Time          ", icon = "NODE_CURVE_TIME")
                 props.use_transform = True
                 props.type = "TextureNodeCurveTime"
 
@@ -1209,11 +1211,11 @@ class NodesIconsPanelInputAdvanced(bpy.types.Panel):
                 col = layout.column(align=True)
                 row = col.row(align=True)    
 
-                props = row.operator("node.add_node", text=" Bricks         ", icon_value = custom_icons["brick"].icon_id) 
+                props = row.operator("node.add_node", text=" Bricks         ", icon = "NODE_BRICK") 
                 props.use_transform = True
                 props.type = "TextureNodeBricks"
 
-                props = row.operator("node.add_node", text=" Checker        ", icon_value = custom_icons["checker"].icon_id)
+                props = row.operator("node.add_node", text=" Checker        ", icon = "NODE_CHECKER")
                 props.use_transform = True
                 props.type = "TextureNodeChecker"
 
@@ -1226,11 +1228,11 @@ class NodesIconsPanelInputAdvanced(bpy.types.Panel):
                 row = layout.row()
                 row.alignment = 'LEFT'       
 
-                props = row.operator("node.add_node", text="", icon_value = custom_icons["texcoordinate"].icon_id) 
+                props = row.operator("node.add_node", text="", icon = "NODE_TEXCOORDINATE") 
                 props.use_transform = True
                 props.type = "TextureNodeCoordinates"
 
-                props = row.operator("node.add_node", text="", icon_value = custom_icons["curve_time"].icon_id)
+                props = row.operator("node.add_node", text="", icon = "NODE_CURVE_TIME")
                 props.use_transform = True
                 props.type = "TextureNodeCurveTime"
 
@@ -1239,11 +1241,11 @@ class NodesIconsPanelInputAdvanced(bpy.types.Panel):
                 row = layout.row()
                 row.alignment = 'LEFT'   
 
-                props = row.operator("node.add_node", text="", icon_value = custom_icons["brick"].icon_id) 
+                props = row.operator("node.add_node", text="", icon = "NODE_BRICK") 
                 props.use_transform = True
                 props.type = "TextureNodeBricks"
 
-                props = row.operator("node.add_node", text="", icon_value = custom_icons["checker"].icon_id)
+                props = row.operator("node.add_node", text="", icon = "NODE_CHECKER")
                 props.use_transform = True
                 props.type = "TextureNodeChecker"
 
@@ -1279,38 +1281,38 @@ class NodesIconsPanelModify(bpy.types.Panel):
                 col = layout.column(align=True)
                 row = col.row(align=True) 
         
-                props = row.operator("node.add_node", text=" Bright / Contrast    ", icon_value = custom_icons["brightcontrast"].icon_id)
+                props = row.operator("node.add_node", text=" Bright / Contrast    ", icon = "NODE_BRIGHT_CONTRAST")
                 props.use_transform = True
                 props.type = "ShaderNodeBrightContrast"       
         
-                props = row.operator("node.add_node", text=" Gamma         ", icon_value = custom_icons["gamma"].icon_id)
+                props = row.operator("node.add_node", text=" Gamma         ", icon = "NODE_GAMMA")
                 props.use_transform = True
                 props.type = "ShaderNodeGamma"
 
                 row = col.row(align=True) 
         
-                props = row.operator("node.add_node", text="Hue / Saturation    ", icon_value = custom_icons["huesaturation"].icon_id)
+                props = row.operator("node.add_node", text="Hue / Saturation    ", icon = "NODE_HUESATURATION")   
                 props.use_transform = True
                 props.type = "ShaderNodeHueSaturation"
         
-                props = row.operator("node.add_node", text=" Invert              ", icon_value = custom_icons["invert"].icon_id)
+                props = row.operator("node.add_node", text=" Invert              ", icon = "NODE_INVERT")  
                 props.use_transform = True
                 props.type = "ShaderNodeInvert"
                 
                 col = layout.column(align=True)
                 row = col.row(align=True) 
 
-                props = row.operator("node.add_node", text=" Light Falloff           ", icon_value = custom_icons["lightfalloff"].icon_id)
+                props = row.operator("node.add_node", text=" Light Falloff           ", icon = "NODE_LIGHTFALLOFF")
                 props.use_transform = True
                 props.type = "ShaderNodeLightFalloff"
         
-                props = row.operator("node.add_node", text=" Mix RGB           ", icon_value = custom_icons["mixrgb"].icon_id)
+                props = row.operator("node.add_node", text=" Mix RGB           ", icon = "NODE_MIXRGB") 
                 props.use_transform = True
                 props.type = "ShaderNodeMixRGB"
 
                 row = col.row(align=True) 
         
-                props = row.operator("node.add_node", text="RGB Curves       ", icon_value = custom_icons["rgbcurve"].icon_id)
+                props = row.operator("node.add_node", text="RGB Curves       ", icon = "NODE_RGBCURVE")
                 props.use_transform = True
                 props.type = "ShaderNodeRGBCurve"
 
@@ -1321,29 +1323,29 @@ class NodesIconsPanelModify(bpy.types.Panel):
                 col = layout.column(align=True)
                 row = col.row(align=True)         
         
-                props = row.operator("node.add_node", text=" Bump            ", icon_value = custom_icons["bump"].icon_id)
+                props = row.operator("node.add_node", text=" Bump            ", icon = "NODE_BUMP")
                 props.use_transform = True
                 props.type = "ShaderNodeBump"
         
         
-                props = row.operator("node.add_node", text=" Mapping          ", icon_value = custom_icons["mapping"].icon_id)
+                props = row.operator("node.add_node", text=" Mapping          ", icon = "NODE_MAPPING")
                 props.use_transform = True
                 props.type = "ShaderNodeMapping"
 
                 row = col.row(align=True) 
 
-                props = row.operator("node.add_node", text=" Normal          ", icon_value = custom_icons["normal"].icon_id)
+                props = row.operator("node.add_node", text=" Normal          ", icon = "NODE_NORMAL")
                 props.use_transform = True
                 props.type = "ShaderNodeNormal"
         
                 col = layout.column(align=True)
                 row = col.row(align=True)  
         
-                props = row.operator("node.add_node", text=" Vector Transform   ", icon_value = custom_icons["vector_transform"].icon_id)
+                props = row.operator("node.add_node", text=" Vector Transform   ", icon = "NODE_VECTOR_TRANSFORM")
                 props.use_transform = True
                 props.type = "ShaderNodeVectorTransform"
         
-                props = row.operator("node.add_node", text=" Vector Curves    ", icon_value = custom_icons["vector"].icon_id)
+                props = row.operator("node.add_node", text=" Vector Curves    ", icon = "NODE_VECTOR")
                 props.use_transform = True
                 props.type = "ShaderNodeVectorCurve"
 
@@ -1354,82 +1356,82 @@ class NodesIconsPanelModify(bpy.types.Panel):
                 col = layout.column(align=True)
                 row = col.row(align=True)        
         
-                props = row.operator("node.add_node", text=" Attribute     ", icon_value = custom_icons["attribute"].icon_id)
+                props = row.operator("node.add_node", text=" Attribute     ", icon = "NODE_ATTRIBUTE")
                 props.use_transform = True
                 props.type = "ShaderNodeAttribute"
         
-                props = row.operator("node.add_node", text=" Camera Data   ", icon_value = custom_icons["cameradata"].icon_id)
+                props = row.operator("node.add_node", text=" Camera Data   ", icon = "NODE_CAMERADATA")
                 props.use_transform = True
                 props.type = "ShaderNodeCameraData"
 
                 row = col.row(align=True)
         
-                props = row.operator("node.add_node", text=" Geometry        ", icon_value = custom_icons["geometry"].icon_id)
+                props = row.operator("node.add_node", text=" Geometry        ", icon = "NODE_GEOMETRY")
                 props.use_transform = True
                 props.type = "ShaderNodeNewGeometry"
         
                 col = layout.column(align=True)
                 row = col.row(align=True)
         
-                props = row.operator("node.add_node", text=" Hair Info     ", icon_value = custom_icons["hairinfo"].icon_id)
+                props = row.operator("node.add_node", text=" Hair Info     ", icon = "NODE_HAIRINFO")
                 props.use_transform = True
                 props.type = "ShaderNodeHairInfo"
         
-                props = row.operator("node.add_node", text=" Layer Weight   ", icon_value = custom_icons["layerweight"].icon_id)
+                props = row.operator("node.add_node", text=" Layer Weight   ", icon = "NODE_LAYERWEIGHT")
                 props.use_transform = True
                 props.type = "ShaderNodeLayerWeight"
 
                 row = col.row(align=True)
         
-                props = row.operator("node.add_node", text=" Light Path    ", icon_value = custom_icons["lightpath"].icon_id)
+                props = row.operator("node.add_node", text=" Light Path    ", icon = "NODE_LIGHTPATH")
                 props.use_transform = True
                 props.type = "ShaderNodeLightPath"
         
-                props = row.operator("node.add_node", text=" Object Info    ", icon_value = custom_icons["objectinfo"].icon_id)
+                props = row.operator("node.add_node", text=" Object Info    ", icon = "NODE_OBJECTINFO")
                 props.use_transform = True
                 props.type = "ShaderNodeObjectInfo"
         
                 col = layout.column(align=True)
                 row = col.row(align=True) 
         
-                props = row.operator("node.add_node", text=" Particle Info", icon_value = custom_icons["particleinfo"].icon_id)
+                props = row.operator("node.add_node", text=" Particle Info", icon = "NODE_PARTICLEINFO")
                 props.use_transform = True
                 props.type = "ShaderNodeParticleInfo"
         
-                props = row.operator("node.add_node", text=" RGB               ", icon_value = custom_icons["rgb"].icon_id)
+                props = row.operator("node.add_node", text=" RGB               ", icon = "NODE_RGB")
                 props.use_transform = True
                 props.type = "ShaderNodeRGB"
 
                 row = col.row(align=True)
         
-                props = row.operator("node.add_node", text=" Tangent        ", icon_value = custom_icons["tangent"].icon_id)
+                props = row.operator("node.add_node", text=" Tangent        ", icon = "NODE_TANGENT")
                 props.use_transform = True
                 props.type = "ShaderNodeTangent"
         
-                props = row.operator("node.add_node", text=" Texture Coordinate", icon_value = custom_icons["texcoordinate"].icon_id)
+                props = row.operator("node.add_node", text=" Texture Coordinate", icon = "NODE_TEXCOORDINATE") 
                 props.use_transform = True
                 props.type = "ShaderNodeTexCoord"
 
                 col = layout.column(align=True)
                 row = col.row(align=True) 
         
-                props = row.operator("node.add_node", text=" UV Map       ", icon_value = custom_icons["uvmap"].icon_id)
+                props = row.operator("node.add_node", text=" UV Map       ", icon = "NODE_UVMAP")
                 props.use_transform = True
                 props.type = "ShaderNodeUVMap"
         
-                props = row.operator("node.add_node", text=" Value            ", icon_value = custom_icons["value"].icon_id)
+                props = row.operator("node.add_node", text=" Value            ", icon = "NODE_VALUE")
                 props.use_transform = True
                 props.type = "ShaderNodeValue"
 
                 row = col.row(align=True)
         
-                props = row.operator("node.add_node", text=" Wireframe", icon_value = custom_icons["wireframe"].icon_id)
+                props = row.operator("node.add_node", text=" Wireframe", icon = "NODE_WIREFRAME")
                 props.use_transform = True
                 props.type = "ShaderNodeWireframe"
 
                 if context.space_data.shader_type == 'LINESTYLE':
 
-                    props = row.operator("node.add_node", text=" UV along stroke", icon_value = custom_icons["uvalongstroke"].icon_id)
+                    props = row.operator("node.add_node", text=" UV along stroke", icon = "NODE_UVALONGSTROKE")
                     props.use_transform = True
                     props.type = "ShaderNodeUVALongStroke"
 
@@ -1442,66 +1444,66 @@ class NodesIconsPanelModify(bpy.types.Panel):
                 col = layout.column(align=True)
                 row = col.row(align=True)           
         
-                props = row.operator("node.add_node", text=" Combine HSV    ", icon_value = custom_icons["combinehsv"].icon_id)
+                props = row.operator("node.add_node", text=" Combine HSV    ", icon = "NODE_COMBINEHSV")
                 props.use_transform = True
                 props.type = "ShaderNodeCombineHSV"        
          
-                props = row.operator("node.add_node", text=" Combine RGB   ", icon_value = custom_icons["combinergb"].icon_id)
+                props = row.operator("node.add_node", text=" Combine RGB   ", icon = "NODE_COMBINERGB")
                 props.use_transform = True
                 props.type = "ShaderNodeCombineRGB"
 
                 row = col.row(align=True) 
         
-                props = row.operator("node.add_node", text=" Combine XYZ    ", icon_value = custom_icons["combinexyz"].icon_id)
+                props = row.operator("node.add_node", text=" Combine XYZ    ", icon = "NODE_COMBINEXYZ")
                 props.use_transform = True
                 props.type = "ShaderNodeCombineXYZ" 
 
                 col = layout.column(align=True)
                 row = col.row(align=True) 
 
-                props = row.operator("node.add_node", text=" Separate HSV    ", icon_value = custom_icons["separatehsv"].icon_id)
+                props = row.operator("node.add_node", text=" Separate HSV    ", icon = "NODE_SEPARATEHSV") 
                 props.use_transform = True
                 props.type = "ShaderNodeSeparateHSV"
 
-                props = row.operator("node.add_node", text=" Separate RGB    ", icon_value = custom_icons["separatergb"].icon_id)
+                props = row.operator("node.add_node", text=" Separate RGB    ", icon = "NODE_SEPARATERGB")
                 props.use_transform = True
                 props.type = "ShaderNodeSeparateRGB" 
                 
                 row = col.row(align=True)      
         
-                props = row.operator("node.add_node", text=" Separate XYZ    ", icon_value = custom_icons["separatexyz"].icon_id)
+                props = row.operator("node.add_node", text=" Separate XYZ    ", icon = "NODE_SEPARATEXYZ")
                 props.use_transform = True
                 props.type = "ShaderNodeSeparateXYZ" 
 
                 col = layout.column(align=True)
                 row = col.row(align=True)           
         
-                props = row.operator("node.add_node", text=" Blackbody        ", icon_value = custom_icons["blackbody"].icon_id)
+                props = row.operator("node.add_node", text=" Blackbody        ", icon = "NODE_BLACKBODY")
                 props.use_transform = True
                 props.type = "ShaderNodeBlackbody"        
         
-                props = row.operator("node.add_node", text=" ColorRamp      ", icon_value = custom_icons["colorramp"].icon_id)
+                props = row.operator("node.add_node", text=" ColorRamp      ", icon = "NODE_COLORRAMP")
                 props.use_transform = True
                 props.type = "ShaderNodeValToRGB"
 
                 row = col.row(align=True) 
 
-                props = row.operator("node.add_node", text=" Math              ", icon_value = custom_icons["math"].icon_id)
+                props = row.operator("node.add_node", text=" Math              ", icon = "NODE_MATH")
                 props.use_transform = True
                 props.type = "ShaderNodeMath"
         
-                props = row.operator("node.add_node", text=" RGB to BW        ", icon_value = custom_icons["rgbtobw"].icon_id)
+                props = row.operator("node.add_node", text=" RGB to BW        ", icon = "NODE_RGBTOBW")
                 props.use_transform = True
                 props.type = "ShaderNodeRGBToBW"
         
                 col = layout.column(align=True)
                 row = col.row(align=True)       
         
-                props = row.operator("node.add_node", text=" Vector Math       ", icon_value = custom_icons["vectormath"].icon_id)
+                props = row.operator("node.add_node", text=" Vector Math       ", icon = "NODE_VECTORMATH")
                 props.use_transform = True
                 props.type = "ShaderNodeVectorMath"
         
-                props = row.operator("node.add_node", text=" Wavelength      ", icon_value = custom_icons["wavelength"].icon_id)
+                props = row.operator("node.add_node", text=" Wavelength      ", icon = "NODE_WAVELENGTH")
                 props.use_transform = True
                 props.type = "ShaderNodeWavelength"
 
@@ -1512,7 +1514,7 @@ class NodesIconsPanelModify(bpy.types.Panel):
                 col = layout.column(align=True)
                 row = col.row(align=True) 
         
-                props = row.operator("node.add_node", text=" Script            ", icon_value = custom_icons["script"].icon_id)
+                props = row.operator("node.add_node", text=" Script            ", icon = "NODE_SCRIPT")
                 props.use_transform = True
                 props.type = "ShaderNodeScript"  
 
@@ -1526,35 +1528,35 @@ class NodesIconsPanelModify(bpy.types.Panel):
                 row = layout.row()
                 row.alignment = 'LEFT'        
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["brightcontrast"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_BRIGHT_CONTRAST")
                 props.use_transform = True
                 props.type = "ShaderNodeBrightContrast"
         
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["gamma"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_GAMMA")
                 props.use_transform = True
                 props.type = "ShaderNodeGamma"
  
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["huesaturation"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_HUESATURATION")   
                 props.use_transform = True
                 props.type = "ShaderNodeHueSaturation"
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["invert"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_INVERT")  
                 props.use_transform = True
                 props.type = "ShaderNodeInvert"
         
                 row = layout.row()
                 row.alignment = 'LEFT'  
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["lightfalloff"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_LIGHTFALLOFF")
                 props.use_transform = True
                 props.type = "ShaderNodeLightFalloff"
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["mixrgb"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_MIXRGB") 
                 props.use_transform = True
                 props.type = "ShaderNodeMixRGB"
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["rgbcurve"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_RGBCURVE")
                 props.use_transform = True
                 props.type = "ShaderNodeRGBCurve"
 
@@ -1565,26 +1567,26 @@ class NodesIconsPanelModify(bpy.types.Panel):
                 row = layout.row()
                 row.alignment = 'LEFT'        
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["bump"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_BUMP")
                 props.use_transform = True
                 props.type = "ShaderNodeBump"
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["mapping"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_MAPPING")
                 props.use_transform = True
                 props.type = "ShaderNodeMapping"
      
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["normal"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_NORMAL")
                 props.use_transform = True
                 props.type = "ShaderNodeNormal"
         
                 row = layout.row()
                 row.alignment = 'LEFT'  
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["vector_transform"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_VECTOR_TRANSFORM")
                 props.use_transform = True
                 props.type = "ShaderNodeVectorTransform"
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["vector"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_VECTOR")
                 props.use_transform = True
                 props.type = "ShaderNodeVectorCurve"
 
@@ -1595,76 +1597,76 @@ class NodesIconsPanelModify(bpy.types.Panel):
                 row = layout.row()
                 row.alignment = 'LEFT'        
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["attribute"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_ATTRIBUTE")
                 props.use_transform = True
                 props.type = "ShaderNodeAttribute"
    
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["cameradata"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_CAMERADATA")
                 props.use_transform = True
                 props.type = "ShaderNodeCameraData"
 
 
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["geometry"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_GEOMETRY")
                 props.use_transform = True
                 props.type = "ShaderNodeNewGeometry"
         
                 row = layout.row()
                 row.alignment = 'LEFT'  
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["hairinfo"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_HAIRINFO")
                 props.use_transform = True
                 props.type = "ShaderNodeHairInfo"
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["layerweight"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_LAYERWEIGHT")
                 props.use_transform = True
                 props.type = "ShaderNodeLayerWeight"
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["lightpath"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_LIGHTPATH")
                 props.use_transform = True
                 props.type = "ShaderNodeLightPath"
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["objectinfo"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_OBJECTINFO")
                 props.use_transform = True
                 props.type = "ShaderNodeObjectInfo"
         
                 row = layout.row()
                 row.alignment = 'LEFT'  
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["particleinfo"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_PARTICLEINFO")
                 props.use_transform = True
                 props.type = "ShaderNodeParticleInfo"
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["rgb"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_RGB")
                 props.use_transform = True
                 props.type = "ShaderNodeRGB"
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["tangent"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_TANGENT")
                 props.use_transform = True
                 props.type = "ShaderNodeTangent"
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["texcoordinate"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_TEXCOORDINATE") 
                 props.use_transform = True
                 props.type = "ShaderNodeTexCoord"
 
                 row = layout.row()
                 row.alignment = 'LEFT'  
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["uvmap"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_UVMAP")
                 props.use_transform = True
                 props.type = "ShaderNodeUVMap"
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["value"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_VALUE")
                 props.use_transform = True
                 props.type = "ShaderNodeValue"
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["wireframe"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_WIREFRAME")
                 props.use_transform = True
                 props.type = "ShaderNodeWireframe"
 
                 if context.space_data.shader_type == 'LINESTYLE':
 
-                    props = row.operator("node.add_node", text = "", icon_value = custom_icons["uvalongstroke"].icon_id)
+                    props = row.operator("node.add_node", text = "", icon = "NODE_UVALONGSTROKE")
                     props.use_transform = True
                     props.type = "ShaderNodeUVALongStroke"
 
@@ -1676,60 +1678,60 @@ class NodesIconsPanelModify(bpy.types.Panel):
                 row = layout.row()
                 row.alignment = 'LEFT'
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["combinehsv"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_COMBINEHSV")
                 props.use_transform = True
                 props.type = "ShaderNodeCombineHSV"   
                 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["combinergb"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_COMBINERGB")
                 props.use_transform = True
                 props.type = "ShaderNodeCombineRGB"
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["combinexyz"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_COMBINEXYZ")
                 props.use_transform = True
                 props.type = "ShaderNodeCombineXYZ"     
         
                 row = layout.row()
                 row.alignment = 'LEFT'  
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["separatehsv"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_SEPARATEHSV") 
                 props.use_transform = True
                 props.type = "ShaderNodeSeparateHSV"
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["separatergb"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_SEPARATERGB")
                 props.use_transform = True
                 props.type = "ShaderNodeSeparateRGB"      
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["separatexyz"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_SEPARATEXYZ")
                 props.use_transform = True
                 props.type = "ShaderNodeSeparateXYZ"     
                 
                 row = layout.row()
                 row.alignment = 'LEFT'      
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["blackbody"].icon_id)
+                props = row.operator("node.add_node", text = "", icon= "NODE_BLACKBODY")
                 props.use_transform = True
                 props.type = "ShaderNodeBlackbody"        
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["colorramp"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_COLORRAMP")
                 props.use_transform = True
                 props.type = "ShaderNodeValToRGB"
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["math"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_MATH")
                 props.use_transform = True
                 props.type = "ShaderNodeMath"
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["rgbtobw"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_RGBTOBW")
                 props.use_transform = True
                 props.type = "ShaderNodeRGBToBW"    
 
                 row = layout.row()
                 row.alignment = 'LEFT'  
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["vectormath"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_VECTORMATH")
                 props.use_transform = True
                 props.type = "ShaderNodeVectorMath"
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["wavelength"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_WAVELENGTH")
                 props.use_transform = True
                 props.type = "ShaderNodeWavelength"
 
@@ -1740,7 +1742,7 @@ class NodesIconsPanelModify(bpy.types.Panel):
                 row = layout.row()
                 row.alignment = 'LEFT'        
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["script"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_SCRIPT")
                 props.use_transform = True
                 props.type = "ShaderNodeScript"  
             
@@ -1757,80 +1759,80 @@ class NodesIconsPanelModify(bpy.types.Panel):
                 col = layout.column(align=True)
                 row = col.row(align=True)   
 
-                props = row.operator("node.add_node", text=" Combine HSVA         ", icon_value = custom_icons["combinehsv"].icon_id)
+                props = row.operator("node.add_node", text=" Combine HSVA         ", icon = "NODE_COMBINEHSV")
                 props.use_transform = True
                 props.type = "CompositorNodeCombHSVA"
             
-                props = row.operator("node.add_node", text=" Combine RGBA         ", icon_value = custom_icons["combinergb"].icon_id)
+                props = row.operator("node.add_node", text=" Combine RGBA         ", icon = "NODE_COMBINERGB")
                 props.use_transform = True
                 props.type = "CompositorNodeCombRGBA"
 
                 row = col.row(align=True)  
 
-                props = row.operator("node.add_node", text=" Combine YCbCrA       ", icon_value = custom_icons["combineycbcra"].icon_id)
+                props = row.operator("node.add_node", text=" Combine YCbCrA       ", icon = "NODE_COMBINEYCBCRA")
                 props.use_transform = True
                 props.type = "CompositorNodeCombYCCA"
 
-                props = row.operator("node.add_node", text=" Combine YUVA       ", icon_value = custom_icons["combineyuva"].icon_id)  
+                props = row.operator("node.add_node", text=" Combine YUVA       ", icon = "NODE_COMBINEYUVA")  
                 props.use_transform = True
                 props.type = "CompositorNodeCombYUVA"
 
                 col = layout.column(align=True)
                 row = col.row(align=True)   
 
-                props = row.operator("node.add_node", text=" Separate HSVA         ", icon_value = custom_icons["separatehsv"].icon_id)  
+                props = row.operator("node.add_node", text=" Separate HSVA         ", icon = "NODE_SEPARATEHSV") 
                 props.use_transform = True
                 props.type = "CompositorNodeSepHSVA"
 
-                props = row.operator("node.add_node", text=" Separate RGBA         ", icon_value = custom_icons["separatergb"].icon_id)
+                props = row.operator("node.add_node", text=" Separate RGBA         ", icon = "NODE_SEPARATERGB")
                 props.use_transform = True
                 props.type = "CompositorNodeSepRGBA"
 
                 row = col.row(align=True)  
         
-                props = row.operator("node.add_node", text=" Separate YCbCrA       ", icon_value = custom_icons["separateycbcra"].icon_id) 
+                props = row.operator("node.add_node", text=" Separate YCbCrA       ", icon = "NODE_SEPARATE_YCBCRA") 
                 props.use_transform = True
                 props.type = "CompositorNodeSepYCCA"
 
-                props = row.operator("node.add_node", text=" Separate YUVA       ", icon_value = custom_icons["separateyuva"].icon_id)
+                props = row.operator("node.add_node", text=" Separate YUVA       ", icon = "NODE_SEPARATE_YUVA") 
                 props.use_transform = True
                 props.type = "CompositorNodeSepYUVA"
 
                 col = layout.column(align=True)
                 row = col.row(align=True)  
 
-                props = row.operator("node.add_node", text=" Set Alpha         ", icon_value = custom_icons["alpha"].icon_id)
+                props = row.operator("node.add_node", text=" Set Alpha         ", icon = "NODE_ALPHA")
                 props.use_transform = True
                 props.type = "CompositorNodeSetAlpha"
                 
-                props = row.operator("node.add_node", text=" Alpha Convert          ", icon_value = custom_icons["alphaconvert"].icon_id)
+                props = row.operator("node.add_node", text=" Alpha Convert          ", icon = "NODE_ALPHACONVERT")
                 props.use_transform = True
                 props.type = "CompositorNodePremulKey"
 
                 row = col.row(align=True) 
 
-                props = row.operator("node.add_node", text=" RGB to BW          ", icon_value = custom_icons["rgbtobw"].icon_id) 
+                props = row.operator("node.add_node", text=" RGB to BW          ", icon = "NODE_RGBTOBW")
                 props.use_transform = True
                 props.type = "CompositorNodeRGBToBW"
 
-                props = row.operator("node.add_node", text=" Color Ramp       ", icon_value = custom_icons["colorramp"].icon_id)
+                props = row.operator("node.add_node", text=" Color Ramp       ", icon = "NODE_COLORRAMP")
                 props.use_transform = True
                 props.type = "CompositorNodeValToRGB"
 
                 col = layout.column(align=True)
                 row = col.row(align=True)  
         
-                props = row.operator("node.add_node", text=" ID Mask        ", icon_value = custom_icons["node_mask"].icon_id) 
+                props = row.operator("node.add_node", text=" ID Mask        ", icon = "NODE_MASK") 
                 props.use_transform = True
                 props.type = "CompositorNodeIDMask"
             
-                props = row.operator("node.add_node", text=" Math         ", icon_value = custom_icons["math"].icon_id)
+                props = row.operator("node.add_node", text=" Math         ", icon = "NODE_MATH")
                 props.use_transform = True
                 props.type = "CompositorNodeMath"
 
                 row = col.row(align=True)  
 
-                props = row.operator("node.add_node", text=" Switch View         ", icon_value = custom_icons["switchview"].icon_id)
+                props = row.operator("node.add_node", text=" Switch View         ", icon = "NODE_SWITCHVIEW")
                 props.use_transform = True
                 props.type = "CompositorNodeSwitchView"
         
@@ -1841,70 +1843,70 @@ class NodesIconsPanelModify(bpy.types.Panel):
                 col = layout.column(align=True)
                 row = col.row(align=True)   
 
-                props = row.operator("node.add_node", text=" Bilateral Blur          ", icon_value = custom_icons["bilateralblur"].icon_id)
+                props = row.operator("node.add_node", text=" Bilateral Blur          ", icon = "NODE_BILATERAL_BLUR")
                 props.use_transform = True
                 props.type = "CompositorNodeBilateralblur"
 
-                props = row.operator("node.add_node", text=" Blur      ", icon_value = custom_icons["blur"].icon_id) 
+                props = row.operator("node.add_node", text=" Blur      ", icon = "NODE_BLUR") 
                 props.use_transform = True
                 props.type = "CompositorNodeBlur"
 
                 row = col.row(align=True)  
         
-                props = row.operator("node.add_node", text=" Bokeh Blur         ", icon_value = custom_icons["bokeh_blur"].icon_id) 
+                props = row.operator("node.add_node", text=" Bokeh Blur         ", icon = "NODE_BOKEH_BLUR") 
                 props.use_transform = True
                 props.type = "CompositorNodeBokehBlur"
 
-                props = row.operator("node.add_node", text=" Directional Blur     ", icon_value = custom_icons["directionalblur"].icon_id)
+                props = row.operator("node.add_node", text=" Directional Blur     ", icon = "NODE_DIRECITONALBLUR")
                 props.use_transform = True
                 props.type = "CompositorNodeDBlur"
 
                 col = layout.column(align=True)
                 row = col.row(align=True)  
 
-                props = row.operator("node.add_node", text=" Vector Blur       ", icon_value = custom_icons["vector_blur"].icon_id)
+                props = row.operator("node.add_node", text=" Vector Blur       ", icon = "NODE_VECTOR_BLUR")
                 props.use_transform = True
                 props.type = "CompositorNodeVecBlur"
 
-                props = row.operator("node.add_node", text=" Defocus         ", icon_value = custom_icons["defocus"].icon_id)
+                props = row.operator("node.add_node", text=" Defocus         ", icon = "NODE_DEFOCUS")
                 props.use_transform = True
                 props.type = "CompositorNodeDefocus"
 
                 row = col.row(align=True)  
 
-                props = row.operator("node.add_node", text=" Despeckle       ", icon_value = custom_icons["despeckle"].icon_id)
+                props = row.operator("node.add_node", text=" Despeckle       ", icon = "NODE_DESPECKLE")
                 props.use_transform = True
                 props.type = "CompositorNodeDespeckle"
 
-                props = row.operator("node.add_node", text=" Dilate / Erode      ", icon_value = custom_icons["erode"].icon_id)
+                props = row.operator("node.add_node", text=" Dilate / Erode      ", icon = "NODE_ERODE")
                 props.use_transform = True
                 props.type = "CompositorNodeDilateErode"
 
                 col = layout.column(align=True)
                 row = col.row(align=True)  
 
-                props = row.operator("node.add_node", text=" Filter        ", icon_value = custom_icons["filter"].icon_id) 
+                props = row.operator("node.add_node", text=" Filter        ", icon = "NODE_FILTER") 
                 props.use_transform = True
                 props.type = "CompositorNodeFilter"
             
-                props = row.operator("node.add_node", text=" Glare         ", icon_value = custom_icons["glare"].icon_id)
+                props = row.operator("node.add_node", text=" Glare         ", icon = "NODE_GLARE")
                 props.use_transform = True
                 props.type = "CompositorNodeGlare"
 
                 row = col.row(align=True)  
             
-                props = row.operator("node.add_node", text=" Inpaint        ", icon_value = custom_icons["inpaint"].icon_id)
+                props = row.operator("node.add_node", text=" Inpaint        ", icon = "NODE_IMPAINT")
                 props.use_transform = True
                 props.type = "CompositorNodeInpaint"
             
-                props = row.operator("node.add_node", text=" Pixelate         ", icon_value = custom_icons["pixelated"].icon_id)
+                props = row.operator("node.add_node", text=" Pixelate         ", icon = "NODE_PIXELATED")
                 props.use_transform = True
                 props.type = "CompositorNodePixelate"
 
                 col = layout.column(align=True)
                 row = col.row(align=True)  
         
-                props = row.operator("node.add_node", text=" Sunbeams       ", icon_value = custom_icons["sunbeams"].icon_id) 
+                props = row.operator("node.add_node", text=" Sunbeams       ", icon = "NODE_SUNBEAMS") 
                 props.use_transform = True
                 props.type = "CompositorNodeSunBeams"
                 
@@ -1916,28 +1918,28 @@ class NodesIconsPanelModify(bpy.types.Panel):
                 col = layout.column(align=True)
                 row = col.row(align=True)   
 
-                props = row.operator("node.add_node", text=" Map Range         ", icon_value = custom_icons["range"].icon_id)
+                props = row.operator("node.add_node", text=" Map Range         ", icon = "NODE_RANGE")
                 props.use_transform = True
                 props.type = "CompositorNodeMapRange"
 
-                props = row.operator("node.add_node", text=" Map Value     ", icon_value = custom_icons["value"].icon_id)
+                props = row.operator("node.add_node", text=" Map Value     ", icon = "NODE_VALUE")
                 props.use_transform = True
                 props.type = "CompositorNodeMapValue"
 
                 row = col.row(align=True)  
         
-                props = row.operator("node.add_node", text=" Normal         ", icon_value = custom_icons["normal"].icon_id)
+                props = row.operator("node.add_node", text=" Normal         ", icon = "NODE_NORMAL")
                 props.use_transform = True
                 props.type = "CompositorNodeNormal"
             
-                props = row.operator("node.add_node", text=" Normalize        ", icon_value = custom_icons["normalize"].icon_id)
+                props = row.operator("node.add_node", text=" Normalize        ", icon = "NODE_NORMALIZE")
                 props.use_transform = True
                 props.type = "CompositorNodeNormalize"
 
                 col = layout.column(align=True)
                 row = col.row(align=True)  
         
-                props = row.operator("node.add_node", text=" Vector Curves      ", icon_value = custom_icons["vector"].icon_id)
+                props = row.operator("node.add_node", text=" Vector Curves      ", icon = "NODE_VECTOR")
                 props.use_transform = True
                 props.type = "CompositorNodeCurveVec"
 
@@ -1948,59 +1950,59 @@ class NodesIconsPanelModify(bpy.types.Panel):
                 col = layout.column(align=True)
                 row = col.row(align=True)   
 
-                props = row.operator("node.add_node", text=" Box Mask         ", icon_value = custom_icons["boxmask"].icon_id)
+                props = row.operator("node.add_node", text=" Box Mask         ", icon = "NODE_BOXMASK")
                 props.use_transform = True
                 props.type = "CompositorNodeBoxMask"
 
-                props = row.operator("node.add_node", text=" Double Edge Mask     ", icon_value = custom_icons["doubleedgemask"].icon_id)
+                props = row.operator("node.add_node", text=" Double Edge Mask     ", icon = "NODE_DOUBLEEDGEMASK")
                 props.use_transform = True
                 props.type = "CompositorNodeDoubleEdgeMask"
 
                 row = col.row(align=True)  
             
-                props = row.operator("node.add_node", text=" Ellipse Mask       ", icon_value = custom_icons["ellipsemask"].icon_id)  
+                props = row.operator("node.add_node", text=" Ellipse Mask       ", icon = "NODE_ELLIPSEMASK")  
                 props.use_transform = True
                 props.type = "CompositorNodeEllipseMask"
 
                 col = layout.column(align=True)
                 row = col.row(align=True)
 
-                props = row.operator("node.add_node", text=" Channel Key      ", icon_value = custom_icons["channel"].icon_id)
+                props = row.operator("node.add_node", text=" Channel Key      ", icon = "NODE_CHANNEL")
                 props.use_transform = True
                 props.type = "CompositorNodeChannelMatte"     
         
-                props = row.operator("node.add_node", text=" Chroma Key         ", icon_value = custom_icons["chroma"].icon_id)
+                props = row.operator("node.add_node", text=" Chroma Key         ", icon = "NODE_CHROMA")
                 props.use_transform = True
                 props.type = "CompositorNodeChromaMatte"
 
                 row = col.row(align=True)  
             
-                props = row.operator("node.add_node", text=" Color Key         ", icon_value = custom_icons["color"].icon_id)
+                props = row.operator("node.add_node", text=" Color Key         ", icon = "NODE_COLOR")
                 props.use_transform = True
                 props.type = "CompositorNodeColorMatte"
 
-                props = row.operator("node.add_node", text=" Difference Key       ", icon_value = custom_icons["difference"].icon_id)   
+                props = row.operator("node.add_node", text=" Difference Key       ", icon = "NODE_DIFFERENCE")   
                 props.use_transform = True
                 props.type = "CompositorNodeDiffMatte"
 
                 col = layout.column(align=True)
                 row = col.row(align=True)  
 
-                props = row.operator("node.add_node", text=" Distance Key      ", icon_value = custom_icons["node_distance"].icon_id)
+                props = row.operator("node.add_node", text=" Distance Key      ", icon = "NODE_DISTANCE")
                 props.use_transform = True
                 props.type = "CompositorNodeDistanceMatte"
 
-                props = row.operator("node.add_node", text=" Keying         ", icon_value = custom_icons["keying"].icon_id)
+                props = row.operator("node.add_node", text=" Keying         ", icon = "NODE_KEYING")
                 props.use_transform = True
                 props.type = "CompositorNodeKeying"
 
                 row = col.row(align=True)  
             
-                props = row.operator("node.add_node", text=" Keying Screen       ", icon_value = custom_icons["keyingscreen"].icon_id) 
+                props = row.operator("node.add_node", text=" Keying Screen       ", icon = "NODE_KEYINGSCREEN") 
                 props.use_transform = True
                 props.type = "CompositorNodeKeyingScreen"
 
-                props = row.operator("node.add_node", text=" Luminance Key        ", icon_value = custom_icons["luminance"].icon_id) 
+                props = row.operator("node.add_node", text=" Luminance Key        ", icon = "NODE_LUMINANCE") 
                 props.use_transform = True
                 props.type = "CompositorNodeLumaMatte"
 
@@ -2011,70 +2013,70 @@ class NodesIconsPanelModify(bpy.types.Panel):
                 col = layout.column(align=True)
                 row = col.row(align=True)   
 
-                props = row.operator("node.add_node", text=" Corner Pin        ", icon_value = custom_icons["cornerpin"].icon_id)
+                props = row.operator("node.add_node", text=" Corner Pin        ", icon = "NODE_CORNERPIN")
                 props.use_transform = True
                 props.type = "CompositorNodeCornerPin"
 
-                props = row.operator("node.add_node", text=" Crop     ", icon_value = custom_icons["crop"].icon_id)
+                props = row.operator("node.add_node", text=" Crop     ", icon = "NODE_CROP")
                 props.use_transform = True
                 props.type = "CompositorNodeCrop"
 
                 row = col.row(align=True)  
         
-                props = row.operator("node.add_node", text=" Displace        ", icon_value = custom_icons["displace"].icon_id) 
+                props = row.operator("node.add_node", text=" Displace        ", icon = "NODE_DISPLACE") 
                 props.use_transform = True
                 props.type = "CompositorNodeDisplace"
             
-                props = row.operator("node.add_node", text=" Flip         ", icon_value = custom_icons["flip"].icon_id)  
+                props = row.operator("node.add_node", text=" Flip         ", icon = "NODE_FLIP")  
                 props.use_transform = True
                 props.type = "CompositorNodeFlip"
 
                 col = layout.column(align=True)
                 row = col.row(align=True)  
         
-                props = row.operator("node.add_node", text=" Lens Distortion       ", icon_value = custom_icons["lensdistort"].icon_id)
+                props = row.operator("node.add_node", text=" Lens Distortion       ", icon = "NODE_LENSDISTORT")
                 props.use_transform = True
                 props.type = "CompositorNodeLensdist"
 
-                props = row.operator("node.add_node", text=" Map UV     ", icon_value = custom_icons["uvmap"].icon_id)
+                props = row.operator("node.add_node", text=" Map UV     ", icon = "NODE_UVMAP")
                 props.use_transform = True
                 props.type = "CompositorNodeMapUV"
 
                 row = col.row(align=True)  
         
-                props = row.operator("node.add_node", text=" Movie Distortion     ", icon_value = custom_icons["moviedistort"].icon_id) 
+                props = row.operator("node.add_node", text=" Movie Distortion     ", icon = "NODE_MOVIEDISTORT") 
                 props.use_transform = True
                 props.type = "CompositorNodeMovieDistortion"
             
-                props = row.operator("node.add_node", text=" Plane Track Deform       ", icon_value = custom_icons["planetrackdeform"].icon_id)
+                props = row.operator("node.add_node", text=" Plane Track Deform       ", icon = "NODE_PLANETRACKDEFORM")
                 props.use_transform = True
                 props.type = "CompositorNodePlaneTrackDeform"
 
                 col = layout.column(align=True)
                 row = col.row(align=True)  
             
-                props = row.operator("node.add_node", text=" Rotate         ", icon_value = custom_icons["node_rotate"].icon_id)  
+                props = row.operator("node.add_node", text=" Rotate         ", icon = "NODE_ROTATE")  
                 props.use_transform = True
                 props.type = "CompositorNodeRotate"
             
-                props = row.operator("node.add_node", text=" Scale       ", icon_value = custom_icons["node scale"].icon_id)
+                props = row.operator("node.add_node", text=" Scale       ", icon = "NODE_SCALE")
                 props.use_transform = True
                 props.type = "CompositorNodeScale"
 
                 row = col.row(align=True)  
       
-                props = row.operator("node.add_node", text=" Transform       ", icon_value = custom_icons["transform"].icon_id)
+                props = row.operator("node.add_node", text=" Transform       ", icon = "NODE_TRANSFORM")
                 props.use_transform = True
                 props.type = "CompositorNodeTransform"
 
-                props = row.operator("node.add_node", text=" Translate       ", icon_value = custom_icons["node_move"].icon_id) 
+                props = row.operator("node.add_node", text=" Translate       ", icon = "NODE_MOVE") 
                 props.use_transform = True
                 props.type = "CompositorNodeTranslate"
 
                 col = layout.column(align=True)
                 row = col.row(align=True)  
 
-                props = row.operator("node.add_node", text=" Stabilize 2D        ", icon_value = custom_icons["stabilize2d"].icon_id)  
+                props = row.operator("node.add_node", text=" Stabilize 2D        ", icon = "NODE_STABILIZE2D")  
                 props.use_transform = True
                 props.type = "CompositorNodeStabilize"
 
@@ -2088,72 +2090,72 @@ class NodesIconsPanelModify(bpy.types.Panel):
                 row = layout.row()
                 row.alignment = 'LEFT'  
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["combinehsv"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_COMBINEHSV")
                 props.use_transform = True
                 props.type = "CompositorNodeCombHSVA"
             
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["combinergb"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_COMBINERGB")
                 props.use_transform = True
                 props.type = "CompositorNodeCombRGBA"
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["combineycbcra"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_COMBINEYCBCRA")
                 props.use_transform = True
                 props.type = "CompositorNodeCombYCCA"
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["combineyuva"].icon_id)  
+                props = row.operator("node.add_node", text = "", icon = "NODE_COMBINEYUVA")  
                 props.use_transform = True
                 props.type = "CompositorNodeCombYUVA"
 
                 row = layout.row()
                 row.alignment = 'LEFT'   
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["separatehsv"].icon_id)  
+                props = row.operator("node.add_node", text = "", icon = "NODE_SEPARATEHSV")  
                 props.use_transform = True
                 props.type = "CompositorNodeSepHSVA"
             
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["separatergb"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_SEPARATERGB")
                 props.use_transform = True
                 props.type = "CompositorNodeSepRGBA"
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["separateycbcra"].icon_id) 
+                props = row.operator("node.add_node", text = "", icon = "NODE_SEPARATE_YCBCRA") 
                 props.use_transform = True
                 props.type = "CompositorNodeSepYCCA"
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["separateyuva"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_COMBINEYUVA")  
                 props.use_transform = True
                 props.type = "CompositorNodeSepYUVA"
 
                 row = layout.row()
                 row.alignment = 'LEFT'
                 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["alpha"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_ALPHA")
                 props.use_transform = True
                 props.type = "CompositorNodeSetAlpha"  
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["alphaconvert"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_ALPHACONVERT")
                 props.use_transform = True
                 props.type = "CompositorNodePremulKey"
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["rgbtobw"].icon_id) 
+                props = row.operator("node.add_node", text = "", icon = "NODE_RGBTOBW")
                 props.use_transform = True
                 props.type = "CompositorNodeRGBToBW"
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["colorramp"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_COLORRAMP")
                 props.use_transform = True
                 props.type = "CompositorNodeValToRGB"   
                 
                 row = layout.row()
                 row.alignment = 'LEFT'            
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["node_mask"].icon_id) 
+                props = row.operator("node.add_node", text = "", icon = "NODE_MASK") 
                 props.use_transform = True
                 props.type = "CompositorNodeIDMask"
             
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["math"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_MATH")
                 props.use_transform = True
                 props.type = "CompositorNodeMath"
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["switchview"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_SWITCHVIEW")
                 props.use_transform = True
                 props.type = "CompositorNodeSwitchView"
         
@@ -2164,64 +2166,64 @@ class NodesIconsPanelModify(bpy.types.Panel):
                 row = layout.row()
                 row.alignment = 'LEFT'    
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["bilateralblur"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_BILATERAL_BLUR")
                 props.use_transform = True
                 props.type = "CompositorNodeBilateralblur"
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["blur"].icon_id) 
+                props = row.operator("node.add_node", text = "", icon = "NODE_BLUR") 
                 props.use_transform = True
                 props.type = "CompositorNodeBlur"
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["bokeh_blur"].icon_id) 
+                props = row.operator("node.add_node", text = "", icon = "NODE_BOKEH_BLUR") 
                 props.use_transform = True
                 props.type = "CompositorNodeBokehBlur"
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["directionalblur"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_DIRECITONALBLUR")
                 props.use_transform = True
                 props.type = "CompositorNodeDBlur"
 
                 row = layout.row()
                 row.alignment = 'LEFT'  
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["vector_blur"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_VECTOR_BLUR")
                 props.use_transform = True
                 props.type = "CompositorNodeVecBlur"
             
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["defocus"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_DEFOCUS")
                 props.use_transform = True
                 props.type = "CompositorNodeDefocus"
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["despeckle"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_DESPECKLE")
                 props.use_transform = True
                 props.type = "CompositorNodeDespeckle"
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["erode"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_ERODE")
                 props.use_transform = True
                 props.type = "CompositorNodeDilateErode"
 
                 row = layout.row()
                 row.alignment = 'LEFT'  
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["filter"].icon_id) 
+                props = row.operator("node.add_node", text = "", icon = "NODE_FILTER")  
                 props.use_transform = True
                 props.type = "CompositorNodeFilter"
     
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["glare"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_GLARE")
                 props.use_transform = True
                 props.type = "CompositorNodeGlare"
             
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["inpaint"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_IMPAINT")
                 props.use_transform = True
                 props.type = "CompositorNodeInpaint"
             
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["pixelated"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_PIXELATED")
                 props.use_transform = True
                 props.type = "CompositorNodePixelate"
 
                 row = layout.row()
                 row.alignment = 'LEFT'  
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["sunbeams"].icon_id) 
+                props = row.operator("node.add_node", text = "", icon = "NODE_SUNBEAMS") 
                 props.use_transform = True
                 props.type = "CompositorNodeSunBeams"
 
@@ -2237,26 +2239,26 @@ class NodesIconsPanelModify(bpy.types.Panel):
                 row = layout.row()
                 row.alignment = 'LEFT'  
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["range"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_RANGE")
                 props.use_transform = True
                 props.type = "CompositorNodeMapRange"
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["value"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_VALUE")
                 props.use_transform = True
                 props.type = "CompositorNodeMapValue"
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["normal"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_NORMAL")
                 props.use_transform = True
                 props.type = "CompositorNodeNormal"
             
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["normalize"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_NORMALIZE")
                 props.use_transform = True
                 props.type = "CompositorNodeNormalize"
 
                 row = layout.row()
                 row.alignment = 'LEFT'  
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["vector"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_VECTOR")
                 props.use_transform = True
                 props.type = "CompositorNodeCurveVec"
 
@@ -2267,53 +2269,53 @@ class NodesIconsPanelModify(bpy.types.Panel):
                 row = layout.row()
                 row.alignment = 'LEFT'   
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["boxmask"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_BOXMASK")
                 props.use_transform = True
                 props.type = "CompositorNodeBoxMask"
 
-                props = row.operator("node.add_node", text="", icon_value = custom_icons["doubleedgemask"].icon_id)
+                props = row.operator("node.add_node", text="", icon = "NODE_DOUBLEEDGEMASK")
                 props.use_transform = True
                 props.type = "CompositorNodeDoubleEdgeMask"
             
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["ellipsemask"].icon_id)  
+                props = row.operator("node.add_node", text = "", icon = "NODE_ELLIPSEMASK")  
                 props.use_transform = True
                 props.type = "CompositorNodeEllipseMask"
 
                 row = layout.row()
                 row.alignment = 'LEFT'  
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["channel"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_CHANNEL")
                 props.use_transform = True
                 props.type = "CompositorNodeChannelMatte" 
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["chroma"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_CHROMA")
                 props.use_transform = True
                 props.type = "CompositorNodeChromaMatte"
             
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["color"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_COLOR")
                 props.use_transform = True
                 props.type = "CompositorNodeColorMatte"
       
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["difference"].icon_id)   
+                props = row.operator("node.add_node", text = "", icon = "NODE_DIFFERENCE") 
                 props.use_transform = True
                 props.type = "CompositorNodeDiffMatte"
 
                 row = layout.row()
                 row.alignment = 'LEFT'  
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["node_distance"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_DISTANCE")
                 props.use_transform = True
                 props.type = "CompositorNodeDistanceMatte" 
             
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["keying"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_KEYING")
                 props.use_transform = True
                 props.type = "CompositorNodeKeying"
             
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["keyingscreen"].icon_id) 
+                props = row.operator("node.add_node", text = "", icon = "NODE_KEYINGSCREEN") 
                 props.use_transform = True
                 props.type = "CompositorNodeKeyingScreen"
             
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["luminance"].icon_id) 
+                props = row.operator("node.add_node", text = "", icon = "NODE_LUMINANCE") 
                 props.use_transform = True
                 props.type = "CompositorNodeLumaMatte"
 
@@ -2324,64 +2326,64 @@ class NodesIconsPanelModify(bpy.types.Panel):
                 row = layout.row()
                 row.alignment = 'LEFT'  
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["cornerpin"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_CORNERPIN")
                 props.use_transform = True
                 props.type = "CompositorNodeCornerPin"
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["crop"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_CROP")
                 props.use_transform = True
                 props.type = "CompositorNodeCrop"
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["displace"].icon_id) 
+                props = row.operator("node.add_node", text = "", icon = "NODE_DISPLACE") 
                 props.use_transform = True
                 props.type = "CompositorNodeDisplace"
             
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["flip"].icon_id)  
+                props = row.operator("node.add_node", text = "", icon = "NODE_FLIP")  
                 props.use_transform = True
                 props.type = "CompositorNodeFlip"
 
                 row = layout.row()
                 row.alignment = 'LEFT'  
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["lensdistort"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_LENSDISTORT")
                 props.use_transform = True
                 props.type = "CompositorNodeLensdist"
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["uvmap"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_UVMAP")
                 props.use_transform = True
                 props.type = "CompositorNodeMapUV"
         
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["moviedistort"].icon_id) 
+                props = row.operator("node.add_node", text = "", icon = "NODE_MOVIEDISTORT") 
                 props.use_transform = True
                 props.type = "CompositorNodeMovieDistortion"
             
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["planetrackdeform"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_PLANETRACKDEFORM")
                 props.use_transform = True
                 props.type = "CompositorNodePlaneTrackDeform"
 
                 row = layout.row()
                 row.alignment = 'LEFT'  
             
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["node_rotate"].icon_id)  
+                props = row.operator("node.add_node", text = "", icon = "NODE_ROTATE") 
                 props.use_transform = True
                 props.type = "CompositorNodeRotate"
             
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["node scale"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_SCALE")
                 props.use_transform = True
                 props.type = "CompositorNodeScale"
                     
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["transform"].icon_id)
+                props = row.operator("node.add_node", text = "", icon = "NODE_TRANSFORM")
                 props.use_transform = True
                 props.type = "CompositorNodeTransform"
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["node_move"].icon_id) 
+                props = row.operator("node.add_node", text = "", icon = "NODE_MOVE") 
                 props.use_transform = True
                 props.type = "CompositorNodeTranslate"
 
                 row = layout.row()
                 row.alignment = 'LEFT'  
 
-                props = row.operator("node.add_node", text = "", icon_value = custom_icons["stabilize2d"].icon_id)  
+                props = row.operator("node.add_node", text = "", icon = "NODE_STABILIZE2D")  
                 props.use_transform = True
                 props.type = "CompositorNodeStabilize"
 
@@ -2398,27 +2400,27 @@ class NodesIconsPanelModify(bpy.types.Panel):
                 col = layout.column(align=True)
                 row = col.row(align=True)    
 
-                props = row.operator("node.add_node", text=" Color Ramp         ", icon_value = custom_icons["colorramp"].icon_id)
+                props = row.operator("node.add_node", text=" Color Ramp         ", icon = "NODE_COLORRAMP")
                 props.use_transform = True
                 props.type = "TextureNodeValToRGB"
 
-                props = row.operator("node.add_node", text=" Distance         ", icon_value = custom_icons["node_distance"].icon_id)
+                props = row.operator("node.add_node", text=" Distance         ", icon = "NODE_DISTANCE")
                 props.use_transform = True
                 props.type = "TextureNodeDistance"
 
                 row = col.row(align=True)
 
-                props = row.operator("node.add_node", text=" Math        ", icon_value = custom_icons["math"].icon_id)
+                props = row.operator("node.add_node", text=" Math        ", icon = "NODE_MATH")
                 props.use_transform = True
                 props.type = "TextureNodeMath"
 
-                props = row.operator("node.add_node", text=" RGB to BW        ", icon_value = custom_icons["rgbtobw"].icon_id)
+                props = row.operator("node.add_node", text=" RGB to BW        ", icon = "NODE_RGBTOBW")
                 props.use_transform = True
                 props.type = "TextureNodeRGBToBW"
 
                 row = col.row(align=True)   
 
-                props = row.operator("node.add_node", text=" Value to Normal         ", icon_value = custom_icons["normal"].icon_id)
+                props = row.operator("node.add_node", text=" Value to Normal         ", icon = "NODE_NORMAL")
                 props.use_transform = True
                 props.type = "TextureNodeValToNor"
 
@@ -2427,21 +2429,21 @@ class NodesIconsPanelModify(bpy.types.Panel):
                 col = layout.column(align=True)
                 row = col.row(align=True)    
 
-                props = row.operator("node.add_node", text=" At        ", icon_value = custom_icons["node_at"].icon_id)
+                props = row.operator("node.add_node", text=" At        ", icon = "NODE_AT")
                 props.use_transform = True
                 props.type = "TextureNodeAt"
 
-                props = row.operator("node.add_node", text=" Rotate         ", icon_value = custom_icons["node_rotate"].icon_id)
+                props = row.operator("node.add_node", text=" Rotate         ", icon = "NODE_ROTATE") 
                 props.use_transform = True
                 props.type = "TextureNodeRotate"
 
                 row = col.row(align=True)
 
-                props = row.operator("node.add_node", text=" Scale        ", icon_value = custom_icons["node scale"].icon_id)
+                props = row.operator("node.add_node", text=" Scale        ", icon = "NODE_SCALE")
                 props.use_transform = True
                 props.type = "TextureNodeScale"
 
-                props = row.operator("node.add_node", text=" translate       ", icon_value = custom_icons["node_move"].icon_id)
+                props = row.operator("node.add_node", text=" translate       ", icon = "NODE_MOVE") 
                 props.use_transform = True
                 props.type = "TextureNodeTranslate"
 
@@ -2454,26 +2456,26 @@ class NodesIconsPanelModify(bpy.types.Panel):
                 row = layout.row()
                 row.alignment = 'LEFT' 
 
-                props = row.operator("node.add_node", text="", icon_value = custom_icons["colorramp"].icon_id)
+                props = row.operator("node.add_node", text="", icon = "NODE_COLORRAMP")
                 props.use_transform = True
                 props.type = "TextureNodeValToRGB"
 
-                props = row.operator("node.add_node", text="", icon_value = custom_icons["node_distance"].icon_id)
+                props = row.operator("node.add_node", text="", icon = "NODE_DISTANCE")
                 props.use_transform = True
                 props.type = "TextureNodeDistance"
 
-                props = row.operator("node.add_node", text="", icon_value = custom_icons["math"].icon_id)
+                props = row.operator("node.add_node", text="", icon = "NODE_MATH")
                 props.use_transform = True
                 props.type = "TextureNodeMath"
 
-                props = row.operator("node.add_node", text="", icon_value = custom_icons["rgbtobw"].icon_id)
+                props = row.operator("node.add_node", text="", icon = "NODE_RGBTOBW")
                 props.use_transform = True
                 props.type = "TextureNodeRGBToBW"
 
                 row = layout.row()
                 row.alignment = 'LEFT'  
 
-                props = row.operator("node.add_node", text="", icon_value = custom_icons["normal"].icon_id)
+                props = row.operator("node.add_node", text="", icon = "NODE_NORMAL")
                 props.use_transform = True
                 props.type = "TextureNodeValToNor"
 
@@ -2482,19 +2484,19 @@ class NodesIconsPanelModify(bpy.types.Panel):
                 row = layout.row()
                 row.alignment = 'LEFT'  
 
-                props = row.operator("node.add_node", text="", icon_value = custom_icons["node_at"].icon_id)
+                props = row.operator("node.add_node", text="", icon = "NODE_AT")
                 props.use_transform = True
                 props.type = "TextureNodeAt"
 
-                props = row.operator("node.add_node", text="", icon_value = custom_icons["node_rotate"].icon_id)
+                props = row.operator("node.add_node", text="", icon = "NODE_ROTATE") 
                 props.use_transform = True
                 props.type = "TextureNodeRotate"
 
-                props = row.operator("node.add_node", text="", icon_value = custom_icons["node scale"].icon_id)
+                props = row.operator("node.add_node", text="", icon = "NODE_SCALE")
                 props.use_transform = True
                 props.type = "TextureNodeScale"
 
-                props = row.operator("node.add_node", text="", icon_value = custom_icons["node_move"].icon_id)
+                props = row.operator("node.add_node", text="", icon = "NODE_MOVE") 
                 props.use_transform = True
                 props.type = "TextureNodeTranslate"
 
@@ -2525,17 +2527,17 @@ class NodesIconsPanelRelations(bpy.types.Panel):
             col = layout.column(align=True)
             row = col.row(align=True)       
 
-            row.operator("node.group_edit", text=" Edit Group     ", icon_value = custom_icons["editgroup"].icon_id).exit = False
-            row.operator("node.group_edit", text = "Exit Edit Group  ", icon_value = custom_icons["exiteditgroup"].icon_id).exit = True
+            row.operator("node.group_edit", text=" Edit Group     ", icon = "NODE_EDITGROUP").exit = False
+            row.operator("node.group_edit", text = "Exit Edit Group  ", icon = "NODE_EXITEDITGROUP").exit = True
 
             row = col.row(align=True)  
 
-            row.operator("node.group_insert", text = " Group Insert    ", icon_value = custom_icons["groupinsert"].icon_id)
-            row.operator("node.group_make", text = " Make Group     ", icon_value = custom_icons["makegroup"].icon_id)
+            row.operator("node.group_insert", text = " Group Insert    ", icon = "NODE_GROUPINSERT")
+            row.operator("node.group_make", text = " Make Group     ", icon = "NODE_MAKEGROUP")
 
             row = col.row(align=True)  
 
-            row.operator("node.group_ungroup", text = " Ungroup        ", icon_value = custom_icons["ungroup"].icon_id)
+            row.operator("node.group_ungroup", text = " Ungroup        ", icon = "NODE_UNGROUP")
   
 
             ##### --------------------------------- Layout ------------------------------------------- ####
@@ -2545,17 +2547,17 @@ class NodesIconsPanelRelations(bpy.types.Panel):
             col = layout.column(align=True)
             row = col.row(align=True)         
 
-            props = row.operator("node.add_node", text=" Frame       ", icon_value = custom_icons["frame"].icon_id)
+            props = row.operator("node.add_node", text=" Frame       ", icon = "NODE_FRAME")
             props.use_transform = True
             props.type = "NodeFrame"      
         
-            props = row.operator("node.add_node", text=" Reroute      ", icon_value = custom_icons["reroute"].icon_id)
+            props = row.operator("node.add_node", text=" Reroute      ", icon = "NODE_REROUTE")
             props.use_transform = True
             props.type = "NodeReroute"
 
             if context.space_data.tree_type == 'CompositorNodeTree':
                 row = col.row(align=True)
-                props = row.operator("node.add_node", text=" Switch      ", icon_value = custom_icons["node_switch"].icon_id)
+                props = row.operator("node.add_node", text=" Switch      ", icon = "NODE_SWITCH")
                 props.use_transform = True
                 props.type = "CompositorNodeSwitch"
 
@@ -2568,15 +2570,15 @@ class NodesIconsPanelRelations(bpy.types.Panel):
             row = layout.row()
             row.alignment = 'LEFT'        
 
-            row.operator("node.group_edit", text = "", icon_value = custom_icons["editgroup"].icon_id).exit = False
-            row.operator("node.group_edit", text = "", icon_value = custom_icons["exiteditgroup"].icon_id).exit = True
-            row.operator("node.group_insert", text = "", icon_value = custom_icons["groupinsert"].icon_id)
-            row.operator("node.group_make", text = "", icon_value = custom_icons["makegroup"].icon_id)
+            row.operator("node.group_edit", text = "", icon = "NODE_EDITGROUP").exit = False
+            row.operator("node.group_edit", text = "", icon = "NODE_EXITEDITGROUP").exit = True
+            row.operator("node.group_insert", text = "", icon = "NODE_GROUPINSERT")
+            row.operator("node.group_make", text = "", icon = "NODE_MAKEGROUP")
 
             row = layout.row()
             row.alignment = 'LEFT'
 
-            row.operator("node.group_ungroup", text = "", icon_value = custom_icons["ungroup"].icon_id)
+            row.operator("node.group_ungroup", text = "", icon = "NODE_UNGROUP")
 
             ##### --------------------------------- Layout ------------------------------------------- ####
         
@@ -2585,16 +2587,16 @@ class NodesIconsPanelRelations(bpy.types.Panel):
             row = layout.row()
             row.alignment = 'LEFT'        
 
-            props = row.operator("node.add_node", text = "", icon_value = custom_icons["frame"].icon_id)
+            props = row.operator("node.add_node", text = "", icon = "NODE_FRAME")
             props.use_transform = True
             props.type = "NodeFrame"      
         
-            props = row.operator("node.add_node", text = "", icon_value = custom_icons["reroute"].icon_id)
+            props = row.operator("node.add_node", text = "", icon = "NODE_REROUTE")
             props.use_transform = True
             props.type = "NodeReroute"
 
             if context.space_data.tree_type == 'CompositorNodeTree':
-                props = row.operator("node.add_node", text="", icon_value = custom_icons["node_switch"].icon_id)
+                props = row.operator("node.add_node", text="", icon = "NODE_SWITCH")
                 props.use_transform = True
                 props.type = "CompositorNodeSwitch"
 
@@ -2622,215 +2624,6 @@ def register():
     # Use this for testing the script in the scripting layout
     #script_path = bpy.context.space_data.text.filepath
     #icons_dir = os.path.join(os.path.dirname(script_path), "icons")
-
-    # All the Icons
-
-    custom_icons.load("brick", os.path.join(icons_dir, "brick.png"), 'IMAGE')
-    custom_icons.load("checker", os.path.join(icons_dir, "checker.png"), 'IMAGE')
-    custom_icons.load("environment", os.path.join(icons_dir, "environment.png"), 'IMAGE')
-    custom_icons.load("gradient", os.path.join(icons_dir, "gradient.png"), 'IMAGE')
-    custom_icons.load("image", os.path.join(icons_dir, "image.png"), 'IMAGE')
-    custom_icons.load("magic", os.path.join(icons_dir, "magic.png"), 'IMAGE')
-    custom_icons.load("musgrave", os.path.join(icons_dir, "musgrave.png"), 'IMAGE')
-    custom_icons.load("noise", os.path.join(icons_dir, "noise.png"), 'IMAGE')
-    custom_icons.load("pointcloud", os.path.join(icons_dir, "pointcloud.png"), 'IMAGE')
-    custom_icons.load("sky", os.path.join(icons_dir, "sky.png"), 'IMAGE')
-    custom_icons.load("voronoi", os.path.join(icons_dir, "voronoi.png"), 'IMAGE')
-    custom_icons.load("waves", os.path.join(icons_dir, "waves.png"), 'IMAGE')
-
-    custom_icons.load("curve_time", os.path.join(icons_dir, "curve_time.png"), 'IMAGE')
-    custom_icons.load("clouds", os.path.join(icons_dir, "clouds.png"), 'IMAGE')
-    custom_icons.load("wood", os.path.join(icons_dir, "wood.png"), 'IMAGE')
-    custom_icons.load("blend", os.path.join(icons_dir, "blend.png"), 'IMAGE')
-    custom_icons.load("marble", os.path.join(icons_dir, "marble.png"), 'IMAGE')
-    custom_icons.load("distortednoise", os.path.join(icons_dir, "distortednoise.png"), 'IMAGE')
-    custom_icons.load("stucci", os.path.join(icons_dir, "stucci.png"), 'IMAGE')
-
-    # Input
-
-    custom_icons.load("attribute", os.path.join(icons_dir, "attribute.png"), 'IMAGE')
-    custom_icons.load("cameradata", os.path.join(icons_dir, "cameradata.png"), 'IMAGE')
-    custom_icons.load("fresnel", os.path.join(icons_dir, "fresnel.png"), 'IMAGE')
-    custom_icons.load("geometry", os.path.join(icons_dir, "geometry.png"), 'IMAGE')
-    custom_icons.load("hairinfo", os.path.join(icons_dir, "hairinfo.png"), 'IMAGE')
-    custom_icons.load("layerweight", os.path.join(icons_dir, "layerweight.png"), 'IMAGE')
-    custom_icons.load("lightpath", os.path.join(icons_dir, "lightpath.png"), 'IMAGE')
-    custom_icons.load("objectinfo", os.path.join(icons_dir, "objectinfo.png"), 'IMAGE')
-    custom_icons.load("particleinfo", os.path.join(icons_dir, "particleinfo.png"), 'IMAGE')
-    custom_icons.load("rgb", os.path.join(icons_dir, "rgb.png"), 'IMAGE')
-    custom_icons.load("tangent", os.path.join(icons_dir, "tangent.png"), 'IMAGE')
-    custom_icons.load("texcoordinate", os.path.join(icons_dir, "texcoordinate.png"), 'IMAGE')
-    custom_icons.load("uvmap", os.path.join(icons_dir, "uvmap.png"), 'IMAGE')
-    custom_icons.load("value", os.path.join(icons_dir, "value.png"), 'IMAGE')
-    custom_icons.load("wireframe", os.path.join(icons_dir, "wireframe.png"), 'IMAGE')
-
-    custom_icons.load("alpha", os.path.join(icons_dir, "alpha.png"), 'IMAGE')
-    custom_icons.load("alphaconvert", os.path.join(icons_dir, "alphaconvert.png"), 'IMAGE')
-    custom_icons.load("bokeh_image", os.path.join(icons_dir, "bokeh_image.png"), 'IMAGE')
-    custom_icons.load("node_mask", os.path.join(icons_dir, "node_mask.png"), 'IMAGE')
-    custom_icons.load("node_movie", os.path.join(icons_dir, "node_movie.png"), 'IMAGE')
-    custom_icons.load("node_texture", os.path.join(icons_dir, "node_texture.png"), 'IMAGE')
-    custom_icons.load("render_layer", os.path.join(icons_dir, "render_layer.png"), 'IMAGE')
-    custom_icons.load("uvalongstroke", os.path.join(icons_dir, "uvalongstroke.png"), 'IMAGE')
-    custom_icons.load("node_time", os.path.join(icons_dir, "node_time.png"), 'IMAGE')
-    custom_icons.load("trackposition", os.path.join(icons_dir, "trackposition.png"), 'IMAGE')
-
-    # Output
-
-    custom_icons.load("material_output", os.path.join(icons_dir, "material_output.png"), 'IMAGE')
-    custom_icons.load("lamp_output", os.path.join(icons_dir, "lamp_output.png"), 'IMAGE')
-    custom_icons.load("world_output", os.path.join(icons_dir, "world_output.png"), 'IMAGE')
-
-    custom_icons.load("compositeoutput", os.path.join(icons_dir, "composite_output.png"), 'IMAGE')
-    custom_icons.load("fileoutput", os.path.join(icons_dir, "fileoutput.png"), 'IMAGE')
-    custom_icons.load("linestyle_output", os.path.join(icons_dir, "linestyle_output.png"), 'IMAGE')
-    custom_icons.load("node_viewer", os.path.join(icons_dir, "node_viewer.png"), 'IMAGE')
-    custom_icons.load("node_viewersplit", os.path.join(icons_dir, "node_viewersplit.png"), 'IMAGE')
-    custom_icons.load("node_levels", os.path.join(icons_dir, "node_levels.png"), 'IMAGE')
-    custom_icons.load("output", os.path.join(icons_dir, "output.png"), 'IMAGE')
-
-    # Filter
-
-    custom_icons.load("bilateralblur", os.path.join(icons_dir, "bilateral_blur.png"), 'IMAGE')
-    custom_icons.load("blur", os.path.join(icons_dir, "blur.png"), 'IMAGE')
-    custom_icons.load("bokeh_blur", os.path.join(icons_dir, "bokeh_blur.png"), 'IMAGE')
-    custom_icons.load("vector_blur", os.path.join(icons_dir, "vector_blur.png"), 'IMAGE')
-
-    custom_icons.load("pixelated", os.path.join(icons_dir, "pixelated.png"), 'IMAGE')
-    custom_icons.load("filter", os.path.join(icons_dir, "filter.png"), 'IMAGE')
-    custom_icons.load("glare", os.path.join(icons_dir, "glare.png"), 'IMAGE')
-    custom_icons.load("sunbeams", os.path.join(icons_dir, "sunbeams.png"), 'IMAGE')
-    custom_icons.load("inpaint", os.path.join(icons_dir, "inpaint.png"), 'IMAGE')  
-    custom_icons.load("erode", os.path.join(icons_dir, "erode.png"), 'IMAGE')
-    custom_icons.load("directionalblur", os.path.join(icons_dir, "directionalblur.png"), 'IMAGE')
-    custom_icons.load("defocus", os.path.join(icons_dir, "defocus.png"), 'IMAGE')
-    custom_icons.load("despeckle", os.path.join(icons_dir, "despeckle.png"), 'IMAGE')
-
-    # Shaders
-
-    custom_icons.load("node_principled_shader", os.path.join(icons_dir, "node_principled_shader.png"), 'IMAGE')
-
-    custom_icons.load("addshader", os.path.join(icons_dir, "addshader.png"), 'IMAGE')
-    custom_icons.load("anisotopicshader", os.path.join(icons_dir, "anisotopicshader.png"), 'IMAGE')
-    custom_icons.load("ambient_occlusion", os.path.join(icons_dir, "ambient_occlusion.png"), 'IMAGE')
-    custom_icons.load("diffuseshader", os.path.join(icons_dir, "diffuseshader.png"), 'IMAGE')
-    custom_icons.load("emission", os.path.join(icons_dir, "emission.png"), 'IMAGE')
-    custom_icons.load("glasshader", os.path.join(icons_dir, "glasshader.png"), 'IMAGE')
-    custom_icons.load("glossyshader", os.path.join(icons_dir, "glossyshader.png"), 'IMAGE')
-    custom_icons.load("hairshader", os.path.join(icons_dir, "hairshader.png"), 'IMAGE')
-    custom_icons.load("holdoutshader", os.path.join(icons_dir, "holdoutshader.png"), 'IMAGE')
-    custom_icons.load("mixshader", os.path.join(icons_dir, "mixshader.png"), 'IMAGE')
-    custom_icons.load("refractionshader", os.path.join(icons_dir, "refractionshader.png"), 'IMAGE')
-    custom_icons.load("sss_shader", os.path.join(icons_dir, "sss_shader.png"), 'IMAGE')
-    custom_icons.load("toonshader", os.path.join(icons_dir, "toonshader.png"), 'IMAGE')
-    custom_icons.load("translucentshader", os.path.join(icons_dir, "translucentshader.png"), 'IMAGE')
-    custom_icons.load("transparentshader", os.path.join(icons_dir, "transparentshader.png"), 'IMAGE')
-    custom_icons.load("velvetshader", os.path.join(icons_dir, "velvetshader.png"), 'IMAGE')
-    custom_icons.load("volumeabsorptionshader", os.path.join(icons_dir, "volumeabsorptionshader.png"), 'IMAGE')
-    custom_icons.load("volumescatter", os.path.join(icons_dir, "volumescatter.png"), 'IMAGE')
-
-    custom_icons.load("backgroundshader", os.path.join(icons_dir, "backgroundshader.png"), 'IMAGE')
-
-    # Color
-
-    custom_icons.load("brightcontrast", os.path.join(icons_dir, "brightcontrast.png"), 'IMAGE')
-    custom_icons.load("gamma", os.path.join(icons_dir, "gamma.png"), 'IMAGE')
-    custom_icons.load("huesaturation", os.path.join(icons_dir, "huesaturation.png"), 'IMAGE')
-    custom_icons.load("invert", os.path.join(icons_dir, "invert.png"), 'IMAGE')
-    custom_icons.load("lightfalloff", os.path.join(icons_dir, "lightfalloff.png"), 'IMAGE')
-    custom_icons.load("mixrgb", os.path.join(icons_dir, "mixrgb.png"), 'IMAGE')
-    custom_icons.load("rgbcurve", os.path.join(icons_dir, "rgbcurve.png"), 'IMAGE')
-    
-    custom_icons.load("colorbalance", os.path.join(icons_dir, "colorbalance.png"), 'IMAGE')
-    custom_icons.load("zcombine", os.path.join(icons_dir, "zcombine.png"), 'IMAGE')
-    custom_icons.load("tonemap", os.path.join(icons_dir, "tonemap.png"), 'IMAGE')
-    custom_icons.load("colorcorrection", os.path.join(icons_dir, "colorcorrection.png"), 'IMAGE')
-
-    # Vector
-
-    custom_icons.load("bump", os.path.join(icons_dir, "bump.png"), 'IMAGE')
-    custom_icons.load("mapping", os.path.join(icons_dir, "mapping.png"), 'IMAGE')
-    custom_icons.load("normal", os.path.join(icons_dir, "normal.png"), 'IMAGE')
-    custom_icons.load("normalmap", os.path.join(icons_dir, "normalmap.png"), 'IMAGE')
-    custom_icons.load("vector_transform", os.path.join(icons_dir, "vector_transform.png"), 'IMAGE')
-    custom_icons.load("vector", os.path.join(icons_dir, "vector.png"), 'IMAGE')
-    custom_icons.load("normalize", os.path.join(icons_dir, "normalize.png"), 'IMAGE')
-    custom_icons.load("range", os.path.join(icons_dir, "range.png"), 'IMAGE')
-
-    # Converter
-
-    custom_icons.load("blackbody", os.path.join(icons_dir, "blackbody.png"), 'IMAGE')
-    custom_icons.load("colorramp", os.path.join(icons_dir, "colorramp.png"), 'IMAGE')
-    custom_icons.load("combinehsv", os.path.join(icons_dir, "combinehsv.png"), 'IMAGE')
-    custom_icons.load("combinergb", os.path.join(icons_dir, "combinergb.png"), 'IMAGE')   
-    custom_icons.load("combinexyz", os.path.join(icons_dir, "combinexyz.png"), 'IMAGE')
-    custom_icons.load("math", os.path.join(icons_dir, "math.png"), 'IMAGE')
-    custom_icons.load("rgbtobw", os.path.join(icons_dir, "rgbtobw.png"), 'IMAGE')
-    custom_icons.load("separatehsv", os.path.join(icons_dir, "separatehsv.png"), 'IMAGE')
-    custom_icons.load("separatergb", os.path.join(icons_dir, "separatergb.png"), 'IMAGE')
-    custom_icons.load("separatexyz", os.path.join(icons_dir, "separatexyz.png"), 'IMAGE')   
-    custom_icons.load("vectormath", os.path.join(icons_dir, "vectormath.png"), 'IMAGE')
-    custom_icons.load("wavelength", os.path.join(icons_dir, "wavelength.png"), 'IMAGE')
-
-    custom_icons.load("switchview", os.path.join(icons_dir, "switchview.png"), 'IMAGE')
-    custom_icons.load("combineyuva", os.path.join(icons_dir, "combineyuva.png"), 'IMAGE')
-    custom_icons.load("combineycbcra", os.path.join(icons_dir, "combineycbcra.png"), 'IMAGE')   
-    custom_icons.load("separateyuva", os.path.join(icons_dir, "separateyuva.png"), 'IMAGE')
-    custom_icons.load("separateycbcra", os.path.join(icons_dir, "separateycbcra.png"), 'IMAGE')
-
-    custom_icons.load("node_distance", os.path.join(icons_dir, "node_distance.png"), 'IMAGE')
-
-    # Distort
-
-    custom_icons.load("node_move", os.path.join(icons_dir, "node_move.png"), 'IMAGE')
-    custom_icons.load("node_rotate", os.path.join(icons_dir, "node_rotate.png"), 'IMAGE')   
-    custom_icons.load("node scale", os.path.join(icons_dir, "node scale.png"), 'IMAGE')
-    custom_icons.load("node_at", os.path.join(icons_dir, "node_at.png"), 'IMAGE')
-
-    custom_icons.load("transform", os.path.join(icons_dir, "transform.png"), 'IMAGE')
-    custom_icons.load("crop", os.path.join(icons_dir, "crop.png"), 'IMAGE')
-    custom_icons.load("displace", os.path.join(icons_dir, "displace.png"), 'IMAGE')
-    custom_icons.load("flip", os.path.join(icons_dir, "flip.png"), 'IMAGE')
-    custom_icons.load("lensdistort", os.path.join(icons_dir, "lensdistort.png"), 'IMAGE')
-    custom_icons.load("moviedistort", os.path.join(icons_dir, "moviedistort.png"), 'IMAGE')
-    custom_icons.load("stabilize2d", os.path.join(icons_dir, "stabilize2d.png"), 'IMAGE')
-    custom_icons.load("planetrackdeform", os.path.join(icons_dir, "planetrackdeform.png"), 'IMAGE')
-    custom_icons.load("cornerpin", os.path.join(icons_dir, "cornerpin.png"), 'IMAGE')
-
-    # Script
-
-    custom_icons.load("script", os.path.join(icons_dir, "script.png"), 'IMAGE')
-
-    # Group
-
-    custom_icons.load("editgroup", os.path.join(icons_dir, "editgroup.png"), 'IMAGE')
-    custom_icons.load("exiteditgroup", os.path.join(icons_dir, "exiteditgroup.png"), 'IMAGE')
-    custom_icons.load("groupinsert", os.path.join(icons_dir, "groupinsert.png"), 'IMAGE')
-    custom_icons.load("makegroup", os.path.join(icons_dir, "makegroup.png"), 'IMAGE')
-    custom_icons.load("ungroup", os.path.join(icons_dir, "ungroup.png"), 'IMAGE')   
-
-    # Layout
-
-    custom_icons.load("frame", os.path.join(icons_dir, "frame.png"), 'IMAGE')
-    custom_icons.load("reroute", os.path.join(icons_dir, "reroute.png"), 'IMAGE')
-    custom_icons.load("node_switch", os.path.join(icons_dir, "node_switch.png"), 'IMAGE')
-
-    # Matte
-
-    custom_icons.load("boxmask", os.path.join(icons_dir, "boxmask.png"), 'IMAGE')
-    custom_icons.load("ellipsemask", os.path.join(icons_dir, "ellipsemask.png"), 'IMAGE')
-    custom_icons.load("keying", os.path.join(icons_dir, "keying.png"), 'IMAGE')
-    custom_icons.load("keyingscreen", os.path.join(icons_dir, "keyingscreen.png"), 'IMAGE')
-    custom_icons.load("luminance", os.path.join(icons_dir, "luminance.png"), 'IMAGE')
-    custom_icons.load("color", os.path.join(icons_dir, "color.png"), 'IMAGE')
-    custom_icons.load("chroma", os.path.join(icons_dir, "chroma.png"), 'IMAGE')
-    custom_icons.load("difference", os.path.join(icons_dir, "difference.png"), 'IMAGE')
-    custom_icons.load("doubleedgemask", os.path.join(icons_dir, "doubleedgemask.png"), 'IMAGE')
-    custom_icons.load("channel", os.path.join(icons_dir, "channel.png"), 'IMAGE')
-
-    # DEVELOPMENTPLACEHOLDER
-
-    #custom_icons.load("placeholder", os.path.join(icons_dir, "placeholder.png"), 'IMAGE')
 
 
     # Our data block for icon or text buttons
