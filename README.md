@@ -11,7 +11,7 @@ The main differences to Blender are:
 - Cleaned up User Interface. More than 400 not necessary double menu entries removed.
 - Extended User Interface. Close to 100 formerly hotkey only tools have a menu entry now.
 - Rearranged User Interface. Some things are better accessible now, some are not so much in the way anymore.
-- Over 450 new native icons, still growing.
+- Close to 700 new icons.
 - Icon Buttons in the Tool Shelf to reduce the scrolling.
 - A configurable Toolbar with icon buttons.
 - Improved Layouts.
