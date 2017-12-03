@@ -114,19 +114,19 @@ class NLA_MT_view(Menu):
         layout.prop(st, "show_local_markers")
 
         layout.separator()
-        layout.operator("anim.previewrange_set")
-        layout.operator("anim.previewrange_clear")
-        layout.operator("nla.previewrange_set")
+        layout.operator("anim.previewrange_set", icon='BORDER_RECT')
+        layout.operator("anim.previewrange_clear", icon = "CLEAR")
+        layout.operator("nla.previewrange_set", icon='BORDER_RECT')
 
         layout.separator()
-        layout.operator("nla.view_all")
-        layout.operator("nla.view_selected")
-        layout.operator("nla.view_frame")
+        layout.operator("nla.view_all", icon = "VIEWALL")
+        layout.operator("nla.view_selected", icon = "VIEW_SELECTED")
+        layout.operator("nla.view_frame", icon = "VIEW_FRAME" )
 
         layout.separator()
-        layout.operator("screen.area_dupli")
-        layout.operator("screen.screen_full_area")
-        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area").use_hide_panels = True
+        layout.operator("screen.area_dupli", icon = "NEW_WINDOW")
+        layout.operator("screen.screen_full_area", icon = "MAXIMIZE_AREA")
+        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area", icon = "FULLSCREEN_AREA").use_hide_panels = True
 
 
 class NLA_MT_select(Menu):
@@ -136,18 +136,18 @@ class NLA_MT_select(Menu):
         layout = self.layout
 
         # This is a bit misleading as the operator's default text is "Select All" while it actually *toggles* All/None
-        layout.operator("nla.select_all_toggle").invert = False
-        layout.operator("nla.select_all_toggle", text="Invert Selection").invert = True
+        layout.operator("nla.select_all_toggle", icon='SELECT_ALL').invert = False
+        layout.operator("nla.select_all_toggle", text="Invert Selection", icon = 'INVERSE').invert = True
 
         layout.separator()
-        layout.operator("nla.select_border").axis_range = False
-        layout.operator("nla.select_border", text="Border Axis Range").axis_range = True
+        layout.operator("nla.select_border", icon='BORDER_RECT').axis_range = False
+        layout.operator("nla.select_border", text="Border Axis Range", icon='BORDER_RECT').axis_range = True
 
         layout.separator()
-        props = layout.operator("nla.select_leftright", text="Before Current Frame")
+        props = layout.operator("nla.select_leftright", text="Before Current Frame", icon = "BEFORE_CURRENT_FRAME")
         props.extend = False
         props.mode = 'LEFT'
-        props = layout.operator("nla.select_leftright", text="After Current Frame")
+        props = layout.operator("nla.select_leftright", text="After Current Frame", icon = "AFTER_CURRENT_FRAME")
         props.extend = False
         props.mode = 'RIGHT'
 
@@ -171,44 +171,43 @@ class NLA_MT_edit(Menu):
         scene = context.scene
 
         layout.menu("NLA_MT_edit_transform", text="Transform")
-
-        layout.operator_menu_enum("nla.snap", "type", text="Snap")
-
-        layout.separator()
-        layout.operator("nla.duplicate", text="Duplicate").linked = False
-        layout.operator("nla.duplicate", text="Linked Duplicate").linked = True
-        layout.operator("nla.split")
-        layout.operator("nla.delete")
+        layout.menu("NLA_MT_edit_snap")
 
         layout.separator()
-        layout.operator("nla.mute_toggle")
+        layout.operator("nla.duplicate", text="Duplicate", icon = "DUPLICATE").linked = False
+        layout.operator("nla.duplicate", text="Linked Duplicate", icon = "DUPLICATE").linked = True
+        layout.operator("nla.split", icon = "SPLIT")
+        layout.operator("nla.delete", icon = "DELETE")
 
         layout.separator()
-        layout.operator("nla.apply_scale")
-        layout.operator("nla.clear_scale")
-        layout.operator("nla.action_sync_length").active = False
+        layout.operator("nla.mute_toggle", icon = "MUTE_IPO_ON")
 
         layout.separator()
-        layout.operator("nla.make_single_user")
+        layout.operator("nla.apply_scale", icon = "APPLYSCALE")
+        layout.operator("nla.clear_scale", icon = "CLEARSCALE")
+        layout.operator("nla.action_sync_length", icon = "SYNC").active = False
 
         layout.separator()
-        layout.operator("nla.swap")
-        layout.operator("nla.move_up")
-        layout.operator("nla.move_down")
+        layout.operator("nla.make_single_user", icon = "MAKE_SINGLE_USER")
+
+        layout.separator()
+        layout.operator("nla.swap", icon = "SWAP")
+        layout.operator("nla.move_up", icon = "MOVE_UP")
+        layout.operator("nla.move_down", icon = "MOVE_DOWN")
 
         # TODO: this really belongs more in a "channel" (or better, "track") menu
         layout.separator()
-        layout.operator_menu_enum("anim.channels_move", "direction", text="Track Ordering...")
-        layout.operator("anim.channels_clean_empty")
+        layout.menu("NLA_MT_edit_move") # bfa - content is in real the same content than the Move menu in graph editor. Just the title is different ...
+        layout.operator("anim.channels_clean_empty", icon = "CLEAN_CHANNELS")
 
         layout.separator()
         # TODO: names of these tools for 'tweak-mode' need changing?
         if scene.is_nla_tweakmode:
-            layout.operator("nla.tweakmode_exit", text="Stop Editing Stashed Action").isolate_action = True
-            layout.operator("nla.tweakmode_exit", text="Stop Tweaking Strip Actions")
+            layout.operator("nla.tweakmode_exit", text="Stop Editing Stashed Action", icon = "ACTION_TWEAK").isolate_action = True
+            layout.operator("nla.tweakmode_exit", text="Stop Tweaking Strip Actions", icon = "ACTION_TWEAK")
         else:
-            layout.operator("nla.tweakmode_enter", text="Start Editing Stashed Action").isolate_action = True
-            layout.operator("nla.tweakmode_enter", text="Start Tweaking Strip Actions")
+            layout.operator("nla.tweakmode_enter", text="Start Editing Stashed Action", icon = "ACTION_TWEAK").isolate_action = True
+            layout.operator("nla.tweakmode_enter", text="Start Tweaking Strip Actions", icon = "ACTION_TWEAK")
 
 
 class NLA_MT_add(Menu):
@@ -217,20 +216,20 @@ class NLA_MT_add(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("nla.actionclip_add")
-        layout.operator("nla.transition_add")
-        layout.operator("nla.soundclip_add")
+        layout.operator("nla.actionclip_add", icon = "ADD_STRIP")
+        layout.operator("nla.transition_add", icon = "TRANSITION")
+        layout.operator("nla.soundclip_add", icon = "SOUND")
 
         layout.separator()
-        layout.operator("nla.meta_add")
-        layout.operator("nla.meta_remove")
+        layout.operator("nla.meta_add", icon = "ADD_METASTRIP")
+        layout.operator("nla.meta_remove", icon = "REMOVE_MTEASTRIP")
 
         layout.separator()
-        layout.operator("nla.tracks_add").above_selected = False
-        layout.operator("nla.tracks_add", text="Add Tracks Above Selected").above_selected = True
+        layout.operator("nla.tracks_add", icon = "ADD_TRACK").above_selected = False
+        layout.operator("nla.tracks_add", text="Add Tracks Above Selected", icon = "ADD_TRACK_ABOVE").above_selected = True
 
         layout.separator()
-        layout.operator("nla.selected_objects_add")
+        layout.operator("nla.selected_objects_add", icon = "ADD_SELECTED")
 
 
 class NLA_MT_edit_transform(Menu):
@@ -239,9 +238,31 @@ class NLA_MT_edit_transform(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("transform.translate", text="Grab/Move")
-        layout.operator("transform.transform", text="Extend").mode = 'TIME_EXTEND'
-        layout.operator("transform.transform", text="Scale").mode = 'TIME_SCALE'
+        layout.operator("transform.translate", text="Grab/Move", icon = "TRANSFORM_MOVE")
+        layout.operator("transform.transform", text="Extend", icon = "SHRINK_FATTEN").mode = 'TIME_EXTEND'
+        layout.operator("transform.transform", text="Scale", icon = "TRANSFORM_SCALE").mode = 'TIME_SCALE'
+
+
+class NLA_MT_edit_move(Menu):
+    bl_label = "Track Ordering"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.operator("anim.channels_move", text= "To Top", icon = "MOVE_TO_TOP").direction = 'TOP'
+        layout.operator("anim.channels_move", text= "Up", icon = "MOVE_UP").direction = 'UP'
+        layout.operator("anim.channels_move", text= "Down", icon = "MOVE_DOWN").direction = 'DOWN'
+        layout.operator("anim.channels_move", text= "To Bottom", icon = "MOVE_TO_BOTTOM").direction = 'BOTTOM'
+
+class NLA_MT_edit_snap(Menu):
+    bl_label = "Snap"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("nla.snap", text="Current Frame", icon = "SNAP_CURRENTFRAME").type= 'CFRA'
+        layout.operator("nla.snap", text="Nearest Frame", icon = "SNAP_NEARESTFRAME").type= 'NEAREST_FRAME'
+        layout.operator("nla.snap", text="Nearest Second", icon = "SNAP_NEARESTSECOND").type= 'NEAREST_SECOND'
+        layout.operator("nla.snap", text="Nearest Marker", icon = "SNAP_NEARESTMARKER").type= 'NEAREST_MARKER'
 
 
 classes = (
@@ -255,6 +276,8 @@ classes = (
     NLA_MT_marker,
     NLA_MT_add,
     NLA_MT_edit_transform,
+    NLA_MT_edit_move,
+    NLA_MT_edit_snap,
 )
 
 if __name__ == "__main__":  # only for live edit.
