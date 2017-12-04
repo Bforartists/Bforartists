@@ -1955,7 +1955,7 @@ void GRAPH_OT_euler_filter(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Euler Discontinuity Filter";
 	ot->idname = "GRAPH_OT_euler_filter";
-	ot->description = "Euler Discontinuity Filte\nFix large jumps and flips in the selected "
+	ot->description = "Euler Discontinuity Filter\nFix large jumps and flips in the selected "
 	                  "Euler Rotation F-Curves arising from rotation "
 	                  "values being clipped when baking physics";
 	
