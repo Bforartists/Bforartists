@@ -383,13 +383,7 @@ class VIEW3D_MT_view(Menu):
         layout.operator("view3d.clip_border", text="Clipping Border", icon = "CLIPPINGBORDER")
         layout.operator("view3d.clear_render_border", text="Clear Render Border", icon = "RENDERBORDER_CLEAR")
         layout.operator("view3d.render_border", text="Render Border", icon = "RENDERBORDER").camera_only = False
-
-        layout.separator()
-      
-        myvar= layout.operator("transform.create_orientation", text="Create Orientation", icon = "MANIPUL")
-        myvar.use_view = True
-        myvar.use = True
-
+   
         layout.separator()
 
         layout.operator("view3d.localview", text="View Global/Local", icon = "VIEW_GLOBAL_LOCAL")
@@ -4152,6 +4146,35 @@ class VIEW3D_PT_context_properties(Panel):
             # Draw with no edit button
             rna_prop_ui.draw(self.layout, context, member, object, False)
 
+class VIEW3D_PT_transform_orientations(Panel):
+    bl_space_type = 'VIEW_3D'
+    bl_region_type = 'UI'
+    bl_label = "Transform Orientations"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        view = context.space_data
+        return (view)
+
+    def draw(self, context):
+        layout = self.layout
+
+        view = context.space_data
+        orientation = view.current_orientation
+
+        row = layout.row(align=True)
+        row.prop(view, "transform_orientation", text="")
+
+        if orientation:
+            row = layout.row(align=True)
+            row.prop(orientation, "name", text="")
+            row.operator("transform.delete_orientation", text="", icon='X')
+
+        myvar= layout.operator("transform.create_orientation", text="Create Orientation", icon = "MANIPUL")
+        myvar.use_view = True
+        myvar.use = True
+
 classes = (
     VIEW3D_HT_header,
     ALL_MT_editormenu,
@@ -4304,6 +4327,7 @@ classes = (
     VIEW3D_PT_background_image,
     VIEW3D_PT_etch_a_ton,
     VIEW3D_PT_context_properties,
+    VIEW3D_PT_transform_orientations,
 )
 
 
