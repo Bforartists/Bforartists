@@ -79,6 +79,8 @@ _modules = [
     "space_view3d",
     "space_view3d_toolbar",
     "space_toolbar",
+    "space_node_toolshelf",
+   
 ]
 
 import bpy
