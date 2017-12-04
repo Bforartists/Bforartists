@@ -16,54 +16,30 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-# This script installs three new tabs in the Tool Shelf in the Node Editor.
-# It contains all the add nodes. But better arranged and with icons.
-# And it installs a panel in the Properties sidebar.
-# Here you can adjust if you want to display the buttons as text buttons with icons.
-# Or as pure icon buttons.
-
-# Note that this version is not compatible with Blender. It relies at icons in the Bfoartists iconsheet which doesn't exist in Blender.
-
-
+# <pep8 compliant>
 import bpy
-import os
-import bpy.utils.previews
-
 from bpy import context
 
-bl_info = {
-    "name": "Nodes Icons Panel",
-    "author": "Reiner 'Tiles' Prokein",
-    "version": (0, 9, 7),
-    "blender": (2, 79, 0),
-    "location": "Node Editor -> Tool Shelf + Properties Sidebar",
-    "description": "DO NOT TURN OFF! - Adds panels with Icon buttons in the Node editor",
-    "warning": "",
-    "wiki_url": "",
-    "tracker_url": "",
-    "category": "User Interface"}
-
-# text or icon buttons, the prop
-class UITweaksDataNodes(bpy.types.PropertyGroup):
-    icon_or_text = bpy.props.BoolProperty(name="Icon / Text Buttons", description="Display the buttons in the Node editor tool shelf as text or iconbuttons\nTo make the change permanent save the startup file\nBeware of the layout, this is also saved with the startup file!", default = False) # Our prop
-
 # The text or icon prop is in the properties sidebar
-class NodesIconsPanelProp(bpy.types.Panel):
+class NodesToolshelfProp(bpy.types.Panel):
     """The prop to turn on or off text or icon buttons in the node editor tool shelf."""
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
-    bl_label = "Display"
+    bl_label = "Display"  
     
     @staticmethod
     def draw(self, context):
         layout = self.layout
         default_context = bpy.app.translations.contexts.default
+
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
         
         scene = context.scene
-        layout.prop(scene.UItweaksNodes, "icon_or_text")
+        layout.prop(addon_prefs,"Node_text_or_icon")
 
 #Input nodes tab, Input common panel
-class NodesIconsPanelInput(bpy.types.Panel):
+class NodesToolshelfInput(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Input Common"
     bl_idname = "nodes.nip_input"
@@ -78,13 +54,16 @@ class NodesIconsPanelInput(bpy.types.Panel):
         
         scene = context.scene
 
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
+
 #--------------------------------------------------------------------- Shader Node Tree --------------------------------------------------------------------------------
 
         if context.space_data.tree_type == 'ShaderNodeTree':
 
             ##### Textbuttons
 
-            if not scene.UItweaksNodes.icon_or_text: 
+            if not addon_prefs.Node_text_or_icon:
 
             ##### --------------------------------- Textures ------------------------------------------- ####     
                
@@ -406,7 +385,7 @@ class NodesIconsPanelInput(bpy.types.Panel):
 
             #### Text Buttons
 
-            if not scene.UItweaksNodes.icon_or_text: 
+            if not addon_prefs.Node_text_or_icon: 
 
                 # ------------------------------- Input -----------------------------
 
@@ -590,7 +569,7 @@ class NodesIconsPanelInput(bpy.types.Panel):
 
             #### Text Buttons
 
-            if not scene.UItweaksNodes.icon_or_text: 
+            if not addon_prefs.Node_text_or_icon:
 
                 layout.label(text="Input:")
 
@@ -821,7 +800,7 @@ class NodesIconsPanelInput(bpy.types.Panel):
                 props.type = "TextureNodeViewer"
 
 #Input nodes tab, Input Advanced panel
-class NodesIconsPanelInputAdvanced(bpy.types.Panel):
+class NodesToolshelfInputAdvanced(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Input Advanced"
     bl_idname = "nodes.nip_input_advanced"
@@ -834,6 +813,9 @@ class NodesIconsPanelInputAdvanced(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         default_context = bpy.app.translations.contexts.default
+
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
         
         scene = context.scene
 
@@ -843,7 +825,7 @@ class NodesIconsPanelInputAdvanced(bpy.types.Panel):
 
             ##### Textbuttons
 
-            if not scene.UItweaksNodes.icon_or_text: 
+            if not addon_prefs.Node_text_or_icon:
 
             ##### --------------------------------- Textures ------------------------------------------- ####     
                
@@ -1020,7 +1002,7 @@ class NodesIconsPanelInputAdvanced(bpy.types.Panel):
 
             ##### Textbuttons
 
-            if not scene.UItweaksNodes.icon_or_text:
+            if not addon_prefs.Node_text_or_icon:
 
                 # ------------------------------- Input -----------------------------
 
@@ -1191,7 +1173,7 @@ class NodesIconsPanelInputAdvanced(bpy.types.Panel):
 
             #### Text Buttons
 
-            if not scene.UItweaksNodes.icon_or_text: 
+            if not addon_prefs.Node_text_or_icon: 
 
                 layout.label(text="Input:")
 
@@ -1250,7 +1232,7 @@ class NodesIconsPanelInputAdvanced(bpy.types.Panel):
                 props.type = "TextureNodeChecker"
 
 #Modify nodes tab, Modify common panel
-class NodesIconsPanelModify(bpy.types.Panel):
+class NodesToolshelfModify(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Modify common"
     bl_idname = "nodes.nip_modify"
@@ -1262,6 +1244,9 @@ class NodesIconsPanelModify(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         default_context = bpy.app.translations.contexts.default
+
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
         
         scene = context.scene
 
@@ -1271,7 +1256,7 @@ class NodesIconsPanelModify(bpy.types.Panel):
 
             ##### Textbuttons
 
-            if not scene.UItweaksNodes.icon_or_text: 
+            if not addon_prefs.Node_text_or_icon:
 
 
                 ##### --------------------------------- Color ------------------------------------------- ####
@@ -1751,7 +1736,7 @@ class NodesIconsPanelModify(bpy.types.Panel):
 
             #### Text Buttons
 
-            if not scene.UItweaksNodes.icon_or_text: 
+            if not addon_prefs.Node_text_or_icon:
             # ------------------------------- Converter -----------------------------
 
                 layout.label(text="Converter:")
@@ -2393,7 +2378,7 @@ class NodesIconsPanelModify(bpy.types.Panel):
 
             #### Text Buttons
 
-            if not scene.UItweaksNodes.icon_or_text: 
+            if not addon_prefs.Node_text_or_icon:
 
                 layout.label(text="Converter:")
 
@@ -2501,7 +2486,7 @@ class NodesIconsPanelModify(bpy.types.Panel):
                 props.type = "TextureNodeTranslate"
 
 #Relations tab, Relations Panel
-class NodesIconsPanelRelations(bpy.types.Panel):
+class NodesToolshelfRelations(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Relations"
     bl_idname = "nodes.nip_relations"
@@ -2513,12 +2498,15 @@ class NodesIconsPanelRelations(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         default_context = bpy.app.translations.contexts.default
+
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
         
         scene = context.scene
 
         ##### Textbuttons
 
-        if not scene.UItweaksNodes.icon_or_text: 
+        if not addon_prefs.Node_text_or_icon:
 
              ##### --------------------------------- Group ------------------------------------------- ####
         
@@ -2600,51 +2588,15 @@ class NodesIconsPanelRelations(bpy.types.Panel):
                 props.use_transform = True
                 props.type = "CompositorNodeSwitch"
 
- # ----------------------------------------------------------- 
-    
-# global variable to store icons in 
-custom_icons = None
+classes = (
+    NodesToolshelfProp,
+    NodesToolshelfInput,
+    NodesToolshelfInputAdvanced,
+    NodesToolshelfModify,
+    NodesToolshelfRelations,
+)
 
-def register():
-    
-    bpy.utils.register_class(NodesIconsPanelProp)
-    bpy.utils.register_class(NodesIconsPanelInput)
-    bpy.utils.register_class(NodesIconsPanelInputAdvanced)
-    bpy.utils.register_class(NodesIconsPanelModify)
-    bpy.utils.register_class(NodesIconsPanelRelations)
-     
-    # Our external Icons
-    global custom_icons
-
-    custom_icons = bpy.utils.previews.new()
-
-    # Use this for addons
-    icons_dir = os.path.join(os.path.dirname(__file__), "icons")
-
-    # Use this for testing the script in the scripting layout
-    #script_path = bpy.context.space_data.text.filepath
-    #icons_dir = os.path.join(os.path.dirname(script_path), "icons")
-
-
-    # Our data block for icon or text buttons
-    bpy.utils.register_class(UITweaksDataNodes) # Our data block
-    bpy.types.Scene.UItweaksNodes = bpy.props.PointerProperty(type=UITweaksDataNodes) # Bind reference of type of our data block to type Scene objects
-    
-    
-def unregister():
-    global custom_icons
-    bpy.utils.previews.remove(custom_icons)
-
-    bpy.utils.unregister_class(NodesIconsPanelProp)
-    bpy.utils.unregister_class(NodesIconsPanelInput)
-    bpy.utils.unregister_class(NodesIconsPanelInputAdvanced)
-    bpy.utils.unregister_class(NodesIconsPanelModify)
-    bpy.utils.unregister_class(NodesIconsPanelRelations)
-
-    bpy.utils.unregister_class(UITweaksDataNodes)
-     
-# This allows you to run the script directly from blenders text editor
-# to test the addon without having to install it.
-
-if __name__ == "__main__":
-    register()
+if __name__ == "__main__":  # only for live edit.
+    from bpy.utils import register_class
+    for cls in classes:
+        register_class(cls)
