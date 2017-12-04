@@ -1177,6 +1177,8 @@ class VIEW3D_MT_select_edit_armature_similar(Menu):
         layout.operator("armature.select_similar", text="Prefix", icon = "PREFIX").type = 'PREFIX'
         layout.operator("armature.select_similar", text="Suffix", icon = "SUFFIX").type = 'SUFFIX'
         layout.operator("armature.select_similar", text="Layer", icon = "LAYER").type = 'LAYER'
+        layout.operator("armature.select_similar", text="Group", icon = "GROUP").type = 'GROUP'
+        layout.operator("armature.select_similar", text="Shape", icon = "SHAPEKEY_DATA").type = 'SHAPE'
 
 class VIEW3D_MT_select_gpencil(Menu):
     bl_label = "Select"
