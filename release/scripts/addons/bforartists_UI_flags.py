@@ -74,6 +74,12 @@ class bforartists_UI_flags(AddonPreferences):
     SP_material_shading_diffuseramp = BoolProperty(name="Ramp Options", description="Contains some Ramp options", default = False)
     SP_material_shading_specularramp = BoolProperty(name="Ramp Options", description="Contains some Ramp options", default = False)
 
+    # Node Editor, text or icon buttons
+
+    Node_text_or_icon = BoolProperty(name="Icon / Text Buttons", description="Display the buttons in the Node editor tool shelf as text or iconbuttons\nSave User preferences to save the current state", default = False)
+
+
+
 #------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -140,6 +146,10 @@ class bforartists_UI_flags(AddonPreferences):
         row.prop(self, "SP_material_settings_options")
         row.prop(self, "SP_material_shading_diffuseramp")
         row.prop(self, "SP_material_shading_specularramp")
+
+        row = layout.row()
+
+        row.prop(self, "Node_text_or_icon")
         
 
 class OBJECT_OT_BFA_UI_flags(Operator):
