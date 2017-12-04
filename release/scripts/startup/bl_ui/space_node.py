@@ -246,9 +246,9 @@ class NODE_OT_group_separate(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("node.group_separate", text = "Copy").type = 'COPY'
-        layout.operator("node.group_separate", text = "Move").type = 'MOVE'
-
+        layout.operator("node.group_separate", text = "Copy", icon = "SEPARATE").type = 'COPY'
+        layout.operator("node.group_separate", text = "Move", icon = "SEPARATE").type = 'MOVE'
+         
 class NODE_MT_node(Menu):
     bl_label = "Node"
 
