@@ -558,6 +558,7 @@ classes = (
     NODE_MT_add,
     NODE_MT_view,
     NODE_MT_select,
+    NODE_OT_group_separate,
     NODE_MT_node,
     NODE_MT_node_color_presets,
     NODE_MT_node_color_specials,
