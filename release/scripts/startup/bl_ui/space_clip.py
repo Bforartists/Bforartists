@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -1332,26 +1332,6 @@ class CLIP_MT_track(Menu):
         layout.separator()
         layout.operator("clip.keyframe_insert")
         layout.operator("clip.keyframe_delete")
-
-        layout.separator()
-        props = layout.operator("clip.track_markers", text="Track Frame Backwards")
-        props.backwards = True
-        props.sequence = False
-
-        props = layout.operator("clip.track_markers", text="Track Backwards")
-        props.backwards = True
-        props.sequence = True
-
-        props = layout.operator("clip.track_markers", text="Track Forwards")
-        props.backwards = False
-        props.sequence = True
-
-        props = layout.operator("clip.track_markers", text="Track Frame Forwards")
-        props.backwards = False
-        props.sequence = False
-
-        #layout.separator()
-        #layout.operator("clip.add_marker_move")
 
         layout.separator()
         layout.menu("CLIP_MT_track_visibility")
