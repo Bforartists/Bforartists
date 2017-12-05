@@ -128,7 +128,7 @@ static void graph_panel_view(const bContext *C, Panel *pa)
 		
 	sub = uiLayoutColumn(col, true);
 	uiLayoutSetActive(sub, RNA_boolean_get(&spaceptr, "show_cursor"));
-	uiItemO(sub, IFACE_("Cursor from Selection"), ICON_NONE, "GRAPH_OT_frame_jump");
+	uiItemO(sub, IFACE_("Jump to Keyframes"), ICON_JUMP_TO_KEYFRAMES, "GRAPH_OT_frame_jump");
 
 	sub = uiLayoutColumn(col, true);
 	uiLayoutSetActive(sub, RNA_boolean_get(&spaceptr, "show_cursor"));
