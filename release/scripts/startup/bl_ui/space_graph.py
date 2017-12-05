@@ -297,9 +297,6 @@ class GRAPH_MT_key(Menu):
         layout.operator("graph.sound_bake", icon = "BAKE_SOUND")
 
         layout.separator()
-        layout.operator("graph.frame_jump", icon= 'JUMP_TO_KEYFRAMES' )
-
-        layout.separator()
         layout.operator("graph.duplicate_move", icon = "DUPLICATE")
         layout.operator("graph.delete", icon = "DELETE")
 
