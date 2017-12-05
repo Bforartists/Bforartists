@@ -121,38 +121,21 @@ class GRAPH_MT_view(Menu):
         st = context.space_data
 
         layout.operator("graph.properties", icon='MENU_PANEL')
-        layout.separator()
-
-        layout.prop(st, "use_realtime_update")
-        layout.prop(st, "show_frame_indicator")
-        layout.prop(st, "show_sliders")
-        layout.prop(st, "show_group_colors")
-        layout.prop(st, "use_auto_merge_keyframes")
-
-        layout.separator()
-        layout.prop(st, "use_beauty_drawing")
 
         layout.separator()
 
-        layout.prop(st, "show_handles")
-
-        layout.prop(st, "use_only_selected_curves_handles")
-        layout.prop(st, "use_only_selected_keyframe_handles")
-
-        layout.prop(st, "show_seconds")
-        layout.prop(st, "show_locked_time")
-
-        layout.separator()
         layout.operator("anim.previewrange_set", icon='BORDER_RECT')
         layout.operator("anim.previewrange_clear", icon = "CLEAR")
         layout.operator("graph.previewrange_set", icon='BORDER_RECT')
 
         layout.separator()
+
         layout.operator("graph.view_all", icon = "VIEWALL")
         layout.operator("graph.view_selected", icon = "VIEW_SELECTED")
         layout.operator("graph.view_frame", icon = "VIEW_FRAME" )
 
         layout.separator()
+
         layout.operator("screen.area_dupli", icon = "NEW_WINDOW")
         layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area", icon = "MAXIMIZE_AREA") # bfa - the separated tooltip. Class is in space_text.py
         layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area", icon = "FULLSCREEN_AREA").use_hide_panels = True
@@ -457,6 +440,33 @@ class GRAPH_MT_channel_settings_disable(Menu):
         layout.operator("anim.channels_setting_disable", text = "Mute", icon = "MUTE_IPO_ON").type = 'MUTE'
         
 
+class GRAPH_MT_properties_view_options(bpy.types.Panel):
+    bl_label = "View Options"
+    bl_space_type = 'GRAPH_EDITOR'
+    bl_region_type = 'UI'
+    
+    def draw(self, context):
+        sc = context.scene
+        layout = self.layout
+        
+        st = context.space_data
+
+        layout.prop(st, "use_realtime_update")
+        layout.prop(st, "show_frame_indicator")
+        layout.prop(st, "show_sliders")
+        layout.prop(st, "show_group_colors")
+        layout.prop(st, "use_auto_merge_keyframes")
+
+        layout.prop(st, "use_beauty_drawing")
+
+        layout.prop(st, "show_handles")
+
+        layout.prop(st, "use_only_selected_curves_handles")
+        layout.prop(st, "use_only_selected_keyframe_handles")
+
+        layout.prop(st, "show_seconds")
+        layout.prop(st, "show_locked_time")
+
 
 
 
@@ -483,6 +493,7 @@ classes = (
     GRAPH_MT_channel_settings_toggle,
     GRAPH_MT_channel_settings_enable,
     GRAPH_MT_channel_settings_disable,
+    GRAPH_MT_properties_view_options,
 )
 
 if __name__ == "__main__":  # only for live edit.
