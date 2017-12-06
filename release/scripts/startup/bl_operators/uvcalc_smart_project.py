@@ -1090,7 +1090,7 @@ class SmartProject(Operator):
     stretch_to_bounds = BoolProperty(
             name="Stretch to UV Bounds",
             description="Stretch the final output to texture bounds",
-            default=True,
+            default=False, # bfa - changed default from true to false
             )
 
     @classmethod
