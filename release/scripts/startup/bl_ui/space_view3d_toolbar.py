@@ -623,8 +623,9 @@ class VIEW3D_PT_tools_relations(View3DPanel, Panel):
                     col.separator()
 
                     col.label(text="Object Data:")
-                    col.operator("object.make_links_data", icon='LINK_DATA', text = "Link Data             ")
                     col.operator("object.make_single_user", icon='MAKE_SINGLE_USER', text = "Make Single User ")
+                    
+                    col.menu("VIEW3D_PT_tools_relations_link_data")
                     
                     operator_context_default = layout.operator_context
                     if len(bpy.data.scenes) > 10:
@@ -668,8 +669,10 @@ class VIEW3D_PT_tools_relations(View3DPanel, Panel):
 
                     row = col.row(align=False)
                     row.alignment = 'LEFT'
-                    row.operator("object.make_links_data", icon='LINK_DATA', text = "")
+
                     row.operator("object.make_single_user", icon='MAKE_SINGLE_USER', text = "")
+
+                    row.menu("VIEW3D_PT_tools_relations_link_data", text = "", icon='LINK_DATA' ) # bfa - link data 
                 
                     operator_context_default = layout.operator_context
                     if len(bpy.data.scenes) > 10:
@@ -2960,6 +2963,22 @@ class RENDER_PT_bake(bpy.types.Panel):
             sub.active = rd.use_bake_user_scale
             sub.prop(rd, "bake_user_scale", text="User Scale")
 
+# Link Data menu
+
+class VIEW3D_PT_tools_relations_link_data(Menu):
+    bl_label = "Link Data"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("object.make_links_data", text = "Object Data", icon='LINK_DATA').type = 'OBDATA'
+        layout.operator("object.make_links_data", text = "Materials", icon='LINK_DATA').type = 'MATERIAL'
+        layout.operator("object.make_links_data", text = "Animation Data", icon='LINK_DATA').type = 'ANIMATION'
+        layout.operator("object.make_links_data", text = "Group", icon='LINK_DATA').type = 'GROUPS'
+        layout.operator("object.make_links_data", text = "Dupli Group", icon='LINK_DATA').type = 'DUPLIGROUP'
+        layout.operator("object.make_links_data", text = "Modifiers", icon='LINK_DATA').type = 'MODIFIERS'
+        layout.operator("object.make_links_data", text = "Fonts", icon='LINK_DATA').type = 'FONTS'
+
 classes = (
     VIEW3D_MT_snap,
     VIEW3D_PT_tools_object,
@@ -3020,6 +3039,7 @@ classes = (
     VIEW3D_PT_tools_grease_pencil_brushcurves,
     VIEW3D_PT_tools_history,
     RENDER_PT_bake,
+    VIEW3D_PT_tools_relations_link_data,
 )
 
 if __name__ == "__main__":  # only for live edit.
