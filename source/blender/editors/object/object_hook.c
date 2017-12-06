@@ -593,7 +593,7 @@ void OBJECT_OT_hook_add_selob(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Hook to Selected Object";
-	ot->description = "Hook to Selected Object\nHook selected vertices to the first selected object";
+	ot->description = "Hook to Selected Object\nHook to selected Object hooks vertices to the first selected Mesh object\nHook to Selected Objects to Bone hooks vertices to a selected bone";
 	ot->idname = "OBJECT_OT_hook_add_selob";
 	
 	/* api callbacks */
