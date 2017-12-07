@@ -38,6 +38,7 @@
 #include "util/util_foreach.h"
 #include "util/util_list.h"
 #include "util/util_map.h"
+#include "util/util_param.h"
 #include "util/util_string.h"
 
 CCL_NAMESPACE_BEGIN
@@ -68,8 +69,15 @@ typedef boost::archive::binary_iarchive i_archive;
 class network_device_memory : public device_memory
 {
 public:
-	network_device_memory() {}
-	~network_device_memory() { device_pointer = 0; };
+	network_device_memory(Device *device)
+	: device_memory(device, "", MEM_READ_ONLY)
+	{
+	}
+
+	~network_device_memory()
+	{
+		device_pointer = 0;
+	};
 
 	vector<char> local_data;
 };
@@ -119,6 +127,9 @@ public:
 	{
 		archive & mem.data_type & mem.data_elements & mem.data_size;
 		archive & mem.data_width & mem.data_height & mem.data_depth & mem.device_pointer;
+		archive & mem.type & string(mem.name);
+		archive & mem.interpolation & mem.extension;
+		archive & mem.device_pointer;
 	}
 
 	template<typename T> void add(const T& data)
@@ -132,7 +143,7 @@ public:
 		archive & type & task.x & task.y & task.w & task.h;
 		archive & task.rgba_byte & task.rgba_half & task.buffer & task.sample & task.num_samples;
 		archive & task.offset & task.stride;
-		archive & task.shader_input & task.shader_output & task.shader_output_luma & task.shader_eval_type;
+		archive & task.shader_input & task.shader_output & task.shader_eval_type;
 		archive & task.shader_x & task.shader_w;
 		archive & task.need_finish_queue;
 	}
@@ -142,7 +153,7 @@ public:
 		archive & tile.x & tile.y & tile.w & tile.h;
 		archive & tile.start_sample & tile.num_samples & tile.sample;
 		archive & tile.resolution & tile.offset & tile.stride;
-		archive & tile.buffer & tile.rng_state;
+		archive & tile.buffer;
 	}
 
 	void write()
@@ -258,12 +269,21 @@ public:
 		delete archive_stream;
 	}
 
-	void read(network_device_memory& mem)
+	void read(network_device_memory& mem, string& name)
 	{
 		*archive & mem.data_type & mem.data_elements & mem.data_size;
 		*archive & mem.data_width & mem.data_height & mem.data_depth & mem.device_pointer;
+		*archive & mem.type & name;
+		*archive & mem.interpolation & mem.extension;
+		*archive & mem.device_pointer;
 
-		mem.data_pointer = 0;
+		mem.name = name.c_str();
+		mem.host_pointer = 0;
+
+		/* Can't transfer OpenGL texture over network. */
+		if(mem.type == MEM_PIXELS) {
+			mem.type = MEM_READ_WRITE;
+		}
 	}
 
 	template<typename T> void read(T& data)
@@ -291,7 +311,7 @@ public:
 		*archive & type & task.x & task.y & task.w & task.h;
 		*archive & task.rgba_byte & task.rgba_half & task.buffer & task.sample & task.num_samples;
 		*archive & task.offset & task.stride;
-		*archive & task.shader_input & task.shader_output & task.shader_output_luma & task.shader_eval_type;
+		*archive & task.shader_input & task.shader_output & task.shader_eval_type;
 		*archive & task.shader_x & task.shader_w;
 		*archive & task.need_finish_queue;
 
@@ -303,7 +323,7 @@ public:
 		*archive & tile.x & tile.y & tile.w & tile.h;
 		*archive & tile.start_sample & tile.num_samples & tile.sample;
 		*archive & tile.resolution & tile.offset & tile.stride;
-		*archive & tile.buffer & tile.rng_state;
+		*archive & tile.buffer;
 
 		tile.buffers = NULL;
 	}

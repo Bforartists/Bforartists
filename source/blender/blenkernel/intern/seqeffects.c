@@ -53,6 +53,8 @@
 #include "IMB_imbuf.h"
 #include "IMB_colormanagement.h"
 
+#include "BLI_math_color_blend.h"
+
 #include "RNA_access.h"
 
 #include "RE_pipeline.h"
@@ -1266,6 +1268,274 @@ static void do_mul_effect(const SeqRenderData *context, Sequence *UNUSED(seq), f
 	}
 }
 
+/*********************** Blend Mode ***************************************/
+typedef void (*IMB_blend_func_byte)(unsigned char *dst, const unsigned char *src1, const unsigned char *src2);
+typedef void (*IMB_blend_func_float)(float *dst, const float *src1, const float *src2);
+
+BLI_INLINE void apply_blend_function_byte(float facf0, float facf1, int x, int y, unsigned char *rect1, unsigned char *rect2, unsigned char *out, IMB_blend_func_byte blend_function)
+{
+	int xo;
+	unsigned char *rt1, *rt2, *rt;
+	unsigned int achannel;
+	xo = x;
+	rt1 = rect1;
+	rt2 = rect2;
+	rt = out;
+	while (y--) {		
+		for (x = xo; x > 0; x--) {
+			achannel = rt2[3];
+			rt2[3] = (unsigned int) achannel * facf0;
+			blend_function(rt, rt1, rt2);
+			rt2[3] = achannel;
+			rt[3] = rt2[3];
+			rt1 += 4;
+			rt2 += 4;
+			rt += 4;
+		}
+		if (y == 0) {
+			break;
+		}
+		y--;		
+		for (x = xo; x > 0; x--) {
+			achannel = rt2[3];
+			rt2[3] = (unsigned int) achannel * facf1;
+			blend_function(rt, rt1, rt2);
+			rt2[3] = achannel;
+			rt[3] = rt2[3];
+			rt1 += 4;
+			rt2 += 4;
+			rt += 4;
+		}
+	}
+}
+
+BLI_INLINE void apply_blend_function_float(float facf0, float facf1, int x, int y, float *rect1, float *rect2, float *out, IMB_blend_func_float blend_function)
+{
+	int xo;
+	float *rt1, *rt2, *rt;
+	float achannel;
+	xo = x;
+	rt1 = rect1;
+	rt2 = rect2;
+	rt = out;
+	while (y--) {		
+		for (x = xo; x > 0; x--) {
+			achannel = rt2[3];
+			rt2[3] = achannel * facf0;
+			blend_function(rt, rt1, rt2);
+			rt2[3] = achannel;
+			rt[3] = rt2[3];
+			rt1 += 4;
+			rt2 += 4;
+			rt += 4;
+		}
+		if (y == 0) {
+			break;
+		}
+		y--;		
+		for (x = xo; x > 0; x--) {
+			achannel = rt2[3];
+			rt2[3] = achannel * facf1;
+			blend_function(rt, rt1, rt2);
+			rt2[3] = achannel;
+			rt[3] = rt2[3];
+			rt1 += 4;
+			rt2 += 4;
+			rt += 4;
+		}
+	}
+}
+
+static void do_blend_effect_float(float facf0, float facf1, int x, int y, float *rect1, float *rect2, int btype, float *out)
+{
+	switch (btype) {
+		case SEQ_TYPE_ADD:
+			apply_blend_function_float(facf0, facf1, x, y, rect1, rect2, out, blend_color_add_float);
+			break;
+		case SEQ_TYPE_SUB:
+			apply_blend_function_float(facf0, facf1, x, y, rect1, rect2, out, blend_color_sub_float);
+			break;
+		case SEQ_TYPE_MUL:
+			apply_blend_function_float(facf0, facf1, x, y, rect1, rect2, out, blend_color_mul_float);
+			break;
+		case SEQ_TYPE_DARKEN:
+			apply_blend_function_float(facf0, facf1, x, y, rect1, rect2, out, blend_color_darken_float);
+			break;
+		case SEQ_TYPE_BURN:
+			apply_blend_function_float(facf0, facf1, x, y, rect1, rect2, out, blend_color_burn_float);
+			break;
+		case SEQ_TYPE_LINEAR_BURN:
+			apply_blend_function_float(facf0, facf1, x, y, rect1, rect2, out, blend_color_linearburn_float);
+			break;
+		case SEQ_TYPE_SCREEN:
+			apply_blend_function_float(facf0, facf1, x, y, rect1, rect2, out, blend_color_screen_float);
+			break;
+		case SEQ_TYPE_LIGHTEN:
+			apply_blend_function_float(facf0, facf1, x, y, rect1, rect2, out, blend_color_lighten_float);
+			break;
+		case SEQ_TYPE_DODGE:
+			apply_blend_function_float(facf0, facf1, x, y, rect1, rect2, out, blend_color_dodge_float);
+			break;
+		case SEQ_TYPE_OVERLAY:
+			apply_blend_function_float(facf0, facf1, x, y, rect1, rect2, out, blend_color_overlay_float);
+			break;
+		case SEQ_TYPE_SOFT_LIGHT:
+			apply_blend_function_float(facf0, facf1, x, y, rect1, rect2, out, blend_color_softlight_float);
+			break;
+		case SEQ_TYPE_HARD_LIGHT:
+			apply_blend_function_float(facf0, facf1, x, y, rect1, rect2, out, blend_color_hardlight_float);
+			break;
+		case SEQ_TYPE_PIN_LIGHT:
+			apply_blend_function_float(facf0, facf1, x, y, rect1, rect2, out, blend_color_pinlight_float);
+			break;
+		case SEQ_TYPE_LIN_LIGHT:
+			apply_blend_function_float(facf0, facf1, x, y, rect1, rect2, out, blend_color_linearlight_float);
+			break;
+		case SEQ_TYPE_VIVID_LIGHT:
+			apply_blend_function_float(facf0, facf1, x, y, rect1, rect2, out, blend_color_vividlight_float);
+			break;
+		case SEQ_TYPE_BLEND_COLOR:
+			apply_blend_function_float(facf0, facf1, x, y, rect1, rect2, out, blend_color_color_float);
+			break;
+		case SEQ_TYPE_HUE:
+			apply_blend_function_float(facf0, facf1, x, y, rect1, rect2, out, blend_color_hue_float);
+			break;
+		case SEQ_TYPE_SATURATION:
+			apply_blend_function_float(facf0, facf1, x, y, rect1, rect2, out, blend_color_saturation_float);
+			break;
+		case SEQ_TYPE_VALUE:
+			apply_blend_function_float(facf0, facf1, x, y, rect1, rect2, out, blend_color_luminosity_float);
+			break;
+		case SEQ_TYPE_DIFFERENCE:
+			apply_blend_function_float(facf0, facf1, x, y, rect1, rect2, out, blend_color_difference_float);
+			break;
+		case SEQ_TYPE_EXCLUSION:
+			apply_blend_function_float(facf0, facf1, x, y, rect1, rect2, out, blend_color_exclusion_float);
+			break;
+		default:
+			break;
+	}
+}
+
+static void do_blend_effect_byte(float facf0, float facf1, int x, int y, unsigned char *rect1, unsigned char *rect2, int btype, unsigned char *out)
+{
+	switch (btype) {
+		case SEQ_TYPE_ADD:
+			apply_blend_function_byte(facf0, facf1, x, y, rect1, rect2, out, blend_color_add_byte);
+			break;
+		case SEQ_TYPE_SUB:
+			apply_blend_function_byte(facf0, facf1, x, y, rect1, rect2, out, blend_color_sub_byte);
+			break;
+		case SEQ_TYPE_MUL:
+			apply_blend_function_byte(facf0, facf1, x, y, rect1, rect2, out, blend_color_mul_byte);
+			break;
+		case SEQ_TYPE_DARKEN:
+			apply_blend_function_byte(facf0, facf1, x, y, rect1, rect2, out, blend_color_darken_byte);
+			break;
+		case SEQ_TYPE_BURN:
+			apply_blend_function_byte(facf0, facf1, x, y, rect1, rect2, out, blend_color_burn_byte);
+			break;
+		case SEQ_TYPE_LINEAR_BURN:
+			apply_blend_function_byte(facf0, facf1, x, y, rect1, rect2, out, blend_color_linearburn_byte);
+			break;
+		case SEQ_TYPE_SCREEN:
+			apply_blend_function_byte(facf0, facf1, x, y, rect1, rect2, out, blend_color_screen_byte);
+			break;
+		case SEQ_TYPE_LIGHTEN:
+			apply_blend_function_byte(facf0, facf1, x, y, rect1, rect2, out, blend_color_lighten_byte);
+			break;
+		case SEQ_TYPE_DODGE:
+			apply_blend_function_byte(facf0, facf1, x, y, rect1, rect2, out, blend_color_dodge_byte);
+			break;
+		case SEQ_TYPE_OVERLAY:
+			apply_blend_function_byte(facf0, facf1, x, y, rect1, rect2, out, blend_color_overlay_byte);
+			break;
+		case SEQ_TYPE_SOFT_LIGHT:
+			apply_blend_function_byte(facf0, facf1, x, y, rect1, rect2, out, blend_color_softlight_byte);
+			break;
+		case SEQ_TYPE_HARD_LIGHT:
+			apply_blend_function_byte(facf0, facf1, x, y, rect1, rect2, out, blend_color_hardlight_byte);
+			break;
+		case SEQ_TYPE_PIN_LIGHT:
+			apply_blend_function_byte(facf0, facf1, x, y, rect1, rect2, out, blend_color_pinlight_byte);
+			break;
+		case SEQ_TYPE_LIN_LIGHT:
+			apply_blend_function_byte(facf0, facf1, x, y, rect1, rect2, out, blend_color_linearlight_byte);
+			break;
+		case SEQ_TYPE_VIVID_LIGHT:
+			apply_blend_function_byte(facf0, facf1, x, y, rect1, rect2, out, blend_color_vividlight_byte);
+			break;
+		case SEQ_TYPE_BLEND_COLOR:
+			apply_blend_function_byte(facf0, facf1, x, y, rect1, rect2, out, blend_color_color_byte);
+			break;
+		case SEQ_TYPE_HUE:
+			apply_blend_function_byte(facf0, facf1, x, y, rect1, rect2, out, blend_color_hue_byte);
+			break;
+		case SEQ_TYPE_SATURATION:
+			apply_blend_function_byte(facf0, facf1, x, y, rect1, rect2, out, blend_color_saturation_byte);
+			break;
+		case SEQ_TYPE_VALUE:
+			apply_blend_function_byte(facf0, facf1, x, y, rect1, rect2, out, blend_color_luminosity_byte);
+			break;
+		case SEQ_TYPE_DIFFERENCE:
+			apply_blend_function_byte(facf0, facf1, x, y, rect1, rect2, out, blend_color_difference_byte);
+			break;
+		case SEQ_TYPE_EXCLUSION:
+			apply_blend_function_byte(facf0, facf1, x, y, rect1, rect2, out, blend_color_exclusion_byte);
+			break;
+		default:
+			break;
+	}
+}
+
+static void do_blend_mode_effect(const SeqRenderData *context, Sequence *seq, float UNUSED(cfra), float facf0, float facf1,
+                             ImBuf *ibuf1, ImBuf *ibuf2, ImBuf *UNUSED(ibuf3), int start_line, int total_lines, ImBuf *out)
+{
+	if (out->rect_float) {
+		float *rect1 = NULL, *rect2 = NULL, *rect_out = NULL;
+		slice_get_float_buffers(context, ibuf1, ibuf2, NULL, out, start_line, &rect1, &rect2, NULL, &rect_out);
+		do_blend_effect_float(facf0, facf1, context->rectx, total_lines, rect1, rect2, seq->blend_mode, rect_out);
+	}
+	else {
+		unsigned char *rect1 = NULL, *rect2 = NULL, *rect_out = NULL;
+		slice_get_byte_buffers(context, ibuf1, ibuf2, NULL, out, start_line, &rect1, &rect2, NULL, &rect_out);
+		do_blend_effect_byte(facf0, facf1, context->rectx, total_lines, rect1, rect2, seq->blend_mode, rect_out);
+	}
+}
+/*********************** Color Mix Effect  *************************/
+static void init_colormix_effect(Sequence *seq)
+{
+	ColorMixVars *data;
+
+	if (seq->effectdata){
+		MEM_freeN(seq->effectdata);
+	}
+	seq->effectdata = MEM_callocN(sizeof(ColorMixVars), "colormixvars");
+	data = (ColorMixVars *) seq->effectdata;
+	data->blend_effect = SEQ_TYPE_OVERLAY;
+	data->factor = 1.0f;
+}
+
+static void do_colormix_effect(const SeqRenderData *context, Sequence *seq, float UNUSED(cfra), float UNUSED(facf0), float UNUSED(facf1),
+                               ImBuf *ibuf1, ImBuf *ibuf2, ImBuf *UNUSED(ibuf3), int start_line, int total_lines, ImBuf *out)
+{
+	float facf;
+
+	ColorMixVars *data = seq->effectdata;
+	facf = data->factor;
+
+	if (out->rect_float) {
+		float *rect1 = NULL, *rect2 = NULL, *rect_out = NULL;
+		slice_get_float_buffers(context, ibuf1, ibuf2, NULL, out, start_line, &rect1, &rect2, NULL, &rect_out);
+		do_blend_effect_float(facf, facf, context->rectx, total_lines, rect1, rect2, data->blend_effect, rect_out);
+	}
+	else {
+		unsigned char *rect1 = NULL, *rect2 = NULL, *rect_out = NULL;
+		slice_get_byte_buffers(context, ibuf1, ibuf2, NULL, out, start_line, &rect1, &rect2, NULL, &rect_out);
+		do_blend_effect_byte(facf, facf, context->rectx, total_lines, rect1, rect2, data->blend_effect, rect_out);
+	}
+}
+
 /*********************** Wipe *************************/
 
 typedef struct WipeZone {
@@ -1861,7 +2131,7 @@ static void RVBlurBitmap2_float(float *map, int width, int height, float blur, i
 	float *filter = NULL;
 	int x, y, i, fx, fy;
 	int index, ix, halfWidth;
-	float fval, k, curColor[3], curColor2[3], weight = 0;
+	float fval, k, curColor[4], curColor2[4], weight = 0;
 
 	/* If we're not really blurring, bail out */
 	if (blur <= 0)
@@ -1906,47 +2176,38 @@ static void RVBlurBitmap2_float(float *map, int width, int height, float blur, i
 	for (y = 0; y < height; y++) {
 		/* Do the left & right strips */
 		for (x = 0; x < halfWidth; x++) {
-			index = (x + y * width) * 4;
 			fx = 0;
-			curColor[0] = curColor[1] = curColor[2] = 0.0f;
-			curColor2[0] = curColor2[1] = curColor2[2] = 0.0f;
+			zero_v4(curColor);
+			zero_v4(curColor2);
 
 			for (i = x - halfWidth; i < x + halfWidth; i++) {
 				if ((i >= 0) && (i < width)) {
-					curColor[0] += map[(i + y * width) * 4 + GlowR] * filter[fx];
-					curColor[1] += map[(i + y * width) * 4 + GlowG] * filter[fx];
-					curColor[2] += map[(i + y * width) * 4 + GlowB] * filter[fx];
+					index = (i + y * width) * 4;
+					madd_v4_v4fl(curColor, map + index, filter[fx]);
 
-					curColor2[0] += map[(width - 1 - i + y * width) * 4 + GlowR] * filter[fx];
-					curColor2[1] += map[(width - 1 - i + y * width) * 4 + GlowG] * filter[fx];
-					curColor2[2] += map[(width - 1 - i + y * width) * 4 + GlowB] * filter[fx];
+					index = (width - 1 - i + y * width) * 4;
+					madd_v4_v4fl(curColor2, map + index, filter[fx]);
 				}
 				fx++;
 			}
-			temp[index + GlowR] = curColor[0];
-			temp[index + GlowG] = curColor[1];
-			temp[index + GlowB] = curColor[2];
+			index = (x + y * width) * 4;
+			copy_v4_v4(temp + index, curColor);
 
-			temp[((width - 1 - x + y * width) * 4) + GlowR] = curColor2[0];
-			temp[((width - 1 - x + y * width) * 4) + GlowG] = curColor2[1];
-			temp[((width - 1 - x + y * width) * 4) + GlowB] = curColor2[2];
-
+			index = (width - 1 - x + y * width) * 4;
+			copy_v4_v4(temp + index, curColor2);
 		}
 
 		/* Do the main body */
 		for (x = halfWidth; x < width - halfWidth; x++) {
-			index = (x + y * width) * 4;
 			fx = 0;
-			zero_v3(curColor);
+			zero_v4(curColor);
 			for (i = x - halfWidth; i < x + halfWidth; i++) {
-				curColor[0] += map[(i + y * width) * 4 + GlowR] * filter[fx];
-				curColor[1] += map[(i + y * width) * 4 + GlowG] * filter[fx];
-				curColor[2] += map[(i + y * width) * 4 + GlowB] * filter[fx];
+				index = (i + y * width) * 4;
+				madd_v4_v4fl(curColor, map + index, filter[fx]);
 				fx++;
 			}
-			temp[index + GlowR] = curColor[0];
-			temp[index + GlowG] = curColor[1];
-			temp[index + GlowB] = curColor[2];
+			index = (x + y * width) * 4;
+			copy_v4_v4(temp + index, curColor);
 		}
 	}
 
@@ -1957,46 +2218,39 @@ static void RVBlurBitmap2_float(float *map, int width, int height, float blur, i
 	for (x = 0; x < width; x++) {
 		/* Do the top & bottom strips */
 		for (y = 0; y < halfWidth; y++) {
-			index = (x + y * width) * 4;
 			fy = 0;
-			zero_v3(curColor);
-			zero_v3(curColor2);
+			zero_v4(curColor);
+			zero_v4(curColor2);
 			for (i = y - halfWidth; i < y + halfWidth; i++) {
 				if ((i >= 0) && (i < height)) {
 					/* Bottom */
-					curColor[0] += map[(x + i * width) * 4 + GlowR] * filter[fy];
-					curColor[1] += map[(x + i * width) * 4 + GlowG] * filter[fy];
-					curColor[2] += map[(x + i * width) * 4 + GlowB] * filter[fy];
+					index = (x + i * width) * 4;
+					madd_v4_v4fl(curColor, map + index, filter[fy]);
 
 					/* Top */
-					curColor2[0] += map[(x + (height - 1 - i) * width) * 4 + GlowR] * filter[fy];
-					curColor2[1] += map[(x + (height - 1 - i) * width) * 4 + GlowG] * filter[fy];
-					curColor2[2] += map[(x + (height - 1 - i) * width) * 4 + GlowB] * filter[fy];
+					index = (x + (height - 1 - i) * width) * 4;
+					madd_v4_v4fl(curColor2, map + index, filter[fy]);
 				}
 				fy++;
 			}
-			temp[index + GlowR] = curColor[0];
-			temp[index + GlowG] = curColor[1];
-			temp[index + GlowB] = curColor[2];
-			temp[((x + (height - 1 - y) * width) * 4) + GlowR] = curColor2[0];
-			temp[((x + (height - 1 - y) * width) * 4) + GlowG] = curColor2[1];
-			temp[((x + (height - 1 - y) * width) * 4) + GlowB] = curColor2[2];
+			index = (x + y * width) * 4;
+			copy_v4_v4(temp + index, curColor);
+
+			index = (x + (height - 1 - y) * width) * 4;
+			copy_v4_v4(temp + index, curColor2);
 		}
 	
 		/* Do the main body */
 		for (y = halfWidth; y < height - halfWidth; y++) {
-			index = (x + y * width) * 4;
 			fy = 0;
-			zero_v3(curColor);
+			zero_v4(curColor);
 			for (i = y - halfWidth; i < y + halfWidth; i++) {
-				curColor[0] += map[(x + i * width) * 4 + GlowR] * filter[fy];
-				curColor[1] += map[(x + i * width) * 4 + GlowG] * filter[fy];
-				curColor[2] += map[(x + i * width) * 4 + GlowB] * filter[fy];
+				index = (x + i * width) * 4;
+				madd_v4_v4fl(curColor, map + index, filter[fy]);
 				fy++;
 			}
-			temp[index + GlowR] = curColor[0];
-			temp[index + GlowG] = curColor[1];
-			temp[index + GlowB] = curColor[2];
+			index = (x + y * width) * 4;
+			copy_v4_v4(temp + index, curColor);
 		}
 	}
 
@@ -2015,10 +2269,10 @@ static void RVAddBitmaps_float(float *a, float *b, float *c, int width, int heig
 	for (y = 0; y < height; y++) {
 		for (x = 0; x < width; x++) {
 			index = (x + y * width) * 4;
-			c[index + GlowR] = MIN2(1.0f, a[index + GlowR] + b[index + GlowR]);
-			c[index + GlowG] = MIN2(1.0f, a[index + GlowG] + b[index + GlowG]);
-			c[index + GlowB] = MIN2(1.0f, a[index + GlowB] + b[index + GlowB]);
-			c[index + GlowA] = MIN2(1.0f, a[index + GlowA] + b[index + GlowA]);
+			c[index + GlowR] = min_ff(1.0f, a[index + GlowR] + b[index + GlowR]);
+			c[index + GlowG] = min_ff(1.0f, a[index + GlowG] + b[index + GlowG]);
+			c[index + GlowB] = min_ff(1.0f, a[index + GlowB] + b[index + GlowB]);
+			c[index + GlowA] = min_ff(1.0f, a[index + GlowA] + b[index + GlowA]);
 		}
 	}
 }
@@ -2035,10 +2289,10 @@ static void RVIsolateHighlights_float(float *in, float *out, int width, int heig
 			/* Isolate the intensity */
 			intensity = (in[index + GlowR] + in[index + GlowG] + in[index + GlowB] - threshold);
 			if (intensity > 0) {
-				out[index + GlowR] = MIN2(clamp, (in[index + GlowR] * boost * intensity));
-				out[index + GlowG] = MIN2(clamp, (in[index + GlowG] * boost * intensity));
-				out[index + GlowB] = MIN2(clamp, (in[index + GlowB] * boost * intensity));
-				out[index + GlowA] = MIN2(clamp, (in[index + GlowA] * boost * intensity));
+				out[index + GlowR] = min_ff(clamp, (in[index + GlowR] * boost * intensity));
+				out[index + GlowG] = min_ff(clamp, (in[index + GlowG] * boost * intensity));
+				out[index + GlowB] = min_ff(clamp, (in[index + GlowB] * boost * intensity));
+				out[index + GlowA] = min_ff(clamp, (in[index + GlowA] * boost * intensity));
 			}
 			else {
 				out[index + GlowR] = 0;
@@ -3350,6 +3604,36 @@ static struct SeqEffectHandle get_sequence_effect_impl(int seq_type)
 		case SEQ_TYPE_MUL:
 			rval.multithreaded = true;
 			rval.execute_slice = do_mul_effect;
+			rval.early_out = early_out_mul_input2;
+			break;
+		case SEQ_TYPE_SCREEN:
+		case SEQ_TYPE_OVERLAY:
+		case SEQ_TYPE_BURN:
+		case SEQ_TYPE_LINEAR_BURN:
+		case SEQ_TYPE_DARKEN:
+		case SEQ_TYPE_LIGHTEN:
+		case SEQ_TYPE_DODGE:
+		case SEQ_TYPE_SOFT_LIGHT:
+		case SEQ_TYPE_HARD_LIGHT:
+		case SEQ_TYPE_PIN_LIGHT:
+		case SEQ_TYPE_LIN_LIGHT:
+		case SEQ_TYPE_VIVID_LIGHT:
+		case SEQ_TYPE_BLEND_COLOR:
+		case SEQ_TYPE_HUE:
+		case SEQ_TYPE_SATURATION:
+		case SEQ_TYPE_VALUE:
+		case SEQ_TYPE_DIFFERENCE:
+		case SEQ_TYPE_EXCLUSION:
+			rval.multithreaded = true;
+			rval.execute_slice = do_blend_mode_effect;
+			rval.early_out = early_out_mul_input2;
+			break;
+		case SEQ_TYPE_COLORMIX:
+			rval.multithreaded = true;
+			rval.init = init_colormix_effect;
+			rval.free = free_effect_default;
+			rval.copy = copy_effect_default;
+			rval.execute_slice = do_colormix_effect;
 			rval.early_out = early_out_mul_input2;
 			break;
 		case SEQ_TYPE_ALPHAOVER:

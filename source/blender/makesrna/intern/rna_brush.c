@@ -43,13 +43,13 @@
 
 #include "WM_types.h"
 
-static EnumPropertyItem prop_direction_items[] = {
+static const EnumPropertyItem prop_direction_items[] = {
 	{0, "ADD", 0, "Add", "Add effect of brush"},
 	{BRUSH_DIR_IN, "SUBTRACT", 0, "Subtract", "Subtract effect of brush"},
 	{0, NULL, 0, NULL, NULL}
 };
 
-static EnumPropertyItem sculpt_stroke_method_items[] = {
+static const EnumPropertyItem sculpt_stroke_method_items[] = {
 	{0, "DOTS", 0, "Dots", "Apply paint on each mouse move step"},
 	{BRUSH_DRAG_DOT, "DRAG_DOT", 0, "Drag Dot", "Allows a single dot to be carefully positioned"},
 	{BRUSH_SPACE, "SPACE", 0, "Space", "Limit brush application to the distance specified by spacing"},
@@ -62,7 +62,7 @@ static EnumPropertyItem sculpt_stroke_method_items[] = {
 };
 
 
-EnumPropertyItem rna_enum_brush_sculpt_tool_items[] = {
+const EnumPropertyItem rna_enum_brush_sculpt_tool_items[] = {
 	{SCULPT_TOOL_BLOB, "BLOB", ICON_BRUSH_BLOB, "Blob", ""},
 	{SCULPT_TOOL_CLAY, "CLAY", ICON_BRUSH_CLAY, "Clay", ""},
 	{SCULPT_TOOL_CLAY_STRIPS, "CLAY_STRIPS", ICON_BRUSH_CLAY_STRIPS, "Clay Strips", ""},
@@ -86,7 +86,7 @@ EnumPropertyItem rna_enum_brush_sculpt_tool_items[] = {
 };
 
 
-EnumPropertyItem rna_enum_brush_vertex_tool_items[] = {
+const EnumPropertyItem rna_enum_brush_vertex_tool_items[] = {
 	{PAINT_BLEND_MIX, "MIX", ICON_BRUSH_MIX, "Mix", "Use mix blending mode while painting"},
 	{PAINT_BLEND_ADD, "ADD", ICON_BRUSH_ADD, "Add", "Use add blending mode while painting"},
 	{PAINT_BLEND_SUB, "SUB", ICON_BRUSH_SUBTRACT, "Subtract", "Use subtract blending mode while painting"},
@@ -94,10 +94,25 @@ EnumPropertyItem rna_enum_brush_vertex_tool_items[] = {
 	{PAINT_BLEND_BLUR, "BLUR", ICON_BRUSH_BLUR, "Blur", "Blur the color with surrounding values"},
 	{PAINT_BLEND_LIGHTEN, "LIGHTEN", ICON_BRUSH_LIGHTEN, "Lighten", "Use lighten blending mode while painting"},
 	{PAINT_BLEND_DARKEN, "DARKEN", ICON_BRUSH_DARKEN, "Darken", "Use darken blending mode while painting"},
+	{PAINT_BLEND_AVERAGE, "AVERAGE", ICON_BRUSH_BLUR, "Average", "Use average blending mode while painting"},
+	{PAINT_BLEND_SMEAR, "SMEAR", ICON_BRUSH_BLUR, "Smear", "Use smear blending mode while painting"},
+	{PAINT_BLEND_COLORDODGE, "COLORDODGE", ICON_BRUSH_BLUR, "Color Dodge", "Use color dodge blending mode while painting" },
+	{PAINT_BLEND_DIFFERENCE, "DIFFERENCE", ICON_BRUSH_BLUR, "Difference", "Use difference blending mode while painting"},
+	{PAINT_BLEND_SCREEN, "SCREEN", ICON_BRUSH_BLUR, "Screen", "Use screen blending mode while painting"},
+	{PAINT_BLEND_HARDLIGHT, "HARDLIGHT", ICON_BRUSH_BLUR, "Hardlight", "Use hardlight blending mode while painting"},
+	{PAINT_BLEND_OVERLAY, "OVERLAY", ICON_BRUSH_BLUR, "Overlay", "Use overlay blending mode while painting"},
+	{PAINT_BLEND_SOFTLIGHT, "SOFTLIGHT", ICON_BRUSH_BLUR, "Softlight", "Use softlight blending mode while painting"},
+	{PAINT_BLEND_EXCLUSION, "EXCLUSION", ICON_BRUSH_BLUR, "Exclusion", "Use exclusion blending mode while painting"},
+	{PAINT_BLEND_LUMINOCITY, "LUMINOCITY", ICON_BRUSH_BLUR, "Luminocity", "Use luminocity blending mode while painting"},
+	{PAINT_BLEND_SATURATION, "SATURATION", ICON_BRUSH_BLUR, "Saturation", "Use saturation blending mode while painting"},
+	{PAINT_BLEND_HUE, "HUE", ICON_BRUSH_BLUR, "Hue", "Use hue blending mode while painting"},
+	{PAINT_BLEND_ALPHA_SUB, "ERASE_ALPHA", 0, "Erase Alpha", "Erase alpha while painting"},
+	{PAINT_BLEND_ALPHA_ADD, "ADD_ALPHA", 0, "Add Alpha", "Add alpha while painting"},
+
 	{0, NULL, 0, NULL, NULL}
 };
 	
-EnumPropertyItem rna_enum_brush_image_tool_items[] = {
+const EnumPropertyItem rna_enum_brush_image_tool_items[] = {
 	{PAINT_TOOL_DRAW, "DRAW", ICON_BRUSH_TEXDRAW, "Draw", ""},
 	{PAINT_TOOL_SOFTEN, "SOFTEN", ICON_BRUSH_SOFTEN, "Soften", ""},
 	{PAINT_TOOL_SMEAR, "SMEAR", ICON_BRUSH_SMEAR, "Smear", ""},
@@ -223,11 +238,7 @@ static int rna_SculptToolCapabilities_has_sculpt_plane_get(PointerRNA *ptr)
 static int rna_SculptToolCapabilities_has_secondary_color_get(PointerRNA *ptr)
 {
 	Brush *br = (Brush *)ptr->data;
-	return ELEM(br->sculpt_tool,
-	            SCULPT_TOOL_BLOB, SCULPT_TOOL_CLAY, SCULPT_TOOL_CLAY_STRIPS,
-	            SCULPT_TOOL_CREASE, SCULPT_TOOL_DRAW, SCULPT_TOOL_FILL,
-	            SCULPT_TOOL_FLATTEN, SCULPT_TOOL_INFLATE, SCULPT_TOOL_PINCH,
-	            SCULPT_TOOL_SCRAPE);
+	return BKE_brush_sculpt_has_secondary_color(br);
 }
 
 static int rna_SculptToolCapabilities_has_smooth_stroke_get(PointerRNA *ptr)
@@ -466,48 +477,48 @@ static void rna_Brush_set_unprojected_radius(PointerRNA *ptr, float value)
 	brush->unprojected_radius = value;
 }
 
-static EnumPropertyItem *rna_Brush_direction_itemf(bContext *C, PointerRNA *ptr,
+static const EnumPropertyItem *rna_Brush_direction_itemf(bContext *C, PointerRNA *ptr,
                                                    PropertyRNA *UNUSED(prop), bool *UNUSED(r_free))
 {
-	PaintMode mode = BKE_paintmode_get_active_from_context(C);
+	ePaintMode mode = BKE_paintmode_get_active_from_context(C);
 
-	static EnumPropertyItem prop_default_items[] = {
+	static const EnumPropertyItem prop_default_items[] = {
 		{0, NULL, 0, NULL, NULL}
 	};
 
 	/* sculpt mode */
-	static EnumPropertyItem prop_flatten_contrast_items[] = {
+	static const EnumPropertyItem prop_flatten_contrast_items[] = {
 		{0, "FLATTEN", 0, "Flatten", "Add effect of brush"},
 		{BRUSH_DIR_IN, "CONTRAST", 0, "Contrast", "Subtract effect of brush"},
 		{0, NULL, 0, NULL, NULL}
 	};
 
-	static EnumPropertyItem prop_fill_deepen_items[] = {
+	static const EnumPropertyItem prop_fill_deepen_items[] = {
 		{0, "FILL", 0, "Fill", "Add effect of brush"},
 		{BRUSH_DIR_IN, "DEEPEN", 0, "Deepen", "Subtract effect of brush"},
 		{0, NULL, 0, NULL, NULL}
 	};
 
-	static EnumPropertyItem prop_scrape_peaks_items[] = {
+	static const EnumPropertyItem prop_scrape_peaks_items[] = {
 		{0, "SCRAPE", 0, "Scrape", "Add effect of brush"},
 		{BRUSH_DIR_IN, "PEAKS", 0, "Peaks", "Subtract effect of brush"},
 		{0, NULL, 0, NULL, NULL}
 	};
 
-	static EnumPropertyItem prop_pinch_magnify_items[] = {
+	static const EnumPropertyItem prop_pinch_magnify_items[] = {
 		{0, "PINCH", 0, "Pinch", "Add effect of brush"},
 		{BRUSH_DIR_IN, "MAGNIFY", 0, "Magnify", "Subtract effect of brush"},
 		{0, NULL, 0, NULL, NULL}
 	};
 
-	static EnumPropertyItem prop_inflate_deflate_items[] = {
+	static const EnumPropertyItem prop_inflate_deflate_items[] = {
 		{0, "INFLATE", 0, "Inflate", "Add effect of brush"},
 		{BRUSH_DIR_IN, "DEFLATE", 0, "Deflate", "Subtract effect of brush"},
 		{0, NULL, 0, NULL, NULL}
 	};
 
 	/* texture paint mode */
-	static EnumPropertyItem prop_soften_sharpen_items[] = {
+	static const EnumPropertyItem prop_soften_sharpen_items[] = {
 		{0, "SOFTEN", 0, "Soften", "Blur effect of brush"},
 		{BRUSH_DIR_IN, "SHARPEN", 0, "Sharpen", "Sharpen effect of brush"},
 		{0, NULL, 0, NULL, NULL}
@@ -572,12 +583,12 @@ static EnumPropertyItem *rna_Brush_direction_itemf(bContext *C, PointerRNA *ptr,
 	}
 }
 
-static EnumPropertyItem *rna_Brush_stroke_itemf(bContext *C, PointerRNA *UNUSED(ptr),
+static const EnumPropertyItem *rna_Brush_stroke_itemf(bContext *C, PointerRNA *UNUSED(ptr),
                                                 PropertyRNA *UNUSED(prop), bool *UNUSED(r_free))
 {
-	PaintMode mode = BKE_paintmode_get_active_from_context(C);
+	ePaintMode mode = BKE_paintmode_get_active_from_context(C);
 
-	static EnumPropertyItem brush_stroke_method_items[] = {
+	static const EnumPropertyItem brush_stroke_method_items[] = {
 		{0, "DOTS", 0, "Dots", "Apply paint on each mouse move step"},
 		{BRUSH_SPACE, "SPACE", 0, "Space", "Limit brush application to the distance specified by spacing"},
 		{BRUSH_AIRBRUSH, "AIRBRUSH", 0, "Airbrush", "Keep applying paint effect while holding mouse (spray)"},
@@ -603,7 +614,7 @@ static void rna_def_brush_texture_slot(BlenderRNA *brna)
 	StructRNA *srna;
 	PropertyRNA *prop;
 
-	static EnumPropertyItem prop_map_mode_items[] = {
+	static const EnumPropertyItem prop_map_mode_items[] = {
 		{MTEX_MAP_MODE_VIEW, "VIEW_PLANE", 0, "View Plane", ""},
 		{MTEX_MAP_MODE_AREA, "AREA_PLANE", 0, "Area Plane", ""},
 		{MTEX_MAP_MODE_TILED, "TILED", 0, "Tiled", ""},
@@ -613,7 +624,7 @@ static void rna_def_brush_texture_slot(BlenderRNA *brna)
 		{0, NULL, 0, NULL, NULL}
 	};
 
-	static EnumPropertyItem prop_tex_paint_map_mode_items[] = {
+	static const EnumPropertyItem prop_tex_paint_map_mode_items[] = {
 		{MTEX_MAP_MODE_VIEW, "VIEW_PLANE", 0, "View Plane", ""},
 		{MTEX_MAP_MODE_TILED, "TILED", 0, "Tiled", ""},
 		{MTEX_MAP_MODE_3D, "3D", 0, "3D", ""},
@@ -622,7 +633,7 @@ static void rna_def_brush_texture_slot(BlenderRNA *brna)
 		{0, NULL, 0, NULL, NULL}
 	};
 
-	static EnumPropertyItem prop_mask_paint_map_mode_items[] = {
+	static const EnumPropertyItem prop_mask_paint_map_mode_items[] = {
 		{MTEX_MAP_MODE_VIEW, "VIEW_PLANE", 0, "View Plane", ""},
 		{MTEX_MAP_MODE_TILED, "TILED", 0, "Tiled", ""},
 		{MTEX_MAP_MODE_RANDOM, "RANDOM", 0, "Random", ""},
@@ -788,7 +799,7 @@ static void rna_def_brush(BlenderRNA *brna)
 	StructRNA *srna;
 	PropertyRNA *prop;
 	
-	static EnumPropertyItem prop_blend_items[] = {
+	static const EnumPropertyItem prop_blend_items[] = {
 		{IMB_BLEND_MIX, "MIX", 0, "Mix", "Use mix blending mode while painting"},
 		{IMB_BLEND_ADD, "ADD", 0, "Add", "Use add blending mode while painting"},
 		{IMB_BLEND_SUB, "SUB", 0, "Subtract", "Use subtract blending mode while painting"},
@@ -816,7 +827,7 @@ static void rna_def_brush(BlenderRNA *brna)
 		{0, NULL, 0, NULL, NULL}
 	};
 	
-	static EnumPropertyItem brush_sculpt_plane_items[] = {
+	static const EnumPropertyItem brush_sculpt_plane_items[] = {
 		{SCULPT_DISP_DIR_AREA, "AREA", 0, "Area Plane", ""},
 		{SCULPT_DISP_DIR_VIEW, "VIEW", 0, "View Plane", ""},
 		{SCULPT_DISP_DIR_X, "X", 0, "X Plane", ""},
@@ -825,32 +836,32 @@ static void rna_def_brush(BlenderRNA *brna)
 		{0, NULL, 0, NULL, NULL}
 	};
 
-	static EnumPropertyItem brush_mask_tool_items[] = {
+	static const EnumPropertyItem brush_mask_tool_items[] = {
 		{BRUSH_MASK_DRAW, "DRAW", 0, "Draw", ""},
 		{BRUSH_MASK_SMOOTH, "SMOOTH", 0, "Smooth", ""},
 		{0, NULL, 0, NULL, NULL}
 	};
 
-	static EnumPropertyItem brush_blur_mode_items[] = {
+	static const EnumPropertyItem brush_blur_mode_items[] = {
 		{KERNEL_BOX, "BOX", 0, "Box", ""},
 		{KERNEL_GAUSSIAN, "GAUSSIAN", 0, "Gaussian", ""},
 		{0, NULL, 0, NULL, NULL}
 	};
 
-	static EnumPropertyItem brush_gradient_items[] = {
+	static const EnumPropertyItem brush_gradient_items[] = {
 		{BRUSH_GRADIENT_PRESSURE, "PRESSURE", 0, "Pressure", ""},
 		{BRUSH_GRADIENT_SPACING_REPEAT, "SPACING_REPEAT", 0, "Repeat", ""},
 		{BRUSH_GRADIENT_SPACING_CLAMP, "SPACING_CLAMP", 0, "Clamp", ""},
 		{0, NULL, 0, NULL, NULL}
 	};
 
-	static EnumPropertyItem brush_gradient_fill_items[] = {
+	static const EnumPropertyItem brush_gradient_fill_items[] = {
 		{BRUSH_GRADIENT_LINEAR, "LINEAR", 0, "Linear", ""},
 		{BRUSH_GRADIENT_RADIAL, "RADIAL", 0, "Radial", ""},
 		{0, NULL, 0, NULL, NULL}
 	};
 
-	static EnumPropertyItem brush_mask_pressure_items[] = {
+	static const EnumPropertyItem brush_mask_pressure_items[] = {
 		{0, "NONE", 0, "Off", ""},
 		{BRUSH_MASK_PRESSURE_RAMP, "RAMP", ICON_STYLUS_PRESSURE, "Ramp", ""},
 		{BRUSH_MASK_PRESSURE_CUTOFF, "CUTOFF", ICON_STYLUS_PRESSURE, "Cutoff", ""},
@@ -1105,7 +1116,20 @@ static void rna_def_brush(BlenderRNA *brna)
 	RNA_def_property_ui_text(prop, "Blur Mode", "");
 	RNA_def_property_update(prop, 0, "rna_Brush_update");
 
+	prop = RNA_def_property(srna, "falloff_angle", PROP_FLOAT, PROP_ANGLE);
+	RNA_def_property_float_sdna(prop, NULL, "falloff_angle");
+	RNA_def_property_range(prop, 0, M_PI / 2);
+	RNA_def_property_ui_text(prop, "Falloff Angle",
+	                         "Paint most on faces pointing towards the view according to this angle");
+	RNA_def_property_update(prop, 0, "rna_Brush_update");
+
 	/* flag */
+	/* This is an enum but its unlikely we add other shapes, so expose as a boolean. */
+	prop = RNA_def_property(srna, "use_projected", PROP_BOOLEAN, PROP_NONE);
+	RNA_def_property_boolean_sdna(prop, NULL, "falloff_shape", BRUSH_AIRBRUSH);
+	RNA_def_property_ui_text(prop, "2D Falloff", "Apply brush influence in 2D circle instead of a sphere");
+	RNA_def_property_update(prop, 0, "rna_Brush_update");
+
 	prop = RNA_def_property(srna, "use_airbrush", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_sdna(prop, NULL, "flag", BRUSH_AIRBRUSH);
 	RNA_def_property_ui_text(prop, "Airbrush", "Keep applying paint effect while holding mouse (spray)");
@@ -1182,6 +1206,11 @@ static void rna_def_brush(BlenderRNA *brna)
 	RNA_def_property_ui_text(prop, "Use Front-Face", "Brush only affects vertexes that face the viewer");
 	RNA_def_property_update(prop, 0, "rna_Brush_update");
 
+	prop = RNA_def_property(srna, "use_frontface_falloff", PROP_BOOLEAN, PROP_NONE);
+	RNA_def_property_boolean_sdna(prop, NULL, "flag", BRUSH_FRONTFACE_FALLOFF);
+	RNA_def_property_ui_text(prop, "Use Front-Face Falloff", "Blend brush influence by how much they face the front");
+	RNA_def_property_update(prop, 0, "rna_Brush_update");
+
 	prop = RNA_def_property(srna, "use_anchor", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_sdna(prop, NULL, "flag", BRUSH_ANCHORED);
 	RNA_def_property_ui_text(prop, "Anchored", "Keep the brush anchored to the initial location");
@@ -1248,7 +1277,7 @@ static void rna_def_brush(BlenderRNA *brna)
 	RNA_def_property_ui_text(prop, "Restore Mesh", "Allow a single dot to be carefully positioned");
 	RNA_def_property_update(prop, 0, "rna_Brush_update");
 
-	/* only for projection paint, TODO, other paint modes */
+	/* only for projection paint & vertex paint, TODO, other paint modes */
 	prop = RNA_def_property(srna, "use_alpha", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_negative_sdna(prop, NULL, "flag", BRUSH_LOCK_ALPHA);
 	RNA_def_property_ui_text(prop, "Alpha", "When this is disabled, lock alpha while painting");

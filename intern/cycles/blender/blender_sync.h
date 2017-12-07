@@ -54,8 +54,7 @@ public:
 	            BL::Scene& b_scene,
 	            Scene *scene,
 	            bool preview,
-	            Progress &progress,
-	            bool is_cpu);
+	            Progress &progress);
 	~BlenderSync();
 
 	/* sync */
@@ -83,8 +82,7 @@ public:
 
 	/* get parameters */
 	static SceneParams get_scene_params(BL::Scene& b_scene,
-	                                    bool background,
-	                                    bool is_cpu);
+	                                    bool background);
 	static SessionParams get_session_params(BL::RenderEngine& b_engine,
 	                                        BL::UserPreferences& b_userpref,
 	                                        BL::Scene& b_scene,
@@ -133,6 +131,7 @@ private:
 	void sync_light(BL::Object& b_parent,
 	                int persistent_id[OBJECT_PERSISTENT_ID_SIZE],
 	                BL::Object& b_ob,
+	                BL::DupliObject& b_dupli_ob,
 	                Transform& tfm,
 	                bool *use_portal);
 	void sync_background_light(bool use_portal);
@@ -177,7 +176,6 @@ private:
 	Scene *scene;
 	bool preview;
 	bool experimental;
-	bool is_cpu;
 
 	float dicing_rate;
 	int max_subdivisions;

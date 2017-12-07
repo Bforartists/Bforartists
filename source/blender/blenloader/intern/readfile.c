@@ -872,7 +872,7 @@ BHead *blo_nextbhead(FileData *fd, BHead *thisblock)
 	return(bhead);
 }
 
-/* Warning! Caller's responsability to ensure given bhead **is** and ID one! */
+/* Warning! Caller's responsibility to ensure given bhead **is** and ID one! */
 const char *bhead_id_name(const FileData *fd, const BHead *bhead)
 {
 	return (const char *)POINTER_OFFSET(bhead, sizeof(*bhead) + fd->id_name_offs);
@@ -2441,13 +2441,14 @@ static void lib_link_fcurves(FileData *fd, ID *id, ListBase *list)
 
 
 /* NOTE: this assumes that link_list has already been called on the list */
-static void direct_link_fmodifiers(FileData *fd, ListBase *list)
+static void direct_link_fmodifiers(FileData *fd, ListBase *list, FCurve *curve)
 {
 	FModifier *fcm;
 	
 	for (fcm = list->first; fcm; fcm = fcm->next) {
 		/* relink general data */
 		fcm->data  = newdataadr(fd, fcm->data);
+		fcm->curve = curve;
 		
 		/* do relinking of data for specific types */
 		switch (fcm->type) {
@@ -2537,7 +2538,7 @@ static void direct_link_fcurves(FileData *fd, ListBase *list)
 		
 		/* modifiers */
 		link_list(fd, &fcu->modifiers);
-		direct_link_fmodifiers(fd, &fcu->modifiers);
+		direct_link_fmodifiers(fd, &fcu->modifiers, fcu);
 	}
 }
 
@@ -2642,7 +2643,7 @@ static void direct_link_nladata_strips(FileData *fd, ListBase *list)
 		
 		/* strip's F-Modifiers */
 		link_list(fd, &strip->modifiers);
-		direct_link_fmodifiers(fd, &strip->modifiers);
+		direct_link_fmodifiers(fd, &strip->modifiers, NULL);
 	}
 }
 
@@ -6003,16 +6004,6 @@ static void direct_link_scene(FileData *fd, Scene *sce)
 		sce->toolsettings->particle.scene = NULL;
 		sce->toolsettings->particle.object = NULL;
 		sce->toolsettings->gp_sculpt.paintcursor = NULL;
-
-		/* in rare cases this is needed, see [#33806] */
-		if (sce->toolsettings->vpaint) {
-			sce->toolsettings->vpaint->vpaint_prev = NULL;
-			sce->toolsettings->vpaint->tot = 0;
-		}
-		if (sce->toolsettings->wpaint) {
-			sce->toolsettings->wpaint->wpaint_prev = NULL;
-			sce->toolsettings->wpaint->tot = 0;
-		}
 		
 		/* relink grease pencil drawing brushes */
 		link_list(fd, &sce->toolsettings->gp_brushes);
@@ -6161,11 +6152,6 @@ static void direct_link_scene(FileData *fd, Scene *sce)
 	if (sce->r.avicodecdata) {
 		sce->r.avicodecdata->lpFormat = newdataadr(fd, sce->r.avicodecdata->lpFormat);
 		sce->r.avicodecdata->lpParms = newdataadr(fd, sce->r.avicodecdata->lpParms);
-	}
-	
-	sce->r.qtcodecdata = newdataadr(fd, sce->r.qtcodecdata);
-	if (sce->r.qtcodecdata) {
-		sce->r.qtcodecdata->cdParms = newdataadr(fd, sce->r.qtcodecdata->cdParms);
 	}
 	if (sce->r.ffcodecdata.properties) {
 		sce->r.ffcodecdata.properties = newdataadr(fd, sce->r.ffcodecdata.properties);
@@ -7312,7 +7298,7 @@ static bool direct_link_screen(FileData *fd, bScreen *sc)
 				sseq->scopes.sep_waveform_ibuf = NULL;
 				sseq->scopes.vector_ibuf = NULL;
 				sseq->scopes.histogram_ibuf = NULL;
-
+				sseq->compositor = NULL;
 			}
 			else if (sl->spacetype == SPACE_BUTS) {
 				SpaceButs *sbuts = (SpaceButs *)sl;

@@ -168,10 +168,6 @@ elseif(APPLE AND NOT WITH_X11)
 		)
 	endif()
 
-	if(WITH_CODEC_QUICKTIME)
-		add_definitions(-DWITH_QUICKTIME)
-	endif()
-
 elseif(WITH_X11)
 	list(APPEND INC_SYS
 		${X11_X11_INCLUDE_PATH}
@@ -220,6 +216,13 @@ elseif(WITH_X11)
 		add_definitions(-DWITH_X11_XF86VMODE)
 		list(APPEND INC_SYS
 			${X11_xf86vmode_INCLUDE_PATH}
+		)
+	endif()
+
+	if(WITH_X11_XFIXES)
+		add_definitions(-DWITH_X11_XFIXES)
+		list(APPEND INC_SYS
+			${X11_Xfixes_INCLUDE_PATH}
 		)
 	endif()
 

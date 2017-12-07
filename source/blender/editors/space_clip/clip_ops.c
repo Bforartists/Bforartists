@@ -56,6 +56,7 @@
 
 #include "BKE_context.h"
 #include "BKE_global.h"
+#include "BKE_depsgraph.h"
 #include "BKE_report.h"
 #include "BKE_library.h"
 #include "BKE_main.h"
@@ -247,6 +248,7 @@ static int open_exec(bContext *C, wmOperator *op)
 
 	WM_event_add_notifier(C, NC_MOVIECLIP | NA_ADDED, clip);
 
+	DAG_relations_tag_update(bmain);
 	MEM_freeN(op->customdata);
 
 	return OPERATOR_FINISHED;
@@ -941,7 +943,7 @@ static int frame_from_event(bContext *C, const wmEvent *event)
 
 		UI_view2d_region_to_view(&ar->v2d, event->mval[0], event->mval[1], &viewx, &viewy);
 
-		framenr = iroundf(viewx);
+		framenr = round_fl_to_int(viewx);
 	}
 
 	return framenr;

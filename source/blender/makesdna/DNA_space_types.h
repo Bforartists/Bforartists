@@ -512,6 +512,9 @@ typedef struct SpaceSeq {
 
 	char multiview_eye;				/* multiview current eye - for internal use */
 	char pad2[7];
+
+	struct GPUFX *compositor;
+	void *pad3;
 } SpaceSeq;
 
 
@@ -664,7 +667,7 @@ typedef struct FSMenuEntry {
 } FSMenuEntry;
 
 /* FileSelectParams.display */
-enum FileDisplayTypeE {
+enum eFileDisplayType {
 	FILE_DEFAULTDISPLAY = 0,
 	FILE_SHORTDISPLAY = 1,
 	FILE_LONGDISPLAY = 2,
@@ -672,7 +675,7 @@ enum FileDisplayTypeE {
 };
 
 /* FileSelectParams.sort */
-enum FileSortTypeE {
+enum eFileSortType {
 	FILE_SORT_NONE = 0,
 	FILE_SORT_ALPHA = 1,
 	FILE_SORT_EXTENSION = 2,

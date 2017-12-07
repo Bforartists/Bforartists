@@ -27,12 +27,12 @@
  *  \ingroup bmesh
  */
 
-struct EdgeHash;
 struct Heap;
 
 #include "BLI_compiler_attrs.h"
 
 void  BM_mesh_calc_tessellation(BMesh *bm, BMLoop *(*looptris)[3], int *r_looptris_tot);
+void  BM_mesh_calc_tessellation_beauty(BMesh *bm, BMLoop *(*looptris)[3], int *r_looptris_tot);
 
 void  BM_face_calc_tessellation(
         const BMFace *f, const bool use_fixed_quad,
@@ -56,6 +56,8 @@ void  BM_face_calc_center_mean_vcos(
         const BMesh *bm, const BMFace *f, float r_cent[3],
         float const (*vertexCos)[3]) ATTR_NONNULL();
 void  BM_face_calc_center_mean_weighted(const BMFace *f, float center[3]) ATTR_NONNULL();
+
+void BM_face_calc_bounds_expand(const BMFace *f, float min[3], float max[3]);
 
 void  BM_face_normal_update(BMFace *f) ATTR_NONNULL();
 
@@ -82,7 +84,7 @@ void  BM_face_triangulate(
         const int quad_method, const int ngon_method,
         const bool use_tag,
         struct MemArena *pf_arena,
-        struct Heap *pf_heap, struct EdgeHash *pf_ehash
+        struct Heap *pf_heap
         ) ATTR_NONNULL(1, 2);
 
 void  BM_face_splits_check_legal(BMesh *bm, BMFace *f, BMLoop *(*loops)[2], int len) ATTR_NONNULL();

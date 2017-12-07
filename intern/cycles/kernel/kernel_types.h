@@ -34,7 +34,7 @@
 
 CCL_NAMESPACE_BEGIN
 
-/* constants */
+/* Constants */
 #define OBJECT_SIZE 		12
 #define OBJECT_VECTOR_SIZE	6
 #define LIGHT_SIZE		11
@@ -46,6 +46,7 @@ CCL_NAMESPACE_BEGIN
 
 #define BSSRDF_MIN_RADIUS			1e-8f
 #define BSSRDF_MAX_HITS				4
+#define LOCAL_MAX_HITS				4
 
 #define BECKMANN_TABLE_SIZE		256
 
@@ -56,6 +57,7 @@ CCL_NAMESPACE_BEGIN
 
 #define VOLUME_STACK_SIZE		16
 
+/* Split kernel constants */
 #define WORK_POOL_SIZE_GPU 64
 #define WORK_POOL_SIZE_CPU 1
 #ifdef __KERNEL_GPU__
@@ -76,7 +78,7 @@ CCL_NAMESPACE_BEGIN
 #endif
 
 
-/* device capabilities */
+/* Device capabilities */
 #ifdef __KERNEL_CPU__
 #  ifdef __KERNEL_SSE2__
 #    define __QBVH__
@@ -161,7 +163,7 @@ CCL_NAMESPACE_BEGIN
 
 #endif  /* __KERNEL_OPENCL__ */
 
-/* kernel features */
+/* Kernel features */
 #define __SOBOL__
 #define __INSTANCING__
 #define __DPDU__
@@ -175,8 +177,8 @@ CCL_NAMESPACE_BEGIN
 #define __CLAMP_SAMPLE__
 #define __PATCH_EVAL__
 #define __SHADOW_TRICKS__
-
 #define __DENOISING_FEATURES__
+#define __SHADER_RAYTRACE__
 
 #ifdef __KERNEL_SHADING__
 #  define __SVM__
@@ -197,10 +199,6 @@ CCL_NAMESPACE_BEGIN
 #  define __OBJECT_MOTION__
 #  define __HAIR__
 #  define __BAKING__
-#endif
-
-#ifdef WITH_CYCLES_DEBUG
-#  define __KERNEL_DEBUG__
 #endif
 
 /* Scene-based selective features compilation. */
@@ -240,6 +238,18 @@ CCL_NAMESPACE_BEGIN
 #endif
 #ifdef __NO_DENOISING__
 #  undef __DENOISING_FEATURES__
+#endif
+#ifdef __NO_SHADER_RAYTRACE__
+#  undef __SHADER_RAYTRACE__
+#endif
+
+/* Features that enable others */
+#ifdef WITH_CYCLES_DEBUG
+#  define __KERNEL_DEBUG__
+#endif
+
+#if defined(__SUBSURFACE__) || defined(__SHADER_RAYTRACE__)
+#  define __BVH_LOCAL__
 #endif
 
 /* Shader Evaluation */
@@ -281,31 +291,24 @@ enum PathTraceDimension {
 	PRNG_FILTER_V = 1,
 	PRNG_LENS_U = 2,
 	PRNG_LENS_V = 3,
-#ifdef __CAMERA_MOTION__
 	PRNG_TIME = 4,
 	PRNG_UNUSED_0 = 5,
 	PRNG_UNUSED_1 = 6,	/* for some reason (6, 7) is a bad sobol pattern */
 	PRNG_UNUSED_2 = 7,  /* with a low number of samples (< 64) */
-#endif
-	PRNG_BASE_NUM = 8,
+	PRNG_BASE_NUM = 10,
 
 	PRNG_BSDF_U = 0,
 	PRNG_BSDF_V = 1,
-	PRNG_BSDF = 2,
-	PRNG_LIGHT = 3,
-	PRNG_LIGHT_U = 4,
-	PRNG_LIGHT_V = 5,
-	PRNG_LIGHT_TERMINATE = 6,
-	PRNG_TERMINATE = 7,
+	PRNG_LIGHT_U = 2,
+	PRNG_LIGHT_V = 3,
+	PRNG_LIGHT_TERMINATE = 4,
+	PRNG_TERMINATE = 5,
+	PRNG_PHASE_CHANNEL = 6,
+	PRNG_SCATTER_DISTANCE = 7,
+	PRNG_BOUNCE_NUM = 8,
 
-#ifdef __VOLUME__
-	PRNG_PHASE_U = 8,
-	PRNG_PHASE_V = 9,
-	PRNG_PHASE = 10,
-	PRNG_SCATTER_DISTANCE = 11,
-#endif
-
-	PRNG_BOUNCE_NUM = 12,
+	PRNG_BEVEL_U = 6, /* reuse volume dimension, correlation won't harm */
+	PRNG_BEVEL_V = 7,
 };
 
 enum SamplingPattern {
@@ -365,43 +368,59 @@ typedef enum ClosureLabel {
 
 /* Render Passes */
 
+#define PASS_NAME_JOIN(a, b) a ## _ ## b
+#define PASSMASK(pass) (1 << ((PASS_NAME_JOIN(PASS, pass)) % 32))
+
+#define PASSMASK_COMPONENT(comp) (PASSMASK(PASS_NAME_JOIN(comp, DIRECT)) |   \
+                                  PASSMASK(PASS_NAME_JOIN(comp, INDIRECT)) | \
+                                  PASSMASK(PASS_NAME_JOIN(comp, COLOR)))
+
 typedef enum PassType {
 	PASS_NONE = 0,
-	PASS_COMBINED = (1 << 0),
-	PASS_DEPTH = (1 << 1),
-	PASS_NORMAL = (1 << 2),
-	PASS_UV = (1 << 3),
-	PASS_OBJECT_ID = (1 << 4),
-	PASS_MATERIAL_ID = (1 << 5),
-	PASS_DIFFUSE_COLOR = (1 << 6),
-	PASS_GLOSSY_COLOR = (1 << 7),
-	PASS_TRANSMISSION_COLOR = (1 << 8),
-	PASS_DIFFUSE_INDIRECT = (1 << 9),
-	PASS_GLOSSY_INDIRECT = (1 << 10),
-	PASS_TRANSMISSION_INDIRECT = (1 << 11),
-	PASS_DIFFUSE_DIRECT = (1 << 12),
-	PASS_GLOSSY_DIRECT = (1 << 13),
-	PASS_TRANSMISSION_DIRECT = (1 << 14),
-	PASS_EMISSION = (1 << 15),
-	PASS_BACKGROUND = (1 << 16),
-	PASS_AO = (1 << 17),
-	PASS_SHADOW = (1 << 18),
-	PASS_MOTION = (1 << 19),
-	PASS_MOTION_WEIGHT = (1 << 20),
-	PASS_MIST = (1 << 21),
-	PASS_SUBSURFACE_DIRECT = (1 << 22),
-	PASS_SUBSURFACE_INDIRECT = (1 << 23),
-	PASS_SUBSURFACE_COLOR = (1 << 24),
-	PASS_LIGHT = (1 << 25), /* no real pass, used to force use_light_pass */
+
+	/* Main passes */
+	PASS_COMBINED = 1,
+	PASS_DEPTH,
+	PASS_NORMAL,
+	PASS_UV,
+	PASS_OBJECT_ID,
+	PASS_MATERIAL_ID,
+	PASS_MOTION,
+	PASS_MOTION_WEIGHT,
 #ifdef __KERNEL_DEBUG__
-	PASS_BVH_TRAVERSED_NODES = (1 << 26),
-	PASS_BVH_TRAVERSED_INSTANCES = (1 << 27),
-	PASS_BVH_INTERSECTIONS = (1 << 28),
-	PASS_RAY_BOUNCES = (1 << 29),
+	PASS_BVH_TRAVERSED_NODES,
+	PASS_BVH_TRAVERSED_INSTANCES,
+	PASS_BVH_INTERSECTIONS,
+	PASS_RAY_BOUNCES,
 #endif
+	PASS_RENDER_TIME,
+	PASS_CATEGORY_MAIN_END = 31,
+
+	PASS_MIST = 32,
+	PASS_EMISSION,
+	PASS_BACKGROUND,
+	PASS_AO,
+	PASS_SHADOW,
+	PASS_LIGHT, /* no real pass, used to force use_light_pass */
+	PASS_DIFFUSE_DIRECT,
+	PASS_DIFFUSE_INDIRECT,
+	PASS_DIFFUSE_COLOR,
+	PASS_GLOSSY_DIRECT,
+	PASS_GLOSSY_INDIRECT,
+	PASS_GLOSSY_COLOR,
+	PASS_TRANSMISSION_DIRECT,
+	PASS_TRANSMISSION_INDIRECT,
+	PASS_TRANSMISSION_COLOR,
+	PASS_SUBSURFACE_DIRECT,
+	PASS_SUBSURFACE_INDIRECT,
+	PASS_SUBSURFACE_COLOR,
+	PASS_VOLUME_DIRECT,
+	PASS_VOLUME_INDIRECT,
+	/* No Scatter color since it's tricky to define what it would even mean. */
+	PASS_CATEGORY_LIGHT_END = 63,
 } PassType;
 
-#define PASS_ALL (~0)
+#define PASS_ANY (~0)
 
 typedef enum DenoisingPassOffsets {
 	DENOISING_PASS_NORMAL             = 0,
@@ -419,7 +438,7 @@ typedef enum DenoisingPassOffsets {
 	DENOISING_PASS_SIZE_CLEAN         = 3,
 } DenoisingPassOffsets;
 
-typedef enum BakePassFilter {
+typedef enum eBakePassFilter {
 	BAKE_FILTER_NONE = 0,
 	BAKE_FILTER_DIRECT = (1 << 0),
 	BAKE_FILTER_INDIRECT = (1 << 1),
@@ -430,7 +449,7 @@ typedef enum BakePassFilter {
 	BAKE_FILTER_SUBSURFACE = (1 << 6),
 	BAKE_FILTER_EMISSION = (1 << 7),
 	BAKE_FILTER_AO = (1 << 8),
-} BakePassFilter;
+} eBakePassFilter;
 
 typedef enum BakePassFilterCombos {
 	BAKE_FILTER_COMBINED = (
@@ -476,6 +495,18 @@ typedef struct DebugData {
 } DebugData;
 #endif
 
+typedef ccl_addr_space struct PathRadianceState {
+#ifdef __PASSES__
+	float3 diffuse;
+	float3 glossy;
+	float3 transmission;
+	float3 subsurface;
+	float3 scatter;
+
+	float3 direct;
+#endif
+} PathRadianceState;
+
 typedef ccl_addr_space struct PathRadiance {
 #ifdef __PASSES__
 	int use_light_pass;
@@ -488,14 +519,12 @@ typedef ccl_addr_space struct PathRadiance {
 	float3 ao;
 
 	float3 indirect;
-	float3 direct_throughput;
 	float3 direct_emission;
 
 	float3 color_diffuse;
 	float3 color_glossy;
 	float3 color_transmission;
 	float3 color_subsurface;
-	float3 color_scatter;
 
 	float3 direct_diffuse;
 	float3 direct_glossy;
@@ -509,15 +538,11 @@ typedef ccl_addr_space struct PathRadiance {
 	float3 indirect_subsurface;
 	float3 indirect_scatter;
 
-	float3 path_diffuse;
-	float3 path_glossy;
-	float3 path_transmission;
-	float3 path_subsurface;
-	float3 path_scatter;
-
 	float4 shadow;
 	float mist;
 #endif
+
+	struct PathRadianceState state;
 
 #ifdef __SHADOW_TRICKS__
 	/* Total light reachable across the path, ignoring shadow blocked queries. */
@@ -535,11 +560,13 @@ typedef ccl_addr_space struct PathRadiance {
 	/* Path radiance sum and throughput at the moment when ray hits shadow
 	 * catcher object.
 	 */
-	float3 shadow_radiance_sum;
 	float shadow_throughput;
 
 	/* Accumulated transparency along the path after shadow catcher bounce. */
 	float shadow_transparency;
+
+	/* Indicate if any shadow catcher data is set. */
+	int has_shadow_catcher;
 #endif
 
 #ifdef __DENOISING_FEATURES__
@@ -770,10 +797,14 @@ typedef struct AttributeDescriptor {
 /* Closure data */
 
 #ifdef __MULTI_CLOSURE__
-#  ifndef __MAX_CLOSURE__
-#     define MAX_CLOSURE 64
+#  ifdef __SPLIT_KERNEL__
+#    define MAX_CLOSURE 1
 #  else
-#    define MAX_CLOSURE __MAX_CLOSURE__
+#    ifndef __MAX_CLOSURE__
+#       define MAX_CLOSURE 64
+#    else
+#      define MAX_CLOSURE __MAX_CLOSURE__
+#    endif
 #  endif
 #else
 #  define MAX_CLOSURE 1
@@ -813,7 +844,7 @@ enum ShaderDataFlag {
 
 	/* Set when ray hits backside of surface. */
 	SD_BACKFACING      = (1 << 0),
-	/* Shader has emissive closure. */
+	/* Shader has non-zero emission. */
 	SD_EMISSION        = (1 << 1),
 	/* Shader has BSDF closure. */
 	SD_BSDF            = (1 << 2),
@@ -823,8 +854,8 @@ enum ShaderDataFlag {
 	SD_BSSRDF          = (1 << 4),
 	/* Shader has holdout closure. */
 	SD_HOLDOUT         = (1 << 5),
-	/* Shader has volume absorption closure. */
-	SD_ABSORPTION      = (1 << 6),
+	/* Shader has non-zero volume extinction. */
+	SD_EXTINCTION      = (1 << 6),
 	/* Shader has have volume phase (scatter) closure. */
 	SD_SCATTER         = (1 << 7),
 	/* Shader has AO closure. */
@@ -839,7 +870,7 @@ enum ShaderDataFlag {
 	                    SD_BSDF_HAS_EVAL |
 	                    SD_BSSRDF |
 	                    SD_HOLDOUT |
-	                    SD_ABSORPTION |
+	                    SD_EXTINCTION |
 	                    SD_SCATTER |
 	                    SD_AO |
 	                    SD_BSDF_NEEDS_LCG),
@@ -941,6 +972,8 @@ typedef ccl_addr_space struct ShaderData {
 	float v;
 	/* object id if there is one, ~0 otherwise */
 	int object;
+	/* lamp id if there is one, ~0 otherwise */
+	int lamp;
 
 	/* motion blur sample time */
 	float time;
@@ -971,16 +1004,6 @@ typedef ccl_addr_space struct ShaderData {
 	Transform ob_itfm;
 #endif
 
-	/* Closure data, we store a fixed array of closures */
-	struct ShaderClosure closure[MAX_CLOSURE];
-	int num_closure;
-	int num_closure_extra;
-	float randb_closure;
-	float3 svm_closure_weight;
-
-	/* LCG state for closures that require additional random numbers. */
-	uint lcg_state;
-
 	/* ray start position, only set for backgrounds */
 	float3 ray_P;
 	differential3 ray_dP;
@@ -989,7 +1012,29 @@ typedef ccl_addr_space struct ShaderData {
 	struct KernelGlobals *osl_globals;
 	struct PathState *osl_path_state;
 #endif
+
+	/* LCG state for closures that require additional random numbers. */
+	uint lcg_state;
+
+	/* Closure data, we store a fixed array of closures */
+	int num_closure;
+	int num_closure_left;
+	float randb_closure;
+	float3 svm_closure_weight;
+
+	/* Closure weights summed directly, so we can evaluate
+	 * emission and shadow transparency with MAX_CLOSURE 0. */
+	float3 closure_emission_background;
+	float3 closure_transparent_extinction;
+
+	/* At the end so we can adjust size in ShaderDataTinyStorage. */
+	struct ShaderClosure closure[MAX_CLOSURE];
 } ShaderData;
+
+typedef ccl_addr_space struct ShaderDataTinyStorage {
+	char pad[sizeof(ShaderData) - sizeof(ShaderClosure) * MAX_CLOSURE];
+} ShaderDataTinyStorage;
+#define AS_SHADER_DATA(shader_data_tiny_storage) ((ShaderData*)shader_data_tiny_storage)
 
 /* Path State */
 
@@ -1006,9 +1051,10 @@ typedef struct PathState {
 
 	/* random number generator state */
 	uint rng_hash;          /* per pixel hash */
-	int rng_offset;    		/* dimension offset */
-	int sample;        		/* path sample number */
-	int num_samples;		/* total number of times this path will be sampled */
+	int rng_offset;         /* dimension offset */
+	int sample;             /* path sample number */
+	int num_samples;        /* total number of times this path will be sampled */
+	float branch_factor;    /* number of branches in indirect paths */
 
 	/* bounce counting */
 	int bounce;
@@ -1036,32 +1082,29 @@ typedef struct PathState {
 #endif
 } PathState;
 
-/* Subsurface */
-
-/* Struct to gather multiple SSS hits. */
-typedef struct SubsurfaceIntersection
-{
+/* Struct to gather multiple nearby intersections. */
+typedef struct LocalIntersection {
 	Ray ray;
-	float3 weight[BSSRDF_MAX_HITS];
+	float3 weight[LOCAL_MAX_HITS];
 
 	int num_hits;
-	struct Intersection hits[BSSRDF_MAX_HITS];
-	float3 Ng[BSSRDF_MAX_HITS];
-} SubsurfaceIntersection;
+	struct Intersection hits[LOCAL_MAX_HITS];
+	float3 Ng[LOCAL_MAX_HITS];
+} LocalIntersection;
+
+/* Subsurface */
 
 /* Struct to gather SSS indirect rays and delay tracing them. */
-typedef struct SubsurfaceIndirectRays
-{
-	bool need_update_volume_stack;
-	bool tracing;
+typedef struct SubsurfaceIndirectRays {
 	PathState state[BSSRDF_MAX_HITS];
-	struct PathRadiance direct_L;
 
 	int num_rays;
+
 	struct Ray rays[BSSRDF_MAX_HITS];
 	float3 throughputs[BSSRDF_MAX_HITS];
-	struct PathRadiance L[BSSRDF_MAX_HITS];
+	struct PathRadianceState L_state[BSSRDF_MAX_HITS];
 } SubsurfaceIndirectRays;
+static_assert(BSSRDF_MAX_HITS <= LOCAL_MAX_HITS, "BSSRDF hits too high.");
 
 /* Constant Kernel Data
  *
@@ -1151,6 +1194,7 @@ static_assert_align(KernelCamera, 16);
 typedef struct KernelFilm {
 	float exposure;
 	int pass_flag;
+	int light_pass_flag;
 	int pass_stride;
 	int use_light_pass;
 
@@ -1173,11 +1217,13 @@ typedef struct KernelFilm {
 	int pass_glossy_indirect;
 	int pass_transmission_indirect;
 	int pass_subsurface_indirect;
+	int pass_volume_indirect;
 	
 	int pass_diffuse_direct;
 	int pass_glossy_direct;
 	int pass_transmission_direct;
 	int pass_subsurface_direct;
+	int pass_volume_direct;
 	
 	int pass_emission;
 	int pass_background;
@@ -1187,7 +1233,6 @@ typedef struct KernelFilm {
 	int pass_shadow;
 	float pass_shadow_scale;
 	int filter_table_offset;
-	int pass_pad2;
 
 	int pass_mist;
 	float mist_start;
@@ -1197,7 +1242,8 @@ typedef struct KernelFilm {
 	int pass_denoising_data;
 	int pass_denoising_clean;
 	int denoising_flags;
-	int pad;
+
+	int pad1, pad2, pad3;
 
 #ifdef __KERNEL_DEBUG__
 	int pass_bvh_traversed_nodes;
@@ -1218,7 +1264,8 @@ typedef struct KernelBackground {
 	/* ambient occlusion */
 	float ao_factor;
 	float ao_distance;
-	float ao_pad1, ao_pad2;
+	float ao_bounces_factor;
+	float ao_pad;
 } KernelBackground;
 static_assert_align(KernelBackground, 16);
 
@@ -1230,8 +1277,8 @@ typedef struct KernelIntegrator {
 	int num_all_lights;
 	float pdf_triangles;
 	float pdf_lights;
-	float inv_pdf_lights;
 	int pdf_background_res;
+	float light_inv_rr_threshold;
 
 	/* light portals */
 	float portal_pdf;
@@ -1266,6 +1313,7 @@ typedef struct KernelIntegrator {
 
 	/* branched path */
 	int branched;
+	int volume_decoupled;
 	int diffuse_samples;
 	int glossy_samples;
 	int transmission_samples;
@@ -1288,23 +1336,21 @@ typedef struct KernelIntegrator {
 	float volume_step_size;
 	int volume_samples;
 
-	float light_inv_rr_threshold;
-
 	int start_sample;
-	int pad1;
+
+	int max_closures;
 } KernelIntegrator;
 static_assert_align(KernelIntegrator, 16);
 
 typedef struct KernelBVH {
 	/* root node */
 	int root;
-	int attributes_map_stride;
 	int have_motion;
 	int have_curves;
 	int have_instancing;
 	int use_qbvh;
 	int use_bvh_steps;
-	int pad1;
+	int pad1, pad2;
 } KernelBVH;
 static_assert_align(KernelBVH, 16);
 
@@ -1451,6 +1497,20 @@ enum RayState {
 #define PATCH_MAP_NODE_IS_SET (1 << 30)
 #define PATCH_MAP_NODE_IS_LEAF (1u << 31)
 #define PATCH_MAP_NODE_INDEX_MASK (~(PATCH_MAP_NODE_IS_SET | PATCH_MAP_NODE_IS_LEAF))
+
+/* Work Tiles */
+
+typedef struct WorkTile {
+	uint x, y, w, h;
+
+	uint start_sample;
+	uint num_samples;
+
+	uint offset;
+	uint stride;
+
+	ccl_global float *buffer;
+} WorkTile;
 
 CCL_NAMESPACE_END
 

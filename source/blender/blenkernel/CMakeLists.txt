@@ -49,6 +49,7 @@ set(INC
 	../../../intern/smoke/extern
 	../../../intern/atomic
 	../../../intern/libmv
+	../../../extern/curve_fit_nd
 )
 
 set(INC_SYS
@@ -91,6 +92,7 @@ set(SRC
 	intern/context.c
 	intern/crazyspace.c
 	intern/curve.c
+	intern/curve_decimate.c
 	intern/customdata.c
 	intern/customdata_file.c
 	intern/data_transfer.c
@@ -290,7 +292,6 @@ set(SRC
 	BKE_texture.h
 	BKE_tracking.h
 	BKE_unit.h
-	BKE_utildefines.h
 	BKE_world.h
 	BKE_writeavi.h
 	BKE_writeframeserver.h
@@ -383,16 +384,6 @@ if(WITH_CODEC_AVI)
 		../avi
 	)
 	add_definitions(-DWITH_AVI)
-endif()
-
-if(WITH_CODEC_QUICKTIME)
-	list(APPEND INC
-		../quicktime
-	)
-	list(APPEND INC_SYS
-		${QUICKTIME_INCLUDE_DIRS}
-	)
-	add_definitions(-DWITH_QUICKTIME)
 endif()
 
 if(WITH_CODEC_FFMPEG)

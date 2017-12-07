@@ -883,6 +883,8 @@ void BKE_texture_copy_data(Main *bmain, Tex *tex_dst, const Tex *tex_src, const 
 		if (tex_src->nodetree->execdata) {
 			ntreeTexEndExecTree(tex_src->nodetree->execdata);
 		}
+		/* Note: nodetree is *not* in bmain, however this specific case is handled at lower level
+		 *       (see BKE_libblock_copy_ex()). */
 		BKE_id_copy_ex(bmain, (ID *)tex_src->nodetree, (ID **)&tex_dst->nodetree, flag, false);
 	}
 
@@ -1163,6 +1165,10 @@ void set_current_material_texture(Material *ma, Tex *newtex)
 				ma->mtex[act] = BKE_texture_mtex_add();
 				/* Reset this slot's ON/OFF toggle, for materials, when slot was empty. */
 				ma->septex &= ~(1 << act);
+				/* For volumes the default UV texture coordinates are not available. */
+				if (ma->material_type == MA_TYPE_VOLUME) {
+					ma->mtex[act]->texco = TEXCO_ORCO;
+				}
 			}
 			
 			ma->mtex[act]->tex = newtex;
