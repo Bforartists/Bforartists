@@ -29,7 +29,10 @@
 #endif
 
 #ifdef __KERNEL_OPENCL__
-#  include "kernel/kernel_image_opencl.h"
+#  include "kernel/kernels/opencl/kernel_opencl_image.h"
+#endif
+#ifdef __KERNEL_CUDA__
+#  include "kernel/kernels/cuda/kernel_cuda_image.h"
 #endif
 #ifdef __KERNEL_CPU__
 #  include "kernel/kernels/cpu/kernel_cpu_image.h"
@@ -63,7 +66,7 @@ ccl_device_inline void kernel_split_path_end(KernelGlobals *kg, int ray_index)
 		PathRadiance *orig_ray_L = &kernel_split_state.path_radiance[orig_ray];
 
 		path_radiance_sum_indirect(L);
-		path_radiance_accum_sample(orig_ray_L, L, 1);
+		path_radiance_accum_sample(orig_ray_L, L);
 
 		atomic_fetch_and_dec_uint32((ccl_global uint*)&kernel_split_state.branched_state[orig_ray].shared_sample_count);
 

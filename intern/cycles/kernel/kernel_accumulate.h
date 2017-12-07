@@ -181,14 +181,12 @@ ccl_device_inline void path_radiance_init(PathRadiance *L, int use_light_pass)
 
 	if(use_light_pass) {
 		L->indirect = make_float3(0.0f, 0.0f, 0.0f);
-		L->direct_throughput = make_float3(0.0f, 0.0f, 0.0f);
 		L->direct_emission = make_float3(0.0f, 0.0f, 0.0f);
 
 		L->color_diffuse = make_float3(0.0f, 0.0f, 0.0f);
 		L->color_glossy = make_float3(0.0f, 0.0f, 0.0f);
 		L->color_transmission = make_float3(0.0f, 0.0f, 0.0f);
 		L->color_subsurface = make_float3(0.0f, 0.0f, 0.0f);
-		L->color_scatter = make_float3(0.0f, 0.0f, 0.0f);
 
 		L->direct_diffuse = make_float3(0.0f, 0.0f, 0.0f);
 		L->direct_glossy = make_float3(0.0f, 0.0f, 0.0f);
@@ -202,18 +200,19 @@ ccl_device_inline void path_radiance_init(PathRadiance *L, int use_light_pass)
 		L->indirect_subsurface = make_float3(0.0f, 0.0f, 0.0f);
 		L->indirect_scatter = make_float3(0.0f, 0.0f, 0.0f);
 
-		L->path_diffuse = make_float3(0.0f, 0.0f, 0.0f);
-		L->path_glossy = make_float3(0.0f, 0.0f, 0.0f);
-		L->path_transmission = make_float3(0.0f, 0.0f, 0.0f);
-		L->path_subsurface = make_float3(0.0f, 0.0f, 0.0f);
-		L->path_scatter = make_float3(0.0f, 0.0f, 0.0f);
-
 		L->transparent = 0.0f;
 		L->emission = make_float3(0.0f, 0.0f, 0.0f);
 		L->background = make_float3(0.0f, 0.0f, 0.0f);
 		L->ao = make_float3(0.0f, 0.0f, 0.0f);
 		L->shadow = make_float4(0.0f, 0.0f, 0.0f, 0.0f);
 		L->mist = 0.0f;
+
+		L->state.diffuse = make_float3(0.0f, 0.0f, 0.0f);
+		L->state.glossy = make_float3(0.0f, 0.0f, 0.0f);
+		L->state.transmission = make_float3(0.0f, 0.0f, 0.0f);
+		L->state.subsurface = make_float3(0.0f, 0.0f, 0.0f);
+		L->state.scatter = make_float3(0.0f, 0.0f, 0.0f);
+		L->state.direct = make_float3(0.0f, 0.0f, 0.0f);
 	}
 	else
 #endif
@@ -226,9 +225,9 @@ ccl_device_inline void path_radiance_init(PathRadiance *L, int use_light_pass)
 	L->path_total = make_float3(0.0f, 0.0f, 0.0f);
 	L->path_total_shaded = make_float3(0.0f, 0.0f, 0.0f);
 	L->shadow_background_color = make_float3(0.0f, 0.0f, 0.0f);
-	L->shadow_radiance_sum = make_float3(0.0f, 0.0f, 0.0f);
 	L->shadow_throughput = 0.0f;
 	L->shadow_transparency = 1.0f;
+	L->has_shadow_catcher = 0;
 #endif
 
 #ifdef __DENOISING_FEATURES__
@@ -245,26 +244,34 @@ ccl_device_inline void path_radiance_init(PathRadiance *L, int use_light_pass)
 #endif
 }
 
-ccl_device_inline void path_radiance_bsdf_bounce(PathRadiance *L, ccl_addr_space float3 *throughput,
-	BsdfEval *bsdf_eval, float bsdf_pdf, int bounce, int bsdf_label)
+ccl_device_inline void path_radiance_bsdf_bounce(
+	KernelGlobals *kg,
+	PathRadianceState *L_state,
+	ccl_addr_space float3 *throughput,
+	BsdfEval *bsdf_eval,
+	float bsdf_pdf, int bounce, int bsdf_label)
 {
 	float inverse_pdf = 1.0f/bsdf_pdf;
 
 #ifdef __PASSES__
-	if(L->use_light_pass) {
+	if(kernel_data.film.use_light_pass) {
 		if(bounce == 0 && !(bsdf_label & LABEL_TRANSPARENT)) {
 			/* first on directly visible surface */
 			float3 value = *throughput*inverse_pdf;
 
-			L->path_diffuse = bsdf_eval->diffuse*value;
-			L->path_glossy = bsdf_eval->glossy*value;
-			L->path_transmission = bsdf_eval->transmission*value;
-			L->path_subsurface = bsdf_eval->subsurface*value;
-			L->path_scatter = bsdf_eval->scatter*value;
+			L_state->diffuse = bsdf_eval->diffuse*value;
+			L_state->glossy = bsdf_eval->glossy*value;
+			L_state->transmission = bsdf_eval->transmission*value;
+			L_state->subsurface = bsdf_eval->subsurface*value;
+			L_state->scatter = bsdf_eval->scatter*value;
 
-			*throughput = L->path_diffuse + L->path_glossy + L->path_transmission + L->path_subsurface + L->path_scatter;
+			*throughput = L_state->diffuse +
+			              L_state->glossy +
+			              L_state->transmission +
+			              L_state->subsurface +
+			              L_state->scatter;
 			
-			L->direct_throughput = *throughput;
+			L_state->direct = *throughput;
 		}
 		else {
 			/* transparent bounce before first hit, or indirectly visible through BSDF */
@@ -279,13 +286,22 @@ ccl_device_inline void path_radiance_bsdf_bounce(PathRadiance *L, ccl_addr_space
 	}
 }
 
-ccl_device_inline void path_radiance_accum_emission(PathRadiance *L, float3 throughput, float3 value, int bounce)
+ccl_device_inline void path_radiance_accum_emission(PathRadiance *L,
+                                                    ccl_addr_space PathState *state,
+                                                    float3 throughput,
+                                                    float3 value)
 {
+#ifdef __SHADOW_TRICKS__
+	if(state->flag & PATH_RAY_SHADOW_CATCHER) {
+		return;
+	}
+#endif
+
 #ifdef __PASSES__
 	if(L->use_light_pass) {
-		if(bounce == 0)
+		if(state->bounce == 0)
 			L->emission += throughput*value;
-		else if(bounce == 1)
+		else if(state->bounce == 1)
 			L->direct_emission += throughput*value;
 		else
 			L->indirect += throughput*value;
@@ -304,6 +320,18 @@ ccl_device_inline void path_radiance_accum_ao(PathRadiance *L,
                                               float3 bsdf,
                                               float3 ao)
 {
+#ifdef __SHADOW_TRICKS__
+	if(state->flag & PATH_RAY_STORE_SHADOW_INFO) {
+		float3 light = throughput * bsdf;
+		L->path_total += light;
+		L->path_total_shaded += ao * light;
+
+		if(state->flag & PATH_RAY_SHADOW_CATCHER) {
+			return;
+		}
+	}
+#endif
+
 #ifdef __PASSES__
 	if(L->use_light_pass) {
 		if(state->bounce == 0) {
@@ -321,14 +349,6 @@ ccl_device_inline void path_radiance_accum_ao(PathRadiance *L,
 	{
 		L->emission += throughput*bsdf*ao;
 	}
-
-#ifdef __SHADOW_TRICKS__
-	if(state->flag & PATH_RAY_STORE_SHADOW_INFO) {
-		float3 light = throughput * bsdf;
-		L->path_total += light;
-		L->path_total_shaded += ao * light;
-	}
-#endif
 }
 
 ccl_device_inline void path_radiance_accum_total_ao(
@@ -357,6 +377,18 @@ ccl_device_inline void path_radiance_accum_light(PathRadiance *L,
                                                  float shadow_fac,
                                                  bool is_lamp)
 {
+#ifdef __SHADOW_TRICKS__
+	if(state->flag & PATH_RAY_STORE_SHADOW_INFO) {
+		float3 light = throughput * bsdf_eval->sum_no_mis;
+		L->path_total += light;
+		L->path_total_shaded += shadow * light;
+
+		if(state->flag & PATH_RAY_SHADOW_CATCHER) {
+			return;
+		}
+	}
+#endif
+
 #ifdef __PASSES__
 	if(L->use_light_pass) {
 		if(state->bounce == 0) {
@@ -383,14 +415,6 @@ ccl_device_inline void path_radiance_accum_light(PathRadiance *L,
 	{
 		L->emission += throughput*bsdf_eval->diffuse*shadow;
 	}
-
-#ifdef __SHADOW_TRICKS__
-	if(state->flag & PATH_RAY_STORE_SHADOW_INFO) {
-		float3 light = throughput * bsdf_eval->sum_no_mis;
-		L->path_total += light;
-		L->path_total_shaded += shadow * light;
-	}
-#endif
 }
 
 ccl_device_inline void path_radiance_accum_total_light(
@@ -417,6 +441,18 @@ ccl_device_inline void path_radiance_accum_background(
         float3 throughput,
         float3 value)
 {
+
+#ifdef __SHADOW_TRICKS__
+	if(state->flag & PATH_RAY_STORE_SHADOW_INFO) {
+		L->path_total += throughput * value;
+		L->path_total_shaded += throughput * value * L->shadow_transparency;
+
+		if(state->flag & PATH_RAY_SHADOW_CATCHER) {
+			return;
+		}
+	}
+#endif
+
 #ifdef __PASSES__
 	if(L->use_light_pass) {
 		if(state->bounce == 0)
@@ -432,17 +468,30 @@ ccl_device_inline void path_radiance_accum_background(
 		L->emission += throughput*value;
 	}
 
-#ifdef __SHADOW_TRICKS__
-	if(state->flag & PATH_RAY_STORE_SHADOW_INFO) {
-		L->path_total += throughput * value;
-		L->path_total_shaded += throughput * value * L->shadow_transparency;
-	}
-#endif
-
 #ifdef __DENOISING_FEATURES__
 	L->denoising_albedo += state->denoising_feature_weight * value;
 #endif  /* __DENOISING_FEATURES__ */
 }
+
+ccl_device_inline void path_radiance_accum_transparent(
+        PathRadiance *L,
+        ccl_addr_space PathState *state,
+        float3 throughput)
+{
+	L->transparent += average(throughput);
+}
+
+#ifdef __SHADOW_TRICKS__
+ccl_device_inline void path_radiance_accum_shadowcatcher(
+        PathRadiance *L,
+        float3 throughput,
+        float3 background)
+{
+	L->shadow_throughput += average(throughput);
+	L->shadow_background_color += throughput * background;
+	L->has_shadow_catcher = 1;
+}
+#endif
 
 ccl_device_inline void path_radiance_sum_indirect(PathRadiance *L)
 {
@@ -451,19 +500,19 @@ ccl_device_inline void path_radiance_sum_indirect(PathRadiance *L)
 	 * only a single throughput further along the path, here we recover just
 	 * the indirect path that is not influenced by any particular BSDF type */
 	if(L->use_light_pass) {
-		L->direct_emission = safe_divide_color(L->direct_emission, L->direct_throughput);
-		L->direct_diffuse += L->path_diffuse*L->direct_emission;
-		L->direct_glossy += L->path_glossy*L->direct_emission;
-		L->direct_transmission += L->path_transmission*L->direct_emission;
-		L->direct_subsurface += L->path_subsurface*L->direct_emission;
-		L->direct_scatter += L->path_scatter*L->direct_emission;
+		L->direct_emission = safe_divide_color(L->direct_emission, L->state.direct);
+		L->direct_diffuse += L->state.diffuse*L->direct_emission;
+		L->direct_glossy += L->state.glossy*L->direct_emission;
+		L->direct_transmission += L->state.transmission*L->direct_emission;
+		L->direct_subsurface += L->state.subsurface*L->direct_emission;
+		L->direct_scatter += L->state.scatter*L->direct_emission;
 
-		L->indirect = safe_divide_color(L->indirect, L->direct_throughput);
-		L->indirect_diffuse += L->path_diffuse*L->indirect;
-		L->indirect_glossy += L->path_glossy*L->indirect;
-		L->indirect_transmission += L->path_transmission*L->indirect;
-		L->indirect_subsurface += L->path_subsurface*L->indirect;
-		L->indirect_scatter += L->path_scatter*L->indirect;
+		L->indirect = safe_divide_color(L->indirect, L->state.direct);
+		L->indirect_diffuse += L->state.diffuse*L->indirect;
+		L->indirect_glossy += L->state.glossy*L->indirect;
+		L->indirect_transmission += L->state.transmission*L->indirect;
+		L->indirect_subsurface += L->state.subsurface*L->indirect;
+		L->indirect_scatter += L->state.scatter*L->indirect;
 	}
 #endif
 }
@@ -472,11 +521,11 @@ ccl_device_inline void path_radiance_reset_indirect(PathRadiance *L)
 {
 #ifdef __PASSES__
 	if(L->use_light_pass) {
-		L->path_diffuse = make_float3(0.0f, 0.0f, 0.0f);
-		L->path_glossy = make_float3(0.0f, 0.0f, 0.0f);
-		L->path_transmission = make_float3(0.0f, 0.0f, 0.0f);
-		L->path_subsurface = make_float3(0.0f, 0.0f, 0.0f);
-		L->path_scatter = make_float3(0.0f, 0.0f, 0.0f);
+		L->state.diffuse = make_float3(0.0f, 0.0f, 0.0f);
+		L->state.glossy = make_float3(0.0f, 0.0f, 0.0f);
+		L->state.transmission = make_float3(0.0f, 0.0f, 0.0f);
+		L->state.subsurface = make_float3(0.0f, 0.0f, 0.0f);
+		L->state.scatter = make_float3(0.0f, 0.0f, 0.0f);
 
 		L->direct_emission = make_float3(0.0f, 0.0f, 0.0f);
 		L->indirect = make_float3(0.0f, 0.0f, 0.0f);
@@ -489,11 +538,7 @@ ccl_device_inline void path_radiance_copy_indirect(PathRadiance *L,
 {
 #ifdef __PASSES__
 	if(L->use_light_pass) {
-		L->path_diffuse = L_src->path_diffuse;
-		L->path_glossy = L_src->path_glossy;
-		L->path_transmission = L_src->path_transmission;
-		L->path_subsurface = L_src->path_subsurface;
-		L->path_scatter = L_src->path_scatter;
+		L->state = L_src->state;
 
 		L->direct_emission = L_src->direct_emission;
 		L->indirect = L_src->indirect;
@@ -501,7 +546,40 @@ ccl_device_inline void path_radiance_copy_indirect(PathRadiance *L,
 #endif
 }
 
-ccl_device_inline float3 path_radiance_clamp_and_sum(KernelGlobals *kg, PathRadiance *L)
+#ifdef __SHADOW_TRICKS__
+ccl_device_inline void path_radiance_sum_shadowcatcher(KernelGlobals *kg,
+                                                       PathRadiance *L,
+                                                       float3 *L_sum,
+                                                       float *alpha)
+{
+	/* Calculate current shadow of the path. */
+	float path_total = average(L->path_total);
+	float shadow;
+
+	if(UNLIKELY(!isfinite_safe(path_total))) {
+		kernel_assert(!"Non-finite total radiance along the path");
+		shadow = 0.0f;
+	}
+	else if(path_total == 0.0f) {
+		shadow = L->shadow_transparency;
+	}
+	else {
+		float path_total_shaded = average(L->path_total_shaded);
+		shadow = path_total_shaded / path_total;
+	}
+
+	/* Calculate final light sum and transparency for shadow catcher object. */
+	if(kernel_data.background.transparent) {
+		*alpha -= L->shadow_throughput * shadow;
+	}
+	else {
+		L->shadow_background_color *= shadow;
+		*L_sum += L->shadow_background_color;
+	}
+}
+#endif
+
+ccl_device_inline float3 path_radiance_clamp_and_sum(KernelGlobals *kg, PathRadiance *L, float *alpha)
 {
 	float3 L_sum;
 	/* Light Passes are used */
@@ -578,8 +656,6 @@ ccl_device_inline float3 path_radiance_clamp_and_sum(KernelGlobals *kg, PathRadi
 			L_sum = L_direct + L_indirect;
 		}
 #endif
-
-		return L_sum;
 	}
 
 	/* No Light Passes */
@@ -587,14 +663,24 @@ ccl_device_inline float3 path_radiance_clamp_and_sum(KernelGlobals *kg, PathRadi
 #endif
 	{
 		L_sum = L->emission;
+
+		/* Reject invalid value */
+		float sum = fabsf((L_sum).x) + fabsf((L_sum).y) + fabsf((L_sum).z);
+		if(!isfinite_safe(sum)) {
+			kernel_assert(!"Non-finite final sum in path_radiance_clamp_and_sum!");
+			L_sum = make_float3(0.0f, 0.0f, 0.0f);
+		}
 	}
 
-	/* Reject invalid value */
-	float sum = fabsf((L_sum).x) + fabsf((L_sum).y) + fabsf((L_sum).z);
-	if(!isfinite_safe(sum)) {
-		kernel_assert(!"Non-finite final sum in path_radiance_clamp_and_sum!");
-		L_sum = make_float3(0.0f, 0.0f, 0.0f);
+	/* Compute alpha. */
+	*alpha = 1.0f - L->transparent;
+
+	/* Add shadow catcher contributions. */
+#ifdef __SHADOW_TRICKS__
+	if(L->has_shadow_catcher) {
+		path_radiance_sum_shadowcatcher(kg, L, &L_sum, alpha);
 	}
+#endif  /* __SHADOW_TRICKS__ */
 
 	return L_sum;
 }
@@ -627,14 +713,18 @@ ccl_device_inline void path_radiance_split_denoising(KernelGlobals *kg, PathRadi
 	*clean = make_float3(0.0f, 0.0f, 0.0f);
 #endif
 
+#ifdef __SHADOW_TRICKS__
+	if(L->has_shadow_catcher) {
+		*noisy += L->shadow_background_color;
+	}
+#endif
+
 	*noisy = ensure_finite3(*noisy);
 	*clean = ensure_finite3(*clean);
 }
 
-ccl_device_inline void path_radiance_accum_sample(PathRadiance *L, PathRadiance *L_sample, int num_samples)
+ccl_device_inline void path_radiance_accum_sample(PathRadiance *L, PathRadiance *L_sample)
 {
-	float fac = 1.0f/num_samples;
-
 #ifdef __SPLIT_KERNEL__
 #  define safe_float3_add(f, v) \
 	do { \
@@ -643,66 +733,35 @@ ccl_device_inline void path_radiance_accum_sample(PathRadiance *L, PathRadiance 
 		atomic_add_and_fetch_float(p+1, (v).y); \
 		atomic_add_and_fetch_float(p+2, (v).z); \
 	} while(0)
+#  define safe_float_add(f, v) \
+		atomic_add_and_fetch_float(&(f), (v))
 #else
 #  define safe_float3_add(f, v) (f) += (v)
+#  define safe_float_add(f, v) (f) += (v)
 #endif  /* __SPLIT_KERNEL__ */
 
 #ifdef __PASSES__
-	safe_float3_add(L->direct_diffuse, L_sample->direct_diffuse*fac);
-	safe_float3_add(L->direct_glossy, L_sample->direct_glossy*fac);
-	safe_float3_add(L->direct_transmission, L_sample->direct_transmission*fac);
-	safe_float3_add(L->direct_subsurface, L_sample->direct_subsurface*fac);
-	safe_float3_add(L->direct_scatter, L_sample->direct_scatter*fac);
+	safe_float3_add(L->direct_diffuse, L_sample->direct_diffuse);
+	safe_float3_add(L->direct_glossy, L_sample->direct_glossy);
+	safe_float3_add(L->direct_transmission, L_sample->direct_transmission);
+	safe_float3_add(L->direct_subsurface, L_sample->direct_subsurface);
+	safe_float3_add(L->direct_scatter, L_sample->direct_scatter);
 
-	safe_float3_add(L->indirect_diffuse, L_sample->indirect_diffuse*fac);
-	safe_float3_add(L->indirect_glossy, L_sample->indirect_glossy*fac);
-	safe_float3_add(L->indirect_transmission, L_sample->indirect_transmission*fac);
-	safe_float3_add(L->indirect_subsurface, L_sample->indirect_subsurface*fac);
-	safe_float3_add(L->indirect_scatter, L_sample->indirect_scatter*fac);
+	safe_float3_add(L->indirect_diffuse, L_sample->indirect_diffuse);
+	safe_float3_add(L->indirect_glossy, L_sample->indirect_glossy);
+	safe_float3_add(L->indirect_transmission, L_sample->indirect_transmission);
+	safe_float3_add(L->indirect_subsurface, L_sample->indirect_subsurface);
+	safe_float3_add(L->indirect_scatter, L_sample->indirect_scatter);
 
-	safe_float3_add(L->background, L_sample->background*fac);
-	safe_float3_add(L->ao, L_sample->ao*fac);
-	safe_float3_add(L->shadow, L_sample->shadow*fac);
-#  ifdef __SPLIT_KERNEL__
-	atomic_add_and_fetch_float(&L->mist, L_sample->mist*fac);
-#  else
-	L->mist += L_sample->mist*fac;
-#  endif  /* __SPLIT_KERNEL__ */
+	safe_float3_add(L->background, L_sample->background);
+	safe_float3_add(L->ao, L_sample->ao);
+	safe_float3_add(L->shadow, L_sample->shadow);
+	safe_float_add(L->mist, L_sample->mist);
 #endif  /* __PASSES__ */
-	safe_float3_add(L->emission, L_sample->emission*fac);
+	safe_float3_add(L->emission, L_sample->emission);
 
+#undef safe_float_add
 #undef safe_float3_add
 }
-
-#ifdef __SHADOW_TRICKS__
-/* Calculate current shadow of the path. */
-ccl_device_inline float path_radiance_sum_shadow(const PathRadiance *L)
-{
-	float path_total = average(L->path_total);
-	float path_total_shaded = average(L->path_total_shaded);
-	if(path_total != 0.0f) {
-		return path_total_shaded / path_total;
-	}
-	return L->shadow_transparency;
-}
-
-/* Calculate final light sum and transparency for shadow catcher object. */
-ccl_device_inline float3 path_radiance_sum_shadowcatcher(KernelGlobals *kg,
-                                                         const PathRadiance *L,
-                                                         float* alpha)
-{
-	const float shadow = path_radiance_sum_shadow(L);
-	float3 L_sum;
-	if(kernel_data.background.transparent) {
-		*alpha = 1.0f - L->shadow_throughput * shadow;
-		L_sum = L->shadow_radiance_sum;
-	}
-	else {
-		L_sum = L->shadow_background_color * L->shadow_throughput * shadow +
-		        L->shadow_radiance_sum;
-	}
-	return L_sum;
-}
-#endif
 
 CCL_NAMESPACE_END

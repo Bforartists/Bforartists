@@ -125,17 +125,6 @@ void free_avicodecdata(AviCodecData *acd)
 	}
 }
 
-void free_qtcodecdata(QuicktimeCodecData *qcd)
-{
-	if (qcd) {
-		if (qcd->cdParms) {
-			MEM_freeN(qcd->cdParms);
-			qcd->cdParms = NULL;
-			qcd->cdSize = 0;
-		}
-	}
-}
-
 static void remove_sequencer_fcurves(Scene *sce)
 {
 	AnimData *adt = BKE_animdata_from_id(&sce->id);
@@ -191,6 +180,8 @@ void BKE_scene_copy_data(Main *bmain, Scene *sce_dst, const Scene *sce_src, cons
 	BKE_keyingsets_copy(&(sce_dst->keyingsets), &(sce_src->keyingsets));
 
 	if (sce_src->nodetree) {
+		/* Note: nodetree is *not* in bmain, however this specific case is handled at lower level
+		 *       (see BKE_libblock_copy_ex()). */
 		BKE_id_copy_ex(bmain, (ID *)sce_src->nodetree, (ID **)&sce_dst->nodetree, flag, false);
 		BKE_libblock_relink_ex(bmain, sce_dst->nodetree, (void *)(&sce_src->id), &sce_dst->id, false);
 	}
@@ -228,16 +219,10 @@ void BKE_scene_copy_data(Main *bmain, Scene *sce_dst, const Scene *sce_src, cons
 		ToolSettings *ts = sce_dst->toolsettings = MEM_dupallocN(sce_dst->toolsettings);
 		if (ts->vpaint) {
 			ts->vpaint = MEM_dupallocN(ts->vpaint);
-			ts->vpaint->paintcursor = NULL;
-			ts->vpaint->vpaint_prev = NULL;
-			ts->vpaint->wpaint_prev = NULL;
 			BKE_paint_copy(&ts->vpaint->paint, &ts->vpaint->paint, flag_subdata);
 		}
 		if (ts->wpaint) {
 			ts->wpaint = MEM_dupallocN(ts->wpaint);
-			ts->wpaint->paintcursor = NULL;
-			ts->wpaint->vpaint_prev = NULL;
-			ts->wpaint->wpaint_prev = NULL;
 			BKE_paint_copy(&ts->wpaint->paint, &ts->wpaint->paint, flag_subdata);
 		}
 		if (ts->sculpt) {
@@ -271,12 +256,6 @@ void BKE_scene_copy_data(Main *bmain, Scene *sce_dst, const Scene *sce_src, cons
 		sce_dst->r.avicodecdata = MEM_dupallocN(sce_src->r.avicodecdata);
 		sce_dst->r.avicodecdata->lpFormat = MEM_dupallocN(sce_dst->r.avicodecdata->lpFormat);
 		sce_dst->r.avicodecdata->lpParms = MEM_dupallocN(sce_dst->r.avicodecdata->lpParms);
-	}
-
-	/* make a private copy of the qtcodecdata */
-	if (sce_src->r.qtcodecdata) {
-		sce_dst->r.qtcodecdata = MEM_dupallocN(sce_src->r.qtcodecdata);
-		sce_dst->r.qtcodecdata->cdParms = MEM_dupallocN(sce_dst->r.qtcodecdata->cdParms);
 	}
 
 	if (sce_src->r.ffcodecdata.properties) { /* intentionally check sce_dst not sce_src. */  /* XXX ??? comment outdated... */
@@ -313,7 +292,7 @@ Scene *BKE_scene_copy(Main *bmain, Scene *sce, int type)
 		ListBase rl, rv;
 
 		sce_copy = BKE_scene_add(bmain, sce->id.name + 2);
-		
+
 		rl = sce_copy->r.layers;
 		rv = sce_copy->r.views;
 		curvemapping_free_data(&sce_copy->r.mblur_shutter_curve);
@@ -352,16 +331,10 @@ Scene *BKE_scene_copy(Main *bmain, Scene *sce, int type)
 		if (ts) {
 			if (ts->vpaint) {
 				ts->vpaint = MEM_dupallocN(ts->vpaint);
-				ts->vpaint->paintcursor = NULL;
-				ts->vpaint->vpaint_prev = NULL;
-				ts->vpaint->wpaint_prev = NULL;
 				BKE_paint_copy(&ts->vpaint->paint, &ts->vpaint->paint, 0);
 			}
 			if (ts->wpaint) {
 				ts->wpaint = MEM_dupallocN(ts->wpaint);
-				ts->wpaint->paintcursor = NULL;
-				ts->wpaint->vpaint_prev = NULL;
-				ts->wpaint->wpaint_prev = NULL;
 				BKE_paint_copy(&ts->wpaint->paint, &ts->wpaint->paint, 0);
 			}
 			if (ts->sculpt) {
@@ -400,12 +373,6 @@ Scene *BKE_scene_copy(Main *bmain, Scene *sce, int type)
 			sce_copy->r.avicodecdata->lpParms = MEM_dupallocN(sce_copy->r.avicodecdata->lpParms);
 		}
 
-		/* make a private copy of the qtcodecdata */
-		if (sce->r.qtcodecdata) {
-			sce_copy->r.qtcodecdata = MEM_dupallocN(sce->r.qtcodecdata);
-			sce_copy->r.qtcodecdata->cdParms = MEM_dupallocN(sce_copy->r.qtcodecdata->cdParms);
-		}
-
 		if (sce->r.ffcodecdata.properties) { /* intentionally check scen not sce. */
 			sce_copy->r.ffcodecdata.properties = IDP_CopyProperty(sce->r.ffcodecdata.properties);
 		}
@@ -422,6 +389,8 @@ Scene *BKE_scene_copy(Main *bmain, Scene *sce, int type)
 	}
 	else {
 		BKE_id_copy_ex(bmain, (ID *)sce, (ID **)&sce_copy, LIB_ID_COPY_ACTIONS, false);
+		id_us_min(&sce_copy->id);
+		id_us_ensure_real(&sce_copy->id);
 
 		/* Extra actions, most notably SCE_FULL_COPY also duplicates several 'children' datablocks... */
 
@@ -511,11 +480,6 @@ void BKE_scene_free(Scene *sce)
 		free_avicodecdata(sce->r.avicodecdata);
 		MEM_freeN(sce->r.avicodecdata);
 		sce->r.avicodecdata = NULL;
-	}
-	if (sce->r.qtcodecdata) {
-		free_qtcodecdata(sce->r.qtcodecdata);
-		MEM_freeN(sce->r.qtcodecdata);
-		sce->r.qtcodecdata = NULL;
 	}
 	if (sce->r.ffcodecdata.properties) {
 		IDP_FreeProperty(sce->r.ffcodecdata.properties);
@@ -1940,8 +1904,6 @@ void BKE_scene_update_tagged(EvaluationContext *eval_ctx, Main *bmain, Scene *sc
 #endif
 	{
 		DEG_evaluate_on_refresh(eval_ctx, scene->depsgraph, scene);
-		/* TODO(sergey): This is to beocme a node in new depsgraph. */
-		BKE_mask_update_scene(bmain, scene);
 	}
 
 	/* update sound system animation (TODO, move to depsgraph) */
@@ -2058,10 +2020,9 @@ void BKE_scene_update_for_newframe_ex(EvaluationContext *eval_ctx, Main *bmain, 
 		/* Following 2 functions are recursive
 		 * so don't call within 'scene_update_tagged_recursive' */
 		DAG_scene_update_flags(bmain, sce, lay, true, do_invisible_flush);   // only stuff that moves or needs display still
+		BKE_mask_evaluate_all_masks(bmain, ctime, true);
 	}
 #endif
-
-	BKE_mask_evaluate_all_masks(bmain, ctime, true);
 
 	/* Update animated cache files for modifiers. */
 	BKE_cachefile_update_frame(bmain, sce, ctime, (((double)sce->r.frs_sec) / (double)sce->r.frs_sec_base));
@@ -2414,7 +2375,7 @@ int BKE_scene_num_threads(const Scene *scene)
 int BKE_render_preview_pixel_size(const RenderData *r)
 {
 	if (r->preview_pixel_size == 0) {
-		return (U.pixelsize > 1.5f)? 2 : 1;
+		return (U.pixelsize > 1.5f) ? 2 : 1;
 	}
 	return r->preview_pixel_size;
 }

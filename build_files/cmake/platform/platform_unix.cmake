@@ -358,7 +358,11 @@ if(WITH_OPENSUBDIV OR WITH_CYCLES_OPENSUBDIV)
 endif()
 
 # OpenSuse needs lutil, ArchLinux not, for now keep, can avoid by using --as-needed
-list(APPEND PLATFORM_LINKLIBS -lutil -lc -lm)
+if(HAIKU)
+	list(APPEND PLATFORM_LINKLIBS -lnetwork)
+else()
+	list(APPEND PLATFORM_LINKLIBS -lutil -lc -lm)
+endif()
 
 find_package(Threads REQUIRED)
 list(APPEND PLATFORM_LINKLIBS ${CMAKE_THREAD_LIBS_INIT})
@@ -400,10 +404,6 @@ if(CMAKE_COMPILER_IS_GNUCC)
 # CLang is the same as GCC for now.
 elseif(CMAKE_C_COMPILER_ID MATCHES "Clang")
 	set(PLATFORM_CFLAGS "-pipe -fPIC -funsigned-char -fno-strict-aliasing")
-# Solaris CC
-elseif(CMAKE_C_COMPILER_ID MATCHES "SunPro")
-	set(PLATFORM_CFLAGS "-pipe -features=extensions -fPIC -D__FUNCTION__=__func__")
-
 # Intel C++ Compiler
 elseif(CMAKE_C_COMPILER_ID MATCHES "Intel")
 	# think these next two are broken

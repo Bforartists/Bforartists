@@ -1203,7 +1203,6 @@ bool BKE_imtype_is_movie(const char imtype)
 	switch (imtype) {
 		case R_IMF_IMTYPE_AVIRAW:
 		case R_IMF_IMTYPE_AVIJPEG:
-		case R_IMF_IMTYPE_QUICKTIME:
 		case R_IMF_IMTYPE_FFMPEG:
 		case R_IMF_IMTYPE_H264:
 		case R_IMF_IMTYPE_THEORA:
@@ -1275,7 +1274,6 @@ char BKE_imtype_valid_channels(const char imtype, bool write_file)
 		case R_IMF_IMTYPE_MULTILAYER:
 		case R_IMF_IMTYPE_DDS:
 		case R_IMF_IMTYPE_JP2:
-		case R_IMF_IMTYPE_QUICKTIME:
 		case R_IMF_IMTYPE_DPX:
 			chan_flag |= IMA_CHAN_FLAG_ALPHA;
 			break;
@@ -1338,7 +1336,6 @@ char BKE_imtype_from_arg(const char *imtype_arg)
 	else if (STREQ(imtype_arg, "AVIRAW")) return R_IMF_IMTYPE_AVIRAW;
 	else if (STREQ(imtype_arg, "AVIJPEG")) return R_IMF_IMTYPE_AVIJPEG;
 	else if (STREQ(imtype_arg, "PNG")) return R_IMF_IMTYPE_PNG;
-	else if (STREQ(imtype_arg, "QUICKTIME")) return R_IMF_IMTYPE_QUICKTIME;
 	else if (STREQ(imtype_arg, "BMP")) return R_IMF_IMTYPE_BMP;
 #ifdef WITH_HDR
 	else if (STREQ(imtype_arg, "HDR")) return R_IMF_IMTYPE_RADHDR;
@@ -1449,7 +1446,7 @@ static bool do_add_image_extension(char *string, const char imtype, const ImageF
 		}
 	}
 #endif
-	else { //   R_IMF_IMTYPE_AVIRAW, R_IMF_IMTYPE_AVIJPEG, R_IMF_IMTYPE_JPEG90, R_IMF_IMTYPE_QUICKTIME etc
+	else { //   R_IMF_IMTYPE_AVIRAW, R_IMF_IMTYPE_AVIJPEG, R_IMF_IMTYPE_JPEG90 etc
 		if (!(BLI_testextensie_n(string, extension_test = ".jpg", ".jpeg", NULL)))
 			extension = extension_test;
 	}
@@ -1457,9 +1454,7 @@ static bool do_add_image_extension(char *string, const char imtype, const ImageF
 	if (extension) {
 		/* prefer this in many cases to avoid .png.tga, but in certain cases it breaks */
 		/* remove any other known image extension */
-		if (BLI_testextensie_array(string, imb_ext_image) ||
-		    (G.have_quicktime && BLI_testextensie_array(string, imb_ext_image_qt)))
-		{
+		if (BLI_testextensie_array(string, imb_ext_image)) {
 			return BLI_replace_extension(string, FILE_MAX, extension);
 		}
 		else {
@@ -1612,6 +1607,14 @@ void BKE_imbuf_to_image_format(struct ImageFormatData *im_format, const ImBuf *i
 #define STAMP_NAME_SIZE ((MAX_ID_NAME - 2) + 16)
 /* could allow access externally - 512 is for long names,
  * STAMP_NAME_SIZE is for id names, allowing them some room for description */
+typedef struct StampDataCustomField {
+	struct StampDataCustomField *next, *prev;
+	/* TODO(sergey): Think of better size here, maybe dynamically allocated even. */
+	char key[512];
+	char value[512];
+	/* TODO(sergey): Support non-string values. */
+} StampDataCustomField;
+
 typedef struct StampData {
 	char file[512];
 	char note[512];
@@ -1625,6 +1628,13 @@ typedef struct StampData {
 	char strip[STAMP_NAME_SIZE];
 	char rendertime[STAMP_NAME_SIZE];
 	char memory[STAMP_NAME_SIZE];
+
+	/* Custom fields are used to put extra meta information header from render
+	 * engine to the result image.
+	 *
+	 * NOTE: This fields are not stamped onto the image. At least for now.
+	 */
+	ListBase custom_fields;
 } StampData;
 #undef STAMP_NAME_SIZE
 
@@ -1735,7 +1745,7 @@ static void stampdata(Scene *scene, Object *camera, StampData *stamp_data, int d
 	}
 
 	{
-		Render *re = RE_GetRender(scene->id.name);
+		Render *re = RE_GetSceneRender(scene);
 		RenderStats *stats = re ? RE_GetStats(re) : NULL;
 
 		if (stats && (scene->r.stamp & R_STAMP_RENDERTIME)) {
@@ -2126,7 +2136,39 @@ void BKE_stamp_info_callback(void *data, struct StampData *stamp_data, StampCall
 	CALL(rendertime, "RenderTime");
 	CALL(memory, "Memory");
 
+	for (StampDataCustomField *custom_field = stamp_data->custom_fields.first;
+	     custom_field != NULL;
+	     custom_field = custom_field->next)
+	{
+		if (noskip || custom_field->value[0]) {
+			callback(data, custom_field->key, custom_field->value, sizeof(custom_field->value));
+		}
+	}
+
 #undef CALL
+}
+
+void BKE_render_result_stamp_data(RenderResult *rr, const char *key, const char *value)
+{
+	StampData *stamp_data;
+	if (rr->stamp_data == NULL) {
+		rr->stamp_data = MEM_callocN(sizeof(StampData), "RenderResult.stamp_data");
+	}
+	stamp_data = rr->stamp_data;
+	StampDataCustomField *field = MEM_mallocN(sizeof(StampDataCustomField),
+	                                          "StampData Custom Field");
+	BLI_strncpy(field->key, key, sizeof(field->key));
+	BLI_strncpy(field->value, value, sizeof(field->value));
+	BLI_addtail(&stamp_data->custom_fields, field);
+}
+
+void BKE_stamp_data_free(struct StampData *stamp_data)
+{
+	if (stamp_data == NULL) {
+		return;
+	}
+	BLI_freelistN(&stamp_data->custom_fields);
+	MEM_freeN(stamp_data);
 }
 
 /* wrap for callback only */
@@ -2826,7 +2868,7 @@ RenderPass *BKE_image_multilayer_index(RenderResult *rr, ImageUser *iuser)
 		bool is_stereo = (iuser->flag & IMA_SHOW_STEREO) && RE_RenderResult_is_stereo(rr);
 
 		rv_index = is_stereo ? iuser->multiview_eye : iuser->view;
-		if (RE_HasFakeLayer(rr)) rl_index += 1;
+		if (RE_HasCombinedLayer(rr)) rl_index += 1;
 
 		for (rl = rr->layers.first; rl; rl = rl->next, rl_index++) {
 			if (iuser->layer == rl_index) {
@@ -2882,7 +2924,8 @@ bool BKE_image_is_multilayer(Image *ima)
 
 bool BKE_image_is_multiview(Image *ima)
 {
-	return (BLI_listbase_count_ex(&ima->views, 2) > 1);
+	ImageView *view = ima->views.first;
+	return (view && (view->next || view->name[0]));
 }
 
 bool BKE_image_is_stereo(Image *ima)
@@ -2929,7 +2972,7 @@ RenderResult *BKE_image_acquire_renderresult(Scene *scene, Image *ima)
 	}
 	else if (ima->type == IMA_TYPE_R_RESULT) {
 		if (ima->render_slot == ima->last_render_slot)
-			rr = RE_AcquireResultRead(RE_GetRender(scene->id.name));
+			rr = RE_AcquireResultRead(RE_GetSceneRender(scene));
 		else
 			rr = ima->renders[ima->render_slot];
 
@@ -2947,7 +2990,7 @@ void BKE_image_release_renderresult(Scene *scene, Image *ima)
 	}
 	else if (ima->type == IMA_TYPE_R_RESULT) {
 		if (ima->render_slot == ima->last_render_slot)
-			RE_ReleaseResult(RE_GetRender(scene->id.name));
+			RE_ReleaseResult(RE_GetSceneRender(scene));
 	}
 }
 
@@ -2967,7 +3010,7 @@ void BKE_image_backup_render(Scene *scene, Image *ima, bool free_current_slot)
 {
 	/* called right before rendering, ima->renders contains render
 	 * result pointers for everything but the current render */
-	Render *re = RE_GetRender(scene->id.name);
+	Render *re = RE_GetSceneRender(scene);
 	int slot = ima->render_slot, last = ima->last_render_slot;
 
 	if (slot != last) {
@@ -2986,51 +3029,6 @@ void BKE_image_backup_render(Scene *scene, Image *ima, bool free_current_slot)
 	}
 
 	ima->last_render_slot = slot;
-}
-
-/**************************** multiview save openexr *********************************/
-#ifdef WITH_OPENEXR
-static const char *image_get_view_cb(void *base, const int view_id)
-{
-	Image *ima = base;
-	ImageView *iv = BLI_findlink(&ima->views, view_id);
-	return iv ? iv->name : "";
-}
-#endif  /* WITH_OPENEXR */
-
-#ifdef WITH_OPENEXR
-static ImBuf *image_get_buffer_cb(void *base, const int view_id)
-{
-	Image *ima = base;
-	ImageUser iuser = {0};
-
-	iuser.view = view_id;
-	iuser.ok = 1;
-
-	BKE_image_multiview_index(ima, &iuser);
-
-	return image_acquire_ibuf(ima, &iuser, NULL);
-}
-#endif  /* WITH_OPENEXR */
-
-bool BKE_image_save_openexr_multiview(Image *ima, ImBuf *ibuf, const char *filepath, const int flags)
-{
-#ifdef WITH_OPENEXR
-	char name[FILE_MAX];
-	bool ok;
-
-	BLI_strncpy(name, filepath, sizeof(name));
-	BLI_path_abs(name, G.main->name);
-
-	ibuf->userdata = ima;
-	ok = IMB_exr_multiview_save(ibuf, name, flags, BLI_listbase_count(&ima->views), image_get_view_cb, image_get_buffer_cb);
-	ibuf->userdata = NULL;
-
-	return ok;
-#else
-	UNUSED_VARS(ima, ibuf, filepath, flags);
-	return false;
-#endif
 }
 
 /**************************** multiview load openexr *********************************/
@@ -3064,51 +3062,6 @@ static void image_add_view(Image *ima, const char *viewname, const char *filepat
 		BLI_addtail(&ima->views, iv);
 	}
 }
-
-#ifdef WITH_OPENEXR
-static void image_add_view_cb(void *base, const char *str)
-{
-	Image *ima = base;
-	image_add_view(ima, str, ima->name);
-}
-
-static void image_add_buffer_cb(void *base, const char *str, ImBuf *ibuf, const int frame)
-{
-	Image *ima = base;
-	int id;
-	bool predivide = (ima->alpha_mode == IMA_ALPHA_PREMUL);
-	const char *colorspace = ima->colorspace_settings.name;
-	const char *to_colorspace = IMB_colormanagement_role_colorspace_name_get(COLOR_ROLE_SCENE_LINEAR);
-
-	if (ibuf == NULL)
-		return;
-
-	id = BLI_findstringindex(&ima->views, str, offsetof(ImageView, name));
-
-	if (id == -1)
-		return;
-
-	if (ibuf->channels >= 3)
-		IMB_colormanagement_transform(ibuf->rect_float, ibuf->x, ibuf->y, ibuf->channels,
-		                              colorspace, to_colorspace, predivide);
-
-	image_assign_ibuf(ima, ibuf, id, frame);
-	IMB_freeImBuf(ibuf);
-}
-#endif  /* WITH_OPENEXR */
-
-/* after imbuf load, openexr type can return with a exrhandle open */
-/* in that case we have to build a render-result */
-#ifdef WITH_OPENEXR
-static void image_create_multiview(Image *ima, ImBuf *ibuf, const int frame)
-{
-	BKE_image_free_views(ima);
-
-	IMB_exr_multiview_convert(ibuf->userdata, ima, image_add_view_cb, image_add_buffer_cb, frame);
-
-	IMB_exr_close(ibuf->userdata);
-}
-#endif  /* WITH_OPENEXR */
 
 /* after imbuf load, openexr type can return with a exrhandle open */
 /* in that case we have to build a render-result */
@@ -3221,16 +3174,10 @@ static ImBuf *load_sequence_single(Image *ima, ImageUser *iuser, int frame, cons
 
 	if (ibuf) {
 #ifdef WITH_OPENEXR
-		/* handle multilayer case, don't assign ibuf. will be handled in BKE_image_acquire_ibuf */
 		if (ibuf->ftype == IMB_FTYPE_OPENEXR && ibuf->userdata) {
-			/* handle singlelayer multiview case assign ibuf based on available views */
-			if (IMB_exr_has_singlelayer_multiview(ibuf->userdata)) {
-				image_create_multiview(ima, ibuf, frame);
-				IMB_freeImBuf(ibuf);
-				ibuf = NULL;
-			}
-			else if (IMB_exr_has_multilayer(ibuf->userdata)) {
-				/* handle multilayer case, don't assign ibuf. will be handled in BKE_image_acquire_ibuf */
+			/* Handle multilayer and multiview cases, don't assign ibuf here.
+			 * will be set layer in BKE_image_acquire_ibuf from ima->rr. */
+			if (IMB_exr_has_multilayer(ibuf->userdata)) {
 				image_create_multilayer(ima, ibuf, frame);
 				ima->type = IMA_TYPE_MULTILAYER;
 				IMB_freeImBuf(ibuf);
@@ -3519,14 +3466,9 @@ static ImBuf *load_image_single(
 	if (ibuf) {
 #ifdef WITH_OPENEXR
 		if (ibuf->ftype == IMB_FTYPE_OPENEXR && ibuf->userdata) {
-			if (IMB_exr_has_singlelayer_multiview(ibuf->userdata)) {
-				/* handle singlelayer multiview case assign ibuf based on available views */
-				image_create_multiview(ima, ibuf, cfra);
-				IMB_freeImBuf(ibuf);
-				ibuf = NULL;
-			}
-			else if (IMB_exr_has_multilayer(ibuf->userdata)) {
-				/* handle multilayer case, don't assign ibuf. will be handled in BKE_image_acquire_ibuf */
+			/* Handle multilayer and multiview cases, don't assign ibuf here.
+			 * will be set layer in BKE_image_acquire_ibuf from ima->rr. */
+			if (IMB_exr_has_multilayer(ibuf->userdata)) {
 				image_create_multilayer(ima, ibuf, cfra);
 				ima->type = IMA_TYPE_MULTILAYER;
 				IMB_freeImBuf(ibuf);
@@ -3692,7 +3634,7 @@ static ImBuf *image_get_render_result(Image *ima, ImageUser *iuser, void **r_loc
 	if (!r_lock)
 		return NULL;
 
-	re = RE_GetRender(iuser->scene->id.name);
+	re = RE_GetSceneRender(iuser->scene);
 
 	channels = 4;
 	layer = iuser->layer;
@@ -4366,7 +4308,7 @@ void BKE_image_update_frame(const Main *bmain, int cfra)
 
 void BKE_image_user_file_path(ImageUser *iuser, Image *ima, char *filepath)
 {
-	if (BKE_image_is_multiview(ima) && (ima->rr == NULL)) {
+	if (BKE_image_is_multiview(ima)) {
 		ImageView *iv = BLI_findlink(&ima->views, iuser->view);
 		if (iv->filepath[0])
 			BLI_strncpy(filepath, iv->filepath, FILE_MAX);

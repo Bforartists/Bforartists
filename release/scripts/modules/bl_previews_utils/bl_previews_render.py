@@ -24,7 +24,11 @@
 import os
 
 import bpy
-from mathutils import Vector, Euler, Matrix
+from mathutils import (
+    Euler,
+    Matrix,
+    Vector,
+)
 
 
 INTERN_PREVIEW_TYPES = {'MATERIAL', 'LAMP', 'WORLD', 'TEXTURE', 'IMAGE'}
@@ -39,7 +43,7 @@ def rna_backup_gen(data, include_props=None, exclude_props=None, root=()):
     # only writable properties...
     for p in data.bl_rna.properties:
         pid = p.identifier
-        if pid in {'rna_type', }:
+        if pid == "rna_type":
             continue
         path = root + (pid,)
         if include_props is not None and path not in include_props:
@@ -278,7 +282,7 @@ def do_previews(do_objects, do_groups, do_scenes, do_data_intern):
                 bbox[1].z = v.z
 
     def objects_bbox_calc(camera, objects, offset_matrix):
-        bbox = (Vector((1e9, 1e9, 1e9)), Vector((-1e9, -1e9, -1e9)))
+        bbox = (Vector((1e24, 1e24, 1e24)), Vector((-1e24, -1e24, -1e24)))
         for obname, libpath in objects:
             ob = bpy.data.objects[obname, libpath]
             object_bbox_merge(bbox, ob, camera, offset_matrix)
@@ -305,6 +309,17 @@ def do_previews(do_objects, do_groups, do_scenes, do_data_intern):
             cos = objects_bbox_calc(camera, objects, offset_matrix)
             loc, ortho_scale = camera.camera_fit_coords(scene, cos)
             camera.location = loc
+            # Set camera clipping accordingly to computed bbox.
+            min_dist = 1e24
+            max_dist = -1e24
+            for co in zip(*(iter(cos),) * 3):
+                dist = (Vector(co) - loc).length
+                if dist < min_dist:
+                    min_dist = dist
+                if dist > max_dist:
+                    max_dist = dist
+            camera.data.clip_start = min_dist / 2
+            camera.data.clip_end = max_dist * 2
             if lamp:
                 loc, ortho_scale = lamp.camera_fit_coords(scene, cos)
                 lamp.location = loc
