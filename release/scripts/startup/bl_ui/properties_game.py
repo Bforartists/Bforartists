@@ -75,7 +75,7 @@ class PHYSICS_PT_game_physics(PhysicsButtonsPanel, Panel):
             split = layout.split()
 
             col = split.column()
-            col.label(text="Attributest:")
+            col.label(text="Attributes:")
             col.prop(game, "mass")
             col.prop(game, "radius")
             col.prop(game, "form_factor")

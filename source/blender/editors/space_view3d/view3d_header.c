@@ -318,7 +318,7 @@ void uiTemplateHeader3D(uiLayout *layout, struct bContext *C)
 
 	row = uiLayoutRow(layout, false);
 	{
-		EnumPropertyItem *item = rna_enum_object_mode_items;
+		const EnumPropertyItem *item = rna_enum_object_mode_items;
 		const char *name = "";
 		int icon = ICON_OBJECT_DATAMODE;
 
@@ -350,7 +350,7 @@ void uiTemplateHeader3D(uiLayout *layout, struct bContext *C)
 			PointerRNA meshptr;
 
 			RNA_pointer_create(ob->data, &RNA_Mesh, ob->data, &meshptr);
-			if (ob->mode & (OB_MODE_TEXTURE_PAINT | OB_MODE_VERTEX_PAINT)) {
+			if (ob->mode & (OB_MODE_TEXTURE_PAINT)) {
 				uiItemR(layout, &meshptr, "use_paint_mask", UI_ITEM_R_ICON_ONLY, "", ICON_NONE);
 			}
 			else {

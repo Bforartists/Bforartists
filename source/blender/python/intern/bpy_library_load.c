@@ -48,7 +48,7 @@
 
 #include "DNA_space_types.h" /* FILE_LINK, FILE_RELPATH */
 
-#include "bpy_util.h"
+#include "bpy_capi_utils.h"
 #include "bpy_library.h"
 
 #include "../generic/py_capi_utils.h"
@@ -183,17 +183,17 @@ PyDoc_STRVAR(bpy_lib_load_doc,
 "   :arg relative: When True the path is stored relative to the open blend file.\n"
 "   :type relative: bool\n"
 );
-static PyObject *bpy_lib_load(PyObject *UNUSED(self), PyObject *args, PyObject *kwds)
+static PyObject *bpy_lib_load(PyObject *UNUSED(self), PyObject *args, PyObject *kw)
 {
-	static const char *kwlist[] = {"filepath", "link", "relative", NULL};
 	Main *bmain = CTX_data_main(BPy_GetContext());
 	BPy_Library *ret;
 	const char *filename = NULL;
 	bool is_rel = false, is_link = false;
 
-	if (!PyArg_ParseTupleAndKeywords(
-	        args, kwds,
-	        "s|O&O&:load", (char **)kwlist,
+	static const char *_keywords[] = {"filepath", "link", "relative", NULL};
+	static _PyArg_Parser _parser = {"s|O&O&:load", _keywords, 0};
+	if (!_PyArg_ParseTupleAndKeywordsFast(
+	        args, kw, &_parser,
 	        &filename,
 	        PyC_ParseBool, &is_link,
 	        PyC_ParseBool, &is_rel))

@@ -5,15 +5,15 @@ include("${CMAKE_CURRENT_LIST_DIR}/../../cmake/config/blender_full.cmake")
 # Detect which libc we'll be linking against.
 # Some of the paths will depend on this
 
-if (EXISTS "/lib/x86_64-linux-gnu/libc-2.19.so")
+if(EXISTS "/lib/x86_64-linux-gnu/libc-2.19.so")
 	message(STATUS "Building in GLibc-2.19 environment")
 	set(GLIBC "2.19")
 	set(MULTILIB "/x86_64-linux-gnu")
-elseif (EXISTS "/lib/i386-linux-gnu//libc-2.19.so")
+elseif(EXISTS "/lib/i386-linux-gnu//libc-2.19.so")
 	message(STATUS "Building in GLibc-2.19 environment")
 	set(GLIBC "2.19")
 	set(MULTILIB "/i386-linux-gnu")
-elseif (EXISTS "/lib/libc-2.11.3.so")
+elseif(EXISTS "/lib/libc-2.11.3.so")
 	message(STATUS "Building in GLibc-2.11 environment")
 	set(GLIBC "2.11")
 	set(MULTILIB "")
@@ -66,7 +66,6 @@ set(FFMPEG_LIBRARIES
 	/usr/lib${MULTILIB}/libtheora.a
 	/usr/lib${MULTILIB}/libschroedinger-1.0.a
 	/usr/lib${MULTILIB}/liborc-0.4.a
-	/usr/lib${MULTILIB}/liblzma.a
 	CACHE STRING "" FORCE
 )
 
@@ -142,12 +141,6 @@ set(ZLIB_LIBRARY        "/usr/lib${MULTILIB}/libz.a"     CACHE STRING "" FORCE)
 set(OPENVDB_LIBRARY
 	/opt/lib/openvdb/lib/libopenvdb.a
 	/opt/lib/blosc/lib/libblosc.a
-	CACHE BOOL "" FORCE
-)
-
-# TBB
-set(TBB_LIBRARY
-	/opt/lib/tbb/lib/libtbb.a
 	CACHE BOOL "" FORCE
 )
 

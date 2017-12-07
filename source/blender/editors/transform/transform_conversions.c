@@ -1905,7 +1905,6 @@ static void createTransParticleVerts(bContext *C, TransInfo *t)
 {
 	TransData *td = NULL;
 	TransDataExtension *tx;
-	Base *base = CTX_data_active_base(C);
 	Object *ob = CTX_data_active_object(C);
 	ParticleEditSettings *pset = PE_settings(t->scene);
 	PTCacheEdit *edit = PE_get_current(t->scene, ob);
@@ -1924,8 +1923,6 @@ static void createTransParticleVerts(bContext *C, TransInfo *t)
 
 	if (psys)
 		psmd = psys_get_modifier(ob, psys);
-
-	base->flag |= BA_HAS_RECALC_DATA;
 
 	for (i = 0, point = edit->points; i < edit->totpoint; i++, point++) {
 		point->flag &= ~PEP_TRANSFORM;
@@ -2801,7 +2798,7 @@ void flushTransSeq(TransInfo *t)
 		tdsq = (TransDataSeq *)td->extra;
 		seq = tdsq->seq;
 		old_start = seq->start;
-		new_frame = iroundf(td2d->loc[0]);
+		new_frame = round_fl_to_int(td2d->loc[0]);
 
 		switch (tdsq->sel_flag) {
 			case SELECT:
@@ -2813,7 +2810,7 @@ void flushTransSeq(TransInfo *t)
 					seq->start = new_frame - tdsq->start_offset;
 #endif
 				if (seq->depth == 0) {
-					seq->machine = iroundf(td2d->loc[1]);
+					seq->machine = round_fl_to_int(td2d->loc[1]);
 					CLAMP(seq->machine, 1, MAXSEQ);
 				}
 				break;
@@ -3761,7 +3758,7 @@ void flushTransIntFrameActionData(TransInfo *t)
 
 	/* flush data! */
 	for (i = 0; i < t->total; i++, tfd++) {
-		*(tfd->sdata) = iroundf(tfd->val);
+		*(tfd->sdata) = round_fl_to_int(tfd->val);
 	}
 }
 
@@ -4789,7 +4786,7 @@ void flushTransGraphData(TransInfo *t)
 		
 		/* if int-values only, truncate to integers */
 		if (td->flag & TD_INTVALUES)
-			td2d->loc2d[1] = floorf(td2d->loc[1] + 0.5f);
+			td2d->loc2d[1] = floorf(td2d->loc[1] * inv_unit_scale - tdg->offset + 0.5f);
 		else
 			td2d->loc2d[1] = td2d->loc[1] * inv_unit_scale - tdg->offset;
 		
@@ -5606,17 +5603,14 @@ static void set_trans_object_base_flags(TransInfo *t)
 	}
 
 	/* all recalc flags get flushed to all layers, so a layer flip later on works fine */
-#ifdef WITH_LEGACY_DEPSGRAPH
 	DAG_scene_flush_update(G.main, t->scene, -1, 0);
-#endif
 
 	/* and we store them temporal in base (only used for transform code) */
 	/* this because after doing updates, the object->recalc is cleared */
 	for (base = scene->base.first; base; base = base->next) {
-		if (base->object->recalc & OB_RECALC_OB)
-			base->flag |= BA_HAS_RECALC_OB;
-		if (base->object->recalc & OB_RECALC_DATA)
-			base->flag |= BA_HAS_RECALC_DATA;
+		if (base->object->recalc & (OB_RECALC_OB | OB_RECALC_DATA)) {
+			base->flag |= BA_SNAP_FIX_DEPS_FIASCO;
+		}
 	}
 }
 
@@ -5687,17 +5681,14 @@ static int count_proportional_objects(TransInfo *t)
 
 	/* all recalc flags get flushed to all layers, so a layer flip later on works fine */
 	DAG_scene_relations_update(G.main, t->scene);
-#ifdef WITH_LEGACY_DEPSGRAPH
 	DAG_scene_flush_update(G.main, t->scene, -1, 0);
-#endif
 
 	/* and we store them temporal in base (only used for transform code) */
 	/* this because after doing updates, the object->recalc is cleared */
 	for (base = scene->base.first; base; base = base->next) {
-		if (base->object->recalc & OB_RECALC_OB)
-			base->flag |= BA_HAS_RECALC_OB;
-		if (base->object->recalc & OB_RECALC_DATA)
-			base->flag |= BA_HAS_RECALC_DATA;
+		if (base->object->recalc & (OB_RECALC_OB | OB_RECALC_DATA)) {
+			base->flag |= BA_SNAP_FIX_DEPS_FIASCO;
+		}
 	}
 
 	return total;
@@ -5712,7 +5703,7 @@ static void clear_trans_object_base_flags(TransInfo *t)
 		if (base->flag & BA_WAS_SEL)
 			base->flag |= SELECT;
 
-		base->flag &= ~(BA_WAS_SEL | BA_HAS_RECALC_OB | BA_HAS_RECALC_DATA | BA_TEMP_TAG | BA_TRANSFORM_CHILD | BA_TRANSFORM_PARENT);
+		base->flag &= ~(BA_WAS_SEL | BA_SNAP_FIX_DEPS_FIASCO | BA_TEMP_TAG | BA_TRANSFORM_CHILD | BA_TRANSFORM_PARENT);
 	}
 }
 
@@ -6612,7 +6603,7 @@ static void createTransObject(bContext *C, TransInfo *t)
 		}
 		
 		/* select linked objects, but skip them later */
-		if (ID_IS_LINKED_DATABLOCK(ob)) {
+		if (ID_IS_LINKED(ob)) {
 			td->flag |= TD_SKIP;
 		}
 		

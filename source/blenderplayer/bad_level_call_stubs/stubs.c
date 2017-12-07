@@ -246,7 +246,7 @@ void RE_SetActiveRenderView(struct Render *re, const char *viewname) RET_NONE
 
 struct RenderPass *RE_pass_find_by_name(volatile struct RenderLayer *rl, const char *name, const char *viewname) RET_NULL
 struct RenderPass *RE_pass_find_by_type(volatile struct RenderLayer *rl, int passtype, const char *viewname) RET_NULL
-bool RE_HasFakeLayer(RenderResult *res) RET_ZERO
+bool RE_HasCombinedLayer(RenderResult *res) RET_ZERO
 
 /* zbuf.c stub */
 void antialias_tagbuf(int xsize, int ysize, char *rectmove) RET_NONE
@@ -271,6 +271,7 @@ void RE_sample_material_color(
         int tri_index, struct DerivedMesh *orcoDm, struct Object *ob) RET_NONE
 /* nodes */
 struct Render *RE_GetRender(const char *name) RET_NULL
+struct Render *RE_GetSceneRender(const struct Scene *scene) RET_NULL
 struct Object *RE_GetCamera(struct Render *re) RET_NULL
 float RE_lamp_get_data(struct ShadeInput *shi, struct Object *lamp_obj, float col[4], float lv[3], float *dist, float shadow[4]) RET_ZERO
 const float (*RE_object_instance_get_matrix(struct ObjectInstanceRen *obi, int matrix_id))[4] RET_NULL
@@ -290,12 +291,13 @@ void RE_Database_Free(struct Render *re) RET_NONE
 void RE_FreeRender(struct Render *re) RET_NONE
 void RE_DataBase_GetView(struct Render *re, float mat[4][4]) RET_NONE
 int externtex(
-        struct MTex *mtex, const float vec[3], float *tin, float *tr, float *tg, float *tb, float *ta,
+        const struct MTex *mtex, const float vec[3], float *tin, float *tr, float *tg, float *tb, float *ta,
         const int thread, struct ImagePool *pool, const bool skip_load_image, const bool texnode_preview) RET_ZERO
 float texture_value_blend(float tex, float out, float fact, float facg, int blendtype) RET_ZERO
 void texture_rgb_blend(float in[3], const float tex[3], const float out[3], float fact, float facg, int blendtype) RET_NONE
 double elbeemEstimateMemreq(int res, float sx, float sy, float sz, int refine, char *retstr) RET_ZERO
 struct Render *RE_NewRender(const char *name) RET_NULL
+struct Render *RE_NewSceneRender(const struct Scene *scene) RET_NULL
 void RE_SwapResult(struct Render *re, struct RenderResult **rr) RET_NONE
 void RE_BlenderFrame(struct Render *re, struct Main *bmain, struct Scene *scene, struct SceneRenderLayer *srl, struct Object *camera_override, unsigned int lay_override, int frame, const bool write_still) RET_NONE
 bool RE_WriteEnvmapResult(struct ReportList *reports, struct Scene *scene, struct EnvMap *env, const char *relpath, const char imtype, float layout[12]) RET_ZERO
@@ -568,8 +570,9 @@ void ED_curve_editnurb_make(struct Object *obedit) RET_NONE
 
 void uiItemR(uiLayout *layout, struct PointerRNA *ptr, const char *propname, int flag, const char *name, int icon) RET_NONE
 
-struct PointerRNA uiItemFullO(uiLayout *layout, const char *idname, const char *name, int icon, struct IDProperty *properties, int context, int flag) RET_STRUCT(PointerRNA)
-PointerRNA uiItemFullO_ptr(struct uiLayout *layout, struct wmOperatorType *ot, const char *name, int icon, struct IDProperty *properties, int context, int flag) RET_STRUCT(PointerRNA)
+void uiItemFullO(uiLayout *layout, const char *idname, const char *name, int icon, struct IDProperty *properties, int context, int flag, struct PointerRNA *r_opptr) RET_NONE
+void uiItemFullO_ptr(struct uiLayout *layout, struct wmOperatorType *ot, const char *name, int icon, struct IDProperty *properties, int context, int flag, struct PointerRNA *r_opptr) RET_NONE
+void uiItemFullOMenuHold_ptr( uiLayout *layout, struct wmOperatorType *ot, const char *name, int icon, struct IDProperty *properties, int context, int flag, const char *menu_id,  /* extra menu arg. */ PointerRNA *r_opptr) RET_NONE
 struct uiLayout *uiLayoutRow(uiLayout *layout, int align) RET_NULL
 struct uiLayout *uiLayoutColumn(uiLayout *layout, int align) RET_NULL
 struct uiLayout *uiLayoutColumnFlow(uiLayout *layout, int number, int align) RET_NULL
@@ -585,6 +588,7 @@ void uiItemPointerR(uiLayout *layout, struct PointerRNA *ptr, const char *propna
 void uiItemsEnumO(uiLayout *layout, const char *opname, const char *propname) RET_NONE
 void uiItemEnumO_string(uiLayout *layout, const char *name, int icon, const char *opname, const char *propname, const char *value) RET_NONE
 void uiItemMenuEnumO(uiLayout *layout, struct bContext *C, const char *opname, const char *propname, const char *name, int icon) RET_NONE
+void uiItemMenuEnumO_ptr(uiLayout *layout, struct bContext *C, struct wmOperatorType *ot, const char *propname, const char *name, int icon) RET_NONE
 void uiItemBooleanO(uiLayout *layout, const char *name, int icon, const char *opname, const char *propname, int value) RET_NONE
 void uiItemIntO(uiLayout *layout, const char *name, int icon, const char *opname, const char *propname, int value) RET_NONE
 void uiItemFloatO(uiLayout *layout, const char *name, int icon, const char *opname, const char *propname, float value) RET_NONE
@@ -649,6 +653,7 @@ void uiTemplateCacheFile(uiLayout *layout, struct bContext *C, struct PointerRNA
 struct RenderResult *RE_engine_begin_result(RenderEngine *engine, int x, int y, int w, int h, const char *layername, const char *viewname) RET_NULL
 struct RenderResult *RE_AcquireResultRead(struct Render *re) RET_NULL
 struct RenderResult *RE_AcquireResultWrite(struct Render *re) RET_NULL
+struct RenderResult *RE_engine_get_result(struct RenderEngine *re) RET_NULL
 struct RenderStats *RE_GetStats(struct Render *re) RET_NULL
 struct RenderData *RE_engine_get_render_data(struct Render *re) RET_NULL
 void RE_engine_update_result(struct RenderEngine *engine, struct RenderResult *result) RET_NONE
@@ -710,7 +715,7 @@ char *WM_operator_pystring_ex(struct bContext *C, struct wmOperator *op, const b
 char *WM_operator_pystring(struct bContext *C, struct wmOperator *op, const bool all_args, const bool macro_args) RET_NULL
 struct wmKeyMapItem *WM_modalkeymap_add_item(struct wmKeyMap *km, int type, int val, int modifier, int keymodifier, int value) RET_NULL
 struct wmKeyMapItem *WM_modalkeymap_add_item_str(struct wmKeyMap *km, int type, int val, int modifier, int keymodifier, const char *value) RET_NULL
-struct wmKeyMap *WM_modalkeymap_add(struct wmKeyConfig *keyconf, const char *idname, struct EnumPropertyItem *items) RET_NULL
+struct wmKeyMap *WM_modalkeymap_add(struct wmKeyConfig *keyconf, const char *idname, const struct EnumPropertyItem *items) RET_NULL
 struct uiPopupMenu *UI_popup_menu_begin(struct bContext *C, const char *title, int icon) RET_NULL
 void UI_popup_menu_end(struct bContext *C, struct uiPopupMenu *head) RET_NONE
 struct uiLayout *UI_popup_menu_layout(struct uiPopupMenu *head) RET_NULL

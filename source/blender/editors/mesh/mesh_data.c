@@ -252,7 +252,7 @@ void ED_mesh_uv_loop_reset(struct bContext *C, struct Mesh *me)
 {
 	/* could be ldata or pdata */
 	CustomData *pdata = GET_CD_DATA(me, pdata);
-	const int layernum = CustomData_get_active_layer_index(pdata, CD_MTEXPOLY);
+	const int layernum = CustomData_get_active_layer(pdata, CD_MTEXPOLY);
 	ED_mesh_uv_loop_reset_ex(me, layernum);
 	
 	WM_event_add_notifier(C, NC_GEOM | ND_DATA, me);
@@ -464,6 +464,20 @@ int ED_mesh_color_add(Mesh *me, const char *name, const bool active_set)
 	return layernum;
 }
 
+bool ED_mesh_color_ensure(struct Mesh *me, const char *name)
+{
+	BLI_assert(me->edit_btmesh == NULL);
+
+	if (!me->mloopcol && me->totloop) {
+		CustomData_add_layer_named(&me->ldata, CD_MLOOPCOL, CD_DEFAULT, NULL, me->totloop, name);
+		BKE_mesh_update_customdata_pointers(me, true);
+	}
+
+	DAG_id_tag_update(&me->id, 0);
+
+	return (me->mloopcol != NULL);
+}
+
 bool ED_mesh_color_remove_index(Mesh *me, const int n)
 {
 	CustomData *ldata = GET_CD_DATA(me, ldata);
@@ -511,7 +525,7 @@ static int layers_poll(bContext *C)
 {
 	Object *ob = ED_object_context(C);
 	ID *data = (ob) ? ob->data : NULL;
-	return (ob && !ID_IS_LINKED_DATABLOCK(ob) && ob->type == OB_MESH && data && !ID_IS_LINKED_DATABLOCK(data));
+	return (ob && !ID_IS_LINKED(ob) && ob->type == OB_MESH && data && !ID_IS_LINKED(data));
 }
 
 static int mesh_uv_texture_add_exec(bContext *C, wmOperator *UNUSED(op))
@@ -759,7 +773,7 @@ static int mesh_customdata_mask_clear_poll(bContext *C)
 			return false;
 		}
 
-		if (!ID_IS_LINKED_DATABLOCK(me)) {
+		if (!ID_IS_LINKED(me)) {
 			CustomData *data = GET_CD_DATA(me, vdata);
 			if (CustomData_has_layer(data, CD_PAINT_MASK)) {
 				return true;
@@ -813,7 +827,7 @@ static int mesh_customdata_skin_state(bContext *C)
 
 	if (ob && ob->type == OB_MESH) {
 		Mesh *me = ob->data;
-		if (!ID_IS_LINKED_DATABLOCK(me)) {
+		if (!ID_IS_LINKED(me)) {
 			CustomData *data = GET_CD_DATA(me, vdata);
 			return CustomData_has_layer(data, CD_MVERT_SKIN);
 		}

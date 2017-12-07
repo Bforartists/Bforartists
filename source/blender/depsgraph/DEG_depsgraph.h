@@ -120,10 +120,9 @@ void DEG_id_tag_update_ex(struct Main *bmain,
                           struct ID *id,
                           short flag);
 
-/* Tag given ID type for update.
- *
- * Used by all sort of render engines to quickly check if
- * IDs of a given type need to be checked for update.
+/* Mark a particular datablock type as having changing. This does
+ * not cause any updates but is used by external render engines to detect if for
+ * example a datablock was removed.
  */
 void DEG_id_type_tag(struct Main *bmain, short idtype);
 
@@ -133,6 +132,9 @@ void DEG_ids_clear_recalc(struct Main *bmain);
 
 /* Flush updates for all IDs */
 void DEG_ids_flush_tagged(struct Main *bmain);
+
+/* Flush updates for IDs in a single scene. */
+void DEG_scene_flush_update(struct Main *bmain, struct Scene *scene);
 
 /* Check if something was changed in the database and inform
  * editors about this.

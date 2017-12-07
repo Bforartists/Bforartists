@@ -29,9 +29,9 @@ ccl_device_noinline bool kernel_split_branched_path_volume_indirect_light_iter(K
 {
 	SplitBranchedState *branched_state = &kernel_split_state.branched_state[ray_index];
 
-	ShaderData *sd = &kernel_split_state.sd[ray_index];
+	ShaderData *sd = kernel_split_sd(sd, ray_index);
 	PathRadiance *L = &kernel_split_state.path_radiance[ray_index];
-	ShaderData *emission_sd = &kernel_split_state.sd_DL_shadow[ray_index];
+	ShaderData *emission_sd = AS_SHADER_DATA(&kernel_split_state.sd_DL_shadow[ray_index]);
 
 	/* GPU: no decoupled ray marching, scatter probalistically */
 	int num_samples = kernel_data.integrator.volume_samples;
@@ -65,14 +65,13 @@ ccl_device_noinline bool kernel_split_branched_path_volume_indirect_light_iter(K
 			kernel_path_volume_connect_light(kg, sd, emission_sd, *tp, &branched_state->path_state, L);
 
 			/* indirect light bounce */
-			if(!kernel_path_volume_bounce(kg, sd, tp, ps, L, pray)) {
+			if(!kernel_path_volume_bounce(kg, sd, tp, ps, &L->state, pray)) {
 				continue;
 			}
 
 			/* start the indirect path */
 			branched_state->next_closure = 0;
 			branched_state->next_sample = j+1;
-			branched_state->num_samples = num_samples;
 
 			/* Attempting to share too many samples is slow for volumes as it causes us to
 			 * loop here more and have many calls to kernel_volume_integrate which evaluates
@@ -141,8 +140,8 @@ ccl_device void kernel_do_volume(KernelGlobals *kg)
 		ccl_global float3 *throughput = &kernel_split_state.throughput[ray_index];
 		ccl_global Ray *ray = &kernel_split_state.ray[ray_index];
 		ccl_global Intersection *isect = &kernel_split_state.isect[ray_index];
-		ShaderData *sd = &kernel_split_state.sd[ray_index];
-		ShaderData *emission_sd = &kernel_split_state.sd_DL_shadow[ray_index];
+		ShaderData *sd = kernel_split_sd(sd, ray_index);
+		ShaderData *emission_sd = AS_SHADER_DATA(&kernel_split_state.sd_DL_shadow[ray_index]);
 
 		bool hit = ! IS_STATE(ray_state, ray_index, RAY_HIT_BACKGROUND);
 
@@ -171,7 +170,7 @@ ccl_device void kernel_do_volume(KernelGlobals *kg)
 						kernel_path_volume_connect_light(kg, sd, emission_sd, *throughput, state, L);
 
 						/* indirect light bounce */
-						if(kernel_path_volume_bounce(kg, sd, throughput, state, L, ray)) {
+						if(kernel_path_volume_bounce(kg, sd, throughput, state, &L->state, ray)) {
 							ASSIGN_RAY_STATE(ray_state, ray_index, RAY_REGENERATED);
 						}
 						else {

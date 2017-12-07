@@ -70,14 +70,11 @@ if 'cmake' in builder:
 
     if builder.startswith('mac'):
         # Set up OSX architecture
-        if builder.endswith('x86_64_10_6_cmake'):
+        if builder.endswith('x86_64_10_9_cmake'):
             cmake_extra_options.append('-DCMAKE_OSX_ARCHITECTURES:STRING=x86_64')
-        cmake_extra_options.append('-DWITH_CODEC_QUICKTIME=OFF')
-        cmake_extra_options.append('-DCMAKE_OSX_DEPLOYMENT_TARGET=10.6')
+        cmake_extra_options.append('-DCMAKE_OSX_DEPLOYMENT_TARGET=10.9')
         cmake_extra_options.append('-DCUDA_HOST_COMPILER=/usr/local/cuda-hack/clang')
         cmake_extra_options.append('-DCUDA_NVCC_EXECUTABLE=/usr/local/cuda-hack/nvcc')
-
-
 
     elif builder.startswith('win'):
         if builder.endswith('_vc2015'):
@@ -112,8 +109,8 @@ if 'cmake' in builder:
             chroot_name = 'buildbot_' + deb_name + '_i686'
             cuda_chroot_name = 'buildbot_' + deb_name + '_x86_64'
             targets = ['player', 'blender', 'cuda']
-        #cmake_extra_options.extend(["-DCMAKE_C_COMPILER=/usr/bin/gcc-7",
-        #                            "-DCMAKE_CXX_COMPILER=/usr/bin/g++-7"])
+        cmake_extra_options.extend(["-DCMAKE_C_COMPILER=/usr/bin/gcc-7",
+                                    "-DCMAKE_CXX_COMPILER=/usr/bin/g++-7"])
 
     cmake_options.append("-C" + os.path.join(blender_dir, cmake_config_file))
 

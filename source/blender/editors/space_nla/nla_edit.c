@@ -365,8 +365,8 @@ static int nlaedit_previewrange_exec(bContext *C, wmOperator *UNUSED(op))
 	/* set the range directly */
 	get_nlastrip_extents(&ac, &min, &max, true);
 	scene->r.flag |= SCER_PRV_RANGE;
-	scene->r.psfra = iroundf(min);
-	scene->r.pefra = iroundf(max);
+	scene->r.psfra = round_fl_to_int(min);
+	scene->r.pefra = round_fl_to_int(max);
 	
 	/* set notifier that things have changed */
 	// XXX err... there's nothing for frame ranges yet, but this should do fine too
@@ -2089,7 +2089,7 @@ void NLA_OT_clear_scale(wmOperatorType *ot)
 /* Moves the start-point of the selected strips to the specified places */
 
 /* defines for snap keyframes tool */
-static EnumPropertyItem prop_nlaedit_snap_types[] = {
+static const EnumPropertyItem prop_nlaedit_snap_types[] = {
 	{NLAEDIT_SNAP_CFRA, "CFRA", 0, "Current Frame", ""},
 	{NLAEDIT_SNAP_NEAREST_FRAME, "NEAREST_FRAME", 0, "Nearest Frame", ""}, // XXX as single entry?
 	{NLAEDIT_SNAP_NEAREST_SECOND, "NEAREST_SECOND", 0, "Nearest Second", ""}, // XXX as single entry?
@@ -2239,7 +2239,7 @@ void NLA_OT_snap(wmOperatorType *ot)
 
 /* ******************** Add F-Modifier Operator *********************** */
 
-static EnumPropertyItem *nla_fmodifier_itemf(bContext *C, PointerRNA *UNUSED(ptr), PropertyRNA *UNUSED(prop), bool *r_free)
+static const EnumPropertyItem *nla_fmodifier_itemf(bContext *C, PointerRNA *UNUSED(ptr), PropertyRNA *UNUSED(prop), bool *r_free)
 {
 	EnumPropertyItem *item = NULL;
 	int totitem = 0;
@@ -2316,7 +2316,7 @@ static int nla_fmodifier_add_exec(bContext *C, wmOperator *op)
 				continue;
 			
 			/* add F-Modifier of specified type to selected, and make it the active one */
-			fcm = add_fmodifier(&strip->modifiers, type);
+			fcm = add_fmodifier(&strip->modifiers, type, NULL);
 			
 			if (fcm) {
 				set_active_fmodifier(&strip->modifiers, fcm);
@@ -2470,7 +2470,7 @@ static int nla_fmodifier_paste_exec(bContext *C, wmOperator *op)
 			}
 			
 			/* paste FModifiers from buffer */
-			ok += ANIM_fmodifiers_paste_from_buf(&strip->modifiers, replace);
+			ok += ANIM_fmodifiers_paste_from_buf(&strip->modifiers, replace, NULL);
 			ale->update |= ANIM_UPDATE_DEPS;
 		}
 	}

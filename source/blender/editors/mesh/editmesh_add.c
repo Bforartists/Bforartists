@@ -145,7 +145,7 @@ void MESH_OT_primitive_plane_add(wmOperatorType *ot)
 	/* flags */
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
-	ED_object_add_unit_props_cube(ot);
+	ED_object_add_unit_props_cube(ot);/*bfa - Cube has no radius. But size*/
 	ED_object_add_mesh_props(ot);
 	ED_object_add_generic_props(ot, true);
 }
@@ -197,7 +197,7 @@ void MESH_OT_primitive_cube_add(wmOperatorType *ot)
 	/* flags */
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
-	ED_object_add_unit_props_cube(ot);
+	ED_object_add_unit_props_cube(ot);/*bfa - Cube has no radius. But size*/
 	ED_object_add_mesh_props(ot);
 	ED_object_add_generic_props(ot, true);
 }
@@ -233,7 +233,7 @@ static int add_primitive_circle_exec(bContext *C, wmOperator *op)
 
 	if (!EDBM_op_call_and_selectf(
 	        em, op, "verts.out", false,
-	        "create_circle segments=%i diameter=%f cap_ends=%b cap_tris=%b matrix=%m4 calc_uvs=%b",
+	        "create_circle segments=%i radius=%f cap_ends=%b cap_tris=%b matrix=%m4 calc_uvs=%b",
 	        RNA_int_get(op->ptr, "vertices"), RNA_float_get(op->ptr, "radius"),
 	        cap_end, cap_tri, mat, calc_uvs))
 	{
@@ -445,7 +445,7 @@ void MESH_OT_primitive_grid_add(wmOperatorType *ot)
 	 * impossible values (10^12 vertices or so...). */
 	RNA_def_int(ot->srna, "x_subdivisions", 10, 2, MESH_ADD_VERTS_MAXI, "X Subdivisions", "", 2, 1000);
 	RNA_def_int(ot->srna, "y_subdivisions", 10, 2, MESH_ADD_VERTS_MAXI, "Y Subdivisions", "", 2, 1000);
-	ED_object_add_unit_props_cube(ot);
+	ED_object_add_unit_props_cube(ot);/*bfa - Cube has no radius. But size*/
 
 	ED_object_add_mesh_props(ot);
 	ED_object_add_generic_props(ot, true);

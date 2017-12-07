@@ -33,7 +33,9 @@
 
 CCL_NAMESPACE_BEGIN
 
+thread_mutex ShaderManager::lookup_table_mutex;
 vector<float> ShaderManager::beckmann_table;
+bool ShaderManager::beckmann_table_ready = false;
 
 /* Beckmann sampling precomputed table, see bsdf_microfacet.h */
 
@@ -414,14 +416,13 @@ void ShaderManager::device_update_common(Device *device,
                                          Scene *scene,
                                          Progress& /*progress*/)
 {
-	device->tex_free(dscene->shader_flag);
-	dscene->shader_flag.clear();
+	dscene->shader_flag.free();
 
 	if(scene->shaders.size() == 0)
 		return;
 
 	uint shader_flag_size = scene->shaders.size()*SHADER_SIZE;
-	uint *shader_flag = dscene->shader_flag.resize(shader_flag_size);
+	uint *shader_flag = dscene->shader_flag.alloc(shader_flag_size);
 	uint i = 0;
 	bool has_volumes = false;
 	bool has_transparent_shadow = false;
@@ -449,10 +450,12 @@ void ShaderManager::device_update_common(Device *device,
 			flag |= SD_HETEROGENEOUS_VOLUME;
 		if(shader->has_bssrdf_bump)
 			flag |= SD_HAS_BSSRDF_BUMP;
-		if(shader->volume_sampling_method == VOLUME_SAMPLING_EQUIANGULAR)
-			flag |= SD_VOLUME_EQUIANGULAR;
-		if(shader->volume_sampling_method == VOLUME_SAMPLING_MULTIPLE_IMPORTANCE)
-			flag |= SD_VOLUME_MIS;
+		if(device->info.has_volume_decoupled) {
+			if(shader->volume_sampling_method == VOLUME_SAMPLING_EQUIANGULAR)
+				flag |= SD_VOLUME_EQUIANGULAR;
+			if(shader->volume_sampling_method == VOLUME_SAMPLING_MULTIPLE_IMPORTANCE)
+				flag |= SD_VOLUME_MIS;
+		}
 		if(shader->volume_interpolation_method == VOLUME_INTERPOLATION_CUBIC)
 			flag |= SD_VOLUME_CUBIC;
 		if(shader->has_bump)
@@ -475,17 +478,18 @@ void ShaderManager::device_update_common(Device *device,
 		has_transparent_shadow |= (flag & SD_HAS_TRANSPARENT_SHADOW) != 0;
 	}
 
-	device->tex_alloc("__shader_flag", dscene->shader_flag);
+	dscene->shader_flag.copy_to_device();
 
 	/* lookup tables */
 	KernelTables *ktables = &dscene->data.tables;
 
 	/* beckmann lookup table */
 	if(beckmann_table_offset == TABLE_OFFSET_INVALID) {
-		if(beckmann_table.size() == 0) {
+		if(!beckmann_table_ready) {
 			thread_scoped_lock lock(lookup_table_mutex);
-			if(beckmann_table.size() == 0) {
+			if(!beckmann_table_ready) {
 				beckmann_table_build(beckmann_table);
+				beckmann_table_ready = true;
 			}
 		}
 		beckmann_table_offset = scene->lookup_tables->add_table(dscene, beckmann_table);
@@ -499,12 +503,11 @@ void ShaderManager::device_update_common(Device *device,
 	kintegrator->transparent_shadows = has_transparent_shadow;
 }
 
-void ShaderManager::device_free_common(Device *device, DeviceScene *dscene, Scene *scene)
+void ShaderManager::device_free_common(Device *, DeviceScene *dscene, Scene *scene)
 {
 	scene->lookup_tables->remove_table(&beckmann_table_offset);
 
-	device->tex_free(dscene->shader_flag);
-	dscene->shader_flag.clear();
+	dscene->shader_flag.free();
 }
 
 void ShaderManager::add_default(Scene *scene)
@@ -588,6 +591,9 @@ void ShaderManager::get_requested_graph_features(ShaderGraph *graph,
 		}
 		if(node->has_surface_transparent()) {
 			requested_features->use_transparent = true;
+		}
+		if(node->has_raytrace()) {
+			requested_features->use_shader_raytrace = true;
 		}
 	}
 }
