@@ -2209,13 +2209,6 @@ class VIEW3D_MT_sculpt(Menu):
         layout.operator("ed.redo", icon = "REDO")
 
         layout.separator()
-        layout.prop(sculpt, "use_threaded", text="Threaded Sculpt")
-        layout.prop(sculpt, "show_low_resolution")
-        layout.prop(sculpt, "show_brush")
-        layout.prop(sculpt, "use_deform_only")
-        layout.prop(sculpt, "show_diffuse_color")
-
-        layout.separator()
 
         layout.menu("VIEW3D_subdivision_set")
 
