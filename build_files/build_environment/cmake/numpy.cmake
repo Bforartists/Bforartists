@@ -25,19 +25,21 @@ if(MSVC)
 		set(NUMPY_DIR_POSTFIX)
 		set(NUMPY_ARCHIVE_POSTFIX)
 		set(NUMPY_BUILD_OPTION)
-	endif(BUILD_MODE STREQUAL Debug)
+	endif()
 endif()
 
 set(NUMPY_POSTFIX)
 
 if(WIN32)
 	set(NUMPY_INSTALL
-		${CMAKE_COMMAND} -E copy_directory "${BUILD_DIR}/python/src/external_python/run/lib/site-packages/numpy/core/include/numpy" "${LIBDIR}/python/include/python3.5/numpy" &&
-		${CMAKE_COMMAND} -E chdir "${BUILD_DIR}/numpy/src/external_numpy/build/lib.${PYTHON_ARCH2}-3.5${NUMPY_DIR_POSTFIX}" 
-		${CMAKE_COMMAND} -E tar "cfvz" "${LIBDIR}/python35_numpy_${NUMPY_SHORT_VERSION}${NUMPY_ARCHIVE_POSTFIX}.tar.gz" "." 
+		${CMAKE_COMMAND} -E copy_directory "${BUILD_DIR}/python/src/external_python/run/lib/site-packages/numpy/core/include/numpy" "${LIBDIR}/python/include/python${PYTHON_SHORT_VERSION}/numpy" &&
+		${CMAKE_COMMAND} -E chdir "${BUILD_DIR}/numpy/src/external_numpy/build/lib.${PYTHON_ARCH2}-${PYTHON_SHORT_VERSION}${NUMPY_DIR_POSTFIX}" 
+		${CMAKE_COMMAND} -E tar "cfvz" "${LIBDIR}/python${PYTHON_SHORT_VERSION_NO_DOTS}_numpy_${NUMPY_SHORT_VERSION}${NUMPY_ARCHIVE_POSTFIX}.tar.gz" "." 
 	)
+	set(NUMPY_PATCH ${PATCH_CMD} --verbose -p 1 -N -d ${BUILD_DIR}/numpy/src/external_numpy < ${PATCH_DIR}/numpy.diff )
 else()
 	set(NUMPY_INSTALL echo .)
+	set(NUMPY_PATCH echo .)
 endif()
 
 ExternalProject_Add(external_numpy
@@ -45,11 +47,14 @@ ExternalProject_Add(external_numpy
 	DOWNLOAD_DIR ${DOWNLOAD_DIR}
 	URL_HASH MD5=${NUMPY_HASH}
 	PREFIX ${BUILD_DIR}/numpy
-	PATCH_COMMAND ${PATCH_CMD} --verbose -p 1 -N -d ${BUILD_DIR}/numpy/src/external_numpy < ${PATCH_DIR}/numpy.diff
+	PATCH_COMMAND ${NUMPY_PATCH}
 	CONFIGURE_COMMAND ""
 	LOG_BUILD 1
-	BUILD_COMMAND ${PYTHON_BINARY} ${BUILD_DIR}/numpy/src/external_numpy/setup.py build ${NUMPY_BUILD_OPTION} install
+	BUILD_COMMAND ${PYTHON_BINARY} ${BUILD_DIR}/numpy/src/external_numpy/setup.py build ${NUMPY_BUILD_OPTION} install --old-and-unmanageable
 	INSTALL_COMMAND ${NUMPY_INSTALL}
 )
 
-add_dependencies(external_numpy Make_Python_Environment)
+add_dependencies(
+	external_numpy
+	Make_Python_Environment
+)

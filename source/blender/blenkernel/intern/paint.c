@@ -49,6 +49,7 @@
 
 #include "BKE_brush.h"
 #include "BKE_colortools.h"
+#include "BKE_deform.h"
 #include "BKE_main.h"
 #include "BKE_context.h"
 #include "BKE_crazyspace.h"
@@ -71,7 +72,7 @@ const char PAINT_CURSOR_VERTEX_PAINT[3] = {255, 255, 255};
 const char PAINT_CURSOR_WEIGHT_PAINT[3] = {200, 200, 255};
 const char PAINT_CURSOR_TEXTURE_PAINT[3] = {255, 255, 255};
 
-static OverlayControlFlags overlay_flags = 0;
+static eOverlayControlFlags overlay_flags = 0;
 
 void BKE_paint_invalidate_overlay_tex(Scene *scene, const Tex *tex)
 {
@@ -103,12 +104,12 @@ void BKE_paint_invalidate_overlay_all(void)
 	                  PAINT_INVALID_OVERLAY_CURVE);
 }
 
-OverlayControlFlags BKE_paint_get_overlay_flags(void)
+eOverlayControlFlags BKE_paint_get_overlay_flags(void)
 {
 	return overlay_flags;
 }
 
-void BKE_paint_set_overlay_override(OverlayFlags flags)
+void BKE_paint_set_overlay_override(eOverlayFlags flags)
 {
 	if (flags & BRUSH_OVERLAY_OVERRIDE_MASK) {
 		if (flags & BRUSH_OVERLAY_CURSOR_OVERRIDE_ON_STROKE)
@@ -123,12 +124,12 @@ void BKE_paint_set_overlay_override(OverlayFlags flags)
 	}
 }
 
-void BKE_paint_reset_overlay_invalid(OverlayControlFlags flag)
+void BKE_paint_reset_overlay_invalid(eOverlayControlFlags flag)
 {
 	overlay_flags &= ~(flag);
 }
 
-Paint *BKE_paint_get_active_from_paintmode(Scene *sce, PaintMode mode)
+Paint *BKE_paint_get_active_from_paintmode(Scene *sce, ePaintMode mode)
 {
 	if (sce) {
 		ToolSettings *ts = sce->toolsettings;
@@ -234,7 +235,7 @@ Paint *BKE_paint_get_active_from_context(const bContext *C)
 	return NULL;
 }
 
-PaintMode BKE_paintmode_get_active_from_context(const bContext *C)
+ePaintMode BKE_paintmode_get_active_from_context(const bContext *C)
 {
 	Scene *sce = CTX_data_scene(C);
 	SpaceImage *sima;
@@ -466,7 +467,7 @@ bool BKE_paint_select_vert_test(Object *ob)
 	         (ob->type == OB_MESH) &&
 	         (ob->data != NULL) &&
 	         (((Mesh *)ob->data)->editflag & ME_EDIT_PAINT_VERT_SEL) &&
-	         (ob->mode & OB_MODE_WEIGHT_PAINT)
+	         (ob->mode & OB_MODE_WEIGHT_PAINT || ob->mode & OB_MODE_VERTEX_PAINT)
 	         );
 }
 
@@ -495,7 +496,7 @@ void BKE_paint_cavity_curve_preset(Paint *p, int preset)
 	curvemapping_changed(p->cavity_curve, false);
 }
 
-short BKE_paint_object_mode_from_paint_mode(PaintMode mode)
+short BKE_paint_object_mode_from_paint_mode(ePaintMode mode)
 {
 	switch (mode) {
 		case ePaintSculpt:
@@ -516,7 +517,7 @@ short BKE_paint_object_mode_from_paint_mode(PaintMode mode)
 	}
 }
 
-void BKE_paint_init(Scene *sce, PaintMode mode, const char col[3])
+void BKE_paint_init(Scene *sce, ePaintMode mode, const char col[3])
 {
 	UnifiedPaintSettings *ups = &sce->toolsettings->unified_paint_settings;
 	Brush *brush;
@@ -673,6 +674,33 @@ void BKE_sculptsession_free_deformMats(SculptSession *ss)
 	MEM_SAFE_FREE(ss->deform_imats);
 }
 
+void BKE_sculptsession_free_vwpaint_data(struct SculptSession *ss)
+{
+	struct SculptVertexPaintGeomMap *gmap = NULL;
+	if (ss->mode_type == OB_MODE_VERTEX_PAINT) {
+		gmap = &ss->mode.vpaint.gmap;
+
+		MEM_SAFE_FREE(ss->mode.vpaint.previous_color);
+	}
+	else if (ss->mode_type == OB_MODE_WEIGHT_PAINT) {
+		gmap = &ss->mode.wpaint.gmap;
+
+		MEM_SAFE_FREE(ss->mode.wpaint.alpha_weight);
+		if (ss->mode.wpaint.dvert_prev) {
+			BKE_defvert_array_free_elems(ss->mode.wpaint.dvert_prev, ss->totvert);
+			MEM_freeN(ss->mode.wpaint.dvert_prev);
+			ss->mode.wpaint.dvert_prev = NULL;
+		}
+	}
+	else {
+		return;
+	}
+	MEM_SAFE_FREE(gmap->vert_to_loop);
+	MEM_SAFE_FREE(gmap->vert_map_mem);
+	MEM_SAFE_FREE(gmap->vert_to_poly);
+	MEM_SAFE_FREE(gmap->poly_map_mem);
+}
+
 /* Write out the sculpt dynamic-topology BMesh to the Mesh */
 static void sculptsession_bm_to_me_update_data_only(Object *ob, bool reorder)
 {
@@ -764,6 +792,8 @@ void BKE_sculptsession_free(Object *ob)
 		if (ss->deform_imats)
 			MEM_freeN(ss->deform_imats);
 
+		BKE_sculptsession_free_vwpaint_data(ob->sculpt);
+
 		MEM_freeN(ss);
 
 		ob->sculpt = NULL;
@@ -848,6 +878,8 @@ void BKE_sculpt_update_mesh_elements(Scene *scene, Sculpt *sd, Object *ob,
 	ss->modifiers_active = sculpt_modifiers_active(scene, sd, ob);
 	ss->show_diffuse_color = (sd->flags & SCULPT_SHOW_DIFFUSE) != 0;
 
+	ss->building_vp_handle = false;
+
 	if (need_mask) {
 		if (mmd == NULL) {
 			if (!CustomData_has_layer(&me->vdata, CD_PAINT_MASK)) {
@@ -876,7 +908,8 @@ void BKE_sculpt_update_mesh_elements(Scene *scene, Sculpt *sd, Object *ob,
 
 	dm = mesh_get_derived_final(scene, ob, CD_MASK_BAREMESH);
 
-	if (mmd) {
+	/* VWPaint require mesh info for loop lookup, so require sculpt mode here */
+	if (mmd && ob->mode & OB_MODE_SCULPT) {
 		ss->multires = mmd;
 		ss->totvert = dm->getNumVerts(dm);
 		ss->totpoly = dm->getNumPolys(dm);

@@ -70,6 +70,10 @@ public:
 		                    size_t num_steps,
 		                    size_t step,
 		                    float3 r_verts[3]) const;
+
+		float3 compute_normal(const float3 *verts) const;
+
+		bool valid(const float3 *verts) const;
 	};
 
 	Triangle get_triangle(size_t i) const
@@ -246,6 +250,8 @@ public:
 	size_t face_offset;
 	size_t corner_offset;
 
+	size_t attr_map_offset;
+
 	size_t num_subd_verts;
 
 	/* Functions */
@@ -282,7 +288,8 @@ public:
 	void pack_curves(Scene *scene, float4 *curve_key_co, float4 *curve_data, size_t curvekey_offset);
 	void pack_patches(uint *patch_data, uint vert_offset, uint face_offset, uint corner_offset);
 
-	void compute_bvh(DeviceScene *dscene,
+	void compute_bvh(Device *device,
+	                 DeviceScene *dscene,
 	                 SceneParams *params,
 	                 Progress *progress,
 	                 int n,
@@ -316,8 +323,6 @@ public:
 
 class MeshManager {
 public:
-	BVH *bvh;
-
 	bool need_update;
 	bool need_flags_update;
 
@@ -363,7 +368,6 @@ protected:
 	                       Progress& progress);
 
 	void device_update_displacement_images(Device *device,
-	                                       DeviceScene *dscene,
 	                                       Scene *scene,
 	                                       Progress& progress);
 };

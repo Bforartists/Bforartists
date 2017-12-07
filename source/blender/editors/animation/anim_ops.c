@@ -108,7 +108,7 @@ static void change_frame_apply(bContext *C, wmOperator *op)
 		SUBFRA = frame - (int)frame;
 	}
 	else {
-		CFRA = iroundf(frame);
+		CFRA = round_fl_to_int(frame);
 		SUBFRA = 0.0f;
 	}
 	FRAMENUMBER_MIN_CLAMP(CFRA);
@@ -301,8 +301,8 @@ static int previewrange_define_exec(bContext *C, wmOperator *op)
 	if (efra < sfra) efra = sfra;
 	
 	scene->r.flag |= SCER_PRV_RANGE;
-	scene->r.psfra = iroundf(sfra);
-	scene->r.pefra = iroundf(efra);
+	scene->r.psfra = round_fl_to_int(sfra);
+	scene->r.pefra = round_fl_to_int(efra);
 	
 	/* send notifiers */
 	WM_event_add_notifier(C, NC_SCENE | ND_FRAME, scene);
@@ -318,10 +318,10 @@ static void ANIM_OT_previewrange_set(wmOperatorType *ot)
 	ot->description = "Set Preview Range\nInteractively define frame range used for playback";
 	
 	/* api callbacks */
-	ot->invoke = WM_border_select_invoke;
+	ot->invoke = WM_gesture_border_invoke;
 	ot->exec = previewrange_define_exec;
-	ot->modal = WM_border_select_modal;
-	ot->cancel = WM_border_select_cancel;
+	ot->modal = WM_gesture_border_modal;
+	ot->cancel = WM_gesture_border_cancel;
 	
 	ot->poll = ED_operator_animview_active;
 	

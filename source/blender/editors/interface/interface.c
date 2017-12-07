@@ -366,10 +366,10 @@ static void ui_block_bounds_calc_centered_pie(uiBlock *block)
 
 static void ui_block_bounds_calc_popup(
         wmWindow *window, uiBlock *block,
-        eBlockBoundsCalc bounds_calc, const int xy[2])
+        eBlockBoundsCalc bounds_calc, const int xy[2], int r_xy[2])
 {
 	int width, height, oldwidth, oldheight;
-	int oldbounds, xmax, ymax;
+	int oldbounds, xmax, ymax, raw_x, raw_y;
 	const int margin = UI_SCREEN_MARGIN;
 	rcti rect, rect_bounds;
 	int ofs_dummy[2];
@@ -407,8 +407,8 @@ static void ui_block_bounds_calc_popup(
 
 	/* offset block based on mouse position, user offset is scaled
 	 * along in case we resized the block in ui_block_bounds_calc_text */
-	rect.xmin = xy[0] + block->rect.xmin + (block->mx * width) / oldwidth;
-	rect.ymin = xy[1] + block->rect.ymin + (block->my * height) / oldheight;
+	raw_x = rect.xmin = xy[0] + block->rect.xmin + (block->mx * width) / oldwidth;
+	raw_y = rect.ymin = xy[1] + block->rect.ymin + (block->my * height) / oldheight;
 	rect.xmax = rect.xmin + width;
 	rect.ymax = rect.ymin + height;
 
@@ -422,6 +422,13 @@ static void ui_block_bounds_calc_popup(
 
 	/* now recompute bounds and safety */
 	ui_block_bounds_calc(block);
+
+	/* If given, adjust input coordinates such that they would generate real final popup position.
+	 * Needed to handle correctly floating panels once they have been dragged around, see T52999. */
+	if (r_xy) {
+		r_xy[0] = xy[0] + block->rect.xmin - raw_x;
+		r_xy[1] = xy[1] + block->rect.ymin - raw_y;
+	}
 }
 
 /* used for various cases */
@@ -487,6 +494,9 @@ static int ui_but_calc_float_precision(uiBut *but, double value)
 	}
 	else if (prec == -1) {
 		prec = (but->hardmax < 10.001f) ? 3 : 2;
+	}
+	else {
+		CLAMP(prec, 0, UI_PRECISION_FLOAT_MAX);
 	}
 
 	return UI_calc_float_precision(prec, value);
@@ -973,7 +983,9 @@ void ui_but_add_shortcut(uiBut *but, const char *shortcut_str, const bool do_str
 	}
 }
 
-static bool ui_but_event_operator_string(const bContext *C, uiBut *but, char *buf, const size_t buf_len)
+static bool ui_but_event_operator_string(
+        const bContext *C, uiBut *but,
+        char *buf, const size_t buf_len)
 {
 	MenuType *mt;
 	bool found = false;
@@ -981,7 +993,10 @@ static bool ui_but_event_operator_string(const bContext *C, uiBut *but, char *bu
 	if (but->optype) {
 		IDProperty *prop = (but->opptr) ? but->opptr->data : NULL;
 
-		if (WM_key_event_operator_string(C, but->optype->idname, but->opcontext, prop, true, buf_len, buf)) {
+		if (WM_key_event_operator_string(
+		        C, but->optype->idname, but->opcontext, prop, true,
+		        buf, buf_len))
+		{
 			found = true;
 		}
 	}
@@ -996,8 +1011,9 @@ static bool ui_but_event_operator_string(const bContext *C, uiBut *but, char *bu
 
 		IDP_AssignString(prop_menu_name, mt->idname, sizeof(mt->idname));
 
-		if (WM_key_event_operator_string(C, "WM_OT_call_menu", WM_OP_INVOKE_REGION_WIN, prop_menu,
-		                                 true, buf_len, buf))
+		if (WM_key_event_operator_string(
+		        C, "WM_OT_call_menu", WM_OP_INVOKE_REGION_WIN, prop_menu, true,
+		        buf, buf_len))
 		{
 			found = true;
 		}
@@ -1009,8 +1025,10 @@ static bool ui_but_event_operator_string(const bContext *C, uiBut *but, char *bu
 	return found;
 }
 
-static bool ui_but_event_property_operator_string(const bContext *C, uiBut *but, char *buf, const size_t buf_len)
-{	
+static bool ui_but_event_property_operator_string(
+        const bContext *C, uiBut *but,
+        char *buf, const size_t buf_len)
+{
 	/* context toggle operator names to check... */
 	const char *ctx_toggle_opnames[] = {
 		"WM_OT_context_toggle",
@@ -1104,8 +1122,9 @@ static bool ui_but_event_property_operator_string(const bContext *C, uiBut *but,
 			
 			/* check each until one works... */
 			for (i = 0; (i < num_ops) && (ctx_toggle_opnames[i]); i++) {
-				if (WM_key_event_operator_string(C, ctx_toggle_opnames[i], WM_OP_INVOKE_REGION_WIN, prop_path, false,
-				                                 buf_len, buf))
+				if (WM_key_event_operator_string(
+				        C, ctx_toggle_opnames[i], WM_OP_INVOKE_REGION_WIN, prop_path, false,
+				        buf, buf_len))
 				{
 					found = true;
 					break;
@@ -1228,7 +1247,7 @@ void UI_block_update_from_old(const bContext *C, uiBlock *block)
 	block->oldblock = NULL;
 }
 
-void UI_block_end_ex(const bContext *C, uiBlock *block, const int xy[2])
+void UI_block_end_ex(const bContext *C, uiBlock *block, const int xy[2], int r_xy[2])
 {
 	wmWindow *window = CTX_wm_window(C);
 	Scene *scene = CTX_data_scene(C);
@@ -1296,7 +1315,7 @@ void UI_block_end_ex(const bContext *C, uiBlock *block, const int xy[2])
 			/* fallback */
 		case UI_BLOCK_BOUNDS_POPUP_MOUSE:
 		case UI_BLOCK_BOUNDS_POPUP_MENU:
-			ui_block_bounds_calc_popup(window, block, block->bounds_type, xy);
+			ui_block_bounds_calc_popup(window, block, block->bounds_type, xy, r_xy);
 			break;
 	}
 
@@ -1314,7 +1333,7 @@ void UI_block_end(const bContext *C, uiBlock *block)
 {
 	wmWindow *window = CTX_wm_window(C);
 
-	UI_block_end_ex(C, block, &window->eventstate->x);
+	UI_block_end_ex(C, block, &window->eventstate->x, NULL);
 }
 
 /* ************** BLOCK DRAWING FUNCTION ************* */
@@ -1937,13 +1956,14 @@ void ui_but_value_set(uiBut *but, double value)
 	else {
 		/* first do rounding */
 		if (but->pointype == UI_BUT_POIN_CHAR) {
-			value = (char)floor(value + 0.5);
+			value = round_db_to_uchar_clamp(value);
 		}
 		else if (but->pointype == UI_BUT_POIN_SHORT) {
-			value = (short)floor(value + 0.5);
+			value = round_db_to_short_clamp(value);
 		}
-		else if (but->pointype == UI_BUT_POIN_INT)
-			value = (int)floor(value + 0.5);
+		else if (but->pointype == UI_BUT_POIN_INT) {
+			value = round_db_to_int_clamp(value);
+		}
 		else if (but->pointype == UI_BUT_POIN_FLOAT) {
 			float fval = (float)value;
 			if (fval >= -0.00001f && fval <= 0.00001f) fval = 0.0f;  /* prevent negative zero */
@@ -2479,7 +2499,9 @@ bool ui_but_string_set(bContext *C, uiBut *but, const char *str)
 			return false;
 		}
 
-		if (!ui_but_is_float(but)) value = (int)floor(value + 0.5);
+		if (!ui_but_is_float(but)) {
+			value = floor(value + 0.5);
+		}
 
 		/* not that we use hard limits here */
 		if (value < (double)but->hardmin) value = but->hardmin;
@@ -2657,6 +2679,10 @@ static void ui_but_free(const bContext *C, uiBut *but)
 
 	if (but->tip_argN) {
 		MEM_freeN(but->tip_argN);
+	}
+
+	if (but->hold_argN) {
+		MEM_freeN(but->hold_argN);
 	}
 
 	if (but->active) {
@@ -3277,7 +3303,7 @@ static void ui_def_but_rna__menu(bContext *UNUSED(C), uiLayout *layout, void *bu
 	uiBut *but = (uiBut *)but_p;
 
 	/* see comment in ui_item_enum_expand, re: uiname  */
-	EnumPropertyItem *item, *item_array;
+	const EnumPropertyItem *item, *item_array;
 	bool free;
 
 	uiLayout *split, *column = NULL;
@@ -3387,9 +3413,8 @@ static void ui_def_but_rna__menu(bContext *UNUSED(C), uiLayout *layout, void *bu
 	UI_block_layout_set_current(block, layout);
 
 	if (free) {
-		MEM_freeN(item_array);
+		MEM_freeN((void *)item_array);
 	}
-
 	BLI_assert((block->flag & UI_BLOCK_IS_FLIP) == 0);
 	block->flag |= UI_BLOCK_IS_FLIP;
 }
@@ -3420,7 +3445,7 @@ static uiBut *ui_def_but_rna(
 	/* use rna values if parameters are not specified */
 	if ((proptype == PROP_ENUM) && ELEM(type, UI_BTYPE_MENU, UI_BTYPE_ROW, UI_BTYPE_LISTROW)) {
 		/* UI_BTYPE_MENU is handled a little differently here */
-		EnumPropertyItem *item;
+		const EnumPropertyItem *item;
 		int value;
 		bool free;
 		int i;
@@ -3462,7 +3487,7 @@ static uiBut *ui_def_but_rna(
 		}
 
 		if (free) {
-			MEM_freeN(item);
+			MEM_freeN((void *)item);
 		}
 	}
 	else {
@@ -4424,7 +4449,7 @@ static void operator_enum_search_cb(const struct bContext *C, void *but, const c
 	}
 	else {
 		PointerRNA *ptr = UI_but_operator_ptr_get(but);  /* Will create it if needed! */
-		EnumPropertyItem *item, *item_array;
+		const EnumPropertyItem *item, *item_array;
 		bool do_free;
 
 		RNA_property_enum_items_gettexted((bContext *)C, ptr, prop, &item_array, NULL, &do_free);
@@ -4437,8 +4462,9 @@ static void operator_enum_search_cb(const struct bContext *C, void *but, const c
 			}
 		}
 
-		if (do_free)
-			MEM_freeN(item_array);
+		if (do_free) {
+			MEM_freeN((void *)item_array);
+		}
 	}
 }
 
@@ -4507,12 +4533,18 @@ void UI_but_focus_on_enter_event(wmWindow *win, uiBut *but)
 	wm_event_add(win, &event);
 }
 
+void UI_but_func_hold_set(uiBut *but, uiButHandleHoldFunc func, void *argN)
+{
+	but->hold_func = func;
+	but->hold_argN = argN;
+}
+
 void UI_but_string_info_get(bContext *C, uiBut *but, ...)
 {
 	va_list args;
 	uiStringInfo *si;
 
-	EnumPropertyItem *items = NULL, *item = NULL;
+	const EnumPropertyItem *items = NULL, *item = NULL;
 	int totitems;
 	bool free_items = false;
 
@@ -4688,8 +4720,9 @@ void UI_but_string_info_get(bContext *C, uiBut *but, ...)
 	}
 	va_end(args);
 
-	if (free_items && items)
-		MEM_freeN(items);
+	if (free_items && items) {
+		MEM_freeN((void *)items);
+	}
 }
 
 /* Program Init/Exit */

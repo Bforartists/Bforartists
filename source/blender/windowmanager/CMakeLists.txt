@@ -60,6 +60,7 @@ set(SRC
 	intern/wm_files.c
 	intern/wm_files_link.c
 	intern/wm_gesture.c
+	intern/wm_gesture_ops.c
 	intern/wm_init_exit.c
 	intern/wm_jobs.c
 	intern/wm_keymap.c
@@ -98,16 +99,6 @@ endif()
 
 if(WITH_OPENCOLLADA)
 	add_definitions(-DWITH_COLLADA)
-endif()
-
-if(WITH_CODEC_QUICKTIME)
-	list(APPEND INC
-		../quicktime
-	)
-	list(APPEND INC_SYS
-		${QUICKTIME_INCLUDE_DIRS}
-	)
-	add_definitions(-DWITH_QUICKTIME)
 endif()
 
 if(WITH_CODEC_FFMPEG)

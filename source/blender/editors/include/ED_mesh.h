@@ -75,7 +75,6 @@ struct BMFace *EDBM_verts_mirror_get_face(struct BMEditMesh *em, struct BMFace *
 void           EDBM_verts_mirror_cache_clear(struct BMEditMesh *em, struct BMVert *v);
 void           EDBM_verts_mirror_cache_end(struct BMEditMesh *em);
 
-void EDBM_mesh_ensure_valid_dm_hack(struct Scene *scene, struct BMEditMesh *em);
 void EDBM_mesh_normals_update(struct BMEditMesh *em);
 void EDBM_mesh_clear(struct BMEditMesh *em);
 
@@ -103,7 +102,7 @@ void undo_push_mesh(struct bContext *C, const char *name);
 bool EDBM_vert_color_check(struct BMEditMesh *em);
 
 void EDBM_mesh_hide(struct BMEditMesh *em, bool swap);
-void EDBM_mesh_reveal(struct BMEditMesh *em);
+void EDBM_mesh_reveal(struct BMEditMesh *em, bool select);
 
 void EDBM_update_generic(struct BMEditMesh *em, const bool do_tessface, const bool is_destructive);
 
@@ -205,7 +204,7 @@ void paintface_select_linked(struct bContext *C, struct Object *ob, const int mv
 bool paintface_minmax(struct Object *ob, float r_min[3], float r_max[3]);
 
 void paintface_hide(struct Object *ob, const bool unselected);
-void paintface_reveal(struct Object *ob);
+void paintface_reveal(struct Object *ob, const bool select);
 
 void paintvert_deselect_all_visible(struct Object *ob, int action, bool flush_flags);
 void paintvert_select_ungrouped(struct Object *ob, bool extend, bool flush_flags);
@@ -282,6 +281,7 @@ bool ED_mesh_uv_texture_remove_active(struct Mesh *me);
 bool ED_mesh_uv_texture_remove_named(struct Mesh *me, const char *name);
 void ED_mesh_uv_loop_reset(struct bContext *C, struct Mesh *me);
 void ED_mesh_uv_loop_reset_ex(struct Mesh *me, const int layernum);
+bool ED_mesh_color_ensure(struct Mesh *me, const char *name);
 int  ED_mesh_color_add(struct Mesh *me, const char *name, const bool active_set);
 bool ED_mesh_color_remove_index(struct Mesh *me, const int n);
 bool ED_mesh_color_remove_active(struct Mesh *me);

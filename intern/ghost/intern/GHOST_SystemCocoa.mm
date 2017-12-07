@@ -283,16 +283,7 @@ extern "C" int GHOST_HACK_getFirstFile(char buf[FIRSTFILEBUFLG])
  * CocoaAppDelegate
  * ObjC object to capture applicationShouldTerminate, and send quit event
  **/
-#if defined(__clang_major__) && __clang_major__ <= 7
-/* FIXME(merwin & Juicyfruit): long-term fix for proper protocol to use
- * merwin thinks NSApplicationDelegate is the correct protocol here. Has been around since 10.6 so we should be good... what's the problem?
- * https://developer.apple.com/reference/appkit/nsapplicationdelegate?language=objc
- */
-@interface CocoaAppDelegate : NSObject <NSFileManagerDelegate> {
-#else
-/* for Xcode 8 */
 @interface CocoaAppDelegate : NSObject <NSApplicationDelegate> {
-#endif
 
 	GHOST_SystemCocoa *systemCocoa;
 }
@@ -1254,27 +1245,6 @@ bool GHOST_SystemCocoa::handleTabletEvent(void *eventPtr)
 	}
 }
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED < 1070
-enum {
-	NSEventPhaseNone = 0,
-	NSEventPhaseBegan = 0x1 << 0,
-	NSEventPhaseStationary = 0x1 << 1,
-	NSEventPhaseChanged = 0x1 << 2,
-	NSEventPhaseEnded = 0x1 << 3,
-	NSEventPhaseCancelled = 0x1 << 4,
-};
-typedef NSUInteger NSEventPhase;
-
-@interface NSEvent (AvailableOn1070AndLater)
-- (BOOL)hasPreciseScrollingDeltas;
-- (CGFloat)scrollingDeltaX;
-- (CGFloat)scrollingDeltaY;
-- (NSEventPhase)momentumPhase;
-- (BOOL)isDirectionInvertedFromDevice;
-- (NSEventPhase)phase;
-@end
-#endif
-
 GHOST_TSuccess GHOST_SystemCocoa::handleMouseEvent(void *eventPtr)
 {
 	NSEvent *event = (NSEvent *)eventPtr;
@@ -1459,7 +1429,6 @@ GHOST_TSuccess GHOST_SystemCocoa::handleMouseEvent(void *eventPtr)
 					double dx;
 					double dy;
 
-#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 					/* with 10.7 nice scrolling deltas are supported */
 					dx = [event scrollingDeltaX];
 					dy = [event scrollingDeltaY];
@@ -1469,29 +1438,6 @@ GHOST_TSuccess GHOST_SystemCocoa::handleMouseEvent(void *eventPtr)
 						dx = [event deltaX];
 						dy = [event deltaY];
 					}
-#else
-					/* trying to pretend you have nice scrolls... */
-					dx = [event deltaX];
-					dy = -[event deltaY];
-					const double deltaMax = 50.0;
-
-					if ((dx == 0) && (dy == 0)) break;
-
-					/* Quadratic acceleration */
-					dx = dx*(fabs(dx) + 0.5);
-					if (dx < 0.0) dx -= 0.5;
-					else          dx += 0.5;
-					if      (dx < -deltaMax) dx = -deltaMax;
-					else if (dx >  deltaMax) dx =  deltaMax;
-
-					dy = dy*(fabs(dy) + 0.5);
-					if (dy < 0.0) dy -= 0.5;
-					else          dy += 0.5;
-					if      (dy < -deltaMax) dy= -deltaMax;
-					else if (dy >  deltaMax) dy=  deltaMax;
-
-					dy = -dy;
-#endif
 					window->clientToScreenIntern(mousePos.x, mousePos.y, x, y);
 
 					pushEvent(new GHOST_EventTrackpad([event timestamp] * 1000, window, GHOST_kTrackpadEventScroll, x, y, dx, dy));
@@ -1515,7 +1461,7 @@ GHOST_TSuccess GHOST_SystemCocoa::handleMouseEvent(void *eventPtr)
 				GHOST_TInt32 x, y;
 				window->clientToScreenIntern(mousePos.x, mousePos.y, x, y);
 				pushEvent(new GHOST_EventTrackpad([event timestamp] * 1000, window, GHOST_kTrackpadEventRotate, x, y,
-				                                  [event rotation] * 5.0, 0));
+				                                  [event rotation] * -5.0, 0));
 			}
 		default:
 			return GHOST_kFailure;

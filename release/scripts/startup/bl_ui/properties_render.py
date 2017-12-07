@@ -486,37 +486,6 @@ class RENDER_PT_output(RenderButtonsPanel, Panel):
         if rd.use_multiview:
             layout.template_image_views(image_settings)
 
-        if file_format == 'QUICKTIME':
-            quicktime = rd.quicktime
-
-            split = layout.split()
-            col = split.column()
-            col.prop(quicktime, "codec_type", text="Video Codec")
-            col.prop(quicktime, "codec_spatial_quality", text="Quality")
-
-            # Audio
-            col.prop(quicktime, "audiocodec_type", text="Audio Codec")
-            if quicktime.audiocodec_type != 'No audio':
-                split = layout.split()
-                if quicktime.audiocodec_type == 'LPCM':
-                    split.prop(quicktime, "audio_bitdepth", text="")
-
-                split.prop(quicktime, "audio_samplerate", text="")
-
-                split = layout.split()
-                col = split.column()
-                if quicktime.audiocodec_type == 'AAC':
-                    col.prop(quicktime, "audio_bitrate")
-
-                subsplit = split.split()
-                col = subsplit.column()
-
-                if quicktime.audiocodec_type == 'AAC':
-                    col.prop(quicktime, "audio_codec_isvbr")
-
-                col = subsplit.column()
-                col.prop(quicktime, "audio_resampling_hq")
-
 
 class RENDER_PT_encoding(RenderButtonsPanel, Panel):
     bl_label = "Encoding"
@@ -564,19 +533,19 @@ class RENDER_PT_encoding(RenderButtonsPanel, Panel):
         pbox.prop(ffmpeg, "max_b_frames", text="")
         pbox.enabled = ffmpeg.use_max_b_frames
 
-        split = layout.split()
-        split.enabled = ffmpeg.constant_rate_factor == 'NONE'
-        col = split.column()
-        col.label(text="Rate:")
-        col.prop(ffmpeg, "video_bitrate")
-        col.prop(ffmpeg, "minrate", text="Minimum")
-        col.prop(ffmpeg, "maxrate", text="Maximum")
-        col.prop(ffmpeg, "buffersize", text="Buffer")
+        if ffmpeg.constant_rate_factor == 'NONE':
+            split = layout.split()
+            col = split.column()
+            col.label(text="Rate:")
+            col.prop(ffmpeg, "video_bitrate")
+            col.prop(ffmpeg, "minrate", text="Minimum")
+            col.prop(ffmpeg, "maxrate", text="Maximum")
+            col.prop(ffmpeg, "buffersize", text="Buffer")
 
-        col = split.column()
-        col.label(text="Mux:")
-        col.prop(ffmpeg, "muxrate", text="Rate")
-        col.prop(ffmpeg, "packetsize", text="Packet Size")
+            col = split.column()
+            col.label(text="Mux:")
+            col.prop(ffmpeg, "muxrate", text="Rate")
+            col.prop(ffmpeg, "packetsize", text="Packet Size")
 
         layout.separator()
 
@@ -584,10 +553,10 @@ class RENDER_PT_encoding(RenderButtonsPanel, Panel):
         if ffmpeg.format != 'MP3':
             layout.prop(ffmpeg, "audio_codec", text="Audio Codec")
 
-        row = layout.row()
-        row.enabled = ffmpeg.audio_codec != 'NONE'
-        row.prop(ffmpeg, "audio_bitrate")
-        row.prop(ffmpeg, "audio_volume", slider=True)
+        if ffmpeg.audio_codec != 'NONE':
+            row = layout.row()
+            row.prop(ffmpeg, "audio_bitrate")
+            row.prop(ffmpeg, "audio_volume", slider=True)
 
 
 

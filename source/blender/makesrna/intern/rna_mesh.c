@@ -52,7 +52,7 @@
 
 #include "WM_types.h"
 
-EnumPropertyItem rna_enum_mesh_delimit_mode_items[] = {
+const EnumPropertyItem rna_enum_mesh_delimit_mode_items[] = {
 	{BMO_DELIM_NORMAL, "NORMAL", 0, "Normal", "Delimit by face directions"},
 	{BMO_DELIM_MATERIAL, "MATERIAL", 0, "Material", "Delimit by face material"},
 	{BMO_DELIM_SEAM, "SEAM", 0, "Seam", "Delimit by edge seams"},
@@ -304,7 +304,7 @@ static float rna_MeshVertex_bevel_weight_get(PointerRNA *ptr)
 static void rna_MeshVertex_bevel_weight_set(PointerRNA *ptr, float value)
 {
 	MVert *mvert = (MVert *)ptr->data;
-	mvert->bweight = (char)(CLAMPIS(value * 255.0f, 0, 255));
+	mvert->bweight = round_fl_to_uchar_clamp(value * 255.0f);
 }
 
 static float rna_MEdge_bevel_weight_get(PointerRNA *ptr)
@@ -316,7 +316,7 @@ static float rna_MEdge_bevel_weight_get(PointerRNA *ptr)
 static void rna_MEdge_bevel_weight_set(PointerRNA *ptr, float value)
 {
 	MEdge *medge = (MEdge *)ptr->data;
-	medge->bweight = (char)(CLAMPIS(value * 255.0f, 0, 255));
+	medge->bweight = round_fl_to_uchar_clamp(value * 255.0f);
 }
 
 static float rna_MEdge_crease_get(PointerRNA *ptr)
@@ -328,7 +328,7 @@ static float rna_MEdge_crease_get(PointerRNA *ptr)
 static void rna_MEdge_crease_set(PointerRNA *ptr, float value)
 {
 	MEdge *medge = (MEdge *)ptr->data;
-	medge->crease = (char)(CLAMPIS(value * 255.0f, 0, 255));
+	medge->crease = round_fl_to_uchar_clamp(value * 255.0f);
 }
 
 static void rna_MeshLoop_normal_get(PointerRNA *ptr, float *values)
@@ -577,90 +577,100 @@ static void rna_MeshColor_color1_get(PointerRNA *ptr, float *values)
 {
 	MCol *mcol = (MCol *)ptr->data;
 
-	values[2] = (&mcol[0].r)[0] / 255.0f;
-	values[1] = (&mcol[0].r)[1] / 255.0f;
-	values[0] = (&mcol[0].r)[2] / 255.0f;
+	values[3] = mcol[0].a / 255.0f;
+	values[2] = mcol[0].r / 255.0f;
+	values[1] = mcol[0].g / 255.0f;
+	values[0] = mcol[0].b / 255.0f;
 }
 
 static void rna_MeshColor_color1_set(PointerRNA *ptr, const float *values)
 {
 	MCol *mcol = (MCol *)ptr->data;
 
-	(&mcol[0].r)[2] = (char)(CLAMPIS(values[0] * 255.0f, 0, 255));
-	(&mcol[0].r)[1] = (char)(CLAMPIS(values[1] * 255.0f, 0, 255));
-	(&mcol[0].r)[0] = (char)(CLAMPIS(values[2] * 255.0f, 0, 255));
+	mcol[0].a = round_fl_to_uchar_clamp(values[3] * 255.0f);
+	mcol[0].r = round_fl_to_uchar_clamp(values[2] * 255.0f);
+	mcol[0].g = round_fl_to_uchar_clamp(values[1] * 255.0f);
+	mcol[0].b = round_fl_to_uchar_clamp(values[0] * 255.0f);
 }
 
 static void rna_MeshColor_color2_get(PointerRNA *ptr, float *values)
 {
 	MCol *mcol = (MCol *)ptr->data;
 
-	values[2] = (&mcol[1].r)[0] / 255.0f;
-	values[1] = (&mcol[1].r)[1] / 255.0f;
-	values[0] = (&mcol[1].r)[2] / 255.0f;
+	values[3] = mcol[1].a / 255.0f;
+	values[2] = mcol[1].r / 255.0f;
+	values[1] = mcol[1].g / 255.0f;
+	values[0] = mcol[1].b / 255.0f;
 }
 
 static void rna_MeshColor_color2_set(PointerRNA *ptr, const float *values)
 {
 	MCol *mcol = (MCol *)ptr->data;
 
-	(&mcol[1].r)[2] = (char)(CLAMPIS(values[0] * 255.0f, 0, 255));
-	(&mcol[1].r)[1] = (char)(CLAMPIS(values[1] * 255.0f, 0, 255));
-	(&mcol[1].r)[0] = (char)(CLAMPIS(values[2] * 255.0f, 0, 255));
+	mcol[1].a = round_fl_to_uchar_clamp(values[3] * 255.0f);
+	mcol[1].r = round_fl_to_uchar_clamp(values[2] * 255.0f);
+	mcol[1].g = round_fl_to_uchar_clamp(values[1] * 255.0f);
+	mcol[1].b = round_fl_to_uchar_clamp(values[0] * 255.0f);
 }
 
 static void rna_MeshColor_color3_get(PointerRNA *ptr, float *values)
 {
 	MCol *mcol = (MCol *)ptr->data;
 
-	values[2] = (&mcol[2].r)[0] / 255.0f;
-	values[1] = (&mcol[2].r)[1] / 255.0f;
-	values[0] = (&mcol[2].r)[2] / 255.0f;
+	values[3] = mcol[2].a / 255.0f;
+	values[2] = mcol[2].r / 255.0f;
+	values[1] = mcol[2].g / 255.0f;
+	values[0] = mcol[2].b / 255.0f;
 }
 
 static void rna_MeshColor_color3_set(PointerRNA *ptr, const float *values)
 {
 	MCol *mcol = (MCol *)ptr->data;
 
-	(&mcol[2].r)[2] = (char)(CLAMPIS(values[0] * 255.0f, 0, 255));
-	(&mcol[2].r)[1] = (char)(CLAMPIS(values[1] * 255.0f, 0, 255));
-	(&mcol[2].r)[0] = (char)(CLAMPIS(values[2] * 255.0f, 0, 255));
+	mcol[2].a = round_fl_to_uchar_clamp(values[3] * 255.0f);
+	mcol[2].r = round_fl_to_uchar_clamp(values[2] * 255.0f);
+	mcol[2].g = round_fl_to_uchar_clamp(values[1] * 255.0f);
+	mcol[2].b = round_fl_to_uchar_clamp(values[0] * 255.0f);
 }
 
 static void rna_MeshColor_color4_get(PointerRNA *ptr, float *values)
 {
 	MCol *mcol = (MCol *)ptr->data;
 
-	values[2] = (&mcol[3].r)[0] / 255.0f;
-	values[1] = (&mcol[3].r)[1] / 255.0f;
-	values[0] = (&mcol[3].r)[2] / 255.0f;
+	values[3] = mcol[3].a / 255.0f;
+	values[2] = mcol[3].r / 255.0f;
+	values[1] = mcol[3].g / 255.0f;
+	values[0] = mcol[3].b / 255.0f;
 }
 
 static void rna_MeshColor_color4_set(PointerRNA *ptr, const float *values)
 {
 	MCol *mcol = (MCol *)ptr->data;
 
-	(&mcol[3].r)[2] = (char)(CLAMPIS(values[0] * 255.0f, 0, 255));
-	(&mcol[3].r)[1] = (char)(CLAMPIS(values[1] * 255.0f, 0, 255));
-	(&mcol[3].r)[0] = (char)(CLAMPIS(values[2] * 255.0f, 0, 255));
+	mcol[3].a = round_fl_to_uchar_clamp(values[3] * 255.0f);
+	mcol[3].r = round_fl_to_uchar_clamp(values[2] * 255.0f);
+	mcol[3].g = round_fl_to_uchar_clamp(values[1] * 255.0f);
+	mcol[3].b = round_fl_to_uchar_clamp(values[0] * 255.0f);
 }
 
 static void rna_MeshLoopColor_color_get(PointerRNA *ptr, float *values)
 {
-	MLoopCol *mcol = (MLoopCol *)ptr->data;
+	MLoopCol *mlcol = (MLoopCol *)ptr->data;
 
-	values[0] = (&mcol->r)[0] / 255.0f;
-	values[1] = (&mcol->r)[1] / 255.0f;
-	values[2] = (&mcol->r)[2] / 255.0f;
+	values[0] = mlcol->r / 255.0f;
+	values[1] = mlcol->g / 255.0f;
+	values[2] = mlcol->b / 255.0f;
+	values[3] = mlcol->a / 255.0f;
 }
 
 static void rna_MeshLoopColor_color_set(PointerRNA *ptr, const float *values)
 {
-	MLoopCol *mcol = (MLoopCol *)ptr->data;
+	MLoopCol *mlcol = (MLoopCol *)ptr->data;
 
-	(&mcol->r)[0] = (char)(CLAMPIS(values[0] * 255.0f, 0, 255));
-	(&mcol->r)[1] = (char)(CLAMPIS(values[1] * 255.0f, 0, 255));
-	(&mcol->r)[2] = (char)(CLAMPIS(values[2] * 255.0f, 0, 255));
+	mlcol->r = round_fl_to_uchar_clamp(values[0] * 255.0f);
+	mlcol->g = round_fl_to_uchar_clamp(values[1] * 255.0f);
+	mlcol->b = round_fl_to_uchar_clamp(values[2] * 255.0f);
+	mlcol->a = round_fl_to_uchar_clamp(values[3] * 255.0f);
 }
 
 static int rna_Mesh_texspace_editable(PointerRNA *ptr, const char **UNUSED(r_info))
@@ -2504,28 +2514,28 @@ static void rna_def_mcol(BlenderRNA *brna)
 	RNA_def_struct_path_func(srna, "rna_MeshColor_path");
 
 	prop = RNA_def_property(srna, "color1", PROP_FLOAT, PROP_COLOR);
-	RNA_def_property_array(prop, 3);
+	RNA_def_property_array(prop, 4);
 	RNA_def_property_range(prop, 0.0f, 1.0f);
 	RNA_def_property_float_funcs(prop, "rna_MeshColor_color1_get", "rna_MeshColor_color1_set", NULL);
 	RNA_def_property_ui_text(prop, "Color 1", "");
 	RNA_def_property_update(prop, 0, "rna_Mesh_update_data");
 
 	prop = RNA_def_property(srna, "color2", PROP_FLOAT, PROP_COLOR);
-	RNA_def_property_array(prop, 3);
+	RNA_def_property_array(prop, 4);
 	RNA_def_property_range(prop, 0.0f, 1.0f);
 	RNA_def_property_float_funcs(prop, "rna_MeshColor_color2_get", "rna_MeshColor_color2_set", NULL);
 	RNA_def_property_ui_text(prop, "Color 2", "");
 	RNA_def_property_update(prop, 0, "rna_Mesh_update_data");
 
 	prop = RNA_def_property(srna, "color3", PROP_FLOAT, PROP_COLOR);
-	RNA_def_property_array(prop, 3);
+	RNA_def_property_array(prop, 4);
 	RNA_def_property_range(prop, 0.0f, 1.0f);
 	RNA_def_property_float_funcs(prop, "rna_MeshColor_color3_get", "rna_MeshColor_color3_set", NULL);
 	RNA_def_property_ui_text(prop, "Color 3", "");
 	RNA_def_property_update(prop, 0, "rna_Mesh_update_data");
 
 	prop = RNA_def_property(srna, "color4", PROP_FLOAT, PROP_COLOR);
-	RNA_def_property_array(prop, 3);
+	RNA_def_property_array(prop, 4);
 	RNA_def_property_range(prop, 0.0f, 1.0f);
 	RNA_def_property_float_funcs(prop, "rna_MeshColor_color4_get", "rna_MeshColor_color4_set", NULL);
 	RNA_def_property_ui_text(prop, "Color 4", "");
@@ -2575,7 +2585,7 @@ static void rna_def_mloopcol(BlenderRNA *brna)
 	RNA_def_struct_path_func(srna, "rna_MeshColor_path");
 
 	prop = RNA_def_property(srna, "color", PROP_FLOAT, PROP_COLOR);
-	RNA_def_property_array(prop, 3);
+	RNA_def_property_array(prop, 4);
 	RNA_def_property_range(prop, 0.0f, 1.0f);
 	RNA_def_property_float_funcs(prop, "rna_MeshLoopColor_color_get", "rna_MeshLoopColor_color_set", NULL);
 	RNA_def_property_ui_text(prop, "Color", "");

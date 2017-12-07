@@ -1131,6 +1131,11 @@ static void node_buts_output_linestyle(uiLayout *layout, bContext *UNUSED(C), Po
 	uiItemR(col, ptr, "use_clamp", 0, NULL, ICON_NONE);
 }
 
+static void node_shader_buts_bevel(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
+{
+	uiItemR(layout, ptr, "samples", 0, NULL, ICON_NONE);
+}
+
 /* only once called */
 static void node_shader_set_butfunc(bNodeType *ntype)
 {
@@ -1262,6 +1267,9 @@ static void node_shader_set_butfunc(bNodeType *ntype)
 		case SH_NODE_OUTPUT_LINESTYLE:
 			ntype->draw_buttons = node_buts_output_linestyle;
 			break;
+		case SH_NODE_BEVEL:
+			ntype->draw_buttons = node_shader_buts_bevel;
+			break;
 	}
 }
 
@@ -1337,7 +1345,7 @@ static void node_composit_buts_renderlayers(uiLayout *layout, bContext *C, Point
 	scn_ptr = RNA_pointer_get(ptr, "scene");
 	RNA_string_get(&scn_ptr, "name", scene_name);
 
-	op_ptr = uiItemFullO(row, "RENDER_OT_render", "", ICON_RENDER_STILL, NULL, WM_OP_INVOKE_DEFAULT, UI_ITEM_O_RETURN_PROPS);
+	uiItemFullO(row, "RENDER_OT_render", "", ICON_RENDER_STILL, NULL, WM_OP_INVOKE_DEFAULT, 0, &op_ptr);
 	RNA_string_set(&op_ptr, "layer", layer_name);
 	RNA_string_set(&op_ptr, "scene", scene_name);
 }
@@ -1828,9 +1836,9 @@ static void node_composit_buts_file_output_ex(uiLayout *layout, bContext *C, Poi
 	
 	col = uiLayoutColumn(row, true);
 	ot = WM_operatortype_find("NODE_OT_output_file_move_active_socket", false);
-	op_ptr = uiItemFullO_ptr(col, ot, "", ICON_TRIA_UP, NULL, WM_OP_INVOKE_DEFAULT, UI_ITEM_O_RETURN_PROPS);
+	uiItemFullO_ptr(col, ot, "", ICON_TRIA_UP, NULL, WM_OP_INVOKE_DEFAULT, 0, &op_ptr);
 	RNA_enum_set(&op_ptr, "direction", 1);
-	op_ptr = uiItemFullO_ptr(col, ot, "", ICON_TRIA_DOWN, NULL, WM_OP_INVOKE_DEFAULT, UI_ITEM_O_RETURN_PROPS);
+	uiItemFullO_ptr(col, ot, "", ICON_TRIA_DOWN, NULL, WM_OP_INVOKE_DEFAULT, 0, &op_ptr);
 	RNA_enum_set(&op_ptr, "direction", 2);
 	
 	if (active_input_ptr.data) {
@@ -1841,7 +1849,7 @@ static void node_composit_buts_file_output_ex(uiLayout *layout, bContext *C, Poi
 			row = uiLayoutRow(col, false);
 			uiItemR(row, &active_input_ptr, "name", 0, "", ICON_NONE);
 			uiItemFullO(row, "NODE_OT_output_file_remove_active_socket", "",
-			            ICON_X, NULL, WM_OP_EXEC_DEFAULT, UI_ITEM_R_ICON_ONLY);
+			            ICON_X, NULL, WM_OP_EXEC_DEFAULT, UI_ITEM_R_ICON_ONLY, NULL);
 		}
 		else {
 			col = uiLayoutColumn(layout, true);
@@ -1850,7 +1858,7 @@ static void node_composit_buts_file_output_ex(uiLayout *layout, bContext *C, Poi
 			row = uiLayoutRow(col, false);
 			uiItemR(row, &active_input_ptr, "path", 0, "", ICON_NONE);
 			uiItemFullO(row, "NODE_OT_output_file_remove_active_socket", "",
-			            ICON_X, NULL, WM_OP_EXEC_DEFAULT, UI_ITEM_R_ICON_ONLY);
+			            ICON_X, NULL, WM_OP_EXEC_DEFAULT, UI_ITEM_R_ICON_ONLY, NULL);
 			
 			/* format details for individual files */
 			imfptr = RNA_pointer_get(&active_input_ptr, "format");
@@ -2162,7 +2170,9 @@ static void node_composit_buts_switch(uiLayout *layout, bContext *UNUSED(C), Poi
 
 static void node_composit_buts_switch_view_ex(uiLayout *layout, bContext *UNUSED(C), PointerRNA *UNUSED(ptr))
 {
-	uiItemFullO(layout, "NODE_OT_switch_view_update", "Update Views", ICON_FILE_REFRESH, NULL, WM_OP_INVOKE_DEFAULT, 0);
+	uiItemFullO(
+	        layout, "NODE_OT_switch_view_update",
+	        "Update Views", ICON_FILE_REFRESH, NULL, WM_OP_INVOKE_DEFAULT, 0, NULL);
 }
 
 static void node_composit_buts_boxmask(uiLayout *layout, bContext *UNUSED(C), PointerRNA *ptr)
@@ -2204,16 +2214,17 @@ static void node_composit_backdrop_viewer(SpaceNode *snode, ImBuf *backdrop, bNo
 	if (node->custom1 == 0) {
 		const float backdropWidth = backdrop->x;
 		const float backdropHeight = backdrop->y;
-		const float cx  = x + snode->zoom * backdropWidth * node->custom3;
+		const float cx = x + snode->zoom * backdropWidth  * node->custom3;
 		const float cy = y + snode->zoom * backdropHeight * node->custom4;
+		const float cross_size = 12 * U.pixelsize;
 
 		glColor3f(1.0, 1.0, 1.0);
 
 		glBegin(GL_LINES);
-		glVertex2f(cx - 25, cy - 25);
-		glVertex2f(cx + 25, cy + 25);
-		glVertex2f(cx + 25, cy - 25);
-		glVertex2f(cx - 25, cy + 25);
+		glVertex2f(cx - cross_size, cy - cross_size);
+		glVertex2f(cx + cross_size, cy + cross_size);
+		glVertex2f(cx + cross_size, cy - cross_size);
+		glVertex2f(cx - cross_size, cy + cross_size);
 		glEnd();
 	}
 }

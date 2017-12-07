@@ -229,7 +229,7 @@ void BKE_brush_make_local(Main *bmain, Brush *brush, const bool lib_local)
 	 * - mixed: make copy
 	 */
 
-	if (!ID_IS_LINKED_DATABLOCK(brush)) {
+	if (!ID_IS_LINKED(brush)) {
 		return;
 	}
 
@@ -438,9 +438,8 @@ void BKE_brush_sculpt_reset(Brush *br)
 
 /**
  * Library Operations
- * \param preset  CurveMappingPreset
  */
-void BKE_brush_curve_preset(Brush *b, int preset)
+void BKE_brush_curve_preset(Brush *b, eCurveMappingPreset preset)
 {
 	CurveMap *cm = NULL;
 
@@ -521,13 +520,13 @@ int BKE_brush_clone_image_delete(Brush *brush)
  * region space mouse coordinates, or 3d world coordinates for 3D mapping.
  *
  * rgba outputs straight alpha. */
-float BKE_brush_sample_tex_3D(const Scene *scene, Brush *br,
+float BKE_brush_sample_tex_3D(const Scene *scene, const Brush *br,
                               const float point[3],
                               float rgba[4], const int thread,
                               struct ImagePool *pool)
 {
 	UnifiedPaintSettings *ups = &scene->toolsettings->unified_paint_settings;
-	MTex *mtex = &br->mtex;
+	const MTex *mtex = &br->mtex;
 	float intensity = 1.0;
 	bool hasrgb = false;
 
@@ -821,7 +820,7 @@ int BKE_brush_size_get(const Scene *scene, const Brush *brush)
 	return size;
 }
 
-int BKE_brush_use_locked_size(const Scene *scene, const Brush *brush)
+bool BKE_brush_use_locked_size(const Scene *scene, const Brush *brush)
 {
 	const short us_flag = scene->toolsettings->unified_paint_settings.flag;
 
@@ -830,7 +829,7 @@ int BKE_brush_use_locked_size(const Scene *scene, const Brush *brush)
 	       (brush->flag & BRUSH_LOCK_SIZE);
 }
 
-int BKE_brush_use_size_pressure(const Scene *scene, const Brush *brush)
+bool BKE_brush_use_size_pressure(const Scene *scene, const Brush *brush)
 {
 	const short us_flag = scene->toolsettings->unified_paint_settings.flag;
 
@@ -839,13 +838,23 @@ int BKE_brush_use_size_pressure(const Scene *scene, const Brush *brush)
 	       (brush->flag & BRUSH_SIZE_PRESSURE);
 }
 
-int BKE_brush_use_alpha_pressure(const Scene *scene, const Brush *brush)
+bool BKE_brush_use_alpha_pressure(const Scene *scene, const Brush *brush)
 {
 	const short us_flag = scene->toolsettings->unified_paint_settings.flag;
 
 	return (us_flag & UNIFIED_PAINT_ALPHA) ?
 	       (us_flag & UNIFIED_PAINT_BRUSH_ALPHA_PRESSURE) :
 	       (brush->flag & BRUSH_ALPHA_PRESSURE);
+}
+
+bool BKE_brush_sculpt_has_secondary_color(const Brush *brush)
+{
+	return ELEM(
+	        brush->sculpt_tool, SCULPT_TOOL_BLOB, SCULPT_TOOL_DRAW,
+	        SCULPT_TOOL_INFLATE, SCULPT_TOOL_CLAY, SCULPT_TOOL_CLAY_STRIPS,
+	        SCULPT_TOOL_PINCH, SCULPT_TOOL_CREASE, SCULPT_TOOL_LAYER,
+	        SCULPT_TOOL_FLATTEN, SCULPT_TOOL_FILL, SCULPT_TOOL_SCRAPE,
+	        SCULPT_TOOL_MASK);
 }
 
 void BKE_brush_unprojected_radius_set(Scene *scene, Brush *brush, float unprojected_radius)
@@ -966,7 +975,7 @@ void BKE_brush_randomize_texture_coords(UnifiedPaintSettings *ups, bool mask)
 }
 
 /* Uses the brush curve control to find a strength value */
-float BKE_brush_curve_strength(Brush *br, float p, const float len)
+float BKE_brush_curve_strength(const Brush *br, float p, const float len)
 {
 	float strength;
 

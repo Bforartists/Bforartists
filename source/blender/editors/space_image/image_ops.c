@@ -1000,7 +1000,7 @@ static int image_view_zoom_border_exec(bContext *C, wmOperator *op)
 	SpaceImage *sima = CTX_wm_space_image(C);
 	ARegion *ar = CTX_wm_region(C);
 	rctf bounds;
-	const int gesture_mode = RNA_int_get(op->ptr, "gesture_mode");
+	const bool zoom_in = !RNA_boolean_get(op->ptr, "zoom_out");
 
 	WM_operator_properties_border_to_rctf(op, &bounds);
 
@@ -1019,7 +1019,7 @@ static int image_view_zoom_border_exec(bContext *C, wmOperator *op)
 	sima_zoom_set_from_bounds(sima, ar, &bounds);
 
 	/* zoom out */
-	if (gesture_mode == GESTURE_MODAL_OUT) {
+	if (!zoom_in) {
 		sima->xof = sima_view_prev.xof + (sima->xof - sima_view_prev.xof);
 		sima->yof = sima_view_prev.yof + (sima->yof - sima_view_prev.yof);
 		sima->zoom = sima_view_prev.zoom * (sima_view_prev.zoom / sima->zoom);
@@ -1038,15 +1038,15 @@ void IMAGE_OT_view_zoom_border(wmOperatorType *ot)
 	ot->idname = "IMAGE_OT_view_zoom_border";
 
 	/* api callbacks */
-	ot->invoke = WM_border_select_invoke;
+	ot->invoke = WM_gesture_border_invoke;
 	ot->exec = image_view_zoom_border_exec;
-	ot->modal = WM_border_select_modal;
-	ot->cancel = WM_border_select_cancel;
+	ot->modal = WM_gesture_border_modal;
+	ot->cancel = WM_gesture_border_cancel;
 
 	ot->poll = space_image_main_region_poll;
 
 	/* rna */
-	WM_operator_properties_gesture_border(ot, false);
+	WM_operator_properties_gesture_border_zoom(ot);
 }
 
 /**************** load/replace/save callbacks ******************/
@@ -1301,12 +1301,12 @@ static int image_open_exec(bContext *C, wmOperator *op)
 	if (iod->iuser) {
 		iuser = iod->iuser;
 	}
-	else if (sa->spacetype == SPACE_IMAGE) {
+	else if (sa && sa->spacetype == SPACE_IMAGE) {
 		SpaceImage *sima = sa->spacedata.first;
 		ED_space_image_set(sima, scene, obedit, ima);
 		iuser = &sima->iuser;
 	}
-	else if (sa->spacetype == SPACE_VIEW3D) {
+	else if (sa && sa->spacetype == SPACE_VIEW3D) {
 		View3D *v3d = sa->spacedata.first;
 
 		for (BGpic *bgpic = v3d->bgpicbase.first; bgpic; bgpic = bgpic->next) {
@@ -1330,7 +1330,8 @@ static int image_open_exec(bContext *C, wmOperator *op)
 		iuser->framenr = 1;
 		if (ima->source == IMA_SRC_MOVIE) {
 			iuser->offset = 0;
-		} else {
+		}
+		else {
 			iuser->offset = frame_ofs - 1;
 		}
 		iuser->fie_ima = 2;
@@ -1823,9 +1824,6 @@ static bool save_image_doit(bContext *C, SpaceImage *sima, wmOperator *op, SaveI
 		const bool save_as_render = (RNA_struct_find_property(op->ptr, "save_as_render") && RNA_boolean_get(op->ptr, "save_as_render"));
 		ImageFormatData *imf = &simopts->im_format;
 
-		const bool is_multilayer = imf->imtype == R_IMF_IMTYPE_MULTILAYER;
-		bool is_mono;
-
 		/* old global to ensure a 2nd save goes to same dir */
 		BLI_strncpy(G.ima, simopts->filepath, sizeof(G.ima));
 
@@ -1852,7 +1850,8 @@ static bool save_image_doit(bContext *C, SpaceImage *sima, wmOperator *op, SaveI
 		/* we need renderresult for exr and rendered multiview */
 		scene = CTX_data_scene(C);
 		rr = BKE_image_acquire_renderresult(scene, ima);
-		is_mono = rr ? BLI_listbase_count_ex(&rr->views, 2) < 2 : BLI_listbase_count_ex(&ima->views, 2) < 2;
+		bool is_mono = rr ? BLI_listbase_count_ex(&rr->views, 2) < 2 : BLI_listbase_count_ex(&ima->views, 2) < 2;
+		bool is_exr_rr = rr && ELEM(imf->imtype, R_IMF_IMTYPE_OPENEXR, R_IMF_IMTYPE_MULTILAYER);
 
 		/* error handling */
 		if (!rr) {
@@ -1882,28 +1881,23 @@ static bool save_image_doit(bContext *C, SpaceImage *sima, wmOperator *op, SaveI
 		}
 
 		/* fancy multiview OpenEXR */
-		if ((imf->imtype == R_IMF_IMTYPE_MULTILAYER) && (imf->views_format == R_IMF_VIEWS_MULTIVIEW)) {
-			ok = RE_WriteRenderResult(op->reports, rr, simopts->filepath, imf, true, NULL);
+		if (imf->views_format == R_IMF_VIEWS_MULTIVIEW && is_exr_rr) {
+			/* save render result */
+			ok = RE_WriteRenderResult(op->reports, rr, simopts->filepath, imf, NULL, sima->iuser.layer);
 			save_image_post(op, ibuf, ima, ok, true, relbase, relative, do_newpath, simopts->filepath);
-			ED_space_image_release_buffer(sima, ibuf, lock);
-		}
-		else if ((imf->imtype == R_IMF_IMTYPE_OPENEXR) && (imf->views_format == R_IMF_VIEWS_MULTIVIEW)) {
-			/* treat special Openexr case separetely (this is the singlelayer multiview OpenEXR */
-			BKE_imbuf_write_prepare(ibuf, imf);
-			ok = BKE_image_save_openexr_multiview(ima, ibuf, simopts->filepath, (IB_rect | IB_zbuf | IB_zbuffloat | IB_multiview));
 			ED_space_image_release_buffer(sima, ibuf, lock);
 		}
 		/* regular mono pipeline */
 		else if (is_mono) {
-			if (is_multilayer) {
-				ok = RE_WriteRenderResult(op->reports, rr, simopts->filepath, imf, false, NULL);
+			if (is_exr_rr) {
+				ok = RE_WriteRenderResult(op->reports, rr, simopts->filepath, imf, NULL, -1);
 			}
 			else {
 				colormanaged_ibuf = IMB_colormanagement_imbuf_for_write(ibuf, save_as_render, true, &imf->view_settings, &imf->display_settings, imf);
 				ok = BKE_imbuf_write_as(colormanaged_ibuf, simopts->filepath, imf, save_copy);
 				save_imbuf_post(ibuf, colormanaged_ibuf);
 			}
-			save_image_post(op, ibuf, ima, ok, (is_multilayer ? true : save_copy), relbase, relative, do_newpath, simopts->filepath);
+			save_image_post(op, ibuf, ima, ok, (is_exr_rr ? true : save_copy), relbase, relative, do_newpath, simopts->filepath);
 			ED_space_image_release_buffer(sima, ibuf, lock);
 		}
 		/* individual multiview images */
@@ -1912,7 +1906,7 @@ static bool save_image_doit(bContext *C, SpaceImage *sima, wmOperator *op, SaveI
 			unsigned char planes = ibuf->planes;
 			const int totviews = (rr ? BLI_listbase_count(&rr->views) : BLI_listbase_count(&ima->views));
 
-			if (!is_multilayer) {
+			if (!is_exr_rr) {
 				ED_space_image_release_buffer(sima, ibuf, lock);
 			}
 
@@ -1922,9 +1916,9 @@ static bool save_image_doit(bContext *C, SpaceImage *sima, wmOperator *op, SaveI
 				const char *view = rr ? ((RenderView *) BLI_findlink(&rr->views, i))->name :
 				                        ((ImageView *) BLI_findlink(&ima->views, i))->name;
 
-				if (is_multilayer) {
+				if (is_exr_rr) {
 					BKE_scene_multiview_view_filepath_get(&scene->r, simopts->filepath, view, filepath);
-					ok_view = RE_WriteRenderResult(op->reports, rr, filepath, imf, false, view);
+					ok_view = RE_WriteRenderResult(op->reports, rr, filepath, imf, view, -1);
 					save_image_post(op, ibuf, ima, ok_view, true, relbase, relative, do_newpath, filepath);
 				}
 				else {
@@ -1952,14 +1946,14 @@ static bool save_image_doit(bContext *C, SpaceImage *sima, wmOperator *op, SaveI
 				ok &= ok_view;
 			}
 
-			if (is_multilayer) {
+			if (is_exr_rr) {
 				ED_space_image_release_buffer(sima, ibuf, lock);
 			}
 		}
 		/* stereo (multiview) images */
 		else if (simopts->im_format.views_format == R_IMF_VIEWS_STEREO_3D) {
 			if (imf->imtype == R_IMF_IMTYPE_MULTILAYER) {
-				ok = RE_WriteRenderResult(op->reports, rr, simopts->filepath, imf, false, NULL);
+				ok = RE_WriteRenderResult(op->reports, rr, simopts->filepath, imf, NULL, -1);
 				save_image_post(op, ibuf, ima, ok, true, relbase, relative, do_newpath, simopts->filepath);
 				ED_space_image_release_buffer(sima, ibuf, lock);
 			}
@@ -2385,8 +2379,8 @@ static int image_new_exec(bContext *C, wmOperator *op)
 	Main *bmain;
 	PointerRNA ptr, idptr;
 	PropertyRNA *prop;
-	char _name[MAX_ID_NAME - 2];
-	char *name = _name;
+	char name_buffer[MAX_ID_NAME - 2];
+	const char *name;
 	float color[4];
 	int width, height, floatbuf, gen_type, alpha;
 	int gen_context;
@@ -2399,10 +2393,13 @@ static int image_new_exec(bContext *C, wmOperator *op)
 	bmain = CTX_data_main(C);
 
 	prop = RNA_struct_find_property(op->ptr, "name");
-	RNA_property_string_get(op->ptr, prop, name);
+	RNA_property_string_get(op->ptr, prop, name_buffer);
 	if (!RNA_property_is_set(op->ptr, prop)) {
 		/* Default value, we can translate! */
-		name = (char *)DATA_(name);
+		name = DATA_(name_buffer);
+	}
+	else {
+		name = name_buffer;
 	}
 	width = RNA_int_get(op->ptr, "width");
 	height = RNA_int_get(op->ptr, "height");
@@ -2549,7 +2546,7 @@ void IMAGE_OT_new(wmOperatorType *ot)
 	PropertyRNA *prop;
 	static float default_color[4] = {0.0f, 0.0f, 0.0f, 1.0f};
 
-	static EnumPropertyItem gen_context_items[] = {
+	static const EnumPropertyItem gen_context_items[] = {
 		{GEN_CONTEXT_NONE, "NONE", 0, "None", ""},
 		{GEN_CONTEXT_PAINT_CANVAS, "PAINT_CANVAS", 0, "Paint Canvas", ""},
 		{GEN_CONTEXT_PAINT_STENCIL, "PAINT_STENCIL", 0, "Paint Stencil", ""},
@@ -3256,7 +3253,7 @@ void IMAGE_OT_sample_line(wmOperatorType *ot)
 
 void IMAGE_OT_curves_point_set(wmOperatorType *ot)
 {
-	static EnumPropertyItem point_items[] = {
+	static const EnumPropertyItem point_items[] = {
 		{0, "BLACK_POINT", 0, "Black Point", ""},
 		{1, "WHITE_POINT", 0, "White Point", ""},
 		{0, NULL, 0, NULL, NULL}
@@ -3526,7 +3523,7 @@ static int frame_from_event(bContext *C, const wmEvent *event)
 
 		UI_view2d_region_to_view(&ar->v2d, event->mval[0], event->mval[1], &viewx, &viewy);
 
-		framenr = iroundf(viewx);
+		framenr = round_fl_to_int(viewx);
 	}
 
 	return framenr;
@@ -3632,7 +3629,7 @@ static int render_border_exec(bContext *C, wmOperator *op)
 {
 	ARegion *ar = CTX_wm_region(C);
 	Scene *scene = CTX_data_scene(C);
-	Render *re = RE_GetRender(scene->id.name);
+	Render *re = RE_GetSceneRender(scene);
 	RenderData *rd;
 	rctf border;
 
@@ -3684,10 +3681,10 @@ void IMAGE_OT_render_border(wmOperatorType *ot)
 	ot->idname = "IMAGE_OT_render_border";
 
 	/* api callbacks */
-	ot->invoke = WM_border_select_invoke;
+	ot->invoke = WM_gesture_border_invoke;
 	ot->exec = render_border_exec;
-	ot->modal = WM_border_select_modal;
-	ot->cancel = WM_border_select_cancel;
+	ot->modal = WM_gesture_border_modal;
+	ot->cancel = WM_gesture_border_cancel;
 	ot->poll = image_cycle_render_slot_poll;
 
 	/* flags */

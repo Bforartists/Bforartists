@@ -2637,6 +2637,9 @@ static void write_scene(WriteData *wd, Scene *sce)
 						case SEQ_TYPE_TEXT:
 							writestruct(wd, DATA, TextVars, 1, seq->effectdata);
 							break;
+						case SEQ_TYPE_COLORMIX:
+							writestruct(wd, DATA, ColorMixVars, 1, seq->effectdata);
+							break;
 					}
 				}
 
@@ -2686,13 +2689,6 @@ static void write_scene(WriteData *wd, Scene *sce)
 		}
 		if (sce->r.avicodecdata->lpParms) {
 			writedata(wd, DATA, sce->r.avicodecdata->cbParms, sce->r.avicodecdata->lpParms);
-		}
-	}
-
-	if (sce->r.qtcodecdata) {
-		writestruct(wd, DATA, QuicktimeCodecData, 1, sce->r.qtcodecdata);
-		if (sce->r.qtcodecdata->cdParms) {
-			writedata(wd, DATA, sce->r.qtcodecdata->cdSize, sce->r.qtcodecdata->cdParms);
 		}
 	}
 	if (sce->r.ffcodecdata.properties) {

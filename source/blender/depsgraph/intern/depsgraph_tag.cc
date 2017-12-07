@@ -251,7 +251,7 @@ void DEG_id_tag_update_ex(Main *bmain, ID *id, short flag)
 #endif
 }
 
-/* Tag given ID type for update. */
+/* Mark a particular datablock type as having changing. */
 void DEG_id_type_tag(Main *bmain, short idtype)
 {
 	if (idtype == ID_NT) {
@@ -277,13 +277,18 @@ void DEG_ids_flush_tagged(Main *bmain)
 	     scene != NULL;
 	     scene = (Scene *)scene->id.next)
 	{
-		/* TODO(sergey): Only visible scenes? */
-		if (scene->depsgraph != NULL) {
-			DEG::deg_graph_flush_updates(
-			        bmain,
-			        reinterpret_cast<DEG::Depsgraph *>(scene->depsgraph));
-		}
+		DEG_scene_flush_update(bmain, scene);
 	}
+}
+
+void DEG_scene_flush_update(Main *bmain, Scene *scene)
+{
+	if (scene->depsgraph == NULL) {
+		return;
+	}
+	DEG::deg_graph_flush_updates(
+	        bmain,
+	        reinterpret_cast<DEG::Depsgraph *>(scene->depsgraph));
 }
 
 /* Update dependency graph when visible scenes/layers changes. */

@@ -32,7 +32,7 @@
 #include "BLI_memarena.h"
 #include "BLI_array.h"
 #include "BLI_alloca.h"
-#include "BLI_stackdefines.h"
+#include "BLI_utildefines_stack.h"
 #include "BLI_linklist_stack.h"
 #include "BLI_sort.h"
 #include "BLI_sort_utils.h"
@@ -1236,6 +1236,8 @@ bool BM_face_split_edgenet_connect_islands(
 		BMLoop *l_iter, *l_first;
 		l_iter = l_first = BM_FACE_FIRST_LOOP(f);
 		do {
+			BLI_assert(!BM_elem_flag_test(l_iter->v, VERT_NOT_IN_STACK));
+			BLI_assert(!BM_elem_flag_test(l_iter->e, EDGE_NOT_IN_STACK));
 			edge_arr[i++] = l_iter->e;
 		} while ((l_iter = l_iter->next) != l_first);
 		BLI_assert(i == edge_arr_len);

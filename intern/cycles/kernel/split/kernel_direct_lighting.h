@@ -58,7 +58,7 @@ ccl_device void kernel_direct_lighting(KernelGlobals *kg,
 
 	if(IS_STATE(kernel_split_state.ray_state, ray_index, RAY_ACTIVE)) {
 		ccl_global PathState *state = &kernel_split_state.path_state[ray_index];
-		ShaderData *sd = &kernel_split_state.sd[ray_index];
+		ShaderData *sd = kernel_split_sd(sd, ray_index);
 
 		/* direct lighting */
 #ifdef __EMISSION__
@@ -81,27 +81,33 @@ ccl_device void kernel_direct_lighting(KernelGlobals *kg,
 
 		if(flag) {
 			/* Sample illumination from lights to find path contribution. */
-			float light_t = path_state_rng_1D(kg, state, PRNG_LIGHT);
 			float light_u, light_v;
 			path_state_rng_2D(kg, state, PRNG_LIGHT_U, &light_u, &light_v);
 			float terminate = path_state_rng_light_termination(kg, state);
 
 			LightSample ls;
 			if(light_sample(kg,
-			                light_t, light_u, light_v,
+			                light_u, light_v,
 			                sd->time,
 			                sd->P,
 			                state->bounce,
 			                &ls)) {
 
 				Ray light_ray;
-#  ifdef __OBJECT_MOTION__
 				light_ray.time = sd->time;
-#  endif
 
 				BsdfEval L_light;
 				bool is_lamp;
-				if(direct_emission(kg, sd, &kernel_split_state.sd_DL_shadow[ray_index], &ls, state, &light_ray, &L_light, &is_lamp, terminate)) {
+				if(direct_emission(kg,
+				                   sd,
+				                   AS_SHADER_DATA(&kernel_split_state.sd_DL_shadow[ray_index]),
+				                   &ls,
+				                   state,
+				                   &light_ray,
+				                   &L_light,
+				                   &is_lamp,
+				                   terminate))
+				{
 					/* Write intermediate data to global memory to access from
 					 * the next kernel.
 					 */
