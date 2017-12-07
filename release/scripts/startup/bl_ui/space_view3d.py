@@ -2670,6 +2670,7 @@ class VIEW3D_MT_edit_mesh(Menu):
 
         layout.menu("VIEW3D_MT_edit_mesh_select_mode")
         layout.menu("VIEW3D_MT_vertex_group")
+        layout.menu("VIEW3D_MT_hook")
         layout.menu("VIEW3D_MT_edit_mesh_vertices")
         layout.menu("VIEW3D_MT_edit_mesh_edges")
         layout.menu("VIEW3D_MT_edit_mesh_faces")
@@ -2855,9 +2856,7 @@ class VIEW3D_MT_edit_mesh_vertices(Menu):
         layout.operator("mesh.blend_from_shape", icon = "BLENDFROMSHAPE")
         layout.operator("mesh.shape_propagate_to_all", icon = "SHAPEPROPAGATE")
 
-        layout.separator()
-
-        layout.menu("VIEW3D_MT_hook")
+        
 
 
 class VIEW3D_MT_edit_mesh_edges(Menu):
@@ -3038,6 +3037,7 @@ def draw_curve(self, context):
     layout.separator()
 
     layout.menu("VIEW3D_MT_edit_curve_ctrlpoints")
+    layout.menu("VIEW3D_MT_hook")
 
     layout.separator()
 
@@ -3063,8 +3063,7 @@ class VIEW3D_MT_edit_curve_ctrlpoints(Menu):
             layout.operator("curve.tilt_clear",icon = "CLEAR_TILT")
 
             layout.separator()
-
-        layout.menu("VIEW3D_MT_hook")
+     
 
 
 class VIEW3D_MT_edit_curve_specials(Menu):
