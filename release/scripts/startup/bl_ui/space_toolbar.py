@@ -1061,6 +1061,7 @@ class TOOLBAR_MT_tools(Menu):
 
                         row.operator("object.data_transfer", icon ='TRANSFER_DATA', text="")
                         row.operator("object.datalayout_transfer", icon ='TRANSFER_DATA_LAYOUT', text="")
+                        row.operator("object.join_uvs", icon ='TRANSFER_UV', text = "")
 
 
             if mode == 'EDIT':
