@@ -31,7 +31,7 @@ bl_info = {
     'description' : "Stroke Select - Enables selection by mouse strokes",
     'category'    : "Mesh",
     'blender'     : (2, 76),
-    'version'     : (1, 0, 2),
+    'version'     : (1, 0, 3),
     'wiki_url'    : 'http://www.reinerstilesets.de',
 }
 
@@ -128,9 +128,16 @@ def register():
     
                
 def unregister():
-    bpy.types.VIEW3D_MT_view.remove(menu_func)
     del bpy.types.WindowManager.stroke_select_bool # Unregister our flag when unregister.
     bpy.utils.unregister_module(__name__)
+
+    bpy.types.VIEW3D_MT_select_object.remove(menu_func)
+    bpy.types.VIEW3D_MT_select_edit_mesh.remove(menu_func)
+    bpy.types.VIEW3D_MT_select_edit_curve.remove(menu_func)
+    bpy.types.VIEW3D_MT_select_edit_surface.remove(menu_func)
+    bpy.types.VIEW3D_MT_select_edit_lattice.remove(menu_func)
+    bpy.types.VIEW3D_MT_select_edit_armature.remove(menu_func)
+    bpy.types.VIEW3D_MT_select_pose.remove(menu_func)
         
 if __name__ == "__main__":
     register()
