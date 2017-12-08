@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -624,11 +624,11 @@ class ExportFBX(bpy.types.Operator, ExportHelper, IOFBXOrientationHelper):
 
 
 def menu_func_import(self, context):
-    self.layout.operator(ImportFBX.bl_idname, text="FBX (.fbx)")
+    self.layout.operator(ImportFBX.bl_idname, text="FBX (.fbx)", icon = "LOAD_FBX")
 
 
 def menu_func_export(self, context):
-    self.layout.operator(ExportFBX.bl_idname, text="FBX (.fbx)")
+    self.layout.operator(ExportFBX.bl_idname, text="FBX (.fbx)", icon = "SAVE_FBX")
 
 
 classes = (

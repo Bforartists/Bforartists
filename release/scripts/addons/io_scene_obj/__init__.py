@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -313,11 +313,11 @@ class ExportOBJ(bpy.types.Operator, ExportHelper, IOOBJOrientationHelper):
 
 
 def menu_func_import(self, context):
-    self.layout.operator(ImportOBJ.bl_idname, text="Wavefront (.obj)")
+    self.layout.operator(ImportOBJ.bl_idname, text="Wavefront (.obj)", icon = "LOAD_OBJ")
 
 
 def menu_func_export(self, context):
-    self.layout.operator(ExportOBJ.bl_idname, text="Wavefront (.obj)")
+    self.layout.operator(ExportOBJ.bl_idname, text="Wavefront (.obj)", icon = "SAVE_OBJ")
 
 
 classes = (
