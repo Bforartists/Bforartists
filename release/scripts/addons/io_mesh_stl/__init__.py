@@ -248,12 +248,12 @@ class ExportSTL(Operator, ExportHelper, IOSTLOrientationHelper):
 
 
 def menu_import(self, context):
-    self.layout.operator(ImportSTL.bl_idname, text="Stl (.stl)")
+    self.layout.operator(ImportSTL.bl_idname, text="Stl (.stl)", icon = "LOAD_STL")
 
 
 def menu_export(self, context):
     default_path = os.path.splitext(bpy.data.filepath)[0] + ".stl"
-    self.layout.operator(ExportSTL.bl_idname, text="Stl (.stl)")
+    self.layout.operator(ExportSTL.bl_idname, text="Stl (.stl)", icon = "SAVE_STL")
 
 
 def register():
