@@ -117,10 +117,16 @@ class TOOLBAR_MT_toolbars_file_menu(Menu):
 
         layout.prop(addon_prefs, "file_load_save")
         layout.prop(addon_prefs, "file_link_append")
+        layout.prop(addon_prefs, "file_import_menu")
+        layout.prop(addon_prefs, "file_export_menu")
+
         layout.prop(addon_prefs, "file_import_common")
+        layout.prop(addon_prefs, "file_import_common2")
         layout.prop(addon_prefs, "file_import_uncommon")
         layout.prop(addon_prefs, "file_export_common")
+        layout.prop(addon_prefs, "file_export_common2")
         layout.prop(addon_prefs, "file_export_uncommon")
+
         layout.prop(addon_prefs, "file_render")
         layout.prop(addon_prefs, "file_render_opengl")
         layout.prop(addon_prefs, "file_render_misc")
@@ -173,7 +179,17 @@ class TOOLBAR_MT_file(Menu):
             row.operator("wm.link", text="", icon='LINK_BLEND')
             row.operator("wm.append", text="", icon='APPEND_BLEND')
 
-        ## ------------------ Import common
+        ## ------------------ Import menu
+
+        if addon_prefs.file_import_menu:
+
+            layout.menu("INFO_MT_file_import", icon='IMPORT', text = "")
+
+        if addon_prefs.file_export_menu:
+
+            layout.menu("INFO_MT_file_export", icon='EXPORT', text = "")
+
+        ## ------------------ Import single types
 
         if addon_prefs.file_import_common:
 
@@ -181,11 +197,17 @@ class TOOLBAR_MT_file(Menu):
 
             row.operator("import_scene.fbx", text="", icon='LOAD_FBX')
             row.operator("import_scene.obj", text="", icon='LOAD_OBJ')
+            row.operator("wm.alembic_import", text="", icon = "LOAD_ABC" )
+            
+
+        if addon_prefs.file_import_common2:
+
+            row = layout.row(align=True)
+
             row.operator("wm.collada_import", text="", icon='LOAD_DAE')
             row.operator("import_anim.bvh", text="", icon='LOAD_BVH')
             row.operator("import_scene.autodesk_3ds", text="", icon='LOAD_3DS')
-            row.operator("wm.alembic_import", text="", icon = "LOAD_ABC" )
-
+            
         ## ------------------ Import uncommon
 
         if addon_prefs.file_import_uncommon:
@@ -205,10 +227,15 @@ class TOOLBAR_MT_file(Menu):
 
             row.operator("export_scene.fbx", text="", icon='SAVE_FBX')
             row.operator("export_scene.obj", text="", icon='SAVE_OBJ')
+            row.operator("wm.alembic_export", text="", icon = "SAVE_ABC" )
+
+        if addon_prefs.file_export_common2:
+
+            row = layout.row(align=True)
+
             row.operator("wm.collada_export", text="", icon='SAVE_DAE')
             row.operator("export_anim.bvh", text="", icon='SAVE_BVH')
-            row.operator("export_scene.autodesk_3ds", text="", icon='SAVE_3DS')
-            row.operator("wm.alembic_export", text="", icon = "SAVE_ABC" )
+            row.operator("export_scene.autodesk_3ds", text="", icon='SAVE_3DS')       
 
         ## ------------------ Export uncommon
 
