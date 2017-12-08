@@ -44,10 +44,18 @@ class bforartists_toolbar_settings(AddonPreferences):
 
     file_load_save = BoolProperty(name="Load / Save", default=True, description = "Display the Load Save Toolbar\nAll Modes", )
     file_link_append = BoolProperty(name="Link / Append", default=False, description = "Display the Link Append Toolbar\nAll Modes", )
-    file_import_common = BoolProperty(name="Import Common", default=True, description = "Display the Import Common Toolbar\nAll Modes", )
-    file_import_uncommon = BoolProperty(name="Import Uncommon", default=False, description = "Display the Import Uncommon Toolbar\nAll Modes", )
-    file_export_common = BoolProperty(name="Export Common", default=True, description = "Display the Export Common Toolbar\nAll Modes", )
-    file_export_uncommon = BoolProperty(name="Export Uncommon", default=False, description = "Display the Export Uncommon Toolbar\nAll Modes", )
+
+    file_import_menu = BoolProperty(name="Import Menu", default=True, description = "Display the Import Menu\nAll Modes", )
+    file_export_menu = BoolProperty(name="Export Menu", default=True, description = "Display the Export Menu\nAll Modes", )
+
+    file_import_common = BoolProperty(name="Import Common", default=False, description = "Display the Import Common Toolbar - FBX, Obj, Alembic\nAll Modes", )
+    file_import_common2 = BoolProperty(name="Import Common2", default=False, description = "Display the Import Common2 Toolbar - Collada, BVH, 3DS\nAll Modes", )
+    file_import_uncommon = BoolProperty(name="Import Uncommon", default=False, description = "Display the Import Uncommon Toolbar - STL, PLY, WRL, SVG\nAll Modes", )
+    file_export_common = BoolProperty(name="Export Common", default=False, description = "Display the Export Common Toolbar - FBX, Obj, Alembic\nAll Modes", )
+    file_export_common2 = BoolProperty(name="Export Common2", default=False, description = "Display the Export Common2 Toolbar - Collada, BVH, 3DS\nAll Modes", )
+    file_export_uncommon = BoolProperty(name="Export Uncommon", default=False, description = "Display the Export Uncommon Toolbar - STL, PLY, WRL, SVG\nAll Modes", )
+
+
     file_render = BoolProperty(name="Render", default=True, description = "Display the Render Toolbar\nAll Modes", )
     file_render_opengl = BoolProperty(name="Render Open GL", default=False, description = "Display the Render Open GL Toolbar\nAll Modes", )
     file_render_misc = BoolProperty(name="Render Misc", default=False, description = "Display the Render Misc Toolbar\nAll Modes", )
@@ -140,18 +148,25 @@ class bforartists_toolbar_settings(AddonPreferences):
 
         row.prop(self, "file_load_save")
         row.prop(self, "file_link_append")
-        row.prop(self, "file_import_common")
-        row.prop(self, "file_import_uncommon")
+        row.prop(self, "file_import_menu")
+        row.prop(self, "file_export_menu")
 
         row = layout.row()
 
+        row.prop(self, "file_import_common")
+        row.prop(self, "file_import_common2")
+        row.prop(self, "file_import_uncommon")
         row.prop(self, "file_export_common")
+
+        row = layout.row()
+
+        row.prop(self, "file_export_common2")
         row.prop(self, "file_export_uncommon")
+
+        row = layout.row()
+
         row.prop(self, "file_render")
         row.prop(self, "file_render_opengl")
-
-        row = layout.row()
-
         row.prop(self, "file_render_misc")
         row.prop(self, "file_window_search")
 
