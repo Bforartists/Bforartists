@@ -25,7 +25,7 @@ import bpy
 bl_info = {
     "name": "Align View Buttons",
     "author": "Reiner 'Tiles' Prokein",
-    "version": (1, 0, 0),
+    "version": (1, 0, 1),
     "blender": (2, 76, 0),
     "location": "Header of the 3D View",
     "description": "Adds a tab button row in the header of the 3D View to switch between views",
@@ -103,6 +103,8 @@ def register():
 def unregister():
 
     bpy.utils.unregister_class(VIEW3D_MT_switchactivecamto)
+    
+    bpy.types.VIEW3D_HT_header.remove(align_view_buttons)
 
      
 # This allows you to run the script directly from blenders text editor
