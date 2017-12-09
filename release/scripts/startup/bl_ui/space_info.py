@@ -298,19 +298,19 @@ class INFO_MT_file_external_data(Menu):
         layout.separator()
 
         pack_all = layout.row()
-        pack_all.operator("file.pack_all")
+        pack_all.operator("file.pack_all", icon = "PACKAGE")
         pack_all.active = not bpy.data.use_autopack
 
         unpack_all = layout.row()
-        unpack_all.operator("file.unpack_all")
+        unpack_all.operator("file.unpack_all", icon = "PACKAGE")
         unpack_all.active = not bpy.data.use_autopack
 
         layout.separator()
 
         layout.operator("file.make_paths_relative")
         layout.operator("file.make_paths_absolute")
-        layout.operator("file.report_missing_files")
-        layout.operator("file.find_missing_files")
+        layout.operator("file.report_missing_files", icon = "ERROR")
+        layout.operator("file.find_missing_files", icon = "VIEWZOOM")
 
 
 class INFO_MT_file_previews(Menu):
