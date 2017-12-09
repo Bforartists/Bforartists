@@ -319,13 +319,13 @@ class INFO_MT_file_previews(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("wm.previews_ensure")
-        layout.operator("wm.previews_batch_generate")
+        layout.operator("wm.previews_ensure", icon = "FILE_REFRESH")
+        layout.operator("wm.previews_batch_generate", icon = "BATCH_GENERATE")
 
         layout.separator()
 
-        layout.operator("wm.previews_clear")
-        layout.operator("wm.previews_batch_clear")
+        layout.operator("wm.previews_clear", icon = "DATABLOCK_CLEAR")
+        layout.operator("wm.previews_batch_clear", icon = "BATCH_GENERATE_CLEAR")
 
 
 class INFO_MT_game(Menu):
