@@ -258,7 +258,7 @@ void DepsgraphRelationBuilder::build_splineik_pose(Object *object,
 		// TODO: the bigggest point here is that we need the curve PATH and not just the general geometry...
 		ComponentKey target_key(&data->tar->id, DEG_NODE_TYPE_GEOMETRY);
 		ComponentKey pose_key(&object->id, DEG_NODE_TYPE_EVAL_POSE);
-		add_relation(target_key, pose_key, "[Curve.Path -> Spline IK] DepsRel");
+		add_relation(target_key, pose_key, "Curve.Path -> Spline IK");
 	}
 
 	pchan->flag |= POSE_DONE;
@@ -323,11 +323,6 @@ void DepsgraphRelationBuilder::build_rig(Object *object)
 	                          DEG_OPCODE_PLACEHOLDER,
 	                          "Armature Eval");
 	add_relation(armature_key, init_key, "Data dependency");
-
-	if (needs_animdata_node(&object->id)) {
-		ComponentKey animation_key(&object->id, DEG_NODE_TYPE_ANIMATION);
-		add_relation(animation_key, init_key, "Rig Animation");
-	}
 
 	/* IK Solvers...
 	 * - These require separate processing steps are pose-level
@@ -414,7 +409,7 @@ void DepsgraphRelationBuilder::build_rig(Object *object)
 			}
 
 			OperationKey parent_key(&object->id, DEG_NODE_TYPE_BONE, pchan->parent->name, parent_key_opcode);
-			add_relation(parent_key, bone_pose_key, "[Parent Bone -> Child Bone]");
+			add_relation(parent_key, bone_pose_key, "Parent Bone -> Child Bone");
 		}
 
 		/* constraints */

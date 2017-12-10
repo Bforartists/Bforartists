@@ -92,7 +92,6 @@ extern "C" {
 #include "BKE_particle.h"
 #include "BKE_rigidbody.h"
 #include "BKE_sound.h"
-#include "BKE_texture.h"
 #include "BKE_tracking.h"
 #include "BKE_world.h"
 
@@ -983,6 +982,9 @@ void DepsgraphNodeBuilder::build_nodetree(bNodeTree *ntree)
 			/* Scenes are used by compositor trees, and handled by render
 			 * pipeline. No need to build dependencies for them here.
 			 */
+		}
+		else if (id_type == ID_TXT) {
+			/* Ignore script nodes. */
 		}
 		else if (bnode->type == NODE_GROUP) {
 			bNodeTree *group_ntree = (bNodeTree *)id;
