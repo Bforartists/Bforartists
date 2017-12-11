@@ -1019,7 +1019,7 @@ class TOOLBAR_MT_tools(Menu):
                     row = layout.row(align=True)
 
                     row.operator("object.make_single_user", icon='MAKE_SINGLE_USER', text="")
-                    row.menu("VIEW3D_PT_tools_relations_link_data", text = "", icon='LINK_DATA' )
+                    row.menu("VIEW3D_MT_make_links", text = "", icon='LINK_DATA' )
                                       
 
                 if addon_prefs.tools_link_to_scn:
