@@ -396,14 +396,15 @@ def write_file(filepath, objects, scene,
                         if me is None:
                             continue
 
+                        # _must_ do this before applying transformation, else tessellation may differ
+                        if EXPORT_TRI:
+                            # _must_ do this first since it re-allocs arrays
+                            mesh_triangulate(me)
+
                         me.transform(EXPORT_GLOBAL_MATRIX * ob_mat)
                         # If negative scaling, we have to invert the normals...
                         if ob_mat.determinant() < 0.0:
                             me.flip_normals()
-
-                        if EXPORT_TRI:
-                            # _must_ do this first since it re-allocs arrays
-                            mesh_triangulate(me)
 
                         if EXPORT_UV:
                             faceuv = len(me.uv_textures) > 0

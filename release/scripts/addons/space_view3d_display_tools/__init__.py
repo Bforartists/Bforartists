@@ -25,7 +25,7 @@
 bl_info = {
     "name": "Display Tools",
     "author": "Jordi Vall-llovera Medina, Jhon Wallace",
-    "version": (1, 6, 3),
+    "version": (1, 6, 4),
     "blender": (2, 7, 0),
     "location": "Toolshelf",
     "description": "Display tools for fast navigation/interaction with the viewport",
@@ -446,13 +446,20 @@ class DisplayToolsPanel(Panel):
             layout.prop(display_tools, "OriginalMode")
             layout.prop(display_tools, "FastMode")
             layout.prop(display_tools, "EditActive", "Edit mode")
+
             layout.prop(display_tools, "Delay")
-            layout.prop(display_tools, "DelayTimeGlobal", "Delay time")
+            col = layout.column(align=True)
+            col.active = display_tools.Delay
+            col.prop(display_tools, "DelayTimeGlobal", "Delay time")
+
             layout.prop(display_tools, "ShowParticles")
-            layout.prop(display_tools, "ParticlesPercentageDisplay")
-            layout.separator()
+            col = layout.column(align=True)
+            col.active = display_tools.ShowParticles
+            col.prop(display_tools, "InitialParticles")
+            col.prop(display_tools, "ParticlesPercentageDisplay")
 
             col = layout.column(align=True)
+            col.label("Screen Active Area:")
             col.prop(display_tools, "ScreenStart")
             col.prop(display_tools, "ScreenEnd")
 
@@ -517,8 +524,8 @@ class display_tools_scene_props(PropertyGroup):
             default=True
             )
     ParticlesPercentageDisplay = IntProperty(
-            name="Display",
-            description="Display only a percentage of particles",
+            name="Fast Display",
+            description="Display only a percentage of particles when active",
             default=25,
             min=0,
             max=100,
@@ -527,8 +534,9 @@ class display_tools_scene_props(PropertyGroup):
             subtype='FACTOR'
             )
     InitialParticles = IntProperty(
-            name="Count for initial particle setting before entering fast navigate",
-            description="Display a percentage value of particles",
+            name="Normal Display",
+            description="When idle, how much particles are displayed\n"
+                        "Overrides the Particles settings",
             default=100,
             min=0,
             max=100,

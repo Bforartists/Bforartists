@@ -918,6 +918,12 @@ def MapAdd_View3D_Global(kc):
     # Manipulator
     #-------------
     
+    kmi = km.keymap_items.new('view3d.manipulator', 'EVT_TWEAK_L', 'ANY', shift=True)
+    kmi.properties.release_confirm = True
+    kmi.properties.use_planar_constraint = True
+    kmi = km.keymap_items.new('view3d.manipulator', 'EVT_TWEAK_L', 'ANY', shift=True)
+    kmi.properties.release_confirm = True
+    kmi.properties.use_accurate = True
     kmi = km.keymap_items.new('view3d.manipulator', 'EVT_TWEAK_L', 'ANY', any=True)
     kmi.properties.release_confirm = True
 

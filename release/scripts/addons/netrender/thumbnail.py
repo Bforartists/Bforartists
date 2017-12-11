@@ -38,7 +38,7 @@ def generate(filename, external=True):
         while process.poll() is None:
             process.stdout.read(1024) # empty buffer to be sure
         process.stdout.read()
-        
+
         return _thumbname(filename)
     else:
         return _internal(filename)
@@ -58,7 +58,7 @@ def _internal(filename):
         scene = bpy.data.scenes[0] # FIXME, this is dodgy!
         scene.render.image_settings.file_format = "JPEG"
         scene.render.image_settings.quality = 90
-        
+
         # remove existing image, if there's a leftover (otherwise open changes the name)
         if imagename in bpy.data.images:
             img = bpy.data.images[imagename]
@@ -66,9 +66,9 @@ def _internal(filename):
 
         bpy.ops.image.open(filepath=filename)
         img = bpy.data.images[imagename]
-            
+
         img.save_render(thumbname, scene=scene)
-        
+
         img.user_clear()
         bpy.data.images.remove(img)
 

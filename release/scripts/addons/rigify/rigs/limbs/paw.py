@@ -724,7 +724,7 @@ class Rig:
         toes_mch_parent = get_bone_name(org_bones[3], 'mch', 'parent')
         toes_mch_parent = copy_bone(self.obj, org_bones[3], toes_mch_parent)
 
-        eb[toes_mch_parent].use_connect = False
+        eb[toes_mch_parent].use_connect = True
         eb[toes_mch_parent].parent = eb[org_bones[2]]
 
         eb[toes_mch_parent].length /= 2

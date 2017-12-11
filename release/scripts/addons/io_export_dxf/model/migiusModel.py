@@ -13,7 +13,7 @@ try:
     #from dxfLibrary import *
 except Exception:
     raise Exception("No dxfLibrary.py module in Blender script folder found!")
-        
+
 #------------------------------------------------------
 #def col2RGB(color):
 #    return [int(floor(255*color[0])),
@@ -81,13 +81,13 @@ class MigiusDXFLibDrawing(DxfDrawing):
 #        for l in self._layers:
         drawing.saveas(file)
 
-    def _write(self):        
+    def _write(self):
         # init Drawing ---------------------
         d=DXF.Drawing()
         # add Tables -----------------
         # initialized automatic: d.blocks.append(b)                 #section BLOCKS
         # initialized automatic: d.styles.append(DXF.Style())            #table STYLE
-    
+
         #table LTYPE ---------------
         #d.linetypes.append(DXF.LineType(name='CONTINUOUS',description='--------',elements=[0.0]))
         d.linetypes.append(DXF.LineType(name='DOT',description='. . . . . . .',elements=[0.25, 0.0, -0.25]))
@@ -97,13 +97,13 @@ class MigiusDXFLibDrawing(DxfDrawing):
         d.linetypes.append(DXF.LineType(name='BORDER',description='__ __ . __ __ . ',elements=[1.75, 0.5, -0.25, 0.5, -0.25, 0.0, -0.25]))
         d.linetypes.append(DXF.LineType(name='HIDDEN',description='__ __ __ __ __',elements=[0.4, 0.25, -0.25]))
         d.linetypes.append(DXF.LineType(name='CENTER',description='____ _ ____ _ __',elements=[2.0, 1.25, -0.25, 0.25, -0.25]))
-    
+
         #d.vports.append(DXF.VPort('*ACTIVE'))
         d.vports.append(DXF.VPort('*ACTIVE',center=(-5.0,1.0),height=10.0))
         #d.vports.append(DXF.VPort('*ACTIVE',leftBottom=(-100.0,-60.0),rightTop=(100.0,60.0)))
         #d.views.append(DXF.View('Normal'))      #table view
         d.views.append(DXF.ViewByWindow('BF_TOPVIEW',leftBottom=(-100,-60),rightTop=(100,60)))  #idem
-        
+
         return d
 
     def _processEntityArray(self, drawing, type, ents):

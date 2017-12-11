@@ -142,9 +142,10 @@ def snap_point(takeloc=None,
     # for ArchipackSnapBase to be able to handle both modes
     # must implements corresponding helper create and delete actions
     SnapStore.mode = mode
-    res = bpy.ops.archipack.snap('INVOKE_DEFAULT')
+    bpy.ops.archipack.snap('INVOKE_DEFAULT')
     # return helper so we are able to move it "live"
     return SnapStore.helper
+
 
 class ArchipackSnapBase():
     """
@@ -273,7 +274,7 @@ class ARCHIPACK_OT_snap(ArchipackSnapBase, Operator):
         # NOTE: this part only run after transform LEFTMOUSE RELEASE
         # or with ESC and RIGHTMOUSE
         if event.type not in {'ESC', 'RIGHTMOUSE', 'LEFTMOUSE', 'MOUSEMOVE'}:
-            print("Snap.modal skip unknown event %s %s" % (event.type, event.value))
+            # print("Snap.modal skip unknown event %s %s" % (event.type, event.value))
             # self.report({'WARNING'}, "ARCHIPACK_OT_snap unknown event")
             return{'PASS_THROUGH'}
         if event.type in ('ESC', 'RIGHTMOUSE'):

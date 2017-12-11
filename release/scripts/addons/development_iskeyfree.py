@@ -216,6 +216,7 @@ class RunActionCheck(Operator):
 # Defines UI panel
 # ------------------------------------------------------
 class UIControlPanel(Panel):
+    bl_idname = "DEVISKEYFREE_PT_ui"
     bl_space_type = "TEXT_EDITOR"
     bl_region_type = "UI"
     bl_label = "Is Key Free"

@@ -108,12 +108,7 @@ def render_main(self, context, animation=False):
 
         # Load image on memory
         img.gl_load(0, bgl.GL_NEAREST, bgl.GL_NEAREST)
-
-        # 2.77 API change
-        if bpy.app.version >= (2, 77, 0):
-            tex = img.bindcode[0]
-        else:
-            tex = img.bindcode
+        tex = img.bindcode[0]
 
         # --------------------------------------------
         # Create output image (to apply texture)
@@ -121,7 +116,6 @@ def render_main(self, context, animation=False):
         if "measureit_output" in bpy.data.images:
             out_img = bpy.data.images["measureit_output"]
             if out_img is not None:
-                out_img.user_clear()
                 bpy.data.images.remove(out_img)
 
         out = bpy.data.images.new("measureit_output", width, height)
@@ -189,8 +183,16 @@ def render_main(self, context, animation=False):
                 if scene.measureit_debug is True:
                     selobj = bpy.context.selected_objects
                     for myobj in selobj:
+                        if scene.measureit_debug_objects is True:
+                            draw_object(context, myobj, None, None)
+                        elif scene.measureit_debug_object_loc is True:
+                            draw_object(context, myobj, None, None)
                         if scene.measureit_debug_vertices is True:
                             draw_vertices(context, myobj, None, None)
+                        elif scene.measureit_debug_vert_loc is True:
+                            draw_vertices(context, myobj, None, None)
+                        if scene.measureit_debug_edges is True:
+                            draw_edges(context, myobj, None, None)
                         if scene.measureit_debug_faces is True or scene.measureit_debug_normals is True:
                             draw_faces(context, myobj, None, None)
 
@@ -236,7 +238,6 @@ def render_main(self, context, animation=False):
         img.gl_free()  # free opengl image memory
 
         # delete image
-        img.user_clear()
         bpy.data.images.remove(img)
         # remove temp file
         remove(outpath)

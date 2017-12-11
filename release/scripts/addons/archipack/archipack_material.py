@@ -37,6 +37,7 @@ from bpy.props import (
     StringProperty
     )
 
+
 setman = None
 libman = None
 
@@ -49,7 +50,10 @@ class MatLib():
     """
     def __init__(self, matlib_path, name):
         self.name = name
-        self.path = os.path.join(matlib_path, name)
+        try:
+            self.path = os.path.join(matlib_path, name)
+        except:
+            pass
         self.materials = []
 
     def cleanup(self):
@@ -60,14 +64,15 @@ class MatLib():
             list material names
         """
         # print("MatLib.load_list(%s)" % (self.name))
-
         self.materials.clear()
-
-        with bpy.data.libraries.load(self.path) as (data_from, data_to):
-            for mat in data_from.materials:
-                self.materials.append(mat)
-        if sort:
-            self.materials = list(sorted(self.materials))
+        try:
+            with bpy.data.libraries.load(self.path) as (data_from, data_to):
+                for mat in data_from.materials:
+                    self.materials.append(mat)
+            if sort:
+                self.materials = list(sorted(self.materials))
+        except:
+            pass
 
     def has(self, name):
         return name in self.materials
@@ -76,15 +81,19 @@ class MatLib():
         """
             Load a material from library
         """
-        # print("MatLib.load_mat(%s) linked:%s" % (name, link))
-        with bpy.data.libraries.load(self.path, link, False) as (data_from, data_to):
-            data_to.materials = [name]
+        try:
+            # print("MatLib.load_mat(%s) linked:%s" % (name, link))
+            with bpy.data.libraries.load(self.path, link, False) as (data_from, data_to):
+                data_to.materials = [name]
+        except:
+            pass
 
     def get_mat(self, name, link):
         """
             apply a material by name to active_object
             into slot index
             lazy load material list on demand
+            return material or None
         """
 
         # Lazy load material names
@@ -116,14 +125,14 @@ class MatlibsManager():
         self.matlibs.clear()
 
     def get_prefs(self, context):
+        """
+            let raise error if any
+        """
         global __name__
         prefs = None
-        try:
-            # retrieve addon name from imports
-            addon_name = __name__.split('.')[0]
-            prefs = context.user_preferences.addons[addon_name].preferences
-        except:
-            pass
+        # retrieve addon name from imports
+        addon_name = __name__.split('.')[0]
+        prefs = context.user_preferences.addons[addon_name].preferences
         return prefs
 
     @property
@@ -166,7 +175,7 @@ class MatlibsManager():
             prefs = self.get_prefs(context)
             self.add_to_list(prefs.matlib_path)
         except:
-            print("unable to load %s" % mat_path)
+            print("Archipack: Unable to load default material library, please check path in addon prefs")
             pass
 
     def apply(self, context, slot_index, name, link=False):
@@ -248,20 +257,23 @@ class MaterialSetManager():
         # print("load filename %s" % filename)
 
         material_sets = {}
-        
+
         # create file object, and set open mode
         if os.path.exists(filename):
-        
-            f = open(filename, 'r')
-            lines = f.readlines()
+            try:
+                f = open(filename, 'r')
+                lines = f.readlines()
 
-            for line in lines:
-                s_key, mat_name = line.split("##|##")
-                if str(s_key) not in material_sets.keys():
-                    material_sets[s_key] = []
-                material_sets[s_key].append(mat_name.strip())
-
-            f.close()
+                for line in lines:
+                    s_key, mat_name = line.split("##|##")
+                    if str(s_key) not in material_sets.keys():
+                        material_sets[s_key] = []
+                    material_sets[s_key].append(mat_name.strip())
+            except:
+                print("Archipack: An error occured while loading {}".format(filename))
+                pass
+            finally:
+                f.close()
 
             for s_key in material_sets.keys():
                 self.register_set(object_type, s_key, material_sets[s_key])
@@ -275,9 +287,14 @@ class MaterialSetManager():
         for s_key in o_dict.keys():
             for mat in o_dict[s_key]:
                 lines.append("{}##|##{}\n".format(s_key, mat))
-        f = open(filename, 'w')
-        f.writelines(lines)
-        f.close()
+        try:
+            f = open(filename, 'w')
+            f.writelines(lines)
+        except:
+            print("Archipack: An error occured while saving {}".format(filename))
+            pass
+        finally:
+            f.close()
 
     def add(self, context, set_name):
         o = context.active_object
@@ -302,9 +319,10 @@ class MaterialSetManager():
         if object_type not in self.objects.keys():
             self.load(object_type)
         if object_type not in self.objects.keys():
+            print("Archipack: Unknown object type {}".format(object_type))
             return None
         if set_name not in self.objects[object_type].keys():
-            print("set {} not found".format(set_name))
+            print("Archipack: set {} not found".format(set_name))
             return None
         return self.objects[object_type][set_name]
 
@@ -315,9 +333,9 @@ class MaterialSetManager():
 
         if object_type not in self.objects.keys():
             self.objects[object_type] = {}
-            
+
         s_keys = self.objects[object_type].keys()
-        
+
         if len(s_keys) < 1:
             return [('DEFAULT', 'Default', '', 0)]
 
@@ -344,7 +362,7 @@ class archipack_material(PropertyGroup):
         )
     material = EnumProperty(
         name="Material",
-        description="Material type",
+        description="Material Set name",
         items=material_enum,
         update=update
         )
@@ -429,7 +447,7 @@ class ARCHIPACK_OT_material(Operator):
         )
     material = StringProperty(
         name="Material",
-        description="Material type",
+        description="Material Set name",
         default=""
         )
 
@@ -455,8 +473,10 @@ class ARCHIPACK_OT_material(Operator):
             pass
 
         if res:
+            # print("ARCHIPACK_OT_material.apply {} {}".format(self.category, self.material))
             return {'FINISHED'}
         else:
+            print("Archipack: unable to add material {} for {}".format(self.material, self.category))
             self.report({'WARNING'}, 'Material {} for {} not found'.format(self.material, self.category))
             return {'CANCELLED'}
 
@@ -469,7 +489,7 @@ class ARCHIPACK_OT_material_add(Operator):
 
     material = StringProperty(
         name="Material",
-        description="Material type",
+        description="Material Set name",
         default=""
         )
 

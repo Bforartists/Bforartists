@@ -40,6 +40,7 @@ from glob import glob
 from copy import copy
 from itertools import chain
 import re
+from collections import namedtuple
 
 #################
 # rl_outputs:
@@ -48,38 +49,39 @@ import re
 # and MultiLayer EXR outputs names and corresponding render engines
 #
 # rl_outputs entry = (render_pass, rl_output_name, exr_output_name, in_internal, in_cycles)
+RL_entry = namedtuple('RL_Entry', ['render_pass', 'output_name', 'exr_output_name', 'in_internal', 'in_cycles'])
 rl_outputs = (
-    ('use_pass_ambient_occlusion', 'AO', 'AO', True, True),
-    ('use_pass_color', 'Color', 'Color', True, False),
-    ('use_pass_combined', 'Image', 'Combined', True, True),
-    ('use_pass_diffuse', 'Diffuse', 'Diffuse', True, False),
-    ('use_pass_diffuse_color', 'Diffuse Color', 'DiffCol', False, True),
-    ('use_pass_diffuse_direct', 'Diffuse Direct', 'DiffDir', False, True),
-    ('use_pass_diffuse_indirect', 'Diffuse Indirect', 'DiffInd', False, True),
-    ('use_pass_emit', 'Emit', 'Emit', True, False),
-    ('use_pass_environment', 'Environment', 'Env', True, False),
-    ('use_pass_glossy_color', 'Glossy Color', 'GlossCol', False, True),
-    ('use_pass_glossy_direct', 'Glossy Direct', 'GlossDir', False, True),
-    ('use_pass_glossy_indirect', 'Glossy Indirect', 'GlossInd', False, True),
-    ('use_pass_indirect', 'Indirect', 'Indirect', True, False),
-    ('use_pass_material_index', 'IndexMA', 'IndexMA', True, True),
-    ('use_pass_mist', 'Mist', 'Mist', True, False),
-    ('use_pass_normal', 'Normal', 'Normal', True, True),
-    ('use_pass_object_index', 'IndexOB', 'IndexOB', True, True),
-    ('use_pass_reflection', 'Reflect', 'Reflect', True, False),
-    ('use_pass_refraction', 'Refract', 'Refract', True, False),
-    ('use_pass_shadow', 'Shadow', 'Shadow', True, True),
-    ('use_pass_specular', 'Specular', 'Spec', True, False),
-    ('use_pass_subsurface_color', 'Subsurface Color', 'SubsurfaceCol', False, True),
-    ('use_pass_subsurface_direct', 'Subsurface Direct', 'SubsurfaceDir', False, True),
-    ('use_pass_subsurface_indirect', 'Subsurface Indirect', 'SubsurfaceInd', False, True),
-    ('use_pass_transmission_color', 'Transmission Color', 'TransCol', False, True),
-    ('use_pass_transmission_direct', 'Transmission Direct', 'TransDir', False, True),
-    ('use_pass_transmission_indirect', 'Transmission Indirect', 'TransInd', False, True),
-    ('use_pass_uv', 'UV', 'UV', True, True),
-    ('use_pass_vector', 'Speed', 'Vector', True, True),
-    ('use_pass_z', 'Z', 'Depth', True, True),
-)
+    RL_entry('use_pass_ambient_occlusion', 'AO', 'AO', True, True),
+    RL_entry('use_pass_color', 'Color', 'Color', True, False),
+    RL_entry('use_pass_combined', 'Image', 'Combined', True, True),
+    RL_entry('use_pass_diffuse', 'Diffuse', 'Diffuse', True, False),
+    RL_entry('use_pass_diffuse_color', 'Diffuse Color', 'DiffCol', False, True),
+    RL_entry('use_pass_diffuse_direct', 'Diffuse Direct', 'DiffDir', False, True),
+    RL_entry('use_pass_diffuse_indirect', 'Diffuse Indirect', 'DiffInd', False, True),
+    RL_entry('use_pass_emit', 'Emit', 'Emit', True, False),
+    RL_entry('use_pass_environment', 'Environment', 'Env', True, False),
+    RL_entry('use_pass_glossy_color', 'Glossy Color', 'GlossCol', False, True),
+    RL_entry('use_pass_glossy_direct', 'Glossy Direct', 'GlossDir', False, True),
+    RL_entry('use_pass_glossy_indirect', 'Glossy Indirect', 'GlossInd', False, True),
+    RL_entry('use_pass_indirect', 'Indirect', 'Indirect', True, False),
+    RL_entry('use_pass_material_index', 'IndexMA', 'IndexMA', True, True),
+    RL_entry('use_pass_mist', 'Mist', 'Mist', True, False),
+    RL_entry('use_pass_normal', 'Normal', 'Normal', True, True),
+    RL_entry('use_pass_object_index', 'IndexOB', 'IndexOB', True, True),
+    RL_entry('use_pass_reflection', 'Reflect', 'Reflect', True, False),
+    RL_entry('use_pass_refraction', 'Refract', 'Refract', True, False),
+    RL_entry('use_pass_shadow', 'Shadow', 'Shadow', True, True),
+    RL_entry('use_pass_specular', 'Specular', 'Spec', True, False),
+    RL_entry('use_pass_subsurface_color', 'Subsurface Color', 'SubsurfaceCol', False, True),
+    RL_entry('use_pass_subsurface_direct', 'Subsurface Direct', 'SubsurfaceDir', False, True),
+    RL_entry('use_pass_subsurface_indirect', 'Subsurface Indirect', 'SubsurfaceInd', False, True),
+    RL_entry('use_pass_transmission_color', 'Transmission Color', 'TransCol', False, True),
+    RL_entry('use_pass_transmission_direct', 'Transmission Direct', 'TransDir', False, True),
+    RL_entry('use_pass_transmission_indirect', 'Transmission Indirect', 'TransInd', False, True),
+    RL_entry('use_pass_uv', 'UV', 'UV', True, True),
+    RL_entry('use_pass_vector', 'Speed', 'Vector', True, True),
+    RL_entry('use_pass_z', 'Z', 'Depth', True, True),
+    )
 
 # shader nodes
 # (rna_type.identifier, type, rna_type.name)
@@ -2942,9 +2944,10 @@ class NWAddReroutes(Operator, NWBase):
                         pass_used = True
                     else:
                         # check entries in global 'rl_outputs' variable
-                        for render_pass, out_name, exr_name, in_internal, in_cycles in rl_outputs:
-                            if output.name == out_name:
-                                pass_used = getattr(node_scene.render.layers[node_layer], render_pass)
+                        #for render_pass, output_name, exr_name, in_internal, in_cycles in rl_outputs:
+                        for rlo in rl_outputs:
+                            if output.name == rlo.output_name or output.name == rlo.exr_output_name:
+                                pass_used = getattr(node_scene.render.layers[node_layer], rlo.render_pass)
                                 break
                 if pass_used:
                     valid = ((option == 'ALL') or

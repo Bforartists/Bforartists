@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "4.3.1"
-__date__ = "6 June 2017"
+__version__ = "4.4"
+__date__ = "2 Aug 2017"
 
 import bpy
 import bmesh
@@ -73,12 +73,15 @@ class MUV_CPUVSelSeqCopyUV(bpy.types.Operator):
         # get selected face
         props.src_uvs = []
         props.src_pin_uvs = []
+        props.src_seams = []
         for hist in bm.select_history:
             if isinstance(hist, bmesh.types.BMFace) and hist.select:
                 uvs = [l[uv_layer].uv.copy() for l in hist.loops]
                 pin_uvs = [l[uv_layer].pin_uv for l in hist.loops]
+                seams = [l.edge.seam  for l in hist.loops]
                 props.src_uvs.append(uvs)
                 props.src_pin_uvs.append(pin_uvs)
+                props.src_seams.append(seams)
         if len(props.src_uvs) == 0 or len(props.src_pin_uvs) == 0:
             self.report({'WARNING'}, "No faces are selected")
             return {'CANCELLED'}
@@ -128,16 +131,24 @@ class MUV_CPUVSelSeqPasteUV(bpy.types.Operator):
             ('N_N', 'N:N', 'Number of faces must be equal to source'),
             ('N_M', 'N:M', 'Number of faces must not be equal to source')
         ],
-        default="N_M")
+        default="N_M"
+    )
     flip_copied_uv = BoolProperty(
         name="Flip Copied UV",
         description="Flip Copied UV...",
-        default=False)
+        default=False
+    )
     rotate_copied_uv = IntProperty(
         default=0,
         name="Rotate Copied UV",
         min=0,
-        max=30)
+        max=30
+    )
+    copy_seams = BoolProperty(
+        name="Copy Seams",
+        description="Copy Seams",
+        default=True
+    )
 
     def execute(self, context):
         props = context.scene.muv_props.cpuv_selseq
@@ -170,14 +181,17 @@ class MUV_CPUVSelSeqPasteUV(bpy.types.Operator):
         # get selected face
         dest_uvs = []
         dest_pin_uvs = []
+        dest_seams = []
         dest_face_indices = []
         for hist in bm.select_history:
             if isinstance(hist, bmesh.types.BMFace) and hist.select:
                 dest_face_indices.append(hist.index)
                 uvs = [l[uv_layer].uv.copy() for l in hist.loops]
                 pin_uvs = [l[uv_layer].pin_uv for l in hist.loops]
+                seams = [l.edge.seam for l in hist.loops]
                 dest_uvs.append(uvs)
                 dest_pin_uvs.append(pin_uvs)
+                dest_seams.append(seams)
         if len(dest_uvs) == 0 or len(dest_pin_uvs) == 0:
             self.report({'WARNING'}, "No faces are selected")
             return {'CANCELLED'}
@@ -193,38 +207,49 @@ class MUV_CPUVSelSeqPasteUV(bpy.types.Operator):
         for i, idx in enumerate(dest_face_indices):
             suv = None
             spuv = None
+            ss = None
             duv = None
             if self.strategy == 'N_N':
                 suv = props.src_uvs[i]
                 spuv = props.src_pin_uvs[i]
+                ss = props.src_seams[i]
                 duv = dest_uvs[i]
             elif self.strategy == 'N_M':
                 suv = props.src_uvs[i % len(props.src_uvs)]
                 spuv = props.src_pin_uvs[i % len(props.src_pin_uvs)]
+                ss = props.src_seams[i % len(props.src_seams)]
                 duv = dest_uvs[i]
             if len(suv) != len(duv):
                 self.report({'WARNING'}, "Some faces are different size")
                 return {'CANCELLED'}
             suvs_fr = [uv for uv in suv]
             spuvs_fr = [pin_uv for pin_uv in spuv]
+            ss_fr = [s for s in ss]
             # flip UVs
             if self.flip_copied_uv is True:
                 suvs_fr.reverse()
                 spuvs_fr.reverse()
+                ss_fr.reverse()
             # rotate UVs
             for _ in range(self.rotate_copied_uv):
                 uv = suvs_fr.pop()
                 pin_uv = spuvs_fr.pop()
+                s = ss_fr.pop()
                 suvs_fr.insert(0, uv)
                 spuvs_fr.insert(0, pin_uv)
+                ss_fr.insert(0, s)
             # paste UVs
-            for l, suv, spuv in zip(bm.faces[idx].loops, suvs_fr, spuvs_fr):
+            for l, suv, spuv, ss in zip(bm.faces[idx].loops, suvs_fr, spuvs_fr, ss_fr):
                 l[uv_layer].uv = suv
                 l[uv_layer].pin_uv = spuv
+                if self.copy_seams is True:
+                    l.edge.seam = ss
 
         self.report({'INFO'}, "%d face(s) are copied" % len(dest_uvs))
 
         bmesh.update_edit_mesh(obj.data)
+        if self.copy_seams is True:
+            obj.data.show_edge_seams = True
 
         return {'FINISHED'}
 

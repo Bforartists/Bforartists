@@ -19,8 +19,8 @@
 bl_info = {
     "name": "Sequencer Tools",
     "author": "mont29",
-    "version": (0, 0, 2),
-    "blender": (2, 66, 0),
+    "version": (0, 0, 5),
+    "blender": (2, 78, 0),
     "location": "Sequencer menus/UI",
     "description": "Various Sequencer tools.",
     "warning": "",
@@ -36,15 +36,19 @@ if "bpy" in locals():
     imp.reload(export_strips)
 else:
     import bpy
+    import bpy_extras.keyconfig_utils
     from . import export_strips
+
+
+classes = export_strips.classes
 
 
 KEYMAPS = (
     # First, keymap identifiers (last bool is True for modal km).
-    (("Sequencer", "WINDOW", "SEQUENCE_EDITOR", False), (
+    (('Sequencer', 'SEQUENCE_EDITOR', 'WINDOW', False), (
     # Then a tuple of keymap items, defined by a dict of kwargs for the km new func, and a tuple of tuples (name, val)
     # for ops properties, if needing non-default values.
-        ({"idname": export_strips.SEQExportStrip.bl_idname, "type": "P", "value": "PRESS", "shift": True, "ctrl": True},
+        ({"idname": export_strips.SEQExportStrip.bl_idname, "type": 'P', "value": 'PRESS', "shift": True, "ctrl": True},
          ()),
     )),
 )
@@ -54,60 +58,20 @@ def menu_func(self, context):
     self.layout.operator(export_strips.SEQExportStrip.bl_idname, text="Export Selected")
 
 
-def find_keymap_items(km, idname):
-    return (i for i in km.keymap_items if i.idname == idname)
-
-def update_keymap(activate):
-    # Add.
-    if activate:
-        kconf = bpy.context.window_manager.keyconfigs.addon
-        if not kconf:
-            return  # happens in background mode...
-        for km_info, km_items in KEYMAPS:
-            km_name, km_regtype, km_sptype, km_ismodal = km_info
-            kmap = [k for k in kconf.keymaps
-                      if k.name == km_name and k.region_type == km_regtype and
-                         k.space_type == km_sptype and k.is_modal == km_ismodal]
-            if kmap:
-                kmap = kmap[0]
-            else:
-                kmap = kconf.keymaps.new(km_name, region_type=km_regtype, space_type=km_sptype, modal=km_ismodal)
-            for kmi_kwargs, props in km_items:
-                kmi = kmap.keymap_items.new(**kmi_kwargs)
-                kmi.active = True
-                for prop, val in props:
-                    setattr(kmi.properties, prop, val)
-
-    # Remove.
-    else:
-        # XXX We must also clean up user keyconfig, else, if user has customized one of our shortcut, this
-        #     customization remains in memory, and comes back when re-enabling the addon, causing a segfault... :/
-        kconfs = bpy.context.window_manager.keyconfigs
-        for kconf in (kconfs.user, kconfs.addon):
-            for km_info, km_items in KEYMAPS:
-                km_name, km_regtype, km_sptype, km_ismodal = km_info
-                kmaps = (k for k in kconf.keymaps
-                           if k.name == km_name and k.region_type == km_regtype and
-                              k.space_type == km_sptype and k.is_modal == km_ismodal)
-                for kmap in kmaps:
-                    for kmi_kwargs, props in km_items:
-                        for kmi in find_keymap_items(kmap, kmi_kwargs["idname"]):
-                            kmap.keymap_items.remove(kmi)
-                # XXX We won’t remove addons keymaps themselves, other addons might also use them!
-
-
 def register():
-    bpy.utils.register_module(__name__)
+    for cls in classes:
+        bpy.utils.register_class(cls)
     bpy.types.SEQUENCER_MT_strip.append(menu_func)
 
-    update_keymap(True)
+    bpy_extras.keyconfig_utils.addon_keymap_register(bpy.context.window_manager, KEYMAPS)
 
 
 def unregister():
-    update_keymap(False)
+    bpy_extras.keyconfig_utils.addon_keymap_unregister(bpy.context.window_manager, KEYMAPS)
 
     bpy.types.SEQUENCER_MT_strip.remove(menu_func)
-    bpy.utils.unregister_module(__name__)
+    for cls in classes:
+        bpy.utils.unregister_class(cls)
 
 
 if __name__ == "__main__":

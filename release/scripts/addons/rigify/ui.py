@@ -507,7 +507,7 @@ class DATA_UL_rigify_bone_groups(bpy.types.UIList):
         row2.enabled = not bpy.context.object.data.rigify_colors_lock
 
 
-class DATA_PT_rigify_bone_groups_specials(bpy.types.Menu):
+class DATA_MT_rigify_bone_groups_specials(bpy.types.Menu):
     bl_label = 'Rigify Bone Groups Specials'
 
     def draw(self, context):
@@ -549,7 +549,7 @@ class DATA_PT_rigify_bone_groups(bpy.types.Panel):
         col = row.column(align=True)
         col.operator("armature.rigify_bone_group_add", icon='ZOOMIN', text="")
         col.operator("armature.rigify_bone_group_remove", icon='ZOOMOUT', text="").idx = obj.data.rigify_colors_index
-        col.menu("DATA_PT_rigify_bone_groups_specials", icon='DOWNARROW_HLT', text="")
+        col.menu("DATA_MT_rigify_bone_groups_specials", icon='DOWNARROW_HLT', text="")
         row = layout.row()
         row.prop(armature, 'rigify_theme_to_add', text = 'Theme')
         op = row.operator("armature.rigify_bone_group_add_theme", text="Add From Theme")
@@ -627,9 +627,12 @@ class BONE_PT_rigify_buttons(bpy.types.Panel):
 class VIEW3D_PT_tools_rigify_dev(bpy.types.Panel):
     bl_label = "Rigify Dev Tools"
     bl_category = 'Tools'
-    bl_context = "armature_edit"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
+
+    @classmethod
+    def poll(cls, context):
+        return context.mode in ['EDIT_ARMATURE', 'EDIT_MESH']
 
     def draw(self, context):
         obj = context.active_object
@@ -1189,7 +1192,7 @@ def rotPoleToggle(rig, window='ALL', value=False, toggle=False, bake=False):
                     args = (controls[0], controls[6], controls[5], pole, parent)
 
                 for f in frames:
-                    if not bones_in_frame(f, rig, *args):
+                    if bake and not bones_in_frame(f, rig, *args):
                         continue
                     scn.frame_set(f)
                     func1(**kwargs1)
@@ -1320,7 +1323,7 @@ def register():
     bpy.utils.register_class(DATA_OT_rigify_bone_group_remove)
     bpy.utils.register_class(DATA_OT_rigify_bone_group_remove_all)
     bpy.utils.register_class(DATA_UL_rigify_bone_groups)
-    bpy.utils.register_class(DATA_PT_rigify_bone_groups_specials)
+    bpy.utils.register_class(DATA_MT_rigify_bone_groups_specials)
     bpy.utils.register_class(DATA_PT_rigify_bone_groups)
     bpy.utils.register_class(DATA_PT_rigify_layer_names)
     bpy.utils.register_class(DATA_PT_rigify_buttons)
@@ -1356,7 +1359,7 @@ def unregister():
     bpy.utils.unregister_class(DATA_OT_rigify_bone_group_remove)
     bpy.utils.unregister_class(DATA_OT_rigify_bone_group_remove_all)
     bpy.utils.unregister_class(DATA_UL_rigify_bone_groups)
-    bpy.utils.unregister_class(DATA_PT_rigify_bone_groups_specials)
+    bpy.utils.unregister_class(DATA_MT_rigify_bone_groups_specials)
     bpy.utils.unregister_class(DATA_PT_rigify_bone_groups)
     bpy.utils.unregister_class(DATA_PT_rigify_layer_names)
     bpy.utils.unregister_class(DATA_PT_rigify_buttons)

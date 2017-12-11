@@ -104,10 +104,10 @@ def fillCommonJobSettings(job, job_name, netsettings):
         job.render = netsettings.job_render_engine_other
     else:
         job.render = netsettings.job_render_engine
-        
+
     if netsettings.job_tags:
         job.tags.update(netsettings.job_tags.split(";"))
-     
+
     if netsettings.job_type == "JOB_BLENDER":
         job.type = netrender.model.JOB_BLENDER
     elif netsettings.job_type == "JOB_PROCESS":
@@ -133,16 +133,16 @@ def sendJobVCS(conn, scene, anim = False):
         job.addFrame(scene.frame_current)
 
     filename = bpy.data.filepath
-    
+
     if not filename.startswith(netsettings.vcs_wpath):
         # this is an error, need better way to handle this
         return
 
     filename = filename[len(netsettings.vcs_wpath):]
-    
+
     if filename[0] in {os.sep, os.altsep}:
         filename = filename[1:]
-    
+
     job.addFile(filename, signed=False)
 
     job_name = netsettings.job_name
@@ -152,14 +152,14 @@ def sendJobVCS(conn, scene, anim = False):
 
 
     fillCommonJobSettings(job, job_name, netsettings)
-    
+
     # VCS Specific code
     job.version_info = netrender.model.VersioningInfo()
     job.version_info.system = netsettings.vcs_system
     job.version_info.wpath = netsettings.vcs_wpath
     job.version_info.rpath = netsettings.vcs_rpath
     job.version_info.revision = netsettings.vcs_revision
-    
+
     job.tags.add(netrender.model.TAG_RENDER)
 
     # try to send path first
@@ -169,7 +169,7 @@ def sendJobVCS(conn, scene, anim = False):
     response.read()
 
     job_id = response.getheader("job-id")
-    
+
     # a VCS job is always good right now, need error handling
 
     return job_id
@@ -179,20 +179,20 @@ def sendJobBaking(conn, scene, can_save = True):
     job = netrender.model.RenderJob()
 
     filename = bpy.data.filepath
-    
+
     if not os.path.exists(filename):
         raise RuntimeError("Current file path not defined\nSave your file before sending a job")
 
     if can_save and netsettings.save_before_job:
         bpy.ops.wm.save_mainfile(filepath=filename, check_existing=False)
-    
+
     job.addFile(filename)
 
     job_name = netsettings.job_name
     path, name = os.path.split(filename)
     if job_name == "[default]":
         job_name = name
-        
+
     ###############################
     # LIBRARIES (needed for baking)
     ###############################
@@ -202,7 +202,7 @@ def sendJobBaking(conn, scene, can_save = True):
             job.addFile(file_path)
 
     tasks = set()
-    
+
     ####################################
     # FLUID + POINT CACHE (what we bake)
     ####################################
@@ -213,17 +213,17 @@ def sendJobBaking(conn, scene, can_save = True):
         else: # owner is modifier
             index = [index for index, data in enumerate(object.modifiers) if data == owner][0]
             tasks.add((owner.type, object.name, str(index)))
-        
+
     def fluidFunc(object, modifier, cache_path):
         pass
-        
+
     def multiresFunc(object, modifier, cache_path):
         pass
-        
+
     processObjectDependencies(pointCacheFunc, fluidFunc, multiresFunc)
 
     fillCommonJobSettings(job, job_name, netsettings)
-    
+
     job.tags.add(netrender.model.TAG_BAKING)
     job.subtype = netrender.model.JOB_SUB_BAKING
     job.chunks = 1 # No chunking for baking
@@ -231,7 +231,7 @@ def sendJobBaking(conn, scene, can_save = True):
     for i, task in enumerate(tasks):
         job.addFrame(i + 1)
         job.frames[-1].command = netrender.baking.taskToCommand(task)
-        
+
     # try to send path first
     with ConnectionContext():
         conn.request("POST", "/job", json.dumps(job.serialize()))
@@ -253,7 +253,7 @@ def sendJobBaking(conn, scene, can_save = True):
     # server will reply with ACCEPTED until all files are found
 
     return job_id
-    
+
 def sendJobBlender(conn, scene, anim = False, can_save = True):
     netsettings = scene.network_render
     job = netrender.model.RenderJob()
@@ -268,7 +268,7 @@ def sendJobBlender(conn, scene, anim = False, can_save = True):
 
     if not os.path.exists(filename):
         raise RuntimeError("Current file path not defined\nSave your file before sending a job")
-    
+
     if can_save and netsettings.save_before_job:
         bpy.ops.wm.save_mainfile(filepath=filename, check_existing=False)
 
@@ -295,7 +295,7 @@ def sendJobBlender(conn, scene, anim = False, can_save = True):
             file_path = bpy.path.abspath(image.filepath)
             if os.path.exists(file_path):
                 job.addFile(file_path)
-                
+
                 tex_path = os.path.splitext(file_path)[0] + ".tex"
                 if os.path.exists(tex_path):
                     job.addFile(tex_path)
@@ -304,22 +304,22 @@ def sendJobBlender(conn, scene, anim = False, can_save = True):
     # FLUID + POINT CACHE
     ###########################
     default_path = cachePath(filename)
-    
+
     def pointCacheFunc(object, owner, point_cache):
         addPointCache(job, object, point_cache, default_path)
-        
+
     def fluidFunc(object, modifier, cache_path):
         addFluidFiles(job, cache_path)
-        
+
     def multiresFunc(object, modifier, cache_path):
         job.addFile(cache_path)
-        
+
     processObjectDependencies(pointCacheFunc, fluidFunc, multiresFunc)
 
     #print(job.files)
 
     fillCommonJobSettings(job, job_name, netsettings)
-    
+
     job.tags.add(netrender.model.TAG_RENDER)
 
     # try to send path first
@@ -371,7 +371,7 @@ class NetworkRenderEngine(bpy.types.RenderEngine):
 
         address = "" if netsettings.server_address == "[default]" else netsettings.server_address
 
-        master.runMaster(address = (address, netsettings.server_port), 
+        master.runMaster(address = (address, netsettings.server_port),
                          broadcast = netsettings.use_master_broadcast,
                          clear = netsettings.use_master_clear,
                          force = netsettings.use_master_force_upload,
@@ -405,8 +405,8 @@ class NetworkRenderEngine(bpy.types.RenderEngine):
             # reading back result
 
             self.update_stats("", "Network render waiting for results")
-            
-             
+
+
             requestResult(conn, job_id, scene.frame_current)
             response = conn.getresponse()
             buf = response.read()
@@ -419,7 +419,7 @@ class NetworkRenderEngine(bpy.types.RenderEngine):
                 requestResult(conn, job_id, scene.frame_current)
                 response = conn.getresponse()
                 buf = response.read()
-                
+
             while response.status == http.client.ACCEPTED and not self.test_break():
                 time.sleep(1)
                 requestResult(conn, job_id, scene.frame_current)
@@ -442,9 +442,9 @@ class NetworkRenderEngine(bpy.types.RenderEngine):
             r = scene.render
             x= int(r.resolution_x*r.resolution_percentage*0.01)
             y= int(r.resolution_y*r.resolution_percentage*0.01)
-            
+
             result_path = os.path.join(bpy.path.abspath(netsettings.path), "output.exr")
-            
+
             folder = os.path.split(result_path)[0]
             verifyCreateDir(folder)
 

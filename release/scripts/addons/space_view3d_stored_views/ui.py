@@ -170,7 +170,7 @@ class VIEW3D_PT_properties_stored_views(Panel):
         col.prop_enum(stored_views, "mode", 'VIEW')
         row = layout.row(align=True)
         row.operator("view3d.camera_to_view", text="Camera To view")
-        row.operator("stored_views.newcamera", text="New Camera To view")
+        row.operator("stored_views.newcamera")
 
         row = col.row(align=True)
         row.prop_enum(stored_views, "mode", 'POV')
@@ -252,12 +252,12 @@ class VIEW3D_PT_properties_stored_views(Panel):
         if len(cameras) > 0:
             for camera in cameras:
                 row = layout.row(align=True)
-                btn = row.operator("cameraselector.set_scene_camera",
+                row.context_pointer_set("active_object", camera)
+                row.operator("cameraselector.set_scene_camera",
                                    text=camera.name, icon='OUTLINER_DATA_CAMERA')
-                btn.chosen_camera = camera.name
-
-                btn = row.operator("cameraselector.add_camera_marker",
+                row.operator("cameraselector.preview_scene_camera",
+                                   text='', icon='RESTRICT_VIEW_OFF')
+                row.operator("cameraselector.add_camera_marker",
                                    text='', icon='MARKER')
-                btn.chosen_camera = camera.name
         else:
             layout.label("No cameras in this scene")

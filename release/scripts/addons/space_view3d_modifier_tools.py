@@ -20,14 +20,13 @@
 bl_info = {
     "name": "Modifier Tools",
     "author": "Meta Androcto, saidenka",
-    "version": (0, 2, 2),
+    "version": (0, 2, 4),
     "blender": (2, 77, 0),
     "location": "Properties > Modifiers",
     "description": "Modifiers Specials Show/Hide/Apply Selected",
     "warning": "",
-    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6"
-    "/Py/Scripts/3D_interaction/modifier_tools",
-    "tracker_url": "https://developer.blender.org/maniphest/task/edit/form/2/",
+    "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6"
+                "/Py/Scripts/3D_interaction/modifier_tools",
     "category": "3D View"
     }
 
@@ -39,7 +38,7 @@ class ApplyAllModifiers(Operator):
     bl_idname = "object.apply_all_modifiers"
     bl_label = "Apply All"
     bl_description = ("Apply All modifiers of the selected object(s) \n"
-                      "Active object has to have modifiers for menu to show up")
+                      "Active object has to have modifiers for the option to show up")
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
@@ -59,8 +58,10 @@ class ApplyAllModifiers(Operator):
                 contx['modifier'] = mod
                 is_mod = True
                 try:
-                    bpy.ops.object.modifier_apply(contx, apply_as='DATA',
-                                                  modifier=contx['modifier'].name)
+                    bpy.ops.object.modifier_apply(
+                                        contx, apply_as='DATA',
+                                        modifier=contx['modifier'].name
+                                        )
                 except:
                     obj_name = getattr(obj, "name", "NO NAME")
                     collect_names.append(obj_name)
@@ -73,18 +74,19 @@ class ApplyAllModifiers(Operator):
             else:
                 message_a = "No Modifiers on Selected Objects"
         else:
-            self.report(type={"INFO"}, message="No Selection. No changes applied")
+            self.report({"INFO"}, "No Selection. No changes applied")
             return {'CANCELLED'}
 
         # applying failed for some objects, show report
         message_obj = (",".join(collect_names) if collect_names and
                        len(collect_names) < 8 else "some objects (Check System Console)")
 
-        self.report(type={"INFO"}, message=(message_a if not message_b else
+        self.report({"INFO"},
+                    (message_a if not message_b else
                     "Applying modifiers failed for {}".format(message_obj)))
 
         if (collect_names and message_obj == "some objects (Check System Console)"):
-            print("\n** MODIFIERS TOOLS REPORT **\n\nApplying failed on:"
+            print("\n[Modifier Tools]\n\nApplying failed on:"
                   "\n\n{} \n".format(", ".join(collect_names)))
 
         return {'FINISHED'}
@@ -116,10 +118,10 @@ class DeleteAllModifiers(Operator):
             else:
                 message_a = "No Modifiers on Selected Objects"
         else:
-            self.report(type={"INFO"}, message="No Selection. No changes applied")
+            self.report({"INFO"}, "No Selection. No changes applied")
             return {'CANCELLED'}
 
-        self.report(type={"INFO"}, message=message_a)
+        self.report({"INFO"}, message_a)
         return {'FINISHED'}
 
 
@@ -128,6 +130,10 @@ class ToggleApplyModifiersView(Operator):
     bl_label = "Hide Viewport"
     bl_description = "Shows/Hide modifiers of the active / selected object(s) in 3d View"
     bl_options = {'REGISTER'}
+
+    @classmethod
+    def poll(cls, context):
+        return context.active_object is not None
 
     def execute(self, context):
         is_apply = True
@@ -147,11 +153,11 @@ class ToggleApplyModifiersView(Operator):
                 mod.show_viewport = is_apply
 
         if is_apply:
-            message_a = "Displaying modifiers in the 3d View"
+            message_a = "Displaying modifiers in the 3D View"
         else:
-            message_a = "Hiding modifiers in the 3d View"
+            message_a = "Hiding modifiers in the 3D View"
 
-        self.report(type={"INFO"}, message=message_a)
+        self.report({"INFO"}, message_a)
         return {'FINISHED'}
 
 
@@ -160,6 +166,10 @@ class ToggleAllShowExpanded(Operator):
     bl_label = "Expand/Collapse All"
     bl_description = "Expand/Collapse Modifier Stack"
     bl_options = {'REGISTER'}
+
+    @classmethod
+    def poll(cls, context):
+        return context.active_object is not None
 
     def execute(self, context):
         obj = context.active_object
@@ -176,7 +186,7 @@ class ToggleAllShowExpanded(Operator):
             for mod in obj.modifiers:
                 mod.show_expanded = not is_close
         else:
-            self.report(type={'WARNING'}, message="Not a single modifier")
+            self.report({'WARNING'}, "Not a single modifier to Expand/Collapse")
             return {'CANCELLED'}
 
         for area in context.screen.areas:
@@ -233,6 +243,7 @@ def unregister():
     bpy.types.VIEW3D_MT_object_apply.remove(menu_func)
 
     bpy.utils.unregister_module(__name__)
+
 
 if __name__ == "__main__":
     register()

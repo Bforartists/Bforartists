@@ -19,16 +19,10 @@
 
 """
     constants_utils.py
-
     Useful constants...
-    
-
-
 """
-
-
 
 # Golden mean
 PHI_INV = 0.61803398874989484820
-PHI     = 1.61803398874989484820
+PHI = 1.61803398874989484820
 PHI_SQR = 2.61803398874989484820

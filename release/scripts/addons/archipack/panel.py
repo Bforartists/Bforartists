@@ -703,8 +703,8 @@ class Panel():
         n_profil_faces = self.profil_faces
         idmat = []
         for i in range(n_path_faces):
-            for mat in range(n_profil_faces):
-                idmat.append(self.idmat[mat])
+            for f in range(n_profil_faces):
+                idmat.append(self.idmat[f])
         if self.side_cap_front > -1:
             idmat.append(cap_front_id)
         if self.side_cap_back > -1:

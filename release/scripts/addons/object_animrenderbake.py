@@ -23,7 +23,7 @@ bl_info = {
     "blender": (2, 75, 0),
     "location": "Properties > Render > Bake Panel",
     "description": "Renderbakes a series of frames",
-    "category": "Object",
+    "category": "Render",
     "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
                 "Scripts/Object/Animated_Render_Baker",
 }
@@ -59,7 +59,7 @@ class OBJECT_OT_animrenderbake(bpy.types.Operator):
         if start >= end:
             self.report({'ERROR'}, "Start frame must be smaller than end frame")
             return {'CANCELLED'}
-            
+
         selected = context.selected_objects
 
         # Only single object baking for now
@@ -192,7 +192,7 @@ def register():
             default=250)
 
     bpy.types.RENDER_PT_bake.prepend(draw)
-    cycles_panel = getattr(bpy.types, "CyclesRender_PT_bake", None)
+    cycles_panel = getattr(bpy.types, "CYCLES_RENDER_PT_bake", None)
     if cycles_panel:
         cycles_panel.prepend(draw)
 
@@ -205,7 +205,7 @@ def unregister():
     del bpy.types.Scene.animrenderbake_end
 
     bpy.types.RENDER_PT_bake.remove(draw)
-    cycles_panel = getattr(bpy.types, "CyclesRender_PT_bake", None)
+    cycles_panel = getattr(bpy.types, "CYCLES_RENDER_PT_bake", None)
     if cycles_panel:
         cycles_panel.remove(draw)
 

@@ -77,7 +77,7 @@ def main_object(scene, obj, level, **kw):
     if kw_copy["use_debug_redraw"]:
         obj_draw_type_prev = obj.draw_type
         obj.draw_type = 'WIRE'
-    
+
     objects = fracture_cell_setup.cell_fracture_objects(scene, obj, **kw_copy)
     objects = fracture_cell_setup.cell_fracture_boolean(scene, obj, objects,
                                                         use_island_split=use_island_split,
@@ -229,8 +229,8 @@ def main(context, **kw):
                 return volume
 
             return _getObjectVolume()
-        
-        
+
+
         obj_volume_ls = [_get_volume(obj_cell) for obj_cell in objects]
         obj_volume_tot = sum(obj_volume_ls)
         if obj_volume_tot > 0.0:
@@ -381,7 +381,7 @@ class FractureCell(Operator):
 
     # -------------------------------------------------------------------------
     # Physics Options
-    
+
     mass_mode = EnumProperty(
             name="Mass Mode",
             items=(('VOLUME', "Volume", "Objects get part of specified mass based on their volume"),
@@ -389,7 +389,7 @@ class FractureCell(Operator):
                    ),
             default='VOLUME',
             )
-    
+
     mass = FloatProperty(
             name="Mass",
             description="Mass to give created objects",
@@ -417,7 +417,7 @@ class FractureCell(Operator):
     # Scene Options
     #
     # .. different from object options in that this controls how the objects
-    #    are setup in the scene.  
+    #    are setup in the scene.
 
     use_layer_index = IntProperty(
             name="Layer Index",
@@ -445,7 +445,7 @@ class FractureCell(Operator):
             description="Create mesh data showing the points used for fracture",
             default=False,
             )
-            
+
     use_debug_redraw = BoolProperty(
             name="Show Progress Realtime",
             description="Redraw as fracture is done",
@@ -509,7 +509,7 @@ class FractureCell(Operator):
         rowsub.prop(self, "material_index")
         rowsub.prop(self, "use_interior_vgroup")
 
-        # could be own section, control how we subdiv        
+        # could be own section, control how we subdiv
         rowsub.prop(self, "margin")
         rowsub.prop(self, "use_island_split")
 

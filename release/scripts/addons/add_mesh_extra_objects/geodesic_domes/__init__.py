@@ -24,19 +24,18 @@ bl_info = {
     "location": "Toolshelf > Create Tab",
     "description": "Create geodesic dome type objects.",
     "warning": "",
-    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Modeling/Geodesic_Domes",
-    "tracker_url": "https://developer.blender.org/maniphest/task/create/?project=3&type=Bug",
+    "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Modeling/Geodesic_Domes",
+    "tracker_url": "",
     "category": "Mesh"}
 
 if "bpy" in locals():
-    import imp
-    imp.reload(third_domes_panel_271)
+    import importlib
+    importlib.reload(third_domes_panel_271)
 
 else:
     from . import third_domes_panel_271
 
 import bpy
-from bpy.props import *
 
 
 def register():
@@ -45,6 +44,7 @@ def register():
 
 def unregister():
     bpy.utils.unregister_module(__name__)
+
 
 if __name__ == "__main__":
     register()

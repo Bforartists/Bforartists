@@ -60,7 +60,7 @@ def exportText(ob, mx, mw, **common):
                 coef = -clipStart / (point1*mx)[2]
                 textHeight *= coef
                 #print 'deb: coef=', coef #--------------
-    
+
         #print 'deb: point=', point #--------------
         [point] = toGlobalOrigin([point])
         point2 = point

@@ -52,7 +52,6 @@ class Fence():
         self.t_end = 0
         self.dz = 0
         self.z0 = 0
-        self.a0 = 0
 
     def set_offset(self, offset, last=None):
         """
@@ -622,12 +621,19 @@ def update_type(self, context):
             else:
                 w = w0.curved_fence(part.a0, part.da, part.radius)
         else:
-            g = FenceGenerator(None)
-            g.add_part(self)
-            w = g.segs[0]
+            if "C_" in self.type:
+                p = Vector((0, 0))
+                v = self.length * Vector((cos(self.a0), sin(self.a0)))
+                w = StraightFence(p, v)
+                a0 = pi / 2
+            else:
+                c = -self.radius * Vector((cos(self.a0), sin(self.a0)))
+                w = CurvedFence(c, self.radius, self.a0, pi)
 
-        # w0 - w - w1
+        # not closed, see wall
+        # for closed ability
         dp = w.p1 - w.p0
+
         if "C_" in self.type:
             part.radius = 0.5 * dp.length
             part.da = pi
@@ -703,21 +709,21 @@ class archipack_fence_part(PropertyGroup):
             update=update_type
             )
     length = FloatProperty(
-            name="length",
+            name="Length",
             min=0.01,
             default=2.0,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
     radius = FloatProperty(
-            name="radius",
+            name="Radius",
             min=0.01,
             default=0.7,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
     da = FloatProperty(
-            name="total angle",
+            name="Angle",
             min=-pi,
             max=pi,
             default=pi / 2,
@@ -725,7 +731,7 @@ class archipack_fence_part(PropertyGroup):
             update=update
             )
     a0 = FloatProperty(
-            name="angle",
+            name="Start angle",
             min=-2 * pi,
             max=2 * pi,
             default=0,
@@ -779,7 +785,7 @@ class archipack_fence(ArchipackObject, Manipulable, PropertyGroup):
 
     parts = CollectionProperty(type=archipack_fence_part)
     user_defined_path = StringProperty(
-            name="user defined",
+            name="User defined",
             update=update_path
             )
     user_defined_spline = IntProperty(
@@ -789,32 +795,32 @@ class archipack_fence(ArchipackObject, Manipulable, PropertyGroup):
             update=update_path
             )
     user_defined_resolution = IntProperty(
-            name="resolution",
+            name="Resolution",
             min=1,
             max=128,
             default=12, update=update_path
             )
     n_parts = IntProperty(
-            name="parts",
+            name="Parts",
             min=1,
             default=1, update=update_manipulators
             )
     x_offset = FloatProperty(
-            name="x offset",
+            name="Offset",
             default=0.0, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
 
     radius = FloatProperty(
-            name="radius",
+            name="Radius",
             min=0.01,
             default=0.7,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
     da = FloatProperty(
-            name="angle",
+            name="Angle",
             min=-pi,
             max=pi,
             default=pi / 2,
@@ -822,7 +828,7 @@ class archipack_fence(ArchipackObject, Manipulable, PropertyGroup):
             update=update
             )
     angle_limit = FloatProperty(
-            name="angle",
+            name="Angle",
             min=0,
             max=2 * pi,
             default=pi / 8,
@@ -838,40 +844,40 @@ class archipack_fence(ArchipackObject, Manipulable, PropertyGroup):
             update=update
             )
     post = BoolProperty(
-            name='enable',
+            name='Enable',
             default=True,
             update=update
             )
     post_spacing = FloatProperty(
-            name="spacing",
+            name="Spacing",
             min=0.1,
             default=1.0, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
     post_x = FloatProperty(
-            name="width",
+            name="Width",
             min=0.001,
             default=0.04, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
     post_y = FloatProperty(
-            name="length",
+            name="Length",
             min=0.001, max=1000,
             default=0.04, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
     post_z = FloatProperty(
-            name="height",
+            name="Height",
             min=0.001,
             default=1, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
     post_alt = FloatProperty(
-            name="altitude",
+            name="Altitude",
             default=0, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
@@ -882,7 +888,7 @@ class archipack_fence(ArchipackObject, Manipulable, PropertyGroup):
             default=True
             )
     user_defined_post = StringProperty(
-            name="user defined",
+            name="User defined",
             update=update
             )
     idmat_post = EnumProperty(
@@ -892,46 +898,46 @@ class archipack_fence(ArchipackObject, Manipulable, PropertyGroup):
             update=update
             )
     subs = BoolProperty(
-            name='enable',
+            name='Enable',
             default=False,
             update=update
             )
     subs_spacing = FloatProperty(
-            name="spacing",
+            name="Spacing",
             min=0.05,
             default=0.10, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
     subs_x = FloatProperty(
-            name="width",
+            name="Width",
             min=0.001,
             default=0.02, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
     subs_y = FloatProperty(
-            name="length",
+            name="Length",
             min=0.001,
             default=0.02, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
     subs_z = FloatProperty(
-            name="height",
+            name="Height",
             min=0.001,
             default=1, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
     subs_alt = FloatProperty(
-            name="altitude",
+            name="Altitude",
             default=0, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
     subs_offset_x = FloatProperty(
-            name="offset",
+            name="Offset",
             default=0.0, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
@@ -951,7 +957,7 @@ class archipack_fence(ArchipackObject, Manipulable, PropertyGroup):
             default=True
             )
     user_defined_subs = StringProperty(
-            name="user defined",
+            name="User defined",
             update=update
             )
     idmat_subs = EnumProperty(
@@ -961,39 +967,39 @@ class archipack_fence(ArchipackObject, Manipulable, PropertyGroup):
             update=update
             )
     panel = BoolProperty(
-            name='enable',
+            name='Enable',
             default=True,
             update=update
             )
     panel_alt = FloatProperty(
-            name="altitude",
+            name="Altitude",
             default=0.25, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
     panel_x = FloatProperty(
-            name="width",
+            name="Width",
             min=0.001,
             default=0.01, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
     panel_z = FloatProperty(
-            name="height",
+            name="Height",
             min=0.001,
             default=0.6, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
     panel_dist = FloatProperty(
-            name="space",
+            name="Spacing",
             min=0.001,
             default=0.05, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
     panel_offset_x = FloatProperty(
-            name="offset",
+            name="Offset",
             default=0.0, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
@@ -1005,19 +1011,19 @@ class archipack_fence(ArchipackObject, Manipulable, PropertyGroup):
             update=update
             )
     rail = BoolProperty(
-            name="enable",
+            name="Enable",
             update=update,
             default=False
             )
     rail_n = IntProperty(
-            name="number",
+            name="#",
             default=1,
             min=0,
             max=31,
             update=update
             )
     rail_x = FloatVectorProperty(
-            name="width",
+            name="Width",
             default=[
                 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05,
                 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05,
@@ -1031,7 +1037,7 @@ class archipack_fence(ArchipackObject, Manipulable, PropertyGroup):
             update=update
             )
     rail_z = FloatVectorProperty(
-            name="height",
+            name="Height",
             default=[
                 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05,
                 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05,
@@ -1045,7 +1051,7 @@ class archipack_fence(ArchipackObject, Manipulable, PropertyGroup):
             update=update
             )
     rail_offset = FloatVectorProperty(
-            name="offset",
+            name="Offset",
             default=[
                 0, 0, 0, 0, 0, 0, 0, 0,
                 0, 0, 0, 0, 0, 0, 0, 0,
@@ -1058,7 +1064,7 @@ class archipack_fence(ArchipackObject, Manipulable, PropertyGroup):
             update=update
             )
     rail_alt = FloatVectorProperty(
-            name="altitude",
+            name="Altitude",
             default=[
                 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
                 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
@@ -1073,36 +1079,36 @@ class archipack_fence(ArchipackObject, Manipulable, PropertyGroup):
     rail_mat = CollectionProperty(type=archipack_fence_material)
 
     handrail = BoolProperty(
-            name="enable",
+            name="Enable",
             update=update,
             default=True
             )
     handrail_offset = FloatProperty(
-            name="offset",
+            name="Offset",
             default=0.0, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
     handrail_alt = FloatProperty(
-            name="altitude",
+            name="Altitude",
             default=1.0, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
     handrail_extend = FloatProperty(
-            name="extend",
+            name="Extend",
             min=0,
             default=0.1, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
     handrail_slice = BoolProperty(
-            name='slice',
+            name='Slice',
             default=True,
             update=update
             )
     handrail_slice_right = BoolProperty(
-            name='slice',
+            name='Slice',
             default=True,
             update=update
             )
@@ -1117,21 +1123,21 @@ class archipack_fence(ArchipackObject, Manipulable, PropertyGroup):
             update=update
             )
     handrail_x = FloatProperty(
-            name="width",
+            name="Width",
             min=0.001,
             default=0.04, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
     handrail_y = FloatProperty(
-            name="height",
+            name="Height",
             min=0.001,
             default=0.04, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
     handrail_radius = FloatProperty(
-            name="radius",
+            name="Radius",
             min=0.001,
             default=0.02, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',

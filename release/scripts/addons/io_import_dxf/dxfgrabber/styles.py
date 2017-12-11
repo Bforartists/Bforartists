@@ -50,7 +50,7 @@ class StyleTable(Table):
             style = Style(entry_tags)
             styles._table_entries[style.name] = style
         return styles
-    
+
 
 DEFAULT_STYLE = """  0
 STYLE

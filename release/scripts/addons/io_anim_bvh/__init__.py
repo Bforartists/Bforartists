@@ -1,4 +1,4 @@
-﻿# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -57,7 +57,7 @@ ImportBVHOrientationHelper = orientation_helper_factory("ImportBVHOrientationHel
 
 
 class ImportBVH(bpy.types.Operator, ImportHelper, ImportBVHOrientationHelper):
-    """Import BVH\nLoad a BVH motion capture file"""
+    """Load a BVH motion capture file"""
     bl_idname = "import_anim.bvh"
     bl_label = "Import BVH"
     bl_options = {'REGISTER', 'UNDO'}
@@ -141,7 +141,7 @@ class ImportBVH(bpy.types.Operator, ImportHelper, ImportBVHOrientationHelper):
 
 
 class ExportBVH(bpy.types.Operator, ExportHelper):
-    """Export BVH\nSave a BVH motion capture file from an armature"""
+    """Save a BVH motion capture file from an armature"""
     bl_idname = "export_anim.bvh"
     bl_label = "Export BVH"
 
@@ -211,11 +211,11 @@ class ExportBVH(bpy.types.Operator, ExportHelper):
 
 
 def menu_func_import(self, context):
-    self.layout.operator(ImportBVH.bl_idname, text="Motion Capture (.bvh)", icon = "LOAD_BVH")
+    self.layout.operator(ImportBVH.bl_idname, text="Motion Capture (.bvh)")
 
 
 def menu_func_export(self, context):
-    self.layout.operator(ExportBVH.bl_idname, text="Motion Capture (.bvh)", icon = "SAVE_BVH")
+    self.layout.operator(ExportBVH.bl_idname, text="Motion Capture (.bvh)")
 
 
 def register():

@@ -21,11 +21,11 @@
 bl_info = {
     "name": "Math Vis (Console)",
     "author": "Campbell Barton",
-    "version": (0, 2),
+    "version": (0, 2, 1),
     "blender": (2, 57, 0),
     "location": "Properties: Scene > Math Vis Console and Python Console: Menu",
     "description": "Display console defined mathutils variables in the 3D view",
-    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
+    "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
                 "Scripts/3D_interaction/Math_Viz",
     "support": "OFFICIAL",
     "category": "3D View",
@@ -37,13 +37,28 @@ if "bpy" in locals():
     importlib.reload(utils)
     importlib.reload(draw)
 else:
-    from . import utils, draw
+    from . import utils
+    from . import draw
 
 import bpy
-from bpy.props import StringProperty, BoolProperty, BoolVectorProperty, FloatProperty, IntProperty, PointerProperty, CollectionProperty
+from bpy.types import (
+        Operator,
+        Panel,
+        PropertyGroup,
+        UIList,
+        )
+from bpy.props import (
+        StringProperty,
+        BoolProperty,
+        BoolVectorProperty,
+        FloatProperty,
+        IntProperty,
+        PointerProperty,
+        CollectionProperty,
+        )
 
 
-class PanelConsoleVars(bpy.types.Panel):
+class PanelConsoleVars(Panel):
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = 'scene'
@@ -61,14 +76,15 @@ class PanelConsoleVars(bpy.types.Panel):
             col = box.column(align=True)
             col.label("No vars to display")
         else:
-            layout.template_list('MathVisVarList',
-                                 'MathVisStatePropList',
-                                 bpy.context.window_manager,
-                                 'MathVisStatePropList',
-                                 bpy.context.window_manager.MathVisProp,
-                                 'index',
-                                 rows=10)
-
+            layout.template_list(
+                    'MathVisVarList',
+                    'MathVisStatePropList',
+                    bpy.context.window_manager,
+                    'MathVisStatePropList',
+                    bpy.context.window_manager.MathVisProp,
+                    'index',
+                    rows=10
+                    )
         col = layout.column()
         col.prop(bpy.context.window_manager.MathVisProp, "name_hide")
         col.prop(bpy.context.window_manager.MathVisProp, "bbox_hide")
@@ -76,7 +92,7 @@ class PanelConsoleVars(bpy.types.Panel):
         col.operator("mathvis.cleanup_console")
 
 
-class DeleteVar(bpy.types.Operator):
+class DeleteVar(Operator):
     bl_idname = "mathvis.delete_var"
     bl_label = "Delete Var"
     bl_description = "Remove the variable from the Console"
@@ -92,7 +108,7 @@ class DeleteVar(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class ToggleDisplay(bpy.types.Operator):
+class ToggleDisplay(Operator):
     bl_idname = "mathvis.toggle_display"
     bl_label = "Hide/Unhide"
     bl_description = "Change the display state of the var"
@@ -106,7 +122,7 @@ class ToggleDisplay(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class ToggleLock(bpy.types.Operator):
+class ToggleLock(Operator):
     bl_idname = "mathvis.toggle_lock"
     bl_label = "Lock/Unlock"
     bl_description = "Lock the var from being deleted"
@@ -120,7 +136,7 @@ class ToggleLock(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class ToggleMatrixBBoxDisplay(bpy.types.Operator):
+class ToggleMatrixBBoxDisplay(Operator):
     bl_idname = "mathvis.show_bbox"
     bl_label = "Show BBox"
     bl_description = "Show/Hide the BBox of Matrix items"
@@ -132,7 +148,7 @@ class ToggleMatrixBBoxDisplay(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class CleanupConsole(bpy.types.Operator):
+class CleanupConsole(Operator):
     bl_idname = "mathvis.cleanup_console"
     bl_label = "Cleanup Math Vis Console"
     bl_description = "Remove all visualized variables from the Console"
@@ -160,12 +176,12 @@ def call_console_hook(self, context):
     console_hook()
 
 
-class MathVisStateProp(bpy.types.PropertyGroup):
+class MathVisStateProp(PropertyGroup):
     ktype = StringProperty()
     state = BoolVectorProperty(default=(False, False), size=2)
 
 
-class MathVisVarList(bpy.types.UIList):
+class MathVisVarList(UIList):
 
     def draw_item(self,
                   context,
@@ -201,22 +217,29 @@ class MathVisVarList(bpy.types.UIList):
             prop.key = key
 
 
-class MathVis(bpy.types.PropertyGroup):
+class MathVis(PropertyGroup):
 
-    index = IntProperty(name="index")
-
-    bbox_hide = BoolProperty(name="Hide BBoxes",
-                             default=False,
-                             description="Hide the bounding boxes rendered for Matrix like items",
-                             update=call_console_hook)
-
-    name_hide = BoolProperty(name="Hide Names",
-                             default=False,
-                             description="Hide the names of the rendered items",
-                             update=call_console_hook)
-
-    bbox_scale = FloatProperty(name="Scale factor", min=0, default=1,
-                               description="Resize the Bounding Box and the coordinate lines for the display of Matrix items")
+    index = IntProperty(
+            name="index"
+            )
+    bbox_hide = BoolProperty(
+            name="Hide BBoxes",
+            default=False,
+            description="Hide the bounding boxes rendered for Matrix like items",
+            update=call_console_hook
+            )
+    name_hide = BoolProperty(
+            name="Hide Names",
+            default=False,
+            description="Hide the names of the rendered items",
+            update=call_console_hook
+            )
+    bbox_scale = FloatProperty(
+            name="Scale factor",
+            min=0, default=1,
+            description="Resize the Bounding Box and the coordinate "
+                        "lines for the display of Matrix items"
+            )
 
 
 def register():
@@ -226,7 +249,7 @@ def register():
     console_python.execute.hooks.append((console_hook, ()))
     bpy.utils.register_module(__name__)
     bpy.types.WindowManager.MathVisProp = PointerProperty(type=MathVis)
-    bpy.types.WindowManager.MathVisStatePropList = CollectionProperty( type=MathVisStateProp)
+    bpy.types.WindowManager.MathVisStatePropList = CollectionProperty(type=MathVisStateProp)
     bpy.types.CONSOLE_MT_console.prepend(menu_func_cleanup)
 
 

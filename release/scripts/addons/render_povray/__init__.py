@@ -36,6 +36,7 @@ if "bpy" in locals():
     import importlib
     importlib.reload(ui)
     importlib.reload(render)
+    importlib.reload(shading)
     importlib.reload(update_files)
 
 else:
@@ -1618,6 +1619,14 @@ class RenderPovSettingsTexture(PropertyGroup):
 ###############################################################################
 
 class RenderPovSettingsObject(PropertyGroup):
+    # Pov inside_vector used for CSG
+    inside_vector = FloatVectorProperty(
+            name="CSG Inside Vector", description="Direction to shoot CSG inside test rays at",
+            precision=4, step=0.01, min=0, soft_max=1,
+            default=(0.001, 0.001, 0.5),
+            options={'ANIMATABLE'},
+            subtype='XYZ')
+            
     # Importance sampling
     importance_value = FloatProperty(
             name="Radiosity Importance",
@@ -1664,7 +1673,8 @@ class RenderPovSettingsObject(PropertyGroup):
         default=(0.0, 0.0, 2.0))
 
     unlock_parameters = BoolProperty(name="Lock",default = False)
-
+    
+    # not in UI yet but used for sor (lathe) / prism... pov primitives
     curveshape = EnumProperty(
             name="Povray Shape Type",
             items=(("birail", "Birail", ""),
@@ -2055,6 +2065,19 @@ class RenderPovSettingsObject(PropertyGroup):
                     description = "",
                     default = 1.0)
 
+                    
+###############################################################################
+# Modifiers POV properties.
+###############################################################################
+#class RenderPovSettingsModifier(PropertyGroup):
+    boolean_mod = EnumProperty(
+            name="Operation",
+            description="Choose the type of calculation for Boolean modifier",
+            items=(("BMESH", "Use the BMesh Boolean Solver", ""),
+                   ("CARVE", "Use the Carve Boolean Solver", ""),
+                   ("POV", "Use Pov-Ray Constructive Solid Geometry", "")),
+            default="BMESH")
+                    
 #################Avogadro
     # filename_ext = ".png"
 
@@ -2199,6 +2222,7 @@ def register():
     bpy.types.NODE_HT_header.append(ui.menu_func_nodes)
     nodeitems_utils.register_node_categories("POVRAYNODES", node_categories)
     bpy.types.Scene.pov = PointerProperty(type=RenderPovSettingsScene)
+    #bpy.types.Modifier.pov = PointerProperty(type=RenderPovSettingsModifier)
     bpy.types.Material.pov = PointerProperty(type=RenderPovSettingsMaterial)
     bpy.types.Texture.pov = PointerProperty(type=RenderPovSettingsTexture)
     bpy.types.Object.pov = PointerProperty(type=RenderPovSettingsObject)
@@ -2210,6 +2234,7 @@ def register():
 def unregister():
     del bpy.types.Scene.pov
     del bpy.types.Material.pov
+    #del bpy.types.Modifier.pov 
     del bpy.types.Texture.pov
     del bpy.types.Object.pov
     del bpy.types.Camera.pov

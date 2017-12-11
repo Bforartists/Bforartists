@@ -553,13 +553,14 @@ def fbx_data_element_custom_properties(props, bid):
 
 def fbx_data_empty_elements(root, empty, scene_data):
     """
-    Write the Empty data block.
+    Write the Empty data block (you can control its FBX datatype with the 'fbx_type' string custom property).
     """
     empty_key = scene_data.data_empties[empty]
 
     null = elem_data_single_int64(root, b"NodeAttribute", get_fbx_uuid_from_key(empty_key))
     null.add_string(fbx_name_class(empty.name.encode(), b"NodeAttribute"))
-    null.add_string(b"Null")
+    val = empty.bdata.get('fbx_type', None)
+    null.add_string(val.encode() if val and isinstance(val, str) else b"Null")
 
     elem_data_single_string(null, b"TypeFlags", b"Null")
 
@@ -1061,9 +1062,9 @@ def fbx_data_mesh_elements(root, me_obj, scene_data, done_meshes):
     vcolnumber = len(me.vertex_colors)
     if vcolnumber:
         def _coltuples_gen(raw_cols):
-            return zip(*(iter(raw_cols),) * 3 + (_infinite_gen(1.0),))  # We need a fake alpha...
+            return zip(*(iter(raw_cols),) * 4)
 
-        t_lc = array.array(data_types.ARRAY_FLOAT64, (0.0,)) * len(me.loops) * 3
+        t_lc = array.array(data_types.ARRAY_FLOAT64, (0.0,)) * len(me.loops) * 4
         for colindex, collayer in enumerate(me.vertex_colors):
             collayer.data.foreach_get("color", t_lc)
             lay_vcol = elem_data_single_int32(geom, b"LayerElementColor", colindex)
@@ -1203,7 +1204,7 @@ def fbx_data_mesh_elements(root, me_obj, scene_data, done_meshes):
 
 def check_skip_material(mat):
     """Simple helper to check whether we actually support exporting that material or not"""
-    return mat.type not in {'SURFACE'} or mat.use_nodes
+    return mat.type not in {'SURFACE'}
 
 
 def fbx_data_material_elements(root, mat, scene_data):
@@ -1216,9 +1217,10 @@ def fbx_data_material_elements(root, mat, scene_data):
 
     mat_key, _objs = scene_data.data_materials[mat]
     skip_mat = check_skip_material(mat)
+    node_mat = mat.use_nodes
     mat_type = b"Phong"
     # Approximation...
-    if not skip_mat and mat.specular_shader not in {'COOKTORR', 'PHONG', 'BLINN'}:
+    if not skip_mat and not node_mat and mat.specular_shader not in {'COOKTORR', 'PHONG', 'BLINN'}:
         mat_type = b"Lambert"
 
     fbx_mat = elem_data_single_int64(root, b"Material", get_fbx_uuid_from_key(mat_key))
@@ -1235,34 +1237,35 @@ def fbx_data_material_elements(root, mat, scene_data):
 
     if not skip_mat:
         elem_props_template_set(tmpl, props, "p_string", b"ShadingModel", mat_type.decode())
-        elem_props_template_set(tmpl, props, "p_color", b"EmissiveColor", mat.diffuse_color)
-        elem_props_template_set(tmpl, props, "p_number", b"EmissiveFactor", mat.emit)
-        elem_props_template_set(tmpl, props, "p_color", b"AmbientColor", ambient_color)
-        elem_props_template_set(tmpl, props, "p_number", b"AmbientFactor", mat.ambient)
         elem_props_template_set(tmpl, props, "p_color", b"DiffuseColor", mat.diffuse_color)
         elem_props_template_set(tmpl, props, "p_number", b"DiffuseFactor", mat.diffuse_intensity)
-        elem_props_template_set(tmpl, props, "p_color", b"TransparentColor",
-                                mat.diffuse_color if mat.use_transparency else (1.0, 1.0, 1.0))
-        elem_props_template_set(tmpl, props, "p_number", b"TransparencyFactor",
-                                1.0 - mat.alpha if mat.use_transparency else 0.0)
-        elem_props_template_set(tmpl, props, "p_number", b"Opacity", mat.alpha if mat.use_transparency else 1.0)
-        elem_props_template_set(tmpl, props, "p_vector_3d", b"NormalMap", (0.0, 0.0, 0.0))
-        # Not sure about those...
-        """
-        b"Bump": ((0.0, 0.0, 0.0), "p_vector_3d"),
-        b"BumpFactor": (1.0, "p_double"),
-        b"DisplacementColor": ((0.0, 0.0, 0.0), "p_color_rgb"),
-        b"DisplacementFactor": (0.0, "p_double"),
-        """
-        if mat_type == b"Phong":
-            elem_props_template_set(tmpl, props, "p_color", b"SpecularColor", mat.specular_color)
-            elem_props_template_set(tmpl, props, "p_number", b"SpecularFactor", mat.specular_intensity / 2.0)
-            # See Material template about those two!
-            elem_props_template_set(tmpl, props, "p_number", b"Shininess", (mat.specular_hardness - 1.0) / 5.10)
-            elem_props_template_set(tmpl, props, "p_number", b"ShininessExponent", (mat.specular_hardness - 1.0) / 5.10)
-            elem_props_template_set(tmpl, props, "p_color", b"ReflectionColor", mat.mirror_color)
-            elem_props_template_set(tmpl, props, "p_number", b"ReflectionFactor",
-                                    mat.raytrace_mirror.reflect_factor if mat.raytrace_mirror.use else 0.0)
+        if not node_mat:
+            elem_props_template_set(tmpl, props, "p_color", b"EmissiveColor", mat.diffuse_color)
+            elem_props_template_set(tmpl, props, "p_number", b"EmissiveFactor", mat.emit)
+            elem_props_template_set(tmpl, props, "p_color", b"AmbientColor", ambient_color)
+            elem_props_template_set(tmpl, props, "p_number", b"AmbientFactor", mat.ambient)
+            elem_props_template_set(tmpl, props, "p_color", b"TransparentColor",
+                                    mat.diffuse_color if mat.use_transparency else (1.0, 1.0, 1.0))
+            elem_props_template_set(tmpl, props, "p_number", b"TransparencyFactor",
+                                    1.0 - mat.alpha if mat.use_transparency else 0.0)
+            elem_props_template_set(tmpl, props, "p_number", b"Opacity", mat.alpha if mat.use_transparency else 1.0)
+            elem_props_template_set(tmpl, props, "p_vector_3d", b"NormalMap", (0.0, 0.0, 0.0))
+            # Not sure about those...
+            """
+            b"Bump": ((0.0, 0.0, 0.0), "p_vector_3d"),
+            b"BumpFactor": (1.0, "p_double"),
+            b"DisplacementColor": ((0.0, 0.0, 0.0), "p_color_rgb"),
+            b"DisplacementFactor": (0.0, "p_double"),
+            """
+            if mat_type == b"Phong":
+                elem_props_template_set(tmpl, props, "p_color", b"SpecularColor", mat.specular_color)
+                elem_props_template_set(tmpl, props, "p_number", b"SpecularFactor", mat.specular_intensity / 2.0)
+                # See Material template about those two!
+                elem_props_template_set(tmpl, props, "p_number", b"Shininess", (mat.specular_hardness - 1.0) / 5.10)
+                elem_props_template_set(tmpl, props, "p_number", b"ShininessExponent", (mat.specular_hardness - 1.0) / 5.10)
+                elem_props_template_set(tmpl, props, "p_color", b"ReflectionColor", mat.mirror_color)
+                elem_props_template_set(tmpl, props, "p_number", b"ReflectionFactor",
+                                        mat.raytrace_mirror.reflect_factor if mat.raytrace_mirror.use else 0.0)
 
     elem_props_template_finalize(tmpl, props)
 
@@ -2019,6 +2022,7 @@ def fbx_animations(scene_data):
             add_anim(animations, animated,
                      fbx_animations_do(scene_data, strip, strip.frame_start, strip.frame_end, True, force_keep=True))
             strip.mute = True
+            scene.frame_set(scene.frame_current, 0.0)
 
         for strip in strips:
             strip.mute = False
@@ -2097,6 +2101,7 @@ def fbx_animations(scene_data):
                         pbo.matrix_basis = mat.copy()
                 ob.animation_data.action = org_act
                 restore_object(ob, ob_copy)
+                scene.frame_set(scene.frame_current, 0.0)
 
             if pbones_matrices is not ...:
                 for pbo, mat in zip(ob.pose.bones, pbones_matrices):
@@ -2104,6 +2109,7 @@ def fbx_animations(scene_data):
             ob.animation_data.action = org_act
 
             bpy.data.objects.remove(ob_copy)
+            scene.frame_set(scene.frame_current, 0.0)
 
     # Global (containing everything) animstack, only if not exporting NLA strips and/or all actions.
     if not scene_data.settings.bake_anim_use_nla_strips and not scene_data.settings.bake_anim_use_all_actions:
@@ -3129,7 +3135,7 @@ def save(operator, context,
                 # Find the 'most used' source scene, and use its unit settings. This is somewhat weak, but should work
                 # fine in most cases, and avoids stupid issues like T41931.
                 best_src_scene = None
-                best_src_scene_users = 0
+                best_src_scene_users = -1
                 for sce, nbr_users in src_scenes.items():
                     if (nbr_users) > best_src_scene_users:
                         best_src_scene_users = nbr_users

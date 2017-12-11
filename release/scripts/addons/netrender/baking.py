@@ -26,14 +26,14 @@ def commandToTask(command):
     i = command.index("|")
     ri = command.rindex("|")
     return (command[:i], command[i+1:ri], command[ri+1:])
-    
+
 def taskToCommand(task):
     return "|".join(task)
-                    
+
 def bake(job, tasks):
     main_file = job.files[0]
     job_full_path = main_file.filepath
-    
+
     task_commands = []
     for task in tasks:
         task_commands.extend(task)
@@ -61,34 +61,34 @@ def resultsFromOuput(lines):
         if match:
             task_id = int(match.groups()[0])
             task_filename = match.groups()[1]
-            
+
             results.append((task_id, task_filename))
-            
+
     return results
 
 def bake_cache(obj, point_cache, task_index):
     if point_cache.is_baked:
         bpy.ops.ptcache.free_bake({"point_cache": point_cache})
-        
+
     point_cache.use_disk_cache = True
     point_cache.use_external = False
-    
+
     bpy.ops.ptcache.bake({"point_cache": point_cache}, bake=True)
-    
+
     results = cache_results(obj, point_cache)
-    
+
     print()
-    
+
     for filename in results:
         print("BAKE FILE[", task_index, "]:", filename)
-  
+
 
 def cache_results(obj, point_cache):
     name = cacheName(obj, point_cache)
     default_path = cachePath(bpy.data.filepath)
 
     cache_path = bpy.path.abspath(point_cache.filepath) if point_cache.use_external else default_path
-    
+
     index = "%02i" % point_cache.index
 
     if os.path.exists(cache_path):
@@ -103,9 +103,9 @@ def cache_results(obj, point_cache):
                 cache_files.append(os.path.join(cache_path, cache_file))
 
         cache_files.sort()
-        
+
         return cache_files
-    
+
     return []
 
 def process_generic(obj, index, task_index):
@@ -143,12 +143,12 @@ if __name__ == "__main__":
         i = sys.argv.index("--")
     except:
         i = 0
-    
+
     if i:
         task_args = sys.argv[i+1:]
         for i in range(0, len(task_args), 3):
             bake_type = task_args[i]
             obj = bpy.data.objects[task_args[i+1]]
             index = int(task_args[i+2])
-            
+
             process_funcs.get(bake_type, process_null)(obj, index, i)

@@ -20,7 +20,7 @@ import bpy
 
 from . import import_pdb
 
-class AtomPropExport(object):  
+class AtomPropExport(object):
     __slots__ = ('element', 'location')
     def __init__(self, element, location):
         self.element  = element
@@ -31,13 +31,13 @@ def export_pdb(obj_type, filepath_pdb):
 
     list_atoms = []
     for obj in bpy.context.selected_objects:
-    
+
         if "Stick" in obj.name:
             continue
-            
+
         if obj.type not in {'MESH', 'SURFACE', 'META'}:
-            continue 
-       
+            continue
+
         name = ""
         for element in import_pdb.ELEMENTS_DEFAULT:
             if element[1] in obj.name:
@@ -45,7 +45,7 @@ def export_pdb(obj_type, filepath_pdb):
                     name = "X"
                 else:
                     name = element[2]
-        
+
         if name == "":
             if obj_type == "0":
                 name = "?"

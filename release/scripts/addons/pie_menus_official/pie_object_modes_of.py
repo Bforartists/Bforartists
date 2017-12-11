@@ -2,8 +2,8 @@
 bl_info = {
     "name": "Mode Set: Key: 'Tab'",
     "description": "Object Modes",
-#    "author": "Antony Riakiotakis, Sebastian Koenig",
-#    "version": (0, 1, 0),
+    "author": "Antony Riakiotakis, Sebastian Koenig",
+    "version": (0, 1, 1),
     "blender": (2, 77, 0),
     "location": "Tab key",
     "warning": "",
@@ -12,10 +12,8 @@ bl_info = {
     }
 
 import bpy
-from bpy.types import (
-        Menu,
-        Operator,
-        )
+from bpy.types import Menu
+
 
 # Pie Object Mode - Tab
 class VIEW3D_PIE_object_mode_of(Menu):
@@ -28,11 +26,13 @@ class VIEW3D_PIE_object_mode_of(Menu):
         pie = layout.menu_pie()
         pie.operator_enum("OBJECT_OT_mode_set", "mode")
 
-classes = [
+
+classes = (
     VIEW3D_PIE_object_mode_of,
-    ]
+    )
 
 addon_keymaps = []
+
 
 def register():
 
@@ -57,8 +57,8 @@ def register():
 def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
-    wm = bpy.context.window_manager
 
+    wm = bpy.context.window_manager
     kc = wm.keyconfigs.addon
     if kc:
         for km, kmi in addon_keymaps:

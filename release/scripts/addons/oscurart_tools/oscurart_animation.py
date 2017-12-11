@@ -25,8 +25,8 @@ from mathutils import Matrix
 
 
 def DefQuickParent(inf, out):
-    if bpy.context.object.type == "ARMATURE":
-        ob = bpy.context.object
+    ob = bpy.context.object
+    if ob.type == "ARMATURE":
         target = [object for object in bpy.context.selected_objects if object != ob][0]
         ob = bpy.context.active_pose_bone if bpy.context.object.type == 'ARMATURE' else bpy.context.object
         target.select = False
@@ -39,7 +39,6 @@ def DefQuickParent(inf, out):
             ob.matrix = target.matrix_world * a * i
             bpy.ops.anim.keyframe_insert(type="LocRotScale")
     else:
-        ob = bpy.context.object
         target = [object for object in bpy.context.selected_objects if object != ob][0]
         ob = bpy.context.active_pose_bone if bpy.context.object.type == 'ARMATURE' else bpy.context.object
         target.select = False
@@ -53,8 +52,8 @@ def DefQuickParent(inf, out):
             bpy.ops.anim.keyframe_insert(type="LocRotScale")
 
 
-class QuickParent (bpy.types.Operator):
-    """Creates a parent from one object to other in a selected frame range."""
+class QuickParent(bpy.types.Operator):
+    """Creates a parent from one object to other in a selected frame range"""
     bl_idname = "anim.quick_parent_osc"
     bl_label = "Quick Parent"
     bl_options = {"REGISTER", "UNDO"}
@@ -62,5 +61,6 @@ class QuickParent (bpy.types.Operator):
     def execute(self, context):
         DefQuickParent(
             bpy.context.scene.quick_animation_in,
-            bpy.context.scene.quick_animation_out)
+            bpy.context.scene.quick_animation_out,
+        )
         return {'FINISHED'}

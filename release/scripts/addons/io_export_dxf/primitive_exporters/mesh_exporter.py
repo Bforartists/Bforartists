@@ -4,7 +4,7 @@ from .base_exporter import BasePrimitiveDXFExporter
 import copy
 
 class MeshDXFExporter(BasePrimitiveDXFExporter):
-    
+
     def export(self, ctx, drawing, ob, mx, mx_n, **kwargs):
         """
         Converts Mesh-Object to desired projection and representation(DXF-Entity type)
@@ -15,7 +15,7 @@ class MeshDXFExporter(BasePrimitiveDXFExporter):
         # it manipulates original geometry and by retransformation lefts back rounding-errors
         # we dont want to manipulate original data!
         #temp_verts = me.verts[:] #doesn't work on ubuntu(Yorik), bug?
-        if me.vertices:    
+        if me.vertices:
             # check if there are more instances of this mesh (if used by other objects), then write to BLOCK/INSERT
             if self.INSTANCES and me.users>1 and not self.PROJECTION and not (ob.modifiers and self._settings['apply_modifiers']):
                 if drawing.containsBlock(me.name):
@@ -40,15 +40,15 @@ class MeshDXFExporter(BasePrimitiveDXFExporter):
 #                        block = DXF.Block(insert_name,flag=0,base=(0,0,0),entities=entities)
                         # write INSERT as entity
                         entities = self._writeInsert(ob, mx, me.name, **(kwargs))
-    
+
             else: # no other instances, so go the standard way
                 return self._standard_way(drawing, me, mx, mx_n)
-    
+
     def _writeInsert(self, drawing, ob, mx, insert_name, **kwargs):
         from insert_exporter import InsertDXFExporter
         ex = InsertDXFExporter(self._settings)
         ex.export(drawing, ob, mx, insert_name, **(kwargs))
-        
+
     def _getMeshData(self, ctx, obj, settings):
         if obj.modifiers and settings['apply_modifiers']:
             #this gets mesh with applied modifiers
@@ -57,7 +57,7 @@ class MeshDXFExporter(BasePrimitiveDXFExporter):
     #        me = ob.getData(mesh=1) # is a Mesh if mesh>0 (otherwise it is a NMesh)
             data = obj.data
         return data
-    
+
     def _standard_way(self, drawing, me, mx, mx_n, **kwargs):
         allpoints = [v.co for v in me.vertices]
         allpoints = self.projected_co(allpoints, mx)
@@ -92,7 +92,7 @@ class MeshDXFExporter(BasePrimitiveDXFExporter):
         for type, args in entities:
             drawing.addEntity(type, **(args))
         return True
-    
+
     def _writeMeshEntities(self, allpoints, edges, faces, **kwargs):
         """help routine for exportMesh()
         """
@@ -115,7 +115,7 @@ class MeshDXFExporter(BasePrimitiveDXFExporter):
         elif c in {'POLYFACE', 'POLYLINE'}:
             if faces and allpoints:
                 #TODO: purge allpoints: left only vertices used by faces
-#                    if exportsettings['verbose']: 
+#                    if exportsettings['verbose']:
 #                        mesh_drawBlender(allpoints, None, faces) #deb: draw to scene
                 if not (self.PROJECTION and self.HIDDEN_LINES):
                     faces = [[v+1 for v in f.vertices] for f in faces]
@@ -129,7 +129,7 @@ class MeshDXFExporter(BasePrimitiveDXFExporter):
                         i,newverts=0,[]
                         for used_i,used in enumerate(verts_state):
                             if used:
-                                newverts.append(allpoints[used_i])    
+                                newverts.append(allpoints[used_i])
                                 map[used_i]=i
                                 i+=1
                         allpoints = newverts
@@ -142,7 +142,7 @@ class MeshDXFExporter(BasePrimitiveDXFExporter):
                 entities.append(('PolyLine', args))
         elif c=='3DFACEs':
             if faces and allpoints:
-#                if exportsettings['verbose']: 
+#                if exportsettings['verbose']:
 #                    mesh_drawBlender(allpoints, None, faces) #deb: draw to scene
                 for f in faces:
                     points = [allpoints[v_id] for v_id in f.vertices]

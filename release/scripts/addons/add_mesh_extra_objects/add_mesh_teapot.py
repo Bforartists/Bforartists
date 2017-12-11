@@ -5,9 +5,7 @@ from bpy.props import (
     IntProperty,
     EnumProperty,
     )
-
 import mathutils
-
 import io
 import operator
 import functools
@@ -111,10 +109,19 @@ def patches_to_raw(patches, resolution):
 
 
 def make_bezier(ctrlpnts, resolution):
-    b1 = lambda t: t * t * t
-    b2 = lambda t: 3.0 * t * t * (1.0 - t)
-    b3 = lambda t: 3.0 * t * (1.0 - t) * (1.0 - t)
-    b4 = lambda t: (1.0 - t) * (1.0 - t) * (1.0 - t)
+
+    def b1(t):
+        return t * t * t
+
+    def b2(t):
+        return 3.0 * t * t * (1.0 - t)
+
+    def b3(t):
+        return 3.0 * t * (1.0 - t) * (1.0 - t)
+
+    def b4(t):
+        return (1.0 - t) * (1.0 - t) * (1.0 - t)
+
     p1, p2, p3, p4 = map(mathutils.Vector, ctrlpnts)
 
     def makevert(t):

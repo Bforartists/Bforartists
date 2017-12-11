@@ -33,7 +33,7 @@ from bpy.types import (
 bl_info = {
     "name": "3D Viewport Pie Menus",
     "author": "meta-androcto, pitiwazou, chromoly, italic",
-    "version": (1, 1, 6),
+    "version": (1, 1, 8),
     "blender": (2, 7, 7),
     "description": "Individual Pie Menu Activation List",
     "location": "Addons Preferences",
@@ -192,7 +192,6 @@ class PieToolsPreferences(AddonPreferences):
             row = col.row()
             sub = row.row()
             sub.context_pointer_set('addon_prefs', self)
-            sub.alignment = 'LEFT'
             op = sub.operator('wm.context_toggle', text='', icon=icon,
                               emboss=False)
             op.data_path = 'addon_prefs.show_expanded_' + mod_name
@@ -256,7 +255,7 @@ class PieToolsPreferences(AddonPreferences):
                         del prefs.layout
 
         row = layout.row()
-        row.label(text="End of Advanced Object Panels Activations",
+        row.label(text="End of 3D Viewport Pie Menus Activations",
                   icon="FILE_PARENT")
 
 

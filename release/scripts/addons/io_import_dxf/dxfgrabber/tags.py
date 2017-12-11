@@ -38,6 +38,23 @@ def is_point_tag(tag):
     return tag[0] in POINT_CODES
 
 
+infinite = float('inf')
+neg_infinite = float('-inf')
+
+
+def to_float_with_infinite(value):
+    try:
+        return float(value)
+    except ValueError:
+        value = value.lower().strip()
+        if value.startswith('inf'):
+            return infinite
+        if value.startswith('-inf'):
+            return neg_infinite
+        else:
+            raise
+
+
 class TagCaster:
     def __init__(self):
         self._cast = self._build()
@@ -74,14 +91,14 @@ class TagCaster:
 TYPES = [
     (tostr, range(0, 10)),
     (point_tuple, range(10, 20)),
-    (float, range(20, 60)),
+    (to_float_with_infinite, range(20, 60)),
     (int, range(60, 100)),
     (tostr, range(100, 106)),
     (point_tuple, range(110, 113)),
-    (float, range(113, 150)),
+    (to_float_with_infinite, range(113, 150)),
     (int, range(170, 180)),
     (point_tuple, [210]),
-    (float, range(211, 240)),
+    (to_float_with_infinite, range(211, 240)),
     (int, range(270, 290)),
     (int, range(290, 300)),  # bool 1=True 0=False
     (tostr, range(300, 370)),
@@ -92,12 +109,12 @@ TYPES = [
     (int, range(420, 430)),
     (tostr, range(430, 440)),
     (int, range(440, 460)),
-    (float, range(460, 470)),
+    (to_float_with_infinite, range(460, 470)),
     (tostr, range(470, 480)),
     (tostr, range(480, 482)),
     (tostr, range(999, 1010)),
     (point_tuple, range(1010, 1020)),
-    (float, range(1020, 1060)),
+    (to_float_with_infinite, range(1020, 1060)),
     (int, range(1060, 1072)),
 ]
 
@@ -121,8 +138,8 @@ def stream_tagger(stream, assure_3d_coords=False):
         value = stream.readline()
         line.counter += 2
         if code and value:  # StringIO(): empty strings indicates EOF
-            return DXFTag(int(code[:-1]), value[:-1])  # without '\n'
-        else:  # StringIO(): missing '\n' indicates EOF
+            return DXFTag(int(code.rstrip('\r\n')), value.rstrip('\r\n'))  # without line ending
+        else:  # StringIO(): empty lines indicates EOF
             raise EOFError()
 
     while True:

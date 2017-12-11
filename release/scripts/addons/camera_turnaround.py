@@ -262,6 +262,7 @@ class CameraTurnProps(PropertyGroup):
 # UI Class
 # ------------------------------------------------------
 class PanelUI(Panel):
+    bl_idname = "CAMERA_TURN_PT_main"
     bl_label = "Turnaround Camera"
     bl_space_type = "VIEW_3D"
     bl_region_type = "TOOLS"

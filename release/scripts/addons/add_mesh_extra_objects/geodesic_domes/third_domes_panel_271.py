@@ -1066,14 +1066,22 @@ class GenerateGeodesicDome(Operator):
                         ui.label(text=el[y])
 
             box = layout.box()
-            help_text = ["NEW!",
-                "Save or load (nearly all) parameters",
-                "A file GD_0.GD will be used, living in:",
-                "geodesic_domes/tmp",
+            help_text = ["To Use",
+                "If normals look inverted:",
+                "Once mesh is finished,",
+                "You may recalc normals outside.",
                 "--------",
-                "After loading you have to change a ",
-                "parameter back and forth "
-                "to see it"]
+                "To use your own mesh with the:",
+                "Faces:",
+                "Import your mesh in the:",
+                "Objects: Geodesic menu.",
+                "You must type in the name",
+                "Of your custom object first.",
+                "--------",
+                "To use your own mesh with the: ",
+                "Struts/Hubs:",
+                "You must type in the name",
+                "Of your custom object/s first,"]
             text_width = self.gd_help_text_width
             box.prop(self, "gd_help_text_width", slider=True)
             multi_label(help_text, box, text_width)

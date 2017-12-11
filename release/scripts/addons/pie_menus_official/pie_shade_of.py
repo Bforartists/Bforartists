@@ -2,8 +2,8 @@
 bl_info = {
     "name": "Shade Menu: Key: 'Z key'",
     "description": "View Modes",
-#    "author": "Antony Riakiotakis, Sebastian Koenig",
-#    "version": (0, 1, 0),
+    "author": "Antony Riakiotakis, Sebastian Koenig",
+    "version": (0, 1, 1),
     "blender": (2, 77, 0),
     "location": "Z key",
     "warning": "",
@@ -12,10 +12,8 @@ bl_info = {
     }
 
 import bpy
-from bpy.types import (
-        Menu,
-        Operator,
-        )
+from bpy.types import Menu
+
 
 # Pie Shade Mode - Z
 class VIEW3D_PIE_shade_of(Menu):
@@ -36,11 +34,13 @@ class VIEW3D_PIE_shade_of(Menu):
                 pie.operator("OBJECT_OT_shade_smooth")
                 pie.operator("OBJECT_OT_shade_flat")
 
-classes = [
+
+classes = (
     VIEW3D_PIE_shade_of,
-    ]
+    )
 
 addon_keymaps = []
+
 
 def register():
     for cls in classes:
@@ -54,16 +54,18 @@ def register():
         kmi.properties.name = "pie.shade_of"
         addon_keymaps.append((km, kmi))
 
+
 def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
-    wm = bpy.context.window_manager
 
+    wm = bpy.context.window_manager
     kc = wm.keyconfigs.addon
     if kc:
         for km, kmi in addon_keymaps:
             km.keymap_items.remove(kmi)
     addon_keymaps.clear()
+
 
 if __name__ == "__main__":
     register()

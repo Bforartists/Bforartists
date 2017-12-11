@@ -1,10 +1,7 @@
 # gpl authors: nfloyd, Francesco Siddi
 
 import bpy
-from bpy.props import (
-        IntProperty,
-        StringProperty,
-        )
+from bpy.props import IntProperty
 from bpy.types import Operator
 from .core import (
         stored_view_factory,
@@ -66,28 +63,27 @@ class VIEW3D_New_Camera_to_View(Operator):
     bl_label = "New Camera To View"
     bl_description = "Add a new Active Camera and align it to this view"
 
+    @classmethod
+    def poll(cls, context):
+        return (
+            context.space_data is not None and
+            context.space_data.type == 'VIEW_3D' and
+            context.space_data.region_3d.view_perspective != 'CAMERA'
+            )
+
     def execute(self, context):
-        try:
-            # check for operator's poll (there is no active object, for instance)
-            if bpy.ops.object.mode_set.poll():
-                bpy.ops.object.mode_set(mode='OBJECT')
 
-            bpy.ops.object.camera_add(view_align=True)
-            cam = bpy.context.active_object
-            bpy.ops.view3d.object_as_camera()
-            bpy.ops.view3d.camera_to_view()
+        if bpy.ops.object.mode_set.poll():
+            bpy.ops.object.mode_set(mode='OBJECT')
 
-            # this will name the Camera Object
-            if 'View_Camera' not in context.scene.objects:
-                cam.name = "View_Camera"
-            else:
-                cam.name = "View_Camera.000"
+        bpy.ops.object.camera_add()
+        cam = context.active_object
+        cam.name = "View_Camera"
+        # make active camera by hand
+        context.scene.camera = cam
 
-            return {'FINISHED'}
-        except:
-            self.report({'WARNING'},
-                        "Operation Cancelled. New Camera to View failed to add a new camera")
-            return {'CANCELLED'}
+        bpy.ops.view3d.camera_to_view()
+        return {'FINISHED'}
 
 
 # Camera marker & switcher by Fsiddi
@@ -96,35 +92,38 @@ class SetSceneCamera(Operator):
     bl_label = "Set Scene Camera"
     bl_description = "Set chosen camera as the scene's active camera"
 
-    chosen_camera = StringProperty()
-    select_chosen = False
+    hide_others = False
 
     def execute(self, context):
-        chosen_camera = bpy.data.objects.get(self.chosen_camera, None)
+        chosen_camera = context.active_object
         scene = context.scene
-        if not chosen_camera:
-            self.report({'ERROR'}, "Camera %s not found.")
-            return {'CANCELLED'}
 
-        if self.select_chosen:
-            if context.mode == 'OBJECT':
-                for o in context.selected_objects:
-                    o.select = False
-                chosen_camera.select = True
-                scene.objects.active = chosen_camera
+        if self.hide_others:
             for c in [o for o in scene.objects if o.type == 'CAMERA']:
                 c.hide = (c != chosen_camera)
         scene.camera = chosen_camera
-        bpy.context.scene.objects.active = chosen_camera
-        bpy.ops.object.select_all(action='TOGGLE')
+        bpy.ops.object.select_all(action='DESELECT')
         chosen_camera.select = True
         return {'FINISHED'}
 
     def invoke(self, context, event):
         if event.ctrl:
-            self.select_chosen = True
+            self.hide_others = True
 
         return self.execute(context)
+
+
+class PreviewSceneCamera(Operator):
+    bl_idname = "cameraselector.preview_scene_camera"
+    bl_label = "Preview Camera"
+    bl_description = "Preview chosen camera and make scene's active camera"
+
+    def execute(self, context):
+        chosen_camera = context.active_object
+        bpy.ops.view3d.object_as_camera()
+        bpy.ops.object.select_all(action="DESELECT")
+        chosen_camera.select = True
+        return {'FINISHED'}
 
 
 class AddCameraMarker(Operator):
@@ -132,14 +131,9 @@ class AddCameraMarker(Operator):
     bl_label = "Add Camera Marker"
     bl_description = "Add a timeline marker bound to chosen camera"
 
-    chosen_camera = StringProperty()
-
     def execute(self, context):
-        chosen_camera = bpy.data.objects.get(self.chosen_camera, None)
+        chosen_camera = context.active_object
         scene = context.scene
-        if not chosen_camera:
-            self.report({'WARNING'}, "Camera %s not found. Operation Cancelled")
-            return {'CANCELLED'}
 
         current_frame = scene.frame_current
         marker = None
@@ -153,7 +147,7 @@ class AddCameraMarker(Operator):
             # current frame is already bound to the camera.
             return {'CANCELLED'}
 
-        marker_name = "F_%02d_%s" % (current_frame, self.chosen_camera)
+        marker_name = "F_%02d_%s" % (current_frame, chosen_camera.name)
         if marker and (marker.frame == current_frame):
             # Reuse existing marker at current frame to avoid
             # overlapping bound markers.

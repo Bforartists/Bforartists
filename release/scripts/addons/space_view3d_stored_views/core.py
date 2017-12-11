@@ -70,11 +70,10 @@ class POV(StoredView):
         if region3d.view_perspective == 'CAMERA':
             stored_view.camera_type = view3d.camera.type  # type : 'CAMERA' or 'MESH'
             stored_view.camera_name = view3d.camera.name  # store string instead of object
-            stored_view.camera_pointer = view3d.camera.as_pointer()
         if view3d.lock_object is not None:
             stored_view.lock_object_name = view3d.lock_object.name  # idem
-            stored_view.lock_object_pointer = view3d.lock_object.as_pointer()  # idem
-
+        else:
+            stored_view.lock_object_name = ""
         stored_view.lock_cursor = view3d.lock_cursor
         stored_view.cursor_location = view3d.cursor_location
 
@@ -94,39 +93,18 @@ class POV(StoredView):
             view3d.cursor_location = stored_view.cursor_location
 
         if stored_view.perspective == "CAMERA":
-            cam = self._get_object(stored_view.camera_name, stored_view.camera_pointer)
-            if cam:
-                # in case the camera is found by pointer, update name
-                stored_view.camera_name = cam.name
-                view3d.camera = cam
-            else:
-                # TODO: camera object not found
-                pass
 
-        if stored_view.lock_object_name != "":
-            lock_obj = self._get_object(stored_view.lock_object_name, stored_view.lock_object_pointer)
+            lock_obj = self._get_object(stored_view.lock_object_name)
             if lock_obj:
-                # in case the lock object is found by pointer, update name
-                stored_view.lock_object_name = lock_obj.name
                 view3d.lock_object = lock_obj
             else:
-                # TODO: handle lock object not found
-                pass
+                cam = self._get_object(stored_view.camera_name)
+                if cam:
+                    view3d.camera = cam
 
     @staticmethod
     def _get_object(name, pointer=None):
-        obj = None
-        try:
-            obj = bpy.data.objects[name]
-        except:
-            if pointer:
-                scene_objects = bpy.data.objects
-                for o in scene_objects:
-                    p = o.as_pointer()
-                    if p == pointer:
-                        obj = o
-                        break
-        return obj
+        return bpy.data.objects.get(name)
 
     @staticmethod
     def is_modified(context, stored_view):
@@ -350,29 +328,29 @@ class DataStore():
     def sanitize_data(scene):
 
         def check_objects_references(mode, list):
-            for key, item in list.items():
+            to_remove = []
+            for i, list_item in enumerate(list.items()):
+                key, item = list_item
                 if mode == 'POV' or mode == 'VIEWS':
                     if mode == 'VIEWS':
                         item = item.pov
 
                     if item.perspective == "CAMERA":
-                        try:
-                            camera = bpy.data.objects[item.camera_name]
-                            item.camera_pointer = camera.as_pointer()
-                        except:
+
+                        camera = bpy.data.objects.get(item.camera_name)
+                        if camera is None:
                             try:  # pick a default camera TODO: ask to pick?
                                 camera = bpy.data.cameras[0]
                                 item.camera_name = camera.name
-                                item.camera_pointer = camera.as_pointer()
                             except:  # couldn't find a camera in the scene
-                                list.remove(key)  # TODO: create one instead?
+                                pass
 
-                    if item.lock_object_name != "":
-                        try:  # get object from name string
-                            object = bpy.data.objects[item.lock_object_name]
-                            item.lock_object_pointer = object.as_pointer()
-                        except:
-                            item.lock_object_name = ""
+                        obj = bpy.data.objects.get(item.lock_object_name)
+                        if obj is None and camera is None:
+                            to_remove.append(i)
+
+            for i in reversed(to_remove):
+                list.remove(i)
 
         modes = ['POV', 'VIEW', 'DISPLAY', 'LAYERS']
         for mode in modes:

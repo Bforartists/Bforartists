@@ -70,7 +70,7 @@ class OBJECT_PT_blendinfo(bpy.types.Panel):
         objects = bpy.data.objects
 
         layout = self.layout
-        
+
         # OBJECTS
 
         l_row = layout.row()
@@ -132,7 +132,7 @@ class OBJECT_PT_blendinfo(bpy.types.Panel):
             icon='OUTLINER_OB_SPEAKER')
 
         layout.separator()
-        
+
         # DATABLOCKS
 
         l_row = layout.row()
