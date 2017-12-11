@@ -636,7 +636,7 @@ class VIEW3D_PT_tools_relations(View3DPanel, Panel):
                     col.label(text="Object Data:")
                     col.operator("object.make_single_user", icon='MAKE_SINGLE_USER', text = "Make Single User ")
                     
-                    col.menu("VIEW3D_PT_tools_relations_link_data")
+                    col.menu("VIEW3D_MT_make_links")
                     
                     operator_context_default = layout.operator_context
                     if len(bpy.data.scenes) > 10:
@@ -683,7 +683,7 @@ class VIEW3D_PT_tools_relations(View3DPanel, Panel):
 
                     row.operator("object.make_single_user", icon='MAKE_SINGLE_USER', text = "")
 
-                    row.menu("VIEW3D_PT_tools_relations_link_data", text = "", icon='LINK_DATA' ) # bfa - link data 
+                    row.menu("VIEW3D_MT_make_links", text = "", icon='LINK_DATA' ) # bfa - link data 
                 
                     operator_context_default = layout.operator_context
                     if len(bpy.data.scenes) > 10:
@@ -3009,7 +3009,7 @@ class RENDER_PT_bake(bpy.types.Panel):
 
 # Link Data menu
 
-class VIEW3D_PT_tools_relations_link_data(Menu):
+class VIEW3D_MT_make_links(Menu):
     bl_label = "Link Data"
 
     def draw(self, context):
@@ -3085,7 +3085,7 @@ classes = (
     VIEW3D_PT_tools_grease_pencil_brushcurves,
     VIEW3D_PT_tools_history,
     RENDER_PT_bake,
-    VIEW3D_PT_tools_relations_link_data,
+    VIEW3D_MT_make_links,
 )
 
 if __name__ == "__main__":  # only for live edit.
