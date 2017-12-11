@@ -116,6 +116,7 @@ class Line(Projection):
         else:
             self.p = Vector((0, 0))
             self.v = Vector((0, 0))
+        self.line = None
 
     @property
     def copy(self):
@@ -160,6 +161,10 @@ class Line(Projection):
             2d angle on xy plane
         """
         return atan2(self.v.y, self.v.x)
+
+    @property
+    def a0(self):
+        return self.angle
 
     @property
     def angle_normal(self):
@@ -365,7 +370,7 @@ class Line(Projection):
         if hasattr(last, "r"):
             res, d, t = line.point_sur_segment(last.c)
             c = (last.r * last.r) - (d * d)
-            print("t:%s" % t)
+            # print("t:%s" % t)
             if c <= 0:
                 # no intersection !
                 p0 = line.lerp(t)
@@ -455,8 +460,6 @@ class Arc(Circle):
     """
         Represent a 2d Arc
         TODO:
-            Add some sugar here
-            like being able to set p0 and p1 of line
             make it possible to define an arc by start point end point and center
     """
     def __init__(self, c, radius, a0, da):
@@ -473,6 +476,7 @@ class Arc(Circle):
             stored internally as radians
         """
         Circle.__init__(self, Vector(c).to_2d(), radius)
+        self.line = None
         self.a0 = a0
         self.da = da
 
@@ -575,6 +579,15 @@ class Arc(Circle):
         """
         return self.r * abs(self.da)
 
+    @property
+    def oposite(self):
+        a0 = self.a0 + self.da
+        if a0 > pi:
+            a0 -= 2 * pi
+        if a0 < -pi:
+            a0 += 2 * pi
+        return Arc(self.c, self.r, a0, -self.da)
+
     def normal(self, t=0):
         """
             Perpendicular line starting at t
@@ -627,6 +640,26 @@ class Arc(Circle):
     def steps_by_angle(self, step_angle):
         steps = max(1, round(abs(self.da) / step_angle, 0))
         return 1.0 / steps, int(steps)
+
+    def as_lines(self, steps):
+        """
+            convert Arc to lines
+        """
+        res = []
+        p0 = self.lerp(0)
+        for step in range(steps):
+            p1 = self.lerp((step + 1) / steps)
+            s = Line(p0=p0, p1=p1)
+            res.append(s)
+            p0 = p1
+
+        if self.line is not None:
+            p0 = self.line.lerp(0)
+            for step in range(steps):
+                p1 = self.line.lerp((step + 1) / steps)
+                res[step].line = Line(p0=p0, p1=p1)
+                p0 = p1
+        return res
 
     def offset(self, offset):
         """

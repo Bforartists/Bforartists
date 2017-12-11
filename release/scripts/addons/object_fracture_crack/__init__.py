@@ -19,9 +19,9 @@
 bl_info = {
     "name": "Cell Fracture Crack It",
     "author": "Nobuyuki Hirakata",
-    "version": (0, 1, 1),
+    "version": (0, 1, 2),
     "blender": (2, 78, 5),
-    "location": "View3D > Toolshelf > Crack it! Tab",
+    "location": "View3D > Toolshelf > Create Tab",
     "description": "Displaced Cell Fracture Addon",
     "warning": "Make sure to enable 'Object: Cell Fracture' Addon",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/"

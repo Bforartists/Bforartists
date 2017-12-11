@@ -343,7 +343,7 @@ def blen_read_custom_properties(fbx_obj, blen_obj, settings):
                     elif prop_type in {b'Enum', b'enum'}:
                         assert(fbx_prop.props_type[4:6] == bytes((data_types.INT32, data_types.STRING)))
                         val = fbx_prop.props[4]
-                        if settings.use_custom_props_enum_as_string:
+                        if settings.use_custom_props_enum_as_string and fbx_prop.props[5]:
                             enum_items = fbx_prop.props[5].decode('utf-8').split('~')
                             assert(val >= 0 and val < len(enum_items))
                             blen_obj[prop_name] = enum_items[val]
@@ -544,7 +544,7 @@ def blen_read_animations_action_item(action, item, cnodes, fps, anim_offset):
     'Bake' loc/rot/scale into the action,
     taking any pre_ and post_ matrix into account to transform from fbx into blender space.
     """
-    from bpy.types import Object, PoseBone, ShapeKey
+    from bpy.types import Object, PoseBone, ShapeKey, Material
     from itertools import chain
 
     fbx_curves = []
@@ -559,7 +559,10 @@ def blen_read_animations_action_item(action, item, cnodes, fps, anim_offset):
     blen_curves = []
     props = []
 
-    if isinstance(item, ShapeKey):
+    if isinstance(item, Material):
+        grpname = item.name
+        props = [("diffuse_color", 3, grpname or "Diffuse Color")]
+    elif isinstance(item, ShapeKey):
         props = [(item.path_from_id("value"), 1, "Key")]
     else:  # Object or PoseBone:
         if item.is_bone:
@@ -586,7 +589,18 @@ def blen_read_animations_action_item(action, item, cnodes, fps, anim_offset):
     blen_curves = [action.fcurves.new(prop, channel, grpname)
                    for prop, nbr_channels, grpname in props for channel in range(nbr_channels)]
 
-    if isinstance(item, ShapeKey):
+    if isinstance(item, Material):
+        for frame, values in blen_read_animations_curves_iter(fbx_curves, anim_offset, 0, fps):
+            value = [0,0,0]
+            for v, (fbxprop, channel, _fbx_acdata) in values:
+                assert(fbxprop == b'DiffuseColor')
+                assert(channel in {0, 1, 2})
+                value[channel] = v
+
+            for fc, v in zip(blen_curves, value):
+                fc.keyframe_points.insert(frame, v, {'NEEDED', 'FAST'}).interpolation = 'LINEAR'
+
+    elif isinstance(item, ShapeKey):
         for frame, values in blen_read_animations_curves_iter(fbx_curves, anim_offset, 0, fps):
             value = 0.0
             for v, (fbxprop, channel, _fbx_acdata) in values:
@@ -659,7 +673,7 @@ def blen_read_animations(fbx_tmpl_astack, fbx_tmpl_alayer, stacks, scene, anim_o
     Only the first found action is linked to objects, more complex setups are not handled,
     it's up to user to reproduce them!
     """
-    from bpy.types import ShapeKey
+    from bpy.types import ShapeKey, Material
 
     actions = {}
     for as_uuid, ((fbx_asdata, _blen_data), alayers) in stacks.items():
@@ -667,7 +681,9 @@ def blen_read_animations(fbx_tmpl_astack, fbx_tmpl_alayer, stacks, scene, anim_o
         for al_uuid, ((fbx_aldata, _blen_data), items) in alayers.items():
             layer_name = elem_name_ensure_class(fbx_aldata, b'AnimLayer')
             for item, cnodes in items.items():
-                if isinstance(item, ShapeKey):
+                if isinstance(item, Material):
+                    id_data = item
+                elif isinstance(item, ShapeKey):
                     id_data = item.id_data
                 else:
                     id_data = item.bl_obj
@@ -783,12 +799,14 @@ def blen_read_geom_array_gen_direct_looptovert(mesh, fbx_data, stride):
 
 
 # generic error printers.
-def blen_read_geom_array_error_mapping(descr, fbx_layer_mapping):
-    print("warning layer %r mapping type unsupported: %r" % (descr, fbx_layer_mapping))
+def blen_read_geom_array_error_mapping(descr, fbx_layer_mapping, quiet=False):
+    if not quiet:
+        print("warning layer %r mapping type unsupported: %r" % (descr, fbx_layer_mapping))
 
 
-def blen_read_geom_array_error_ref(descr, fbx_layer_ref):
-    print("warning layer %r ref type unsupported: %r" % (descr, fbx_layer_ref))
+def blen_read_geom_array_error_ref(descr, fbx_layer_ref, quiet=False):
+    if not quiet:
+        print("warning layer %r ref type unsupported: %r" % (descr, fbx_layer_ref))
 
 
 def blen_read_geom_array_mapped_vert(
@@ -796,7 +814,7 @@ def blen_read_geom_array_mapped_vert(
         fbx_layer_data, fbx_layer_index,
         fbx_layer_mapping, fbx_layer_ref,
         stride, item_size, descr,
-        xform=None,
+        xform=None, quiet=False,
         ):
     if fbx_layer_mapping == b'ByVertice':
         if fbx_layer_ref == b'Direct':
@@ -804,16 +822,16 @@ def blen_read_geom_array_mapped_vert(
             blen_read_geom_array_setattr(blen_read_geom_array_gen_direct(fbx_layer_data, stride),
                                          blen_data, blen_attr, fbx_layer_data, stride, item_size, descr, xform)
             return True
-        blen_read_geom_array_error_ref(descr, fbx_layer_ref)
+        blen_read_geom_array_error_ref(descr, fbx_layer_ref, quiet)
     elif fbx_layer_mapping == b'AllSame':
         if fbx_layer_ref == b'IndexToDirect':
             assert(fbx_layer_index is None)
             blen_read_geom_array_setattr(blen_read_geom_array_gen_allsame(len(blen_data)),
                                          blen_data, blen_attr, fbx_layer_data, stride, item_size, descr, xform)
             return True
-        blen_read_geom_array_error_ref(descr, fbx_layer_ref)
+        blen_read_geom_array_error_ref(descr, fbx_layer_ref, quiet)
     else:
-        blen_read_geom_array_error_mapping(descr, fbx_layer_mapping)
+        blen_read_geom_array_error_mapping(descr, fbx_layer_mapping, quiet)
 
     return False
 
@@ -823,23 +841,23 @@ def blen_read_geom_array_mapped_edge(
         fbx_layer_data, fbx_layer_index,
         fbx_layer_mapping, fbx_layer_ref,
         stride, item_size, descr,
-        xform=None,
+        xform=None, quiet=False,
         ):
     if fbx_layer_mapping == b'ByEdge':
         if fbx_layer_ref == b'Direct':
             blen_read_geom_array_setattr(blen_read_geom_array_gen_direct(fbx_layer_data, stride),
                                          blen_data, blen_attr, fbx_layer_data, stride, item_size, descr, xform)
             return True
-        blen_read_geom_array_error_ref(descr, fbx_layer_ref)
+        blen_read_geom_array_error_ref(descr, fbx_layer_ref, quiet)
     elif fbx_layer_mapping == b'AllSame':
         if fbx_layer_ref == b'IndexToDirect':
             assert(fbx_layer_index is None)
             blen_read_geom_array_setattr(blen_read_geom_array_gen_allsame(len(blen_data)),
                                          blen_data, blen_attr, fbx_layer_data, stride, item_size, descr, xform)
             return True
-        blen_read_geom_array_error_ref(descr, fbx_layer_ref)
+        blen_read_geom_array_error_ref(descr, fbx_layer_ref, quiet)
     else:
-        blen_read_geom_array_error_mapping(descr, fbx_layer_mapping)
+        blen_read_geom_array_error_mapping(descr, fbx_layer_mapping, quiet)
 
     return False
 
@@ -849,7 +867,7 @@ def blen_read_geom_array_mapped_polygon(
         fbx_layer_data, fbx_layer_index,
         fbx_layer_mapping, fbx_layer_ref,
         stride, item_size, descr,
-        xform=None,
+        xform=None, quiet=False,
         ):
     if fbx_layer_mapping == b'ByPolygon':
         if fbx_layer_ref == b'IndexToDirect':
@@ -867,16 +885,16 @@ def blen_read_geom_array_mapped_polygon(
             blen_read_geom_array_setattr(blen_read_geom_array_gen_direct(fbx_layer_data, stride),
                                          blen_data, blen_attr, fbx_layer_data, stride, item_size, descr, xform)
             return True
-        blen_read_geom_array_error_ref(descr, fbx_layer_ref)
+        blen_read_geom_array_error_ref(descr, fbx_layer_ref, quiet)
     elif fbx_layer_mapping == b'AllSame':
         if fbx_layer_ref == b'IndexToDirect':
             assert(fbx_layer_index is None)
             blen_read_geom_array_setattr(blen_read_geom_array_gen_allsame(len(blen_data)),
                                          blen_data, blen_attr, fbx_layer_data, stride, item_size, descr, xform)
             return True
-        blen_read_geom_array_error_ref(descr, fbx_layer_ref)
+        blen_read_geom_array_error_ref(descr, fbx_layer_ref, quiet)
     else:
-        blen_read_geom_array_error_mapping(descr, fbx_layer_mapping)
+        blen_read_geom_array_error_mapping(descr, fbx_layer_mapping, quiet)
 
     return False
 
@@ -886,7 +904,7 @@ def blen_read_geom_array_mapped_polyloop(
         fbx_layer_data, fbx_layer_index,
         fbx_layer_mapping, fbx_layer_ref,
         stride, item_size, descr,
-        xform=None,
+        xform=None, quiet=False,
         ):
     if fbx_layer_mapping == b'ByPolygonVertex':
         if fbx_layer_ref == b'IndexToDirect':
@@ -904,23 +922,23 @@ def blen_read_geom_array_mapped_polyloop(
             blen_read_geom_array_setattr(blen_read_geom_array_gen_direct(fbx_layer_data, stride),
                                          blen_data, blen_attr, fbx_layer_data, stride, item_size, descr, xform)
             return True
-        blen_read_geom_array_error_ref(descr, fbx_layer_ref)
+        blen_read_geom_array_error_ref(descr, fbx_layer_ref, quiet)
     elif fbx_layer_mapping == b'ByVertice':
         if fbx_layer_ref == b'Direct':
             assert(fbx_layer_index is None)
             blen_read_geom_array_setattr(blen_read_geom_array_gen_direct_looptovert(mesh, fbx_layer_data, stride),
                                          blen_data, blen_attr, fbx_layer_data, stride, item_size, descr, xform)
             return True
-        blen_read_geom_array_error_ref(descr, fbx_layer_ref)
+        blen_read_geom_array_error_ref(descr, fbx_layer_ref, quiet)
     elif fbx_layer_mapping == b'AllSame':
         if fbx_layer_ref == b'IndexToDirect':
             assert(fbx_layer_index is None)
             blen_read_geom_array_setattr(blen_read_geom_array_gen_allsame(len(blen_data)),
                                          blen_data, blen_attr, fbx_layer_data, stride, item_size, descr, xform)
             return True
-        blen_read_geom_array_error_ref(descr, fbx_layer_ref)
+        blen_read_geom_array_error_ref(descr, fbx_layer_ref, quiet)
     else:
-        blen_read_geom_array_error_mapping(descr, fbx_layer_mapping)
+        blen_read_geom_array_error_mapping(descr, fbx_layer_mapping, quiet)
 
     return False
 
@@ -998,12 +1016,11 @@ def blen_read_geom_layer_color(fbx_obj, mesh):
                 print("%r %r missing data" % (layer_id, fbx_layer_name))
                 continue
 
-            # ignore alpha layer (read 4 items into 3)
             blen_read_geom_array_mapped_polyloop(
                 mesh, blen_data, "color",
                 fbx_layer_data, fbx_layer_index,
                 fbx_layer_mapping, fbx_layer_ref,
-                4, 3, layer_id,
+                4, 4, layer_id,
                 )
 
 
@@ -1074,22 +1091,25 @@ def blen_read_geom_layer_normal(fbx_obj, mesh, xform=None):
     fbx_layer_index = elem_prop_first(elem_find_first(fbx_layer, b'NormalsIndex'))
 
     # try loops, then vertices.
-    tries = ((mesh.loops, False, blen_read_geom_array_mapped_polyloop),
-             (mesh.polygons, True, blen_read_geom_array_mapped_polygon),
-             (mesh.vertices, True, blen_read_geom_array_mapped_vert))
-    for blen_data, is_fake, func in tries:
+    tries = ((mesh.loops, "Loops", False, blen_read_geom_array_mapped_polyloop),
+             (mesh.polygons, "Polygons", True, blen_read_geom_array_mapped_polygon),
+             (mesh.vertices, "Vertices", True, blen_read_geom_array_mapped_vert))
+    for blen_data, blen_data_type, is_fake, func in tries:
         bdata = [None] * len(blen_data) if is_fake else blen_data
         if func(mesh, bdata, "normal",
-                fbx_layer_data, fbx_layer_index, fbx_layer_mapping, fbx_layer_ref, 3, 3, layer_id, xform):
-            if blen_data is mesh.polygons:
+                fbx_layer_data, fbx_layer_index, fbx_layer_mapping, fbx_layer_ref, 3, 3, layer_id, xform, True):
+            if blen_data_type is "Polygons":
                 for pidx, p in enumerate(mesh.polygons):
                     for lidx in range(p.loop_start, p.loop_start + p.loop_total):
                         mesh.loops[lidx].normal[:] = bdata[pidx]
-            elif blen_data is mesh.vertices:
+            elif blen_data_type is "Vertices":
                 # We have to copy vnors to lnors! Far from elegant, but simple.
                 for l in mesh.loops:
                     l.normal[:] = bdata[l.vertex_index]
             return True
+
+    blen_read_geom_array_error_mapping("normal", fbx_layer_mapping)
+    blen_read_geom_array_error_ref("normal", fbx_layer_ref)
     return False
 
 
@@ -2797,14 +2817,23 @@ def load(operator, context, filepath="",
                     if lnk_prop in {b'Lcl Translation', b'Lcl Rotation', b'Lcl Scaling'}:
                         # n_uuid can (????) be linked to root '0' node, instead of a mere object node... See T41712.
                         ob = fbx_helper_nodes.get(n_uuid, None)
-                        if ob is None:
+                        if ob is None or ob.is_root:
                             continue
                         items.append((ob, lnk_prop))
                     elif lnk_prop == b'DeformPercent':  # Shape keys.
-                        keyblocks = blend_shape_channels.get(n_uuid)
+                        keyblocks = blend_shape_channels.get(n_uuid, None)
                         if keyblocks is None:
                             continue
                         items += [(kb, lnk_prop) for kb in keyblocks]
+                    elif lnk_prop == b'DiffuseColor':
+                        from bpy.types import Material
+                        fbx_item = fbx_table_nodes.get(n_uuid, None)
+                        if fbx_item is None or not isinstance(fbx_item[1], Material):
+                            continue
+                        mat = fbx_item[1]
+                        items.append((mat, lnk_prop))
+                        if settings.use_cycles:
+                            print("WARNING! Importing material's animation is not supported for Cycles materials...")
                 for al_uuid, al_ctype in fbx_connection_map.get(acn_uuid, ()):
                     if al_ctype.props[0] != b'OO':
                         continue

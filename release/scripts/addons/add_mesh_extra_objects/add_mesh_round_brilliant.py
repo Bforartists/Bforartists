@@ -1,9 +1,15 @@
 # GPL "author": "Dominic Kröper, (dommetysk)"
 
 import bpy
-from math import pi, sin, cos, tan
+from math import (
+        pi, sin,
+        cos, tan,
+        )
 from bpy.types import Operator
-from mathutils import Vector, Euler
+from mathutils import (
+        Vector,
+        Euler,
+        )
 from bpy.props import (
         IntProperty,
         FloatProperty,
@@ -34,7 +40,7 @@ def addBrilliant(context, s, table_w, crown_h, girdle_t, pavi_d, bezel_f,
         s = s - 1
     if not girdle_real:
         g_real_smooth = False
-    ang = 2 * pi / s                            # angle step size
+    ang = 2 * pi / s                        # angle step size
     Verts = []                              # collect all vertices
     Faces = []                              # collect all faces
     ca = cos(ang)
@@ -300,85 +306,85 @@ class MESH_OT_primitive_brilliant_add(Operator):
 
     # set user options
     s = IntProperty(
-                name="Segments",
-                description="Longitudial segmentation",
-                step=1,
-                min=6,
-                max=128,
-                default=16,
-                subtype='FACTOR'
-                )
+            name="Segments",
+            description="Longitudial segmentation",
+            step=1,
+            min=6,
+            max=128,
+            default=16,
+            subtype='FACTOR'
+            )
     table_w = FloatProperty(
-                name="Table width",
-                description="Width of table",
-                min=0.001,
-                max=1.0,
-                default=0.53,
-                subtype='PERCENTAGE'
-                )
+            name="Table width",
+            description="Width of table",
+            min=0.001,
+            max=1.0,
+            default=0.53,
+            subtype='PERCENTAGE'
+            )
     crown_h = FloatProperty(
-                name="Crown height",
-                description="Heigth of crown",
-                min=0.0,
-                max=1.0,
-                default=0.162,
-                subtype='PERCENTAGE'
-                )
+            name="Crown height",
+            description="Heigth of crown",
+            min=0.0,
+            max=1.0,
+            default=0.162,
+            subtype='PERCENTAGE'
+            )
     girdle_t = FloatProperty(
-                name="Girdle height",
-                description="Height of girdle",
-                min=0.0,
-                max=0.5,
-                default=0.017,
-                subtype='PERCENTAGE'
-                )
+            name="Girdle height",
+            description="Height of girdle",
+            min=0.0,
+            max=0.5,
+            default=0.017,
+            subtype='PERCENTAGE'
+            )
     girdle_real = BoolProperty(
-                name="Real girdle",
-                description="More beautiful girdle; has more polygons",
-                default=True
-                )
+            name="Real girdle",
+            description="More beautiful girdle; has more polygons",
+            default=True
+            )
     g_real_smooth = BoolProperty(
-                name="Smooth girdle",
-                description="smooth shading for girdle, only available for real girdle",
-                default=False
-                )
+            name="Smooth girdle",
+            description="smooth shading for girdle, only available for real girdle",
+            default=False
+            )
     pavi_d = FloatProperty(
-                name="Pavilion depth",
-                description="Height of pavillion",
-                min=0.0,
-                max=1.0,
-                default=0.431,
-                subtype='PERCENTAGE'
-                )
+            name="Pavilion depth",
+            description="Height of pavillion",
+            min=0.0,
+            max=1.0,
+            default=0.431,
+            subtype='PERCENTAGE'
+            )
     bezel_f = FloatProperty(
-                name="Upper facet factor",
-                description="Determines the form of bezel and upper girdle facets",
-                min=0.0,
-                max=1.0,
-                default=0.250,
-                subtype='PERCENTAGE'
-                )
+            name="Upper facet factor",
+            description="Determines the form of bezel and upper girdle facets",
+            min=0.0,
+            max=1.0,
+            default=0.250,
+            subtype='PERCENTAGE'
+            )
     pavi_f = FloatProperty(
-                name="Lower facet factor",
-                description="Determines the form of pavillion and lower girdle facets",
-                min=0.001,
-                max=1.0,
-                default=0.400,
-                subtype='PERCENTAGE'
-                )
+            name="Lower facet factor",
+            description="Determines the form of pavillion and lower girdle facets",
+            min=0.001,
+            max=1.0,
+            default=0.400,
+            subtype='PERCENTAGE'
+            )
     culet = FloatProperty(
-                name="Culet size",
-                description="0: no culet (default)",
-                min=0.0,
-                max=0.999,
-                default=0.0,
-                subtype='PERCENTAGE'
-                )
+            name="Culet size",
+            description="0: no culet (default)",
+            min=0.0,
+            max=0.999,
+            default=0.0,
+            subtype='PERCENTAGE'
+            )
     keep_lga = BoolProperty(
-                name="Retain lower angle",
-                description="If culet > 0, retains angle of pavillion facets",
-                default=False
-                )
+            name="Retain lower angle",
+            description="If culet > 0, retains angle of pavillion facets",
+            default=False
+            )
 
     # call mesh/object generator function with user inputs
     def execute(self, context):

@@ -26,6 +26,7 @@
 # ----------------------------------------------------------
 import bpy
 import os
+import subprocess
 from bl_operators.presets import AddPresetBase
 from mathutils import Vector
 from bpy.props import StringProperty
@@ -235,19 +236,19 @@ class PresetMenu():
             self.imageList.append(self.default_image.filepath_raw)
             return
         dir_path = os.path.dirname(os.path.realpath(__file__))
-        sub_path = "_presets" + os.path.sep + "missing.png"
+        sub_path = "presets" + os.path.sep + "missing.png"
         filepath = os.path.join(dir_path, sub_path)
         if os.path.exists(filepath) and os.path.isfile(filepath):
             self.default_image = bpy.data.images.load(filepath=filepath)
             self.imageList.append(self.default_image.filepath_raw)
         if self.default_image is None:
-            raise EnvironmentError("archipack/_presets/missing.png not found")
+            raise EnvironmentError("archipack/presets/missing.png not found")
 
     def scan_files(self, category):
         file_list = []
         # load default presets
         dir_path = os.path.dirname(os.path.realpath(__file__))
-        sub_path = "_presets" + os.path.sep + category
+        sub_path = "presets" + os.path.sep + category
         presets_path = os.path.join(dir_path, sub_path)
         if os.path.exists(presets_path):
             file_list += [presets_path + os.path.sep + f[:-3]
@@ -280,7 +281,7 @@ class PresetMenu():
         """
         image = None
         img_idx = bpy.data.images.find(os.path.basename(filepath) + '.png')
-        if img_idx > -1:
+        if img_idx > -1 and bpy.data.images[img_idx].filepath_raw == filepath:
             image = bpy.data.images[img_idx]
             self.imageList.append(image.filepath_raw)
         elif os.path.exists(filepath + '.png') and os.path.isfile(filepath + '.png'):
@@ -522,6 +523,23 @@ class ArchipackPreset(AddPresetBase):
         # remove thumb
         os.remove(filepath[:-3] + ".png")
 
+    def background_render(self, context, cls, preset):
+        print("bg render")
+        generator = os.path.dirname(os.path.realpath(__file__)) + os.path.sep + "archipack_thumbs.py"
+        # Run external instance of blender like the original thumbnail generator.
+        cmd = [
+            bpy.app.binary_path,
+            "--background",
+            "-noaudio",
+            "--python", generator,
+            "--",
+            "cls:" + cls,
+            "preset:" + preset
+            ]
+        print(repr(cmd))
+
+        subprocess.Popen(cmd)
+
     def post_cb(self, context):
 
         if not self.remove_active:
@@ -536,49 +554,9 @@ class ArchipackPreset(AddPresetBase):
                                                   target_path,
                                                   create=True)
 
-            filepath = os.path.join(target_path, filename) + ".png"
-
-            # render thumb
-            scene = context.scene
-            render = scene.render
-
-            # save render parame
-            resolution_x = render.resolution_x
-            resolution_y = render.resolution_y
-            resolution_percentage = render.resolution_percentage
-            old_filepath = render.filepath
-            use_file_extension = render.use_file_extension
-            use_overwrite = render.use_overwrite
-            use_compositing = render.use_compositing
-            use_sequencer = render.use_sequencer
-            file_format = render.image_settings.file_format
-            color_mode = render.image_settings.color_mode
-            color_depth = render.image_settings.color_depth
-
-            render.resolution_x = 150
-            render.resolution_y = 100
-            render.resolution_percentage = 100
-            render.filepath = filepath
-            render.use_file_extension = True
-            render.use_overwrite = True
-            render.use_compositing = False
-            render.use_sequencer = False
-            render.image_settings.file_format = 'PNG'
-            render.image_settings.color_mode = 'RGBA'
-            render.image_settings.color_depth = '8'
-            bpy.ops.render.render(animation=False, write_still=True, use_viewport=False)
-
-            # restore render params
-            render.resolution_x = resolution_x
-            render.resolution_y = resolution_y
-            render.resolution_percentage = resolution_percentage
-            render.filepath = old_filepath
-            render.use_file_extension = use_file_extension
-            render.use_overwrite = use_overwrite
-            render.use_compositing = use_compositing
-            render.use_sequencer = use_sequencer
-            render.image_settings.file_format = file_format
-            render.image_settings.color_mode = color_mode
-            render.image_settings.color_depth = color_depth
+            preset = os.path.join(target_path, filename) + ".py"
+            cls = self.preset_subdir[10:]
+            print("post cb cls:%s preset:%s" % (cls, preset))
+            self.background_render(context, cls, preset)
 
             return

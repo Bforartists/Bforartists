@@ -422,7 +422,7 @@ class AntAddLandscape(bpy.types.Operator):
             default=0,
             min=0,
             max=16,
-            description="Effect depth - number of frequencies."
+            description="Effect depth - number of frequencies"
             )
     fx_amplitude = FloatProperty(
             name="Amp",

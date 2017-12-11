@@ -49,7 +49,7 @@ def set_normals(myobject, direction=False):
     bpy.ops.object.mode_set(mode='EDIT')
     # select all faces
     bpy.ops.mesh.select_all(action='SELECT')
-    # recalculate outside normals�
+    # recalculate outside normals
     bpy.ops.mesh.normals_make_consistent(inside=direction)
     # go object mode again
     bpy.ops.object.editmode_toggle()

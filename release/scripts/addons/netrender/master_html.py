@@ -46,8 +46,8 @@ def countFiles(job):
         elif not file == job.files[0]:
            tot_other += 1
     return tot_cache,tot_fluid,tot_other;
-    
-    
+
+
 def get(handler):
     def output(text):
         handler.wfile.write(bytes(text, encoding='utf8'))
@@ -112,11 +112,11 @@ def get(handler):
 
     def checkbox(title, value, script=""):
         return """<input type="checkbox" title="%s" %s %s>""" % (title, "checked" if value else "", ("onclick=\"%s\"" % script) if script else "")
-    
+
     def sendjson(message):
-        handler.send_head(content = "application/json") 
+        handler.send_head(content = "application/json")
         output(json.dumps(message,sort_keys=False))
-            
+
     def sendFile(filename,content_type):
         f = open(os.path.join(src_folder,filename), 'rb')
 
@@ -126,9 +126,9 @@ def get(handler):
         f.close()
     # return serialized version of job for html interface
     # job: the base job
-    # includeFiles: boolean to indicate if we want file to be serialized too into job 
-    # includeFrames; boolean to  indicate if we want frame to be serialized too into job     
-    def gethtmlJobInfo(job,includeFiles=True,includeFrames=True):     
+    # includeFiles: boolean to indicate if we want file to be serialized too into job
+    # includeFrames; boolean to  indicate if we want frame to be serialized too into job
+    def gethtmlJobInfo(job,includeFiles=True,includeFrames=True):
         if (job):
              results = job.framesStatus()
              serializedJob = job.serialize(withFiles=includeFiles, withFrames=includeFrames)
@@ -142,27 +142,27 @@ def get(handler):
              tot_cache, tot_fluid, tot_other = countFiles(job)
              serializedJob["totcache"] = tot_cache
              serializedJob["totfluid"] = tot_fluid
-             serializedJob["totother"] = tot_other  
-             serializedJob["wktime"] = (time.time()-job.start_time ) if job.status != netrender.model.JOB_FINISHED else (job.finish_time-job.start_time)             
+             serializedJob["totother"] = tot_other
+             serializedJob["wktime"] = (time.time()-job.start_time ) if job.status != netrender.model.JOB_FINISHED else (job.finish_time-job.start_time)
         else:
              serializedJob={"name":"invalid job"}
-           
+
         return  serializedJob;
-    
+
     # return serialized files based on cumulative file_type
     # job_id: id of the job
     # message: serialized content
     # file_type: any combinaison of CACHE_FILE,FLUID_FILES, OTHER_FILES
-    
+
     def getFiles(job_id,message,file_type):
-        
+
         job=handler.server.getJobID(job_id)
         print ("job.files.length="+str(len(job.files)))
-                
+
         for file in job.files:
             filedata=file.serialize()
             filedata["name"] = os.path.split(file.filepath)[1]
-                
+
             if file.filepath.endswith(".bphys") and (file_type & CACHE_FILES):
                message.append(filedata);
                continue
@@ -172,104 +172,104 @@ def get(handler):
             if (not file == job.files[0]) and (file_type & OTHER_FILES) and (not file.filepath.endswith((".bobj.gz", ".bvel.gz"))) and not file.filepath.endswith(".bphys"):
                message.append(filedata);
                continue
-                  
-        
-    
+
+
+
     if handler.path == "/html/netrender.js":
         sendFile("netrender.js","text/javascript")
-        
+
     elif handler.path == "/html/netrender.css":
         sendFile("netrender.css","text/css")
-        
+
     elif handler.path =="/html/newui":
         sendFile("newui.html","text/html")
-         
+
     elif handler.path.startswith("/html/js"):
          path, filename = os.path.split(handler.path)
          sendFile("js/"+filename,"text/javascript")
-         
-    elif handler.path.startswith("/html/css/images"): 
+
+    elif handler.path.startswith("/html/css/images"):
          path, filename = os.path.split(handler.path)
          sendFile("css/images/"+filename,"image/png")
-                  
+
     elif handler.path.startswith("/html/css"):
          path, filename = os.path.split(handler.path)
          sendFile("css/"+filename,"text/css")
-    # return all master rules information      
+    # return all master rules information
     elif handler.path == "/html/rules":
          message = []
          for rule in handler.server.balancer.rules:
             message.append(rule.serialize())
          for rule in handler.server.balancer.priorities:
-            message.append(rule.serialize())  
+            message.append(rule.serialize())
          for rule in handler.server.balancer.exceptions:
             message.append(rule.serialize())
          sendjson(message)
-    #return all slaves list     
+    #return all slaves list
     elif handler.path == "/html/slaves":
          message = []
          for slave in handler.server.slaves:
             serializedSlave = slave.serialize()
             if  slave.job:
                 serializedSlave["job_name"] = slave.job.name
-                serializedSlave["job_id"] = slave.job.id                      
+                serializedSlave["job_id"] = slave.job.id
             else:
                 serializedSlave["job_name"] = "None"
                 serializedSlave["job_id"] = "0"
             message.append(serializedSlave)
          sendjson(message)
-    # return all job list                    
+    # return all job list
     elif handler.path == "/html/jobs":
          message = []
          for job in handler.server.jobs:
              if job:
                 message.append(gethtmlJobInfo(job, False, False))
          sendjson(message)
-     #return a job information    
+     #return a job information
     elif handler.path.startswith("/html/job_"):
-         
+
          job_id = handler.path[10:]
          job = handler.server.getJobID(job_id)
-         
+
          message = []
          if job:
-            
+
              message.append(gethtmlJobInfo(job, includeFiles=False))
          sendjson(message)
-    # return all frames for a job     
+    # return all frames for a job
     elif handler.path.startswith("/html/frames_"):
-     
+
          job_id = handler.path[13:]
          job = handler.server.getJobID(job_id)
-         
+
          message = []
          if job:
              for f in job.frames:
               message.append(f.serialize())
-             
+
          sendjson(message)
-    # return physic cache files     
+    # return physic cache files
     elif handler.path.startswith("/html/cachefiles_"):
          job_id = handler.path[17:]
          message = []
          getFiles(job_id, message, CACHE_FILES);
-         sendjson(message)          
-    #return fluid cache files     
+         sendjson(message)
+    #return fluid cache files
     elif handler.path.startswith("/html/fluidfiles_"):
          job_id = handler.path[17:]
-                 
+
          message = []
          getFiles(job_id, message, FLUID_FILES);
-         sendjson(message)                   
-         
-    #return list of other files ( images, sequences ...)         
+         sendjson(message)
+
+    #return list of other files ( images, sequences ...)
     elif handler.path.startswith("/html/otherfiles_"):
          job_id = handler.path[17:]
-         
+
          message = []
          getFiles(job_id, message, OTHER_FILES);
-         sendjson(message)                   
-    # return blend file info      
+         sendjson(message)
+    # return blend file info
     elif handler.path.startswith("/html/blendfile_"):
          job_id = handler.path[16:]
          job = handler.server.getJobID(job_id)
@@ -280,10 +280,10 @@ def get(handler):
          sendjson(message)
     # return black listed slaves for a job
     elif handler.path.startswith("/html/blacklist_"):
-         
+
          job_id = handler.path[16:]
          job = handler.server.getJobID(job_id)
-         
+
          message = []
          if job:
            for slave_id in job.blacklist:
@@ -291,9 +291,9 @@ def get(handler):
                message.append(slave.serialize())
          sendjson(message)
     # return all slaves currently assigned to a job
-           
+
     elif handler.path.startswith("/html/slavesjob_"):
-         
+
          job_id = handler.path[16:]
          job = handler.server.getJobID(job_id)
          message = []
@@ -301,8 +301,8 @@ def get(handler):
            for slave in handler.server.slaves:
                if slave.job and slave.job == job:
                    message.append(slave.serialize())
-           sendjson(message)                                   
-    # here begin code for simple ui                                        
+           sendjson(message)
+    # here begin code for simple ui
     elif handler.path == "/html" or handler.path == "/":
         handler.send_head(content = "text/html")
         head("NetRender", refresh = True)
@@ -336,10 +336,10 @@ def get(handler):
 
         for job in handler.server.jobs:
             results = job.framesStatus()
-            
+
             time_finished = job.time_finished
             time_started = job.time_started
-            
+
             rowTable(
                         """<button title="cancel job" onclick="cancel_job('%s');">X</button>""" % job.id +
                         """<button title="pause job" onclick="request('/pause_%s', null);">P</button>""" % job.id +
@@ -370,7 +370,7 @@ def get(handler):
                     )
 
         endTable()
-        
+
         output("<h2>Slaves</h2>")
 
         startTable()
@@ -383,7 +383,7 @@ def get(handler):
         output("<h2>Configuration</h2>")
 
         output("""<button title="remove all jobs" onclick="clear_jobs();">CLEAR JOB LIST</button>""")
-        
+
         output("<br />")
 
         output(link("new interface", "/html/newui"))
@@ -427,7 +427,7 @@ def get(handler):
         job_id = handler.path[9:]
 
         head("NetRender")
-        
+
         output(link("Back to Main Page", "/html"))
 
         job = handler.server.getJobID(job_id)
@@ -442,7 +442,7 @@ def get(handler):
             rowTable("resolution", "%ix%i at %i%%" % job.resolution)
 
             rowTable("tags", ";".join(sorted(job.tags)) if job.tags else "<i>None</i>")
-            
+
             rowTable("results", link("download all", resultURL(job_id)))
 
             endTable()
@@ -450,29 +450,29 @@ def get(handler):
 
             if job.type == netrender.model.JOB_BLENDER:
                 output("<h2>Files</h2>")
-                
+
                 startTable()
                 headerTable("path")
-    
+
                 tot_cache = 0
                 tot_fluid = 0
                 tot_other = 0
-    
+
                 rowTable(job.files[0].original_path)
-                tot_cache, tot_fluid, tot_other = countFiles(job)    
-                
+                tot_cache, tot_fluid, tot_other = countFiles(job)
+
                 if tot_cache > 0:
                     rowTable("%i physic cache files" % tot_cache, class_style = "toggle", extra = "onclick='toggleDisplay(&quot;.cache&quot;, &quot;none&quot;, &quot;table-row&quot;)'")
                     for file in job.files:
                         if file.filepath.endswith(".bphys"):
                             rowTable(os.path.split(file.filepath)[1], class_style = "cache")
-    
+
                 if tot_fluid > 0:
                     rowTable("%i fluid bake files" % tot_fluid, class_style = "toggle", extra = "onclick='toggleDisplay(&quot;.fluid&quot;, &quot;none&quot;, &quot;table-row&quot;)'")
                     for file in job.files:
                         if file.filepath.endswith((".bobj.gz", ".bvel.gz")):
                             rowTable(os.path.split(file.filepath)[1], class_style = "fluid")
-    
+
                 if tot_other > 0:
                     rowTable("%i other files" % tot_other, class_style = "toggle", extra = "onclick='toggleDisplay(&quot;.other&quot;, &quot;none&quot;, &quot;table-row&quot;)'")
                     for file in job.files:
@@ -487,15 +487,15 @@ def get(handler):
                 endTable()
             elif job.type == netrender.model.JOB_VCS:
                 output("<h2>Versioning</h2>")
-                
+
                 startTable()
-    
+
                 rowTable("System", job.version_info.system.name)
                 rowTable("Remote Path", job.version_info.rpath)
                 rowTable("Working Path", job.version_info.wpath)
                 rowTable("Revision", job.version_info.revision)
                 rowTable("Render File", job.files[0].filepath)
-    
+
                 endTable()
 
             if job.blacklist:
@@ -524,10 +524,10 @@ def get(handler):
             output("<h2>Frames</h2>")
 
             startTable()
-            
+
             if job.hasRenderResult():
                 headerTable("no", "status", "render time", "slave", "log", "result", "")
-                
+
                 for frame in job.frames:
                     rowTable(
                              frame.number,
@@ -541,7 +541,7 @@ def get(handler):
                              )
             else:
                 headerTable("no", "status", "process time", "slave", "log")
-                
+
                 for frame in job.frames:
                     rowTable(
                              frame.number,

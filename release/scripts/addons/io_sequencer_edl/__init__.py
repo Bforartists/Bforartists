@@ -115,9 +115,8 @@ class FindReelsEDL(Operator):
         def media_file_walker(path):
             ext_check = bpy.path.extensions_movie | bpy.path.extensions_audio
             for dirpath, dirnames, filenames in os.walk(path):
-                # skip '.svn'
-                if dirpath.startswith("."):
-                    continue
+                # skip '.git'
+                dirnames[:] = [d for d in dirnames if not d.startswith(".")]
                 for filename in filenames:
                     fileonly, ext = os.path.splitext(filename)
                     ext_lower = ext.lower()

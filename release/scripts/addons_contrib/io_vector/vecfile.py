@@ -192,9 +192,10 @@ def TokenizeAIEPS(s):
     """
 
     i = s.find("%%EndSetup")
-    i += 10
     if i == -1:
-        return (False, "couldn't find illustration part of file")
+        i = 0
+    else:
+        i += 10
     ans = []
     while i < len(s):
         c = s[i]

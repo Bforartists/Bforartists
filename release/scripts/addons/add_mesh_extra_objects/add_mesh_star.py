@@ -1,7 +1,10 @@
 # GPL Original by Fourmadmen
 
 import bpy
-from mathutils import Vector, Quaternion
+from mathutils import (
+        Vector,
+        Quaternion,
+        )
 from math import pi
 from bpy.props import (
         IntProperty,

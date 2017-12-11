@@ -695,7 +695,7 @@ def material_frame_handler(scene):
 
 
 class CubeSterPanel(Panel):
-    bl_idname = "OBJECT_PT.cubester"
+    bl_idname = "OBJECT_PT_cubester"
     bl_label = "CubeSter"
     bl_space_type = "VIEW_3D"
     bl_region_type = "TOOLS"

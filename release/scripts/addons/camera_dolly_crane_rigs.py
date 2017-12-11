@@ -754,6 +754,7 @@ def build_crane_rig(context):
 # This is the UI for the Dolly Camera Rig
 # =========================================================================
 class DollyCameraUI(Panel):
+    bl_idname = "CAMERA_DOLLY_PT_ui"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_label = "Dolly Camera UI"
@@ -819,6 +820,7 @@ class DollyCameraUI(Panel):
 # This is the UI for the Crane Rig Camera
 # =========================================================================
 class CraneCameraUI(Panel):
+    bl_idname = "CAMERA_CRANE_PT_ui"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_label = "Crane Camera UI"

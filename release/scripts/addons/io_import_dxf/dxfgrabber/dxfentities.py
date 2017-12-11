@@ -190,8 +190,8 @@ class Text(DXFEntity):
         self.halign = 0
         self.valign = 0
         self.align_point = None
-        self.font = ""
-        self.big_font = ""
+        self.font = None
+        self.big_font = None
 
     def setup_attributes(self, tags):
         for code, value in super(Text, self).setup_attributes(tags):

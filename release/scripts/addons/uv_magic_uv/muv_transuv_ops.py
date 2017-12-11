@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>, Mifth, MaxRobinot"
 __status__ = "production"
-__version__ = "4.3.1"
-__date__ = "6 June 2017"
+__version__ = "4.4"
+__date__ = "2 Aug 2017"
 
 from collections import OrderedDict
 
@@ -77,10 +77,12 @@ class MUV_TransUVCopy(bpy.types.Operator):
 
         if all_sorted_faces:
             for face_data in all_sorted_faces.values():
+                edges = face_data[1]
                 uv_loops = face_data[2]
                 uvs = [l.uv.copy() for l in uv_loops]
                 pin_uvs = [l.pin_uv for l in uv_loops]
-                props.topology_copied.append([uvs, pin_uvs])
+                seams = [e.seam for e in edges]
+                props.topology_copied.append([uvs, pin_uvs, seams])
 
         bmesh.update_edit_mesh(active_obj.data)
 
@@ -101,7 +103,13 @@ class MUV_TransUVPaste(bpy.types.Operator):
     invert_normals = BoolProperty(
         name="Invert Normals",
         description="Invert Normals",
-        default=False)
+        default=False
+    )
+    copy_seams = BoolProperty(
+        name="Copy Seams",
+        description="Copy Seams",
+        default=True
+    )
 
     def execute(self, context):
         props = context.scene.muv_props.transuv
@@ -161,11 +169,15 @@ class MUV_TransUVPaste(bpy.types.Operator):
                             )
                             return {'FINISHED'}
 
-                        for j, uvloop in enumerate(face_data[2]):
+                        for j, (edge, uvloop) in enumerate(zip(face_data[1], face_data[2])):
                             uvloop.uv = copied_data[0][j]
                             uvloop.pin_uv = copied_data[1][j]
+                            if self.copy_seams:
+                                edge.seam = copied_data[2][j]
 
         bmesh.update_edit_mesh(active_obj.data)
+        if self.copy_seams:
+            active_obj.data.show_edge_seams = True
 
         return {'FINISHED'}
 

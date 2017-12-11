@@ -38,20 +38,20 @@ class MRenderFile(netrender.model.RenderFile):
 
     def updateStatus(self):
         self.found = os.path.exists(self.filepath)
-        
-        if self.found and self.signature != None:
+
+        if self.found and self.signature is not None:
             found_signature = hashFile(self.filepath)
             self.found = self.signature == found_signature
             if not self.found:
                 print("Signature mismatch", self.signature, found_signature)
-            
+
         return self.found
 
     def test(self):
         # don't check when forcing upload and only until found
         if not self.force and not self.found:
             self.updateStatus()
-            
+
         return self.found
 
 
@@ -60,7 +60,7 @@ class MRenderSlave(netrender.model.RenderSlave):
         super().__init__(slave_info)
         self.id = hashlib.md5(bytes(repr(slave_info.name) + repr(slave_info.address), encoding='utf8')).hexdigest()
         self.last_seen = time.time()
-        
+
 
         self.job = None
         self.job_frames = []
@@ -97,7 +97,7 @@ class MRenderJob(netrender.model.RenderJob):
         self.last_update = 0
         self.save_path = ""
         self.files = [MRenderFile(rfile.filepath, rfile.index, rfile.start, rfile.end, rfile.signature) for rfile in job_info.files]
-        
+
     def setForceUpload(self, force):
         for rfile in self.files:
             rfile.force = force
@@ -154,7 +154,7 @@ class MRenderJob(netrender.model.RenderJob):
 
     def start(self):
         self.status = netrender.model.JOB_QUEUED
-        
+
 
     def addLog(self, frames):
         frames = sorted(frames)
@@ -174,7 +174,7 @@ class MRenderJob(netrender.model.RenderJob):
     def reset(self, all):
         for f in self.frames:
             f.reset(all)
-            
+
         if all:
             self.status = netrender.model.JOB_QUEUED
 
@@ -188,7 +188,7 @@ class MRenderJob(netrender.model.RenderJob):
                     break
 
         return frames
-    
+
     def getResultPath(self, filename):
         return os.path.join(self.save_path, filename)
 
@@ -239,7 +239,7 @@ class RenderHandler(http.server.BaseHTTPRequestHandler):
         f.write(buf)
         f.close()
         del buf
-        
+
     def log_message(self, format, *args):
         # override because the original calls self.address_string(), which
         # is extremely slow due to some timeout..
@@ -256,7 +256,7 @@ class RenderHandler(http.server.BaseHTTPRequestHandler):
 
     def send_head(self, code = http.client.OK, headers = {}, content = "application/octet-stream"):
         self.send_response(code)
-        
+
         if code == http.client.OK and content:
             self.send_header("Content-type", content)
 
@@ -351,10 +351,10 @@ class RenderHandler(http.server.BaseHTTPRequestHandler):
                             if frame.status == netrender.model.FRAME_DONE:
                                 for filename in frame.results:
                                     filepath = job.getResultPath(filename)
-                                    
+
                                     zfile.write(filepath, filename)
-                                    
-                    
+
+
                     f = open(zip_filepath, 'rb')
                     self.send_head(content = "application/x-zip-compressed")
                     shutil.copyfileobj(f, self.wfile)
@@ -577,7 +577,7 @@ class RenderHandler(http.server.BaseHTTPRequestHandler):
             job_id = self.server.nextJobID()
 
             job = MRenderJob(job_id, job_info)
-            
+
             job.setForceUpload(self.server.force)
 
             for frame in job_info.frames:
@@ -728,7 +728,7 @@ class RenderHandler(http.server.BaseHTTPRequestHandler):
             self.server.stats("", "New slave connected")
 
             slave_info = netrender.model.RenderSlave.materialize(json.loads(str(self.rfile.read(length), encoding='utf8')), cache = False)
-            
+
             slave_info.address = self.client_address
 
             slave_id = self.server.addSlave(slave_info)
@@ -790,12 +790,12 @@ class RenderHandler(http.server.BaseHTTPRequestHandler):
                             file_path = os.path.join(job.save_path, main_name)
 
                         # add same temp file + renames as slave
-                        
+
                         self.write_file(file_path)
-                        
+
                         rfile.filepath = file_path # set the new path
                         found = rfile.updateStatus() # make sure we have the right file
-                        
+
                         if not found: # checksum mismatch
                             self.server.stats("", "File upload but checksum mismatch, this shouldn't happen")
                             self.send_head(http.client.CONFLICT)
@@ -882,19 +882,19 @@ class RenderHandler(http.server.BaseHTTPRequestHandler):
                     if frame:
                         job_result = int(self.headers['job-result'])
                         job_finished = self.headers['job-finished'] == str(True)
-                        
+
                         self.send_head(content = None)
 
                         if job_result == netrender.model.FRAME_DONE:
                             result_filename = self.headers['result-filename']
-                            
+
                             frame.results.append(result_filename)
                             self.write_file(job.getResultPath(result_filename))
-                            
+
                         if job_finished:
                             job_time = float(self.headers['job-time'])
                             slave.finishedFrame(job_frame)
-    
+
                             frame.status = job_result
                             frame.time = job_time
 
@@ -925,7 +925,7 @@ class RenderHandler(http.server.BaseHTTPRequestHandler):
 
                     if frame:
                         self.send_head(content = None)
-                        
+
                         if job.hasRenderResult():
                             self.write_file(os.path.join(os.path.join(job.save_path, "%06d.jpg" % job_frame)))
 
@@ -996,7 +996,7 @@ class RenderMasterServer(socketserver.ThreadingMixIn, http.server.HTTPServer):
     def restore(self, jobs, slaves, balancer = None):
         self.jobs = jobs
         self.jobs_map = {}
-        
+
         for job in self.jobs:
             self.jobs_map[job.id] = job
             self.job_id = max(self.job_id, int(job.id))
@@ -1004,10 +1004,10 @@ class RenderMasterServer(socketserver.ThreadingMixIn, http.server.HTTPServer):
         self.slaves = slaves
         for slave in self.slaves:
             self.slaves_map[slave.id] = slave
-        
+
         if balancer:
             self.balancer = balancer
-        
+
 
     def nextJobID(self):
         self.job_id += 1
@@ -1123,7 +1123,7 @@ class RenderMasterServer(socketserver.ThreadingMixIn, http.server.HTTPServer):
                     and slave.id not in job.blacklist           # slave is not blacklisted
                     and (not slave.tags or job.tags.issubset(slave.tags))  # slave doesn't use tags or slave has all job tags
                          ):
-                    
+
                     return job, job.getFrames()
 
         return None, None
@@ -1138,17 +1138,17 @@ def createMaster(address, clear, force, path):
         print("loading saved master:", filepath)
         with open(filepath, 'rb') as f:
             path, jobs, slaves = pickle.load(f)
-            
+
             httpd = RenderMasterServer(address, RenderHandler, path, force=force, subdir=False)
             httpd.restore(jobs, slaves)
-            
+
             return httpd
 
     return RenderMasterServer(address, RenderHandler, path, force=force)
 
 def saveMaster(path, httpd):
     filepath = os.path.join(path, "blender_master.data")
-    
+
     with open(filepath, 'wb') as f:
         pickle.dump((httpd.path, httpd.jobs, httpd.slaves), f, pickle.HIGHEST_PROTOCOL)
 

@@ -30,16 +30,6 @@ from bpy.props import EnumProperty
 from mathutils import Vector
 
 
-"""
-from os import path
-def debug_using_gl(context, filename):
-    context.scene.update()
-    temp_path = "C:\\tmp\\"
-    context.scene.render.filepath = path.join(temp_path, filename + ".png")
-    bpy.ops.render.opengl(write_still=True)
-"""
-
-
 class ArchipackBoolManager():
     """
         Handle three methods for booleans
@@ -95,7 +85,7 @@ class ArchipackBoolManager():
                'archipack_robusthole' in wall or
                'archipack_handle' in wall)
 
-    def datablock(self, o, basis='WALL'):
+    def datablock(self, o):
         """
             get datablock from windows and doors
             return
@@ -103,15 +93,12 @@ class ArchipackBoolManager():
                 None when not found
         """
         d = None
-        if o.data:
-            if basis == 'WALL':
-                if "archipack_window" in o.data:
-                    d = o.data.archipack_window[0]
-                elif "archipack_door" in o.data:
-                    d = o.data.archipack_door[0]
-            elif basis == 'ROOF':
-                if "archipack_roof" in o.data:
-                    d = o.data.archipack_roof[0]
+        if o.data is None:
+            return
+        if "archipack_window" in o.data:
+            d = o.data.archipack_window[0]
+        elif "archipack_door" in o.data:
+            d = o.data.archipack_door[0]
         return d
 
     def prepare_hole(self, hole):
@@ -135,7 +122,7 @@ class ArchipackBoolManager():
                 return hole
         return None
 
-    def _generate_hole(self, context, o, basis='WALL'):
+    def _generate_hole(self, context, o):
         # use existing one
         if self.mode != 'ROBUST':
             hole = self.get_child_hole(o)
@@ -143,7 +130,7 @@ class ArchipackBoolManager():
                 # print("_generate_hole Use existing hole %s" % (hole.name))
                 return hole
         # generate single hole from archipack primitives
-        d = self.datablock(o, basis)
+        d = self.datablock(o)
         hole = None
         if d is not None:
             if (self.itM is not None and (
@@ -390,21 +377,21 @@ class ArchipackBoolManager():
         elif modif is not None:
             wall.modifiers.remove(modif)
 
-    def get_basis_type(self, o):
-        if o.data is not None:
-            if "archipack_wall2" in o.data:
-                return 'WALL'
-            elif "archipack_roof" in o.data:
-                return 'ROOF'
-            elif "archipack_wall" in o.data:
-                return 'WALL'
-        return 'DEFAULT'
-
     def autoboolean(self, context, wall):
         """
             Entry point for multi-boolean operations like
             in T panel autoBoolean and RobustBoolean buttons
         """
+
+        if wall.data is not None and "archipack_wall2" in wall.data:
+            # ensure wall modifier is there before any boolean
+            # to support "revival" of applied modifiers
+            m = wall.modifiers.get("Wall")
+            if m is None:
+                wall.select = True
+                context.scene.objects.active = wall
+                wall.data.archipack_wall2[0].update(context)
+
         bpy.ops.object.select_all(action='DESELECT')
         context.scene.objects.active = None
         childs = []
@@ -412,12 +399,9 @@ class ArchipackBoolManager():
         # get wall bounds to find what's inside
         self._get_bounding_box(wall)
 
-        # filter roofs when wall is roof
-        basis = self.get_basis_type(wall)
-
         # either generate hole or get existing one
         for o in context.scene.objects:
-            h = self._generate_hole(context, o, basis)
+            h = self._generate_hole(context, o)
             if h is not None:
                 holes.append(h)
                 childs.append(o)
@@ -484,8 +468,7 @@ class ArchipackBoolManager():
 
         # generate holes for crossing window and doors
         self.itM = wall.matrix_world.inverted()
-        basis = self.get_basis_type(wall)
-        d = self.datablock(o, basis)
+        d = self.datablock(o)
 
         hole = None
         hole_obj = None
@@ -680,17 +663,14 @@ class ARCHIPACK_OT_generate_hole(Operator):
             manager = ArchipackBoolManager(mode='HYBRID')
             o = context.active_object
 
-            # filter roofs when o is roof
-            basis = manager.get_basis_type(o)
-
-            d = manager.datablock(o, basis)
+            d = manager.datablock(o)
             if d is None:
                 self.report({'WARNING'}, "Archipack: active object must be a door, a window or a roof")
                 return {'CANCELLED'}
             bpy.ops.object.select_all(action='DESELECT')
             o.select = True
             context.scene.objects.active = o
-            hole = manager._generate_hole(context, o, basis)
+            hole = manager._generate_hole(context, o)
             manager.prepare_hole(hole)
             hole.select = False
             o.select = True

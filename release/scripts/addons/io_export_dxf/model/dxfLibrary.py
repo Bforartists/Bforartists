@@ -278,7 +278,7 @@ class Face(_Entity):
 		while len(points)<4: #fix for r12 format
 			points.append(points[-1])
 		self.points=points
-		
+
 	def __str__(self):
 		out = '  0\n3DFACE\n%s%s\n' %(self._common(),_points(self.points))
 		return out
@@ -579,7 +579,7 @@ class LineType(_Call):
 				elements += ' 49\n%s\n' %e
 			result += elements
 		return result
-		 
+
 
 #-----------------------------------------------
 class Style(_Call):
@@ -767,16 +767,16 @@ class Drawing(_Collection):
 		#self.acadver='9\n$ACADVER\n1\nAC1006\n'
 		self.acadver='  9\n$ACADVER\n  1\nAC1009\n'
 		"""DXF AutoCAD-Release format codes:
-		AC1021  2008, 2007 
-		AC1018  2006, 2005, 2004 
-		AC1015  2002, 2000i, 2000 
-		AC1014  R14,14.01 
-		AC1012  R13    
-		AC1009  R12,11 
-		AC1006  R10    
-		AC1004  R9    
-		AC1002  R2.6  
-		AC1.50  R2.05 
+		AC1021  2008, 2007
+		AC1018  2006, 2005, 2004
+		AC1015  2002, 2000i, 2000
+		AC1014  R14,14.01
+		AC1012  R13
+		AC1009  R12,11
+		AC1006  R10
+		AC1004  R9
+		AC1002  R2.6
+		AC1.50  R2.05
 		"""
 
 	def _name(self,x):
@@ -815,7 +815,7 @@ class Drawing(_Collection):
 		entities=self._section('entities',[str(x) for x in self.entities])
 		all=''.join([header,tables,blocks,entities,'  0\nEOF\n'])
 		return all
-		
+
 	def _write_section(self,file,name,data):
 		file.write('  0\nSECTION\n  2\n%s\n'%name.upper())
 		for x in data:
@@ -924,4 +924,4 @@ if __name__=='__main__':
 	if not copy:
 		Draw.PupMenu('Error%t|This script requires a full python install')
 	else: test()
-	
+

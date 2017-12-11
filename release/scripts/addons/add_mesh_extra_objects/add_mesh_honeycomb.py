@@ -2,7 +2,10 @@
 
 import bpy
 from bpy_extras import object_utils
-from math import pi, sin, cos
+from math import (
+        pi, sin,
+        cos,
+        )
 from bpy.props import (
         IntProperty,
         BoolProperty,
@@ -216,49 +219,48 @@ class add_mesh_honeycomb(bpy.types.Operator):
             self.edge = m
 
     rows = IntProperty(
-                    name="Num of rows",
-                    default=2,
-                    min=1, max=100,
-                    description='Number of the rows'
-                    )
-
+            name="Num of rows",
+            default=2,
+            min=1, max=100,
+            description='Number of the rows'
+            )
     cols = IntProperty(
-                    name='Num of cols',
-                    default=2,
-                    min=1, max=100,
-                    description='Number of the columns'
-                    )
+            name='Num of cols',
+            default=2,
+            min=1, max=100,
+            description='Number of the columns'
+            )
     layers = BoolVectorProperty(
-                    name="Layers",
-                    size=20,
-                    subtype='LAYER',
-                    options={'HIDDEN', 'SKIP_SAVE'},
-                    )
+            name="Layers",
+            size=20,
+            subtype='LAYER',
+            options={'HIDDEN', 'SKIP_SAVE'},
+            )
     diam = FloatProperty(
-                    name='Cell Diameter',
-                    default=1.0,
-                    min=0.0, update=fix_edge,
-                    description='Diameter of the cell'
-                    )
+            name='Cell Diameter',
+            default=1.0,
+            min=0.0, update=fix_edge,
+            description='Diameter of the cell'
+            )
     edge = FloatProperty(
-                    name='Edge Width',
-                    default=0.1,
-                    min=0.0, update=fix_edge,
-                    description='Width of the edge'
-                    )
+            name='Edge Width',
+            default=0.1,
+            min=0.0, update=fix_edge,
+            description='Width of the edge'
+            )
     # generic transform props
     view_align = BoolProperty(
-                    name="Align to View",
-                    default=False
-                    )
+            name="Align to View",
+            default=False
+            )
     location = FloatVectorProperty(
-                    name="Location",
-                    subtype='TRANSLATION'
-                    )
+            name="Location",
+            subtype='TRANSLATION'
+            )
     rotation = FloatVectorProperty(
-                    name="Rotation",
-                    subtype='EULER'
-                    )
+            name="Rotation",
+            subtype='EULER'
+            )
 
     @classmethod
     def poll(cls, context):

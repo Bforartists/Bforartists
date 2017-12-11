@@ -971,7 +971,7 @@ def build_armature(layer_data, bones):
         else:
             nb.roll= 0.0
 
-        if prev_bone != None:
+        if prev_bone is not None:
             if nb.head == prev_bone.tail:
                 nb.parent= prev_bone
 

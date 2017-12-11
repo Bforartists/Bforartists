@@ -19,7 +19,6 @@
 # <pep8 compliant>
 
 import bpy
-from bpy.props import BoolProperty
 
 
 def console_namespace():
@@ -45,14 +44,14 @@ class VarStates:
 
     @staticmethod
     def store_states():
-        # Store the display states, called upon unregister the Addon
+        # Store the display states, called upon unregister the Add-on
         # This is useful when you press F8 to reload the Addons.
         # Then this function preserves the display states of the
         # console variables.
         state_props = bpy.context.window_manager.MathVisStatePropList
         variables = get_math_data()
         for key, ktype in variables.items():
-            if key and not key in state_props:
+            if key and key not in state_props:
                 prop = state_props.add()
                 prop.name = key
                 prop.ktype = ktype.__name__
@@ -107,7 +106,6 @@ def get_math_data():
 
 
 def cleanup_math_data():
-    from mathutils import Matrix, Vector, Quaternion, Euler
 
     locals = console_namespace()
     if not locals:

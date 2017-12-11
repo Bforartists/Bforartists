@@ -69,7 +69,7 @@ def DefSplitShapes(self, ACTIVESHAPE, LAYOUTCOMPAT):
 
 
 class CreaShapes(Operator):
-    """Divide on left and right the diffenrent Shapekeys. “Create Mix Groups” its required."""
+    """Divide on left and right the diffenrent Shapekeys. “Create Mix Groups” its required"""
     bl_idname = "mesh.split_lr_shapes_osc"
     bl_label = "Split LR Shapes"
     bl_options = {"REGISTER", "UNDO"}
@@ -103,7 +103,7 @@ class CreaShapes(Operator):
 # ----------------------------SHAPES LAYOUT-----------------------
 
 class CreaShapesLayout(Operator):
-    """Creates an interface to control the Shapekeys of symmetrical Objects. “Create Mix Groups” its required."""
+    """Creates an interface to control the Shapekeys of symmetrical Objects. “Create Mix Groups” its required"""
     bl_idname = "mesh.create_symmetrical_layout_osc"
     bl_label = "Symmetrical Layout"
     bl_options = {"REGISTER", "UNDO"}
@@ -275,7 +275,7 @@ def createLMRGroups(self, FACTORVG, ADDVG):
 
 
 class CreaGrupos(Operator):
-    """It creates a vertex group in symmetrical objects, ideal for smoothly mixing shapekeys."""
+    """It creates a vertex group in symmetrical objects, ideal for smoothly mixing shapekeys"""
     bl_idname = "mesh.create_lmr_groups_osc"
     bl_label = "Create Mix groups"
     bl_options = {'REGISTER', 'UNDO'}
@@ -308,7 +308,7 @@ class CreaGrupos(Operator):
 # ------------------------ SHAPES LAYOUT SYMMETRICA ------------------------
 
 class CreateLayoutAsymmetrical(Operator):
-    """Creates an interface to control the Shapekeys of symmetrical Objects. “Create Mix Groups” its required."""
+    """Creates an interface to control the Shapekeys of symmetrical Objects. “Create Mix Groups” its required"""
     bl_idname = "mesh.create_asymmetrical_layout_osc"
     bl_label = "Asymmetrical Layout"
     bl_options = {"REGISTER", "UNDO"}
@@ -444,7 +444,7 @@ class CreateLayoutAsymmetrical(Operator):
 # ---------------------------SHAPES TO OBJECTS------------------
 
 class ShapeToObjects(Operator):
-    """It creates a new object for every shapekey in the selected object, ideal to export to other 3D software Apps."""
+    """It creates a new object for every shapekey in the selected object, ideal to export to other 3D software Apps"""
     bl_idname = "object.shape_key_to_objects_osc"
     bl_label = "Shapes To Objects"
     bl_options = {"REGISTER", "UNDO"}

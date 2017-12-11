@@ -33,14 +33,12 @@ class Sections(object):
         def name(section):
             return section[1].value
 
-        bootstrap = True
         for section in iterchunks(tagreader, stoptag='EOF', endofchunk='ENDSEC'):
-            if bootstrap:
+            if name(section) == 'HEADER':
                 new_section = HeaderSection.from_tags(section)
                 drawing.dxfversion = new_section.get('$ACADVER', 'AC1009')
                 codepage = new_section.get('$DWGCODEPAGE', 'ANSI_1252')
                 drawing.encoding = toencoding(codepage)
-                bootstrap = False
             else:
                 section_name = name(section)
                 if section_name in SECTIONMAP:

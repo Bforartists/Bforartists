@@ -20,18 +20,35 @@ bl_info = {
     "name": "Auto Tile Size",
     "description": "Estimate and set the tile size that will render the fastest",
     "author": "Greg Zaal",
-    "version": (3, 1, 1),
+    "version": (3, 1, 2),
     "blender": (2, 74, 0),
     "location": "Render Settings > Performance",
     "warning": "",
-    "wiki_url": "http://wiki.blender.org/index.php?title=Extensions:2.6/Py/Scripts/Render/Auto_Tile_Size",
+    "wiki_url": "https://wiki.blender.org/index.php?title=Extensions:2.6/Py/"
+                "Scripts/Render/Auto_Tile_Size",
     "category": "Render",
 }
 
 
 import bpy
+from bpy.types import (
+        Operator,
+        PropertyGroup,
+        )
+from bpy.props import (
+        BoolProperty,
+        EnumProperty,
+        FloatVectorProperty,
+        IntProperty,
+        IntVectorProperty,
+        StringProperty,
+        PointerProperty,
+        )
 from bpy.app.handlers import persistent
-from math import ceil, floor, sqrt
+from math import (
+        ceil, floor,
+        sqrt,
+        )
 
 
 SUPPORTED_RENDER_ENGINES = {'CYCLES', 'BLENDER_RENDER'}
@@ -50,92 +67,135 @@ def _update_tile_size(self, context):
     do_set_tile_size(context)
 
 
-class AutoTileSizeSettings(bpy.types.PropertyGroup):
-    gpu_choice = bpy.props.EnumProperty(
-        name="Target GPU Tile Size",
-        items=TILE_SIZES,
-        default='256',
-        description="Square dimensions of tiles for GPU rendering",
-        update=_update_tile_size)
-    cpu_choice = bpy.props.EnumProperty(
-        name="Target CPU Tile Size",
-        items=TILE_SIZES,
-        default='32',
-        description="Square dimensions of tiles for CPU rendering",
-        update=_update_tile_size)
-    bi_choice = bpy.props.EnumProperty(
-        name="Target CPU Tile Size",
-        items=TILE_SIZES,
-        default='64',
-        description="Square dimensions of tiles",
-        update=_update_tile_size)
-
-    gpu_custom = bpy.props.IntProperty(
-        name="Target Size",
-        default=256,
-        min=8,  # same as blender's own limits
-        max=65536,
-        description="Custom target tile size for GPU rendering",
-        update=_update_tile_size)
-    cpu_custom = bpy.props.IntProperty(
-        name="Target Size",
-        default=32,
-        min=8,  # same as blender's own limits
-        max=65536,
-        description="Custom target tile size for CPU rendering",
-        update=_update_tile_size)
-    bi_custom = bpy.props.IntProperty(
-        name="Target Size",
-        default=64,
-        min=8,  # same as blender's own limits
-        max=65536,
-        description="Custom target tile size",
-        update=_update_tile_size)
-
-    target_type = bpy.props.EnumProperty(
-        name="Target tile size",
-        items=(
-            ('po2', "Po2", "A choice between powers of 2 (16, 32, 64...)"),
-            ('custom', "Custom", "Choose any number as the tile size target")),
-        default='po2',
-        description="Method of choosing the target tile size",
-        update=_update_tile_size)
-
-    use_optimal = bpy.props.BoolProperty(
-        name="Optimal Tiles",
-        default=True,
-        description="Try to find a similar tile size for best performance, instead of using exact selected one",
-        update=_update_tile_size)
-
-    is_enabled = bpy.props.BoolProperty(
-        name="Auto Tile Size",
-        default=True,
-        description="Calculate the best tile size based on factors of the render size and the chosen target",
-        update=_update_tile_size)
-
-    use_advanced_ui = bpy.props.BoolProperty(
-        name="Advanced Settings",
-        default=False,
-        description="Show extra options for more control over the calculated tile size")
-
-    thread_error_correct = bpy.props.BoolProperty(
-        name="Fix",
-        default=True,
-        description="Reduce the tile size so that all your available threads are used",
-        update=_update_tile_size)
+class AutoTileSizeSettings(PropertyGroup):
+    gpu_choice = EnumProperty(
+            name="Target GPU Tile Size",
+            items=TILE_SIZES,
+            default='256',
+            description="Square dimensions of tiles for GPU rendering",
+            update=_update_tile_size
+            )
+    cpu_choice = EnumProperty(
+            name="Target CPU Tile Size",
+            items=TILE_SIZES,
+            default='32',
+            description="Square dimensions of tiles for CPU rendering",
+            update=_update_tile_size
+            )
+    bi_choice = EnumProperty(
+            name="Target CPU Tile Size",
+            items=TILE_SIZES,
+            default='64',
+            description="Square dimensions of tiles",
+            update=_update_tile_size
+            )
+    gpu_custom = IntProperty(
+            name="Target Size",
+            default=256,
+            min=8,  # same as blender's own limits
+            max=65536,
+            description="Custom target tile size for GPU rendering",
+            update=_update_tile_size
+            )
+    cpu_custom = IntProperty(
+            name="Target Size",
+            default=32,
+            min=8,  # same as blender's own limits
+            max=65536,
+            description="Custom target tile size for CPU rendering",
+            update=_update_tile_size
+            )
+    bi_custom = IntProperty(
+            name="Target Size",
+            default=64,
+            min=8,  # same as blender's own limits
+            max=65536,
+            description="Custom target tile size",
+            update=_update_tile_size
+            )
+    target_type = EnumProperty(
+            name="Target tile size",
+            items=(
+                ('po2', "Po2", "A choice between powers of 2 (16, 32, 64...)"),
+                ('custom', "Custom", "Choose any number as the tile size target")),
+            default='po2',
+            description="Method of choosing the target tile size",
+            update=_update_tile_size
+            )
+    use_optimal = BoolProperty(
+            name="Optimal Tiles",
+            default=True,
+            description="Try to find a similar tile size for best performance, "
+                        "instead of using exact selected one",
+            update=_update_tile_size
+            )
+    is_enabled = BoolProperty(
+            name="Auto Tile Size",
+            default=True,
+            description="Calculate the best tile size based on factors of the "
+                        "render size and the chosen target",
+            update=_update_tile_size
+            )
+    use_advanced_ui = BoolProperty(
+            name="Advanced Settings",
+            default=False,
+            description="Show extra options for more control over the calculated tile size"
+            )
+    thread_error_correct = BoolProperty(
+            name="Fix",
+            default=True,
+            description="Reduce the tile size so that all your available threads are used",
+            update=_update_tile_size
+            )
 
     # Internally used props (not for GUI)
-    first_run = bpy.props.BoolProperty(default=True, options={'HIDDEN'})
-    threads_error = bpy.props.BoolProperty(options={'HIDDEN'})
-    num_tiles = bpy.props.IntVectorProperty(default=(0, 0), size=2, options={'HIDDEN'})
-    prev_choice = bpy.props.StringProperty(default='', options={'HIDDEN'})
-    prev_engine = bpy.props.StringProperty(default='', options={'HIDDEN'})
-    prev_device = bpy.props.StringProperty(default='', options={'HIDDEN'})
-    prev_res = bpy.props.IntVectorProperty(default=(0, 0), size=2, options={'HIDDEN'})
-    prev_border = bpy.props.BoolProperty(default=False, options={'HIDDEN'})
-    prev_border_res = bpy.props.FloatVectorProperty(default=(0, 0, 0, 0), size=4, options={'HIDDEN'})
-    prev_actual_tile_size = bpy.props.IntVectorProperty(default=(0, 0), size=2, options={'HIDDEN'})
-    prev_threads = bpy.props.IntProperty(default=0, options={'HIDDEN'})
+    first_run = BoolProperty(
+            default=True,
+            options={'HIDDEN'}
+            )
+    threads_error = BoolProperty(
+            options={'HIDDEN'}
+            )
+    num_tiles = IntVectorProperty(
+            default=(0, 0),
+            size=2,
+            options={'HIDDEN'}
+            )
+    prev_choice = StringProperty(
+            default='',
+            options={'HIDDEN'}
+            )
+    prev_engine = StringProperty(
+            default='',
+            options={'HIDDEN'}
+            )
+    prev_device = StringProperty(
+            default='',
+            options={'HIDDEN'}
+            )
+    prev_res = IntVectorProperty(
+            default=(0, 0),
+            size=2,
+            options={'HIDDEN'}
+            )
+    prev_border = BoolProperty(
+            default=False,
+            options={'HIDDEN'}
+            )
+    prev_border_res = FloatVectorProperty(
+            default=(0, 0, 0, 0),
+            size=4,
+            options={'HIDDEN'}
+            )
+    prev_actual_tile_size = IntVectorProperty(
+            default=(0, 0),
+            size=2,
+            options={'HIDDEN'}
+            )
+    prev_threads = IntProperty(
+            default=0,
+            options={'HIDDEN'}
+            )
 
 
 def ats_poll(context):
@@ -202,6 +262,7 @@ def get_actual_res(render):
     # floor is implicitly done by int conversion...
     return (int(render.resolution_x * rend_percent), int(render.resolution_y * rend_percent))
 
+
 def get_threads(context, device):
     render = context.scene.render
     engine = render.engine
@@ -214,6 +275,7 @@ def get_threads(context, device):
 
     return threads
 
+
 def max_tile_size(threads, xres, yres):
     ''' Give the largest tile size that will still use all threads '''
 
@@ -223,7 +285,7 @@ def max_tile_size(threads, xres, yres):
 
     # lists: num x tiles, num y tiles, squareness, total tiles
     perfect_attempts = []  # attempts with correct number of tiles
-    attempts = []  # all attempts, even if incorrect number of tiles
+    attempts = []          # all attempts, even if incorrect number of tiles
 
     axes = [xres, yres]
     funcs = [floor, ceil]
@@ -234,13 +296,15 @@ def max_tile_size(threads, xres, yres):
             primary = func(axis / tile_length)
             if primary > 0:
                 secondary = threads / primary
-                ts_p = axis/primary
-                ts_s = sec_axis/secondary
+                ts_p = axis / primary
+                ts_s = sec_axis / secondary
                 squareness = max(ts_p, ts_s) - min(ts_p, ts_s)
-                attempt = [primary if axis == xres else secondary, primary if axis != xres else secondary, squareness, primary * secondary]
+                attempt = [primary if axis == xres else secondary, primary if
+                           axis != xres else secondary, squareness, primary * secondary]
                 if attempt not in attempts:
                     attempts.append(attempt)
-                    if secondary.is_integer():  # will only be an integer if there are the right number of tiles
+                    # will only be an integer if there are the right number of tiles
+                    if secondary.is_integer():
                         perfect_attempts.append(attempt)
 
     if perfect_attempts:  # prefer to use attempt that has exactly the right number of tiles
@@ -253,6 +317,7 @@ def max_tile_size(threads, xres, yres):
     tile_y = ceil(yres / numtiles_y)
 
     return (tile_x, tile_y)
+
 
 def do_set_tile_size(context):
     if not ats_poll(context):
@@ -295,7 +360,7 @@ def do_set_tile_size(context):
         settings.threads_error = True
         if settings.thread_error_correct:
             tile_x, tile_y = max_tile_size(threads, xres, yres)
-            settings.num_tiles = (ceil(xres/tile_x), ceil(yres/tile_y))
+            settings.num_tiles = (ceil(xres / tile_x), ceil(yres / tile_y))
     else:
         settings.threads_error = False
 
@@ -314,17 +379,18 @@ def do_set_tile_size(context):
     settings.prev_threads = threads
     settings.prev_choice = str(choice)
     settings.prev_res = res
-    settings.prev_border_res = (render.border_min_x, render.border_min_y, render.border_max_x, render.border_max_y)
+    settings.prev_border_res = (render.border_min_x, render.border_min_y,
+                                render.border_max_x, render.border_max_y)
     settings.prev_actual_tile_size = (tile_x, tile_y)
     settings.first_run = False
 
     return True
 
 
-class SetTileSize(bpy.types.Operator):
-    """The first render may not obey the tile-size set here"""
+class SetTileSize(Operator):
     bl_idname = "render.autotilesize_set"
     bl_label = "Set"
+    bl_description = "The first render may not obey the tile-size set here"
 
     @classmethod
     def poll(clss, context):
@@ -366,7 +432,10 @@ def ui_layout(engine, layout, context):
         row.prop(settings, get_tilesize_prop(engine, device, userpref), expand=True)
         sub.prop(settings, "use_optimal", text="Calculate Optimal Size")
 
-        sub.label("Number of tiles: %s x %s (Total: %s)" % (settings.num_tiles[0], settings.num_tiles[1], settings.num_tiles[0] * settings.num_tiles[1]))
+        sub.label("Number of tiles: %s x %s (Total: %s)" %
+                 (settings.num_tiles[0], settings.num_tiles[1],
+                 settings.num_tiles[0] * settings.num_tiles[1])
+                 )
 
     if settings.first_run:
         sub = layout.column(align=True)
@@ -375,9 +444,11 @@ def ui_layout(engine, layout, context):
         sub = layout.column(align=True)
         sub.operator("render.autotilesize_set", text="Device changed - fix", icon='ERROR')
 
-    if (render.tile_x / render.tile_y > 2) or (render.tile_x / render.tile_y < 0.5):  # if not very square tile
+    # if not very square tile
+    if (render.tile_x / render.tile_y > 2) or (render.tile_x / render.tile_y < 0.5):
         sub.label(text="Warning: Tile size is not very square", icon='ERROR')
         sub.label(text="    Try a slightly different resolution")
+
     if settings.threads_error:
         row = sub.row(align=True)
         row.alignment = 'CENTER'
@@ -398,10 +469,13 @@ def menu_func_bi(self, context):
 def register():
     bpy.utils.register_module(__name__)
 
-    bpy.types.Scene.ats_settings = bpy.props.PointerProperty(type=AutoTileSizeSettings)
+    bpy.types.Scene.ats_settings = PointerProperty(
+                                        type=AutoTileSizeSettings
+                                        )
 
-    # Note, the Cycles addon must be registered first, otherwise this panel doesn't exist - better be safe here!
-    cycles_panel = getattr(bpy.types, "CyclesRender_PT_performance", None)
+    # Note, the Cycles addon must be registered first, otherwise
+    # this panel doesn't exist - better be safe here!
+    cycles_panel = getattr(bpy.types, "CYCLES_RENDER_PT_performance", None)
     if cycles_panel is not None:
         cycles_panel.append(menu_func_cycles)
 
@@ -413,7 +487,7 @@ def unregister():
     bpy.app.handlers.scene_update_post.remove(on_scene_update)
     bpy.types.RENDER_PT_performance.remove(menu_func_bi)
 
-    cycles_panel = getattr(bpy.types, "CyclesRender_PT_performance", None)
+    cycles_panel = getattr(bpy.types, "CYCLES_RENDER_PT_performance", None)
     if cycles_panel is not None:
         cycles_panel.remove(menu_func_cycles)
 

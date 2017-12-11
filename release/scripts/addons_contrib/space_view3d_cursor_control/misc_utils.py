@@ -19,14 +19,12 @@
 
 """
     misc_util.py
-    
-    Miscellaneous helper methods.
-
+    Miscellaneous helper methods
 """
 
 import bpy
-from mathutils import Vector, Matrix
-from .cursor_utils import *
+from mathutils import Vector
+from .cursor_utils import CursorAccess
 
 
 class BlenderFake:

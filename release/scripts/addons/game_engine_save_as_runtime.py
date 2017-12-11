@@ -70,13 +70,13 @@ def WriteAppleRuntime(player_path, output_path, copy_python, overwrite_lib):
 
     # Use the system's cp command to preserve some meta-data
     os.system('cp -R "%s" "%s"' % (player_path, output_path))
-    
+
     bpy.ops.wm.save_as_mainfile(filepath=os.path.join(output_path, "Contents/Resources/game.blend"),
                                 relative_remap=False,
                                 compress=False,
                                 copy=True,
                                 )
-    
+
     # Python doesn't need to be copied for OS X since it's already inside blenderplayer.app
 
 
@@ -87,22 +87,22 @@ def WriteRuntime(player_path, output_path, copy_python, overwrite_lib, copy_dlls
     if not os.path.isfile(player_path) and not(os.path.exists(player_path) and player_path.endswith('.app')):
         report({'ERROR'}, "The player could not be found! Runtime not saved")
         return
-    
+
     # Check if we're bundling a .app
     if player_path.endswith('.app'):
         WriteAppleRuntime(player_path, output_path, copy_python, overwrite_lib)
         return
-        
+
     # Enforce "exe" extension on Windows
     if player_path.endswith('.exe') and not output_path.endswith('.exe'):
         output_path += '.exe'
-    
+
     # Get the player's binary and the offset for the blend
     file = open(player_path, 'rb')
     player_d = file.read()
     offset = file.tell()
     file.close()
-    
+
     # Create a tmp blend file (Blenderplayer doesn't like compressed blends)
     tempdir = tempfile.mkdtemp()
     blend_path = os.path.join(tempdir, bpy.path.clean_name(output_path))
@@ -111,7 +111,7 @@ def WriteRuntime(player_path, output_path, copy_python, overwrite_lib, copy_dlls
                                 compress=False,
                                 copy=True,
                                 )
-    
+
     # Get the blend data
     blend_file = open(blend_path, 'rb')
     blend_d = blend_file.read()
@@ -120,35 +120,35 @@ def WriteRuntime(player_path, output_path, copy_python, overwrite_lib, copy_dlls
     # Get rid of the tmp blend, we're done with it
     os.remove(blend_path)
     os.rmdir(tempdir)
-    
+
     # Create a new file for the bundled runtime
     output = open(output_path, 'wb')
-    
+
     # Write the player and blend data to the new runtime
     print("Writing runtime...", end=" ")
     output.write(player_d)
     output.write(blend_d)
-    
+
     # Store the offset (an int is 4 bytes, so we split it up into 4 bytes and save it)
     output.write(struct.pack('B', (offset>>24)&0xFF))
     output.write(struct.pack('B', (offset>>16)&0xFF))
     output.write(struct.pack('B', (offset>>8)&0xFF))
     output.write(struct.pack('B', (offset>>0)&0xFF))
-    
+
     # Stuff for the runtime
     output.write(b'BRUNTIME')
     output.close()
-    
+
     print("done")
-    
+
     # Make the runtime executable on Linux
     if os.name == 'posix':
         os.chmod(output_path, 0o755)
-        
+
     # Copy bundled Python
     blender_dir = os.path.dirname(bpy.app.binary_path)
     runtime_dir = os.path.dirname(output_path)
-    
+
     if copy_python:
         print("Copying Python files...", end=" ")
         py_folder = os.path.join(bpy.app.version_string.split()[0], "python", "lib")
@@ -173,7 +173,7 @@ class SaveAsRuntime(bpy.types.Operator):
     bl_idname = "wm.save_as_runtime"
     bl_label = "Save As Game Engine Runtime"
     bl_options = {'REGISTER'}
-    
+
     if sys.platform == 'darwin':
         # XXX, this line looks suspicious, could be done better?
         blender_bin_dir = '/' + os.path.join(*bpy.app.binary_path.split('/')[0:-4])
@@ -213,7 +213,7 @@ class SaveAsRuntime(bpy.types.Operator):
                 )
     else:
         copy_dlls = False
-    
+
     def execute(self, context):
         import time
         start_time = time.clock()

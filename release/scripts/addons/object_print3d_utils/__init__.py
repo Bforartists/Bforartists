@@ -16,16 +16,16 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-# <pep8-80 compliant>
+# <pep8 compliant>
 
 bl_info = {
     "name": "3D Print Toolbox",
     "author": "Campbell Barton",
-    "blender": (2, 65, 0),
+    "blender": (2, 79, 0),
     "location": "3D View > Toolbox",
     "description": "Utilities for 3D printing",
     "warning": "",
-    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
+    "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
                 "Scripts/Modeling/PrintToolbox",
     "support": 'OFFICIAL',
     "category": "Mesh"}
@@ -37,6 +37,8 @@ if "bpy" in locals():
     importlib.reload(operators)
     importlib.reload(mesh_helpers)
 else:
+    import math
+
     import bpy
     from bpy.props import (
             StringProperty,
@@ -49,15 +51,14 @@ else:
             AddonPreferences,
             PropertyGroup,
             )
+
     from . import (
             ui,
             operators,
             )
 
-import math
 
-
-class Print3DSettings(PropertyGroup):
+class Print3D_Scene_Props(PropertyGroup):
     export_format = EnumProperty(
             name="Format",
             description="Format type to export to",
@@ -118,69 +119,76 @@ class Print3DSettings(PropertyGroup):
             )
 
 
-# Addons Preferences Update Panel
-def update_panel(self, context):
+# Update panel category name
+panels = (
+    ui.VIEW3D_PT_Print3D_Object,
+    ui.VIEW3D_PT_Print3D_Mesh,
+    )
+
+
+def update_panels(self, context):
     try:
-        bpy.utils.unregister_class(ui.Print3DToolBarObject)
-        bpy.utils.unregister_class(ui.Print3DToolBarMesh)
-    except:
-        pass
-    ui.Print3DToolBarObject.bl_category = context.user_preferences.addons[__name__].preferences.category
-    bpy.utils.register_class(ui.Print3DToolBarObject)
-    ui.Print3DToolBarMesh.bl_category = context.user_preferences.addons[__name__].preferences.category
-    bpy.utils.register_class(ui.Print3DToolBarMesh)
+        for panel in panels:
+            if "bl_rna" in panel.__dict__:
+                bpy.utils.unregister_class(panel)
+
+        for panel in panels:
+            panel.bl_category = context.user_preferences.addons[__name__].preferences.category
+            bpy.utils.register_class(panel)
+
+    except Exception as e:
+        message = "3D Print Toolbox: Updating Panel locations has failed"
+        print("\n[{}]\n{}\n\nError:\n{}".format(__name__, message, e))
 
 
-class printpreferences(AddonPreferences):
-    # this must match the addon name, use '__package__'
-    # when defining this in a submodule of a python package.
+class Print3D_Preferences(AddonPreferences):
     bl_idname = __name__
 
-    category = bpy.props.StringProperty(
+    category = StringProperty(
             name="Tab Category",
             description="Choose a name for the category of the panel",
             default="3D Printing",
-            update=update_panel)
+            update=update_panels,
+            )
 
     def draw(self, context):
-
         layout = self.layout
-        row = layout.row()
-        col = row.column()
+
+        col = layout.column()
         col.label(text="Tab Category:")
         col.prop(self, "category", text="")
 
 
 classes = (
-    ui.Print3DToolBarObject,
-    ui.Print3DToolBarMesh,
+    ui.VIEW3D_PT_Print3D_Object,
+    ui.VIEW3D_PT_Print3D_Mesh,
 
-    operators.Print3DInfoVolume,
-    operators.Print3DInfoArea,
+    operators.MESH_OT_Print3D_Info_Volume,
+    operators.MESH_OT_Print3D_Info_Area,
 
-    operators.Print3DCheckDegenerate,
-    operators.Print3DCheckDistorted,
-    operators.Print3DCheckSolid,
-    operators.Print3DCheckIntersections,
-    operators.Print3DCheckThick,
-    operators.Print3DCheckSharp,
-    operators.Print3DCheckOverhang,
-    operators.Print3DCheckAll,
+    operators.MESH_OT_Print3D_Check_Degenerate,
+    operators.MESH_OT_Print3D_Check_Distorted,
+    operators.MESH_OT_Print3D_Check_Solid,
+    operators.MESH_OT_Print3D_Check_Intersections,
+    operators.MESH_OT_Print3D_Check_Thick,
+    operators.MESH_OT_Print3D_Check_Sharp,
+    operators.MESH_OT_Print3D_Check_Overhang,
+    operators.MESH_OT_Print3D_Check_All,
 
-    operators.Print3DCleanIsolated,
-    operators.Print3DCleanDistorted,
-    # operators.Print3DCleanThin,
-    operators.Print3DCleanNonManifold,
+    operators.MESH_OT_Print3D_Clean_Isolated,
+    operators.MESH_OT_Print3D_Clean_Distorted,
+    # operators.MESH_OT_Print3D_Clean_Thin,
+    operators.MESH_OT_Print3D_Clean_Non_Manifold,
 
-    operators.Print3DSelectReport,
+    operators.MESH_OT_Print3D_Select_Report,
 
-    operators.Print3DScaleToVolume,
-    operators.Print3DScaleToBounds,
+    operators.MESH_OT_Print3D_Scale_To_Volume,
+    operators.MESH_OT_Print3D_Scale_To_Bounds,
 
-    operators.Print3DExport,
+    operators.MESH_OT_Print3D_Export,
 
-    Print3DSettings,
-    printpreferences,
+    Print3D_Scene_Props,
+    Print3D_Preferences,
     )
 
 
@@ -188,7 +196,9 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
-    bpy.types.Scene.print_3d = PointerProperty(type=Print3DSettings)
+    bpy.types.Scene.print_3d = PointerProperty(type=Print3D_Scene_Props)
+
+    update_panels(None, bpy.context)
 
 
 def unregister():

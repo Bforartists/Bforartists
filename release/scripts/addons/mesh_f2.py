@@ -289,7 +289,7 @@ def quad_from_vertex(bm, vert_sel, context, event):
                             uv_others[loop.vert.index] = loop[uv_layer].uv
                             break
                 if len(uv_others) == 2:
-                    mid_other = (list(uv_others.values())[0] + 
+                    mid_other = (list(uv_others.values())[0] +
                         list(uv_others.values())[1]) / 2
                     for loop in vert_sel.link_loops:
                         if loop.face.index > -1:
@@ -397,7 +397,7 @@ def unregister():
     for km, kmi in addon_keymaps:
         km.keymap_items.remove(kmi)
     addon_keymaps.clear()
-    
+
     # remove operator and preferences
     for c in reversed(classes):
         bpy.utils.unregister_class(c)

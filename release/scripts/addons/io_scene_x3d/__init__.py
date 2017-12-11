@@ -93,7 +93,7 @@ class ExportX3D(bpy.types.Operator, ExportHelper, IOX3DOrientationHelper):
     use_selection = BoolProperty(
             name="Selection Only",
             description="Export selected objects only",
-            default=True,
+            default=True, # bfa - changed the default from false to true
             )
     use_mesh_modifiers = BoolProperty(
             name="Apply Modifiers",

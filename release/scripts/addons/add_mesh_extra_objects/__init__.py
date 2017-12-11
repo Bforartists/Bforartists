@@ -16,30 +16,27 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 # Contributed to by:
-# Pontiac, Fourmadmen, varkenvarken, tuga3d, meta-androcto, metalliandy #
-# dreampainter, cotejrp1, liero, Kayo Phoenix, sugiany, dommetysk #
-# Phymec, Anthony D'Agostino, Pablo Vazquez, Richard Wilks, lijenstina #
-# xyz presets by elfnor
+# Pontiac, Fourmadmen, varkenvarken, tuga3d, meta-androcto, metalliandy     #
+# dreampainter, cotejrp1, liero, Kayo Phoenix, sugiany, dommetysk, Jambay   #
+# Phymec, Anthony D'Agostino, Pablo Vazquez, Richard Wilks, lijenstina,     #
+# Sjaak-de-Draak, Phil Cote, cotejrp1, xyz presets by elfnor, revolt_randy, #
+
 
 bl_info = {
     "name": "Extra Objects",
     "author": "Multiple Authors",
-    "version": (0, 3, 1),
+    "version": (0, 3, 2),
     "blender": (2, 74, 5),
     "location": "View3D > Add > Mesh",
     "description": "Add extra mesh object types",
     "warning": "",
-    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Add_Mesh/Add_Extra",
+    "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/"
+                "Py/Scripts/Add_Mesh/Add_Extra",
     "category": "Add Mesh",
 }
 
-from .geodesic_domes import __init__
-from .geodesic_domes import add_shape_geodesic
-from .geodesic_domes import forms_271
-from .geodesic_domes import geodesic_classes_271
-from .geodesic_domes import third_domes_panel_271
-from .geodesic_domes import vefm_271
-
+# Note: Blocks has to be loaded before the WallFactory or the script
+#       will not work properly after (F8) reload
 
 if "bpy" in locals():
     import importlib
@@ -62,8 +59,14 @@ if "bpy" in locals():
     importlib.reload(add_empty_as_parent)
     importlib.reload(mesh_discombobulator)
     importlib.reload(add_mesh_beam_builder)
-    importlib.reload(Wallfactory)
     importlib.reload(Blocks)
+    importlib.reload(Wallfactory)
+    importlib.reload(add_shape_geodesic)
+    importlib.reload(forms_271)
+    importlib.reload(geodesic_classes_271)
+    importlib.reload(third_domes_panel_271)
+    importlib.reload(vefm_271)
+    importlib.reload(add_mesh_triangles)
 else:
     from . import add_mesh_star
     from . import add_mesh_twisted_torus
@@ -84,8 +87,15 @@ else:
     from . import add_empty_as_parent
     from . import mesh_discombobulator
     from . import add_mesh_beam_builder
-    from . import Wallfactory
     from . import Blocks
+    from . import Wallfactory
+    from . import add_mesh_triangles
+
+    from .geodesic_domes import add_shape_geodesic
+    from .geodesic_domes import forms_271
+    from .geodesic_domes import geodesic_classes_271
+    from .geodesic_domes import third_domes_panel_271
+    from .geodesic_domes import vefm_271
 
 import bpy
 from bpy.types import Menu
@@ -159,6 +169,7 @@ class INFO_MT_mesh_math_add(Menu):
         layout.operator("mesh.primitive_xyz_function_surface",
                         text="XYZ Math Surface")
         self.layout.operator("mesh.primitive_solid_add", text="Regular Solid")
+        self.layout.operator("mesh.make_triangle", icon="MESH_DATA")
 
 
 class INFO_MT_mesh_mech(Menu):
@@ -243,97 +254,97 @@ class discombobulator_scene_props(bpy.types.PropertyGroup):
     DISC_doodads = []
     # Protusions Buttons:
     repeatprot = IntProperty(
-                        name="Repeat protusions",
-                        description=("Make several layers of protusion \n"
-                                     "Use carefully, runs recursively the discombulator"),
-                        default=1, min=1, max=4  # set to 4 because it's 2**n reqursive
-                        )
+            name="Repeat protusions",
+            description=("Make several layers of protusion \n"
+                         "Use carefully, runs recursively the discombulator"),
+            default=1, min=1, max=4  # set to 4 because it's 2**n reqursive
+            )
     doprots = BoolProperty(
-                        name="Make protusions",
-                        description="Check if we want to add protusions to the mesh",
-                        default=True
-                        )
+            name="Make protusions",
+            description="Check if we want to add protusions to the mesh",
+            default=True
+            )
     subpolygon1 = BoolProperty(
-                        name="1",
-                        default=True
-                        )
+            name="1",
+            default=True
+            )
     subpolygon2 = BoolProperty(
-                        name="2",
-                        default=True
-                        )
+            name="2",
+            default=True
+            )
     subpolygon3 = BoolProperty(
-                        name="3",
-                        default=True
-                        )
+            name="3",
+            default=True
+            )
     subpolygon4 = BoolProperty(
-                        name="4",
-                        default=True
-                        )
+            name="4",
+            default=True
+            )
     polygonschangedpercent = FloatProperty(
-                        name="Polygon %",
-                        description="Percentage of changed polygons",
-                        default=1.0
-                        )
+            name="Polygon %",
+            description="Percentage of changed polygons",
+            default=1.0
+            )
     minHeight = FloatProperty(
-                        name="Min height",
-                        description="Minimal height of the protusions",
-                        default=0.2
-                        )
+            name="Min height",
+            description="Minimal height of the protusions",
+            default=0.2
+            )
     maxHeight = FloatProperty(
-                        name="Max height",
-                        description="Maximal height of the protusions",
-                        default=0.4
-                        )
+            name="Max height",
+            description="Maximal height of the protusions",
+            default=0.4
+            )
     minTaper = FloatProperty(
-                        name="Min taper",
-                        description="Minimal height of the protusions",
-                        default=0.15, min=0.0, max=1.0,
-                        subtype='PERCENTAGE'
-                        )
+            name="Min taper",
+            description="Minimal height of the protusions",
+            default=0.15, min=0.0, max=1.0,
+            subtype='PERCENTAGE'
+            )
     maxTaper = FloatProperty(
-                        name="Max taper",
-                        description="Maximal height of the protusions",
-                        default=0.35, min=0.0, max=1.0,
-                        subtype='PERCENTAGE'
-                        )
+            name="Max taper",
+            description="Maximal height of the protusions",
+            default=0.35, min=0.0, max=1.0,
+            subtype='PERCENTAGE'
+            )
     # Doodads buttons:
     dodoodads = BoolProperty(
-                        name="Make doodads",
-                        description="Check if we want to generate doodads",
-                        default=False
-                        )
+            name="Make doodads",
+            description="Check if we want to generate doodads",
+            default=False
+            )
     mindoodads = IntProperty(
-                        name="Minimum doodads number",
-                        description="Ask for the minimum number of doodads to generate per polygon",
-                        default=1, min=0, max=50
-                        )
+            name="Minimum doodads number",
+            description="Ask for the minimum number of doodads to generate per polygon",
+            default=1, min=0, max=50
+            )
     maxdoodads = IntProperty(
-                        name="Maximum doodads number",
-                        description="Ask for the maximum number of doodads to generate per polygon",
-                        default=6, min=1, max=50
-                        )
+            name="Maximum doodads number",
+            description="Ask for the maximum number of doodads to generate per polygon",
+            default=6, min=1, max=50
+            )
     doodMinScale = FloatProperty(
-                        name="Scale min", description="Minimum scaling of doodad",
-                        default=0.5, min=0.0, max=1.0,
-                        subtype='PERCENTAGE'
-                        )
+            name="Scale min", description="Minimum scaling of doodad",
+            default=0.5, min=0.0, max=1.0,
+            subtype='PERCENTAGE'
+            )
     doodMaxScale = FloatProperty(
-                        name="Scale max",
-                        description="Maximum scaling of doodad",
-                        default=1.0, min=0.0, max=1.0,
-                        subtype='PERCENTAGE'
-                        )
+            name="Scale max",
+            description="Maximum scaling of doodad",
+            default=1.0, min=0.0, max=1.0,
+            subtype='PERCENTAGE'
+            )
     # Materials buttons:
     sideProtMat = IntProperty(
-                        name="Side's prot mat",
-                        description="Material of protusion's sides",
-                        default=0, min=0
-                        )
+            name="Side's prot mat",
+            description="Material of protusion's sides",
+            default=0, min=0
+            )
     topProtMat = IntProperty(
-                        name="Prot's top mat",
-                        description="Material of protusion's top",
-                        default=0, min=0
-                        )
+            name="Prot's top mat",
+            description="Material of protusion's top",
+            default=0, min=0
+            )
 
 
 # Register all operators and panels

@@ -1,4 +1,4 @@
-# ***** BEGIN GPL LICENSE BLOCK *****
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -14,36 +14,36 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
-# ***** END GPL LICENCE BLOCK *****
+# ##### END GPL LICENCE BLOCK #####
 
 bl_info = {
     "name": "Bone Selection Sets",
     "author": "Inês Almeida, Antony Riakiotakis, Dan Eicher",
-    "version": (2, 0, 0),
+    "version": (2, 0, 1),
     "blender": (2, 75, 0),
     "location": "Properties > Object Data (Armature) > Selection Sets",
     "description": "List of Bone sets for easy selection while animating",
     "warning": "",
-    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
+    "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
                 "Scripts/Animation/SelectionSets",
     "category": "Animation",
 }
 
 import bpy
 from bpy.types import (
-    Operator,
-    Menu,
-    Panel,
-    UIList,
-    PropertyGroup,
-)
-
+        Operator,
+        Menu,
+        Panel,
+        UIList,
+        PropertyGroup,
+        )
 from bpy.props import (
-    StringProperty,
-    IntProperty,
-    EnumProperty,
-    CollectionProperty,
-)
+        StringProperty,
+        IntProperty,
+        EnumProperty,
+        CollectionProperty,
+        )
+
 
 # Data Structure ##############################################################
 
@@ -78,25 +78,24 @@ class POSE_PT_selection_sets(Panel):
 
     @classmethod
     def poll(cls, context):
-        return (context.object
-            and context.object.type == 'ARMATURE'
-            and context.object.pose)
+        return (context.object and
+                context.object.type == 'ARMATURE' and
+                context.object.pose)
 
     def draw(self, context):
         layout = self.layout
 
-        ob = context.object
         arm = context.object
 
         row = layout.row()
         row.enabled = (context.mode == 'POSE')
 
         # UI list
-        rows = 4  if len(arm.selection_sets) > 0 else 1
+        rows = 4 if len(arm.selection_sets) > 0 else 1
         row.template_list(
-            "POSE_UL_selection_set", "", # type and unique id
-            arm, "selection_sets", # pointer to the CollectionProperty
-            arm, "active_selection_set", # pointer to the active identifier
+            "POSE_UL_selection_set", "",  # type and unique id
+            arm, "selection_sets",  # pointer to the CollectionProperty
+            arm, "active_selection_set",  # pointer to the active identifier
             rows=rows
         )
 
@@ -130,7 +129,7 @@ class POSE_UL_selection_set(UIList):
 
 
 class POSE_MT_create_new_selection_set(Menu):
-    bl_idname = "pose.selection_set_create_new_popup"
+    bl_idname = "POSE_MT_selection_set_create"
     bl_label = "Choose Selection Set"
 
     def draw(self, context):
@@ -148,13 +147,14 @@ class PluginOperator(Operator):
                 context.object.type == 'ARMATURE' and
                 context.mode == 'POSE')
 
+
 class NeedSelSetPluginOperator(PluginOperator):
     @classmethod
     def poll(self, context):
         if super().poll(context):
-            arm =  context.object
-            return (arm.active_selection_set < len(arm.selection_sets)
-                and arm.active_selection_set >= 0)
+            arm = context.object
+            return (arm.active_selection_set < len(arm.selection_sets) and
+                    arm.active_selection_set >= 0)
         return False
 
 
@@ -208,7 +208,7 @@ class POSE_OT_selection_set_move(NeedSelSetPluginOperator):
     @classmethod
     def poll(self, context):
         if super().poll(context):
-            arm =  context.object
+            arm = context.object
             return len(arm.selection_sets) > 1
         return False
 
@@ -233,7 +233,6 @@ class POSE_OT_selection_set_add(PluginOperator):
     bl_description = "Creates a new empty Selection Set"
     bl_options = {'UNDO', 'REGISTER'}
 
-
     def execute(self, context):
         arm = context.object
 
@@ -241,7 +240,7 @@ class POSE_OT_selection_set_add(PluginOperator):
 
         # naming
         if "SelectionSet" not in arm.selection_sets:
-            new_sel_set.name  = "SelectionSet"
+            new_sel_set.name = "SelectionSet"
         else:
             sorted_sets = []
             for selset in arm.selection_sets:
@@ -294,12 +293,11 @@ class POSE_OT_selection_set_assign(PluginOperator):
 
         if not (arm.active_selection_set < len(arm.selection_sets)):
             bpy.ops.wm.call_menu("INVOKE_DEFAULT",
-                name="pose.selection_set_create_new_popup")
+                name="POSE_MT_selection_set_create")
         else:
             bpy.ops.pose.selection_set_assign('EXEC_DEFAULT')
 
         return {'FINISHED'}
-
 
     def execute(self, context):
         arm = context.object
@@ -345,7 +343,7 @@ class POSE_OT_selection_set_select(NeedSelSetPluginOperator):
 
         for bone in context.visible_pose_bones:
             if bone.name in act_sel_set.bone_ids:
-                 bone.bone.select = True
+                bone.bone.select = True
 
         return {'FINISHED'}
 
@@ -378,6 +376,7 @@ class POSE_OT_selection_set_add_and_assign(PluginOperator):
         bpy.ops.pose.selection_set_assign('EXEC_DEFAULT')
         return {'FINISHED'}
 
+
 # Registry ####################################################################
 
 classes = (
@@ -399,20 +398,21 @@ classes = (
     POSE_OT_selection_set_add_and_assign,
 )
 
+
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
     bpy.types.Object.selection_sets = CollectionProperty(
-        type=SelectionSet,
-        name="Selection Sets",
-        description="List of groups of bones for easy selection"
-    )
+            type=SelectionSet,
+            name="Selection Sets",
+            description="List of groups of bones for easy selection"
+            )
     bpy.types.Object.active_selection_set = IntProperty(
-        name="Active Selection Set",
-        description="Index of the currently active selection set",
-        default=0
-    )
+            name="Active Selection Set",
+            description="Index of the currently active selection set",
+            default=0
+            )
 
 
 def unregister():

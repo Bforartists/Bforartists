@@ -63,7 +63,7 @@ if "bpy" in locals():
     imp.reload(archipack_floor)
     imp.reload(archipack_rendering)
 
-    print("archipack: reload ready")
+    # print("archipack: reload ready")
 else:
     from . import archipack_progressbar
     from . import archipack_material
@@ -82,7 +82,7 @@ else:
     from . import archipack_floor
     from . import archipack_rendering
 
-    print("archipack: ready")
+    # print("archipack: ready")
 
 # noinspection PyUnresolvedReferences
 import bpy
@@ -261,7 +261,7 @@ class Archipack_Pref(AddonPreferences):
         col.label(text="Manipulators:")
         col.prop(self, "arrow_size")
         col.prop(self, "handle_size")
-
+        # layout.operator("archipack.render_thumbs")
 
 # ----------------------------------------------------
 # Archipack panels
@@ -283,18 +283,16 @@ class TOOLS_PT_Archipack_Tools(Panel):
     def draw(self, context):
         wm = context.window_manager
         layout = self.layout
-        row = layout.row(align=True)
-        box = row.box()
+        box = layout.box()
         box.label("Auto boolean")
-        row = box.row(align=True)
-        row.operator("archipack.auto_boolean", text="AutoBoolean", icon='AUTO').mode = 'HYBRID'
-        row = layout.row(align=True)
-        box = row.box()
+        box.operator("archipack.auto_boolean", text="AutoBoolean", icon='AUTO').mode = 'HYBRID'
+        box = layout.box()
         box.label("Rendering")
-        row = box.row(align=True)
-        row.prop(wm.archipack, 'render_type', text="")
-        row = box.row(align=True)
-        row.operator("archipack.render", icon='RENDER_STILL')
+        box.prop(wm.archipack, 'render_type', text="")
+        box.operator("archipack.render", icon='RENDER_STILL')
+        box = layout.box()
+        box.label("Render presets Thumbnails")
+        box.operator("archipack.render_thumbs", icon='ERROR')
 
 
 class TOOLS_PT_Archipack_Create(Panel):
@@ -435,9 +433,8 @@ def draw_menu(self, context):
                     ).preset_operator = "archipack.roof"
 
 
-class ARCHIPACK_create_menu(Menu):
+class ARCHIPACK_MT_create(Menu):
     bl_label = 'Archipack'
-    bl_idname = 'ARCHIPACK_create_menu'
 
     def draw(self, context):
         draw_menu(self, context)
@@ -452,7 +449,7 @@ def menu_func(self, context):
     # either draw sub menu or right at end of this one
     if context.user_preferences.addons[__name__].preferences.create_submenu:
         layout.operator_context = 'INVOKE_REGION_WIN'
-        layout.menu("ARCHIPACK_create_menu", icon_value=icons["archipack"].icon_id)
+        layout.menu("ARCHIPACK_MT_create", icon_value=icons["archipack"].icon_id)
     else:
         draw_menu(self, context)
 
@@ -506,14 +503,14 @@ def register():
     WindowManager.archipack = PointerProperty(type=archipack_data)
     bpy.utils.register_class(Archipack_Pref)
     update_panel(None, bpy.context)
-    bpy.utils.register_class(ARCHIPACK_create_menu)
+    bpy.utils.register_class(ARCHIPACK_MT_create)
     bpy.types.INFO_MT_mesh_add.append(menu_func)
 
 
 def unregister():
     global icons_collection
     bpy.types.INFO_MT_mesh_add.remove(menu_func)
-    bpy.utils.unregister_class(ARCHIPACK_create_menu)
+    bpy.utils.unregister_class(ARCHIPACK_MT_create)
 
     bpy.utils.unregister_class(TOOLS_PT_Archipack_Tools)
     bpy.utils.unregister_class(TOOLS_PT_Archipack_Create)

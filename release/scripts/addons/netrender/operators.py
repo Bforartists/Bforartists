@@ -51,7 +51,7 @@ class RENDER_OT_netclientsendbake(bpy.types.Operator):
                 self.report({'INFO'}, "Job sent to master")
         except Exception as err:
             self.report({'ERROR'}, str(err))
-            
+
         return {'FINISHED'}
 
     def invoke(self, context, event):
@@ -389,26 +389,26 @@ class netclientdownload(bpy.types.Operator):
 
         if conn:
             job_id = netrender.jobs[netsettings.active_job_index].id
-    
+
             with ConnectionContext():
                 conn.request("GET", "/status", headers={"job-id":job_id})
             response = conn.getresponse()
-        
+
             if response.status != http.client.OK:
                 self.report({'ERROR'}, "Job ID %i not defined on master" % job_id)
                 return {'ERROR'}
-            
+
             content = response.read()
-    
+
             job = netrender.model.RenderJob.materialize(json.loads(str(content, encoding='utf8')))
-            
-            conn.close()  
-    
+
+            conn.close()
+
             finished_frames = []
-            
+
             nb_error = 0
             nb_missing = 0
-                
+
             for frame in job.frames:
                 if frame.status == netrender.model.FRAME_DONE:
                     finished_frames.append(frame.number)
@@ -416,36 +416,36 @@ class netclientdownload(bpy.types.Operator):
                     nb_error += 1
                 else:
                     nb_missing += 1
-            
+
             if not finished_frames:
                 self.report({'ERROR'}, "Job doesn't have any finished frames")
                 return {'ERROR'}
-            
+
             frame_ranges = []
-    
+
             first = None
             last = None
-            
+
             for i in range(len(finished_frames)):
                 current = finished_frames[i]
-                
+
                 if not first:
                     first = current
                     last = current
                 elif last + 1 == current:
                     last = current
-                
+
                 if last + 1 < current or i + 1 == len(finished_frames):
                     if first < last:
                         frame_ranges.append((first, last))
                     else:
                         frame_ranges.append((first,))
-                    
+
                     first = current
                     last = current
-            
+
             getResults(netsettings.server_address, netsettings.server_port, job_id, job.resolution[0], job.resolution[1], job.resolution[2], frame_ranges)
-            
+
             if nb_error and nb_missing:
                 self.report({'ERROR'}, "Results downloaded but skipped %i frames with errors and %i unfinished frames" % (nb_error, nb_missing))
             elif nb_error:
@@ -495,20 +495,20 @@ class netclientvcsguess(bpy.types.Operator):
 
     def execute(self, context):
         netsettings = context.scene.network_render
-        
+
         system = versioning.SYSTEMS.get(netsettings.vcs_system, None)
-        
+
         if system:
             wpath, name = os.path.split(os.path.abspath(bpy.data.filepath))
-            
+
             rpath = system.path(wpath)
             revision = system.revision(wpath)
-            
+
             netsettings.vcs_wpath = wpath
             netsettings.vcs_rpath = rpath
             netsettings.vcs_revision = revision
-            
-        
+
+
 
         return {'FINISHED'}
 
@@ -538,7 +538,7 @@ class netclientweb(bpy.types.Operator):
             if netsettings.use_ssl:
                webbrowser.open("https://%s:%i" % (netsettings.server_address, netsettings.server_port))
             else:
-               webbrowser.open("http://%s:%i" % (netsettings.server_address, netsettings.server_port)) 
+               webbrowser.open("http://%s:%i" % (netsettings.server_address, netsettings.server_port))
         return {'FINISHED'}
 
     def invoke(self, context, event):

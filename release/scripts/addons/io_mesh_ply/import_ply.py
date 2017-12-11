@@ -185,9 +185,15 @@ def read(filepath):
                 if tokens[1] not in format_specs:
                     print('Unknown format', tokens[1])
                     return invalid_ply
-                if tokens[2] != version:
+                try:
+                    version_test = float(tokens[2])
+                except Exception as ex:
+                    print('Unknown version', ex)
+                    version_test = None
+                if version_test != float(version):
                     print('Unknown version', tokens[2])
                     return invalid_ply
+                del version_test
                 format = tokens[1]
             elif tokens[0] == b'element':
                 if len(tokens) < 3:
@@ -236,7 +242,7 @@ def load_ply_mesh(filepath, ply_name):
             uvindices = (el.index(b's'), el.index(b't'))
             if -1 in uvindices:
                 uvindices = None
-            colindices = el.index(b'red'), el.index(b'green'), el.index(b'blue')
+            colindices = el.index(b'red'), el.index(b'green'), el.index(b'blue'), el.index(b'alpha')
             if -1 in colindices:
                 colindices = None
             else:  # if not a float assume uchar
@@ -261,6 +267,7 @@ def load_ply_mesh(filepath, ply_name):
             mesh_colors.append([(vertices[index][colindices[0]] * colmultiply[0],
                                  vertices[index][colindices[1]] * colmultiply[1],
                                  vertices[index][colindices[2]] * colmultiply[2],
+                                 vertices[index][colindices[3]] * colmultiply[3],
                                  ) for index in indices])
 
     if uvindices or colindices:
@@ -334,7 +341,10 @@ def load_ply_mesh(filepath, ply_name):
                         f_col = f.color1, f.color2, f.color3
 
                     for j, col in enumerate(f_col):
-                        col.r, col.g, col.b = ply_col[j]
+                        col[0] = ply_col[j][0]
+                        col[1] = ply_col[j][1]
+                        col[2] = ply_col[j][2]
+                        col[3] = ply_col[j][3]
 
     mesh.validate()
     mesh.update()

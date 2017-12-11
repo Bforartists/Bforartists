@@ -19,56 +19,63 @@
 # <pep8 compliant>
 
 # this script creates Keyboard layout images of the current keyboard configuration.
-# the result will be writen to the blender default directory.
-
 # first implementation done by jbakker
+# version 0.2 - file manager directory on export, modified the SVG layout (lijenstina)
 
 bl_info = {
-    "name": "Keyboard Layout (svg)",
+    "name": "Keyboard Layout (SVG)",
     "author": "Jbakker",
-    "version": (0, 1),
+    "version": (0, 2),
     "blender": (2, 60, 0),
-    "location": "",
-    "description": "Save the hotkeys as a .svg file (search: Keyboard)",
-    "warning": "may not work in recent svn",
-    "wiki_url": 'http://wiki.blender.org/index.php/Extensions:2.6/Py/'
-        'Scripts/System/keymaps_to_svg',
+    "location": "Help Menu > Save Shortcuts as SVG files",
+    "description": "Save the hotkeys as .svg files (search: Keyboard)",
+    "warning": "",
+    "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
+                "Scripts/System/keymaps_to_svg",
     "tracker_url": "https://developer.blender.org/maniphest/task/edit/form/2/",
-    "category": "System"}
+    "category": "System"
+    }
 
 import bpy
+import os
+from math import ceil
+from bpy.props import StringProperty
 
 keyboard = (
-    ('`', 'ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT', 'NINE', 'ZERO', 'MINUS', 'EQUAL', 'BACKSPACE'),
+    ('`', 'ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT', 'NINE',
+    'ZERO', 'MINUS', 'EQUAL', 'BACKSPACE'),
     ('TAB', 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '(', ')', '\\'),
     ('CAPSLOCK', 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ';', "'", 'ENTER'),
     ('SHIFT', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', ',', '.', '/', 'SHIFT'),
     ('CONTROL', 'OSKEY', 'ALT', 'SPACE', 'ALT', 'OSKEY', 'MENUKEY', 'CONTROL')
     )
 
-# default dimension of a single key [width, heidgh]
-DEFAULT_KEY_DIMENSION = 100, 100
-# alternative dimensions of specufic keys [keyname,[width, height]]
+# default dimension of a single key [width, height]
+HEIGHT_KEY = 160
+DEFAULT_KEY_DIMENSION = 170, HEIGHT_KEY
+# alternative dimensions of specific keys [keyname,[width, height]]
 ALTERNATIVE_KEY_DIMENSIONS = {
-    'BACKSPACE': (250, 100),
-    'TAB': (175, 100),
-    '\\': (175, 100),
-    'CAPSLOCK': (225, 100),
-    'ENTER': (240, 100),
-    'SHIFT': (290, 100),
-    'CONTROL': (225, 100),
-    'ALT': (100, 100),
-    'OSKEY': (100, 100),
-    'MENUKEY': (100, 100),
-    'SPACE': (690, 100),
+    'BACKSPACE': (270, HEIGHT_KEY),
+    'TAB': (220, HEIGHT_KEY),
+    '\\': (220, HEIGHT_KEY),
+    'CAPSLOCK': (285, HEIGHT_KEY),
+    'ENTER': (345, HEIGHT_KEY),
+    'SHIFT': (410, HEIGHT_KEY),
+    'CONTROL': (230, HEIGHT_KEY),
+    'ALT': DEFAULT_KEY_DIMENSION,
+    'OSKEY': DEFAULT_KEY_DIMENSION,
+    'MENUKEY': DEFAULT_KEY_DIMENSION,
+    'SPACE': (1290, HEIGHT_KEY),
 }
+INFO_STRING = "Modifier keys Info: [C] = Ctrl, [A] = Alt, [S] = Shift"
 
 
-def createKeyboard(viewtype):
+def createKeyboard(viewtype, filepaths):
     """
     Creates a keyboard layout (.svg) file of the current configuration for a specific viewtype.
     example of a viewtype is "VIEW_3D".
     """
+
     for keyconfig in bpy.data.window_managers[0].keyconfigs:
         kc_map = {}
         for keymap in keyconfig.keymaps:
@@ -76,7 +83,6 @@ def createKeyboard(viewtype):
                 for key in keymap.keymap_items:
                     if key.map_type == 'KEYBOARD':
                         test = 0
-                        pre = []
                         cont = ""
                         if key.ctrl:
                             test = test + 1
@@ -98,16 +104,16 @@ def createKeyboard(viewtype):
                         kc_map[ktype].append((test, cont + key.name))
 
         filename = "keyboard_%s.svg" % viewtype
-        print(filename)
-        svgfile = open(filename, "w")
-        svgfile.write("""<?xml version="1.0" standalone="no"?>
+        export_path = os.path.join(os.path.normpath(filepaths), filename)
+        with open(export_path, mode="w") as svgfile:
+            svgfile.write("""<?xml version="1.0" standalone="no"?>
     <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-    """)
-        svgfile.write("""<svg width="2000" height="800" version="1.1" xmlns="http://www.w3.org/2000/svg">
-    """)
-        svgfile.write("""<style>
+        """)
+            svgfile.write("""<svg width="2800" height="1000" version="1.1" xmlns="http://www.w3.org/2000/svg">
+        """)
+            svgfile.write("""<style>
     rect {
-        fill:rgb(192,192,192);
+        fill:rgb(223,235,238);
         stroke-width:1;
         stroke:rgb(0,0,0);
     }
@@ -115,8 +121,10 @@ def createKeyboard(viewtype):
         font-size:xx-large;
     }
     text.key {
-        stroke-width:1;
-        stroke:rgb(0,0,0);
+        fill:rgb(0,65,100);
+        font-size:x-large;
+        stroke-width:2;
+        stroke:rgb(0,65,100);
     }
     text.action {
         font-size:smaller;
@@ -131,7 +139,7 @@ def createKeyboard(viewtype):
     }
     text.add2 {
         font-size:smaller;
-        fill:rgb(0,255,0)
+        fill:rgb(0,128,115)
     }
     text.add3 {
        font-size:smaller;
@@ -187,63 +195,81 @@ def createKeyboard(viewtype):
     }
     </style>
     """)
-        svgfile.write("""<text class="header" x="100" y="24">keyboard layout - """ + viewtype + """</text>
-""")
-
-        x = 0
-        xgap = 15
-        ygap = 15
-        y = 32
-        for row in keyboard:
-            x = 0
-            for key in row:
-                width, height = ALTERNATIVE_KEY_DIMENSIONS.get(key, DEFAULT_KEY_DIMENSION)
-                tx = 16
-                ty = 16
-                svgfile.write("""<rect x=\"""" + str(x) +
-                              """\" y=\"""" + str(y) +
-                              """\" width=\"""" + str(width) +
-                              """\" height=\"""" + str(height) +
-                              """\" rx="20" ry="20" />
+            svgfile.write("""<text class="header" x="30" y="32">Keyboard Layout for """ + viewtype + """</text>
     """)
-                svgfile.write("""<text class="key" x=\"""" + str(x + tx) +
-                              """\" y=\"""" + str(y + ty) +
-                              """\" width=\"""" + str(width) +
-                              """\" height=\"""" + str(height) + """\">
-    """)
-                svgfile.write(key)
-                svgfile.write("</text>")
-                ty = ty + 16
-                tx = 4
-                if key in kc_map:
-                    for a in kc_map[key]:
-                        svgfile.write("""<text class="add""" + str(a[0]) +
-                                      """" x=\"""" + str(x + tx) +
-                                      """\" y=\"""" + str(y + ty) +
-                                      """\" width=\"""" + str(width) +
-                                      """\" height=\"""" + str(height) + """\">
-    """)
-                        svgfile.write(a[1])
-                        svgfile.write("</text>")
-                        ty = ty + 16
-                x = x + width + xgap
-            y = y + 100 + ygap
-        svgfile.write("""</svg>""")
-        svgfile.flush()
-        svgfile.close()
+
+            x = 20
+            xgap = 20
+            ygap = 20
+            y = 48
+            for row in keyboard:
+                x = 30
+                for key in row:
+                    width, height = ALTERNATIVE_KEY_DIMENSIONS.get(key, DEFAULT_KEY_DIMENSION)
+                    tx = ceil(width * 0.2)
+                    ty = 32
+                    svgfile.write("""<rect x=\"""" + str(x) +
+                                  """\" y=\"""" + str(y) +
+                                  """\" width=\"""" + str(width) +
+                                  """\" height=\"""" + str(height) +
+                                  """\" rx="20" ry="20" />
+        """)
+                    svgfile.write("""<text class="key" x=\"""" + str(x + tx) +
+                                  """\" y=\"""" + str(y + ty) +
+                                  """\" width=\"""" + str(width) +
+                                  """\" height=\"""" + str(height) + """\">
+        """)
+                    svgfile.write(key)
+                    svgfile.write("</text>")
+                    ty = ty + 16
+                    tx = 4
+                    if key in kc_map:
+                        for a in kc_map[key]:
+                            svgfile.write("""<text class="add""" + str(a[0]) +
+                                          """" x=\"""" + str(x + tx) +
+                                          """\" y=\"""" + str(y + ty) +
+                                          """\" width=\"""" + str(width) +
+                                          """\" height=\"""" + str(height) + """\">
+        """)
+                            svgfile.write(a[1])
+                            svgfile.write("</text>")
+                            ty = ty + 16
+                    x = x + width + xgap
+                y = y + HEIGHT_KEY + ygap
+
+            svgfile.write("""<text class="header" x="30" y="975" >""")
+            svgfile.write(INFO_STRING)
+            svgfile.write("</text>")
+
+            svgfile.write("""</svg>""")
 
 
-class WM_OT_Keyboardlayout(bpy.types.Operator):
-    """
-        Windows manager operator for keyboard leyout export
-    """
+class WM_OT_keyboardlayout(bpy.types.Operator):
     bl_idname = "wm.keyboardlayout"
-    bl_label = "Keyboard layout (SVG)"
+    bl_label = "Save Shortcuts as SVG files"
+    bl_description = ("Export the keyboard layouts in SVG format\n"
+                      "for each Editor in a separate file")
+
+    directory = StringProperty(
+        subtype='FILE_PATH',
+        options={'SKIP_SAVE'},
+        )
+
+    def invoke(self, context, event):
+        if not self.directory:
+            self.directory = ""
+
+        wm = context.window_manager
+        wm.fileselect_add(self)
+        return {'RUNNING_MODAL'}
 
     def execute(self, context):
-        """
-        Iterate over all viewtypes to export the keyboard layout.
-        """
+        if not (os.path.isdir(self.directory) and os.path.exists(self.directory)):
+            self.report({'WARNING'},
+                        "Chosen path is not a directory or it doesn't exist. Operation Cancelled")
+            return {'CANCELLED'}
+
+        # Iterate over all viewtypes to export the keyboard layout
         for vt in ('VIEW_3D',
                    'LOGIC_EDITOR',
                    'NODE_EDITOR',
@@ -257,16 +283,27 @@ class WM_OT_Keyboardlayout(bpy.types.Operator):
                    'DOPESHEET_EDITOR',
                    'Window'):
 
-            createKeyboard(vt)
+            createKeyboard(vt, self.directory)
+
         return {'FINISHED'}
 
 
+def menu_func_help(self, context):
+    self.layout.separator()
+    self.layout.operator(WM_OT_keyboardlayout.bl_idname, icon="IMGDISPLAY")
+
+
 def register():
-    bpy.utils.register_module(__name__)
+    bpy.utils.register_class(WM_OT_keyboardlayout)
+
+    bpy.types.INFO_MT_help.append(menu_func_help)
 
 
 def unregister():
-    bpy.utils.unregister_module(__name__)
+    bpy.types.INFO_MT_help.remove(menu_func_help)
+
+    bpy.utils.unregister_class(WM_OT_keyboardlayout)
+
 
 if __name__ == "__main__":
     register()

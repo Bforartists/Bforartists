@@ -17,33 +17,26 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-
-
-# Blender Add-Ons menu registration (in User Prefs)
-
 bl_info = {
     "name": "Cursor Control",
     "author": "Morgan Mörtsell (Seminumerical)",
-    "version": (0, 7, 1),
+    "version": (0, 7, 3),
     "blender": (2, 65, 4),
     "location": "View3D > Properties > Cursor",
     "description": "Control the Cursor",
-    "warning": "buggy, may crash other addons", # used for warning icon and text in addons panel
+    "warning": "Buggy, may crash other add-ons",
     "wiki_url": "http://blenderpythonscripts.wordpress.com/",
     "tracker_url": "https://developer.blender.org/maniphest/task/edit/form/2/",
     "category": "3D View"}
 
 
-import bpy
-
-# To support reload properly, try to access a package var, if it's there, reload everything
-if "local_var" in locals():
-    import imp
-    imp.reload(data)
-    imp.reload(ui)
-    imp.reload(operators)
-    imp.reload(history)
-    imp.reload(memory)
+if "bpy" in locals():
+    import importlib
+    importlib.reload(data)
+    importlib.reload(ui)
+    importlib.reload(operators)
+    importlib.reload(history)
+    importlib.reload(memory)
 else:
     from . import data
     from . import ui
@@ -51,23 +44,150 @@ else:
     from . import history
     from . import memory
 
-local_var = True
+import bpy
+from bpy.props import PointerProperty
+
+from .data import CursorControlData
+from .memory import (
+    CursorMemoryData,
+    VIEW3D_PT_cursor_memory_init,
+    VIEW3D_OT_cursor_memory_hide,
+    VIEW3D_OT_cursor_memory_recall,
+    VIEW3D_OT_cursor_memory_save,
+    VIEW3D_OT_cursor_memory_show,
+    VIEW3D_OT_cursor_memory_swap,
+    VIEW3D_PT_cursor_memory,
+    )
+from .history import (
+    CursorHistoryData,
+    cursor_history_draw,
+    VIEW3D_PT_cursor_history_init,
+    VIEW3D_OT_cursor_history_hide,
+    VIEW3D_OT_cursor_history_show,
+    VIEW3D_PT_cursor_history,
+    VIEW3D_OT_cursor_next,
+    VIEW3D_OT_cursor_previous,
+    )
+from .operators import (
+    VIEW3D_OT_ccdelta_add,
+    VIEW3D_OT_ccdelta_invert,
+    VIEW3D_OT_ccdelta_normalize,
+    VIEW3D_OT_ccdelta_sub,
+    VIEW3D_OT_ccdelta_vvdist,
+    VIEW3D_OT_cursor_stepval_phi,
+    VIEW3D_OT_cursor_stepval_phi2,
+    VIEW3D_OT_cursor_stepval_phinv,
+    VIEW3D_OT_cursor_stepval_vvdist,
+    VIEW3D_OT_cursor_to_active_object_center,
+    VIEW3D_OT_cursor_to_cylinderaxis,
+    VIEW3D_OT_cursor_to_edge,
+    VIEW3D_OT_cursor_to_face,
+    VIEW3D_OT_cursor_to_line,
+    VIEW3D_OT_cursor_to_linex,
+    VIEW3D_OT_cursor_to_origin,
+    VIEW3D_OT_cursor_to_perimeter,
+    VIEW3D_OT_cursor_to_plane,
+    VIEW3D_OT_cursor_to_sl,
+    VIEW3D_OT_cursor_to_sl_mirror,
+    VIEW3D_OT_cursor_to_spherecenter,
+    VIEW3D_OT_cursor_to_vertex,
+    VIEW3D_OT_cursor_to_vertex_median,
+    )
+from .ui import (
+    CursorControlMenu,
+    VIEW3D_PT_ccDelta,
+    VIEW3D_PT_cursor,
+    menu_callback,
+    )
+
+
+classes = (
+    CursorControlData,
+    CursorHistoryData,
+    CursorMemoryData,
+
+    VIEW3D_PT_cursor_memory_init,
+    VIEW3D_PT_cursor_history_init,
+
+    VIEW3D_OT_cursor_memory_hide,
+    VIEW3D_OT_cursor_memory_recall,
+    VIEW3D_OT_cursor_memory_save,
+    VIEW3D_OT_cursor_memory_show,
+    VIEW3D_OT_cursor_memory_swap,
+    VIEW3D_PT_cursor_memory,
+
+    VIEW3D_OT_cursor_history_hide,
+    VIEW3D_OT_cursor_history_show,
+    VIEW3D_OT_cursor_next,
+    VIEW3D_OT_cursor_previous,
+    VIEW3D_PT_cursor_history,
+
+    VIEW3D_OT_ccdelta_add,
+    VIEW3D_OT_ccdelta_invert,
+    VIEW3D_OT_ccdelta_normalize,
+    VIEW3D_OT_ccdelta_sub,
+    VIEW3D_OT_ccdelta_vvdist,
+    VIEW3D_OT_cursor_stepval_phi,
+    VIEW3D_OT_cursor_stepval_phi2,
+    VIEW3D_OT_cursor_stepval_phinv,
+    VIEW3D_OT_cursor_stepval_vvdist,
+    VIEW3D_OT_cursor_to_active_object_center,
+    VIEW3D_OT_cursor_to_cylinderaxis,
+    VIEW3D_OT_cursor_to_edge,
+    VIEW3D_OT_cursor_to_face,
+    VIEW3D_OT_cursor_to_line,
+    VIEW3D_OT_cursor_to_linex,
+    VIEW3D_OT_cursor_to_origin,
+    VIEW3D_OT_cursor_to_perimeter,
+    VIEW3D_OT_cursor_to_plane,
+    VIEW3D_OT_cursor_to_sl,
+    VIEW3D_OT_cursor_to_sl_mirror,
+    VIEW3D_OT_cursor_to_spherecenter,
+    VIEW3D_OT_cursor_to_vertex,
+    VIEW3D_OT_cursor_to_vertex_median,
+
+    CursorControlMenu,
+    VIEW3D_PT_ccDelta,
+    VIEW3D_PT_cursor,
+    )
+
 
 def register():
-    bpy.utils.register_module(__name__)
+    for cls in classes:
+        bpy.utils.register_class(cls)
+
     # Register Cursor Control Structure
-    bpy.types.Scene.cursor_control = bpy.props.PointerProperty(type=data.CursorControlData, name="")
-    bpy.types.Scene.cursor_history = bpy.props.PointerProperty(type=history.CursorHistoryData, name="")
-    bpy.types.Scene.cursor_memory  = bpy.props.PointerProperty(type=memory.CursorMemoryData, name="")
+    bpy.types.Scene.cursor_control = PointerProperty(
+                                        type=CursorControlData,
+                                        name=""
+                                        )
+    bpy.types.Scene.cursor_history = PointerProperty(
+                                        type=CursorHistoryData,
+                                        name=""
+                                        )
+    bpy.types.Scene.cursor_memory = PointerProperty(
+                                        type=CursorMemoryData,
+                                        name=""
+                                        )
     # Register menu
-    bpy.types.VIEW3D_MT_snap.append(ui.menu_callback)
+    bpy.types.VIEW3D_MT_snap.append(menu_callback)
+
 
 def unregister():
     history.VIEW3D_PT_cursor_history_init.handle_remove()
     memory.VIEW3D_PT_cursor_memory_init.handle_remove()
+    # reset the panel flags if the add-on is toggled off/on
+    history.VIEW3D_PT_cursor_history_init.initDone = False
+    memory.VIEW3D_PT_cursor_memory_init.initDone = False
     # Unregister menu
-    bpy.types.VIEW3D_MT_snap.remove(ui.menu_callback)
-    bpy.utils.unregister_module(__name__)
+    bpy.types.VIEW3D_MT_snap.remove(menu_callback)
+
+    for cls in reversed(classes):
+        bpy.utils.unregister_class(cls)
+
+    del bpy.types.Scene.cursor_control
+    del bpy.types.Scene.cursor_history
+    del bpy.types.Scene.cursor_memory
 
 
 if __name__ == "__main__":

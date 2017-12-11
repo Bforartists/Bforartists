@@ -21,8 +21,8 @@
 bl_info = {
     "name": "Manage UI translations",
     "author": "Bastien Montagne",
-    "version": (1, 1, 2),
-    "blender": (2, 75, 0),
+    "version": (1, 1, 4),
+    "blender": (2, 79, 0),
     "location": "Main \"File\" menu, text editor, any UI control",
     "description": "Allow to manage UI translations directly from Blender "
         "(update main po files, update scripts' translations, etc.)",
@@ -53,8 +53,12 @@ else:
 import os
 
 
+classes = settings.classes + edit_translation.classes + update_svn.classes + update_addon.classes + update_ui.classes
+
+
 def register():
-    bpy.utils.register_module(__name__)
+    for cls in classes:
+        bpy.utils.register_class(cls)
     bpy.types.WindowManager.i18n_update_svn_settings = \
                     bpy.props.PointerProperty(type=update_ui.I18nUpdateTranslationSettings)
 
@@ -68,5 +72,5 @@ def register():
 
 def unregister():
     del bpy.types.WindowManager.i18n_update_svn_settings
-
-    bpy.utils.unregister_module(__name__)
+    for cls in classes:
+        bpy.utils.unregister_class(cls)

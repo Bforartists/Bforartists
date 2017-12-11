@@ -5,22 +5,22 @@
 import bpy
 from os import path as os_path
 from bpy.types import Operator
-from math import (log2,
-                  ceil,
-                  )
+from math import (
+        log2, ceil,
+        )
 from bpy.props import (
-            BoolProperty,
-            EnumProperty,
-            )
+        BoolProperty,
+        EnumProperty,
+        )
 from .warning_messages_utils import (
-            warning_messages,
-            c_is_cycles_addon_enabled,
-            c_data_has_materials,
-            collect_report,
-            )
+        warning_messages,
+        c_is_cycles_addon_enabled,
+        c_data_has_materials,
+        collect_report,
+        )
 
 # -----------------------------------------------------------------------------
-# Globals #
+# Globals
 
 # switch for operator's function called after AutoNodeInitiate
 CHECK_AUTONODE = False
@@ -37,7 +37,7 @@ PAINT_SC_COLOR = (0.80, 0.75, 0.54, 0.9)
 CLAY_GLOSSY = (0.38, 0.032, 0.023, 1)
 
 # -----------------------------------------------------------------------------
-# Functions #
+# Functions
 
 
 def AutoNodeSwitch(renderer="CYCLES", switch="OFF", operator=None):
@@ -130,8 +130,7 @@ def BakingText(tex, mode, tex_type=None):
     img = bpy.data.images.get("TMP_BAKING")
     img.file_format = ("JPEG" if not mode == "ALPHA" else "PNG")
 
-    # switch temporarly to 'IMAGE EDITOR'
-    # other approaches are not reliable
+    # switch temporarly to 'IMAGE EDITOR', other approaches are not reliable
     check_area = False
     store_area = bpy.context.area.type
     collect_report("INFO: Temporarly switching context to Image Editor")
@@ -211,7 +210,7 @@ def AutoNodeInitiate(active=False, operator=None):
         if sc.mat_specials.SET_FAKE_USER:
             SetFakeUserTex()
     else:
-        warning_messages(operator, 'DIR_PATH_CONVERT')
+        warning_messages(operator, 'DIR_PATH_CONVERT', override=True)
 
 
 def AutoNode(active=False, operator=None):
@@ -850,7 +849,7 @@ def create_mix_node(TreeNodes, links, nodes, loc, start, median_point, row, fram
 
 
 # -----------------------------------------------------------------------------
-# Operator Classes #
+# Operator Classes
 
 class mllock(Operator):
     bl_idname = "ml.lock"
@@ -877,12 +876,14 @@ class mllock(Operator):
 class mlrefresh(Operator):
     bl_idname = "ml.refresh"
     bl_label = "Convert All Materials"
-    bl_description = "Convert All Materials in the scene from non-nodes to Cycles"
+    bl_description = ("Convert All Materials in the scene from non-nodes to Cycles\n"
+                      "Needs saving the .blend file first")
     bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod
     def poll(cls, context):
-        return (c_is_cycles_addon_enabled() and c_data_has_materials())
+        return (bpy.data.filepath != ""and c_is_cycles_addon_enabled() and
+                c_data_has_materials())
 
     def execute(self, context):
         AutoNodeInitiate(False, self)
@@ -909,13 +910,14 @@ class mlrefresh(Operator):
 class mlrefresh_active(Operator):
     bl_idname = "ml.refresh_active"
     bl_label = "Convert All Materials From Active Object"
-    bl_description = "Convert all Active Object's Materials from non-nodes to Cycles"
+    bl_description = ("Convert all Active Object's Materials from non-nodes to Cycles\n"
+                      "Needs saving the .blend file first")
     bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod
     def poll(cls, context):
-        return (c_is_cycles_addon_enabled() and c_data_has_materials() and
-                context.active_object is not None)
+        return (bpy.data.filepath != "" and c_is_cycles_addon_enabled() and
+                c_data_has_materials() and context.active_object is not None)
 
     def execute(self, context):
         AutoNodeInitiate(True, self)
@@ -977,6 +979,7 @@ def register():
 def unregister():
     bpy.utils.unregister_module(__name__)
     pass
+
 
 if __name__ == "__main__":
     register()

@@ -10,7 +10,7 @@ class DxfDrawing(object):
 		self._views = []
 		self._vports = []
 		self._blocks = []
-		
+
 	def isEmpty(self):
 		return len(self._entities) == 0
 
@@ -34,5 +34,5 @@ class DxfDrawing(object):
 	def convert(self, **kwargs):
 		""" Converts this drawing into DXF representation object """
 		raise NotImplementedError()
-	
+
 
