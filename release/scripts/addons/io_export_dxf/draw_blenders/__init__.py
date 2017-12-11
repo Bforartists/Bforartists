@@ -58,7 +58,7 @@ def curve_drawBlender(vertList, org_point=[0.0,0.0,0.0], closed=0, name="dxfCurv
             ob.setLocation(cur_loc)
         Blender.Redraw()
     #return ob
-    
+
 #-----------------------------------------------------
 def drawClipBox(clip_box):
     """debug tool: draws Clipping-Box of a Camera View
@@ -79,7 +79,7 @@ def drawClipBox(clip_box):
     newmesh = Mesh.New()
     newmesh.verts.extend(verts)
     newmesh.faces.extend(faces)
-    
+
     plan = Object.New('Mesh','clip_box')
     plan.link(newmesh)
     sce = Scene.GetCurrent()

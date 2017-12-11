@@ -19,33 +19,35 @@
 
 """
     ui_utils.py
-
     Some UI utility functions
-    
-    
-
 """
 
 
-
 class GUI:
-
     @classmethod
     def drawIconButton(cls, enabled, layout, iconName, operator, frame=True):
         col = layout.column()
         col.enabled = enabled
-        bt = col.operator(operator,
-            text='',
-            icon=iconName,
-            emboss=frame)
+        col.operator(
+                operator, text='',
+                icon=iconName, emboss=frame
+                )
+
+    @classmethod
+    def drawIconButton_poll(cls, active, layout, iconName, operator, frame=True):
+        col = layout.column()
+        col.alert = not active
+        op = col.operator(
+                operator, text='',
+                icon=iconName, emboss=frame
+                )
+        op.no_skip = active
 
     @classmethod
     def drawTextButton(cls, enabled, layout, text, operator, frame=True):
         col = layout.column()
         col.enabled = enabled
-        bt = col.operator(operator,
-            text=text,
-            emboss=frame)
-
-
-
+        col.operator(
+            operator, text=text,
+            emboss=frame
+            )

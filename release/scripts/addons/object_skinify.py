@@ -19,7 +19,7 @@
 bl_info = {
     "name": "Skinify Rig",
     "author": "Albert Makac (karab44)",
-    "version": (0, 9, 2),
+    "version": (0, 11, 0),
     "blender": (2, 7, 9),
     "location": "Properties > Bone > Skinify Rig (visible on pose mode only)",
     "description": "Creates a mesh object from selected bones",
@@ -46,7 +46,6 @@ from mathutils import (
         )
 from bpy.app.handlers import persistent
 from enum import Enum
-
 
 # can the armature data properties group_prop and row be fetched directly from the rigify script?
 horse_data = \
@@ -105,47 +104,62 @@ rigify_data = horse_data, shark_data, bird_data, cat_data, biped_data, human_dat
               wolf_data, quadruped_data, human_legacy_data, pitchipoy_data
 
 
-# Skin.rig_type.ENUM
-# Skin.junction_dict['bname'].data[0] idx, data[1] idx + 1, data[2] thickness
-# NOTE each fragment contains section information about adequate bone
-# junctions idx and idx + 1 and these vertices' ids share common thickness
-class Skin(object):
+class Rig_type(Enum):
+    HORSE = 0
+    SHARK = 1
+    BIRD = 2
+    CAT = 3
+    BIPED = 4
+    HUMAN = 5
+    WOLF = 6
+    QUAD = 7
+    LEGACY = 8
+    PITCHIPOY = 9
+    OTHER = 10
 
-    class Rig_type(Enum):
-        HORSE = 0
-        SHARK = 1
-        BIRD = 2
-        CAT = 3
-        BIPED = 4
-        HUMAN = 5
-        WOLF = 6
-        QUAD = 7
-        LEGACY = 8
-        PITCHIPOY = 9
-        OTHER = 10
 
+rig_type = Rig_type.OTHER
+
+
+class Idx_Store(object):
     def __init__(self, rig_type):
         self.rig_type = rig_type
-        self.junctions_dict = dict()
+        self.hand_r_merge = []
+        self.hand_l_merge = []
+        self.hands_pretty = []
+        self.root = []
 
-    def fragment_create(self, bname, idx=None, thickness=0.0):
-        data = []
-        data.insert(0, idx)
+        if not self.rig_type == Rig_type.LEGACY and \
+                not self.rig_type == Rig_type.HUMAN and \
+                not self.rig_type == Rig_type.PITCHIPOY:
+            return
 
-        if idx is not None:
-            data.insert(1, idx + 1)
-        else:
-            data.insert(1, None)
+        if self.rig_type == Rig_type.LEGACY:
+            self.hand_l_merge = [7, 12, 16, 21, 26, 27]
+            self.hand_r_merge = [30, 31, 36, 40, 45, 50]
+            self.hands_pretty = [6, 29]
+            self.root = [59]
 
-        self.junctions_dict[bname] = data
-        self.junctions_dict[bname].append(thickness)
+        if self.rig_type == Rig_type.HUMAN or self.rig_type == Rig_type.PITCHIPOY:
+            self.hand_l_merge = [9, 10, 15, 19, 24, 29]
+            self.hand_r_merge = [32, 33, 37, 42, 47, 52]
+            self.hands_pretty = [8, 31]
+            self.root = [56]
 
-    # for the sake of code clarity
-    def fragment_update(self, bname, idx=None, thickness=0.0):
-        self.fragment_create(bname, idx, thickness)
+    def get_all_idx(self):
+        return self.hand_l_merge, self.hand_r_merge, self.hands_pretty, self.root
 
+    def get_hand_l_merge_idx(self):
+        return self.hand_l_merge
 
-rig_type = Skin.Rig_type.OTHER
+    def get_hand_r_merge_idx(self):
+        return self.hand_r_merge
+
+    def get_hands_pretty_idx(self):
+        return self.hands_pretty
+
+    def get_root_idx(self):
+        return self.root
 
 
 # initialize properties
@@ -165,9 +179,26 @@ def init_props():
         scn.sub_level = 1
 
 
+# selects vertices
+def select_vertices(mesh_obj, idx):
+    bpy.context.scene.objects.active = mesh_obj
+    mode = mesh_obj.mode
+    bpy.ops.object.mode_set(mode='EDIT')
+    bpy.ops.mesh.select_all(action='DESELECT')
+    bpy.ops.object.mode_set(mode='OBJECT')
+
+    for i in idx:
+        mesh_obj.data.vertices[i].select = True
+
+    selectedVerts = [v.index for v in mesh_obj.data.vertices if v.select]
+
+    bpy.ops.object.mode_set(mode=mode)
+    return selectedVerts
+
+
 def identify_rig():
     if 'rigify_layers' not in bpy.context.object.data:
-        return Skin.Rig_type.OTHER  # non recognized
+        return Rig_type.OTHER  # non recognized
 
     LEGACY_LAYERS_SIZE = 28
     layers = bpy.context.object.data['rigify_layers']
@@ -184,33 +215,35 @@ def identify_rig():
             elif (props['row'] != rig[index][0]) or (props['group_prop'] != rig[index][1]):
                 break
 
-            # SUCCESS if reaches the end
+            # SUCCESS if reach the end
             if index == len(layers) - 1:
-                return Skin.Rig_type(type)
+                return Rig_type(type)
 
             index = index + 1
 
-    return Skin.Rig_type.OTHER
+    return Rig_type.OTHER
 
 
-# prepares customizable ignore and thickness lists
-# edit these lists to suits your taste
-def prepare_lists(rig_type, finger_thickness):
-
-    # EXAMPLE IGNORE LIST
-    # detect the head, face, hands, breast, heels or other exceptionary bones for exclusion or customization
+def prepare_ignore_list(rig_type, bones):
+    # detect the head, face, hands, breast, heels or other exceptionary bones to exclusion or customization
     common_ignore_list = ['eye', 'heel', 'breast', 'root']
+
+    # edit these lists to suits your taste
+
     horse_ignore_list = ['chest', 'belly', 'pelvis', 'jaw', 'nose', 'skull', 'ear.']
+
     shark_ignore_list = ['jaw']
+
     bird_ignore_list = [
             'face', 'pelvis', 'nose', 'lip', 'jaw', 'chin', 'ear.', 'brow',
             'lid', 'forehead', 'temple', 'cheek', 'teeth', 'tongue', 'beak'
             ]
     cat_ignore_list = [
-            'face', 'belly', 'pelvis.C', 'nose', 'lip', 'jaw', 'chin', 'ear.', 'brow',
+            'face', 'belly' 'pelvis.C', 'nose', 'lip', 'jaw', 'chin', 'ear.', 'brow',
             'lid', 'forehead', 'temple', 'cheek', 'teeth', 'tongue'
             ]
     biped_ignore_list = ['pelvis']
+
     human_ignore_list = [
             'face', 'pelvis', 'nose', 'lip', 'jaw', 'chin', 'ear.', 'brow',
             'lid', 'forehead', 'temple', 'cheek', 'teeth', 'tongue'
@@ -224,119 +257,84 @@ def prepare_lists(rig_type, finger_thickness):
             'lid', 'forehead', 'temple', 'cheek', 'teeth', 'tongue'
             ]
     rigify_legacy_ignore_list = []
+
     pitchipoy_ignore_list = [
             'face', 'pelvis', 'nose', 'lip', 'jaw', 'chin', 'ear.', 'brow',
             'lid', 'forehead', 'temple', 'cheek', 'teeth', 'tongue'
             ]
+
     other_ignore_list = []
 
-    # EXAMPLE THICKNESS
-    # feel free to modify and customize the list by adding elements followed by comma
-    # common_thickness_dict = {"hand": common_finger_thickness, "head": common_head_thickness}
-    common_finger_thickness = finger_thickness
-    common_thickness_dict = {"hand": common_finger_thickness}
-    horse_thickness_dict = {}
-    shark_thickness_dict = {}
-    bird_thickness_dict = {}
-    cat_thickness_dict = {}
-    face_thickness = 0.20
-    biped_thickness_dict = {}
-    human_thickness_dict = {"face": face_thickness}
-    wolf_thickness_dict = {}
-    quad_thickness_dict = {}
-    rigify_legacy_thickness_dict = {}
-    pitchipoy_thickness_dict = {"face": face_thickness}
-    other_thickness_dict = {}
-
-    # combine lists depending on rig type
     ignore_list = common_ignore_list
-    thickness_dict = common_thickness_dict
-    if rig_type == Skin.Rig_type.HORSE:
+
+    if rig_type == Rig_type.HORSE:
         ignore_list = ignore_list + horse_ignore_list
-        thickness_dict.update(horse_thickness_dict)
         print("RIDER OF THE APOCALYPSE")
-    elif rig_type == Skin.Rig_type.SHARK:
+    elif rig_type == Rig_type.SHARK:
         ignore_list = ignore_list + shark_ignore_list
-        thickness_dict.update(shark_thickness_dict)
         print("DEADLY JAWS")
-    elif rig_type == Skin.Rig_type.BIRD:
+    elif rig_type == Rig_type.BIRD:
         ignore_list = ignore_list + bird_ignore_list
-        thickness_dict.update(bird_thickness_dict)
         print("WINGS OF LIBERTY")
-    elif rig_type == Skin.Rig_type.CAT:
+    elif rig_type == Rig_type.CAT:
         ignore_list = ignore_list + cat_ignore_list
-        thickness_dict.update(cat_thickness_dict)
         print("MEOW")
-    elif rig_type == Skin.Rig_type.BIPED:
+    elif rig_type == Rig_type.BIPED:
         ignore_list = ignore_list + biped_ignore_list
-        thickness_dict.update(biped_thickness_dict)
         print("HUMANOID")
-    elif rig_type == Skin.Rig_type.HUMAN:
+    elif rig_type == Rig_type.HUMAN:
         ignore_list = ignore_list + human_ignore_list
-        thickness_dict.update(human_thickness_dict)
         print("JUST A HUMAN AFTER ALL")
-    elif rig_type == Skin.Rig_type.WOLF:
+    elif rig_type == Rig_type.WOLF:
         ignore_list = ignore_list + wolf_ignore_list
-        thickness_dict.update(wolf_thickness_dict)
         print("WHITE FANG")
-    elif rig_type == Skin.Rig_type.QUAD:
+    elif rig_type == Rig_type.QUAD:
         ignore_list = ignore_list + quad_ignore_list
-        thickness_dict.update(quad_thickness_dict)
         print("MYSTERIOUS CREATURE")
-    elif rig_type == Skin.Rig_type.LEGACY:
+    elif rig_type == Rig_type.LEGACY:
         ignore_list = ignore_list + rigify_legacy_ignore_list
-        thickness_dict.update(rigify_legacy_thickness_dict)
         print("LEGACY RIGIFY")
-    elif rig_type == Skin.Rig_type.PITCHIPOY:
+    elif rig_type == Rig_type.PITCHIPOY:
         ignore_list = ignore_list + pitchipoy_ignore_list
-        thickness_dict.update(pitchipoy_thickness_dict)
         print("PITCHIPOY")
-    elif rig_type == Skin.Rig_type.OTHER:
+    elif rig_type == Rig_type.OTHER:
         ignore_list = ignore_list + other_ignore_list
-        thickness_dict.update(other_thickness_dict)
         print("rig non recognized...")
 
-    return ignore_list, thickness_dict
+    return ignore_list
 
 
 # generates edges from vertices used by skin modifier
 def generate_edges(mesh, shape_object, bones, scale, connect_mesh=False, connect_parents=False,
-                   head_ornaments=False, generate_all=False, thickness=0.0, finger_thickness=0.0):
+                   head_ornaments=False, generate_all=False):
     """
-    This function adds vertices for all bones' heads and tails
+    This function adds vertices for all heads and tails
     """
+    # scene preferences
+
+    alternate_scale_list = []
 
     me = mesh
     verts = []
     edges = []
     idx = 0
+    alternate_scale_idx_list = list()
 
     rig_type = identify_rig()
-    skin = Skin(rig_type)
-
-    # prepare the list
-    ignore_list, thickness_dict = prepare_lists(skin.rig_type, finger_thickness)
-
-    # create default junctions for all bones
-    for b in bones:
-        # set default thickness to all new junctions
-        skin.fragment_create(bname=b.name, idx=None, thickness=thickness)
+    ignore_list = prepare_ignore_list(rig_type, bones)
 
     # edge generator loop
     for b in bones:
-        # look for rig's specific bones and their childs and set individual thickness
-        for bname, thick in thickness_dict.items():
-
-            if bname.lower() in b.name.lower():
-                skin.fragment_update(bname=b.name, idx=None, thickness=thick)
-                for c in b.children_recursive:
-                    # update junctions with specific thickness
-                    skin.fragment_update(bname=c.name, idx=None, thickness=thick)
+        # look for rig's hands and their childs
+        if 'hand' in b.name.lower():
+            # prepare the list
+            for c in b.children_recursive:
+                alternate_scale_list.append(c.name)
 
         found = False
 
         for i in ignore_list:
-            if i.lower() in b.name.lower():
+            if i in b.name.lower():
                 found = True
                 break
 
@@ -351,10 +349,10 @@ def generate_edges(mesh, shape_object, bones, scale, connect_mesh=False, connect
         if head_ornaments is False:
             if b.parent is not None:
 
-                if 'head' in b.parent.name.lower() and not rig_type == Skin.Rig_type.HUMAN:
+                if 'head' in b.parent.name.lower() and not rig_type == Rig_type.HUMAN:
                     continue
 
-                if 'face' in b.parent.name.lower() and rig_type == Skin.Rig_type.HUMAN:
+                if 'face' in b.parent.name.lower() and rig_type == Rig_type.HUMAN:
                     continue
 
         if connect_parents:
@@ -378,20 +376,17 @@ def generate_edges(mesh, shape_object, bones, scale, connect_mesh=False, connect
                 edges.append([idx, idx + 1])
 
                 # also make list of edges made of gaps between the bones
-                for bname, data in skin.junctions_dict.items():
-                    if b.name == bname:
-                        skin.fragment_update(b.name, idx, data[2])
-                        break
-
-                # create new segment for new connections
-                skin.fragment_create(b.name + b.parent.name, idx, data[2])
+                for a in alternate_scale_list:
+                    if b.name == a:
+                        alternate_scale_idx_list.append(idx)
+                        alternate_scale_idx_list.append(idx + 1)
 
                 idx = idx + 2
             # for bvh free floating hips and hips correction for rigify and pitchipoy
             if ((generate_all is False and 'hip' in b.name.lower()) or
-              (generate_all is False and (b.name == 'hips' and rig_type == Skin.Rig_type.LEGACY) or
-              (b.name == 'spine' and rig_type == Skin.Rig_type.PITCHIPOY) or (b.name == 'spine' and
-               rig_type == Skin.Rig_type.HUMAN) or (b.name == 'spine' and rig_type == Skin.Rig_type.BIPED))):
+              (generate_all is False and (b.name == 'hips' and rig_type == Rig_type.LEGACY) or
+              (b.name == 'spine' and rig_type == Rig_type.PITCHIPOY) or (b.name == 'spine' and
+               rig_type == Rig_type.HUMAN) or (b.name == 'spine' and rig_type == Rig_type.BIPED))):
                 continue
 
         vert1 = b.head
@@ -401,10 +396,10 @@ def generate_edges(mesh, shape_object, bones, scale, connect_mesh=False, connect
 
         edges.append([idx, idx + 1])
 
-        # insert idx to junctions and update
-        for bname, data in skin.junctions_dict.items():
-            if b.name == bname:
-                skin.fragment_update(b.name, idx, data[2])
+        for a in alternate_scale_list:
+            if b.name == a:
+                alternate_scale_idx_list.append(idx)
+                alternate_scale_idx_list.append(idx + 1)
 
         idx = idx + 2
 
@@ -412,31 +407,16 @@ def generate_edges(mesh, shape_object, bones, scale, connect_mesh=False, connect
     me.from_pydata(verts, edges, [])
     # Update mesh with new data
     me.update()
+
     # set object scale exact as armature's scale
     shape_object.scale = scale
 
-    return skin
+    return alternate_scale_idx_list, rig_type
 
 
-# selects vertices
-def select_vertices(mesh_obj, idx):
-    bpy.context.scene.objects.active = mesh_obj
-    mode = mesh_obj.mode
-    bpy.ops.object.mode_set(mode='EDIT')
-    bpy.ops.mesh.select_all(action='DESELECT')
-    bpy.ops.object.mode_set(mode='OBJECT')
-
-    for i in idx:
-        mesh_obj.data.vertices[i].select = True
-
-    selectedVerts = [v.index for v in mesh_obj.data.vertices if v.select]
-
-    bpy.ops.object.mode_set(mode=mode)
-    return selectedVerts
-
-
-def generate_mesh(shape_object, size, sub_level=1, connect_mesh=False, connect_parents=False,
-                  generate_all=False, apply_mod=True, skin=None, bones=[]):
+def generate_mesh(shape_object, size, thickness=0.8, finger_thickness=0.25, sub_level=1,
+                  connect_mesh=False, connect_parents=False, generate_all=False, apply_mod=True,
+                  alternate_scale_idx_list=[], rig_type=0, bones=[]):
     """
     This function adds modifiers for generated edges
     """
@@ -464,29 +444,30 @@ def generate_mesh(shape_object, size, sub_level=1, connect_mesh=False, connect_p
                     override['modifier'] = bpy.context.object.modifiers
                     break
 
-    # calculate optimal, normalized thickness for each segment
+    # calculate optimal thickness for defaults
     bpy.ops.object.skin_root_mark(override)
-
-    # select finger vertices and calculate optimal thickness for fingers to fix proportions
-    # by default set fingers thickness to 25 percent of body thickness
-    # make loose hands only for better topology
-
-    if len(skin.junctions_dict.keys()) > 0:
-        for bname, data in skin.junctions_dict.items():
-            if data[0] is not None:
-                fragment_idx = list()
-                fragment_idx.append(data[0])
-                fragment_idx.append(data[1])
-                thickness = data[2]
-                select_vertices(shape_object, fragment_idx)
-                bpy.ops.transform.skin_resize(override,
-                        value=(1 * thickness * (size / 10), 1 * thickness * (size / 10),
-                        1 * thickness * (size / 10)), constraint_axis=(False, False, False),
-                        constraint_orientation='GLOBAL', mirror=False, proportional='DISABLED',
-                        proportional_edit_falloff='SMOOTH', proportional_size=1
-                        )
+    bpy.ops.transform.skin_resize(override,
+            value=(1 * thickness * (size / 10), 1 * thickness * (size / 10), 1 * thickness * (size / 10)),
+            constraint_axis=(False, False, False), constraint_orientation='GLOBAL',
+            mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH',
+            proportional_size=1
+            )
     shape_object.modifiers["Skin"].use_smooth_shade = True
     shape_object.modifiers["Skin"].use_x_symmetry = True
+
+    # select finger vertices and calculate optimal thickness for fingers to fix proportions
+    if len(alternate_scale_idx_list) > 0:
+        select_vertices(shape_object, alternate_scale_idx_list)
+
+        bpy.ops.object.skin_loose_mark_clear(override, action='MARK')
+        # by default set fingers thickness to 25 percent of body thickness
+        bpy.ops.transform.skin_resize(override,
+                    value=(finger_thickness, finger_thickness, finger_thickness),
+                    constraint_axis=(False, False, False), constraint_orientation='GLOBAL',
+                    mirror=False, proportional='DISABLED', proportional_edit_falloff='SMOOTH',
+                    proportional_size=1
+                    )
+        # make loose hands only for better topology
 
     # bpy.ops.mesh.select_all(action='DESELECT')
 
@@ -496,21 +477,16 @@ def generate_mesh(shape_object, size, sub_level=1, connect_mesh=False, connect_p
         bpy.ops.mesh.select_all(action='SELECT')
         bpy.ops.mesh.remove_doubles()
 
+    idx_store = Idx_Store(rig_type)
+
     # fix rigify and pitchipoy hands topology
     if connect_mesh and connect_parents and generate_all is False and \
-            (skin.rig_type == Skin.Rig_type.LEGACY or skin.rig_type == Skin.Rig_type.PITCHIPOY or
-            skin.rig_type == Skin.Rig_type.HUMAN) and selected_bones_num == total_bones_num:
+            (rig_type == Rig_type.LEGACY or rig_type == Rig_type.PITCHIPOY or rig_type == Rig_type.HUMAN) and \
+            selected_bones_num == total_bones_num:
         # thickness will set palm vertex for both hands look pretty
         corrective_thickness = 2.5
-
         # left hand verts
-        merge_idx = []
-
-        if skin.rig_type == Skin.Rig_type.LEGACY:
-            merge_idx = [8, 9, 14, 18, 23, 28]
-
-        elif skin.rig_type == Skin.Rig_type.PITCHIPOY or skin.rig_type == Skin.Rig_type.HUMAN:
-            merge_idx = [10, 11, 16, 20, 25, 30]
+        merge_idx = idx_store.get_hand_l_merge_idx()
 
         select_vertices(shape_object, merge_idx)
         bpy.ops.mesh.merge(type='CENTER')
@@ -523,11 +499,7 @@ def generate_mesh(shape_object, size, sub_level=1, connect_mesh=False, connect_p
         bpy.ops.mesh.select_all(action='DESELECT')
 
         # right hand verts
-        if skin.rig_type == Skin.Rig_type.LEGACY:
-            merge_idx = [31, 32, 37, 41, 46, 51]
-
-        elif skin.rig_type == Skin.Rig_type.PITCHIPOY or skin.rig_type == Skin.Rig_type.HUMAN:
-            merge_idx = [33, 34, 39, 43, 48, 53]
+        merge_idx = idx_store.get_hand_r_merge_idx()
 
         select_vertices(shape_object, merge_idx)
         bpy.ops.mesh.merge(type='CENTER')
@@ -540,14 +512,7 @@ def generate_mesh(shape_object, size, sub_level=1, connect_mesh=False, connect_p
 
         # making hands even more pretty
         bpy.ops.mesh.select_all(action='DESELECT')
-        hands_idx = []  # left and right hand vertices
-        if skin.rig_type == Skin.Rig_type.LEGACY:
-            # hands_idx = [8, 33]  # L and R
-            hands_idx = [7, 30]
-
-        elif skin.rig_type == Skin.Rig_type.PITCHIPOY or skin.rig_type == Skin.Rig_type.HUMAN:
-            # hands_idx = [10, 35]  # L and R
-            hands_idx = [9, 32]
+        hands_idx = idx_store.get_hands_pretty_idx()
 
         select_vertices(shape_object, hands_idx)
         # change the thickness to make hands look less blocky and more sexy
@@ -562,13 +527,9 @@ def generate_mesh(shape_object, size, sub_level=1, connect_mesh=False, connect_p
 
     # todo optionally take root from rig's hip tail or head depending on scenario
 
-    root_idx = []
-    if skin.rig_type == Skin.Rig_type.LEGACY and selected_bones_num == total_bones_num:
-        root_idx = [59]
-    elif (skin.rig_type == Skin.Rig_type.PITCHIPOY or skin.rig_type == Skin.Rig_type.HUMAN) and \
-                selected_bones_num == total_bones_num:
-        root_idx = [56]
-    elif selected_bones_num == total_bones_num:
+    root_idx = idx_store.get_root_idx()
+
+    if selected_bones_num == total_bones_num:
         root_idx = [0]
 
     if len(root_idx) > 0:
@@ -644,15 +605,16 @@ def main(context):
     me.name = mesh_name
 
     # this way we fit mesh and bvh with armature modifier correctly
-    skin = generate_edges(
-                me, ob, bone_selection, scale, sknfy.connect_mesh,
-                sknfy.connect_parents, sknfy.head_ornaments,
-                sknfy.generate_all, sknfy.thickness, sknfy.finger_thickness
-                )
 
-    generate_mesh(ob, size, sknfy.sub_level,
+    alternate_scale_idx_list, rig_type = generate_edges(
+                                                me, ob, bone_selection, scale, sknfy.connect_mesh,
+                                                sknfy.connect_parents, sknfy.head_ornaments,
+                                                sknfy.generate_all
+                                                )
+
+    generate_mesh(ob, size, sknfy.thickness, sknfy.finger_thickness, sknfy.sub_level,
                   sknfy.connect_mesh, sknfy.connect_parents, sknfy.generate_all,
-                  sknfy.apply_mod, skin, bone_selection)
+                  sknfy.apply_mod, alternate_scale_idx_list, rig_type, bone_selection)
 
     # parent mesh with armature only if modifiers are applied
     if sknfy.apply_mod and sknfy.parent_armature:
@@ -681,10 +643,6 @@ def main(context):
 
     return {'FINISHED'}, me
 
-
-# Note: setting bl_options to UNDO, INTERNAL since access through
-# the Search Menu or Repeat History will cause a context loss and crash
-# See a similar problem solution in commit b947810291b1
 
 class BONE_OT_custom_shape(Operator):
     bl_idname = "object.skinify_rig"

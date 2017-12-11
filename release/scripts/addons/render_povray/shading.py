@@ -93,7 +93,7 @@ def writeMaterial(using_uberpov, DEF_MAT_NAME, scene, tabWrite, safety, comments
                 pass  # let's keep things simple for now
             if material.diffuse_shader == 'LAMBERT' and Level != 3:
                 # trying to best match lambert attenuation by that constant brilliance value
-                tabWrite("brilliance 1.8\n")
+                tabWrite("brilliance 1\n")
 
             if Level == 2:
                 ###########################Specular Shader######################################
@@ -101,7 +101,7 @@ def writeMaterial(using_uberpov, DEF_MAT_NAME, scene, tabWrite, safety, comments
                 if (material.specular_shader == 'COOKTORR' or
                     material.specular_shader == 'PHONG'):
                     tabWrite("phong %.3g\n" % (material.specular_intensity))
-                    tabWrite("phong_size %.3g\n" % (material.specular_hardness / 2 + 0.25))
+                    tabWrite("phong_size %.3g\n" % (material.specular_hardness /3.14))
 
                 # POV-Ray 'specular' keyword corresponds to a Blinn model, without the ior.
                 elif material.specular_shader == 'BLINN':
@@ -130,9 +130,38 @@ def writeMaterial(using_uberpov, DEF_MAT_NAME, scene, tabWrite, safety, comments
 
             ####################################################################################
             elif Level == 1:
-                tabWrite("specular 0\n")
+                if (material.specular_shader == 'COOKTORR' or
+                    material.specular_shader == 'PHONG'):
+                    tabWrite("phong %.3g\n" % (material.specular_intensity/5))
+                    tabWrite("phong_size %.3g\n" % (material.specular_hardness /3.14))
+
+                # POV-Ray 'specular' keyword corresponds to a Blinn model, without the ior.
+                elif material.specular_shader == 'BLINN':
+                    # Use blender Blinn's IOR just as some factor for spec intensity
+                    tabWrite("specular %.3g\n" % (material.specular_intensity *
+                                                  (material.specular_ior / 4.0)))
+                    tabWrite("roughness %.3g\n" % roughness)
+                    #Could use brilliance 2(or varying around 2 depending on ior or factor) too.
+
+                elif material.specular_shader == 'TOON':
+                    tabWrite("phong %.3g\n" % (material.specular_intensity * 2.0))
+                    # use extreme phong_size
+                    tabWrite("phong_size %.3g\n" % (0.1 + material.specular_toon_smooth / 2.0))
+
+                elif material.specular_shader == 'WARDISO':
+                    # find best suited default constant for brilliance Use both phong and
+                    # specular for some values.
+                    tabWrite("specular %.3g\n" % (material.specular_intensity /
+                                                  (material.specular_slope + 0.0005)))
+                    # find best suited default constant for brilliance Use both phong and
+                    # specular for some values.
+                    tabWrite("roughness %.4g\n" % (0.0005 + material.specular_slope / 10.0))
+                    # find best suited default constant for brilliance Use both phong and
+                    # specular for some values.
+                    tabWrite("brilliance %.4g\n" % (1.8 - material.specular_slope * 1.8))
             elif Level == 3:
-                tabWrite("specular 1\n")
+                tabWrite("specular %.3g\n" % ((material.specular_intensity*material.specular_color.v)*5))
+                tabWrite("roughness %.3g\n" % (1.1/material.specular_hardness))
             tabWrite("diffuse %.3g %.3g\n" % (frontDiffuse, backDiffuse))
 
             tabWrite("ambient %.3g\n" % material.ambient)
@@ -795,7 +824,7 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
                 # IMAGE SEQUENCE BEGINS
                 if image_filename:
                     if bpy.data.images[t.texture.image.name].source == 'SEQUENCE':
-                        korvaa = "." + str(bpy.data.textures[t.texture.name].image_user.frame_offset + 1).zfill(3) + "."
+                        korvaa = "." + str(t.texture.image_user.frame_offset + 1).zfill(3) + "."
                         image_filename = image_filename.replace(".001.", korvaa)
                         print(" seq debug ")
                         print(image_filename)
@@ -982,12 +1011,12 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
             mappingNor =imgMapTransforms(t_nor)
 
             if texturesNorm and texturesNorm.startswith("PAT_"):
-                tabWrite("normal{function{f%s(x,y,z).grey} bump_size %.4g %s}\n" %(texturesNorm, t_nor.normal_factor/10, mappingNor))
+                tabWrite("normal{function{f%s(x,y,z).grey} bump_size %.4g %s}\n" %(texturesNorm, t_nor.normal_factor, mappingNor))
             else:
                 tabWrite("normal {uv_mapping bump_map " \
                          "{%s \"%s\" %s  bump_size %.4g }%s}\n" % \
                          (imageFormat(texturesNorm), texturesNorm, imgMap(t_nor),
-                          t_nor.normal_factor/10, mappingNor))
+                          t_nor.normal_factor, mappingNor))
         if texturesSpec != "":
             tabWrite("]\n")
         ##################Second index for mapping specular max value###############
@@ -1093,11 +1122,11 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
         mappingNor =imgMapTransforms(t_nor)
 
         if texturesNorm and texturesNorm.startswith("PAT_"):
-            tabWrite("normal{function{f%s(x,y,z).grey} bump_size %.4g %s}\n" %(texturesNorm, t_nor.normal_factor/10, mappingNor))
+            tabWrite("normal{function{f%s(x,y,z).grey} bump_size %.4g %s}\n" %(texturesNorm, t_nor.normal_factor, mappingNor))
         else:
             tabWrite("normal {uv_mapping bump_map {%s \"%s\" %s  bump_size %.4g }%s}\n" % \
                      (imageFormat(texturesNorm), texturesNorm, imgMap(t_nor),
-                      t_nor.normal_factor/10, mappingNor))
+                      t_nor.normal_factor, mappingNor))
     if texturesSpec != "" and mater.pov.replacement_text == "":
         tabWrite("]\n")
 
@@ -1169,13 +1198,13 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
                             tabWrite("normal{function" \
                                      "{f%s(x,y,z).grey} bump_size %.4g}\n" % \
                                      (texturesNorm,
-                                     t_nor.normal_factor/10))
+                                     t_nor.normal_factor))
                         else:
                             tabWrite("normal {uv_mapping bump_map " \
                                      "{%s \"%s\" %s  bump_size %.4g }%s}\n" % \
                                      (imageFormat(texturesNorm),
                                      texturesNorm, imgMap(t_nor),
-                                     t_nor.normal_factor/10,
+                                     t_nor.normal_factor,
                                      mappingNor))
 
         tabWrite("}\n") # THEN IT CAN CLOSE LAST LAYER OF TEXTURE

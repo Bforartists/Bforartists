@@ -76,6 +76,7 @@ def menu_func_landscape(self, context):
 
 # Landscape Add Panel
 class panel_func_add_landscape(bpy.types.Panel):
+    bl_idname = "ANTLANDSCAPE_PT_add"
     bl_space_type = "VIEW_3D"
     bl_context = "objectmode"
     bl_region_type = "TOOLS"
@@ -90,6 +91,7 @@ class panel_func_add_landscape(bpy.types.Panel):
 
 # Landscape Tools:
 class AntLandscapeToolsPanel(bpy.types.Panel):
+    bl_idname = "ANTLANDSCAPE_PT_tools"
     bl_space_type = "VIEW_3D"
     bl_context = "objectmode"
     bl_region_type = "TOOLS"

@@ -143,6 +143,17 @@ for member in dir(properties_physics_dynamicpaint):
         pass
 del properties_physics_dynamicpaint
 
+
+# Example of wrapping every class 'as is'
+from bl_ui import properties_data_modifier
+for member in dir(properties_data_modifier):
+    subclass = getattr(properties_data_modifier, member)
+    try:
+        subclass.COMPAT_ENGINES.add('POVRAY_RENDER')
+    except:
+        pass
+del properties_data_modifier
+
 # Example of wrapping every class 'as is' except some
 from bl_ui import properties_material
 for member in dir(properties_material):
@@ -229,6 +240,17 @@ class RenderButtonsPanel():
         rd = context.scene.render
         return (rd.use_game_engine is False) and (rd.engine in cls.COMPAT_ENGINES)
 
+class ModifierButtonsPanel():
+    bl_space_type = 'PROPERTIES'
+    bl_region_type = 'WINDOW'
+    bl_context = "modifier"
+    # COMPAT_ENGINES must be defined in each subclass, external engines can add themselves here
+
+    @classmethod
+    def poll(cls, context):
+        mods = context.object.modifiers
+        rd = context.scene.render
+        return mods and (rd.use_game_engine is False) and (rd.engine in cls.COMPAT_ENGINES)
 
 class MaterialButtonsPanel():
     bl_space_type = 'PROPERTIES'
@@ -802,6 +824,36 @@ class RENDER_PT_povray_media(WorldButtonsPanel, bpy.types.Panel):
 ##        rd = scene.render
 ##
 ##        layout.active = scene.pov.baking_enable
+'''XXX WIP preparing for CSG
+class MODIFIERS_PT_povray_modifiers(ModifierButtonsPanel, bpy.types.Panel):
+    bl_label = "POV-Ray"
+    COMPAT_ENGINES = {'POVRAY_RENDER'}
+
+    #def draw_header(self, context):
+        #scene = context.scene
+        #self.layout.prop(scene.pov, "boolean_mod", text="")
+
+    def draw(self, context):
+        scene = context.scene
+        layout = self.layout
+        ob = context.object
+        mod = ob.modifiers
+        col = layout.column()
+        # Find Boolean Modifiers for displaying CSG option
+        onceCSG = 0
+        for mod in ob.modifiers:
+            if onceCSG == 0:
+                if mod :
+                    if mod.type == 'BOOLEAN':
+                        col.prop(ob.pov, "boolean_mod")
+                        onceCSG = 1
+
+                    if ob.pov.boolean_mod == "POV": 
+                        split = layout.split()
+                        col = layout.column()
+                        # Inside Vector for CSG
+                        col.prop(ob.pov, "inside_vector")
+'''        
 
 class MATERIAL_PT_povray_activate_node(MaterialButtonsPanel, bpy.types.Panel):
     bl_label = "Activate Node Settings"
@@ -1281,23 +1333,55 @@ class TEXTURE_PT_povray_tex_gamma(TextureButtonsPanel, bpy.types.Panel):
         # col.prop(tex.pov, "replacement_text", text="")
 
 
-class OBJECT_PT_povray_obj_importance(ObjectButtonsPanel, bpy.types.Panel):
+class OBJECT_PT_povray_obj_parameters(ObjectButtonsPanel, bpy.types.Panel):
     bl_label = "POV-Ray"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
+    
+    @classmethod
+    def poll(cls, context):
+
+        engine = context.scene.render.engine
+        return (engine in cls.COMPAT_ENGINES)
 
     def draw(self, context):
         layout = self.layout
 
         obj = context.object
 
-        col = layout.column()
+        split = layout.split()
+
+        col = split.column(align=True)
+
         col.label(text="Radiosity:")
         col.prop(obj.pov, "importance_value", text="Importance")
         col.label(text="Photons:")
         col.prop(obj.pov, "collect_photons", text="Receive Photon Caustics")
         if obj.pov.collect_photons:
             col.prop(obj.pov, "spacing_multiplier", text="Photons Spacing Multiplier")
+            
+        split = layout.split()
 
+        col = split.column()
+        col.prop(obj.pov,"hollow")
+        col.prop(obj.pov,"double_illuminate")
+
+     
+        if obj.type == 'META' or obj.pov.curveshape == 'lathe':
+        #if obj.pov.curveshape == 'sor'
+            col.prop(obj.pov,"sturm")
+        col.prop(obj.pov,"no_shadow")
+        col.prop(obj.pov,"no_image")
+        col.prop(obj.pov,"no_reflection")
+        col.prop(obj.pov,"no_radiosity")
+        col.prop(obj.pov,"inverse")
+        col.prop(obj.pov,"hierarchy")
+        # col.prop(obj.pov,"boundorclip",text="Bound / Clip")
+        # if obj.pov.boundorclip != "none":
+            # col.prop_search(obj.pov,"boundorclipob",context.blend_data,"objects",text="Object")
+            # text = "Clipped by"
+            # if obj.pov.boundorclip == "clipped_by":
+                # text = "Bounded by"
+            # col.prop(obj.pov,"addboundorclip",text=text)
 
 class OBJECT_PT_povray_obj_sphere(PovDataButtonsPanel, bpy.types.Panel):
     bl_label = "POV-Ray Sphere"
@@ -1594,9 +1678,9 @@ class OBJECT_PT_povray_replacement_text(ObjectButtonsPanel, bpy.types.Panel):
 ###############################################################################
 
 
-class Povray_primitives_add_menu(bpy.types.Menu):
+class POVRAY_MT_primitives_add_menu(bpy.types.Menu):
     """Define the menu with presets"""
-    bl_idname = "Povray_primitives_add_menu"
+    bl_idname = "POVRAY_MT_primitives_add_menu"
     bl_label = "Povray"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
 
@@ -1612,11 +1696,10 @@ class Povray_primitives_add_menu(bpy.types.Menu):
         layout.menu(ImportMenu.bl_idname, text = "Import",icon="IMPORT")
 
 class BasicShapesMenu(bpy.types.Menu):
-    bl_idname = "Basic_shapes_calls"
+    bl_idname = "POVRAY_MT_basic_shape_tools"
     bl_label = "Basic_shapes"
 
     def draw(self,context):
-        pov = bpy.types.Object.pov #context.object.pov ?
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
         layout.operator("pov.addplane", text="Infinite Plane",icon = 'MESH_PLANE')
@@ -1660,11 +1743,10 @@ class BasicShapesMenu(bpy.types.Menu):
             layout.operator("pov.addparametric", text="Parametric",icon = 'SCRIPTPLUGINS')
 
 class ImportMenu(bpy.types.Menu):
-    bl_idname = "Importer_calls"
+    bl_idname = "POVRAY_MT_import_tools"
     bl_label = "Import"
 
     def draw(self,context):
-        pov = bpy.types.Object.pov #context.object.pov ?
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
         layout.operator("import_scene.pov",icon="FORCE_LENNARDJONES")
@@ -1672,7 +1754,7 @@ class ImportMenu(bpy.types.Menu):
 def menu_func_add(self, context):
     engine = context.scene.render.engine
     if engine == 'POVRAY_RENDER':
-        self.layout.menu("Povray_primitives_add_menu", icon="PLUGIN")
+        self.layout.menu("POVRAY_MT_primitives_add_menu", icon="PLUGIN")
 
 def menu_func_import(self, context):
     engine = context.scene.render.engine
@@ -1706,9 +1788,9 @@ def menu_func_import(self, context):
 
     # return True
 
-class Node_map_create_menu(bpy.types.Menu):
+class NodeMapCreateMenu(bpy.types.Menu):
     """Create maps"""
-    bl_idname = "Node_map_create_menu"
+    bl_idname = "POVRAY_MT_node_map_create"
     bl_label = "Create map"
 
     def draw(self,context):
@@ -1721,7 +1803,7 @@ def menu_func_nodes(self, context):
         mat=context.object.active_material
         if mat and context.space_data.tree_type == 'ObjectNodeTree':
             self.layout.prop(mat.pov,"material_use_nodes")
-            self.layout.menu("Node_map_create_menu")
+            self.layout.menu(NodeMapCreateMenu.bl_idname)
             self.layout.operator("wm.updatepreviewkey")
         if hasattr(mat,'active_texture') and context.scene.render.engine == 'POVRAY_RENDER':
             tex=mat.active_texture

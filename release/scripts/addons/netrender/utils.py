@@ -42,7 +42,7 @@ if system == "Darwin":
         def __init__(self, timeout = None):
             self.old_timeout = socket.getdefaulttimeout()
             self.timeout = timeout
-            
+
         def __enter__(self):
             if self.old_timeout != self.timeout:
                 socket.setdefaulttimeout(self.timeout)
@@ -54,7 +54,7 @@ else:
     class ConnectionContext:
         def __init__(self, timeout = None):
             pass
-            
+
         def __enter__(self):
             pass
 
@@ -66,7 +66,7 @@ if system in {"Windows", "win32"}:
     class NoErrorDialogContext:
         def __init__(self):
             self.val = 0
-            
+
         def __enter__(self):
             self.val = ctypes.windll.kernel32.SetErrorMode(0x0002)
             ctypes.windll.kernel32.SetErrorMode(self.val | 0x0002)
@@ -77,7 +77,7 @@ else:
     class NoErrorDialogContext:
         def __init__(self):
             pass
-            
+
         def __enter__(self):
             pass
 
@@ -87,7 +87,7 @@ else:
 class DirectoryContext:
     def __init__(self, path):
         self.path = path
-        
+
     def __enter__(self):
         self.curdir = os.path.abspath(os.curdir)
         os.chdir(self.path)
@@ -102,19 +102,19 @@ class BreakableIncrementedSleep:
         self.max = max_timeout
         self.current = self.default
         self.break_fct = break_fct
-        
+
     def reset(self):
         self.current = self.default
 
     def increase(self):
         self.current = min(self.current + self.increment, self.max)
-        
+
     def sleep(self):
         for i in range(self.current):
             time.sleep(1)
             if self.break_fct():
                 break
-            
+
         self.increase()
 
 def responseStatus(conn):
@@ -163,7 +163,7 @@ def clientConnection(netsettings, report = None, scan = True, timeout = 50):
     address = netsettings.server_address
     port = netsettings.server_port
     use_ssl = netsettings.use_ssl
-    
+
     if address== "[default]":
 #            calling operator from python is fucked, scene isn't in context
 #            if bpy:
@@ -236,7 +236,7 @@ def hashFile(path):
     value = hashData(f.read())
     f.close()
     return value
-    
+
 def hashData(data):
     m = hashlib.md5()
     m.update(data)
@@ -257,13 +257,13 @@ def verifyCreateDir(directory_path):
             if original_path != directory_path:
                 print("Expanded from the following path:", original_path)
             raise
-    
+
 
 def cacheName(ob, point_cache):
     name = point_cache.name
     if name == "":
         name = "".join(["%02X" % ord(c) for c in ob.name])
-        
+
     return name
 
 def cachePath(file_path):
@@ -291,12 +291,12 @@ def processObjectDependencies(pointCacheFunction, fluidFunction, multiresFunctio
             elif modifier.type == "DYNAMIC_PAINT" and modifier.canvas_settings:
                 for surface in modifier.canvas_settings.canvas_surfaces:
                     pointCacheFunction(object, modifier, surface.point_cache)
-    
+
         # particles modifier are stupid and don't contain data
         # we have to go through the object property
         for psys in object.particle_systems:
             pointCacheFunction(object, psys, psys.point_cache)
-    
+
 
 def createLocalPath(rfile, prefixdirectory, prefixpath, forcelocal):
     filepath = rfile.original_path
@@ -309,12 +309,12 @@ def createLocalPath(rfile, prefixdirectory, prefixpath, forcelocal):
         finalpath = filepath
         if forcelocal or not os.path.exists(finalpath):
             path, name = os.path.split(os.path.normpath(finalpath))
-            
+
             # Don't add signatures to cache files, relink fails otherwise
             if not name.endswith(".bphys") and not name.endswith(".bobj.gz"):
                 name, ext = os.path.splitext(name)
                 name = name + "_" + rfile.signature + ext
-            
+
             if prefixpath and path.startswith(prefixpath):
                 suffix = ""
                 while path != prefixpath:
@@ -334,7 +334,7 @@ def createLocalPath(rfile, prefixdirectory, prefixpath, forcelocal):
         if not name.endswith(".bphys") and not name.endswith(".bobj.gz"):
             name, ext = os.path.splitext(name)
             name = name + "_" + rfile.signature + ext
-        
+
         directory = directory.replace("../")
         directory = os.path.join(prefixdirectory, directory)
 
@@ -355,7 +355,7 @@ def getResults(server_address, server_port, job_id, resolution_x, resolution_y, 
             frame_arguments.extend(["-s", str(r[0]), "-e", str(r[1]), "-a"])
         else:
             frame_arguments.extend(["-f", str(r[0])])
-            
+
     filepath = os.path.join(bpy.app.tempdir, "netrender_temp.blend")
     bpy.ops.wm.save_as_mainfile(filepath=filepath, copy=True, check_existing=False)
 
@@ -387,22 +387,22 @@ def getResults(server_address, server_port, job_id, resolution_x, resolution_y, 
         stdout = process.stdout.read(1024)
         if bpy.app.debug:
             print(str(stdout, encoding='utf-8'), end="")
-        
+
 
     # read leftovers if needed
     stdout = process.stdout.read()
     if bpy.app.debug:
         print(str(stdout, encoding='utf-8'))
-    
+
     os.remove(filepath)
-    
+
     if bpy.app.debug:
         print("=============================================")
     return
 
 def _getResults(server_address, server_port, job_id, resolution_x, resolution_y, resolution_percentage):
     render = bpy.context.scene.render
-    
+
     netsettings = bpy.context.scene.network_render
 
     netsettings.server_address = server_address
@@ -417,7 +417,7 @@ def _getResults(server_address, server_port, job_id, resolution_x, resolution_y,
     render.use_full_sample = False
     render.use_compositing = False
     render.use_border = False
-    
+
 
 def getFileInfo(filepath, infos):
     process = subprocess.Popen(
@@ -445,7 +445,7 @@ def getFileInfo(filepath, infos):
     values = [eval(v[1:].strip()) for v in stdout.split("\n") if v.startswith("$")]
 
     return values
-  
+
 
 if __name__ == "__main__":
     try:
@@ -453,8 +453,8 @@ if __name__ == "__main__":
     except ValueError:
         start = 0
     action, *args = sys.argv[start:]
-    
-    if action == "FileInfo": 
+
+    if action == "FileInfo":
         for info in args:
             print("$", eval(info))
     elif action == "GetResults":

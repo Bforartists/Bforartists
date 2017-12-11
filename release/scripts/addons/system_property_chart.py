@@ -36,9 +36,14 @@ bl_info = {
 
 import bpy
 from bl_operators.presets import AddPresetBase
+from bpy.types import (
+    Menu,
+    Operator,
+    Panel,
+)
 
 
-class AddPresetProperties(AddPresetBase, bpy.types.Operator):
+class AddPresetProperties(AddPresetBase, Operator):
     """Add an properties preset"""
     bl_idname = "scene.properties_preset_add"
     bl_label = "Add Properties Preset"
@@ -58,7 +63,7 @@ class AddPresetProperties(AddPresetBase, bpy.types.Operator):
             self.preset_values = ["scene.sequencer_edit_props"]
 
 
-class SCENE_MT_properties_presets(bpy.types.Menu):
+class SCENE_MT_properties_presets(Menu):
     bl_label = "Properties Presets"
     preset_operator = "script.execute_preset"
 
@@ -70,7 +75,7 @@ class SCENE_MT_properties_presets(bpy.types.Menu):
         else:
             self.preset_subdir = "system_property_chart_sequencer"
 
-        bpy.types.Menu.draw_preset(self, context)
+        Menu.draw_preset(self, context)
 
 
 def _property_chart_data_get(self, context):
@@ -163,8 +168,9 @@ def _property_chart_draw(self, context):
 
             for obj, prop_pairs in prop_all:
                 data, attr = prop_pairs[i]
+                # row is needed for vector buttons
                 if data:
-                    col.prop(data, attr, text="")  # , emboss=obj==active_object
+                    col.row().prop(data, attr, text="")  # , emboss=obj==active_object
                 else:
                     col.label(text="<missing>")
 
@@ -179,7 +185,8 @@ def _property_chart_draw(self, context):
     col.prop(id_storage, self._PROP_STORAGE_ID, text="")
 
 
-class View3DEditProps(bpy.types.Panel):
+class View3DEditProps(Panel):
+    bl_idname = "SYSPROP_CHART_PT_view3d"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
 
@@ -187,7 +194,8 @@ class View3DEditProps(bpy.types.Panel):
     bl_context = "objectmode"
 
     _PROP_STORAGE_ID = "view3d_edit_props"
-    _PROP_STORAGE_DEFAULT = "data data.name"
+    _PROP_STORAGE_ID_DESCR = "Properties of objects in the context"
+    _PROP_STORAGE_DEFAULT = "data data.use_auto_smooth"
 
     # _property_chart_draw needs these
     context_data_path_active = "active_object"
@@ -196,13 +204,15 @@ class View3DEditProps(bpy.types.Panel):
     draw = _property_chart_draw
 
 
-class SequencerEditProps(bpy.types.Panel):
+class SequencerEditProps(Panel):
+    bl_idname = "SYSPROP_CHART_PT_sequencer"
     bl_space_type = 'SEQUENCE_EDITOR'
     bl_region_type = 'UI'
 
     bl_label = "Property Chart"
 
     _PROP_STORAGE_ID = "sequencer_edit_props"
+    _PROP_STORAGE_ID_DESCR = "Properties of sequencer strips in the context"
     _PROP_STORAGE_DEFAULT = "blend_type blend_alpha"
 
     # _property_chart_draw needs these
@@ -239,7 +249,7 @@ def _property_chart_copy(self, context):
 from bpy.props import StringProperty
 
 
-class CopyPropertyChart(bpy.types.Operator):
+class CopyPropertyChart(Operator):
     "Open a path in a file browser"
     bl_idname = "wm.chart_copy"
     bl_label = "Copy properties from active to selected"
@@ -264,14 +274,15 @@ def register():
     Scene = bpy.types.Scene
 
     for cls in View3DEditProps, SequencerEditProps:
-        setattr(Scene,
-                cls._PROP_STORAGE_ID,
-                StringProperty(
-                    name="Scene Name",
-                    description="Name of POV-Ray scene to create. Empty " \
-                                "name will use the name of the blend file",
-                    default=cls._PROP_STORAGE_DEFAULT, maxlen=1024),
-                )
+        setattr(
+            Scene,
+            cls._PROP_STORAGE_ID,
+            StringProperty(
+                name="Properties",
+                description=cls._PROP_STORAGE_ID_DESCR + " (separated by spaces)",
+                default=cls._PROP_STORAGE_DEFAULT, maxlen=1024,
+            ),
+        )
 
 
 def unregister():

@@ -2,7 +2,11 @@
 
 import bpy
 from bpy.types import Operator
-from math import atan, asin, cos, sin, tan, pi, radians
+from math import (
+        atan, asin, cos,
+        sin, tan, pi,
+        radians,
+        )
 from bpy.props import (
         FloatProperty,
         IntProperty,
@@ -551,64 +555,74 @@ class AddGear(Operator):
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
     number_of_teeth = IntProperty(name="Number of Teeth",
-        description="Number of teeth on the gear",
-        min=2,
-        max=265,
-        default=12)
+            description="Number of teeth on the gear",
+            min=2,
+            max=265,
+            default=12
+            )
     radius = FloatProperty(name="Radius",
-        description="Radius of the gear, negative for crown gear",
-        min=-100.0,
-        max=100.0,
-        unit='LENGTH',
-        default=1.0)
+            description="Radius of the gear, negative for crown gear",
+            min=-100.0,
+            max=100.0,
+            unit='LENGTH',
+            default=1.0
+            )
     addendum = FloatProperty(name="Addendum",
-        description="Addendum, extent of tooth above radius",
-        min=0.01,
-        max=100.0,
-        unit='LENGTH',
-        default=0.1)
+            description="Addendum, extent of tooth above radius",
+            min=0.01,
+            max=100.0,
+            unit='LENGTH',
+            default=0.1
+            )
     dedendum = FloatProperty(name="Dedendum",
-        description="Dedendum, extent of tooth below radius",
-        min=0.0,
-        max=100.0,
-        unit='LENGTH',
-        default=0.1)
+            description="Dedendum, extent of tooth below radius",
+            min=0.0,
+            max=100.0,
+            unit='LENGTH',
+            default=0.1
+            )
     angle = FloatProperty(name="Pressure Angle",
-        description="Pressure angle, skewness of tooth tip",
-        min=0.0,
-        max=radians(45.0),
-        unit='ROTATION',
-        default=radians(20.0))
+            description="Pressure angle, skewness of tooth tip",
+            min=0.0,
+            max=radians(45.0),
+            unit='ROTATION',
+            default=radians(20.0)
+            )
     base = FloatProperty(name="Base",
-        description="Base, extent of gear below radius",
-        min=0.0,
-        max=100.0,
-        unit='LENGTH',
-        default=0.2)
+            description="Base, extent of gear below radius",
+            min=0.0,
+            max=100.0,
+            unit='LENGTH',
+            default=0.2
+            )
     width = FloatProperty(name="Width",
-        description="Width, thickness of gear",
-        min=0.05,
-        max=100.0,
-        unit='LENGTH',
-        default=0.2)
+            description="Width, thickness of gear",
+            min=0.05,
+            max=100.0,
+            unit='LENGTH',
+            default=0.2
+            )
     skew = FloatProperty(name="Skewness",
-        description="Skew of teeth",
-        min=radians(-90.0),
-        max=radians(90.0),
-        unit='ROTATION',
-        default=radians(0.0))
+            description="Skew of teeth",
+            min=radians(-90.0),
+            max=radians(90.0),
+            unit='ROTATION',
+            default=radians(0.0)
+            )
     conangle = FloatProperty(name="Conical angle",
-        description="Conical angle of gear",
-        min=0.0,
-        max=radians(90.0),
-        unit='ROTATION',
-        default=radians(0.0))
+            description="Conical angle of gear",
+            min=0.0,
+            max=radians(90.0),
+            unit='ROTATION',
+            default=radians(0.0)
+            )
     crown = FloatProperty(name="Crown",
-        description="Inward pointing extend of crown teeth",
-        min=0.0,
-        max=100.0,
-        unit='LENGTH',
-        default=0.0)
+            description="Inward pointing extend of crown teeth",
+            min=0.0,
+            max=100.0,
+            unit='LENGTH',
+            default=0.0
+            )
 
     def draw(self, context):
         layout = self.layout
@@ -668,75 +682,75 @@ class AddWormGear(Operator):
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
     number_of_teeth = IntProperty(
-                name="Number of Teeth",
-                description="Number of teeth on the gear",
-                min=2,
-                max=265,
-                default=12
-                )
+            name="Number of Teeth",
+            description="Number of teeth on the gear",
+            min=2,
+            max=265,
+            default=12
+            )
     number_of_rows = IntProperty(
-                name="Number of Rows",
-                description="Number of rows on the worm gear",
-                min=2,
-                max=265,
-                default=32
-                )
+            name="Number of Rows",
+            description="Number of rows on the worm gear",
+            min=2,
+            max=265,
+            default=32
+            )
     radius = FloatProperty(
-                name="Radius",
-                description="Radius of the gear, negative for crown gear",
-                min=-100.0,
-                max=100.0,
-                unit='LENGTH',
-                default=1.0
-                )
+            name="Radius",
+            description="Radius of the gear, negative for crown gear",
+            min=-100.0,
+            max=100.0,
+            unit='LENGTH',
+            default=1.0
+            )
     addendum = FloatProperty(
-                name="Addendum",
-                description="Addendum, extent of tooth above radius",
-                min=0.01,
-                max=100.0,
-                unit='LENGTH',
-                default=0.1
-                )
+            name="Addendum",
+            description="Addendum, extent of tooth above radius",
+            min=0.01,
+            max=100.0,
+            unit='LENGTH',
+            default=0.1
+            )
     dedendum = FloatProperty(
-                name="Dedendum",
-                description="Dedendum, extent of tooth below radius",
-                min=0.0,
-                max=100.0,
-                unit='LENGTH',
-                default=0.1
-                )
+            name="Dedendum",
+            description="Dedendum, extent of tooth below radius",
+            min=0.0,
+            max=100.0,
+            unit='LENGTH',
+            default=0.1
+            )
     angle = FloatProperty(
-                name="Pressure Angle",
-                description="Pressure angle, skewness of tooth tip",
-                min=0.0,
-                max=radians(45.0),
-                default=radians(20.0),
-                unit='ROTATION'
-                )
+            name="Pressure Angle",
+            description="Pressure angle, skewness of tooth tip",
+            min=0.0,
+            max=radians(45.0),
+            default=radians(20.0),
+            unit='ROTATION'
+            )
     row_height = FloatProperty(
-                name="Row Height",
-                description="Height of each Row",
-                min=0.05,
-                max=100.0,
-                unit='LENGTH',
-                default=0.2
-                )
+            name="Row Height",
+            description="Height of each Row",
+            min=0.05,
+            max=100.0,
+            unit='LENGTH',
+            default=0.2
+            )
     skew = FloatProperty(
-                name="Skewness per Row",
-                description="Skew of each row",
-                min=radians(-90.0),
-                max=radians(90.0),
-                default=radians(11.25),
-                unit='ROTATION'
-                )
+            name="Skewness per Row",
+            description="Skew of each row",
+            min=radians(-90.0),
+            max=radians(90.0),
+            default=radians(11.25),
+            unit='ROTATION'
+            )
     crown = FloatProperty(
-                name="Crown",
-                description="Inward pointing extend of crown teeth",
-                min=0.0,
-                max=100.0,
-                unit='LENGTH',
-                default=0.0
-                )
+            name="Crown",
+            description="Inward pointing extend of crown teeth",
+            min=0.0,
+            max=100.0,
+            unit='LENGTH',
+            default=0.0
+            )
 
     def draw(self, context):
         layout = self.layout
@@ -745,9 +759,11 @@ class AddWormGear(Operator):
         box.prop(self, "number_of_rows")
         box.prop(self, "radius")
         box.prop(self, "row_height")
+
         box = layout.box()
         box.prop(self, "addendum")
         box.prop(self, "dedendum")
+
         box = layout.box()
         box.prop(self, "angle")
         box.prop(self, "skew")

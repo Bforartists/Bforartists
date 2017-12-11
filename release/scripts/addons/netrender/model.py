@@ -121,7 +121,7 @@ class RenderSlave:
         self.total_done = 0
         self.total_error = 0
         self.last_seen = 0.0
-        
+
         if info:
             self.name = info.name
             self.address = info.address
@@ -176,7 +176,7 @@ class VersioningInfo:
         self.wpath = ""
         self.rpath = ""
         self.revision = ""
-        
+
     @property
     def system(self):
         return self._system
@@ -187,7 +187,7 @@ class VersioningInfo:
 
     def update(self):
         self.system.update(self)
-    
+
     def serialize(self):
         return {
                 "wpath": self.wpath,
@@ -195,7 +195,7 @@ class VersioningInfo:
                 "revision": self.revision,
                 "system": self.system.name
                 }
-        
+
     @staticmethod
     def generate(system, path):
         vs = VersioningInfo()
@@ -204,23 +204,23 @@ class VersioningInfo:
 
         vs.rpath = vs.system.path(path)
         vs.revision = vs.system.revision(path)
-        
+
         return vs
-        
-        
+
+
     @staticmethod
     def materialize(data):
         if not data:
             return None
-        
+
         vs = VersioningInfo()
         vs.wpath = data["wpath"]
         vs.rpath = data["rpath"]
         vs.revision = data["revision"]
         vs.system = data["system"]
-        
+
         return vs
-        
+
 
 class RenderFile:
     def __init__(self, filepath = "", index = 0, start = -1, end = -1, signature = 0):
@@ -231,7 +231,7 @@ class RenderFile:
         self.start = start
         self.end = end
         self.force = False
-        
+
 
     def serialize(self):
         return 	{
@@ -242,7 +242,7 @@ class RenderFile:
                     "end": self.end,
                     "signature": self.signature,
                     "force": self.force
-                    
+
                 }
 
     @staticmethod
@@ -259,16 +259,16 @@ class RenderFile:
 class RenderJob:
     def __init__(self, info = None):
         self.id = ""
-        
+
         self.resolution = None
 
         self.usage = 0.0
         self.last_dispatched = 0.0
         self.frames = []
         self.transitions = []
-        
+
         self._status = None
-        
+
         if info:
             self.type = info.type
             self.subtype = info.subtype
@@ -300,13 +300,13 @@ class RenderJob:
     def status(self):
         """Status of the job (waiting, paused, finished or queued)"""
         return self._status
-    
+
     @status.setter
     def status(self, value):
         transition = JOB_TRANSITIONS.get((self.status, value), None)
         if transition:
             self.transitions.append((transition, time.time()))
-            
+
         self._status = value
 
     @property
@@ -316,7 +316,7 @@ class RenderJob:
             if transition == JOB_TRANSITION_STARTED:
                 started_time = time_value
                 break
-            
+
         return started_time
 
     @property
@@ -326,7 +326,7 @@ class RenderJob:
             for transition, time_value in self.transitions:
                 if transition == JOB_TRANSITION_FINISHED:
                     finished_time = time_value
-            
+
         return finished_time
 
     def hasRenderResult(self):
@@ -339,15 +339,15 @@ class RenderJob:
         def isFileInFrames():
             if start == end == -1:
                 return True
-            
+
             for rframe in self.frames:
                 if start <= rframe.number<= end:
                     return True
-            
+
             return False
-            
-            
-        if isFileInFrames(): 
+
+
+        if isFileInFrames():
             if signed:
                 signature = hashFile(file_path)
             else:
@@ -426,10 +426,10 @@ class RenderJob:
                         }
         if (withFiles):
            data["files"]=[f.serialize() for f in self.files if f.start == -1 or not frames or (f.start <= max_frame and f.end >= min_frame)]
-          
+
         if (withFrames):
            data["frames"]=[f.serialize() for f in self.frames if not frames or f in frames]
-           
+
         return data
     @staticmethod
     def materialize(data):
@@ -454,7 +454,7 @@ class RenderJob:
         job.last_dispatched = data["last_dispatched"]
         job.resolution = data["resolution"]
         job.render=data["render"]
-        
+
         version_info = data.get("version_info", None)
         if version_info:
             job.version_info = VersioningInfo.materialize(version_info)

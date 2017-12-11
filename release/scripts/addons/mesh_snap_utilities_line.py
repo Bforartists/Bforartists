@@ -19,10 +19,11 @@
 # Email:    germano.costa@ig.com.br
 # Twitter:  wii_mano @mano_wii
 
+
 bl_info = {
     "name": "Snap Utilities Line",
     "author": "Germano Cavalcante",
-    "version": (5, 7, 2),
+    "version": (5, 7, 6),
     "blender": (2, 75, 0),
     "location": "View3D > TOOLS > Snap Utilities > snap utilities",
     "description": "Extends Blender Snap controls",
@@ -50,6 +51,11 @@ from bpy.props import (
         FloatVectorProperty,
         StringProperty,
         )
+
+##DEBUG = False
+##if DEBUG:
+##    from .snap_framebuffer_debug import screenTexture
+##    from .snap_context import mesh_drawing
 
 
 def get_units_info(scale, unit_system, separate_units):
@@ -104,51 +110,6 @@ def location_3d_to_region_2d(region, rv3d, coord):
                    height_half + height_half * (prj.y / prj.w),
                    prj.z / prj.w
                    ))
-
-
-def fac_nearest_to_segment_2d(co2v, v2d0, v2d1):
-    u = v2d1.xy - v2d0.xy
-    h = co2v.xy - v2d0.xy
-    return u.dot(h) / u.length_squared
-
-
-def region_2d_to_orig_and_view_vector(region, rv3d, coord, clamp=None):
-    viewinv = rv3d.view_matrix.inverted()
-    persinv = rv3d.perspective_matrix.inverted()
-
-    dx = (2.0 * coord[0] / region.width) - 1.0
-    dy = (2.0 * coord[1] / region.height) - 1.0
-
-    if rv3d.is_perspective:
-        origin_start = viewinv.translation.copy()
-
-        out = Vector((dx, dy, -0.5))
-
-        w = out.dot(persinv[3].xyz) + persinv[3][3]
-
-        view_vector = ((persinv * out) / w) - origin_start
-    else:
-        view_vector = -viewinv.col[2].xyz
-
-        origin_start = ((persinv.col[0].xyz * dx) +
-                        (persinv.col[1].xyz * dy) +
-                        viewinv.translation)
-
-        if clamp != 0.0:
-            if rv3d.view_perspective != 'CAMERA':
-                # this value is scaled to the far clip already
-                origin_offset = persinv.col[2].xyz
-                if clamp is not None:
-                    if clamp < 0.0:
-                        origin_offset.negate()
-                        clamp = -clamp
-                    if origin_offset.length > clamp:
-                        origin_offset.length = clamp
-
-                origin_start -= origin_offset
-
-    view_vector.normalize()
-    return origin_start, view_vector
 
 
 def out_Location(rv3d, region, orig, vector):
@@ -212,23 +173,16 @@ class SnapCache():
         v2dmid = None
         v2dperp = None
 
-        bface = None
-        fmid = None
-        fnor = None
-
-        out_obj = None
-        out_obmat = None
-        out_obimat = None
+        bm_geom_selected = None
 
 
 def snap_utilities(
-            cache, context, obj_matrix_world,
-            bm, mcursor,
-            outer_verts=False,
-            constrain=None,
-            previous_vert=None,
-            ignore_obj=None,
-            increment=0.0):
+        sctx, obj,
+        cache, context, obj_matrix_world,
+        bm, mcursor,
+        constrain = None,
+        previous_vert = None,
+        increment = 0.0):
 
     rv3d = context.region_data
     region = context.region
@@ -239,62 +193,94 @@ def snap_utilities(
     r_len = 0.0
     bm_geom = None
 
-    if bm.select_history:
-        bm.select_history[0].select = False
-        bm.select_history.clear()
+    if cache.bm_geom_selected:
+        try:
+           cache.bm_geom_selected.select = False
+        except ReferenceError as e:
+            print(e)
 
-    bpy.ops.view3d.select(location=(int(mcursor.x), int(mcursor.y)))
+    snp_obj, loc, elem = sctx.snap_get(mcursor)
+    view_vector, orig = sctx.last_ray
 
-    if bm.select_history:
-        bm_geom = bm.select_history[0]
+    if not snp_obj:
+        is_increment = True
+        if constrain:
+            end = orig + view_vector
+            t_loc = intersect_line_line(constrain[0], constrain[1], orig, end)
+            if t_loc is None:
+                t_loc = constrain
+            r_loc = t_loc[0]
+        else:
+            r_type = 'OUT'
+            r_loc = out_Location(rv3d, region, orig, view_vector)
 
-    if isinstance(bm_geom, bmesh.types.BMVert):
+    elif snp_obj.data[0] != obj: #OUT
+        r_loc = loc
+
+        if constrain:
+            is_increment = False
+            r_loc = intersect_point_line(r_loc, constrain[0], constrain[1])[0]
+            if not r_loc:
+                r_loc = out_Location(rv3d, region, orig, view_vector)
+        elif len(elem) == 1:
+            is_increment = False
+            r_type = 'VERT'
+        elif len(elem) == 2:
+            is_increment = True
+            r_type = 'EDGE'
+        else:
+            is_increment = True
+            r_type = 'FACE'
+
+    elif len(elem) == 1:
         r_type = 'VERT'
+        bm_geom = bm.verts[elem[0]]
 
         if cache.bvert != bm_geom:
             cache.bvert = bm_geom
-            cache.vco = obj_matrix_world * cache.bvert.co
-            # cache.v2d = location_3d_to_region_2d(region, rv3d, cache.vco)
+            cache.vco = loc
+            #cache.v2d = location_3d_to_region_2d(region, rv3d, cache.vco)
 
         if constrain:
-            location = intersect_point_line(cache.vco, constrain[0], constrain[1])
-            # factor = location[1]
-            r_loc = location[0]
+            r_loc = intersect_point_line(cache.vco, constrain[0], constrain[1])[0]
         else:
             r_loc = cache.vco
 
-    elif isinstance(bm_geom, bmesh.types.BMEdge):
+    elif len(elem) == 2:
+        v1 = bm.verts[elem[0]]
+        v2 = bm.verts[elem[1]]
+        bm_geom = bm.edges.get([v1, v2])
+
         if cache.bedge != bm_geom:
             cache.bedge = bm_geom
-            cache.v0 = obj_matrix_world * bm_geom.verts[0].co
-            cache.v1 = obj_matrix_world * bm_geom.verts[1].co
+            cache.v0 = obj_matrix_world * v1.co
+            cache.v1 = obj_matrix_world * v2.co
             cache.vmid = 0.5 * (cache.v0 + cache.v1)
             cache.v2d0 = location_3d_to_region_2d(region, rv3d, cache.v0)
             cache.v2d1 = location_3d_to_region_2d(region, rv3d, cache.v1)
             cache.v2dmid = location_3d_to_region_2d(region, rv3d, cache.vmid)
 
-            if previous_vert and previous_vert not in bm_geom.verts:
+            if previous_vert and previous_vert not in {v1, v2}:
                 pvert_co = obj_matrix_world * previous_vert.co
                 perp_point = intersect_point_line(pvert_co, cache.v0, cache.v1)
                 cache.vperp = perp_point[0]
-                # factor = point_perpendicular[1]
+                #factor = point_perpendicular[1]
                 cache.v2dperp = location_3d_to_region_2d(region, rv3d, perp_point[0])
 
-            # else: cache.v2dperp = None
+            #else: cache.v2dperp = None
 
         if constrain:
-            location = intersect_line_line(constrain[0], constrain[1], cache.v0, cache.v1)
-            if location is None:
+            t_loc = intersect_line_line(constrain[0], constrain[1], cache.v0, cache.v1)
+            if t_loc is None:
                 is_increment = True
-                orig, view_vector = region_2d_to_orig_and_view_vector(region, rv3d, mcursor)
                 end = orig + view_vector
-                location = intersect_line_line(constrain[0], constrain[1], orig, end)
-            r_loc = location[0]
+                t_loc = intersect_line_line(constrain[0], constrain[1], orig, end)
+            r_loc = t_loc[0]
 
-        elif cache.v2dperp and \
-          abs(cache.v2dperp[0] - mcursor[0]) < 10 and abs(cache.v2dperp[1] - mcursor[1]) < 10:
-            r_type = 'PERPENDICULAR'
-            r_loc = cache.vperp
+        elif cache.v2dperp and\
+            abs(cache.v2dperp[0] - mcursor[0]) < 10 and abs(cache.v2dperp[1] - mcursor[1]) < 10:
+                r_type = 'PERPENDICULAR'
+                r_loc = cache.vperp
 
         elif abs(cache.v2dmid[0] - mcursor[0]) < 10 and abs(cache.v2dmid[1] - mcursor[1]) < 10:
             r_type = 'CENTER'
@@ -305,93 +291,40 @@ def snap_utilities(
                 is_increment = True
 
             r_type = 'EDGE'
-            orig, view_vector = region_2d_to_orig_and_view_vector(region, rv3d, mcursor)
-            r_loc = intersect_line_line(cache.v0, cache.v1, orig, orig + view_vector)[0]
+            r_loc = loc
 
-    elif isinstance(bm_geom, bmesh.types.BMFace):
+    elif len(elem) == 3:
         is_increment = True
         r_type = 'FACE'
+        tri = [
+            bm.verts[elem[0]],
+            bm.verts[elem[1]],
+            bm.verts[elem[2]],
+        ]
 
-        if cache.bface != bm_geom:
-            cache.bface = bm_geom
-            cache.fmid = obj_matrix_world * bm_geom.calc_center_median()
-            cache.fnor = bm_geom.normal * obj_matrix_world
+        faces = set(tri[0].link_faces).intersection(tri[1].link_faces, tri[2].link_faces)
+        if len(faces) == 1:
+            bm_geom = faces.pop()
+        else:
+            i = -2
+            edge = None
+            while not edge and i != 1:
+                edge = bm.edges.get([tri[i], tri[i + 1]])
+                i += 1
+            if edge:
+                for l in edge.link_loops:
+                    if l.link_loop_next.vert == tri[i] or l.link_loop_prev.vert == tri[i - 2]:
+                        bm_geom = l.face
+                        break
+                else: # This should never happen!!!!
+                    raise
+                    bm_geom = faces.pop()
 
-        orig, view_vector = region_2d_to_orig_and_view_vector(region, rv3d, mcursor)
-        end = orig + view_vector
-        r_loc = intersect_line_plane(orig, end, cache.fmid, cache.fnor, False)
+        r_loc = loc
 
         if constrain:
             is_increment = False
             r_loc = intersect_point_line(r_loc, constrain[0], constrain[1])[0]
-
-    else:  # OUT
-        is_increment = True
-        r_type = 'OUT'
-
-        orig, view_vector = region_2d_to_orig_and_view_vector(region, rv3d, mcursor)
-
-        face_index = -1
-        if cache.out_obj is None:
-            ## TODO: The Scene.raycast also tests the edited object.
-            #  This is highly inefficient because the edited object
-            #  does not keep DerivedMesh which forces rebuilding the bvhtree.
-            result, r_loc, normal, face_index, cache.out_obj, cache.out_obmat = scene.ray_cast(orig, view_vector)
-            if result:
-                r_type = 'FACE'
-                cache.out_obimat = cache.out_obmat.inverted()
-            else:
-                face_index = -1
-                r_loc = None
-
-        if cache.out_obj and cache.out_obj != ignore_obj:
-            if not r_loc or outer_verts:
-                location = None
-                if face_index == -1:
-                    # get the ray relative to the cache.out_obj
-                    ray_origin_obj = cache.out_obimat * orig
-                    end = orig + view_vector * 1000
-                    ray_target_obj = cache.out_obimat * end
-                    result, location, normal, face_index = cache.out_obj.ray_cast(ray_origin_obj, ray_target_obj)
-
-                if face_index == -1:
-                    cache.out_obj = None
-
-                elif outer_verts:
-                    vloc = None
-                    try:
-                        me = cache.out_obj.data
-                        verts = me.polygons[face_index].vertices
-                        v_dist = 100
-
-                        for i in verts:
-                            v_co = cache.out_obmat * me.vertices[i].co
-                            v_2d = location_3d_to_region_2d(region, rv3d, v_co)
-                            dist = (Vector(mcursor) - v_2d.xy).length_squared
-                            if dist < v_dist:
-                                v_dist = dist
-                                vloc = v_co
-                    except Exception as e:
-                        print('Fail', e)
-
-                    if vloc:
-                        is_increment = False
-                        r_type = 'VERT'
-                        r_loc = vloc
-
-                if not r_loc:
-                    r_type = 'FACE'
-                    r_loc = cache.out_obmat * location
-
-        if constrain:
-            if r_loc:
-                is_increment = False
-                r_loc = intersect_point_line(r_loc, constrain[0], constrain[1])[0]
-            else:
-                r_loc = intersect_line_line(constrain[0], constrain[1], orig, orig + view_vector)[0]
-
-        elif not r_loc:
-            r_loc = out_Location(rv3d, region, orig, view_vector)
 
     if previous_vert:
         pv_co = obj_matrix_world * previous_vert.co
@@ -401,6 +334,11 @@ def snap_utilities(
             r_loc = r_len * vec.normalized() + pv_co
         else:
             r_len = vec.length
+
+    if bm_geom:
+        bm_geom.select = True
+
+    cache.bm_geom_selected = bm_geom
 
     return r_loc, r_type, bm_geom, r_len
 
@@ -413,14 +351,9 @@ def get_loose_linked_edges(bmvert):
 
 
 def draw_line(self, obj, bm, bm_geom, location):
-    if not hasattr(self, 'list_verts'):
-        self.list_verts = []
-
-    if not hasattr(self, 'list_edges'):
-        self.list_edges = []
-
     split_faces = set()
 
+    drawing_is_dirt = False
     update_edit_mesh = False
     tessface = False
 
@@ -435,6 +368,7 @@ def draw_line(self, obj, bm, bm_geom, location):
         else:
             vert = bm.verts.new(location)
             self.list_verts.append(vert)
+            drawing_is_dirt = True
 
     elif isinstance(bm_geom, bmesh.types.BMEdge):
         self.list_edges.append(bm_geom)
@@ -447,40 +381,46 @@ def draw_line(self, obj, bm, bm_geom, location):
                 vert = bm_geom.verts[1]
             else:
                 edge, vert = bmesh.utils.edge_split(bm_geom, bm_geom.verts[0], ret[1])
+                drawing_is_dirt = True
             self.list_verts.append(vert)
             # self.list_edges.append(edge)
 
         else:  # constrain point is near
             vert = bm.verts.new(location)
             self.list_verts.append(vert)
+            drawing_is_dirt = True
 
     elif isinstance(bm_geom, bmesh.types.BMFace):
         split_faces.add(bm_geom)
         vert = bm.verts.new(location)
         self.list_verts.append(vert)
+        drawing_is_dirt = True
 
     # draw, split and create face
     if len(self.list_verts) >= 2:
         v1, v2 = self.list_verts[-2:]
         # v2_link_verts = [x for y in [a.verts for a in v2.link_edges] for x in y if x != v2]
-        for edge in v2.link_edges:
-            if v1 in edge.verts:
+        edge = bm.edges.get([v1, v2])
+        if edge:
                 self.list_edges.append(edge)
-                break
+
         else:  # if v1 not in v2_link_verts:
             if not v2.link_edges:
                 edge = bm.edges.new([v1, v2])
                 self.list_edges.append(edge)
+                drawing_is_dirt = True
             else:  # split face
-                if v1.link_faces and v2.link_faces:
-                    split_faces.update({f for f in v2.link_faces if f in v1.link_faces})
+                v1_link_faces = v1.link_faces
+                v2_link_faces = v2.link_faces
+                if v1_link_faces and v2_link_faces:
+                    split_faces.update(set(v1_link_faces).intersection(v2_link_faces))
 
                 else:
-                    if v1.link_faces:
-                        faces = v1.link_faces
+                    if v1_link_faces:
+                        faces = v1_link_faces
                         co2 = v2.co.copy()
                     else:
-                        faces = v2.link_faces
+                        faces = v2_link_faces
                         co2 = v1.co.copy()
 
                     for face in faces:
@@ -505,9 +445,12 @@ def draw_line(self, obj, bm, bm_geom, location):
                     if not self.intersect or not facesp['edges']:
                         edge = bm.edges.new([v1, v2])
                         self.list_edges.append(edge)
+                        drawing_is_dirt = True
                     else:
                         for edge in facesp['edges']:
                             self.list_edges.append(edge)
+                            update_edit_mesh = True
+                            tessface = True
 
         # create face
         if self.create_face:
@@ -519,7 +462,7 @@ def draw_line(self, obj, bm, bm_geom, location):
                         break
                 else:
                     continue
-                # Inner loop was broken, break the outer
+                # Inner loop had a break, break the outer
                 break
 
             ed_list.update(get_loose_linked_edges(v2))
@@ -529,7 +472,13 @@ def draw_line(self, obj, bm, bm_geom, location):
             tessface = True
             # print('face created')
     if update_edit_mesh:
-        bmesh.update_edit_mesh(obj.data, tessface = tessface, destructive=True)
+        bmesh.update_edit_mesh(obj.data, tessface = tessface)
+        self.sctx.update_drawn_snap_object(self.snap_obj)
+        #bm.verts.index_update()
+    elif drawing_is_dirt:
+        self.obj.update_from_editmode()
+        self.sctx.update_drawn_snap_object(self.snap_obj)
+
     return [obj.matrix_world * v.co for v in self.list_verts]
 
 
@@ -620,6 +569,11 @@ class SnapUtilitiesLine(Operator):
         bgl.glDisable(bgl.GL_DEPTH_TEST)
         # bgl.glPushMatrix()
         # bgl.glMultMatrixf(self.obj_glmatrix)
+
+##        if DEBUG:
+##            mesh_drawing._store_current_shader_state(mesh_drawing.PreviousGLState)
+##            self.screen.Draw(self.sctx._texture)
+##            mesh_drawing._restore_shader_state(mesh_drawing.PreviousGLState)
 
         if self.vector_constrain:
             vc = self.vector_constrain
@@ -723,10 +677,10 @@ class SnapUtilitiesLine(Operator):
             self.list_verts_co = []
             self.list_verts = []
             self.list_edges = []
-            self.list_faces = []
             self.obj = bpy.context.active_object
             self.obj_matrix = self.obj.matrix_world.copy()
             self.bm = bmesh.from_edit_mesh(self.obj.data)
+            self.sctx.update_drawn_snap_object(self.snap_obj)
             return {'RUNNING_MODAL'}
 
         if event.type == 'MOUSEMOVE' or self.bool_update:
@@ -740,13 +694,11 @@ class SnapUtilitiesLine(Operator):
             mval = Vector((event.mouse_region_x, event.mouse_region_y))
 
             self.location, self.type, self.geom, self.len = snap_utilities(
-                    self.cache, context, self.obj_matrix,
+                    self.sctx, self.obj, self.cache, context, self.obj_matrix,
                     self.bm, mval,
-                    outer_verts=(self.outer_verts and not self.keytab),
-                    constrain=self.vector_constrain,
-                    previous_vert=(self.list_verts[-1] if self.list_verts else None),
-                    ignore_obj=self.obj,
-                    increment=self.incremental
+                    constrain = self.vector_constrain,
+                    previous_vert = (self.list_verts[-1] if self.list_verts else None),
+                    increment = self.incremental
             )
             if self.snap_to_grid and self.type == 'OUT':
                 loc = self.location / self.rd
@@ -756,7 +708,7 @@ class SnapUtilitiesLine(Operator):
 
             if self.keyf8 and self.list_verts_co:
                 lloc = self.list_verts_co[-1]
-                orig, view_vec = region_2d_to_orig_and_view_vector(self.region, self.rv3d, mval)
+                view_vec, orig = self.sctx.last_ray
                 location = intersect_point_line(lloc, orig, (orig + view_vec))
                 vec = (location[0] - lloc)
                 ax, ay, az = abs(vec.x), abs(vec.y), abs(vec.z)
@@ -805,7 +757,7 @@ class SnapUtilitiesLine(Operator):
                 point = self.obj_matinv * self.location
                 # with constraint the intersection can be in a different element of the selected one
                 if self.vector_constrain and self.geom:
-                    geom2 = get_closest_edge(self.bm, point, .001)
+                    geom2 = get_closest_edge(self.bm, point, 0.001)
                 else:
                     geom2 = self.geom
 
@@ -816,8 +768,10 @@ class SnapUtilitiesLine(Operator):
             elif event.type == 'TAB':
                 self.keytab = self.keytab is False
                 if self.keytab:
+                    self.sctx.set_snap_mode(False, False, True)
                     context.tool_settings.mesh_select_mode = (False, False, True)
                 else:
+                    self.sctx.set_snap_mode(True, True, True)
                     context.tool_settings.mesh_select_mode = (True, True, True)
 
             elif event.type == 'F8':
@@ -841,18 +795,27 @@ class SnapUtilitiesLine(Operator):
 
             elif event.type in {'RIGHTMOUSE', 'ESC'}:
                 if self.list_verts_co == [] or event.type == 'ESC':
+                    del self.bm
+                    del self.list_edges
+                    del self.list_verts
+                    del self.list_verts_co
+
                     bpy.types.SpaceView3D.draw_handler_remove(self._handle, 'WINDOW')
-                    context.tool_settings.mesh_select_mode = self.select_mode
                     context.area.header_text_set()
+                    self.sctx.free()
+
+                    #restore initial state
                     context.user_preferences.view.use_rotate_around_active = self.use_rotate_around_active
+                    context.tool_settings.mesh_select_mode = self.select_mode
                     if not self.is_editmode:
                         bpy.ops.object.editmode_toggle()
+
                     return {'FINISHED'}
                 else:
                     self.vector_constrain = None
+                    self.list_edges = []
                     self.list_verts = []
                     self.list_verts_co = []
-                    self.list_faces = []
 
         a = ""
         if self.list_verts_co:
@@ -863,6 +826,7 @@ class SnapUtilitiesLine(Operator):
                 length = self.len
                 length = convert_distance(length, self.uinfo)
                 a = 'length: ' + length
+
         context.area.header_text_set(
                         "hit: %.3f %.3f %.3f %s" % (self.location[0],
                         self.location[1], self.location[2], a)
@@ -874,61 +838,12 @@ class SnapUtilitiesLine(Operator):
         if context.space_data.type == 'VIEW_3D':
             # print('name', __name__, __package__)
             preferences = context.user_preferences.addons[__name__].preferences
-            create_new_obj = preferences.create_new_obj
-            if context.mode == 'OBJECT' and \
-              (create_new_obj or context.object is None or context.object.type != 'MESH'):
 
-                mesh = bpy.data.meshes.new("")
-                obj = bpy.data.objects.new("", mesh)
-                context.scene.objects.link(obj)
-                context.scene.objects.active = obj
-
-            # bgl.glEnable(bgl.GL_POINT_SMOOTH)
-            self.is_editmode = bpy.context.object.data.is_editmode
-            bpy.ops.object.mode_set(mode='EDIT')
-            context.space_data.use_occlude_geometry = True
-
-            self.scale = context.scene.unit_settings.scale_length
-            self.unit_system = context.scene.unit_settings.system
-            self.separate_units = context.scene.unit_settings.use_separate
-            self.uinfo = get_units_info(self.scale, self.unit_system, self.separate_units)
-
-            grid = context.scene.unit_settings.scale_length / context.space_data.grid_scale
-            relative_scale = preferences.relative_scale
-            self.scale = grid / relative_scale
-            self.rd = bpy.utils.units.to_value(self.unit_system, 'LENGTH', str(1 / self.scale))
-
-            incremental = preferences.incremental
-            self.incremental = bpy.utils.units.to_value(self.unit_system, 'LENGTH', str(incremental))
-
-            self.use_rotate_around_active = context.user_preferences.view.use_rotate_around_active
-            context.user_preferences.view.use_rotate_around_active = True
-
-            self.select_mode = context.tool_settings.mesh_select_mode[:]
-            context.tool_settings.mesh_select_mode = (True, True, True)
-
-            self.region = context.region
-            self.rv3d = context.region_data
-            self.rotMat = self.rv3d.view_matrix.copy()
-            self.obj = bpy.context.active_object
-            self.obj_matrix = self.obj.matrix_world.copy()
-            self.obj_matinv = self.obj_matrix.inverted()
-            # self.obj_glmatrix = bgl.Buffer(bgl.GL_FLOAT, [4, 4], self.obj_matrix.transposed())
-            self.bm = bmesh.from_edit_mesh(self.obj.data)
-            self.cache = SnapCache()
-
-            self.location = Vector()
-            self.list_verts = []
-            self.list_verts_co = []
-            self.bool_update = False
-            self.vector_constrain = ()
-            self.navigation_keys = NavigationKeys(context)
-            self.keytab = False
-            self.keyf8 = False
-            self.type = 'OUT'
-            self.len = 0
-            self.length_entered = ""
-            self.line_pos = 0
+            #Store the preferences that will be used in modal
+            self.intersect = preferences.intersect
+            self.create_face = preferences.create_face
+            self.outer_verts = preferences.outer_verts
+            self.snap_to_grid = preferences.increments_grid
 
             self.out_color = preferences.out_color
             self.face_color = preferences.face_color
@@ -942,17 +857,89 @@ class SnapUtilitiesLine(Operator):
             self.axis_y_color = tuple(context.user_preferences.themes[0].user_interface.axis_y)
             self.axis_z_color = tuple(context.user_preferences.themes[0].user_interface.axis_z)
 
-            self.intersect = preferences.intersect
-            self.create_face = preferences.create_face
-            self.outer_verts = preferences.outer_verts
-            self.snap_to_grid = preferences.increments_grid
+            if context.mode == 'OBJECT' and \
+              (preferences.create_new_obj or context.object is None or context.object.type != 'MESH'):
 
-            self._handle = bpy.types.SpaceView3D.draw_handler_add(
-                                                    self.draw_callback_px,
-                                                    (context,),
-                                                    'WINDOW', 'POST_VIEW'
-                                                    )
+                mesh = bpy.data.meshes.new("")
+                obj = bpy.data.objects.new("", mesh)
+                context.scene.objects.link(obj)
+                context.scene.objects.active = obj
+
+            #Store current state
+            self.is_editmode = context.object.data.is_editmode
+            self.use_rotate_around_active = context.user_preferences.view.use_rotate_around_active
+            self.select_mode = context.tool_settings.mesh_select_mode[:]
+
+            #Modify the current state
+            bpy.ops.object.mode_set(mode='EDIT')
+            bpy.ops.mesh.select_all(action='DESELECT')
+            context.user_preferences.view.use_rotate_around_active = True
+            context.tool_settings.mesh_select_mode = (True, True, True)
+            context.space_data.use_occlude_geometry = True
+
+            #Configure the unit of measure
+            scale = context.scene.unit_settings.scale_length
+            self.unit_system = context.scene.unit_settings.system
+            separate_units = context.scene.unit_settings.use_separate
+            self.uinfo = get_units_info(scale, self.unit_system, separate_units)
+
+            scale /= context.space_data.grid_scale * preferences.relative_scale
+            self.rd = bpy.utils.units.to_value(self.unit_system, 'LENGTH', str(1 / scale))
+
+            self.incremental = bpy.utils.units.to_value(self.unit_system, 'LENGTH', str(preferences.incremental))
+
+            #Store values from 3d view context
+            self.rv3d = context.region_data
+            self.rotMat = self.rv3d.view_matrix.copy()
+            self.obj = bpy.context.active_object
+            self.obj_matrix = self.obj.matrix_world.copy()
+            self.obj_matinv = self.obj_matrix.inverted()
+            # self.obj_glmatrix = bgl.Buffer(bgl.GL_FLOAT, [4, 4], self.obj_matrix.transposed())
+            self.bm = bmesh.from_edit_mesh(self.obj.data) #remove at end
+            self.cache = SnapCache()
+
+            #init these variables to avoid errors
+            self.prevloc = Vector()
+            self.location = Vector()
+            self.list_verts = []
+            self.list_edges = []
+            self.list_verts_co = []
+            self.bool_update = False
+            self.vector_constrain = ()
+            self.navigation_keys = NavigationKeys(context)
+            self.type = 'OUT'
+            self.len = 0
+            self.length_entered = ""
+            self.line_pos = 0
+            self.bm_geom_selected = None
+
+            #Init event variables
+            self.keytab = False
+            self.keyf8 = False
+
+            #Init Snap Context
+            from snap_context import SnapContext
+
+            self.sctx = SnapContext(context.region, context.space_data)
+            self.sctx.set_pixel_dist(12)
+            self.sctx.use_clip_planes(True)
+
+            act_base = context.active_base
+
+            if self.outer_verts:
+                for base in context.visible_bases:
+                    if base != act_base:
+                        self.sctx.add_obj(base.object, base.object.matrix_world)
+
+            self.snap_obj = self.sctx.add_obj(act_base.object, act_base.object.matrix_world)
+
+            self.snap_face = context.space_data.viewport_shade not in {'BOUNDBOX', 'WIREFRAME'}
+            self.sctx.set_snap_mode(True, True, self.snap_face)
+
+            #modals
+            self._handle = bpy.types.SpaceView3D.draw_handler_add(self.draw_callback_px, (context,), 'WINDOW', 'POST_VIEW')
             context.window_manager.modal_handler_add(self)
+
             return {'RUNNING_MODAL'}
         else:
             self.report({'WARNING'}, "Active space must be a View3d")
@@ -1067,7 +1054,7 @@ class SnapAddonPreferences(AddonPreferences):
     category = StringProperty(
             name="Category",
             description="Choose a name for the category of the panel",
-            default="Tools",
+            default="Snap Utilities",
             update=update_panel
             )
     incremental = FloatProperty(

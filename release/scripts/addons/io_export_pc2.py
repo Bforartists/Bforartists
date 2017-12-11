@@ -19,7 +19,7 @@
 bl_info = {
     "name": "Export Pointcache Format(.pc2)",
     "author": "Florian Meyer (tstscr)",
-    "version": (1, 1),
+    "version": (1, 1, 1),
     "blender": (2, 71, 0),
     "location": "File > Export > Pointcache (.pc2)",
     "description": "Export mesh Pointcache data (.pc2)",
@@ -79,6 +79,7 @@ def do_export(context, props, filepath):
         me = ob.to_mesh(sc, apply_modifiers, 'PREVIEW')
 
         if len(me.vertices) != vertCount:
+            bpy.data.meshes.remove(me, do_unlink=True)
             file.close()
             try:
                 remove(filepath)
@@ -99,6 +100,9 @@ def do_export(context, props, filepath):
                                              float(v.co[1]),
                                              float(v.co[2]))
             file.write(thisVertex)
+
+        bpy.data.meshes.remove(me, do_unlink=True)
+
 
     file.flush()
     file.close()
@@ -153,7 +157,11 @@ class Export_pc2(bpy.types.Operator, ExportHelper):
 
     @classmethod
     def poll(cls, context):
-        return context.active_object.type in {'MESH', 'CURVE', 'SURFACE', 'FONT'}
+        obj = context.active_object
+        return (
+            obj is not None and
+            obj.type in {'MESH', 'CURVE', 'SURFACE', 'FONT'}
+        )
 
     def execute(self, context):
         start_time = time.time()

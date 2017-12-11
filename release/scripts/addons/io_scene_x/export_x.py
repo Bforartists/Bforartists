@@ -746,7 +746,7 @@ class MeshExportObject(ExportObject):
 
         def GetMaterialKey(Material, UVTexture, Index):
             Image = None
-            if UVTexture != None and UVTexture.data[Index].image != None:
+            if UVTexture is not None and UVTexture.data[Index].image is not None:
                 Image = UVTexture.data[Index].image if \
                     UVTexture.data[Index].image.source == 'FILE' else None
 

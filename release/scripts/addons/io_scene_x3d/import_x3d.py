@@ -428,25 +428,25 @@ class vrmlNode(object):
     # Only available from the root node
     '''
     def getFieldDict(self):
-        if self.FIELD_NAMESPACE != None:
+        if self.FIELD_NAMESPACE is not None:
             return self.FIELD_NAMESPACE
         else:
             return self.parent.getFieldDict()
     '''
     def getProtoDict(self):
-        if self.PROTO_NAMESPACE != None:
+        if self.PROTO_NAMESPACE is not None:
             return self.PROTO_NAMESPACE
         else:
             return self.parent.getProtoDict()
 
     def getDefDict(self):
-        if self.DEF_NAMESPACE != None:
+        if self.DEF_NAMESPACE is not None:
             return self.DEF_NAMESPACE
         else:
             return self.parent.getDefDict()
 
     def getRouteIpoDict(self):
-        if self.ROUTE_IPO_NAMESPACE != None:
+        if self.ROUTE_IPO_NAMESPACE is not None:
             return self.ROUTE_IPO_NAMESPACE
         else:
             return self.parent.getRouteIpoDict()
@@ -1107,7 +1107,7 @@ class vrmlNode(object):
 
             # fill in DEF/USE
             key = self.getDefName()
-            if key != None:
+            if key is not None:
                 self.getDefDict()[key] = self
 
             key = self.getProtoName()
@@ -1115,7 +1115,7 @@ class vrmlNode(object):
                 key = self.getExternprotoName()
 
             proto_dict = self.getProtoDict()
-            if key != None:
+            if key is not None:
                 proto_dict[key] = self
 
                 # Parse the proto nodes fields
@@ -3370,7 +3370,7 @@ def translateTimeSensor(node, action, ancestry):
     startTime = node.getFieldAsFloat('startTime', 0.0, ancestry)
     stopTime = node.getFieldAsFloat('stopTime', 250.0, ancestry)
 
-    if cycleInterval != None:
+    if cycleInterval is not None:
         stopTime = startTime + cycleInterval
 
     loop = node.getFieldAsBool('loop', False, ancestry)

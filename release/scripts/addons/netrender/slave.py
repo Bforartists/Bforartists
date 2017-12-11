@@ -45,13 +45,13 @@ def slave_Info(netsettings):
     slave.stats = sysname + " " + release + " " + machine + " " + processor
     if netsettings.slave_tags:
         slave.tags = set(netsettings.slave_tags.split(";"))
-    
+
     if netsettings.slave_bake:
         slave.tags.add(netrender.model.TAG_BAKING)
-    
+
     if netsettings.slave_render:
         slave.tags.add(netrender.model.TAG_RENDER)
-        
+
     return slave
 
 def testCancel(conn, job_id, frame_number):
@@ -66,13 +66,13 @@ def testCancel(conn, job_id, frame_number):
 
 def testFile(conn, job_id, slave_id, rfile, job_prefix, main_path=None):
     job_full_path = createLocalPath(rfile, job_prefix, main_path, rfile.force)
-    
+
     found = os.path.exists(job_full_path)
-    
-    if found and rfile.signature != None:
+
+    if found and rfile.signature is not None:
         found_signature = hashFile(job_full_path)
         found = found_signature == rfile.signature
-        
+
         if not found:
             print("Found file %s at %s but signature mismatch!" % (rfile.filepath, job_full_path))
             os.remove(job_full_path)
@@ -99,7 +99,7 @@ def testFile(conn, job_id, slave_id, rfile, job_prefix, main_path=None):
         f.close()
 
         os.renames(temp_path, job_full_path)
-        
+
     rfile.filepath = job_full_path
 
     return job_full_path
@@ -114,7 +114,7 @@ def render_slave(engine, netsettings, threads):
     bisleep = BreakableIncrementedSleep(INCREMENT_TIMEOUT, 1, MAX_TIMEOUT, engine.test_break)
 
     engine.update_stats("", "Network render node initiation")
-    
+
     slave_path = bpy.path.abspath(netsettings.path)
 
     if not os.path.exists(slave_path):
@@ -124,23 +124,23 @@ def render_slave(engine, netsettings, threads):
     if not os.access(slave_path, os.W_OK):
         print("Slave working path ( %s ) is not writable" % netsettings.path)
         return
-    
+
     conn = clientConnection(netsettings)
-    
+
     if not conn:
         print("Connection failed, will try connecting again at most %i times" % MAX_CONNECT_TRY)
         bisleep.reset()
-        
+
         for i in range(MAX_CONNECT_TRY):
             bisleep.sleep()
-            
+
             conn = clientConnection(netsettings)
-            
+
             if conn or engine.test_break():
                 break
-            
+
             print("Retry %i failed, waiting %is before retrying" % (i + 1, bisleep.current))
-    
+
     if conn:
         with ConnectionContext():
             conn.request("POST", "/slave", json.dumps(slave_Info(netsettings).serialize()))
@@ -184,7 +184,7 @@ def render_slave(engine, netsettings, threads):
                     for rfile in job.files[1:]:
                         testFile(conn, job.id, slave_id, rfile, job_prefix, main_path)
                         print("\t", rfile.filepath)
-                        
+
                     netrender.repath.update(job)
 
                     engine.update_stats("", "Render File " + main_file + " for job " + job.id)
@@ -192,15 +192,15 @@ def render_slave(engine, netsettings, threads):
                     if not job.version_info:
                         # Need to return an error to server, incorrect job type
                         pass
-                        
+
                     job_path = job.files[0].filepath # path of main file
                     main_path, main_file = os.path.split(job_path)
-                    
+
                     job.version_info.update()
-                    
+
                     # For VCS jobs, file path is relative to the working copy path
                     job_full_path = os.path.join(job.version_info.wpath, job_path)
-                    
+
                     engine.update_stats("", "Render File " + main_file + " for job " + job.id)
 
                 # announce log to master
@@ -238,26 +238,26 @@ def render_slave(engine, netsettings, threads):
                             stdout=subprocess.PIPE,
                             stderr=subprocess.STDOUT,
                             )
-                        
+
                 elif job.subtype == netrender.model.JOB_SUB_BAKING:
                     tasks = []
                     for frame in job.frames:
                         tasks.append(netrender.baking.commandToTask(frame.command))
-                        
+
                     with NoErrorDialogContext():
                         process = netrender.baking.bake(job, tasks)
-                        
+
                 elif job.type == netrender.model.JOB_PROCESS:
                     command = job.frames[0].command
                     with NoErrorDialogContext():
                         process = subprocess.Popen(command.split(" "), stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
                 headers = {"slave-id":slave_id}
-                
+
                 results = []
 
                 line = ""
-                
+
                 class ProcessData:
                     def __init__(self):
                         self.lock = threading.Lock()
@@ -265,21 +265,21 @@ def render_slave(engine, netsettings, threads):
                         self.cancelled = False
                         self.start_time = time.time()
                         self.last_time = time.time()
-                        
+
                 data = ProcessData()
-                
+
                 def run_process(process, data):
                     while not data.cancelled and process.poll() is None:
                         buf = process.stdout.read(1024)
-                        
+
                         data.lock.acquire()
                         data.stdout += buf
                         data.lock.release()
-                        
+
                 process_thread = threading.Thread(target=run_process, args=(process, data))
-                
+
                 process_thread.start()
-                
+
                 while not data.cancelled and process_thread.is_alive():
                     time.sleep(CANCEL_POLL_SPEED / 2)
                     current_time = time.time()
@@ -294,13 +294,13 @@ def render_slave(engine, netsettings, threads):
                             with ConnectionContext():
                                 conn.request("PUT", logURL(job.id, first_frame), data.stdout, headers=headers)
                             responseStatus(conn)
-                            
+
                             stdout_text = str(data.stdout, encoding='utf8')
-                            
+
                             # Also output on console
                             if netsettings.use_slave_output_log:
                                 print(stdout_text, end="")
-                                
+
                             lines = stdout_text.split("\n")
                             lines[0] = line + lines[0]
                             line = lines.pop()
@@ -308,14 +308,14 @@ def render_slave(engine, netsettings, threads):
                                 results.extend(netrender.baking.resultsFromOuput(lines))
 
                             data.stdout = bytes()
-                            
+
                         data.lock.release()
 
                         data.last_time = current_time
                         if testCancel(conn, job.id, first_frame):
                             engine.update_stats("", "Job canceled by Master")
                             data.cancelled = True
-                
+
                 process_thread.join()
                 del process_thread
 
@@ -337,11 +337,11 @@ def render_slave(engine, netsettings, threads):
                 # flush the rest of the logs
                 if data.stdout:
                     stdout_text = str(data.stdout, encoding='utf8')
-                    
+
                     # Also output on console
                     if netsettings.use_slave_output_log:
                         print(stdout_text, end="")
-                    
+
                     lines = stdout_text.split("\n")
                     lines[0] = line + lines[0]
                     if job.subtype == netrender.model.JOB_SUB_BAKING:
@@ -350,7 +350,7 @@ def render_slave(engine, netsettings, threads):
                     # (only need to update on one frame, they are linked
                     with ConnectionContext():
                         conn.request("PUT", logURL(job.id, first_frame), data.stdout, headers=headers)
-                    
+
                     if responseStatus(conn) == http.client.NO_CONTENT:
                         continue
 
@@ -377,7 +377,7 @@ def render_slave(engine, netsettings, threads):
                             # thumbnail first
                             if netsettings.use_slave_thumb:
                                 thumbname = thumbnail.generate(filename)
-                                
+
                                 if thumbname:
                                     f = open(thumbname, 'rb')
                                     with ConnectionContext():
@@ -394,21 +394,21 @@ def render_slave(engine, netsettings, threads):
 
                         elif job.subtype == netrender.model.JOB_SUB_BAKING:
                             index = job.frames.index(frame)
-                            
+
                             frame_results = [result_filepath for task_index, result_filepath in results if task_index == index]
-                            
+
                             for result_filepath in frame_results:
                                 result_path, result_filename = os.path.split(result_filepath)
                                 headers["result-filename"] = result_filename
                                 headers["job-finished"] = str(result_filepath == frame_results[-1])
-                                    
+
                                 f = open(result_filepath, 'rb')
                                 with ConnectionContext():
                                     conn.request("PUT", "/result", f, headers=headers)
                                 f.close()
                                 if responseStatus(conn) == http.client.NO_CONTENT:
                                     continue
-                            
+
                         elif job.type == netrender.model.JOB_PROCESS:
                             with ConnectionContext():
                                 conn.request("PUT", "/render", headers=headers)

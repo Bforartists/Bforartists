@@ -21,24 +21,27 @@
 bl_info = {
     "name": "Clip Editor Pies: Key: 'hotkey list Below'",
     "description": "Clip Editor Pies",
-#    "author": "Antony Riakiotakis, Sebastian Koenig",
-#    "version": (0, 1, 0),
+    "author": "Antony Riakiotakis, Sebastian Koenig",
+    "version": (0, 1, 1),
     "blender": (2, 77, 0),
-    "location": "Q, W, Shift W, E. Shift S, Shift A",
+    "location": "Q, W, Shift W, E, Shift S, Shift A",
     "warning": "",
     "wiki_url": "",
     "category": "Pie Menu"
     }
 
 import bpy
-from bpy.types import (
-        Menu,
-        Operator,
-        )
+from bpy.types import Menu
+
 
 class CLIP_PIE_refine_pie(Menu):
     # Refinement Options
     bl_label = "Refine Intrinsics"
+
+    @classmethod
+    def poll(cls, context):
+        space = context.space_data
+        return (space.type == 'CLIP_EDITOR') and space.clip
 
     def draw(self, context):
         clip = context.space_data.clip
@@ -65,6 +68,11 @@ class CLIP_PIE_geometry_reconstruction(Menu):
 class CLIP_PIE_proxy_pie(Menu):
     # Proxy Controls
     bl_label = "Proxy Size"
+
+    @classmethod
+    def poll(cls, context):
+        space = context.space_data
+        return (space.type == 'CLIP_EDITOR') and space.clip
 
     def draw(self, context):
         space = context.space_data
@@ -98,7 +106,8 @@ class CLIP_PIE_marker_pie(Menu):
 
     def draw(self, context):
         clip = context.space_data.clip
-        track_active = clip.tracking.tracks.active
+        tracky = getattr(getattr(clip, "tracking", None), "tracks", None)
+        track_active = tracky.active if tracky else None
 
         layout = self.layout
         pie = layout.menu_pie()
@@ -171,7 +180,10 @@ class CLIP_PIE_clipsetup_pie(Menu):
         pie.operator("clip.set_scene_frames", text="Set Scene Frames", icon='SCENE_DATA')
         pie.operator("wm.call_menu_pie", text="Marker Display", icon='PLUS').name = "CLIP_PIE_display_pie"
         pie.operator("clip.set_active_clip", icon='CLIP')
-        pie.operator("wm.call_menu_pie", text="Proxy", icon='PLUS').name = "CLIP_PIE_proxy_pie"
+
+        pie_proxy = layout.menu_pie()
+        pie_proxy.enabled = space.clip is not None
+        pie_proxy.operator("wm.call_menu_pie", text="Proxy", icon='PLUS').name = "CLIP_PIE_proxy_pie"
 
 
 class CLIP_PIE_solver_pie(Menu):
@@ -180,7 +192,7 @@ class CLIP_PIE_solver_pie(Menu):
 
     def draw(self, context):
         clip = context.space_data.clip
-        settings = clip.tracking.settings
+        settings = getattr(getattr(clip, "tracking", None), "settings", None)
 
         layout = self.layout
         pie = layout.menu_pie()
@@ -188,11 +200,15 @@ class CLIP_PIE_solver_pie(Menu):
         pie.operator("clip.create_plane_track", icon='MESH_PLANE')
         pie.operator("clip.solve_camera", text="Solve Camera", icon='OUTLINER_OB_CAMERA')
 
-        pie.operator("wm.call_menu_pie", text="Refinement", icon='CAMERA_DATA').name = "CLIP_PIE_refine_pie"
-        pie.prop(settings, "use_tripod_solver", text="Tripod Solver")
+        if settings:
+            pie.operator("wm.call_menu_pie", text="Refinement",
+                        icon='CAMERA_DATA').name = "CLIP_PIE_refine_pie"
+            pie.prop(settings, "use_tripod_solver", text="Tripod Solver")
 
-        pie.operator("clip.set_solver_keyframe", text="Set Keyframe A", icon='KEY_HLT').keyframe = 'KEYFRAME_A'
-        pie.operator("clip.set_solver_keyframe", text="Set Keyframe B", icon='KEY_HLT').keyframe = 'KEYFRAME_B'
+        pie.operator("clip.set_solver_keyframe", text="Set Keyframe A",
+                    icon='KEY_HLT').keyframe = 'KEYFRAME_A'
+        pie.operator("clip.set_solver_keyframe", text="Set Keyframe B",
+                    icon='KEY_HLT').keyframe = 'KEYFRAME_B'
 
         prop = pie.operator("clip.clean_tracks", icon='STICKY_UVS_DISABLE')
         pie.operator("clip.filter_tracks", icon='FILTER')
@@ -218,7 +234,8 @@ class CLIP_PIE_reconstruction_pie(Menu):
         pie.operator("clip.set_axis", text="Set Y Axis", icon='AXIS_SIDE').axis = 'Y'
 
         pie.operator("clip.set_scale", text="Set Scale", icon='ARROW_LEFTRIGHT')
-        pie.operator("wm.call_menu_pie", text="Reconstruction", icon='MESH_DATA').name = "CLIP_PIE_geometry_reconstruction"
+        pie.operator("wm.call_menu_pie", text="Reconstruction",
+                    icon='MESH_DATA').name = "CLIP_PIE_geometry_reconstruction"
 
 
 class CLIP_PIE_timecontrol_pie(Menu):
@@ -266,8 +283,7 @@ def register():
     wm = bpy.context.window_manager
 
     if wm.keyconfigs.addon:
-        #km = wm.keyconfigs.addon.keymaps.new(name='Object Non-modal') # WHY
-        
+
         km = wm.keyconfigs.addon.keymaps.new(name="Clip", space_type='CLIP_EDITOR')
 
         kmi = km.keymap_items.new("wm.call_menu_pie", 'Q', 'PRESS')
@@ -300,7 +316,6 @@ def unregister():
         bpy.utils.unregister_class(cls)
 
     wm = bpy.context.window_manager
-
     kc = wm.keyconfigs.addon
     if kc:
         for km, kmi in addon_keymaps:

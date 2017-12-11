@@ -1,3 +1,21 @@
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
 import os
 import mathutils
 
@@ -6,7 +24,7 @@ if DEBUG:
 	import sys
 	sys.path.append(os.environ['PYDEV_DEBUG_PATH'])
 	import pydevd
-	
+
 from .model.migiusModel import MigiusDXFLibDrawing
 
 SUPPORTED_TYPES = ('MESH')#,'CURVE','EMPTY','TEXT','CAMERA','LAMP')
@@ -28,7 +46,7 @@ def exportDXF(context, filePath, settings):
 		objects = (ob for ob in scene.objects if ob.is_visible(scene) and ob.select and ob.type in SUPPORTED_TYPES)
 	else:
 		objects = (ob for ob in scene.objects if ob.is_visible(scene) and ob.type in SUPPORTED_TYPES)
-		
+
 	if DEBUG: pydevd.settrace()
 	mw = get_view_projection_matrix(context, settings)
 
@@ -37,22 +55,22 @@ def exportDXF(context, filePath, settings):
 		#todo: fixme: seems to be the reason for missing BLOCK-export
 		#if APPLY_MODIFIERS: tmp_me = Mesh.New('tmp')
 		#else: tmp_me = None
-	
+
 		drawing = MigiusDXFLibDrawing()
 		exported = 0
 		for o in objects:
 			if _exportItem(context, o, mw, drawing, settings):
 				exported +=1
-	
+
 		if not drawing.isEmpty():
 			# NOTE: Only orthographic projection used now.
 	#		if PERSPECTIVE: # generate view border - passepartout
 	#			from .primitive_exporters.viewborder_exporter import ViewBorderDXFExporter
 	#			e = ViewBorderDXFExporter(settings)
 	#			e.export(drawing, ob, mx, mw)
-	
+
 			drawing.convert(filePath)
-			
+
 		duration = time.clock() - time1
 		print('%s objects exported in %.2f seconds. -----DONE-----' %\
 			(exported, duration))
@@ -75,7 +93,7 @@ def getCommons(ob, settings):
 	 thickness=None
 	 parent=None
 	"""
-	
+
 	BYBLOCK=0 #DXF-attribute: assign property to BLOCK defaults
 	BYLAYER=None #256 #DXF-attribute: assign property to LAYER defaults
 	LAYERNAME_DEF='' #default layer name
@@ -94,7 +112,7 @@ def getCommons(ob, settings):
 		ob_material = materials[0]
 		ob_mat_color = ob_material.material.diffuse_color
 	else: ob_mat_color, ob_material = None, None
-	if DEBUG: 
+	if DEBUG:
 		print('ob_mat_color, ob_material=', ob_mat_color, ob_material) #--------------
 
 	data_materials = ob.material_slots
@@ -202,9 +220,9 @@ def get_view_projection_matrix(context, settings):
 	Projection matrix is either identity if 3d export is selected or
 	camera projection if a camera or view is selected.
 	Currently only orthographic projection is used. (Subject to discussion).
-	"""	
+	"""
 	cam = settings['projectionThrough']
-	if cam == None:
+	if cam is None:
 		mw = mathutils.Matrix()
 		mw.identity()
 	elif cam in projectionMapping.keys():
@@ -238,8 +256,8 @@ def _exportItem(ctx, o, mw, drawing, settings):
 		print('elayer=%s, ecolor=%s, eltype=%s' % (elayer, ecolor, eltype))
 	#TODO: use o.boundBox for drawing extends ??
 
-	if elayer != None and not drawing.containsLayer(elayer):
-		if ecolor!=None: tempcolor = ecolor
+	if elayer is not None and not drawing.containsLayer(elayer):
+		if ecolor is not None: tempcolor = ecolor
 		else: tempcolor = settings['layercolor_def']
 		drawing.addLayer(elayer, tempcolor)
 

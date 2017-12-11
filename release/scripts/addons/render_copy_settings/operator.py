@@ -46,7 +46,7 @@ def collection_property_sort(collection, sortkey, start_idx=0):
     return collection
 
 
-class RenderCopySettingsPrepare(bpy.types.Operator):
+class RenderCopySettingsOPPrepare(bpy.types.Operator):
     """Prepare internal data for render_copy_settings (gathering all existingrender settings, and scenes)"""
     bl_idname = "scene.render_copy_settings_prepare"
     bl_label = "Render: Copy Settings Prepare"
@@ -54,7 +54,7 @@ class RenderCopySettingsPrepare(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.scene != None
+        return context.scene is not None
 
     def execute(self, context):
         cp_sett = context.scene.render_copy_settings
@@ -119,7 +119,7 @@ class RenderCopySettingsPrepare(bpy.types.Operator):
 from bpy.props import EnumProperty
 
 
-class RenderCopySettingsPreset(bpy.types.Operator):
+class RenderCopySettingsOPPreset(bpy.types.Operator):
     """Apply some presets of render settings to copy to other scenes"""
     bl_idname = "scene.render_copy_settings_preset"
     bl_label = "Render: Copy Settings Preset"
@@ -144,7 +144,7 @@ class RenderCopySettingsPreset(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.scene != None
+        return context.scene is not None
 
     def execute(self, context):
         cp_sett = context.scene.render_copy_settings
@@ -170,7 +170,7 @@ def do_copy(context, affected_settings, allowed_scenes):
             setattr(scene.render, sett, val)
 
 
-class RenderCopySettings(bpy.types.Operator):
+class RenderCopySettingsOPCopy(bpy.types.Operator):
     """Copy render settings from current scene to others"""
     bl_idname = "scene.render_copy_settings"
     bl_label = "Render: Copy Settings"
@@ -179,7 +179,7 @@ class RenderCopySettings(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.scene != None
+        return context.scene is not None
 
     def execute(self, context):
         regex = None
@@ -190,5 +190,9 @@ class RenderCopySettings(bpy.types.Operator):
         return {'FINISHED'}
 
 
-if __name__ == "__main__":
-    bpy.ops.scene.render_copy_settings()
+classes = (
+    RenderCopySettingsOPPrepare,
+    RenderCopySettingsOPPreset,
+    RenderCopySettingsOPCopy,
+)
+

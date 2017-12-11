@@ -43,7 +43,7 @@ def exportInsert(ob, mx, insert_name, **common):
                 #TODO: ? sizeX *= coef
                 #sizeY *= coef
                 #sizeZ *= coef
-    
+
         #print 'deb: point=', point #--------------
         [point] = toGlobalOrigin([point])
 

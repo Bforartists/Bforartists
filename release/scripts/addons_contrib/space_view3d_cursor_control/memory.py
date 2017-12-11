@@ -17,8 +17,6 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-
-
 """
   TODO:
 
@@ -40,35 +38,44 @@
               5. CTRL-Z
 
       QUESTIONS:
-
-
 """
-
-
 
 import bpy
 import bgl
-import math
-from mathutils import Vector, Matrix
-from mathutils import geometry
-from .misc_utils import *
-from .constants_utils import *
-from .cursor_utils import *
-from .ui_utils import *
-
-
+from bpy.props import (
+        BoolProperty,
+        FloatVectorProperty,
+        )
+from bpy.types import (
+        Operator,
+        PropertyGroup,
+        Panel,
+        )
+from mathutils import Vector
+from .misc_utils import (
+        BlenderFake,
+        region3d_get_2d_coordinates,
+        )
+from .constants_utils import PHI_INV
+from .cursor_utils import CursorAccess
+from .ui_utils import GUI
 
 PRECISION = 4
 
 
+class CursorMemoryData(PropertyGroup):
+    savedLocationDraw = BoolProperty(
+            description="Draw SL cursor in 3D view",
+            default=1
+            )
+    savedLocation = FloatVectorProperty(
+            name="",
+            description="Saved Location",
+            precision=PRECISION
+            )
 
-class CursorMemoryData(bpy.types.PropertyGroup):
 
-    savedLocationDraw = bpy.props.BoolProperty(description="Draw SL cursor in 3D view",default=1)
-    savedLocation = bpy.props.FloatVectorProperty(name="",description="Saved Location",precision=PRECISION)
-
-
-class VIEW3D_OT_cursor_memory_save(bpy.types.Operator):
+class VIEW3D_OT_cursor_memory_save(Operator):
     """Save cursor location"""
     bl_idname = "view3d.cursor_memory_save"
     bl_label = "Save cursor location"
@@ -78,14 +85,18 @@ class VIEW3D_OT_cursor_memory_save(bpy.types.Operator):
         return {'FINISHED'}
 
     def execute(self, context):
+        if CursorAccess.getCursor() is None:
+            self.report({'WARNING'},
+                        "Cursor location cannot be retrieved. Operation Cancelled")
+            return {"CANCELLED"}
+
         cc = context.scene.cursor_memory
         cc.savedLocation = CursorAccess.getCursor()
         CursorAccess.setCursor(cc.savedLocation)
         return {'FINISHED'}
 
 
-
-class VIEW3D_OT_cursor_memory_swap(bpy.types.Operator):
+class VIEW3D_OT_cursor_memory_swap(Operator):
     """Swap cursor location"""
     bl_idname = "view3d.cursor_memory_swap"
     bl_label = "Swap cursor location"
@@ -95,6 +106,12 @@ class VIEW3D_OT_cursor_memory_swap(bpy.types.Operator):
         return {'FINISHED'}
 
     def execute(self, context):
+
+        if CursorAccess.getCursor() is None:
+            self.report({'WARNING'},
+                        "Cursor location cannot be retrieved. Operation Cancelled")
+            return {"CANCELLED"}
+
         location = CursorAccess.getCursor().copy()
         cc = context.scene.cursor_memory
         CursorAccess.setCursor(cc.savedLocation)
@@ -102,8 +119,7 @@ class VIEW3D_OT_cursor_memory_swap(bpy.types.Operator):
         return {'FINISHED'}
 
 
-
-class VIEW3D_OT_cursor_memory_recall(bpy.types.Operator):
+class VIEW3D_OT_cursor_memory_recall(Operator):
     """Recall cursor location"""
     bl_idname = "view3d.cursor_memory_recall"
     bl_label = "Recall cursor location"
@@ -118,8 +134,7 @@ class VIEW3D_OT_cursor_memory_recall(bpy.types.Operator):
         return {'FINISHED'}
 
 
-
-class VIEW3D_OT_cursor_memory_show(bpy.types.Operator):
+class VIEW3D_OT_cursor_memory_show(Operator):
     """Show cursor memory"""
     bl_idname = "view3d.cursor_memory_show"
     bl_label = "Show cursor memory"
@@ -135,8 +150,7 @@ class VIEW3D_OT_cursor_memory_show(bpy.types.Operator):
         return {'FINISHED'}
 
 
-
-class VIEW3D_OT_cursor_memory_hide(bpy.types.Operator):
+class VIEW3D_OT_cursor_memory_hide(Operator):
     """Hide cursor memory"""
     bl_idname = "view3d.cursor_memory_hide"
     bl_label = "Hide cursor memory"
@@ -152,8 +166,7 @@ class VIEW3D_OT_cursor_memory_hide(bpy.types.Operator):
         return {'FINISHED'}
 
 
-
-class VIEW3D_PT_cursor_memory(bpy.types.Panel):
+class VIEW3D_PT_cursor_memory(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_label = "Cursor Memory"
@@ -163,11 +176,11 @@ class VIEW3D_PT_cursor_memory(bpy.types.Panel):
     def poll(self, context):
         # Display in object or edit mode.
         if (context.area.type == 'VIEW_3D' and
-            (context.mode == 'EDIT_MESH'
-            or context.mode == 'OBJECT')):
-            return 1
+                (context.mode == 'EDIT_MESH' or
+                 context.mode == 'OBJECT')):
+            return True
 
-        return 0
+        return False
 
     def draw_header(self, context):
         layout = self.layout
@@ -175,12 +188,11 @@ class VIEW3D_PT_cursor_memory(bpy.types.Panel):
         if cc.savedLocationDraw:
             GUI.drawIconButton(True, layout, 'RESTRICT_VIEW_OFF', "view3d.cursor_memory_hide", False)
         else:
-            GUI.drawIconButton(True, layout, 'RESTRICT_VIEW_ON' , "view3d.cursor_memory_show", False)
-        #layout.prop(sce, "cursor_memory.savedLocationDraw")
+            GUI.drawIconButton(True, layout, 'RESTRICT_VIEW_ON', "view3d.cursor_memory_show", False)
+        # layout.prop(sce, "cursor_memory.savedLocationDraw")
 
     def draw(self, context):
         layout = self.layout
-        sce = context.scene
         cc = context.scene.cursor_memory
 
         row = layout.row()
@@ -190,13 +202,12 @@ class VIEW3D_PT_cursor_memory(bpy.types.Panel):
         row2 = col.row()
         GUI.drawIconButton(True, row2, 'FILE_REFRESH', "view3d.cursor_memory_swap")
         row2 = col.row()
-        GUI.drawIconButton(True, row2, 'BACK'        , "view3d.cursor_memory_recall")
+        GUI.drawIconButton(True, row2, 'BACK', "view3d.cursor_memory_recall")
         col = row.column()
         col.prop(cc, "savedLocation")
 
 
-
-class VIEW3D_PT_cursor_memory_init(bpy.types.Panel):
+class VIEW3D_PT_cursor_memory_init(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
     bl_label = "Register callback"
@@ -207,31 +218,36 @@ class VIEW3D_PT_cursor_memory_init(bpy.types.Panel):
 
     @staticmethod
     def handle_add(self, context):
-        VIEW3D_PT_cursor_memory_init._handle = bpy.types.SpaceView3D.draw_handler_add(
-            cursor_memory_draw, (self, context), 'WINDOW', 'POST_PIXEL')
+        VIEW3D_PT_cursor_memory_init._handle = \
+                bpy.types.SpaceView3D.draw_handler_add(
+                        cursor_memory_draw, (self, context),
+                        'WINDOW', 'POST_PIXEL'
+                        )
 
     @staticmethod
     def handle_remove():
         if VIEW3D_PT_cursor_memory_init._handle is not None:
-            bpy.types.SpaceView3D.draw_handler_remove(VIEW3D_PT_cursor_memory_init._handle, 'WINDOW')
+            bpy.types.SpaceView3D.draw_handler_remove(
+                    VIEW3D_PT_cursor_memory_init._handle, 'WINDOW'
+                    )
         VIEW3D_PT_cursor_memory_init._handle = None
 
     @classmethod
     def poll(cls, context):
-        if VIEW3D_PT_cursor_memory_init.initDone:
-            return False
+        try:
+            if VIEW3D_PT_cursor_memory_init.initDone:
+                return False
 
-        print ("Cursor Memory draw-callback registration...")
-        sce = context.scene
-        if context.area.type == 'VIEW_3D':
-            VIEW3D_PT_cursor_memory_init.handle_add(cls, context)
-            VIEW3D_PT_cursor_memory_init.initDone = True
-            print ("Cursor Memory draw-callback registered")
-            # Unregister to prevent double registration...
-            # Started to fail after v2.57
-            # bpy.types.unregister(VIEW3D_PT_cursor_memory_init)
-        else:
-            print("View3D not found, cannot run operator")
+            if context.area.type == 'VIEW_3D':
+                VIEW3D_PT_cursor_memory_init.handle_add(cls, context)
+                VIEW3D_PT_cursor_memory_init.initDone = True
+            else:
+                print("\n[Cursor Control]\nClass:VIEW3D_PT_cursor_memory_init\n"
+                     "Error: View3D not found, cannot initialize the handler draw")
+        except Exception as e:
+            print("\n[Cursor Control]\nClass:VIEW3D_PT_cursor_memory_init\n"
+                 "Error: {}\n".format(e))
+
         return False
 
     def draw_header(self, context):
@@ -241,20 +257,19 @@ class VIEW3D_PT_cursor_memory_init(bpy.types.Panel):
         pass
 
 
-
-def cursor_memory_draw(cls,context):
+def cursor_memory_draw(cls, context):
     cc = context.scene.cursor_memory
 
     draw = 0
     if hasattr(cc, "savedLocationDraw"):
         draw = cc.savedLocationDraw
 
-    if(draw):
+    if draw:
         bgl.glEnable(bgl.GL_BLEND)
         bgl.glShadeModel(bgl.GL_FLAT)
         p1 = Vector(cc.savedLocation)
         location = region3d_get_2d_coordinates(context, p1)
-        alpha = 1-PHI_INV
+        alpha = 1 - PHI_INV
         # Circle
         color = ([0.33, 0.33, 0.33],
             [1, 1, 1],
@@ -287,7 +302,7 @@ def cursor_memory_draw(cls,context):
         bgl.glBegin(bgl.GL_LINE_LOOP)
         for i in range(14):
             bgl.glColor4f(color[i][0], color[i][1], color[i][2], alpha)
-            bgl.glVertex2f(location[0]+offset[i][0], location[1]+offset[i][1])
+            bgl.glVertex2f(location[0] + offset[i][0], location[1] + offset[i][1])
         bgl.glEnd()
 
         # Crosshair
@@ -295,20 +310,18 @@ def cursor_memory_draw(cls,context):
         offset = 5
         bgl.glColor4f(0, 0, 0, alpha)
         bgl.glBegin(bgl.GL_LINE_STRIP)
-        bgl.glVertex2f(location[0]-offset2, location[1])
-        bgl.glVertex2f(location[0]- offset, location[1])
+        bgl.glVertex2f(location[0] - offset2, location[1])
+        bgl.glVertex2f(location[0] - offset, location[1])
         bgl.glEnd()
         bgl.glBegin(bgl.GL_LINE_STRIP)
-        bgl.glVertex2f(location[0]+ offset, location[1])
-        bgl.glVertex2f(location[0]+offset2, location[1])
+        bgl.glVertex2f(location[0] + offset, location[1])
+        bgl.glVertex2f(location[0] + offset2, location[1])
         bgl.glEnd()
         bgl.glBegin(bgl.GL_LINE_STRIP)
-        bgl.glVertex2f(location[0], location[1]-offset2)
-        bgl.glVertex2f(location[0], location[1]- offset)
+        bgl.glVertex2f(location[0], location[1] - offset2)
+        bgl.glVertex2f(location[0], location[1] - offset)
         bgl.glEnd()
         bgl.glBegin(bgl.GL_LINE_STRIP)
-        bgl.glVertex2f(location[0], location[1]+ offset)
-        bgl.glVertex2f(location[0], location[1]+offset2)
+        bgl.glVertex2f(location[0], location[1] + offset)
+        bgl.glVertex2f(location[0], location[1] + offset2)
         bgl.glEnd()
-
-

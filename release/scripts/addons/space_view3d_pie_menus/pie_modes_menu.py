@@ -22,7 +22,7 @@ bl_info = {
     "name": "Hotkey: 'Tab'",
     "description": "Switch between 3d view object/edit modes",
     "author": "pitiwazou, meta-androcto, italic",
-    "version": (0, 1, 1),
+    "version": (0, 1, 2),
     "blender": (2, 77, 0),
     "location": "3D View",
     "warning": "",
@@ -40,8 +40,8 @@ from bpy.types import (
 class ClassObject(Operator):
     bl_idname = "class.object"
     bl_label = "Class Object"
-    bl_options = {'REGISTER', 'UNDO'}
     bl_description = "Edit/Object Mode Switch"
+    bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
         if context.object.mode == "OBJECT":
@@ -54,8 +54,8 @@ class ClassObject(Operator):
 class ClassVertex(Operator):
     bl_idname = "class.vertex"
     bl_label = "Class Vertex"
-    bl_options = {'REGISTER', 'UNDO'}
     bl_description = "Vert Select"
+    bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
         if context.object.mode != "EDIT":
@@ -69,8 +69,8 @@ class ClassVertex(Operator):
 class ClassEdge(Operator):
     bl_idname = "class.edge"
     bl_label = "Class Edge"
-    bl_options = {'REGISTER', 'UNDO'}
     bl_description = "Edge Select"
+    bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
         if context.object.mode != "EDIT":
@@ -84,8 +84,8 @@ class ClassEdge(Operator):
 class ClassFace(Operator):
     bl_idname = "class.face"
     bl_label = "Class Face"
-    bl_options = {'REGISTER', 'UNDO'}
     bl_description = "Face Select"
+    bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
         if context.object.mode != "EDIT":
@@ -99,8 +99,8 @@ class ClassFace(Operator):
 class ClassTexturePaint(Operator):
     bl_idname = "class.pietexturepaint"
     bl_label = "Class Texture Paint"
-    bl_options = {'REGISTER', 'UNDO'}
     bl_description = "Texture Paint"
+    bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
         if context.object.mode == "EDIT":
@@ -114,8 +114,8 @@ class ClassTexturePaint(Operator):
 class ClassWeightPaint(Operator):
     bl_idname = "class.pieweightpaint"
     bl_label = "Class Weight Paint"
-    bl_options = {'REGISTER', 'UNDO'}
     bl_description = "Weight Paint"
+    bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
         if context.object.mode == "EDIT":
@@ -129,8 +129,8 @@ class ClassWeightPaint(Operator):
 class ClassVertexPaint(Operator):
     bl_idname = "class.pievertexpaint"
     bl_label = "Class Vertex Paint"
-    bl_options = {'REGISTER', 'UNDO'}
     bl_description = "Vertex Paint"
+    bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
         if context.object.mode == "EDIT":
@@ -144,8 +144,8 @@ class ClassVertexPaint(Operator):
 class ClassParticleEdit(Operator):
     bl_idname = "class.pieparticleedit"
     bl_label = "Class Particle Edit"
-    bl_options = {'REGISTER', 'UNDO'}
     bl_description = "Particle Edit (must have active particle system)"
+    bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
         if context.object.mode == "EDIT":
@@ -181,8 +181,8 @@ class SetObjectModePie(Operator):
 class VertsEdges(Operator):
     bl_idname = "verts.edges"
     bl_label = "Verts Edges"
-    bl_options = {'REGISTER', 'UNDO'}
     bl_description = "Vert/Edge Select"
+    bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
         if context.object.mode != "EDIT":
@@ -196,8 +196,8 @@ class VertsEdges(Operator):
 class EdgesFaces(Operator):
     bl_idname = "edges.faces"
     bl_label = "EdgesFaces"
-    bl_options = {'REGISTER', 'UNDO'}
     bl_description = "Edge/Face Select"
+    bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
         if context.object.mode != "EDIT":
@@ -211,8 +211,8 @@ class EdgesFaces(Operator):
 class VertsFaces(Operator):
     bl_idname = "verts.faces"
     bl_label = "Verts Faces"
-    bl_options = {'REGISTER', 'UNDO'}
     bl_description = "Vert/Face Select"
+    bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
         if context.object.mode != "EDIT":
@@ -226,8 +226,8 @@ class VertsFaces(Operator):
 class VertsEdgesFaces(Operator):
     bl_idname = "verts.edgesfaces"
     bl_label = "Verts Edges Faces"
-    bl_options = {'REGISTER', 'UNDO'}
     bl_description = "Vert/Edge/Face Select"
+    bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
         if context.object.mode != "EDIT":
@@ -427,6 +427,16 @@ class PieObjectEditMode(Menu):
             # 3 - BOTTOM - RIGHT
             if context.gpencil_data:
                 pie.operator("view3d.pie_interactive_mode_grease_pencil", icon="GREASEPENCIL")
+        else:
+            message = "Active Object has only Object Mode available" if ob \
+                    and ob.type in {"LAMP", "CAMERA", "EMPTY", "SPEAKER"} else \
+                    "No active object found. Please select one first"
+            pie = layout.menu_pie()
+            pie.separator()
+            pie.separator()
+            pie.separator()
+            box = pie.box()
+            box.label(text=message, icon="INFO")
 
 
 classes = (

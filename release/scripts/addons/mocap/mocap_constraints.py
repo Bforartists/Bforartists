@@ -385,13 +385,15 @@ def bakeAllConstraints(obj, s_frame, e_frame, bones):
     constraintStrip.frame_end = e_frame
     if selectedBones:
         # Use bake function from NLA Bake Action operator
-        anim_utils.bake_action(s_frame,
-                               e_frame,
-                               action=constraintStrip.action,
-                               only_selected=True,
-                               do_pose=True,
-                               do_object=False,
-                               )
+        anim_utils.bake_action(
+            obj,
+            s_frame,
+            e_frame,
+            action=constraintStrip.action,
+            only_selected=True,
+            do_pose=True,
+            do_object=False,
+        )
     if simpleBake:
         #Do a "simple" bake, location only, world space only.
         locBake(s_frame, e_frame, simpleBake)

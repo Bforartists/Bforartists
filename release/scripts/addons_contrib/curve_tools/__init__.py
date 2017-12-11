@@ -1,31 +1,54 @@
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
 bl_info = {
     "name": "Curve Tools 2",
     "description": "Adds some functionality for bezier/nurbs curve/surface modeling",
     "author": "Mackraken, guy lateur",
-    "version": (0, 2, 0),
+    "version": (0, 2, 1),
     "blender": (2, 71, 0),
     "location": "View3D > Tool Shelf > Addons Tab",
     "warning": "WIP",
-    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
+    "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
                 "Scripts/Curve/Curve_Tools",
     "tracker_url": "https://developer.blender.org/maniphest/task/edit/form/2/",
     "category": "Add Curve"}
 
 
 import bpy
+from bpy.types import (
+        Operator,
+        Panel,
+        PropertyGroup,
+        )
 from bpy.props import (
         BoolProperty,
         IntProperty,
         FloatProperty,
         EnumProperty,
         CollectionProperty,
+        StringProperty,
         )
-
 from . import Properties
 from . import Operators
 from . import auto_loft
 from . import curve_outline
-from . import add_curve_simple
+
 
 from bpy.types import (
         AddonPreferences,
@@ -41,8 +64,7 @@ def UpdateDummy(object, context):
     UTILSDROP = scene.UTUtilsDrop
 
 
-class SeparateOutline(bpy.types.Operator):
-    """Curve Outliner"""
+class SeparateOutline(Operator):
     bl_idname = "object.sep_outline"
     bl_label = "Separate Outline"
     bl_options = {'REGISTER', 'UNDO'}
@@ -61,104 +83,109 @@ class SeparateOutline(bpy.types.Operator):
         return {'FINISHED'}
 
 
-class CurveTools2Settings(bpy.types.PropertyGroup):
+class CurveTools2Settings(PropertyGroup):
     # selection
     SelectedObjects = CollectionProperty(
-                        type=Properties.CurveTools2SelectedObject
-                        )
+            type=Properties.CurveTools2SelectedObject
+            )
     NrSelectedObjects = IntProperty(
-                        name="NrSelectedObjects",
-                        default=0,
-                        description="Number of selected objects",
-                        update=UpdateDummy
-                        )
-    # NrSelectedObjects = IntProperty(name="NrSelectedObjects", default=0, description="Number of selected objects")
-
+            name="NrSelectedObjects",
+            default=0,
+            description="Number of selected objects",
+            update=UpdateDummy
+            )
+    """
+    NrSelectedObjects = IntProperty(
+            name="NrSelectedObjects",
+            default=0,
+            description="Number of selected objects"
+            )
+    """
     # curve
     CurveLength = FloatProperty(
-                        name="CurveLength",
-                        default=0.0,
-                        precision=6
-                        )
+            name="CurveLength",
+            default=0.0,
+            precision=6
+            )
     # splines
     SplineResolution = IntProperty(
-                        name="SplineResolution",
-                        default=64,
-                        min=2, max=1024,
-                        soft_min=2,
-                        description="Spline resolution will be set to this value"
-                        )
+            name="SplineResolution",
+            default=64,
+            min=2, max=1024,
+            soft_min=2,
+            description="Spline resolution will be set to this value"
+            )
     SplineRemoveLength = FloatProperty(
-                        name="SplineRemoveLength",
-                        default=0.001,
-                        precision=6,
-                        description="Splines shorter than this threshold length will be removed"
-                        )
+            name="SplineRemoveLength",
+            default=0.001,
+            precision=6,
+            description="Splines shorter than this threshold length will be removed"
+            )
     SplineJoinDistance = FloatProperty(
-                        name="SplineJoinDistance",
-                        default=0.001,
-                        precision=6,
-                        description="Splines with starting/ending points closer to each other "
-                                    "than this threshold distance will be joined"
-                        )
+            name="SplineJoinDistance",
+            default=0.001,
+            precision=6,
+            description="Splines with starting/ending points closer to each other "
+                        "than this threshold distance will be joined"
+            )
     SplineJoinStartEnd = BoolProperty(
-                        name="SplineJoinStartEnd",
-                        default=False,
-                        description="Only join splines at the starting point of one and the ending point of the other"
-                        )
+            name="SplineJoinStartEnd",
+            default=False,
+            description="Only join splines at the starting point of one and the ending point of the other"
+            )
     splineJoinModeItems = (
-                        ('At midpoint', 'At midpoint', 'Join splines at midpoint of neighbouring points'),
-                        ('Insert segment', 'Insert segment', 'Insert segment between neighbouring points')
-                        )
+            ('At midpoint', 'At midpoint', 'Join splines at midpoint of neighbouring points'),
+            ('Insert segment', 'Insert segment', 'Insert segment between neighbouring points')
+            )
     SplineJoinMode = EnumProperty(
-                        items=splineJoinModeItems,
-                        name="SplineJoinMode",
-                        default='At midpoint',
-                        description="Determines how the splines will be joined"
-                        )
+            items=splineJoinModeItems,
+            name="SplineJoinMode",
+            default='At midpoint',
+            description="Determines how the splines will be joined"
+            )
     # curve intersection
     LimitDistance = FloatProperty(
-                        name="LimitDistance",
-                        default=0.0001,
-                        precision=6,
-                        description="Displays the result of the curve length calculation"
-                        )
+            name="LimitDistance",
+            default=0.0001,
+            precision=6,
+            description="Displays the result of the curve length calculation"
+            )
 
     intAlgorithmItems = (
-                        ('3D', '3D', 'Detect where curves intersect in 3D'),
-                        ('From View', 'From View', 'Detect where curves intersect in the RegionView3D')
-                        )
+            ('3D', '3D', 'Detect where curves intersect in 3D'),
+            ('From View', 'From View', 'Detect where curves intersect in the RegionView3D')
+            )
     IntersectCurvesAlgorithm = EnumProperty(
-                        items=intAlgorithmItems,
-                        name="IntersectCurvesAlgorithm",
-                        description="Determines how the intersection points will be detected",
-                        default='3D'
-                        )
+            items=intAlgorithmItems,
+            name="IntersectCurvesAlgorithm",
+            description="Determines how the intersection points will be detected",
+            default='3D'
+            )
     intModeItems = (
-                    ('Insert', 'Insert', 'Insert points into the existing spline(s)'),
-                    ('Split', 'Split', 'Split the existing spline(s) into 2'),
-                    ('Empty', 'Empty', 'Add empty at intersections')
-                    )
+            ('Insert', 'Insert', 'Insert points into the existing spline(s)'),
+            ('Split', 'Split', 'Split the existing spline(s) into 2'),
+            ('Empty', 'Empty', 'Add empty at intersections')
+            )
     IntersectCurvesMode = EnumProperty(
-                    items=intModeItems,
-                    name="IntersectCurvesMode",
-                    description="Determines what happens at the intersection points",
-                    default='Split'
-                    )
+            items=intModeItems,
+            name="IntersectCurvesMode",
+            description="Determines what happens at the intersection points",
+            default='Split'
+            )
     intAffectItems = (
-                    ('Both', 'Both', 'Insert points into both curves'),
-                    ('Active', 'Active', 'Insert points into active curve only'),
-                    ('Other', 'Other', 'Insert points into other curve only')
-                    )
+            ('Both', 'Both', 'Insert points into both curves'),
+            ('Active', 'Active', 'Insert points into active curve only'),
+            ('Other', 'Other', 'Insert points into other curve only')
+            )
     IntersectCurvesAffect = EnumProperty(
-                    items=intAffectItems,
-                    name="IntersectCurvesAffect",
-                    description="Determines which of the selected curves will be affected by the operation",
-                    default='Both'
-                    )
+            items=intAffectItems,
+            name="IntersectCurvesAffect",
+            description="Determines which of the selected curves will be affected by the operation",
+            default='Both'
+            )
 
 
-class CurvePanel(bpy.types.Panel):
+class CurvePanel(Panel):
     bl_label = "Curve Tools 2"
     bl_space_type = "VIEW_3D"
     bl_region_type = "TOOLS"
@@ -168,7 +195,8 @@ class CurvePanel(bpy.types.Panel):
     @classmethod
     def poll(cls, context):
         if len(context.selected_objects) > 0:
-            return (context.active_object.type == "CURVE")
+            obj = context.active_object
+            return (obj and obj.type == "CURVE")
 
     def draw(self, context):
         scene = context.scene
@@ -178,12 +206,6 @@ class CurvePanel(bpy.types.Panel):
         TRIPLEDROP = scene.UTTripleDrop
         UTILSDROP = scene.UTUtilsDrop
         layout = self.layout
-
-        # Object Creation
-        box1 = self.layout.box()
-        col = box1.column(align=True)
-        row = col.row(align=True)
-        row.menu("INFO_MT_simple_menu", icon="OBJECT_DATAMODE")
 
         # Z. selection
         boxSelection = self.layout.box()
@@ -293,10 +315,12 @@ class CurvePanel(bpy.types.Panel):
 
                 if len(vertex) > 0 and n > 2:
                     row = col.row(align=True)
-                    simple_edit = row.operator("curve.bezier_points_fillet", text='Fillet')
+                    row.operator("curve.bezier_points_fillet", text='Fillet')
+                """
                 if len(vertex) == 2 and abs(selected[0] - selected[1]) == 1:
                     row = col.row(align=True)
-                    simple_divide = row.operator("curve.bezier_spline_divide", text='Divide')
+                    row.operator("curve.bezier_spline_divide", text='Divide')
+                """
             row = col.row(align=True)
             row.operator("curvetools2.operatorbirail", text="Birail")
         # Utils Curve options
@@ -335,14 +359,28 @@ class CurvePanel(bpy.types.Panel):
             row.prop(context.scene.curvetools, "SplineJoinMode", text="Join mode")
 
 
-# Addons Preferences Update Panel
+# Add-ons Preferences Update Panel
+
+# Define Panel classes for updating
+panels = (
+        CurvePanel,
+        )
+
+
 def update_panel(self, context):
+    message = "Curve Tools 2: Updating Panel locations has failed"
     try:
-        bpy.utils.unregister_class(CurvePanel)
-    except:
+        for panel in panels:
+            if "bl_rna" in panel.__dict__:
+                bpy.utils.unregister_class(panel)
+
+        for panel in panels:
+            panel.bl_category = context.user_preferences.addons[__name__].preferences.category
+            bpy.utils.register_class(panel)
+
+    except Exception as e:
+        print("\n[{}]\n{}\n\nError:\n{}".format(__name__, message, e))
         pass
-    CurvePanel.bl_category = context.user_preferences.addons[__name__].preferences.category
-    bpy.utils.register_class(CurvePanel)
 
 
 class CurveAddonPreferences(AddonPreferences):
@@ -350,50 +388,50 @@ class CurveAddonPreferences(AddonPreferences):
     # when defining this in a submodule of a python package.
     bl_idname = __name__
 
-    category = bpy.props.StringProperty(
-            name="Category",
+    category = StringProperty(
+            name="Tab Category",
             description="Choose a name for the category of the panel",
             default="Tools",
-            update=update_panel)
+            update=update_panel
+            )
 
     def draw(self, context):
-
         layout = self.layout
+
         row = layout.row()
         col = row.column()
-        col.label(text="Category:")
+        col.label(text="Tab Category:")
         col.prop(self, "category", text="")
 
 
 def register():
     bpy.types.Scene.UTSingleDrop = BoolProperty(
-                                    name="Single Curve",
-                                    default=False,
-                                    description="Single Curve"
-                                    )
+            name="Single Curve",
+            default=False,
+            description="Single Curve"
+            )
     bpy.types.Scene.UTDoubleDrop = BoolProperty(
-                                    name="Two Curves",
-                                    default=False,
-                                    description="Two Curves"
-                                    )
+            name="Two Curves",
+            default=False,
+            description="Two Curves"
+            )
     bpy.types.Scene.UTLoftDrop = BoolProperty(
-                                    name="Two Curves Loft",
-                                    default=False,
-                                    description="Two Curves Loft"
-                                    )
+            name="Two Curves Loft",
+            default=False,
+            description="Two Curves Loft"
+            )
     bpy.types.Scene.UTTripleDrop = BoolProperty(
-                                    name="Advanced",
-                                    default=False,
-                                    description="Advanced"
-                                    )
+            name="Advanced",
+            default=False,
+            description="Advanced"
+            )
     bpy.types.Scene.UTUtilsDrop = BoolProperty(
-                                    name="Curves Utils",
-                                    default=False,
-                                    description="Curves Utils"
-                                    )
+            name="Curves Utils",
+            default=False,
+            description="Curves Utils"
+            )
     auto_loft.register()
     curve_outline.register()
-    add_curve_simple.register()
     bpy.utils.register_class(Properties.CurveTools2SelectedObject)
     bpy.utils.register_class(CurveAddonPreferences)
     bpy.utils.register_class(CurveTools2Settings)
@@ -434,7 +472,6 @@ def unregister():
 
     auto_loft.unregister()
     curve_outline.unregister()
-    add_curve_simple.unregister()
     bpy.utils.unregister_class(CurveAddonPreferences)
     # bpy.app.handlers.scene_update_pre.remove(SceneUpdatePreHandler)
     bpy.utils.unregister_class(CurvePanel)

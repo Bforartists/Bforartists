@@ -96,6 +96,7 @@ def _setattr(self, name, val):
     print(self, name, val)
     setattr(self, name, val)
 
+
 class UI_AP_i18n_settings(bpy.types.AddonPreferences):
     bl_idname = __name__.split(".")[0]  # We want "top" module name!
     bl_option = {'REGISTER'}
@@ -195,3 +196,10 @@ class UI_AP_i18n_settings(bpy.types.AddonPreferences):
         col = split.column()
         col.operator("ui.i18n_settings_save", text="Save Persistent To...")
         col.operator("ui.i18n_settings_load", text="Load Persistent From...")
+
+
+classes = (
+    UI_OT_i18n_settings_load,
+    UI_OT_i18n_settings_save,
+    UI_AP_i18n_settings,
+)

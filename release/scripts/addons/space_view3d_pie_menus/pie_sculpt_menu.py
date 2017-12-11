@@ -104,8 +104,6 @@ class PieSculpttwo(Menu):
                         icon='BRUSH_LAYER').sculpt_tool = 'LAYER'
         layout.operator("paint.brush_select", text='Mask',
                         icon='BRUSH_MASK').sculpt_tool = 'MASK'
-        layout.operator("paint.brush_select", text='Simplify',
-                        icon='BRUSH_DATA').sculpt_tool = 'SIMPLIFY'
 
 
 # Pie Sculpt Three
@@ -148,12 +146,6 @@ def register():
         km = wm.keyconfigs.addon.keymaps.new(name='Sculpt')
         kmi = km.keymap_items.new('wm.call_menu_pie', 'W', 'PRESS')
         kmi.properties.name = "pie.sculpt"
-        addon_keymaps.append((km, kmi))
-
-        # Sculpt Pie Menu 2
-        km = wm.keyconfigs.addon.keymaps.new(name='Sculpt')
-        kmi = km.keymap_items.new('wm.call_menu_pie', 'W', 'PRESS', alt=True)
-        kmi.properties.name = "pie.sculpttwo"
         addon_keymaps.append((km, kmi))
 
 

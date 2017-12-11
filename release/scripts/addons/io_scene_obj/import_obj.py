@@ -114,6 +114,8 @@ def create_materials(filepath, relpath,
                     map_options[curr_token[0]] = curr_token[1:]
                 curr_token[:] = []
             curr_token.append(token)
+        if curr_token:
+            map_options[curr_token[0]] = curr_token[1:]
 
         # Absolute path - c:\.. etc would work here
         image = obj_image_load(context_imagepath_map, line, DIR, use_image_search, relpath)
@@ -175,22 +177,21 @@ def create_materials(filepath, relpath,
 
         elif type == 'Bump':
             bump_mult = map_options.get(b'-bm')
+            bump_mult = float(bump_mult[0]) if len(bump_mult) > 1 else 1.0
 
             if use_cycles:
                 mat_wrap.normal_image_set(image)
                 mat_wrap.normal_mapping_set(coords='UV', translation=map_offset, scale=map_scale)
                 if bump_mult:
-                    mat_wrap.normal_factor_set(bump_mult[0])
+                    mat_wrap.normal_factor_set(bump_mult)
 
             mtex = blender_material.texture_slots.add()
             mtex.use_map_color_diffuse = False
             mtex.texture = texture
             mtex.texture_coords = 'UV'
             mtex.use_map_normal = True
-            mtex.texture.use_normal_map = True  # bfa - import normalmaps as normalmaps
-
             if bump_mult:
-                mtex.normal_factor = bump_mult[0]
+                mtex.normal_factor = bump_mult
 
         elif type == 'D':
             if use_cycles:

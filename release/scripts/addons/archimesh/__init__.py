@@ -29,7 +29,7 @@ bl_info = {
     "name": "Archimesh",
     "author": "Antonio Vazquez (antonioya)",
     "location": "View3D > Add > Mesh > Archimesh",
-    "version": (1, 1, 3),
+    "version": (1, 1, 4),
     "blender": (2, 6, 8),
     "description": "Generate rooms, doors, windows, and other architecture objects",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Add_Mesh/Archimesh",
@@ -43,22 +43,22 @@ import os
 # Import modules
 # ----------------------------------------------
 if "bpy" in locals():
-    import imp
-    imp.reload(achm_room_maker)
-    imp.reload(achm_door_maker)
-    imp.reload(achm_window_maker)
-    imp.reload(achm_roof_maker)
-    imp.reload(achm_column_maker)
-    imp.reload(achm_stairs_maker)
-    imp.reload(achm_kitchen_maker)
-    imp.reload(achm_shelves_maker)
-    imp.reload(achm_books_maker)
-    imp.reload(achm_lamp_maker)
-    imp.reload(achm_curtain_maker)
-    imp.reload(achm_venetian_maker)
-    imp.reload(achm_main_panel)
-    imp.reload(achm_window_panel)
-    print("archimesh: Reloaded multifiles")
+    import importlib
+    importlib.reload(achm_room_maker)
+    importlib.reload(achm_door_maker)
+    importlib.reload(achm_window_maker)
+    importlib.reload(achm_roof_maker)
+    importlib.reload(achm_column_maker)
+    importlib.reload(achm_stairs_maker)
+    importlib.reload(achm_kitchen_maker)
+    importlib.reload(achm_shelves_maker)
+    importlib.reload(achm_books_maker)
+    importlib.reload(achm_lamp_maker)
+    importlib.reload(achm_curtain_maker)
+    importlib.reload(achm_venetian_maker)
+    importlib.reload(achm_main_panel)
+    importlib.reload(achm_window_panel)
+    # print("archimesh: Reloaded multifiles")
 else:
     from . import achm_books_maker
     from . import achm_column_maker
@@ -75,14 +75,26 @@ else:
     from . import achm_window_maker
     from . import achm_window_panel
 
-    print("archimesh: Imported multifiles")
+    # print("archimesh: Imported multifiles")
 
 # noinspection PyUnresolvedReferences
 import bpy
 # noinspection PyUnresolvedReferences
-from bpy.props import BoolProperty, FloatVectorProperty, IntProperty, FloatProperty
+from bpy.props import (
+        BoolProperty,
+        FloatVectorProperty,
+        IntProperty,
+        FloatProperty,
+        StringProperty,
+        )
 # noinspection PyUnresolvedReferences
-from bpy.types import Menu, Scene, INFO_MT_mesh_add, WindowManager
+from bpy.types import (
+        AddonPreferences,
+        Menu,
+        Scene,
+        INFO_MT_mesh_add,
+        WindowManager,
+        )
 
 # ----------------------------------------------------------
 # Decoration assets
@@ -95,11 +107,11 @@ class AchmInfoMtMeshDecorationAdd(Menu):
 
     # noinspection PyUnusedLocal
     def draw(self, context):
-        self.layout.operator("mesh.archimesh_books", text="Add Books", icon="PLUGIN")
-        self.layout.operator("mesh.archimesh_lamp", text="Add Lamp", icon="PLUGIN")
-        self.layout.operator("mesh.archimesh_roller", text="Add Roller curtains", icon="PLUGIN")
-        self.layout.operator("mesh.archimesh_venetian", text="Add Venetian blind", icon="PLUGIN")
-        self.layout.operator("mesh.archimesh_japan", text="Add Japanese curtains", icon="PLUGIN")
+        self.layout.operator("mesh.archimesh_books", text="Add Books")
+        self.layout.operator("mesh.archimesh_lamp", text="Add Lamp")
+        self.layout.operator("mesh.archimesh_roller", text="Add Roller curtains")
+        self.layout.operator("mesh.archimesh_venetian", text="Add Venetian blind")
+        self.layout.operator("mesh.archimesh_japan", text="Add Japanese curtains")
 
 # ----------------------------------------------------------
 # Registration
@@ -113,39 +125,49 @@ class AchmInfoMtMeshCustomMenuAdd(Menu):
     # noinspection PyUnusedLocal
     def draw(self, context):
         self.layout.operator_context = 'INVOKE_REGION_WIN'
-        self.layout.operator("mesh.archimesh_room", text="Add Room", icon="PLUGIN")
-        self.layout.operator("mesh.archimesh_door", text="Add Door", icon="PLUGIN")
-        self.layout.operator("mesh.archimesh_window", text="Add Rail Window", icon="PLUGIN")
-        self.layout.operator("mesh.archimesh_winpanel", text="Add Panel Window", icon="PLUGIN")
-        self.layout.operator("mesh.archimesh_kitchen", text="Add Cabinet", icon="PLUGIN")
-        self.layout.operator("mesh.archimesh_shelves", text="Add Shelves", icon="PLUGIN")
-        self.layout.operator("mesh.archimesh_column", text="Add Column", icon="PLUGIN")
-        self.layout.operator("mesh.archimesh_stairs", text="Add Stairs", icon="PLUGIN")
-        self.layout.operator("mesh.archimesh_roof", text="Add Roof", icon="PLUGIN")
+        self.layout.operator("mesh.archimesh_room", text="Add Room")
+        self.layout.operator("mesh.archimesh_door", text="Add Door")
+        self.layout.operator("mesh.archimesh_window", text="Add Rail Window")
+        self.layout.operator("mesh.archimesh_winpanel", text="Add Panel Window")
+        self.layout.operator("mesh.archimesh_kitchen", text="Add Cabinet")
+        self.layout.operator("mesh.archimesh_shelves", text="Add Shelves")
+        self.layout.operator("mesh.archimesh_column", text="Add Column")
+        self.layout.operator("mesh.archimesh_stairs", text="Add Stairs")
+        self.layout.operator("mesh.archimesh_roof", text="Add Roof")
         self.layout.menu("INFO_MT_mesh_decoration_add", text="Decoration props", icon="GROUP")
 
 # --------------------------------------------------------------
 # Register all operators and panels
 # --------------------------------------------------------------
 
-## Addons Preferences Update Panel
-from bpy.types import (
-        AddonPreferences,
-        )
-from bpy.props import (
-        StringProperty,
+
+# Add-ons Preferences Update Panel
+
+# Define Panel classes for updating
+panels = (
+        achm_main_panel.ArchimeshMainPanel,
         )
 
+
 def update_panel(self, context):
+    message = "Archimesh: Updating Panel locations has failed"
     try:
-        bpy.utils.unregister_class(achm_main_panel.ArchimeshMainPanel)
-    except:
+        for panel in panels:
+            if "bl_rna" in panel.__dict__:
+                bpy.utils.unregister_class(panel)
+
+        for panel in panels:
+            panel.bl_category = context.user_preferences.addons[__name__].preferences.category
+            bpy.utils.register_class(panel)
+
+    except Exception as e:
+        print("\n[{}]\n{}\n\nError:\n{}".format(__name__, message, e))
         pass
-    achm_main_panel.ArchimeshMainPanel.bl_category = context.user_preferences.addons[__name__].preferences.category
-    bpy.utils.register_class(achm_main_panel.ArchimeshMainPanel)
 
 
 class Archi_Pref(AddonPreferences):
+    # this must match the addon name, use '__package__'
+    # when defining this in a submodule of a python package.
     bl_idname = __name__
 
     category = StringProperty(
@@ -156,17 +178,18 @@ class Archi_Pref(AddonPreferences):
             )
 
     def draw(self, context):
-
         layout = self.layout
+
         row = layout.row()
         col = row.column()
         col.label(text="Tab Category:")
         col.prop(self, "category", text="")
 
+
 # Define menu
 # noinspection PyUnusedLocal
 def AchmMenu_func(self, context):
-    self.layout.menu("INFO_MT_mesh_custom_menu_add", icon="PLUGIN")
+    self.layout.menu("INFO_MT_mesh_custom_menu_add", icon="GROUP")
 
 
 def register():

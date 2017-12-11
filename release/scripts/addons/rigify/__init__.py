@@ -305,7 +305,7 @@ def register():
 
     IDStore.rigify_target_rigs = bpy.props.CollectionProperty(type=RigifyName)
     IDStore.rigify_target_rig = bpy.props.StringProperty(name="Rigify Target Rig",
-                                                         description="Defines which rig to overwrite. If unset, a new one called 'rig' will be created.",
+                                                         description="Defines which rig to overwrite. If unset, a new one called 'rig' will be created",
                                                          default="")
 
     IDStore.rigify_rig_uis = bpy.props.CollectionProperty(type=RigifyName)

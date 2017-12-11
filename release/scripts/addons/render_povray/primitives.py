@@ -983,7 +983,7 @@ class POVRAY_OT_isosurface_box_add(bpy.types.Operator):
         bpy.ops.object.mode_set(mode="OBJECT")
         ob.pov.object_as = "ISOSURFACE"
         ob.pov.contained_by = 'box'
-        ob.name = 'Isosurface'
+        ob.name = 'PovIsosurfaceBox'
         return {'FINISHED'}
 
 class POVRAY_OT_isosurface_sphere_add(bpy.types.Operator):
@@ -1006,7 +1006,7 @@ class POVRAY_OT_isosurface_sphere_add(bpy.types.Operator):
         bpy.ops.object.shade_smooth()
         ob.pov.object_as = "ISOSURFACE"
         ob.pov.contained_by = 'sphere'
-        ob.name = 'Isosurface'
+        ob.name = 'PovIsosurfaceSphere'
         return {'FINISHED'}
 
 class POVRAY_OT_sphere_sweep_add(bpy.types.Operator):
@@ -1040,7 +1040,7 @@ class POVRAY_OT_blob_add(bpy.types.Operator):
         layers[0] = True
         bpy.ops.object.metaball_add(type = 'BALL',layers = layers)
         ob = context.object
-        ob.name = "Blob"
+        ob.name = "PovBlob"
         return {'FINISHED'}
 
 

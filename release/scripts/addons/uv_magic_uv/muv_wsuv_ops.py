@@ -20,8 +20,9 @@
 
 __author__ = "McBuff, Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "4.3.1"
-__date__ = "6 June 2017"
+__version__ = "4.4"
+__date__ = "2 Aug 2017"
+
 
 import bpy
 import bmesh
@@ -126,6 +127,9 @@ class MUV_WSUVApply(bpy.types.Operator):
         orig_area = bpy.context.area.type
         bpy.context.area.type = 'IMAGE_EDITOR'
 
+        # select all UV related to the selected faces
+        bpy.ops.uv.select_all(action='SELECT')
+
         # apply scaled UV
         bpy.ops.transform.resize(
             value=(ratio, ratio, ratio),
@@ -134,14 +138,7 @@ class MUV_WSUVApply(bpy.types.Operator):
             mirror=False,
             proportional='DISABLED',
             proportional_edit_falloff='SMOOTH',
-            proportional_size=1,
-            snap=False,
-            snap_target='CLOSEST',
-            snap_point=(0, 0, 0),
-            snap_align=False,
-            snap_normal=(0, 0, 0),
-            texture_space=False,
-            release_confirm=False)
+            proportional_size=1)
 
         bpy.context.area.type = orig_area
 

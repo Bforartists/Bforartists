@@ -36,13 +36,16 @@ info_header_draw = None
 
 def update(self, context):
     global last_update
-    areas = context.window.screen.areas
-    for area in areas:
-        if area.type == 'INFO':
-            area.tag_redraw()
-    if time() - last_update > 0.1:
-        bpy.ops.wm.redraw_timer(type='DRAW_WIN_SWAP', iterations=1)
-        last_update = time()
+    if (context.window is not None and
+            context.window.screen is not None and
+            context.window.screen.areas is not None):
+        areas = context.window.screen.areas
+        for area in areas:
+            if area.type == 'INFO':
+                area.tag_redraw()
+        if time() - last_update > 0.1:
+            bpy.ops.wm.redraw_timer(type='DRAW_WIN_SWAP', iterations=1)
+            last_update = time()
 
 
 def register():

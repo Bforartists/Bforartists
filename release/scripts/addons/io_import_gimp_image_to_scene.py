@@ -36,12 +36,12 @@ This script imports GIMP layered image files into 3D Scenes (.xcf, .xjt)
 def main(report, File, Path, LayerViewers, MixerViewers, LayerOffset,
          LayerScale, OpacityMode, AlphaMode, ShadelessMats,
          SetCamera, SetupCompo, GroupUntagged, Ext):
-    
+
     #-------------------------------------------------
-    
+
     #Folder = '['+File.rstrip(Ext)+']'+'_images/'
     Folder = 'images_'+'['+File.rstrip(Ext)+']/'
-    
+
     if not bpy.data.is_saved:
         PathSaveRaw = Path+Folder
         PathSave = PathSaveRaw.replace(' ', '\ ')
@@ -55,7 +55,7 @@ def main(report, File, Path, LayerViewers, MixerViewers, LayerOffset,
         try: os.mkdir(PathSaveRaw)
         except: pass
         PathSaveRaw = bpy.path.relpath(PathSaveRaw)+'/'
-    
+
     PathRaw = Path
     Path = Path.replace(' ', '\ ')
     if Ext == '.xjt':
@@ -63,92 +63,92 @@ def main(report, File, Path, LayerViewers, MixerViewers, LayerOffset,
         #-------------------------------------------------
         # EXTRACT XJT
         import tarfile
-        
+
         IMG = tarfile.open ('%s%s' % (PathRaw, File))
         PRP = IMG.extractfile('PRP')
-        
+
         Members = IMG.getmembers()
-        
+
         for Member in Members:
             Name = Member.name
             if Name.startswith('l') and Name.endswith('.jpg'):
                 IMG.extract(Name, path=PathSaveRaw)
-        
+
         #-------------------------------------------------
         # INFO XJT
         IMGs = []
         for Line in PRP.readlines():
             Line = str(Line)
-            
+
             if Line.startswith("b'GIMP_XJ_IMAGE"):
                 for Segment in Line.split():
                     if Segment.startswith('w/h:'):
                         ResX, ResY = map (int, Segment[4:].split(','))
             if Line.startswith(("b'L", "b'l")):
-                
+
                 """The "nice" method to check if layer has alpha channel
                 sadly GIMP sometimes decides not to export an alpha channel
                 if it's pure white so we are not completly sure here yet"""
                 if Line.startswith("b'L"): HasAlpha = True
                 else: HasAlpha = False
-                
+
                 md = None
                 op = 1
                 ox, oy = 0,0
-                
+
                 for Segment in Line.split():
-                    
+
                     if Segment.startswith("b'"):
                         imageFile = 'l' + Segment[3:] + '.jpg'
                         imageFileAlpha ='la'+Segment[3:]+'.jpg'
-                        
+
                         """Phisically double checking if alpha image exists
                         now we can be sure! (damn GIMP)"""
                         if HasAlpha:
                             if not os.path.isfile(PathSaveRaw+imageFileAlpha): HasAlpha = False
-                        
+
                         # Get Widht and Height from images
                         data = open(PathSaveRaw+imageFile, "rb").read()
-                        
+
                         hexList = []
                         for ch in data:
                             byt = "%02X" % ch
                             hexList.append(byt)
-                        
+
                         for k in range(len(hexList)-1):
                             if hexList[k] == 'FF' and (hexList[k+1] == 'C0' or hexList[k+1] == 'C2'):
                                 ow = int(hexList[k+7],16)*256 + int(hexList[k+8],16)
                                 oh = int(hexList[k+5],16)*256 + int(hexList[k+6],16)
-                    
+
                     elif Segment.startswith('md:'): # mode
                         md = Segment[3:]
-                        
+
                     elif Segment.startswith('op:'): # opacity
                         op = float(Segment[3:])*.01
-                    
+
                     elif Segment.startswith('o:'): # origin
                         ox, oy = map(int, Segment[2:].split(','))
-                    
+
                     elif Segment.startswith('n:'): # name
                         n = Segment[3:-4]
                         OpenBracket = n.find ('[')
                         CloseBracket = n.find (']')
-                        
+
                         if OpenBracket != -1 and CloseBracket != -1:
                             RenderLayer = n[OpenBracket+1:CloseBracket]
                             NameShort = n[:OpenBracket]
-                            
+
                         else:
                             RenderLayer = n
                             NameShort = n
-                        
+
                         os.rename(PathSaveRaw+imageFile, PathSaveRaw+NameShort+'.jpg')
                         if HasAlpha: os.rename(PathSaveRaw+imageFileAlpha, PathSaveRaw+NameShort+'_A'+'.jpg')
-                        
+
                 IMGs.append({'LayerMode':md, 'LayerOpacity':op,
                             'LayerName':n, 'LayerNameShort':NameShort,
                             'RenderLayer':RenderLayer, 'LayerCoords':[ow, oh, ox, oy], 'HasAlpha':HasAlpha})
-    
+
     else: # Ext == '.xcf':
         ExtSave = '.png'
         #-------------------------------------------------
@@ -171,14 +171,14 @@ def main(report, File, Path, LayerViewers, MixerViewers, LayerOffset,
         IMGs = []
         for Line in Info.split('\n'):
             if Line.startswith ('+'):
-                
+
                 Line = Line.split(' ', 4)
-                
+
                 RenderLayer = Line[4]
-                
+
                 OpenBracket = RenderLayer.find ('[')
                 CloseBracket = RenderLayer.find (']')
-                
+
                 if OpenBracket != -1 and CloseBracket != -1:
                     RenderLayer = RenderLayer[OpenBracket+1:CloseBracket]
                     NameShort = Line[4][:OpenBracket]
@@ -188,7 +188,7 @@ def main(report, File, Path, LayerViewers, MixerViewers, LayerOffset,
                         RenderLayer = '__Undefined__'
                     else:
                         RenderLayer = NameShort
-                
+
                 LineThree = Line[3]
                 Slash = LineThree.find('/')
                 if Slash == -1:
@@ -197,7 +197,7 @@ def main(report, File, Path, LayerViewers, MixerViewers, LayerOffset,
                 else:
                     Mode = LineThree[:Slash]
                     Opacity = float(LineThree[Slash+1:LineThree.find('%')])*.01
-                
+
                 IMGs.append ({
                     'LayerMode': Mode,
                     'LayerOpacity': Opacity,
@@ -209,7 +209,7 @@ def main(report, File, Path, LayerViewers, MixerViewers, LayerOffset,
                     })
             elif Line.startswith('Version'):
                 ResX, ResY = map (int, Line.split()[2].split('x'))
-        
+
         #-------------------------------------------------
         # EXTRACT XCF
         if OpacityMode == 'BAKE':
@@ -220,56 +220,56 @@ def main(report, File, Path, LayerViewers, MixerViewers, LayerOffset,
         for Layer in IMGs:
             png_path = "%s%s.png" % (PathSave, Layer['LayerName'].replace(' ', '_'))
             subprocess.call((XCF2PNG, "-C", xcf_path, "-o", png_path, Layer['LayerName']) + Opacity)
-    
+
     #-------------------------------------------------
     Scene = bpy.context.scene
     #-------------------------------------------------
     # CAMERA
-    
+
     if SetCamera:
         bpy.ops.object.camera_add(location=(0, 0, 10))
-        
+
         Camera = bpy.context.active_object.data
-        
+
         Camera.type = 'ORTHO'
         Camera.ortho_scale = ResX * .01
-    
+
     #-------------------------------------------------
     # RENDER SETTINGS
-    
+
     Render = Scene.render
-    
+
     if SetCamera:
         Render.resolution_x = ResX
         Render.resolution_y = ResY
         Render.resolution_percentage = 100
     Render.alpha_mode = 'TRANSPARENT'
-    
+
     #-------------------------------------------------
     # 3D VIEW SETTINGS
-    
+
     Scene.game_settings.material_mode = 'GLSL'
-    
+
     Areas = bpy.context.screen.areas
-    
+
     for Area in Areas:
         if Area.type == 'VIEW_3D':
             Area.spaces.active.viewport_shade = 'TEXTURED'
             Area.spaces.active.show_textured_solid = True
             Area.spaces.active.show_floor = False
-    
+
     #-------------------------------------------------
     # 3D LAYERS
-    
+
     def Make3DLayer (Name, NameShort, Z, Coords, RenderLayer, LayerMode, LayerOpacity, HasAlpha):
-        
+
         # RenderLayer
-        
+
         if SetupCompo:
             if not bpy.context.scene.render.layers.get(RenderLayer):
-                
+
                 bpy.ops.scene.render_layer_add()
-                
+
                 LayerActive = bpy.context.scene.render.layers.active
                 LayerActive.name = RenderLayer
                 LayerActive.use_pass_vector = True
@@ -277,18 +277,18 @@ def main(report, File, Path, LayerViewers, MixerViewers, LayerOffset,
                 LayerActive.use_edge_enhance = False
                 LayerActive.use_strand = False
                 LayerActive.use_halo = False
-                
+
                 global LayerNum
                 for i in range (0,20):
                     if not i == LayerNum:
                         LayerActive.layers[i] = False
-                
+
                 bpy.context.scene.layers[LayerNum] = True
-                
+
                 LayerFlags[RenderLayer] = bpy.context.scene.render.layers.active.layers
-                
+
                 LayerList.append([RenderLayer, LayerMode, LayerOpacity])
-                
+
                 LayerNum += 1
 
         # Object
@@ -298,40 +298,40 @@ def main(report, File, Path, LayerViewers, MixerViewers, LayerOffset,
 
         bpy.ops.object.transform_apply(location=False, rotation=True, scale=False)
 
-        
+
         Active = bpy.context.active_object
-        
+
         if SetupCompo:
             Active.layers = LayerFlags[RenderLayer]
-        
+
         Active.location = (
             (float(Coords[2])-(ResX*0.5))*LayerScale,
             (-float(Coords[3])+(ResY*0.5))*LayerScale, Z)
-        
+
         for Vert in Active.data.vertices:
             Vert.co[0] += 1
             Vert.co[1] += -1
-            
+
         Active.dimensions = float(Coords[0])*LayerScale, float(Coords[1])*LayerScale, 0
-        
+
         bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
-        
+
         bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN')
-        
+
         Active.show_wire = True
-        
+
         Active.name = NameShort
         bpy.ops.mesh.uv_texture_add()
-        
+
         # Material
-        
+
         '''if bpy.data.materials.get(NameShort):
             Mat = bpy.data.materials[NameShort]
             if not Active.material_slots:
                 bpy.ops.object.material_slot_add()
             Active.material_slots[0].material = Mat
         else:'''
-        
+
         Mat = bpy.data.materials.new(NameShort)
         Mat.diffuse_color = (1,1,1)
         Mat.use_raytrace = False
@@ -343,23 +343,23 @@ def main(report, File, Path, LayerViewers, MixerViewers, LayerOffset,
             if OpacityMode == 'MAT': Mat.alpha = LayerOpacity
             else: Mat.alpha = 0
         if ShadelessMats: Mat.use_shadeless = True
-        
+
         if Ext == '.xcf':
             # Color & Alpha PNG
             Tex = bpy.data.textures.new(NameShort, 'IMAGE')
             Tex.extension = 'CLIP'
             Tex.use_preview_alpha = True
-            
+
             Img = bpy.data.images.new(NameShort, 128, 128)
             Img.source = 'FILE'
             Img.alpha_mode = AlphaMode
             Img.filepath = '%s%s%s' % (PathSaveRaw, Name, ExtSave)
-            
+
             UVFace = Active.data.uv_textures[0].data[0]
             UVFace.image = Img
-            
+
             Tex.image = Img
-            
+
             Mat.texture_slots.add()
             TexSlot = Mat.texture_slots[0]
             TexSlot.texture = Tex
@@ -367,40 +367,40 @@ def main(report, File, Path, LayerViewers, MixerViewers, LayerOffset,
             TexSlot.texture_coords = 'UV'
             if OpacityMode == 'TEX': TexSlot.alpha_factor = LayerOpacity
             elif OpacityMode == 'MAT': TexSlot.blend_type = 'MULTIPLY'
-        
+
         else: # Ext == '.xjt'
             # Color JPG
             Tex = bpy.data.textures.new(NameShort, 'IMAGE')
             Tex.extension = 'CLIP'
-            
+
             Img = bpy.data.images.new(NameShort, 128, 128)
             Img.source = 'FILE'
             Img.filepath = '%s%s%s' % (PathSaveRaw, Name, ExtSave)
-            
+
             UVFace = Active.data.uv_textures[0].data[0]
             UVFace.image = Img
-            
+
             Tex.image = Img
-            
+
             Mat.texture_slots.add()
             TexSlot = Mat.texture_slots[0]
             TexSlot.texture = Tex
             TexSlot.texture_coords = 'UV'
-            
+
             if HasAlpha:
                 # Alpha JPG
                 Tex = bpy.data.textures.new(NameShort+'_A', 'IMAGE')
                 Tex.extension = 'CLIP'
                 Tex.use_preview_alpha = True
-                
+
                 Img = bpy.data.images.new(NameShort+'_A', 128, 128)
                 Img.source = 'FILE'
                 Img.alpha_mode = AlphaMode
                 Img.filepath = '%s%s_A%s' % (PathSaveRaw, Name, ExtSave)
                 Img.use_alpha = False
-                
+
                 Tex.image = Img
-                
+
                 Mat.texture_slots.add()
                 TexSlot = Mat.texture_slots[1]
                 TexSlot.texture = Tex
@@ -409,10 +409,10 @@ def main(report, File, Path, LayerViewers, MixerViewers, LayerOffset,
                 TexSlot.texture_coords = 'UV'
                 if OpacityMode == 'TEX': TexSlot.alpha_factor = LayerOpacity
                 elif OpacityMode == 'MAT': TexSlot.blend_type = 'MULTIPLY'
-        
+
         if not Active.material_slots:
             bpy.ops.object.material_slot_add()
-        
+
         Active.material_slots[0].material = Mat
 
 
@@ -421,7 +421,7 @@ def main(report, File, Path, LayerViewers, MixerViewers, LayerOffset,
     LayerNum = 0
     LayerFlags = {}
     LayerList = []
-    
+
     for Layer in IMGs:
         Make3DLayer(Layer['LayerName'].replace(' ', '_'),
                     Layer['LayerNameShort'].replace(' ', '_'),
@@ -432,57 +432,57 @@ def main(report, File, Path, LayerViewers, MixerViewers, LayerOffset,
                     Layer['LayerOpacity'],
                     Layer['HasAlpha'],
                     )
-        
+
         Z -= LayerOffset
-    
+
     if SetupCompo:
         #-------------------------------------------------
         # COMPO NODES
-        
+
         Scene.use_nodes = True
-        
+
         Tree = Scene.node_tree
-        
+
         for i in Tree.nodes:
             Tree.nodes.remove(i)
-        
+
         LayerList.reverse()
-        
+
         Offset = 0
         LayerLen = len(LayerList)
-        
+
         for Layer in LayerList:
-            
+
             Offset += 1
-            
+
             X_Offset = (500*Offset)
             Y_Offset = (-300*Offset)
-            
+
             Node = Tree.nodes.new('CompositorNodeRLayers')
             Node.location = (-500+X_Offset, 300+Y_Offset)
             Node.name = 'R_'+ str(Offset)
             Node.scene = Scene
             Node.layer = Layer[0]
-            
+
             if LayerViewers:
                 Node_V = Tree.nodes.new('CompositorNodeViewer')
                 Node_V.name = Layer[0]
                 Node_V.location = (-200+X_Offset, 200+Y_Offset)
-                
+
                 Tree.links.new(Node.outputs[0], Node_V.inputs[0])
-            
+
             if LayerLen > Offset:
-                
+
                 Mode = LayerList[Offset][1] # has to go one step further
                 LayerOpacity = LayerList[Offset][2]
-                
+
                 if not Mode in {'Normal', '-1'}:
-                    
+
                     Node = Tree.nodes.new('CompositorNodeMixRGB')
                     if OpacityMode == 'COMPO': Node.inputs['Fac'].default_value = LayerOpacity
                     else: Node.inputs['Fac'].default_value = 1
                     Node.use_alpha = True
-                    
+
                     if Mode in {'Addition', '7'}: Node.blend_type = 'ADD'
                     elif Mode in {'Subtract', '8'}: Node.blend_type = 'SUBTRACT'
                     elif Mode in {'Multiply', '3'}: Node.blend_type = 'MULTIPLY'
@@ -500,27 +500,27 @@ def main(report, File, Path, LayerViewers, MixerViewers, LayerOffset,
                     elif Mode in {'Hue', '11'}: Node.blend_type = 'HUE'
                     elif Mode in {'Softlight', '19'}: Node.blend_type = 'SOFT_LIGHT'
                     else: pass
-                    
+
                 else:
                     Node = Tree.nodes.new('CompositorNodeAlphaOver')
                     if OpacityMode == 'COMPO': Node.inputs['Fac'].default_value = LayerOpacity
                 Node.name = 'M_' + str(Offset)
                 Node.location = (300+X_Offset, 250+Y_Offset)
-                
+
                 if MixerViewers:
                     Node_V = Tree.nodes.new('CompositorNodeViewer')
                     Node_V.name = Layer[0]
                     Node_V.location = (500+X_Offset, 350+Y_Offset)
-                    
+
                     Tree.links.new(Node.outputs[0], Node_V.inputs[0])
-                
+
             else:
                 Node = Tree.nodes.new('CompositorNodeComposite')
                 Node.name = 'Composite'
                 Node.location = (400+X_Offset, 350+Y_Offset)
-                
+
         Nodes = bpy.context.scene.node_tree.nodes
-        
+
         if LayerLen > 1:
             for i in range (1, LayerLen + 1):
                 if i == 1:
@@ -533,7 +533,7 @@ def main(report, File, Path, LayerViewers, MixerViewers, LayerOffset,
                     Tree.links.new(Nodes['M_'+str(i-1)].outputs[0], Nodes['Composite'].inputs[0])
         else:
             Tree.links.new(Nodes['R_1'].outputs[0], Nodes['Composite'].inputs[0])
-        
+
         for i in Tree.nodes:
             i.location[0] += -250*Offset
             i.location[1] += 150*Offset
@@ -553,20 +553,20 @@ class GIMPImageToScene(bpy.types.Operator):
     bl_label = "GIMP Image to Scene"
     bl_description = "Imports GIMP multilayer image files into 3D Scenes"
     bl_options = {'REGISTER', 'UNDO'}
-    
+
     filename = StringProperty(name="File Name",
         description="Name of the file")
     directory = StringProperty(name="Directory",
         description="Directory of the file")
-    
+
     LayerViewers = BoolProperty(name="Layer Viewers",
         description="Add Viewer nodes to each Render Layer node",
         default=True)
-    
+
     MixerViewers = BoolProperty(name="Mixer Viewers",
         description="Add Viewer nodes to each Mix node",
         default=True)
-    
+
     AlphaMode = EnumProperty(name="Alpha Mode",
         description="Representation of alpha information in the RGBA pixels",
         items=(
@@ -577,7 +577,7 @@ class GIMPImageToScene(bpy.types.Operator):
     ShadelessMats = BoolProperty(name="Shadeless Material",
         description="Set Materials as Shadeless",
         default=True)
-    
+
     OpacityMode = EnumProperty(name="Opacity Mode",
         description="Layer Opacity management",
         items=(
@@ -586,32 +586,32 @@ class GIMPImageToScene(bpy.types.Operator):
             ('COMPO', 'Mixer Node Factor', ''),
             ('BAKE', 'Baked in Image Alpha', '')),
         default='TEX')
-    
+
     SetCamera = BoolProperty(name="Set Camera",
         description="Create an Ortho Camera matching image resolution",
         default=True)
-        
+
     SetupCompo = BoolProperty(name="Setup Node Compositing",
         description="Create a compositing node setup (will delete existing nodes)",
         default=False)
-    
+
     GroupUntagged = BoolProperty(name="Group Untagged",
         description="Layers with no tag go to a single Render Layer",
         default=False)
-    
+
     LayerOffset = FloatProperty(name="Layer Separation",
         description="Distance between each 3D Layer in the Z axis",
         min=0,
         default=0.50)
-    
+
     LayerScale = FloatProperty(name="Layer Scale",
         description="Scale pixel resolution by Blender units",
         min=0,
         default=0.01)
-    
+
     def draw(self, context):
         layout = self.layout
-        
+
         box = layout.box()
         box.label('3D Layers:', icon='SORTSIZE')
         box.prop(self, 'SetCamera', icon='OUTLINER_DATA_CAMERA')
@@ -622,7 +622,7 @@ class GIMPImageToScene(bpy.types.Operator):
         box.prop(self, 'ShadelessMats', icon='SOLID')
         box.prop(self, 'LayerOffset')
         box.prop(self, 'LayerScale')
-        
+
         box = layout.box()
         box.label('Compositing:', icon='RENDERLAYERS')
         box.prop(self, 'SetupCompo', icon='NODETREE')
@@ -630,12 +630,12 @@ class GIMPImageToScene(bpy.types.Operator):
             box.prop(self, 'GroupUntagged', icon='IMAGE_ZDEPTH')
             box.prop(self, 'LayerViewers', icon='NODE')
             box.prop(self, 'MixerViewers', icon='NODE')
-    
+
     def execute(self, context):
         # File Path
         filename = self.filename
         directory = self.directory
-        
+
         # Settings
         LayerViewers = self.LayerViewers
         MixerViewers = self.MixerViewers
@@ -647,11 +647,11 @@ class GIMPImageToScene(bpy.types.Operator):
         GroupUntagged = self.GroupUntagged
         LayerOffset = self.LayerOffset
         LayerScale = self.LayerScale
-        
+
         Ext = None
         if filename.endswith('.xcf'): Ext = '.xcf'
         elif filename.endswith('.xjt'): Ext = '.xjt'
-        
+
         # Call Main Function
         if Ext:
             ret = main(self.report, filename, directory, LayerViewers, MixerViewers, LayerOffset,
@@ -662,7 +662,7 @@ class GIMPImageToScene(bpy.types.Operator):
         else:
             self.report({'ERROR'},"Selected file wasn't valid, try .xcf or .xjt")
             return {'CANCELLED'}
-        
+
         return {'FINISHED'}
 
     def invoke(self, context, event):

@@ -1,9 +1,9 @@
-#  ***** GPL LICENSE BLOCK *****
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
-#  This program is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 3 of the License, or
-#  (at your option) any later version.
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
 #
 #  This program is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -11,9 +11,10 @@
 #  GNU General Public License for more details.
 #
 #  You should have received a copy of the GNU General Public License
-#  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#  All rights reserved.
-#  ***** GPL LICENSE BLOCK *****
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
 
 bl_info = {
     "name": "Export Autocad DXF Format (.dxf)",
@@ -28,20 +29,35 @@ bl_info = {
     "category": "Import-Export",
 }
 
+if "bpy" in locals():
+    from importlib import reload
+    reload(operator)
+    del reload
 
 import bpy
-from .operator import DXFExporter
+from . import operator
 
 def menu_func(self, context):
-    self.layout.operator(DXFExporter.bl_idname, text="Autocad (.dxf)")
+    self.layout.operator(operator.DXFExporter.bl_idname, text="Autocad (.dxf)")
+
+classes = (
+    operator.DXFExporter,
+)
 
 def register():
-    bpy.utils.register_module(__name__)
     bpy.types.INFO_MT_file_export.append(menu_func)
 
+    from bpy.utils import register_class
+    for cls in classes:
+        register_class(cls)
+
+
 def unregister():
-    bpy.utils.unregister_module(__name__)
     bpy.types.INFO_MT_file_export.remove(menu_func)
+
+    from bpy.utils import unregister_class
+    for cls in reversed(classes):
+        unregister_class(cls)
 
 if __name__ == "__main__":
     register()

@@ -28,7 +28,7 @@ from netrender.utils import *
 
 def reset(job):
     main_file = job.files[0]
-    
+
     job_full_path = main_file.filepath
 
     if os.path.exists(job_full_path + ".bak"):
@@ -37,27 +37,27 @@ def reset(job):
 
 def update(job):
     paths = []
-    
+
     main_file = job.files[0]
-    
+
     job_full_path = main_file.filepath
 
-        
+
     path, ext = os.path.splitext(job_full_path)
-    
+
     new_path = path + ".remap" + ext
-    
-    original_path = main_file.original_path 
-    
+
+    original_path = main_file.original_path
+
     # Disable for now. Partial repath should work anyway
     #all = main_file.filepath != main_file.original_path
-    all = False 
-    
+    all = False
+
     for rfile in job.files[1:]:
         if all or rfile.original_path != rfile.filepath:
             paths.append(rfile.original_path)
             paths.append(rfile.filepath)
-    
+
     # Only update if needed
     if paths:
         process = subprocess.Popen(
@@ -75,7 +75,7 @@ def update(job):
             stderr=subprocess.STDOUT,
             )
         process.wait()
-        
+
         os.renames(job_full_path, job_full_path + ".bak")
         os.renames(new_path, job_full_path)
 
@@ -97,12 +97,12 @@ def process(original_path, paths):
         else:
             if DEBUG: print(paths[i], paths[i+1])
             path_map[paths[i]] = paths[i+1]
-            
+
     if DEBUG: print("----------------------------------------------------------")
 
     # TODO original paths aren't really the original path, they are the normalized path
-    # so we repath using the filenames only. 
-    
+    # so we repath using the filenames only.
+
     ###########################
     # LIBRARIES
     ###########################
@@ -123,7 +123,7 @@ def process(original_path, paths):
             if DEBUG: print(file_path, new_path)
             if new_path:
                 image.filepath = new_path
-            
+
 
     ###########################
     # FLUID + POINT CACHE
@@ -139,31 +139,31 @@ def process(original_path, paths):
             point_cache.use_external = True
             point_cache.filepath = new_path
             point_cache.name = cache_name
-        
+
     def fluidFunc(object, modifier, cache_path):
         fluid = modifier.settings
         new_path = path_map.get(cache_path, None)
         if new_path:
             fluid.path = new_path
-        
+
     def multiresFunc(object, modifier, cache_path):
         new_path = path_map.get(cache_path, None)
         if new_path:
             modifier.filepath = new_path
-        
+
     processObjectDependencies(pointCacheFunc, fluidFunc, multiresFunc)
     if DEBUG: print("==========================================================")
-                
+
 
 if __name__ == "__main__":
     try:
         i = sys.argv.index("--")
     except:
         i = 0
-    
+
     if i:
         new_path, original_path, *args = sys.argv[i+1:]
-        
+
         process(original_path, args)
-        
+
         bpy.ops.wm.save_as_mainfile(filepath=new_path, check_existing=False)

@@ -202,6 +202,7 @@ def SVGMatrixFromNode(node, context):
         return Matrix()
 
     rect = context['rect']
+    has_user_coordinate = (len(context['rects']) > 1)
 
     m = Matrix()
     x = SVGParseCoord(node.getAttribute('x') or '0', rect[0])
@@ -210,7 +211,7 @@ def SVGMatrixFromNode(node, context):
     h = SVGParseCoord(node.getAttribute('height') or str(rect[1]), rect[1])
 
     m = Matrix.Translation(Vector((x, y, 0.0)))
-    if len(context['rects']) > 1:
+    if has_user_coordinate:
         if rect[0] != 0 and rect[1] != 0:
             m = m * Matrix.Scale(w / rect[0], 4, Vector((1.0, 0.0, 0.0)))
             m = m * Matrix.Scale(h / rect[1], 4, Vector((0.0, 1.0, 0.0)))
@@ -225,9 +226,14 @@ def SVGMatrixFromNode(node, context):
         if vw == 0 or vh == 0:
             return m
 
-        sx = w / vw
-        sy = h / vh
-        scale = min(sx, sy)
+        if has_user_coordinate or (w != 0 and h != 0):
+            sx = w / vw
+            sy = h / vh
+            scale = min(sx, sy)
+        else:
+            scale = 1.0
+            w = vw
+            h = vh
 
         tx = (w - vw * scale) / 2
         ty = (h - vh * scale) / 2
@@ -1536,6 +1542,9 @@ class SVGGeometryELLIPSE(SVGGeometry):
         ob = SVGCreateCurve()
         cu = ob.data
 
+        if self._node.getAttribute('id'):
+            cu.name = self._node.getAttribute('id')
+
         if self._styles['useFill']:
             cu.dimensions = '2D'
             cu.materials.append(self._styles['fill'])
@@ -1781,7 +1790,6 @@ class SVGGeometrySVG(SVGGeometryContainer):
         """
 
         rect = SVGRectFromNode(self._node, self._context)
-        self._pushRect(rect)
 
         matrix = self.getNodeMatrix()
 
@@ -1793,6 +1801,7 @@ class SVGGeometrySVG(SVGGeometryContainer):
             matrix = matrix * Matrix.Translation([0.0, -document_height , 0.0])
 
         self._pushMatrix(matrix)
+        self._pushRect(rect)
 
         super()._doCreateGeom(False)
 
@@ -1826,7 +1835,7 @@ class SVGLoader(SVGGeometryContainer):
         m = m * Matrix.Scale(1.0 / 90.0 * 0.3048 / 12.0, 4, Vector((1.0, 0.0, 0.0)))
         m = m * Matrix.Scale(-1.0 / 90.0 * 0.3048 / 12.0, 4, Vector((0.0, 1.0, 0.0)))
 
-        rect = (1, 1)
+        rect = (0, 0)
 
         self._context = {'defines': {},
                          'transform': [],

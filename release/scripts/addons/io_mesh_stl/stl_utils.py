@@ -182,7 +182,7 @@ def _binary_write(filepath, faces):
             # write normal + vertexes + pad as attributes
             fw(struct.pack('<3f', *normal(*face)) + pack(*itertools.chain.from_iterable(face)))
             # attribute byte count (unused)
-            fw(b'\0\0') 
+            fw(b'\0\0')
             nb += 1
 
         # header, with correct value now

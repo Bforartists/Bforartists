@@ -1,7 +1,27 @@
-
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import StringProperty, EnumProperty, BoolProperty
+from bpy.props import (
+    BoolProperty,
+    EnumProperty,
+    StringProperty,
+)
 
 class DXFExporter(bpy.types.Operator):
     """
@@ -67,7 +87,7 @@ class DXFExporter(bpy.types.Operator):
         ('..BLOCK', '..BLOCK', ''),
         ('..XDATA', '..XDATA', ''),
         ('..INI-File', '..INI-File', '')
-    )    
+    )
     projectionItems=(
         ('NO', 'No projection', 'Export 3D scene without any 2D projection'),
         ('TOP', 'TOP view', 'Use TOP view for projection'),
@@ -150,10 +170,10 @@ class DXFExporter(bpy.types.Operator):
     projectionThrough = EnumProperty(name="Projection", default="NO",
                                     description="Select camera for use to 2D projection",
                                     items=projectionItems)
-    
+
     onlySelected = BoolProperty(name="Only selected", default=True,
                               description="What object will be exported? Only selected / all objects")
-    
+
     apply_modifiers = BoolProperty(name="Apply modifiers", default=True,
                            description="Shall be modifiers applied during export?")
     # GUI_B -----------------------------------------
@@ -225,7 +245,7 @@ class DXFExporter(bpy.types.Operator):
 #                                    description='Set default COLOR. (0=BYBLOCK,256=BYLAYER)')
 #    layerltype_def = StringProperty(name="Default LINETYPE", default="DEF_LAY_TYPE",
 #                                    description='Set default LINETYPE')
-    
+
     verbose = BoolProperty(name="Verbose", default=False,
                            description="Run the exporter in debug mode.  Check the console for output")
 
@@ -249,9 +269,9 @@ class DXFExporter(bpy.types.Operator):
 
             'entitylayer_from' : self.entitylayer_from,
             'entitycolor_from' : self.entitycolor_from,
-            'entityltype_from' : self.entityltype_from,      
+            'entityltype_from' : self.entityltype_from,
             'layerName_from' : self.layerName_from,
-            
+
             # NOT USED
 #            'layFrozen_on' : self.layFrozen_on,
 #            'materialFilter_on' : self.materialFilter_on,

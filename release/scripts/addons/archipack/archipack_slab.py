@@ -247,6 +247,10 @@ class SlabGenerator(CutAblePolygon, CutAbleGenerator):
             either external or holes cuts
         """
         self.limits()
+
+        self.as_lines(step_angle=0.0502)
+        # self.segs = [s.line for s in self.segs]
+
         for b in o.children:
             d = archipack_slab_cutter.datablock(b)
             if d is not None:
@@ -382,12 +386,21 @@ def update_type(self, context):
             else:
                 w = w0.curved_slab(part.a0, part.da, part.radius)
         else:
-            g = SlabGenerator(None)
-            g.add_part(self)
-            w = g.segs[0]
+            if "C_" in self.type:
+                p = Vector((0, 0))
+                v = self.length * Vector((cos(self.a0), sin(self.a0)))
+                w = StraightSlab(p, v)
+                a0 = pi / 2
+            else:
+                c = -self.radius * Vector((cos(self.a0), sin(self.a0)))
+                w = CurvedSlab(c, self.radius, self.a0, pi)
 
         # w0 - w - w1
-        dp = w.p1 - w.p0
+        if idx + 1 == d.n_parts:
+            dp = - w.p0
+        else:
+            dp = w.p1 - w.p0
+
         if "C_" in self.type:
             part.radius = 0.5 * dp.length
             part.da = pi
@@ -435,19 +448,19 @@ class ArchipackSegment():
             update=update_type
             )
     length = FloatProperty(
-            name="length",
+            name="Length",
             min=0.01,
             default=2.0,
             update=update
             )
     radius = FloatProperty(
-            name="radius",
+            name="Radius",
             min=0.5,
             default=0.7,
             update=update
             )
     da = FloatProperty(
-            name="angle",
+            name="Angle",
             min=-pi,
             max=pi,
             default=pi / 2,
@@ -455,7 +468,7 @@ class ArchipackSegment():
             update=update
             )
     a0 = FloatProperty(
-            name="start angle",
+            name="Start angle",
             min=-2 * pi,
             max=2 * pi,
             default=0,
@@ -494,22 +507,15 @@ class ArchipackSegment():
 
     def draw(self, context, layout, index):
         box = layout.box()
-        row = box.row()
-        row.prop(self, "type", text=str(index + 1))
+        box.prop(self, "type", text=str(index + 1))
         self.draw_insert(context, box, index)
         if self.type in ['C_SEG']:
-            row = box.row()
-            row.prop(self, "radius")
-            row = box.row()
-            row.prop(self, "da")
+            box.prop(self, "radius")
+            box.prop(self, "da")
         else:
-            row = box.row()
-            row.prop(self, "length")
-        row = box.row()
-        row.prop(self, "a0")
-        row = box.row()
-        row.prop(self, "offset")
-        # row.prop(self, "linked_idx")
+            box.prop(self, "length")
+        box.prop(self, "a0")
+        # box.prop(self, "offset")
 
 
 class archipack_slab_part(ArchipackSegment, PropertyGroup):
@@ -538,7 +544,7 @@ class archipack_slab_part(ArchipackSegment, PropertyGroup):
 class archipack_slab(ArchipackObject, Manipulable, PropertyGroup):
     # boundary
     n_parts = IntProperty(
-            name="parts",
+            name="Parts",
             min=1,
             default=1, update=update_manipulators
             )
@@ -556,20 +562,20 @@ class archipack_slab(ArchipackObject, Manipulable, PropertyGroup):
             )
 
     x_offset = FloatProperty(
-            name="x offset",
+            name="Offset",
             min=-1000, max=1000,
             default=0.0, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
     z = FloatProperty(
-            name="z",
+            name="Thickness",
             default=0.3, precision=2, step=1,
             unit='LENGTH', subtype='DISTANCE',
             update=update
             )
     auto_synch = BoolProperty(
-            name="AutoSynch",
+            name="Auto-Synch",
             description="Keep wall in synch when editing",
             default=True,
             update=update_manipulators
@@ -823,6 +829,7 @@ class archipack_slab(ArchipackObject, Manipulable, PropertyGroup):
 
                             # start and shared: update rotation
                             a = seg.angle - w.segs[idx].angle
+
                             if abs(a) > 0.00001:
                                 w.rotate(idx, a)
 
@@ -831,7 +838,7 @@ class archipack_slab(ArchipackObject, Manipulable, PropertyGroup):
 
                             if next_idx > -1:
 
-                                if idx + 1 == next_idx:
+                                if (idx + 1 == next_idx) or (next_idx == 0 and i + 1 == self.n_parts):
                                     # shared: should move last point
                                     # and apply to next segments
                                     # this is overriden for common segs
@@ -854,11 +861,13 @@ class archipack_slab(ArchipackObject, Manipulable, PropertyGroup):
                             last_idx = next_idx - 1
 
                     # update d from og
+                    last_seg = None
                     for i, seg in enumerate(w.segs):
-                        if i > 0:
-                            d.parts[i].a0 = seg.delta_angle(w.segs[i - 1])
-                        else:
-                            d.parts[i].a0 = seg.angle
+
+                        d.parts[i].a0 = seg.delta_angle(last_seg)
+
+                        last_seg = seg
+
                         if "C_" in d.parts[i].type:
                             d.parts[i].radius = seg.r
                             d.parts[i].da = seg.da
