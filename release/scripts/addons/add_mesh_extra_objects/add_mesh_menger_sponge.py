@@ -85,7 +85,7 @@ class MengerSponge(object):
     def __make_sub_sponge(self, cur_points, face_vis, depth):
         if depth <= 0:
             if not face_vis:
-                face_vis = True * 6
+                face_vis = [True] * 6
             cur_point_indices = []
             for p in cur_points:
                 cur_point_indices.append(self.__get_vindex(p))
@@ -145,36 +145,36 @@ class AddMengerSponge(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     level = IntProperty(
-                    name="Level",
-                    description="Sponge Level",
-                    min=0, max=4,
-                    default=1,
-                    )
+            name="Level",
+            description="Sponge Level",
+            min=0, max=4,
+            default=1,
+            )
     radius = FloatProperty(
-                    name="Width",
-                    description="Sponge Radius",
-                    min=0.01, max=100.0,
-                    default=1.0,
-                    )
+            name="Width",
+            description="Sponge Radius",
+            min=0.01, max=100.0,
+            default=1.0,
+            )
     # generic transform props
     view_align = BoolProperty(
-                    name="Align to View",
-                    default=False,
-                    )
+            name="Align to View",
+            default=False,
+            )
     location = FloatVectorProperty(
-                    name="Location",
-                    subtype='TRANSLATION',
-                    )
+            name="Location",
+            subtype='TRANSLATION',
+            )
     rotation = FloatVectorProperty(
-                    name="Rotation",
-                    subtype='EULER',
-                    )
+            name="Rotation",
+            subtype='EULER',
+            )
     layers = BoolVectorProperty(
-                    name="Layers",
-                    size=20,
-                    subtype='LAYER',
-                    options={'HIDDEN', 'SKIP_SAVE'},
-                    )
+            name="Layers",
+            size=20,
+            subtype='LAYER',
+            options={'HIDDEN', 'SKIP_SAVE'},
+            )
 
     def execute(self, context):
         sponger = MengerSponge(self.level)

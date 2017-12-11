@@ -32,7 +32,7 @@ def exportCurve(ob, mx, mw, **common):
             if not PROJECTION:
                 #Extrusion, ZRotation, Elevation = getExtrusion(mx)
                 Extrusion, AXaxis = getExtrusion(imx)
-        
+
                 # no thickness/width for POLYLINEs converted into Screen-C-S
                 #print 'deb: curve.ext1=', curve.ext1 #---------
                 if curve.ext1: Thickness = curve.ext1 * sizeZ
@@ -66,7 +66,7 @@ def exportCurve(ob, mx, mw, **common):
         rotY  = ob.RotY
         rotZ  = ob.RotZ
         #print 'deb: sizeX=%s, sizeY=%s' %(sizeX, sizeY) #---------
-    
+
         Thickness,Extrusion,ZRotation,Elevation = None,None,None,None
         ZRotation,Zrotmatrix,OCS_origin,ECS_origin = None,None,None,None
         AXaxis = mx[0].copy().resize3D() # = ArbitraryXvector
@@ -74,7 +74,7 @@ def exportCurve(ob, mx, mw, **common):
         if not PROJECTION:
             #Extrusion, ZRotation, Elevation = getExtrusion(mx)
             Extrusion, AXaxis = getExtrusion(mx)
-    
+
             # no thickness/width for POLYLINEs converted into Screen-C-S
             #print 'deb: curve.ext1=', curve.ext1 #---------
             if curve.ext1: Thickness = curve.ext1 * sizeZ
@@ -174,7 +174,7 @@ def writeCurveEntities(curve, mx,
                     #print 'deb: pkt=', pkt #---------
                     points.append(pkt)
                     flags.append([None, [width1,width2]])
-    
+
             #print 'deb: points', points #--------------
             if len(points)>1:
                 c = curve_as_list[GUI_A['curve_as'].val]
@@ -192,13 +192,13 @@ def writeCurveEntities(curve, mx,
                     else:
                         points = projected_co(points, mx)
                     #print 'deb: points', points #--------------
-    
+
                     if cur.isCyclic(): closed = 1
                     else: closed = 0
                     points = toGlobalOrigin(points)
                     points_temp = []
                     for p,f in zip(points,flags):
-                        points_temp.append([p,f[0],f[1]])    
+                        points_temp.append([p,f[0],f[1]])
                     points = points_temp
                     #print 'deb: points', points #--------------
 
@@ -209,7 +209,7 @@ def writeCurveEntities(curve, mx,
                     ##common['elevation']= Elevation
                     common['thickness']= Thickness
                     #print 'deb: common=', common #------------------
-    
+
                     flag70, flag75 = pflag70+closed, pflag75
                     if 0: #DEBUG
                         p=AXaxis[:3]
@@ -222,20 +222,20 @@ def writeCurveEntities(curve, mx,
                         #OCS_origin=[0,0,0] #only debug----------------
                         dxfPLINE = DXF.PolyLine(points,OCS_origin, flag70=flag70, flag75=flag70, width=0.0,**common)
                         entities.append(dxfPLINE)
-    
+
                     dxfPLINE = DXF.PolyLine(points,OCS_origin, flag70=flag70, flag75=flag70, width=0.0,**common)
                     entities.append(dxfPLINE)
                     if Thickness:
                         common['thickness']= -Thickness
                         dxfPLINE = DXF.PolyLine(points,OCS_origin, flag70=flag70, flag75=flag70, width=0.0,**common)
                         entities.append(dxfPLINE)
-    
+
                 elif c=="LINEs": # export Curve as multiple LINEs
                     points = projected_co(points, mx)
                     if cur.isCyclic(): points.append(points[0])
                     #print 'deb: points', points #--------------
                     points = toGlobalOrigin(points)
-    
+
                     if DEBUG: curve_drawBlender(points,WCS_loc,closed) #deb: draw to scene
                     common['extrusion']= Extrusion
                     common['elevation']= Elevation
@@ -251,7 +251,7 @@ def writeCurveEntities(curve, mx,
                             linepoints = [points[i], points[i+1]]
                             dxfLINE = DXF.Line(linepoints,**common)
                             entities.append(dxfLINE)
-    
+
                 elif c=="POINTs": # export Curve as multiple POINTs
                     points = projected_co(points, mx)
                     for p in points:

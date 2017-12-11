@@ -21,7 +21,7 @@
 bl_info = {
     "name": "Import Images as Planes",
     "author": "Florian Meyer (tstscr), mont29, matali, Ted Schundler (SpkyElctrc)",
-    "version": (3, 1, 0),
+    "version": (3, 1, 1),
     "blender": (2, 78, 0),
     "location": "File > Import > Images as Planes or Add > Mesh > Images as Planes",
     "description": "Imports images and creates planes with the appropriate aspect ratio. "
@@ -1204,10 +1204,18 @@ def import_images_button(self, context):
     self.layout.operator(IMPORT_IMAGE_OT_to_plane.bl_idname, text="Images as Planes", icon='TEXTURE')
 
 
+classes = (
+    IMPORT_IMAGE_OT_to_plane,
+)
+
+
 def register():
-    bpy.utils.register_module(__name__)
+    for cls in classes:
+        bpy.utils.register_class(cls)
+
     bpy.types.INFO_MT_file_import.append(import_images_button)
     bpy.types.INFO_MT_mesh_add.append(import_images_button)
+
     bpy.app.handlers.load_post.append(register_driver)
     register_driver()
 
@@ -1223,7 +1231,8 @@ def unregister():
     bpy.app.handlers.load_post.remove(register_driver)
     del bpy.app.driver_namespace['import_image__find_plane_corner']
 
-    bpy.utils.unregister_module(__name__)
+    for cls in classes:
+        bpy.utils.unregister_class(cls)
 
 
 if __name__ == "__main__":

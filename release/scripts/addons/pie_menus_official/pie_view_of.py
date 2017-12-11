@@ -1,8 +1,8 @@
 bl_info = {
     "name": "View Menu: Key: 'Q key'",
     "description": "View Modes",
-#    "author": "Antony Riakiotakis, Sebastian Koenig",
-#    "version": (0, 1, 0),
+    "author": "Antony Riakiotakis, Sebastian Koenig",
+    "version": (0, 1, 1),
     "blender": (2, 77, 0),
     "location": "Q key",
     "warning": "",
@@ -11,15 +11,12 @@ bl_info = {
     }
 
 import bpy
-from bpy.types import (
-        Menu,
-        Operator,
-        )
+from bpy.types import Menu
+
 
 # Pie View Mode - Q
 class VIEW3D_PIE_view_more_of(Menu):
     bl_label = "More"
-
 
     def draw(self, context):
         layout = self.layout
@@ -44,12 +41,14 @@ class VIEW3D_PIE_view_of(Menu):
         pie.operator_enum("VIEW3D_OT_viewnumpad", "type")
         pie.operator("wm.call_menu_pie", text="More", icon='PLUS').name = "VIEW3D_PIE_view_more_of"
 
+
 classes = [
     VIEW3D_PIE_view_more_of,
     VIEW3D_PIE_view_of,
     ]
 
 addon_keymaps = []
+
 
 def register():
     addon_keymaps.clear()
@@ -64,16 +63,18 @@ def register():
         kmi.properties.name = "pie.view_of"
         addon_keymaps.append((km, kmi))
 
+
 def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
-    wm = bpy.context.window_manager
 
+    wm = bpy.context.window_manager
     kc = wm.keyconfigs.addon
     if kc:
         for km, kmi in addon_keymaps:
             km.keymap_items.remove(kmi)
     addon_keymaps.clear()
+
 
 if __name__ == "__main__":
     register()

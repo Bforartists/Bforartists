@@ -454,7 +454,6 @@ def GetPDFTrailerAndCrossrefs(s):
     crossrefs = {}
     d = None
     last_trailerdict = None
-    print("looking for crossref at", crossrefi)
     if s[crossrefi:crossrefi+4] != b'xref':
         # Could be Crossref stream
         (obj, j) = GetPDFObject(s, crossrefi)
@@ -555,7 +554,9 @@ def GetPDFTrailerAndCrossrefs(s):
         if last_trailerdict is None:
             last_trailerdict = trailerdict
         if 'Prev' in trailerdict:
-            crossrefi = trailerdict['Prev']
+            crossrefi = GetTypedValFromDictEntry(trailerdict, 'Prev', ONUM, s, crossrefs)
+            if crossrefi is None:
+                crossrefi = -1
         else:
             crossrefi = -1
     return (last_trailerdict, crossrefs)
@@ -842,7 +843,7 @@ def GetPDFStreamContents(contentsobj, s, crossrefs, dodecode=True):
       crossrefs: dict - maps (obj_number, gen_number) to byte offset in s
       dodecode: bool - should we decode too?
     Returns:
-      string - the contents (if dodecode, decoded using default (UTF-8) decoder)
+      string - the contents (if dodecode, decoded using latin1 decoder)
     """
 
     if not PDFObjHasType(contentsobj, OSTREAM):
@@ -902,7 +903,7 @@ def GetPDFStreamContents(contentsobj, s, crossrefs, dodecode=True):
                         print("FlateDecode with prediction didn't consume all bytes")
                 ans = ''.join(ansbytes)
             if dodecode:
-                ans = ans.decode()
+                ans = ans.decode(encoding='latin1', errors='ignore')
         else:
             if WARN:
                 print('unhandled stream filter', fname)

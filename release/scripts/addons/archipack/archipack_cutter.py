@@ -28,6 +28,7 @@ from mathutils import Vector, Matrix
 from mathutils.geometry import interpolate_bezier
 from math import cos, sin, pi, atan2
 import bmesh
+from random import uniform
 from bpy.props import (
     FloatProperty, IntProperty, BoolProperty,
     StringProperty, EnumProperty
@@ -40,6 +41,7 @@ class CutterSegment(Line):
     def __init__(self, p, v, type='DEFAULT'):
         Line.__init__(self, p, v)
         self.type = type
+        self.is_hole = True
 
     @property
     def copy(self):
@@ -60,7 +62,7 @@ class CutterSegment(Line):
 
     def offset(self, offset):
         s = self.copy
-        s.p += offset * self.cross_z.normalized()
+        s.p += self.sized_normal(0, offset).v
         return s
 
     @property
@@ -204,6 +206,18 @@ class CutAblePolygon():
         - holes
         - convex
     """
+    def as_lines(self, step_angle=0.104):
+        """
+            Convert curved segments to straight lines
+        """
+        segs = []
+        for s in self.segs:
+            if "Curved" in type(s).__name__:
+                dt, steps = s.steps_by_angle(step_angle)
+                segs.extend(s.as_lines(steps))
+            else:
+                segs.append(s)
+        self.segs = segs
 
     def inside(self, pt, segs=None):
         """
@@ -212,7 +226,7 @@ class CutAblePolygon():
             TODO:
             make s1 angle different than all othr segs
         """
-        s1 = Line(pt, Vector((100 * self.xsize, 0.1)))
+        s1 = Line(pt, Vector((min(10000, 100 * self.xsize), uniform(-0.5, 0.5))))
         counter = 0
         if segs is None:
             segs = self.segs
@@ -235,6 +249,9 @@ class CutAblePolygon():
         s0 = self.segs[-1]
         for i in range(n_segs):
             s1 = self.segs[i]
+            if "Curved" in type(s1).__name__:
+                self.convex = False
+                return
             c = s0.v.cross(s1.v)
             if i == 0:
                 sign = (c > 0)
@@ -404,22 +421,28 @@ class CutAblePolygon():
         # no points found at all
         if start < 0:
             # print("no pt inside")
-            return
+            return not keep_inside
 
         if not slice_res:
             # print("slice fails")
             # found more segments than input
             # cutter made more than one loop
-            return
+            return True
 
         if len(store) < 1:
             if is_inside:
                 # print("not touching, add as hole")
-                self.holes.append(cutter)
-            return
+                if keep_inside:
+                    self.segs = cutter.segs
+                else:
+                    self.holes.append(cutter)
+
+            return True
 
         self.segs = store
         self.is_convex()
+
+        return True
 
 
 class CutAbleGenerator():
@@ -460,8 +483,9 @@ class CutAbleGenerator():
                             of = offset[s.type]
                         else:
                             of = offset['DEFAULT']
-                        p0 = s.p0 + s.cross_z.normalized() * of
-                        self.bissect(bm, p0.to_3d(), s.cross_z.to_3d(), clear_outer=False)
+                        n = s.sized_normal(0, 1).v
+                        p0 = s.p0 + n * of
+                        self.bissect(bm, p0.to_3d(), n.to_3d(), clear_outer=False)
 
                 # compute boundary with offset
                 new_s = None
@@ -484,7 +508,8 @@ class CutAbleGenerator():
             else:
                 for s in hole.segs:
                     if s.length > 0:
-                        self.bissect(bm, s.p0.to_3d(), s.cross_z.to_3d(), clear_outer=False)
+                        n = s.sized_normal(0, 1).v
+                        self.bissect(bm, s.p0.to_3d(), n.to_3d(), clear_outer=False)
                 # use hole boundary
                 segs = hole.segs
             if len(segs) > 0:
@@ -507,12 +532,14 @@ class CutAbleGenerator():
                         of = offset[s.type]
                     else:
                         of = offset['DEFAULT']
-                    p0 = s.p0 + s.cross_z.normalized() * of
-                    self.bissect(bm, p0.to_3d(), s.cross_z.to_3d(), clear_outer=cutable.convex)
+                    n = s.sized_normal(0, 1).v
+                    p0 = s.p0 + n * of
+                    self.bissect(bm, p0.to_3d(), n.to_3d(), clear_outer=cutable.convex)
         else:
             for s in cutable.segs:
                 if s.length > 0:
-                    self.bissect(bm, s.p0.to_3d(), s.cross_z.to_3d(), clear_outer=cutable.convex)
+                    n = s.sized_normal(0, 1).v
+                    self.bissect(bm, s.p0.to_3d(), n.to_3d(), clear_outer=cutable.convex)
 
         if not cutable.convex:
             f_geom = [f for f in bm.faces
@@ -536,14 +563,14 @@ class ArchipackCutterPart():
         -type EnumProperty
     """
     length = FloatProperty(
-            name="length",
+            name="Length",
             min=0.01,
             max=1000.0,
             default=2.0,
             update=update_hole
             )
     a0 = FloatProperty(
-            name="angle",
+            name="Angle",
             min=-2 * pi,
             max=2 * pi,
             default=0,
@@ -551,7 +578,7 @@ class ArchipackCutterPart():
             update=update_hole
             )
     offset = FloatProperty(
-            name="offset",
+            name="Offset",
             min=0,
             default=0,
             update=update_hole
@@ -591,7 +618,7 @@ def update_manipulators(self, context):
 
 class ArchipackCutter():
     n_parts = IntProperty(
-            name="parts",
+            name="Parts",
             min=1,
             default=1, update=update_manipulators
             )
@@ -602,11 +629,11 @@ class ArchipackCutter():
             options={'SKIP_SAVE'}
             )
     user_defined_path = StringProperty(
-            name="user defined",
+            name="User defined",
             update=update_path
             )
     user_defined_resolution = IntProperty(
-            name="resolution",
+            name="Resolution",
             min=1,
             max=128,
             default=12, update=update_path
@@ -641,8 +668,7 @@ class ArchipackCutter():
             row.prop(self, 'parts_expand', icon="TRIA_DOWN", icon_only=True, text="Parts", emboss=False)
             box.prop(self, 'n_parts')
             for i, part in enumerate(self.parts):
-                if i < self.n_parts:
-                    part.draw(layout, context, i)
+                part.draw(layout, context, i)
         else:
             row.prop(self, 'parts_expand', icon="TRIA_RIGHT", icon_only=True, text="Parts", emboss=False)
 

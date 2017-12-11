@@ -1,8 +1,0 @@
-DEFAULT##|##Wall_inside
-DEFAULT##|##Wall_outside
-DEFAULT##|##Wall_cuts
-DEFAULT##|##Wall_alt1
-DEFAULT##|##Wall_alt2
-DEFAULT##|##Wall_alt3
-DEFAULT##|##Wall_alt4
-DEFAULT##|##Wall_alt5

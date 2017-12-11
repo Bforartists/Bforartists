@@ -29,10 +29,11 @@ bl_info = {
     "name": "MeasureIt",
     "author": "Antonio Vazquez (antonioya)",
     "location": "View3D > Tools Panel /Properties panel",
-    "version": (1, 6, 8),
+    "version": (1, 7, 0),
     "blender": (2, 7, 4),
     "description": "Tools for measuring objects.",
-    "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/3D_interaction/Measureit",
+    "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/"
+                "Py/Scripts/3D_interaction/Measureit",
     "category": "3D View"
 }
 
@@ -43,60 +44,76 @@ import os
 # Import modules
 # ----------------------------------------------
 if "bpy" in locals():
-    import imp
+    import importlib
 
-    imp.reload(measureit_main)
-    print("measureit: Reloaded multifiles")
+    importlib.reload(measureit_main)
+    # print("measureit: Reloaded multifiles")
 else:
     from . import measureit_main
-
-    print("measureit: Imported multifiles")
+    # print("measureit: Imported multifiles")
 
 # noinspection PyUnresolvedReferences
 import bpy
-from bpy.types import Scene, WindowManager
-from bpy.props import FloatVectorProperty, IntProperty, BoolProperty, StringProperty, FloatProperty, EnumProperty
+from bpy.types import (
+        AddonPreferences,
+        Scene,
+        WindowManager,
+        )
+from bpy.props import (
+        FloatVectorProperty,
+        IntProperty,
+        BoolProperty,
+        StringProperty,
+        FloatProperty,
+        EnumProperty,
+        )
 
 # --------------------------------------------------------------
 # Register all operators and panels
 # --------------------------------------------------------------
 
-## Addons Preferences Update Panel
-from bpy.types import (
-    AddonPreferences,
-)
+# Add-ons Preferences Update Panel
+
+# Define Panel classes for updating
+panels = (
+        measureit_main.MeasureitEditPanel,
+        measureit_main.MeasureitMainPanel,
+        measureit_main.MeasureitConfPanel,
+        measureit_main.MeasureitRenderPanel,
+        )
 
 
 def update_panel(self, context):
+    message = "MeasureIt: Updating Panel locations has failed"
     try:
-        bpy.utils.unregister_class(measureit_main.MeasureitEditPanel)
-        bpy.utils.unregister_class(measureit_main.MeasureitMainPanel)
-        bpy.utils.unregister_class(measureit_main.MeasureitConfPanel)
-        bpy.utils.unregister_class(measureit_main.MeasureitRenderPanel)
-    except:
+        for panel in panels:
+            if "bl_rna" in panel.__dict__:
+                bpy.utils.unregister_class(panel)
+
+        for panel in panels:
+            panel.bl_category = context.user_preferences.addons[__name__].preferences.category
+            bpy.utils.register_class(panel)
+
+    except Exception as e:
+        print("\n[{}]\n{}\n\nError:\n{}".format(__name__, message, e))
         pass
-    measureit_main.MeasureitEditPanel.bl_category = context.user_preferences.addons[__name__].preferences.category
-    bpy.utils.register_class(measureit_main.MeasureitEditPanel)
-    measureit_main.MeasureitMainPanel.bl_category = context.user_preferences.addons[__name__].preferences.category
-    bpy.utils.register_class(measureit_main.MeasureitMainPanel)
-    measureit_main.MeasureitConfPanel.bl_category = context.user_preferences.addons[__name__].preferences.category
-    bpy.utils.register_class(measureit_main.MeasureitConfPanel)
-    measureit_main.MeasureitRenderPanel.bl_category = context.user_preferences.addons[__name__].preferences.category
-    bpy.utils.register_class(measureit_main.MeasureitRenderPanel)
 
 
 class Measure_Pref(AddonPreferences):
+    # this must match the addon name, use '__package__'
+    # when defining this in a submodule of a python package.
     bl_idname = __name__
 
     category = StringProperty(
-        name="Tab Category",
-        description="Choose a name for the category of the panel",
-        default="Display",
-        update=update_panel
-    )
+            name="Tab Category",
+            description="Choose a name for the category of the panel",
+            default="Display",
+            update=update_panel
+            )
 
     def draw(self, context):
         layout = self.layout
+
         row = layout.row()
         col = row.column()
         col.label(text="Tab Category:")
@@ -124,6 +141,8 @@ def register():
     bpy.utils.register_class(measureit_main.MeasureitConfPanel)
     bpy.utils.register_class(measureit_main.MeasureitRenderPanel)
     bpy.utils.register_class(measureit_main.RenderSegmentButton)
+    bpy.utils.register_class(measureit_main.ExpandAllSegmentButton)
+    bpy.utils.register_class(measureit_main.CollapseAllSegmentButton)
     bpy.utils.register_class(Measure_Pref)
     update_panel(None, bpy.context)
     # Define properties
@@ -173,12 +192,12 @@ def register():
     Scene.measureit_scale_font = IntProperty(name="Font",
                                              description="Text size",
                                              default=14, min=10, max=150)
-    Scene.measureit_scale_pos_x = IntProperty(name="Position X",
+    Scene.measureit_scale_pos_x = IntProperty(name="X Position",
                                               description="Margin on the X axis",
                                               default=5,
                                               min=0,
                                               max=100)
-    Scene.measureit_scale_pos_y = IntProperty(name="Position Y",
+    Scene.measureit_scale_pos_y = IntProperty(name="Y Position",
                                               description="Margin on the Y axis",
                                               default=5,
                                               min=0,
@@ -188,7 +207,6 @@ def register():
                                                  default="Scale:")
     Scene.measureit_scale_precision = IntProperty(name='Precision', min=0, max=5, default=0,
                                                   description="Number of decimal precision")
-
     Scene.measureit_ovr = BoolProperty(name="Override",
                                        description="Override colors and fonts",
                                        default=False)
@@ -205,6 +223,13 @@ def register():
     Scene.measureit_ovr_width = IntProperty(name='Override width', min=1, max=10, default=1,
                                             description='override line width')
 
+    Scene.measureit_ovr_font_rotation = IntProperty(name='Rotate', min=0, max=360, default=0,
+                                                    description="Text rotation in degrees")
+    Scene.measureit_ovr_font_align = EnumProperty(items=(('L', "Left Align", "Use current render"),
+                                                         ('C', "Center Align", ""),
+                                                         ('R', "Right Align", "")),
+                                                  name="Align Font",
+                                                  description="Set Font Alignment")
     Scene.measureit_units = EnumProperty(items=(('1', "Automatic", "Use scene units"),
                                                 ('2', "Meters", ""),
                                                 ('3', "Centimeters", ""),
@@ -303,16 +328,25 @@ def register():
                                          default=False)
     Scene.measureit_debug_select = BoolProperty(name="Selected",
                                                 description="Display information "
-                                                            "for selected vertices/faces",
+                                                            "only for selected items",
                                                 default=False)
     Scene.measureit_debug_vertices = BoolProperty(name="Vertices",
-                                                  description="Display vertex number",
+                                                  description="Display vertex index number",
                                                   default=True)
-    Scene.measureit_debug_location = BoolProperty(name="Location",
+    Scene.measureit_debug_objects = BoolProperty(name="Objects",
+                                                 description="Display object scene index number",
+                                                 default=False)
+    Scene.measureit_debug_vert_loc = BoolProperty(name="Location",
                                                   description="Display vertex location",
                                                   default=False)
+    Scene.measureit_debug_object_loc = BoolProperty(name="Location",
+                                                    description="Display object location",
+                                                    default=False)
+    Scene.measureit_debug_edges = BoolProperty(name="Edges",
+                                               description="Display edge index number",
+                                               default=False)
     Scene.measureit_debug_faces = BoolProperty(name="Faces",
-                                               description="Display face number",
+                                               description="Display face index number",
                                                default=False)
     Scene.measureit_debug_normals = BoolProperty(name="Normals",
                                                  description="Display face normal "
@@ -324,27 +358,41 @@ def register():
     Scene.measureit_debug_font = IntProperty(name="Font",
                                              description="Debug text size",
                                              default=14, min=10, max=150)
-    Scene.measureit_debug_color = FloatVectorProperty(name="Debug color",
-                                                      description="Debug Color",
-                                                      default=(1, 0, 0, 1.0),
-                                                      min=0.1,
-                                                      max=1,
-                                                      subtype='COLOR',
-                                                      size=4)
-    Scene.measureit_debug_color2 = FloatVectorProperty(name="Debug face color",
-                                                       description="Debug face Color",
-                                                       default=(0, 1, 0, 1.0),
-                                                       min=0.1,
-                                                       max=1,
-                                                       subtype='COLOR',
-                                                       size=4)
-    Scene.measureit_debug_color3 = FloatVectorProperty(name="Debug vector color",
-                                                       description="Debug vector Color",
-                                                       default=(1.0, 1.0, 0.1, 1.0),
-                                                       min=0.1,
-                                                       max=1,
-                                                       subtype='COLOR',
-                                                       size=4)
+    Scene.measureit_debug_vert_color = FloatVectorProperty(name="Debug color",
+                                                           description="Debug Color",
+                                                           default=(1, 0, 0, 1.0),
+                                                           min=0.1,
+                                                           max=1,
+                                                           subtype='COLOR',
+                                                           size=4)
+    Scene.measureit_debug_face_color = FloatVectorProperty(name="Debug face color",
+                                                           description="Debug face Color",
+                                                           default=(0, 1, 0, 1.0),
+                                                           min=0.1,
+                                                           max=1,
+                                                           subtype='COLOR',
+                                                           size=4)
+    Scene.measureit_debug_norm_color = FloatVectorProperty(name="Debug vector color",
+                                                           description="Debug vector Color",
+                                                           default=(1.0, 1.0, 0.1, 1.0),
+                                                           min=0.1,
+                                                           max=1,
+                                                           subtype='COLOR',
+                                                           size=4)
+    Scene.measureit_debug_edge_color = FloatVectorProperty(name="Debug vector color",
+                                                           description="Debug vector Color",
+                                                           default=(0.1, 1.0, 1.0, 1.0),
+                                                           min=0.1,
+                                                           max=1,
+                                                           subtype='COLOR',
+                                                           size=4)
+    Scene.measureit_debug_obj_color = FloatVectorProperty(name="Debug vector color",
+                                                          description="Debug vector Color",
+                                                          default=(1.0, 1.0, 1.0, 1.0),
+                                                          min=0.1,
+                                                          max=1,
+                                                          subtype='COLOR',
+                                                          size=4)
     Scene.measureit_debug_normal_size = FloatProperty(name='Len', min=0.001, max=9,
                                                       default=0.5,
                                                       precision=2,
@@ -353,6 +401,19 @@ def register():
                                               description='Vector line thickness')
     Scene.measureit_debug_precision = IntProperty(name='Precision', min=0, max=5, default=1,
                                                   description="Number of decimal precision")
+    Scene.measureit_debug_vert_loc_toggle = EnumProperty(items=(('1', "Local",
+                                                                 "Uses local coordinates"),
+                                                                ('2', "Global",
+                                                                 "Uses global coordinates")),
+                                                         name="Coordinates",
+                                                         description="Choose coordinate system")
+    Scene.measureit_font_rotation = IntProperty(name='Rotate', min=0, max=360, default=0,
+                                                description="Default text rotation in degrees")
+    Scene.measureit_font_align = EnumProperty(items=(('L', "Left Align", "Use current render"),
+                                                     ('C', "Center Align", ""),
+                                                     ('R', "Right Align", "")),
+                                              name="Align Font",
+                                              description="Set Font Alignment")
 
     # OpenGL flag
     wm = WindowManager
@@ -379,6 +440,8 @@ def unregister():
     bpy.utils.unregister_class(measureit_main.MeasureitConfPanel)
     bpy.utils.unregister_class(measureit_main.MeasureitRenderPanel)
     bpy.utils.unregister_class(measureit_main.RenderSegmentButton)
+    bpy.utils.unregister_class(measureit_main.ExpandAllSegmentButton)
+    bpy.utils.unregister_class(measureit_main.CollapseAllSegmentButton)
     bpy.utils.unregister_class(Measure_Pref)
 
     # Remove properties
@@ -402,6 +465,8 @@ def unregister():
     del Scene.measureit_ovr_font
     del Scene.measureit_ovr_color
     del Scene.measureit_ovr_width
+    del Scene.measureit_ovr_font_rotation
+    del Scene.measureit_ovr_font_align
     del Scene.measureit_units
     del Scene.measureit_hide_units
     del Scene.measureit_render
@@ -417,17 +482,25 @@ def unregister():
     del Scene.measureit_debug
     del Scene.measureit_debug_select
     del Scene.measureit_debug_vertices
+    del Scene.measureit_debug_objects
+    del Scene.measureit_debug_edges
     del Scene.measureit_debug_faces
     del Scene.measureit_debug_normals
     del Scene.measureit_debug_normal_details
     del Scene.measureit_debug_font
-    del Scene.measureit_debug_color
-    del Scene.measureit_debug_color2
-    del Scene.measureit_debug_color3
+    del Scene.measureit_debug_vert_color
+    del Scene.measureit_debug_face_color
+    del Scene.measureit_debug_norm_color
+    del Scene.measureit_debug_edge_color
+    del Scene.measureit_debug_obj_color
     del Scene.measureit_debug_normal_size
     del Scene.measureit_debug_width
     del Scene.measureit_debug_precision
-    del Scene.measureit_debug_location
+    del Scene.measureit_debug_vert_loc
+    del Scene.measureit_debug_object_loc
+    del Scene.measureit_debug_vert_loc_toggle
+    del Scene.measureit_font_rotation
+    del Scene.measureit_font_align
 
     # remove OpenGL data
     measureit_main.RunHintDisplayButton.handle_remove(measureit_main.RunHintDisplayButton, bpy.context)

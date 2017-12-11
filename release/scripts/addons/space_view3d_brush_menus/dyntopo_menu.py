@@ -58,9 +58,18 @@ class DynDetailMenu(Menu):
             datapath = "tool_settings.sculpt.detail_size"
             slider_setting = "detail_size"
 
-        else:
+        elif bpy.context.tool_settings.sculpt.detail_type_method == 'CONSTANT':
             datapath = "tool_settings.sculpt.constant_detail"
             slider_setting = "constant_detail"
+        else:
+            datapath = "tool_settings.sculpt.detail_percent"
+            slider_setting = "detail_percent"
+            settings = (("100", 100),
+                        ("75", 75),
+                        ("50", 50),
+                        ("25", 25),
+                        ("10", 10),
+                        ("5", 5))
 
         return settings, datapath, slider_setting
 
@@ -96,7 +105,8 @@ class DetailMethodMenu(Menu):
                         ("Subdivide Collapse", 'SUBDIVIDE_COLLAPSE'))
 
         type_items = (("Relative Detail", 'RELATIVE'),
-                      ("Constant Detail", 'CONSTANT'))
+                      ("Constant Detail", 'CONSTANT'),
+                      ("Brush Detail", 'BRUSH'))
 
         layout.row().label("Refine")
         layout.row().separator()

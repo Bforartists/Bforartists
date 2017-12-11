@@ -108,37 +108,30 @@ def get_intersection_dictionary(bm, edge_indices):
     return d
 
 
-def update_mesh(obj, d):
+def update_mesh(bm, d):
     ''' Make new geometry (delete old first) '''
 
-    bpy.ops.mesh.delete(type='EDGE')
-    bpy.ops.object.editmode_toggle()
+    oe = bm.edges
+    ov = bm.verts
 
-    oe = obj.data.edges
-    ov = obj.data.vertices
-    vert_count = len(ov)
-    edge_count = len(oe)
-
+    new_verts = []
+    collect = new_verts.extend
     for old_edge, point_list in d.items():
-        num_points = len(point_list)
-        num_edges_to_add = num_points - 1
-
+        num_edges_to_add = len(point_list)-1
         for i in range(num_edges_to_add):
-            oe.add(1)
-            ov.add(2)
+            a = ov.new(point_list[i])
+            b = ov.new(point_list[i+1])
+            oe.new((a, b))
+            bm.normal_update()
+            collect([a, b])
 
-            ov[vert_count].co = point_list[i]
-            ov[vert_count + 1].co = point_list[i + 1]
+    bmesh.ops.delete(bm, geom=[edge for edge in bm.edges if edge.select], context=2) # 2 = edges
 
-            oe[edge_count].vertices = [vert_count, vert_count + 1]
-            vert_count = len(ov)
-            edge_count = len(oe)
+    #bpy.ops.mesh.remove_doubles(
+    #    threshold=cm.CAD_prefs.VTX_DOUBLES_THRSHLD,
+    #    use_unselected=False)
 
-    # set edit mode
-    bpy.ops.object.editmode_toggle()
-    bpy.ops.mesh.remove_doubles(
-        threshold=cm.CAD_prefs.VTX_DOUBLES_THRSHLD,
-        use_unselected=False)
+    bmesh.ops.remove_doubles(bm, verts=new_verts, dist=cm.CAD_prefs.VTX_DOUBLES_THRSHLD)
 
 
 def unselect_nonintersecting(bm, d_edges, edge_indices):
@@ -174,7 +167,9 @@ class TCIntersectAllEdges(bpy.types.Operator):
             d = get_intersection_dictionary(bm, edge_indices)
 
             unselect_nonintersecting(bm, d.keys(), edge_indices)
-            update_mesh(obj, d)
+            update_mesh(bm, d)
+
+            bmesh.update_edit_mesh(obj.data)
         else:
             print('must be in edit mode')
 

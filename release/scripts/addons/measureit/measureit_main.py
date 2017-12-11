@@ -26,6 +26,7 @@
 # ----------------------------------------------------------
 # noinspection PyUnresolvedReferences
 import bpy
+import bmesh
 from bmesh import from_edit_mesh
 # noinspection PyUnresolvedReferences
 import bgl
@@ -159,6 +160,13 @@ class MeasureitProperties(PropertyGroup):
     glfont_size = IntProperty(name="Text Size",
                               description="Text size",
                               default=14, min=6, max=150)
+    glfont_align = EnumProperty(items=(('L', "Left Align", ""),
+                                       ('C', "Center Align", ""),
+                                       ('R', "Right Align", "")),
+                                name="Align Font",
+                                description="Set Font Alignment")
+    glfont_rotat = IntProperty(name='Rotate', min=0, max=360, default=0,
+                                description="Text rotation in degrees")
     gllink = StringProperty(name="gllink",
                             description="linked object for linked measures")
     glocwarning = BoolProperty(name="glocwarning",
@@ -364,13 +372,16 @@ class MeasureitEditPanel(Panel):
                 row = box.row()
                 row.prop(scene, 'measureit_scale', text="Scale")
                 if scene.measureit_scale is True:
-                    row.prop(scene, 'measureit_scale_factor', text="1")
-                    row.prop(scene, 'measureit_scale_precision', text="")
+                    split = row.split(percentage=0.25, align=False)
+                    split.prop(scene, 'measureit_scale_color', text="")
+                    split.prop(scene, 'measureit_scale_factor', text="1")
+                    row = box.row()
+                    row.separator()
                     row.prop(scene, 'measureit_gl_scaletxt', text="")
-                    row = box.row()
-                    row.prop(scene, 'measureit_scale_color')
                     row.prop(scene, 'measureit_scale_font')
+                    row.prop(scene, 'measureit_scale_precision', text="")
                     row = box.row()
+                    row.separator()
                     row.prop(scene, 'measureit_scale_pos_x')
                     row.prop(scene, 'measureit_scale_pos_y')
 
@@ -378,9 +389,15 @@ class MeasureitEditPanel(Panel):
                 row = box.row()
                 row.prop(scene, 'measureit_ovr', text="Override")
                 if scene.measureit_ovr is True:
-                    row.prop(scene, 'measureit_ovr_color', text="")
+                    split = row.split(percentage=0.25, align=False)
+                    split.prop(scene, 'measureit_ovr_color', text="")
+                    split.prop(scene, 'measureit_ovr_width', text="Width")
+                    row = box.row()
+                    row.separator()
                     row.prop(scene, 'measureit_ovr_font', text="Font")
-                    row.prop(scene, 'measureit_ovr_width', text="Width")
+                    row.prop(scene, 'measureit_ovr_font_align', text="")
+                    if scene.measureit_ovr_font_align == 'L':
+                        row.prop(scene, 'measureit_ovr_font_rotation', text="Rotate")
 
                 mp = context.object.MeasureGenerator[0]
                 # -----------------
@@ -388,6 +405,9 @@ class MeasureitEditPanel(Panel):
                 # -----------------
                 if mp.measureit_num > 0:
                     box = layout.box()
+                    row = box.row(True)
+                    row.operator("measureit.expandallsegmentbutton", text="Expand all", icon="ZOOMIN")
+                    row.operator("measureit.collapseallsegmentbutton", text="Collapse all", icon="ZOOMOUT")
                     for idx in range(0, mp.measureit_num):
                         if mp.measureit_segments[idx].glfree is False:
                             add_item(box, idx, mp.measureit_segments[idx])
@@ -411,6 +431,10 @@ class MeasureitEditPanel(Panel):
                         if (ms.gltype == 1 or ms.gltype == 12
                             or ms.gltype == 13 or ms.gltype == 14) and ms.gltot != '99' \
                                 and ms.glfree is False:  # only segments
+                            if bpy.context.mode == "EDIT_MESH":
+                                bm = bmesh.from_edit_mesh(bpy.context.edit_object.data)
+                                if hasattr(bm.verts, "ensure_lookup_table"):
+                                    bm.verts.ensure_lookup_table()
                             if ms.glpointa <= len(obverts) and ms.glpointb <= len(obverts):
                                 p1 = get_point(obverts[ms.glpointa].co, myobj)
                                 if ms.gltype == 1:
@@ -474,9 +498,10 @@ class MeasureitEditPanel(Panel):
 
 
 # -----------------------------------------------------
-# Add segment to the panel.
+# Add segment options to the panel.
 # -----------------------------------------------------
 def add_item(box, idx, segment):
+    scene = bpy.context.scene
     row = box.row(True)
     if segment.glview is True:
         icon = "VISIBLE_IPO_ON"
@@ -484,17 +509,27 @@ def add_item(box, idx, segment):
         icon = "VISIBLE_IPO_OFF"
 
     row.prop(segment, 'glview', text="", toggle=True, icon=icon)
-    row.prop(segment, 'gladvance', text="", toggle=True, icon="MANIPUL")
-    row.prop(segment, 'gltxt', text="")
-    row.prop(segment, 'glcolor', text="")
+    row.prop(segment, 'gladvance', text="", toggle=True, icon="SCRIPTWIN")
+    if segment.gltype == 20:  # Area special
+        split = row.split(percentage=0.15, align=True)
+        split.prop(segment, 'glcolorarea', text="")
+        split = split.split(percentage=0.20, align=True)
+        split.prop(segment, 'glcolor', text="")
+    else:
+        split = row.split(percentage=0.25, align=True)
+        split.prop(segment, 'glcolor', text="")
+    split.prop(segment, 'gltxt', text="")
     op = row.operator("measureit.deletesegmentbutton", text="", icon="X")
     op.tag = idx  # saves internal data
     if segment.gladvance is True:
         row = box.row(True)
-        if segment.gltype != 10 and segment.gltype != 20:
-            row.prop(segment, 'glspace', text="Distance")
-
         row.prop(segment, 'glfont_size', text="Font")
+        row.prop(segment, 'glfont_align', text="")
+        if segment.glfont_align == 'L':
+            row.prop(segment, 'glfont_rotat', text="Rotate")
+        row = box.row(True)
+        if segment.gltype != 9 and segment.gltype != 10 and segment.gltype != 20:
+            row.prop(segment, 'glspace', text="Distance")
         row.prop(segment, 'glfontx', text="X")
         row.prop(segment, 'glfonty', text="Y")
 
@@ -503,17 +538,20 @@ def add_item(box, idx, segment):
             row = box.row(True)
             row.prop(segment, 'glarrow_a', text="")
             row.prop(segment, 'glarrow_b', text="")
-            row.prop(segment, 'glarrow_s', text="Size")
+            if segment.glarrow_a != '99' or segment.glarrow_b != '99': 
+                row.prop(segment, 'glarrow_s', text="Size")
 
         if segment.gltype != 2 and segment.gltype != 10:
             row = box.row(True)
-            row.prop(segment, 'gldist', text="Distance", toggle=True, icon="ALIGN")
-            row.prop(segment, 'glnames', text="Text", toggle=True, icon="FONT_DATA")
+            if scene.measureit_gl_show_d is True and segment.gltype != 9:
+                row.prop(segment, 'gldist', text="Distance", toggle=True, icon="ALIGN")
+            if scene.measureit_gl_show_n is True:
+                row.prop(segment, 'glnames', text="Text", toggle=True, icon="FONT_DATA")
             # sum distances
             if segment.gltype == 1 or segment.gltype == 12 or segment.gltype == 13 or segment.gltype == 14:
                 row.prop(segment, 'gltot', text="Sum")
 
-        if segment.gltype != 10 and segment.gltype != 20:
+        if segment.gltype != 9 and segment.gltype != 10 and segment.gltype != 20:
             row = box.row(True)
             row.prop(segment, 'glwidth', text="Line")
             row.prop(segment, 'gldefault', text="Automatic position")
@@ -524,8 +562,9 @@ def add_item(box, idx, segment):
                 row.prop(segment, 'glnormalz', text="Z")
 
         # Loc axis
-        if segment.gltype != 2 and segment.gltype != 10 \
-                and segment.gltype != 12 and segment.gltype != 13 and segment.gltype != 14 and segment.gltype != 20:
+        if segment.gltype != 2 and segment.gltype != 9 and segment.gltype != 10 \
+                and segment.gltype != 11 and segment.gltype != 12 and segment.gltype != 13 \
+                and segment.gltype != 14 and segment.gltype != 20:
             row = box.row(True)
             row.prop(segment, 'glocx', text="X", toggle=True)
             row.prop(segment, 'glocy', text="Y", toggle=True)
@@ -562,12 +601,8 @@ def add_item(box, idx, segment):
             row = box.row(True)
             row.prop(segment, 'glarc_a', text="")
             row.prop(segment, 'glarc_b', text="")
-            row.prop(segment, 'glarc_s', text="Size")
-
-        # Area special
-        if segment.gltype == 20:
-            row = box.row(True)
-            row.prop(segment, 'glcolorarea', text="")
+            if segment.glarc_a != '99' or segment.glarc_b != '99':
+                row.prop(segment, 'glarc_s', text="Size")
 
 
 # ------------------------------------------------------------------
@@ -649,22 +684,50 @@ class MeasureitMainPanel(Panel):
                      text="Mesh Debug", emboss=False)
 
             row = box.row()
-            row.prop(scene, "measureit_debug_vertices", icon="LOOPSEL")
-            row.prop(scene, "measureit_debug_location", icon="EMPTY_DATA")
-            row.prop(scene, "measureit_debug_faces", icon="FACESEL")
+            split = row.split(percentage=0.10, align=True)
+            split.prop(scene, 'measureit_debug_obj_color', text="")
+            split.prop(scene, "measureit_debug_objects", icon="OBJECT_DATA")
+            split.prop(scene, "measureit_debug_object_loc", icon="EMPTY_DATA")
+
             row = box.row()
+            split = row.split(percentage=0.10, align=True)
+            split.prop(scene, 'measureit_debug_vert_color', text="")
+            split.prop(scene, "measureit_debug_vertices", icon="LOOPSEL")
+            split.prop(scene, "measureit_debug_vert_loc", icon="EMPTY_DATA")
+            if scene.measureit_debug_vert_loc is True:
+                split.prop(scene, 'measureit_debug_vert_loc_toggle', text="")
+
+            row = box.row()
+            split = row.split(percentage=0.10, align=True)
+            split.prop(scene, 'measureit_debug_edge_color', text="")
+            split = split.split(percentage=0.5, align=True)
+            split.prop(scene, "measureit_debug_edges", icon="EDGESEL")
+
+            row = box.row()
+            split = row.split(percentage=0.10, align=True)
+            split.prop(scene, 'measureit_debug_face_color', text="")
+            split = split.split(percentage=0.5, align=True)
+            split.prop(scene, "measureit_debug_faces", icon="FACESEL")
+
+            row = box.row()
+            split = row.split(percentage=0.10, align=True)
+            split.prop(scene, 'measureit_debug_norm_color', text="")
+            if scene.measureit_debug_normals is False:
+                split = split.split(percentage=0.50, align=True)
+                split.prop(scene, "measureit_debug_normals", icon="MAN_TRANS")
+            else:
+                split = split.split(percentage=0.5, align=True)
+                split.prop(scene, "measureit_debug_normals", icon="MAN_TRANS")
+                split.prop(scene, "measureit_debug_normal_size")
+                row = box.row()
+                split = row.split(percentage=0.10, align=True)
+                split.separator()
+                split.prop(scene, "measureit_debug_normal_details")
+                split.prop(scene, 'measureit_debug_width', text="Thickness")
+
+            row = box.row(align=True)
             row.prop(scene, "measureit_debug_select", icon="GHOST_ENABLED")
-            row.prop(scene, "measureit_debug_normals", icon="MAN_TRANS")
-            if scene.measureit_debug_normals is True:
-                row.prop(scene, "measureit_debug_normal_size")
-                row.prop(scene, "measureit_debug_normal_details")
-            row = box.row()
-            row.prop(scene, 'measureit_debug_color', text="")
-            row.prop(scene, 'measureit_debug_color2', text="")
-            row.prop(scene, 'measureit_debug_color3', text="")
-            row = box.row()
             row.prop(scene, 'measureit_debug_font', text="Font")
-            row.prop(scene, 'measureit_debug_width', text="Thickness")
             row.prop(scene, 'measureit_debug_precision', text="Precision")
 
 
@@ -677,6 +740,7 @@ class MeasureitConfPanel(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = "TOOLS"
     bl_category = 'Measureit'
+    bl_options = {'DEFAULT_CLOSED'}
 
     # ------------------------------
     # Draw UI
@@ -688,18 +752,24 @@ class MeasureitConfPanel(Panel):
         # Configuration data
         box = layout.box()
         row = box.row()
-        row.prop(scene, "measureit_gl_txt", text="Text")
-        row = box.row()
-        row.prop(scene, "measureit_default_color", text="")
+        split = row.split(percentage=0.2, align=True)
+        split.label("Text")
+        split = split.split(percentage=0.2, align=True)
+        split.prop(scene, "measureit_default_color", text="")
+        split.prop(scene, "measureit_gl_txt", text="")
+        row = box.row(True)
         row.prop(scene, "measureit_hint_space")
+        row.prop(scene, "measureit_font_align", text="")
         # Arrow
         row = box.row(True)
         row.prop(scene, "measureit_glarrow_a", text="")
         row.prop(scene, "measureit_glarrow_b", text="")
-        row.prop(scene, "measureit_glarrow_s", text="Size")
-
-        row = box.row()
+        if scene.measureit_glarrow_a != '99' or scene.measureit_glarrow_b != '99':
+            row.prop(scene, "measureit_glarrow_s", text="Size")
+        row = box.row(True)
         row.prop(scene, "measureit_font_size")
+        if scene.measureit_font_align == 'L':
+            row.prop(scene, "measureit_font_rotation", text="Rotate")
 
 
 # ------------------------------------------------------------------
@@ -711,6 +781,7 @@ class MeasureitRenderPanel(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = "TOOLS"
     bl_category = 'Measureit'
+    bl_options = {'DEFAULT_CLOSED'}
 
     # ------------------------------
     # Draw UI
@@ -737,7 +808,7 @@ class MeasureitRenderPanel(Panel):
 
 
 # -------------------------------------------------------------
-# Defines button for add a measure segment
+# Defines button that adds a measure segment
 #
 # -------------------------------------------------------------
 class AddSegmentButton(Operator):
@@ -804,6 +875,8 @@ class AddSegmentButton(Operator):
                         # text
                         ms.gltxt = scene.measureit_gl_txt
                         ms.glfont_size = scene.measureit_font_size
+                        ms.glfont_align = scene.measureit_font_align
+                        ms.glfont_rotat = scene.measureit_font_rotation
                         # Sum group
                         ms.gltot = scene.measureit_sum
                         # Add index
@@ -824,7 +897,7 @@ class AddSegmentButton(Operator):
 
 
 # -------------------------------------------------------------
-# Defines button for add area measure
+# Defines button that adds an area measure
 #
 # -------------------------------------------------------------
 class AddAreaButton(Operator):
@@ -891,6 +964,8 @@ class AddAreaButton(Operator):
                 # text
                 ms.gltxt = scene.measureit_gl_txt
                 ms.glfont_size = scene.measureit_font_size
+                ms.glfont_align = scene.measureit_font_align
+                ms.glfont_rotat = scene.measureit_font_rotation
                 # Sum group
                 ms.gltot = scene.measureit_sum
                 # Add index
@@ -910,7 +985,7 @@ class AddAreaButton(Operator):
 
 
 # -------------------------------------------------------------
-# Defines button for add a measure segment to x/y/z origin
+# Defines button that adds a measure segment to x/y/z origin
 #
 # -------------------------------------------------------------
 class AddSegmentOrtoButton(Operator):
@@ -979,6 +1054,8 @@ class AddSegmentOrtoButton(Operator):
                         # text
                         ms.gltxt = scene.measureit_gl_txt
                         ms.glfont_size = scene.measureit_font_size
+                        ms.glfont_align = scene.measureit_font_align
+                        ms.glfont_rotat = scene.measureit_font_rotation
                         # Sum group
                         ms.gltot = scene.measureit_sum
                         # Add index
@@ -999,7 +1076,7 @@ class AddSegmentOrtoButton(Operator):
 
 
 # -------------------------------------------------------------
-# Defines button for add a angle
+# Defines button that adds an angle measure
 #
 # -------------------------------------------------------------
 class AddAngleButton(Operator):
@@ -1060,6 +1137,8 @@ class AddAngleButton(Operator):
                     # text
                     ms.gltxt = scene.measureit_gl_txt
                     ms.glfont_size = scene.measureit_font_size
+                    ms.glfont_align = scene.measureit_font_align
+                    ms.glfont_rotat = scene.measureit_font_rotation
                     # Add index
                     mp.measureit_num += 1
 
@@ -1078,7 +1157,7 @@ class AddAngleButton(Operator):
 
 
 # -------------------------------------------------------------
-# Defines button for add a arc
+# Defines button that adds an arc measure
 #
 # -------------------------------------------------------------
 class AddArcButton(Operator):
@@ -1143,6 +1222,8 @@ class AddArcButton(Operator):
                     # text
                     ms.gltxt = scene.measureit_gl_txt
                     ms.glfont_size = scene.measureit_font_size
+                    ms.glfont_align = scene.measureit_font_align
+                    ms.glfont_rotat = scene.measureit_font_rotation
                     # Add index
                     mp.measureit_num += 1
 
@@ -1161,7 +1242,7 @@ class AddArcButton(Operator):
 
 
 # -------------------------------------------------------------
-# Defines button for add a label segment
+# Defines button that adds a label segment
 #
 # -------------------------------------------------------------
 class AddLabelButton(Operator):
@@ -1224,6 +1305,8 @@ class AddLabelButton(Operator):
                     # text
                     ms.gltxt = scene.measureit_gl_txt
                     ms.glfont_size = scene.measureit_font_size
+                    ms.glfont_align = scene.measureit_font_align
+                    ms.glfont_rotat = scene.measureit_font_rotation
                     # Add index
                     mp.measureit_num += 1
 
@@ -1242,7 +1325,7 @@ class AddLabelButton(Operator):
 
 
 # -------------------------------------------------------------
-# Defines button for add a link
+# Defines button that adds a link
 #
 # -------------------------------------------------------------
 class AddLinkButton(Operator):
@@ -1368,6 +1451,8 @@ class AddLinkButton(Operator):
                 # text
                 ms.gltxt = scene.measureit_gl_txt
                 ms.glfont_size = scene.measureit_font_size
+                ms.glfont_align = scene.measureit_font_align
+                ms.glfont_rotat = scene.measureit_font_rotation
                 # link
                 ms.gllink = linkobject
                 # Add index
@@ -1387,7 +1472,7 @@ class AddLinkButton(Operator):
 
 
 # -------------------------------------------------------------
-# Defines button for add a origin segment
+# Defines button that adds an origin segment
 #
 # -------------------------------------------------------------
 class AddOriginButton(Operator):
@@ -1469,6 +1554,8 @@ class AddOriginButton(Operator):
                 # text
                 ms.gltxt = scene.measureit_gl_txt
                 ms.glfont_size = scene.measureit_font_size
+                ms.glfont_align = scene.measureit_font_align
+                ms.glfont_rotat = scene.measureit_font_rotation
                 # Add index
                 mp.measureit_num += 1
 
@@ -1484,7 +1571,7 @@ class AddOriginButton(Operator):
 
 
 # -------------------------------------------------------------
-# Defines button for delete a measure segment
+# Defines button that deletes a measure segment
 #
 # -------------------------------------------------------------
 class DeleteSegmentButton(Operator):
@@ -1518,7 +1605,7 @@ class DeleteSegmentButton(Operator):
 
 
 # -------------------------------------------------------------
-# Defines button for delete all measure segment
+# Defines button that deletes all measure segments
 #
 # -------------------------------------------------------------
 class DeleteAllSegmentButton(Operator):
@@ -1553,7 +1640,7 @@ class DeleteAllSegmentButton(Operator):
 
 
 # -------------------------------------------------------------
-# Defines button for delete all measure segment
+# Defines button that deletes all measure segment sums
 #
 # -------------------------------------------------------------
 class DeleteAllSumButton(Operator):
@@ -1579,7 +1666,69 @@ class DeleteAllSumButton(Operator):
 
 
 # -------------------------------------------------------------
-# Defines button for render
+# Defines button that expands all measure segments
+#
+# -------------------------------------------------------------
+class ExpandAllSegmentButton(Operator):
+    bl_idname = "measureit.expandallsegmentbutton"
+    bl_label = "Expand"
+    bl_description = "Expand all measure properties"
+    bl_category = 'Measureit'
+    tag = IntProperty()
+
+    # ------------------------------
+    # Execute button action
+    # ------------------------------
+    def execute(self, context):
+        if context.area.type == 'VIEW_3D':
+            # Add properties
+            mainobject = context.object
+            mp = mainobject.MeasureGenerator[0]
+
+            for i in mp.measureit_segments:
+                i.gladvance = True
+
+            return {'FINISHED'}
+        else:
+            self.report({'WARNING'},
+                        "View3D not found, cannot run operator")
+
+        return {'CANCELLED'}
+
+
+# -------------------------------------------------------------
+# Defines button that collapses all measure segments
+#
+# -------------------------------------------------------------
+class CollapseAllSegmentButton(Operator):
+    bl_idname = "measureit.collapseallsegmentbutton"
+    bl_label = "Collapse"
+    bl_description = "Collapses all measure properties"
+    bl_category = 'Measureit'
+    tag = IntProperty()
+
+    # ------------------------------
+    # Execute button action
+    # ------------------------------
+    def execute(self, context):
+        if context.area.type == 'VIEW_3D':
+            # Add properties
+            mainobject = context.object
+            mp = mainobject.MeasureGenerator[0]
+
+            for i in mp.measureit_segments:
+                i.gladvance = False
+
+            return {'FINISHED'}
+        else:
+            self.report({'WARNING'},
+                        "View3D not found, cannot run operator")
+
+        return {'CANCELLED'}
+
+
+# -------------------------------------------------------------
+# Defines button for render option
 #
 # -------------------------------------------------------------
 class RenderSegmentButton(Operator):
@@ -1610,8 +1759,7 @@ class RenderSegmentButton(Operator):
             # noinspection PyBroadException
             try:
                 result = bpy.data.images['Render Result']
-                if result.has_data is False:
-                    bpy.ops.render.render()
+                bpy.ops.render.render()
             except:
                 bpy.ops.render.render()
             print("MeasureIt: Using current render image on buffer")
@@ -1769,6 +1917,8 @@ class AddNoteButton(Operator):
             # text
             ms.gltxt = scene.measureit_gl_txt
             ms.glfont_size = scene.measureit_font_size
+            ms.glfont_align = scene.measureit_font_align
+            ms.glfont_rotat = scene.measureit_font_rotation
             # Add index
             mp.measureit_num += 1
 
@@ -1783,7 +1933,7 @@ class AddNoteButton(Operator):
 
 
 # -------------------------------------------------------------
-# Defines button for enable/disable the tip display
+# Defines button that enables/disables the tip display
 #
 # -------------------------------------------------------------
 class RunHintDisplayButton(Operator):
@@ -1863,9 +2013,14 @@ def draw_main(context):
     scene = bpy.context.scene
     # Get visible layers
     layers = []
-    for x in range(0, 20):
-        if bpy.context.scene.layers[x] is True:
-            layers.extend([x])
+    if bpy.context.space_data.lock_camera_and_layers is True:
+        for x in range(0, 20):
+            if bpy.context.scene.layers[x] is True:
+                layers.extend([x])
+    else:
+        for x in range(20):
+            if bpy.context.space_data.layers[x] is True:
+                layers.extend([x])
 
     # Display selected or all
     if scene.measureit_gl_ghost is False:
@@ -1894,8 +2049,16 @@ def draw_main(context):
     if scene.measureit_debug is True:
         selobj = bpy.context.selected_objects
         for myobj in selobj:
+            if scene.measureit_debug_objects is True:
+                draw_object(context, myobj, region, rv3d)
+            elif scene.measureit_debug_object_loc is True:
+                draw_object(context, myobj, region, rv3d)
             if scene.measureit_debug_vertices is True:
                 draw_vertices(context, myobj, region, rv3d)
+            elif scene.measureit_debug_vert_loc is True:
+                draw_vertices(context, myobj, region, rv3d)
+            if scene.measureit_debug_edges is True:
+                draw_edges(context, myobj, region, rv3d)
             if scene.measureit_debug_faces is True or scene.measureit_debug_normals is True:
                 draw_faces(context, myobj, region, rv3d)
 

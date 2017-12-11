@@ -360,7 +360,7 @@ class Do:
         if len(spline) % 3 != 1:
             print("DXF-IMPORT: DO ARC: CHECK PLEASE: ", len(spline), spline)
 
-        # curve == None means arc is called from bulge conversion
+        # curve is None means arc is called from bulge conversion
         # nothing should be projected at this stage, since the
         # lwpolyline (the only entity with bulges) will be projected
         # as a whole afterwards (small little error; took ages to debug)
@@ -509,7 +509,10 @@ class Do:
                     ii = geometry.intersect_line_line(edge1, edge2, opposite1, opposite2)
                     if ii is not None:
                         if _is_on_edge(ii[0]):
-                            bm.faces.remove(face)
+                            try:
+                                bm.faces.remove(face)
+                            except Exception as e:
+                                pass
                             iv = bm.verts.new(ii[0])
                             bm.faces.new((verts[i], iv, verts[(i + 3) % 4]))
                             bm.faces.new((verts[i + 1], iv, verts[i + 2]))
@@ -1132,7 +1135,10 @@ class Do:
             return
         has_varying_width = is_.varying_width(entity)
         th = entity.thickness
-        w = entity.width[0][0] if hasattr(entity, "width") else 0
+        w = 0
+        if hasattr(entity, "width"):
+            if len(entity.width) > 0 and len(entity.width[0]) > 0:
+                w = entity.width[0][0]
 
         if w == 0 and not has_varying_width:
             if th != 0:

@@ -38,9 +38,7 @@ class POVData(PropertyGroup):
     perspective_matrix_md5 = StringProperty()
     camera_name = StringProperty()
     camera_type = StringProperty()
-    camera_pointer = IntProperty()
     lock_object_name = StringProperty()
-    lock_object_pointer = IntProperty()
 
 
 class LayersData(PropertyGroup):
@@ -71,11 +69,7 @@ class DisplayData(PropertyGroup):
     grid_lines = IntProperty()
     grid_scale = FloatProperty()
     grid_subdivisions = IntProperty()
-    material_mode = EnumProperty(
-                    items=[('TEXTURE_FACE', '', ''),
-                           ('MULTITEXTURE', '', ''),
-                           ('GLSL', '', '')]
-                    )
+    material_mode = StringProperty()
     show_textured_solid = BoolProperty()
     quad_view = BoolProperty()
     lock_rotation = BoolProperty()

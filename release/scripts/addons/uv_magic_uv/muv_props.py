@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "4.3.1"
-__date__ = "6 June 2017"
+__version__ = "4.4"
+__date__ = "2 Aug 2017"
 
 import bpy
 from bpy.props import (
@@ -67,11 +67,13 @@ class MUV_Properties():
 class MUV_CPUVProps():
     src_uvs = []
     src_pin_uvs = []
+    src_seams = []
 
 
 class MUV_CPUVSelSeqProps():
     src_uvs = []
     src_pin_uvs = []
+    src_seams = []
 
 
 class MUV_TransUVProps():
@@ -122,7 +124,7 @@ def init_props(scene):
         items=get_loaded_texture_name)
     scene.muv_texproj_tex_transparency = FloatProperty(
         name="Transparency",
-        description="Texture Transparency.",
+        description="Texture Transparency",
         default=0.2,
         min=0.0,
         max=1.0)

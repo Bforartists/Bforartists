@@ -333,3 +333,11 @@ class UI_OT_i18n_addon_translation_export(bpy.types.Operator):
         trans.write(kind='PO', langs=set(uids))
 
         return {'FINISHED'}
+
+
+classes = (
+    UI_OT_i18n_addon_translation_invoke,
+    UI_OT_i18n_addon_translation_update,
+    UI_OT_i18n_addon_translation_import,
+    UI_OT_i18n_addon_translation_export,
+)

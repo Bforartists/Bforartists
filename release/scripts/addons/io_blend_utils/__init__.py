@@ -19,7 +19,7 @@
 bl_info = {
     "name": "Blend File Utils",
     "author": "Campbell Barton and Sybren A. Stüvel",
-    "version": (1, 0),
+    "version": (1, 1, 7),
     "blender": (2, 76, 0),
     "location": "File > External Data > Blend Utils",
     "description": "Utility for packing blend files",
@@ -28,6 +28,8 @@ bl_info = {
     "support": 'OFFICIAL',
     "category": "Import-Export",
 }
+
+BAM_WHEEL_PATH = 'blender_bam-unpacked.whl'
 
 import logging
 
@@ -109,23 +111,24 @@ def pythonpath() -> str:
     """Returns the value of a PYTHONPATH environment variable needed to run BAM from its wheel file.
     """
 
-    import os.path
-    import glob
+    import os
+    import pathlib
 
     log = logging.getLogger('%s.pythonpath' % __name__)
 
     # Find the wheel to run.
-    my_dir = os.path.abspath(os.path.dirname(__file__))
-    wheelpaths = glob.glob(os.path.join(my_dir, 'blender_bam-*.whl'))
-    wheelpath = sorted(wheelpaths)[-1]  # use the last version we find, should be only one.
-    log.info('Using wheel file %s to run BAM-Pack', wheelpath)
+    wheelpath = pathlib.Path(__file__).with_name(BAM_WHEEL_PATH)
+    if not wheelpath.exists():
+        raise EnvironmentError('Wheel %s does not exist!' % wheelpath)
+
+    log.info('Using wheel %s to run BAM-Pack', wheelpath)
 
     # Update the PYTHONPATH to include that wheel.
     existing_pypath = os.environ.get('PYTHONPATH', '')
     if existing_pypath:
-        return os.pathsep.join((existing_pypath, wheelpath))
+        return os.pathsep.join((existing_pypath, str(wheelpath)))
 
-    return wheelpath
+    return str(wheelpath)
 
 
 def register():

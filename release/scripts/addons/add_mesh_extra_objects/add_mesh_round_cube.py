@@ -3,7 +3,11 @@
 import bpy
 from bpy_extras import object_utils
 from itertools import permutations
-from math import copysign, pi, sqrt
+from math import (
+        copysign, pi,
+        sqrt,
+        )
+from bpy.types import Operator
 from bpy.props import (
         BoolProperty,
         EnumProperty,
@@ -109,12 +113,12 @@ def round_cube(radius=1.0, arcdiv=4, lindiv=0., size=(0., 0., 0.),
 
     # Sides built left to right bottom up
     #         xp yp zp  xd  yd  zd
-    sides = ((0, 2, 1, (-1,  1,  1)),   # Y+ Front
-             (1, 2, 0, (-1, -1,  1)),   # X- Left
-             (0, 2, 1, ( 1, -1,  1)),   # Y- Back
-             (1, 2, 0, ( 1,  1,  1)),   # X+ Right
-             (0, 1, 2, (-1,  1, -1)),   # Z- Bottom
-             (0, 1, 2, (-1, -1,  1)))   # Z+ Top
+    sides = ((0, 2, 1, (-1, 1, 1)),    # Y+ Front
+             (1, 2, 0, (-1, -1, 1)),   # X- Left
+             (0, 2, 1, (1, -1, 1)),    # Y- Back
+             (1, 2, 0, (1, 1, 1)),     # X+ Right
+             (0, 1, 2, (-1, 1, -1)),   # Z- Bottom
+             (0, 1, 2, (-1, -1, 1)))   # Z+ Top
 
     # side vertex index table (for sphere)
     svit = [[[] for i in range(steps)] for i in range(6)]
@@ -325,34 +329,34 @@ def round_cube(radius=1.0, arcdiv=4, lindiv=0., size=(0., 0., 0.),
     return verts, faces
 
 
-class AddRoundCube(bpy.types.Operator, object_utils.AddObjectHelper):
+class AddRoundCube(Operator, object_utils.AddObjectHelper):
     bl_idname = "mesh.primitive_round_cube_add"
     bl_label = "Add Round Cube"
-    bl_description = ("Create mesh primitives: Quadspheres,"
-                     "\nCapsules, Rounded Cuboids, 3D Grids etc.")
+    bl_description = ("Create mesh primitives: Quadspheres, "
+                      "Capsules, Rounded Cuboids, 3D Grids etc")
     bl_options = {"REGISTER", "UNDO", "PRESET"}
 
     sanity_check_verts = 200000
     vert_count = 0
 
     radius = FloatProperty(
-            name='Radius',
-            description='Radius of vertices for sphere, capsule or cuboid bevel',
+            name="Radius",
+            description="Radius of vertices for sphere, capsule or cuboid bevel",
             default=1.0, min=0.0, soft_min=0.01, step=10
             )
     size = FloatVectorProperty(
-            name='Size',
-            description='Size',
+            name="Size",
+            description="Size",
             subtype='XYZ',
             )
     arc_div = IntProperty(
-            name='Arc Divisions',
-            description='Arc curve divisions, per quadrant; 0=derive from Linear',
+            name="Arc Divisions",
+            description="Arc curve divisions, per quadrant, 0=derive from Linear",
             default=4, min=1
             )
     lin_div = FloatProperty(
-            name='Linear Divisions',
-            description='Linear unit divisions (Edges/Faces); 0=derive from Arc',
+            name="Linear Divisions",
+            description="Linear unit divisions (Edges/Faces), 0=derive from Arc",
             default=0.0, min=0.0, step=100, precision=1
             )
     div_type = EnumProperty(
@@ -376,7 +380,8 @@ class AddRoundCube(bpy.types.Operator, object_utils.AddObjectHelper):
 
     def execute(self, context):
         if self.arc_div <= 0 and self.lin_div <= 0:
-            self.report({'ERROR'}, 'Either Arc Divisions or Linear Divisions must be greater than zero!')
+            self.report({'ERROR'},
+                        "Either Arc Divisions or Linear Divisions must be greater than zero")
             return {'CANCELLED'}
 
         if not self.no_limit:
@@ -395,8 +400,11 @@ class AddRoundCube(bpy.types.Operator, object_utils.AddObjectHelper):
         return {'FINISHED'}
 
     def check(self, context):
-        self.arcdiv, self.lindiv, self.vert_count = round_cube(self.radius, self.arc_div, self.lin_div,
-                                                               self.size, self.div_type, self.odd_axis_align, True)
+        self.arcdiv, self.lindiv, self.vert_count = round_cube(
+                                                        self.radius, self.arc_div, self.lin_div,
+                                                        self.size, self.div_type, self.odd_axis_align,
+                                                        True
+                                                        )
         return True
 
     def invoke(self, context, event):
@@ -438,4 +446,3 @@ class AddRoundCube(bpy.types.Operator, object_utils.AddObjectHelper):
         col.prop(self, 'location', expand=True)
         col = layout.column(align=True)
         col.prop(self, 'rotation', expand=True)
-

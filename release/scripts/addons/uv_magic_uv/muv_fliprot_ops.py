@@ -20,8 +20,8 @@
 
 __author__ = "Nutti <nutti.metro@gmail.com>"
 __status__ = "production"
-__version__ = "4.3.1"
-__date__ = "6 June 2017"
+__version__ = "4.4"
+__date__ = "2 Aug 2017"
 
 import bpy
 import bmesh
@@ -53,6 +53,11 @@ class MUV_FlipRot(bpy.types.Operator):
         min=0,
         max=30
     )
+    seams = BoolProperty(
+        name="Seams",
+        description="Seams",
+        default=True
+    )
 
     def execute(self, context):
         self.report({'INFO'}, "Flip/Rotate UV")
@@ -70,40 +75,52 @@ class MUV_FlipRot(bpy.types.Operator):
         # get selected face
         dest_uvs = []
         dest_pin_uvs = []
+        dest_seams = []
         dest_face_indices = []
         for face in bm.faces:
             if face.select:
                 dest_face_indices.append(face.index)
                 uvs = [l[uv_layer].uv.copy() for l in face.loops]
                 pin_uvs = [l[uv_layer].pin_uv for l in face.loops]
+                seams = [l.edge.seam for l in face.loops]
                 dest_uvs.append(uvs)
                 dest_pin_uvs.append(pin_uvs)
+                dest_seams.append(seams)
         if len(dest_uvs) == 0 or len(dest_pin_uvs) == 0:
             self.report({'WARNING'}, "No faces are selected")
             return {'CANCELLED'}
         self.report({'INFO'}, "%d face(s) are selected" % len(dest_uvs))
 
         # paste
-        for idx, duvs, dpuvs in zip(dest_face_indices, dest_uvs, dest_pin_uvs):
+        for idx, duvs, dpuvs, dss in zip(dest_face_indices, dest_uvs, dest_pin_uvs, dest_seams):
             duvs_fr = [uv for uv in duvs]
             dpuvs_fr = [pin_uv for pin_uv in dpuvs]
+            dss_fr = [s for s in dss]
             # flip UVs
             if self.flip is True:
                 duvs_fr.reverse()
                 dpuvs_fr.reverse()
+                dss_fr.reverse()
             # rotate UVs
             for _ in range(self.rotate):
                 uv = duvs_fr.pop()
                 pin_uv = dpuvs_fr.pop()
+                s = dss_fr.pop()
                 duvs_fr.insert(0, uv)
                 dpuvs_fr.insert(0, pin_uv)
+                dss_fr.insert(0, s)
             # paste UVs
-            for l, duv, dpuv in zip(bm.faces[idx].loops, duvs_fr, dpuvs_fr):
+            for l, duv, dpuv, ds in zip(
+                    bm.faces[idx].loops, duvs_fr, dpuvs_fr, dss_fr):
                 l[uv_layer].uv = duv
                 l[uv_layer].pin_uv = dpuv
+                if self.seams is True:
+                    l.edge.seam = ds
 
         self.report({'INFO'}, "%d face(s) are flipped/rotated" % len(dest_uvs))
 
         bmesh.update_edit_mesh(obj.data)
+        if self.seams is True:
+            obj.data.show_edge_seams = True
 
         return {'FINISHED'}

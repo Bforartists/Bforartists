@@ -3,7 +3,6 @@
 
 import bpy
 
-# -----------------------------------------------------------------------------
 # Globals #
 
 # change the name for the properties settings
@@ -13,20 +12,22 @@ MAT_SPEC_NAME = "materials_specials"
 COLLECT_REPORT = []
 
 
-# -----------------------------------------------------------------------------
-# Functions #
+# Functions
 
-def warning_messages(operator=None, warn='DEFAULT', object_name="", is_mat=None, fake=""):
+def warning_messages(operator=None, warn='DEFAULT', object_name="", is_mat=None,
+                     fake="", override=False):
     # Enter warning messages to the message dictionary
     # warn - if nothing passed falls back to DEFAULT
     # a list of strings can be passed and concatenated in obj_name too
     # is_mat a switch to change to materials or textures for obj_name('MAT','TEX', 'FILE', None)
     # fake - optional string that can be passed
     # MAX_COUNT - max members of an list to be displayed
+    # override - important messages that should be enabled, no matter the setting
 
     # pass the show_warnings bool to enable/disable them
     addon = bpy.context.user_preferences.addons[MAT_SPEC_NAME]
-    show_warn = (addon.preferences.show_warnings if addon else False)
+    get_warn = addon.preferences.show_warnings if addon else False
+    show_warn = get_warn if override is False else override
 
     if show_warn and operator:
         obj_name = ""
@@ -104,6 +105,7 @@ def warning_messages(operator=None, warn='DEFAULT', object_name="", is_mat=None,
             'DIR_PATH_A_ERROR': "ERROR: Directory not accessible",
             'DIR_PATH_W_OK': "Directory has writing privileges",
             'DIR_PATH_CONVERT': "Conversion Cancelled. Problem with chosen Directory, check System Console",
+            'DIR_PATH_EMPTY': "File Path is empty. Please save the .blend file first",
             'MAT_LINK_ERROR': "{}{}".format(obj_name, "not be renamed or set as Base(s)"),
             'MAT_LINK_NO_NAME': "No Base name given, No changes applied",
             'MOVE_SLOT_UP': "{}{}".format(obj_name, "been moved on top of the stack"),
@@ -123,6 +125,10 @@ def warning_messages(operator=None, warn='DEFAULT', object_name="", is_mat=None,
         if obj_size_big is True:
             print("\n** MATERIAL SPECIALS **: \n Full list for the Info message is: \n",
                   ", ".join(object_name), "\n")
+
+    # restore settings if overriden
+    if override:
+        addon.preferences.show_warnings = get_warn
 
 
 def collect_report(collection="", is_start=False, is_final=False):
@@ -148,12 +154,8 @@ def collect_report(collection="", is_start=False, is_final=False):
         COLLECT_REPORT = []
 
 
-# -----------------------------------------------------------------------------
-# utility functions:
-
 def c_is_cycles_addon_enabled():
-    # checks if Cycles is enabled
-    # thanks to ideasman42
+    # checks if Cycles is enabled thanks to ideasman42
     return ('cycles' in bpy.context.user_preferences.addons.keys())
 
 
@@ -175,6 +177,7 @@ def register():
 def unregister():
     bpy.utils.unregister_module(__name__)
     pass
+
 
 if __name__ == "__main__":
     register()

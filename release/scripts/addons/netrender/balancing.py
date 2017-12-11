@@ -174,7 +174,7 @@ class NewJobPriority(PriorityRule):
                  "enabled": self.enabled,
                  "editable": self.editable,
                  "descritpiton":str(self),
-                 "limit": self.limit,           
+                 "limit": self.limit,
                  "limit_str":self.str_limit(),
                  "id":self.id()
                 }
@@ -215,7 +215,7 @@ class ExcludeQueuedEmptyJob(ExclusionRule):
 
     def test(self, job):
         return job.status != netrender.model.JOB_QUEUED or job.countFrames(status = netrender.model.FRAME_QUEUED) == 0
-    
+
     def serialize(self):
         return { "type": "exception",
                  "enabled": self.enabled,

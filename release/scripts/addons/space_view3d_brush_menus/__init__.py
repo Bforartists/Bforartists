@@ -23,7 +23,7 @@ bl_info = {
     "name": "Sculpt/Paint Brush Menus",
     "description": "Fast access to brushes & tools in Sculpt and Paint Modes",
     "author": "Ryan Inch (Imaginer)",
-    "version": (1, 1, 5),
+    "version": (1, 1, 6),
     "blender": (2, 78, 0),
     "location": "Alt V in Sculpt/Paint Modes",
     "warning": '',

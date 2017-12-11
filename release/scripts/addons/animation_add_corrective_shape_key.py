@@ -181,7 +181,7 @@ class add_corrective_pose_shape(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.active_object != None
+        return context.active_object is not None
 
     def execute(self, context):
         selection = context.selected_objects
@@ -378,7 +378,7 @@ class add_corrective_pose_shape_fast(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.active_object != None
+        return context.active_object is not None
 
     def execute(self, context):
         selection = context.selected_objects

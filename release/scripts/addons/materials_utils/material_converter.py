@@ -1,18 +1,17 @@
 # -*- coding: utf-8 -*-
 
 import bpy
-import mathutils
 from mathutils import Vector
 from bpy.types import Operator
 from .warning_messages_utils import (
-            warning_messages,
-            c_is_cycles_addon_enabled,
-            c_data_has_materials,
-            collect_report,
-            )
+        warning_messages,
+        c_is_cycles_addon_enabled,
+        c_data_has_materials,
+        collect_report,
+        )
 
 # -----------------------------------------------------------------------------
-# Globals #
+# Globals
 
 nodesDictionary = None
 
@@ -39,7 +38,7 @@ textureNodeSizeY = 350
 
 
 # -----------------------------------------------------------------------------
-# Functions #
+# Functions
 
 def makeTextureNodeDict(cmat):
     global nodesDictionary
@@ -155,11 +154,11 @@ def replaceNode(oldNode, newNode):
     newNode.location = oldNode.location
     try:
         for link in oldNode.outputs['BSDF'].links:
-            links.new(newNode.outputs['BSDF'], link.to_socket)
+            link.new(newNode.outputs['BSDF'], link.to_socket)
         for link in oldNode.inputs['Color'].links:
-            links.new(newNode.inputs['Color'], link.from_socket)
+            link.new(newNode.inputs['Color'], link.from_socket)
         for link in oldNode.inputs['Normal'].links:
-            links.new(newNode.inputs['Normal'], link.from_socket)
+            link.new(newNode.inputs['Normal'], link.from_socket)
     except:
         collect_report("ERROR: Failure to replace node")
 
@@ -252,8 +251,10 @@ def createDiffuseNodes(cmat, texCoordNode, mainShader, materialOutput):
                     mixRgbNode.parent = diffuseFrame
                     addRGBMixNode(TreeNodes, textureSlot, mixRgbNode, texNode, latestNode,
                                   '{}'.format(groupName), textureIdx)
-                    mixRgbNode.location = Vector((max(texNode.location.x, latestNode.location.x),
-                                                 (texNode.location.y + latestNode.location.y) / 2)) + Vector((200, 0))
+                    mixRgbNode.location = Vector(
+                                    (max(texNode.location.x, latestNode.location.x),
+                                    (texNode.location.y + latestNode.location.y) / 2)) + Vector((200, 0)
+                                    )
                     latestNode = mixRgbNode
                 except:
                     continue
@@ -325,7 +326,8 @@ def createNormalNodes(cmat, texCoordNode, mainShader, materialOutput):
             tex_node_name = getattr(texNode.image, "name", "")
             collect_report("INFO: Generating Normal Nodes for: " + tex_node_name)
             texNode.parent = normalFrame
-            placeNode(texNode, -500 - ((texCount) * 200), currPosY, textureNodeSizeX, textureNodeSizeY, 0, textureIdx)
+            placeNode(texNode, -500 - ((texCount) * 200), currPosY,
+                      textureNodeSizeX, textureNodeSizeY, 0, textureIdx)
 
             # Add mapping node
             normalMapping = TreeNodes.nodes.new(MAPPING_NODE)
@@ -364,8 +366,10 @@ def createNormalNodes(cmat, texCoordNode, mainShader, materialOutput):
                     mixRgbNode.parent = normalFrame
                     addRGBMixNode(TreeNodes, textureSlot, mixRgbNode, texNode, latestNode,
                                   '{}'.format(groupName), textureIdx)
-                    mixRgbNode.location = Vector((max(texNode.location.x, latestNode.location.x),
-                                                 (texNode.location.y + latestNode.location.y) / 2)) + Vector((200, 0))
+                    mixRgbNode.location = Vector(
+                                            (max(texNode.location.x, latestNode.location.x),
+                                            (texNode.location.y + latestNode.location.y) / 2)) + Vector((200, 0)
+                                            )
                     latestNode = mixRgbNode
                 except:
                     continue
@@ -401,7 +405,8 @@ def createSpecularNodes(cmat, texCoordNode, mainShader, mainDiffuse, materialOut
             tex_node_name = getattr(texNode.image, "name", "")
             collect_report("INFO: Generating {} Nodes for: ".format(groupName) + tex_node_name)
             texNode.parent = specularFrame
-            placeNode(texNode, -500 - ((texCount) * 200), currPosY, textureNodeSizeX, textureNodeSizeY, 0, textureIdx)
+            placeNode(texNode, -500 - ((texCount) * 200),
+                      currPosY, textureNodeSizeX, textureNodeSizeY, 0, textureIdx)
 
             # Add mapping node
             specularMapping = TreeNodes.nodes.new(MAPPING_NODE)
@@ -439,8 +444,10 @@ def createSpecularNodes(cmat, texCoordNode, mainShader, mainDiffuse, materialOut
                     mixRgbNode.parent = specularFrame
                     addRGBMixNode(TreeNodes, textureSlot, mixRgbNode, texNode, latestNode,
                                   '{}'.format(groupName), textureIdx)
-                    mixRgbNode.location = Vector((max(texNode.location.x, latestNode.location.x),
-                                                 (texNode.location.y + latestNode.location.y) / 2)) + Vector((200, 0))
+                    mixRgbNode.location = Vector(
+                                            (max(texNode.location.x, latestNode.location.x),
+                                            (texNode.location.y + latestNode.location.y) / 2)) + Vector((200, 0)
+                                            )
                     latestNode = mixRgbNode
                 except:
                     continue
@@ -505,7 +512,8 @@ def createEmissionNodes(cmat, texCoordNode, mainShader, materialOutput):
             tex_node_name = getattr(texNode.image, "name", "")
             collect_report("INFO: Generating {} Nodes for: ".format(groupName) + tex_node_name)
             texNode.parent = emissionFrame
-            placeNode(texNode, -500 - ((texCount) * 200), currPosY, textureNodeSizeX, textureNodeSizeY, 0, textureIdx)
+            placeNode(texNode, -500 - ((texCount) * 200), currPosY,
+                      textureNodeSizeX, textureNodeSizeY, 0, textureIdx)
 
             # Add mapping node
             emissionMapping = TreeNodes.nodes.new(MAPPING_NODE)
@@ -544,8 +552,10 @@ def createEmissionNodes(cmat, texCoordNode, mainShader, materialOutput):
                     mixRgbNode.parent = emissionFrame
                     addRGBMixNode(TreeNodes, textureSlot, mixRgbNode, texNode, latestNode,
                                   '{}'.format(groupName), textureIdx)
-                    mixRgbNode.location = Vector((max(texNode.location.x, latestNode.location.x),
-                                                 (texNode.location.y + latestNode.location.y) / 2)) + Vector((200, 0))
+                    mixRgbNode.location = Vector(
+                                            (max(texNode.location.x, latestNode.location.x),
+                                            (texNode.location.y + latestNode.location.y) / 2)) + Vector((200, 0)
+                                            )
                     latestNode = mixRgbNode
                 except:
                     continue
@@ -604,9 +614,9 @@ def AutoNode(active=False, operator=None):
     if not materials:
         if operator:
             if active:
-                warning_messages(operator, 'CONV_NO_SEL_MAT')
+                warning_messages(operator, 'CONV_NO_SEL_MAT', override=True)
             else:
-                warning_messages(operator, 'CONV_NO_SC_MAT')
+                warning_messages(operator, 'CONV_NO_SC_MAT', override=True)
         return
 
     for cmat in materials:
@@ -649,7 +659,6 @@ def makeCyclesFromBI(cmat):
     cmat_mirror = cmat.raytrace_mirror.use
     cmat_mirror_fac = cmat.raytrace_mirror.reflect_factor
 
-    # --------------------------------------
     # Material Shaders
     # Diffuse nodes
     # --------------------------------------
@@ -727,17 +736,19 @@ def makeCyclesFromBI(cmat):
 
 
 # -----------------------------------------------------------------------------
-# Operator Classes #
+# Operator Classes
 
 class material_convert_all(Operator):
     bl_idname = "xps_tools.convert_to_cycles_all"
     bl_label = "Convert All Materials"
-    bl_description = "Convert All Materials to BI and Cycles Nodes"
+    bl_description = ("Convert All Materials to BI and Cycles Nodes\n"
+                      "Needs saving the .blend file first")
     bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod
     def poll(cls, context):
-        return (c_is_cycles_addon_enabled() and c_data_has_materials())
+        return (bpy.data.filepath != "" and c_is_cycles_addon_enabled() and
+                c_data_has_materials())
 
     def execute(self, context):
         AutoNode(False, self)
@@ -747,14 +758,15 @@ class material_convert_all(Operator):
 class material_convert_selected(Operator):
     bl_idname = "xps_tools.convert_to_cycles_selected"
     bl_label = "Convert All Materials From Selected Objects"
-    bl_description = "Convert All Materials on Selected Objects to BI and Cycles Nodes"
+    bl_description = ("Convert All Materials on Selected Objects to BI and Cycles Nodes\n"
+                      "Needs saving the .blend file first")
     bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod
     def poll(cls, context):
-        return (c_data_has_materials() and c_is_cycles_addon_enabled() and
-                bool(
-                    next((obj for obj in context.selected_objects if obj.type == 'MESH'),
+        return (bpy.data.filepath != "" and c_data_has_materials() and
+                c_is_cycles_addon_enabled() and
+                bool(next((obj for obj in context.selected_objects if obj.type == 'MESH'),
                          None)
                     )
                 )
@@ -772,6 +784,7 @@ def register():
 def unregister():
     bpy.utils.unregister_module(__name__)
     pass
+
 
 if __name__ == "__main__":
     register()

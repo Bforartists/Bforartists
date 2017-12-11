@@ -21,8 +21,8 @@
 bl_info = {
     "name": "Copy Settings",
     "author": "Bastien Montagne",
-    "version": (0, 1, 5),
-    "blender": (2, 65, 9),
+    "version": (0, 1, 7),
+    "blender": (2, 79, 1),
     "location": "Render buttons (Properties window)",
     "description": "Allows to copy a selection of render settings "
                    "from current scene to others.",
@@ -34,12 +34,14 @@ bl_info = {
 
 if "bpy" in locals():
     import importlib
+    importlib.reload(data)
     importlib.reload(operator)
     importlib.reload(panel)
     importlib.reload(translations)
 
 else:
     from . import (
+            data,
             operator,
             panel,
             translations,
@@ -48,68 +50,27 @@ else:
 
 import bpy
 from bpy.props import (
-        StringProperty,
-        BoolProperty,
-        IntProperty,
-        CollectionProperty,
         PointerProperty,
         )
 
-########################################################################################################################
-# Global properties for the script, for UI (as there’s no way to let them in the operator…).
-########################################################################################################################
 
-class RenderCopySettingsScene(bpy.types.PropertyGroup):
-    allowed = BoolProperty(default=True)
-
-
-class RenderCopySettingsSetting(bpy.types.PropertyGroup):
-    strid = StringProperty(default="")
-    copy = BoolProperty(default=False)
-
-
-class RenderCopySettings(bpy.types.PropertyGroup):
-    # XXX: The consistency of this collection is delegated to the UI code.
-    #      It should only contain one element for each render setting.
-    affected_settings = CollectionProperty(type=RenderCopySettingsSetting,
-                                           name="Affected Settings",
-                                           description="The list of all available render settings")
-    # XXX Unused, but needed for template_list…
-    affected_settings_idx = IntProperty()
-
-    # XXX: The consistency of this collection is delegated to the UI code.
-    #      It should only contain one element for each scene.
-    allowed_scenes = CollectionProperty(type=RenderCopySettingsScene,
-                                        name="Allowed Scenes",
-                                        description="The list all scenes in the file")
-    # XXX Unused, but needed for template_list…
-    allowed_scenes_idx = IntProperty()
-
-    filter_scene = StringProperty(name="Filter Scene",
-                                  description="Regex to only affect scenes which name matches it",
-                                  default="")
+classes = data.classes + operator.classes + panel.classes
 
 
 def register():
-    # Register properties.
-    bpy.utils.register_class(RenderCopySettingsScene)
-    bpy.utils.register_class(RenderCopySettingsSetting)
-    bpy.utils.register_class(RenderCopySettings)
-    bpy.types.Scene.render_copy_settings = PointerProperty(type=RenderCopySettings)
+    for cls in classes:
+        bpy.utils.register_class(cls)
+    bpy.types.Scene.render_copy_settings = PointerProperty(type=data.RenderCopySettingsData)
 
-    bpy.utils.register_module(__name__)
     bpy.app.translations.register(__name__, translations.translations_dict)
 
 
 def unregister():
-    # Unregister properties.
-    bpy.utils.unregister_class(RenderCopySettingsScene)
-    bpy.utils.unregister_class(RenderCopySettingsSetting)
-    bpy.utils.unregister_class(RenderCopySettings)
-    del bpy.types.Scene.render_copy_settings
-
-    bpy.utils.unregister_module(__name__)
     bpy.app.translations.unregister(__name__)
+
+    del bpy.types.Scene.render_copy_settings
+    for cls in classes:
+        bpy.utils.unregister_class(cls)
 
 
 if __name__ == "__main__":

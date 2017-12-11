@@ -36,7 +36,6 @@ from bpy_extras.view3d_utils import (
     region_2d_to_origin_3d,
     region_2d_to_vector_3d
     )
-# from .materialutils import MaterialUtils
 
 
 class ArchipackObject():
@@ -98,7 +97,7 @@ class ArchipackObject():
             return None
 
         active = context.active_object
-        selected = [o for o in context.selected_objects]
+        selected = context.selected_objects[:]
 
         for o in selected:
             if self.__class__.datablock(o) == self:
@@ -151,18 +150,30 @@ class ArchipackCreateTool():
     def load_preset(self, d):
         """
             Load python preset
+            d: archipack object datablock
             preset: full filename.py with path
         """
         d.auto_update = False
+        fallback = True
         if self.filepath != "":
             try:
                 bpy.ops.script.python_file_run(filepath=self.filepath)
+                fallback = False
             except:
-                print("Archipack unable to load preset file : %s" % (self.filepath))
                 pass
+            if fallback:
+                # fallback to load preset on background process
+                try:
+                    exec(compile(open(self.filepath).read(), self.filepath, 'exec'))
+                except:
+                    print("Archipack unable to load preset file : %s" % (self.filepath))
+                    pass
         d.auto_update = True
 
     def add_material(self, o, material='DEFAULT', category=None):
+        # skip if preset allready add material
+        if "archipack_material" in o:
+            return
         try:
             if category is None:
                 category = self.archipack_category

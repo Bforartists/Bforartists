@@ -2094,7 +2094,7 @@ class ARCHIPACK_OT_manipulate(Operator):
         return res
 
     def invoke(self, context, event):
-        if context.space_data.type == 'VIEW_3D':
+        if context.space_data is not None and context.space_data.type == 'VIEW_3D':
             context.window_manager.modal_handler_add(self)
             return {'RUNNING_MODAL'}
         else:
@@ -2213,7 +2213,7 @@ class Manipulable():
 
         # take care of context switching
         # when call from outside of 3d view
-        if context.space_data.type != 'VIEW_3D':
+        if context.space_data is not None and context.space_data.type != 'VIEW_3D':
             for window in bpy.context.window_manager.windows:
                 screen = window.screen
                 for area in screen.areas:

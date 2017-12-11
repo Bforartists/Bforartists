@@ -517,9 +517,8 @@ def load_config(cfg_name=DEMO_CFG):
 
             def blend_dict_items(path):
                 for dirpath, dirnames, filenames in os.walk(path):
-                    # skip '.svn'
-                    if dirpath.startswith("."):
-                        continue
+                    # skip '.git'
+                    dirnames[:] = [d for d in dirnames if not d.startswith(".")]
                     for filename in filenames:
                         if filename.lower().endswith(".blend"):
                             filepath = os.path.join(dirpath, filename)

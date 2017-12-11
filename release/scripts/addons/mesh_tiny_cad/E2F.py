@@ -27,6 +27,17 @@ from mathutils.geometry import intersect_line_plane
 def failure_message(self):
     self.report({"WARNING"}, 'select 1 face and 1 detached edge')
 
+def failure_message_on_plane(self):
+    msg2 = """\
+Edge2Face expects the edge to intersect at one point on the plane of the selected face. You're  
+seeing this warning because mathutils.geometry.intersect_line_plane is being called on an edge/face  
+combination that has no clear intersection point ( both points of the edge either touch the same  
+plane as the face or they lie in a plane that is offset along the face's normal )"""
+    lines = msg2.split('\n')
+    for line in lines:
+        self.report({'INFO'}, line)
+    self.report({"WARNING"}, 'No intersection found, see the info panel for details')
+
 
 def extend_vertex(self):
 
@@ -37,7 +48,7 @@ def extend_vertex(self):
     faces = bm.faces
 
     planes = [f for f in faces if f.select]
-    if (len(planes) > 1) or (len(planes) == 0):
+    if not (len(planes) == 1):
         failure_message(self)
         return
 
@@ -60,15 +71,19 @@ def extend_vertex(self):
     plane_no = plane.normal
 
     new_co = intersect_line_plane(v1, v2, plane_co, plane_no, False)
-    new_vertex = verts.new(new_co)
 
-    A_len = (v1 - new_co).length
-    B_len = (v2 - new_co).length
+    if new_co:
+        new_vertex = verts.new(new_co)
+        A_len = (v1 - new_co).length
+        B_len = (v2 - new_co).length
 
-    vertex_reference = v1_ref if (A_len < B_len) else v2_ref
-    bm.edges.new([vertex_reference, new_vertex])
+        vertex_reference = v1_ref if (A_len < B_len) else v2_ref
+        bm.edges.new([vertex_reference, new_vertex])
+        bmesh.update_edit_mesh(me, True)
 
-    bmesh.update_edit_mesh(me, True)
+    else:
+        failure_message_on_plane(self)
+
 
 
 class TCEdgeToFace(bpy.types.Operator):

@@ -137,7 +137,7 @@ def gettailpos(pbone,bones):
             ischildfound = True
             childbone = bone
             childbonelist.append(bone)
-            
+
     if ischildfound:
         tmp_head = [0.0] * 3
         for bone in childbonelist:
@@ -187,9 +187,9 @@ def pskimport(infile,importmesh,importbone,bDebugLogPSK,importmultiuvtextures):
     #read general header
     indata = unpack('20s3i', pskfile.read(32))
     #not using the general header at this time
-    #================================================================================================== 
+    #==================================================================================================
     # vertex point
-    #================================================================================================== 
+    #==================================================================================================
     #read the PNTS0000 header
     indata = unpack('20s3i', pskfile.read(32))
     recCount = indata[3]
@@ -207,9 +207,9 @@ def pskimport(infile,importmesh,importbone,bDebugLogPSK,importmultiuvtextures):
         printlog(str(indata[0]) + "|" + str(indata[1]) + "|" + str(indata[2]) + "\n")
         #Tmsh.vertices.append(NMesh.Vert(indata[0], indata[1], indata[2]))
 
-    #================================================================================================== 
+    #==================================================================================================
     # UV
-    #================================================================================================== 
+    #==================================================================================================
     #read the VTXW0000 header
     indata = unpack('20s3i', pskfile.read(32))
     recCount = indata[3]
@@ -227,9 +227,9 @@ def pskimport(infile,importmesh,importbone,bDebugLogPSK,importmultiuvtextures):
         #print([indata[0], indata[2], indata[3]])
         #print([indata[1], indata[2], indata[3]])
 
-    #================================================================================================== 
+    #==================================================================================================
     # Face
-    #================================================================================================== 
+    #==================================================================================================
     #read the FACE0000 header
     indata = unpack('20s3i', pskfile.read(32))
     recCount = indata[3]
@@ -288,9 +288,9 @@ def pskimport(infile,importmesh,importbone,bDebugLogPSK,importmultiuvtextures):
     # skip something...
     #==========
 
-    #================================================================================================== 
+    #==================================================================================================
     # Material
-    #================================================================================================== 
+    #==================================================================================================
     ##
     #read the MATT0000 header
     indata = unpack('20s3i', pskfile.read(32))
@@ -307,9 +307,9 @@ def pskimport(infile,importmesh,importbone,bDebugLogPSK,importmultiuvtextures):
         print("Mat name %s", indata[0])
 
     ##
-    #================================================================================================== 
+    #==================================================================================================
     # Bones (Armature)
-    #================================================================================================== 
+    #==================================================================================================
     #read the REFSKEL0 header
     indata = unpack('20s3i', pskfile.read(32))
     recCount = indata[3]
@@ -321,8 +321,8 @@ def pskimport(infile,importmesh,importbone,bDebugLogPSK,importmultiuvtextures):
 
     md5_bones = []
     bni_dict = {}
-    #================================================================================================== 
-    # Bone Data 
+    #==================================================================================================
+    # Bone Data
     #==================================================================================================
     counter = 0
     print ("---PRASE--BONES---")
@@ -364,7 +364,7 @@ def pskimport(infile,importmesh,importbone,bDebugLogPSK,importmultiuvtextures):
         else:
              createbone.bindmat = mathutils.Quaternion((indata[7], -indata[4], -indata[5], -indata[6])).to_matrix()
              createbone.origmat = mathutils.Quaternion((indata[7], -indata[4], -indata[5], -indata[6])).to_matrix()
-        
+
         createbone.bindmat = mathutils.Matrix.Translation(mathutils.Vector((indata[8], indata[9], indata[10]))) * \
                              createbone.bindmat.to_4x4()
 
@@ -378,13 +378,13 @@ def pskimport(infile,importmesh,importbone,bDebugLogPSK,importmultiuvtextures):
 
     for pbone in md5_bones:
         if pbone.name != pbone.parent.name:
-            pbone.bindmat = pbone.parent.bindmat * pbone.bindmat 
+            pbone.bindmat = pbone.parent.bindmat * pbone.bindmat
             #print(pbone.name)
             #print(pbone.bindmat)
             #print("end")
         else:
             pbone.bindmat = pbone.bindmat
-    
+
     for pbone in md5_bones:
         pbone.head = getheadpos(pbone, md5_bones)
 
@@ -479,7 +479,7 @@ def pskimport(infile,importmesh,importbone,bDebugLogPSK,importmultiuvtextures):
                     newbone.tail.z = bone.tail[2]
                     newbone.roll = math.radians(90.0)
                 """
-                vec = newbone.tail - newbone.head 
+                vec = newbone.tail - newbone.head
                 if vec.z > 0.0:
                     newbone.roll = math.radians(90.0)
                 else:
@@ -515,9 +515,9 @@ def pskimport(infile,importmesh,importbone,bDebugLogPSK,importmultiuvtextures):
         #Add the material to the mesh
         VtxCol.append(tmpCol)
 
-    #================================================================================================== 
+    #==================================================================================================
     # Bone Weight
-    #================================================================================================== 
+    #==================================================================================================
     #read the RAWW0000 header
     indata = unpack('20s3i', pskfile.read(32))
     recCount = indata[3]
@@ -562,9 +562,9 @@ def pskimport(infile,importmesh,importbone,bDebugLogPSK,importmultiuvtextures):
     """
     if (DEBUGLOG):
         logf.close()
-    #================================================================================================== 
+    #==================================================================================================
     #Building Mesh
-    #================================================================================================== 
+    #==================================================================================================
     print("vertex:", len(verts), "faces:", len(faces))
     print("vertex2:", len(verts2))
     me_ob.vertices.add(len(verts2))
@@ -594,7 +594,7 @@ def pskimport(infile,importmesh,importbone,bDebugLogPSK,importmultiuvtextures):
     materials = []
 
     for matcount in range(materialcount):
-        #if texturedata != None:
+        #if texturedata is not None:
         matdata = bpy.data.materials.new(materialname + str(matcount))
         #mtex = matdata.texture_slots.new()
         #mtex.texture = texture[matcount].data
@@ -617,7 +617,7 @@ def pskimport(infile,importmesh,importbone,bDebugLogPSK,importmultiuvtextures):
     #===================================================================================================
     print ("-------------------------")
     print ("-- Creating UV Texture --")
-    print ("-------------------------") 
+    print ("-------------------------")
     texture = []
     # texturename = "text1"  # UNUSED
     countm = 0
@@ -644,9 +644,9 @@ def pskimport(infile,importmesh,importbone,bDebugLogPSK,importmultiuvtextures):
                 _uv3 = mfaceuv[0][2] #(0,0)
                 uv.data[face.index].uv3 = mathutils.Vector((_uv3[0], _uv3[1])) #set them
             else: #if not match zero them
-                uv.data[face.index].uv1 = mathutils.Vector((0, 0)) #zero them 
-                uv.data[face.index].uv2 = mathutils.Vector((0, 0)) #zero them 
-                uv.data[face.index].uv3 = mathutils.Vector((0, 0)) #zero them 
+                uv.data[face.index].uv1 = mathutils.Vector((0, 0)) #zero them
+                uv.data[face.index].uv2 = mathutils.Vector((0, 0)) #zero them
+                uv.data[face.index].uv3 = mathutils.Vector((0, 0)) #zero them
         _textcount += 1
         #_matcount += 1
         #print(matcount)
@@ -697,7 +697,7 @@ def pskimport(infile,importmesh,importbone,bDebugLogPSK,importmultiuvtextures):
     #bpy.ops.object.select_name(name=str(ob_new.name))
     #bpy.context.scene.objects.active = ob_new
     me_ob.update()
-    bpy.context.scene.objects.link(obmesh)   
+    bpy.context.scene.objects.link(obmesh)
     bpy.context.scene.update()
     obmesh.select = False
     ob_new.select = False
@@ -946,7 +946,7 @@ def psaimport(filename,context):
         _psa_bone = psa_bone()
         _psa_bone.name = bone.name
         _psa_bone.Transform = bone.matrix
-        if bone.parent != None:
+        if bone.parent is not None:
             _psa_bone.parent = psa_bones[bone.parent.name]
         else:
             _psa_bone.parent = None
@@ -975,10 +975,10 @@ def psaimport(filename,context):
                     quat = Raw_Key_List[raw_key_index][1]
 
                     mat = Matrix()
-                    if pbone.parent != None:
+                    if pbone.parent is not None:
                         quat = quat.conjugated()
                         mat = Matrix.Translation(pos) * quat.to_matrix().to_4x4()
-                        mat = pose_bones[bName].parent.matrix * mat 
+                        mat = pose_bones[bName].parent.matrix * mat
                         #mat = pbone.parent.Transform * mat
                     else:
                         mat = pbone.Transform * Matrix.Translation(pos) * quat.to_matrix().to_4x4()
@@ -1012,20 +1012,20 @@ def psaimport(filename,context):
                 pose_bone.keyframe_insert("location")
                 pose_bone.keyframe_insert("rotation_quaternion")
                 bpy.context.scene.update()
-                #set back children bon to original position 
+                #set back children bon to original position
                 #reverse whirl child bone by quat.inverse()
 
                 for child in childrens:
                     armmat = children_infos[child][0]
                     pos = children_infos[child][1]
-                    rotmat = children_infos[child][2] 
+                    rotmat = children_infos[child][2]
 
-                    child.matrix = Matrix.Translation(pos) * rotmat.to_4x4() * hymat * armmat 
-                    child.keyframe_insert("location") 
+                    child.matrix = Matrix.Translation(pos) * rotmat.to_4x4() * hymat * armmat
+                    child.keyframe_insert("location")
                     child.keyframe_insert("rotation_quaternion")
 
             for bone in pose_bones:
-                if bone.parent != None:
+                if bone.parent is not None:
                     whirlSingleBone(bone,Quaternion((0.707, 0, 0, -0.707)))
                 else:
                     bone.rotation_quaternion *= Quaternion((0.707, -0.707, 0, 0)) * Quaternion((0.707, 0, 0, -0.707))
@@ -1284,6 +1284,6 @@ def unregister():
 if __name__ == "__main__":
     register()
 
-#note this only read the data and will not be place in the scene    
-#getInputFilename('C:\\blenderfiles\\BotA.psk') 
+#note this only read the data and will not be place in the scene
+#getInputFilename('C:\\blenderfiles\\BotA.psk')
 #getInputFilename('C:\\blenderfiles\\AA.PSK')
