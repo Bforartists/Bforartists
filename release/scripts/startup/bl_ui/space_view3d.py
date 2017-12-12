@@ -1043,7 +1043,18 @@ class VIEW3D_MT_select_edit_metaball(Menu):
 
         layout.separator()
 
-        layout.operator_menu_enum("mball.select_similar", "type", text="Similar")
+        layout.menu("VIEW3D_MT_select_edit_metaball_select_similar")
+
+class VIEW3D_MT_select_edit_metaball_select_similar(Menu):
+    bl_label = "Similar"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("mball.select_similar", text="Type", icon = "TYPE").type = 'TYPE'
+        layout.operator("mball.select_similar", text="Radius", icon = "RADIUS").type = 'RADIUS'
+        layout.operator("mball.select_similar", text="Stiffness", icon = "BEND").type = 'STIFFNESS'
+        layout.operator("mball.select_similar", text="Rotation", icon = "ROTATE").type = 'ROTATION'
 
 
 # Workaround to separate the tooltips
@@ -4192,6 +4203,7 @@ classes = (
     VIEW3D_MT_select_edit_text,
     VIEW3D_MT_select_edit_metaball_inverse,
     VIEW3D_MT_select_edit_metaball,
+    VIEW3D_MT_select_edit_metaball_select_similar,
     VIEW3D_MT_select_edit_lattice_inverse,
     VIEW3D_MT_select_edit_lattice,
     VIEW3D_MT_select_edit_armature_inverse,
