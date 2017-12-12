@@ -194,22 +194,21 @@ class IMAGE_MT_select(Menu):
         layout.operator("uv.select_all_inverse", text="Inverse", icon = 'INVERSE')
 
         layout.separator()
-
-        layout.operator("uv.select_pinned")
-        layout.operator("uv.select_linked", text="Linked").extend = False
-        layout.operator("uv.select_linked_extend", text="Linked Extend")
-
-        layout.operator("uv.select_linked_pick", text="Linked Pick").extend = False
-        layout.operator("uv.select_linked_pick_extend", text="Linked Pick Extend")
+     
+        layout.operator("uv.select_linked", text="Linked", icon = "LINKED").extend = False
+        layout.operator("uv.select_linked_extend", text="Linked Extend", icon = "LINKED")
+        layout.operator("uv.select_linked_pick", text="Linked Pick", icon = "LINKED").extend = False
+        layout.operator("uv.select_linked_pick_extend", text="Linked Pick Extend", icon = "LINKED")
 
         layout.separator()
 
-        layout.operator("uv.select_split",text = "Split")
+        layout.operator("uv.select_pinned", text = "Pinned", icon = "PINNED")
+        layout.operator("uv.select_split",text = "Split", icon = "SPLIT")
 
         layout.separator()
 
-        layout.operator("uv.select_more", text="More")
-        layout.operator("uv.select_less", text="Less")
+        layout.operator("uv.select_more", text="More", icon = "SELECTMORE")
+        layout.operator("uv.select_less", text="Less", icon = "SELECTLESS")
 
 
 class IMAGE_MT_brush(Menu):
