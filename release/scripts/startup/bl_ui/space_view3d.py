@@ -756,7 +756,7 @@ class VIEW3D_MT_select_particle(Menu):
 
 
 class VIEW3D_MT_edit_mesh_select_similar(Menu):
-    bl_label = "Select Similar"
+    bl_label = "Similar"
 
     def draw(self, context):
         layout = self.layout
@@ -819,21 +819,6 @@ class VIEW3D_MT_edit_mesh_select_by_trait(Menu):
 
         layout.operator("mesh.select_ungrouped", text="Ungrouped Verts", icon = "SELECT_UNGROUPED_VERTS")
 
-
-class VIEW3D_MT_edit_mesh_select_more_less(Menu):
-    bl_label = "Select More/Less"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("mesh.select_more", text="More", icon = "SELECTMORE")
-        layout.operator("mesh.select_less", text="Less", icon = "SELECTLESS")
-
-        layout.separator()
-
-        layout.operator("mesh.select_next_item", text="Next Active", icon = "NEXTACTIVE")
-        layout.operator("mesh.select_prev_item", text="Previous Active", icon = "PREVIOUSACTIVE")
-
 # Workaround to separate the tooltips
 class VIEW3D_MT_select_edit_mesh_inverse(bpy.types.Operator):
     """Inverse\nInverts the current selection """      # blender will use this as a tooltip for menu items and buttons.
@@ -871,11 +856,6 @@ class VIEW3D_MT_select_edit_mesh(Menu):
         layout.operator("mesh.shortest_path_select", text="Shortest Path", icon = "SELECT_SHORTESTPATH")
         layout.operator("mesh.select_axis", text="Side of Active", icon = "SELECT_SIDEOFACTIVE")
 
-
-        layout.separator()
-
-        layout.menu("VIEW3D_MT_edit_mesh_select_more_less")
-
         layout.separator()
 
         # geometric
@@ -906,7 +886,16 @@ class VIEW3D_MT_select_edit_mesh(Menu):
         layout.operator("mesh.select_linked", text="Linked", icon = "LINKED")
         layout.operator("mesh.select_linked_pick", text="Linked Pick Select", icon = "LINKED").deselect = False
         layout.operator("mesh.select_linked_pick", text="Linked Pick Deselect", icon = "LINKED").deselect = True
-   
+
+        layout.separator()
+
+        layout.operator("mesh.select_next_item", text="Next Active", icon = "NEXTACTIVE")
+        layout.operator("mesh.select_prev_item", text="Previous Active", icon = "PREVIOUSACTIVE")
+
+        layout.separator()
+
+        layout.operator("mesh.select_more", text="More", icon = "SELECTMORE")
+        layout.operator("mesh.select_less", text="Less", icon = "SELECTLESS")
 
 
 
@@ -948,7 +937,7 @@ class VIEW3D_MT_select_edit_curve(Menu):
         layout.operator("curve.select_linked", text="Linked", icon = "LINKED")
         layout.operator("curve.select_linked_pick", text="Linked Pick Select", icon = "LINKED").deselect = False
         layout.operator("curve.select_linked_pick", text="Linked Pick Deselect", icon = "LINKED").deselect = True
-        layout.operator("curve.select_similar", text="Similar", icon = "SELECT_SIMILAR")
+        layout.operator_menu_enum("curve.select_similar", "type", text="Similar")
 
         layout.separator()
 
@@ -989,7 +978,7 @@ class VIEW3D_MT_select_edit_surface(Menu):
         layout.operator("curve.select_linked", text="Linked", icon = "LINKED")
         layout.operator("curve.select_linked_pick", text="Linked Pick Select", icon = "LINKED").deselect = False
         layout.operator("curve.select_linked_pick", text="Linked Pick Deselect", icon = "LINKED").deselect = True
-        layout.operator("curve.select_similar", text="Similar", icon = "SELECT_SIMILAR")
+        layout.operator_menu_enum("curve.select_similar", "type", text="Similar")
 
         layout.separator()
 
@@ -1054,7 +1043,7 @@ class VIEW3D_MT_select_edit_metaball(Menu):
 
         layout.separator()
 
-        layout.operator_menu_enum("mball.select_similar", "type", text="Similar", icon = "SELECT_SIMILAR")
+        layout.operator_menu_enum("mball.select_similar", "type", text="Similar")
 
 
 # Workaround to separate the tooltips
@@ -1088,7 +1077,7 @@ class VIEW3D_MT_select_edit_lattice(Menu):
         layout.separator()
 
         layout.operator("lattice.select_random", text="Random", icon = "RANDOMIZE")
-        layout.operator("lattice.select_mirror", text ="Mirror")
+        layout.operator("lattice.select_mirror", text ="Mirror", icon = "TRANSFORM_MIRROR")
 
         layout.separator()
 
@@ -1098,8 +1087,6 @@ class VIEW3D_MT_select_edit_lattice(Menu):
 
         layout.operator("lattice.select_more", text ="More", icon = "SELECTMORE")
         layout.operator("lattice.select_less", text ="Less", icon = "SELECTLESS")
-
-        layout.separator()
 
 
 # Workaround to separate the tooltips
@@ -4197,7 +4184,6 @@ classes = (
     VIEW3D_MT_edit_mesh_sort_elements,
     VIEW3D_MT_edit_mesh_select_similar,
     VIEW3D_MT_edit_mesh_select_by_trait,
-    VIEW3D_MT_edit_mesh_select_more_less,
     VIEW3D_MT_select_edit_mesh_inverse,
     VIEW3D_MT_select_edit_mesh,
     VIEW3D_MT_select_edit_curve_inverse,
