@@ -937,7 +937,7 @@ class VIEW3D_MT_select_edit_curve(Menu):
         layout.operator("curve.select_linked", text="Linked", icon = "LINKED")
         layout.operator("curve.select_linked_pick", text="Linked Pick Select", icon = "LINKED").deselect = False
         layout.operator("curve.select_linked_pick", text="Linked Pick Deselect", icon = "LINKED").deselect = True
-        layout.operator_menu_enum("curve.select_similar", "type", text="Similar")
+        layout.menu("VIEW3D_MT_select_edit_curve_select_similar")
 
         layout.separator()
 
@@ -978,7 +978,7 @@ class VIEW3D_MT_select_edit_surface(Menu):
         layout.operator("curve.select_linked", text="Linked", icon = "LINKED")
         layout.operator("curve.select_linked_pick", text="Linked Pick Select", icon = "LINKED").deselect = False
         layout.operator("curve.select_linked_pick", text="Linked Pick Deselect", icon = "LINKED").deselect = True
-        layout.operator_menu_enum("curve.select_similar", "type", text="Similar")
+        layout.menu("VIEW3D_MT_select_edit_curve_select_similar")
 
         layout.separator()
 
@@ -988,6 +988,17 @@ class VIEW3D_MT_select_edit_surface(Menu):
 
         layout.operator("curve.select_more", text = "More", icon = "SELECTMORE")
         layout.operator("curve.select_less", text = "Less", icon = "SELECTLESS")
+
+class VIEW3D_MT_select_edit_curve_select_similar(Menu):
+    bl_label = "Similar"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("curve.select_similar", text="Type", icon = "TYPE").type = 'TYPE'
+        layout.operator("curve.select_similar", text="Radius", icon = "RADIUS").type = 'RADIUS'
+        layout.operator("curve.select_similar", text="Weight", icon = "MOD_VERTEX_WEIGHT").type = 'WEIGHT'
+        layout.operator("curve.select_similar", text="Direction", icon = "SWITCH_DIRECTION").type = 'DIRECTION'
 
 
 class VIEW3D_MT_select_edit_text(Menu):
@@ -4200,6 +4211,7 @@ classes = (
     VIEW3D_MT_select_edit_curve_inverse,
     VIEW3D_MT_select_edit_curve,
     VIEW3D_MT_select_edit_surface,
+    VIEW3D_MT_select_edit_curve_select_similar,
     VIEW3D_MT_select_edit_text,
     VIEW3D_MT_select_edit_metaball_inverse,
     VIEW3D_MT_select_edit_metaball,
