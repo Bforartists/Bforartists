@@ -19,7 +19,7 @@
 # <pep8 compliant>
 
 import bpy
-from bpy.types import Header, Menu
+from bpy.types import Header, Menu, Panel
 
 ################################ Switch between the editors ##########################################
 
@@ -101,17 +101,6 @@ class NLA_MT_view(Menu):
         st = context.space_data
 
         layout.operator("nla.properties", icon='MENU_PANEL')
-
-        layout.separator()
-
-        layout.prop(st, "use_realtime_update")
-        layout.prop(st, "show_frame_indicator")
-
-        layout.prop(st, "show_seconds")
-        layout.prop(st, "show_locked_time")
-
-        layout.prop(st, "show_strip_curves")
-        layout.prop(st, "show_local_markers")
 
         layout.separator()
         layout.operator("anim.previewrange_set", icon='BORDER_RECT')
@@ -266,6 +255,29 @@ class NLA_MT_edit_snap(Menu):
         layout.operator("nla.snap", text="Nearest Second", icon = "SNAP_NEARESTSECOND").type= 'NEAREST_SECOND'
         layout.operator("nla.snap", text="Nearest Marker", icon = "SNAP_NEARESTMARKER").type= 'NEAREST_MARKER'
 
+class NLA_MT_view_view_options(Panel):
+    bl_label = "View Options"
+    bl_space_type = 'NLA_EDITOR'
+    bl_region_type = 'UI'
+
+    def draw(self, context):
+        layout = self.layout
+
+        st = context.space_data
+
+        layout.separator()
+
+        layout.prop(st, "use_realtime_update")
+        layout.prop(st, "show_frame_indicator")
+
+        layout.prop(st, "show_seconds")
+        layout.prop(st, "show_locked_time")
+
+        layout.prop(st, "show_strip_curves")
+        layout.prop(st, "show_local_markers")
+
+
+
 
 classes = (
     switch_editors_in_nla,
@@ -280,6 +292,7 @@ classes = (
     NLA_MT_edit_transform,
     NLA_MT_edit_move,
     NLA_MT_edit_snap,
+    NLA_MT_view_view_options,
 )
 
 if __name__ == "__main__":  # only for live edit.
