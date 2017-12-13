@@ -235,8 +235,6 @@ class GRAPH_MT_channel(Menu):
         layout.separator()
 
         layout.menu("GRAPH_MT_channel_settings_toggle")
-        layout.menu("GRAPH_MT_channel_settings_enable")
-        layout.menu("GRAPH_MT_channel_settings_disable")
 
         layout.separator()
 
@@ -413,31 +411,23 @@ class GRAPH_MT_channel_extrapolation(Menu):
 
 
 class GRAPH_MT_channel_settings_toggle(Menu):
-    bl_label = "Toggle Channel Settings"
+    bl_label = "Channel Settings"
 
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("anim.channels_setting_toggle", text = "Protect", icon = "LOCKED").type = 'PROTECT'
-        layout.operator("anim.channels_setting_toggle", text = "Mute", icon ="MUTE_IPO_ON").type = 'MUTE'
+        layout.operator("anim.channels_setting_toggle", text = "Toggle Protect", icon = "LOCKED").type = 'PROTECT'
+        layout.operator("anim.channels_setting_toggle", text = "Toggle Mute", icon ="MUTE_IPO_ON").type = 'MUTE'
 
-class GRAPH_MT_channel_settings_enable(Menu):
-    bl_label = "Enable Channel Settings"
+        layout.separator()
 
-    def draw(self, context):
-        layout = self.layout
+        layout.operator("anim.channels_setting_enable", text = "Enable Protect", icon = "LOCKED").type = 'PROTECT'
+        layout.operator("anim.channels_setting_enable", text = "Enable Mute", icon = "MUTE_IPO_ON").type = 'MUTE'
 
-        layout.operator("anim.channels_setting_enable", text = "Protect", icon = "LOCKED").type = 'PROTECT'
-        layout.operator("anim.channels_setting_enable", text = "Mute", icon = "MUTE_IPO_ON").type = 'MUTE'
+        layout.separator()
 
-class GRAPH_MT_channel_settings_disable(Menu):
-    bl_label = "Disable Channel Settings"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("anim.channels_setting_disable", text = "Protect", icon = "LOCKED").type = 'PROTECT'
-        layout.operator("anim.channels_setting_disable", text = "Mute", icon = "MUTE_IPO_ON").type = 'MUTE'
+        layout.operator("anim.channels_setting_disable", text = "Disable Protect", icon = "LOCKED").type = 'PROTECT'
+        layout.operator("anim.channels_setting_disable", text = "Disable Mute", icon = "MUTE_IPO_ON").type = 'MUTE'
         
 
 class GRAPH_MT_properties_view_options(bpy.types.Panel):
@@ -491,8 +481,6 @@ classes = (
     GRAPH_MT_channel_move,
     GRAPH_MT_channel_extrapolation,
     GRAPH_MT_channel_settings_toggle,
-    GRAPH_MT_channel_settings_enable,
-    GRAPH_MT_channel_settings_disable,
     GRAPH_MT_properties_view_options,
 )
 
