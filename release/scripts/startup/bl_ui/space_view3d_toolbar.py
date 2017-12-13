@@ -2610,19 +2610,7 @@ class VIEW3D_PT_tools_weightpaint_options(Panel, View3DPaintPanel):
         wpaint = tool_settings.weight_paint
 
         col = layout.column()
-        col.label("Falloff:")
-        row = col.row()
-        row.prop(wpaint, "falloff_shape", expand=True)
-        row = col.row()
-        row.prop(wpaint, "use_backface_culling")
-        row = col.row()
-        row.prop(wpaint, "use_normal_falloff")
-        sub = row.row()
-        sub.active = (wpaint.use_normal_falloff)
-        sub.prop(wpaint, "normal_angle", text="")
-        col = layout.column()
-        row = col.row()
-        row.prop(wpaint, "use_group_restrict")
+        col.prop(wpaint, "use_group_restrict")
 
         obj = context.weight_paint_object
         if obj.type == 'MESH':
@@ -2653,16 +2641,6 @@ class VIEW3D_PT_tools_vertexpaint(Panel, View3DPaintPanel):
         vpaint = toolsettings.vertex_paint
 
         col = layout.column()
-        col.label("Falloff:")
-        row = col.row()
-        row.prop(vpaint, "falloff_shape", expand=True)
-        row = col.row()
-        row.prop(vpaint, "use_backface_culling")
-        row = col.row()
-        row.prop(vpaint, "use_normal_falloff")
-        sub = row.row()
-        sub.active = (vpaint.use_normal_falloff)
-        sub.prop(vpaint, "normal_angle", text="")
 
         self.unified_paint_settings(col, context)
 
