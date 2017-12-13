@@ -224,10 +224,6 @@ class IMAGE_MT_brush(Menu):
         layout.prop(ups, "use_unified_size", text="Unified Size")
         layout.prop(ups, "use_unified_strength", text="Unified Strength")
         layout.prop(ups, "use_unified_color", text="Unified Color")
-        layout.separator()
-
-        # brush tool
-        layout.prop_menu_enum(brush, "image_tool")
 
 
 class IMAGE_MT_image(Menu):
