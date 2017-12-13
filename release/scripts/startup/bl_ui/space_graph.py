@@ -273,7 +273,6 @@ class GRAPH_MT_key(Menu):
 
         layout.separator()
         layout.menu("GRAPH_MT_key_keyframe")
-        layout.menu("GRAPH_MT_key_fmodfier_add")
         layout.operator("graph.sound_bake", icon = "BAKE_SOUND")
 
         layout.separator()
@@ -360,21 +359,6 @@ class GRAPH_MT_key_keyframe(Menu):
         layout.operator("graph.keyframe_insert", text = "Only Selected Channels", icon = "KEYFRAMES_INSERT").type = 'SEL'
         layout.operator("graph.keyframe_insert", text = "Active Channels at Cursor", icon = "KEYFRAMES_INSERT").type = 'CURSOR_ACTIVE'
         layout.operator("graph.keyframe_insert", text = "Selected Channels at Cursor", icon = "KEYFRAMES_INSERT").type = 'CURSOR_SEL'
-
-
-class GRAPH_MT_key_fmodfier_add(Menu):
-    bl_label = "Add F-Curve Modifier"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("graph.fmodifier_add", text = "Generator", icon = "GENERATOR_MODIFIER").type = 'GENERATOR'
-        layout.operator("graph.fmodifier_add", text = "Built-In Function", icon = "BUILTIN_MODIFIER").type = 'FNGENERATOR'
-        layout.operator("graph.fmodifier_add", text = "Envelope", icon = "ENVELOPE_MODIFIER").type = 'ENVELOPE'
-        layout.operator("graph.fmodifier_add", text = "Cycles", icon = "CYCLES_MODIFIER").type = 'CYCLES'
-        layout.operator("graph.fmodifier_add", text = "Noise", icon = "NOISE_MODIFIER").type = 'NOISE'
-        layout.operator("graph.fmodifier_add", text = "Limits", icon = "LIMIT_MODIFIER").type = 'LIMITS'
-        layout.operator("graph.fmodifier_add", text = "Stepped Interpolation", icon = "STEPPED_MODIFIER").type = 'STEPPED'
 
 class GRAPH_MT_key_handle_type(Menu):
     bl_label = "Handle Type"
@@ -475,7 +459,6 @@ classes = (
     GRAPH_MT_delete,
     GRAPH_MT_key_mirror,
     GRAPH_MT_key_keyframe,
-    GRAPH_MT_key_fmodfier_add,
     GRAPH_MT_key_handle_type,
     GRAPH_MT_channel_move,
     GRAPH_MT_channel_extrapolation,
