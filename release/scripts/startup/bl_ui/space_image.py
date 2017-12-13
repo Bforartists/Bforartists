@@ -220,10 +220,7 @@ class IMAGE_MT_brush(Menu):
         settings = toolsettings.image_paint
         brush = settings.brush
 
-        ups = context.tool_settings.unified_paint_settings
-        layout.prop(ups, "use_unified_size", text="Unified Size")
-        layout.prop(ups, "use_unified_strength", text="Unified Strength")
-        layout.prop(ups, "use_unified_color", text="Unified Color")
+        layout.label(text = "For addons")
 
 
 class IMAGE_MT_image(Menu):
@@ -498,7 +495,6 @@ class MASK_MT_editor_menus(Menu):
 
         show_uvedit = sima.show_uvedit
         show_maskedit = sima.show_maskedit
-        show_paint = sima.show_paint
 
         layout.menu("IMAGE_MT_view")
 
@@ -506,8 +502,6 @@ class MASK_MT_editor_menus(Menu):
             layout.menu("IMAGE_MT_select")
         if show_maskedit:
             layout.menu("MASK_MT_select")
-        if show_paint:
-            layout.menu("IMAGE_MT_brush")
 
         if ima and ima.is_dirty:
             layout.menu("IMAGE_MT_image", text="Image*")
@@ -1064,6 +1058,10 @@ class IMAGE_PT_tools_paint_options(BrushButtonsPanel, Panel):
         row.prop(ups, "use_unified_size", text="Size")
         row.prop(ups, "use_unified_strength", text="Strength")
         col.prop(ups, "use_unified_color", text="Color")
+
+
+        layout.label(text = "Addons Brush")
+        layout.menu("IMAGE_MT_brush")
 
 
 class IMAGE_PT_uv_sculpt_curve(Panel):
