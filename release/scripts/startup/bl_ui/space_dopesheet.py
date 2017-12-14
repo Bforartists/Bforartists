@@ -429,7 +429,8 @@ class DOPESHEET_MT_key(Menu):
         layout.separator()
 
         layout.operator_menu_enum("action.keyframe_type", "type", text="Keyframe Type")
-        layout.operator_menu_enum("action.handle_type", "type", text="Handle Type")
+        #layout.operator_menu_enum("action.handle_type", "type", text="Handle Type")
+        layout.menu("DOPESHEET_MT_key_handle_type")
         layout.operator_menu_enum("action.interpolation_type", "type", text="Interpolation Mode")
 
         layout.separator()
@@ -443,6 +444,17 @@ class DOPESHEET_MT_key(Menu):
         layout.operator("action.copy", text="Copy Keyframes", icon='COPYDOWN')
         layout.operator("action.paste", text="Paste Keyframes", icon='PASTEDOWN')
         layout.operator("action.paste", text="Paste Flipped", icon='PASTEFLIPDOWN').flipped = True
+
+class DOPESHEET_MT_key_handle_type(Menu):
+    bl_label = "Handle Type"
+
+    def draw(self, context):
+        layout = self.layout
+        layout.operator("action.handle_type", text= "Free", icon = "HANDLE_FREE").type = 'FREE'
+        layout.operator("action.handle_type", text= "Vector", icon = "HANDLE_VECTOR").type = 'VECTOR'
+        layout.operator("action.handle_type", text= "Aligned", icon = "HANDLE_ALIGN").type = 'ALIGNED'
+        layout.operator("action.handle_type", text= "Automatic", icon = "HANDLE_AUTO").type = 'AUTO'
+        layout.operator("action.handle_type", text= "Auto Clamped", icon = "HANDLE_AUTO_CLAMPED").type = 'AUTO_CLAMPED'
 
 
 class DOPESHEET_MT_key_transform(Menu):
@@ -568,6 +580,7 @@ classes = (
     DOPESHEET_MT_channel,
     DOPESHEET_MT_key_clean_channels,
     DOPESHEET_MT_key,
+    DOPESHEET_MT_key_handle_type,
     DOPESHEET_MT_key_transform,
     DOPESHEET_MT_gpencil_channel,
     DOPESHEET_MT_gpencil_frame,
