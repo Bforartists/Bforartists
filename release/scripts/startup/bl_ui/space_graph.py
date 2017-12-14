@@ -415,6 +415,7 @@ class GRAPH_MT_channel_settings_toggle(Menu):
 
 class GRAPH_MT_properties_view_options(bpy.types.Panel):
     bl_label = "View Options"
+    bl_category = "View"
     bl_space_type = 'GRAPH_EDITOR'
     bl_region_type = 'UI'
     
