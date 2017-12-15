@@ -242,17 +242,6 @@ class DOPESHEET_MT_view(Menu):
         st = context.space_data
 
         layout.operator("action.properties", icon='MENU_PANEL')
-        layout.separator()
-
-        layout.prop(st, "use_realtime_update")
-        layout.prop(st, "show_frame_indicator")
-        layout.prop(st, "show_sliders")
-        layout.prop(st, "show_group_colors")
-        layout.prop(st, "use_auto_merge_keyframes")
-        layout.prop(st, "use_marker_sync")
-
-        layout.prop(st, "show_seconds")
-        layout.prop(st, "show_locked_time")
 
         layout.separator()
         layout.operator("anim.previewrange_set", icon='BORDER_RECT')
@@ -566,6 +555,28 @@ class DOPESHEET_MT_key_snap(Menu):
         layout.operator("action.snap", text="Nearest Second", icon = "SNAP_NEARESTSECOND").type= 'NEAREST_SECOND'
         layout.operator("action.snap", text="Nearest Marker", icon = "SNAP_NEARESTMARKER").type= 'NEAREST_MARKER'
 
+class DOPESHEET_MT_view_view_options(bpy.types.Panel):
+    bl_label = "View Options"
+    bl_category = "View"
+    bl_space_type = 'DOPESHEET_EDITOR'
+    bl_region_type = 'UI'
+    
+    def draw(self, context):
+        sc = context.scene
+        layout = self.layout
+        
+        st = context.space_data
+
+        layout.prop(st, "use_realtime_update")
+        layout.prop(st, "show_frame_indicator")
+        layout.prop(st, "show_sliders")
+        layout.prop(st, "show_group_colors")
+        layout.prop(st, "use_auto_merge_keyframes")
+        layout.prop(st, "use_marker_sync")
+
+        layout.prop(st, "show_seconds")
+        layout.prop(st, "show_locked_time")
+
 
 classes = (
     switch_editors_in_dopesheet,
@@ -588,6 +599,7 @@ classes = (
     DOPESHEET_MT_channel_extrapolation,
     DOPESHEET_MT_key_mirror,
     DOPESHEET_MT_key_snap,
+    DOPESHEET_MT_view_view_options,
 )
 
 if __name__ == "__main__":  # only for live edit.
