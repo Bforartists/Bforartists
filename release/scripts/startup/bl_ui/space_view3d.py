@@ -3249,6 +3249,7 @@ class VIEW3D_MT_edit_armature(Menu):
         layout.menu("VIEW3D_MT_transform_armature")
         layout.operator("object.vertex_group_mirror", icon = "MIRROR_VERTEXGROUP")
         layout.menu("VIEW3D_MT_edit_armature_roll")
+        layout.menu("VIEW3D_MT_edit_recalc_roll")
 
         layout.separator()
 
@@ -3305,10 +3306,6 @@ class VIEW3D_MT_edit_armature_roll(Menu):
 
     def draw(self, context):
         layout = self.layout
-
-        layout.menu("VIEW3D_MT_edit_recalc_roll")
-
-        layout.separator()
 
         layout.operator("transform.transform", text="Set Roll", icon = "SET_ROLL").mode = 'BONE_ROLL'
         layout.operator("armature.roll_clear", icon = "CLEAR_ROLL")
