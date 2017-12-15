@@ -2687,10 +2687,6 @@ class VIEW3D_MT_edit_mesh(Menu):
 
         layout.separator()
 
-        layout.prop(toolsettings, "use_mesh_automerge")
-
-        layout.separator()
-
         layout.menu("VIEW3D_MT_edit_mesh_show_hide")
 
 class VIEW3D_MT_edit_mesh_sort_elements(Menu):
