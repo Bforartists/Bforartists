@@ -57,11 +57,11 @@ static const EnumPropertyItem beztriple_handle_type_items[] = {
 #endif
 		
 const EnumPropertyItem rna_enum_keyframe_handle_type_items[] = {
-	{HD_FREE, "FREE", 0, "Free", ""},
-	{HD_VECT, "VECTOR", 0, "Vector", ""},
-	{HD_ALIGN, "ALIGNED", 0, "Aligned", ""},
-	{HD_AUTO, "AUTO", 0, "Automatic", ""},
-	{HD_AUTO_ANIM, "AUTO_CLAMPED", 0, "Auto Clamped", "Auto handles clamped to not overshoot"},
+	{ HD_FREE, "FREE", ICON_HANDLE_FREE, "Free", "" },
+	{ HD_VECT, "VECTOR", ICON_HANDLE_VECTOR, "Vector", "" },
+	{ HD_ALIGN, "ALIGNED", ICON_HANDLE_ALIGN, "Aligned", "" },
+	{ HD_AUTO, "AUTO", ICON_HANDLE_AUTO, "Automatic", "" },
+	{ HD_AUTO_ANIM, "AUTO_CLAMPED", ICON_HANDLE_AUTO_CLAMPED, "Auto Clamped", "Auto handles clamped to not overshoot" },
 	{0, NULL, 0, NULL, NULL}
 };
 
