@@ -19,7 +19,7 @@
 # <pep8 compliant>
 
 import bpy
-from bpy.types import Header, Menu
+from bpy.types import Header, Menu, Panel
 
 
 ################################ Switch between the editors ##########################################
@@ -266,24 +266,29 @@ class GRAPH_MT_key(Menu):
     def draw(self, context):
         layout = self.layout
 
+        layout.operator("graph.copy", text="Copy Keyframes", icon='COPYDOWN')
+        layout.operator("graph.paste", text="Paste Keyframes", icon='PASTEDOWN')
+        layout.operator("graph.paste", text="Paste Flipped", icon='PASTEFLIPDOWN').flipped = True
+
+        layout.separator()
+
+        layout.operator("graph.duplicate_move", icon = "DUPLICATE")
+        layout.operator("graph.delete", icon = "DELETE")
+
+        layout.separator()
+
         layout.menu("GRAPH_MT_key_transform", text="Transform")
 
         layout.menu("GRAPH_MT_key_snap")
         layout.menu("GRAPH_MT_key_mirror")
 
         layout.separator()
+
         layout.menu("GRAPH_MT_key_keyframe")
-        layout.operator("graph.sound_bake", icon = "BAKE_SOUND")
+        layout.operator("graph.sound_bake", icon = "BAKE_SOUND")   
 
         layout.separator()
-        layout.operator("graph.duplicate_move", icon = "DUPLICATE")
-        layout.operator("graph.delete", icon = "DELETE")
 
-        layout.separator()
-        layout.menu("GRAPH_MT_key_handle_type")
-        layout.operator_menu_enum("graph.easing_type", "type", text="Easing Type")
-
-        layout.separator()
         layout.operator("graph.clean", icon = "CLEAN_KEYS").channels = False
         layout.operator("graph.clean", text="Clean Channels", icon = "CLEAN_CHANNELS").channels = True
         layout.operator("graph.smooth", icon = "SMOOTH_KEYFRAMES")
@@ -291,11 +296,7 @@ class GRAPH_MT_key(Menu):
         layout.operator("graph.bake", icon = "BAKE_CURVE")
 
         layout.separator()
-        layout.operator("graph.copy", text="Copy Keyframes", icon='COPYDOWN')
-        layout.operator("graph.paste", text="Paste Keyframes", icon='PASTEDOWN')
-        layout.operator("graph.paste", text="Paste Flipped", icon='PASTEFLIPDOWN').flipped = True
-
-        layout.separator()
+        
         layout.operator("graph.euler_filter", text="Discontinuity (Euler) Filter", icon = "DISCONTINUE_EULER")
 
 class GRAPH_MT_key_snap(Menu):
@@ -413,7 +414,7 @@ class GRAPH_MT_channel_settings_toggle(Menu):
         layout.operator("anim.channels_setting_disable", text = "Disable Mute", icon = "MUTE_IPO_ON").type = 'MUTE'
         
 
-class GRAPH_MT_properties_view_options(bpy.types.Panel):
+class GRAPH_MT_properties_view_options(Panel):
     bl_label = "View Options"
     bl_category = "View"
     bl_space_type = 'GRAPH_EDITOR'
@@ -441,8 +442,18 @@ class GRAPH_MT_properties_view_options(bpy.types.Panel):
         layout.prop(st, "show_seconds")
         layout.prop(st, "show_locked_time")
 
-
-
+class GRAPH_MT_properties_key_options(Panel):
+    bl_label = "Keyframe Options"
+    bl_category = "F-Curve"
+    bl_space_type = 'GRAPH_EDITOR'
+    bl_region_type = 'UI'
+    
+    def draw(self, context):
+        sc = context.scene
+        layout = self.layout
+        
+        layout.menu("GRAPH_MT_key_handle_type")
+        layout.operator_menu_enum("graph.easing_type", "type", text="Easing Type")
 
 classes = (
     switch_editors_in_graph,
@@ -465,6 +476,7 @@ classes = (
     GRAPH_MT_channel_extrapolation,
     GRAPH_MT_channel_settings_toggle,
     GRAPH_MT_properties_view_options,
+    GRAPH_MT_properties_key_options,
 )
 
 if __name__ == "__main__":  # only for live edit.
