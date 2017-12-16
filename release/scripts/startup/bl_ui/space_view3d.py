@@ -170,7 +170,8 @@ class VIEW3D_MT_editor_menus(Menu):
         elif obj:
             if mode_string != 'PAINT_TEXTURE':
                 layout.menu("VIEW3D_MT_%s" % mode_string.lower())
-            if mode_string in {'SCULPT', 'PAINT_VERTEX', 'PAINT_WEIGHT', 'PAINT_TEXTURE'}:
+            #if mode_string in {'SCULPT', 'PAINT_VERTEX', 'PAINT_WEIGHT', 'PAINT_TEXTURE'}: # bfa - deactivated the brush menu in all other modes for now.
+            if mode_string in {'SCULPT'}:
                 layout.menu("VIEW3D_MT_brush")
             if mode_string == 'SCULPT':
                 layout.menu("VIEW3D_MT_hide_mask")
@@ -2063,6 +2064,11 @@ class VIEW3D_MT_facemask_showhide(Menu):
 
 
 # ********** Brush menu **********
+
+# bfa deactivated the brush menu in all other modes but sculpting. 
+# See class VIEW3D_MT_editor_menus at the beginning of the script.
+# This class may need further cleanups therefore.
+
 class VIEW3D_MT_brush(Menu):
     bl_label = "Brush"
 
@@ -2082,7 +2088,7 @@ class VIEW3D_MT_brush(Menu):
             return
 
         # brush paint modes
-        layout.menu("VIEW3D_MT_brush_paint_modes")
+        #layout.menu("VIEW3D_MT_brush_paint_modes")
 
         # TODO: still missing a lot of brush options here #### bfa - FUCK NO! NOT HERE!
 
