@@ -19,7 +19,7 @@
 # <pep8 compliant>
 
 import bpy
-from bpy.types import Header, Menu
+from bpy.types import Header, Menu, Panel
 
 
 #######################################
@@ -363,8 +363,6 @@ class DOPESHEET_MT_channel(Menu):
         layout.separator()
 
         layout.menu("GRAPH_MT_channel_settings_toggle")#bfa - menu comes from space_graph
-        layout.menu("GRAPH_MT_channel_settings_enable")#bfa - menu comes from space_graph
-        layout.menu("GRAPH_MT_channel_settings_disable")#bfa - menu comes from space_graph
 
         layout.separator()
         layout.operator("anim.channels_editable_toggle", icon = "LOCKED")
@@ -398,6 +396,17 @@ class DOPESHEET_MT_key(Menu):
     def draw(self, context):
         layout = self.layout
 
+        layout.operator("action.copy", text="Copy Keyframes", icon='COPYDOWN')
+        layout.operator("action.paste", text="Paste Keyframes", icon='PASTEDOWN')
+        layout.operator("action.paste", text="Paste Flipped", icon='PASTEFLIPDOWN').flipped = True
+
+        layout.separator()
+
+        layout.operator("action.duplicate_move", icon = "DUPLICATE")
+        layout.operator("action.delete", icon = "DELETE")
+
+        layout.separator()
+
         layout.menu("DOPESHEET_MT_key_transform", text="Transform")
         layout.menu("DOPESHEET_MT_key_snap")
         layout.menu("DOPESHEET_MT_key_mirror")
@@ -408,19 +417,7 @@ class DOPESHEET_MT_key(Menu):
 
         layout.separator()
 
-        layout.operator("action.frame_jump", icon = 'JUMP_TO_KEYFRAMES')
-
-        layout.separator()
-
-        layout.operator("action.duplicate_move", icon = "DUPLICATE")
-        layout.operator("action.delete", icon = "DELETE")
-
-        layout.separator()
-
-        layout.operator_menu_enum("action.keyframe_type", "type", text="Keyframe Type")
-        #layout.operator_menu_enum("action.handle_type", "type", text="Handle Type")
-        layout.menu("DOPESHEET_MT_key_handle_type")
-        layout.operator_menu_enum("action.interpolation_type", "type", text="Interpolation Mode")
+        layout.operator("action.frame_jump", icon = 'JUMP_TO_KEYFRAMES')     
 
         layout.separator()
 
@@ -428,12 +425,7 @@ class DOPESHEET_MT_key(Menu):
         layout.operator("action.clean_channels", text="Clean Channels", icon = "CLEAN_CHANNELS") # bfa -  separated tooltips
         layout.operator("action.sample", icon = "SAMPLE_KEYFRAMES")
 
-        layout.separator()
-
-        layout.operator("action.copy", text="Copy Keyframes", icon='COPYDOWN')
-        layout.operator("action.paste", text="Paste Keyframes", icon='PASTEDOWN')
-        layout.operator("action.paste", text="Paste Flipped", icon='PASTEFLIPDOWN').flipped = True
-
+        
 class DOPESHEET_MT_key_handle_type(Menu):
     bl_label = "Handle Type"
 
@@ -578,6 +570,20 @@ class DOPESHEET_MT_view_view_options(bpy.types.Panel):
         layout.prop(st, "show_locked_time")
 
 
+class DOPESHEET_MT_key_properties(Panel):
+    bl_label = "Keyframe Options"
+    bl_category = "F-Curve"
+    bl_space_type = 'DOPESHEET_EDITOR'
+    bl_region_type = 'UI'
+    
+    def draw(self, context):
+        sc = context.scene
+        layout = self.layout
+        
+        layout.operator_menu_enum("action.keyframe_type", "type", text="Keyframe Type")
+        layout.menu("DOPESHEET_MT_key_handle_type")
+        layout.operator_menu_enum("action.interpolation_type", "type", text="Interpolation Mode")
+
 classes = (
     switch_editors_in_dopesheet,
     DOPESHEET_HT_header,
@@ -600,6 +606,7 @@ classes = (
     DOPESHEET_MT_key_mirror,
     DOPESHEET_MT_key_snap,
     DOPESHEET_MT_view_view_options,
+    DOPESHEET_MT_key_properties,
 )
 
 if __name__ == "__main__":  # only for live edit.
