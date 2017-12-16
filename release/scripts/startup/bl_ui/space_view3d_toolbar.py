@@ -2476,6 +2476,10 @@ class VIEW3D_PT_sculpt_options(Panel, View3DPaintPanel):
 
         self.unified_paint_settings(layout, context)
 
+        # brush paint modes
+        layout.label("Enabled Brush Modes:")
+        layout.menu("VIEW3D_MT_brush_paint_modes")
+
 
 class VIEW3D_PT_sculpt_symmetry(Panel, View3DPaintPanel):
     bl_category = "Tools"
@@ -2626,6 +2630,10 @@ class VIEW3D_PT_tools_weightpaint_options(Panel, View3DPaintPanel):
 
         self.unified_paint_settings(col, context)
 
+        # brush paint modes
+        layout.label("Enabled Brush Modes:")
+        layout.menu("VIEW3D_MT_brush_paint_modes")
+
 # ********** default tools for vertex-paint ****************
 
 
@@ -2643,6 +2651,10 @@ class VIEW3D_PT_tools_vertexpaint(Panel, View3DPaintPanel):
         col = layout.column()
 
         self.unified_paint_settings(col, context)
+
+        # brush paint modes
+        layout.label("Enabled Brush Modes:")
+        layout.menu("VIEW3D_MT_brush_paint_modes")
 
 
 class VIEW3D_PT_tools_vertexpaint_symmetry(Panel, View3DPaintPanel):
@@ -2738,6 +2750,10 @@ class VIEW3D_PT_tools_projectpaint(View3DPaintPanel, Panel):
         layout.prop(ipaint, "dither")
         self.unified_paint_settings(layout, context)
 
+        # brush paint modes
+        layout.label("Enabled Brush Modes:")
+        layout.menu("VIEW3D_MT_brush_paint_modes")
+
 
 class VIEW3D_PT_imagepaint_options(View3DPaintPanel):
     bl_category = "Options"
@@ -2752,6 +2768,10 @@ class VIEW3D_PT_imagepaint_options(View3DPaintPanel):
 
         col = layout.column()
         self.unified_paint_settings(col, context)
+
+        # brush paint modes
+        layout.label("Enabled Brush Modes:")
+        layout.menu("VIEW3D_MT_brush_paint_modes")
 
 
 class VIEW3D_MT_tools_projectpaint_stencil(Menu):
