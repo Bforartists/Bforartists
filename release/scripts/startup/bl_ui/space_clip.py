@@ -1224,13 +1224,13 @@ class CLIP_MT_view(Menu):
             layout.operator("clip.tools", icon='MENU_PANEL')
             layout.separator()
 
-            layout.operator("clip.view_selected")
-            layout.operator("clip.view_all")
-            layout.operator("clip.view_all", text="View Fit").fit_view = True
+            layout.operator("clip.view_selected", icon = "VIEW_SELECTED")
+            layout.operator("clip.view_all", icon = "VIEWALL")
+            layout.operator("clip.view_all", text="View Fit", icon = "VIEW_FIT").fit_view = True
 
             layout.separator()
-            layout.operator("clip.view_zoom_in")
-            layout.operator("clip.view_zoom_out")
+            layout.operator("clip.view_zoom_in", icon = "ZOOM_IN")
+            layout.operator("clip.view_zoom_out", icon = "ZOOM_OUT")
 
             layout.separator()
 
@@ -1238,14 +1238,12 @@ class CLIP_MT_view(Menu):
 
             text = iface_("Zoom %d:%d")
             for a, b in ratios:
-                layout.operator("clip.view_zoom_ratio",
-                                text=text % (a, b),
-                                translate=False).ratio = a / b
+                layout.operator("clip.view_zoom_ratio", text=text % (a, b), translate=False, icon = "ZOOM_SET").ratio = a / b
         else:
             if sc.view == 'GRAPH':
                 layout.operator_context = 'INVOKE_REGION_PREVIEW'
                 layout.operator("clip.graph_center_current_frame")
-                layout.operator("clip.graph_view_all")
+                layout.operator("clip.graph_view_all", icon = "VIEWALL")
                 layout.operator_context = 'INVOKE_DEFAULT'
 
                 layout.separator()
@@ -1253,13 +1251,13 @@ class CLIP_MT_view(Menu):
             layout.prop(sc, "show_seconds")
             layout.prop(sc, "show_locked_time")
 
-            layout.operator("clip.dopesheet_view_all")    
+            layout.operator("clip.dopesheet_view_all", icon = "VIEWALL")
 
         layout.separator()
 
-        layout.operator("screen.area_dupli")
-        layout.operator("screen.screen_full_area")
-        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area").use_hide_panels = True
+        layout.operator("screen.area_dupli", icon = "NEW_WINDOW")      
+        layout.operator("screen.screen_full_area", text="Toggle Fullscreen Area", icon = "MAXIMIZE_AREA").use_hide_panels = True
+        layout.operator("screen.screen_full_area", icon = "FULLSCREEN_AREA")
 
 
 class CLIP_MT_clip(Menu):
