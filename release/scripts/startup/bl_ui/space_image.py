@@ -85,26 +85,12 @@ class IMAGE_MT_view(Menu):
 
         sima = context.space_data
         uv = sima.uv_editor
-        toolsettings = context.tool_settings
-        paint = toolsettings.image_paint
 
         show_uvedit = sima.show_uvedit
         show_render = sima.show_render
 
         layout.operator("image.properties", icon='MENU_PANEL')
         layout.operator("image.toolshelf", icon='MENU_PANEL')
-
-        layout.separator()
-
-        layout.prop(sima, "use_realtime_update")
-        if show_uvedit:
-            layout.prop(toolsettings, "show_uv_local_view")
-
-        layout.prop(uv, "show_other_objects")
-        layout.prop(uv, "show_metadata")
-        if paint.brush and (context.image_paint_object or sima.mode == 'PAINT'):
-            layout.prop(uv, "show_texpaint")
-            layout.prop(toolsettings, "show_uv_local_view", text="Show Same Material")
 
         layout.separator()
 
@@ -640,6 +626,7 @@ class IMAGE_PT_view_properties(Panel):
     def poll(cls, context):
         sima = context.space_data
         return (sima and (sima.image or sima.show_uvedit))
+        
 
     def draw(self, context):
         layout = self.layout
@@ -651,6 +638,9 @@ class IMAGE_PT_view_properties(Panel):
         show_uvedit = sima.show_uvedit
         show_maskedit = sima.show_maskedit
         uvedit = sima.uv_editor
+
+        toolsettings = context.tool_settings
+        paint = toolsettings.image_paint
 
         split = layout.split()
 
@@ -703,7 +693,15 @@ class IMAGE_PT_view_properties(Panel):
             render_slot = ima.render_slots.active
             layout.prop(render_slot, "name", text="Slot Name")
 
+        layout.prop(sima, "use_realtime_update")
+        if show_uvedit:
+            layout.prop(toolsettings, "show_uv_local_view")
 
+        layout.prop(uvedit, "show_other_objects")
+        layout.prop(uvedit, "show_metadata")
+        if paint.brush and (context.image_paint_object or sima.mode == 'PAINT'):
+            layout.prop(uvedit, "show_texpaint")
+            layout.prop(toolsettings, "show_uv_local_view", text="Show Same Material")
 
 
 class IMAGE_PT_tools_align_uvs(Panel, UVToolsPanel):
