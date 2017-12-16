@@ -831,6 +831,7 @@ class CLIP_PT_display(CLIP_PT_clip_view_panel, Panel):
         col.prop(sc.clip_user, "use_render_undistorted", text="Render Undistorted")
         col.prop(sc, "lock_selection", text="Lock to Selection")
         col.prop(sc, "show_stable", text="Display Stabilization")
+
         if sc.view == 'GRAPH':
             col.prop(sc, "lock_time_cursor")
         row = col.row(align=True)
@@ -842,6 +843,7 @@ class CLIP_PT_display(CLIP_PT_clip_view_panel, Panel):
             col.label(text="Display Aspect Ratio:")
             row = col.row()
             row.prop(clip, "display_aspect", text="")
+            layout.prop(sc, "show_metadata")
 
 
 class CLIP_PT_marker_display(CLIP_PT_clip_view_panel, Panel):
@@ -1230,8 +1232,6 @@ class CLIP_MT_view(Menu):
             layout.operator("clip.view_zoom_in")
             layout.operator("clip.view_zoom_out")
 
-            layout.separator()
-            layout.prop(sc, "show_metadata")
             layout.separator()
 
             ratios = ((1, 8), (1, 4), (1, 2), (1, 1), (2, 1), (4, 1), (8, 1))
