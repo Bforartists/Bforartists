@@ -65,13 +65,13 @@ namespace {
 // TODO(sergey): De-duplicate with depsgraph_tag,cc
 void lib_id_recalc_tag(Main *bmain, ID *id)
 {
-	id->tag |= LIB_TAG_ID_RECALC;
+	id->recalc |= ID_RECALC;
 	DEG_id_type_tag(bmain, GS(id->name));
 }
 
 void lib_id_recalc_data_tag(Main *bmain, ID *id)
 {
-	id->tag |= LIB_TAG_ID_RECALC_DATA;
+	id->recalc |= ID_RECALC_DATA;
 	DEG_id_type_tag(bmain, GS(id->name));
 }
 
@@ -176,6 +176,7 @@ void deg_graph_flush_updates(Main *bmain, Depsgraph *graph)
 						case DEG_NODE_TYPE_TIMESOURCE:
 						case DEG_NODE_TYPE_ID_REF:
 						case DEG_NODE_TYPE_SEQUENCER:
+						case NUM_DEG_NODE_TYPES:
 							/* Ignore, does not translate to object component. */
 							BLI_assert(!"This should never happen!");
 							break;
