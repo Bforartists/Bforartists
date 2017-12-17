@@ -138,6 +138,7 @@ typedef struct Object {
 	
 	bAnimVizSettings avs;	/* settings for visualization of object-transform animation */
 	bMotionPath *mpath;		/* motion path cache for this object */
+	void *pad1;
 	
 	ListBase constraintChannels  DNA_DEPRECATED; // XXX deprecated... old animation system
 	ListBase effect  DNA_DEPRECATED;             // XXX deprecated... keep for readfile
@@ -254,8 +255,6 @@ typedef struct Object {
 	int gameflag;
 	int gameflag2;
 
-	struct BulletSoftBody *bsoft;	/* settings for game engine bullet soft body */
-
 	char restrictflag;		/* for restricting view, select, render etc. accessible in outliner */
 	char recalc;			/* dependency flag */
 	short softflag;			/* softbody settings */
@@ -266,6 +265,7 @@ typedef struct Object {
 	ListBase hooks  DNA_DEPRECATED;				// XXX deprecated... old animation system
 	ListBase particlesystem;	/* particle systems */
 	
+	struct BulletSoftBody *bsoft;	/* settings for game engine bullet soft body */
 	struct PartDeflect *pd;		/* particle deflector/attractor/collision data */
 	struct SoftBody *soft;		/* if exists, saved in file */
 	struct Group *dup_group;	/* object duplicator for group */
@@ -295,6 +295,7 @@ typedef struct Object {
 
 	float ima_ofs[2];		/* offset for image empties */
 	ImageUser *iuser;		/* must be non-null when oject is an empty image */
+	void *pad3;
 
 	ListBase lodlevels;		/* contains data for levels of detail */
 	LodLevel *currentlod;
