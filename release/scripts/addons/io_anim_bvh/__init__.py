@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -211,11 +211,11 @@ class ExportBVH(bpy.types.Operator, ExportHelper):
 
 
 def menu_func_import(self, context):
-    self.layout.operator(ImportBVH.bl_idname, text="Motion Capture (.bvh)")
+    self.layout.operator(ImportBVH.bl_idname, text="Motion Capture (.bvh)", icon='LOAD_BVH')
 
 
 def menu_func_export(self, context):
-    self.layout.operator(ExportBVH.bl_idname, text="Motion Capture (.bvh)")
+    self.layout.operator(ExportBVH.bl_idname, text="Motion Capture (.bvh)", icon='SAVE_BVH')
 
 
 def register():
