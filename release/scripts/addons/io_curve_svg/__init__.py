@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -62,8 +62,7 @@ class ImportSVG(bpy.types.Operator, ImportHelper):
 
 
 def menu_func_import(self, context):
-    self.layout.operator(ImportSVG.bl_idname,
-        text="Scalable Vector Graphics (.svg)")
+    self.layout.operator(ImportSVG.bl_idname, text="Scalable Vector Graphics (.svg)", icon='LOAD_SVG')
 
 
 def register():
