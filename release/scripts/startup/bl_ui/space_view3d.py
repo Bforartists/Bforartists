@@ -1711,6 +1711,9 @@ class VIEW3D_MT_object(Menu):
         layout.operator("object.duplicate_move_linked", icon = "DUPLICATE")
         layout.operator("object.delete_global", text="Delete Global", icon = "DELETE") # bfa - separated tooltip
         layout.operator("object.delete", text="Delete...", icon = "DELETE").use_global = False
+
+        layout.separator()
+
         layout.operator("object.make_dupli_face", icon = "MAKEDUPLIFACE")
 
         layout.separator()
@@ -1726,12 +1729,6 @@ class VIEW3D_MT_object(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_object_game")
-
-        layout.separator()
-
-        layout.operator("object.data_transfer", icon ='TRANSFER_DATA')
-        layout.operator("object.datalayout_transfer", icon ='TRANSFER_DATA_LAYOUT')
-        layout.operator("object.join_uvs", icon ='TRANSFER_UV')
 
         layout.separator()
 
