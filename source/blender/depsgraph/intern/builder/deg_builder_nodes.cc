@@ -105,9 +105,11 @@ extern "C" {
 #include "intern/builder/deg_builder.h"
 #include "intern/nodes/deg_node.h"
 #include "intern/nodes/deg_node_component.h"
+#include "intern/nodes/deg_node_id.h"
 #include "intern/nodes/deg_node_operation.h"
 #include "intern/depsgraph_types.h"
 #include "intern/depsgraph_intern.h"
+
 #include "util/deg_util_foreach.h"
 
 namespace DEG {
@@ -755,7 +757,7 @@ void DepsgraphNodeBuilder::build_obdata_geom(Object *object)
 
 	// TODO: "Done" operation
 
-	/* Cloyth modifier. */
+	/* Cloth modifier. */
 	LINKLIST_FOREACH (ModifierData *, md, &object->modifiers) {
 		if (md->type == eModifierType_Cloth) {
 			build_cloth(object);
