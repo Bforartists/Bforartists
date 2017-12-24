@@ -1718,7 +1718,6 @@ class VIEW3D_MT_object(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_object_track")
         layout.menu("VIEW3D_MT_object_constraints")
 
         layout.separator()
@@ -1950,26 +1949,6 @@ class VIEW3D_MT_object_apply(Menu):
         layout.operator("object.duplicates_make_real", icon = "MAKEDUPLIREAL")
 
 
-class VIEW3D_MT_object_track(Menu):
-    bl_label = "Track"
-
-    def draw(self, context):
-        layout = self.layout
-
-        #layout.operator_enum("object.track_set", "type")
-        #layout.separator()
-        #layout.operator_enum("object.track_clear", "type")
-
-        #layout.separator()
-
-        layout.operator("object.track_set", text= "Damped Track Constraint", icon = "CONSTRAINT").type = 'DAMPTRACK'
-        layout.operator("object.track_set", text= "Track to Constraint", icon = "CONSTRAINT").type = 'TRACKTO'
-        layout.operator("object.track_set", text= "Lock Track Constraint", icon = "CONSTRAINT").type = 'LOCKTRACK'
-        layout.separator()
-        layout.operator("object.track_clear", text= "Clear Track", icon = "CLEAR_TRACK").type = 'CLEAR'
-        layout.operator("object.track_clear", text= "Clear Track - Keep Transformation", icon = "CLEAR_TRACK").type = 'CLEAR_KEEP_TRANSFORM'
-
-
 class VIEW3D_MT_object_constraints(Menu):
     bl_label = "Constraints"
 
@@ -1979,6 +1958,11 @@ class VIEW3D_MT_object_constraints(Menu):
         layout.operator("object.constraint_add_with_targets", icon = "CONSTRAINT_DATA")
         layout.operator("object.constraints_copy", icon = "COPYDOWN")
         layout.operator("object.constraints_clear", icon = "CLEAR_CONSTRAINT")
+
+        layout.separator()
+
+        layout.operator("object.track_clear", text= "Clear Track", icon = "CLEAR_TRACK").type = 'CLEAR'
+        layout.operator("object.track_clear", text= "Clear Track - Keep Transformation", icon = "CLEAR_TRACK").type = 'CLEAR_KEEP_TRANSFORM'
 
 
 class VIEW3D_MT_object_quick_effects(Menu):
@@ -4237,7 +4221,6 @@ classes = (
     VIEW3D_MT_object_clear,
     VIEW3D_MT_object_specials,
     VIEW3D_MT_object_apply,
-    VIEW3D_MT_object_track,
     VIEW3D_MT_object_constraints,
     VIEW3D_MT_object_quick_effects,
     VIEW3D_subdivision_set,
