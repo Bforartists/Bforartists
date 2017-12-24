@@ -24,48 +24,23 @@
  * ***** END GPL LICENSE BLOCK *****
  */
 
-/** \file blender/depsgraph/intern/depsgraph_query.cc
+/** \file blender/depsgraph/intern/nodes/deg_node_time.cc
  *  \ingroup depsgraph
- *
- * Implementation of Querying and Filtering API's
  */
 
-#include "MEM_guardedalloc.h"
-
-extern "C" {
-#include "BKE_idcode.h"
-#include "BKE_main.h"
-} /* extern "C" */
-
-#include "DEG_depsgraph_query.h"
+#include "intern/nodes/deg_node_time.h"
 
 #include "intern/depsgraph_intern.h"
-#include "intern/nodes/deg_node_id.h"
+#include "util/deg_util_foreach.h"
 
-bool DEG_id_type_tagged(Main *bmain, short idtype)
+namespace DEG {
+
+void TimeSourceDepsNode::tag_update(Depsgraph *graph)
 {
-	return bmain->id_tag_update[BKE_idcode_to_index(idtype)] != 0;
+	foreach (DepsRelation *rel, outlinks) {
+		DepsNode *node = rel->to;
+		node->tag_update(graph);
+	}
 }
 
-short DEG_get_eval_flags_for_id(Depsgraph *graph, ID *id)
-{
-	if (graph == NULL) {
-		/* Happens when converting objects to mesh from a python script
-		 * after modifying scene graph.
-		 *
-		 * Currently harmless because it's only called for temporary
-		 * objects which are out of the DAG anyway.
-		 */
-		return 0;
-	}
-
-	DEG::Depsgraph *deg_graph = reinterpret_cast<DEG::Depsgraph *>(graph);
-
-	DEG::IDDepsNode *id_node = deg_graph->find_id_node(id);
-	if (id_node == NULL) {
-		/* TODO(sergey): Does it mean we need to check set scene? */
-		return 0;
-	}
-
-	return id_node->eval_flags;
-}
+}  // namespace DEG
