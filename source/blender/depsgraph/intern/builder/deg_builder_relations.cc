@@ -103,7 +103,9 @@ extern "C" {
 
 #include "intern/nodes/deg_node.h"
 #include "intern/nodes/deg_node_component.h"
+#include "intern/nodes/deg_node_id.h"
 #include "intern/nodes/deg_node_operation.h"
+#include "intern/nodes/deg_node_time.h"
 
 #include "intern/depsgraph_intern.h"
 #include "intern/depsgraph_types.h"
@@ -898,7 +900,7 @@ void DepsgraphRelationBuilder::build_animdata(ID *id)
 	/* Animation curves and NLA. */
 	build_animdata_curves(id);
 	/* Drivers. */
-	build_animdata_drievrs(id);
+	build_animdata_drivers(id);
 }
 
 void DepsgraphRelationBuilder::build_animdata_curves(ID *id)
@@ -967,7 +969,7 @@ void DepsgraphRelationBuilder::build_animdata_curves_targets(ID *id)
 	}
 }
 
-void DepsgraphRelationBuilder::build_animdata_drievrs(ID *id)
+void DepsgraphRelationBuilder::build_animdata_drivers(ID *id)
 {
 	AnimData *adt = BKE_animdata_from_id(id);
 	if (adt == NULL) {
@@ -1386,7 +1388,7 @@ void DepsgraphRelationBuilder::build_particles(Object *object)
 			if (part->dup_ob->type == OB_MBALL) {
 				ComponentKey dup_geometry_key(&part->dup_ob->id,
 				                              DEG_NODE_TYPE_GEOMETRY);
-				add_relation(psys_key,
+				add_relation(obdata_ubereval_key,
 				             dup_geometry_key,
 				             "Particle MBall Visualization");
 			}
@@ -1791,7 +1793,8 @@ void DepsgraphRelationBuilder::build_gpencil(bGPdata *gpd)
 	// TODO: parent object (when that feature is implemented)
 }
 
-void DepsgraphRelationBuilder::build_cachefile(CacheFile *cache_file) {
+void DepsgraphRelationBuilder::build_cachefile(CacheFile *cache_file)
+{
 	/* Animation. */
 	build_animdata(&cache_file->id);
 }
