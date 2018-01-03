@@ -64,50 +64,42 @@ class NodesToolshelfInput_connect(bpy.types.Panel):
         user_preferences = context.user_preferences
         addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
 
-#--------------------------------------------------------------------- Shader Node Tree --------------------------------------------------------------------------------
+        ##### Textbuttons
 
-        if context.space_data.tree_type == 'ShaderNodeTree':
+        if not addon_prefs.Node_text_or_icon:
 
-            ##### Textbuttons
-
-            if not addon_prefs.Node_text_or_icon:
-
-                ##### --------------------------------- Connect ------------------------------------------- ####
-
-                col = layout.column(align=True)      
+            col = layout.column(align=True)      
         
-                props = col.operator("node.add_node", text=" Add              ", icon = "NODE_ADD_SHADER")
-                props.use_transform = True
-                props.type = "ShaderNodeAddShader" 
+            props = col.operator("node.add_node", text=" Add              ", icon = "NODE_ADD_SHADER")
+            props.use_transform = True
+            props.type = "ShaderNodeAddShader" 
 
-                props = col.operator("node.add_node", text=" Mix            ", icon = "NODE_MIXSHADER")
-                props.use_transform = True
-                props.type = "ShaderNodeMixShader"   
+            props = col.operator("node.add_node", text=" Mix            ", icon = "NODE_MIXSHADER")
+            props.use_transform = True
+            props.type = "ShaderNodeMixShader"   
 
-                props = col.operator("node.add_node", text=" Normal Map     ", icon = "NODE_NORMALMAP")
-                props.use_transform = True
-                props.type = "ShaderNodeNormalMap"
+            props = col.operator("node.add_node", text=" Normal Map     ", icon = "NODE_NORMALMAP")
+            props.use_transform = True
+            props.type = "ShaderNodeNormalMap"
 
-            #### Icon Buttons
+        #### Icon Buttons
 
-            else:
+        else:
 
-                ##### --------------------------------- Connect ------------------------------------------- ####
-
-                row = layout.row()
-                row.alignment = 'LEFT'        
+            row = layout.row()
+            row.alignment = 'LEFT'        
         
-                props = row.operator("node.add_node", text = "", icon = "NODE_ADD_SHADER")
-                props.use_transform = True
-                props.type = "ShaderNodeAddShader"
+            props = row.operator("node.add_node", text = "", icon = "NODE_ADD_SHADER")
+            props.use_transform = True
+            props.type = "ShaderNodeAddShader"
 
-                props = row.operator("node.add_node", text = "", icon = "NODE_MIXSHADER")
-                props.use_transform = True
-                props.type = "ShaderNodeMixShader"
+            props = row.operator("node.add_node", text = "", icon = "NODE_MIXSHADER")
+            props.use_transform = True
+            props.type = "ShaderNodeMixShader"
 
-                props = row.operator("node.add_node", text = "", icon = "NODE_NORMALMAP")
-                props.use_transform = True
-                props.type = "ShaderNodeNormalMap"
+            props = row.operator("node.add_node", text = "", icon = "NODE_NORMALMAP")
+            props.use_transform = True
+            props.type = "ShaderNodeNormalMap"
 
 #Input nodes tab, textures common panel. All modes
 class NodesToolshelfInput_textures_common(bpy.types.Panel):
@@ -159,8 +151,6 @@ class NodesToolshelfInput_textures_common(bpy.types.Panel):
             #### Icon Buttons
 
             else:
-          
-                ##### --------------------------------- Textures common ------------------------------------------- ####
 
                 row = layout.row()
                 row.alignment = 'LEFT'        
@@ -189,8 +179,6 @@ class NodesToolshelfInput_textures_common(bpy.types.Panel):
             #### Text Buttons
 
             if not addon_prefs.Node_text_or_icon: 
-
-                # ------------------------------- Textures common -----------------------------
 
                 col = layout.column(align=True)  
 
@@ -224,8 +212,6 @@ class NodesToolshelfInput_textures_common(bpy.types.Panel):
             #### Image Buttons
 
             else: 
-
-                # ------------------------------- Textures common -----------------------------
 
                 row = layout.row()
                 row.alignment = 'LEFT'   
@@ -266,8 +252,6 @@ class NodesToolshelfInput_textures_common(bpy.types.Panel):
 
             if not addon_prefs.Node_text_or_icon:
 
-                # ------------------------------- Textures common -----------------------------
-
                 col = layout.column(align=True)  
 
                 props = col.operator("node.add_node", text=" Image          ", icon = "NODE_IMAGE")  
@@ -282,8 +266,6 @@ class NodesToolshelfInput_textures_common(bpy.types.Panel):
             #### Icon Buttons
 
             else: 
-
-                # ------------------------------- Textures common -----------------------------
 
                 row = layout.row()
                 row.alignment = 'LEFT'       
@@ -328,8 +310,6 @@ class NodesToolshelfInput_textures_advanced(bpy.types.Panel):
 
             if not addon_prefs.Node_text_or_icon:
 
-                ##### --------------------------------- Textures ------------------------------------------- ####
-
                 col = layout.column(align=True)    
         
                 props = col.operator("node.add_node", text=" Wave            ", icon = "NODE_WAVES")
@@ -370,8 +350,6 @@ class NodesToolshelfInput_textures_advanced(bpy.types.Panel):
             #### Icon Buttons
 
             else:
-
-                ##### --------------------------------- Textures ------------------------------------------- ####
         
                 row = layout.row()
                 row.alignment = 'LEFT'  
@@ -418,8 +396,6 @@ class NodesToolshelfInput_textures_advanced(bpy.types.Panel):
             #### Text Buttons
 
             if not addon_prefs.Node_text_or_icon:
-
-                ##### --------------------------------- Textures ------------------------------------------- ####
 
                 col = layout.column(align=True) 
 
@@ -470,8 +446,6 @@ class NodesToolshelfInput_textures_advanced(bpy.types.Panel):
             #### Icon Buttons
 
             else: 
-
-                ##### --------------------------------- Textures ------------------------------------------- ####
 
                 row = layout.row()
                 row.alignment = 'LEFT'  
@@ -545,11 +519,10 @@ class NodesToolshelfInput_shader(bpy.types.Panel):
         user_preferences = context.user_preferences
         addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
 
-        ##### --------------------------------- Shader ------------------------------------------- ####
-
         #### Text Buttons
 
         if not addon_prefs.Node_text_or_icon:
+
             if context.space_data.shader_type == 'OBJECT':
 
                 col = layout.column(align=True)
@@ -570,9 +543,8 @@ class NodesToolshelfInput_shader(bpy.types.Panel):
         #### Icon Buttons
 
         else:
-            if context.space_data.shader_type == 'OBJECT':
 
-                layout.label(text="Shader:")
+            if context.space_data.shader_type == 'OBJECT':
 
                 row = layout.row()
                 row.alignment = 'LEFT' 
@@ -589,6 +561,7 @@ class NodesToolshelfInput_shader(bpy.types.Panel):
                 props = row.operator("node.add_node", text = "", icon = "NODE_BACKGROUNDSHADER")
                 props.use_transform = True
                 props.type = "ShaderNodeBackground"
+
 
 #Input nodes tab, Shader common panel. Just in shader mode
 class NodesToolshelfInput_shader_common(bpy.types.Panel):
@@ -617,8 +590,6 @@ class NodesToolshelfInput_shader_common(bpy.types.Panel):
 #--------------------------------------------------------------------- Shader Node Tree --------------------------------------------------------------------------------
 
         if not addon_prefs.Node_text_or_icon:
-
-                ##### --------------------------------- Shader ------------------------------------------- ####
 
             if context.space_data.shader_type == 'OBJECT':
 
@@ -677,8 +648,6 @@ class NodesToolshelfInput_shader_common(bpy.types.Panel):
 
         else:
 
-            ##### --------------------------------- Shader ------------------------------------------- ####
-
             if context.space_data.shader_type == 'OBJECT':
 
                 row = layout.row()
@@ -734,6 +703,7 @@ class NodesToolshelfInput_shader_common(bpy.types.Panel):
                 props.use_transform = True
                 props.type = "ShaderNodeBsdfVelvet"
 
+
 #Input nodes tab, Shader Advanced panel. Just in shader mode
 class NodesToolshelfInput_shader_advanced(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
@@ -759,8 +729,6 @@ class NodesToolshelfInput_shader_advanced(bpy.types.Panel):
         scene = context.scene
 
         if not addon_prefs.Node_text_or_icon:
-
-            ##### --------------------------------- Shader ------------------------------------------- #### 
 
             if context.space_data.shader_type == 'OBJECT':
 
@@ -796,9 +764,6 @@ class NodesToolshelfInput_shader_advanced(bpy.types.Panel):
                 
         else:
 
-
-            ##### --------------------------------- Shader ------------------------------------------- ####
-
             if context.space_data.shader_type == 'OBJECT':
 
                 row = layout.row()
@@ -830,6 +795,7 @@ class NodesToolshelfInput_shader_advanced(bpy.types.Panel):
             props = row.operator("node.add_node", text = "", icon = "NODE_VOLUMESCATTER")
             props.use_transform = True
             props.type = "ShaderNodeVolumeScatter"
+
 
 #Input nodes tab, Input panel. Just in texture and compositing mode
 class NodesToolshelfInput_input(bpy.types.Panel):
@@ -863,8 +829,6 @@ class NodesToolshelfInput_input(bpy.types.Panel):
 
             if not addon_prefs.Node_text_or_icon:
 
-                # ------------------------------- Input -----------------------------
-
                 col = layout.column(align=True)    
 
                 props = col.operator("node.add_node", text=" Bokeh Image          ", icon = "NODE_BOKEH_IMAGE")    
@@ -887,8 +851,6 @@ class NodesToolshelfInput_input(bpy.types.Panel):
             ##### Iconbuttons
 
             else:            
-
-                # ------------------------------- Input -----------------------------
 
                 row = layout.row()
                 row.alignment = 'LEFT'  
@@ -942,6 +904,7 @@ class NodesToolshelfInput_input(bpy.types.Panel):
                 props.use_transform = True
                 props.type = "TextureNodeCurveTime"
 
+
 #Input nodes tab, Pattern panel. # Just in texture mode
 class NodesToolshelfInput_pattern(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
@@ -970,9 +933,6 @@ class NodesToolshelfInput_pattern(bpy.types.Panel):
 
         if not addon_prefs.Node_text_or_icon: 
 
-
-            layout.label(text="pattern:")
-
             col = layout.column(align=True)
 
             props = col.operator("node.add_node", text=" Bricks         ", icon = "NODE_BRICK") 
@@ -985,10 +945,7 @@ class NodesToolshelfInput_pattern(bpy.types.Panel):
 
         #### Icon Buttons
 
-        else: 
-
-
-            layout.label(text="pattern:")
+        else:
 
             row = layout.row()
             row.alignment = 'LEFT'   
@@ -1000,6 +957,7 @@ class NodesToolshelfInput_pattern(bpy.types.Panel):
             props = row.operator("node.add_node", text="", icon = "NODE_CHECKER")
             props.use_transform = True
             props.type = "TextureNodeChecker"
+
 
 #Input nodes tab, Color panel. Just in texture and compositing mode
 class NodesToolshelfInput_color(bpy.types.Panel):
@@ -1032,11 +990,6 @@ class NodesToolshelfInput_color(bpy.types.Panel):
             #### Text Buttons
 
             if not addon_prefs.Node_text_or_icon: 
-                          
-        
-                # ------------------------------- Color -----------------------------
-
-                layout.label(text="Color:")
 
                 col = layout.column(align=True) 
 
@@ -1066,14 +1019,9 @@ class NodesToolshelfInput_color(bpy.types.Panel):
                 props.use_transform = True
                 props.type = "CompositorNodeZcombine"
 
-
             #### Image Buttons
 
-            else: 
-
-                # ------------------------------- Color -----------------------------
-
-                layout.label(text="Color:")
+            else:
 
                 row = layout.row()
                 row.alignment = 'LEFT'  
@@ -1114,10 +1062,6 @@ class NodesToolshelfInput_color(bpy.types.Panel):
 
             if not addon_prefs.Node_text_or_icon:
 
-
-
-                layout.label(text="Color:")
-
                 col = layout.column(align=True)  
 
                 props = col.operator("node.add_node", text=" RGB Curves          ", icon = "NODE_RGBCURVE")
@@ -1150,8 +1094,6 @@ class NodesToolshelfInput_color(bpy.types.Panel):
 
             else: 
 
-                layout.label(text="Color:")
-
                 row = layout.row()
                 row.alignment = 'LEFT' 
 
@@ -1181,6 +1123,7 @@ class NodesToolshelfInput_color(bpy.types.Panel):
                 props = row.operator("node.add_node", text="", icon = "NODE_SEPARATERGB")
                 props.use_transform = True
                 props.type = "TextureNodeDecompose"
+
 
 #Input nodes tab, Input Advanced panel. Just in compositing mode
 class NodesToolshelfInput_color_advanced(bpy.types.Panel):
@@ -1213,11 +1156,6 @@ class NodesToolshelfInput_color_advanced(bpy.types.Panel):
             ##### Textbuttons
 
             if not addon_prefs.Node_text_or_icon:
-
-        
-                # ------------------------------- Color -----------------------------
-
-                layout.label(text="Color:")
 
                 col = layout.column(align=True) 
             
@@ -1252,10 +1190,6 @@ class NodesToolshelfInput_color_advanced(bpy.types.Panel):
 
             else:            
 
-                # ------------------------------- Color -----------------------------
-
-                layout.label(text="Color:")
-
                 row = layout.row()
                 row.alignment = 'LEFT' 
             
@@ -1286,6 +1220,7 @@ class NodesToolshelfInput_color_advanced(bpy.types.Panel):
                 props.use_transform = True
                 props.type = "CompositorNodeTonemap"
 
+
 #Input nodes tab, Output panel, all modes
 class NodesToolshelfInput_output(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
@@ -1312,8 +1247,6 @@ class NodesToolshelfInput_output(bpy.types.Panel):
             ##### Textbuttons
 
             if not addon_prefs.Node_text_or_icon:
-
-                ##### --------------------------------- Output ------------------------------------------- ####
 
                 col = layout.column(align=True)
                 
@@ -1343,8 +1276,6 @@ class NodesToolshelfInput_output(bpy.types.Panel):
             #### Icon Buttons
 
             else:
-
-                ##### --------------------------------- Output ------------------------------------------- ####
 
                 row = layout.row()
                 row.alignment = 'LEFT'        
@@ -1378,8 +1309,6 @@ class NodesToolshelfInput_output(bpy.types.Panel):
 
             if not addon_prefs.Node_text_or_icon: 
 
-                # ------------------------------- Output -----------------------------
-
                 col = layout.column(align=True)  
          
                 props = col.operator("node.add_node", text=" Composite          ", icon = "NODE_COMPOSITE_OUTPUT")
@@ -1407,8 +1336,6 @@ class NodesToolshelfInput_output(bpy.types.Panel):
             #### Image Buttons
 
             else: 
-
-                # ------------------------------- Output -----------------------------
 
                 row = layout.row()
                 row.alignment = 'LEFT'  
@@ -1499,8 +1426,6 @@ class NodesToolshelfModify_matte(bpy.types.Panel):
 
         if not addon_prefs.Node_text_or_icon:
 
-        # ------------------------------- Matte -----------------------------
-
             col = layout.column(align=True)
 
             props = col.operator("node.add_node", text=" Box Mask         ", icon = "NODE_BOXMASK")
@@ -1554,7 +1479,6 @@ class NodesToolshelfModify_matte(bpy.types.Panel):
         #### Icon Buttons
 
         else: 
-        # ------------------------------- Matte -----------------------------
 
             row = layout.row()
             row.alignment = 'LEFT'   
@@ -1609,6 +1533,7 @@ class NodesToolshelfModify_matte(bpy.types.Panel):
             props.use_transform = True
             props.type = "CompositorNodeLumaMatte"
 
+
 #Modify nodes tab, Filter panel. Just in compositing mode
 class NodesToolshelfModify_filter(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
@@ -1633,8 +1558,6 @@ class NodesToolshelfModify_filter(bpy.types.Panel):
         scene = context.scene
 
         if not addon_prefs.Node_text_or_icon:
-        
-            # ------------------------------- Filter -----------------------------
 
             col = layout.column(align=True) 
 
@@ -1700,9 +1623,7 @@ class NodesToolshelfModify_filter(bpy.types.Panel):
 
         #### Icon Buttons
 
-        else: 
-        
-            # ------------------------------- Filter -----------------------------
+        else:
 
             row = layout.row()
             row.alignment = 'LEFT'    
@@ -1798,8 +1719,6 @@ class NodesToolshelfModify_input(bpy.types.Panel):
 
         if not addon_prefs.Node_text_or_icon:
 
-            ##### --------------------------------- Input ------------------------------------------- ####
-
             col = layout.column(align=True)      
         
             props = col.operator("node.add_node", text=" Attribute     ", icon = "NODE_ATTRIBUTE")
@@ -1876,8 +1795,6 @@ class NodesToolshelfModify_input(bpy.types.Panel):
 
         else: 
 
-            ##### --------------------------------- Input ------------------------------------------- ####
-
             row = layout.row()
             row.alignment = 'LEFT'        
         
@@ -1952,6 +1869,7 @@ class NodesToolshelfModify_input(bpy.types.Panel):
                 props.use_transform = True
                 props.type = "ShaderNodeUVALongStroke"
 
+
 #Modify nodes tab, converter panel. All modes
 class NodesToolshelfModify_converter(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
@@ -1978,9 +1896,6 @@ class NodesToolshelfModify_converter(bpy.types.Panel):
             ##### Textbuttons
 
             if not addon_prefs.Node_text_or_icon:
-
-
-                ##### --------------------------------- Converter ------------------------------------------- ####
 
                 col = layout.column(align=True)        
         
@@ -2042,8 +1957,6 @@ class NodesToolshelfModify_converter(bpy.types.Panel):
             ##### Icon Buttons 
 
             else: 
-
-                ##### --------------------------------- Converter ------------------------------------------- ####
 
                 row = layout.row()
                 row.alignment = 'LEFT'
@@ -2111,8 +2024,6 @@ class NodesToolshelfModify_converter(bpy.types.Panel):
             #### Text Buttons
 
             if not addon_prefs.Node_text_or_icon:
-
-            # ------------------------------- Converter -----------------------------
 
                 col = layout.column(align=True)   
 
@@ -2186,7 +2097,6 @@ class NodesToolshelfModify_converter(bpy.types.Panel):
             #### Icon Buttons
 
             else: 
-            # ------------------------------- Converter -----------------------------
 
                 row = layout.row()
                 row.alignment = 'LEFT'  
@@ -2268,8 +2178,6 @@ class NodesToolshelfModify_converter(bpy.types.Panel):
 
             if not addon_prefs.Node_text_or_icon:
 
-                # ------------------------------- Converter -----------------------------
-
                 col = layout.column(align=True)
 
                 props = col.operator("node.add_node", text=" Color Ramp         ", icon = "NODE_COLORRAMP")
@@ -2297,8 +2205,6 @@ class NodesToolshelfModify_converter(bpy.types.Panel):
             #### Icon Buttons
 
             else: 
-
-                # ------------------------------- Converter -----------------------------
 
                 row = layout.row()
                 row.alignment = 'LEFT' 
@@ -2358,8 +2264,6 @@ class NodesToolshelfModify_vector(bpy.types.Panel):
             ##### Textbuttons
 
             if not addon_prefs.Node_text_or_icon:
-
-                ##### --------------------------------- Vector ------------------------------------------- ####
 
                 col = layout.column(align=True)    
         
@@ -2424,8 +2328,6 @@ class NodesToolshelfModify_vector(bpy.types.Panel):
 
             if not addon_prefs.Node_text_or_icon:
 
-             # ------------------------------- Vector -----------------------------
-
                 col = layout.column(align=True)  
 
                 props = col.operator("node.add_node", text=" Map Range         ", icon = "NODE_RANGE")
@@ -2455,8 +2357,6 @@ class NodesToolshelfModify_vector(bpy.types.Panel):
 
             else: 
 
-             # ------------------------------- Vector -----------------------------
-
                 row = layout.row()
                 row.alignment = 'LEFT'  
 
@@ -2482,6 +2382,7 @@ class NodesToolshelfModify_vector(bpy.types.Panel):
                 props = row.operator("node.add_node", text = "", icon = "NODE_VECTOR")
                 props.use_transform = True
                 props.type = "CompositorNodeCurveVec"
+
 
 #Modify nodes tab, distort panel. Just in texture and compositing mode
 class NodesToolshelfModify_distort(bpy.types.Panel):
@@ -2511,9 +2412,7 @@ class NodesToolshelfModify_distort(bpy.types.Panel):
 
             #### Text Buttons
 
-            if not addon_prefs.Node_text_or_icon:     
-
-            # ------------------------------- Distort -----------------------------
+            if not addon_prefs.Node_text_or_icon:
 
                 col = layout.column(align=True) 
 
@@ -2577,9 +2476,7 @@ class NodesToolshelfModify_distort(bpy.types.Panel):
 
             #### Icon Buttons
 
-            else: 
-
-            # ------------------------------- Distort -----------------------------
+            else:
 
                 row = layout.row()
                 row.alignment = 'LEFT'  
@@ -2653,8 +2550,6 @@ class NodesToolshelfModify_distort(bpy.types.Panel):
 
             if not addon_prefs.Node_text_or_icon:
 
-                # ------------------------------- Distort -----------------------------
-
                 col = layout.column(align=True) 
 
                 props = col.operator("node.add_node", text=" At        ", icon = "NODE_AT")
@@ -2676,8 +2571,6 @@ class NodesToolshelfModify_distort(bpy.types.Panel):
             #### Icon Buttons
 
             else: 
-
-                # ------------------------------- Distort -----------------------------
 
                 row = layout.row()
                 row.alignment = 'LEFT'  
@@ -2724,8 +2617,6 @@ class NodesToolshelfModify_color(bpy.types.Panel):
         ##### Textbuttons
 
         if not addon_prefs.Node_text_or_icon:
-
-            ##### --------------------------------- Color ------------------------------------------- ####
                 
             col = layout.column(align=True)
         
@@ -2762,8 +2653,7 @@ class NodesToolshelfModify_color(bpy.types.Panel):
 
         ##### Icon Buttons 
 
-        else: 
-            ##### --------------------------------- Color ------------------------------------------- ####
+        else:
 
             row = layout.row()
             row.alignment = 'LEFT'        
@@ -2800,6 +2690,7 @@ class NodesToolshelfModify_color(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeRGBCurve"
 
+
 #Modify nodes tab, Script panel. Just in shader mode
 class NodesToolshelfModify_script(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
@@ -2826,9 +2717,6 @@ class NodesToolshelfModify_script(bpy.types.Panel):
             ##### Textbuttons
 
         if not addon_prefs.Node_text_or_icon:
-         
-
-        ##### --------------------------------- Script ------------------------------------------- ####
 
             col = layout.column(align=True)
         
@@ -2840,8 +2728,6 @@ class NodesToolshelfModify_script(bpy.types.Panel):
 
         else: 
 
-        ##### --------------------------------- Script ------------------------------------------- ####
-
             row = layout.row()
             row.alignment = 'LEFT'        
         
@@ -2849,13 +2735,14 @@ class NodesToolshelfModify_script(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeScript"  
 
+
 # ------------- Relations tab -------------------------------
             
 #Relations tab, Relations Panel
-class NodesToolshelfRelations(bpy.types.Panel):
+class NodesToolshelfRelations_group(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
-    bl_label = "Relations"
-    bl_idname = "nodes.nip_relations"
+    bl_label = "Group"
+    bl_idname = "nodes.nip_relations_group"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Relations"
@@ -2874,10 +2761,6 @@ class NodesToolshelfRelations(bpy.types.Panel):
 
         if not addon_prefs.Node_text_or_icon:
 
-             ##### --------------------------------- Group ------------------------------------------- ####
-        
-            layout.label(text="Group Nodes:")
-
             col = layout.column(align=True)  
 
             col.operator("node.group_edit", text=" Edit Group     ", icon = "NODE_EDITGROUP").exit = False
@@ -2888,11 +2771,47 @@ class NodesToolshelfRelations(bpy.types.Panel):
             col = layout.column(align=True)  
 
             col.operator("node.group_ungroup", text = " Ungroup        ", icon = "NODE_UNGROUP")
-  
 
-            ##### --------------------------------- Layout ------------------------------------------- ####
+        #### Icon Buttons
+
+        else: 
+
+            row = layout.row()
+            row.alignment = 'LEFT'        
+
+            row.operator("node.group_edit", text = "", icon = "NODE_EDITGROUP").exit = False
+            row.operator("node.group_edit", text = "", icon = "NODE_EXITEDITGROUP").exit = True
+            row.operator("node.group_insert", text = "", icon = "NODE_GROUPINSERT")
+            row.operator("node.group_make", text = "", icon = "NODE_MAKEGROUP")
+
+            row = layout.row()
+            row.alignment = 'LEFT'
+
+            row.operator("node.group_ungroup", text = "", icon = "NODE_UNGROUP")
+
+
+#Relations tab, Relations Panel
+class NodesToolshelfRelations_layout(bpy.types.Panel):
+    """Creates a Panel in the Object properties window"""
+    bl_label = "Layout"
+    bl_idname = "nodes.nip_relations_layout"
+    bl_space_type = 'NODE_EDITOR'
+    bl_region_type = 'TOOLS'
+    bl_category = "Relations"
+    
+    @staticmethod
+    def draw(self, context):
+        layout = self.layout
+        default_context = bpy.app.translations.contexts.default
+
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
         
-            layout.label(text="Layout:")
+        scene = context.scene
+
+        ##### Textbuttons
+
+        if not addon_prefs.Node_text_or_icon:
 
             col = layout.column(align=True)     
 
@@ -2914,27 +2833,6 @@ class NodesToolshelfRelations(bpy.types.Panel):
 
         else: 
 
-            ##### --------------------------------- Group ------------------------------------------- ####
-        
-            layout.label(text="Group:")
-
-            row = layout.row()
-            row.alignment = 'LEFT'        
-
-            row.operator("node.group_edit", text = "", icon = "NODE_EDITGROUP").exit = False
-            row.operator("node.group_edit", text = "", icon = "NODE_EXITEDITGROUP").exit = True
-            row.operator("node.group_insert", text = "", icon = "NODE_GROUPINSERT")
-            row.operator("node.group_make", text = "", icon = "NODE_MAKEGROUP")
-
-            row = layout.row()
-            row.alignment = 'LEFT'
-
-            row.operator("node.group_ungroup", text = "", icon = "NODE_UNGROUP")
-
-            ##### --------------------------------- Layout ------------------------------------------- ####
-        
-            layout.label(text="Layout:")
-
             row = layout.row()
             row.alignment = 'LEFT'        
 
@@ -2950,6 +2848,7 @@ class NodesToolshelfRelations(bpy.types.Panel):
                 props = row.operator("node.add_node", text="", icon = "NODE_SWITCH")
                 props.use_transform = True
                 props.type = "CompositorNodeSwitch"
+
 
 classes = (
     NodesToolshelfProp,
@@ -2972,7 +2871,8 @@ classes = (
     NodesToolshelfModify_vector,
     NodesToolshelfModify_distort,
     NodesToolshelfModify_script,
-    NodesToolshelfRelations,   
+    NodesToolshelfRelations_group,
+    NodesToolshelfRelations_layout, 
 )
 
 if __name__ == "__main__":  # only for live edit.
