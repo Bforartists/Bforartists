@@ -496,7 +496,7 @@ class NodesToolshelfInput_textures_advanced(bpy.types.Panel):
                 props.use_transform = True
                 props.type = "TextureNodeTexWood"
 
-#Input nodes tab, Shader panel with prinicipled shader. Just in shader mode
+#Input nodes tab, Shader panel with prinicipled shader. Just in shader mode with Object and World mode
 class NodesToolshelfInput_shader(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Shader"
@@ -507,7 +507,7 @@ class NodesToolshelfInput_shader(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'ShaderNodeTree') # Just in shader mode
+        return (context.space_data.tree_type == 'ShaderNodeTree' and context.space_data.shader_type in ( 'OBJECT', 'WORLD')) # Just in shader mode, Just in Object and World
     
     @staticmethod
     def draw(self, context):
@@ -563,7 +563,7 @@ class NodesToolshelfInput_shader(bpy.types.Panel):
                 props.type = "ShaderNodeBackground"
 
 
-#Input nodes tab, Shader common panel. Just in shader mode
+#Input nodes tab, Shader common panel. Just in shader mode with Object mode
 class NodesToolshelfInput_shader_common(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Shader Common"
@@ -575,7 +575,7 @@ class NodesToolshelfInput_shader_common(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
-        return (context.space_data.tree_type == 'ShaderNodeTree') # Just in shader mode
+        return (context.space_data.tree_type == 'ShaderNodeTree'and context.space_data.shader_type == 'OBJECT') # Just in shader mode with Object mode
     
     @staticmethod
     def draw(self, context):
