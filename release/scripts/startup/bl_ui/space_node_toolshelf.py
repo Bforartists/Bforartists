@@ -102,10 +102,10 @@ class NodesToolshelfInput_connect(bpy.types.Panel):
             props.type = "ShaderNodeNormalMap"
 
 #Input nodes tab, textures common panel. All modes
-class NodesToolshelfInput_textures_common(bpy.types.Panel):
+class NodesToolshelfInput_input(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
-    bl_label = "Textures Common"
-    bl_idname = "nodes.nip_input_textures_common"
+    bl_label = "Input"
+    bl_idname = "nodes.nip_input_input"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Input"
@@ -279,10 +279,10 @@ class NodesToolshelfInput_textures_common(bpy.types.Panel):
                 props.type = "TextureNodeTexture"
 
 #Input nodes tab, textures advanced panel. Just in shader and Texture mode
-class NodesToolshelfInput_textures_advanced(bpy.types.Panel):
+class NodesToolshelfInput_textures(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
-    bl_label = "Textures Advanced"
-    bl_idname = "nodes.nip_input_textures_advanced"
+    bl_label = "Textures"
+    bl_idname = "nodes.nip_input_textures"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Input"
@@ -798,10 +798,10 @@ class NodesToolshelfInput_shader_advanced(bpy.types.Panel):
 
 
 #Input nodes tab, Input panel. Just in texture and compositing mode
-class NodesToolshelfInput_input(bpy.types.Panel):
+class NodesToolshelfInput_input_advanced(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
-    bl_label = "Input"
-    bl_idname = "nodes.nip_input_input"
+    bl_label = "Input Advanced"
+    bl_idname = "nodes.nip_input_input_advanced"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Input"
@@ -2854,12 +2854,12 @@ class NodesToolshelfRelations_layout(bpy.types.Panel):
 classes = (
     NodesToolshelfProp,
     NodesToolshelfInput_connect,
-    NodesToolshelfInput_textures_common,
-    NodesToolshelfInput_textures_advanced,
+    NodesToolshelfInput_input,
+    NodesToolshelfInput_textures,
     NodesToolshelfInput_shader,
     NodesToolshelfInput_shader_common,
     NodesToolshelfInput_shader_advanced,
-    NodesToolshelfInput_input,
+    NodesToolshelfInput_input_advanced,
     NodesToolshelfInput_pattern,
     NodesToolshelfInput_color,
     NodesToolshelfInput_color_advanced,
