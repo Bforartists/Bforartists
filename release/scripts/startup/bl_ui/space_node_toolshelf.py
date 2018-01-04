@@ -1402,8 +1402,8 @@ class NodesToolshelfInput_output(bpy.types.Panel):
 #Modify nodes tab, Modify common panel. Just in compositing mode
 class NodesToolshelfModify_matte(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
-    bl_label = "Modify common"
-    bl_idname = "nodes.nip_modify"
+    bl_label = "Matte"
+    bl_idname = "nodes.nip_matte"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Modify"
