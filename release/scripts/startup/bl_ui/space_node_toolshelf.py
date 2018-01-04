@@ -139,14 +139,6 @@ class NodesToolshelfInput_input(bpy.types.Panel):
                 props = col.operator("node.add_node", text=" Environment", icon = "NODE_ENVIRONMENT")
                 props.use_transform = True
                 props.type = "ShaderNodeTexEnvironment"         
-        
-                props = col.operator("node.add_node", text=" Sky              ", icon = "NODE_SKY")
-                props.use_transform = True
-                props.type = "ShaderNodeTexSky"
-         
-                props = col.operator("node.add_node", text=" Noise            ", icon = "NODE_NOISE")
-                props.use_transform = True
-                props.type = "ShaderNodeTexNoise"
 
             #### Icon Buttons
 
@@ -163,15 +155,6 @@ class NodesToolshelfInput_input(bpy.types.Panel):
                 props = row.operator("node.add_node", text = "", icon = "NODE_ENVIRONMENT")
                 props.use_transform = True
                 props.type = "ShaderNodeTexEnvironment"
-   
-                props = row.operator("node.add_node", text = "", icon = "NODE_SKY")
-                props.use_transform = True
-                props.type = "ShaderNodeTexSky"
-        
-                props = row.operator("node.add_node", text = "", icon = "NODE_NOISE")
-                props.use_transform = True
-                props.type = "ShaderNodeTexNoise"
-
 
 #--------------------------------------------------------------------- Compositing Node Tree --------------------------------------------------------------------------------
         elif context.space_data.tree_type == 'CompositorNodeTree':
@@ -310,8 +293,44 @@ class NodesToolshelfInput_textures(bpy.types.Panel):
 
             if not addon_prefs.Node_text_or_icon:
 
-                col = layout.column(align=True)    
-        
+                col = layout.column(align=True)
+
+                props = col.operator("node.add_node", text=" Brick             ", icon = "NODE_BRICK")
+                props.use_transform = True 
+                props.type = "ShaderNodeTexBrick"
+
+                props = col.operator("node.add_node", text=" Checker        ", icon = "NODE_CHECKER")
+                props.use_transform = True
+                props.type = "ShaderNodeTexChecker"
+
+                props = col.operator("node.add_node", text=" Gradient       ", icon = "NODE_GRADIENT")
+                props.use_transform = True
+                props.type = "ShaderNodeTexGradient"
+
+                props = col.operator("node.add_node", text=" Magic            ", icon = "NODE_MAGIC")
+                props.use_transform = True
+                props.type = "ShaderNodeTexMagic"
+
+                col = layout.column(align=True)
+
+                props = col.operator("node.add_node", text=" Musgrave      ", icon = "NODE_MUSGRAVE")
+                props.use_transform = True
+                props.type = "ShaderNodeTexMusgrave"
+                
+                props = col.operator("node.add_node", text=" Noise            ", icon = "NODE_NOISE")
+                props.use_transform = True
+                props.type = "ShaderNodeTexNoise"
+
+                props = col.operator("node.add_node", text=" Sky              ", icon = "NODE_SKY")
+                props.use_transform = True
+                props.type = "ShaderNodeTexSky"
+
+                props = col.operator("node.add_node", text=" Point Density", icon = "NODE_POINTCLOUD")
+                props.use_transform = True
+                props.type = "ShaderNodeTexPointDensity"
+
+                col = layout.column(align=True)
+
                 props = col.operator("node.add_node", text=" Wave            ", icon = "NODE_WAVES")
                 props.use_transform = True
                 props.type = "ShaderNodeTexWave"
@@ -319,40 +338,51 @@ class NodesToolshelfInput_textures(bpy.types.Panel):
                 props = col.operator("node.add_node", text=" Voronoi         ", icon = "NODE_VORONI")
                 props.use_transform = True
                 props.type = "ShaderNodeTexVoronoi"
-        
-                props = col.operator("node.add_node", text=" Musgrave      ", icon = "NODE_MUSGRAVE")
-                props.use_transform = True
-                props.type = "ShaderNodeTexMusgrave"
-         
-                props = col.operator("node.add_node", text=" Gradient       ", icon = "NODE_GRADIENT")
-                props.use_transform = True
-                props.type = "ShaderNodeTexGradient"
-
-                col = layout.column(align=True)
-         
-                props = col.operator("node.add_node", text=" Magic            ", icon = "NODE_MAGIC")
-                props.use_transform = True
-                props.type = "ShaderNodeTexMagic"
-        
-                props = col.operator("node.add_node", text=" Checker        ", icon = "NODE_CHECKER")
-                props.use_transform = True
-                props.type = "ShaderNodeTexChecker"
-        
-                props = col.operator("node.add_node", text=" Brick             ", icon = "NODE_BRICK")
-                props.use_transform = True 
-                props.type = "ShaderNodeTexBrick"
-        
-                props = col.operator("node.add_node", text=" Point Density", icon = "NODE_POINTCLOUD")
-                props.use_transform = True
-                props.type = "ShaderNodeTexPointDensity"
-
 
             #### Icon Buttons
 
             else:
         
                 row = layout.row()
-                row.alignment = 'LEFT'  
+                row.alignment = 'LEFT'
+
+                props = row.operator("node.add_node", text = "", icon = "NODE_BRICK")
+                props.use_transform = True
+                props.type = "ShaderNodeTexBrick"
+
+                props = row.operator("node.add_node", text = "", icon = "NODE_CHECKER")
+                props.use_transform = True
+                props.type = "ShaderNodeTexChecker"
+
+                props = row.operator("node.add_node", text = "", icon = "NODE_GRADIENT")
+                props.use_transform = True
+                props.type = "ShaderNodeTexGradient"
+
+                props = row.operator("node.add_node", text = "", icon = "NODE_MAGIC")
+                props.use_transform = True
+                props.type = "ShaderNodeTexMagic"
+
+                row = layout.row()
+                row.alignment = 'LEFT' 
+
+                props = row.operator("node.add_node", text = "", icon = "NODE_MUSGRAVE")
+                props.use_transform = True
+                props.type = "ShaderNodeTexMusgrave"
+
+                props = row.operator("node.add_node", text = "", icon = "NODE_NOISE")
+                props.use_transform = True
+                props.type = "ShaderNodeTexNoise"
+
+                props = row.operator("node.add_node", text = "", icon = "NODE_POINTCLOUD")
+                props.use_transform = True
+                props.type = "ShaderNodeTexPointDensity"
+
+                props = row.operator("node.add_node", text = "", icon = "NODE_SKY")
+                props.use_transform = True
+                props.type = "ShaderNodeTexSky"
+
+                row = layout.row()
+                row.alignment = 'LEFT' 
         
                 props = row.operator("node.add_node", text = "", icon = "NODE_WAVES")
                 props.use_transform = True
@@ -361,33 +391,7 @@ class NodesToolshelfInput_textures(bpy.types.Panel):
                 props = row.operator("node.add_node", text = "", icon = "NODE_VORONI")
                 props.use_transform = True
                 props.type = "ShaderNodeTexVoronoi"
-        
-                props = row.operator("node.add_node", text = "", icon = "NODE_MUSGRAVE")
-                props.use_transform = True
-                props.type = "ShaderNodeTexMusgrave"
-        
-                props = row.operator("node.add_node", text = "", icon = "NODE_GRADIENT")
-                props.use_transform = True
-                props.type = "ShaderNodeTexGradient"
-        
-                row = layout.row()
-                row.alignment = 'LEFT'  
-        
-                props = row.operator("node.add_node", text = "", icon = "NODE_MAGIC")
-                props.use_transform = True
-                props.type = "ShaderNodeTexMagic"
-        
-                props = row.operator("node.add_node", text = "", icon = "NODE_CHECKER")
-                props.use_transform = True
-                props.type = "ShaderNodeTexChecker"
-        
-                props = row.operator("node.add_node", text = "", icon = "NODE_BRICK")
-                props.use_transform = True
-                props.type = "ShaderNodeTexBrick"
-        
-                props = row.operator("node.add_node", text = "", icon = "NODE_POINTCLOUD")
-                props.use_transform = True
-                props.type = "ShaderNodeTexPointDensity"
+ 
 
 #--------------------------------------------------------------------- Texture Node Tree --------------------------------------------------------------------------------
 
