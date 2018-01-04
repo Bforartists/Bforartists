@@ -2565,7 +2565,7 @@ class NodesToolshelfModify_distort(bpy.types.Panel):
                 props.use_transform = True
                 props.type = "TextureNodeScale"
 
-                props = col.operator("node.add_node", text=" translate       ", icon = "NODE_MOVE") 
+                props = col.operator("node.add_node", text=" Translate       ", icon = "NODE_MOVE") 
                 props.use_transform = True
                 props.type = "TextureNodeTranslate"
 
