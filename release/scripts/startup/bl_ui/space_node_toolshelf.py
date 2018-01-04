@@ -2280,14 +2280,14 @@ class NodesToolshelfModify_vector(bpy.types.Panel):
                 props.type = "ShaderNodeNormal"
                 
                 col = layout.column(align=True) 
-        
-                props = col.operator("node.add_node", text=" Vector Transform   ", icon = "NODE_VECTOR_TRANSFORM")
-                props.use_transform = True
-                props.type = "ShaderNodeVectorTransform"
                 
                 props = col.operator("node.add_node", text=" Vector Curves    ", icon = "NODE_VECTOR")
                 props.use_transform = True
                 props.type = "ShaderNodeVectorCurve"
+
+                props = col.operator("node.add_node", text=" Vector Transform   ", icon = "NODE_VECTOR_TRANSFORM")
+                props.use_transform = True
+                props.type = "ShaderNodeVectorTransform"
 
             ##### Icon Buttons 
 
@@ -2312,14 +2312,15 @@ class NodesToolshelfModify_vector(bpy.types.Panel):
         
                 row = layout.row()
                 row.alignment = 'LEFT'  
+
+                props = row.operator("node.add_node", text = "", icon = "NODE_VECTOR")
+                props.use_transform = True
+                props.type = "ShaderNodeVectorCurve"
         
                 props = row.operator("node.add_node", text = "", icon = "NODE_VECTOR_TRANSFORM")
                 props.use_transform = True
                 props.type = "ShaderNodeVectorTransform"
         
-                props = row.operator("node.add_node", text = "", icon = "NODE_VECTOR")
-                props.use_transform = True
-                props.type = "ShaderNodeVectorCurve"
 
 #--------------------------------------------------------------------- Compositing Node Tree --------------------------------------------------------------------------------
         elif context.space_data.tree_type == 'CompositorNodeTree':
