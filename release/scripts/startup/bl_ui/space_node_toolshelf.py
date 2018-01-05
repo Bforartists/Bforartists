@@ -1458,11 +1458,15 @@ class NodesToolshelfModify_matte(bpy.types.Panel):
             props.use_transform = True
             props.type = "CompositorNodeColorMatte"
 
-            props = col.operator("node.add_node", text=" Difference Key       ", icon = "NODE_DIFFERENCE")   
+            props = col.operator("node.add_node", text=" Color Spill         ", icon = "NODE_SPILL")
             props.use_transform = True
-            props.type = "CompositorNodeDiffMatte"
+            props.type = "CompositorNodeColorSpill"
 
             col = layout.column(align=True)
+
+            props = col.operator("node.add_node", text=" Difference Key       ", icon = "NODE_DIFFERENCE")   
+            props.use_transform = True
+            props.type = "CompositorNodeDiffMatte"     
 
             props = col.operator("node.add_node", text=" Distance Key      ", icon = "NODE_DISTANCE")
             props.use_transform = True
@@ -1475,6 +1479,8 @@ class NodesToolshelfModify_matte(bpy.types.Panel):
             props = col.operator("node.add_node", text=" Keying Screen       ", icon = "NODE_KEYINGSCREEN") 
             props.use_transform = True
             props.type = "CompositorNodeKeyingScreen"
+
+            col = layout.column(align=True)
 
             props = col.operator("node.add_node", text=" Luminance Key        ", icon = "NODE_LUMINANCE") 
             props.use_transform = True
@@ -1513,13 +1519,17 @@ class NodesToolshelfModify_matte(bpy.types.Panel):
             props = row.operator("node.add_node", text = "", icon = "NODE_COLOR")
             props.use_transform = True
             props.type = "CompositorNodeColorMatte"
+
+            props = row.operator("node.add_node", text="", icon = "NODE_SPILL")
+            props.use_transform = True
+            props.type = "CompositorNodeColorSpill"
+
+            row = layout.row()
+            row.alignment = 'LEFT' 
       
             props = row.operator("node.add_node", text = "", icon = "NODE_DIFFERENCE") 
             props.use_transform = True
             props.type = "CompositorNodeDiffMatte"
-
-            row = layout.row()
-            row.alignment = 'LEFT'  
 
             props = row.operator("node.add_node", text = "", icon = "NODE_DISTANCE")
             props.use_transform = True
@@ -1532,6 +1542,9 @@ class NodesToolshelfModify_matte(bpy.types.Panel):
             props = row.operator("node.add_node", text = "", icon = "NODE_KEYINGSCREEN") 
             props.use_transform = True
             props.type = "CompositorNodeKeyingScreen"
+
+            row = layout.row()
+            row.alignment = 'LEFT' 
             
             props = row.operator("node.add_node", text = "", icon = "NODE_LUMINANCE") 
             props.use_transform = True
