@@ -18,9 +18,9 @@ if sys.platform == 'darwin':
     if os.path.exists(inkscape_app_path):
         inkscape_bin = inkscape_app_path
 
-cmd = inkscape_bin + ' "%sblender_icons.svg" --export-width=602 --export-height=640 --without-gui --export-png="%sblender_icons16.png"' % (BASEDIR, BASEDIR)
+cmd = inkscape_bin + ' "%sblender_icons.svg" --export-width=850 --export-height=640 --without-gui --export-png="%sblender_icons16.png"' % (BASEDIR, BASEDIR)
 run(cmd)
-cmd = inkscape_bin + ' "%sblender_icons.svg" --export-width=1204 --export-height=1280 --without-gui --export-png="%sblender_icons32.png"' % (BASEDIR, BASEDIR)
+cmd = inkscape_bin + ' "%sblender_icons.svg" --export-width=1700 --export-height=1280 --without-gui --export-png="%sblender_icons32.png"' % (BASEDIR, BASEDIR)
 run(cmd)
 
 
