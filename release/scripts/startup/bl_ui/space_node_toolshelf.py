@@ -70,11 +70,11 @@ class NodesToolshelfInput_connect(bpy.types.Panel):
 
             col = layout.column(align=True)      
         
-            props = col.operator("node.add_node", text=" Add              ", icon = "NODE_ADD_SHADER")
+            props = col.operator("node.add_node", text=" Add                   ", icon = "NODE_ADD_SHADER")
             props.use_transform = True
             props.type = "ShaderNodeAddShader" 
 
-            props = col.operator("node.add_node", text=" Mix            ", icon = "NODE_MIXSHADER")
+            props = col.operator("node.add_node", text=" Mix                   ", icon = "NODE_MIXSHADER")
             props.use_transform = True
             props.type = "ShaderNodeMixShader"   
 
@@ -132,11 +132,11 @@ class NodesToolshelfInput_input(bpy.types.Panel):
 
                 col = layout.column(align=True)     
         
-                props = col.operator("node.add_node", text=" Image          ", icon = "NODE_IMAGE")    
+                props = col.operator("node.add_node", text=" Image               ", icon = "NODE_IMAGE")    
                 props.use_transform = True
                 props.type = "ShaderNodeTexImage"
               
-                props = col.operator("node.add_node", text=" Environment", icon = "NODE_ENVIRONMENT")
+                props = col.operator("node.add_node", text=" Environment    ", icon = "NODE_ENVIRONMENT")
                 props.use_transform = True
                 props.type = "ShaderNodeTexEnvironment"         
 
@@ -165,29 +165,29 @@ class NodesToolshelfInput_input(bpy.types.Panel):
 
                 col = layout.column(align=True)  
 
-                props = col.operator("node.add_node", text=" Image          ", icon = "NODE_IMAGE")  
+                props = col.operator("node.add_node", text=" Image              ", icon = "NODE_IMAGE")  
                 props.use_transform = True
                 props.type = "CompositorNodeImage"
 
-                props = col.operator("node.add_node", text=" Texture          ", icon = "NODE_TEXTURE")
+                props = col.operator("node.add_node", text=" Texture             ", icon = "NODE_TEXTURE")
                 props.use_transform = True
                 props.type = "CompositorNodeTexture"
 
-                props = col.operator("node.add_node", text=" Mask         ", icon = "NODE_MASK") 
+                props = col.operator("node.add_node", text=" Mask                 ", icon = "NODE_MASK") 
                 props.use_transform = True
                 props.type = "CompositorNodeMask"
             
-                props = col.operator("node.add_node", text=" Movie Clip         ", icon = "NODE_MOVIE")
+                props = col.operator("node.add_node", text=" Movie Clip        ", icon = "NODE_MOVIE")
                 props.use_transform = True
                 props.type = "CompositorNodeMovieClip"
 
                 col = layout.column(align=True) 
             
-                props = col.operator("node.add_node", text=" Render Layers         ", icon = "NODE_RENDERLAYER")
+                props = col.operator("node.add_node", text=" Render Layers  ", icon = "NODE_RENDERLAYER")
                 props.use_transform = True
                 props.type = "CompositorNodeRLayers"
             
-                props = col.operator("node.add_node", text=" RGB        ", icon = "NODE_RGB")
+                props = col.operator("node.add_node", text=" RGB                 ", icon = "NODE_RGB")
                 props.use_transform = True
                 props.type = "CompositorNodeRGB"
                           
@@ -237,11 +237,11 @@ class NodesToolshelfInput_input(bpy.types.Panel):
 
                 col = layout.column(align=True)  
 
-                props = col.operator("node.add_node", text=" Image          ", icon = "NODE_IMAGE")  
+                props = col.operator("node.add_node", text=" Image               ", icon = "NODE_IMAGE")  
                 props.use_transform = True
                 props.type = "TextureNodeImage"
 
-                props = col.operator("node.add_node", text=" Texture          ", icon = "NODE_TEXTURE")
+                props = col.operator("node.add_node", text=" Texture             ", icon = "NODE_TEXTURE")
                 props.use_transform = True
                 props.type = "TextureNodeTexture"
 
@@ -295,47 +295,47 @@ class NodesToolshelfInput_textures(bpy.types.Panel):
 
                 col = layout.column(align=True)
 
-                props = col.operator("node.add_node", text=" Brick             ", icon = "NODE_BRICK")
-                props.use_transform = True 
+                props = col.operator("node.add_node", text=" Brick                ", icon = "NODE_BRICK")
+                props.use_transform = True
                 props.type = "ShaderNodeTexBrick"
 
-                props = col.operator("node.add_node", text=" Checker        ", icon = "NODE_CHECKER")
+                props = col.operator("node.add_node", text=" Checker           ", icon = "NODE_CHECKER")
                 props.use_transform = True
                 props.type = "ShaderNodeTexChecker"
 
-                props = col.operator("node.add_node", text=" Gradient       ", icon = "NODE_GRADIENT")
+                props = col.operator("node.add_node", text=" Gradient           ", icon = "NODE_GRADIENT")
                 props.use_transform = True
                 props.type = "ShaderNodeTexGradient"
 
-                props = col.operator("node.add_node", text=" Magic            ", icon = "NODE_MAGIC")
+                props = col.operator("node.add_node", text=" Magic               ", icon = "NODE_MAGIC")
                 props.use_transform = True
                 props.type = "ShaderNodeTexMagic"
 
                 col = layout.column(align=True)
 
-                props = col.operator("node.add_node", text=" Musgrave      ", icon = "NODE_MUSGRAVE")
+                props = col.operator("node.add_node", text=" Musgrave         ", icon = "NODE_MUSGRAVE")
                 props.use_transform = True
                 props.type = "ShaderNodeTexMusgrave"
                 
-                props = col.operator("node.add_node", text=" Noise            ", icon = "NODE_NOISE")
+                props = col.operator("node.add_node", text=" Noise                ", icon = "NODE_NOISE")
                 props.use_transform = True
                 props.type = "ShaderNodeTexNoise"
 
-                props = col.operator("node.add_node", text=" Sky              ", icon = "NODE_SKY")
+                props = col.operator("node.add_node", text=" Sky                    ", icon = "NODE_SKY")
                 props.use_transform = True
                 props.type = "ShaderNodeTexSky"
 
-                props = col.operator("node.add_node", text=" Point Density", icon = "NODE_POINTCLOUD")
+                props = col.operator("node.add_node", text=" Point Density   ", icon = "NODE_POINTCLOUD")
                 props.use_transform = True
                 props.type = "ShaderNodeTexPointDensity"
 
                 col = layout.column(align=True)
 
-                props = col.operator("node.add_node", text=" Wave            ", icon = "NODE_WAVES")
+                props = col.operator("node.add_node", text=" Wave                ", icon = "NODE_WAVES")
                 props.use_transform = True
                 props.type = "ShaderNodeTexWave"
         
-                props = col.operator("node.add_node", text=" Voronoi         ", icon = "NODE_VORONI")
+                props = col.operator("node.add_node", text=" Voronoi             ", icon = "NODE_VORONI")
                 props.use_transform = True
                 props.type = "ShaderNodeTexVoronoi"
 
@@ -403,47 +403,47 @@ class NodesToolshelfInput_textures(bpy.types.Panel):
 
                 col = layout.column(align=True) 
 
-                props = col.operator("node.add_node", text=" Blend         ", icon = "NODE_BLEND")
+                props = col.operator("node.add_node", text=" Blend                 ", icon = "NODE_BLEND")
                 props.use_transform = True
                 props.type = "TextureNodeTexBlend"
 
-                props = col.operator("node.add_node", text=" Clouds         ", icon = "NODE_CLOUDS")
+                props = col.operator("node.add_node", text=" Clouds               ", icon = "NODE_CLOUDS")
                 props.use_transform = True
                 props.type = "TextureNodeTexClouds"
 
-                props = col.operator("node.add_node", text=" Distorted Noise        ", icon = "NODE_DISTORTEDNOISE")
+                props = col.operator("node.add_node", text=" Distorted Noise ", icon = "NODE_DISTORTEDNOISE")
                 props.use_transform = True
                 props.type = "TextureNodeTexDistNoise"
 
-                props = col.operator("node.add_node", text=" Magic         ", icon = "NODE_MAGIC")
+                props = col.operator("node.add_node", text=" Magic               ", icon = "NODE_MAGIC")
                 props.use_transform = True
                 props.type = "TextureNodeTexMagic"
 
                 col = layout.column(align=True)
 
-                props = col.operator("node.add_node", text=" Marble         ", icon = "NODE_MARBLE")
-                props.use_transform = True
+                props = col.operator("node.add_node", text=" Marble              ", icon = "NODE_MARBLE")
+                props.use_transform = True  
                 props.type = "TextureNodeTexMarble"
 
-                props = col.operator("node.add_node", text=" Musgrave        ", icon = "NODE_MUSGRAVE")
+                props = col.operator("node.add_node", text=" Musgrave          ", icon = "NODE_MUSGRAVE")
                 props.use_transform = True
                 props.type = "TextureNodeTexMusgrave"
 
-                props = col.operator("node.add_node", text=" Noise        ", icon = "NODE_NOISE")
+                props = col.operator("node.add_node", text=" Noise                 ", icon = "NODE_NOISE")
                 props.use_transform = True
                 props.type = "TextureNodeTexNoise"
 
-                props = col.operator("node.add_node", text=" Stucci         ", icon = "NODE_STUCCI")
+                props = col.operator("node.add_node", text=" Stucci                ", icon = "NODE_STUCCI")
                 props.use_transform = True
                 props.type = "TextureNodeTexStucci"
 
                 col = layout.column(align=True) 
-
-                props = col.operator("node.add_node", text=" Voronoi         ", icon = "NODE_VORONI")
+                 
+                props = col.operator("node.add_node", text=" Voronoi             ", icon = "NODE_VORONI")
                 props.use_transform = True
                 props.type = "TextureNodeTexVoronoi"
 
-                props = col.operator("node.add_node", text=" Wood        ", icon = "NODE_WOOD")
+                props = col.operator("node.add_node", text=" Wood                ", icon = "NODE_WOOD")
                 props.use_transform = True
                 props.type = "TextureNodeTexWood"
 
@@ -531,7 +531,7 @@ class NodesToolshelfInput_shader(bpy.types.Panel):
 
                 col = layout.column(align=True)
                     
-                props = col.operator("node.add_node", text=" Principled        ", icon = "NODE_PRINCIPLED")
+                props = col.operator("node.add_node", text=" Principled         ", icon = "NODE_PRINCIPLED")
                 props.use_transform = True
                 props.type = "ShaderNodeBsdfPrincipled"
 
@@ -539,7 +539,7 @@ class NodesToolshelfInput_shader(bpy.types.Panel):
 
                 col = layout.column(align=True)     
 
-                props = col.operator("node.add_node", text=" Background            ", icon = "NODE_BACKGROUNDSHADER")
+                props = col.operator("node.add_node", text=" Background    ", icon = "NODE_BACKGROUNDSHADER")
                 props.use_transform = True
                 props.type = "ShaderNodeBackground"
 
@@ -599,51 +599,51 @@ class NodesToolshelfInput_shader_common(bpy.types.Panel):
 
                 col = layout.column(align=True)
 
-                props = col.operator("node.add_node", text=" Diffuse          ", icon = "NODE_DIFFUSESHADER")
-                props.use_transform = True
+                props = col.operator("node.add_node", text=" Diffuse               ", icon = "NODE_DIFFUSESHADER")
+                props.use_transform = True 
                 props.type = "ShaderNodeBsdfDiffuse"
         
-                props = col.operator("node.add_node", text=" Emission        ", icon = "NODE_EMISSION")
+                props = col.operator("node.add_node", text=" Emission           ", icon = "NODE_EMISSION")
                 props.use_transform = True
                 props.type = "ShaderNodeEmission"
 
-                props = col.operator("node.add_node", text=" Fresnel        ", icon = "NODE_FRESNEL")
+                props = col.operator("node.add_node", text=" Fresnel              ", icon = "NODE_FRESNEL")
                 props.use_transform = True
                 props.type = "ShaderNodeFresnel"
         
-                props = col.operator("node.add_node", text=" Glass               ", icon = "NODE_GLASSHADER")
+                props = col.operator("node.add_node", text=" Glass                  ", icon = "NODE_GLASSHADER")
                 props.use_transform = True
                 props.type = "ShaderNodeBsdfGlass"   
 
                 col = layout.column(align=True)
          
-                props = col.operator("node.add_node", text=" Glossy          ", icon = "NODE_GLOSSYSHADER")
+                props = col.operator("node.add_node", text=" Glossy                ", icon = "NODE_GLOSSYSHADER")
                 props.use_transform = True
                 props.type = "ShaderNodeBsdfGlossy"
         
-                props = col.operator("node.add_node", text=" Refraction     ", icon = "NODE_REFRACTIONSHADER")
+                props = col.operator("node.add_node", text=" Refraction         ", icon = "NODE_REFRACTIONSHADER")
                 props.use_transform = True
                 props.type = "ShaderNodeBsdfRefraction"
          
-                props = col.operator("node.add_node", text=" Subsurface Scattering", icon = "NODE_SSS")
+                props = col.operator("node.add_node", text=" Subsurface Scattering ", icon = "NODE_SSS")
                 props.use_transform = True
                 props.type = "ShaderNodeSubsurfaceScattering"
         
-                props = col.operator("node.add_node", text=" Toon              ", icon = "NODE_TOONSHADER")
+                props = col.operator("node.add_node", text=" Toon                    ", icon = "NODE_TOONSHADER")
                 props.use_transform = True
                 props.type = "ShaderNodeBsdfToon"
 
                 col = layout.column(align=True)
         
-                props = col.operator("node.add_node", text=" Translucent      ", icon = "NODE_TRANSLUCENT")
+                props = col.operator("node.add_node", text=" Translucent       ", icon = "NODE_TRANSLUCENT")
                 props.use_transform = True
                 props.type = "ShaderNodeBsdfTranslucent"
 
-                props = col.operator("node.add_node", text=" Transparent    ", icon = "NODE_TRANSPARENT")
+                props = col.operator("node.add_node", text=" Transparent      ", icon = "NODE_TRANSPARENT")
                 props.use_transform = True
                 props.type = "ShaderNodeBsdfTransparent"
 
-                props = col.operator("node.add_node", text=" Velvet            ", icon = "NODE_VELVET")
+                props = col.operator("node.add_node", text=" Velvet              ", icon = "NODE_VELVET")
                 props.use_transform = True
                 props.type = "ShaderNodeBsdfVelvet"
 
@@ -742,15 +742,15 @@ class NodesToolshelfInput_shader_advanced(bpy.types.Panel):
                 props.use_transform = True
                 props.type = "ShaderNodeAmbientOcclusion"         
         
-                props = col.operator("node.add_node", text=" Anisotopic    ", icon = "NODE_ANISOTOPIC")
+                props = col.operator("node.add_node", text=" Anisotopic         ", icon = "NODE_ANISOTOPIC")
                 props.use_transform = True
                 props.type = "ShaderNodeBsdfAnisotropic"
         
-                props = col.operator("node.add_node", text=" Hair               ", icon = "NODE_HAIRSHADER")
+                props = col.operator("node.add_node", text=" Hair                   ", icon = "NODE_HAIRSHADER")
                 props.use_transform = True
                 props.type = "ShaderNodeBsdfHair"       
         
-                props = col.operator("node.add_node", text=" Holdout        ", icon = "NODE_HOLDOUTSHADER")
+                props = col.operator("node.add_node", text=" Holdout            ", icon = "NODE_HOLDOUTSHADER")
                 props.use_transform = True
                 props.type = "ShaderNodeHoldout"
 
@@ -760,7 +760,7 @@ class NodesToolshelfInput_shader_advanced(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeVolumeAbsorption"
         
-            props = col.operator("node.add_node", text=" Volume Scatter    ", icon = "NODE_VOLUMESCATTER")
+            props = col.operator("node.add_node", text=" Volume Scatter ", icon = "NODE_VOLUMESCATTER")
             props.use_transform = True
             props.type = "ShaderNodeVolumeScatter"
 
@@ -835,19 +835,19 @@ class NodesToolshelfInput_input_advanced(bpy.types.Panel):
 
                 col = layout.column(align=True)    
 
-                props = col.operator("node.add_node", text=" Bokeh Image          ", icon = "NODE_BOKEH_IMAGE")    
+                props = col.operator("node.add_node", text=" Bokeh Image   ", icon = "NODE_BOKEH_IMAGE")    
                 props.use_transform = True
                 props.type = "CompositorNodeBokehImage"
            
-                props = col.operator("node.add_node", text=" Time         ", icon = "NODE_TIME")
+                props = col.operator("node.add_node", text=" Time                 ", icon = "NODE_TIME")
                 props.use_transform = True
                 props.type = "CompositorNodeTime" 
             
-                props = col.operator("node.add_node", text=" Track Position         ", icon = "NODE_TRACKPOSITION")
+                props = col.operator("node.add_node", text=" Track Position  ", icon = "NODE_TRACKPOSITION")
                 props.use_transform = True
                 props.type = "CompositorNodeTrackPos"
            
-                props = col.operator("node.add_node", text=" Value          ", icon = "NODE_VALUE")
+                props = col.operator("node.add_node", text=" Value               ", icon = "NODE_VALUE")
                 props.use_transform = True
                 props.type = "CompositorNodeValue"
        
@@ -885,11 +885,11 @@ class NodesToolshelfInput_input_advanced(bpy.types.Panel):
 
                 col = layout.column(align=True)    
 
-                props = col.operator("node.add_node", text=" Coordinates          ", icon = "NODE_TEXCOORDINATE") 
+                props = col.operator("node.add_node", text=" Coordinates       ", icon = "NODE_TEXCOORDINATE") 
                 props.use_transform = True
                 props.type = "TextureNodeCoordinates"
 
-                props = col.operator("node.add_node", text=" Curve Time          ", icon = "NODE_CURVE_TIME")
+                props = col.operator("node.add_node", text=" Curve Time        ", icon = "NODE_CURVE_TIME")
                 props.use_transform = True
                 props.type = "TextureNodeCurveTime"
 
@@ -939,11 +939,11 @@ class NodesToolshelfInput_pattern(bpy.types.Panel):
 
             col = layout.column(align=True)
 
-            props = col.operator("node.add_node", text=" Bricks         ", icon = "NODE_BRICK") 
+            props = col.operator("node.add_node", text=" Bricks               ", icon = "NODE_BRICK") 
             props.use_transform = True
             props.type = "TextureNodeBricks"
 
-            props = col.operator("node.add_node", text=" Checker        ", icon = "NODE_CHECKER")
+            props = col.operator("node.add_node", text=" Checker            ", icon = "NODE_CHECKER")
             props.use_transform = True
             props.type = "TextureNodeChecker"
 
@@ -997,29 +997,29 @@ class NodesToolshelfInput_color(bpy.types.Panel):
 
                 col = layout.column(align=True) 
 
-                props = col.operator("node.add_node", text=" Alpha Over          ", icon = "NODE_ALPHA")
+                props = col.operator("node.add_node", text=" Alpha Over       ", icon = "NODE_ALPHA")
                 props.use_transform = True
                 props.type = "CompositorNodeAlphaOver"
 
-                props = col.operator("node.add_node", text=" Bright / Contrast        ", icon = "NODE_BRIGHT_CONTRAST")
+                props = col.operator("node.add_node", text=" Bright / Contrast", icon = "NODE_BRIGHT_CONTRAST")
                 props.use_transform = True
                 props.type = "CompositorNodeBrightContrast" 
         
-                props = col.operator("node.add_node", text=" Color Balance         ", icon = "NODE_COLORBALANCE")
+                props = col.operator("node.add_node", text=" Color Balance  ", icon = "NODE_COLORBALANCE")
                 props.use_transform = True
                 props.type = "CompositorNodeColorBalance"
 
-                props = col.operator("node.add_node", text=" Hue Saturation Value        ", icon = "NODE_HUESATURATION")   
+                props = col.operator("node.add_node", text=" Hue Saturation Value", icon = "NODE_HUESATURATION")   
                 props.use_transform = True
                 props.type = "CompositorNodeHueSat"
 
                 col = layout.column(align=True) 
         
-                props = col.operator("node.add_node", text=" RGB Curves         ", icon = "NODE_RGBCURVE")
+                props = col.operator("node.add_node", text=" RGB Curves     ", icon = "NODE_RGBCURVE")
                 props.use_transform = True
                 props.type = "CompositorNodeCurveRGB"
         
-                props = col.operator("node.add_node", text=" Z Combine         ", icon = "NODE_ZCOMBINE")
+                props = col.operator("node.add_node", text=" Z Combine      ", icon = "NODE_ZCOMBINE")
                 props.use_transform = True
                 props.type = "CompositorNodeZcombine"
 
@@ -1068,29 +1068,29 @@ class NodesToolshelfInput_color(bpy.types.Panel):
 
                 col = layout.column(align=True)  
 
-                props = col.operator("node.add_node", text=" RGB Curves          ", icon = "NODE_RGBCURVE")
+                props = col.operator("node.add_node", text=" RGB Curves       ", icon = "NODE_RGBCURVE")
                 props.use_transform = True
                 props.type = "TextureNodeCurveRGB"
 
-                props = col.operator("node.add_node", text=" Hue / Saturation         ", icon = "NODE_HUESATURATION")   
+                props = col.operator("node.add_node", text=" Hue / Saturation", icon = "NODE_HUESATURATION")   
                 props.use_transform = True
                 props.type = "TextureNodeHueSaturation"
 
-                props = col.operator("node.add_node", text=" Invert         ", icon = "NODE_INVERT")  
+                props = col.operator("node.add_node", text=" Invert                ", icon = "NODE_INVERT")  
                 props.use_transform = True
                 props.type = "TextureNodeInvert"
 
-                props = col.operator("node.add_node", text=" Mix RGB          ", icon = "NODE_MIXRGB") 
+                props = col.operator("node.add_node", text=" Mix RGB            ", icon = "NODE_MIXRGB") 
                 props.use_transform = True
                 props.type = "TextureNodeMixRGB"
 
                 col = layout.column(align=True) 
 
-                props = col.operator("node.add_node", text=" Combine RGBA         ", icon = "NODE_COMBINERGB")
+                props = col.operator("node.add_node", text=" Combine RGBA ", icon = "NODE_COMBINERGB")
                 props.use_transform = True
                 props.type = "TextureNodeCompose"                
 
-                props = col.operator("node.add_node", text=" Separate RGBA         ", icon = "NODE_SEPARATERGB")
+                props = col.operator("node.add_node", text=" Separate RGBA ", icon = "NODE_SEPARATERGB")
                 props.use_transform = True
                 props.type = "TextureNodeDecompose"
 
@@ -1163,30 +1163,30 @@ class NodesToolshelfInput_color_advanced(bpy.types.Panel):
 
                 col = layout.column(align=True) 
             
-                props = col.operator("node.add_node", text=" Color Correction         ", icon = "NODE_COLORCORRECTION")
+                props = col.operator("node.add_node", text=" Color Correction", icon = "NODE_COLORCORRECTION")
                 props.use_transform = True
                 props.type = "CompositorNodeColorCorrection"
 
-                props = col.operator("node.add_node", text=" Gamma        ", icon = "NODE_GAMMA")
+                props = col.operator("node.add_node", text=" Gamma           ", icon = "NODE_GAMMA")
                 props.use_transform = True
                 props.type = "CompositorNodeGamma"
 
-                props = col.operator("node.add_node", text=" Hue Correct        ", icon = "NODE_HUESATURATION")   
+                props = col.operator("node.add_node", text=" Hue Correct    ", icon = "NODE_HUESATURATION")   
                 props.use_transform = True
                 props.type = "CompositorNodeHueCorrect"
             
-                props = col.operator("node.add_node", text=" Invert         ", icon = "NODE_INVERT")  
+                props = col.operator("node.add_node", text=" Invert              ", icon = "NODE_INVERT")  
                 props.use_transform = True
                 props.type = "CompositorNodeInvert"
 
                 col = layout.column(align=True)
             
-                props = col.operator("node.add_node", text=" Mix          ", icon = "NODE_MIXRGB") 
+                props = col.operator("node.add_node", text=" Mix                  ", icon = "NODE_MIXRGB") 
                 props.use_transform = True
                 props.type = "CompositorNodeMixRGB"
 
                 props = col.operator("node.add_node", text=" Tonemap         ", icon = "NODE_TONEMAP")
-                props.use_transform = True
+                props.use_transform = True 
                 props.type = "CompositorNodeTonemap"
 
             
@@ -1261,13 +1261,13 @@ class NodesToolshelfInput_output(bpy.types.Panel):
                     props.type = "ShaderNodeOutputMaterial"
         
         
-                    props = col.operator("node.add_node", text=" Lamp Output", icon = "NODE_LAMP")
+                    props = col.operator("node.add_node", text=" Lamp Output    ", icon = "NODE_LAMP")
                     props.use_transform = True
                     props.type = "ShaderNodeOutputLamp"
 
                 elif context.space_data.shader_type == 'WORLD':
         
-                    props = col.operator("node.add_node", text=" World Output", icon = "NODE_WORLDOUTPUT")
+                    props = col.operator("node.add_node", text=" World Output    ", icon = "NODE_WORLDOUTPUT")
                     props.use_transform = True
                     props.type = "ShaderNodeOutputWorld"
 
@@ -1315,25 +1315,25 @@ class NodesToolshelfInput_output(bpy.types.Panel):
 
                 col = layout.column(align=True)  
          
-                props = col.operator("node.add_node", text=" Composite          ", icon = "NODE_COMPOSITE_OUTPUT")
+                props = col.operator("node.add_node", text=" Composite      ", icon = "NODE_COMPOSITE_OUTPUT")
                 props.use_transform = True
                 props.type = "CompositorNodeComposite"
             
-                props = col.operator("node.add_node", text=" Viewer          ", icon = "NODE_VIEWER")
+                props = col.operator("node.add_node", text=" Viewer            ", icon = "NODE_VIEWER")
                 props.use_transform = True
                 props.type = "CompositorNodeViewer"
 
                 col = layout.column(align=True)  
         
-                props = col.operator("node.add_node", text=" File Output         ", icon = "NODE_FILEOUTPUT") 
+                props = col.operator("node.add_node", text=" File Output     ", icon = "NODE_FILEOUTPUT") 
                 props.use_transform = True
                 props.type = "CompositorNodeOutputFile"
 
-                props = col.operator("node.add_node", text=" Levels         ", icon = "NODE_LEVELS")
+                props = col.operator("node.add_node", text=" Levels             ", icon = "NODE_LEVELS")
                 props.use_transform = True
                 props.type = "CompositorNodeLevels"
         
-                props = col.operator("node.add_node", text=" Split Viewer         ", icon = "NODE_VIWERSPLIT")
+                props = col.operator("node.add_node", text=" Split Viewer    ", icon = "NODE_VIWERSPLIT")
                 props.use_transform = True
                 props.type = "CompositorNodeSplitViewer"
 
@@ -1377,11 +1377,11 @@ class NodesToolshelfInput_output(bpy.types.Panel):
 
                 col = layout.column(align=True)
 
-                props = col.operator("node.add_node", text=" Output         ", icon = "NODE_OUTPUT")
+                props = col.operator("node.add_node", text=" Output               ", icon = "NODE_OUTPUT")
                 props.use_transform = True
                 props.type = "TextureNodeOutput"
 
-                props = col.operator("node.add_node", text=" Viewer        ", icon = "NODE_VIEWER")
+                props = col.operator("node.add_node", text=" Viewer              ", icon = "NODE_VIEWER")
                 props.use_transform = True
                 props.type = "TextureNodeViewer"
 
@@ -1436,21 +1436,21 @@ class NodesToolshelfModify_matte(bpy.types.Panel):
             props.use_transform = True
             props.type = "CompositorNodeBoxMask"
 
-            props = col.operator("node.add_node", text=" Double Edge Mask     ", icon = "NODE_DOUBLEEDGEMASK")
+            props = col.operator("node.add_node", text=" Double Edge Mask ", icon = "NODE_DOUBLEEDGEMASK")
             props.use_transform = True
             props.type = "CompositorNodeDoubleEdgeMask" 
             
-            props = col.operator("node.add_node", text=" Ellipse Mask       ", icon = "NODE_ELLIPSEMASK")  
+            props = col.operator("node.add_node", text=" Ellipse Mask     ", icon = "NODE_ELLIPSEMASK")  
             props.use_transform = True
             props.type = "CompositorNodeEllipseMask"
 
             col = layout.column(align=True)
 
-            props = col.operator("node.add_node", text=" Channel Key      ", icon = "NODE_CHANNEL")
+            props = col.operator("node.add_node", text=" Channel Key     ", icon = "NODE_CHANNEL")
             props.use_transform = True
             props.type = "CompositorNodeChannelMatte"     
         
-            props = col.operator("node.add_node", text=" Chroma Key         ", icon = "NODE_CHROMA")
+            props = col.operator("node.add_node", text=" Chroma Key     ", icon = "NODE_CHROMA")
             props.use_transform = True
             props.type = "CompositorNodeChromaMatte" 
             
@@ -1458,31 +1458,31 @@ class NodesToolshelfModify_matte(bpy.types.Panel):
             props.use_transform = True
             props.type = "CompositorNodeColorMatte"
 
-            props = col.operator("node.add_node", text=" Color Spill         ", icon = "NODE_SPILL")
+            props = col.operator("node.add_node", text=" Color Spill        ", icon = "NODE_SPILL")
             props.use_transform = True
             props.type = "CompositorNodeColorSpill"
 
             col = layout.column(align=True)
 
-            props = col.operator("node.add_node", text=" Difference Key       ", icon = "NODE_DIFFERENCE")   
+            props = col.operator("node.add_node", text=" Difference Key ", icon = "NODE_DIFFERENCE")   
             props.use_transform = True
             props.type = "CompositorNodeDiffMatte"     
 
-            props = col.operator("node.add_node", text=" Distance Key      ", icon = "NODE_DISTANCE")
+            props = col.operator("node.add_node", text=" Distance Key   ", icon = "NODE_DISTANCE")
             props.use_transform = True
             props.type = "CompositorNodeDistanceMatte"
 
-            props = col.operator("node.add_node", text=" Keying         ", icon = "NODE_KEYING")
+            props = col.operator("node.add_node", text=" Keying              ", icon = "NODE_KEYING")
             props.use_transform = True
             props.type = "CompositorNodeKeying"
             
-            props = col.operator("node.add_node", text=" Keying Screen       ", icon = "NODE_KEYINGSCREEN") 
+            props = col.operator("node.add_node", text=" Keying Screen  ", icon = "NODE_KEYINGSCREEN") 
             props.use_transform = True
             props.type = "CompositorNodeKeyingScreen"
 
             col = layout.column(align=True)
 
-            props = col.operator("node.add_node", text=" Luminance Key        ", icon = "NODE_LUMINANCE") 
+            props = col.operator("node.add_node", text=" Luminance Key ", icon = "NODE_LUMINANCE") 
             props.use_transform = True
             props.type = "CompositorNodeLumaMatte"
 
@@ -1559,6 +1559,7 @@ class NodesToolshelfModify_filter(bpy.types.Panel):
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Modify"
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -1578,19 +1579,19 @@ class NodesToolshelfModify_filter(bpy.types.Panel):
 
             col = layout.column(align=True) 
 
-            props = col.operator("node.add_node", text=" Bilateral Blur          ", icon = "NODE_BILATERAL_BLUR")
+            props = col.operator("node.add_node", text=" Bilateral Blur    ", icon = "NODE_BILATERAL_BLUR")
             props.use_transform = True
             props.type = "CompositorNodeBilateralblur"
 
-            props = col.operator("node.add_node", text=" Blur      ", icon = "NODE_BLUR") 
+            props = col.operator("node.add_node", text=" Blur                   ", icon = "NODE_BLUR") 
             props.use_transform = True
             props.type = "CompositorNodeBlur" 
         
-            props = col.operator("node.add_node", text=" Bokeh Blur         ", icon = "NODE_BOKEH_BLUR") 
+            props = col.operator("node.add_node", text=" Bokeh Blur       ", icon = "NODE_BOKEH_BLUR") 
             props.use_transform = True
             props.type = "CompositorNodeBokehBlur"
 
-            props = col.operator("node.add_node", text=" Directional Blur     ", icon = "NODE_DIRECITONALBLUR")
+            props = col.operator("node.add_node", text=" Directional Blur ", icon = "NODE_DIRECITONALBLUR")
             props.use_transform = True
             props.type = "CompositorNodeDBlur"
 
@@ -1600,41 +1601,41 @@ class NodesToolshelfModify_filter(bpy.types.Panel):
             props.use_transform = True
             props.type = "CompositorNodeVecBlur"
 
-            props = col.operator("node.add_node", text=" Defocus         ", icon = "NODE_DEFOCUS")
+            props = col.operator("node.add_node", text=" Defocus             ", icon = "NODE_DEFOCUS")
             props.use_transform = True
             props.type = "CompositorNodeDefocus"
 
-            props = col.operator("node.add_node", text=" Despeckle       ", icon = "NODE_DESPECKLE")
+            props = col.operator("node.add_node", text=" Despeckle         ", icon = "NODE_DESPECKLE")
             props.use_transform = True
             props.type = "CompositorNodeDespeckle"
 
-            props = col.operator("node.add_node", text=" Dilate / Erode      ", icon = "NODE_ERODE")
+            props = col.operator("node.add_node", text=" Dilate / Erode    ", icon = "NODE_ERODE")
             props.use_transform = True
             props.type = "CompositorNodeDilateErode"
 
             col = layout.column(align=True)
 
-            props = col.operator("node.add_node", text=" Filter        ", icon = "NODE_FILTER") 
+            props = col.operator("node.add_node", text=" Filter                ", icon = "NODE_FILTER") 
             props.use_transform = True
             props.type = "CompositorNodeFilter"
             
-            props = col.operator("node.add_node", text=" Glare         ", icon = "NODE_GLARE")
+            props = col.operator("node.add_node", text=" Glare                ", icon = "NODE_GLARE")
             props.use_transform = True
             props.type = "CompositorNodeGlare"
 
             row = col.row(align=True)  
             
-            props = col.operator("node.add_node", text=" Inpaint        ", icon = "NODE_IMPAINT")
+            props = col.operator("node.add_node", text=" Inpaint              ", icon = "NODE_IMPAINT")
             props.use_transform = True
             props.type = "CompositorNodeInpaint"
             
-            props = col.operator("node.add_node", text=" Pixelate         ", icon = "NODE_PIXELATED")
+            props = col.operator("node.add_node", text=" Pixelate            ", icon = "NODE_PIXELATED")
             props.use_transform = True
             props.type = "CompositorNodePixelate"
 
             col = layout.column(align=True) 
         
-            props = col.operator("node.add_node", text=" Sunbeams       ", icon = "NODE_SUNBEAMS") 
+            props = col.operator("node.add_node", text=" Sunbeams        ", icon = "NODE_SUNBEAMS") 
             props.use_transform = True
             props.type = "CompositorNodeSunBeams"
 
@@ -1738,7 +1739,7 @@ class NodesToolshelfModify_input(bpy.types.Panel):
 
             col = layout.column(align=True)      
         
-            props = col.operator("node.add_node", text=" Attribute     ", icon = "NODE_ATTRIBUTE")
+            props = col.operator("node.add_node", text=" Attribute          ", icon = "NODE_ATTRIBUTE")
             props.use_transform = True
             props.type = "ShaderNodeAttribute"
         
@@ -1752,7 +1753,7 @@ class NodesToolshelfModify_input(bpy.types.Panel):
         
             col = layout.column(align=True)
         
-            props = col.operator("node.add_node", text=" Hair Info     ", icon = "NODE_HAIRINFO")
+            props = col.operator("node.add_node", text=" Hair Info           ", icon = "NODE_HAIRINFO")
             props.use_transform = True
             props.type = "ShaderNodeHairInfo"
         
@@ -1760,45 +1761,45 @@ class NodesToolshelfModify_input(bpy.types.Panel):
             props.use_transform = True
             props.type = "ShaderNodeLayerWeight"
         
-            props = col.operator("node.add_node", text=" Light Path    ", icon = "NODE_LIGHTPATH")
+            props = col.operator("node.add_node", text=" Light Path        ", icon = "NODE_LIGHTPATH")
             props.use_transform = True
             props.type = "ShaderNodeLightPath"
         
-            props = col.operator("node.add_node", text=" Object Info    ", icon = "NODE_OBJECTINFO")
+            props = col.operator("node.add_node", text=" Object Info       ", icon = "NODE_OBJECTINFO")
             props.use_transform = True
             props.type = "ShaderNodeObjectInfo"
         
             col = layout.column(align=True)
         
-            props = col.operator("node.add_node", text=" Particle Info", icon = "NODE_PARTICLEINFO")
+            props = col.operator("node.add_node", text=" Particle Info     ", icon = "NODE_PARTICLEINFO")
             props.use_transform = True
             props.type = "ShaderNodeParticleInfo"
         
-            props = col.operator("node.add_node", text=" RGB               ", icon = "NODE_RGB")
+            props = col.operator("node.add_node", text=" RGB                 ", icon = "NODE_RGB")
             props.use_transform = True
             props.type = "ShaderNodeRGB"
         
-            props = col.operator("node.add_node", text=" Tangent        ", icon = "NODE_TANGENT")
+            props = col.operator("node.add_node", text=" Tangent             ", icon = "NODE_TANGENT")
             props.use_transform = True
             props.type = "ShaderNodeTangent"
         
-            props = col.operator("node.add_node", text=" Texture Coordinate", icon = "NODE_TEXCOORDINATE") 
+            props = col.operator("node.add_node", text=" Texture Coordinate ", icon = "NODE_TEXCOORDINATE") 
             props.use_transform = True
             props.type = "ShaderNodeTexCoord"
 
             col = layout.column(align=True)
         
-            props = col.operator("node.add_node", text=" UV Map       ", icon = "NODE_UVMAP")
+            props = col.operator("node.add_node", text=" UV Map            ", icon = "NODE_UVMAP")
             props.use_transform = True
             props.type = "ShaderNodeUVMap"
         
-            props = col.operator("node.add_node", text=" Value            ", icon = "NODE_VALUE")
+            props = col.operator("node.add_node", text=" Value                ", icon = "NODE_VALUE")
             props.use_transform = True
             props.type = "ShaderNodeValue"
 
             row = col.row(align=True)
         
-            props = col.operator("node.add_node", text=" Wireframe", icon = "NODE_WIREFRAME")
+            props = col.operator("node.add_node", text=" Wireframe        ", icon = "NODE_WIREFRAME")
             props.use_transform = True
             props.type = "ShaderNodeWireframe"
 
@@ -1887,7 +1888,7 @@ class NodesToolshelfModify_input(bpy.types.Panel):
                 props.type = "ShaderNodeUVALongStroke"
 
 
-#Modify nodes tab, converter panel. All modes
+#Modify nodes tab, converter panel. All modes 
 class NodesToolshelfModify_converter(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Converter"
@@ -1895,6 +1896,7 @@ class NodesToolshelfModify_converter(bpy.types.Panel):
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Modify"
+    bl_options = {'DEFAULT_CLOSED'}
     
     @staticmethod
     def draw(self, context):
@@ -1916,7 +1918,7 @@ class NodesToolshelfModify_converter(bpy.types.Panel):
 
                 col = layout.column(align=True)        
         
-                props = col.operator("node.add_node", text=" Combine HSV    ", icon = "NODE_COMBINEHSV")
+                props = col.operator("node.add_node", text=" Combine HSV   ", icon = "NODE_COMBINEHSV")
                 props.use_transform = True
                 props.type = "ShaderNodeCombineHSV"        
          
@@ -1924,21 +1926,21 @@ class NodesToolshelfModify_converter(bpy.types.Panel):
                 props.use_transform = True
                 props.type = "ShaderNodeCombineRGB"
         
-                props = col.operator("node.add_node", text=" Combine XYZ    ", icon = "NODE_COMBINEXYZ")
+                props = col.operator("node.add_node", text=" Combine XYZ   ", icon = "NODE_COMBINEXYZ")
                 props.use_transform = True
                 props.type = "ShaderNodeCombineXYZ" 
 
                 col = layout.column(align=True)
 
-                props = col.operator("node.add_node", text=" Separate HSV    ", icon = "NODE_SEPARATEHSV") 
+                props = col.operator("node.add_node", text=" Separate HSV   ", icon = "NODE_SEPARATEHSV") 
                 props.use_transform = True
                 props.type = "ShaderNodeSeparateHSV"
 
-                props = col.operator("node.add_node", text=" Separate RGB    ", icon = "NODE_SEPARATERGB")
+                props = col.operator("node.add_node", text=" Separate RGB   ", icon = "NODE_SEPARATERGB")
                 props.use_transform = True
                 props.type = "ShaderNodeSeparateRGB"    
         
-                props = col.operator("node.add_node", text=" Separate XYZ    ", icon = "NODE_SEPARATEXYZ")
+                props = col.operator("node.add_node", text=" Separate XYZ   ", icon = "NODE_SEPARATEXYZ")
                 props.use_transform = True
                 props.type = "ShaderNodeSeparateXYZ" 
 
@@ -1948,25 +1950,25 @@ class NodesToolshelfModify_converter(bpy.types.Panel):
                 props.use_transform = True
                 props.type = "ShaderNodeBlackbody"        
         
-                props = col.operator("node.add_node", text=" ColorRamp      ", icon = "NODE_COLORRAMP")
+                props = col.operator("node.add_node", text=" ColorRamp       ", icon = "NODE_COLORRAMP")
                 props.use_transform = True
                 props.type = "ShaderNodeValToRGB"
 
-                props = col.operator("node.add_node", text=" Math              ", icon = "NODE_MATH")
-                props.use_transform = True
+                props = col.operator("node.add_node", text=" Math                 ", icon = "NODE_MATH")
+                props.use_transform = True   
                 props.type = "ShaderNodeMath"
         
-                props = col.operator("node.add_node", text=" RGB to BW        ", icon = "NODE_RGBTOBW")
+                props = col.operator("node.add_node", text=" RGB to BW      ", icon = "NODE_RGBTOBW")
                 props.use_transform = True
                 props.type = "ShaderNodeRGBToBW"
         
                 col = layout.column(align=True)       
         
-                props = col.operator("node.add_node", text=" Vector Math       ", icon = "NODE_VECTORMATH")
+                props = col.operator("node.add_node", text=" Vector Math     ", icon = "NODE_VECTORMATH")
                 props.use_transform = True
                 props.type = "ShaderNodeVectorMath"
         
-                props = col.operator("node.add_node", text=" Wavelength      ", icon = "NODE_WAVELENGTH")
+                props = col.operator("node.add_node", text=" Wavelength     ", icon = "NODE_WAVELENGTH")
                 props.use_transform = True
                 props.type = "ShaderNodeWavelength"
         
@@ -2044,69 +2046,69 @@ class NodesToolshelfModify_converter(bpy.types.Panel):
 
                 col = layout.column(align=True)   
 
-                props = col.operator("node.add_node", text=" Combine HSVA         ", icon = "NODE_COMBINEHSV")
+                props = col.operator("node.add_node", text=" Combine HSVA ", icon = "NODE_COMBINEHSV")
                 props.use_transform = True
                 props.type = "CompositorNodeCombHSVA"
             
-                props = col.operator("node.add_node", text=" Combine RGBA         ", icon = "NODE_COMBINERGB")
+                props = col.operator("node.add_node", text=" Combine RGBA ", icon = "NODE_COMBINERGB")
                 props.use_transform = True
                 props.type = "CompositorNodeCombRGBA"
 
-                props = col.operator("node.add_node", text=" Combine YCbCrA       ", icon = "NODE_COMBINEYCBCRA")
+                props = col.operator("node.add_node", text=" Combine YCbCrA ", icon = "NODE_COMBINEYCBCRA")
                 props.use_transform = True
                 props.type = "CompositorNodeCombYCCA"
 
-                props = col.operator("node.add_node", text=" Combine YUVA       ", icon = "NODE_COMBINEYUVA")  
+                props = col.operator("node.add_node", text=" Combine YUVA ", icon = "NODE_COMBINEYUVA")  
                 props.use_transform = True
                 props.type = "CompositorNodeCombYUVA"
 
                 col = layout.column(align=True)
 
-                props = col.operator("node.add_node", text=" Separate HSVA         ", icon = "NODE_SEPARATEHSV") 
+                props = col.operator("node.add_node", text=" Separate HSVA ", icon = "NODE_SEPARATEHSV") 
                 props.use_transform = True
                 props.type = "CompositorNodeSepHSVA"
 
-                props = col.operator("node.add_node", text=" Separate RGBA         ", icon = "NODE_SEPARATERGB")
+                props = col.operator("node.add_node", text=" Separate RGBA ", icon = "NODE_SEPARATERGB")
                 props.use_transform = True
                 props.type = "CompositorNodeSepRGBA"
         
-                props = col.operator("node.add_node", text=" Separate YCbCrA       ", icon = "NODE_SEPARATE_YCBCRA") 
+                props = col.operator("node.add_node", text=" Separate YCbCrA ", icon = "NODE_SEPARATE_YCBCRA") 
                 props.use_transform = True
                 props.type = "CompositorNodeSepYCCA"
 
-                props = col.operator("node.add_node", text=" Separate YUVA       ", icon = "NODE_SEPARATE_YUVA") 
+                props = col.operator("node.add_node", text=" Separate YUVA ", icon = "NODE_SEPARATE_YUVA") 
                 props.use_transform = True
                 props.type = "CompositorNodeSepYUVA"
 
                 col = layout.column(align=True)
 
-                props = col.operator("node.add_node", text=" Set Alpha         ", icon = "NODE_ALPHA")
+                props = col.operator("node.add_node", text=" Set Alpha          ", icon = "NODE_ALPHA")
                 props.use_transform = True
                 props.type = "CompositorNodeSetAlpha"
                 
-                props = col.operator("node.add_node", text=" Alpha Convert          ", icon = "NODE_ALPHACONVERT")
+                props = col.operator("node.add_node", text=" Alpha Convert  ", icon = "NODE_ALPHACONVERT")
                 props.use_transform = True
                 props.type = "CompositorNodePremulKey"
 
-                props = col.operator("node.add_node", text=" RGB to BW          ", icon = "NODE_RGBTOBW")
+                props = col.operator("node.add_node", text=" RGB to BW       ", icon = "NODE_RGBTOBW")
                 props.use_transform = True
                 props.type = "CompositorNodeRGBToBW"
 
-                props = col.operator("node.add_node", text=" Color Ramp       ", icon = "NODE_COLORRAMP")
+                props = col.operator("node.add_node", text=" Color Ramp      ", icon = "NODE_COLORRAMP")
                 props.use_transform = True
                 props.type = "CompositorNodeValToRGB"
 
                 col = layout.column(align=True)
         
-                props = col.operator("node.add_node", text=" ID Mask        ", icon = "NODE_MASK") 
+                props = col.operator("node.add_node", text=" ID Mask           ", icon = "NODE_MASK") 
                 props.use_transform = True
                 props.type = "CompositorNodeIDMask"
             
-                props = col.operator("node.add_node", text=" Math         ", icon = "NODE_MATH")
+                props = col.operator("node.add_node", text=" Math                 ", icon = "NODE_MATH")
                 props.use_transform = True
                 props.type = "CompositorNodeMath"
 
-                props = col.operator("node.add_node", text=" Switch View         ", icon = "NODE_SWITCHVIEW")
+                props = col.operator("node.add_node", text=" Switch View    ", icon = "NODE_SWITCHVIEW")
                 props.use_transform = True
                 props.type = "CompositorNodeSwitchView"
         
@@ -2197,25 +2199,25 @@ class NodesToolshelfModify_converter(bpy.types.Panel):
 
                 col = layout.column(align=True)
 
-                props = col.operator("node.add_node", text=" Color Ramp         ", icon = "NODE_COLORRAMP")
+                props = col.operator("node.add_node", text=" Color Ramp      ", icon = "NODE_COLORRAMP")
                 props.use_transform = True
                 props.type = "TextureNodeValToRGB"
 
-                props = col.operator("node.add_node", text=" Distance         ", icon = "NODE_DISTANCE")
+                props = col.operator("node.add_node", text=" Distance           ", icon = "NODE_DISTANCE")
                 props.use_transform = True
                 props.type = "TextureNodeDistance"
 
-                props = col.operator("node.add_node", text=" Math        ", icon = "NODE_MATH")
+                props = col.operator("node.add_node", text=" Math                 ", icon = "NODE_MATH")
                 props.use_transform = True
                 props.type = "TextureNodeMath"
 
-                props = col.operator("node.add_node", text=" RGB to BW        ", icon = "NODE_RGBTOBW")
+                props = col.operator("node.add_node", text=" RGB to BW       ", icon = "NODE_RGBTOBW")
                 props.use_transform = True
                 props.type = "TextureNodeRGBToBW"
 
                 col = layout.column(align=True)
 
-                props = col.operator("node.add_node", text=" Value to Normal         ", icon = "NODE_NORMAL")
+                props = col.operator("node.add_node", text=" Value to Normal ", icon = "NODE_NORMAL")
                 props.use_transform = True
                 props.type = "TextureNodeValToNor"
 
@@ -2259,6 +2261,7 @@ class NodesToolshelfModify_vector(bpy.types.Panel):
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Modify"
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -2284,25 +2287,25 @@ class NodesToolshelfModify_vector(bpy.types.Panel):
 
                 col = layout.column(align=True)    
         
-                props = col.operator("node.add_node", text=" Bump            ", icon = "NODE_BUMP")
-                props.use_transform = True
+                props = col.operator("node.add_node", text=" Bump               ", icon = "NODE_BUMP")
+                props.use_transform = True   
                 props.type = "ShaderNodeBump"
         
-                props = col.operator("node.add_node", text=" Mapping          ", icon = "NODE_MAPPING")
+                props = col.operator("node.add_node", text=" Mapping           ", icon = "NODE_MAPPING")
                 props.use_transform = True
                 props.type = "ShaderNodeMapping"
 
-                props = col.operator("node.add_node", text=" Normal          ", icon = "NODE_NORMAL")
+                props = col.operator("node.add_node", text=" Normal            ", icon = "NODE_NORMAL")
                 props.use_transform = True
                 props.type = "ShaderNodeNormal"
                 
                 col = layout.column(align=True) 
                 
-                props = col.operator("node.add_node", text=" Vector Curves    ", icon = "NODE_VECTOR")
+                props = col.operator("node.add_node", text=" Vector Curves ", icon = "NODE_VECTOR")
                 props.use_transform = True
                 props.type = "ShaderNodeVectorCurve"
 
-                props = col.operator("node.add_node", text=" Vector Transform   ", icon = "NODE_VECTOR_TRANSFORM")
+                props = col.operator("node.add_node", text=" Vector Transform ", icon = "NODE_VECTOR_TRANSFORM")
                 props.use_transform = True
                 props.type = "ShaderNodeVectorTransform"
 
@@ -2348,15 +2351,15 @@ class NodesToolshelfModify_vector(bpy.types.Panel):
 
                 col = layout.column(align=True)  
 
-                props = col.operator("node.add_node", text=" Map Range         ", icon = "NODE_RANGE")
+                props = col.operator("node.add_node", text=" Map Range       ", icon = "NODE_RANGE")
                 props.use_transform = True
                 props.type = "CompositorNodeMapRange"
 
-                props = col.operator("node.add_node", text=" Map Value     ", icon = "NODE_VALUE")
+                props = col.operator("node.add_node", text=" Map Value       ", icon = "NODE_VALUE")
                 props.use_transform = True
                 props.type = "CompositorNodeMapValue"
         
-                props = col.operator("node.add_node", text=" Normal         ", icon = "NODE_NORMAL")
+                props = col.operator("node.add_node", text=" Normal            ", icon = "NODE_NORMAL")
                 props.use_transform = True
                 props.type = "CompositorNodeNormal"
             
@@ -2366,7 +2369,7 @@ class NodesToolshelfModify_vector(bpy.types.Panel):
 
                 col = layout.column(align=True)
         
-                props = col.operator("node.add_node", text=" Vector Curves      ", icon = "NODE_VECTOR")
+                props = col.operator("node.add_node", text=" Vector Curves  ", icon = "NODE_VECTOR")
                 props.use_transform = True
                 props.type = "CompositorNodeCurveVec"
 
@@ -2410,6 +2413,7 @@ class NodesToolshelfModify_distort(bpy.types.Panel):
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Modify"
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -2438,57 +2442,57 @@ class NodesToolshelfModify_distort(bpy.types.Panel):
                 props.use_transform = True
                 props.type = "CompositorNodeCornerPin"
 
-                props = col.operator("node.add_node", text=" Crop     ", icon = "NODE_CROP")
+                props = col.operator("node.add_node", text=" Crop                 ", icon = "NODE_CROP")
                 props.use_transform = True
                 props.type = "CompositorNodeCrop"
         
-                props = col.operator("node.add_node", text=" Displace        ", icon = "NODE_DISPLACE") 
+                props = col.operator("node.add_node", text=" Displace          ", icon = "NODE_DISPLACE") 
                 props.use_transform = True
                 props.type = "CompositorNodeDisplace"
             
-                props = col.operator("node.add_node", text=" Flip         ", icon = "NODE_FLIP")  
+                props = col.operator("node.add_node", text=" Flip                   ", icon = "NODE_FLIP")  
                 props.use_transform = True
                 props.type = "CompositorNodeFlip"
 
                 col = layout.column(align=True)  
         
-                props = col.operator("node.add_node", text=" Lens Distortion       ", icon = "NODE_LENSDISTORT")
+                props = col.operator("node.add_node", text=" Lens Distortion ", icon = "NODE_LENSDISTORT")
                 props.use_transform = True
                 props.type = "CompositorNodeLensdist"
 
-                props = col.operator("node.add_node", text=" Map UV     ", icon = "NODE_UVMAP")
+                props = col.operator("node.add_node", text=" Map UV            ", icon = "NODE_UVMAP")
                 props.use_transform = True
                 props.type = "CompositorNodeMapUV"
         
-                props = col.operator("node.add_node", text=" Movie Distortion     ", icon = "NODE_MOVIEDISTORT") 
+                props = col.operator("node.add_node", text=" Movie Distortion ", icon = "NODE_MOVIEDISTORT") 
                 props.use_transform = True
                 props.type = "CompositorNodeMovieDistortion"
             
-                props = col.operator("node.add_node", text=" Plane Track Deform       ", icon = "NODE_PLANETRACKDEFORM")
+                props = col.operator("node.add_node", text=" Plane Track Deform ", icon = "NODE_PLANETRACKDEFORM")
                 props.use_transform = True
                 props.type = "CompositorNodePlaneTrackDeform"
 
                 col = layout.column(align=True)
             
-                props = col.operator("node.add_node", text=" Rotate         ", icon = "NODE_ROTATE")  
+                props = col.operator("node.add_node", text=" Rotate               ", icon = "NODE_ROTATE")  
                 props.use_transform = True
                 props.type = "CompositorNodeRotate"
             
-                props = col.operator("node.add_node", text=" Scale       ", icon = "NODE_SCALE")
+                props = col.operator("node.add_node", text=" Scale                ", icon = "NODE_SCALE")
                 props.use_transform = True
                 props.type = "CompositorNodeScale"
       
-                props = col.operator("node.add_node", text=" Transform       ", icon = "NODE_TRANSFORM")
+                props = col.operator("node.add_node", text=" Transform         ", icon = "NODE_TRANSFORM")
                 props.use_transform = True
                 props.type = "CompositorNodeTransform"
 
-                props = col.operator("node.add_node", text=" Translate       ", icon = "NODE_MOVE") 
+                props = col.operator("node.add_node", text=" Translate          ", icon = "NODE_MOVE") 
                 props.use_transform = True
                 props.type = "CompositorNodeTranslate"
 
                 col = layout.column(align=True)
 
-                props = col.operator("node.add_node", text=" Stabilize 2D        ", icon = "NODE_STABILIZE2D")  
+                props = col.operator("node.add_node", text=" Stabilize 2D     ", icon = "NODE_STABILIZE2D")  
                 props.use_transform = True
                 props.type = "CompositorNodeStabilize"
 
@@ -2570,19 +2574,19 @@ class NodesToolshelfModify_distort(bpy.types.Panel):
 
                 col = layout.column(align=True) 
 
-                props = col.operator("node.add_node", text=" At        ", icon = "NODE_AT")
+                props = col.operator("node.add_node", text=" At                      ", icon = "NODE_AT")
                 props.use_transform = True
                 props.type = "TextureNodeAt"
 
-                props = col.operator("node.add_node", text=" Rotate         ", icon = "NODE_ROTATE") 
-                props.use_transform = True
+                props = col.operator("node.add_node", text=" Rotate              ", icon = "NODE_ROTATE") 
+                props.use_transform = True    
                 props.type = "TextureNodeRotate"
 
-                props = col.operator("node.add_node", text=" Scale        ", icon = "NODE_SCALE")
+                props = col.operator("node.add_node", text=" Scale                ", icon = "NODE_SCALE")
                 props.use_transform = True
                 props.type = "TextureNodeScale"
 
-                props = col.operator("node.add_node", text=" Translate       ", icon = "NODE_MOVE") 
+                props = col.operator("node.add_node", text=" Translate          ", icon = "NODE_MOVE") 
                 props.use_transform = True
                 props.type = "TextureNodeTranslate"
 
@@ -2617,6 +2621,7 @@ class NodesToolshelfModify_color(bpy.types.Panel):
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Modify"
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -2637,34 +2642,34 @@ class NodesToolshelfModify_color(bpy.types.Panel):
         if not addon_prefs.Node_text_or_icon:
                 
             col = layout.column(align=True)
-        
-            props = col.operator("node.add_node", text=" Bright / Contrast    ", icon = "NODE_BRIGHT_CONTRAST")
+
+            props = col.operator("node.add_node", text=" Bright / Contrast ", icon = "NODE_BRIGHT_CONTRAST")
             props.use_transform = True
             props.type = "ShaderNodeBrightContrast"       
         
-            props = col.operator("node.add_node", text=" Gamma                ", icon = "NODE_GAMMA")
+            props = col.operator("node.add_node", text=" Gamma             ", icon = "NODE_GAMMA")
             props.use_transform = True
             props.type = "ShaderNodeGamma"
         
-            props = col.operator("node.add_node", text="  Hue / Saturation    ", icon = "NODE_HUESATURATION")   
+            props = col.operator("node.add_node", text=" Hue / Saturation ", icon = "NODE_HUESATURATION")   
             props.use_transform = True
             props.type = "ShaderNodeHueSaturation"
         
-            props = col.operator("node.add_node", text=" Invert                  ", icon = "NODE_INVERT")  
+            props = col.operator("node.add_node", text=" Invert                 ", icon = "NODE_INVERT")  
             props.use_transform = True
             props.type = "ShaderNodeInvert"
                 
             col = layout.column(align=True)
 
-            props = col.operator("node.add_node", text=" Light Falloff         ", icon = "NODE_LIGHTFALLOFF")
+            props = col.operator("node.add_node", text=" Light Falloff      ", icon = "NODE_LIGHTFALLOFF")
             props.use_transform = True
             props.type = "ShaderNodeLightFalloff"
         
-            props = col.operator("node.add_node", text=" Mix RGB             ", icon = "NODE_MIXRGB") 
+            props = col.operator("node.add_node", text=" Mix RGB           ", icon = "NODE_MIXRGB") 
             props.use_transform = True
             props.type = "ShaderNodeMixRGB"
         
-            props = col.operator("node.add_node", text="  RGB Curves         ", icon = "NODE_RGBCURVE")
+            props = col.operator("node.add_node", text="  RGB Curves        ", icon = "NODE_RGBCURVE")
             props.use_transform = True
             props.type = "ShaderNodeRGBCurve"
 
@@ -2717,6 +2722,7 @@ class NodesToolshelfModify_script(bpy.types.Panel):
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Modify"
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
@@ -2738,7 +2744,7 @@ class NodesToolshelfModify_script(bpy.types.Panel):
 
             col = layout.column(align=True)
         
-            props = col.operator("node.add_node", text=" Script            ", icon = "NODE_SCRIPT")
+            props = col.operator("node.add_node", text=" Script               ", icon = "NODE_SCRIPT")
             props.use_transform = True
             props.type = "ShaderNodeScript"  
 
@@ -2781,14 +2787,14 @@ class NodesToolshelfRelations_group(bpy.types.Panel):
 
             col = layout.column(align=True)  
 
-            col.operator("node.group_edit", text=" Edit Group     ", icon = "NODE_EDITGROUP").exit = False
-            col.operator("node.group_edit", text = "Exit Edit Group  ", icon = "NODE_EXITEDITGROUP").exit = True
-            col.operator("node.group_insert", text = " Group Insert    ", icon = "NODE_GROUPINSERT")
-            col.operator("node.group_make", text = " Make Group     ", icon = "NODE_MAKEGROUP")
+            col.operator("node.group_edit", text=" Edit Group         ", icon = "NODE_EDITGROUP").exit = False
+            col.operator("node.group_edit", text = "Exit Edit Group ", icon = "NODE_EXITEDITGROUP").exit = True
+            col.operator("node.group_insert", text = " Group Insert      ", icon = "NODE_GROUPINSERT")
+            col.operator("node.group_make", text = " Make Group      ", icon = "NODE_MAKEGROUP")
 
             col = layout.column(align=True)  
 
-            col.operator("node.group_ungroup", text = " Ungroup        ", icon = "NODE_UNGROUP")
+            col.operator("node.group_ungroup", text = " Ungroup           ", icon = "NODE_UNGROUP")
 
         #### Icon Buttons
 
@@ -2833,17 +2839,17 @@ class NodesToolshelfRelations_layout(bpy.types.Panel):
 
             col = layout.column(align=True)     
 
-            props = col.operator("node.add_node", text=" Frame       ", icon = "NODE_FRAME")
+            props = col.operator("node.add_node", text=" Frame               ", icon = "NODE_FRAME")
             props.use_transform = True
             props.type = "NodeFrame"      
         
-            props = col.operator("node.add_node", text=" Reroute      ", icon = "NODE_REROUTE")
+            props = col.operator("node.add_node", text=" Reroute             ", icon = "NODE_REROUTE")
             props.use_transform = True
             props.type = "NodeReroute"
 
             if context.space_data.tree_type == 'CompositorNodeTree':
                 col = layout.column(align=True)   
-                props = col.operator("node.add_node", text=" Switch      ", icon = "NODE_SWITCH")
+                props = col.operator("node.add_node", text=" Switch              ", icon = "NODE_SWITCH")
                 props.use_transform = True
                 props.type = "CompositorNodeSwitch"
 
