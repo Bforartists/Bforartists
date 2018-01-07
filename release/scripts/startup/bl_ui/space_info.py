@@ -401,7 +401,7 @@ class INFO_MT_help(Menu):
         layout.operator("wm.url_open", text="Report a Bug", icon='URL').url = "https://www.bforartists.de/node/add/project-issue/bforartists_bugtracker"
         layout.separator()
 
-        layout.operator("wm.url_open", text="Python API Reference", icon='URL').url = "https://www.bforartists.de/pythonapi/contents.html"
+        layout.operator("wm.url_open", text="Blender Python API Reference", icon='URL').url = "https://docs.blender.org/api/blender_python_api_master/#"
         layout.operator("wm.sysinfo", icon='TEXT')
         layout.separator()
 

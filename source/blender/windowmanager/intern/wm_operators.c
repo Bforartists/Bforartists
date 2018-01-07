@@ -1913,7 +1913,7 @@ static uiBlock *wm_block_create_splash(bContext *C, ARegion *ar, void *UNUSED(ar
 	uiItemStringO(col, IFACE_("Bforartists Website"), ICON_URL, "WM_OT_url_open", "url", "https://www.bforartists.de/");
 	uiItemStringO(col, IFACE_("Report a bug"), ICON_URL, "WM_OT_url_open", "url", "https://www.bforartists.de/node/add/project-issue/bforartists_bugtracker");
 
-	uiItemStringO(col, IFACE_("Python API Reference"), ICON_URL, "WM_OT_url_open", "url", "https://www.bforartists.de/pythonapi/contents.html"); // bfa - link to new api page
+	uiItemStringO(col, IFACE_("Blender Python API Reference"), ICON_URL, "WM_OT_url_open", "url", "https://docs.blender.org/api/blender_python_api_master/#"); /*bfa- we link to the official Blender api here, we don't have a own api*/
 	uiItemL(col, "", ICON_NONE);
 	uiItemL(col, "Bforartists 0.9.5 is based on Blender 2.79", ICON_NONE);
 
