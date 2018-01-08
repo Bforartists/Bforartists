@@ -214,8 +214,10 @@ class VIEW3D_MT_transform(VIEW3D_MT_transform_base):
 
         layout.separator()
 
-        layout.operator("transform.translate", text="Move Texture Space", icon = "MOVE_TEXTURESPACE").texture_space = True
-        layout.operator("transform.resize", text="Scale Texture Space", icon = "SCALE_TEXTURESPACE").texture_space = True
+        #layout.operator("transform.translate", text="Move Texture Space", icon = "MOVE_TEXTURESPACE").texture_space = True
+        layout.operator("transform.translate_texture", text="Move Texture Space", icon = "MOVE_TEXTURESPACE").texture_space = True
+        #layout.operator("transform.resize", text="Scale Texture Space", icon = "SCALE_TEXTURESPACE").texture_space = True
+        layout.operator("transform.resize_texture", text="Scale Texture Space", icon = "SCALE_TEXTURESPACE").texture_space = True
 
         layout.separator()
 
@@ -233,8 +235,10 @@ class VIEW3D_MT_transform_object(VIEW3D_MT_transform_base):
         # object-specific option follow...
         layout.separator()
 
-        layout.operator("transform.translate", text="Move Texture Space", icon = "MOVE_TEXTURESPACE").texture_space = True
-        layout.operator("transform.resize", text="Scale Texture Space", icon = "SCALE_TEXTURESPACE").texture_space = True
+        #layout.operator("transform.translate", text="Move Texture Space", icon = "MOVE_TEXTURESPACE").texture_space = True
+        layout.operator("transform.translate_texture", text="Move Texture Space", icon = "MOVE_TEXTURESPACE").texture_space = True
+        #layout.operator("transform.resize", text="Scale Texture Space", icon = "SCALE_TEXTURESPACE").texture_space = True
+        layout.operator("transform.resize_texture", text="Scale Texture Space", icon = "SCALE_TEXTURESPACE").texture_space = True
 
         layout.separator()
 
