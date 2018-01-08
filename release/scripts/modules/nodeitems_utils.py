@@ -105,8 +105,6 @@ def register_node_categories(identifier, cat_list):
         raise KeyError("Node categories list '%s' already registered" % identifier)
         return
 
-    
-
     # works as draw function for both menus and panels
     def draw_node_item(self, context):
         layout = self.layout
@@ -127,20 +125,21 @@ def register_node_categories(identifier, cat_list):
             })
         panel_type = type("NODE_PT_category_" + cat.identifier, (bpy.types.Panel,), {
             "bl_space_type": 'NODE_EDITOR',
-            "bl_region_type": 'TOOLS',
+            "bl_region_type": 'HEADER', #BFA- changed from tools to header to get rid of the many tabs
             "bl_label": cat.name,
             "bl_category": cat.name,
             "category": cat,
             "poll": cat.poll,
             "draw": draw_node_item,
+            "bl_options": {'DEFAULT_CLOSED'}
             })
 
         # bfa - disabling the many tabs in the node editor tool shelf.
-        #menu_types.append(menu_type)
-        #panel_types.append(panel_type)
+        menu_types.append(menu_type)
+        panel_types.append(panel_type)
 
-        #bpy.utils.register_class(menu_type)
-        #bpy.utils.register_class(panel_type)
+        bpy.utils.register_class(menu_type)
+        bpy.utils.register_class(panel_type)
 
     def draw_add_menu(self, context):
         layout = self.layout
