@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -105,10 +105,13 @@ def register_node_categories(identifier, cat_list):
         raise KeyError("Node categories list '%s' already registered" % identifier)
         return
 
+    
+
     # works as draw function for both menus and panels
     def draw_node_item(self, context):
         layout = self.layout
         col = layout.column()
+
         for item in self.category.items(context):
             item.draw(item, col, context)
 
@@ -132,11 +135,12 @@ def register_node_categories(identifier, cat_list):
             "draw": draw_node_item,
             })
 
-        menu_types.append(menu_type)
-        panel_types.append(panel_type)
+        # bfa - disabling the many tabs in the node editor tool shelf.
+        #menu_types.append(menu_type)
+        #panel_types.append(panel_type)
 
-        bpy.utils.register_class(menu_type)
-        bpy.utils.register_class(panel_type)
+        #bpy.utils.register_class(menu_type)
+        #bpy.utils.register_class(panel_type)
 
     def draw_add_menu(self, context):
         layout = self.layout
