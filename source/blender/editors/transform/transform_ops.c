@@ -65,9 +65,11 @@ typedef struct TransformModeItem {
 static const float VecOne[3] = {1, 1, 1};
 
 static const char OP_TRANSLATION[] = "TRANSFORM_OT_translate";
+static const char OP_TRANSLATION_TEXTURE[] = "TRANSFORM_OT_translate_texture"; /*bfa move texture space*/
 static const char OP_ROTATION[] = "TRANSFORM_OT_rotate";
 static const char OP_TOSPHERE[] = "TRANSFORM_OT_tosphere";
 static const char OP_RESIZE[] = "TRANSFORM_OT_resize";
+static const char OP_RESIZE_TEXTURE[] = "TRANSFORM_OT_resize_texture";/*bfa scale texture space*/
 static const char OP_SKIN_RESIZE[] = "TRANSFORM_OT_skin_resize";
 static const char OP_SHEAR[] = "TRANSFORM_OT_shear";
 static const char OP_BEND[] = "TRANSFORM_OT_bend";
@@ -83,9 +85,11 @@ static const char OP_EDGE_BWEIGHT[] = "TRANSFORM_OT_edge_bevelweight";
 static const char OP_SEQ_SLIDE[] = "TRANSFORM_OT_seq_slide";
 
 static void TRANSFORM_OT_translate(struct wmOperatorType *ot);
+static void TRANSFORM_OT_translate_texture(struct wmOperatorType *ot); /*bfa move texture space*/
 static void TRANSFORM_OT_rotate(struct wmOperatorType *ot);
 static void TRANSFORM_OT_tosphere(struct wmOperatorType *ot);
 static void TRANSFORM_OT_resize(struct wmOperatorType *ot);
+static void TRANSFORM_OT_resize_texture(struct wmOperatorType *ot);/*bfa scale texture space*/
 static void TRANSFORM_OT_skin_resize(struct wmOperatorType *ot);
 static void TRANSFORM_OT_shear(struct wmOperatorType *ot);
 static void TRANSFORM_OT_bend(struct wmOperatorType *ot);
@@ -103,9 +107,11 @@ static void TRANSFORM_OT_seq_slide(struct wmOperatorType *ot);
 static TransformModeItem transform_modes[] =
 {
 	{OP_TRANSLATION, TFM_TRANSLATION, TRANSFORM_OT_translate},
+	{OP_TRANSLATION_TEXTURE, TFM_TRANSLATION, TRANSFORM_OT_translate_texture},/*bfa move texture space*/
 	{OP_ROTATION, TFM_ROTATION, TRANSFORM_OT_rotate},
 	{OP_TOSPHERE, TFM_TOSPHERE, TRANSFORM_OT_tosphere},
 	{OP_RESIZE, TFM_RESIZE, TRANSFORM_OT_resize},
+	{OP_RESIZE_TEXTURE, TFM_RESIZE, TRANSFORM_OT_resize_texture},/*bfa scale texture space*/
 	{OP_SKIN_RESIZE, TFM_SKIN_RESIZE, TRANSFORM_OT_skin_resize},
 	{OP_SHEAR, TFM_SHEAR, TRANSFORM_OT_shear},
 	{OP_BEND, TFM_BEND, TRANSFORM_OT_bend},
@@ -602,6 +608,27 @@ static void TRANSFORM_OT_translate(struct wmOperatorType *ot)
 	Transform_Properties(ot, P_CONSTRAINT | P_PROPORTIONAL | P_MIRROR | P_ALIGN_SNAP | P_OPTIONS | P_GPENCIL_EDIT);
 }
 
+/*bfa move texture space. Same operator than translate, but with separated tooltip that shows required important hints*/
+static void TRANSFORM_OT_translate_texture(struct wmOperatorType *ot)
+{
+	/* identifiers */
+	ot->name = "Translate Texture";
+	ot->description = "Move Texture Space\nMoves the Texture space of the selected object\nRequires Texture Coordinate / Generated Node Input, with Tube, Flat or Boxmapping\nTo see result in viewport use Material or Rendered shading";
+	ot->idname = OP_TRANSLATION_TEXTURE;
+	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
+
+	/* api callbacks */
+	ot->invoke = transform_invoke;
+	ot->exec = transform_exec;
+	ot->modal = transform_modal;
+	ot->cancel = transform_cancel;
+	ot->poll = ED_operator_screenactive;
+
+	RNA_def_float_vector_xyz(ot->srna, "value", 3, NULL, -FLT_MAX, FLT_MAX, "Vector", "", -FLT_MAX, FLT_MAX);
+
+	Transform_Properties(ot, P_CONSTRAINT | P_PROPORTIONAL | P_MIRROR | P_ALIGN_SNAP | P_OPTIONS | P_GPENCIL_EDIT);
+}
+
 static void TRANSFORM_OT_resize(struct wmOperatorType *ot)
 {
 	/* identifiers */
@@ -621,6 +648,28 @@ static void TRANSFORM_OT_resize(struct wmOperatorType *ot)
 
 	Transform_Properties(
 	        ot, P_CONSTRAINT | P_PROPORTIONAL | P_MIRROR | P_GEO_SNAP | P_OPTIONS | P_GPENCIL_EDIT | P_CENTER);
+}
+
+/*bfa scale texture space. Same operator than translate, but with separated tooltip that shows required important hints*/
+static void TRANSFORM_OT_resize_texture(struct wmOperatorType *ot)
+{
+	/* identifiers */
+	ot->name = "Resize Texture";
+	ot->description = "Scale Texture Space\nScales the Texture space of the selected object\nRequires Texture Coordinate / Generated Node Input, with Tube, Flat or Boxmapping\nTo see result in viewport use Material or Rendered shading";
+	ot->idname = OP_RESIZE_TEXTURE;
+	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_BLOCKING;
+
+	/* api callbacks */
+	ot->invoke = transform_invoke;
+	ot->exec = transform_exec;
+	ot->modal = transform_modal;
+	ot->cancel = transform_cancel;
+	ot->poll = ED_operator_screenactive;
+
+	RNA_def_float_vector(ot->srna, "value", 3, VecOne, -FLT_MAX, FLT_MAX, "Vector", "", -FLT_MAX, FLT_MAX);
+
+	Transform_Properties(
+		ot, P_CONSTRAINT | P_PROPORTIONAL | P_MIRROR | P_GEO_SNAP | P_OPTIONS | P_GPENCIL_EDIT | P_CENTER);
 }
 
 static int skin_resize_poll(bContext *C)
