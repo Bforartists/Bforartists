@@ -471,35 +471,16 @@ texture_node_categories = [
         ]),
     ]
 
-#bfa - HOLY CRAP WHAT INSANE SPAGHETTI CODE THE NATIVE PANELS CODE IN THE COMPOSITOR IS!
-
-# We have to disable this native Blender panels in the tool shelf of the node editor.
-# I am pretty sure that we have to disable even more code.
-# But i have still no idea where else this shit all links to.
-# And so i have disabled at least the classes here by disabling registering at all. 
-# The dummy class is so that at least something gets registered. 
-# Else it throws an error that something needs to be registered ...
-
-class dummytogetridofthisnodecrap(bpy.types.Operator):
-
-    bl_idname = "crap.holycrap"        # unique identifier for buttons and menu items to reference.
-    bl_label = "Crap"         # display name in the interface.
-    bl_options = {'REGISTER', 'UNDO'}
-
 def register():
-    #nodeitems_utils.register_node_categories('SHADER', shader_node_categories)
-    #nodeitems_utils.register_node_categories('COMPOSITING', compositor_node_categories)
-    #nodeitems_utils.register_node_categories('TEXTURE', texture_node_categories)
-
-    bpy.utils.register_class(dummytogetridofthisnodecrap)
+    nodeitems_utils.register_node_categories('SHADER', shader_node_categories)
+    nodeitems_utils.register_node_categories('COMPOSITING', compositor_node_categories)
+    nodeitems_utils.register_node_categories('TEXTURE', texture_node_categories)
 
 
 def unregister():
-    #nodeitems_utils.unregister_node_categories('SHADER')
-    #nodeitems_utils.unregister_node_categories('COMPOSITING')
-    #nodeitems_utils.unregister_node_categories('TEXTURE')
-
-    bpy.utils.unregister_class(dummytogetridofthisnodecrap)
+    nodeitems_utils.unregister_node_categories('SHADER')
+    nodeitems_utils.unregister_node_categories('COMPOSITING')
+    nodeitems_utils.unregister_node_categories('TEXTURE')
 
 
 if __name__ == "__main__":
