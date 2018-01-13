@@ -97,7 +97,7 @@ void Object::compute_bounds(bool motion_blur)
 			mtfm.post = tfm;
 		}
 
-		DecompMotionTransform decomp;
+		MotionTransform decomp;
 		transform_motion_decompose(&decomp, &mtfm, &tfm);
 
 		bounds = BoundBox::empty;
@@ -365,7 +365,7 @@ void ObjectManager::device_update_object_transform(UpdateObejctTransformState *s
 	/* OBJECT_INVERSE_TRANSFORM */
 	memcpy(&objects[offset+4], &itfm, sizeof(float4)*3);
 	/* OBJECT_PROPERTIES */
-	objects[offset+8] = make_float4(surface_area, pass_id, random_number, __int_as_float(particle_index));
+	objects[offset+12] = make_float4(surface_area, pass_id, random_number, __int_as_float(particle_index));
 
 	if(mesh->use_motion_blur) {
 		state->have_motion = true;
@@ -398,19 +398,17 @@ void ObjectManager::device_update_object_transform(UpdateObejctTransformState *s
 		memcpy(&objects_vector[object_index*OBJECT_VECTOR_SIZE+0], &mtfm.pre, sizeof(float4)*3);
 		memcpy(&objects_vector[object_index*OBJECT_VECTOR_SIZE+3], &mtfm.post, sizeof(float4)*3);
 	}
-#ifdef __OBJECT_MOTION__
 	else if(state->need_motion == Scene::MOTION_BLUR) {
 		if(ob->use_motion) {
 			/* decompose transformations for interpolation. */
-			DecompMotionTransform decomp;
+			MotionTransform decomp;
 
 			transform_motion_decompose(&decomp, &ob->motion, &ob->tfm);
-			memcpy(&objects[offset], &decomp, sizeof(float4)*8);
+			memcpy(&objects[offset], &decomp, sizeof(float4)*12);
 			flag |= SD_OBJECT_MOTION;
 			state->have_motion = true;
 		}
 	}
-#endif
 
 	/* Dupli object coords and motion info. */
 	int totalsteps = mesh->motion_steps;
@@ -418,9 +416,9 @@ void ObjectManager::device_update_object_transform(UpdateObejctTransformState *s
 	int numverts = mesh->verts.size();
 	int numkeys = mesh->curve_keys.size();
 
-	objects[offset+9] = make_float4(ob->dupli_generated[0], ob->dupli_generated[1], ob->dupli_generated[2], __int_as_float(numkeys));
-	objects[offset+10] = make_float4(ob->dupli_uv[0], ob->dupli_uv[1], __int_as_float(numsteps), __int_as_float(numverts));
-	objects[offset+11] = make_float4(0.0f, 0.0f, 0.0f, 0.0f);
+	objects[offset+13] = make_float4(ob->dupli_generated[0], ob->dupli_generated[1], ob->dupli_generated[2], __int_as_float(numkeys));
+	objects[offset+14] = make_float4(ob->dupli_uv[0], ob->dupli_uv[1], __int_as_float(numsteps), __int_as_float(numverts));
+	objects[offset+15] = make_float4(0.0f, 0.0f, 0.0f, 0.0f);
 
 	/* Object flag. */
 	if(ob->use_holdout) {
@@ -482,7 +480,7 @@ void ObjectManager::device_update_transforms(Device *device,
                                              Progress& progress)
 {
 	UpdateObejctTransformState state;
-	state.need_motion = scene->need_motion(device->info.advanced_shading);
+	state.need_motion = scene->need_motion();
 	state.have_motion = false;
 	state.have_curves = false;
 	state.scene = scene;
@@ -655,7 +653,7 @@ void ObjectManager::device_update_mesh_offsets(Device *, DeviceScene *dscene, Sc
 
 	foreach(Object *object, scene->objects) {
 		Mesh* mesh = object->mesh;
-		int offset = object_index*OBJECT_SIZE + 11;
+		int offset = object_index*OBJECT_SIZE + 15;
 
 		if(mesh->patch_table) {
 			uint patch_map_offset = 2*(mesh->patch_table_offset + mesh->patch_table->total_size() -
@@ -694,14 +692,9 @@ void ObjectManager::apply_static_transforms(DeviceScene *dscene, Scene *scene, u
 
 	/* counter mesh users */
 	map<Mesh*, int> mesh_users;
-#ifdef __OBJECT_MOTION__
 	Scene::MotionType need_motion = scene->need_motion();
 	bool motion_blur = need_motion == Scene::MOTION_BLUR;
 	bool apply_to_motion = need_motion != Scene::MOTION_PASS;
-#else
-	bool motion_blur = false;
-	bool apply_to_motion = false;
-#endif
 	int i = 0;
 	bool have_instancing = false;
 

@@ -376,7 +376,10 @@ static bool sculpt_stroke_is_dynamic_topology(
 
 /*** paint mesh ***/
 
-static void paint_mesh_restore_co_task_cb(void *userdata, const int n)
+static void paint_mesh_restore_co_task_cb(
+        void *__restrict userdata,
+        const int n,
+        const ParallelRangeTLS *__restrict UNUSED(tls))
 {
 	SculptThreadedTaskData *data = userdata;
 	SculptSession *ss = data->ob->sculpt;
@@ -438,9 +441,14 @@ static void paint_mesh_restore_co(Sculpt *sd, Object *ob)
 		.sd = sd, .ob = ob, .brush = brush, .nodes = nodes,
 	};
 
+	ParallelRangeSettings settings;
+	BLI_parallel_range_settings_defaults(&settings);
+	settings.use_threading = ((sd->flags & SCULPT_USE_OPENMP) && !ss->bm && totnode > SCULPT_THREADED_LIMIT);
 	BLI_task_parallel_range(
-	            0, totnode, &data, paint_mesh_restore_co_task_cb,
-	            ((sd->flags & SCULPT_USE_OPENMP) && !ss->bm && totnode > SCULPT_THREADED_LIMIT));
+	            0, totnode,
+	            &data,
+	            paint_mesh_restore_co_task_cb,
+	            &settings);
 
 	if (nodes)
 		MEM_freeN(nodes);
@@ -794,7 +802,10 @@ static float calc_symmetry_feather(Sculpt *sd, StrokeCache *cache)
  * \note These are all _very_ similar, when changing one, check others.
  * \{ */
 
-static void calc_area_normal_and_center_task_cb(void *userdata, const int n)
+static void calc_area_normal_and_center_task_cb(
+        void *__restrict userdata,
+        const int n,
+        const ParallelRangeTLS *__restrict UNUSED(tls))
 {
 	SculptThreadedTaskData *data = userdata;
 	SculptSession *ss = data->ob->sculpt;
@@ -946,9 +957,14 @@ static void calc_area_center(
 	};
 	BLI_mutex_init(&data.mutex);
 
+	ParallelRangeSettings settings;
+	BLI_parallel_range_settings_defaults(&settings);
+	settings.use_threading = ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT);
 	BLI_task_parallel_range(
-	            0, totnode, &data, calc_area_normal_and_center_task_cb,
-	            ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT));
+	            0, totnode,
+	            &data,
+	            calc_area_normal_and_center_task_cb,
+	            &settings);
 
 	BLI_mutex_end(&data.mutex);
 
@@ -996,9 +1012,14 @@ void sculpt_pbvh_calc_area_normal(
 	};
 	BLI_mutex_init(&data.mutex);
 
+	ParallelRangeSettings settings;
+	BLI_parallel_range_settings_defaults(&settings);
+	settings.use_threading = use_threading;
 	BLI_task_parallel_range(
-	            0, totnode, &data, calc_area_normal_and_center_task_cb,
-	            use_threading);
+	            0, totnode,
+	            &data,
+	            calc_area_normal_and_center_task_cb,
+	            &settings);
 
 	BLI_mutex_end(&data.mutex);
 
@@ -1036,9 +1057,14 @@ static void calc_area_normal_and_center(
 	};
 	BLI_mutex_init(&data.mutex);
 
+	ParallelRangeSettings settings;
+	BLI_parallel_range_settings_defaults(&settings);
+	settings.use_threading = ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT);
 	BLI_task_parallel_range(
-	            0, totnode, &data, calc_area_normal_and_center_task_cb,
-	            ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT));
+	            0, totnode,
+	            &data,
+	            calc_area_normal_and_center_task_cb,
+	            &settings);
 
 	BLI_mutex_end(&data.mutex);
 
@@ -1626,7 +1652,9 @@ typedef struct {
 } SculptFindNearestToRayData;
 
 static void do_smooth_brush_mesh_task_cb_ex(
-        void *userdata, void *UNUSED(userdata_chunk), const int n, const int thread_id)
+        void *__restrict userdata,
+        const int n,
+        const ParallelRangeTLS *__restrict tls)
 {
 	SculptThreadedTaskData *data = userdata;
 	SculptSession *ss = data->ob->sculpt;
@@ -1648,7 +1676,7 @@ static void do_smooth_brush_mesh_task_cb_ex(
 		if (sculpt_brush_test_sq_fn(&test, vd.co)) {
 			const float fade = bstrength * tex_strength(
 			        ss, brush, vd.co, sqrtf(test.dist),
-			        vd.no, vd.fno, smooth_mask ? 0.0f : (vd.mask ? *vd.mask : 0.0f), thread_id);
+			        vd.no, vd.fno, smooth_mask ? 0.0f : (vd.mask ? *vd.mask : 0.0f), tls->thread_id);
 			if (smooth_mask) {
 				float val = neighbor_average_mask(ss, vd.vert_indices[vd.i]) - *vd.mask;
 				val *= fade * bstrength;
@@ -1674,7 +1702,9 @@ static void do_smooth_brush_mesh_task_cb_ex(
 }
 
 static void do_smooth_brush_bmesh_task_cb_ex(
-        void *userdata, void *UNUSED(userdata_chunk), const int n, const int thread_id)
+        void *__restrict userdata,
+        const int n,
+        const ParallelRangeTLS *__restrict tls)
 {
 	SculptThreadedTaskData *data = userdata;
 	SculptSession *ss = data->ob->sculpt;
@@ -1696,7 +1726,7 @@ static void do_smooth_brush_bmesh_task_cb_ex(
 		if (sculpt_brush_test_sq_fn(&test, vd.co)) {
 			const float fade = bstrength * tex_strength(
 			        ss, brush, vd.co, sqrtf(test.dist),
-			        vd.no, vd.fno, smooth_mask ? 0.0f : *vd.mask, thread_id);
+			        vd.no, vd.fno, smooth_mask ? 0.0f : *vd.mask, tls->thread_id);
 			if (smooth_mask) {
 				float val = bmesh_neighbor_average_mask(vd.bm_vert, vd.cd_vert_mask_offset) - *vd.mask;
 				val *= fade * bstrength;
@@ -1722,10 +1752,12 @@ static void do_smooth_brush_bmesh_task_cb_ex(
 }
 
 static void do_smooth_brush_multires_task_cb_ex(
-        void *userdata, void *userdata_chunk, const int n, const int thread_id)
+        void *__restrict userdata,
+        const int n,
+        const ParallelRangeTLS *__restrict tls)
 {
 	SculptThreadedTaskData *data = userdata;
-	SculptDoBrushSmoothGridDataChunk *data_chunk = userdata_chunk;
+	SculptDoBrushSmoothGridDataChunk *data_chunk = tls->userdata_chunk;
 	SculptSession *ss = data->ob->sculpt;
 	Sculpt *sd = data->sd;
 	const Brush *brush = data->brush;
@@ -1837,7 +1869,7 @@ static void do_smooth_brush_multires_task_cb_ex(
 					const float strength_mask = (smooth_mask ? 0.0f : *mask);
 					const float fade = bstrength * tex_strength(
 					        ss, brush, co, sqrtf(test.dist),
-					        NULL, fno, strength_mask, thread_id);
+					        NULL, fno, strength_mask, tls->thread_id);
 					float f = 1.0f / 16.0f;
 
 					if (x == 0 || x == gridsize - 1)
@@ -1895,6 +1927,10 @@ static void smooth(
 		    .smooth_mask = smooth_mask, .strength = strength,
 		};
 
+		ParallelRangeSettings settings;
+		BLI_parallel_range_settings_defaults(&settings);
+		settings.use_threading = ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT);
+
 		switch (type) {
 			case PBVH_GRIDS:
 			{
@@ -1909,22 +1945,30 @@ static void smooth(
 				data_chunk->tmpgrid_size = size;
 				size += sizeof(*data_chunk);
 
-				BLI_task_parallel_range_ex(
-				            0, totnode, &data, data_chunk, size, do_smooth_brush_multires_task_cb_ex,
-				            ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT), false);
+				settings.userdata_chunk = data_chunk;
+				settings.userdata_chunk_size = size;
+				BLI_task_parallel_range(
+				            0, totnode,
+				            &data,
+				            do_smooth_brush_multires_task_cb_ex,
+				            &settings);
 
 				MEM_freeN(data_chunk);
 				break;
 			}
 			case PBVH_FACES:
-				BLI_task_parallel_range_ex(
-				            0, totnode, &data, NULL, 0, do_smooth_brush_mesh_task_cb_ex,
-				            ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT), false);
+				BLI_task_parallel_range(
+				            0, totnode,
+				            &data,
+				            do_smooth_brush_mesh_task_cb_ex,
+				            &settings);
 				break;
 			case PBVH_BMESH:
-				BLI_task_parallel_range_ex(
-				            0, totnode, &data, NULL, 0, do_smooth_brush_bmesh_task_cb_ex,
-				            ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT), false);
+				BLI_task_parallel_range(
+				            0, totnode,
+				            &data,
+				            do_smooth_brush_bmesh_task_cb_ex,
+				            &settings);
 				break;
 		}
 
@@ -1940,7 +1984,9 @@ static void do_smooth_brush(Sculpt *sd, Object *ob, PBVHNode **nodes, int totnod
 }
 
 static void do_mask_brush_draw_task_cb_ex(
-        void *userdata, void *UNUSED(userdata_chunk), const int n, const int thread_id)
+        void *__restrict userdata,
+        const int n,
+        const ParallelRangeTLS *__restrict tls)
 {
 	SculptThreadedTaskData *data = userdata;
 	SculptSession *ss = data->ob->sculpt;
@@ -1958,7 +2004,7 @@ static void do_mask_brush_draw_task_cb_ex(
 		if (sculpt_brush_test_sq_fn(&test, vd.co)) {
 			const float fade = tex_strength(
 			        ss, brush, vd.co, sqrtf(test.dist),
-			        vd.no, vd.fno, 0.0f, thread_id);
+			        vd.no, vd.fno, 0.0f, tls->thread_id);
 
 			(*vd.mask) += fade * bstrength;
 			CLAMP(*vd.mask, 0, 1);
@@ -1979,9 +2025,14 @@ static void do_mask_brush_draw(Sculpt *sd, Object *ob, PBVHNode **nodes, int tot
 	    .sd = sd, .ob = ob, .brush = brush, .nodes = nodes,
 	};
 
-	BLI_task_parallel_range_ex(
-	            0, totnode, &data, NULL, 0, do_mask_brush_draw_task_cb_ex,
-	            ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT), false);
+	ParallelRangeSettings settings;
+	BLI_parallel_range_settings_defaults(&settings);
+	settings.use_threading = ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT);
+	BLI_task_parallel_range(
+	            0, totnode,
+	            &data,
+	            do_mask_brush_draw_task_cb_ex,
+	            &settings);
 }
 
 static void do_mask_brush(Sculpt *sd, Object *ob, PBVHNode **nodes, int totnode)
@@ -2000,7 +2051,9 @@ static void do_mask_brush(Sculpt *sd, Object *ob, PBVHNode **nodes, int totnode)
 }
 
 static void do_draw_brush_task_cb_ex(
-        void *userdata, void *UNUSED(userdata_chunk), const int n, const int thread_id)
+        void *__restrict userdata,
+        const int n,
+        const ParallelRangeTLS *__restrict tls)
 {
 	SculptThreadedTaskData *data = userdata;
 	SculptSession *ss = data->ob->sculpt;
@@ -2022,7 +2075,7 @@ static void do_draw_brush_task_cb_ex(
 			/* offset vertex */
 			const float fade = tex_strength(
 			        ss, brush, vd.co, sqrtf(test.dist),
-			        vd.no, vd.fno, vd.mask ? *vd.mask : 0.0f, thread_id);
+			        vd.no, vd.fno, vd.mask ? *vd.mask : 0.0f, tls->thread_id);
 
 			mul_v3_v3fl(proxy[vd.i], offset, fade);
 
@@ -2051,16 +2104,23 @@ static void do_draw_brush(Sculpt *sd, Object *ob, PBVHNode **nodes, int totnode)
 	    .offset = offset,
 	};
 
-	BLI_task_parallel_range_ex(
-	            0, totnode, &data, NULL, 0, do_draw_brush_task_cb_ex,
-	            ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT), false);
+	ParallelRangeSettings settings;
+	BLI_parallel_range_settings_defaults(&settings);
+	settings.use_threading = ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT);
+	BLI_task_parallel_range(
+	            0, totnode,
+	            &data,
+	            do_draw_brush_task_cb_ex,
+	            &settings);
 }
 
 /**
  * Used for 'SCULPT_TOOL_CREASE' and 'SCULPT_TOOL_BLOB'
  */
 static void do_crease_brush_task_cb_ex(
-        void *userdata, void *UNUSED(userdata_chunk), const int n, const int thread_id)
+        void *__restrict userdata,
+        const int n,
+        const ParallelRangeTLS *__restrict tls)
 {
 	SculptThreadedTaskData *data = userdata;
 	SculptSession *ss = data->ob->sculpt;
@@ -2084,7 +2144,7 @@ static void do_crease_brush_task_cb_ex(
 			/* offset vertex */
 			const float fade = tex_strength(
 			        ss, brush, vd.co, sqrtf(test.dist),
-			        vd.no, vd.fno, vd.mask ? *vd.mask : 0.0f, thread_id);
+			        vd.no, vd.fno, vd.mask ? *vd.mask : 0.0f, tls->thread_id);
 			float val1[3];
 			float val2[3];
 
@@ -2148,13 +2208,20 @@ static void do_crease_brush(Sculpt *sd, Object *ob, PBVHNode **nodes, int totnod
 	    .spvc = &spvc, .offset = offset, .flippedbstrength = flippedbstrength,
 	};
 
-	BLI_task_parallel_range_ex(
-	            0, totnode, &data, NULL, 0, do_crease_brush_task_cb_ex,
-	            ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT), false);
+	ParallelRangeSettings settings;
+	BLI_parallel_range_settings_defaults(&settings);
+	settings.use_threading = ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT);
+	BLI_task_parallel_range(
+	            0, totnode,
+	            &data,
+	            do_crease_brush_task_cb_ex,
+	            &settings);
 }
 
 static void do_pinch_brush_task_cb_ex(
-        void *userdata, void *UNUSED(userdata_chunk), const int n, const int thread_id)
+        void *__restrict userdata,
+        const int n,
+        const ParallelRangeTLS *__restrict tls)
 {
 	SculptThreadedTaskData *data = userdata;
 	SculptSession *ss = data->ob->sculpt;
@@ -2175,7 +2242,7 @@ static void do_pinch_brush_task_cb_ex(
 		if (sculpt_brush_test_sq_fn(&test, vd.co)) {
 			const float fade = bstrength * tex_strength(
 			        ss, brush, vd.co, sqrtf(test.dist),
-			        vd.no, vd.fno, vd.mask ? *vd.mask : 0.0f, thread_id);
+			        vd.no, vd.fno, vd.mask ? *vd.mask : 0.0f, tls->thread_id);
 			float val[3];
 
 			sub_v3_v3v3(val, test.location, vd.co);
@@ -2199,13 +2266,20 @@ static void do_pinch_brush(Sculpt *sd, Object *ob, PBVHNode **nodes, int totnode
 	    .sd = sd, .ob = ob, .brush = brush, .nodes = nodes,
 	};
 
-	BLI_task_parallel_range_ex(
-	            0, totnode, &data, NULL, 0, do_pinch_brush_task_cb_ex,
-	            ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT), false);
+	ParallelRangeSettings settings;
+	BLI_parallel_range_settings_defaults(&settings);
+	settings.use_threading = ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT);
+	BLI_task_parallel_range(
+	            0, totnode,
+	            &data,
+	            do_pinch_brush_task_cb_ex,
+	            &settings);
 }
 
 static void do_grab_brush_task_cb_ex(
-        void *userdata, void *UNUSED(userdata_chunk), const int n, const int thread_id)
+        void *__restrict userdata,
+        const int n,
+        const ParallelRangeTLS *__restrict tls)
 {
 	SculptThreadedTaskData *data = userdata;
 	SculptSession *ss = data->ob->sculpt;
@@ -2232,7 +2306,7 @@ static void do_grab_brush_task_cb_ex(
 		if (sculpt_brush_test_sq_fn(&test, orig_data.co)) {
 			const float fade = bstrength * tex_strength(
 			        ss, brush, orig_data.co, sqrtf(test.dist),
-			        orig_data.no, NULL, vd.mask ? *vd.mask : 0.0f, thread_id);
+			        orig_data.no, NULL, vd.mask ? *vd.mask : 0.0f, tls->thread_id);
 
 			mul_v3_v3fl(proxy[vd.i], grab_delta, fade);
 
@@ -2260,13 +2334,20 @@ static void do_grab_brush(Sculpt *sd, Object *ob, PBVHNode **nodes, int totnode)
 	    .grab_delta = grab_delta,
 	};
 
-	BLI_task_parallel_range_ex(
-	            0, totnode, &data, NULL, 0, do_grab_brush_task_cb_ex,
-	            ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT), false);
+	ParallelRangeSettings settings;
+	BLI_parallel_range_settings_defaults(&settings);
+	settings.use_threading = ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT);
+	BLI_task_parallel_range(
+	            0, totnode,
+	            &data,
+	            do_grab_brush_task_cb_ex,
+	            &settings);
 }
 
 static void do_nudge_brush_task_cb_ex(
-        void *userdata, void *UNUSED(userdata_chunk), const int n, const int thread_id)
+        void *__restrict userdata,
+        const int n,
+        const ParallelRangeTLS *__restrict tls)
 {
 	SculptThreadedTaskData *data = userdata;
 	SculptSession *ss = data->ob->sculpt;
@@ -2288,7 +2369,7 @@ static void do_nudge_brush_task_cb_ex(
 		if (sculpt_brush_test_sq_fn(&test, vd.co)) {
 			const float fade = bstrength * tex_strength(
 			        ss, brush, vd.co, sqrtf(test.dist),
-			        vd.no, vd.fno, vd.mask ? *vd.mask : 0.0f, thread_id);
+			        vd.no, vd.fno, vd.mask ? *vd.mask : 0.0f, tls->thread_id);
 
 			mul_v3_v3fl(proxy[vd.i], cono, fade);
 
@@ -2316,13 +2397,20 @@ static void do_nudge_brush(Sculpt *sd, Object *ob, PBVHNode **nodes, int totnode
 	    .cono = cono,
 	};
 
-	BLI_task_parallel_range_ex(
-	            0, totnode, &data, NULL, 0, do_nudge_brush_task_cb_ex,
-	            ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT), false);
+	ParallelRangeSettings settings;
+	BLI_parallel_range_settings_defaults(&settings);
+	settings.use_threading = ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT);
+	BLI_task_parallel_range(
+	            0, totnode,
+	            &data,
+	            do_nudge_brush_task_cb_ex,
+	            &settings);
 }
 
 static void do_snake_hook_brush_task_cb_ex(
-        void *userdata, void *UNUSED(userdata_chunk), const int n, const int thread_id)
+        void *__restrict userdata,
+        const int n,
+        const ParallelRangeTLS *__restrict tls)
 {
 	SculptThreadedTaskData *data = userdata;
 	SculptSession *ss = data->ob->sculpt;
@@ -2349,7 +2437,7 @@ static void do_snake_hook_brush_task_cb_ex(
 		if (sculpt_brush_test_sq_fn(&test, vd.co)) {
 			const float fade = bstrength * tex_strength(
 			        ss, brush, vd.co, sqrtf(test.dist),
-			        vd.no, vd.fno, vd.mask ? *vd.mask : 0.0f, thread_id);
+			        vd.no, vd.fno, vd.mask ? *vd.mask : 0.0f, tls->thread_id);
 
 			mul_v3_v3fl(proxy[vd.i], grab_delta, fade);
 
@@ -2422,13 +2510,20 @@ static void do_snake_hook_brush(Sculpt *sd, Object *ob, PBVHNode **nodes, int to
 	    .spvc = &spvc, .grab_delta = grab_delta,
 	};
 
-	BLI_task_parallel_range_ex(
-	            0, totnode, &data, NULL, 0, do_snake_hook_brush_task_cb_ex,
-	            ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT), false);
+	ParallelRangeSettings settings;
+	BLI_parallel_range_settings_defaults(&settings);
+	settings.use_threading = ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT);
+	BLI_task_parallel_range(
+	            0, totnode,
+	            &data,
+	            do_snake_hook_brush_task_cb_ex,
+	            &settings);
 }
 
 static void do_thumb_brush_task_cb_ex(
-        void *userdata, void *UNUSED(userdata_chunk), const int n, const int thread_id)
+        void *__restrict userdata,
+        const int n,
+        const ParallelRangeTLS *__restrict tls)
 {
 	SculptThreadedTaskData *data = userdata;
 	SculptSession *ss = data->ob->sculpt;
@@ -2455,7 +2550,7 @@ static void do_thumb_brush_task_cb_ex(
 		if (sculpt_brush_test_sq_fn(&test, orig_data.co)) {
 			const float fade = bstrength * tex_strength(
 			        ss, brush, orig_data.co, sqrtf(test.dist),
-			        orig_data.no, NULL, vd.mask ? *vd.mask : 0.0f, thread_id);
+			        orig_data.no, NULL, vd.mask ? *vd.mask : 0.0f, tls->thread_id);
 
 			mul_v3_v3fl(proxy[vd.i], cono, fade);
 
@@ -2483,13 +2578,20 @@ static void do_thumb_brush(Sculpt *sd, Object *ob, PBVHNode **nodes, int totnode
 	    .cono = cono,
 	};
 
-	BLI_task_parallel_range_ex(
-	            0, totnode, &data, NULL, 0, do_thumb_brush_task_cb_ex,
-	            ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT), false);
+	ParallelRangeSettings settings;
+	BLI_parallel_range_settings_defaults(&settings);
+	settings.use_threading = ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT);
+	BLI_task_parallel_range(
+	            0, totnode,
+	            &data,
+	            do_thumb_brush_task_cb_ex,
+	            &settings);
 }
 
 static void do_rotate_brush_task_cb_ex(
-        void *userdata, void *UNUSED(userdata_chunk), const int n, const int thread_id)
+        void *__restrict userdata,
+        const int n,
+        const ParallelRangeTLS *__restrict tls)
 {
 	SculptThreadedTaskData *data = userdata;
 	SculptSession *ss = data->ob->sculpt;
@@ -2517,7 +2619,7 @@ static void do_rotate_brush_task_cb_ex(
 			float vec[3], rot[3][3];
 			const float fade = bstrength * tex_strength(
 			        ss, brush, orig_data.co, sqrtf(test.dist),
-			        orig_data.no, NULL, vd.mask ? *vd.mask : 0.0f, thread_id);
+			        orig_data.no, NULL, vd.mask ? *vd.mask : 0.0f, tls->thread_id);
 
 			sub_v3_v3v3(vec, orig_data.co, ss->cache->location);
 			axis_angle_normalized_to_mat3(rot, ss->cache->sculpt_normal_symm, angle * fade);
@@ -2545,13 +2647,20 @@ static void do_rotate_brush(Sculpt *sd, Object *ob, PBVHNode **nodes, int totnod
 	    .angle = angle,
 	};
 
-	BLI_task_parallel_range_ex(
-	            0, totnode, &data, NULL, 0, do_rotate_brush_task_cb_ex,
-	            ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT), false);
+	ParallelRangeSettings settings;
+	BLI_parallel_range_settings_defaults(&settings);
+	settings.use_threading = ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT);
+	BLI_task_parallel_range(
+	            0, totnode,
+	            &data,
+	            do_rotate_brush_task_cb_ex,
+	            &settings);
 }
 
 static void do_layer_brush_task_cb_ex(
-        void *userdata, void *UNUSED(userdata_chunk), const int n, const int thread_id)
+        void *__restrict userdata,
+        const int n,
+        const ParallelRangeTLS *__restrict tls)
 {
 	SculptThreadedTaskData *data = userdata;
 	SculptSession *ss = data->ob->sculpt;
@@ -2585,7 +2694,7 @@ static void do_layer_brush_task_cb_ex(
 		if (sculpt_brush_test_sq_fn(&test, orig_data.co)) {
 			const float fade = bstrength * tex_strength(
 			        ss, brush, vd.co, sqrtf(test.dist),
-			        vd.no, vd.fno, vd.mask ? *vd.mask : 0.0f, thread_id);
+			        vd.no, vd.fno, vd.mask ? *vd.mask : 0.0f, tls->thread_id);
 			float *disp = &layer_disp[vd.i];
 			float val[3];
 
@@ -2630,15 +2739,22 @@ static void do_layer_brush(Sculpt *sd, Object *ob, PBVHNode **nodes, int totnode
 	};
 	BLI_mutex_init(&data.mutex);
 
-	BLI_task_parallel_range_ex(
-	            0, totnode, &data, NULL, 0, do_layer_brush_task_cb_ex,
-	            ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT), false);
+	ParallelRangeSettings settings;
+	BLI_parallel_range_settings_defaults(&settings);
+	settings.use_threading = ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT);
+	BLI_task_parallel_range(
+	            0, totnode,
+	            &data,
+	            do_layer_brush_task_cb_ex,
+	            &settings);
 
 	BLI_mutex_end(&data.mutex);
 }
 
 static void do_inflate_brush_task_cb_ex(
-        void *userdata, void *UNUSED(userdata_chunk), const int n, const int thread_id)
+        void *__restrict userdata,
+        const int n,
+        const ParallelRangeTLS *__restrict tls)
 {
 	SculptThreadedTaskData *data = userdata;
 	SculptSession *ss = data->ob->sculpt;
@@ -2659,7 +2775,7 @@ static void do_inflate_brush_task_cb_ex(
 		if (sculpt_brush_test_sq_fn(&test, vd.co)) {
 			const float fade = bstrength * tex_strength(
 			        ss, brush, vd.co, sqrtf(test.dist),
-			        vd.no, vd.fno, vd.mask ? *vd.mask : 0.0f, thread_id);
+			        vd.no, vd.fno, vd.mask ? *vd.mask : 0.0f, tls->thread_id);
 			float val[3];
 
 			if (vd.fno)
@@ -2685,9 +2801,14 @@ static void do_inflate_brush(Sculpt *sd, Object *ob, PBVHNode **nodes, int totno
 	    .sd = sd, .ob = ob, .brush = brush, .nodes = nodes,
 	};
 
-	BLI_task_parallel_range_ex(
-	            0, totnode, &data, NULL, 0, do_inflate_brush_task_cb_ex,
-	            ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT), false);
+	ParallelRangeSettings settings;
+	BLI_parallel_range_settings_defaults(&settings);
+	settings.use_threading = ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT);
+	BLI_task_parallel_range(
+	            0, totnode,
+	            &data,
+	            do_inflate_brush_task_cb_ex,
+	            &settings);
 }
 
 static void calc_sculpt_plane(
@@ -2802,7 +2923,9 @@ static float get_offset(Sculpt *sd, SculptSession *ss)
 }
 
 static void do_flatten_brush_task_cb_ex(
-        void *userdata, void *UNUSED(userdata_chunk), const int n, const int thread_id)
+        void *__restrict userdata,
+        const int n,
+        const ParallelRangeTLS *__restrict tls)
 {
 	SculptThreadedTaskData *data = userdata;
 	SculptSession *ss = data->ob->sculpt;
@@ -2835,7 +2958,7 @@ static void do_flatten_brush_task_cb_ex(
 			if (plane_trim(ss->cache, brush, val)) {
 				const float fade = bstrength * tex_strength(
 				        ss, brush, vd.co, sqrtf(test.dist),
-				        vd.no, vd.fno, vd.mask ? *vd.mask : 0.0f, thread_id);
+				        vd.no, vd.fno, vd.mask ? *vd.mask : 0.0f, tls->thread_id);
 
 				mul_v3_v3fl(proxy[vd.i], val, fade);
 
@@ -2874,13 +2997,20 @@ static void do_flatten_brush(Sculpt *sd, Object *ob, PBVHNode **nodes, int totno
 	    .area_no = area_no, .area_co = area_co,
 	};
 
-	BLI_task_parallel_range_ex(
-	            0, totnode, &data, NULL, 0, do_flatten_brush_task_cb_ex,
-	            ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT), false);
+	ParallelRangeSettings settings;
+	BLI_parallel_range_settings_defaults(&settings);
+	settings.use_threading = ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT);
+	BLI_task_parallel_range(
+	            0, totnode,
+	            &data,
+	            do_flatten_brush_task_cb_ex,
+	            &settings);
 }
 
 static void do_clay_brush_task_cb_ex(
-        void *userdata, void *UNUSED(userdata_chunk), const int n, const int thread_id)
+        void *__restrict userdata,
+        const int n,
+        const ParallelRangeTLS *__restrict tls)
 {
 	SculptThreadedTaskData *data = userdata;
 	SculptSession *ss = data->ob->sculpt;
@@ -2917,7 +3047,7 @@ static void do_clay_brush_task_cb_ex(
 					 * causes glitch with planes, see: T44390 */
 					const float fade = bstrength * tex_strength(
 					        ss, brush, vd.co, sqrtf(test.dist),
-					        vd.no, vd.fno, vd.mask ? *vd.mask : 0.0f, thread_id);
+					        vd.no, vd.fno, vd.mask ? *vd.mask : 0.0f, tls->thread_id);
 
 					mul_v3_v3fl(proxy[vd.i], val, fade);
 
@@ -2960,13 +3090,20 @@ static void do_clay_brush(Sculpt *sd, Object *ob, PBVHNode **nodes, int totnode)
 	    .area_no = area_no, .area_co = area_co,
 	};
 
-	BLI_task_parallel_range_ex(
-	            0, totnode, &data, NULL, 0, do_clay_brush_task_cb_ex,
-	            ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT), false);
+	ParallelRangeSettings settings;
+	BLI_parallel_range_settings_defaults(&settings);
+	settings.use_threading = ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT);
+	BLI_task_parallel_range(
+	            0, totnode,
+	            &data,
+	            do_clay_brush_task_cb_ex,
+	            &settings);
 }
 
 static void do_clay_strips_brush_task_cb_ex(
-        void *userdata, void *UNUSED(userdata_chunk), const int n, const int thread_id)
+        void *__restrict userdata,
+        const int n,
+        const ParallelRangeTLS *__restrict tls)
 {
 	SculptThreadedTaskData *data = userdata;
 	SculptSession *ss = data->ob->sculpt;
@@ -3002,7 +3139,7 @@ static void do_clay_strips_brush_task_cb_ex(
 					 * causes glitch with planes, see: T44390 */
 					const float fade = bstrength * tex_strength(
 					        ss, brush, vd.co, ss->cache->radius * test.dist,
-					        vd.no, vd.fno, vd.mask ? *vd.mask : 0.0f, thread_id);
+					        vd.no, vd.fno, vd.mask ? *vd.mask : 0.0f, tls->thread_id);
 
 					mul_v3_v3fl(proxy[vd.i], val, fade);
 
@@ -3070,13 +3207,20 @@ static void do_clay_strips_brush(Sculpt *sd, Object *ob, PBVHNode **nodes, int t
 	    .area_no_sp = area_no_sp, .area_co = area_co, .mat = mat,
 	};
 
-	BLI_task_parallel_range_ex(
-	            0, totnode, &data, NULL, 0, do_clay_strips_brush_task_cb_ex,
-	            ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT), false);
+	ParallelRangeSettings settings;
+	BLI_parallel_range_settings_defaults(&settings);
+	settings.use_threading = ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT);
+	BLI_task_parallel_range(
+	            0, totnode,
+	            &data,
+	            do_clay_strips_brush_task_cb_ex,
+	            &settings);
 }
 
 static void do_fill_brush_task_cb_ex(
-        void *userdata, void *UNUSED(userdata_chunk), const int n, const int thread_id)
+        void *__restrict userdata,
+        const int n,
+        const ParallelRangeTLS *__restrict tls)
 {
 	SculptThreadedTaskData *data = userdata;
 	SculptSession *ss = data->ob->sculpt;
@@ -3110,7 +3254,7 @@ static void do_fill_brush_task_cb_ex(
 				if (plane_trim(ss->cache, brush, val)) {
 					const float fade = bstrength * tex_strength(
 					        ss, brush, vd.co, sqrtf(test.dist),
-					        vd.no, vd.fno, vd.mask ? *vd.mask : 0.0f, thread_id);
+					        vd.no, vd.fno, vd.mask ? *vd.mask : 0.0f, tls->thread_id);
 
 					mul_v3_v3fl(proxy[vd.i], val, fade);
 
@@ -3151,13 +3295,20 @@ static void do_fill_brush(Sculpt *sd, Object *ob, PBVHNode **nodes, int totnode)
 	    .area_no = area_no, .area_co = area_co,
 	};
 
-	BLI_task_parallel_range_ex(
-	            0, totnode, &data, NULL, 0, do_fill_brush_task_cb_ex,
-	            ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT), false);
+	ParallelRangeSettings settings;
+	BLI_parallel_range_settings_defaults(&settings);
+	settings.use_threading = ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT);
+	BLI_task_parallel_range(
+	            0, totnode,
+	            &data,
+	            do_fill_brush_task_cb_ex,
+	            &settings);
 }
 
 static void do_scrape_brush_task_cb_ex(
-        void *userdata, void *UNUSED(userdata_chunk), const int n, const int thread_id)
+        void *__restrict userdata,
+        const int n,
+        const ParallelRangeTLS *__restrict tls)
 {
 	SculptThreadedTaskData *data = userdata;
 	SculptSession *ss = data->ob->sculpt;
@@ -3190,7 +3341,7 @@ static void do_scrape_brush_task_cb_ex(
 				if (plane_trim(ss->cache, brush, val)) {
 					const float fade = bstrength * tex_strength(
 					        ss, brush, vd.co, sqrtf(test.dist),
-					        vd.no, vd.fno, vd.mask ? *vd.mask : 0.0f, thread_id);
+					        vd.no, vd.fno, vd.mask ? *vd.mask : 0.0f, tls->thread_id);
 
 					mul_v3_v3fl(proxy[vd.i], val, fade);
 
@@ -3231,13 +3382,20 @@ static void do_scrape_brush(Sculpt *sd, Object *ob, PBVHNode **nodes, int totnod
 	    .area_no = area_no, .area_co = area_co,
 	};
 
-	BLI_task_parallel_range_ex(
-	            0, totnode, &data, NULL, 0, do_scrape_brush_task_cb_ex,
-	            ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT), false);
+	ParallelRangeSettings settings;
+	BLI_parallel_range_settings_defaults(&settings);
+	settings.use_threading = ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT);
+	BLI_task_parallel_range(
+	            0, totnode,
+	            &data,
+	            do_scrape_brush_task_cb_ex,
+	            &settings);
 }
 
 static void do_gravity_task_cb_ex(
-        void *userdata, void *UNUSED(userdata_chunk), const int n, const int thread_id)
+        void *__restrict userdata,
+        const int n,
+        const ParallelRangeTLS *__restrict tls)
 {
 	SculptThreadedTaskData *data = userdata;
 	SculptSession *ss = data->ob->sculpt;
@@ -3257,7 +3415,7 @@ static void do_gravity_task_cb_ex(
 		if (sculpt_brush_test_sq_fn(&test, vd.co)) {
 			const float fade = tex_strength(
 			        ss, brush, vd.co, sqrtf(test.dist),
-			        vd.no, vd.fno, vd.mask ? *vd.mask : 0.0f, thread_id);
+			        vd.no, vd.fno, vd.mask ? *vd.mask : 0.0f, tls->thread_id);
 
 			mul_v3_v3fl(proxy[vd.i], offset, fade);
 
@@ -3288,9 +3446,14 @@ static void do_gravity(Sculpt *sd, Object *ob, PBVHNode **nodes, int totnode, fl
 	    .offset = offset,
 	};
 
-	BLI_task_parallel_range_ex(
-	            0, totnode, &data, NULL, 0, do_gravity_task_cb_ex,
-	            ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT), false);
+	ParallelRangeSettings settings;
+	BLI_parallel_range_settings_defaults(&settings);
+	settings.use_threading = ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT);
+	BLI_task_parallel_range(
+	            0, totnode,
+	            &data,
+	            do_gravity_task_cb_ex,
+	            &settings);
 }
 
 
@@ -3392,7 +3555,10 @@ static void sculpt_topology_update(Sculpt *sd, Object *ob, Brush *brush, Unified
 	}
 }
 
-static void do_brush_action_task_cb(void *userdata, const int n)
+static void do_brush_action_task_cb(
+        void *__restrict userdata,
+        const int n,
+        const ParallelRangeTLS *__restrict UNUSED(tls))
 {
 	SculptThreadedTaskData *data = userdata;
 
@@ -3419,9 +3585,14 @@ static void do_brush_action(Sculpt *sd, Object *ob, Brush *brush, UnifiedPaintSe
 			.sd = sd, .ob = ob, .brush = brush, .nodes = nodes,
 		};
 
+		ParallelRangeSettings settings;
+		BLI_parallel_range_settings_defaults(&settings);
+		settings.use_threading = ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT);
 		BLI_task_parallel_range(
-		            0, totnode, &task_data, do_brush_action_task_cb,
-		            ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT));
+		            0, totnode,
+		            &task_data,
+		            do_brush_action_task_cb,
+		            &settings);
 
 		if (sculpt_brush_needs_normal(brush, ss->cache->normal_weight))
 			update_sculpt_normal(sd, ob, nodes, totnode);
@@ -3533,7 +3704,10 @@ static void sculpt_flush_pbvhvert_deform(Object *ob, PBVHVertexIter *vd)
 		copy_v3_v3(me->mvert[index].co, newco);
 }
 
-static void sculpt_combine_proxies_task_cb(void *userdata, const int n)
+static void sculpt_combine_proxies_task_cb(
+        void *__restrict userdata,
+        const int n,
+        const ParallelRangeTLS *__restrict UNUSED(tls))
 {
 	SculptThreadedTaskData *data = userdata;
 	SculptSession *ss = data->ob->sculpt;
@@ -3600,9 +3774,14 @@ static void sculpt_combine_proxies(Sculpt *sd, Object *ob)
 			.sd = sd, .ob = ob, .brush = brush, .nodes = nodes,
 		};
 
+		ParallelRangeSettings settings;
+		BLI_parallel_range_settings_defaults(&settings);
+		settings.use_threading = ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT);
 		BLI_task_parallel_range(
-		            0, totnode, &data, sculpt_combine_proxies_task_cb,
-		            ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT));
+		            0, totnode,
+		            &data,
+		            sculpt_combine_proxies_task_cb,
+		            &settings);
 	}
 
 	if (nodes)
@@ -3628,7 +3807,10 @@ static void sculpt_update_keyblock(Object *ob)
 	}
 }
 
-static void sculpt_flush_stroke_deform_task_cb(void *userdata, const int n)
+static void sculpt_flush_stroke_deform_task_cb(
+        void *__restrict userdata,
+        const int n,
+        const ParallelRangeTLS *__restrict UNUSED(tls))
 {
 	SculptThreadedTaskData *data = userdata;
 	SculptSession *ss = data->ob->sculpt;
@@ -3681,9 +3863,14 @@ static void sculpt_flush_stroke_deform(Sculpt *sd, Object *ob)
 			.vertCos = vertCos,
 		};
 
+		ParallelRangeSettings settings;
+		BLI_parallel_range_settings_defaults(&settings);
+		settings.use_threading = ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT);
 		BLI_task_parallel_range(
-		            0, totnode, &data, sculpt_flush_stroke_deform_task_cb,
-		            ((sd->flags & SCULPT_USE_OPENMP) && totnode > SCULPT_THREADED_LIMIT));
+		            0, totnode,
+		            &data,
+		            sculpt_flush_stroke_deform_task_cb,
+		            &settings);
 
 		if (vertCos) {
 			sculpt_vertcos_to_key(ob, ss->kb, vertCos);
