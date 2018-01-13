@@ -462,7 +462,10 @@ typedef struct UserDef {
 	short wheellinescroll;
 	int uiflag;   /* eUserpref_UI_Flag */
 	int uiflag2;  /* eUserpref_UI_Flag2 */
-	int language;
+	/* Experimental flag for app-templates to make changes to behavior
+	 * which are outside the scope of typical preferences. */
+	short app_flag;
+	short language;
 	short userpref, viewzoom;
 	
 	int mixbufsize;
@@ -493,7 +496,9 @@ typedef struct UserDef {
 	char keyconfigstr[64];
 	
 	short undosteps;
-	short undomemory;
+	short pad1;
+	int undomemory;
+	int pad3;
 	short gp_manhattendist, gp_euclideandist, gp_eraser;
 	short gp_settings;  /* eGP_UserdefSettings */
 	short tb_leftmouse, tb_rightmouse;
@@ -667,7 +672,9 @@ typedef enum eUserpref_UI_Flag {
 	USER_DRAWVIEWINFO		= (1 << 4),
 	USER_PLAINMENUS			= (1 << 5),
 	USER_LOCK_CURSOR_ADJUST	= (1 << 6),
-	USER_UIFLAG_DEPRECATED_7	= (1 << 7),  /* cleared */
+	/* Avoid accidentally adjusting the layout
+	 * (exact behavior may change based on whats considered reasonable to lock down). */
+	USER_UIFLAG_DEPRECATED_7 = (1 << 7),
 	USER_ALLWINCODECS		= (1 << 8),
 	USER_MENUOPENAUTO		= (1 << 9),
 	USER_ZBUF_CURSOR		= (1 << 10),
@@ -700,7 +707,13 @@ typedef enum eUserpref_UI_Flag2 {
 	USER_REGION_OVERLAP			= (1 << 1),
 	USER_TRACKPAD_NATURAL		= (1 << 2),
 } eUserpref_UI_Flag2;
-	
+
+/* UserDef.app_flag */
+typedef enum eUserpref_APP_Flag {
+	USER_APP_LOCK_UI_LAYOUT = (1 << 0),
+	USER_APP_VIEW3D_HIDE_CURSOR = (1 << 1),
+} eUserpref_APP_Flag;
+
 /* Auto-Keying mode.
  * UserDef.autokey_mode */
 typedef enum eAutokey_Mode {
@@ -817,7 +830,7 @@ typedef enum eColorPicker_Types {
 } eColorPicker_Types;
 
 /* timecode display styles
-  * UserDef.timecode_style */
+ * UserDef.timecode_style */
 typedef enum eTimecodeStyles {
 	/* as little info as is necessary to show relevant info
 	 * with '+' to denote the frames 

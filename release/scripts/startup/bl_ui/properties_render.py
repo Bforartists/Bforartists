@@ -473,8 +473,18 @@ class RENDER_PT_output(RenderButtonsPanel, Panel):
         
             ## Cycles transparent background.
             scene = context.scene
-            cscene = scene.cycles  
+            cscene = scene.cycles 
+            
+            #split = layout.split()
+
+            #col = split.column()
             layout.prop(cscene, "film_transparent", text = "Transparent Background")
+            sub = layout.row()
+            sub.prop(cscene, "film_transparent_glass", text="Transparent Glass")
+            sub.active = cscene.film_transparent
+            sub = layout.row()
+            sub.prop(cscene, "film_transparent_roughness", text="Roughness Threshold")
+            sub.active = cscene.film_transparent and cscene.film_transparent_glass
             
         else:
         
