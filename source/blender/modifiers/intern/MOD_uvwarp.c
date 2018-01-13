@@ -112,7 +112,10 @@ typedef struct UVWarpData {
 	int axis_v;
 } UVWarpData;
 
-static void uv_warp_compute(void *userdata, const int i)
+static void uv_warp_compute(
+        void *__restrict userdata,
+        const int i,
+        const ParallelRangeTLS *__restrict UNUSED(tls))
 {
 	const UVWarpData *data = userdata;
 
@@ -210,7 +213,13 @@ static DerivedMesh *applyModifier(ModifierData *md, Object *ob,
 	UVWarpData data = {.mpoly = mpoly, .mloop = mloop, .mloopuv = mloopuv,
 	                   .dvert = dvert, .defgrp_index = defgrp_index,
 	                   .warp_mat = warp_mat, .axis_u = axis_u, .axis_v = axis_v};
-	BLI_task_parallel_range(0, numPolys, &data, uv_warp_compute, numPolys > 1000);
+	ParallelRangeSettings settings;
+	BLI_parallel_range_settings_defaults(&settings);
+	settings.use_threading = (numPolys > 1000);
+	BLI_task_parallel_range(0, numPolys,
+	                        &data,
+	                        uv_warp_compute,
+	                        &settings);
 
 	dm->dirty |= DM_DIRTY_TESS_CDLAYERS;
 

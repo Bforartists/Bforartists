@@ -24,6 +24,7 @@
  *  \ingroup RNA
  */
 
+#include <limits.h>
 #include <stdlib.h>
 
 #include "DNA_curve_types.h"
@@ -34,6 +35,7 @@
 #include "DNA_scene_types.h"
 
 #include "BLI_utildefines.h"
+#include "BLI_math_base.h"
 
 #include "BKE_appdir.h"
 #include "BKE_DerivedMesh.h"
@@ -150,6 +152,12 @@ static void rna_userdef_dpi_update(Main *bmain, Scene *UNUSED(scene), PointerRNA
 	}
 
 	WM_main_add_notifier(NC_WINDOW, NULL);      /* full redraw */
+	WM_main_add_notifier(NC_SCREEN | NA_EDITED, NULL);    /* refresh region sizes */
+}
+
+static void rna_userdef_update_ui(Main *UNUSED(bmain), Scene *UNUSED(scene), PointerRNA *UNUSED(ptr))
+{
+	WM_main_add_notifier(NC_WINDOW, NULL);
 	WM_main_add_notifier(NC_SCREEN | NA_EDITED, NULL);    /* refresh region sizes */
 }
 
@@ -669,6 +677,27 @@ static StructRNA *rna_AddonPref_refine(PointerRNA *ptr)
 }
 
 #else
+
+/* TODO(sergey): This technically belongs to blenlib, but we don't link
+ * makesrna against it.
+ */
+
+/* Get maximum addressable memory in megabytes, */
+static size_t max_memory_in_megabytes(void)
+{
+	/* Maximum addressable bytes on this platform. */
+	const size_t limit_bytes = (((size_t)1) << ((sizeof(size_t) * 8) - 1));
+	/* Convert it to megabytes and return. */
+	return (limit_bytes >> 20);
+}
+
+/* Same as above, but clipped to int capacity. */
+static int max_memory_in_megabytes_int(void)
+{
+	const size_t limit_megabytes = max_memory_in_megabytes();
+	/* NOTE: The result will fit into integer. */
+	return (int)min_zz(limit_megabytes, (size_t)INT_MAX);
+}
 
 static void rna_def_userdef_theme_ui_font_style(BlenderRNA *brna)
 {
@@ -3367,12 +3396,24 @@ static void rna_def_userdef_view(BlenderRNA *brna)
 	RNA_def_property_boolean_negative_sdna(prop, NULL, "uiflag", USER_SPLASH_DISABLE);
 	RNA_def_property_ui_text(prop, "Show Splash", "Display splash screen on startup");
 
+
 	prop = RNA_def_property(srna, "show_playback_fps", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_sdna(prop, NULL, "uiflag", USER_SHOW_FPS);
 	RNA_def_property_ui_text(prop, "Show Playback FPS",
 	                         "Show the frames per second screen refresh rate, while animation is played back");
 	RNA_def_property_update(prop, 0, "rna_userdef_update");
-	
+
+	/* app flags (use for app-templates) */
+	prop = RNA_def_property(srna, "show_layout_ui", PROP_BOOLEAN, PROP_NONE);
+	RNA_def_property_boolean_negative_sdna(prop, NULL, "app_flag", USER_APP_LOCK_UI_LAYOUT);
+	RNA_def_property_ui_text(prop, "Show Layout Widgets", "Show screen layout editing UI");
+	RNA_def_property_update(prop, 0, "rna_userdef_update_ui");
+
+	prop = RNA_def_property(srna, "show_view3d_cursor", PROP_BOOLEAN, PROP_NONE);
+	RNA_def_property_boolean_negative_sdna(prop, NULL, "app_flag", USER_APP_VIEW3D_HIDE_CURSOR);
+	RNA_def_property_ui_text(prop, "Show 3D View Cursor", "");
+	RNA_def_property_update(prop, 0, "rna_userdef_update");
+
 	/* menus */
 	prop = RNA_def_property(srna, "use_mouse_over_open", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_sdna(prop, NULL, "uiflag", USER_MENUOPENAUTO);
@@ -3645,7 +3686,7 @@ static void rna_def_userdef_edit(BlenderRNA *brna)
 
 	prop = RNA_def_property(srna, "undo_memory_limit", PROP_INT, PROP_NONE);
 	RNA_def_property_int_sdna(prop, NULL, "undomemory");
-	RNA_def_property_range(prop, 0, 32767);
+	RNA_def_property_range(prop, 0, max_memory_in_megabytes_int());
 	RNA_def_property_ui_text(prop, "Undo Memory Size", "Maximum memory usage in megabytes (0 means unlimited)");
 
 	prop = RNA_def_property(srna, "use_global_undo", PROP_BOOLEAN, PROP_NONE);
@@ -4055,7 +4096,7 @@ static void rna_def_userdef_system(BlenderRNA *brna)
 
 	prop = RNA_def_property(srna, "memory_cache_limit", PROP_INT, PROP_NONE);
 	RNA_def_property_int_sdna(prop, NULL, "memcachelimit");
-	RNA_def_property_range(prop, 0, (sizeof(void *) == 8) ? 1024 * 32 : 1024); /* 32 bit 2 GB, 64 bit 32 GB */
+	RNA_def_property_range(prop, 0, max_memory_in_megabytes_int());
 	RNA_def_property_ui_text(prop, "Memory Cache Limit", "Memory cache limit (in megabytes)");
 	RNA_def_property_update(prop, 0, "rna_Userdef_memcache_update");
 
