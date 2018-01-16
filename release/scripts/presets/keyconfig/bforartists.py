@@ -1304,8 +1304,7 @@ km = kc.keymaps.new('Weight Paint Vertex Selection', space_type='EMPTY', region_
 
 kmi = km.keymap_items.new('paint.vert_select_all', 'A', 'PRESS')
 kmi_props_setattr(kmi.properties, 'action', 'TOGGLE')
-kmi = km.keymap_items.new('paint.vert_select_all', 'I', 'PRESS', ctrl=True)
-kmi_props_setattr(kmi.properties, 'action', 'INVERT')
+kmi = km.keymap_items.new('paint.vert_select_all_inverse', 'I', 'PRESS', ctrl=True)
 kmi = km.keymap_items.new('view3d.select_border', 'B', 'PRESS')
 kmi = km.keymap_items.new('view3d.select_lasso', 'EVT_TWEAK_A', 'ANY', ctrl=True)
 kmi_props_setattr(kmi.properties, 'deselect', False)
