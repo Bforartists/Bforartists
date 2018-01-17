@@ -3825,8 +3825,14 @@ class VIEW3D_PT_view3d_meshdisplay(Panel):
             col.label(text="Face Info:")
             col.prop(mesh, "show_extra_face_area", text="Area")
             col.prop(mesh, "show_extra_face_angle", text="Angle")
+            
+            row=layout.row()
+            
             if bpy.app.debug:
-                layout.prop(mesh, "show_extra_indices")
+                row.prop(mesh, "show_extra_indices")
+            else:
+                row.enabled = False
+                row.prop(mesh, "show_extra_indices")
 
 
 class VIEW3D_PT_view3d_meshstatvis(Panel):
