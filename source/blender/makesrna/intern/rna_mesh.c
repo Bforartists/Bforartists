@@ -3632,7 +3632,7 @@ static void rna_def_mesh(BlenderRNA *brna)
 
 	prop = RNA_def_property(srna, "show_extra_indices", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_sdna(prop, NULL, "drawflag", ME_DRAWEXTRA_INDICES);
-	RNA_def_property_ui_text(prop, "Indices", "Display the index numbers of selected vertices, edges, and faces");
+	RNA_def_property_ui_text(prop, "Indices", "Display the index numbers of selected vertices, edges, and faces\nYou need to activate the Debugflag first\nType 'bpy.app.debug = True' in the Python console");
 	RNA_def_property_update(prop, 0, "rna_Mesh_update_draw");
 
 	/* editflag */
