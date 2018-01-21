@@ -20,8 +20,6 @@
 #include <cassert>
 #include <iostream>
 
-#include "util/util_static_assert.h"
-
 CCL_NAMESPACE_BEGIN
 
 /* Global storage for all sort of flags used to fine-tune behavior of particular
@@ -46,6 +44,15 @@ public:
 		bool sse41;
 		bool sse3;
 		bool sse2;
+
+		/* Check functions to see whether instructions up to the given one
+		 * are allowed for use.
+		 */
+		bool has_avx2()  { return has_avx()   && avx2; }
+		bool has_avx()   { return has_sse41() && avx; }
+		bool has_sse41() { return has_sse3()  && sse41; }
+		bool has_sse3()  { return has_sse2()  && sse3; }
+		bool has_sse2()  { return sse2; }
 
 		/* Whether QBVH usage is allowed or not. */
 		bool qbvh;

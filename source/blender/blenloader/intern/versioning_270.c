@@ -1243,7 +1243,7 @@ void blo_do_versions_270(FileData *fd, Library *UNUSED(lib), Main *main)
 	if (!MAIN_VERSION_ATLEAST(main, 277, 1)) {
 		for (Scene *scene = main->scene.first; scene; scene = scene->id.next) {
 			ParticleEditSettings *pset = &scene->toolsettings->particle;
-			for (int a = 0; a < PE_TOT_BRUSH; a++) {
+			for (int a = 0; a < ARRAY_SIZE(pset->brush); a++) {
 				if (pset->brush[a].strength > 1.0f) {
 					pset->brush[a].strength *= 0.01f;
 				}
@@ -1593,7 +1593,7 @@ void blo_do_versions_270(FileData *fd, Library *UNUSED(lib), Main *main)
 			if (scene->toolsettings != NULL) {
 				ToolSettings *ts = scene->toolsettings;
 				ParticleEditSettings *pset = &ts->particle;
-				for (int a = 0; a < PE_TOT_BRUSH; a++) {
+				for (int a = 0; a < ARRAY_SIZE(pset->brush); a++) {
 					if (pset->brush[a].count == 0) {
 						pset->brush[a].count = 10;
 					}
@@ -1773,14 +1773,7 @@ void blo_do_versions_270(FileData *fd, Library *UNUSED(lib), Main *main)
 				for (ModifierData *md = ob->modifiers.first; md; md = md->next) {
 					if (md->type == eModifierType_SimpleDeform) {
 						SimpleDeformModifierData *smd = (SimpleDeformModifierData *)md;
-						switch (smd->mode) {
-							case MOD_SIMPLEDEFORM_MODE_BEND:
-								smd->deform_axis = 0;
-								break;
-							default:
-								smd->deform_axis = 2;
-								break;
-						}
+						smd->deform_axis = 2;
 					}
 				}
 			}

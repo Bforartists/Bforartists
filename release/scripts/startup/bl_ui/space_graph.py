@@ -1,4 +1,4 @@
-﻿# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -226,6 +226,8 @@ class GRAPH_MT_channel(Menu):
         layout.operator_context = 'INVOKE_REGION_CHANNELS'
 
         layout.operator("anim.channels_delete", icon = "DELETE")
+        if context.space_data.mode == 'DRIVERS':
+            layout.operator("graph.driver_delete_invalid")
 
         layout.separator()
 
