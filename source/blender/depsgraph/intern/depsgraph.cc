@@ -155,7 +155,7 @@ static bool pointer_to_component_node_criteria(
 			return true;
 		}
 		else if (object->pose != NULL) {
-			LINKLIST_FOREACH(bPoseChannel *, pchan, &object->pose->chanbase) {
+			BLI_LISTBASE_FOREACH(bPoseChannel *, pchan, &object->pose->chanbase) {
 				if (BLI_findindex(&pchan->constraints, con) != -1) {
 					/* bone transforms */
 					*type = DEG_NODE_TYPE_BONE;
@@ -192,11 +192,7 @@ static bool pointer_to_component_node_criteria(
 		}
 	}
 	else if (ptr->type == &RNA_ShapeKey) {
-		Key *key = (Key *)ptr->id.data;
-		/* ShapeKeys are currently handled as geometry on the geometry that
-		 * owns it.
-		 */
-		*id = key->from;
+		*id = (ID *)ptr->id.data;
 		*type = DEG_NODE_TYPE_GEOMETRY;
 		return true;
 	}

@@ -3199,11 +3199,12 @@ static ImBuf *seq_render_scene_strip(const SeqRenderData *context, Sequence *seq
 		int scemode;
 		int cfra;
 		float subframe;
+
 #ifdef DURIAN_CAMERA_SWITCH
-		ListBase markers;
+		int mode;
 #endif
 	} orig_data;
-	
+
 	/* Old info:
 	 * Hack! This function can be called from do_render_seq(), in that case
 	 * the seq->scene can already have a Render initialized with same name,
@@ -3263,7 +3264,7 @@ static ImBuf *seq_render_scene_strip(const SeqRenderData *context, Sequence *seq
 	orig_data.cfra = scene->r.cfra;
 	orig_data.subframe = scene->r.subframe;
 #ifdef DURIAN_CAMERA_SWITCH
-	orig_data.markers = scene->markers;
+	orig_data.mode = scene->r.mode;
 #endif
 
 	BKE_scene_frame_set(scene, frame);
@@ -3286,10 +3287,10 @@ static ImBuf *seq_render_scene_strip(const SeqRenderData *context, Sequence *seq
 
 	/* prevent eternal loop */
 	scene->r.scemode &= ~R_DOSEQ;
-	
+
 #ifdef DURIAN_CAMERA_SWITCH
 	/* stooping to new low's in hackyness :( */
-	BLI_listbase_clear(&scene->markers);
+	scene->r.mode |= R_NO_CAMERA_SWITCH;
 #endif
 
 	is_frame_update = (orig_data.cfra != scene->r.cfra) || (orig_data.subframe != scene->r.subframe);
@@ -3409,7 +3410,7 @@ finally:
 
 #ifdef DURIAN_CAMERA_SWITCH
 	/* stooping to new low's in hackyness :( */
-	scene->markers = orig_data.markers;
+	scene->r.mode &= ~(orig_data.mode & R_NO_CAMERA_SWITCH);
 #endif
 
 	return ibuf;
@@ -4487,7 +4488,8 @@ Sequence *BKE_sequencer_foreground_frame_get(Scene *scene, int frame)
 		/* Only use strips that generate an image, not ones that combine
 		 * other strips or apply some effect. */
 		if (ELEM(seq->type, SEQ_TYPE_IMAGE, SEQ_TYPE_META, SEQ_TYPE_SCENE,
-		         SEQ_TYPE_MOVIE, SEQ_TYPE_COLOR, SEQ_TYPE_TEXT)) {
+		         SEQ_TYPE_MOVIE, SEQ_TYPE_COLOR, SEQ_TYPE_TEXT))
+		{
 			if (seq->machine > best_machine) {
 				best_seq = seq;
 				best_machine = seq->machine;

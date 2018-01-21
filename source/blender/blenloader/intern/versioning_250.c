@@ -951,7 +951,7 @@ void blo_do_versions_250(FileData *fd, Library *lib, Main *main)
 			if (ob->totcol && ob->matbits == NULL) {
 				int a;
 
-				ob->matbits = MEM_callocN(sizeof(char)*ob->totcol, "ob->matbits");
+				ob->matbits = MEM_calloc_arrayN(ob->totcol, sizeof(char), "ob->matbits");
 				for (a = 0; a < ob->totcol; a++)
 					ob->matbits[a] = (ob->colbits & (1<<a)) != 0;
 			}
@@ -1785,7 +1785,7 @@ void blo_do_versions_250(FileData *fd, Library *lib, Main *main)
 			ParticleEditSettings *pset = &sce->toolsettings->particle;
 			int a;
 
-			for (a = 0; a < PE_TOT_BRUSH; a++)
+			for (a = 0; a < ARRAY_SIZE(pset->brush); a++)
 				pset->brush[a].strength /= 100.0f;
 		}
 
