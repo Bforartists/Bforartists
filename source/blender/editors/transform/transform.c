@@ -1936,7 +1936,7 @@ void saveTransform(bContext *C, TransInfo *t, wmOperator *op)
 	}
 
 	// If modal, save settings back in scene if not set as operator argument
-	if (t->flag & T_MODAL) {
+	if ((t->flag & T_MODAL) || (op->flag & OP_IS_REPEAT)) {
 		/* save settings if not set in operator */
 
 		/* skip saving proportional edit if it was not actually used */
@@ -1956,10 +1956,9 @@ void saveTransform(bContext *C, TransInfo *t, wmOperator *op)
 					ts->proportional_objects = (proportional != PROP_EDIT_OFF);
 			}
 
-			if ((prop = RNA_struct_find_property(op->ptr, "proportional_size")) &&
-			    !RNA_property_is_set(op->ptr, prop))
-			{
-				ts->proportional_size = t->prop_size;
+			if ((prop = RNA_struct_find_property(op->ptr, "proportional_size"))) {
+				ts->proportional_size =
+				        RNA_property_is_set(op->ptr, prop) ? RNA_property_float_get(op->ptr, prop) : t->prop_size;
 			}
 
 			if ((prop = RNA_struct_find_property(op->ptr, "proportional_edit_falloff")) &&
@@ -5626,12 +5625,12 @@ static void slide_origdata_interp_data_vert(
 	if (sod->layer_math_map_num) {
 		if (do_loop_weight) {
 			for (j = 0; j < sod->layer_math_map_num; j++) {
-				 BM_vert_loop_groups_data_layer_merge_weights(bm, sv->cd_loop_groups[j], sod->layer_math_map[j], loop_weights);
+				BM_vert_loop_groups_data_layer_merge_weights(bm, sv->cd_loop_groups[j], sod->layer_math_map[j], loop_weights);
 			}
 		}
 		else {
 			for (j = 0; j < sod->layer_math_map_num; j++) {
-				 BM_vert_loop_groups_data_layer_merge(bm, sv->cd_loop_groups[j], sod->layer_math_map[j]);
+				BM_vert_loop_groups_data_layer_merge(bm, sv->cd_loop_groups[j], sod->layer_math_map[j]);
 			}
 		}
 	}

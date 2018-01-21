@@ -987,14 +987,12 @@ void view3d_cached_text_draw_end(View3D *v3d, ARegion *ar, bool depth_write)
 					col_pack_prev = vos->col.pack;
 				}
 
-				((vos->flag & V3D_CACHE_TEXT_ASCII) ?
-				 BLF_draw_default_ascii :
-				 BLF_draw_default
-				 )((float)(vos->sco[0] + vos->xoffs),
-				   (float)(vos->sco[1]),
-				   (depth_write) ? 0.0f : 2.0f,
-				   vos->str,
-				   vos->str_len);
+				((vos->flag & V3D_CACHE_TEXT_ASCII) ? BLF_draw_default_ascii : BLF_draw_default)(
+				        (float)(vos->sco[0] + vos->xoffs),
+				        (float)(vos->sco[1]),
+				        (depth_write) ? 0.0f : 2.0f,
+				        vos->str,
+				        vos->str_len);
 			}
 		}
 
@@ -1045,7 +1043,7 @@ static void drawcube_size(float size)
 		{ size,  size,  size}
 	};
 
-	const GLubyte indices[24] = {0,1,1,3,3,2,2,0,0,4,4,5,5,7,7,6,6,4,1,5,3,7,2,6};
+	const GLubyte indices[24] = {0, 1, 1, 3, 3, 2, 2, 0, 0, 4, 4, 5, 5, 7, 7, 6, 6, 4, 1, 5, 3, 7, 2, 6};
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, 0, pos);
@@ -5267,46 +5265,46 @@ static void draw_new_particle_system(Scene *scene, View3D *v3d, RegionView3D *rv
 
 /* 4. */
 	if (draw_as && ELEM(draw_as, PART_DRAW_PATH, PART_DRAW_CIRC) == 0) {
-		int tot_vec_size = (totpart + totchild) * 3 * sizeof(float);
+		int partsize = 3 * sizeof(float);
 		int create_ndata = 0;
 
 		if (!pdd)
 			pdd = psys->pdd = MEM_callocN(sizeof(ParticleDrawData), "ParticleDrawData");
 
 		if (part->draw_as == PART_DRAW_REND && part->trail_count > 1) {
-			tot_vec_size *= part->trail_count;
+			partsize *= part->trail_count;
 			psys_make_temp_pointcache(ob, psys);
 		}
 
 		switch (draw_as) {
 			case PART_DRAW_AXIS:
 			case PART_DRAW_CROSS:
-				tot_vec_size *= 6;
+				partsize *= 6;
 				if (draw_as != PART_DRAW_CROSS)
 					create_cdata = 1;
 				break;
 			case PART_DRAW_LINE:
-				tot_vec_size *= 2;
+				partsize *= 2;
 				break;
 			case PART_DRAW_BB:
-				tot_vec_size *= 4;
+				partsize *= 4;
 				create_ndata = 1;
 				break;
 		}
 
-		if (pdd->tot_vec_size != tot_vec_size)
+		if (pdd->totpart != totpart + totchild || pdd->partsize != partsize)
 			psys_free_pdd(psys);
 
 		if (!pdd->vdata)
-			pdd->vdata = MEM_callocN(tot_vec_size, "particle_vdata");
+			pdd->vdata = MEM_calloc_arrayN(totpart + totchild, partsize, "particle_vdata");
 		if (create_cdata && !pdd->cdata)
-			pdd->cdata = MEM_callocN(tot_vec_size, "particle_cdata");
+			pdd->cdata = MEM_calloc_arrayN(totpart + totchild, partsize, "particle_cdata");
 		if (create_ndata && !pdd->ndata)
-			pdd->ndata = MEM_callocN(tot_vec_size, "particle_ndata");
+			pdd->ndata = MEM_calloc_arrayN(totpart + totchild, partsize, "particle_ndata");
 
 		if (part->draw & PART_DRAW_VEL && draw_as != PART_DRAW_LINE) {
 			if (!pdd->vedata)
-				pdd->vedata = MEM_callocN(2 * (totpart + totchild) * 3 * sizeof(float), "particle_vedata");
+				pdd->vedata = MEM_calloc_arrayN(totpart + totchild, 2 * 3 * sizeof(float), "particle_vedata");
 
 			need_v = 1;
 		}
@@ -5320,7 +5318,8 @@ static void draw_new_particle_system(Scene *scene, View3D *v3d, RegionView3D *rv
 		pdd->ved = pdd->vedata;
 		pdd->cd = pdd->cdata;
 		pdd->nd = pdd->ndata;
-		pdd->tot_vec_size = tot_vec_size;
+		pdd->totpart = totpart + totchild;
+		pdd->partsize = partsize;
 	}
 	else if (psys->pdd) {
 		psys_free_pdd(psys);
@@ -5841,7 +5840,7 @@ static void draw_ptcache_edit(Scene *scene, View3D *v3d, PTCacheEdit *edit)
 	totkeys = (*edit->pathcache)->segments + 1;
 
 	glEnable(GL_BLEND);
-	pathcol = MEM_callocN(totkeys * 4 * sizeof(float), "particle path color data");
+	pathcol = MEM_calloc_arrayN(totkeys, 4 * sizeof(float), "particle path color data");
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_COLOR_ARRAY);
@@ -5894,8 +5893,8 @@ static void draw_ptcache_edit(Scene *scene, View3D *v3d, PTCacheEdit *edit)
 
 			if (totkeys_visible) {
 				if (edit->points && !(edit->points->keys->flag & PEK_USE_WCO))
-					pd = pdata = MEM_callocN(totkeys_visible * 3 * sizeof(float), "particle edit point data");
-				cd = cdata = MEM_callocN(totkeys_visible * (timed ? 4 : 3) * sizeof(float), "particle edit color data");
+					pd = pdata = MEM_calloc_arrayN(totkeys_visible, 3 * sizeof(float), "particle edit point data");
+				cd = cdata = MEM_calloc_arrayN(totkeys_visible, (timed ? 4 : 3) * sizeof(float), "particle edit color data");
 			}
 
 			for (i = 0, point = edit->points; i < totpoint; i++, point++) {
@@ -7084,11 +7083,11 @@ static void draw_box(const float vec[8][3], bool solid)
 	glVertexPointer(3, GL_FLOAT, 0, vec);
 	
 	if (solid) {
-		const GLubyte indices[24] = {0,1,2,3,7,6,5,4,4,5,1,0,3,2,6,7,3,7,4,0,1,5,6,2};
+		const GLubyte indices[24] = {0, 1, 2, 3, 7, 6, 5, 4, 4, 5, 1, 0, 3, 2, 6, 7, 3, 7, 4, 0, 1, 5, 6, 2};
 		glDrawRangeElements(GL_QUADS, 0, 7, 24, GL_UNSIGNED_BYTE, indices);
 	}
 	else {
-		const GLubyte indices[24] = {0,1,1,2,2,3,3,0,0,4,4,5,5,6,6,7,7,4,1,5,2,6,3,7};
+		const GLubyte indices[24] = {0, 1, 1, 2, 2, 3, 3, 0, 0, 4, 4, 5, 5, 6, 6, 7, 7, 4, 1, 5, 2, 6, 3, 7};
 		glDrawRangeElements(GL_LINES, 0, 7, 24, GL_UNSIGNED_BYTE, indices);
 	}
 

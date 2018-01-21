@@ -1419,9 +1419,9 @@ static PyObject *pyrna_enum_to_py(PointerRNA *ptr, PropertyRNA *prop, int val)
 
 					/* prefer not fail silently in case of api errors, maybe disable it later */
 					printf("RNA Warning: Current value \"%d\" "
-						   "matches no enum in '%s', '%s', '%s'\n",
-						   val, RNA_struct_identifier(ptr->type),
-						   ptr_name, RNA_property_identifier(prop));
+					       "matches no enum in '%s', '%s', '%s'\n",
+					       val, RNA_struct_identifier(ptr->type),
+					       ptr_name, RNA_property_identifier(prop));
 
 #if 0				/* gives python decoding errors while generating docs :( */
 					char error_str[256];
@@ -1751,10 +1751,8 @@ static int pyrna_py_to_prop(
 						return -1;
 					}
 					else {
-						/* same as unicode */
-						/* XXX, this is suspect but needed for function calls, need to see if theres a better way */
 						if (data) *((char **)data) = (char *)param;
-						else RNA_property_string_set(ptr, prop, param);
+						else RNA_property_string_set_bytes(ptr, prop, param, PyBytes_Size(value));
 					}
 				}
 				else {

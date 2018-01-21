@@ -446,6 +446,7 @@ struct bNodeSocket *nodeInsertStaticSocket(struct bNodeTree *ntree, struct bNode
                                            struct bNodeSocket *next_sock, const char *identifier, const char *name);
 void nodeRemoveSocket(struct bNodeTree *ntree, struct bNode *node, struct bNodeSocket *sock);
 void nodeRemoveAllSockets(struct bNodeTree *ntree, struct bNode *node);
+void nodeModifySocketType(struct bNodeTree *ntree, struct bNode *node, struct bNodeSocket *sock, int type, int subtype);
 
 struct bNode	*nodeAddNode(const struct bContext *C, struct bNodeTree *ntree, const char *idname);
 struct bNode	*nodeAddStaticNode(const struct bContext *C, struct bNodeTree *ntree, int type);
@@ -512,7 +513,7 @@ int                    BKE_node_clipboard_get_type(void);
 
 /* Node Instance Hash */
 typedef struct bNodeInstanceHash {
-	 GHash *ghash;	/* XXX should be made a direct member, GHash allocation needs to support it */
+	GHash *ghash;	/* XXX should be made a direct member, GHash allocation needs to support it */
 } bNodeInstanceHash;
 
 typedef void (*bNodeInstanceValueFP)(void *value);

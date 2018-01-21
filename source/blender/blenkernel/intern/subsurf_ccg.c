@@ -1552,7 +1552,7 @@ static void ccgDM_copyFinalLoopArray(DerivedMesh *dm, MLoop *mloop)
 				BLI_edgehash_insert(ehash, medge[i].v1, medge[i].v2, SET_INT_IN_POINTER(i));
 			}
 
-			atomic_cas_ptr((void**)&ccgdm->ehash, ccgdm->ehash, ehash);
+			atomic_cas_ptr((void **)&ccgdm->ehash, ccgdm->ehash, ehash);
 		}
 		BLI_mutex_unlock(&ccgdm->loops_cache_lock);
 	}
@@ -4512,8 +4512,10 @@ static struct PBVH *ccgDM_getPBVH(Object *ob, DerivedMesh *dm)
 		                    looptri, looptris_num);
 	}
 
-	if (ccgdm->pbvh)
+	if (ccgdm->pbvh != NULL) {
 		pbvh_show_diffuse_color_set(ccgdm->pbvh, ob->sculpt->show_diffuse_color);
+		pbvh_show_mask_set(ccgdm->pbvh, ob->sculpt->show_mask);
+	}
 
 	/* For vertex paint, keep track of ccgdm */
 	if (!(ob->mode & OB_MODE_SCULPT) && ccgdm->pbvh) {
