@@ -149,7 +149,7 @@ class OUTLINER_MT_view(Menu):
 
         layout.menu("OUTLINER_MT_search")
 
-        if space.display_mode not in {'DATABLOCKS', 'USER_PREFERENCES', 'KEYMAPS'}:
+        if space.display_mode not in {'DATABLOCKS', 'USER_PREFERENCES'}:
             layout.prop(space, "use_sort_alpha")
             layout.prop(space, "show_restrict_columns")
             layout.separator()

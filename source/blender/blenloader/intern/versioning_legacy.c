@@ -113,7 +113,7 @@ static void vcol_to_fcol(Mesh *me)
 	if (me->totface == 0 || me->mcol == NULL)
 		return;
 
-	mcoln = mcolmain = MEM_mallocN(4*sizeof(int)*me->totface, "mcoln");
+	mcoln = mcolmain = MEM_malloc_arrayN(me->totface, 4 * sizeof(int), "mcoln");
 	mcol = (unsigned int *)me->mcol;
 	mface = me->mface;
 	for (a = me->totface; a > 0; a--, mface++) {
@@ -3148,7 +3148,7 @@ void blo_do_versions_pre250(FileData *fd, Library *lib, Main *main)
 				pset->totaddkey = 5;
 				pset->brushtype = PE_BRUSH_NONE;
 
-				for (a = 0; a < PE_TOT_BRUSH; a++) {
+				for (a = 0; a < ARRAY_SIZE(pset->brush); a++) {
 					pset->brush[a].strength = 50;
 					pset->brush[a].size = 50;
 					pset->brush[a].step = 10;

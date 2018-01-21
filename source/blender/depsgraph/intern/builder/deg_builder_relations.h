@@ -276,8 +276,30 @@ protected:
 	DepsNodeHandle create_node_handle(const KeyType& key,
 	                                  const char *default_name = "");
 
+	/* TODO(sergey): All those is_same* functions are to be generalized. */
+
+	/* Check whether two keys correponds to the same bone from same armature.
+	 *
+	 * This is used by drivers relations builder to avoid possible fake
+	 * dependency cycle when one bone property drives another property of the
+	 * same bone.
+	 */
 	template <typename KeyFrom, typename KeyTo>
 	bool is_same_bone_dependency(const KeyFrom& key_from, const KeyTo& key_to);
+
+	/* Similar to above, but used to check whether driver is using node from
+	 * the same node tree as a driver variable.
+	 */
+	template <typename KeyFrom, typename KeyTo>
+	bool is_same_nodetree_node_dependency(const KeyFrom& key_from,
+	                                      const KeyTo& key_to);
+
+	/* Similar to above, but used to check whether driver is using key from
+	 * the same key datablock as a driver variable.
+	 */
+	template <typename KeyFrom, typename KeyTo>
+	bool is_same_shapekey_dependency(const KeyFrom& key_from,
+	                                 const KeyTo& key_to);
 
 private:
 	/* State which never changes, same for the whole builder time. */
