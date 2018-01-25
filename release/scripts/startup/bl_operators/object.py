@@ -653,7 +653,7 @@ class MakeDupliFace(Operator):
 
 
 class IsolateTypeRender(Operator):
-    """Restrict Render unselected\nHide unselected render objects of same type as active """ \
+    """Render selected\nRender just the selected Item, disables rendering for all others\nHave a look in the outliner """ \
     """by setting the hide render flag"""
     bl_idname = "object.isolate_type_render"
     bl_label = "Restrict Render Unselected"
@@ -674,7 +674,7 @@ class IsolateTypeRender(Operator):
 
 
 class ClearAllRestrictRender(Operator):
-    """Clear all restrict Render\nReveal all render objects by setting the hide render flag"""
+    """Render all\nRender all Objects in the scene\nHave a look in the outliner"""
     bl_idname = "object.hide_render_clear_all"
     bl_label = "Clear All Restrict Render"
     bl_options = {'REGISTER', 'UNDO'}
