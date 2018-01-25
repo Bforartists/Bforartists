@@ -379,9 +379,9 @@ class VIEW3D_MT_view(Menu):
         # So for now we simply hide the two menu items when there is no object selected.
 
         if context.object :
-            props = layout.operator("object.hide_render_set", icon = "RESTRICT_RENDER_OFF")
-            props = layout.operator("object.isolate_type_render", icon = "RESTRICT_RENDER_OFF")
-            props = layout.operator("object.hide_render_clear_all", icon = "RESTRICT_RENDER_OFF")
+            props = layout.operator("object.hide_render_set", text = "Render unselected", icon = "RESTRICT_RENDER_OFF")
+            props = layout.operator("object.isolate_type_render", text = "Render selected", icon = "RESTRICT_RENDER_OFF")
+            props = layout.operator("object.hide_render_clear_all", text = "Render all", icon = "RESTRICT_RENDER_OFF")
 
             layout.separator()
 

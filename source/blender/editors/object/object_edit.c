@@ -304,8 +304,8 @@ static int object_hide_render_set_exec(bContext *C, wmOperator *op)
 void OBJECT_OT_hide_render_set(wmOperatorType *ot)
 {
 	/* identifiers */
-	ot->name = "Set Restrict Render";
-	ot->description = "Set Restrict Render\nHide the render object by setting the hide render flag";
+	ot->name = "Render unselected";
+	ot->description = "Render unselected\nDon't render the selected item, but all others\nHave a look in the outliner";
 	ot->idname = "OBJECT_OT_hide_render_set";
 
 	/* api callbacks */
