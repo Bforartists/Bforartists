@@ -788,15 +788,15 @@ class GPENCIL_MT_snap(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("gpencil.snap_to_grid", text="Selection to Grid")
-        layout.operator("gpencil.snap_to_cursor", text="Selection to Cursor").use_offset = False
-        layout.operator("gpencil.snap_to_cursor", text="Selection to Cursor (Offset)").use_offset = True
+        layout.operator("gpencil.snap_to_grid", text="Selection to Grid", icon = "SELECTIONTOGRID")
+        layout.operator("gpencil.snap_to_cursor", text="Selection to Cursor", icon = "SELECTIONTOCURSOR").use_offset = False
+        layout.operator("gpencil.snap_to_cursor", text="Selection to Cursor (Offset)", icon = "SELECTIONTOCURSOROFFSET").use_offset = True
 
         layout.separator()
 
-        layout.operator("gpencil.snap_cursor_to_selected", text="Cursor to Selected")
-        layout.operator("view3d.snap_cursor_to_center", text="Cursor to Center")
-        layout.operator("view3d.snap_cursor_to_grid", text="Cursor to Grid")
+        layout.operator("gpencil.snap_cursor_to_selected", text="Cursor to Selected", icon = "CURSORTOSELECTION")
+        layout.operator("view3d.snap_cursor_to_center", text="Cursor to Center", icon = "CURSORTOCENTER")
+        layout.operator("view3d.snap_cursor_to_grid", text="Cursor to Grid", icon = "CURSORTOGRID")
 
 
 class GPENCIL_MT_gpencil_edit_specials(Menu):

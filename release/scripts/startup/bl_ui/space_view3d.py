@@ -1756,14 +1756,14 @@ class VIEW3D_MT_object_animation(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("anim.keyframe_insert_menu", text="Insert Keyframe...")
-        layout.operator("anim.keyframe_delete_v3d", text="Delete Keyframes...")
-        layout.operator("anim.keyframe_clear_v3d", text="Clear Keyframes...")
-        layout.operator("anim.keying_set_active_set", text="Change Keying Set...")
+        layout.operator("anim.keyframe_insert_menu", text="Insert Keyframe", icon= 'KEYFRAMES_INSERT')
+        layout.operator("anim.keyframe_delete_v3d", text="Delete Keyframes", icon= 'KEYFRAMES_REMOVE')
+        layout.operator("anim.keyframe_clear_v3d", text="Clear Keyframes", icon= 'KEYFRAMES_CLEAR')
+        layout.operator("anim.keying_set_active_set", text="Change Keying Set", icon='TRIA_RIGHT')
 
         layout.separator()
 
-        layout.operator("nla.bake", text="Bake Action...")
+        layout.operator("nla.bake", text="Bake Action", icon= 'BAKE_ACTION')
 
 
 class VIEW3D_MT_object_clear(Menu):
@@ -2972,15 +2972,17 @@ class VIEW3D_MT_edit_gpencil_delete(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator_enum("gpencil.delete", "type")
+        layout.operator("gpencil.delete", text = "Points", icon = "DELETE").type = 'POINTS'
+        layout.operator("gpencil.delete", text = "Strokes", icon = "DELETE").type = 'STROKES'
+        layout.operator("gpencil.delete", text = "Frame", icon = "DELETE").type = 'FRAME'
 
         layout.separator()
 
-        layout.operator("gpencil.dissolve")
+        layout.operator("gpencil.dissolve", icon = "DELETE")
 
         layout.separator()
 
-        layout.operator("gpencil.active_frames_delete_all")
+        layout.operator("gpencil.active_frames_delete_all", icon = "DELETE")
 
 
 # Edit Curve
@@ -3381,10 +3383,10 @@ class VIEW3D_MT_edit_gpencil(Menu):
 
         layout.separator()
 
-        layout.operator("gpencil.layer_isolate")
-        layout.operator("gpencil.reveal")
-        layout.operator("gpencil.hide", text="Show Active Layer Only").unselected = True
-        layout.operator("gpencil.hide", text="Hide Active Layer").unselected = False
+        layout.operator("gpencil.layer_isolate", icon = "LAYER")
+        layout.operator("gpencil.reveal", icon = "RESTRICT_VIEW_OFF")
+        layout.operator("gpencil.hide", text="Show Active Layer Only", icon = "HIDE_UNSELECTED").unselected = True
+        layout.operator("gpencil.hide", text="Hide Active Layer", icon = "RESTRICT_VIEW_ON").unselected = False
 
         layout.separator()
 
