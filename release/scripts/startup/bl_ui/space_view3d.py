@@ -1210,8 +1210,8 @@ class VIEW3D_MT_select_gpencil(Menu):
 
         layout.separator()
 
-        layout.operator("gpencil.select_linked", text="Linked")
-        layout.operator_menu_enum("gpencil.select_grouped", "type", text="Grouped")
+        layout.operator("gpencil.select_linked", text="Linked", icon = "LINKED")  
+        layout.menu("VIEW3D_MT_select_gpencil_grouped", text="Grouped")
 
         layout.separator()
 
@@ -1222,6 +1222,15 @@ class VIEW3D_MT_select_gpencil(Menu):
 
         layout.operator("gpencil.select_more", icon = "SELECTMORE")
         layout.operator("gpencil.select_less", icon = "SELECTLESS")
+
+class VIEW3D_MT_select_gpencil_grouped(Menu):
+    bl_label = "Grouped"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("gpencil.select_grouped", text="Layer", icon = "LAYER").type = 'LAYER'
+        layout.operator("gpencil.select_grouped", text="Color", icon = "COLOR").type = 'COLOR'
 
 
 # Workaround to separate the tooltips
@@ -4212,6 +4221,7 @@ classes = (
     VIEW3D_MT_select_edit_armature,
     VIEW3D_MT_select_edit_armature_similar,
     VIEW3D_MT_select_gpencil,
+    VIEW3D_MT_select_gpencil_grouped,
     VIEW3D_MT_select_paint_mask_inverse,
     VIEW3D_MT_select_paint_mask,
     VIEW3D_MT_select_paint_mask_vertex_inverse,
