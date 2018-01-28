@@ -399,8 +399,7 @@ MINLINE int integer_digits_d(const double d)
 
 MINLINE int integer_digits_i(const int i)
 {
-	/*return (int)log10(i) + 1;*/
-	return (int)log10((float)i) + 1; /*bfa-standard defined for both float and int, and so we need to define one of it*/
+	return (int)log10((double)i) + 1;
 }
 
 /* Internal helpers for SSE2 implementation.
