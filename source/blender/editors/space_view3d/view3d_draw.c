@@ -2768,10 +2768,17 @@ void ED_view3d_update_viewmat(
 		view3d_winmatrix_set(ar, v3d, rect);
 
 	/* setup view matrix */
-	if (viewmat)
+	if (viewmat) {
 		copy_m4_m4(rv3d->viewmat, viewmat);
-	else
-		view3d_viewmatrix_set(scene, v3d, rv3d);  /* note: calls BKE_object_where_is_calc for camera... */
+	}
+	else {
+		float rect_scale[2];
+		if (rect) {
+			rect_scale[0] = (float)BLI_rcti_size_x(rect) / (float)ar->winx;
+			rect_scale[1] = (float)BLI_rcti_size_y(rect) / (float)ar->winy;
+		}
+		view3d_viewmatrix_set(scene, v3d, rv3d, rect ? rect_scale : NULL);  /* note: calls BKE_object_where_is_calc for camera... */
+	}
 
 	/* update utility matrices */
 	mul_m4_m4m4(rv3d->persmat, rv3d->winmat, rv3d->viewmat);
@@ -3594,14 +3601,16 @@ void ED_scene_draw_fps(Scene *scene, const rcti *rect)
 #endif
 }
 
-static bool view3d_main_region_do_render_draw(Scene *scene)
+static bool view3d_main_region_do_render_draw(const Scene *scene)
 {
 	RenderEngineType *type = RE_engines_find(scene->r.engine);
 
 	return (type && type->view_update && type->view_draw);
 }
 
-bool ED_view3d_calc_render_border(Scene *scene, View3D *v3d, ARegion *ar, rcti *rect)
+bool ED_view3d_calc_render_border(
+        const Scene *scene, const View3D *v3d, const ARegion *ar,
+        rcti *rect)
 {
 	RegionView3D *rv3d = ar->regiondata;
 	rctf viewborder;

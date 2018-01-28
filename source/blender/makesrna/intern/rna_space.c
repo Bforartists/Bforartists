@@ -1440,7 +1440,7 @@ static void rna_BackgroundImage_size_set(PointerRNA *ptr, float value)
 
 static BGpic *rna_BackgroundImage_new(View3D *v3d)
 {
-	BGpic *bgpic = ED_view3D_background_image_new(v3d);
+	BGpic *bgpic = ED_view3d_background_image_new(v3d);
 
 	WM_main_add_notifier(NC_SPACE | ND_SPACE_VIEW3D, v3d);
 
@@ -1454,7 +1454,7 @@ static void rna_BackgroundImage_remove(View3D *v3d, ReportList *reports, Pointer
 		BKE_report(reports, RPT_ERROR, "Background image cannot be removed");
 	}
 
-	ED_view3D_background_image_remove(v3d, bgpic);
+	ED_view3d_background_image_remove(v3d, bgpic);
 	RNA_POINTER_INVALIDATE(bgpic_ptr);
 
 	WM_main_add_notifier(NC_SPACE | ND_SPACE_VIEW3D, v3d);
@@ -1462,7 +1462,7 @@ static void rna_BackgroundImage_remove(View3D *v3d, ReportList *reports, Pointer
 
 static void rna_BackgroundImage_clear(View3D *v3d)
 {
-	ED_view3D_background_image_clear(v3d);
+	ED_view3d_background_image_clear(v3d);
 	WM_main_add_notifier(NC_SPACE | ND_SPACE_VIEW3D, v3d);
 }
 

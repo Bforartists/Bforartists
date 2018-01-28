@@ -42,9 +42,14 @@ enum_feature_set = (
     )
 
 enum_displacement_methods = (
-    ('BUMP', "Bump", "Bump mapping to simulate the appearance of displacement"),
-    ('TRUE', "True", "Use true displacement only, requires fine subdivision"),
-    ('BOTH', "Both", "Combination of displacement and bump mapping"),
+    ('BUMP', "Bump Only", "Bump mapping to simulate the appearance of displacement"),
+    ('DISPLACEMENT', "Displacement Only", "Use true displacement of surface only, requires fine subdivision"),
+    ('BOTH', "Displacement and Bump", "Combination of true displacement and bump mapping for finer detail"),
+    )
+
+enum_bvh_layouts = (
+    ('BVH2', "BVH2", "", 1),
+    ('BVH4', "BVH4", "", 2),
     )
 
 enum_bvh_types = (
@@ -670,7 +675,11 @@ class CyclesRenderSettings(bpy.types.PropertyGroup):
         cls.debug_use_cpu_sse41 = BoolProperty(name="SSE41", default=True)
         cls.debug_use_cpu_sse3 = BoolProperty(name="SSE3", default=True)
         cls.debug_use_cpu_sse2 = BoolProperty(name="SSE2", default=True)
-        cls.debug_use_qbvh = BoolProperty(name="QBVH", default=True)
+        cls.debug_bvh_layout = EnumProperty(
+                name="BVH Layout",
+                items=enum_bvh_layouts,
+                default='BVH4',
+                )
         cls.debug_use_cpu_split_kernel = BoolProperty(name="Split Kernel", default=False)
 
         cls.debug_use_cuda_adaptive_compile = BoolProperty(name="Adaptive Compile", default=False)
@@ -869,7 +878,7 @@ class CyclesMaterialSettings(bpy.types.PropertyGroup):
                 name="Displacement Method",
                 description="Method to use for the displacement",
                 items=enum_displacement_methods,
-                default='BUMP',
+                default='DISPLACEMENT',
                 )
 
     @classmethod

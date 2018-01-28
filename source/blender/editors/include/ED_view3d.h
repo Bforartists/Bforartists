@@ -215,6 +215,8 @@ eV3DProjStatus ED_view3d_project_float_ex(const struct ARegion *ar, float perspm
 eV3DProjStatus ED_view3d_project_float_global(const struct ARegion *ar, const float co[3], float r_co[2], const eV3DProjTest flag);
 eV3DProjStatus ED_view3d_project_float_object(const struct ARegion *ar, const float co[3], float r_co[2], const eV3DProjTest flag);
 
+float ED_view3d_pixel_size(const struct RegionView3D *rv3d, const float co[3]);
+
 float ED_view3d_calc_zfac(const struct RegionView3D *rv3d, const float co[3], bool *r_flip);
 bool ED_view3d_clip_segment(const struct RegionView3D *rv3d, float ray_start[3], float ray_end[3]);
 bool ED_view3d_win_to_ray(
@@ -264,8 +266,9 @@ void ED_view3d_calc_camera_border_size(
         const struct Scene *scene, const struct ARegion *ar,
         const struct View3D *v3d, const struct RegionView3D *rv3d,
         float r_size[2]);
-bool ED_view3d_calc_render_border(struct Scene *scene, struct View3D *v3d,
-                                  struct ARegion *ar, struct rcti *rect);
+bool ED_view3d_calc_render_border(
+        const struct Scene *scene, const struct View3D *v3d,
+        const struct ARegion *ar, struct rcti *rect);
 
 void ED_view3d_clipping_calc_from_boundbox(float clip[6][4], const struct BoundBox *clipbb, const bool is_flip);
 void ED_view3d_clipping_calc(struct BoundBox *bb, float planes[4][4], struct bglMats *mats, const struct rcti *rect);
@@ -274,8 +277,6 @@ bool ED_view3d_clipping_test(const struct RegionView3D *rv3d, const float co[3],
 void ED_view3d_clipping_set(struct RegionView3D *rv3d);
 void ED_view3d_clipping_enable(void);
 void ED_view3d_clipping_disable(void);
-
-float ED_view3d_pixel_size(const struct RegionView3D *rv3d, const float co[3]);
 
 float ED_view3d_radius_to_dist_persp(const float angle, const float radius);
 float ED_view3d_radius_to_dist_ortho(const float lens, const float radius);
@@ -405,6 +406,9 @@ uint64_t ED_view3d_datamask(const struct Scene *scene, const struct View3D *v3d)
 uint64_t ED_view3d_screen_datamask(const struct bScreen *screen);
 
 bool ED_view3d_offset_lock_check(const struct View3D *v3d, const struct RegionView3D *rv3d);
+void ED_view3d_persp_switch_from_camera(struct View3D *v3d, struct RegionView3D *rv3d, const char persp);
+bool ED_view3d_persp_ensure(struct View3D *v3d, struct ARegion *ar);
+
 
 /* camera lock functions */
 bool ED_view3d_camera_lock_check(const struct View3D *v3d, const struct RegionView3D *rv3d);
@@ -421,11 +425,11 @@ bool ED_view3d_camera_lock_autokey(
         struct View3D *v3d, struct RegionView3D *rv3d,
         struct bContext *C, const bool do_rotate, const bool do_translate);
 
-void ED_view3D_lock_clear(struct View3D *v3d);
+void ED_view3d_lock_clear(struct View3D *v3d);
 
-struct BGpic *ED_view3D_background_image_new(struct View3D *v3d);
-void ED_view3D_background_image_remove(struct View3D *v3d, struct BGpic *bgpic);
-void ED_view3D_background_image_clear(struct View3D *v3d);
+struct BGpic *ED_view3d_background_image_new(struct View3D *v3d);
+void ED_view3d_background_image_remove(struct View3D *v3d, struct BGpic *bgpic);
+void ED_view3d_background_image_clear(struct View3D *v3d);
 
 #define VIEW3D_MARGIN 1.4f
 #define VIEW3D_DIST_FALLBACK 1.0f

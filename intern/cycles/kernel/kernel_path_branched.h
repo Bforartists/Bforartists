@@ -333,7 +333,7 @@ ccl_device void kernel_branched_path_subsurface_scatter(KernelGlobals *kg,
 
 		/* set up random number generator */
 		uint lcg_state = lcg_state_init(state, 0x68bc21eb);
-		int num_samples = kernel_data.integrator.subsurface_samples;
+		int num_samples = kernel_data.integrator.subsurface_samples * 3;
 		float num_samples_inv = 1.0f/num_samples;
 		uint bssrdf_rng_hash = cmj_hash(state->rng_hash, i);
 
@@ -552,8 +552,7 @@ ccl_device void kernel_branched_path_integrate(KernelGlobals *kg,
 		}
 
 		/* Update Path State */
-		state.flag |= PATH_RAY_TRANSPARENT;
-		state.transparent_bounce++;
+		path_state_next(kg, &state, LABEL_TRANSPARENT);
 
 		ray.P = ray_offset(sd.P, -sd.Ng);
 		ray.t -= sd.ray_length; /* clipping works through transparent */
