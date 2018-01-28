@@ -437,8 +437,6 @@ void RE_AcquireResultImage(Render *re, RenderResult *rr, const int view_id)
 			rr->rectz = rv->rectz;
 			rr->rect32 = rv->rect32;
 
-			rr->have_combined = (rv->rectf != NULL);
-
 			/* active layer */
 			rl = render_get_active_layer(re, re->result);
 
@@ -839,7 +837,7 @@ void RE_InitState(Render *re, Render *source, RenderData *rd,
 		re->result = MEM_callocN(sizeof(RenderResult), "new render result");
 		re->result->rectx = re->rectx;
 		re->result->recty = re->recty;
-		render_result_view_new(re->result, "new temporary view");
+		render_result_view_new(re->result, "");
 	}
 	
 	if (re->r.scemode & R_VIEWPORT_PREVIEW)
@@ -3316,7 +3314,8 @@ bool RE_WriteRenderViewsImage(ReportList *reports, RenderResult *rr, Scene *scen
 		return false;
 
 	bool is_mono = BLI_listbase_count_ex(&rr->views, 2) < 2;
-	bool is_exr_rr = ELEM(rd->im_format.imtype, R_IMF_IMTYPE_OPENEXR, R_IMF_IMTYPE_MULTILAYER);
+	bool is_exr_rr = ELEM(rd->im_format.imtype, R_IMF_IMTYPE_OPENEXR, R_IMF_IMTYPE_MULTILAYER) &&
+	                 RE_HasFloatPixels(rr);
 
 	if (rd->im_format.views_format == R_IMF_VIEWS_MULTIVIEW && is_exr_rr)
 	{
