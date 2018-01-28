@@ -163,14 +163,22 @@ class CYCLES_RENDER_PT_sampling(CyclesButtonsPanel, Panel):
 
         col = split.column()
         sub = col.column(align=True)
+        sub.label("Settings:")
+
+        seed_sub = sub.row(align=True)
+        seed_sub.prop(cscene, "seed")
+        seed_sub.prop(cscene, "use_animated_seed", text="", icon="TIME")
+
+        sub.prop(cscene, "sample_clamp_direct")
+        sub.prop(cscene, "sample_clamp_indirect")
+        sub.prop(cscene, "light_sampling_threshold")
 
         if cscene.progressive == 'PATH' or use_branched_path(context) is False:
-            row = layout.row()
-            row.label("Samples:")
-            row = layout.row()
-            row.prop(cscene, "samples", text="Render")
-            row.prop(cscene, "preview_samples", text="Preview")
-            
+            col = split.column()
+            sub = col.column(align=True)
+            sub.label(text="Samples:")
+            sub.prop(cscene, "samples", text="Render")
+            sub.prop(cscene, "preview_samples", text="Preview")
         else:
             sub.label(text="AA Samples:")
             sub.prop(cscene, "aa_samples", text="Render")
@@ -340,6 +348,10 @@ class CYCLES_RENDER_PT_light_paths(CyclesButtonsPanel, Panel):
         sub.prop(cscene, "transparent_max_bounces", text="Max")
 
         col.separator()
+
+        col.prop(cscene, "caustics_reflective")
+        col.prop(cscene, "caustics_refractive")
+        col.prop(cscene, "blur_glossy")
 
         col = split.column()
 
@@ -1378,8 +1390,11 @@ class CYCLES_MATERIAL_PT_settings(CyclesButtonsPanel, Panel):
 
         if context.scene.cycles.feature_set == 'EXPERIMENTAL':
             col.separator()
-            col.label(text="Displacement:")
+            col.label(text="Geometry:")
             col.prop(cmat, "displacement_method", text="")
+        else:
+            col.separator()
+            col.prop(mat, "pass_index")
 
         col = split.column()
         col.label(text="Volume:")
@@ -1389,6 +1404,9 @@ class CYCLES_MATERIAL_PT_settings(CyclesButtonsPanel, Panel):
         col.prop(cmat, "volume_interpolation", text="")
         col.prop(cmat, "homogeneous_volume", text="Homogeneous")
 
+        if context.scene.cycles.feature_set == 'EXPERIMENTAL':
+            col.separator()
+            col.prop(mat, "pass_index")
 
         ############## Subtab #####################
         
@@ -1420,6 +1438,34 @@ class CYCLES_MATERIAL_PT_settings(CyclesButtonsPanel, Panel):
             col.separator()
             col.prop(mat, "pass_index")
 
+class CYCLES_MATERIAL_PT_viewport(CyclesButtonsPanel, Panel):
+    bl_label = "Viewport"
+    bl_context = "material"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return context.material and CyclesButtonsPanel.poll(context)
+
+    def draw(self, context):
+        mat = context.material
+
+        layout = self.layout
+        split = layout.split()
+
+        col = split.column(align=True)
+        col.label("Color:")
+        col.prop(mat, "diffuse_color", text="")
+        col.prop(mat, "alpha")
+
+        col.separator()
+        col.label("Alpha:")
+        col.prop(mat.game_settings, "alpha_blend", text="")
+
+        col = split.column(align=True)
+        col.label("Specular:")
+        col.prop(mat, "specular_color", text="")
+        col.prop(mat, "specular_hardness", text="Hardness")
 
 class CYCLES_TEXTURE_PT_context(CyclesButtonsPanel, Panel):
     bl_label = ""
@@ -1681,7 +1727,7 @@ class CYCLES_RENDER_PT_debug(CyclesButtonsPanel, Panel):
         row.prop(cscene, "debug_use_cpu_sse41", toggle=True)
         row.prop(cscene, "debug_use_cpu_avx", toggle=True)
         row.prop(cscene, "debug_use_cpu_avx2", toggle=True)
-        col.prop(cscene, "debug_use_qbvh")
+        col.prop(cscene, "debug_bvh_layout")
         col.prop(cscene, "debug_use_cpu_split_kernel")
 
         col.separator()
@@ -2005,6 +2051,7 @@ classes = (
     CYCLES_MATERIAL_PT_volume,
     CYCLES_MATERIAL_PT_displacement,
     CYCLES_MATERIAL_PT_settings,
+    CYCLES_MATERIAL_PT_viewport,
     CYCLES_TEXTURE_PT_context,
     CYCLES_TEXTURE_PT_node,
     CYCLES_TEXTURE_PT_mapping,
