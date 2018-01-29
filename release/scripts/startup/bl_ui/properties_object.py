@@ -300,6 +300,14 @@ class OBJECT_PT_display(ObjectButtonsPanel, Panel):
                 col.label(text="Object Color:")
                 col.prop(obj, "color", text="")
 
+        # --------------------------- Wireframe colors subtab
+
+        if not addon_prefs.SP_object_display_wireframecols:
+            layout.prop(addon_prefs,"SP_object_display_wireframecols", emboss=False, icon="TRIA_RIGHT", text="- Wireframe Colors -")
+
+        else:
+            layout.prop(addon_prefs,"SP_object_display_wireframecols", emboss=False, icon="TRIA_DOWN", text="+ Wireframe Colors +")
+
             # Custom wire color sets
             col = layout.column()
             col.prop(obj, "wire_color_set")
