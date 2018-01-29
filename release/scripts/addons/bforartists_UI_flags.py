@@ -64,6 +64,7 @@ class bforartists_UI_flags(AddonPreferences):
 
     #Subtab Bools Object Panel
     SP_object_display_options = BoolProperty(name="Options", description="Contains some more options", default = False)
+    SP_object_display_wireframecols = BoolProperty(name="Wireframe Colors", description="Contains the Wireframe color options\nRequires a selected object", default = False)
 
     #Subtab Bools Data Panel
     SP_data_texspace_manual = BoolProperty(name="Manual Transform", description="Contains the transform edit boxes for manual Texture space", default = False)
@@ -131,6 +132,7 @@ class bforartists_UI_flags(AddonPreferences):
         row = layout.row()
 
         row.prop(self, "SP_object_display_options")  
+        row.prop(self, "SP_object_display_wireframecols")  
 
         layout.label(text="Subtab Bools Data Panel")
 
