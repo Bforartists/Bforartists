@@ -2176,15 +2176,15 @@ class VIEW3D_MT_vertex_group(Menu):
         if ob.mode == 'EDIT' or (ob.mode == 'WEIGHT_PAINT' and ob.type == 'MESH' and ob.data.use_paint_mask_vertex):
             if ob.vertex_groups.active:
                 layout.separator()
-                layout.operator("object.vertex_group_assign", text="Assign to Active Group")
-                layout.operator("object.vertex_group_remove_from", text="Remove from Active Group").use_all_groups = False
-                layout.operator("object.vertex_group_remove_from", text="Remove from All").use_all_groups = True
+                layout.operator("object.vertex_group_assign", text="Assign to Active Group",  icon = 'ADD_TO_ACTIVE')
+                layout.operator("object.vertex_group_remove_from", text="Remove from Active Group", icon = 'REMOVE_SELECTED_FROM_ACTIVE_GROUP').use_all_groups = False
+                layout.operator("object.vertex_group_remove_from", text="Remove from All", icon = 'REMOVE_FROM_ALL_GROUPS').use_all_groups = True
                 layout.separator()
 
         if ob.vertex_groups.active:
             layout.operator_menu_enum("object.vertex_group_set_active", "group", text="Set Active Group")
-            layout.operator("object.vertex_group_remove", text="Remove Active Group").all = False
-            layout.operator("object.vertex_group_remove", text="Remove All Groups").all = True
+            layout.operator("object.vertex_group_remove", text="Remove Active Group", icon = "REMOVE_ACTIVE_GROUP").all = False
+            layout.operator("object.vertex_group_remove", text="Remove All Groups", icon = "REMOVE_ALL_GROUPS").all = True
 
 # ********** Weight paint menu **********
 

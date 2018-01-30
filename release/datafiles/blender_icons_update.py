@@ -75,8 +75,8 @@ cmd = (
 )
 run(cmd)
 
-os.remove(os.path.join(BASEDIR, "blender_icons16.png"))
-os.remove(os.path.join(BASEDIR, "blender_icons32.png"))
+#os.remove(os.path.join(BASEDIR, "blender_icons16.png"))
+#os.remove(os.path.join(BASEDIR, "blender_icons32.png"))
 
 # For testing, if we want the PNG of each image
 # ./datatoc_icon_split_to_png.py ./blender_icons16/*.dat
