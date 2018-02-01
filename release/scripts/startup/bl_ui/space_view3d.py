@@ -3051,7 +3051,7 @@ class VIEW3D_MT_edit_curve(Menu):
 
 
 class VIEW3D_MT_edit_curve_ctrlpoints(Menu):
-    bl_label = "Control Points"
+    bl_label = "Mean Tilt"
 
     def draw(self, context):
         layout = self.layout
