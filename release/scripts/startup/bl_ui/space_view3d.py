@@ -3015,11 +3015,15 @@ def draw_curve(self, context):
     layout = self.layout
 
     toolsettings = context.tool_settings
+    ob = context.active_object
 
     layout.menu("VIEW3D_MT_transform")
     layout.operator("object.vertex_group_mirror", icon = "MIRROR_VERTEXGROUP")
 
     layout.separator()
+
+    if ob.type == 'CURVE':
+        layout.operator("curve.vertex_add", icon = "EXTRUDE_REGION")
 
     layout.operator("curve.duplicate_move", icon = "DUPLICATE")
     layout.operator("curve.split", icon = "SPLIT")
@@ -3036,7 +3040,9 @@ def draw_curve(self, context):
     
     layout.separator()
 
-    layout.menu("VIEW3D_MT_edit_curve_ctrlpoints")
+    if ob.type == 'CURVE':
+        layout.menu("VIEW3D_MT_edit_curve_ctrlpoints")
+
     layout.menu("VIEW3D_MT_hook")
 
     layout.separator()
