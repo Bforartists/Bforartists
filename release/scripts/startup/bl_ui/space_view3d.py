@@ -3165,7 +3165,6 @@ class VIEW3D_MT_edit_meta(Menu):
         toolsettings = context.tool_settings
 
         layout.menu("VIEW3D_MT_transform")
-        layout.operator("object.vertex_group_mirror", icon = "MIRROR_VERTEXGROUP")
 
         layout.separator()
 
