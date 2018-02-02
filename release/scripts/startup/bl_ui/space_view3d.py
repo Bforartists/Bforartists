@@ -3018,18 +3018,20 @@ def draw_curve(self, context):
     ob = context.active_object
 
     layout.menu("VIEW3D_MT_transform")
-    layout.operator("object.vertex_group_mirror", icon = "MIRROR_VERTEXGROUP")
 
     layout.separator()
 
-    if ob.type == 'CURVE':
-        layout.operator("curve.vertex_add", icon = "EXTRUDE_REGION")
-
     layout.operator("curve.duplicate_move", icon = "DUPLICATE")
+    layout.operator("curve.delete", text="Delete...", icon = "DELETE")
+
+    layout.separator()
+
     layout.operator("curve.split", icon = "SPLIT")
     layout.operator("curve.separate", icon = "SEPARATE")
     layout.operator("curve.make_segment", icon = "MAKE_CURVESEGMENT")
-    layout.operator("curve.delete", text="Delete...", icon = "DELETE")
+
+    if ob.type == 'CURVE':
+        layout.operator("curve.vertex_add", icon = "EXTRUDE_REGION")
 
     layout.separator()
 
