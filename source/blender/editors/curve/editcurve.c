@@ -5075,7 +5075,7 @@ void CURVE_OT_vertex_add(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Add Vertex";
 	ot->idname = "CURVE_OT_vertex_add";
-	ot->description = "Add Vertex\nAdd a new control point (linked to only selected end-curve one, if any)";
+	ot->description = "Add Vertex\nHotkey Only Tool!\nAdds a new control point under the mouse, extruding from the selected endpoint(s)";
 	
 	/* api callbacks */
 	ot->exec = add_vertex_exec;
