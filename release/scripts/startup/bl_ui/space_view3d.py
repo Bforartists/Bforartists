@@ -3168,8 +3168,8 @@ class VIEW3D_MT_edit_meta(Menu):
 
         layout.separator()
 
-        layout.operator("mball.delete_metaelems", text="Delete...", icon = "DELETE")
-        layout.operator("mball.duplicate_metaelems", icon = "DUPLICATE")
+        layout.operator("mball.delete_metaelems", text="Delete", icon = "DELETE")
+        layout.operator("mball.duplicate_move", icon = "DUPLICATE")
 
         layout.separator()
 
