@@ -3212,7 +3212,7 @@ class VIEW3D_MT_edit_lattice(Menu):
         layout.menu("VIEW3D_MT_edit_lattice_flip")
 
 class VIEW3D_MT_edit_lattice_flip(Menu):
-    bl_label = "Flip ( Distortion Free)"
+    bl_label = "Flip"
 
     def draw(self, context):
         layout = self.layout
