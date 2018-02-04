@@ -3256,7 +3256,6 @@ class VIEW3D_MT_edit_armature(Menu):
         arm = edit_object.data
 
         layout.menu("VIEW3D_MT_transform_armature")
-        layout.operator("object.vertex_group_mirror", icon = "MIRROR_VERTEXGROUP")
         layout.menu("VIEW3D_MT_edit_armature_roll")
         layout.menu("VIEW3D_MT_edit_recalc_roll")
 
