@@ -3265,7 +3265,7 @@ class VIEW3D_MT_edit_armature(Menu):
             layout.operator("armature.extrude_forked" , icon = "EXTRUDE_REGION")
 
         layout.operator("armature.duplicate_move", icon = "DUPLICATE")
-        layout.operator("armature.delete", icon = "DELETE")
+        layout.operator("armature.delete", text = "Delete", icon = "DELETE")
 
         layout.separator()
 
