@@ -194,10 +194,12 @@ public:
 			return NULL;
 		}
 
+		bsdf->T = make_float3(0.0f, 0.0f, 0.0f);
 		bsdf->extra = extra;
 		bsdf->ior = 1.5f;
 		bsdf->alpha_x = clearcoat_roughness;
 		bsdf->alpha_y = clearcoat_roughness;
+		bsdf->extra->color = make_float3(0.0f, 0.0f, 0.0f);
 		bsdf->extra->cspec0 = make_float3(0.04f, 0.04f, 0.04f);
 		bsdf->extra->clearcoat = clearcoat;
 		return bsdf;
@@ -206,7 +208,11 @@ public:
 	void setup(ShaderData *sd, int path_flag, float3 weight)
 	{
 		MicrofacetBsdf *bsdf = alloc(sd, path_flag, weight);
-		sd->flag |= (bsdf) ? bsdf_microfacet_ggx_clearcoat_setup(bsdf, sd) : 0;
+		if(!bsdf) {
+			return;
+		}
+
+		sd->flag |= bsdf_microfacet_ggx_clearcoat_setup(bsdf, sd);
 	}
 };
 
@@ -379,6 +385,7 @@ public:
 		bsdf->extra = extra;
 		bsdf->extra->color = color;
 		bsdf->extra->cspec0 = cspec0;
+		bsdf->extra->clearcoat = 0.0f;
 		return bsdf;
 	}
 };
@@ -388,7 +395,13 @@ public:
 	void setup(ShaderData *sd, int path_flag, float3 weight)
 	{
 		MicrofacetBsdf *bsdf = alloc(sd, path_flag, weight);
-		sd->flag |= (bsdf) ? bsdf_microfacet_ggx_fresnel_setup(bsdf, sd) : 0;
+		if(!bsdf) {
+			return;
+		}
+
+		bsdf->T = make_float3(0.0f, 0.0f, 0.0f);
+		bsdf->alpha_y = bsdf->alpha_x;
+		sd->flag |= bsdf_microfacet_ggx_fresnel_setup(bsdf, sd);
 	}
 };
 
@@ -412,7 +425,11 @@ public:
 	void setup(ShaderData *sd, int path_flag, float3 weight)
 	{
 		MicrofacetBsdf *bsdf = alloc(sd, path_flag, weight);
-		sd->flag |= (bsdf) ? bsdf_microfacet_ggx_aniso_fresnel_setup(bsdf, sd) : 0;
+		if(!bsdf) {
+			return;
+		}
+
+		sd->flag |= bsdf_microfacet_ggx_aniso_fresnel_setup(bsdf, sd);
 	}
 };
 
@@ -462,6 +479,8 @@ public:
 
 		bsdf->extra = extra;
 		bsdf->extra->color = color;
+		bsdf->extra->cspec0 = make_float3(0.0f, 0.0f, 0.0f);
+		bsdf->extra->clearcoat = 0.0f;
 		return bsdf;
 	}
 };
@@ -471,7 +490,14 @@ public:
 	void setup(ShaderData *sd, int path_flag, float3 weight)
 	{
 		MicrofacetBsdf *bsdf = alloc(sd, path_flag, weight);
-		sd->flag |= (bsdf) ? bsdf_microfacet_multi_ggx_setup(bsdf) : 0;
+		if(!bsdf) {
+			return;
+		}
+
+		bsdf->ior = 0.0f;
+		bsdf->T = make_float3(0.0f, 0.0f, 0.0f);
+		bsdf->alpha_y = bsdf->alpha_x;
+		sd->flag |= bsdf_microfacet_multi_ggx_setup(bsdf);
 	}
 };
 
@@ -493,7 +519,12 @@ public:
 	void setup(ShaderData *sd, int path_flag, float3 weight)
 	{
 		MicrofacetBsdf *bsdf = alloc(sd, path_flag, weight);
-		sd->flag |= (bsdf) ? bsdf_microfacet_multi_ggx_aniso_setup(bsdf) : 0;
+		if(!bsdf) {
+			return;
+		}
+
+		bsdf->ior = 0.0f;
+		sd->flag |= bsdf_microfacet_multi_ggx_aniso_setup(bsdf);
 	}
 };
 
@@ -519,7 +550,13 @@ public:
 	void setup(ShaderData *sd, int path_flag, float3 weight)
 	{
 		MicrofacetBsdf *bsdf = alloc(sd, path_flag, weight);
-		sd->flag |= (bsdf) ? bsdf_microfacet_multi_ggx_glass_setup(bsdf) : 0;
+		if(!bsdf) {
+			return;
+		}
+
+		bsdf->T = make_float3(0.0f, 0.0f, 0.0f);
+		bsdf->alpha_y = bsdf->alpha_x;
+		sd->flag |= bsdf_microfacet_multi_ggx_glass_setup(bsdf);
 	}
 };
 
@@ -568,6 +605,7 @@ public:
 		bsdf->extra = extra;
 		bsdf->extra->color = color;
 		bsdf->extra->cspec0 = cspec0;
+		bsdf->extra->clearcoat = 0.0f;
 		return bsdf;
 	}
 };
@@ -577,7 +615,13 @@ public:
 	void setup(ShaderData *sd, int path_flag, float3 weight)
 	{
 		MicrofacetBsdf *bsdf = alloc(sd, path_flag, weight);
-		sd->flag |= (bsdf) ? bsdf_microfacet_multi_ggx_fresnel_setup(bsdf, sd) : 0;
+		if(!bsdf) {
+			return;
+		}
+
+		bsdf->T = make_float3(0.0f, 0.0f, 0.0f);
+		bsdf->alpha_y = bsdf->alpha_x;
+		sd->flag |= bsdf_microfacet_multi_ggx_fresnel_setup(bsdf, sd);
 	}
 };
 
@@ -601,7 +645,11 @@ public:
 	void setup(ShaderData *sd, int path_flag, float3 weight)
 	{
 		MicrofacetBsdf *bsdf = alloc(sd, path_flag, weight);
-		sd->flag |= (bsdf) ? bsdf_microfacet_multi_ggx_aniso_fresnel_setup(bsdf, sd) : 0;
+		if(!bsdf) {
+			return;
+		}
+
+		sd->flag |= bsdf_microfacet_multi_ggx_aniso_fresnel_setup(bsdf, sd);
 	}
 };
 
@@ -629,7 +677,13 @@ public:
 	void setup(ShaderData *sd, int path_flag, float3 weight)
 	{
 		MicrofacetBsdf *bsdf = alloc(sd, path_flag, weight);
-		sd->flag |= (bsdf) ? bsdf_microfacet_multi_ggx_glass_fresnel_setup(bsdf, sd) : 0;
+		if(!bsdf) {
+			return;
+		}
+
+		bsdf->T = make_float3(0.0f, 0.0f, 0.0f);
+		bsdf->alpha_y = bsdf->alpha_x;
+		sd->flag |= bsdf_microfacet_multi_ggx_glass_fresnel_setup(bsdf, sd);
 	}
 };
 
@@ -702,7 +756,11 @@ public:
 		volume_extinction_setup(sd, weight);
 
 	    HenyeyGreensteinVolume *volume = (HenyeyGreensteinVolume*)bsdf_alloc_osl(sd, sizeof(HenyeyGreensteinVolume), weight, &params);
-		sd->flag |= (volume) ? volume_henyey_greenstein_setup(volume) : 0;
+		if(!volume) {
+			return;
+		}
+
+		sd->flag |= volume_henyey_greenstein_setup(volume);
 	}
 };
 
