@@ -403,7 +403,6 @@ typedef struct bTheme {
 #define UI_THEMESPACE_START(btheme)  (CHECK_TYPE_INLINE(btheme, bTheme *),  &((btheme)->tbuts))
 #define UI_THEMESPACE_END(btheme)    (CHECK_TYPE_INLINE(btheme, bTheme *), (&((btheme)->tclip) + 1))
 
-/* for the moment only the name. may want to store options with this later */
 typedef struct bAddon {
 	struct bAddon *next, *prev;
 	char module[64];
@@ -677,12 +676,12 @@ typedef enum eUserpref_UI_Flag {
 	USER_UIFLAG_DEPRECATED_7 = (1 << 7),
 	USER_ALLWINCODECS		= (1 << 8),
 	USER_MENUOPENAUTO		= (1 << 9),
-	USER_ZBUF_CURSOR		= (1 << 10),
+	USER_DEPTH_CURSOR		= (1 << 10),
 	USER_AUTOPERSP     		= (1 << 11),
 	USER_LOCKAROUND     	= (1 << 12),
 	USER_GLOBALUNDO     	= (1 << 13),
 	USER_ORBIT_SELECTION	= (1 << 14),
-	USER_ZBUF_ORBIT			= (1 << 15),
+	USER_DEPTH_NAVIGATE     = (1 << 15),
 	USER_HIDE_DOT			= (1 << 16),
 	USER_SHOW_ROTVIEWICON	= (1 << 17),
 	USER_SHOW_VIEWPORTNAME	= (1 << 18),

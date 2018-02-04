@@ -401,15 +401,17 @@ static void rna_userdef_autosave_update(Main *bmain, Scene *scene, PointerRNA *p
 
 static bAddon *rna_userdef_addon_new(void)
 {
+	ListBase *addons_list = &U.addons;
 	bAddon *bext = MEM_callocN(sizeof(bAddon), "bAddon");
-	BLI_addtail(&U.addons, bext);
+	BLI_addtail(addons_list, bext);
 	return bext;
 }
 
-static void rna_userdef_addon_remove(ReportList *reports, PointerRNA *path_cmp_ptr)
+static void rna_userdef_addon_remove(ReportList *reports, PointerRNA *bext_ptr)
 {
-	bAddon *bext = path_cmp_ptr->data;
-	if (BLI_findindex(&U.addons, bext) == -1) {
+	ListBase *addons_list = &U.addons;
+	bAddon *bext = bext_ptr->data;
+	if (BLI_findindex(addons_list, bext) == -1) {
 		BKE_report(reports, RPT_ERROR, "Add-on is no longer valid");
 		return;
 	}
@@ -419,8 +421,8 @@ static void rna_userdef_addon_remove(ReportList *reports, PointerRNA *path_cmp_p
 		MEM_freeN(bext->prop);
 	}
 
-	BLI_freelinkN(&U.addons, bext);
-	RNA_POINTER_INVALIDATE(path_cmp_ptr);
+	BLI_freelinkN(addons_list, bext);
+	RNA_POINTER_INVALIDATE(bext_ptr);
 }
 
 static bPathCompare *rna_userdef_pathcompare_new(void)
@@ -3490,12 +3492,12 @@ static void rna_def_userdef_view(BlenderRNA *brna)
 	RNA_def_property_ui_text(prop, "Global Pivot", "Lock the same rotation/scaling pivot in all 3D Views");
 
 	prop = RNA_def_property(srna, "use_mouse_depth_navigate", PROP_BOOLEAN, PROP_NONE);
-	RNA_def_property_boolean_sdna(prop, NULL, "uiflag", USER_ZBUF_ORBIT);
+	RNA_def_property_boolean_sdna(prop, NULL, "uiflag", USER_DEPTH_NAVIGATE);
 	RNA_def_property_ui_text(prop, "Auto Depth",
 	                         "Use the depth under the mouse to improve view pan/rotate/zoom functionality");
 
 	prop = RNA_def_property(srna, "use_mouse_depth_cursor", PROP_BOOLEAN, PROP_NONE);
-	RNA_def_property_boolean_sdna(prop, NULL, "uiflag", USER_ZBUF_CURSOR);
+	RNA_def_property_boolean_sdna(prop, NULL, "uiflag", USER_DEPTH_CURSOR);
 	RNA_def_property_ui_text(prop, "Cursor Depth",
 	                         "Use the depth under the mouse when placing the cursor");
 

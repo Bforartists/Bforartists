@@ -1658,7 +1658,7 @@ static void shapekey_layers_to_keyblocks(DerivedMesh *dm, Mesh *me, int actshape
 		cos = CustomData_get_layer_n(&dm->vertData, CD_SHAPEKEY, i);
 		kb->totelem = dm->numVertData;
 
-		kb->data = kbcos = MEM_malloc_arrayN(kb->totelem, sizeof(float), "kbcos DerivedMesh.c");
+		kb->data = kbcos = MEM_malloc_arrayN(kb->totelem, 3 * sizeof(float), "kbcos DerivedMesh.c");
 		if (kb->uid == actshape_uid) {
 			MVert *mvert = dm->getVertArray(dm);
 			
@@ -4149,7 +4149,7 @@ void DM_init_origspace(DerivedMesh *dm)
 			BKE_mesh_calc_poly_normal(mp, l, mv, p_nor);
 			axis_dominant_v3_to_m3(mat, p_nor);
 
-			BLI_array_empty(vcos_2d);
+			BLI_array_clear(vcos_2d);
 			BLI_array_reserve(vcos_2d, mp->totloop);
 			for (j = 0; j < mp->totloop; j++, l++) {
 				mul_v3_m3v3(co, mat, mv[l->v].co);
