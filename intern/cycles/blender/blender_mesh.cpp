@@ -97,8 +97,11 @@ struct MikkUserData {
 
 		if(layer_name == NULL) {
 			Attribute *attr_orco = attributes.find(ATTR_STD_GENERATED);
-			orco = attr_orco->data_float3();
-			mesh_texture_space(*(BL::Mesh*)&b_mesh, orco_loc, orco_size);
+
+			if(attr_orco) {
+				orco = attr_orco->data_float3();
+				mesh_texture_space(*(BL::Mesh*)&b_mesh, orco_loc, orco_size);
+			}
 		}
 		else {
 			Attribute *attr_uv = attributes.find(ustring(layer_name));
@@ -1123,7 +1126,7 @@ Mesh *BlenderSync::sync_mesh(BL::Object& b_ob,
 			bool attribute_recalc = false;
 
 			foreach(Shader *shader, mesh->used_shaders)
-				if(shader->need_update_attributes)
+				if(shader->need_update_mesh)
 					attribute_recalc = true;
 
 			if(!attribute_recalc)
