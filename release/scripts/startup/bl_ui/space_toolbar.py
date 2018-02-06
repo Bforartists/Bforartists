@@ -1539,10 +1539,7 @@ class TOOLBAR_MT_misc(Menu):
         if addon_prefs.misc_undohistory:
 
             row = layout.row(align=True)
-
-            if obj is None or obj.mode != 'SCULPT':
-                # Sculpt mode does not generate an undo menu it seems...
-                row.operator("ed.undo_history", icon='UNDO_HISTORY',text="")
+            row.operator("ed.undo_history", icon='UNDO_HISTORY',text="")
             
         if addon_prefs.misc_repeat:
 
