@@ -2070,22 +2070,6 @@ class VIEW3D_MT_brush(Menu):
             layout.label(text="No Brushes currently available", icon='INFO')
             return
 
-        # brush paint modes
-        #layout.menu("VIEW3D_MT_brush_paint_modes")
-
-        # TODO: still missing a lot of brush options here #### bfa - FUCK NO! NOT HERE!
-
-        # sculpt options
-        if context.sculpt_object:
-
-            sculpt_tool = brush.sculpt_tool
-
-            if sculpt_tool != 'GRAB':
-
-                if sculpt_tool == 'LAYER':
-                    layout.prop(brush, "use_persistent")
-                    layout.operator("sculpt.set_persistent_base")
-
 
 class VIEW3D_MT_brush_paint_modes(Menu):
     bl_label = "Enabled Modes"
