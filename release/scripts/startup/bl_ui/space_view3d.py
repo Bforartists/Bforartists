@@ -2214,11 +2214,6 @@ class VIEW3D_MT_sculpt(Menu):
         toolsettings = context.tool_settings
         sculpt = toolsettings.sculpt
 
-        layout.operator("ed.undo", icon = "UNDO")
-        layout.operator("ed.redo", icon = "REDO")
-
-        layout.separator()
-
         layout.menu("VIEW3D_subdivision_set")
 
 
