@@ -2920,9 +2920,7 @@ class VIEW3D_PT_tools_history(View3DPanel, Panel):
             row = col.row(align=False)
             row.operator("ed.undo", icon='UNDO',text = "")
             row.operator("ed.redo", icon='REDO',text = "")
-            if obj is None or obj.mode != 'SCULPT':
-                # Sculpt mode does not generate an undo menu it seems...
-                row.operator("ed.undo_history", icon='UNDO_HISTORY',text = "")
+            row.operator("ed.undo_history", icon='UNDO_HISTORY',text = "")
 
             col = layout.column(align=True)
             col.label(text="Repeat:")
