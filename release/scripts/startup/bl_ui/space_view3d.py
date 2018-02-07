@@ -2094,11 +2094,6 @@ class VIEW3D_MT_paint_vertex(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("ed.undo", icon = "UNDO")
-        layout.operator("ed.redo", icon = "REDO")
-
-        layout.separator()
-
         layout.operator("paint.vertex_color_set", icon = "COLOR")
         layout.operator("paint.vertex_color_smooth", icon = "SMOOTH")
         layout.operator("paint.vertex_color_dirt", icon = "DIRTY_VERTEX")
