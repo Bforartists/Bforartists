@@ -334,6 +334,10 @@ class TEXT_MT_edit(Menu):
 
         layout.separator()
 
+        layout.menu("TEXT_MT_edit_move_select")
+
+        layout.separator()
+
         layout.menu("TEXT_MT_edit_delete")
 
         layout.separator()
@@ -345,6 +349,24 @@ class TEXT_MT_edit(Menu):
         layout.separator()
 
         layout.menu("TEXT_MT_edit_to3d")
+
+# move_select submenu
+class TEXT_MT_edit_move_select(Menu):
+    bl_label = "Select Text"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("text.move_select", text = "Line End", icon = "HAND").type = 'LINE_END'
+        layout.operator("text.move_select", text = "Line Begin", icon = "HAND").type = 'LINE_BEGIN'
+        layout.operator("text.move_select", text = "Previous Character", icon = "HAND").type = 'PREVIOUS_CHARACTER'
+        layout.operator("text.move_select", text = "Next Character", icon = "HAND").type = 'NEXT_CHARACTER'
+        layout.operator("text.move_select", text = "Previous Word", icon = "HAND").type = 'PREVIOUS_WORD'
+        layout.operator("text.move_select", text = "Next Word", icon = "HAND").type = 'NEXT_WORD'
+        layout.operator("text.move_select", text = "Previous Line", icon = "HAND").type = 'PREVIOUS_LINE'
+        layout.operator("text.move_select", text = "Next Line", icon = "HAND").type = 'NEXT_LINE'
+        layout.operator("text.move_select", text = "Previous Character", icon = "HAND").type = 'PREVIOUS_CHARACTER'
+        layout.operator("text.move_select", text = "Next Character", icon = "HAND").type = 'NEXT_CHARACTER'
 
 
 class TEXT_MT_toolbox(Menu):
@@ -378,6 +400,7 @@ classes = (
     TEXT_HT_header,
     ALL_MT_editormenu,
     TEXT_MT_edit,
+    TEXT_MT_edit_move_select,
     TEXT_MT_editor_menus,
     TEXT_PT_properties,
     TEXT_PT_find,
