@@ -271,6 +271,7 @@ class CLIP_PT_tools_marker(CLIP_PT_tracking_panel, Panel):
     bl_region_type = 'TOOLS'
     bl_label = "Marker"
     bl_category = "Track"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -294,6 +295,7 @@ class CLIP_PT_tracking_settings(CLIP_PT_tracking_panel, Panel):
     bl_region_type = 'TOOLS'
     bl_label = "Tracking Settings"
     bl_category = "Track"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
 
@@ -505,6 +507,7 @@ class CLIP_PT_tools_orientation(CLIP_PT_tracking_panel, Panel):
     bl_region_type = 'TOOLS'
     bl_label = "Orientation"
     bl_category = "Solve"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         sc = context.space_data
@@ -811,6 +814,7 @@ class CLIP_PT_display(CLIP_PT_clip_view_panel, Panel):
     bl_space_type = 'CLIP_EDITOR'
     bl_region_type = 'UI'
     bl_label = "Display"
+    bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
         layout = self.layout
@@ -850,6 +854,7 @@ class CLIP_PT_marker_display(CLIP_PT_clip_view_panel, Panel):
     bl_space_type = 'CLIP_EDITOR'
     bl_region_type = 'UI'
     bl_label = "Marker Display"
+    bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
     def poll(cls, context):
