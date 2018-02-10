@@ -1324,9 +1324,6 @@ class CLIP_MT_track(Menu):
         layout.operator("clip.join_tracks")
 
         layout.separator()
-        layout.operator("clip.clean_tracks")
-
-        layout.separator()
         layout.operator("clip.lock_tracks", text="Lock Tracks").action = 'LOCK'
         layout.operator("clip.lock_tracks", text="Unlock Tracks").action = 'UNLOCK'
 
