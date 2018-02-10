@@ -188,7 +188,6 @@ class CLIP_MT_tracking_editor_menus(Menu):
                 layout.menu("CLIP_MT_select")
                 layout.menu("CLIP_MT_clip")
                 layout.menu("CLIP_MT_track")
-                layout.menu("CLIP_MT_reconstruction")
             else:
                 layout.menu("CLIP_MT_clip")
 
@@ -1338,6 +1337,10 @@ class CLIP_MT_track(Menu):
         layout.menu("CLIP_MT_track_visibility")
         layout.menu("CLIP_MT_track_transform")
 
+        layout.separator()
+
+        layout.menu("CLIP_MT_reconstruction")
+
 
 class CLIP_MT_reconstruction(Menu):
     bl_label = "Reconstruction"
@@ -1346,9 +1349,6 @@ class CLIP_MT_reconstruction(Menu):
         layout = self.layout
 
         layout.label(text = "Menu remains for addon compability")
-
-        layout.operator("clip.track_to_empty")
-        layout.operator("clip.bundles_to_mesh")
 
 
 class CLIP_MT_track_visibility(Menu):
