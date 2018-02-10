@@ -1346,16 +1346,7 @@ class CLIP_MT_reconstruction(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("clip.set_origin")
-        layout.operator("clip.set_plane", text="Set Floor").plane = 'FLOOR'
-        layout.operator("clip.set_plane", text="Set Wall").plane = 'WALL'
-
-        layout.operator("clip.set_axis", text="Set X Axis").axis = 'X'
-        layout.operator("clip.set_axis", text="Set Y Axis").axis = 'Y'
-
-        layout.operator("clip.set_scale")
-
-        layout.separator()
+        layout.label(text = "Menu remains for addon compability")
 
         layout.operator("clip.track_to_empty")
         layout.operator("clip.bundles_to_mesh")
