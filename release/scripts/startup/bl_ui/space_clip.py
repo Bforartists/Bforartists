@@ -1305,7 +1305,6 @@ class CLIP_MT_track(Menu):
         layout = self.layout
 
         layout.operator("clip.clear_solution")
-        layout.operator("clip.solve_camera")
 
         layout.separator()
         props = layout.operator("clip.clear_track_path", text="Clear After")
