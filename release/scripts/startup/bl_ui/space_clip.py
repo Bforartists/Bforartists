@@ -1305,21 +1305,9 @@ class CLIP_MT_track(Menu):
 
         layout.operator("clip.clear_solution")
 
-        layout.separator()
-        props = layout.operator("clip.clear_track_path", text="Clear After")
-        props.clear_active = False
-        props.action = 'REMAINED'
-
-        props = layout.operator("clip.clear_track_path", text="Clear Before")
-        props.clear_active = False
-        props.action = 'UPTO'
-
         props = layout.operator("clip.clear_track_path", text="Clear Track Path")
         props.clear_active = False
         props.action = 'ALL'
-
-        layout.separator()
-        layout.operator("clip.join_tracks")
 
         layout.separator()
         layout.operator("clip.lock_tracks", text="Lock Tracks").action = 'LOCK'
