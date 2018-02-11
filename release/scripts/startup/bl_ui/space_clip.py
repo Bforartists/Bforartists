@@ -188,7 +188,6 @@ class CLIP_MT_tracking_editor_menus(Menu):
                 layout.menu("CLIP_MT_select")
                 layout.menu("CLIP_MT_clip")
                 layout.menu("CLIP_MT_track")
-                layout.menu("CLIP_MT_reconstruction")
             else:
                 layout.menu("CLIP_MT_clip")
 
@@ -1305,26 +1304,10 @@ class CLIP_MT_track(Menu):
         layout = self.layout
 
         layout.operator("clip.clear_solution")
-        layout.operator("clip.solve_camera")
-
-        layout.separator()
-        props = layout.operator("clip.clear_track_path", text="Clear After")
-        props.clear_active = False
-        props.action = 'REMAINED'
-
-        props = layout.operator("clip.clear_track_path", text="Clear Before")
-        props.clear_active = False
-        props.action = 'UPTO'
 
         props = layout.operator("clip.clear_track_path", text="Clear Track Path")
         props.clear_active = False
         props.action = 'ALL'
-
-        layout.separator()
-        layout.operator("clip.join_tracks")
-
-        layout.separator()
-        layout.operator("clip.clean_tracks")
 
         layout.separator()
         layout.operator("clip.lock_tracks", text="Lock Tracks").action = 'LOCK'
@@ -1342,6 +1325,10 @@ class CLIP_MT_track(Menu):
         layout.menu("CLIP_MT_track_visibility")
         layout.menu("CLIP_MT_track_transform")
 
+        layout.separator()
+
+        layout.menu("CLIP_MT_reconstruction")
+
 
 class CLIP_MT_reconstruction(Menu):
     bl_label = "Reconstruction"
@@ -1349,19 +1336,7 @@ class CLIP_MT_reconstruction(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("clip.set_origin")
-        layout.operator("clip.set_plane", text="Set Floor").plane = 'FLOOR'
-        layout.operator("clip.set_plane", text="Set Wall").plane = 'WALL'
-
-        layout.operator("clip.set_axis", text="Set X Axis").axis = 'X'
-        layout.operator("clip.set_axis", text="Set Y Axis").axis = 'Y'
-
-        layout.operator("clip.set_scale")
-
-        layout.separator()
-
-        layout.operator("clip.track_to_empty")
-        layout.operator("clip.bundles_to_mesh")
+        layout.label(text = "Menu remains for addon compability")
 
 
 class CLIP_MT_track_visibility(Menu):
