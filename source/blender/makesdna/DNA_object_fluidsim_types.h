@@ -25,12 +25,12 @@
  * ***** END GPL LICENSE BLOCK *****
  */
 
-/** \file DNA_object_fluidsim.h
+/** \file DNA_object_fluidsim_types.h
  *  \ingroup DNA
  */
 
-#ifndef __DNA_OBJECT_FLUIDSIM_H__
-#define __DNA_OBJECT_FLUIDSIM_H__
+#ifndef __DNA_OBJECT_FLUIDSIM_TYPES_H__
+#define __DNA_OBJECT_FLUIDSIM_TYPES_H__
 
 #include "DNA_ID.h"
 #include "DNA_defs.h"
@@ -189,6 +189,5 @@ typedef struct FluidsimSettings {
 }
 #endif
 
-#endif
-
+#endif  /* __DNA_OBJECT_FLUIDSIM_TYPES_H__ */
 
