@@ -188,7 +188,7 @@ class TIME_MT_marker(Menu):
     def draw(self, context):
         layout = self.layout
 
-        marker_menu_generic(layout)
+        marker_menu_generic(layout, context)
 
 
 class TIME_MT_view(Menu):
@@ -320,6 +320,7 @@ class marker_menu_generic_marker_jump_previous(bpy.types.Operator):
 
 
 def marker_menu_generic(layout):
+    from bpy import context
 
     # layout.operator_context = 'EXEC_REGION_WIN'
 
@@ -346,7 +347,7 @@ def marker_menu_generic(layout):
     layout.operator("screen.marker_jump_previous", text="Jump to Previous Marker", icon = "PREV_KEYFRAME") # bfa - the separated tooltip
 
     layout.separator()
-    ts = bpy.context.tool_settings
+    ts = context.tool_settings
     layout.prop(ts, "lock_markers")
 
 
