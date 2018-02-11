@@ -25,12 +25,12 @@
  * ***** END GPL LICENSE BLOCK *****
  */
 
-/** \file DNA_object_force.h
+/** \file DNA_object_force_types.h
  *  \ingroup DNA
  */
 
-#ifndef __DNA_OBJECT_FORCE_H__
-#define __DNA_OBJECT_FORCE_H__
+#ifndef __DNA_OBJECT_FORCE_TYPES_H__
+#define __DNA_OBJECT_FORCE_TYPES_H__
 
 #ifdef __cplusplus
 extern "C" {
@@ -453,5 +453,5 @@ typedef struct SoftBody {
 }
 #endif
 
-#endif
+#endif  /* __DNA_OBJECT_FORCE_TYPES_H__ */
 
