@@ -34,7 +34,7 @@ endif()
 set_property(GLOBAL PROPERTY USE_FOLDERS ${WINDOWS_USE_VISUAL_STUDIO_FOLDERS})
 
 if(NOT WITH_PYTHON_MODULE)
-	set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT blender)
+	set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT bforartists)
 endif()
 
 macro(warn_hardcoded_paths package_name
