@@ -1879,7 +1879,7 @@ static void build_boundary(BevelParams *bp, BevVert *bv, bool construct)
 	}
 }
 
-#if 0
+#ifdef DEBUG_ADJUST
 static void print_adjust_stats(BoundVert *vstart)
 {
 	BoundVert *v;
@@ -1921,21 +1921,25 @@ static void print_adjust_stats(BoundVert *vstart)
 		if (v->adjchain != NULL) {
 			eright = v->efirst;
 			eleft = v->adjchain->elast;
-			delta = fabs(eright->offset_r - eright->offset_r_spec);
+			delta = eright->offset_r - eright->offset_r_spec;
 			delta_pct = 100.0 * delta / eright->offset_r_spec;
-			printf("e%d r(%f) vs r spec(%f): abs(delta)=%f, delta_pct=%f\n",
+			printf("e%d r(%f) vs r spec(%f): delta=%f, delta_pct=%f\n",
 				BM_elem_index_get(eright->e), eright->offset_r, eright->offset_r_spec, delta, delta_pct);
 			spec_residual2 += delta * delta;
+			delta = fabs(delta);
+			delta_pct = fabs(delta_pct);
 			if (delta > max_spec_r)
 				max_spec_r = delta;
 			if (delta_pct > max_spec_r_pct)
 				max_spec_r_pct = delta_pct;
 
-			delta = fabs(eleft->offset_l - eleft->offset_l_spec);
+			delta = eleft->offset_l - eleft->offset_l_spec;
 			delta_pct = 100.0 * delta / eright->offset_l_spec;
-			printf("e%d l(%f) vs l spec(%f): abs(delta)=%f, delta_pct=%f\n",
+			printf("e%d l(%f) vs l spec(%f): delta=%f, delta_pct=%f\n",
 				BM_elem_index_get(eright->e), eleft->offset_l, eleft->offset_l_spec, delta, delta_pct);
 			spec_residual2 += delta * delta;
+			delta = fabs(delta);
+			delta_pct = fabs(delta_pct);
 			if (delta > max_spec_r)
 				max_spec_r = delta;
 			if (delta_pct > max_spec_r_pct)
@@ -1951,6 +1955,15 @@ static void print_adjust_stats(BoundVert *vstart)
 }
 #endif
 
+#ifdef FAST_ADJUST_CODE
+/* This code uses a direct solution to the adjustment problem for chains and certain cycles.
+ * It is a two-step approach: first solve for the exact solution of the 'match widths' constraints
+ * using the one degree of freedom that allows for expressing all other widths in terms of that.
+ * And then minimize the spec-matching constraints using the derivative of the least squares
+ * residual in terms of that one degree of freedom.
+ * Unfortunately, the results are in some cases worse than the general least squares solution
+ * for the combined (with weights) problem, so this code is not used.
+ * But keep it here for a while in case peformance issues demand that it be used sometimes. */
 static bool adjust_the_cycle_or_chain_fast(BoundVert *vstart, int np, bool iscycle)
 {
 	BoundVert *v;
@@ -2027,6 +2040,7 @@ static bool adjust_the_cycle_or_chain_fast(BoundVert *vstart, int np, bool iscyc
 	MEM_freeN(g_prod);
 	return true;
 }
+#endif
 
 /* Adjust the offsets for a single cycle or chain.
  * For chains and some cycles, a fast solution exists.
@@ -2038,22 +2052,35 @@ static bool adjust_the_cycle_or_chain_fast(BoundVert *vstart, int np, bool iscyc
 static void adjust_the_cycle_or_chain(BoundVert *vstart, bool iscycle)
 {
 	BoundVert *v;
-	EdgeHalf *eleft, *eright;
+	EdgeHalf *eleft, *eright, *enextleft;
 	LinearSolver *solver;
 	double weight, val;
 	int i, np, nrows, row;
 
 	np = 0;
+#ifdef DEBUG_ADJUST
+	printf("\nadjust the %s (with eigen)\n", iscycle ? "cycle" : "chain");
+#endif
 	v = vstart;
 	do {
+#ifdef DEBUG_ADJUST
+		eleft = v->elast;
+		eright = v->efirst;
+		printf(" (left=e%d, right=e%d)", BM_elem_index_get(eleft->e), BM_elem_index_get(eright->e));
+#endif
 		np++;
 		v = v->adjchain;
 	} while (v && v != vstart);
+#ifdef DEBUG_ADJUST
+		printf(" -> %d parms\n", np);
+#endif
 
+#ifdef FAST_ADJUST_CODE
 	if (adjust_the_cycle_or_chain_fast(vstart, np, iscycle))
 		return;
+#endif
 
-	nrows = iscycle ? 2 * np : 2 * np - 1;
+	nrows = iscycle ? 3 * np : 3 * np - 3;
 
 	solver = EIG_linear_least_squares_solver_new(nrows, np, 1);
 
@@ -2062,9 +2089,15 @@ static void adjust_the_cycle_or_chain(BoundVert *vstart, bool iscycle)
 	weight = BEVEL_MATCH_SPEC_WEIGHT; /* sqrt of factor to weight down importance of spec match */
 	do {
 		/* except at end of chain, v's indep variable is offset_r of v->efirst */
-		if (iscycle || v->adjchain != NULL) {
+		if (iscycle || i < np - 1) {
 			eright = v->efirst;
 			eleft = v->elast;
+			enextleft = v->adjchain->elast;
+#ifdef DEBUG_ADJUST
+			printf("p%d: e%d->offset_r = %f\n", i, BM_elem_index_get(eright->e), eright->offset_r);
+			if (iscycle || v != vstart)
+				printf("  dependent: e%d->offset_l = %f * p%d\n", BM_elem_index_get(eleft->e), v->sinratio, i);
+#endif
 
 			/* residue i: width difference between eright and eleft of next */
 			EIG_linear_solver_matrix_add(solver, i, i, 1.0);
@@ -2073,52 +2106,86 @@ static void adjust_the_cycle_or_chain(BoundVert *vstart, bool iscycle)
 				EIG_linear_solver_matrix_add(solver, i > 0 ? i - 1 : np - 1, i, -v->sinratio);
 			}
 			else {
-				if (i > 0)
+				if (i > 0) {
 					EIG_linear_solver_matrix_add(solver, i - 1, i, -v->sinratio);
+				}
 			}
 
-			/* residue np + i (if cycle) else np - 1 + i:
+			/* residue np + 2*i (if cycle) else np - 1 + 2*i:
 			 * right offset for parm i matches its spec; weighted */
-			row = iscycle ? np + i : np - 1 + i;
+			row = iscycle ? np + 2 * i : np - 1 + 2 *  i;
 			EIG_linear_solver_matrix_add(solver, row, i, weight);
 			EIG_linear_solver_right_hand_side_add(solver, 0, row, weight * eright->offset_r);
+#ifdef DEBUG_ADJUST
+			printf("b[%d]=%f * %f, for e%d->offset_r\n", row, weight, eright->offset_r, BM_elem_index_get(eright->e));
+#endif
+			
+			/* residue np + 2*i + 1 (if cycle) else np - 1 + 2*i + 1:
+			 * left offset for parm i matches its spec; weighted */
+			 row = row + 1;
+			EIG_linear_solver_matrix_add(solver, row, (i == np - 1) ? 0 : i + 1, weight * v->adjchain->sinratio);
+			EIG_linear_solver_right_hand_side_add(solver, 0, row, weight * enextleft->offset_l);
+#ifdef DEBUG_ADJUST
+			printf("b[%d]=%f * %f, for e%d->offset_l\n", row, weight, enextleft->offset_l,
+				BM_elem_index_get(enextleft->e));
+#endif
 		}
 		else {
 			/* not a cycle, and last of chain */
 			eleft = v->elast;
+#ifdef DEBUG_ADJUST
+			printf("p%d: e%d->offset_l = %f\n", i, BM_elem_index_get(eleft->e), eleft->offset_l);
+#endif
 			/* second part of residue i for last i */
 			EIG_linear_solver_matrix_add(solver, i - 1, i, -1.0);
-			/* residue 2 * np -2 : last spec match residue is for left offset of final parm */
-			row = 2 * np - 2;
-			EIG_linear_solver_matrix_add(solver, row, i, weight);
-			EIG_linear_solver_right_hand_side_add(solver, 0, row, weight * eleft->offset_l);
 		}
 		i++;
 		v = v->adjchain;
 	} while (v && v != vstart);
 	EIG_linear_solver_solve(solver);
+#ifdef DEBUG_ADJUST
+	/* Note: this print only works after solve, but by that time b has been cleared */
+	EIG_linear_solver_print_matrix(solver);
+	printf("\nSolution:\n");
+	for (i = 0; i < np; i++)
+		printf("p%d = %f\n", i, EIG_linear_solver_variable_get(solver, 0, i));
+#endif
 
 	/* Use the solution to set new widths */
 	v = vstart;
 	i = 0;
 	do {
 		val = EIG_linear_solver_variable_get(solver, 0, i);
-		if (iscycle || v->adjchain != NULL) {
+		if (iscycle || i < np - 1) {
 			eright = v->efirst;
 			eleft = v->elast;
 			eright->offset_r = (float)val;
+#ifdef DEBUG_ADJUST
+			printf("e%d->offset_r = %f\n", BM_elem_index_get(eright->e), eright->offset_r);
+#endif
 			if (iscycle || v != vstart) {
 				eleft->offset_l = (float)(v->sinratio * val);
+#ifdef DEBUG_ADJUST
+				printf("e%d->offset_l = %f\n", BM_elem_index_get(eleft->e), eleft->offset_l);
+#endif
 			}
 		}
 		else {
 			/* not a cycle, and last of chain */
 			eleft = v->elast;
 			eleft->offset_l = (float)val;
+#ifdef DEBUG_ADJUST
+			printf("e%d->offset_l = %f\n", BM_elem_index_get(eleft->e), eleft->offset_l);
+#endif
 		}
 		i++;
 		v = v->adjchain;
 	} while (v && v != vstart);
+
+#ifdef DEBUG_ADJUST
+		print_adjust_stats(vstart);
+		EIG_linear_solver_print_matrix(solver);
+#endif
 
 	EIG_linear_solver_delete(solver);
 }
@@ -2170,7 +2237,6 @@ static void adjust_offsets(BevelParams *bp)
 				v->visited = true;
 				if (vnext->visited) {
 					if (vnext != vchainstart) {
-						printf("WHOOPS, adjusting offsets, expected cycle!\n");
 						break;
 					}
 					adjust_the_cycle_or_chain(vchainstart, true);
@@ -3187,6 +3253,173 @@ static void build_square_in_vmesh(BevelParams *bp, BMesh *bm, BevVert *bv, VMesh
 	}
 }
 
+/* copy whichever of a and b is closer to v into r */
+static void closer_v3_v3v3v3(float r[3], float a[3], float b[3], float v[3])
+{
+	if (len_squared_v3v3(a, v) <= len_squared_v3v3(b, v))
+		copy_v3_v3(r, a);
+	else
+		copy_v3_v3(r, b);
+}
+
+/* Special case of VMesh when profile == 1 and there are 3 or more beveled edges.
+ * We want the effect of parallel offset lines (n/2 of them) on each side of the center, for even n.
+ * Wherever they intersect with each other between two successive beveled edges, those intersections
+ * are part of the vmesh rings.
+ * We have to move the boundary edges too -- the usual method is to make one profile plane between
+ * successive BoundVerts, but for the effect we want here, there will be two planes, one on each side
+ * of the original edge.
+ */
+static VMesh *square_out_adj_vmesh(BevelParams *bp, BevVert *bv)
+{
+	int n, ns, ns2, odd, i, j, k, ikind, im1, clstride;
+	float bndco[3], dir1[3], dir2[3], co1[3], co2[3], meet1[3], meet2[3], v1co[3], v2co[3];
+	float *on_edge_cur, *on_edge_prev, *p;
+	float ns2inv, finalfrac, ang;
+	BoundVert *bndv;
+	EdgeHalf *e1, *e2;
+	VMesh *vm;
+	float *centerline;
+
+	n = bv->vmesh->count;
+	ns = bv->vmesh->seg;
+	ns2 = ns / 2;
+	odd = ns % 2;
+	ns2inv = 1.0f / (float) ns2;
+	vm = new_adj_vmesh(bp->mem_arena, n, ns, bv->vmesh->boundstart);
+	clstride = 3 * (ns2 + 1);
+	centerline = MEM_mallocN(clstride * n * sizeof(float), "bevel");
+
+	/* find on_edge, place on bndv[i]'s elast where offset line would meet,
+	 * averaging with position where next sector's offset line would meet */
+	bndv = vm->boundstart;
+	for (i = 0; i < n; i++) {
+		copy_v3_v3(bndco, bndv->nv.co);
+		e1 = bndv->efirst;
+		e2 = bndv->elast;
+		sub_v3_v3v3(dir1, e1->e->v1->co, e1->e->v2->co);
+		sub_v3_v3v3(dir2, e2->e->v1->co, e2->e->v2->co);
+		add_v3_v3v3(co1, bndco, dir1);
+		add_v3_v3v3(co2, bndco, dir2);
+		/* intersect e1 with line through bndv parallel to e2 to get v1co */
+		ikind = isect_line_line_v3(e1->e->v1->co, e1->e->v2->co, bndco, co2, meet1, meet2);
+
+		if (ikind == 0) {
+			/* Placeholder: this should get eliminated by min dist test with adjacent edge */
+			mid_v3_v3v3(v1co, e1->e->v1->co, e1->e->v2->co);
+		}
+		else {
+			/* if the lines are skew (ikind == 2), want meet1 which is on e1 */
+			copy_v3_v3(v1co, meet1);
+		}
+		/* intersect e2 with line through bndv parallel to e1 to get v2co */
+		ikind = isect_line_line_v3(e2->e->v1->co, e2->e->v2->co, bndco, co1, meet1, meet2);
+		if (ikind == 0) {
+			mid_v3_v3v3(v2co, e2->e->v1->co, e2->e->v2->co);
+		}
+		else {
+			copy_v3_v3(v2co, meet1);
+		}
+
+		/* want on_edge[i] to be min dist to bv->v of v2co and the v1co of next iteration */
+		on_edge_cur = centerline + clstride * i;
+		on_edge_prev = centerline + clstride * ((i == 0) ? n - 1 : i - 1);
+		if (i == 0) {
+			copy_v3_v3(on_edge_cur, v2co);
+			copy_v3_v3(on_edge_prev, v1co);
+		}
+		else if (i == n - 1) {
+			closer_v3_v3v3v3(on_edge_cur, on_edge_cur, v2co, bv->v->co);
+			closer_v3_v3v3v3(on_edge_prev, on_edge_prev, v1co, bv->v->co);
+		}
+		else {
+			copy_v3_v3(on_edge_cur, v2co);
+			closer_v3_v3v3v3(on_edge_prev, on_edge_prev, v1co, bv->v->co);
+		}
+		bndv = bndv->next;
+	}
+
+	/* fill in rest of centerlines by interpolation */
+	copy_v3_v3(co2, bv->v->co);
+	bndv = vm->boundstart;
+	for (i = 0; i < n; i++) {
+		if (odd) {
+			ang = 0.5f * angle_v3v3v3(bndv->nv.co, co1, bndv->next->nv.co);
+			if (ang > BEVEL_SMALL_ANG) {
+				/* finalfrac is length along arms of isoceles triangle with top angle 2*ang
+				 * such that the base of the triangle is 1.
+				 * This is used in interpolation along centerline in odd case.
+				 * To avoid too big a drop from bv, cap finalfrac a 0.8 arbitrarily */
+				finalfrac = 0.5f / sin(ang);
+				if (finalfrac > 0.8f)
+					finalfrac = 0.8f;
+			}
+			else {
+				finalfrac = 0.8f;
+			}
+			ns2inv = 1.0f / (ns2 + finalfrac);
+		}
+
+		p = centerline + clstride * i;
+		copy_v3_v3(co1, p);
+		p += 3;
+		for (j = 1; j <= ns2; j++) {
+			interp_v3_v3v3(p, co1, co2, j * ns2inv);
+			p += 3;
+		}
+		bndv = bndv->next;
+	}
+
+	/* coords of edges and mid or near-mid line */
+	bndv = vm->boundstart;
+	for (i = 0; i < n; i++) {
+		copy_v3_v3(co1, bndv->nv.co);
+		copy_v3_v3(co2, centerline + clstride * (i == 0 ? n - 1 : i - 1));
+		for (j = 0; j < ns2 + odd; j++) {
+			interp_v3_v3v3(mesh_vert(vm, i, j, 0)->co, co1, co2, j * ns2inv);
+		}
+		copy_v3_v3(co2, centerline + clstride * i);
+		for (k = 1; k <= ns2; k++) {
+			interp_v3_v3v3(mesh_vert(vm, i, 0, k)->co, co1, co2, k * ns2inv);
+		}
+		bndv = bndv->next;
+	}
+	if (!odd)
+		copy_v3_v3(mesh_vert(vm, 0, ns2, ns2)->co, bv->v->co);
+	vmesh_copy_equiv_verts(vm);
+
+	/* fill in interior points by interpolation from edges to centerlines */
+	bndv = vm->boundstart;
+	for (i = 0; i < n; i++) {
+		im1 = (i == 0) ? n - 1 : i - 1;
+		for (j = 1; j < ns2 + odd; j++) {
+			for (k = 1; k <= ns2; k++) {
+				ikind = isect_line_line_v3(
+					mesh_vert(vm, i, 0, k)->co, centerline + clstride * im1 + 3 * k,
+					mesh_vert(vm, i, j, 0)->co, centerline + clstride * i + 3 * j,
+					meet1, meet2);
+				if (ikind == 0) {
+					/* how can this happen? fall back on interpolation in one direction if it does */
+					interp_v3_v3v3(mesh_vert(vm, i, j, k)->co,
+						mesh_vert(vm, i, 0, k)->co, centerline + clstride * im1 + 3 * k, j * ns2inv);
+				}
+				else if (ikind == 1) {
+					copy_v3_v3(mesh_vert(vm, i, j, k)->co, meet1);
+				}
+				else {
+					mid_v3_v3v3(mesh_vert(vm, i, j, k)->co, meet1, meet2);
+				}
+			}
+		}
+		bndv = bndv->next;
+	}
+
+	vmesh_copy_equiv_verts(vm);
+
+	MEM_freeN(centerline);
+	return vm;
+}
+
 /*
  * Given that the boundary is built and the boundary BMVerts have been made,
  * calculate the positions of the interior mesh points for the M_ADJ pattern,
@@ -3209,9 +3442,13 @@ static void bevel_build_rings(BevelParams *bp, BMesh *bm, BevVert *bv)
 	odd = ns % 2;
 	BLI_assert(n >= 3 && ns > 1);
 
+
 	vpipe = pipe_test(bv);
 
-	if (vpipe) {
+	if (bp->pro_super_r == PRO_SQUARE_R && bv->selcount >= 3 && !odd) {
+		vm1 = square_out_adj_vmesh(bp, bv);
+	}
+	else if (vpipe) {
 		vm1 = pipe_adj_vmesh(bp, bv, vpipe);
 	}
 	else if (tri_corner_test(bp, bv)) {
