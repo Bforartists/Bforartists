@@ -257,9 +257,8 @@ class MASK_PT_tools:
 
         col = layout.column(align=True)
         col.label(text="Animation:")
-        row = col.row(align=True)
-        row.operator("mask.shape_key_insert", text="Insert Key")
-        row.operator("mask.shape_key_clear", text="Clear Key")
+        col.operator("mask.shape_key_insert", text="Insert Key")
+        col.operator("mask.shape_key_clear", text="Clear Key")
         col.operator("mask.shape_key_feather_reset", text="Reset Feather Animation")
         col.operator("mask.shape_key_rekey", text="Re-Key Shape Points")
 
@@ -284,7 +283,7 @@ class MASK_MT_mask(Menu):
         layout.separator()
         layout.menu("MASK_MT_visibility")
         layout.menu("MASK_MT_transform")
-        layout.menu("MASK_MT_animation")
+        #layout.menu("MASK_MT_animation") # bfa - this menu is still there and can be called by hotkey. But it is not longer part of this mask menu.
 
 
 class MASK_MT_visibility(Menu):
