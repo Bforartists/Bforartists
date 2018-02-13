@@ -227,30 +227,6 @@ class MASK_PT_display:
         sub.prop(space_data, "mask_overlay_mode", text="")
 
 
-class MASK_PT_transforms:
-    # subclasses must define...
-    #~ bl_space_type = 'CLIP_EDITOR'
-    #~ bl_region_type = 'TOOLS'
-    bl_label = "Transforms"
-    bl_category = "Mask"
-    bl_options = {'DEFAULT_CLOSED'}
-
-    @classmethod
-    def poll(cls, context):
-        space_data = context.space_data
-        return space_data.mask and space_data.mode == 'MASK'
-
-    def draw(self, context):
-        layout = self.layout
-
-        col = layout.column(align=True)
-        col.label(text="Transform:")
-        col.operator("transform.translate")
-        col.operator("transform.rotate")
-        col.operator("transform.resize", text="Scale")
-        col.operator("transform.transform", text="Scale Feather").mode = 'MASK_SHRINKFATTEN'
-
-
 class MASK_PT_tools:
     # subclasses must define...
     #~ bl_space_type = 'CLIP_EDITOR'
@@ -278,12 +254,6 @@ class MASK_PT_tools:
         col.operator("mask.switch_direction")
         col.operator("mask.handle_type_set")
         col.operator("mask.feather_weight_clear")
-
-        col = layout.column(align=True)
-        col.label(text="Parenting:")
-        row = col.row(align=True)
-        row.operator("mask.parent_set", text="Parent")
-        row.operator("mask.parent_clear", text="Clear")
 
         col = layout.column(align=True)
         col.label(text="Animation:")
@@ -322,12 +292,6 @@ class MASK_MT_mask(Menu):
 
         layout.operator("mask.delete")
         layout.operator("mask.duplicate_move", text = "Duplicate")
-
-        layout.separator()
-        layout.operator("mask.cyclic_toggle")
-        layout.operator("mask.switch_direction")
-        layout.operator("mask.normals_make_consistent")
-        layout.operator("mask.feather_weight_clear")  # TODO, better place?
 
         layout.separator()
         layout.operator("mask.parent_clear")
