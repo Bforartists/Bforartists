@@ -1071,7 +1071,6 @@ from .properties_mask_common import (
     MASK_PT_point,
     MASK_PT_display,
     MASK_PT_tools,
-    MASK_PT_transforms,
     MASK_PT_add,
 )
 
@@ -1101,11 +1100,6 @@ class CLIP_PT_mask(MASK_PT_mask, Panel):
     bl_region_type = 'UI'
 
 class CLIP_PT_tools_mask_add(MASK_PT_add, Panel):
-    bl_space_type = 'CLIP_EDITOR'
-    bl_region_type = 'TOOLS'
-
-
-class CLIP_PT_tools_mask_transforms(MASK_PT_transforms, Panel):
     bl_space_type = 'CLIP_EDITOR'
     bl_region_type = 'TOOLS'
 
@@ -1504,7 +1498,6 @@ classes = (
     CLIP_PT_active_mask_point,
     CLIP_PT_tools_mask,
     CLIP_PT_tools_mask_add,
-    CLIP_PT_tools_mask_transforms,
     CLIP_PT_footage,
     CLIP_PT_footage_info,
     CLIP_PT_tools_scenesetup,
