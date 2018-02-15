@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 
 # This script updates icons from the SVG file
 import os
@@ -22,7 +22,7 @@ if sys.platform == 'darwin':
 cmd = (
     inkscape_bin,
     os.path.join(BASEDIR, "blender_icons.svg"),
-    "--export-width=850",
+    "--export-width=1060",
     "--export-height=640",
     "--without-gui",
     "--export-png=" + os.path.join(BASEDIR, "blender_icons16.png"),
@@ -32,7 +32,7 @@ run(cmd)
 cmd = (
     inkscape_bin,
     os.path.join(BASEDIR, "blender_icons.svg"),
-    "--export-width=1700",
+    "--export-width=2120",
     "--export-height=1280",
     "--without-gui",
     "--export-png=" + os.path.join(BASEDIR, "blender_icons32.png"),
@@ -54,7 +54,7 @@ cmd = (
     "--output=" + os.path.join(BASEDIR, "blender_icons16"),
     "--output_prefix=icon16_",
     "--name_style=UI_ICONS",
-    "--parts_x", "40", "--parts_y", "30",
+    "--parts_x", "50", "--parts_y", "30",
     "--minx", "3", "--maxx", "8", "--miny", "3", "--maxy", "8",
     "--minx_icon", "2", "--maxx_icon", "2", "--miny_icon", "2", "--maxy_icon", "2",
     "--spacex_icon", "1", "--spacey_icon", "1",
@@ -68,7 +68,7 @@ cmd = (
     "--output=" + os.path.join(BASEDIR, "blender_icons32"),
     "--output_prefix=icon32_",
     "--name_style=UI_ICONS",
-    "--parts_x", "40", "--parts_y", "30",
+    "--parts_x", "50", "--parts_y", "30",
     "--minx", "6", "--maxx", "16", "--miny", "6", "--maxy", "16",
     "--minx_icon", "4", "--maxx_icon", "4", "--miny_icon", "4", "--maxy_icon", "4",
     "--spacex_icon", "2", "--spacey_icon", "2",
