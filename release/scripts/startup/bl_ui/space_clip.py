@@ -1427,12 +1427,18 @@ class CLIP_GRAPH_MT_select(Menu):
 
 
 class CLIP_MT_select_grouped(Menu):
-    bl_label = "Select Grouped"
+    bl_label = "Select Grouped Tracks"
 
     def draw(self, context):
         layout = self.layout
 
-        layout.operator_enum("clip.select_grouped", "group")
+        layout.operator("clip.select_grouped", text = "Keyframed", icon = "HAND").group = 'KEYFRAMED'
+        layout.operator("clip.select_grouped", text = "Estimated", icon = "HAND").group = 'ESTIMATED'
+        layout.operator("clip.select_grouped", text = "Tracked", icon = "HAND").group = 'TRACKED'
+        layout.operator("clip.select_grouped", text = "Locked", icon = "HAND").group = 'LOCKED'
+        layout.operator("clip.select_grouped", text = "Disabled", icon = "HAND").group = 'DISABLED'
+        layout.operator("clip.select_grouped", text = "Same Color", icon = "HAND").group = 'COLOR'
+        layout.operator("clip.select_grouped", text = "Failed", icon = "HAND").group = 'FAILED'
 
 class CLIP_MT_tracking_specials(Menu):
     bl_label = "Specials"
