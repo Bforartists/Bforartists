@@ -1427,7 +1427,7 @@ class CLIP_GRAPH_MT_select(Menu):
 
 
 class CLIP_MT_select_grouped(Menu):
-    bl_label = "Select Grouped Tracks"
+    bl_label = "Grouped Tracks"
 
     def draw(self, context):
         layout = self.layout
