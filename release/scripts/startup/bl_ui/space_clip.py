@@ -1294,23 +1294,23 @@ class CLIP_MT_track(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("clip.clear_solution")
+        layout.operator("clip.clear_solution", icon = "CLEAN_CHANNELS")
 
-        props = layout.operator("clip.clear_track_path", text="Clear Track Path")
+        props = layout.operator("clip.clear_track_path", text="Clear Track Path", icon = "CLEAR")
         props.clear_active = False
         props.action = 'ALL'
 
         layout.separator()
-        layout.operator("clip.lock_tracks", text="Lock Tracks").action = 'LOCK'
-        layout.operator("clip.lock_tracks", text="Unlock Tracks").action = 'UNLOCK'
+        layout.operator("clip.lock_tracks", text="Lock", icon = "LOCKED").action = 'LOCK'
+        layout.operator("clip.lock_tracks", text="Unlock", icon = "UNLOCKED").action = 'UNLOCK'
 
         layout.separator()
-        layout.operator("clip.copy_tracks")
-        layout.operator("clip.paste_tracks")
+        layout.operator("clip.copy_tracks", text= "Copy", icon = "COPYDOWN")
+        layout.operator("clip.paste_tracks", text= "Paste", icon = "PASTEDOWN")
 
         layout.separator()
-        layout.operator("clip.keyframe_insert")
-        layout.operator("clip.keyframe_delete")
+        layout.operator("clip.keyframe_insert", icon = "KEYFRAMES_INSERT")
+        layout.operator("clip.keyframe_delete", icon = "KEYFRAMES_REMOVE")
 
         layout.separator()
         layout.menu("CLIP_MT_track_visibility")
@@ -1336,9 +1336,9 @@ class CLIP_MT_track_visibility(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("clip.hide_tracks_clear", text="Show Hidden")
-        layout.operator("clip.hide_tracks", text="Hide Selected").unselected = False
-        layout.operator("clip.hide_tracks", text="Hide Unselected").unselected = True
+        layout.operator("clip.hide_tracks_clear", text="Show Hidden", icon = "RESTRICT_VIEW_OFF")
+        layout.operator("clip.hide_tracks", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
+        layout.operator("clip.hide_tracks", text="Hide Unselected", icon = "HIDE_UNSELECTED").unselected = True
 
 
 class CLIP_MT_track_transform(Menu):
@@ -1347,10 +1347,10 @@ class CLIP_MT_track_transform(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("transform.translate")
-        layout.operator("transform.resize")
-        layout.operator("transform.rotate")
-        
+        layout.operator("transform.translate", icon = "TRANSFORM_MOVE")
+        layout.operator("transform.resize",  icon = "TRANSFORM_SCALE")
+        layout.operator("transform.rotate", icon = "TRANSFORM_ROTATE")
+               
 
 
 class CLIP_MT_select(Menu):
