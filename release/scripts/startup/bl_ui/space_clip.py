@@ -1267,17 +1267,15 @@ class CLIP_MT_clip(Menu):
         sc = context.space_data
         clip = sc.clip
 
-        layout.operator("clip.open")
+        layout.operator("clip.open", icon = "FILE_FOLDER")
 
         if clip:
-            layout.operator("clip.prefetch")
-            layout.operator("clip.reload")
+            layout.operator("clip.prefetch", icon = "PREFETCH")
+            layout.operator("clip.reload", icon = "FILE_REFRESH")
             layout.menu("CLIP_MT_proxy")
 
-            layout.operator("clip.set_solver_keyframe", text = "Set Solver Keyframe A").keyframe = "KEYFRAME_A"
-            layout.operator("clip.set_solver_keyframe", text = "Set Solver Keyframe B").keyframe = "KEYFRAME_B"
-
-
+            layout.operator("clip.set_solver_keyframe", text = "Set Solver Keyframe A", icon = "KEYFRAMES_INSERT").keyframe = "KEYFRAME_A"
+            layout.operator("clip.set_solver_keyframe", text = "Set Solver Keyframe B", icon = "KEYFRAMES_INSERT").keyframe = "KEYFRAME_B"
 
 
 class CLIP_MT_proxy(Menu):
@@ -1286,8 +1284,8 @@ class CLIP_MT_proxy(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("clip.rebuild_proxy")
-        layout.operator("clip.delete_proxy")
+        layout.operator("clip.rebuild_proxy", icon = "MAKE_PROXY")
+        layout.operator("clip.delete_proxy", icon = "DELETE")
 
 
 class CLIP_MT_track(Menu):
