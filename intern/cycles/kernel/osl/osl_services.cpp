@@ -83,6 +83,7 @@ ustring OSLRenderServices::u_geom_dupli_uv("geom:dupli_uv");
 ustring OSLRenderServices::u_material_index("material:index");
 ustring OSLRenderServices::u_object_random("object:random");
 ustring OSLRenderServices::u_particle_index("particle:index");
+ustring OSLRenderServices::u_particle_random("particle:random");
 ustring OSLRenderServices::u_particle_age("particle:age");
 ustring OSLRenderServices::u_particle_lifetime("particle:lifetime");
 ustring OSLRenderServices::u_particle_location("particle:location");
@@ -96,11 +97,10 @@ ustring OSLRenderServices::u_geom_polyvertices("geom:polyvertices");
 ustring OSLRenderServices::u_geom_name("geom:name");
 ustring OSLRenderServices::u_geom_undisplaced("geom:undisplaced");
 ustring OSLRenderServices::u_is_smooth("geom:is_smooth");
-#ifdef __HAIR__
 ustring OSLRenderServices::u_is_curve("geom:is_curve");
 ustring OSLRenderServices::u_curve_thickness("geom:curve_thickness");
 ustring OSLRenderServices::u_curve_tangent_normal("geom:curve_tangent_normal");
-#endif
+ustring OSLRenderServices::u_curve_random("geom:curve_random");
 ustring OSLRenderServices::u_path_ray_length("path:ray_length");
 ustring OSLRenderServices::u_path_ray_depth("path:ray_depth");
 ustring OSLRenderServices::u_path_diffuse_depth("path:diffuse_depth");
@@ -658,6 +658,12 @@ bool OSLRenderServices::get_object_standard_attribute(KernelGlobals *kg, ShaderD
 		float f = particle_index(kg, particle_id);
 		return set_attribute_float(f, type, derivatives, val);
 	}
+	else if(name == u_particle_random) {
+		int particle_id = object_particle_id(kg, sd->object);
+		float f = hash_int_01(particle_index(kg, particle_id));
+		return set_attribute_float(f, type, derivatives, val);
+	}
+
 	else if(name == u_particle_age) {
 		int particle_id = object_particle_id(kg, sd->object);
 		float f = particle_age(kg, particle_id);
@@ -701,11 +707,7 @@ bool OSLRenderServices::get_object_standard_attribute(KernelGlobals *kg, ShaderD
 		return set_attribute_int(3, type, derivatives, val);
 	}
 	else if((name == u_geom_trianglevertices || name == u_geom_polyvertices)
-#ifdef __HAIR__
 		     && sd->type & PRIMITIVE_ALL_TRIANGLE)
-#else
-		)
-#endif
 	{
 		float3 P[3];
 
@@ -730,7 +732,6 @@ bool OSLRenderServices::get_object_standard_attribute(KernelGlobals *kg, ShaderD
 		float f = ((sd->shader & SHADER_SMOOTH_NORMAL) != 0);
 		return set_attribute_float(f, type, derivatives, val);
 	}
-#ifdef __HAIR__
 	/* Hair Attributes */
 	else if(name == u_is_curve) {
 		float f = (sd->type & PRIMITIVE_ALL_CURVE) != 0;
@@ -744,7 +745,6 @@ bool OSLRenderServices::get_object_standard_attribute(KernelGlobals *kg, ShaderD
 		float3 f = curve_tangent_normal(kg, sd);
 		return set_attribute_float3(f, type, derivatives, val);
 	}
-#endif
 	else
 		return false;
 }

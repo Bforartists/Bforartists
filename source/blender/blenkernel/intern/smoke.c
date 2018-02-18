@@ -168,11 +168,11 @@ void smoke_reallocate_highres_fluid(SmokeDomainSettings *sds, float dx, int res[
 	}
 
 	/* smoke_turbulence_init uses non-threadsafe functions from fftw3 lib (like fftw_plan & co). */
-	BLI_lock_thread(LOCK_FFTW);
+	BLI_thread_lock(LOCK_FFTW);
 
 	sds->wt = smoke_turbulence_init(res, sds->amplify + 1, sds->noise, BKE_tempdir_session(), use_fire, use_colors);
 
-	BLI_unlock_thread(LOCK_FFTW);
+	BLI_thread_unlock(LOCK_FFTW);
 
 	sds->res_wt[0] = res[0] * (sds->amplify + 1);
 	sds->res_wt[1] = res[1] * (sds->amplify + 1);
@@ -1285,6 +1285,8 @@ static void emit_from_particles(
 			curvemapping_changed_all(psys->part->clumpcurve);
 		if ((psys->part->child_flag & PART_CHILD_USE_ROUGH_CURVE) && psys->part->roughcurve)
 			curvemapping_changed_all(psys->part->roughcurve);
+		if ((psys->part->child_flag & PART_CHILD_USE_TWIST_CURVE) && psys->part->twistcurve)
+			curvemapping_changed_all(psys->part->twistcurve);
 
 		/* initialize particle cache */
 		if (psys->part->type == PART_HAIR) {
