@@ -191,6 +191,10 @@ class CLIP_MT_tracking_editor_menus(Menu):
             else:
                 layout.menu("CLIP_MT_clip")
 
+        if sc.view == 'GRAPH':
+            if clip:
+                layout.menu("CLIP_GRAPH_MT_select")
+                layout.menu("CLIP_GRAPH_MT_graph")
 
 class CLIP_MT_masking_editor_menus(Menu):
 
@@ -1233,18 +1237,18 @@ class CLIP_MT_view(Menu):
             for a, b in ratios:
                 layout.operator("clip.view_zoom_ratio", text=text % (a, b), translate=False, icon = "ZOOM_SET").ratio = a / b
         else:
-            if sc.view == 'GRAPH':
-                layout.operator_context = 'INVOKE_REGION_PREVIEW'
-                layout.operator("clip.graph_center_current_frame")
-                layout.operator("clip.graph_view_all", icon = "VIEWALL")
-                layout.operator_context = 'INVOKE_DEFAULT'
-
-                layout.separator()
 
             layout.prop(sc, "show_seconds")
             layout.prop(sc, "show_locked_time")
 
-            layout.operator("clip.dopesheet_view_all", icon = "VIEWALL")
+            if sc.view == 'GRAPH':
+
+                layout.separator()
+
+                layout.operator_context = 'INVOKE_REGION_PREVIEW'
+                layout.operator("clip.graph_center_current_frame", icon = "VIEW_SELECTED" )
+                layout.operator("clip.graph_view_all", icon = "VIEWALL")
+                layout.operator_context = 'INVOKE_DEFAULT'           
 
         layout.separator()
 
@@ -1263,17 +1267,15 @@ class CLIP_MT_clip(Menu):
         sc = context.space_data
         clip = sc.clip
 
-        layout.operator("clip.open")
+        layout.operator("clip.open", icon = "FILE_FOLDER")
 
         if clip:
-            layout.operator("clip.prefetch")
-            layout.operator("clip.reload")
+            layout.operator("clip.prefetch", icon = "PREFETCH")
+            layout.operator("clip.reload", icon = "FILE_REFRESH")
             layout.menu("CLIP_MT_proxy")
 
-            layout.operator("clip.set_solver_keyframe", text = "Set Solver Keyframe A").keyframe = "KEYFRAME_A"
-            layout.operator("clip.set_solver_keyframe", text = "Set Solver Keyframe B").keyframe = "KEYFRAME_B"
-
-
+            layout.operator("clip.set_solver_keyframe", text = "Set Solver Keyframe A", icon = "KEYFRAMES_INSERT").keyframe = "KEYFRAME_A"
+            layout.operator("clip.set_solver_keyframe", text = "Set Solver Keyframe B", icon = "KEYFRAMES_INSERT").keyframe = "KEYFRAME_B"
 
 
 class CLIP_MT_proxy(Menu):
@@ -1282,8 +1284,8 @@ class CLIP_MT_proxy(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("clip.rebuild_proxy")
-        layout.operator("clip.delete_proxy")
+        layout.operator("clip.rebuild_proxy", icon = "MAKE_PROXY")
+        layout.operator("clip.delete_proxy", icon = "DELETE")
 
 
 class CLIP_MT_track(Menu):
@@ -1292,23 +1294,23 @@ class CLIP_MT_track(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("clip.clear_solution")
+        layout.operator("clip.clear_solution", icon = "CLEAN_CHANNELS")
 
-        props = layout.operator("clip.clear_track_path", text="Clear Track Path")
+        props = layout.operator("clip.clear_track_path", text="Clear Track Path", icon = "CLEAR")
         props.clear_active = False
         props.action = 'ALL'
 
         layout.separator()
-        layout.operator("clip.lock_tracks", text="Lock Tracks").action = 'LOCK'
-        layout.operator("clip.lock_tracks", text="Unlock Tracks").action = 'UNLOCK'
+        layout.operator("clip.lock_tracks", text="Lock", icon = "LOCKED").action = 'LOCK'
+        layout.operator("clip.lock_tracks", text="Unlock", icon = "UNLOCKED").action = 'UNLOCK'
 
         layout.separator()
-        layout.operator("clip.copy_tracks")
-        layout.operator("clip.paste_tracks")
+        layout.operator("clip.copy_tracks", text= "Copy", icon = "COPYDOWN")
+        layout.operator("clip.paste_tracks", text= "Paste", icon = "PASTEDOWN")
 
         layout.separator()
-        layout.operator("clip.keyframe_insert")
-        layout.operator("clip.keyframe_delete")
+        layout.operator("clip.keyframe_insert", icon = "KEYFRAMES_INSERT")
+        layout.operator("clip.keyframe_delete", icon = "KEYFRAMES_REMOVE")
 
         layout.separator()
         layout.menu("CLIP_MT_track_visibility")
@@ -1334,9 +1336,9 @@ class CLIP_MT_track_visibility(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("clip.hide_tracks_clear", text="Show Hidden")
-        layout.operator("clip.hide_tracks", text="Hide Selected").unselected = False
-        layout.operator("clip.hide_tracks", text="Hide Unselected").unselected = True
+        layout.operator("clip.hide_tracks_clear", text="Show Hidden", icon = "RESTRICT_VIEW_OFF")
+        layout.operator("clip.hide_tracks", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
+        layout.operator("clip.hide_tracks", text="Hide Unselected", icon = "HIDE_UNSELECTED").unselected = True
 
 
 class CLIP_MT_track_transform(Menu):
@@ -1345,10 +1347,10 @@ class CLIP_MT_track_transform(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("transform.translate")
-        layout.operator("transform.resize")
-        layout.operator("transform.rotate")
-        
+        layout.operator("transform.translate", icon = "TRANSFORM_MOVE")
+        layout.operator("transform.resize",  icon = "TRANSFORM_SCALE")
+        layout.operator("transform.rotate", icon = "TRANSFORM_ROTATE")
+               
 
 
 class CLIP_MT_select(Menu):
@@ -1369,14 +1371,72 @@ class CLIP_MT_select(Menu):
 
         layout.menu("CLIP_MT_select_grouped")
 
-
-class CLIP_MT_select_grouped(Menu):
-    bl_label = "Select Grouped"
+class CLIP_GRAPH_MT_graph(Menu):
+    bl_label = "Graph"
 
     def draw(self, context):
         layout = self.layout
 
-        layout.operator_enum("clip.select_grouped", "group")
+        layout.operator_context = 'INVOKE_REGION_PREVIEW'
+
+        layout.operator("clip.graph_delete_curve", icon = 'DELETE')
+        layout.operator("clip.graph_delete_knot", icon = 'DELETE')
+
+        layout.separator()
+
+        props = layout.operator("clip.clear_track_path", text = "Clear Track Path Remained", icon = 'CLEAN_CHANNELS')
+        props.action = 'REMAINED'
+        props.clear_active = True
+
+        props = layout.operator("clip.clear_track_path", text = "Clear Track Path Up To",icon = 'CLEAN_CHANNELS')
+        props.action = 'UPTO'
+        props.clear_active = True
+
+        props = layout.operator("clip.clear_track_path", text = "Clear Track Path All",icon = 'CLEAN_CHANNELS')
+        props.action = 'ALL'
+        props.clear_active = True
+
+        layout.separator()
+
+        layout.operator("clip.graph_disable_markers", icon = 'MARKER_HLT').action = 'TOGGLE'
+
+        layout.separator()
+
+        layout.operator("transform.translate", icon = 'TRANSFORM_MOVE')
+        layout.operator("transform.resize", icon = 'TRANSFORM_ROTATE')
+        layout.operator("transform.rotate", icon = 'TRANSFORM_SCALE')
+
+        
+
+class CLIP_GRAPH_MT_select(Menu):
+    bl_label = "Select"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator_context = 'INVOKE_REGION_PREVIEW'
+
+        layout.operator("clip.graph_select_border", icon = 'BORDER_RECT')
+
+        layout.separator()
+
+        layout.operator("clip.graph_select_all_markers", icon = 'SELECT_ALL').action = 'TOGGLE'
+        layout.operator("clip.graph_select_all_markers", text ="Inverse", icon = 'INVERSE').action = 'INVERT'
+
+
+class CLIP_MT_select_grouped(Menu):
+    bl_label = "Grouped Tracks"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("clip.select_grouped", text = "Keyframed", icon = "HAND").group = 'KEYFRAMED'
+        layout.operator("clip.select_grouped", text = "Estimated", icon = "HAND").group = 'ESTIMATED'
+        layout.operator("clip.select_grouped", text = "Tracked", icon = "HAND").group = 'TRACKED'
+        layout.operator("clip.select_grouped", text = "Locked", icon = "HAND").group = 'LOCKED'
+        layout.operator("clip.select_grouped", text = "Disabled", icon = "HAND").group = 'DISABLED'
+        layout.operator("clip.select_grouped", text = "Same Color", icon = "HAND").group = 'COLOR'
+        layout.operator("clip.select_grouped", text = "Failed", icon = "HAND").group = 'FAILED'
 
 class CLIP_MT_tracking_specials(Menu):
     bl_label = "Specials"
@@ -1509,6 +1569,8 @@ classes = (
     CLIP_MT_track_visibility,
     CLIP_MT_track_transform,
     CLIP_MT_select,
+    CLIP_GRAPH_MT_select,
+    CLIP_GRAPH_MT_graph,
     CLIP_MT_select_grouped,
     CLIP_MT_tracking_specials,
     CLIP_MT_camera_presets,
