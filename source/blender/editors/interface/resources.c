@@ -45,6 +45,7 @@
 #include "BLI_utildefines.h"
 #include "BLI_math.h"
 
+#include "BKE_addon.h"
 #include "BKE_appdir.h"
 #include "BKE_colorband.h"
 #include "BKE_DerivedMesh.h"
@@ -2149,13 +2150,9 @@ void init_userdef_do_versions(void)
 			if (btheme->tipo.handle_sel_auto_clamped[3] == 0)
 				rgba_char_args_set(btheme->tipo.handle_sel_auto_clamped, 0xf0, 0xaf, 0x90, 255);
 		}
-		
+
 		/* enable (Cycles) addon by default */
-		if (!BLI_findstring(&U.addons, "cycles", offsetof(bAddon, module))) {
-			bAddon *baddon = MEM_callocN(sizeof(bAddon), "bAddon");
-			BLI_strncpy(baddon->module, "cycles", sizeof(baddon->module));
-			BLI_addtail(&U.addons, baddon);
-		}
+		BKE_addon_ensure(&U.addons, "cycles");
 	}
 	
 	if (!USER_VERSION_ATLEAST(260, 5)) {
@@ -2798,6 +2795,15 @@ void init_userdef_do_versions(void)
 #ifdef WITH_SYSTEM_AUDASPACE
 	// we default to the first audio device
 	U.audiodevice = 0;
+#endif
+
+	/* Not versioning, just avoid errors. */
+#ifndef WITH_CYCLES
+	bAddon *addon = BLI_findstring(&U.addons, "cycles", offsetof(bAddon, module));
+	if (addon) {
+		BLI_remlink(&U.addons, addon);
+		BKE_addon_free(addon);
+	}
 #endif
 
 	/* funny name, but it is GE stuff, moves userdef stuff to engine */

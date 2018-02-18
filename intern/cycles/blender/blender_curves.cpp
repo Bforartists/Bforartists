@@ -25,6 +25,7 @@
 #include "blender/blender_util.h"
 
 #include "util/util_foreach.h"
+#include "util/util_hash.h"
 #include "util/util_logging.h"
 
 CCL_NAMESPACE_BEGIN
@@ -565,9 +566,12 @@ static void ExportCurveSegments(Scene *scene, Mesh *mesh, ParticleCurveData *CDa
 		return;
 
 	Attribute *attr_intercept = NULL;
+	Attribute *attr_random = NULL;
 
 	if(mesh->need_attribute(scene, ATTR_STD_CURVE_INTERCEPT))
 		attr_intercept = mesh->curve_attributes.add(ATTR_STD_CURVE_INTERCEPT);
+	if(mesh->need_attribute(scene, ATTR_STD_CURVE_RANDOM))
+		attr_random = mesh->curve_attributes.add(ATTR_STD_CURVE_RANDOM);
 
 	/* compute and reserve size of arrays */
 	for(int sys = 0; sys < CData->psys_firstcurve.size(); sys++) {
@@ -610,6 +614,10 @@ static void ExportCurveSegments(Scene *scene, Mesh *mesh, ParticleCurveData *CDa
 					attr_intercept->add(time);
 
 				num_curve_keys++;
+			}
+
+			if(attr_random != NULL) {
+				attr_random->add(hash_int_01(num_curves));
 			}
 
 			mesh->add_curve(num_keys, CData->psys_shader[sys]);

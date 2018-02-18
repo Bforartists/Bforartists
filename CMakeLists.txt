@@ -412,7 +412,7 @@ option(WITH_CYCLES_OSL				"Build Cycles with OSL support" ${_init_CYCLES_OSL})
 option(WITH_CYCLES_OPENSUBDIV		"Build Cycles with OpenSubdiv support" ${_init_CYCLES_OPENSUBDIV})
 option(WITH_CYCLES_CUDA_BINARIES	"Build Cycles CUDA binaries" OFF)
 option(WITH_CYCLES_CUBIN_COMPILER	"Build cubins with nvrtc based compiler instead of nvcc" OFF)
-set(CYCLES_CUDA_BINARIES_ARCH sm_20 sm_21 sm_30 sm_35 sm_37 sm_50 sm_52 sm_60 sm_61 CACHE STRING "CUDA architectures to build binaries for")
+set(CYCLES_CUDA_BINARIES_ARCH sm_30 sm_35 sm_37 sm_50 sm_52 sm_60 sm_61 CACHE STRING "CUDA architectures to build binaries for")
 mark_as_advanced(CYCLES_CUDA_BINARIES_ARCH)
 unset(PLATFORM_DEFAULT)
 option(WITH_CYCLES_LOGGING	"Build Cycles with logging support" ON)
@@ -422,6 +422,13 @@ mark_as_advanced(WITH_CYCLES_CUBIN_COMPILER)
 mark_as_advanced(WITH_CYCLES_LOGGING)
 mark_as_advanced(WITH_CYCLES_DEBUG)
 mark_as_advanced(WITH_CYCLES_NATIVE_ONLY)
+
+option(WITH_CYCLES_DEVICE_CUDA				"Enable Cycles CUDA compute support" ON)
+option(WITH_CYCLES_DEVICE_OPENCL			"Enable Cycles OpenCL compute support" ON)
+option(WITH_CYCLES_NETWORK				"Enable Cycles compute over network support (EXPERIMENTAL and unfinished)" OFF)
+mark_as_advanced(WITH_CYCLES_DEVICE_CUDA)
+mark_as_advanced(WITH_CYCLES_DEVICE_OPENCL)
+mark_as_advanced(WITH_CYCLES_NETWORK)
 
 option(WITH_CUDA_DYNLOAD "Dynamically load CUDA libraries at runtime" ON)
 mark_as_advanced(WITH_CUDA_DYNLOAD)
@@ -454,7 +461,8 @@ option(WITH_BOOST					"Enable features depending on boost" ON)
 
 # Unit testsing
 option(WITH_GTESTS "Enable GTest unit testing" OFF)
-option(WITH_OPENGL_TESTS "Enable OpenGL related unit testing (Experimental)" OFF)
+option(WITH_OPENGL_RENDER_TESTS "Enable OpenGL render related unit testing (Experimental)" OFF)
+option(WITH_OPENGL_DRAW_TESTS "Enable OpenGL UI drawing related unit testing (Experimental)" OFF)
 
 
 # Documentation
@@ -744,6 +752,15 @@ if(WITH_AUDASPACE)
 			"-DAUD_SEQUENCE_H=<AUD_C-API.h>"
 			"-DAUD_TYPES_H=<AUD_Space.h>"
 		)
+	endif()
+endif()
+
+# Auto-enable CUDA dynload if toolkit is not found.
+if(NOT WITH_CUDA_DYNLOAD)
+	find_package(CUDA)
+	if (NOT CUDA_FOUND)
+		message("CUDA toolkit not found, using dynamic runtime loading of libraries instead")
+		set(WITH_CUDA_DYNLOAD ON)
 	endif()
 endif()
 
