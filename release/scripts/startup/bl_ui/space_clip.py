@@ -266,7 +266,7 @@ class CLIP_PT_tools_clip(Panel):
     def draw(self, context):
         layout = self.layout
         col = layout.column(align=True)
-        col.operator("clip.set_scene_frames")
+        col.operator("clip.set_scene_frames", icon = "SET_FRAMES")
 
 
 class CLIP_PT_tools_marker(CLIP_PT_tracking_panel, Panel):
