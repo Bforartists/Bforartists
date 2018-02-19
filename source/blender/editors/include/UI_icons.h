@@ -32,7 +32,7 @@
  * once from UI_resources.h for the internal icon enum and
  * once for interface_api.c for the definition of the RNA enum for the icons */
 
-/*50 icons per row*/
+/*50 icons per 29*/
 
 /* ICON_ prefix added */
 
@@ -1823,15 +1823,9 @@ DEF_ICON(NODE_KEYING)
 DEF_ICON(NODE_LAMP)
 DEF_ICON(NODE_MARBLE)
 DEF_ICON(NODE_SPILL)
-
 DEF_ICON(REMOVE_ACTIVE_GROUP)
 DEF_ICON(REMOVE_ALL_GROUPS)
-
-#ifndef DEF_ICON_BLANK_SKIP
-
-	DEF_ICON(extend_280)
-
-#endif
+DEF_ICON(SET_FRAMES)
 
 #ifndef DEF_ICON_BLANK_SKIP
 
