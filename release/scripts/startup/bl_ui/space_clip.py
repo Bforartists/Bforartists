@@ -281,18 +281,21 @@ class CLIP_PT_tools_marker(CLIP_PT_tracking_panel, Panel):
 
         # sc = context.space_data
         # clip = sc.clip
+        
+        col = layout.column(align=True)
+        
+        col.operator("clip.detect_features", icon = "DETECT")
 
         col = layout.column(align=True)
-        row = col.row(align=True)
-        row.operator("clip.disable_markers", text="Enable Markers").action = 'ENABLE'
-        row.operator("clip.disable_markers", text="Disable markers").action = 'DISABLE'
+        col.operator("clip.add_marker_at_click", text="Add Marker            ", icon = "MARKER")   
+        col.operator("clip.disable_markers", text="Enable Markers    " , icon = "ENABLE").action = 'ENABLE'
+        col.operator("clip.disable_markers", text="Disable markers    ", icon = "DISABLE").action = 'DISABLE'
+        col.operator("clip.delete_marker", text="Delete Marker        ", icon = "DELETE")
         
-        col.operator("clip.add_marker_at_click", text="Add Marker")
-        row = col.row(align=True)    
-        row.operator("clip.delete_track", text="Delete Track")
-        row.operator("clip.delete_marker", text="Delete Marker")
-        col.operator("clip.detect_features")
-
+        col = layout.column(align=True)       
+        
+        col.operator("clip.delete_track", text="Delete Track        ", icon = "DELETE")
+        
 class CLIP_PT_tracking_settings(CLIP_PT_tracking_panel, Panel):
     bl_space_type = 'CLIP_EDITOR'
     bl_region_type = 'TOOLS'
