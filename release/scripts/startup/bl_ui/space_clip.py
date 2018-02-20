@@ -428,7 +428,7 @@ class CLIP_PT_tools_plane_tracking(CLIP_PT_tracking_panel, Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.operator("clip.create_plane_track")
+        layout.operator("clip.create_plane_track", icon = "PLANETRACK")
 
 
 class CLIP_PT_tools_solve(CLIP_PT_tracking_panel, Panel):
