@@ -344,8 +344,7 @@ class CLIP_PT_tracking_settings(CLIP_PT_tracking_panel, Panel):
         row.prop(settings, "use_default_normalization")
 
         col.separator()
-        col.operator("clip.track_settings_as_default",
-                     text="Copy From Active Track")
+        col.operator("clip.track_settings_as_default", text="  Copy From Active Track", icon = "COPYDOWN")
 
         box = layout.box()
         row = box.row(align=True)
