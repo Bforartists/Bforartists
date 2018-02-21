@@ -244,23 +244,23 @@ class MASK_PT_tools:
         
         col = layout.column(align=True)
         col.label(text="Add Spline:")
-        col.operator("mask.primitive_circle_add")
-        col.operator("mask.primitive_square_add")
+        col.operator("mask.primitive_circle_add", text = "  Add Circle            ", icon='MESH_PLANE')
+        col.operator("mask.primitive_square_add", text= "  Add Square            ",  icon='MESH_CIRCLE')
 
         col = layout.column(align=True)
         col.label(text="Spline:")
-        col.operator("mask.delete")
-        col.operator("mask.cyclic_toggle")
-        col.operator("mask.switch_direction")
-        col.operator("mask.handle_type_set")
-        col.operator("mask.feather_weight_clear")
+        col.operator("mask.delete", text = "  Delete                    ", icon = "DELETE")
+        col.operator("mask.cyclic_toggle", text = "  Toggle Cyclic        ", icon = 'TOGGLE_CYCLIC')
+        col.operator("mask.switch_direction", text = "  Switch Direction     ", icon = 'SWITCH_DIRECTION')
+        col.operator("mask.handle_type_set", text = "  Set Handle Type     ", icon = 'HANDLE_AUTO')
+        col.operator("mask.feather_weight_clear", text = "  Clear Feather Weight", icon = "CLEAR")
 
         col = layout.column(align=True)
         col.label(text="Animation:")
-        col.operator("mask.shape_key_insert", text="Insert Key")
-        col.operator("mask.shape_key_clear", text="Clear Key")
-        col.operator("mask.shape_key_feather_reset", text="Reset Feather Animation")
-        col.operator("mask.shape_key_rekey", text="Re-Key Shape Points")
+        col.operator("mask.shape_key_insert", text="  Insert Key               ", icon = "KEYFRAMES_INSERT")
+        col.operator("mask.shape_key_clear", text="  Clear Key               ", icon = "CLEAR")
+        col.operator("mask.shape_key_feather_reset", text="  Reset Feather Animation", icon = "RESET")
+        col.operator("mask.shape_key_rekey", text="  Re-Key Shape Points", icon='KEY_HLT')
 
 
 class MASK_MT_mask(Menu):
