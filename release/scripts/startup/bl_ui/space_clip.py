@@ -503,8 +503,8 @@ class CLIP_PT_tools_geometry(CLIP_PT_tracking_panel, Panel):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("clip.bundles_to_mesh")
-        layout.operator("clip.track_to_empty")
+        layout.operator("clip.bundles_to_mesh", text = "  3D Markers to Mesh",  icon = "MARKER_TO_MESH")
+        layout.operator("clip.track_to_empty", text = "  Link Empty to Track", icon = "LINKED")
 
 
 class CLIP_PT_tools_orientation(CLIP_PT_tracking_panel, Panel):
