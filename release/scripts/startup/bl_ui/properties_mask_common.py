@@ -308,7 +308,7 @@ class MASK_MT_transform(Menu):
         layout.operator("transform.resize", text="Scale",  icon = "TRANSFORM_SCALE")
         layout.operator("transform.transform", text="Scale Feather", icon = 'SHRINK_FATTEN').mode = 'MASK_SHRINKFATTEN'
 
-
+ # bfa - this menu is still there and can be called by hotkey. But it is not longer part of this mask menu.
 class MASK_MT_animation(Menu):
     bl_label = "Animation"
 
@@ -327,19 +327,19 @@ class MASK_MT_select(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("mask.select_border")
-        layout.operator("mask.select_circle")
+        layout.operator("mask.select_border", icon='BORDER_RECT')
+        layout.operator("mask.select_circle", icon = 'CIRCLE_SELECT')
 
         layout.separator()
 
-        layout.operator("mask.select_more")
-        layout.operator("mask.select_less")
+        layout.operator("mask.select_all", icon='SELECT_ALL').action = 'TOGGLE'
+        layout.operator("mask.select_all", text="Inverse", icon='INVERSE').action = 'INVERT'
+        layout.operator("mask.select_linked", text="Select Linked", icon = "LINKED")
 
         layout.separator()
 
-        layout.operator("mask.select_all").action = 'TOGGLE'
-        layout.operator("mask.select_all", text="Inverse").action = 'INVERT'
-        layout.operator("mask.select_linked", text="Select Linked")
+        layout.operator("mask.select_more", icon = "SELECTMORE")
+        layout.operator("mask.select_less", icon = "SELECTLESS")
 
 
 classes = (
