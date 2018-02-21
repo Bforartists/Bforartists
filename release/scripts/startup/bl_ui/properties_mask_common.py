@@ -269,16 +269,16 @@ class MASK_MT_mask(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("mask.delete")
-        layout.operator("mask.duplicate_move", text = "Duplicate")
+        layout.operator("mask.delete", icon = "DELETE")
+        layout.operator("mask.duplicate_move", text = "Duplicate", icon = "DUPLICATE")
 
         layout.separator()
-        layout.operator("mask.parent_clear")
-        layout.operator("mask.parent_set")
+        layout.operator("mask.parent_clear", icon = "PARENT_CLEAR")
+        layout.operator("mask.parent_set", icon = "PARENT_SET")
 
         layout.separator()
-        layout.operator("mask.copy_splines")
-        layout.operator("mask.paste_splines")
+        layout.operator("mask.copy_splines", icon = "COPYDOWN")
+        layout.operator("mask.paste_splines", icon = "PASTEDOWN")
 
         layout.separator()
         layout.menu("MASK_MT_visibility")
@@ -292,9 +292,9 @@ class MASK_MT_visibility(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("mask.hide_view_clear", text="Show Hidden")
-        layout.operator("mask.hide_view_set", text="Hide Selected").unselected = False
-        layout.operator("mask.hide_view_set", text="Hide Unselected").unselected = True
+        layout.operator("mask.hide_view_clear", text="Show Hidden", icon = "RESTRICT_VIEW_OFF")
+        layout.operator("mask.hide_view_set", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
+        layout.operator("mask.hide_view_set", text="Hide Unselected", icon = "HIDE_UNSELECTED").unselected = True
 
 
 class MASK_MT_transform(Menu):
@@ -303,10 +303,10 @@ class MASK_MT_transform(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("transform.translate")
-        layout.operator("transform.rotate")
-        layout.operator("transform.resize")
-        layout.operator("transform.transform", text="Scale Feather").mode = 'MASK_SHRINKFATTEN'
+        layout.operator("transform.translate", icon = "TRANSFORM_MOVE")
+        layout.operator("transform.rotate", icon = "TRANSFORM_ROTATE")
+        layout.operator("transform.resize", text="Scale",  icon = "TRANSFORM_SCALE")
+        layout.operator("transform.transform", text="Scale Feather", icon = 'SHRINK_FATTEN').mode = 'MASK_SHRINKFATTEN'
 
 
 class MASK_MT_animation(Menu):
