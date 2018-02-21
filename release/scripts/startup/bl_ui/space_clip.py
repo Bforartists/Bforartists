@@ -468,8 +468,8 @@ class CLIP_PT_tools_solve(CLIP_PT_tracking_panel, Panel):
         col.scale_y = 2.0
 
         col.operator("clip.solve_camera",
-                     text="Solve Camera Motion" if tracking_object.is_camera
-                     else "Solve Object Motion")
+                     text="  Solve Camera Motion" if tracking_object.is_camera
+                     else "  Solve Object Motion", icon = "MOTIONPATHS_CALCULATE")
 
 
 class CLIP_PT_tools_cleanup(CLIP_PT_tracking_panel, Panel):
