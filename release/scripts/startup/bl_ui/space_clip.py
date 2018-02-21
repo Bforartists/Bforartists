@@ -520,22 +520,23 @@ class CLIP_PT_tools_orientation(CLIP_PT_tracking_panel, Panel):
         settings = sc.clip.tracking.settings
 
         col = layout.column(align=True)
-        row = col.row(align=True)
-        row.operator("clip.set_plane", text="Floor").plane = 'FLOOR'
-        row.operator("clip.set_plane", text="Wall").plane = 'WALL'
+        col.operator("clip.set_plane", text="  Floor                  ", icon = "FLOOR").plane = 'FLOOR'
+        col.operator("clip.set_plane", text="  Wall                  ", icon = "WALL").plane = 'WALL'
+        
+        col = layout.column(align=True)
 
-        col.operator("clip.set_origin")
+        col.operator("clip.set_origin", text = "Set Origin        ", icon = "ORIGIN")
+        
+        col = layout.column(align=True)
 
-        row = col.row(align=True)
-        row.operator("clip.set_axis", text="Set X Axis").axis = 'X'
-        row.operator("clip.set_axis", text="Set Y Axis").axis = 'Y'
+        col.operator("clip.set_axis", text="  Set X Axis         ", icon = "X_ICON").axis = 'X'
+        col.operator("clip.set_axis", text="  Set Y Axis         ", icon = "Y_ICON").axis = 'Y'
 
         layout.separator()
 
         col = layout.column()
-        row = col.row(align=True)
-        row.operator("clip.set_scale")
-        row.operator("clip.apply_solution_scale", text="Apply Scale")
+        col.operator("clip.set_scale", text = "  Set Scale         ", icon = "TRANSFORM_SCALE")
+        col.operator("clip.apply_solution_scale", text="  Apply Scale     ", icon = "APPLYSCALE")
 
         col.prop(settings, "distance")
 
