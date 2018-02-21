@@ -1163,8 +1163,8 @@ class CLIP_PT_tools_scenesetup(Panel):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("clip.set_viewport_background")
-        layout.operator("clip.setup_tracking_scene")
+        layout.operator("clip.set_viewport_background", text = "  Set as Background", icon = "BACKGROUND")
+        layout.operator("clip.setup_tracking_scene", text = "  Setup Tracking Scene", icon = "SETUP")
 
 
 # Grease Pencil properties
