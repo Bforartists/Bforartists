@@ -484,13 +484,13 @@ class CLIP_PT_tools_cleanup(CLIP_PT_tracking_panel, Panel):
         clip = context.space_data.clip
         settings = clip.tracking.settings
 
-        layout.operator("clip.clean_tracks")
+        layout.operator("clip.clean_tracks", icon = "CLEAN_CHANNELS")
 
         layout.prop(settings, "clean_frames", text="Frames")
         layout.prop(settings, "clean_error", text="Error")
         layout.prop(settings, "clean_action", text="")
         layout.separator()
-        layout.operator("clip.filter_tracks")
+        layout.operator("clip.filter_tracks", icon = "FILTER")
 
 
 class CLIP_PT_tools_geometry(CLIP_PT_tracking_panel, Panel):
