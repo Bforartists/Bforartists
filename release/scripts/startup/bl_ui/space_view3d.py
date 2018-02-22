@@ -747,13 +747,13 @@ class VIEW3D_MT_select_particle(Menu):
         layout.separator()
 
         layout.operator("particle.select_random", text="Random", icon = "RANDOMIZE")
-        layout.operator("particle.select_roots", text="Roots")
-        layout.operator("particle.select_tips", text="Tips")
+        layout.operator("particle.select_roots", text="Roots", icon = "SELECT_ROOT")
+        layout.operator("particle.select_tips", text="Tips", icon = "SELECT_TIP")
         
         layout.separator()
 
-        layout.operator("particle.select_linked", text="Linked").deselect = False
-        layout.operator("particle.select_linked", text="Deselect Linked").deselect = True
+        layout.operator("particle.select_linked", text="Linked", icon = "LINKED").deselect = False
+        layout.operator("particle.select_linked", text="Deselect Linked", icon = "LINKED").deselect = True
         layout.separator()
 
         layout.operator("particle.select_more", text="More", icon = "SELECTMORE")
@@ -2253,19 +2253,19 @@ class VIEW3D_MT_particle(Menu):
 
         particle_edit = context.tool_settings.particle_edit
 
-        layout.operator("particle.mirror")
+        layout.operator("particle.mirror", icon = "TRANSFORM_MIRROR")
 
         layout.separator()
 
-        layout.operator("particle.remove_doubles")
+        layout.operator("particle.remove_doubles", icon = "REMOVE_DOUBLES")
         layout.operator("particle.delete", icon = "DELETE")
 
         if particle_edit.select_mode == 'POINT':
-            layout.operator("particle.subdivide")
+            layout.operator("particle.subdivide", icon = "SUBDIVIDE_EDGES")
 
-        layout.operator("particle.unify_length")
-        layout.operator("particle.rekey")
-        layout.operator("particle.weight_set")
+        layout.operator("particle.unify_length", icon = "RULER")
+        layout.operator("particle.rekey", icon = "KEY_HLT")
+        layout.operator("particle.weight_set", icon = "MOD_VERTEX_WEIGHT")
 
         layout.separator()
 
