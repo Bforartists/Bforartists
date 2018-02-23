@@ -2159,12 +2159,12 @@ class VIEW3D_MT_paint_weight(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("paint.weight_from_bones", text="Assign Automatic From Bones").type = 'AUTOMATIC'
-        layout.operator("paint.weight_from_bones", text="Assign From Bone Envelopes").type = 'ENVELOPES'
+        layout.operator("paint.weight_from_bones", text="Assign Automatic From Bones", icon = "BONE_DATA").type = 'AUTOMATIC'
+        layout.operator("paint.weight_from_bones", text="Assign From Bone Envelopes", icon = "ENVELOPE_MODIFIER").type = 'ENVELOPES'
 
         layout.separator()
 
-        layout.operator("paint.weight_set")
+        layout.operator("paint.weight_set", icon = "MOD_VERTEX_WEIGHT")
 
 # ********** Sculpt menu **********
 
