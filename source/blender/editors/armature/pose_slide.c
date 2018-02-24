@@ -674,22 +674,22 @@ static void pose_slide_draw_status(tPoseSlideOp *pso)
 	
 	switch (pso->channels) {
 		case PS_TFM_LOC:
-			BLI_snprintf(limits_str, sizeof(limits_str), "[G]/R/S/B/C - Location only (G to clear) | %s", axis_str);
+			BLI_snprintf(limits_str, sizeof(limits_str), "[W]/E/R/B/C - Location only (W to clear) | %s", axis_str); /*bfa - changed keys from grs to wer*/
 			break;
 		case PS_TFM_ROT:
-			BLI_snprintf(limits_str, sizeof(limits_str), "G/[R]/S/B/C - Rotation only (R to clear) | %s", axis_str);
+			BLI_snprintf(limits_str, sizeof(limits_str), "W/[E]/R/B/C - Rotation only (E to clear) | %s", axis_str);/*bfa - changed keys from grs to wer*/
 			break;
 		case PS_TFM_SIZE:
-			BLI_snprintf(limits_str, sizeof(limits_str), "G/R/[S]/B/C - Scale only (S to clear) | %s", axis_str);
+			BLI_snprintf(limits_str, sizeof(limits_str), "W/E/[R]/B/C - Scale only (R to clear) | %s", axis_str);/*bfa - changed keys from grs to wer*/
 			break;
 		case PS_TFM_BBONE_SHAPE:
-			BLI_strncpy(limits_str, "G/R/S/[B]/C - Bendy Bone properties only (B to clear) | %s", sizeof(limits_str));
+			BLI_strncpy(limits_str, "W/E/R/[B]/C - Bendy Bone properties only (B to clear) | %s", sizeof(limits_str));/*bfa - changed keys from grs to wer*/
 			break;
 		case PS_TFM_PROPS:
-			BLI_strncpy(limits_str, "G/R/S/B/[C] - Custom Properties only (C to clear) | %s", sizeof(limits_str));
+			BLI_strncpy(limits_str, "W/E/R/B/[C] - Custom Properties only (C to clear) | %s", sizeof(limits_str));/*bfa - changed keys from grs to wer*/
 			break;
 		default:
-			BLI_strncpy(limits_str, "G/R/S/B/C - Limit to Transform/Property Set", sizeof(limits_str));
+			BLI_strncpy(limits_str, "W/E/R/B/C - Limit to Transform/Property Set", sizeof(limits_str));/*bfa - changed keys from grs to wer*/
 			break;
 	}
 	
@@ -924,19 +924,19 @@ static int pose_slide_modal(bContext *C, wmOperator *op, const wmEvent *event)
 				switch (event->type) {
 					/* Transform Channel Limits  */
 					/* XXX: Replace these hardcoded hotkeys with a modalmap that can be customised */
-					case GKEY: /* Location */
+					case WKEY: /* Location *//*bfa - changed keys from grs to wer*/
 					{
 						pose_slide_toggle_channels_mode(op, pso, PS_TFM_LOC);
 						do_pose_update = true;
 						break;
 					}
-					case RKEY: /* Rotation */
+					case EKEY: /* Rotation *//*bfa - changed keys from grs to wer*/
 					{
 						pose_slide_toggle_channels_mode(op, pso, PS_TFM_ROT);
 						do_pose_update = true;
 						break;
 					}
-					case SKEY: /* Scale */
+					case RKEY: /* Scale *//*bfa - changed keys from grs to wer*/
 					{
 						pose_slide_toggle_channels_mode(op, pso, PS_TFM_SIZE);
 						do_pose_update = true;
