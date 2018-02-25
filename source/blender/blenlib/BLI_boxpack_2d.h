@@ -25,10 +25,10 @@
  * ***** END GPL LICENSE BLOCK *****
  */
 
-#ifndef __BLI_BOXPACK2D_H__
-#define __BLI_BOXPACK2D_H__
+#ifndef __BLI_BOXPACK_2D_H__
+#define __BLI_BOXPACK_2D_H__
 
-/** \file BLI_boxpack2d.h
+/** \file BLI_boxpack_2d.h
  *  \ingroup bli
  */
 
@@ -39,7 +39,7 @@ typedef struct BoxPack {
 	float y;
 	float w;
 	float h;
-	
+
 	/* Verts this box uses
 	 * (BL,TR,TL,BR) / 0,1,2,3 */
 	struct BoxVert *v[4];
@@ -49,5 +49,5 @@ typedef struct BoxPack {
 
 void BLI_box_pack_2d(BoxPack *boxarray, const unsigned int len, float *tot_width, float *tot_height);
 
-#endif
+#endif  /* __BLI_BOXPACK_2D_H__ */
 

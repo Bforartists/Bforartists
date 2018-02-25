@@ -116,7 +116,7 @@ void		WM_file_autoexec_init(const char *filepath);
 bool		WM_file_read(struct bContext *C, const char *filepath, struct ReportList *reports);
 void		WM_autosave_init(struct wmWindowManager *wm);
 void		WM_recover_last_session(struct bContext *C, struct ReportList *reports);
-void		WM_file_tag_modified(const struct bContext *C);
+void		WM_file_tag_modified(void);
 
 void        WM_lib_reload(struct Library *lib, struct bContext *C, struct ReportList *reports);
 
@@ -378,6 +378,7 @@ struct MenuType    *WM_menutype_find(const char *idname, bool quiet);
 bool                WM_menutype_add(struct MenuType *mt);
 void                WM_menutype_freelink(struct MenuType *mt);
 void                WM_menutype_free(void);
+bool                WM_menutype_poll(struct bContext *C, struct MenuType *mt);
 
 /* wm_gesture_ops.c */
 int			WM_gesture_border_invoke	(struct bContext *C, struct wmOperator *op, const struct wmEvent *event);

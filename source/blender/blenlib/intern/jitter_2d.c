@@ -25,7 +25,7 @@
  * ***** END GPL LICENSE BLOCK *****
  */
 
-/** \file blender/blenlib/intern/jitter.c
+/** \file blender/blenlib/intern/jitter_2d.c
  *  \ingroup bli
  *  \brief Jitter offset table
  */
@@ -35,7 +35,7 @@
 #include "MEM_guardedalloc.h"
 
 #include "BLI_rand.h"
-#include "BLI_jitter.h"
+#include "BLI_jitter_2d.h"
 
 #include "BLI_strict_flags.h"
 

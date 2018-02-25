@@ -15,20 +15,27 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
+ * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
+ * All rights reserved.
+ *
+ * The Original Code is: all of this file.
+ *
+ * Contributor(s): none yet.
+ *
  * ***** END GPL LICENSE BLOCK *****
  */
 
-#ifndef __BLI_CONVEXHULL2D_H__
-#define __BLI_CONVEXHULL2D_H__
+#ifndef __BLI_LASSO_2D_H__
+#define __BLI_LASSO_2D_H__
 
-/** \file BLI_convexhull2d.h
+/** \file BLI_lasso_2d.h
  *  \ingroup bli
  */
 
-int BLI_convexhull_2d_sorted(const float (*points)[2], const int n, int r_points[]);
-int BLI_convexhull_2d(const float (*points)[2], const int n, int r_points[]);
+struct rcti;
 
-float BLI_convexhull_aabb_fit_hull_2d(const float (*points_hull)[2], unsigned int n);
-float BLI_convexhull_aabb_fit_points_2d(const float (*points)[2], unsigned int n);
+void BLI_lasso_boundbox(struct rcti *rect, const int mcords[][2], const unsigned int moves);
+bool BLI_lasso_is_point_inside(const int mcords[][2], const unsigned int moves, const int sx, const int sy, const int error_value);
+bool BLI_lasso_is_edge_inside(const int mcords[][2], const unsigned int moves, int x0, int y0, int x1, int y1, const int error_value);
 
-#endif  /* __BLI_CONVEXHULL2D_H__ */
+#endif  /* __BLI_LASSO_2D_H__ */

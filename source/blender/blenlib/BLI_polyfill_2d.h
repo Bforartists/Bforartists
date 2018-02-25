@@ -15,27 +15,29 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
- * All rights reserved.
- *
- * The Original Code is: all of this file.
- *
- * Contributor(s): none yet.
- *
  * ***** END GPL LICENSE BLOCK *****
  */
 
-#ifndef __BLI_LASSO_H__
-#define __BLI_LASSO_H__
+#ifndef __BLI_POLYFILL_2D_H__
+#define __BLI_POLYFILL_2D_H__
 
-/** \file BLI_lasso.h
- *  \ingroup bli
- */
+struct MemArena;
 
-struct rcti;
+void BLI_polyfill_calc_arena(
+        const float (*coords)[2],
+        const unsigned int coords_tot,
+        const int coords_sign,
+        unsigned int (*r_tris)[3],
 
-void BLI_lasso_boundbox(struct rcti *rect, const int mcords[][2], const unsigned int moves);
-bool BLI_lasso_is_point_inside(const int mcords[][2], const unsigned int moves, const int sx, const int sy, const int error_value);
-bool BLI_lasso_is_edge_inside(const int mcords[][2], const unsigned int moves, int x0, int y0, int x1, int y1, const int error_value);
+        struct MemArena *arena);
 
-#endif
+void BLI_polyfill_calc(
+        const float (*coords)[2],
+        const unsigned int coords_tot,
+        const int coords_sign,
+        unsigned int (*r_tris)[3]);
+
+/* default size of polyfill arena */
+#define BLI_POLYFILL_ARENA_SIZE MEM_SIZE_OPTIMAL(1 << 14)
+
+#endif  /* __BLI_POLYFILL_2D_H__ */

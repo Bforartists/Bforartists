@@ -545,7 +545,7 @@ static bool build_deg_tracking_constraints(DagForest *dag,
 	return true;
 }
 
-static void build_dag_object(DagForest *dag, DagNode *scenenode, Main *bmain, Scene *scene, Object *ob, int mask)
+static void build_dag_object(DagForest *dag, DagNode *scenenode, Scene *scene, Object *ob, int mask)
 {
 	bConstraint *con;
 	DagNode *node;
@@ -645,11 +645,17 @@ static void build_dag_object(DagForest *dag, DagNode *scenenode, Main *bmain, Sc
 
 	if (ob->modifiers.first) {
 		ModifierData *md;
-		
+		ModifierUpdateDepsgraphContext ctx = {
+			.scene = scene,
+			.object = ob,
+
+			.forest = dag,
+			.obNode = node,
+		};
 		for (md = ob->modifiers.first; md; md = md->next) {
 			const ModifierTypeInfo *mti = modifierType_getInfo(md->type);
 			
-			if (mti->updateDepgraph) mti->updateDepgraph(md, dag, bmain, scene, ob, node);
+			if (mti->updateDepgraph) mti->updateDepgraph(md, &ctx);
 		}
 	}
 	if (ob->parent) {
@@ -946,7 +952,7 @@ static void build_dag_group(DagForest *dag, DagNode *scenenode, Main *bmain, Sce
 	group->id.tag |= LIB_TAG_DOIT;
 
 	for (go = group->gobject.first; go; go = go->next) {
-		build_dag_object(dag, scenenode, bmain, scene, go->ob, mask);
+		build_dag_object(dag, scenenode, scene, go->ob, mask);
 		if (go->ob->dup_group)
 			build_dag_group(dag, scenenode, bmain, scene, go->ob->dup_group, mask);
 	}
@@ -984,9 +990,9 @@ DagForest *build_dag(Main *bmain, Scene *sce, short mask)
 	for (base = sce->base.first; base; base = base->next) {
 		ob = base->object;
 		ob->id.tag |= LIB_TAG_DOIT;
-		build_dag_object(dag, scenenode, bmain, sce, ob, mask);
+		build_dag_object(dag, scenenode, sce, ob, mask);
 		if (ob->proxy)
-			build_dag_object(dag, scenenode, bmain, sce, ob->proxy, mask);
+			build_dag_object(dag, scenenode, sce, ob->proxy, mask);
 		if (ob->dup_group) 
 			build_dag_group(dag, scenenode, bmain, sce, ob->dup_group, mask);
 	}
@@ -1011,9 +1017,9 @@ DagForest *build_dag(Main *bmain, Scene *sce, short mask)
 			ob = node->ob;
 			if ((ob->id.tag & LIB_TAG_DOIT) == 0) {
 				ob->id.tag |= LIB_TAG_DOIT;
-				build_dag_object(dag, scenenode, bmain, sce, ob, mask);
+				build_dag_object(dag, scenenode, sce, ob, mask);
 				if (ob->proxy)
-					build_dag_object(dag, scenenode, bmain, sce, ob->proxy, mask);
+					build_dag_object(dag, scenenode, sce, ob->proxy, mask);
 				if (ob->dup_group)
 					build_dag_group(dag, scenenode, bmain, sce, ob->dup_group, mask);
 			}
@@ -3002,7 +3008,7 @@ void DAG_id_tag_update_ex(Main *bmain, ID *id, short flag)
 
 	if (id == NULL) return;
 
-	if (G.debug & G_DEBUG_DEPSGRAPH) {
+	if (G.debug & G_DEBUG_DEPSGRAPH_TAG) {
 		printf("%s: id=%s flag=%d\n", __func__, id->name, flag);
 	}
 
