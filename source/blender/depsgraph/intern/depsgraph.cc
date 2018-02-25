@@ -149,16 +149,20 @@ static bool pointer_to_component_node_criteria(
 		Object *object = (Object *)ptr->id.data;
 		bConstraint *con = (bConstraint *)ptr->data;
 		/* Check whether is object or bone constraint. */
+		/* NOTE: Currently none of the area can address transform of an object
+		 * at a given constraint, but for rigging one might use constraint
+		 * influence to be used to drive some corrective shape keys or so.
+		 */
 		if (BLI_findindex(&object->constraints, con) != -1) {
-			/* Constraint is defining object transform. */
 			*type = DEG_NODE_TYPE_TRANSFORM;
+			*operation_code = DEG_OPCODE_TRANSFORM_LOCAL;
 			return true;
 		}
 		else if (object->pose != NULL) {
 			LISTBASE_FOREACH(bPoseChannel *, pchan, &object->pose->chanbase) {
 				if (BLI_findindex(&pchan->constraints, con) != -1) {
-					/* bone transforms */
 					*type = DEG_NODE_TYPE_BONE;
+					*operation_code = DEG_OPCODE_BONE_LOCAL;
 					*subdata = pchan->name;
 					return true;
 				}
@@ -286,7 +290,6 @@ IDDepsNode *Depsgraph::add_id_node(ID *id, const char *name)
 	if (!id_node) {
 		DepsNodeFactory *factory = deg_type_get_factory(DEG_NODE_TYPE_ID_REF);
 		id_node = (IDDepsNode *)factory->create_node(id, "", name);
-		id->tag |= LIB_TAG_DOIT;
 		/* register */
 		BLI_ghash_insert(id_hash, id, id_node);
 		id_nodes.push_back(id_node);

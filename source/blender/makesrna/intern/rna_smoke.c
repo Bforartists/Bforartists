@@ -362,6 +362,42 @@ static void rna_SmokeModifier_heat_grid_get(PointerRNA *ptr, float *values)
 #endif
 }
 
+static void rna_SmokeModifier_temperature_grid_get(PointerRNA *ptr, float *values)
+{
+#ifdef WITH_SMOKE
+	SmokeDomainSettings *sds = (SmokeDomainSettings *)ptr->data;
+	int length[RNA_MAX_ARRAY_DIMENSION];
+	int size = rna_SmokeModifier_grid_get_length(ptr, length);
+	float *flame;
+
+	BLI_rw_mutex_lock(sds->fluid_mutex, THREAD_LOCK_READ);
+
+	if (sds->flags & MOD_SMOKE_HIGHRES && sds->wt) {
+		flame = smoke_turbulence_get_flame(sds->wt);
+	}
+	else {
+		flame = smoke_get_flame(sds->fluid);
+	}
+
+	if (flame) {
+		/* Output is such that 0..1 maps to 0..1000K */
+		float offset = sds->flame_ignition;
+		float scale = sds->flame_max_temp - sds->flame_ignition;
+
+		for (int i = 0; i < size; i++) {
+			values[i] = (flame[i] > 0.01f) ? offset + flame[i] * scale : 0.0f;
+		}
+	}
+	else {
+		memset(values, 0, size * sizeof(float));
+	}
+
+	BLI_rw_mutex_unlock(sds->fluid_mutex);
+#else
+	UNUSED_VARS(ptr, values);
+#endif
+}
+
 static void rna_SmokeFlow_density_vgroup_get(PointerRNA *ptr, char *value)
 {
 	SmokeFlowSettings *flow = (SmokeFlowSettings *)ptr->data;
@@ -677,6 +713,14 @@ static void rna_def_smoke_domain_settings(BlenderRNA *brna)
 	RNA_def_property_float_funcs(prop, "rna_SmokeModifier_heat_grid_get", NULL, NULL);
 	RNA_def_property_ui_text(prop, "Heat Grid", "Smoke heat grid");
 
+	prop = RNA_def_property(srna, "temperature_grid", PROP_FLOAT, PROP_NONE);
+	RNA_def_property_array(prop, 32);
+	RNA_def_property_flag(prop, PROP_DYNAMIC);
+	RNA_def_property_clear_flag(prop, PROP_EDITABLE);
+	RNA_def_property_dynamic_array_funcs(prop, "rna_SmokeModifier_grid_get_length");
+	RNA_def_property_float_funcs(prop, "rna_SmokeModifier_temperature_grid_get", NULL, NULL);
+	RNA_def_property_ui_text(prop, "Temperature Grid", "Smoke temperature grid, range 0..1 represents 0..1000K");
+
 	prop = RNA_def_property(srna, "cell_size", PROP_FLOAT, PROP_XYZ); /* can change each frame when using adaptive domain */
 	RNA_def_property_clear_flag(prop, PROP_EDITABLE);
 	RNA_def_property_ui_text(prop, "cell_size", "Cell Size");
@@ -854,6 +898,14 @@ static void rna_def_smoke_domain_settings(BlenderRNA *brna)
 	RNA_def_property_struct_type(prop, "ColorRamp");
 	RNA_def_property_ui_text(prop, "Color Ramp", "");
 	RNA_def_property_update(prop, NC_OBJECT | ND_DRAW, NULL);
+
+	prop = RNA_def_property(srna, "clipping", PROP_FLOAT, PROP_NONE);
+	RNA_def_property_float_sdna(prop, NULL, "clipping");
+	RNA_def_property_range(prop, 0.0, 1.0);
+	RNA_def_property_ui_range(prop, 0.0, 1.0, 0.1, 3);
+	RNA_def_property_ui_text(prop, "Clipping",
+							 "Value under which voxels are considered empty space to optimize caching or rendering");
+	RNA_def_property_update(prop, NC_OBJECT | ND_MODIFIER, NULL);
 }
 
 static void rna_def_smoke_flow_settings(BlenderRNA *brna)

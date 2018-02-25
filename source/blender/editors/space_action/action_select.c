@@ -36,7 +36,7 @@
 
 #include "BLI_blenlib.h"
 #include "BLI_dlrbTree.h"
-#include "BLI_lasso.h"
+#include "BLI_lasso_2d.h"
 #include "BLI_utildefines.h"
 
 #include "DNA_anim_types.h"
@@ -220,7 +220,7 @@ static void borderselect_action(bAnimContext *ac, const rcti rect, short mode, s
 	UI_view2d_region_to_view(v2d, rect.xmax, rect.ymax - 2, &rectf.xmax, &rectf.ymax);
 	
 	/* filter data */
-	filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_LIST_CHANNELS | ANIMFILTER_NODUPLIS);
+	filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_LIST_CHANNELS);
 	ANIM_animdata_filter(ac, &anim_data, filter, ac->data, ac->datatype);
 	
 	/* get beztriple editing/validation funcs  */
@@ -262,7 +262,7 @@ static void borderselect_action(bAnimContext *ac, const rcti rect, short mode, s
 		{
 			/* loop over data selecting */
 			switch (ale->type) {
-#if 0 /* XXXX: Keyframes are not currently shown here */
+#if 0 /* XXX: Keyframes are not currently shown here */
 				case ANIMTYPE_GPDATABLOCK:
 				{
 					bGPdata *gpd = ale->data;
@@ -401,7 +401,7 @@ static void region_select_action_keys(bAnimContext *ac, const rctf *rectf_view, 
 	UI_view2d_region_to_view_rctf(v2d, rectf_view, &rectf);
 	
 	/* filter data */
-	filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_LIST_CHANNELS | ANIMFILTER_NODUPLIS);
+	filter = (ANIMFILTER_DATA_VISIBLE | ANIMFILTER_LIST_VISIBLE | ANIMFILTER_LIST_CHANNELS);
 	ANIM_animdata_filter(ac, &anim_data, filter, ac->data, ac->datatype);
 	
 	/* get beztriple editing/validation funcs  */
@@ -466,6 +466,7 @@ static void region_select_action_keys(bAnimContext *ac, const rctf *rectf_view, 
 		{
 			/* loop over data selecting */
 			switch (ale->type) {
+#if 0 /* XXX: Keyframes are not currently shown here */
 				case ANIMTYPE_GPDATABLOCK:
 				{
 					bGPdata *gpd = ale->data;
@@ -475,6 +476,7 @@ static void region_select_action_keys(bAnimContext *ac, const rctf *rectf_view, 
 					}
 					break;
 				}
+#endif
 				case ANIMTYPE_GPLAYER:
 				{
 					ED_gplayer_frames_select_region(&ked, ale->data, mode, selectmode);
@@ -717,8 +719,6 @@ static void columnselect_action_keys(bAnimContext *ac, short mode)
 	CfraElem *ce;
 	KeyframeEditFunc select_cb, ok_cb;
 	KeyframeEditData ked = {{NULL}};
-	
-	/* initialize keyframe editing data */
 	
 	/* build list of columns */
 	switch (mode) {

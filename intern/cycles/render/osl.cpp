@@ -233,18 +233,25 @@ void OSLShaderManager::shading_system_init()
 			"glossy",			/* PATH_RAY_GLOSSY */
 			"singular",			/* PATH_RAY_SINGULAR */
 			"transparent",		/* PATH_RAY_TRANSPARENT */
+
 			"shadow",			/* PATH_RAY_SHADOW_OPAQUE_NON_CATCHER */
 			"shadow",			/* PATH_RAY_SHADOW_OPAQUE_CATCHER */
 			"shadow",			/* PATH_RAY_SHADOW_TRANSPARENT_NON_CATCHER */
 			"shadow",			/* PATH_RAY_SHADOW_TRANSPARENT_CATCHER */
 
 			"__unused__",
+			"volume_scatter",	/* PATH_RAY_VOLUME_SCATTER */
+			"__unused__",
+
 			"__unused__",
 			"diffuse_ancestor",	/* PATH_RAY_DIFFUSE_ANCESTOR */
 			"__unused__",
 			"__unused__",
-			"__unused__",		/* PATH_RAY_SINGLE_PASS_DONE */
-			"volume_scatter",	/* PATH_RAY_VOLUME_SCATTER */
+			"__unused__",
+			"__unused__",
+			"__unused__",
+			"__unused__",
+			"__unused__",
 		};
 
 		const int nraytypes = sizeof(raytypes)/sizeof(raytypes[0]);
@@ -737,6 +744,10 @@ void OSLCompiler::add(ShaderNode *node, const char *name, bool isfilepath)
 		current_shader->has_object_dependency = true;
 	}
 
+	if(node->has_attribute_dependency()) {
+		current_shader->has_attribute_dependency = true;
+	}
+
 	if(node->has_integrator_dependency()) {
 		current_shader->has_integrator_dependency = true;
 	}
@@ -984,6 +995,14 @@ void OSLCompiler::parameter_color_array(const char *name, const array<float3>& f
 	ss->Parameter(name, type, table.data());
 }
 
+void OSLCompiler::parameter_attribute(const char *name, ustring s)
+{
+	if(Attribute::name_standard(s.c_str()))
+		parameter(name, (string("geom:") + s.c_str()).c_str());
+	else
+		parameter(name, s.c_str());
+}
+
 void OSLCompiler::find_dependencies(ShaderNodeSet& dependencies, ShaderInput *input)
 {
 	ShaderNode *node = (input->link)? input->link->parent: NULL;
@@ -1117,6 +1136,7 @@ void OSLCompiler::compile(Scene *scene, OSLGlobals *og, Shader *shader)
 		shader->has_surface_spatial_varying = false;
 		shader->has_volume_spatial_varying = false;
 		shader->has_object_dependency = false;
+		shader->has_attribute_dependency = false;
 		shader->has_integrator_dependency = false;
 
 		/* generate surface shader */
