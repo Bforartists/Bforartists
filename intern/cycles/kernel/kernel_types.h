@@ -347,12 +347,31 @@ enum PathRayFlag {
 
 	PATH_RAY_ALL_VISIBILITY = ((1 << 14)-1),
 
-	PATH_RAY_MIS_SKIP               = (1 << 15),
-	PATH_RAY_DIFFUSE_ANCESTOR       = (1 << 16),
-	PATH_RAY_SINGLE_PASS_DONE       = (1 << 17),
-	PATH_RAY_SHADOW_CATCHER         = (1 << 18),
-	PATH_RAY_STORE_SHADOW_INFO      = (1 << 19),
-	PATH_RAY_TRANSPARENT_BACKGROUND = (1 << 20),
+	/* Don't apply multiple importance sampling weights to emission from
+	 * lamp or surface hits, because they were not direct light sampled. */
+	PATH_RAY_MIS_SKIP                    = (1 << 14),
+	/* Diffuse bounce earlier in the path, skip SSS to improve performance
+	 * and avoid branching twice with disk sampling SSS. */
+	PATH_RAY_DIFFUSE_ANCESTOR            = (1 << 15),
+	/* Single pass has been written. */
+	PATH_RAY_SINGLE_PASS_DONE            = (1 << 16),
+	/* Ray is behind a shadow catcher .*/
+	PATH_RAY_SHADOW_CATCHER              = (1 << 17),
+	/* Store shadow data for shadow catcher or denoising. */
+	PATH_RAY_STORE_SHADOW_INFO           = (1 << 18),
+	/* Zero background alpha, for camera or transparent glass rays. */
+	PATH_RAY_TRANSPARENT_BACKGROUND      = (1 << 19),
+	/* Terminate ray immediately at next bounce. */
+	PATH_RAY_TERMINATE_IMMEDIATE         = (1 << 20),
+	/* Ray is to be terminated, but continue with transparent bounces and
+	 * emission as long as we encounter them. This is required to make the
+	 * MIS between direct and indirect light rays match, as shadow rays go
+	 * through transparent surfaces to reach emisison too. */
+	PATH_RAY_TERMINATE_AFTER_TRANSPARENT = (1 << 21),
+	/* Ray is to be terminated. */
+	PATH_RAY_TERMINATE                   = (PATH_RAY_TERMINATE_IMMEDIATE|PATH_RAY_TERMINATE_AFTER_TRANSPARENT),
+	/* Path and shader is being evaluated for direct lighting emission. */
+	PATH_RAY_EMISSION                    = (1 << 22)
 };
 
 /* Closure Label */
@@ -779,6 +798,7 @@ typedef enum AttributeStandard {
 	ATTR_STD_VOLUME_COLOR,
 	ATTR_STD_VOLUME_FLAME,
 	ATTR_STD_VOLUME_HEAT,
+	ATTR_STD_VOLUME_TEMPERATURE,
 	ATTR_STD_VOLUME_VELOCITY,
 	ATTR_STD_POINTINESS,
 	ATTR_STD_NUM,
@@ -905,19 +925,22 @@ enum ShaderDataFlag {
 	SD_HAS_DISPLACEMENT       = (1 << 26),
 	/* Has constant emission (value stored in __shader_flag) */
 	SD_HAS_CONSTANT_EMISSION  = (1 << 27),
+	/* Needs to access attributes */
+	SD_NEED_ATTRIBUTES        = (1 << 28),
 
 	SD_SHADER_FLAGS = (SD_USE_MIS |
 	                   SD_HAS_TRANSPARENT_SHADOW |
 	                   SD_HAS_VOLUME |
 	                   SD_HAS_ONLY_VOLUME |
-	                   SD_HETEROGENEOUS_VOLUME|
+	                   SD_HETEROGENEOUS_VOLUME |
 	                   SD_HAS_BSSRDF_BUMP |
 	                   SD_VOLUME_EQUIANGULAR |
 	                   SD_VOLUME_MIS |
 	                   SD_VOLUME_CUBIC |
 	                   SD_HAS_BUMP |
 	                   SD_HAS_DISPLACEMENT |
-	                   SD_HAS_CONSTANT_EMISSION)
+	                   SD_HAS_CONSTANT_EMISSION |
+	                   SD_NEED_ATTRIBUTES)
 };
 
 	/* Object flags. */
@@ -938,6 +961,8 @@ enum ShaderDataObjectFlag {
 	SD_OBJECT_HAS_VERTEX_MOTION      = (1 << 6),
 	/* object is used to catch shadows */
 	SD_OBJECT_SHADOW_CATCHER         = (1 << 7),
+	/* object has volume attributes */
+	SD_OBJECT_HAS_VOLUME_ATTRIBUTES  = (1 << 8),
 
 	SD_OBJECT_FLAGS = (SD_OBJECT_HOLDOUT_MASK |
 	                   SD_OBJECT_MOTION |
@@ -945,7 +970,8 @@ enum ShaderDataObjectFlag {
 	                   SD_OBJECT_NEGATIVE_SCALE_APPLIED |
 	                   SD_OBJECT_HAS_VOLUME |
 	                   SD_OBJECT_INTERSECTS_VOLUME |
-	                   SD_OBJECT_SHADOW_CATCHER)
+	                   SD_OBJECT_SHADOW_CATCHER |
+	                   SD_OBJECT_HAS_VOLUME_ATTRIBUTES)
 };
 
 typedef ccl_addr_space struct ShaderData {
