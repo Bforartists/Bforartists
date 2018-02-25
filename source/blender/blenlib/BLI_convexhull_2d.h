@@ -18,28 +18,17 @@
  * ***** END GPL LICENSE BLOCK *****
  */
 
-#ifndef __BLI_POLYFILL2D_BEAUTIFY_H__
-#define __BLI_POLYFILL2D_BEAUTIFY_H__
+#ifndef __BLI_CONVEXHULL_2D_H__
+#define __BLI_CONVEXHULL_2D_H__
 
-struct Heap;
-struct MemArena;
+/** \file BLI_convexhull_2d.h
+ *  \ingroup bli
+ */
 
-void BLI_polyfill_beautify(
-        const float (*coords)[2],
-        const unsigned int coords_tot,
-        unsigned int (*tris)[3],
+int BLI_convexhull_2d_sorted(const float (*points)[2], const int n, int r_points[]);
+int BLI_convexhull_2d(const float (*points)[2], const int n, int r_points[]);
 
-        /* structs for reuse */
-        struct MemArena *arena, struct Heap *eheap);
+float BLI_convexhull_aabb_fit_hull_2d(const float (*points_hull)[2], unsigned int n);
+float BLI_convexhull_aabb_fit_points_2d(const float (*points)[2], unsigned int n);
 
-float BLI_polyfill_beautify_quad_rotate_calc_ex(
-        const float v1[2], const float v2[2], const float v3[2], const float v4[2],
-        const bool lock_degenerate);
-#define BLI_polyfill_beautify_quad_rotate_calc(v1, v2, v3, v4) \
-	BLI_polyfill_beautify_quad_rotate_calc_ex(v1, v2, v3, v4, false)
-
-
-/* avoid realloc's when creating new structures for polyfill ngons */
-#define BLI_POLYFILL_ALLOC_NGON_RESERVE 64
-
-#endif  /* __BLI_POLYFILL2D_BEAUTIFY_H__ */
+#endif  /* __BLI_CONVEXHULL_2D_H__ */

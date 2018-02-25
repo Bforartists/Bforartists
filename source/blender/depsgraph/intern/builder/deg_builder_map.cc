@@ -15,26 +15,50 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * The Original Code is Copyright (C) 2001-2002 by NaN Holding BV.
+ * The Original Code is Copyright (C) 2018 Blender Foundation.
  * All rights reserved.
  *
- * The Original Code is: all of this file.
- *
- * Contributor(s): none yet.
+ * Original Author: Sergey Sharybin
+ * Contributor(s): None Yet
  *
  * ***** END GPL LICENSE BLOCK *****
  */
 
-#ifndef __BLI_JITTER_H__
-#define __BLI_JITTER_H__ 
-
-/** \file BLI_jitter.h
- *  \ingroup bli
+/** \file blender/depsgraph/intern/builder/deg_builder_map.cc
+ *  \ingroup depsgraph
  */
 
-void BLI_jitter_init(float (*jitarr)[2], int num);
-void BLI_jitterate1(float (*jit1)[2], float (*jit2)[2], int num, float radius1);
-void BLI_jitterate2(float (*jit1)[2], float (*jit2)[2], int num, float radius2);
+#include "intern/builder/deg_builder_map.h"
 
-#endif
+#include "BLI_utildefines.h"
+#include "BLI_ghash.h"
 
+namespace DEG {
+
+BuilderMap::BuilderMap() {
+	set = BLI_gset_ptr_new("deg builder gset");
+}
+
+
+BuilderMap::~BuilderMap() {
+	BLI_gset_free(set, NULL);
+}
+
+bool BuilderMap::checkIsBuilt(ID *id) {
+	return BLI_gset_haskey(set, id);
+}
+
+void BuilderMap::tagBuild(ID *id) {
+	BLI_gset_insert(set, id);
+}
+
+bool BuilderMap::checkIsBuiltAndTag(ID *id) {
+	void **key_p;
+	if (!BLI_gset_ensure_p_ex(set, id, &key_p)) {
+		*key_p = id;
+		return false;
+	}
+	return true;
+}
+
+}  // namespace DEG
