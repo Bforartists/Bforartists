@@ -156,46 +156,34 @@ class CYCLES_RENDER_PT_sampling(CyclesButtonsPanel, Panel):
 
         row = layout.row()
         sub = row.row()
+        sub.active = get_device_type(context) != 'OPENCL' or use_cpu(context)
         sub.prop(cscene, "progressive", text="")
         row.prop(cscene, "use_square_samples")
 
-        split = layout.split()
+        if cscene.progressive == 'PATH' or use_branched_path(context) == False:
 
-        col = split.column()
-        sub = col.column(align=True)
-        sub.label("Settings:")
-
-        seed_sub = sub.row(align=True)
-        seed_sub.prop(cscene, "seed")
-        seed_sub.prop(cscene, "use_animated_seed", text="", icon="TIME")
-
-        sub.prop(cscene, "sample_clamp_direct")
-        sub.prop(cscene, "sample_clamp_indirect")
-        sub.prop(cscene, "light_sampling_threshold")
-
-        if cscene.progressive == 'PATH' or use_branched_path(context) is False:
-            col = split.column()
-            sub = col.column(align=True)
-            sub.label(text="Samples:")
-            sub.prop(cscene, "samples", text="Render")
-            sub.prop(cscene, "preview_samples", text="Preview")
+            row = layout.row()
+            row.label("Samples:")
+            row = layout.row()
+            row.prop(cscene, "samples", text="Render")
+            row.prop(cscene, "preview_samples", text="Preview")
+            
         else:
-            sub.label(text="AA Samples:")
-            sub.prop(cscene, "aa_samples", text="Render")
-            sub.prop(cscene, "preview_aa_samples", text="Preview")
 
+            row = layout.row()
+            row.label("Samples:")
+
+            split = layout.split()
             col = split.column()
             sub = col.column(align=True)
-            sub.label(text="Samples:")
             sub.prop(cscene, "diffuse_samples", text="Diffuse")
             sub.prop(cscene, "glossy_samples", text="Glossy")
             sub.prop(cscene, "transmission_samples", text="Transmission")
             sub.prop(cscene, "ao_samples", text="AO")
 
-            subsub = sub.row(align=True)
-            subsub.active = use_sample_all_lights(context)
-            subsub.prop(cscene, "mesh_light_samples", text="Mesh Light")
-
+            col = split.column()
+            sub = col.column(align=True)  
+            sub.prop(cscene, "mesh_light_samples", text="Mesh Light")
             sub.prop(cscene, "subsurface_samples", text="Subsurface")
             sub.prop(cscene, "volume_samples", text="Volume")
 
@@ -248,6 +236,9 @@ class CYCLES_RENDER_PT_sampling(CyclesButtonsPanel, Panel):
                 sub.prop(cscene, "sample_clamp_direct")
                 sub.prop(cscene, "sample_clamp_indirect")
                
+                sub.separator()
+                sub.separator()
+                sub.separator()
                 sub.separator()
 
                 sub.prop(cscene, "sample_all_lights_direct")
