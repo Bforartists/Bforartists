@@ -338,12 +338,6 @@ class CYCLES_RENDER_PT_light_paths(CyclesButtonsPanel, Panel):
         sub.label("Transparency:")
         sub.prop(cscene, "transparent_max_bounces", text="Max")
 
-        col.separator()
-
-        col.prop(cscene, "caustics_reflective")
-        col.prop(cscene, "caustics_refractive")
-        col.prop(cscene, "blur_glossy")
-
         col = split.column()
 
         sub = col.column(align=True)
