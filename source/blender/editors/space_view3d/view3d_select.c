@@ -916,60 +916,7 @@ void VIEW3D_OT_select_lasso(wmOperatorType *ot)
 	WM_operator_properties_gesture_lasso_select(ot);
 }
 
-
-/* ************************************************* */
-
-#if 0
-/* smart function to sample a rect spiralling outside, nice for backbuf selection */
-static unsigned int samplerect(unsigned int *buf, int size, unsigned int dontdo)
-{
-	Base *base;
-	unsigned int *bufmin, *bufmax;
-	int a, b, rc, tel, len, dirvec[4][2], maxob;
-	unsigned int retval = 0;
-	
-	base = LASTBASE;
-	if (base == 0) return 0;
-	maxob = base->selcol;
-
-	len = (size - 1) / 2;
-	rc = 0;
-
-	dirvec[0][0] = 1;
-	dirvec[0][1] = 0;
-	dirvec[1][0] = 0;
-	dirvec[1][1] = -size;
-	dirvec[2][0] = -1;
-	dirvec[2][1] = 0;
-	dirvec[3][0] = 0;
-	dirvec[3][1] = size;
-
-	bufmin = buf;
-	bufmax = buf + size * size;
-	buf += len * size + len;
-
-	for (tel = 1; tel <= size; tel++) {
-
-		for (a = 0; a < 2; a++) {
-			for (b = 0; b < tel; b++) {
-
-				if (*buf && *buf <= maxob && *buf != dontdo) return *buf;
-				if (*buf == dontdo) retval = dontdo;  /* if only color dontdo is available, still return dontdo */
-				
-				buf += (dirvec[rc][0] + dirvec[rc][1]);
-
-				if (buf < bufmin || buf >= bufmax) return retval;
-			}
-			rc++;
-			rc &= 3;
-		}
-	}
-	return retval;
-}
-#endif
-
 /* ************************** mouse select ************************* */
-
 
 /* The max number of menu items in an object select menu */
 typedef struct SelMenuItemF {
@@ -1167,7 +1114,7 @@ static Base *object_mouse_select_menu(
 	}
 }
 
-static bool selectbuffer_has_bones(const unsigned int *buffer, const unsigned int hits)
+static bool selectbuffer_has_bones(const uint *buffer, const uint hits)
 {
 	unsigned int i;
 	for (i = 0; i < hits; i++) {
@@ -1288,8 +1235,9 @@ finally:
 }
 
 /* returns basact */
-static Base *mouse_select_eval_buffer(ViewContext *vc, unsigned int *buffer, int hits,
-                                      Base *startbase, bool has_bones, bool do_nearest)
+static Base *mouse_select_eval_buffer(
+        ViewContext *vc, const uint *buffer, int hits,
+        Base *startbase, bool has_bones, bool do_nearest)
 {
 	Scene *scene = vc->scene;
 	View3D *v3d = vc->v3d;
