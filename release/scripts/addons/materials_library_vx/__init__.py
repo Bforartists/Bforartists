@@ -21,7 +21,7 @@
 bl_info = {
   "name": "Material Library",
   "author": "Mackraken (mackraken2023@hotmail.com)",
-  "version": (0, 5, 7),
+  "version": (0, 5, 8),
   "blender": (2, 7, 8),
   "api": 60995,
   "location": "Properties > Material",
@@ -114,7 +114,7 @@ def check_index(collection, index):
 
 def send_command(cmd, output="sendmat.py"):
     bin = winpath(bpy.app.binary_path)
-    scriptpath = winpath(os.path.join(matlib_path, output))
+    scriptpath = winpath(os.path.join(bpy.app.tempdir, output))
 
     with open(scriptpath, "w") as f:
       f.write(cmd)
@@ -265,11 +265,10 @@ def get_libraries():
     libs = [Library(matlib_path, f) for f in os.listdir(matlib_path) if f[-5::] == "blend"]
     try:
         user_path = bpy.context.user_preferences.addons[__name__].preferences.matlib_path
-        if user_path:
-            if os.path.exists(user_path):
-                libs.extend([Library(user_path, f) for f in os.listdir(user_path) if f[-5::] == "blend"])
-            else:
-                print("path not found %s" % user_path)
+        if os.path.exists(user_path):
+            libs.extend([Library(user_path, f) for f in os.listdir(user_path) if f[-5::] == "blend"])
+        else:
+            print("path not found %s" % user_path)
     except:
         pass
     return sorted(libs, key=lambda x: bpy.path.display_name(x.name))

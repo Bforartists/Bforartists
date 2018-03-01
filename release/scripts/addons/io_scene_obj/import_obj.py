@@ -177,7 +177,7 @@ def create_materials(filepath, relpath,
 
         elif type == 'Bump':
             bump_mult = map_options.get(b'-bm')
-            bump_mult = float(bump_mult[0]) if len(bump_mult) > 1 else 1.0
+            bump_mult = float(bump_mult[0]) if (bump_mult is not None and len(bump_mult) > 1) else 1.0
 
             if use_cycles:
                 mat_wrap.normal_image_set(image)

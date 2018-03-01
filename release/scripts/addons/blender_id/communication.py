@@ -19,7 +19,10 @@
 # <pep8 compliant>
 
 import functools
+import logging
 import typing
+
+log = logging.getLogger(__name__)
 
 
 class BlenderIdCommError(RuntimeError):
@@ -84,8 +87,9 @@ def blender_id_server_authenticate(username, password) -> AuthResult:
     except (requests.exceptions.SSLError,
             requests.exceptions.HTTPError,
             requests.exceptions.ConnectionError) as e:
-        print('Exception POSTing to {}: {}'.format(url, e))
-        return AuthResult(status, error_message=e)
+        msg = 'Exception POSTing to {}: {}'.format(url, e)
+        print(msg)
+        return AuthResult(success=False, error_message=msg)
 
     if r.status_code == 200:
         resp = r.json()
@@ -117,17 +121,21 @@ def blender_id_server_validate(token) -> typing.Tuple[typing.Optional[str], typi
     import requests
     import requests.exceptions
 
+    url = blender_id_endpoint('u/validate_token')
     try:
-        r = requests.post(blender_id_endpoint('u/validate_token'),
-                          data={'token': token}, verify=True)
+        r = requests.post(url, data={'token': token}, verify=True)
+    except requests.exceptions.ConnectionError:
+        log.exception('error connecting to Blender ID at %s', url)
+        return None, 'Unable to connect to Blender ID'
     except requests.exceptions.RequestException as e:
-        return (str(e), None)
+        log.exception('error validating token at %s', url)
+        return None, str(e)
 
     if r.status_code != 200:
-        return (None, 'Authentication token invalid')
+        return None, 'Authentication token invalid'
 
     response = r.json()
-    return (response['token_expires'], None)
+    return response['token_expires'], None
 
 
 def blender_id_server_logout(user_id, token):

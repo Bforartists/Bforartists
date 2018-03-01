@@ -979,7 +979,6 @@ def draw_spline_settings(self):
 # Tools Panel > Create
 # ------------------------------------------------------------
 class SplinePanel(Panel):
-    bl_idname = "VIEW3D_PT_spirofit_spline"
     bl_space_type = "VIEW_3D"
     bl_context = "objectmode"
     bl_region_type = "TOOLS"

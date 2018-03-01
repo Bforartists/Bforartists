@@ -167,19 +167,16 @@ def bake(face_indices, uvmap, image):
         # please excuse the following mess. Cycles baking API does not seem to allow better.
         ob = bpy.context.active_object
         me = ob.data
-        mat = bpy.data.materials.new("unfolder dummy")
-        mat.use_nodes = True
-        img = mat.node_tree.nodes.new('ShaderNodeTexImage')
-        img.image = image
-        mat.node_tree.nodes.active = img
-        uv = mat.node_tree.nodes.new('ShaderNodeUVMap')
-        uv.uv_map = uvmap.name
-        mat.node_tree.links.new(uv.outputs['UV'], img.inputs['Vector'])
-        uvmap.active = True
-        recall_object_slots, recall_mesh_slots = [slot.material for slot in ob.material_slots], me.materials[:]
-        for i, slot in enumerate(ob.material_slots):
-            slot.material = me.materials[i] = mat
-        me.materials.append(mat)
+        # add a disconnected image node that defines the bake target
+        temp_nodes = dict()
+        for mat in me.materials:
+            mat.use_nodes = True
+            img = mat.node_tree.nodes.new('ShaderNodeTexImage')
+            img.image = image
+            temp_nodes[mat] = img
+            mat.node_tree.nodes.active = img
+            uvmap.active = True
+        # move all excess faces to negative numbers (that is the only way to disable them)
         loop = me.uv_layers[me.uv_layers.active_index].data
         face_indices = set(face_indices)
         ignored_uvs = [
@@ -187,8 +184,7 @@ def bake(face_indices, uvmap, image):
             for face in me.polygons if face.index not in face_indices
             for i, v in enumerate(face.vertices)]
         for vid in ignored_uvs:
-            loop[vid].uv[0] *= -1
-            loop[vid].uv[1] *= -1
+            loop[vid].uv *= -1
         bake_type = bpy.context.scene.cycles.bake_type
         sta = bpy.context.scene.render.bake.use_selected_to_active
         try:
@@ -196,15 +192,10 @@ def bake(face_indices, uvmap, image):
         except RuntimeError as e:
             raise UnfoldError(*e.args)
         finally:
-            me.materials.pop()
-            for slot, recall in zip(ob.material_slots, recall_object_slots):
-                slot.material = recall
-            for i, recall in enumerate(recall_mesh_slots):
-                me.materials[i] = recall
-            bpy.data.materials.remove(mat)
+            for mat, node in temp_nodes.items():
+                mat.node_tree.nodes.remove(node)
         for vid in ignored_uvs:
-            loop[vid].uv[0] *= -1
-            loop[vid].uv[1] *= -1
+            loop[vid].uv *= -1
     else:
         texfaces = uvmap.data
         for fid in face_indices:
@@ -293,9 +284,11 @@ class Unfolder:
             rd = sce.render
             bk = rd.bake
             if rd.engine == 'CYCLES':
-                recall = sce.cycles.bake_type, bk.use_selected_to_active, bk.margin, bk.cage_extrusion, bk.use_cage, bk.use_clear
+                recall = sce.cycles.bake_type, bk.use_selected_to_active, bk.margin, bk.cage_extrusion, bk.use_cage, bk.use_clear, bk.use_pass_direct, bk.use_pass_indirect
+                # recall use_pass...
                 lookup = {'TEXTURE': 'DIFFUSE', 'AMBIENT_OCCLUSION': 'AO', 'RENDER': 'COMBINED', 'SELECTED_TO_ACTIVE': 'COMBINED'}
                 sce.cycles.bake_type = lookup[properties.output_type]
+                bk.use_pass_direct = bk.use_pass_indirect = (properties.output_type != 'TEXTURE')
                 bk.use_selected_to_active = (properties.output_type == 'SELECTED_TO_ACTIVE')
                 bk.margin, bk.cage_extrusion, bk.use_cage, bk.use_clear = 0, 10, False, False
             else:
@@ -316,7 +309,7 @@ class Unfolder:
 
             # revoke settings
             if rd.engine == 'CYCLES':
-                sce.cycles.bake_type, bk.use_selected_to_active, bk.margin, bk.cage_extrusion, bk.use_cage, bk.use_clear = recall
+                sce.cycles.bake_type, bk.use_selected_to_active, bk.margin, bk.cage_extrusion, bk.use_cage, bk.use_clear, bk.use_pass_direct, bk.use_pass_indirect = recall
             else:
                 rd.engine, rd.bake_type, rd.use_bake_to_vertex_color, rd.use_bake_selected_to_active, rd.bake_distance, rd.bake_bias, rd.bake_margin, rd.use_bake_clear = recall
             if not properties.do_create_uvmap:
@@ -371,7 +364,7 @@ class Mesh:
             face.select = (face.index in null_faces or face.index in twisted_faces)
         cure = ("Remove Doubles and Triangulate" if (null_edges or null_faces) and twisted_faces
             else "Triangulate" if twisted_faces
-            else"Remove Doubles")
+            else "Remove Doubles")
         raise UnfoldError(
             "The model contains:\n" +
             (" {} zero-length edge(s)\n".format(len(null_edges)) if null_edges else "") +
@@ -662,6 +655,10 @@ class Mesh:
             bpy.data.images.remove(image)
 
     def save_separate_images(self, tex, scale, filepath, embed=None):
+        # omitting this may cause a "Circular reference in texture stack" error
+        recall = {texface: texface.image for texface in tex.data}
+        for texface in tex.data:
+            texface.image = None
         for i, island in enumerate(self.islands, 1):
             image_name = "{} isl{}".format(self.data.name[:15], i)
             image = create_blank_image(image_name, island.bounding_box * scale, alpha=0)
@@ -678,6 +675,8 @@ class Mesh:
                 island.image_path = image_path
             image.user_clear()
             bpy.data.images.remove(image)
+        for texface, img in recall.items():
+            texface.image = img
 
 
 class Vertex:

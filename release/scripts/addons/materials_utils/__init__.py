@@ -1764,7 +1764,7 @@ class MATERIAL_PT_scenemassive(Panel):
         box = layout.box()
         row = box.row()
         row.menu("scenemassive.opt", text="Advanced Options", icon='SCRIPTWIN')
-        row.menu("HELP_MT_biconvert",
+        row.menu("help.biconvert",
                  text="Usage Information Guide", icon="INFO")
 
         box = layout.box()
@@ -1812,7 +1812,7 @@ class MATERIAL_PT_xps_convert(Panel):
 # Converters Help #
 
 class MATERIAL_MT_biconv_help(Menu):
-    bl_idname = "HELP_MT_biconvert"
+    bl_idname = "help.biconvert"
     bl_description = "Read Instructions & Current Limitations"
     bl_label = "Usage Information Guide"
     bl_options = {'REGISTER'}
