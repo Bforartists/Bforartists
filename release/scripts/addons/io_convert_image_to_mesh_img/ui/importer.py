@@ -20,7 +20,11 @@
 """Blender menu importer for loading a DTM"""
 
 import bpy
-import bpy.props
+from bpy.props import (
+        BoolProperty,
+        FloatProperty,
+        StringProperty,
+        )
 from bpy_extras.io_utils import ImportHelper
 
 from ..mesh.terrain import BTerrain
@@ -29,11 +33,12 @@ from ..mesh.dtm import DTM
 
 class ImportHiRISETerrain(bpy.types.Operator, ImportHelper):
     """DTM Import Helper"""
-    bl_idname = "import.pds_dtm"
+    bl_idname = "import_mesh.pds_dtm"
     bl_label = "Import HiRISE Terrain Model"
     bl_options = {'UNDO'}
+
     filename_ext = ".img"
-    filter_glob = bpy.props.StringProperty(
+    filter_glob = StringProperty(
         options={'HIDDEN'},
         default="*.img"
     )
@@ -55,7 +60,7 @@ class ImportHiRISETerrain(bpy.types.Operator, ImportHelper):
     # functions to the property itself because they result in a recursion
     # error. Instead, we use another, hidden, property to store the scaled
     # resolution.
-    dtm_resolution = bpy.props.FloatProperty(
+    dtm_resolution = FloatProperty(
         subtype="PERCENTAGE",
         description=(
             "Percentage scale for terrain model resolution. 100\% loads the "
@@ -73,7 +78,7 @@ class ImportHiRISETerrain(bpy.types.Operator, ImportHelper):
         name="Terrain Model Resolution",
         min=1.0, max=100.0, default=10.0
     )
-    scaled_dtm_resolution = bpy.props.FloatProperty(
+    scaled_dtm_resolution = FloatProperty(
         options={'HIDDEN'},
         name="Scaled Terrain Model Resolution",
         get=(lambda self: self.dtm_resolution / 100)
@@ -91,7 +96,7 @@ class ImportHiRISETerrain(bpy.types.Operator, ImportHelper):
     #    Blender to change the clipping distance to something appropriate for
     #    the DTM, and scales the grid floor to have gridlines 1km apart,
     #    instead of 1m apart.
-    should_setup_viewport = bpy.props.BoolProperty(
+    should_setup_viewport = BoolProperty(
         description=(
             "Set up the Blender screen to try and avoid clipping the DTM "
             "and to make the grid floor larger. *WARNING* This will change "
@@ -102,7 +107,7 @@ class ImportHiRISETerrain(bpy.types.Operator, ImportHelper):
     )
     # 2. Blender's default units are dimensionless. This option instructs
     #    Blender to change its unit's dimension to meters.
-    should_setup_units = bpy.props.BoolProperty(
+    should_setup_units = BoolProperty(
         description=(
             "Set the Blender scene to use meters as its unit"
         ),

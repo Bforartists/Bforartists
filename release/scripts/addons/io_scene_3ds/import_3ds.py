@@ -19,7 +19,8 @@
 # <pep8 compliant>
 
 # Script copyright (C) Bob Holcomb
-# Contributors: Bob Holcomb, Richard L?rk?ng, Damien McGinnes, Campbell Barton, Mario Lapin, Dominique Lorre, Andreas Atteneder
+# Contributors: Bob Holcomb, Richard L?rk?ng, Damien McGinnes,
+# Campbell Barton, Mario Lapin, Dominique Lorre, Andreas Atteneder
 
 import os
 import time
@@ -155,13 +156,13 @@ object_dictionary = {}
 object_matrix = {}
 
 
-#the chunk class
-class chunk:
-    ID = 0
-    length = 0
-    bytes_read = 0
-
-    #we don't read in the bytes_read, we compute that
+class Chunk:
+    __slots__ = (
+        "ID",
+        "length",
+        "bytes_read",
+    )
+    # we don't read in the bytes_read, we compute that
     binary_format = "<HI"
 
     def __init__(self):
@@ -190,17 +191,17 @@ def read_chunk(file, chunk):
 
 def read_string(file):
     #read in the characters till we get a null character
-    s = b''
+    s = []
     while True:
-        c = struct.unpack('<c', file.read(1))[0]
+        c = file.read(1)
         if c == b'\x00':
             break
-        s += c
-        #print 'string: ',s
+        s.append(c)
+        # print('string: ', s)
 
-    #remove the null character from the string
-# 	print("read string", s)
-    return str(s, "utf-8", "replace"), len(s) + 1
+    # Remove the null character from the string
+    # print("read string", s)
+    return str(b''.join(s), "utf-8", "replace"), len(s) + 1
 
 ######################################################
 # IMPORT
@@ -208,7 +209,7 @@ def read_string(file):
 
 
 def process_next_object_chunk(file, previous_chunk):
-    new_chunk = chunk()
+    new_chunk = Chunk()
 
     while (previous_chunk.bytes_read < previous_chunk.length):
         #read the next chunk
@@ -226,7 +227,10 @@ def add_texture_to_material(image, texture, scale, offset, extension, material, 
     #print('assigning %s to %s' % (texture, material))
 
     if mapto not in {'COLOR', 'SPECULARITY', 'ALPHA', 'NORMAL'}:
-        print('/tError:  Cannot map to "%s"\n\tassuming diffuse color. modify material "%s" later.' % (mapto, material.name))
+        print(
+            "\tError: Cannot map to %r\n\tassuming diffuse color. modify material %r later." %
+            (mapto, material.name)
+        )
         mapto = "COLOR"
 
     if image:
@@ -370,8 +374,8 @@ def process_next_chunk(file, previous_chunk, importedObjects, IMAGE_SEARCH):
             object_matrix[ob] = contextMatrix_rot.copy()
 
     #a spare chunk
-    new_chunk = chunk()
-    temp_chunk = chunk()
+    new_chunk = Chunk()
+    temp_chunk = Chunk()
 
     CreateBlenderObject = False
 
@@ -856,7 +860,7 @@ def load_3ds(filepath,
     time1 = time.clock()
 # 	time1 = Blender.sys.time()
 
-    current_chunk = chunk()
+    current_chunk = Chunk()
 
     file = open(filepath, 'rb')
 

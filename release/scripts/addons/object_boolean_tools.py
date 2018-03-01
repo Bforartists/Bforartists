@@ -24,7 +24,7 @@ bl_info = {
     "version": (0, 3, 8),
     "blender": (2, 78, 0),
     "location": "View3D > Toolshelf",
-    "description": "Bool Tool Hotkey: Ctrl Shift B",
+    "description": "Bool Tools Hotkey: Ctrl Shift B",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
                 "Scripts/Object/BoolTool",
     "category": "Object",
@@ -609,19 +609,17 @@ class BTool_Slice(Operator):
         return {'FINISHED'}
 
 
-# Auto Boolean operators (maintainer Mikhail Rachinskiy)
-# --------------------------------------------------------------------------------------
+# Auto Boolean operators (maintainer Mikhail Rachinskiy) -------------------------------
 
-
-class Auto_Boolean:
+class AutoBoolean:
 
     solver = EnumProperty(
             name="Boolean Solver",
-            description="Specify solver for boolean operation",
             items=(('BMESH', "BMesh", "BMesh solver is faster, but less stable "
                                       "and cannot handle coplanar geometry"),
                    ('CARVE', "Carve", "Carve solver is slower, but more stable "
                                       "and can handle simple cases of coplanar geometry")),
+            description="Specify solver for boolean operation",
             options={'SKIP_SAVE'},
             )
 
@@ -673,9 +671,9 @@ class Auto_Boolean:
         bpy.data.objects.remove(ob)
 
 
-class OBJECT_OT_BoolTool_Auto_Union(Operator, Auto_Boolean):
-    bl_idname = "object.booltool_auto_union"
-    bl_label = "Bool Tool Union"
+class Auto_Union(AutoBoolean, Operator):
+    bl_idname = "btool.auto_union"
+    bl_label = "Union"
     bl_description = "Combine selected objects"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -687,9 +685,9 @@ class OBJECT_OT_BoolTool_Auto_Union(Operator, Auto_Boolean):
         return {'FINISHED'}
 
 
-class OBJECT_OT_BoolTool_Auto_Difference(Operator, Auto_Boolean):
-    bl_idname = "object.booltool_auto_difference"
-    bl_label = "Bool Tool Difference"
+class Auto_Difference(AutoBoolean, Operator):
+    bl_idname = "btool.auto_difference"
+    bl_label = "Difference"
     bl_description = "Subtract selected objects from active object"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -701,9 +699,9 @@ class OBJECT_OT_BoolTool_Auto_Difference(Operator, Auto_Boolean):
         return {'FINISHED'}
 
 
-class OBJECT_OT_BoolTool_Auto_Intersect(Operator, Auto_Boolean):
-    bl_idname = "object.booltool_auto_intersect"
-    bl_label = "Bool Tool Intersect"
+class Auto_Intersect(AutoBoolean, Operator):
+    bl_idname = "btool.auto_intersect"
+    bl_label = "Intersect"
     bl_description = "Keep only intersecting geometry"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -715,10 +713,11 @@ class OBJECT_OT_BoolTool_Auto_Intersect(Operator, Auto_Boolean):
         return {'FINISHED'}
 
 
-class OBJECT_OT_BoolTool_Auto_Slice(Operator, Auto_Boolean):
-    bl_idname = "object.booltool_auto_slice"
-    bl_label = "Bool Tool Slice"
-    bl_description = "Slice active object along the selected object"
+class Auto_Slice(AutoBoolean, Operator):
+    bl_idname = "btool.auto_slice"
+    bl_label = "Slice"
+    bl_description = ("Slice active object along the selected object\n"
+                      "(can handle only two objects at a time)")
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
@@ -744,10 +743,11 @@ class OBJECT_OT_BoolTool_Auto_Slice(Operator, Auto_Boolean):
         return {'FINISHED'}
 
 
-class OBJECT_OT_BoolTool_Auto_Subtract(Operator, Auto_Boolean):
-    bl_idname = "object.booltool_auto_subtract"
-    bl_label = "Bool Tool Subtract"
-    bl_description = "Subtract selected object from active object, subtracted object not removed"
+class Auto_Subtract(AutoBoolean, Operator):
+    bl_idname = "btool.auto_subtract"
+    bl_label = "Subtract"
+    bl_description = ("Subtract selected object from active object, subtracted object not removed\n"
+                      "(can handle only two objects at a time)")
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
@@ -922,19 +922,19 @@ class BTool_BrushToMesh(Operator):
 # ------------------- MENU CLASSES ------------------------------
 
 # 3Dview Header Menu
-class VIEW3D_MT_booltool_menu(Menu):
+class BoolTool_Menu(Menu):
     bl_label = "BoolTool Operators"
-    bl_idname = "VIEW3D_MT_booltool_menu"
+    bl_idname = "OBJECT_MT_BoolTool_Menu"
 
     def draw(self, context):
         layout = self.layout
 
         layout.label("Auto Boolean:")
-        layout.operator(OBJECT_OT_BoolTool_Auto_Difference.bl_idname, text='Difference', icon="ROTACTIVE")
-        layout.operator(OBJECT_OT_BoolTool_Auto_Union.bl_idname, text='Union', icon="ROTATECOLLECTION")
-        layout.operator(OBJECT_OT_BoolTool_Auto_Intersect.bl_idname, text='Intersect', icon="ROTATECENTER")
-        layout.operator(OBJECT_OT_BoolTool_Auto_Slice.bl_idname, text='Slice', icon="ROTATECENTER")
-        layout.operator(OBJECT_OT_BoolTool_Auto_Subtract.bl_idname, text='Subtract', icon="ROTACTIVE")
+        layout.operator(Auto_Difference.bl_idname, icon="ROTACTIVE")
+        layout.operator(Auto_Union.bl_idname, icon="ROTATECOLLECTION")
+        layout.operator(Auto_Intersect.bl_idname, icon="ROTATECENTER")
+        layout.operator(Auto_Slice.bl_idname, icon="ROTATECENTER")
+        layout.operator(Auto_Subtract.bl_idname, icon="ROTACTIVE")
         layout.separator()
 
         layout.label("Brush Boolean:")
@@ -959,16 +959,17 @@ class VIEW3D_MT_booltool_menu(Menu):
 
 
 def VIEW3D_BoolTool_Menu(self, context):
-    self.layout.menu(VIEW3D_MT_booltool_menu.bl_idname)
+    self.layout.menu(BoolTool_Menu.bl_idname)
 
 
 # ---------------- Toolshelf: Tools ---------------------
 
-class VIEW3D_PT_booltool_tools(Panel):
+class BoolTool_Tools(Panel):
     bl_category = "Tools"
-    bl_label = "Bool Tool"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
+    bl_label = "Bool Tools"
+    bl_idname = "BoolTool_Tools"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "TOOLS"
     bl_context = 'objectmode'
 
     @classmethod
@@ -981,8 +982,8 @@ class VIEW3D_PT_booltool_tools(Panel):
         obs_len = len(context.selected_objects)
 
         row = layout.split(0.7)
-        row.label("Help:")
-        row.operator("wm.booltool_help", text="", icon="QUESTION")
+        row.label("Bool Tools:")
+        row.operator("help.bool_tool", text="", icon="QUESTION")
 
         main = layout.column(align=True)
         main.enabled = obj.type == 'MESH' and obs_len > 0
@@ -993,16 +994,16 @@ class VIEW3D_PT_booltool_tools(Panel):
         col.enabled = obs_len > 1
         col.label("Auto Boolean:", icon="MODIFIER")
         col.separator()
-        col.operator(OBJECT_OT_BoolTool_Auto_Difference.bl_idname, text='Difference', icon="ROTACTIVE")
-        col.operator(OBJECT_OT_BoolTool_Auto_Union.bl_idname, text='Union', icon="ROTATECOLLECTION")
-        col.operator(OBJECT_OT_BoolTool_Auto_Intersect.bl_idname, text='Intersect', icon="ROTATECENTER")
+        col.operator(Auto_Difference.bl_idname, icon="ROTACTIVE")
+        col.operator(Auto_Union.bl_idname, icon="ROTATECOLLECTION")
+        col.operator(Auto_Intersect.bl_idname, icon="ROTATECENTER")
 
         main.separator()
 
         col = main.column(align=True)
         col.enabled = obs_len == 2
-        col.operator(OBJECT_OT_BoolTool_Auto_Slice.bl_idname, text='Slice', icon="ROTATECENTER")
-        col.operator(OBJECT_OT_BoolTool_Auto_Subtract.bl_idname, text='Subtract', icon="ROTACTIVE")
+        col.operator(Auto_Slice.bl_idname, icon="ROTATECENTER")
+        col.operator(Auto_Subtract.bl_idname, icon="ROTACTIVE")
 
         main.separator()
 
@@ -1025,12 +1026,13 @@ class VIEW3D_PT_booltool_tools(Panel):
 
 # ---------- Toolshelf: Properties --------------------------------------------------------
 
-class VIEW3D_PT_booltool_config(Panel):
+class BoolTool_Config(Panel):
     bl_category = "Tools"
     bl_label = "Properties"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
-    bl_context = 'objectmode'
+    bl_idname = "BoolTool_BConfig"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "TOOLS"
+    bl_context = "objectmode"
 
     @classmethod
     def poll(cls, context):
@@ -1117,12 +1119,13 @@ class VIEW3D_PT_booltool_config(Panel):
 
 # ---------- Toolshelf: Brush Viewer -------------------------------------------------------
 
-class VIEW3D_PT_booltool_bviewer(Panel):
-    bl_category = "Tools"
+class BoolTool_BViwer(Panel):
     bl_label = "Brush Viewer"
-    bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
-    bl_context = 'objectmode'
+    bl_idname = "BoolTool_BViwer"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "TOOLS"
+    bl_category = "Tools"
+    bl_context = "objectmode"
 
     @classmethod
     def poll(cls, context):
@@ -1189,11 +1192,9 @@ class VIEW3D_PT_booltool_bviewer(Panel):
 
 
 # ------------------ BOOL TOOL Help ----------------------------
-
-
-class WM_OT_BoolTool_Help(Operator):
-    bl_idname = "wm.booltool_help"
-    bl_label = "Bool Tool Help"
+class BoolTool_help(Operator):
+    bl_idname = "help.bool_tool"
+    bl_label = "Help"
     bl_description = "Tool Help - click to read some basic information"
 
     def draw(self, context):
@@ -1203,12 +1204,8 @@ class WM_OT_BoolTool_Help(Operator):
         layout.label("choose one option from the panel")
         layout.label("or from the Ctrl + Shift + B menu")
 
-        layout.separator()
-
         layout.label("Auto Boolean:")
         layout.label("Apply Boolean operation directly.")
-
-        layout.separator()
 
         layout.label("Brush Boolean:")
         layout.label("Create a Boolean brush setup.")
@@ -1222,7 +1219,6 @@ class WM_OT_BoolTool_Help(Operator):
 
 # ------------------ BOOL TOOL ADD-ON PREFERENCES ----------------------------
 
-
 def UpdateBoolTool_Pref(self, context):
     if self.fast_transform:
         RegisterFastT()
@@ -1234,13 +1230,14 @@ def UpdateBoolTool_Pref(self, context):
 
 # Define Panel classes for updating
 panels = (
-    VIEW3D_PT_booltool_tools,
-    VIEW3D_PT_booltool_config,
-    VIEW3D_PT_booltool_bviewer,
+        BoolTool_Tools,
+        BoolTool_Config,
+        BoolTool_BViwer,
         )
 
 
-def update_panels(self, context):
+def update_panel(self, context):
+    message = "Bool Tool: Updating Panel locations has failed"
     try:
         for panel in panels:
             if "bl_rna" in panel.__dict__:
@@ -1251,11 +1248,11 @@ def update_panels(self, context):
             bpy.utils.register_class(panel)
 
     except Exception as e:
-        message = "Bool Tool: Updating Panel locations has failed"
         print("\n[{}]\n{}\n\nError:\n{}".format(__name__, message, e))
+        pass
 
 
-class PREFS_BoolTool_Props(AddonPreferences):
+class BoolTool_Pref(AddonPreferences):
     bl_idname = __name__
 
     fast_transform = BoolProperty(
@@ -1286,7 +1283,7 @@ class PREFS_BoolTool_Props(AddonPreferences):
             name="Tab Category",
             description="Choose a name for the category of the panel",
             default="Tools",
-            update=update_panels,
+            update=update_panel,
             )
     solver = EnumProperty(
             name="Boolean Solver",
@@ -1362,18 +1359,17 @@ class PREFS_BoolTool_Props(AddonPreferences):
 # ------------------- Class List ------------------------------------------------
 
 classes = (
-    PREFS_BoolTool_Props,
+    BoolTool_Pref,
+    BoolTool_Menu,
+    BoolTool_Tools,
+    BoolTool_Config,
+    BoolTool_BViwer,
 
-    VIEW3D_MT_booltool_menu,
-    VIEW3D_PT_booltool_tools,
-    VIEW3D_PT_booltool_config,
-    VIEW3D_PT_booltool_bviewer,
-
-    OBJECT_OT_BoolTool_Auto_Union,
-    OBJECT_OT_BoolTool_Auto_Difference,
-    OBJECT_OT_BoolTool_Auto_Intersect,
-    OBJECT_OT_BoolTool_Auto_Slice,
-    OBJECT_OT_BoolTool_Auto_Subtract,
+    Auto_Union,
+    Auto_Difference,
+    Auto_Intersect,
+    Auto_Slice,
+    Auto_Subtract,
 
     BTool_Union,
     BTool_Diff,
@@ -1390,7 +1386,7 @@ classes = (
     BTool_EnableFTransform,
     BTool_FastTransform,
 
-    WM_OT_BoolTool_Help,
+    BoolTool_help,
     )
 
 
@@ -1432,7 +1428,7 @@ def UnRegisterFastT():
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
-    update_panels(None, bpy.context)
+    update_panel(None, bpy.context)
 
     # Scene variables
     bpy.types.Scene.BoolHide = BoolProperty(
@@ -1455,7 +1451,7 @@ def register():
     km = wm.keyconfigs.addon.keymaps.new(name='Object Mode')
 
     kmi = km.keymap_items.new('wm.call_menu', 'B', 'PRESS', ctrl=True, shift=True)
-    kmi.properties.name = 'VIEW3D_MT_booltool_menu'
+    kmi.properties.name = 'OBJECT_MT_BoolTool_Menu'
     addon_keymaps.append((km, kmi))
 
     # Brush Operators
@@ -1473,17 +1469,13 @@ def register():
     addon_keymaps.append((km, kmi))
 
     # Auto Operators
-    kmi = km.keymap_items.new(OBJECT_OT_BoolTool_Auto_Union.bl_idname,
-            'NUMPAD_PLUS', 'PRESS', ctrl=True, shift=True)
+    kmi = km.keymap_items.new(Auto_Union.bl_idname, 'NUMPAD_PLUS', 'PRESS', ctrl=True, shift=True)
     addon_keymaps.append((km, kmi))
-    kmi = km.keymap_items.new(OBJECT_OT_BoolTool_Auto_Difference.bl_idname,
-            'NUMPAD_MINUS', 'PRESS', ctrl=True, shift=True)
+    kmi = km.keymap_items.new(Auto_Difference.bl_idname, 'NUMPAD_MINUS', 'PRESS', ctrl=True, shift=True)
     addon_keymaps.append((km, kmi))
-    kmi = km.keymap_items.new(OBJECT_OT_BoolTool_Auto_Intersect.bl_idname,
-            'NUMPAD_ASTERIX', 'PRESS', ctrl=True, shift=True)
+    kmi = km.keymap_items.new(Auto_Intersect.bl_idname, 'NUMPAD_ASTERIX', 'PRESS', ctrl=True, shift=True)
     addon_keymaps.append((km, kmi))
-    kmi = km.keymap_items.new(OBJECT_OT_BoolTool_Auto_Slice.bl_idname,
-            'NUMPAD_SLASH', 'PRESS', ctrl=True, shift=True)
+    kmi = km.keymap_items.new(Auto_Slice.bl_idname, 'NUMPAD_SLASH', 'PRESS', ctrl=True, shift=True)
     addon_keymaps.append((km, kmi))
 
 

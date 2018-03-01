@@ -122,23 +122,24 @@ class Do:
         self.current_scene = None
         self.dxf_unit_scale = dxf_unit_scale
 
-    def proj(self, co):
+    def proj(self, co, elevation=0):
         """
         :param co: coordinate
+        :param elevation: float (lwpolyline code 38)
         :return: transformed coordinate if self.pScene is defined
         """
         if self.pScene is not None and self.pDXF is not None:
             u = self.dxf_unit_scale
             if len(co) == 3:
                 c1, c2, c3 = co
+                c3 += elevation
             else:
                 c1, c2 = co
-                c3 = 0
+                c3 = elevation
             if u != 1.0:
                 c1 *= u
                 c2 *= u
                 c3 *= u
-
             # add
             add = Vector((0, 0, 0))
             if "latitude" in self.current_scene and "longitude" in self.current_scene:
@@ -160,15 +161,16 @@ class Do:
             if u != 1:
                 if len(co) == 3:
                     c1, c2, c3 = co
+                    c3 += elevation
                 else:
                     c1, c2 = co
-                    c3 = 0
+                    c3 = elevation
                 c1 *= u
                 c2 *= u
                 c3 *= u
                 return Vector((c1, c2, c3))
             else:
-                return Vector((co[0], co[1], co[2] if len(co) == 3 else 0))
+                return Vector((co[0], co[1], co[2] + elevation if len(co) == 3 else elevation))
 
     def georeference(self, scene, center):
         if "latitude" not in scene and "longitude" not in scene:
@@ -231,10 +233,11 @@ class Do:
         else:
             self._cubic_bezier_open(points, curve)
 
-    def _poly(self, points, curve, is_closed=False):
+    def _poly(self, points, curve, elevation=0, is_closed=False):
         """
         points: list of (x,y,z)
         curve: Blender curve data of type "CURVE" (object.data) to which the poly should be added to
+        param elevation: float (lwpolyline code 38)
         is_closed: True / False to indicate if the polygon is open or closed
         """
         p = curve.splines.new("POLY")
@@ -243,13 +246,13 @@ class Do:
         p.points.add(len(points) - 1)
 
         for i, pt in enumerate(points):
-            p.points[i].co = self.proj(pt).to_4d()
+            p.points[i].co = self.proj(pt, elevation).to_4d()
 
-    def _gen_poly(self, en, curve):
+    def _gen_poly(self, en, curve, elevation=0):
         if any([b != 0 for b in en.bulge]):
             self._cubic_bezier(convert.bulgepoly_to_cubic(self, en), curve, en.is_closed)
         else:
-            self._poly(en.points, curve, en.is_closed)
+            self._poly(en.points, curve, elevation, en.is_closed)
 
     def polyline(self, en, curve):
         """
@@ -270,14 +273,14 @@ class Do:
         en: DXF entity of type `LWPOLYLINE`
         curve: Blender data structure of type `CURVE`
         """
-        self._gen_poly(en, curve)
+        self._gen_poly(en, curve, en.elevation)
 
     def line(self, en, curve):
         """
         en: DXF entity of type `LINE`
         curve: Blender data structure of type `CURVE`
         """
-        self._poly([en.start, en.end], curve, False)
+        self._poly([en.start, en.end], curve, 0, False)
 
     def arc(self, en, curve=None, aunits=None, angdir=None, angbase=None):
         """
@@ -297,10 +300,17 @@ class Do:
             angdir = self.dwg.header.get('$ANGDIR', 0)
         kappa = 0.5522848
 
+        # TODO: add support for 1 (dms) and 4 (survey)
         if aunits == 0:
+            # Degree
             s = radians(en.start_angle+angbase)
             e = radians(en.end_angle+angbase)
+        elif aunits == 2:
+            # Gradians
+            s = radians(0.9 * (en.start_angle + angbase))
+            e = radians(0.9 * (en.end_angle + angbase))
         else:
+            # Radians
             s = en.start_angle+angbase
             e = en.end_angle+angbase
 
@@ -1105,7 +1115,7 @@ class Do:
         """
         polylines = line_merger(lines)
         for polyline in polylines:
-            self._poly(polyline, curve, polyline[0] == polyline[-1])
+            self._poly(polyline, curve, 0, polyline[0] == polyline[-1])
 
     def _thickness(self, bm, thickness):
         """

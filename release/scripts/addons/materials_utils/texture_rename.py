@@ -88,6 +88,7 @@ class TEXTURE_OT_patern_rename(Operator):
 class TEXTURE_PT_rename_panel(Panel):
     # Creates a Panel in the scene context of the properties editor
     bl_label = "Texture Rename"
+    bl_idname = "SCENE_PT_layout"
     bl_space_type = 'PROPERTIES'
     bl_region_type = 'WINDOW'
     bl_context = "texture"

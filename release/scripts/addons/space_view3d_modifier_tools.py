@@ -20,7 +20,7 @@
 bl_info = {
     "name": "Modifier Tools",
     "author": "Meta Androcto, saidenka",
-    "version": (0, 2, 4),
+    "version": (0, 2, 5),
     "blender": (2, 77, 0),
     "location": "Properties > Modifiers",
     "description": "Modifiers Specials Show/Hide/Apply Selected",
@@ -36,7 +36,7 @@ from bpy.types import Operator
 
 class ApplyAllModifiers(Operator):
     bl_idname = "object.apply_all_modifiers"
-    bl_label = "Apply All"
+    bl_label = "Apply All Modifiers"
     bl_description = ("Apply All modifiers of the selected object(s) \n"
                       "Active object has to have modifiers for the option to show up")
     bl_options = {'REGISTER', 'UNDO'}
@@ -94,7 +94,7 @@ class ApplyAllModifiers(Operator):
 
 class DeleteAllModifiers(Operator):
     bl_idname = "object.delete_all_modifiers"
-    bl_label = "Remove All"
+    bl_label = "Remove All Modifiers"
     bl_description = "Remove All modifiers of the selected object(s)"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -127,8 +127,8 @@ class DeleteAllModifiers(Operator):
 
 class ToggleApplyModifiersView(Operator):
     bl_idname = "object.toggle_apply_modifiers_view"
-    bl_label = "Hide Viewport"
-    bl_description = "Shows/Hide modifiers of the active / selected object(s) in 3d View"
+    bl_label = "Toggle Visibility of Modifiers"
+    bl_description = "Shows/Hide modifiers of the active / selected object(s) in the 3D View"
     bl_options = {'REGISTER'}
 
     @classmethod
@@ -139,31 +139,69 @@ class ToggleApplyModifiersView(Operator):
         is_apply = True
         message_a = ""
 
-        for mod in context.active_object.modifiers:
-            if mod.show_viewport:
-                is_apply = False
-                break
+        # avoid toggling not exposed modifiers (currently only Collision, see T53406)
+        skip_type = ["COLLISION"]   # types of modifiers to skip
+        skipped = set()             # collect names
+        count_modifiers = 0         # check for message_a (all skipped)
 
+        # check if the active object has only one non exposed modifier as the logic will fail
+        if len(context.active_object.modifiers) == 1 and \
+                context.active_object.modifiers[0].type in skip_type:
+
+            for obj in context.selected_objects:
+                for mod in obj.modifiers:
+                    if mod.type in skip_type:
+                        skipped.add(mod.name)
+                        continue
+
+                    if mod.show_viewport:
+                        is_apply = False
+                        break
+        else:
+            for mod in context.active_object.modifiers:
+                if mod.type in skip_type:
+                    skipped.add(mod.name)
+                    continue
+
+                if mod.show_viewport:
+                    is_apply = False
+                    break
+
+        count_modifiers = len(context.active_object.modifiers)
         # active object - no selection
         for mod in context.active_object.modifiers:
+            if mod.type in skip_type:
+                count_modifiers -= 1
+                skipped.add(mod.name)
+                continue
+
             mod.show_viewport = is_apply
 
         for obj in context.selected_objects:
+            count_modifiers += len(obj.modifiers)
+
             for mod in obj.modifiers:
+                if mod.type in skip_type:
+                    skipped.add(mod.name)
+                    count_modifiers -= 1
+                    continue
+
                 mod.show_viewport = is_apply
 
-        if is_apply:
-            message_a = "Displaying modifiers in the 3D View"
-        else:
-            message_a = "Hiding modifiers in the 3D View"
+        message_a = "{} modifiers in the 3D View".format("Displaying" if is_apply else "Hidding")
+
+        if skipped:
+            message_a = "{}, {}".format(message_a, "skipping: " + ", ".join(skipped)) if \
+                        count_modifiers > 0 else "No change of Modifiers' Visibility, all skipped"
 
         self.report({"INFO"}, message_a)
+
         return {'FINISHED'}
 
 
 class ToggleAllShowExpanded(Operator):
     bl_idname = "wm.toggle_all_show_expanded"
-    bl_label = "Expand/Collapse All"
+    bl_label = "Expand/Collapse All Modifiers"
     bl_description = "Expand/Collapse Modifier Stack"
     bl_options = {'REGISTER'}
 

@@ -568,7 +568,6 @@ class TracerProperties(PropertyGroup):
 
 # Draw Brush panel in Toolbar
 class addTracerObjectPanel(Panel):
-    bl_idname = "BTRACE_PT_object_brush"
     bl_label = "Btrace"
     bl_space_type = "VIEW_3D"
     bl_region_type = "TOOLS"
