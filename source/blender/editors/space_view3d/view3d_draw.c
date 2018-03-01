@@ -866,7 +866,7 @@ static void draw_viewport_name(ARegion *ar, View3D *v3d, rcti *rect)
  * framenum, object name, bone name (if available), marker name (if available)
  */
 
-static void draw_selected_name(Scene *scene, Object *ob, rcti *rect)
+static void draw_selected_name(Scene *scene, Object *ob, const rcti *rect)
 {
 	const int cfra = CFRA;
 	const char *msg_pin = " (Pinned)";
@@ -1560,8 +1560,10 @@ ImBuf *ED_view3d_backbuf_read(ViewContext *vc, int xmin, int ymin, int xmax, int
 	}
 }
 
-/* smart function to sample a rect spiralling outside, nice for backbuf selection */
-unsigned int ED_view3d_backbuf_sample_rect(
+/**
+ * Smart function to sample a rectangle spiral ling outside, nice for backbuf selection
+ */
+uint ED_view3d_backbuf_sample_rect(
         ViewContext *vc, const int mval[2], int size,
         unsigned int min, unsigned int max, float *r_dist)
 {
