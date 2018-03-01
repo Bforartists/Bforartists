@@ -646,7 +646,7 @@ class OffsetEdges(Operator):
             row.prop(self, 'edge_rail_only_end', text="OnlyEnd", toggle=True)
 
         layout.prop(self, 'mirror_modifier')
-        layout.operator('mesh.offset_edges', text="Repeat")
+        # layout.operator('mesh.offset_edges', text="Repeat")  # for 2.79a, Crashing...
 
         if self.follow_face:
             layout.separator()

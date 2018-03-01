@@ -1399,7 +1399,6 @@ class BezierDivide(Operator):
 # Simple change panel
 
 class SimplePanel(Panel):
-    bl_idname = "VIEW3D_PT_simple_curve"
     bl_label = "Simple Curve"
     bl_space_type = "VIEW_3D"
     bl_region_type = "TOOLS"

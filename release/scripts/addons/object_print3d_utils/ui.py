@@ -20,13 +20,12 @@
 
 # Interface for this addon.
 
-from bpy.types import Panel
 import bmesh
-
+from bpy.types import Panel
 from . import report
 
 
-class Print3D_ToolBar:
+class Print3DToolBar:
     bl_label = "Print3D"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -40,7 +39,7 @@ class Print3D_ToolBar:
     @classmethod
     def poll(cls, context):
         obj = context.active_object
-        return obj and obj.type == 'MESH'
+        return obj and obj.type == 'MESH' and context.mode in {'OBJECT','EDIT_MESH'}
 
     @staticmethod
     def draw_report(layout, context):
@@ -58,7 +57,7 @@ class Print3D_ToolBar:
                     bm_type, bm_array = data
                     col.operator("mesh.print3d_select_report",
                                  text=text,
-                                 icon=Print3D_ToolBar._type_to_icon[bm_type]).index = i
+                                 icon=Print3DToolBar._type_to_icon[bm_type]).index = i
                     layout.operator("mesh.select_non_manifold", text='Non Manifold Extended')
                 else:
                     col.label(text)
@@ -131,17 +130,17 @@ class Print3D_ToolBar:
         rowsub.prop(print_3d, "export_format", text="")
         rowsub.operator("mesh.print3d_export", text="Export", icon='EXPORT')
 
-        Print3D_ToolBar.draw_report(layout, context)
+        Print3DToolBar.draw_report(layout, context)
 
 
 # So we can have a panel in both object mode and editmode
-class VIEW3D_PT_Print3D_Object(Panel, Print3D_ToolBar):
+class Print3DToolBarObject(Panel, Print3DToolBar):
     bl_category = "3D Printing"
-    bl_idname = "VIEW3D_PT_print3d_object"
+    bl_idname = "MESH_PT_print3d_object"
     bl_context = "objectmode"
 
 
-class VIEW3D_PT_Print3D_Mesh(Panel, Print3D_ToolBar):
+class Print3DToolBarMesh(Panel, Print3DToolBar):
     bl_category = "3D Printing"
-    bl_idname = "VIEW3D_PT_print3d_mesh"
+    bl_idname = "MESH_PT_print3d_mesh"
     bl_context = "mesh_edit"

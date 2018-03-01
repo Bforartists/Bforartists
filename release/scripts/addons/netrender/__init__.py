@@ -21,13 +21,13 @@
 bl_info = {
     "name": "Network Renderer",
     "author": "Martin Poirier",
-    "version": (1, 8),
+    "version": (1, 8, 1),
     "blender": (2, 60, 0),
     "location": "Render > Engine > Network Render",
     "description": "Distributed rendering for Blender",
     "warning": "Stable but still work in progress",
-    "wiki_url": "http://wiki.blender.org/index.php/Doc:2.5/Manual/"
-                "Render/Engines/Netrender",
+    "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
+                "Scripts/Render/Net_render",
     "category": "Render",
 }
 

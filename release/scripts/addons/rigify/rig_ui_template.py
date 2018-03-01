@@ -520,6 +520,75 @@ def ik2fk_leg(obj, fk, ik):
         match_pole_target(thighi, shini, pole, thigh, (thighi.length + shini.length))
 
 
+################################
+## IK Rotation-Pole functions ##
+################################
+
+def parse_bone_names(names_string):
+    if names_string[0] == '[' and names_string[-1] == ']':
+        return eval(names_string)
+    else:
+        return names_string
+
+def rotPoleToggle(rig, limb_type, controls, ik_ctrl, fk_ctrl, parent, pole):
+
+    rig_id = rig.data['rig_id']
+    leg_fk2ik = eval('bpy.ops.pose.rigify_leg_fk2ik_' + rig_id)
+    arm_fk2ik = eval('bpy.ops.pose.rigify_arm_fk2ik_' + rig_id)
+    leg_ik2fk = eval('bpy.ops.pose.rigify_leg_ik2fk_' + rig_id)
+    arm_ik2fk = eval('bpy.ops.pose.rigify_arm_ik2fk_' + rig_id)
+
+    controls = parse_bone_names(controls)
+    ik_ctrl = parse_bone_names(ik_ctrl)
+    fk_ctrl = parse_bone_names(fk_ctrl)
+    parent = parse_bone_names(parent)
+    pole = parse_bone_names(pole)
+
+    pbones = bpy.context.selected_pose_bones
+    bpy.ops.pose.select_all(action='DESELECT')
+
+    for b in pbones:
+
+        new_pole_vector_value = not rig.pose.bones[parent]['pole_vector']
+
+        if b.name in controls or b.name in ik_ctrl:
+            if limb_type == 'arm':
+                func1 = arm_fk2ik
+                func2 = arm_ik2fk
+                rig.pose.bones[controls[0]].bone.select = not new_pole_vector_value
+                rig.pose.bones[controls[4]].bone.select = not new_pole_vector_value
+                rig.pose.bones[parent].bone.select = not new_pole_vector_value
+                rig.pose.bones[pole].bone.select = new_pole_vector_value
+
+                kwargs1 = {'uarm_fk': controls[1], 'farm_fk': controls[2], 'hand_fk': controls[3],
+                          'uarm_ik': controls[0], 'farm_ik': ik_ctrl[1],
+                          'hand_ik': controls[4]}
+                kwargs2 = {'uarm_fk': controls[1], 'farm_fk': controls[2], 'hand_fk': controls[3],
+                          'uarm_ik': controls[0], 'farm_ik': ik_ctrl[1], 'hand_ik': controls[4],
+                          'pole': pole, 'main_parent': parent}
+            else:
+                func1 = leg_fk2ik
+                func2 = leg_ik2fk
+                rig.pose.bones[controls[0]].bone.select = not new_pole_vector_value
+                rig.pose.bones[controls[6]].bone.select = not new_pole_vector_value
+                rig.pose.bones[controls[5]].bone.select = not new_pole_vector_value
+                rig.pose.bones[parent].bone.select = not new_pole_vector_value
+                rig.pose.bones[pole].bone.select = new_pole_vector_value
+
+                kwargs1 = {'thigh_fk': controls[1], 'shin_fk': controls[2], 'foot_fk': controls[3],
+                          'mfoot_fk': controls[7], 'thigh_ik': controls[0], 'shin_ik': ik_ctrl[1],
+                          'foot_ik': ik_ctrl[2], 'mfoot_ik': ik_ctrl[2]}
+                kwargs2 = {'thigh_fk': controls[1], 'shin_fk': controls[2], 'foot_fk': controls[3],
+                          'mfoot_fk': controls[7], 'thigh_ik': controls[0], 'shin_ik': ik_ctrl[1],
+                          'foot_ik': controls[6], 'pole': pole, 'footroll': controls[5], 'mfoot_ik': ik_ctrl[2],
+                          'main_parent': parent}
+
+            func1(**kwargs1)
+            rig.pose.bones[parent]['pole_vector'] = new_pole_vector_value
+            func2(**kwargs2)
+
+            bpy.ops.pose.select_all(action='DESELECT')
+
 ##############################
 ## IK/FK snapping operators ##
 ##############################
@@ -649,6 +718,31 @@ class Rigify_Leg_IK2FK(bpy.types.Operator):
             context.user_preferences.edit.use_global_undo = use_global_undo
         return {'FINISHED'}
 
+###########################
+## IK Rotation Pole Snap ##
+###########################
+
+class Rigify_Rot2PoleSwitch(bpy.types.Operator):
+    bl_idname = "pose.rigify_rot2pole_" + rig_id
+    bl_label = "Rotation - Pole toggle"
+    bl_description = "Toggles IK chain between rotation and pole target"
+    bone_name = bpy.props.StringProperty(default='')
+    limb_type = bpy.props.StringProperty(name="Limb Type")
+    controls = bpy.props.StringProperty(name="Controls string")
+    ik_ctrl = bpy.props.StringProperty(name="IK Controls string")
+    fk_ctrl = bpy.props.StringProperty(name="FK Controls string")
+    parent = bpy.props.StringProperty(name="Parent name")
+    pole = bpy.props.StringProperty(name="Pole name")
+
+    def execute(self, context):
+        rig = context.object
+
+        if self.bone_name:
+            bpy.ops.pose.select_all(action='DESELECT')
+            rig.pose.bones[self.bone_name].bone.select = True
+
+        rotPoleToggle(rig, self.limb_type, self.controls, self.ik_ctrl, self.fk_ctrl, self.parent, self.pole)
+        return {'FINISHED'}
 
 ###################
 ## Rig UI Panels ##
@@ -752,6 +846,7 @@ def register():
     bpy.utils.register_class(Rigify_Arm_IK2FK)
     bpy.utils.register_class(Rigify_Leg_FK2IK)
     bpy.utils.register_class(Rigify_Leg_IK2FK)
+    bpy.utils.register_class(Rigify_Rot2PoleSwitch)
     bpy.utils.register_class(RigUI)
     bpy.utils.register_class(RigLayers)
 
@@ -760,6 +855,7 @@ def unregister():
     bpy.utils.unregister_class(Rigify_Arm_IK2FK)
     bpy.utils.unregister_class(Rigify_Leg_FK2IK)
     bpy.utils.unregister_class(Rigify_Leg_IK2FK)
+    bpy.utils.register_class(Rigify_Rot2PoleSwitch)
     bpy.utils.unregister_class(RigUI)
     bpy.utils.unregister_class(RigLayers)
 

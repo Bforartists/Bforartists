@@ -61,31 +61,17 @@ def prepare_assets(export_settings):
 
         for ob in bpy.data.objects:
             if ob.type == 'MESH':
-
                 for mat_slot in ob.material_slots:
-                    #CYCLES RENDER
-                    if bpy.context.scene.render.engine == 'CYCLES':
-                        if not mat_slot.material:
+                    if not mat_slot.material:
+                        continue
+                    for tex_slot in mat_slot.material.texture_slots:
+                        if not tex_slot:
                             continue
-                        if not mat_slot.material.node_tree:
-                            continue
-                        imgnodes = [n for n in mat_slot.material.node_tree.nodes if n.type == 'TEX_IMAGE']
-                        for node in imgnodes:
-                            if node.image is not None:
-                                images.add(node.image)
-                    #BLENDER RENDER
-                    else:
-                        if not mat_slot.material:
-                            continue
-                        for tex_slot in mat_slot.material.texture_slots:
-                            if not tex_slot:
-                                continue
-                            tex = tex_slot.texture
-                            if tex.type == 'IMAGE':
-                                image = tex.image
-                                if image is not None:
-                                    images.add(image)
-
+                        tex = tex_slot.texture
+                        if tex.type == 'IMAGE':
+                            image = tex.image
+                            if image is not None:
+                                images.add(image)
             if ((export_settings['models'] == 'SELECTION' and ob.type == 'MESH') or
                 (export_settings['lamps'] == 'SELECTION' and ob.type == 'LAMP')):
 

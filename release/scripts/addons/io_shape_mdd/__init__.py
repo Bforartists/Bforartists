@@ -21,6 +21,7 @@
 bl_info = {
     "name": "NewTek MDD format",
     "author": "Bill L.Nieuwendorp",
+    "version": (1, 0, 1),
     "blender": (2, 57, 0),
     "location": "File > Import-Export",
     "description": "Import-Export MDD as mesh shape keys",

@@ -20,13 +20,18 @@
 """Blender panel for managing a DTM *after* it's been imported"""
 
 import bpy
+from bpy.types import (
+        Operator,
+        Panel,
+        )
+from bpy.props import FloatProperty
 
 from ..mesh.terrain import BTerrain
 from ..mesh.dtm import DTM
 
 
-class TerrainPanel(bpy.types.Panel):
-    """Creates a Panel in the Object properites window for terrain objects"""
+class TerrainPanel(Panel):
+    """Creates a Panel in the Object properties window for terrain objects"""
     bl_label = "Terrain Model"
     bl_idname = "OBJECT_PT_terrain"
     bl_space_type = "PROPERTIES"
@@ -50,7 +55,7 @@ class TerrainPanel(bpy.types.Panel):
     # functions to the property itself because they result in a recursion
     # error. Instead, we use another, hidden, property to store the scaled
     # resolution.
-    bpy.types.Object.dtm_resolution = bpy.props.FloatProperty(
+    bpy.types.Object.dtm_resolution = FloatProperty(
         subtype="PERCENTAGE",
         name="New Resolution",
         description=(
@@ -65,7 +70,7 @@ class TerrainPanel(bpy.types.Panel):
         ),
         min=1.0, max=100.0, default=10.0
     )
-    bpy.types.Object.scaled_dtm_resolution = bpy.props.FloatProperty(
+    bpy.types.Object.scaled_dtm_resolution = FloatProperty(
         options={'HIDDEN'},
         name="Scaled Terrain Model Resolution",
         get=(lambda self: self.dtm_resolution / 100.0)
@@ -73,7 +78,8 @@ class TerrainPanel(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
-        return context.object.get("IS_TERRAIN", False)
+        obj = context.active_object
+        return obj and obj.get("IS_TERRAIN", False)
 
     def draw(self, context):
         obj = context.active_object
@@ -114,14 +120,19 @@ class TerrainPanel(bpy.types.Panel):
         return {'FINISHED'}
 
 
-class ReloadTerrain(bpy.types.Operator):
+class ReloadTerrain(Operator):
     """Button for reloading the terrain mesh at a new resolution"""
     bl_idname = "terrain.reload"
     bl_label = "Reload Terrain"
 
+    @classmethod
+    def poll(cls, context):
+        obj = context.active_object
+        return obj and obj.get("IS_TERRAIN", False)
+
     def execute(self, context):
         # Reload the terrain
-        obj = context.object
+        obj = context.active_object
         path = obj['PATH']
 
         scaled_dtm_resolution = obj.scaled_dtm_resolution
