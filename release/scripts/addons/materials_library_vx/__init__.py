@@ -265,10 +265,11 @@ def get_libraries():
     libs = [Library(matlib_path, f) for f in os.listdir(matlib_path) if f[-5::] == "blend"]
     try:
         user_path = bpy.context.user_preferences.addons[__name__].preferences.matlib_path
-        if os.path.exists(user_path):
-            libs.extend([Library(user_path, f) for f in os.listdir(user_path) if f[-5::] == "blend"])
-        else:
-            print("path not found %s" % user_path)
+        if user_path:
+            if os.path.exists(user_path):
+                libs.extend([Library(user_path, f) for f in os.listdir(user_path) if f[-5::] == "blend"])
+            else:
+                print("path not found %s" % user_path)
     except:
         pass
     return sorted(libs, key=lambda x: bpy.path.display_name(x.name))
