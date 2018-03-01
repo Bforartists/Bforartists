@@ -21,9 +21,9 @@
 bl_info = {
     "name": "IvyGen",
     "author": "testscreenings, PKHG, TrumanBlending",
-    "version": (0, 1, 2),
+    "version": (0, 1, 4),
     "blender": (2, 59, 0),
-    "location": "View3D > Add > Curve",
+    "location": "View3D > Tool Shelf > Create > Ivy Generator",
     "description": "Adds generated ivy to a mesh object starting "
                    "at the 3D cursor",
     "warning": "",
@@ -34,10 +34,16 @@ bl_info = {
 
 
 import bpy
+from bpy.types import (
+        Operator,
+        Panel,
+        PropertyGroup,
+        )
 from bpy.props import (
+        BoolProperty,
         FloatProperty,
         IntProperty,
-        BoolProperty,
+        PointerProperty,
         )
 from mathutils import (
         Vector,
@@ -191,7 +197,7 @@ def createIvyGeometry(IVY, growLeaves):
 
     if growLeaves:
         faceList = [[4 * i + l for l in range(4)] for i in
-                                                     range(len(vertList) // 4)]
+                    range(len(vertList) // 4)]
 
         # Generate the new leaf mesh and link
         me = bpy.data.meshes.new('IvyLeaf')
@@ -210,24 +216,6 @@ def createIvyGeometry(IVY, growLeaves):
         '''
 
         ob.parent = newCurve
-
-
-'''
-def computeBoundingSphere(ob):
-    # Get the mesh data
-    me = ob.data
-    # Intialise the center
-    center = Vector((0.0, 0.0, 0.0))
-    # Add all vertex coords
-    for v in me.vertices:
-        center += v.co
-    # Average over all verts
-    center /= len(me.vertices)
-    # Create the iterator and find its max
-    length_iter = ((center - v.co).length for v in me.vertices)
-    radius = max(length_iter)
-    return radius
-'''
 
 
 class IvyNode:
@@ -463,12 +451,204 @@ def check_mesh_faces(ob):
     return False
 
 
-class IvyGen(bpy.types.Operator):
+class IvyGen(Operator):
     bl_idname = "curve.ivy_gen"
     bl_label = "IvyGen"
     bl_description = "Generate Ivy on an Mesh Object"
     bl_options = {'REGISTER', 'UNDO'}
 
+    updateIvy = BoolProperty(
+            name="Update Ivy",
+            description="Update the Ivy location based on the cursor and Panel settings",
+            default=False
+            )
+    defaultIvy = BoolProperty(
+            name="Default Ivy",
+            options={"HIDDEN", "SKIP_SAVE"},
+            default=False
+            )
+
+    @classmethod
+    def poll(self, context):
+        # Check if there's an object and whether it's a mesh
+        ob = context.active_object
+        return ((ob is not None) and
+                (ob.type == 'MESH') and
+                (context.mode == 'OBJECT'))
+
+    def invoke(self, context, event):
+        self.updateIvy = True
+        return self.execute(context)
+
+    def execute(self, context):
+        # scene = context.scene
+        ivyProps = context.window_manager.ivy_gen_props
+
+        if not self.updateIvy:
+            return {'PASS_THROUGH'}
+
+        # assign the variables, check if it is default
+        # Note: update the values if window_manager props defaults are changed
+        randomSeed = ivyProps.randomSeed if not self.defaultIvy else 0
+        maxTime = ivyProps.maxTime if not self.defaultIvy else 0
+        maxIvyLength = ivyProps.maxIvyLength if not self.defaultIvy else 1.0
+        ivySize = ivyProps.ivySize if not self.defaultIvy else 0.02
+        maxFloatLength = ivyProps.maxFloatLength if not self.defaultIvy else 0.5
+        maxAdhesionDistance = ivyProps.maxAdhesionDistance if not self.defaultIvy else 1.0
+        primaryWeight = ivyProps.primaryWeight if not self.defaultIvy else 0.5
+        randomWeight = ivyProps.randomWeight if not self.defaultIvy else 0.2
+        gravityWeight = ivyProps.gravityWeight if not self.defaultIvy else 1.0
+        adhesionWeight = ivyProps.adhesionWeight if not self.defaultIvy else 0.1
+        branchingProbability = ivyProps.branchingProbability if not self.defaultIvy else 0.05
+        leafProbability = ivyProps.leafProbability if not self.defaultIvy else 0.35
+        ivyBranchSize = ivyProps.ivyBranchSize if not self.defaultIvy else 0.001
+        ivyLeafSize = ivyProps.ivyLeafSize if not self.defaultIvy else 0.02
+        growLeaves = ivyProps.growLeaves if not self.defaultIvy else True
+
+        bpy.ops.object.mode_set(mode='EDIT', toggle=False)
+        bpy.ops.object.mode_set(mode='OBJECT', toggle=False)
+
+        # Get the selected object
+        ob = context.active_object
+
+        # Check if the mesh has at least one polygon since some functions
+        # are expecting them in the object's data (see T51753)
+        check_face = check_mesh_faces(ob)
+        if check_face is False:
+            self.report({'WARNING'},
+                        "Mesh Object doesn't have at least one Face. "
+                        "Operation Cancelled")
+            return {"CANCELLED"}
+
+        # Compute bounding sphere radius
+        # radius = computeBoundingSphere(ob)  # Not needed anymore
+
+        # Get the seeding point
+        seedPoint = context.scene.cursor_location
+
+        # Fix the random seed
+        rand_seed(randomSeed)
+
+        # Make the new ivy
+        IVY = Ivy(
+            primaryWeight=primaryWeight,
+            randomWeight=randomWeight,
+            gravityWeight=gravityWeight,
+            adhesionWeight=adhesionWeight,
+            branchingProbability=branchingProbability,
+            leafProbability=leafProbability,
+            ivySize=ivySize,
+            ivyLeafSize=ivyLeafSize,
+            ivyBranchSize=ivyBranchSize,
+            maxFloatLength=maxFloatLength,
+            maxAdhesionDistance=maxAdhesionDistance
+            )
+        # Generate first root and node
+        IVY.seed(seedPoint)
+
+        checkTime = False
+        maxLength = maxIvyLength  # * radius
+
+        # If we need to check time set the flag
+        if maxTime != 0.0:
+            checkTime = True
+
+        t = time.time()
+        startPercent = 0.0
+        checkAliveIter = [True, ]
+
+        # Grow until 200 roots is reached or backup counter exceeds limit
+        while (any(checkAliveIter) and
+               (IVY.maxLength < maxLength) and
+               (not checkTime or (time.time() - t < maxTime))):
+            # Grow the ivy for this iteration
+            IVY.grow(ob)
+
+            # Print the proportion of ivy growth to console
+            if (IVY.maxLength / maxLength * 100) > 10 * startPercent // 10:
+                print('%0.2f%% of Ivy nodes have grown' %
+                                         (IVY.maxLength / maxLength * 100))
+                startPercent += 10
+                if IVY.maxLength / maxLength > 1:
+                    print("Halting Growth")
+
+            # Make an iterator to check if all are alive
+            checkAliveIter = (r.alive for r in IVY.ivyRoots)
+
+        # Create the curve and leaf geometry
+        createIvyGeometry(IVY, growLeaves)
+        print("Geometry Generation Complete")
+
+        print("Ivy generated in %0.2f s" % (time.time() - t))
+
+        self.updateIvy = False
+        self.defaultIvy = False
+
+        return {'FINISHED'}
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.prop(self, "updateIvy", icon="FILE_REFRESH")
+
+
+class CURVE_PT_IvyGenPanel(Panel):
+    bl_label = "Ivy Generator"
+    bl_idname = "CURVE_PT_IvyGenPanel"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "TOOLS"
+    bl_category = "Create"
+    bl_context = 'objectmode'
+    bl_options = {"DEFAULT_CLOSED"}
+
+    def draw(self, context):
+        layout = self.layout
+        wm = context.window_manager
+        col = layout.column(align=True)
+
+        prop_new = col.operator("curve.ivy_gen", text="Add New Ivy", icon="OUTLINER_OB_CURVE")
+        prop_new.defaultIvy = False
+        prop_new.updateIvy = True
+
+        prop_def = col.operator("curve.ivy_gen", text="Add New Default Ivy", icon="CURVE_DATA")
+        prop_def.defaultIvy = True
+        prop_def.updateIvy = True
+
+        col = layout.column(align=True)
+        col.label("Generation Settings:")
+        col.prop(wm.ivy_gen_props, "randomSeed")
+        col.prop(wm.ivy_gen_props, "maxTime")
+
+        col = layout.column(align=True)
+        col.label("Size Settings:")
+        col.prop(wm.ivy_gen_props, "maxIvyLength")
+        col.prop(wm.ivy_gen_props, "ivySize")
+        col.prop(wm.ivy_gen_props, "maxFloatLength")
+        col.prop(wm.ivy_gen_props, "maxAdhesionDistance")
+
+        col = layout.column(align=True)
+        col.label("Weight Settings:")
+        col.prop(wm.ivy_gen_props, "primaryWeight")
+        col.prop(wm.ivy_gen_props, "randomWeight")
+        col.prop(wm.ivy_gen_props, "gravityWeight")
+        col.prop(wm.ivy_gen_props, "adhesionWeight")
+
+        col = layout.column(align=True)
+        col.label("Branch Settings:")
+        col.prop(wm.ivy_gen_props, "branchingProbability")
+        col.prop(wm.ivy_gen_props, "ivyBranchSize")
+
+        col = layout.column(align=True)
+        col.prop(wm.ivy_gen_props, "growLeaves")
+
+        if wm.ivy_gen_props.growLeaves:
+            col = layout.column(align=True)
+            col.label("Leaf Settings:")
+            col.prop(wm.ivy_gen_props, "ivyLeafSize")
+            col.prop(wm.ivy_gen_props, "leafProbability")
+
+
+class IvyGenProperties(PropertyGroup):
     maxIvyLength = FloatProperty(
             name="Max Ivy Length",
             description="Maximum ivy length in Blender Units",
@@ -551,7 +731,8 @@ class IvyGen(bpy.types.Operator):
                         "can live while floating",
             default=0.5,
             min=0.0,
-            soft_max=1.0)
+            soft_max=1.0
+            )
     maxAdhesionDistance = FloatProperty(
             name="Max Adhesion Length",
             description="The maximum distance that a branch "
@@ -580,168 +761,29 @@ class IvyGen(bpy.types.Operator):
             description="Grow leaves or not",
             default=True
             )
-    updateIvy = BoolProperty(
-            name="Update Ivy",
-            default=False
-            )
-
-    @classmethod
-    def poll(self, context):
-        # Check if there's an object and whether it's a mesh
-        ob = context.active_object
-        return ((ob is not None) and
-                (ob.type == 'MESH') and
-                (context.mode == 'OBJECT'))
-
-    def invoke(self, context, event):
-        self.updateIvy = True
-        return self.execute(context)
-
-    def execute(self, context):
-        if not self.updateIvy:
-            return {'PASS_THROUGH'}
-
-        bpy.ops.object.mode_set(mode='EDIT', toggle=False)
-        bpy.ops.object.mode_set(mode='OBJECT', toggle=False)
-
-        # Get the selected object
-        ob = context.active_object
-
-        # Check if the mesh has at least one polygon since some functions
-        # are expecting them in the object's data (see T51753)
-        check_face = check_mesh_faces(ob)
-        if check_face is False:
-            self.report({'WARNING'},
-                        "Mesh Object doesn't have at least one Face. "
-                        "Operation Cancelled")
-            return {"CANCELLED"}
-
-        # Compute bounding sphere radius
-        # radius = computeBoundingSphere(ob)  # Not needed anymore
-
-        # Get the seeding point
-        seedPoint = context.scene.cursor_location
-
-        # Fix the random seed
-        rand_seed(self.randomSeed)
-
-        # Make the new ivy
-        IVY = Ivy(**self.as_keywords(ignore=('randomSeed', 'growLeaves',
-                                  'maxIvyLength', 'maxTime', 'updateIvy')))
-
-        # Generate first root and node
-        IVY.seed(seedPoint)
-
-        checkTime = False
-        maxLength = self.maxIvyLength  # * radius
-
-        # If we need to check time set the flag
-        if self.maxTime != 0.0:
-            checkTime = True
-
-        t = time.time()
-        startPercent = 0.0
-        checkAliveIter = [True, ]
-
-        # Grow until 200 roots is reached or backup counter exceeds limit
-        while (any(checkAliveIter) and
-               (IVY.maxLength < maxLength) and
-               (not checkTime or (time.time() - t < self.maxTime))):
-            # Grow the ivy for this iteration
-            IVY.grow(ob)
-
-            # Print the proportion of ivy growth to console
-            if (IVY.maxLength / maxLength * 100) > 10 * startPercent // 10:
-                print('%0.2f%% of Ivy nodes have grown' %
-                                         (IVY.maxLength / maxLength * 100))
-                startPercent += 10
-                if IVY.maxLength / maxLength > 1:
-                    print("Halting Growth")
-
-            # Make an iterator to check if all are alive
-            checkAliveIter = (r.alive for r in IVY.ivyRoots)
-
-        # Create the curve and leaf geometry
-        createIvyGeometry(IVY, self.growLeaves)
-        print("Geometry Generation Complete")
-
-        print("Ivy generated in %0.2f s" % (time.time() - t))
-
-        self.updateIvy = False
-
-        return {'FINISHED'}
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.prop(self, 'updateIvy', icon='CURVE_DATA')
-
-        properties = layout.operator('curve.ivy_gen', text="Add New Ivy")
-        properties.randomSeed = self.randomSeed
-        properties.maxTime = self.maxTime
-        properties.maxIvyLength = self.maxIvyLength
-        properties.ivySize = self.ivySize
-        properties.maxFloatLength = self.maxFloatLength
-        properties.maxAdhesionDistance = self.maxAdhesionDistance
-        properties.primaryWeight = self.primaryWeight
-        properties.randomWeight = self.randomWeight
-        properties.gravityWeight = self.gravityWeight
-        properties.adhesionWeight = self.adhesionWeight
-        properties.branchingProbability = self.branchingProbability
-        properties.leafProbability = self.leafProbability
-        properties.ivyBranchSize = self.ivyBranchSize
-        properties.ivyLeafSize = self.ivyLeafSize
-        properties.updateIvy = True
-
-        prop_def = layout.operator('curve.ivy_gen', text="Add New Default Ivy")
-        prop_def.updateIvy = True
-
-        layout.prop(self, 'growLeaves')
-
-        box = layout.box()
-        box.label("Generation Settings:")
-        box.prop(self, 'randomSeed')
-        box.prop(self, 'maxTime')
-
-        box = layout.box()
-        box.label("Size Settings:")
-        box.prop(self, 'maxIvyLength')
-        box.prop(self, 'ivySize')
-        box.prop(self, 'maxFloatLength')
-        box.prop(self, 'maxAdhesionDistance')
-
-        box = layout.box()
-        box.label("Weight Settings:")
-        box.prop(self, 'primaryWeight')
-        box.prop(self, 'randomWeight')
-        box.prop(self, 'gravityWeight')
-        box.prop(self, 'adhesionWeight')
-
-        box = layout.box()
-        box.label("Branch Settings:")
-        box.prop(self, 'branchingProbability')
-        box.prop(self, 'ivyBranchSize')
-
-        if self.growLeaves:
-            box = layout.box()
-            box.label("Leaf Settings:")
-            box.prop(self, 'ivyLeafSize')
-            box.prop(self, 'leafProbability')
 
 
-def menu_func(self, context):
-    self.layout.operator(IvyGen.bl_idname, text="Add Ivy to Mesh",
-                         icon='OUTLINER_DATA_CURVE').updateIvy = True
+classes = (
+    IvyGen,
+    IvyGenProperties,
+    CURVE_PT_IvyGenPanel
+)
 
 
 def register():
-    bpy.utils.register_module(__name__)
-    bpy.types.INFO_MT_curve_add.append(menu_func)
+    for cls in classes:
+        bpy.utils.register_class(cls)
+
+    bpy.types.WindowManager.ivy_gen_props = PointerProperty(
+            type=IvyGenProperties
+            )
 
 
 def unregister():
-    bpy.types.INFO_MT_curve_add.remove(menu_func)
-    bpy.utils.unregister_module(__name__)
+    del bpy.types.WindowManager.ivy_gen_props
+
+    for cls in reversed(classes):
+        bpy.utils.unregister_class(cls)
 
 
 if __name__ == "__main__":

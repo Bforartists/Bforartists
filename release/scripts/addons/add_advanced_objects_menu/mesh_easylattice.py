@@ -16,122 +16,104 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-# TODO: find a better solution for allowing more than one lattice per scene
-
 bl_info = {
     "name": "Easy Lattice Object",
     "author": "Kursad Karatas",
-    "version": (0, 5, 1),
+    "version": (0, 6, 0),
     "blender": (2, 66, 0),
     "location": "View3D > Easy Lattice",
     "description": "Create a lattice for shape editing",
     "warning": "",
     "wiki_url": "https://wiki.blender.org/index.php/Easy_Lattice_Editing_Addon",
     "tracker_url": "https://bitbucket.org/kursad/blender_addons_easylattice/src",
-    "category": "Mesh"}
+    "category": "Mesh",
+}
 
 
 import bpy
 from mathutils import (
-        Matrix,
-        Vector,
-        )
+    Matrix,
+    Vector,
+)
 from bpy.types import Operator
 from bpy.props import (
-        EnumProperty,
-        IntProperty,
-        StringProperty,
-        )
+    EnumProperty,
+    FloatProperty,
+    IntProperty,
+)
 
 
-# Cleanup
-def modifiersDelete(obj):
-    for mod in obj.modifiers:
-        if mod.name == "latticeeasytemp":
-            try:
-                if mod.object == bpy.data.objects['LatticeEasytTemp']:
-                    bpy.ops.object.modifier_apply(apply_as='DATA', modifier=mod.name)
-            except:
-                bpy.ops.object.modifier_remove(modifier=mod.name)
-
-
-def modifiersApplyRemove(obj):
-    bpy.ops.object.select_all(action='DESELECT')
-    bpy.ops.object.select_pattern(pattern=obj.name, extend=False)
-    bpy.context.scene.objects.active = obj
-
-    for mod in obj.modifiers:
-        if mod.name == "latticeeasytemp":
-            if mod.object == bpy.data.objects['LatticeEasytTemp']:
-                bpy.ops.object.modifier_apply(apply_as='DATA', modifier=mod.name)
-
-
-def latticeDelete(obj):
-    bpy.ops.object.select_all(action='DESELECT')
-    for ob in bpy.context.scene.objects:
-        if "LatticeEasytTemp" in ob.name:
-            ob.select = True
-    bpy.ops.object.delete(use_global=False)
-
-    obj.select = True
-
-
-def createLattice(obj, size, pos, props):
+def createLattice(context, obj, props):
     # Create lattice and object
-    lat = bpy.data.lattices.new('LatticeEasytTemp')
-    ob = bpy.data.objects.new('LatticeEasytTemp', lat)
+    lat = bpy.data.lattices.new('EasyLattice')
+    ob = bpy.data.objects.new('EasyLattice', lat)
 
-    loc, rot, scl = getTransformations(obj)
+    # Take into consideration any selected vertices (default: all verticies)
+    selectedVertices = createVertexGroup(obj)
+
+    size, pos = findBBox(obj, selectedVertices)
+    loc, rot = getTransformations(obj)
 
     # the position comes from the bbox
     ob.location = pos
 
-    # the size  from bbox
-    ob.scale = size
+    # the size from bbox * the incoming scale factor
+    ob.scale = size * props[3]
 
     # the rotation comes from the combined obj world
     # matrix which was converted to euler pairs
     ob.rotation_euler = buildRot_World(obj)
-
     ob.show_x_ray = True
+
     # Link object to scene
-    scn = bpy.context.scene
-    scn.objects.link(ob)
+    scn = context.scene
+
+    # Take care of the local view
+    base = scn.objects.link(ob)
     scn.objects.active = ob
+
+    v3d = None
+    if context.space_data and context.space_data.type == 'VIEW_3D':
+        v3d = context.space_data
+
+    if v3d and v3d.local_view:
+        base.layers_from_view(v3d)
+
     scn.update()
 
     # Set lattice attributes
-    lat.interpolation_type_u = props[3]
-    lat.interpolation_type_v = props[3]
-    lat.interpolation_type_w = props[3]
-
-    lat.use_outside = False
-
     lat.points_u = props[0]
     lat.points_v = props[1]
     lat.points_w = props[2]
 
+    lat.interpolation_type_u = props[4]
+    lat.interpolation_type_v = props[4]
+    lat.interpolation_type_w = props[4]
+
+    lat.use_outside = False
+
     return ob
 
 
-def selectedVerts_Grp(obj):
+def createVertexGroup(obj):
     vertices = obj.data.vertices
     selverts = []
 
     if obj.mode == "EDIT":
         bpy.ops.object.editmode_toggle()
 
-    for grp in obj.vertex_groups:
-        if "templatticegrp" in grp.name:
-            bpy.ops.object.vertex_group_set_active(group=grp.name)
-            bpy.ops.object.vertex_group_remove()
-
-    tempgroup = obj.vertex_groups.new("templatticegrp")
+    group = obj.vertex_groups.new("easy_lattice_group")
 
     for vert in vertices:
         if vert.select is True:
             selverts.append(vert)
-            tempgroup.add([vert.index], 1.0, "REPLACE")
+            group.add([vert.index], 1.0, "REPLACE")
+
+    # Default: use all vertices
+    if not selverts:
+        for vert in vertices:
+            selverts.append(vert)
+            group.add([vert.index], 1.0, "REPLACE")
 
     return selverts
 
@@ -139,9 +121,8 @@ def selectedVerts_Grp(obj):
 def getTransformations(obj):
     rot = obj.rotation_euler
     loc = obj.location
-    size = obj.scale
 
-    return [loc, rot, size]
+    return [loc, rot]
 
 
 def findBBox(obj, selvertsarray):
@@ -175,17 +156,17 @@ def findBBox(obj, selvertsarray):
     minpoint = Vector((minx, miny, minz))
     maxpoint = Vector((maxx, maxy, maxz))
 
-    # middle point has to be calculated based on the real world matrix
-    middle = ((minpoint + maxpoint) / 2)
+    # The middle position has to be calculated based on the real world matrix
+    pos = ((minpoint + maxpoint) / 2)
 
     minpoint = mat * minpoint    # Calculate only based on loc/scale
     maxpoint = mat * maxpoint    # Calculate only based on loc/scale
-    middle = mat_world * middle  # the middle has to be calculated based on the real world matrix
+    pos = mat_world * pos        # the middle position has to be calculated based on the real world matrix
 
     size = maxpoint - minpoint
-    size = Vector((abs(size.x), abs(size.y), abs(size.z)))
+    size = Vector((max(0.1, abs(size.x)), max(0.1, abs(size.y)), max(0.1, abs(size.z)))) # Prevent zero size dimensions
 
-    return [minpoint, maxpoint, size, middle]
+    return [size, pos]
 
 
 def buildTrnSclMat(obj):
@@ -262,70 +243,39 @@ def buildRot_World(obj):
     return rot
 
 
-def run(lat_props):
-    obj = bpy.context.object
+def main(context, lat_props):
+    obj = context.object
 
     if obj.type == "MESH":
-        # set global property for the currently active latticed object
-        # removed in __init__ on unregister if created
-        bpy.types.Scene.activelatticeobject = StringProperty(
-                name="currentlatticeobject",
-                default=""
-                )
-        bpy.types.Scene.activelatticeobject = obj.name
+        lat = createLattice(context, obj, lat_props)
 
-        modifiersDelete(obj)
-        selvertsarray = selectedVerts_Grp(obj)
-        bbox = findBBox(obj, selvertsarray)
-
-        size = bbox[2]
-        pos = bbox[3]
-
-        latticeDelete(obj)
-        lat = createLattice(obj, size, pos, lat_props)
-
-        modif = obj.modifiers.new("latticeeasytemp", "LATTICE")
+        modif = obj.modifiers.new("EasyLattice", "LATTICE")
         modif.object = lat
-        modif.vertex_group = "templatticegrp"
+        modif.vertex_group = "easy_lattice_group"
 
         bpy.ops.object.select_all(action='DESELECT')
         bpy.ops.object.select_pattern(pattern=lat.name, extend=False)
-        bpy.context.scene.objects.active = lat
+        context.scene.objects.active = lat
 
-        bpy.context.scene.update()
-        bpy.ops.object.mode_set(mode='EDIT')
-
-    if obj.type == "LATTICE":
-        if bpy.types.Scene.activelatticeobject:
-            name = bpy.types.Scene.activelatticeobject
-
-            # Are we in edit lattice mode? If so move on to object mode
-            if obj.mode == "EDIT":
-                bpy.ops.object.editmode_toggle()
-
-            for ob in bpy.context.scene.objects:
-                if ob.name == name:  # found the object with the lattice mod
-                    object = ob
-                    modifiersApplyRemove(object)
-                    latticeDelete(obj)
+        context.scene.update()
 
     return
-
-
-def main(context, latticeprops):
-    run(latticeprops)
 
 
 class EasyLattice(Operator):
     bl_idname = "object.easy_lattice"
     bl_label = "Easy Lattice Creator"
     bl_description = ("Create a Lattice modifier ready to edit\n"
-                      "Needs an existing Active Mesh Object\n"
-                      "Note: Works only with one lattice per scene")
+                      "Needs an existing Active Mesh Object\n")
 
     lat_u = IntProperty(
             name="Lattice u",
             description="Points in u direction",
+            default=3
+            )
+    lat_v = IntProperty(
+            name="Lattice v",
+            description="Points in v direction",
             default=3
             )
     lat_w = IntProperty(
@@ -333,20 +283,24 @@ class EasyLattice(Operator):
             description="Points in w direction",
             default=3
             )
-    lat_m = IntProperty(
-            name="Lattice m",
-            description="Points in m direction",
-            default=3
+    lat_scale_factor = FloatProperty(
+            name="Lattice scale factor",
+            description="Adjustment to the lattice scale",
+            default=1,
+            min=0.1,
+            step=1,
+            precision=2
             )
     lat_types = (('KEY_LINEAR', "Linear", "Linear Interpolation type"),
                  ('KEY_CARDINAL', "Cardinal", "Cardinal Interpolation type"),
+                 ('KEY_CATMULL_ROM', "Catmull-Rom", "Catmull-Rom Interpolation type"),
                  ('KEY_BSPLINE', "BSpline", "Key BSpline Interpolation Type")
                 )
     lat_type = EnumProperty(
             name="Lattice Type",
             description="Choose Lattice Type",
             items=lat_types,
-            default='KEY_LINEAR'
+            default='KEY_BSPLINE'
             )
 
     @classmethod
@@ -359,27 +313,33 @@ class EasyLattice(Operator):
 
         col = layout.column(align=True)
         col.prop(self, "lat_u")
+        col.prop(self, "lat_v")
         col.prop(self, "lat_w")
-        col.prop(self, "lat_m")
+
+        layout.prop(self, "lat_scale_factor")
 
         layout.prop(self, "lat_type")
 
     def execute(self, context):
         lat_u = self.lat_u
+        lat_v = self.lat_v
         lat_w = self.lat_w
-        lat_m = self.lat_m
+
+        lat_scale_factor = self.lat_scale_factor
 
         # enum property no need to complicate things
         lat_type = self.lat_type
-        lat_props = [lat_u, lat_w, lat_m, lat_type]
+        # XXX, should use keyword args
+        lat_props = [lat_u, lat_v, lat_w, lat_scale_factor, lat_type]
         try:
             main(context, lat_props)
 
-        except Exception as e:
-            print("\n[Add Advanced Objects]\nOperator:object.easy_lattice\n{}\n".format(e))
-            self.report({'WARNING'},
-                         "Easy Lattice Creator could not be completed (See Console for more info)")
-
+        except Exception as ex:
+            print("\n[Add Advanced Objects]\nOperator:object.easy_lattice\n{}\n".format(ex))
+            self.report(
+                {'WARNING'},
+                "Easy Lattice Creator could not be completed (See Console for more info)"
+            )
             return {"CANCELLED"}
 
         return {"FINISHED"}

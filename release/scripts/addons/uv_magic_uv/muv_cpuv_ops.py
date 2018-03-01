@@ -459,8 +459,8 @@ class MUV_CPUVObjPasteUV(bpy.types.Operator):
                         bm.faces[idx].loops, suvs_fr, spuvs_fr, ss_fr):
                     l[uv_layer].uv = suv
                     l[uv_layer].pin_uv = spuv
-                    if self.copy_seams is True:
-                        l.edge.seam = ss
+                if self.copy_seams is True:
+                    l.edge.seam = ss
 
             bmesh.update_edit_mesh(obj.data)
             if self.copy_seams is True:

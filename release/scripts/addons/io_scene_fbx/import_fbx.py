@@ -82,7 +82,7 @@ def elem_find_first_string(elem, id_search):
     if fbx_item is not None and fbx_item.props:  # Do not error on complete empty properties (see T45291).
         assert(len(fbx_item.props) == 1)
         assert(fbx_item.props_type[0] == data_types.STRING)
-        return fbx_item.props[0].decode('utf-8')
+        return fbx_item.props[0].decode('utf-8', 'replace')
     return None
 
 
@@ -124,14 +124,14 @@ def elem_name_ensure_class(elem, clss=...):
     elem_name, elem_class = elem_split_name_class(elem)
     if clss is not ...:
         assert(elem_class == clss)
-    return elem_name.decode('utf-8')
+    return elem_name.decode('utf-8', 'replace')
 
 
 def elem_name_ensure_classes(elem, clss=...):
     elem_name, elem_class = elem_split_name_class(elem)
     if clss is not ...:
         assert(elem_class in clss)
-    return elem_name.decode('utf-8')
+    return elem_name.decode('utf-8', 'replace')
 
 
 def elem_split_name_class_nodeattr(elem):
@@ -308,13 +308,13 @@ def blen_read_custom_properties(fbx_obj, blen_obj, settings):
                     # Special case for 3DS Max user properties:
                     assert(fbx_prop.props[1] == b'KString')
                     assert(fbx_prop.props_type[4] == data_types.STRING)
-                    items = fbx_prop.props[4].decode('utf-8')
+                    items = fbx_prop.props[4].decode('utf-8', 'replace')
                     for item in items.split('\r\n'):
                         if item:
                             prop_name, prop_value = item.split('=', 1)
                             blen_obj[prop_name.strip()] = prop_value.strip()
                 else:
-                    prop_name = fbx_prop.props[0].decode('utf-8')
+                    prop_name = fbx_prop.props[0].decode('utf-8', 'replace')
                     prop_type = fbx_prop.props[1]
                     if prop_type in {b'Vector', b'Vector3D', b'Color', b'ColorRGB'}:
                         assert(fbx_prop.props_type[4:7] == bytes((data_types.FLOAT64,)) * 3)
@@ -330,7 +330,7 @@ def blen_read_custom_properties(fbx_obj, blen_obj, settings):
                         blen_obj[prop_name] = fbx_prop.props[4]
                     elif prop_type == b'KString':
                         assert(fbx_prop.props_type[4] == data_types.STRING)
-                        blen_obj[prop_name] = fbx_prop.props[4].decode('utf-8')
+                        blen_obj[prop_name] = fbx_prop.props[4].decode('utf-8', 'replace')
                     elif prop_type in {b'Number', b'double', b'Double'}:
                         assert(fbx_prop.props_type[4] == data_types.FLOAT64)
                         blen_obj[prop_name] = fbx_prop.props[4]
@@ -344,13 +344,13 @@ def blen_read_custom_properties(fbx_obj, blen_obj, settings):
                         assert(fbx_prop.props_type[4:6] == bytes((data_types.INT32, data_types.STRING)))
                         val = fbx_prop.props[4]
                         if settings.use_custom_props_enum_as_string and fbx_prop.props[5]:
-                            enum_items = fbx_prop.props[5].decode('utf-8').split('~')
+                            enum_items = fbx_prop.props[5].decode('utf-8', 'replace').split('~')
                             assert(val >= 0 and val < len(enum_items))
                             blen_obj[prop_name] = enum_items[val]
                         else:
                             blen_obj[prop_name] = val
                     else:
-                        print ("WARNING: User property type '%s' is not supported" % prop_type.decode('utf-8'))
+                        print ("WARNING: User property type '%s' is not supported" % prop_type.decode('utf-8', 'replace'))
 
 
 def blen_read_object_transform_do(transform_data):
@@ -544,7 +544,7 @@ def blen_read_animations_action_item(action, item, cnodes, fps, anim_offset):
     'Bake' loc/rot/scale into the action,
     taking any pre_ and post_ matrix into account to transform from fbx into blender space.
     """
-    from bpy.types import Object, PoseBone, ShapeKey, Material
+    from bpy.types import Object, PoseBone, ShapeKey
     from itertools import chain
 
     fbx_curves = []
@@ -559,10 +559,7 @@ def blen_read_animations_action_item(action, item, cnodes, fps, anim_offset):
     blen_curves = []
     props = []
 
-    if isinstance(item, Material):
-        grpname = item.name
-        props = [("diffuse_color", 3, grpname or "Diffuse Color")]
-    elif isinstance(item, ShapeKey):
+    if isinstance(item, ShapeKey):
         props = [(item.path_from_id("value"), 1, "Key")]
     else:  # Object or PoseBone:
         if item.is_bone:
@@ -589,18 +586,7 @@ def blen_read_animations_action_item(action, item, cnodes, fps, anim_offset):
     blen_curves = [action.fcurves.new(prop, channel, grpname)
                    for prop, nbr_channels, grpname in props for channel in range(nbr_channels)]
 
-    if isinstance(item, Material):
-        for frame, values in blen_read_animations_curves_iter(fbx_curves, anim_offset, 0, fps):
-            value = [0,0,0]
-            for v, (fbxprop, channel, _fbx_acdata) in values:
-                assert(fbxprop == b'DiffuseColor')
-                assert(channel in {0, 1, 2})
-                value[channel] = v
-
-            for fc, v in zip(blen_curves, value):
-                fc.keyframe_points.insert(frame, v, {'NEEDED', 'FAST'}).interpolation = 'LINEAR'
-
-    elif isinstance(item, ShapeKey):
+    if isinstance(item, ShapeKey):
         for frame, values in blen_read_animations_curves_iter(fbx_curves, anim_offset, 0, fps):
             value = 0.0
             for v, (fbxprop, channel, _fbx_acdata) in values:
@@ -673,7 +659,7 @@ def blen_read_animations(fbx_tmpl_astack, fbx_tmpl_alayer, stacks, scene, anim_o
     Only the first found action is linked to objects, more complex setups are not handled,
     it's up to user to reproduce them!
     """
-    from bpy.types import ShapeKey, Material
+    from bpy.types import ShapeKey
 
     actions = {}
     for as_uuid, ((fbx_asdata, _blen_data), alayers) in stacks.items():
@@ -681,9 +667,7 @@ def blen_read_animations(fbx_tmpl_astack, fbx_tmpl_alayer, stacks, scene, anim_o
         for al_uuid, ((fbx_aldata, _blen_data), items) in alayers.items():
             layer_name = elem_name_ensure_class(fbx_aldata, b'AnimLayer')
             for item, cnodes in items.items():
-                if isinstance(item, Material):
-                    id_data = item
-                elif isinstance(item, ShapeKey):
+                if isinstance(item, ShapeKey):
                     id_data = item.id_data
                 else:
                     id_data = item.bl_obj
@@ -1016,11 +1000,12 @@ def blen_read_geom_layer_color(fbx_obj, mesh):
                 print("%r %r missing data" % (layer_id, fbx_layer_name))
                 continue
 
+            # ignore alpha layer (read 4 items into 3)
             blen_read_geom_array_mapped_polyloop(
                 mesh, blen_data, "color",
                 fbx_layer_data, fbx_layer_index,
                 fbx_layer_mapping, fbx_layer_ref,
-                4, 4, layer_id,
+                4, 3, layer_id,
                 )
 
 
@@ -2821,19 +2806,10 @@ def load(operator, context, filepath="",
                             continue
                         items.append((ob, lnk_prop))
                     elif lnk_prop == b'DeformPercent':  # Shape keys.
-                        keyblocks = blend_shape_channels.get(n_uuid, None)
+                        keyblocks = blend_shape_channels.get(n_uuid)
                         if keyblocks is None:
                             continue
                         items += [(kb, lnk_prop) for kb in keyblocks]
-                    elif lnk_prop == b'DiffuseColor':
-                        from bpy.types import Material
-                        fbx_item = fbx_table_nodes.get(n_uuid, None)
-                        if fbx_item is None or not isinstance(fbx_item[1], Material):
-                            continue
-                        mat = fbx_item[1]
-                        items.append((mat, lnk_prop))
-                        if settings.use_cycles:
-                            print("WARNING! Importing material's animation is not supported for Cycles materials...")
                 for al_uuid, al_ctype in fbx_connection_map.get(acn_uuid, ()):
                     if al_ctype.props[0] != b'OO':
                         continue

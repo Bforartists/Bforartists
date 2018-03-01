@@ -21,7 +21,7 @@ bl_info = {
     "author": "Antonio Vazquez (antonioya)",
     "version": (0, 2, 5),
     "blender": (2, 68, 0),
-    "location": "View3D > Toolshelf > Turnaround camera",
+    "location": "View3D > Toolshelf > Animation Tab > Turnaround Camera",
     "description": "Add a camera rotation around selected object",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
                 "Scripts/Animation/TurnaroundCamera",
@@ -58,7 +58,7 @@ class RunAction(Operator):
         scene = context.scene
         turn_camera = scene.turn_camera
         selectobject = context.active_object
-        camera = bpy.data.objects[bpy.context.scene.camera.name]
+        camera = context.scene.camera
         savedcursor = bpy.context.scene.cursor_location.copy()  # cursor position
         savedframe = scene.frame_current
         if turn_camera.use_cursor is False:
@@ -68,7 +68,7 @@ class RunAction(Operator):
         # Create empty and parent
         # -------------------------
         bpy.ops.object.empty_add(type='PLAIN_AXES')
-        myempty = bpy.data.objects[bpy.context.active_object.name]
+        myempty = context.active_object
 
         myempty.location = selectobject.location
         savedstate = myempty.matrix_world
@@ -89,7 +89,7 @@ class RunAction(Operator):
         # -------------------------
         bpy.ops.object.select_all(False)
         myempty.select = True
-        bpy.context.scene.objects.active = myempty
+        context.scene.objects.active = myempty
         # save current configuration
         savedinterpolation = context.user_preferences.edit.keyframe_new_interpolation_type
         # change interpolation mode
@@ -97,7 +97,7 @@ class RunAction(Operator):
         # create first frame
         myempty.rotation_euler = (0, 0, 0)
         myempty.empty_draw_size = 0.1
-        bpy.context.scene.frame_set(scene.frame_start)
+        context.scene.frame_set(scene.frame_start)
         myempty.keyframe_insert(data_path='rotation_euler', frame=scene.frame_start)
 
         # Clear the Camera Animations if the option is checked

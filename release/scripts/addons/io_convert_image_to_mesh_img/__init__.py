@@ -19,28 +19,29 @@
 
 """A HiRISE DTM Importer for Blender"""
 
-import bpy
-
-from .ui import importer
-from .ui import terrainpanel
-
 bl_info = {
     "name": "HiRISE DTM Importer",
     "author": "Nicholas Wolf (nicwolf@pirl.lpl.arizona.edu)",
-    "version": (0, 2, 1),
+    "version": (0, 2, 2),
     "blender": (2, 78, 0),
     "location": "File > Import > HiRISE DTM (.img)",
-    "description": "Import a HiRISE DTM as a mesh.",
+    "description": "Import a HiRISE DTM as a mesh",
     "warning": "May consume a lot of memory",
-    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
+    "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
                 "Scripts/Import-Export/HiRISE_DTM_from_PDS_IMG",
     "category": "Import-Export",
 }
 
 if "bpy" in locals():
-    import imp
-    imp.reload(importer)
-    imp.reload(terrainpanel)
+    import importlib
+    importlib.reload(importer)
+    importlib.reload(terrainpanel)
+
+else:
+    from .ui import importer
+    from .ui import terrainpanel
+
+import bpy
 
 
 def menu_import(self, context):

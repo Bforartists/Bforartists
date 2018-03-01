@@ -21,12 +21,12 @@
 bl_info = {
     "name": "Mesh: Icicle/Snowflake",
     "author": "Eoin Brennan (Mayeoin Bread)",
-    "version": (0, 1, 0),
+    "version": (0, 1, 1),
     "blender": (2, 74, 0),
     "location": "View3D > Add > Mesh",
     "description": "Add Icicle & Snowflake",
     "warning": "",
-    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
+    "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
                 "Scripts/Add_Mesh/Add_Extra",
     "category": "Add Mesh",
 }
@@ -35,7 +35,6 @@ if "bpy" in locals():
     import importlib
     importlib.reload(add_mesh_icicle_gen)
     importlib.reload(add_mesh_snowflake)
-
 
 else:
     from . import add_mesh_icicle_gen
@@ -58,13 +57,12 @@ class INFO_MT_mesh_icy_add(bpy.types.Menu):
         layout.operator("mesh.snowflake",
                         text="Snowflake")
 
+
 # Register all operators and panels
 
 # Define "Extras" menu
-
-
 def menu_func(self, context):
-    self.layout.menu("INFO_MT_mesh_ice_add", text="Ice & Snow")
+    self.layout.menu("INFO_MT_mesh_ice_add", text="Ice & Snow", icon="FREEZE")
 
 
 def register():
@@ -79,6 +77,7 @@ def unregister():
 
     # Remove "Extras" menu from the "Add Mesh" menu.
     bpy.types.INFO_MT_mesh_add.remove(menu_func)
+
 
 if __name__ == "__main__":
     register()
