@@ -431,11 +431,11 @@ if(UNIX AND NOT APPLE)
 	if(NOT WITH_PYTHON_MODULE)
 		if(WITH_DOC_MANPAGE)
 			add_custom_target(
-				blender_man_page ALL
+				bforartists_man_page ALL
 				COMMAND ${CMAKE_SOURCE_DIR}/doc/manpage/blender.1.py
 				        ${EXECUTABLE_OUTPUT_PATH}/blender
 				        ${CMAKE_CURRENT_BINARY_DIR}/blender.1)
-			add_dependencies(blender_man_page blender)
+			add_dependencies(bforartists_man_page bforartists)
 		endif()
 	endif()
 
