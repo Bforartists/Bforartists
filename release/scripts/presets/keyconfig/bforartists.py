@@ -911,6 +911,7 @@ km = kc.keymaps.new('Image', space_type='IMAGE_EDITOR', region_type='WINDOW', mo
 
 kmi = km.keymap_items.new('image.view_all', 'HOME', 'PRESS')
 kmi = km.keymap_items.new('image.view_selected', 'NUMPAD_0', 'PRESS')
+kmi = km.keymap_items.new('image.view_all_fit', 'NUMPAD_PERIOD', 'PRESS')
 kmi = km.keymap_items.new('image.view_pan', 'MIDDLEMOUSE', 'PRESS')
 kmi = km.keymap_items.new('image.view_pan', 'MIDDLEMOUSE', 'PRESS', shift=True)
 kmi = km.keymap_items.new('image.view_pan', 'TRACKPADPAN', 'ANY')
@@ -931,7 +932,6 @@ kmi = km.keymap_items.new('image.curves_point_set', 'ACTIONMOUSE', 'PRESS', shif
 kmi_props_setattr(kmi.properties, 'point', 'WHITE_POINT')
 kmi = km.keymap_items.new('image.open', 'O', 'PRESS', ctrl=True)
 kmi = km.keymap_items.new('image.new', 'N', 'PRESS', ctrl=True)
-kmi = km.keymap_items.new('image.view_all_fit', 'NUMPAD_0', 'PRESS')
 
 # Map NLA Editor
 km = kc.keymaps.new('NLA Editor', space_type='NLA_EDITOR', region_type='WINDOW', modal=False)
