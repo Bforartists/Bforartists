@@ -180,7 +180,7 @@ km = kc.keymaps.new('Grease Pencil Stroke Edit Mode', space_type='EMPTY', region
 
 kmi = km.keymap_items.new('gpencil.editmode_toggle', 'TAB', 'PRESS')
 kmi = km.keymap_items.new('wm.call_menu_pie', 'E', 'PRESS', key_modifier='D')
-kmi_props_setattr(kmi.properties, 'name', 'GPENCIL_PIE_sculpt')
+kmi_props_setattr(kmi.properties, 'name', 'GPENCIL_MT_pie_sculpt')
 kmi = km.keymap_items.new('wm.radial_control', 'F', 'PRESS', ctrl=True)
 kmi_props_setattr(kmi.properties, 'data_path_primary', 'user_preferences.edit.grease_pencil_eraser_radius')
 kmi = km.keymap_items.new('gpencil.interpolate', 'E', 'PRESS', ctrl=True, alt=True)
@@ -1276,9 +1276,9 @@ kmi_props_setattr(kmi.properties, 'mode', 'ERASER')
 kmi_props_setattr(kmi.properties, 'wait_for_input', False)
 kmi = km.keymap_items.new('gpencil.editmode_toggle', 'TAB', 'PRESS', key_modifier='D')
 kmi = km.keymap_items.new('wm.call_menu_pie', 'Q', 'PRESS', key_modifier='D')
-kmi_props_setattr(kmi.properties, 'name', 'GPENCIL_PIE_tool_palette')
+kmi_props_setattr(kmi.properties, 'name', 'GPENCIL_MT_pie_tool_palette')
 kmi = km.keymap_items.new('wm.call_menu_pie', 'W', 'PRESS', key_modifier='D')
-kmi_props_setattr(kmi.properties, 'name', 'GPENCIL_PIE_settings_palette')
+kmi_props_setattr(kmi.properties, 'name', 'GPENCIL_MT_pie_settings_palette')
 kmi = km.keymap_items.new('gpencil.blank_frame_add', 'B', 'PRESS', key_modifier='D')
 
 # Map Face Mask
