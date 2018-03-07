@@ -838,9 +838,9 @@ static int image_view_selected_poll(bContext *C)
 void IMAGE_OT_view_selected(wmOperatorType *ot)
 {
 	/* identifiers */
-	ot->name = "View Center";
+	ot->name = "View Selected";
 	ot->idname = "IMAGE_OT_view_selected";
-	ot->description = "View Center\nView all selected UVs";
+	ot->description = "View Selected\nCenter view at all selected UVs";
 	
 	/* api callbacks */
 	ot->exec = image_view_selected_exec;
