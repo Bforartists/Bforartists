@@ -2462,7 +2462,7 @@ class VIEW3D_PT_sculpt_options(Panel, View3DPaintPanel):
 
         col = layout.column(align=True)
         col.active = capabilities.has_gravity
-        col.label(text="Gravity:")
+        col.label(text="Dab Gravity:")
         col.prop(sculpt, "gravity", slider=True, text="Factor")
         col.prop(sculpt, "gravity_object")
 
@@ -2559,7 +2559,7 @@ class VIEW3D_PT_tools_brush_appearance(Panel, View3DPaintPanel):
         col.separator()
 
         col = col.column(align=True)
-        col.prop(brush, "use_custom_icon")
+        col.prop(brush, "use_custom_icon", text = "Custom Brush Icon")
         sub = col.column()
         sub.active = brush.use_custom_icon
         sub.prop(brush, "icon_filepath", text = "")
