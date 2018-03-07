@@ -149,3 +149,17 @@ def bridgeVertLoops(loop1, loop2, close):
         faces.append((loop1[-1], loop1[0], loop2[0], loop2[-1]))
     
     return faces
+
+def updateHeaderText(context, self, event):
+    if self.state == 1:
+        center = str(self.center[0])
+    else:
+        center = str(self.center[2])
+        
+    even = str(self.even)
+    flip = str(self.flip)
+    snapInc = str(self.snapInc)
+    snap = str(event.ctrl)
+    seg = "X: " + str(self.seg[0]) + " Y: " + str(self.seg[1]) + " Z: " + str(self.seg[2])
+    string = "Confirm Axis: (LMB), Cancel All: (RMB,ESC), Cancel Modal: (SHIFT+RMB), Revert State: (ALT+RMB), New Mesh: (SHIFT+LMB), Center Axis: " + center + " (C), Even: " + even + " (E), Flipped: " + flip + " (F), Snapping: " + snap + " (CTRL), Grid Snap Incements: " + snapInc + " (CTRL+M WHEEL), Segments: " + seg + " (M Wheel)"
+    context.area.header_text_set(string) 
