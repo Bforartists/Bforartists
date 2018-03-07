@@ -87,7 +87,7 @@ def draw_vpaint_symmetry(layout, vpaint):
 
 # ********** default tools for object-mode ****************
 
-class VIEW3D_MT_snap(View3DPanel, Panel):
+class VIEW3D_MT_snap_panel(View3DPanel, Panel):
     """Snap Tools"""
     bl_label = "Snap"
     bl_category = "Tools"
@@ -3020,7 +3020,7 @@ class VIEW3D_MT_make_links(Menu):
         layout.operator("object.make_links_data", text = "Fonts", icon='LINK_DATA').type = 'FONTS'
 
 classes = (
-    VIEW3D_MT_snap,
+    VIEW3D_MT_snap_panel,
     VIEW3D_PT_tools_object,
     VIEW3D_PT_tools_add_object,
     VIEW3D_PT_tools_add_misc,

@@ -275,6 +275,24 @@ class VIEW3D_MT_transform_armature(VIEW3D_MT_transform_base):
         if context.edit_object and context.edit_object.type == 'ARMATURE':
             layout.operator("armature.align",icon = "ALIGN")
 
+class VIEW3D_MT_snap(Menu):
+    bl_label = "Snap"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("view3d.snap_selected_to_grid", text="Selection to Grid")
+        layout.operator("view3d.snap_selected_to_cursor", text="Selection to Cursor").use_offset = False
+        layout.operator("view3d.snap_selected_to_cursor", text="Selection to Cursor (Offset)").use_offset = True
+        layout.operator("view3d.snap_selected_to_active", text="Selection to Active")
+
+        layout.separator()
+
+        layout.operator("view3d.snap_cursor_to_selected", text="Cursor to Selected")
+        layout.operator("view3d.snap_cursor_to_center", text="Cursor to Center")
+        layout.operator("view3d.snap_cursor_to_grid", text="Cursor to Grid")
+        layout.operator("view3d.snap_cursor_to_active", text="Cursor to Active")
+
 
 class VIEW3D_MT_uv_map(Menu):
     bl_label = "UV Mapping"
@@ -4199,6 +4217,7 @@ classes = (
     VIEW3D_MT_transform_base,
     VIEW3D_MT_transform_object,
     VIEW3D_MT_transform_armature,
+    VIEW3D_MT_snap,
     VIEW3D_MT_uv_map,
     VIEW3D_MT_view_all_all_regions,
     VIEW3D_MT_view_center_cursor_and_view_all,
