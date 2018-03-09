@@ -288,8 +288,26 @@ class IMAGE_MT_uvs_showhide(Menu):
         layout.operator("uv.hide", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
         layout.operator("uv.hide", text="Hide Unselected", icon = "HIDE_UNSELECTED").unselected = True
 
+class IMAGE_MT_uvs_snap(Menu):
+    bl_label = "Snap"
 
-class IMAGE_MT_uvs_snap(Panel, UVToolsPanel):
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator_context = 'EXEC_REGION_WIN'
+
+        layout.operator("uv.snap_selected", text="Selected to Pixels").target = 'PIXELS'
+        layout.operator("uv.snap_selected", text="Selected to Cursor").target = 'CURSOR'
+        layout.operator("uv.snap_selected", text="Selected to Cursor (Offset)").target = 'CURSOR_OFFSET'
+        layout.operator("uv.snap_selected", text="Selected to Adjacent Unselected").target = 'ADJACENT_UNSELECTED'
+
+        layout.separator()
+
+        layout.operator("uv.snap_cursor", text="Cursor to Pixels").target = 'PIXELS'
+        layout.operator("uv.snap_cursor", text="Cursor to Selected").target = 'SELECTED'
+
+
+class IMAGE_MT_uvs_snap_panel(Panel, UVToolsPanel):
     bl_label = "Snap"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -1342,6 +1360,7 @@ classes = (
     IMAGE_MT_uvs_weldalign,
     IMAGE_MT_uvs_showhide,
     IMAGE_MT_uvs_snap,
+    IMAGE_MT_uvs_snap_panel,
     IMAGE_MT_uvs_select_mode,
     IMAGE_HT_header,
     MASK_MT_editor_menus,
