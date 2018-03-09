@@ -1377,12 +1377,12 @@ class INFO_MT_curve_add(Menu):
     bl_label = "Curve"
 
     def draw(self, context):
-        #from .space_view3d_toolbar import VIEW3D_PT_tools_add_object
+        from .space_view3d_toolbar import VIEW3D_PT_tools_add_object
         layout = self.layout
 
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        #VIEW3D_PT_tools_add_object.draw_add_curve(layout)
+        VIEW3D_PT_tools_add_object.draw_add_curve(layout)
 
 
 class INFO_MT_surface_add(Menu):
@@ -1390,12 +1390,12 @@ class INFO_MT_surface_add(Menu):
     bl_label = "Surface"
 
     def draw(self, context):
-        #from .space_view3d_toolbar import VIEW3D_PT_tools_add_object
+        from .space_view3d_toolbar import VIEW3D_PT_tools_add_object
         layout = self.layout
 
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        #VIEW3D_PT_tools_add_object.draw_add_surface(layout)
+        VIEW3D_PT_tools_add_object.draw_add_surface(layout)
 
 
 class INFO_MT_metaball_add(Menu):
@@ -1419,10 +1419,10 @@ class INFO_MT_edit_curve_add(Menu):
         layout = self.layout
         layout.operator_context = 'EXEC_REGION_WIN'
 
-        #if is_surf:
-        #    INFO_MT_surface_add.draw(self, context)
-        #else:
-        #    INFO_MT_curve_add.draw(self, context)
+        if is_surf:
+            INFO_MT_surface_add.draw(self, context)
+        else:
+            INFO_MT_curve_add.draw(self, context)
 
 
 class INFO_MT_edit_armature_add(Menu):
@@ -4292,6 +4292,7 @@ classes = (
     VIEW3D_MT_angle_control,
     INFO_MT_camera_add,
     INFO_MT_curve_add,
+    INFO_MT_edit_curve_add,
     INFO_MT_surface_add,
     INFO_MT_metaball_add,
     INFO_MT_armature_add,
