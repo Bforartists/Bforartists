@@ -1363,13 +1363,13 @@ class INFO_MT_mesh_add(Menu):
     bl_label = "Mesh"
 
     def draw(self, context):
-        #from .space_view3d_toolbar import VIEW3D_PT_tools_add_object
+        from .space_view3d_toolbar import VIEW3D_PT_tools_add_object
 
         layout = self.layout
 
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        #VIEW3D_PT_tools_add_object.draw_add_mesh(layout)
+        VIEW3D_PT_tools_add_object.draw_add_mesh(layout)
 
 
 class INFO_MT_curve_add(Menu):
