@@ -2043,6 +2043,32 @@ class VIEW3D_MT_object_showhide(Menu):
         layout.operator("object.hide_view_set", text="Hide Selected", icon = "RESTRICT_VIEW_ON").unselected = False
         layout.operator("object.hide_unselected", text="Hide Unselected", icon = "HIDE_UNSELECTED") # hide unselected with new tooltip
 
+class VIEW3D_MT_make_single_user(Menu):
+    bl_label = "Make Single User"
+
+    def draw(self, context):
+        layout = self.layout
+
+        props = layout.operator("object.make_single_user", text="Object")
+        props.object = True
+        props.obdata = props.material = props.texture = props.animation = False
+
+        props = layout.operator("object.make_single_user", text="Object & Data")
+        props.object = props.obdata = True
+        props.material = props.texture = props.animation = False
+
+        props = layout.operator("object.make_single_user", text="Object & Data & Materials+Tex")
+        props.object = props.obdata = props.material = props.texture = True
+        props.animation = False
+
+        props = layout.operator("object.make_single_user", text="Materials+Tex")
+        props.material = props.texture = True
+        props.object = props.obdata = props.animation = False
+
+        props = layout.operator("object.make_single_user", text="Object Animation")
+        props.animation = True
+        props.object = props.obdata = props.material = props.texture = False
+
 
 class VIEW3D_MT_object_game(Menu):
     bl_label = "Game"
@@ -4283,6 +4309,7 @@ classes = (
     VIEW3D_subdivision_set,
     VIEW3D_hide_view_set_unselected,
     VIEW3D_MT_object_showhide,
+    VIEW3D_MT_make_single_user,
     VIEW3D_MT_object_game,
     VIEW3D_MT_brush,
     VIEW3D_MT_brush_paint_modes,
