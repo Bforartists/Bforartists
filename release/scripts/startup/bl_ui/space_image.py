@@ -315,6 +315,17 @@ class IMAGE_MT_uvs_snap(Panel, UVToolsPanel):
         col.operator("uv.snap_cursor", text="Cursor to Pixels", icon = "CURSOR_TO_PIXELS").target = 'PIXELS'
         col.operator("uv.snap_cursor", text="Cursor to Selected", icon = "CURSORTOSELECTION").target = 'SELECTED'
 
+class IMAGE_MT_uvs_weldalign(Menu):
+    bl_label = "Weld/Align"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.operator("uv.weld")  # W, 1
+        layout.operator("uv.remove_doubles")
+        layout.operator_enum("uv.align", "axis")  # W, 2/3/4
+
+
 
 class IMAGE_MT_uvs(Menu):
     bl_label = "UVs"
@@ -1328,6 +1339,7 @@ classes = (
     IMAGE_MT_image,
     IMAGE_MT_image_invert,
     IMAGE_MT_uvs,
+    IMAGE_MT_uvs_weldalign,
     IMAGE_MT_uvs_showhide,
     IMAGE_MT_uvs_snap,
     IMAGE_MT_uvs_select_mode,
