@@ -622,7 +622,7 @@ if(WITH_CODEC_FFMPEG)
 	add_python_test(
 		ffmpeg_tests
 		${CMAKE_CURRENT_LIST_DIR}/ffmpeg_tests.py
-		--blender "$<TARGET_FILE:blender>"
+		--blender "$<TARGET_FILE:bforartists>"
 		--testdir "${TEST_DATA_SRC_DIR}/ffmpeg"
 	)
 endif()
