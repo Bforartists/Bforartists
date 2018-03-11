@@ -114,7 +114,7 @@ ccl_device_noinline void shader_setup_from_ray(KernelGlobals *kg,
 
 	sd->I = -ray->D;
 
-	sd->flag |= kernel_tex_fetch(__shader_flag, (sd->shader & SHADER_MASK)*SHADER_SIZE);
+	sd->flag |= kernel_tex_fetch(__shaders, (sd->shader & SHADER_MASK)).flags;
 
 #ifdef __INSTANCING__
 	if(isect->object != OBJECT_NONE) {
@@ -199,7 +199,7 @@ void shader_setup_from_subsurface(
 		motion_triangle_shader_setup(kg, sd, isect, ray, true);
 	}
 
-	sd->flag |= kernel_tex_fetch(__shader_flag, (sd->shader & SHADER_MASK)*SHADER_SIZE);
+	sd->flag |= kernel_tex_fetch(__shaders, (sd->shader & SHADER_MASK)).flags;
 
 #  ifdef __INSTANCING__
 	if(isect->object != OBJECT_NONE) {
@@ -276,7 +276,7 @@ ccl_device_inline void shader_setup_from_sample(KernelGlobals *kg,
 	sd->time = time;
 	sd->ray_length = t;
 
-	sd->flag = kernel_tex_fetch(__shader_flag, (sd->shader & SHADER_MASK)*SHADER_SIZE);
+	sd->flag = kernel_tex_fetch(__shaders, (sd->shader & SHADER_MASK)).flags;
 	sd->object_flag = 0;
 	if(sd->object != OBJECT_NONE) {
 		sd->object_flag |= kernel_tex_fetch(__object_flag,
@@ -386,7 +386,7 @@ ccl_device_inline void shader_setup_from_background(KernelGlobals *kg, ShaderDat
 	sd->Ng = -ray->D;
 	sd->I = -ray->D;
 	sd->shader = kernel_data.background.surface_shader;
-	sd->flag = kernel_tex_fetch(__shader_flag, (sd->shader & SHADER_MASK)*SHADER_SIZE);
+	sd->flag = kernel_tex_fetch(__shaders, (sd->shader & SHADER_MASK)).flags;
 	sd->object_flag = 0;
 	sd->time = ray->time;
 	sd->ray_length = 0.0f;
@@ -763,6 +763,26 @@ ccl_device int shader_bsdf_sample_closure(KernelGlobals *kg, ShaderData *sd,
 	return label;
 }
 
+ccl_device float shader_bsdf_average_roughness(ShaderData *sd)
+{
+	float roughness = 0.0f;
+	float sum_weight = 0.0f;
+
+	for(int i = 0; i < sd->num_closure; i++) {
+		ShaderClosure *sc = &sd->closure[i];
+
+		if(CLOSURE_IS_BSDF(sc->type)) {
+			/* sqrt once to undo the squaring from multiplying roughness on the
+			 * two axes, and once for the squared roughness convention. */
+			float weight = fabsf(average(sc->weight));
+			roughness += weight * sqrtf(safe_sqrtf(bsdf_get_roughness_squared(sc)));
+			sum_weight += weight;
+		}
+	}
+
+	return (sum_weight > 0.0f) ? roughness / sum_weight : 0.0f;
+}
+
 ccl_device void shader_bsdf_blur(KernelGlobals *kg, ShaderData *sd, float roughness)
 {
 	for(int i = 0; i < sd->num_closure; i++) {
@@ -875,7 +895,7 @@ ccl_device float3 shader_bsdf_average_normal(KernelGlobals *kg, ShaderData *sd)
 	for(int i = 0; i < sd->num_closure; i++) {
 		ShaderClosure *sc = &sd->closure[i];
 		if(CLOSURE_IS_BSDF_OR_BSSRDF(sc->type))
-			N += sc->N*average(sc->weight);
+			N += sc->N*fabsf(average(sc->weight));
 	}
 
 	return (is_zero(N))? sd->N : normalize(N);
@@ -892,11 +912,11 @@ ccl_device float3 shader_bsdf_ao(KernelGlobals *kg, ShaderData *sd, float ao_fac
 		if(CLOSURE_IS_BSDF_DIFFUSE(sc->type)) {
 			const DiffuseBsdf *bsdf = (const DiffuseBsdf*)sc;
 			eval += sc->weight*ao_factor;
-			N += bsdf->N*average(sc->weight);
+			N += bsdf->N*fabsf(average(sc->weight));
 		}
 		else if(CLOSURE_IS_AMBIENT_OCCLUSION(sc->type)) {
 			eval += sc->weight;
-			N += sd->N*average(sc->weight);
+			N += sd->N*fabsf(average(sc->weight));
 		}
 	}
 
@@ -994,8 +1014,10 @@ ccl_device void shader_eval_surface(KernelGlobals *kg, ShaderData *sd,
 		DiffuseBsdf *bsdf = (DiffuseBsdf*)bsdf_alloc(sd,
 		                                             sizeof(DiffuseBsdf),
 		                                             make_float3(0.8f, 0.8f, 0.8f));
-		bsdf->N = sd->N;
-		sd->flag |= bsdf_diffuse_setup(bsdf);
+		if (bsdf != NULL) {
+			bsdf->N = sd->N;
+			sd->flag |= bsdf_diffuse_setup(bsdf);
+		}
 #endif
 	}
 
@@ -1179,7 +1201,7 @@ ccl_device_inline void shader_eval_volume(KernelGlobals *kg,
 		sd->shader = stack[i].shader;
 
 		sd->flag &= ~SD_SHADER_FLAGS;
-		sd->flag |= kernel_tex_fetch(__shader_flag, (sd->shader & SHADER_MASK)*SHADER_SIZE);
+		sd->flag |= kernel_tex_fetch(__shaders, (sd->shader & SHADER_MASK)).flags;
 		sd->object_flag &= ~SD_OBJECT_FLAGS;
 
 		if(sd->object != OBJECT_NONE) {
@@ -1252,7 +1274,7 @@ ccl_device bool shader_transparent_shadow(KernelGlobals *kg, Intersection *isect
 		shader = __float_as_int(str.z);
 	}
 #endif
-	int flag = kernel_tex_fetch(__shader_flag, (shader & SHADER_MASK)*SHADER_SIZE);
+	int flag = kernel_tex_fetch(__shaders, (shader & SHADER_MASK)).flags;
 
 	return (flag & SD_HAS_TRANSPARENT_SHADOW) != 0;
 }

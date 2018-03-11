@@ -188,7 +188,7 @@ class TIME_MT_marker(Menu):
     def draw(self, context):
         layout = self.layout
 
-        marker_menu_generic(layout, context)
+        marker_menu_generic(layout)
 
 
 class TIME_MT_view(Menu):
