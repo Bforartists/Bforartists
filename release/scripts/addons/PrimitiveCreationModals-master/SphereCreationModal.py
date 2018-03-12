@@ -74,7 +74,7 @@ def ResetObjectParams(self, context):
 class SphereCreationModalOperator(bpy.types.Operator):
     bl_idname = "object.sphere_creation_modal_operator"
     bl_label = "Sphere Creation Modal"
-    bl_description = "Sphere Modal- \nAllows Sphere creation by dragging\nClick once to place the object, Click a second time to set the radius, Click again to confirm the height."
+    bl_description = "Sphere Modal- \nAllows Sphere creation by dragging\nClick once to place the object, Click a second time to set the radius, Click again to confirm the height"
     bl_options = {'REGISTER', 'GRAB_CURSOR', 'BLOCKING', 'UNDO'}
     
     #init Vars
