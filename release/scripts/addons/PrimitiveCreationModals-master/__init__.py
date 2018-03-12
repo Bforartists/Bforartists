@@ -42,7 +42,7 @@ class addPrimitiveModals(AddonPreferences):
     HUD_Center = BoolProperty(name="UI Centered", default=True)
 
     def draw(self, context):
-        layout = self.layout
+        layout = self.layout        
         layout.prop(self, "Zsensitivity")
         layout.prop(self, "Max_Click_Dist")
         layout.prop(self, "HUD_Center")
@@ -50,6 +50,9 @@ class addPrimitiveModals(AddonPreferences):
 
 #Add option in the Add object menu.
 def add_object_button(self, context):
+    
+    self.layout.operator_context = 'INVOKE_DEFAULT'
+    
     self.layout.operator(
         operator="object.box_creation_modal_operator",
         text="Box Modal",
