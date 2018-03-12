@@ -74,7 +74,7 @@ def ResetObjectParams(self, context):
 class BoxCreationModalOperator(bpy.types.Operator):
     bl_idname = "object.box_creation_modal_operator"
     bl_label = "Box Creation Modal"
-    bl_description = "Box Modal- \nAllows Box creation by dragging\nClick once to place one corner, Click a second time to place the opposite corner, Click again to confirm the height."
+    bl_description = "Box Modal- \nAllows Box creation by dragging\nClick once to place one corner, Click a second time to place the opposite corner, Click again to confirm the height"
     bl_options = {'REGISTER', 'GRAB_CURSOR', 'BLOCKING', 'UNDO'}
     
     #init Vars

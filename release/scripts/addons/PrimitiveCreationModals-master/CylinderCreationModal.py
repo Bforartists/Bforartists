@@ -74,7 +74,7 @@ def ResetObjectParams(self, context):
 class CylinderCreationModalOperator(bpy.types.Operator):
     bl_idname = "object.cylinder_creation_modal_operator"
     bl_label = "Cylinder Creation Modal"
-    bl_description = "Cylinder Modal- \nAllows Cylinder creation by dragging\nClick once to place object, Click a second time to set the radius, Click again to confirm the height."
+    bl_description = "Cylinder Modal- \nAllows Cylinder creation by dragging\nClick once to place object, Click a second time to set the radius, Click again to confirm the height"
     bl_options = {'REGISTER', 'GRAB_CURSOR', 'BLOCKING', 'UNDO'}
     
     #init Vars
