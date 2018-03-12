@@ -108,9 +108,9 @@ def parse_json_rec(fbx_root, json_node):
         elif dt == "d":
             e.add_float64_array(d)
         elif dt == "b":
-            e.add_byte_array(d)
-        elif dt == "c":
             e.add_bool_array(d)
+        elif dt == "c":
+            e.add_byte_array(d)
 
     if name == "FBXVersion":
         assert(data_types == "I")
