@@ -1508,13 +1508,13 @@ def save_single(operator, scene, filepath="",
         collayers = []
         if len(me.vertex_colors):
             collayers = me.vertex_colors
-            t_lc = [None] * len(me.loops) * 3
+            t_lc = [None] * len(me.loops) * 4
             col2idx = None
             _nchunk = 4  # Number of colors per line
             _nchunk_idx = 64  # Number of color indices per line
             for colindex, collayer in enumerate(collayers):
                 collayer.data.foreach_get("color", t_lc)
-                lc = tuple(zip(*[iter(t_lc)] * 3))
+                lc = tuple(zip(*[iter(t_lc)] * 4))
                 fw('\n\t\tLayerElementColor: %i {'
                    '\n\t\t\tVersion: 101'
                    '\n\t\t\tName: "%s"'
@@ -1523,7 +1523,7 @@ def save_single(operator, scene, filepath="",
                    '\n\t\t\tColors: ' % (colindex, collayer.name))
 
                 col2idx = tuple(set(lc))
-                fw(',\n\t\t\t        '.join(','.join('%.6f,%.6f,%.6f,1' % c for c in chunk)
+                fw(',\n\t\t\t        '.join(','.join('%.6f,%.6f,%.6f,%.06f' % c for c in chunk)
                                             for chunk in grouper_exact(col2idx, _nchunk)))
 
                 fw('\n\t\t\tColorIndex: ')

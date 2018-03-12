@@ -1062,9 +1062,9 @@ def fbx_data_mesh_elements(root, me_obj, scene_data, done_meshes):
     vcolnumber = len(me.vertex_colors)
     if vcolnumber:
         def _coltuples_gen(raw_cols):
-            return zip(*(iter(raw_cols),) * 3 + (_infinite_gen(1.0),))  # We need a fake alpha...
+            return zip(*(iter(raw_cols),) * 4)
 
-        t_lc = array.array(data_types.ARRAY_FLOAT64, (0.0,)) * len(me.loops) * 3
+        t_lc = array.array(data_types.ARRAY_FLOAT64, (0.0,)) * len(me.loops) * 4
         for colindex, collayer in enumerate(me.vertex_colors):
             collayer.data.foreach_get("color", t_lc)
             lay_vcol = elem_data_single_int32(geom, b"LayerElementColor", colindex)
@@ -1204,7 +1204,7 @@ def fbx_data_mesh_elements(root, me_obj, scene_data, done_meshes):
 
 def check_skip_material(mat):
     """Simple helper to check whether we actually support exporting that material or not"""
-    return mat.type not in {'SURFACE'} or mat.use_nodes
+    return mat.type not in {'SURFACE'}
 
 
 def fbx_data_material_elements(root, mat, scene_data):
@@ -1217,9 +1217,10 @@ def fbx_data_material_elements(root, mat, scene_data):
 
     mat_key, _objs = scene_data.data_materials[mat]
     skip_mat = check_skip_material(mat)
+    node_mat = mat.use_nodes
     mat_type = b"Phong"
     # Approximation...
-    if not skip_mat and mat.specular_shader not in {'COOKTORR', 'PHONG', 'BLINN'}:
+    if not skip_mat and not node_mat and mat.specular_shader not in {'COOKTORR', 'PHONG', 'BLINN'}:
         mat_type = b"Lambert"
 
     fbx_mat = elem_data_single_int64(root, b"Material", get_fbx_uuid_from_key(mat_key))
@@ -1236,34 +1237,35 @@ def fbx_data_material_elements(root, mat, scene_data):
 
     if not skip_mat:
         elem_props_template_set(tmpl, props, "p_string", b"ShadingModel", mat_type.decode())
-        elem_props_template_set(tmpl, props, "p_color", b"EmissiveColor", mat.diffuse_color)
-        elem_props_template_set(tmpl, props, "p_number", b"EmissiveFactor", mat.emit)
-        elem_props_template_set(tmpl, props, "p_color", b"AmbientColor", ambient_color)
-        elem_props_template_set(tmpl, props, "p_number", b"AmbientFactor", mat.ambient)
         elem_props_template_set(tmpl, props, "p_color", b"DiffuseColor", mat.diffuse_color)
         elem_props_template_set(tmpl, props, "p_number", b"DiffuseFactor", mat.diffuse_intensity)
-        elem_props_template_set(tmpl, props, "p_color", b"TransparentColor",
-                                mat.diffuse_color if mat.use_transparency else (1.0, 1.0, 1.0))
-        elem_props_template_set(tmpl, props, "p_number", b"TransparencyFactor",
-                                1.0 - mat.alpha if mat.use_transparency else 0.0)
-        elem_props_template_set(tmpl, props, "p_number", b"Opacity", mat.alpha if mat.use_transparency else 1.0)
-        elem_props_template_set(tmpl, props, "p_vector_3d", b"NormalMap", (0.0, 0.0, 0.0))
-        # Not sure about those...
-        """
-        b"Bump": ((0.0, 0.0, 0.0), "p_vector_3d"),
-        b"BumpFactor": (1.0, "p_double"),
-        b"DisplacementColor": ((0.0, 0.0, 0.0), "p_color_rgb"),
-        b"DisplacementFactor": (0.0, "p_double"),
-        """
-        if mat_type == b"Phong":
-            elem_props_template_set(tmpl, props, "p_color", b"SpecularColor", mat.specular_color)
-            elem_props_template_set(tmpl, props, "p_number", b"SpecularFactor", mat.specular_intensity / 2.0)
-            # See Material template about those two!
-            elem_props_template_set(tmpl, props, "p_number", b"Shininess", (mat.specular_hardness - 1.0) / 5.10)
-            elem_props_template_set(tmpl, props, "p_number", b"ShininessExponent", (mat.specular_hardness - 1.0) / 5.10)
-            elem_props_template_set(tmpl, props, "p_color", b"ReflectionColor", mat.mirror_color)
-            elem_props_template_set(tmpl, props, "p_number", b"ReflectionFactor",
-                                    mat.raytrace_mirror.reflect_factor if mat.raytrace_mirror.use else 0.0)
+        if not node_mat:
+            elem_props_template_set(tmpl, props, "p_color", b"EmissiveColor", mat.diffuse_color)
+            elem_props_template_set(tmpl, props, "p_number", b"EmissiveFactor", mat.emit)
+            elem_props_template_set(tmpl, props, "p_color", b"AmbientColor", ambient_color)
+            elem_props_template_set(tmpl, props, "p_number", b"AmbientFactor", mat.ambient)
+            elem_props_template_set(tmpl, props, "p_color", b"TransparentColor",
+                                    mat.diffuse_color if mat.use_transparency else (1.0, 1.0, 1.0))
+            elem_props_template_set(tmpl, props, "p_number", b"TransparencyFactor",
+                                    1.0 - mat.alpha if mat.use_transparency else 0.0)
+            elem_props_template_set(tmpl, props, "p_number", b"Opacity", mat.alpha if mat.use_transparency else 1.0)
+            elem_props_template_set(tmpl, props, "p_vector_3d", b"NormalMap", (0.0, 0.0, 0.0))
+            # Not sure about those...
+            """
+            b"Bump": ((0.0, 0.0, 0.0), "p_vector_3d"),
+            b"BumpFactor": (1.0, "p_double"),
+            b"DisplacementColor": ((0.0, 0.0, 0.0), "p_color_rgb"),
+            b"DisplacementFactor": (0.0, "p_double"),
+            """
+            if mat_type == b"Phong":
+                elem_props_template_set(tmpl, props, "p_color", b"SpecularColor", mat.specular_color)
+                elem_props_template_set(tmpl, props, "p_number", b"SpecularFactor", mat.specular_intensity / 2.0)
+                # See Material template about those two!
+                elem_props_template_set(tmpl, props, "p_number", b"Shininess", (mat.specular_hardness - 1.0) / 5.10)
+                elem_props_template_set(tmpl, props, "p_number", b"ShininessExponent", (mat.specular_hardness - 1.0) / 5.10)
+                elem_props_template_set(tmpl, props, "p_color", b"ReflectionColor", mat.mirror_color)
+                elem_props_template_set(tmpl, props, "p_number", b"ReflectionFactor",
+                                        mat.raytrace_mirror.reflect_factor if mat.raytrace_mirror.use else 0.0)
 
     elem_props_template_finalize(tmpl, props)
 
@@ -1894,8 +1896,9 @@ def fbx_animations_do(scene_data, ref_id, f_start, f_end, start_zero, objects=No
                                ACNW(ob_obj.key, 'LCL_SCALING', force_key, force_sek, scale))
         p_rots[ob_obj] = rot
 
-    animdata_shapes = OrderedDict()
     force_key = (simplify_fac == 0.0)
+
+    animdata_shapes = OrderedDict()
     for me, (me_key, _shapes_key, shapes) in scene_data.data_deformers_shape.items():
         # Ignore absolute shape keys for now!
         if not me.shape_keys.use_relative:
@@ -1905,6 +1908,12 @@ def fbx_animations_do(scene_data, ref_id, f_start, f_end, start_zero, objects=No
             # Sooooo happy to have to twist again like a mad snake... Yes, we need to write those curves twice. :/
             acnode.add_group(me_key, shape.name, shape.name, (shape.name,))
             animdata_shapes[channel_key] = (acnode, me, shape)
+
+    animdata_cameras = OrderedDict()
+    for cam_obj, cam_key in scene_data.data_cameras.items():
+        cam = cam_obj.bdata.data
+        acnode = AnimationCurveNodeWrapper(cam_key, 'CAMERA_FOCAL', force_key, force_sek, (cam.lens,))
+        animdata_cameras[cam_key] = (acnode, cam)
 
     currframe = f_start
     while currframe <= f_end:
@@ -1925,6 +1934,8 @@ def fbx_animations_do(scene_data, ref_id, f_start, f_end, start_zero, objects=No
             ob_obj.dupli_list_clear()
         for anim_shape, me, shape in animdata_shapes.values():
             anim_shape.add_keyframe(real_currframe, (shape.value * 100.0,))
+        for anim_camera, camera in animdata_cameras.values():
+            anim_camera.add_keyframe(real_currframe, (camera.lens,))
         currframe += bake_step
 
     scene.frame_set(back_currframe, 0.0)
@@ -1951,6 +1962,18 @@ def fbx_animations_do(scene_data, ref_id, f_start, f_end, start_zero, objects=No
         if not anim_shape:
             continue
         for elem_key, group_key, group, fbx_group, fbx_gname in anim_shape.get_final_data(scene, ref_id, force_keep):
+                anim_data = animations.get(elem_key)
+                if anim_data is None:
+                    anim_data = animations[elem_key] = ("dummy_unused_key", OrderedDict())
+                anim_data[1][fbx_group] = (group_key, group, fbx_gname)
+
+    # And cameras' lens keys.
+    for cam_key, (anim_camera, camera) in animdata_cameras.items():
+        final_keys = OrderedDict()
+        anim_camera.simplify(simplify_fac, bake_step, force_keep)
+        if not anim_camera:
+            continue
+        for elem_key, group_key, group, fbx_group, fbx_gname in anim_camera.get_final_data(scene, ref_id, force_keep):
                 anim_data = animations.get(elem_key)
                 if anim_data is None:
                     anim_data = animations[elem_key] = ("dummy_unused_key", OrderedDict())
@@ -2192,8 +2215,11 @@ def fbx_data_from_scene(scene, settings):
                     if mod.show_render:
                         use_org_data = False
             if not use_org_data:
-                tmp_me = ob.to_mesh(scene, apply_modifiers=True,
-                                    settings='RENDER' if settings.use_mesh_modifiers_render else 'PREVIEW')
+                tmp_me = ob.to_mesh(
+                    scene,
+                    apply_modifiers=settings.use_mesh_modifiers,
+                    settings='RENDER' if settings.use_mesh_modifiers_render else 'PREVIEW',
+                )
                 data_meshes[ob_obj] = (get_blenderID_key(tmp_me), tmp_me, True)
             # Re-enable temporary disabled modifiers.
             for mod, show_render in tmp_mods:

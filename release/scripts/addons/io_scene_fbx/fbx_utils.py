@@ -729,6 +729,7 @@ class AnimationCurveNodeWrapper:
         'LCL_ROTATION': ("Lcl Rotation", "R", ("X", "Y", "Z")),
         'LCL_SCALING': ("Lcl Scaling", "S", ("X", "Y", "Z")),
         'SHAPE_KEY': ("DeformPercent", "DeformPercent", ("DeformPercent",)),
+        'CAMERA_FOCAL': ("FocalLength", "FocalLength", ("FocalLength",)),
     }
 
     def __init__(self, elem_key, kind, force_keying, force_startend_keying, default_values=...):
