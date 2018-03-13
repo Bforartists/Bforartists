@@ -125,8 +125,8 @@ class LightFieldPropertyGroup(PropertyGroup):
 
 # Define Panel classes for updating
 panels = (
-        light_field_tools.VIEW3D_OT_lightfield_tools,
-        )
+    light_field_tools.VIEW3D_PT_lightfield_tools,
+)
 
 
 def update_panel(self, context):

@@ -174,11 +174,3 @@ class TCIntersectAllEdges(bpy.types.Operator):
             print('must be in edit mode')
 
         return {'FINISHED'}
-
-
-def register():
-    bpy.utils.register_module(__name__)
-
-
-def unregister():
-    bpy.utils.unregister_module(__name__)

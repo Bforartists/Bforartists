@@ -25,28 +25,28 @@
 bl_info = {
     "name": "CubeSter",
     "author": "Jacob Morris",
-    "version": (0, 7, 1),
+    "version": (0, 7, 2),
     "blender": (2, 78, 0),
     "location": "View 3D > Toolbar > CubeSter",
     "description": "Takes image, image sequence, or audio file and converts it "
                    "into a height map based on pixel color and alpha values",
     "category": "Add Mesh"
-    }
+}
 
 import bpy
 import bmesh
 from bpy.types import (
-        Operator,
-        Panel,
-        )
+    Operator,
+    Panel,
+)
 
 import timeit
 from random import uniform
 from math import radians
 from os import (
-        path,
-        listdir,
-        )
+    path,
+    listdir,
+)
 
 
 # create block at center position x, y with block width 2 * hx and 2 * hy and height of h
@@ -146,18 +146,18 @@ def create_material(scene, ob, name):
 
         if adv_obj.cubester_materials == "image":
             mat.node_tree.links.new(
-                            nodes["Image Texture"].outputs[0],
-                            nodes["Diffuse BSDF"].inputs[0]
-                            )
+                nodes["Image Texture"].outputs[0],
+                nodes["Diffuse BSDF"].inputs[0]
+            )
             mat.node_tree.links.new(
-                            nodes["Texture Coordinate"].outputs[2],
-                            nodes["Image Texture"].inputs[0]
-                            )
+                nodes["Texture Coordinate"].outputs[2],
+                nodes["Image Texture"].inputs[0]
+            )
         else:
             mat.node_tree.links.new(
-                            nodes["Attribute"].outputs[0],
-                            nodes["Diffuse BSDF"].inputs[0]
-                            )
+                nodes["Attribute"].outputs[0],
+                nodes["Diffuse BSDF"].inputs[0]
+            )
     else:
         if adv_obj.cubester_materials == "image" or scene.render.engine != "BLENDER_RENDER":
             tex = bpy.data.textures.new("CubeSter_" + name, "IMAGE")
@@ -177,9 +177,11 @@ def create_mesh_from_audio(self, scene, verts, faces):
     audio_filepath = adv_obj.cubester_audio_path
     width = adv_obj.cubester_audio_width_blocks
     length = adv_obj.cubester_audio_length_blocks
-    size_per_hundred = adv_obj.cubester_size_per_hundred_pixels
 
+    size_per_hundred = adv_obj.cubester_size_per_hundred_pixels
     size = size_per_hundred / 100
+    # Note: used for compatibility with vertex colors changes
+    bl_version = bool(bpy.app.version >= (2, 79, 1))
 
     # create all blocks
     y = -(width / 2) * size + (size / 2)
@@ -212,7 +214,8 @@ def create_mesh_from_audio(self, scene, verts, faces):
             # go through each column, step by appropriate amount
             for column in range(0, picture.size[0] * 4, 4 + skip_x * 4):
                 r, g, b, a = get_pixel_values(picture, pixels, row, column)
-                vert_colors += [(r, g, b) for i in range(24)]
+                get_colors = (r, g, b, a) if bl_version else (r, g, b)
+                vert_colors += [get_colors for i in range(24)]
 
         bpy.ops.mesh.vertex_color_add()
 
@@ -244,7 +247,8 @@ def create_mesh_from_audio(self, scene, verts, faces):
                 for row in range(0, picture.size[1], skip_y + 1):
                     for column in range(0, picture.size[0] * 4, 4 + skip_x * 4):
                         r, g, b, a = get_pixel_values(picture, pixels, row, column)
-                        frame_colors += [(r, g, b) for i in range(24)]
+                        get_colors = (r, g, b, a) if bl_version else (r, g, b)
+                        frame_colors += [get_colors for i in range(24)]
 
                 frames_vert_colors.append(frame_colors)
 
@@ -354,6 +358,8 @@ def create_mesh_from_image(self, scene, verts, faces):
     adv_obj = scene.advanced_objects
     picture = bpy.data.images[adv_obj.cubester_image]
     pixels = list(picture.pixels)
+    # Note: used for compatibility with vertex colors changes
+    bl_version = bool(bpy.app.version >= (2, 79, 1))
 
     x_pixels = picture.size[0] / (adv_obj.cubester_skip_pixels + 1)
     y_pixels = picture.size[1] / (adv_obj.cubester_skip_pixels + 1)
@@ -367,7 +373,6 @@ def create_mesh_from_image(self, scene, verts, faces):
     y = -height / 2 + half_width
 
     vert_colors = []
-    weights = [uniform(0.0, 1.0) for i in range(4)]  # random weights
     rows = 0
 
     # go through each row of pixels stepping by adv_obj.cubester_skip_pixels + 1
@@ -377,16 +382,17 @@ def create_mesh_from_image(self, scene, verts, faces):
         # go through each column, step by appropriate amount
         for column in range(0, picture.size[0] * 4, 4 + adv_obj.cubester_skip_pixels * 4):
             r, g, b, a = get_pixel_values(picture, pixels, row, column)
+            get_colors = (r, g, b, a) if bl_version else (r, g, b)
             h = find_point_height(r, g, b, a, scene)
 
             # if not transparent
             if h != -1:
                 if adv_obj.cubester_mesh_style == "blocks":
                     create_block(x, y, half_width, h, verts, faces)
-                    vert_colors += [(r, g, b) for i in range(24)]
+                    vert_colors += [get_colors for i in range(24)]
                 else:
                     verts += [(x, y, h)]
-                    vert_colors += [(r, g, b) for i in range(4)]
+                    vert_colors += [get_colors for i in range(4)]
 
             x += step
         y += step
@@ -464,14 +470,15 @@ def create_mesh_from_image(self, scene, verts, faces):
             for row in range(0, picture.size[1], adv_obj.cubester_skip_pixels + 1):
                 for column in range(0, picture.size[0] * 4, 4 + adv_obj.cubester_skip_pixels * 4):
                     r, g, b, a = get_pixel_values(picture, pixels, row, column)
+                    get_colors = (r, g, b, a) if bl_version else (r, g, b)
                     h = find_point_height(r, g, b, a, scene)
 
                     if h != -1:
                         frame_heights.append(h)
                         if adv_obj.cubester_mesh_style == "blocks":
-                            frame_colors += [(r, g, b) for i in range(24)]
+                            frame_colors += [get_colors for i in range(24)]
                         else:
-                            frame_colors += [(r, g, b) for i in range(4)]
+                            frame_colors += [get_colors for i in range(4)]
 
             if adv_obj.cubester_mesh_style == "plane":
                 del vert_colors[len(vert_colors) - 4:len(vert_colors)]
@@ -482,24 +489,24 @@ def create_mesh_from_image(self, scene, verts, faces):
         # determine what data to use
         if adv_obj.cubester_materials == "vertex" or scene.render.engine == "BLENDER_ENGINE":
             adv_obj.cubester_vertex_colors[ob.name] = {
-                                    "type": "vertex", "frames": frames_vert_colors,
-                                    "frame_skip": adv_obj.cubester_frame_step,
-                                    "total_images": max_images
-                                    }
+                "type": "vertex", "frames": frames_vert_colors,
+                "frame_skip": adv_obj.cubester_frame_step,
+                "total_images": max_images
+            }
         else:
             adv_obj.cubester_vertex_colors[ob.name] = {
-                                    "type": "image", "frame_skip": scene.cubester_frame_step,
-                                    "total_images": max_images
-                                    }
+                "type": "image", "frame_skip": adv_obj.cubester_frame_step,
+                "total_images": max_images
+            }
             att = get_image_node(ob.data.materials[0])
             att.image_user.frame_duration = len(frames) * adv_obj.cubester_frame_step
 
         # animate mesh
         create_f_curves(
-                mesh, frames,
-                adv_obj.cubester_frame_step,
-                adv_obj.cubester_mesh_style
-                )
+            mesh, frames,
+            adv_obj.cubester_frame_step,
+            adv_obj.cubester_mesh_style
+        )
 
 
 # generate uv map for object
@@ -695,7 +702,7 @@ def material_frame_handler(scene):
 
 
 class CubeSterPanel(Panel):
-    bl_idname = "OBJECT_PT.cubester"
+    bl_idname = "OBJECT_PT_cubester"
     bl_label = "CubeSter"
     bl_space_type = "VIEW_3D"
     bl_region_type = "TOOLS"
@@ -879,11 +886,12 @@ class CubeSterPanel(Panel):
 
 class CubeSter(Operator):
     bl_idname = "mesh.cubester"
-    bl_label = "Generate Mesh"
+    bl_label = "Generate CubeSter Mesh"
     bl_description = "Generate a mesh from an Image or Sound File"
     bl_options = {"REGISTER", "UNDO"}
 
     def execute(self, context):
+
         verts, faces = [], []
 
         start = timeit.default_timer()
@@ -901,7 +909,8 @@ class CubeSter(Operator):
                 return {"CANCELLED"}
         else:
             if (adv_obj.cubester_audio_path != "" and
-               path.isfile(adv_obj.cubester_audio_path) and adv_obj.cubester_check_audio is True):
+                    path.isfile(adv_obj.cubester_audio_path) and
+                    adv_obj.cubester_check_audio is True):
 
                 create_mesh_from_audio(self, scene, verts, faces)
                 created = adv_obj.cubester_audio_file_length
@@ -913,19 +922,21 @@ class CubeSter(Operator):
         stop = timeit.default_timer()
 
         if adv_obj.cubester_mesh_style == "blocks" or adv_obj.cubester_audio_image == "audio":
-            self.report({"INFO"},
-                        "CubeSter: {} blocks and {} frame(s) "
-                        "in {}s".format(str(int(len(verts) / 8)),
-                                        str(created),
-                                        str(round(stop - start, 4)))
-                        )
+            self.report(
+                {"INFO"},
+                "CubeSter: {} blocks and {} frame(s) "
+                "in {}s".format(str(int(len(verts) / 8)),
+                                str(created),
+                                str(round(stop - start, 4)))
+            )
         else:
-            self.report({"INFO"},
-                        "CubeSter: {} points and {} frame(s) "
-                        "in {}s" .format(str(len(verts)),
-                                         str(created),
-                                         str(round(stop - start, 4)))
-                        )
+            self.report(
+                {"INFO"},
+                "CubeSter: {} points and {} frame(s) "
+                "in {}s" .format(str(len(verts)),
+                                 str(created),
+                                 str(round(stop - start, 4)))
+            )
 
         return {"FINISHED"}
 

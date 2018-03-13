@@ -22,6 +22,7 @@ import bpy
 import sys #really import here and in render.py?
 import os #really import here and in render.py?
 from os.path import isfile
+from bl_operators.presets import AddPresetBase
 
 # Use some of the existing buttons.
 from bl_ui import properties_render
@@ -41,6 +42,61 @@ properties_world.WORLD_PT_world.COMPAT_ENGINES.add('POVRAY_RENDER')
 properties_world.WORLD_PT_mist.COMPAT_ENGINES.add('POVRAY_RENDER')
 del properties_world
 
+class POV_WORLD_MT_presets(bpy.types.Menu):
+    bl_label = "World Presets"
+    preset_subdir = "pov/world"
+    preset_operator = "script.execute_preset"
+    draw = bpy.types.Menu.draw_preset
+
+
+class AddPresetWorld(AddPresetBase, bpy.types.Operator):
+    '''Add a World Preset'''
+    bl_idname = "object.world_preset_add"
+    bl_label = "Add World Preset"
+    preset_menu = "POV_WORLD_MT_presets"
+
+    # variable used for all preset values
+    preset_defines = [
+        "scene = bpy.context.scene"    
+        ]
+
+    # properties to store in the preset
+    preset_values = [
+        "scene.world.use_sky_blend",
+        "scene.world.horizon_color",
+        "scene.world.zenith_color", 
+        "scene.world.ambient_color",
+        "scene.world.mist_settings.use_mist",
+        "scene.world.mist_settings.intensity",
+        "scene.world.mist_settings.depth",        
+        "scene.world.mist_settings.start",
+        "scene.pov.media_enable",
+        "scene.pov.media_scattering_type", 
+        "scene.pov.media_samples",
+        "scene.pov.media_diffusion_scale",
+        "scene.pov.media_diffusion_color",
+        "scene.pov.media_absorption_scale",
+        "scene.pov.media_absorption_color",
+        "scene.pov.media_eccentricity",        
+        ]
+
+    # where to store the preset
+    preset_subdir = "pov/world"
+
+# Draw into an existing panel
+def world_panel_func(self, context):
+    layout = self.layout
+
+    row = layout.row(align=True)
+    row.menu(POV_WORLD_MT_presets.__name__, text=POV_WORLD_MT_presets.bl_label)
+    row.operator(AddPresetWorld.bl_idname, text="", icon='ZOOMIN')
+    row.operator(AddPresetWorld.bl_idname, text="", icon='ZOOMOUT').remove_active = True
+
+
+classes = (
+    POV_WORLD_MT_presets,
+    AddPresetWorld,
+    )  
 
 # Example of wrapping every class 'as is'
 from bl_ui import properties_texture
@@ -453,6 +509,52 @@ class LAMP_PT_POV_lamp(PovLampButtonsPanel, bpy.types.Panel):
 
     draw = properties_data_lamp.DATA_PT_lamp.draw
 
+class POV_LAMP_MT_presets(bpy.types.Menu):
+    bl_label = "Lamp Presets"
+    preset_subdir = "pov/lamp"
+    preset_operator = "script.execute_preset"
+    draw = bpy.types.Menu.draw_preset
+
+
+class AddPresetLamp(AddPresetBase, bpy.types.Operator):
+    '''Add a Lamp Preset'''
+    bl_idname = "object.lamp_preset_add"
+    bl_label = "Add Lamp Preset"
+    preset_menu = "POV_LAMP_MT_presets"
+
+    # variable used for all preset values
+    preset_defines = [
+        "lampdata = bpy.context.object.data"
+        ]
+
+    # properties to store in the preset
+    preset_values = [
+        "lampdata.type",
+        "lampdata.color",      
+        ]
+
+    # where to store the preset
+    preset_subdir = "pov/lamp"
+
+
+
+
+
+# Draw into an existing panel
+def lamp_panel_func(self, context):
+    layout = self.layout
+
+    row = layout.row(align=True)
+    row.menu(POV_LAMP_MT_presets.__name__, text=POV_LAMP_MT_presets.bl_label)
+    row.operator(AddPresetLamp.bl_idname, text="", icon='ZOOMIN')
+    row.operator(AddPresetLamp.bl_idname, text="", icon='ZOOMOUT').remove_active = True
+
+
+classes = (
+    POV_LAMP_MT_presets,
+    AddPresetLamp,
+    )    
+    
 class LAMP_PT_POV_sunsky(PovLampButtonsPanel, bpy.types.Panel):
     bl_label = properties_data_lamp.DATA_PT_sunsky.bl_label
 
@@ -609,7 +711,10 @@ class RENDER_PT_povray_render_settings(RenderButtonsPanel, bpy.types.Panel):
 
         scene = context.scene
         #layout.active = (scene.pov.max_trace_level != 0)
-
+        
+        if sys.platform[:3] != "win":
+            layout.prop(scene.pov, "sdl_window_enable", text="POV-Ray SDL Window")
+            
         col = layout.column()
 
         col.label(text="Global Settings:")
@@ -787,7 +892,71 @@ class RENDER_PT_povray_radiosity(RenderButtonsPanel, bpy.types.Panel):
             col.prop(scene.pov, "radio_subsurface")
 
 
+            
+            
+            
+class POV_RADIOSITY_MT_presets(bpy.types.Menu):
+    bl_label = "Radiosity Presets"
+    preset_subdir = "pov/radiosity"
+    preset_operator = "script.execute_preset"
+    draw = bpy.types.Menu.draw_preset
 
+
+class AddPresetRadiosity(AddPresetBase, bpy.types.Operator):
+    '''Add a Radiosity Preset'''
+    bl_idname = "scene.radiosity_preset_add"
+    bl_label = "Add Radiosity Preset"
+    preset_menu = "POV_RADIOSITY_MT_presets"
+
+    # variable used for all preset values
+    preset_defines = [
+        "scene = bpy.context.scene"
+        ]
+
+    # properties to store in the preset
+    preset_values = [
+        "scene.pov.radio_display_advanced",    
+        "scene.pov.radio_adc_bailout",
+        "scene.pov.radio_always_sample",
+        "scene.pov.radio_brightness",
+        "scene.pov.radio_count",
+        "scene.pov.radio_error_bound",
+        "scene.pov.radio_gray_threshold",
+        "scene.pov.radio_low_error_factor",
+        "scene.pov.radio_media",
+        "scene.pov.radio_subsurface",
+        "scene.pov.radio_minimum_reuse",
+        "scene.pov.radio_maximum_reuse",
+        "scene.pov.radio_nearest_count",
+        "scene.pov.radio_normal",
+        "scene.pov.radio_recursion_limit",
+        "scene.pov.radio_pretrace_start",
+        "scene.pov.radio_pretrace_end",     
+        ]
+
+    # where to store the preset
+    preset_subdir = "pov/radiosity"
+
+
+
+
+
+# Draw into an existing panel
+def rad_panel_func(self, context):
+    layout = self.layout
+
+    row = layout.row(align=True)
+    row.menu(POV_RADIOSITY_MT_presets.__name__, text=POV_RADIOSITY_MT_presets.bl_label)
+    row.operator(AddPresetRadiosity.bl_idname, text="", icon='ZOOMIN')
+    row.operator(AddPresetRadiosity.bl_idname, text="", icon='ZOOMOUT').remove_active = True
+
+
+classes = (
+    POV_RADIOSITY_MT_presets,
+    AddPresetRadiosity,
+    )
+    
+    
 class RENDER_PT_povray_media(WorldButtonsPanel, bpy.types.Panel):
     bl_label = "Atmosphere Media"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
@@ -804,10 +973,22 @@ class RENDER_PT_povray_media(WorldButtonsPanel, bpy.types.Panel):
 
         layout.active = scene.pov.media_enable
 
-        row = layout.row()
-        row.prop(scene.pov, "media_samples", text="Samples")
-        row.prop(scene.pov, "media_color", text="")
-
+        col = layout.column()
+        col.prop(scene.pov, "media_scattering_type", text="")
+        col = layout.column()
+        col.prop(scene.pov, "media_samples", text="Samples")
+        split = layout.split()        
+        col = split.column(align=True)
+        col.label(text="Scattering:")
+        col.prop(scene.pov, "media_diffusion_scale")
+        col.prop(scene.pov, "media_diffusion_color", text="")
+        col = split.column(align=True)
+        col.label(text="Absorption:")
+        col.prop(scene.pov, "media_absorption_scale")        
+        col.prop(scene.pov, "media_absorption_color", text="")
+        if scene.pov.media_scattering_type == '5':
+            col = layout.column()
+            col.prop(scene.pov, "media_eccentricity", text="Eccentricity")
 ##class RENDER_PT_povray_baking(RenderButtonsPanel, bpy.types.Panel):
 ##    bl_label = "Baking"
 ##    COMPAT_ENGINES = {'POVRAY_RENDER'}
@@ -824,7 +1005,7 @@ class RENDER_PT_povray_media(WorldButtonsPanel, bpy.types.Panel):
 ##        rd = scene.render
 ##
 ##        layout.active = scene.pov.baking_enable
-'''XXX WIP preparing for CSG
+
 class MODIFIERS_PT_povray_modifiers(ModifierButtonsPanel, bpy.types.Panel):
     bl_label = "POV-Ray"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
@@ -853,7 +1034,7 @@ class MODIFIERS_PT_povray_modifiers(ModifierButtonsPanel, bpy.types.Panel):
                         col = layout.column()
                         # Inside Vector for CSG
                         col.prop(ob.pov, "inside_vector")
-'''        
+       
 
 class MATERIAL_PT_povray_activate_node(MaterialButtonsPanel, bpy.types.Panel):
     bl_label = "Activate Node Settings"
@@ -1678,9 +1859,9 @@ class OBJECT_PT_povray_replacement_text(ObjectButtonsPanel, bpy.types.Panel):
 ###############################################################################
 
 
-class Povray_primitives_add_menu(bpy.types.Menu):
+class POVRAY_MT_primitives_add_menu(bpy.types.Menu):
     """Define the menu with presets"""
-    bl_idname = "Povray_primitives_add_menu"
+    bl_idname = "POVRAY_MT_primitives_add_menu"
     bl_label = "Povray"
     COMPAT_ENGINES = {'POVRAY_RENDER'}
 
@@ -1696,11 +1877,10 @@ class Povray_primitives_add_menu(bpy.types.Menu):
         layout.menu(ImportMenu.bl_idname, text = "Import",icon="IMPORT")
 
 class BasicShapesMenu(bpy.types.Menu):
-    bl_idname = "Basic_shapes_calls"
+    bl_idname = "POVRAY_MT_basic_shape_tools"
     bl_label = "Basic_shapes"
 
     def draw(self,context):
-        pov = bpy.types.Object.pov #context.object.pov ?
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
         layout.operator("pov.addplane", text="Infinite Plane",icon = 'MESH_PLANE')
@@ -1744,11 +1924,10 @@ class BasicShapesMenu(bpy.types.Menu):
             layout.operator("pov.addparametric", text="Parametric",icon = 'SCRIPTPLUGINS')
 
 class ImportMenu(bpy.types.Menu):
-    bl_idname = "Importer_calls"
+    bl_idname = "POVRAY_MT_import_tools"
     bl_label = "Import"
 
     def draw(self,context):
-        pov = bpy.types.Object.pov #context.object.pov ?
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
         layout.operator("import_scene.pov",icon="FORCE_LENNARDJONES")
@@ -1756,7 +1935,7 @@ class ImportMenu(bpy.types.Menu):
 def menu_func_add(self, context):
     engine = context.scene.render.engine
     if engine == 'POVRAY_RENDER':
-        self.layout.menu("Povray_primitives_add_menu", icon="PLUGIN")
+        self.layout.menu("POVRAY_MT_primitives_add_menu", icon="PLUGIN")
 
 def menu_func_import(self, context):
     engine = context.scene.render.engine
@@ -1790,9 +1969,9 @@ def menu_func_import(self, context):
 
     # return True
 
-class Node_map_create_menu(bpy.types.Menu):
+class NodeMapCreateMenu(bpy.types.Menu):
     """Create maps"""
-    bl_idname = "Node_map_create_menu"
+    bl_idname = "POVRAY_MT_node_map_create"
     bl_label = "Create map"
 
     def draw(self,context):
@@ -1805,7 +1984,7 @@ def menu_func_nodes(self, context):
         mat=context.object.active_material
         if mat and context.space_data.tree_type == 'ObjectNodeTree':
             self.layout.prop(mat.pov,"material_use_nodes")
-            self.layout.menu("Node_map_create_menu")
+            self.layout.menu(NodeMapCreateMenu.bl_idname)
             self.layout.operator("wm.updatepreviewkey")
         if hasattr(mat,'active_texture') and context.scene.render.engine == 'POVRAY_RENDER':
             tex=mat.active_texture

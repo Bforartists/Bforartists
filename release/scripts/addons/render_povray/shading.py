@@ -245,13 +245,11 @@ def writeMaterial(using_uberpov, DEF_MAT_NAME, scene, tabWrite, safety, comments
         for t in material.texture_slots:
             if t and t.use and t.texture is not None:
                 if (t.texture.type == 'IMAGE' and t.texture.image) or t.texture.type != 'IMAGE':
-                    validPath=True
-            else:
-                validPath=False
-            if(t and t.use and validPath and
-               (t.use_map_specular or t.use_map_raymir or t.use_map_normal or t.use_map_alpha)):
-                special_texture_found = True
-                continue  # Some texture found
+                    #validPath
+                    if(t and t.use and
+                       (t.use_map_specular or t.use_map_raymir or t.use_map_normal or t.use_map_alpha)):
+                        special_texture_found = True
+                        continue  # Some texture found
 
         if special_texture_found or colored_specular_found:
             # Level=1 Means No specular nor Mirror reflection
@@ -1087,7 +1085,6 @@ def writeTextureInfluence(mater, materialNames, LocalMaterialNames, path_image, 
         else:
             if texturesDif and texturesDif.startswith("PAT_"):
                 tabWrite("pigment{%s %s}\n" %(texturesDif, mappingDif))
-                print('XXXMEEEERDE!')
             else:
                 tabWrite("pigment {\n")
                 tabWrite("uv_mapping image_map {\n")
