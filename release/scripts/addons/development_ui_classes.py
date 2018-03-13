@@ -21,7 +21,7 @@
 bl_info = {
     "name": "UI Classes Overview",
     "author": "lijenstina",
-    "version": (1, 0, 1),
+    "version": (1, 0, 2),
     "blender": (2, 78, 0),
     "location": "Text Editor > Properties",
     "description": "Print the UI classes in a text-block",
@@ -33,15 +33,15 @@ bl_info = {
 
 import bpy
 from bpy.types import (
-        Operator,
-        Panel,
-        PropertyGroup,
-        )
+    Operator,
+    Panel,
+    PropertyGroup,
+)
 from bpy.props import (
-        BoolProperty,
-        EnumProperty,
-        PointerProperty,
-        )
+    BoolProperty,
+    EnumProperty,
+    PointerProperty,
+)
 
 
 class TEXT_PT_ui_cheat_sheet(Panel):
@@ -128,7 +128,10 @@ class TEXT_OT_ui_cheat_sheet(Operator):
                 textblock.write(('\n' if not searchable else '').join(sorted(op_string_ui[cls_name])))
                 textblock.write(close_line)
 
-            context.space_data.text = bpy.data.texts[file_name]
+            # try to set the created text block to active
+            if context.area.type in {"TEXT_EDITOR"}:
+                bpy.context.space_data.text = bpy.data.texts[file_name]
+
             self.report({'INFO'}, "See %s textblock" % file_name)
 
             return {'FINISHED'}
@@ -152,21 +155,21 @@ class text_ui_cheat_props(PropertyGroup):
                ('Header', "Headers", "Print Header UI types"),
                ),
         default='all',
-        )
+    )
     searchable = BoolProperty(
         name="Format searchable",
         description="Generate the list as Python dictionary,\n"
                     "using the format Class: Path",
         default=False
-        )
+    )
 
 
 # Register
 classes = (
-        TEXT_OT_ui_cheat_sheet,
-        TEXT_PT_ui_cheat_sheet,
-        text_ui_cheat_props
-        )
+    TEXT_OT_ui_cheat_sheet,
+    TEXT_PT_ui_cheat_sheet,
+    text_ui_cheat_props
+)
 
 
 def register():

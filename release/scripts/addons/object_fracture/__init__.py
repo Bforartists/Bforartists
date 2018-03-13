@@ -57,7 +57,7 @@ class INFO_MT_add_fracture_objects(bpy.types.Menu):
 
 
 def menu_func(self, context):
-    self.layout.menu("INFO_MT_add_fracture_objects", icon="PLUGIN")
+    self.layout.menu("INFO_MT_add_fracture_objects")
 
 
 def register():

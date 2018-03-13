@@ -19,6 +19,7 @@
 # <pep8 compliant>
 
 import bpy
+from mathutils import Vector
 from bpy.types import Operator
 from bpy.props import (
         IntProperty,
@@ -562,3 +563,155 @@ class LatticeMirror(Operator):
     def execute(self, context):
         defLatticeMirror(self, context)
         return {'FINISHED'}
+
+
+# -------------------------- OVERLAP UV ISLANDS
+
+def defCopyUvsIsland(self, context):
+    bpy.ops.object.mode_set(mode="OBJECT")
+    global obLoop
+    global islandFaces
+    obLoop = []
+    islandFaces = []
+    for poly in bpy.context.object.data.polygons:
+        if poly.select:
+            islandFaces.append(poly.index)
+            for li in poly.loop_indices:
+                obLoop.append(li)
+
+    bpy.ops.object.mode_set(mode="EDIT")        
+    
+def defPasteUvsIsland(self, uvOffset, rotateUv,context):
+    bpy.ops.object.mode_set(mode="OBJECT")
+    selPolys = [poly.index for poly in bpy.context.object.data.polygons if poly.select]
+        
+    for island in selPolys:
+        bpy.ops.object.mode_set(mode="EDIT")      
+        bpy.ops.mesh.select_all(action="DESELECT")        
+        bpy.ops.object.mode_set(mode="OBJECT")  
+        bpy.context.object.data.polygons[island].select = True
+        bpy.ops.object.mode_set(mode="EDIT")  
+        bpy.ops.mesh.select_linked()
+        bpy.ops.object.mode_set(mode="OBJECT") 
+        TobLoop = []
+        TislandFaces = []
+        for poly in bpy.context.object.data.polygons:
+            if poly.select:
+                TislandFaces.append(poly.index)
+                for li in poly.loop_indices:
+                    TobLoop.append(li)    
+
+        for source,target in zip(range(min(obLoop),max(obLoop)+1),range(min(TobLoop),max(TobLoop)+1)):
+            bpy.context.object.data.uv_layers.active.data[target].uv = bpy.context.object.data.uv_layers.active.data[source].uv + Vector((uvOffset,0))
+              
+        bpy.ops.object.mode_set(mode="EDIT")   
+        
+    if rotateUv:
+        bpy.ops.object.mode_set(mode="OBJECT") 
+        for poly in selPolys:
+            bpy.context.object.data.polygons[poly].select = True
+        bpy.ops.object.mode_set(mode="EDIT")
+        bm = bmesh.from_edit_mesh(bpy.context.object.data)
+        bmesh.ops.reverse_uvs(bm, faces=[f for f in bm.faces if f.select])
+        bmesh.ops.rotate_uvs(bm, faces=[f for f in bm.faces if f.select]) 
+        #bmesh.update_edit_mesh(bpy.context.object.data, tessface=False, destructive=False)
+
+
+
+class CopyUvIsland(Operator):
+    """Copy Uv Island"""
+    bl_idname = "mesh.uv_island_copy"
+    bl_label = "Copy Uv Island"
+    bl_options = {"REGISTER", "UNDO"}
+
+    @classmethod
+    def poll(cls, context):
+        return (context.active_object is not None and
+                context.active_object.type == 'MESH' and
+                context.active_object.mode == "EDIT")
+
+    def execute(self, context):
+        defCopyUvsIsland(self, context)
+        return {'FINISHED'}
+    
+class PasteUvIsland(Operator):
+    """Paste Uv Island"""
+    bl_idname = "mesh.uv_island_paste"
+    bl_label = "Paste Uv Island"
+    bl_options = {"REGISTER", "UNDO"}
+    
+    uvOffset = BoolProperty(
+            name="Uv Offset",
+            default=False
+            )    
+
+    rotateUv = BoolProperty(
+            name="Rotate Uv Corner",
+            default=False
+            )  
+    @classmethod
+    def poll(cls, context):
+        return (context.active_object is not None and
+                context.active_object.type == 'MESH' and
+                context.active_object.mode == "EDIT")
+
+    def execute(self, context):
+        defPasteUvsIsland(self, self.uvOffset, self.rotateUv, context)
+        return {'FINISHED'}    
+    
+    
+
+class createEditMultimesh(Operator):
+    """Create Edit Multi Mesh"""
+    bl_idname = "mesh.create_edit_multimesh"
+    bl_label = "Create edit multimesh"
+    bl_options = {"REGISTER", "UNDO"}
+    
+    
+    # creo el merge para editar
+    def execute(self,context):    
+        global relvert
+        global me    
+        global ob 
+        temp = [[ob , [vert.co for vert in ob.data.vertices]]for ob in bpy.data.groups[bpy.context.scene.multimeshedit].objects]
+        vi = 0
+        pi = 0
+        relvert = {}
+        vertlist = []
+        polylist = []
+        for ob in temp:
+            objectMatrix = ob[0].matrix_world.copy()
+            for vert in ob[0].data.vertices:
+                vertlist.append(objectMatrix*vert.co)
+            for poly in ob[0].data.polygons: 
+                polylist.append(tuple([vert+vi for vert in poly.vertices[:]]))
+            relvert[ob[0]] = {vert.index:vert.index+vi for vert in  ob[0].data.vertices}
+            vi += len(ob[0].data.vertices)  
+            ob[0].hide = 1
+        me = bpy.data.meshes.new("editMesh")
+        ob = bpy.data.objects.new("editMesh", me)
+        bpy.context.scene.objects.link(ob)
+        me.from_pydata(vertlist,[],polylist)
+        bpy.ops.object.select_all(action="DESELECT")
+        bpy.context.scene.objects.active = ob
+        bpy.ops.object.mode_set(mode='EDIT', toggle=False)
+        return {'FINISHED'}  
+
+
+class ApplyEditMultimesh(Operator):
+    """Apply Edit Multi Mesh"""
+    bl_idname = "mesh.apply_edit_multimesh"
+    bl_label = "Apply edit multimesh"
+    bl_options = {"REGISTER", "UNDO"}
+   
+    def execute(self,context):    
+        bpy.ops.object.mode_set(mode='OBJECT', toggle=False)
+        for object,rv in relvert.items():
+            objectMatrix = object.matrix_world.inverted().copy()
+            for source, target in rv.items():
+                object.data.vertices[source].co = objectMatrix * me.vertices[target].co
+            object.hide = 0    
+        bpy.context.scene.objects.unlink(ob) 
+        return {'FINISHED'} 
+        
+           

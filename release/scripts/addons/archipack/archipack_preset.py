@@ -34,6 +34,8 @@ from .archipack_gl import (
     ThumbHandle, Screen, GlRect,
     GlPolyline, GlPolygon, GlText, GlHandle
 )
+preset_paths = bpy.utils.script_paths("presets")
+addons_paths = bpy.utils.script_paths("addons")
 
 
 class CruxHandle(GlHandle):
@@ -164,10 +166,6 @@ class SeekBox(GlText, GlHandle):
         return self.pos_3d
 
 
-preset_paths = bpy.utils.script_paths("presets")
-addons_paths = bpy.utils.script_paths("addons")
-
-
 class PresetMenuItem():
     def __init__(self, thumbsize, preset, image=None):
         name = bpy.path.display_name_from_filepath(preset)
@@ -246,6 +244,7 @@ class PresetMenu():
 
     def scan_files(self, category):
         file_list = []
+        """
         # load default presets
         dir_path = os.path.dirname(os.path.realpath(__file__))
         sub_path = "presets" + os.path.sep + category
@@ -255,6 +254,7 @@ class PresetMenu():
                 for f in os.listdir(presets_path)
                 if f.endswith('.py') and
                 not f.startswith('.')]
+        """
         # load user def presets
         for path in preset_paths:
             presets_path = os.path.join(path, category)
@@ -524,7 +524,6 @@ class ArchipackPreset(AddPresetBase):
         os.remove(filepath[:-3] + ".png")
 
     def background_render(self, context, cls, preset):
-        print("bg render")
         generator = os.path.dirname(os.path.realpath(__file__)) + os.path.sep + "archipack_thumbs.py"
         # Run external instance of blender like the original thumbnail generator.
         cmd = [
@@ -536,7 +535,7 @@ class ArchipackPreset(AddPresetBase):
             "cls:" + cls,
             "preset:" + preset
             ]
-        print(repr(cmd))
+        # print(repr(cmd))
 
         subprocess.Popen(cmd)
 

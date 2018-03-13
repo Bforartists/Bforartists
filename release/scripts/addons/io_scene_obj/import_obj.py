@@ -109,7 +109,7 @@ def create_materials(filepath, relpath,
 
         curr_token = []
         for token in img_data[:-1]:
-            if token.startswith(b'-'):
+            if token.startswith(b'-') and token[1:].isalpha():
                 if curr_token:
                     map_options[curr_token[0]] = curr_token[1:]
                 curr_token[:] = []

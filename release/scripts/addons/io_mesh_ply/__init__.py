@@ -134,7 +134,7 @@ class ExportPLY(bpy.types.Operator, ExportHelper, IOPLYOrientationHelper):
 
     @classmethod
     def poll(cls, context):
-        return context.active_object != None
+        return context.active_object is not None
 
     def execute(self, context):
         from . import export_ply

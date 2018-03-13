@@ -586,6 +586,14 @@ class AntAddLandscape(bpy.types.Operator):
             description="Automatic refresh"
             )
 
+    @classmethod
+    def poll(self, context):
+        ob = context.object
+        if ob is not None:
+            if ob.mode == 'EDIT':
+                return False
+        return True
+
     def draw(self, context):
         draw_ant_refresh(self, context)
         draw_ant_main(self, context, generate=True)

@@ -384,7 +384,7 @@ class OBJECT_OT_create_lightfield_basemesh(Operator):
         return {'FINISHED'}
 
 
-class VIEW3D_OT_lightfield_tools(Panel):
+class VIEW3D_PT_lightfield_tools(Panel):
     bl_space_type = "VIEW_3D"
     bl_region_type = "TOOLS"
     bl_context = "objectmode"

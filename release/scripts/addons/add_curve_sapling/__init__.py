@@ -235,7 +235,7 @@ class ImportData(Operator):
 class PresetMenu(Menu):
     """Create the preset menu by finding all preset files
     in the preset directory"""
-    bl_idname = "sapling.presetmenu"
+    bl_idname = "SAPLING_MT_preset"
     bl_label = "Presets"
 
     def draw(self, context):
@@ -930,7 +930,7 @@ class AddTree(Operator):
             row.label(" ")
             row.prop(self, 'overwrite')
             row = box.row()
-            row.menu('sapling.presetmenu', text='Load Preset')
+            row.menu('SAPLING_MT_preset', text='Load Preset')
             row.prop(self, 'limitImport')
 
         elif self.chooseSet == '1':

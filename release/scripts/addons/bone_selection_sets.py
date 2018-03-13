@@ -18,8 +18,8 @@
 
 bl_info = {
     "name": "Bone Selection Sets",
-    "author": "Inês Almeida, Antony Riakiotakis, Dan Eicher",
-    "version": (2, 0, 1),
+    "author": "Inês Almeida, Sybren A. Stüvel, Antony Riakiotakis, Dan Eicher",
+    "version": (2, 1, 0),
     "blender": (2, 75, 0),
     "location": "Properties > Object Data (Armature) > Selection Sets",
     "description": "List of Bone sets for easy selection while animating",
@@ -31,18 +31,18 @@ bl_info = {
 
 import bpy
 from bpy.types import (
-        Operator,
-        Menu,
-        Panel,
-        UIList,
-        PropertyGroup,
-        )
+    Operator,
+    Menu,
+    Panel,
+    UIList,
+    PropertyGroup,
+)
 from bpy.props import (
-        StringProperty,
-        IntProperty,
-        EnumProperty,
-        CollectionProperty,
-        )
+    StringProperty,
+    IntProperty,
+    EnumProperty,
+    CollectionProperty,
+)
 
 
 # Data Structure ##############################################################
@@ -68,6 +68,8 @@ class POSE_MT_selection_sets_specials(Menu):
 
         layout.operator("pose.selection_set_delete_all", icon='X')
         layout.operator("pose.selection_set_remove_bones", icon='X')
+        layout.operator("pose.selection_set_copy", icon='COPYDOWN')
+        layout.operator("pose.selection_set_paste", icon='PASTEDOWN')
 
 
 class POSE_PT_selection_sets(Panel):
@@ -129,20 +131,34 @@ class POSE_UL_selection_set(UIList):
 
 
 class POSE_MT_create_new_selection_set(Menu):
-    bl_idname = "POSE_MT_selection_set_create"
     bl_label = "Choose Selection Set"
 
     def draw(self, context):
         layout = self.layout
         layout.operator("pose.selection_set_add_and_assign",
-            text="New Selection Set")
+                        text="New Selection Set")
+
+
+class POSE_MT_selection_sets(Menu):
+    bl_label = 'Select Selection Set'
+
+    @classmethod
+    def poll(cls, context):
+        return POSE_OT_selection_set_select.poll(context)
+
+    def draw(self, context):
+        layout = self.layout
+        layout.operator_context = 'EXEC_DEFAULT'
+        for idx, sel_set in enumerate(context.object.selection_sets):
+            props = layout.operator(POSE_OT_selection_set_select.bl_idname, text=sel_set.name)
+            props.selection_set_index = idx
 
 
 # Operators ###################################################################
 
 class PluginOperator(Operator):
     @classmethod
-    def poll(self, context):
+    def poll(cls, context):
         return (context.object and
                 context.object.type == 'ARMATURE' and
                 context.mode == 'POSE')
@@ -150,12 +166,11 @@ class PluginOperator(Operator):
 
 class NeedSelSetPluginOperator(PluginOperator):
     @classmethod
-    def poll(self, context):
-        if super().poll(context):
-            arm = context.object
-            return (arm.active_selection_set < len(arm.selection_sets) and
-                    arm.active_selection_set >= 0)
-        return False
+    def poll(cls, context):
+        if not super().poll(context):
+            return False
+        arm = context.object
+        return 0 <= arm.active_selection_set < len(arm.selection_sets)
 
 
 class POSE_OT_selection_set_delete_all(PluginOperator):
@@ -206,11 +221,11 @@ class POSE_OT_selection_set_move(NeedSelSetPluginOperator):
     )
 
     @classmethod
-    def poll(self, context):
-        if super().poll(context):
-            arm = context.object
-            return len(arm.selection_sets) > 1
-        return False
+    def poll(cls, context):
+        if not super().poll(context):
+            return False
+        arm = context.object
+        return len(arm.selection_sets) > 1
 
     def execute(self, context):
         arm = context.object
@@ -235,30 +250,12 @@ class POSE_OT_selection_set_add(PluginOperator):
 
     def execute(self, context):
         arm = context.object
-
-        new_sel_set = arm.selection_sets.add()
-
-        # naming
-        if "SelectionSet" not in arm.selection_sets:
-            new_sel_set.name = "SelectionSet"
-        else:
-            sorted_sets = []
-            for selset in arm.selection_sets:
-                if selset.name.startswith("SelectionSet."):
-                    index = selset.name[13:]
-                    if index.isdigit():
-                        sorted_sets.append(index)
-            sorted_sets = sorted(sorted_sets)
-            min_index = 1
-            for num in sorted_sets:
-                num = int(num)
-                if min_index < num:
-                    break
-                min_index = num + 1
-            new_sel_set.name = "SelectionSet.{:03d}".format(min_index)
+        sel_sets = arm.selection_sets
+        new_sel_set = sel_sets.add()
+        new_sel_set.name = uniqify("SelectionSet", sel_sets.keys())
 
         # select newly created set
-        arm.active_selection_set = len(arm.selection_sets) - 1
+        arm.active_selection_set = len(sel_sets) - 1
 
         return {'FINISHED'}
 
@@ -293,7 +290,7 @@ class POSE_OT_selection_set_assign(PluginOperator):
 
         if not (arm.active_selection_set < len(arm.selection_sets)):
             bpy.ops.wm.call_menu("INVOKE_DEFAULT",
-                name="POSE_MT_selection_set_create")
+                                 name="POSE_MT_selection_set_create")
         else:
             bpy.ops.pose.selection_set_assign('EXEC_DEFAULT')
 
@@ -337,12 +334,22 @@ class POSE_OT_selection_set_select(NeedSelSetPluginOperator):
     bl_description = "Add Selection Set bones to current selection"
     bl_options = {'UNDO', 'REGISTER'}
 
+    selection_set_index = IntProperty(
+        name='Selection Set Index',
+        default=-1,
+        description='Which Selection Set to select; -1 uses the active Selection Set')
+
     def execute(self, context):
         arm = context.object
-        act_sel_set = arm.selection_sets[arm.active_selection_set]
+
+        if self.selection_set_index == -1:
+            idx = arm.active_selection_set
+        else:
+            idx = self.selection_set_index
+        sel_set = arm.selection_sets[idx]
 
         for bone in context.visible_pose_bones:
-            if bone.name in act_sel_set.bone_ids:
+            if bone.name in sel_set.bone_ids:
                 bone.bone.select = True
 
         return {'FINISHED'}
@@ -377,11 +384,44 @@ class POSE_OT_selection_set_add_and_assign(PluginOperator):
         return {'FINISHED'}
 
 
+class POSE_OT_selection_set_copy(NeedSelSetPluginOperator):
+    bl_idname = "pose.selection_set_copy"
+    bl_label = "Copy Selection Set to Clipboard"
+    bl_description = "Converts the Selection Set to JSON and places it on the clipboard"
+    bl_options = {'UNDO', 'REGISTER'}
+
+    def execute(self, context):
+        context.window_manager.clipboard = to_json(context)
+        self.report({'INFO'}, 'Copied Selection Set to Clipboard')
+        return {'FINISHED'}
+
+
+class POSE_OT_selection_set_paste(PluginOperator):
+    bl_idname = "pose.selection_set_paste"
+    bl_label = "Paste Selection Set from Clipboard"
+    bl_description = "Adds a new Selection Set from copied JSON on the clipboard"
+    bl_options = {'UNDO', 'REGISTER'}
+
+    def execute(self, context):
+        import json
+
+        try:
+            from_json(context, context.window_manager.clipboard)
+        except (json.JSONDecodeError, KeyError):
+            self.report({'ERROR'}, 'The clipboard does not contain a Selection Set')
+        else:
+            # Select the pasted Selection Set.
+            context.object.active_selection_set = len(context.object.selection_sets) - 1
+
+        return {'FINISHED'}
+
+
 # Registry ####################################################################
 
 classes = (
     POSE_MT_create_new_selection_set,
     POSE_MT_selection_sets_specials,
+    POSE_MT_selection_sets,
     POSE_PT_selection_sets,
     POSE_UL_selection_set,
     SelectionEntry,
@@ -396,7 +436,82 @@ classes = (
     POSE_OT_selection_set_select,
     POSE_OT_selection_set_deselect,
     POSE_OT_selection_set_add_and_assign,
+    POSE_OT_selection_set_copy,
+    POSE_OT_selection_set_paste,
 )
+
+
+def add_sss_button(self, context):
+    self.layout.menu('POSE_MT_selection_sets')
+
+
+def to_json(context) -> str:
+    """Convert the active bone selection set of the current rig to JSON."""
+    import json
+
+    arm = context.object
+    active_idx = arm.active_selection_set
+    sel_set = arm.selection_sets[active_idx]
+
+    return json.dumps({
+        'name': sel_set.name,
+        'bones': [bone_id.name for bone_id in sel_set.bone_ids]
+    })
+
+
+def from_json(context, as_json: str):
+    """Add the single bone selection set from JSON to the current rig."""
+    import json
+
+    sel_set = json.loads(as_json)
+
+    sel_sets = context.object.selection_sets
+    new_sel_set = sel_sets.add()
+    new_sel_set.name = uniqify(sel_set['name'], sel_sets.keys())
+
+    for bone_name in sel_set['bones']:
+        bone_id = new_sel_set.bone_ids.add()
+        bone_id.name = bone_name
+
+
+def uniqify(name: str, other_names: list) -> str:
+    """Return a unique name with .xxx suffix if necessary.
+
+    >>> uniqify('hey', ['there'])
+    'hey'
+    >>> uniqify('hey', ['hey.001', 'hey.005'])
+    'hey'
+    >>> uniqify('hey', ['hey', 'hey.001', 'hey.005'])
+    'hey.002'
+    >>> uniqify('hey', ['hey', 'hey.005', 'hey.001'])
+    'hey.002'
+    >>> uniqify('hey', ['hey', 'hey.005', 'hey.001', 'hey.left'])
+    'hey.002'
+    >>> uniqify('hey', ['hey', 'hey.001', 'hey.002'])
+    'hey.003'
+
+    It also works with a dict_keys object:
+    >>> uniqify('hey', {'hey': 1, 'hey.005': 1, 'hey.001': 1}.keys())
+    'hey.002'
+    """
+
+    if name not in other_names:
+        return name
+
+    # Construct the list of numbers already in use.
+    offset = len(name) + 1
+    others = (n[offset:] for n in other_names
+              if n.startswith(name + '.'))
+    numbers = sorted(int(suffix) for suffix in others
+                     if suffix.isdigit())
+
+    # Find the first unused number.
+    min_index = 1
+    for num in numbers:
+        if min_index < num:
+            break
+        min_index = num + 1
+    return "{}.{:03d}".format(name, min_index)
 
 
 def register():
@@ -404,15 +519,23 @@ def register():
         bpy.utils.register_class(cls)
 
     bpy.types.Object.selection_sets = CollectionProperty(
-            type=SelectionSet,
-            name="Selection Sets",
-            description="List of groups of bones for easy selection"
-            )
+        type=SelectionSet,
+        name="Selection Sets",
+        description="List of groups of bones for easy selection"
+    )
     bpy.types.Object.active_selection_set = IntProperty(
-            name="Active Selection Set",
-            description="Index of the currently active selection set",
-            default=0
-            )
+        name="Active Selection Set",
+        description="Index of the currently active selection set",
+        default=0
+    )
+
+    wm = bpy.context.window_manager
+    km = wm.keyconfigs.active.keymaps['Pose']
+
+    kmi = km.keymap_items.new('wm.call_menu', 'W', 'PRESS', alt=True, shift=True)
+    kmi.properties.name = 'POSE_MT_selection_sets'
+
+    bpy.types.VIEW3D_MT_select_pose.append(add_sss_button)
 
 
 def unregister():
@@ -424,4 +547,7 @@ def unregister():
 
 
 if __name__ == "__main__":
+    import doctest
+
+    doctest.testmod()
     register()

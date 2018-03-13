@@ -19,14 +19,13 @@
 # <pep8 compliant>
 
 bl_info = {
-    "name": "POVRAY-3.7",
+    "name": "POV-3.7",
     "author": "Campbell Barton, Silvio Falcinelli, Maurice Raybaud, "
               "Constantin Rahn, Bastien Montagne, Leonid Desyatkov",
-    "version": (0, 0, 9),
-    "blender": (2, 75, 0),
+    "version": (0, 1, 0),
+    "blender": (2, 79, 0),
     "location": "Render > Engine > POV-Ray 3.7",
     "description": "Basic POV-Ray 3.7 integration for blender",
-    "warning": "this script is RC",
     "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
                 "Scripts/Render/POV-Ray",
     "category": "Render",
@@ -44,6 +43,7 @@ else:
     #import addon_utils # To use some other addons
     import nodeitems_utils #for Nodes
     from nodeitems_utils import NodeCategory, NodeItem #for Nodes
+    from bl_operators.presets import AddPresetBase    
     from bpy.types import (
             AddonPreferences,
             PropertyGroup,
@@ -73,6 +73,11 @@ def string_strip_hyphen(name):
 # Scene POV properties.
 ###############################################################################
 class RenderPovSettingsScene(PropertyGroup):
+    #Linux SDL-window enable
+    sdl_window_enable = BoolProperty(
+            name="Enable SDL window",
+            description="Enable the SDL window in Linux OS",
+            default=True)
     # File Options
     text_block = StringProperty(
             name="Text Scene Name",
@@ -121,7 +126,7 @@ class RenderPovSettingsScene(PropertyGroup):
     radio_enable = BoolProperty(
             name="Enable Radiosity",
             description="Enable POV-Rays radiosity calculation",
-            default=False)
+            default=True)
 
     radio_display_advanced = BoolProperty(
             name="Advanced Options",
@@ -132,19 +137,88 @@ class RenderPovSettingsScene(PropertyGroup):
             name="Enable Media",
             description="Enable POV-Rays atmospheric media",
             default=False)
+            
     media_samples = IntProperty(
             name="Samples",
             description="Number of samples taken from camera to first object "
                         "encountered along ray path for media calculation",
             min=1, max=100, default=35)
-
-    media_color = FloatVectorProperty(
-            name="Media Color", description="The atmospheric media color",
+            
+    media_scattering_type = EnumProperty(
+            name="Scattering Type",
+            description="Scattering model",
+            items=(('1', "1 Isotropic", "The simplest form of scattering because"
+                                      " it is independent of direction."),
+                   ('2', "2 Mie haze ", "For relatively small particles such as "
+                                      "minuscule water droplets of fog, cloud "
+                                      "particles, and particles responsible "
+                                      "for the polluted sky. In this model the"
+                                      " scattering is extremely directional in"
+                                      " the forward direction i.e. the amount "
+                                      "of scattered light is largest when the "
+                                      "incident light is anti-parallel to the "
+                                      "viewing direction (the light goes "
+                                      "directly to the viewer). It is smallest"
+                                      " when the incident light is parallel to"
+                                      " the viewing direction. "),
+                   ('3', "3 Mie murky", "Like haze but much more directional"),
+                   ('4', "4 Rayleigh", "For extremely small particles such as "
+                                     "molecules of the air. The amount of "
+                                     "scattered light depends on the incident"
+                                     " light angle. It is largest when the "
+                                     "incident light is parallel or "
+                                     "anti-parallel to the viewing direction "
+                                     "and smallest when the incident light is "
+                                     "perpendicular to viewing direction."),
+                   ('5', "5 Henyey-Greenstein", "The default eccentricity value "
+                                              "of zero defines isotropic "
+                                              "scattering while positive "
+                                              "values lead to scattering in "
+                                              "the direction of the light and "
+                                              "negative values lead to "
+                                              "scattering in the opposite "
+                                              "direction of the light. Larger "
+                                              "values of e (or smaller values "
+                                              "in the negative case) increase "
+                                              "the directional property of the"
+                                              " scattering.")),                   
+            default='1')
+           
+    media_diffusion_scale = FloatProperty(
+            name="Scale", description="Scale factor of Media Diffusion Color",
+            precision=12, step=0.00000001, min=0.000000001, max=1.0,
+            default=(1.0))
+            
+    media_diffusion_color = FloatVectorProperty(
+            name="Media Diffusion Color", description="The atmospheric media color",
             precision=4, step=0.01, min=0, soft_max=1,
             default=(0.001, 0.001, 0.001),
             options={'ANIMATABLE'},
             subtype='COLOR')
 
+    media_absorption_scale = FloatProperty(
+            name="Scale", description="Scale factor of Media Absorption Color. "
+                                      "use 1/depth of media volume in meters",
+            precision=12, step=0.000001, min=0.000000001, max=1.0,
+            default=(0.00002))
+            
+    media_absorption_color = FloatVectorProperty(
+            name="Media Absorption Color", description="The atmospheric media absorption color",
+            precision=4, step=0.01, min=0, soft_max=1,
+            default=(0.0, 0.0, 0.0),
+            options={'ANIMATABLE'},
+            subtype='COLOR')            
+
+    media_eccentricity = FloatProperty(
+            name="Media Eccenticity Factor", description="Positive values lead"
+                 " to scattering in the direction of the light and negative "
+                 "values lead to scattering in the opposite direction of the "
+                 "light. Larger values of e (or smaller values in the negative"
+                 " case) increase the directional property of the scattering.",
+            precision=2, step=0.01, min=-1.0, max=1.0,
+            default=(0.0),
+            options={'ANIMATABLE'})
+                       
     baking_enable = BoolProperty(
             name="Enable Baking",
             description="Enable POV-Rays texture baking",
@@ -377,7 +451,7 @@ class RenderPovSettingsScene(PropertyGroup):
             description="",
             maxlen=1024, subtype="FILE_PATH")
 
-
+    #########RADIOSITY########
     radio_adc_bailout = FloatProperty(
             name="ADC Bailout",
             description="The adc_bailout for radiosity rays. Use "
@@ -422,7 +496,7 @@ class RenderPovSettingsScene(PropertyGroup):
 
     radio_media = BoolProperty(
             name="Media", description="Radiosity estimation can be affected by media",
-            default=False)
+            default=True)
 
     radio_subsurface = BoolProperty(
             name="Subsurface", description="Radiosity estimation can be affected by Subsurface Light Transport",
@@ -467,7 +541,6 @@ class RenderPovSettingsScene(PropertyGroup):
             description="Fraction of the screen width which sets the size of the blocks "
                         "in the mosaic preview last pass",
             min=0.000925, max=1.00, soft_min=0.01, soft_max=1.00, default=0.04, precision=3)
-
 
 ###############################################################################
 # Material POV properties.
@@ -2199,20 +2272,14 @@ class PovrayPreferences(AddonPreferences):
 
 
 
-
-
-
-
-
-
-
-
-
 def register():
     bpy.utils.register_module(__name__)
     bpy.types.INFO_MT_add.prepend(ui.menu_func_add)
     bpy.types.INFO_MT_file_import.append(ui.menu_func_import)
     bpy.types.TEXT_MT_templates.append(ui.menu_func_templates)
+    bpy.types.RENDER_PT_povray_radiosity.prepend(ui.rad_panel_func)
+    bpy.types.LAMP_PT_POV_lamp.prepend(ui.lamp_panel_func)
+    bpy.types.WORLD_PT_world.prepend(ui.world_panel_func)    
     # was used for parametric objects but made the other addon unreachable on
     # unregister for other tools to use created a user action call instead
     #addon_utils.enable("add_mesh_extra_objects", default_set=False, persistent=True)
@@ -2244,6 +2311,9 @@ def unregister():
 
     #bpy.types.TEXTURE_PT_context_texture.remove(TEXTURE_PT_povray_type)
     #addon_utils.disable("add_mesh_extra_objects", default_set=False)
+    bpy.types.WORLD_PT_world.remove(ui.world_panel_func)
+    bpy.types.LAMP_PT_POV_lamp.remove(ui.lamp_panel_func)    
+    bpy.types.RENDER_PT_povray_radiosity.remove(ui.rad_panel_func)
     bpy.types.TEXT_MT_templates.remove(ui.menu_func_templates)
     bpy.types.INFO_MT_file_import.remove(ui.menu_func_import)
     bpy.types.INFO_MT_add.remove(ui.menu_func_add)
