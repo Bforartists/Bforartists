@@ -186,13 +186,17 @@ def safety(name, Level):
 ##############end safety string name material
 ##############################EndSF###########################
 
+csg_list = []
+
 def is_renderable(scene, ob):
-    return (ob.is_visible(scene) and not ob.hide_render)
+    return (ob.is_visible(scene) and not ob.hide_render and ob not in csg_list)
 
 
 def renderable_objects(scene):
     return [ob for ob in bpy.data.objects if is_renderable(scene, ob)]
 
+def no_renderable_objects(scene):
+    return [ob for ob in csg_list]
 
 tabLevel = 0
 unpacked_images=[]
@@ -628,7 +632,7 @@ def write_pov(filename, scene=None, info_callback=None):
                 tabWrite("fade_distance %.6f\n" % (lamp.distance / 2.0))
                 # Area lights have no falloff type, so always use blenders lamp quad equivalent
                 # for those?
-                tabWrite("fade_power %d\n" % 0)
+                tabWrite("fade_power %d\n" % 2)
                 size_x = lamp.size
                 samples_x = lamp.shadow_ray_samples_x
                 if lamp.shape == 'SQUARE':
@@ -1446,7 +1450,7 @@ def write_pov(filename, scene=None, info_callback=None):
             file.write('      BuildWriteMesh2(VecArr, NormArr, UVArr, Iter_U, Iter_V, FileName)\n')
             file.write('   #end\n')
             file.write('#end\n\n')
-        # Empty curves    
+        # Empty curves
         if len(ob.data.splines)==0:
             tabWrite("\n//dummy sphere to represent empty curve location\n")        
             tabWrite("#declare %s =\n"%dataname)
@@ -1793,7 +1797,7 @@ def write_pov(filename, scene=None, info_callback=None):
 #    objectNames = {}
     DEF_OBJ_NAME = "Default"
 
-    def exportMeshes(scene, sel):
+    def exportMeshes(scene, sel, csg):
 #        obmatslist = []
 #        def hasUniqueMaterial():
 #            # Grab materials attached to object instances ...
@@ -2416,7 +2420,7 @@ def write_pov(filename, scene=None, info_callback=None):
                     tabWrite("#declare %s = plane{ <0,0,1>,1\n"%povdataname)
                     povMatName = "Default_texture"
                     if ob.active_material:
-                         #povMatName = string_strip_hyphen(bpy.path.clean_name(ob.active_material.name))
+                        #povMatName = string_strip_hyphen(bpy.path.clean_name(ob.active_material.name))
                         try:
                             material = ob.active_material
                             writeObjectMaterial(material, ob)
@@ -3009,7 +3013,7 @@ def write_pov(filename, scene=None, info_callback=None):
                         # POV object modifiers such as 
                         # hollow / sturm / double_illuminate etc.
                         write_object_modifiers(scene,ob,file)                        
- 
+
                         #Importance for radiosity sampling added here:
                         tabWrite("radiosity { \n")
                         tabWrite("importance %3g \n" % importance)
@@ -3254,7 +3258,7 @@ def write_pov(filename, scene=None, info_callback=None):
                                                         ob.pov.inside_vector[1],
                                                         ob.pov.inside_vector[2]))
                                             onceCSG = 1
- 
+
                         if me.materials:
                             try:
                                 material = me.materials[0]  # dodgy
@@ -3277,38 +3281,69 @@ def write_pov(filename, scene=None, info_callback=None):
 
                     bpy.data.meshes.remove(me)
 
-        duplidata_ref = []
-        for ob in sel:
-            #matrix = global_matrix * ob.matrix_world
-            if ob.is_duplicator:
-                tabWrite("\n//--DupliObjects in %s--\n\n"% ob.name)
-                ob.dupli_list_create(scene)
-                dup = ""
-                if ob.is_modified(scene, 'RENDER'):
-                    #modified object always unique so using object name rather than data name
-                    dup = "#declare OB%s = union{\n" %(string_strip_hyphen(bpy.path.clean_name(ob.name)))
+        if csg:
+            duplidata_ref = []
+            for ob in sel:
+                #matrix = global_matrix * ob.matrix_world
+                if ob.is_duplicator:
+                    tabWrite("\n//--DupliObjects in %s--\n\n"% ob.name)
+                    ob.dupli_list_create(scene)
+                    dup = ""
+                    if ob.is_modified(scene, 'RENDER'):
+                        #modified object always unique so using object name rather than data name
+                        dup = "#declare OB%s = union{\n" %(string_strip_hyphen(bpy.path.clean_name(ob.name)))
+                    else:
+                        dup = "#declare DATA%s = union{\n" %(string_strip_hyphen(bpy.path.clean_name(ob.name)))
+                    for eachduplicate in ob.dupli_list:
+                        duplidataname = "OB"+string_strip_hyphen(bpy.path.clean_name(bpy.data.objects[eachduplicate.object.name].data.name))
+                        dup += ("\tobject {\n\t\tDATA%s\n\t\t%s\t}\n" %(string_strip_hyphen(bpy.path.clean_name(bpy.data.objects[eachduplicate.object.name].data.name)), MatrixAsPovString(ob.matrix_world.inverted() * eachduplicate.matrix)))
+                        #add object to a list so that it is not rendered for some dupli_types
+                        if ob.dupli_type not in {'GROUP'} and duplidataname not in duplidata_ref:
+                            duplidata_ref.append(duplidataname) #older key [string_strip_hyphen(bpy.path.clean_name("OB"+ob.name))]
+                    dup += "}\n"
+                    ob.dupli_list_clear()
+                    tabWrite(dup)
                 else:
-                    dup = "#declare DATA%s = union{\n" %(string_strip_hyphen(bpy.path.clean_name(ob.name)))
-                for eachduplicate in ob.dupli_list:
-                    duplidataname = "OB"+string_strip_hyphen(bpy.path.clean_name(bpy.data.objects[eachduplicate.object.name].data.name))
-                    dup += ("\tobject {\n\t\tDATA%s\n\t\t%s\t}\n" %(string_strip_hyphen(bpy.path.clean_name(bpy.data.objects[eachduplicate.object.name].data.name)), MatrixAsPovString(ob.matrix_world.inverted() * eachduplicate.matrix)))
-                    #add object to a list so that it is not rendered for some dupli_types
-                    if ob.dupli_type not in {'GROUP'} and duplidataname not in duplidata_ref:
-                        duplidata_ref.append(duplidataname) #older key [string_strip_hyphen(bpy.path.clean_name("OB"+ob.name))]
-                dup += "}\n"
-                ob.dupli_list_clear()
-                tabWrite(dup)
-            else:
-                continue
-        print(duplidata_ref)
-        for data_name, inst in data_ref.items():
-            for ob_name, matrix_str in inst:
-                if ob_name not in duplidata_ref: #.items() for a dictionary
-                    tabWrite("\n//----Blender Object Name:%s----\n" % ob_name)
-                    tabWrite("object { \n")
-                    tabWrite("%s\n" % data_name)
-                    tabWrite("%s\n" % matrix_str)
-                    tabWrite("}\n")
+                    continue
+            print(duplidata_ref)
+            for data_name, inst in data_ref.items():
+                for ob_name, matrix_str in inst:
+                    if ob_name not in duplidata_ref: #.items() for a dictionary
+                        tabWrite("\n//----Blender Object Name:%s----\n" % ob_name)
+                        if ob.pov.object_as == '':
+                            tabWrite("object { \n")
+                            tabWrite("%s\n" % data_name)
+                            tabWrite("%s\n" % matrix_str)
+                            tabWrite("}\n")
+                        else:
+                            no_boolean = True
+                            for mod in ob.modifiers:
+                                if mod.type == 'BOOLEAN':
+                                    operation = None
+                                    no_boolean = False
+                                    if mod.operation == 'INTERSECT':
+                                        operation = 'intersection'
+                                    else:
+                                        operation = mod.operation.lower()
+                                    mod_ob_name = string_strip_hyphen(bpy.path.clean_name(mod.object.name))
+                                    mod_matrix = global_matrix * mod.object.matrix_world
+                                    mod_ob_matrix = MatrixAsPovString(mod_matrix)
+                                    tabWrite("%s { \n"%operation)
+                                    tabWrite("object { \n")
+                                    tabWrite("%s\n" % data_name)
+                                    tabWrite("%s\n" % matrix_str)
+                                    tabWrite("}\n")
+                                    tabWrite("object { \n")
+                                    tabWrite("%s\n" % ('DATA'+ mod_ob_name))
+                                    tabWrite("%s\n" % mod_ob_matrix)
+                                    tabWrite("}\n")
+                                    tabWrite("}\n")
+                                    break
+                            if no_boolean:
+                                tabWrite("object { \n")
+                                tabWrite("%s\n" % data_name)
+                                tabWrite("%s\n" % matrix_str)
+                                tabWrite("}\n")
 
     def exportWorld(world):
         render = scene.render
@@ -3444,18 +3479,33 @@ def write_pov(filename, scene=None, info_callback=None):
 
         if mist.use_mist:
             tabWrite("fog {\n")
-            tabWrite("distance %.6f\n" % mist.depth)
+            if mist.falloff=='LINEAR':
+                tabWrite("distance %.6f\n" % ((mist.start+mist.depth)*0.368))
+            elif mist.falloff=='QUADRATIC':    # n**2 or squrt(n)?
+                tabWrite("distance %.6f\n" % ((mist.start+mist.depth)**2*0.368))
+            elif mist.falloff=='INVERSE_QUADRATIC':    # n**2 or squrt(n)?
+                tabWrite("distance %.6f\n" % ((mist.start+mist.depth)**2*0.368))                
             tabWrite("color rgbt<%.3g, %.3g, %.3g, %.3g>\n" % \
                      (*world.horizon_color, 1.0 - mist.intensity))
-            #tabWrite("fog_offset %.6f\n" % mist.start)
-            #tabWrite("fog_alt 5\n")
+            #tabWrite("fog_offset %.6f\n" % mist.start) #create a pov property to prepend
+            #tabWrite("fog_alt %.6f\n" % mist.height) #XXX right?
             #tabWrite("turbulence 0.2\n")
             #tabWrite("turb_depth 0.3\n")
-            tabWrite("fog_type 1\n")
+            tabWrite("fog_type 1\n") #type2 for height
             tabWrite("}\n")
         if scene.pov.media_enable:
             tabWrite("media {\n")
-            tabWrite("scattering { 1, rgb <%.4g, %.4g, %.4g>}\n" % scene.pov.media_color[:])
+            tabWrite("scattering { %d, rgb %.12f*<%.4g, %.4g, %.4g>\n" % \
+                     (int(scene.pov.media_scattering_type),
+                     (scene.pov.media_diffusion_scale),                     
+                     *(scene.pov.media_diffusion_color[:])))
+            if scene.pov.media_scattering_type == '5':
+                tabWrite("eccentricity %.3g\n" % scene.pov.media_eccentricity) 
+            tabWrite("}\n") 
+            tabWrite("absorption %.12f*<%.4g, %.4g, %.4g>\n" % \
+                     (scene.pov.media_absorption_scale,
+                     *(scene.pov.media_absorption_color[:]))) 
+            tabWrite("\n")             
             tabWrite("samples %.d\n" % scene.pov.media_samples)
             tabWrite("}\n")
 
@@ -3559,7 +3609,7 @@ def write_pov(filename, scene=None, info_callback=None):
                 file.write(txt.as_string())
                 file.write("\n")
 
-    sel = renderable_objects(scene)
+    #sel = renderable_objects(scene) #removed for booleans
     if comments:
         file.write("//----------------------------------------------\n" \
                    "//--Exported with POV-Ray exporter for Blender--\n" \
@@ -3601,6 +3651,20 @@ def write_pov(filename, scene=None, info_callback=None):
 
     if comments:
         file.write("\n//--Lamps--\n\n")
+
+    for ob in bpy.data.objects:
+        if ob.type == 'MESH':
+            for mod in ob.modifiers:
+                if mod.type == 'BOOLEAN':
+                    if mod.object not in csg_list:
+                        csg_list.append(mod.object)
+    if csg_list != []:
+        csg = False
+        sel = no_renderable_objects(scene)
+        exportMeshes(scene, sel, csg)
+
+    csg = True
+    sel = renderable_objects(scene)
 
     exportLamps([L for L in sel if (L.type == 'LAMP' and L.pov.object_as != 'RAINBOW')])
 
@@ -3655,7 +3719,7 @@ def write_pov(filename, scene=None, info_callback=None):
     if comments:
         file.write("//--Mesh objects--\n")
 
-    exportMeshes(scene, sel)
+    exportMeshes(scene, sel, csg)
 
     #What follow used to happen here:
     #exportCamera()
@@ -3745,7 +3809,7 @@ def write_pov_ini(scene, filename_ini, filename_log, filename_pov, filename_imag
 
 class PovrayRender(bpy.types.RenderEngine):
     bl_idname = 'POVRAY_RENDER'
-    bl_label = "POV-Ray 3.7"
+    bl_label = "Persitence Of Vision"
     DELAY = 0.5
 
     @staticmethod
@@ -3951,8 +4015,8 @@ class PovrayRender(bpy.types.RenderEngine):
                 self._temp_file_in = os.path.join(preview_dir, povPath)
                 self._temp_file_ini = os.path.join(preview_dir, (os.path.splitext(self._temp_file_in)[0]+".INI"))
                 self._temp_file_log = os.path.join(preview_dir, "alltext.out")
-        
-        
+
+
             '''
             try:
                 os.remove(self._temp_file_in)  # so as not to load the old file
@@ -4000,7 +4064,14 @@ class PovrayRender(bpy.types.RenderEngine):
 
             # Start Rendering!
             try:
-                _process = subprocess.Popen([pov_binary, self._temp_file_ini] + extra_args,
+                if sys.platform[:3] != "win" and scene.pov.sdl_window_enable: #segfault on linux == False !!!
+                    env = {'POV_DISPLAY_SCALED': 'off'}
+                    env.update(os.environ)
+                    self._process = subprocess.Popen([pov_binary, self._temp_file_ini],
+                        stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                        env=env)
+                else:
+                    self._process = subprocess.Popen([pov_binary, self._temp_file_ini] + extra_args,
                                                  stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             except OSError:
                 # TODO, report api
@@ -4015,7 +4086,7 @@ class PovrayRender(bpy.types.RenderEngine):
                 print("Command line arguments passed: " + str(extra_args))
                 #return True
                 self.update_stats("", "POV-Ray 3.7: Parsing File")                  
- 
+
 
                 
             # Indented in main function now so repeated here but still not working 
@@ -4040,7 +4111,7 @@ class PovrayRender(bpy.types.RenderEngine):
                 print(f.read()) 
                 
             self.update_stats("", "")
-            
+
             if scene.pov.tempfiles_enable or scene.pov.deletefiles_enable:
                 self._cleanup()            
         else:
@@ -4394,7 +4465,7 @@ class RunPovTextRender(Operator):
 
             
         bpy.ops.render.render()
- 
+
         #empty text name property engain
         scene.pov.text_block = ""
-        return {'FINISHED'}    
+        return {'FINISHED'}

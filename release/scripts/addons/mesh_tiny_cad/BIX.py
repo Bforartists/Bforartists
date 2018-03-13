@@ -92,11 +92,3 @@ class TCLineOnBisection(bpy.types.Operator):
     def execute(self, context):
         add_line_to_bisection(self)
         return {'FINISHED'}
-
-
-def register():
-    bpy.utils.register_module(__name__)
-
-
-def unregister():
-    bpy.utils.unregister_module(__name__)

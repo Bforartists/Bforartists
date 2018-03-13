@@ -627,7 +627,7 @@ class discombobulator(Operator):
 
 
 class discombobulator_dodads_list(Menu):
-    bl_idname = "object.discombobulator_dodad_list"
+    bl_idname = "OBJECT_MT_discombobulator_dodad_list"
     bl_label = "List of saved Doodads"
     bl_description = "List of the saved Doodad Object Names"
     bl_options = {'REGISTER'}
@@ -644,7 +644,7 @@ class discombobulator_dodads_list(Menu):
 
 
 class discombob_help(Menu):
-    bl_idname = "help.discombobulator"
+    bl_idname = "HELP_MT_discombobulator"
     bl_label = "Usage Information"
     bl_description = "Help"
     bl_options = {'REGISTER'}
@@ -688,7 +688,7 @@ class VIEW3D_OT_tools_discombobulate(Operator):
         layout = self.layout
 
         row = layout.row()
-        row.menu('help.discombobulator', icon='INFO')
+        row.menu('HELP_MT_discombobulator', icon='INFO')
         box = layout.box()
         box.label("Protusions settings")
         row = box.row()
@@ -740,7 +740,7 @@ class VIEW3D_OT_tools_discombobulate(Operator):
         doodle = len(bpy.context.scene.discomb.DISC_doodads)
 
         col.enabled = (True if doodle > 0 else False)
-        col.menu("object.discombobulator_dodad_list",
+        col.menu("OBJECT_MT_discombobulator_dodad_list",
                      text="List of saved Doodads ({})".format(doodle))
 
         box = layout.box()

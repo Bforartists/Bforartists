@@ -58,7 +58,7 @@ if "bpy" in locals():
     importlib.reload(achm_venetian_maker)
     importlib.reload(achm_main_panel)
     importlib.reload(achm_window_panel)
-    print("archimesh: Reloaded multifiles")
+    # print("archimesh: Reloaded multifiles")
 else:
     from . import achm_books_maker
     from . import achm_column_maker
@@ -75,7 +75,7 @@ else:
     from . import achm_window_maker
     from . import achm_window_panel
 
-    print("archimesh: Imported multifiles")
+    # print("archimesh: Imported multifiles")
 
 # noinspection PyUnresolvedReferences
 import bpy

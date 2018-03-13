@@ -223,6 +223,8 @@ class MaterialSetManager():
             Store sets for each object type
         """
         self.objects = {}
+        # hold reference of dynamic enumerator
+        self.enums = {}
 
     def get_filename(self, object_type):
 
@@ -234,6 +236,7 @@ class MaterialSetManager():
 
     def cleanup(self):
         self.objects.clear()
+        self.enums.clear()
 
     def register_set(self, object_type, set_name, materials_names):
 
@@ -275,8 +278,11 @@ class MaterialSetManager():
             finally:
                 f.close()
 
-            for s_key in material_sets.keys():
+            s_keys = material_sets.keys()
+            for s_key in s_keys:
                 self.register_set(object_type, s_key, material_sets[s_key])
+
+            self.make_enum(object_type, s_keys)
 
     def save(self, object_type):
         # always save in user prefs
@@ -284,7 +290,8 @@ class MaterialSetManager():
         # print("filename:%s" % filename)
         o_dict = self.objects[object_type]
         lines = []
-        for s_key in o_dict.keys():
+        s_keys = o_dict.keys()
+        for s_key in s_keys:
             for mat in o_dict[s_key]:
                 lines.append("{}##|##{}\n".format(s_key, mat))
         try:
@@ -295,6 +302,8 @@ class MaterialSetManager():
             pass
         finally:
             f.close()
+
+        self.make_enum(object_type, s_keys)
 
     def add(self, context, set_name):
         o = context.active_object
@@ -311,9 +320,11 @@ class MaterialSetManager():
             d = o.archipack_material[0]
             object_type = d.category
             set_name = d.material
-            if set_name in self.objects[object_type].keys():
+            s_keys = self.objects[object_type].keys()
+            if set_name in s_keys:
                 self.objects[object_type].pop(set_name)
                 self.save(object_type)
+            self.make_enum(object_type, s_keys)
 
     def get_materials(self, object_type, set_name):
         if object_type not in self.objects.keys():
@@ -326,7 +337,13 @@ class MaterialSetManager():
             return None
         return self.objects[object_type][set_name]
 
-    def make_enum(self, object_type):
+    def make_enum(self, object_type, s_keys):
+        if len(s_keys) < 1:
+            self.enums[object_type] = [('DEFAULT', 'Default', '', 0)]
+        else:
+            self.enums[object_type] = [(s.upper(), s.capitalize(), '', i) for i, s in enumerate(s_keys)]
+
+    def get_enum(self, object_type):
 
         if object_type not in self.objects.keys():
             self.load(object_type)
@@ -334,19 +351,14 @@ class MaterialSetManager():
         if object_type not in self.objects.keys():
             self.objects[object_type] = {}
 
-        s_keys = self.objects[object_type].keys()
-
-        if len(s_keys) < 1:
-            return [('DEFAULT', 'Default', '', 0)]
-
-        return [(s.upper(), s.capitalize(), '', i) for i, s in enumerate(s_keys)]
+        return self.enums[object_type]
 
 
 def material_enum(self, context):
     global setman
     if setman is None:
         setman = MaterialSetManager()
-    return setman.make_enum(self.category)
+    return setman.get_enum(self.category)
 
 
 def update(self, context):

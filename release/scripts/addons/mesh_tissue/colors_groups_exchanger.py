@@ -36,7 +36,7 @@
 bl_info = {
     "name": "Colors/Groups Exchanger",
     "author": "Alessandro Zomparelli (Co-de-iT)",
-    "version": (0, 3, 1),
+    "version": (0, 3, 2),
     "blender": (2, 7, 8),
     "location": "",
     "description": ("Convert vertex colors channels to vertex groups and vertex"
@@ -99,6 +99,11 @@ class vertex_colors_to_vertex_groups(Operator):
         id_blue = ids
         id_value = ids
 
+        # Fix T53350: Access of h, s, v values has changed since 2.79 release
+        # use rgb_to_hsv function to get the v component
+        blender_version = bool(bpy.app.version >= (2, 79, 1))
+        from colorsys import rgb_to_hsv
+
         boolCol = len(obj.data.vertex_colors)
         if boolCol:
             col_name = obj.data.vertex_colors.active.name
@@ -130,11 +135,10 @@ class vertex_colors_to_vertex_groups(Operator):
             obj.vertex_groups[id_value].name = col_name + '_value'
             ids += 1
 
-        mult = 1
-        if self.invert:
-            mult = -1
+        mult = -1 if self.invert else 1
 
         bpy.ops.object.mode_set(mode='OBJECT')
+
         sub_red = 1 + self.value + self.blue + self.green
         sub_green = 1 + self.value + self.blue
         sub_blue = 1 + self.value
@@ -150,19 +154,24 @@ class vertex_colors_to_vertex_groups(Operator):
                     gr = obj.data.vertices[v].groups
                     if self.red:
                         gr[min(len(gr) - sub_red, id_red)].weight = \
-                                self.invert + mult * v_colors[i].color.r
+                                self.invert + mult * v_colors[i].color[0]
 
                     if self.green:
                         gr[min(len(gr) - sub_green, id_green)].weight = \
-                                self.invert + mult * v_colors[i].color.g
+                                self.invert + mult * v_colors[i].color[1]
 
                     if self.blue:
                         gr[min(len(gr) - sub_blue, id_blue)].weight = \
-                                self.invert + mult * v_colors[i].color.b
+                                self.invert + mult * v_colors[i].color[2]
 
                     if self.value:
+                        col_value = v_colors[i].color.v if not blender_version else \
+                                    rgb_to_hsv(v_colors[i].color[0],
+                                               v_colors[i].color[0],
+                                               v_colors[i].color[0])[2]
+
                         gr[min(len(gr) - sub_value, id_value)].weight = \
-                                self.invert + mult * v_colors[i].color.v
+                                self.invert + mult * col_value
                     i += 1
             bpy.ops.paint.weight_paint_toggle()
 
@@ -262,6 +271,7 @@ class vertex_group_to_vertex_colors(Operator):
                 i += 1
         bpy.ops.paint.vertex_paint_toggle()
         bpy.context.object.data.vertex_colors[colors_id].active_render = True
+
         return {'FINISHED'}
 
 
@@ -314,6 +324,9 @@ class curvature_to_vertex_groups(Operator):
             )
 
     def execute(self, context):
+        # Fix T53350: Access of r, g, b values has changed since 2.79.1
+        blender_version = bool(bpy.app.version >= (2, 79, 1))
+
         bpy.ops.object.mode_set(mode='OBJECT')
         bpy.ops.mesh.vertex_color_add()
         vertex_colors = bpy.context.active_object.data.vertex_colors
@@ -322,9 +335,14 @@ class curvature_to_vertex_groups(Operator):
         vertex_colors[-1].name = "Curvature"
 
         for c in vertex_colors[-1].data:
-            c.color.r, c.color.g, c.color.b = 1, 1, 1
+            if blender_version:
+                # white color, alpha 1
+                c.color[0], c.color[1], c.color[2], c.color[3] = 1, 1, 1, 1
+            else:
+                c.color.r, c.color.g, c.color.b = 1, 1, 1
 
         bpy.ops.object.mode_set(mode='VERTEX_PAINT')
+
         bpy.ops.paint.vertex_color_dirt(
                 blur_strength=self.blur_strength,
                 blur_iterations=self.blur_iterations,

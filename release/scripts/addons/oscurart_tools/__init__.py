@@ -178,6 +178,7 @@ class OscPanelMesh(Panel):
         return context.scene.oscurart.osc_mesh_tools
 
     def draw(self, context):
+        scene = context.scene
         layout = self.layout
         col = layout.column(align=1)
 
@@ -197,10 +198,18 @@ class OscPanelMesh(Panel):
         colrow = col.row(align=1)
         colrow.operator("mesh.overlap_uv_faces", icon="UV_FACESEL")
         colrow = col.row(align=1)
-        colrow.operator("view3d.modal_operator", icon="STICKY_UVS_DISABLE")
+        colrow.operator("mesh.uv_island_copy", icon="COPYDOWN")
+        colrow.operator("mesh.uv_island_paste", icon="PASTEDOWN")        
+        colrow = col.row(align=1)
+        colrow.operator("view3d.modal_operator", icon="STICKY_UVS_DISABLE")       
         colrow = col.row(align=1)
         colrow.operator("lattice.mirror_selected", icon="LATTICE_DATA")
-
+        colrow = col.row(align=1)
+        colrow.label(text="Edit Multimesh")
+        colrow.prop_search(scene, "multimeshedit", bpy.data, "groups", text="")   
+        colrow = col.row(align=1)
+        colrow.operator("mesh.create_edit_multimesh", icon="IMPORT", text= "StartEdit")
+        colrow.operator("mesh.apply_edit_multimesh", icon="EXPORT", text="FinishEdit")
 
 class OscPanelShapes(Panel):
     bl_idname = "Oscurart Shapes Tools"
@@ -222,8 +231,8 @@ class OscPanelShapes(Panel):
         col.operator("mesh.create_lmr_groups_osc", icon="GROUP_VERTEX")
         col.operator("mesh.split_lr_shapes_osc", icon="SHAPEKEY_DATA")
         colrow = col.row(align=1)
-        colrow.operator("mesh.create_symmetrical_layout_osc", icon="SETTINGS")
-        colrow.operator("mesh.create_asymmetrical_layout_osc", icon="SETTINGS")
+        colrow.operator("mesh.create_symmetrical_layout_osc", icon="IMPORT")
+        colrow.operator("mesh.create_asymmetrical_layout_osc", icon="EXPORT")
 
 
 class OscPanelRender(Panel):
@@ -433,6 +442,7 @@ class OscurartToolsAddonPreferences(AddonPreferences):
 
 
 def register():
+    from bpy.types import Scene
     bpy.utils.register_module(__name__)
 
     bpy.types.Scene.oscurart = PointerProperty(type=View3DOscPanel)
@@ -441,6 +451,8 @@ def register():
 
     bpy.types.Scene.quick_animation_in = IntProperty(default=1)
     bpy.types.Scene.quick_animation_out = IntProperty(default=250)
+
+    Scene.multimeshedit = StringProperty()
 
     # SETEO VARIABLE DE ENTORNO
     bpy.types.Scene.SearchAndSelectOt = StringProperty(

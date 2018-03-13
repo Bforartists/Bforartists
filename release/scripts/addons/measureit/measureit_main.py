@@ -2038,10 +2038,9 @@ def draw_main(context):
             if 'MeasureGenerator' in myobj:
                 # verify visible layer
                 for x in range(0, 20):
-                    if myobj.layers[x] is True:
-                        if x in layers:
-                            op = myobj.MeasureGenerator[0]
-                            draw_segments(context, myobj, op, region, rv3d)
+                    if myobj.layers[x] is True and x in layers:
+                        op = myobj.MeasureGenerator[0]
+                        draw_segments(context, myobj, op, region, rv3d)
                         break
     # ---------------------------------------
     # Generate all OpenGL calls for debug

@@ -39,27 +39,27 @@ else:
 import bpy
 from bpy.types import AddonPreferences
 from .bTrace_props import (
-        TracerProperties,
-        addTracerObjectPanel,
-        )
+    TracerProperties,
+    addTracerObjectPanel,
+)
 from .bTrace import (
-        OBJECT_OT_convertcurve,
-        OBJECT_OT_objecttrace,
-        OBJECT_OT_objectconnect,
-        OBJECT_OT_writing,
-        OBJECT_OT_particletrace,
-        OBJECT_OT_traceallparticles,
-        OBJECT_OT_curvegrow,
-        OBJECT_OT_reset,
-        OBJECT_OT_fcnoise,
-        OBJECT_OT_meshfollow,
-        OBJECT_OT_materialChango,
-        OBJECT_OT_clearColorblender,
-        )
+    OBJECT_OT_convertcurve,
+    OBJECT_OT_objecttrace,
+    OBJECT_OT_objectconnect,
+    OBJECT_OT_writing,
+    OBJECT_OT_particletrace,
+    OBJECT_OT_traceallparticles,
+    OBJECT_OT_curvegrow,
+    OBJECT_OT_reset,
+    OBJECT_OT_fcnoise,
+    OBJECT_OT_meshfollow,
+    OBJECT_OT_materialChango,
+    OBJECT_OT_clearColorblender,
+)
 from bpy.props import (
-        EnumProperty,
-        PointerProperty,
-        )
+    EnumProperty,
+    PointerProperty,
+)
 
 
 # Add-on Preferences

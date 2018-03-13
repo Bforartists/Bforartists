@@ -191,6 +191,11 @@ class SnapContext():
     def __del__(self):
         if not self.freed:
             self._offscreen.free()
+            # Some objects may still be being referenced
+            for snap_obj in self.snap_objects:
+                del snap_obj.data
+                del snap_obj.mat
+                del snap_obj
             del self.snap_objects
 
     ## PUBLIC ##

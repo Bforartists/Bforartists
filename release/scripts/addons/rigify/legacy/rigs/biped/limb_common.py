@@ -1080,20 +1080,20 @@ class RubberHoseLimb:
 
             # B-bone settings
             ulimb2_p.bone.bbone_segments = 16
-            ulimb2_p.bone.bbone_in = 0.0
-            ulimb2_p.bone.bbone_out = 1.0
+            ulimb2_p.bone.bbone_easein = 0.0
+            ulimb2_p.bone.bbone_easeout = 1.0
 
             ulimb2_smoother_p.bone.bbone_segments = 16
-            ulimb2_smoother_p.bone.bbone_in = 1.0
-            ulimb2_smoother_p.bone.bbone_out = 0.0
+            ulimb2_smoother_p.bone.bbone_easein = 1.0
+            ulimb2_smoother_p.bone.bbone_easeout = 0.0
 
             flimb1_p.bone.bbone_segments = 16
-            flimb1_p.bone.bbone_in = 1.0
-            flimb1_p.bone.bbone_out = 0.0
+            flimb1_p.bone.bbone_easein = 1.0
+            flimb1_p.bone.bbone_easeout = 0.0
 
             flimb1_smoother_p.bone.bbone_segments = 16
-            flimb1_smoother_p.bone.bbone_in = 0.0
-            flimb1_smoother_p.bone.bbone_out = 1.0
+            flimb1_smoother_p.bone.bbone_easein = 0.0
+            flimb1_smoother_p.bone.bbone_easeout = 1.0
 
             # Custom properties
             prop = rna_idprop_ui_prop_get(jhose_p, "smooth_bend", create=True)
