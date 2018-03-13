@@ -154,7 +154,8 @@ def save_mesh(filepath,
     if use_colors:
         fw("property uchar red\n"
            "property uchar green\n"
-           "property uchar blue\n")
+           "property uchar blue\n"
+           "property uchar alpha\n")
 
     fw("element face %d\n" % len(mesh.tessfaces))
     fw("property list uchar uint vertex_indices\n")
@@ -167,7 +168,7 @@ def save_mesh(filepath,
         if use_uv_coords:
             fw(" %.6f %.6f" % v[2])  # uv
         if use_colors:
-            fw(" %u %u %u" % v[3])  # col
+            fw(" %u %u %u %u" % v[3])  # col
         fw("\n")
 
     for pf in ply_faces:

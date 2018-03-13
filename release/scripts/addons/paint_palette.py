@@ -22,7 +22,7 @@
 bl_info = {
     "name": "Paint Palettes",
     "author": "Dany Lebel (Axon D)",
-    "version": (0, 9, 3),
+    "version": (0, 9, 4),
     "blender": (2, 63, 0),
     "location": "Image Editor and 3D View > Any Paint mode > Color Palette or Weight Palette panel",
     "description": "Palettes for color and weight paint modes",
@@ -44,20 +44,20 @@ with the brush by using the button under the color.
 
 import bpy
 from bpy.types import (
-        Operator,
-        Menu,
-        Panel,
-        PropertyGroup,
-        )
+    Operator,
+    Menu,
+    Panel,
+    PropertyGroup,
+)
 from bpy.props import (
-        BoolProperty,
-        FloatProperty,
-        FloatVectorProperty,
-        IntProperty,
-        StringProperty,
-        PointerProperty,
-        CollectionProperty,
-        )
+    BoolProperty,
+    FloatProperty,
+    FloatVectorProperty,
+    IntProperty,
+    StringProperty,
+    PointerProperty,
+    CollectionProperty,
+)
 
 
 def update_panels():
@@ -97,6 +97,14 @@ def update_weight_value():
     return None
 
 
+def check_path_return():
+    from os.path import normpath
+    preset_path = bpy.path.abspath(bpy.context.scene.palette_props.presets_folder)
+    paths = normpath(preset_path)
+
+    return paths if paths else ""
+
+
 class PALETTE_MT_menu(Menu):
     bl_label = "Presets"
     preset_subdir = ""
@@ -109,61 +117,62 @@ class PALETTE_MT_menu(Menu):
         import bpy.utils
 
         layout = self.layout
+
+        if bpy.data.filepath == "":
+            layout.label("*Please save the .blend file first*")
+            return
+
         if not searchpaths[0]:
             layout.label("* Missing Paths *")
+            return
 
         # collect paths
-        else:
-            files = []
-            for directory in searchpaths:
-                files.extend([(f, os.path.join(directory, f)) for f in os.listdir(directory)])
+        files = []
+        for directory in searchpaths:
+            files.extend([(f, os.path.join(directory, f)) for f in os.listdir(directory)])
 
-            files.sort()
+        files.sort()
 
-            for f, filepath in files:
+        for f, filepath in files:
 
-                if f.startswith("."):
-                    continue
-                # do not load everything from the given folder, only .gpl files
-                if f[-4:] != ".gpl":
-                    continue
+            if f.startswith("."):
+                continue
+            # do not load everything from the given folder, only .gpl files
+            if f[-4:] != ".gpl":
+                continue
 
-                preset_name = bpy.path.display_name(f)
-                props = layout.operator(operator, text=preset_name)
+            preset_name = bpy.path.display_name(f)
+            props = layout.operator(operator, text=preset_name)
 
-                for attr, value in props_default.items():
-                    setattr(props, attr, value)
+            for attr, value in props_default.items():
+                setattr(props, attr, value)
 
-                props.filepath = filepath
-                if operator == "palette.load_gimp_palette":
-                    props.menu_idname = self.bl_idname
+            props.filepath = filepath
+            if operator == "palette.load_gimp_palette":
+                props.menu_idname = self.bl_idname
 
     def draw_preset(self, context):
-        """Define these on the subclass
-         - preset_operator
-         - preset_subdir
-        """
-        import bpy
-        self.path_menu([bpy.context.scene.palette_props.presets_folder], self.preset_operator)
+        paths = check_path_return()
+        self.path_menu([paths], self.preset_operator)
 
     draw = draw_preset
 
 
-class LoadGimpPalette(Operator):
+class PALETTE_OT_load_gimp_palette(Operator):
     """Execute a preset"""
     bl_idname = "palette.load_gimp_palette"
     bl_label = "Load a Gimp palette"
 
     filepath = StringProperty(
-            name="Path",
-            description="Path of the .gpl file to load",
-            default=""
-            )
+        name="Path",
+        description="Path of the .gpl file to load",
+        default=""
+    )
     menu_idname = StringProperty(
-            name="Menu ID Name",
-            description="ID name of the menu this was called from",
-            default=""
-            )
+        name="Menu ID Name",
+        description="ID name of the menu this was called from",
+        default=""
+    )
 
     def execute(self, context):
         from os.path import basename
@@ -255,14 +264,16 @@ class WriteGimpPalette():
     bl_options = {'REGISTER'}  # only because invoke_props_popup requires
 
     name = StringProperty(
-                name="Name",
-                description="Name of the preset, used to make the path name",
-                maxlen=64, default=""
-                )
+        name="Name",
+        description="Name of the preset, used to make the path name",
+        maxlen=64,
+        options={'SKIP_SAVE'},
+        default=""
+    )
     remove_active = BoolProperty(
-                default=False,
-                options={'HIDDEN'}
-                )
+        default=False,
+        options={'HIDDEN'}
+    )
 
     @staticmethod
     def as_filename(name):  # could reuse for other presets
@@ -278,26 +289,25 @@ class WriteGimpPalette():
             self.pre_cb(context)
 
         preset_menu_class = getattr(bpy.types, self.preset_menu)
+        target_path = check_path_return()
+
+        if not target_path:
+            self.report({'WARNING'}, "Failed to create presets path")
+            return {'CANCELLED'}
+
+        if not os.path.exists(target_path):
+            self.report({'WARNING'},
+                        "Failure to open the saved Palettes Folder. Check if the path exists")
+            return {'CANCELLED'}
 
         if not self.remove_active:
-
             if not self.name:
+                self.report({'INFO'},
+                            "No name is given for the preset entry. Operation Cancelled")
                 return {'FINISHED'}
 
             filename = self.as_filename(self.name)
-            target_path = pp.presets_folder
-
-            if not target_path:
-                self.report({'WARNING'}, "Failed to create presets path")
-                return {'CANCELLED'}
-
-            if not os.path.exists(target_path):
-                self.report({'WARNING'},
-                            "Failure to open the saved Palletes Folder. Check if the path exists")
-                return {'CANCELLED'}
-
             filepath = os.path.join(target_path, filename) + ".gpl"
-
             file_preset = open(filepath, 'wb')
             gpl = "GIMP Palette\n"
             gpl += "Name: %s\n" % filename
@@ -312,18 +322,19 @@ class WriteGimpPalette():
             file_preset.close()
 
             pp.palette_name = filename
+            preset_menu_class.bl_label = bpy.path.display_name(filename)
+
+            self.report({'INFO'}, "Created Palette: {}".format(filepath))
 
         else:
             preset_active = preset_menu_class.bl_label
+            filename = self.as_filename(preset_active)
 
-            # fairly sloppy but convenient.
-            filepath = bpy.utils.preset_find(preset_active, self.preset_subdir)
+            filepath = os.path.join(target_path, filename) + ".gpl"
 
-            if not filepath:
-                filepath = bpy.utils.preset_find(preset_active,
-                    self.preset_subdir, display_name=True)
-
-            if not filepath:
+            if not filepath or not os.path.exists(filepath):
+                self.report({'WARNING'}, "Preset could not be found. Operation Cancelled")
+                self.reset_preset_name(preset_menu_class, pp)
                 return {'CANCELLED'}
 
             if hasattr(self, "remove"):
@@ -331,17 +342,23 @@ class WriteGimpPalette():
             else:
                 try:
                     os.remove(filepath)
+                    self.report({'INFO'}, "Deleted palette: {}".format(filepath))
                 except:
                     import traceback
                     traceback.print_exc()
 
-            # XXX, stupid!
-            preset_menu_class.bl_label = "Presets"
+        self.reset_preset_name(preset_menu_class, pp)
 
         if hasattr(self, "post_cb"):
             self.post_cb(context)
 
         return {'FINISHED'}
+
+    @staticmethod
+    def reset_preset_name(presets, props):
+        # XXX, still stupid!
+        presets.bl_label = "Presets"
+        props.palette_name = ""
 
     def check(self, context):
         self.name = self.as_filename(self.name)
@@ -350,11 +367,11 @@ class WriteGimpPalette():
         if not self.remove_active:
             wm = context.window_manager
             return wm.invoke_props_dialog(self)
-        else:
-            return self.execute(context)
+
+        return self.execute(context)
 
 
-class AddPresetPalette(WriteGimpPalette, Operator):
+class PALETTE_OT_preset_add(WriteGimpPalette, Operator):
     bl_idname = "palette.preset_add"
     bl_label = "Add Palette Preset"
     preset_menu = "PALETTE_MT_menu"
@@ -439,14 +456,13 @@ class IMAGE_OT_select_color(Operator):
 
 
 def color_palette_draw(self, context):
-    palette_props = bpy.context.scene.palette_props
+    palette_props = context.scene.palette_props
 
     layout = self.layout
-    bpy.types.PALETTE_MT_menu.preset_subdir = palette_props.presets_folder
 
     row = layout.row(align=True)
-    row.menu("PALETTE_MT_menu", text=palette_props.palette_name.rstrip())
-    row.operator("palette.preset_add", text="", icon="ZOOMIN")
+    row.menu("PALETTE_MT_menu", text=PALETTE_MT_menu.bl_label)
+    row.operator("palette.preset_add", text="", icon="ZOOMIN").remove_active = False
     row.operator("palette.preset_add", text="", icon="ZOOMOUT").remove_active = True
 
     col = layout.column(align=True)
@@ -486,8 +502,6 @@ def color_palette_draw(self, context):
     layout = self.layout
     row = layout.row()
     row.prop(palette_props, "presets_folder", text="")
-
-    pass
 
 
 class BrushButtonsPanel():
@@ -612,11 +626,12 @@ class VIEW3D_OT_reset_weight_palette(Operator):
     def execute(self, context):
         try:
             palette_props = context.scene.palette_props
-            dict_defs = {0: 0.0, 1: 0.1, 2: 0.25,
-                         3: 0.333, 4: 0.4, 5: 0.5,
-                         6: 0.6, 7: 0.6666, 8: 0.75,
-                         9: 0.9, 10: 1.0
-                        }
+            dict_defs = {
+                0: 0.0, 1: 0.1, 2: 0.25,
+                3: 0.333, 4: 0.4, 5: 0.5,
+                6: 0.6, 7: 0.6666, 8: 0.75,
+                9: 0.9, 10: 1.0
+            }
             current_idx = palette_props.current_weight_index
             palette_props.weight = dict_defs[current_idx]
 
@@ -673,30 +688,20 @@ class VIEW3D_PT_weight_palette(PaintPanel, Panel):
         row.operator("paint.reset_weight_palette", text="Reset")
 
 
-class Colors(PropertyGroup):
+class PALETTE_Colors(PropertyGroup):
     """Class for colors CollectionProperty"""
     color = FloatVectorProperty(
-            name="",
-            description="",
-            default=(0.8, 0.8, 0.8),
-            min=0, max=1,
-            step=1, precision=3,
-            subtype='COLOR_GAMMA',
-            size=3
-            )
+        name="",
+        description="",
+        default=(0.8, 0.8, 0.8),
+        min=0, max=1,
+        step=1, precision=3,
+        subtype='COLOR_GAMMA',
+        size=3
+    )
 
 
-class Weights(PropertyGroup):
-    """Class for Weights Collection Property"""
-    weight = FloatProperty(
-            default=0.0,
-            min=0.0,
-            max=1.0,
-            precision=3
-            )
-
-
-class PaletteProps(PropertyGroup):
+class PALETTE_Props(PropertyGroup):
 
     def update_color_name(self, context):
         pp = bpy.context.scene.palette_props
@@ -742,133 +747,151 @@ class PaletteProps(PropertyGroup):
         return None
 
     palette_name = StringProperty(
-            name="Palette Name",
-            default="Preset",
-            subtype='FILE_NAME'
-            )
+        name="Palette Name",
+        default="Preset",
+        subtype='FILE_NAME'
+    )
     color_name = StringProperty(
-            name="",
-            description="Color Name",
-            default="Untitled",
-            update=update_color_name
-            )
+        name="",
+        description="Color Name",
+        default="Untitled",
+        update=update_color_name
+    )
     columns = IntProperty(
-            name="Columns",
-            description="Number of Columns",
-            min=0, max=16,
-            default=0
-            )
+        name="Columns",
+        description="Number of Columns",
+        min=0, max=16,
+        default=0
+    )
     index = IntProperty(
-            name="Index",
-            description="Move Selected Color",
-            min=0,
-            update=move_color
-            )
+        name="Index",
+        description="Move Selected Color",
+        min=0,
+        update=move_color
+    )
     notes = StringProperty(
-            name="Palette Notes",
-            default="#\n"
-            )
+        name="Palette Notes",
+        default="#\n"
+    )
     current_color_index = IntProperty(
-            name="Current Color Index",
-            description="",
-            default=0,
-            min=0
-            )
+        name="Current Color Index",
+        description="",
+        default=0,
+        min=0
+    )
     current_weight_index = IntProperty(
-            name="Current Color Index",
-            description="",
-            default=10,
-            min=-1
-            )
+        name="Current Color Index",
+        description="",
+        default=10,
+        min=-1
+    )
     presets_folder = StringProperty(name="",
-            description="Palettes Folder",
-            subtype="DIR_PATH"
-            )
+        description="Palettes Folder",
+        subtype="DIR_PATH",
+        default="//"
+    )
     colors = CollectionProperty(
-            type=Colors
-            )
+        type=PALETTE_Colors
+    )
     weight = FloatProperty(
-            name="Weight",
-            description="Modify the active Weight preset slot value",
-            default=0.0,
-            min=0.0, max=1.0,
-            precision=3,
-            update=update_weight
-            )
+        name="Weight",
+        description="Modify the active Weight preset slot value",
+        default=0.0,
+        min=0.0, max=1.0,
+        precision=3,
+        update=update_weight
+    )
     weight_0 = FloatProperty(
-            default=0.0,
-            min=0.0, max=1.0,
-            precision=3
-            )
+        default=0.0,
+        min=0.0, max=1.0,
+        precision=3
+    )
     weight_1 = FloatProperty(
-            default=0.1,
-            min=0.0, max=1.0,
-            precision=3
-            )
+        default=0.1,
+        min=0.0, max=1.0,
+        precision=3
+    )
     weight_2 = FloatProperty(
-            default=0.25,
-            min=0.0, max=1.0,
-            precision=3
-            )
+        default=0.25,
+        min=0.0, max=1.0,
+        precision=3
+    )
     weight_3 = FloatProperty(
-            default=0.333,
-            min=0.0, max=1.0,
-            precision=3
-            )
+        default=0.333,
+        min=0.0, max=1.0,
+        precision=3
+    )
     weight_4 = FloatProperty(
-            default=0.4,
-            min=0.0, max=1.0,
-            precision=3
-            )
+        default=0.4,
+        min=0.0, max=1.0,
+        precision=3
+    )
     weight_5 = FloatProperty(
-            default=0.5,
-            min=0.0, max=1.0,
-            precision=3
-            )
+        default=0.5,
+        min=0.0, max=1.0,
+        precision=3
+    )
     weight_6 = FloatProperty(
-            default=0.6,
-            min=0.0, max=1.0,
-            precision=3
-            )
+        default=0.6,
+        min=0.0, max=1.0,
+        precision=3
+    )
     weight_7 = FloatProperty(
-            default=0.6666,
-            min=0.0, max=1.0,
-            precision=3
-            )
+        default=0.6666,
+        min=0.0, max=1.0,
+        precision=3
+    )
     weight_8 = FloatProperty(
-            default=0.75,
-            min=0.0, max=1.0,
-            precision=3
-            )
+        default=0.75,
+        min=0.0, max=1.0,
+        precision=3
+    )
     weight_9 = FloatProperty(
-            default=0.9,
-            min=0.0, max=1.0,
-            precision=3
-            )
+        default=0.9,
+        min=0.0, max=1.0,
+        precision=3
+    )
     weight_10 = FloatProperty(
-            default=1.0,
-            min=0.0, max=1.0,
-            precision=3
-            )
-    pass
+        default=1.0,
+        min=0.0, max=1.0,
+        precision=3
+    )
+
+
+classes = (
+    PALETTE_MT_menu,
+    PALETTE_OT_load_gimp_palette,
+    PALETTE_OT_preset_add,
+    PALETTE_OT_add_color,
+    PALETTE_OT_remove_color,
+    PALETTE_OT_sample_tool_color,
+    IMAGE_OT_select_color,
+    IMAGE_PT_color_palette,
+    VIEW3D_PT_color_palette,
+    VIEW3D_OT_select_weight,
+    VIEW3D_OT_reset_weight_palette,
+    VIEW3D_PT_weight_palette,
+    PALETTE_Colors,
+    PALETTE_Props,
+)
 
 
 def register():
-    bpy.utils.register_module(__name__)
+    for cls in classes:
+        bpy.utils.register_class(cls)
 
     bpy.types.Scene.palette_props = PointerProperty(
-                                        type=PaletteProps,
-                                        name="Palette Props",
-                                        description=""
-                                        )
-    pass
+        type=PALETTE_Props,
+        name="Palette Props",
+        description=""
+    )
 
 
 def unregister():
-    bpy.utils.unregister_module(__name__)
+    for cls in reversed(classes):
+        bpy.utils.unregister_class(cls)
 
     del bpy.types.Scene.palette_props
-    pass
 
 
 if __name__ == "__main__":

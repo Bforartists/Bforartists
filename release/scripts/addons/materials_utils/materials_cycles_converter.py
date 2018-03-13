@@ -6,18 +6,18 @@ import bpy
 from os import path as os_path
 from bpy.types import Operator
 from math import (
-        log2, ceil,
-        )
+    log2, ceil, sqrt,
+)
 from bpy.props import (
-        BoolProperty,
-        EnumProperty,
-        )
+    BoolProperty,
+    EnumProperty,
+)
 from .warning_messages_utils import (
-        warning_messages,
-        c_is_cycles_addon_enabled,
-        c_data_has_materials,
-        collect_report,
-        )
+    warning_messages,
+    c_is_cycles_addon_enabled,
+    c_data_has_materials,
+    collect_report,
+)
 
 # -----------------------------------------------------------------------------
 # Globals
@@ -130,7 +130,7 @@ def BakingText(tex, mode, tex_type=None):
     img = bpy.data.images.get("TMP_BAKING")
     img.file_format = ("JPEG" if not mode == "ALPHA" else "PNG")
 
-    # switch temporarly to 'IMAGE EDITOR', other approaches are not reliable
+    # switch temporarily to 'IMAGE EDITOR', other approaches are not reliable
     check_area = False
     store_area = bpy.context.area.type
     collect_report("INFO: Temporarly switching context to Image Editor")
@@ -267,8 +267,7 @@ def AutoNode(active=False, operator=None):
             for n in TreeNodes.nodes:
                 TreeNodes.nodes.remove(n)
 
-            # Starting point is diffuse BSDF and output material
-            # and a Color Ramp node
+            # Starting point is diffuse BSDF and output material and a Color Ramp node
             shader = TreeNodes.nodes.new('ShaderNodeBsdfDiffuse')
             shader.location = 10, 10
             shader_val = TreeNodes.nodes.new('ShaderNodeValToRGB')
@@ -382,7 +381,7 @@ def AutoNode(active=False, operator=None):
             else:
                 # Create Clay Material (Diffuse, Glossy, Layer Weight)
                 shader.inputs['Color'].default_value = PAINT_SC_COLOR
-                shader.inputs['Roughness'].default_value = 0.9
+                shader.inputs['Roughness'].default_value = 0.9486
 
                 # remove Color Ramp and links from the default shader and reroute
                 try:
@@ -416,10 +415,10 @@ def AutoNode(active=False, operator=None):
                     shader.inputs['Roughness'].default_value = cmat.specular_intensity
 
                 if shader.type == 'ShaderNodeBsdfGlossy':
-                    shader.inputs['Roughness'].default_value = 1 - cmat.raytrace_mirror.gloss_factor
+                    shader.inputs['Roughness'].default_value = sqrt(max(1 - cmat.raytrace_mirror.gloss_factor, 0.0))
 
                 if shader.type == 'ShaderNodeBsdfGlass':
-                    shader.inputs['Roughness'].default_value = 1 - cmat.raytrace_mirror.gloss_factor
+                    shader.inputs['Roughness'].default_value = sqrt(max(1 - cmat.raytrace_mirror.gloss_factor, 0.0))
                     shader.inputs['IOR'].default_value = cmat.raytrace_transparency.ior
 
                 if shader.type == 'ShaderNodeEmission':
@@ -848,6 +847,21 @@ def create_mix_node(TreeNodes, links, nodes, loc, start, median_point, row, fram
     return mix_node
 
 
+def unwrap_active_object(context):
+    enable_unwrap = context.scene.mat_specials.UV_UNWRAP
+    if enable_unwrap:
+        obj_name = getattr(context.active_object, "name", "UNNAMED OBJECT")
+        try:
+            # it's possible that the active object would fail UV Unwrap
+            bpy.ops.object.editmode_toggle()
+            bpy.ops.uv.unwrap(method='ANGLE_BASED', margin=0.001)
+            bpy.ops.object.editmode_toggle()
+            collect_report("INFO: UV Unwrapping active object {}".format(obj_name))
+        except:
+            collect_report("ERROR: UV Unwrapping failed for "
+                           "active object {}".format(obj_name))
+
+
 # -----------------------------------------------------------------------------
 # Operator Classes
 
@@ -866,10 +880,8 @@ class mllock(Operator):
         TreeNodes = cmat.node_tree
         for n in TreeNodes.nodes:
             if n.type == 'ShaderNodeOutputMaterial':
-                if n.label == 'Locked':
-                    n.label = ''
-                else:
-                    n.label = 'Locked'
+                n.label = "" if n.label == "Locked" else "Locked"
+
         return {'FINISHED'}
 
 
@@ -882,28 +894,17 @@ class mlrefresh(Operator):
 
     @classmethod
     def poll(cls, context):
-        return (bpy.data.filepath != ""and c_is_cycles_addon_enabled() and
+        return (bpy.data.filepath != "" and c_is_cycles_addon_enabled() and
                 c_data_has_materials())
 
     def execute(self, context):
         AutoNodeInitiate(False, self)
 
         if CHECK_AUTONODE is True:
-            enable_unwrap = bpy.context.scene.mat_specials.UV_UNWRAP
-            if enable_unwrap:
-                obj_name = getattr(context.active_object, "name", "UNNAMED OBJECT")
-                try:
-                    # it's possible to the active object would fail UV Unwrap
-                    bpy.ops.object.editmode_toggle()
-                    bpy.ops.uv.unwrap(method='ANGLE_BASED', margin=0.001)
-                    bpy.ops.object.editmode_toggle()
-                    collect_report("INFO: UV Unwrapping active object "
-                                   "{}".format(obj_name))
-                except:
-                    collect_report("ERROR: UV Unwrapping failed for "
-                                   "active object {}".format(obj_name))
+            unwrap_active_object(context)
 
         collect_report("Conversion finished !", False, True)
+
         return {'FINISHED'}
 
 
@@ -922,20 +923,10 @@ class mlrefresh_active(Operator):
     def execute(self, context):
         AutoNodeInitiate(True, self)
         if CHECK_AUTONODE is True:
-            obj_name = getattr(context.active_object, "name", "UNNAMED OBJECT")
-            enable_unwrap = bpy.context.scene.mat_specials.UV_UNWRAP
-            if enable_unwrap:
-                try:
-                    # you can already guess it, what could happen here
-                    bpy.ops.object.editmode_toggle()
-                    bpy.ops.uv.unwrap(method='ANGLE_BASED', margin=0.001)
-                    bpy.ops.object.editmode_toggle()
-                    collect_report("INFO: UV Unwrapping object {}".format(obj_name))
-                except:
-                    collect_report("ERROR: UV Unwrapping failed for "
-                                   "object {}".format(obj_name))
+            unwrap_active_object(context)
 
         collect_report("Conversion finished !", False, True)
+
         return {'FINISHED'}
 
 
@@ -947,27 +938,28 @@ class mlrestore(Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     switcher = BoolProperty(
-            name="Use Nodes",
-            description="When restoring, switch Use Nodes On/Off",
-            default=True
-            )
+        name="Use Nodes",
+        description="When restoring, switch Use Nodes On/Off",
+        default=True
+    )
     renderer = EnumProperty(
-            name="Renderer",
-            description="Choose Cycles or Blender Internal",
-            items=(('CYCLES', "Cycles", "Switch to Cycles"),
-                   ('BI', "Blender Internal", "Switch to Blender Internal")),
-            default='CYCLES',
-            )
+        name="Renderer",
+        description="Choose Cycles or Blender Internal",
+        items=(
+            ('CYCLES', "Cycles", "Switch to Cycles"),
+            ('BI', "Blender Internal", "Switch to Blender Internal")
+        ),
+        default='CYCLES',
+    )
 
     @classmethod
     def poll(cls, context):
         return c_is_cycles_addon_enabled()
 
     def execute(self, context):
-        if self.switcher:
-            AutoNodeSwitch(self.renderer, "ON", self)
-        else:
-            AutoNodeSwitch(self.renderer, "OFF", self)
+        switch = "ON" if self.switcher else "OFF"
+        AutoNodeSwitch(self.renderer, switch, self)
+
         return {'FINISHED'}
 
 

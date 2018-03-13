@@ -193,7 +193,10 @@ class AntLandscapeRegenerate(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return bpy.context.active_object.ant_landscape
+        ob = bpy.context.active_object
+        if ob.mode == 'EDIT':
+            return False
+        return ob.ant_landscape
 
 
     def execute(self, context):

@@ -31,6 +31,7 @@ FLT_MIN = 0.004
 
 
 class PanelDupliCurve(Panel):
+    bl_idname = "VIEW3D_PT_arranjar_numa_curva"
     bl_space_type = "VIEW_3D"
     bl_region_type = "TOOLS"
     bl_context = "objectmode"

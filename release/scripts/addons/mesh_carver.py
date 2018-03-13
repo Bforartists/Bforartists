@@ -21,37 +21,44 @@ bl_info = {
     "name": "Carver MT",
     "category": "Object",
     "author": "Pixivore, Cedric LEPILLER, Ted Milker",
-    "version": (1, 1, 7),
-    "blender": (2, 77, 0),
+    "version": (1, 1, 8),
+    "blender": (2, 79, 2),
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
                 "Scripts/Modeling/Carver",
     "description": "Multiple tools to carve or to create objects",
-    }
+}
 
 import bpy
 import bgl
 import blf
 import math
-import mathutils
 import sys
 import random
 import bmesh
+from mathutils import (
+    Color,
+    Euler,
+    Matrix,
+    Vector,
+    Quaternion,
+)
 import bpy_extras
 from bpy.props import (
-        BoolProperty,
-        EnumProperty,
-        IntProperty,
-        StringProperty,
-        )
+    BoolProperty,
+    IntProperty,
+    PointerProperty,
+    StringProperty,
+)
 from bpy_extras import view3d_utils
 from bpy_extras.view3d_utils import (
-        region_2d_to_vector_3d,
-        region_2d_to_location_3d,
-        )
+    region_2d_to_vector_3d,
+    region_2d_to_location_3d,
+)
+
 
 Profils = [
     ("CTP_4882",
-     mathutils.Vector((2.61824, -5.56469, 0)),
+      Vector((2.61824, -5.56469, 0)),
      [(-1.156501, 0.799282, 0.032334),
       (-0.967583, 0.838861, 0.032334),
       (-1.10386, 0.846403, 0.032334),
@@ -108,7 +115,7 @@ Profils = [
       [38, 39, 47], [34, 32, 35], [39, 46, 47], [43, 34, 35], [35, 38, 47], [47, 42, 35], [32, 33, 35],
       [42, 40, 43], [36, 37, 39], [42, 43, 35], [44, 45, 47], [46, 44, 47]]),
     ("CTP_8354",
-     mathutils.Vector((-0.06267, -2.43829, -0.0)),
+     Vector((-0.06267, -2.43829, -0.0)),
      [(-0.534254, -1.0, 0.032334),
       (-1.0, -0.534254, 0.032334),
       (-0.654798, -0.98413, 0.032334),
@@ -212,7 +219,7 @@ Profils = [
       [48, 71, 80, 47], [67, 37, 38, 83], [82, 83, 87, 86], [81, 82, 86, 85], [80, 81, 85, 84], [47, 80, 84, 46],
       [83, 38, 39, 87]]),
     ("CTP_5585",
-     mathutils.Vector((5.0114, -2.4281, 0.0)),
+     Vector((5.0114, -2.4281, 0.0)),
      [(-0.490711, -1.0, 0.032334),
       (-1.0, -0.490711, 0.032334),
       (1.0, -0.490711, 0.032334),
@@ -233,7 +240,7 @@ Profils = [
      [[11, 12, 13, 14], [9, 8, 4, 1], [10, 9, 1, 0], [11, 10, 0, 3], [12, 11, 3, 2], [13, 12, 2, 7],
       [14, 13, 7, 6], [15, 14, 6, 5], [8, 15, 5, 4], [9, 10, 15, 8], [10, 11, 14, 15]]),
     ("CTP_6960",
-     mathutils.Vector((-0.11417, 2.48371, -0.0)),
+     Vector((-0.11417, 2.48371, -0.0)),
      [(0.0, 1.0, 0.016827),
       (-0.382683, 0.92388, 0.016827),
       (-0.707107, 0.707107, 0.016827),
@@ -271,7 +278,7 @@ Profils = [
       [6, 22, 21, 5], [14, 30, 29, 13], [7, 23, 22, 6], [15, 31, 30, 14], [8, 24, 23, 7], [1, 17, 16, 0],
       [0, 16, 31, 15], [9, 25, 24, 8], [2, 18, 17, 1], [10, 26, 25, 9]]),
     ("CTP_5359",
-     mathutils.Vector((5.50446, 2.41669, -0.0)),
+     Vector((5.50446, 2.41669, -0.0)),
      [(0.0, 0.714247, 0.023261),
       (-0.382683, 0.659879, 0.023261),
       (-0.707107, 0.505049, 0.023261),
@@ -309,7 +316,7 @@ Profils = [
       [6, 22, 21, 5], [14, 30, 29, 13], [7, 23, 22, 6], [15, 31, 30, 14], [8, 24, 23, 7], [1, 17, 16, 0],
       [0, 16, 31, 15], [9, 25, 24, 8], [2, 18, 17, 1], [10, 26, 25, 9]]),
     ("CTP_5424",
-     mathutils.Vector((2.61824, 2.34147, 0.0)),
+     Vector((2.61824, 2.34147, 0.0)),
      [(1.0, -1.0, 0.032334),
       (-1.0, 1.0, 0.032334),
       (1.0, 1.0, 0.032334),
@@ -328,7 +335,7 @@ Profils = [
      [[3, 0, 2], [10, 9, 2], [2, 1, 4], [2, 4, 13], [5, 3, 2], [6, 5, 2], [2, 13, 12], [2, 12, 11], [7, 6, 2],
       [8, 7, 2], [2, 11, 10], [9, 8, 2]]),
     ("CTP_3774",
-     mathutils.Vector((2.61824, -2.52425, 0.0)),
+     Vector((2.61824, -2.52425, 0.0)),
      [(1.0, 0.0, 0.020045),
       (-1.0, 0.0, 0.020045),
       (0.31903, -0.664947, 0.020045),
@@ -367,7 +374,7 @@ Profils = [
       [11, 30, 9, 12], [17, 16, 27, 26], [14, 17, 26, 24], [24, 25, 0, 14], [15, 13, 27, 16], [9, 30, 23, 4],
       [31, 29, 7, 18], [28, 31, 18, 21], [30, 28, 21, 23]]),
     ("CTP_4473",
-     mathutils.Vector((7.31539, 0.0, 0.0)),
+     Vector((7.31539, 0.0, 0.0)),
      [(0.24549, -1.0, 0.022454),
       (-0.24549, -1.0, 0.022454),
       (-0.24549, 1.0, 0.022454),
@@ -383,7 +390,7 @@ Profils = [
       ],
      [[8, 3, 2, 10], [0, 9, 11, 1], [4, 8, 9, 5], [8, 10, 11, 9], [10, 7, 6, 11]]),
     ("CTP_4003",
-     mathutils.Vector((4.91276, 0.0, 0.0)),
+     Vector((4.91276, 0.0, 0.0)),
      [(-1.0, -1.0, 0.026945),
       (1.0, -1.0, 0.026945),
       (-1.0, 1.0, 0.026945),
@@ -424,7 +431,7 @@ Profils = [
       [23, 25, 31, 29], [24, 23, 29, 30], [25, 22, 28, 31], [26, 22, 15, 20], [10, 27, 33, 5], [31, 28, 3, 11],
       [33, 30, 13, 14], [29, 31, 11, 12], [5, 33, 14, 1], [30, 29, 12, 13], [32, 28, 22, 26]]),
     ("CTP_3430",
-     mathutils.Vector((2.61824, 0.0, 0.0)),
+     Vector((2.61824, 0.0, 0.0)),
      [(-1.0, -1.0, 0.032334),
       (1.0, -1.0, 0.032334),
       (-1.0, 1.0, 0.032334),
@@ -432,7 +439,7 @@ Profils = [
       ],
      [[0, 1, 3, 2]]),
     ("CTP_7175",
-     mathutils.Vector((0.0, 0.0, 0.0)),
+     Vector((0.0, 0.0, 0.0)),
      [(-1.0, -1.0, 0.032334),
       (1.0, -1.0, 0.032334),
       (-1.0, 1.0, 0.032334),
@@ -464,33 +471,33 @@ class CarverPrefs(bpy.types.AddonPreferences):
     bl_idname = __name__
 
     Enable_Tab_01 = BoolProperty(
-            name="Info",
-            description="Some general information and settings about the add-on",
-            default=False
-            )
+        name="Info",
+        description="Some general information and settings about the add-on",
+        default=False
+    )
     Enable_Tab_02 = BoolProperty(
-            name="Hotkeys",
-            description="List of the shortcuts used during carving",
-            default=False
-            )
+        name="Hotkeys",
+        description="List of the shortcuts used during carving",
+        default=False
+    )
     bpy.types.Scene.Key_Create = StringProperty(
-            name="Object creation",
-            description="Object creation",
-            maxlen=1,
-            default="C"
-            )
+        name="Object creation",
+        description="Object creation",
+        maxlen=1,
+        default="C"
+    )
     bpy.types.Scene.Key_Update = StringProperty(
-            name="Auto Bevel Update",
-            description="Auto Bevel Update",
-            maxlen=1,
-            default="A",
-            )
+        name="Auto Bevel Update",
+        description="Auto Bevel Update",
+        maxlen=1,
+        default="A",
+    )
     bpy.types.Scene.Key_Bool = StringProperty(
-            name="Boolean type",
-            description="Boolean operation type",
-            maxlen=1,
-            default="T",
-            )
+        name="Boolean type",
+        description="Boolean operation type",
+        maxlen=1,
+        default="T",
+    )
     bpy.types.Scene.Key_Brush = StringProperty(
             name="Brush Mode",
             description="Brush Mode",
@@ -498,167 +505,150 @@ class CarverPrefs(bpy.types.AddonPreferences):
             default="B",
             )
     bpy.types.Scene.Key_Help = StringProperty(
-            name="Help display",
-            description="Help display",
-            maxlen=1,
-            default="H",
-            )
+        name="Help display",
+        description="Help display",
+        maxlen=1,
+        default="H",
+    )
     bpy.types.Scene.Key_Instant = StringProperty(
-            name="Instantiate",
-            description="Instantiate object",
-            maxlen=1,
-            default="I",
-            )
+        name="Instantiate",
+        description="Instantiate object",
+        maxlen=1,
+        default="I",
+    )
     bpy.types.Scene.Key_Close = StringProperty(
-            name="Close polygonal shape",
-            description="Close polygonal shape",
-            maxlen=1,
-            default="X",
-            )
+        name="Close polygonal shape",
+        description="Close polygonal shape",
+        maxlen=1,
+        default="X",
+    )
     bpy.types.Scene.Key_Apply = StringProperty(
-            name="Apply operation",
-            description="Apply operation",
-            maxlen=1,
-            default="Q",
-            )
+        name="Apply operation",
+        description="Apply operation",
+        maxlen=1,
+        default="Q",
+    )
     bpy.types.Scene.Key_Scale = StringProperty(
-            name="Scale object",
-            description="Scale object",
-            maxlen=1,
-            default="S",
-            )
+        name="Scale object",
+        description="Scale object",
+        maxlen=1,
+        default="S",
+    )
     bpy.types.Scene.Key_Gapy = StringProperty(
-            name="Gap rows",
-            description="Scale gap between columns",
-            maxlen=1,
-            default="J",
-            )
+        name="Gap rows",
+        description="Scale gap between columns",
+        maxlen=1,
+        default="J",
+    )
     bpy.types.Scene.Key_Gapx = StringProperty(
-            name="Gap columns",
-            description="Scale gap between columns",
-            maxlen=1,
-            default="U",
-            )
+        name="Gap columns",
+        description="Scale gap between columns",
+        maxlen=1,
+        default="U",
+    )
     bpy.types.Scene.Key_Depth = StringProperty(
-            name="Depth",
-            description="Cursor depth or solidify pattern",
-            maxlen=1,
-            default="D",
-            )
+        name="Depth",
+        description="Cursor depth or solidify pattern",
+        maxlen=1,
+        default="D",
+    )
     bpy.types.Scene.Key_BrushDepth = StringProperty(
-            name="Brush Depth",
-            description="Brush depth",
-            maxlen=1,
-            default="C",
-            )
+        name="Brush Depth",
+        description="Brush depth",
+        maxlen=1,
+        default="C",
+    )
     bpy.types.Scene.Key_Subadd = StringProperty(
-            name="Add subdivision",
-            description="Add subdivision",
-            maxlen=1,
-            default="X",
-            )
+        name="Add subdivision",
+        description="Add subdivision",
+        maxlen=1,
+        default="X",
+    )
     bpy.types.Scene.Key_Subrem = StringProperty(
-            name="Remove subdivision",
-            description="Remove subdivision",
-            maxlen=1,
-            default="W",
-            )
+        name="Remove subdivision",
+        description="Remove subdivision",
+        maxlen=1,
+        default="W",
+    )
     bpy.types.Scene.Key_Randrot = StringProperty(
-            name="Random rotation",
-            description="Random rotation",
-            maxlen=1,
-            default="R",
-            )
-    bpy.types.Scene.Key_Solver = StringProperty(
-            name="Solver",
-            description="Switch between Carve and BMesh Boolean solver\n"
-                        "depending on a specific use case",
-            maxlen=1,
-            default="V",
-            )
+        name="Random rotation",
+        description="Random rotation",
+        maxlen=1,
+        default="R",
+    )
     bpy.types.Scene.ProfilePrefix = StringProperty(
-            name="Profile prefix",
-            description="Prefix to look for profiles with",
-            default="Carver_Profile-"
-            )
-    bpy.types.Scene.CarverSolver = EnumProperty(
-            name="Boolean Solver",
-            description="Boolean solver to use by default\n",
-            default="CARVE",
-            items=(
-                ('CARVE', 'Carve', "Carve solver, as the legacy one, can handle\n"
-                                   "basic coplanar but can often fail with\n"
-                                   "non-closed geometry"),
-                ('BMESH', 'BMesh', "BMesh solver is faster, but cannot handle\n"
-                                   "coplanar and self-intersecting geometry")
-                )
-            )
+        name="Profile prefix",
+        description="Prefix to look for profiles with",
+        default="Carver_Profile-"
+    )
 
     def draw(self, context):
         scene = context.scene
         layout = self.layout
 
-        layout.prop(self, "Enable_Tab_01", text="Info and Settings", icon="QUESTION")
+        icon_1 = "TRIA_RIGHT" if not self.Enable_Tab_01 else "TRIA_DOWN"
+        box = layout.box()
+        box.prop(self, "Enable_Tab_01", text="Info and Settings", emboss=False, icon=icon_1)
         if self.Enable_Tab_01:
-            layout.label(text="Carver Operator:", icon="LAYER_ACTIVE")
-            layout.label(text="Select a Mesh Object and press [CTRL]+[SHIFT]+[X] to carve",
+            box.label(text="Carver Operator:", icon="LAYER_ACTIVE")
+            box.label(text="Select a Mesh Object and press [CTRL]+[SHIFT]+[X] to carve",
                          icon="LAYER_USED")
-            layout.label(text="To finish carving press [ESC] or [RIGHT CLICK]",
+            box.label(text="To finish carving press [ESC] or [RIGHT CLICK]",
                          icon="LAYER_USED")
+            box.prop(scene, "ProfilePrefix", text="Profile prefix")
 
-            layout.prop(scene, "ProfilePrefix", text="Profile prefix")
-            layout.prop(scene, "CarverSolver", text="Solver")
-
-        layout.prop(self, "Enable_Tab_02", text="Keys", icon="KEYINGSET")
+        icon_2 = "TRIA_RIGHT" if not self.Enable_Tab_02 else "TRIA_DOWN"
+        box = layout.box()
+        box.prop(self, "Enable_Tab_02", text="Keys", emboss=False, icon=icon_2)
         if self.Enable_Tab_02:
-            split = layout.split()
-            col = split.column()
+            split = box.split(align=True)
+            box = split.box()
+            col = box.column(align=True)
             col.label("Object Creation:")
             col.prop(scene, "Key_Create", text="")
             col.label("Auto bevel update:")
             col.prop(scene, "Key_Update", text="")
             col.label("Boolean operation type:")
             col.prop(scene, "Key_Bool", text="")
-            col.label("Solver:")
-            col.prop(scene, "Key_Solver", text="")
+            col.label("Brush Depth:")
+            col.prop(scene, "Key_BrushDepth", text="")
 
-            col = split.column()
+            box = split.box()
+            col = box.column(align=True)
             col.label("Brush Mode:")
             col.prop(scene, "Key_Brush", text="")
             col.label("Help display:")
             col.prop(scene, "Key_Help", text="")
             col.label("Instantiate object:")
             col.prop(scene, "Key_Instant", text="")
-            col.label("Brush Depth:")
-            col.prop(scene, "Key_BrushDepth", text="")
+            col.label("Random rotation:")
+            col.prop(scene, "Key_Randrot", text="")
 
-            col = split.column()
+            box = split.box()
+            col = box.column(align=True)
             col.label("Close polygonal shape:")
             col.prop(scene, "Key_Close", text="")
             col.label("Apply operation:")
             col.prop(scene, "Key_Apply", text="")
             col.label("Scale object:")
             col.prop(scene, "Key_Scale", text="")
+            col.label("Subdiv add:")
+            col.prop(scene, "Key_Subadd", text="")
 
-            col = split.column()
+            box = split.box()
+            col = box.column(align=True)
             col.label("Gap rows:")
             col.prop(scene, "Key_Gapy", text="")
             col.label("Gap columns:")
             col.prop(scene, "Key_Gapx", text="")
             col.label("Depth / Solidify:")
             col.prop(scene, "Key_Depth", text="")
-
-            col = split.column()
-            col.label("Subdiv add:")
-            col.prop(scene, "Key_Subadd", text="")
             col.label("Subdiv Remove:")
             col.prop(scene, "Key_Subrem", text="")
-            col.label("Random rotation:")
-            col.prop(scene, "Key_Randrot", text="")
 
 
 # Draw Text (Center position)
-def DrawCenterText(text, xt, yt, Size, Color, self):
+def DrawCenterText(text, xt, yt, Size, colors, self):
     font_id = 0
     # Offset Shadow
     Sshadow_x = 2
@@ -670,16 +660,16 @@ def DrawCenterText(text, xt, yt, Size, Color, self):
 
     blf.draw(font_id, text)
     blf.position(font_id, xt - blf.dimensions(font_id, text)[0] / 2, yt, 0)
-    if Color is not None:
-        mColor = mathutils.Color((Color[0], Color[1], Color[2]))
-        bgl.glColor4f(mColor.r, mColor.g, mColor.b, 1.0)
+    if colors is not None:
+        mcolor = Color((colors[0], colors[1], colors[2]))
+        bgl.glColor4f(mcolor.r, mcolor.g, mcolor.b, 1.0)
     else:
         bgl.glColor4f(1.0, 1.0, 1.0, 1.0)
     blf.draw(font_id, text)
 
 
 # Draw text (Left position)
-def DrawLeftText(text, xt, yt, Size, Color, self):
+def DrawLeftText(text, xt, yt, Size, colors, self):
     font_id = 0
     # Offset Shadow
     Sshadow_x = 2
@@ -690,16 +680,16 @@ def DrawLeftText(text, xt, yt, Size, Color, self):
     bgl.glColor4f(0.0, 0.0, 0.0, 1.0)
     blf.draw(font_id, text)
     blf.position(font_id, xt, yt, 0)
-    if Color is not None:
-        mColor = mathutils.Color((Color[0], Color[1], Color[2]))
-        bgl.glColor4f(mColor.r, mColor.g, mColor.b, 1.0)
+    if colors is not None:
+        mcolor = Color((colors[0], colors[1], colors[2]))
+        bgl.glColor4f(mcolor.r, mcolor.g, mcolor.b, 1.0)
     else:
         bgl.glColor4f(1.0, 1.0, 1.0, 1.0)
     blf.draw(font_id, text)
 
 
 # Draw text (Right position)
-def DrawRightText(text, xt, yt, Size, Color, self):
+def DrawRightText(text, xt, yt, Size, colors, self):
     font_id = 0
     # Offset Shadow
     Sshadow_x = 2
@@ -710,9 +700,9 @@ def DrawRightText(text, xt, yt, Size, Color, self):
     bgl.glColor4f(0.0, 0.0, 0.0, 1.0)
     blf.draw(font_id, text)
     blf.position(font_id, xt - blf.dimensions(font_id, text)[0], yt, 0)
-    if Color is not None:
-        mColor = mathutils.Color((Color[0], Color[1], Color[2]))
-        bgl.glColor4f(mColor.r, mColor.g, mColor.b, 1.0)
+    if colors is not None:
+        mcolor = Color((colors[0], colors[1], colors[2]))
+        bgl.glColor4f(mcolor.r, mcolor.g, mcolor.b, 1.0)
     else:
         bgl.glColor4f(1.0, 1.0, 1.0, 1.0)
     blf.draw(font_id, text)
@@ -743,28 +733,18 @@ def draw_callback_px(self, context):
         BooleanMode = "Create"
     else:
         if self.ObjectMode or self.ProfileMode:
-            if self.BoolOps == DIFFERENCE:
-                BooleanType = "Difference) [T]"
-            else:
-                BooleanType = "Union) [T]"
-
-            if self.ObjectMode:
-                BooleanMode = "Object Brush (" + BooleanType
-            else:
-                BooleanMode = "Profil Brush (" + BooleanType
+            BooleanType = "Difference) [T]" if self.BoolOps == DIFFERENCE else "Union) [T]"
+            BooleanMode = \
+                "Object Brush (" + BooleanType if self.ObjectMode else "Profil Brush (" + BooleanType
         else:
-            if (self.shift is False) and (self.ForceRebool is False):
-                BooleanMode = "Difference"
-            else:
-                BooleanMode = "Rebool"
+            BooleanMode = \
+                "Difference" if (self.shift is False) and (self.ForceRebool is False) else "Rebool"
 
     UIColor = (0.992, 0.5518, 0.0, 1.0)
 
     # Display boolean mode
-    if region.width >= 850:
-        DrawCenterText(BooleanMode, xt, yt, 40, UIColor, self)
-    else:
-        DrawCenterText(BooleanMode, xt, yt, 20, UIColor, self)
+    text_size = 40 if region.width >= 850 else 20
+    DrawCenterText(BooleanMode, xt, yt, text_size, UIColor, self)
 
     # Separator (Line)
     LineWidth = 75
@@ -790,12 +770,11 @@ def draw_callback_px(self, context):
     # Variables according to screen size
     IFontSize = 12
     yInterval = 20
-    xCmd = 0
     yCmd = yt - 30
+
     if region.width >= 850:
         IFontSize = 18
         yInterval = 25
-        xCmd = 100
 
     # Color
     Color0 = None
@@ -816,11 +795,9 @@ def draw_callback_px(self, context):
 
         # Depth Cursor
         TypeStr = "Cursor Depth [" + context.scene.Key_Depth + "] : "
-        if self.snapCursor:
-            BoolStr = "(ON)"
-        else:
-            BoolStr = "(OFF)"
+        BoolStr = "(ON)" if self.snapCursor else "(OFF)"
         OpsStr = TypeStr + BoolStr
+
         TotalWidth = blf.dimensions(font_id, OpsStr)[0]
         xLeft = region.width / 2 - TotalWidth / 2
         xLeftP = xLeft + blf.dimensions(font_id, TypeStr)[0]
@@ -830,11 +807,9 @@ def draw_callback_px(self, context):
         if self.CreateMode is False:
             # Apply Booleans
             TypeStr = "Apply Operations [" + context.scene.Key_Apply + "] : "
-            if self.DontApply:
-                BoolStr = "(OFF)"
-            else:
-                BoolStr = "(ON)"
+            BoolStr = "(OFF)" if self.DontApply else "(ON)"
             OpsStr = TypeStr + BoolStr
+
             TotalWidth = blf.dimensions(font_id, OpsStr)[0]
             xLeft = region.width / 2 - TotalWidth / 2
             xLeftP = xLeft + blf.dimensions(font_id, TypeStr)[0]
@@ -843,11 +818,9 @@ def draw_callback_px(self, context):
 
             # Auto update for bevel
             TypeStr = "Bevel Update [" + context.scene.Key_Update + "] : "
-            if self.Auto_BevelUpdate:
-                BoolStr = "(ON)"
-            else:
-                BoolStr = "(OFF)"
+            BoolStr = "(ON)" if self.Auto_BevelUpdate else "(OFF)"
             OpsStr = TypeStr + BoolStr
+
             TotalWidth = blf.dimensions(font_id, OpsStr)[0]
             xLeft = region.width / 2 - TotalWidth / 2
             xLeftP = xLeft + blf.dimensions(font_id, TypeStr)[0]
@@ -856,10 +829,7 @@ def draw_callback_px(self, context):
 
         # Subdivisions
         if self.CutMode == CIRCLE:
-            if self.CreateMode is False:
-                y = yCmd - yInterval * 4
-            else:
-                y = yCmd - yInterval * 2
+            y = yCmd - yInterval * 4 if self.CreateMode is False else yCmd - yInterval * 2
             TypeStr = "Subdivisions [" + context.scene.Key_Subrem + "][" + context.scene.Key_Subadd + "] : "
             BoolStr = str((int(360 / self.stepAngle[self.step])))
             OpsStr = TypeStr + BoolStr
@@ -872,11 +842,9 @@ def draw_callback_px(self, context):
     else:
         # INSTANTIATE:
         TypeStr = "Instantiate [" + context.scene.Key_Instant + "] : "
-        if self.Instantiate:
-            BoolStr = "(ON)"
-        else:
-            BoolStr = "(OFF)"
+        BoolStr = "(ON)" if self.Instantiate else "(OFF)"
         OpsStr = TypeStr + BoolStr
+
         blf.size(font_id, IFontSize, 72)
         TotalWidth = blf.dimensions(font_id, OpsStr)[0]
         xLeft = region.width / 2 - TotalWidth / 2
@@ -887,11 +855,9 @@ def draw_callback_px(self, context):
         # RANDOM ROTATION:
         if self.alt:
             TypeStr = "Random Rotation [" + context.scene.Key_Randrot + "] : "
-            if self.RandomRotation:
-                BoolStr = "(ON)"
-            else:
-                BoolStr = "(OFF)"
+            BoolStr = "(ON)" if self.RandomRotation else "(OFF)"
             OpsStr = TypeStr + BoolStr
+
             blf.size(font_id, IFontSize, 72)
             TotalWidth = blf.dimensions(font_id, OpsStr)[0]
             xLeft = region.width / 2 - TotalWidth / 2
@@ -911,42 +877,38 @@ def draw_callback_px(self, context):
             TotalWidth = blf.dimensions(font_id, OpsStr)[0]
             xLeft = region.width / 2 - TotalWidth / 2
             xLeftP = xLeft + blf.dimensions(font_id, TypeStr)[0]
-            if self.alt:
-                DrawLeftText(TypeStr, xLeft, yCmd - yInterval * 2, IFontSize, Color0, self)
-                DrawLeftText(BoolStr, xLeftP, yCmd - yInterval * 2, IFontSize, Color1, self)
-            else:
-                DrawLeftText(TypeStr, xLeft, yCmd - yInterval, IFontSize, Color0, self)
-                DrawLeftText(BoolStr, xLeftP, yCmd - yInterval, IFontSize, Color1, self)
+
+            self_alt_y = 2 if self.alt else 1
+            DrawLeftText(TypeStr, xLeft, yCmd - yInterval * self_alt_y, IFontSize, Color0, self)
+            DrawLeftText(BoolStr, xLeftP, yCmd - yInterval * self_alt_y, IFontSize, Color1, self)
 
         # BRUSH DEPTH:
         if (self.ObjectMode):
             TypeStr = "Carve Depth [" + context.scene.Key_Depth + "] : "
             BoolStr = str(round(self.ObjectBrush.data.vertices[0].co.z, 2))
             OpsStr = TypeStr + BoolStr
+
             blf.size(font_id, IFontSize, 72)
             TotalWidth = blf.dimensions(font_id, OpsStr)[0]
             xLeft = region.width / 2 - TotalWidth / 2
             xLeftP = xLeft + blf.dimensions(font_id, TypeStr)[0]
-            if self.alt:
-                DrawLeftText(TypeStr, xLeft, yCmd - yInterval * 2, IFontSize, Color0, self)
-                DrawLeftText(BoolStr, xLeftP, yCmd - yInterval * 2, IFontSize, Color1, self)
-            else:
-                DrawLeftText(TypeStr, xLeft, yCmd - yInterval, IFontSize, Color0, self)
-                DrawLeftText(BoolStr, xLeftP, yCmd - yInterval, IFontSize, Color1, self)
+
+            self_alt_y = 2 if self.alt else 1
+            DrawLeftText(TypeStr, xLeft, yCmd - yInterval * self_alt_y, IFontSize, Color0, self)
+            DrawLeftText(BoolStr, xLeftP, yCmd - yInterval * self_alt_y, IFontSize, Color1, self)
 
             TypeStr = "Brush Depth [" + context.scene.Key_BrushDepth + "] : "
             BoolStr = str(round(self.BrushDepthOffset, 2))
             OpsStr = TypeStr + BoolStr
+
             blf.size(font_id, IFontSize, 72)
             TotalWidth = blf.dimensions(font_id, OpsStr)[0]
             xLeft = region.width / 2 - TotalWidth / 2
             xLeftP = xLeft + blf.dimensions(font_id, TypeStr)[0]
-            if self.alt:
-                DrawLeftText(TypeStr, xLeft, yCmd - yInterval * 3, IFontSize, Color0, self)
-                DrawLeftText(BoolStr, xLeftP, yCmd - yInterval * 3, IFontSize, Color1, self)
-            else:
-                DrawLeftText(TypeStr, xLeft, yCmd - yInterval * 2, IFontSize, Color0, self)
-                DrawLeftText(BoolStr, xLeftP, yCmd - yInterval * 2, IFontSize, Color1, self)
+
+            self_alt_y = 3 if self.alt else 2
+            DrawLeftText(TypeStr, xLeft, yCmd - yInterval * self_alt_y, IFontSize, Color0, self)
+            DrawLeftText(BoolStr, xLeftP, yCmd - yInterval * self_alt_y, IFontSize, Color1, self)
 
     bgl.glEnable(bgl.GL_BLEND)
     if region.width >= 850:
@@ -969,21 +931,23 @@ def draw_callback_px(self, context):
             if self.ObjectMode or self.ProfileMode:
                 if self.ProfileMode:
                     DrawLeftText("[" + context.scene.Key_Brush + "]", xHelp, yHelp +
-                                 Help_Interval * 2, Help_FontSize, UIColor, self)
+                                Help_Interval * 2, Help_FontSize, UIColor, self)
                     DrawLeftText(": Object Mode", 150 + t_panel_width, yHelp +
-                                 Help_Interval * 2, Help_FontSize, None, self)
+                                Help_Interval * 2, Help_FontSize, None, self)
                 else:
                     DrawLeftText("[" + context.scene.Key_Brush + "]", xHelp, yHelp +
-                                 Help_Interval * 2, Help_FontSize, UIColor, self)
-                    DrawLeftText(": Return", 150 + t_panel_width, yHelp + Help_Interval * 2, Help_FontSize, None, self)
+                                Help_Interval * 2, Help_FontSize, UIColor, self)
+                    DrawLeftText(": Return", 150 + t_panel_width, yHelp +
+                                Help_Interval * 2, Help_FontSize, None, self)
             else:
                 DrawLeftText("[" + context.scene.Key_Brush + "]", xHelp, yHelp +
-                             Help_Interval * 2, Help_FontSize, UIColor, self)
+                            Help_Interval * 2, Help_FontSize, UIColor, self)
                 DrawLeftText(": Profil Brush", 150 + t_panel_width, yHelp +
-                             Help_Interval * 2, Help_FontSize, None, self)
-                DrawLeftText("[Ctrl + LMB]", xHelp, yHelp - Help_Interval * 6, Help_FontSize, UIColor, self)
+                            Help_Interval * 2, Help_FontSize, None, self)
+                DrawLeftText("[Ctrl + LMB]", xHelp, yHelp - Help_Interval * 6,
+                            Help_FontSize, UIColor, self)
                 DrawLeftText(": Move Cursor", 150 + t_panel_width, yHelp -
-                             Help_Interval * 6, Help_FontSize, None, self)
+                            Help_Interval * 6, Help_FontSize, None, self)
 
             if (self.ObjectMode is False) and (self.ProfileMode is False):
                 if self.CreateMode is False:
@@ -994,235 +958,225 @@ def draw_callback_px(self, context):
                 else:
                     DrawLeftText("[" + context.scene.Key_Create + "]", xHelp,
                                  yHelp + Help_Interval, Help_FontSize, UIColor, self)
-                    DrawLeftText(": Cut", 150 + t_panel_width, yHelp + Help_Interval, Help_FontSize, None, self)
+                    DrawLeftText(": Cut", 150 + t_panel_width, yHelp + Help_Interval,
+                                Help_FontSize, None, self)
 
                 if self.CutMode == RECTANGLE:
                     DrawLeftText("MouseMove", xHelp, yHelp, Help_FontSize, UIColor, self)
                     DrawLeftText("[Alt]", xHelp, yHelp - Help_Interval, Help_FontSize, UIColor, self)
-                    DrawLeftText("[" + context.scene.Key_Solver + "]",
-                                xHelp, yHelp - Help_Interval * 2, Help_FontSize, UIColor, self)
                     DrawLeftText(": Dimension", 150 + t_panel_width, yHelp, Help_FontSize, None, self)
-                    DrawLeftText(": Move all", 150 + t_panel_width, yHelp - Help_Interval, Help_FontSize, None, self)
-                    DrawLeftText(": Solver [" + context.scene.CarverSolver + "]", 150 + t_panel_width,
-                                yHelp - Help_Interval * 2, Help_FontSize, None, self)
+                    DrawLeftText(": Move all", 150 + t_panel_width, yHelp - Help_Interval,
+                                Help_FontSize, None, self)
 
                 if self.CutMode == CIRCLE:
                     DrawLeftText("MouseMove", xHelp, yHelp, Help_FontSize, UIColor, self)
                     DrawLeftText("[Alt]", xHelp, yHelp - Help_Interval, Help_FontSize, UIColor, self)
                     DrawLeftText("[" + context.scene.Key_Subrem + "] [" + context.scene.Key_Subadd + "]",
-                                 xHelp, yHelp - Help_Interval * 2, Help_FontSize, UIColor, self)
+                                xHelp, yHelp - Help_Interval * 2, Help_FontSize, UIColor, self)
                     DrawLeftText("[Ctrl]", xHelp, yHelp - Help_Interval * 3, Help_FontSize, UIColor, self)
-                    DrawLeftText("[" + context.scene.Key_Solver + "]",
-                                xHelp, yHelp - Help_Interval * 4, Help_FontSize, UIColor, self)
                     DrawLeftText(": Rotation and Radius", 150 + t_panel_width, yHelp, Help_FontSize, None, self)
-                    DrawLeftText(": Move all", 150 + t_panel_width, yHelp - Help_Interval, Help_FontSize, None, self)
+                    DrawLeftText(": Move all", 150 + t_panel_width, yHelp - Help_Interval,
+                                Help_FontSize, None, self)
                     DrawLeftText(": Subdivision", 150 + t_panel_width, yHelp -
-                                 Help_Interval * 2, Help_FontSize, None, self)
+                                Help_Interval * 2, Help_FontSize, None, self)
                     DrawLeftText(": Incremental rotation", 150 + t_panel_width,
-                                 yHelp - Help_Interval * 3, Help_FontSize, None, self)
-                    DrawLeftText(": Solver [" + context.scene.CarverSolver + "]",
-                                150 + t_panel_width, yHelp - Help_Interval * 4, Help_FontSize, None, self)
+                                yHelp - Help_Interval * 3, Help_FontSize, None, self)
 
                 if self.CutMode == LINE:
                     DrawLeftText("MouseMove", xHelp, yHelp, Help_FontSize, UIColor, self)
                     DrawLeftText("[Alt]", xHelp, yHelp - Help_Interval, Help_FontSize, UIColor, self)
                     DrawLeftText("[Space]", xHelp, yHelp - Help_Interval * 2, Help_FontSize, UIColor, self)
                     DrawLeftText("[Ctrl]", xHelp, yHelp - Help_Interval * 3, Help_FontSize, UIColor, self)
-                    DrawLeftText("[" + context.scene.Key_Solver + "]",
-                                xHelp, yHelp - Help_Interval * 4, Help_FontSize, UIColor, self)
                     DrawLeftText(": Dimension", 150 + t_panel_width, yHelp, Help_FontSize, None, self)
-                    DrawLeftText(": Move all", 150 + t_panel_width, yHelp - Help_Interval, Help_FontSize, None, self)
+                    DrawLeftText(": Move all", 150 + t_panel_width, yHelp - Help_Interval,
+                                Help_FontSize, None, self)
                     DrawLeftText(": Validate", 150 + t_panel_width, yHelp -
                                  Help_Interval * 2, Help_FontSize, None, self)
                     DrawLeftText(": Incremental", 150 + t_panel_width, yHelp -
-                                 Help_Interval * 3, Help_FontSize, None, self)
-                    DrawLeftText(": Solver [" + context.scene.CarverSolver + "]",
-                                150 + t_panel_width, yHelp - Help_Interval * 4, Help_FontSize, None, self)
+                                Help_Interval * 3, Help_FontSize, None, self)
                     if self.CreateMode:
                         DrawLeftText("[" + context.scene.Key_Subadd + "]", xHelp, yHelp -
-                                     Help_Interval * 4, Help_FontSize, UIColor, self)
+                                    Help_Interval * 4, Help_FontSize, UIColor, self)
                         DrawLeftText(": Close geometry", 150 + t_panel_width, yHelp -
-                                     Help_Interval * 4, Help_FontSize, None, self)
+                                    Help_Interval * 4, Help_FontSize, None, self)
             else:
                 DrawLeftText("[Space]", xHelp, yHelp + Help_Interval, Help_FontSize, UIColor, self)
-                DrawLeftText(": Difference", 150 + t_panel_width, yHelp + Help_Interval, Help_FontSize, None, self)
+                DrawLeftText(": Difference", 150 + t_panel_width, yHelp + Help_Interval,
+                            Help_FontSize, None, self)
                 DrawLeftText("[Shift][Space]", xHelp, yHelp, Help_FontSize, UIColor, self)
                 DrawLeftText(": Rebool", 150 + t_panel_width, yHelp, Help_FontSize, None, self)
                 DrawLeftText("[Alt][Space]", xHelp, yHelp - Help_Interval, Help_FontSize, UIColor, self)
-                DrawLeftText(": Duplicate", 150 + t_panel_width, yHelp - Help_Interval, Help_FontSize, None, self)
+                DrawLeftText(": Duplicate", 150 + t_panel_width, yHelp - Help_Interval,
+                            Help_FontSize, None, self)
                 DrawLeftText("[" + context.scene.Key_Scale + "]", xHelp, yHelp -
-                             Help_Interval * 2, Help_FontSize, UIColor, self)
-                DrawLeftText(": Scale", 150 + t_panel_width, yHelp - Help_Interval * 2, Help_FontSize, None, self)
+                            Help_Interval * 2, Help_FontSize, UIColor, self)
+                DrawLeftText(": Scale", 150 + t_panel_width, yHelp - Help_Interval * 2,
+                            Help_FontSize, None, self)
                 DrawLeftText("[LMB][Move]", xHelp, yHelp - Help_Interval * 3, Help_FontSize, UIColor, self)
-                DrawLeftText(": Rotation", 150 + t_panel_width, yHelp - Help_Interval * 3, Help_FontSize, None, self)
-                DrawLeftText("[Ctrl][LMB][Move]", xHelp, yHelp - Help_Interval * 4, Help_FontSize, UIColor, self)
-                DrawLeftText(": Step Angle", 150 + t_panel_width, yHelp - Help_Interval * 4, Help_FontSize, None, self)
+                DrawLeftText(": Rotation", 150 + t_panel_width, yHelp - Help_Interval * 3,
+                            Help_FontSize, None, self)
+                DrawLeftText("[Ctrl][LMB][Move]", xHelp, yHelp - Help_Interval * 4,
+                            Help_FontSize, UIColor, self)
+                DrawLeftText(": Step Angle", 150 + t_panel_width, yHelp - Help_Interval * 4,
+                            Help_FontSize, None, self)
                 if self.ProfileMode:
                     DrawLeftText("[" + context.scene.Key_Subadd + "][" + context.scene.Key_Subrem + "]",
-                                 xHelp, yHelp - Help_Interval * 5, Help_FontSize, UIColor, self)
+                                xHelp, yHelp - Help_Interval * 5, Help_FontSize, UIColor, self)
                     DrawLeftText(": Previous or Next Profile", 150 + t_panel_width,
                                  yHelp - Help_Interval * 5, Help_FontSize, None, self)
                 DrawLeftText("[ARROWS]", xHelp, yHelp - Help_Interval * 6, Help_FontSize, UIColor, self)
                 DrawLeftText(": Create / Delete rows or columns", 150 + t_panel_width,
-                             yHelp - Help_Interval * 6, Help_FontSize, None, self)
+                            yHelp - Help_Interval * 6, Help_FontSize, None, self)
                 DrawLeftText("[" + context.scene.Key_Gapy + "][" + context.scene.Key_Gapx + "]",
                              xHelp, yHelp - Help_Interval * 7, Help_FontSize, UIColor, self)
                 DrawLeftText(": Gap between rows or columns", 150 + t_panel_width,
-                             yHelp - Help_Interval * 7, Help_FontSize, None, self)
-                DrawLeftText("[" + context.scene.Key_Solver + "]",
-                            xHelp, yHelp - Help_Interval * 8, Help_FontSize, UIColor, self)
-                DrawLeftText(": Solver [" + context.scene.CarverSolver + "]",
-                            150 + t_panel_width, yHelp - Help_Interval * 8, Help_FontSize, None, self)
+                            yHelp - Help_Interval * 7, Help_FontSize, None, self)
 
-    # Opengl Initialise
+    # Opengl Initialize
     bgl.glEnable(bgl.GL_BLEND)
     bgl.glColor4f(0.512, 0.919, 0.04, 1.0)
     bgl.glLineWidth(2)
 
-    # if context.space_data.region_3d.is_perspective is False:
-    if 1:
-        bgl.glEnable(bgl.GL_POINT_SMOOTH)
+    bgl.glEnable(bgl.GL_POINT_SMOOTH)
+    bgl.glPointSize(6)
 
-        bgl.glPointSize(6)
+    if self.ProfileMode:
+        xrect = region.width - t_panel_width - 80
+        yrect = 80
+        bgl.glColor4f(0.0, 0.0, 0.0, 0.3)
+        bgl.glRecti(xrect, yrect, xrect + 60, yrect - 60)
 
-        if self.ProfileMode:
-            xrect = region.width - t_panel_width - 80
-            yrect = 80
-            bgl.glColor4f(0.0, 0.0, 0.0, 0.3)
-            bgl.glRecti(xrect, yrect, xrect + 60, yrect - 60)
-
-            faces = self.Profils[self.nProfil][3]
-            vertices = self.Profils[self.nProfil][2]
-            WidthProfil = 50
-            location = mathutils.Vector((region.width - t_panel_width - WidthProfil, 50, 0))
-            ProfilScale = 20.0
-            bgl.glColor4f(UIColor[0], UIColor[1], UIColor[2], 0.7)
-            for f in faces:
-                if len(f) == 4:
-                    bgl.glBegin(bgl.GL_QUADS)
-                    bgl.glVertex3f(vertices[f[0]][0] * ProfilScale + location.x, vertices[f[0]][1] *
-                                   ProfilScale + location.y, vertices[f[0]][2] * ProfilScale + location.z)
-                    bgl.glVertex3f(vertices[f[1]][0] * ProfilScale + location.x, vertices[f[1]][1] *
-                                   ProfilScale + location.y, vertices[f[1]][2] * ProfilScale + location.z)
-                    bgl.glVertex3f(vertices[f[2]][0] * ProfilScale + location.x, vertices[f[2]][1] *
-                                   ProfilScale + location.y, vertices[f[2]][2] * ProfilScale + location.z)
-                    bgl.glVertex3f(vertices[f[3]][0] * ProfilScale + location.x, vertices[f[3]][1] *
-                                   ProfilScale + location.y, vertices[f[3]][2] * ProfilScale + location.z)
-                    bgl.glEnd()
-                if len(f) == 3:
-                    bgl.glBegin(bgl.GL_TRIANGLES)
-                    bgl.glVertex3f(vertices[f[0]][0] * ProfilScale + location.x, vertices[f[0]][1] *
-                                   ProfilScale + location.y, vertices[f[0]][2] * ProfilScale + location.z)
-                    bgl.glVertex3f(vertices[f[1]][0] * ProfilScale + location.x, vertices[f[1]][1] *
-                                   ProfilScale + location.y, vertices[f[1]][2] * ProfilScale + location.z)
-                    bgl.glVertex3f(vertices[f[2]][0] * ProfilScale + location.x, vertices[f[2]][1] *
-                                   ProfilScale + location.y, vertices[f[2]][2] * ProfilScale + location.z)
-                    bgl.glEnd()
-
-        if self.bDone:
-            if len(self.mouse_path) > 1:
-                x0 = self.mouse_path[0][0]
-                y0 = self.mouse_path[0][1]
-                x1 = self.mouse_path[1][0]
-                y1 = self.mouse_path[1][1]
-
-            # Cut Line
-            if self.CutMode == LINE:
-                if (self.shift) or (self.CreateMode and self.Closed):
-                    bgl.glColor4f(UIColor[0], UIColor[1], UIColor[2], 0.5)
-
-                    bgl.glBegin(bgl.GL_POLYGON)
-                    for x, y in self.mouse_path:
-                        bgl.glVertex2i(x + self.xpos, y + self.ypos)
-                    bgl.glEnd()
-
-                bgl.glColor4f(UIColor[0], UIColor[1], UIColor[2], 1.0)
-                bgl.glBegin(bgl.GL_LINE_STRIP)
-                for x, y in self.mouse_path:
-                    bgl.glVertex2i(x + self.xpos, y + self.ypos)
+        faces = self.Profils[self.nProfil][3]
+        vertices = self.Profils[self.nProfil][2]
+        WidthProfil = 50
+        location = Vector((region.width - t_panel_width - WidthProfil, 50, 0))
+        ProfilScale = 20.0
+        bgl.glColor4f(UIColor[0], UIColor[1], UIColor[2], 0.7)
+        for f in faces:
+            if len(f) == 4:
+                bgl.glBegin(bgl.GL_QUADS)
+                bgl.glVertex3f(vertices[f[0]][0] * ProfilScale + location.x, vertices[f[0]][1] *
+                               ProfilScale + location.y, vertices[f[0]][2] * ProfilScale + location.z)
+                bgl.glVertex3f(vertices[f[1]][0] * ProfilScale + location.x, vertices[f[1]][1] *
+                               ProfilScale + location.y, vertices[f[1]][2] * ProfilScale + location.z)
+                bgl.glVertex3f(vertices[f[2]][0] * ProfilScale + location.x, vertices[f[2]][1] *
+                               ProfilScale + location.y, vertices[f[2]][2] * ProfilScale + location.z)
+                bgl.glVertex3f(vertices[f[3]][0] * ProfilScale + location.x, vertices[f[3]][1] *
+                               ProfilScale + location.y, vertices[f[3]][2] * ProfilScale + location.z)
                 bgl.glEnd()
-                if (self.CreateMode is False) or (self.CreateMode and self.Closed):
-                    bgl.glBegin(bgl.GL_LINE_STRIP)
-                    bgl.glVertex2i(self.mouse_path[len(self.mouse_path) - 1][0] + self.xpos,
-                                   self.mouse_path[len(self.mouse_path) - 1][1] + self.ypos)
-                    bgl.glVertex2i(self.mouse_path[0][0] + self.xpos, self.mouse_path[0][1] + self.ypos)
-                    bgl.glEnd()
-
-                bgl.glPointSize(6)
-                bgl.glBegin(bgl.GL_POINTS)
-                for x, y in self.mouse_path:
-                    bgl.glVertex2i(x + self.xpos, y + self.ypos)
+            if len(f) == 3:
+                bgl.glBegin(bgl.GL_TRIANGLES)
+                bgl.glVertex3f(vertices[f[0]][0] * ProfilScale + location.x, vertices[f[0]][1] *
+                               ProfilScale + location.y, vertices[f[0]][2] * ProfilScale + location.z)
+                bgl.glVertex3f(vertices[f[1]][0] * ProfilScale + location.x, vertices[f[1]][1] *
+                               ProfilScale + location.y, vertices[f[1]][2] * ProfilScale + location.z)
+                bgl.glVertex3f(vertices[f[2]][0] * ProfilScale + location.x, vertices[f[2]][1] *
+                               ProfilScale + location.y, vertices[f[2]][2] * ProfilScale + location.z)
                 bgl.glEnd()
 
-            # Cut rectangle
-            if self.CutMode == RECTANGLE:
+    if self.bDone:
+        if len(self.mouse_path) > 1:
+            x0 = self.mouse_path[0][0]
+            y0 = self.mouse_path[0][1]
+            x1 = self.mouse_path[1][0]
+            y1 = self.mouse_path[1][1]
+
+        # Cut Line
+        if self.CutMode == LINE:
+            if (self.shift) or (self.CreateMode and self.Closed):
                 bgl.glColor4f(UIColor[0], UIColor[1], UIColor[2], 0.5)
 
-                # if SHIFT, fill primitive
-                if self.shift or self.CreateMode:
-                    bgl.glBegin(bgl.GL_QUADS)
-                    bgl.glVertex2i(x0 + self.xpos, y0 + self.ypos)
-                    bgl.glVertex2i(x1 + self.xpos, y0 + self.ypos)
-                    bgl.glVertex2i(x1 + self.xpos, y1 + self.ypos)
-                    bgl.glVertex2i(x0 + self.xpos, y1 + self.ypos)
-                    bgl.glEnd()
+                bgl.glBegin(bgl.GL_POLYGON)
+                for x, y in self.mouse_path:
+                    bgl.glVertex2i(x + self.xpos, y + self.ypos)
+                bgl.glEnd()
 
+            bgl.glColor4f(UIColor[0], UIColor[1], UIColor[2], 1.0)
+            bgl.glBegin(bgl.GL_LINE_STRIP)
+            for x, y in self.mouse_path:
+                bgl.glVertex2i(x + self.xpos, y + self.ypos)
+            bgl.glEnd()
+            if (self.CreateMode is False) or (self.CreateMode and self.Closed):
                 bgl.glBegin(bgl.GL_LINE_STRIP)
+                bgl.glVertex2i(self.mouse_path[len(self.mouse_path) - 1][0] + self.xpos,
+                               self.mouse_path[len(self.mouse_path) - 1][1] + self.ypos)
+                bgl.glVertex2i(self.mouse_path[0][0] + self.xpos, self.mouse_path[0][1] + self.ypos)
+                bgl.glEnd()
+
+            bgl.glPointSize(6)
+            bgl.glBegin(bgl.GL_POINTS)
+            for x, y in self.mouse_path:
+                bgl.glVertex2i(x + self.xpos, y + self.ypos)
+            bgl.glEnd()
+
+        # Cut rectangle
+        if self.CutMode == RECTANGLE:
+            bgl.glColor4f(UIColor[0], UIColor[1], UIColor[2], 0.5)
+
+            # if SHIFT, fill primitive
+            if self.shift or self.CreateMode:
+                bgl.glBegin(bgl.GL_QUADS)
                 bgl.glVertex2i(x0 + self.xpos, y0 + self.ypos)
                 bgl.glVertex2i(x1 + self.xpos, y0 + self.ypos)
                 bgl.glVertex2i(x1 + self.xpos, y1 + self.ypos)
                 bgl.glVertex2i(x0 + self.xpos, y1 + self.ypos)
-                bgl.glVertex2i(x0 + self.xpos, y0 + self.ypos)
-                bgl.glEnd()
-                bgl.glPointSize(6)
-
-                bgl.glColor4f(UIColor[0], UIColor[1], UIColor[2], 1.0)
-                bgl.glBegin(bgl.GL_POINTS)
-                bgl.glVertex2i(x0 + self.xpos, y0 + self.ypos)
-                bgl.glVertex2i(x1 + self.xpos, y0 + self.ypos)
-                bgl.glVertex2i(x1 + self.xpos, y1 + self.ypos)
-                bgl.glVertex2i(x0 + self.xpos, y1 + self.ypos)
                 bgl.glEnd()
 
-            # Circle Cut
-            if self.CutMode == CIRCLE:
-                DEG2RAD = 3.14159 / 180
-                v0 = mathutils.Vector((self.mouse_path[0][0], self.mouse_path[0][1], 0))
-                v1 = mathutils.Vector((self.mouse_path[1][0], self.mouse_path[1][1], 0))
-                v0 -= v1
-                radius = self.mouse_path[1][0] - self.mouse_path[0][0]
-                DEG2RAD = 3.14159 / (180.0 / self.stepAngle[self.step])
-                if self.ctrl:
-                    self.stepR = (self.mouse_path[1][1] - self.mouse_path[0][1]) / 25
-                    shift = (3.14159 / (360.0 / 60.0)) * int(self.stepR)
-                else:
-                    shift = (self.mouse_path[1][1] - self.mouse_path[0][1]) / 50
+            bgl.glBegin(bgl.GL_LINE_STRIP)
+            bgl.glVertex2i(x0 + self.xpos, y0 + self.ypos)
+            bgl.glVertex2i(x1 + self.xpos, y0 + self.ypos)
+            bgl.glVertex2i(x1 + self.xpos, y1 + self.ypos)
+            bgl.glVertex2i(x0 + self.xpos, y1 + self.ypos)
+            bgl.glVertex2i(x0 + self.xpos, y0 + self.ypos)
+            bgl.glEnd()
+            bgl.glPointSize(6)
 
-                if self.shift or self.CreateMode:
-                    bgl.glColor4f(UIColor[0], UIColor[1], UIColor[2], 0.5)
-                    bgl.glBegin(bgl.GL_TRIANGLE_FAN)
-                    bgl.glVertex2f(x0 + self.xpos, y0 + self.ypos)
-                    for i in range(0, int(360 / self.stepAngle[self.step])):
-                        degInRad = i * DEG2RAD
-                        bgl.glVertex2f(x0 + self.xpos + math.cos(degInRad + shift) * radius,
-                                       y0 + self.ypos + math.sin(degInRad + shift) * radius)
-                    bgl.glVertex2f(x0 + self.xpos + math.cos(0 + shift) * radius,
-                                   y0 + self.ypos + math.sin(0 + shift) * radius)
-                    bgl.glEnd()
+            bgl.glColor4f(UIColor[0], UIColor[1], UIColor[2], 1.0)
+            bgl.glBegin(bgl.GL_POINTS)
+            bgl.glVertex2i(x0 + self.xpos, y0 + self.ypos)
+            bgl.glVertex2i(x1 + self.xpos, y0 + self.ypos)
+            bgl.glVertex2i(x1 + self.xpos, y1 + self.ypos)
+            bgl.glVertex2i(x0 + self.xpos, y1 + self.ypos)
+            bgl.glEnd()
 
-                bgl.glColor4f(UIColor[0], UIColor[1], UIColor[2], 1.0)
-                bgl.glBegin(bgl.GL_LINE_LOOP)
+        # Circle Cut
+        if self.CutMode == CIRCLE:
+            DEG2RAD = 3.14159 / 180
+            v0 = Vector((self.mouse_path[0][0], self.mouse_path[0][1], 0))
+            v1 = Vector((self.mouse_path[1][0], self.mouse_path[1][1], 0))
+            v0 -= v1
+            radius = self.mouse_path[1][0] - self.mouse_path[0][0]
+            DEG2RAD = 3.14159 / (180.0 / self.stepAngle[self.step])
+            if self.ctrl:
+                self.stepR = (self.mouse_path[1][1] - self.mouse_path[0][1]) / 25
+                shift = (3.14159 / (360.0 / 60.0)) * int(self.stepR)
+            else:
+                shift = (self.mouse_path[1][1] - self.mouse_path[0][1]) / 50
+
+            if self.shift or self.CreateMode:
+                bgl.glColor4f(UIColor[0], UIColor[1], UIColor[2], 0.5)
+                bgl.glBegin(bgl.GL_TRIANGLE_FAN)
+                bgl.glVertex2f(x0 + self.xpos, y0 + self.ypos)
                 for i in range(0, int(360 / self.stepAngle[self.step])):
                     degInRad = i * DEG2RAD
                     bgl.glVertex2f(x0 + self.xpos + math.cos(degInRad + shift) * radius,
                                    y0 + self.ypos + math.sin(degInRad + shift) * radius)
+                bgl.glVertex2f(x0 + self.xpos + math.cos(0 + shift) * radius,
+                               y0 + self.ypos + math.sin(0 + shift) * radius)
                 bgl.glEnd()
+
+            bgl.glColor4f(UIColor[0], UIColor[1], UIColor[2], 1.0)
+            bgl.glBegin(bgl.GL_LINE_LOOP)
+            for i in range(0, int(360 / self.stepAngle[self.step])):
+                degInRad = i * DEG2RAD
+                bgl.glVertex2f(x0 + self.xpos + math.cos(degInRad + shift) * radius,
+                               y0 + self.ypos + math.sin(degInRad + shift) * radius)
+            bgl.glEnd()
 
     if self.ObjectMode or self.ProfileMode:
         if self.ShowCursor:
             region = context.region
             rv3d = context.space_data.region_3d
-            view_width = context.region.width
 
             if self.ObjectMode:
                 ob = self.ObjectBrush
@@ -1233,7 +1187,7 @@ def draw_callback_px(self, context):
             # 50% alpha, 2 pixel width line
             bgl.glEnable(bgl.GL_BLEND)
 
-            bbox = [mat * mathutils.Vector(b) for b in ob.bound_box]
+            bbox = [mat * Vector(b) for b in ob.bound_box]
 
             if self.shift:
                 bgl.glLineWidth(4)
@@ -1260,12 +1214,12 @@ def draw_callback_px(self, context):
             # Object display
             if self.qRot is not None:
                 ob.location = self.CurLoc
-                v = mathutils.Vector()
+                v = Vector()
                 v.x = v.y = 0.0
                 v.z = self.BrushDepthOffset
                 ob.location += self.qRot * v
 
-                e = mathutils.Euler()
+                e = Euler()
                 e.x = 0.0
                 e.y = 0.0
                 e.z = self.aRotZ / 25.0
@@ -1319,9 +1273,9 @@ def isect_line_plane_v3(p0, p1, p_co, p_no, epsilon=1e-6):
         # The segment is parallel to plane
         return None
 
+
 # ----------------------
 # generic math functions
-
 
 def add_v3v3(v0, v1):
     return (
@@ -1358,21 +1312,19 @@ def mul_v3_fl(v0, f):
         v0[2] * f,
     )
 
+
 # Cut Square
-
-
 def CreateCutSquare(self, context):
     FAR_LIMIT = 10000.0
 
     # New mesh
     me = bpy.data.meshes.new('CMT_Square')
-
     # New object
     ob = bpy.data.objects.new('CMT_Square', me)
     # Save new object
     self.CurrentObj = ob
-    # Scene informations
-    scene = context.scene
+
+    # Scene information
     region = context.region
     rv3d = context.region_data
     coord = self.mouse_path[0][0], self.mouse_path[0][1]
@@ -1382,14 +1334,10 @@ def CreateCutSquare(self, context):
     if self.snapCursor:
         PlanePoint = context.scene.cursor_location
     else:
-        if self.OpsObj is not None:
-            PlanePoint = self.OpsObj.location
-        else:
-            PlanePoint = mathutils.Vector((0.0, 0.0, 0.0))
+        PlanePoint = self.OpsObj.location if self.OpsObj is not None else Vector((0.0, 0.0, 0.0))
 
     PlaneNormal = depthLocation
     PlaneNormalised = PlaneNormal.normalized()
-    d = -PlanePoint.x * PlaneNormalised.x - PlanePoint.y * PlaneNormalised.y - PlanePoint.z * PlaneNormalised.z
 
     # Link object to scene
     context.scene.objects.link(ob)
@@ -1448,20 +1396,15 @@ def CreateCutLine(self, context):
     ob = bpy.data.objects.new('CMT_Line', me)
     self.CurrentObj = ob
 
-    scene = context.scene
     region = context.region
     rv3d = context.region_data
     coord = self.mouse_path[0][0], self.mouse_path[0][1]
     depthLocation = region_2d_to_vector_3d(region, rv3d, coord)
     self.ViewVector = depthLocation
-    if self.snapCursor:
-        PlanePoint = context.scene.cursor_location
-    else:
-        PlanePoint = mathutils.Vector((0.0, 0.0, 0.0))
 
+    PlanePoint = context.scene.cursor_location if self.snapCursor else Vector((0.0, 0.0, 0.0))
     PlaneNormal = depthLocation
     PlaneNormalised = PlaneNormal.normalized()
-    d = -PlanePoint.x * PlaneNormalised.x - PlanePoint.y * PlaneNormalised.y - PlanePoint.z * PlaneNormalised.z
 
     context.scene.objects.link(ob)
 
@@ -1473,8 +1416,9 @@ def CreateCutLine(self, context):
 
     bLine = False
 
-    if (len(self.mouse_path) == 2) or ((len(self.mouse_path) <= 3) and (self.mouse_path[1] == self.mouse_path[2])):
-        PlanePoint = mathutils.Vector((0.0, 0.0, 0.0))
+    if (len(self.mouse_path) == 2) or ((len(self.mouse_path) <= 3) and
+            (self.mouse_path[1] == self.mouse_path[2])):
+        PlanePoint = Vector((0.0, 0.0, 0.0))
         PlaneNormal = depthLocation
         PlaneNormalised = PlaneNormal.normalized()
         # Force rebool
@@ -1496,7 +1440,6 @@ def CreateCutLine(self, context):
                 Index += 1
                 if NbVertices == 1:
                     t_v0 = t_bm.verts.new(loc0)
-                    t_init = t_v0
                     LocInit = loc0
                     t_bm.verts.index_update()
                 else:
@@ -1504,7 +1447,6 @@ def CreateCutLine(self, context):
                     t_edges = t_bm.edges.new([t_v0, t_v1])
                     NbVertices = 1
                     t_v0 = t_v1
-
     else:
         for x, y in self.mouse_path:
             v0 = x + self.xpos, y + self.ypos
@@ -1518,7 +1460,6 @@ def CreateCutLine(self, context):
             NbVertices += 1
             if NbVertices == 1:
                 t_v0 = t_bm.verts.new(loc0)
-                t_init = t_v0
                 LocInit = loc0
                 t_bm.verts.index_update()
                 FacesList.append(t_v0)
@@ -1554,20 +1495,15 @@ def CreateCutCircle(self, context):
     ob = bpy.data.objects.new('CMT_Circle', me)
     self.CurrentObj = ob
 
-    scene = context.scene
     region = context.region
     rv3d = context.region_data
     coord = self.mouse_path[0][0], self.mouse_path[0][1]
     depthLocation = region_2d_to_vector_3d(region, rv3d, coord)
     self.ViewVector = depthLocation
-    if self.snapCursor:
-        PlanePoint = context.scene.cursor_location
-    else:
-        PlanePoint = mathutils.Vector((0.0, 0.0, 0.0))
 
+    PlanePoint = context.scene.cursor_location if self.snapCursor else Vector((0.0, 0.0, 0.0))
     PlaneNormal = depthLocation
     PlaneNormalised = PlaneNormal.normalized()
-    d = -PlanePoint.x * PlaneNormalised.x - PlanePoint.y * PlaneNormalised.y - PlanePoint.z * PlaneNormalised.z
 
     context.scene.objects.link(ob)
 
@@ -1576,11 +1512,9 @@ def CreateCutCircle(self, context):
 
     x0 = self.mouse_path[0][0]
     y0 = self.mouse_path[0][1]
-    x1 = self.mouse_path[1][0]
-    y1 = self.mouse_path[1][1]
 
-    v0 = mathutils.Vector((self.mouse_path[0][0], self.mouse_path[0][1], 0))
-    v1 = mathutils.Vector((self.mouse_path[1][0], self.mouse_path[1][1], 0))
+    v0 = Vector((self.mouse_path[0][0], self.mouse_path[0][1], 0))
+    v1 = Vector((self.mouse_path[1][0], self.mouse_path[1][1], 0))
     v0 -= v1
     radius = self.mouse_path[1][0] - self.mouse_path[0][0]
     DEG2RAD = math.pi / (180.0 / self.stepAngle[self.step])
@@ -1594,7 +1528,8 @@ def CreateCutCircle(self, context):
     FacesList = []
     for i in range(0, int(360.0 / self.stepAngle[self.step])):
         degInRad = i * DEG2RAD
-        v0 = x0 + self.xpos + math.cos(degInRad + shift) * radius, y0 + self.ypos + math.sin(degInRad + shift) * radius
+        v0 = x0 + self.xpos + math.cos(degInRad + shift) * radius, \
+                y0 + self.ypos + math.sin(degInRad + shift) * radius
         vec = region_2d_to_vector_3d(region, rv3d, v0)
         loc0 = region_2d_to_location_3d(region, rv3d, v0, vec)
 
@@ -1607,7 +1542,6 @@ def CreateCutCircle(self, context):
         FacesList.append(t_v0)
 
     t_bm.verts.index_update()
-
     t_face = t_bm.faces.new(FacesList)
 
     t_bm.to_mesh(me)
@@ -1699,9 +1633,8 @@ def update_bevel(context):
         obj.select = True
     context.scene.objects.active = active
 
+
 # Create bevel
-
-
 def CreateBevel(context, CurrentObject):
     # Save active object
     SavActive = context.active_object
@@ -1752,7 +1685,7 @@ def CreateBevel(context, CurrentObject):
     context.object.data.use_auto_smooth = True
     context.object.data.auto_smooth_angle = 1.0471975
 
-    # Remet l'objet actif par défaut
+    # Restore the active object
     context.scene.objects.active = SavActive
 
 
@@ -1767,7 +1700,6 @@ def Picking(context, event):
     # get the ray from the viewport and mouse
     view_vector = view3d_utils.region_2d_to_vector_3d(region, rv3d, coord)
     ray_origin = view3d_utils.region_2d_to_origin_3d(region, rv3d, coord)
-
     ray_target = ray_origin + view_vector
 
     def visible_objects_and_duplis():
@@ -1794,8 +1726,7 @@ def Picking(context, event):
         success, location, normal, face_index = obj.ray_cast(ray_origin_obj, ray_direction_obj)
         if success:
             return location, normal, face_index
-        else:
-            return None, None, None
+        return None, None, None
 
     # cast rays and find the closest object
     best_length_squared = -1.0
@@ -1820,7 +1751,6 @@ def Picking(context, event):
 
 
 def CreatePrimitive(self, _AngleStep, _radius):
-    CLRaw = []
     Angle = 0.0
     self.NbPointsInPrimitive = 0
     while(Angle < 360.0):
@@ -1838,7 +1768,7 @@ def CreatePrimitive(self, _AngleStep, _radius):
 def MoveCursor(qRot, location, self):
     if qRot is not None:
         self.CLR_C.clear()
-        vc = mathutils.Vector()
+        vc = Vector()
         idx = 0
         for i in range(int(len(self.CircleListRaw) / 3)):
             vc.x = self.CircleListRaw[idx * 3] * self.CRadius
@@ -1855,12 +1785,12 @@ def RBenVe(Object, Dir):
     ObjectV = Object.normalized()
     DirV = Dir.normalized()
     cosTheta = ObjectV.dot(DirV)
-    rotationAxis = mathutils.Vector((0.0, 0.0, 0.0))
+    rotationAxis = Vector((0.0, 0.0, 0.0))
     if (cosTheta < -1 + 0.001):
-        v = mathutils.Vector((0.0, 1.0, 0.0))
+        v = Vector((0.0, 1.0, 0.0))
         rotationAxis = ObjectV.cross(v)
         rotationAxis = rotationAxis.normalized()
-        q = mathutils.Quaternion()
+        q = Quaternion()
         q.w = 0.0
         q.x = rotationAxis.x
         q.y = rotationAxis.y
@@ -1869,7 +1799,7 @@ def RBenVe(Object, Dir):
     rotationAxis = ObjectV.cross(DirV)
     s = math.sqrt((1.0 + cosTheta) * 2.0)
     invs = 1 / s
-    q = mathutils.Quaternion()
+    q = Quaternion()
     q.w = s * 0.5
     q.x = rotationAxis.x * invs
     q.y = rotationAxis.y * invs
@@ -1878,7 +1808,6 @@ def RBenVe(Object, Dir):
 
 
 def Pick(context, event, self, ray_max=10000.0):
-    scene = context.scene
     region = context.region
     rv3d = context.region_data
     coord = event.mouse_region_x, event.mouse_region_y
@@ -1893,8 +1822,7 @@ def Pick(context, event, self, ray_max=10000.0):
         success, hit, normal, face_index = obj.ray_cast(ray_origin_obj, ray_target_obj)
         if success:
             return hit, normal, face_index
-        else:
-            return None, None, None
+        return None, None, None
 
     best_length_squared = ray_max * ray_max
     best_obj = None
@@ -1914,8 +1842,8 @@ def Pick(context, event, self, ray_max=10000.0):
 
     if best_obj is not None:
         return hits, ns, fs, rotation
-    else:
-        return None, None, None
+
+    return None, None, None
 
 
 def SelectObject(self, copyobj):
@@ -1939,7 +1867,7 @@ def UndoAdd(self, type, OpsObj):
         return
     if type != "DUPLICATE":
         ob = OpsObj
-        # Creation du mesh de 'sauvegarde'
+        # Create the 'backup' mesh
         bm = bmesh.new()
         bm.from_mesh(ob.data)
 
@@ -2011,7 +1939,7 @@ def duplicateObject(self):
     ob_new = bpy.context.active_object
 
     ob_new.location = self.CurLoc
-    v = mathutils.Vector()
+    v = Vector()
     v.x = v.y = 0.0
     v.z = self.BrushDepthOffset
     ob_new.location += self.qRot * v
@@ -2021,7 +1949,7 @@ def duplicateObject(self):
     if self.ProfileMode:
         ob_new.scale = self.ProfileBrush.scale
 
-    e = mathutils.Euler()
+    e = Euler()
     e.x = e.y = 0.0
     e.z = self.aRotZ / 25.0
 
@@ -2075,7 +2003,10 @@ def update_grid(self, context):
 
     # Get the data from the profils or the object
     if self.ProfileMode:
-        brush = bpy.data.objects.new(self.Profils[self.nProfil][0], bpy.data.meshes[self.Profils[self.nProfil][0]])
+        brush = bpy.data.objects.new(
+                    self.Profils[self.nProfil][0],
+                    bpy.data.meshes[self.Profils[self.nProfil][0]]
+                    )
         obj = bpy.data.objects["CT_Profil"]
         obfaces = brush.data.polygons
         obverts = brush.data.vertices
@@ -2107,7 +2038,7 @@ def update_grid(self, context):
 
         # Add random rotation
         if (self.RandomRotation) and not (self.GridScaleX or self.GridScaleY):
-            rotmat = mathutils.Matrix.Rotation(math.radians(360 * random.random()), 4, 'Z')
+            rotmat = Matrix.Rotation(math.radians(360 * random.random()), 4, 'Z')
             for v in obverts:
                 v.co = v.co * rotmat
 
@@ -2124,47 +2055,25 @@ def update_grid(self, context):
     mymesh.update(calc_edges=True)
     # Update data
     obj.data = mymesh
-    # Make the the object the active one to remove double
+    # Make the object active to remove doubles
     context.scene.objects.active = obj
 
 
-def boolean_difference():
+def boolean_operation(bool_type="DIFFERENCE"):
     ActiveObj = bpy.context.active_object
+    sel_index = 0 if bpy.context.selected_objects[0] != bpy.context.active_object else 1
 
-    if bpy.context.selected_objects[0] != bpy.context.active_object:
-        bpy.ops.object.modifier_apply(apply_as='DATA', modifier="CT_SOLIDIFY")
-        BoolMod = ActiveObj.modifiers.new("CT_" + bpy.context.selected_objects[0].name, "BOOLEAN")
-        BoolMod.object = bpy.context.selected_objects[0]
-        BoolMod.operation = "DIFFERENCE"
-        BoolMod.solver = bpy.context.scene.CarverSolver
-        bpy.context.selected_objects[0].draw_type = 'WIRE'
-    else:
-        BoolMod = ActiveObj.modifiers.new("CT_" + bpy.context.selected_objects[1].name, "BOOLEAN")
-        BoolMod.object = bpy.context.selected_objects[1]
-        BoolMod.operation = "DIFFERENCE"
-        BoolMod.solver = bpy.context.scene.CarverSolver
-        bpy.context.selected_objects[1].draw_type = 'WIRE'
-
-
-def boolean_union():
-    ActiveObj = bpy.context.active_object
-
-    if bpy.context.selected_objects[0] != bpy.context.active_object:
-        BoolMod = ActiveObj.modifiers.new("CT_" + bpy.context.selected_objects[0].name, "BOOLEAN")
-        BoolMod.object = bpy.context.selected_objects[0]
-        BoolMod.operation = "UNION"
-        bpy.context.selected_objects[0].draw_type = 'WIRE'
-    else:
-        BoolMod = ActiveObj.modifiers.new("CT_" + bpy.context.selected_objects[1].name, "BOOLEAN")
-        BoolMod.object = bpy.context.selected_objects[1]
-        BoolMod.operation = "UNION"
-        bpy.context.selected_objects[1].draw_type = 'WIRE'
+    bpy.ops.object.modifier_apply(apply_as='DATA', modifier="CT_SOLIDIFY")
+    BoolMod = ActiveObj.modifiers.new(
+                    "CT_" + bpy.context.selected_objects[sel_index].name,
+                    "BOOLEAN"
+                    )
+    BoolMod.object = bpy.context.selected_objects[sel_index]
+    BoolMod.operation = bool_type
+    bpy.context.selected_objects[sel_index].draw_type = 'WIRE'
 
 
 def Rebool(context, self):
-    SelObj_Name = []
-    BoolObj = []
-
     LastObj = context.active_object
 
     Brush = context.selected_objects[0]
@@ -2204,12 +2113,10 @@ def Rebool(context, self):
 
     m = LastObjectCreated.modifiers.new("CT_INTERSECT", "BOOLEAN")
     m.operation = "INTERSECT"
-    m.solver = context.scene.CarverSolver
     m.object = Brush
 
     m = obj.modifiers.new("CT_DIFFERENCE", "BOOLEAN")
     m.operation = "DIFFERENCE"
-    m.solver = context.scene.CarverSolver
     m.object = Brush
 
     for mb in LastObj.modifiers:
@@ -2262,14 +2169,14 @@ def createMeshFromData(self):
 
     if "CT_Profil" not in bpy.data.objects:
         ob = bpy.data.objects.new("CT_Profil", bpy.data.meshes[self.Profils[self.nProfil][0]])
-        ob.location = mathutils.Vector((0.0, 0.0, 0.0))
+        ob.location = Vector((0.0, 0.0, 0.0))
 
         # Link object to scene and make active
         scn = bpy.context.scene
         scn.objects.link(ob)
         scn.objects.active = ob
         ob.select = True
-        ob.location = mathutils.Vector((10000.0, 0.0, 0.0))
+        ob.location = Vector((10000.0, 0.0, 0.0))
         ob.draw_type = "WIRE"
 
         self.SolidifyPossible = True
@@ -2277,25 +2184,38 @@ def createMeshFromData(self):
         bpy.data.objects["CT_Profil"].data = bpy.data.meshes[self.Profils[self.nProfil][0]]
 
 
+def Selection_Save_Restore(self):
+    if "CT_Profil" in bpy.data.objects:
+        Selection_Save(self)
+        bpy.ops.object.select_all(action='DESELECT')
+        bpy.data.objects["CT_Profil"].select = True
+        bpy.context.scene.objects.active = bpy.data.objects["CT_Profil"]
+        if bpy.data.objects["CT_Profil"] in self.SavSel:
+            self.SavSel.remove(bpy.data.objects["CT_Profil"])
+        bpy.ops.object.delete(use_global=False)
+        Selection_Restore(self)
+
+
 def Selection_Save(self):
+    obj_name = getattr(bpy.context.active_object, "name", None)
     self.SavSel = bpy.context.selected_objects.copy()
-    self.Sav_ac = bpy.context.active_object
+    self.Sav_ac = obj_name
 
 
 def Selection_Restore(self):
     for o in self.SavSel:
         o.select = True
-    bpy.context.scene.objects.active = self.Sav_ac
+    if self.Sav_ac:
+        bpy.context.scene.objects.active = bpy.data.objects.get(self.Sav_ac, None)
 
 
 # Modal Operator
 class Carver(bpy.types.Operator):
     bl_idname = "object.carver"
     bl_label = "Carver"
-    bl_description = "Cut or create in object mode"
+    bl_description = "Cut or create Meshes in Object mode"
     bl_options = {'REGISTER', 'UNDO'}
 
-    # --------------------------------------------------------------------------------------------------
     @classmethod
     def poll(cls, context):
         ob = None
@@ -2306,14 +2226,12 @@ class Carver(bpy.types.Operator):
             (ob and ob.type == 'MESH' and context.mode == 'OBJECT') or
             (context.mode == 'OBJECT' and ob is None) or
             (context.mode == 'EDIT_MESH'))
-    # --------------------------------------------------------------------------------------------------
 
-    # --------------------------------------------------------------------------------------------------
     def modal(self, context, event):
         PI = 3.14156
-
         region_types = {'WINDOW', 'UI'}
         win = context.window
+
         for area in win.screen.areas:
             if area.type in ('VIEW_3D'):
                 for region in area.regions:
@@ -2327,14 +2245,10 @@ class Carver(bpy.types.Operator):
             return {'PASS_THROUGH'}
         try:
             # [Shift]
-            self.shift = False
-            if event.shift:
-                self.shift = True
+            self.shift = True if event.shift else False
 
             # [Ctrl]
-            self.ctrl = False
-            if event.ctrl:
-                self.ctrl = True
+            self.ctrl = True if event.ctrl else False
 
             # [Alt]
             self.alt = False
@@ -2349,7 +2263,7 @@ class Carver(bpy.types.Operator):
                 self.alt = True
             # [Alt] release
             if self.InitPosition and self.alt is False:
-                # Update coordonnee
+                # Update coordinates
                 for i in range(0, len(self.mouse_path)):
                     l = list(self.mouse_path[i])
                     l[0] += self.xpos
@@ -2417,15 +2331,14 @@ class Carver(bpy.types.Operator):
                                 self.CreateGeometry()
                                 bpy.types.SpaceView3D.draw_handler_remove(self._handle, 'WINDOW')
                                 # Cursor Snap
-                                context.scene.DepthCursor = self.snapCursor
+                                context.scene.mesh_carver.DepthCursor = self.snapCursor
                                 # Object Instantiate
-                                context.scene.OInstanciate = self.Instantiate
+                                context.scene.mesh_carver.OInstanciate = self.Instantiate
                                 # Random rotation
-                                context.scene.ORandom = self.RandomRotation
+                                context.scene.mesh_carver.ORandom = self.RandomRotation
 
                                 return {'FINISHED'}
                             else:
-                                # Cut
                                 self.Cut()
                                 UndoListUpdate(self)
 
@@ -2459,28 +2372,13 @@ class Carver(bpy.types.Operator):
                             self.BrushSolidify = False
                             self.CList = self.OB_List
 
-                            if "CT_Profil" in bpy.data.objects:
-                                Selection_Save(self)
-                                bpy.ops.object.select_all(action='DESELECT')
-                                bpy.data.objects["CT_Profil"].select = True
-                                context.scene.objects.active = bpy.data.objects["CT_Profil"]
-                                bpy.ops.object.delete(use_global=False)
-                                Selection_Restore(self)
-
-                            context.scene.nProfile = self.nProfil
-
+                            Selection_Save_Restore(self)
+                            context.scene.mesh_carver.nProfile = self.nProfil
                         else:
                             self.ObjectMode = False
                     else:
                         self.BrushSolidify = False
-
-                        if "CT_Profil" in bpy.data.objects:
-                            Selection_Save(self)
-                            bpy.ops.object.select_all(action='DESELECT')
-                            bpy.data.objects["CT_Profil"].select = True
-                            context.scene.objects.active = bpy.data.objects["CT_Profil"]
-                            bpy.ops.object.delete(use_global=False)
-                            Selection_Restore(self)
+                        Selection_Save_Restore(self)
 
                 if self.ProfileMode:
                     createMeshFromData(self)
@@ -2496,7 +2394,6 @@ class Carver(bpy.types.Operator):
 
                     bpy.ops.object.modifier_add(type='SOLIDIFY')
                     context.object.modifiers["Solidify"].name = "CT_SOLIDIFY"
-
                     context.object.modifiers["CT_SOLIDIFY"].thickness = 0.1
 
                     Selection_Restore(self)
@@ -2525,7 +2422,6 @@ class Carver(bpy.types.Operator):
 
                                 Selection_Restore(self)
                         else:
-
                             if self.Solidify_Active_Start:
                                 Selection_Save(self)
                                 self.BrushSolidify = True
@@ -2555,12 +2451,6 @@ class Carver(bpy.types.Operator):
 
             if event.type == context.scene.Key_Apply and event.value == 'PRESS':
                 self.DontApply = not self.DontApply
-
-            if event.type == context.scene.Key_Solver and event.value == 'PRESS':
-                if context.scene.CarverSolver == "CARVE":
-                    context.scene.CarverSolver = "BMESH"
-                else:
-                    context.scene.CarverSolver = "CARVE"
 
             # Scale object
             if event.type == context.scene.Key_Scale and event.value == 'PRESS':
@@ -2731,7 +2621,6 @@ class Carver(bpy.types.Operator):
                                     self.ProfileBrush.scale.x -= float(self.ascale) / 150.0
                                     self.ProfileBrush.scale.y -= float(self.ascale) / 150.0
                                     self.ProfileBrush.scale.z -= float(self.ascale) / 150.0
-
                         else:
                             if self.LMB:
                                 if self.ctrl:
@@ -2746,10 +2635,9 @@ class Carver(bpy.types.Operator):
                                 vBack = Pick(context, event, self)
                                 if vBack[0] is not None:
                                     self.ShowCursor = True
-                                    NormalObject = mathutils.Vector((0.0, 0.0, 1.0))
+                                    NormalObject = Vector((0.0, 0.0, 1.0))
                                     qR = RBenVe(NormalObject, vBack[1])
                                     self.qRot = vBack[3] * qR
-                                    Pos = vBack[0]
                                     MoveCursor(qR, vBack[0], self)
                                     self.SavCurLoc = vBack[0]
                                     if self.ctrl:
@@ -2758,13 +2646,13 @@ class Carver(bpy.types.Operator):
                                             yEcart = abs(self.SavMousePos.y - self.SavCurLoc.y)
                                             zEcart = abs(self.SavMousePos.z - self.SavCurLoc.z)
                                             if (xEcart > yEcart) and (xEcart > zEcart):
-                                                self.CurLoc = mathutils.Vector(
+                                                self.CurLoc = Vector(
                                                     (vBack[0].x, self.SavMousePos.y, self.SavMousePos.z))
                                             if (yEcart > xEcart) and (yEcart > zEcart):
-                                                self.CurLoc = mathutils.Vector(
+                                                self.CurLoc = Vector(
                                                     (self.SavMousePos.x, vBack[0].y, self.SavMousePos.z))
                                             if (zEcart > xEcart) and (zEcart > yEcart):
-                                                self.CurLoc = mathutils.Vector(
+                                                self.CurLoc = Vector(
                                                     (self.SavMousePos.x, self.SavMousePos.y, vBack[0].z))
                                             else:
                                                 self.CurLoc = vBack[0]
@@ -2807,7 +2695,7 @@ class Carver(bpy.types.Operator):
                     if self.LMB is False:
                         vBack = Pick(context, event, self)
                         if vBack[0] is not None:
-                            NormalObject = mathutils.Vector((0.0, 0.0, 1.0))
+                            NormalObject = Vector((0.0, 0.0, 1.0))
                             self.aqR = RBenVe(NormalObject, vBack[1])
                             self.qRot = vBack[3] * self.aqR
                         self.am = event.mouse_region_x, event.mouse_region_y
@@ -2871,13 +2759,13 @@ class Carver(bpy.types.Operator):
                                 self.CreateGeometry()
                                 bpy.types.SpaceView3D.draw_handler_remove(self._handle, 'WINDOW')
                                 # Depth Cursor
-                                context.scene.DepthCursor = self.snapCursor
+                                context.scene.mesh_carver.DepthCursor = self.snapCursor
                                 # Instantiate object
-                                context.scene.OInstanciate = self.Instantiate
+                                context.scene.mesh_carver.OInstanciate = self.Instantiate
                                 # Random rotation
-                                context.scene.ORandom = self.RandomRotation
+                                context.scene.mesh_carver.ORandom = self.RandomRotation
                                 # Apply operation
-                                context.scene.DontApply = self.DontApply
+                                context.scene.mesh_carver.DontApply = self.DontApply
 
                                 # if Object mode, set intiale state
                                 if self.ObjectBrush is not None:
@@ -2900,14 +2788,12 @@ class Carver(bpy.types.Operator):
 
                                     Selection_Restore(self)
 
-                                    context.scene.nProfile = self.nProfil
+                                    context.scene.mesh_carver.nProfile = self.nProfil
 
                                 return {'FINISHED'}
                             else:
-                                # Cut
                                 self.Cut()
                                 UndoListUpdate(self)
-
                         else:
                             # Line
                             self.mouse_path.append((event.mouse_region_x, event.mouse_region_y))
@@ -2941,17 +2827,16 @@ class Carver(bpy.types.Operator):
                     else:
                         if self.step > 0:
                             self.step -= 1
-
             # Quit
             elif event.type in {'RIGHTMOUSE', 'ESC'}:
                 # Depth Cursor
-                context.scene.DepthCursor = self.snapCursor
+                context.scene.mesh_carver.DepthCursor = self.snapCursor
                 # Instantiate object
-                context.scene.OInstanciate = self.Instantiate
+                context.scene.mesh_carver.OInstanciate = self.Instantiate
                 # Random Rotation
-                context.scene.ORandom = self.RandomRotation
+                context.scene.mesh_carver.ORandom = self.RandomRotation
                 # Apply boolean operation
-                context.scene.DontApply = self.DontApply
+                context.scene.mesh_carver.DontApply = self.DontApply
 
                 # Reset Object
                 if self.ObjectBrush is not None:
@@ -2971,24 +2856,16 @@ class Carver(bpy.types.Operator):
                     context.scene.objects.active = self.ObjectBrush
 
                     bpy.ops.object.modifier_remove(modifier="CT_SOLIDIFY")
-
                     bpy.ops.object.select_all(action='TOGGLE')
 
                     Selection_Restore(self)
 
-                if "CT_Profil" in bpy.data.objects:
-                    Selection_Save(self)
-                    bpy.ops.object.select_all(action='DESELECT')
-                    bpy.data.objects["CT_Profil"].select = True
-                    context.scene.objects.active = bpy.data.objects["CT_Profil"]
-                    bpy.ops.object.delete(use_global=False)
-                    Selection_Restore(self)
-
+                Selection_Save_Restore(self)
                 context.scene.objects.active = self.CurrentActive
-
-                context.scene.nProfile = self.nProfil
+                context.scene.mesh_carver.nProfile = self.nProfil
 
                 bpy.types.SpaceView3D.draw_handler_remove(self._handle, 'WINDOW')
+
                 # Remove Copy Object Brush
                 if bpy.data.objects.get("CarverBrushCopy") is not None:
                     brush = bpy.data.objects["CarverBrushCopy"]
@@ -3003,7 +2880,6 @@ class Carver(bpy.types.Operator):
 
         except:
             print("\n[Carver MT ERROR]\n")
-
             import traceback
             traceback.print_exc()
 
@@ -3016,242 +2892,246 @@ class Carver(bpy.types.Operator):
 
             return {'FINISHED'}
 
-    # --------------------------------------------------------------------------------------------------
+    def cancel(self, context):
+        # Note: used to prevent memory leaks on quiting Blender while the modal operator
+        # is still running, gets called on return {"CANCELLED"}
+        bpy.types.SpaceView3D.draw_handler_remove(self._handle, 'WINDOW')
 
-    # --------------------------------------------------------------------------------------------------
     def invoke(self, context, event):
-        if context.area.type == 'VIEW_3D':
-            if context.mode == 'EDIT_MESH':
-                bpy.ops.object.mode_set(mode='OBJECT')
-
-            win = context.window
-
-            # Get default patterns
-            self.Profils = []
-            for p in Profils:
-                self.Profils.append((p[0], p[1], p[2], p[3]))
-
-            for o in context.scene.objects:
-                if not o.name.startswith(context.scene.ProfilePrefix):
-                    continue
-
-                # In-scene profiles may have changed, remove them to refresh
-                for m in bpy.data.meshes:
-                    if m.name.startswith(context.scene.ProfilePrefix):
-                        bpy.data.meshes.remove(m)
-
-                vertices = []
-                for v in o.data.vertices:
-                    vertices.append((v.co.x, v.co.y, v.co.z))
-
-                faces = []
-                for f in o.data.polygons:
-                    face = []
-
-                    for v in f.vertices:
-                        face.append(v)
-
-                    faces.append(face)
-
-                self.Profils.append(
-                            (o.name,
-                            mathutils.Vector((o.location.x, o.location.y, o.location.z)),
-                            vertices, faces)
-                            )
-
-            self.nProfil = context.scene.nProfile
-            self.MaxProfil = len(self.Profils)
-
-            # reset selected profile if last profile exceeds length of array
-            if self.nProfil >= self.MaxProfil:
-                self.nProfil = context.scene.nProfile = 0
-
-            # Save selection
-            self.CurrentSelection = context.selected_objects.copy()
-            self.CurrentActive = context.active_object
-            self.SavSel = context.selected_objects.copy()
-            self.Sav_ac = None
-
-            args = (self, context)
-
-            self._handle = bpy.types.SpaceView3D.draw_handler_add(draw_callback_px, args, 'WINDOW', 'POST_PIXEL')
-
-            self.mouse_path = [(0, 0), (0, 0)]
-
-            self.shift = False
-            self.ctrl = False
-            self.alt = False
-
-            self.bDone = False
-
-            self.DontApply = context.scene.DontApply
-            self.Auto_BevelUpdate = True
-
-            # Cut type (Rectangle, Circle, Line)
-            self.CutMode = 0
-            self.BoolOps = DIFFERENCE
-
-            # Circle variables
-            self.stepAngle = [2, 4, 5, 6, 9, 10, 15, 20, 30, 40, 45, 60, 72, 90]
-            self.step = 4
-            self.stepRotation = 0
-
-            # Primitives Position
-            self.xpos = 0
-            self.ypos = 0
-            self.InitPosition = False
-
-            # Line Increment
-            self.Increment = 15
-            # Close polygonal shape
-            self.Closed = False
-
-            # Depth Cursor
-            self.snapCursor = context.scene.DepthCursor
-
-            # Help
-            self.AskHelp = False
-
-            # Working object
-            self.OpsObj = context.active_object
-
-            # Create mode
-            self.CreateMode = False
-            self.ExclusiveCreateMode = False
-            if len(context.selected_objects) == 0:
-                self.ExclusiveCreateMode = True
-                self.CreateMode = True
-
-            # Rebool forced (cut line)
-            self.ForceRebool = False
-
-            self.ViewVector = mathutils.Vector()
-
-            self.CurrentObj = None
-
-            # Brush
-            self.BrushSolidify = False
-            self.WidthSolidify = False
-            self.CarveDepth = False
-            self.BrushDepth = False
-            self.BrushDepthOffset = 0.0
-
-            self.ObjectScale = False
-
-            self.CircleListRaw = []
-            self.CLR_C = []
-            self.CurLoc = mathutils.Vector((0.0, 0.0, 0.0))
-            self.SavCurLoc = mathutils.Vector((0.0, 0.0, 0.0))
-            self.CRadius = 1.0
-            CreatePrimitive(self, 10.0, 1.0)
-            self.VertsList = []
-            self.FacesList = []
-
-            self.am = -1, -1
-            self.SavMousePos = None
-            self.xSavMouse = 0
-
-            self.ascale = 0
-            self.aRotZ = 0
-            self.nRotZ = 0
-            self.aqR = None
-            self.qRot = None
-
-            self.RandomRotation = context.scene.ORandom
-
-            self.ShowCursor = True
-
-            self.ObjectMode = False
-            self.ProfileMode = False
-            self.Instantiate = context.scene.OInstanciate
-
-            self.ProfileBrush = None
-            self.ObjectBrush = None
-            self.InitBrushPosition = None
-            self.InitBrushScale = None
-            self.InitBrushQRotation = None
-            self.InitBrushERotation = None
-            self.InitBrushARotation = None
-
-            self.ObjectBrush_DT = "WIRE"
-            self.XRay = False
-
-            # Grid mesh
-            self.nbcol = 1
-            self.nbrow = 1
-            self.gapx = 0
-            self.gapy = 0
-            self.scale_x = 1
-            self.scale_y = 1
-
-            self.GridScaleX = False
-            self.GridScaleY = False
-
-            if len(context.selected_objects) > 1:
-                self.ObjectBrush = context.active_object
-
-                # Copy the brush object
-                ob = bpy.data.objects.new("CarverBrushCopy", context.object.data.copy())
-                ob.location = self.ObjectBrush.location
-                scene = context.scene
-                scene.objects.link(ob)
-                scene.update()
-
-                # Get default variables
-                self.InitBrushPosition = self.ObjectBrush.location.copy()
-                self.InitBrushScale = self.ObjectBrush.scale.copy()
-                self.InitBrushQRotation = self.ObjectBrush.rotation_quaternion.copy()
-                self.InitBrushERotation = self.ObjectBrush.rotation_euler.copy()
-                self.ObjectBrush_DT = self.ObjectBrush.draw_type
-                self.XRay = self.ObjectBrush.show_x_ray
-                # Test if flat object
-                z = self.ObjectBrush.data.vertices[0].co.z
-                ErrorMarge = 0.01
-                self.Solidify_Active_Start = True
-                for v in self.ObjectBrush.data.vertices:
-                    if abs(v.co.z - z) > ErrorMarge:
-                        self.Solidify_Active_Start = False
-                        break
-                self.SolidifyPossible = False
-
-            self.CList = []
-            self.OPList = []
-            self.RList = []
-            self.OB_List = []
-
-            for ent in context.selected_objects:
-                if ent != self.ObjectBrush:
-                    self.OB_List.append(ent)
-
-            # Left button
-            self.LMB = False
-
-            # Undo Variables
-            self.undo_index = 0
-            self.undo_limit = context.user_preferences.edit.undo_steps
-            self.undo_list = []
-
-            # Boolean operations type
-            self.BooleanType = 0
-
-            self.UList = []
-            self.UList_Index = -1
-            self.UndoOps = []
-
-            context.window_manager.modal_handler_add(self)
-            return {'RUNNING_MODAL'}
-        else:
-            self.report({'WARNING'}, "View3D not found, cannot run operator")
+        if context.area.type != 'VIEW_3D':
+            self.report({'WARNING'},
+                        "View3D not found or not currently active. Operation Cancelled")
             return {'CANCELLED'}
-    # --------------------------------------------------------------------------------------------------
 
-    # --------------------------------------------------------------------------------------------------
+        if context.mode == 'EDIT_MESH':
+            bpy.ops.object.mode_set(mode='OBJECT')
+
+        # test if some other object types are selected that are not meshes
+        test_selection = True
+        for obj in context.selected_objects:
+            if obj.type != "MESH":
+                test_selection = False
+                break
+        if not test_selection:
+            self.report({'WARNING'},
+                        "Some selected objects are not of the Mesh type. Operation Cancelled")
+            return {"CANCELLED"}
+
+        # Get default patterns
+        self.Profils = []
+        for p in Profils:
+            self.Profils.append((p[0], p[1], p[2], p[3]))
+
+        for o in context.scene.objects:
+            if not o.name.startswith(context.scene.ProfilePrefix):
+                continue
+
+            # In-scene profiles may have changed, remove them to refresh
+            for m in bpy.data.meshes:
+                if m.name.startswith(context.scene.ProfilePrefix):
+                    bpy.data.meshes.remove(m)
+
+            vertices = []
+            for v in o.data.vertices:
+                vertices.append((v.co.x, v.co.y, v.co.z))
+
+            faces = []
+            for f in o.data.polygons:
+                face = []
+                for v in f.vertices:
+                    face.append(v)
+
+                faces.append(face)
+
+            self.Profils.append(
+                (o.name,
+                Vector((o.location.x, o.location.y, o.location.z)),
+                vertices, faces)
+            )
+
+        self.nProfil = context.scene.mesh_carver.nProfile
+        self.MaxProfil = len(self.Profils)
+
+        # reset selected profile if last profile exceeds length of array
+        if self.nProfil >= self.MaxProfil:
+            self.nProfil = context.scene.mesh_carver.nProfile = 0
+
+        # Save selection
+        self.CurrentSelection = context.selected_objects.copy()
+        self.CurrentActive = context.active_object
+        self.SavSel = context.selected_objects.copy()
+        self.Sav_ac = None
+
+        args = (self, context)
+
+        self._handle = bpy.types.SpaceView3D.draw_handler_add(draw_callback_px, args, 'WINDOW', 'POST_PIXEL')
+
+        self.mouse_path = [(0, 0), (0, 0)]
+
+        self.shift = False
+        self.ctrl = False
+        self.alt = False
+        self.bDone = False
+
+        self.DontApply = context.scene.mesh_carver.DontApply
+        self.Auto_BevelUpdate = True
+
+        # Cut type (Rectangle, Circle, Line)
+        self.CutMode = 0
+        self.BoolOps = DIFFERENCE
+
+        # Circle variables
+        self.stepAngle = [2, 4, 5, 6, 9, 10, 15, 20, 30, 40, 45, 60, 72, 90]
+        self.step = 4
+        self.stepRotation = 0
+
+        # Primitives Position
+        self.xpos = 0
+        self.ypos = 0
+        self.InitPosition = False
+
+        # Line Increment
+        self.Increment = 15
+        # Close polygonal shape
+        self.Closed = False
+
+        # Depth Cursor
+        self.snapCursor = context.scene.mesh_carver.DepthCursor
+
+        # Help
+        self.AskHelp = False
+
+        # Working object
+        self.OpsObj = context.active_object
+
+        # Create mode
+        self.CreateMode = False
+        self.ExclusiveCreateMode = False
+        if len(context.selected_objects) == 0:
+            self.ExclusiveCreateMode = True
+            self.CreateMode = True
+
+        # Rebool forced (cut line)
+        self.ForceRebool = False
+
+        self.ViewVector = Vector()
+        self.CurrentObj = None
+
+        # Brush
+        self.BrushSolidify = False
+        self.WidthSolidify = False
+        self.CarveDepth = False
+        self.BrushDepth = False
+        self.BrushDepthOffset = 0.0
+
+        self.ObjectScale = False
+
+        self.CircleListRaw = []
+        self.CLR_C = []
+        self.CurLoc = Vector((0.0, 0.0, 0.0))
+        self.SavCurLoc = Vector((0.0, 0.0, 0.0))
+        self.CRadius = 1.0
+        CreatePrimitive(self, 10.0, 1.0)
+        self.VertsList = []
+        self.FacesList = []
+
+        self.am = -1, -1
+        self.SavMousePos = None
+        self.xSavMouse = 0
+
+        self.ascale = 0
+        self.aRotZ = 0
+        self.nRotZ = 0
+        self.aqR = None
+        self.qRot = None
+
+        self.RandomRotation = context.scene.mesh_carver.ORandom
+
+        self.ShowCursor = True
+        self.ObjectMode = False
+        self.ProfileMode = False
+        self.Instantiate = context.scene.mesh_carver.OInstanciate
+
+        self.ProfileBrush = None
+        self.ObjectBrush = None
+        self.InitBrushPosition = None
+        self.InitBrushScale = None
+        self.InitBrushQRotation = None
+        self.InitBrushERotation = None
+        self.InitBrushARotation = None
+
+        self.ObjectBrush_DT = "WIRE"
+        self.XRay = False
+
+        # Grid mesh
+        self.nbcol = 1
+        self.nbrow = 1
+        self.gapx = 0
+        self.gapy = 0
+        self.scale_x = 1
+        self.scale_y = 1
+
+        self.GridScaleX = False
+        self.GridScaleY = False
+
+        if len(context.selected_objects) > 1:
+            self.ObjectBrush = context.active_object
+
+            # Copy the brush object
+            ob = bpy.data.objects.new("CarverBrushCopy", context.object.data.copy())
+            ob.location = self.ObjectBrush.location
+            scene = context.scene
+            scene.objects.link(ob)
+            scene.update()
+
+            # Get default variables
+            self.InitBrushPosition = self.ObjectBrush.location.copy()
+            self.InitBrushScale = self.ObjectBrush.scale.copy()
+            self.InitBrushQRotation = self.ObjectBrush.rotation_quaternion.copy()
+            self.InitBrushERotation = self.ObjectBrush.rotation_euler.copy()
+            self.ObjectBrush_DT = self.ObjectBrush.draw_type
+            self.XRay = self.ObjectBrush.show_x_ray
+            # Test if flat object
+            z = self.ObjectBrush.data.vertices[0].co.z
+            ErrorMarge = 0.01
+            self.Solidify_Active_Start = True
+            for v in self.ObjectBrush.data.vertices:
+                if abs(v.co.z - z) > ErrorMarge:
+                    self.Solidify_Active_Start = False
+                    break
+            self.SolidifyPossible = False
+
+        self.CList = []
+        self.OPList = []
+        self.RList = []
+        self.OB_List = []
+
+        for ent in context.selected_objects:
+            if ent != self.ObjectBrush:
+                self.OB_List.append(ent)
+
+        # Left button
+        self.LMB = False
+
+        # Undo Variables
+        self.undo_index = 0
+        self.undo_limit = context.user_preferences.edit.undo_steps
+        self.undo_list = []
+
+        # Boolean operations type
+        self.BooleanType = 0
+
+        self.UList = []
+        self.UList_Index = -1
+        self.UndoOps = []
+
+        context.window_manager.modal_handler_add(self)
+        return {'RUNNING_MODAL'}
+
     def CreateGeometry(self):
         context = bpy.context
-
-        region_id = context.region.id
-
         bLocalView = False
+
         for area in context.screen.areas:
             if area.type == 'VIEW_3D':
                 if area.spaces[0].local_view is not None:
@@ -3309,13 +3189,9 @@ class Carver(bpy.types.Operator):
         self.bDone = False
         self.mouse_path.clear()
         self.mouse_path = [(0, 0), (0, 0)]
-    # --------------------------------------------------------------------------------------------------
 
-    # --------------------------------------------------------------------------------------------------
     def Cut(self):
         context = bpy.context
-
-        UNDO = []
 
         # Local view ?
         bLocalView = False
@@ -3358,7 +3234,7 @@ class Carver(bpy.types.Operator):
             bpy.ops.mesh.normals_make_consistent()
             bpy.ops.object.mode_set(mode='OBJECT')
         else:
-            # Create liste
+            # Create list
             if self.ObjectMode:
                 for o in self.CurrentSelection:
                     if o != self.ObjectBrush:
@@ -3380,7 +3256,7 @@ class Carver(bpy.types.Operator):
             if len(context.selected_objects) > 0:
                 bpy.ops.object.select_all(action='TOGGLE')
 
-            # Testif intitiale object has bevel
+            # Test if initial object has bevel
             BevelAO = False
             for obj in ActiveObjList:
                 for mb in obj.modifiers:
@@ -3407,14 +3283,11 @@ class Carver(bpy.types.Operator):
             if (self.shift is False) and (self.ForceRebool is False):
                 if self.ObjectMode or self.ProfileMode:
                     if self.BoolOps == UNION:
-                        # Union
-                        boolean_union()
+                        boolean_operation(bool_type="UNION")
                     else:
-                        # Cut object
-                        boolean_difference()
+                        boolean_operation(bool_type="DIFFERENCE")
                 else:
-                    # Cut
-                    boolean_difference()
+                    boolean_operation(bool_type="DIFFERENCE")
 
                 # Apply booleans
                 if self.DontApply is False:
@@ -3487,7 +3360,6 @@ class Carver(bpy.types.Operator):
                 if len(context.selected_objects) > 0:
                     bpy.ops.object.select_all(action='TOGGLE')
                 bpy.data.objects[self.CurrentObj.name].select = True
-                cname = self.CurrentObj.name
                 bpy.ops.object.delete(use_global=False)
             else:
                 if self.ObjectMode:
@@ -3496,7 +3368,7 @@ class Carver(bpy.types.Operator):
         if len(context.selected_objects) > 0:
             bpy.ops.object.select_all(action='TOGGLE')
 
-        # Select cutted objects
+        # Select cut objects
         for obj in lastSelected:
             bpy.data.objects[obj.name].select = True
 
@@ -3508,10 +3380,10 @@ class Carver(bpy.types.Operator):
         if self.Auto_BevelUpdate:
             update_bevel(context)
 
-        # Reselect intiale objects
+        # Re-select initial objects
         bpy.ops.object.select_all(action='TOGGLE')
         if self.ObjectMode:
-            # Reselect brush
+            # Re-select brush
             self.ObjectBrush.select = True
         for ActiveObj in ActiveObjList:
             bpy.data.objects[ActiveObj.name].select = True
@@ -3535,23 +3407,45 @@ class Carver(bpy.types.Operator):
         self.ForceRebool = False
 
 
-classes = (
-    Carver,
+class CarverProperties(bpy.types.PropertyGroup):
+    DepthCursor = BoolProperty(
+        name="DepthCursor",
+        default=False
     )
+    OInstanciate = BoolProperty(
+        name="Obj_Instantiate",
+        default=False
+    )
+    ORandom = BoolProperty(
+        name="Random_Rotation",
+        default=False
+    )
+    DontApply = BoolProperty(
+        name="Dont_Apply",
+        default=False
+    )
+    nProfile = IntProperty(
+        name="Num_Profile",
+        default=0
+    )
+
 
 addon_keymaps = []
 
+classes = (
+    CarverPrefs,
+    CarverProperties,
+    Carver,
+)
+
 
 def register():
-    bpy.types.Scene.DepthCursor = BoolProperty(name="DepthCursor", default=False)
-    bpy.types.Scene.OInstanciate = BoolProperty(name="Obj_Instantiate", default=False)
-    bpy.types.Scene.ORandom = BoolProperty(name="Random_Rotation", default=False)
-    bpy.types.Scene.DontApply = BoolProperty(name="Dont_Apply", default=False)
-    bpy.types.Scene.nProfile = IntProperty(name="Num_Profile", default=0)
+    for cls in classes:
+        bpy.utils.register_class(cls)
 
-    bpy.utils.register_class(CarverPrefs)
-
-    bpy.utils.register_class(Carver)
+    bpy.types.Scene.mesh_carver = PointerProperty(
+        type=CarverProperties
+    )
     # add keymap entry
     kcfg = bpy.context.window_manager.keyconfigs.addon
     if kcfg:
@@ -3561,14 +3455,15 @@ def register():
 
 
 def unregister():
-    bpy.utils.unregister_class(CarverPrefs)
+    for cls in classes:
+        bpy.utils.unregister_class(cls)
 
     # remove keymap entry
     for km, kmi in addon_keymaps:
         km.keymap_items.remove(kmi)
     addon_keymaps.clear()
 
-    bpy.utils.unregister_class(Carver)
+    del bpy.types.Scene.mesh_carver
 
 
 if __name__ == "__main__":

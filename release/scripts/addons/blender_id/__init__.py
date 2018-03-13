@@ -21,7 +21,7 @@
 bl_info = {
     'name': 'Blender ID authentication',
     'author': 'Francesco Siddi, Inês Almeida and Sybren A. Stüvel',
-    'version': (1, 3, 0),
+    'version': (1, 4, 1),
     'blender': (2, 77, 0),
     'location': 'Add-on preferences',
     'description':
@@ -159,8 +159,9 @@ def token_expires() -> typing.Optional[datetime.datetime]:
     # Try parsing as different formats. A new Blender ID is coming,
     # which may change the format in which timestamps are sent.
     formats = [
-        '%Y-%m-%dT%H:%M:%S.%fZ', # ISO 8601 with Z-suffix, used by new Blender ID
-        '%a, %d %b %Y %H:%M:%S GMT', # RFC 1123, used by current Blender ID
+        '%Y-%m-%dT%H:%M:%SZ', # ISO 8601 with Z-suffix
+        '%Y-%m-%dT%H:%M:%S.%fZ', # ISO 8601 with fractional seconds and Z-suffix
+        '%a, %d %b %Y %H:%M:%S GMT', # RFC 1123, used by old Blender ID
     ]
     for fmt in formats:
         try:
@@ -217,11 +218,9 @@ class BlenderIdPreferences(AddonPreferences):
         if active_profile:
             expiry = token_expires()
             now = datetime.datetime.utcnow()
-            show_validate_button = bpy.app.debug
 
             if expiry is None:
                 layout.label(text='We do not know when your token expires, please validate it.')
-                show_validate_button = True
             elif now >= expiry:
                 layout.label(text='Your login has expired! Log out and log in again to refresh it.',
                              icon='ERROR')
@@ -247,10 +246,9 @@ class BlenderIdPreferences(AddonPreferences):
                     layout.label('You are logged in as %s. Your authentication token expires %s.'
                                  % (active_profile.username, exp_str), icon='WORLD_DATA')
 
-            row = layout.row()
+            row = layout.row().split(0.8)
             row.operator('blender_id.logout')
-            if show_validate_button:
-                row.operator('blender_id.validate')
+            row.operator('blender_id.validate')
         else:
             layout.prop(self, 'blender_id_username')
             layout.prop(self, 'blender_id_password')

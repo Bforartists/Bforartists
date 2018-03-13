@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 
 import bpy
+import math
 from mathutils import Vector
 from bpy.types import Operator
 from .warning_messages_utils import (
-        warning_messages,
-        c_is_cycles_addon_enabled,
-        c_data_has_materials,
-        collect_report,
-        )
+    warning_messages,
+    c_is_cycles_addon_enabled,
+    c_data_has_materials,
+    collect_report,
+)
 
 # -----------------------------------------------------------------------------
 # Globals
@@ -665,7 +666,7 @@ def makeCyclesFromBI(cmat):
 
     # Make Diffuse and Output nodes
     mainShader = makeMainShader(TreeNodes)
-    mainShader.inputs['Roughness'].default_value = cmat.specular_intensity
+    mainShader.inputs['Roughness'].default_value = math.sqrt(max(cmat.specular_intensity, 0.0))
     mainDiffuse = mainShader
     materialOutput = makeMaterialOutput(TreeNodes)
     links.new(mainShader.outputs['BSDF'], materialOutput.inputs['Surface'])
@@ -752,6 +753,7 @@ class material_convert_all(Operator):
 
     def execute(self, context):
         AutoNode(False, self)
+
         return {'FINISHED'}
 
 
@@ -766,13 +768,12 @@ class material_convert_selected(Operator):
     def poll(cls, context):
         return (bpy.data.filepath != "" and c_data_has_materials() and
                 c_is_cycles_addon_enabled() and
-                bool(next((obj for obj in context.selected_objects if obj.type == 'MESH'),
-                         None)
-                    )
+                bool(next((obj for obj in context.selected_objects if obj.type == 'MESH'), None))
                 )
 
     def execute(self, context):
         AutoNode(True, self)
+
         return {'FINISHED'}
 
 

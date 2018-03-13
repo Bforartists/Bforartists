@@ -47,10 +47,10 @@ if "bpy" in locals():
     import importlib
 
     importlib.reload(measureit_main)
-    print("measureit: Reloaded multifiles")
+    # print("measureit: Reloaded multifiles")
 else:
     from . import measureit_main
-    print("measureit: Imported multifiles")
+    # print("measureit: Imported multifiles")
 
 # noinspection PyUnresolvedReferences
 import bpy

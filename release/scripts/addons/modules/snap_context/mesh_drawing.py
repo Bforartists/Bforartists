@@ -159,10 +159,30 @@ class GPU_Indices_Mesh():
     shader = None
 
     @classmethod
+    def end_opengl(cls):
+        del cls.shader
+        del cls._NULL
+        del cls.P
+        del cls.MV
+        del cls.MVP
+        del cls.vert_index
+        del cls.tri_co
+        del cls.edge_co
+        del cls.vert_co
+
+        del cls
+
+    @classmethod
     def init_opengl(cls):
         # OpenGL was already initialized, nothing to do here.
         if cls.shader is not None:
             return
+
+        import atexit
+
+        # Make sure we only registered the callback once.
+        atexit.unregister(cls.end_opengl)
+        atexit.register(cls.end_opengl)
 
         cls.shader = Shader(
             load_shader('3D_vert.glsl'),
@@ -173,6 +193,8 @@ class GPU_Indices_Mesh():
         cls.unif_use_clip_planes = bgl.glGetUniformLocation(cls.shader.program, 'use_clip_planes')
         cls.unif_clip_plane = bgl.glGetUniformLocation(cls.shader.program, 'clip_plane')
 
+        cls._NULL = gl_buffer_void_as_long(0)
+
         cls.unif_MVP = bgl.glGetUniformLocation(cls.shader.program, 'MVP')
         cls.unif_MV = bgl.glGetUniformLocation(cls.shader.program, 'MV')
         cls.unif_offset = bgl.glGetUniformLocation(cls.shader.program, 'offset')
@@ -182,6 +204,7 @@ class GPU_Indices_Mesh():
 
         cls.P = bgl.Buffer(bgl.GL_FLOAT, (4, 4))
         cls.MV = bgl.Buffer(bgl.GL_FLOAT, (4, 4))
+        cls.MVP = bgl.Buffer(bgl.GL_FLOAT, (4, 4))
 
         # returns of public API #
         cls.vert_index = bgl.Buffer(bgl.GL_INT, 1)
@@ -192,10 +215,6 @@ class GPU_Indices_Mesh():
 
     def __init__(self, obj, draw_tris, draw_edges, draw_verts):
         GPU_Indices_Mesh.init_opengl()
-
-        self._NULL = gl_buffer_void_as_long(0)
-
-        self.MVP = bgl.Buffer(bgl.GL_FLOAT, (4, 4))
 
         self.obj = obj
         self.draw_tris = draw_tris
@@ -427,8 +446,6 @@ class GPU_Indices_Mesh():
 
 
     def __del__(self):
-        del self._NULL
-
         if self.vbo_tris:
             bgl.glDeleteBuffers(1, self.vbo_tris)
             bgl.glDeleteBuffers(1, self.vbo_tri_indices)

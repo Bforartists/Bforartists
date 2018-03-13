@@ -388,7 +388,7 @@ class AchmPencilAction(Operator):
 # Define panel class for main functions.
 # ------------------------------------------------------------------
 class ArchimeshMainPanel(Panel):
-    bl_idname = "archimesh_main_panel"
+    bl_idname = "ARCHIMESH_PT_main"
     bl_label = "Archimesh"
     bl_space_type = "VIEW_3D"
     bl_region_type = "TOOLS"

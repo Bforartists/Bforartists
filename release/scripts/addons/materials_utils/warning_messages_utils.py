@@ -21,7 +21,7 @@ def warning_messages(operator=None, warn='DEFAULT', object_name="", is_mat=None,
     # a list of strings can be passed and concatenated in obj_name too
     # is_mat a switch to change to materials or textures for obj_name('MAT','TEX', 'FILE', None)
     # fake - optional string that can be passed
-    # MAX_COUNT - max members of an list to be displayed
+    # MAX_COUNT - max members of an list to be displayed in UI report
     # override - important messages that should be enabled, no matter the setting
 
     # pass the show_warnings bool to enable/disable them
@@ -72,6 +72,8 @@ def warning_messages(operator=None, warn='DEFAULT', object_name="", is_mat=None,
                                          "not cleaned"),
             'C_OB_MIX_NO_MAT': "{}{}".format(obj_name, "No Materials or an Object type that "
                                              "can't have Materials (Clean Material Slots)"),
+            'C_OB_MIX_SLOT_MAT': "{}{}".format(obj_name, "No Materials or only empty Slots are removed  "
+                                                "(Clean Material Slots)"),
             'R_OB_NO_MAT': "{}{}".format(obj_name, "No Materials. Nothing to remove"),
             'R_OB_FAIL_MAT': "{}{}".format(obj_name, "Failed to remove materials - (Operator Error)"),
             'R_NO_SL_MAT': "No Selection. Material slots are not removed",
@@ -79,6 +81,7 @@ def warning_messages(operator=None, warn='DEFAULT', object_name="", is_mat=None,
             'R_ALL_NO_MAT': "Object(s) have no materials to remove",
             'R_ACT_MAT': "{}{}".format(obj_name, "Removed active Material"),
             'R_ACT_MAT_ALL': "{}{}".format(obj_name, "Removed all Material from the Object"),
+            'SL_MAT_EDIT_BY_NAME': "{}{}{}".format("Geometry with the Material ", obj_name, "been selected"),
             'SL_MAT_BY_NAME': "{}{}{}".format("Objects with the Material ", obj_name, "been selected"),
             'OB_CANT_MAT': "{}{}".format(obj_name, "Object type that can't have Materials"),
             'REP_MAT_NONE': "Replace Material: No materials replaced",
@@ -123,17 +126,18 @@ def warning_messages(operator=None, warn='DEFAULT', object_name="", is_mat=None,
         operator.report({'INFO'}, message[warn])
 
         if obj_size_big is True:
-            print("\n** MATERIAL SPECIALS **: \n Full list for the Info message is: \n",
-                  ", ".join(object_name), "\n")
+            print("\n[Materials Utils Specials]:\nFull list for the Info message is:\n\n",
+                  " ".join(names + "," + "\n" * ((i + 1) % 10 == 0) for i, names in enumerate(object_name)),
+                  "\n")
 
-    # restore settings if overriden
+    # restore settings if overridden
     if override:
         addon.preferences.show_warnings = get_warn
 
 
 def collect_report(collection="", is_start=False, is_final=False):
     # collection passes a string for appending to COLLECT_REPORT global
-    # is_final swithes to the final report with the operator in __init__
+    # is_final switches to the final report with the operator in __init__
     global COLLECT_REPORT
     scene = bpy.context.scene.mat_specials
     use_report = scene.enable_report
@@ -164,20 +168,14 @@ def c_data_has_materials():
     return (len(bpy.data.materials) > 0)
 
 
+def c_obj_data_has_materials(obj):
+    # check for material presence in object's data
+    matlen = 0
+    if obj:
+        matlen = len(obj.data.materials)
+    return (matlen > 0)
+
+
 def c_data_has_images():
     # check for image presence in data
     return (len(bpy.data.images) > 0)
-
-
-def register():
-    bpy.utils.register_module(__name__)
-    pass
-
-
-def unregister():
-    bpy.utils.unregister_module(__name__)
-    pass
-
-
-if __name__ == "__main__":
-    register()

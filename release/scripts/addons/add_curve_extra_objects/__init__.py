@@ -225,9 +225,9 @@ class CurveExtraObjectsAddonPreferences(AddonPreferences):
                      icon="LAYER_USED")
 
 
-class INFO_MT_curve_knots_add1(Menu):
+class INFO_MT_curve_knots_add(Menu):
     # Define the "Extras" menu
-    bl_idname = "curve_knots_add"
+    bl_idname = "INFO_MT_curve_knots_add"
     bl_label = "Plants"
 
     def draw(self, context):
@@ -253,7 +253,7 @@ def menu_func(self, context):
                               icon='CURVE_DATA')
     layout.separator()
 
-    layout.menu("curve_knots_add", text="Knots", icon='CURVE_DATA')
+    layout.menu(INFO_MT_curve_knots_add.bl_idname, text="Knots", icon='CURVE_DATA')
     layout.separator()
     layout.operator("curve.curlycurve", text="Curly Curve",
                     icon='CURVE_DATA')

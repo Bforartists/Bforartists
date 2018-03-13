@@ -21,12 +21,12 @@
 # All Operator
 
 import bpy
-import bmesh
 from bpy.types import Operator
 from bpy.props import (
         IntProperty,
         FloatProperty,
         )
+import bmesh
 
 from . import (
         mesh_helpers,
@@ -48,7 +48,7 @@ def clean_float(text):
 # Mesh Info
 
 
-class Print3DInfoVolume(Operator):
+class MESH_OT_Print3D_Info_Volume(Operator):
     """Report the volume of the active mesh"""
     bl_idname = "mesh.print3d_info_volume"
     bl_label = "Print3D Info Volume"
@@ -75,7 +75,7 @@ class Print3DInfoVolume(Operator):
         return {'FINISHED'}
 
 
-class Print3DInfoArea(Operator):
+class MESH_OT_Print3D_Info_Area(Operator):
     """Report the surface area of the active mesh"""
     bl_idname = "mesh.print3d_info_area"
     bl_label = "Print3D Info Area"
@@ -122,7 +122,7 @@ def multiple_obj_warning(self, context):
         self.report({"INFO"}, "Multiple selected objects. Only the active one will be evaluated")
 
 
-class Print3DCheckSolid(Operator):
+class MESH_OT_Print3D_Check_Solid(Operator):
     """Check for geometry is solid (has valid inside/outside) and correct normals"""
     bl_idname = "mesh.print3d_check_solid"
     bl_label = "Print3D Check Solid"
@@ -150,7 +150,7 @@ class Print3DCheckSolid(Operator):
         return execute_check(self, context)
 
 
-class Print3DCheckIntersections(Operator):
+class MESH_OT_Print3D_Check_Intersections(Operator):
     """Check geometry for self intersections"""
     bl_idname = "mesh.print3d_check_intersect"
     bl_label = "Print3D Check Intersections"
@@ -165,7 +165,7 @@ class Print3DCheckIntersections(Operator):
         return execute_check(self, context)
 
 
-class Print3DCheckDegenerate(Operator):
+class MESH_OT_Print3D_Check_Degenerate(Operator):
     """Check for degenerate geometry that may not print properly """ \
     """(zero area faces, zero length edges)"""
     bl_idname = "mesh.print3d_check_degenerate"
@@ -195,7 +195,7 @@ class Print3DCheckDegenerate(Operator):
         return execute_check(self, context)
 
 
-class Print3DCheckDistorted(Operator):
+class MESH_OT_Print3D_Check_Distorted(Operator):
     """Check for non-flat faces """
     bl_idname = "mesh.print3d_check_distort"
     bl_label = "Print3D Check Distorted Faces"
@@ -233,7 +233,7 @@ class Print3DCheckDistorted(Operator):
         return execute_check(self, context)
 
 
-class Print3DCheckThick(Operator):
+class MESH_OT_Print3D_Check_Thick(Operator):
     """Check geometry is above the minimum thickness preference """ \
     """(relies on correct normals)"""
     bl_idname = "mesh.print3d_check_thick"
@@ -253,7 +253,7 @@ class Print3DCheckThick(Operator):
         return execute_check(self, context)
 
 
-class Print3DCheckSharp(Operator):
+class MESH_OT_Print3D_Check_Sharp(Operator):
     """Check edges are below the sharpness preference"""
     bl_idname = "mesh.print3d_check_sharp"
     bl_label = "Print3D Check Sharp"
@@ -278,7 +278,7 @@ class Print3DCheckSharp(Operator):
         return execute_check(self, context)
 
 
-class Print3DCheckOverhang(Operator):
+class MESH_OT_Print3D_Check_Overhang(Operator):
     """Check faces don't overhang past a certain angle"""
     bl_idname = "mesh.print3d_check_overhang"
     bl_label = "Print3D Check Overhang"
@@ -314,19 +314,19 @@ class Print3DCheckOverhang(Operator):
         return execute_check(self, context)
 
 
-class Print3DCheckAll(Operator):
+class MESH_OT_Print3D_Check_All(Operator):
     """Run all checks"""
     bl_idname = "mesh.print3d_check_all"
     bl_label = "Print3D Check All"
 
     check_cls = (
-        Print3DCheckSolid,
-        Print3DCheckIntersections,
-        Print3DCheckDegenerate,
-        Print3DCheckDistorted,
-        Print3DCheckThick,
-        Print3DCheckSharp,
-        Print3DCheckOverhang,
+        MESH_OT_Print3D_Check_Solid,
+        MESH_OT_Print3D_Check_Intersections,
+        MESH_OT_Print3D_Check_Degenerate,
+        MESH_OT_Print3D_Check_Distorted,
+        MESH_OT_Print3D_Check_Thick,
+        MESH_OT_Print3D_Check_Sharp,
+        MESH_OT_Print3D_Check_Overhang,
         )
 
     def execute(self, context):
@@ -343,7 +343,7 @@ class Print3DCheckAll(Operator):
         return {'FINISHED'}
 
 
-class Print3DCleanIsolated(Operator):
+class MESH_OT_Print3D_Clean_Isolated(Operator):
     """Cleanup isolated vertices and edges"""
     bl_idname = "mesh.print3d_clean_isolated"
     bl_label = "Print3D Clean Isolated "
@@ -407,7 +407,7 @@ class Print3DCleanIsolated(Operator):
             return {'CANCELLED'}
 
 
-class Print3DCleanDistorted(Operator):
+class MESH_OT_Print3D_Clean_Distorted(Operator):
     """Tessellate distorted faces"""
     bl_idname = "mesh.print3d_clean_distorted"
     bl_label = "Print3D Clean Distorted"
@@ -440,7 +440,7 @@ class Print3DCleanDistorted(Operator):
             return {'CANCELLED'}
 
 
-class Print3DCleanNonManifold(Operator):
+class MESH_OT_Print3D_Clean_Non_Manifold(Operator):
     """Cleanup problems, like holes, non-manifold vertices, and inverted normals"""
     bl_idname = "mesh.print3d_clean_non_manifold"
     bl_label = "Print3D Clean Non-Manifold and Inverted"
@@ -594,7 +594,7 @@ class Print3DCleanNonManifold(Operator):
         bpy.ops.mesh.delete(type='VERT')
 
 
-class Print3DCleanThin(Operator):
+class MESH_OT_Print3D_Clean_Thin(Operator):
     """Ensure minimum thickness"""
     bl_idname = "mesh.print3d_clean_thin"
     bl_label = "Print3D Clean Thin"
@@ -610,7 +610,7 @@ class Print3DCleanThin(Operator):
 # Select Report
 # ... helper function for info UI
 
-class Print3DSelectReport(Operator):
+class MESH_OT_Print3D_Select_Report(Operator):
     """Select the data associated with this report"""
     bl_idname = "mesh.print3d_select_report"
     bl_label = "Print3D Select Report"
@@ -641,7 +641,7 @@ class Print3DSelectReport(Operator):
         bpy.ops.mesh.select_mode(type=self._type_to_mode[bm_type])
 
         bm = bmesh.from_edit_mesh(obj.data)
-        elems = getattr(bm, Print3DSelectReport._type_to_attr[bm_type])[:]
+        elems = getattr(bm, MESH_OT_Print3D_Select_Report._type_to_attr[bm_type])[:]
 
         try:
             for i in bm_array:
@@ -669,7 +669,7 @@ def _scale(scale, report=None, report_suffix=""):
         report({'INFO'}, "Scaled by %s%s" % (clean_float("%.6f" % scale), report_suffix))
 
 
-class Print3DScaleToVolume(Operator):
+class MESH_OT_Print3D_Scale_To_Volume(Operator):
     """Scale edit-mesh or selected-objects to a set volume"""
     bl_idname = "mesh.print3d_scale_to_volume"
     bl_label = "Scale to Volume"
@@ -715,7 +715,7 @@ class Print3DScaleToVolume(Operator):
         return wm.invoke_props_dialog(self)
 
 
-class Print3DScaleToBounds(Operator):
+class MESH_OT_Print3D_Scale_To_Bounds(Operator):
     """Scale edit-mesh or selected-objects to fit within a maximum length"""
     bl_idname = "mesh.print3d_scale_to_bounds"
     bl_label = "Scale to Bounds"
@@ -769,7 +769,7 @@ class Print3DScaleToBounds(Operator):
 # ------
 # Export
 
-class Print3DExport(Operator):
+class MESH_OT_Print3D_Export(Operator):
     """Export active object using print3d settings"""
     bl_idname = "mesh.print3d_export"
     bl_label = "Print3D Export"
