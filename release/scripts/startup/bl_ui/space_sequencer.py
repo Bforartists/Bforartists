@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -185,7 +185,16 @@ class SEQUENCER_MT_view(Menu):
             # mode, else the lookup for the shortcut will fail in
             # wm_keymap_item_find_props() (see #32595).
             layout.operator_context = 'INVOKE_REGION_PREVIEW'
+
         layout.operator("sequencer.properties", icon='MENU_PANEL')
+
+        layout.separator()
+
+        layout.operator("render.opengl", text="OpenGL Render Image", icon='RENDER_STILL').sequencer = True
+        props = layout.operator("render.opengl", text="OpenGL Render Animation", icon='RENDER_ANIMATION')
+        props.animation = True
+        props.sequencer = True
+
         layout.operator_context = 'INVOKE_DEFAULT'
 
         layout.separator()
