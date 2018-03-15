@@ -189,15 +189,17 @@ class SEQUENCER_MT_view(Menu):
         layout.operator("sequencer.properties", icon='MENU_PANEL')
 
         layout.separator()
+        
+        ##This code was causing an issue. Refer to issue #71 - Draise
+        
+        #layout.operator("render.opengl", text="OpenGL Render Image", icon='RENDER_STILL').sequencer = True
+        #props = layout.operator("render.opengl", text="OpenGL Render Animation", icon='RENDER_ANIMATION')
+        #props.animation = True
+        #props.sequencer = True
 
-        layout.operator("render.opengl", text="OpenGL Render Image", icon='RENDER_STILL').sequencer = True
-        props = layout.operator("render.opengl", text="OpenGL Render Animation", icon='RENDER_ANIMATION')
-        props.animation = True
-        props.sequencer = True
+        #layout.operator_context = 'INVOKE_DEFAULT'
 
-        layout.operator_context = 'INVOKE_DEFAULT'
-
-        layout.separator()
+        #layout.separator()
 
         if is_sequencer_view:
             layout.operator_context = 'INVOKE_REGION_WIN'
@@ -206,6 +208,18 @@ class SEQUENCER_MT_view(Menu):
             layout.operator("sequencer.view_frame")
             layout.operator_context = 'INVOKE_DEFAULT'
         if is_preview:
+            
+            #icons for the new OpenGl render feature - Draise
+            layout.operator("render.opengl", text="OpenGL Render Image", icon='RENDER_STILL').sequencer = True
+            props = layout.operator("render.opengl", text="OpenGL Render Animation", icon='RENDER_ANIMATION')
+            props.animation = True
+            props.sequencer = True
+
+            layout.operator_context = 'INVOKE_DEFAULT'
+
+            layout.separator()
+            #end icons for the new OpenGl render feature
+            
             layout.operator_context = 'INVOKE_REGION_PREVIEW'
             layout.operator("sequencer.view_all_preview", text="Fit Preview in window")
 
