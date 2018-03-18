@@ -505,7 +505,7 @@ static int arg_handle_print_help(int UNUSED(argc), const char **UNUSED(argv), vo
 	printf("\n");
 	printf("Window Options:\n");
 	BLI_argsPrintArgDoc(ba, "--window-border");
-	BLI_argsPrintArgDoc(ba, "--window-borderless");
+	BLI_argsPrintArgDoc(ba, "--window-fullscreen");
 	BLI_argsPrintArgDoc(ba, "--window-geometry");
 	BLI_argsPrintArgDoc(ba, "--start-console");
 	BLI_argsPrintArgDoc(ba, "--no-native-pixels");
@@ -755,10 +755,14 @@ static const char arg_handle_debug_mode_generic_set_doc_depsgraph_build[] =
 "\n\tEnable debug messages from dependency graph related on graph construction.";
 static const char arg_handle_debug_mode_generic_set_doc_depsgraph_tag[] =
 "\n\tEnable debug messages from dependency graph related on tagging.";
+static const char arg_handle_debug_mode_generic_set_doc_depsgraph_time[] =
+"\n\tEnable debug messages from dependency graph related on timing.";
 static const char arg_handle_debug_mode_generic_set_doc_depsgraph_eval[] =
 "\n\tEnable debug messages from dependency graph related on evaluation.";
 static const char arg_handle_debug_mode_generic_set_doc_depsgraph_no_threads[] =
 "\n\tSwitch dependency graph to a single threaded evaluation.";
+static const char arg_handle_debug_mode_generic_set_doc_depsgraph_pretty[] =
+"\n\tEnable colors for dependency graph debug messages.";
 static const char arg_handle_debug_mode_generic_set_doc_gpumem[] =
 "\n\tEnable GPU memory stats in status bar.";
 
@@ -972,7 +976,7 @@ static int arg_handle_with_borders(int UNUSED(argc), const char **UNUSED(argv), 
 }
 
 static const char arg_handle_without_borders_doc[] =
-"\n\tForce opening without borders."
+"\n\tForce opening in fullscreen mode."
 ;
 static int arg_handle_without_borders(int UNUSED(argc), const char **UNUSED(argv), void *UNUSED(data))
 {
@@ -1872,8 +1876,12 @@ void main_args_setup(bContext *C, bArgs *ba, SYS_SystemHandle *syshandle)
 	            CB_EX(arg_handle_debug_mode_generic_set, depsgraph_eval), (void *)G_DEBUG_DEPSGRAPH_EVAL);
 	BLI_argsAdd(ba, 1, NULL, "--debug-depsgraph-tag",
 	            CB_EX(arg_handle_debug_mode_generic_set, depsgraph_tag), (void *)G_DEBUG_DEPSGRAPH_TAG);
+	BLI_argsAdd(ba, 1, NULL, "--debug-depsgraph-time",
+	            CB_EX(arg_handle_debug_mode_generic_set, depsgraph_time), (void *)G_DEBUG_DEPSGRAPH_TIME);
 	BLI_argsAdd(ba, 1, NULL, "--debug-depsgraph-no-threads",
 	            CB_EX(arg_handle_debug_mode_generic_set, depsgraph_no_threads), (void *)G_DEBUG_DEPSGRAPH_NO_THREADS);
+	BLI_argsAdd(ba, 1, NULL, "--debug-depsgraph-pretty",
+	            CB_EX(arg_handle_debug_mode_generic_set, depsgraph_pretty), (void *)G_DEBUG_DEPSGRAPH_PRETTY);
 	BLI_argsAdd(ba, 1, NULL, "--debug-gpumem",
 	            CB_EX(arg_handle_debug_mode_generic_set, gpumem), (void *)G_DEBUG_GPU_MEM);
 
@@ -1892,7 +1900,7 @@ void main_args_setup(bContext *C, bArgs *ba, SYS_SystemHandle *syshandle)
 	/* second pass: custom window stuff */
 	BLI_argsAdd(ba, 2, "-p", "--window-geometry", CB(arg_handle_window_geometry), NULL);
 	BLI_argsAdd(ba, 2, "-w", "--window-border", CB(arg_handle_with_borders), NULL);
-	BLI_argsAdd(ba, 2, "-W", "--window-borderless", CB(arg_handle_without_borders), NULL);
+	BLI_argsAdd(ba, 2, "-W", "--window-fullscreen", CB(arg_handle_without_borders), NULL);
 	BLI_argsAdd(ba, 2, "-con", "--start-console", CB(arg_handle_start_with_console), NULL);
 	BLI_argsAdd(ba, 2, "-R", NULL, CB(arg_handle_register_extension), NULL);
 	BLI_argsAdd(ba, 2, "-r", NULL, CB_EX(arg_handle_register_extension, silent), ba);
