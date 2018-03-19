@@ -2332,11 +2332,16 @@ class VIEW3D_PT_tools_brush_stroke(Panel, View3DPaintPanel):
                 col.separator()
 
                 col.prop(brush, "use_smooth_stroke")
+                
+                if brush.use_smooth_stroke:
 
-                sub = col.column()
-                sub.active = brush.use_smooth_stroke
-                sub.prop(brush, "smooth_stroke_radius", text="Radius", slider=True)
-                sub.prop(brush, "smooth_stroke_factor", text="Factor", slider=True)
+                    sub = col.column()
+                    sub.active = brush.use_smooth_stroke
+                    sub.prop(brush, "smooth_stroke_radius", text="Radius", slider=True)
+                    sub.prop(brush, "smooth_stroke_factor", text="Factor", slider=True)
+                    
+                    layout.prop(settings, "input_samples")
+                    
         else:
             col.separator()
 
@@ -2353,13 +2358,15 @@ class VIEW3D_PT_tools_brush_stroke(Panel, View3DPaintPanel):
 
             if brush.brush_capabilities.has_smooth_stroke:
                 col.prop(brush, "use_smooth_stroke")
+                
+                if brush.use_smooth_stroke:
 
-                sub = col.column()
-                sub.active = brush.use_smooth_stroke
-                sub.prop(brush, "smooth_stroke_radius", text="Radius", slider=True)
-                sub.prop(brush, "smooth_stroke_factor", text="Factor", slider=True)
+                    sub = col.column()
+                    sub.active = brush.use_smooth_stroke
+                    sub.prop(brush, "smooth_stroke_radius", text="Radius", slider=True)
+                    sub.prop(brush, "smooth_stroke_factor", text="Factor", slider=True)
 
-        layout.prop(settings, "input_samples")
+                    layout.prop(settings, "input_samples")
 
 
 class VIEW3D_PT_tools_brush_curve(Panel, View3DPaintPanel):
