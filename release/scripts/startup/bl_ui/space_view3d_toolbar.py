@@ -1879,15 +1879,22 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
                 col.separator()
                 row = col.row(align=True)
                 row.prop(brush, "rake_factor", slider=True)
+                
+                        # direction
+            col.separator()
+            col.row().prop(brush, "direction", expand=True)
+            col.separator()
 
             # use_original_normal and sculpt_plane
             if capabilities.has_sculpt_plane:
-                col.separator()
+
                 row = col.row(align=True)
 
                 row.prop(brush, "use_original_normal", toggle=True, icon_only=True)
 
                 row.prop(brush, "sculpt_plane", text = "")
+                
+                col.separator()
 
             if brush.sculpt_tool == 'MASK':
                 col.prop(brush, "mask_tool", text = "")
@@ -1902,9 +1909,11 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
 
                 row = col.row()
                 row.prop(brush, "use_plane_trim", text="Trim")
-                row = col.row()
-                row.active = brush.use_plane_trim
-                row.prop(brush, "plane_trim", slider=True, text="Distance")
+                
+                if brush.use_plane_trim:                
+                    row = col.row()
+                    row.active = brush.use_plane_trim
+                    row.prop(brush, "plane_trim", slider=True, text="Distance")
 
             # height
             if capabilities.has_height:
@@ -1912,17 +1921,11 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
                 row.prop(brush, "height", slider=True, text="Height")
 
             # use_frontface
-            col.separator()
             row = col.row()
-            row.prop(brush, "use_frontface", text="Front Faces Only")
-
-            # direction
-            col.separator()
-            col.row().prop(brush, "direction", expand=True)
+            row.prop(brush, "use_frontface", text="Front Faces Only")          
 
             # use_accumulate
             if capabilities.has_accumulate:
-                col.separator()
 
                 col.prop(brush, "use_accumulate")
 
