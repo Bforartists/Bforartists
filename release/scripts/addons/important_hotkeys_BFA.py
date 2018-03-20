@@ -20,10 +20,10 @@ import blf
 bl_info = {
     "name": "Important Hotkeys BFA",
     "author": "Reiner 'Tiles' Prokein",
-    "version": (1, 0, 1),
+    "version": (1, 0, 2),
     "blender": (2, 76, 0),
     "location": "3D View > Properties Panel > Important Hotkeys",
-    "description": "This addon displays some important hotkeys in the upper left corner",
+    "description": "This addon displays some important hotkeys in the upper left corner of the 3D view",
     "warning": "",
     "wiki_url": "",
     "tracker_url": "",
@@ -49,7 +49,7 @@ def handle_keys(km, keystring):
     if km.alt:
         keystring += "Alt " # has alt key?
     if km.key_modifier != "NONE":
-        string += km.key_modifier  + " " #key modifier when available. And a gap
+        keystring += km.key_modifier  + " " #key modifier when available. And a gap
     keystring += km.type # And finally the main key. 
     
     return keystring # calculation done, send the result back
@@ -455,6 +455,7 @@ def draw_modetext(self, context, obj):
     mode = obj.mode # The different modes
 
     texts = [] # Our text array
+
     if mode == 'OBJECT':
         if obj.type == 'MESH':
             texts.append(([
@@ -468,6 +469,7 @@ def draw_modetext(self, context, obj):
                 "Clear Parent - " + self.clear_parent,
                 "Join Mesh - " + self.join_mesh,
                 ]))
+
         elif obj.type:
             texts.append(([
                 "------",
@@ -657,6 +659,8 @@ def draw_modetext(self, context, obj):
             "------",
             "Make Parent - "+ self.pose_parent_set,
             ]))
+
+
             
     self.mod_Y = 8.2 * scene.important_hotkeys_font_size # our second text block needs a bit offset. Every new line adds 0.55. Plus a bit more because of the + 1 to have a spacing between the lines.
     
@@ -738,6 +742,31 @@ def draw_maintext(self, context):
             # Render image
             if item == 'wm.search_menu':
                 self.search_menu = handle_keys(km, self.search_menu)
+
+    # ---------------------- Grease Pencil section
+    keymaps_GPENCIL   = wm.keyconfigs['Blender User'].keymaps['Grease Pencil']
+    keymaps_STROKEEDIT   = wm.keyconfigs['Blender User'].keymaps['Grease Pencil Stroke Edit Mode']
+    
+    if self._flag2 == False:
+        
+        for item, km in keymaps_GPENCIL.keymap_items.items(): # all the items in the tuple
+            #print(tuple(keymaps_GPENCIL.keymap_items.keys()))      # debug. prints the tuple content
+
+            if item == 'wm.call_menu_pie':
+                if km.properties.name == 'GPENCIL_MT_pie_tool_palette':
+                    self.gpencil_tool_pie = handle_keys(km, self.gpencil_tool_pie)
+
+                if km.properties.name == 'GPENCIL_MT_pie_settings_palette':
+                    self.gpencil_settings_pie = handle_keys(km, self.gpencil_settings_pie)
+
+        for item, km in keymaps_STROKEEDIT.keymap_items.items(): # all the items in the tuple
+            #print(tuple(keymaps_STROKEEDIT.keymap_items.keys()))      # debug. prints the tuple content
+
+            if item == 'wm.call_menu_pie':
+                if km.properties.name == 'GPENCIL_MT_pie_sculpt':
+                    self.gpencil_sculpt_pie = handle_keys(km, self.gpencil_sculpt_pie)
+
+
   
     self._flag2 = True # One time goingh through the tuple and set the strings is enough.
     
@@ -752,6 +781,8 @@ def draw_maintext(self, context):
     blf.position(0, pos_x, context.region.height-pos_y, 0) #titleposition
     blf.size(font_id, context.scene.important_hotkeys_font_size, 72)
     bgl.glColor4f(font_color_r, font_color_g, font_color_b, font_color_alpha * 0.8) # color variables
+
+    
     
     texts = []
     texts.append(([
@@ -771,6 +802,43 @@ def draw_maintext(self, context):
         "Render image - " + self.render_image,
         "Show/Hide Renderview - " + self.render_view_show
         ]))
+
+    # We need some entries for the grease pencil mode too. The method with the empty lines is a dirty one. 
+    # But working. The alternative would have been a third text block. Do not want. 
+    # This method is easier to implement and to maintain :)
+
+    gp_edit = context.gpencil_data and context.gpencil_data.use_stroke_edit_mode
+    if gp_edit:
+        texts.append(([
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "------",
+            "Grease Pencil Tools Pie menu - " + self.gpencil_tool_pie,
+            "Grease Pencil Settings Pie menu - " + self.gpencil_settings_pie,
+            "Grease Pencil Sculpting Pie menu - " + self.gpencil_sculpt_pie,
+            ]))
     
     # Draw the text
     for data in texts:
@@ -812,6 +880,10 @@ class ModalDrawOperator(bpy.types.Operator):
         self.set_3d_cursor = "Not found" # plugin reset 3d view
         # Window
         self.search_menu = "Not found" # plugin reset 3d view
+        # Grease Pencil
+        self.gpencil_tool_pie = "Not found"
+        self.gpencil_settings_pie = "Not found"
+        self.gpencil_sculpt_pie = "Not found"
         # Screen
         self.switch_to_camera = "Not found"
         self.render_image = "Not found" 
