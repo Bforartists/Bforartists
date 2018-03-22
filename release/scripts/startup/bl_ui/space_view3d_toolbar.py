@@ -890,7 +890,7 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
             col.operator("mesh.vertices_smooth_laplacian", icon='LAPLACIAN_SMOOTH_VERTEX')
 
             col = layout.column(align=True)
-            col.label(text="Add:")
+            col.label(text="Modify:")
 
             col.menu("VIEW3D_MT_edit_mesh_extrude")
             col.operator("view3d.edit_mesh_extrude_move_normal", icon='EXTRUDE_REGION', text="Extrude Region")
@@ -959,7 +959,7 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
 
 
             col = layout.column(align=False)
-            col.label(text="Add:")
+            col.label(text="Modify:")
 
             row = col.row(align=False)
             row.alignment = 'LEFT' 
