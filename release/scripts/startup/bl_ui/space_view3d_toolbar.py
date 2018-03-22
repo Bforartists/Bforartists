@@ -959,7 +959,10 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
 
             col = layout.column(align=False)
             col.label(text="Add:")
-            col.menu("VIEW3D_MT_edit_mesh_extrude")
+
+            row = col.row(align=False)
+            row.alignment = 'LEFT' 
+            row.menu("VIEW3D_MT_edit_mesh_extrude", text = "", icon = "EXTRUDE_REGION")
 
             col.separator()
             
