@@ -119,12 +119,14 @@ class VIEW3D_MT_snap_panel(View3DPanel, Panel):
             col.operator("view3d.snap_cursor_to_active", text="Active              ", icon = "CURSORTOACTIVE")
             col.operator("view3d.snap_cursor_to_grid", text="Grid                 ", icon = "CURSORTOGRID")
 
-            if obj.type == 'MESH' and obj.mode in {'EDIT'}:
-            
-                col = layout.column(align=True)
+            if obj:
 
-                col.label(text="Snap to ... :")
-                col.operator("mesh.symmetry_snap", text = "Symmetry      ", icon = "SNAP_SYMMETRY")
+                if obj.type == 'MESH' and obj.mode in {'EDIT'}:
+            
+                    col = layout.column(align=True)
+
+                    col.label(text="Snap to ... :")
+                    col.operator("mesh.symmetry_snap", text = "Symmetry      ", icon = "SNAP_SYMMETRY")
 
         else: 
 
@@ -147,12 +149,14 @@ class VIEW3D_MT_snap_panel(View3DPanel, Panel):
             row.operator("view3d.snap_cursor_to_active", text = "", icon = "CURSORTOACTIVE")
             row.operator("view3d.snap_cursor_to_grid", text = "", icon = "CURSORTOGRID")
 
-            if obj.type == 'MESH' and obj.mode in {'EDIT'}:
+            if obj:
 
-                col.label(text="Snap to ... :")
-                row = col.row(align=False)
-                row.alignment = 'LEFT'
-                row.operator("mesh.symmetry_snap", text = "", icon = "SNAP_SYMMETRY")
+                if obj.type == 'MESH' and obj.mode in {'EDIT'}:
+
+                    col.label(text="Snap to ... :")
+                    row = col.row(align=False)
+                    row.alignment = 'LEFT'
+                    row.operator("mesh.symmetry_snap", text = "", icon = "SNAP_SYMMETRY")
 
 
 class VIEW3D_PT_tools_object(View3DPanel, Panel):
