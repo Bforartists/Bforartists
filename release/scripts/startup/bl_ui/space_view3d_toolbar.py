@@ -920,9 +920,10 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
             col.operator("mesh.knife_project", icon='KNIFE_PROJECT', text="Knife Project   ")
             col.operator("mesh.bisect", icon='BISECT', text="Bisect              ")
 
-            col = layout.column(align=True)
-            col.operator_menu_enum("mesh.merge", "type")
-            col.operator_menu_enum("mesh.separate", "type")
+            #col = layout.column(align=True)
+            col.label(text="Merge/Separate:")
+            col.operator_menu_enum("mesh.merge", "type", icon = "MERGE")
+            col.operator_menu_enum("mesh.separate", "type", icon = "SEPARATE")
             
             col.label(text="Dissolve:")
             col.operator("mesh.dissolve_verts", icon='DISSOLVE_VERTS')
@@ -1004,9 +1005,12 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
             row.operator("mesh.knife_project", icon='KNIFE_PROJECT', text = "")
             row.operator("mesh.bisect", icon='BISECT', text = "")
 
-            col = layout.column(align=False)
-            col.operator_menu_enum("mesh.merge", "type")
-            col.operator_menu_enum("mesh.separate", "type")
+            col.label(text="Merge/Separate:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+
+            row.operator_menu_enum("mesh.merge", "type", text = "", icon = "MERGE")
+            row.operator_menu_enum("mesh.separate", "type", text = "", icon = "SEPARATE")
 
             col.label(text="Dissolve:")
             row = col.row(align=False)
