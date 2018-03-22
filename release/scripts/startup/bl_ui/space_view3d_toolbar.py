@@ -105,25 +105,26 @@ class VIEW3D_MT_snap_panel(View3DPanel, Panel):
             col = layout.column(align=True)
 
             col.label(text="Selection to ... :")
-            col.operator("view3d.snap_selected_to_grid", text="Selection to Grid                ", icon = "SELECTIONTOGRID")
-            col.operator("view3d.snap_selected_to_cursor", text="Selection to Cursor              ", icon = "SELECTIONTOCURSOR").use_offset = False
-            col.operator("view3d.snap_selected_to_cursor", text="Selection to Cursor (Offset)", icon = "SELECTIONTOCURSOROFFSET").use_offset = True
-            col.operator("view3d.snap_selected_to_active", text="Selection to Active              ", icon = "SELECTIONTOACTIVE")
+            
+            col.operator("view3d.snap_selected_to_cursor", text="Cursor              ", icon = "SELECTIONTOCURSOR").use_offset = False
+            col.operator("view3d.snap_selected_to_cursor", text="Cursor (Offset) ", icon = "SELECTIONTOCURSOROFFSET").use_offset = True
+            col.operator("view3d.snap_selected_to_active", text="Active              ", icon = "SELECTIONTOACTIVE")
+            col.operator("view3d.snap_selected_to_grid", text="Grid                  ", icon = "SELECTIONTOGRID")
 
             col = layout.column(align=True)
 
             col.label(text="Cursor to ... :")
-            col.operator("view3d.snap_cursor_to_selected", text="Cursor to Selected              ", icon = "CURSORTOSELECTION")
-            col.operator("view3d.snap_cursor_to_center", text="Cursor to Center                  ", icon = "CURSORTOCENTER")
-            col.operator("view3d.snap_cursor_to_grid", text="Cursor to Grid                      ", icon = "CURSORTOGRID")
-            col.operator("view3d.snap_cursor_to_active", text="Cursor to Active                  ", icon = "CURSORTOACTIVE")
+            col.operator("view3d.snap_cursor_to_selected", text="Selected          ", icon = "CURSORTOSELECTION")
+            col.operator("view3d.snap_cursor_to_center", text="Center              ", icon = "CURSORTOCENTER")          
+            col.operator("view3d.snap_cursor_to_active", text="Active              ", icon = "CURSORTOACTIVE")
+            col.operator("view3d.snap_cursor_to_grid", text="Grid                 ", icon = "CURSORTOGRID")
 
             if obj.type == 'MESH' and obj.mode in {'EDIT'}:
             
                 col = layout.column(align=True)
 
                 col.label(text="Snap to ... :")
-                col.operator("mesh.symmetry_snap", text = "Snap to Symmetry               ", icon = "SNAP_SYMMETRY")
+                col.operator("mesh.symmetry_snap", text = "Symmetry      ", icon = "SNAP_SYMMETRY")
 
         else: 
 
