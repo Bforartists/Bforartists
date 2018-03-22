@@ -2664,7 +2664,6 @@ class VIEW3D_MT_edit_mesh(Menu):
 
         layout.menu("VIEW3D_MT_transform")
         layout.operator("object.vertex_group_mirror", icon = "MIRROR_VERTEXGROUP")
-        layout.operator("mesh.symmetry_snap", icon = "SNAP_SYMMETRY")
 
         layout.separator()
 
