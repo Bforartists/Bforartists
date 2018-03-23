@@ -3230,7 +3230,6 @@ class VIEW3D_MT_edit_lattice(Menu):
         toolsettings = context.tool_settings
 
         layout.menu("VIEW3D_MT_transform")
-        layout.operator("object.vertex_group_mirror", icon = "MIRROR_VERTEXGROUP")
         layout.menu("VIEW3D_MT_edit_lattice_flip")
 
 class VIEW3D_MT_edit_lattice_flip(Menu):
