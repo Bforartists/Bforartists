@@ -1663,8 +1663,8 @@ class VIEW3D_PT_tools_latticeedit(View3DPanel, Panel):
 
             col = layout.column(align=True)
             col.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="Mirror                   ")
+            col.operator("object.vertex_group_mirror", icon = "MIRROR_VERTEXGROUP", text = "Mirror Vertex Group    ")
             col.operator("lattice.make_regular", icon = 'MAKE_REGULAR', text = "Make Regular  ")
-
 
         else:
             col = layout.column(align=True)
@@ -1672,7 +1672,9 @@ class VIEW3D_PT_tools_latticeedit(View3DPanel, Panel):
             row = col.row(align=False)
             row.alignment = 'LEFT'
             row.operator("transform.mirror", icon='TRANSFORM_MIRROR', text = "")
+            row.operator("object.vertex_group_mirror", icon = "MIRROR_VERTEXGROUP", text = "")
             row.operator("lattice.make_regular", icon = 'MAKE_REGULAR', text = "")
+           
 
 
 # ********** default tools for pose-mode ****************
