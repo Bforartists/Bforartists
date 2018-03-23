@@ -2663,7 +2663,6 @@ class VIEW3D_MT_edit_mesh(Menu):
         toolsettings = context.tool_settings
 
         layout.menu("VIEW3D_MT_transform")
-        layout.operator("object.vertex_group_mirror", icon = "MIRROR_VERTEXGROUP")
 
         layout.separator()
 
@@ -2683,7 +2682,6 @@ class VIEW3D_MT_edit_mesh(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_subdivision_set")
-        layout.operator("mesh.symmetrize", icon = "SYMMETRIZE")
         layout.operator("mesh.noise", icon='NOISE')      
         layout.menu("VIEW3D_MT_edit_mesh_sort_elements")
 

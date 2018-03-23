@@ -879,6 +879,8 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
             col = layout.column(align=True)
             col.operator("transform.shrink_fatten", icon = 'SHRINK_FATTEN', text="Shrink/Fatten   ")
             col.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="Mirror              ")
+            col.operator("object.vertex_group_mirror", icon = "MIRROR_VERTEXGROUP", text = "Mirror Vertex Group")
+            col.operator("mesh.symmetrize", icon = "SYMMETRIZE", text = "Symmetrize")
 
             # --------------------------------------
 
@@ -960,7 +962,9 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
             row.alignment = 'LEFT'
 
             row.operator("transform.shrink_fatten", icon = 'SHRINK_FATTEN', text = "")
-            row.operator("transform.mirror", icon='TRANSFORM_MIRROR', text = "")  
+            row.operator("transform.mirror", icon='TRANSFORM_MIRROR', text = "")
+            row.operator("object.vertex_group_mirror", icon = "MIRROR_VERTEXGROUP", text = "")
+            row.operator("mesh.symmetrize", icon = "SYMMETRIZE", text = "")
 
             # --------------------------------------
 
