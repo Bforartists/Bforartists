@@ -332,7 +332,7 @@ option(WITH_CODEC_FFMPEG        "Enable FFMPeg Support (http://ffmpeg.org)" ${_i
 option(WITH_CODEC_SNDFILE       "Enable libsndfile Support (http://www.mega-nerd.com/libsndfile)" OFF)
 
 # Alembic support
-option(WITH_ALEMBIC             "Enable Alembic Support" OFF)
+option(WITH_ALEMBIC             "Enable Alembic Support" ON)
 option(WITH_ALEMBIC_HDF5        "Enable Legacy Alembic Support (not officially supported)" OFF)
 
 # 3D format support
