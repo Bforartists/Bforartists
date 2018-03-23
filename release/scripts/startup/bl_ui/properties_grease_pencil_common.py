@@ -114,21 +114,19 @@ class GreasePencilDrawingToolsPanel:
         row.operator("gpencil.draw", icon= 'ERASE',  text="").mode = 'ERASER'
         row.operator("gpencil.draw", icon= 'LINE_DATA', text="").mode = 'DRAW_STRAIGHT'
         row.operator("gpencil.draw", icon= 'MESH_DATA', text="").mode = 'DRAW_POLY'
-        col.separator()
 
         col.separator()
 
         sub = col.column(align=True)
         sub.operator("gpencil.blank_frame_add", icon='NEW')
         sub.operator("gpencil.active_frames_delete_all", icon='DELETE', text="Delete Frame(s)")
+        
+        col.separator()
 
         sub = col.column(align=True)
         sub.prop(context.tool_settings, "use_gpencil_additive_drawing", text="Additive Drawing")
         sub.prop(context.tool_settings, "use_gpencil_continuous_drawing", text="Continuous Drawing")
         sub.prop(context.tool_settings, "use_gpencil_draw_onback", text="Draw on Back")
-
-        col.separator()
-        col.separator()
 
         if context.space_data.type in {'VIEW_3D', 'CLIP_EDITOR'}:
             col.separator()
@@ -140,7 +138,6 @@ class GreasePencilDrawingToolsPanel:
                 row.prop(context.space_data, "grease_pencil_source", expand=True)
 
         col.separator()
-        col.separator()
 
         gpencil_stroke_placement_settings(context, col)
 
@@ -148,13 +145,11 @@ class GreasePencilDrawingToolsPanel:
 
         if gpd and not is_3d_view:
             layout.separator()
-            layout.separator()
 
             col = layout.column(align=True)
             col.prop(gpd, "use_stroke_edit_mode", text="Enable Editing", icon='EDIT', toggle=True)
 
         if is_3d_view:
-            col.separator()
             col.separator()
 
             col.label(text="Tools:")
