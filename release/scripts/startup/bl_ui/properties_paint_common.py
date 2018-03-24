@@ -214,14 +214,15 @@ def brush_texpaint_common(panel, context, layout, brush, settings, projpaint=Fal
     col = layout.column()
 
     # use_accumulate
+    
+    row = col.row(align=True)
     if capabilities.has_accumulate:
-        col = layout.column(align=True)
-        col.prop(brush, "use_accumulate")
+        row.prop(brush, "use_accumulate")
 
     if projpaint:
-        col.prop(brush, "use_alpha")
+        row.prop(brush, "use_alpha")
 
-    col.prop(brush, "use_gradient")
+    row.prop(brush, "use_gradient")
 
     col.separator()
     col.template_ID(settings, "palette", new="palette.new")
