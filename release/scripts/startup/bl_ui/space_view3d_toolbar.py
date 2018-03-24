@@ -2042,11 +2042,8 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
             self.prop_unified_color(row, context, brush, "color", text="")
             self.prop_unified_color(row, context, brush, "secondary_color", text="")
             row.separator()
-            row.operator("paint.brush_colors_flip", icon='FILE_REFRESH', text="")
 
-            row = col.row(align=True) # We need a row to add our eyedropper besides the color field.
-            self.prop_unified_color(row, context, brush, "color", text = "") # Here now with row instead of col
-            row.separator() # A separator
+            row.operator("paint.brush_colors_flip", icon='FILE_REFRESH', text="")
             row.operator("paint.sample_color", icon='EYEDROPPER', text = "") # And finally the eyedropper
 
             col.separator()
