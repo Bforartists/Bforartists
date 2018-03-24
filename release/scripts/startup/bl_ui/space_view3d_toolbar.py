@@ -2023,14 +2023,14 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
             self.prop_unified_strength(row, context, brush, "use_pressure_strength")
 
             col.prop(brush, "vertex_tool", text="Blend")
+            
+            row = col.row(align=True)
 
             if brush.vertex_tool != 'SMEAR':
-                col.prop(brush, "use_accumulate")
-                col.separator()
+                row.prop(brush, "use_accumulate")
 
-            col = layout.column()
-            col.prop(toolsettings, "use_auto_normalize", text="Auto Normalize")
-            col.prop(toolsettings, "use_multipaint", text="Multi-Paint")
+            row.prop(toolsettings, "use_auto_normalize", text="Auto Normalize")
+            row.prop(toolsettings, "use_multipaint", text="Multi-Paint")
 
         # Vertex Paint Mode #
         elif context.vertex_paint_object and brush:
@@ -2062,10 +2062,13 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
             # row = col.row(align=True)
             # row.prop(brush, "jitter", slider=True)
             # row.prop(brush, "use_pressure_jitter", toggle=True, text = "")
+
             col.separator()
             col.prop(brush, "vertex_tool", text="Blend")
-            col.prop(brush, "use_accumulate")
-            col.prop(brush, "use_alpha")
+
+            row = col.row(align=True)
+            row.prop(brush, "use_accumulate")
+            row.prop(brush, "use_alpha")
 
             col.separator()
             col.template_ID(settings, "palette", new="palette.new")
