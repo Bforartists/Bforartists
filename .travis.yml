@@ -40,7 +40,7 @@ matrix:
 
 # Before compile
 install:
-  - ./build_files/build_environment/install_deps.sh --with-all --no-confirm
+  - ./build_files/build_environment/install_deps.sh --skip-osl --no-confirm
 
 script:
   - mkdir build
