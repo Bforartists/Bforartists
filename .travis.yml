@@ -35,10 +35,6 @@ matrix:
     osx_image: xcode8
     env:
       - MATRIX_EVAL="NPROC=$(sysctl -n hw.physicalcpu)"
-      
-before_install:
-  - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-  - sudo apt-get update -qq
 
 # Before compile
 install:
