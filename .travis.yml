@@ -38,7 +38,7 @@ matrix:
 
 # Before compile
 install:
-  - ./build_files/build_environment/install_deps.sh --build-all --no-confirm
+  - ./build_files/build_environment/install_deps.sh --no-confirm --with-all
 
 script:
   - mkdir build
