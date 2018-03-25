@@ -83,6 +83,7 @@
 
 #include "ED_armature.h"
 #include "ED_curve.h"
+#include "ED_lattice.h"
 #include "ED_particle.h"
 #include "ED_mesh.h"
 #include "ED_object.h"
@@ -1985,8 +1986,8 @@ static int do_object_pose_box_select(bContext *C, ViewContext *vc, rcti *rect, b
 {
 	Bone *bone;
 	Object *ob = vc->obact;
-	unsigned int *vbuffer = NULL; /* selection buffer	*/
-	unsigned int *col;          /* color in buffer	*/
+	unsigned int *vbuffer = NULL; /* selection buffer */
+	unsigned int *col;            /* color in buffer */
 	int bone_only;
 	int bone_selected = 0;
 	int totobj = MAXPICKBUF; /* XXX solve later */
