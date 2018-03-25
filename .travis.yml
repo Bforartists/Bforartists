@@ -56,7 +56,7 @@ matrix:
 
 # Before compile
 install:
-  - ./build_files/build_environment/install_deps.sh --build-all
+  - ./build_files/build_environment/install_deps.sh --build-all -y
 
 script:
   - mkdir build
