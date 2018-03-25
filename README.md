@@ -25,7 +25,7 @@ The main differences to Blender are:
 - Some neat new addons to improve usability, like the reset 3D View addon or the Important Hotkey addon.
 - And lots more small details like hidable 3D Cursor or Wireframe Colors. Or that you can now delete objects and selections without the delete menu quiz.
 
-A detailled list of the changes can be found in the release notes: http://www.bforartists.de/wiki/release-notes
+A detailled list of the changes can be found in the release notes: https://www.bforartists.de/wiki/release-notes
 
 But the code is just half of the show. Another important bit is the non code things.
 
