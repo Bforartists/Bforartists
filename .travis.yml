@@ -42,8 +42,6 @@ before_install:
 
 # Before compile
 install:
-  - sudo apt-get install -qq g++-6
-  - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-6 90
   - ./build_files/build_environment/install_deps.sh --build-all --no-confirm
 
 script:
