@@ -32,6 +32,8 @@ But the code is just half of the show. Another important bit is the non code thi
 
 This youtube video describes the differences by showing them.
 
+[![Youtube Introduction](https://img.youtube.com/vi/zSbxfYF7rIY/0.jpg)](https://www.youtube.com/watch?v=zSbxfYF7rIY)
+
 https://youtu.be/zSbxfYF7rIY
 
 And here's a Youtube playlist with some quickstart videos:
