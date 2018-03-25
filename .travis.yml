@@ -23,6 +23,8 @@ matrix:
         sources:
           - ubuntu-toolchain-r-test
         packages:
+          - nvidia-cuda-dev
+          - libcuda1-384
           - build-essential
           - gcc-6-multilib
           - gcc-6
@@ -38,7 +40,7 @@ matrix:
 
 # Before compile
 install:
-  - ./build_files/build_environment/install_deps.sh --no-confirm
+  - ./build_files/build_environment/install_deps.sh --with-all --no-confirm
 
 script:
   - mkdir build
