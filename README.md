@@ -1,6 +1,8 @@
 # Bforartists
 
 [![Build status](https://ci.appveyor.com/api/projects/status/alpp11hxsn7ix39o?svg=true)](https://ci.appveyor.com/project/ktotheoz/bforartists)
+[![Build Status](https://img.shields.io/travis/Bforartists/Bforartists.svg?branch=master&job=1&label=Linux)](https://travis-ci.org/Bforartists/Bforartists)
+[![Build Status](https://img.shields.io/travis/Bforartists/Bforartists.svg?branch=master&job=2&label=Mac)](https://travis-ci.org/Bforartists/Bforartists)
 
 Bforartists is a fork of the popular 3D software Blender, with the goal to improve the graphical UI, and to increase the usability.
 
