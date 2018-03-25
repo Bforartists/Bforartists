@@ -6,10 +6,8 @@ clone_folder: c:\projects\bfa
 image:
 - Visual Studio 2013
 - Visual Studio 2015
-- Visual Studio 2017
 configuration:
 - Release
-- Debug
 platform:
 - x64
 environment:
@@ -31,7 +29,7 @@ init:
 
 before_build:
 - cmd: |-
-    call build_files/build_environment/windows/install_cuda.cmd
+#    call build_files/build_environment/windows/install_cuda.cmd
     cd ..
     if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2013" (svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/win64_vc12 lib/win64_vc12)
     if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2015" (svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/win64_vc14 lib/win64_vc14)
