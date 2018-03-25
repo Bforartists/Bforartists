@@ -1406,8 +1406,8 @@ class TOOLBAR_MT_edit(Menu):
 
                     row = layout.row(align=True)
 
-                    row.operator_menu_enum("mesh.merge", "type")
-                    row.operator_menu_enum("mesh.separate", "type")
+                    row.operator_menu_enum("mesh.merge", "type", text = "", icon = "MERGE")
+                    row.operator_menu_enum("mesh.separate", "type", text = "", icon = "SEPARATE")
 
             if addon_prefs.edit_weightinedit:
 

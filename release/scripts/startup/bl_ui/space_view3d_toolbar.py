@@ -97,22 +97,36 @@ class VIEW3D_MT_snap_panel(View3DPanel, Panel):
         layout = self.layout
 
         view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
-            # text
+        obj = context.active_object
+
+        # text
         if not view.show_iconbuttons: 
 
             col = layout.column(align=True)
 
-            col.operator("view3d.snap_selected_to_grid", text="Selection to Grid                ", icon = "SELECTIONTOGRID")
-            col.operator("view3d.snap_selected_to_cursor", text="Selection to Cursor              ", icon = "SELECTIONTOCURSOR").use_offset = False
-            col.operator("view3d.snap_selected_to_cursor", text="Selection to Cursor (Offset)", icon = "SELECTIONTOCURSOROFFSET").use_offset = True
-            col.operator("view3d.snap_selected_to_active", text="Selection to Active              ", icon = "SELECTIONTOACTIVE")
+            col.label(text="Selection to ... :")
+            
+            col.operator("view3d.snap_selected_to_cursor", text="Cursor              ", icon = "SELECTIONTOCURSOR").use_offset = False
+            col.operator("view3d.snap_selected_to_cursor", text="Cursor (Offset) ", icon = "SELECTIONTOCURSOROFFSET").use_offset = True
+            col.operator("view3d.snap_selected_to_active", text="Active              ", icon = "SELECTIONTOACTIVE")
+            col.operator("view3d.snap_selected_to_grid", text="Grid                  ", icon = "SELECTIONTOGRID")
 
             col = layout.column(align=True)
 
-            col.operator("view3d.snap_cursor_to_selected", text="Cursor to Selected              ", icon = "CURSORTOSELECTION")
-            col.operator("view3d.snap_cursor_to_center", text="Cursor to Center                  ", icon = "CURSORTOCENTER")
-            col.operator("view3d.snap_cursor_to_grid", text="Cursor to Grid                      ", icon = "CURSORTOGRID")
-            col.operator("view3d.snap_cursor_to_active", text="Cursor to Active                  ", icon = "CURSORTOACTIVE")
+            col.label(text="Cursor to ... :")
+            col.operator("view3d.snap_cursor_to_selected", text="Selected          ", icon = "CURSORTOSELECTION")
+            col.operator("view3d.snap_cursor_to_center", text="Center              ", icon = "CURSORTOCENTER")          
+            col.operator("view3d.snap_cursor_to_active", text="Active              ", icon = "CURSORTOACTIVE")
+            col.operator("view3d.snap_cursor_to_grid", text="Grid                 ", icon = "CURSORTOGRID")
+
+            if obj:
+
+                if obj.type == 'MESH' and obj.mode in {'EDIT'}:
+            
+                    col = layout.column(align=True)
+
+                    col.label(text="Snap to ... :")
+                    col.operator("mesh.symmetry_snap", text = "Symmetry      ", icon = "SNAP_SYMMETRY")
 
         else: 
 
@@ -134,6 +148,15 @@ class VIEW3D_MT_snap_panel(View3DPanel, Panel):
             row.operator("view3d.snap_cursor_to_center", text = "", icon = "CURSORTOCENTER")         
             row.operator("view3d.snap_cursor_to_active", text = "", icon = "CURSORTOACTIVE")
             row.operator("view3d.snap_cursor_to_grid", text = "", icon = "CURSORTOGRID")
+
+            if obj:
+
+                if obj.type == 'MESH' and obj.mode in {'EDIT'}:
+
+                    col.label(text="Snap to ... :")
+                    row = col.row(align=False)
+                    row.alignment = 'LEFT'
+                    row.operator("mesh.symmetry_snap", text = "", icon = "SNAP_SYMMETRY")
 
 
 class VIEW3D_PT_tools_object(View3DPanel, Panel):
@@ -855,38 +878,37 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
 
             col = layout.column(align=True)
             col.operator("transform.shrink_fatten", icon = 'SHRINK_FATTEN', text="Shrink/Fatten   ")
-            col = layout.column(align=True)
             col.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="Mirror              ")
- 
+            col.operator("object.vertex_group_mirror", icon = "MIRROR_VERTEXGROUP", text = "Mirror Vertex Group")
+            col.operator("mesh.symmetrize", icon = "SYMMETRIZE", text = "Symmetrize")
+
+            # --------------------------------------
 
             col = layout.column(align=True)
-            col.label(text="Deform:")
-            col.operator("transform.edge_slide", icon='SLIDE_EDGE', text="Edge Slide       ")
-            col.operator("transform.vert_slide", icon='SLIDE_VERTEX', text="Vertex Slide    ")
-            col.operator("mesh.vertices_smooth", icon='SMOOTH_VERTEX')
-            col.operator("mesh.vertices_smooth_laplacian", icon='LAPLACIAN_SMOOTH_VERTEX')
-
-            col = layout.column(align=True)
-            col.label(text="Add:")
-
-            col.menu("VIEW3D_MT_edit_mesh_extrude")
+            col.label(text="Modify:")
+            
             col.operator("view3d.edit_mesh_extrude_move_normal", icon='EXTRUDE_REGION', text="Extrude Region")
-            col.operator("view3d.edit_mesh_extrude_individual_move", icon='EXTRUDE_INDIVIDUAL', text="Individual        "),
-           
-            layout.separator()
+            col.operator("view3d.edit_mesh_extrude_individual_move", icon='EXTRUDE_INDIVIDUAL', text="Individual        ")
+            col.menu("VIEW3D_MT_edit_mesh_extrude")
+
+            col = layout.column(align=True)
+
             col.operator("mesh.spin", icon='SPIN', text="Spin                 ")
             col.operator("mesh.screw", icon='SCREW', text="Screw              ")
-            col.operator("mesh.bevel", icon='BEVEL', text="Bevel               ")
-            col.operator("mesh.bevel", icon='VERTEXBEVEL',text = "Vertex Bevel    ").vertex_only = True
-
-            layout.separator()
-
             col.operator("mesh.inset", icon='INSET_FACES', text="Inset Faces      ")
             col.operator("mesh.edge_face_add", icon='MAKE_EDGEFACE', text="Make Edge/Face   ")
+
+            col = layout.column(align=True)
+
+            col.operator("mesh.bevel", icon='BEVEL', text="Bevel               ")
+            col.operator("mesh.bevel", icon='VERTEXBEVEL',text = "Vertex Bevel    ").vertex_only = True          
             col.operator("mesh.subdivide", icon='SUBDIVIDE_EDGES', text="Subdivide        ")
-            col.operator("mesh.loopcut_slide", icon='LOOP_CUT_AND_SLIDE', text="Loop Cut n Slide  ")
-            col.operator("mesh.offset_edge_loops_slide", icon='OFFSET_EDGE_SLIDE')
             col.operator("mesh.bridge_edge_loops", icon = "BRIDGE_EDGELOOPS")
+
+            # --------------------------------------
+
+            col = layout.column(align=True)
+            col.label(text="Cut/Slide:")
 
             props = col.operator("mesh.knife_tool", icon='KNIFE', text="Knife                ")
             props.use_occlude_geometry = True
@@ -894,12 +916,33 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
             props = col.operator("mesh.knife_tool", icon='KNIFE_SELECT', text="Knife Select    ")
             props.use_occlude_geometry = False
             props.only_selected = True
+            col.operator("mesh.loopcut_slide", icon='LOOP_CUT_AND_SLIDE', text="Loop Cut n Slide  ")
+            col.operator("mesh.offset_edge_loops_slide", icon='OFFSET_EDGE_SLIDE')
+
+            col = layout.column(align=True)
+
             col.operator("mesh.knife_project", icon='KNIFE_PROJECT', text="Knife Project   ")
             col.operator("mesh.bisect", icon='BISECT', text="Bisect              ")
 
+            # --------------------------------------
+
             col = layout.column(align=True)
-            col.operator_menu_enum("mesh.merge", "type")
-            col.operator_menu_enum("mesh.separate", "type")
+            col.label(text="Merge/Separate:")
+
+            col.operator_menu_enum("mesh.merge", "type", icon = "MERGE")
+            col.operator_menu_enum("mesh.separate", "type", icon = "SEPARATE")
+
+            # --------------------------------------
+
+            col = layout.column(align=True)
+            col.label(text="Deform:")
+
+            col.operator("transform.edge_slide", icon='SLIDE_EDGE', text="Edge Slide       ")
+            col.operator("transform.vert_slide", icon='SLIDE_VERTEX', text="Vertex Slide    ")
+            col.operator("mesh.vertices_smooth", icon='SMOOTH_VERTEX')
+            col.operator("mesh.vertices_smooth_laplacian", icon='LAPLACIAN_SMOOTH_VERTEX')
+
+            # --------------------------------------
             
             col.label(text="Dissolve:")
             col.operator("mesh.dissolve_verts", icon='DISSOLVE_VERTS')
@@ -907,22 +950,82 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
             col.operator("mesh.dissolve_faces", icon='DISSOLVE_FACES')
             col.operator("mesh.remove_doubles", icon='REMOVE_DOUBLES')
 
-            layout.separator()
+            col = layout.column(align=True)
 
             col.operator("mesh.dissolve_limited", icon='DISSOLVE_LIMITED') 
             col.operator("mesh.dissolve_mode", icon='DISSOLVE_SELECTION')
-
-            layout.separator()
-
             col.operator("mesh.edge_collapse", icon='EDGE_COLLAPSE')
 
         else:
 
             row = layout.row(align=False)
             row.alignment = 'LEFT'
+
             row.operator("transform.shrink_fatten", icon = 'SHRINK_FATTEN', text = "")
             row.operator("transform.mirror", icon='TRANSFORM_MIRROR', text = "")
+            row.operator("object.vertex_group_mirror", icon = "MIRROR_VERTEXGROUP", text = "")
+            row.operator("mesh.symmetrize", icon = "SYMMETRIZE", text = "")
 
+            # --------------------------------------
+
+            col = layout.column(align=False)
+            col.label(text="Modify:")
+
+            row = col.row(align=False)
+            row.alignment = 'LEFT' 
+            
+            row.operator("view3d.edit_mesh_extrude_move_normal", icon='EXTRUDE_REGION', text = "")
+            row.operator("view3d.edit_mesh_extrude_individual_move", icon='EXTRUDE_INDIVIDUAL', text = "")
+            row.menu("VIEW3D_MT_edit_mesh_extrude", text = "", icon = "EXTRUDE_REGION")         
+
+            col.separator()
+
+            row = col.row(align=False)  
+            row.operator("mesh.spin", icon='SPIN', text = "")
+            row.operator("mesh.screw", icon='SCREW', text = "")
+            row.operator("mesh.inset", icon='INSET_FACES', text = "")
+            row.operator("mesh.edge_face_add", icon='MAKE_EDGEFACE', text = "")   
+                     
+            col.separator()
+
+            row = col.row(align=False)
+            row.operator("mesh.bevel", icon='BEVEL', text = "")
+            row.operator("mesh.bevel", icon='VERTEXBEVEL',text = "").vertex_only = True
+            row.operator("mesh.subdivide", icon='SUBDIVIDE_EDGES', text = "")
+            row.operator("mesh.bridge_edge_loops", icon = "BRIDGE_EDGELOOPS", text = "")
+
+            # --------------------------------------
+
+            col = layout.column(align=False)
+            col.label(text="Cut/Slide:")
+
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            props = row.operator("mesh.knife_tool", icon='KNIFE', text = "")
+            props.use_occlude_geometry = True
+            props.only_selected = False
+            props = row.operator("mesh.knife_tool", icon='KNIFE_SELECT', text = "")
+            props.use_occlude_geometry = False
+            props.only_selected = True
+            row.operator("mesh.loopcut_slide", icon='LOOP_CUT_AND_SLIDE', text = "")
+            row.operator("mesh.offset_edge_loops_slide", icon='OFFSET_EDGE_SLIDE', text = "")
+
+            col.separator()
+            row = col.row(align=False)
+
+            row.operator("mesh.knife_project", icon='KNIFE_PROJECT', text = "")
+            row.operator("mesh.bisect", icon='BISECT', text = "")
+
+            # --------------------------------------
+
+            col.label(text="Merge/Separate:")
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+
+            row.operator_menu_enum("mesh.merge", "type", text = "", icon = "MERGE")
+            row.operator_menu_enum("mesh.separate", "type", text = "", icon = "SEPARATE")
+
+            # --------------------------------------
 
             col = layout.column(align=True)
             col.label(text="Deform:")
@@ -933,54 +1036,7 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
             row.operator("mesh.vertices_smooth", icon='SMOOTH_VERTEX', text = "")
             row.operator("mesh.vertices_smooth_laplacian", icon='LAPLACIAN_SMOOTH_VERTEX', text = "")
 
-
-            col = layout.column(align=False)
-            col.label(text="Add:")
-            col.menu("VIEW3D_MT_edit_mesh_extrude")
-
-            col.separator()
-            
-            row = col.row(align=False)
-            row.alignment = 'LEFT' 
-            row.operator("view3d.edit_mesh_extrude_move_normal", icon='EXTRUDE_REGION', text = "")
-            row.operator("view3d.edit_mesh_extrude_individual_move", icon='EXTRUDE_INDIVIDUAL', text = ""),
-
-            row.operator("mesh.spin", icon='SPIN', text = "")
-            row.operator("mesh.screw", icon='SCREW', text = "")
-            
-            col.separator()
-
-            row = col.row(align=False)  
-            
-            row.operator("mesh.inset", icon='INSET_FACES', text = "")
-            row.operator("mesh.edge_face_add", icon='MAKE_EDGEFACE', text = "")   
-            row.operator("mesh.bevel", icon='BEVEL', text = "")
-            row.operator("mesh.bevel", icon='VERTEXBEVEL',text = "").vertex_only = True
-
-            col.separator()
-
-            row = col.row(align=False)
-            row.operator("mesh.subdivide", icon='SUBDIVIDE_EDGES', text = "")
-            row.operator("mesh.loopcut_slide", icon='LOOP_CUT_AND_SLIDE', text = "")
-            row.operator("mesh.offset_edge_loops_slide", icon='OFFSET_EDGE_SLIDE', text = "")
-            row.operator("mesh.bridge_edge_loops", icon = "BRIDGE_EDGELOOPS", text = "")
-
-            col.separator()
-
-            row = col.row(align=False)
-            row.alignment = 'LEFT'
-            props = row.operator("mesh.knife_tool", icon='KNIFE', text = "")
-            props.use_occlude_geometry = True
-            props.only_selected = False
-            props = row.operator("mesh.knife_tool", icon='KNIFE_SELECT', text = "")
-            props.use_occlude_geometry = False
-            props.only_selected = True
-            row.operator("mesh.knife_project", icon='KNIFE_PROJECT', text = "")
-            row.operator("mesh.bisect", icon='BISECT', text = "")
-
-            col = layout.column(align=False)
-            col.operator_menu_enum("mesh.merge", "type")
-            col.operator_menu_enum("mesh.separate", "type")
+            # --------------------------------------
 
             col.label(text="Dissolve:")
             row = col.row(align=False)
@@ -996,9 +1052,6 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
             row.operator("mesh.dissolve_limited", icon='DISSOLVE_LIMITED', text = "")
             row.operator("mesh.dissolve_mode", icon='DISSOLVE_SELECTION', text = "")
             row.operator("mesh.edge_collapse", icon='EDGE_COLLAPSE', text = "")
-        
-
-
 
 
 class VIEW3D_PT_tools_meshweight(View3DPanel, Panel):
@@ -1610,8 +1663,8 @@ class VIEW3D_PT_tools_latticeedit(View3DPanel, Panel):
 
             col = layout.column(align=True)
             col.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="Mirror                   ")
+            col.operator("object.vertex_group_mirror", icon = "MIRROR_VERTEXGROUP", text = "Mirror Vertex Group    ")
             col.operator("lattice.make_regular", icon = 'MAKE_REGULAR', text = "Make Regular  ")
-
 
         else:
             col = layout.column(align=True)
@@ -1619,7 +1672,9 @@ class VIEW3D_PT_tools_latticeedit(View3DPanel, Panel):
             row = col.row(align=False)
             row.alignment = 'LEFT'
             row.operator("transform.mirror", icon='TRANSFORM_MIRROR', text = "")
+            row.operator("object.vertex_group_mirror", icon = "MIRROR_VERTEXGROUP", text = "")
             row.operator("lattice.make_regular", icon = 'MAKE_REGULAR', text = "")
+           
 
 
 # ********** default tools for pose-mode ****************
@@ -1784,6 +1839,12 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
         toolsettings = context.tool_settings
         settings = self.paint_settings(context)
         brush = settings.brush
+
+        obj = context.active_object
+        mode = obj.mode   
+
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
 
         if not context.particle_edit_object:
             col = layout.split().column()
@@ -1968,30 +2029,32 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
             self.prop_unified_strength(row, context, brush, "use_pressure_strength")
 
             col.prop(brush, "vertex_tool", text="Blend")
+            
+            row = col.row(align=True)
 
             if brush.vertex_tool != 'SMEAR':
-                col.prop(brush, "use_accumulate")
-                col.separator()
+                row.prop(brush, "use_accumulate")
 
-            col = layout.column()
-            col.prop(toolsettings, "use_auto_normalize", text="Auto Normalize")
-            col.prop(toolsettings, "use_multipaint", text="Multi-Paint")
+            row.prop(toolsettings, "use_auto_normalize", text="Auto Normalize")
+            row.prop(toolsettings, "use_multipaint", text="Multi-Paint")
 
         # Vertex Paint Mode #
         elif context.vertex_paint_object and brush:
             col = layout.column()
-            self.prop_unified_color_picker(col, context, brush, "color", value_slider=True)
+
+            #Hidable color picker dialog
+            if not addon_prefs.brushpanel_hide_colorpicker:
+                self.prop_unified_color_picker(col, context, brush, "color", value_slider=True)
+
             if settings.palette:
                 col.template_palette(settings, "palette", color=True)
+
             row = col.row(align=True)
             self.prop_unified_color(row, context, brush, "color", text="")
             self.prop_unified_color(row, context, brush, "secondary_color", text="")
             row.separator()
-            row.operator("paint.brush_colors_flip", icon='FILE_REFRESH', text="")
 
-            row = col.row(align=True) # We need a row to add our eyedropper besides the color field.
-            self.prop_unified_color(row, context, brush, "color", text = "") # Here now with row instead of col
-            row.separator() # A separator
+            row.operator("paint.brush_colors_flip", icon='FILE_REFRESH', text="")
             row.operator("paint.sample_color", icon='EYEDROPPER', text = "") # And finally the eyedropper
 
             col.separator()
@@ -2007,13 +2070,31 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
             # row = col.row(align=True)
             # row.prop(brush, "jitter", slider=True)
             # row.prop(brush, "use_pressure_jitter", toggle=True, text = "")
-            col.separator()
-            col.prop(brush, "vertex_tool", text="Blend")
-            col.prop(brush, "use_accumulate")
-            col.prop(brush, "use_alpha")
 
             col.separator()
-            col.template_ID(settings, "palette", new="palette.new")
+            col.prop(brush, "vertex_tool", text="Blend")
+
+            row = col.row(align=True)
+            row.prop(brush, "use_accumulate")
+            row.prop(brush, "use_alpha")
+
+            # Hidable palette settings
+            if not addon_prefs.brushpanel_hide_palette:
+                col.separator()
+                col.template_ID(settings, "palette", new="palette.new")
+
+        # Options just for vertex and texture paint
+        if mode != 'WEIGHT_PAINT':
+
+            if not addon_prefs.brushpanel_display_options:
+                layout.prop(addon_prefs,"brushpanel_display_options", emboss=False, icon="SETUP", text=" ")
+
+            else:
+                layout.prop(addon_prefs,"brushpanel_display_options", emboss=False, icon="SETUP", text="Display Options")
+
+                layout.prop(addon_prefs, "brushpanel_hide_colorpicker")
+                layout.prop(addon_prefs, "brushpanel_hide_palette")
+            
 
 
 class TEXTURE_UL_texpaintslots(UIList):

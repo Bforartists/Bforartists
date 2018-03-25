@@ -107,10 +107,15 @@ def brush_texpaint_common(panel, context, layout, brush, settings, projpaint=Fal
 
     col = layout.column()
 
+    user_preferences = context.user_preferences
+    addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
+
     if brush.image_tool in {'DRAW', 'FILL'}:
         if brush.blend not in {'ERASE_ALPHA', 'ADD_ALPHA'}:
             if not brush.use_gradient:
-                panel.prop_unified_color_picker(col, context, brush, "color", value_slider=True)
+                #Hidable color picker
+                if not addon_prefs.brushpanel_hide_colorpicker:
+                    panel.prop_unified_color_picker(col, context, brush, "color", value_slider=True)
 
             if settings.palette:
                 col.template_palette(settings, "palette", color=True)
@@ -214,17 +219,21 @@ def brush_texpaint_common(panel, context, layout, brush, settings, projpaint=Fal
     col = layout.column()
 
     # use_accumulate
+    
+    row = col.row(align=True)
     if capabilities.has_accumulate:
-        col = layout.column(align=True)
-        col.prop(brush, "use_accumulate")
+        row.prop(brush, "use_accumulate")
 
     if projpaint:
-        col.prop(brush, "use_alpha")
+        row.prop(brush, "use_alpha")
 
-    col.prop(brush, "use_gradient")
+    row.prop(brush, "use_gradient")
 
     col.separator()
-    col.template_ID(settings, "palette", new="palette.new")
+
+    #Hidable palette
+    if not addon_prefs.brushpanel_hide_palette:
+        col.template_ID(settings, "palette", new="palette.new")
 
 
 # Used in both the View3D toolbar and texture properties
