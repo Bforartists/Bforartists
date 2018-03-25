@@ -1,4 +1,7 @@
 # Bforartists
+
+[![Build status](https://ci.appveyor.com/api/projects/status/alpp11hxsn7ix39o?svg=true)](https://ci.appveyor.com/project/ktotheoz/bforartists)
+
 Bforartists is a fork of the popular 3D software Blender, with the goal to improve the graphical UI, and to increase the usability.
 
 The project page, the binary downloads and further infos can be found at the project page: https://www.bforartists.de/
@@ -31,6 +34,8 @@ But the code is just half of the show. Another important bit is the non code thi
 - Bforartists is not bound to the Blender bubble. It has its own independant eco system.
 
 This youtube video describes the differences by showing them.
+
+[![Youtube Introduction](https://img.youtube.com/vi/zSbxfYF7rIY/0.jpg)](https://www.youtube.com/watch?v=zSbxfYF7rIY)
 
 https://youtu.be/zSbxfYF7rIY
 
