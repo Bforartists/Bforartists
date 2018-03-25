@@ -1840,6 +1840,12 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
         settings = self.paint_settings(context)
         brush = settings.brush
 
+        obj = context.active_object
+        mode = obj.mode   
+
+        user_preferences = context.user_preferences
+        addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
+
         if not context.particle_edit_object:
             col = layout.split().column()
             col.template_ID_preview(settings, "brush", new="brush.add", rows=3, cols=8)
@@ -2035,9 +2041,14 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
         # Vertex Paint Mode #
         elif context.vertex_paint_object and brush:
             col = layout.column()
-            self.prop_unified_color_picker(col, context, brush, "color", value_slider=True)
+
+            #Hidable color picker dialog
+            if not addon_prefs.brushpanel_hide_colorpicker:
+                self.prop_unified_color_picker(col, context, brush, "color", value_slider=True)
+
             if settings.palette:
                 col.template_palette(settings, "palette", color=True)
+
             row = col.row(align=True)
             self.prop_unified_color(row, context, brush, "color", text="")
             self.prop_unified_color(row, context, brush, "secondary_color", text="")
@@ -2067,8 +2078,23 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
             row.prop(brush, "use_accumulate")
             row.prop(brush, "use_alpha")
 
-            col.separator()
-            col.template_ID(settings, "palette", new="palette.new")
+            # Hidable palette settings
+            if not addon_prefs.brushpanel_hide_palette:
+                col.separator()
+                col.template_ID(settings, "palette", new="palette.new")
+
+        # Options just for vertex and texture paint
+        if mode != 'WEIGHT_PAINT':
+
+            if not addon_prefs.brushpanel_display_options:
+                layout.prop(addon_prefs,"brushpanel_display_options", emboss=False, icon="SETUP", text=" ")
+
+            else:
+                layout.prop(addon_prefs,"brushpanel_display_options", emboss=False, icon="SETUP", text="Display Options")
+
+                layout.prop(addon_prefs, "brushpanel_hide_colorpicker")
+                layout.prop(addon_prefs, "brushpanel_hide_palette")
+            
 
 
 class TEXTURE_UL_texpaintslots(UIList):
