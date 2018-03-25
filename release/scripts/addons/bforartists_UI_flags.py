@@ -49,6 +49,13 @@ class bforartists_UI_flags(AddonPreferences):
     subtab_3dview_properties_meshdisplay_overlay = BoolProperty(name="Overlay Options", description="Contains Overlay Settings", default = False)
     subtab_3dview_properties_meshdisplay_info = BoolProperty(name="Info Options", description="Contains Info Settings", default = False)
 
+    # Subtab Mesh Tools
+    SP_3Dview_mesh_tools_transform = BoolProperty(name="Transform", description="Transform tools", default = True)
+    SP_3Dview_mesh_tools_deform = BoolProperty(name="Deform", description="Deform tools", default = False)
+    SP_3Dview_mesh_tools_Modify = BoolProperty(name="Modify", description="Modify Tools", default = True)
+    SP_3Dview_mesh_tools_merge_separate = BoolProperty(name="Merge / Separate", description="Merge Separate tools", default = True)
+    SP_3Dview_mesh_tools_dissolve = BoolProperty(name="Dissolve", description="Contains Overlay Settings", default = False)
+
     # Subtab bools Rendertab panels
     SP_render_output_options = BoolProperty(name="Options", description="Contains Options", default = False)
     SP_render_metadata_stampoptions = BoolProperty(name="Stamp Options", description="Contains Options for Stamp output", default = False)
@@ -79,7 +86,11 @@ class bforartists_UI_flags(AddonPreferences):
 
     Node_text_or_icon = BoolProperty(name="Icon / Text Buttons", description="Display the buttons in the Node editor tool shelf as text or iconbuttons\nSave User preferences to save the current state", default = False)
 
+    # Compact paint panel
 
+    brushpanel_display_options = BoolProperty(name="Display Options", description="Contains Display options for the Brush panel", default = False)
+    brushpanel_hide_colorpicker = BoolProperty(name="Hide Colorpicker", description="Here you can hide the color picker", default = True)
+    brushpanel_hide_palette = BoolProperty(name="Hide Palette", description="Here you can display a much smaller brush menu", default = True)
 
 #------------------------------------------------------------------------------------------------------------------------------
 
@@ -105,6 +116,23 @@ class bforartists_UI_flags(AddonPreferences):
         row.prop(self, "subtab_3dview_properties_meshdisplay_overlay")
         row.prop(self, "subtab_3dview_properties_meshdisplay_info")
 
+        # ---------------------------
+
+        layout.label(text="Subtab Mesh Tools")
+
+        row = layout.row()
+
+        row.prop(self, "SP_3Dview_mesh_tools_transform")
+        row.prop(self, "SP_3Dview_mesh_tools_deform")
+        row.prop(self, "SP_3Dview_mesh_tools_Modify")
+        row.prop(self, "SP_3Dview_mesh_tools_merge_separate")
+
+        row = layout.row()
+
+        row.prop(self, "SP_3Dview_mesh_tools_dissolve")
+
+        # ---------------------------
+
         layout.label(text="Subtab bools Rendertab panels")
 
         row = layout.row()
@@ -120,6 +148,8 @@ class bforartists_UI_flags(AddonPreferences):
         row.prop(self, "SP_render_light_paths_options")
         row.prop(self, "SP_render_postpro_BI_options")
 
+        # ---------------------------
+
         layout.label(text="Subtab Bools Scene Panel")
 
         row = layout.row()
@@ -134,11 +164,15 @@ class bforartists_UI_flags(AddonPreferences):
         row.prop(self, "SP_object_display_options")  
         row.prop(self, "SP_object_display_wireframecols")  
 
+        # ---------------------------
+
         layout.label(text="Subtab Bools Data Panel")
 
         row = layout.row()
 
         row.prop(self, "SP_data_texspace_manual")
+
+        # ---------------------------
 
         layout.label(text="Subtab Bools Material Panel")
 
@@ -152,6 +186,14 @@ class bforartists_UI_flags(AddonPreferences):
         row = layout.row()
 
         row.prop(self, "Node_text_or_icon")
+
+        layout.label(text="Compact Brush Panel")
+
+        row = layout.row()
+
+        row.prop(self, "brushpanel_display_options")
+        row.prop(self, "brushpanel_hide_colorpicker")
+        row.prop(self, "brushpanel_hide_palette")
         
 
 class OBJECT_OT_BFA_UI_flags(Operator):

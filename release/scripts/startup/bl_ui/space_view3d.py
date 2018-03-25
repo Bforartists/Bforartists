@@ -2663,8 +2663,6 @@ class VIEW3D_MT_edit_mesh(Menu):
         toolsettings = context.tool_settings
 
         layout.menu("VIEW3D_MT_transform")
-        layout.operator("object.vertex_group_mirror", icon = "MIRROR_VERTEXGROUP")
-        layout.operator("mesh.symmetry_snap", icon = "SNAP_SYMMETRY")
 
         layout.separator()
 
@@ -2684,7 +2682,6 @@ class VIEW3D_MT_edit_mesh(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_subdivision_set")
-        layout.operator("mesh.symmetrize", icon = "SYMMETRIZE")
         layout.operator("mesh.noise", icon='NOISE')      
         layout.menu("VIEW3D_MT_edit_mesh_sort_elements")
 
@@ -3233,7 +3230,6 @@ class VIEW3D_MT_edit_lattice(Menu):
         toolsettings = context.tool_settings
 
         layout.menu("VIEW3D_MT_transform")
-        layout.operator("object.vertex_group_mirror", icon = "MIRROR_VERTEXGROUP")
         layout.menu("VIEW3D_MT_edit_lattice_flip")
 
 class VIEW3D_MT_edit_lattice_flip(Menu):
@@ -3380,6 +3376,24 @@ class VIEW3D_MT_edit_armature_delete(Menu):
 
 # ********** GPencil Stroke Edit menu **********
 
+class VIEW3D_MT_edit_gpencil_pie(Menu):
+    bl_label = "Pie Menus"
+
+    def draw(self, context):
+        layout = self.layout
+
+        layout.label(text = "Pie menus are hotkey tools!")
+
+        props = layout.operator("wm.call_menu_pie", text = "Tools Pie menu", icon = "MENU_PANEL")
+        props.name = 'GPENCIL_MT_pie_tool_palette'
+
+        props = layout.operator("wm.call_menu_pie", text = "Settings Pie menu", icon = "MENU_PANEL")
+        props.name = 'GPENCIL_MT_pie_settings_palette'
+
+        props = layout.operator("wm.call_menu_pie", text = "Sculpt Pie menu", icon = "MENU_PANEL")
+        props.name = 'GPENCIL_MT_pie_sculpt'
+        
+
 
 class VIEW3D_MT_edit_gpencil(Menu):
     bl_label = "GPencil"
@@ -3392,6 +3406,10 @@ class VIEW3D_MT_edit_gpencil(Menu):
         layout.operator("ed.undo", icon = "UNDO")
         layout.operator("ed.redo", icon = "REDO")
         layout.operator("ed.undo_history", icon = "UNDO_HISTORY")
+
+        layout.separator()
+
+        layout.menu("VIEW3D_MT_edit_gpencil_pie")
 
         layout.separator()
 
@@ -4350,6 +4368,7 @@ classes = (
     VIEW3D_MT_edit_mesh_faces,
     VIEW3D_MT_edit_mesh_clean,
     VIEW3D_MT_edit_mesh_delete,
+    VIEW3D_MT_edit_gpencil_pie,
     VIEW3D_MT_edit_gpencil,
     VIEW3D_MT_edit_gpencil_delete,
     VIEW3D_curve_hide_unselected,
