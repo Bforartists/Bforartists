@@ -6,10 +6,8 @@ clone_folder: c:\projects\bfa
 image:
 - Visual Studio 2013
 - Visual Studio 2015
-- Visual Studio 2017
 configuration:
 - Release
-- Debug
 platform:
 - x64
 environment:
@@ -29,6 +27,7 @@ init:
 - if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2013" ( set generator="Visual Studio 12 2013%arch%" )
 - echo %generator%
 
+#    call build_files/build_environment/windows/install_cuda.cmd
 before_build:
 - cmd: |-
     cd ..
