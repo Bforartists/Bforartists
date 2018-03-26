@@ -11,52 +11,36 @@ addons:
       - cmake
 
 compiler:
-  - clang
   - gcc
 
 matrix:
   include:
   - os: linux
     dist: trusty
-    compiler: gcc-4.9
+    compiler: gcc-6
     addons:
       apt:
         sources:
           - ubuntu-toolchain-r-test
         packages:
+          - nvidia-cuda-dev
+          - libcuda1-384
           - build-essential
-          - gcc-4.8-multilib
-          - gcc-4.9
-          - g++-4.9
+          - gcc-6-multilib
+          - gcc-6
+          - g++-6
           - cmake
           - doxygen
     env:
-      - MATRIX_EVAL="gcc-4.9 && CXX=g++-4.9 && NPROC=$(nproc)"
-  - os: linux
-    dist: trusty
-    compiler: gcc-4.9
-    addons:
-      apt:
-        sources:
-          - ubuntu-toolchain-r-test
-        packages:
-          - build-essential
-          - gcc-4.8-multilib
-          - gcc-4.9
-          - g++-4.9
-          - cmake
-          - doxygen
-    env:
-      - MATRIX_EVAL="gcc-4.9 && CXX=g++-4.9 && NPROC=$(nproc)"
+      - MATRIX_EVAL="gcc-6 && CXX=g++-6 && NPROC=$(nproc)"
   - os: osx
     osx_image: xcode8
     env:
       - MATRIX_EVAL="NPROC=$(sysctl -n hw.physicalcpu)"
-      
 
 # Before compile
 install:
-  - ./build_files/build_environment/install_deps.sh --build-all
+  - ./build_files/build_environment/install_deps.sh --skip-osl --no-confirm
 
 script:
   - mkdir build
