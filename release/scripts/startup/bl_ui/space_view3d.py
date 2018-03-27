@@ -2295,21 +2295,7 @@ class VIEW3D_MT_particle(Menu):
     def draw(self, context):
         layout = self.layout
 
-        particle_edit = context.tool_settings.particle_edit
-
-        layout.operator("particle.mirror", icon = "TRANSFORM_MIRROR")
-
-        layout.separator()
-
-        layout.operator("particle.remove_doubles", icon = "REMOVE_DOUBLES")
         layout.operator("particle.delete", icon = "DELETE")
-
-        if particle_edit.select_mode == 'POINT':
-            layout.operator("particle.subdivide", icon = "SUBDIVIDE_EDGES")
-
-        layout.operator("particle.unify_length", icon = "RULER")
-        layout.operator("particle.rekey", icon = "KEY_HLT")
-        layout.operator("particle.weight_set", icon = "MOD_VERTEX_WEIGHT")
 
         layout.separator()
 
