@@ -2527,10 +2527,10 @@ static void rna_def_tool_settings(BlenderRNA  *brna)
 	};
 	
 	static const EnumPropertyItem gpencil_stroke_placement_items[] = {
-		{GP_PROJECT_VIEWSPACE, "CURSOR", 0, "Cursor", "Draw stroke at the 3D cursor"},
-		{0, "VIEW", 0, "View", "Stick stroke to the view "}, /* weird, GP_PROJECT_VIEWALIGN is inverted */
-		{GP_PROJECT_VIEWSPACE | GP_PROJECT_DEPTH_VIEW, "SURFACE", 0, "Surface", "Stick stroke to surfaces"},
-		{GP_PROJECT_VIEWSPACE | GP_PROJECT_DEPTH_STROKE, "STROKE", 0, "Stroke", "Stick stroke to other strokes"},
+		{GP_PROJECT_VIEWSPACE, "CURSOR", 0, "Cursor", "Stroke Placement Cursor\nDraw stroke at the 3D cursor"},
+		{0, "VIEW", 0, "View", "Stroke Placement View\nStick stroke to the view "}, /* weird, GP_PROJECT_VIEWALIGN is inverted */
+		{GP_PROJECT_VIEWSPACE | GP_PROJECT_DEPTH_VIEW, "SURFACE", 0, "Surface", "Stroke Placement Surface\nStick stroke to surfaces"},
+		{GP_PROJECT_VIEWSPACE | GP_PROJECT_DEPTH_STROKE, "STROKE", 0, "Stroke", "Stroke Placement View\nStick stroke to other strokes"},
 		{0, NULL, 0, NULL, NULL}
 	};
 	
