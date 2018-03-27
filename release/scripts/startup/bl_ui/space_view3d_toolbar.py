@@ -1547,9 +1547,21 @@ class VIEW3D_PT_tools_curveedit(View3DPanel, Panel):
 
             col = layout.column(align=True)
             col.label(text="Modeling:")
-            col.operator("curve.extrude_move", icon = 'EXTRUDE_REGION', text="Extrude            ")
-            col.operator("curve.subdivide", icon = 'SUBDIVIDE_EDGES', text="Subdivide        ")
-            col.operator("curve.smooth", icon = 'SHADING_SMOOTH', text="Smooth           ")
+            col.operator("curve.extrude_move", icon = 'EXTRUDE_REGION', text="Extrude                ")
+            col.operator("curve.subdivide", icon = 'SUBDIVIDE_EDGES', text="Subdivide            ")
+            col.operator("curve.smooth", icon = 'SHADING_SMOOTH', text="Smooth              ")
+            col.operator("curve.split", icon = "SPLIT", text = "Split                   ")
+
+            col = layout.column(align=True)
+            col.operator("curve.separate", icon = "SEPARATE", text = "Separate             ")
+            col.operator("curve.make_segment", icon = "MAKE_CURVESEGMENT", text = "Make Segment    ")
+            col.operator("curve.vertex_add", icon = "EXTRUDE_REGION", text = "Add Vertex          ")
+            col.operator("curve.smooth_tilt", icon = "SMOOTH_TILT", text = "Smooth Tilt        ")
+
+            col = layout.column(align=True)
+            col.operator("curve.smooth_radius", icon = "SMOOTH_RADIUS", text = "Smooth Radius     ")
+            col.operator("curve.smooth_weight", icon = "SMOOTH_WEIGHT", text = "Smooth Weight     ")
+            col.operator("curve.spline_weight_set", icon = "WEIGHT_TRANSFER_WEIGHTS", text = "Set Goal Weight   ")
 
         else:
 
@@ -1590,6 +1602,24 @@ class VIEW3D_PT_tools_curveedit(View3DPanel, Panel):
             row.operator("curve.extrude_move", icon = 'EXTRUDE_REGION', text = "")
             row.operator("curve.subdivide", icon = 'SUBDIVIDE_EDGES', text = "")
             row.operator("curve.smooth", icon = 'SHADING_SMOOTH', text = "")
+            row.operator("curve.split", icon = "SPLIT", text = "")
+
+            col.separator()
+
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("curve.separate", icon = "SEPARATE", text = "")
+            row.operator("curve.make_segment", icon = "MAKE_CURVESEGMENT", text = "")
+            row.operator("curve.vertex_add", icon = "EXTRUDE_REGION", text = "")
+            row.operator("curve.smooth_tilt", icon = "SMOOTH_TILT", text = "")
+
+            col.separator()
+
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("curve.smooth_radius", icon = "SMOOTH_RADIUS", text = "")
+            row.operator("curve.smooth_weight", icon = "SMOOTH_WEIGHT", text = "")
+            row.operator("curve.spline_weight_set", icon = "WEIGHT_TRANSFER_WEIGHTS", text = "")
 
 
 class VIEW3D_PT_tools_add_curve_edit(View3DPanel, Panel):
@@ -1686,9 +1716,20 @@ class VIEW3D_PT_tools_surfaceedit(View3DPanel, Panel):
 
             col = layout.column(align=True)
             col.label(text="Modeling:")
-            col.operator("curve.extrude", icon='EXTRUDE_REGION', text="Extrude           ")
-            col.operator("curve.spin", icon = 'SPIN', text="Spin                 ")  
-            col.operator("curve.subdivide", icon='SUBDIVIDE_EDGES', text="Subdivide        ")
+            col.operator("curve.extrude", icon='EXTRUDE_REGION', text="Extrude               ")
+            col.operator("curve.spin", icon = 'SPIN', text="Spin                     ")  
+            col.operator("curve.subdivide", icon='SUBDIVIDE_EDGES', text="Subdivide          ")
+            col.operator("curve.split", icon = "SPLIT", text = "Split                   ")
+
+            col = layout.column(align=True)
+            col.operator("curve.separate", icon = "SEPARATE", text = "Separate             ")
+            col.operator("curve.make_segment", icon = "MAKE_CURVESEGMENT", text = "Make Segment    ")
+            col.operator("curve.smooth_tilt", icon = "SMOOTH_TILT", text = "Smooth Tilt        ")
+            col.operator("curve.smooth_radius", icon = "SMOOTH_RADIUS", text = "Smooth Radius     ")
+
+            col = layout.column(align=True)
+            col.operator("curve.smooth_weight", icon = "SMOOTH_WEIGHT", text = "Smooth Weight     ")
+            col.operator("curve.spline_weight_set", icon = "WEIGHT_TRANSFER_WEIGHTS", text = "Set Goal Weight   ")
 
         else:
 
@@ -1708,6 +1749,23 @@ class VIEW3D_PT_tools_surfaceedit(View3DPanel, Panel):
             row.operator("curve.extrude", icon='EXTRUDE_REGION', text = "")
             row.operator("curve.spin", icon = 'SPIN', text = "")
             row.operator("curve.subdivide", icon='SUBDIVIDE_EDGES', text = "")
+            row.operator("curve.split", icon = "SPLIT", text = "")
+
+            col.separator()
+
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("curve.separate", icon = "SEPARATE", text = "")
+            row.operator("curve.make_segment", icon = "MAKE_CURVESEGMENT", text = "")
+            row.operator("curve.smooth_tilt", icon = "SMOOTH_TILT", text = "")
+            row.operator("curve.smooth_radius", icon = "SMOOTH_RADIUS", text = "")
+
+            col.separator()
+
+            row = col.row(align=False)
+            row.alignment = 'LEFT'         
+            row.operator("curve.smooth_weight", icon = "SMOOTH_WEIGHT", text = "")
+            row.operator("curve.spline_weight_set", icon = "WEIGHT_TRANSFER_WEIGHTS", text = "")
 
 
 class VIEW3D_PT_tools_add_surface_edit(View3DPanel, Panel):
