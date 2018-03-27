@@ -2660,10 +2660,6 @@ class VIEW3D_MT_edit_mesh(Menu):
         layout.menu("VIEW3D_MT_edit_mesh_select_mode")
         layout.menu("VIEW3D_MT_vertex_group")
         layout.menu("VIEW3D_MT_hook")
-        layout.menu("VIEW3D_MT_edit_mesh_vertices")
-        layout.menu("VIEW3D_MT_edit_mesh_edges")
-        layout.menu("VIEW3D_MT_edit_mesh_faces")
-        layout.menu("VIEW3D_MT_edit_mesh_clean")
 
         layout.separator()
 
@@ -2815,7 +2811,7 @@ class VIEW3D_MT_edit_mesh_extrude(Menu):
         for menu_id in self.extrude_options(context):
             self._extrude_funcs[menu_id](layout)
 
-
+# bfa - Not longer connected. but the menu remains available for the Blender keymap.
 class VIEW3D_MT_edit_mesh_vertices(Menu):
     bl_label = "Vertices"
 
@@ -2840,9 +2836,7 @@ class VIEW3D_MT_edit_mesh_vertices(Menu):
         layout.operator("mesh.blend_from_shape", icon = "BLENDFROMSHAPE")
         layout.operator("mesh.shape_propagate_to_all", icon = "SHAPEPROPAGATE")
 
-        
-
-
+# bfa - Not longer connected. but the menu remains available for the Blender keymap.
 class VIEW3D_MT_edit_mesh_edges(Menu):
     bl_label = "Edges"
 
@@ -2879,7 +2873,7 @@ class VIEW3D_MT_edit_mesh_edges(Menu):
 
         layout.operator("mesh.edge_split", icon = "SPLITEDGE")
 
-
+# bfa - Not longer connected. but the menu remains available for the Blender keymap.
 class VIEW3D_MT_edit_mesh_faces(Menu):
     bl_label = "Faces"
     bl_idname = "VIEW3D_MT_edit_mesh_faces"
@@ -2919,7 +2913,7 @@ class VIEW3D_MT_edit_mesh_faces(Menu):
         layout.operator("mesh.colors_rotate", icon = "ROTATE_COLORS")
         layout.operator("mesh.colors_reverse", icon = "REVERSE_COLORS")
 
-
+# bfa - Not longer connected. but the menu remains available for the Blender keymap.
 class VIEW3D_MT_edit_mesh_clean(Menu):
     bl_label = "Clean up"
 
