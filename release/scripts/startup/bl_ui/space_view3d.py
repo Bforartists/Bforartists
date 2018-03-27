@@ -3003,22 +3003,6 @@ def draw_curve(self, context):
 
     layout.operator("curve.duplicate_move", icon = "DUPLICATE")
     layout.operator("curve.delete", text="Delete...", icon = "DELETE")
-
-    layout.separator()
-
-    layout.operator("curve.split", icon = "SPLIT")
-    layout.operator("curve.separate", icon = "SEPARATE")
-    layout.operator("curve.make_segment", icon = "MAKE_CURVESEGMENT")
-
-    if ob.type == 'CURVE':
-        layout.operator("curve.vertex_add", icon = "EXTRUDE_REGION")
-
-    layout.separator()
-
-    layout.operator("curve.smooth_tilt", icon = "SMOOTH_TILT")
-    layout.operator("curve.smooth_radius", icon = "SMOOTH_RADIUS")
-    layout.operator("curve.smooth_weight", icon = "SMOOTH_WEIGHT")
-    layout.operator("curve.spline_weight_set", icon = "WEIGHT_TRANSFER_WEIGHTS")
     
     layout.separator()
 
