@@ -1054,6 +1054,242 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
             row.operator("mesh.edge_collapse", icon='EDGE_COLLAPSE', text = "")
 
 
+class VIEW3D_MT_edit_mesh_vertices_panel(View3DPanel, Panel):
+    bl_category = "Tools"
+    bl_context = "mesh_edit"
+    bl_label = "Vertices Tools"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        layout = self.layout
+        layout.operator_context = 'INVOKE_REGION_WIN'
+
+        with_bullet = bpy.app.build_options.bullet
+
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
+
+        #Text buttons
+        if not view.show_iconbuttons:
+
+            col = layout.column(align=True)
+            col.operator("mesh.rip_move", text = "Rip                       ", icon = "RIP")
+            col.operator("mesh.rip_move_fill", text = "Rip Fill                 ", icon = "RIP_FILL")
+            col.operator("mesh.rip_edge_move", text = "Extend Vertices  ", icon = "EXTEND_VERTICES")
+            col.operator("mesh.split", text = "Split                    ", icon = "SPLIT")
+
+            col = layout.column(align=True)
+            col.operator("mesh.vert_connect_path", text="Connect Vertex Path", icon = "VERTEXCONNECTPATH")
+            col.operator("mesh.vert_connect", text = "Connect Vertices    ", icon = "VERTEXCONNECT")
+            col.operator("mesh.blend_from_shape", text = "Blend from Shape  ", icon = "BLENDFROMSHAPE")
+            col.operator("mesh.shape_propagate_to_all", text = "Shape Propagate    ", icon = "SHAPEPROPAGATE")
+
+            if with_bullet:
+                col = layout.column(align=True)
+                col.operator("mesh.convex_hull", text = "Convex Hull        ", icon = "CONVEXHULL")
+        
+        #Icon Buttons
+        else:
+
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("mesh.rip_move", text = "", icon = "RIP")
+            row.operator("mesh.rip_move_fill", text = "", icon = "RIP_FILL")
+            row.operator("mesh.rip_edge_move", text = "", icon = "EXTEND_VERTICES")
+            row.operator("mesh.split", text = "", icon = "SPLIT")
+
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("mesh.vert_connect_path", text = "", icon = "VERTEXCONNECTPATH")
+            row.operator("mesh.vert_connect", text = "", icon = "VERTEXCONNECT")
+            row.operator("mesh.blend_from_shape", text = "", icon = "BLENDFROMSHAPE")
+            row.operator("mesh.shape_propagate_to_all", text = "", icon = "SHAPEPROPAGATE")
+
+            if with_bullet:
+                row = layout.row(align=False)
+                row.alignment = 'LEFT'
+                row.operator("mesh.convex_hull", text = "", icon = "CONVEXHULL")
+
+
+class VIEW3D_MT_edit_mesh_edges_panel(View3DPanel, Panel):
+    bl_category = "Tools"
+    bl_context = "mesh_edit"
+    bl_label = "Edge Tools"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        layout = self.layout
+        layout.operator_context = 'INVOKE_REGION_WIN'
+
+        with_freestyle = bpy.app.build_options.freestyle
+
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
+        
+        #Text buttons
+        if not view.show_iconbuttons:
+
+            col = layout.column(align=True)
+            col.operator("mesh.subdivide_edgering", text = "Subdivide Edgering", icon = "SUBDIV_EDGERING")
+            col.operator("mesh.unsubdivide", text = "Un-Subdivide         ", icon = "UNSUBDIVIDE")
+            col.operator("transform.edge_crease", text = "Edge crease            ", icon = "CREASE")
+            col.operator("transform.edge_bevelweight", text = "Edge Bevel Weight ", icon = "BEVEL")
+
+            col = layout.column(align=True)
+            col.operator("mesh.mark_sharp", text = "Mark Sharp           ", icon = "MARKSHARPEDGES")
+            col.operator("mesh.mark_sharp", text = "Clear Sharp            ", icon = "CLEARSHARPEDGES").clear = True
+            col.operator("mesh.edge_rotate",text = "Rotate Edge CW    ", icon = "ROTATECW").use_ccw = False
+            col.operator("mesh.edge_split", text = "Edge Split              ", icon = "SPLITEDGE")
+
+            if with_freestyle:
+                col = layout.column(align=True)
+                col.operator("mesh.mark_freestyle_edge", text = "Mark Freestyle Edge  ", icon = "MARK_FS_EDGE").clear = False
+                col.operator("mesh.mark_freestyle_edge", text="Clear Freestyle Edge  ", icon = "CLEAR_FS_EDGE").clear = True
+
+        else:
+
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("mesh.subdivide_edgering",text = "", icon = "SUBDIV_EDGERING")
+            row.operator("mesh.unsubdivide",text = "", icon = "UNSUBDIVIDE")
+            row.operator("transform.edge_crease",text = "", icon = "CREASE")
+            row.operator("transform.edge_bevelweight",text = "", icon = "BEVEL")
+
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("mesh.mark_sharp",text = "", icon = "MARKSHARPEDGES")
+            row.operator("mesh.mark_sharp",text = "", icon = "CLEARSHARPEDGES").clear = True
+            row.operator("mesh.edge_rotate",text = "", icon = "ROTATECW").use_ccw = False
+            row.operator("mesh.edge_split",text = "", icon = "SPLITEDGE")
+
+            if with_freestyle:
+                row = layout.row(align=False)
+                row.alignment = 'LEFT'
+                row.operator("mesh.mark_freestyle_edge",text = "", icon = "MARK_FS_EDGE").clear = False
+                row.operator("mesh.mark_freestyle_edge",text = "", icon = "CLEAR_FS_EDGE").clear = True
+
+
+class VIEW3D_MT_edit_mesh_faces_panel(View3DPanel, Panel):
+    bl_category = "Tools"
+    bl_context = "mesh_edit"
+    bl_label = "Faces Tools"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        layout = self.layout
+        layout.operator_context = 'INVOKE_REGION_WIN'
+
+        with_freestyle = bpy.app.build_options.freestyle
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
+
+        #Text buttons
+        if not view.show_iconbuttons:     
+  
+            col = layout.column(align=True)
+            col.operator("mesh.fill", text = "Fill                  ", icon = "FILL")
+            col.operator("mesh.fill_grid", text = "Grid Fill           ", icon = "GRIDFILL")
+            col.operator("mesh.beautify_fill", text = "Beautify           ", icon = "BEAUTIFY")
+            col.operator("mesh.solidify", text = "Solidify             ", icon = "SOLIDIFY")
+
+            col = layout.column(align=True)
+            col.operator("mesh.intersect", text = "Intersect            ", icon = "INTERSECT")
+            col.operator("mesh.intersect_boolean", text = "Intersect (Boolean)  ", icon = "BOOLEAN_INTERSECT")
+            col.operator("mesh.wireframe", text = "Wire Frame        ", icon = "WIREFRAME")
+            col.operator("mesh.poke", text = "Poke Faces        ", icon = "POKEFACES")
+
+            col = layout.column(align=True)
+            props = col.operator("mesh.quads_convert_to_tris", text = "Triangulate         ", icon = "TRIANGULATE")
+            props.quad_method = props.ngon_method = 'BEAUTY'
+            col.operator("mesh.tris_convert_to_quads", text = "Tris to Quads      ", icon = "TRISTOQUADS")
+            col.operator("mesh.face_split_by_edges", text = "Split by Edges    ", icon = "SPLITBYEDGES")
+            col.operator("mesh.uvs_rotate", text = "Rotate UV's      ", icon = "ROTATE_UVS")
+
+            col = layout.column(align=True)
+            col.operator("mesh.uvs_reverse", text = "Reverse UV's    ", icon = "REVERSE_UVS")
+            col.operator("mesh.colors_rotate", text = "Rotate Colkors    ", icon = "ROTATE_COLORS")
+            col.operator("mesh.colors_reverse", text = "Reverse Colors     ", icon = "REVERSE_COLORS")
+
+            col = layout.column(align=True)
+            if with_freestyle:
+                col.operator("mesh.mark_freestyle_face", text = "Mark Freestyle Face", icon = "MARKFSFACE").clear = False
+                col.operator("mesh.mark_freestyle_face", text="Clear Freestyle Face", icon = "CLEARFSFACE").clear = True
+
+        else:     
+
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("mesh.fill", text = "", icon = "FILL")
+            row.operator("mesh.fill_grid", text = "", icon = "GRIDFILL")
+            row.operator("mesh.beautify_fill", text = "", icon = "BEAUTIFY")
+            row.operator("mesh.solidify", text = "", icon = "SOLIDIFY")
+
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("mesh.intersect", text = "", icon = "INTERSECT")
+            row.operator("mesh.intersect_boolean", text = "", icon = "BOOLEAN_INTERSECT")
+            row.operator("mesh.wireframe", text = "", icon = "WIREFRAME")
+            row.operator("mesh.poke", text = "", icon = "POKEFACES")
+
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            props = row.operator("mesh.quads_convert_to_tris", text = "", icon = "TRIANGULATE")
+            props.quad_method = props.ngon_method = 'BEAUTY'
+            row.operator("mesh.tris_convert_to_quads", text = "", icon = "TRISTOQUADS")
+            row.operator("mesh.face_split_by_edges", text = "", icon = "SPLITBYEDGES")
+            row.operator("mesh.uvs_rotate", text = "", icon = "ROTATE_UVS")
+
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("mesh.uvs_reverse", text = "", icon = "REVERSE_UVS")
+            row.operator("mesh.colors_rotate", text = "", icon = "ROTATE_COLORS")
+            row.operator("mesh.colors_reverse", text = "", icon = "REVERSE_COLORS")
+
+            if with_freestyle:
+                row = layout.row(align=False)
+                row.alignment = 'LEFT'
+                row.operator("mesh.mark_freestyle_face", text = "", icon = "MARKFSFACE").clear = False
+                row.operator("mesh.mark_freestyle_face", text = "", icon = "CLEARFSFACE").clear = True
+
+
+class VIEW3D_MT_edit_mesh_clean_panel(View3DPanel, Panel):
+    bl_category = "Tools"
+    bl_context = "mesh_edit"
+    bl_label = "Clean Up"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        layout = self.layout
+
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
+
+        #Text buttons
+        if not view.show_iconbuttons:
+
+            col = layout.column(align=True)
+            col.operator("mesh.delete_loose", text = "Delete Loose        ", icon = "DELETE_LOOSE")
+            col.operator("mesh.decimate", text = "Decimate Geometry", icon = "DECIMATE")
+            col.operator("mesh.dissolve_degenerate", text = "Degenerate Dissolve", icon = "DEGENERATE_DISSOLVE")
+            col.operator("mesh.face_make_planar", text = "Make Planar Faces", icon = "MAKE_PLANAR")
+
+            col = layout.column(align=True)
+            col.operator("mesh.vert_connect_nonplanar", text = "Split Non-Planar Faces", icon = "SPLIT_NONPLANAR")
+            col.operator("mesh.vert_connect_concave", text = "Split Concave Faces", icon = "SPLIT_CONCAVE")
+            col.operator("mesh.fill_holes", text = "Fill Holes              ", icon = "FILL_HOLE")
+
+        else:
+
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("mesh.delete_loose", text = "", icon = "DELETE_LOOSE")
+            row.operator("mesh.decimate", text = "", icon = "DECIMATE")
+            row.operator("mesh.dissolve_degenerate", text = "", icon = "DEGENERATE_DISSOLVE")
+            row.operator("mesh.face_make_planar", text = "", icon = "MAKE_PLANAR")
+
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("mesh.vert_connect_nonplanar", text = "", icon = "SPLIT_NONPLANAR")
+            row.operator("mesh.vert_connect_concave", text = "", icon = "SPLIT_CONCAVE")
+            row.operator("mesh.fill_holes", text = "", icon = "FILL_HOLE")
+
+
 class VIEW3D_PT_tools_meshweight(View3DPanel, Panel):
     bl_category = "Tools"
     bl_context = "mesh_edit"
@@ -3162,6 +3398,10 @@ classes = (
     VIEW3D_PT_tools_animation,
     VIEW3D_PT_tools_rigid_body,
     VIEW3D_PT_tools_meshedit,
+    VIEW3D_MT_edit_mesh_vertices_panel,
+    VIEW3D_MT_edit_mesh_edges_panel,
+    VIEW3D_MT_edit_mesh_faces_panel,
+    VIEW3D_MT_edit_mesh_clean_panel,
     VIEW3D_normals_make_consistent_inside,
     VIEW3D_PT_tools_meshweight,
     VIEW3D_PT_tools_add_mesh_edit,
