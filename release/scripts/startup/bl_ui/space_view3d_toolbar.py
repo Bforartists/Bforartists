@@ -1825,6 +1825,45 @@ class VIEW3D_PT_imapaint_tools_missing(Panel, View3DPaintPanel):
             col.operator("image.new", text="New").gen_context = 'PAINT_STENCIL'
 
 
+class VIEW3D_MT_particle_tools(Panel, View3DPaintPanel):
+    bl_category = "Tools"
+    bl_label = "Tools"
+    bl_context = "particlemode"
+
+    def draw(self, context):
+        layout = self.layout
+
+        particle_edit = context.tool_settings.particle_edit
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
+
+        # bfa - icon or text buttons
+        if not view.show_iconbuttons: 
+
+            col = layout.column(align=True)
+            col.operator("particle.mirror", icon = "TRANSFORM_MIRROR")
+            col.operator("particle.remove_doubles", icon = "REMOVE_DOUBLES")
+            col.operator("particle.unify_length", icon = "RULER")
+            col.operator("particle.rekey", icon = "KEY_HLT")
+            col.operator("particle.weight_set", icon = "MOD_VERTEX_WEIGHT")
+
+            if particle_edit.select_mode == 'POINT':
+                layout.operator("particle.subdivide", icon = "SUBDIVIDE_EDGES")
+
+        else:
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("particle.mirror", text = "", icon = "TRANSFORM_MIRROR")
+            row.operator("particle.remove_doubles", text = "", icon = "REMOVE_DOUBLES")
+            row.operator("particle.unify_length", text = "", icon = "RULER")
+            row.operator("particle.rekey", text = "", icon = "KEY_HLT")
+
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("particle.weight_set", text = "", icon = "MOD_VERTEX_WEIGHT")
+            if particle_edit.select_mode == 'POINT':
+                row.operator("particle.subdivide", text = "", icon = "SUBDIVIDE_EDGES")
+
+
 class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
     bl_category = "Tools"
     bl_label = "Brush"
@@ -2094,6 +2133,7 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
 
                 layout.prop(addon_prefs, "brushpanel_hide_colorpicker")
                 layout.prop(addon_prefs, "brushpanel_hide_palette")
+
             
 
 
@@ -3143,6 +3183,7 @@ classes = (
     VIEW3D_PT_tools_posemode,
     VIEW3D_PT_tools_posemode_options,
     VIEW3D_PT_imapaint_tools_missing,
+    VIEW3D_MT_particle_tools,
     VIEW3D_PT_tools_brush,
     TEXTURE_UL_texpaintslots,
     VIEW3D_MT_tools_projectpaint_uvlayer,
