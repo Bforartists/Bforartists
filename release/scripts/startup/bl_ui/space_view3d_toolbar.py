@@ -2237,7 +2237,6 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
             self.prop_unified_size(row, context, brush, "use_pressure_size")
 
             # strength, use_strength_pressure, and use_strength_attenuation
-            col.separator()
             row = col.row(align=True)
 
             if capabilities.has_space_attenuation:
@@ -2250,7 +2249,6 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
 
             # auto_smooth_factor and use_inverse_smooth_pressure
             if capabilities.has_auto_smooth:
-                col.separator()
 
                 row = col.row(align=True)
                 row.prop(brush, "auto_smooth_factor", slider=True)
@@ -2258,23 +2256,20 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
 
             # normal_weight
             if capabilities.has_normal_weight:
-                col.separator()
                 row = col.row(align=True)
                 row.prop(brush, "normal_weight", slider=True)
 
             # crease_pinch_factor
             if capabilities.has_pinch_factor:
-                col.separator()
                 row = col.row(align=True)
                 row.prop(brush, "crease_pinch_factor", slider=True, text="Pinch")
 
             # rake_factor
             if capabilities.has_rake_factor:
-                col.separator()
                 row = col.row(align=True)
                 row.prop(brush, "rake_factor", slider=True)
                 
-                        # direction
+            # direction
             col.separator()
             col.row().prop(brush, "direction", expand=True)
             col.separator()
@@ -2287,8 +2282,6 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
                 row.prop(brush, "use_original_normal", toggle=True, icon_only=True)
 
                 row.prop(brush, "sculpt_plane", text = "")
-                
-                col.separator()
 
             if brush.sculpt_tool == 'MASK':
                 col.prop(brush, "mask_tool", text = "")
@@ -2298,8 +2291,6 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
                 row = col.row(align=True)
                 row.prop(brush, "plane_offset", slider=True)
                 row.prop(brush, "use_offset_pressure", text = "")
-
-                col.separator()
 
                 row = col.row()
                 row.prop(brush, "use_plane_trim", text="Trim")
@@ -2321,7 +2312,7 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
             # use_accumulate
             if capabilities.has_accumulate:
 
-                col.prop(brush, "use_accumulate")
+                row.prop(brush, "use_accumulate")
 
             # use_persistent, set_persistent_base
             if capabilities.has_persistence:
