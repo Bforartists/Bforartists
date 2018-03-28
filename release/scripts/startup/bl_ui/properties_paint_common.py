@@ -249,9 +249,9 @@ def brush_texture_settings(layout, brush, sculpt):
         layout.separator()
 
     if tex_slot.map_mode == 'STENCIL':
+
         if brush.texture and brush.texture.type == 'IMAGE':
-            layout.operator("brush.stencil_fit_image_aspect")
-        layout.operator("brush.stencil_reset_transform")
+            layout.operator("brush.stencil_fit_image_aspect", icon = "IMAGE_ASPECT", text = " Image Aspect")       
 
         # bfa - stencil brush control buttons
         col = layout.column()
@@ -261,6 +261,7 @@ def brush_texture_settings(layout, brush, sculpt):
         row.operator("brush.stencil_control", text = '', icon ='TRANSFORM_MOVE').mode = 'TRANSLATION'
         row.operator("brush.stencil_control", text = '', icon ='TRANSFORM_ROTATE').mode = 'ROTATION'
         row.operator("brush.stencil_control", text = '', icon ='TRANSFORM_SCALE').mode = 'SCALE'
+        row.operator("brush.stencil_reset_transform", icon = "RESET", text = "")
 
 
     # angle and texture_angle_source
@@ -305,8 +306,7 @@ def brush_mask_texture_settings(layout, brush):
 
     if mask_tex_slot.map_mode == 'STENCIL':
         if brush.mask_texture and brush.mask_texture.type == 'IMAGE':
-            layout.operator("brush.stencil_fit_image_aspect").mask = True
-        layout.operator("brush.stencil_reset_transform").mask = True
+            layout.operator("brush.stencil_fit_image_aspect", icon = "IMAGE_ASPECT", text = " Image Aspect").mask = True
 
         # stencil brush controls hotkeys. This is the secondary set.
 
@@ -323,6 +323,7 @@ def brush_mask_texture_settings(layout, brush):
         myvar = row.operator("brush.stencil_control", text = "", icon ='TRANSFORM_SCALE')
         myvar.mode = 'SCALE'
         myvar.texmode = 'SECONDARY'
+        row.operator("brush.stencil_reset_transform", icon = "RESET", text = "").mask = True
         
         layout.separator()
 
