@@ -198,7 +198,6 @@ def brush_texpaint_common(panel, context, layout, brush, settings, projpaint=Fal
             col.prop(brush, "clone_alpha", text="Alpha")
 
     col.separator()
-
     if capabilities.has_radius:
         row = col.row(align=True)
         panel.prop_unified_size(row, context, brush, "size", slider=True, text="Radius")
@@ -229,10 +228,9 @@ def brush_texpaint_common(panel, context, layout, brush, settings, projpaint=Fal
 
     row.prop(brush, "use_gradient")
 
-    col.separator()
-
     #Hidable palette
     if not addon_prefs.brushpanel_hide_palette:
+        col.separator()
         col.template_ID(settings, "palette", new="palette.new")
 
 
