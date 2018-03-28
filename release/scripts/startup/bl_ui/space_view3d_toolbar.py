@@ -2417,7 +2417,7 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
                 col.template_ID(settings, "palette", new="palette.new")
 
         # Options just for vertex and texture paint
-        if mode != 'WEIGHT_PAINT':
+        if mode in {'TEXTURE_PAINT', 'VERTEX_PAINT'}:
 
             if not addon_prefs.brushpanel_display_options:
                 layout.prop(addon_prefs,"brushpanel_display_options", emboss=False, icon="SETUP", text=" ")
@@ -2427,8 +2427,6 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
 
                 layout.prop(addon_prefs, "brushpanel_hide_colorpicker")
                 layout.prop(addon_prefs, "brushpanel_hide_palette")
-
-            
 
 
 class TEXTURE_UL_texpaintslots(UIList):
