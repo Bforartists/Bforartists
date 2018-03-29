@@ -1844,12 +1844,16 @@ class VIEW3D_PT_tools_armatureedit(View3DPanel, Panel):
         if not view.show_iconbuttons: 
             col = layout.column(align=True)
             col.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="Mirror                   ")
+            col.operator("armature.symmetrize", icon = "SYMMETRIZE", text = "Symmetrize          ")
+
             col = layout.column(align=True)
             col.label(text="Bones:")
             col.operator("armature.bone_primitive_add", icon = 'BONE_DATA', text="Add                      ")
             col.operator("armature.merge", text="Merge Bones        ", icon = "MERGE")
             col.operator("armature.fill", text="Fill between Joints", icon = "FILLBETWEEN")
             col.operator("armature.split",  text="Split                     ", icon = "SPLIT")
+
+            col = layout.column(align=True)
             col.operator("armature.separate", text="Separate                ", icon = "SEPARATE")
             col.operator("armature.switch_direction", text="Switch Direction  ", icon = "SWITCH_DIRECTION")
 
@@ -1863,6 +1867,8 @@ class VIEW3D_PT_tools_armatureedit(View3DPanel, Panel):
             row = col.row(align=False)
             row.alignment = 'LEFT'
             row.operator("transform.mirror", icon='TRANSFORM_MIRROR', text = "")
+            row.operator("armature.symmetrize", icon = "SYMMETRIZE", text = "")
+
             col = layout.column(align=True)
             col.label(text="Bones:")
             row = col.row(align=False)
