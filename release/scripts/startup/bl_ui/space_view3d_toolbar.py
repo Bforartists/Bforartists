@@ -2831,7 +2831,7 @@ class VIEW3D_PT_sculpt_dyntopo(Panel, View3DPaintPanel):
         settings = self.paint_settings(context)
         brush = settings.brush
 
-        layout.operator("sculpt.set_detail_size", text="Set detail size")
+        layout.operator("sculpt.set_detail_size", text="Set detail size    ", icon = "BRUSHSIZE")
 
         col = layout.column()
         col.active = context.sculpt_object.use_dynamic_topology_sculpting
@@ -2849,12 +2849,12 @@ class VIEW3D_PT_sculpt_dyntopo(Panel, View3DPaintPanel):
         sub.prop(sculpt, "detail_type_method", text = "")
         col.separator()
         col.prop(sculpt, "use_smooth_shading")
-        col.operator("sculpt.optimize")
+        col.operator("sculpt.optimize", icon = "OPTIMIZE", text = "Optimize           ")
         if (sculpt.detail_type_method == 'CONSTANT'):
-            col.operator("sculpt.detail_flood_fill")
+            col.operator("sculpt.detail_flood_fill", icon = "FLOODFILL")
         col.separator()
         col.prop(sculpt, "symmetrize_direction")
-        col.operator("sculpt.symmetrize")
+        col.operator("sculpt.symmetrize", icon = "SYMMETRIZE", text = "Symmetrize       ")
 
 
 class VIEW3D_PT_sculpt_options(Panel, View3DPaintPanel):
