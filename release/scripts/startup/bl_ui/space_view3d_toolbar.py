@@ -1993,17 +1993,16 @@ class VIEW3D_PT_tools_posemode(View3DPanel, Panel):
 
             col = layout.column(align=True)
             col.label(text="In-Between:")
-            row = col.row(align=True)
-            row.operator("pose.push", icon = 'PUSH_POSE', text="Push")
-            row.operator("pose.relax", icon = 'RELAX_POSE',text="Relax")
-            col.operator("pose.breakdown", icon = 'BREAKDOWNER_POSE',text="Breakdowner  ")
+            col.operator("pose.push", icon = 'PUSH_POSE', text="Push                   ")
+            col.operator("pose.relax", icon = 'RELAX_POSE',text="Relax                  ")
+            col.operator("pose.breakdown", icon = 'BREAKDOWNER_POSE',text="Breakdowner     ")
 
             col = layout.column(align=True)
             col.label(text="Pose:")
             row = col.row(align=True)
 
             row = layout.row(align=True)
-            row.operator("pose.propagate", text="Propagate")
+            row.operator("pose.propagate", text="Propagate        ", icon = "PROPAGATE")
 
             # bfa - Double menu entry. But stays available for further modifications
             #col = layout.column(align=True)
@@ -2013,9 +2012,8 @@ class VIEW3D_PT_tools_posemode(View3DPanel, Panel):
 
             col = layout.column(align=True)
             col.label(text="Motion Paths:")
-            row = col.row(align=True)
-            row.operator("pose.paths_calculate", icon ='MOTIONPATHS_CALCULATE', text="Calculate")
-            row.operator("pose.paths_clear", icon ='MOTIONPATHS_CLEAR', text="Clear")
+            col.operator("pose.paths_calculate", icon ='MOTIONPATHS_CALCULATE', text="Calculate         ")
+            col.operator("pose.paths_clear", icon ='MOTIONPATHS_CLEAR', text="Clear               ")
 
         else:
             col = layout.column(align=True)
@@ -2033,8 +2031,8 @@ class VIEW3D_PT_tools_posemode(View3DPanel, Panel):
             #row = col.row(align=False)
             #row.operator("poselib.pose_add", icon = 'ADD_TO_LIBRARY', text = "")
 
-            row = col.row(align=True)
-            row.operator("pose.propagate", text="Propagate")
+            row = col.row(align=False)
+            row.operator("pose.propagate", text="", icon = "PROPAGATE")
 
             draw_keyframing_tools_icons(context, layout)
 
