@@ -351,9 +351,9 @@ class GreasePencilInterpolatePanel:
         settings = context.tool_settings.gpencil_interpolate
 
         col = layout.column(align=True)
-        col.operator("gpencil.interpolate", text="Interpolate")
-        col.operator("gpencil.interpolate_sequence", text="Sequence")
-        col.operator("gpencil.interpolate_reverse", text="Remove Breakdowns")
+        col.operator("gpencil.interpolate", text="Interpolate        ", icon = "INTERPOLATE")
+        col.operator("gpencil.interpolate_sequence", text=" Sequence          ", icon = "SEQUENCE")
+        col.operator("gpencil.interpolate_reverse", text=" Remove Breakdowns", icon = "DELETE")
 
         col = layout.column(align=True)
         col.label(text="Options:")
@@ -464,7 +464,7 @@ class GreasePencilStrokeSculptPanel:
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("gpencil.brush_paint", text="Sculpt Strokes").wait_for_input = True
+        layout.operator("gpencil.brush_paint", text="Sculpt Strokes", icon = "SCULPTMODE_HLT").wait_for_input = True
         settings = context.tool_settings.gpencil_sculpt
         tool = settings.tool
         brush = settings.brush
