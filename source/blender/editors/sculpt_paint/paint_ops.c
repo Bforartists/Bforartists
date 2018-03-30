@@ -85,7 +85,7 @@ static void BRUSH_OT_add(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Add Brush";
-	ot->description = "Add brush by mode type";
+	ot->description = "Add Brush\nAdd brush by mode type";
 	ot->idname = "BRUSH_OT_add";
 	
 	/* api callbacks */
@@ -142,7 +142,7 @@ static void BRUSH_OT_scale_size(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Scale Sculpt/Paint Brush Size";
-	ot->description = "Change brush size by a scalar";
+	ot->description = "Scale Sculpt/Paint Brush Size\nChange brush size by a scalar";
 	ot->idname = "BRUSH_OT_scale_size";
 	
 	/* api callbacks */
@@ -173,7 +173,7 @@ static void PALETTE_OT_new(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Add New Palette";
-	ot->description = "Add new palette";
+	ot->description = "Add new palette\nAdds a new palette of indexed colors";
 	ot->idname = "PALETTE_OT_new";
 
 	/* api callbacks */
@@ -221,7 +221,7 @@ static void PALETTE_OT_color_add(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "New Palette Color";
-	ot->description = "Add new color to active palette";
+	ot->description = "New Palette Color\nAdd new color to active palette";
 	ot->idname = "PALETTE_OT_color_add";
 
 	/* api callbacks */
@@ -249,7 +249,7 @@ static void PALETTE_OT_color_delete(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Delete Palette Color";
-	ot->description = "Remove active color from palette";
+	ot->description = "Delete Palette Color\Remove active color from palette";
 	ot->idname = "PALETTE_OT_color_delete";
 
 	/* api callbacks */
@@ -283,7 +283,7 @@ static void BRUSH_OT_reset(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Reset Brush";
-	ot->description = "Return brush to defaults based on current tool";
+	ot->description = "Reset Brush\nReturn brush to defaults based on current tool";
 	ot->idname = "BRUSH_OT_reset";
 	
 	/* api callbacks */
@@ -471,7 +471,7 @@ static void PAINT_OT_brush_select(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Brush Select";
-	ot->description = "Select a paint mode's brush by tool type";
+	ot->description = "Brush Select\nSelect a paint mode's brush by tool type";
 	ot->idname = "PAINT_OT_brush_select";
 
 	/* api callbacks */
@@ -538,7 +538,7 @@ static void BRUSH_OT_uv_sculpt_tool_set(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "UV Sculpt Tool Set";
-	ot->description = "Set the UV sculpt tool";
+	ot->description = "UV Sculpt Tool Set\nSet the UV sculpt tool";
 	ot->idname = "BRUSH_OT_uv_sculpt_tool_set";
 
 	/* api callbacks */
@@ -811,7 +811,7 @@ static void BRUSH_OT_stencil_control(wmOperatorType *ot)
 	};
 	/* identifiers */
 	ot->name = "Stencil Brush Control";
-	ot->description = "Control the stencil brush";
+	ot->description = "Stencil Brush Control\nControl the position, rotation or size of the stencil brush image\nHotkey Tool! You need to be with the mouse in the viewport to see the changes!";
 	ot->idname = "BRUSH_OT_stencil_control";
 
 	/* api callbacks */
@@ -890,7 +890,7 @@ static void BRUSH_OT_stencil_fit_image_aspect(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Image Aspect";
-	ot->description = "When using an image texture, adjust the stencil size to fit the image aspect ratio";
+	ot->description = "Image Aspect\nWhen using an image texture, adjust the stencil size to fit the image aspect ratio";
 	ot->idname = "BRUSH_OT_stencil_fit_image_aspect";
 
 	/* api callbacks */
@@ -944,7 +944,7 @@ static void BRUSH_OT_stencil_reset_transform(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Reset Transform";
-	ot->description = "Reset the stencil transformation to the default";
+	ot->description = "Reset Transform\nReset the stencil transformation to the default";
 	ot->idname = "BRUSH_OT_stencil_reset_transform";
 
 	/* api callbacks */
@@ -989,7 +989,7 @@ void ED_operatormacros_paint(void)
 
 	ot = WM_operatortype_append_macro("PAINTCURVE_OT_add_point_slide", "Add Curve Point and Slide",
 	                                  "Add new curve point and slide it", OPTYPE_UNDO);
-	ot->description = "Add new curve point and slide it";
+	ot->description = "Add Curve Point and Slide\nAdd a new curve point and slide it";
 	WM_operatortype_macro_define(ot, "PAINTCURVE_OT_add_point");
 	otmacro = WM_operatortype_macro_define(ot, "PAINTCURVE_OT_slide");
 	RNA_boolean_set(otmacro->ptr, "align", true);
