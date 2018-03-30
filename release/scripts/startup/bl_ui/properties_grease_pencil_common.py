@@ -153,7 +153,7 @@ class GreasePencilDrawingToolsPanel:
             col.separator()
 
             col.label(text="Tools:")
-            col.operator("view3d.ruler")
+            col.operator("view3d.ruler", icon = "RULER")
 
 
 class GreasePencilStrokeEditPanel:
