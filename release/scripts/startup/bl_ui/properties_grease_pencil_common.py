@@ -50,9 +50,11 @@ def gpencil_stroke_placement_settings(context, layout):
 
         row = col.row(align=False)
         row.active = getattr(ts, propname) in {'SURFACE', 'STROKE'}
-        row.prop(ts, "use_gpencil_stroke_endpoints")
+        
+        if context.scene.tool_settings.gpencil_stroke_placement_view3d == 'STROKE':
+            row.prop(ts, "use_gpencil_stroke_endpoints")
 
-        if context.scene.tool_settings.gpencil_stroke_placement_view3d == 'CURSOR':
+        elif context.scene.tool_settings.gpencil_stroke_placement_view3d == 'CURSOR':
             row = col.row(align=True)
             row.label("Lock axis:")
             row = col.row(align=True)
