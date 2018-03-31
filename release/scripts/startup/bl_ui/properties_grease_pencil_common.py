@@ -117,6 +117,8 @@ class GreasePencilDrawingToolsPanel:
         row.operator("gpencil.draw", icon= 'LINE_DATA', text="").mode = 'DRAW_STRAIGHT'
         row.operator("gpencil.draw", icon= 'MESH_DATA', text="").mode = 'DRAW_POLY'
         
+        col.separator()
+        
         row = col.row(align=True)
         row.label(text = "Eraser Radius:")
         myvar = row.operator("wm.radial_control", text = "", icon = "ERASERSIZE")
