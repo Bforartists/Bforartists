@@ -116,6 +116,11 @@ class GreasePencilDrawingToolsPanel:
         row.operator("gpencil.draw", icon= 'ERASE',  text="").mode = 'ERASER'
         row.operator("gpencil.draw", icon= 'LINE_DATA', text="").mode = 'DRAW_STRAIGHT'
         row.operator("gpencil.draw", icon= 'MESH_DATA', text="").mode = 'DRAW_POLY'
+        
+        row = col.row(align=True)
+        row.label(text = "Eraser Radius:")
+        myvar = row.operator("wm.radial_control", text = "", icon = "ERASERSIZE")
+        myvar.data_path_primary = 'user_preferences.edit.grease_pencil_eraser_radius'
 
         col.separator()
 
@@ -474,11 +479,20 @@ class GreasePencilStrokeSculptPanel:
         layout.column().prop(settings, "tool")
 
         col = layout.column()
-        col.prop(brush, "size", slider=True)
         row = col.row(align=True)
-        row.prop(brush, "strength", slider=True)
+        row.prop(brush, "size", slider=True)
+        myvar = row.operator("wm.radial_control", text = "", icon = "BRUSHSIZE")
+        myvar.data_path_primary = 'tool_settings.gpencil_sculpt.brush.size'
+        
+        
+        row = col.row(align=True)
+        row.prop(brush, "strength", slider=True)      
         row.prop(brush, "use_pressure_strength", text="")
+        myvar = row.operator("wm.radial_control", text = "", icon = "BRUSHSTRENGTH")
+        myvar.data_path_primary = 'tool_settings.gpencil_sculpt.brush.strength'
+        
         col.prop(brush, "use_falloff")
+        
         if tool in {'SMOOTH', 'RANDOMIZE'}:
             row = layout.row(align=True)
             row.prop(settings, "affect_position", text="Position", icon='MESH_DATA', toggle=True)
