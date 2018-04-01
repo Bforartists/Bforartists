@@ -2295,21 +2295,7 @@ class VIEW3D_MT_particle(Menu):
     def draw(self, context):
         layout = self.layout
 
-        particle_edit = context.tool_settings.particle_edit
-
-        layout.operator("particle.mirror", icon = "TRANSFORM_MIRROR")
-
-        layout.separator()
-
-        layout.operator("particle.remove_doubles", icon = "REMOVE_DOUBLES")
         layout.operator("particle.delete", icon = "DELETE")
-
-        if particle_edit.select_mode == 'POINT':
-            layout.operator("particle.subdivide", icon = "SUBDIVIDE_EDGES")
-
-        layout.operator("particle.unify_length", icon = "RULER")
-        layout.operator("particle.rekey", icon = "KEY_HLT")
-        layout.operator("particle.weight_set", icon = "MOD_VERTEX_WEIGHT")
 
         layout.separator()
 
@@ -2674,10 +2660,6 @@ class VIEW3D_MT_edit_mesh(Menu):
         layout.menu("VIEW3D_MT_edit_mesh_select_mode")
         layout.menu("VIEW3D_MT_vertex_group")
         layout.menu("VIEW3D_MT_hook")
-        layout.menu("VIEW3D_MT_edit_mesh_vertices")
-        layout.menu("VIEW3D_MT_edit_mesh_edges")
-        layout.menu("VIEW3D_MT_edit_mesh_faces")
-        layout.menu("VIEW3D_MT_edit_mesh_clean")
 
         layout.separator()
 
@@ -2829,7 +2811,7 @@ class VIEW3D_MT_edit_mesh_extrude(Menu):
         for menu_id in self.extrude_options(context):
             self._extrude_funcs[menu_id](layout)
 
-
+# bfa - Not longer connected. but the menu remains available for the Blender keymap.
 class VIEW3D_MT_edit_mesh_vertices(Menu):
     bl_label = "Vertices"
 
@@ -2854,9 +2836,7 @@ class VIEW3D_MT_edit_mesh_vertices(Menu):
         layout.operator("mesh.blend_from_shape", icon = "BLENDFROMSHAPE")
         layout.operator("mesh.shape_propagate_to_all", icon = "SHAPEPROPAGATE")
 
-        
-
-
+# bfa - Not longer connected. but the menu remains available for the Blender keymap.
 class VIEW3D_MT_edit_mesh_edges(Menu):
     bl_label = "Edges"
 
@@ -2893,7 +2873,7 @@ class VIEW3D_MT_edit_mesh_edges(Menu):
 
         layout.operator("mesh.edge_split", icon = "SPLITEDGE")
 
-
+# bfa - Not longer connected. but the menu remains available for the Blender keymap.
 class VIEW3D_MT_edit_mesh_faces(Menu):
     bl_label = "Faces"
     bl_idname = "VIEW3D_MT_edit_mesh_faces"
@@ -2933,7 +2913,7 @@ class VIEW3D_MT_edit_mesh_faces(Menu):
         layout.operator("mesh.colors_rotate", icon = "ROTATE_COLORS")
         layout.operator("mesh.colors_reverse", icon = "REVERSE_COLORS")
 
-
+# bfa - Not longer connected. but the menu remains available for the Blender keymap.
 class VIEW3D_MT_edit_mesh_clean(Menu):
     bl_label = "Clean up"
 
@@ -3023,22 +3003,6 @@ def draw_curve(self, context):
 
     layout.operator("curve.duplicate_move", icon = "DUPLICATE")
     layout.operator("curve.delete", text="Delete...", icon = "DELETE")
-
-    layout.separator()
-
-    layout.operator("curve.split", icon = "SPLIT")
-    layout.operator("curve.separate", icon = "SEPARATE")
-    layout.operator("curve.make_segment", icon = "MAKE_CURVESEGMENT")
-
-    if ob.type == 'CURVE':
-        layout.operator("curve.vertex_add", icon = "EXTRUDE_REGION")
-
-    layout.separator()
-
-    layout.operator("curve.smooth_tilt", icon = "SMOOTH_TILT")
-    layout.operator("curve.smooth_radius", icon = "SMOOTH_RADIUS")
-    layout.operator("curve.smooth_weight", icon = "SMOOTH_WEIGHT")
-    layout.operator("curve.spline_weight_set", icon = "WEIGHT_TRANSFER_WEIGHTS")
     
     layout.separator()
 
@@ -3291,7 +3255,6 @@ class VIEW3D_MT_edit_armature(Menu):
         layout.separator()
 
         layout.operator_context = 'EXEC_AREA'
-        layout.operator("armature.symmetrize", icon = "SYMMETRIZE")
         layout.operator("armature.autoside_names", text="AutoName Left/Right", icon = "STRING").type = 'XAXIS'
         layout.operator("armature.autoside_names", text="AutoName Front/Back", icon = "STRING").type = 'YAXIS'
         layout.operator("armature.autoside_names", text="AutoName Top/Bottom", icon = "STRING").type = 'ZAXIS'
