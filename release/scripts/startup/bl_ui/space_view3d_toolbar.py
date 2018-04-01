@@ -1054,6 +1054,242 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
             row.operator("mesh.edge_collapse", icon='EDGE_COLLAPSE', text = "")
 
 
+class VIEW3D_MT_edit_mesh_vertices_panel(View3DPanel, Panel):
+    bl_category = "Tools"
+    bl_context = "mesh_edit"
+    bl_label = "Vertices Tools"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        layout = self.layout
+        layout.operator_context = 'INVOKE_REGION_WIN'
+
+        with_bullet = bpy.app.build_options.bullet
+
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
+
+        #Text buttons
+        if not view.show_iconbuttons:
+
+            col = layout.column(align=True)
+            col.operator("mesh.rip_move", text = "Rip                       ", icon = "RIP")
+            col.operator("mesh.rip_move_fill", text = "Rip Fill                 ", icon = "RIP_FILL")
+            col.operator("mesh.rip_edge_move", text = "Extend Vertices  ", icon = "EXTEND_VERTICES")
+            col.operator("mesh.split", text = "Split                    ", icon = "SPLIT")
+
+            col = layout.column(align=True)
+            col.operator("mesh.vert_connect_path", text="Connect Vertex Path", icon = "VERTEXCONNECTPATH")
+            col.operator("mesh.vert_connect", text = "Connect Vertices    ", icon = "VERTEXCONNECT")
+            col.operator("mesh.blend_from_shape", text = "Blend from Shape  ", icon = "BLENDFROMSHAPE")
+            col.operator("mesh.shape_propagate_to_all", text = "Shape Propagate    ", icon = "SHAPEPROPAGATE")
+
+            if with_bullet:
+                col = layout.column(align=True)
+                col.operator("mesh.convex_hull", text = "Convex Hull        ", icon = "CONVEXHULL")
+        
+        #Icon Buttons
+        else:
+
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("mesh.rip_move", text = "", icon = "RIP")
+            row.operator("mesh.rip_move_fill", text = "", icon = "RIP_FILL")
+            row.operator("mesh.rip_edge_move", text = "", icon = "EXTEND_VERTICES")
+            row.operator("mesh.split", text = "", icon = "SPLIT")
+
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("mesh.vert_connect_path", text = "", icon = "VERTEXCONNECTPATH")
+            row.operator("mesh.vert_connect", text = "", icon = "VERTEXCONNECT")
+            row.operator("mesh.blend_from_shape", text = "", icon = "BLENDFROMSHAPE")
+            row.operator("mesh.shape_propagate_to_all", text = "", icon = "SHAPEPROPAGATE")
+
+            if with_bullet:
+                row = layout.row(align=False)
+                row.alignment = 'LEFT'
+                row.operator("mesh.convex_hull", text = "", icon = "CONVEXHULL")
+
+
+class VIEW3D_MT_edit_mesh_edges_panel(View3DPanel, Panel):
+    bl_category = "Tools"
+    bl_context = "mesh_edit"
+    bl_label = "Edge Tools"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        layout = self.layout
+        layout.operator_context = 'INVOKE_REGION_WIN'
+
+        with_freestyle = bpy.app.build_options.freestyle
+
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
+        
+        #Text buttons
+        if not view.show_iconbuttons:
+
+            col = layout.column(align=True)
+            col.operator("mesh.subdivide_edgering", text = "Subdivide Edgering", icon = "SUBDIV_EDGERING")
+            col.operator("mesh.unsubdivide", text = "Un-Subdivide         ", icon = "UNSUBDIVIDE")
+            col.operator("transform.edge_crease", text = "Edge crease            ", icon = "CREASE")
+            col.operator("transform.edge_bevelweight", text = "Edge Bevel Weight ", icon = "BEVEL")
+
+            col = layout.column(align=True)
+            col.operator("mesh.mark_sharp", text = "Mark Sharp           ", icon = "MARKSHARPEDGES")
+            col.operator("mesh.mark_sharp", text = "Clear Sharp            ", icon = "CLEARSHARPEDGES").clear = True
+            col.operator("mesh.edge_rotate",text = "Rotate Edge CW    ", icon = "ROTATECW").use_ccw = False
+            col.operator("mesh.edge_split", text = "Edge Split              ", icon = "SPLITEDGE")
+
+            if with_freestyle:
+                col = layout.column(align=True)
+                col.operator("mesh.mark_freestyle_edge", text = "Mark Freestyle Edge  ", icon = "MARK_FS_EDGE").clear = False
+                col.operator("mesh.mark_freestyle_edge", text="Clear Freestyle Edge  ", icon = "CLEAR_FS_EDGE").clear = True
+
+        else:
+
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("mesh.subdivide_edgering",text = "", icon = "SUBDIV_EDGERING")
+            row.operator("mesh.unsubdivide",text = "", icon = "UNSUBDIVIDE")
+            row.operator("transform.edge_crease",text = "", icon = "CREASE")
+            row.operator("transform.edge_bevelweight",text = "", icon = "BEVEL")
+
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("mesh.mark_sharp",text = "", icon = "MARKSHARPEDGES")
+            row.operator("mesh.mark_sharp",text = "", icon = "CLEARSHARPEDGES").clear = True
+            row.operator("mesh.edge_rotate",text = "", icon = "ROTATECW").use_ccw = False
+            row.operator("mesh.edge_split",text = "", icon = "SPLITEDGE")
+
+            if with_freestyle:
+                row = layout.row(align=False)
+                row.alignment = 'LEFT'
+                row.operator("mesh.mark_freestyle_edge",text = "", icon = "MARK_FS_EDGE").clear = False
+                row.operator("mesh.mark_freestyle_edge",text = "", icon = "CLEAR_FS_EDGE").clear = True
+
+
+class VIEW3D_MT_edit_mesh_faces_panel(View3DPanel, Panel):
+    bl_category = "Tools"
+    bl_context = "mesh_edit"
+    bl_label = "Faces Tools"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        layout = self.layout
+        layout.operator_context = 'INVOKE_REGION_WIN'
+
+        with_freestyle = bpy.app.build_options.freestyle
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
+
+        #Text buttons
+        if not view.show_iconbuttons:     
+  
+            col = layout.column(align=True)
+            col.operator("mesh.fill", text = "Fill                  ", icon = "FILL")
+            col.operator("mesh.fill_grid", text = "Grid Fill           ", icon = "GRIDFILL")
+            col.operator("mesh.beautify_fill", text = "Beautify           ", icon = "BEAUTIFY")
+            col.operator("mesh.solidify", text = "Solidify             ", icon = "SOLIDIFY")
+
+            col = layout.column(align=True)
+            col.operator("mesh.intersect", text = "Intersect            ", icon = "INTERSECT")
+            col.operator("mesh.intersect_boolean", text = "Intersect (Boolean)  ", icon = "BOOLEAN_INTERSECT")
+            col.operator("mesh.wireframe", text = "Wire Frame        ", icon = "WIREFRAME")
+            col.operator("mesh.poke", text = "Poke Faces        ", icon = "POKEFACES")
+
+            col = layout.column(align=True)
+            props = col.operator("mesh.quads_convert_to_tris", text = "Triangulate         ", icon = "TRIANGULATE")
+            props.quad_method = props.ngon_method = 'BEAUTY'
+            col.operator("mesh.tris_convert_to_quads", text = "Tris to Quads      ", icon = "TRISTOQUADS")
+            col.operator("mesh.face_split_by_edges", text = "Split by Edges    ", icon = "SPLITBYEDGES")
+            col.operator("mesh.uvs_rotate", text = "Rotate UV's      ", icon = "ROTATE_UVS")
+
+            col = layout.column(align=True)
+            col.operator("mesh.uvs_reverse", text = "Reverse UV's    ", icon = "REVERSE_UVS")
+            col.operator("mesh.colors_rotate", text = "Rotate Colkors    ", icon = "ROTATE_COLORS")
+            col.operator("mesh.colors_reverse", text = "Reverse Colors     ", icon = "REVERSE_COLORS")
+
+            col = layout.column(align=True)
+            if with_freestyle:
+                col.operator("mesh.mark_freestyle_face", text = "Mark Freestyle Face", icon = "MARKFSFACE").clear = False
+                col.operator("mesh.mark_freestyle_face", text="Clear Freestyle Face", icon = "CLEARFSFACE").clear = True
+
+        else:     
+
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("mesh.fill", text = "", icon = "FILL")
+            row.operator("mesh.fill_grid", text = "", icon = "GRIDFILL")
+            row.operator("mesh.beautify_fill", text = "", icon = "BEAUTIFY")
+            row.operator("mesh.solidify", text = "", icon = "SOLIDIFY")
+
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("mesh.intersect", text = "", icon = "INTERSECT")
+            row.operator("mesh.intersect_boolean", text = "", icon = "BOOLEAN_INTERSECT")
+            row.operator("mesh.wireframe", text = "", icon = "WIREFRAME")
+            row.operator("mesh.poke", text = "", icon = "POKEFACES")
+
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            props = row.operator("mesh.quads_convert_to_tris", text = "", icon = "TRIANGULATE")
+            props.quad_method = props.ngon_method = 'BEAUTY'
+            row.operator("mesh.tris_convert_to_quads", text = "", icon = "TRISTOQUADS")
+            row.operator("mesh.face_split_by_edges", text = "", icon = "SPLITBYEDGES")
+            row.operator("mesh.uvs_rotate", text = "", icon = "ROTATE_UVS")
+
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("mesh.uvs_reverse", text = "", icon = "REVERSE_UVS")
+            row.operator("mesh.colors_rotate", text = "", icon = "ROTATE_COLORS")
+            row.operator("mesh.colors_reverse", text = "", icon = "REVERSE_COLORS")
+
+            if with_freestyle:
+                row = layout.row(align=False)
+                row.alignment = 'LEFT'
+                row.operator("mesh.mark_freestyle_face", text = "", icon = "MARKFSFACE").clear = False
+                row.operator("mesh.mark_freestyle_face", text = "", icon = "CLEARFSFACE").clear = True
+
+
+class VIEW3D_MT_edit_mesh_clean_panel(View3DPanel, Panel):
+    bl_category = "Tools"
+    bl_context = "mesh_edit"
+    bl_label = "Clean Up"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        layout = self.layout
+
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
+
+        #Text buttons
+        if not view.show_iconbuttons:
+
+            col = layout.column(align=True)
+            col.operator("mesh.delete_loose", text = "Delete Loose        ", icon = "DELETE_LOOSE")
+            col.operator("mesh.decimate", text = "Decimate Geometry", icon = "DECIMATE")
+            col.operator("mesh.dissolve_degenerate", text = "Degenerate Dissolve", icon = "DEGENERATE_DISSOLVE")
+            col.operator("mesh.face_make_planar", text = "Make Planar Faces", icon = "MAKE_PLANAR")
+
+            col = layout.column(align=True)
+            col.operator("mesh.vert_connect_nonplanar", text = "Split Non-Planar Faces", icon = "SPLIT_NONPLANAR")
+            col.operator("mesh.vert_connect_concave", text = "Split Concave Faces", icon = "SPLIT_CONCAVE")
+            col.operator("mesh.fill_holes", text = "Fill Holes              ", icon = "FILL_HOLE")
+
+        else:
+
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("mesh.delete_loose", text = "", icon = "DELETE_LOOSE")
+            row.operator("mesh.decimate", text = "", icon = "DECIMATE")
+            row.operator("mesh.dissolve_degenerate", text = "", icon = "DEGENERATE_DISSOLVE")
+            row.operator("mesh.face_make_planar", text = "", icon = "MAKE_PLANAR")
+
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("mesh.vert_connect_nonplanar", text = "", icon = "SPLIT_NONPLANAR")
+            row.operator("mesh.vert_connect_concave", text = "", icon = "SPLIT_CONCAVE")
+            row.operator("mesh.fill_holes", text = "", icon = "FILL_HOLE")
+
+
 class VIEW3D_PT_tools_meshweight(View3DPanel, Panel):
     bl_category = "Tools"
     bl_context = "mesh_edit"
@@ -1311,9 +1547,21 @@ class VIEW3D_PT_tools_curveedit(View3DPanel, Panel):
 
             col = layout.column(align=True)
             col.label(text="Modeling:")
-            col.operator("curve.extrude_move", icon = 'EXTRUDE_REGION', text="Extrude            ")
-            col.operator("curve.subdivide", icon = 'SUBDIVIDE_EDGES', text="Subdivide        ")
-            col.operator("curve.smooth", icon = 'SHADING_SMOOTH', text="Smooth           ")
+            col.operator("curve.extrude_move", icon = 'EXTRUDE_REGION', text="Extrude                ")
+            col.operator("curve.subdivide", icon = 'SUBDIVIDE_EDGES', text="Subdivide            ")
+            col.operator("curve.smooth", icon = 'SHADING_SMOOTH', text="Smooth              ")
+            col.operator("curve.split", icon = "SPLIT", text = "Split                   ")
+
+            col = layout.column(align=True)
+            col.operator("curve.separate", icon = "SEPARATE", text = "Separate             ")
+            col.operator("curve.make_segment", icon = "MAKE_CURVESEGMENT", text = "Make Segment    ")
+            col.operator("curve.vertex_add", icon = "EXTRUDE_REGION", text = "Add Vertex          ")
+            col.operator("curve.smooth_tilt", icon = "SMOOTH_TILT", text = "Smooth Tilt        ")
+
+            col = layout.column(align=True)
+            col.operator("curve.smooth_radius", icon = "SMOOTH_RADIUS", text = "Smooth Radius     ")
+            col.operator("curve.smooth_weight", icon = "SMOOTH_WEIGHT", text = "Smooth Weight     ")
+            col.operator("curve.spline_weight_set", icon = "WEIGHT_TRANSFER_WEIGHTS", text = "Set Goal Weight   ")
 
         else:
 
@@ -1354,6 +1602,24 @@ class VIEW3D_PT_tools_curveedit(View3DPanel, Panel):
             row.operator("curve.extrude_move", icon = 'EXTRUDE_REGION', text = "")
             row.operator("curve.subdivide", icon = 'SUBDIVIDE_EDGES', text = "")
             row.operator("curve.smooth", icon = 'SHADING_SMOOTH', text = "")
+            row.operator("curve.split", icon = "SPLIT", text = "")
+
+            col.separator()
+
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("curve.separate", icon = "SEPARATE", text = "")
+            row.operator("curve.make_segment", icon = "MAKE_CURVESEGMENT", text = "")
+            row.operator("curve.vertex_add", icon = "EXTRUDE_REGION", text = "")
+            row.operator("curve.smooth_tilt", icon = "SMOOTH_TILT", text = "")
+
+            col.separator()
+
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("curve.smooth_radius", icon = "SMOOTH_RADIUS", text = "")
+            row.operator("curve.smooth_weight", icon = "SMOOTH_WEIGHT", text = "")
+            row.operator("curve.spline_weight_set", icon = "WEIGHT_TRANSFER_WEIGHTS", text = "")
 
 
 class VIEW3D_PT_tools_add_curve_edit(View3DPanel, Panel):
@@ -1450,9 +1716,20 @@ class VIEW3D_PT_tools_surfaceedit(View3DPanel, Panel):
 
             col = layout.column(align=True)
             col.label(text="Modeling:")
-            col.operator("curve.extrude", icon='EXTRUDE_REGION', text="Extrude           ")
-            col.operator("curve.spin", icon = 'SPIN', text="Spin                 ")  
-            col.operator("curve.subdivide", icon='SUBDIVIDE_EDGES', text="Subdivide        ")
+            col.operator("curve.extrude", icon='EXTRUDE_REGION', text="Extrude               ")
+            col.operator("curve.spin", icon = 'SPIN', text="Spin                     ")  
+            col.operator("curve.subdivide", icon='SUBDIVIDE_EDGES', text="Subdivide          ")
+            col.operator("curve.split", icon = "SPLIT", text = "Split                   ")
+
+            col = layout.column(align=True)
+            col.operator("curve.separate", icon = "SEPARATE", text = "Separate             ")
+            col.operator("curve.make_segment", icon = "MAKE_CURVESEGMENT", text = "Make Segment    ")
+            col.operator("curve.smooth_tilt", icon = "SMOOTH_TILT", text = "Smooth Tilt        ")
+            col.operator("curve.smooth_radius", icon = "SMOOTH_RADIUS", text = "Smooth Radius     ")
+
+            col = layout.column(align=True)
+            col.operator("curve.smooth_weight", icon = "SMOOTH_WEIGHT", text = "Smooth Weight     ")
+            col.operator("curve.spline_weight_set", icon = "WEIGHT_TRANSFER_WEIGHTS", text = "Set Goal Weight   ")
 
         else:
 
@@ -1472,6 +1749,23 @@ class VIEW3D_PT_tools_surfaceedit(View3DPanel, Panel):
             row.operator("curve.extrude", icon='EXTRUDE_REGION', text = "")
             row.operator("curve.spin", icon = 'SPIN', text = "")
             row.operator("curve.subdivide", icon='SUBDIVIDE_EDGES', text = "")
+            row.operator("curve.split", icon = "SPLIT", text = "")
+
+            col.separator()
+
+            row = col.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("curve.separate", icon = "SEPARATE", text = "")
+            row.operator("curve.make_segment", icon = "MAKE_CURVESEGMENT", text = "")
+            row.operator("curve.smooth_tilt", icon = "SMOOTH_TILT", text = "")
+            row.operator("curve.smooth_radius", icon = "SMOOTH_RADIUS", text = "")
+
+            col.separator()
+
+            row = col.row(align=False)
+            row.alignment = 'LEFT'         
+            row.operator("curve.smooth_weight", icon = "SMOOTH_WEIGHT", text = "")
+            row.operator("curve.spline_weight_set", icon = "WEIGHT_TRANSFER_WEIGHTS", text = "")
 
 
 class VIEW3D_PT_tools_add_surface_edit(View3DPanel, Panel):
@@ -1550,12 +1844,16 @@ class VIEW3D_PT_tools_armatureedit(View3DPanel, Panel):
         if not view.show_iconbuttons: 
             col = layout.column(align=True)
             col.operator("transform.mirror", icon='TRANSFORM_MIRROR', text="Mirror                   ")
+            col.operator("armature.symmetrize", icon = "SYMMETRIZE", text = "Symmetrize          ")
+
             col = layout.column(align=True)
             col.label(text="Bones:")
             col.operator("armature.bone_primitive_add", icon = 'BONE_DATA', text="Add                      ")
             col.operator("armature.merge", text="Merge Bones        ", icon = "MERGE")
             col.operator("armature.fill", text="Fill between Joints", icon = "FILLBETWEEN")
             col.operator("armature.split",  text="Split                     ", icon = "SPLIT")
+
+            col = layout.column(align=True)
             col.operator("armature.separate", text="Separate                ", icon = "SEPARATE")
             col.operator("armature.switch_direction", text="Switch Direction  ", icon = "SWITCH_DIRECTION")
 
@@ -1569,6 +1867,8 @@ class VIEW3D_PT_tools_armatureedit(View3DPanel, Panel):
             row = col.row(align=False)
             row.alignment = 'LEFT'
             row.operator("transform.mirror", icon='TRANSFORM_MIRROR', text = "")
+            row.operator("armature.symmetrize", icon = "SYMMETRIZE", text = "")
+
             col = layout.column(align=True)
             col.label(text="Bones:")
             row = col.row(align=False)
@@ -1693,17 +1993,16 @@ class VIEW3D_PT_tools_posemode(View3DPanel, Panel):
 
             col = layout.column(align=True)
             col.label(text="In-Between:")
-            row = col.row(align=True)
-            row.operator("pose.push", icon = 'PUSH_POSE', text="Push")
-            row.operator("pose.relax", icon = 'RELAX_POSE',text="Relax")
-            col.operator("pose.breakdown", icon = 'BREAKDOWNER_POSE',text="Breakdowner  ")
+            col.operator("pose.push", icon = 'PUSH_POSE', text="Push                   ")
+            col.operator("pose.relax", icon = 'RELAX_POSE',text="Relax                  ")
+            col.operator("pose.breakdown", icon = 'BREAKDOWNER_POSE',text="Breakdowner     ")
 
             col = layout.column(align=True)
             col.label(text="Pose:")
             row = col.row(align=True)
 
             row = layout.row(align=True)
-            row.operator("pose.propagate", text="Propagate")
+            row.operator("pose.propagate", text="Propagate        ", icon = "PROPAGATE")
 
             # bfa - Double menu entry. But stays available for further modifications
             #col = layout.column(align=True)
@@ -1713,9 +2012,8 @@ class VIEW3D_PT_tools_posemode(View3DPanel, Panel):
 
             col = layout.column(align=True)
             col.label(text="Motion Paths:")
-            row = col.row(align=True)
-            row.operator("pose.paths_calculate", icon ='MOTIONPATHS_CALCULATE', text="Calculate")
-            row.operator("pose.paths_clear", icon ='MOTIONPATHS_CLEAR', text="Clear")
+            col.operator("pose.paths_calculate", icon ='MOTIONPATHS_CALCULATE', text="Calculate         ")
+            col.operator("pose.paths_clear", icon ='MOTIONPATHS_CLEAR', text="Clear               ")
 
         else:
             col = layout.column(align=True)
@@ -1733,8 +2031,8 @@ class VIEW3D_PT_tools_posemode(View3DPanel, Panel):
             #row = col.row(align=False)
             #row.operator("poselib.pose_add", icon = 'ADD_TO_LIBRARY', text = "")
 
-            row = col.row(align=True)
-            row.operator("pose.propagate", text="Propagate")
+            row = col.row(align=False)
+            row.operator("pose.propagate", text="", icon = "PROPAGATE")
 
             draw_keyframing_tools_icons(context, layout)
 
@@ -1825,6 +2123,45 @@ class VIEW3D_PT_imapaint_tools_missing(Panel, View3DPaintPanel):
             col.operator("image.new", text="New").gen_context = 'PAINT_STENCIL'
 
 
+class VIEW3D_MT_particle_tools(Panel, View3DPaintPanel):
+    bl_category = "Tools"
+    bl_label = "Tools"
+    bl_context = "particlemode"
+
+    def draw(self, context):
+        layout = self.layout
+
+        particle_edit = context.tool_settings.particle_edit
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
+
+        # bfa - icon or text buttons
+        if not view.show_iconbuttons: 
+
+            col = layout.column(align=True)
+            col.operator("particle.mirror", icon = "TRANSFORM_MIRROR")
+            col.operator("particle.remove_doubles", icon = "REMOVE_DOUBLES")
+            col.operator("particle.unify_length", icon = "RULER")
+            col.operator("particle.rekey", icon = "KEY_HLT")
+            col.operator("particle.weight_set", icon = "MOD_VERTEX_WEIGHT")
+
+            if particle_edit.select_mode == 'POINT':
+                layout.operator("particle.subdivide", icon = "SUBDIVIDE_EDGES")
+
+        else:
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("particle.mirror", text = "", icon = "TRANSFORM_MIRROR")
+            row.operator("particle.remove_doubles", text = "", icon = "REMOVE_DOUBLES")
+            row.operator("particle.unify_length", text = "", icon = "RULER")
+            row.operator("particle.rekey", text = "", icon = "KEY_HLT")
+
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("particle.weight_set", text = "", icon = "MOD_VERTEX_WEIGHT")
+            if particle_edit.select_mode == 'POINT':
+                row.operator("particle.subdivide", text = "", icon = "SUBDIVIDE_EDGES")
+
+
 class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
     bl_category = "Tools"
     bl_label = "Brush"
@@ -1858,15 +2195,17 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
 
             if tool != 'NONE':
                 col = layout.column()
-                col.prop(brush, "size", slider=True)
+                row = col.row(align=True)
+                row.prop(brush, "size", slider=True)
 
-                myvar = layout.operator("wm.radial_control", text = "Radial Control Size")
+                myvar = row.operator("wm.radial_control", text = "", icon = "BRUSHSIZE")
                 myvar.data_path_primary = 'tool_settings.particle_edit.brush.size'
 
                 if tool != 'ADD':
-                    col.prop(brush, "strength", slider=True)
+                    row = col.row(align=True)
+                    row.prop(brush, "strength", slider=True)
 
-                    myvar = layout.operator("wm.radial_control", text = "Radial Control Strength")
+                    myvar = row.operator("wm.radial_control", text = "", icon = "BRUSHSTRENGTH")
                     myvar.data_path_primary = 'tool_settings.particle_edit.brush.strength'
 
             if tool == 'ADD':
@@ -1904,7 +2243,6 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
             self.prop_unified_size(row, context, brush, "use_pressure_size")
 
             # strength, use_strength_pressure, and use_strength_attenuation
-            col.separator()
             row = col.row(align=True)
 
             if capabilities.has_space_attenuation:
@@ -1917,7 +2255,6 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
 
             # auto_smooth_factor and use_inverse_smooth_pressure
             if capabilities.has_auto_smooth:
-                col.separator()
 
                 row = col.row(align=True)
                 row.prop(brush, "auto_smooth_factor", slider=True)
@@ -1925,23 +2262,20 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
 
             # normal_weight
             if capabilities.has_normal_weight:
-                col.separator()
                 row = col.row(align=True)
                 row.prop(brush, "normal_weight", slider=True)
 
             # crease_pinch_factor
             if capabilities.has_pinch_factor:
-                col.separator()
                 row = col.row(align=True)
                 row.prop(brush, "crease_pinch_factor", slider=True, text="Pinch")
 
             # rake_factor
             if capabilities.has_rake_factor:
-                col.separator()
                 row = col.row(align=True)
                 row.prop(brush, "rake_factor", slider=True)
                 
-                        # direction
+            # direction
             col.separator()
             col.row().prop(brush, "direction", expand=True)
             col.separator()
@@ -1954,8 +2288,6 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
                 row.prop(brush, "use_original_normal", toggle=True, icon_only=True)
 
                 row.prop(brush, "sculpt_plane", text = "")
-                
-                col.separator()
 
             if brush.sculpt_tool == 'MASK':
                 col.prop(brush, "mask_tool", text = "")
@@ -1965,8 +2297,6 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
                 row = col.row(align=True)
                 row.prop(brush, "plane_offset", slider=True)
                 row.prop(brush, "use_offset_pressure", text = "")
-
-                col.separator()
 
                 row = col.row()
                 row.prop(brush, "use_plane_trim", text="Trim")
@@ -1988,7 +2318,7 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
             # use_accumulate
             if capabilities.has_accumulate:
 
-                col.prop(brush, "use_accumulate")
+                row.prop(brush, "use_accumulate")
 
             # use_persistent, set_persistent_base
             if capabilities.has_persistence:
@@ -2084,7 +2414,7 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
                 col.template_ID(settings, "palette", new="palette.new")
 
         # Options just for vertex and texture paint
-        if mode != 'WEIGHT_PAINT':
+        if mode in {'TEXTURE_PAINT', 'VERTEX_PAINT'}:
 
             if not addon_prefs.brushpanel_display_options:
                 layout.prop(addon_prefs,"brushpanel_display_options", emboss=False, icon="SETUP", text=" ")
@@ -2094,7 +2424,6 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
 
                 layout.prop(addon_prefs, "brushpanel_hide_colorpicker")
                 layout.prop(addon_prefs, "brushpanel_hide_palette")
-            
 
 
 class TEXTURE_UL_texpaintslots(UIList):
@@ -2508,7 +2837,7 @@ class VIEW3D_PT_sculpt_dyntopo(Panel, View3DPaintPanel):
         settings = self.paint_settings(context)
         brush = settings.brush
 
-        layout.operator("sculpt.set_detail_size", text="Set detail size")
+        layout.operator("sculpt.set_detail_size", text="Set detail size    ", icon = "BRUSHSIZE")
 
         col = layout.column()
         col.active = context.sculpt_object.use_dynamic_topology_sculpting
@@ -2526,12 +2855,12 @@ class VIEW3D_PT_sculpt_dyntopo(Panel, View3DPaintPanel):
         sub.prop(sculpt, "detail_type_method", text = "")
         col.separator()
         col.prop(sculpt, "use_smooth_shading")
-        col.operator("sculpt.optimize")
+        col.operator("sculpt.optimize", icon = "OPTIMIZE", text = "Optimize           ")
         if (sculpt.detail_type_method == 'CONSTANT'):
-            col.operator("sculpt.detail_flood_fill")
+            col.operator("sculpt.detail_flood_fill", icon = "FLOODFILL")
         col.separator()
         col.prop(sculpt, "symmetrize_direction")
-        col.operator("sculpt.symmetrize")
+        col.operator("sculpt.symmetrize", icon = "SYMMETRIZE", text = "Symmetrize       ")
 
 
 class VIEW3D_PT_sculpt_options(Panel, View3DPaintPanel):
@@ -3122,6 +3451,10 @@ classes = (
     VIEW3D_PT_tools_animation,
     VIEW3D_PT_tools_rigid_body,
     VIEW3D_PT_tools_meshedit,
+    VIEW3D_MT_edit_mesh_vertices_panel,
+    VIEW3D_MT_edit_mesh_edges_panel,
+    VIEW3D_MT_edit_mesh_faces_panel,
+    VIEW3D_MT_edit_mesh_clean_panel,
     VIEW3D_normals_make_consistent_inside,
     VIEW3D_PT_tools_meshweight,
     VIEW3D_PT_tools_add_mesh_edit,
@@ -3143,6 +3476,7 @@ classes = (
     VIEW3D_PT_tools_posemode,
     VIEW3D_PT_tools_posemode_options,
     VIEW3D_PT_imapaint_tools_missing,
+    VIEW3D_MT_particle_tools,
     VIEW3D_PT_tools_brush,
     TEXTURE_UL_texpaintslots,
     VIEW3D_MT_tools_projectpaint_uvlayer,
