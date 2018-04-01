@@ -198,11 +198,25 @@ def brush_texpaint_common(panel, context, layout, brush, settings, projpaint=Fal
             col.prop(brush, "clone_alpha", text="Alpha")
 
     col.separator()
-
     if capabilities.has_radius:
         row = col.row(align=True)
         panel.prop_unified_size(row, context, brush, "size", slider=True, text="Radius")
         panel.prop_unified_size(row, context, brush, "use_pressure_size")
+
+        #radial control button brushsize
+        myvar = row.operator("wm.radial_control", text = "", icon = "BRUSHSIZE")
+        myvar.data_path_primary = 'tool_settings.image_paint.brush.size'
+        myvar.data_path_secondary = 'tool_settings.unified_paint_settings.size'
+        myvar.use_secondary = 'tool_settings.unified_paint_settings.use_unified_size'
+        myvar.rotation_path = 'tool_settings.image_paint.brush.mask_texture_slot.angle'
+        myvar.color_path = 'tool_settings.image_paint.brush.cursor_color_add'
+        myvar.fill_color_path = 'tool_settings.image_paint.brush.color'
+        myvar.fill_color_override_path = 'tool_settings.unified_paint_settings.color'
+        myvar.fill_color_override_test_path = 'tool_settings.unified_paint_settings.use_unified_color'
+        myvar.zoom_path = 'space_data.zoom'
+        myvar.image_id = 'tool_settings.image_paint.brush'
+        myvar.secondary_tex = True
+
 
     row = col.row(align=True)
 
@@ -211,6 +225,21 @@ def brush_texpaint_common(panel, context, layout, brush, settings, projpaint=Fal
 
     panel.prop_unified_strength(row, context, brush, "strength", text="Strength")
     panel.prop_unified_strength(row, context, brush, "use_pressure_strength")
+
+    #radial control button brushsize
+    myvar = row.operator("wm.radial_control", text = "", icon = "BRUSHSTRENGTH")
+    myvar.data_path_primary = 'tool_settings.image_paint.brush.strength'
+    myvar.data_path_secondary = 'tool_settings.unified_paint_settings.strength'
+    myvar.use_secondary = 'tool_settings.unified_paint_settings.use_unified_strength'
+    myvar.rotation_path = 'tool_settings.image_paint.brush.mask_texture_slot.angle'
+    myvar.color_path = 'tool_settings.image_paint.brush.cursor_color_add'
+    myvar.fill_color_path = 'tool_settings.image_paint.brush.color'
+    myvar.fill_color_override_path = 'tool_settings.unified_paint_settings.color'
+    myvar.fill_color_override_test_path = 'tool_settings.unified_paint_settings.use_unified_color'
+    myvar.zoom_path = ''
+    myvar.image_id = 'tool_settings.image_paint.brush'
+    myvar.secondary_tex = True
+
 
     if brush.image_tool in {'DRAW', 'FILL'}:
         col.separator()
@@ -229,10 +258,9 @@ def brush_texpaint_common(panel, context, layout, brush, settings, projpaint=Fal
 
     row.prop(brush, "use_gradient")
 
-    col.separator()
-
     #Hidable palette
     if not addon_prefs.brushpanel_hide_palette:
+        col.separator()
         col.template_ID(settings, "palette", new="palette.new")
 
 
@@ -251,9 +279,9 @@ def brush_texture_settings(layout, brush, sculpt):
         layout.separator()
 
     if tex_slot.map_mode == 'STENCIL':
+
         if brush.texture and brush.texture.type == 'IMAGE':
-            layout.operator("brush.stencil_fit_image_aspect")
-        layout.operator("brush.stencil_reset_transform")
+            layout.operator("brush.stencil_fit_image_aspect", icon = "IMAGE_ASPECT", text = " Image Aspect")       
 
         # bfa - stencil brush control buttons
         col = layout.column()
@@ -263,13 +291,31 @@ def brush_texture_settings(layout, brush, sculpt):
         row.operator("brush.stencil_control", text = '', icon ='TRANSFORM_MOVE').mode = 'TRANSLATION'
         row.operator("brush.stencil_control", text = '', icon ='TRANSFORM_ROTATE').mode = 'ROTATION'
         row.operator("brush.stencil_control", text = '', icon ='TRANSFORM_SCALE').mode = 'SCALE'
+        row.operator("brush.stencil_reset_transform", icon = "RESET", text = "")
 
 
     # angle and texture_angle_source
     if tex_slot.has_texture_angle:
         col = layout.column()
         col.label(text="Angle:")
-        col.prop(tex_slot, "angle", text="")
+        row = col.row(align=True)
+        row.prop(tex_slot, "angle", text="")
+        
+        #radial control button brushsize
+        myvar = row.operator("wm.radial_control", text = "", icon = "BRUSHANGLE")
+        myvar.data_path_primary = 'tool_settings.image_paint.brush.texture_slot.angle'
+        myvar.data_path_secondary = ''
+        myvar.use_secondary = ''
+        myvar.rotation_path = 'tool_settings.image_paint.brush.texture_slot.angle'
+        myvar.color_path = 'tool_settings.image_paint.brush.cursor_color_add'
+        myvar.fill_color_path = 'tool_settings.image_paint.brush.color'
+        myvar.fill_color_override_path = 'tool_settings.unified_paint_settings.color'
+        myvar.fill_color_override_test_path = 'tool_settings.unified_paint_settings.use_unified_color'
+        myvar.zoom_path = ''
+        myvar.image_id = 'tool_settings.image_paint.brush'
+        myvar.secondary_tex = False
+        
+               
         if tex_slot.has_texture_angle_source:
             col.prop(tex_slot, "use_rake", text="Rake")
 
@@ -307,8 +353,7 @@ def brush_mask_texture_settings(layout, brush):
 
     if mask_tex_slot.map_mode == 'STENCIL':
         if brush.mask_texture and brush.mask_texture.type == 'IMAGE':
-            layout.operator("brush.stencil_fit_image_aspect").mask = True
-        layout.operator("brush.stencil_reset_transform").mask = True
+            layout.operator("brush.stencil_fit_image_aspect", icon = "IMAGE_ASPECT", text = " Image Aspect").mask = True
 
         # stencil brush controls hotkeys. This is the secondary set.
 
@@ -325,6 +370,7 @@ def brush_mask_texture_settings(layout, brush):
         myvar = row.operator("brush.stencil_control", text = "", icon ='TRANSFORM_SCALE')
         myvar.mode = 'SCALE'
         myvar.texmode = 'SECONDARY'
+        row.operator("brush.stencil_reset_transform", icon = "RESET", text = "").mask = True
         
         layout.separator()
 
@@ -335,7 +381,25 @@ def brush_mask_texture_settings(layout, brush):
     if mask_tex_slot.has_texture_angle:
         col = layout.column()
         col.label(text="Angle:")
-        col.prop(mask_tex_slot, "angle", text="")
+        
+        row = col.row(align=True)
+        row.prop(mask_tex_slot, "angle", text="")
+        
+        #radial control button brushsize
+        myvar = row.operator("wm.radial_control", text = "", icon = "BRUSHANGLE")
+        myvar.data_path_primary = 'tool_settings.image_paint.brush.mask_texture_slot.angle'
+        myvar.data_path_secondary = ''
+        myvar.use_secondary = ''
+        myvar.rotation_path = 'tool_settings.image_paint.brush.mask_texture_slot.angle'
+        myvar.color_path = 'tool_settings.image_paint.brush.cursor_color_add'
+        myvar.fill_color_path = 'tool_settings.image_paint.brush.color'
+        myvar.fill_color_override_path = 'tool_settings.unified_paint_settings.color'
+        myvar.fill_color_override_test_path = 'tool_settings.unified_paint_settings.use_unified_color'
+        myvar.zoom_path = ''
+        myvar.image_id = 'tool_settings.image_paint.brush'
+        myvar.secondary_tex = True
+        
+        
         if mask_tex_slot.has_texture_angle_source:
             col.prop(mask_tex_slot, "use_rake", text="Rake")
 
