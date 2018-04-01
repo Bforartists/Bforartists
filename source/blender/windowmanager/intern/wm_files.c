@@ -62,6 +62,8 @@
 
 #include "BLT_translation.h"
 
+#include "BLF_api.h"
+
 #include "DNA_mesh_types.h" /* only for USE_BMESH_SAVE_AS_COMPAT */
 #include "DNA_object_types.h"
 #include "DNA_space_types.h"
@@ -85,9 +87,11 @@
 #include "BKE_sound.h"
 #include "BKE_scene.h"
 #include "BKE_screen.h"
+#include "BKE_undo_system.h"
 
 #include "BLO_readfile.h"
 #include "BLO_writefile.h"
+#include "BLO_undofile.h"  /* to save from an undo memfile */
 
 #include "RNA_access.h"
 #include "RNA_define.h"
@@ -339,6 +343,8 @@ static void wm_init_userdef(Main *bmain, const bool read_userdef_from_memory)
 
 	/* update tempdir from user preferences */
 	BKE_tempdir_init(U.tempdir);
+
+	BLF_antialias_set((U.text_render & USER_TEXT_DISABLE_AA) == 0);
 }
 
 
@@ -518,9 +524,13 @@ static void wm_file_read_post(bContext *C, const bool is_startup_file, const boo
 	}
 
 	if (!G.background) {
-//		undo_editmode_clear();
-		BKE_undo_reset();
-		BKE_undo_write(C, "original");  /* save current state */
+		if (wm->undo_stack == NULL) {
+			wm->undo_stack = BKE_undosys_stack_create();
+		}
+		else {
+			BKE_undosys_stack_clear(wm->undo_stack);
+		}
+		BKE_undosys_stack_init_from_main(wm->undo_stack, CTX_data_main(C));
 	}
 }
 
@@ -592,10 +602,6 @@ bool WM_file_read(bContext *C, const char *filepath, ReportList *reports)
 
 		success = true;
 	}
-#if 0
-	else if (retval == BKE_READ_EXOTIC_OK_OTHER)
-		BKE_undo_write(C, "Import file");
-#endif
 	else if (retval == BKE_READ_EXOTIC_FAIL_OPEN) {
 		BKE_reportf(reports, RPT_ERROR, "Cannot read file '%s': %s", filepath,
 		            errno ? strerror(errno) : TIP_("unable to open the file"));
@@ -1267,7 +1273,10 @@ void wm_autosave_timer(const bContext *C, wmWindowManager *wm, wmTimer *UNUSED(w
 
 	if (U.uiflag & USER_GLOBALUNDO) {
 		/* fast save of last undobuffer, now with UI */
-		BKE_undo_save_file(filepath);
+		struct MemFile *memfile = ED_undosys_stack_memfile_get_active(wm->undo_stack);
+		if (memfile) {
+			BLO_memfile_write_file(memfile, filepath);
+		}
 	}
 	else {
 		/*  save as regular blend file */
