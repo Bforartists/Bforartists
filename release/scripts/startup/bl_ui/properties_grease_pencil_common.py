@@ -50,9 +50,11 @@ def gpencil_stroke_placement_settings(context, layout):
 
         row = col.row(align=False)
         row.active = getattr(ts, propname) in {'SURFACE', 'STROKE'}
-        row.prop(ts, "use_gpencil_stroke_endpoints")
+        
+        if context.scene.tool_settings.gpencil_stroke_placement_view3d == 'STROKE':
+            row.prop(ts, "use_gpencil_stroke_endpoints")
 
-        if context.scene.tool_settings.gpencil_stroke_placement_view3d == 'CURSOR':
+        elif context.scene.tool_settings.gpencil_stroke_placement_view3d == 'CURSOR':
             row = col.row(align=True)
             row.label("Lock axis:")
             row = col.row(align=True)
@@ -114,6 +116,13 @@ class GreasePencilDrawingToolsPanel:
         row.operator("gpencil.draw", icon= 'ERASE',  text="").mode = 'ERASER'
         row.operator("gpencil.draw", icon= 'LINE_DATA', text="").mode = 'DRAW_STRAIGHT'
         row.operator("gpencil.draw", icon= 'MESH_DATA', text="").mode = 'DRAW_POLY'
+        
+        col.separator()
+        
+        row = col.row(align=True)
+        row.label(text = "Eraser Radius:")
+        myvar = row.operator("wm.radial_control", text = "", icon = "ERASERSIZE")
+        myvar.data_path_primary = 'user_preferences.edit.grease_pencil_eraser_radius'
 
         col.separator()
 
@@ -153,7 +162,7 @@ class GreasePencilDrawingToolsPanel:
             col.separator()
 
             col.label(text="Tools:")
-            col.operator("view3d.ruler")
+            col.operator("view3d.ruler", icon = "RULER")
 
 
 class GreasePencilStrokeEditPanel:
@@ -351,9 +360,9 @@ class GreasePencilInterpolatePanel:
         settings = context.tool_settings.gpencil_interpolate
 
         col = layout.column(align=True)
-        col.operator("gpencil.interpolate", text="Interpolate")
-        col.operator("gpencil.interpolate_sequence", text="Sequence")
-        col.operator("gpencil.interpolate_reverse", text="Remove Breakdowns")
+        col.operator("gpencil.interpolate", text="Interpolate        ", icon = "INTERPOLATE")
+        col.operator("gpencil.interpolate_sequence", text=" Sequence          ", icon = "SEQUENCE")
+        col.operator("gpencil.interpolate_reverse", text=" Remove Breakdowns", icon = "DELETE")
 
         col = layout.column(align=True)
         col.label(text="Options:")
@@ -464,7 +473,7 @@ class GreasePencilStrokeSculptPanel:
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("gpencil.brush_paint", text="Sculpt Strokes").wait_for_input = True
+        layout.operator("gpencil.brush_paint", text="Sculpt Strokes", icon = "SCULPTMODE_HLT").wait_for_input = True
         settings = context.tool_settings.gpencil_sculpt
         tool = settings.tool
         brush = settings.brush
@@ -472,11 +481,20 @@ class GreasePencilStrokeSculptPanel:
         layout.column().prop(settings, "tool")
 
         col = layout.column()
-        col.prop(brush, "size", slider=True)
         row = col.row(align=True)
-        row.prop(brush, "strength", slider=True)
+        row.prop(brush, "size", slider=True)
+        myvar = row.operator("wm.radial_control", text = "", icon = "BRUSHSIZE")
+        myvar.data_path_primary = 'tool_settings.gpencil_sculpt.brush.size'
+        
+        
+        row = col.row(align=True)
+        row.prop(brush, "strength", slider=True)      
         row.prop(brush, "use_pressure_strength", text="")
+        myvar = row.operator("wm.radial_control", text = "", icon = "BRUSHSTRENGTH")
+        myvar.data_path_primary = 'tool_settings.gpencil_sculpt.brush.strength'
+        
         col.prop(brush, "use_falloff")
+        
         if tool in {'SMOOTH', 'RANDOMIZE'}:
             row = layout.row(align=True)
             row.prop(settings, "affect_position", text="Position", icon='MESH_DATA', toggle=True)
@@ -961,9 +979,7 @@ class GreasePencilDataPanel:
         gpd = context.gpencil_data
 
         # Owner Selector
-        if context.space_data.type == 'VIEW_3D':
-            layout.row().prop(context.tool_settings, "grease_pencil_source", expand=True)
-        elif context.space_data.type == 'CLIP_EDITOR':
+        if context.space_data.type == 'CLIP_EDITOR':
             layout.row().prop(context.space_data, "grease_pencil_source", expand=True)
 
         # Grease Pencil data selector

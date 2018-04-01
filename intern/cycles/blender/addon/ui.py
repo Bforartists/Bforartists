@@ -1927,17 +1927,17 @@ class CyclesRender_PT_bake(bpy.types.Panel):
         col.prop(cbk, "use_clear")
 
         col.prop(cbk, "use_selected_to_active")
-        sub = col.column()
-        sub.active = cbk.use_selected_to_active
-        sub.prop(cbk, "use_cage", text="Cage")
+        
+        if context.scene.render.bake.use_selected_to_active == True:
+            sub = col.column()
+            sub.active = cbk.use_selected_to_active
+            sub.prop(cbk, "use_cage", text="Cage")
 
-
-
-        if cbk.use_cage:
-            sub.prop(cbk, "cage_extrusion", text="Extrusion")
-            sub.prop_search(cbk, "cage_object", scene, "objects", text="")
-        else:
-            sub.prop(cbk, "cage_extrusion", text="Ray Distance")
+            if cbk.use_cage:
+                sub.prop(cbk, "cage_extrusion", text="Extrusion")
+                sub.prop_search(cbk, "cage_object", scene, "objects", text="")
+            else:
+                sub.prop(cbk, "cage_extrusion", text="Ray Distance")
 
 
 def get_panels():
