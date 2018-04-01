@@ -30,6 +30,7 @@ set(INC
 	../../makesrna
 	../../windowmanager
 	../../../../intern/guardedalloc
+	../../../../intern/clog
 	../../../../intern/glew-mx
 )
 
@@ -40,9 +41,10 @@ set(INC_SYS
 set(SRC
 	ed_transverts.c
 	ed_util.c
-	editmode_undo.c
+	memfile_undo.c
 	numinput.c
 	undo.c
+	undo_system_types.c
 
 	util_intern.h
 	# general includes
