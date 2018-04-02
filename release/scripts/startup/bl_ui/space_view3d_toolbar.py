@@ -2650,7 +2650,7 @@ class VIEW3D_PT_tools_brush_texture(Panel, View3DPaintPanel):
 
         col.template_ID_preview(brush, "texture", new="texture.new", rows=3, cols=8)
 
-        brush_texture_settings(col, brush, context.sculpt_object)
+        brush_texture_settings(col, brush, context.sculpt_object, context.vertex_paint_object, context.image_paint_object)
 
 
 class VIEW3D_PT_tools_mask_texture(Panel, View3DPaintPanel):
