@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -19,12 +19,12 @@
 # <pep8 compliant>
 
 bl_info = {
-    "name": "F2",
+    "name": "F2 - Bforartists version",
     "author": "Bart Crouch, Alexander Nedovizin, Paul Kotelevets "
               "(concept design)",
     "version": (1, 7, 2),
     "blender": (2, 70, 0),
-    "location": "Editmode > F",
+    "location": "Editmode > F / Tools tab > Mesh Tools Panel",
     "warning": "",
     "description": "Extends the 'Make Edge/Face' functionality",
     "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/"
@@ -336,7 +336,7 @@ class MeshF2(bpy.types.Operator):
     """Tooltip"""
     bl_idname = "mesh.f2"
     bl_label = "Make Edge/Face"
-    bl_description = "Extends the 'Make Edge/Face' functionality"
+    bl_description = "F2\nExtends the 'Make Edge/Face' functionality. \nSelect Edge or Vertice, and the tool tries to fill the geometry"
     bl_options = {'REGISTER', 'UNDO'}
 
     @classmethod
@@ -378,8 +378,19 @@ class MeshF2(bpy.types.Operator):
 classes = [MeshF2, F2AddonPreferences]
 addon_keymaps = []
 
+def menu_func(self, context):
+
+    layout = self.layout
+
+    layout.label(text = "F2 tool:")
+    col = layout.column(align=False)
+    row = col.row(align=False)
+    row.alignment = 'LEFT' 
+    row.operator(MeshF2.bl_idname, text="F2")
 
 def register():
+
+    
     # add operator
     for c in classes:
         bpy.utils.register_class(c)
@@ -391,8 +402,12 @@ def register():
         kmi = km.keymap_items.new("mesh.f2", 'F', 'PRESS')
         addon_keymaps.append((km, kmi))
 
+    bpy.types.VIEW3D_PT_tools_meshedit.append(menu_func)
+
 
 def unregister():
+
+    
     # remove keymap entry
     for km, kmi in addon_keymaps:
         km.keymap_items.remove(kmi)
@@ -401,6 +416,8 @@ def unregister():
     # remove operator and preferences
     for c in reversed(classes):
         bpy.utils.unregister_class(c)
+
+    bpy.types.VIEW3D_PT_tools_meshedit.remove(menu_func)
 
 
 if __name__ == "__main__":
