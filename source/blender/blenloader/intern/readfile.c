@@ -2235,6 +2235,10 @@ static void direct_link_id(FileData *fd, ID *id)
 		IDP_DirectLinkGroup_OrFree(&id->properties, (fd->flags & FD_FLAGS_SWITCH_ENDIAN), fd);
 	}
 	id->py_instance = NULL;
+
+	/* That way datablock reading not going through main read_libblock() function are still in a clear tag state.
+	 * (glowering at certain nodetree fake datablock here...). */
+	id->tag = 0;
 }
 
 /* ************ READ CurveMapping *************** */
@@ -3708,15 +3712,11 @@ static void lib_link_text(FileData *fd, Main *main)
 static void direct_link_text(FileData *fd, Text *text)
 {
 	TextLine *ln;
-	
+
 	text->name = newdataadr(fd, text->name);
-	
-	text->undo_pos = -1;
-	text->undo_len = TXT_INIT_UNDO;
-	text->undo_buf = MEM_mallocN(text->undo_len, "undo buf");
-	
+
 	text->compiled = NULL;
-	
+
 #if 0
 	if (text->flags & TXT_ISEXT) {
 		BKE_text_reload(text);
@@ -5076,6 +5076,7 @@ static void direct_link_pose(FileData *fd, bPose *pose)
 	link_list(fd, &pose->agroups);
 
 	pose->chanhash = NULL;
+	pose->chan_array = NULL;
 
 	for (pchan = pose->chanbase.first; pchan; pchan=pchan->next) {
 		pchan->bone = NULL;
@@ -8237,7 +8238,6 @@ static BHead *read_libblock(FileData *fd, Main *main, BHead *bhead, const short 
 	if (!id)
 		return blo_nextbhead(fd, bhead);
 	
-	id->tag = tag | LIB_TAG_NEED_LINK;
 	id->lib = main->curlib;
 	id->us = ID_FAKE_USERS(id);
 	id->icon_id = 0;
@@ -8246,11 +8246,11 @@ static BHead *read_libblock(FileData *fd, Main *main, BHead *bhead, const short 
 	
 	/* this case cannot be direct_linked: it's just the ID part */
 	if (bhead->code == ID_ID) {
+		/* That way, we know which datablock needs do_versions (required currently for linking). */
+		id->tag = tag | LIB_TAG_NEED_LINK | LIB_TAG_NEW;
+
 		return blo_nextbhead(fd, bhead);
 	}
-
-	/* That way, we know which datablock needs do_versions (required currently for linking). */
-	id->tag |= LIB_TAG_NEW;
 
 	/* need a name for the mallocN, just for debugging and sane prints on leaks */
 	allocname = dataname(GS(id->name));
@@ -8260,7 +8260,11 @@ static BHead *read_libblock(FileData *fd, Main *main, BHead *bhead, const short 
 	
 	/* init pointers direct data */
 	direct_link_id(fd, id);
-	
+
+	/* That way, we know which datablock needs do_versions (required currently for linking). */
+	/* Note: doing this after driect_link_id(), which resets that field. */
+	id->tag = tag | LIB_TAG_NEED_LINK | LIB_TAG_NEW;
+
 	switch (GS(id->name)) {
 		case ID_WM:
 			direct_link_windowmanager(fd, (wmWindowManager *)id);
