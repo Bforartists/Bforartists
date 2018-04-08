@@ -18,8 +18,8 @@
  * ***** END GPL LICENSE BLOCK *****
  */
 
-/** \file blender/editors/util/undo_system_types.c
- *  \ingroup edutil
+/** \file blender/editors/undo/undo_system_types.c
+ *  \ingroup edundo
  */
 
 #include <string.h>
@@ -36,8 +36,8 @@
 #include "ED_particle.h"
 #include "ED_sculpt.h"
 #include "ED_text.h"
-#include "ED_util.h"
-#include "util_intern.h"
+#include "ED_undo.h"
+#include "undo_intern.h"
 
 /* Keep last */
 #include "BKE_undo_system.h"
@@ -62,7 +62,7 @@ void ED_undosys_type_init(void)
 	BKE_UNDOSYS_TYPE_PAINTCURVE = BKE_undosys_type_append(ED_paintcurve_undosys_type);
 
 	/* Text editor */
-	BKE_undosys_type_append(ED_text_undosys_type);
+	BKE_UNDOSYS_TYPE_TEXT = BKE_undosys_type_append(ED_text_undosys_type);
 
 	/* Keep global undo last (as a fallback). */
 	BKE_UNDOSYS_TYPE_MEMFILE = BKE_undosys_type_append(ED_memfile_undosys_type);

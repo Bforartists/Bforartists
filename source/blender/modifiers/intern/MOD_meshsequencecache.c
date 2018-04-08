@@ -45,6 +45,7 @@
 
 #ifdef WITH_ALEMBIC
 #	include "ABC_alembic.h"
+#	include "BKE_global.h"
 #endif
 
 static void initData(ModifierData *md)
@@ -74,10 +75,6 @@ static void copyData(ModifierData *md, ModifierData *target)
 static void freeData(ModifierData *md)
 {
 	MeshSeqCacheModifierData *mcmd = (MeshSeqCacheModifierData *) md;
-
-	if (mcmd->cache_file) {
-		id_us_min(&mcmd->cache_file->id);
-	}
 
 	if (mcmd->reader) {
 #ifdef WITH_ALEMBIC

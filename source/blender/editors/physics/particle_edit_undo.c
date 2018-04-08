@@ -45,11 +45,9 @@
 #include "BLI_utildefines.h"
 
 #include "BKE_depsgraph.h"
-#include "BKE_global.h"
 #include "BKE_particle.h"
 #include "BKE_pointcache.h"
 #include "BKE_context.h"
-#include "BKE_main.h"
 #include "BKE_undo_system.h"
 
 #include "ED_object.h"
@@ -294,21 +292,6 @@ void ED_particle_undosys_type(UndoType *ut)
 	ut->use_context = true;
 
 	ut->step_size = sizeof(ParticleUndoStep);
-}
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Utilities
- * \{ */
-
-void PE_undo_push(struct Scene *scene, const char *str)
-{
-	wmWindowManager *wm = G.main->wm.first;
-	bContext *C_temp = CTX_create();
-	CTX_data_scene_set(C_temp, scene);
-	BKE_undosys_step_push_with_type(wm->undo_stack, C_temp, str, BKE_UNDOSYS_TYPE_PARTICLE);
-	CTX_free(C_temp);
 }
 
 /** \} */
