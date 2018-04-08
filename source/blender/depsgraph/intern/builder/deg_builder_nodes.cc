@@ -114,39 +114,6 @@ extern "C" {
 
 namespace DEG {
 
-namespace {
-
-struct BuilderWalkUserData {
-	DepsgraphNodeBuilder *builder;
-};
-
-static void modifier_walk(void *user_data,
-                          struct Object * /*object*/,
-                          struct Object **obpoin,
-                          int /*cb_flag*/)
-{
-	BuilderWalkUserData *data = (BuilderWalkUserData *)user_data;
-	if (*obpoin) {
-		data->builder->build_object(NULL, *obpoin);
-	}
-}
-
-void constraint_walk(bConstraint * /*con*/,
-                     ID **idpoin,
-                     bool /*is_reference*/,
-                     void *user_data)
-{
-	BuilderWalkUserData *data = (BuilderWalkUserData *)user_data;
-	if (*idpoin) {
-		ID *id = *idpoin;
-		if (GS(id->name) == ID_OB) {
-			data->builder->build_object(NULL, (Object *)id);
-		}
-	}
-}
-
-}  /* namespace */
-
 /* ************ */
 /* Node Builder */
 
@@ -342,7 +309,7 @@ void DepsgraphNodeBuilder::build_object(Base *base, Object *object)
 	if (object->modifiers.first != NULL) {
 		BuilderWalkUserData data;
 		data.builder = this;
-		modifiers_foreachObjectLink(object, modifier_walk, &data);
+		modifiers_foreachIDLink(object, modifier_walk, &data);
 	}
 	/* Constraints. */
 	if (object->constraints.first != NULL) {
@@ -1053,6 +1020,11 @@ void DepsgraphNodeBuilder::build_texture(Tex *texture)
 			build_image(texture->ima);
 		}
 	}
+	/* Placeholder so we can add relations and tag ID node for update. */
+	add_operation_node(&texture->id,
+	                   DEG_NODE_TYPE_PARAMETERS,
+	                   NULL,
+	                   DEG_OPCODE_PLACEHOLDER);
 }
 
 void DepsgraphNodeBuilder::build_image(Image *image) {
@@ -1130,5 +1102,51 @@ void DepsgraphNodeBuilder::build_movieclip(MovieClip *clip) {
 	                   function_bind(BKE_movieclip_eval_update, _1, clip),
 	                   DEG_OPCODE_MOVIECLIP_EVAL);
 }
+
+/* **** ID traversal callbacks functions **** */
+
+void DepsgraphNodeBuilder::modifier_walk(void *user_data,
+                                         struct Object * /*object*/,
+                                         struct ID **idpoin,
+                                         int /*cb_flag*/)
+{
+	BuilderWalkUserData *data = (BuilderWalkUserData *)user_data;
+	ID *id = *idpoin;
+	if (id == NULL) {
+		return;
+	}
+	switch (GS(id->name)) {
+		case ID_OB:
+			data->builder->build_object(NULL, (Object *)id);
+			break;
+		case ID_TE:
+			data->builder->build_texture((Tex *)id);
+			break;
+		default:
+			/* pass */
+			break;
+	}
+}
+
+void DepsgraphNodeBuilder::constraint_walk(bConstraint * /*con*/,
+                                           ID **idpoin,
+                                           bool /*is_reference*/,
+                                           void *user_data)
+{
+	BuilderWalkUserData *data = (BuilderWalkUserData *)user_data;
+	ID *id = *idpoin;
+	if (id == NULL) {
+		return;
+	}
+	switch (GS(id->name)) {
+		case ID_OB:
+			data->builder->build_object(NULL, (Object *)id);
+			break;
+		default:
+			/* pass */
+			break;
+	}
+}
+
 
 }  // namespace DEG

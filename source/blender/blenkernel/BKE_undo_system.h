@@ -125,11 +125,12 @@ typedef struct UndoType {
 } UndoType;
 
 /* expose since we need to perform operations on spesific undo types (rarely). */
-extern const UndoType *BKE_UNDOSYS_TYPE_MEMFILE;
 extern const UndoType *BKE_UNDOSYS_TYPE_IMAGE;
-extern const UndoType *BKE_UNDOSYS_TYPE_SCULPT;
-extern const UndoType *BKE_UNDOSYS_TYPE_PARTICLE;
+extern const UndoType *BKE_UNDOSYS_TYPE_MEMFILE;
 extern const UndoType *BKE_UNDOSYS_TYPE_PAINTCURVE;
+extern const UndoType *BKE_UNDOSYS_TYPE_PARTICLE;
+extern const UndoType *BKE_UNDOSYS_TYPE_SCULPT;
+extern const UndoType *BKE_UNDOSYS_TYPE_TEXT;
 
 UndoStack      *BKE_undosys_stack_create(void);
 void            BKE_undosys_stack_destroy(UndoStack *ustack);
@@ -141,8 +142,8 @@ UndoStep       *BKE_undosys_stack_init_or_active_with_type(UndoStack *ustack, co
 void            BKE_undosys_stack_limit_steps_and_memory(UndoStack *ustack, int steps, size_t memory_limit);
 
 /* Only some UndoType's require init. */
-void BKE_undosys_step_push_init_with_type(UndoStack *ustack, struct bContext *C, const char *name, const UndoType *ut);
-void BKE_undosys_step_push_init(UndoStack *ustack, struct bContext *C, const char *name);
+UndoStep *BKE_undosys_step_push_init_with_type(UndoStack *ustack, struct bContext *C, const char *name, const UndoType *ut);
+UndoStep *BKE_undosys_step_push_init(UndoStack *ustack, struct bContext *C, const char *name);
 
 bool BKE_undosys_step_push_with_type(UndoStack *ustack, struct bContext *C, const char *name, const UndoType *ut);
 bool BKE_undosys_step_push(UndoStack *ustack, struct bContext *C, const char *name);
@@ -180,7 +181,15 @@ struct UndoIDPtrMap *BKE_undosys_ID_map_create(void);
 void                 BKE_undosys_ID_map_destroy(struct UndoIDPtrMap *map);
 void                 BKE_undosys_ID_map_add(struct UndoIDPtrMap *map, ID *id);
 struct ID           *BKE_undosys_ID_map_lookup(const struct UndoIDPtrMap *map, const struct ID *id_src);
-void                 BKE_undosys_ID_map_foreach_ID_ref(
+
+void BKE_undosys_ID_map_add_with_prev(
+        struct UndoIDPtrMap *map, struct ID *id,
+        struct ID **id_prev);
+struct ID *BKE_undosys_ID_map_lookup_with_prev(
+        const struct UndoIDPtrMap *map, struct ID *id_src,
+        struct ID *id_prev_match[2]);
+
+void BKE_undosys_ID_map_foreach_ID_ref(
         struct UndoIDPtrMap *map,
         UndoTypeForEachIDRefFn foreach_ID_ref_fn, void *user_data);
 

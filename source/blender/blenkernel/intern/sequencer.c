@@ -84,6 +84,7 @@
 #include "IMB_imbuf.h"
 #include "IMB_imbuf_types.h"
 #include "IMB_colormanagement.h"
+#include "IMB_metadata.h"
 
 #include "BKE_context.h"
 #include "BKE_sound.h"
@@ -941,6 +942,8 @@ void BKE_sequence_reload_new_file(Scene *scene, Sequence *seq, const bool lock_r
 			if ((!sanim) || (!sanim->anim)) {
 				return;
 			}
+
+			IMB_anim_load_metadata(sanim->anim);
 
 			seq->len = IMB_anim_get_duration(sanim->anim, seq->strip->proxy ? seq->strip->proxy->tc : IMB_TC_RECORD_RUN);
 
@@ -2955,7 +2958,7 @@ static ImBuf *seq_render_movie_strip(const SeqRenderData *context, Sequence *seq
 		int totviews;
 		int i;
 
-		if (totfiles != BLI_listbase_count_ex(&seq->anims, totfiles + 1))
+		if (totfiles != BLI_listbase_count_at_most(&seq->anims, totfiles + 1))
 			goto monoview_movie;
 
 		totviews = BKE_scene_multiview_num_views_get(&context->scene->r);
@@ -5380,6 +5383,8 @@ Sequence *BKE_sequencer_add_movie_strip(bContext *C, ListBase *seqbasep, SeqLoad
 			break;
 		}
 	}
+
+	IMB_anim_load_metadata(anim_arr[0]);
 
 	seq->anim_preseek = IMB_anim_get_preseek(anim_arr[0]);
 	BLI_strncpy(seq->name + 2, "Movie", SEQ_NAME_MAXSTR - 2);
