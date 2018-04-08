@@ -132,7 +132,7 @@ struct DepsgraphNodeBuilder {
 	void build_object_data(Object *object);
 	void build_object_transform(Object *object);
 	void build_object_constraints(Object *object);
-	void build_pose_constraints(Object *object, bPoseChannel *pchan);
+	void build_pose_constraints(Object *object, bPoseChannel *pchan, int pchan_index);
 	void build_rigidbody(Scene *scene);
 	void build_particles(Object *object);
 	void build_cloth(Object *object);
@@ -165,6 +165,20 @@ struct DepsgraphNodeBuilder {
 	void build_movieclip(MovieClip *clip);
 
 protected:
+	struct BuilderWalkUserData {
+		DepsgraphNodeBuilder *builder;
+	};
+
+	static void modifier_walk(void *user_data,
+	                          struct Object *object,
+	                          struct ID **idpoin,
+	                          int cb_flag);
+
+	static void constraint_walk(bConstraint *constraint,
+	                            ID **idpoin,
+	                            bool is_reference,
+	                            void *user_data);
+
 	/* State which never changes, same for the whole builder time. */
 	Main *bmain_;
 	Depsgraph *graph_;
