@@ -2241,6 +2241,20 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
                 self.prop_unified_size(row, context, brush, "size", slider=True, text="Radius")
 
             self.prop_unified_size(row, context, brush, "use_pressure_size")
+                
+            #radial control button brush size
+            myvar = row.operator("wm.radial_control", text = "", icon = "BRUSHSIZE")
+            myvar.data_path_primary = 'tool_settings.sculpt.brush.size'
+            myvar.data_path_secondary = 'tool_settings.unified_paint_settings.size'
+            myvar.use_secondary = 'tool_settings.unified_paint_settings.use_unified_size'
+            myvar.rotation_path = 'tool_settings.sculpt.brush.texture_slot.angle'
+            myvar.color_path = 'tool_settings.sculpt.brush.cursor_color_add'
+            myvar.fill_color_path = ''
+            myvar.fill_color_override_path = ''
+            myvar.fill_color_override_test_path = ''
+            myvar.zoom_path = ''
+            myvar.image_id = 'tool_settings.sculpt.brush'
+            myvar.secondary_tex = False
 
             # strength, use_strength_pressure, and use_strength_attenuation
             row = col.row(align=True)
@@ -2252,6 +2266,20 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
 
             if capabilities.has_strength_pressure:
                 self.prop_unified_strength(row, context, brush, "use_pressure_strength")
+                
+            #radial control button brush strength
+            myvar = row.operator("wm.radial_control", text = "", icon = "BRUSHSTRENGTH")
+            myvar.data_path_primary = 'tool_settings.sculpt.brush.strength'
+            myvar.data_path_secondary = 'tool_settings.unified_paint_settings.strength'
+            myvar.use_secondary = 'tool_settings.unified_paint_settings.use_unified_strength'
+            myvar.rotation_path = 'tool_settings.sculpt.brush.texture_slot.angle'
+            myvar.color_path = 'tool_settings.sculpt.brush.cursor_color_add'
+            myvar.fill_color_path = ''
+            myvar.fill_color_override_path = ''
+            myvar.fill_color_override_test_path = ''
+            myvar.zoom_path = ''
+            myvar.image_id = 'tool_settings.sculpt.brush'
+            myvar.secondary_tex = False
 
             # auto_smooth_factor and use_inverse_smooth_pressure
             if capabilities.has_auto_smooth:
@@ -2353,10 +2381,38 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
             row = col.row(align=True)
             self.prop_unified_size(row, context, brush, "size", slider=True, text="Radius")
             self.prop_unified_size(row, context, brush, "use_pressure_size")
+            
+            #radial control button brush size
+            myvar = row.operator("wm.radial_control", text = "", icon = "BRUSHSIZE")
+            myvar.data_path_primary = 'tool_settings.weight_paint.brush.size'
+            myvar.data_path_secondary = 'tool_settings.unified_paint_settings.size'
+            myvar.use_secondary = 'tool_settings.unified_paint_settings.use_unified_size'
+            myvar.rotation_path = 'tool_settings.weight_paint.brush.texture_slot.angle'
+            myvar.color_path = 'tool_settings.weight_paint.brush.cursor_color_add'
+            myvar.fill_color_path = ''
+            myvar.fill_color_override_path = ''
+            myvar.fill_color_override_test_path = ''
+            myvar.zoom_path = ''
+            myvar.image_id = 'tool_settings.weight_paint.brush'
+            myvar.secondary_tex = False
 
             row = col.row(align=True)
             self.prop_unified_strength(row, context, brush, "strength", text="Strength")
             self.prop_unified_strength(row, context, brush, "use_pressure_strength")
+            
+            #radial control button brush strength
+            myvar = row.operator("wm.radial_control", text = "", icon = "BRUSHSTRENGTH")
+            myvar.data_path_primary = 'tool_settings.weight_paint.brush.strength'
+            myvar.data_path_secondary = 'tool_settings.unified_paint_settings.strength'
+            myvar.use_secondary = 'tool_settings.unified_paint_settings.use_unified_strength'
+            myvar.rotation_path = 'tool_settings.weight_paint.brush.texture_slot.angle'
+            myvar.color_path = 'tool_settings.weight_paint.brush.cursor_color_add'
+            myvar.fill_color_path = ''
+            myvar.fill_color_override_path = ''
+            myvar.fill_color_override_test_path = ''
+            myvar.zoom_path = ''
+            myvar.image_id = 'tool_settings.weight_paint.brush'
+            myvar.secondary_tex = False
 
             col.prop(brush, "vertex_tool", text="Blend")
             
@@ -2391,10 +2447,38 @@ class VIEW3D_PT_tools_brush(Panel, View3DPaintPanel):
             row = col.row(align=True)
             self.prop_unified_size(row, context, brush, "size", slider=True, text="Radius")
             self.prop_unified_size(row, context, brush, "use_pressure_size")
+            
+            #radial control button brush size
+            myvar = row.operator("wm.radial_control", text = "", icon = "BRUSHSIZE")
+            myvar.data_path_primary = 'tool_settings.vertex_paint.brush.size'
+            myvar.data_path_secondary = 'tool_settings.unified_paint_settings.size'
+            myvar.use_secondary = 'tool_settings.unified_paint_settings.use_unified_size'
+            myvar.rotation_path = 'tool_settings.vertex_paint.brush.texture_slot.angle'
+            myvar.color_path = 'tool_settings.vertex_paint.brush.cursor_color_add'
+            myvar.fill_color_path = 'tool_settings.vertex_paint.brush.color'
+            myvar.fill_color_override_path = 'tool_settings.unified_paint_settings.color'
+            myvar.fill_color_override_test_path = 'tool_settings.unified_paint_settings.use_unified_color'
+            myvar.zoom_path = ''
+            myvar.image_id = 'tool_settings.vertex_paint.brush'
+            myvar.secondary_tex = False
 
             row = col.row(align=True)
             self.prop_unified_strength(row, context, brush, "strength", text="Strength")
             self.prop_unified_strength(row, context, brush, "use_pressure_strength")
+            
+            #radial control button brush strength
+            myvar = row.operator("wm.radial_control", text = "", icon = "BRUSHSTRENGTH")
+            myvar.data_path_primary = 'tool_settings.vertex_paint.brush.strength'
+            myvar.data_path_secondary = 'tool_settings.unified_paint_settings.strength'
+            myvar.use_secondary = 'tool_settings.unified_paint_settings.use_unified_strength'
+            myvar.rotation_path = 'tool_settings.vertex_paint.brush.texture_slot.angle'
+            myvar.color_path = 'tool_settings.vertex_paint.brush.cursor_color_add'
+            myvar.fill_color_path = 'tool_settings.vertex_paint.brush.color'
+            myvar.fill_color_override_path = 'tool_settings.unified_paint_settings.color'
+            myvar.fill_color_override_test_path = 'tool_settings.unified_paint_settings.use_unified_color'
+            myvar.zoom_path = ''
+            myvar.image_id = 'tool_settings.vertex_paint.brush'
+            myvar.secondary_tex = False
 
             # XXX - TODO
             # row = col.row(align=True)
@@ -2650,7 +2734,7 @@ class VIEW3D_PT_tools_brush_texture(Panel, View3DPaintPanel):
 
         col.template_ID_preview(brush, "texture", new="texture.new", rows=3, cols=8)
 
-        brush_texture_settings(col, brush, context.sculpt_object)
+        brush_texture_settings(col, brush, context.sculpt_object, context.vertex_paint_object, context.image_paint_object)
 
 
 class VIEW3D_PT_tools_mask_texture(Panel, View3DPaintPanel):
