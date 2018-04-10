@@ -3566,7 +3566,7 @@ class VIEW3D_PT_view3d_name(Panel):
 class VIEW3D_PT_view3d_display(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_label = "Display"
+    bl_label = "Viewport Display"
     bl_options = {'DEFAULT_CLOSED'}
 
     @classmethod
