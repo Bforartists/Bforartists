@@ -658,7 +658,7 @@ static int editmode_toggle_exec(bContext *C, wmOperator *op)
 	if (!is_mode_set)
 		ED_object_editmode_enter(C, EM_WAITCURSOR);
 	else
-		ED_object_editmode_exit(C, EM_FREEDATA | EM_FREEUNDO | EM_WAITCURSOR);  /* had EM_DO_UNDO but op flag calls undo too [#24685] */
+		ED_object_editmode_exit(C, EM_FREEDATA | EM_WAITCURSOR);  /* had EM_DO_UNDO but op flag calls undo too [#24685] */
 	
 	ED_space_image_uv_sculpt_update(CTX_wm_manager(C), scene);
 
@@ -703,7 +703,7 @@ static int posemode_exec(bContext *C, wmOperator *op)
 	Base *base = CTX_data_active_base(C);
 	Object *ob = base->object;
 	const int mode_flag = OB_MODE_POSE;
-	const bool is_mode_set = (ob->mode & mode_flag) != 0;
+	bool is_mode_set = (ob->mode & mode_flag) != 0;
 	
 	if (!is_mode_set) {
 		if (!ED_object_mode_compat_set(C, ob, mode_flag, op->reports)) {
@@ -714,12 +714,15 @@ static int posemode_exec(bContext *C, wmOperator *op)
 	if (ob->type == OB_ARMATURE) {
 		if (ob == CTX_data_edit_object(C)) {
 			ED_object_editmode_exit(C, EM_FREEDATA | EM_DO_UNDO);
-			ED_armature_enter_posemode(C, base);
+			is_mode_set = false;
 		}
-		else if (is_mode_set)
-			ED_armature_exit_posemode(C, base);
-		else
-			ED_armature_enter_posemode(C, base);
+
+		if (is_mode_set) {
+			ED_object_posemode_exit(C, ob);
+		}
+		else {
+			ED_object_posemode_enter(C, ob);
+		}
 		
 		return OPERATOR_FINISHED;
 	}
