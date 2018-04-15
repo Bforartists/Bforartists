@@ -75,7 +75,7 @@ def draw_segments(context, myobj, op, region, rv3d):
         # --------------------
         # Loop
         # --------------------
-        for idx in range(0, op.measureit_num):
+        for idx in range(op.measureit_num):
             ms = op.measureit_segments[idx]
             if ovr is False:
                 fsize = ms.glfont_size
@@ -557,7 +557,7 @@ def draw_segments(context, myobj, op, region, rv3d):
                         p_02a = None
                         p_02b = None
                         # draw the arc
-                        for i in range(0, int(n_step)):
+                        for i in range(int(n_step)):
                             p2 = mat_trans2 * mat_rot1 * mat_trans1 * p1
                             p1_ = (p1[0] + vi[0], p1[1] + vi[1], p1[2] + vi[2])
                             # First Point
@@ -606,7 +606,7 @@ def draw_segments(context, myobj, op, region, rv3d):
                         for face in ms.measureit_faces:
                             myvertices = []
                             for v in face.measureit_index:
-                                myvertices.extend([v.glidx])
+                                myvertices.append(v.glidx)
 
                             area = get_area_and_paint(myvertices, myobj, obverts, region, rv3d)
                             tot += area
@@ -668,7 +668,7 @@ def get_area_and_paint(myvertices, myobj, obverts, region, rv3d):
             bm = from_edit_mesh(myobj.data)
             myv = []
             for v in bm.verts:
-                myv.extend([v.co])
+                myv.append(v.co)
             tris = mesh_utils.ngon_tessellate(myv, myvertices)
 
         for t in tris:
@@ -750,7 +750,7 @@ def get_group_sum(myobj, tag):
         scale = bpy.context.scene.unit_settings.scale_length
         tot = 0.0
         obverts = get_mesh_vertices(myobj)
-        for idx in range(0, mp.measureit_num):
+        for idx in range(mp.measureit_num):
             ms = mp.measureit_segments[idx]
             if (ms.gltype == 1 or ms.gltype == 12 or
                 ms.gltype == 13 or ms.gltype == 14) and ms.gltot != '99' \

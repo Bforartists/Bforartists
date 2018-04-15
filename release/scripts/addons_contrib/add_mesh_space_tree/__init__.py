@@ -1,6 +1,6 @@
 # ##### BEGIN GPL LICENSE BLOCK #####
 #
-#  SCA Tree Generator, a Blender addon
+#  SCA Tree Generator, a Blender add-on
 #  (c) 2013 Michel J. Anders (varkenvarken)
 #
 #  This program is free software; you can redistribute it and/or
@@ -24,26 +24,45 @@
 bl_info = {
     "name": "SCA Tree Generator",
     "author": "michel anders (varkenvarken)",
-    "version": (0, 1, 2),
-    "blender": (2, 66, 0),
+    "version": (0, 1, 3),
+    "blender": (2, 77, 0),
     "location": "View3D > Add > Mesh",
-    "description": "Adds a tree created with the space colonization algorithm starting at the 3D cursor",
+    "description": "Create a tree using the space colonization algorithm starting at the 3D cursor",
     "warning": "",
-    "wiki_url": "http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Add_Mesh/Add_Space_Tree",
+    "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
+                "Scripts/Add_Mesh/Add_Space_Tree",
     "tracker_url": "https://developer.blender.org/maniphest/task/edit/form/2/",
-    "category": "Add Mesh"}
-
-from time import time
-from random import random, gauss
-from functools import partial
-from math import sin, cos
+    "category": "Add Mesh"
+}
 
 import bpy
-from bpy.props import FloatProperty, IntProperty, BoolProperty, EnumProperty
-from mathutils import Vector, Euler, Matrix, Quaternion
-
-from .simplefork import simplefork, simplefork2, quadfork, bridgequads  # simple skinning algorithm building blocks
-from .sca import SCA, Branchpoint  # the core class that implements the space colonization algorithm and the definition of a segment
+from random import (
+    gauss, random,
+)
+from functools import partial
+from math import (
+    cos, sin,
+)
+from bpy.props import (
+    BoolProperty,
+    EnumProperty,
+    FloatProperty,
+    IntProperty,
+)
+from mathutils import (
+    Euler,
+    Vector,
+    Quaternion,
+)
+# simple skinning algorithm building blocks
+from .simplefork import (
+    quadfork, bridgequads,
+)
+# the core class that implements the space colonization
+# algorithm and the definition of a segment
+from .sca import (
+    SCA, Branchpoint,
+)
 from .timer import Timer
 
 
@@ -76,13 +95,15 @@ def ellipsoid(r=5, rz=5, p=Vector((0, 0, 8)), taper=0):
 
 
 def pointInsideMesh(pointrelativetocursor, ob):
-    # adapted from http://blenderartists.org/forum/showthread.php?195605-Detecting-if-a-point-is-inside-a-mesh-2-5-API&p=1691633&viewfull=1#post1691633
+    # adapted from http://blenderartists.org/forum/showthread.php?"
+    # "195605-Detecting-if-a-point-is-inside-a-mesh-2-5-API&p=1691633&viewfull=1#post1691633
     mat = ob.matrix_world.inverted()
     orig = mat * (pointrelativetocursor + bpy.context.scene.cursor_location)
     count = 0
     axis = Vector((0, 0, 1))
     while True:
-        location, normal, index = ob.ray_cast(orig, orig + axis * 10000.0)
+        # Note: address changes introduced to object.ray_cast return (see T54414)
+        result, location, normal, index = ob.ray_cast(orig, orig + axis * 10000.0)
         if index == -1:
             break
         count += 1
@@ -102,7 +123,7 @@ def ellipsoid2(rxy=5, rz=5, p=Vector((0, 0, 8)), surfacebias=1, topbias=1):
         st = sin(theta)
         st = (((st + 1) / 2) ** topbias) * 2 - 1
         z = r * rz * st
-        #print(">>>%.2f %.2f %.2f "%(x,y,z))
+        # print(">>>%.2f %.2f %.2f "%(x,y,z))
         m = p + Vector((x, y, z))
         reject = False
         for ob in bpy.context.selected_objects:
@@ -144,7 +165,8 @@ def insidegroup(pointrelativetocursor, group):
     return False
 
 
-def groupdistribution(crowngroup, shadowgroup=None, seed=0, size=Vector((1, 1, 1)), pointrelativetocursor=Vector((0, 0, 0))):
+def groupdistribution(crowngroup, shadowgroup=None, seed=0, size=Vector((1, 1, 1)),
+                      pointrelativetocursor=Vector((0, 0, 0))):
     if crowngroup == shadowgroup:
         shadowgroup = None  # safeguard otherwise every marker would be rejected
     nocrowngroup = bpy.data.groups.find(crowngroup) < 0
@@ -190,14 +212,15 @@ def groupExtends(group):
     return mx - mn, mn
 
 
-def createLeaves(tree, probability=0.5, size=0.5, randomsize=0.1, randomrot=0.1, maxconnections=2, bunchiness=1.0, connectoffset=-0.1):
+def createLeaves(tree, probability=0.5, size=0.5, randomsize=0.1,
+                 randomrot=0.1, maxconnections=2, bunchiness=1.0, connectoffset=-0.1):
     p = bpy.context.scene.cursor_location
 
     verts = []
     faces = []
     c1 = Vector((connectoffset, -size / 2, 0))
-    c2 = Vector((size+connectoffset, -size / 2, 0))
-    c3 = Vector((size+connectoffset, size / 2, 0))
+    c2 = Vector((size + connectoffset, -size / 2, 0))
+    c3 = Vector((size + connectoffset, size / 2, 0))
     c4 = Vector((connectoffset, size / 2, 0))
     t = gauss(1.0 / probability, 0.1)
     bpswithleaves = 0
@@ -229,7 +252,9 @@ def createLeaves(tree, probability=0.5, size=0.5, randomsize=0.1, randomrot=0.1,
                 verts.append(v * scale + bp.v + dvp)
                 n = len(verts)
                 faces.append((n - 1, n - 4, n - 3, n - 2))
-                t += gauss(1.0 / probability, 0.1)                      # this is not the best choice of distribution because we might get negative values especially if sigma is large
+                # this is not the best choice of distribution because we might
+                # get negative values especially if sigma is large
+                t += gauss(1.0 / probability, 0.1)
                 dvp = nleavesonbp * (dv / (probability ** bunchiness))  # TODO add some randomness to the offset
 
     mesh = bpy.data.meshes.new('Leaves')
@@ -240,8 +265,8 @@ def createLeaves(tree, probability=0.5, size=0.5, randomsize=0.1, randomrot=0.1,
 
 
 def createMarkers(tree, scale=0.05):
-    #not used as markers are parented to tree object that is created at the cursor position
-    #p=bpy.context.scene.cursor_location
+    # not used as markers are parented to tree object that is created at the cursor position
+    # p=bpy.context.scene.cursor_location
 
     verts = []
     faces = []
@@ -261,7 +286,8 @@ def createMarkers(tree, scale=0.05):
     return mesh
 
 
-def createObjects(tree, parent=None, objectname=None, probability=0.5, size=0.5, randomsize=0.1, randomrot=0.1, maxconnections=2, bunchiness=1.0):
+def createObjects(tree, parent=None, objectname=None, probability=0.5, size=0.5,
+                  randomsize=0.1, randomrot=0.1, maxconnections=2, bunchiness=1.0):
 
     if (parent is None) or (objectname is None) or (objectname == 'None'):
         return
@@ -295,8 +321,9 @@ def createObjects(tree, parent=None, objectname=None, probability=0.5, size=0.5,
                 obj.scale = [scale, scale, scale]
                 obj.parent = parent
                 bpy.context.scene.objects.link(obj)
-
-                t += gauss(1.0 / probability, 0.1)                      # this is not the best choice of distribution because we might get negative values especially if sigma is large
+                # this is not the best choice of distribution because we might
+                # get negative values especially if sigma is large
+                t += gauss(1.0 / probability, 0.1)
                 dvp = nleavesonbp * (dv / (probability ** bunchiness))  # TODO add some randomness to the offset
 
 
@@ -308,20 +335,20 @@ def vertextend(v, dv):
 
 def vertcopy(loopa, v, p):
     dv = [v[i] + p for i in loopa]
-    #print(loopa,p,dv)
+    # print(loopa, p, dv)
     return vertextend(v, dv)
 
 
 def bend(p0, p1, p2, loopa, loopb, verts):
     # will extend this with a tri centered at p0
-    #print('bend')
+    # print('bend')
     return bridgequads(loopa, loopb, verts)
 
 
 def extend(p0, p1, p2, loopa, verts):
     # will extend this with a tri centered at p0
-    #print('extend')
-    #print(p0,p1,p2,[verts[i] for i in loopa])
+    # print('extend')
+    # print(p0,p1,p2,[verts[i] for i in loopa])
 
     # both difference point upward, we extend to the second
     d1 = p1 - p0
@@ -329,22 +356,23 @@ def extend(p0, p1, p2, loopa, verts):
     p = (verts[loopa[0]] + verts[loopa[1]] + verts[loopa[2]] + verts[loopa[3]]) / 4
     a = d1.angle(d2, 0)
     if abs(a) < 0.05:
-        #print('small angle')
+        # print('small angle')
         loopb = vertcopy(loopa, verts, p0 - d2 / 2 - p)
         # all verts in loopb are displaced the same amount so no need to find the minimum distance
         n = 4
-        return ([(loopa[(i) % n], loopa[(i + 1) % n], loopb[(i + 1) % n], loopb[(i) % n]) for i in range(n)], loopa, loopb)
+        return ([(loopa[(i) % n], loopa[(i + 1) % n],
+                 loopb[(i + 1) % n], loopb[(i) % n]) for i in range(n)], loopa, loopb)
 
     r = d2.cross(d1)
     q = Quaternion(r, -a)
     dverts = [verts[i] - p for i in loopa]
-    #print('large angle',dverts,'axis',r)
+    # print('large angle',dverts,'axis',r)
     for dv in dverts:
         dv.rotate(q)
-    #print('rotated',dverts)
+    # print('rotated',dverts)
     for dv in dverts:
         dv += (p0 - d2 / 2)
-    #print('moved',dverts)
+    # print('moved',dverts)
     loopb = vertextend(verts, dverts)
     # none of the verts in loopb are rotated so no need to find the minimum distance
     n = 4
@@ -352,22 +380,22 @@ def extend(p0, p1, p2, loopa, verts):
 
 
 def nonfork(bp, parent, apex, verts, p, branchpoints):
-    #print('nonfork bp    ',bp.index,bp.v,bp.loop if hasattr(bp,'loop') else None)
-    #print('nonfork parent',parent.index,parent.v,parent.loop if hasattr(parent,'loop') else None)
-    #print('nonfork apex  ',apex.index,apex.v,apex.loop if hasattr(apex,'loop') else None)
+    # print('nonfork bp    ',bp.index,bp.v,bp.loop if hasattr(bp,'loop') else None)
+    # print('nonfork parent',parent.index,parent.v,parent.loop if hasattr(parent,'loop') else None)
+    # print('nonfork apex  ',apex.index,apex.v,apex.loop if hasattr(apex,'loop') else None)
     if hasattr(bp, 'loop'):
         if hasattr(apex, 'loop'):
-            #print('nonfork bend bp->apex')
+            # print('nonfork bend bp->apex')
             return bend(bp.v + p, parent.v + p, apex.v + p, bp.loop, apex.loop, verts)
         else:
-            #print('nonfork extend bp->apex')
+            # print('nonfork extend bp->apex')
             faces, loop1, loop2 = extend(bp.v + p, parent.v + p, apex.v + p, bp.loop, verts)
             apex.loop = loop2
             return faces, loop1, loop2
     else:
         if hasattr(parent, 'loop'):
-            #print('nonfork extend from bp->parent')
-            #faces,loop1,loop2 =  extend(bp.v+p, apex.v+p, parent.v+p, parent.loop, verts)
+            # print('nonfork extend from bp->parent')
+            # faces,loop1,loop2 =  extend(bp.v+p, apex.v+p, parent.v+p, parent.loop, verts)
             if parent.parent is None:
                 return None, None, None
             grandparent = branchpoints[parent.parent]
@@ -375,7 +403,7 @@ def nonfork(bp, parent, apex, verts, p, branchpoints):
             bp.loop = loop2
             return faces, loop1, loop2
         else:
-            #print('nonfork no loop')
+            # print('nonfork no loop')
             # neither parent nor apex already have a loop calculated
             # will fill this later ...
             return None, None, None
@@ -400,10 +428,11 @@ def skin(aloop, bloop, faces):
         faces.append((aloop[i], aloop[(i + 1) % n], bloop[(i + 1) % n], bloop[i]))
 
 
-def createGeometry(tree, power=0.5, scale=0.01, addleaves=False, pleaf=0.5, leafsize=0.5, leafrandomsize=0.1, leafrandomrot=0.1,
-    nomodifiers=True, skinmethod='NATIVE', subsurface=False,
-    maxleafconnections=2, bleaf=1.0, connectoffset=-0.1,
-    timeperf=True):
+def createGeometry(tree, power=0.5, scale=0.01, addleaves=False, pleaf=0.5,
+                   leafsize=0.5, leafrandomsize=0.1, leafrandomrot=0.1,
+                   nomodifiers=True, skinmethod='NATIVE', subsurface=False,
+                   maxleafconnections=2, bleaf=1.0, connectoffset=-0.1,
+                   timeperf=True):
 
     timings = Timer()
 
@@ -434,10 +463,15 @@ def createGeometry(tree, power=0.5, scale=0.01, addleaves=False, pleaf=0.5, leaf
             rootp = verts[r]
             nv = len(verts)
             radius = 0.7071 * ((tree.branchpoints[r].connections + 1) ** power) * scale
-            verts.extend([rootp + Vector((-radius, -radius, 0)), rootp + Vector((radius, -radius, 0)), rootp + Vector((radius, radius, 0)), rootp + Vector((-radius, radius, 0))])
+            verts.extend(
+                [rootp + Vector((-radius, -radius, 0)),
+                 rootp + Vector((radius, -radius, 0)),
+                 rootp + Vector((radius, radius, 0)),
+                 rootp + Vector((-radius, radius, 0))]
+            )
             tree.branchpoints[r].loop = (nv, nv + 1, nv + 2, nv + 3)
-            #print('root verts',tree.branchpoints[r].loop)
-            #faces.append((nv,nv+1,nv+2))
+            # print('root verts',tree.branchpoints[r].loop)
+            # faces.append((nv, nv + 1,nv + 2))
             edges.extend([(nv, nv + 1), (nv + 1, nv + 2), (nv + 2, nv + 3), (nv + 3, nv)])
 
         # skin all forked branchpoints, no attempt is yet made to adjust the radius
@@ -466,22 +500,24 @@ def createGeometry(tree, power=0.5, scale=0.01, addleaves=False, pleaf=0.5, leaf
                 verts.extend([v + p for v in skinverts])
                 faces.extend([tuple(v + nv for v in f) for f in skinfaces])
 
-                # the vertices of the quads at the end of the internodes are returned as the first 12 vertices of a total of 22
-                # we store them for reuse by non-forked internodes but first check if we have a fork to fork connection
+                # the vertices of the quads at the end of the internodes
+                # are returned as the first 12 vertices of a total of 22
+                # we store them for reuse by non-forked internodes but
+                # first check if we have a fork to fork connection
                 nv = len(verts)
                 if hasattr(bp, 'loop') and not (bpi in forkfork):  # already assigned by another fork
                     faces.extend(bridgequads(bp.loop, [nv - 22, nv - 21, nv - 20, nv - 19], verts)[0])
                     forkfork.add(bpi)
                 else:
                     bp.loop = [nv - 22, nv - 21, nv - 20, nv - 19]
-
-                if hasattr(apex, 'loop') and not (bp.apex in forkfork):  # already assigned by another fork but not yet skinned
+                # already assigned by another fork but not yet skinned
+                if hasattr(apex, 'loop') and not (bp.apex in forkfork):
                     faces.extend(bridgequads(apex.loop, [nv - 18, nv - 17, nv - 16, nv - 15], verts)[0])
                     forkfork.add(bp.apex)
                 else:
                     apex.loop = [nv - 18, nv - 17, nv - 16, nv - 15]
-
-                if hasattr(shoot, 'loop') and not (bp.shoot in forkfork):  # already assigned by another fork but not yet skinned
+                # already assigned by another fork but not yet skinned
+                if hasattr(shoot, 'loop') and not (bp.shoot in forkfork):
                     faces.extend(bridgequads(shoot.loop, [nv - 14, nv - 13, nv - 12, nv - 11], verts)[0])
                     forkfork.add(bp.shoot)
                 else:
@@ -500,12 +536,16 @@ def createGeometry(tree, power=0.5, scale=0.01, addleaves=False, pleaf=0.5, leaf
         start = -1
         while(start != len(skinnednonforks)):
             start = len(skinnednonforks)
-            #print('-'*20,start)
+            # print('-' * 20, start)
             for bp in tree.branchpoints:
                 if bp.shoot is None and not (bp.parent is None or bp.apex is None or bp in skinnednonforks):
-                    bfaces, apexloop, parentloop = nonfork(bp, tree.branchpoints[bp.parent], tree.branchpoints[bp.apex], verts, p, tree.branchpoints)
+                    bfaces, apexloop, parentloop = nonfork(
+                                                    bp, tree.branchpoints[bp.parent],
+                                                    tree.branchpoints[bp.apex], verts,
+                                                    p, tree.branchpoints
+                                                    )
                     if bfaces is not None:
-                        #print(bfaces,apexloop,parentloop)
+                        # print(bfaces,apexloop,parentloop)
                         faces.extend(bfaces)
                         skinnednonforks.add(bp)
 
@@ -565,7 +605,11 @@ def createGeometry(tree, power=0.5, scale=0.01, addleaves=False, pleaf=0.5, leaf
 
     # create the leaves object
     if addleaves:
-        mesh = createLeaves(tree, pleaf, leafsize, leafrandomsize, leafrandomrot, maxleafconnections, bleaf, connectoffset)
+        mesh = createLeaves(
+                    tree, pleaf, leafsize, leafrandomsize,
+                    leafrandomrot, maxleafconnections,
+                    bleaf, connectoffset
+                )
         obj_leaves = bpy.data.objects.new(mesh.name, mesh)
         base = bpy.context.scene.objects.link(obj_leaves)
         obj_leaves.parent = obj_new
@@ -584,204 +628,296 @@ def createGeometry(tree, power=0.5, scale=0.01, addleaves=False, pleaf=0.5, leaf
 class SCATree(bpy.types.Operator):
     bl_idname = "mesh.sca_tree"
     bl_label = "SCATree"
+    bl_description = "Generate a tree using a space colonization algorithm"
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
 
-    internodeLength = FloatProperty(name="Internode Length",
-                    description="Internode length in Blender Units",
-                    default=0.75,
-                    min=0.01,
-                    soft_max=3.0,
-                    subtype='DISTANCE',
-                    unit='LENGTH')
-    killDistance = FloatProperty(name="Kill Distance",
-                    description="Kill Distance as a multiple of the internode length",
-                    default=3,
-                    min=0.01,
-                    soft_max=100.0)
-    influenceRange = FloatProperty(name="Influence Range",
-                    description="Influence Range as a multiple of the internode length",
-                    default=15,
-                    min=0.01,
-                    soft_max=100.0)
-    tropism = FloatProperty(name="Tropism",
-                    description="The tendency of branches to bend up or down",
-                    default=0,
-                    min=-1.0,
-                    soft_max=1.0)
-    power = FloatProperty(name="Power",
-                    description="Tapering power of branch connections",
-                    default=0.3,
-                    min=0.01,
-                    soft_max=1.0)
-    scale = FloatProperty(name="Scale",
-                    description="Branch size",
-                    default=0.01,
-                    min=0.0001,
-                    soft_max=1.0)
-
-    # the group related properties are not saved as presets because on reload no groups with the same names might exist, causing an exception
-    useGroups = BoolProperty(name="Use object groups",
-                    options={'ANIMATABLE', 'SKIP_SAVE'},
-                    description="Use groups of objects to specify marker distribution",
-                    default=False)
-
-    crownGroup = EnumProperty(items=availableGroups,
-                    options={'ANIMATABLE', 'SKIP_SAVE'},
-                    name='Crown Group',
-                    description='Group of objects that specify crown shape')
-
-    shadowGroup = EnumProperty(items=availableGroupsOrNone,
-                    options={'ANIMATABLE', 'SKIP_SAVE'},
-                    name='Shadow Group',
-                    description='Group of objects subtracted from the crown shape')
-
-    exclusionGroup = EnumProperty(items=availableGroupsOrNone,
-                    options={'ANIMATABLE', 'SKIP_SAVE'},
-                    name='Exclusion Group',
-                    description='Group of objects that will not be penetrated by growing branches')
-
-    useTrunkGroup = BoolProperty(name="Use trunk group",
-                    options={'ANIMATABLE', 'SKIP_SAVE'},
-                    description="Use the locations of a group of objects to specify trunk starting points instead of 3d cursor",
-                    default=False)
-
-    trunkGroup = EnumProperty(items=availableGroups,
-                    options={'ANIMATABLE', 'SKIP_SAVE'},
-                    name='Trunk Group',
-                    description='Group of objects whose locations specify trunk starting points')
-
-    crownSize = FloatProperty(name="Crown Size",
-                    description="Crown size",
-                    default=5,
-                    min=1,
-                    soft_max=29)
-    crownShape = FloatProperty(name="Crown Shape",
-                    description="Crown shape",
-                    default=1,
-                    min=0.2,
-                    soft_max=5)
-    crownOffset = FloatProperty(name="Crown Offset",
-                    description="Crown offset (the length of the bole)",
-                    default=3,
-                    min=0,
-                    soft_max=20.0)
-    surfaceBias = FloatProperty(name="Surface Bias",
-                    description="Surface bias (how much markers are favored near the surface)",
-                    default=1,
-                    min=-10,
-                    soft_max=10)
-    topBias = FloatProperty(name="Top Bias",
-                    description="Top bias (how much markers are favored near the top)",
-                    default=1,
-                    min=-10,
-                    soft_max=10)
-    randomSeed = IntProperty(name="Random Seed",
-                    description="The seed governing random generation",
-                    default=0,
-                    min=0)
-    maxIterations = IntProperty(name="Maximum Iterations",
-                    description="The maximum number of iterations allowed for tree generation",
-                    default=40,
-                    min=0)
-    numberOfEndpoints = IntProperty(name="Number of Endpoints",
-                    description="The number of endpoints generated in the growing volume",
-                    default=100,
-                    min=0)
-    newEndPointsPer1000 = IntProperty(name="Number of new Endpoints",
-                    description="The number of new endpoints generated in the growing volume per thousand iterations",
-                    default=0,
-                    min=0)
-    maxTime = FloatProperty(name="Maximum Time",
-                    description=("The maximum time to run the generation for "
-                                "in seconds/generation (0.0 = Disabled). Currently ignored"),
-                    default=0.0,
-                    min=0.0,
-                    soft_max=10)
-    pLeaf = FloatProperty(name="Leaves per internode",
-                    description=("The average number of leaves per internode"),
-                    default=0.5,
-                    min=0.0,
-                    soft_max=4)
-    bLeaf = FloatProperty(name="Leaf clustering",
-                    description=("How much leaves cluster to the end of the internode"),
-                    default=1,
-                    min=1,
-                    soft_max=4)
-    leafSize = FloatProperty(name="Leaf Size",
-                    description=("The leaf size"),
-                    default=0.5,
-                    min=0.0,
-                    soft_max=1)
-    leafRandomSize = FloatProperty(name="Leaf Random Size",
-                    description=("The amount of randomness to add to the leaf size"),
-                    default=0.1,
-                    min=0.0,
-                    soft_max=10)
-    leafRandomRot = FloatProperty(name="Leaf Random Rotation",
-                    description=("The amount of random rotation to add to the leaf"),
-                    default=0.1,
-                    min=0.0,
-                    soft_max=1)
-    connectoffset = FloatProperty(name="Connect Offset",
-                    description=("Offset of leaf to twig"),
-                    default=-0.1)
-    leafMaxConnections = IntProperty(name="Max Connections",
-                    description="The maximum number of connections of an internode elegible for a leaf",
-                    default=2,
-                    min=0)
-    addLeaves = BoolProperty(name="Add Leaves", default=False)
-
-    objectName = EnumProperty(items=availableObjects,
-                    options={'ANIMATABLE', 'SKIP_SAVE'},
-                    name='Object Name',
-                    description='Name of additional objects to duplicate at the branchpoints')
-    pObject = FloatProperty(name="Objects per internode",
-                    description=("The average number of objects per internode"),
-                    default=0.3,
-                    min=0.0,
-                    soft_max=1)
-    bObject = FloatProperty(name="Object clustering",
-                    description=("How much objects cluster to the end of the internode"),
-                    default=1,
-                    min=1,
-                    soft_max=4)
-    objectSize = FloatProperty(name="Object Size",
-                    description=("The object size"),
-                    default=1,
-                    min=0.0,
-                    soft_max=2)
-    objectRandomSize = FloatProperty(name="Object Random Size",
-                    description=("The amount of randomness to add to the object size"),
-                    default=0.1,
-                    min=0.0,
-                    soft_max=10)
-    objectRandomRot = FloatProperty(name="Object Random Rotation",
-                    description=("The amount of random rotation to add to the object"),
-                    default=0.1,
-                    min=0.0,
-                    soft_max=1)
-    objectMaxConnections = IntProperty(name="Max Connections for Object",
-                    description="The maximum number of connections of an internode elegible for a object",
-                    default=1,
-                    min=0)
-    addObjects = BoolProperty(name="Add Objects", default=False)
-
-    updateTree = BoolProperty(name="Update Tree", default=False)
-
-    noModifiers = BoolProperty(name="No Modifers", default=True)
-    subSurface = BoolProperty(name="Sub Surface", default=False, description="Add subsurface modifier to trunk skin")
-    skinMethod = EnumProperty(items=[('NATIVE', 'Native', 'Built in skinning method', 1), ('BLENDER', 'Skin modifier', 'Use Blenders skin modifier', 2)],
-                    options={'ANIMATABLE', 'SKIP_SAVE'},
-                    name='Skinning method',
-                    description='How to add a surface to the trunk skeleton')
-
-    showMarkers = BoolProperty(name="Show Markers", default=False)
-    markerScale = FloatProperty(name="Marker Scale",
-                    description=("The size of the markers"),
-                    default=0.05,
-                    min=0.001,
-                    soft_max=0.2)
-    timePerformance = BoolProperty(name="Time performance", default=False, description="Show duration of generation steps on console")
+    internodeLength = FloatProperty(
+        name="Internode Length",
+        description="Internode length in Blender Units",
+        default=0.75,
+        min=0.01,
+        soft_max=3.0,
+        subtype='DISTANCE',
+        unit='LENGTH'
+    )
+    killDistance = FloatProperty(
+        name="Kill Distance",
+        description="Kill Distance as a multiple of the internode length",
+        default=3,
+        min=0.01,
+        soft_max=100.0
+    )
+    influenceRange = FloatProperty(
+        name="Influence Range",
+        description="Influence Range as a multiple of the internode length",
+        default=15,
+        min=0.01,
+        soft_max=100.0
+    )
+    tropism = FloatProperty(
+        name="Tropism",
+        description="The tendency of branches to bend up or down",
+        default=0,
+        min=-1.0,
+        soft_max=1.0
+    )
+    power = FloatProperty(
+        name="Power",
+        description="Tapering power of branch connections",
+        default=0.3,
+        min=0.01,
+        soft_max=1.0
+    )
+    scale = FloatProperty(
+        name="Scale",
+        description="Branch size",
+        default=0.01,
+        min=0.0001,
+        soft_max=1.0
+    )
+    # the group related properties are not saved as presets because on reload
+    # no groups with the same names might exist, causing an exception
+    useGroups = BoolProperty(
+        name="Use object groups",
+        options={'ANIMATABLE', 'SKIP_SAVE'},
+        description="Use groups of objects to specify marker distribution",
+        default=False
+    )
+    crownGroup = EnumProperty(
+        items=availableGroups,
+        options={'ANIMATABLE', 'SKIP_SAVE'},
+        name='Crown Group',
+        description='Group of objects that specify crown shape'
+    )
+    shadowGroup = EnumProperty(
+        items=availableGroupsOrNone,
+        options={'ANIMATABLE', 'SKIP_SAVE'},
+        name='Shadow Group',
+        description='Group of objects subtracted from the crown shape'
+    )
+    exclusionGroup = EnumProperty(
+        items=availableGroupsOrNone,
+        options={'ANIMATABLE', 'SKIP_SAVE'},
+        name='Exclusion Group',
+        description='Group of objects that will not be penetrated by growing branches'
+    )
+    useTrunkGroup = BoolProperty(
+        name="Use trunk group",
+        options={'ANIMATABLE', 'SKIP_SAVE'},
+        description="Use the locations of a group of objects to "
+                    "specify trunk starting points instead of 3d cursor",
+        default=False
+    )
+    trunkGroup = EnumProperty(
+        items=availableGroups,
+        options={'ANIMATABLE', 'SKIP_SAVE'},
+        name='Trunk Group',
+        description='Group of objects whose locations specify trunk starting points'
+    )
+    crownSize = FloatProperty(
+        name="Crown Size",
+        description="Crown size",
+        default=5,
+        min=1,
+        soft_max=29
+    )
+    crownShape = FloatProperty(
+        name="Crown Shape",
+        description="Crown shape",
+        default=1,
+        min=0.2,
+        soft_max=5
+    )
+    crownOffset = FloatProperty(
+        name="Crown Offset",
+        description="Crown offset (the length of the bole)",
+        default=3,
+        min=0,
+        soft_max=20.0
+    )
+    surfaceBias = FloatProperty(
+        name="Surface Bias",
+        description="Surface bias (how much markers are favored near the surface)",
+        default=1,
+        min=-10,
+        soft_max=10
+    )
+    topBias = FloatProperty(
+        name="Top Bias",
+        description="Top bias (how much markers are favored near the top)",
+        default=1,
+        min=-10,
+        soft_max=10
+    )
+    randomSeed = IntProperty(
+        name="Random Seed",
+        description="The seed governing random generation",
+        default=0,
+        min=0
+    )
+    maxIterations = IntProperty(
+        name="Maximum Iterations",
+        description="The maximum number of iterations allowed for tree generation",
+        default=40,
+        min=0
+    )
+    numberOfEndpoints = IntProperty(
+        name="Number of Endpoints",
+        description="The number of endpoints generated in the growing volume",
+        default=100,
+        min=0
+    )
+    newEndPointsPer1000 = IntProperty(
+        name="Number of new Endpoints",
+        description="The number of new endpoints generated in the growing volume per thousand iterations",
+        default=0,
+        min=0
+    )
+    maxTime = FloatProperty(
+        name="Maximum Time",
+        description=("The maximum time to run the generation for "
+                    "in seconds/generation (0.0 = Disabled). Currently ignored"),
+        default=0.0,
+        min=0.0,
+        soft_max=10
+    )
+    pLeaf = FloatProperty(
+        name="Leaves per internode",
+        description=("The average number of leaves per internode"),
+        default=0.5,
+        min=0.0,
+        soft_max=4
+    )
+    bLeaf = FloatProperty(
+        name="Leaf clustering",
+        description=("How much leaves cluster to the end of the internode"),
+        default=1,
+        min=1,
+        soft_max=4
+    )
+    leafSize = FloatProperty(
+        name="Leaf Size",
+        description=("The leaf size"),
+        default=0.5,
+        min=0.0,
+        soft_max=1
+    )
+    leafRandomSize = FloatProperty(
+        name="Leaf Random Size",
+        description=("The amount of randomness to add to the leaf size"),
+        default=0.1,
+        min=0.0,
+        soft_max=10
+    )
+    leafRandomRot = FloatProperty(
+        name="Leaf Random Rotation",
+        description=("The amount of random rotation to add to the leaf"),
+        default=0.1,
+        min=0.0,
+        soft_max=1
+    )
+    connectoffset = FloatProperty(
+        name="Connect Offset",
+        description=("Offset of leaf to twig"),
+        default=-0.1
+    )
+    leafMaxConnections = IntProperty(
+        name="Max Connections",
+        description="The maximum number of connections of an internode elegible for a leaf",
+        default=2,
+        min=0
+    )
+    addLeaves = BoolProperty(
+        name="Add Leaves",
+        default=False
+    )
+    objectName = EnumProperty(
+        items=availableObjects,
+        options={'ANIMATABLE', 'SKIP_SAVE'},
+        name='Object Name',
+        description='Name of additional objects to duplicate at the branchpoints'
+    )
+    pObject = FloatProperty(
+        name="Objects per internode",
+        description=("The average number of objects per internode"),
+        default=0.3,
+        min=0.0,
+        soft_max=1
+    )
+    bObject = FloatProperty(
+        name="Object clustering",
+        description=("How much objects cluster to the end of the internode"),
+        default=1,
+        min=1,
+        soft_max=4
+    )
+    objectSize = FloatProperty(
+        name="Object Size",
+        description=("The object size"),
+        default=1,
+        min=0.0,
+        soft_max=2
+    )
+    objectRandomSize = FloatProperty(
+        name="Object Random Size",
+        description=("The amount of randomness to add to the object size"),
+        default=0.1,
+        min=0.0,
+        soft_max=10
+    )
+    objectRandomRot = FloatProperty(
+        name="Object Random Rotation",
+        description=("The amount of random rotation to add to the object"),
+        default=0.1,
+        min=0.0,
+        soft_max=1
+    )
+    objectMaxConnections = IntProperty(
+        name="Max Connections for Object",
+        description="The maximum number of connections of an internode elegible for a object",
+        default=1,
+        min=0
+    )
+    addObjects = BoolProperty(
+        name="Add Objects",
+        default=False
+    )
+    updateTree = BoolProperty(
+        name="Update Tree",
+        default=False
+    )
+    noModifiers = BoolProperty(
+        name="No Modifers",
+        default=True
+    )
+    subSurface = BoolProperty(
+        name="Sub Surface",
+        default=False,
+        description="Add subsurface modifier to trunk skin"
+    )
+    skinMethod = EnumProperty(
+        items=[('NATIVE', 'Native', 'Built in skinning method', 1),
+               ('BLENDER', 'Skin modifier', 'Use Blenders skin modifier', 2)],
+        options={'ANIMATABLE', 'SKIP_SAVE'},
+        name='Skinning method',
+        description='How to add a surface to the trunk skeleton'
+    )
+    showMarkers = BoolProperty(
+        name="Show Markers",
+        default=False
+    )
+    markerScale = FloatProperty(
+        name="Marker Scale",
+        description=("The size of the markers"),
+        default=0.05,
+        min=0.001,
+        soft_max=0.2
+    )
+    timePerformance = BoolProperty(
+        name="Time performance",
+        default=False,
+        description="Show duration of generation steps on console"
+    )
 
     @classmethod
     def poll(self, context):
@@ -795,7 +931,8 @@ class SCATree(bpy.types.Operator):
 
         timings = Timer()
 
-        # necessary otherwize ray casts toward these objects may fail. However if nothing is selected, we get a runtime error ...
+        # necessary otherwize ray casts toward these objects may fail.
+        # However if nothing is selected, we get a runtime error ...
         try:
             bpy.ops.object.mode_set(mode='EDIT', toggle=False)
             bpy.ops.object.mode_set(mode='OBJECT', toggle=False)
@@ -804,9 +941,16 @@ class SCATree(bpy.types.Operator):
 
         if self.useGroups:
             size, minp = groupExtends(self.crownGroup)
-            volumefie = partial(groupdistribution, self.crownGroup, self.shadowGroup, self.randomSeed, size, minp - bpy.context.scene.cursor_location)
+            volumefie = partial(
+                            groupdistribution, self.crownGroup, self.shadowGroup,
+                            self.randomSeed, size, minp - bpy.context.scene.cursor_location
+                        )
         else:
-            volumefie = partial(ellipsoid2, self.crownSize * self.crownShape, self.crownSize, Vector((0, 0, self.crownSize + self.crownOffset)), self.surfaceBias, self.topBias)
+            volumefie = partial(
+                            ellipsoid2, self.crownSize * self.crownShape, self.crownSize,
+                            Vector((0, 0, self.crownSize + self.crownOffset)),
+                            self.surfaceBias, self.topBias
+                        )
 
         startingpoints = []
         if self.useTrunkGroup:
@@ -837,10 +981,13 @@ class SCATree(bpy.types.Operator):
         sca.iterate2(newendpointsper1000=self.newEndPointsPer1000, maxtime=self.maxTime)
         timings.add('iterate')
 
-        obj_new = createGeometry(sca, self.power, self.scale, self.addLeaves, self.pLeaf, self.leafSize, self.leafRandomSize, self.leafRandomRot,
-            self.noModifiers, self.skinMethod, self.subSurface,
-            self.leafMaxConnections, self.bLeaf, self.connectoffset,
-            self.timePerformance)
+        obj_new = createGeometry(
+                    sca, self.power, self.scale, self.addLeaves,
+                    self.pLeaf, self.leafSize, self.leafRandomSize, self.leafRandomRot,
+                    self.noModifiers, self.skinMethod, self.subSurface,
+                    self.leafMaxConnections, self.bLeaf, self.connectoffset,
+                    self.timePerformance
+                )
 
         timings.add('objcreationstart')
         if self.addObjects:
@@ -956,8 +1103,9 @@ class SCATree(bpy.types.Operator):
 
 
 def menu_func(self, context):
-    self.layout.operator(SCATree.bl_idname, text="Add Tree to Scene",
-                                                icon='PLUGIN').updateTree = True
+    self.layout.operator(
+        SCATree.bl_idname, text="Add Tree to Scene",
+        icon='PLUGIN').updateTree = True
 
 
 def register():

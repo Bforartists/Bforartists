@@ -8,13 +8,13 @@ import shutil
 import bpy
 from bpy.types import Operator
 from bpy.props import (
-        BoolProperty,
-        StringProperty
-        )
+    BoolProperty,
+    StringProperty,
+)
 from bpy_extras.io_utils import (
-        ExportHelper,
-        ImportHelper,
-        )
+    ExportHelper,
+    ImportHelper,
+)
 from . import bl_info
 from .core import get_preferences
 from .operators import DataStore
@@ -162,11 +162,12 @@ class IO_Utils():
             return False
 
         # io_filters = sv.settings.io_filters
-        sv_data = {"point_of_views": sv.pov_list,
-                   "views": sv.view_list,
-                   "layers": sv.layers_list,
-                   "displays": sv.display_list}
-
+        sv_data = {
+            "point_of_views": sv.pov_list,
+            "views": sv.view_list,
+            "layers": sv.layers_list,
+            "displays": sv.display_list
+        }
         for sv_struct, props in dump["data"].items():
             """
             is_filtered = getattr(io_filters, sv_struct)
@@ -203,20 +204,20 @@ class IO_Utils():
 
 
 class VIEW3D_stored_views_import(Operator, ImportHelper):
-    bl_idname = "stored_views.import"
+    bl_idname = "stored_views.import_blsv"
     bl_label = "Import Stored Views preset"
     bl_description = "Import a .blsv preset file to the current Stored Views"
 
     filename_ext = ".blsv"
     filter_glob = StringProperty(
-            default="*.blsv",
-            options={'HIDDEN'}
-            )
+        default="*.blsv",
+        options={'HIDDEN'}
+    )
     replace = BoolProperty(
-            name="Replace",
-            default=True,
-            description="Replace current stored views, otherwise append"
-            )
+        name="Replace",
+        default=True,
+        description="Replace current stored views, otherwise append"
+    )
 
     @classmethod
     def poll(cls, context):
@@ -227,7 +228,7 @@ class VIEW3D_stored_views_import(Operator, ImportHelper):
         exists = os.path.isfile(self.filepath) if self.filepath else False
         if not exists:
             self.report({'WARNING'},
-                        "No filepath specified, or file could not be found. Operation Cancelled")
+                        "No filepath specified or file could not be found. Operation Cancelled")
             return {'CANCELLED'}
 
         # apply chosen preset
@@ -258,15 +259,15 @@ class VIEW3D_stored_views_import_from_scene(Operator):
     bl_description = "Import currently stored views from an another scene"
 
     scene_name = StringProperty(
-            name="Scene Name",
-            description="A current blend scene",
-            default=""
-            )
+        name="Scene Name",
+        description="A current blend scene",
+        default=""
+    )
     replace = BoolProperty(
-            name="Replace",
-            default=True,
-            description="Replace current stored views, otherwise append"
-            )
+        name="Replace",
+        default=True,
+        description="Replace current stored views, otherwise append"
+    )
 
     @classmethod
     def poll(cls, context):
@@ -300,23 +301,23 @@ class VIEW3D_stored_views_import_from_scene(Operator):
 
 
 class VIEW3D_stored_views_export(Operator, ExportHelper):
-    bl_idname = "stored_views.export"
+    bl_idname = "stored_views.export_blsv"
     bl_label = "Export Stored Views preset"
     bl_description = "Export the current Stored Views to a .blsv preset file"
 
     filename_ext = ".blsv"
     filepath = StringProperty(
-            default=os.path.join(IO_Utils.get_preset_path()[0], "untitled")
-            )
+        default=os.path.join(IO_Utils.get_preset_path()[0], "untitled")
+    )
     filter_glob = StringProperty(
-            default="*.blsv",
-            options={'HIDDEN'}
-            )
+        default="*.blsv",
+        options={'HIDDEN'}
+    )
     preset_name = StringProperty(
-            name="Preset name",
-            default="",
-            description="Name of the stored views preset"
-            )
+        name="Preset name",
+        default="",
+        description="Name of the stored views preset"
+    )
 
     @classmethod
     def poll(cls, context):
@@ -324,4 +325,5 @@ class VIEW3D_stored_views_export(Operator, ExportHelper):
 
     def execute(self, context):
         IO_Utils.stored_views_export_to_blsv(self.filepath, self.preset_name)
+
         return{'FINISHED'}

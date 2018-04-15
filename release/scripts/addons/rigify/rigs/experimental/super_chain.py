@@ -228,11 +228,11 @@ class Rig:
             self.obj.data.bones[bone].bbone_segments = self.bbones
 
         if not self.SINGLE_BONE:
-            self.obj.data.bones[def_bones[0]].bbone_in = 0.0
-            self.obj.data.bones[def_bones[-1]].bbone_out = 0.0
+            self.obj.data.bones[def_bones[0]].bbone_easein = 0.0
+            self.obj.data.bones[def_bones[-1]].bbone_easeout = 0.0
         else:
-            self.obj.data.bones[def_bones[0]].bbone_in = 1.0
-            self.obj.data.bones[def_bones[-1]].bbone_out = 1.0
+            self.obj.data.bones[def_bones[0]].bbone_easein = 1.0
+            self.obj.data.bones[def_bones[-1]].bbone_easeout = 1.0
         bpy.ops.object.mode_set(mode='EDIT')
 
         return def_bones
