@@ -19,6 +19,7 @@
 # <pep8 compliant>
 
 import bpy
+import math
 
 __all__ = (
     "CyclesShaderWrapper",
@@ -392,7 +393,7 @@ class CyclesShaderWrapper():
 
     def hardness_value_set(self, value):
         node = self.node_mix_color_hard
-        node.inputs["Color1"].default_value = (value,) * 4
+        node.inputs["Color1"].default_value = (math.sqrt(max(value, 0.0)),) * 4
 
     def hardness_image_set(self, image):
         node = self.node_mix_color_hard
