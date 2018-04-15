@@ -118,7 +118,7 @@ class Export3DS(bpy.types.Operator, ExportHelper, IO3DSOrientationHelper):
             name="Selection Only",
             description="Export selected objects only",
             default=True,
-            )
+            ) # bfa - turned selected objects only to true
 
     def execute(self, context):
         from . import export_3ds

@@ -347,10 +347,10 @@ class Rig:
         for bone in def_bones[:-1]:
             self.obj.data.bones[bone].bbone_segments = self.bbones
 
-        self.obj.data.bones[ def_bones[0]  ].bbone_in = 0.0
-        self.obj.data.bones[ def_bones[-2] ].bbone_out = 0.0
-        self.obj.data.bones[ def_bones[-1] ].bbone_in = 0.0
-        self.obj.data.bones[ def_bones[-1] ].bbone_out = 0.0
+        self.obj.data.bones[ def_bones[0]  ].bbone_easein = 0.0
+        self.obj.data.bones[ def_bones[-2] ].bbone_easeout = 0.0
+        self.obj.data.bones[ def_bones[-1] ].bbone_easein = 0.0
+        self.obj.data.bones[ def_bones[-1] ].bbone_easeout = 0.0
 
 
         # Rubber hose drivers
@@ -376,11 +376,11 @@ class Rig:
             drvs = {}
             if j != 0:
                 tidx = j
-                drvs[tidx] = self.obj.data.bones[d].driver_add("bbone_in").driver
+                drvs[tidx] = self.obj.data.bones[d].driver_add("bbone_easein").driver
 
             if j != len( def_bones[:-1] ) - 1:
                 tidx = j + 1
-                drvs[tidx] = self.obj.data.bones[d].driver_add("bbone_out").driver
+                drvs[tidx] = self.obj.data.bones[d].driver_add("bbone_easeout").driver
 
             for d in drvs:
                 drv = drvs[d]

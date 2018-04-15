@@ -19,7 +19,7 @@
 bl_info = {
     "name": "Bone Selection Sets",
     "author": "Inês Almeida, Sybren A. Stüvel, Antony Riakiotakis, Dan Eicher",
-    "version": (2, 1, 0),
+    "version": (2, 1, 1),
     "blender": (2, 75, 0),
     "location": "Properties > Object Data (Armature) > Selection Sets",
     "description": "List of Bone sets for easy selection while animating",
@@ -130,7 +130,7 @@ class POSE_UL_selection_set(UIList):
         layout.prop(set, "name", text="", icon='GROUP_BONE', emboss=False)
 
 
-class POSE_MT_create_new_selection_set(Menu):
+class POSE_MT_selection_set_create(Menu):
     bl_label = "Choose Selection Set"
 
     def draw(self, context):
@@ -419,7 +419,7 @@ class POSE_OT_selection_set_paste(PluginOperator):
 # Registry ####################################################################
 
 classes = (
-    POSE_MT_create_new_selection_set,
+    POSE_MT_selection_set_create,
     POSE_MT_selection_sets_specials,
     POSE_MT_selection_sets,
     POSE_PT_selection_sets,
@@ -514,6 +514,10 @@ def uniqify(name: str, other_names: list) -> str:
     return "{}.{:03d}".format(name, min_index)
 
 
+# store keymaps here to access after registration
+addon_keymaps = []
+
+
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
@@ -530,10 +534,11 @@ def register():
     )
 
     wm = bpy.context.window_manager
-    km = wm.keyconfigs.active.keymaps['Pose']
+    km = wm.keyconfigs.addon.keymaps.new(name='Pose')
 
     kmi = km.keymap_items.new('wm.call_menu', 'W', 'PRESS', alt=True, shift=True)
     kmi.properties.name = 'POSE_MT_selection_sets'
+    addon_keymaps.append((km, kmi))
 
     bpy.types.VIEW3D_MT_select_pose.append(add_sss_button)
 
@@ -544,6 +549,11 @@ def unregister():
 
     del bpy.types.Object.selection_sets
     del bpy.types.Object.active_selection_set
+
+    # handle the keymap
+    for km, kmi in addon_keymaps:
+        km.keymap_items.remove(kmi)
+    addon_keymaps.clear()
 
 
 if __name__ == "__main__":
