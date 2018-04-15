@@ -275,8 +275,8 @@ def copy_bone(obj, bone_name, assign_name=''):
 
         edit_bone_2.use_deform = edit_bone_1.use_deform
         edit_bone_2.bbone_segments = edit_bone_1.bbone_segments
-        edit_bone_2.bbone_in = edit_bone_1.bbone_in
-        edit_bone_2.bbone_out = edit_bone_1.bbone_out
+        edit_bone_2.bbone_easein = edit_bone_1.bbone_easein
+        edit_bone_2.bbone_easeout = edit_bone_1.bbone_easeout
 
         bpy.ops.object.mode_set(mode='OBJECT')
 

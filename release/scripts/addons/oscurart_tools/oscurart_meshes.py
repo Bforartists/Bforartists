@@ -32,6 +32,7 @@ import bmesh
 import time
 import blf
 from bpy_extras.view3d_utils import location_3d_to_region_2d
+from random import uniform
 
 C = bpy.context
 D = bpy.data
@@ -714,4 +715,53 @@ class ApplyEditMultimesh(Operator):
         bpy.context.scene.objects.unlink(ob) 
         return {'FINISHED'} 
         
-           
+# -------------------------VERTEX COLOR MASK----------------------------------
+
+
+class resymVertexGroups(Operator):
+    bl_idname = "mesh.vertex_color_mask"
+    bl_label = "Vertex Color Mask"
+    bl_description = ("Create a Vertex Color Mask")
+    bl_options = {"REGISTER", "UNDO"}
+
+    @classmethod
+    def poll(cls, context):
+        obj = context.active_object
+        return obj is not None
+
+    def execute(self, context):
+        obj = bpy.context.active_object
+        mesh= obj.data
+
+        bpy.ops.object.mode_set(mode='EDIT', toggle=False) 
+        bpy.ops.mesh.select_all(action="DESELECT") 
+
+        bm = bmesh.from_edit_mesh(mesh) 
+        bm.faces.ensure_lookup_table()
+
+        islands = []
+        faces = bm.faces
+
+        try:
+            color_layer = bm.loops.layers.color["RGBMask"]
+        except:    
+            color_layer = bm.loops.layers.color.new("RGBMask")
+
+        while faces:
+            faces[0].select_set(True) 
+            bpy.ops.mesh.select_linked() 
+            islands.append([f for f in faces if f.select])
+            bpy.ops.mesh.hide(unselected=False) 
+            faces = [f for f in bm.faces if not f.hide] 
+
+        bpy.ops.mesh.reveal()
+
+        for island in islands:
+            color = (uniform(0,1),uniform(0,1),uniform(0,1),1) 
+            for face in island:
+                for loop in face.loops:
+                    loop[color_layer] = color    
+            
+        bpy.ops.object.mode_set(mode="VERTEX_PAINT")
+
+        return {'FINISHED'}           

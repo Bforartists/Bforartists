@@ -1,6 +1,6 @@
 # ##### BEGIN GPL LICENSE BLOCK #####
 #
-#  SCA Tree Generator, a Blender addon
+#  SCA Tree Generator, a Blender add-on
 #  (c) 2013 Michel J. Anders (varkenvarken)
 #
 #  This program is free software; you can redistribute it and/or
@@ -23,7 +23,7 @@
 
 from collections import defaultdict as dd
 from random import random, seed, expovariate
-from math import sqrt, pow, sin, cos
+from math import sqrt
 from functools import partial
 
 from mathutils import Vector
@@ -52,8 +52,10 @@ def sphere(r, p):
 
 
 class SCA:
-    def __init__(self, NENDPOINTS=100, d=0.3, NBP=2000, KILLDIST=5, INFLUENCE=15, SEED=42, volume=partial(sphere, 5, Vector((0, 0, 8))), TROPISM=0.0, exclude=lambda p: False,
-        startingpoints=[]):
+    def __init__(self, NENDPOINTS=100, d=0.3, NBP=2000, KILLDIST=5, INFLUENCE=15,
+                SEED=42, volume=partial(sphere, 5, Vector((0, 0, 8))), TROPISM=0.0,
+                exclude=lambda p: False,
+                startingpoints=[]):
         seed(SEED)
         self.d = d
         self.NBP = NBP
@@ -74,7 +76,8 @@ class SCA:
         endpointsadded = 0.0
         niterations = 0.0
         newendpointsper1000 /= 1000.0
-        t = expovariate(newendpointsper1000) if newendpointsper1000 > 0.0 else 1  # time to the first new 'endpoint add event'
+        # time to the first new 'endpoint add event'
+        t = expovariate(newendpointsper1000) if newendpointsper1000 > 0.0 else 1
 
         while self.NBP > 0 and (len(self.endpoints) > 0):
             self.NBP -= 1
@@ -110,10 +113,11 @@ class SCA:
                 sd /= n
                 ll = sqrt(sd.dot(sd))
                 # don't know if this assumption is true:
-                # if the unnormalised direction is very small, the endpoints are nearly coplanar/colinear and at roughly the same distance
+                # if the unnormalised direction is very small, the endpoints are nearly
+                # coplanar/colinear and at roughly the same distance
                 # so no endpoints will be killed and we might end up adding the same branch again and again
                 if ll < 1e-3:
-                    #print('SD very small')
+                    # print('SD very small')
                     continue
 
                 sd /= ll
@@ -122,12 +126,13 @@ class SCA:
                 sd /= ll
 
                 newp = self.branchpoints[bi].v + sd * self.d
-                # the assumption we made earlier is not suffucient to prevent adding the same branch so we need an expensive check:
+                # the assumption we made earlier is not suffucient to prevent
+                # adding the same branch so we need an expensive check:
                 tooclose = False
                 for dbi in self.branchpoints:
                     dddd = newp - dbi.v
                     if dddd.dot(dddd) < 1e-3:
-                        #print('BP to close to another')
+                        # print('BP to close to another')
                         tooclose = True
                 if tooclose:
                     continue
@@ -152,20 +157,23 @@ class SCA:
                 # generate new endpoints with a poisson process
                 # when we first arrive here, t already hold the time to the first event
                 niterations += 1
-                while t < niterations:  # we keep on adding endpoints as long as the next event still happens within this iteration
+                # we keep on adding endpoints as long as the next event still happens within this iteration
+                while t < niterations:
                     self.endpoints.append(next(self.volumepoint))
                     endpointsadded += 1
                     t += expovariate(newendpointsper1000)  # time to new 'endpoint add event'
-
-        #if newendpointsper1000 > 0.0:
-            #print("newendpoints/iteration %.3f, actual %.3f in %5.f iterations"%(newendpointsper1000,endpointsadded/niterations,niterations))
-
+        """
+        if newendpointsper1000 > 0.0:
+            print("newendpoints / iteration %.3f, actual %.3f in %5.f iterations"%(
+                  newendpointsper1000, endpointsadded / niterations, niterations))
+        """
     def iterate2(self, newendpointsper1000=0, maxtime=0.0):  # maxtime still ignored for now
         """iterate using a kdtree fr the branchpoints"""
         endpointsadded = 0.0
         niterations = 0.0
         newendpointsper1000 /= 1000.0
-        t = expovariate(newendpointsper1000) if newendpointsper1000 > 0.0 else 1  # time to the first new 'endpoint add event'
+        # time to the first new 'endpoint add event'
+        t = expovariate(newendpointsper1000) if newendpointsper1000 > 0.0 else 1
 
         tree = Tree(3)
         for bpi, bp in enumerate(self.branchpoints):
@@ -201,10 +209,11 @@ class SCA:
                 sd /= n
                 ll = sd.length_squared
                 # don't know if this assumption is true:
-                # if the unnormalised direction is very small, the endpoints are nearly coplanar/colinear and at roughly the same distance
+                # if the unnormalised direction is very small, the endpoints
+                # are nearly coplanar/colinear and at roughly the same distance
                 # so no endpoints will be killed and we might end up adding the same branch again and again
                 if ll < 1e-3:
-                    #print('SD very small')
+                    # print('SD very small')
                     continue
 
                 sd /= ll
@@ -212,10 +221,11 @@ class SCA:
                 sd.normalize()
 
                 newp = self.branchpoints[bi].v + sd * self.d
-                # the assumption we made earlier is not suffucient to prevent adding the same branch so we need an expensive check:
+                # the assumption we made earlier is not suffucient to prevent
+                # adding the same branch so we need an expensive check:
                 _, dddd = tree.nearest(newp)  # no checkempty here, we want to check for forks as well
                 if dddd < 1e-3:
-                        #print('BP to close to another')
+                        # print('BP to close to another')
                         continue
 
                 if not self.exclude(newp):
@@ -231,7 +241,9 @@ class SCA:
                     else:
                         bp.shoot = nbpi
                         node, _ = tree.nearest(bp.v)
-                        node.data = None  # signal that this is a fork so that we might ignore it when searching for nearest neighbors
+                        # signal that this is a fork so that we might ignore it
+                        # when searching for nearest neighbors
+                        node.data = None
                     while not (bp.parent is None):
                         bp = self.branchpoints[bp.parent]
                         bp.connections += 1
@@ -242,7 +254,8 @@ class SCA:
                 # generate new endpoints with a poisson process
                 # when we first arrive here, t already hold the time to the first event
                 niterations += 1
-                while t < niterations:  # we keep on adding endpoints as long as the next event still happens within this iteration
+                # we keep on adding endpoints as long as the next event still happens within this iteration
+                while t < niterations:
                     self.endpoints.append(next(self.volumepoint))
                     endpointsadded += 1
                     t += expovariate(newendpointsper1000)  # time to new 'endpoint add event'

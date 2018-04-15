@@ -56,9 +56,9 @@ def render_main(self, context, animation=False):
         # Get visible layers
         layers = []
         scene = context.scene
-        for x in range(0, 20):
+        for x in range(20):
             if scene.layers[x] is True:
-                layers.extend([x])
+                layers.append(x)
 
         # Get object list
         objlist = context.scene.objects
@@ -124,8 +124,8 @@ def render_main(self, context, animation=False):
         # --------------------------------
         # Loop for all tiles
         # --------------------------------
-        for row in range(0, row_num):
-            for col in range(0, col_num):
+        for row in range(row_num):
+            for col in range(col_num):
                 buffer = bgl.Buffer(bgl.GL_FLOAT, width * height * 4)
                 bgl.glDisable(bgl.GL_SCISSOR_TEST)  # if remove this line, get blender screenshot not image
                 bgl.glViewport(0, 0, tile_x, tile_y)
@@ -170,7 +170,7 @@ def render_main(self, context, animation=False):
                     if myobj.hide is False:
                         if 'MeasureGenerator' in myobj:
                             # verify visible layer
-                            for x in range(0, 20):
+                            for x in range(20):
                                 if myobj.layers[x] is True:
                                     if x in layers:
                                         op = myobj.MeasureGenerator[0]
@@ -216,7 +216,7 @@ def render_main(self, context, animation=False):
                 # --------------------------------
                 bgl.glFinish()
                 bgl.glReadPixels(0, 0, width, height, bgl.GL_RGBA, bgl.GL_FLOAT, buffer)  # read image data
-                for y in range(0, tile_y):
+                for y in range(tile_y):
                     # final image pixels position
                     p1 = (y * width * 4) + (row * tile_y * width * 4) + (col * tile_x * 4)
                     p2 = p1 + (tile_x * 4)

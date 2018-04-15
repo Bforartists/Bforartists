@@ -256,7 +256,7 @@ class Rig:
             def_bone = self.obj.data.bones[deform]
 
             def_bone.bbone_segments = 8
-            drv = def_bone.driver_add("bbone_in").driver # Ease in
+            drv = def_bone.driver_add("bbone_easein").driver # Ease in
 
             drv.type='SUM'
             drv_var = drv.variables.new()
@@ -265,7 +265,7 @@ class Rig:
             drv_var.targets[0].id = self.obj
             drv_var.targets[0].data_path = pb_master.path_from_id() + '["finger_curve"]'
 
-            drv = def_bone.driver_add("bbone_out").driver # Ease out
+            drv = def_bone.driver_add("bbone_easeout").driver # Ease out
 
             drv.type='SUM'
             drv_var = drv.variables.new()
