@@ -2141,7 +2141,7 @@ class VIEW3D_MT_paint_vertex(Menu):
         layout.operator("paint.vertex_color_set", icon = "COLOR")
         layout.operator("paint.vertex_color_smooth", icon = "SMOOTH")
         layout.operator("paint.vertex_color_dirt", icon = "DIRTY_VERTEX")
-        layout.operator("paint.vertex_color_from_weight")
+        layout.operator("paint.vertex_color_from_weight", icon = "VERTCOLFROMWEIGHT")
 
         layout.separator()
 
