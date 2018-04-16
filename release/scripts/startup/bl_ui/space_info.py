@@ -308,6 +308,11 @@ class INFO_MT_file_external_data(Menu):
 
         layout.separator()
 
+        layout.operator("file.pack_libraries", icon = "PACKAGE")
+        layout.operator("file.unpack_libraries", icon = "PACKAGE")
+
+        layout.separator()
+
         layout.operator("file.make_paths_relative", icon = "RELATIVEPATH")
         layout.operator("file.make_paths_absolute", icon = "ABSOLUTEPATH")
         layout.operator("file.report_missing_files", icon = "ERROR")
