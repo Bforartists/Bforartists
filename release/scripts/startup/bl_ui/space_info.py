@@ -303,7 +303,7 @@ class INFO_MT_file_external_data(Menu):
         pack_all.active = not bpy.data.use_autopack
 
         unpack_all = layout.row()
-        unpack_all.operator("file.unpack_all", icon = "PACKAGE")
+        unpack_all.operator("file.unpack_all", icon = "PACKAGE", text = "Unpack packed files")
         unpack_all.active = not bpy.data.use_autopack
 
         layout.separator()
