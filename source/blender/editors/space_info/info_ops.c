@@ -266,9 +266,9 @@ static int unpack_all_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(
 void FILE_OT_unpack_all(wmOperatorType *ot)
 {
 	/* identifiers */
-	ot->name = "Unpack All Into Files";
+	ot->name = "Unpack packed files";
 	ot->idname = "FILE_OT_unpack_all";
-	ot->description = "Unpack All Into Files\nUnpack all files packed into this .blend to external ones";
+	ot->description = "Unpack packed Files\nUnpack embedded files from this .blend file\n'Current directory' methods extracts the data into a subfolder called 'textures'\n 'Original Location' methods tries to write the data to the original directories\nBeware of absolute paths here!";
 	
 	/* api callbacks */
 	ot->exec = unpack_all_exec;
