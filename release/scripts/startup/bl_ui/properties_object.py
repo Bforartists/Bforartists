@@ -234,7 +234,7 @@ class OBJECT_PT_groups(ObjectButtonsPanel, Panel):
 
 
 class OBJECT_PT_display(ObjectButtonsPanel, Panel):
-    bl_label = "Display"
+    bl_label = "Object Display"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
