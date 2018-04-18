@@ -140,7 +140,7 @@ void CLIP_OT_detect_features(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Detect Features";
-	ot->description = "Automatically detect features and place markers to track";
+	ot->description = "Detect Features\nAutomatically detect features and place markers to track";
 	ot->idname = "CLIP_OT_detect_features";
 
 	/* api callbacks */

@@ -288,7 +288,7 @@ void CLIP_OT_solve_camera(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Solve Camera";
-	ot->description = "Solve camera motion from tracks";
+	ot->description = "Solve Camera\nSolve camera motion from tracks";
 	ot->idname = "CLIP_OT_solve_camera";
 
 	/* api callbacks */
@@ -339,7 +339,7 @@ void CLIP_OT_clear_solution(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Clear Solution";
-	ot->description = "Clear all calculated data";
+	ot->description = "Clear Solution\nClear all calculated data";
 	ot->idname = "CLIP_OT_clear_solution";
 
 	/* api callbacks */
