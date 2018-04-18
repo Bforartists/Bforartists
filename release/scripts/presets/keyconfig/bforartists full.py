@@ -3320,6 +3320,10 @@ kmi = km.keymap_items.new('wm.context_toggle', 'TAB', 'PRESS', shift=True)
 kmi_props_setattr(kmi.properties, 'data_path', 'tool_settings.use_snap')
 kmi = km.keymap_items.new('wm.context_menu_enum', 'TAB', 'PRESS', shift=True, ctrl=True)
 kmi_props_setattr(kmi.properties, 'data_path', 'tool_settings.snap_uv_element')
+kmi = km.keymap_items.new('uv.mark_seam', 'N', 'PRESS')
+kmi_props_setattr(kmi.properties, 'clear', True)
+kmi = km.keymap_items.new('uv.mark_seam', 'M', 'PRESS')
+kmi_props_setattr(kmi.properties, 'clear', False)
 
 
 ### Done

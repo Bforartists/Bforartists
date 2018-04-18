@@ -1810,6 +1810,10 @@ kmi = km.keymap_items.new('transform.resize', 'R', 'PRESS')
 kmi = km.keymap_items.new('transform.mirror', 'M', 'PRESS', ctrl=True)
 kmi = km.keymap_items.new('uv.select_all_inverse', 'I', 'PRESS', ctrl=True)
 kmi = km.keymap_items.new('uv.select_linked_pick_extend', 'L', 'PRESS', shift=True)
+kmi = km.keymap_items.new('uv.mark_seam', 'N', 'PRESS')
+kmi_props_setattr(kmi.properties, 'clear', True)
+kmi = km.keymap_items.new('uv.mark_seam', 'M', 'PRESS')
+kmi_props_setattr(kmi.properties, 'clear', False)
 
 # Map UV Sculpt
 km = kc.keymaps.new('UV Sculpt', space_type='EMPTY', region_type='WINDOW', modal=False)
