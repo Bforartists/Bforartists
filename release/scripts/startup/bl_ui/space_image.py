@@ -770,27 +770,38 @@ class IMAGE_PT_tools_uvs(Panel, UVToolsPanel):
         layout = self.layout
 
         col = layout.column(align=True)
-        row = col.row(align=True)
-        row.operator("uv.weld", icon='WELD')
-        row.operator("uv.stitch", icon = "STITCH")
+        
+        layout.label(text="UV Unwrap:")
+        
+        col = layout.column(align=True)
+        col.operator("uv.mark_seam", text="Mark Seam", icon ="MARK_SEAM").clear = False
+        col.operator("uv.mark_seam", text="Clear Seam", icon ="CLEAR_SEAM").clear = True
+        col.operator("uv.seams_from_islands", text="Mark Seams from Islands", icon ="SEAMSFROMISLAND")
+        
+        col.separator()
+        
+        col.operator("uv.unwrap", text = "Unwrap ABF", icon='UNWRAP_ABF').method='ANGLE_BASED'
+        col.operator("uv.unwrap", text = "Unwrap LSCM", icon='UNWRAP_LSCM').method='CONFORMAL'  
+        
+        layout.label(text="Modify UV:")
+        
+        col = layout.column(align=True)
+        
+        col.operator("uv.pin", icon = "PINNED").clear = False
+        col.operator("uv.pin", text="Unpin", icon = "UNPINNED").clear = True
+        
+        col.separator()
+        
+        col.operator("uv.weld", icon='WELD')
+        col.operator("uv.stitch", icon = "STITCH")
         col.operator("uv.remove_doubles", icon='REMOVE_DOUBLES')
+        
+        col.separator()
+        
         col.operator("uv.average_islands_scale", icon ="AVERAGEISLANDSCALE")
         col.operator("uv.pack_islands", icon ="PACKISLAND")
         col.operator("mesh.faces_mirror_uv", icon ="COPYMIRRORED")
-
         col.operator("uv.minimize_stretch", icon = "MINIMIZESTRETCH")
-
-        layout.label(text="UV Unwrap:")
-        row = layout.row(align=True)
-        row.operator("uv.pin", icon = "PINNED").clear = False
-        row.operator("uv.pin", text="Unpin", icon = "UNPINNED").clear = True
-        col = layout.column(align=True)
-        row = col.row(align=True)
-        row.operator("uv.mark_seam", text="Mark Seam", icon ="MARK_SEAM").clear = False
-        row.operator("uv.mark_seam", text="Clear Seam", icon ="CLEAR_SEAM").clear = True
-        col.operator("uv.seams_from_islands", text="Mark Seams from Islands", icon ="SEAMSFROMISLAND")
-        col.operator("uv.unwrap", text = "Unwrap ABF", icon='UNWRAP_ABF').method='ANGLE_BASED'
-        col.operator("uv.unwrap", text = "Unwrap LSCM", icon='UNWRAP_LSCM').method='CONFORMAL'  
 
 
 class IMAGE_PT_paint(Panel, ImagePaintPanel):
