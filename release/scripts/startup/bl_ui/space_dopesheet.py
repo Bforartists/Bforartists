@@ -191,7 +191,7 @@ class DOPESHEET_HT_header(Header):
 
         # Grease Pencil mode doesn't need snapping, as it's frame-aligned only
         if st.mode != 'GPENCIL':
-            layout.prop(st, "auto_snap", text="")
+            layout.prop(st, "auto_snap", text="", icon = "SNAP_ON")
 
 # bfa - show hide the editormenu
 class ALL_MT_editormenu(Menu):
