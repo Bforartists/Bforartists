@@ -20,6 +20,7 @@
 import bpy
 from bpy.types import Header, Menu
 from bpy.app.translations import contexts as i18n_contexts
+#import math
 
 
 class TOOLBAR_HT_header(Header):
@@ -859,9 +860,10 @@ class TOOLBAR_MT_toolbars_image_menu(Menu):
         user_preferences = context.user_preferences
         addon_prefs = user_preferences.addons["bforartists_toolbar_settings"].preferences
 
-        layout.prop(addon_prefs, "image_uv_common")
-        layout.prop(addon_prefs, "image_uv_misc")
         layout.prop(addon_prefs, "image_uv_align")
+        layout.prop(addon_prefs, "image_uv_unwrap")
+        layout.prop(addon_prefs, "image_uv_modify")
+        
             
 ############### bfa - menu hidable by the flag in the right click menu
 
@@ -883,34 +885,22 @@ class TOOLBAR_MT_image(Menu):
 
         ## ------------------ image sub toolbars
 
-        if addon_prefs.image_uv_common:
-
-            row = layout.row(align=True)
-
-            row.operator("uv.pack_islands", text="", icon ="PACKISLAND")
-            row.operator("uv.average_islands_scale", text="", icon ="AVERAGEISLANDSCALE")
-            #row.operator("uv.minimize_stretch") # doesn't work in toolbar editor, needs to be performed in image editor where the uv mesh is.
-            #row.operator("uv.stitch") # doesn't work in toolbar editor, needs to be performed in image editor where the uv mesh is.
-            row.operator("uv.mark_seam", text="", icon ="MARK_SEAM").clear = False
-            row.operator("uv.mark_seam", text="", icon ="CLEAR_SEAM").clear = True
-            row.operator("uv.seams_from_islands", text="", icon ="SEAMSFROMISLAND")
-            row.operator("mesh.faces_mirror_uv", text="", icon ="COPYMIRRORED")
-
-        if addon_prefs.image_uv_misc: 
-
-            row = layout.row(align=True)
-
-            row.operator("uv.unwrap", text = "", icon='UNWRAP_ABF').method='ANGLE_BASED'
-            row.operator("uv.unwrap", text = "", icon='UNWRAP_LSCM').method='CONFORMAL'   
-            row.operator("uv.pin", text= "", icon = "PINNED").clear = False
-            row.operator("uv.pin", text="", icon = "UNPINNED").clear = True
-
         if addon_prefs.image_uv_align:
 
             row = layout.row(align=True)
 
-            row.operator("uv.weld", text="", icon='WELD')
-            row.operator("uv.remove_doubles", text="", icon='REMOVE_DOUBLES')
+            ############################################### doesn't work from toolbar
+
+            #row.operator("transform.mirror", text="", icon = "MIRROR_X").constraint_axis[0] = True
+            #row.operator("transform.mirror", text="", icon = "MIRROR_Y").constraint_axis[1] = True
+
+            #row = layout.row(align=True)
+
+            #row.operator("transform.rotate", text="", icon = "ROTATE_PLUS_90").value = math.pi / 2
+            #row.operator("transform.rotate", text="", icon = "ROTATE_MINUS_90").value = math.pi / -2
+
+            ################################################
+
             #row.operator_enum("uv.align", "axis")  # W, 2/3/4 # bfa - enum is no good idea in header. It enums below each other. And the header just shows besides ...
 
             row.operator("uv.align", text= "", icon = "STRAIGHTEN").axis = 'ALIGN_S'
@@ -923,6 +913,41 @@ class TOOLBAR_MT_image(Menu):
             # Try to give unique tooltip fails at wrong context issue. It throws an error when you are not in edit mode, have no uv editor open, and there is no mesh selected.
             # Code remains here for now. Maybe we find a solution at a later point.
             #row.operator("image.uv_straighten", text= "straighten")
+
+        if addon_prefs.image_uv_unwrap:
+
+            row = layout.row(align=True)
+
+            row.operator("uv.mark_seam", text="", icon ="MARK_SEAM").clear = False
+            row.operator("uv.mark_seam", text="", icon ="CLEAR_SEAM").clear = True
+            row.operator("uv.seams_from_islands", text="", icon ="SEAMSFROMISLAND")
+
+            row = layout.row(align=True)
+
+            row.operator("uv.unwrap", text = "", icon='UNWRAP_ABF').method='ANGLE_BASED'
+            row.operator("uv.unwrap", text = "", icon='UNWRAP_LSCM').method='CONFORMAL' 
+
+        if addon_prefs.image_uv_modify: 
+
+            row = layout.row(align=True)
+
+            row.operator("uv.pin", text= "", icon = "PINNED").clear = False
+            row.operator("uv.pin", text="", icon = "UNPINNED").clear = True
+
+            row = layout.row(align=True)
+
+            row.operator("uv.weld", text="", icon='WELD')
+            #row.operator("uv.stitch") # doesn't work in toolbar editor, needs to be performed in image editor where the uv mesh is.
+            row.operator("uv.remove_doubles", text="", icon='REMOVE_DOUBLES')
+
+            row = layout.row(align=True)
+   
+            row.operator("uv.average_islands_scale", text="", icon ="AVERAGEISLANDSCALE")
+            row.operator("uv.pack_islands", text="", icon ="PACKISLAND")
+            row.operator("mesh.faces_mirror_uv", text="", icon ="COPYMIRRORED")
+            #row.operator("uv.minimize_stretch") # doesn't work in toolbar editor, needs to be performed in image editor where the uv mesh is.
+
+
 
 ######################################## Tools ##############################################
 
