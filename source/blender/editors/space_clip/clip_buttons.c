@@ -382,9 +382,9 @@ void uiTemplateMarker(uiLayout *layout, PointerRNA *ptr, const char *propname, P
 		block = uiLayoutGetBlock(layout);
 
 		if (cb->marker_flag & MARKER_DISABLED)
-			tip = TIP_("Marker is disabled at current frame");
+			tip = TIP_("Disabled\nMarker is disabled at current frame");
 		else
-			tip = TIP_("Marker is enabled at current frame");
+			tip = TIP_("Enabled\nMarker is enabled at current frame");
 
 		bt = uiDefIconButBitI(block, UI_BTYPE_TOGGLE_N, MARKER_DISABLED, 0, ICON_RESTRICT_VIEW_OFF, 0, 0, UI_UNIT_X, UI_UNIT_Y,
 		                      &cb->marker_flag, 0, 0, 1, 0, tip);
@@ -429,9 +429,9 @@ void uiTemplateMarker(uiLayout *layout, PointerRNA *ptr, const char *propname, P
 		UI_block_funcN_set(block, marker_update_cb, cb, NULL);
 
 		if (cb->marker_flag & MARKER_DISABLED)
-			tip = TIP_("Marker is disabled at current frame");
+			tip = TIP_("Disabled\nMarker is disabled at current frame");
 		else
-			tip = TIP_("Marker is enabled at current frame");
+			tip = TIP_("Enabled\nMarker is enabled at current frame");
 
 		uiDefButBitI(block, UI_BTYPE_CHECKBOX_N, MARKER_DISABLED, B_MARKER_FLAG, IFACE_("Enabled"), 0.5 * UI_UNIT_X, 9.5 * UI_UNIT_Y, 7.25 * UI_UNIT_X, UI_UNIT_Y,
 		             &cb->marker_flag, 0, 0, 0, 0, tip);
