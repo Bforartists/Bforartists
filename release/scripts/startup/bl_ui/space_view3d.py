@@ -3476,43 +3476,41 @@ class VIEW3D_PT_view3d_properties(Panel):
         col = layout.column(align=True)
         col.prop(view, "use_render_border")
         
-        ############## Subtab Lock #####################
-        
-        user_preferences = context.user_preferences
-        addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
-        
-        if not addon_prefs.subtab_3dview_properties_view_lock:
-            layout.prop(addon_prefs,"subtab_3dview_properties_view_lock", emboss=False, icon="TRIA_RIGHT", text="- Lock -")
+        ##############  Lock #####################
 
-        else:
-            layout.prop(addon_prefs,"subtab_3dview_properties_view_lock", emboss=False, icon="TRIA_DOWN", text="+ Lock +")
-            
-            col = layout.column()
-            col.prop(view, "lock_camera_and_layers")
+        layout.label(text= "Lock:")
 
-            subcol = col.column(align=True)
-            subcol.enabled = not view.lock_camera_and_layers
+        col = layout.column()
+        col.prop(view, "lock_camera")
             
+        col = layout.column()
+        col.prop(view, "lock_camera_and_layers")
+
+        subcol = col.column(align=True)
+        subcol.enabled = not view.lock_camera_and_layers
+        
+        if not bpy.context.space_data.lock_camera_and_layers:
             subcol.label(text="Local Camera:")
             subcol.prop(view, "camera", text="")
 
-            col = layout.column(align=True)
-            col.active = view.region_3d.view_perspective != 'CAMERA'
-            
-            col = layout.column()
-            col.prop(view, "lock_camera")
-            
-            col.label(text="Lock to Object:")
-            col.prop(view, "lock_object", text="")
-            lock_object = view.lock_object
-            if lock_object:
-                if lock_object.type == 'ARMATURE':
-                    col.prop_search(view, "lock_bone", lock_object.data,
-                                    "edit_bones" if lock_object.mode == 'EDIT'
-                                    else "bones",
-                                    text="")
-            else:
-                col.prop(view, "lock_cursor", text="Lock to Cursor")
+        
+        col = layout.column(align=True)
+        col.active = view.region_3d.view_perspective != 'CAMERA'
+              
+        col.label(text="Lock to Object:")
+        col.prop(view, "lock_object", text="")
+        lock_object = view.lock_object
+
+        col.separator()
+
+        if lock_object:
+            if lock_object.type == 'ARMATURE':
+                col.prop_search(view, "lock_bone", lock_object.data,
+                                "edit_bones" if lock_object.mode == 'EDIT'
+                                else "bones",
+                                text="")
+        else:
+            col.prop(view, "lock_cursor", text="Lock to Cursor")
       
         
         ################################################

@@ -42,7 +42,6 @@ class bforartists_UI_flags(AddonPreferences):
 #--------------------------------------------------------------------------------------------------------------------------
 
     # Subtab bools
-    subtab_3dview_properties_view_lock = BoolProperty(name="Lock", description="Contains the Lock Items", default = False)
     subtab_3dview_properties_display_misc = BoolProperty(name="Miscellaneous", description="Contains miscellaneous settings", default = False)
     subtab_3dview_properties_bgimg_settings = BoolProperty(name="Settings", description="Contains Settings", default = False)
     subtab_3dview_properties_bgimg_align = BoolProperty(name="Align", description="Contains Align Tools", default = False)
@@ -106,7 +105,6 @@ class bforartists_UI_flags(AddonPreferences):
 
         row = layout.row()
 
-        row.prop(self, "subtab_3dview_properties_view_lock")
         row.prop(self, "subtab_3dview_properties_display_misc")
         row.prop(self, "subtab_3dview_properties_bgimg_settings")
         row.prop(self, "subtab_3dview_properties_bgimg_align")
