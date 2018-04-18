@@ -624,19 +624,26 @@ class VIEW_3D_select_grouped(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("object.select_grouped", text= "Lamp Type", icon = "LAMP").type = 'LAMP_TYPE'
-        layout.operator("object.select_grouped", text= "Keying Set", icon = "KEYINGSET").type = 'KEYINGSET'
-        layout.operator("object.select_grouped", text= "Properties", icon = "BUTS").type = 'PROPERTIES'
-        layout.operator("object.select_grouped", text= "Color", icon = "COLOR").type = 'COLOR'
-        layout.operator("object.select_grouped", text= "Pass", icon = "PASS").type = 'PASS'
-        layout.operator("object.select_grouped", text= "Hook", icon = "HOOK").type = 'HOOK'
         layout.operator("object.select_grouped", text= "Group", icon = "GROUP").type = 'GROUP'
-        layout.operator("object.select_grouped", text= "Layer", icon = "LAYER").type = 'LAYER'
         layout.operator("object.select_grouped", text= "Type", icon = "TYPE").type = 'TYPE'
+        layout.operator("object.select_grouped", text= "Layer", icon = "LAYER").type = 'LAYER'
+
+        layout.separator()
+
         layout.operator("object.select_grouped", text= "Siblings", icon = "SIBLINGS").type = 'SIBLINGS'
-        layout.operator("object.select_grouped", text= "Parent", icon = "PARENT").type = 'PARENT'
-        layout.operator("object.select_grouped", text= "Immediate Children", icon = "CHILD").type = 'CHILDREN'
+        layout.operator("object.select_grouped", text= "Parent", icon = "PARENT").type = 'PARENT'      
         layout.operator("object.select_grouped", text= "Children", icon = "CHILD_RECURSIVE").type = 'CHILDREN_RECURSIVE'
+        layout.operator("object.select_grouped", text= "Immediate Children", icon = "CHILD").type = 'CHILDREN'
+
+        layout.separator()
+
+        layout.operator("object.select_grouped", text= "Color", icon = "COLOR").type = 'COLOR'
+        layout.operator("object.select_grouped", text= "Hook", icon = "HOOK").type = 'HOOK'
+        layout.operator("object.select_grouped", text= "Keying Set", icon = "KEYINGSET").type = 'KEYINGSET'
+        layout.operator("object.select_grouped", text= "Lamp Type", icon = "LAMP").type = 'LAMP_TYPE'
+        layout.operator("object.select_grouped", text= "Pass", icon = "PASS").type = 'PASS'
+        layout.operator("object.select_grouped", text= "Properties", icon = "BUTS").type = 'PROPERTIES'      
+        
 
 class VIEW_3D_select_by_type(Menu):
     bl_label = "All by Type"
