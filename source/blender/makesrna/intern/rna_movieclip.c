@@ -220,7 +220,7 @@ static void rna_def_movieclip_proxy(BlenderRNA *brna)
 	prop = RNA_def_property(srna, "directory", PROP_STRING, PROP_DIRPATH);
 	RNA_def_property_string_sdna(prop, NULL, "dir");
 	RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
-	RNA_def_property_ui_text(prop, "Directory", "Location to store the proxy files");
+	RNA_def_property_ui_text(prop, "Directory", "Directory\nLocation to store the proxy files");
 	RNA_def_property_update(prop, NC_MOVIECLIP | ND_DISPLAY, "rna_MovieClip_reload_update");
 }
 
@@ -240,25 +240,25 @@ static void rna_def_moviecliUser(BlenderRNA *brna)
 
 	srna = RNA_def_struct(brna, "MovieClipUser", NULL);
 	RNA_def_struct_ui_text(srna, "Movie Clip User",
-	                       "Parameters defining how a MovieClip data-block is used by another data-block");
+	                       "Movie Clip User\nParameters defining how a MovieClip data-block is used by another data-block");
 
 	prop = RNA_def_property(srna, "frame_current", PROP_INT, PROP_TIME);
 	RNA_def_property_int_sdna(prop, NULL, "framenr");
 	RNA_def_property_range(prop, MINAFRAME, MAXFRAME);
-	RNA_def_property_ui_text(prop, "Current Frame", "Current frame number in movie or image sequence");
+	RNA_def_property_ui_text(prop, "Current Frame", "Current Frame\nCurrent frame number in movie or image sequence");
 
 	/* render size */
 	prop = RNA_def_property(srna, "proxy_render_size", PROP_ENUM, PROP_NONE);
 	RNA_def_property_enum_sdna(prop, NULL, "render_size");
 	RNA_def_property_enum_items(prop, clip_render_size_items);
 	RNA_def_property_ui_text(prop, "Proxy render size",
-	                         "Draw preview using full resolution or different proxy resolutions");
+	                         "Proxy Render Size\nDraw preview using full resolution or different proxy resolutions");
 	RNA_def_property_update(prop, NC_MOVIECLIP | ND_DISPLAY, "rna_MovieClipUser_proxy_render_settings_update");
 
 	/* render undistorted */
 	prop = RNA_def_property(srna, "use_render_undistorted", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_sdna(prop, NULL, "render_flag", MCLIP_PROXY_RENDER_UNDISTORT);
-	RNA_def_property_ui_text(prop, "Render Undistorted", "Render preview using undistorted proxy");
+	RNA_def_property_ui_text(prop, "Render Undistorted", "Render Undistorted\nRender preview using undistorted proxy");
 	RNA_def_property_update(prop, NC_MOVIECLIP | ND_DISPLAY, "rna_MovieClipUser_proxy_render_settings_update");
 }
 
@@ -267,7 +267,7 @@ static void rna_def_movieClipScopes(BlenderRNA *brna)
 	StructRNA *srna;
 
 	srna = RNA_def_struct(brna, "MovieClipScopes", NULL);
-	RNA_def_struct_ui_text(srna, "MovieClipScopes", "Scopes for statistical view of a movie clip");
+	RNA_def_struct_ui_text(srna, "MovieClipScopes", "Movie Clip Scopes\nScopes for statistical view of a movie clip");
 }
 
 

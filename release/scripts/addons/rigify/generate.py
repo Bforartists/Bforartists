@@ -179,8 +179,8 @@ def generate_rig(context, metarig):
 
         # B-bone stuff
         bone_gen.bbone_segments = bone.bbone_segments
-        bone_gen.bbone_in = bone.bbone_in
-        bone_gen.bbone_out = bone.bbone_out
+        bone_gen.bbone_easein = bone.bbone_easein
+        bone_gen.bbone_easeout = bone.bbone_easeout
 
     # Copy over the pose_bone properties
     for bone in metarig.pose.bones:

@@ -558,8 +558,8 @@ class Rig:
         for bone in bones['def'][:-1]:
             self.obj.data.bones[bone].bbone_segments = 8
 
-        self.obj.data.bones[ bones['def'][0]  ].bbone_in  = 0.0
-        self.obj.data.bones[ bones['def'][-2] ].bbone_out = 0.0
+        self.obj.data.bones[ bones['def'][0]  ].bbone_easein  = 0.0
+        self.obj.data.bones[ bones['def'][-2] ].bbone_easeout = 0.0
 
         # Locks
         tweaks =  bones['neck']['tweak'] + bones['chest']['tweak']

@@ -70,12 +70,21 @@ def defRenderAll(frametype, scenes):
                 for i in scene.render.layers:
                     i.use = False
                 layer.use = 1
+                
                 print("SCENE: %s" % scene.name)
                 print("LAYER: %s" % layer.name)
                 print("OVERRIDE: %s" % str(proptolist))
-                scene.render.filepath = os.path.join(
-                    os.path.dirname(renpath), filename, scene.name, layer.name, "%s_%s_%s" %
-                    (filename, scene.name, layer.name))
+                #scene.render.filepath = os.path.join(
+                #    os.path.dirname(renpath), filename, scene.name, layer.name, "%s_%s_%s" %
+                #    (filename, scene.name, layer.name))
+                tokens = {
+                    "$Scene":scene.name,
+                    "$File":os.path.basename(bpy.data.filepath).split(".")[0],
+                    "$Layer":layer.name,
+                    "$Camera":scene.camera.name}
+
+                scene.render.filepath = renpath.replace("$Scene",tokens["$Scene"]).replace("$File",tokens["$File"]).replace("$Layer",tokens["$Layer"]).replace("$Camera",tokens["$Camera"])
+                
                 bpy.context.window.screen.scene = scene
                 bpy.ops.render.render(
                     animation=True,
@@ -209,7 +218,15 @@ def defoscBatchMaker(TYPE, BIN):
     SHFILE = os.path.join(
         bpy.data.filepath.rpartition(SYSBAR)[0],
         FILENAME + EXTSYS)
+        
+    renpath = bpy.context.scene.render.filepath    
+    tokens = {
+        "$Scene":bpy.context.scene.name,
+        "$File":os.path.basename(bpy.data.filepath).split(".")[0],
+        "$Layer":bpy.context.scene.render.layers.active.name,
+        "$Camera":bpy.context.scene.camera.name}
 
+    rfp = bpy.context.scene.render.filepath.replace("$Scene",tokens["$Scene"]).replace("$File",tokens["$File"]).replace("$Layer",tokens["$Layer"]).replace("$Camera",tokens["$Camera"])        
     with open(SHFILE, "w") as FILE:
         # assign permission in linux
         if EXTSYS == ".sh":
@@ -219,13 +236,13 @@ def defoscBatchMaker(TYPE, BIN):
                 print(
                     "** Oscurart Batch maker can not modify the permissions.")
         if not BIN:
-            FILE.writelines("%s%s%s -b %s -x 1 -o %s -P %s%s.py  -s %s -e %s -a" %
-                            (QUOTES, BINDIR, QUOTES, bpy.data.filepath, bpy.context.scene.render.filepath,
+            FILE.writelines("%s%s%s -b %s -x 1  -P %s%s.py  -s %s -e %s " %
+                            (QUOTES, BINDIR, QUOTES, bpy.data.filepath,
                              bpy.data.filepath.rpartition(SYSBAR)[0] + SYSBAR, TYPE,
                              str(bpy.context.scene.frame_start), str(bpy.context.scene.frame_end)))
         else:
-            FILE.writelines("%s -b %s -x 1 -o %s -P %s%s.py  -s %s -e %s -a" %
-                            ("blender", bpy.data.filepath, bpy.context.scene.render.filepath,
+            FILE.writelines("%s -b %s -x 1  -P %s%s.py  -s %s -e %s " %
+                            ("blender", bpy.data.filepath,
                              bpy.data.filepath.rpartition(SYSBAR)[0] + SYSBAR, TYPE,
                              str(bpy.context.scene.frame_start), str(bpy.context.scene.frame_end)))
 
