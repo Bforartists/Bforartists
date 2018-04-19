@@ -847,7 +847,7 @@ void GPENCIL_OT_blank_frame_add(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Insert Blank Frame";
 	ot->idname = "GPENCIL_OT_blank_frame_add";
-	ot->description = "Insert a blank frame on the current frame "
+	ot->description = "Insert Blank Frame\nInsert a blank frame on the current frame "
 	                  "(all subsequently existing frames, if any, are shifted right by one frame)";
 	
 	/* callbacks */
@@ -856,7 +856,7 @@ void GPENCIL_OT_blank_frame_add(wmOperatorType *ot)
 	
 	/* properties */
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
-	RNA_def_boolean(ot->srna, "all_layers", false, "All Layers", "Create blank frame in all layers, not only active");
+	RNA_def_boolean(ot->srna, "all_layers", false, "All Layers", "All Layers\nCreate blank frame in all layers, not only active");
 }
 
 /* ******************* Delete Active Frame ************************ */
@@ -960,7 +960,7 @@ void GPENCIL_OT_active_frames_delete_all(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Delete All Active Frames";
 	ot->idname = "GPENCIL_OT_active_frames_delete_all";
-	ot->description = "Delete the active frame(s) of all editable Grease Pencil layers";
+	ot->description = "Delete all active Frames\nDelete the active frame(s) of all editable Grease Pencil layers";
 	
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 	
