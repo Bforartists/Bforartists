@@ -1,6 +1,6 @@
 # ##### BEGIN GPL LICENSE BLOCK #####
 #
-#  SCA Tree Generator, a Blender addon
+#  SCA Tree Generator, a Blender add-on
 #  (c) 2013 Michel J. Anders (varkenvarken)
 #
 #  This module is: kdtree.py
@@ -24,7 +24,7 @@
 
 # <pep8 compliant>
 
-from copy import copy, deepcopy
+from copy import deepcopy
 
 
 class Hyperrectangle:
@@ -89,7 +89,8 @@ class Node:
 
     def _str(self, level):
         s = '  ' * level + str(self.dir) + ' ' + str(self.pos) + ' ' + str(self.rect) + '\n'
-        return s + ('' if self.left is None else 'L:' + self.left._str(level + 1)) + ('' if self.right is None else 'R:' + self.right._str(level + 1))
+        return s + ('' if self.left is None else 'L:' + self.left._str(level + 1)) + \
+                   ('' if self.right is None else 'R:' + self.right._str(level + 1))
 
     def __str__(self):
         return self._str(0)
@@ -181,6 +182,7 @@ class Tree:
     def __str__(self):
         return str(self.root)
 
+
 if __name__ == "__main__":
 
     class vector(list):
@@ -199,7 +201,7 @@ if __name__ == "__main__":
 
         def __mul__(self, other):
             s = sum(self[i] * other[i] for i in (0, 1, 2))
-            #print("ds",s,self,other,[self[i]*other[i] for i in (0,1,2)])
+            # print("ds",s,self,other,[self[i]*other[i] for i in (0,1,2)])
             return s
 
         def dot(self, other):
@@ -425,8 +427,9 @@ if __name__ == "__main__":
                 node, distsq = tree.nearest(p)
             e = time() - s
             print("queries|tree size|tree height|empties|query load|query time")
-            print("{0:7d}|{2:9d}|{1.level:11d}|      0|{3:10.2f}|{4:10.1f}".format(qsize, tree, tsize, float(tree.count) / qsize, e))
-
+            print("{0:7d}|{2:9d}|{1.level:11d}|      0|{3:10.2f}|{4:10.1f}".format(
+                    qsize, tree, tsize, float(tree.count) / qsize, e)
+            )
             tree.resetcounters()
             empty = []
             for p in range(tsize * 9):
@@ -438,8 +441,9 @@ if __name__ == "__main__":
             for p in qpos:
                 node, distsq = tree.nearest(p)
             e2 = time() - s
-            print("{0:7d}|{2:9d}|{1.level:11d}|      0|{3:10.2f}|{4:10.1f}".format(qsize, tree, tsize * 10, float(tree.count) / qsize, e2))
-
+            print("{0:7d}|{2:9d}|{1.level:11d}|      0|{3:10.2f}|{4:10.1f}".format(
+                    qsize, tree, tsize * 10, float(tree.count) / qsize, e2)
+            )
             self.assertLess(e2, 3 * e, msg="a 10x bigger tree shouldn't take more than 3x the time to query")
 
             for p in empty:
@@ -450,6 +454,8 @@ if __name__ == "__main__":
             for p in qpos:
                 node, distsq = tree.nearest(p, checkempty=True)
             e3 = time() - s
-            print("{0:7d}|{2:9d}|{1.level:11d}|{5:7d}|{3:10.2f}|{4:10.1f}".format(qsize, tree, tsize * 10, float(tree.count) / qsize, e3, tsize * 10 // emptyq))
+            print("{0:7d}|{2:9d}|{1.level:11d}|{5:7d}|{3:10.2f}|{4:10.1f}".format(
+                    qsize, tree, tsize * 10, float(tree.count) / qsize, e3, tsize * 10 // emptyq)
+            )
 
     unittest.main()

@@ -22,7 +22,7 @@
 import os
 import bpy
 
-from bpy.types import Panel
+from bpy.types import Panel # bfa - tools belongs into the tool shelf, and that's panels.
 
 ICONS = 'BIX CCEN V2X VTX XALL E2F'.split(' ')
 icon_collection = {}

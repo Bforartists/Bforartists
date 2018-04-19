@@ -7,9 +7,9 @@ import bpy
 import blf
 from . import core
 from bpy.types import (
-        Operator,
-        Panel,
-        )
+    Operator,
+    Panel,
+)
 
 """
   If view name display is enabled,
@@ -185,8 +185,8 @@ class VIEW3D_PT_properties_stored_views(Panel):
         if core.get_preferences():
             row = layout.row(align=True)
             row.operator("stored_views.import_from_scene", text="Import from Scene")
-            row.operator("stored_views.import", text="", icon="IMPORT")
-            row.operator("stored_views.export", text="", icon="EXPORT")
+            row.operator("stored_views.import_blsv", text="", icon="IMPORT")
+            row.operator("stored_views.export_blsv", text="", icon="EXPORT")
 
         data_store = core.DataStore()
         list = data_store.list

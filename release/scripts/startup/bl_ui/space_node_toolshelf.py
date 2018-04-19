@@ -211,6 +211,12 @@ class NodesToolshelfInput_input_comp(bpy.types.Panel):
             props = col.operator("node.add_node", text=" RGB                 ", icon = "NODE_RGB")
             props.use_transform = True
             props.type = "CompositorNodeRGB"
+
+            col = layout.column(align=True) 
+
+            props = col.operator("node.add_node", text=" Mix                  ", icon = "NODE_MIXRGB") 
+            props.use_transform = True
+            props.type = "CompositorNodeMixRGB"
                           
 
         #### Image Buttons
@@ -246,6 +252,13 @@ class NodesToolshelfInput_input_comp(bpy.types.Panel):
             props = row.operator("node.add_node", text = "", icon = "NODE_RGB")
             props.use_transform = True
             props.type = "CompositorNodeRGB"
+
+            row = layout.row()
+            row.alignment = 'LEFT' 
+
+            props = row.operator("node.add_node", text = "", icon = "NODE_MIXRGB") 
+            props.use_transform = True
+            props.type = "CompositorNodeMixRGB"
 
 
 #Input nodes tab, textures common panel. Texture mode
@@ -1273,10 +1286,6 @@ class NodesToolshelfInput_color_advanced(bpy.types.Panel):
                 props.type = "CompositorNodeInvert"
 
                 col = layout.column(align=True)
-            
-                props = col.operator("node.add_node", text=" Mix                  ", icon = "NODE_MIXRGB") 
-                props.use_transform = True
-                props.type = "CompositorNodeMixRGB"
 
                 props = col.operator("node.add_node", text=" Tonemap         ", icon = "NODE_TONEMAP")
                 props.use_transform = True 
@@ -1308,10 +1317,6 @@ class NodesToolshelfInput_color_advanced(bpy.types.Panel):
 
                 row = layout.row()
                 row.alignment = 'LEFT' 
-            
-                props = row.operator("node.add_node", text = "", icon = "NODE_MIXRGB") 
-                props.use_transform = True
-                props.type = "CompositorNodeMixRGB"
 
                 props = row.operator("node.add_node", text = "", icon = "NODE_TONEMAP")
                 props.use_transform = True
