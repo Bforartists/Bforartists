@@ -1921,7 +1921,7 @@ static uiBlock *wm_block_create_splash(bContext *C, ARegion *ar, void *UNUSED(ar
 
 	uiItemStringO(col, IFACE_("Blender Python API Reference"), ICON_URL, "WM_OT_url_open", "url", "https://docs.blender.org/api/blender_python_api_master/#"); /*bfa- we link to the official Blender api here, we don't have a own api*/
 	uiItemL(col, "", ICON_NONE);
-	uiItemL(col, "Bforartists 0.9.6 is based on Blender 2.79a", ICON_NONE);
+	uiItemL(col, "Bforartists 0.9.7 is based on Blender 2.79b", ICON_NONE);
 
 	col = uiLayoutColumn(split, false);
 
