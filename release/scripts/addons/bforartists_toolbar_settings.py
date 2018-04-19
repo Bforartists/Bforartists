@@ -92,9 +92,9 @@ class bforartists_toolbar_settings(AddonPreferences):
 
     # Image
 
-    image_uv_common = BoolProperty(name="UV Common", default=True, description = "Display the UV Common Toolbar\nAll Modes", )
-    image_uv_misc = BoolProperty(name="UV Misc", default=True, description = "Display the UV Misc Toolbar\nAll Modes", )
     image_uv_align = BoolProperty(name="UV Align", default=True, description = "Display the UV Align Toolbar\nAll Modes", )
+    image_uv_unwrap = BoolProperty(name="UV Tools - UV Unwrap", default=True, description = "Display the UV Unwrap Toolbar\nAll Modes", )
+    image_uv_modify = BoolProperty(name="UV Tools - Modify UV", default=True, description = "Display the UV Modify Toolbar\nAll Modes", )
 
     # Tools
 
@@ -217,10 +217,10 @@ class bforartists_toolbar_settings(AddonPreferences):
 
         row = layout.row()
 
-        row.prop(self, "image_uv_common")
-        row.prop(self, "image_uv_misc")      
         row.prop(self, "image_uv_align")
-
+        row.prop(self, "image_uv_unwrap")
+        row.prop(self, "image_uv_modify")      
+        
         layout.label(text="The Tools toolbar container")
 
         row = layout.row()

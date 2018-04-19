@@ -1139,7 +1139,7 @@ void CLIP_OT_clear_track_path(wmOperatorType *ot)
 
 	/* identifiers */
 	ot->name = "Clear Track Path";
-	ot->description = "Clear Track Path, Clear tracks after/before current position or clear the whole track";
+	ot->description = "Clear Track Path\nClear tracks after/before current position or clear the whole track";
 	ot->idname = "CLIP_OT_clear_track_path";
 
 	/* api callbacks */

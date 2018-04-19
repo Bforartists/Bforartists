@@ -869,7 +869,7 @@ static void rna_def_trackingSettings(BlenderRNA *brna)
 	RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
 	RNA_def_property_boolean_sdna(prop, NULL, "reconstruction_flag", TRACKING_USE_KEYFRAME_SELECTION);
 	RNA_def_property_ui_text(prop, "Keyframe Selection",
-	                         "Automatically select keyframes when solving camera/object motion");
+	                         "Keyframe\nAutomatically select keyframes when solving camera/object motion");
 
 	/* intrinsics refinement during bundle adjustment */
 	prop = RNA_def_property(srna, "refine_intrinsics", PROP_ENUM, PROP_NONE);
@@ -928,7 +928,7 @@ static void rna_def_trackingSettings(BlenderRNA *brna)
 	RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
 	RNA_def_property_boolean_sdna(prop, NULL, "motion_flag", TRACKING_MOTION_TRIPOD);
 	RNA_def_property_ui_text(prop, "Tripod Motion",
-	                         "Use special solver to track a stable camera position, such as a tripod");
+	                         "Tripod\nUse special solver to track a stable camera position, such as a tripod");
 
 	/* default_limit_frames */
 	prop = RNA_def_property(srna, "default_frames_limit", PROP_INT, PROP_NONE);
@@ -962,21 +962,21 @@ static void rna_def_trackingSettings(BlenderRNA *brna)
 	/* default_use_brute */
 	prop = RNA_def_property(srna, "use_default_brute", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_sdna(prop, NULL, "default_algorithm_flag", TRACK_ALGORITHM_FLAG_USE_BRUTE);
-	RNA_def_property_ui_text(prop, "Prepass", "Use a brute-force translation-only initialization when tracking");
+	RNA_def_property_ui_text(prop, "Prepass", "Prepass\nUse a brute-force translation-only initialization when tracking");
 	RNA_def_property_update(prop, NC_MOVIECLIP | ND_DISPLAY, NULL);
 
 	/* default_use_brute */
 	prop = RNA_def_property(srna, "use_default_mask", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_sdna(prop, NULL, "default_algorithm_flag", TRACK_ALGORITHM_FLAG_USE_MASK);
 	RNA_def_property_ui_text(prop, "Use Mask",
-	                         "Use a grease pencil data-block as a mask to use only specified areas of pattern "
+	                         "Use Mask\nUse a grease pencil data-block as a mask to use only specified areas of pattern "
 	                         "when tracking");
 	RNA_def_property_update(prop, NC_MOVIECLIP | ND_DISPLAY, NULL);
 
 	/* default_use_normalization */
 	prop = RNA_def_property(srna, "use_default_normalization", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_sdna(prop, NULL, "default_algorithm_flag", TRACK_ALGORITHM_FLAG_USE_NORMALIZATION);
-	RNA_def_property_ui_text(prop, "Normalize", "Normalize light intensities while tracking (slower)");
+	RNA_def_property_ui_text(prop, "Normalize", "Normalize\nNormalize light intensities while tracking (slower)");
 	RNA_def_property_update(prop, NC_MOVIECLIP | ND_DISPLAY, NULL);
 
 	/* default minmal correlation */
@@ -1340,14 +1340,14 @@ static void rna_def_trackingTrack(BlenderRNA *brna)
 	prop = RNA_def_property(srna, "use_brute", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_sdna(prop, NULL, "algorithm_flag", TRACK_ALGORITHM_FLAG_USE_BRUTE);
 	RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
-	RNA_def_property_ui_text(prop, "Prepass", "Use a brute-force translation only pre-track before refinement");
+	RNA_def_property_ui_text(prop, "Prepass", "Prepass\nUse a brute-force translation only pre-track before refinement");
 	RNA_def_property_update(prop, NC_MOVIECLIP | ND_DISPLAY, NULL);
 
 	/* use_brute */
 	prop = RNA_def_property(srna, "use_mask", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_sdna(prop, NULL, "algorithm_flag", TRACK_ALGORITHM_FLAG_USE_MASK);
 	RNA_def_property_ui_text(prop, "Use Mask",
-	                         "Use a grease pencil data-block as a mask to use only specified areas of pattern "
+	                         "Use Mask\nUse a grease pencil data-block as a mask to use only specified areas of pattern "
 	                         "when tracking");
 	RNA_def_property_update(prop, NC_MOVIECLIP | ND_DISPLAY, NULL);
 
@@ -1355,7 +1355,7 @@ static void rna_def_trackingTrack(BlenderRNA *brna)
 	prop = RNA_def_property(srna, "use_normalization", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_sdna(prop, NULL, "algorithm_flag", TRACK_ALGORITHM_FLAG_USE_NORMALIZATION);
 	RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
-	RNA_def_property_ui_text(prop, "Normalize", "Normalize light intensities while tracking. Slower");
+	RNA_def_property_ui_text(prop, "Normalize", "Normalize\nNormalize light intensities while tracking. Slower");
 	RNA_def_property_update(prop, NC_MOVIECLIP | ND_DISPLAY, NULL);
 
 	/* markers */
@@ -1451,7 +1451,7 @@ static void rna_def_trackingTrack(BlenderRNA *brna)
 	prop = RNA_def_property(srna, "lock", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_sdna(prop, NULL, "flag", TRACK_LOCKED);
 	RNA_def_property_clear_flag(prop, PROP_ANIMATABLE);
-	RNA_def_property_ui_text(prop, "Lock", "Track is locked and all changes to it are disabled");
+	RNA_def_property_ui_text(prop, "Lock", "Lock\nTrack is locked and all changes to it are disabled");
 	RNA_def_property_update(prop, NC_MOVIECLIP | ND_DISPLAY, NULL);
 
 	/* custom color */

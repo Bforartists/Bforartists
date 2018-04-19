@@ -1298,18 +1298,17 @@ def blen_read_shape(fbx_tmpl, fbx_sdata, fbx_bcdata, meshes, scene):
 
         if me.shape_keys is None:
             objects[0].shape_key_add(name="Basis", from_mix=False)
-        objects[0].shape_key_add(name=elem_name_utf8, from_mix=False)
+        kb = objects[0].shape_key_add(name=elem_name_utf8, from_mix=False)
         me.shape_keys.use_relative = True  # Should already be set as such.
 
-        kb = me.shape_keys.key_blocks[elem_name_utf8]
         for idx, co in vcos:
             kb.data[idx].co[:] = co
         kb.value = weight
 
         # Add vgroup if necessary.
         if create_vg:
-            add_vgroup_to_objects(indices, vgweights, elem_name_utf8, objects)
-            kb.vertex_group = elem_name_utf8
+            vgoups = add_vgroup_to_objects(indices, vgweights, kb.name, objects)
+            kb.vertex_group = kb.name
 
         keyblocks.append(kb)
 

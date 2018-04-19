@@ -624,19 +624,26 @@ class VIEW_3D_select_grouped(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.operator("object.select_grouped", text= "Lamp Type", icon = "LAMP").type = 'LAMP_TYPE'
-        layout.operator("object.select_grouped", text= "Keying Set", icon = "KEYINGSET").type = 'KEYINGSET'
-        layout.operator("object.select_grouped", text= "Properties", icon = "BUTS").type = 'PROPERTIES'
-        layout.operator("object.select_grouped", text= "Color", icon = "COLOR").type = 'COLOR'
-        layout.operator("object.select_grouped", text= "Pass", icon = "PASS").type = 'PASS'
-        layout.operator("object.select_grouped", text= "Hook", icon = "HOOK").type = 'HOOK'
         layout.operator("object.select_grouped", text= "Group", icon = "GROUP").type = 'GROUP'
-        layout.operator("object.select_grouped", text= "Layer", icon = "LAYER").type = 'LAYER'
         layout.operator("object.select_grouped", text= "Type", icon = "TYPE").type = 'TYPE'
+        layout.operator("object.select_grouped", text= "Layer", icon = "LAYER").type = 'LAYER'
+
+        layout.separator()
+
         layout.operator("object.select_grouped", text= "Siblings", icon = "SIBLINGS").type = 'SIBLINGS'
-        layout.operator("object.select_grouped", text= "Parent", icon = "PARENT").type = 'PARENT'
-        layout.operator("object.select_grouped", text= "Immediate Children", icon = "CHILD").type = 'CHILDREN'
+        layout.operator("object.select_grouped", text= "Parent", icon = "PARENT").type = 'PARENT'      
         layout.operator("object.select_grouped", text= "Children", icon = "CHILD_RECURSIVE").type = 'CHILDREN_RECURSIVE'
+        layout.operator("object.select_grouped", text= "Immediate Children", icon = "CHILD").type = 'CHILDREN'
+
+        layout.separator()
+
+        layout.operator("object.select_grouped", text= "Color", icon = "COLOR").type = 'COLOR'
+        layout.operator("object.select_grouped", text= "Hook", icon = "HOOK").type = 'HOOK'
+        layout.operator("object.select_grouped", text= "Keying Set", icon = "KEYINGSET").type = 'KEYINGSET'
+        layout.operator("object.select_grouped", text= "Lamp Type", icon = "LAMP").type = 'LAMP_TYPE'
+        layout.operator("object.select_grouped", text= "Pass", icon = "PASS").type = 'PASS'
+        layout.operator("object.select_grouped", text= "Properties", icon = "BUTS").type = 'PROPERTIES'      
+        
 
 class VIEW_3D_select_by_type(Menu):
     bl_label = "All by Type"
@@ -2141,7 +2148,7 @@ class VIEW3D_MT_paint_vertex(Menu):
         layout.operator("paint.vertex_color_set", icon = "COLOR")
         layout.operator("paint.vertex_color_smooth", icon = "SMOOTH")
         layout.operator("paint.vertex_color_dirt", icon = "DIRTY_VERTEX")
-        layout.operator("paint.vertex_color_from_weight")
+        layout.operator("paint.vertex_color_from_weight", icon = "VERTCOLFROMWEIGHT")
 
         layout.separator()
 
@@ -3476,43 +3483,41 @@ class VIEW3D_PT_view3d_properties(Panel):
         col = layout.column(align=True)
         col.prop(view, "use_render_border")
         
-        ############## Subtab Lock #####################
-        
-        user_preferences = context.user_preferences
-        addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
-        
-        if not addon_prefs.subtab_3dview_properties_view_lock:
-            layout.prop(addon_prefs,"subtab_3dview_properties_view_lock", emboss=False, icon="TRIA_RIGHT", text="- Lock -")
+        ##############  Lock #####################
 
-        else:
-            layout.prop(addon_prefs,"subtab_3dview_properties_view_lock", emboss=False, icon="TRIA_DOWN", text="+ Lock +")
-            
-            col = layout.column()
-            col.prop(view, "lock_camera_and_layers")
+        layout.label(text= "Lock:")
 
-            subcol = col.column(align=True)
-            subcol.enabled = not view.lock_camera_and_layers
+        col = layout.column()
+        col.prop(view, "lock_camera")
             
+        col = layout.column()
+        col.prop(view, "lock_camera_and_layers")
+
+        subcol = col.column(align=True)
+        subcol.enabled = not view.lock_camera_and_layers
+        
+        if not bpy.context.space_data.lock_camera_and_layers:
             subcol.label(text="Local Camera:")
             subcol.prop(view, "camera", text="")
 
-            col = layout.column(align=True)
-            col.active = view.region_3d.view_perspective != 'CAMERA'
-            
-            col = layout.column()
-            col.prop(view, "lock_camera")
-            
-            col.label(text="Lock to Object:")
-            col.prop(view, "lock_object", text="")
-            lock_object = view.lock_object
-            if lock_object:
-                if lock_object.type == 'ARMATURE':
-                    col.prop_search(view, "lock_bone", lock_object.data,
-                                    "edit_bones" if lock_object.mode == 'EDIT'
-                                    else "bones",
-                                    text="")
-            else:
-                col.prop(view, "lock_cursor", text="Lock to Cursor")
+        
+        col = layout.column(align=True)
+        col.active = view.region_3d.view_perspective != 'CAMERA'
+              
+        col.label(text="Lock to Object:")
+        col.prop(view, "lock_object", text="")
+        lock_object = view.lock_object
+
+        col.separator()
+
+        if lock_object:
+            if lock_object.type == 'ARMATURE':
+                col.prop_search(view, "lock_bone", lock_object.data,
+                                "edit_bones" if lock_object.mode == 'EDIT'
+                                else "bones",
+                                text="")
+        else:
+            col.prop(view, "lock_cursor", text="Lock to Cursor")
       
         
         ################################################
