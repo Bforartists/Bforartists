@@ -264,7 +264,7 @@ class BONE_PT_relations(BoneButtonsPanel, Panel):
 
 
 class BONE_PT_display(BoneButtonsPanel, Panel):
-    bl_label = "Display"
+    bl_label = "Bone Display"
 
     @classmethod
     def poll(cls, context):

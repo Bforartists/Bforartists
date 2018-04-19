@@ -20,13 +20,14 @@ bl_info = {
     "name": "Stored Views",
     "description": "Save and restore User defined views, pov, layers and display configs",
     "author": "nfloyd, Francesco Siddi",
-    "version": (0, 3, 6),
+    "version": (0, 3, 7),
     "blender": (2, 7, 8),
     "location": "View3D > Properties > Stored Views",
     "warning": "",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.5/"
                 "Py/Scripts/3D_interaction/stored_views",
-    "category": "3D View"}
+    "category": "3D View"
+}
 
 """
 ACKNOWLEDGMENT
@@ -65,14 +66,14 @@ else:
 
 import bpy
 from bpy.props import (
-        BoolProperty,
-        IntProperty,
-        PointerProperty,
-        )
+    BoolProperty,
+    IntProperty,
+    PointerProperty,
+)
 from bpy.types import (
-        AddonPreferences,
-        Operator,
-        )
+    AddonPreferences,
+    Operator,
+)
 
 
 class VIEW3D_stored_views_initialize(Operator):
@@ -99,20 +100,20 @@ class VIEW3D_stored_views_preferences(AddonPreferences):
     bl_idname = __name__
 
     show_exporters = BoolProperty(
-            name="Enable I/O Operators",
-            default=False,
-            description="Enable Import/Export Operations in the UI:\n"
-                        "Import Stored Views preset,\n"
-                        "Export Stored Views preset and \n"
-                        "Import stored views from scene",
-            )
+        name="Enable I/O Operators",
+        default=False,
+        description="Enable Import/Export Operations in the UI:\n"
+                    "Import Stored Views preset,\n"
+                    "Export Stored Views preset and \n"
+                    "Import stored views from scene",
+    )
     view_3d_update_rate = IntProperty(
-            name="3D view update",
-            description="Update rate of the 3D view redraw\n"
-                        "Increse the value if the UI feels sluggish",
-            min=1, max=10,
-            default=1
-            )
+        name="3D view update",
+        description="Update rate of the 3D view redraw\n"
+                    "Increse the value if the UI feels sluggish",
+        min=1, max=10,
+        default=1
+    )
 
     def draw(self, context):
         layout = self.layout
