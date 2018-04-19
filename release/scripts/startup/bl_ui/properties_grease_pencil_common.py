@@ -125,17 +125,19 @@ class GreasePencilDrawingToolsPanel:
         myvar.data_path_primary = 'user_preferences.edit.grease_pencil_eraser_radius'
 
         col.separator()
-
-        sub = col.column(align=True)
-        sub.operator("gpencil.blank_frame_add", icon='NEW')
-        sub.operator("gpencil.active_frames_delete_all", icon='DELETE', text="Delete Frame(s)")
+        
+        row = col.row(align=True)
+        
+        row.operator("gpencil.blank_frame_add", icon='NEW')
+        row.operator("gpencil.active_frames_delete_all", icon='DELETE', text="Delete Frame(s)")
         
         col.separator()
+        
+        row = col.row(align=True)
 
-        sub = col.column(align=True)
-        sub.prop(context.tool_settings, "use_gpencil_additive_drawing", text="Additive Drawing")
-        sub.prop(context.tool_settings, "use_gpencil_continuous_drawing", text="Continuous Drawing")
-        sub.prop(context.tool_settings, "use_gpencil_draw_onback", text="Draw on Back")
+        row.prop(context.tool_settings, "use_gpencil_additive_drawing", text="Additive Drawing")
+        row.prop(context.tool_settings, "use_gpencil_continuous_drawing", text="Continuous Drawing")
+        row.prop(context.tool_settings, "use_gpencil_draw_onback", text="Draw on Back")
 
         if context.space_data.type in {'VIEW_3D', 'CLIP_EDITOR'}:
             col.separator()
