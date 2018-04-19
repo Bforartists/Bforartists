@@ -1,0 +1,1 @@
+from .autocrop import Autocrop
