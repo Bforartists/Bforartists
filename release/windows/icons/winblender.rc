@@ -17,8 +17,8 @@ IDR_VERSION1 VERSIONINFO
 //FILEVERSION BLEN_VER_RC_1, BLEN_VER_RC_2, BLEN_VER_RC_3, BLEN_VER_RC_4
 //PRODUCTVERSION BLEN_VER_RC_1, BLEN_VER_RC_2, BLEN_VER_RC_3, BLEN_VER_RC_4
 
-FILEVERSION 0,9,2 // bfa - don't separate by dots, but commas here.
-PRODUCTVERSION 0,9,2 // bfa - don't separate by dots, but commas here.
+FILEVERSION 0,9,7 // bfa - don't separate by dots, but commas here.
+PRODUCTVERSION 0,9,7 // bfa - don't separate by dots, but commas here.
 FILEOS 0x00000004
 FILETYPE 0x00000001
 BEGIN
@@ -35,8 +35,8 @@ BEGIN
       //VALUE "ProductName", "Blender"
 
 	  // bfa - changed the detail settings
-	  VALUE "FileVersion", "0.9.5"
-	  VALUE "ProductVersion", "0.9.5"
+	  VALUE "FileVersion", "0.9.7"
+	  VALUE "ProductVersion", "0.9.7"
 	  VALUE "CompanyName", "Bforartists"
 	  VALUE "FileDescription", "Bforartists"
 	  VALUE "LegalCopyright", "GPLv2/v3"
