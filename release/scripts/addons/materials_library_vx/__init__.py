@@ -484,11 +484,8 @@ if mat:
 #        self.current_library.materials[self.mat_index].category = cat
       #remove mat from any category
       else:
-        matnode = xml.find("material", mat.name, lib)
-        if matnode:
-          xml.deleteNode(matnode)
         mat.category = ""
-        self.current_library.materials[self.mat_index].category = ""
+        self.all_materials[self.mat_index].category = ""
     else:
       return "WARNING", "Select a material"
 
