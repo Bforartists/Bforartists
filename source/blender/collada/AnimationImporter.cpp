@@ -81,7 +81,7 @@ void AnimationImporter::add_bezt(FCurve *fcu, float frame, float value, eBezTrip
 	bez.ipo = ipo; /* use default interpolation mode here... */
 	bez.f1 = bez.f2 = bez.f3 = SELECT;
 	bez.h1 = bez.h2 = HD_AUTO;
-	insert_bezt_fcurve(fcu, &bez, 0);
+	insert_bezt_fcurve(fcu, &bez, INSERTKEY_NOFLAGS);
 	calchandles_fcurve(fcu);
 }
 
@@ -148,7 +148,7 @@ void AnimationImporter::animation_to_fcurves(COLLADAFW::AnimationCurve *curve)
 					// bez.ipo = U.ipo_new; /* use default interpolation mode here... */
 					bez.f1 = bez.f2 = bez.f3 = SELECT;
 
-					insert_bezt_fcurve(fcu, &bez, 0);
+					insert_bezt_fcurve(fcu, &bez, INSERTKEY_NOFLAGS);
 				}
 
 				calchandles_fcurve(fcu);
@@ -566,14 +566,16 @@ void AnimationImporter:: Assign_transform_animations(COLLADAFW::Transformation *
 		}
 
 		case COLLADAFW::Transformation::MATRIX:
-			/*{
-			   COLLADAFW::Matrix *mat = (COLLADAFW::Matrix*)transform;
-			   COLLADABU::Math::Matrix4 mat4 = mat->getMatrix();
-			   switch (binding->animationClass) {
-			   case COLLADAFW::AnimationList::TRANSFORM:
+#if 0
+			{
+				COLLADAFW::Matrix *mat = (COLLADAFW::Matrix*)transform;
+				COLLADABU::Math::Matrix4 mat4 = mat->getMatrix();
+				switch (binding->animationClass) {
+					case COLLADAFW::AnimationList::TRANSFORM:
 
-			   }
-			   }*/
+				}
+			}
+#endif
 			unused_fcurve(curves);
 			break;
 		case COLLADAFW::Transformation::SKEW:
@@ -1751,7 +1753,8 @@ bool AnimationImporter::evaluate_animation(COLLADAFW::Transformation *tm, float 
 	if (type != COLLADAFW::Transformation::ROTATE &&
 	    type != COLLADAFW::Transformation::SCALE &&
 	    type != COLLADAFW::Transformation::TRANSLATE &&
-	    type != COLLADAFW::Transformation::MATRIX) {
+	    type != COLLADAFW::Transformation::MATRIX)
+	{
 		fprintf(stderr, "animation of transformation %d is not supported yet\n", type);
 		return false;
 	}
