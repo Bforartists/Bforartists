@@ -91,8 +91,9 @@ void EffectsExporter::exportEffects(Scene *sce)
 			openLibrary();
 			std::set<Image *>::iterator uv_images_iter;
 			for (uv_images_iter = uv_images.begin();
-				uv_images_iter != uv_images.end();
-				uv_images_iter++) {
+			     uv_images_iter != uv_images.end();
+			     uv_images_iter++)
+			{
 
 				Image *ima = *uv_images_iter;
 				std::string key(id_name(ima));
@@ -148,12 +149,13 @@ void EffectsExporter::writePhong(COLLADASW::EffectProfile &ep, Material *ma)
 	ep.setSpecular(cot, false, "specular");
 }
 
-void EffectsExporter::writeTextures(COLLADASW::EffectProfile &ep,
-									std::string &key,
-									COLLADASW::Sampler *sampler, 
-									MTex *t, Image *ima,
-									std::string &uvname ) {
-		
+void EffectsExporter::writeTextures(
+        COLLADASW::EffectProfile &ep,
+        std::string &key,
+        COLLADASW::Sampler *sampler, 
+        MTex *t, Image *ima,
+        std::string &uvname )
+{
 	// Image not set for texture
 	if (!ima) return;
 
