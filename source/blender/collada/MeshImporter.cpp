@@ -703,8 +703,9 @@ void MeshImporter::read_polys(COLLADAFW::Mesh *collada_mesh, Mesh *me)
 		}
 
 		if (collada_meshtype == COLLADAFW::MeshPrimitive::POLYLIST ||
-			collada_meshtype == COLLADAFW::MeshPrimitive::POLYGONS ||
-			collada_meshtype == COLLADAFW::MeshPrimitive::TRIANGLES) {
+		    collada_meshtype == COLLADAFW::MeshPrimitive::POLYGONS ||
+		    collada_meshtype == COLLADAFW::MeshPrimitive::TRIANGLES)
+		{
 			COLLADAFW::Polygons *mpvc = (COLLADAFW::Polygons *)mp;
 			unsigned int start_index = 0;
 
@@ -1092,7 +1093,8 @@ MTFace *MeshImporter::assign_material_to_geom(COLLADAFW::MaterialBinding cmateri
 	// set texture face
 	if (color_texture &&
 	    strlen((color_texture)->uvname) &&
-	    !STREQ(layername, color_texture->uvname)) {
+	    !STREQ(layername, color_texture->uvname))
+	{
 		texture_face = (MTFace *)CustomData_get_layer_named(&me->fdata, CD_MTFACE,
 		                                                    color_texture->uvname);
 		strcpy(layername, color_texture->uvname);
