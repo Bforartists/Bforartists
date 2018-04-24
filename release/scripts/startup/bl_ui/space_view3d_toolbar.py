@@ -3332,9 +3332,11 @@ class VIEW3D_PT_tools_particlemode(View3DPanel, Panel):
         if pe.is_hair:
             col.active = pe.is_editable
             col.prop(pe, "use_emitter_deflect", text="Deflect Emitter")
-            sub = col.row(align=True)
-            sub.active = pe.use_emitter_deflect
-            sub.prop(pe, "emitter_distance", text="Distance")
+            
+            if pe.use_emitter_deflect:
+                sub = col.row(align=True)
+                sub.active = pe.use_emitter_deflect
+                sub.prop(pe, "emitter_distance", text="Distance")
 
         col = layout.column(align=True)
         col.active = pe.is_editable
@@ -3347,7 +3349,8 @@ class VIEW3D_PT_tools_particlemode(View3DPanel, Panel):
         col.prop(ob.data, "use_mirror_x")
 
         col.prop(pe, "shape_object")
-        col.operator("particle.shape_cut")
+        if pe.shape_object is not None:
+            col.operator("particle.shape_cut")
 
         col = layout.column(align=True)
         col.active = pe.is_editable
