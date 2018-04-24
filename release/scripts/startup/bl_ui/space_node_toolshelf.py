@@ -45,7 +45,6 @@ class NodesToolshelfProp(bpy.types.Panel):
 class NodesToolshelfInput_connect(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Connect"
-    bl_idname = "nodes.nip_input_connect"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Input"
@@ -105,7 +104,6 @@ class NodesToolshelfInput_connect(bpy.types.Panel):
 class NodesToolshelfInput_input_shader(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Input"
-    bl_idname = "nodes.nip_input_input_shader"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Input"
@@ -161,7 +159,6 @@ class NodesToolshelfInput_input_shader(bpy.types.Panel):
 class NodesToolshelfInput_input_comp(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Input"
-    bl_idname = "nodes.nip_input_input_comp"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Input"
@@ -265,7 +262,6 @@ class NodesToolshelfInput_input_comp(bpy.types.Panel):
 class NodesToolshelfInput_input_tex(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Input"
-    bl_idname = "nodes.nip_input_input_tex"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Input"
@@ -322,7 +318,6 @@ class NodesToolshelfInput_input_tex(bpy.types.Panel):
 class NodesToolshelfInput_textures_tex(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Textures"
-    bl_idname = "nodes.nip_input_textures_tex"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Input"
@@ -450,7 +445,6 @@ class NodesToolshelfInput_textures_tex(bpy.types.Panel):
 class NodesToolshelfInput_shader(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Shader"
-    bl_idname = "nodes.nip_input_shader"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Input"
@@ -517,7 +511,6 @@ class NodesToolshelfInput_shader(bpy.types.Panel):
 class NodesToolshelfInput_shader_common(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Shader Common"
-    bl_idname = "nodes.nip_input_shader_common"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Input"
@@ -658,7 +651,6 @@ class NodesToolshelfInput_shader_common(bpy.types.Panel):
 class NodesToolshelfInput_shader_advanced(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Shader Advanced"
-    bl_idname = "nodes.nip_input_shader_advanced"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Input"
@@ -750,7 +742,6 @@ class NodesToolshelfInput_shader_advanced(bpy.types.Panel):
 class NodesToolshelfInput_textures_shader(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Textures"
-    bl_idname = "nodes.nip_input_textures_shader"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Input"
@@ -878,7 +869,6 @@ class NodesToolshelfInput_textures_shader(bpy.types.Panel):
 class NodesToolshelfInput_input_advanced_comp(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Input Advanced"
-    bl_idname = "nodes.nip_input_input_advanced_comp"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Input"
@@ -949,7 +939,6 @@ class NodesToolshelfInput_input_advanced_comp(bpy.types.Panel):
 class NodesToolshelfInput_input_advanced_tex(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Input Advanced"
-    bl_idname = "nodes.nip_input_input_advanced_tex"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Input"
@@ -1003,7 +992,6 @@ class NodesToolshelfInput_input_advanced_tex(bpy.types.Panel):
 class NodesToolshelfInput_pattern(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Pattern"
-    bl_idname = "nodes.nip_input_pattern"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Input"
@@ -1057,7 +1045,6 @@ class NodesToolshelfInput_pattern(bpy.types.Panel):
 class NodesToolshelfInput_color_comp(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Color"
-    bl_idname = "nodes.nip_input_color_comp"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Input"
@@ -1148,7 +1135,6 @@ class NodesToolshelfInput_color_comp(bpy.types.Panel):
 class NodesToolshelfInput_color_tex(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Color"
-    bl_idname = "nodes.nip_input_color_tex"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Input"
@@ -1239,7 +1225,6 @@ class NodesToolshelfInput_color_tex(bpy.types.Panel):
 class NodesToolshelfInput_color_advanced(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Color Advanced"
-    bl_idname = "nodes.nip_input_color_advanced"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Input"
@@ -1327,7 +1312,6 @@ class NodesToolshelfInput_color_advanced(bpy.types.Panel):
 class NodesToolshelfInput_output_shader(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Output"
-    bl_idname = "nodes.nip_input_output_shader"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Input"
@@ -1409,7 +1393,6 @@ class NodesToolshelfInput_output_shader(bpy.types.Panel):
 class NodesToolshelfInput_output_comp(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Output"
-    bl_idname = "nodes.nip_input_output_comp"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Input"
@@ -1491,7 +1474,6 @@ class NodesToolshelfInput_output_comp(bpy.types.Panel):
 class NodesToolshelfInput_output_tex(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Output"
-    bl_idname = "nodes.nip_input_output_tex"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Input"
@@ -1547,7 +1529,6 @@ class NodesToolshelfInput_output_tex(bpy.types.Panel):
 class NodesToolshelfModify_matte(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Matte"
-    bl_idname = "nodes.nip_matte"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Modify"
@@ -1695,7 +1676,6 @@ class NodesToolshelfModify_matte(bpy.types.Panel):
 class NodesToolshelfModify_filter(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Filter"
-    bl_idname = "nodes.nip_modify_filter"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Modify"
@@ -1854,7 +1834,6 @@ class NodesToolshelfModify_filter(bpy.types.Panel):
 class NodesToolshelfModify_input(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Input"
-    bl_idname = "nodes.nip_modify_input"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Modify"
@@ -2032,7 +2011,6 @@ class NodesToolshelfModify_input(bpy.types.Panel):
 class NodesToolshelfModify_converter_shader(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Converter"
-    bl_idname = "nodes.nip_modify_converter_shader"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Modify"
@@ -2182,7 +2160,6 @@ class NodesToolshelfModify_converter_shader(bpy.types.Panel):
 class NodesToolshelfModify_converter_comp(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Converter"
-    bl_idname = "nodes.nip_modify_converter_comp"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Modify"
@@ -2356,7 +2333,6 @@ class NodesToolshelfModify_converter_comp(bpy.types.Panel):
 class NodesToolshelfModify_converter_tex(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Converter"
-    bl_idname = "nodes.nip_modify_converter_tex"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Modify"
@@ -2438,7 +2414,6 @@ class NodesToolshelfModify_converter_tex(bpy.types.Panel):
 class NodesToolshelfModify_vector_shader(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Vector"
-    bl_idname = "nodes.nip_modify_vector_shader"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Modify"
@@ -2523,7 +2498,6 @@ class NodesToolshelfModify_vector_shader(bpy.types.Panel):
 class NodesToolshelfModify_vector_comp(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Vector"
-    bl_idname = "nodes.nip_modify_vector_comp"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Modify"
@@ -2607,7 +2581,6 @@ class NodesToolshelfModify_vector_comp(bpy.types.Panel):
 class NodesToolshelfModify_distort_tex(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Distort"
-    bl_idname = "nodes.nip_modify_distort_tex"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Modify"
@@ -2677,7 +2650,6 @@ class NodesToolshelfModify_distort_tex(bpy.types.Panel):
 class NodesToolshelfModify_distort_comp(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Distort"
-    bl_idname = "nodes.nip_modify_distort_comp"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Modify"
@@ -2834,7 +2806,6 @@ class NodesToolshelfModify_distort_comp(bpy.types.Panel):
 class NodesToolshelfModify_color(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Color"
-    bl_idname = "nodes.nip_modify_color"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Modify"
@@ -2935,7 +2906,6 @@ class NodesToolshelfModify_color(bpy.types.Panel):
 class NodesToolshelfModify_script(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Script"
-    bl_idname = "nodes.nip_modify_script"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Modify"
@@ -2983,7 +2953,6 @@ class NodesToolshelfModify_script(bpy.types.Panel):
 class NodesToolshelfRelations_group(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Group"
-    bl_idname = "nodes.nip_relations_group"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Relations"
@@ -3035,7 +3004,6 @@ class NodesToolshelfRelations_group(bpy.types.Panel):
 class NodesToolshelfRelations_layout(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Layout"
-    bl_idname = "nodes.nip_relations_layout"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
     bl_category = "Relations"
