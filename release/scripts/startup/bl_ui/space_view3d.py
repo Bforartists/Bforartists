@@ -3387,7 +3387,6 @@ class VIEW3D_MT_edit_gpencil(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_edit_gpencil_transform")
         layout.menu("GPENCIL_MT_snap")
 
         layout.separator()
@@ -3409,16 +3408,6 @@ class VIEW3D_MT_edit_gpencil(Menu):
 
         layout.operator_menu_enum("gpencil.convert", "type", text="Convert to Geometry...")
 
-
-class VIEW3D_MT_edit_gpencil_transform(Menu):
-    bl_label = "Transform"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator("transform.translate", icon = "TRANSFORM_MOVE")
-        layout.operator("transform.rotate", icon = "TRANSFORM_ROTATE")
-        layout.operator("transform.resize", text="Scale",  icon = "TRANSFORM_SCALE")
 
 
 class VIEW3D_MT_edit_gpencil_interpolate(Menu):
@@ -4355,7 +4344,6 @@ classes = (
     VIEW3D_MT_edit_armature_roll,
     VIEW3D_MT_edit_recalc_roll,
     VIEW3D_MT_edit_armature_delete,
-    VIEW3D_MT_edit_gpencil_transform,
     VIEW3D_MT_edit_gpencil_interpolate,
     VIEW3D_PT_grease_pencil,
     VIEW3D_PT_grease_pencil_palettecolor,
