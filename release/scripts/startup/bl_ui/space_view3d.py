@@ -3552,6 +3552,7 @@ class VIEW3D_PT_view3d_display(Panel):
         col = layout.column()
         col.prop(view, "show_iconbuttons", text="Icon or Text Buttons") # bfa - show hide icon or text checkbox      
         col.prop(view, "show_only_render")
+        col.prop(view, "show_world")
   
         col = layout.column()
         display_all = not view.show_only_render
@@ -3594,14 +3595,13 @@ class VIEW3D_PT_view3d_display(Panel):
         user_preferences = context.user_preferences
         addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
 
-        if not addon_prefs.subtab_3dview_properties_display_misc:
-            layout.prop(addon_prefs,"subtab_3dview_properties_display_misc", emboss=False, icon="TRIA_RIGHT", text="- Miscellaneous -")
+        if not addon_prefs.subtab_3dview_properties_display_obj_related:
+            layout.prop(addon_prefs,"subtab_3dview_properties_display_obj_related", emboss=False, icon="TRIA_RIGHT", text="- Object related -")
 
         else:
-            layout.prop(addon_prefs,"subtab_3dview_properties_display_misc", emboss=False, icon="TRIA_DOWN", text="+ Miscellaneous +")
+            layout.prop(addon_prefs,"subtab_3dview_properties_display_obj_related", emboss=False, icon="TRIA_DOWN", text="+ Object related +")
 
             col = layout.column()
-            col.prop(view, "show_world")
             col.prop(view, "show_outline_selected")
             col.prop(view, "show_all_objects_origin")
             col.prop(view, "show_relationship_lines")
