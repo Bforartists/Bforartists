@@ -87,7 +87,7 @@ def draw_vpaint_symmetry(layout, vpaint):
 
 # ********** default tools for object-mode ****************
 
-class VIEW3D_MT_snap_panel(View3DPanel, Panel):
+class VIEW3D_PT_snap_panel(View3DPanel, Panel):
     """Snap Tools"""
     bl_label = "Snap"
     bl_category = "Tools"
@@ -1054,7 +1054,7 @@ class VIEW3D_PT_tools_meshedit(View3DPanel, Panel):
             row.operator("mesh.edge_collapse", icon='EDGE_COLLAPSE', text = "")
 
 
-class VIEW3D_MT_edit_mesh_vertices_panel(View3DPanel, Panel):
+class VIEW3D_PT_edit_mesh_vertices_panel(View3DPanel, Panel):
     bl_category = "Tools"
     bl_context = "mesh_edit"
     bl_label = "Vertices Tools"
@@ -1110,7 +1110,7 @@ class VIEW3D_MT_edit_mesh_vertices_panel(View3DPanel, Panel):
                 row.operator("mesh.convex_hull", text = "", icon = "CONVEXHULL")
 
 
-class VIEW3D_MT_edit_mesh_edges_panel(View3DPanel, Panel):
+class VIEW3D_PT_edit_mesh_edges_panel(View3DPanel, Panel):
     bl_category = "Tools"
     bl_context = "mesh_edit"
     bl_label = "Edge Tools"
@@ -1167,7 +1167,7 @@ class VIEW3D_MT_edit_mesh_edges_panel(View3DPanel, Panel):
                 row.operator("mesh.mark_freestyle_edge",text = "", icon = "CLEAR_FS_EDGE").clear = True
 
 
-class VIEW3D_MT_edit_mesh_faces_panel(View3DPanel, Panel):
+class VIEW3D_PT_edit_mesh_faces_panel(View3DPanel, Panel):
     bl_category = "Tools"
     bl_context = "mesh_edit"
     bl_label = "Faces Tools"
@@ -1249,7 +1249,7 @@ class VIEW3D_MT_edit_mesh_faces_panel(View3DPanel, Panel):
                 row.operator("mesh.mark_freestyle_face", text = "", icon = "CLEARFSFACE").clear = True
 
 
-class VIEW3D_MT_edit_mesh_clean_panel(View3DPanel, Panel):
+class VIEW3D_PT_edit_mesh_clean_panel(View3DPanel, Panel):
     bl_category = "Tools"
     bl_context = "mesh_edit"
     bl_label = "Clean Up"
@@ -2125,7 +2125,7 @@ class VIEW3D_PT_imapaint_tools_missing(Panel, View3DPaintPanel):
             col.operator("image.new", text="New").gen_context = 'PAINT_STENCIL'
 
 
-class VIEW3D_MT_particle_tools(Panel, View3DPaintPanel):
+class VIEW3D_PT_particle_tools(Panel, View3DPaintPanel):
     bl_category = "Tools"
     bl_label = "Tools"
     bl_context = "particlemode"
@@ -3532,7 +3532,7 @@ class VIEW3D_MT_make_links(Menu):
         layout.operator("object.make_links_data", text = "Fonts", icon='LINK_DATA').type = 'FONTS'
 
 classes = (
-    VIEW3D_MT_snap_panel,
+    VIEW3D_PT_snap_panel,
     VIEW3D_PT_tools_object,
     VIEW3D_PT_tools_add_object,
     VIEW3D_PT_tools_add_misc,
@@ -3540,10 +3540,10 @@ classes = (
     VIEW3D_PT_tools_animation,
     VIEW3D_PT_tools_rigid_body,
     VIEW3D_PT_tools_meshedit,
-    VIEW3D_MT_edit_mesh_vertices_panel,
-    VIEW3D_MT_edit_mesh_edges_panel,
-    VIEW3D_MT_edit_mesh_faces_panel,
-    VIEW3D_MT_edit_mesh_clean_panel,
+    VIEW3D_PT_edit_mesh_vertices_panel,
+    VIEW3D_PT_edit_mesh_edges_panel,
+    VIEW3D_PT_edit_mesh_faces_panel,
+    VIEW3D_PT_edit_mesh_clean_panel,
     VIEW3D_normals_make_consistent_inside,
     VIEW3D_PT_tools_meshweight,
     VIEW3D_PT_tools_add_mesh_edit,
@@ -3565,7 +3565,7 @@ classes = (
     VIEW3D_PT_tools_posemode,
     VIEW3D_PT_tools_posemode_options,
     VIEW3D_PT_imapaint_tools_missing,
-    VIEW3D_MT_particle_tools,
+    VIEW3D_PT_particle_tools,
     VIEW3D_PT_tools_brush,
     TEXTURE_UL_texpaintslots,
     VIEW3D_MT_tools_projectpaint_uvlayer,

@@ -307,7 +307,7 @@ class IMAGE_MT_uvs_snap(Menu):
         layout.operator("uv.snap_cursor", text="Cursor to Selected").target = 'SELECTED'
 
 
-class IMAGE_MT_uvs_snap_panel(Panel, UVToolsPanel):
+class IMAGE_PT_uvs_snap_panel(Panel, UVToolsPanel):
     bl_label = "Snap"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -1407,7 +1407,7 @@ classes = (
     IMAGE_MT_uvs_weldalign,
     IMAGE_MT_uvs_showhide,
     IMAGE_MT_uvs_snap,
-    IMAGE_MT_uvs_snap_panel,
+    IMAGE_PT_uvs_snap_panel,
     IMAGE_MT_uvs_select_mode,
     IMAGE_HT_header,
     MASK_MT_editor_menus,

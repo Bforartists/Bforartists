@@ -240,7 +240,7 @@ class NODE_MT_select(Menu):
 
         layout.operator("node.select_link_viewer", icon = "LINK")
 
-class NODE_OT_node_group_separate(Menu):
+class NODE_MT_node_group_separate(Menu):
     bl_label = "Separate"
 
     def draw(self, context):
@@ -284,7 +284,7 @@ class NODE_MT_node(Menu):
         layout.operator("node.links_detach", icon = "DETACH_LINKS")
         layout.operator("node.move_detach_links", text = "Detach Links Move", icon = "DETACH_LINKS")
         layout.operator("node.parent_set", icon = "PARENT_SET")
-        layout.menu("NODE_OT_node_group_separate")
+        layout.menu("NODE_MT_node_group_separate")
 
         layout.separator()
 
@@ -558,7 +558,7 @@ classes = (
     NODE_MT_add,
     NODE_MT_view,
     NODE_MT_select,
-    NODE_OT_node_group_separate,
+    NODE_MT_node_group_separate,
     NODE_MT_node,
     NODE_MT_node_color_presets,
     NODE_MT_node_color_specials,

@@ -1,4 +1,4 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
+﻿# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -416,7 +416,7 @@ class GRAPH_MT_channel_settings_toggle(Menu):
         layout.operator("anim.channels_setting_disable", text = "Disable Mute", icon = "MUTE_IPO_ON").type = 'MUTE'
         
 
-class GRAPH_MT_properties_view_options(Panel):
+class GRAPH_PT_properties_view_options(Panel):
     bl_label = "View Options"
     bl_category = "View"
     bl_space_type = 'GRAPH_EDITOR'
@@ -444,7 +444,7 @@ class GRAPH_MT_properties_view_options(Panel):
         layout.prop(st, "show_seconds")
         layout.prop(st, "show_locked_time")
 
-class GRAPH_MT_properties_key_options(Panel):
+class GRAPH_PT_properties_key_options(Panel):
     bl_label = "Keyframe Options"
     bl_category = "F-Curve"
     bl_space_type = 'GRAPH_EDITOR'
@@ -477,8 +477,8 @@ classes = (
     GRAPH_MT_channel_move,
     GRAPH_MT_channel_extrapolation,
     GRAPH_MT_channel_settings_toggle,
-    GRAPH_MT_properties_view_options,
-    GRAPH_MT_properties_key_options,
+    GRAPH_PT_properties_view_options,
+    GRAPH_PT_properties_key_options,
 )
 
 if __name__ == "__main__":  # only for live edit.

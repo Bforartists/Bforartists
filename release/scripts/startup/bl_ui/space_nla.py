@@ -255,7 +255,7 @@ class NLA_MT_edit_snap(Menu):
         layout.operator("nla.snap", text="Nearest Second", icon = "SNAP_NEARESTSECOND").type= 'NEAREST_SECOND'
         layout.operator("nla.snap", text="Nearest Marker", icon = "SNAP_NEARESTMARKER").type= 'NEAREST_MARKER'
 
-class NLA_MT_view_view_options(Panel):
+class NLA_PT_view_view_options(Panel):
     bl_label = "View Options"
     bl_space_type = 'NLA_EDITOR'
     bl_region_type = 'UI'
@@ -292,7 +292,7 @@ classes = (
     NLA_MT_edit_transform,
     NLA_MT_edit_move,
     NLA_MT_edit_snap,
-    NLA_MT_view_view_options,
+    NLA_PT_view_view_options,
 )
 
 if __name__ == "__main__":  # only for live edit.
