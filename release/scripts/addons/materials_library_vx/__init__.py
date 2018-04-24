@@ -1152,19 +1152,26 @@ class matlibvxPanel(Panel):
     if not matlib.hide_search:
       row = layout.row(align=True)
       row.prop_search(matlib, "search", matlib, "materials", text="", icon="VIEWZOOM")
+     
+     # Material preview window 
+    self.layout.template_preview(context.material)
+    
+    row = layout.row()
+    row.scale_y = 1.5
+    row.operator("matlib.apply", icon="MATERIAL", text=" Apply")
+    row.operator("matlib.preview", icon="COLOR", text="Preview")
 
 #    #list
     row = layout.row()
     row.template_list("UI_UL_list", "  ", matlib, "materials", matlib, "mat_index", rows=6)
     col = row.column(align=True)
-    row = layout.row()
 
       #operators
     col.operator("matlib.add", icon="ZOOMIN", text="")
     col.operator("matlib.remove", icon="ZOOMOUT", text="")
     col.operator("matlib.reload", icon="FILE_REFRESH", text="")
-    col.operator("matlib.apply", icon="MATERIAL", text="")
-    col.operator("matlib.preview", icon="COLOR", text="")
+    #col.operator("matlib.apply", icon="MATERIAL", text="")
+    #col.operator("matlib.preview", icon="COLOR", text="")
     col.operator("matlib.flush", icon="GHOST_DISABLED", text="")
     col.prop(matlib, "show_prefs", icon="MODIFIER", text="")
 
