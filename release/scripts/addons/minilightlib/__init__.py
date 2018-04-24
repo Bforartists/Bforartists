@@ -101,7 +101,7 @@ def item_cb(self, context):
     
 ########################### the panel #############################
 
-class MyPanel(bpy.types.Panel):
+class VIEW3D_PT_Minilightlib(bpy.types.Panel):
     bl_label = "Mini Lightlib"
     bl_space_type = 'VIEW_3D'
     bl_region_type = "TOOLS"

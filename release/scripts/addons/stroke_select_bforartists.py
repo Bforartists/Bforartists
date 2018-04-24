@@ -87,7 +87,7 @@ To toggle between select and deselect hold down hotkey and right click"""
  # the panel in the properties sidebar. Visual feedback in what state the deselect bool currently is    
  # -----------------------------------------------------------------------------------------------------
  
-class StrokeSelectPanel(bpy.types.Panel):
+class VIEW3D_PT_StrokeSelectPanel(bpy.types.Panel):
     bl_label = "Stroke Select"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'

@@ -1005,7 +1005,7 @@ class ModalDrawOperator(bpy.types.Operator):
 
 #------------------------ Menu - a buttton in the 3d View in the Properties sidebar in the Show Text panel
 
-class ShowtextPanel(bpy.types.Panel):
+class VIEW3D_PT_ShowtextPanel(bpy.types.Panel):
     bl_label = "Important Hotkeys"
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
@@ -1083,11 +1083,11 @@ def clear_properties():
 def register():
     init_properties()  # everything initialize.
     bpy.utils.register_class(ModalDrawOperator)
-    bpy.utils.register_class(ShowtextPanel)
+    bpy.utils.register_class(VIEW3D_PT_ShowtextPanel)
 
 def unregister():
     bpy.utils.unregister_class(ModalDrawOperator)
-    bpy.utils.unregister_class(ShowtextPanel) 
+    bpy.utils.unregister_class(VIEW3D_PT_ShowtextPanel) 
     clear_properties() # cleaning up after the job is done
 
 if __name__ == "__main__":
