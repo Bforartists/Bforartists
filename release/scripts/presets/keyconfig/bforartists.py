@@ -1614,6 +1614,7 @@ kmi_props_setattr(kmi.properties, 'texmode', 'SECONDARY')
 kmi = km.keymap_items.new('brush.stencil_control', 'RIGHTMOUSE', 'PRESS', ctrl=True, alt=True)
 kmi_props_setattr(kmi.properties, 'mode', 'ROTATION')
 kmi_props_setattr(kmi.properties, 'texmode', 'SECONDARY')
+kmi = km.keymap_items.new('paint.mask_lasso_gesture', 'LEFTMOUSE', 'PRESS', shift=True, ctrl=True)
 
 # Map Metaball
 km = kc.keymaps.new('Metaball', space_type='EMPTY', region_type='WINDOW', modal=False)
