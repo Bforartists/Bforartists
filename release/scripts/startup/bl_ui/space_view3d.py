@@ -592,11 +592,11 @@ class VIEW3D_MT_select_object(Menu):
 
         layout.separator()
 
-        layout.menu ("VIEW_3D_select_grouped")
-        layout.menu ("VIEW_3D_select_linked")
+        layout.menu ("VIEW3D_MT_select_grouped")
+        layout.menu ("VIEW3D_MT_select_linked")
         layout.operator("object.select_pattern", text="By Pattern...", icon = "PATTERN")
         layout.operator("object.select_by_layer", text="All by Layer", icon = "LAYER")
-        layout.menu ("VIEW_3D_select_by_type")
+        layout.menu ("VIEW3D_MT_select_by_type")
         layout.separator()
 
         myvar = layout.operator("object.select_hierarchy", text="Parent", icon = "PARENT")
@@ -618,7 +618,7 @@ class VIEW3D_MT_select_object(Menu):
         layout.operator("object.select_more", text="More", icon = "SELECTMORE")
         layout.operator("object.select_less", text="Less", icon = "SELECTLESS")
 
-class VIEW_3D_select_grouped(Menu):
+class VIEW3D_MT_select_grouped(Menu):
     bl_label = "Grouped"
 
     def draw(self, context):
@@ -645,7 +645,7 @@ class VIEW_3D_select_grouped(Menu):
         layout.operator("object.select_grouped", text= "Properties", icon = "BUTS").type = 'PROPERTIES'      
         
 
-class VIEW_3D_select_by_type(Menu):
+class VIEW3D_MT_select_by_type(Menu):
     bl_label = "All by Type"
 
     def draw(self, context):
@@ -669,7 +669,7 @@ class VIEW_3D_select_by_type(Menu):
         layout.operator("object.select_by_type", text= "Lamp", icon = "OUTLINER_OB_LAMP").type = 'LAMP'
         layout.operator("object.select_by_type", text= "Speaker", icon = "OUTLINER_OB_SPEAKER").type = 'SPEAKER'
 
-class VIEW_3D_select_linked(Menu):
+class VIEW3D_MT_select_linked(Menu):
     bl_label = "Linked"
 
     def draw(self, context):
@@ -1761,7 +1761,7 @@ class VIEW3D_MT_object(Menu):
         layout.separator()
 
         layout.menu("VIEW3D_MT_object_quick_effects")
-        layout.menu("VIEW3D_subdivision_set")
+        layout.menu("VIEW3D_MT_subdivision_set")
 
         layout.separator()
 
@@ -2014,7 +2014,7 @@ class VIEW3D_MT_object_quick_effects(Menu):
         layout.operator("object.quick_smoke", icon = "MOD_SMOKE")
         layout.operator("object.quick_fluid", icon = "MOD_FLUIDSIM")
 
-class VIEW3D_subdivision_set(Menu):
+class VIEW3D_MT_subdivision_set(Menu):
     bl_label = "Subdivide"
 
     def draw(self, context):
@@ -2229,7 +2229,7 @@ class VIEW3D_MT_sculpt(Menu):
         toolsettings = context.tool_settings
         sculpt = toolsettings.sculpt
 
-        layout.menu("VIEW3D_subdivision_set")
+        layout.menu("VIEW3D_MT_subdivision_set")
 
 
 class VIEW3D_MT_hide_mask(Menu):
@@ -2670,7 +2670,7 @@ class VIEW3D_MT_edit_mesh(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_subdivision_set")
+        layout.menu("VIEW3D_MT_subdivision_set")
         layout.operator("mesh.noise", icon='NOISE')      
         layout.menu("VIEW3D_MT_edit_mesh_sort_elements")
 
@@ -4205,9 +4205,9 @@ classes = (
     VIEW3D_MT_view_cameras,
     VIEW3D_MT_select_object_inverse,
     VIEW3D_MT_select_object,
-    VIEW_3D_select_grouped,
-    VIEW_3D_select_by_type,
-    VIEW_3D_select_linked,
+    VIEW3D_MT_select_grouped,
+    VIEW3D_MT_select_by_type,
+    VIEW3D_MT_select_linked,
     VIEW3D_MT_select_pose_inverse,
     VIEW3D_MT_select_pose,
     VIEW3D_MT_select_particle_inverse,
@@ -4257,7 +4257,7 @@ classes = (
     VIEW3D_MT_object_apply,
     VIEW3D_MT_object_constraints,
     VIEW3D_MT_object_quick_effects,
-    VIEW3D_subdivision_set,
+    VIEW3D_MT_subdivision_set,
     VIEW3D_hide_view_set_unselected,
     VIEW3D_MT_object_showhide,
     VIEW3D_MT_make_single_user,

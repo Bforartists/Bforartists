@@ -547,7 +547,7 @@ class DOPESHEET_MT_key_snap(Menu):
         layout.operator("action.snap", text="Nearest Second", icon = "SNAP_NEARESTSECOND").type= 'NEAREST_SECOND'
         layout.operator("action.snap", text="Nearest Marker", icon = "SNAP_NEARESTMARKER").type= 'NEAREST_MARKER'
 
-class DOPESHEET_MT_view_view_options(bpy.types.Panel):
+class DOPESHEET_PT_view_view_options(bpy.types.Panel):
     bl_label = "View Options"
     bl_category = "View"
     bl_space_type = 'DOPESHEET_EDITOR'
@@ -570,7 +570,7 @@ class DOPESHEET_MT_view_view_options(bpy.types.Panel):
         layout.prop(st, "show_locked_time")
 
 
-class DOPESHEET_MT_key_properties(Panel):
+class DOPESHEET_PT_key_properties(Panel):
     bl_label = "Keyframe Options"
     bl_category = "F-Curve"
     bl_space_type = 'DOPESHEET_EDITOR'
@@ -605,8 +605,8 @@ classes = (
     DOPESHEET_MT_channel_extrapolation,
     DOPESHEET_MT_key_mirror,
     DOPESHEET_MT_key_snap,
-    DOPESHEET_MT_view_view_options,
-    DOPESHEET_MT_key_properties,
+    DOPESHEET_PT_view_view_options,
+    DOPESHEET_PT_key_properties,
 )
 
 if __name__ == "__main__":  # only for live edit.
