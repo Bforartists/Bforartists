@@ -3013,9 +3013,6 @@ def draw_curve(self, context):
     
     layout.separator()
 
-    if ob.type == 'CURVE':
-        layout.menu("VIEW3D_MT_edit_curve_ctrlpoints")
-
     layout.menu("VIEW3D_MT_hook")
 
     layout.separator()
@@ -3026,23 +3023,7 @@ def draw_curve(self, context):
 class VIEW3D_MT_edit_curve(Menu):
     bl_label = "Curve"
 
-    draw = draw_curve
-
-
-class VIEW3D_MT_edit_curve_ctrlpoints(Menu):
-    bl_label = "Mean Tilt"
-
-    def draw(self, context):
-        layout = self.layout
-
-        edit_object = context.edit_object
-
-        if edit_object.type == 'CURVE':
-            layout.operator("transform.tilt", icon = "TILT")
-            layout.operator("curve.tilt_clear",icon = "CLEAR_TILT")
-
-            layout.separator()
-     
+    draw = draw_curve    
 
 
 class VIEW3D_MT_edit_curve_specials(Menu):
@@ -4325,7 +4306,6 @@ classes = (
     VIEW3D_curve_hide_unselected,
     VIEW3D_MT_edit_curve_show_hide,
     VIEW3D_MT_edit_curve,
-    VIEW3D_MT_edit_curve_ctrlpoints,
     VIEW3D_MT_edit_curve_specials,
     VIEW3D_MT_edit_curve_delete,
     VIEW3D_MT_edit_surface,
