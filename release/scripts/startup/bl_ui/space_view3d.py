@@ -3373,12 +3373,6 @@ class VIEW3D_MT_edit_gpencil(Menu):
 
         layout = self.layout
 
-        layout.operator("ed.undo", icon = "UNDO")
-        layout.operator("ed.redo", icon = "REDO")
-        layout.operator("ed.undo_history", icon = "UNDO_HISTORY")
-
-        layout.separator()
-
         layout.menu("VIEW3D_MT_edit_gpencil_pie")
 
         layout.separator()
