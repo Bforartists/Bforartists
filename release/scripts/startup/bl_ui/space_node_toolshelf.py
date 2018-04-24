@@ -21,7 +21,7 @@ import bpy
 from bpy import context
 
 # The text or icon prop is in the properties sidebar
-class NodesToolshelfProp(bpy.types.Panel):
+class NODES_PT_Prop(bpy.types.Panel):
     """The prop to turn on or off text or icon buttons in the node editor tool shelf."""
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
@@ -42,7 +42,7 @@ class NodesToolshelfProp(bpy.types.Panel):
 ###-------------- Input tab --------------
 
 #Input nodes tab, connect panel. Just in shader mode
-class NodesToolshelfInput_connect(bpy.types.Panel):
+class NODES_PT_Input_connect(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Connect"
     bl_space_type = 'NODE_EDITOR'
@@ -101,7 +101,7 @@ class NodesToolshelfInput_connect(bpy.types.Panel):
             props.type = "ShaderNodeNormalMap"
 
 #Input nodes tab, textures common panel. Shader Mode
-class NodesToolshelfInput_input_shader(bpy.types.Panel):
+class NODES_PT_Input_input_shader(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Input"
     bl_space_type = 'NODE_EDITOR'
@@ -156,7 +156,7 @@ class NodesToolshelfInput_input_shader(bpy.types.Panel):
 
 
 #Input nodes tab, textures common panel. Compositing mode
-class NodesToolshelfInput_input_comp(bpy.types.Panel):
+class NODES_PT_Input_input_comp(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Input"
     bl_space_type = 'NODE_EDITOR'
@@ -259,7 +259,7 @@ class NodesToolshelfInput_input_comp(bpy.types.Panel):
 
 
 #Input nodes tab, textures common panel. Texture mode
-class NodesToolshelfInput_input_tex(bpy.types.Panel):
+class NODES_PT_Input_input_tex(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Input"
     bl_space_type = 'NODE_EDITOR'
@@ -315,7 +315,7 @@ class NodesToolshelfInput_input_tex(bpy.types.Panel):
  
 
 #Input nodes tab, textures advanced panel. Just in Texture mode
-class NodesToolshelfInput_textures_tex(bpy.types.Panel):
+class NODES_PT_Input_textures_tex(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Textures"
     bl_space_type = 'NODE_EDITOR'
@@ -442,7 +442,7 @@ class NodesToolshelfInput_textures_tex(bpy.types.Panel):
 
 
 #Input nodes tab, Shader panel with prinicipled shader. Just in shader mode with Object and World mode
-class NodesToolshelfInput_shader(bpy.types.Panel):
+class NODES_PT_Input_shader(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Shader"
     bl_space_type = 'NODE_EDITOR'
@@ -508,7 +508,7 @@ class NodesToolshelfInput_shader(bpy.types.Panel):
 
 
 #Input nodes tab, Shader common panel. Just in shader mode with Object mode
-class NodesToolshelfInput_shader_common(bpy.types.Panel):
+class NODES_PT_Input_shader_common(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Shader Common"
     bl_space_type = 'NODE_EDITOR'
@@ -648,7 +648,7 @@ class NodesToolshelfInput_shader_common(bpy.types.Panel):
 
 
 #Input nodes tab, Shader Advanced panel. Just in shader mode
-class NodesToolshelfInput_shader_advanced(bpy.types.Panel):
+class NODES_PT_Input_shader_advanced(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Shader Advanced"
     bl_space_type = 'NODE_EDITOR'
@@ -739,7 +739,7 @@ class NodesToolshelfInput_shader_advanced(bpy.types.Panel):
             props.type = "ShaderNodeVolumeScatter"
 
 #Input nodes tab, textures advanced panel. Just in shader mode
-class NodesToolshelfInput_textures_shader(bpy.types.Panel):
+class NODES_PT_Input_textures_shader(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Textures"
     bl_space_type = 'NODE_EDITOR'
@@ -866,7 +866,7 @@ class NodesToolshelfInput_textures_shader(bpy.types.Panel):
 
 
 #Input nodes tab, Input panel. Just in texture and compositing mode
-class NodesToolshelfInput_input_advanced_comp(bpy.types.Panel):
+class NODES_PT_Input_input_advanced_comp(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Input Advanced"
     bl_space_type = 'NODE_EDITOR'
@@ -936,7 +936,7 @@ class NodesToolshelfInput_input_advanced_comp(bpy.types.Panel):
 
 
 #Input nodes tab, Input panel. Just in texture mode
-class NodesToolshelfInput_input_advanced_tex(bpy.types.Panel):
+class NODES_PT_Input_input_advanced_tex(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Input Advanced"
     bl_space_type = 'NODE_EDITOR'
@@ -989,7 +989,7 @@ class NodesToolshelfInput_input_advanced_tex(bpy.types.Panel):
 
 
 #Input nodes tab, Pattern panel. # Just in texture mode
-class NodesToolshelfInput_pattern(bpy.types.Panel):
+class NODES_PT_Input_pattern(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Pattern"
     bl_space_type = 'NODE_EDITOR'
@@ -1042,7 +1042,7 @@ class NodesToolshelfInput_pattern(bpy.types.Panel):
 
 
 #Input nodes tab, Color panel. Just in compositing mode
-class NodesToolshelfInput_color_comp(bpy.types.Panel):
+class NODES_PT_Input_color_comp(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Color"
     bl_space_type = 'NODE_EDITOR'
@@ -1132,7 +1132,7 @@ class NodesToolshelfInput_color_comp(bpy.types.Panel):
 
 
 #Input nodes tab, Color panel. Just in texture mode
-class NodesToolshelfInput_color_tex(bpy.types.Panel):
+class NODES_PT_Input_color_tex(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Color"
     bl_space_type = 'NODE_EDITOR'
@@ -1222,7 +1222,7 @@ class NodesToolshelfInput_color_tex(bpy.types.Panel):
 
 
 #Input nodes tab, Input Advanced panel. Just in compositing mode
-class NodesToolshelfInput_color_advanced(bpy.types.Panel):
+class NODES_PT_Input_color_advanced(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Color Advanced"
     bl_space_type = 'NODE_EDITOR'
@@ -1309,7 +1309,7 @@ class NodesToolshelfInput_color_advanced(bpy.types.Panel):
 
 
 #Input nodes tab, Output panel, Shader mode 
-class NodesToolshelfInput_output_shader(bpy.types.Panel):
+class NODES_PT_Input_output_shader(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Output"
     bl_space_type = 'NODE_EDITOR'
@@ -1390,7 +1390,7 @@ class NodesToolshelfInput_output_shader(bpy.types.Panel):
 
 
 #Input nodes tab, Output panel, Compositing mode
-class NodesToolshelfInput_output_comp(bpy.types.Panel):
+class NODES_PT_Input_output_comp(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Output"
     bl_space_type = 'NODE_EDITOR'
@@ -1471,7 +1471,7 @@ class NodesToolshelfInput_output_comp(bpy.types.Panel):
 
 
 #Input nodes tab, Output panel, Texture modce
-class NodesToolshelfInput_output_tex(bpy.types.Panel):
+class NODES_PT_Input_output_tex(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Output"
     bl_space_type = 'NODE_EDITOR'
@@ -1526,7 +1526,7 @@ class NodesToolshelfInput_output_tex(bpy.types.Panel):
 # ------------- Modify tab -------------------------------
 
 #Modify nodes tab, Modify common panel. Just in compositing mode
-class NodesToolshelfModify_matte(bpy.types.Panel):
+class NODES_PT_Modify_matte(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Matte"
     bl_space_type = 'NODE_EDITOR'
@@ -1673,7 +1673,7 @@ class NodesToolshelfModify_matte(bpy.types.Panel):
 
 
 #Modify nodes tab, Filter panel. Just in compositing mode
-class NodesToolshelfModify_filter(bpy.types.Panel):
+class NODES_PT_Modify_filter(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Filter"
     bl_space_type = 'NODE_EDITOR'
@@ -1831,7 +1831,7 @@ class NodesToolshelfModify_filter(bpy.types.Panel):
             row.alignment = 'LEFT'
 
 #Modify nodes tab, Input panel. Just in shader mode
-class NodesToolshelfModify_input(bpy.types.Panel):
+class NODES_PT_Modify_input(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Input"
     bl_space_type = 'NODE_EDITOR'
@@ -2008,7 +2008,7 @@ class NodesToolshelfModify_input(bpy.types.Panel):
 
 
 #Modify nodes tab, converter panel. Just in shader mode
-class NodesToolshelfModify_converter_shader(bpy.types.Panel):
+class NODES_PT_Modify_converter_shader(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Converter"
     bl_space_type = 'NODE_EDITOR'
@@ -2157,7 +2157,7 @@ class NodesToolshelfModify_converter_shader(bpy.types.Panel):
             
 
 #Modify nodes tab, converter panel. Just in compositing mode
-class NodesToolshelfModify_converter_comp(bpy.types.Panel):
+class NODES_PT_Modify_converter_comp(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Converter"
     bl_space_type = 'NODE_EDITOR'
@@ -2330,7 +2330,7 @@ class NodesToolshelfModify_converter_comp(bpy.types.Panel):
 
 
 #Modify nodes tab, converter panel. Just in texture mode
-class NodesToolshelfModify_converter_tex(bpy.types.Panel):
+class NODES_PT_Modify_converter_tex(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Converter"
     bl_space_type = 'NODE_EDITOR'
@@ -2411,7 +2411,7 @@ class NodesToolshelfModify_converter_tex(bpy.types.Panel):
 
 
 #Modify nodes tab, vector panel. Just in shader mode
-class NodesToolshelfModify_vector_shader(bpy.types.Panel):
+class NODES_PT_Modify_vector_shader(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Vector"
     bl_space_type = 'NODE_EDITOR'
@@ -2495,7 +2495,7 @@ class NodesToolshelfModify_vector_shader(bpy.types.Panel):
 
 
 #Modify nodes tab, vector panel. Just in compositing mode
-class NodesToolshelfModify_vector_comp(bpy.types.Panel):
+class NODES_PT_Modify_vector_comp(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Vector"
     bl_space_type = 'NODE_EDITOR'
@@ -2578,7 +2578,7 @@ class NodesToolshelfModify_vector_comp(bpy.types.Panel):
 
 
 #Modify nodes tab, distort panel. Just in texture mode
-class NodesToolshelfModify_distort_tex(bpy.types.Panel):
+class NODES_PT_Modify_distort_tex(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Distort"
     bl_space_type = 'NODE_EDITOR'
@@ -2647,7 +2647,7 @@ class NodesToolshelfModify_distort_tex(bpy.types.Panel):
 
 
 #Modify nodes tab, distort panel. Just in compositing mode
-class NodesToolshelfModify_distort_comp(bpy.types.Panel):
+class NODES_PT_Modify_distort_comp(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Distort"
     bl_space_type = 'NODE_EDITOR'
@@ -2803,7 +2803,7 @@ class NodesToolshelfModify_distort_comp(bpy.types.Panel):
 
 
 #Modify nodes tab,color common panel. Just in shader mode.
-class NodesToolshelfModify_color(bpy.types.Panel):
+class NODES_PT_Modify_color(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Color"
     bl_space_type = 'NODE_EDITOR'
@@ -2903,7 +2903,7 @@ class NodesToolshelfModify_color(bpy.types.Panel):
 
 
 #Modify nodes tab, Script panel. Just in shader mode
-class NodesToolshelfModify_script(bpy.types.Panel):
+class NODES_PT_Modify_script(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Script"
     bl_space_type = 'NODE_EDITOR'
@@ -2950,7 +2950,7 @@ class NodesToolshelfModify_script(bpy.types.Panel):
 # ------------- Relations tab -------------------------------
             
 #Relations tab, Relations Panel
-class NodesToolshelfRelations_group(bpy.types.Panel):
+class NODES_PT_Relations_group(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Group"
     bl_space_type = 'NODE_EDITOR'
@@ -3001,7 +3001,7 @@ class NodesToolshelfRelations_group(bpy.types.Panel):
 
 
 #Relations tab, Relations Panel
-class NodesToolshelfRelations_layout(bpy.types.Panel):
+class NODES_PT_Relations_layout(bpy.types.Panel):
     """Creates a Panel in the Object properties window"""
     bl_label = "Layout"
     bl_space_type = 'NODE_EDITOR'
@@ -3060,39 +3060,39 @@ class NodesToolshelfRelations_layout(bpy.types.Panel):
 
 
 classes = (
-    NodesToolshelfProp,
-    NodesToolshelfInput_connect,
-    NodesToolshelfInput_input_shader,
-    NodesToolshelfInput_input_comp,
-    NodesToolshelfInput_input_tex,
-    NodesToolshelfInput_textures_tex,
-    NodesToolshelfInput_shader,
-    NodesToolshelfInput_shader_common,
-    NodesToolshelfInput_shader_advanced,
-    NodesToolshelfInput_textures_shader,
-    NodesToolshelfInput_input_advanced_comp,
-    NodesToolshelfInput_input_advanced_tex,
-    NodesToolshelfInput_pattern,
-    NodesToolshelfInput_color_comp,
-    NodesToolshelfInput_color_tex,
-    NodesToolshelfInput_color_advanced,
-    NodesToolshelfInput_output_shader,
-    NodesToolshelfInput_output_comp,
-    NodesToolshelfInput_output_tex,
-    NodesToolshelfModify_matte,
-    NodesToolshelfModify_filter,
-    NodesToolshelfModify_input,
-    NodesToolshelfModify_color,
-    NodesToolshelfModify_converter_shader,
-    NodesToolshelfModify_converter_comp,
-    NodesToolshelfModify_converter_tex,
-    NodesToolshelfModify_vector_shader,
-    NodesToolshelfModify_vector_comp,
-    NodesToolshelfModify_distort_tex,
-    NodesToolshelfModify_distort_comp,
-    NodesToolshelfModify_script,
-    NodesToolshelfRelations_group,
-    NodesToolshelfRelations_layout, 
+    NODES_PT_Prop,
+    NODES_PT_Input_connect,
+    NODES_PT_Input_input_shader,
+    NODES_PT_Input_input_comp,
+    NODES_PT_Input_input_tex,
+    NODES_PT_Input_textures_tex,
+    NODES_PT_Input_shader,
+    NODES_PT_Input_shader_common,
+    NODES_PT_Input_shader_advanced,
+    NODES_PT_Input_textures_shader,
+    NODES_PT_Input_input_advanced_comp,
+    NODES_PT_Input_input_advanced_tex,
+    NODES_PT_Input_pattern,
+    NODES_PT_Input_color_comp,
+    NODES_PT_Input_color_tex,
+    NODES_PT_Input_color_advanced,
+    NODES_PT_Input_output_shader,
+    NODES_PT_Input_output_comp,
+    NODES_PT_Input_output_tex,
+    NODES_PT_Modify_matte,
+    NODES_PT_Modify_filter,
+    NODES_PT_Modify_input,
+    NODES_PT_Modify_color,
+    NODES_PT_Modify_converter_shader,
+    NODES_PT_Modify_converter_comp,
+    NODES_PT_Modify_converter_tex,
+    NODES_PT_Modify_vector_shader,
+    NODES_PT_Modify_vector_comp,
+    NODES_PT_Modify_distort_tex,
+    NODES_PT_Modify_distort_comp,
+    NODES_PT_Modify_script,
+    NODES_PT_Relations_group,
+    NODES_PT_Relations_layout, 
 )
 
 if __name__ == "__main__":  # only for live edit.
