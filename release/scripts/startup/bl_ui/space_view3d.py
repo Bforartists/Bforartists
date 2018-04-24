@@ -3652,7 +3652,7 @@ class VIEW3D_PT_view3d_stereo(Panel):
 class VIEW3D_PT_view3d_shading(Panel):
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'UI'
-    bl_label = "Shading"
+    bl_label = "Object Shading"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
