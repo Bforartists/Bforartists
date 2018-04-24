@@ -1,4 +1,4 @@
-bl_info = {
+﻿bl_info = {
     "name": "Add primitive modals",
     "author": "CC",
     "version": (1, 0),
@@ -69,7 +69,7 @@ def add_object_button(self, context):
 
 
 #Add Buttons to the Tool panel
-class ModalAddPanel(bpy.types.Panel):
+class VIEW3D_PT_ModalAddPanel(bpy.types.Panel):
     """Creates a Panel in the Toolbar"""
     bl_space_type = 'VIEW_3D'
     bl_region_type = 'TOOLS'
@@ -87,14 +87,14 @@ class ModalAddPanel(bpy.types.Panel):
 def register():
 
     bpy.utils.register_class(addPrimitiveModals)
-    bpy.utils.register_class(ModalAddPanel)
+    bpy.utils.register_class(VIEW3D_PT_ModalAddPanel)
     bpy.types.INFO_MT_mesh_add.prepend(add_object_button)
     bpy.utils.register_module(__name__)
 
 def unregister():
 
     bpy.utils.unregister_class(addPrimitiveModals)
-    bpy.utils.unregister_class(ModalAddPanel)
+    bpy.utils.unregister_class(VIEW3D_PT_ModalAddPanel)
     bpy.types.INFO_MT_mesh_add.remove(add_object_button)
     bpy.utils.unregister_module(__name__)
     
