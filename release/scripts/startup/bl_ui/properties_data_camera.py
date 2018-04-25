@@ -131,8 +131,8 @@ class DATA_PT_lens(CameraButtonsPanel, Panel):
 
         col = split.column(align=True)
         col.label(text="Clipping:")
-        col.prop(cam, "clip_start", text="Start")
-        col.prop(cam, "clip_end", text="End")
+        col.prop(cam, "clip_start", text="Near")
+        col.prop(cam, "clip_end", text="Far")
 
 
 class DATA_PT_camera_stereoscopy(CameraButtonsPanel, Panel):
