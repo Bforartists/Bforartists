@@ -66,7 +66,7 @@ void BKE_camera_init(Camera *cam)
 	cam->sensor_x = DEFAULT_SENSOR_WIDTH;
 	cam->sensor_y = DEFAULT_SENSOR_HEIGHT;
 	cam->clipsta = 0.1f;
-	cam->clipend = 100.0f;
+	cam->clipend = 1000.0f;
 	cam->drawsize = 0.5f;
 	cam->ortho_scale = 6.0;
 	cam->flag |= CAM_SHOWPASSEPARTOUT;
@@ -192,7 +192,7 @@ void BKE_camera_params_init(CameraParams *params)
 
 	/* fallback for non camera objects */
 	params->clipsta = 0.1f;
-	params->clipend = 100.0f;
+	params->clipend = 1000.0f;
 }
 
 void BKE_camera_params_from_object(CameraParams *params, const Object *ob)
