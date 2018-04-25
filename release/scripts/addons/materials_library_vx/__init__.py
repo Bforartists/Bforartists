@@ -738,8 +738,8 @@ bpy.ops.wm.save_mainfile(filepath="%s", check_existing=False, compress=True)''' 
 # Scene.matlib = PointerProperty(type = matlibProperties)
 
 ### MENUS
-class matlibLibsMenu(Menu):
-  bl_idname = "matlib.libs_menu"
+class MATLIB_MT_LibsMenu(Menu):
+  #bl_idname = "matlib.libs_menu"
   bl_label = "Libraries Menu"
 
   def draw(self, context):
@@ -749,8 +749,8 @@ class matlibLibsMenu(Menu):
     for i, lib in enumerate(libs):
       layout.operator("matlib.operator", text=lib.shortname).cmd="lib"+str(i)
 
-class matlibCatsMenu(Menu):
-  bl_idname = "matlib.cats_menu"
+class MATLIB_MT_CatsMenu(Menu):
+  #bl_idname = "matlib.cats_menu"
   bl_label = "Categories Menu"
 
   def draw(self, context):
@@ -1115,7 +1115,7 @@ for mat in mats:
     return {'FINISHED'}
 
 
-class matlibvxPanel(Panel):
+class MATLIB_PT_vxPanel(Panel):
   bl_label = "Material Library VX"
   bl_space_type = "PROPERTIES"
   bl_region_type = "WINDOW"
@@ -1141,7 +1141,7 @@ class matlibvxPanel(Panel):
     else:
       text = "Select a Library"
 
-    row.menu("matlib.libs_menu",text=text)
+    row.menu("MATLIB_MT_LibsMenu",text=text)
     row.operator("matlib.operator", icon="ZOOMIN", text="").cmd = "LIBRARY_ADD"
     if matlib.active_material:
       row.label(matlib.active_material.category)
@@ -1179,7 +1179,7 @@ class matlibvxPanel(Panel):
     row = layout.row(align=True)
     text = "All"
     if matlib.current_category: text = matlib.current_category
-    row.menu("matlib.cats_menu",text=text)
+    row.menu("MATLIB_MT_CatsMenu",text=text)
     row.prop(matlib, "filter", icon="FILTER", text="")
     row.operator("matlib.operator", icon="FILE_PARENT", text="").cmd="FILTER_SET"
     row.operator("matlib.operator", icon="ZOOMIN", text="").cmd="FILTER_ADD"
@@ -1202,7 +1202,7 @@ class matlibvxPanel(Panel):
 #      else:
 #        row.label("Library not found!.")
 
-#classes = [matlibvxPanel, matlibOperator, matlibLibsMenu, matlibCatsMenu]
+#classes = [MATLIB_PT_vxPanel, matlibOperator, matlibLibsMenu, matlibCatsMenu]
 #print(bpy.context.scene)
 
 
