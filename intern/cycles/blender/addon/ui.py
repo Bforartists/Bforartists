@@ -1,4 +1,4 @@
-#
+﻿#
 # Copyright 2011-2013 Blender Foundation
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -1859,7 +1859,7 @@ def draw_pause(self, context):
             layout.prop(cscene, "preview_pause", icon="PAUSE", text="")
             layout.prop(cscene, "preview_active_layer", icon="RENDERLAYERS", text=layername)
 
-class CyclesRender_PT_bake(bpy.types.Panel):
+class CYCLES_RENDER_PT_bake(bpy.types.Panel):
     bl_label = "Bake Cycles"
     bl_space_type = 'VIEW_3D'
     bl_region_type = "TOOLS"
@@ -2044,7 +2044,6 @@ classes = (
     CYCLES_RENDER_PT_debug,
     CYCLES_PARTICLE_PT_curve_settings,
     CYCLES_SCENE_PT_simplify,
-    CyclesRender_PT_bake,
 )
 
 
