@@ -3441,8 +3441,8 @@ class VIEW3D_PT_view3d_properties(Panel):
           
         col = layout.column(align=True)
         col.label(text="Clip:")
-        col.prop(view, "clip_start", text="Start")
-        col.prop(view, "clip_end", text="End")
+        col.prop(view, "clip_start", text="Near")
+        col.prop(view, "clip_end", text="Far")
         
         col = layout.column(align=True)
         col.prop(view, "use_render_border")
