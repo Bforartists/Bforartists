@@ -1,4 +1,4 @@
-﻿bl_info = {
+bl_info = {
     "name": "Add primitive modals",
     "author": "CC",
     "version": (1, 0),
