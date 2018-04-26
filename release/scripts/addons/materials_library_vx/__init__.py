@@ -739,7 +739,6 @@ bpy.ops.wm.save_mainfile(filepath="%s", check_existing=False, compress=True)''' 
 
 ### MENUS
 class MATLIB_MT_LibsMenu(Menu):
-  #bl_idname = "matlib.libs_menu"
   bl_label = "Libraries Menu"
 
   def draw(self, context):
@@ -750,7 +749,6 @@ class MATLIB_MT_LibsMenu(Menu):
       layout.operator("matlib.operator", text=lib.shortname).cmd="lib"+str(i)
 
 class MATLIB_MT_CatsMenu(Menu):
-  #bl_idname = "matlib.cats_menu"
   bl_label = "Categories Menu"
 
   def draw(self, context):
@@ -776,7 +774,7 @@ class MATLIB_MT_CatsMenu(Menu):
 
 
 
-class MatlibAdd(Operator):
+class MATLIB_OT_add(Operator):
   """Add active material to library"""
   bl_idname = "matlib.add"
   bl_label = "Add active material"
@@ -794,7 +792,7 @@ class MatlibAdd(Operator):
       self.report({success[0]}, success[1])
     return {'FINISHED'}
 
-class MatlibRemove(Operator):
+class MATLIB_OT_remove(Operator):
   """Remove material from library"""
   bl_idname = "matlib.remove"
   bl_label = "Remove material from library"
@@ -812,7 +810,7 @@ class MatlibRemove(Operator):
       self.report({success[0]}, success[1])
     return {'FINISHED'}
 
-class MatlibReload(Operator):
+class MATLIB_OT_remove(Operator):
   """Reload library"""
   bl_idname = "matlib.reload"
   bl_label = "Reload library"
@@ -833,7 +831,7 @@ class MatlibReload(Operator):
     return {'FINISHED'}
 
 
-class MatlibApply(Operator):
+class MATLIB_OT_apply(Operator):
   """Apply selected material"""
   bl_idname = "matlib.apply"
   bl_label = "Apply material"
@@ -855,7 +853,7 @@ class MatlibApply(Operator):
     return {'FINISHED'}
 
 
-class MatlibPreview(Operator):
+class MATLIB_OT_preview(Operator):
   """Preview selected material"""
   bl_idname = "matlib.preview"
   bl_label = "Preview selected material"
@@ -877,7 +875,7 @@ class MatlibPreview(Operator):
     return {'FINISHED'}
 
 
-class MatlibFlush(Operator):
+class MATLIB_OT_flush(Operator):
   """Flush unused materials"""
   bl_idname = "matlib.flush"
   bl_label = "Flush unused materials"
@@ -914,7 +912,7 @@ class MatlibFlush(Operator):
     return {'FINISHED'}
 
 
-class matlibOperator(Operator):
+class MATLIB_OT_operator(Operator):
   """Add, Remove, Reload, Apply, Preview, Clean Material"""
   bl_label = "New"
   bl_idname = "matlib.operator"
@@ -1170,8 +1168,6 @@ class MATLIB_PT_vxPanel(Panel):
     col.operator("matlib.add", icon="ZOOMIN", text="")
     col.operator("matlib.remove", icon="ZOOMOUT", text="")
     col.operator("matlib.reload", icon="FILE_REFRESH", text="")
-    #col.operator("matlib.apply", icon="MATERIAL", text="")
-    #col.operator("matlib.preview", icon="COLOR", text="")
     col.operator("matlib.flush", icon="GHOST_DISABLED", text="")
     col.prop(matlib, "show_prefs", icon="MODIFIER", text="")
 
@@ -1202,7 +1198,7 @@ class MATLIB_PT_vxPanel(Panel):
 #      else:
 #        row.label("Library not found!.")
 
-#classes = [MATLIB_PT_vxPanel, matlibOperator, matlibLibsMenu, matlibCatsMenu]
+#classes = [MATLIB_PT_vxPanel, MATLIB_OT_operator, MATLIB_MT_LibsMenu, MATLIB_MT_CatsMenu]
 #print(bpy.context.scene)
 
 
