@@ -1383,26 +1383,56 @@ class INFO_MT_curve_add(Menu):
     bl_idname = "INFO_MT_curve_add"
     bl_label = "Curve"
 
+    @staticmethod
+    def draw_add_curve(layout, label=False):
+        if label:
+            layout.label(text="Bezier:")
+        layout.operator("curve.primitive_bezier_curve_add", text="Bezier            ", icon='CURVE_BEZCURVE')
+        layout.operator("curve.primitive_bezier_circle_add", text="Circle             ", icon='CURVE_BEZCIRCLE')
+
+        if label:
+            layout.label(text="Nurbs:")
+        else:
+            layout.separator()
+        layout.operator("curve.primitive_nurbs_curve_add", text="Nurbs Curve  ", icon='CURVE_NCURVE')
+        layout.operator("curve.primitive_nurbs_circle_add", text="Nurbs Circle  ", icon='CURVE_NCIRCLE')
+        layout.operator("curve.primitive_nurbs_path_add", text="Path               ", icon='CURVE_PATH')
+        
+        layout.separator()
+
+        layout.operator("curve.draw", icon='LINE_DATA')
+        
+
     def draw(self, context):
         from .space_view3d_toolbar import VIEW3D_PT_tools_add_object
         layout = self.layout
 
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        VIEW3D_PT_tools_add_object.draw_add_curve(layout)
+        self.draw_add_curve(layout)
 
 
 class INFO_MT_surface_add(Menu):
     bl_idname = "INFO_MT_surface_add"
     bl_label = "Surface"
 
+    @staticmethod
+    def draw_add_surface(layout):
+        layout.operator("surface.primitive_nurbs_surface_curve_add", text="Surface Curve ", icon='SURFACE_NCURVE')
+        layout.operator("surface.primitive_nurbs_surface_circle_add", text="Surface Circle ", icon='SURFACE_NCIRCLE')
+        layout.operator("surface.primitive_nurbs_surface_surface_add", text="Surface Patch  ", icon='SURFACE_NSURFACE')
+        layout.operator("surface.primitive_nurbs_surface_cylinder_add", text="Surface Cylinder", icon='SURFACE_NCYLINDER')
+        layout.operator("surface.primitive_nurbs_surface_sphere_add", text="Surface Sphere", icon='SURFACE_NSPHERE')
+        layout.operator("surface.primitive_nurbs_surface_torus_add", text="Surface Torus  ", icon='SURFACE_NTORUS')
+
+
     def draw(self, context):
         from .space_view3d_toolbar import VIEW3D_PT_tools_add_object
         layout = self.layout
 
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        VIEW3D_PT_tools_add_object.draw_add_surface(layout)
+        self.draw_add_surface(layout)
 
 
 class INFO_MT_metaball_add(Menu):
@@ -1413,7 +1443,7 @@ class INFO_MT_metaball_add(Menu):
         layout = self.layout
 
         layout.operator_context = 'INVOKE_REGION_WIN'
-        #layout.operator_enum("object.metaball_add", "type")
+        layout.operator_enum("object.metaball_add", "type")
 
 
 class INFO_MT_edit_curve_add(Menu):
@@ -1440,7 +1470,7 @@ class INFO_MT_edit_armature_add(Menu):
         layout = self.layout
 
         layout.operator_context = 'EXEC_REGION_WIN'
-        #layout.operator("armature.bone_primitive_add", text="Single Bone", icon='BONE_DATA')
+        layout.operator("armature.bone_primitive_add", text="Single Bone", icon='BONE_DATA')
 
 
 class INFO_MT_armature_add(Menu):
@@ -1451,7 +1481,7 @@ class INFO_MT_armature_add(Menu):
         layout = self.layout
 
         layout.operator_context = 'EXEC_REGION_WIN'
-        #layout.operator("object.armature_add", text="Single Bone", icon='BONE_DATA')
+        layout.operator("object.armature_add", text="Single Bone", icon='BONE_DATA')
 
 
 class INFO_MT_lamp_add(Menu):
@@ -1462,7 +1492,7 @@ class INFO_MT_lamp_add(Menu):
         layout = self.layout
 
         layout.operator_context = 'INVOKE_REGION_WIN'
-        #layout.operator_enum("object.lamp_add", "type")
+        layout.operator_enum("object.lamp_add", "type")
 
 
 class INFO_MT_add(Menu):
@@ -1477,21 +1507,46 @@ class INFO_MT_add(Menu):
         #       "align_view" to work on first call (see [#32719]).
         layout.operator_context = 'EXEC_REGION_WIN'
 
+        # layout.operator_menu_enum("object.mesh_add", "type", text="Mesh", icon='OUTLINER_OB_MESH')
         layout.menu("INFO_MT_mesh_add", icon='OUTLINER_OB_MESH')
+
+        # layout.operator_menu_enum("object.curve_add", "type", text="Curve", icon='OUTLINER_OB_CURVE')
         layout.menu("INFO_MT_curve_add", icon='OUTLINER_OB_CURVE')
+        # layout.operator_menu_enum("object.surface_add", "type", text="Surface", icon='OUTLINER_OB_SURFACE')
         layout.menu("INFO_MT_surface_add", icon='OUTLINER_OB_SURFACE')
         layout.menu("INFO_MT_metaball_add", text="Metaball", icon='OUTLINER_OB_META')
+        layout.operator("object.text_add", text="Text", icon='OUTLINER_OB_FONT')
         layout.separator()
 
         layout.menu("INFO_MT_armature_add", icon='OUTLINER_OB_ARMATURE')
-        #layout.operator_menu_enum("object.empty_add", "type", text="Empty", icon='OUTLINER_OB_EMPTY')
+        layout.operator("object.add", text="Lattice", icon='OUTLINER_OB_LATTICE').type = 'LATTICE'
+        layout.operator_menu_enum("object.empty_add", "type", text="Empty", icon='OUTLINER_OB_EMPTY')
         layout.separator()
 
+        layout.operator("object.speaker_add", text="Speaker", icon='OUTLINER_OB_SPEAKER')
+        layout.separator()
+
+        if INFO_MT_camera_add.is_extended():
+            layout.menu("INFO_MT_camera_add", icon='OUTLINER_OB_CAMERA')
+        else:
+            INFO_MT_camera_add.draw(self, context)
+
         layout.menu("INFO_MT_lamp_add", icon='OUTLINER_OB_LAMP')
-        #layout.separator()
+        layout.separator()
 
-        #layout.operator_menu_enum("object.effector_add", "type", text="Force Field", icon='OUTLINER_OB_EMPTY')
+        layout.operator_menu_enum("object.effector_add", "type", text="Force Field", icon='OUTLINER_OB_FORCE_FIELD')
+        layout.separator()
 
+        if len(bpy.data.groups) > 10:
+            layout.operator_context = 'INVOKE_REGION_WIN'
+            layout.operator("object.group_instance_add", text="Group Instance...", icon='OUTLINER_OB_GROUP_INSTANCE')
+        else:
+            layout.operator_menu_enum(
+                "object.group_instance_add",
+                "group",
+                text="Group Instance",
+                icon='OUTLINER_OB_GROUP_INSTANCE',
+            )
 
 
 # ********** Object menu **********
@@ -1677,46 +1732,6 @@ class INFO_MT_camera_add(Menu):
         layout = self.layout
         layout.operator_context = 'EXEC_REGION_WIN'
         layout.operator("object.camera_add", text="Camera", icon='OUTLINER_OB_CAMERA')
-
-
-class INFO_MT_add(Menu):
-    bl_label = "Add"
-
-    def draw(self, context):
-        layout = self.layout
-
-        # note, don't use 'EXEC_SCREEN' or operators wont get the 'v3d' context.
-
-        # Note: was EXEC_AREA, but this context does not have the 'rv3d', which prevents
-        #       "align_view" to work on first call (see [#32719]).
-        layout.operator_context = 'EXEC_REGION_WIN'
-
-        #layout.operator_menu_enum("object.mesh_add", "type", text="Mesh", icon='OUTLINER_OB_MESH')
-        layout.menu("INFO_MT_mesh_add", icon='OUTLINER_OB_MESH')
-
-        #layout.operator_menu_enum("object.curve_add", "type", text="Curve", icon='OUTLINER_OB_CURVE')
-        layout.menu("INFO_MT_curve_add", icon='OUTLINER_OB_CURVE')
-        #layout.operator_menu_enum("object.surface_add", "type", text="Surface", icon='OUTLINER_OB_SURFACE')
-        layout.menu("INFO_MT_surface_add", icon='OUTLINER_OB_SURFACE')
-        layout.menu("INFO_MT_metaball_add", text="Metaball", icon='OUTLINER_OB_META')
-        layout.operator("object.text_add", text="Text", icon='OUTLINER_OB_FONT')
-        layout.separator()
-
-        layout.menu("INFO_MT_armature_add", icon='OUTLINER_OB_ARMATURE')
-        layout.operator("object.add", text="Lattice", icon='OUTLINER_OB_LATTICE').type = 'LATTICE'
-        layout.operator_menu_enum("object.empty_add", "type", text="Empty", icon='OUTLINER_OB_EMPTY')
-        layout.separator()
-
-        layout.operator("object.speaker_add", text="Speaker", icon='OUTLINER_OB_SPEAKER')
-        layout.separator()
-
-        if INFO_MT_camera_add.is_extended():
-            layout.menu("INFO_MT_camera_add", icon='OUTLINER_OB_CAMERA')
-        else:
-            INFO_MT_camera_add.draw(self, context)
-
-        layout.menu("INFO_MT_lamp_add", icon='OUTLINER_OB_LAMP')
-        layout.separator()
 
 
 # ********** Object menu **********
