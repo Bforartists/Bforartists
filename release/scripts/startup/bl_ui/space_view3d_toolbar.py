@@ -267,7 +267,7 @@ class VIEW3D_PT_tools_object(View3DPanel, Panel):
 class VIEW3D_PT_tools_add_object(View3DPanel, Panel):
     bl_category = "Create"
     bl_context = "objectmode"
-    bl_label = "Add Primitive"
+    bl_label = "Mesh"
 
     @staticmethod
     def draw_add_mesh(layout, label=False):
@@ -314,6 +314,100 @@ class VIEW3D_PT_tools_add_object(View3DPanel, Panel):
         row.operator("mesh.primitive_grid_add", text = "", icon='MESH_GRID')
         row.operator("mesh.primitive_monkey_add", text = "", icon='MESH_MONKEY')
 
+
+    def draw(self, context):
+        layout = self.layout
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
+
+        col = layout.column(align=True)
+        if not view.show_iconbuttons: 
+            self.draw_add_mesh(col)
+        else:
+            self.draw_add_mesh_icons(col)
+
+
+class VIEW3D_PT_tools_add_misc(View3DPanel, Panel):
+    bl_category = "Create"
+    bl_context = "objectmode"
+    bl_label = "Misc"
+
+    @staticmethod
+    def draw_add_other(layout):
+        layout.operator("object.text_add", text="Text                ", icon='OUTLINER_OB_FONT')
+        layout.operator("object.armature_add", text="Armature       ", icon='OUTLINER_OB_ARMATURE')
+        layout.operator("object.add", text="Lattice           ", icon='OUTLINER_OB_LATTICE').type = 'LATTICE'
+        layout.operator("object.camera_add", text="Camera          ", icon='OUTLINER_OB_CAMERA')
+        layout.operator("object.speaker_add", text="Speaker         ", icon='OUTLINER_OB_SPEAKER')
+        
+
+    @staticmethod
+    def draw_add_other_icons(layout):
+        row = layout.row(align=False)
+        row.alignment = 'LEFT'
+        row.operator("object.text_add", text = "", icon='OUTLINER_OB_FONT')
+        row.operator("object.armature_add", text = "", icon='OUTLINER_OB_ARMATURE')
+        row.operator("object.add", text = "", icon='OUTLINER_OB_LATTICE').type = 'LATTICE'
+        row.operator("object.camera_add", text = "", icon='OUTLINER_OB_CAMERA')
+        layout.separator()
+        row = layout.row(align=False)
+        row.operator("object.speaker_add", text = "", icon='OUTLINER_OB_SPEAKER')
+
+
+    def draw(self, context):
+        layout = self.layout
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
+
+        obj = context.active_object
+        mode_string = context.mode
+        edit_object = context.edit_object
+        gp_edit = context.gpencil_data and context.gpencil_data.use_stroke_edit_mode
+
+        col = layout.column(align=True)
+        if not view.show_iconbuttons:
+            self.draw_add_other(col)
+        else:
+            self.draw_add_other_icons(col)
+
+        # ################## Group Instance
+        # note, don't use 'EXEC_SCREEN' or operators wont get the 'v3d' context.
+
+        # Note: was EXEC_AREA, but this context does not have the 'rv3d', which prevents
+        #       "align_view" to work on first call (see [#32719]).
+
+        layout.operator_context = 'EXEC_REGION_WIN'
+
+        if len(bpy.data.groups) > 10:
+            layout.operator_context = 'INVOKE_REGION_WIN'
+            layout.operator("object.group_instance_add", text="Group Instance...", icon='OUTLINER_OB_GROUP_INSTANCE')
+        else:
+            layout.operator_menu_enum("object.group_instance_add", "group", text="Group Instance", icon='OUTLINER_OB_GROUP_INSTANCE')
+
+        # #######################
+
+        # Add menu for addons.
+        col = layout.column(align=True)
+        col.label(text="Addons add:")
+        if gp_edit:
+            pass
+        elif mode_string == 'OBJECT':
+            col.menu("INFO_MT_add", text="Add")
+        elif mode_string == 'EDIT_MESH':
+            col.menu("INFO_MT_mesh_add", text="Add")
+        elif mode_string == 'EDIT_CURVE':
+            col.menu("INFO_MT_curve_add", text="Add")
+        elif mode_string == 'EDIT_SURFACE':
+            col.menu("INFO_MT_surface_add", text="Add")
+        elif mode_string == 'EDIT_METABALL':
+            col.menu("INFO_MT_metaball_add", text="Add")
+        elif mode_string == 'EDIT_ARMATURE':
+            col.menu("INFO_MT_edit_armature_add", text="Add")
+
+class VIEW3D_PT_tools_add_curve(View3DPanel, Panel):
+    bl_category = "Create"
+    bl_context = "objectmode"
+    bl_label = "Curve"
+    bl_options = {'DEFAULT_CLOSED'}
+
     @staticmethod
     def draw_add_curve(layout, label=False):
         if label:
@@ -354,6 +448,22 @@ class VIEW3D_PT_tools_add_object(View3DPanel, Panel):
         
         row.operator("curve.draw", text = "", icon='LINE_DATA')
 
+    def draw(self, context):
+        layout = self.layout
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
+
+        col = layout.column(align=True)
+        if not view.show_iconbuttons: 
+            self.draw_add_curve(col)
+        else:
+            self.draw_add_curve_icons(col)
+
+class VIEW3D_PT_tools_add_surface(View3DPanel, Panel):
+    bl_category = "Create"
+    bl_context = "objectmode"
+    bl_label = "Surface"
+    bl_options = {'DEFAULT_CLOSED'}
+
     @staticmethod
     def draw_add_surface(layout):
         layout.operator("surface.primitive_nurbs_surface_curve_add", text="Surface Curve ", icon='SURFACE_NCURVE')
@@ -375,6 +485,22 @@ class VIEW3D_PT_tools_add_object(View3DPanel, Panel):
         row = layout.row(align=False)
         row.operator("surface.primitive_nurbs_surface_sphere_add", text = "", icon='SURFACE_NSPHERE')
         row.operator("surface.primitive_nurbs_surface_torus_add", text = "", icon='SURFACE_NTORUS')
+
+    def draw(self, context):
+        layout = self.layout
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
+
+        col = layout.column(align=True)
+        if not view.show_iconbuttons: 
+            self.draw_add_surface(col)
+        else:
+            self.draw_add_surface_icons(col)
+
+class VIEW3D_PT_tools_add_meta(View3DPanel, Panel):
+    bl_category = "Create"
+    bl_context = "objectmode"
+    bl_label = "Metaballs"
+    bl_options = {'DEFAULT_CLOSED'}
 
     @staticmethod
     def draw_add_mball(layout):
@@ -400,54 +526,18 @@ class VIEW3D_PT_tools_add_object(View3DPanel, Panel):
     def draw(self, context):
         layout = self.layout
         view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
-        col = layout.column(align=True)
-
-        col.label(text="Mesh:")
-        if not view.show_iconbuttons: 
-            self.draw_add_mesh(col)
-        else:
-            self.draw_add_mesh_icons(col)
 
         col = layout.column(align=True)
-        col.label(text="Curve:")
-        if not view.show_iconbuttons: 
-            self.draw_add_curve(col)
-        else:
-            self.draw_add_curve_icons(col)
-
-        col = layout.column(align=True)
-        col.label(text="Surface:")
-        if not view.show_iconbuttons: 
-            self.draw_add_surface(col)
-        else:
-            self.draw_add_surface_icons(col)
-
-        col = layout.column(align=True)
-        col.label(text="Metaball:")
         if not view.show_iconbuttons: 
             self.draw_add_mball(col)
         else:
             self.draw_add_mball_icons(col)
 
-        layout.separator()
-
-        # note, don't use 'EXEC_SCREEN' or operators wont get the 'v3d' context.
-
-        # Note: was EXEC_AREA, but this context does not have the 'rv3d', which prevents
-        #       "align_view" to work on first call (see [#32719]).
-
-        layout.operator_context = 'EXEC_REGION_WIN'
-
-        if len(bpy.data.groups) > 10:
-            layout.operator_context = 'INVOKE_REGION_WIN'
-            layout.operator("object.group_instance_add", text="Group Instance...", icon='OUTLINER_OB_GROUP_INSTANCE')
-        else:
-            layout.operator_menu_enum("object.group_instance_add", "group", text="Group Instance", icon='OUTLINER_OB_GROUP_INSTANCE')
-
-class VIEW3D_PT_tools_add_misc(View3DPanel, Panel):
+class VIEW3D_PT_tools_add_lamp(View3DPanel, Panel):
     bl_category = "Create"
     bl_context = "objectmode"
-    bl_label = "Add Misc"
+    bl_label = "Lamp"
+    bl_options = {'DEFAULT_CLOSED'}
 
     @staticmethod
     def draw_add_lamp(layout):
@@ -472,27 +562,27 @@ class VIEW3D_PT_tools_add_misc(View3DPanel, Panel):
         row = layout.row(align=False)
         row.operator("object.lamp_add", text = "", icon='LAMP_AREA').type= 'AREA' 
 
-    @staticmethod
-    def draw_add_other(layout):
-        layout.operator("object.text_add", text="Text                ", icon='OUTLINER_OB_FONT')
-        layout.operator("object.armature_add", text="Armature       ", icon='OUTLINER_OB_ARMATURE')
-        layout.operator("object.add", text="Lattice           ", icon='OUTLINER_OB_LATTICE').type = 'LATTICE'
-        layout.operator("object.camera_add", text="Camera          ", icon='OUTLINER_OB_CAMERA')
-        layout.operator("object.speaker_add", text="Speaker         ", icon='OUTLINER_OB_SPEAKER')
-        
 
-    @staticmethod
-    def draw_add_other_icons(layout):
-        row = layout.row(align=False)
-        row.alignment = 'LEFT'
-        row.operator("object.text_add", text = "", icon='OUTLINER_OB_FONT')
-        row.operator("object.armature_add", text = "", icon='OUTLINER_OB_ARMATURE')
-        row.operator("object.add", text = "", icon='OUTLINER_OB_LATTICE').type = 'LATTICE'
-        row.operator("object.camera_add", text = "", icon='OUTLINER_OB_CAMERA')
-        layout.separator()
-        row = layout.row(align=False)
-        row.operator("object.speaker_add", text = "", icon='OUTLINER_OB_SPEAKER')
+    def draw(self, context):
+        layout = self.layout
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
 
+        obj = context.active_object
+        mode_string = context.mode
+        edit_object = context.edit_object
+        gp_edit = context.gpencil_data and context.gpencil_data.use_stroke_edit_mode
+
+        col = layout.column(align=True)
+        if not view.show_iconbuttons: 
+            self.draw_add_lamp(col)
+        else:
+            self.draw_add_lamp_icons(col)
+
+class VIEW3D_PT_tools_add_empties(View3DPanel, Panel):
+    bl_category = "Create"
+    bl_context = "objectmode"
+    bl_label = "Empties"
+    bl_options = {'DEFAULT_CLOSED'}
 
     @staticmethod
     def draw_add_empties(layout):
@@ -519,6 +609,29 @@ class VIEW3D_PT_tools_add_misc(View3DPanel, Panel):
         row.operator("object.empty_add", text = "", icon='EMPTY_SINGLEARROW').type = 'SINGLE_ARROW'       
         row.operator("object.empty_add", text = "", icon='EMPTY_ARROWS').type = 'ARROWS'
         row.operator("object.empty_add", text = "", icon='EMPTY_IMAGE').type = 'IMAGE'
+
+
+    def draw(self, context):
+        layout = self.layout
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
+
+        obj = context.active_object
+        mode_string = context.mode
+        edit_object = context.edit_object
+        gp_edit = context.gpencil_data and context.gpencil_data.use_stroke_edit_mode
+
+        col = layout.column(align=True)
+        if not view.show_iconbuttons:
+            self.draw_add_empties(col)
+        else:
+            self.draw_add_empties_icons(col)
+
+
+class VIEW3D_PT_tools_add_forcefield(View3DPanel, Panel):
+    bl_category = "Create"
+    bl_context = "objectmode"
+    bl_label = "Force Field"
+    bl_options = {'DEFAULT_CLOSED'}
 
     @staticmethod
     def draw_add_force_field(layout):
@@ -571,50 +684,13 @@ class VIEW3D_PT_tools_add_misc(View3DPanel, Panel):
         gp_edit = context.gpencil_data and context.gpencil_data.use_stroke_edit_mode
 
         col = layout.column(align=True)
-        col.label(text="Lamp:")
-        if not view.show_iconbuttons: 
-            self.draw_add_lamp(col)
-        else:
-            self.draw_add_lamp_icons(col)
-
-        col = layout.column(align=True)
-        col.label(text="Other:")
-        if not view.show_iconbuttons:
-            self.draw_add_other(col)
-        else:
-            self.draw_add_other_icons(col)
-
-        col = layout.column(align=True)
-        col.label(text="Empties:")
-        if not view.show_iconbuttons:
-            self.draw_add_empties(col)
-        else:
-            self.draw_add_empties_icons(col)
-
-        col = layout.column(align=True)
-        col.label(text="Force Field:")
         if not view.show_iconbuttons:
             self.draw_add_force_field(col)
         else:
             self.draw_add_force_field_icons(col)
 
-        # Add menu for addons.
-        col = layout.column(align=True)
-        col.label(text="Addons add:")
-        if gp_edit:
-            pass
-        elif mode_string == 'OBJECT':
-            col.menu("INFO_MT_add", text="Add")
-        elif mode_string == 'EDIT_MESH':
-            col.menu("INFO_MT_mesh_add", text="Add")
-        elif mode_string == 'EDIT_CURVE':
-            col.menu("INFO_MT_curve_add", text="Add")
-        elif mode_string == 'EDIT_SURFACE':
-            col.menu("INFO_MT_surface_add", text="Add")
-        elif mode_string == 'EDIT_METABALL':
-            col.menu("INFO_MT_metaball_add", text="Add")
-        elif mode_string == 'EDIT_ARMATURE':
-            col.menu("INFO_MT_edit_armature_add", text="Add")
+        layout.operator_menu_enum("object.effector_add", "type", text="Force Field", icon='OUTLINER_OB_FORCE_FIELD')
+        layout.separator()
 
 
 class VIEW3D_PT_tools_relations(View3DPanel, Panel):
@@ -3536,6 +3612,12 @@ classes = (
     VIEW3D_PT_tools_object,
     VIEW3D_PT_tools_add_object,
     VIEW3D_PT_tools_add_misc,
+    VIEW3D_PT_tools_add_curve,
+    VIEW3D_PT_tools_add_surface,
+    VIEW3D_PT_tools_add_meta,   
+    VIEW3D_PT_tools_add_lamp,
+    VIEW3D_PT_tools_add_empties,
+    VIEW3D_PT_tools_add_forcefield,
     VIEW3D_PT_tools_relations,
     VIEW3D_PT_tools_animation,
     VIEW3D_PT_tools_rigid_body,
