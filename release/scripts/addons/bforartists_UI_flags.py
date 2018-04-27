@@ -69,7 +69,6 @@ class bforartists_UI_flags(AddonPreferences):
     SP_scene_audio_options = BoolProperty(name="Options", description="Contains Audio Options", default = False)
 
     #Subtab Bools Object Panel
-    SP_object_display_options = BoolProperty(name="Options", description="Contains some more options", default = False)
     SP_object_display_wireframecols = BoolProperty(name="Wireframe Colors", description="Contains the Wireframe color options\nRequires a selected object", default = False)
 
     #Subtab Bools Data Panel
@@ -159,7 +158,6 @@ class bforartists_UI_flags(AddonPreferences):
 
         row = layout.row()
 
-        row.prop(self, "SP_object_display_options")  
         row.prop(self, "SP_object_display_wireframecols")  
 
         # ---------------------------
