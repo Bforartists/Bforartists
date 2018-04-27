@@ -1816,9 +1816,10 @@ class VIEW3D_PT_tools_add_curve_edit(View3DPanel, Panel):
 
         # bfa - icon or text buttons
         if not view.show_iconbuttons: 
-            VIEW3D_PT_tools_add_object.draw_add_curve(col, label=True) # the original class
+            VIEW3D_PT_tools_add_curve.draw_add_curve(col, label=True) # the original class
         else:
-            VIEW3D_PT_tools_add_object.draw_add_curve_icons(col, label=True) # the modified class with icon buttons
+            
+            VIEW3D_PT_tools_add_curve.draw_add_curve_icons(col, label=True) # the modified class with icon buttons
 
 
 class VIEW3D_PT_tools_curveedit_options_stroke(View3DPanel, Panel):
@@ -1962,9 +1963,9 @@ class VIEW3D_PT_tools_add_surface_edit(View3DPanel, Panel):
 
         # bfa - icon or text buttons
         if not view.show_iconbuttons: 
-            VIEW3D_PT_tools_add_object.draw_add_surface(col) # the original class
+            VIEW3D_PT_tools_add_surface.draw_add_surface(col) # the original class
         else:
-            VIEW3D_PT_tools_add_object.draw_add_surface_icons(col) # the modified class with icon buttons
+            VIEW3D_PT_tools_add_surface.draw_add_surface_icons(col) # the modified class with icon buttons
 
 
 # ********** default tools for editmode_text ****************
@@ -2124,9 +2125,9 @@ class VIEW3D_PT_tools_add_mball_edit(View3DPanel, Panel):
 
         # bfa - icon or text buttons
         if not view.show_iconbuttons: 
-            VIEW3D_PT_tools_add_object.draw_add_mball(col) # the original class
+            VIEW3D_PT_tools_add_meta.draw_add_mball(col) # the original class
         else:
-            VIEW3D_PT_tools_add_object.draw_add_mball_icons(col) # the modified class with icon buttons
+            VIEW3D_PT_tools_add_meta.draw_add_mball_icons(col) # the modified class with icon buttons
 
 
 # ********** default tools for editmode_lattice ****************
