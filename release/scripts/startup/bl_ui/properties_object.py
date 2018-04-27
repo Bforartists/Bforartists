@@ -272,52 +272,37 @@ class OBJECT_PT_display(ObjectButtonsPanel, Panel):
         if obj_type == 'MESH' or is_empty_image:
             col.prop(obj, "show_transparent", text="Transparency")
 
-        ############## Subtab #####################
-        
-        user_preferences = context.user_preferences
-        addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
+        ##############  Draw type #####################
 
-        if not addon_prefs.SP_object_display_options:
-            layout.prop(addon_prefs,"SP_object_display_options", emboss=False, icon="TRIA_RIGHT", text="- Options -")
+        split = layout.split()
 
+        col = split.column()
+        if is_wire:
+            # wire objects only use the max. draw type for duplis
+            col.active = is_dupli
+            col.label(text="Maximum Dupli Draw Type:")
         else:
-            layout.prop(addon_prefs,"SP_object_display_options", emboss=False, icon="TRIA_DOWN", text="+ Options +")
+            col.label(text="Maximum Draw Type:")
+        col.prop(obj, "draw_type", text="")
 
-            split = layout.split()
+        col = split.column()
+        if is_geometry or is_empty_image:
+            # Only useful with object having faces/materials...
+            col.label(text="Object Color:")
+            col.prop(obj, "color", text="")
 
-            col = split.column()
-            if is_wire:
-                # wire objects only use the max. draw type for duplis
-                col.active = is_dupli
-                col.label(text="Maximum Dupli Draw Type:")
-            else:
-                col.label(text="Maximum Draw Type:")
-            col.prop(obj, "draw_type", text="")
+        # --------------------------- Wireframe colors
 
-            col = split.column()
-            if is_geometry or is_empty_image:
-                # Only useful with object having faces/materials...
-                col.label(text="Object Color:")
-                col.prop(obj, "color", text="")
-
-        # --------------------------- Wireframe colors subtab
-
-        if not addon_prefs.SP_object_display_wireframecols:
-            layout.prop(addon_prefs,"SP_object_display_wireframecols", emboss=False, icon="TRIA_RIGHT", text="- Wireframe Colors -")
-
-        else:
-            layout.prop(addon_prefs,"SP_object_display_wireframecols", emboss=False, icon="TRIA_DOWN", text="+ Wireframe Colors +")
-
-            # Custom wire color sets
+        col = layout.column()
+        col.label(text="Wireframe Colors:")
+        col.prop(obj, "wire_color_set", text = "Color Set")
+        if obj.wire_color_set:
             col = layout.column()
-            col.prop(obj, "wire_color_set")
-            if obj.wire_color_set:
-                col = layout.column()
-                sub = col.row(align=True)
-                sub.enabled = obj.is_custom_wire_color_set  # only custom colors are editable
-                sub.prop(obj.wire_colors, "normal", text="")
-                sub.prop(obj.wire_colors, "select", text="")
-                sub.prop(obj.wire_colors, "active", text="")
+            sub = col.row(align=True)
+            sub.enabled = obj.is_custom_wire_color_set  # only custom colors are editable
+            sub.prop(obj.wire_colors, "normal", text="")
+            sub.prop(obj.wire_colors, "select", text="")
+            sub.prop(obj.wire_colors, "active", text="")
 
 class OBJECT_PT_duplication(ObjectButtonsPanel, Panel):
     bl_label = "Duplication"

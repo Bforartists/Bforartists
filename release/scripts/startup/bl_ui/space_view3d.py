@@ -3731,7 +3731,7 @@ class VIEW3D_PT_view3d_shading(Panel):
             if obj is not None:
                 # Custom wire color sets
                 col = layout.column()
-                col.prop(obj, "wire_color_set")
+                col.prop(obj, "wire_color_set", text = "Color Set:")
                 if obj.wire_color_set:
                     col = layout.column()
                     sub = col.row(align=True)
