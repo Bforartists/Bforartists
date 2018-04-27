@@ -1325,6 +1325,110 @@ class VIEW3D_PT_edit_mesh_faces_panel(View3DPanel, Panel):
                 row.operator("mesh.mark_freestyle_face", text = "", icon = "CLEARFSFACE").clear = True
 
 
+class VIEW3D_PT_transform(View3DPanel, Panel):
+    bl_category = "Tools"
+    bl_label = "Transform"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    def draw(self, context):
+        layout = self.layout
+
+        obj = context.object
+
+        view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
+
+        # Buttons
+        if not view.show_iconbuttons: 
+
+            col = layout.column(align=True)
+            col.operator("transform.tosphere", text="To Sphere", icon = "TOSPHERE")
+            col.operator("transform.shear", text="Shear", icon = "SHEAR")
+            col.operator("transform.bend", text="Bend", icon = "BEND")
+            col.operator("transform.push_pull", text="Push/Pull", icon = 'PUSH_PULL')
+
+            if context.mode != 'OBJECT':
+                col = layout.column(align=True)
+                col.operator("transform.vertex_warp", text="Warp", icon = "MOD_WARP")
+                col.operator("transform.vertex_random", text="Randomize", icon = 'RANDOMIZE')
+                col.operator("transform.skin_resize", text="Skin Resize", icon = "MOD_SKIN")
+
+
+            if obj.type != 'ARMATURE':
+
+                col = layout.column(align=True)
+                col.operator("transform.translate_texture", text="Move Tex Space", icon = "MOVE_TEXTURESPACE").texture_space = True
+                col.operator("transform.resize_texture", text="Scale Tex Space", icon = "SCALE_TEXTURESPACE").texture_space = True
+
+            layout.operator_context = 'EXEC_REGION_WIN'
+            layout.operator("transform.transform", text="Align to Transform Orientation", icon = "ALIGN_TRANSFORM").mode = 'ALIGN'  # XXX see alignmenu() in edit.c of b2.4x to get this working
+
+            layout.operator_context = 'EXEC_AREA'
+
+            layout.operator("object.randomize_transform", icon = "RANDOMIZE_TRANSFORM")
+        
+            if obj.type == 'ARMATURE' and obj.mode in {'EDIT', 'POSE'}:
+                if obj.data.draw_type == 'BBONE':
+                    layout.operator("transform.transform", text="Scale BBone").mode = 'BONE_SIZE'
+                elif obj.data.draw_type == 'ENVELOPE':
+                    layout.operator("transform.transform", text="Scale Envelope Distance").mode = 'BONE_SIZE'
+                    layout.operator("transform.transform", text="Scale Radius").mode = 'BONE_ENVELOPE'
+
+            if context.edit_object and context.edit_object.type == 'ARMATURE':
+                layout.operator("armature.align",icon = "ALIGN")
+            else:
+                layout.operator("object.align", icon = "ALIGN")
+
+        #icons
+        else:
+
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator("transform.tosphere", text="", icon = "TOSPHERE")
+            row.operator("transform.shear", text="", icon = "SHEAR")
+            row.operator("transform.bend", text="", icon = "BEND")
+            row.operator("transform.push_pull", text="", icon = 'PUSH_PULL')
+
+            if context.mode != 'OBJECT':
+                row = layout.row(align=False)
+                row.alignment = 'LEFT'
+                row.operator("transform.vertex_warp", text="", icon = "MOD_WARP")
+                row.operator("transform.vertex_random", text="", icon = 'RANDOMIZE')
+                row.operator("transform.skin_resize", text="", icon = "MOD_SKIN")
+
+
+            if obj.type != 'ARMATURE':
+
+                row = layout.row(align=False)
+                row.alignment = 'LEFT'
+                row.operator("transform.translate_texture", text="", icon = "MOVE_TEXTURESPACE").texture_space = True
+                row.operator("transform.resize_texture", text="", icon = "SCALE_TEXTURESPACE").texture_space = True
+
+
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+            row.operator_context = 'EXEC_REGION_WIN'
+            row.operator("transform.transform", text="", icon = "ALIGN_TRANSFORM").mode = 'ALIGN'  # XXX see alignmenu() in edit.c of b2.4x to get this working
+
+            row.operator_context = 'EXEC_AREA'
+
+            row.operator("object.randomize_transform", text = "", icon = "RANDOMIZE_TRANSFORM")
+
+            row = layout.row(align=False)
+            row.alignment = 'LEFT'
+        
+            if obj.type == 'ARMATURE' and obj.mode in {'EDIT', 'POSE'}:
+                if obj.data.draw_type == 'BBONE':
+                    row.operator("transform.transform", text="").mode = 'BONE_SIZE'
+                elif obj.data.draw_type == 'ENVELOPE':
+                    row.operator("transform.transform", text="").mode = 'BONE_SIZE'
+                    row.operator("transform.transform", text="").mode = 'BONE_ENVELOPE'
+
+            if context.edit_object and context.edit_object.type == 'ARMATURE':
+                row.operator("armature.align", text = "", icon = "ALIGN")
+            else:
+                row.operator("object.align", text = "", icon = "ALIGN")
+
+
 class VIEW3D_PT_edit_mesh_clean_panel(View3DPanel, Panel):
     bl_category = "Tools"
     bl_context = "mesh_edit"
@@ -3625,6 +3729,7 @@ classes = (
     VIEW3D_PT_edit_mesh_vertices_panel,
     VIEW3D_PT_edit_mesh_edges_panel,
     VIEW3D_PT_edit_mesh_faces_panel,
+    VIEW3D_PT_transform,
     VIEW3D_PT_edit_mesh_clean_panel,
     VIEW3D_normals_make_consistent_inside,
     VIEW3D_PT_tools_meshweight,
