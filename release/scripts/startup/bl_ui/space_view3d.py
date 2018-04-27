@@ -1752,7 +1752,7 @@ class VIEW3D_MT_object(Menu):
 
         layout.separator()
 
-        layout.menu("VIEW3D_MT_transform_object")
+        #layout.menu("VIEW3D_MT_transform_object")
         layout.menu("VIEW3D_MT_object_clear")
         layout.menu("VIEW3D_MT_object_apply")
 
@@ -2397,7 +2397,7 @@ class VIEW3D_MT_pose(Menu):
     def draw(self, context):
         layout = self.layout
 
-        layout.menu("VIEW3D_MT_transform_armature")
+        #layout.menu("VIEW3D_MT_transform_armature")
 
         layout.menu("VIEW3D_MT_pose_transform")
         layout.menu("VIEW3D_MT_pose_apply")
@@ -2670,7 +2670,7 @@ class VIEW3D_MT_edit_mesh(Menu):
 
         toolsettings = context.tool_settings
 
-        layout.menu("VIEW3D_MT_transform")
+        #layout.menu("VIEW3D_MT_transform")
 
         layout.separator()
 
@@ -3019,7 +3019,7 @@ def draw_curve(self, context):
     toolsettings = context.tool_settings
     ob = context.active_object
 
-    layout.menu("VIEW3D_MT_transform")
+    #layout.menu("VIEW3D_MT_transform")
 
     layout.separator()
 
@@ -3153,7 +3153,7 @@ class VIEW3D_MT_edit_meta(Menu):
 
         toolsettings = context.tool_settings
 
-        layout.menu("VIEW3D_MT_transform")
+        #layout.menu("VIEW3D_MT_transform")
 
         layout.separator()
 
@@ -3196,7 +3196,7 @@ class VIEW3D_MT_edit_lattice(Menu):
 
         toolsettings = context.tool_settings
 
-        layout.menu("VIEW3D_MT_transform")
+        #layout.menu("VIEW3D_MT_transform")
         layout.menu("VIEW3D_MT_edit_lattice_flip")
 
 class VIEW3D_MT_edit_lattice_flip(Menu):
@@ -3243,7 +3243,7 @@ class VIEW3D_MT_edit_armature(Menu):
         edit_object = context.edit_object
         arm = edit_object.data
 
-        layout.menu("VIEW3D_MT_transform_armature")
+        #layout.menu("VIEW3D_MT_transform_armature")
         layout.menu("VIEW3D_MT_edit_armature_roll")
         layout.menu("VIEW3D_MT_edit_recalc_roll")
 
