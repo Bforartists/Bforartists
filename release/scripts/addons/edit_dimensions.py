@@ -1,4 +1,4 @@
-# Copyright 2016 Jake Dube
+﻿# Copyright 2016 Jake Dube
 #
 # ##### BEGIN GPL LICENSE BLOCK ######
 # This file is part of MeshTools.
@@ -25,7 +25,7 @@ from bpy.props import FloatProperty, PointerProperty
 
 
 bl_info = {
-    "name": "Mesh Tools",
+    "name": "Mesh Tools - Bforartists version",
     "author": "Jake Dube",
     "version": (1, 0),
     "blender": (2, 78, 0),
@@ -117,11 +117,13 @@ def add_button(self, context):
 def register():
     register_class(SetDimensions)
     bpy.types.VIEW3D_MT_transform.append(add_button)
+    bpy.types.VIEW3D_PT_transform.append(add_button)
 
 
 def unregister():
     unregister_class(SetDimensions)
     bpy.types.VIEW3D_MT_transform.remove(add_button)
+    bpy.types.VIEW3D_PT_transform.remove(add_button)
 
 
 if __name__ == "__main__":
