@@ -139,9 +139,11 @@ static void updateDepsgraph(ModifierData *md, const ModifierUpdateDepsgraphConte
 	ArrayModifierData *amd = (ArrayModifierData *)md;
 	if (amd->start_cap != NULL) {
 		DEG_add_object_relation(ctx->node, amd->start_cap, DEG_OB_COMP_TRANSFORM, "Array Modifier Start Cap");
+		DEG_add_object_relation(ctx->node, amd->start_cap, DEG_OB_COMP_GEOMETRY, "Array Modifier Start Cap");
 	}
 	if (amd->end_cap != NULL) {
 		DEG_add_object_relation(ctx->node, amd->end_cap, DEG_OB_COMP_TRANSFORM, "Array Modifier End Cap");
+		DEG_add_object_relation(ctx->node, amd->end_cap, DEG_OB_COMP_GEOMETRY, "Array Modifier End Cap");
 	}
 	if (amd->curve_ob) {
 		struct Depsgraph *depsgraph = DEG_get_graph_from_handle(ctx->node);
@@ -558,8 +560,8 @@ static DerivedMesh *arrayModifier_doArray(
 	DM_copy_loop_data(dm, result, 0, 0, chunk_nloops);
 	DM_copy_poly_data(dm, result, 0, 0, chunk_npolys);
 
-	/* subsurf for eg wont have mesh data in the
-	 * now add mvert/medge/mface layers */
+	/* Subsurf for eg wont have mesh data in the custom data arrays.
+	 * now add mvert/medge/mpoly layers. */
 
 	if (!CustomData_has_layer(&dm->vertData, CD_MVERT)) {
 		dm->copyVertArray(dm, result_dm_verts);
