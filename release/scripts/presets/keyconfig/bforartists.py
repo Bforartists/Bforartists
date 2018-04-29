@@ -1164,7 +1164,7 @@ kmi = km.keymap_items.new('screen.screen_set', 'RIGHT_ARROW', 'PRESS', ctrl=True
 kmi_props_setattr(kmi.properties, 'delta', 1)
 kmi = km.keymap_items.new('screen.screen_set', 'LEFT_ARROW', 'PRESS', ctrl=True)
 kmi_props_setattr(kmi.properties, 'delta', -1)
-kmi = km.keymap_items.new('screen.screen_full_area', 'UP_ARROW', 'PRESS', ctrl=True)
+kmi = km.keymap_items.new('screen.toggle_maximized_area', 'UP_ARROW', 'PRESS', ctrl=True)
 kmi = km.keymap_items.new('screen.screen_full_area', 'DOWN_ARROW', 'PRESS', ctrl=True)
 kmi = km.keymap_items.new('screen.screen_full_area', 'SPACE', 'PRESS', shift=True)
 kmi = km.keymap_items.new('screen.screen_full_area', 'F10', 'PRESS', alt=True)
