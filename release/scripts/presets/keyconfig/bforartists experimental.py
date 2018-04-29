@@ -812,7 +812,7 @@ kmi = km.keymap_items.new('view3d.view_roll', 'NUMPAD_6', 'PRESS', shift=True, c
 kmi_props_setattr(kmi.properties, 'angle', 0.2619999945163727)
     ##Added from Blender - by Draise
 kmi = km.keymap_items.new('view3d.navigate', 'F', 'PRESS', shift=True)
-kmi = km.keymap_items.new('view3d.view_all', 'C', 'PRESS', shift=True)
+kmi = km.keymap_items.new('view3d.view_all_center_cursor', 'C', 'PRESS', shift=True)
 kmi_props_setattr(kmi.properties, 'center', True)
 ##These items conflict and may also be depricated - will try find alternatives
 #kmi = km.keymap_items.new('view3d.layers', 'ACCENT_GRAVE', 'PRESS')
