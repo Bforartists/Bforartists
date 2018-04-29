@@ -421,7 +421,7 @@ class VIEW3D_MT_view(Menu):
         layout.operator("screen.area_dupli", icon = "NEW_WINDOW")
         layout.operator("screen.region_quadview", icon = "QUADVIEW")
         layout.operator("screen.toggle_maximized_area", text="Toggle Maximize Area", icon = "MAXIMIZE_AREA") # bfa - the separated tooltip. Class is in space_text.py
-        layout.operator("screen.screen_full_area", icon = "FULLSCREEN_AREA").use_hide_panels = True
+        layout.operator("screen.screen_full_area", icon = "FULLSCREEN_AREA", text = "Toggle Fullscreen Area").use_hide_panels = True
 
 
 class VIEW3D_MT_view_navigation(Menu):
