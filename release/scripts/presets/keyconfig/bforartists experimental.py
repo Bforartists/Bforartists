@@ -2345,7 +2345,7 @@ kmi = km.keymap_items.new('object.origin_clear', 'O', 'PRESS', alt=True)
 kmi = km.keymap_items.new('object.hide_render_clear', 'H', 'PRESS', ctrl=True, alt=True)
 kmi = km.keymap_items.new('object.hide_render_set', 'H', 'PRESS', ctrl=True)
 kmi = km.keymap_items.new('object.move_to_layer', 'M', 'PRESS')
-kmi = km.keymap_items.new('object.delete', 'DEL', 'PRESS', shift=True)
+kmi = km.keymap_items.new('object.delete_global', 'DEL', 'PRESS', shift=True)
 kmi_props_setattr(kmi.properties, 'use_global', True)
 kmi = km.keymap_items.new('wm.call_menu', 'A', 'PRESS', shift=True)  ##- deprecated in BFA
 kmi_props_setattr(kmi.properties, 'name', 'INFO_MT_add')
