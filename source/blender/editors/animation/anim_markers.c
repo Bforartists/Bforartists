@@ -1388,7 +1388,7 @@ static void MARKER_OT_delete(wmOperatorType *ot)
 	ot->idname = "MARKER_OT_delete";
 	
 	/* api callbacks */
-	ot->invoke = ed_marker_delete_invoke_wrapper;
+	/*ot->invoke = ed_marker_delete_invoke_wrapper;*/ /*bfa - turned this dialog off*/
 	ot->exec = ed_marker_delete_exec;
 	ot->poll = ed_markers_poll_selected_no_locked_markers;
 	
