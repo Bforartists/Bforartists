@@ -51,14 +51,14 @@
 #include "bmesh.h"
 
 static const EnumPropertyItem particle_edit_hair_brush_items[] = {
-	{PE_BRUSH_NONE, "NONE", 0, "None", "Don't use any brush"},
-	{PE_BRUSH_COMB, "COMB", 0, "Comb", "Comb hairs"},
-	{PE_BRUSH_SMOOTH, "SMOOTH", 0, "Smooth", "Smooth hairs"},
-	{PE_BRUSH_ADD, "ADD", 0, "Add", "Add hairs"},
-	{PE_BRUSH_LENGTH, "LENGTH", 0, "Length", "Make hairs longer or shorter"},
-	{PE_BRUSH_PUFF, "PUFF", 0, "Puff", "Make hairs stand up"},
-	{PE_BRUSH_CUT, "CUT", 0, "Cut", "Cut hairs"},
-	{PE_BRUSH_WEIGHT, "WEIGHT", 0, "Weight", "Weight hair particles"},
+	{ PE_BRUSH_NONE, "NONE", ICON_PARTICLEBRUSH_NONE, "None", "Don't use any brush" },
+	{ PE_BRUSH_COMB, "COMB", ICON_PARTICLEBRUSH_COMB, "Comb", "Comb hairs" },
+	{ PE_BRUSH_SMOOTH, "SMOOTH", ICON_PARTICLEBRUSH_SMOOTH, "Smooth", "Smooth hairs" },
+	{ PE_BRUSH_ADD, "ADD", ICON_PARTICLEBRUSH_ADD, "Add", "Add hairs" },
+	{ PE_BRUSH_LENGTH, "LENGTH", ICON_PARTICLEBRUSH_LENGTH, "Length", "Make hairs longer or shorter" },
+	{ PE_BRUSH_PUFF, "PUFF", ICON_PARTICLEBRUSH_PUFF, "Puff", "Make hairs stand up" },
+	{PE_BRUSH_CUT, "CUT", ICON_CUT, "Cut", "Cut hairs"},
+	{ PE_BRUSH_WEIGHT, "WEIGHT", ICON_PARTICLEBRUSH_WEIGHT, "Weight", "Weight hair particles" },
 	{0, NULL, 0, NULL, NULL}
 };
 
