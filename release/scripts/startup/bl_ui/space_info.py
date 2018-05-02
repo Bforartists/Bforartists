@@ -403,6 +403,7 @@ class INFO_MT_help(Menu):
         layout.separator()
 
         layout.operator("wm.url_open", text="Bforartists Website", icon='URL').url = "https://www.bforartists.de"
+        layout.operator("wm.url_open", text="Quickstart Learning Videos (Youtube)", icon='URL').url = "https://www.youtube.com/playlist?list=PLB0iqEbIPQTZEkNWmGcIFGubrLYSDi5Og"
         layout.separator()
         layout.operator("wm.url_open", text="Report a Bug", icon='URL').url = "https://github.com/Bforartists/Bforartists/issues"
         layout.separator()
