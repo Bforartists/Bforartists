@@ -1746,12 +1746,6 @@ class VIEW3D_MT_object(Menu):
         view = context.space_data
         is_local_view = (view.local_view is not None)
 
-        layout.operator("ed.undo", icon = "UNDO")
-        layout.operator("ed.redo", icon = "REDO")
-        layout.operator("ed.undo_history", icon = "UNDO_HISTORY")
-
-        layout.separator()
-
         #layout.menu("VIEW3D_MT_transform_object")
         layout.menu("VIEW3D_MT_object_clear")
         layout.menu("VIEW3D_MT_object_apply")
