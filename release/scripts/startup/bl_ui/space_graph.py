@@ -74,7 +74,7 @@ class GRAPH_HT_header(Header):
             row.prop(toolsettings, "proportional_edit_falloff",
                      text="", icon_only=True)
 
-        layout.prop(st, "auto_snap", text="")
+        layout.prop(st, "auto_snap", text="", icon = "SNAP_ON")
         layout.prop(st, "pivot_point", icon_only=True)
 
         row = layout.row(align=True)
