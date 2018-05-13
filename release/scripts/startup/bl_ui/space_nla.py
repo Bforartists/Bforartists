@@ -60,7 +60,7 @@ class NLA_HT_header(Header):
 
         dopesheet_filter(layout, context)
 
-        layout.prop(st, "auto_snap", text="")
+        layout.prop(st, "auto_snap", text="",icon = "SNAP_ON")
 
 # bfa - show hide the editormenu
 class ALL_MT_editormenu(Menu):

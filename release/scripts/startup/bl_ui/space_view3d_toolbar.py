@@ -250,8 +250,11 @@ class VIEW3D_PT_tools_object(View3DPanel, Panel):
                     # bfa - autosmooth below shading.
                     col.prop(mesh, "use_auto_smooth")
                     sub = col.column()
-                    sub.active = mesh.use_auto_smooth and not mesh.has_custom_normals
-                    sub.prop(mesh, "auto_smooth_angle", text="Angle")
+                    if mesh.use_auto_smooth:
+                            
+                        sub.active = mesh.use_auto_smooth and not mesh.has_custom_normals
+                        sub.prop(mesh, "auto_smooth_angle", text="Angle")
+                        
                     col.prop(mesh, "show_double_sided")
                     
                     # data transfer
