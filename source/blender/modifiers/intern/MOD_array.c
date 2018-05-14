@@ -82,15 +82,6 @@ static void initData(ModifierData *md)
 	amd->flags = 0;
 }
 
-static void copyData(ModifierData *md, ModifierData *target)
-{
-#if 0
-	ArrayModifierData *amd = (ArrayModifierData *) md;
-	ArrayModifierData *tamd = (ArrayModifierData *) target;
-#endif
-	modifier_copyData_generic(md, target);
-}
-
 static void foreachObjectLink(
         ModifierData *md, Object *ob,
         ObjectWalkFunc walk, void *userData)
@@ -800,9 +791,10 @@ static DerivedMesh *arrayModifier_doArray(
 }
 
 
-static DerivedMesh *applyModifier(ModifierData *md, Object *ob,
-                                  DerivedMesh *dm,
-                                  ModifierApplyFlag flag)
+static DerivedMesh *applyModifier(
+        ModifierData *md, Object *ob,
+        DerivedMesh *dm,
+        ModifierApplyFlag flag)
 {
 	ArrayModifierData *amd = (ArrayModifierData *) md;
 	return arrayModifier_doArray(amd, md->scene, ob, dm, flag);
@@ -820,7 +812,7 @@ ModifierTypeInfo modifierType_Array = {
 	                        eModifierTypeFlag_EnableInEditmode |
 	                        eModifierTypeFlag_AcceptsCVs,
 
-	/* copyData */          copyData,
+	/* copyData */          modifier_copyData_generic,
 	/* deformVerts */       NULL,
 	/* deformMatrices */    NULL,
 	/* deformVertsEM */     NULL,

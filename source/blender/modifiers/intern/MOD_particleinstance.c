@@ -71,14 +71,6 @@ static void initData(ModifierData *md)
 	STRNCPY(pimd->index_layer_name, "");
 	STRNCPY(pimd->value_layer_name, "");
 }
-static void copyData(ModifierData *md, ModifierData *target)
-{
-#if 0
-	ParticleInstanceModifierData *pimd = (ParticleInstanceModifierData *) md;
-	ParticleInstanceModifierData *tpimd = (ParticleInstanceModifierData *) target;
-#endif
-	modifier_copyData_generic(md, target);
-}
 
 static CustomDataMask requiredDataMask(Object *UNUSED(ob), ModifierData *md)
 {
@@ -154,8 +146,9 @@ static void updateDepsgraph(ModifierData *md, const ModifierUpdateDepsgraphConte
 	}
 }
 
-static void foreachObjectLink(ModifierData *md, Object *ob,
-                              ObjectWalkFunc walk, void *userData)
+static void foreachObjectLink(
+        ModifierData *md, Object *ob,
+        ObjectWalkFunc walk, void *userData)
 {
 	ParticleInstanceModifierData *pimd = (ParticleInstanceModifierData *) md;
 
@@ -212,14 +205,15 @@ static bool particle_skip(ParticleInstanceModifierData *pimd, ParticleSystem *ps
 
 static void store_float_in_vcol(MLoopCol *vcol, float float_value)
 {
-	const uchar value = FTOCHAR(float_value);
+	const uchar value = unit_float_to_uchar_clamp(float_value);
 	vcol->r = vcol->g = vcol->b = value;
 	vcol->a = 1.0f;
 }
 
-static DerivedMesh *applyModifier(ModifierData *md, Object *ob,
-                                  DerivedMesh *derivedData,
-                                  ModifierApplyFlag UNUSED(flag))
+static DerivedMesh *applyModifier(
+        ModifierData *md, Object *ob,
+        DerivedMesh *derivedData,
+        ModifierApplyFlag UNUSED(flag))
 {
 	DerivedMesh *dm = derivedData, *result;
 	ParticleInstanceModifierData *pimd = (ParticleInstanceModifierData *) md;
@@ -554,7 +548,7 @@ ModifierTypeInfo modifierType_ParticleInstance = {
 	                        eModifierTypeFlag_SupportsEditmode |
 	                        eModifierTypeFlag_EnableInEditmode,
 
-	/* copyData */          copyData,
+	/* copyData */          modifier_copyData_generic,
 	/* deformVerts */       NULL,
 	/* deformMatrices */    NULL,
 	/* deformVertsEM */     NULL,

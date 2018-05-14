@@ -57,15 +57,6 @@
 
 #include "BLI_strict_flags.h"
 
-static void copyData(ModifierData *md, ModifierData *target)
-{
-#if 0
-	MaskModifierData *mmd = (MaskModifierData *) md;
-	MaskModifierData *tmmd = (MaskModifierData *) target;
-#endif
-	modifier_copyData_generic(md, target);
-}
-
 static CustomDataMask requiredDataMask(Object *UNUSED(ob), ModifierData *UNUSED(md))
 {
 	return CD_MASK_MDEFORMVERT;
@@ -105,9 +96,10 @@ static void updateDepsgraph(ModifierData *md, const ModifierUpdateDepsgraphConte
 	}
 }
 
-static DerivedMesh *applyModifier(ModifierData *md, Object *ob,
-                                  DerivedMesh *dm,
-                                  ModifierApplyFlag UNUSED(flag))
+static DerivedMesh *applyModifier(
+        ModifierData *md, Object *ob,
+        DerivedMesh *dm,
+        ModifierApplyFlag UNUSED(flag))
 {
 	MaskModifierData *mmd = (MaskModifierData *)md;
 	const bool found_test = (mmd->flag & MOD_MASK_INV) == 0;
@@ -384,7 +376,7 @@ ModifierTypeInfo modifierType_Mask = {
 	                        eModifierTypeFlag_SupportsMapping |
 	                        eModifierTypeFlag_SupportsEditmode,
 
-	/* copyData */          copyData,
+	/* copyData */          modifier_copyData_generic,
 	/* deformVerts */       NULL,
 	/* deformMatrices */    NULL,
 	/* deformVertsEM */     NULL,
