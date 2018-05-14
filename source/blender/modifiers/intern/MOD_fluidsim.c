@@ -65,26 +65,30 @@ static void freeData(ModifierData *md)
 	fluidsim_free(fluidmd);
 }
 
-static void copyData(ModifierData *md, ModifierData *target)
+static void copyData(const ModifierData *md, ModifierData *target)
 {
-	FluidsimModifierData *fluidmd = (FluidsimModifierData *) md;
+	const FluidsimModifierData *fluidmd = (const FluidsimModifierData *) md;
 	FluidsimModifierData *tfluidmd = (FluidsimModifierData *) target;
 	
-	fluidsim_free(tfluidmd);
-
 	if (fluidmd->fss) {
 		tfluidmd->fss = MEM_dupallocN(fluidmd->fss);
 		if (tfluidmd->fss && (tfluidmd->fss->meshVelocities != NULL)) {
 			tfluidmd->fss->meshVelocities = MEM_dupallocN(tfluidmd->fss->meshVelocities);
 		}
 	}
+
+	/* Seems to never be used, but for sqke of consistency... */
+	BLI_assert(fluidmd->point_cache == NULL);
+	BLI_assert(tfluidmd->point_cache == NULL);
+	tfluidmd->point_cache = NULL;
 }
 
 
 
-static DerivedMesh *applyModifier(ModifierData *md, Object *ob,
-                                  DerivedMesh *dm,
-                                  ModifierApplyFlag flag)
+static DerivedMesh *applyModifier(
+        ModifierData *md, Object *ob,
+        DerivedMesh *dm,
+        ModifierApplyFlag flag)
 {
 	FluidsimModifierData *fluidmd = (FluidsimModifierData *) md;
 	DerivedMesh *result = NULL;

@@ -57,19 +57,16 @@ static void initData(ModifierData *md)
 	mcmd->read_flag = MOD_MESHSEQ_READ_ALL;
 }
 
-static void copyData(ModifierData *md, ModifierData *target)
+static void copyData(const ModifierData *md, ModifierData *target)
 {
 #if 0
-	MeshSeqCacheModifierData *mcmd = (MeshSeqCacheModifierData *)md;
+	const MeshSeqCacheModifierData *mcmd = (const MeshSeqCacheModifierData *)md;
 #endif
 	MeshSeqCacheModifierData *tmcmd = (MeshSeqCacheModifierData *)target;
 
 	modifier_copyData_generic(md, target);
 
-	if (tmcmd->cache_file) {
-		id_us_plus(&tmcmd->cache_file->id);
-		tmcmd->reader = NULL;
-	}
+	tmcmd->reader = NULL;
 }
 
 static void freeData(ModifierData *md)
@@ -92,9 +89,10 @@ static bool isDisabled(ModifierData *md, int UNUSED(useRenderParams))
 	return (mcmd->cache_file == NULL) || (mcmd->object_path[0] == '\0');
 }
 
-static DerivedMesh *applyModifier(ModifierData *md, Object *ob,
-                                  DerivedMesh *dm,
-                                  ModifierApplyFlag UNUSED(flag))
+static DerivedMesh *applyModifier(
+        ModifierData *md, Object *ob,
+        DerivedMesh *dm,
+        ModifierApplyFlag UNUSED(flag))
 {
 #ifdef WITH_ALEMBIC
 	MeshSeqCacheModifierData *mcmd = (MeshSeqCacheModifierData *) md;
@@ -162,8 +160,9 @@ static bool dependsOnTime(ModifierData *md)
 	return true;
 }
 
-static void foreachIDLink(ModifierData *md, Object *ob,
-                          IDWalkFunc walk, void *userData)
+static void foreachIDLink(
+        ModifierData *md, Object *ob,
+        IDWalkFunc walk, void *userData)
 {
 	MeshSeqCacheModifierData *mcmd = (MeshSeqCacheModifierData *) md;
 

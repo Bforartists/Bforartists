@@ -80,9 +80,9 @@ static void initData(ModifierData *md)
 }
 
 
-static void copyData(ModifierData *md, ModifierData *target)
+static void copyData(const ModifierData *md, ModifierData *target)
 {
-	CorrectiveSmoothModifierData *csmd = (CorrectiveSmoothModifierData *)md;
+	const CorrectiveSmoothModifierData *csmd = (const CorrectiveSmoothModifierData *)md;
 	CorrectiveSmoothModifierData *tcsmd = (CorrectiveSmoothModifierData *)target;
 
 	modifier_copyData_generic(md, target);
@@ -706,7 +706,8 @@ static void correctivesmooth_modifier_do(
 
 	/* when the modifier fails to execute */
 error:
-	MEM_SAFE_FREE(csmd->delta_cache);
+	MEM_SAFE_FREE(
+        csmd->delta_cache);
 	csmd->delta_cache_num = 0;
 
 }
