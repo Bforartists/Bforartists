@@ -31,14 +31,14 @@
 if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
 	if(NOT DEFINED WITH_IN_SOURCE_BUILD)
 		message(FATAL_ERROR
-			"CMake generation for blender is not allowed within the source directory!"
+			"CMake generation for Bforartists is not allowed within the source directory!"
 			"\n Remove \"${CMAKE_SOURCE_DIR}/CMakeCache.txt\" and try again from another folder, e.g.:"
 			"\n "
 			"\n rm CMakeCache.txt"
 			"\n cd .."
 			"\n mkdir cmake-make"
 			"\n cd cmake-make"
-			"\n cmake ../blender"
+			"\n cmake ../Bforartists"
 			"\n "
 			"\n Alternately define WITH_IN_SOURCE_BUILD to force this option (not recommended!)"
 		)
@@ -108,7 +108,7 @@ include(build_files/cmake/macros.cmake)
 
 blender_project_hack_pre()
 
-project(Blender)
+project(Bforartists)
 
 blender_project_hack_post()
 
@@ -200,7 +200,7 @@ if(UNIX AND NOT (APPLE OR HAIKU))
 endif()
 
 # Blender internal features
-option(WITH_BLENDER "Build blender (disable to build only the blender player)" ON)
+option(WITH_BLENDER "Build bforartists (disable to build only the blender player)" ON)
 mark_as_advanced(WITH_BLENDER)
 
 option(WITH_INTERNATIONAL "Enable I18N (International fonts and text)" ON)
@@ -212,7 +212,7 @@ mark_as_advanced(WITH_PYTHON_SECURITY)  # some distributions see this as a secur
 
 option(WITH_PYTHON_SAFETY "Enable internal API error checking to track invalid data to prevent crash on access (at the expense of some effeciency, only enable for development)." OFF)
 mark_as_advanced(WITH_PYTHON_SAFETY)
-option(WITH_PYTHON_MODULE "Enable building as a python module which runs without a user interface, like running regular blender in background mode (experimental, only enable for development), installs to PYTHON_SITE_PACKAGES (or CMAKE_INSTALL_PREFIX if WITH_INSTALL_PORTABLE is enabled)." OFF)
+option(WITH_PYTHON_MODULE "Enable building as a python module which runs without a user interface, like running regular bforartists in background mode (experimental, only enable for development), installs to PYTHON_SITE_PACKAGES (or CMAKE_INSTALL_PREFIX if WITH_INSTALL_PORTABLE is enabled)." OFF)
 if(APPLE)
 	option(WITH_PYTHON_FRAMEWORK "Enable building using the Python available in the framework (OSX only)" OFF)
 endif()
@@ -259,7 +259,7 @@ mark_as_advanced(WITH_OPENVDB_3_ABI_COMPATIBLE)
 option(WITH_GHOST_DEBUG   "Enable debugging output for the GHOST library" OFF)
 mark_as_advanced(WITH_GHOST_DEBUG)
 
-option(WITH_GHOST_SDL    "Enable building Blender against SDL for windowing rather than the native APIs" OFF)
+option(WITH_GHOST_SDL    "Enable building Bforartists against SDL for windowing rather than the native APIs" OFF)
 mark_as_advanced(WITH_GHOST_SDL)
 
 if(WITH_X11)
@@ -270,7 +270,7 @@ endif()
 option(WITH_HEADLESS      "Build without graphical support (renderfarm, server mode only)" OFF)
 mark_as_advanced(WITH_HEADLESS)
 
-option(WITH_AUDASPACE    "Build with blenders audio library (only disable if you know what you're doing!)" ON)
+option(WITH_AUDASPACE    "Build with Bforartists audio library (only disable if you know what you're doing!)" ON)
 option(WITH_SYSTEM_AUDASPACE "Build with external audaspace library installed on the system (only enable if you know what you're doing!)" OFF)
 mark_as_advanced(WITH_AUDASPACE)
 mark_as_advanced(WITH_SYSTEM_AUDASPACE)
@@ -329,7 +329,7 @@ option(WITH_IMAGE_HDR           "Enable HDR Image Support" ON)
 option(WITH_IMAGE_FRAMESERVER   "Enable image FrameServer Support for rendering" ON)
 
 # Audio/Video format support
-option(WITH_CODEC_AVI           "Enable Blenders own AVI file support (raw/jpeg)" ON)
+option(WITH_CODEC_AVI           "Enable Bforartists own AVI file support (raw/jpeg)" ON)
 option(WITH_CODEC_FFMPEG        "Enable FFMPeg Support (http://ffmpeg.org)" ${_init_CODEC_FFMPEG})
 option(WITH_CODEC_SNDFILE       "Enable libsndfile Support (http://www.mega-nerd.com/libsndfile)" OFF)
 
@@ -381,7 +381,7 @@ option(WITH_INPUT_NDOF "Enable NDOF input devices (SpaceNavigator and friends)" 
 option(WITH_RAYOPTIMIZATION	"Enable use of SIMD (SSE) optimizations for the raytracer" ON)
 if(UNIX AND NOT APPLE)
 	option(WITH_INSTALL_PORTABLE "Install redistributeable runtime, otherwise install into CMAKE_INSTALL_PREFIX" ON)
-	option(WITH_STATIC_LIBS "Try to link with static libraries, as much as possible, to make blender more portable across distributions" OFF)
+	option(WITH_STATIC_LIBS "Try to link with static libraries, as much as possible, to make bforartists more portable across distributions" OFF)
 	if(WITH_STATIC_LIBS)
 		option(Boost_USE_STATIC_LIBS "Boost use static libraries." ON)
 		option(WITH_BOOST_ICU "Boost uses ICU library (required for linking with static Boost built with libicu)." OFF)
@@ -390,14 +390,14 @@ if(UNIX AND NOT APPLE)
 	endif()
 endif()
 
-option(WITH_PYTHON_INSTALL       "Copy system python into the blender install folder" ON)
+option(WITH_PYTHON_INSTALL       "Copy system python into the bforartists install folder" ON)
 if(WITH_PYTHON_INSTALL)
-	option(WITH_PYTHON_INSTALL_NUMPY "Copy system numpy into the blender install folder"  ON)
+	option(WITH_PYTHON_INSTALL_NUMPY "Copy system numpy into the bforartists install folder"  ON)
 	set(PYTHON_NUMPY_PATH            "" CACHE PATH "Path to python site-packages or dist-packages containing 'numpy' module")
 	mark_as_advanced(PYTHON_NUMPY_PATH)
 
 	if(UNIX AND NOT APPLE)
-		option(WITH_PYTHON_INSTALL_REQUESTS "Copy system requests into the blender install folder" ON)
+		option(WITH_PYTHON_INSTALL_REQUESTS "Copy system requests into the bforartists install folder" ON)
 		set(PYTHON_REQUESTS_PATH "" CACHE PATH "Path to python site-packages or dist-packages containing 'requests' module")
 		mark_as_advanced(PYTHON_REQUESTS_PATH)
 	endif()
@@ -540,7 +540,7 @@ if(CMAKE_COMPILER_IS_GNUCC)
 endif()
 
 # Dependency graph
-option(WITH_LEGACY_DEPSGRAPH "Build Blender with legacy dependency graph" ON)
+option(WITH_LEGACY_DEPSGRAPH "Build bforartists with legacy dependency graph" ON)
 mark_as_advanced(WITH_LEGACY_DEPSGRAPH)
 
 if(WIN32)
@@ -1181,7 +1181,7 @@ if(WITH_SYSTEM_GLEW)
 	# Note: There is an assumption here that the system GLEW is not a static library.
 
 	if(NOT GLEW_FOUND)
-		message(FATAL_ERROR "GLEW is required to build Blender. Install it or disable WITH_SYSTEM_GLEW.")
+		message(FATAL_ERROR "GLEW is required to build bforartists. Install it or disable WITH_SYSTEM_GLEW.")
 	endif()
 
 	if(WITH_GLEW_MX)
@@ -1689,7 +1689,7 @@ endif()
 
 if(FIRST_RUN)
 
-	set(_config_msg "\nBlender Configuration\n=====================")
+	set(_config_msg "\nBforartists Configuration\n=====================")
 
 	function(info_cfg_option
 		_setting
