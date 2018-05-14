@@ -67,18 +67,6 @@ static void initData(ModifierData *md)
 	umd->scalex = umd->scaley = 1.0f;
 }
 
-static void copyData(ModifierData *md, ModifierData *target)
-{
-#if 0
-	UVProjectModifierData *umd = (UVProjectModifierData *) md;
-#endif
-	UVProjectModifierData *tumd = (UVProjectModifierData *) target;
-
-	modifier_copyData_generic(md, target);
-
-	id_us_plus((ID *)tumd->image);
-}
-
 static CustomDataMask requiredDataMask(Object *UNUSED(ob), ModifierData *UNUSED(md))
 {
 	CustomDataMask dataMask = 0;
@@ -89,8 +77,9 @@ static CustomDataMask requiredDataMask(Object *UNUSED(ob), ModifierData *UNUSED(
 	return dataMask;
 }
 
-static void foreachObjectLink(ModifierData *md, Object *ob,
-                              ObjectWalkFunc walk, void *userData)
+static void foreachObjectLink(
+        ModifierData *md, Object *ob,
+        ObjectWalkFunc walk, void *userData)
 {
 	UVProjectModifierData *umd = (UVProjectModifierData *) md;
 	int i;
@@ -99,8 +88,9 @@ static void foreachObjectLink(ModifierData *md, Object *ob,
 		walk(userData, ob, &umd->projectors[i], IDWALK_CB_NOP);
 }
 
-static void foreachIDLink(ModifierData *md, Object *ob,
-                          IDWalkFunc walk, void *userData)
+static void foreachIDLink(
+        ModifierData *md, Object *ob,
+        IDWalkFunc walk, void *userData)
 {
 	UVProjectModifierData *umd = (UVProjectModifierData *) md;
 
@@ -142,8 +132,9 @@ typedef struct Projector {
 	void *uci;              /* optional uv-project info (panorama projection) */
 } Projector;
 
-static DerivedMesh *uvprojectModifier_do(UVProjectModifierData *umd,
-                                         Object *ob, DerivedMesh *dm)
+static DerivedMesh *uvprojectModifier_do(
+        UVProjectModifierData *umd,
+        Object *ob, DerivedMesh *dm)
 {
 	float (*coords)[3], (*co)[3];
 	MLoopUV *mloop_uv;
@@ -347,9 +338,10 @@ static DerivedMesh *uvprojectModifier_do(UVProjectModifierData *umd,
 	return dm;
 }
 
-static DerivedMesh *applyModifier(ModifierData *md, Object *ob,
-                                  DerivedMesh *derivedData,
-                                  ModifierApplyFlag UNUSED(flag))
+static DerivedMesh *applyModifier(
+        ModifierData *md, Object *ob,
+        DerivedMesh *derivedData,
+        ModifierApplyFlag UNUSED(flag))
 {
 	DerivedMesh *result;
 	UVProjectModifierData *umd = (UVProjectModifierData *) md;
@@ -370,7 +362,7 @@ ModifierTypeInfo modifierType_UVProject = {
 	                        eModifierTypeFlag_SupportsEditmode |
 	                        eModifierTypeFlag_EnableInEditmode,
 
-	/* copyData */          copyData,
+	/* copyData */          modifier_copyData_generic,
 	/* deformVerts */       NULL,
 	/* deformMatrices */    NULL,
 	/* deformVertsEM */     NULL,
