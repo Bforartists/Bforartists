@@ -2,10 +2,11 @@ version: '{build}'
 branches:
   only:
   - master
-clone_folder: c:\projects\bfa
+clone_folder: C:/projects/bfa
 image:
 - Visual Studio 2013
 - Visual Studio 2015
+- Ubuntu
 configuration:
 - Release
 platform:
@@ -16,6 +17,10 @@ environment:
 matrix:
   fast_finish: true
 
+install:
+- ps: C:/projects/bfa/build_files/build_environment/windows/install_cuda.cmd
+- sh: cmake cmake-curses-gui
+
 # skip unsupported combinations
 init:
 - set arch=
@@ -25,7 +30,9 @@ init:
 - if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2017" ( set generator="Visual Studio 15 2017%arch%" )
 - if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2015" ( set generator="Visual Studio 14 2015%arch%" )
 - if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2013" ( set generator="Visual Studio 12 2013%arch%" )
+- if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Ubuntu" ( set generator="Unix Makefiles" )
 - echo %generator%
+- sh: sh build_files/build_environment/install_deps.sh --with-all --no-confirm
 
 #    call build_files/build_environment/windows/install_cuda.cmd
 before_build:
@@ -38,7 +45,8 @@ before_build:
     cd build
     cmake --version
     cmake .. -G %generator%
+    dir C:/projects/bfa/build/
 build:
-  project: c:\projects\bfa\build\blender.sln
+  project: C:/projects/bfa/build/bforartists.sln
   verbosity: minimal
   parallel: true
