@@ -45,8 +45,7 @@ before_build:
     cd build
     cmake --version
     cmake .. -G %generator%
-    dir C:/projects/bfa/build/
 build:
-  project: C:/projects/bfa/build/bforartists.sln
+  project: C:/projects/bfa/build/Bforartists.sln
   verbosity: minimal
   parallel: true
