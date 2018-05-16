@@ -15,7 +15,7 @@ matrix:
   fast_finish: true
 
 install:
-- ps: C:/projects/bfa/build_files/build_environment/windows/install_cuda.cmd
+#- ps: C:/projects/bfa/build_files/build_environment/windows/install_cuda.cmd
 - sh: cmake cmake-curses-gui
 
 # skip unsupported combinations
