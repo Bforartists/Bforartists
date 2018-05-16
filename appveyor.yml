@@ -4,8 +4,8 @@ branches:
   - master
 clone_folder: C:/projects/bfa
 image:
-- Visual Studio 2013
-- Visual Studio 2015
+#- Visual Studio 2013
+#- Visual Studio 2015
 - Ubuntu
 configuration:
 - Release
