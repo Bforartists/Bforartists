@@ -365,7 +365,7 @@ void WM_event_remove_timer(struct wmWindowManager *wm, struct wmWindow *win, str
 float WM_event_tablet_data(const struct wmEvent *event, int *pen_flip, float tilt[2]) RET_ZERO
 bool WM_event_is_tablet(const struct wmEvent *event) RET_ZERO
 void ED_armature_ebone_remove(struct bArmature *arm, struct EditBone *exBone) RET_NONE
-void object_test_constraints(struct Object *owner) RET_NONE
+void object_test_constraints(struct Main *bmain, struct Object *owner) RET_NONE
 void ED_armature_ebone_to_mat4(struct EditBone *ebone, float mat[4][4]) RET_NONE
 void ED_armature_ebone_from_mat4(EditBone *ebone, float mat[4][4]) RET_NONE
 void ED_object_parent(struct Object *ob, struct Object *par, int type, const char *substr) RET_NONE
@@ -390,7 +390,7 @@ bool ED_space_image_show_uvedit(struct SpaceImage *sima, struct Object *obedit) 
 bool ED_space_image_show_render(struct SpaceImage *sima) RET_ZERO
 bool ED_space_image_show_paint(struct SpaceImage *sima) RET_ZERO
 void ED_space_image_paint_update(struct wmWindowManager *wm, struct Scene *scene) RET_NONE
-void ED_space_image_set(struct SpaceImage *sima, struct Scene *scene, struct Object *obedit, struct Image *ima) RET_NONE
+void ED_space_image_set(struct Main *bmain, struct SpaceImage *sima, struct Scene *scene, struct Object *obedit, struct Image *ima) RET_NONE
 void ED_space_image_uv_sculpt_update(struct wmWindowManager *wm, struct Scene *scene) RET_NONE
 void ED_space_image_scopes_update(const struct bContext *C, struct SpaceImage *sima, struct ImBuf *ibuf, bool use_view_settings) RET_NONE
 
@@ -495,9 +495,9 @@ void ED_base_object_select(struct Base *base, short mode) RET_NONE
 bool ED_object_modifier_remove(struct ReportList *reports, struct Main *bmain, struct Object *ob, struct ModifierData *md) RET_ZERO
 struct ModifierData *ED_object_modifier_add(struct ReportList *reports, struct Main *bmain, struct Scene *scene, struct Object *ob, const char *name, int type) RET_ZERO
 void ED_object_modifier_clear(struct Main *bmain, struct Object *ob) RET_NONE
-void ED_object_editmode_enter(struct bContext *C, int flag) RET_NONE
-void ED_object_editmode_exit(struct bContext *C, int flag) RET_NONE
-bool ED_object_editmode_load(struct Object *obedit) RET_ZERO
+bool ED_object_editmode_enter(struct bContext *C, int flag) RET_ZERO
+bool ED_object_editmode_exit(struct bContext *C, int flag) RET_ZERO
+bool ED_object_editmode_load(struct Main *bmain, struct Object *obedit) RET_ZERO
 void ED_object_check_force_modifiers(struct Main *bmain, struct Scene *scene, struct Object *object) RET_NONE
 bool uiLayoutGetActive(struct uiLayout *layout) RET_ZERO
 int uiLayoutGetOperatorContext(struct uiLayout *layout) RET_ZERO
@@ -528,8 +528,8 @@ bool ED_mesh_color_remove_named(struct Mesh *me, const char *name) RET_ZERO
 bool ED_mesh_uv_texture_remove_named(struct Mesh *me, const char *name) RET_ZERO
 void ED_object_constraint_dependency_update(struct Main *bmain, struct Object *ob) RET_NONE
 void ED_object_constraint_dependency_tag_update(struct Main *bmain, struct Object *ob, struct bConstraint *con) RET_NONE
-void ED_object_constraint_update(struct Object *ob) RET_NONE
-void ED_object_constraint_tag_update(struct Object *ob, struct bConstraint *con) RET_NONE
+void ED_object_constraint_update(struct Main *bmain, struct Object *ob) RET_NONE
+void ED_object_constraint_tag_update(struct Main *bmain, struct Object *ob, struct bConstraint *con) RET_NONE
 void ED_vgroup_vert_add(struct Object *ob, struct bDeformGroup *dg, int vertnum, float weight, int assignmode) RET_NONE
 void ED_vgroup_vert_remove(struct Object *ob, struct bDeformGroup *dg, int vertnum) RET_NONE
 float ED_vgroup_vert_weight(struct Object *ob, struct bDeformGroup *dg, int vertnum) RET_ZERO

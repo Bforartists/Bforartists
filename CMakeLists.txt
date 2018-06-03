@@ -542,9 +542,7 @@ if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_C_COMPILER_ID MATCHES "Clang")
 -fsanitize=enum \
 -fsanitize=float-cast-overflow \
 -fsanitize=float-divide-by-zero \
--fsanitize=leak \
 -fsanitize=nonnull-attribute \
--fsanitize=object-size \
 -fsanitize=returns-nonnull-attribute \
 -fsanitize=signed-integer-overflow \
 -fsanitize=undefined \
@@ -552,6 +550,9 @@ if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_C_COMPILER_ID MATCHES "Clang")
 -fno-sanitize=alignment \
 ")
 
+		if(NOT MSVC) # not all sanitizers are supported with clang-cl, these two however are very vocal about it
+			set(_asan_defaults "${_asan_defaults} -fsanitize=leak -fsanitize=object-size" )
+		endif()
 		set(COMPILER_ASAN_CFLAGS "${_asan_defaults}" CACHE STRING "C flags for address sanitizer")
 		mark_as_advanced(COMPILER_ASAN_CFLAGS)
 		set(COMPILER_ASAN_CXXFLAGS "${_asan_defaults}" CACHE STRING "C++ flags for address sanitizer")
@@ -559,9 +560,15 @@ if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_C_COMPILER_ID MATCHES "Clang")
 
 		unset(_asan_defaults)
 
-		find_library(COMPILER_ASAN_LIBRARY asan ${CMAKE_C_IMPLICIT_LINK_DIRECTORIES})
+		if(NOT MSVC)
+			find_library(COMPILER_ASAN_LIBRARY asan ${CMAKE_C_IMPLICIT_LINK_DIRECTORIES})
+		else()
+			find_library( COMPILER_ASAN_LIBRARY NAMES clang_rt.asan-x86_64
+				PATHS 	[HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\LLVM\\LLVM;]/lib/clang/7.0.0/lib/windows
+						[HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\LLVM\\LLVM;]/lib/clang/6.0.0/lib/windows
+						)
+		endif() 
 		mark_as_advanced(COMPILER_ASAN_LIBRARY)
-
 	endif()
 endif()
 
@@ -866,8 +873,12 @@ if(WITH_COMPILER_ASAN)
 
 	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${COMPILER_ASAN_CXXFLAGS}")
 	set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} ${COMPILER_ASAN_CXXFLAGS}")
-
-	set(PLATFORM_LINKFLAGS_DEBUG "${COMPILER_ASAN_LIBRARY}")
+	if(MSVC)
+		set(COMPILER_ASAN_LINKER_FLAGS "/FUNCTIONPADMIN:6") 
+	endif()
+	set(PLATFORM_LINKLIBS "${PLATFORM_LINKLIBS};${COMPILER_ASAN_LIBRARY}")
+	set(PLATFORM_LINKFLAGS "${COMPILER_ASAN_LIBRARY} ${COMPILER_ASAN_LINKER_FLAGS}")
+	set(PLATFORM_LINKFLAGS_DEBUG "${COMPILER_ASAN_LIBRARY} ${COMPILER_ASAN_LINKER_FLAGS}") 
 endif()
 
 #-----------------------------------------------------------------------------
@@ -1615,7 +1626,12 @@ else()
 endif()
 
 # Visual Studio has all standards it supports available by default
-if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_C_COMPILER_ID MATCHES "Clang" OR CMAKE_C_COMPILER_ID MATCHES "Intel")
+# Clang on windows copies this behavior and does not support these switches
+if(
+	CMAKE_COMPILER_IS_GNUCC OR
+	(CMAKE_C_COMPILER_ID MATCHES "Clang" AND (NOT MSVC)) OR
+	(CMAKE_C_COMPILER_ID MATCHES "Intel")
+)
 	# Use C99 + GNU extensions, works with GCC, Clang, ICC
 	if(WITH_C11)
 		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu11")
