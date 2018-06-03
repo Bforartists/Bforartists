@@ -4,7 +4,7 @@
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version. 
+ * of the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -18,7 +18,7 @@
  * The Original Code is Copyright (C) 2008 Blender Foundation.
  * All rights reserved.
  *
- * 
+ *
  * Contributor(s): Blender Foundation
  *
  * ***** END GPL LICENSE BLOCK *****
@@ -504,6 +504,7 @@ void VIEW3D_OT_camera_to_view(wmOperatorType *ot)
  * meant to take into account vertex/bone selection for eg. */
 static int view3d_camera_to_view_selected_exec(bContext *C, wmOperator *op)
 {
+	Main *bmain = CTX_data_main(C);
 	Scene *scene = CTX_data_scene(C);
 	View3D *v3d = CTX_wm_view3d(C);  /* can be NULL */
 	Object *camera_ob = v3d ? v3d->camera : scene->camera;
@@ -517,7 +518,7 @@ static int view3d_camera_to_view_selected_exec(bContext *C, wmOperator *op)
 	}
 
 	/* this function does all the important stuff */
-	if (BKE_camera_view_frame_fit_to_scene(scene, v3d, camera_ob, r_co, &r_scale)) {
+	if (BKE_camera_view_frame_fit_to_scene(bmain, scene, v3d, camera_ob, r_co, &r_scale)) {
 		ObjectTfmProtectedChannels obtfm;
 		float obmat_new[4][4];
 

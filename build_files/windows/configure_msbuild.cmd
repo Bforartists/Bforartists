@@ -4,6 +4,22 @@ if "%BUILD_ARCH%"=="x64" (
 	set MSBUILD_PLATFORM=x64
 ) else if "%BUILD_ARCH%"=="x86" (
 	set MSBUILD_PLATFORM=win32
+	if "%WITH_CLANG%"=="1" (
+		echo Clang not supported for X86
+		exit /b 1
+	)
+)
+
+if "%WITH_CLANG%"=="1" (
+	set BUILD_CMAKE_ARGS=%BUILD_CMAKE_ARGS% -T"LLVM-vs2017"
+	if "%WITH_ASAN%"=="1" (
+		set BUILD_CMAKE_ARGS=%BUILD_CMAKE_ARGS% -DWITH_COMPILER_ASAN=On
+	)
+) else (
+	if "%WITH_ASAN%"=="1" (
+		echo ASAN is only supported with clang.
+		exit /b 1 
+	)
 )
 
 if NOT EXIST %BUILD_DIR%\nul (
