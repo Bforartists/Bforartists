@@ -86,7 +86,7 @@ struct bNodeInstanceHash;
 
 /** Compact definition of a node socket.
  * Can be used to quickly define a list of static sockets for a node,
- * which are added to each new node of that type. 
+ * which are added to each new node of that type.
  *
  * \deprecated This struct is used by C nodes to define templates as simple
  * static struct lists. These are converted to the new template collections
@@ -789,7 +789,7 @@ struct ShadeResult;
 #define SH_NODE_UVALONGSTROKE			191
 #define SH_NODE_TEX_POINTDENSITY		192
 #define SH_NODE_BSDF_PRINCIPLED         193
-#define SH_NODE_TEX_IES                 195
+#define SH_NODE_TEX_IES                 194
 #define SH_NODE_BEVEL                   197
 #define SH_NODE_DISPLACEMENT            198
 #define SH_NODE_VECTOR_DISPLACEMENT     199

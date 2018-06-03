@@ -4,7 +4,7 @@
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version. 
+ * of the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -384,7 +384,7 @@ static void dynamicPaint_bakeImageSequence(DynamicPaintBakeJob *job)
 		/* calculate a frame */
 		scene->r.cfra = (int)frame;
 		ED_update_for_newframe(job->bmain, scene, 1);
-		if (!dynamicPaint_calculateFrame(surface, scene, cObject, frame)) {
+		if (!dynamicPaint_calculateFrame(job->bmain->eval_ctx, surface, scene, cObject, frame)) {
 			job->success = 0;
 			return;
 		}

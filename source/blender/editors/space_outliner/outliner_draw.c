@@ -4,7 +4,7 @@
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version. 
+ * of the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -464,6 +464,7 @@ static void restrictbutton_id_user_toggle(bContext *UNUSED(C), void *poin, void 
 
 static void namebutton_cb(bContext *C, void *tsep, char *oldname)
 {
+	Main *bmain = CTX_data_main(C);
 	SpaceOops *soops = CTX_wm_space_outliner(C);
 	Scene *scene = CTX_data_scene(C);
 	Object *obedit = CTX_data_edit_object(C);
@@ -474,7 +475,7 @@ static void namebutton_cb(bContext *C, void *tsep, char *oldname)
 		TreeElement *te = outliner_find_tree_element(&soops->tree, tselem);
 		
 		if (tselem->type == 0) {
-			BLI_libblock_ensure_unique_name(G.main, tselem->id->name);
+			BLI_libblock_ensure_unique_name(bmain, tselem->id->name);
 			
 			switch (GS(tselem->id->name)) {
 				case ID_MA:
@@ -493,10 +494,10 @@ static void namebutton_cb(bContext *C, void *tsep, char *oldname)
 				Library *lib = (Library *)tselem->id;
 				char expanded[FILE_MAX];
 
-				BKE_library_filepath_set(lib, lib->name);
+				BKE_library_filepath_set(bmain, lib, lib->name);
 
 				BLI_strncpy(expanded, lib->name, sizeof(expanded));
-				BLI_path_abs(expanded, G.main->name);
+				BLI_path_abs(expanded, bmain->name);
 				if (!BLI_exists(expanded)) {
 					BKE_reportf(CTX_wm_reports(C), RPT_ERROR,
 					            "Library path '%s' does not exist, correct this before saving", expanded);
@@ -514,7 +515,7 @@ static void namebutton_cb(bContext *C, void *tsep, char *oldname)
 					defgroup_unique_name(te->directdata, (Object *)tselem->id); //	id = object
 					break;
 				case TSE_NLA_ACTION:
-					BLI_libblock_ensure_unique_name(G.main, tselem->id->name);
+					BLI_libblock_ensure_unique_name(bmain, tselem->id->name);
 					break;
 				case TSE_EBONE:
 				{
