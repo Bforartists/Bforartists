@@ -890,7 +890,7 @@ static Sequence *cut_seq_soft(Scene *scene, Sequence *seq, int cutframe)
 
 
 /* like duplicate, but only duplicate and cut overlapping strips,
- * strips to the left of the cutframe are ignored and strips to the right 
+ * strips to the left of the cutframe are ignored and strips to the right
  * are moved to the end of slist
  * we have to work on the same slist (not using a separate list), since
  * otherwise dupli_seq can't check for duplicate names properly and
@@ -3885,13 +3885,14 @@ void SEQUENCER_OT_change_path(struct wmOperatorType *ot)
 
 static int sequencer_export_subtitles_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event))
 {
+	Main *bmain = CTX_data_main(C);
 	if (!RNA_struct_property_is_set(op->ptr, "filepath")) {
 		char filepath[FILE_MAX];
 
-		if (G.main->name[0] == 0)
+		if (bmain->name[0] == '\0')
 			BLI_strncpy(filepath, "untitled", sizeof(filepath));
 		else
-			BLI_strncpy(filepath, G.main->name, sizeof(filepath));
+			BLI_strncpy(filepath, bmain->name, sizeof(filepath));
 
 		BLI_replace_extension(filepath, sizeof(filepath), ".srt");
 		RNA_string_set(op->ptr, "filepath", filepath);

@@ -75,6 +75,7 @@
 #include "BKE_colortools.h"
 #include "BKE_effect.h"
 #include "BKE_library_query.h"
+#include "BKE_main.h"
 #include "BKE_particle.h"
 
 #include "BKE_DerivedMesh.h"
@@ -1444,7 +1445,7 @@ static void integrate_particle(ParticleSettings *part, ParticleData *pa, float d
 }
 
 /*********************************************************************************************************
- *                    SPH fluid physics 
+ *                    SPH fluid physics
  *
  * In theory, there could be unlimited implementation of SPH simulators
  *
@@ -3796,8 +3797,9 @@ static void cached_step(ParticleSimulationData *sim, float cfra)
 	}
 }
 
-static void particles_fluid_step(ParticleSimulationData *sim, int UNUSED(cfra), const bool use_render_params)
-{	
+static void particles_fluid_step(
+        Main *bmain, ParticleSimulationData *sim, int UNUSED(cfra), const bool use_render_params)
+{
 	ParticleSystem *psys = sim->psys;
 	if (psys->particles) {
 		MEM_freeN(psys->particles);
@@ -3827,7 +3829,7 @@ static void particles_fluid_step(ParticleSimulationData *sim, int UNUSED(cfra), 
 			// ok, start loading
 			BLI_join_dirfile(filename, sizeof(filename), fss->surfdataPath, OB_FLUIDSIM_SURF_PARTICLES_FNAME);
 
-			BLI_path_abs(filename, modifier_path_relbase(sim->ob));
+			BLI_path_abs(filename, modifier_path_relbase(bmain, sim->ob));
 
 			BLI_path_frame(filename, curFrame, 0); // fixed #frame-no 
 
@@ -3901,7 +3903,7 @@ static void particles_fluid_step(ParticleSimulationData *sim, int UNUSED(cfra), 
 		} // fluid sim particles done
 	}
 #else
-	UNUSED_VARS(use_render_params);
+	UNUSED_VARS(bmain, use_render_params);
 #endif // WITH_MOD_FLUID
 }
 
@@ -4205,7 +4207,7 @@ static int hair_needs_recalc(ParticleSystem *psys)
 
 /* main particle update call, checks that things are ok on the large scale and
  * then advances in to actual particle calculations depending on particle type */
-void particle_system_update(Scene *scene, Object *ob, ParticleSystem *psys, const bool use_render_params)
+void particle_system_update(Main *bmain, Scene *scene, Object *ob, ParticleSystem *psys, const bool use_render_params)
 {
 	ParticleSimulationData sim= {0};
 	ParticleSettings *part = psys->part;
@@ -4301,7 +4303,7 @@ void particle_system_update(Scene *scene, Object *ob, ParticleSystem *psys, cons
 		}
 		case PART_FLUID:
 		{
-			particles_fluid_step(&sim, (int)cfra, use_render_params);
+			particles_fluid_step(bmain, &sim, (int)cfra, use_render_params);
 			break;
 		}
 		default:

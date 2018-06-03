@@ -973,6 +973,7 @@ void OBJECT_OT_lamp_add(wmOperatorType *ot)
 
 static int group_instance_add_exec(bContext *C, wmOperator *op)
 {
+	Main *bmain = CTX_data_main(C);
 	Group *group;
 	unsigned int layer;
 	float loc[3], rot[3];
@@ -981,7 +982,7 @@ static int group_instance_add_exec(bContext *C, wmOperator *op)
 		char name[MAX_ID_NAME - 2];
 		
 		RNA_string_get(op->ptr, "name", name);
-		group = (Group *)BKE_libblock_find_name(ID_GR, name);
+		group = (Group *)BKE_libblock_find_name(bmain, ID_GR, name);
 		
 		if (0 == RNA_struct_property_is_set(op->ptr, "location")) {
 			const wmEvent *event = CTX_wm_window(C)->eventstate;
@@ -1000,7 +1001,6 @@ static int group_instance_add_exec(bContext *C, wmOperator *op)
 		return OPERATOR_CANCELLED;
 
 	if (group) {
-		Main *bmain = CTX_data_main(C);
 		Scene *scene = CTX_data_scene(C);
 		Object *ob = ED_object_add_type(C, OB_EMPTY, group->id.name + 2, loc, rot, false, layer);
 		ob->dup_group = group;
@@ -1654,7 +1654,7 @@ static int convert_exec(bContext *C, wmOperator *op)
 			if (ob->type == OB_MBALL && target == OB_MESH) {
 				if (BKE_mball_is_basis(ob) == false) {
 					Object *ob_basis;
-					ob_basis = BKE_mball_basis_find(scene, ob);
+					ob_basis = BKE_mball_basis_find(bmain->eval_ctx, scene, ob);
 					if (ob_basis) {
 						ob_basis->flag &= ~OB_DONE;
 					}
@@ -1868,7 +1868,7 @@ static int convert_exec(bContext *C, wmOperator *op)
 			base->flag &= ~SELECT;
 			ob->flag &= ~SELECT;
 
-			baseob = BKE_mball_basis_find(scene, ob);
+			baseob = BKE_mball_basis_find(bmain->eval_ctx, scene, ob);
 
 			if (ob != baseob) {
 				/* if motherball is converting it would be marked as done later */
@@ -1939,7 +1939,7 @@ static int convert_exec(bContext *C, wmOperator *op)
 					if (ob->flag & OB_DONE) {
 						Object *ob_basis = NULL;
 						if (BKE_mball_is_basis(ob) ||
-						    ((ob_basis = BKE_mball_basis_find(scene, ob)) && (ob_basis->flag & OB_DONE)))
+						    ((ob_basis = BKE_mball_basis_find(bmain->eval_ctx, scene, ob)) && (ob_basis->flag & OB_DONE)))
 						{
 							ED_base_object_free_and_unlink(bmain, scene, base);
 						}
@@ -2360,7 +2360,7 @@ static int add_named_exec(bContext *C, wmOperator *op)
 
 	/* find object, create fake base */
 	RNA_string_get(op->ptr, "name", name);
-	ob = (Object *)BKE_libblock_find_name(ID_OB, name);
+	ob = (Object *)BKE_libblock_find_name(bmain, ID_OB, name);
 
 	if (ob == NULL) {
 		BKE_report(op->reports, RPT_ERROR, "Object not found");
