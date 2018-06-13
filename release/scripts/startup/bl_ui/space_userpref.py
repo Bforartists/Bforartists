@@ -145,7 +145,6 @@ class USERPREF_MT_app_templates(Menu):
             layout.operator_context = 'INVOKE_DEFAULT'
             props = layout.operator("wm.app_template_install")
 
-
     def draw(self, context):
         self.draw_ex(context, use_splash=False, use_default=True, use_install=True)
 
@@ -288,8 +287,8 @@ class USERPREF_PT_interface(Panel):
         row.separator()
 
         col = row.column()
-        #Toolbox doesn't exist yet
-        #col.label(text="Toolbox:")
+        # Toolbox doesn't exist yet
+        # col.label(text="Toolbox:")
         #col.prop(view, "show_column_layout")
         #col.label(text="Open Toolbox Delay:")
         #col.prop(view, "open_left_mouse_delay", text="Hold LMB")
@@ -330,7 +329,6 @@ class USERPREF_PT_interface(Panel):
         col.label(text="Options intended for use with app-templates only.")
         col.prop(view, "show_layout_ui")
         col.prop(view, "show_view3d_cursor")
-
 
 
 class USERPREF_PT_edit(Panel):
@@ -416,7 +414,7 @@ class USERPREF_PT_edit(Panel):
 
         sub = col.column()
 
-        #~ sub.active = edit.use_keyframe_insert_auto # incorrect, time-line can enable
+        # ~ sub.active = edit.use_keyframe_insert_auto # incorrect, time-line can enable
         sub.prop(edit, "use_keyframe_insert_available", text="Only Insert Available")
 
         col.separator()
@@ -1224,7 +1222,7 @@ class USERPREF_PT_input(Panel):
 
         #sub.prop(inputs, "use_mouse_mmb_paste")
 
-        #col.separator()
+        # col.separator()
 
         sub = col.column()
         sub.prop(inputs, "invert_zoom_wheel", text="Invert Wheel Zoom Direction")
@@ -1312,7 +1310,7 @@ class USERPREF_PT_addons(Panel):
         'OFFICIAL': 'FILE_BLEND',
         'COMMUNITY': 'POSE_DATA',
         'TESTING': 'MOD_EXPLODE',
-        }
+    }
 
     @classmethod
     def poll(cls, context):
@@ -1414,11 +1412,11 @@ class USERPREF_PT_addons(Panel):
 
             # check if addon should be visible with current filters
             if ((filter == "All") or
-                (filter == info["category"]) or
-                (filter == "Enabled" and is_enabled) or
-                (filter == "Disabled" and not is_enabled) or
-                (filter == "User" and (mod.__file__.startswith((scripts_addons_folder, userpref_addons_folder))))
-            ):
+                        (filter == info["category"]) or
+                        (filter == "Enabled" and is_enabled) or
+                    (filter == "Disabled" and not is_enabled) or
+                    (filter == "User" and (mod.__file__.startswith((scripts_addons_folder, userpref_addons_folder))))
+                    ):
                 if search and search not in info["name"].lower():
                     if info["author"]:
                         if search not in info["author"].lower():

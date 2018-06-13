@@ -357,8 +357,8 @@ void WM_keyconfig_update(struct wmWindowManager *wm) RET_NONE
 int WM_enum_search_invoke(struct bContext *C, struct wmOperator *op, const struct wmEvent *event) RET_ZERO
 void WM_event_add_notifier(const struct bContext *C, unsigned int type, void *reference) RET_NONE
 void WM_main_add_notifier(unsigned int type, void *reference) RET_NONE
-void ED_armature_bone_rename(struct bArmature *arm, const char *oldnamep, const char *newnamep) RET_NONE
-void ED_armature_transform(struct bArmature *arm, float mat[4][4], const bool do_props) RET_NONE
+void ED_armature_bone_rename(struct Main *bmain, struct bArmature *arm, const char *oldnamep, const char *newnamep) RET_NONE
+void ED_armature_transform(struct Main *bmain, struct bArmature *arm, float mat[4][4], const bool do_props) RET_NONE
 struct wmEventHandler *WM_event_add_modal_handler(struct bContext *C, struct wmOperator *op) RET_NULL
 struct wmTimer *WM_event_add_timer(struct wmWindowManager *wm, struct wmWindow *win, int event_type, double timestep) RET_NULL
 void WM_event_remove_timer(struct wmWindowManager *wm, struct wmWindow *win, struct wmTimer *timer) RET_NONE
@@ -562,7 +562,7 @@ bool ED_transform_snap_object_project_ray_ex(
         float r_loc[3], float r_no[3], int *r_index,
         struct Object **r_ob, float r_obmat[4][4]) RET_ZERO
 
-void ED_curve_editnurb_load(struct Object *obedit) RET_NONE
+void ED_curve_editnurb_load(struct Main *bmain, struct Object *obedit) RET_NONE
 void ED_curve_editnurb_make(struct Object *obedit) RET_NONE
 
 void uiItemR(uiLayout *layout, struct PointerRNA *ptr, const char *propname, int flag, const char *name, int icon) RET_NONE
@@ -705,9 +705,9 @@ void WM_operator_py_idname(char *to, const char *from) RET_NONE
 bool WM_operator_py_idname_ok_or_report(struct ReportList *reports, const char *classname, const char *idname) RET_ZERO
 int WM_operator_ui_popup(struct bContext *C, struct wmOperator *op, int width, int height) RET_ZERO
 void update_autoflags_fcurve(struct FCurve *fcu, struct bContext *C, struct ReportList *reports, struct PointerRNA *ptr) RET_NONE
-short insert_keyframe(struct ReportList *reports, struct ID *id, struct bAction *act, const char group[], const char rna_path[], int array_index, float cfra, eBezTriple_KeyframeType keytype, eInsertKeyFlags flag) RET_ZERO
+short insert_keyframe(struct Main *bmain, struct ReportList *reports, struct ID *id, struct bAction *act, const char group[], const char rna_path[], int array_index, float cfra, eBezTriple_KeyframeType keytype, eInsertKeyFlags flag) RET_ZERO
 short delete_keyframe(struct ReportList *reports, struct ID *id, struct bAction *act, const char group[], const char rna_path[], int array_index, float cfra, eInsertKeyFlags flag) RET_ZERO
-struct bAction *verify_adt_action(struct ID *id, short add) RET_NULL
+struct bAction *verify_adt_action(struct Main *bmain, struct ID *id, short add) RET_NULL
 char *WM_operator_pystring_ex(struct bContext *C, struct wmOperator *op, const bool all_args, const bool macro_args, struct wmOperatorType *ot, struct PointerRNA *opptr) RET_NULL
 char *WM_operator_pystring(struct bContext *C, struct wmOperator *op, const bool all_args, const bool macro_args) RET_NULL
 struct wmKeyMapItem *WM_modalkeymap_add_item(struct wmKeyMap *km, int type, int val, int modifier, int keymodifier, int value) RET_NULL
