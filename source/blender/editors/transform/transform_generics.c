@@ -348,6 +348,7 @@ static void recalcData_actedit(TransInfo *t)
 
 	/* initialize relevant anim-context 'context' data from TransInfo data */
 	/* NOTE: sync this with the code in ANIM_animdata_get_context() */
+	ac.bmain = CTX_data_main(t->context);
 	ac.scene = t->scene;
 	ac.obact = OBACT;
 	ac.sa = t->sa;
@@ -374,7 +375,7 @@ static void recalcData_actedit(TransInfo *t)
 		if ((saction->flag & SACTION_NOREALTIMEUPDATES) == 0) {
 			for (ale = anim_data.first; ale; ale = ale->next) {
 				/* set refresh tags for objects using this animation */
-				ANIM_list_elem_update(t->scene, ale);
+				ANIM_list_elem_update(CTX_data_main(t->context), scene, ale);
 			}
 		}
 
@@ -397,6 +398,7 @@ static void recalcData_graphedit(TransInfo *t)
 
 	/* initialize relevant anim-context 'context' data from TransInfo data */
 	/* NOTE: sync this with the code in ANIM_animdata_get_context() */
+	ac.bmain = CTX_data_main(t->context);
 	scene = ac.scene = t->scene;
 	ac.obact = OBACT;
 	ac.sa = t->sa;
@@ -432,7 +434,7 @@ static void recalcData_graphedit(TransInfo *t)
 		 * BUT only if realtime updates are enabled
 		 */
 		if ((sipo->flag & SIPO_NOREALTIMEUPDATES) == 0)
-			ANIM_list_elem_update(t->scene, ale);
+			ANIM_list_elem_update(CTX_data_main(t->context), t->scene, ale);
 	}
 
 	/* do resort and other updates? */
