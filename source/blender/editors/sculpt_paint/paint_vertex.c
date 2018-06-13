@@ -944,7 +944,7 @@ static void vertex_paint_init_session(Scene *scene, Object *ob)
 
 	if (ob->sculpt == NULL) {
 		ob->sculpt = MEM_callocN(sizeof(SculptSession), "sculpt session");
-		BKE_sculpt_update_mesh_elements(scene, scene->toolsettings->sculpt, ob, 0, false);
+		BKE_sculpt_update_mesh_elements(scene, scene->toolsettings->sculpt, ob, false, false);
 	}
 }
 
@@ -2552,7 +2552,7 @@ static float tex_color_alpha_ubyte(
 }
 
 static void do_vpaint_brush_draw_task_cb_ex(
-        void *__restrict userdata, 
+        void *__restrict userdata,
         const int n,
         const ParallelRangeTLS *__restrict UNUSED(tls))
 {

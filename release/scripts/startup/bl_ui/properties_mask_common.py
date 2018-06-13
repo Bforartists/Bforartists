@@ -1,4 +1,4 @@
-﻿# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -43,8 +43,8 @@ class MASK_UL_layers(UIList):
 
 class MASK_PT_mask:
     # subclasses must define...
-    #~ bl_space_type = 'CLIP_EDITOR'
-    #~ bl_region_type = 'UI'
+    # ~ bl_space_type = 'CLIP_EDITOR'
+    # ~ bl_region_type = 'UI'
     bl_label = "Mask Settings"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -66,8 +66,8 @@ class MASK_PT_mask:
 
 class MASK_PT_layers:
     # subclasses must define...
-    #~ bl_space_type = 'CLIP_EDITOR'
-    #~ bl_region_type = 'UI'
+    # ~ bl_space_type = 'CLIP_EDITOR'
+    # ~ bl_region_type = 'UI'
     bl_label = "Mask Layers"
 
     @classmethod
@@ -114,8 +114,8 @@ class MASK_PT_layers:
 
 class MASK_PT_spline:
     # subclasses must define...
-    #~ bl_space_type = 'CLIP_EDITOR'
-    #~ bl_region_type = 'UI'
+    # ~ bl_space_type = 'CLIP_EDITOR'
+    # ~ bl_region_type = 'UI'
     bl_label = "Active Spline"
 
     @classmethod
@@ -148,8 +148,8 @@ class MASK_PT_spline:
 
 class MASK_PT_point:
     # subclasses must define...
-    #~ bl_space_type = 'CLIP_EDITOR'
-    #~ bl_region_type = 'UI'
+    # ~ bl_space_type = 'CLIP_EDITOR'
+    # ~ bl_region_type = 'UI'
     bl_label = "Active Point"
 
     @classmethod
@@ -203,8 +203,8 @@ class MASK_PT_point:
 
 class MASK_PT_display:
     # subclasses must define...
-    #~ bl_space_type = 'CLIP_EDITOR'
-    #~ bl_region_type = 'UI'
+    # ~ bl_space_type = 'CLIP_EDITOR'
+    # ~ bl_region_type = 'UI'
     bl_label = "Mask Display"
     bl_options = {'DEFAULT_CLOSED'}
 
@@ -227,10 +227,34 @@ class MASK_PT_display:
         sub.prop(space_data, "mask_overlay_mode", text="")
 
 
+class MASK_PT_transforms:
+    # subclasses must define...
+    # ~ bl_space_type = 'CLIP_EDITOR'
+    # ~ bl_region_type = 'TOOLS'
+    bl_label = "Transforms"
+    bl_category = "Mask"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        space_data = context.space_data
+        return space_data.mask and space_data.mode == 'MASK'
+
+    def draw(self, context):
+        layout = self.layout
+
+        col = layout.column(align=True)
+        col.label(text="Transform:")
+        col.operator("transform.translate")
+        col.operator("transform.rotate")
+        col.operator("transform.resize", text="Scale")
+        col.operator("transform.transform", text="Scale Feather").mode = 'MASK_SHRINKFATTEN'
+
+
 class MASK_PT_tools:
     # subclasses must define...
-    #~ bl_space_type = 'CLIP_EDITOR'
-    #~ bl_region_type = 'TOOLS'
+    # ~ bl_space_type = 'CLIP_EDITOR'
+    # ~ bl_region_type = 'TOOLS'
     bl_label = "Mask Tools"
     bl_category = "Mask"
 

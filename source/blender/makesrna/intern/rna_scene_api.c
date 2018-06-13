@@ -101,7 +101,7 @@ static void rna_Scene_frame_set(Scene *scene, Main *bmain, int frame, float subf
 		/* cant use NC_SCENE|ND_FRAME because this causes wm_event_do_notifiers to call
 		 * BKE_scene_update_for_newframe which will loose any un-keyed changes [#24690] */
 		/* WM_main_add_notifier(NC_SCENE|ND_FRAME, scene); */
-		
+
 		/* instead just redraw the views */
 		WM_main_add_notifier(NC_WINDOW, NULL);
 	}
@@ -148,7 +148,7 @@ static void rna_SceneRender_get_frame_path(
 	}
 	else {
 		BKE_image_path_from_imformat(
-		        name, rd->pic, bmain->name, (frame == INT_MIN) ? rd->cfra : frame,
+		        name, rd->pic, BKE_main_blendfile_path(bmain), (frame == INT_MIN) ? rd->cfra : frame,
 		        &rd->im_format, (rd->scemode & R_EXTENSION) != 0, true, suffix);
 	}
 }
@@ -294,7 +294,7 @@ void RNA_api_scene(StructRNA *srna)
 	parm = RNA_def_float_vector(func, "result", 2, NULL, 0.0f, FLT_MAX, "", "aspect", 0.0f, FLT_MAX);
 	RNA_def_parameter_flags(parm, PROP_THICK_WRAP, 0);
 	RNA_def_function_output(func, parm);
-	
+
 	/* Ray Cast */
 	func = RNA_def_function(srna, "ray_cast", "rna_Scene_ray_cast");
 	RNA_def_function_flag(func, FUNC_USE_MAIN);

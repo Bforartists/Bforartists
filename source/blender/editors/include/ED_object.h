@@ -117,7 +117,7 @@ enum {
 	EM_WAITCURSOR       = (1 << 1),
 	EM_IGNORE_LAYER     = (1 << 3),
 };
-bool ED_object_editmode_exit_ex(struct Scene *scene, struct Object *obedit, int flag);
+bool ED_object_editmode_exit_ex(struct Main *bmain, struct Scene *scene, struct Object *obedit, int flag);
 bool ED_object_editmode_exit(struct bContext *C, int flag);
 bool ED_object_editmode_enter(struct bContext *C, int flag);
 bool ED_object_editmode_load(struct Main *bmain, struct Object *obedit);
@@ -140,7 +140,7 @@ void ED_object_wpaintmode_exit_ex(struct Object *ob);
 void ED_object_wpaintmode_exit(struct bContext *C);
 
 void ED_object_sculptmode_enter_ex(
-        struct Scene *scene, struct Object *ob,
+        struct Main *bmain, struct Scene *scene, struct Object *ob,
         struct ReportList *reports);
 void ED_object_sculptmode_enter(struct bContext *C, struct ReportList *reports);
 void ED_object_sculptmode_exit_ex(
