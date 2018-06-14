@@ -48,3 +48,15 @@ build:
   project: c:\projects\bfa\build\blender.sln
   verbosity: minimal
   parallel: true
+
+deploy:
+  release: bforartists-git
+  description: 'The current git version of Bforartists'
+  provider: GitHub
+  auth_token:
+    secure: lsXb3GHJtJFQ6r6uum7jHYUBK6RWHGA+EjJX+9Jij505T7mO9JCieuOUXPYINdg/
+  draft: false
+  prerelease: false
+  on:
+    branch: build_linux
+    appveyor_repo_tag: true
