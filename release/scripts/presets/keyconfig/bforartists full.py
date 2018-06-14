@@ -813,7 +813,6 @@ kmi_props_setattr(kmi.properties, 'angle', 0.2619999945163727)
     ##Added from Blender - by Draise
 kmi = km.keymap_items.new('view3d.navigate', 'F', 'PRESS', shift=True)
 kmi = km.keymap_items.new('view3d.view_all_center_cursor', 'C', 'PRESS', shift=True)
-kmi_props_setattr(kmi.properties, 'center', True)
 ##These items conflict and may also be depricated - will try find alternatives
 #kmi = km.keymap_items.new('view3d.layers', 'ACCENT_GRAVE', 'PRESS')
 #kmi_props_setattr(kmi.properties, 'nr', 0)
@@ -2346,7 +2345,6 @@ kmi = km.keymap_items.new('object.hide_render_clear', 'H', 'PRESS', ctrl=True, a
 kmi = km.keymap_items.new('object.hide_render_set', 'H', 'PRESS', ctrl=True)
 kmi = km.keymap_items.new('object.move_to_layer', 'M', 'PRESS')
 kmi = km.keymap_items.new('object.delete_global', 'DEL', 'PRESS', shift=True)
-kmi_props_setattr(kmi.properties, 'use_global', True)
 kmi = km.keymap_items.new('wm.call_menu', 'A', 'PRESS', shift=True)  ##- deprecated in BFA
 kmi_props_setattr(kmi.properties, 'name', 'INFO_MT_add')
 kmi = km.keymap_items.new('object.duplicates_make_real', 'A', 'PRESS', shift=True, ctrl=True)
