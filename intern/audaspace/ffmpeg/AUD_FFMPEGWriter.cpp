@@ -163,7 +163,7 @@ AUD_FFMPEGWriter::AUD_FFMPEGWriter(std::string filename, AUD_DeviceSpecs specs, 
 		try
 		{
 			if(m_formatCtx->oformat->flags & AVFMT_GLOBALHEADER)
-				m_codecCtx->flags |= CODEC_FLAG_GLOBAL_HEADER;
+				m_codecCtx->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
 
 			AVCodec* codec = avcodec_find_encoder(m_codecCtx->codec_id);
 			if(!codec)
@@ -185,11 +185,11 @@ AUD_FFMPEGWriter::AUD_FFMPEGWriter(std::string filename, AUD_DeviceSpecs specs, 
 			if(avcodec_open2(m_codecCtx, codec, NULL))
 				AUD_THROW(AUD_ERROR_FFMPEG, codec_error);
 
-			m_output_buffer.resize(FF_MIN_BUFFER_SIZE);
+			m_output_buffer.resize(AV_INPUT_BUFFER_MIN_SIZE);
 			int samplesize = AUD_MAX(AUD_SAMPLE_SIZE(m_specs), AUD_DEVICE_SAMPLE_SIZE(m_specs));
 
 			if(m_codecCtx->frame_size <= 1) {
-				m_input_size = FF_MIN_BUFFER_SIZE * 8 / m_codecCtx->bits_per_coded_sample / m_codecCtx->channels;
+				m_input_size = AV_INPUT_BUFFER_MIN_SIZE * 8 / m_codecCtx->bits_per_coded_sample / m_codecCtx->channels;
 				m_input_buffer.resize(m_input_size * samplesize);
 			}
 			else

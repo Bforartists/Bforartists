@@ -290,7 +290,7 @@ SUDO="sudo"
 
 NO_BUILD=false
 NO_CONFIRM=false
-USE_CXX11=false
+USE_CXX11=true
 
 PYTHON_VERSION="3.6.2"
 PYTHON_VERSION_MIN="3.6"
@@ -750,13 +750,13 @@ OCIO_SOURCE=( "https://github.com/imageworks/OpenColorIO/tarball/v$OCIO_VERSION"
 OCIO_SOURCE_REPO=( "https://github.com/imageworks/OpenColorIO.git" )
 OCIO_SOURCE_REPO_UID="6de971097c7f552300f669ed69ca0b6cf5a70843"
 
-OPENEXR_USE_REPO=false
+OPENEXR_USE_REPO=true
 OPENEXR_SOURCE=( "http://download.savannah.nongnu.org/releases/openexr/openexr-$OPENEXR_VERSION.tar.gz" )
 OPENEXR_SOURCE_REPO=( "https://github.com/mont29/openexr.git" )
 OPENEXR_SOURCE_REPO_UID="2787aa1cf652d244ed45ae124eb1553f6cff11ee"
 ILMBASE_SOURCE=( "http://download.savannah.nongnu.org/releases/openexr/ilmbase-$ILMBASE_VERSION.tar.gz" )
 
-OIIO_USE_REPO=false
+OIIO_USE_REPO=true
 OIIO_SOURCE=( "https://github.com/OpenImageIO/oiio/archive/Release-$OIIO_VERSION.tar.gz" )
 OIIO_SOURCE_REPO=( "https://github.com/OpenImageIO/oiio.git" )
 OIIO_SOURCE_REPO_UID="c9e67275a0b248ead96152f6d2221cc0c0f278a4"
@@ -764,7 +764,7 @@ OIIO_SOURCE_REPO_UID="c9e67275a0b248ead96152f6d2221cc0c0f278a4"
 LLVM_SOURCE=( "http://releases.llvm.org/$LLVM_VERSION/llvm-$LLVM_VERSION.src.tar.gz" )
 LLVM_CLANG_SOURCE=( "http://releases.llvm.org/$LLVM_VERSION/clang-$LLVM_VERSION.src.tar.gz" "http://llvm.org/releases/$LLVM_VERSION/cfe-$LLVM_VERSION.src.tar.gz" )
 
-OSL_USE_REPO=false
+OSL_USE_REPO=true
 OSL_SOURCE=( "https://github.com/imageworks/OpenShadingLanguage/archive/Release-$OSL_VERSION.tar.gz" )
 #~ OSL_SOURCE=( "https://github.com/Nazg-Gul/OpenShadingLanguage/archive/Release-1.5.11.tar.gz" )
 #~ OSL_SOURCE_REPO=( "https://github.com/imageworks/OpenShadingLanguage.git" )
@@ -775,7 +775,7 @@ OSL_SOURCE_REPO=( "https://github.com/Nazg-Gul/OpenShadingLanguage.git" )
 OSL_SOURCE_REPO_UID="7d40ff5fe8e47b030042afb92d0e955f5aa96f48"
 OSL_SOURCE_REPO_BRANCH="blender-fixes"
 
-OSD_USE_REPO=false
+OSD_USE_REPO=true
 # Script foo to make the version string compliant with the archive name:
 # ${Varname//SearchForThisChar/ReplaceWithThisChar}
 OSD_SOURCE=( "https://github.com/PixarAnimationStudios/OpenSubdiv/archive/v${OSD_VERSION//./_}.tar.gz" )
@@ -783,14 +783,14 @@ OSD_SOURCE_REPO=( "https://github.com/PixarAnimationStudios/OpenSubdiv.git" )
 OSD_SOURCE_REPO_UID="404659fffa659da075d1c9416e4fc939139a84ee"
 OSD_SOURCE_REPO_BRANCH="dev"
 
-OPENVDB_USE_REPO=false
+OPENVDB_USE_REPO=true
 OPENVDB_BLOSC_SOURCE=( "https://github.com/Blosc/c-blosc/archive/v${OPENVDB_BLOSC_VERSION}.tar.gz" )
 OPENVDB_SOURCE=( "https://github.com/dreamworksanimation/openvdb/archive/v${OPENVDB_VERSION}.tar.gz" )
 #~ OPENVDB_SOURCE_REPO=( "https:///dreamworksanimation/openvdb.git" )
 #~ OPENVDB_SOURCE_REPO_UID="404659fffa659da075d1c9416e4fc939139a84ee"
 #~ OPENVDB_SOURCE_REPO_BRANCH="dev"
 
-ALEMBIC_USE_REPO=false
+ALEMBIC_USE_REPO=true
 ALEMBIC_SOURCE=( "https://github.com/alembic/alembic/archive/${ALEMBIC_VERSION}.tar.gz" )
 # ALEMBIC_SOURCE_REPO=( "https://github.com/alembic/alembic.git" )
 # ALEMBIC_SOURCE_REPO_UID="e6c90d4faa32c4550adeaaf3f556dad4b73a92bb"

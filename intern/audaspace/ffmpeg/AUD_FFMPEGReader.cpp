@@ -264,9 +264,9 @@ AUD_FFMPEGReader::AUD_FFMPEGReader(boost::shared_ptr<AUD_Buffer> buffer) :
 		m_membuffer(buffer),
 		m_membufferpos(0)
 {
-	m_membuf = reinterpret_cast<data_t*>(av_malloc(FF_MIN_BUFFER_SIZE + FF_INPUT_BUFFER_PADDING_SIZE));
+	m_membuf = reinterpret_cast<data_t*>(av_malloc(AV_INPUT_BUFFER_MIN_SIZE + AV_INPUT_BUFFER_PADDING_SIZE));
 
-	m_aviocontext = avio_alloc_context(m_membuf, FF_MIN_BUFFER_SIZE, 0, this,
+	m_aviocontext = avio_alloc_context(m_membuf, AV_INPUT_BUFFER_MIN_SIZE, 0, this,
 									   read_packet, NULL, seek_packet);
 
 	if(!m_aviocontext)

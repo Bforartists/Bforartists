@@ -6,6 +6,7 @@ clone_folder: c:\projects\bfa
 image:
 - Visual Studio 2013
 - Visual Studio 2015
+- Ubuntu
 configuration:
 - Release
 platform:

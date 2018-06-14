@@ -537,7 +537,7 @@ static struct proxy_output_ctx *alloc_proxy_output_ffmpeg(
 	av_opt_set_int(rv->c, "qmax", ffmpeg_quality, 0);
 
 	if (rv->of->flags & AVFMT_GLOBALHEADER) {
-		rv->c->flags |= CODEC_FLAG_GLOBAL_HEADER;
+		rv->c->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
 	}
 
 	if (avio_open(&rv->of->pb, fname, AVIO_FLAG_WRITE) < 0) {

@@ -619,7 +619,7 @@ static AVStream *alloc_video_stream(FFMpegContext *context, RenderData *rd, int 
 	c->rc_buffer_aggressivity = 1.0;
 #endif
 
-	c->me_method = ME_EPZS;
+	// TODO(khaos): c->me_method = ME_EPZS;
 	
 	codec = avcodec_find_encoder(c->codec_id);
 	if (!codec)
@@ -682,14 +682,14 @@ static AVStream *alloc_video_stream(FFMpegContext *context, RenderData *rd, int 
 	    )
 	{
 		PRINT("Using global header\n");
-		c->flags |= CODEC_FLAG_GLOBAL_HEADER;
+		c->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
 	}
 	
 	/* Determine whether we are encoding interlaced material or not */
 	if (rd->mode & R_FIELDS) {
 		PRINT("Encoding interlaced video\n");
-		c->flags |= CODEC_FLAG_INTERLACED_DCT;
-		c->flags |= CODEC_FLAG_INTERLACED_ME;
+		c->flags |= AV_CODEC_FLAG_INTERLACED_DCT;
+		c->flags |= AV_CODEC_FLAG_INTERLACED_ME;
 	}
 
 	/* xasp & yasp got float lately... */
@@ -779,7 +779,7 @@ static AVStream *alloc_audio_stream(FFMpegContext *context, RenderData *rd, int 
 	}
 
 	if (of->oformat->flags & AVFMT_GLOBALHEADER) {
-		c->flags |= CODEC_FLAG_GLOBAL_HEADER;
+		c->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
 	}
 
 	set_ffmpeg_properties(rd, c, "audio", &opts);
@@ -805,7 +805,7 @@ static AVStream *alloc_audio_stream(FFMpegContext *context, RenderData *rd, int 
 		// used to be if ((c->codec_id >= CODEC_ID_PCM_S16LE) && (c->codec_id <= CODEC_ID_PCM_DVD))
 		// not sure if that is needed anymore, so let's try out if there are any
 		// complaints regarding some ffmpeg versions users might have
-		context->audio_input_samples = FF_MIN_BUFFER_SIZE * 8 / c->bits_per_coded_sample / c->channels;
+		context->audio_input_samples = AV_INPUT_BUFFER_MIN_SIZE * 8 / c->bits_per_coded_sample / c->channels;
 	else {
 		context->audio_input_samples = c->frame_size;
 #ifndef FFMPEG_HAVE_ENCODE_AUDIO2
