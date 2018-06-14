@@ -43,7 +43,7 @@ before_build:
     cd build
     cmake --version
     cmake .. -G %generator%
-    dir C:/projects/bfa/build/
+    dir c:\projects\bfa\build\
 build:
   project: c:\projects\bfa\build\blender.sln
   verbosity: minimal
