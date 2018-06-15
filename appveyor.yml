@@ -43,9 +43,8 @@ before_build:
     cd build
     cmake --version
     cmake .. -G %generator%
-    dir c:\projects\bfa\build\
 build:
-  project: c:\projects\bfa\build\blender.sln
+  project: c:\projects\bfa\build\Bforartists.sln
   verbosity: minimal
   parallel: true
 
