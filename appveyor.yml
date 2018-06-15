@@ -57,5 +57,5 @@ deploy:
   draft: false
   prerelease: false
   on:
-    branch: build_linux
+    branch: linux_build
     appveyor_repo_tag: true
