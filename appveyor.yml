@@ -58,4 +58,4 @@ deploy:
   prerelease: false
   on:
     branch: linux_build
-    appveyor_repo_tag: true
+    appveyor_repo_tag: false
