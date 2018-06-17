@@ -81,9 +81,9 @@ PRESETS = {
         "CMAKE_CXX_FLAGS": (("-fsanitize=bounds-strict",), ()),
         "CMAKE_C_FLAGS":   (("-fsanitize=bounds-strict",), ()),
     },
-    "sanitize_vla_bounds": {
-        "CMAKE_CXX_FLAGS": (("-fsanitize=vla-bounds",), ()),
-        "CMAKE_C_FLAGS":   (("-fsanitize=vla-bounds",), ()),
+    "sanitize_vla_bound": {
+        "CMAKE_CXX_FLAGS": (("-fsanitize=vla-bound",), ()),
+        "CMAKE_C_FLAGS":   (("-fsanitize=vla-bound",), ()),
     },
     "sanitize_alignment": {
         "CMAKE_CXX_FLAGS": (("-fsanitize=alignment",), ()),

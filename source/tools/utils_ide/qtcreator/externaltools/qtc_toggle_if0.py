@@ -32,7 +32,9 @@ if is_comment:
         del data[pop_b]
         del data[pop_a]
 else:
-    data = ["#if 0"] + data + ["#endif"]
+    while data and not data[-1].strip():
+        data.pop()
+    data = ["#if 0"] + data + ["#endif\n"]
 
 
 print("\n".join(data), end="")
