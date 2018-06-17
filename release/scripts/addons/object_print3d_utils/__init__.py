@@ -24,11 +24,11 @@ bl_info = {
     "blender": (2, 79, 0),
     "location": "3D View > Toolbox",
     "description": "Utilities for 3D printing",
-    "warning": "",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/Py/"
                 "Scripts/Modeling/PrintToolbox",
     "support": 'OFFICIAL',
-    "category": "Mesh"}
+    "category": "Mesh",
+    }
 
 
 if "bpy" in locals():
@@ -153,10 +153,7 @@ class Print3D_Preferences(AddonPreferences):
 
     def draw(self, context):
         layout = self.layout
-
-        col = layout.column()
-        col.label(text="Tab Category:")
-        col.prop(self, "category", text="")
+        layout.prop(self, "category")
 
 
 classes = (
