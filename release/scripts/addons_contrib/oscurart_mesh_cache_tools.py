@@ -173,7 +173,7 @@ class OscEPc2ExporterPanel(View3DMCPanel, Panel):
 def OscSetFolder(self, context, filepath):
     fp = filepath if os.path.isdir(filepath) else os.path.dirname(filepath)
     try:
-        os.chdir(os.path.dirname(filepath))
+        os.chdir(os.path.dirname(bpy.data.filepath))
     except Exception as e:
         self.report({'WARNING'}, "Folder could not be set: {}".format(e))
         return {'CANCELLED'}

@@ -21,7 +21,7 @@ bl_info = {
     "name": "Enhanced 3D Cursor",
     "description": "Cursor history and bookmarks; drag/snap cursor.",
     "author": "dairin0d",
-    "version": (3, 0, 5),
+    "version": (3, 0, 7),
     "blender": (2, 7, 7),
     "location": "View3D > Action mouse; F10; Properties panel",
     "warning": "",
@@ -3508,6 +3508,28 @@ def update_history_id(self, context):
                 history.last_id = history.curr_id
             history.curr_id = history.current_id
 
+class CursorHistoryBackward(bpy.types.Operator):
+    bl_idname = "scene.cursor_3d_history_backward"
+    bl_label = "Cursor History Backward"
+    bl_description = "Jump to previous position in cursor history"
+
+    def execute(self, context):
+        settings = find_settings()
+        history = settings.history
+        history.current_id += 1 # max is oldest
+        return {'FINISHED'}
+
+class CursorHistoryForward(bpy.types.Operator):
+    bl_idname = "scene.cursor_3d_history_forward"
+    bl_label = "Cursor History Forward"
+    bl_description = "Jump to next position in cursor history"
+
+    def execute(self, context):
+        settings = find_settings()
+        history = settings.history
+        history.current_id -= 1 # 0 is newest
+        return {'FINISHED'}
+
 class CursorHistoryProp(bpy.types.PropertyGroup):
     max_size_limit = 500
 
@@ -5588,6 +5610,14 @@ def scene_update_post_kmreg(scene):
     bpy.app.handlers.scene_update_post.remove(scene_update_post_kmreg)
     update_keymap(True)
 
+@bpy.app.handlers.persistent
+def scene_load_post(*args):
+    wm = bpy.context.window_manager
+    userprefs = bpy.context.user_preferences
+    addon_prefs = userprefs.addons[__name__].preferences
+    wm.cursor_3d_runtime_settings.use_cursor_monitor = \
+        addon_prefs.use_cursor_monitor
+
 class ThisAddonPreferences(bpy.types.AddonPreferences):
     # this must match the addon name, use '__package__'
     # when defining this in a submodule of a python package.
@@ -5643,6 +5673,8 @@ def register():
     bpy.types.VIEW3D_MT_snap.append(extra_snap_menu_draw)
 
     bpy.app.handlers.scene_update_post.append(scene_update_post_kmreg)
+    
+    bpy.app.handlers.load_post.append(scene_load_post)
 
 
 def unregister():
@@ -5674,6 +5706,8 @@ def unregister():
     #bpy.types.VIEW3D_PT_view3d_properties.remove(draw_cursor_tools)
 
     bpy.types.VIEW3D_MT_snap.remove(extra_snap_menu_draw)
+    
+    bpy.app.handlers.load_post.remove(scene_load_post)
 
 
 if __name__ == "__main__":
