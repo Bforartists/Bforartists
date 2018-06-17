@@ -481,9 +481,9 @@ int BKE_mesh_nurbs_displist_to_mdata(
 
 
 /* this may fail replacing ob->data, be sure to check ob->type */
-void BKE_mesh_from_nurbs_displist(Object *ob, ListBase *dispbase, const bool use_orco_uv, const char *obdata_name)
+void BKE_mesh_from_nurbs_displist(
+        Main *bmain, Object *ob, ListBase *dispbase, const bool use_orco_uv, const char *obdata_name)
 {
-	Main *bmain = G.main;
 	Object *ob1;
 	DerivedMesh *dm = ob->derivedFinal;
 	Mesh *me;
@@ -571,7 +571,7 @@ void BKE_mesh_from_nurbs_displist(Object *ob, ListBase *dispbase, const bool use
 	BKE_libblock_free_us(bmain, cu);
 }
 
-void BKE_mesh_from_nurbs(Object *ob)
+void BKE_mesh_from_nurbs(Main *bmain, Object *ob)
 {
 	Curve *cu = (Curve *) ob->data;
 	bool use_orco_uv = (cu->flag & CU_UV_ORCO) != 0;
@@ -581,7 +581,7 @@ void BKE_mesh_from_nurbs(Object *ob)
 		disp = ob->curve_cache->disp;
 	}
 
-	BKE_mesh_from_nurbs_displist(ob, &disp, use_orco_uv, cu->id.name);
+	BKE_mesh_from_nurbs_displist(bmain, ob, &disp, use_orco_uv, cu->id.name);
 }
 
 typedef struct EdgeLink {
@@ -741,7 +741,7 @@ void BKE_mesh_to_curve_nurblist(DerivedMesh *dm, ListBase *nurblist, const int e
 	}
 }
 
-void BKE_mesh_to_curve(Scene *scene, Object *ob)
+void BKE_mesh_to_curve(Main *bmain, Scene *scene, Object *ob)
 {
 	/* make new mesh data from the original copy */
 	DerivedMesh *dm = mesh_get_derived_final(scene, ob, CD_MASK_MESH);
@@ -752,7 +752,7 @@ void BKE_mesh_to_curve(Scene *scene, Object *ob)
 	BKE_mesh_to_curve_nurblist(dm, &nurblist, 1);
 
 	if (nurblist.first) {
-		Curve *cu = BKE_curve_add(G.main, ob->id.name + 2, OB_CURVE);
+		Curve *cu = BKE_curve_add(bmain, ob->id.name + 2, OB_CURVE);
 		cu->flag |= CU_3D;
 
 		cu->nurb = nurblist;
@@ -849,14 +849,14 @@ Mesh *BKE_mesh_new_from_object(
 
 			/* convert object type to mesh */
 			uv_from_orco = (tmpcu->flag & CU_UV_ORCO) != 0;
-			BKE_mesh_from_nurbs_displist(tmpobj, &dispbase, uv_from_orco, tmpcu->id.name + 2);
+			BKE_mesh_from_nurbs_displist(bmain, tmpobj, &dispbase, uv_from_orco, tmpcu->id.name + 2);
 
 			tmpmesh = tmpobj->data;
 
 			BKE_displist_free(&dispbase);
 
 			/* BKE_mesh_from_nurbs changes the type to a mesh, check it worked.
-			 * if it didn't the curve did not have any segments or otherwise 
+			 * if it didn't the curve did not have any segments or otherwise
 			 * would have generated an empty mesh */
 			if (tmpobj->type != OB_MESH) {
 				BKE_libblock_free_us(bmain, tmpobj);
@@ -876,7 +876,7 @@ Mesh *BKE_mesh_new_from_object(
 		case OB_MBALL:
 		{
 			/* metaballs don't have modifiers, so just convert to mesh */
-			Object *basis_ob = BKE_mball_basis_find(bmain->eval_ctx, sce, ob);
+			Object *basis_ob = BKE_mball_basis_find(bmain, bmain->eval_ctx, sce, ob);
 			/* todo, re-generatre for render-res */
 			/* metaball_polygonize(scene, ob) */
 
@@ -895,7 +895,7 @@ Mesh *BKE_mesh_new_from_object(
 				 */
 				EvaluationContext eval_ctx;
 				DEG_evaluation_context_init(&eval_ctx, DAG_EVAL_RENDER);
-				BKE_displist_make_mball_forRender(&eval_ctx, sce, ob, &disp);
+				BKE_displist_make_mball_forRender(bmain, &eval_ctx, sce, ob, &disp);
 				BKE_mesh_from_metaball(&disp, tmpmesh);
 				BKE_displist_free(&disp);
 			}

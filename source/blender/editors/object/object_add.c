@@ -1357,7 +1357,7 @@ static void make_object_duplilist_real(bContext *C, Scene *scene, Base *base,
 		return;
 	}
 
-	lb_duplis = object_duplilist(bmain->eval_ctx, scene, base->object);
+	lb_duplis = object_duplilist(bmain, bmain->eval_ctx, scene, base->object);
 
 	dupli_gh = BLI_ghash_ptr_new(__func__);
 	if (use_hierarchy) {
@@ -1568,7 +1568,7 @@ static void convert_ensure_curve_cache(Main *bmain, Scene *scene, Object *ob)
 			BKE_displist_make_curveTypes(scene, ob, false);
 		}
 		else if (ob->type == OB_MBALL) {
-			BKE_displist_make_mball(bmain->eval_ctx, scene, ob);
+			BKE_displist_make_mball(bmain, bmain->eval_ctx, scene, ob);
 		}
 	}
 }
@@ -1576,7 +1576,7 @@ static void convert_ensure_curve_cache(Main *bmain, Scene *scene, Object *ob)
 static void curvetomesh(Main *bmain, Scene *scene, Object *ob)
 {
 	convert_ensure_curve_cache(bmain, scene, ob);
-	BKE_mesh_from_nurbs(ob); /* also does users */
+	BKE_mesh_from_nurbs(bmain, ob); /* also does users */
 
 	if (ob->type == OB_MESH) {
 		BKE_object_free_modifiers(ob, 0);
@@ -1654,7 +1654,7 @@ static int convert_exec(bContext *C, wmOperator *op)
 			if (ob->type == OB_MBALL && target == OB_MESH) {
 				if (BKE_mball_is_basis(ob) == false) {
 					Object *ob_basis;
-					ob_basis = BKE_mball_basis_find(bmain->eval_ctx, scene, ob);
+					ob_basis = BKE_mball_basis_find(bmain, bmain->eval_ctx, scene, ob);
 					if (ob_basis) {
 						ob_basis->flag &= ~OB_DONE;
 					}
@@ -1730,7 +1730,7 @@ static int convert_exec(bContext *C, wmOperator *op)
 				newob = ob;
 			}
 
-			BKE_mesh_to_curve(scene, newob);
+			BKE_mesh_to_curve(bmain, scene, newob);
 
 			if (newob->type == OB_CURVE) {
 				BKE_object_free_modifiers(newob, 0);   /* after derivedmesh calls! */
@@ -1791,7 +1791,7 @@ static int convert_exec(bContext *C, wmOperator *op)
 			 *               datablock, but for until we've got granular update
 			 *               lets take care by selves.
 			 */
-			BKE_vfont_to_curve(bmain, newob, FO_EDIT);
+			BKE_vfont_to_curve(newob, FO_EDIT);
 
 			newob->type = OB_CURVE;
 			cu->type = OB_CURVE;
@@ -1868,7 +1868,7 @@ static int convert_exec(bContext *C, wmOperator *op)
 			base->flag &= ~SELECT;
 			ob->flag &= ~SELECT;
 
-			baseob = BKE_mball_basis_find(bmain->eval_ctx, scene, ob);
+			baseob = BKE_mball_basis_find(bmain, bmain->eval_ctx, scene, ob);
 
 			if (ob != baseob) {
 				/* if motherball is converting it would be marked as done later */
@@ -1939,7 +1939,7 @@ static int convert_exec(bContext *C, wmOperator *op)
 					if (ob->flag & OB_DONE) {
 						Object *ob_basis = NULL;
 						if (BKE_mball_is_basis(ob) ||
-						    ((ob_basis = BKE_mball_basis_find(bmain->eval_ctx, scene, ob)) && (ob_basis->flag & OB_DONE)))
+						    ((ob_basis = BKE_mball_basis_find(bmain, bmain->eval_ctx, scene, ob)) && (ob_basis->flag & OB_DONE)))
 						{
 							ED_base_object_free_and_unlink(bmain, scene, base);
 						}
@@ -2042,7 +2042,7 @@ static Base *object_add_duplicate_internal(Main *bmain, Scene *scene, Base *base
 
 		/* duplicates using userflags */
 		if (dupflag & USER_DUP_ACT) {
-			BKE_animdata_copy_id_action(&obn->id, true);
+			BKE_animdata_copy_id_action(bmain, &obn->id, true);
 		}
 
 		if (dupflag & USER_DUP_MAT) {
@@ -2056,7 +2056,7 @@ static Base *object_add_duplicate_internal(Main *bmain, Scene *scene, Base *base
 					id_us_min(id);
 
 					if (dupflag & USER_DUP_ACT) {
-						BKE_animdata_copy_id_action(&obn->mat[a]->id, true);
+						BKE_animdata_copy_id_action(bmain, &obn->mat[a]->id, true);
 					}
 				}
 			}
@@ -2072,7 +2072,7 @@ static Base *object_add_duplicate_internal(Main *bmain, Scene *scene, Base *base
 					}
 
 					if (dupflag & USER_DUP_ACT) {
-						BKE_animdata_copy_id_action(&psys->part->id, true);
+						BKE_animdata_copy_id_action(bmain, &psys->part->id, true);
 					}
 
 					id_us_min(id);
@@ -2202,9 +2202,9 @@ static Base *object_add_duplicate_internal(Main *bmain, Scene *scene, Base *base
 			if (dupflag & USER_DUP_ACT) {
 				bActuator *act;
 
-				BKE_animdata_copy_id_action((ID *)obn->data, true);
+				BKE_animdata_copy_id_action(bmain, (ID *)obn->data, true);
 				if (key) {
-					BKE_animdata_copy_id_action((ID *)key, true);
+					BKE_animdata_copy_id_action(bmain, (ID *)key, true);
 				}
 
 				/* Update the duplicated action in the action actuators */

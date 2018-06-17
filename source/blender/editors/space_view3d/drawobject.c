@@ -2382,7 +2382,7 @@ static void ensure_curve_cache(Main *bmain, Scene *scene, Object *object)
 				BKE_displist_make_curveTypes(scene, object, false);
 				break;
 			case OB_MBALL:
-				BKE_displist_make_mball(bmain->eval_ctx, scene, object);
+				BKE_displist_make_mball(bmain, bmain->eval_ctx, scene, object);
 				break;
 			case OB_LATTICE:
 				BKE_lattice_modifiers_calc(scene, object);
@@ -5803,10 +5803,10 @@ static void draw_new_particle_system(Scene *scene, View3D *v3d, RegionView3D *rv
 	}
 }
 
-static void draw_update_ptcache_edit(Scene *scene, Object *ob, PTCacheEdit *edit)
+static void draw_update_ptcache_edit(Main *bmain, Scene *scene, Object *ob, PTCacheEdit *edit)
 {
 	if (edit->psys && edit->psys->flag & PSYS_HAIR_UPDATED)
-		PE_update_object(scene, ob, 0);
+		PE_update_object(bmain, scene, ob, 0);
 
 	/* create path and child path cache if it doesn't exist already */
 	if (edit->pathcache == NULL)
@@ -7900,9 +7900,9 @@ void draw_object(Main *bmain, Scene *scene, ARegion *ar, View3D *v3d, Base *base
 		for (psys = ob->particlesystem.first; psys; psys = psys->next) {
 			/* run this so that possible child particles get cached */
 			if (ob->mode & OB_MODE_PARTICLE_EDIT && is_obact) {
-				PTCacheEdit *edit = PE_create_current(scene, ob);
+				PTCacheEdit *edit = PE_create_current(bmain, scene, ob);
 				if (edit && edit->psys == psys)
-					draw_update_ptcache_edit(scene, ob, edit);
+					draw_update_ptcache_edit(bmain, scene, ob, edit);
 			}
 
 			draw_new_particle_system(scene, v3d, rv3d, base, psys, dt, dflag);
@@ -7922,10 +7922,10 @@ void draw_object(Main *bmain, Scene *scene, ARegion *ar, View3D *v3d, Base *base
 	{
 
 		if (ob->mode & OB_MODE_PARTICLE_EDIT && is_obact) {
-			PTCacheEdit *edit = PE_create_current(scene, ob);
+			PTCacheEdit *edit = PE_create_current(bmain, scene, ob);
 			if (edit) {
 				glLoadMatrixf(rv3d->viewmat);
-				draw_update_ptcache_edit(scene, ob, edit);
+				draw_update_ptcache_edit(bmain, scene, ob, edit);
 				draw_ptcache_edit(scene, v3d, edit);
 				glMultMatrixf(ob->obmat);
 			}
@@ -8268,7 +8268,7 @@ void draw_object_select(Main *bmain, Scene *scene, ARegion *ar, View3D *v3d, Bas
 		Base tbase;
 
 		tbase.flag = OB_FROMDUPLI;
-		lb = object_duplilist(bmain->eval_ctx, scene, base->object);
+		lb = object_duplilist(bmain, bmain->eval_ctx, scene, base->object);
 
 		for (dob = lb->first; dob; dob = dob->next) {
 			float omat[4][4];
