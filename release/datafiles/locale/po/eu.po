@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.78 (sub 4) (b'd5c7d22bc2')\n"
+"Project-Id-Version: Blender 2.79 (sub 2) (b'6618852b7f1')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-23 21:33:49\n"
+"POT-Creation-Date: 2018-02-23 10:49:02\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Ainhize & Miriam <agoenaga006@ikasle.ehu.eus>\n"
 "Language-Team: Euskara <agoenaga006@ikasle.ehu.eus>\n"
@@ -585,20 +585,20 @@ msgid "NLA Editor"
 msgstr "AEL (Animazio Ez-Lineala) Editorea"
 
 
-msgid "Video Sequence Editor"
-msgstr "Bideo Sekuentzia Editorea"
-
-
 msgid "Movie Clip Editor"
 msgstr "Film Sekuentzia Editorea"
 
 
-msgid "Text Editor"
-msgstr "Testu Editorea"
+msgid "Video Sequence Editor"
+msgstr "Bideo Sekuentzia Editorea"
 
 
 msgid "Node Editor"
 msgstr "Nodo Editorea"
+
+
+msgid "Text Editor"
+msgstr "Testu Editorea"
 
 
 msgid "Logic Editor"
@@ -663,18 +663,6 @@ msgstr "Metodoak"
 
 msgid "Plane"
 msgstr "Planoa"
-
-
-msgid "Lamp"
-msgstr "Lanpara"
-
-
-msgid "Speaker"
-msgstr "Bozgorailua"
-
-
-msgid "World"
-msgstr "Mundua"
 
 
 msgid "Cube"
@@ -760,8 +748,20 @@ msgid "Circle"
 msgstr "Zirkulua"
 
 
+msgid "Lamp"
+msgstr "Lanpara"
+
+
+msgid "Speaker"
+msgstr "Bozgorailua"
+
+
 msgid "Grid"
 msgstr "Sarea"
+
+
+msgid "World"
+msgstr "Mundua"
 
 
 msgid "Filter Size"
@@ -866,6 +866,10 @@ msgid "Edit"
 msgstr "Editatu"
 
 
+msgid "Relations"
+msgstr "Loturak"
+
+
 msgid "UV"
 msgstr "UV"
 
@@ -912,10 +916,6 @@ msgstr "Bikoiztu"
 msgctxt "Operator"
 msgid "Properties"
 msgstr "Propietateak"
-
-
-msgid "Event Type"
-msgstr "Gertaera mota"
 
 
 msgid "Deselect"
@@ -2093,14 +2093,6 @@ msgid "Zoom Out"
 msgstr "Zoom Gutxiago"
 
 
-msgid "Zoom Position X"
-msgstr "X kokapenean zoom egin"
-
-
-msgid "Zoom Position Y"
-msgstr "Y kokapenean zoom egin"
-
-
 msgctxt "Operator"
 msgid "Layers"
 msgstr "Geruzak"
@@ -2156,10 +2148,6 @@ msgstr "Sistemaren Informazioa Gorde"
 msgctxt "Operator"
 msgid "Duplicate Window"
 msgstr "Leihoa Biderkatu"
-
-
-msgid "Relations"
-msgstr "Loturak"
 
 
 msgid "Create"
@@ -2498,6 +2486,11 @@ msgstr "Fitxategia: %r"
 
 
 msgctxt "Operator"
+msgid "Camera"
+msgstr "Kamera"
+
+
+msgctxt "Operator"
 msgid "Empty"
 msgstr "Hutsa"
 
@@ -2505,11 +2498,6 @@ msgstr "Hutsa"
 msgctxt "Operator"
 msgid "Speaker"
 msgstr "Bozgorailua"
-
-
-msgctxt "Operator"
-msgid "Camera"
-msgstr "Kamera"
 
 
 msgctxt "Operator"
@@ -2831,14 +2819,6 @@ msgstr "2 Irudia"
 
 msgid "ID value"
 msgstr "ID balioa"
-
-
-msgid "Reflect"
-msgstr "Islatu"
-
-
-msgid "Refract"
-msgstr "Errefrakzioa"
 
 
 msgid "Dispersion"
