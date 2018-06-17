@@ -83,6 +83,7 @@
 
 #include "UI_interface.h"
 
+#include "ED_object.h"
 #include "ED_mesh.h"
 #include "ED_node.h"
 #include "ED_paint.h"
@@ -5472,7 +5473,7 @@ static int texture_paint_image_from_view_exec(bContext *C, wmOperator *op)
 		return OPERATOR_CANCELLED;
 	}
 
-	image = BKE_image_add_from_imbuf(ibuf, "image_view");
+	image = BKE_image_add_from_imbuf(bmain, ibuf, "image_view");
 
 	/* Drop reference to ibuf so that the image owns it */
 	IMB_freeImBuf(ibuf);
@@ -5680,7 +5681,7 @@ static Image *proj_paint_image_create(wmOperator *op, Main *bmain)
 
 static bool proj_paint_add_slot(bContext *C, wmOperator *op)
 {
-	Object *ob = CTX_data_active_object(C);
+	Object *ob = ED_object_active_context(C);
 	Scene *scene = CTX_data_scene(C);
 	Material *ma;
 	bool is_bi = BKE_scene_uses_blender_internal(scene) || BKE_scene_uses_blender_game(scene);
@@ -5743,7 +5744,7 @@ static bool proj_paint_add_slot(bContext *C, wmOperator *op)
 
 		if (ima) {
 			BKE_texpaint_slot_refresh_cache(scene, ma);
-			BKE_image_signal(ima, NULL, IMA_SIGNAL_USER_NEW_IMAGE);
+			BKE_image_signal(bmain, ima, NULL, IMA_SIGNAL_USER_NEW_IMAGE);
 			WM_event_add_notifier(C, NC_IMAGE | NA_ADDED, ima);
 			DAG_id_tag_update(&ma->id, 0);
 			ED_area_tag_redraw(CTX_wm_area(C));
@@ -5772,7 +5773,7 @@ static int texture_paint_add_texture_paint_slot_invoke(bContext *C, wmOperator *
 {
 	char imagename[MAX_ID_NAME - 2];
 	Main *bmain = CTX_data_main(C);
-	Object *ob = CTX_data_active_object(C);
+	Object *ob = ED_object_active_context(C);
 	Material *ma = give_current_material(ob, ob->actcol);
 	int type = RNA_enum_get(op->ptr, "type");
 
@@ -5810,7 +5811,7 @@ void PAINT_OT_add_texture_paint_slot(wmOperatorType *ot)
 	/* api callbacks */
 	ot->invoke = texture_paint_add_texture_paint_slot_invoke;
 	ot->exec = texture_paint_add_texture_paint_slot_exec;
-	ot->poll = ED_operator_region_view3d_active;
+	ot->poll = ED_operator_object_active;
 
 	/* flags */
 	ot->flag = OPTYPE_UNDO;
@@ -5888,6 +5889,7 @@ void PAINT_OT_delete_texture_paint_slot(wmOperatorType *ot)
 static int add_simple_uvs_exec(bContext *C, wmOperator *UNUSED(op))
 {
 	/* no checks here, poll function does them for us */
+	Main *bmain = CTX_data_main(C);
 	Object *ob = CTX_data_active_object(C);
 	Scene *scene = CTX_data_scene(C);
 	Mesh *me = ob->data;
@@ -5912,7 +5914,7 @@ static int add_simple_uvs_exec(bContext *C, wmOperator *UNUSED(op))
 	/* set the margin really quickly before the packing operation*/
 	scene->toolsettings->uvcalc_margin = 0.001f;
 	ED_uvedit_pack_islands(scene, ob, bm, false, false, true);
-	BM_mesh_bm_to_me(bm, me, (&(struct BMeshToMeshParams){0}));
+	BM_mesh_bm_to_me(bmain, bm, me, (&(struct BMeshToMeshParams){0}));
 	BM_mesh_free(bm);
 
 	if (synch_selection)

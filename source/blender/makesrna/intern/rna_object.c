@@ -300,7 +300,7 @@ static void rna_Object_active_shape_update(Main *bmain, Scene *scene, PointerRNA
 		/* exit/enter editmode to get new shape */
 		switch (ob->type) {
 			case OB_MESH:
-				EDBM_mesh_load(ob);
+				EDBM_mesh_load(bmain, ob);
 				EDBM_mesh_make(ob, scene->toolsettings->selectmode, true);
 
 				DAG_id_tag_update(ob->data, 0);
@@ -800,11 +800,11 @@ static void rna_Object_active_particle_system_index_set(PointerRNA *ptr, int val
 	psys_set_current_num(ob, value);
 }
 
-static void rna_Object_particle_update(Main *UNUSED(bmain), Scene *scene, PointerRNA *ptr)
+static void rna_Object_particle_update(Main *bmain, Scene *scene, PointerRNA *ptr)
 {
 	Object *ob = (Object *)ptr->id.data;
 
-	PE_current_changed(scene, ob);
+	PE_current_changed(bmain, scene, ob);
 }
 
 /* rotation - axis-angle */

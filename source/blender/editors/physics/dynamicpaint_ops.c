@@ -313,7 +313,7 @@ static void dpaint_bake_endjob(void *customdata)
 	G.is_rendering = false;
 	BKE_spacedata_draw_locks(false);
 
-	WM_set_locked_interface(G.main->wm.first, false);
+	WM_set_locked_interface(G_MAIN->wm.first, false);
 
 	/* Bake was successful:
 	 *  Report for ended bake and how long it took */
@@ -384,7 +384,7 @@ static void dynamicPaint_bakeImageSequence(DynamicPaintBakeJob *job)
 		/* calculate a frame */
 		scene->r.cfra = (int)frame;
 		ED_update_for_newframe(job->bmain, scene, 1);
-		if (!dynamicPaint_calculateFrame(job->bmain->eval_ctx, surface, scene, cObject, frame)) {
+		if (!dynamicPaint_calculateFrame(job->bmain, job->bmain->eval_ctx, surface, scene, cObject, frame)) {
 			job->success = 0;
 			return;
 		}

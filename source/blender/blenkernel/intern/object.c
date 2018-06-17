@@ -2432,7 +2432,7 @@ bool BKE_object_minmax_dupli(
 	else {
 		ListBase *lb;
 		DupliObject *dob;
-		lb = object_duplilist(bmain->eval_ctx, scene, ob);
+		lb = object_duplilist(bmain, bmain->eval_ctx, scene, ob);
 		for (dob = lb->first; dob; dob = dob->next) {
 			if ((use_hidden == false) && (dob->no_draw != 0)) {
 				/* pass */
@@ -2509,7 +2509,7 @@ void BKE_scene_foreach_display_point(
 				ListBase *lb;
 				DupliObject *dob;
 
-				lb = object_duplilist(bmain->eval_ctx, scene, ob);
+				lb = object_duplilist(bmain, bmain->eval_ctx, scene, ob);
 				for (dob = lb->first; dob; dob = dob->next) {
 					if (dob->no_draw == 0) {
 						BKE_object_foreach_display_point(dob->ob, dob->mat, func_cb, user_data);
@@ -2589,7 +2589,8 @@ bool BKE_object_parent_loop_check(const Object *par, const Object *ob)
 	return BKE_object_parent_loop_check(par->parent, ob);
 }
 
-static void object_handle_update_proxy(EvaluationContext *eval_ctx,
+static void object_handle_update_proxy(Main *bmain,
+                                       EvaluationContext *eval_ctx,
                                        Scene *scene,
                                        Object *object,
                                        const bool do_proxy_update)
@@ -2606,7 +2607,7 @@ static void object_handle_update_proxy(EvaluationContext *eval_ctx,
 	if (object->proxy_group == NULL) {
 		if (do_proxy_update) {
 			// printf("call update, lib ob %s proxy %s\n", ob->proxy->id.name, ob->id.name);
-			BKE_object_handle_update(eval_ctx, scene, object->proxy);
+			BKE_object_handle_update(bmain, eval_ctx, scene, object->proxy);
 		}
 	}
 }
@@ -2619,13 +2620,14 @@ static void object_handle_update_proxy(EvaluationContext *eval_ctx,
 /* the main object update call, for object matrix, constraints, keys and displist (modifiers) */
 /* requires flags to be set! */
 /* Ideally we shouldn't have to pass the rigid body world, but need bigger restructuring to avoid id */
-void BKE_object_handle_update_ex(EvaluationContext *eval_ctx,
+void BKE_object_handle_update_ex(Main *bmain,
+                                 EvaluationContext *eval_ctx,
                                  Scene *scene, Object *ob,
                                  RigidBodyWorld *rbw,
                                  const bool do_proxy_update)
 {
 	if ((ob->recalc & OB_RECALC_ALL) == 0) {
-		object_handle_update_proxy(eval_ctx, scene, ob, do_proxy_update);
+		object_handle_update_proxy(bmain, eval_ctx, scene, ob, do_proxy_update);
 		return;
 	}
 	/* Speed optimization for animation lookups. */
@@ -2659,12 +2661,12 @@ void BKE_object_handle_update_ex(EvaluationContext *eval_ctx,
 	}
 
 	if (ob->recalc & OB_RECALC_DATA) {
-		BKE_object_handle_data_update(eval_ctx, scene, ob);
+		BKE_object_handle_data_update(bmain, eval_ctx, scene, ob);
 	}
 
 	ob->recalc &= ~OB_RECALC_ALL;
 
-	object_handle_update_proxy(eval_ctx, scene, ob, do_proxy_update);
+	object_handle_update_proxy(bmain, eval_ctx, scene, ob, do_proxy_update);
 }
 
 /* WARNING: "scene" here may not be the scene object actually resides in. 
@@ -2672,9 +2674,9 @@ void BKE_object_handle_update_ex(EvaluationContext *eval_ctx,
  * e.g. "scene" <-- set 1 <-- set 2 ("ob" lives here) <-- set 3 <-- ... <-- set n
  * rigid bodies depend on their world so use BKE_object_handle_update_ex() to also pass along the corrent rigid body world
  */
-void BKE_object_handle_update(EvaluationContext *eval_ctx, Scene *scene, Object *ob)
+void BKE_object_handle_update(Main *bmain, EvaluationContext *eval_ctx, Scene *scene, Object *ob)
 {
-	BKE_object_handle_update_ex(eval_ctx, scene, ob, NULL, true);
+	BKE_object_handle_update_ex(bmain, eval_ctx, scene, ob, NULL, true);
 }
 
 void BKE_object_sculpt_modifiers_changed(Object *ob)
@@ -2814,7 +2816,7 @@ void BKE_object_delete_ptcache(Object *ob, int index)
 /* shape key utility function */
 
 /************************* Mesh ************************/
-static KeyBlock *insert_meshkey(Object *ob, const char *name, const bool from_mix)
+static KeyBlock *insert_meshkey(Main *bmain, Object *ob, const char *name, const bool from_mix)
 {
 	Mesh *me = ob->data;
 	Key *key = me->key;
@@ -2822,7 +2824,7 @@ static KeyBlock *insert_meshkey(Object *ob, const char *name, const bool from_mi
 	int newkey = 0;
 
 	if (key == NULL) {
-		key = me->key = BKE_key_add((ID *)me);
+		key = me->key = BKE_key_add(bmain, (ID *)me);
 		key->type = KEY_RELATIVE;
 		newkey = 1;
 	}
@@ -2846,7 +2848,7 @@ static KeyBlock *insert_meshkey(Object *ob, const char *name, const bool from_mi
 	return kb;
 }
 /************************* Lattice ************************/
-static KeyBlock *insert_lattkey(Object *ob, const char *name, const bool from_mix)
+static KeyBlock *insert_lattkey(Main *bmain, Object *ob, const char *name, const bool from_mix)
 {
 	Lattice *lt = ob->data;
 	Key *key = lt->key;
@@ -2854,7 +2856,7 @@ static KeyBlock *insert_lattkey(Object *ob, const char *name, const bool from_mi
 	int newkey = 0;
 
 	if (key == NULL) {
-		key = lt->key = BKE_key_add((ID *)lt);
+		key = lt->key = BKE_key_add(bmain, (ID *)lt);
 		key->type = KEY_RELATIVE;
 		newkey = 1;
 	}
@@ -2884,7 +2886,7 @@ static KeyBlock *insert_lattkey(Object *ob, const char *name, const bool from_mi
 	return kb;
 }
 /************************* Curve ************************/
-static KeyBlock *insert_curvekey(Object *ob, const char *name, const bool from_mix)
+static KeyBlock *insert_curvekey(Main *bmain, Object *ob, const char *name, const bool from_mix)
 {
 	Curve *cu = ob->data;
 	Key *key = cu->key;
@@ -2893,7 +2895,7 @@ static KeyBlock *insert_curvekey(Object *ob, const char *name, const bool from_m
 	int newkey = 0;
 
 	if (key == NULL) {
-		key = cu->key = BKE_key_add((ID *)cu);
+		key = cu->key = BKE_key_add(bmain, (ID *)cu);
 		key->type = KEY_RELATIVE;
 		newkey = 1;
 	}
@@ -2924,16 +2926,16 @@ static KeyBlock *insert_curvekey(Object *ob, const char *name, const bool from_m
 	return kb;
 }
 
-KeyBlock *BKE_object_shapekey_insert(Object *ob, const char *name, const bool from_mix)
+KeyBlock *BKE_object_shapekey_insert(Main *bmain, Object *ob, const char *name, const bool from_mix)
 {	
 	switch (ob->type) {
 		case OB_MESH:
-			return insert_meshkey(ob, name, from_mix);
+			return insert_meshkey(bmain, ob, name, from_mix);
 		case OB_CURVE:
 		case OB_SURF:
-			return insert_curvekey(ob, name, from_mix);
+			return insert_curvekey(bmain, ob, name, from_mix);
 		case OB_LATTICE:
-			return insert_lattkey(ob, name, from_mix);
+			return insert_lattkey(bmain, ob, name, from_mix);
 		default:
 			return NULL;
 	}
@@ -3382,18 +3384,18 @@ LinkNode *BKE_object_relational_superset(struct Scene *scene, eObjectSet objectS
 /**
  * return all groups this object is apart of, caller must free.
  */
-struct LinkNode *BKE_object_groups(Object *ob)
+struct LinkNode *BKE_object_groups(Main *bmain, Object *ob)
 {
 	LinkNode *group_linknode = NULL;
 	Group *group = NULL;
-	while ((group = BKE_group_object_find(group, ob))) {
+	while ((group = BKE_group_object_find(bmain, group, ob))) {
 		BLI_linklist_prepend(&group_linknode, group);
 	}
 
 	return group_linknode;
 }
 
-void BKE_object_groups_clear(Scene *scene, Base *base, Object *object)
+void BKE_object_groups_clear(Main *bmain, Scene *scene, Base *base, Object *object)
 {
 	Group *group = NULL;
 
@@ -3403,8 +3405,8 @@ void BKE_object_groups_clear(Scene *scene, Base *base, Object *object)
 		base = BKE_scene_base_find(scene, object);
 	}
 
-	while ((group = BKE_group_object_find(group, base->object))) {
-		BKE_group_object_unlink(group, object, scene, base);
+	while ((group = BKE_group_object_find(bmain, group, base->object))) {
+		BKE_group_object_unlink(bmain, group, object, scene, base);
 	}
 }
 
@@ -3609,11 +3611,11 @@ bool BKE_object_modifier_use_time(Object *ob, ModifierData *md)
 }
 
 /* set "ignore cache" flag for all caches on this object */
-static void object_cacheIgnoreClear(Object *ob, int state)
+static void object_cacheIgnoreClear(Main *bmain, Object *ob, int state)
 {
 	ListBase pidlist;
 	PTCacheID *pid;
-	BKE_ptcache_ids_from_object(&pidlist, ob, NULL, 0);
+	BKE_ptcache_ids_from_object(bmain, &pidlist, ob, NULL, 0);
 
 	for (pid = pidlist.first; pid; pid = pid->next) {
 		if (pid->cache) {
@@ -3630,9 +3632,11 @@ static void object_cacheIgnoreClear(Object *ob, int state)
 /* Note: this function should eventually be replaced by depsgraph functionality.
  * Avoid calling this in new code unless there is a very good reason for it!
  */
-bool BKE_object_modifier_update_subframe(EvaluationContext *eval_ctx, Scene *scene, Object *ob, bool update_mesh,
-                                         int parent_recursion, float frame,
-                                         int type)
+bool BKE_object_modifier_update_subframe(
+        Main *bmain, EvaluationContext *eval_ctx,
+        Scene *scene, Object *ob, bool update_mesh,
+        int parent_recursion, float frame,
+        int type)
 {
 	ModifierData *md = modifiers_findByType(ob, (ModifierType)type);
 	bConstraint *con;
@@ -3655,8 +3659,8 @@ bool BKE_object_modifier_update_subframe(EvaluationContext *eval_ctx, Scene *sce
 	if (parent_recursion) {
 		int recursion = parent_recursion - 1;
 		bool no_update = false;
-		if (ob->parent) no_update |= BKE_object_modifier_update_subframe(eval_ctx, scene, ob->parent, 0, recursion, frame, type);
-		if (ob->track) no_update |= BKE_object_modifier_update_subframe(eval_ctx, scene, ob->track, 0, recursion, frame, type);
+		if (ob->parent) no_update |= BKE_object_modifier_update_subframe(bmain, eval_ctx, scene, ob->parent, 0, recursion, frame, type);
+		if (ob->track) no_update |= BKE_object_modifier_update_subframe(bmain, eval_ctx, scene, ob->track, 0, recursion, frame, type);
 
 		/* skip subframe if object is parented
 		 *  to vertex of a dynamic paint canvas */
@@ -3673,7 +3677,7 @@ bool BKE_object_modifier_update_subframe(EvaluationContext *eval_ctx, Scene *sce
 				cti->get_constraint_targets(con, &targets);
 				for (ct = targets.first; ct; ct = ct->next) {
 					if (ct->tar)
-						BKE_object_modifier_update_subframe(eval_ctx, scene, ct->tar, 0, recursion, frame, type);
+						BKE_object_modifier_update_subframe(bmain, eval_ctx, scene, ct->tar, 0, recursion, frame, type);
 				}
 				/* free temp targets */
 				if (cti->flush_constraint_targets)
@@ -3688,9 +3692,9 @@ bool BKE_object_modifier_update_subframe(EvaluationContext *eval_ctx, Scene *sce
 	if (update_mesh) {
 		/* ignore cache clear during subframe updates
 		 *  to not mess up cache validity */
-		object_cacheIgnoreClear(ob, 1);
-		BKE_object_handle_update(eval_ctx, scene, ob);
-		object_cacheIgnoreClear(ob, 0);
+		object_cacheIgnoreClear(bmain, ob, 1);
+		BKE_object_handle_update(bmain, eval_ctx, scene, ob);
+		object_cacheIgnoreClear(bmain, ob, 0);
 	}
 	else
 		BKE_object_where_is_calc_time(scene, ob, frame);

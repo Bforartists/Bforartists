@@ -207,6 +207,7 @@ void BKE_object_eval_uber_transform(
         struct EvaluationContext *eval_ctx,
         struct Object *ob);
 void BKE_object_eval_uber_data(
+        struct Main *bmain,
         struct EvaluationContext *eval_ctx,
         struct Scene *scene,
         struct Object *ob);
@@ -223,11 +224,17 @@ void BKE_object_eval_transform_all(
         struct Object *object);
 
 void BKE_object_handle_data_update(
+        struct Main *bmain,
         struct EvaluationContext *eval_ctx,
         struct Scene *scene,
         struct Object *ob);
-void BKE_object_handle_update(struct EvaluationContext *eval_ctx, struct Scene *scene, struct Object *ob);
+void BKE_object_handle_update(
+        struct Main *bmain,
+        struct EvaluationContext *eval_ctx,
+        struct Scene *scene,
+        struct Object *ob);
 void BKE_object_handle_update_ex(
+        struct Main *bmain,
         struct EvaluationContext *eval_ctx,
         struct Scene *scene, struct Object *ob,
         struct RigidBodyWorld *rbw,
@@ -238,7 +245,7 @@ int BKE_object_obdata_texspace_get(struct Object *ob, short **r_texflag, float *
 
 int BKE_object_insert_ptcache(struct Object *ob);
 void BKE_object_delete_ptcache(struct Object *ob, int index);
-struct KeyBlock *BKE_object_shapekey_insert(struct Object *ob, const char *name, const bool from_mix);
+struct KeyBlock *BKE_object_shapekey_insert(struct Main *bmain, struct Object *ob, const char *name, const bool from_mix);
 bool BKE_object_shapekey_remove(struct Main *bmain, struct Object *ob, struct KeyBlock *kb);
 bool BKE_object_shapekey_free(struct Main *bmain, struct Object *ob);
 
@@ -276,8 +283,9 @@ typedef enum eObjectSet {
 
 struct LinkNode *BKE_object_relational_superset(
         struct Scene *scene, eObjectSet objectSet, eObRelationTypes includeFilter);
-struct LinkNode *BKE_object_groups(struct Object *ob);
-void             BKE_object_groups_clear(struct Scene *scene, struct Base *base, struct Object *object);
+struct LinkNode *BKE_object_groups(struct Main *bmain, struct Object *ob);
+void             BKE_object_groups_clear(
+        struct Main *bmain, struct Scene *scene, struct Base *base, struct Object *object);
 
 struct KDTree *BKE_object_as_kdtree(struct Object *ob, int *r_tot);
 
@@ -286,7 +294,8 @@ bool BKE_object_modifier_use_time(struct Object *ob, struct ModifierData *md);
 void BKE_object_wire_colors_sync(struct Object *ob); // bfa -  custom wireframe colors
 
 bool BKE_object_modifier_update_subframe(
-        struct EvaluationContext *eval_ctx, struct Scene *scene, struct Object *ob, bool update_mesh,
+        struct Main *bmain, struct EvaluationContext *eval_ctx,
+        struct Scene *scene, struct Object *ob, bool update_mesh,
         int parent_recursion, float frame,
         int type);
 

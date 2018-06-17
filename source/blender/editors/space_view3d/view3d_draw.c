@@ -2120,7 +2120,7 @@ static void draw_dupli_objects_color(
 	}
 
 	tbase.flag = OB_FROMDUPLI | base->flag;
-	lb = object_duplilist(bmain->eval_ctx, scene, base->object);
+	lb = object_duplilist(bmain, bmain->eval_ctx, scene, base->object);
 	// BLI_listbase_sort(lb, dupli_ob_sort); /* might be nice to have if we have a dupli list with mixed objects. */
 
 	apply_data = duplilist_apply(base->object, scene, lb);
@@ -2649,7 +2649,7 @@ static void gpu_update_lamps_shadows_world(Main *bmain, Scene *scene, View3D *v3
 
 		if (ob->transflag & OB_DUPLI) {
 			DupliObject *dob;
-			ListBase *lb = object_duplilist(bmain->eval_ctx, scene, ob);
+			ListBase *lb = object_duplilist(bmain, bmain->eval_ctx, scene, ob);
 
 			for (dob = lb->first; dob; dob = dob->next)
 				if (dob->ob->type == OB_LAMP)
@@ -2689,7 +2689,7 @@ static void gpu_update_lamps_shadows_world(Main *bmain, Scene *scene, View3D *v3
 
 		/* no need to call ED_view3d_draw_offscreen_init since shadow buffers were already updated */
 		ED_view3d_draw_offscreen(
-		            scene, v3d, &ar, winsize, winsize, viewmat, winmat,
+		            bmain, scene, v3d, &ar, winsize, winsize, viewmat, winmat,
 		            false, false, true,
 		            NULL, NULL, NULL, NULL);
 		GPU_lamp_shadow_buffer_unbind(shadow->lamp);
@@ -2844,11 +2844,14 @@ void ED_view3d_update_viewmat(
  */
 static void view3d_draw_objects(
         const bContext *C,
+        Main *bmain,
         Scene *scene, View3D *v3d, ARegion *ar,
         const char **grid_unit,
         const bool do_bgpic, const bool draw_offscreen, GPUFX *fx)
 {
-	Main *bmain = CTX_data_main(C);
+	if (bmain == NULL) {
+		bmain = CTX_data_main(C);
+	}
 	RegionView3D *rv3d = ar->regiondata;
 	Base *base;
 	const bool do_camera_frame = !draw_offscreen;
@@ -3185,7 +3188,7 @@ static void view3d_main_region_clear(Scene *scene, View3D *v3d, ARegion *ar)
  * stuff like shadow buffers
  */
 void ED_view3d_draw_offscreen(
-        Scene *scene, View3D *v3d, ARegion *ar, int winx, int winy,
+        Main *bmain, Scene *scene, View3D *v3d, ARegion *ar, int winx, int winy,
         float viewmat[4][4], float winmat[4][4],
         bool do_bgpic, bool do_sky, bool is_persp, const char *viewname,
         GPUFX *fx, GPUFXSettings *fx_settings,
@@ -3254,7 +3257,7 @@ void ED_view3d_draw_offscreen(
 	}
 
 	/* main drawing call */
-	view3d_draw_objects(NULL, scene, v3d, ar, NULL, do_bgpic, true, do_compositing ? fx : NULL);
+	view3d_draw_objects(NULL, bmain, scene, v3d, ar, NULL, do_bgpic, true, do_compositing ? fx : NULL);
 
 	/* post process */
 	if (do_compositing) {
@@ -3388,7 +3391,7 @@ ImBuf *ED_view3d_draw_offscreen_imbuf(
 	if ((samples && use_full_sample) == 0) {
 		/* Single-pass render, common case */
 		ED_view3d_draw_offscreen(
-		        scene, v3d, ar, sizex, sizey, NULL, winmat,
+		        bmain, scene, v3d, ar, sizex, sizey, NULL, winmat,
 		        draw_background, draw_sky, !is_ortho, viewname,
 		        fx, &fx_settings, ofs);
 
@@ -3414,7 +3417,7 @@ ImBuf *ED_view3d_draw_offscreen_imbuf(
 
 		/* first sample buffer, also initializes 'rv3d->persmat' */
 		ED_view3d_draw_offscreen(
-		        scene, v3d, ar, sizex, sizey, NULL, winmat,
+		        bmain, scene, v3d, ar, sizex, sizey, NULL, winmat,
 		        draw_background, draw_sky, !is_ortho, viewname,
 		        fx, &fx_settings, ofs);
 		GPU_offscreen_read_pixels(ofs, GL_UNSIGNED_BYTE, rect_temp);
@@ -3433,7 +3436,7 @@ ImBuf *ED_view3d_draw_offscreen_imbuf(
 			        (jit_ofs[j][1] * 2.0f) / sizey);
 
 			ED_view3d_draw_offscreen(
-			        scene, v3d, ar, sizex, sizey, NULL, winmat_jitter,
+			        bmain, scene, v3d, ar, sizex, sizey, NULL, winmat_jitter,
 			        draw_background, draw_sky, !is_ortho, viewname,
 			        fx, &fx_settings, ofs);
 			GPU_offscreen_read_pixels(ofs, GL_UNSIGNED_BYTE, rect_temp);
@@ -3935,7 +3938,7 @@ static void view3d_main_region_draw_objects(const bContext *C, Scene *scene, Vie
 	}
 
 	/* main drawing call */
-	view3d_draw_objects(C, scene, v3d, ar, grid_unit, true, false, do_compositing ? rv3d->compositor : NULL);
+	view3d_draw_objects(C, bmain, scene, v3d, ar, grid_unit, true, false, do_compositing ? rv3d->compositor : NULL);
 
 	/* post process */
 	if (do_compositing) {
