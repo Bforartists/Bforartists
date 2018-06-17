@@ -20,14 +20,16 @@
 
 # Export wrappers and integration with external tools.
 
-import bpy
 import os
+
+import bpy
 
 
 def image_copy_guess(filepath, objects):
     # 'filepath' is the path we are writing to.
     import shutil
     from bpy_extras import object_utils
+
     image = None
     for obj in objects:
         image = object_utils.object_image_guess(obj)
@@ -168,7 +170,7 @@ def write_mesh(context, info, report_cb):
                 global_scale=global_scale,
                 )
     else:
-        assert(0)
+        assert 0
 
     # for formats that don't support images
     if export_format in {'STL', 'PLY'}:
