@@ -21,7 +21,6 @@
 # Generic helper functions, to be used by any modules.
 
 import bmesh
-import array
 
 
 def bmesh_copy_from_object(obj, transform=True, triangulate=True, apply_modifiers=False):
@@ -29,7 +28,7 @@ def bmesh_copy_from_object(obj, transform=True, triangulate=True, apply_modifier
     Returns a transformed, triangulated copy of the mesh
     """
 
-    assert(obj.type == 'MESH')
+    assert obj.type == 'MESH'
 
     if apply_modifiers and obj.modifiers:
         import bpy
@@ -101,18 +100,17 @@ def bmesh_check_self_intersect_object(obj):
 
     returns an array of edge index values.
     """
-    import bpy
+    import array
+    import mathutils
 
     if not obj.data.polygons:
         return array.array('i', ())
 
     bm = bmesh_copy_from_object(obj, transform=False, triangulate=False)
-
-    import mathutils
     tree = mathutils.bvhtree.BVHTree.FromBMesh(bm, epsilon=0.00001)
-
     overlap = tree.overlap(tree)
     faces_error = {i for i_pair in overlap for i in i_pair}
+
     return array.array('i', faces_error)
 
 
@@ -142,7 +140,7 @@ def bmesh_face_points_random(f, num_points=1, margin=0.05):
 
 
 def bmesh_check_thick_object(obj, thickness):
-
+    import array
     import bpy
 
     # Triangulate
@@ -279,3 +277,19 @@ def object_merge(context, objects):
 
     # return new object
     return base_base
+
+
+def face_is_distorted(ele, angle_distort):
+    no = ele.normal
+    angle_fn = no.angle
+
+    for loop in ele.loops:
+        loopno = loop.calc_normal()
+
+        if loopno.dot(no) < 0.0:
+            loopno.negate()
+
+        if angle_fn(loopno, 1000.0) > angle_distort:
+            return True
+
+    return False
