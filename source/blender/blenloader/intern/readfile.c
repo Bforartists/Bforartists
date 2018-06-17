@@ -4501,12 +4501,12 @@ static void lib_link_mesh(FileData *fd, Main *main)
 			if (me->totface && !me->totpoly) {
 				/* temporarily switch main so that reading from
 				 * external CustomData works */
-				Main *gmain = G.main;
-				G.main = main;
+				Main *gmain = G_MAIN;
+				G_MAIN = main;
 				
 				BKE_mesh_do_versions_convert_mfaces_to_mpolys(me);
 				
-				G.main = gmain;
+				G_MAIN = gmain;
 			}
 
 			/*
@@ -6817,11 +6817,12 @@ void blo_lib_link_screen_restore(Main *newmain, bScreen *curscreen, Scene *cursc
 
 					/* free render engines for now */
 					for (ar = sa->regionbase.first; ar; ar = ar->next) {
-						RegionView3D *rv3d= ar->regiondata;
-						
-						if (rv3d && rv3d->render_engine) {
-							RE_engine_free(rv3d->render_engine);
-							rv3d->render_engine = NULL;
+						if (ar->regiontype == RGN_TYPE_WINDOW) {
+							RegionView3D *rv3d = ar->regiondata;
+							if (rv3d && rv3d->render_engine) {
+								RE_engine_free(rv3d->render_engine);
+								rv3d->render_engine = NULL;
+							}
 						}
 					}
 				}
@@ -7049,6 +7050,10 @@ static void direct_link_region(FileData *fd, ARegion *ar, int spacetype)
 
 	if (spacetype == SPACE_EMPTY) {
 		/* unkown space type, don't leak regiondata */
+		ar->regiondata = NULL;
+	}
+	else if (ar->flag & RGN_FLAG_TEMP_REGIONDATA) {
+		/* Runtime data, don't use. */
 		ar->regiondata = NULL;
 	}
 	else {
@@ -7582,9 +7587,9 @@ static void direct_link_group(FileData *fd, Group *group)
 	group->preview = direct_link_preview_image(fd, group->preview);
 }
 
-static void lib_link_group(FileData *fd, Main *main)
+static void lib_link_group(FileData *fd, Main *bmain)
 {
-	for (Group *group = main->group.first; group; group = group->id.next) {
+	for (Group *group = bmain->group.first; group; group = group->id.next) {
 		if (group->id.tag & LIB_TAG_NEED_LINK) {
 			IDP_LibLinkProperty(group->id.properties, fd);
 			
@@ -7601,7 +7606,7 @@ static void lib_link_group(FileData *fd, Main *main)
 			if (add_us) {
 				id_us_ensure_real(&group->id);
 			}
-			BKE_group_object_unlink(group, NULL, NULL, NULL);	/* removes NULL entries */
+			BKE_group_object_unlink(bmain, group, NULL, NULL, NULL);	/* removes NULL entries */
 
 			group->id.tag &= ~LIB_TAG_NEED_LINK;
 		}
@@ -8447,17 +8452,18 @@ static void convert_tface_mt(FileData *fd, Main *main)
 	
 	/* this is a delayed do_version (so it can create new materials) */
 	if (main->versionfile < 259 || (main->versionfile == 259 && main->subversionfile < 3)) {
-		//XXX hack, material.c uses G.main all over the place, instead of main
-		// temporarily set G.main to the current main
-		gmain = G.main;
-		G.main = main;
+		//XXX hack, material.c uses G_MAIN all over the place, instead of main
+		/* XXX NOTE: this hack should not beneeded anymore... but will check/remove this in 2.8 code rather */
+		// temporarily set G_MAIN to the current main
+		gmain = G_MAIN;
+		G_MAIN = main;
 		
 		if (!(do_version_tface(main))) {
 			BKE_report(fd->reports, RPT_WARNING, "Texface conversion problem (see error in console)");
 		}
 		
-		//XXX hack, material.c uses G.main allover the place, instead of main
-		G.main = gmain;
+		//XXX hack, material.c uses G_MAIN allover the place, instead of main
+		G_MAIN = gmain;
 	}
 }
 
@@ -10324,7 +10330,7 @@ static Main *library_link_begin(Main *mainvar, FileData **fd, const char *filepa
 /**
  * Initialize the BlendHandle for linking library data.
  *
- * \param mainvar The current main database, e.g. G.main or CTX_data_main(C).
+ * \param mainvar The current main database, e.g. G_MAIN or CTX_data_main(C).
  * \param bh A blender file handle as returned by \a BLO_blendhandle_from_file or \a BLO_blendhandle_from_memory.
  * \param filepath Used for relative linking, copied to the \a lib->name.
  * \return the library Main, to be passed to \a BLO_library_append_named_part as \a mainl.
