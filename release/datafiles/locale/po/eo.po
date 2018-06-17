@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.78 (sub 4) (b'd5c7d22bc2')\n"
+"Project-Id-Version: Blender 2.79 (sub 2) (b'6618852b7f1')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-23 21:33:49\n"
+"POT-Creation-Date: 2018-02-23 10:49:02\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
