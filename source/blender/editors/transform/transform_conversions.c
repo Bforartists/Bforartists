@@ -1908,9 +1908,10 @@ static void createTransParticleVerts(bContext *C, TransInfo *t)
 {
 	TransData *td = NULL;
 	TransDataExtension *tx;
+	Main *bmain = CTX_data_main(C);
 	Object *ob = CTX_data_active_object(C);
 	ParticleEditSettings *pset = PE_settings(t->scene);
-	PTCacheEdit *edit = PE_get_current(t->scene, ob);
+	PTCacheEdit *edit = PE_get_current(bmain, t->scene, ob);
 	ParticleSystem *psys = NULL;
 	ParticleSystemModifierData *psmd = NULL;
 	PTCacheEditPoint *point;
@@ -2024,9 +2025,10 @@ static void createTransParticleVerts(bContext *C, TransInfo *t)
 
 void flushTransParticles(TransInfo *t)
 {
+	Main *bmain = CTX_data_main(t->context);
 	Scene *scene = t->scene;
 	Object *ob = OBACT;
-	PTCacheEdit *edit = PE_get_current(scene, ob);
+	PTCacheEdit *edit = PE_get_current(bmain, scene, ob);
 	ParticleSystem *psys = edit->psys;
 	ParticleSystemModifierData *psmd = NULL;
 	PTCacheEditPoint *point;
@@ -2065,7 +2067,7 @@ void flushTransParticles(TransInfo *t)
 			point->flag |= PEP_EDIT_RECALC;
 	}
 
-	PE_update_object(scene, OBACT, 1);
+	PE_update_object(bmain, scene, OBACT, 1);
 }
 
 /* ********************* mesh ****************** */
@@ -5635,7 +5637,7 @@ static void set_trans_object_base_flags(TransInfo *t)
 	for (base = scene->base.first; base; base = base->next) {
 		if (base->object->recalc & OB_RECALC_ALL) {
 			/* TODO(sergey): Ideally, it's not needed. */
-			BKE_object_handle_update(bmain->eval_ctx, t->scene, base->object);
+			BKE_object_handle_update(bmain, bmain->eval_ctx, t->scene, base->object);
 		}
 	}
 
@@ -6025,7 +6027,7 @@ void autokeyframe_pose_cb_func(bContext *C, Scene *scene, View3D *v3d, Object *o
 		 */
 		if (C && (ob->pose->avs.path_bakeflag & MOTIONPATH_BAKE_HAS_PATHS)) {
 			//ED_pose_clear_paths(C, ob); // XXX for now, don't need to clear
-			ED_pose_recalculate_paths(scene, ob);
+			ED_pose_recalculate_paths(bmain, scene, ob);
 		}
 	}
 	else {
@@ -6567,7 +6569,7 @@ void special_aftertrans_update(bContext *C, TransInfo *t)
 	else if ((t->scene->basact) &&
 	         (ob = t->scene->basact->object) &&
 	         (ob->mode & OB_MODE_PARTICLE_EDIT) &&
-	         PE_get_current(t->scene, ob))
+	         PE_get_current(bmain, t->scene, ob))
 	{
 		/* do nothing */
 	}
@@ -6589,7 +6591,7 @@ void special_aftertrans_update(bContext *C, TransInfo *t)
 				continue;
 
 			/* flag object caches as outdated */
-			BKE_ptcache_ids_from_object(&pidlist, ob, t->scene, MAX_DUPLI_RECUR);
+			BKE_ptcache_ids_from_object(bmain, &pidlist, ob, t->scene, MAX_DUPLI_RECUR);
 			for (pid = pidlist.first; pid; pid = pid->next) {
 				if (pid->type != PTCACHE_TYPE_PARTICLES) /* particles don't need reset on geometry change */
 					pid->cache->flag |= PTCACHE_OUTDATED;
@@ -8148,6 +8150,7 @@ static void createTransGPencil(bContext *C, TransInfo *t)
 
 void createTransData(bContext *C, TransInfo *t)
 {
+	Main *bmain = CTX_data_main(C);
 	Scene *scene = t->scene;
 	Object *ob = OBACT;
 
@@ -8324,7 +8327,7 @@ void createTransData(bContext *C, TransInfo *t)
 
 		}
 	}
-	else if (ob && (ob->mode & OB_MODE_PARTICLE_EDIT) && PE_start_edit(PE_get_current(scene, ob))) {
+	else if (ob && (ob->mode & OB_MODE_PARTICLE_EDIT) && PE_start_edit(PE_get_current(bmain, scene, ob))) {
 		createTransParticleVerts(C, t);
 		t->flag |= T_POINTS;
 

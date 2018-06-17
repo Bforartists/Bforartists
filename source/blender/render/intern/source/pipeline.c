@@ -2879,8 +2879,8 @@ static void do_render_all_options(Render *re)
 	re->i.starttime = PIL_check_seconds_timer();
 
 	/* ensure no images are in memory from previous animated sequences */
-	BKE_image_all_free_anim_ibufs(re->r.cfra);
-	BKE_sequencer_all_free_anim_ibufs(re->r.cfra);
+	BKE_image_all_free_anim_ibufs(re->main, re->r.cfra);
+	BKE_sequencer_all_free_anim_ibufs(re->main, re->r.cfra);
 
 	if (RE_engine_render(re, 1)) {
 		/* in this case external render overrides all */
@@ -3190,7 +3190,7 @@ static void update_physics_cache(Render *re, Scene *scene, int UNUSED(anim_init)
 	PTCacheBaker baker;
 
 	memset(&baker, 0, sizeof(baker));
-	baker.main = re->main;
+	baker.bmain = re->main;
 	baker.scene = scene;
 	baker.bake = 0;
 	baker.render = 1;
@@ -3577,7 +3577,7 @@ static int do_write_image_or_movie(Render *re, Main *bmain, Scene *scene, bMovie
 	/* Flush stdout to be sure python callbacks are printing stuff after blender. */
 	fflush(stdout);
 
-	BLI_callback_exec(G.main, NULL, BLI_CB_EVT_RENDER_STATS);
+	BLI_callback_exec(re->main, NULL, BLI_CB_EVT_RENDER_STATS);
 
 	BLI_timecode_string_from_time_simple(name, sizeof(name), re->i.lastframetime - render_time);
 	printf(" (Saving: %s)\n", name);

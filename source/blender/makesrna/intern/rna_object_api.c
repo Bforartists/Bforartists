@@ -191,7 +191,7 @@ static void dupli_render_particle_set(Scene *scene, Object *ob, int level, int e
 		dupli_render_particle_set(scene, go->ob, level + 1, enable);
 }
 /* When no longer needed, duplilist should be freed with Object.free_duplilist */
-static void rna_Object_create_duplilist(Object *ob, ReportList *reports, Scene *sce, int settings)
+static void rna_Object_create_duplilist(Object *ob, Main *bmain, ReportList *reports, Scene *sce, int settings)
 {
 	bool for_render = (settings == DAG_EVAL_RENDER);
 	EvaluationContext eval_ctx;
@@ -211,7 +211,7 @@ static void rna_Object_create_duplilist(Object *ob, ReportList *reports, Scene *
 	}
 	if (for_render)
 		dupli_render_particle_set(sce, ob, 0, 1);
-	ob->duplilist = object_duplilist(&eval_ctx, sce, ob);
+	ob->duplilist = object_duplilist(bmain, &eval_ctx, sce, ob);
 	if (for_render)
 		dupli_render_particle_set(sce, ob, 0, 0);
 	/* ob->duplilist should now be freed with Object.free_duplilist */
@@ -228,9 +228,10 @@ static void rna_Object_free_duplilist(Object *ob)
 static PointerRNA rna_Object_shape_key_add(Object *ob, bContext *C, ReportList *reports,
                                            const char *name, int from_mix)
 {
+	Main *bmain = CTX_data_main(C);
 	KeyBlock *kb = NULL;
 
-	if ((kb = BKE_object_shapekey_insert(ob, name, from_mix))) {
+	if ((kb = BKE_object_shapekey_insert(bmain, ob, name, from_mix))) {
 		PointerRNA keyptr;
 
 		RNA_pointer_create((ID *)ob->data, &RNA_ShapeKey, kb, &keyptr);
@@ -573,13 +574,13 @@ void RNA_api_object(StructRNA *srna)
 
 	/* duplis */
 	func = RNA_def_function(srna, "dupli_list_create", "rna_Object_create_duplilist");
+	RNA_def_function_flag(func, FUNC_USE_MAIN | FUNC_USE_REPORTS);
 	RNA_def_function_ui_description(func, "Create a list of dupli objects for this object, needs to "
 	                                "be freed manually with free_dupli_list to restore the "
 	                                "objects real matrix and layers");
 	parm = RNA_def_pointer(func, "scene", "Scene", "", "Scene within which to evaluate duplis");
 	RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED);
 	RNA_def_enum(func, "settings", dupli_eval_mode_items, 0, "", "Generate texture coordinates for rendering");
-	RNA_def_function_flag(func, FUNC_USE_REPORTS);
 
 	func = RNA_def_function(srna, "dupli_list_clear", "rna_Object_free_duplilist");
 	RNA_def_function_ui_description(func, "Free the list of dupli objects");
