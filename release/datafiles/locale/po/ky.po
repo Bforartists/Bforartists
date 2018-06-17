@@ -1,10 +1,10 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.78 (sub 4) (b'd5c7d22bc2')\n"
+"Project-Id-Version: Blender 2.79 (sub 2) (b'6618852b7f1')\n"
 "(b'0000000000000000000000000000000000000000')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-23 21:33:49\n"
+"POT-Creation-Date: 2018-02-23 10:49:02\n"
 "PO-Revision-Date: 2013-11-05 13:47+0600\n"
 "Last-Translator: Chyngyz Dzhumaliev <kyrgyzl10n@gmail.com>\n"
 "Language-Team: Kirghiz <kyrgyzl10n@gmail.com>\n"
@@ -439,12 +439,12 @@ msgid "NLA Editor"
 msgstr "NLA редактору"
 
 
-msgid "Text Editor"
-msgstr "Текст редактору"
-
-
 msgid "Node Editor"
 msgstr "Түйүн редактору"
+
+
+msgid "Text Editor"
+msgstr "Текст редактору"
 
 
 msgid "Logic Editor"
@@ -808,48 +808,8 @@ msgid "Bone Name"
 msgstr "Сөөк аты"
 
 
-msgid "Brush"
-msgstr "Чачы"
-
-
-msgid "Font"
-msgstr "Арип"
-
-
 msgid "Group"
 msgstr "Топ"
-
-
-msgid "Key"
-msgstr "Ачкыч"
-
-
-msgid "Lamp"
-msgstr "Лампа"
-
-
-msgid "Mask"
-msgstr "Маска"
-
-
-msgid "Particle"
-msgstr "Бөлүкчө"
-
-
-msgid "Speaker"
-msgstr "Үн булагы"
-
-
-msgid "Texture"
-msgstr "Текстура"
-
-
-msgid "Window Manager"
-msgstr "Терезе менеджери"
-
-
-msgid "World"
-msgstr "Дүйнө"
 
 
 msgid "Brush Settings"
@@ -894,6 +854,10 @@ msgstr "UV-текстура"
 
 msgid "Vertex Color"
 msgstr "Чоку түсү"
+
+
+msgid "Texture"
+msgstr "Текстура"
 
 
 msgid "Vertex"
@@ -1068,6 +1032,10 @@ msgid "Fluid"
 msgstr "Суюктук"
 
 
+msgid "Particle"
+msgstr "Бөлүкчө"
+
+
 msgid "End"
 msgstr "Соңу"
 
@@ -1086,6 +1054,10 @@ msgstr "Фокус аралыгы"
 
 msgid "Angle"
 msgstr "Бурч"
+
+
+msgid "Brush"
+msgstr "Чачы"
 
 
 msgid "Tool"
@@ -1110,6 +1082,10 @@ msgstr "Колдонуучулар"
 
 msgid "Draw"
 msgstr "Тартуу"
+
+
+msgid "Mask"
+msgstr "Маска"
 
 
 msgid "Mask Tool"
@@ -1192,6 +1168,10 @@ msgid "Text Curve"
 msgstr "Текст ийриси"
 
 
+msgid "Font"
+msgstr "Арип"
+
+
 msgid "Font size"
 msgstr "Арип өлчөмү"
 
@@ -1202,10 +1182,6 @@ msgstr "Чарчы"
 
 msgid "Iris"
 msgstr "Iris"
-
-
-msgid "JPEG 2000"
-msgstr "JPEG 2000"
 
 
 msgid "Targa"
@@ -1526,6 +1502,14 @@ msgid "Meta"
 msgstr "Мета"
 
 
+msgid "Lamp"
+msgstr "Лампа"
+
+
+msgid "Speaker"
+msgstr "Үн булагы"
+
+
 msgid "Animate"
 msgstr "Анимация"
 
@@ -1572,6 +1556,10 @@ msgstr "Ченөө бирдиктеринин ырастоолору"
 
 msgid "View Settings"
 msgstr "Көрсөтүү ырастоолору"
+
+
+msgid "World"
+msgstr "Дүйнө"
 
 
 msgid "Clouds"
@@ -1664,6 +1652,10 @@ msgstr "sqrt(x*x+y*y+z*z)"
 
 msgid "(x*x+y*y+z*z)"
 msgstr "(x*x+y*y+z*z)"
+
+
+msgid "Window Manager"
+msgstr "Терезе менеджери"
 
 
 msgid "Category"
@@ -1844,6 +1836,10 @@ msgid "Delete"
 msgstr "Өчүрүү"
 
 
+msgid "Key"
+msgstr "Ачкыч"
+
+
 msgid "Marker"
 msgstr "Маркер"
 
@@ -1876,20 +1872,16 @@ msgid "Node"
 msgstr "Түйүн"
 
 
-msgid "Change"
-msgstr "Өзгөртүү"
-
-
 msgid "Cache"
 msgstr "Кэш"
 
 
-msgid "Clean up"
-msgstr "Тазалоо"
-
-
 msgid "Apply"
 msgstr "Колдонуу"
+
+
+msgid "Undo/Redo"
+msgstr "Жокко чыгаруу/кайталоо"
 
 
 msgid "Color 1"
@@ -3301,11 +3293,6 @@ msgstr "3D-манипулятор"
 
 
 msgctxt "Operator"
-msgid "Install from File..."
-msgstr "Файлдан орнотуу..."
-
-
-msgctxt "Operator"
 msgid "Refresh"
 msgstr "Жаңылоо"
 
@@ -3354,10 +3341,6 @@ msgid "Recover Last Session"
 msgstr "Акыркы сессияны калыбына келтирүү"
 
 
-msgid "Undo/Redo"
-msgstr "Жокко чыгаруу/кайталоо"
-
-
 msgid "Save Copy"
 msgstr "Көчүрмөсүн сактоо"
 
@@ -3377,12 +3360,12 @@ msgid "New World"
 msgstr "Жаңы дүйнө"
 
 
-msgid "Add a new world"
-msgstr "Жаңы дүйнөнү кошуу"
-
-
 msgid "Solve"
 msgstr "Чечим"
+
+
+msgid "Clean up"
+msgstr "Тазалоо"
 
 
 msgid "Mask Tools"
@@ -3397,16 +3380,16 @@ msgid "Lens"
 msgstr "Объектив"
 
 
+msgid "Post Processing"
+msgstr "Постиштетүү"
+
+
 msgid "Film"
 msgstr "Тасма"
 
 
 msgid "Performance"
 msgstr "Өндүргүчтүк"
-
-
-msgid "Post Processing"
-msgstr "Постиштетүү"
 
 
 msgid "Paragraph"
@@ -3441,10 +3424,6 @@ msgid "Vectorscope"
 msgstr "Вектороскоп"
 
 
-msgid "Print3D"
-msgstr "3D-басма"
-
-
 msgid "Audio"
 msgstr "Аудио"
 
@@ -3455,6 +3434,10 @@ msgstr "Табуу"
 
 msgid "Themes"
 msgstr "Темалар"
+
+
+msgid "Print3D"
+msgstr "3D-басма"
 
 
 msgid "Language Name"
@@ -3541,6 +3524,18 @@ msgid "Mitchell-Netravali"
 msgstr "Митчелл-Нетравали"
 
 
+msgid "2x"
+msgstr "2x"
+
+
+msgid "4x"
+msgstr "4x"
+
+
+msgid "8x"
+msgstr "8x"
+
+
 msgid "Octree"
 msgstr "Октодерево"
 
@@ -3619,18 +3614,6 @@ msgstr "Физика кыймылдаткычы"
 
 msgid "Bullet"
 msgstr "Bullet"
-
-
-msgid "2x"
-msgstr "2x"
-
-
-msgid "4x"
-msgstr "4x"
-
-
-msgid "8x"
-msgstr "8x"
 
 
 msgid "16x"
@@ -4185,6 +4168,14 @@ msgid "Transparency:"
 msgstr "Тунуктугу:"
 
 
+msgid "Geometry:"
+msgstr "Калып:"
+
+
+msgid "Alpha:"
+msgstr "Жарым тунуктугу:"
+
+
 msgid "Type:"
 msgstr "Түрү:"
 
@@ -4411,10 +4402,6 @@ msgid "Animation"
 msgstr "Анимация"
 
 
-msgid "Video Codec"
-msgstr "Видеокодек"
-
-
 msgid "Sequencer:"
 msgstr "Секвенсор:"
 
@@ -4435,10 +4422,6 @@ msgid "Filter:"
 msgstr "Фильтр:"
 
 
-msgid "Alpha:"
-msgstr "Жарым тунуктугу:"
-
-
 msgid "Calculate"
 msgstr "Эсептөө"
 
@@ -4453,10 +4436,6 @@ msgstr "Чагылтуу:"
 
 msgid "System:"
 msgstr "Система:"
-
-
-msgid "Geometry:"
-msgstr "Калып:"
 
 
 msgid "Map:"
@@ -4632,18 +4611,8 @@ msgstr "Видеофрагменттер..."
 
 
 msgctxt "Operator"
-msgid "Clip..."
-msgstr "Видеофрагмент..."
-
-
-msgctxt "Operator"
 msgid "Masks..."
 msgstr "Маскалар..."
-
-
-msgctxt "Operator"
-msgid "Mask..."
-msgstr "Маска..."
 
 
 msgctxt "Operator"
@@ -4842,6 +4811,11 @@ msgstr "Бир сөөк"
 
 
 msgctxt "Operator"
+msgid "Camera"
+msgstr "Камера"
+
+
+msgctxt "Operator"
 msgid "Empty"
 msgstr "Боштук"
 
@@ -4849,11 +4823,6 @@ msgstr "Боштук"
 msgctxt "Operator"
 msgid "Speaker"
 msgstr "Үн булагы"
-
-
-msgctxt "Operator"
-msgid "Camera"
-msgstr "Камера"
 
 
 msgctxt "Operator"
