@@ -35,11 +35,15 @@ proof-reading after this tool has ran is heavily suggested!
 
 Example usage:
 
-   ./git_log_review_commits_advanced.py  --source ../../src --range HEAD~40..HEAD --filter 'BUGFIX' --accept-pretty --accept-releaselog --blender-rev 2.75
+   ./git_log_review_commits_advanced.py  --source ../../.. --range HEAD~40..HEAD --filter 'BUGFIX' --accept-pretty --accept-releaselog --blender-rev 2.79
 
 To add list of fixes between RC2 and RC3, and list both RC2 and RC3 fixes also in their own sections:
 
-   ./git_log_review_commits_advanced.py  --source ../../src --range <RC2 revision>..<RC3 revision> --filter 'BUGFIX' --accept-pretty --accept-releaselog --blender-rev 2.76 --blender-rstate=RC3 --blender-rstate-list="RC2,RC3"
+   ./git_log_review_commits_advanced.py  --source ../../.. --range <RC2 revision>..<RC3 revision> --filter 'BUGFIX' --accept-pretty --accept-releaselog --blender-rev 2.79 --blender-rstate=RC3 --blender-rstate-list="RC2,RC3"
+
+To exclude all commits from some given files, by sha1 or by commit message (from previously generated release logs) - much handy when going over commits which were partially cherry-picked into a previous release branch e.g.:
+
+   ./git_log_review_commits_advanced.py  --source ../../.. --range HEAD~40..HEAD --filter 'BUGFIX' --filter-exclude-sha1-fromfiles "review_accept.txt" "review_reject.txt" --filter-exclude-fromreleaselogs "review_accept_release_log.txt" --accept-pretty --accept-releaselog --blender-rev 2.75
 
 """
 
@@ -50,6 +54,7 @@ import re
 
 ACCEPT_FILE = "review_accept.txt"
 REJECT_FILE = "review_reject.txt"
+ACCEPT_LOG_FILE = "review_accept_log.txt"
 ACCEPT_PRETTY_FILE = "review_accept_pretty.txt"
 ACCEPT_RELEASELOG_FILE = "review_accept_release_log.txt"
 
@@ -59,9 +64,11 @@ IGNORE_END_LINE = "<!-- IGNORE_END -->"
 _cwd = os.getcwd()
 __doc__ = __doc__ + \
     "\nRaw GIT revisions files:\n\t* Accepted: %s\n\t* Rejected: %s\n\n" \
-    "Basic pretty-printed accepted revisions: %s\n\nFull release notes wiki page: %s\n" \
+    "Basic log accepted revisions: %s\n\nWiki-printed accepted revisions: %s\n\n" \
+    "Full release notes wiki page: %s\n" \
     % (os.path.join(_cwd, ACCEPT_FILE), os.path.join(_cwd, REJECT_FILE),
-       os.path.join(_cwd, ACCEPT_PRETTY_FILE), os.path.join(_cwd, ACCEPT_RELEASELOG_FILE))
+       os.path.join(_cwd, ACCEPT_LOG_FILE), os.path.join(_cwd, ACCEPT_PRETTY_FILE),
+       os.path.join(_cwd, ACCEPT_RELEASELOG_FILE))
 del _cwd
 
 
@@ -217,10 +224,15 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='surro
 sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='surrogateescape', line_buffering=True)
 
 
+def gen_commit_summary(c):
+    # In git, all commit message lines until first empty one are part of 'summary'.
+    return c.body.split("\n\n")[0].strip(" :.;-\n").replace("\n", " ")
+
+
 def print_commit(c):
     print("------------------------------------------------------------------------------")
-    print(colorize("{{GitCommit|%s}}" % c.sha1.decode(), color='green'), end=" ")
-    # print("Author: %s" % colorize(c.author, color='bright_blue'))
+    print(colorize(c.sha1.decode(), color='green'), end=" ")
+    print(colorize(c.date.strftime("%Y/%m/%d"), color='purple'), end=" ")
     print(colorize(c.author, color='bright_blue'))
     print()
     print(colorize(c.body, color='normal'))
@@ -231,15 +243,19 @@ def print_commit(c):
     print()
 
 
+def gen_commit_log(c):
+    return "rB%s   %s   %-30s   %s" % (c.sha1.decode()[:10], c.date.strftime("%Y/%m/%d"),
+                                         c.author, gen_commit_summary(c))
+
+
 re_bugify_str = r"T([0-9]{1,})"
 re_bugify = re.compile(re_bugify_str)
 re_commitify = re.compile(r"\W(r(?:B|BA|BAC|BTS)[0-9a-fA-F]{6,})")
 re_prettify = re.compile(r"(.{,20}?)(Fix(?:ing|es)?\s*(?:for)?\s*" + re_bugify_str + r")\s*[-:,]*\s*", re.IGNORECASE)
 
 
-def gen_commit_pretty(c, unreported=None, rstate=None):
-    # In git, all commit message lines until first empty one are part of 'summary'.
-    body = c.body.split("\n\n")[0].strip(" :.;-\n").replace("\n", " ")
+def gen_commit_message_pretty(c, unreported=None):
+    body = gen_commit_summary(c)
 
     tbody = re_prettify.sub(r"Fix {{BugReport|\3}}: \1", body)
     if tbody == body:
@@ -249,9 +265,26 @@ def gen_commit_pretty(c, unreported=None, rstate=None):
     body = re_bugify.sub(r"{{BugReport|\1}}", tbody)
     body = re_commitify.sub(r"{{GitCommit|\1}}", body)
 
+    return body
+
+
+def gen_commit_pretty(c, unreported=None, rstate=None):
+    body = gen_commit_message_pretty(c, unreported)
+
     if rstate is not None:
         return "* [%s] %s ({{GitCommit|rB%s}})." % (rstate, body, c.sha1.decode()[:10])
-    return "* %s ({{GitCommit|rB%s}})." % (body, c.sha1.decode()[:10])
+    return "* %s ({{GitCommit|rB%s}})." % (rstate, body, c.sha1.decode()[:10])
+
+
+def gen_commit_unprettify(body):
+    if body.startswith("* ["):
+        end = body.find("]")
+        if end > 0:
+            body = body[end + 2:]  # +2 to remove ] itself, and following space.
+    start = body.rfind("({{GitCommit|rB")
+    if start > 0:
+        body = body[:start - 1]  # -1 to remove trailing space.
+    return body
 
 
 def print_categories_tree():
@@ -261,16 +294,40 @@ def print_categories_tree():
             print("\t\t[%d] %s" % (j, sub_cat))
 
 
+def release_log_extract_messages(path):
+    messages = set()
+
+    if os.path.exists(path):
+        with open(path, 'r') as f:
+            ignore = False
+            header = True
+            for l in f:
+                if IGNORE_END_LINE in l:
+                    ignore = False
+                    continue
+                elif ignore or IGNORE_START_LINE in l:
+                    ignore = True
+                    continue
+                l = l.strip(" \n")
+                if header and not l.startswith("=="):
+                    continue  # Header, we don't care here.
+                header = False
+                if not l.startswith("==") and "Fix " in l:
+                    messages.add(gen_commit_unprettify(l))
+
+    return messages
+
+
 def release_log_init(path, source_dir, blender_rev, start_sha1, end_sha1, rstate, rstate_list):
     from git_log import GitRepo
 
     if rstate is not None:
         header = "= Blender %s: Bug Fixes =\n\n" \
-                 "[%s] Changes from revision {{GitCommit|%s}} to {{GitCommit|%s}}, inclusive.\n\n" \
+                 "[%s] Changes from revision {{GitCommit|rB%s}} to {{GitCommit|rB%s}}, inclusive.\n\n" \
                  % (blender_rev, rstate, start_sha1[:10], end_sha1[:10])
     else:
         header = "= Blender %s: Bug Fixes =\n\n" \
-                 "Changes from revision {{GitCommit|%s}} to {{GitCommit|%s}}, inclusive.\n\n" \
+                 "Changes from revision {{GitCommit|rB%s}} to {{GitCommit|rB%s}}, inclusive.\n\n" \
                  % (blender_rev, start_sha1[:10], end_sha1[:10])
 
     release_log = {"__HEADER__": header, "__COUNT__": [0, 0], "__RSTATES__": {k: [] for k in rstate_list}}
@@ -477,6 +534,23 @@ def argparse_create():
         metavar='FILTER', type=str, required=False,
         help=("Method to filter commits in ['BUGFIX', 'NOISE']"))
     parser.add_argument(
+        "--filter-exclude-sha1", dest="filter_exclude_sha1_list",
+        default=[], required=False, type=lambda s: s.split(","),
+        help=("Coma-separated list of commits to ignore/skip"))
+    parser.add_argument(
+        "--filter-exclude-sha1-fromfiles", dest="filter_exclude_sha1_filepaths",
+        default="", required=False, nargs='*',
+        help=("One or more text files storing list of commits to ignore/skip"))
+    parser.add_argument(
+        "--filter-exclude-fromreleaselogs", dest="filter_exclude_releaselogs",
+        default="", required=False, nargs='*',
+        help=("One or more text files storing release logs, to ignore/skip their entries "
+              "(based on message comparison, not commit sha1)"))
+    parser.add_argument(
+        "--accept-log", dest="accept_log",
+        default=False, action='store_true', required=False,
+        help=("Also output more complete info about accepted commits (summary, author...)"))
+    parser.add_argument(
         "--accept-pretty", dest="accept_pretty",
         default=False, action='store_true', required=False,
         help=("Also output pretty-printed accepted commits (nearly ready for WIKI release notes)"))
@@ -507,6 +581,17 @@ def main():
     # Parse Args
 
     args = argparse_create().parse_args()
+
+    for path in args.filter_exclude_sha1_filepaths:
+        if os.path.exists(path):
+            with open(path, 'r') as f:
+                args.filter_exclude_sha1_list += [sha1 for l in f for sha1 in l.split()]
+    args.filter_exclude_sha1_list = {sha1.encode() for sha1 in args.filter_exclude_sha1_list}
+
+    messages = set()
+    for path in args.filter_exclude_releaselogs:
+        messages |= release_log_extract_messages(path)
+    args.filter_exclude_releaselogs = messages
 
     from git_log import GitCommit, GitCommitIter
 
@@ -540,6 +625,15 @@ def main():
         elif args.author != c.author:
             return False
 
+        # commits to exclude
+        if c.sha1 in args.filter_exclude_sha1_list:
+            return False
+
+        # exclude by commit message (because cherry-pick totally breaks relations with original commit...)
+        if args.filter_exclude_releaselogs:
+            if gen_commit_message_pretty(c) in args.filter_exclude_releaselogs:
+                return False
+
         return True
 
     if args.accept_releaselog:
@@ -561,6 +655,7 @@ def main():
     def exit_message():
         print("  Written",
               colorize(ACCEPT_FILE, color='green'), "(%d)" % tot_accept,
+              colorize(ACCEPT_LOG_FILE, color='yellow'), "(%d)" % tot_accept,
               colorize(ACCEPT_PRETTY_FILE, color='blue'), "(%d)" % tot_accept,
               colorize(REJECT_FILE, color='red'), "(%d)" % tot_reject,
               )
@@ -608,6 +703,7 @@ def main():
                 return False
             elif ch == b' ':
                 log_filepath = ACCEPT_FILE
+                log_filepath_log = ACCEPT_LOG_FILE
                 log_filepath_pretty = ACCEPT_PRETTY_FILE
                 tot_accept += 1
 
@@ -669,6 +765,7 @@ def main():
                 break
             elif ch == b'\r':
                 log_filepath = REJECT_FILE
+                log_filepath_log = None
                 log_filepath_pretty = None
                 tot_reject += 1
                 break
@@ -681,6 +778,10 @@ def main():
         if args.accept_pretty and log_filepath_pretty:
             with open(log_filepath_pretty, 'a') as f:
                 f.write(gen_commit_pretty(c, rstate=args.blender_rstate) + "\n")
+
+        if args.accept_log and log_filepath_log:
+            with open(log_filepath_log, 'a') as f:
+                f.write(gen_commit_log(c) + "\n")
 
     exit_message()
 
