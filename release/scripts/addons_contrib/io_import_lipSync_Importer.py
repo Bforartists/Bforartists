@@ -167,7 +167,7 @@ def lipsyncer():
     obj = bpy.context.object
     scn = bpy.context.scene
 
-    f = open(scn.regMenuTypes.fpath)  # importing file
+    f = open(bpy.path.abspath(scn.regMenuTypes.fpath))  # importing file
     f.readline()         # reading the 1st line that we don"t need
 
     for line in f:
