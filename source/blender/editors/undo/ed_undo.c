@@ -143,15 +143,10 @@ static int ed_undo_step(bContext *C, int step, const char *undoname)
 void ED_undo_grouped_push(bContext *C, const char *str)
 {
 	/* do nothing if previous undo task is the same as this one (or from the same undo group) */
-	{
-		wmWindowManager *wm = CTX_wm_manager(C);
-		if (wm->undo_stack->steps.last) {
-			const UndoStep *us = wm->undo_stack->steps.last;
-			if (STREQ(str, us->name)) {
-				return;
-			}
-		}
-
+	wmWindowManager *wm = CTX_wm_manager(C);
+	const UndoStep *us = wm->undo_stack->step_active;
+	if (us && STREQ(str, us->name)) {
+		BKE_undosys_stack_clear_active(wm->undo_stack);
 	}
 
 	/* push as usual */
@@ -205,7 +200,7 @@ bool ED_undo_is_valid(const bContext *C, const char *undoname)
  */
 UndoStack *ED_undo_stack_get(void)
 {
-	wmWindowManager *wm = G.main->wm.first;
+	wmWindowManager *wm = G_MAIN->wm.first;
 	return wm->undo_stack;
 }
 

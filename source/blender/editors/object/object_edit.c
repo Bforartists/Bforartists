@@ -365,7 +365,7 @@ static bool ED_object_editmode_load_ex(Main *bmain, Object *obedit, const bool f
 			return false;
 		}
 
-		EDBM_mesh_load(obedit);
+		EDBM_mesh_load(bmain, obedit);
 
 		if (freedata) {
 			EDBM_mesh_free(me->edit_btmesh);
@@ -471,7 +471,7 @@ bool ED_object_editmode_exit_ex(Main *bmain, Scene *scene, Object *obedit, int f
 		scene->obedit = NULL; // XXX for context
 
 		/* flag object caches as outdated */
-		BKE_ptcache_ids_from_object(&pidlist, obedit, scene, 0);
+		BKE_ptcache_ids_from_object(bmain, &pidlist, obedit, scene, 0);
 		for (pid = pidlist.first; pid; pid = pid->next) {
 			if (pid->type != PTCACHE_TYPE_PARTICLES) /* particles don't need reset on geometry change */
 				pid->cache->flag |= PTCACHE_OUTDATED;
@@ -631,6 +631,7 @@ bool ED_object_editmode_enter(bContext *C, int flag)
 
 static int editmode_toggle_exec(bContext *C, wmOperator *op)
 {
+	Main *bmain = CTX_data_main(C);
 	const int mode_flag = OB_MODE_EDIT;
 	const bool is_mode_set = (CTX_data_edit_object(C) != NULL);
 	Scene *scene =  CTX_data_scene(C);
@@ -648,7 +649,7 @@ static int editmode_toggle_exec(bContext *C, wmOperator *op)
 	else {
 		ED_object_editmode_exit(C, EM_FREEDATA | EM_WAITCURSOR);
 	}
-	ED_space_image_uv_sculpt_update(CTX_wm_manager(C), scene);
+	ED_space_image_uv_sculpt_update(bmain, CTX_wm_manager(C), scene);
 
 	return OPERATOR_FINISHED;
 }
@@ -1254,6 +1255,7 @@ void OBJECT_OT_forcefield_toggle(wmOperatorType *ot)
  */
 void ED_objects_recalculate_paths(bContext *C, Scene *scene)
 {
+	Main *bmain = CTX_data_main(C);
 	ListBase targets = {NULL, NULL};
 
 	/* loop over objects in scene */
@@ -1266,7 +1268,7 @@ void ED_objects_recalculate_paths(bContext *C, Scene *scene)
 	CTX_DATA_END;
 
 	/* recalculate paths, then free */
-	animviz_calc_motionpaths(scene, &targets);
+	animviz_calc_motionpaths(bmain, scene, &targets);
 	BLI_freelistN(&targets);
 }
 

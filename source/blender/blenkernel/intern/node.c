@@ -2014,7 +2014,7 @@ bNodeTree *ntreeLocalize(bNodeTree *ntree)
 		/* Make full copy outside of Main database.
 		 * Note: previews are not copied here.
 		 */
-		BKE_id_copy_ex(G.main, (ID *)ntree, (ID **)&ltree,
+		BKE_id_copy_ex(NULL, (ID *)ntree, (ID **)&ltree,
 		               LIB_ID_CREATE_NO_MAIN | LIB_ID_CREATE_NO_USER_REFCOUNT | LIB_ID_COPY_NO_PREVIEW, false);
 		ltree->flag |= NTREE_IS_LOCALIZED;
 
@@ -2070,11 +2070,11 @@ void ntreeLocalSync(bNodeTree *localtree, bNodeTree *ntree)
 
 /* merge local tree results back, and free local tree */
 /* we have to assume the editor already changed completely */
-void ntreeLocalMerge(bNodeTree *localtree, bNodeTree *ntree)
+void ntreeLocalMerge(Main *bmain, bNodeTree *localtree, bNodeTree *ntree)
 {
 	if (ntree && localtree) {
 		if (ntree->typeinfo->local_merge)
-			ntree->typeinfo->local_merge(localtree, ntree);
+			ntree->typeinfo->local_merge(bmain, localtree, ntree);
 		
 		ntreeFreeTree(localtree);
 		MEM_freeN(localtree);

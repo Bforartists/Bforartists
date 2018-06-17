@@ -1733,7 +1733,8 @@ static void search_id_collection(StructRNA *ptype, PointerRNA *ptr, PropertyRNA 
 	StructRNA *srna;
 
 	/* look for collection property in Main */
-	RNA_main_pointer_create(G.main, ptr);
+	/* Note: using global Main is OK-ish here, UI shall not access other Mains anyay... */
+	RNA_main_pointer_create(G_MAIN, ptr);
 
 	*prop = NULL;
 
@@ -1888,11 +1889,11 @@ static uiBut *ui_item_menu(
 
 	if (layout->root->type == UI_LAYOUT_HEADER) { /* ugly .. */
 		if (force_menu) {
-			w += UI_UNIT_Y;
+			w += UI_UNIT_X;
 		}
 		else {
 			if (name[0]) {
-				w -= UI_UNIT_Y / 2;
+				w -= UI_UNIT_X / 2;
 			}
 		}
 	}
