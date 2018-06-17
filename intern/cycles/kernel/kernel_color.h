@@ -14,22 +14,25 @@
  * limitations under the License.
  */
 
-#include "stdosl.h"
+#ifndef __KERNEL_COLOR_H__
+#define __KERNEL_COLOR_H__
 
-shader node_ambient_occlusion(
-	color ColorIn = color(0.8, 0.8, 0.8),
-	int samples = 8,
-	float Distance = 1.0,
-	normal Normal = N,
-	int inside = 0,
-	int only_local = 1,
-	output color ColorOut = color(0.8, 0.8, 0.8),
-	output float AO = 1.0)
+#include "util/util_color.h"
+
+CCL_NAMESPACE_BEGIN
+
+ccl_device float3 xyz_to_rgb(KernelGlobals *kg, float3 xyz)
 {
-	int global_radius = (Distance == 0.0 && !isconnected(Distance));
-
-	/* Abuse texture call with special @ao token. */
-	AO = texture("@ao", samples, Distance, Normal[0], Normal[1], Normal[2], inside, "sblur", only_local, "tblur", global_radius);
-	ColorOut = ColorIn * AO;
+    return make_float3(dot(float4_to_float3(kernel_data.film.xyz_to_r), xyz),
+                       dot(float4_to_float3(kernel_data.film.xyz_to_g), xyz),
+                       dot(float4_to_float3(kernel_data.film.xyz_to_b), xyz));
 }
 
+ccl_device float linear_rgb_to_gray(KernelGlobals *kg, float3 c)
+{
+    return dot(c, float4_to_float3(kernel_data.film.rgb_to_y));
+}
+
+CCL_NAMESPACE_END
+
+#endif /* __KERNEL_COLOR_H__ */
