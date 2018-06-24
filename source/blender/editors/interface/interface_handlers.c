@@ -61,6 +61,7 @@
 
 #include "PIL_time.h"
 
+#include "BKE_addon.h"
 #include "BKE_colorband.h"
 #include "BKE_blender_undo.h"
 #include "BKE_brush.h"
@@ -5240,12 +5241,12 @@ static int ui_do_but_COLOR(
 			rgb_to_hsv_compat_v(col, hsv);
 
 			if (event->type == WHEELDOWNMOUSE)
-				hsv[2] = CLAMPIS(hsv[2] - 0.05f, 0.0f, 1.0f);
+				hsv[2] = clamp_f(hsv[2] - 0.05f, 0.0f, 1.0f);
 			else if (event->type == WHEELUPMOUSE)
-				hsv[2] = CLAMPIS(hsv[2] + 0.05f, 0.0f, 1.0f);
+				hsv[2] = clamp_f(hsv[2] + 0.05f, 0.0f, 1.0f);
 			else {
 				float fac = 0.005 * (event->y - event->prevy);
-				hsv[2] = CLAMPIS(hsv[2] + fac, 0.0f, 1.0f);
+				hsv[2] = clamp_f(hsv[2] + fac, 0.0f, 1.0f);
 			}
 
 			hsv_to_rgb_v(hsv, data->vec);
@@ -5963,12 +5964,12 @@ static int ui_do_but_HSVCIRCLE(
 		}
 		/* XXX hardcoded keymap check.... */
 		else if (event->type == WHEELDOWNMOUSE) {
-			hsv[2] = CLAMPIS(hsv[2] - 0.05f, 0.0f, 1.0f);
+			hsv[2] = clamp_f(hsv[2] - 0.05f, 0.0f, 1.0f);
 			ui_but_hsv_set(but);    /* converts to rgb */
 			ui_numedit_apply(C, block, but, data);
 		}
 		else if (event->type == WHEELUPMOUSE) {
-			hsv[2] = CLAMPIS(hsv[2] + 0.05f, 0.0f, 1.0f);
+			hsv[2] = clamp_f(hsv[2] + 0.05f, 0.0f, 1.0f);
 			ui_but_hsv_set(but);    /* converts to rgb */
 			ui_numedit_apply(C, block, but, data);
 		}
@@ -6838,29 +6839,30 @@ static void ui_but_menu_add_path_operators(uiLayout *layout, PointerRNA *ptr, Pr
 
 static bool ui_but_menu(bContext *C, uiBut *but)
 {
-	uiPopupMenu *pup;
-	uiLayout *layout;
 	MenuType *mt = WM_menutype_find("WM_MT_button_context", true);
 	bool is_array, is_array_component;
-	uiStringInfo label = {BUT_GET_LABEL, NULL};
-
-/*	if ((but->rnapoin.data && but->rnaprop) == 0 && but->optype == NULL)*/
-/*		return 0;*/
 
 	/* having this menu for some buttons makes no sense */
 	if (but->type == UI_BTYPE_IMAGE) {
 		return false;
 	}
 
-	/* highly unlikely getting the label ever fails */
-	UI_but_string_info_get(C, but, &label, NULL);
+	uiPopupMenu *pup;
+	uiLayout *layout;
 
-	pup = UI_popup_menu_begin(C, label.strinfo ? label.strinfo : "", ICON_NONE);
-	layout = UI_popup_menu_layout(pup);
-	if (label.strinfo)
-		MEM_freeN(label.strinfo);
+	{
+		uiStringInfo label = {BUT_GET_LABEL, NULL};
 
-	uiLayoutSetOperatorContext(layout, WM_OP_INVOKE_DEFAULT);
+		/* highly unlikely getting the label ever fails */
+		UI_but_string_info_get(C, but, &label, NULL);
+
+		pup = UI_popup_menu_begin(C, label.strinfo ? label.strinfo : "", ICON_NONE);
+		layout = UI_popup_menu_layout(pup);
+		if (label.strinfo) {
+			MEM_freeN(label.strinfo);
+		}
+		uiLayoutSetOperatorContext(layout, WM_OP_INVOKE_DEFAULT);
+	}
 
 	if (but->rnapoin.data && but->rnaprop) {
 		PointerRNA *ptr = &but->rnapoin;
@@ -6872,8 +6874,7 @@ static bool ui_but_menu(bContext *C, uiBut *but)
 		/*bool is_idprop = RNA_property_is_idprop(prop);*/ /* XXX does not work as expected, not strictly needed */
 		bool is_set = RNA_property_is_set(ptr, prop);
 
-		/* Set the (button_pointer, button_prop) and pointer data for Python access to the hovered ui element. */
-		uiLayoutSetContextFromBut(layout, but);
+
 
 		/* second slower test, saved people finding keyframe items in menus when its not possible */
 		if (is_anim)
@@ -6885,6 +6886,9 @@ static bool ui_but_menu(bContext *C, uiBut *but)
 
 		/* Keyframes */
 		if (but->flag & UI_BUT_ANIMATED_KEY) {
+			/* Set the (button_pointer, button_prop) and pointer data for Python access to the hovered ui element. */
+			uiLayoutSetContextFromBut(layout, but);
+
 			/* replace/delete keyfraemes */
 			if (is_array_component) {
 				uiItemBooleanO(layout, CTX_IFACE_(BLT_I18NCONTEXT_OPERATOR_DEFAULT, "Replace Keyframes"),
@@ -7138,19 +7142,22 @@ static bool ui_but_menu(bContext *C, uiBut *but)
 	}
 
 	/* perhaps we should move this into (G.debug & G_DEBUG) - campbell */
-	if (ui_block_is_menu(but->block) == false) {
-		uiItemFullO(layout, "UI_OT_editsource", NULL, ICON_NONE, NULL, WM_OP_INVOKE_DEFAULT, 0, NULL);
+	if (U.flag & USER_DEVELOPER_UI) {
+		if (ui_block_is_menu(but->block) == false) {
+			uiItemFullO(layout, "UI_OT_editsource", NULL, ICON_NONE, NULL, WM_OP_INVOKE_DEFAULT, 0, NULL);
+		}
 	}
-	uiItemFullO(layout, "UI_OT_edittranslation_init", NULL, ICON_NONE, NULL, WM_OP_INVOKE_DEFAULT, 0, NULL);
+
+	if (BKE_addon_find(&U.addons, "ui_translate")) {
+		uiItemFullO(layout, "UI_OT_edittranslation_init", NULL, ICON_NONE, NULL, WM_OP_INVOKE_DEFAULT, 0, NULL);
+	}
 
 	mt = WM_menutype_find("WM_MT_button_context", true);
 	if (mt) {
 		UI_menutype_draw(C, mt, uiLayoutColumn(layout, false));
 	}
 
-	UI_popup_menu_end(C, pup);
-
-	return true;
+	return UI_popup_menu_end_or_cancel(C, pup);
 }
 
 static int ui_do_button(bContext *C, uiBlock *block, uiBut *but, const wmEvent *event)
@@ -9628,6 +9635,11 @@ static int ui_handle_menu_event(
 		retval = ui_handle_menu_button(C, event, menu);
 	}
 
+	/* Don't handle double click events, rehandle as regular press/release. */
+	if (retval == WM_UI_HANDLER_CONTINUE && event->val == KM_DBL_CLICK) {
+		return retval;
+	}
+
 	/* if we set a menu return value, ensure we continue passing this on to
 	 * lower menus and buttons, so always set continue then, and if we are
 	 * inside the region otherwise, ensure we swallow the event */
@@ -10208,6 +10220,7 @@ static int ui_handler_region_menu(bContext *C, const wmEvent *event, void *UNUSE
 {
 	ARegion *ar;
 	uiBut *but;
+	int retval = WM_UI_HANDLER_CONTINUE;
 
 	ar = CTX_wm_menu(C);
 	if (!ar)
@@ -10251,29 +10264,32 @@ static int ui_handler_region_menu(bContext *C, const wmEvent *event, void *UNUSE
 			if ((but_other->flag & UI_BUT_DISABLED) == 0) {
 				ui_handle_button_activate(C, ar, but_other, BUTTON_ACTIVATE_OVER);
 				button_activate_state(C, but_other, BUTTON_STATE_MENU_OPEN);
+				retval = WM_UI_HANDLER_BREAK;
 			}
 		}
 		else if (data->state == BUTTON_STATE_MENU_OPEN) {
-			int retval;
-
 			/* handle events for menus and their buttons recursively,
 			 * this will handle events from the top to the bottom menu */
-			if (data->menu)
+			if (data->menu) {
 				retval = ui_handle_menus_recursive(C, event, data->menu, 0, false, false, false);
+			}
 
 			/* handle events for the activated button */
 			if ((data->menu && (retval == WM_UI_HANDLER_CONTINUE)) ||
 			    (event->type == TIMER))
 			{
-				if (data->menu && data->menu->menuretval)
+				if (data->menu && data->menu->menuretval) {
 					ui_handle_button_return_submenu(C, event, but);
-				else
-					ui_handle_button_event(C, event, but);
+					retval = WM_UI_HANDLER_BREAK;
+				}
+				else {
+					retval = ui_handle_button_event(C, event, but);
+				}
 			}
 		}
 		else {
 			/* handle events for the activated button */
-			ui_handle_button_event(C, event, but);
+			retval = ui_handle_button_event(C, event, but);
 		}
 	}
 
@@ -10283,6 +10299,14 @@ static int ui_handler_region_menu(bContext *C, const wmEvent *event, void *UNUSE
 
 	/* delayed apply callbacks */
 	ui_apply_but_funcs_after(C);
+
+	/* Don't handle double-click events,
+	 * these will be converted into regular clicks which we handle. */
+	if (retval == WM_UI_HANDLER_CONTINUE) {
+		if (event->val == KM_DBL_CLICK) {
+			return WM_UI_HANDLER_CONTINUE;
+		}
+	}
 
 	/* we block all events, this is modal interaction */
 	return WM_UI_HANDLER_BREAK;
