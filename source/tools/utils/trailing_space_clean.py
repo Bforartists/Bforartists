@@ -13,7 +13,7 @@ SOURCE_EXT = (
     # Python
     ".py",
     # Text (also CMake)
-    ".txt", ".rst",
+    ".txt", ".cmake", ".rst",
 )
 
 
@@ -27,6 +27,8 @@ def path_iter(path, filename_check=None):
         dirnames[:] = [d for d in dirnames if not d.startswith(".")]
 
         for filename in filenames:
+            if filename.startswith("."):
+                continue
             filepath = join(dirpath, filename)
             if filename_check is None or filename_check(filepath):
                 yield filepath
