@@ -1063,7 +1063,7 @@ static void screen_cursor_set(wmWindow *win, const wmEvent *event)
 	ScrArea *sa;
 
 	for (sa = win->screen->areabase.first; sa; sa = sa->next)
-		if ((az = is_in_area_actionzone(sa, &event->x)))
+		if ((az = ED_area_actionzone_find_xy(sa, &event->x)))
 			break;
 
 	if (sa) {
@@ -1104,10 +1104,13 @@ void ED_screen_set_subwinactive(bContext *C, const wmEvent *event)
 		int oldswin = scr->subwinactive;
 
 		for (sa = scr->areabase.first; sa; sa = sa->next) {
-			if (event->x > sa->totrct.xmin && event->x < sa->totrct.xmax)
-				if (event->y > sa->totrct.ymin && event->y < sa->totrct.ymax)
-					if (NULL == is_in_area_actionzone(sa, &event->x))
+			if (event->x > sa->totrct.xmin && event->x < sa->totrct.xmax) {
+				if (event->y > sa->totrct.ymin && event->y < sa->totrct.ymax) {
+					if (NULL == ED_area_actionzone_refresh_xy(sa, &event->x)) {
 						break;
+					}
+				}
+			}
 		}
 		if (sa) {
 			/* make overlap active when mouse over */
@@ -1166,7 +1169,7 @@ int ED_screen_area_active(const bContext *C)
 	ScrArea *sa = CTX_wm_area(C);
 
 	if (win && sc && sa) {
-		AZone *az = is_in_area_actionzone(sa, &win->eventstate->x);
+		AZone *az = ED_area_actionzone_find_xy(sa, &win->eventstate->x);
 		ARegion *ar;
 
 		if (az && az->type == AZONE_REGION)
