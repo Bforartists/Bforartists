@@ -43,7 +43,11 @@ https://youtu.be/zSbxfYF7rIY
 
 And here's a Youtube playlist with some quickstart videos:
 
-https://youtu.be/Gm7aCzI4xws?list=PLB0iqEbIPQTZEkNWmGcIFGubrLYSDi5O g
+https://youtu.be/Gm7aCzI4xws?list=PLB0iqEbIPQTZEkNWmGcIFGubrLYSDi5O
+
+For those who are willing and interested to help with the manual, we have a Github repository for it too. You can find it here: 
+
+https://github.com/Bforartists/Manual
 
 Have fun :)
 
