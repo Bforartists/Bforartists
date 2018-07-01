@@ -212,31 +212,31 @@ static void rna_userdef_load_ui_update(Main *UNUSED(bmain), Scene *UNUSED(scene)
 
 static void rna_userdef_mipmap_update(Main *bmain, Scene *scene, PointerRNA *ptr)
 {
-	GPU_set_mipmap(!(U.gameflags & USER_DISABLE_MIPMAP));
+	GPU_set_mipmap(bmain, !(U.gameflags & USER_DISABLE_MIPMAP));
 	rna_userdef_update(bmain, scene, ptr);
 }
 
 static void rna_userdef_anisotropic_update(Main *bmain, Scene *scene, PointerRNA *ptr)
 {
-	GPU_set_anisotropic(U.anisotropic_filter);
+	GPU_set_anisotropic(bmain, U.anisotropic_filter);
 	rna_userdef_update(bmain, scene, ptr);
 }
 
 static void rna_userdef_gl_gpu_mipmaps(Main *bmain, Scene *scene, PointerRNA *ptr)
 {
-	GPU_set_gpu_mipmapping(U.use_gpu_mipmap);
+	GPU_set_gpu_mipmapping(bmain, U.use_gpu_mipmap);
 	rna_userdef_update(bmain, scene, ptr);
 }
 
 static void rna_userdef_gl_texture_limit_update(Main *bmain, Scene *scene, PointerRNA *ptr)
 {
-	GPU_free_images();
+	GPU_free_images(bmain);
 	rna_userdef_update(bmain, scene, ptr);
 }
 
 static void rna_userdef_gl_use_16bit_textures(Main *bmain, Scene *scene, PointerRNA *ptr)
 {
-	GPU_free_images();
+	GPU_free_images(bmain);
 	rna_userdef_update(bmain, scene, ptr);
 }
 
@@ -4207,17 +4207,6 @@ static void rna_def_userdef_system(BlenderRNA *brna)
 	RNA_def_property_enum_items(prop, audio_channel_items);
 	RNA_def_property_ui_text(prop, "Audio Channels", "Audio channel count");
 	RNA_def_property_update(prop, 0, "rna_UserDef_audio_update");
-
-	prop = RNA_def_property(srna, "screencast_fps", PROP_INT, PROP_NONE);
-	RNA_def_property_int_sdna(prop, NULL, "scrcastfps");
-	RNA_def_property_range(prop, 10, 100);
-	RNA_def_property_ui_text(prop, "FPS", "Frame rate for the screencast to be played back");
-
-	prop = RNA_def_property(srna, "screencast_wait_time", PROP_INT, PROP_NONE);
-	RNA_def_property_int_sdna(prop, NULL, "scrcastwait");
-	RNA_def_property_range(prop, 10, 1000);
-	RNA_def_property_ui_text(prop, "Wait Timer (ms)",
-	                         "Time in milliseconds between each frame recorded for screencast");
 
 	prop = RNA_def_property(srna, "use_text_antialiasing", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_boolean_negative_sdna(prop, NULL, "text_render", USER_TEXT_DISABLE_AA);
