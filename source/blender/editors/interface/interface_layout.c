@@ -1486,7 +1486,7 @@ void uiItemFullR(uiLayout *layout, PointerRNA *ptr, PropertyRNA *prop, int index
 	}
 
 	/* Mark non-embossed textfields inside a listbox. */
-	if (but && (block->flag & UI_BLOCK_LIST_ITEM) && (but->dt & UI_EMBOSS_NONE)) {
+	if (but && (block->flag & UI_BLOCK_LIST_ITEM) && (but->type == UI_BTYPE_TEXT) && (but->dt & UI_EMBOSS_NONE)) {
 		UI_but_flag_enable(but, UI_BUT_LIST_ITEM);
 	}
 
@@ -1922,7 +1922,7 @@ static uiBut *ui_item_menu(
 	return but;
 }
 
-void uiItemM(uiLayout *layout, bContext *UNUSED(C), const char *menuname, const char *name, int icon)
+void uiItemM(uiLayout *layout, const char *menuname, const char *name, int icon)
 {
 	MenuType *mt;
 

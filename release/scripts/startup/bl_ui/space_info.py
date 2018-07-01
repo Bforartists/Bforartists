@@ -429,7 +429,6 @@ class INFO_MT_window(Menu):
         layout.separator()
 
         layout.operator("screen.screenshot", icon='MAKE_SCREENSHOT')
-        layout.operator("screen.screencast", icon='MAKE_SCREENCAST')
 
         if sys.platform[:3] == "win":
             layout.separator()

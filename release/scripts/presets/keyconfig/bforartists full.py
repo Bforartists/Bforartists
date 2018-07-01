@@ -2026,7 +2026,6 @@ kmi = km.keymap_items.new('render.view_cancel', 'ESC', 'PRESS')
 kmi = km.keymap_items.new('render.view_show', 'F11', 'PRESS')
     ##Added from Blender - by Draise
 kmi = km.keymap_items.new('screen.screenshot', 'F3', 'PRESS', ctrl=True)
-kmi = km.keymap_items.new('screen.screencast', 'F3', 'PRESS', alt=True)
 kmi = km.keymap_items.new('screen.space_context_cycle', 'TAB', 'PRESS', ctrl=True)
 kmi_props_setattr(kmi.properties, 'direction', 'NEXT')
 kmi = km.keymap_items.new('screen.space_context_cycle', 'TAB', 'PRESS', shift=True, ctrl=True)
