@@ -201,4 +201,3 @@ PyObject *PYOP_wrap_macro_define(PyObject *UNUSED(self), PyObject *args)
 
 	return pyrna_struct_CreatePyObject(&ptr_otmacro);
 }
-

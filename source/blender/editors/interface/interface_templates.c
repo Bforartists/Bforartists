@@ -3526,7 +3526,7 @@ void uiTemplateOperatorPropertyButs(
 		uiLayoutGetBlock(layout)->ui_operator = op;
 
 		row = uiLayoutRow(layout, true);
-		uiItemM(row, (bContext *)C, "WM_MT_operator_presets", NULL, ICON_NONE);
+		uiItemM(row, "WM_MT_operator_presets", NULL, ICON_NONE);
 
 		wmOperatorType *ot = WM_operatortype_find("WM_OT_operator_preset_add", false);
 		uiItemFullO_ptr(row, ot, "", ICON_ZOOMIN, NULL, WM_OP_INVOKE_DEFAULT, 0, &op_ptr);
@@ -3800,9 +3800,6 @@ void uiTemplateRunningJobs(uiLayout *layout, bContext *C)
 		                 NULL, 0.0f, 0.0f, 0, 0, TIP_("Stop this job"));
 	}
 
-	if (WM_jobs_test(wm, screen, WM_JOB_TYPE_SCREENCAST))
-		uiDefIconTextBut(block, UI_BTYPE_BUT, B_STOPCAST, ICON_CANCEL, IFACE_("Capture"), 0, 0, UI_UNIT_X * 4.25f, UI_UNIT_Y,
-		                 NULL, 0.0f, 0.0f, 0, 0, TIP_("Stop screencast"));
 	if (screen->animtimer)
 		uiDefIconTextBut(block, UI_BTYPE_BUT, B_STOPANIM, ICON_CANCEL, IFACE_("Anim Player"), 0, 0, UI_UNIT_X * 5.0f, UI_UNIT_Y,
 		                 NULL, 0.0f, 0.0f, 0, 0, TIP_("Stop animation playback"));
