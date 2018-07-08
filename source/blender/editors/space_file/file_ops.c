@@ -1178,9 +1178,9 @@ int file_cancel_exec(bContext *C, wmOperator *UNUSED(unused))
 	return OPERATOR_FINISHED;
 }
 
-static int file_operator_poll(bContext *C)
+static bool file_operator_poll(bContext *C)
 {
-	int poll = ED_operator_file_active(C);
+	bool poll = ED_operator_file_active(C);
 	SpaceFile *sfile = CTX_wm_space_file(C);
 
 	if (!sfile || !sfile->op) poll = 0;
@@ -2201,7 +2201,7 @@ static int file_rename_exec(bContext *C, wmOperator *UNUSED(op))
 
 }
 
-static int file_rename_poll(bContext *C)
+static bool file_rename_poll(bContext *C)
 {
 	bool poll = ED_operator_file_active(C);
 	SpaceFile *sfile = CTX_wm_space_file(C);
@@ -2247,9 +2247,9 @@ void FILE_OT_rename(struct wmOperatorType *ot)
 
 }
 
-static int file_delete_poll(bContext *C)
+static bool file_delete_poll(bContext *C)
 {
-	int poll = ED_operator_file_active(C);
+	bool poll = ED_operator_file_active(C);
 	SpaceFile *sfile = CTX_wm_space_file(C);
 
 	if (sfile && sfile->params) {

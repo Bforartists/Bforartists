@@ -114,7 +114,7 @@
 
 /*********************** Make Vertex Parent Operator ************************/
 
-static int vertex_parent_set_poll(bContext *C)
+static bool vertex_parent_set_poll(bContext *C)
 {
 	return ED_operator_editmesh(C) || ED_operator_editsurfcurve(C) || ED_operator_editlattice(C);
 }
@@ -1313,7 +1313,8 @@ void OBJECT_OT_track_set(wmOperatorType *ot)
 
 static unsigned int move_to_layer_init(bContext *C, wmOperator *op)
 {
-	int values[20], a;
+	int a;
+	bool values[20];
 	unsigned int lay = 0;
 
 	if (!RNA_struct_property_is_set(op->ptr, "layers")) {
