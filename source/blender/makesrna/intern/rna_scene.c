@@ -499,7 +499,7 @@ static void rna_GPencilInterpolateSettings_type_set(PointerRNA *ptr, int value)
 }
 
 /* Grease pencil Drawing Brushes */
-static bGPDbrush *rna_GPencil_brush_new(ToolSettings *ts, const char *name, int setactive)
+static bGPDbrush *rna_GPencil_brush_new(ToolSettings *ts, const char *name, bool setactive)
 {
 	bGPDbrush *brush = BKE_gpencil_brush_addnew(ts, name, setactive != 0);
 
@@ -728,7 +728,7 @@ static void rna_Scene_set_set(PointerRNA *ptr, PointerRNA value)
 	scene->set = set;
 }
 
-static void rna_Scene_layer_set(PointerRNA *ptr, const int *values)
+static void rna_Scene_layer_set(PointerRNA *ptr, const bool *values)
 {
 	Scene *scene = (Scene *)ptr->data;
 
@@ -839,7 +839,7 @@ static void rna_Scene_end_frame_set(PointerRNA *ptr, int value)
 	}
 }
 
-static void rna_Scene_use_preview_range_set(PointerRNA *ptr, int value)
+static void rna_Scene_use_preview_range_set(PointerRNA *ptr, bool value)
 {
 	Scene *data = (Scene *)ptr->data;
 
@@ -1059,13 +1059,13 @@ static int rna_RenderSettings_threads_mode_get(PointerRNA *ptr)
 		return (rd->mode & R_FIXED_THREADS);
 }
 
-static int rna_RenderSettings_is_movie_format_get(PointerRNA *ptr)
+static bool rna_RenderSettings_is_movie_format_get(PointerRNA *ptr)
 {
 	RenderData *rd = (RenderData *)ptr->data;
 	return BKE_imtype_is_movie(rd->im_format.imtype);
 }
 
-static int rna_RenderSettings_save_buffers_get(PointerRNA *ptr)
+static bool rna_RenderSettings_save_buffers_get(PointerRNA *ptr)
 {
 	RenderData *rd = (RenderData *)ptr->data;
 	Scene *scene = (Scene *)ptr->id.data;
@@ -1312,7 +1312,7 @@ static void rna_SceneRender_file_ext_get(PointerRNA *ptr, char *str)
 }
 
 #ifdef WITH_FFMPEG
-static void rna_FFmpegSettings_lossless_output_set(PointerRNA *ptr, int value)
+static void rna_FFmpegSettings_lossless_output_set(PointerRNA *ptr, bool value)
 {
 	Scene *scene = (Scene *) ptr->id.data;
 	RenderData *rd = &scene->r;
@@ -1610,24 +1610,24 @@ static void rna_RenderSettings_views_format_set(PointerRNA *ptr, int value)
 	rd->views_format = value;
 }
 
-static int rna_RenderSettings_multiple_engines_get(PointerRNA *UNUSED(ptr))
+static bool rna_RenderSettings_multiple_engines_get(PointerRNA *UNUSED(ptr))
 {
 	return (BLI_listbase_count(&R_engines) > 1);
 }
 
-static int rna_RenderSettings_use_shading_nodes_get(PointerRNA *ptr)
+static bool rna_RenderSettings_use_shading_nodes_get(PointerRNA *ptr)
 {
 	Scene *scene = (Scene *)ptr->id.data;
 	return BKE_scene_use_new_shading_nodes(scene);
 }
 
-static int rna_RenderSettings_use_spherical_stereo_get(PointerRNA *ptr)
+static bool rna_RenderSettings_use_spherical_stereo_get(PointerRNA *ptr)
 {
 	Scene *scene = (Scene *)ptr->id.data;
 	return BKE_scene_use_spherical_stereo(scene);
 }
 
-static int rna_RenderSettings_use_game_engine_get(PointerRNA *ptr)
+static bool rna_RenderSettings_use_game_engine_get(PointerRNA *ptr)
 {
 	RenderData *rd = (RenderData *)ptr->data;
 	RenderEngineType *type;
@@ -1639,7 +1639,7 @@ static int rna_RenderSettings_use_game_engine_get(PointerRNA *ptr)
 	return 0;
 }
 
-static void rna_SceneRenderLayer_layer_set(PointerRNA *ptr, const int *values)
+static void rna_SceneRenderLayer_layer_set(PointerRNA *ptr, const bool *values)
 {
 	SceneRenderLayer *rl = (SceneRenderLayer *)ptr->data;
 	rl->lay = ED_view3d_scene_layer_set(rl->lay, values, NULL);
@@ -1679,7 +1679,7 @@ static void rna_Physics_update(Main *UNUSED(bmain), Scene *UNUSED(scene), Pointe
 		BKE_ptcache_object_reset(scene, base->object, PTCACHE_RESET_DEPSGRAPH);
 }
 
-static void rna_Scene_editmesh_select_mode_set(PointerRNA *ptr, const int *value)
+static void rna_Scene_editmesh_select_mode_set(PointerRNA *ptr, const bool *value)
 {
 	Scene *scene = (Scene *)ptr->id.data;
 	ToolSettings *ts = (ToolSettings *)ptr->data;
@@ -1777,13 +1777,13 @@ static void rna_Scene_use_persistent_data_update(Main *UNUSED(bmain), Scene *UNU
 		RE_FreePersistentData();
 }
 
-static int rna_Scene_use_audio_get(PointerRNA *ptr)
+static bool rna_Scene_use_audio_get(PointerRNA *ptr)
 {
 	Scene *scene = (Scene *)ptr->data;
 	return (scene->audio.flag & AUDIO_MUTE) != 0;
 }
 
-static void rna_Scene_use_audio_set(PointerRNA *ptr, int value)
+static void rna_Scene_use_audio_set(PointerRNA *ptr, bool value)
 {
 	Scene *scene = (Scene *)ptr->data;
 
@@ -1820,12 +1820,12 @@ static void rna_Scene_sync_mode_set(PointerRNA *ptr, int value)
 	}
 }
 
-static int rna_GameSettings_auto_start_get(PointerRNA *UNUSED(ptr))
+static bool rna_GameSettings_auto_start_get(PointerRNA *UNUSED(ptr))
 {
 	return (G.fileflags & G_FILE_AUTOPLAY) != 0;
 }
 
-static void rna_GameSettings_auto_start_set(PointerRNA *UNUSED(ptr), int value)
+static void rna_GameSettings_auto_start_set(PointerRNA *UNUSED(ptr), bool value)
 {
 	if (value)
 		G.fileflags |= G_FILE_AUTOPLAY;
@@ -2162,7 +2162,7 @@ static void rna_Stereo3dFormat_update(Main *bmain, Scene *UNUSED(scene), Pointer
 	}
 }
 
-static int rna_gpu_is_hq_supported_get(PointerRNA *UNUSED(ptr))
+static bool rna_gpu_is_hq_supported_get(PointerRNA *UNUSED(ptr))
 {
 	return GPU_instanced_drawing_support() && GPU_geometry_shader_support();
 }
