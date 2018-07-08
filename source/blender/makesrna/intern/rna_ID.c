@@ -239,7 +239,7 @@ IDProperty *rna_ID_idprops(PointerRNA *ptr, bool create)
 	return IDP_GetProperties(ptr->data, create);
 }
 
-void rna_ID_fake_user_set(PointerRNA *ptr, int value)
+void rna_ID_fake_user_set(PointerRNA *ptr, bool value)
 {
 	ID *id = (ID *)ptr->data;
 
@@ -360,7 +360,7 @@ static void rna_ID_user_remap(ID *id, Main *bmain, ID *new_id)
 	}
 }
 
-static struct ID *rna_ID_make_local(struct ID *self, Main *bmain, int clear_proxy)
+static struct ID *rna_ID_make_local(struct ID *self, Main *bmain, bool clear_proxy)
 {
 	/* Special case, as we can't rely on id_make_local(); it clears proxies. */
 	if (!clear_proxy && GS(self->name) == ID_OB) {
@@ -433,7 +433,8 @@ static void rna_IDMaterials_append_id(ID *id, Main *bmain, Material *ma)
 	WM_main_add_notifier(NC_OBJECT | ND_OB_SHADING, id);
 }
 
-static Material *rna_IDMaterials_pop_id(ID *id, Main *bmain, ReportList *reports, int index_i, int remove_material_slot)
+static Material *rna_IDMaterials_pop_id(
+        ID *id, Main *bmain, ReportList *reports, int index_i, bool remove_material_slot)
 {
 	Material *ma;
 	short *totcol = give_totcolp_id(id);
@@ -461,7 +462,7 @@ static Material *rna_IDMaterials_pop_id(ID *id, Main *bmain, ReportList *reports
 	return ma;
 }
 
-static void rna_IDMaterials_clear_id(ID *id, Main *bmain, int remove_material_slot)
+static void rna_IDMaterials_clear_id(ID *id, Main *bmain, bool remove_material_slot)
 {
 	BKE_material_clear_id(bmain, id, remove_material_slot);
 
@@ -646,7 +647,7 @@ static void rna_ImagePreview_pixels_float_set(PointerRNA *ptr, const float *valu
 }
 
 
-static void rna_ImagePreview_is_image_custom_set(PointerRNA *ptr, int value)
+static void rna_ImagePreview_is_image_custom_set(PointerRNA *ptr, bool value)
 {
 	rna_ImagePreview_is_custom_set(ptr, value, ICON_SIZE_PREVIEW);
 }
@@ -692,7 +693,7 @@ static void rna_ImagePreview_image_pixels_float_set(PointerRNA *ptr, const float
 }
 
 
-static void rna_ImagePreview_is_icon_custom_set(PointerRNA *ptr, int value)
+static void rna_ImagePreview_is_icon_custom_set(PointerRNA *ptr, bool value)
 {
 	rna_ImagePreview_is_custom_set(ptr, value, ICON_SIZE_ICON);
 }
