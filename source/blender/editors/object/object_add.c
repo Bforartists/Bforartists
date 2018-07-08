@@ -327,7 +327,8 @@ bool ED_object_add_generic_get_opts(bContext *C, wmOperator *op, const char view
 
 	/* Get layers! */
 	{
-		int a, layer_values[20];
+		int a;
+		bool layer_values[20];
 		if (!layer)
 			layer = &_layer;
 
@@ -1587,7 +1588,7 @@ static void curvetomesh(Main *bmain, Scene *scene, Object *ob)
 	}
 }
 
-static int convert_poll(bContext *C)
+static bool convert_poll(bContext *C)
 {
 	Object *obact = CTX_data_active_object(C);
 	Scene *scene = CTX_data_scene(C);
@@ -2430,7 +2431,7 @@ void OBJECT_OT_add_named(wmOperatorType *ot)
 
 /**************************** Join *************************/
 
-static int join_poll(bContext *C)
+static bool join_poll(bContext *C)
 {
 	Object *ob = CTX_data_active_object(C);
 
@@ -2483,7 +2484,7 @@ void OBJECT_OT_join(wmOperatorType *ot)
 
 /**************************** Join as Shape Key*************************/
 
-static int join_shapes_poll(bContext *C)
+static bool join_shapes_poll(bContext *C)
 {
 	Object *ob = CTX_data_active_object(C);
 
