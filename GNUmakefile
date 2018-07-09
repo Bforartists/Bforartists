@@ -126,7 +126,7 @@ endif
 # Build Blender
 all: .FORCE
 	@echo
-	@echo Configuring Blender in \"$(BUILD_DIR)\" ...
+	@echo Configuring Bforartists in \"$(BUILD_DIR)\" ...
 
 #	# if test ! -f $(BUILD_DIR)/CMakeCache.txt ; then \
 #	# 	$(CMAKE_CONFIG); \
@@ -136,11 +136,11 @@ all: .FORCE
 	@$(CMAKE_CONFIG)
 
 	@echo
-	@echo Building Blender ...
+	@echo Building Bforartists ...
 	$(MAKE) -C "$(BUILD_DIR)" -s -j $(NPROCS) install
 	@echo
 	@echo edit build configuration with: "$(BUILD_DIR)/CMakeCache.txt" run make again to rebuild.
-	@echo Blender successfully built, run from: "$(BUILD_DIR)/bin/blender"
+	@echo Bforartists successfully built, run from: "$(BUILD_DIR)/bin/bforartists"
 	@echo
 
 debug: all
