@@ -133,9 +133,11 @@ class TEXT_PT_properties(Panel):
             flow.prop(text, "use_tabs_as_spaces")
 
         flow.prop(st, "show_margin")
-        col = flow.column()
-        col.active = st.show_margin
-        col.prop(st, "margin_column")
+        
+        if st.show_margin:
+            col = flow.column()
+            col.active = st.show_margin
+            col.prop(st, "margin_column")
 
 
 class TEXT_PT_find(Panel):
