@@ -354,7 +354,6 @@ kmi = km.keymap_items.new('wm.call_menu', 'DEL', 'PRESS', ctrl=True) #changed to
 kmi_props_setattr(kmi.properties, 'name', 'VIEW3D_MT_edit_gpencil_delete')
 #kmi = km.keymap_items.new('gpencil.dissolve', 'X', 'PRESS', ctrl=True) - double shortcut removed - by Draise
 kmi = km.keymap_items.new('gpencil.dissolve', 'DEL', 'PRESS') #changed to just DEL to be consistent with BFA deletion - by DRAISE
-kmi = km.keymap_items.new('gpencil.active_frames_delete_all', 'DEL', 'PRESS', shift=True) #changed from X to DEL - by Draise
 kmi = km.keymap_items.new('gpencil.stroke_join', 'J', 'PRESS', ctrl=True)
 kmi = km.keymap_items.new('gpencil.stroke_join', 'J', 'PRESS', shift=True, ctrl=True)
 kmi_props_setattr(kmi.properties, 'type', 'JOINCOPY')
@@ -2225,7 +2224,7 @@ kmi = km.keymap_items.new('wm.call_menu_pie', 'W', 'PRESS', key_modifier='D')
 kmi_props_setattr(kmi.properties, 'name', 'GPENCIL_MT_pie_settings_palette')
 kmi = km.keymap_items.new('gpencil.blank_frame_add', 'B', 'PRESS', key_modifier='D')
     ##Added from Blender - by Draise
-kmi = km.keymap_items.new('gpencil.active_frames_delete_all', 'DEL', 'PRESS') ##- changed to DEL from D to be consistent with BFA - by Draise
+kmi = km.keymap_items.new('gpencil.active_frames_delete_all', 'DEL', 'PRESS', key_modifier='D')
 
 ### Done
 # Map Face Mask
