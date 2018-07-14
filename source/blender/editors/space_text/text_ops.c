@@ -1954,9 +1954,9 @@ void TEXT_OT_jump(wmOperatorType *ot)
 	PropertyRNA *prop;
 
 	/* identifiers */
-	ot->name = "Jump";
+	ot->name = "GoTo";
 	ot->idname = "TEXT_OT_jump";
-	ot->description = "Jump\nJump cursor to line";
+	ot->description = "GoTo\nGo to a specific line number";
 	
 	/* api callbacks */
 	ot->invoke = text_jump_invoke;
