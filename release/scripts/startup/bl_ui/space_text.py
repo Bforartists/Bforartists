@@ -225,9 +225,6 @@ class TEXT_MT_text(Menu):
             if text.filepath:
                 layout.operator("text.make_internal")
 
-            layout.column()
-            layout.operator("text.run_script", icon = "PLAY")
-
         layout.separator()
 
         layout.menu("TEXT_MT_templates")
