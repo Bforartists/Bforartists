@@ -687,7 +687,7 @@
       </ThemeProperties>
     </properties>
     <text_editor>
-      <ThemeTextEditor line_numbers_background="#c7c7c7"
+      <ThemeTextEditor line_numbers_background="#999999"
                        selected_text="#c67777"
                        cursor="#ff0000"
                        syntax_builtin="#800050"
