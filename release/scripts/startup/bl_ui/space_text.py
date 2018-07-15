@@ -139,9 +139,11 @@ class TEXT_PT_properties(Panel):
             flow.prop(text, "use_tabs_as_spaces")
 
         flow.prop(st, "show_margin")
-        col = flow.column()
-        col.active = st.show_margin
-        col.prop(st, "margin_column")
+        
+        if st.show_margin:
+            col = flow.column()
+            col.active = st.show_margin
+            col.prop(st, "margin_column")
 
 
 class TEXT_PT_find(Panel):
@@ -228,9 +230,6 @@ class TEXT_MT_text(Menu):
 
             if text.filepath:
                 layout.operator("text.make_internal")
-
-            layout.column()
-            layout.operator("text.run_script", icon = "PLAY")
 
         layout.separator()
 
