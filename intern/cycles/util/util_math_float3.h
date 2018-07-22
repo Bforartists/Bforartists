@@ -280,11 +280,6 @@ ccl_device_inline float3 sqrt(const float3& a)
 #endif
 }
 
-ccl_device_inline float3 pow3(const float3& a, float e)
-{
-	return make_float3(powf(a.x, e), powf(a.y, e), powf(a.z, e));
-}
-
 ccl_device_inline float3 mix(const float3& a, const float3& b, float t)
 {
 	return a + t*(b - a);
@@ -380,6 +375,21 @@ ccl_device_inline bool isequal_float3(const float3 a, const float3 b)
 #else
 	return a == b;
 #endif
+}
+
+ccl_device_inline float3 pow3(float3 v, float e)
+{
+	return make_float3(powf(v.x, e), powf(v.y, e), powf(v.z, e));
+}
+
+ccl_device_inline float3 exp3(float3 v)
+{
+	return make_float3(expf(v.x), expf(v.y), expf(v.z));
+}
+
+ccl_device_inline float3 log3(float3 v)
+{
+	return make_float3(logf(v.x), logf(v.y), logf(v.z));
 }
 
 ccl_device_inline int3 quick_floor_to_int3(const float3 a)

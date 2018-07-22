@@ -246,6 +246,7 @@ shader_node_categories = [
         NodeItem("ShaderNodeVolumeAbsorption"),
         NodeItem("ShaderNodeVolumeScatter"),
         NodeItem("ShaderNodeVolumePrincipled"),
+        NodeItem("ShaderNodeBsdfHairPrincipled", poll=object_shader_nodes_poll)
     ]),
     ShaderNewNodeCategory("SH_NEW_TEXTURE", "Texture", items=[
         NodeItem("ShaderNodeTexImage"),
@@ -394,6 +395,7 @@ compositor_node_categories = [
         NodeItem("CompositorNodeChromaMatte"),
         NodeItem("CompositorNodeColorMatte"),
         NodeItem("CompositorNodeDoubleEdgeMask"),
+        NodeItem("CompositorNodeCryptomatte"),
     ]),
     CompositorNodeCategory("CMP_DISTORT", "Distort", items=[
         NodeItem("CompositorNodeScale"),
