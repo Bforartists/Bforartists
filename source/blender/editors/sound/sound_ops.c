@@ -481,7 +481,7 @@ static int sound_mixdown_invoke(bContext *C, wmOperator *op, const wmEvent *even
 
 #ifdef WITH_AUDASPACE
 
-static bool sound_mixdown_draw_check_prop(PointerRNA *UNUSED(ptr), PropertyRNA *prop)
+static bool sound_mixdown_draw_check_prop(PointerRNA *UNUSED(ptr), PropertyRNA *prop, void *UNUSED(user_data))
 {
 	const char *prop_id = RNA_property_identifier(prop);
 	return !(STREQ(prop_id, "filepath") ||
@@ -634,7 +634,7 @@ static void sound_mixdown_draw(bContext *C, wmOperator *op)
 	RNA_pointer_create(&wm->id, op->type->srna, op->properties, &ptr);
 
 	/* main draw call */
-	uiDefAutoButsRNA(layout, &ptr, sound_mixdown_draw_check_prop, '\0');
+	uiDefAutoButsRNA(layout, &ptr, sound_mixdown_draw_check_prop, NULL, '\0');
 }
 #endif // WITH_AUDASPACE
 
