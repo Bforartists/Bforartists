@@ -13,7 +13,7 @@ Please use the tracker at the bforartists page to add issues, bug reports and re
 The main differences to Blender are:
 
 - A brand new Keymap with Left Click select, which is reduced to just the necessary hotkeys.
-- Cleaned up User Interface. More than 400 not necessary double menu entries removed.
+- Cleaned up User Interface. More than 600 not necessary double menu entries removed.
 - Extended User Interface. Close to 100 formerly hotkey only tools have a menu entry now.
 - Rearranged User Interface. Some things are better accessible now, some are not so much in the way anymore.
 - 700 new native icons.
