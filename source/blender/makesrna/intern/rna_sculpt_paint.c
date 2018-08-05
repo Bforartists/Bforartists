@@ -51,15 +51,15 @@
 
 #include "bmesh.h"
 
-static const EnumPropertyItem particle_edit_hair_brush_items[] = {
-	{ PE_BRUSH_NONE, "NONE", ICON_PARTICLEBRUSH_NONE, "None", "Don't use any brush" },
-	{ PE_BRUSH_COMB, "COMB", ICON_PARTICLEBRUSH_COMB, "Comb", "Comb hairs" },
-	{ PE_BRUSH_SMOOTH, "SMOOTH", ICON_PARTICLEBRUSH_SMOOTH, "Smooth", "Smooth hairs" },
-	{ PE_BRUSH_ADD, "ADD", ICON_PARTICLEBRUSH_ADD, "Add", "Add hairs" },
-	{ PE_BRUSH_LENGTH, "LENGTH", ICON_PARTICLEBRUSH_LENGTH, "Length", "Make hairs longer or shorter" },
-	{ PE_BRUSH_PUFF, "PUFF", ICON_PARTICLEBRUSH_PUFF, "Puff", "Make hairs stand up" },
-	{PE_BRUSH_CUT, "CUT", ICON_CUT, "Cut", "Cut hairs"},
-	{ PE_BRUSH_WEIGHT, "WEIGHT", ICON_PARTICLEBRUSH_WEIGHT, "Weight", "Weight hair particles" },
+const EnumPropertyItem rna_enum_particle_edit_hair_brush_items[] = {
+	{PE_BRUSH_NONE, "NONE", 0, "None", "Don't use any brush"},
+	{PE_BRUSH_COMB, "COMB", 0, "Comb", "Comb hairs"},
+	{PE_BRUSH_SMOOTH, "SMOOTH", 0, "Smooth", "Smooth hairs"},
+	{PE_BRUSH_ADD, "ADD", 0, "Add", "Add hairs"},
+	{PE_BRUSH_LENGTH, "LENGTH", 0, "Length", "Make hairs longer or shorter"},
+	{PE_BRUSH_PUFF, "PUFF", 0, "Puff", "Make hairs stand up"},
+	{PE_BRUSH_CUT, "CUT", 0, "Cut", "Cut hairs"},
+	{PE_BRUSH_WEIGHT, "WEIGHT", 0, "Weight", "Weight hair particles"},
 	{0, NULL, 0, NULL, NULL}
 };
 
@@ -120,13 +120,13 @@ static void rna_GPencil_update(Main *UNUSED(bmain), Scene *UNUSED(scene), Pointe
 	WM_main_add_notifier(NC_GPENCIL | NA_EDITED, NULL);
 }
 
-static const EnumPropertyItem particle_edit_disconnected_hair_brush_items[] = {
-	{PE_BRUSH_NONE, "NONE", 0, "None", "Don't use any brush"},
-	{PE_BRUSH_COMB, "COMB", 0, "Comb", "Comb hairs"},
-	{PE_BRUSH_SMOOTH, "SMOOTH", 0, "Smooth", "Smooth hairs"},
-	{PE_BRUSH_LENGTH, "LENGTH", 0, "Length", "Make hairs longer or shorter"},
-	{PE_BRUSH_CUT, "CUT", 0, "Cut", "Cut hairs"},
-	{PE_BRUSH_WEIGHT, "WEIGHT", 0, "Weight", "Weight hair particles"},
+const EnumPropertyItem rna_enum_particle_edit_disconnected_hair_brush_items[] = {
+	{PE_BRUSH_NONE, "NONE", ICON_PARTICLEBRUSH_NONE, "None", "Don't use any brush"},
+	{PE_BRUSH_COMB, "COMB", ICON_PARTICLEBRUSH_COMB, "Comb", "Comb hairs"},
+	{PE_BRUSH_SMOOTH, "SMOOTH", ICON_PARTICLEBRUSH_SMOOTH, "Smooth", "Smooth hairs"},
+	{PE_BRUSH_LENGTH, "LENGTH", ICON_PARTICLEBRUSH_ADD, "Length", "Make hairs longer or shorter"},
+	{PE_BRUSH_CUT, "CUT", ICON_CUT, "Cut", "Cut hairs"},
+	{PE_BRUSH_WEIGHT, "WEIGHT", ICON_PARTICLEBRUSH_WEIGHT, "Weight", "Weight hair particles"},
 	{0, NULL, 0, NULL, NULL}
 };
 
@@ -186,8 +186,9 @@ static void rna_ParticleEdit_tool_set(PointerRNA *ptr, int value)
 
 	pset->brushtype = value;
 }
-static const EnumPropertyItem *rna_ParticleEdit_tool_itemf(bContext *C, PointerRNA *UNUSED(ptr),
-                                                     PropertyRNA *UNUSED(prop), bool *UNUSED(r_free))
+static const EnumPropertyItem *rna_ParticleEdit_tool_itemf(
+        bContext *C, PointerRNA *UNUSED(ptr),
+        PropertyRNA *UNUSED(prop), bool *UNUSED(r_free))
 {
 	Scene *scene = CTX_data_scene(C);
 	Object *ob = (scene->basact) ? scene->basact->object : NULL;
@@ -204,10 +205,10 @@ static const EnumPropertyItem *rna_ParticleEdit_tool_itemf(bContext *C, PointerR
 
 	if (psys) {
 		if (psys->flag & PSYS_GLOBAL_HAIR) {
-			return particle_edit_disconnected_hair_brush_items;
+			return rna_enum_particle_edit_disconnected_hair_brush_items;
 		}
 		else {
-			return particle_edit_hair_brush_items;
+			return rna_enum_particle_edit_hair_brush_items;
 		}
 	}
 
@@ -888,7 +889,7 @@ static void rna_def_particle_edit(BlenderRNA *brna)
 
 	prop = RNA_def_property(srna, "tool", PROP_ENUM, PROP_NONE);
 	RNA_def_property_enum_sdna(prop, NULL, "brushtype");
-	RNA_def_property_enum_items(prop, particle_edit_hair_brush_items);
+	RNA_def_property_enum_items(prop, rna_enum_particle_edit_hair_brush_items);
 	RNA_def_property_enum_funcs(prop, NULL, "rna_ParticleEdit_tool_set", "rna_ParticleEdit_tool_itemf");
 	RNA_def_property_ui_text(prop, "Tool", "");
 
