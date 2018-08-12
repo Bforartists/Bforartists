@@ -80,7 +80,6 @@ def register():
 
 def unregister():
     bpy.types.VIEW3D_MT_edit_mesh_specials.remove(menu_func)
-
     for cls in reversed(classes):
         bpy.utils.unregister_class(cls)
     del bpy.types.Scene.tinycad_props

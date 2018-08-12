@@ -19,7 +19,7 @@
 bl_info = {
     "name": "BoltFactory",
     "author": "Aaron Keith",
-    "version": (0, 3, 3),
+    "version": (0, 3, 4),
     "blender": (2, 78, 0),
     "location": "View3D > Add > Mesh",
     "description": "Add a bolt or nut",
