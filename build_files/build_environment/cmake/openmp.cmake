@@ -16,17 +16,17 @@
 #
 # ***** END GPL LICENSE BLOCK *****
 
-ExternalProject_Add(external_orc
-	URL ${ORC_URI}
+
+ExternalProject_Add(external_openmp
+	URL ${OPENMP_URI}
 	DOWNLOAD_DIR ${DOWNLOAD_DIR}
-	URL_HASH SHA256=${ORC_HASH}
-	PREFIX ${BUILD_DIR}/orc
-	CONFIGURE_COMMAND ${CONFIGURE_ENV} && cd ${BUILD_DIR}/orc/src/external_orc/ && ${CONFIGURE_COMMAND} --prefix=${LIBDIR}/orc --disable-shared --enable-static
-	BUILD_COMMAND ${CONFIGURE_ENV} && cd ${BUILD_DIR}/orc/src/external_orc/ && make -j${MAKE_THREADS}
-	INSTALL_COMMAND ${CONFIGURE_ENV} && cd ${BUILD_DIR}/orc/src/external_orc/ && make install
-	INSTALL_DIR ${LIBDIR}/orc
+	URL_HASH MD5=${OPENMP_HASH}
+	PREFIX ${BUILD_DIR}/openmp
+	CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${LIBDIR}/openmp ${DEFAULT_CMAKE_FLAGS}
+	INSTALL_DIR ${LIBDIR}/clang
 )
 
-if(MSVC)
-	set_target_properties(external_orc PROPERTIES FOLDER Mingw)
-endif()
+add_dependencies(
+	external_openmp
+	external_clang
+)
