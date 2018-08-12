@@ -20,44 +20,29 @@
 import bpy
 from mathutils import Matrix
 from bpy.types import Operator
+from bpy_extras.object_utils import AddObjectHelper
 from bpy.props import (
         BoolProperty,
         EnumProperty,
         FloatProperty,
         IntProperty,
+        FloatVectorProperty,
         )
 from . import createMesh
 
 
-# ------------------------------------------------------------
-# calculates the matrix for the new object depending on user pref
-def align_matrix(context):
-    loc = Matrix.Translation(context.scene.cursor_location)
-    obj_align = context.user_preferences.edit.object_align
-    if (context.space_data.type == 'VIEW_3D' and obj_align == 'VIEW'):
-        rot = context.space_data.region_3d.view_matrix.to_3x3().inverted().to_4x4()
-    else:
-        rot = Matrix()
-    align_matrix = loc * rot
-    return align_matrix
 
 
-class add_mesh_bolt(Operator):
+class add_mesh_bolt(Operator, AddObjectHelper):
     bl_idname = "mesh.bolt_add"
     bl_label = "Add Bolt"
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
     bl_description = "Construct many types of Bolts"
 
-    align_matrix = Matrix()
+
     MAX_INPUT_NUMBER = 50
 
-    # edit - Whether to add or update
-    edit = BoolProperty(
-        name="",
-        description="",
-        default=False,
-        options={'HIDDEN'}
-        )
+
     # Model Types
     Model_Type_List = [('bf_Model_Bolt', 'BOLT', 'Bolt Model'),
                        ('bf_Model_Nut', 'NUT', 'Nut Model')]
@@ -148,35 +133,35 @@ class add_mesh_bolt(Operator):
             )
     bf_CounterSink_Head_Dia = FloatProperty(
             attr='bf_CounterSink_Head_Dia',
-            name='Head Dia', default=5.5,
+            name='Head Dia', default=6.300000190734863,
             min=0, soft_min=0,
             max=MAX_INPUT_NUMBER,
             description='Diameter of the Counter Sink Head'
             )
     bf_Cap_Head_Height = FloatProperty(
             attr='bf_Cap_Head_Height',
-            name='Head Height', default=5.5,
+            name='Head Height', default=3,
             min=0, soft_min=0,
             max=MAX_INPUT_NUMBER,
             description='Height of the Cap Head'
             )
     bf_Cap_Head_Dia = FloatProperty(
             attr='bf_Cap_Head_Dia',
-            name='Head Dia', default=3,
+            name='Head Dia', default=5.5,
             min=0, soft_min=0,
             max=MAX_INPUT_NUMBER,
             description='Diameter of the Cap Head'
             )
     bf_Dome_Head_Dia = FloatProperty(
             attr='bf_Dome_Head_Dia',
-            name='Dome Head Dia', default=5.6,
+            name='Dome Head Dia', default=5.599999904632568,
             min=0, soft_min=0,
             max=MAX_INPUT_NUMBER,
             description='Length of the unthreaded shank'
             )
     bf_Pan_Head_Dia = FloatProperty(
             attr='bf_Pan_Head_Dia',
-            name='Pan Head Dia', default=5.6,
+            name='Pan Head Dia', default=5.599999904632568,
             min=0, soft_min=0,
             max=MAX_INPUT_NUMBER,
             description='Diameter of the Pan Head')
@@ -204,7 +189,7 @@ class add_mesh_bolt(Operator):
 
     bf_Pitch = FloatProperty(
             attr='bf_Pitch',
-            name='Pitch', default=0.35,
+            name='Pitch', default=0.3499999940395355,
             min=0.1, soft_min=0.1,
             max=7.0,
             description='Pitch if the thread'
@@ -239,7 +224,7 @@ class add_mesh_bolt(Operator):
             )
     bf_Hex_Nut_Height = FloatProperty(
             attr='bf_Hex_Nut_Height',
-            name='Hex Nut Height', default=2.4,
+            name='Hex Nut Height', default=2.4000000953674316,
             min=0, soft_min=0,
             max=MAX_INPUT_NUMBER,
             description='Height of the Hex Nut'
@@ -250,6 +235,23 @@ class add_mesh_bolt(Operator):
             min=0, soft_min=0,
             max=MAX_INPUT_NUMBER,
             description='Flat distance of the Hex Nut'
+            )
+    
+        # generic transform props
+    view_align = BoolProperty(
+            name="Align to View",
+            default=False,
+            update=AddObjectHelper.view_align_update_callback,
+            )
+    
+    location = FloatVectorProperty(
+            name="Location",
+            subtype='TRANSLATION',
+            )
+    
+    rotation = FloatVectorProperty(
+            name="Rotation",
+            subtype='EULER',
             )
 
     def draw(self, context):
@@ -309,18 +311,22 @@ class add_mesh_bolt(Operator):
         col.prop(self, 'bf_Crest_Percent')
         col.prop(self, 'bf_Root_Percent')
         col.prop(self, 'bf_Div_Count')
+        
+        # generic transform props
+        col.separator()
+        col.prop(self, 'view_align')
+        col.prop(self, 'location')
+        col.prop(self, 'rotation')
 
     @classmethod
     def poll(cls, context):
         return context.scene is not None
 
     def execute(self, context):
-        createMesh.Create_New_Mesh(self, context, self.align_matrix)
+        createMesh.Create_New_Mesh(self, context)
         return {'FINISHED'}
 
     def invoke(self, context, event):
-        # store creation_matrix
-        self.align_matrix = align_matrix(context)
         self.execute(context)
 
         return {'FINISHED'}

@@ -458,9 +458,9 @@ class BlendFileBlock:
                     yield from self.get_recursive_iter(
                             f.dna_name.name_only, path_full, default, None, use_nil, use_str, 0)
 
-    def items_recursive_iter(self):
+    def items_recursive_iter(self, use_nil=True):
         for k in self.keys():
-            yield from self.get_recursive_iter(k, use_str=False)
+            yield from self.get_recursive_iter(k, use_nil=use_nil, use_str=False)
 
     def get_data_hash(self):
         """
