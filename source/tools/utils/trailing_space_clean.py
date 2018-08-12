@@ -49,7 +49,7 @@ def rstrip_file(filename):
         data_src = fh.read()
 
     data_dst = []
-    for l in data_src.splitlines(True):
+    for l in data_src.rstrip().splitlines(True):
         data_dst.append(l.rstrip() + "\n")
 
     data_dst = "".join(data_dst)
