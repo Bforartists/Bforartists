@@ -45,7 +45,7 @@ DUPLICATE_WHITELIST = (
     ('ACTION_OT_mirror', 'GRAPH_OT_mirror'),
     ('ACTION_OT_paste', 'GRAPH_OT_paste'),
     ('ACTION_OT_sample', 'GRAPH_OT_sample'),
-    ('ACTION_OT_select_all_toggle', 'GRAPH_OT_select_all_toggle'),
+    ('ACTION_OT_select_all', 'GRAPH_OT_select_all'),
     ('ACTION_OT_select_border', 'GRAPH_OT_select_border'),
     ('ACTION_OT_select_column', 'GRAPH_OT_select_column'),
     ('ACTION_OT_select_leftright', 'GRAPH_OT_select_leftright'),

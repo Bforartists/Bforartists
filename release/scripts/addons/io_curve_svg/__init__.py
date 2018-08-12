@@ -21,6 +21,7 @@
 bl_info = {
     "name": "Scalable Vector Graphics (SVG) 1.1 format",
     "author": "JM Soler, Sergey Sharybin",
+    "version": (1, 0, 0),
     "blender": (2, 57, 0),
     "location": "File > Import > Scalable Vector Graphics (.svg)",
     "description": "Import SVG as curves",
