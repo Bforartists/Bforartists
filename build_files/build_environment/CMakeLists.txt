@@ -91,12 +91,19 @@ include(cmake/openvdb.cmake)
 include(cmake/python.cmake)
 include(cmake/python_site_packages.cmake)
 include(cmake/numpy.cmake)
+include(cmake/pugixml.cmake)
 
 if(WITH_WEBP)
 	include(cmake/webp.cmake)
 endif()
 if(WIN32)
+	#hmd_branch_deps
 	include(cmake/hidapi.cmake)
+	#ocio deps
+	include(cmake/tinyxml.cmake)
+	include(cmake/yamlcpp.cmake)
+	#lcms is an ocio dep, but only if you build the apps, leaving it here for convenience 
+	#include(cmake/lcms.cmake)
 endif()
 
 if(NOT WIN32 OR ENABLE_MINGW64)
@@ -118,7 +125,6 @@ if(NOT WIN32 OR ENABLE_MINGW64)
 		include(cmake/sndfile.cmake)
 		if(WIN32)
 			include(cmake/iconv.cmake)
-			include(cmake/lapack.cmake)
 		endif()
 		if(UNIX)
 			include(cmake/flac.cmake)

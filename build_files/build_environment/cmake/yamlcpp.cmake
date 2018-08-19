@@ -16,25 +16,26 @@
 #
 # ***** END GPL LICENSE BLOCK *****
 
-set(FAAD_EXTRA_ARGS)
-
-if (WIN32)
-	set(FAAD_EXTRA_CONFIGURE "utils\\win32\\ac2ver.exe" "faad2" "configure.ac" > libfaad\\win32_ver.h)
-else()
-	set(FAAD_EXTRA_CONFIGURE echo .)
-endif()
-
-ExternalProject_Add(external_faad
-	URL ${FAAD_URI}
-	DOWNLOAD_DIR ${DOWNLOAD_DIR}
-	URL_HASH MD5=${FAAD_HASH}
-	PREFIX ${BUILD_DIR}/faad
-	CONFIGURE_COMMAND ${CONFIGURE_ENV} && cd ${BUILD_DIR}/faad/src/external_faad/ && ${FAAD_EXTRA_CONFIGURE} && ${CONFIGURE_COMMAND} --disable-shared --enable-static --prefix=${LIBDIR}/faad
-	BUILD_COMMAND ${CONFIGURE_ENV} && cd ${BUILD_DIR}/faad/src/external_faad/ && make -j${MAKE_THREADS}
-	INSTALL_COMMAND ${CONFIGURE_ENV} && cd ${BUILD_DIR}/faad/src/external_faad/ && make install
-	INSTALL_DIR ${LIBDIR}/faad
+set(YAMLCPP_EXTRA_ARGS
+	-DBUILD_GMOCK=OFF
+	-DYAML_CPP_BUILD_TESTS=OFF
+	-DYAML_CPP_BUILD_TOOLS=OFF
+	-DYAML_CPP_BUILD_CONTRIB=OFF
+	-DMSVC_SHARED_RT=OFF
 )
 
-if(MSVC)
-	set_target_properties(external_faad PROPERTIES FOLDER Mingw)
-endif()
+ExternalProject_Add(external_yamlcpp
+	URL ${YAMLCPP_URI}
+	DOWNLOAD_DIR ${DOWNLOAD_DIR}
+	URL_HASH MD5=${YAMLCPP_HASH}
+	PREFIX ${BUILD_DIR}/yamlcpp
+	CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${LIBDIR}/yamlcpp ${DEFAULT_CMAKE_FLAGS} ${YAMLCPP_EXTRA_ARGS}
+	INSTALL_DIR ${LIBDIR}/yamlcpp
+)
+
+#if(BUILD_MODE STREQUAL Release AND WIN32)
+	#ExternalProject_Add_Step(external_freetype after_install
+	#	COMMAND ${CMAKE_COMMAND} -E copy_directory ${LIBDIR}/freetype ${HARVEST_TARGET}/freetype
+	#	DEPENDEES install
+	#)
+#endif()
