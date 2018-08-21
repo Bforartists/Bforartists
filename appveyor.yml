@@ -4,8 +4,8 @@ branches:
   - master
 clone_folder: C:/projects/bfa
 image:
-- Visual Studio 2015
 - Ubuntu
+- Visual Studio 2015
 configuration:
 - Release
 platform:
@@ -15,6 +15,18 @@ environment:
   - arch: Win64
 matrix:
   fast_finish: true
+  
+for:
+  -
+    matrix:
+      only:
+        - image: Ubuntu
+      clone_folder: /projects/bfa
+      build_script:
+        - echo Ubuntu build script
+          cd /projects/bfa
+          make 
+      build: off
 
 install:
 - sh: cmake cmake-curses-gui
