@@ -4,7 +4,6 @@ branches:
   - master
 clone_folder: C:/projects/bfa
 image:
-- Visual Studio 2013
 - Visual Studio 2015
 - Ubuntu
 configuration:
@@ -28,7 +27,6 @@ init:
 - echo %APPVEYOR_BUILD_WORKER_IMAGE%
 - if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2017" ( set generator="Visual Studio 15 2017%arch%" )
 - if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2015" ( set generator="Visual Studio 14 2015%arch%" )
-- if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2013" ( set generator="Visual Studio 12 2013%arch%" )
 - if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Ubuntu" ( set generator="Unix Makefiles" )
 - echo %generator%
 - sh: sh build_files/build_environment/install_deps.sh --with-all --no-confirm
@@ -37,7 +35,6 @@ init:
 before_build:
 - cmd: |-
     cd ..
-    if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2013" (svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/win64_vc12 lib/win64_vc12)
     if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2015" (svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/win64_vc14 lib/win64_vc14)
     cd bfa
     mkdir build
