@@ -50,7 +50,7 @@ build_script:
       cd build
       cmake --version
       cmake . -G %generator% -DCMAKE_BUILD_TYPE=Release ..
-      cmake --build . --target INSTALL
+      cmake --build . --target PACKAGE
   - sh: >-
       docker run --rm -v $(pwd):/src $DOCKER_IMAGE /bin/bash -c "
         mkdir build && cd build;
