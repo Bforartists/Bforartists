@@ -9,6 +9,10 @@ addons:
     packages:
       - cmake-data
       - cmake
+      
+cache:
+  directories:
+    - $HOME
 
 compiler:
   - gcc
