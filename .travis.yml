@@ -11,6 +11,7 @@ addons:
       - cmake
       
 cache:
+  timeout: 5000
   directories:
     - $HOME
 
