@@ -24,15 +24,8 @@ ExternalProject_Add(external_tinyxml
 	DOWNLOAD_DIR ${DOWNLOAD_DIR}
 	URL_HASH MD5=${TINYXML_HASH}
 	PREFIX ${BUILD_DIR}/tinyxml
-	#patch taken from ocio 
+	#patch taken from ocio
 	PATCH_COMMAND ${PATCH_CMD} -p 1 -N -d ${BUILD_DIR}/tinyxml/src/external_tinyxml < ${PATCH_DIR}/tinyxml.diff
 	CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${LIBDIR}/tinyxml ${DEFAULT_CMAKE_FLAGS} ${TINYXML_EXTRA_ARGS}
 	INSTALL_DIR ${LIBDIR}/tinyxml
 )
-
-#if(BUILD_MODE STREQUAL Release AND WIN32)
-	#ExternalProject_Add_Step(external_freetype after_install
-	#	COMMAND ${CMAKE_COMMAND} -E copy_directory ${LIBDIR}/freetype ${HARVEST_TARGET}/freetype
-	#	DEPENDEES install
-	#)
-#endif()
