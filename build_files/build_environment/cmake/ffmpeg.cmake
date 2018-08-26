@@ -38,6 +38,12 @@ if(WIN32)
 		--disable-pthreads
 		--enable-libopenjpeg
 	)
+	if("${CMAKE_SIZEOF_VOID_P}" EQUAL "4")
+		set(FFMPEG_EXTRA_FLAGS
+			${FFMPEG_EXTRA_FLAGS}
+			--x86asmexe=yasm
+		)
+	endif()
 else()
 	set(FFMPEG_EXTRA_FLAGS
 		${FFMPEG_EXTRA_FLAGS}
@@ -145,5 +151,3 @@ if(BUILD_MODE STREQUAL Release AND WIN32)
 		DEPENDEES install
 	)
 endif()
-
-
