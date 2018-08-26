@@ -9,6 +9,11 @@ addons:
     packages:
       - cmake-data
       - cmake
+      
+cache:
+  timeout: 5000
+  directories:
+    - $HOME
 
 compiler:
   - gcc
@@ -17,7 +22,7 @@ matrix:
   include:
   - os: linux
     dist: trusty
-    compiler: gcc-6
+    compiler: gcc-4.4
     addons:
       apt:
         sources:
@@ -26,23 +31,83 @@ matrix:
           - nvidia-cuda-dev
           - libcuda1-384
           - build-essential
-          - gcc-6-multilib
-          - gcc-6
-          - g++-6
+          - gcc-4.4-multilib
+          - gcc-4.4
+          - g++-4.4
           - cmake
           - doxygen
+    install: ./build_files/build_environment/install_deps.sh --skip-osl --no-confirm
+    before_deploy:
+      - export RELEASE_FILE=$(ls *.deb)
+      - echo "Deploying $RELEASE_FILE to GitHub"
+    deploy:
+      provider: releases
+      api_key:
+        secure: "ERlWoOkrphep39WP0GCsrJuIT2PxoQq4bxUrHZMLXq7Swlf7paDlXPW8C2yS2S1DOpRmZrD3jwIp8lu1OhVYoke8rGURXdRvKyNKpHUfYYDZZmY81sAhYQPCXW3AblurbgqpzJkwJADDA108KYJ6RQ/iOYVdmxaJ1hz/LYGBVbl5Us2i7iGY1JlC3SMNXDt2AH3aLHlOltywNaOcus9aSATGyQVcbzToBh7AhrzvlDNVV1huMwOFEVu9PFnxS8J7KtBVK/tQ3vJEvNkcusCMN5p5Ut8C423MQj/26GBkKN0FJ8wOAuXvi32F1/6F2vFx7Vguzqs/+YQMRdeP5ReLgdBNDJNFuoR0M5hlcXNGNJKY+O5rPJJMaT0S78t5vYD5Bt+9cyNIPnbai6dOlqahAvMEzrdoTJrhK+E0aAgKqybOLObJeqmPCDXsgBo+su3ZHk5nBRH1RQtg6ToYVl2wmZJd/BkwLnLYzzT5sHD4gddHxOFa5uSqUqR9RQeL2olL21lCj8wJ4k43jb9zAqZ7qtgSDCFVpIgnvOO2fVIhfKb6OteaEkD8B4D3mLdlq9N73v9nFASviqM7ry5GOaLHPqSPya9Lv3rArHUzHso2sf2KtJB7Z/uYYiCxgFU5/YN+ajngrovzqvU43HsF9ShjcMmwrxadHqR45/6U+qq82HQ="
+      file_glob: true
+      file: ${RELEASE_FILE}
+      skip_cleanup: true
+      on:
+        tags: true
+        all_branches: true
     env:
-      - MATRIX_EVAL="gcc-6 && CXX=g++-6 && NPROC=$(nproc)"
+      - MATRIX_EVAL="gcc && CXX=g++ && NPROC=$(nproc)"
+  - os: linux
+    dist: xenial
+    compiler: gcc-5
+    addons:
+      apt:
+        sources:
+          - ubuntu-toolchain-r-test
+        packages:
+          - nvidia-cuda-dev
+          - libcuda1-384
+          - build-essential
+          - gcc-5-multilib
+          - gcc-5
+          - g++-5
+          - cmake
+          - doxygen
+    install: ./build_files/build_environment/install_deps.sh --skip-osl --no-confirm
+    before_deploy:
+      - export RELEASE_FILE=$(ls *.deb)
+      - echo "Deploying $RELEASE_FILE to GitHub"
+    deploy:
+      provider: releases
+      api_key:
+        secure: "ERlWoOkrphep39WP0GCsrJuIT2PxoQq4bxUrHZMLXq7Swlf7paDlXPW8C2yS2S1DOpRmZrD3jwIp8lu1OhVYoke8rGURXdRvKyNKpHUfYYDZZmY81sAhYQPCXW3AblurbgqpzJkwJADDA108KYJ6RQ/iOYVdmxaJ1hz/LYGBVbl5Us2i7iGY1JlC3SMNXDt2AH3aLHlOltywNaOcus9aSATGyQVcbzToBh7AhrzvlDNVV1huMwOFEVu9PFnxS8J7KtBVK/tQ3vJEvNkcusCMN5p5Ut8C423MQj/26GBkKN0FJ8wOAuXvi32F1/6F2vFx7Vguzqs/+YQMRdeP5ReLgdBNDJNFuoR0M5hlcXNGNJKY+O5rPJJMaT0S78t5vYD5Bt+9cyNIPnbai6dOlqahAvMEzrdoTJrhK+E0aAgKqybOLObJeqmPCDXsgBo+su3ZHk5nBRH1RQtg6ToYVl2wmZJd/BkwLnLYzzT5sHD4gddHxOFa5uSqUqR9RQeL2olL21lCj8wJ4k43jb9zAqZ7qtgSDCFVpIgnvOO2fVIhfKb6OteaEkD8B4D3mLdlq9N73v9nFASviqM7ry5GOaLHPqSPya9Lv3rArHUzHso2sf2KtJB7Z/uYYiCxgFU5/YN+ajngrovzqvU43HsF9ShjcMmwrxadHqR45/6U+qq82HQ="
+      file_glob: true
+      file: ${RELEASE_FILE}
+      skip_cleanup: true
+      on:
+        tags: true
+        all_branches: true
+    env:
+      - MATRIX_EVAL="gcc && CXX=g++ && NPROC=$(nproc)"
   - os: osx
     osx_image: xcode8
+    addons:
+      apt:
+        packages:
+          - svn
+    install: svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/darwin ../lib/darwin --trust-server-cert --non-interactive
+    before_deploy:
+      - export RELEASE_FILE=$(ls *.dmg)
+      - echo "Deploying $RELEASE_FILE to GitHub"
+    deploy:
+      provider: releases
+      api_key:
+        secure: "ERlWoOkrphep39WP0GCsrJuIT2PxoQq4bxUrHZMLXq7Swlf7paDlXPW8C2yS2S1DOpRmZrD3jwIp8lu1OhVYoke8rGURXdRvKyNKpHUfYYDZZmY81sAhYQPCXW3AblurbgqpzJkwJADDA108KYJ6RQ/iOYVdmxaJ1hz/LYGBVbl5Us2i7iGY1JlC3SMNXDt2AH3aLHlOltywNaOcus9aSATGyQVcbzToBh7AhrzvlDNVV1huMwOFEVu9PFnxS8J7KtBVK/tQ3vJEvNkcusCMN5p5Ut8C423MQj/26GBkKN0FJ8wOAuXvi32F1/6F2vFx7Vguzqs/+YQMRdeP5ReLgdBNDJNFuoR0M5hlcXNGNJKY+O5rPJJMaT0S78t5vYD5Bt+9cyNIPnbai6dOlqahAvMEzrdoTJrhK+E0aAgKqybOLObJeqmPCDXsgBo+su3ZHk5nBRH1RQtg6ToYVl2wmZJd/BkwLnLYzzT5sHD4gddHxOFa5uSqUqR9RQeL2olL21lCj8wJ4k43jb9zAqZ7qtgSDCFVpIgnvOO2fVIhfKb6OteaEkD8B4D3mLdlq9N73v9nFASviqM7ry5GOaLHPqSPya9Lv3rArHUzHso2sf2KtJB7Z/uYYiCxgFU5/YN+ajngrovzqvU43HsF9ShjcMmwrxadHqR45/6U+qq82HQ="
+      file_glob: true
+      file: ${RELEASE_FILE}
+      skip_cleanup: true
+      on:
+        tags: true
+        all_branches: true
     env:
       - MATRIX_EVAL="NPROC=$(sysctl -n hw.physicalcpu)"
-
-# Before compile
-install:
-  - ./build_files/build_environment/install_deps.sh --skip-osl --no-confirm
 
 script:
   - mkdir build
   - cd build
-  - cmake .. && make
+  - cmake -DCPACK_BINARY_DEB:BOOL=True .. && make install && make package

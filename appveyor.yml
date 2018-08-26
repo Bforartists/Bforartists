@@ -2,50 +2,62 @@ version: '{build}'
 branches:
   only:
   - master
-clone_folder: C:/projects/bfa
+# clone_folder: C:/projects/bfa
 image:
-- Visual Studio 2013
-- Visual Studio 2015
-- Ubuntu
-configuration:
-- Release
-platform:
-- x64
+  - Visual Studio 2015
+  - Visual Studio 2017
+#  - Ubuntu
+configuration: Release
+platform: x64
 environment:
+  APPVEYOR_SAVE_CACHE_ON_ERROR: true
+  DOCKER_IMAGE: ubuntu:16.04
   matrix:
-  - arch: Win64
+  - TARGET_PLATFORM: x64
+  - TARGET_PLATFORM: x86
+  
 matrix:
   fast_finish: true
-
-install:
-- sh: cmake cmake-curses-gui
+  exclude:
+    - image: Ubuntu
+      TARGET_PLATFORM: x86
 
 # skip unsupported combinations
 init:
-- set arch=
-- if "%arch%"=="Win64" ( set arch= Win64)
-- echo %arch%
-- echo %APPVEYOR_BUILD_WORKER_IMAGE%
-- if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2017" ( set generator="Visual Studio 15 2017%arch%" )
-- if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2015" ( set generator="Visual Studio 14 2015%arch%" )
-- if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2013" ( set generator="Visual Studio 12 2013%arch%" )
-- if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Ubuntu" ( set generator="Unix Makefiles" )
-- echo %generator%
-- sh: sh build_files/build_environment/install_deps.sh --with-all --no-confirm
+  - ps: |
+      If ($isLinux) {
+        $env:APPVEYOR_CACHE_SKIP_RESTORE = "true"
+        $env:APPVEYOR_CACHE_SKIP_SAVE = "true"
+      }
+  - cmd: |
+      set arch=
+      if "%TARGET_PLATFORM%"=="x64" ( set arch= Win64)
+      If "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2017" ( set generator="Visual Studio 15 2017%arch%" )
+      If "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2015" ( set generator="Visual Studio 14 2015%arch%" )
+      If "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Ubuntu" ( set generator="Unix Makefiles" )
+      echo %generator%
+  - sh: |
+      docker pull $DOCKER_IMAGE
 
-#    call build_files/build_environment/windows/install_cuda.cmd
-before_build:
-- cmd: |-
-    cd ..
-    if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2013" (svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/win64_vc12 lib/win64_vc12)
-    if "%APPVEYOR_BUILD_WORKER_IMAGE%"=="Visual Studio 2015" (svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/win64_vc14 lib/win64_vc14)
-    cd bfa
-    mkdir build
-    cd build
-    cmake --version
-    cmake .. -G %generator%
-    dir C:/projects/bfa/build/
-build:
-  project: C:/projects/bfa/build/bforartists.sln
-  verbosity: minimal
-  parallel: true
+install:
+- sh: cmake
+
+build_script:
+  - cmd: |
+      if "%TARGET_PLATFORM%"=="x86" (svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/windows_vc14 ../lib/windows_vc14)
+      if "%TARGET_PLATFORM%"=="x64" (svn checkout https://svn.blender.org/svnroot/bf-blender/trunk/lib/win64_vc14 ../lib/win64_vc14)
+      mkdir build
+      cd build
+      cmake --version
+      cmake . -G %generator% -DCMAKE_BUILD_TYPE=Release ..
+      cmake --build . --target PACKAGE
+  - sh: >-
+      docker run --rm -v $(pwd):/src $DOCKER_IMAGE /bin/bash -c "
+        mkdir build && cd build;
+        apt update && apt upgrade -y && apt install -y git cmake sudo;
+        useradd -m docker && echo "docker:docker" | chpasswd && adduser docker sudo;
+        . /src/build_files/build_environment/install_deps.sh --with-all --no-confirm;
+        echo Building with Unix Makefiles;
+        cmake . -G'Unix Makefiles' -DCMAKE_BUILD_TYPE=Release /src;
+        cmake --build .;"
+

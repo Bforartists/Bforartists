@@ -1,9 +1,9 @@
 string(TIMESTAMP CURRENT_YEAR "%Y")
 
-set(PROJECT_DESCRIPTION  "Blender is the free and open source 3D creation suite software.")
+set(PROJECT_DESCRIPTION  "Bforartists is the free and open source 3D creation suite software.")
 set(PROJECT_COPYRIGHT    "Copyright (C) 2001-${CURRENT_YEAR} Blender Foundation")
 set(PROJECT_CONTACT      "foundation@blender.org")
-set(PROJECT_VENDOR       "Blender Foundation")
+set(PROJECT_VENDOR       "Bforartists")
 
 set(MAJOR_VERSION ${BLENDER_VERSION_MAJOR})
 set(MINOR_VERSION ${BLENDER_VERSION_MINOR})
@@ -80,8 +80,8 @@ if(APPLE)
 endif()
 
 if(WIN32)
-	set(CPACK_PACKAGE_INSTALL_DIRECTORY "Blender Foundation/Blender")
-	set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "Blender Foundation/Blender")
+	set(CPACK_PACKAGE_INSTALL_DIRECTORY "Bforartists/Bforartists")
+	set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "Bforartists/Bforartists")
 
 	set(CPACK_NSIS_MUI_ICON ${CMAKE_SOURCE_DIR}/release/windows/icons/winblender.ico)
 	set(CPACK_NSIS_COMPRESSOR "/SOLID lzma")
@@ -98,8 +98,8 @@ if(WIN32)
 	set(CPACK_WIX_LIGHT_EXTRA_FLAGS -dcl:high)
 endif()
 
-set(CPACK_PACKAGE_EXECUTABLES "blender" "blender")
-set(CPACK_CREATE_DESKTOP_LINKS "blender" "blender")
+set(CPACK_PACKAGE_EXECUTABLES "bforartists" "bforartists")
+set(CPACK_CREATE_DESKTOP_LINKS "bforartists" "bforartists")
 
 include(CPack)
 
