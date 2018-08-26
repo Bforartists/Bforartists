@@ -1,8 +1,8 @@
 # Bforartists
 
 [![Build status](https://ci.appveyor.com/api/projects/status/alpp11hxsn7ix39o?svg=true)](https://ci.appveyor.com/project/ktotheoz/bforartists)
-[![Build Status](https://img.shields.io/travis/Bforartists/Bforartists.svg?branch=master&job=1&label=Linux)](https://travis-ci.org/Bforartists/Bforartists)
-[![Build Status](https://img.shields.io/travis/Bforartists/Bforartists.svg?branch=master&job=2&label=Mac)](https://travis-ci.org/Bforartists/Bforartists)
+[![Build Status](https://img.shields.io/travis/ktotheoz/Bforartists.svg?branch=master&job=1&label=Linux)](https://travis-ci.org/Bforartists/Bforartists)
+[![Build Status](https://img.shields.io/travis/ktotheoz/Bforartists.svg?branch=master&job=2&label=Mac)](https://travis-ci.org/Bforartists/Bforartists)
 
 Bforartists is a fork of the popular 3D software Blender, with the goal to improve the graphical UI, and to increase the usability.
 
@@ -13,7 +13,7 @@ Please use the tracker at the bforartists page to add issues, bug reports and re
 The main differences to Blender are:
 
 - A brand new Keymap with Left Click select, which is reduced to just the necessary hotkeys.
-- Cleaned up User Interface. More than 400 not necessary double menu entries removed.
+- Cleaned up User Interface. More than 600 not necessary double menu entries removed.
 - Extended User Interface. Close to 100 formerly hotkey only tools have a menu entry now.
 - Rearranged User Interface. Some things are better accessible now, some are not so much in the way anymore.
 - 700 new native icons.
