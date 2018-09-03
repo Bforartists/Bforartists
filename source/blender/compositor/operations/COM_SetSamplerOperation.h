@@ -15,13 +15,13 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Contributor: 
- *		Jeroen Bakker 
+ * Contributor:
+ *		Jeroen Bakker
  *		Monique Dewanchand
  */
 
-#ifndef _COM_SetSamplerOperation_h
-#define _COM_SetSamplerOperation_h
+#ifndef __COM_SETSAMPLEROPERATION_H__
+#define __COM_SETSAMPLEROPERATION_H__
 #include "COM_NodeOperation.h"
 
 
@@ -38,9 +38,9 @@ public:
 	 * Default constructor
 	 */
 	SetSamplerOperation();
-	
+
 	void setSampler(PixelSampler sampler) { this->m_sampler = sampler; }
-	
+
 	/**
 	 * the inner loop of this program
 	 */

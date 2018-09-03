@@ -4,7 +4,7 @@
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version. 
+ * of the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -18,7 +18,7 @@
  * The Original Code is Copyright (C) 2008 Blender Foundation.
  * All rights reserved.
  *
- * 
+ *
  * Contributor(s): Blender Foundation
  *
  * ***** END GPL LICENSE BLOCK *****
@@ -41,6 +41,7 @@ struct ARegion;
 struct ARegionType;
 struct View2D;
 struct bContext;
+struct Main;
 struct wmWindow;
 struct bNode;
 struct bNodeSocket;
@@ -50,7 +51,7 @@ struct wmKeyConfig;
 /* temp data to pass on to modal */
 typedef struct bNodeLinkDrag {
 	struct bNodeLinkDrag *next, *prev;
-	
+
 	/* List of links dragged by the operator.
 	 * Note: This is a list of LinkData structs on top of the actual bNodeLinks.
 	 * This way the links can be added to the node tree while being stored in this list.
@@ -156,7 +157,7 @@ void NODE_OT_group_edit(struct wmOperatorType *ot);
 
 
 /* node_relationships.c */
-bool node_connected_to_output(struct bNodeTree *ntree, struct bNode *node);
+bool node_connected_to_output(struct Main *bmain, struct bNodeTree *ntree, struct bNode *node);
 
 void NODE_OT_link(struct wmOperatorType *ot);
 void NODE_OT_link_make(struct wmOperatorType *ot);
@@ -178,8 +179,8 @@ void snode_dag_update(struct bContext *C, struct SpaceNode *snode);
 void snode_set_context(const struct bContext *C);
 
 void snode_update(struct SpaceNode *snode, struct bNode *node);
-int composite_node_active(struct bContext *C);
-int composite_node_editable(struct bContext *C);
+bool composite_node_active(struct bContext *C);
+bool composite_node_editable(struct bContext *C);
 
 int node_has_hidden_sockets(bNode *node);
 void node_set_hidden_sockets(SpaceNode *snode, bNode *node, int set);
@@ -220,6 +221,9 @@ void NODE_OT_shader_script_update(struct wmOperatorType *ot);
 
 void NODE_OT_viewer_border(struct wmOperatorType *ot);
 void NODE_OT_clear_viewer_border(struct wmOperatorType *ot);
+
+void NODE_OT_cryptomatte_layer_add(struct wmOperatorType *ot);
+void NODE_OT_cryptomatte_layer_remove(struct wmOperatorType *ot);
 
 extern const char *node_context_dir[];
 

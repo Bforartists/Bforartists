@@ -78,7 +78,7 @@ void BKE_object_free_modifiers(struct Object *ob, const int flag);
 void BKE_object_make_proxy(struct Object *ob, struct Object *target, struct Object *gob);
 void BKE_object_copy_proxy_drivers(struct Object *ob, struct Object *target);
 
-bool BKE_object_exists_check(const struct Object *obtest);
+bool BKE_object_exists_check(struct Main *bmain, const struct Object *obtest);
 bool BKE_object_is_in_editmode(const struct Object *ob);
 bool BKE_object_is_in_editmode_vgroup(const struct Object *ob);
 bool BKE_object_is_in_wpaint_select_vert(const struct Object *ob);
@@ -149,13 +149,15 @@ void BKE_object_empty_draw_type_set(struct Object *ob, const int value);
 void BKE_object_boundbox_flag(struct Object *ob, int flag, const bool set);
 void BKE_object_minmax(struct Object *ob, float r_min[3], float r_max[3], const bool use_hidden);
 bool BKE_object_minmax_dupli(
-        struct Scene *scene, struct Object *ob, float r_min[3], float r_max[3], const bool use_hidden);
+        struct Main *bmain, struct Scene *scene,
+        struct Object *ob, float r_min[3], float r_max[3], const bool use_hidden);
 
 /* sometimes min-max isn't enough, we need to loop over each point */
 void BKE_object_foreach_display_point(
         struct Object *ob, float obmat[4][4],
         void (*func_cb)(const float[3], void *), void *user_data);
 void BKE_scene_foreach_display_point(
+        struct Main *bmain,
         struct Scene *scene,
         struct View3D *v3d,
         const short flag,
@@ -205,6 +207,7 @@ void BKE_object_eval_uber_transform(
         struct EvaluationContext *eval_ctx,
         struct Object *ob);
 void BKE_object_eval_uber_data(
+        struct Main *bmain,
         struct EvaluationContext *eval_ctx,
         struct Scene *scene,
         struct Object *ob);
@@ -221,11 +224,17 @@ void BKE_object_eval_transform_all(
         struct Object *object);
 
 void BKE_object_handle_data_update(
+        struct Main *bmain,
         struct EvaluationContext *eval_ctx,
         struct Scene *scene,
         struct Object *ob);
-void BKE_object_handle_update(struct EvaluationContext *eval_ctx, struct Scene *scene, struct Object *ob);
+void BKE_object_handle_update(
+        struct Main *bmain,
+        struct EvaluationContext *eval_ctx,
+        struct Scene *scene,
+        struct Object *ob);
 void BKE_object_handle_update_ex(
+        struct Main *bmain,
         struct EvaluationContext *eval_ctx,
         struct Scene *scene, struct Object *ob,
         struct RigidBodyWorld *rbw,
@@ -236,7 +245,7 @@ int BKE_object_obdata_texspace_get(struct Object *ob, short **r_texflag, float *
 
 int BKE_object_insert_ptcache(struct Object *ob);
 void BKE_object_delete_ptcache(struct Object *ob, int index);
-struct KeyBlock *BKE_object_shapekey_insert(struct Object *ob, const char *name, const bool from_mix);
+struct KeyBlock *BKE_object_shapekey_insert(struct Main *bmain, struct Object *ob, const char *name, const bool from_mix);
 bool BKE_object_shapekey_remove(struct Main *bmain, struct Object *ob, struct KeyBlock *kb);
 bool BKE_object_shapekey_free(struct Main *bmain, struct Object *ob);
 
@@ -274,8 +283,9 @@ typedef enum eObjectSet {
 
 struct LinkNode *BKE_object_relational_superset(
         struct Scene *scene, eObjectSet objectSet, eObRelationTypes includeFilter);
-struct LinkNode *BKE_object_groups(struct Object *ob);
-void             BKE_object_groups_clear(struct Scene *scene, struct Base *base, struct Object *object);
+struct LinkNode *BKE_object_groups(struct Main *bmain, struct Object *ob);
+void             BKE_object_groups_clear(
+        struct Main *bmain, struct Scene *scene, struct Base *base, struct Object *object);
 
 struct KDTree *BKE_object_as_kdtree(struct Object *ob, int *r_tot);
 
@@ -283,9 +293,11 @@ bool BKE_object_modifier_use_time(struct Object *ob, struct ModifierData *md);
 
 void BKE_object_wire_colors_sync(struct Object *ob); // bfa -  custom wireframe colors
 
-bool BKE_object_modifier_update_subframe(struct Scene *scene, struct Object *ob, bool update_mesh,
-                                         int parent_recursion, float frame,
-                                         int type);
+bool BKE_object_modifier_update_subframe(
+        struct Main *bmain, struct EvaluationContext *eval_ctx,
+        struct Scene *scene, struct Object *ob, bool update_mesh,
+        int parent_recursion, float frame,
+        int type);
 
 #ifdef __cplusplus
 }

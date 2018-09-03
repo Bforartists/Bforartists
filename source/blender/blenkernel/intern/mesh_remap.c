@@ -131,7 +131,7 @@ float BKE_mesh_remap_calc_difference_from_dm(
 	float result = 0.0f;
 	int i;
 
-	bvhtree_from_mesh_verts(&treedata, dm_src, 0.0f, 2, 6);
+	bvhtree_from_mesh_get(&treedata, dm_src, BVHTREE_FROM_VERTS, 2);
 	nearest.index = -1;
 
 	for (i = 0; i < numverts_dst; i++) {
@@ -422,9 +422,6 @@ typedef struct IslandResult {
 #define MREMAP_RAYCAST_APPROXIMATE_NR 3
 /* Each approximated raycasts will have n times bigger radius than previous one. */
 #define MREMAP_RAYCAST_APPROXIMATE_FAC 5.0f
-/* BVH epsilon value we have to give to bvh 'constructor' when doing approximated raycasting. */
-#define MREMAP_RAYCAST_APPROXIMATE_BVHEPSILON(_ray_radius) \
-	((float)MREMAP_RAYCAST_APPROXIMATE_NR * MREMAP_RAYCAST_APPROXIMATE_FAC * (_ray_radius))
 
 /* min 16 rays/face, max 400. */
 #define MREMAP_RAYCAST_TRI_SAMPLES_MIN 4
@@ -460,7 +457,7 @@ void BKE_mesh_remap_calc_verts_from_dm(
 		float tmp_co[3], tmp_no[3];
 
 		if (mode == MREMAP_MODE_VERT_NEAREST) {
-			bvhtree_from_mesh_verts(&treedata, dm_src, 0.0f, 2, 6);
+			bvhtree_from_mesh_get(&treedata, dm_src, BVHTREE_FROM_VERTS, 2);
 			nearest.index = -1;
 
 			for (i = 0; i < numverts_dst; i++) {
@@ -485,7 +482,7 @@ void BKE_mesh_remap_calc_verts_from_dm(
 			float (*vcos_src)[3] = MEM_mallocN(sizeof(*vcos_src) * (size_t)dm_src->getNumVerts(dm_src), __func__);
 			dm_src->getVertCos(dm_src, vcos_src);
 
-			bvhtree_from_mesh_edges(&treedata, dm_src, 0.0f, 2, 6);
+			bvhtree_from_mesh_get(&treedata, dm_src, BVHTREE_FROM_EDGES, 2);
 			nearest.index = -1;
 
 			for (i = 0; i < numverts_dst; i++) {
@@ -543,7 +540,8 @@ void BKE_mesh_remap_calc_verts_from_dm(
 			float *weights = MEM_mallocN(sizeof(*weights) * tmp_buff_size, __func__);
 
 			dm_src->getVertCos(dm_src, vcos_src);
-			bvhtree_from_mesh_looptri(&treedata, dm_src, (mode & MREMAP_USE_NORPROJ) ? ray_radius : 0.0f, 2, 6);
+
+			bvhtree_from_mesh_get(&treedata, dm_src, BVHTREE_FROM_LOOPTRI, 2);
 
 			if (mode == MREMAP_MODE_VERT_POLYINTERP_VNORPROJ) {
 				for (i = 0; i < numverts_dst; i++) {
@@ -671,12 +669,13 @@ void BKE_mesh_remap_calc_edges_from_dm(
 				v_dst_to_src_map[i].hit_dist = -1.0f;
 			}
 
-			BKE_mesh_vert_edge_map_create(&vert_to_edge_src_map, &vert_to_edge_src_map_mem,
-			                              edges_src, num_verts_src, num_edges_src);
+			BKE_mesh_vert_edge_map_create(
+			        &vert_to_edge_src_map, &vert_to_edge_src_map_mem,
+			        edges_src, num_verts_src, num_edges_src);
 
 			dm_src->getVertCos(dm_src, vcos_src);
 
-			bvhtree_from_mesh_verts(&treedata, dm_src, 0.0f, 2, 6);
+			bvhtree_from_mesh_get(&treedata, dm_src, BVHTREE_FROM_VERTS, 2);
 			nearest.index = -1;
 
 			for (i = 0; i < numedges_dst; i++) {
@@ -776,7 +775,7 @@ void BKE_mesh_remap_calc_edges_from_dm(
 			MEM_freeN(vert_to_edge_src_map_mem);
 		}
 		else if (mode == MREMAP_MODE_EDGE_NEAREST) {
-			bvhtree_from_mesh_edges(&treedata, dm_src, 0.0f, 2, 6);
+			bvhtree_from_mesh_get(&treedata, dm_src, BVHTREE_FROM_EDGES, 2);
 			nearest.index = -1;
 
 			for (i = 0; i < numedges_dst; i++) {
@@ -803,7 +802,7 @@ void BKE_mesh_remap_calc_edges_from_dm(
 			float (*vcos_src)[3] = MEM_mallocN(sizeof(*vcos_src) * (size_t)dm_src->getNumVerts(dm_src), __func__);
 
 			dm_src->getVertCos(dm_src, vcos_src);
-			bvhtree_from_mesh_looptri(&treedata, dm_src, 0.0f, 2, 6);
+			bvhtree_from_mesh_get(&treedata, dm_src, BVHTREE_FROM_LOOPTRI, 2);
 
 			for (i = 0; i < numedges_dst; i++) {
 				interp_v3_v3v3(tmp_co, verts_dst[edges_dst[i].v1].co, verts_dst[edges_dst[i].v2].co, 0.5f);
@@ -856,7 +855,7 @@ void BKE_mesh_remap_calc_edges_from_dm(
 			/* Here it's simpler to just allocate for all edges :/ */
 			float *weights = MEM_mallocN(sizeof(*weights) * (size_t)numedges_src, __func__);
 
-			bvhtree_from_mesh_edges(&treedata, dm_src, MREMAP_RAYCAST_APPROXIMATE_BVHEPSILON(ray_radius), 2, 6);
+			bvhtree_from_mesh_get(&treedata, dm_src, BVHTREE_FROM_EDGES, 2);
 
 			for (i = 0; i < numedges_dst; i++) {
 				/* For each dst edge, we sample some rays from it (interpolated from its vertices)
@@ -934,8 +933,9 @@ void BKE_mesh_remap_calc_edges_from_dm(
 						indices[sources_num] = j;
 						sources_num++;
 					}
-					mesh_remap_item_define(r_map, i, hit_dist_accum / totweights, 0,
-					                                  sources_num, indices, weights);
+					mesh_remap_item_define(
+					        r_map, i, hit_dist_accum / totweights, 0,
+					        sources_num, indices, weights);
 				}
 				else {
 					/* No source for this dest edge! */
@@ -1149,8 +1149,9 @@ void BKE_mesh_remap_calc_loops_from_dm(
 
 		BLI_AStarGraph *as_graphdata = NULL;
 		BLI_AStarSolution as_solution = {0};
-		const int isld_steps_src = islands_precision_src ?
-		                           max_ii((int)(ASTAR_STEPS_MAX * islands_precision_src + 0.499f), 1) : 0;
+		const int isld_steps_src = (
+		        islands_precision_src ?
+		        max_ii((int)(ASTAR_STEPS_MAX * islands_precision_src + 0.499f), 1) : 0);
 
 		float (*poly_nors_src)[3] = NULL;
 		float (*loop_nors_src)[3] = NULL;
@@ -1199,8 +1200,6 @@ void BKE_mesh_remap_calc_loops_from_dm(
 		IslandResult **islands_res;
 		size_t islands_res_buff_size = MREMAP_DEFAULT_BUFSIZE;
 
-		const float bvh_epsilon = (mode & MREMAP_USE_NORPROJ) ? MREMAP_RAYCAST_APPROXIMATE_BVHEPSILON(ray_radius) : 0.0f;
-
 		if (!use_from_vert) {
 			vcos_src = MEM_mallocN(sizeof(*vcos_src) * (size_t)num_verts_src, __func__);
 			dm_src->getVertCos(dm_src, vcos_src);
@@ -1224,8 +1223,9 @@ void BKE_mesh_remap_calc_loops_from_dm(
 					CustomData_set_layer_flag(pdata_dst, CD_NORMAL, CD_FLAG_TEMPORARY);
 				}
 				if (dirty_nors_dst) {
-					BKE_mesh_calc_normals_poly(verts_dst, NULL, numverts_dst, loops_dst, polys_dst,
-					                           numloops_dst, numpolys_dst, poly_nors_dst, true);
+					BKE_mesh_calc_normals_poly(
+					        verts_dst, NULL, numverts_dst, loops_dst, polys_dst,
+					        numloops_dst, numpolys_dst, poly_nors_dst, true);
 				}
 			}
 			if (need_lnors_dst) {
@@ -1238,10 +1238,11 @@ void BKE_mesh_remap_calc_loops_from_dm(
 						loop_nors_dst = CustomData_add_layer(ldata_dst, CD_NORMAL, CD_CALLOC, NULL, numloops_dst);
 						CustomData_set_layer_flag(ldata_dst, CD_NORMAL, CD_FLAG_TEMPORARY);
 					}
-					BKE_mesh_normals_loop_split(verts_dst, numverts_dst, edges_dst, numedges_dst,
-					                            loops_dst, loop_nors_dst, numloops_dst,
-					                            polys_dst, (const float (*)[3])poly_nors_dst, numpolys_dst,
-					                            use_split_nors_dst, split_angle_dst, NULL, custom_nors_dst, NULL);
+					BKE_mesh_normals_loop_split(
+					        verts_dst, numverts_dst, edges_dst, numedges_dst,
+					        loops_dst, loop_nors_dst, numloops_dst,
+					        polys_dst, (const float (*)[3])poly_nors_dst, numpolys_dst,
+					        use_split_nors_dst, split_angle_dst, NULL, custom_nors_dst, NULL);
 				}
 			}
 			if (need_pnors_src || need_lnors_src) {
@@ -1258,17 +1259,20 @@ void BKE_mesh_remap_calc_loops_from_dm(
 		}
 
 		if (use_from_vert) {
-			BKE_mesh_vert_loop_map_create(&vert_to_loop_map_src, &vert_to_loop_map_src_buff,
-			                              polys_src, loops_src, num_verts_src, num_polys_src, num_loops_src);
+			BKE_mesh_vert_loop_map_create(
+			        &vert_to_loop_map_src, &vert_to_loop_map_src_buff,
+			        polys_src, loops_src, num_verts_src, num_polys_src, num_loops_src);
 			if (mode & MREMAP_USE_POLY) {
-				BKE_mesh_vert_poly_map_create(&vert_to_poly_map_src, &vert_to_poly_map_src_buff,
-				                              polys_src, loops_src, num_verts_src, num_polys_src, num_loops_src);
+				BKE_mesh_vert_poly_map_create(
+				        &vert_to_poly_map_src, &vert_to_poly_map_src_buff,
+				        polys_src, loops_src, num_verts_src, num_polys_src, num_loops_src);
 			}
 		}
 
 		/* Needed for islands (or plain mesh) to AStar graph conversion. */
-		BKE_mesh_edge_poly_map_create(&edge_to_poly_map_src, &edge_to_poly_map_src_buff,
-		                              edges_src, num_edges_src, polys_src, num_polys_src, loops_src, num_loops_src);
+		BKE_mesh_edge_poly_map_create(
+		        &edge_to_poly_map_src, &edge_to_poly_map_src_buff,
+		        edges_src, num_edges_src, polys_src, num_polys_src, loops_src, num_loops_src);
 		if (use_from_vert) {
 			loop_to_poly_map_src = MEM_mallocN(sizeof(*loop_to_poly_map_src) * (size_t)num_loops_src, __func__);
 			poly_cents_src = MEM_mallocN(sizeof(*poly_cents_src) * (size_t)num_polys_src, __func__);
@@ -1349,8 +1353,9 @@ void BKE_mesh_remap_calc_loops_from_dm(
 						}
 					}
 					/* verts 'ownership' is transfered to treedata here, which will handle its freeing. */
-					bvhtree_from_mesh_verts_ex(&treedata[tindex], verts_src, num_verts_src, verts_allocated_src,
-					                           verts_active, num_verts_active, bvh_epsilon, 2, 6);
+					bvhtree_from_mesh_verts_ex(
+					        &treedata[tindex], verts_src, num_verts_src, verts_allocated_src,
+					        verts_active, num_verts_active, 0.0, 2, 6);
 					if (verts_allocated_src) {
 						verts_allocated_src = false;  /* Only 'give' our verts once, to first tree! */
 					}
@@ -1360,7 +1365,7 @@ void BKE_mesh_remap_calc_loops_from_dm(
 			}
 			else {
 				BLI_assert(num_trees == 1);
-				bvhtree_from_mesh_verts(&treedata[0], dm_src, bvh_epsilon, 2, 6);
+				bvhtree_from_mesh_get(&treedata[0], dm_src, BVHTREE_FROM_VERTS, 2);
 			}
 		}
 		else {  /* We use polygons. */
@@ -1397,7 +1402,7 @@ void BKE_mesh_remap_calc_loops_from_dm(
 					        verts_src, verts_allocated_src,
 					        loops_src, loops_allocated_src,
 					        looptri_src, num_looptri_src, false,
-					        looptri_active, num_looptri_active, bvh_epsilon, 2, 6);
+					        looptri_active, num_looptri_active, 0.0, 2, 6);
 					if (verts_allocated_src) {
 						verts_allocated_src = false;  /* Only 'give' our verts once, to first tree! */
 					}
@@ -1410,7 +1415,7 @@ void BKE_mesh_remap_calc_loops_from_dm(
 			}
 			else {
 				BLI_assert(num_trees == 1);
-				bvhtree_from_mesh_looptri(&treedata[0], dm_src, bvh_epsilon, 2, 6);
+				bvhtree_from_mesh_get(&treedata[0], dm_src, BVHTREE_FROM_LOOPTRI, 2);
 			}
 		}
 
@@ -1485,13 +1490,15 @@ void BKE_mesh_remap_calc_loops_from_dm(
 								BLI_assert(index_src != -1);
 								const float dot = dot_v3v3(nors_src[index_src], *nor_dst);
 
-								pidx_src = (mode == MREMAP_MODE_LOOP_NEAREST_LOOPNOR) ?
-								               loop_to_poly_map_src[index_src] : index_src;
+								pidx_src = (
+								        (mode == MREMAP_MODE_LOOP_NEAREST_LOOPNOR) ?
+								        loop_to_poly_map_src[index_src] : index_src);
 								/* WARNING! This is not the *real* lidx_src in case of POLYNOR, we only use it
 								 *          to check we stay on current island (all loops from a given poly are
 								 *          on same island!). */
-								lidx_src = (mode == MREMAP_MODE_LOOP_NEAREST_LOOPNOR) ?
-								               index_src : polys_src[pidx_src].loopstart;
+								lidx_src = (
+								        (mode == MREMAP_MODE_LOOP_NEAREST_LOOPNOR) ?
+								        index_src : polys_src[pidx_src].loopstart);
 
 								/* A same vert may be at the boundary of several islands! Hence, we have to ensure
 								 * poly/loop we are currently considering *belongs* to current island! */
@@ -1510,7 +1517,7 @@ void BKE_mesh_remap_calc_loops_from_dm(
 
 									if (!pcent_dst_valid) {
 										BKE_mesh_calc_poly_center(
-										            mp_dst, &loops_dst[mp_dst->loopstart], verts_dst, pcent_dst);
+										        mp_dst, &loops_dst[mp_dst->loopstart], verts_dst, pcent_dst);
 										pcent_dst_valid = true;
 									}
 									pcent_src = poly_cents_src[pidx_src];
@@ -1741,8 +1748,9 @@ void BKE_mesh_remap_calc_loops_from_dm(
 											BLI_space_transform_apply(space_transform, tmp_co);
 										}
 
-										pidx_src = use_islands ? best_island->indices[last_valid_pidx_isld_src] :
-										                         last_valid_pidx_isld_src;
+										pidx_src = (
+										        use_islands ? best_island->indices[last_valid_pidx_isld_src] :
+										        last_valid_pidx_isld_src);
 										mp_src = &polys_src[pidx_src];
 										ml_src = &loops_src[mp_src->loopstart];
 										for (j = 0; j < mp_src->totloop; j++, ml_src++) {
@@ -1826,8 +1834,9 @@ void BKE_mesh_remap_calc_loops_from_dm(
 											BLI_space_transform_apply(space_transform, tmp_co);
 										}
 
-										pidx_src = use_islands ? best_island->indices[last_valid_pidx_isld_src] :
-										                         last_valid_pidx_isld_src;
+										pidx_src = (
+										        use_islands ? best_island->indices[last_valid_pidx_isld_src] :
+										        last_valid_pidx_isld_src);
 										mp_src = &polys_src[pidx_src];
 
 										/* Create that one on demand. */
@@ -1988,8 +1997,9 @@ void BKE_mesh_remap_calc_polys_from_dm(
 			CustomData_set_layer_flag(pdata_dst, CD_NORMAL, CD_FLAG_TEMPORARY);
 		}
 		if (dirty_nors_dst) {
-			BKE_mesh_calc_normals_poly(verts_dst, NULL, numverts_dst, loops_dst, polys_dst, numloops_dst, numpolys_dst,
-			                           poly_nors_dst, true);
+			BKE_mesh_calc_normals_poly(
+			        verts_dst, NULL, numverts_dst, loops_dst, polys_dst, numloops_dst, numpolys_dst,
+			        poly_nors_dst, true);
 		}
 	}
 
@@ -2007,10 +2017,7 @@ void BKE_mesh_remap_calc_polys_from_dm(
 		BVHTreeRayHit rayhit = {0};
 		float hit_dist;
 
-		bvhtree_from_mesh_looptri(
-		        &treedata, dm_src,
-		        (mode & MREMAP_USE_NORPROJ) ? MREMAP_RAYCAST_APPROXIMATE_BVHEPSILON(ray_radius) : 0.0f,
-		        2, 6);
+		bvhtree_from_mesh_get(&treedata, dm_src, BVHTREE_FROM_LOOPTRI, 2);
 
 		if (mode == MREMAP_MODE_POLY_NEAREST) {
 			nearest.index = -1;
@@ -2175,8 +2182,9 @@ void BKE_mesh_remap_calc_polys_from_dm(
 					tri_vidx_2d[1][2] = 3;
 				}
 				else {
-					BLI_polyfill_calc(poly_vcos_2d, (unsigned int)mp->totloop, -1,
-					                  (unsigned int (*)[3])tri_vidx_2d);
+					BLI_polyfill_calc(
+					        poly_vcos_2d, (unsigned int)mp->totloop, -1,
+					        (unsigned int (*)[3])tri_vidx_2d);
 				}
 
 				for (j = 0; j < tris_num; j++) {
@@ -2253,7 +2261,6 @@ void BKE_mesh_remap_calc_polys_from_dm(
 
 #undef MREMAP_RAYCAST_APPROXIMATE_NR
 #undef MREMAP_RAYCAST_APPROXIMATE_FAC
-#undef MREMAP_RAYCAST_APPROXIMATE_BVHEPSILON
 #undef MREMAP_RAYCAST_TRI_SAMPLES_MIN
 #undef MREMAP_RAYCAST_TRI_SAMPLES_MAX
 #undef MREMAP_DEFAULT_BUFSIZE

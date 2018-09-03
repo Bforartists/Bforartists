@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.78 (sub 4) (b'd5c7d22bc2')\n"
+"Project-Id-Version: Blender 2.79 (sub 2) (b'6618852b7f1')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-23 21:33:49\n"
+"POT-Creation-Date: 2018-02-23 10:49:02\n"
 "PO-Revision-Date: 2016-02-27 15:14+0100\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
@@ -864,36 +864,12 @@ msgid "View"
 msgstr "Weergave"
 
 
-msgid "Group"
-msgstr "Groep"
-
-
-msgid "Key"
-msgstr "Sleutel"
-
-
-msgid "Lamp"
-msgstr "Lamp"
-
-
-msgid "Line Style"
-msgstr "Stijl voor Lijnen"
-
-
-msgid "Mask"
-msgstr "Mask"
-
-
-msgid "Node Tree"
-msgstr "Node Boom"
-
-
-msgid "World"
-msgstr "Wereld"
-
-
 msgid "Frames"
 msgstr "Frames"
+
+
+msgid "Group"
+msgstr "Groep"
 
 
 msgid "Smooth"
@@ -992,6 +968,10 @@ msgid "Crease"
 msgstr "Vouw"
 
 
+msgid "Line Style"
+msgstr "Stijl voor Lijnen"
+
+
 msgid "End"
 msgstr "Einde"
 
@@ -1084,6 +1064,10 @@ msgid "Draw"
 msgstr "Potlood"
 
 
+msgid "Mask"
+msgstr "Mask"
+
+
 msgid "Rotate"
 msgstr "Roteer"
 
@@ -1174,6 +1158,10 @@ msgstr "Actieve Textuur"
 
 msgid "Round"
 msgstr "Rond"
+
+
+msgid "Node Tree"
+msgstr "Node Boom"
 
 
 msgid "Use Nodes"
@@ -1290,6 +1278,10 @@ msgid "Meta"
 msgstr "Meta"
 
 
+msgid "Lamp"
+msgstr "Lamp"
+
+
 msgid "Grid"
 msgstr "Rooster"
 
@@ -1308,6 +1300,10 @@ msgstr "Materiaal Plek"
 
 msgid "Rigid Body World"
 msgstr "Star Lichaam Wereld"
+
+
+msgid "World"
+msgstr "Wereld"
 
 
 msgid "Screen data-block, defining the layout of areas in a window"
@@ -1581,6 +1577,10 @@ msgid "Delete"
 msgstr "Verwijder"
 
 
+msgid "Key"
+msgstr "Sleutel"
+
+
 msgid "Mirror"
 msgstr "Spiegel"
 
@@ -1609,6 +1609,10 @@ msgid "Normals"
 msgstr "Normalen"
 
 
+msgid "Select Linked"
+msgstr "Selecteer Aaneengesloten"
+
+
 msgid "Select Similar"
 msgstr "Selecteer Vergelijkbaar"
 
@@ -1623,6 +1627,10 @@ msgstr "Maak Koppelingen"
 
 msgid "Quick Effects"
 msgstr "Snel Effecten"
+
+
+msgid "Relations"
+msgstr "Relaties"
 
 
 msgid "Clear Transform"
@@ -3389,6 +3397,10 @@ msgid "Flip Normals"
 msgstr "Draai Normalen Om"
 
 
+msgid "Cut"
+msgstr "Knip"
+
+
 msgctxt "Operator"
 msgid "Add Cube"
 msgstr "Voeg Kubus toe"
@@ -4055,10 +4067,6 @@ msgstr "Zet Actie"
 
 msgid "Unlink Action"
 msgstr "Ontkoppel Actie"
-
-
-msgid "Select Linked"
-msgstr "Selecteer Aaneengesloten"
 
 
 msgid "Unlink Group"
@@ -5091,10 +5099,6 @@ msgid "Show Brush"
 msgstr "Toon Penseel"
 
 
-msgid "Relations"
-msgstr "Relaties"
-
-
 msgid "Active Point"
 msgstr "Actieve Punt"
 
@@ -5138,10 +5142,6 @@ msgstr "Voeg Metabol toe"
 
 msgid "Add Primitive"
 msgstr "Voeg Primitieve Toe"
-
-
-msgid "Cut"
-msgstr "Knip"
 
 
 msgid "Custom Object"
@@ -6550,11 +6550,6 @@ msgstr "Clips..."
 
 
 msgctxt "Operator"
-msgid "Clip..."
-msgstr "Clip..."
-
-
-msgctxt "Operator"
 msgid "Subtract"
 msgstr "Aftrekken"
 
@@ -6738,18 +6733,23 @@ msgstr "Volgende Actieve"
 
 
 msgctxt "Operator"
-msgid "Sharp Edges"
-msgstr "Scherpe Randen"
-
-
-msgctxt "Operator"
 msgid "Shortest Path"
 msgstr "Kortste pad"
 
 
 msgctxt "Operator"
+msgid "Sharp Edges"
+msgstr "Scherpe Randen"
+
+
+msgctxt "Operator"
 msgid "Single Bone"
 msgstr "Eenvoudig Bot"
+
+
+msgctxt "Operator"
+msgid "Camera"
+msgstr "Camera"
 
 
 msgctxt "Operator"
@@ -6760,11 +6760,6 @@ msgstr "Leeg"
 msgctxt "Operator"
 msgid "Speaker"
 msgstr "Luidspreker"
-
-
-msgctxt "Operator"
-msgid "Camera"
-msgstr "Camera"
 
 
 msgctxt "Operator"
@@ -6795,16 +6790,6 @@ msgstr "Pas Sleutel Set..."
 msgctxt "Operator"
 msgid "Bake Action..."
 msgstr "Bak Actie..."
-
-
-msgctxt "Operator"
-msgid "Location"
-msgstr "Locatie"
-
-
-msgctxt "Operator"
-msgid "Rotation"
-msgstr "Rotatie"
 
 
 msgctxt "Operator"
@@ -6845,6 +6830,16 @@ msgstr "Toon Passende Doos"
 msgctxt "Operator"
 msgid "Clear Mask"
 msgstr "Maak Masker Leeg"
+
+
+msgctxt "Operator"
+msgid "Location"
+msgstr "Locatie"
+
+
+msgctxt "Operator"
+msgid "Rotation"
+msgstr "Rotatie"
 
 
 msgctxt "Operator"
@@ -6903,6 +6898,11 @@ msgstr "Z Lokaal"
 
 
 msgctxt "Operator"
+msgid "Active Camera"
+msgstr "Actieve Camera"
+
+
+msgctxt "Operator"
 msgid "Roll Left"
 msgstr "Rol Links"
 
@@ -6910,11 +6910,6 @@ msgstr "Rol Links"
 msgctxt "Operator"
 msgid "Roll Right"
 msgstr "Rol Rechts"
-
-
-msgctxt "Operator"
-msgid "Active Camera"
-msgstr "Actieve Camera"
 
 
 msgctxt "Operator"

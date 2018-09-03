@@ -15,8 +15,8 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Contributor: 
- *		Jeroen Bakker 
+ * Contributor:
+ *		Jeroen Bakker
  *		Monique Dewanchand
  */
 
@@ -39,10 +39,10 @@ void RotateNode::convertToOperations(NodeConverter &converter, const CompositorC
 	RotateOperation *operation = new RotateOperation();
 	SetSamplerOperation *sampler = new SetSamplerOperation();
 	sampler->setSampler((PixelSampler)this->getbNode()->custom1);
-	
+
 	converter.addOperation(sampler);
 	converter.addOperation(operation);
-	
+
 	converter.addLink(sampler->getOutputSocket(), operation->getInputSocket(0));
 	converter.mapInputSocket(inputSocket, sampler->getInputSocket(0));
 	converter.mapInputSocket(inputDegreeSocket, operation->getInputSocket(1));

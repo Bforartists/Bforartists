@@ -123,7 +123,7 @@ static uint kdtree_balance(KDTreeNode *nodes, uint totnode, uint axis, const uin
 		return KD_NODE_UNSET;
 	else if (totnode == 1)
 		return 0 + ofs;
-	
+
 	/* quicksort style sorting around median */
 	left = 0;
 	right = totnode - 1;
@@ -238,7 +238,7 @@ int BLI_kdtree_find_nearest(
 		if (root->right != KD_NODE_UNSET)
 			stack[cur++] = root->right;
 	}
-	
+
 	while (cur--) {
 		const KDTreeNode *node = &nodes[stack[cur]];
 
@@ -448,7 +448,7 @@ int BLI_kdtree_find_nearest_n__normal(
 
 	cur_dist = squared_distance(root->co, co, nor);
 	add_nearest(r_nearest, &found, n, root->index, cur_dist, root->co);
-	
+
 	if (co[root->d] < root->co[root->d]) {
 		if (root->right != KD_NODE_UNSET)
 			stack[cur++] = root->right;
@@ -751,7 +751,7 @@ static void deduplicate_recursive(const struct DeDuplicateParams *p, uint i)
  * although it can still be used as a target.
  * \returns The numebr of merges found (includes any merges already in the \a duplicates array).
  *
- * \note Merging is always a single step (target indices wont be marked for merging). 
+ * \note Merging is always a single step (target indices wont be marked for merging).
  */
 int BLI_kdtree_calc_duplicates_fast(
         const KDTree *tree, const float range, bool use_index_order,
@@ -774,7 +774,12 @@ int BLI_kdtree_calc_duplicates_fast(
 			if (ELEM(duplicates[index], -1, index)) {
 				p.search = index;
 				copy_v3_v3(p.search_co, tree->nodes[node_index].co);
+				int found_prev = found;
 				deduplicate_recursive(&p, tree->root);
+				if (found != found_prev) {
+					/* Prevent chains of doubles. */
+					duplicates[index] = index;
+				}
 			}
 		}
 		MEM_freeN(order);
@@ -786,7 +791,12 @@ int BLI_kdtree_calc_duplicates_fast(
 			if (ELEM(duplicates[index], -1, index)) {
 				p.search = index;
 				copy_v3_v3(p.search_co, tree->nodes[node_index].co);
+				int found_prev = found;
 				deduplicate_recursive(&p, tree->root);
+				if (found != found_prev) {
+					/* Prevent chains of doubles. */
+					duplicates[index] = index;
+				}
 			}
 		}
 	}

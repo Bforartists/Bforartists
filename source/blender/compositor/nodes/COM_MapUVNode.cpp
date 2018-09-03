@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Contributor: 
+ * Contributor:
  *		Dalai Felinto
  */
 
@@ -31,7 +31,7 @@ MapUVNode::MapUVNode(bNode *editorNode) : Node(editorNode)
 void MapUVNode::convertToOperations(NodeConverter &converter, const CompositorContext &/*context*/) const
 {
 	bNode *node = this->getbNode();
-	
+
 	MapUVOperation *operation = new MapUVOperation();
 	operation->setAlpha((float)node->custom1);
 	operation->setResolutionInputSocketIndex(1);

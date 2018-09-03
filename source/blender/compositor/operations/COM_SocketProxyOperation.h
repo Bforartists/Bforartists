@@ -15,26 +15,26 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Contributor: 
- *		Jeroen Bakker 
+ * Contributor:
+ *		Jeroen Bakker
  *		Monique Dewanchand
  */
 
-#ifndef _COM_SocketProxyOperation_h_
-#define _COM_SocketProxyOperation_h_
+#ifndef __COM_SOCKETPROXYOPERATION_H__
+#define __COM_SOCKETPROXYOPERATION_H__
 
 #include "COM_NodeOperation.h"
 
 class SocketProxyOperation : public NodeOperation {
 public:
 	SocketProxyOperation(DataType type, bool use_conversion);
-	
+
 	bool isProxyOperation() const { return true; }
 	bool useDatatypeConversion() const { return m_use_conversion; }
-	
+
 	bool getUseConversion() const { return m_use_conversion; }
 	void setUseConversion(bool use_conversion) { m_use_conversion = use_conversion; }
-	
+
 private:
 	bool m_use_conversion;
 };

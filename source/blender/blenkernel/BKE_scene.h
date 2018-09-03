@@ -87,7 +87,7 @@ typedef struct SceneBaseIter {
 	int phase;
 } SceneBaseIter;
 
-int BKE_scene_base_iter_next(struct EvaluationContext *eval_ctx, struct SceneBaseIter *iter,
+int BKE_scene_base_iter_next(struct Main *bmain, struct EvaluationContext *eval_ctx, struct SceneBaseIter *iter,
                              struct Scene **scene, int val, struct Base **base, struct Object **ob);
 
 void BKE_scene_base_flag_to_objects(struct Scene *scene);
@@ -113,6 +113,8 @@ int BKE_scene_camera_switch_update(struct Scene *scene);
 
 char *BKE_scene_find_marker_name(struct Scene *scene, int frame);
 char *BKE_scene_find_last_marker_name(struct Scene *scene, int frame);
+
+int BKE_scene_frame_snap_by_seconds(struct Scene *scene, double interval_in_seconds, int cfra);
 
 /* checks for cycle, returns 1 if it's all OK */
 bool BKE_scene_validate_setscene(struct Main *bmain, struct Scene *sce);

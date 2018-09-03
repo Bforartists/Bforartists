@@ -15,8 +15,8 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Contributor: 
- *		Jeroen Bakker 
+ * Contributor:
+ *		Jeroen Bakker
  *		Monique Dewanchand
  */
 
@@ -132,7 +132,7 @@ void ExecutionSystem::execute()
 	editingtree->stats_draw(editingtree->sdh, IFACE_("Compositing | Initializing execution"));
 
 	DebugInfo::execute_started(this);
-	
+
 	unsigned int order = 0;
 	for (vector<NodeOperation *>::iterator iter = this->m_operations.begin(); iter != this->m_operations.end(); ++iter) {
 		NodeOperation *operation = *iter;

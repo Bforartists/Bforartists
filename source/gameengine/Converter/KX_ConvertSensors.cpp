@@ -109,7 +109,7 @@ void BL_ConvertSensors(struct Object* blenderobject,
 	bool invert = false;
 	bool level = false;
 	bool tap = false;
-	
+
 	while (sens)
 	{
 		sens = sens->next;
@@ -660,4 +660,3 @@ void BL_ConvertSensors(struct Object* blenderobject,
 		sens=sens->next;
 	}
 }
-

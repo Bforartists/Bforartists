@@ -4,7 +4,7 @@
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version. 
+ * of the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -18,7 +18,7 @@
  * The Original Code is Copyright (C) 2007 Blender Foundation.
  * All rights reserved.
  *
- * 
+ *
  * Contributor(s): Blender Foundation
  *
  * ***** END GPL LICENSE BLOCK *****
@@ -38,8 +38,8 @@ typedef struct wmPaintCursor {
 	struct wmPaintCursor *next, *prev;
 
 	void *customdata;
-	
-	int (*poll)(struct bContext *C);
+
+	bool (*poll)(struct bContext *C);
 	void (*draw)(bContext *C, int, int, void *customdata);
 } wmPaintCursor;
 
@@ -51,7 +51,7 @@ extern void wm_close_and_free_all(bContext *C, ListBase *);
 
 extern void wm_add_default(bContext *C);
 extern void wm_clear_default_size(bContext *C);
-			
+
 			/* register to windowmanager for redo or macro */
 void		wm_operator_register(bContext *C, wmOperator *op);
 
@@ -59,6 +59,7 @@ void		wm_operator_register(bContext *C, wmOperator *op);
 void wm_operatortype_free(void);
 void wm_operatortype_init(void);
 void wm_window_keymap(wmKeyConfig *keyconf);
+void wm_operatortypes_register(void);
 
 /* wm_gesture.c */
 void wm_gesture_draw(struct wmWindow *win);

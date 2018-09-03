@@ -79,29 +79,29 @@ char versionstr[48] = "";
 /* only to be called on exit blender */
 void BKE_blender_free(void)
 {
-	/* samples are in a global list..., also sets G.main->sound->sample NULL */
-	BKE_main_free(G.main);
-	G.main = NULL;
+	/* samples are in a global list..., also sets G_MAIN->sound->sample NULL */
+	BKE_main_free(G_MAIN);
+	G_MAIN = NULL;
 
 	if (G.log.file != NULL) {
 		fclose(G.log.file);
 	}
 
 	BKE_spacetypes_free();      /* after free main, it uses space callbacks */
-	
+
 	IMB_exit();
 	BKE_cachefiles_exit();
 	BKE_images_exit();
 	DAG_exit();
 
 	BKE_brush_system_exit();
-	RE_texture_rng_exit();	
+	RE_texture_rng_exit();
 
 	BLI_callback_global_finalize();
 
 	BKE_sequencer_cache_destruct();
 	IMB_moviecache_destruct();
-	
+
 	free_nodesystem();
 }
 
@@ -120,10 +120,10 @@ void BKE_blender_version_string(char *version_str, size_t maxncpy, short version
 void BKE_blender_globals_init(void)
 {
 	memset(&G, 0, sizeof(Global));
-	
+
 	U.savetime = 1;
 
-	G.main = BKE_main_new();
+	G_MAIN = BKE_main_new();
 
 	strcpy(G.ima, "//");
 
@@ -140,9 +140,9 @@ void BKE_blender_globals_init(void)
 
 void BKE_blender_globals_clear(void)
 {
-	BKE_main_free(G.main);          /* free all lib data */
+	BKE_main_free(G_MAIN);          /* free all lib data */
 
-	G.main = NULL;
+	G_MAIN = NULL;
 }
 
 /***/
@@ -321,7 +321,7 @@ int BKE_blender_test_break(void)
 		if (blender_test_break_cb)
 			blender_test_break_cb();
 	}
-	
+
 	return (G.is_break == true);
 }
 

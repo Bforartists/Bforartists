@@ -54,16 +54,6 @@ static void initData(ModifierData *md)
 	lmd->strength = 1.0f;
 }
 
-static void copyData(ModifierData *md, ModifierData *target)
-{
-#if 0
-	LatticeModifierData *lmd = (LatticeModifierData *) md;
-	LatticeModifierData *tlmd = (LatticeModifierData *) target;
-#endif
-
-	modifier_copyData_generic(md, target);
-}
-
 static CustomDataMask requiredDataMask(Object *UNUSED(ob), ModifierData *md)
 {
 	LatticeModifierData *lmd = (LatticeModifierData *)md;
@@ -113,17 +103,18 @@ static void updateDepsgraph(ModifierData *md, const ModifierUpdateDepsgraphConte
 	DEG_add_object_relation(ctx->node, ctx->object, DEG_OB_COMP_TRANSFORM, "Lattice Modifier");
 }
 
-static void deformVerts(ModifierData *md, Object *ob,
-                        DerivedMesh *derivedData,
-                        float (*vertexCos)[3],
-                        int numVerts,
-                        ModifierApplyFlag UNUSED(flag))
+static void deformVerts(
+        ModifierData *md, Object *ob,
+        DerivedMesh *derivedData,
+        float (*vertexCos)[3],
+        int numVerts,
+        ModifierApplyFlag UNUSED(flag))
 {
 	LatticeModifierData *lmd = (LatticeModifierData *) md;
 
 
 	modifier_vgroup_cache(md, vertexCos); /* if next modifier needs original vertices */
-	
+
 	lattice_deform_verts(lmd->object, ob, derivedData,
 	                     vertexCos, numVerts, lmd->name, lmd->strength);
 }
@@ -150,7 +141,7 @@ ModifierTypeInfo modifierType_Lattice = {
 	/* flags */             eModifierTypeFlag_AcceptsCVs |
 	                        eModifierTypeFlag_AcceptsLattice |
 	                        eModifierTypeFlag_SupportsEditmode,
-	/* copyData */          copyData,
+	/* copyData */          modifier_copyData_generic,
 	/* deformVerts */       deformVerts,
 	/* deformMatrices */    NULL,
 	/* deformVertsEM */     deformVertsEM,

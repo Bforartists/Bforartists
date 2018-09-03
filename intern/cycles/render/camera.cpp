@@ -176,7 +176,7 @@ Camera::Camera()
 	need_flags_update = true;
 	previous_need_motion = -1;
 
-	memset(&kernel_camera, 0, sizeof(kernel_camera));
+	memset((void *)&kernel_camera, 0, sizeof(kernel_camera));
 }
 
 Camera::~Camera()
@@ -246,7 +246,7 @@ void Camera::update(Scene *scene)
 		cameratoscreen = projection_orthographic(nearclip, farclip);
 	else
 		cameratoscreen = projection_identity();
-	
+
 	ProjectionTransform screentocamera = projection_inverse(cameratoscreen);
 
 	rastertocamera = screentocamera * rastertoscreen;

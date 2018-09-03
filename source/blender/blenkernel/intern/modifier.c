@@ -58,6 +58,7 @@
 #include "BLT_translation.h"
 
 #include "BKE_appdir.h"
+#include "BKE_global.h"
 #include "BKE_key.h"
 #include "BKE_library.h"
 #include "BKE_library_query.h"
@@ -65,7 +66,6 @@
 #include "BKE_DerivedMesh.h"
 
 /* may move these, only for modifier_path_relbase */
-#include "BKE_global.h" /* ugh, G.main->name only */
 #include "BKE_main.h"
 /* end */
 
@@ -121,7 +121,7 @@ ModifierData *modifier_new(int type)
 {
 	const ModifierTypeInfo *mti = modifierType_getInfo(type);
 	ModifierData *md = MEM_callocN(mti->structSize, mti->structName);
-	
+
 	/* note, this name must be made unique later */
 	BLI_strncpy(md->name, DATA_(mti->name), sizeof(md->name));
 
@@ -286,6 +286,13 @@ void modifiers_foreachTexLink(Object *ob, TexWalkFunc walk, void *userData)
 void modifier_copyData_generic(const ModifierData *md_src, ModifierData *md_dst)
 {
 	const ModifierTypeInfo *mti = modifierType_getInfo(md_src->type);
+
+	/* md_dst may have alredy be fully initialized with some extra allocated data,
+	 * we need to free it now to avoid memleak. */
+	if (mti->freeData) {
+		mti->freeData(md_dst);
+	}
+
 	const size_t data_size = sizeof(ModifierData);
 	const char *md_src_data = ((const char *)md_src) + data_size;
 	char       *md_dst_data =       ((char *)md_dst) + data_size;
@@ -382,9 +389,9 @@ void modifier_setError(ModifierData *md, const char *_format, ...)
 
 /* used for buttons, to find out if the 'draw deformed in editmode' option is
  * there
- * 
+ *
  * also used in transform_conversion.c, to detect CrazySpace [tm] (2nd arg
- * then is NULL) 
+ * then is NULL)
  * also used for some mesh tools to give warnings
  */
 int modifiers_getCageIndex(struct Scene *scene, Object *ob, int *r_lastPossibleCageIndex, bool is_virtual)
@@ -471,7 +478,7 @@ bool modifier_isEnabled(struct Scene *scene, ModifierData *md, int required_mode
 	if (scene != NULL && mti->isDisabled && mti->isDisabled(md, required_mode == eModifierMode_Render)) return false;
 	if (md->mode & eModifierMode_DisableTemporary) return false;
 	if ((required_mode & eModifierMode_Editmode) && !(mti->flags & eModifierTypeFlag_SupportsEditmode)) return false;
-	
+
 	return true;
 }
 
@@ -487,7 +494,7 @@ CDMaskLink *modifiers_calcDataMasks(struct Scene *scene, Object *ob, ModifierDat
 		const ModifierTypeInfo *mti = modifierType_getInfo(md->type);
 
 		curr = MEM_callocN(sizeof(CDMaskLink), "CDMaskLink");
-		
+
 		if (modifier_isEnabled(scene, md, required_mode)) {
 			if (mti->requiredDataMask)
 				curr->mask = mti->requiredDataMask(ob, md);
@@ -596,7 +603,7 @@ Object *modifiers_isDeformedByArmature(Object *ob)
 	VirtualModifierData virtualModifierData;
 	ModifierData *md = modifiers_getVirtualModifierList(ob, &virtualModifierData);
 	ArmatureModifierData *amd = NULL;
-	
+
 	/* return the first selected armature, this lets us use multiple armatures */
 	for (; md; md = md->next) {
 		if (md->type == eModifierType_Armature) {
@@ -605,10 +612,10 @@ Object *modifiers_isDeformedByArmature(Object *ob)
 				return amd->object;
 		}
 	}
-	
+
 	if (amd) /* if were still here then return the last armature */
 		return amd->object;
-	
+
 	return NULL;
 }
 
@@ -620,7 +627,7 @@ Object *modifiers_isDeformedByLattice(Object *ob)
 	VirtualModifierData virtualModifierData;
 	ModifierData *md = modifiers_getVirtualModifierList(ob, &virtualModifierData);
 	LatticeModifierData *lmd = NULL;
-	
+
 	/* return the first selected lattice, this lets us use multiple lattices */
 	for (; md; md = md->next) {
 		if (md->type == eModifierType_Lattice) {
@@ -629,10 +636,10 @@ Object *modifiers_isDeformedByLattice(Object *ob)
 				return lmd->object;
 		}
 	}
-	
+
 	if (lmd) /* if were still here then return the last lattice */
 		return lmd->object;
-	
+
 	return NULL;
 }
 
@@ -644,7 +651,7 @@ Object *modifiers_isDeformedByCurve(Object *ob)
 	VirtualModifierData virtualModifierData;
 	ModifierData *md = modifiers_getVirtualModifierList(ob, &virtualModifierData);
 	CurveModifierData *cmd = NULL;
-	
+
 	/* return the first selected curve, this lets us use multiple curves */
 	for (; md; md = md->next) {
 		if (md->type == eModifierType_Curve) {
@@ -653,10 +660,10 @@ Object *modifiers_isDeformedByCurve(Object *ob)
 				return cmd->object;
 		}
 	}
-	
+
 	if (cmd) /* if were still here then return the last curve */
 		return cmd->object;
-	
+
 	return NULL;
 }
 
@@ -690,7 +697,7 @@ bool modifiers_isCorrectableDeformed(struct Scene *scene, Object *ob)
 
 	if (ob->mode == OB_MODE_EDIT)
 		required_mode |= eModifierMode_Editmode;
-	
+
 	for (; md; md = md->next) {
 		if (!modifier_isEnabled(scene, md, required_mode)) {
 			/* pass */
@@ -758,10 +765,22 @@ void test_object_modifiers(Object *ob)
  * - else if the file has been saved return the blend file path.
  * - else if the file isn't saved and the ID isn't from a library, return the temp dir.
  */
-const char *modifier_path_relbase(Object *ob)
+const char *modifier_path_relbase(Main *bmain, Object *ob)
 {
 	if (G.relbase_valid || ID_IS_LINKED(ob)) {
-		return ID_BLEND_PATH(G.main, &ob->id);
+		return ID_BLEND_PATH(bmain, &ob->id);
+	}
+	else {
+		/* last resort, better then using "" which resolves to the current
+		 * working directory */
+		return BKE_tempdir_session();
+	}
+}
+
+const char *modifier_path_relbase_from_global(Object *ob)
+{
+	if (G.relbase_valid || ID_IS_LINKED(ob)) {
+		return ID_BLEND_PATH_FROM_GLOBAL(&ob->id);
 	}
 	else {
 		/* last resort, better then using "" which resolves to the current

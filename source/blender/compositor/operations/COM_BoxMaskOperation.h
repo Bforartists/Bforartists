@@ -15,13 +15,13 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Contributor: 
- *		Jeroen Bakker 
+ * Contributor:
+ *		Jeroen Bakker
  *		Monique Dewanchand
  */
 
-#ifndef _COM_BoxMaskOperation_h
-#define _COM_BoxMaskOperation_h
+#ifndef __COM_BOXMASKOPERATION_H__
+#define __COM_BOXMASKOPERATION_H__
 #include "COM_NodeOperation.h"
 
 
@@ -32,31 +32,31 @@ private:
 	 */
 	SocketReader *m_inputMask;
 	SocketReader *m_inputValue;
-	
+
 	float m_sine;
 	float m_cosine;
 	float m_aspectRatio;
 	int m_maskType;
-	
+
 	NodeBoxMask *m_data;
 public:
 	BoxMaskOperation();
-	
+
 	/**
 	 * the inner loop of this program
 	 */
 	void executePixelSampled(float output[4], float x, float y, PixelSampler sampler);
-	
+
 	/**
 	 * Initialize the execution
 	 */
 	void initExecution();
-	
+
 	/**
 	 * Deinitialize the execution
 	 */
 	void deinitExecution();
-	
+
 	void setData(NodeBoxMask *data) { this->m_data = data; }
 
 	void setMaskType(int maskType) { this->m_maskType = maskType; }

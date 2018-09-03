@@ -154,7 +154,7 @@ static void rna_Lattice_update_size(Main *bmain, Scene *scene, PointerRNA *ptr)
 	rna_Lattice_update_data(bmain, scene, ptr);
 }
 
-static void rna_Lattice_use_outside_set(PointerRNA *ptr, int value)
+static void rna_Lattice_use_outside_set(PointerRNA *ptr, bool value)
 {
 	Lattice *lt = ptr->data;
 
@@ -215,19 +215,19 @@ static char *rna_LatticePoint_path(PointerRNA *ptr)
 	Lattice *lt = (Lattice *)ptr->id.data;
 	void *point = ptr->data;
 	BPoint *points = NULL;
-	
+
 	if (lt->editlatt && lt->editlatt->latt->def)
 		points = lt->editlatt->latt->def;
 	else
 		points = lt->def;
-	
+
 	if (points && point) {
 		int tot = lt->pntsu * lt->pntsv * lt->pntsw;
-		
+
 		/* only return index if in range */
 		if ((point >= (void *)points) && (point < (void *)(points + tot))) {
 			int pt_index = (int)((BPoint *)point - points);
-			
+
 			return BLI_sprintfN("points[%d]", pt_index);
 		}
 	}
@@ -235,7 +235,7 @@ static char *rna_LatticePoint_path(PointerRNA *ptr)
 	return BLI_strdup("");
 }
 
-static int rna_Lattice_is_editmode_get(PointerRNA *ptr)
+static bool rna_Lattice_is_editmode_get(PointerRNA *ptr)
 {
 	Lattice *lt = (Lattice *)ptr->id.data;
 	return (lt->editlatt != NULL);
@@ -344,7 +344,7 @@ static void rna_def_lattice(BlenderRNA *brna)
 	RNA_def_property_boolean_funcs(prop, NULL, "rna_Lattice_use_outside_set");
 	RNA_def_property_ui_text(prop, "Outside", "Only draw, and take into account, the outer vertices");
 	RNA_def_property_update(prop, 0, "rna_Lattice_update_data_editlatt");
-	
+
 	prop = RNA_def_property(srna, "vertex_group", PROP_STRING, PROP_NONE);
 	RNA_def_property_string_sdna(prop, NULL, "vgroup");
 	RNA_def_property_ui_text(prop, "Vertex Group", "Vertex group to apply the influence of the lattice");

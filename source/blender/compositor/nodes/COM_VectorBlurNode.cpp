@@ -15,8 +15,8 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Contributor: 
- *		Jeroen Bakker 
+ * Contributor:
+ *		Jeroen Bakker
  *		Monique Dewanchand
  */
 
@@ -33,12 +33,12 @@ void VectorBlurNode::convertToOperations(NodeConverter &converter, const Composi
 {
 	bNode *node = this->getbNode();
 	NodeBlurData *vectorBlurSettings = (NodeBlurData *)node->storage;
-	
+
 	VectorBlurOperation *operation = new VectorBlurOperation();
 	operation->setVectorBlurSettings(vectorBlurSettings);
 	operation->setQuality(context.getQuality());
 	converter.addOperation(operation);
-	
+
 	converter.mapInputSocket(getInputSocket(0), operation->getInputSocket(0));
 	converter.mapInputSocket(getInputSocket(1), operation->getInputSocket(1));
 	converter.mapInputSocket(getInputSocket(2), operation->getInputSocket(2));

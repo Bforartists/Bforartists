@@ -76,7 +76,7 @@ ccl_device_noinline float3 direct_emissive_eval(KernelGlobals *kg,
 		/* Evaluate emissive closure. */
 		eval = shader_emissive_eval(kg, emission_sd);
 	}
-	
+
 	eval *= ls->eval_fac;
 
 	return eval;
@@ -319,9 +319,9 @@ ccl_device_noinline float3 indirect_background(KernelGlobals *kg,
 
 #ifdef __BACKGROUND_MIS__
 	/* check if background light exists or if we should skip pdf */
-	int res = kernel_data.integrator.pdf_background_res;
+	int res_x = kernel_data.integrator.pdf_background_res_x;
 
-	if(!(state->flag & PATH_RAY_MIS_SKIP) && res) {
+	if(!(state->flag & PATH_RAY_MIS_SKIP) && res_x) {
 		/* multiple importance sampling, get background light pdf for ray
 		 * direction, and compute weight with respect to BSDF pdf */
 		float pdf = background_light_pdf(kg, ray->P, ray->D);
@@ -338,4 +338,3 @@ ccl_device_noinline float3 indirect_background(KernelGlobals *kg,
 }
 
 CCL_NAMESPACE_END
-
