@@ -64,7 +64,7 @@
 void BLO_memfile_free(MemFile *memfile)
 {
 	MemFileChunk *chunk;
-	
+
 	while ((chunk = BLI_pophead(&memfile->chunks))) {
 		if (chunk->is_identical == false) {
 			MEM_freeN((void *)chunk->buf);
@@ -79,7 +79,7 @@ void BLO_memfile_free(MemFile *memfile)
 void BLO_memfile_merge(MemFile *first, MemFile *second)
 {
 	MemFileChunk *fc, *sc;
-	
+
 	fc = first->chunks.first;
 	sc = second->chunks.first;
 	while (fc || sc) {
@@ -92,7 +92,7 @@ void BLO_memfile_merge(MemFile *first, MemFile *second)
 		if (fc) fc = fc->next;
 		if (sc) sc = sc->next;
 	}
-	
+
 	BLO_memfile_free(first);
 }
 
@@ -130,7 +130,7 @@ void memfile_chunk_add(
 struct Main *BLO_memfile_main_get(struct MemFile *memfile, struct Main *oldmain, struct Scene **r_scene)
 {
 	struct Main *bmain_undo = NULL;
-	BlendFileData *bfd = BLO_read_from_memfile(oldmain, oldmain->name, memfile, NULL, BLO_READ_SKIP_NONE);
+	BlendFileData *bfd = BLO_read_from_memfile(oldmain, BKE_main_blendfile_path(oldmain), memfile, NULL, BLO_READ_SKIP_NONE);
 
 	if (bfd) {
 		bmain_undo = bfd->main;

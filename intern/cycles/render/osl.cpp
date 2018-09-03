@@ -66,6 +66,14 @@ OSLShaderManager::~OSLShaderManager()
 {
 	shading_system_free();
 	texture_system_free();
+#ifdef OSL_HAS_BLENDER_CLEANUP_FIX
+	/* There is a problem with llvm+osl: The order global destructors across
+	 * different compilation units run cannot be guaranteed, on windows this means
+	 * that the llvm destructors run before the osl destructors, causing a crash
+	 * when the process exits. the OSL in svn has a special cleanup hack to
+	 * sidestep this behavior */
+	OSL::pvt::LLVM_Util::Cleanup();
+#endif
 }
 
 void OSLShaderManager::reset(Scene * /*scene*/)
@@ -99,7 +107,9 @@ void OSLShaderManager::device_update(Device *device, DeviceScene *dscene, Scene 
 		 * compile shaders alternating */
 		thread_scoped_lock lock(ss_mutex);
 
-		OSLCompiler compiler((void*)this, (void*)ss, scene->image_manager);
+		OSLCompiler compiler((void*)this, (void*)ss,
+		                     scene->image_manager,
+		                     scene->light_manager);
 		compiler.background = (shader == scene->default_background);
 		compiler.compile(scene, og, shader);
 
@@ -120,7 +130,7 @@ void OSLShaderManager::device_update(Device *device, DeviceScene *dscene, Scene 
 		shader->need_update = false;
 
 	need_update = false;
-	
+
 	/* set texture system */
 	scene->image_manager->set_osl_texture_system((void*)ts);
 
@@ -546,11 +556,14 @@ OSLNode *OSLShaderManager::osl_node(const std::string& filepath,
 
 /* Graph Compiler */
 
-OSLCompiler::OSLCompiler(void *manager_, void *shadingsys_, ImageManager *image_manager_)
+OSLCompiler::OSLCompiler(void *manager_, void *shadingsys_,
+                         ImageManager *image_manager_,
+                         LightManager *light_manager_)
 {
 	manager = manager_;
 	shadingsys = shadingsys_;
 	image_manager = image_manager_;
+	light_manager = light_manager_;
 	current_type = SHADER_TYPE_SURFACE;
 	current_shader = NULL;
 	background = false;
@@ -573,7 +586,7 @@ string OSLCompiler::compatible_name(ShaderNode *node, ShaderInput *input)
 	/* strip whitespace */
 	while((i = sname.find(" ")) != string::npos)
 		sname.replace(i, 1, "");
-	
+
 	/* if output exists with the same name, add "In" suffix */
 	foreach(ShaderOutput *output, node->outputs) {
 		if(input->name() == output->name()) {
@@ -581,7 +594,7 @@ string OSLCompiler::compatible_name(ShaderNode *node, ShaderInput *input)
 			break;
 		}
 	}
-	
+
 	return sname;
 }
 
@@ -593,7 +606,7 @@ string OSLCompiler::compatible_name(ShaderNode *node, ShaderOutput *output)
 	/* strip whitespace */
 	while((i = sname.find(" ")) != string::npos)
 		sname.replace(i, 1, "");
-	
+
 	/* if input exists with the same name, add "Out" suffix */
 	foreach(ShaderInput *input, node->inputs) {
 		if(input->name() == output->name()) {
@@ -601,7 +614,7 @@ string OSLCompiler::compatible_name(ShaderNode *node, ShaderOutput *output)
 			break;
 		}
 	}
-	
+
 	return sname;
 }
 
@@ -609,7 +622,7 @@ bool OSLCompiler::node_skip_input(ShaderNode *node, ShaderInput *input)
 {
 	/* exception for output node, only one input is actually used
 	 * depending on the current shader type */
-	
+
 	if(input->flags() & SocketType::SVM_INTERNAL)
 		return true;
 
@@ -699,7 +712,7 @@ void OSLCompiler::add(ShaderNode *node, const char *name, bool isfilepath)
 		ss->Shader("displacement", name, id(node).c_str());
 	else
 		assert(0);
-	
+
 	/* link inputs to other nodes */
 	foreach(ShaderInput *input, node->inputs) {
 		if(input->link) {
@@ -1245,4 +1258,3 @@ void OSLCompiler::parameter_color_array(const char * /*name*/, const array<float
 #endif /* WITH_OSL */
 
 CCL_NAMESPACE_END
-

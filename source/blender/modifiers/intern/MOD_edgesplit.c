@@ -60,7 +60,7 @@ static DerivedMesh *doEdgeSplit(DerivedMesh *dm, EdgeSplitModifierData *emd)
 	const bool calc_face_normals = (emd->flags & MOD_EDGESPLIT_FROMANGLE) != 0;
 
 	bm = DM_to_bmesh(dm, calc_face_normals);
-	
+
 	if (emd->flags & MOD_EDGESPLIT_FROMANGLE) {
 		BM_ITER_MESH (e, &iter, bm, BM_EDGES_OF_MESH) {
 			/* check for 1 edge having 2 face users */
@@ -78,7 +78,7 @@ static DerivedMesh *doEdgeSplit(DerivedMesh *dm, EdgeSplitModifierData *emd)
 			}
 		}
 	}
-	
+
 	if (emd->flags & MOD_EDGESPLIT_FROMFLAG) {
 		BM_ITER_MESH (e, &iter, bm, BM_EDGES_OF_MESH) {
 			/* check for 2 or more edge users */
@@ -91,7 +91,7 @@ static DerivedMesh *doEdgeSplit(DerivedMesh *dm, EdgeSplitModifierData *emd)
 			}
 		}
 	}
-	
+
 	BM_mesh_edgesplit(bm, false, true, false);
 
 	/* BM_mesh_validate(bm); */ /* for troubleshooting */
@@ -112,17 +112,9 @@ static void initData(ModifierData *md)
 	emd->flags = MOD_EDGESPLIT_FROMANGLE | MOD_EDGESPLIT_FROMFLAG;
 }
 
-static void copyData(ModifierData *md, ModifierData *target)
-{
-#if 0
-	EdgeSplitModifierData *emd = (EdgeSplitModifierData *) md;
-	EdgeSplitModifierData *temd = (EdgeSplitModifierData *) target;
-#endif
-	modifier_copyData_generic(md, target);
-}
-
-static DerivedMesh *applyModifier(ModifierData *md, Object *UNUSED(ob), DerivedMesh *dm,
-                                  ModifierApplyFlag UNUSED(flag))
+static DerivedMesh *applyModifier(
+        ModifierData *md, Object *UNUSED(ob), DerivedMesh *dm,
+        ModifierApplyFlag UNUSED(flag))
 {
 	DerivedMesh *result;
 	EdgeSplitModifierData *emd = (EdgeSplitModifierData *) md;
@@ -147,7 +139,7 @@ ModifierTypeInfo modifierType_EdgeSplit = {
 	                        eModifierTypeFlag_SupportsEditmode |
 	                        eModifierTypeFlag_EnableInEditmode,
 
-	/* copyData */          copyData,
+	/* copyData */          modifier_copyData_generic,
 	/* deformVerts */       NULL,
 	/* deformMatrices */    NULL,
 	/* deformVertsEM */     NULL,

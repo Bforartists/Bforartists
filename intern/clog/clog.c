@@ -81,6 +81,7 @@ typedef struct CLogContext {
 
 	struct {
 		void (*fatal_fn)(void *file_handle);
+		void (*backtrace_fn)(void *file_handle);
 	} callbacks;
 } CLogContext;
 
@@ -328,13 +329,21 @@ static CLG_LogType *clg_ctx_type_register(CLogContext *ctx, const char *identifi
 	return ty;
 }
 
-static void clg_ctx_fatal_action(CLogContext *ctx, FILE *file_handle)
+static void clg_ctx_fatal_action(CLogContext *ctx)
 {
 	if (ctx->callbacks.fatal_fn != NULL) {
-		ctx->callbacks.fatal_fn(file_handle);
+		ctx->callbacks.fatal_fn(ctx->output_file);
 	}
-	fflush(file_handle);
+	fflush(ctx->output_file);
 	abort();
+}
+
+static void clg_ctx_backtrace(CLogContext *ctx)
+{
+	/* Note: we avoid writing fo 'FILE', for backtrace we make an exception,
+	 * if necessary we could have a version of the callback that writes to file descriptor all at once. */
+	ctx->callbacks.backtrace_fn(ctx->output_file);
+	fflush(ctx->output_file);
 }
 
 /** \} */
@@ -408,8 +417,12 @@ void CLG_log_str(
 
 	clg_str_free(&cstr);
 
+	if (lg->ctx->callbacks.backtrace_fn) {
+		clg_ctx_backtrace(lg->ctx);
+	}
+
 	if (severity == CLG_SEVERITY_FATAL) {
-		clg_ctx_fatal_action(lg->ctx, lg->ctx->output_file);
+		clg_ctx_fatal_action(lg->ctx);
 	}
 }
 
@@ -439,8 +452,12 @@ void CLG_logf(
 
 	clg_str_free(&cstr);
 
+	if (lg->ctx->callbacks.backtrace_fn) {
+		clg_ctx_backtrace(lg->ctx);
+	}
+
 	if (severity == CLG_SEVERITY_FATAL) {
-		clg_ctx_fatal_action(lg->ctx, lg->ctx->output_file);
+		clg_ctx_fatal_action(lg->ctx);
 	}
 }
 
@@ -453,7 +470,7 @@ void CLG_logf(
 static void CLG_ctx_output_set(CLogContext *ctx, void *file_handle)
 {
 	ctx->output_file = file_handle;
-	ctx->output = fileno(file_handle);
+	ctx->output = fileno(ctx->output_file);
 #if defined(__unix__) || defined(__APPLE__)
 	ctx->use_color = isatty(ctx->output);
 #endif
@@ -468,6 +485,11 @@ static void CLG_ctx_output_use_basename_set(CLogContext *ctx, int value)
 static void CLG_ctx_fatal_fn_set(CLogContext *ctx, void (*fatal_fn)(void *file_handle))
 {
 	ctx->callbacks.fatal_fn = fatal_fn;
+}
+
+static void CLG_ctx_backtrace_fn_set(CLogContext *ctx, void (*backtrace_fn)(void *file_handle))
+{
+	ctx->callbacks.backtrace_fn = backtrace_fn;
 }
 
 static void clg_ctx_type_filter_append(CLG_IDFilter **flt_list, const char *type_match, int type_match_len)
@@ -490,6 +512,14 @@ static void CLG_ctx_type_filter_exclude(CLogContext *ctx, const char *type_match
 static void CLG_ctx_type_filter_include(CLogContext *ctx, const char *type_match, int type_match_len)
 {
 	clg_ctx_type_filter_append(&ctx->filters[1], type_match, type_match_len);
+}
+
+static void CLG_ctx_level_set(CLogContext *ctx, int level)
+{
+	ctx->default_type.level = level;
+	for (CLG_LogType *ty = ctx->types; ty; ty = ty->next) {
+		ty->level = level;
+	}
 }
 
 static CLogContext *CLG_ctx_init(void)
@@ -529,7 +559,7 @@ static void CLG_ctx_free(CLogContext *ctx)
  * \{ */
 
 /* We could support multiple at once, for now this seems not needed. */
-struct CLogContext *g_ctx = NULL;
+static struct CLogContext *g_ctx = NULL;
 
 void CLG_init(void)
 {
@@ -559,6 +589,11 @@ void CLG_fatal_fn_set(void (*fatal_fn)(void *file_handle))
 	CLG_ctx_fatal_fn_set(g_ctx, fatal_fn);
 }
 
+void CLG_backtrace_fn_set(void (*fatal_fn)(void *file_handle))
+{
+	CLG_ctx_backtrace_fn_set(g_ctx, fatal_fn);
+}
+
 void CLG_type_filter_exclude(const char *type_match, int type_match_len)
 {
 	CLG_ctx_type_filter_exclude(g_ctx, type_match, type_match_len);
@@ -568,6 +603,12 @@ void CLG_type_filter_include(const char *type_match, int type_match_len)
 {
 	CLG_ctx_type_filter_include(g_ctx, type_match, type_match_len);
 }
+
+void CLG_level_set(int level)
+{
+	CLG_ctx_level_set(g_ctx, level);
+}
+
 
 /** \} */
 

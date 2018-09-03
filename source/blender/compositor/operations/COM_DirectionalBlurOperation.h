@@ -15,8 +15,8 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Contributor: 
- *		Jeroen Bakker 
+ * Contributor:
+ *		Jeroen Bakker
  *		Monique Dewanchand
  */
 
@@ -41,25 +41,25 @@ public:
 	 * the inner loop of this program
 	 */
 	void executePixel(float output[4], int x, int y, void *data);
-	
+
 	/**
 	 * Initialize the execution
 	 */
 	void initExecution();
-	
+
 	/**
 	 * Deinitialize the execution
 	 */
 	void deinitExecution();
-	
+
 	bool determineDependingAreaOfInterest(rcti *input, ReadBufferOperation *readOperation, rcti *output);
-	
+
 	void setData(NodeDBlurData *data) { this->m_data = data; }
 
 	void executeOpenCL(OpenCLDevice *device,
 	                   MemoryBuffer *outputMemoryBuffer, cl_mem clOutputBuffer,
 	                   MemoryBuffer **inputMemoryBuffers, list<cl_mem> *clMemToCleanUp,
 	                   list<cl_kernel> *clKernelsToCleanUp);
-	
+
 };
 #endif

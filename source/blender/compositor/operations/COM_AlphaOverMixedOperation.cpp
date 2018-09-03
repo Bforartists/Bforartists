@@ -15,8 +15,8 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Contributor: 
- *		Jeroen Bakker 
+ * Contributor:
+ *		Jeroen Bakker
  *		Monique Dewanchand
  */
 
@@ -32,11 +32,11 @@ void AlphaOverMixedOperation::executePixelSampled(float output[4], float x, floa
 	float inputColor1[4];
 	float inputOverColor[4];
 	float value[4];
-	
+
 	this->m_inputValueOperation->readSampled(value, x, y, sampler);
 	this->m_inputColor1Operation->readSampled(inputColor1, x, y, sampler);
 	this->m_inputColor2Operation->readSampled(inputOverColor, x, y, sampler);
-	
+
 	if (inputOverColor[3] <= 0.0f) {
 		copy_v4_v4(output, inputColor1);
 	}
@@ -54,4 +54,3 @@ void AlphaOverMixedOperation::executePixelSampled(float output[4], float x, floa
 		output[3] = (mul * inputColor1[3]) + value[0] * inputOverColor[3];
 	}
 }
-

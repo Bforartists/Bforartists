@@ -42,7 +42,7 @@
 
 /* all the list begin functions are added manually here, Main is not in SDNA */
 
-static int rna_Main_use_autopack_get(PointerRNA *UNUSED(ptr))
+static bool rna_Main_use_autopack_get(PointerRNA *UNUSED(ptr))
 {
 	if (G.fileflags & G_AUTOPACK)
 		return 1;
@@ -50,7 +50,7 @@ static int rna_Main_use_autopack_get(PointerRNA *UNUSED(ptr))
 	return 0;
 }
 
-static void rna_Main_use_autopack_set(PointerRNA *UNUSED(ptr), int value)
+static void rna_Main_use_autopack_set(PointerRNA *UNUSED(ptr), bool value)
 {
 	if (value)
 		G.fileflags |= G_AUTOPACK;
@@ -58,12 +58,12 @@ static void rna_Main_use_autopack_set(PointerRNA *UNUSED(ptr), int value)
 		G.fileflags &= ~G_AUTOPACK;
 }
 
-static int rna_Main_is_saved_get(PointerRNA *UNUSED(ptr))
+static bool rna_Main_is_saved_get(PointerRNA *UNUSED(ptr))
 {
 	return G.relbase_valid;
 }
 
-static int rna_Main_is_dirty_get(PointerRNA *ptr)
+static bool rna_Main_is_dirty_get(PointerRNA *ptr)
 {
 	/* XXX, not totally nice to do it this way, should store in main ? */
 	Main *bmain = (Main *)ptr->data;
@@ -372,7 +372,7 @@ void RNA_def_main(BlenderRNA *brna)
 	};
 
 	int i;
-	
+
 	srna = RNA_def_struct(brna, "BlendData", NULL);
 	RNA_def_struct_ui_text(srna, "Blendfile Data",
 	                       "Main data structure representing a .blend file and all its data-blocks");
@@ -383,7 +383,7 @@ void RNA_def_main(BlenderRNA *brna)
 	RNA_def_property_string_funcs(prop, "rna_Main_filepath_get", "rna_Main_filepath_length", "rna_Main_filepath_set");
 	RNA_def_property_clear_flag(prop, PROP_EDITABLE);
 	RNA_def_property_ui_text(prop, "Filename", "Path to the .blend file");
-	
+
 	prop = RNA_def_property(srna, "is_dirty", PROP_BOOLEAN, PROP_NONE);
 	RNA_def_property_clear_flag(prop, PROP_EDITABLE);
 	RNA_def_property_boolean_funcs(prop, "rna_Main_is_dirty_get", NULL);

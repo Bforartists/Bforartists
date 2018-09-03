@@ -15,8 +15,8 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Contributor: 
- *		Jeroen Bakker 
+ * Contributor:
+ *		Jeroen Bakker
  *		Monique Dewanchand
  */
 
@@ -36,11 +36,11 @@ void ColorBalanceNode::convertToOperations(NodeConverter &converter, const Compo
 {
 	bNode *node = this->getbNode();
 	NodeColorBalance *n = (NodeColorBalance *)node->storage;
-	
+
 	NodeInput *inputSocket = this->getInputSocket(0);
 	NodeInput *inputImageSocket = this->getInputSocket(1);
 	NodeOutput *outputSocket = this->getOutputSocket(0);
-	
+
 	NodeOperation *operation;
 	if (node->custom1 == 0) {
 		ColorBalanceLGGOperation *operationLGG = new ColorBalanceLGGOperation();
@@ -69,7 +69,7 @@ void ColorBalanceNode::convertToOperations(NodeConverter &converter, const Compo
 		operation = operationCDL;
 	}
 	converter.addOperation(operation);
-	
+
 	converter.mapInputSocket(inputSocket, operation->getInputSocket(0));
 	converter.mapInputSocket(inputImageSocket, operation->getInputSocket(1));
 	converter.mapOutputSocket(outputSocket, operation->getOutputSocket(0));

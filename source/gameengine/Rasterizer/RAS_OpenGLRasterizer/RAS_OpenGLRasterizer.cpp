@@ -29,10 +29,10 @@
  *  \ingroup bgerastogl
  */
 
- 
+
 #include <math.h>
 #include <stdlib.h>
- 
+
 #include "RAS_OpenGLRasterizer.h"
 
 #include "GPU_glew.h"
@@ -60,6 +60,7 @@
 extern "C"{
 	#include "BLF_api.h"
 	#include "BKE_DerivedMesh.h"
+	#include "BKE_global.h"
 }
 
 
@@ -116,7 +117,7 @@ RAS_OpenGLRasterizer::RAS_OpenGLRasterizer(RAS_ICanvas* canvas, RAS_STORAGE_TYPE
 {
 	m_viewmatrix.setIdentity();
 	m_viewinvmatrix.setIdentity();
-	
+
 	for (int i = 0; i < 32; i++)
 	{
 		left_eye_vinterlace_mask[i] = 0x55555555;
@@ -148,7 +149,7 @@ RAS_OpenGLRasterizer::RAS_OpenGLRasterizer(RAS_ICanvas* canvas, RAS_STORAGE_TYPE
 RAS_OpenGLRasterizer::~RAS_OpenGLRasterizer()
 {
 	// Restore the previous AF value
-	GPU_set_anisotropic(m_prevafvalue);
+	GPU_set_anisotropic(G_MAIN, m_prevafvalue);
 
 	if (m_storage)
 		delete m_storage;
@@ -256,13 +257,13 @@ void RAS_OpenGLRasterizer::Exit()
 	glDepthMask (GL_TRUE);
 	glDepthFunc(GL_LEQUAL);
 	glBlendFunc(GL_ONE, GL_ZERO);
-	
+
 	glDisable(GL_POLYGON_STIPPLE);
-	
+
 	glDisable(GL_LIGHTING);
 	if (GLEW_EXT_separate_specular_color || GLEW_VERSION_1_2)
 		glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SINGLE_COLOR);
-	
+
 	EndFrame();
 }
 
@@ -302,7 +303,7 @@ bool RAS_OpenGLRasterizer::BeginFrame(double time)
 	m_lastauxinfo = NULL;
 	m_lastlighting = true; /* force disable in DisableOpenGLLights() */
 	DisableOpenGLLights();
-	
+
 	return true;
 }
 
@@ -441,7 +442,7 @@ void RAS_OpenGLRasterizer::SetRenderArea()
 					area.SetLeft(0);
 					area.SetBottom(m_2DCanvas->GetHeight() -
 						int(m_2DCanvas->GetHeight() - m_noOfScanlines) / 2);
-	
+
 					area.SetRight(int(m_2DCanvas->GetWidth()));
 					area.SetTop(int(m_2DCanvas->GetHeight()));
 					m_2DCanvas->SetDisplayArea(&area);
@@ -463,7 +464,7 @@ void RAS_OpenGLRasterizer::SetRenderArea()
 					area.SetLeft(0);
 					area.SetBottom(m_2DCanvas->GetHeight() -
 						m_2DCanvas->GetHeight() / 2);
-	
+
 					area.SetRight(m_2DCanvas->GetWidth());
 					area.SetTop(m_2DCanvas->GetHeight());
 					m_2DCanvas->SetDisplayArea(&area);
@@ -509,7 +510,7 @@ void RAS_OpenGLRasterizer::SetRenderArea()
 			break;
 	}
 }
-	
+
 void RAS_OpenGLRasterizer::SetStereoMode(const StereoMode stereomode)
 {
 	m_stereomode = stereomode;
@@ -646,7 +647,7 @@ const MT_Matrix4x4& RAS_OpenGLRasterizer::GetViewInvMatrix() const
 
 void RAS_OpenGLRasterizer::IndexPrimitives_3DText(RAS_MeshSlot& ms,
 									class RAS_IPolyMaterial* polymat)
-{ 
+{
 	bool obcolor = ms.m_bObjectColor;
 	MT_Vector4& rgba = ms.m_RGBAcolor;
 	RAS_MeshSlot::iterator it;
@@ -664,7 +665,7 @@ void RAS_OpenGLRasterizer::IndexPrimitives_3DText(RAS_MeshSlot& ms,
 	for (ms.begin(it); !ms.end(it); ms.next(it)) {
 		RAS_TexVert *vertex;
 		size_t i, j, numvert;
-		
+
 		numvert = it.array->m_type;
 
 		if (it.array->m_type == RAS_DisplayArray::LINE) {
@@ -875,7 +876,7 @@ MT_Matrix4x4 RAS_OpenGLRasterizer::GetFrustumMatrix(
 	float frustnear,
 	float frustfar,
 	float focallength,
-	bool 
+	bool
 ) {
 	MT_Matrix4x4 result;
 	float mat[16];
@@ -912,11 +913,11 @@ MT_Matrix4x4 RAS_OpenGLRasterizer::GetFrustumMatrix(
 				top *= 2.0f;
 			}
 	}
-	
+
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glFrustum(left, right, bottom, top, frustnear, frustfar);
-		
+
 	glGetFloatv(GL_PROJECTION_MATRIX, mat);
 	result.setValue(mat);
 
@@ -938,7 +939,7 @@ MT_Matrix4x4 RAS_OpenGLRasterizer::GetOrthoMatrix(
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(left, right, bottom, top, frustnear, frustfar);
-		
+
 	glGetFloatv(GL_PROJECTION_MATRIX, mat);
 	result.setValue(mat);
 
@@ -947,7 +948,7 @@ MT_Matrix4x4 RAS_OpenGLRasterizer::GetOrthoMatrix(
 
 
 // next arguments probably contain redundant info, for later...
-void RAS_OpenGLRasterizer::SetViewMatrix(const MT_Matrix4x4 &mat, 
+void RAS_OpenGLRasterizer::SetViewMatrix(const MT_Matrix4x4 &mat,
 										 const MT_Matrix3x3 & camOrientMat3x3,
 										 const MT_Point3 & pos,
 										 const MT_Vector3 &scale,
@@ -1131,7 +1132,7 @@ void RAS_OpenGLRasterizer::SetAlphaBlend(int alphablend)
 		glAlphaFunc(GL_GREATER, 0.0f);
 	}
 	else if (alphablend == GPU_BLEND_CLIP) {
-		glDisable(GL_BLEND); 
+		glDisable(GL_BLEND);
 		glEnable(GL_ALPHA_TEST);
 		glAlphaFunc(GL_GREATER, 0.5f);
 	}
@@ -1152,13 +1153,13 @@ void RAS_OpenGLRasterizer::SetFrontFace(bool ccw)
 		glFrontFace(GL_CCW);
 	else
 		glFrontFace(GL_CW);
-	
+
 	m_last_frontface = ccw;
 }
 
 void RAS_OpenGLRasterizer::SetAnisotropicFiltering(short level)
 {
-	GPU_set_anisotropic((float)level);
+	GPU_set_anisotropic(G_MAIN, (float)level);
 }
 
 short RAS_OpenGLRasterizer::GetAnisotropicFiltering()
@@ -1171,17 +1172,17 @@ void RAS_OpenGLRasterizer::SetMipmapping(MipmapOption val)
 	if (val == RAS_IRasterizer::RAS_MIPMAP_LINEAR)
 	{
 		GPU_set_linear_mipmap(1);
-		GPU_set_mipmap(1);
+		GPU_set_mipmap(G_MAIN, 1);
 	}
 	else if (val == RAS_IRasterizer::RAS_MIPMAP_NEAREST)
 	{
 		GPU_set_linear_mipmap(0);
-		GPU_set_mipmap(1);
+		GPU_set_mipmap(G_MAIN, 1);
 	}
 	else
 	{
 		GPU_set_linear_mipmap(0);
-		GPU_set_mipmap(0);
+		GPU_set_mipmap(G_MAIN, 0);
 	}
 }
 
@@ -1720,4 +1721,3 @@ void RAS_OpenGLRasterizer::PrintHardwareInfo()
 
 	pprint(" GL_ARB_texture_non_power_of_two supported  " << (GPU_full_non_power_of_two_support()?"yes.":"no."));
 }
-

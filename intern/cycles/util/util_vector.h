@@ -59,11 +59,7 @@ public:
 
 	void shrink_to_fit(void)
 	{
-#if __cplusplus < 201103L
-		vector<value_type>().swap(*this);
-#else
 		std::vector<value_type, allocator_type>::shrink_to_fit();
-#endif
 	}
 
 	void free_memory(void)
@@ -131,7 +127,7 @@ public:
 	{
 		if(this != &from) {
 			resize(from.size());
-			memcpy(data_, from.data_, datasize_*sizeof(T));
+			memcpy((void*)data_, from.data_, datasize_*sizeof(T));
 		}
 
 		return *this;
@@ -204,7 +200,9 @@ public:
 					return NULL;
 				}
 				else if(data_ != NULL) {
-					memcpy(newdata, data_, ((datasize_ < newsize)? datasize_: newsize)*sizeof(T));
+					memcpy((void *)newdata,
+					       data_,
+					       ((datasize_ < newsize)? datasize_: newsize)*sizeof(T));
 					mem_free(data_, capacity_);
 				}
 				data_ = newdata;
@@ -339,4 +337,3 @@ protected:
 CCL_NAMESPACE_END
 
 #endif /* __UTIL_VECTOR_H__ */
-

@@ -72,24 +72,17 @@ ccl_device_inline float area_light_sample(float3 P,
 	float y0 = dot(dir, y);
 	float x1 = x0 + axisu_len;
 	float y1 = y0 + axisv_len;
-	/* Create vectors to four vertices. */
-	float3 v00 = make_float3(x0, y0, z0);
-	float3 v01 = make_float3(x0, y1, z0);
-	float3 v10 = make_float3(x1, y0, z0);
-	float3 v11 = make_float3(x1, y1, z0);
-	/* Compute normals to edges. */
-	float3 n0 = normalize(cross(v00, v10));
-	float3 n1 = normalize(cross(v10, v11));
-	float3 n2 = normalize(cross(v11, v01));
-	float3 n3 = normalize(cross(v01, v00));
 	/* Compute internal angles (gamma_i). */
-	float g0 = safe_acosf(-dot(n0, n1));
-	float g1 = safe_acosf(-dot(n1, n2));
-	float g2 = safe_acosf(-dot(n2, n3));
-	float g3 = safe_acosf(-dot(n3, n0));
+	float4 diff = make_float4(x0, y1, x1, y0) - make_float4(x1, y0, x0, y1);
+	float4 nz = make_float4(y0, x1, y1, x0) * diff;
+	nz = nz / sqrt(z0 * z0 * diff * diff + nz * nz);
+	float g0 = safe_acosf(-nz.x * nz.y);
+	float g1 = safe_acosf(-nz.y * nz.z);
+	float g2 = safe_acosf(-nz.z * nz.w);
+	float g3 = safe_acosf(-nz.w * nz.x);
 	/* Compute predefined constants. */
-	float b0 = n0.z;
-	float b1 = n2.z;
+	float b0 = nz.x;
+	float b1 = nz.z;
 	float b0sq = b0 * b0;
 	float k = M_2PI_F - g2 - g3;
 	/* Compute solid angle from internal angles. */
@@ -143,12 +136,13 @@ float3 background_map_sample(KernelGlobals *kg, float randu, float randv, float 
 	/* for the following, the CDF values are actually a pair of floats, with the
 	 * function value as X and the actual CDF as Y.  The last entry's function
 	 * value is the CDF total. */
-	int res = kernel_data.integrator.pdf_background_res;
-	int cdf_count = res + 1;
+	int res_x = kernel_data.integrator.pdf_background_res_x;
+	int res_y = kernel_data.integrator.pdf_background_res_y;
+	int cdf_width = res_x + 1;
 
 	/* this is basically std::lower_bound as used by pbrt */
 	int first = 0;
-	int count = res;
+	int count = res_y;
 
 	while(count > 0) {
 		int step = count >> 1;
@@ -163,24 +157,24 @@ float3 background_map_sample(KernelGlobals *kg, float randu, float randv, float 
 	}
 
 	int index_v = max(0, first - 1);
-	kernel_assert(index_v >= 0 && index_v < res);
+	kernel_assert(index_v >= 0 && index_v < res_y);
 
 	float2 cdf_v = kernel_tex_fetch(__light_background_marginal_cdf, index_v);
 	float2 cdf_next_v = kernel_tex_fetch(__light_background_marginal_cdf, index_v + 1);
-	float2 cdf_last_v = kernel_tex_fetch(__light_background_marginal_cdf, res);
+	float2 cdf_last_v = kernel_tex_fetch(__light_background_marginal_cdf, res_y);
 
 	/* importance-sampled V direction */
-	float dv = (randv - cdf_v.y) / (cdf_next_v.y - cdf_v.y);
-	float v = (index_v + dv) / res;
+	float dv = inverse_lerp(cdf_v.y, cdf_next_v.y, randv);
+	float v = (index_v + dv) / res_y;
 
 	/* this is basically std::lower_bound as used by pbrt */
 	first = 0;
-	count = res;
+	count = res_x;
 	while(count > 0) {
 		int step = count >> 1;
 		int middle = first + step;
 
-		if(kernel_tex_fetch(__light_background_conditional_cdf, index_v * cdf_count + middle).y < randu) {
+		if(kernel_tex_fetch(__light_background_conditional_cdf, index_v * cdf_width + middle).y < randu) {
 			first = middle + 1;
 			count -= step + 1;
 		}
@@ -189,15 +183,15 @@ float3 background_map_sample(KernelGlobals *kg, float randu, float randv, float 
 	}
 
 	int index_u = max(0, first - 1);
-	kernel_assert(index_u >= 0 && index_u < res);
+	kernel_assert(index_u >= 0 && index_u < res_x);
 
-	float2 cdf_u = kernel_tex_fetch(__light_background_conditional_cdf, index_v * cdf_count + index_u);
-	float2 cdf_next_u = kernel_tex_fetch(__light_background_conditional_cdf, index_v * cdf_count + index_u + 1);
-	float2 cdf_last_u = kernel_tex_fetch(__light_background_conditional_cdf, index_v * cdf_count + res);
+	float2 cdf_u = kernel_tex_fetch(__light_background_conditional_cdf, index_v * cdf_width + index_u);
+	float2 cdf_next_u = kernel_tex_fetch(__light_background_conditional_cdf, index_v * cdf_width + index_u + 1);
+	float2 cdf_last_u = kernel_tex_fetch(__light_background_conditional_cdf, index_v * cdf_width + res_x);
 
 	/* importance-sampled U direction */
-	float du = (randu - cdf_u.y) / (cdf_next_u.y - cdf_u.y);
-	float u = (index_u + du) / res;
+	float du = inverse_lerp(cdf_u.y, cdf_next_u.y, randu);
+	float u = (index_u + du) / res_x;
 
 	/* compute pdf */
 	float denom = cdf_last_u.x * cdf_last_v.x;
@@ -223,19 +217,21 @@ ccl_device
 float background_map_pdf(KernelGlobals *kg, float3 direction)
 {
 	float2 uv = direction_to_equirectangular(direction);
-	int res = kernel_data.integrator.pdf_background_res;
+	int res_x = kernel_data.integrator.pdf_background_res_x;
+	int res_y = kernel_data.integrator.pdf_background_res_y;
+	int cdf_width = res_x + 1;
 
 	float sin_theta = sinf(uv.y * M_PI_F);
 
 	if(sin_theta == 0.0f)
 		return 0.0f;
 
-	int index_u = clamp(float_to_int(uv.x * res), 0, res - 1);
-	int index_v = clamp(float_to_int(uv.y * res), 0, res - 1);
+	int index_u = clamp(float_to_int(uv.x * res_x), 0, res_x - 1);
+	int index_v = clamp(float_to_int(uv.y * res_y), 0, res_y - 1);
 
 	/* pdfs in V direction */
-	float2 cdf_last_u = kernel_tex_fetch(__light_background_conditional_cdf, index_v * (res + 1) + res);
-	float2 cdf_last_v = kernel_tex_fetch(__light_background_marginal_cdf, res);
+	float2 cdf_last_u = kernel_tex_fetch(__light_background_conditional_cdf, index_v * cdf_width + res_x);
+	float2 cdf_last_v = kernel_tex_fetch(__light_background_marginal_cdf, res_y);
 
 	float denom = cdf_last_u.x * cdf_last_v.x;
 
@@ -243,7 +239,7 @@ float background_map_pdf(KernelGlobals *kg, float3 direction)
 		return 0.0f;
 
 	/* pdfs in U direction */
-	float2 cdf_u = kernel_tex_fetch(__light_background_conditional_cdf, index_v * (res + 1) + index_u);
+	float2 cdf_u = kernel_tex_fetch(__light_background_conditional_cdf, index_v * cdf_width + index_u);
 	float2 cdf_v = kernel_tex_fetch(__light_background_marginal_cdf, index_v);
 
 	return (cdf_u.x * cdf_v.x)/(M_2PI_F * M_PI_F * sin_theta * denom);
@@ -503,7 +499,7 @@ ccl_device float lamp_light_pdf(KernelGlobals *kg, const float3 Ng, const float3
 
 	if(cos_pi <= 0.0f)
 		return 0.0f;
-	
+
 	return t*t/cos_pi;
 }
 

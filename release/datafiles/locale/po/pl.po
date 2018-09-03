@@ -1,16 +1,16 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.78 (sub 4) (b'd5c7d22bc2')\n"
+"Project-Id-Version: Blender 2.79 (sub 2) (b'6618852b7f1')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-23 21:33:49\n"
-"PO-Revision-Date: 2015-05-10 14:41+0100\n"
-"Last-Translator: Piotr Arlukowicz <piotao@polskikursblendera.pl>\n"
+"POT-Creation-Date: 2018-02-23 10:49:02\n"
+"PO-Revision-Date: 2017-08-26 11:13+0200\n"
+"Last-Translator: Mikołaj Juda <mikolaj.juda@gmail.com>\n"
 "Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.5.4\n"
+"X-Generator: Poedit 1.8.7.1\n"
 "Language-Team: Polish Blender Course <piotao@polskikursblendera.pl>"
 
 
@@ -1932,12 +1932,20 @@ msgid "Set the objects visible (initialized from the object render restriction t
 msgstr "Ustawia widoczność obiektu (na podstawie ustawienia ograniczeń renderowania dostępnych w panelu fizyki)"
 
 
+msgid "Add-on"
+msgstr "Dodatek"
+
+
 msgid "Module"
 msgstr "Moduł"
 
 
 msgid "Module name"
 msgstr "Nazwa modułu"
+
+
+msgid "Password"
+msgstr "Hasło"
 
 
 msgid "Fribidi Library"
@@ -2002,6 +2010,10 @@ msgstr "Ścieżka do danych trwałych"
 
 msgid "The name of a json file storing those settings (unfortunately, Blender's system does not work here)"
 msgstr "Nazwa pliku json do przechowywania ustawień (niestety, system Blendera tutaj nie działa)"
+
+
+msgid "User Add-ons"
+msgstr "Dodatki Użytkownika"
 
 
 msgid "Animation Data"
@@ -2408,14 +2420,6 @@ msgid "View and edit images and UV Maps"
 msgstr "Wyświetlaj oraz edytuj obrazy oraz mapy UV"
 
 
-msgid "Video Sequence Editor"
-msgstr "Edytor Sekwencji Wideo"
-
-
-msgid "Video editing tools"
-msgstr "Narzędzia do edycji wideo"
-
-
 msgid "Movie Clip Editor"
 msgstr "Edytor klipów filmowych"
 
@@ -2424,12 +2428,12 @@ msgid "Motion tracking tools"
 msgstr "Narzędzia do śledzenia ruchu"
 
 
-msgid "Text Editor"
-msgstr "Edytor tekstu"
+msgid "Video Sequence Editor"
+msgstr "Edytor Sekwencji Wideo"
 
 
-msgid "Edit scripts and in-file documentation"
-msgstr "Edytuj skrypty oraz dokumentację 'w pliku'"
+msgid "Video editing tools"
+msgstr "Narzędzia do edycji wideo"
 
 
 msgid "Node Editor"
@@ -2438,6 +2442,14 @@ msgstr "Edytor nodów"
 
 msgid "Editor for node-based shading and compositing tools"
 msgstr "Edytor z narzędziami do nieliniowego cieniowania i kompozycji"
+
+
+msgid "Text Editor"
+msgstr "Edytor tekstu"
+
+
+msgid "Edit scripts and in-file documentation"
+msgstr "Edytuj skrypty oraz dokumentację 'w pliku'"
 
 
 msgid "Logic Editor"
@@ -2510,6 +2522,10 @@ msgstr "Pozycja Y"
 
 msgid "The window relative horizontal location of the area"
 msgstr "Względna pozycja pozioma obszaru w oknie"
+
+
+msgid "Active Bone"
+msgstr "Aktywna Kość"
 
 
 msgid "Background Image"
@@ -3628,16 +3644,8 @@ msgid "Volume"
 msgstr "Objętość"
 
 
-msgid "B-Bone Ease In"
-msgstr "Wygładzenie wejściowe B-kości"
-
-
 msgid "Length of first Bezier Handle (for B-Bones only)"
 msgstr "Długość pierwszego uchwytu Beziera (wyłącznie dla B-kości)"
-
-
-msgid "B-Bone Ease Out"
-msgstr "Wygładzenie końcowe dla B-kości"
 
 
 msgid "Length of second Bezier Handle (for B-Bones only)"
@@ -7097,10 +7105,6 @@ msgid "Safe area for general elements in a different aspect ratio"
 msgstr "Bezpieczny obszar dla ogólnie pojmowanych elementów o różnych proporcjach"
 
 
-msgid "Title Safe margins"
-msgstr "Bezpieczne marginesy tytułu"
-
-
 msgid "Safe area for text and graphics"
 msgstr "Bezpiecznie marginesy dla tekstu i grafiki"
 
@@ -7449,76 +7453,8 @@ msgid "ID-block that the specific property used can be found from (id_type prope
 msgstr "Blok ID dla użytej własności (wcześniej trzeba ustawić id_type)"
 
 
-msgid "ID Type"
-msgstr "Typ ID"
-
-
 msgid "Type of ID-block that can be used"
 msgstr "Rodzaj bloku ID który może być użyty"
-
-
-msgid "Brush"
-msgstr "Pędzel"
-
-
-msgid "Font"
-msgstr "Czcionka"
-
-
-msgid "Group"
-msgstr "Grupa"
-
-
-msgid "Key"
-msgstr "Klucz"
-
-
-msgid "Lamp"
-msgstr "Lampa"
-
-
-msgid "Library"
-msgstr "Biblioteka"
-
-
-msgid "Line Style"
-msgstr "Styl linii"
-
-
-msgid "Lattice"
-msgstr "Kratownica"
-
-
-msgid "Mask"
-msgstr "Maska"
-
-
-msgid "Paint Curve"
-msgstr "Krzywa graficzna"
-
-
-msgid "Palette"
-msgstr "Paleta"
-
-
-msgid "Particle"
-msgstr "Cząstka"
-
-
-msgid "Speaker"
-msgstr "Głośnik"
-
-
-msgid "Texture"
-msgstr "Tekstura"
-
-
-msgid "Window Manager"
-msgstr "Zarządca okien"
-
-
-msgid "World"
-msgstr "Świat"
 
 
 msgid "Transform Space"
@@ -7671,6 +7607,10 @@ msgstr "Ściany"
 
 msgid "Duplicate child objects on all faces"
 msgstr "Duplikuj obiekty potomne na wszystkich ścianach"
+
+
+msgid "Group"
+msgstr "Grupa"
 
 
 msgid "Enable group instancing"
@@ -7875,6 +7815,10 @@ msgstr "Przeszkoda"
 
 msgid "Reflect Only"
 msgstr "Tylko odbicie"
+
+
+msgid "Texture"
+msgstr "Tekstura"
 
 
 msgid "Edit Bone"
@@ -8897,16 +8841,170 @@ msgid "Scaling (in time) of the noise"
 msgstr "Skalowanie (w czasie) szumu"
 
 
+msgid "Save"
+msgstr "Zapisz"
+
+
+msgid "Shading"
+msgstr "Cieniowanie"
+
+
+msgid "Particle"
+msgstr "Cząstka"
+
+
+msgid "Line Style"
+msgstr "Styl linii"
+
+
+msgid "Brush"
+msgstr "Pędzel"
+
+
+msgid "Library"
+msgstr "Biblioteka"
+
+
+msgid "Mask"
+msgstr "Maska"
+
+
+msgid "Paint Curve"
+msgstr "Krzywa graficzna"
+
+
+msgid "Rotate"
+msgstr "Obróć"
+
+
+msgid "Dimensions"
+msgstr "Wymiary"
+
+
+msgid "Font"
+msgstr "Czcionka"
+
+
+msgid "Use Nodes"
+msgstr "Używaj Węzłów"
+
+
+msgid "Flat"
+msgstr "Płaskie"
+
+
+msgid "Lattice"
+msgstr "Kratownica"
+
+
+msgid "Lamp"
+msgstr "Lampa"
+
+
+msgid "Speaker"
+msgstr "Głośnik"
+
+
+msgid "World"
+msgstr "Świat"
+
+
+msgid "Filter"
+msgstr "Filtr"
+
+
+msgid "Window Manager"
+msgstr "Zarządca okien"
+
+
+msgid "Window"
+msgstr "Okno"
+
+
+msgid "ID Type"
+msgstr "Typ ID"
+
+
+msgid "Transform"
+msgstr "Transformuj"
+
+
+msgid "Delete"
+msgstr "Usuń"
+
+
+msgid "Key"
+msgstr "Klucz"
+
+
+msgid "External Data"
+msgstr "Zewnętrzne Dane"
+
+
+msgid "Edit"
+msgstr "Edytuj"
+
+
+msgid "Distort"
+msgstr "Zniekształć"
+
+
 msgid "GPencil"
 msgstr "Szkicownik"
+
+
+msgid "Overwrite"
+msgstr "Nadpisz"
+
+
+msgid "Smooth Shading"
+msgstr "Gładkie Cieniowanie"
+
+
+msgid "Fixed"
+msgstr "Stałe"
 
 
 msgid "Active Track"
 msgstr "Aktywna Ścieżka"
 
 
+msgid "Pixelate"
+msgstr "Pikselizacja"
+
+
+msgid "Translate"
+msgstr "Przesuń"
+
+
+msgctxt "Operator"
+msgid "Duplicate"
+msgstr "Duplikuj"
+
+
+msgid "Translate (move) selected items"
+msgstr "Przesuń zaznaczone obiekty"
+
+
+msgid "History"
+msgstr "Historia"
+
+
+msgctxt "Operator"
+msgid "Smooth"
+msgstr "Gładkie"
+
+
 msgid "Null"
 msgstr "Żaden"
+
+
+msgid "Open"
+msgstr "Otwórz"
+
+
+msgid "Flat/Smooth"
+msgstr "Płaskie/Gładkie"
 
 
 msgid "Add a constraint to the active object"
@@ -8917,8 +9015,114 @@ msgid "Clear all the constraints for the active Object only"
 msgstr "Usuń ograniczniki tylko z aktywnego obiektu"
 
 
+msgid "Delete selected objects"
+msgstr "Usuń zaznaczone obiekty"
+
+
+msgid "Duplicate selected objects and move them"
+msgstr "Duplikuj zaznaczone obiekty i przesuń je"
+
+
+msgid "New"
+msgstr "Nowy"
+
+
+msgctxt "Operator"
+msgid "Save As"
+msgstr "Zapisz jako"
+
+
+msgctxt "Operator"
+msgid "Rotate"
+msgstr "Obróć"
+
+
+msgid "Rotate selected items"
+msgstr "Obróć zaznaczone obiekty"
+
+
+msgctxt "Operator"
+msgid "Translate"
+msgstr "Przesuń"
+
+
+msgctxt "Operator"
+msgid "Load Factory Settings"
+msgstr "Załaduj Ustawienia Fabryczne"
+
+
+msgctxt "Operator"
+msgid "Recover Auto Save"
+msgstr "Odzyskaj Zapis Automatyczny"
+
+
+msgctxt "Operator"
+msgid "Recover Last Session"
+msgstr "Odzyskaj ostatnią sesję"
+
+
+msgid "Save Copy"
+msgstr "Zapisz Kopię"
+
+
+msgid "Palette"
+msgstr "Paleta"
+
+
+msgid "Performance"
+msgstr "Wydajność"
+
+
+msgid "Auto-detect"
+msgstr "Automatyczne wykrywanie"
+
+
+msgid "Threads:"
+msgstr "Wątki:"
+
+
+msgctxt "Operator"
+msgid "Remove"
+msgstr "Usuń"
+
+
+msgid "Resolution:"
+msgstr "Rozdzielczość:"
+
+
+msgctxt "Operator"
+msgid "Scale"
+msgstr "Skaluj"
+
+
+msgid "Shading:"
+msgstr "Cieniowanie:"
+
+
 msgid "Speed:"
 msgstr "Prędkość:"
+
+
+msgid "Aspect Ratio:"
+msgstr "Format Obrazu:"
+
+
+msgid "Frame Range:"
+msgstr "Zakres Klatek:"
+
+
+msgid "Memory:"
+msgstr "Pamięć:"
+
+
+msgctxt "Operator"
+msgid "Quit"
+msgstr "Wyjdź"
+
+
+msgctxt "Operator"
+msgid "Flat"
+msgstr "Płaskie"
 
 
 msgid "Null cloth object"
@@ -9518,10 +9722,6 @@ msgstr "Para Pierścieni Krawędzi nie jest połączona"
 
 msgid "Edge-rings are not connected"
 msgstr "Pierścienie Krawędzi nie są połączone"
-
-
-msgid "Could not rotate edge"
-msgstr "Nie można było obrócić krawędzi"
 
 
 msgctxt "Action"
@@ -10326,18 +10526,6 @@ msgid "Online Python Reference"
 msgstr "Referencja Python online"
 
 
-msgid "* Redo Unsupported *"
-msgstr "* Ponów nieobsługiwane *"
-
-
-msgid "No Properties"
-msgstr "Brak Właściwości"
-
-
-msgid "Reset operator defaults"
-msgstr "Resetuj domyślne dla operatora"
-
-
 msgid "Active button is not from a script, cannot edit source"
 msgstr "Aktywny przycisk nie pochodzi ze skryptu, nie można edytować źródła"
 
@@ -10364,10 +10552,6 @@ msgstr "Patrz '%s' w edytorze tekstu"
 
 msgid "No valid po found for language '%s' under %s"
 msgstr "Nie odnaleziono prawidłowego 'po' dla języka '%s' pod '%s'"
-
-
-msgid "(Shift-Click/Drag to select multiple)"
-msgstr "(Shift klik/ciągnij by zaznaczyć wiele)"
 
 
 msgid "HSL"
@@ -10422,6 +10606,30 @@ msgid "(Gamma Corrected)"
 msgstr "(Po korekcji gammy)"
 
 
+msgid "Lightness"
+msgstr "Jasność"
+
+
+msgid "Hex triplet for color (#RRGGBB)"
+msgstr "Trójka HEX dla koloru (#RRGGBB)"
+
+
+msgid "Value in Display Color Space"
+msgstr "Wartość w ekranowej przestrzeni barwowej"
+
+
+msgid "Value in Linear RGB Color Space"
+msgstr "Wartość w liniowej przestrzeni barwowej RGB"
+
+
+msgid "Menu \"%s\" not found"
+msgstr "Nie odnaleziono menu \"%s\""
+
+
+msgid "(Shift-Click/Drag to select multiple)"
+msgstr "(Shift klik/ciągnij by zaznaczyć wiele)"
+
+
 msgid "Shortcut: %s"
 msgstr "Skrót: %s"
 
@@ -10452,26 +10660,6 @@ msgstr "Wyłączone: %s"
 
 msgid "Python: %s.%s"
 msgstr "Python: %s.%s"
-
-
-msgid "Lightness"
-msgstr "Jasność"
-
-
-msgid "Hex triplet for color (#RRGGBB)"
-msgstr "Trójka HEX dla koloru (#RRGGBB)"
-
-
-msgid "Value in Display Color Space"
-msgstr "Wartość w ekranowej przestrzeni barwowej"
-
-
-msgid "Value in Linear RGB Color Space"
-msgstr "Wartość w liniowej przestrzeni barwowej RGB"
-
-
-msgid "Menu \"%s\" not found"
-msgstr "Nie odnaleziono menu \"%s\""
 
 
 msgid "ID-Block:"
@@ -10536,6 +10724,14 @@ msgstr "Rorszerz ekstrapolowane"
 
 msgid "Reset Curve"
 msgstr "Resetuj krzywą"
+
+
+msgid "* Redo Unsupported *"
+msgstr "* Ponów nieobsługiwane *"
+
+
+msgid "No Properties"
+msgstr "Brak Właściwości"
 
 
 msgid "Capture"
@@ -10608,6 +10804,10 @@ msgstr "Podwójne kliknięcie by zmienić nazwę"
 
 msgid "Hide filtering options"
 msgstr "Ukryj opcje filtrowania"
+
+
+msgid "Reset operator defaults"
+msgstr "Resetuj domyślne dla operatora"
 
 
 msgid "Stop this job"
@@ -11400,10 +11600,6 @@ msgstr "Niezainicjowany obraz \"%s\" z obiektu \"%s\""
 
 msgid "No active image found in material \"%s\" (%d) for object \"%s\""
 msgstr "Nie odnaleziono aktywnego obrazu w materiale \"%s\" (%d) dla obiektu \"%s\""
-
-
-msgid "No active image found in material (%d) for object \"%s\""
-msgstr "Nie odnaleziono aktywnego obrazu w materiale (%d) dla obiektu \"%s\""
 
 
 msgid "Object \"%s\" is not a mesh or can't be converted to a mesh (Curve, Text, Surface or Metaball)"
@@ -12302,16 +12498,16 @@ msgid "Missing%s%s%s%s detected!"
 msgstr "Wykryto Missing%s%s%s%s!"
 
 
+msgid "Active group is locked, aborting"
+msgstr "Aktywna grupa jest zablokowana, rezygnuję"
+
+
 msgid "The modifier used does not support deformed locations"
 msgstr "Użyty modyfikator nie obsługuje deformowanych lokacji"
 
 
 msgid "No active vertex group for painting, aborting"
 msgstr "Brak aktywnej grupy wierzchołków do malowania, rezygnuję"
-
-
-msgid "Active group is locked, aborting"
-msgstr "Aktywna grupa jest zablokowana, rezygnuję"
 
 
 msgid "Warning!"
@@ -13809,10 +14005,6 @@ msgid "fps: %i"
 msgstr "klatkaż: %i"
 
 
-msgid "View offset is locked"
-msgstr "Przesunięcie widoku zablokowane"
-
-
 msgid "Depth too large"
 msgstr "Za duża głębia"
 
@@ -14992,18 +15184,6 @@ msgid "Font not packed"
 msgstr "Czcionka nie spakowana"
 
 
-msgid "Registering operator class: '%s', invalid bl_idname '%s', at position %d"
-msgstr "Rejestracja operator class: '%s', nieprawidłowe bl_idname '%s', w pozycji %d"
-
-
-msgid "Registering operator class: '%s', invalid bl_idname '%s', is too long, maximum length is %d"
-msgstr "Rejestracja operator class: '%s', nieprawidłowe bl_idname, '%s' jest za długie, maksymalna długość: %d"
-
-
-msgid "Registering operator class: '%s', invalid bl_idname '%s', must contain 1 '.' character"
-msgstr "Rejestracja operator class '%s', nieprawidłowe bl_idname '%s', musi zawierać 1 znak '.'"
-
-
 msgid "Registering operator class: '%s' is too long, maximum length is %d"
 msgstr "Rejestracja operator class: '%s' jest za długie, maksymalna długość to %d"
 
@@ -15030,6 +15210,10 @@ msgstr "KeyConfig '%s' niemożlwe do usunięcia"
 
 msgid "Cannot execute boolean operation"
 msgstr "Operacja boolean nie powiodła się"
+
+
+msgid "Enable 'Auto Smooth' option in mesh settings"
+msgstr "Aktywuj opcję 'Auto Smooth' w ustawieniach siatki"
 
 
 msgid "You are using a rather high poly as source or destination, computation might be slow"
@@ -15086,10 +15270,6 @@ msgstr "Brak danych bindowania"
 
 msgid "Invalid target settings"
 msgstr "Nieprawidłowe ustawienia celu"
-
-
-msgid "Enable 'Auto Smooth' option in mesh settings"
-msgstr "Aktywuj opcję 'Auto Smooth' w ustawieniach siatki"
 
 
 msgid "Hull error"
@@ -15150,22 +15330,6 @@ msgstr "Obraz 2"
 
 msgid "ID value"
 msgstr "Wartość ID"
-
-
-msgid "Reflect"
-msgstr "Odbicia"
-
-
-msgid "Refract"
-msgstr "Refrakcja"
-
-
-msgid "IndexOB"
-msgstr "IndexOB"
-
-
-msgid "IndexMA"
-msgstr "IndexMA"
 
 
 msgid "Dispersion"
@@ -15739,6 +15903,18 @@ msgstr "Właściwość musi być typu integer lub float"
 
 msgid "Property must be a none, distance, factor, percentage, angle, or pixel"
 msgstr "Właściwość musi być typu żaden, distans, współczynnik, odsetek, kąt lub piksel"
+
+
+msgid "Registering operator class: '%s', invalid bl_idname '%s', at position %d"
+msgstr "Rejestracja operator class: '%s', nieprawidłowe bl_idname '%s', w pozycji %d"
+
+
+msgid "Registering operator class: '%s', invalid bl_idname '%s', is too long, maximum length is %d"
+msgstr "Rejestracja operator class: '%s', nieprawidłowe bl_idname, '%s' jest za długie, maksymalna długość: %d"
+
+
+msgid "Registering operator class: '%s', invalid bl_idname '%s', must contain 1 '.' character"
+msgstr "Rejestracja operator class '%s', nieprawidłowe bl_idname '%s', musi zawierać 1 znak '.'"
 
 
 msgid "Cannot read %s '%s': %s"

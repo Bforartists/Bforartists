@@ -78,9 +78,9 @@ static void freeData(ModifierData *md)
 	if (mmd->bindcos) MEM_freeN(mmd->bindcos);  /* deprecated */
 }
 
-static void copyData(ModifierData *md, ModifierData *target)
+static void copyData(const ModifierData *md, ModifierData *target)
 {
-	MeshDeformModifierData *mmd = (MeshDeformModifierData *) md;
+	const MeshDeformModifierData *mmd = (const MeshDeformModifierData *) md;
 	MeshDeformModifierData *tmmd = (MeshDeformModifierData *) target;
 
 	modifier_copyData_generic(md, target);
@@ -96,7 +96,7 @@ static void copyData(ModifierData *md, ModifierData *target)
 }
 
 static CustomDataMask requiredDataMask(Object *UNUSED(ob), ModifierData *md)
-{	
+{
 	MeshDeformModifierData *mmd = (MeshDeformModifierData *)md;
 	CustomDataMask dataMask = 0;
 
@@ -327,7 +327,7 @@ static void meshdeformModifier_do(
 		if (cagedm)
 			cagedm->needsFree = 1;
 	}
-	
+
 	if (!cagedm) {
 		modifier_setError(md, "Cannot get mesh from cage object");
 		return;
@@ -422,11 +422,12 @@ static void meshdeformModifier_do(
 	cagedm->release(cagedm);
 }
 
-static void deformVerts(ModifierData *md, Object *ob,
-                        DerivedMesh *derivedData,
-                        float (*vertexCos)[3],
-                        int numVerts,
-                        ModifierApplyFlag UNUSED(flag))
+static void deformVerts(
+        ModifierData *md, Object *ob,
+        DerivedMesh *derivedData,
+        float (*vertexCos)[3],
+        int numVerts,
+        ModifierApplyFlag UNUSED(flag))
 {
 	DerivedMesh *dm = get_dm(ob, NULL, derivedData, NULL, false, false);
 
@@ -438,11 +439,12 @@ static void deformVerts(ModifierData *md, Object *ob,
 		dm->release(dm);
 }
 
-static void deformVertsEM(ModifierData *md, Object *ob,
-                          struct BMEditMesh *UNUSED(editData),
-                          DerivedMesh *derivedData,
-                          float (*vertexCos)[3],
-                          int numVerts)
+static void deformVertsEM(
+        ModifierData *md, Object *ob,
+        struct BMEditMesh *UNUSED(editData),
+        DerivedMesh *derivedData,
+        float (*vertexCos)[3],
+        int numVerts)
 {
 	DerivedMesh *dm = get_dm(ob, NULL, derivedData, NULL, false, false);
 
@@ -463,7 +465,7 @@ void modifier_mdef_compact_influences(ModifierData *md)
 	weights = mmd->bindweights;
 	if (!weights)
 		return;
-	
+
 	totvert = mmd->totvert;
 	totcagevert = mmd->totcagevert;
 
@@ -509,7 +511,7 @@ void modifier_mdef_compact_influences(ModifierData *md)
 	}
 
 	mmd->bindoffsets[b] = totinfluence;
-	
+
 	/* free */
 	MEM_freeN(mmd->bindweights);
 	mmd->bindweights = NULL;

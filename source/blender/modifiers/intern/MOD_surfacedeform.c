@@ -124,21 +124,18 @@ static void freeData(ModifierData *md)
 					MEM_SAFE_FREE(smd->verts[i].binds[j].vert_weights);
 				}
 
-				MEM_freeN(smd->verts[i].binds);
+				MEM_SAFE_FREE(smd->verts[i].binds);
 			}
 		}
 
-		MEM_freeN(smd->verts);
-		smd->verts = NULL;
+		MEM_SAFE_FREE(smd->verts);
 	}
 }
 
-static void copyData(ModifierData *md, ModifierData *target)
+static void copyData(const ModifierData *md, ModifierData *target)
 {
-	SurfaceDeformModifierData *smd = (SurfaceDeformModifierData *)md;
+	const SurfaceDeformModifierData *smd = (const SurfaceDeformModifierData *)md;
 	SurfaceDeformModifierData *tsmd = (SurfaceDeformModifierData *)target;
-
-	freeData(target);
 
 	modifier_copyData_generic(md, target);
 
@@ -198,8 +195,9 @@ static void freeAdjacencyMap(SDefAdjacencyArray * const vert_edges, SDefAdjacenc
 	MEM_freeN(vert_edges);
 }
 
-static int buildAdjacencyMap(const MPoly *poly, const MEdge *edge, const MLoop * const mloop, const unsigned int numpoly, const unsigned int numedges,
-                              SDefAdjacencyArray * const vert_edges, SDefAdjacency *adj, SDefEdgePolys * const edge_polys)
+static int buildAdjacencyMap(
+        const MPoly *poly, const MEdge *edge, const MLoop * const mloop, const unsigned int numpoly, const unsigned int numedges,
+        SDefAdjacencyArray * const vert_edges, SDefAdjacency *adj, SDefEdgePolys * const edge_polys)
 {
 	const MLoop *loop;
 
@@ -918,8 +916,9 @@ static void bindVert(
 	freeBindData(bwdata);
 }
 
-static bool surfacedeformBind(SurfaceDeformModifierData *smd, float (*vertexCos)[3],
-                              unsigned int numverts, unsigned int tnumpoly, unsigned int tnumverts, DerivedMesh *tdm)
+static bool surfacedeformBind(
+        SurfaceDeformModifierData *smd, float (*vertexCos)[3],
+        unsigned int numverts, unsigned int tnumpoly, unsigned int tnumverts, DerivedMesh *tdm)
 {
 	BVHTreeFromMesh treeData = {NULL};
 	const MVert *mvert = tdm->getVertArray(tdm);
@@ -960,7 +959,7 @@ static bool surfacedeformBind(SurfaceDeformModifierData *smd, float (*vertexCos)
 		return false;
 	}
 
-	bvhtree_from_mesh_looptri(&treeData, tdm, 0.0, 2, 6);
+	bvhtree_from_mesh_get(&treeData, tdm, BVHTREE_FROM_LOOPTRI, 2);
 	if (treeData.tree == NULL) {
 		modifier_setError((ModifierData *)smd, "Out of memory");
 		freeAdjacencyMap(vert_edges, adj_array, edge_polys);
@@ -1189,18 +1188,20 @@ static void surfacedeformModifier_do(ModifierData *md, float (*vertexCos)[3], un
 	}
 }
 
-static void deformVerts(ModifierData *md, Object *ob,
-                        DerivedMesh *UNUSED(derivedData),
-                        float (*vertexCos)[3], int numVerts,
-                        ModifierApplyFlag UNUSED(flag))
+static void deformVerts(
+        ModifierData *md, Object *ob,
+        DerivedMesh *UNUSED(derivedData),
+        float (*vertexCos)[3], int numVerts,
+        ModifierApplyFlag UNUSED(flag))
 {
 	surfacedeformModifier_do(md, vertexCos, numVerts, ob);
 }
 
-static void deformVertsEM(ModifierData *md, Object *ob,
-                          struct BMEditMesh *UNUSED(editData),
-                          DerivedMesh *UNUSED(derivedData),
-                          float (*vertexCos)[3], int numVerts)
+static void deformVertsEM(
+        ModifierData *md, Object *ob,
+        struct BMEditMesh *UNUSED(editData),
+        DerivedMesh *UNUSED(derivedData),
+        float (*vertexCos)[3], int numVerts)
 {
 	surfacedeformModifier_do(md, vertexCos, numVerts, ob);
 }

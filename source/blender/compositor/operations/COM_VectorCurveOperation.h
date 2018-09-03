@@ -15,13 +15,13 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Contributor: 
- *		Jeroen Bakker 
+ * Contributor:
+ *		Jeroen Bakker
  *		Monique Dewanchand
  */
 
-#ifndef _COM_VectorCurveOperation_h
-#define _COM_VectorCurveOperation_h
+#ifndef __COM_VECTORCURVEOPERATION_H__
+#define __COM_VECTORCURVEOPERATION_H__
 #include "COM_NodeOperation.h"
 #include "COM_CurveBaseOperation.h"
 
@@ -33,17 +33,17 @@ private:
 	SocketReader *m_inputProgram;
 public:
 	VectorCurveOperation();
-	
+
 	/**
 	 * the inner loop of this program
 	 */
 	void executePixelSampled(float output[4], float x, float y, PixelSampler sampler);
-	
+
 	/**
 	 * Initialize the execution
 	 */
 	void initExecution();
-	
+
 	/**
 	 * Deinitialize the execution
 	 */

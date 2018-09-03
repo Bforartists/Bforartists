@@ -509,7 +509,9 @@ void DepsgraphRelationBuilder::build_object_data(Object *object)
 	}
 	ID *obdata_id = (ID *)object->data;
 	/* Object data animation. */
-	build_animdata(obdata_id);
+	if (!built_map_.checkIsBuilt(obdata_id)) {
+		build_animdata(obdata_id);
+	}
 	/* type-specific data. */
 	switch (object->type) {
 		case OB_MESH:
@@ -527,7 +529,7 @@ void DepsgraphRelationBuilder::build_object_data(Object *object)
 				build_proxy_rig(object);
 			}
 			else {
-				build_rig(object);
+				 build_rig(object);
 			}
 			break;
 		case OB_LAMP:
@@ -1610,7 +1612,7 @@ void DepsgraphRelationBuilder::build_obdata_geom(Object *object)
 
 		case OB_MBALL:
 		{
-			Object *mom = BKE_mball_basis_find(scene_, object);
+			Object *mom = BKE_mball_basis_find(bmain_, bmain_->eval_ctx, scene_, object);
 			ComponentKey mom_geom_key(&mom->id, DEG_NODE_TYPE_GEOMETRY);
 			/* motherball - mom depends on children! */
 			if (mom == object) {

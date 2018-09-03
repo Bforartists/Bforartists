@@ -41,6 +41,7 @@
 #include "BKE_image.h"
 #include "BKE_editmesh.h"
 #include "BKE_library.h"
+#include "BKE_main.h"
 
 #include "IMB_imbuf_types.h"
 
@@ -61,10 +62,10 @@ Image *ED_space_image(SpaceImage *sima)
 }
 
 /* called to assign images to UV faces */
-void ED_space_image_set(SpaceImage *sima, Scene *scene, Object *obedit, Image *ima)
+void ED_space_image_set(Main *bmain, SpaceImage *sima, Scene *scene, Object *obedit, Image *ima)
 {
 	/* context may be NULL, so use global */
-	ED_uvedit_assign_image(G.main, scene, obedit, ima, sima->image);
+	ED_uvedit_assign_image(bmain, scene, obedit, ima, sima->image);
 
 	/* change the space ima after because uvedit_face_visible_test uses the space ima
 	 * to check if the face is displayed in UV-localview */
@@ -77,7 +78,7 @@ void ED_space_image_set(SpaceImage *sima, Scene *scene, Object *obedit, Image *i
 	}
 
 	if (sima->image)
-		BKE_image_signal(sima->image, &sima->iuser, IMA_SIGNAL_USER_NEW_IMAGE);
+		BKE_image_signal(bmain, sima->image, &sima->iuser, IMA_SIGNAL_USER_NEW_IMAGE);
 
 	id_us_ensure_real((ID *)sima->image);
 
@@ -323,7 +324,7 @@ void ED_space_image_scopes_update(const struct bContext *C, struct SpaceImage *s
 {
 	Scene *scene = CTX_data_scene(C);
 	Object *ob = CTX_data_active_object(C);
-	
+
 	/* scope update can be expensive, don't update during paint modes */
 	if (sima->mode == SI_MODE_PAINT)
 		return;
@@ -339,7 +340,7 @@ void ED_space_image_scopes_update(const struct bContext *C, struct SpaceImage *s
 			return;
 		}
 	}
-	
+
 	scopes_update(&sima->scopes, ibuf, use_view_settings ? &scene->view_settings : NULL, &scene->display_settings);
 }
 
@@ -385,7 +386,7 @@ bool ED_space_image_check_show_maskedit(Scene *scene, SpaceImage *sima)
 	return (sima->mode == SI_MODE_MASK);
 }
 
-int ED_space_image_maskedit_poll(bContext *C)
+bool ED_space_image_maskedit_poll(bContext *C)
 {
 	SpaceImage *sima = CTX_wm_space_image(C);
 
@@ -412,7 +413,7 @@ bool ED_space_image_paint_curve(const bContext *C)
 }
 
 
-int ED_space_image_maskedit_mask_poll(bContext *C)
+bool ED_space_image_maskedit_mask_poll(bContext *C)
 {
 	if (ED_space_image_maskedit_poll(C)) {
 		SpaceImage *sima = CTX_wm_space_image(C);
@@ -421,4 +422,3 @@ int ED_space_image_maskedit_mask_poll(bContext *C)
 
 	return false;
 }
-

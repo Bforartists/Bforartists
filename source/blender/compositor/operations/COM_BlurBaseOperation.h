@@ -15,13 +15,13 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Contributor: 
- *		Jeroen Bakker 
+ * Contributor:
+ *		Jeroen Bakker
  *		Monique Dewanchand
  */
 
-#ifndef _COM_BlurBaseOperation_h
-#define _COM_BlurBaseOperation_h
+#ifndef __COM_BLURBASEOPERATION_H__
+#define __COM_BLURBASEOPERATION_H__
 #include "COM_NodeOperation.h"
 #include "COM_QualityStepHelper.h"
 
@@ -62,12 +62,12 @@ public:
 	 * Initialize the execution
 	 */
 	void initExecution();
-	
+
 	/**
 	 * Deinitialize the execution
 	 */
 	void deinitExecution();
-	
+
 	void setData(const NodeBlurData *data);
 
 	void setSize(float size) { this->m_size = size; this->m_sizeavailable = true; }

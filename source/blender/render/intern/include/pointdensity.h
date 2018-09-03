@@ -31,7 +31,7 @@
 
 
 #ifndef __POINTDENSITY_H__
-#define __POINTDENSITY_H__ 
+#define __POINTDENSITY_H__
 
 /**
  * Make point density kd-trees for all point density textures in the scene
@@ -48,4 +48,3 @@ void free_pointdensities(struct Render *re);
 int pointdensitytex(struct Tex *tex, const float texvec[3], struct TexResult *texres);
 
 #endif /* __POINTDENSITY_H__ */
-

@@ -15,13 +15,13 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Contributor: 
- *		Jeroen Bakker 
+ * Contributor:
+ *		Jeroen Bakker
  *		Monique Dewanchand
  */
 
-#ifndef _COM_ChangeHSVOperation_h
-#define _COM_ChangeHSVOperation_h
+#ifndef __COM_CHANGEHSVOPERATION_H__
+#define __COM_CHANGEHSVOPERATION_H__
 #include "COM_MixOperation.h"
 
 
@@ -41,10 +41,10 @@ public:
 	 * Default constructor
 	 */
 	ChangeHSVOperation();
-	
+
 	void initExecution();
 	void deinitExecution();
-	
+
 	/**
 	 * the inner loop of this program
 	 */

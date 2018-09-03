@@ -41,8 +41,8 @@
 class KX_IInterpolator {
 public:
 	virtual ~KX_IInterpolator() {}
-	
-	virtual void Execute(float currentTime) const = 0; 
+
+	virtual void Execute(float currentTime) const = 0;
 
 
 #ifdef WITH_CXX_GUARDEDALLOC
@@ -53,4 +53,3 @@ public:
 typedef std::vector<KX_IInterpolator *> T_InterpolatorList;
 
 #endif
-

@@ -159,7 +159,6 @@ dict_custom = {
     # blender terms
     "animsys",
     "animviz",
-    "bge",
     "bmain",
     "bmesh",
     "bpy",

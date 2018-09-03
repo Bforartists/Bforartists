@@ -164,7 +164,7 @@ void texttool_suggest_prefix(const char *prefix, const int prefix_len)
 		suggestions.lastmatch = suggestions.last;
 		return;
 	}
-	
+
 	first = last = NULL;
 	for (match = suggestions.first; match; match = match->next) {
 		cmp = BLI_strncasecmp(prefix, match->name, prefix_len);
@@ -246,12 +246,12 @@ void texttool_docs_show(const char *docs)
 	/* Ensure documentation ends with a '\n' */
 	if (docs[len - 1] != '\n') {
 		documentation = MEM_mallocN(len + 2, "Documentation");
-		strncpy(documentation, docs, len);
+		BLI_strncpy(documentation, docs, len);
 		documentation[len++] = '\n';
 	}
 	else {
 		documentation = MEM_mallocN(len + 1, "Documentation");
-		strncpy(documentation, docs, len);
+		BLI_strncpy(documentation, docs, len);
 	}
 	documentation[len] = '\0';
 }

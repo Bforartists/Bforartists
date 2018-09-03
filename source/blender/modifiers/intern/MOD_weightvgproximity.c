@@ -136,9 +136,10 @@ static void vert2geom_task_cb_ex(
 /**
  * Find nearest vertex and/or edge and/or face, for each vertex (adapted from shrinkwrap.c).
  */
-static void get_vert2geom_distance(int numVerts, float (*v_cos)[3],
-                                   float *dist_v, float *dist_e, float *dist_f,
-                                   DerivedMesh *target, const SpaceTransform *loc2trgt)
+static void get_vert2geom_distance(
+        int numVerts, float (*v_cos)[3],
+        float *dist_v, float *dist_e, float *dist_f,
+        DerivedMesh *target, const SpaceTransform *loc2trgt)
 {
 	Vert2GeomData data = {0};
 	Vert2GeomDataChunk data_chunk = {{{0}}};
@@ -149,7 +150,7 @@ static void get_vert2geom_distance(int numVerts, float (*v_cos)[3],
 
 	if (dist_v) {
 		/* Create a bvh-tree of the given target's verts. */
-		bvhtree_from_mesh_verts(&treeData_v, target, 0.0, 2, 6);
+		bvhtree_from_mesh_get(&treeData_v, target, BVHTREE_FROM_VERTS, 2);
 		if (treeData_v.tree == NULL) {
 			OUT_OF_MEMORY();
 			return;
@@ -157,7 +158,7 @@ static void get_vert2geom_distance(int numVerts, float (*v_cos)[3],
 	}
 	if (dist_e) {
 		/* Create a bvh-tree of the given target's edges. */
-		bvhtree_from_mesh_edges(&treeData_e, target, 0.0, 2, 6);
+		bvhtree_from_mesh_get(&treeData_e, target, BVHTREE_FROM_EDGES, 2);
 		if (treeData_e.tree == NULL) {
 			OUT_OF_MEMORY();
 			return;
@@ -165,7 +166,7 @@ static void get_vert2geom_distance(int numVerts, float (*v_cos)[3],
 	}
 	if (dist_f) {
 		/* Create a bvh-tree of the given target's faces. */
-		bvhtree_from_mesh_looptri(&treeData_f, target, 0.0, 2, 6);
+		bvhtree_from_mesh_get(&treeData_f, target, BVHTREE_FROM_LOOPTRI, 2);
 		if (treeData_f.tree == NULL) {
 			OUT_OF_MEMORY();
 			return;
@@ -204,8 +205,9 @@ static void get_vert2geom_distance(int numVerts, float (*v_cos)[3],
  * Returns the real distance between a vertex and another reference object.
  * Note that it works in final world space (i.e. with constraints etc. applied).
  */
-static void get_vert2ob_distance(int numVerts, float (*v_cos)[3], float *dist,
-                                 Object *ob, Object *obr)
+static void get_vert2ob_distance(
+        int numVerts, float (*v_cos)[3], float *dist,
+        Object *ob, Object *obr)
 {
 	/* Vertex and ref object coordinates. */
 	float v_wco[3];
@@ -225,7 +227,7 @@ static void get_vert2ob_distance(int numVerts, float (*v_cos)[3], float *dist,
  */
 static float get_ob2ob_distance(const Object *ob, const Object *obr)
 {
-	return len_v3v3(ob->obmat[3], obr->obmat[3]); 
+	return len_v3v3(ob->obmat[3], obr->obmat[3]);
 }
 
 /**
@@ -284,16 +286,6 @@ static void initData(ModifierData *md)
 	wmd->mask_tex_use_channel = MOD_WVG_MASK_TEX_USE_INT; /* Use intensity by default. */
 	wmd->mask_tex_mapping     = MOD_DISP_MAP_LOCAL;
 	wmd->max_dist             = 1.0f; /* vert arbitrary distance, but don't use 0 */
-}
-
-static void copyData(ModifierData *md, ModifierData *target)
-{
-#if 0
-	WeightVGProximityModifierData *wmd  = (WeightVGProximityModifierData *) md;
-	WeightVGProximityModifierData *twmd = (WeightVGProximityModifierData *) target;
-#endif
-
-	modifier_copyData_generic(md, target);
 }
 
 static CustomDataMask requiredDataMask(Object *UNUSED(ob), ModifierData *md)
@@ -392,8 +384,9 @@ static bool isDisabled(ModifierData *md, int UNUSED(useRenderParams))
 	return (wmd->proximity_ob_target == NULL);
 }
 
-static DerivedMesh *applyModifier(ModifierData *md, Object *ob, DerivedMesh *derivedData,
-                                  ModifierApplyFlag UNUSED(flag))
+static DerivedMesh *applyModifier(
+        ModifierData *md, Object *ob, DerivedMesh *derivedData,
+        ModifierApplyFlag UNUSED(flag))
 {
 	WeightVGProximityModifierData *wmd = (WeightVGProximityModifierData *) md;
 	DerivedMesh *dm = derivedData;
@@ -599,7 +592,7 @@ ModifierTypeInfo modifierType_WeightVGProximity = {
 	                        eModifierTypeFlag_SupportsEditmode |
 	                        eModifierTypeFlag_UsesPreview,
 
-	/* copyData */          copyData,
+	/* copyData */          modifier_copyData_generic,
 	/* deformVerts */       NULL,
 	/* deformMatrices */    NULL,
 	/* deformVertsEM */     NULL,

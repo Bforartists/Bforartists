@@ -4,7 +4,7 @@
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version. 
+ * of the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -18,7 +18,7 @@
  * The Original Code is Copyright (C) 2007 Blender Foundation.
  * All rights reserved.
  *
- * 
+ *
  * Contributor(s): Blender Foundation
  *
  * ***** END GPL LICENSE BLOCK *****
@@ -34,7 +34,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#ifdef WIN32
+#ifdef _WIN32
 #  include <windows.h>
 #endif
 
@@ -156,7 +156,7 @@ bool wm_start_with_console = false; /* used in creator.c */
 /* only called once, for startup */
 void WM_init(bContext *C, int argc, const char **argv)
 {
-	
+
 	if (!G.background) {
 		wm_ghost_init(C);   /* note: it assigns C to ghost! */
 		wm_init_cursor_data();
@@ -166,6 +166,8 @@ void WM_init(bContext *C, int argc, const char **argv)
 	BKE_addon_pref_type_init();
 
 	wm_operatortype_init();
+	wm_operatortypes_register();
+
 	WM_menutype_init();
 	WM_uilisttype_init();
 
@@ -179,12 +181,12 @@ void WM_init(bContext *C, int argc, const char **argv)
 	DAG_editors_update_cb(ED_render_id_flush_update,
 	                      ED_render_scene_update,
 	                      ED_render_scene_update_pre); /* depsgraph.c */
-	
+
 	ED_spacetypes_init();   /* editors/space_api/spacetype.c */
-	
+
 	ED_file_init();         /* for fsmenu */
 	ED_node_init_butfuncs();
-	
+
 	BLF_init(); /* Please update source/gamengine/GamePlayer/GPG_ghost.cpp if you change this */
 	BLT_lang_init();
 
@@ -193,8 +195,7 @@ void WM_init(bContext *C, int argc, const char **argv)
 	wm_init_reports(C);
 
 	/* get the default database, plus a wm */
-	wm_homefile_read(C, NULL, G.factory_startup, false, true, NULL, NULL);
-	
+	wm_homefile_read(C, NULL, G.factory_startup, false, true, NULL, WM_init_state_app_template_get());
 
 	BLT_lang_set(NULL);
 
@@ -207,10 +208,10 @@ void WM_init(bContext *C, int argc, const char **argv)
 
 		GPU_init();
 
-		GPU_set_mipmap(!(U.gameflags & USER_DISABLE_MIPMAP));
+		GPU_set_mipmap(G_MAIN, !(U.gameflags & USER_DISABLE_MIPMAP));
 		GPU_set_linear_mipmap(true);
-		GPU_set_anisotropic(U.anisotropic_filter);
-		GPU_set_gpu_mipmapping(U.use_gpu_mipmap);
+		GPU_set_anisotropic(G_MAIN, U.anisotropic_filter);
+		GPU_set_gpu_mipmapping(G_MAIN, U.use_gpu_mipmap);
 
 #ifdef WITH_OPENSUBDIV
 		BKE_subsurf_osd_init();
@@ -259,11 +260,11 @@ void WM_init(bContext *C, int argc, const char **argv)
 
 	/* allow a path of "", this is what happens when making a new file */
 #if 0
-	if (G.main->name[0] == 0)
-		BLI_make_file_string("/", G.main->name, BKE_appdir_folder_default(), "untitled.blend");
+	if (BKE_main_blendfile_path_from_global()[0] == '\0')
+		BLI_make_file_string("/", G_MAIN->name, BKE_appdir_folder_default(), "untitled.blend");
 #endif
 
-	BLI_strncpy(G.lib, G.main->name, FILE_MAX);
+	BLI_strncpy(G.lib, BKE_main_blendfile_path_from_global(), sizeof(G.lib));
 
 #ifdef WITH_COMPOSITOR
 	if (1) {
@@ -271,13 +272,14 @@ void WM_init(bContext *C, int argc, const char **argv)
 		COM_linker_hack = COM_execute;
 	}
 #endif
-	
+
 	/* load last session, uses regular file reading so it has to be in end (after init py etc) */
 	if (U.uiflag2 & USER_KEEP_SESSION) {
 		/* calling WM_recover_last_session(C, NULL) has been moved to creator.c */
 		/* that prevents loading both the kept session, and the file on the command line */
 	}
 	else {
+		Main *bmain = CTX_data_main(C);
 		/* note, logic here is from wm_file_read_post,
 		 * call functions that depend on Python being initialized. */
 
@@ -288,10 +290,10 @@ void WM_init(bContext *C, int argc, const char **argv)
 		 * note that recovering the last session does its own callbacks. */
 		CTX_wm_window_set(C, CTX_wm_manager(C)->windows.first);
 
-		BLI_callback_exec(CTX_data_main(C), NULL, BLI_CB_EVT_VERSION_UPDATE);
-		BLI_callback_exec(CTX_data_main(C), NULL, BLI_CB_EVT_LOAD_POST);
+		BLI_callback_exec(bmain, NULL, BLI_CB_EVT_VERSION_UPDATE);
+		BLI_callback_exec(bmain, NULL, BLI_CB_EVT_LOAD_POST);
 
-		wm_file_read_report(C);
+		wm_file_read_report(C, bmain);
 
 		if (!G.background) {
 			CTX_wm_window_set(C, NULL);
@@ -304,7 +306,7 @@ void WM_init_splash(bContext *C)
 	if ((U.uiflag & USER_SPLASH_DISABLE) == 0) {
 		wmWindowManager *wm = CTX_wm_manager(C);
 		wmWindow *prevwin = CTX_wm_window(C);
-	
+
 		if (wm->windows.first) {
 			CTX_wm_window_set(C, wm->windows.first);
 			WM_operator_name_call(C, "WM_OT_splash", WM_OP_INVOKE_DEFAULT, NULL);
@@ -407,10 +409,10 @@ bool WM_init_game(bContext *C)
 static void free_openrecent(void)
 {
 	struct RecentFile *recent;
-	
+
 	for (recent = G.recent_files.first; recent; recent = recent->next)
 		MEM_freeN(recent->filepath);
-	
+
 	BLI_freelistN(&(G.recent_files));
 }
 
@@ -493,11 +495,11 @@ void WM_exit_ext(bContext *C, const bool do_python)
 				}
 			}
 		}
-		
+
 		WM_jobs_kill_all(wm);
 
 		for (win = wm->windows.first; win; win = win->next) {
-			
+
 			CTX_wm_window_set(C, win);  /* needed by operator close callbacks */
 			WM_event_remove_handlers(C, &win->handlers);
 			WM_event_remove_handlers(C, &win->modalhandlers);
@@ -517,19 +519,19 @@ void WM_exit_ext(bContext *C, const bool do_python)
 
 	ED_undosys_type_free();
 
-//	XXX	
+//	XXX
 //	BIF_GlobalReebFree();
 //	BIF_freeRetarget();
 	BIF_freeTemplates(C);
 
 	free_openrecent();
-	
+
 	BKE_mball_cubeTable_free();
-	
+
 	/* render code might still access databases */
 	RE_FreeAllRender();
 	RE_engines_exit();
-	
+
 	ED_preview_free_dbase();  /* frees a Main dbase, before BKE_blender_free! */
 
 	if (C && wm)
@@ -539,11 +541,11 @@ void WM_exit_ext(bContext *C, const bool do_python)
 	BKE_tracking_clipboard_free();
 	BKE_mask_clipboard_free();
 	BKE_vfont_clipboard_free();
-		
+
 #ifdef WITH_COMPOSITOR
 	COM_deinitialize();
 #endif
-	
+
 	BKE_blender_free();  /* blender.c, does entire library and spacetypes */
 //	free_matcopybuf();
 	ANIM_fcurves_copybuf_free();
@@ -561,11 +563,11 @@ void WM_exit_ext(bContext *C, const bool do_python)
 	BLF_free_unifont_mono();
 	BLT_lang_free();
 #endif
-	
+
 	ANIM_keyingset_infos_exit();
-	
+
 //	free_txt_data();
-	
+
 
 #ifdef WITH_PYTHON
 	/* option not to close python so we can use 'atexit' */
@@ -589,7 +591,7 @@ void WM_exit_ext(bContext *C, const bool do_python)
 #endif
 
 		GPU_global_buffer_pool_free();
-		GPU_free_unused_buffers();
+		GPU_free_unused_buffers(G_MAIN);
 
 		GPU_exit();
 	}
@@ -600,14 +602,14 @@ void WM_exit_ext(bContext *C, const bool do_python)
 	BKE_blender_userdef_data_free(&U, false);
 
 	RNA_exit(); /* should be after BPY_python_end so struct python slots are cleared */
-	
+
 	wm_ghost_exit();
 
 	CTX_free(C);
 #ifdef WITH_GAMEENGINE
 	SYS_DeleteSystem(SYS_GetSystem());
 #endif
-	
+
 	GHOST_DisposeSystemPaths();
 
 	DNA_sdna_current_free();

@@ -183,8 +183,9 @@ static void simpleDeform_bend(const float factor, const int axis, const float dc
 
 
 /* simple deform modifier */
-static void SimpleDeformModifier_do(SimpleDeformModifierData *smd, struct Object *ob, struct DerivedMesh *dm,
-                                    float (*vertexCos)[3], int numVerts)
+static void SimpleDeformModifier_do(
+        SimpleDeformModifierData *smd, struct Object *ob, struct DerivedMesh *dm,
+        float (*vertexCos)[3], int numVerts)
 {
 	const float base_limit[2] = {0.0f, 0.0f};
 
@@ -349,15 +350,6 @@ static void initData(ModifierData *md)
 	smd->limit[1] =  1.0f;
 }
 
-static void copyData(ModifierData *md, ModifierData *target)
-{
-#if 0
-	SimpleDeformModifierData *smd  = (SimpleDeformModifierData *)md;
-	SimpleDeformModifierData *tsmd = (SimpleDeformModifierData *)target;
-#endif
-	modifier_copyData_generic(md, target);
-}
-
 static CustomDataMask requiredDataMask(Object *UNUSED(ob), ModifierData *md)
 {
 	SimpleDeformModifierData *smd = (SimpleDeformModifierData *)md;
@@ -394,11 +386,12 @@ static void updateDepsgraph(ModifierData *md, const ModifierUpdateDepsgraphConte
 	}
 }
 
-static void deformVerts(ModifierData *md, Object *ob,
-                        DerivedMesh *derivedData,
-                        float (*vertexCos)[3],
-                        int numVerts,
-                        ModifierApplyFlag UNUSED(flag))
+static void deformVerts(
+        ModifierData *md, Object *ob,
+        DerivedMesh *derivedData,
+        float (*vertexCos)[3],
+        int numVerts,
+        ModifierApplyFlag UNUSED(flag))
 {
 	DerivedMesh *dm = derivedData;
 	CustomDataMask dataMask = requiredDataMask(ob, md);
@@ -414,11 +407,12 @@ static void deformVerts(ModifierData *md, Object *ob,
 		dm->release(dm);
 }
 
-static void deformVertsEM(ModifierData *md, Object *ob,
-                          struct BMEditMesh *editData,
-                          DerivedMesh *derivedData,
-                          float (*vertexCos)[3],
-                          int numVerts)
+static void deformVertsEM(
+        ModifierData *md, Object *ob,
+        struct BMEditMesh *editData,
+        DerivedMesh *derivedData,
+        float (*vertexCos)[3],
+        int numVerts)
 {
 	DerivedMesh *dm = derivedData;
 	CustomDataMask dataMask = requiredDataMask(ob, md);
@@ -447,7 +441,7 @@ ModifierTypeInfo modifierType_SimpleDeform = {
 	                        eModifierTypeFlag_SupportsEditmode |
 	                        eModifierTypeFlag_EnableInEditmode,
 
-	/* copyData */          copyData,
+	/* copyData */          modifier_copyData_generic,
 	/* deformVerts */       deformVerts,
 	/* deformMatrices */    NULL,
 	/* deformVertsEM */     deformVertsEM,

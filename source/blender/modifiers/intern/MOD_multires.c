@@ -58,17 +58,9 @@ static void initData(ModifierData *md)
 	mmd->totlvl = 0;
 }
 
-static void copyData(ModifierData *md, ModifierData *target)
-{
-#if 0
-	MultiresModifierData *mmd = (MultiresModifierData *) md;
-	MultiresModifierData *tmmd = (MultiresModifierData *) target;
-#endif
-	modifier_copyData_generic(md, target);
-}
-
-static DerivedMesh *applyModifier(ModifierData *md, Object *ob, DerivedMesh *dm,
-                                  ModifierApplyFlag flag)
+static DerivedMesh *applyModifier(
+        ModifierData *md, Object *ob, DerivedMesh *dm,
+        ModifierApplyFlag flag)
 {
 	MultiresModifierData *mmd = (MultiresModifierData *)md;
 	DerivedMesh *result;
@@ -101,17 +93,17 @@ static DerivedMesh *applyModifier(ModifierData *md, Object *ob, DerivedMesh *dm,
 
 	if (useRenderParams || !(flag & MOD_APPLY_USECACHE)) {
 		DerivedMesh *cddm;
-		
+
 		cddm = CDDM_copy(result);
 
 		/* copy hidden/masks to vertices */
 		if (!useRenderParams) {
 			struct MDisps *mdisps;
 			struct GridPaintMask *grid_paint_mask;
-			
+
 			mdisps = CustomData_get_layer(&me->ldata, CD_MDISPS);
 			grid_paint_mask = CustomData_get_layer(&me->ldata, CD_GRID_PAINT_MASK);
-			
+
 			if (mdisps) {
 				subsurf_copy_grid_hidden(result, me->mpoly,
 				                         cddm->getVertArray(cddm),
@@ -152,7 +144,7 @@ ModifierTypeInfo modifierType_Multires = {
 	                        eModifierTypeFlag_SupportsMapping |
 	                        eModifierTypeFlag_RequiresOriginalData,
 
-	/* copyData */          copyData,
+	/* copyData */          modifier_copyData_generic,
 	/* deformVerts */       NULL,
 	/* deformMatrices */    NULL,
 	/* deformVertsEM */     NULL,

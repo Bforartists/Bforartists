@@ -65,13 +65,13 @@ static void initData(ModifierData *md)
 static void freeData(ModifierData *md)
 {
 	ExplodeModifierData *emd = (ExplodeModifierData *) md;
-	
-	if (emd->facepa) MEM_freeN(emd->facepa);
+
+	MEM_SAFE_FREE(emd->facepa);
 }
-static void copyData(ModifierData *md, ModifierData *target)
+static void copyData(const ModifierData *md, ModifierData *target)
 {
 #if 0
-	ExplodeModifierData *emd = (ExplodeModifierData *) md;
+	const ExplodeModifierData *emd = (const ExplodeModifierData *) md;
 #endif
 	ExplodeModifierData *temd = (ExplodeModifierData *) target;
 
@@ -94,9 +94,10 @@ static CustomDataMask requiredDataMask(Object *UNUSED(ob), ModifierData *md)
 	return dataMask;
 }
 
-static void createFacepa(ExplodeModifierData *emd,
-                         ParticleSystemModifierData *psmd,
-                         DerivedMesh *dm)
+static void createFacepa(
+        ExplodeModifierData *emd,
+        ParticleSystemModifierData *psmd,
+        DerivedMesh *dm)
 {
 	ParticleSystem *psys = psmd->psys;
 	MFace *fa = NULL, *mface = NULL;
@@ -191,7 +192,7 @@ static int edgecut_get(EdgeHash *edgehash, unsigned int v1, unsigned int v2)
 	return GET_INT_FROM_POINTER(BLI_edgehash_lookup(edgehash, v1, v2));
 }
 
- 
+
 static const short add_faces[24] = {
 	0,
 	0, 0, 2, 0, 1, 2, 2, 0, 2, 1,
@@ -633,7 +634,7 @@ static DerivedMesh *cutEdges(ExplodeModifierData *emd, DerivedMesh *dm)
 	/* count new faces due to splitting */
 	for (i = 0, fs = facesplit; i < totface; i++, fs++)
 		totfsplit += add_faces[*fs];
-	
+
 	splitdm = CDDM_from_template_ex(
 	        dm, totesplit, 0, totface + totfsplit, 0, 0,
 	        CD_MASK_DERIVEDMESH | CD_MASK_FACECORNERS);
@@ -785,9 +786,10 @@ static DerivedMesh *cutEdges(ExplodeModifierData *emd, DerivedMesh *dm)
 
 	return splitdm;
 }
-static DerivedMesh *explodeMesh(ExplodeModifierData *emd,
-                                ParticleSystemModifierData *psmd, Scene *scene, Object *ob,
-                                DerivedMesh *to_explode)
+static DerivedMesh *explodeMesh(
+        ExplodeModifierData *emd,
+        ParticleSystemModifierData *psmd, Scene *scene, Object *ob,
+        DerivedMesh *to_explode)
 {
 	DerivedMesh *explode, *dm = to_explode;
 	MFace *mf = NULL, *mface;
@@ -841,7 +843,7 @@ static DerivedMesh *explodeMesh(ExplodeModifierData *emd,
 		 * with BLI_edgehashIterator_getKey */
 		if (facepa[i] == totpart || cfra < (pars + facepa[i])->time)
 			mindex = totvert + totpart;
-		else 
+		else
 			mindex = totvert + facepa[i];
 
 		mf = &mface[i];
@@ -932,12 +934,12 @@ static DerivedMesh *explodeMesh(ExplodeModifierData *emd,
 
 		dm->getTessFace(dm, i, &source);
 		mf = CDDM_get_tessface(explode, u);
-		
+
 		orig_v4 = source.v4;
 
 		if (facepa[i] != totpart && cfra < pa->time)
 			mindex = totvert + totpart;
-		else 
+		else
 			mindex = totvert + facepa[i];
 
 		source.v1 = edgecut_get(vertpahash, source.v1, mindex);
@@ -993,9 +995,10 @@ static ParticleSystemModifierData *findPrecedingParticlesystem(Object *ob, Modif
 	}
 	return psmd;
 }
-static DerivedMesh *applyModifier(ModifierData *md, Object *ob,
-                                  DerivedMesh *derivedData,
-                                  ModifierApplyFlag UNUSED(flag))
+static DerivedMesh *applyModifier(
+        ModifierData *md, Object *ob,
+        DerivedMesh *derivedData,
+        ModifierApplyFlag UNUSED(flag))
 {
 	DerivedMesh *dm = derivedData;
 	ExplodeModifierData *emd = (ExplodeModifierData *) md;
@@ -1018,7 +1021,7 @@ static DerivedMesh *applyModifier(ModifierData *md, Object *ob,
 		{
 			if (psmd->flag & eParticleSystemFlag_Pars)
 				psmd->flag &= ~eParticleSystemFlag_Pars;
-			
+
 			if (emd->flag & eExplodeFlag_CalcFaces)
 				emd->flag &= ~eExplodeFlag_CalcFaces;
 

@@ -1023,9 +1023,11 @@ def fbx_data_mesh_elements(root, me_obj, scene_data, done_meshes):
             if tspacenumber:
                 t_ln = array.array(data_types.ARRAY_FLOAT64, (0.0,)) * len(me.loops) * 3
                 # t_lnw = array.array(data_types.ARRAY_FLOAT64, (0.0,)) * len(me.loops)
+                uv_names = [uvlayer.name for uvlayer in me.uv_layers]
+                for name in uv_names:
+                    me.calc_tangents(name)
                 for idx, uvlayer in enumerate(me.uv_layers):
                     name = uvlayer.name
-                    me.calc_tangents(name)
                     # Loop bitangents (aka binormals).
                     # NOTE: this is not supported by importer currently.
                     me.loops.foreach_get("bitangent", t_ln)

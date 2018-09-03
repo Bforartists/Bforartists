@@ -15,8 +15,8 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Contributor: 
- *		Jeroen Bakker 
+ * Contributor:
+ *		Jeroen Bakker
  *		Monique Dewanchand
  */
 
@@ -74,7 +74,7 @@ void OpenCLDevice::execute(WorkPackage *work)
 	                                                              chunkNumber, inputBuffers, outputBuffer);
 
 	delete outputBuffer;
-	
+
 	executionGroup->finalizeChunkExecution(chunkNumber, inputBuffers);
 }
 cl_mem OpenCLDevice::COM_clAttachMemoryBufferToKernelParameter(cl_kernel kernel, int parameterIndex, int offsetIndex,
@@ -106,7 +106,7 @@ cl_mem OpenCLDevice::COM_clAttachMemoryBufferToKernelParameter(cl_kernel kernel,
                                                                ReadBufferOperation *reader)
 {
 	cl_int error;
-	
+
 	MemoryBuffer *result = reader->getInputMemoryBuffer(inputMemoryBuffers);
 
 	const cl_image_format *imageFormat = determineImageFormat(result);

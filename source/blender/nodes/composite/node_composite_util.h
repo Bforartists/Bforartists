@@ -4,7 +4,7 @@
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version. 
+ * of the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -60,9 +60,8 @@
 
 #define CMP_SCALE_MAX	12000
 
-int cmp_node_poll_default(struct bNodeType *ntype, struct bNodeTree *ntree);
+bool cmp_node_poll_default(struct bNodeType *ntype, struct bNodeTree *ntree);
 void cmp_node_update_default(struct bNodeTree *UNUSED(ntree), struct bNode *node);
 void cmp_node_type_base(struct bNodeType *ntype, int type, const char *name, short nclass, short flag);
 
 #endif  /* __NODE_COMPOSITE_UTIL_H__ */
-

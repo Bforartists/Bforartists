@@ -154,7 +154,7 @@ static SocketType::Type convert_socket_type(BL::NodeSocket& b_socket)
 			return SocketType::STRING;
 		case BL::NodeSocket::type_SHADER:
 			return SocketType::CLOSURE;
-		
+
 		default:
 			return SocketType::UNDEFINED;
 	}
@@ -443,7 +443,7 @@ static ShaderNode *add_node(Scene *scene,
 	else if(b_node.is_a(&RNA_ShaderNodeBsdfGlossy)) {
 		BL::ShaderNodeBsdfGlossy b_glossy_node(b_node);
 		GlossyBsdfNode *glossy = new GlossyBsdfNode();
-		
+
 		switch(b_glossy_node.distribution()) {
 			case BL::ShaderNodeBsdfGlossy::distribution_SHARP:
 				glossy->distribution = CLOSURE_BSDF_REFLECTION_ID;
@@ -524,6 +524,12 @@ static ShaderNode *add_node(Scene *scene,
 		}
 		node = hair;
 	}
+	else if(b_node.is_a(&RNA_ShaderNodeBsdfHairPrincipled)) {
+		BL::ShaderNodeBsdfHairPrincipled b_principled_hair_node(b_node);
+		PrincipledHairBsdfNode *principled_hair = new PrincipledHairBsdfNode();
+		principled_hair->parametrization = (NodePrincipledHairParametrization) get_enum(b_principled_hair_node.ptr, "parametrization", NODE_PRINCIPLED_HAIR_NUM, NODE_PRINCIPLED_HAIR_REFLECTANCE);
+		node = principled_hair;
+	}
 	else if(b_node.is_a(&RNA_ShaderNodeBsdfPrincipled)) {
 		BL::ShaderNodeBsdfPrincipled b_principled_node(b_node);
 		PrincipledBsdfNode *principled = new PrincipledBsdfNode();
@@ -558,7 +564,12 @@ static ShaderNode *add_node(Scene *scene,
 		node = new EmissionNode();
 	}
 	else if(b_node.is_a(&RNA_ShaderNodeAmbientOcclusion)) {
-		node = new AmbientOcclusionNode();
+		BL::ShaderNodeAmbientOcclusion b_ao_node(b_node);
+		AmbientOcclusionNode *ao = new AmbientOcclusionNode();
+		ao->samples = b_ao_node.samples();
+		ao->inside = b_ao_node.inside();
+		ao->only_local = b_ao_node.only_local();
+		node = ao;
 	}
 	else if(b_node.is_a(&RNA_ShaderNodeVolumeScatter)) {
 		node = new ScatterVolumeNode();
@@ -743,6 +754,8 @@ static ShaderNode *add_node(Scene *scene,
 		BL::ShaderNodeTexVoronoi b_voronoi_node(b_node);
 		VoronoiTextureNode *voronoi = new VoronoiTextureNode();
 		voronoi->coloring = (NodeVoronoiColoring)b_voronoi_node.coloring();
+		voronoi->metric = (NodeVoronoiDistanceMetric)b_voronoi_node.distance();
+		voronoi->feature = (NodeVoronoiFeature)b_voronoi_node.feature();
 		BL::TexMapping b_texture_mapping(b_voronoi_node.texture_mapping());
 		get_tex_mapping(&voronoi->tex_mapping, b_texture_mapping);
 		node = voronoi;
@@ -817,6 +830,22 @@ static ShaderNode *add_node(Scene *scene,
 		BL::TexMapping b_texture_mapping(b_sky_node.texture_mapping());
 		get_tex_mapping(&sky->tex_mapping, b_texture_mapping);
 		node = sky;
+	}
+	else if(b_node.is_a(&RNA_ShaderNodeTexIES)) {
+		BL::ShaderNodeTexIES b_ies_node(b_node);
+		IESLightNode *ies = new IESLightNode();
+		switch(b_ies_node.mode()) {
+			case BL::ShaderNodeTexIES::mode_EXTERNAL:
+				ies->filename = blender_absolute_path(b_data, b_ntree, b_ies_node.filepath());
+				break;
+			case BL::ShaderNodeTexIES::mode_INTERNAL:
+				ies->ies = get_text_datablock_content(b_ies_node.ies().ptr);
+				if(ies->ies.empty()) {
+					ies->ies = "\n";
+				}
+				break;
+		}
+		node = ies;
 	}
 	else if(b_node.is_a(&RNA_ShaderNodeNormalMap)) {
 		BL::ShaderNodeNormalMap b_normal_map_node(b_node);
@@ -922,7 +951,7 @@ static ShaderInput *node_find_input_by_name(ShaderNode *node,
                                             BL::NodeSocket& b_socket)
 {
 	string name = b_socket.name();
-	
+
 	if(node_use_modified_socket_name(node)) {
 		BL::Node::inputs_iterator b_input;
 		bool found = false;
@@ -1028,7 +1057,7 @@ static void add_nodes(Scene *scene,
 			for(b_node->internal_links.begin(b_link); b_link != b_node->internal_links.end(); ++b_link) {
 				BL::NodeSocket to_socket(b_link->to_socket());
 				SocketType::Type to_socket_type = convert_socket_type(to_socket);
-				if (to_socket_type == SocketType::UNDEFINED) {
+				if(to_socket_type == SocketType::UNDEFINED) {
 					continue;
 				}
 
@@ -1041,7 +1070,7 @@ static void add_nodes(Scene *scene,
 			}
 		}
 		else if(b_node->is_a(&RNA_ShaderNodeGroup) || b_node->is_a(&RNA_NodeCustomGroup)) {
-			
+
 			BL::ShaderNodeTree b_group_ntree(PointerRNA_NULL);
 			if(b_node->is_a(&RNA_ShaderNodeGroup))
 				b_group_ntree = BL::ShaderNodeTree(((BL::NodeGroup)(*b_node)).node_tree());
@@ -1055,7 +1084,7 @@ static void add_nodes(Scene *scene,
 			 */
 			for(b_node->inputs.begin(b_input); b_input != b_node->inputs.end(); ++b_input) {
 				SocketType::Type input_type = convert_socket_type(*b_input);
-				if (input_type == SocketType::UNDEFINED) {
+				if(input_type == SocketType::UNDEFINED) {
 					continue;
 				}
 
@@ -1071,7 +1100,7 @@ static void add_nodes(Scene *scene,
 			}
 			for(b_node->outputs.begin(b_output); b_output != b_node->outputs.end(); ++b_output) {
 				SocketType::Type output_type = convert_socket_type(*b_output);
-				if (output_type == SocketType::UNDEFINED) {
+				if(output_type == SocketType::UNDEFINED) {
 					continue;
 				}
 
@@ -1083,7 +1112,7 @@ static void add_nodes(Scene *scene,
 
 				output_map[b_output->ptr.data] = proxy->outputs[0];
 			}
-			
+
 			if(b_group_ntree) {
 				add_nodes(scene,
 				          b_engine,
@@ -1460,4 +1489,3 @@ void BlenderSync::sync_shaders()
 }
 
 CCL_NAMESPACE_END
-
