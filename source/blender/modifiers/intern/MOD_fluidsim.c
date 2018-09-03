@@ -55,22 +55,20 @@
 static void initData(ModifierData *md)
 {
 	FluidsimModifierData *fluidmd = (FluidsimModifierData *) md;
-	
+
 	fluidsim_init(fluidmd);
 }
 static void freeData(ModifierData *md)
 {
 	FluidsimModifierData *fluidmd = (FluidsimModifierData *) md;
-	
+
 	fluidsim_free(fluidmd);
 }
 
-static void copyData(ModifierData *md, ModifierData *target)
+static void copyData(const ModifierData *md, ModifierData *target)
 {
-	FluidsimModifierData *fluidmd = (FluidsimModifierData *) md;
+	const FluidsimModifierData *fluidmd = (const FluidsimModifierData *) md;
 	FluidsimModifierData *tfluidmd = (FluidsimModifierData *) target;
-	
-	fluidsim_free(tfluidmd);
 
 	if (fluidmd->fss) {
 		tfluidmd->fss = MEM_dupallocN(fluidmd->fss);
@@ -78,21 +76,27 @@ static void copyData(ModifierData *md, ModifierData *target)
 			tfluidmd->fss->meshVelocities = MEM_dupallocN(tfluidmd->fss->meshVelocities);
 		}
 	}
+
+	/* Seems to never be used, but for sqke of consistency... */
+	BLI_assert(fluidmd->point_cache == NULL);
+	BLI_assert(tfluidmd->point_cache == NULL);
+	tfluidmd->point_cache = NULL;
 }
 
 
 
-static DerivedMesh *applyModifier(ModifierData *md, Object *ob,
-                                  DerivedMesh *dm,
-                                  ModifierApplyFlag flag)
+static DerivedMesh *applyModifier(
+        ModifierData *md, Object *ob,
+        DerivedMesh *dm,
+        ModifierApplyFlag flag)
 {
 	FluidsimModifierData *fluidmd = (FluidsimModifierData *) md;
 	DerivedMesh *result = NULL;
-	
+
 	/* check for alloc failing */
 	if (!fluidmd->fss) {
 		initData(md);
-		
+
 		if (!fluidmd->fss) {
 			return dm;
 		}
@@ -115,7 +119,7 @@ static void updateDepgraph(ModifierData *md, const ModifierUpdateDepsgraphContex
 				if (ob1 != ctx->object) {
 					FluidsimModifierData *fluidmdtmp =
 					        (FluidsimModifierData *)modifiers_findByType(ob1, eModifierType_Fluidsim);
-					
+
 					/* only put dependencies from NON-DOMAIN fluids in here */
 					if (fluidmdtmp && fluidmdtmp->fss && (fluidmdtmp->fss->type != OB_FLUIDSIM_DOMAIN)) {
 						DagNode *curNode = dag_get_node(ctx->forest, ob1);

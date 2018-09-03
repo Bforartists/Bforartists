@@ -15,8 +15,8 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Contributor: 
- *		Jeroen Bakker 
+ * Contributor:
+ *		Jeroen Bakker
  *		Monique Dewanchand
  */
 
@@ -49,7 +49,7 @@ void BokehBlurNode::convertToOperations(NodeConverter &converter, const Composit
 		operation->setThreshold(0.0f);
 		operation->setMaxBlur(b_node->custom4);
 		operation->setDoScaleSize(true);
-		
+
 		converter.addOperation(operation);
 		converter.mapInputSocket(getInputSocket(0), operation->getInputSocket(0));
 		converter.mapInputSocket(getInputSocket(1), operation->getInputSocket(1));
@@ -60,7 +60,7 @@ void BokehBlurNode::convertToOperations(NodeConverter &converter, const Composit
 		BokehBlurOperation *operation = new BokehBlurOperation();
 		operation->setQuality(context.getQuality());
 		operation->setExtendBounds(extend_bounds);
-		
+
 		converter.addOperation(operation);
 		converter.mapInputSocket(getInputSocket(0), operation->getInputSocket(0));
 		converter.mapInputSocket(getInputSocket(1), operation->getInputSocket(1));

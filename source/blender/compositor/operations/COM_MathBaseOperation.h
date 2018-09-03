@@ -15,13 +15,13 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Contributor: 
- *		Jeroen Bakker 
+ * Contributor:
+ *		Jeroen Bakker
  *		Monique Dewanchand
  */
 
-#ifndef _COM_MathBaseOperation_h
-#define _COM_MathBaseOperation_h
+#ifndef __COM_MATHBASEOPERATION_H__
+#define __COM_MATHBASEOPERATION_H__
 #include "COM_NodeOperation.h"
 
 
@@ -51,12 +51,12 @@ public:
 	 * the inner loop of this program
 	 */
 	void executePixelSampled(float output[4], float x, float y, PixelSampler sampler) = 0;
-	
+
 	/**
 	 * Initialize the execution
 	 */
 	void initExecution();
-	
+
 	/**
 	 * Deinitialize the execution
 	 */
@@ -166,6 +166,36 @@ public:
 class MathAbsoluteOperation : public MathBaseOperation {
 public:
 	MathAbsoluteOperation() : MathBaseOperation() {}
+	void executePixelSampled(float output[4], float x, float y, PixelSampler sampler);
+};
+
+class MathArcTan2Operation : public MathBaseOperation {
+public:
+	MathArcTan2Operation() : MathBaseOperation() {}
+	void executePixelSampled(float output[4], float x, float y, PixelSampler sampler);
+};
+
+class MathFloorOperation : public MathBaseOperation {
+public:
+	MathFloorOperation() : MathBaseOperation() {}
+	void executePixelSampled(float output[4], float x, float y, PixelSampler sampler);
+};
+
+class MathCeilOperation : public MathBaseOperation {
+public:
+	MathCeilOperation() : MathBaseOperation() {}
+	void executePixelSampled(float output[4], float x, float y, PixelSampler sampler);
+};
+
+class MathFractOperation : public MathBaseOperation {
+public:
+	MathFractOperation() : MathBaseOperation() {}
+	void executePixelSampled(float output[4], float x, float y, PixelSampler sampler);
+};
+
+class MathSqrtOperation : public MathBaseOperation {
+public:
+	MathSqrtOperation() : MathBaseOperation() {}
 	void executePixelSampled(float output[4], float x, float y, PixelSampler sampler);
 };
 

@@ -15,13 +15,13 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Contributor: 
- *		Jeroen Bakker 
+ * Contributor:
+ *		Jeroen Bakker
  *		Monique Dewanchand
  */
 
-#ifndef _COM_MapValueOperation_h
-#define _COM_MapValueOperation_h
+#ifndef __COM_MAPVALUEOPERATION_H__
+#define __COM_MAPVALUEOPERATION_H__
 #include "COM_NodeOperation.h"
 #include "DNA_texture_types.h"
 
@@ -41,26 +41,26 @@ public:
 	 * Default constructor
 	 */
 	MapValueOperation();
-	
+
 	/**
 	 * the inner loop of this program
 	 */
 	void executePixelSampled(float output[4], float x, float y, PixelSampler sampler);
-	
+
 	/**
 	 * Initialize the execution
 	 */
 	void initExecution();
-	
+
 	/**
 	 * Deinitialize the execution
 	 */
 	void deinitExecution();
-	
+
 	/**
 	 * @brief set the TexMapping settings
 	 */
 	void setSettings(TexMapping *settings) { this->m_settings = settings; }
-	
+
 };
 #endif

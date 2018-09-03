@@ -4,7 +4,7 @@
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version. 
+ * of the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -18,7 +18,7 @@
  * The Original Code is Copyright (C) 2008 Blender Foundation.
  * All rights reserved.
  *
- * 
+ *
  * Contributor(s): Blender Foundation
  *
  * ***** END GPL LICENSE BLOCK *****
@@ -53,8 +53,10 @@ struct wmOperatorType;
 struct PointerRNA;
 struct PropertyRNA;
 struct EnumPropertyItem;
+struct wmWindowManager;
 
 #include "DNA_object_enums.h"
+#include "BLI_compiler_attrs.h"
 
 /* object_edit.c */
 struct Object *ED_object_context(struct bContext *C);               /* context.object */
@@ -115,23 +117,22 @@ void ED_object_parent(struct Object *ob, struct Object *parent, const int type, 
 enum {
 	EM_FREEDATA         = (1 << 0),
 	EM_WAITCURSOR       = (1 << 1),
-	EM_DO_UNDO          = (1 << 2),
 	EM_IGNORE_LAYER     = (1 << 3),
 };
-void ED_object_editmode_exit_ex(struct bContext *C, struct Scene *scene, struct Object *obedit, int flag);
-void ED_object_editmode_exit(struct bContext *C, int flag);
-void ED_object_editmode_enter(struct bContext *C, int flag);
-bool ED_object_editmode_load(struct Object *obedit);
+bool ED_object_editmode_exit_ex(struct Main *bmain, struct Scene *scene, struct Object *obedit, int flag);
+bool ED_object_editmode_exit(struct bContext *C, int flag);
+bool ED_object_editmode_enter(struct bContext *C, int flag);
+bool ED_object_editmode_load(struct Main *bmain, struct Object *obedit);
 
 bool ED_object_editmode_calc_active_center(struct Object *obedit, const bool select_only, float r_center[3]);
 
 
 void ED_object_vpaintmode_enter_ex(
-        struct wmWindowManager *wm,
+        struct Main *bmain, struct wmWindowManager *wm,
         struct Scene *scene, struct Object *ob);
 void ED_object_vpaintmode_enter(struct bContext *C);
 void ED_object_wpaintmode_enter_ex(
-        struct wmWindowManager *wm,
+        struct Main *bmain, struct wmWindowManager *wm,
         struct Scene *scene, struct Object *ob);
 void ED_object_wpaintmode_enter(struct bContext *C);
 
@@ -141,7 +142,7 @@ void ED_object_wpaintmode_exit_ex(struct Object *ob);
 void ED_object_wpaintmode_exit(struct bContext *C);
 
 void ED_object_sculptmode_enter_ex(
-        struct Scene *scene, struct Object *ob,
+        struct Main *bmain, struct Scene *scene, struct Object *ob,
         struct ReportList *reports);
 void ED_object_sculptmode_enter(struct bContext *C, struct ReportList *reports);
 void ED_object_sculptmode_exit_ex(
@@ -149,6 +150,7 @@ void ED_object_sculptmode_exit_ex(
 void ED_object_sculptmode_exit(struct bContext *C);
 
 void ED_object_location_from_view(struct bContext *C, float loc[3]);
+void ED_object_rotation_from_quat(float rot[3], const float quat[4], const char align_axis);
 void ED_object_rotation_from_view(struct bContext *C, float rot[3], const char align_axis);
 void ED_object_base_init_transform(struct bContext *C, struct Base *base, const float loc[3], const float rot[3]);
 float ED_object_new_primitive_matrix(
@@ -185,13 +187,13 @@ struct ListBase *get_active_constraints(struct Object *ob);
 struct ListBase *get_constraint_lb(struct Object *ob, struct bConstraint *con, struct bPoseChannel **r_pchan);
 struct bConstraint *get_active_constraint(struct Object *ob);
 
-void object_test_constraints(struct Object *ob);
+void object_test_constraints(struct Main *bmain, struct Object *ob);
 
 void ED_object_constraint_set_active(struct Object *ob, struct bConstraint *con);
-void ED_object_constraint_update(struct Object *ob);
+void ED_object_constraint_update(struct Main *bmain, struct Object *ob);
 void ED_object_constraint_dependency_update(struct Main *bmain, struct Object *ob);
 
-void ED_object_constraint_tag_update(struct Object *ob, struct bConstraint *con);
+void ED_object_constraint_tag_update(struct Main *bmain, struct Object *ob, struct bConstraint *con);
 void ED_object_constraint_dependency_tag_update(struct Main *bmain, struct Object *ob, struct bConstraint *con);
 
 /* object_modes.c */
@@ -217,7 +219,7 @@ int ED_object_modifier_move_up(struct ReportList *reports, struct Object *ob, st
 int ED_object_modifier_convert(
         struct ReportList *reports, struct Main *bmain, struct Scene *scene,
         struct Object *ob, struct ModifierData *md);
-int ED_object_modifier_apply(struct ReportList *reports, struct Scene *scene,
+int ED_object_modifier_apply(struct Main *bmain, struct ReportList *reports, struct Scene *scene,
                              struct Object *ob, struct ModifierData *md, int mode);
 int ED_object_modifier_copy(struct ReportList *reports, struct Object *ob, struct ModifierData *md);
 

@@ -305,7 +305,7 @@ static PyObject *py_blf_rotation(PyObject *UNUSED(self), PyObject *args)
 
 	if (!PyArg_ParseTuple(args, "if:blf.rotation", &fontid, &angle))
 		return NULL;
-		
+
 	BLF_rotation(fontid, angle);
 
 	Py_RETURN_NONE;
@@ -461,6 +461,7 @@ PyObject *BPyInit_blf(void)
 	PyModule_AddIntConstant(submodule, "SHADOW", BLF_SHADOW);
 	PyModule_AddIntConstant(submodule, "KERNING_DEFAULT", BLF_KERNING_DEFAULT);
 	PyModule_AddIntConstant(submodule, "WORD_WRAP", BLF_WORD_WRAP);
+	PyModule_AddIntConstant(submodule, "MONOCHROME", BLF_MONOCHROME);
 
 	return submodule;
 }

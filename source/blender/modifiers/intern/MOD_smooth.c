@@ -58,15 +58,6 @@ static void initData(ModifierData *md)
 	smd->defgrp_name[0] = '\0';
 }
 
-static void copyData(ModifierData *md, ModifierData *target)
-{
-#if 0
-	SmoothModifierData *smd = (SmoothModifierData *) md;
-	SmoothModifierData *tsmd = (SmoothModifierData *) target;
-#endif
-	modifier_copyData_generic(md, target);
-}
-
 static bool isDisabled(ModifierData *md, int UNUSED(useRenderParams))
 {
 	SmoothModifierData *smd = (SmoothModifierData *) md;
@@ -173,7 +164,7 @@ static void smoothModifier_do(
 
 				/* fp is the sum of uctmp[i] verts, so must be averaged */
 				facw = 0.0f;
-				if (uctmp[i]) 
+				if (uctmp[i])
 					facw = f / (float)uctmp[i];
 
 				if (flag & MOD_SMOOTH_X)
@@ -194,7 +185,7 @@ static void smoothModifier_do(
 
 				/* fp is the sum of uctmp[i] verts, so must be averaged */
 				facw = 0.0f;
-				if (uctmp[i]) 
+				if (uctmp[i])
 					facw = fac / (float)uctmp[i];
 
 				if (flag & MOD_SMOOTH_X)
@@ -215,8 +206,9 @@ static void smoothModifier_do(
 	MEM_freeN(uctmp);
 }
 
-static void deformVerts(ModifierData *md, Object *ob, DerivedMesh *derivedData,
-                        float (*vertexCos)[3], int numVerts, ModifierApplyFlag UNUSED(flag))
+static void deformVerts(
+        ModifierData *md, Object *ob, DerivedMesh *derivedData,
+        float (*vertexCos)[3], int numVerts, ModifierApplyFlag UNUSED(flag))
 {
 	DerivedMesh *dm = get_dm(ob, NULL, derivedData, NULL, false, false);
 
@@ -250,7 +242,7 @@ ModifierTypeInfo modifierType_Smooth = {
 	                        eModifierTypeFlag_AcceptsCVs |
 	                        eModifierTypeFlag_SupportsEditmode,
 
-	/* copyData */          copyData,
+	/* copyData */          modifier_copyData_generic,
 	/* deformVerts */       deformVerts,
 	/* deformMatrices */    NULL,
 	/* deformVertsEM */     deformVertsEM,

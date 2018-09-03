@@ -36,7 +36,6 @@
 #include "BLI_listbase.h"
 
 #include "BKE_context.h"
-#include "BKE_object.h"
 #include "BKE_report.h"
 #include "BKE_editmesh.h"
 
@@ -322,7 +321,7 @@ void MESH_OT_extrude_repeat(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Extrude Repeat Mesh";
-	ot->description = "Extrude Repeat Mesh\nExtrude selected vertices, edges or faces repeatedly";
+	ot->description = "Extrude selected vertices, edges or faces repeatedly";
 	ot->idname = "MESH_OT_extrude_repeat";
 
 	/* api callbacks */
@@ -412,8 +411,8 @@ void MESH_OT_extrude_region(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Extrude Region";
 	ot->idname = "MESH_OT_extrude_region";
-	ot->description = "Extrude Region\nExtrude region of faces";
-	
+	ot->description = "Extrude region of faces";
+
 	/* api callbacks */
 	//ot->invoke = mesh_extrude_region_invoke;
 	ot->exec = edbm_extrude_region_exec;
@@ -448,8 +447,8 @@ void MESH_OT_extrude_verts_indiv(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Extrude Only Vertices";
 	ot->idname = "MESH_OT_extrude_verts_indiv";
-	ot->description = "Extrude Only Vertices\nExtrude individual vertices only";
-	
+	ot->description = "Extrude individual vertices only";
+
 	/* api callbacks */
 	ot->exec = edbm_extrude_verts_exec;
 	ot->poll = ED_operator_editmesh;
@@ -484,8 +483,8 @@ void MESH_OT_extrude_edges_indiv(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Extrude Only Edges";
 	ot->idname = "MESH_OT_extrude_edges_indiv";
-	ot->description = "Extrude Only Edges\nExtrude individual edges only";
-	
+	ot->description = "Extrude individual edges only";
+
 	/* api callbacks */
 	ot->exec = edbm_extrude_edges_exec;
 	ot->poll = ED_operator_editmesh;
@@ -520,8 +519,8 @@ void MESH_OT_extrude_faces_indiv(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Extrude Individual Faces";
 	ot->idname = "MESH_OT_extrude_faces_indiv";
-	ot->description = "Extrude Individual Faces\nExtrude individual faces only";
-	
+	ot->description = "Extrude individual faces only";
+
 	/* api callbacks */
 	ot->exec = edbm_extrude_faces_exec;
 	ot->poll = ED_operator_editmesh;
@@ -662,7 +661,7 @@ static int edbm_dupli_extrude_cursor_invoke(bContext *C, wmOperator *op, const w
 
 			/* also project the source, for retopo workflow */
 			if (use_proj)
-				EMBM_project_snap_verts(C, vc.ar, vc.em);
+				EDBM_project_snap_verts(C, vc.ar, vc.em);
 		}
 
 		edbm_extrude_ex(vc.obedit, vc.em, extrude_htype, BM_ELEM_SELECT, true, true);
@@ -694,7 +693,7 @@ static int edbm_dupli_extrude_cursor_invoke(bContext *C, wmOperator *op, const w
 	}
 
 	if (use_proj)
-		EMBM_project_snap_verts(C, vc.ar, vc.em);
+		EDBM_project_snap_verts(C, vc.ar, vc.em);
 
 	/* This normally happens when pushing undo but modal operators
 	 * like this one don't push undo data until after modal mode is
@@ -711,8 +710,8 @@ void MESH_OT_dupli_extrude_cursor(wmOperatorType *ot)
 	/* identifiers */
 	ot->name = "Duplicate or Extrude to Cursor";
 	ot->idname = "MESH_OT_dupli_extrude_cursor";
-	ot->description = "Duplicate or Extrude to Cursor\nDuplicate and extrude selected vertices, edges or faces towards the mouse cursor\nWith the Rotate flag on the target object gets randomly rotated\nHotkey Tool! Please use the hotkey to use this tool";
-	
+	ot->description = "Duplicate and extrude selected vertices, edges or faces towards the mouse cursor";
+
 	/* api callbacks */
 	ot->invoke = edbm_dupli_extrude_cursor_invoke;
 	ot->poll = ED_operator_editmesh_region_view3d;
@@ -721,244 +720,6 @@ void MESH_OT_dupli_extrude_cursor(wmOperatorType *ot)
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
 	RNA_def_boolean(ot->srna, "rotate_source", true, "Rotate Source", "Rotate initial selection giving better shape");
-}
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Spin Operator
- * \{ */
-
-static int edbm_spin_exec(bContext *C, wmOperator *op)
-{
-	Object *obedit = CTX_data_edit_object(C);
-	BMEditMesh *em = BKE_editmesh_from_object(obedit);
-	BMesh *bm = em->bm;
-	BMOperator spinop;
-	float cent[3], axis[3];
-	float d[3] = {0.0f, 0.0f, 0.0f};
-	int steps, dupli;
-	float angle;
-
-	RNA_float_get_array(op->ptr, "center", cent);
-	RNA_float_get_array(op->ptr, "axis", axis);
-	steps = RNA_int_get(op->ptr, "steps");
-	angle = RNA_float_get(op->ptr, "angle");
-	//if (ts->editbutflag & B_CLOCKWISE)
-	angle = -angle;
-	dupli = RNA_boolean_get(op->ptr, "dupli");
-
-	if (is_zero_v3(axis)) {
-		BKE_report(op->reports, RPT_ERROR, "Invalid/unset axis");
-		return OPERATOR_CANCELLED;
-	}
-
-	/* keep the values in worldspace since we're passing the obmat */
-	if (!EDBM_op_init(em, &spinop, op,
-	                  "spin geom=%hvef cent=%v axis=%v dvec=%v steps=%i angle=%f space=%m4 use_duplicate=%b",
-	                  BM_ELEM_SELECT, cent, axis, d, steps, angle, obedit->obmat, dupli))
-	{
-		return OPERATOR_CANCELLED;
-	}
-	BMO_op_exec(bm, &spinop);
-	EDBM_flag_disable_all(em, BM_ELEM_SELECT);
-	BMO_slot_buffer_hflag_enable(bm, spinop.slots_out, "geom_last.out", BM_ALL_NOLOOP, BM_ELEM_SELECT, true);
-	if (!EDBM_op_finish(em, &spinop, op, true)) {
-		return OPERATOR_CANCELLED;
-	}
-
-	EDBM_update_generic(em, true, true);
-
-	return OPERATOR_FINISHED;
-}
-
-/* get center and axis, in global coords */
-static int edbm_spin_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event))
-{
-	Scene *scene = CTX_data_scene(C);
-	View3D *v3d = CTX_wm_view3d(C);
-	RegionView3D *rv3d = ED_view3d_context_rv3d(C);
-
-	PropertyRNA *prop;
-	prop = RNA_struct_find_property(op->ptr, "center");
-	if (!RNA_property_is_set(op->ptr, prop)) {
-		RNA_property_float_set_array(op->ptr, prop, ED_view3d_cursor3d_get(scene, v3d));
-	}
-	if (rv3d) {
-		prop = RNA_struct_find_property(op->ptr, "axis");
-		if (!RNA_property_is_set(op->ptr, prop)) {
-			RNA_property_float_set_array(op->ptr, prop, rv3d->viewinv[2]);
-		}
-	}
-
-	return edbm_spin_exec(C, op);
-}
-
-void MESH_OT_spin(wmOperatorType *ot)
-{
-	PropertyRNA *prop;
-
-	/* identifiers */
-	ot->name = "Spin";
-	ot->description = "Spin\nExtrude selected vertices in a circle around the cursor in indicated viewport";
-	ot->idname = "MESH_OT_spin";
-
-	/* api callbacks */
-	ot->invoke = edbm_spin_invoke;
-	ot->exec = edbm_spin_exec;
-	ot->poll = ED_operator_editmesh;
-
-	/* flags */
-	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
-
-	/* props */
-	RNA_def_int(ot->srna, "steps", 9, 0, 1000000, "Steps", "Steps", 0, 1000);
-	RNA_def_boolean(ot->srna, "dupli", 0, "Dupli", "Make Duplicates");
-	prop = RNA_def_float(ot->srna, "angle", DEG2RADF(90.0f), -1e12f, 1e12f, "Angle", "Rotation for each step",
-	                     DEG2RADF(-360.0f), DEG2RADF(360.0f));
-	RNA_def_property_subtype(prop, PROP_ANGLE);
-
-	RNA_def_float_vector(ot->srna, "center", 3, NULL, -1e12f, 1e12f,
-	                     "Center", "Center in global view space", -1e4f, 1e4f);
-	RNA_def_float_vector(ot->srna, "axis", 3, NULL, -1.0f, 1.0f, "Axis", "Axis in global view space", -1.0f, 1.0f);
-
-}
-
-/** \} */
-
-/* -------------------------------------------------------------------- */
-/** \name Screw Operator
- * \{ */
-
-static int edbm_screw_exec(bContext *C, wmOperator *op)
-{
-	Object *obedit = CTX_data_edit_object(C);
-	BMEditMesh *em = BKE_editmesh_from_object(obedit);
-	BMesh *bm = em->bm;
-	BMEdge *eed;
-	BMVert *eve, *v1, *v2;
-	BMIter iter, eiter;
-	BMOperator spinop;
-	float dvec[3], nor[3], cent[3], axis[3], v1_co_global[3], v2_co_global[3];
-	int steps, turns;
-	int valence;
-
-
-	turns = RNA_int_get(op->ptr, "turns");
-	steps = RNA_int_get(op->ptr, "steps");
-	RNA_float_get_array(op->ptr, "center", cent);
-	RNA_float_get_array(op->ptr, "axis", axis);
-
-	if (is_zero_v3(axis)) {
-		BKE_report(op->reports, RPT_ERROR, "Invalid/unset axis");
-		return OPERATOR_CANCELLED;
-	}
-
-	/* find two vertices with valence count == 1, more or less is wrong */
-	v1 = NULL;
-	v2 = NULL;
-
-	BM_ITER_MESH (eve, &iter, em->bm, BM_VERTS_OF_MESH) {
-		valence = 0;
-		BM_ITER_ELEM (eed, &eiter, eve, BM_EDGES_OF_VERT) {
-			if (BM_elem_flag_test(eed, BM_ELEM_SELECT)) {
-				valence++;
-			}
-		}
-
-		if (valence == 1) {
-			if (v1 == NULL) {
-				v1 = eve;
-			}
-			else if (v2 == NULL) {
-				v2 = eve;
-			}
-			else {
-				v1 = NULL;
-				break;
-			}
-		}
-	}
-
-	if (v1 == NULL || v2 == NULL) {
-		BKE_report(op->reports, RPT_ERROR, "You have to select a string of connected vertices too");
-		return OPERATOR_CANCELLED;
-	}
-
-	copy_v3_v3(nor, obedit->obmat[2]);
-
-	/* calculate dvec */
-	mul_v3_m4v3(v1_co_global, obedit->obmat, v1->co);
-	mul_v3_m4v3(v2_co_global, obedit->obmat, v2->co);
-	sub_v3_v3v3(dvec, v1_co_global, v2_co_global);
-	mul_v3_fl(dvec, 1.0f / steps);
-
-	if (dot_v3v3(nor, dvec) > 0.0f)
-		negate_v3(dvec);
-
-	if (!EDBM_op_init(em, &spinop, op,
-	                  "spin geom=%hvef cent=%v axis=%v dvec=%v steps=%i angle=%f space=%m4 use_duplicate=%b",
-	                  BM_ELEM_SELECT, cent, axis, dvec, turns * steps, DEG2RADF(360.0f * turns), obedit->obmat, false))
-	{
-		return OPERATOR_CANCELLED;
-	}
-	BMO_op_exec(bm, &spinop);
-	EDBM_flag_disable_all(em, BM_ELEM_SELECT);
-	BMO_slot_buffer_hflag_enable(bm, spinop.slots_out, "geom_last.out", BM_ALL_NOLOOP, BM_ELEM_SELECT, true);
-	if (!EDBM_op_finish(em, &spinop, op, true)) {
-		return OPERATOR_CANCELLED;
-	}
-
-	EDBM_update_generic(em, true, true);
-
-	return OPERATOR_FINISHED;
-}
-
-/* get center and axis, in global coords */
-static int edbm_screw_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event))
-{
-	Scene *scene = CTX_data_scene(C);
-	View3D *v3d = CTX_wm_view3d(C);
-	RegionView3D *rv3d = ED_view3d_context_rv3d(C);
-
-	PropertyRNA *prop;
-	prop = RNA_struct_find_property(op->ptr, "center");
-	if (!RNA_property_is_set(op->ptr, prop)) {
-		RNA_property_float_set_array(op->ptr, prop, ED_view3d_cursor3d_get(scene, v3d));
-	}
-	if (rv3d) {
-		prop = RNA_struct_find_property(op->ptr, "axis");
-		if (!RNA_property_is_set(op->ptr, prop)) {
-			RNA_property_float_set_array(op->ptr, prop, rv3d->viewinv[1]);
-		}
-	}
-
-	return edbm_screw_exec(C, op);
-}
-
-void MESH_OT_screw(wmOperatorType *ot)
-{
-	/* identifiers */
-	ot->name = "Screw";
-	ot->description = "Screw\nExtrude selected vertices in screw-shaped rotation around the cursor in indicated viewport";
-	ot->idname = "MESH_OT_screw";
-
-	/* api callbacks */
-	ot->invoke = edbm_screw_invoke;
-	ot->exec = edbm_screw_exec;
-	ot->poll = ED_operator_editmesh;
-
-	/* flags */
-	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
-
-	/* props */
-	RNA_def_int(ot->srna, "steps", 9, 1, 100000, "Steps", "Steps", 3, 256);
-	RNA_def_int(ot->srna, "turns", 1, 1, 100000, "Turns", "Turns", 1, 256);
-
-	RNA_def_float_vector(ot->srna, "center", 3, NULL, -1e12f, 1e12f,
-	                     "Center", "Center in global view space", -1e4f, 1e4f);
-	RNA_def_float_vector(ot->srna, "axis", 3, NULL, -1.0f, 1.0f,
-	                     "Axis", "Axis in global view space", -1.0f, 1.0f);
 }
 
 /** \} */

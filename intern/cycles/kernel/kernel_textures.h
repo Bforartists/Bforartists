@@ -81,5 +81,7 @@ KERNEL_TEX(uint, __sobol_directions)
 /* image textures */
 KERNEL_TEX(TextureInfo, __texture_info)
 
-#undef KERNEL_TEX
+/* ies lights */
+KERNEL_TEX(float, __ies)
 
+#undef KERNEL_TEX

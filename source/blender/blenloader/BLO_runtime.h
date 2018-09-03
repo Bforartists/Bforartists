@@ -23,7 +23,7 @@
  * Contributor(s): none yet.
  *
  * ***** END GPL LICENSE BLOCK *****
- * 
+ *
  */
 
 #ifndef __BLO_RUNTIME_H__
@@ -51,4 +51,3 @@ bool BLO_main_validate_libraries(struct Main *bmain, struct ReportList *reports)
 #endif
 
 #endif /* __BLO_RUNTIME_H__ */
-

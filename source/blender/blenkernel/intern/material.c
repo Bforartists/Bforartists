@@ -49,8 +49,8 @@
 #include "DNA_object_types.h"
 #include "DNA_scene_types.h"
 
-#include "BLI_math.h"		
-#include "BLI_listbase.h"		
+#include "BLI_math.h"
+#include "BLI_listbase.h"
 #include "BLI_utildefines.h"
 #include "BLI_string.h"
 #include "BLI_array_utils.h"
@@ -90,14 +90,14 @@ void BKE_material_free(Material *ma)
 	int a;
 
 	BKE_animdata_free((ID *)ma, false);
-	
+
 	for (a = 0; a < MAX_MTEX; a++) {
 		MEM_SAFE_FREE(ma->mtex[a]);
 	}
-	
+
 	MEM_SAFE_FREE(ma->ramp_col);
 	MEM_SAFE_FREE(ma->ramp_spec);
-	
+
 	/* is no lib link block, but material extension */
 	if (ma->nodetree) {
 		ntreeFreeTree(ma->nodetree);
@@ -154,13 +154,13 @@ void BKE_material_init(Material *ma)
 	ma->tx_falloff = 1.0;
 	ma->shad_alpha = 1.0f;
 	ma->vcol_alpha = 0;
-	
+
 	ma->gloss_mir = ma->gloss_tra = 1.0;
 	ma->samp_gloss_mir = ma->samp_gloss_tra = 18;
 	ma->adapt_thresh_mir = ma->adapt_thresh_tra = 0.005;
 	ma->dist_mir = 0.0;
 	ma->fadeto_mir = MA_RAYMIR_FADETOSKY;
-	
+
 	ma->rampfac_col = 1.0;
 	ma->rampfac_spec = 1.0;
 	ma->pr_lamp = 3;         /* two lamps, is bits */
@@ -197,11 +197,11 @@ void BKE_material_init(Material *ma)
 	ma->vol.ms_spread = 0.2f;
 	ma->vol.ms_diff = 1.f;
 	ma->vol.ms_intensity = 1.f;
-	
+
 	ma->game.flag = GEMAT_BACKCULL;
 	ma->game.alpha_blend = 0;
 	ma->game.face_orientation = 0;
-	
+
 	ma->mode = MA_TRACEBLE | MA_SHADBUF | MA_SHADOW | MA_RAYBIAS | MA_TANGENT_STR | MA_ZTRANSP;
 	ma->mode2 = MA_CASTSHADOW;
 	ma->shade_flag = MA_APPROX_OCCLUSION;
@@ -213,9 +213,9 @@ Material *BKE_material_add(Main *bmain, const char *name)
 	Material *ma;
 
 	ma = BKE_libblock_alloc(bmain, ID_MA, name, 0);
-	
+
 	BKE_material_init(ma);
-	
+
 	return ma;
 }
 
@@ -282,7 +282,7 @@ Material *BKE_material_localize(Material *ma)
 
 	Material *man;
 	int a;
-	
+
 	man = BKE_libblock_copy_nolib(&ma->id, false);
 
 	/* no increment for texture ID users, in previewrender.c it prevents decrement */
@@ -292,18 +292,18 @@ Material *BKE_material_localize(Material *ma)
 			memcpy(man->mtex[a], ma->mtex[a], sizeof(MTex));
 		}
 	}
-	
+
 	if (ma->ramp_col) man->ramp_col = MEM_dupallocN(ma->ramp_col);
 	if (ma->ramp_spec) man->ramp_spec = MEM_dupallocN(ma->ramp_spec);
 
 	man->texpaintslot = NULL;
 	man->preview = NULL;
-	
+
 	if (ma->nodetree)
 		man->nodetree = ntreeLocalize(ma->nodetree);
-	
+
 	BLI_listbase_clear(&man->gpumaterial);
-	
+
 	return man;
 }
 
@@ -317,7 +317,7 @@ Material ***give_matarar(Object *ob)
 	Mesh *me;
 	Curve *cu;
 	MetaBall *mb;
-	
+
 	if (ob->type == OB_MESH) {
 		me = ob->data;
 		return &(me->mat);
@@ -338,7 +338,7 @@ short *give_totcolp(Object *ob)
 	Mesh *me;
 	Curve *cu;
 	MetaBall *mb;
-	
+
 	if (ob->type == OB_MESH) {
 		me = ob->data;
 		return &(me->totcol);
@@ -501,7 +501,7 @@ Material *BKE_material_pop_id(Main *bmain, ID *id, int index_i, bool update_data
 
 				(*totcol)--;
 				*matar = MEM_reallocN(*matar, sizeof(void *) * (*totcol));
-				test_all_objects_materials(G.main, id);
+				test_all_objects_materials(bmain, id);
 			}
 
 			if (update_data) {
@@ -512,7 +512,7 @@ Material *BKE_material_pop_id(Main *bmain, ID *id, int index_i, bool update_data
 			DAG_relations_tag_update(bmain);
 		}
 	}
-	
+
 	return ret;
 }
 
@@ -546,7 +546,7 @@ Material *give_current_material(Object *ob, short act)
 	const short *totcolp;
 
 	if (ob == NULL) return NULL;
-	
+
 	/* if object cannot have material, (totcolp == NULL) */
 	totcolp = give_totcolp(ob);
 	if (totcolp == NULL || ob->totcol == 0) return NULL;
@@ -572,12 +572,12 @@ Material *give_current_material(Object *ob, short act)
 		if (act > ob->totcol) act = ob->totcol;
 
 		matarar = give_matarar(ob);
-		
+
 		if (matarar && *matarar) ma = (*matarar)[act - 1];
 		else ma = NULL;
-		
+
 	}
-	
+
 	return ma;
 }
 
@@ -634,7 +634,7 @@ void BKE_material_resize_object(Main *bmain, Object *ob, const short totcol, boo
 	DAG_relations_tag_update(bmain);
 }
 
-void test_object_materials(Object *ob, ID *id)
+void test_object_materials(Main *bmain, Object *ob, ID *id)
 {
 	/* make the ob mat-array same size as 'ob->data' mat-array */
 	const short *totcol;
@@ -643,7 +643,7 @@ void test_object_materials(Object *ob, ID *id)
 		return;
 	}
 
-	BKE_material_resize_object(G.main, ob, *totcol, false);
+	BKE_material_resize_object(bmain, ob, *totcol, false);
 }
 
 void test_all_objects_materials(Main *bmain, ID *id)
@@ -665,7 +665,7 @@ void test_all_objects_materials(Main *bmain, ID *id)
 	BKE_main_unlock(bmain);
 }
 
-void assign_material_id(ID *id, Material *ma, short act)
+void assign_material_id(Main *bmain, ID *id, Material *ma, short act)
 {
 	Material *mao, **matar, ***matarar;
 	short *totcolp;
@@ -709,10 +709,10 @@ void assign_material_id(ID *id, Material *ma, short act)
 	if (ma)
 		id_us_plus(&ma->id);
 
-	test_all_objects_materials(G.main, id);
+	test_all_objects_materials(bmain, id);
 }
 
-void assign_material(Object *ob, Material *ma, short act, int assign_type)
+void assign_material(Main *bmain, Object *ob, Material *ma, short act, int assign_type)
 {
 	Material *mao, **matar, ***matarar;
 	short *totcolp;
@@ -720,18 +720,18 @@ void assign_material(Object *ob, Material *ma, short act, int assign_type)
 
 	if (act > MAXMAT) return;
 	if (act < 1) act = 1;
-	
+
 	/* prevent crashing when using accidentally */
 	BLI_assert(!ID_IS_LINKED(ob));
 	if (ID_IS_LINKED(ob)) return;
-	
+
 	/* test arraylens */
-	
+
 	totcolp = give_totcolp(ob);
 	matarar = give_matarar(ob);
-	
+
 	if (totcolp == NULL || matarar == NULL) return;
-	
+
 	if (act > *totcolp) {
 		matar = MEM_callocN(sizeof(void *) * act, "matarray1");
 
@@ -775,7 +775,7 @@ void assign_material(Object *ob, Material *ma, short act, int assign_type)
 				break;
 		}
 	}
-	
+
 	/* do it */
 
 	ob->matbits[act - 1] = bit;
@@ -784,14 +784,14 @@ void assign_material(Object *ob, Material *ma, short act, int assign_type)
 		if (mao)
 			id_us_min(&mao->id);
 		ob->mat[act - 1] = ma;
-		test_object_materials(ob, ob->data);
+		test_object_materials(bmain, ob, ob->data);
 	}
 	else {  /* in data */
 		mao = (*matarar)[act - 1];
 		if (mao)
 			id_us_min(&mao->id);
 		(*matarar)[act - 1] = ma;
-		test_all_objects_materials(G.main, ob->data);  /* Data may be used by several objects... */
+		test_all_objects_materials(bmain, ob->data);  /* Data may be used by several objects... */
 	}
 
 	if (ma)
@@ -884,20 +884,20 @@ void BKE_material_remap_object_calc(
 
 
 /* XXX - this calls many more update calls per object then are needed, could be optimized */
-void assign_matarar(struct Object *ob, struct Material ***matar, short totcol)
+void assign_matarar(Main *bmain, struct Object *ob, struct Material ***matar, short totcol)
 {
 	int actcol_orig = ob->actcol;
 	short i;
 
 	while ((ob->totcol > totcol) &&
-	       BKE_object_material_slot_remove(ob))
+	       BKE_object_material_slot_remove(bmain, ob))
 	{
 		/* pass */
 	}
 
 	/* now we have the right number of slots */
 	for (i = 0; i < totcol; i++)
-		assign_material(ob, (*matar)[i], i + 1, BKE_MAT_ASSIGN_USERPREF);
+		assign_material(bmain, ob, (*matar)[i], i + 1, BKE_MAT_ASSIGN_USERPREF);
 
 	if (actcol_orig > ob->totcol)
 		actcol_orig = ob->totcol;
@@ -910,14 +910,14 @@ short BKE_object_material_slot_find_index(Object *ob, Material *ma)
 {
 	Material ***matarar;
 	short a, *totcolp;
-	
+
 	if (ma == NULL) return 0;
-	
+
 	totcolp = give_totcolp(ob);
 	matarar = give_matarar(ob);
-	
+
 	if (totcolp == NULL || matarar == NULL) return 0;
-	
+
 	for (a = 0; a < *totcolp; a++)
 		if ((*matarar)[a] == ma)
 			break;
@@ -926,39 +926,39 @@ short BKE_object_material_slot_find_index(Object *ob, Material *ma)
 	return 0;
 }
 
-bool BKE_object_material_slot_add(Object *ob)
+bool BKE_object_material_slot_add(Main *bmain, Object *ob)
 {
 	if (ob == NULL) return false;
 	if (ob->totcol >= MAXMAT) return false;
-	
-	assign_material(ob, NULL, ob->totcol + 1, BKE_MAT_ASSIGN_USERPREF);
+
+	assign_material(bmain, ob, NULL, ob->totcol + 1, BKE_MAT_ASSIGN_USERPREF);
 	ob->actcol = ob->totcol;
 	return true;
 }
 
-static void do_init_render_material(Material *ma, int r_mode, float *amb)
+static void do_init_render_material(Main *bmain, Material *ma, int r_mode, float *amb)
 {
 	MTex *mtex;
 	int a, needuv = 0, needtang = 0;
-	
+
 	if (ma->flarec == 0) ma->flarec = 1;
 
 	/* add all texcoflags from mtex, texco and mapto were cleared in advance */
 	for (a = 0; a < MAX_MTEX; a++) {
-		
+
 		/* separate tex switching */
 		if (ma->septex & (1 << a)) continue;
 
 		mtex = ma->mtex[a];
 		if (mtex && mtex->tex && (mtex->tex->type | (mtex->tex->use_nodes && mtex->tex->nodetree) )) {
-			
+
 			ma->texco |= mtex->texco;
 			ma->mapto |= mtex->mapto;
 
 			/* always get derivatives for these textures */
 			if (ELEM(mtex->tex->type, TEX_IMAGE, TEX_ENVMAP)) ma->texco |= TEXCO_OSA;
 			else if (mtex->texflag & (MTEX_COMPAT_BUMP | MTEX_3TAP_BUMP | MTEX_5TAP_BUMP | MTEX_BICUBIC_BUMP)) ma->texco |= TEXCO_OSA;
-			
+
 			if (ma->texco & (TEXCO_ORCO | TEXCO_REFL | TEXCO_NORM | TEXCO_STRAND | TEXCO_STRESS)) needuv = 1;
 			else if (ma->texco & (TEXCO_GLOB | TEXCO_UV | TEXCO_OBJECT | TEXCO_SPEED)) needuv = 1;
 			else if (ma->texco & (TEXCO_LAVECTOR | TEXCO_VIEW)) needuv = 1;
@@ -970,13 +970,13 @@ static void do_init_render_material(Material *ma, int r_mode, float *amb)
 
 	if (needtang) ma->mode |= MA_NORMAP_TANG;
 	else ma->mode &= ~MA_NORMAP_TANG;
-	
+
 	if (ma->mode & (MA_VERTEXCOL | MA_VERTEXCOLP | MA_FACETEXTURE)) {
 		needuv = 1;
 		if (r_mode & R_OSA) ma->texco |= TEXCO_OSA;     /* for texfaces */
 	}
 	if (needuv) ma->texco |= NEED_UV;
-	
+
 	/* since the raytracer doesnt recalc O structs for each ray, we have to preset them all */
 	if (r_mode & R_RAYTRACE) {
 		if ((ma->mode & (MA_RAYMIRROR | MA_SHADOW_TRA)) || ((ma->mode & MA_TRANSP) && (ma->mode & MA_RAYTRANSP))) {
@@ -984,7 +984,7 @@ static void do_init_render_material(Material *ma, int r_mode, float *amb)
 			if (r_mode & R_OSA) ma->texco |= TEXCO_OSA;
 		}
 	}
-	
+
 	if (amb) {
 		ma->ambr = ma->amb * amb[0];
 		ma->ambg = ma->amb * amb[1];
@@ -995,7 +995,7 @@ static void do_init_render_material(Material *ma, int r_mode, float *amb)
 	if ((ma->shade_flag & MA_GROUP_LOCAL) && ma->id.lib && ma->group && ma->group->id.lib) {
 		Group *group;
 
-		for (group = G.main->group.first; group; group = group->id.next) {
+		for (group = bmain->group.first; group; group = group->id.next) {
 			if (!ID_IS_LINKED(group) && STREQ(group->id.name, ma->group->id.name)) {
 				ma->group = group;
 			}
@@ -1003,7 +1003,7 @@ static void do_init_render_material(Material *ma, int r_mode, float *amb)
 	}
 }
 
-static void init_render_nodetree(bNodeTree *ntree, Material *basemat, int r_mode, float *amb)
+static void init_render_nodetree(Main *bmain, bNodeTree *ntree, Material *basemat, int r_mode, float *amb)
 {
 	bNode *node;
 
@@ -1014,7 +1014,7 @@ static void init_render_nodetree(bNodeTree *ntree, Material *basemat, int r_mode
 			if (GS(node->id->name) == ID_MA) {
 				Material *ma = (Material *)node->id;
 				if (ma != basemat) {
-					do_init_render_material(ma, r_mode, amb);
+					do_init_render_material(bmain, ma, r_mode, amb);
 					basemat->texco |= ma->texco;
 				}
 
@@ -1028,7 +1028,7 @@ static void init_render_nodetree(bNodeTree *ntree, Material *basemat, int r_mode
 					basemat->mode_l |= MA_STR_SURFDIFF;
 			}
 			else if (node->type == NODE_GROUP)
-				init_render_nodetree((bNodeTree *)node->id, basemat, r_mode, amb);
+				init_render_nodetree(bmain, (bNodeTree *)node->id, basemat, r_mode, amb);
 		}
 		else if (node->typeinfo->type == SH_NODE_NORMAL_MAP) {
 			basemat->mode2_l |= MA_TANGENT_CONCRETE;
@@ -1048,11 +1048,11 @@ static void init_render_nodetree(bNodeTree *ntree, Material *basemat, int r_mode
 	}
 }
 
-void init_render_material(Material *mat, int r_mode, float *amb)
+void init_render_material(Main *bmain, Material *mat, int r_mode, float *amb)
 {
-	
-	do_init_render_material(mat, r_mode, amb);
-	
+
+	do_init_render_material(bmain, mat, r_mode, amb);
+
 	if (mat->nodetree && mat->use_nodes) {
 		/* mode_l will take the pipeline options from the main material, and the or-ed
 		 * result of non-pipeline options from the nodes. shadeless is an exception,
@@ -1060,8 +1060,8 @@ void init_render_material(Material *mat, int r_mode, float *amb)
 		mat->mode_l = (mat->mode & MA_MODE_PIPELINE) | MA_SHLESS;
 		mat->mode2_l = mat->mode2 & MA_MODE2_PIPELINE;
 		mat->nmap_tangent_names_count = 0;
-		init_render_nodetree(mat->nodetree, mat, r_mode, amb);
-		
+		init_render_nodetree(bmain, mat->nodetree, mat, r_mode, amb);
+
 		if (!mat->nodetree->execdata)
 			mat->nodetree->execdata = ntreeShaderBeginExecTree(mat->nodetree);
 	}
@@ -1077,7 +1077,7 @@ void init_render_material(Material *mat, int r_mode, float *amb)
 void init_render_materials(Main *bmain, int r_mode, float *amb, bool do_default_material)
 {
 	Material *ma;
-	
+
 	/* clear these flags before going over materials, to make sure they
 	 * are cleared only once, otherwise node materials contained in other
 	 * node materials can go wrong */
@@ -1092,12 +1092,12 @@ void init_render_materials(Main *bmain, int r_mode, float *amb, bool do_default_
 	for (ma = bmain->mat.first; ma; ma = ma->id.next) {
 		/* is_used flag comes back in convertblender.c */
 		ma->flag &= ~MA_IS_USED;
-		if (ma->id.us) 
-			init_render_material(ma, r_mode, amb);
+		if (ma->id.us)
+			init_render_material(bmain, ma, r_mode, amb);
 	}
 
 	if (do_default_material) {
-		init_render_material(&defmaterial, r_mode, amb);
+		init_render_material(bmain, &defmaterial, r_mode, amb);
 	}
 }
 
@@ -1114,7 +1114,7 @@ void end_render_materials(Main *bmain)
 {
 	Material *ma;
 	for (ma = bmain->mat.first; ma; ma = ma->id.next)
-		if (ma->id.us) 
+		if (ma->id.us)
 			end_render_material(ma);
 }
 
@@ -1162,7 +1162,7 @@ static void material_node_drivers_update(Scene *scene, bNodeTree *ntree, float c
 	if (ntree->adt && ntree->adt->drivers.first) {
 		BKE_animsys_evaluate_animdata(scene, &ntree->id, ntree->adt, ctime, ADT_RECALC_DRIVERS);
 	}
-	
+
 	/* nodes */
 	for (node = ntree->nodes.first; node; node = node->next) {
 		if (node->id) {
@@ -1176,7 +1176,7 @@ static void material_node_drivers_update(Scene *scene, bNodeTree *ntree, float c
 	}
 }
 
-/* Calculate all drivers for materials 
+/* Calculate all drivers for materials
  * FIXME: this is really a terrible method which may result in some things being calculated
  * multiple times. However, without proper despgraph support for these things, we are forced
  * into this sort of thing...
@@ -1185,7 +1185,7 @@ void material_drivers_update(Scene *scene, Material *ma, float ctime)
 {
 	//if (G.f & G_DEBUG)
 	//	printf("material_drivers_update(%s, %s)\n", scene->id.name, ma->id.name);
-	
+
 	/* Prevent infinite recursion by checking (and tagging the material) as having been visited already
 	 * (see BKE_scene_update_tagged()). This assumes ma->id.tag & LIB_TAG_DOIT isn't set by anything else
 	 * in the meantime... [#32017]
@@ -1194,12 +1194,12 @@ void material_drivers_update(Scene *scene, Material *ma, float ctime)
 		return;
 
 	ma->id.tag |= LIB_TAG_DOIT;
-	
+
 	/* material itself */
 	if (ma->adt && ma->adt->drivers.first) {
 		BKE_animsys_evaluate_animdata(scene, &ma->id, ma->adt, ctime, ADT_RECALC_DRIVERS);
 	}
-	
+
 	/* nodes */
 	if (ma->nodetree) {
 		material_node_drivers_update(scene, ma->nodetree, ctime);
@@ -1208,12 +1208,12 @@ void material_drivers_update(Scene *scene, Material *ma, float ctime)
 	ma->id.tag &= ~LIB_TAG_DOIT;
 }
 
-bool BKE_object_material_slot_remove(Object *ob)
+bool BKE_object_material_slot_remove(Main *bmain, Object *ob)
 {
 	Material *mao, ***matarar;
 	short *totcolp;
 	short a, actcol;
-	
+
 	if (ob == NULL || ob->totcol == 0) {
 		return false;
 	}
@@ -1227,10 +1227,10 @@ bool BKE_object_material_slot_remove(Object *ob)
 
 	/* take a mesh/curve/mball as starting point, remove 1 index,
 	 * AND with all objects that share the ob->data
-	 * 
+	 *
 	 * after that check indices in mesh/curve/mball!!!
 	 */
-	
+
 	totcolp = give_totcolp(ob);
 	matarar = give_matarar(ob);
 
@@ -1242,24 +1242,24 @@ bool BKE_object_material_slot_remove(Object *ob)
 	if (ob->actcol > ob->totcol) {
 		ob->actcol = ob->totcol;
 	}
-	
+
 	/* we delete the actcol */
 	mao = (*matarar)[ob->actcol - 1];
 	if (mao)
 		id_us_min(&mao->id);
-	
+
 	for (a = ob->actcol; a < ob->totcol; a++)
 		(*matarar)[a - 1] = (*matarar)[a];
 	(*totcolp)--;
-	
+
 	if (*totcolp == 0) {
 		MEM_freeN(*matarar);
 		*matarar = NULL;
 	}
-	
+
 	actcol = ob->actcol;
 
-	for (Object *obt = G.main->object.first; obt; obt = obt->id.next) {
+	for (Object *obt = bmain->object.first; obt; obt = obt->id.next) {
 		if (obt->data == ob->data) {
 			/* Can happen when object material lists are used, see: T52953 */
 			if (actcol > obt->totcol) {
@@ -1269,14 +1269,14 @@ bool BKE_object_material_slot_remove(Object *ob)
 			mao = obt->mat[actcol - 1];
 			if (mao)
 				id_us_min(&mao->id);
-		
+
 			for (a = actcol; a < obt->totcol; a++) {
 				obt->mat[a - 1] = obt->mat[a];
 				obt->matbits[a - 1] = obt->matbits[a];
 			}
 			obt->totcol--;
 			if (obt->actcol > obt->totcol) obt->actcol = obt->totcol;
-			
+
 			if (obt->totcol == 0) {
 				MEM_freeN(obt->mat);
 				MEM_freeN(obt->matbits);
@@ -1308,7 +1308,7 @@ static bNode *nodetree_uv_node_recursive(bNode *node)
 {
 	bNode *inode;
 	bNodeSocket *sock;
-	
+
 	for (sock = node->inputs.first; sock; sock = sock->next) {
 		if (sock->link) {
 			inode = sock->link->fromnode;
@@ -1320,7 +1320,7 @@ static bNode *nodetree_uv_node_recursive(bNode *node)
 			}
 		}
 	}
-	
+
 	return NULL;
 }
 
@@ -1332,7 +1332,7 @@ void BKE_texpaint_slot_refresh_cache(Scene *scene, Material *ma)
 
 	bool use_nodes = BKE_scene_use_new_shading_nodes(scene);
 	bool is_bi = BKE_scene_uses_blender_internal(scene) || BKE_scene_uses_blender_game(scene);
-	
+
 	if (!ma)
 		return;
 
@@ -1347,7 +1347,7 @@ void BKE_texpaint_slot_refresh_cache(Scene *scene, Material *ma)
 		ma->paint_clone_slot = 0;
 		return;
 	}
-	
+
 	if (use_nodes || ma->use_nodes) {
 		bNode *node, *active_node;
 
@@ -1376,11 +1376,11 @@ void BKE_texpaint_slot_refresh_cache(Scene *scene, Material *ma)
 				if (active_node == node)
 					ma->paint_active_slot = index;
 				ma->texpaintslot[index].ima = (Image *)node->id;
-				
+
 				/* for new renderer, we need to traverse the treeback in search of a UV node */
 				if (use_nodes) {
 					bNode *uvnode = nodetree_uv_node_recursive(node);
-					
+
 					if (uvnode) {
 						NodeShaderUVMap *storage = (NodeShaderUVMap *)uvnode->storage;
 						ma->texpaintslot[index].uvname = storage->uv_map;
@@ -1419,7 +1419,7 @@ void BKE_texpaint_slot_refresh_cache(Scene *scene, Material *ma)
 				ma->texpaintslot[index].ima = (*mtex)->tex->ima;
 				ma->texpaintslot[index].uvname = (*mtex)->uvname;
 				ma->texpaintslot[index].index = i;
-				
+
 				index++;
 			}
 		}
@@ -1428,12 +1428,12 @@ void BKE_texpaint_slot_refresh_cache(Scene *scene, Material *ma)
 		ma->paint_active_slot = 0;
 		ma->paint_clone_slot = 0;
 		return;
-	}	
+	}
 
 
 	ma->tot_slots = count;
-	
-	
+
+
 	if (ma->paint_active_slot >= count) {
 		ma->paint_active_slot = count - 1;
 	}
@@ -1460,7 +1460,7 @@ void BKE_texpaint_slots_refresh_object(Scene *scene, struct Object *ob)
 void ramp_blend(int type, float r_col[3], const float fac, const float col[3])
 {
 	float tmp, facm = 1.0f - fac;
-	
+
 	switch (type) {
 		case MA_RAMP_BLEND:
 			r_col[0] = facm * (r_col[0]) + fac * col[0];
@@ -1709,7 +1709,7 @@ void free_matcopybuf(void)
 	matcopied = 0;
 }
 
-void copy_matcopybuf(Material *ma)
+void copy_matcopybuf(Main *bmain, Material *ma)
 {
 	int a;
 	MTex *mtex;
@@ -1727,13 +1727,13 @@ void copy_matcopybuf(Material *ma)
 			matcopybuf.mtex[a] = MEM_dupallocN(mtex);
 		}
 	}
-	matcopybuf.nodetree = ntreeCopyTree_ex(ma->nodetree, G.main, false);
+	matcopybuf.nodetree = ntreeCopyTree_ex(ma->nodetree, bmain, false);
 	matcopybuf.preview = NULL;
 	BLI_listbase_clear(&matcopybuf.gpumaterial);
 	matcopied = 1;
 }
 
-void paste_matcopybuf(Material *ma)
+void paste_matcopybuf(Main *bmain, Material *ma)
 {
 	int a;
 	MTex *mtex;
@@ -1772,7 +1772,7 @@ void paste_matcopybuf(Material *ma)
 			ma->mtex[a] = MEM_dupallocN(mtex);
 			if (mtex->tex) {
 				/* first check this is in main (we may have loaded another file) [#35500] */
-				if (BLI_findindex(&G.main->tex, mtex->tex) != -1) {
+				if (BLI_findindex(&bmain->tex, mtex->tex) != -1) {
 					id_us_plus((ID *)mtex->tex);
 				}
 				else {
@@ -1782,7 +1782,7 @@ void paste_matcopybuf(Material *ma)
 		}
 	}
 
-	ma->nodetree = ntreeCopyTree_ex(matcopybuf.nodetree, G.main, false);
+	ma->nodetree = ntreeCopyTree_ex(matcopybuf.nodetree, bmain, false);
 }
 
 
@@ -1806,10 +1806,10 @@ static int encode_tfaceflag(MTFace *tf, int convertall)
 
 	/* light tface flag is ignored in GLSL mode */
 	flag &= ~TF_LIGHT;
-	
+
 	/* 15 is how big the flag can be - hardcoded here and in decode_tfaceflag() */
 	flag |= tf->transp << 15;
-	
+
 	/* increase 1 so flag 0 is different than no flag yet */
 	return flag + 1;
 }
@@ -1825,25 +1825,25 @@ static void decode_tfaceflag(Material *ma, int flag, int convertall)
 
 	alphablend = flag >> 15;  /* encoded in the encode_tfaceflag function */
 	(*game).flag = 0;
-	
+
 	/* General Material Options */
 	if ((flag & TF_DYNAMIC) == 0) (*game).flag    |= GEMAT_NOPHYSICS;
-	
+
 	/* Material Offline Rendering Properties */
 	if (convertall) {
 		if (flag & TF_OBCOL) ma->shade_flag |= MA_OBCOLOR;
 	}
-	
+
 	/* Special Face Properties */
 	if ((flag & TF_TWOSIDE) == 0) (*game).flag |= GEMAT_BACKCULL;
 	if (flag & TF_INVISIBLE) (*game).flag |= GEMAT_INVISIBLE;
 	if (flag & TF_BMFONT) (*game).flag |= GEMAT_TEXT;
-	
+
 	/* Face Orientation */
 	if (flag & TF_BILLBOARD) (*game).face_orientation |= GEMAT_HALO;
 	else if (flag & TF_BILLBOARD2) (*game).face_orientation |= GEMAT_BILLBOARD;
 	else if (flag & TF_SHADOW) (*game).face_orientation |= GEMAT_SHADOW;
-	
+
 	/* Alpha Blend */
 	if (flag & TF_ALPHASORT && ELEM(alphablend, TF_ALPHA, TF_ADD)) (*game).alpha_blend = GEMAT_ALPHA_SORT;
 	else if (alphablend & TF_ALPHA) (*game).alpha_blend = GEMAT_ALPHA;
@@ -1867,7 +1867,7 @@ static int check_tfaceneedmaterial(int flag)
 
 	/* light tface flag is ignored in GLSL mode */
 	flag &= ~TF_LIGHT;
-	
+
 	/* automatic detected if tex image has alpha */
 	flag &= ~(TF_ALPHA << 15);
 	/* automatic detected if using texture */
@@ -1921,9 +1921,9 @@ static short mesh_getmaterialnumber(Mesh *me, Material *ma)
 }
 
 /* append material */
-static short mesh_addmaterial(Mesh *me, Material *ma)
+static short mesh_addmaterial(Main *bmain, Mesh *me, Material *ma)
 {
-	BKE_material_append_id(G.main, &me->id, NULL);
+	BKE_material_append_id(bmain, &me->id, NULL);
 	me->mat[me->totcol - 1] = ma;
 
 	id_us_plus(&ma->id);
@@ -1943,31 +1943,31 @@ static void set_facetexture_flags(Material *ma, Image *image)
 }
 
 /* returns material number */
-static short convert_tfacenomaterial(Main *main, Mesh *me, MTFace *tf, int flag)
+static short convert_tfacenomaterial(Main *bmain, Mesh *me, MTFace *tf, int flag)
 {
 	Material *ma;
 	char idname[MAX_ID_NAME];
 	short mat_nr = -1;
-	
+
 	/* new material, the name uses the flag*/
 	BLI_snprintf(idname, sizeof(idname), "MAMaterial.TF.%0*d", integer_getdigits(flag), flag);
 
-	if ((ma = BLI_findstring(&main->mat, idname + 2, offsetof(ID, name) + 2))) {
+	if ((ma = BLI_findstring(&bmain->mat, idname + 2, offsetof(ID, name) + 2))) {
 		mat_nr = mesh_getmaterialnumber(me, ma);
 		/* assign the material to the mesh */
-		if (mat_nr == -1) mat_nr = mesh_addmaterial(me, ma);
+		if (mat_nr == -1) mat_nr = mesh_addmaterial(bmain, me, ma);
 
 		/* if needed set "Face Textures [Alpha]" Material options */
 		set_facetexture_flags(ma, tf->tpage);
 	}
 	/* create a new material */
 	else {
-		ma = BKE_material_add(main, idname + 2);
+		ma = BKE_material_add(bmain, idname + 2);
 
 		if (ma) {
 			printf("TexFace Convert: Material \"%s\" created.\n", idname + 2);
-			mat_nr = mesh_addmaterial(me, ma);
-			
+			mat_nr = mesh_addmaterial(bmain, me, ma);
+
 			/* if needed set "Face Textures [Alpha]" Material options */
 			set_facetexture_flags(ma, tf->tpage);
 
@@ -1989,7 +1989,7 @@ static short convert_tfacenomaterial(Main *main, Mesh *me, MTFace *tf, int flag)
 }
 
 /* Function to fully convert materials */
-static void convert_tfacematerial(Main *main, Material *ma)
+static void convert_tfacematerial(Main *bmain, Material *ma)
 {
 	Mesh *me;
 	Material *mat_new;
@@ -2001,11 +2001,11 @@ static void convert_tfacematerial(Main *main, Material *ma)
 	CustomDataLayer *cdl;
 	char idname[MAX_ID_NAME];
 
-	for (me = main->mesh.first; me; me = me->id.next) {
+	for (me = bmain->mesh.first; me; me = me->id.next) {
 		/* check if this mesh uses this material */
 		for (a = 0; a < me->totcol; a++)
 			if (me->mat[a] == ma) break;
-			
+
 		/* no material found */
 		if (a == me->totcol) continue;
 
@@ -2025,21 +2025,21 @@ static void convert_tfacematerial(Main *main, Material *ma)
 			/* the name of the new material */
 			calculate_tface_materialname(ma->id.name, (char *)&idname, flag);
 
-			if ((mat_new = BLI_findstring(&main->mat, idname + 2, offsetof(ID, name) + 2))) {
+			if ((mat_new = BLI_findstring(&bmain->mat, idname + 2, offsetof(ID, name) + 2))) {
 				/* material already existent, see if the mesh has it */
 				mat_nr = mesh_getmaterialnumber(me, mat_new);
 				/* material is not in the mesh, add it */
-				if (mat_nr == -1) mat_nr = mesh_addmaterial(me, mat_new);
+				if (mat_nr == -1) mat_nr = mesh_addmaterial(bmain, me, mat_new);
 			}
 			/* create a new material */
 			else {
-				mat_new = BKE_material_copy(main, ma);
+				mat_new = BKE_material_copy(bmain, ma);
 				if (mat_new) {
 					/* rename the material*/
 					BLI_strncpy(mat_new->id.name, idname, sizeof(mat_new->id.name));
 					id_us_min((ID *)mat_new);
 
-					mat_nr = mesh_addmaterial(me, mat_new);
+					mat_nr = mesh_addmaterial(bmain, me, mat_new);
 					decode_tfaceflag(mat_new, flag, 1);
 				}
 				else {
@@ -2048,9 +2048,9 @@ static void convert_tfacematerial(Main *main, Material *ma)
 					continue;
 				}
 			}
-			
+
 			/* if the material has a texture but no texture channel
-			 * set "Face Textures [Alpha]" Material options 
+			 * set "Face Textures [Alpha]" Material options
 			 * actually we need to run it always, because of old behavior
 			 * of using face texture if any texture channel was present (multitex) */
 			//if ((!mat_new->mtex[0]) && (!mat_new->mtex[0]->tex))
@@ -2062,7 +2062,7 @@ static void convert_tfacematerial(Main *main, Material *ma)
 		/* remove material from mesh */
 		for (a = 0; a < me->totcol; ) {
 			if (me->mat[a] == ma) {
-				BKE_material_pop_id(main, &me->id, a, true);
+				BKE_material_pop_id(bmain, &me->id, a, true);
 			}
 			else {
 				a++;
@@ -2084,7 +2084,7 @@ int do_version_tface(Main *main)
 	int a;
 	int flag;
 	int index;
-	
+
 	/* Operator in help menu has been removed for 2.7x */
 	int fileload = 1;
 
@@ -2100,9 +2100,9 @@ int do_version_tface(Main *main)
 	/* mark all the materials to conversion with a flag
 	 * if there is tface create a complete flag for that storing in flag
 	 * if there is tface and flag > 0: creates a new flag based on this face
-	 * if flags are different set flag to -1  
+	 * if flags are different set flag to -1
 	 */
-	
+
 	/* 1st part: marking mesh materials to update */
 	for (me = main->mesh.first; me; me = me->id.next) {
 		if (ID_IS_LINKED(me)) continue;
@@ -2113,7 +2113,7 @@ int do_version_tface(Main *main)
 		if (!cdl) continue;
 
 		nomaterialslots = (me->totcol == 0 ? 1 : 0);
-		
+
 		/* loop over all the faces*/
 		for (a = 0, mf = me->mface; a < me->totface; a++, mf++) {
 			/* texface data for this face */
@@ -2126,11 +2126,11 @@ int do_version_tface(Main *main)
 				if ((tf->mode & TF_CONVERTED)) continue;
 				else tf->mode |= TF_CONVERTED;
 			}
-			
+
 			/* no material slots */
 			if (nomaterialslots) {
 				flag = encode_tfaceflag(tf, 1);
-				
+
 				/* create/find a new material and assign to the face */
 				if (check_tfaceneedmaterial(flag)) {
 					mf->mat_nr = convert_tfacenomaterial(main, me, tf, flag);
@@ -2142,7 +2142,7 @@ int do_version_tface(Main *main)
 			}
 			else if (mf->mat_nr < me->totcol) {
 				ma = me->mat[mf->mat_nr];
-				
+
 				/* no material create one if necessary */
 				if (!ma) {
 					/* find a new material and assign to the face */
@@ -2161,7 +2161,7 @@ int do_version_tface(Main *main)
 				 * later we could, but it's better not */
 				else if (ID_IS_LINKED(ma))
 					continue;
-				
+
 				/* material already marked as disputed */
 				else if (ma->game.flag == MAT_BGE_DISPUTED)
 					continue;
@@ -2173,17 +2173,17 @@ int do_version_tface(Main *main)
 					/* first time changing this material */
 					if (ma->game.flag == 0)
 						ma->game.flag = -flag;
-			
+
 					/* mark material as disputed */
 					else if (ma->game.flag != -flag) {
 						ma->game.flag = MAT_BGE_DISPUTED;
 						continue;
 					}
-			
+
 					/* material ok so far */
 					else {
 						ma->game.flag = -flag;
-						
+
 						/* some people uses multitexture with TexFace by creating a texture
 						 * channel which not necessarily the tf->tpage image. But the game engine
 						 * was enabling it. Now it's required to set "Face Texture [Alpha] in the
@@ -2218,7 +2218,7 @@ int do_version_tface(Main *main)
 		}
 
 	}
-	
+
 	/* 2nd part - conversion */
 	/* skip library files */
 
@@ -2238,7 +2238,7 @@ int do_version_tface(Main *main)
 			}
 			continue;
 		}
-	
+
 		/* no conflicts in this material - 90% of cases
 		 * convert from tface system to material */
 		else if (ma->game.flag < 0) {
@@ -2251,15 +2251,15 @@ int do_version_tface(Main *main)
 					/* check if this mesh uses this material */
 					for (a = 0; a < me->totcol; a++)
 						if (me->mat[a] == ma) break;
-						
+
 					/* no material found */
 					if (a == me->totcol) continue;
-			
+
 					/* get the active tface layer */
 					index = CustomData_get_active_layer_index(&me->fdata, CD_MTFACE);
 					cdl = (index == -1) ? NULL : &me->fdata.layers[index];
 					if (!cdl) continue;
-			
+
 					/* loop over all the faces and stop at the ones that use the material*/
 					for (a = 0, mf = me->mface; a < me->totface; a++, mf++) {
 						if (me->mat[mf->mat_nr] == ma) {
@@ -2282,4 +2282,3 @@ int do_version_tface(Main *main)
 
 	return nowarning;
 }
-

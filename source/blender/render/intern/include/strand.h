@@ -26,7 +26,7 @@
 
 
 #ifndef __STRAND_H__
-#define __STRAND_H__ 
+#define __STRAND_H__
 
 struct StrandVert;
 struct StrandRen;
@@ -96,4 +96,3 @@ void strand_shade_segment(struct Render *re, struct StrandShadeCache *cache, str
 void strand_shade_unref(struct StrandShadeCache *cache, struct ObjectInstanceRen *obi, struct StrandVert *svert);
 
 #endif
-

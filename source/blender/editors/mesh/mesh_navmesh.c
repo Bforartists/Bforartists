@@ -358,7 +358,7 @@ static Object *createRepresentation(bContext *C, struct recast_polyMesh *pmesh, 
 		copy_v3_v3(obedit->rot, rot);
 	}
 
-	ED_object_editmode_enter(C, EM_DO_UNDO | EM_IGNORE_LAYER);
+	ED_object_editmode_enter(C, EM_IGNORE_LAYER);
 	em = BKE_editmesh_from_object(obedit);
 
 	if (!createob) {
@@ -383,7 +383,7 @@ static Object *createRepresentation(bContext *C, struct recast_polyMesh *pmesh, 
 	/* create custom data layer to save polygon idx */
 	CustomData_add_layer_named(&em->bm->pdata, CD_RECAST, CD_CALLOC, NULL, 0, "createRepresentation recastData");
 	CustomData_bmesh_init_pool(&em->bm->pdata, 0, BM_FACE);
-	
+
 	/* create verts and faces for detailed mesh */
 	meshes = recast_polyMeshDetailGetMeshes(dmesh, &nmeshes);
 	polys = recast_polyMeshGetPolys(pmesh, NULL, &nvp);
@@ -445,7 +445,7 @@ static Object *createRepresentation(bContext *C, struct recast_polyMesh *pmesh, 
 	WM_event_add_notifier(C, NC_GEOM | ND_DATA, obedit->data);
 
 
-	ED_object_editmode_exit(C, EM_FREEDATA); 
+	ED_object_editmode_exit(C, EM_FREEDATA);
 	WM_event_add_notifier(C, NC_OBJECT | ND_DRAW, obedit);
 
 	if (createob) {
@@ -616,14 +616,14 @@ static int navmesh_face_add_exec(bContext *C, wmOperator *UNUSED(op))
 	BMEditMesh *em = BKE_editmesh_from_object(obedit);
 	BMFace *ef;
 	BMIter iter;
-	
+
 	if (CustomData_has_layer(&em->bm->pdata, CD_RECAST)) {
 		int targetPolyIdx = findFreeNavPolyIndex(em);
 
 		if (targetPolyIdx > 0) {
 			/* set target poly idx to selected faces */
 			/*XXX this originally went last to first, but that isn't possible anymore*/
-			
+
 			BM_ITER_MESH (ef, &iter, em->bm, BM_FACES_OF_MESH) {
 				if (BM_elem_flag_test(ef, BM_ELEM_SELECT)) {
 					int *recastDataBlock = (int *)CustomData_bmesh_get(&em->bm->pdata, ef->head.data, CD_RECAST);
@@ -654,7 +654,7 @@ void MESH_OT_navmesh_face_add(struct wmOperatorType *ot)
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 }
 
-static int navmesh_obmode_data_poll(bContext *C)
+static bool navmesh_obmode_data_poll(bContext *C)
 {
 	Object *ob = ED_object_active_context(C);
 	if (ob && (ob->mode == OB_MODE_OBJECT) && (ob->type == OB_MESH)) {
@@ -664,7 +664,7 @@ static int navmesh_obmode_data_poll(bContext *C)
 	return false;
 }
 
-static int navmesh_obmode_poll(bContext *C)
+static bool navmesh_obmode_poll(bContext *C)
 {
 	Object *ob = ED_object_active_context(C);
 	if (ob && (ob->mode == OB_MODE_OBJECT) && (ob->type == OB_MESH)) {

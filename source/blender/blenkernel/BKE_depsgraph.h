@@ -105,7 +105,7 @@ void DAG_scene_free(struct Scene *sce);
  *
  * DAG_scene_update_flags will mark all objects that depend on time (animation,
  * physics, ..) to be recalculated, used when changing the current frame.
- * 
+ *
  * DAG_on_visible_update will mark all objects that are visible for the first
  * time to be updated, for example on file load or changing layer visibility.
  *
@@ -177,5 +177,5 @@ bool DAG_is_acyclic(struct Scene *scene);
 #ifdef __cplusplus
 }
 #endif
-		
+
 #endif

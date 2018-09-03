@@ -15,13 +15,13 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Contributor: 
- *		Jeroen Bakker 
+ * Contributor:
+ *		Jeroen Bakker
  *		Monique Dewanchand
  */
 
-#ifndef _COM_SocketReader_h
-#define _COM_SocketReader_h
+#ifndef __COM_SOCKETREADER_H__
+#define __COM_SOCKETREADER_H__
 #include "BLI_rect.h"
 #include "COM_defines.h"
 
@@ -121,4 +121,4 @@ public:
 #endif
 };
 
-#endif /* _COM_SocketReader_h */
+#endif /* __COM_SOCKETREADER_H__ */

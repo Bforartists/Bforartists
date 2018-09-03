@@ -55,6 +55,15 @@ CCL_NAMESPACE_BEGIN
 #ifndef M_2_PI_F
 #  define M_2_PI_F  (0.6366197723675813f)  /* 2/pi */
 #endif
+#ifndef M_1_2PI_F
+#  define M_1_2PI_F (0.1591549430918953f)  /* 1/(2*pi) */
+#endif
+#ifndef M_SQRT_PI_8_F
+#  define M_SQRT_PI_8_F (0.6266570686577501f) /* sqrt(pi/8) */
+#endif
+#ifndef M_LN_2PI_F
+#  define M_LN_2PI_F (1.8378770664093454f) /* ln(2*pi) */
+#endif
 
 /* Multiplication */
 #ifndef M_2PI_F
@@ -266,6 +275,11 @@ ccl_device_inline int floor_to_int(float f)
 	return float_to_int(floorf(f));
 }
 
+ccl_device_inline int quick_floor_to_int(float x)
+{
+	return float_to_int(x) - ((x < 0) ? 1 : 0);
+}
+
 ccl_device_inline int ceil_to_int(float f)
 {
 	return float_to_int(ceilf(f));
@@ -308,6 +322,17 @@ ccl_device_inline float3 float4_to_float3(const float4 a)
 ccl_device_inline float4 float3_to_float4(const float3 a)
 {
 	return make_float4(a.x, a.y, a.z, 1.0f);
+}
+
+ccl_device_inline float inverse_lerp(float a, float b, float x)
+{
+	return (x - a) / (b - a);
+}
+
+/* Cubic interpolation between b and c, a and d are the previous and next point. */
+ccl_device_inline float cubic_interp(float a, float b, float c, float d, float x)
+{
+	return 0.5f*(((d + 3.0f*(b-c) - a)*x + (2.0f*a - 5.0f*b + 4.0f*c - d))*x + (c - a))*x + b;
 }
 
 CCL_NAMESPACE_END
@@ -525,6 +550,16 @@ ccl_device_inline float sqr(float a)
 	return a * a;
 }
 
+ccl_device_inline float pow20(float a)
+{
+    return sqr(sqr(sqr(sqr(a))*a));
+}
+
+ccl_device_inline float pow22(float a)
+{
+    return sqr(a*sqr(sqr(sqr(a))*a));
+}
+
 ccl_device_inline float beta(float x, float y)
 {
 #ifndef __KERNEL_OPENCL__
@@ -537,6 +572,11 @@ ccl_device_inline float beta(float x, float y)
 ccl_device_inline float xor_signmask(float x, int y)
 {
 	return __int_as_float(__float_as_int(x) ^ y);
+}
+
+ccl_device float bits_to_01(uint bits)
+{
+	return bits * (1.0f/(float)0xFFFFFFFF);
 }
 
 /* projections */

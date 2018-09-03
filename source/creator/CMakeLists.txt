@@ -265,14 +265,29 @@ endif()
 set(BLENDER_TEXT_FILES
 	${CMAKE_SOURCE_DIR}/release/text/GPL-license.txt
 	${CMAKE_SOURCE_DIR}/release/text/GPL3-license.txt
-	${CMAKE_SOURCE_DIR}/release/text/Python-license.txt
 	${CMAKE_SOURCE_DIR}/release/text/copyright.txt
-	${CMAKE_SOURCE_DIR}/release/text/jemalloc-license.txt
-	${CMAKE_SOURCE_DIR}/release/text/ocio-license.txt
 	# generate this file
 	# ${CMAKE_SOURCE_DIR}/release/text/readme.html
 	${CMAKE_SOURCE_DIR}/release/datafiles/LICENSE-bfont.ttf.txt
 )
+
+if(WITH_PYTHON)
+	list(APPEND BLENDER_TEXT_FILES
+		${CMAKE_SOURCE_DIR}/release/text/Python-license.txt
+	)
+endif()
+
+if(WITH_OPENCOLORIO)
+	list(APPEND BLENDER_TEXT_FILES
+		${CMAKE_SOURCE_DIR}/release/text/ocio-license.txt
+	)
+endif()
+
+if(WITH_MEM_JEMALLOC)
+	list(APPEND BLENDER_TEXT_FILES
+		${CMAKE_SOURCE_DIR}/release/text/jemalloc-license.txt
+	)
+endif()
 
 if(WITH_INTERNATIONAL)
 	list(APPEND BLENDER_TEXT_FILES
@@ -702,7 +717,7 @@ elseif(WIN32)
 			)
 
 			if(WITH_PYTHON_INSTALL_NUMPY)
-				set(PYTHON_NUMPY_VERSION 1.13)
+				set(PYTHON_NUMPY_VERSION 1.15)
 				add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BLENDER_VERSION}/python/lib/site-packages
 					COMMAND ${CMAKE_COMMAND} -E
 					        make_directory ${CMAKE_CURRENT_BINARY_DIR}/${BLENDER_VERSION}/python/lib/site-packages)
@@ -765,12 +780,12 @@ elseif(WIN32)
 	if(WITH_CODEC_FFMPEG)
 		install(
 			FILES
-				${LIBDIR}/ffmpeg/lib/avcodec-57.dll
-				${LIBDIR}/ffmpeg/lib/avformat-57.dll
-				${LIBDIR}/ffmpeg/lib/avdevice-57.dll
-				${LIBDIR}/ffmpeg/lib/avutil-55.dll
-				${LIBDIR}/ffmpeg/lib/swscale-4.dll
-				${LIBDIR}/ffmpeg/lib/swresample-2.dll
+				${LIBDIR}/ffmpeg/lib/avcodec-58.dll
+				${LIBDIR}/ffmpeg/lib/avformat-58.dll
+				${LIBDIR}/ffmpeg/lib/avdevice-58.dll
+				${LIBDIR}/ffmpeg/lib/avutil-56.dll
+				${LIBDIR}/ffmpeg/lib/swscale-5.dll
+				${LIBDIR}/ffmpeg/lib/swresample-3.dll
 			DESTINATION "."
 		)
 	endif()
@@ -818,15 +833,6 @@ elseif(WIN32)
 		FILES ${LIBDIR}/thumbhandler/lib/BlendThumb64.dll
 		DESTINATION "."
 	)
-
-	if(WITH_OPENCOLORIO)
-		set(OCIOBIN ${LIBDIR}/opencolorio/bin)
-			install(
-				FILES
-					${OCIOBIN}/OpenColorIO.dll
-				DESTINATION "."
-			)
-	endif()
 
 elseif(APPLE)
 

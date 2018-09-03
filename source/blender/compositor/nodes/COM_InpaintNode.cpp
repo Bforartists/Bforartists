@@ -16,7 +16,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * Contributor: Peter Schlaile
- *		Jeroen Bakker 
+ *		Jeroen Bakker
  *		Monique Dewanchand
  */
 
@@ -33,7 +33,7 @@ InpaintNode::InpaintNode(bNode *editorNode) : Node(editorNode)
 
 void InpaintNode::convertToOperations(NodeConverter &converter, const CompositorContext &/*context*/) const
 {
-	
+
 	bNode *editorNode = this->getbNode();
 
 	/* if (editorNode->custom1 == CMP_NODE_INPAINT_SIMPLE) { */
@@ -41,7 +41,7 @@ void InpaintNode::convertToOperations(NodeConverter &converter, const Compositor
 		InpaintSimpleOperation *operation = new InpaintSimpleOperation();
 		operation->setIterations(editorNode->custom2);
 		converter.addOperation(operation);
-		
+
 		converter.mapInputSocket(getInputSocket(0), operation->getInputSocket(0));
 		converter.mapOutputSocket(getOutputSocket(0), operation->getOutputSocket(0));
 	}

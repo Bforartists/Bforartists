@@ -87,7 +87,7 @@ static void rna_Operator_report(wmOperator *op, int type, const char *msg)
 	BKE_report(op->reports, type, msg);
 }
 
-static int rna_Operator_is_repeat(wmOperator *op, bContext *C)
+static bool rna_Operator_is_repeat(wmOperator *op, bContext *C)
 {
 	return WM_operator_is_repeat(C, op);
 }
@@ -96,10 +96,10 @@ static int rna_Operator_is_repeat(wmOperator *op, bContext *C)
 static void rna_Operator_enum_search_invoke(bContext *C, wmOperator *op)
 {
 	WM_enum_search_invoke(C, op, NULL);
-	
+
 }
 
-static int rna_event_modal_handler_add(struct bContext *C, struct wmOperator *operator)
+static bool rna_event_modal_handler_add(struct bContext *C, struct wmOperator *operator)
 {
 	return WM_event_add_modal_handler(C, operator) != NULL;
 }
@@ -169,8 +169,9 @@ static int rna_Operator_props_popup(bContext *C, wmOperator *op, wmEvent *event)
 	return WM_operator_props_popup(C, op, event);
 }
 
-static wmKeyMapItem *rna_KeyMap_item_new(wmKeyMap *km, ReportList *reports, const char *idname, int type, int value,
-                                         int any, int shift, int ctrl, int alt, int oskey, int keymodifier, int head)
+static wmKeyMapItem *rna_KeyMap_item_new(
+        wmKeyMap *km, ReportList *reports, const char *idname, int type, int value,
+        bool any, bool shift, bool ctrl, bool alt, bool oskey, int keymodifier, bool head)
 {
 /*	wmWindowManager *wm = CTX_wm_manager(C); */
 	wmKeyMapItem *kmi = NULL;
@@ -191,24 +192,25 @@ static wmKeyMapItem *rna_KeyMap_item_new(wmKeyMap *km, ReportList *reports, cons
 	if (oskey) modifier |= KM_OSKEY;
 
 	if (any) modifier = KM_ANY;
-	
+
 	/* create keymap item */
 	kmi = WM_keymap_add_item(km, idname_bl, type, value, modifier, keymodifier);
-	
-	/* [#32437] allow scripts to define hotkeys that get added to start of keymap 
+
+	/* [#32437] allow scripts to define hotkeys that get added to start of keymap
 	 *          so that they stand a chance against catch-all defines later on
 	 */
 	if (head) {
 		BLI_remlink(&km->items, kmi);
 		BLI_addhead(&km->items, kmi);
 	}
-	
+
 	return kmi;
 }
 
-static wmKeyMapItem *rna_KeyMap_item_new_modal(wmKeyMap *km, ReportList *reports, const char *propvalue_str,
-                                               int type, int value, int any, int shift, int ctrl, int alt,
-                                               int oskey, int keymodifier)
+static wmKeyMapItem *rna_KeyMap_item_new_modal(
+        wmKeyMap *km, ReportList *reports, const char *propvalue_str,
+        int type, int value, bool any, bool shift, bool ctrl, bool alt,
+        bool oskey, int keymodifier)
 {
 	int modifier = 0;
 	int propvalue = 0;
@@ -248,10 +250,10 @@ static void rna_KeyMap_item_remove(wmKeyMap *km, ReportList *reports, PointerRNA
 	RNA_POINTER_INVALIDATE(kmi_ptr);
 }
 
-static wmKeyMap *rna_keymap_new(wmKeyConfig *keyconf, const char *idname, int spaceid, int regionid, int modal)
+static wmKeyMap *rna_keymap_new(wmKeyConfig *keyconf, const char *idname, int spaceid, int regionid, bool modal)
 {
 	if (modal == 0) {
-		return WM_keymap_find(keyconf, idname, spaceid, regionid);
+		return WM_keymap_ensure(keyconf, idname, spaceid, regionid);
 	}
 	else {
 		return WM_modalkeymap_add(keyconf, idname, NULL); /* items will be lazy init */
@@ -295,6 +297,31 @@ static void rna_KeyConfig_remove(wmWindowManager *wm, ReportList *reports, Point
 	}
 
 	RNA_POINTER_INVALIDATE(keyconf_ptr);
+}
+
+static PointerRNA rna_KeyConfig_find_item_from_operator(
+        wmWindowManager *wm,
+        bContext *C,
+        const char *idname,
+        int opcontext,
+        PointerRNA *properties,
+        bool is_hotkey,
+        PointerRNA *km_ptr)
+{
+	char idname_bl[OP_MAX_TYPENAME];
+	WM_operator_bl_idname(idname_bl, idname);
+
+	wmKeyMap *km = NULL;
+	wmKeyMapItem *kmi = WM_key_event_operator(C, idname_bl, opcontext, properties->data, (bool)is_hotkey, &km);
+	PointerRNA kmi_ptr;
+	RNA_pointer_create(&wm->id, &RNA_KeyMap, km, km_ptr);
+	RNA_pointer_create(&wm->id, &RNA_KeyMapItem, kmi, &kmi_ptr);
+	return kmi_ptr;
+}
+
+static void rna_KeyConfig_update(wmWindowManager *wm)
+{
+	WM_keyconfig_update(wm);
 }
 
 /* popup menu wrapper */
@@ -566,7 +593,7 @@ void RNA_api_operator(StructRNA *srna)
 
 	parm = RNA_def_boolean(func, "result", 0, "result", ""); /* better name? */
 	RNA_def_function_return(func, parm);
-	
+
 	/* invoke */
 	func = RNA_def_function(srna, "invoke", NULL);
 	RNA_def_function_ui_description(func, "Invoke the operator");
@@ -694,7 +721,7 @@ void RNA_api_keymapitems(StructRNA *srna)
 	RNA_def_boolean(func, "alt", 0, "Alt", "");
 	RNA_def_boolean(func, "oskey", 0, "OS Key", "");
 	RNA_def_enum(func, "key_modifier", rna_enum_event_type_items, 0, "Key Modifier", "");
-	RNA_def_boolean(func, "head", 0, "At Head", 
+	RNA_def_boolean(func, "head", 0, "At Head",
 	                "Force item to be added at start (not end) of key map so that "
 	                "it doesn't get blocked by an existing key map item");
 	parm = RNA_def_pointer(func, "item", "KeyMapItem", "Item", "Added key map item");
@@ -716,7 +743,7 @@ void RNA_api_keymapitems(StructRNA *srna)
 	RNA_def_enum(func, "key_modifier", rna_enum_event_type_items, 0, "Key Modifier", "");
 	parm = RNA_def_pointer(func, "item", "KeyMapItem", "Item", "Added key map item");
 	RNA_def_function_return(func, parm);
-	
+
 	func = RNA_def_function(srna, "remove", "rna_KeyMap_item_remove");
 	RNA_def_function_flag(func, FUNC_USE_REPORTS);
 	parm = RNA_def_pointer(func, "item", "KeyMapItem", "Item", "");
@@ -782,6 +809,26 @@ void RNA_api_keyconfigs(StructRNA *srna)
 	parm = RNA_def_pointer(func, "keyconfig", "KeyConfig", "Key Configuration", "Removed key configuration");
 	RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED | PARM_RNAPTR);
 	RNA_def_parameter_clear_flags(parm, PROP_THICK_WRAP, 0);
+
+	/* Helper functions */
+
+	/* Keymap introspection */
+	func = RNA_def_function(srna, "find_item_from_operator", "rna_KeyConfig_find_item_from_operator");
+	RNA_def_function_flag(func, FUNC_USE_CONTEXT);
+	parm = RNA_def_string(func, "idname", NULL, 0, "Operator Identifier", "");
+	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
+	parm = RNA_def_property(func, "context", PROP_ENUM, PROP_NONE);
+	RNA_def_property_enum_items(parm, rna_enum_operator_context_items);
+	parm = RNA_def_pointer(func, "properties", "OperatorProperties", "", "");
+	RNA_def_parameter_flags(parm, 0, PARM_RNAPTR);
+	RNA_def_boolean(func, "is_hotkey", 0, "Hotkey", "Event is not a modifier");
+	parm = RNA_def_pointer(func, "item", "KeyMapItem", "", "");
+	RNA_def_parameter_flags(parm, 0, PARM_RNAPTR);
+	parm = RNA_def_pointer(func, "keymap", "KeyMap", "", "");
+	RNA_def_parameter_flags(parm, 0, PARM_RNAPTR | PARM_OUTPUT);
+	RNA_def_function_return(func, parm);
+
+	RNA_def_function(srna, "update", "rna_KeyConfig_update"); /* WM_keyconfig_update */
 }
 
 #endif

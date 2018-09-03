@@ -139,7 +139,7 @@
 #  include "PIL_time_utildefines.h"
 #endif
 
-/* GS reads the memory pointed at in a specific ordering. 
+/* GS reads the memory pointed at in a specific ordering.
  * only use this definition, makes little and big endian systems
  * work fine, in conjunction with MAKE_ID */
 
@@ -152,7 +152,7 @@
  * also note that the id _must_ have a library - campbell */
 void BKE_id_lib_local_paths(Main *bmain, Library *lib, ID *id)
 {
-	const char *bpath_user_data[2] = {bmain->name, lib->filepath};
+	const char *bpath_user_data[2] = {BKE_main_blendfile_path(bmain), lib->filepath};
 
 	BKE_bpath_traverse_id(bmain, id,
 	                      BKE_bpath_relocate_visitor,
@@ -685,13 +685,14 @@ bool id_single_user(bContext *C, ID *id, PointerRNA *ptr, PropertyRNA *prop)
 {
 	ID *newid = NULL;
 	PointerRNA idptr;
-	
+
 	if (id) {
 		/* if property isn't editable, we're going to have an extra block hanging around until we save */
 		if (RNA_property_editable(ptr, prop)) {
-			if (id_copy(CTX_data_main(C), id, &newid, false) && newid) {
+			Main *bmain = CTX_data_main(C);
+			if (id_copy(bmain, id, &newid, false) && newid) {
 				/* copy animation actions too */
-				BKE_animdata_copy_id_action(id, false);
+				BKE_animdata_copy_id_action(bmain, id, false);
 				/* us is 1 by convention, but RNA_property_pointer_set
 				 * will also increment it, so set it to zero */
 				newid->us = 0;
@@ -700,12 +701,12 @@ bool id_single_user(bContext *C, ID *id, PointerRNA *ptr, PropertyRNA *prop)
 				RNA_id_pointer_create(newid, &idptr);
 				RNA_property_pointer_set(ptr, prop, idptr);
 				RNA_property_update(C, ptr, prop);
-				
+
 				return true;
 			}
 		}
 	}
-	
+
 	return false;
 }
 
@@ -991,9 +992,9 @@ int set_listbasepointers(Main *main, ListBase **lb)
 	lb[INDEX_ID_TE] = &(main->tex);
 	lb[INDEX_ID_MA] = &(main->mat);
 	lb[INDEX_ID_VF] = &(main->vfont);
-	
+
 	/* Important!: When adding a new object type,
-	 * the specific data should be inserted here 
+	 * the specific data should be inserted here
 	 */
 
 	lb[INDEX_ID_AR] = &(main->armature);
@@ -1024,7 +1025,7 @@ int set_listbasepointers(Main *main, ListBase **lb)
 	lb[INDEX_ID_SCE] = &(main->scene);
 	lb[INDEX_ID_WM]  = &(main->wm);
 	lb[INDEX_ID_MSK] = &(main->mask);
-	
+
 	lb[INDEX_ID_NULL] = NULL;
 
 	return (MAX_LIBARRAY - 1);
@@ -1279,7 +1280,7 @@ void BKE_libblock_init_empty(ID *id)
 static void id_copy_animdata(Main *bmain, ID *id, const bool do_action)
 {
 	AnimData *adt = BKE_animdata_from_id(id);
-	
+
 	if (adt) {
 		IdAdtTemplate *iat = (IdAdtTemplate *)id;
 		iat->adt = BKE_animdata_copy(bmain, iat->adt, do_action); /* could be set to false, need to investigate */
@@ -1382,7 +1383,7 @@ void BKE_main_free(Main *mainvar)
 	while (a--) {
 		ListBase *lb = lbarray[a];
 		ID *id;
-		
+
 		while ( (id = lb->first) ) {
 #if 1
 			BKE_libblock_free_ex(mainvar, id, false, false);
@@ -1593,27 +1594,40 @@ void BKE_main_thumbnail_create(struct Main *bmain)
 	bmain->blen_thumb->height = BLEN_THUMB_SIZE;
 }
 
+/**
+ * Return filepath of given \a main.
+ */
+const char *BKE_main_blendfile_path(const Main *bmain)
+{
+	return bmain->name;
+}
+
+/**
+ * Return filepath of global main (G_MAIN).
+ *
+ * \warning Usage is not recommended, you should always try to get a valid Main pointer from context...
+ */
+const char *BKE_main_blendfile_path_from_global(void)
+{
+	return BKE_main_blendfile_path(G_MAIN);
+}
+
 /* ***************** ID ************************ */
-ID *BKE_libblock_find_name_ex(struct Main *bmain, const short type, const char *name)
+ID *BKE_libblock_find_name(struct Main *bmain, const short type, const char *name)
 {
 	ListBase *lb = which_libbase(bmain, type);
 	BLI_assert(lb != NULL);
 	return BLI_findstring(lb, name, offsetof(ID, name) + 2);
 }
-ID *BKE_libblock_find_name(const short type, const char *name)
-{
-	return BKE_libblock_find_name_ex(G.main, type, name);
-}
-
 
 void id_sort_by_name(ListBase *lb, ID *id)
 {
 	ID *idtest;
-	
+
 	/* insert alphabetically */
 	if (lb->first != lb->last) {
 		BLI_remlink(lb, id);
-		
+
 		idtest = lb->first;
 		while (idtest) {
 			if (BLI_strcasecmp(idtest->name, id->name) > 0 || (idtest->lib && !id->lib)) {
@@ -1627,7 +1641,7 @@ void id_sort_by_name(ListBase *lb, ID *id)
 			BLI_addtail(lb, id);
 		}
 	}
-	
+
 }
 
 /**
@@ -1637,9 +1651,9 @@ void id_sort_by_name(ListBase *lb, ID *id)
 static ID *is_dupid(ListBase *lb, ID *id, const char *name)
 {
 	ID *idtest = NULL;
-	
+
 	for (idtest = lb->first; idtest; idtest = idtest->next) {
-		/* if idtest is not a lib */ 
+		/* if idtest is not a lib */
 		if (id != idtest && !ID_IS_LINKED(idtest)) {
 			/* do not test alphabetic! */
 			/* optimized */
@@ -1648,7 +1662,7 @@ static ID *is_dupid(ListBase *lb, ID *id, const char *name)
 			}
 		}
 	}
-	
+
 	return idtest;
 }
 
@@ -1737,8 +1751,8 @@ static bool check_for_dupid(ListBase *lb, ID *id, char *name)
 		 * or 1 greater than the largest used number if all those low ones are taken.
 		 * We can't be bothered to look for the lowest unused number beyond (MAX_IN_USE - 1). */
 
-		/* If the original name has no numeric suffix, 
-		 * rather than just chopping and adding numbers, 
+		/* If the original name has no numeric suffix,
+		 * rather than just chopping and adding numbers,
 		 * shave off the end chars until we have a unique name.
 		 * Check the null terminators match as well so we don't get Cube.000 -> Cube.00 */
 		if (nr == 0 && name[left_len] == '\0') {
@@ -1749,7 +1763,7 @@ static bool check_for_dupid(ListBase *lb, ID *id, char *name)
 
 			len = left_len - 1;
 			idtest = is_dupid(lb, id, name);
-			
+
 			while (idtest && len > 1) {
 				name[len--] = '\0';
 				idtest = is_dupid(lb, id, name);
@@ -1757,7 +1771,7 @@ static bool check_for_dupid(ListBase *lb, ID *id, char *name)
 			if (idtest == NULL) return true;
 			/* otherwise just continue and use a number suffix */
 		}
-		
+
 		if (nr > 999 && left_len > (MAX_ID_NAME - 8)) {
 			/* this would overflow name buffer */
 			left[MAX_ID_NAME - 8] = 0;
@@ -1820,7 +1834,7 @@ bool new_id(ListBase *lb, ID *id, const char *tname)
 #endif
 
 	id_sort_by_name(lb, id);
-	
+
 	return result;
 }
 
@@ -1934,7 +1948,7 @@ static void library_make_local_copying_check(ID *id, GSet *loop_tags, MainIDRela
 
 /** Make linked datablocks local.
  *
- * \param bmain Almost certainly G.main.
+ * \param bmain Almost certainly global main.
  * \param lib If not NULL, only make local datablocks from this library.
  * \param untagged_only If true, only make local datablocks not tagged with LIB_TAG_PRE_EXISTING.
  * \param set_fake If true, set fake user on all localized datablocks (except group and objects ones).
@@ -2335,7 +2349,7 @@ void BLI_libblock_ensure_unique_name(Main *bmain, const char *name)
 
 	lb = which_libbase(bmain, GS(name));
 	if (lb == NULL) return;
-	
+
 	/* search for id */
 	idtest = BLI_findstring(lb, name + 2, offsetof(ID, name) + 2);
 
@@ -2366,7 +2380,7 @@ void BKE_id_ui_prefix(char name[MAX_ID_NAME + 1], const ID *id)
 	strcpy(name + 3, id->name + 2);
 }
 
-void BKE_library_filepath_set(Library *lib, const char *filepath)
+void BKE_library_filepath_set(Main *bmain, Library *lib, const char *filepath)
 {
 	/* in some cases this is used to update the absolute path from the
 	 * relative */
@@ -2384,7 +2398,9 @@ void BKE_library_filepath_set(Library *lib, const char *filepath)
 		 * outliner, and its not really supported but allow from here for now
 		 * since making local could cause this to be directly linked - campbell
 		 */
-		const char *basepath = lib->parent ? lib->parent->filepath : G.main->name;
+		/* Never make paths relative to parent lib - reading code (blenloader) always set *all* lib->name relative to
+		 * current main, not to their parent for indirectly linked ones. */
+		const char *basepath = BKE_main_blendfile_path(bmain);
 		BLI_path_abs(lib->filepath, basepath);
 	}
 }
@@ -2397,4 +2413,12 @@ void BKE_id_tag_set_atomic(ID *id, int tag)
 void BKE_id_tag_clear_atomic(ID *id, int tag)
 {
 	atomic_fetch_and_and_int32(&id->tag, ~tag);
+}
+
+/** Check that given ID pointer actually is in G_MAIN.
+ * Main intended use is for debug asserts in places we cannot easily get rid of G_Main... */
+bool BKE_id_is_in_gobal_main(ID *id)
+{
+	/* We do not want to fail when id is NULL here, even though this is a bit strange behavior... */
+	return (id == NULL || BLI_findindex(which_libbase(G_MAIN, GS(id->name)), id) != -1);
 }

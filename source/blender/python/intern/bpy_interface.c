@@ -74,6 +74,7 @@
 #include "../generic/bgl.h"
 #include "../generic/blf_py_api.h"
 #include "../generic/idprop_py_api.h"
+#include "../generic/imbuf_py_api.h"
 #include "../bmesh/bmesh_py_api.h"
 #include "../mathutils/mathutils.h"
 
@@ -219,6 +220,7 @@ static struct _inittab bpy_internal_modules[] = {
 	{"_bpy_path", BPyInit__bpy_path},
 	{"bgl", BPyInit_bgl},
 	{"blf", BPyInit_blf},
+	{"imbuf", BPyInit_imbuf},
 	{"bmesh", BPyInit_bmesh},
 #if 0
 	{"bmesh.types", BPyInit_bmesh_types},
@@ -289,7 +291,7 @@ void BPY_python_start(int argc, const char **argv)
 		PySys_SetObject("argv", py_argv);
 		Py_DECREF(py_argv);
 	}
-	
+
 	/* Initialize thread support (also acquires lock) */
 	PyEval_InitThreads();
 #else
@@ -328,7 +330,7 @@ void BPY_python_start(int argc, const char **argv)
 	BPy_init_modules();
 
 	bpy_import_init(PyEval_GetBuiltins());
-	
+
 	pyrna_alloc_types();
 
 #ifndef WITH_PYTHON_MODULE
@@ -347,7 +349,7 @@ void BPY_python_end(void)
 
 	/* finalizing, no need to grab the state, except when we are a module */
 	gilstate = PyGILState_Ensure();
-	
+
 	/* free other python data. */
 	pyrna_free_types();
 
@@ -623,12 +625,9 @@ bool BPY_execute_string_as_number(bContext *C, const char *expr, const bool verb
  */
 bool BPY_execute_string_as_string(bContext *C, const char *expr, const bool verbose, char **r_value)
 {
+	BLI_assert(r_value && expr);
 	PyGILState_STATE gilstate;
 	bool ok = true;
-
-	if (!r_value || !expr) {
-		return -1;
-	}
 
 	if (expr[0] == '\0') {
 		*r_value = NULL;
@@ -653,16 +652,48 @@ bool BPY_execute_string_as_string(bContext *C, const char *expr, const bool verb
 	return ok;
 }
 
+/**
+ * Support both int and pointers.
+ *
+ * \return success
+ */
+bool BPY_execute_string_as_intptr(bContext *C, const char *expr, const bool verbose, intptr_t *r_value)
+{
+	BLI_assert(r_value && expr);
+	PyGILState_STATE gilstate;
+	bool ok = true;
+
+	if (expr[0] == '\0') {
+		*r_value = 0;
+		return ok;
+	}
+
+	bpy_context_set(C, &gilstate);
+
+	ok = PyC_RunString_AsIntPtr(expr, "<blender button>", r_value);
+
+	if (ok == false) {
+		if (verbose) {
+			BPy_errors_to_report_ex(CTX_wm_reports(C), false, false);
+		}
+		else {
+			PyErr_Clear();
+		}
+	}
+
+	bpy_context_clear(C, &gilstate);
+
+	return ok;
+}
 
 bool BPY_execute_string_ex(bContext *C, const char *expr, bool use_eval)
 {
+	BLI_assert(expr);
 	PyGILState_STATE gilstate;
 	PyObject *main_mod = NULL;
 	PyObject *py_dict, *retval;
 	bool ok = true;
 	Main *bmain_back; /* XXX, quick fix for release (Copy Settings crash), needs further investigation */
-
-	if (!expr) return -1;
 
 	if (expr[0] == '\0') {
 		return ok;
@@ -693,7 +724,7 @@ bool BPY_execute_string_ex(bContext *C, const char *expr, bool use_eval)
 	PyC_MainModule_Restore(main_mod);
 
 	bpy_context_clear(C, &gilstate);
-	
+
 	return ok;
 }
 
@@ -721,13 +752,13 @@ void BPY_modules_load_user(bContext *C)
 	bpy_context_set(C, &gilstate);
 
 	for (text = bmain->text.first; text; text = text->id.next) {
-		if (text->flags & TXT_ISSCRIPT && BLI_testextensie(text->id.name + 2, ".py")) {
+		if (text->flags & TXT_ISSCRIPT && BLI_path_extension_check(text->id.name + 2, ".py")) {
 			if (!(G.f & G_SCRIPT_AUTOEXEC)) {
 				if (!(G.f & G_SCRIPT_AUTOEXEC_FAIL_QUIET)) {
 					G.f |= G_SCRIPT_AUTOEXEC_FAIL;
 					BLI_snprintf(G.autoexec_fail, sizeof(G.autoexec_fail), "Text '%s'", text->id.name + 2);
 
-					printf("scripts disabled for \"%s\", skipping '%s'\n", bmain->name, text->id.name + 2);
+					printf("scripts disabled for \"%s\", skipping '%s'\n", BKE_main_blendfile_path(bmain), text->id.name + 2);
 				}
 			}
 			else {
@@ -877,7 +908,7 @@ static void bpy_module_delay_init(PyObject *bpy_proxy)
 
 	argv[0] = filename_abs;
 	argv[1] = NULL;
-	
+
 	// printf("module found %s\n", argv[0]);
 
 	main_python_enter(argc, argv);
@@ -906,14 +937,14 @@ PyMODINIT_FUNC
 PyInit_bpy(void)
 {
 	PyObject *bpy_proxy = PyModule_Create(&bpy_proxy_def);
-	
+
 	/* Problem:
 	 * 1) this init function is expected to have a private member defined - 'md_def'
 	 *    but this is only set for C defined modules (not py packages)
 	 *    so we cant return 'bpy_package_py' as is.
 	 *
 	 * 2) there is a 'bpy' C module for python to load which is basically all of blender,
-	 *    and there is scripts/bpy/__init__.py, 
+	 *    and there is scripts/bpy/__init__.py,
 	 *    we may end up having to rename this module so there is no naming conflict here eg:
 	 *    'from blender import bpy'
 	 *
@@ -923,13 +954,13 @@ PyInit_bpy(void)
 
 	/* assign an object which is freed after __file__ is assigned */
 	dealloc_obj *dob;
-	
+
 	/* assign dummy type */
 	dealloc_obj_Type.tp_name = "dealloc_obj";
 	dealloc_obj_Type.tp_basicsize = sizeof(dealloc_obj);
 	dealloc_obj_Type.tp_dealloc = dealloc_obj_dealloc;
 	dealloc_obj_Type.tp_flags = Py_TPFLAGS_DEFAULT;
-	
+
 	if (PyType_Ready(&dealloc_obj_Type) < 0)
 		return NULL;
 

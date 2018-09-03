@@ -15,13 +15,13 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Contributor: 
- *		Jeroen Bakker 
+ * Contributor:
+ *		Jeroen Bakker
  *		Monique Dewanchand
  */
 
-#ifndef _COM_ProjectorLensDistortionOperation_h
-#define _COM_ProjectorLensDistortionOperation_h
+#ifndef __COM_PROJECTORLENSDISTORTIONOPERATION_H__
+#define __COM_PROJECTORLENSDISTORTIONOPERATION_H__
 #include "COM_NodeOperation.h"
 #include "DNA_node_types.h"
 
@@ -31,30 +31,30 @@ private:
 	 * Cached reference to the inputProgram
 	 */
 	SocketReader *m_inputProgram;
-	
+
 	float m_dispersion;
 	bool m_dispersionAvailable;
-	
+
 	float m_kr, m_kr2;
 public:
 	ProjectorLensDistortionOperation();
-	
+
 	/**
 	 * the inner loop of this program
 	 */
 	void executePixel(float output[4], int x, int y, void *data);
-	
+
 	/**
 	 * Initialize the execution
 	 */
 	void initExecution();
-	
+
 	void *initializeTileData(rcti *rect);
 	/**
 	 * Deinitialize the execution
 	 */
 	void deinitExecution();
-	
+
 	bool determineDependingAreaOfInterest(rcti *input, ReadBufferOperation *readOperation, rcti *output);
 
 	void updateDispersion();

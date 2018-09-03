@@ -34,7 +34,7 @@
 #include "BLI_string.h"
 
 #include "BKE_appdir.h"
-#include "BKE_global.h" /* XXX, G.main only */
+#include "BKE_global.h" /* XXX, G_MAIN only */
 #include "BKE_blender_version.h"
 #include "BKE_bpath.h"
 
@@ -136,7 +136,7 @@ static PyObject *bpy_blend_paths(PyObject *UNUSED(self), PyObject *args, PyObjec
 
 	list = PyList_New(0);
 
-	BKE_bpath_traverse_main(G.main, bpy_blend_paths_visit_cb, flag, (void *)list);
+	BKE_bpath_traverse_main(G_MAIN, bpy_blend_paths_visit_cb, flag, (void *)list);
 
 	return list;
 }
@@ -169,7 +169,7 @@ static PyObject *bpy_user_resource(PyObject *UNUSED(self), PyObject *args, PyObj
 		PyErr_SetString(PyExc_ValueError, "invalid resource argument");
 		return NULL;
 	}
-	
+
 	/* same logic as BKE_appdir_folder_id_create(), but best leave it up to the script author to create */
 	path = BKE_appdir_folder_id(folder_id, subdir);
 

@@ -15,13 +15,13 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Contributor: 
- *		Jeroen Bakker 
+ * Contributor:
+ *		Jeroen Bakker
  *		Monique Dewanchand
  */
 
-#ifndef _COM_SocketProxyNode_h_
-#define _COM_SocketProxyNode_h_
+#ifndef __COM_SOCKETPROXYNODE_H__
+#define __COM_SOCKETPROXYNODE_H__
 
 #include "COM_Node.h"
 
@@ -33,10 +33,10 @@ class SocketProxyNode : public Node {
 public:
 	SocketProxyNode(bNode *editorNode, bNodeSocket *editorInput, bNodeSocket *editorOutput, bool use_conversion);
 	void convertToOperations(NodeConverter &converter, const CompositorContext &context) const;
-	
+
 	bool getUseConversion() const { return m_use_conversion; }
 	void setUseConversion(bool use_conversion) { m_use_conversion = use_conversion; }
-	
+
 private:
 	/** If true, the proxy will convert input and output data to/from the proxy socket types. */
 	bool m_use_conversion;

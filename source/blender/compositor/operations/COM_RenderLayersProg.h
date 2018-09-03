@@ -15,14 +15,14 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Contributor: 
- *		Jeroen Bakker 
+ * Contributor:
+ *		Jeroen Bakker
  *		Monique Dewanchand
  */
 
 
-#ifndef _COM_RenderLayersBaseProg_h
-#define _COM_RenderLayersBaseProg_h
+#ifndef __COM_RENDERLAYERSPROG_H__
+#define __COM_RENDERLAYERSPROG_H__
 
 #include "COM_NodeOperation.h"
 #include "DNA_scene_types.h"

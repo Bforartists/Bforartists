@@ -4,7 +4,7 @@
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version. 
+ * of the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -69,30 +69,30 @@ static void *thread_tls_data;
 /* We're using one global task scheduler for all kind of tasks. */
 static TaskScheduler *task_scheduler = NULL;
 
-/* ********** basic thread control API ************ 
- * 
+/* ********** basic thread control API ************
+ *
  * Many thread cases have an X amount of jobs, and only an Y amount of
  * threads are useful (typically amount of cpus)
  *
  * This code can be used to start a maximum amount of 'thread slots', which
- * then can be filled in a loop with an idle timer. 
+ * then can be filled in a loop with an idle timer.
  *
  * A sample loop can look like this (pseudo c);
  *
  *     ListBase lb;
  *     int maxthreads = 2;
  *     int cont = 1;
- * 
+ *
  *     BLI_threadpool_init(&lb, do_something_func, maxthreads);
- * 
+ *
  *     while (cont) {
  *         if (BLI_available_threads(&lb) && !(escape loop event)) {
  *             // get new job (data pointer)
- *             // tag job 'processed 
+ *             // tag job 'processed
  *             BLI_threadpool_insert(&lb, job);
  *         }
  *         else PIL_sleep_ms(50);
- *         
+ *
  *         // find if a job is ready, this the do_something_func() should write in job somewhere
  *         cont = 0;
  *         for (go over all jobs)
@@ -103,13 +103,13 @@ static TaskScheduler *task_scheduler = NULL;
  *             }
  *             else cont = 1;
  *         }
- *         // conditions to exit loop 
+ *         // conditions to exit loop
  *         if (if escape loop event) {
  *             if (BLI_available_threadslots(&lb) == maxthreads)
  *                 break;
  *         }
  *     }
- * 
+ *
  *     BLI_threadpool_end(&lb);
  *
  ************************************************ */
@@ -189,10 +189,10 @@ void BLI_threadpool_init(ListBase *threadbase, void *(*do_thread)(void *), int t
 
 	if (threadbase != NULL && tot > 0) {
 		BLI_listbase_clear(threadbase);
-	
+
 		if (tot > RE_MAX_THREAD) tot = RE_MAX_THREAD;
 		else if (tot < 1) tot = 1;
-	
+
 		for (a = 0; a < tot; a++) {
 			ThreadSlot *tslot = MEM_callocN(sizeof(ThreadSlot), "threadslot");
 			BLI_addtail(threadbase, tslot);
@@ -219,7 +219,7 @@ int BLI_available_threads(ListBase *threadbase)
 {
 	ThreadSlot *tslot;
 	int counter = 0;
-	
+
 	for (tslot = threadbase->first; tslot; tslot = tslot->next) {
 		if (tslot->avail)
 			counter++;
@@ -232,7 +232,7 @@ int BLI_threadpool_available_thread_index(ListBase *threadbase)
 {
 	ThreadSlot *tslot;
 	int counter = 0;
-	
+
 	for (tslot = threadbase->first; tslot; tslot = tslot->next, counter++) {
 		if (tslot->avail)
 			return counter;
@@ -261,7 +261,7 @@ int BLI_thread_is_main(void)
 void BLI_threadpool_insert(ListBase *threadbase, void *callerdata)
 {
 	ThreadSlot *tslot;
-	
+
 	for (tslot = threadbase->first; tslot; tslot = tslot->next) {
 		if (tslot->avail) {
 			tslot->avail = 0;
@@ -276,7 +276,7 @@ void BLI_threadpool_insert(ListBase *threadbase, void *callerdata)
 void BLI_threadpool_remove(ListBase *threadbase, void *callerdata)
 {
 	ThreadSlot *tslot;
-	
+
 	for (tslot = threadbase->first; tslot; tslot = tslot->next) {
 		if (tslot->callerdata == callerdata) {
 			pthread_join(tslot->pthread, NULL);
@@ -290,7 +290,7 @@ void BLI_threadpool_remove_index(ListBase *threadbase, int index)
 {
 	ThreadSlot *tslot;
 	int counter = 0;
-	
+
 	for (tslot = threadbase->first; tslot; tslot = tslot->next, counter++) {
 		if (counter == index && tslot->avail == 0) {
 			pthread_join(tslot->pthread, NULL);
@@ -304,7 +304,7 @@ void BLI_threadpool_remove_index(ListBase *threadbase, int index)
 void BLI_threadpool_clear(ListBase *threadbase)
 {
 	ThreadSlot *tslot;
-	
+
 	for (tslot = threadbase->first; tslot; tslot = tslot->next) {
 		if (tslot->avail == 0) {
 			pthread_join(tslot->pthread, NULL);
@@ -317,9 +317,9 @@ void BLI_threadpool_clear(ListBase *threadbase)
 void BLI_threadpool_end(ListBase *threadbase)
 {
 	ThreadSlot *tslot;
-	
+
 	/* only needed if there's actually some stuff to end
-	 * this way we don't end up decrementing thread_levels on an empty threadbase 
+	 * this way we don't end up decrementing thread_levels on an empty threadbase
 	 * */
 	if (threadbase && (BLI_listbase_is_empty(threadbase) == false)) {
 		for (tslot = threadbase->first; tslot; tslot = tslot->next) {
@@ -355,7 +355,7 @@ int BLI_system_thread_count(void)
 		SYSTEM_INFO info;
 		GetSystemInfo(&info);
 		t = (int) info.dwNumberOfProcessors;
-#else 
+#else
 #   ifdef __APPLE__
 		int mib[2];
 		size_t len;
@@ -488,7 +488,8 @@ void BLI_spin_lock(SpinLock *spin)
 #elif defined(_MSC_VER)
 	while (InterlockedExchangeAcquire(spin, 1)) {
 		while (*spin) {
-			/* pass */
+			/* Spinlock hint for processors with hyperthreading. */
+			YieldProcessor();
 		}
 	}
 #else
@@ -693,11 +694,11 @@ void *BLI_thread_queue_pop(ThreadQueue *queue)
 	pthread_mutex_lock(&queue->mutex);
 	while (BLI_gsqueue_is_empty(queue->queue) && !queue->nowait)
 		pthread_cond_wait(&queue->push_cond, &queue->mutex);
-	
+
 	/* if we have something, pop it */
 	if (!BLI_gsqueue_is_empty(queue->queue)) {
 		BLI_gsqueue_pop(queue->queue, &work);
-		
+
 		if (BLI_gsqueue_is_empty(queue->queue))
 			pthread_cond_broadcast(&queue->finish_cond);
 	}
@@ -763,11 +764,11 @@ void *BLI_thread_queue_pop_timeout(ThreadQueue *queue, int ms)
 	/* if we have something, pop it */
 	if (!BLI_gsqueue_is_empty(queue->queue)) {
 		BLI_gsqueue_pop(queue->queue, &work);
-		
+
 		if (BLI_gsqueue_is_empty(queue->queue))
 			pthread_cond_broadcast(&queue->finish_cond);
 	}
-	
+
 	pthread_mutex_unlock(&queue->mutex);
 
 	return work;
@@ -839,4 +840,3 @@ void BLI_threaded_malloc_end(void)
 		MEM_set_lock_callback(NULL, NULL);
 	}
 }
-

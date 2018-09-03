@@ -23,7 +23,7 @@
  * Contributor(s): none yet.
  *
  * ***** END GPL LICENSE BLOCK *****
- * 
+ *
  */
 
 /** \file blender/editors/space_file/fsmenu.h
@@ -60,7 +60,7 @@ void    fsmenu_remove_entry(struct FSMenu *fsmenu, enum FSMenuCategory category,
 
 /** saves the 'bookmarks' to the specified file */
 void    fsmenu_write_file(struct FSMenu *fsmenu, const char *filename);
-	
+
 /** reads the 'bookmarks' from the specified file */
 void    fsmenu_read_bookmarks(struct FSMenu *fsmenu, const char *filename);
 
@@ -80,4 +80,3 @@ void    fsmenu_refresh_bookmarks_status(struct FSMenu *fsmenu);
 int     fsmenu_get_active_indices(struct FSMenu *fsmenu, enum FSMenuCategory category, const char *dir);
 
 #endif
-

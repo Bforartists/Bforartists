@@ -15,8 +15,8 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Contributor: 
- *		Jeroen Bakker 
+ * Contributor:
+ *		Jeroen Bakker
  *		Monique Dewanchand
  */
 
@@ -84,7 +84,7 @@ void BilateralBlurOperation::executePixel(float output[4], int x, int y, void *d
 			}
 		}
 	}
-	
+
 	if (blurDivider > 0.0f) {
 		mul_v4_v4fl(output, blurColor, 1.0f / blurDivider);
 	}

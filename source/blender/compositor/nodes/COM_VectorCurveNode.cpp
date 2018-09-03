@@ -15,8 +15,8 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Contributor: 
- *		Jeroen Bakker 
+ * Contributor:
+ *		Jeroen Bakker
  *		Monique Dewanchand
  */
 
@@ -34,7 +34,7 @@ void VectorCurveNode::convertToOperations(NodeConverter &converter, const Compos
 	VectorCurveOperation *operation = new VectorCurveOperation();
 	operation->setCurveMapping((CurveMapping *)this->getbNode()->storage);
 	converter.addOperation(operation);
-	
+
 	converter.mapInputSocket(getInputSocket(0), operation->getInputSocket(0));
 	converter.mapOutputSocket(getOutputSocket(0), operation->getOutputSocket());
 }

@@ -140,10 +140,10 @@ static void rna_Object_camera_fit_coords(
 /* copied from Mesh_getFromObject and adapted to RNA interface */
 /* settings: 0 - preview, 1 - render */
 static Mesh *rna_Object_to_mesh(
-        Object *ob, ReportList *reports, Scene *sce,
-        int apply_modifiers, int settings, int calc_tessface, int calc_undeformed)
+        Object *ob, Main *bmain, ReportList *reports, Scene *sce,
+        bool apply_modifiers, int settings, bool calc_tessface, bool calc_undeformed)
 {
-	return rna_Main_meshes_new_from_object(G.main, reports, sce, ob, apply_modifiers, settings, calc_tessface, calc_undeformed);
+	return rna_Main_meshes_new_from_object(bmain, reports, sce, ob, apply_modifiers, settings, calc_tessface, calc_undeformed);
 }
 
 /* mostly a copy from convertblender.c */
@@ -161,7 +161,7 @@ static void dupli_render_particle_set(Scene *scene, Object *ob, int level, int e
 
 	if (level >= MAX_DUPLI_RECUR)
 		return;
-	
+
 	if (ob->transflag & OB_DUPLIPARTS) {
 		for (psys = ob->particlesystem.first; psys; psys = psys->next) {
 			if (ELEM(psys->part->ren_as, PART_DRAW_OB, PART_DRAW_GR)) {
@@ -191,7 +191,7 @@ static void dupli_render_particle_set(Scene *scene, Object *ob, int level, int e
 		dupli_render_particle_set(scene, go->ob, level + 1, enable);
 }
 /* When no longer needed, duplilist should be freed with Object.free_duplilist */
-static void rna_Object_create_duplilist(Object *ob, ReportList *reports, Scene *sce, int settings)
+static void rna_Object_create_duplilist(Object *ob, Main *bmain, ReportList *reports, Scene *sce, int settings)
 {
 	bool for_render = (settings == DAG_EVAL_RENDER);
 	EvaluationContext eval_ctx;
@@ -211,7 +211,7 @@ static void rna_Object_create_duplilist(Object *ob, ReportList *reports, Scene *
 	}
 	if (for_render)
 		dupli_render_particle_set(sce, ob, 0, 1);
-	ob->duplilist = object_duplilist(&eval_ctx, sce, ob);
+	ob->duplilist = object_duplilist(bmain, &eval_ctx, sce, ob);
 	if (for_render)
 		dupli_render_particle_set(sce, ob, 0, 0);
 	/* ob->duplilist should now be freed with Object.free_duplilist */
@@ -226,16 +226,17 @@ static void rna_Object_free_duplilist(Object *ob)
 }
 
 static PointerRNA rna_Object_shape_key_add(Object *ob, bContext *C, ReportList *reports,
-                                           const char *name, int from_mix)
+                                           const char *name, bool from_mix)
 {
+	Main *bmain = CTX_data_main(C);
 	KeyBlock *kb = NULL;
 
-	if ((kb = BKE_object_shapekey_insert(ob, name, from_mix))) {
+	if ((kb = BKE_object_shapekey_insert(bmain, ob, name, from_mix))) {
 		PointerRNA keyptr;
 
 		RNA_pointer_create((ID *)ob->data, &RNA_ShapeKey, kb, &keyptr);
 		WM_event_add_notifier(C, NC_OBJECT | ND_DRAW, ob);
-		
+
 		return keyptr;
 	}
 	else {
@@ -267,7 +268,7 @@ static void rna_Object_shape_key_remove(
 	RNA_POINTER_INVALIDATE(kb_ptr);
 }
 
-static int rna_Object_is_visible(Object *ob, Scene *sce)
+static bool rna_Object_is_visible(Object *ob, Scene *sce)
 {
 	return !(ob->restrictflag & OB_RESTRICT_VIEW) && (ob->lay & sce->lay);
 }
@@ -319,7 +320,7 @@ static int dm_looptri_to_poly_index(DerivedMesh *dm, const MLoopTri *lt)
 static void rna_Object_ray_cast(
         Object *ob, ReportList *reports,
         float origin[3], float direction[3], float distance,
-        int *r_success, float r_location[3], float r_normal[3], int *r_index)
+        bool *r_success, float r_location[3], float r_normal[3], int *r_index)
 {
 	bool success = false;
 
@@ -331,12 +332,14 @@ static void rna_Object_ray_cast(
 	/* Test BoundBox first (efficiency) */
 	BoundBox *bb = BKE_object_boundbox_get(ob);
 	float distmin;
-	if (!bb || (isect_ray_aabb_v3_simple(origin, direction, bb->vec[0], bb->vec[6], &distmin, NULL) && distmin <= distance)) {
-
+	normalize_v3(direction);  /* Needed for valid distance check from isect_ray_aabb_v3_simple() call. */
+	if (!bb ||
+	    (isect_ray_aabb_v3_simple(origin, direction, bb->vec[0], bb->vec[6], &distmin, NULL) && distmin <= distance))
+	{
 		BVHTreeFromMesh treeData = {NULL};
 
 		/* no need to managing allocation or freeing of the BVH data. this is generated and freed as needed */
-		bvhtree_from_mesh_looptri(&treeData, ob->derivedFinal, 0.0f, 4, 6);
+		bvhtree_from_mesh_get(&treeData, ob->derivedFinal, BVHTREE_FROM_LOOPTRI, 4);
 
 		/* may fail if the mesh has no faces, in that case the ray-cast misses */
 		if (treeData.tree != NULL) {
@@ -344,9 +347,6 @@ static void rna_Object_ray_cast(
 
 			hit.index = -1;
 			hit.dist = distance;
-
-			normalize_v3(direction);
-
 
 			if (BLI_bvhtree_ray_cast(treeData.tree, origin, direction, 0.0f, &hit,
 			                         treeData.raycast_callback, &treeData) != -1)
@@ -374,10 +374,10 @@ static void rna_Object_ray_cast(
 
 static void rna_Object_closest_point_on_mesh(
         Object *ob, ReportList *reports, float origin[3], float distance,
-        int *r_success, float r_location[3], float r_normal[3], int *r_index)
+        bool *r_success, float r_location[3], float r_normal[3], int *r_index)
 {
 	BVHTreeFromMesh treeData = {NULL};
-	
+
 	if (ob->derivedFinal == NULL) {
 		BKE_reportf(reports, RPT_ERROR, "Object '%s' has no mesh data to be used for finding nearest point",
 		            ob->id.name + 2);
@@ -385,7 +385,7 @@ static void rna_Object_closest_point_on_mesh(
 	}
 
 	/* no need to managing allocation or freeing of the BVH data. this is generated and freed as needed */
-	bvhtree_from_mesh_looptri(&treeData, ob->derivedFinal, 0.0f, 4, 6);
+	bvhtree_from_mesh_get(&treeData, ob->derivedFinal, BVHTREE_FROM_LOOPTRI, 4);
 
 	if (treeData.tree == NULL) {
 		BKE_reportf(reports, RPT_ERROR, "Object '%s' could not create internal data for finding nearest point",
@@ -426,12 +426,12 @@ static void rna_ObjectBase_layers_from_view(Base *base, View3D *v3d)
 	base->lay = base->object->lay = v3d->lay;
 }
 
-static int rna_Object_is_modified(Object *ob, Scene *scene, int settings)
+static bool rna_Object_is_modified(Object *ob, Scene *scene, int settings)
 {
 	return BKE_object_is_modified(scene, ob) & settings;
 }
 
-static int rna_Object_is_deform_modified(Object *ob, Scene *scene, int settings)
+static bool rna_Object_is_deform_modified(Object *ob, Scene *scene, int settings)
 {
 	return BKE_object_is_deform_modified(scene, ob) & settings;
 }
@@ -474,9 +474,9 @@ void rna_Object_dm_info(struct Object *ob, int type, char *result)
 }
 #endif /* NDEBUG */
 
-static int rna_Object_update_from_editmode(Object *ob)
+static bool rna_Object_update_from_editmode(Object *ob, Main *bmain)
 {
-	return ED_object_editmode_load(ob);
+	return ED_object_editmode_load(bmain, ob);
 }
 #else /* RNA_RUNTIME */
 
@@ -558,7 +558,7 @@ void RNA_api_object(StructRNA *srna)
 	/* mesh */
 	func = RNA_def_function(srna, "to_mesh", "rna_Object_to_mesh");
 	RNA_def_function_ui_description(func, "Create a Mesh data-block with modifiers applied");
-	RNA_def_function_flag(func, FUNC_USE_REPORTS);
+	RNA_def_function_flag(func, FUNC_USE_MAIN | FUNC_USE_REPORTS);
 	parm = RNA_def_pointer(func, "scene", "Scene", "", "Scene within which to evaluate modifiers");
 	RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED);
 	parm = RNA_def_boolean(func, "apply_modifiers", 0, "", "Apply modifiers");
@@ -573,13 +573,13 @@ void RNA_api_object(StructRNA *srna)
 
 	/* duplis */
 	func = RNA_def_function(srna, "dupli_list_create", "rna_Object_create_duplilist");
+	RNA_def_function_flag(func, FUNC_USE_MAIN | FUNC_USE_REPORTS);
 	RNA_def_function_ui_description(func, "Create a list of dupli objects for this object, needs to "
 	                                "be freed manually with free_dupli_list to restore the "
 	                                "objects real matrix and layers");
 	parm = RNA_def_pointer(func, "scene", "Scene", "", "Scene within which to evaluate duplis");
 	RNA_def_parameter_flags(parm, PROP_NEVER_NULL, PARM_REQUIRED);
 	RNA_def_enum(func, "settings", dupli_eval_mode_items, 0, "", "Generate texture coordinates for rendering");
-	RNA_def_function_flag(func, FUNC_USE_REPORTS);
 
 	func = RNA_def_function(srna, "dupli_list_clear", "rna_Object_free_duplilist");
 	RNA_def_function_ui_description(func, "Free the list of dupli objects");
@@ -611,7 +611,7 @@ void RNA_api_object(StructRNA *srna)
 	func = RNA_def_function(srna, "ray_cast", "rna_Object_ray_cast");
 	RNA_def_function_ui_description(func, "Cast a ray onto in object space");
 	RNA_def_function_flag(func, FUNC_USE_REPORTS);
-	
+
 	/* ray start and end */
 	parm = RNA_def_float_vector(func, "origin", 3, NULL, -FLT_MAX, FLT_MAX, "", "", -1e4, 1e4);
 	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
@@ -702,6 +702,7 @@ void RNA_api_object(StructRNA *srna)
 
 	func = RNA_def_function(srna, "update_from_editmode", "rna_Object_update_from_editmode");
 	RNA_def_function_ui_description(func, "Load the objects edit-mode data into the object data");
+	RNA_def_function_flag(func, FUNC_USE_MAIN);
 	parm = RNA_def_boolean(func, "result", 0, "", "Success");
 	RNA_def_function_return(func, parm);
 

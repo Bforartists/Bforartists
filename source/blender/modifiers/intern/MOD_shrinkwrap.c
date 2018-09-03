@@ -63,15 +63,6 @@ static void initData(ModifierData *md)
 	smd->auxTarget  = NULL;
 }
 
-static void copyData(ModifierData *md, ModifierData *target)
-{
-#if 0
-	ShrinkwrapModifierData *smd  = (ShrinkwrapModifierData *)md;
-	ShrinkwrapModifierData *tsmd = (ShrinkwrapModifierData *)target;
-#endif
-	modifier_copyData_generic(md, target);
-}
-
 static CustomDataMask requiredDataMask(Object *UNUSED(ob), ModifierData *md)
 {
 	ShrinkwrapModifierData *smd = (ShrinkwrapModifierData *)md;
@@ -105,11 +96,12 @@ static void foreachObjectLink(ModifierData *md, Object *ob, ObjectWalkFunc walk,
 	walk(userData, ob, &smd->auxTarget, IDWALK_CB_NOP);
 }
 
-static void deformVerts(ModifierData *md, Object *ob,
-                        DerivedMesh *derivedData,
-                        float (*vertexCos)[3],
-                        int numVerts,
-                        ModifierApplyFlag flag)
+static void deformVerts(
+        ModifierData *md, Object *ob,
+        DerivedMesh *derivedData,
+        float (*vertexCos)[3],
+        int numVerts,
+        ModifierApplyFlag flag)
 {
 	DerivedMesh *dm = derivedData;
 	CustomDataMask dataMask = requiredDataMask(ob, md);
@@ -126,8 +118,9 @@ static void deformVerts(ModifierData *md, Object *ob,
 		dm->release(dm);
 }
 
-static void deformVertsEM(ModifierData *md, Object *ob, struct BMEditMesh *editData, DerivedMesh *derivedData,
-                          float (*vertexCos)[3], int numVerts)
+static void deformVertsEM(
+        ModifierData *md, Object *ob, struct BMEditMesh *editData, DerivedMesh *derivedData,
+        float (*vertexCos)[3], int numVerts)
 {
 	DerivedMesh *dm = derivedData;
 	CustomDataMask dataMask = requiredDataMask(ob, md);
@@ -175,7 +168,7 @@ static bool dependsOnNormals(ModifierData *md)
 
 	if (smd->target && smd->shrinkType == MOD_SHRINKWRAP_PROJECT)
 		return (smd->projAxis == MOD_SHRINKWRAP_PROJECT_OVER_NORMAL);
-	
+
 	return false;
 }
 
@@ -190,7 +183,7 @@ ModifierTypeInfo modifierType_Shrinkwrap = {
 	                        eModifierTypeFlag_SupportsEditmode |
 	                        eModifierTypeFlag_EnableInEditmode,
 
-	/* copyData */          copyData,
+	/* copyData */          modifier_copyData_generic,
 	/* deformVerts */       deformVerts,
 	/* deformMatrices */    NULL,
 	/* deformVertsEM */     deformVertsEM,

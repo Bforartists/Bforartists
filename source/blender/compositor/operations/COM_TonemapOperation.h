@@ -15,13 +15,13 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Contributor: 
- *		Jeroen Bakker 
+ * Contributor:
+ *		Jeroen Bakker
  *		Monique Dewanchand
  */
 
-#ifndef _COM_TonemapOperation_h
-#define _COM_TonemapOperation_h
+#ifndef __COM_TONEMAPOPERATION_H__
+#define __COM_TONEMAPOPERATION_H__
 #include "COM_NodeOperation.h"
 #include "DNA_node_types.h"
 
@@ -47,12 +47,12 @@ protected:
 	 * @brief Cached reference to the reader
 	 */
 	SocketReader *m_imageReader;
-	
+
 	/**
 	 * @brief settings of the Tonemap
 	 */
 	NodeTonemap *m_data;
-	
+
 	/**
 	 * @brief temporarily cache of the execution storage
 	 */
@@ -60,27 +60,27 @@ protected:
 
 public:
 	TonemapOperation();
-	
+
 	/**
 	 * the inner loop of this program
 	 */
 	void executePixel(float output[4], int x, int y, void *data);
-	
+
 	/**
 	 * Initialize the execution
 	 */
 	void initExecution();
-	
+
 	void *initializeTileData(rcti *rect);
 	void deinitializeTileData(rcti *rect, void *data);
-	
+
 	/**
 	 * Deinitialize the execution
 	 */
 	void deinitExecution();
-	
+
 	void setData(NodeTonemap *data) { this->m_data = data; }
-	
+
 	bool determineDependingAreaOfInterest(rcti *input, ReadBufferOperation *readOperation, rcti *output);
 };
 

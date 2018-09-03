@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+/* TODO(lukas): Fix colors in OSL. */
+
 float color_srgb_to_scene_linear(float c)
 {
 	if (c < 0.04045)
@@ -129,7 +131,7 @@ color hsv_to_rgb(color hsv)
 	else {
 		if (h == 1.0)
 			h = 0.0;
-		
+
 		h *= 6.0;
 		i = floor(h);
 		f = h - i;
@@ -148,4 +150,3 @@ color hsv_to_rgb(color hsv)
 
 	return rgb;
 }
-

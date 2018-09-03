@@ -15,8 +15,8 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Contributor: 
- *		Jeroen Bakker 
+ * Contributor:
+ *		Jeroen Bakker
  *		Monique Dewanchand
  */
 
@@ -33,9 +33,9 @@ void BokehImageNode::convertToOperations(NodeConverter &converter, const Composi
 {
 	BokehImageOperation *operation = new BokehImageOperation();
 	operation->setData((NodeBokehImage *)this->getbNode()->storage);
-	
+
 	converter.addOperation(operation);
 	converter.mapOutputSocket(getOutputSocket(0), operation->getOutputSocket(0));
-	
+
 	converter.addPreview(operation->getOutputSocket(0));
 }

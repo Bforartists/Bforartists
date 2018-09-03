@@ -56,6 +56,7 @@ class ShaderManager;
 class Progress;
 class BakeManager;
 class BakeData;
+class RenderStats;
 
 /* Scene Device Data */
 
@@ -118,6 +119,9 @@ public:
 
 	/* integrator */
 	device_vector<uint> sobol_directions;
+
+	/* ies lights */
+	device_vector<float> ies_lights;
 
 	KernelData data;
 
@@ -252,6 +256,8 @@ public:
 	void reset();
 	void device_free();
 
+	void collect_statistics(RenderStats *stats);
+
 protected:
 	/* Check if some heavy data worth logging was updated.
 	 * Mainly used to suppress extra annoying logging.
@@ -264,4 +270,3 @@ protected:
 CCL_NAMESPACE_END
 
 #endif /*  __SCENE_H__ */
-
