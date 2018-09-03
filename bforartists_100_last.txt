@@ -1,0 +1,11 @@
+This is the last Bforartists 1.0.0 version. Everything behind is already material for Bforartists 2.
+
+When you are looking for the latest official release version then please use this version here:
+
+https://github.com/Bforartists/Bforartists/releases/tag/BFA1.0.0
+
+But note that the required precompiled libraries for Windows does not longer exist. You need to precompile the libraries by yourself.
+
+Reiner 
+
+03.09.2018
