@@ -26,6 +26,7 @@ from math import (
         tan, radians,
         )
 from random import triangular
+from bpy_extras.object_utils import AddObjectHelper, object_data_add
 
 NARROW_UI = 180
 MAX_INPUT_NUMBER = 50
@@ -69,7 +70,7 @@ Remove Doubles takes a list on Verts and a list of Faces and
 removes the doubles, much like Blender does in edit mode.
 It doesn’t have the range function  but it will round the corrdinates
 and remove verts that are very close togther.  The function
-is useful because you can perform a “Remove Doubles” with out
+is useful because you can perform a "Remove Doubles" with out
 having to enter Edit Mode. Having to enter edit mode has the
 disadvantage of not being able to interactively change the properties.
 """
@@ -1964,39 +1965,37 @@ def Bolt_Mesh(props, context):
     return Move_Verts_Up_Z(verts, Thread_Height), faces
 
 
-# calculates the matrix for the new object
-# depending on user pref
-def align_matrix(context):
-    loc = Matrix.Translation(context.scene.cursor_location)
-    obj_align = context.user_preferences.edit.object_align
-    if (context.space_data.type == 'VIEW_3D' and obj_align == 'VIEW'):
-        rot = context.space_data.region_3d.view_matrix.to_3x3().inverted().to_4x4()
-    else:
-        rot = Matrix()
-    align_matrix = loc * rot
-    return align_matrix
 
 
-# Create a new mesh (object) from verts/edges/faces.
-# verts/edges/faces ... List of vertices/edges/faces for the
-#                       new mesh (as used in from_pydata).
-# name ... Name of the new mesh (& object).
-# edit ... Replace existing mesh data.
-# Note: Using "edit" will destroy/delete existing mesh data.
-def create_mesh_object(context, verts, edges, faces, name, edit, align_matrix):
-    scene = context.scene
-    obj_act = scene.objects.active
 
-    # Can't edit anything, unless we have an active obj.
-    if edit and not obj_act:
-        return None
 
-    # Create new mesh
-    mesh = bpy.data.meshes.new(name)
 
-    # Make a mesh from a list of verts/edges/faces.
+
+def Create_New_Mesh(props, context):
+
+    verts = []
+    faces = []
+    edges = []
+    sObjName = ''
+
+    if props.bf_Model_Type == 'bf_Model_Bolt':
+        # print('Create Bolt')
+        verts, faces = Bolt_Mesh(props, context)
+        sObjName = 'Bolt'
+
+    if props.bf_Model_Type == 'bf_Model_Nut':
+        # print('Create Nut')
+        verts, faces = Nut_Mesh(props, context)
+        sObjName = 'Nut'
+
+    verts, faces = RemoveDoubles(verts, faces)
+
+    verts = Scale_Mesh_Verts(verts, GLOBAL_SCALE)
+
+    mesh = bpy.data.meshes.new(name=sObjName)
     mesh.from_pydata(verts, edges, faces)
 
+    # useful for development when the mesh may be invalid.
     # Fix T51338 : Validate the mesh (the internal thread generator for the Nut
     # should be more reliable now, however there could be other possible errors)
     is_not_mesh_valid = mesh.validate()
@@ -2004,100 +2003,7 @@ def create_mesh_object(context, verts, edges, faces, name, edit, align_matrix):
     if is_not_mesh_valid:
         print("\n[BoltFactory]\nFunction: create_mesh_object\n"
               "Mesh is not Valid, correcting\n")
-
-    # Update mesh geometry after adding stuff.
-    mesh.update()
-
-    # Deselect all objects when in object mode
-    if bpy.ops.object.select_all.poll():
-        bpy.ops.object.select_all(action='DESELECT')
-
-    if edit:
-        # Replace geometry of existing object
-
-        # Use the active obj and select it.
-        ob_new = obj_act
-        ob_new.select = True
-
-        if obj_act.mode == 'OBJECT':
-            # Get existing mesh datablock.
-            old_mesh = ob_new.data
-
-            # Set object data to nothing
-            ob_new.data = None
-
-            # Clear users of existing mesh datablock.
-            old_mesh.user_clear()
-
-            # Remove old mesh datablock if no users are left.
-            if (old_mesh.users == 0):
-                bpy.data.meshes.remove(old_mesh)
-
-            # Assign new mesh datablock.
-            ob_new.data = mesh
-    else:
-        # Create new object
-        ob_new = bpy.data.objects.new(name, mesh)
-
-        # Link new object to the given scene and select it.
-        scene.objects.link(ob_new)
-        ob_new.select = True
-
-        # Place the object at the 3D cursor location.
-        # apply viewRotaion
-        ob_new.matrix_world = align_matrix
-
-    if obj_act and obj_act.mode == 'EDIT':
-        if not edit:
-            # We are in EditMode, switch to ObjectMode.
-            bpy.ops.object.mode_set(mode='OBJECT')
-
-            # Select the active object as well.
-            obj_act.select = True
-
-            # Apply location of new object.
-            scene.update()
-
-            # Join new object into the active.
-            bpy.ops.object.join()
-
-            # Switching back to EditMode.
-            bpy.ops.object.mode_set(mode='EDIT')
-
-            ob_new = obj_act
-
-    else:
-        # We are in ObjectMode.
-        # Make the new object the active one.
-        scene.objects.active = ob_new
-
-    return ob_new
+        
+    object_data_add(context, mesh, operator=props)
 
 
-def Create_New_Mesh(props, context, align_matrix):
-
-    verts = []
-    faces = []
-    # sMeshName =''  # UNUSED
-    sObjName = ''
-
-    if props.bf_Model_Type == 'bf_Model_Bolt':
-        # print('Create Bolt')
-        verts, faces = Bolt_Mesh(props, context)
-        # sMeshName = 'Bolt'  # UNUSED
-        sObjName = 'Bolt'
-
-    if props.bf_Model_Type == 'bf_Model_Nut':
-        # print('Create Nut')
-        verts, faces = Nut_Mesh(props, context)
-        # sMeshName = 'Nut'  # UNUSED
-        sObjName = 'Nut'
-
-    verts, faces = RemoveDoubles(verts, faces)
-
-    verts = Scale_Mesh_Verts(verts, GLOBAL_SCALE)
-
-    obj = create_mesh_object(context, verts, [], faces, sObjName,
-                             props.edit, align_matrix)
-
-    return obj

@@ -189,6 +189,39 @@ static void valuefn(float *out, TexParams *p, bNode *node, bNodeStack **in, shor
 			break;
 		}
 
+		case NODE_MATH_ATAN2:
+		{
+			*out = atan2(in0, in1);
+			break;
+		}
+
+		case NODE_MATH_FLOOR:
+		{
+			*out = floorf(in0);
+			break;
+		}
+
+		case NODE_MATH_CEIL:
+		{
+			*out = ceilf(in0);
+			break;
+		}
+
+		case NODE_MATH_FRACT:
+		{
+			*out = in0 - floorf(in0);
+			break;
+		}
+
+		case NODE_MATH_SQRT:
+		{
+			if (in0 > 0.0f)
+				*out = sqrtf(in0);
+			else
+				*out = 0.0f;
+			break;
+		}
+
 		default:
 		{
 			BLI_assert(0);

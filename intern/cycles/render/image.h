@@ -29,6 +29,7 @@ CCL_NAMESPACE_BEGIN
 
 class Device;
 class Progress;
+class RenderStats;
 class Scene;
 
 class ImageMetaData {
@@ -71,6 +72,8 @@ public:
 	bool get_image_metadata(const string& filename,
 	                        void *builtin_data,
 	                        ImageMetaData& metadata);
+	bool get_image_metadata(int flat_slot,
+	                        ImageMetaData& metadata);
 
 	void device_update(Device *device,
 	                   Scene *scene,
@@ -86,6 +89,8 @@ public:
 	bool set_animation_frame_update(int frame);
 
 	device_memory *image_memory(int flat_slot);
+
+	void collect_statistics(RenderStats *stats);
 
 	bool need_update;
 
@@ -110,7 +115,7 @@ public:
 	struct Image {
 		string filename;
 		void *builtin_data;
-		bool builtin_free_cache;
+		ImageMetaData metadata;
 
 		bool use_alpha;
 		bool need_load;
@@ -137,11 +142,7 @@ private:
 	void *osl_texture_system;
 
 	bool file_load_image_generic(Image *img,
-	                             ImageInput **in,
-	                             int &width,
-	                             int &height,
-	                             int &depth,
-	                             int &components);
+	                             ImageInput **in);
 
 	template<TypeDesc::BASETYPE FileFormat,
 	         typename StorageType,
@@ -151,16 +152,11 @@ private:
 	                     int texture_limit,
 	                     device_vector<DeviceType>& tex_img);
 
-	int max_flattened_slot(ImageDataType type);
-	int type_index_to_flattened_slot(int slot, ImageDataType type);
-	int flattened_slot_to_type_index(int flat_slot, ImageDataType *type);
-	string name_from_type(int type);
-
 	void device_load_image(Device *device,
 	                       Scene *scene,
 	                       ImageDataType type,
 	                       int slot,
-	                       Progress *progess);
+	                       Progress *progress);
 	void device_free_image(Device *device,
 	                       ImageDataType type,
 	                       int slot);
@@ -169,4 +165,3 @@ private:
 CCL_NAMESPACE_END
 
 #endif /* __IMAGE_H__ */
-

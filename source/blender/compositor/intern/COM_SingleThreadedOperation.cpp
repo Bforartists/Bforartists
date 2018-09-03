@@ -15,8 +15,8 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Contributor: 
- *		Jeroen Bakker 
+ * Contributor:
+ *		Jeroen Bakker
  *		Monique Dewanchand
  */
 
@@ -49,7 +49,7 @@ void SingleThreadedOperation::deinitExecution()
 void *SingleThreadedOperation::initializeTileData(rcti *rect)
 {
 	if (this->m_cachedInstance) return this->m_cachedInstance;
-	
+
 	lockMutex();
 	if (this->m_cachedInstance == NULL) {
 		//

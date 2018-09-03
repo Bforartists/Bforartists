@@ -15,8 +15,8 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Contributor: 
- *		Jeroen Bakker 
+ * Contributor:
+ *		Jeroen Bakker
  *		Monique Dewanchand
  */
 
@@ -36,13 +36,13 @@ void BoxMaskNode::convertToOperations(NodeConverter &converter, const Compositor
 {
 	NodeInput *inputSocket = this->getInputSocket(0);
 	NodeOutput *outputSocket = this->getOutputSocket(0);
-	
+
 	BoxMaskOperation *operation;
 	operation = new BoxMaskOperation();
 	operation->setData((NodeBoxMask *)this->getbNode()->storage);
 	operation->setMaskType(this->getbNode()->custom1);
 	converter.addOperation(operation);
-	
+
 	if (inputSocket->isLinked()) {
 		converter.mapInputSocket(inputSocket, operation->getInputSocket(0));
 		converter.mapOutputSocket(outputSocket, operation->getOutputSocket());

@@ -4,7 +4,7 @@
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version. 
+ * of the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -43,7 +43,7 @@
 #else
 #  include <io.h>
 #  include <direct.h>
-#endif   
+#endif
 #include "MEM_guardedalloc.h"
 
 #include "BLI_blenlib.h"
@@ -188,13 +188,13 @@ void folderlist_free(ListBase *folderlist)
 
 ListBase *folderlist_duplicate(ListBase *folderlist)
 {
-	
+
 	if (folderlist) {
 		ListBase *folderlistn = MEM_callocN(sizeof(*folderlistn), __func__);
 		FolderList *folder;
-		
+
 		BLI_duplicatelist(folderlistn, folderlist);
-		
+
 		for (folder = folderlistn->first; folder; folder = folder->next) {
 			folder->foldername = MEM_dupallocN(folder->foldername);
 		}
@@ -267,10 +267,11 @@ typedef struct FileListEntryPreview {
 	ImBuf *img;
 } FileListEntryPreview;
 
+
 typedef struct FileListFilter {
 	unsigned int filter;
 	unsigned int filter_id;
-	char filter_glob[256];
+	char filter_glob[FILE_MAXFILE];
 	char filter_search[66];  /* + 2 for heading/trailing implicit '*' wildcards. */
 	short flags;
 } FileListFilter;
@@ -404,7 +405,7 @@ static int compare_direntry_generic(const FileListInternEntry *entry1, const Fil
 	if (FILENAME_IS_CURRENT(entry2->relpath)) return 1;
 	if (FILENAME_IS_PARENT(entry1->relpath)) return -1;
 	if (FILENAME_IS_PARENT(entry2->relpath)) return 1;
-	
+
 	return 0;
 }
 
@@ -436,7 +437,7 @@ static int compare_date(void *UNUSED(user_data), const void *a1, const void *a2)
 	if ((ret = compare_direntry_generic(entry1, entry2))) {
 		return ret;
 	}
-	
+
 	time1 = (int64_t)entry1->st.st_mtime;
 	time2 = (int64_t)entry2->st.st_mtime;
 	if (time1 < time2) return 1;
@@ -459,7 +460,7 @@ static int compare_size(void *UNUSED(user_data), const void *a1, const void *a2)
 	if ((ret = compare_direntry_generic(entry1, entry2))) {
 		return ret;
 	}
-	
+
 	size1 = entry1->st.st_size;
 	size2 = entry2->st.st_size;
 	if (size1 < size2) return 1;
@@ -1347,7 +1348,7 @@ void filelist_free(struct FileList *filelist)
 		printf("Attempting to delete empty filelist.\n");
 		return;
 	}
-	
+
 	filelist_clear_ex(filelist, false, false);  /* No need to clear cache & selection_state, we free them anyway. */
 	filelist_cache_free(&filelist->filelist_cache);
 
@@ -1419,7 +1420,7 @@ void filelist_setdir(struct FileList *filelist, char *r_dir)
 {
 	BLI_assert(strlen(r_dir) < FILE_MAX_LIBEXTRA);
 
-	BLI_cleanup_dir(G.main->name, r_dir);
+	BLI_cleanup_dir(BKE_main_blendfile_path_from_global(), r_dir);
 	const bool is_valid_path = filelist->checkdirf(filelist, r_dir, true);
 	BLI_assert(is_valid_path);
 	UNUSED_VARS_NDEBUG(is_valid_path);
@@ -1555,7 +1556,7 @@ FileDirEntry *filelist_file(struct FileList *filelist, int index)
 int filelist_file_findpath(struct FileList *filelist, const char *filename)
 {
 	int fidx = -1;
-	
+
 	if (filelist->filelist.nbr_entries_filtered < 0) {
 		return fidx;
 	}
@@ -1950,17 +1951,17 @@ static bool file_is_blend_backup(const char *str)
 	}
 	else {
 		const char *loc;
-		
+
 		if (a > b + 1)
 			b++;
-		
+
 		/* allow .blend1 .blend2 .blend32 */
 		loc = BLI_strcasestr(str + a - b, ".blend");
-		
+
 		if (loc)
 			retval = 1;
 	}
-	
+
 	return (retval);
 }
 
@@ -1973,31 +1974,31 @@ int ED_path_extension_type(const char *path)
 	else if (file_is_blend_backup(path)) {
 		return FILE_TYPE_BLENDER_BACKUP;
 	}
-	else if (BLI_testextensie(path, ".app")) {
+	else if (BLI_path_extension_check(path, ".app")) {
 		return FILE_TYPE_APPLICATIONBUNDLE;
 	}
-	else if (BLI_testextensie(path, ".py")) {
+	else if (BLI_path_extension_check(path, ".py")) {
 		return FILE_TYPE_PYSCRIPT;
 	}
-	else if (BLI_testextensie_n(path, ".txt", ".glsl", ".osl", ".data", ".pov", ".ini", ".mcr", ".inc", NULL)) {
+	else if (BLI_path_extension_check_n(path, ".txt", ".glsl", ".osl", ".data", ".pov", ".ini", ".mcr", ".inc", NULL)) {
 		return FILE_TYPE_TEXT;
 	}
-	else if (BLI_testextensie_n(path, ".ttf", ".ttc", ".pfb", ".otf", ".otc", NULL)) {
+	else if (BLI_path_extension_check_n(path, ".ttf", ".ttc", ".pfb", ".otf", ".otc", NULL)) {
 		return FILE_TYPE_FTFONT;
 	}
-	else if (BLI_testextensie(path, ".btx")) {
+	else if (BLI_path_extension_check(path, ".btx")) {
 		return FILE_TYPE_BTX;
 	}
-	else if (BLI_testextensie(path, ".dae")) {
+	else if (BLI_path_extension_check(path, ".dae")) {
 		return FILE_TYPE_COLLADA;
 	}
-	else if (BLI_testextensie(path, ".abc")) {
+	else if (BLI_path_extension_check(path, ".abc")) {
 		return FILE_TYPE_ALEMBIC;
 	}
-	else if (BLI_testextensie_array(path, imb_ext_image)) {
+	else if (BLI_path_extension_check_array(path, imb_ext_image)) {
 		return FILE_TYPE_IMAGE;
 	}
-	else if (BLI_testextensie(path, ".ogg")) {
+	else if (BLI_path_extension_check(path, ".ogg")) {
 		if (IMB_isanim(path)) {
 			return FILE_TYPE_MOVIE;
 		}
@@ -2005,10 +2006,10 @@ int ED_path_extension_type(const char *path)
 			return FILE_TYPE_SOUND;
 		}
 	}
-	else if (BLI_testextensie_array(path, imb_ext_movie)) {
+	else if (BLI_path_extension_check_array(path, imb_ext_movie)) {
 		return FILE_TYPE_MOVIE;
 	}
-	else if (BLI_testextensie_array(path, imb_ext_audio)) {
+	else if (BLI_path_extension_check_array(path, imb_ext_audio)) {
 		return FILE_TYPE_SOUND;
 	}
 	return 0;
@@ -2024,7 +2025,7 @@ static int file_extension_type(const char *dir, const char *relpath)
 int ED_file_extension_icon(const char *path)
 {
 	const int type = ED_path_extension_type(path);
-	
+
 	switch (type) {
 		case FILE_TYPE_BLENDER:
 			return ICON_FILE_BLEND;
@@ -2233,7 +2234,7 @@ static int filelist_readjob_list_dir(
 			/* Otherwise, do not check extensions for directories! */
 			else if (!(entry->typeflag & FILE_TYPE_DIR)) {
 				entry->typeflag = file_extension_type(root, entry->relpath);
-				if (filter_glob[0] && BLI_testextensie_glob(entry->relpath, filter_glob)) {
+				if (filter_glob[0] && BLI_path_extension_check_glob(entry->relpath, filter_glob)) {
 					entry->typeflag |= FILE_TYPE_OPERATOR;
 				}
 			}
@@ -2313,13 +2314,13 @@ static int filelist_readjob_list_lib(const char *root, ListBase *entries, const 
 #if 0
 /* Kept for reference here, in case we want to add back that feature later. We do not need it currently. */
 /* Code ***NOT*** updated for job stuff! */
-static void filelist_readjob_main_rec(struct FileList *filelist)
+static void filelist_readjob_main_rec(Main *bmain, FileList *filelist)
 {
 	ID *id;
 	FileDirEntry *files, *firstlib = NULL;
 	ListBase *lb;
 	int a, fake, idcode, ok, totlib, totbl;
-	
+
 	// filelist->type = FILE_MAIN; // XXX TODO: add modes to filebrowser
 
 	BLI_assert(filelist->filelist.entries == NULL);
@@ -2375,7 +2376,7 @@ static void filelist_readjob_main_rec(struct FileList *filelist)
 		/* make files */
 		idcode = groupname_to_code(filelist->filelist.root);
 
-		lb = which_libbase(G.main, idcode);
+		lb = which_libbase(bmain, idcode);
 		if (lb == NULL) return;
 
 		filelist->filelist.nbr_entries = 0;
@@ -2394,7 +2395,7 @@ static void filelist_readjob_main_rec(struct FileList *filelist)
 		}
 
 		files = filelist->filelist.entries;
-		
+
 		if (!(filelist->filter_data.flags & FLF_HIDE_PARENT)) {
 			files->entry->relpath = BLI_strdup(FILENAME_PARENT);
 			files->typeflag |= FILE_TYPE_DIR;
@@ -2464,7 +2465,7 @@ static void filelist_readjob_do(
 	BLI_Stack *todo_dirs;
 	TodoDir *td_dir;
 	char dir[FILE_MAX_LIBEXTRA];
-	char filter_glob[64];  /* TODO should be define! */
+	char filter_glob[FILE_MAXFILE];
 	const char *root = filelist->filelist.root;
 	const int max_recursion = filelist->max_recursion;
 	int nbr_done_dirs = 0, nbr_todo_dirs = 1;
@@ -2700,13 +2701,14 @@ static void filelist_readjob_free(void *flrjv)
 
 void filelist_readjob_start(FileList *filelist, const bContext *C)
 {
+	Main *bmain = CTX_data_main(C);
 	wmJob *wm_job;
 	FileListReadJob *flrj;
 
 	/* prepare job data */
 	flrj = MEM_callocN(sizeof(*flrj), __func__);
 	flrj->filelist = filelist;
-	BLI_strncpy(flrj->main_name, G.main->name, sizeof(flrj->main_name));
+	BLI_strncpy(flrj->main_name, BKE_main_blendfile_path(bmain), sizeof(flrj->main_name));
 
 	filelist->flags &= ~(FL_FORCE_RESET | FL_IS_READY);
 	filelist->flags |= FL_IS_PENDING;

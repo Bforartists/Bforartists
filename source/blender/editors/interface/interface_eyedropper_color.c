@@ -36,8 +36,10 @@
 #include "DNA_screen_types.h"
 
 #include "BLI_math_vector.h"
+#include "BLI_string.h"
 
 #include "BKE_context.h"
+#include "BKE_main.h"
 #include "BKE_screen.h"
 
 #include "RNA_access.h"
@@ -71,6 +73,8 @@ typedef struct Eyedropper {
 	bool  accum_start; /* has mouse been pressed */
 	float accum_col[3];
 	int   accum_tot;
+
+	bool accumulate; /* Color picking for cryptomatte, without accumulation. */
 } Eyedropper;
 
 static bool eyedropper_init(bContext *C, wmOperator *op)
@@ -79,6 +83,7 @@ static bool eyedropper_init(bContext *C, wmOperator *op)
 	Eyedropper *eye;
 
 	op->customdata = eye = MEM_callocN(sizeof(Eyedropper), "Eyedropper");
+	eye->accumulate = !STREQ(op->type->idname, "UI_OT_eyedropper_color_crypto");
 
 	UI_context_active_but_prop_get(C, &eye->ptr, &eye->prop, &eye->index);
 
@@ -131,6 +136,7 @@ static void eyedropper_exit(bContext *C, wmOperator *op)
 void eyedropper_color_sample_fl(bContext *C, int mx, int my, float r_col[3])
 {
 	/* we could use some clever */
+	Main *bmain = CTX_data_main(C);
 	wmWindow *win = CTX_wm_window(C);
 	ScrArea *sa = BKE_screen_find_area_xy(win->screen, SPACE_TYPE_ANY, mx, my);
 	const char *display_device = CTX_data_scene(C)->display_settings.display_device;
@@ -156,7 +162,7 @@ void eyedropper_color_sample_fl(bContext *C, int mx, int my, float r_col[3])
 				int mval[2] = {mx - ar->winrct.xmin,
 				               my - ar->winrct.ymin};
 
-				if (ED_space_node_color_sample(snode, ar, mval, r_col)) {
+				if (ED_space_node_color_sample(bmain, snode, ar, mval, r_col)) {
 					return;
 				}
 			}
@@ -205,29 +211,30 @@ static void eyedropper_color_set(bContext *C, Eyedropper *eye, const float col[3
 	RNA_property_update(C, &eye->ptr, eye->prop);
 }
 
-/* set sample from accumulated values */
-static void eyedropper_color_set_accum(bContext *C, Eyedropper *eye)
-{
-	float col[3];
-	mul_v3_v3fl(col, eye->accum_col, 1.0f / (float)eye->accum_tot);
-	eyedropper_color_set(C, eye, col);
-}
-
-/* single point sample & set */
 static void eyedropper_color_sample(bContext *C, Eyedropper *eye, int mx, int my)
 {
+	/* Accumulate color. */
 	float col[3];
 	eyedropper_color_sample_fl(C, mx, my, col);
-	eyedropper_color_set(C, eye, col);
-}
 
-static void eyedropper_color_sample_accum(bContext *C, Eyedropper *eye, int mx, int my)
-{
-	float col[3];
-	eyedropper_color_sample_fl(C, mx, my, col);
-	/* delay linear conversion */
-	add_v3_v3(eye->accum_col, col);
-	eye->accum_tot++;
+	if (eye->accumulate) {
+		add_v3_v3(eye->accum_col, col);
+		eye->accum_tot++;
+	}
+	else {
+		copy_v3_v3(eye->accum_col, col);
+		eye->accum_tot = 1;
+	}
+
+	/* Apply to property. */
+	float accum_col[3];
+	if (eye->accum_tot > 1) {
+		mul_v3_v3fl(accum_col, eye->accum_col, 1.0f / (float)eye->accum_tot);
+	}
+	else {
+		copy_v3_v3(accum_col, eye->accum_col);
+	}
+	eyedropper_color_set(C, eye, accum_col);
 }
 
 static void eyedropper_cancel(bContext *C, wmOperator *op)
@@ -252,29 +259,24 @@ static int eyedropper_modal(bContext *C, wmOperator *op, const wmEvent *event)
 				if (eye->accum_tot == 0) {
 					eyedropper_color_sample(C, eye, event->x, event->y);
 				}
-				else {
-					eyedropper_color_set_accum(C, eye);
-				}
 				eyedropper_exit(C, op);
 				return OPERATOR_FINISHED;
 			case EYE_MODAL_SAMPLE_BEGIN:
 				/* enable accum and make first sample */
 				eye->accum_start = true;
-				eyedropper_color_sample_accum(C, eye, event->x, event->y);
+				eyedropper_color_sample(C, eye, event->x, event->y);
 				break;
 			case EYE_MODAL_SAMPLE_RESET:
 				eye->accum_tot = 0;
 				zero_v3(eye->accum_col);
-				eyedropper_color_sample_accum(C, eye, event->x, event->y);
-				eyedropper_color_set_accum(C, eye);
+				eyedropper_color_sample(C, eye, event->x, event->y);
 				break;
 		}
 	}
-	else if (event->type == MOUSEMOVE) {
+	else if (ELEM(event->type, MOUSEMOVE, INBETWEEN_MOUSEMOVE)) {
 		if (eye->accum_start) {
 			/* button is pressed so keep sampling */
-			eyedropper_color_sample_accum(C, eye, event->x, event->y);
-			eyedropper_color_set_accum(C, eye);
+			eyedropper_color_sample(C, eye, event->x, event->y);
 		}
 	}
 
@@ -295,7 +297,7 @@ static int eyedropper_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(
 	}
 	else {
 		eyedropper_exit(C, op);
-		return OPERATOR_CANCELLED;
+		return OPERATOR_PASS_THROUGH;
 	}
 }
 
@@ -313,26 +315,15 @@ static int eyedropper_exec(bContext *C, wmOperator *op)
 		return OPERATOR_FINISHED;
 	}
 	else {
-		return OPERATOR_CANCELLED;
+		return OPERATOR_PASS_THROUGH;
 	}
 }
 
-static int eyedropper_poll(bContext *C)
+static bool eyedropper_poll(bContext *C)
 {
-	PointerRNA ptr;
-	PropertyRNA *prop;
-	int index_dummy;
-	uiBut *but;
-
-	/* Only color buttons */
-	if ((CTX_wm_window(C) != NULL) &&
-	    (but = UI_context_active_but_prop_get(C, &ptr, &prop, &index_dummy)) &&
-	    (but->type == UI_BTYPE_COLOR))
-	{
-		return 1;
-	}
-
-	return 0;
+	/* Actual test for active button happens later, since we don't
+	 * know which one is active until mouse over. */
+	return (CTX_wm_window(C) != NULL);
 }
 
 void UI_OT_eyedropper_color(wmOperatorType *ot)
@@ -351,6 +342,22 @@ void UI_OT_eyedropper_color(wmOperatorType *ot)
 
 	/* flags */
 	ot->flag = OPTYPE_BLOCKING | OPTYPE_INTERNAL;
+}
 
-	/* properties */
+void UI_OT_eyedropper_color_crypto(wmOperatorType *ot)
+{
+	/* identifiers */
+	ot->name = "Cryptomatte Eyedropper";
+	ot->idname = "UI_OT_eyedropper_color_crypto";
+	ot->description = "Pick a color from Cryptomatte node Pick output image";
+
+	/* api callbacks */
+	ot->invoke = eyedropper_invoke;
+	ot->modal = eyedropper_modal;
+	ot->cancel = eyedropper_cancel;
+	ot->exec = eyedropper_exec;
+	ot->poll = eyedropper_poll;
+
+	/* flags */
+	ot->flag = OPTYPE_BLOCKING | OPTYPE_INTERNAL;
 }

@@ -61,7 +61,7 @@
 
 #include "WM_api.h"
 
-static void rna_Sequence_update_rnafunc(ID *id, Sequence *self, int do_data)
+static void rna_Sequence_update_rnafunc(ID *id, Sequence *self, bool do_data)
 {
 	if (do_data) {
 		BKE_sequencer_update_changed_seq_and_deps((Scene *)id, self, true, true);
@@ -74,7 +74,7 @@ static void rna_Sequence_update_rnafunc(ID *id, Sequence *self, int do_data)
 static void rna_Sequence_swap_internal(Sequence *seq_self, ReportList *reports, Sequence *seq_other)
 {
 	const char *error_msg;
-	
+
 	if (BKE_sequence_swap(seq_self, seq_other, &error_msg) == 0)
 		BKE_report(reports, RPT_ERROR, error_msg);
 }

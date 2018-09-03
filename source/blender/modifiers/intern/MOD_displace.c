@@ -71,16 +71,6 @@ static void initData(ModifierData *md)
 	dmd->space = MOD_DISP_SPACE_LOCAL;
 }
 
-static void copyData(ModifierData *md, ModifierData *target)
-{
-#if 0
-	DisplaceModifierData *dmd = (DisplaceModifierData *) md;
-	DisplaceModifierData *tdmd = (DisplaceModifierData *) target;
-#endif
-
-	modifier_copyData_generic(md, target);
-}
-
 static CustomDataMask requiredDataMask(Object *UNUSED(ob), ModifierData *md)
 {
 	DisplaceModifierData *dmd = (DisplaceModifierData *)md;
@@ -117,16 +107,18 @@ static bool dependsOnNormals(ModifierData *md)
 	return ELEM(dmd->direction, MOD_DISP_DIR_NOR, MOD_DISP_DIR_CLNOR);
 }
 
-static void foreachObjectLink(ModifierData *md, Object *ob,
-                              ObjectWalkFunc walk, void *userData)
+static void foreachObjectLink(
+        ModifierData *md, Object *ob,
+        ObjectWalkFunc walk, void *userData)
 {
 	DisplaceModifierData *dmd = (DisplaceModifierData *) md;
 
 	walk(userData, ob, &dmd->map_object, IDWALK_CB_NOP);
 }
 
-static void foreachIDLink(ModifierData *md, Object *ob,
-                          IDWalkFunc walk, void *userData)
+static void foreachIDLink(
+        ModifierData *md, Object *ob,
+        IDWalkFunc walk, void *userData)
 {
 	DisplaceModifierData *dmd = (DisplaceModifierData *) md;
 
@@ -135,8 +127,9 @@ static void foreachIDLink(ModifierData *md, Object *ob,
 	foreachObjectLink(md, ob, (ObjectWalkFunc)walk, userData);
 }
 
-static void foreachTexLink(ModifierData *md, Object *ob,
-                           TexWalkFunc walk, void *userData)
+static void foreachTexLink(
+        ModifierData *md, Object *ob,
+        TexWalkFunc walk, void *userData)
 {
 	walk(userData, ob, md, "texture");
 }
@@ -157,7 +150,7 @@ static void updateDepgraph(ModifierData *md, const ModifierUpdateDepsgraphContex
 		dag_add_relation(ctx->forest, curNode, ctx->obNode,
 		                 DAG_RL_DATA_DATA | DAG_RL_OB_DATA, "Displace Modifier");
 	}
-	
+
 
 	if (dmd->texmapping == MOD_DISP_MAP_GLOBAL ||
 	    (ELEM(dmd->direction, MOD_DISP_DIR_X, MOD_DISP_DIR_Y, MOD_DISP_DIR_Z, MOD_DISP_DIR_RGB_XYZ) &&
@@ -390,11 +383,12 @@ static void displaceModifier_do(
 	}
 }
 
-static void deformVerts(ModifierData *md, Object *ob,
-                        DerivedMesh *derivedData,
-                        float (*vertexCos)[3],
-                        int numVerts,
-                        ModifierApplyFlag UNUSED(flag))
+static void deformVerts(
+        ModifierData *md, Object *ob,
+        DerivedMesh *derivedData,
+        float (*vertexCos)[3],
+        int numVerts,
+        ModifierApplyFlag UNUSED(flag))
 {
 	DerivedMesh *dm = get_cddm(ob, NULL, derivedData, vertexCos, dependsOnNormals(md));
 
@@ -427,7 +421,7 @@ ModifierTypeInfo modifierType_Displace = {
 	/* flags */             eModifierTypeFlag_AcceptsMesh |
 	                        eModifierTypeFlag_SupportsEditmode,
 
-	/* copyData */          copyData,
+	/* copyData */          modifier_copyData_generic,
 	/* deformVerts */       deformVerts,
 	/* deformMatrices */    NULL,
 	/* deformVertsEM */     deformVertsEM,

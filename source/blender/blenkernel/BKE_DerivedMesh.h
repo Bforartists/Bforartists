@@ -38,18 +38,18 @@
  * There are three main mesh data structures in Blender:
  * #Mesh, #CDDerivedMesh and #BMesh.
  *
- * These, and a few others, all implement DerivedMesh interfaces, 
- * which contains unified drawing interfaces, a few utility interfaces, 
- * and a bunch of read-only interfaces intended mostly for conversion from 
+ * These, and a few others, all implement DerivedMesh interfaces,
+ * which contains unified drawing interfaces, a few utility interfaces,
+ * and a bunch of read-only interfaces intended mostly for conversion from
  * one format to another.
  *
  * All Mesh structures in blender make use of CustomData, which is used to store
  * per-element attributes and interpolate them (e.g. uvs, vcols, vgroups, etc).
- * 
+ *
  * Mesh is the "serialized" structure, used for storing object-mode mesh data
  * and also for saving stuff to disk.  It's interfaces are also what DerivedMesh
  * uses to communicate with.
- * 
+ *
  * CDDM is a little mesh library, that uses Mesh data structures in the backend.
  * It's mostly used for modifiers, and has the advantages of not taking much
  * resources.
@@ -301,12 +301,12 @@ struct DerivedMesh {
 	CustomData *(*getTessFaceDataLayout)(DerivedMesh * dm);
 	CustomData *(*getLoopDataLayout)(DerivedMesh * dm);
 	CustomData *(*getPolyDataLayout)(DerivedMesh * dm);
-	
+
 	/** Copies all customdata for an element source into dst at index dest */
 	void (*copyFromVertCData)(DerivedMesh *dm, int source, CustomData *dst, int dest);
 	void (*copyFromEdgeCData)(DerivedMesh *dm, int source, CustomData *dst, int dest);
 	void (*copyFromFaceCData)(DerivedMesh *dm, int source, CustomData *dst, int dest);
-	
+
 	/** Optional grid access for subsurf */
 	int (*getNumGrids)(DerivedMesh *dm);
 	int (*getGridSize)(DerivedMesh *dm);
@@ -315,7 +315,7 @@ struct DerivedMesh {
 	void (*getGridKey)(DerivedMesh *dm, struct CCGKey *key);
 	DMFlagMat *(*getGridFlagMats)(DerivedMesh * dm);
 	unsigned int **(*getGridHidden)(DerivedMesh * dm);
-	
+
 
 	/** Iterate over each mapped vertex in the derived mesh, calling the
 	 * given function with the original vert and the mapped vert's new
@@ -397,7 +397,7 @@ struct DerivedMesh {
 	 * Also called for *final* editmode DerivedMeshes
 	 */
 	void (*drawEdges)(DerivedMesh *dm, bool drawLooseEdges, bool drawAllEdges);
-	
+
 	/** Draw all loose edges (edges w/ no adjoining faces) */
 	void (*drawLooseEdges)(DerivedMesh *dm);
 
@@ -478,7 +478,7 @@ struct DerivedMesh {
 	 *
 	 * NOTE: This routine is optional!
 	 */
-	void (*drawMappedEdgesInterp)(DerivedMesh *dm, 
+	void (*drawMappedEdgesInterp)(DerivedMesh *dm,
 	                              DMSetDrawOptions setDrawOptions,
 	                              DMSetDrawInterpOptions setDrawInterpOptions,
 	                              void *userData);

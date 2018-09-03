@@ -15,8 +15,8 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Contributor: 
- *		Jeroen Bakker 
+ * Contributor:
+ *		Jeroen Bakker
  *		Monique Dewanchand
  *		Lukas Tönne
  */
@@ -39,7 +39,7 @@ void OutputFileNode::convertToOperations(NodeConverter &converter, const Composi
 {
 	NodeImageMultiFile *storage = (NodeImageMultiFile *)this->getbNode()->storage;
 	const bool is_multiview = (context.getRenderData()->scemode & R_MULTIVIEW) != 0;
-	
+
 	if (!context.isRendering()) {
 		/* only output files when rendering a sequence -
 		 * otherwise, it overwrites the output files just
@@ -70,12 +70,12 @@ void OutputFileNode::convertToOperations(NodeConverter &converter, const Composi
 		for (int i = 0; i < num_inputs; ++i) {
 			NodeInput *input = getInputSocket(i);
 			NodeImageMultiFileSocket *sockdata = (NodeImageMultiFileSocket *)input->getbNodeSocket()->storage;
-			
+
 			/* note: layer becomes an empty placeholder if the input is not linked */
 			outputOperation->add_layer(sockdata->layer, input->getDataType(), input->isLinked());
-			
+
 			converter.mapInputSocket(input, outputOperation->getInputSocket(i));
-			
+
 			if (!previewAdded) {
 				converter.addNodeInputPreview(input);
 				previewAdded = true;

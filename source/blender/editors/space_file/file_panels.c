@@ -4,7 +4,7 @@
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version. 
+ * of the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -18,7 +18,7 @@
  * The Original Code is Copyright (C) 2009 Blender Foundation.
  * All rights reserved.
  *
- * 
+ *
  * Contributor(s): Blender Foundation, Andrea Weikert
  *
  * ***** END GPL LICENSE BLOCK *****
@@ -43,6 +43,7 @@
 #include "MEM_guardedalloc.h"
 
 #include "RNA_access.h"
+#include "RNA_define.h"
 
 #include "ED_fileselect.h"
 
@@ -57,7 +58,7 @@
 
 #include <string.h>
 
-static int file_panel_operator_poll(const bContext *C, PanelType *UNUSED(pt))
+static bool file_panel_operator_poll(const bContext *C, PanelType *UNUSED(pt))
 {
 	SpaceFile *sfile = CTX_wm_space_file(C);
 	return (sfile && sfile->op);
@@ -71,24 +72,30 @@ static void file_panel_operator_header(const bContext *C, Panel *pa)
 	BLI_strncpy(pa->drawname, RNA_struct_ui_name(op->type->srna), sizeof(pa->drawname));
 }
 
-static bool file_panel_check_prop(PointerRNA *UNUSED(ptr), PropertyRNA *prop)
-{
-	const char *prop_id = RNA_property_identifier(prop);
-	return !(STREQ(prop_id, "filepath") ||
-	         STREQ(prop_id, "directory") ||
-	         STREQ(prop_id, "filename")
-	         );
-}
-
 static void file_panel_operator(const bContext *C, Panel *pa)
 {
 	SpaceFile *sfile = CTX_wm_space_file(C);
 	wmOperator *op = sfile->op;
-	// int empty = 1, flag;
 
 	UI_block_func_set(uiLayoutGetBlock(pa->layout), file_draw_check_cb, NULL, NULL);
 
-	uiTemplateOperatorPropertyButs(C, pa->layout, op, file_panel_check_prop, '\0', UI_TEMPLATE_OP_PROPS_SHOW_EMPTY);
+	/* Hack: temporary hide.*/
+	const char *hide[] = {"filepath", "directory", "filename", "files"};
+	for (int i = 0; i < ARRAY_SIZE(hide); i++) {
+		PropertyRNA *prop = RNA_struct_find_property(op->ptr, hide[i]);
+		if (prop) {
+			RNA_def_property_flag(prop, PROP_HIDDEN);
+		}
+	}
+
+	uiTemplateOperatorPropertyButs(C, pa->layout, op, '\0', UI_TEMPLATE_OP_PROPS_SHOW_EMPTY);
+
+	for (int i = 0; i < ARRAY_SIZE(hide); i++) {
+		PropertyRNA *prop = RNA_struct_find_property(op->ptr, hide[i]);
+		if (prop) {
+			RNA_def_property_clear_flag(prop, PROP_HIDDEN);
+		}
+	}
 
 	UI_block_func_set(uiLayoutGetBlock(pa->layout), NULL, NULL, NULL);
 }
@@ -106,4 +113,3 @@ void file_panels_register(ARegionType *art)
 	pt->draw = file_panel_operator;
 	BLI_addtail(&art->paneltypes, pt);
 }
-

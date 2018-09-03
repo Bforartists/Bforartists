@@ -25,6 +25,7 @@
 CCL_NAMESPACE_BEGIN
 
 class ImageManager;
+class LightManager;
 class Scene;
 class Shader;
 
@@ -188,7 +189,9 @@ public:
 	virtual int get_group() { return NODE_GROUP_LEVEL_2; }
 
 	NodeVoronoiColoring coloring;
-	float scale;
+	NodeVoronoiDistanceMetric metric;
+	NodeVoronoiFeature feature;
+	float scale, exponent;
 	float3 vector;
 };
 
@@ -279,6 +282,27 @@ public:
 		return ShaderNode::equals(other) &&
 		       builtin_data == point_dendity_node.builtin_data;
 	}
+};
+
+class IESLightNode : public TextureNode {
+public:
+	SHADER_NODE_NO_CLONE_CLASS(IESLightNode)
+
+	~IESLightNode();
+	ShaderNode *clone() const;
+	virtual int get_group() { return NODE_GROUP_LEVEL_2; }
+
+	ustring filename;
+	ustring ies;
+
+	float strength;
+	float3 vector;
+
+private:
+	LightManager *light_manager;
+	int slot;
+
+	void get_slot();
 };
 
 class MappingNode : public ShaderNode {
@@ -516,12 +540,16 @@ public:
 	SHADER_NODE_CLASS(AmbientOcclusionNode)
 
 	bool has_spatial_varying() { return true; }
-	virtual int get_group() { return NODE_GROUP_LEVEL_1; }
-	virtual ClosureType get_closure_type() { return CLOSURE_AMBIENT_OCCLUSION_ID; }
+	virtual int get_group() { return NODE_GROUP_LEVEL_3; }
+	virtual bool has_raytrace() { return true; }
 
-	float3 normal_osl;
 	float3 color;
-	float surface_mix_weight;
+	float distance;
+	float3 normal;
+	int samples;
+
+	bool only_local;
+	bool inside;
 };
 
 class VolumeNode : public ShaderNode {
@@ -578,6 +606,45 @@ public:
 	float blackbody_intensity;
 	float3 blackbody_tint;
 	float temperature;
+};
+
+/* Interface between the I/O sockets and the SVM/OSL backend. */
+class PrincipledHairBsdfNode : public BsdfBaseNode {
+public:
+	SHADER_NODE_CLASS(PrincipledHairBsdfNode)
+	void attributes(Shader *shader, AttributeRequestSet *attributes);
+
+	/* Longitudinal roughness. */
+	float roughness;
+	/* Azimuthal roughness. */
+	float radial_roughness;
+	/* Randomization factor for roughnesses. */
+	float random_roughness;
+	/* Longitudinal roughness factor for only the diffuse bounce (shiny undercoat). */
+	float coat;
+	/* Index of reflection. */
+	float ior;
+	/* Cuticle tilt angle. */
+	float offset;
+	/* Direct coloring's color. */
+	float3 color;
+	/* Melanin concentration. */
+	float melanin;
+	/* Melanin redness ratio. */
+	float melanin_redness;
+	/* Dye color. */
+	float3 tint;
+	/* Randomization factor for melanin quantities. */
+	float random_color;
+	/* Absorption coefficient (unfiltered). */
+	float3 absorption_coefficient;
+
+	float3 normal;
+	float surface_mix_weight;
+	/* If linked, here will be the given random number. */
+	float random;
+	/* Selected coloring parametrization. */
+	NodePrincipledHairParametrization parametrization;
 };
 
 class HairBsdfNode : public BsdfNode {
@@ -1095,4 +1162,3 @@ public:
 CCL_NAMESPACE_END
 
 #endif /* __NODES_H__ */
-

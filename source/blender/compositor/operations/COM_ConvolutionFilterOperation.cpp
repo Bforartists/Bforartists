@@ -15,8 +15,8 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Contributor: 
- *		Jeroen Bakker 
+ * Contributor:
+ *		Jeroen Bakker
  *		Monique Dewanchand
  */
 
@@ -102,7 +102,7 @@ void ConvolutionFilterOperation::executePixel(float output[4], int x, int y, voi
 	madd_v4_v4fl(output, in1, this->m_filter[7]);
 	this->m_inputOperation->read(in1, x3, y3, NULL);
 	madd_v4_v4fl(output, in1, this->m_filter[8]);
-	
+
 	output[0] = output[0] * value[0] + in2[0] * mval;
 	output[1] = output[1] * value[0] + in2[1] * mval;
 	output[2] = output[2] * value[0] + in2[2] * mval;
@@ -124,6 +124,6 @@ bool ConvolutionFilterOperation::determineDependingAreaOfInterest(rcti *input, R
 	newInput.xmin = input->xmin - addx;
 	newInput.ymax = input->ymax + addy;
 	newInput.ymin = input->ymin - addy;
-	
+
 	return NodeOperation::determineDependingAreaOfInterest(&newInput, readOperation, output);
 }

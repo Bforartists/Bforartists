@@ -95,11 +95,11 @@ def main():
             print("Using Make")
         arg = find_build_args_make(SOURCE_FILE)
     else:
-        sys.stderr.write("Can't find Ninja or Makefile (%r or %r), aborting" % (build_file_ninja, build_file_make))
+        sys.stderr.write(f"Can't find Ninja or Makefile ({build_file_ninja!r} or {build_file_make!r}), aborting")
         return
 
     if arg is None:
-        sys.stderr.write("Can't find file %r in build command output of %r, aborting" % (SOURCE_FILE, BUILD_DIR))
+        sys.stderr.write(f"Can't find file {SOURCE_FILE!r} in build command output of {BUILD_DIR!r}, aborting")
         return
 
     # now we need to get arg and modify it to produce assembler
@@ -156,15 +156,15 @@ def main():
         # arg_split += ["-masm=intel"]  # optional
         # arg_split += ["-fverbose-asm"]  # optional but handy
     else:
-        sys.stderr.write("Compiler %r not supported" % COMPILER_ID)
+        sys.stderr.write(f"Compiler {COMPILER_ID!r} not supported")
         return
 
-    source_asm = SOURCE_FILE + ".asm"
+    source_asm = f"{SOURCE_FILE}.asm"
 
     # Never overwrite existing files
     i = 1
     while os.path.exists(source_asm):
-        source_asm = SOURCE_FILE + ".asm.%d" % i
+        source_asm = f"{SOURCE_FILE}.asm.{i:d}"
         i += 1
 
     arg_split += ["-o", source_asm]
@@ -177,11 +177,11 @@ def main():
     del kwargs
 
     if not os.path.exists(source_asm):
-        sys.stderr.write("Did not create %r from calling %r" % (source_asm, " ".join(arg_split)))
+        sys.stderr.write(f"Did not create {source_asm!r} from calling {arg_split!r}")
         return
     if VERBOSE:
-        print("Running: %r" % " ".join(arg_split))
-    print("Created: %r" % source_asm)
+        print(f"Running: {arg_split}")
+    print(f"Created: {source_asm!r}")
 
 
 if __name__ == "__main__":

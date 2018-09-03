@@ -413,6 +413,34 @@ void math_abs(float val1, out float outval)
 	outval = abs(val1);
 }
 
+void math_atan2(float val1, float val2, out float outval)
+{
+	outval = atan(val1, val2);
+}
+
+void math_floor(float val, out float outval)
+{
+	outval = floor(val);
+}
+
+void math_ceil(float val, out float outval)
+{
+	outval = ceil(val);
+}
+
+void math_fract(float val, out float outval)
+{
+	outval = val - floor(val);
+}
+
+void math_sqrt(float val, out float outval)
+{
+	if (val > 0.0)
+		outval = sqrt(val);
+	else
+		outval = 0.0;
+}
+
 void squeeze(float val, float width, float center, out float outval)
 {
 	outval = 1.0 / (1.0 + pow(2.71828183, -((val - center) * width)));
@@ -2780,9 +2808,10 @@ void node_bsdf_refraction(vec4 color, float roughness, float ior, vec3 N, out ve
 	node_bsdf_diffuse(color, 0.0, N, result);
 }
 
-void node_ambient_occlusion(vec4 color, out vec4 result)
+void node_ambient_occlusion(vec4 color, float distance, vec3 normal, out vec4 result_color, out float result_ao)
 {
-	result = color;
+	result_color = color;
+	result_ao = 1.0;
 }
 
 /* emission */
@@ -3631,7 +3660,7 @@ void node_tex_sky(vec3 co, out vec4 color)
 	color = vec4(1.0);
 }
 
-void node_tex_voronoi(vec3 co, float scale, float coloring, out vec4 color, out float fac)
+void node_tex_voronoi(vec3 co, float scale, float exponent, float coloring, out vec4 color, out float fac)
 {
 #ifdef BIT_OPERATIONS
 	vec3 p = co * scale;
@@ -3882,7 +3911,7 @@ void material_preview_matcap(vec4 color, sampler2D ima, vec4 N, vec4 mask, out v
 {
 	vec3 normal;
 	vec2 tex;
-	
+
 #ifndef USE_OPENSUBDIV
 	/* remap to 0.0 - 1.0 range. This is done because OpenGL 2.0 clamps colors
 	 * between shader stages and we want the full range of the normal */

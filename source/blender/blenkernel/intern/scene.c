@@ -131,10 +131,10 @@ static void remove_sequencer_fcurves(Scene *sce)
 
 	if (adt && adt->action) {
 		FCurve *fcu, *nextfcu;
-		
+
 		for (fcu = adt->action->curves.first; fcu; fcu = nextfcu) {
 			nextfcu = fcu->next;
-			
+
 			if ((fcu->rna_path) && strstr(fcu->rna_path, "sequences_all")) {
 				action_groups_remove_channel(adt->action, fcu);
 				free_fcurve(fcu);
@@ -423,7 +423,7 @@ Scene *BKE_scene_copy(Main *bmain, Scene *sce, int type)
 			/* Remove sequencer if not full copy */
 			/* XXX Why in Hell? :/ */
 			remove_sequencer_fcurves(sce_copy);
-			BKE_sequencer_editing_free(sce_copy);
+			BKE_sequencer_editing_free(sce_copy, true);
 		}
 
 		/* NOTE: part of SCE_COPY_LINK_DATA and SCE_COPY_FULL operations
@@ -458,12 +458,9 @@ void BKE_scene_free(Scene *sce)
 
 	BKE_animdata_free((ID *)sce, false);
 
-	/* check all sequences */
-	BKE_sequencer_clear_scene_in_allseqs(G.main, sce);
-
 	sce->basact = NULL;
 	BLI_freelistN(&sce->base);
-	BKE_sequencer_editing_free(sce);
+	BKE_sequencer_editing_free(sce, false);
 
 	BKE_keyingsets_free(&sce->keyingsets);
 
@@ -502,14 +499,14 @@ void BKE_scene_free(Scene *sce)
 	BLI_freelistN(&sce->transform_spaces);
 	BLI_freelistN(&sce->r.layers);
 	BLI_freelistN(&sce->r.views);
-	
+
 	BKE_toolsettings_free(sce->toolsettings);
 	sce->toolsettings = NULL;
-	
+
 	DAG_scene_free(sce);
 	if (sce->depsgraph)
 		DEG_graph_free(sce->depsgraph);
-	
+
 	MEM_SAFE_FREE(sce->stats);
 	MEM_SAFE_FREE(sce->fps_info);
 
@@ -532,7 +529,7 @@ void BKE_scene_init(Scene *sce)
 	BLI_assert(MEMCMP_STRUCT_OFS_IS_ZERO(sce, id));
 
 	sce->lay = sce->layact = 1;
-	
+
 	sce->r.mode = R_GAMMA | R_OSA | R_SHADOW | R_SSS | R_ENVMAP | R_RAYTRACE;
 	sce->r.cfra = 1;
 	sce->r.sfra = 1;
@@ -572,7 +569,7 @@ void BKE_scene_init(Scene *sce)
 	sce->r.color_mgt_flag |= R_COLOR_MANAGEMENT;
 
 	sce->r.gauss = 1.0;
-	
+
 	/* deprecated but keep for upwards compat */
 	sce->r.postgamma = 1.0;
 	sce->r.posthue = 0.0;
@@ -629,7 +626,7 @@ void BKE_scene_init(Scene *sce)
 	sce->r.border.ymax = 1.0f;
 
 	sce->r.preview_start_resolution = 64;
-	
+
 	sce->r.line_thickness_mode = R_LINE_THICKNESS_ABSOLUTE;
 	sce->r.unit_line_thickness = 1.0f;
 
@@ -765,7 +762,7 @@ void BKE_scene_init(Scene *sce)
 
 	sce->gm.gravity = 9.8f;
 	sce->gm.physicsEngine = WOPHY_BULLET;
-	sce->gm.mode = 32; //XXX ugly harcoding, still not sure we should drop mode. 32 == 1 << 5 == use_occlusion_culling 
+	sce->gm.mode = 32; //XXX ugly harcoding, still not sure we should drop mode. 32 == 1 << 5 == use_occlusion_culling
 	sce->gm.occlusionRes = 128;
 	sce->gm.ticrate = 60;
 	sce->gm.maxlogicstep = 5;
@@ -817,22 +814,22 @@ void BKE_scene_init(Scene *sce)
 	copy_v2_fl2(sce->safe_areas.action_center, 15.0f / 100.0f, 5.0f / 100.0f);
 
 	sce->preview = NULL;
-	
+
 	/* GP Sculpt brushes */
 	{
 		GP_BrushEdit_Settings *gset = &sce->toolsettings->gp_sculpt;
 		GP_EditBrush_Data *gp_brush;
-		
+
 		gp_brush = &gset->brush[GP_EDITBRUSH_TYPE_SMOOTH];
 		gp_brush->size = 25;
 		gp_brush->strength = 0.3f;
 		gp_brush->flag = GP_EDITBRUSH_FLAG_USE_FALLOFF | GP_EDITBRUSH_FLAG_SMOOTH_PRESSURE;
-		
+
 		gp_brush = &gset->brush[GP_EDITBRUSH_TYPE_THICKNESS];
 		gp_brush->size = 25;
 		gp_brush->strength = 0.5f;
 		gp_brush->flag = GP_EDITBRUSH_FLAG_USE_FALLOFF;
-		
+
 		gp_brush = &gset->brush[GP_EDITBRUSH_TYPE_STRENGTH];
 		gp_brush->size = 25;
 		gp_brush->strength = 0.5f;
@@ -842,28 +839,28 @@ void BKE_scene_init(Scene *sce)
 		gp_brush->size = 50;
 		gp_brush->strength = 0.3f;
 		gp_brush->flag = GP_EDITBRUSH_FLAG_USE_FALLOFF;
-		
+
 		gp_brush = &gset->brush[GP_EDITBRUSH_TYPE_PUSH];
 		gp_brush->size = 25;
 		gp_brush->strength = 0.3f;
 		gp_brush->flag = GP_EDITBRUSH_FLAG_USE_FALLOFF;
-		
+
 		gp_brush = &gset->brush[GP_EDITBRUSH_TYPE_TWIST];
 		gp_brush->size = 50;
 		gp_brush->strength = 0.3f; // XXX?
 		gp_brush->flag = GP_EDITBRUSH_FLAG_USE_FALLOFF;
-		
+
 		gp_brush = &gset->brush[GP_EDITBRUSH_TYPE_PINCH];
 		gp_brush->size = 50;
 		gp_brush->strength = 0.5f; // XXX?
 		gp_brush->flag = GP_EDITBRUSH_FLAG_USE_FALLOFF;
-		
+
 		gp_brush = &gset->brush[GP_EDITBRUSH_TYPE_RANDOMIZE];
 		gp_brush->size = 25;
 		gp_brush->strength = 0.5f;
 		gp_brush->flag = GP_EDITBRUSH_FLAG_USE_FALLOFF;
 	}
-	
+
 	/* GP Stroke Placement */
 	sce->toolsettings->gpencil_v3d_align = GP_PROJECT_VIEWSPACE;
 	sce->toolsettings->gpencil_v2d_align = GP_PROJECT_VIEWSPACE;
@@ -915,10 +912,10 @@ void BKE_scene_set_background(Main *bmain, Scene *scene)
 	Group *group;
 	GroupObject *go;
 	int flag;
-	
+
 	/* check for cyclic sets, for reading old files but also for definite security (py?) */
 	BKE_scene_validate_setscene(bmain, scene);
-	
+
 	/* can happen when switching modes in other scenes */
 	if (scene->obedit && !(scene->obedit->mode & OB_MODE_EDIT))
 		scene->obedit = NULL;
@@ -944,12 +941,12 @@ void BKE_scene_set_background(Main *bmain, Scene *scene)
 	for (base = scene->base.first; base; base = base->next) {
 		ob = base->object;
 		ob->lay = base->lay;
-		
+
 		/* group patch... */
 		base->flag &= ~(OB_FROMGROUP);
 		flag = ob->flag & (OB_FROMGROUP);
 		base->flag |= flag;
-		
+
 		/* not too nice... for recovering objects with lost data */
 		//if (ob->pose == NULL) base->flag &= ~OB_POSEMODE;
 		ob->flag = base->flag;
@@ -960,23 +957,23 @@ void BKE_scene_set_background(Main *bmain, Scene *scene)
 /* called from creator_args.c */
 Scene *BKE_scene_set_name(Main *bmain, const char *name)
 {
-	Scene *sce = (Scene *)BKE_libblock_find_name_ex(bmain, ID_SCE, name);
+	Scene *sce = (Scene *)BKE_libblock_find_name(bmain, ID_SCE, name);
 	if (sce) {
 		BKE_scene_set_background(bmain, sce);
-		printf("Scene switch for render: '%s' in file: '%s'\n", name, bmain->name);
+		printf("Scene switch for render: '%s' in file: '%s'\n", name, BKE_main_blendfile_path(bmain));
 		return sce;
 	}
 
-	printf("Can't find scene: '%s' in file: '%s'\n", name, bmain->name);
+	printf("Can't find scene: '%s' in file: '%s'\n", name, BKE_main_blendfile_path(bmain));
 	return NULL;
 }
 
 /* Used by metaballs, return *all* objects (including duplis) existing in the scene (including scene's sets) */
-int BKE_scene_base_iter_next(EvaluationContext *eval_ctx, SceneBaseIter *iter,
+int BKE_scene_base_iter_next(Main *bmain, EvaluationContext *eval_ctx, SceneBaseIter *iter,
                              Scene **scene, int val, Base **base, Object **ob)
 {
 	bool run_again = true;
-	
+
 	/* init */
 	if (val == 0) {
 		iter->phase = F_START;
@@ -1030,19 +1027,19 @@ int BKE_scene_base_iter_next(EvaluationContext *eval_ctx, SceneBaseIter *iter,
 					}
 				}
 			}
-			
+
 			if (*base == NULL) {
 				iter->phase = F_START;
 			}
 			else {
 				if (iter->phase != F_DUPLI) {
 					if ( (*base)->object->transflag & OB_DUPLI) {
-						/* groups cannot be duplicated for mballs yet, 
-						 * this enters eternal loop because of 
+						/* groups cannot be duplicated for mballs yet,
+						 * this enters eternal loop because of
 						 * makeDispListMBall getting called inside of group_duplilist */
 						if ((*base)->object->dup_group == NULL) {
-							iter->duplilist = object_duplilist_ex(eval_ctx, (*scene), (*base)->object, false);
-							
+							iter->duplilist = object_duplilist_ex(bmain, eval_ctx, (*scene), (*base)->object, false);
+
 							iter->dupob = iter->duplilist->first;
 
 							if (!iter->dupob) {
@@ -1075,13 +1072,13 @@ int BKE_scene_base_iter_next(EvaluationContext *eval_ctx, SceneBaseIter *iter,
 				else if (iter->phase == F_DUPLI) {
 					iter->phase = F_SCENE;
 					(*base)->flag &= ~OB_FROMDUPLI;
-					
+
 					if (iter->dupli_refob) {
 						/* Restore last object's real matrix. */
 						copy_m4_m4(iter->dupli_refob->obmat, iter->omat);
 						iter->dupli_refob = NULL;
 					}
-					
+
 					free_object_duplilist(iter->duplilist);
 					iter->duplilist = NULL;
 					run_again = true;
@@ -1102,7 +1099,7 @@ int BKE_scene_base_iter_next(EvaluationContext *eval_ctx, SceneBaseIter *iter,
 Object *BKE_scene_camera_find(Scene *sc)
 {
 	Base *base;
-	
+
 	for (base = sc->base.first; base; base = base->next)
 		if (base->object->type == OB_CAMERA)
 			return base->object;
@@ -1207,6 +1204,16 @@ char *BKE_scene_find_last_marker_name(Scene *scene, int frame)
 	return best_marker ? best_marker->name : NULL;
 }
 
+int BKE_scene_frame_snap_by_seconds(Scene *scene, double interval_in_seconds, int cfra)
+{
+	const int fps = round_db_to_int(FPS * interval_in_seconds);
+	const int second_prev = cfra - mod_i(cfra, fps);
+	const int second_next = second_prev + fps;
+	const int delta_prev = cfra - second_prev;
+	const int delta_next = second_next - cfra;
+	return (delta_prev < delta_next) ? second_prev : second_next;
+}
+
 
 Base *BKE_scene_base_add(Scene *sce, Object *ob)
 {
@@ -1228,7 +1235,7 @@ void BKE_scene_base_unlink(Scene *sce, Base *base)
 	/* remove rigid body object from world before removing object */
 	if (base->object->rigidbody_object)
 		BKE_rigidbody_remove_object(sce, base->object);
-	
+
 	BLI_remlink(&sce->base, base);
 	if (sce->basact == base)
 		sce->basact = NULL;
@@ -1260,7 +1267,7 @@ bool BKE_scene_validate_setscene(Main *bmain, Scene *sce)
 
 	if (sce->set == NULL) return true;
 	totscene = BLI_listbase_count(&bmain->scene);
-	
+
 	for (a = 0, sce_iter = sce; sce_iter->set; sce_iter = sce_iter->set, a++) {
 		/* more iterations than scenes means we have a cycle */
 		if (a > totscene) {
@@ -1274,7 +1281,7 @@ bool BKE_scene_validate_setscene(Main *bmain, Scene *sce)
 }
 
 /* This function is needed to cope with fractional frames - including two Blender rendering features
- * mblur (motion blur that renders 'subframes' and blurs them together), and fields rendering. 
+ * mblur (motion blur that renders 'subframes' and blurs them together), and fields rendering.
  */
 float BKE_scene_frame_get(const Scene *scene)
 {
@@ -1287,7 +1294,7 @@ float BKE_scene_frame_get_from_ctime(const Scene *scene, const float frame)
 	float ctime = frame;
 	ctime += scene->r.subframe;
 	ctime *= scene->r.framelen;
-	
+
 	return ctime;
 }
 
@@ -1302,7 +1309,7 @@ void BKE_scene_frame_set(struct Scene *scene, double cfra)
 }
 
 #ifdef WITH_LEGACY_DEPSGRAPH
-/* drivers support/hacks 
+/* drivers support/hacks
  *  - this method is called from scene_update_tagged_recursive(), so gets included in viewport + render
  *	- these are always run since the depsgraph can't handle non-object data
  *	- these happen after objects are all done so that we can read in their final transform values,
@@ -1312,7 +1319,7 @@ static void scene_update_drivers(Main *UNUSED(bmain), Scene *scene)
 {
 	SceneRenderLayer *srl;
 	float ctime = BKE_scene_frame_get(scene);
-	
+
 	/* scene itself */
 	if (scene->adt && scene->adt->drivers.first) {
 		BKE_animsys_evaluate_animdata(scene, &scene->id, scene->adt, ctime, ADT_RECALC_DRIVERS);
@@ -1323,16 +1330,16 @@ static void scene_update_drivers(Main *UNUSED(bmain), Scene *scene)
 	if (scene->world) {
 		ID *wid = (ID *)scene->world;
 		AnimData *adt = BKE_animdata_from_id(wid);
-		
+
 		if (adt && adt->drivers.first)
 			BKE_animsys_evaluate_animdata(scene, wid, adt, ctime, ADT_RECALC_DRIVERS);
 	}
-	
+
 	/* nodes */
 	if (scene->nodetree) {
 		ID *nid = (ID *)scene->nodetree;
 		AnimData *adt = BKE_animdata_from_id(nid);
-		
+
 		if (adt && adt->drivers.first)
 			BKE_animsys_evaluate_animdata(scene, nid, adt, ctime, ADT_RECALC_DRIVERS);
 	}
@@ -1341,7 +1348,7 @@ static void scene_update_drivers(Main *UNUSED(bmain), Scene *scene)
 	if (scene->world && scene->world->nodetree) {
 		ID *nid = (ID *)scene->world->nodetree;
 		AnimData *adt = BKE_animdata_from_id(nid);
-		
+
 		if (adt && adt->drivers.first)
 			BKE_animsys_evaluate_animdata(scene, nid, adt, ctime, ADT_RECALC_DRIVERS);
 	}
@@ -1364,40 +1371,40 @@ static void scene_update_drivers(Main *UNUSED(bmain), Scene *scene)
 }
 
 /* deps hack - do extra recalcs at end */
-static void scene_depsgraph_hack(EvaluationContext *eval_ctx, Scene *scene, Scene *scene_parent)
+static void scene_depsgraph_hack(Main *bmain, EvaluationContext *eval_ctx, Scene *scene, Scene *scene_parent)
 {
 	Base *base;
-		
+
 	scene->customdata_mask = scene_parent->customdata_mask;
-	
+
 	/* sets first, we allow per definition current scene to have
 	 * dependencies on sets, but not the other way around. */
 	if (scene->set)
-		scene_depsgraph_hack(eval_ctx, scene->set, scene_parent);
-	
+		scene_depsgraph_hack(bmain, eval_ctx, scene->set, scene_parent);
+
 	for (base = scene->base.first; base; base = base->next) {
 		Object *ob = base->object;
-		
+
 		if (ob->depsflag) {
 			int recalc = 0;
 			// printf("depshack %s\n", ob->id.name + 2);
-			
+
 			if (ob->depsflag & OB_DEPS_EXTRA_OB_RECALC)
 				recalc |= OB_RECALC_OB;
 			if (ob->depsflag & OB_DEPS_EXTRA_DATA_RECALC)
 				recalc |= OB_RECALC_DATA;
-			
+
 			ob->recalc |= recalc;
-			BKE_object_handle_update(eval_ctx, scene_parent, ob);
-			
+			BKE_object_handle_update(bmain, eval_ctx, scene_parent, ob);
+
 			if (ob->dup_group && (ob->transflag & OB_DUPLIGROUP)) {
 				GroupObject *go;
-				
+
 				for (go = ob->dup_group->gobject.first; go; go = go->next) {
 					if (go->ob)
 						go->ob->recalc |= recalc;
 				}
-				BKE_group_handle_recalc_and_update(eval_ctx, scene_parent, ob, ob->dup_group);
+				BKE_group_handle_recalc_and_update(bmain, eval_ctx, scene_parent, ob, ob->dup_group);
 			}
 		}
 	}
@@ -1484,6 +1491,7 @@ typedef struct StatisicsEntry {
 typedef struct ThreadedObjectUpdateState {
 	/* TODO(sergey): We might want this to be per-thread object. */
 	EvaluationContext *eval_ctx;
+	Main *bmain;
 	Scene *scene;
 	Scene *scene_parent;
 	double base_time;
@@ -1501,17 +1509,17 @@ typedef struct ThreadedObjectUpdateState {
 
 static void scene_update_object_add_task(void *node, void *user_data);
 
-static void scene_update_all_bases(EvaluationContext *eval_ctx, Scene *scene, Scene *scene_parent)
+static void scene_update_all_bases(Main *bmain, EvaluationContext *eval_ctx, Scene *scene, Scene *scene_parent)
 {
 	Base *base;
 
 	for (base = scene->base.first; base; base = base->next) {
 		Object *object = base->object;
 
-		BKE_object_handle_update_ex(eval_ctx, scene_parent, object, scene->rigidbody_world, true);
+		BKE_object_handle_update_ex(bmain, eval_ctx, scene_parent, object, scene->rigidbody_world, true);
 
 		if (object->dup_group && (object->transflag & OB_DUPLIGROUP))
-			BKE_group_handle_recalc_and_update(eval_ctx, scene_parent, object, object->dup_group);
+			BKE_group_handle_recalc_and_update(bmain, eval_ctx, scene_parent, object, object->dup_group);
 
 		/* always update layer, so that animating layers works (joshua july 2010) */
 		/* XXX commented out, this has depsgraph issues anyway - and this breaks setting scenes
@@ -1529,6 +1537,7 @@ static void scene_update_object_func(TaskPool * __restrict pool, void *taskdata,
 	void *node = taskdata;
 	Object *object = DAG_get_node_object(node);
 	EvaluationContext *eval_ctx = state->eval_ctx;
+	Main *bmain = state->bmain;
 	Scene *scene = state->scene;
 	Scene *scene_parent = state->scene_parent;
 
@@ -1559,7 +1568,7 @@ static void scene_update_object_func(TaskPool * __restrict pool, void *taskdata,
 		 * separately from main thread because of we've got no idea about
 		 * dependencies inside the group.
 		 */
-		BKE_object_handle_update_ex(eval_ctx, scene_parent, object, scene->rigidbody_world, false);
+		BKE_object_handle_update_ex(bmain, eval_ctx, scene_parent, object, scene->rigidbody_world, false);
 
 		/* Calculate statistics. */
 		if (add_to_stats) {
@@ -1700,6 +1709,7 @@ static void scene_update_objects(EvaluationContext *eval_ctx, Main *bmain, Scene
 	}
 
 	state.eval_ctx = eval_ctx;
+	state.bmain = bmain;
 	state.scene = scene;
 	state.scene_parent = scene_parent;
 
@@ -1757,7 +1767,7 @@ static void scene_update_objects(EvaluationContext *eval_ctx, Main *bmain, Scene
 #endif
 
 	if (need_singlethread_pass) {
-		scene_update_all_bases(eval_ctx, scene, scene_parent);
+		scene_update_all_bases(bmain, eval_ctx, scene, scene_parent);
 	}
 
 	if (need_free_scheduler) {
@@ -1782,7 +1792,7 @@ static void scene_update_tagged_recursive(EvaluationContext *eval_ctx, Main *bma
 
 	/* update masking curves */
 	BKE_mask_update_scene(bmain, scene);
-	
+
 }
 #endif  /* WITH_LEGACY_DEPSGRAPH */
 
@@ -1827,7 +1837,7 @@ static void prepare_mesh_for_viewport_render(Main *bmain, Scene *scene)
 			if (check_rendered_viewport_visible(bmain)) {
 				BMesh *bm = mesh->edit_btmesh->bm;
 				BM_mesh_bm_to_me(
-				        bm, mesh,
+				        bmain, bm, mesh,
 				        (&(struct BMeshToMeshParams){
 				            .calc_object_remap = true,
 				        }));
@@ -1868,9 +1878,9 @@ void BKE_scene_update_tagged(EvaluationContext *eval_ctx, Main *bmain, Scene *sc
 	DAG_ids_flush_tagged(bmain);
 
 	/* removed calls to quick_cache, see pointcache.c */
-	
+
 	/* clear "LIB_TAG_DOIT" flag from all materials, to prevent infinite recursion problems later
-	 * when trying to find materials with drivers that need evaluating [#32017] 
+	 * when trying to find materials with drivers that need evaluating [#32017]
 	 */
 	BKE_main_id_tag_idcode(bmain, ID_MA, LIB_TAG_DOIT, false);
 	BKE_main_id_tag_idcode(bmain, ID_LA, LIB_TAG_DOIT, false);
@@ -1897,7 +1907,7 @@ void BKE_scene_update_tagged(EvaluationContext *eval_ctx, Main *bmain, Scene *sc
 	{
 		AnimData *adt = BKE_animdata_from_id(&scene->id);
 		float ctime = BKE_scene_frame_get(scene);
-		
+
 		if (adt && (adt->recalc & ADT_RECALC_ANIM))
 			BKE_animsys_evaluate_animdata(scene, &scene->id, adt, ctime, 0);
 	}
@@ -1975,7 +1985,7 @@ void BKE_scene_update_for_newframe_ex(EvaluationContext *eval_ctx, Main *bmain, 
 	/* update animated image textures for particles, modifiers, gpu, etc,
 	 * call this at the start so modifiers with textures don't lag 1 frame */
 	BKE_image_update_frame(bmain, sce->r.cfra);
-	
+
 #ifdef WITH_LEGACY_DEPSGRAPH
 	/* rebuild rigid body worlds before doing the actual frame update
 	 * this needs to be done on start frame but animation playback usually starts one frame later
@@ -1985,9 +1995,9 @@ void BKE_scene_update_for_newframe_ex(EvaluationContext *eval_ctx, Main *bmain, 
 		scene_rebuild_rbw_recursive(sce, ctime);
 	}
 #endif
-	
+
 	BKE_sound_set_cfra(sce->r.cfra);
-	
+
 	/* clear animation overrides */
 	/* XXX TODO... */
 
@@ -2029,7 +2039,7 @@ void BKE_scene_update_for_newframe_ex(EvaluationContext *eval_ctx, Main *bmain, 
 #endif
 
 	/* clear "LIB_TAG_DOIT" flag from all materials, to prevent infinite recursion problems later
-	 * when trying to find materials with drivers that need evaluating [#32017] 
+	 * when trying to find materials with drivers that need evaluating [#32017]
 	 */
 	BKE_main_id_tag_idcode(bmain, ID_MA, LIB_TAG_DOIT, false);
 	BKE_main_id_tag_idcode(bmain, ID_LA, LIB_TAG_DOIT, false);
@@ -2041,7 +2051,7 @@ void BKE_scene_update_for_newframe_ex(EvaluationContext *eval_ctx, Main *bmain, 
 		scene_do_rb_simulation_recursive(sce, ctime);
 	}
 #endif
-	
+
 	/* BKE_object_handle_update() on all objects, groups and sets */
 #ifdef WITH_LEGACY_DEPSGRAPH
 	if (use_new_eval) {
@@ -2059,7 +2069,7 @@ void BKE_scene_update_for_newframe_ex(EvaluationContext *eval_ctx, Main *bmain, 
 
 #ifdef WITH_LEGACY_DEPSGRAPH
 	if (!use_new_eval) {
-		scene_depsgraph_hack(eval_ctx, sce, sce);
+		scene_depsgraph_hack(bmain, eval_ctx, sce, sce);
 	}
 #endif
 
@@ -2347,7 +2357,7 @@ int BKE_render_num_threads(const RenderData *rd)
 		threads = rd->threads;
 	else
 		threads = BLI_system_thread_count();
-	
+
 	return max_ii(threads, 1);
 }
 

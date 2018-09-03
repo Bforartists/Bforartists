@@ -4,7 +4,7 @@
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version. 
+ * of the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -177,7 +177,7 @@ void BLI_jitter_init(float (*jitarr)[2], int num)
 	}
 
 	MEM_freeN(jit2);
-	
+
 	/* finally, move jittertab to be centered around (0, 0) */
 	for (i = 0; i < num; i++) {
 		jitarr[i][0] -= 0.5f;

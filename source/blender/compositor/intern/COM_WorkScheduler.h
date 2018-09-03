@@ -15,13 +15,13 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Contributor: 
- *		Jeroen Bakker 
+ * Contributor:
+ *		Jeroen Bakker
  *		Monique Dewanchand
  */
 
-#ifndef _COM_WorkScheduler_h_
-#define _COM_WorkScheduler_h_
+#ifndef __COM_WORKSCHEDULER_H__
+#define __COM_WORKSCHEDULER_H__
 
 #include "COM_ExecutionGroup.h"
 extern "C" {
@@ -53,7 +53,7 @@ class WorkScheduler {
 	 * inside this loop new work is queried and being executed
 	 */
 	static void *thread_execute_gpu(void *data);
-#endif	
+#endif
 public:
 	/**
 	 * @brief schedule a chunk of a group to be calculated.
@@ -120,4 +120,4 @@ public:
 #endif
 };
 
-#endif /* _COM_WorkScheduler_h_ */
+#endif /* __COM_WORKSCHEDULER_H__ */

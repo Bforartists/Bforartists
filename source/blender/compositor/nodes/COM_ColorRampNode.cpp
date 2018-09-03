@@ -15,8 +15,8 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Contributor: 
- *		Jeroen Bakker 
+ * Contributor:
+ *		Jeroen Bakker
  *		Monique Dewanchand
  */
 
@@ -42,14 +42,14 @@ void ColorRampNode::convertToOperations(NodeConverter &converter, const Composit
 	ColorRampOperation *operation = new ColorRampOperation();
 	operation->setColorBand((ColorBand *)editorNode->storage);
 	converter.addOperation(operation);
-	
+
 	converter.mapInputSocket(inputSocket, operation->getInputSocket(0));
 	converter.mapOutputSocket(outputSocket, operation->getOutputSocket(0));
-	
+
 	SeparateChannelOperation *operation2 = new SeparateChannelOperation();
 	operation2->setChannel(3);
 	converter.addOperation(operation2);
-	
+
 	converter.addLink(operation->getOutputSocket(), operation2->getInputSocket(0));
 	converter.mapOutputSocket(outputSocketAlpha, operation2->getOutputSocket());
 }

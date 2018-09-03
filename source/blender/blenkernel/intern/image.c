@@ -500,7 +500,7 @@ void BKE_image_make_local(Main *bmain, Image *ima, const bool lib_local)
 	BKE_id_make_local_generic(bmain, &ima->id, true, lib_local);
 }
 
-void BKE_image_merge(Image *dest, Image *source)
+void BKE_image_merge(Main *bmain, Image *dest, Image *source)
 {
 	/* sanity check */
 	if (dest && source && dest != source) {
@@ -518,7 +518,7 @@ void BKE_image_merge(Image *dest, Image *source)
 		}
 		BLI_spin_unlock(&image_spin);
 
-		BKE_libblock_free(G.main, source);
+		BKE_libblock_free(bmain, source);
 	}
 }
 
@@ -574,7 +574,7 @@ static void image_init_color_management(Image *ima)
 
 char BKE_image_alpha_mode_from_extension_ex(const char *filepath)
 {
-	if (BLI_testextensie_n(filepath, ".exr", ".cin", ".dpx", ".hdr", NULL)) {
+	if (BLI_path_extension_check_n(filepath, ".exr", ".cin", ".dpx", ".hdr", NULL)) {
 		return IMA_ALPHA_PREMUL;
 	}
 	else {
@@ -594,7 +594,7 @@ Image *BKE_image_load(Main *bmain, const char *filepath)
 	char str[FILE_MAX];
 
 	STRNCPY(str, filepath);
-	BLI_path_abs(str, bmain->name);
+	BLI_path_abs(str, BKE_main_blendfile_path(bmain));
 
 	/* exists? */
 	file = BLI_open(str, O_BINARY | O_RDONLY, 0);
@@ -605,7 +605,7 @@ Image *BKE_image_load(Main *bmain, const char *filepath)
 	ima = image_alloc(bmain, BLI_path_basename(filepath), IMA_SRC_FILE, IMA_TYPE_IMAGE);
 	STRNCPY(ima->name, filepath);
 
-	if (BLI_testextensie_array(filepath, imb_ext_movie))
+	if (BLI_path_extension_check_array(filepath, imb_ext_movie))
 		ima->source = IMA_SRC_MOVIE;
 
 	image_init_color_management(ima);
@@ -617,19 +617,19 @@ Image *BKE_image_load(Main *bmain, const char *filepath)
 /* otherwise creates new. */
 /* does not load ibuf itself */
 /* pass on optional frame for #name images */
-Image *BKE_image_load_exists_ex(const char *filepath, bool *r_exists)
+Image *BKE_image_load_exists_ex(Main *bmain, const char *filepath, bool *r_exists)
 {
 	Image *ima;
 	char str[FILE_MAX], strtest[FILE_MAX];
 
 	STRNCPY(str, filepath);
-	BLI_path_abs(str, G.main->name);
+	BLI_path_abs(str, BKE_main_blendfile_path_from_global());
 
 	/* first search an identical filepath */
-	for (ima = G.main->image.first; ima; ima = ima->id.next) {
+	for (ima = bmain->image.first; ima; ima = ima->id.next) {
 		if (ima->source != IMA_SRC_VIEWER && ima->source != IMA_SRC_GENERATED) {
 			STRNCPY(strtest, ima->name);
-			BLI_path_abs(strtest, ID_BLEND_PATH(G.main, &ima->id));
+			BLI_path_abs(strtest, ID_BLEND_PATH(bmain, &ima->id));
 
 			if (BLI_path_cmp(strtest, str) == 0) {
 				if ((BKE_image_has_anim(ima) == false) ||
@@ -648,12 +648,12 @@ Image *BKE_image_load_exists_ex(const char *filepath, bool *r_exists)
 
 	if (r_exists)
 		*r_exists = false;
-	return BKE_image_load(G.main, filepath);
+	return BKE_image_load(bmain, filepath);
 }
 
-Image *BKE_image_load_exists(const char *filepath)
+Image *BKE_image_load_exists(Main *bmain, const char *filepath)
 {
-	return BKE_image_load_exists_ex(filepath, NULL);
+	return BKE_image_load_exists_ex(bmain, filepath, NULL);
 }
 
 static ImBuf *add_ibuf_size(unsigned int width, unsigned int height, const char *name, int depth, int floatbuf, short gen_type,
@@ -755,7 +755,7 @@ Image *BKE_image_add_generated(
 /* Create an image image from ibuf. The refcount of ibuf is increased,
  * caller should take care to drop its reference by calling
  * IMB_freeImBuf if needed. */
-Image *BKE_image_add_from_imbuf(ImBuf *ibuf, const char *name)
+Image *BKE_image_add_from_imbuf(Main *bmain, ImBuf *ibuf, const char *name)
 {
 	/* on save, type is changed to FILE in editsima.c */
 	Image *ima;
@@ -764,7 +764,7 @@ Image *BKE_image_add_from_imbuf(ImBuf *ibuf, const char *name)
 		name = BLI_path_basename(ibuf->name);
 	}
 
-	ima = image_alloc(G.main, name, IMA_SRC_FILE, IMA_TYPE_IMAGE);
+	ima = image_alloc(bmain, name, IMA_SRC_FILE, IMA_TYPE_IMAGE);
 
 	if (ima) {
 		STRNCPY(ima->name, ibuf->name);
@@ -933,12 +933,12 @@ void BKE_image_tag_time(Image *ima)
 }
 
 #if 0
-static void tag_all_images_time()
+static void tag_all_images_time(Main *bmain)
 {
 	Image *ima;
 	int ctime = PIL_check_seconds_timer_i();
 
-	ima = G.main->image.first;
+	ima = bmain->image.first;
 	while (ima) {
 		if (ima->bindcode || ima->repbind || ima->ibufs.first) {
 			ima->lastused = ctime;
@@ -992,17 +992,17 @@ static uintptr_t image_mem_size(Image *image)
 	return size;
 }
 
-void BKE_image_print_memlist(void)
+void BKE_image_print_memlist(Main *bmain)
 {
 	Image *ima;
 	uintptr_t size, totsize = 0;
 
-	for (ima = G.main->image.first; ima; ima = ima->id.next)
+	for (ima = bmain->image.first; ima; ima = ima->id.next)
 		totsize += image_mem_size(ima);
 
 	printf("\ntotal image memory len: %.3f MB\n", (double)totsize / (double)(1024 * 1024));
 
-	for (ima = G.main->image.first; ima; ima = ima->id.next) {
+	for (ima = bmain->image.first; ima; ima = ima->id.next) {
 		size = image_mem_size(ima);
 
 		if (size)
@@ -1015,7 +1015,7 @@ static bool imagecache_check_dirty(ImBuf *ibuf, void *UNUSED(userkey), void *UNU
 	return (ibuf->userflags & IB_BITMAPDIRTY) == 0;
 }
 
-void BKE_image_free_all_textures(void)
+void BKE_image_free_all_textures(Main *bmain)
 {
 #undef CHECK_FREED_SIZE
 
@@ -1025,14 +1025,14 @@ void BKE_image_free_all_textures(void)
 	uintptr_t tot_freed_size = 0;
 #endif
 
-	for (ima = G.main->image.first; ima; ima = ima->id.next)
+	for (ima = bmain->image.first; ima; ima = ima->id.next)
 		ima->id.tag &= ~LIB_TAG_DOIT;
 
-	for (tex = G.main->tex.first; tex; tex = tex->id.next)
+	for (tex = bmain->tex.first; tex; tex = tex->id.next)
 		if (tex->ima)
 			tex->ima->id.tag |= LIB_TAG_DOIT;
 
-	for (ima = G.main->image.first; ima; ima = ima->id.next) {
+	for (ima = bmain->image.first; ima; ima = ima->id.next) {
 		if (ima->cache && (ima->id.tag & LIB_TAG_DOIT)) {
 #ifdef CHECK_FREED_SIZE
 			uintptr_t old_size = image_mem_size(ima);
@@ -1068,11 +1068,11 @@ void BKE_image_free_anim_ibufs(Image *ima, int except_frame)
 	BLI_spin_unlock(&image_spin);
 }
 
-void BKE_image_all_free_anim_ibufs(int cfra)
+void BKE_image_all_free_anim_ibufs(Main *bmain, int cfra)
 {
 	Image *ima;
 
-	for (ima = G.main->image.first; ima; ima = ima->id.next)
+	for (ima = bmain->image.first; ima; ima = ima->id.next)
 		if (BKE_image_is_animated(ima))
 			BKE_image_free_anim_ibufs(ima, cfra);
 }
@@ -1367,63 +1367,63 @@ static bool do_add_image_extension(char *string, const char imtype, const ImageF
 	(void)im_format;  /* may be unused, depends on build options */
 
 	if (imtype == R_IMF_IMTYPE_IRIS) {
-		if (!BLI_testextensie(string, extension_test = ".rgb"))
+		if (!BLI_path_extension_check(string, extension_test = ".rgb"))
 			extension = extension_test;
 	}
 	else if (imtype == R_IMF_IMTYPE_IRIZ) {
-		if (!BLI_testextensie(string, extension_test = ".rgb"))
+		if (!BLI_path_extension_check(string, extension_test = ".rgb"))
 			extension = extension_test;
 	}
 #ifdef WITH_HDR
 	else if (imtype == R_IMF_IMTYPE_RADHDR) {
-		if (!BLI_testextensie(string, extension_test = ".hdr"))
+		if (!BLI_path_extension_check(string, extension_test = ".hdr"))
 			extension = extension_test;
 	}
 #endif
 	else if (ELEM(imtype, R_IMF_IMTYPE_PNG, R_IMF_IMTYPE_FFMPEG, R_IMF_IMTYPE_H264, R_IMF_IMTYPE_THEORA, R_IMF_IMTYPE_XVID)) {
-		if (!BLI_testextensie(string, extension_test = ".png"))
+		if (!BLI_path_extension_check(string, extension_test = ".png"))
 			extension = extension_test;
 	}
 #ifdef WITH_DDS
 	else if (imtype == R_IMF_IMTYPE_DDS) {
-		if (!BLI_testextensie(string, extension_test = ".dds"))
+		if (!BLI_path_extension_check(string, extension_test = ".dds"))
 			extension = extension_test;
 	}
 #endif
 	else if (ELEM(imtype, R_IMF_IMTYPE_TARGA, R_IMF_IMTYPE_RAWTGA)) {
-		if (!BLI_testextensie(string, extension_test = ".tga"))
+		if (!BLI_path_extension_check(string, extension_test = ".tga"))
 			extension = extension_test;
 	}
 	else if (imtype == R_IMF_IMTYPE_BMP) {
-		if (!BLI_testextensie(string, extension_test = ".bmp"))
+		if (!BLI_path_extension_check(string, extension_test = ".bmp"))
 			extension = extension_test;
 	}
 #ifdef WITH_TIFF
 	else if (imtype == R_IMF_IMTYPE_TIFF) {
-		if (!BLI_testextensie_n(string, extension_test = ".tif", ".tiff", NULL)) {
+		if (!BLI_path_extension_check_n(string, extension_test = ".tif", ".tiff", NULL)) {
 			extension = extension_test;
 		}
 	}
 #endif
 #ifdef WITH_OPENIMAGEIO
 	else if (imtype == R_IMF_IMTYPE_PSD) {
-		if (!BLI_testextensie(string, extension_test = ".psd"))
+		if (!BLI_path_extension_check(string, extension_test = ".psd"))
 			extension = extension_test;
 	}
 #endif
 #ifdef WITH_OPENEXR
 	else if (imtype == R_IMF_IMTYPE_OPENEXR || imtype == R_IMF_IMTYPE_MULTILAYER) {
-		if (!BLI_testextensie(string, extension_test = ".exr"))
+		if (!BLI_path_extension_check(string, extension_test = ".exr"))
 			extension = extension_test;
 	}
 #endif
 #ifdef WITH_CINEON
 	else if (imtype == R_IMF_IMTYPE_CINEON) {
-		if (!BLI_testextensie(string, extension_test = ".cin"))
+		if (!BLI_path_extension_check(string, extension_test = ".cin"))
 			extension = extension_test;
 	}
 	else if (imtype == R_IMF_IMTYPE_DPX) {
-		if (!BLI_testextensie(string, extension_test = ".dpx"))
+		if (!BLI_path_extension_check(string, extension_test = ".dpx"))
 			extension = extension_test;
 	}
 #endif
@@ -1431,35 +1431,35 @@ static bool do_add_image_extension(char *string, const char imtype, const ImageF
 	else if (imtype == R_IMF_IMTYPE_JP2) {
 		if (im_format) {
 			if (im_format->jp2_codec == R_IMF_JP2_CODEC_JP2) {
-				if (!BLI_testextensie(string, extension_test = ".jp2"))
+				if (!BLI_path_extension_check(string, extension_test = ".jp2"))
 					extension = extension_test;
 			}
 			else if (im_format->jp2_codec == R_IMF_JP2_CODEC_J2K) {
-				if (!BLI_testextensie(string, extension_test = ".j2c"))
+				if (!BLI_path_extension_check(string, extension_test = ".j2c"))
 					extension = extension_test;
 			}
 			else
 				BLI_assert(!"Unsupported jp2 codec was specified in im_format->jp2_codec");
 		}
 		else {
-			if (!BLI_testextensie(string, extension_test = ".jp2"))
+			if (!BLI_path_extension_check(string, extension_test = ".jp2"))
 				extension = extension_test;
 		}
 	}
 #endif
 	else { //   R_IMF_IMTYPE_AVIRAW, R_IMF_IMTYPE_AVIJPEG, R_IMF_IMTYPE_JPEG90 etc
-		if (!(BLI_testextensie_n(string, extension_test = ".jpg", ".jpeg", NULL)))
+		if (!(BLI_path_extension_check_n(string, extension_test = ".jpg", ".jpeg", NULL)))
 			extension = extension_test;
 	}
 
 	if (extension) {
 		/* prefer this in many cases to avoid .png.tga, but in certain cases it breaks */
 		/* remove any other known image extension */
-		if (BLI_testextensie_array(string, imb_ext_image)) {
-			return BLI_replace_extension(string, FILE_MAX, extension);
+		if (BLI_path_extension_check_array(string, imb_ext_image)) {
+			return BLI_path_extension_replace(string, FILE_MAX, extension);
 		}
 		else {
-			return BLI_ensure_extension(string, FILE_MAX, extension);
+			return BLI_path_extension_ensure(string, FILE_MAX, extension);
 		}
 
 	}
@@ -1652,7 +1652,8 @@ static void stampdata(Scene *scene, Object *camera, StampData *stamp_data, int d
 	time_t t;
 
 	if (scene->r.stamp & R_STAMP_FILENAME) {
-		SNPRINTF(stamp_data->file, do_prefix ? "File %s" : "%s", G.relbase_valid ? G.main->name : "<untitled>");
+		SNPRINTF(stamp_data->file, do_prefix ? "File %s" : "%s",
+		         G.relbase_valid ? BKE_main_blendfile_path_from_global() : "<untitled>");
 	}
 	else {
 		stamp_data->file[0] = '\0';
@@ -2551,17 +2552,17 @@ struct anim *openanim(const char *name, int flags, int streamindex, char colorsp
 
 /* forces existence of 1 Image for renderout or nodes, returns Image */
 /* name is only for default, when making new one */
-Image *BKE_image_verify_viewer(int type, const char *name)
+Image *BKE_image_verify_viewer(Main *bmain, int type, const char *name)
 {
 	Image *ima;
 
-	for (ima = G.main->image.first; ima; ima = ima->id.next)
+	for (ima = bmain->image.first; ima; ima = ima->id.next)
 		if (ima->source == IMA_SRC_VIEWER)
 			if (ima->type == type)
 				break;
 
 	if (ima == NULL)
-		ima = image_alloc(G.main, name, IMA_SRC_VIEWER, type);
+		ima = image_alloc(bmain, name, IMA_SRC_VIEWER, type);
 
 	/* happens on reload, imagewindow cannot be image user when hidden*/
 	if (ima->id.us == 0)
@@ -2712,7 +2713,7 @@ void BKE_image_init_imageuser(Image *ima, ImageUser *iuser)
 	image_init_imageuser(ima, iuser);
 }
 
-void BKE_image_signal(Image *ima, ImageUser *iuser, int signal)
+void BKE_image_signal(Main *bmain, Image *ima, ImageUser *iuser, int signal)
 {
 	if (ima == NULL)
 		return;
@@ -2774,7 +2775,7 @@ void BKE_image_signal(Image *ima, ImageUser *iuser, int signal)
 			if (iuser)
 				iuser->ok = 1;
 
-			BKE_image_walk_all_users(G.main, ima, image_tag_frame_recalc);
+			BKE_image_walk_all_users(bmain, ima, image_tag_frame_recalc);
 
 			break;
 
@@ -2786,13 +2787,13 @@ void BKE_image_signal(Image *ima, ImageUser *iuser, int signal)
 				if (totfiles != BLI_listbase_count_at_most(&ima->packedfiles, totfiles + 1)) {
 					/* in case there are new available files to be loaded */
 					image_free_packedfiles(ima);
-					BKE_image_packfiles(NULL, ima, ID_BLEND_PATH(G.main, &ima->id));
+					BKE_image_packfiles(NULL, ima, ID_BLEND_PATH(bmain, &ima->id));
 				}
 				else {
 					ImagePackedFile *imapf;
 					for (imapf = ima->packedfiles.first; imapf; imapf = imapf->next) {
 						PackedFile *pf;
-						pf = newPackedFile(NULL, imapf->filepath, ID_BLEND_PATH(G.main, &ima->id));
+						pf = newPackedFile(NULL, imapf->filepath, ID_BLEND_PATH(bmain, &ima->id));
 						if (pf) {
 							freePackedFile(imapf->packedfile);
 							imapf->packedfile = pf;
@@ -2844,7 +2845,7 @@ void BKE_image_signal(Image *ima, ImageUser *iuser, int signal)
 	 * this also makes sure all scenes are accounted for. */
 	{
 		Scene *scene;
-		for (scene = G.main->scene.first; scene; scene = scene->id.next) {
+		for (scene = bmain->scene.first; scene; scene = scene->id.next) {
 			if (scene->nodetree) {
 				nodeUpdateID(scene->nodetree, &ima->id);
 			}
@@ -3042,7 +3043,7 @@ bool BKE_image_is_openexr(struct Image *ima)
 {
 #ifdef WITH_OPENEXR
 	if (ELEM(ima->source, IMA_SRC_FILE, IMA_SRC_SEQUENCE)) {
-		return BLI_testextensie(ima->name, ".exr");
+		return BLI_path_extension_check(ima->name, ".exr");
 	}
 #else
 	UNUSED_VARS(ima);
@@ -3133,9 +3134,11 @@ static void image_create_multilayer(Image *ima, ImBuf *ibuf, int framenr)
 /* common stuff to do with images after loading */
 static void image_initialize_after_load(Image *ima, ImBuf *ibuf)
 {
-	/* preview is NULL when it has never been used as an icon before */
-	if (G.background == 0 && ima->preview == NULL)
+	/* Preview is NULL when it has never been used as an icon before.
+	 * Never handle previews/icons outside of main thread. */
+	if (G.background == 0 && ima->preview == NULL && BLI_thread_is_main()) {
 		BKE_icon_changed(BKE_icon_id_ensure(&ima->id));
+	}
 
 	/* fields */
 	if (ima->flag & IMA_FIELDS) {
@@ -3534,7 +3537,7 @@ static ImBuf *load_image_single(
 				BLI_addtail(&ima->packedfiles, imapf);
 
 				STRNCPY(imapf->filepath, filepath);
-				imapf->packedfile = newPackedFile(NULL, filepath, ID_BLEND_PATH(G.main, &ima->id));
+				imapf->packedfile = newPackedFile(NULL, filepath, ID_BLEND_PATH_FROM_GLOBAL(&ima->id));
 			}
 		}
 	}
@@ -4092,12 +4095,12 @@ ImBuf *BKE_image_acquire_ibuf(Image *ima, ImageUser *iuser, void **r_lock)
 
 void BKE_image_release_ibuf(Image *ima, ImBuf *ibuf, void *lock)
 {
-	if (lock) {
+	if (lock != NULL) {
 		/* for getting image during threaded render / compositing, need to release */
 		if (lock == ima) {
 			BLI_thread_unlock(LOCK_VIEWER); /* viewer image */
 		}
-		else if (lock) {
+		else {
 			RE_ReleaseResultImage(lock); /* render result */
 			BLI_thread_unlock(LOCK_VIEWER); /* view image imbuf */
 		}
@@ -4372,7 +4375,7 @@ void BKE_image_user_file_path(ImageUser *iuser, Image *ima, char *filepath)
 		BLI_stringenc(filepath, head, tail, numlen, frame);
 	}
 
-	BLI_path_abs(filepath, ID_BLEND_PATH(G.main, &ima->id));
+	BLI_path_abs(filepath, ID_BLEND_PATH_FROM_GLOBAL(&ima->id));
 }
 
 bool BKE_image_has_alpha(struct Image *image)
@@ -4700,7 +4703,7 @@ static void image_update_views_format(Image *ima, ImageUser *iuser)
 			char str[FILE_MAX];
 
 			STRNCPY(str, iv->filepath);
-			BLI_path_abs(str, G.main->name);
+			BLI_path_abs(str, BKE_main_blendfile_path_from_global());
 
 			/* exists? */
 			file = BLI_open(str, O_BINARY | O_RDONLY, 0);

@@ -34,9 +34,10 @@ void forEachObjectInExportSet(Scene *sce, Functor &f, LinkNode *export_set)
 	}
 }
 
-bool AnimationExporter::exportAnimations(Scene *sce)
+bool AnimationExporter::exportAnimations(Main *bmain, Scene *sce)
 {
 	bool has_animations = hasAnimations(sce);
+	m_bmain = bmain;
 	if (has_animations) {
 		this->scene = sce;
 
@@ -60,7 +61,7 @@ bool AnimationExporter::is_flat_line(std::vector<float> &values, int channel_cou
 	return true;
 }
 /*
- *  This function creates a complete LINEAR Collada <Animation> Entry with all needed 
+ *  This function creates a complete LINEAR Collada <Animation> Entry with all needed
  *  <source>, <sampler>, and <channel> entries.
  *  This is is used for creating sampled Transformation Animations for either:
  *
@@ -78,8 +79,8 @@ bool AnimationExporter::is_flat_line(std::vector<float> &values, int channel_cou
  *			axis_name = "" (actually not used)
  *			is_rot = false (see xxx below)
  *
- *	xxx: I tried to create a 3 axis rotation animation 
- *		 like for translation or scale. But i could not 
+ *	xxx: I tried to create a 3 axis rotation animation
+ *		 like for translation or scale. But i could not
  *		 figure out how to setup the channel for this case.
  *		 So for now rotations are exported as 3 separate 1-axis collada animations
  *		 See export_sampled_animation() further down.
@@ -214,7 +215,7 @@ void AnimationExporter::export_sampled_matrix_animation(Object *ob, std::vector<
 	for (std::vector<float>::iterator ctime = ctimes.begin(); ctime != ctimes.end(); ++ctime) {
 		float fmat[4][4];
 
-		bc_update_scene(scene, *ctime);
+		bc_update_scene(m_bmain, scene, *ctime);
 		BKE_object_matrix_local_get(ob, fmat);
 		if (this->export_settings->limit_precision)
 			bc_sanitize_mat(fmat, 6);
@@ -246,7 +247,7 @@ void AnimationExporter::export_sampled_transrotloc_animation(Object *ob, std::ve
 		float fsize[3];
 		float feul[3];
 
-		bc_update_scene(scene, *ctime);
+		bc_update_scene(m_bmain, scene, *ctime);
 		BKE_object_matrix_local_get(ob, fmat);
 		mat4_decompose(floc, fquat, fsize, fmat);
 		quat_to_eul(feul, fquat);
@@ -270,7 +271,7 @@ void AnimationExporter::export_sampled_transrotloc_animation(Object *ob, std::ve
 	create_sampled_animation(3, ctimes, baked_curves[SCALE], ob_name, "scale",   "", false);
 	create_sampled_animation(3, ctimes, baked_curves[LOC],  ob_name, "location", "", false);
 
-	/* Not sure how to export rotation as a 3channel animation, 
+	/* Not sure how to export rotation as a 3channel animation,
 	 * so separate into 3 single animations for now:
 	 */
 
@@ -314,7 +315,7 @@ void AnimationExporter::operator()(Object *ob)
 
 	//This needs to be handled by extra profiles, so postponed for now
 	//export_morph_animation(ob);
-		
+
 	//Export Lamp parameter animations
 	if ( (ob->type == OB_LAMP) && ((Lamp *)ob->data)->adt && ((Lamp *)ob->data)->adt->action) {
 		FCurve *fcu = (FCurve *)(((Lamp *)ob->data)->adt->action->curves.first);
@@ -338,7 +339,7 @@ void AnimationExporter::operator()(Object *ob)
 
 			if ((STREQ(transformName, "lens")) ||
 			    (STREQ(transformName, "ortho_scale")) ||
-			    (STREQ(transformName, "clip_end")) || 
+			    (STREQ(transformName, "clip_end")) ||
 				(STREQ(transformName, "clip_start")))
 			{
 				create_keyframed_animation(ob, fcu, transformName, true);
@@ -380,7 +381,7 @@ void AnimationExporter::export_object_constraint_animation(Object *ob)
 }
 
 void AnimationExporter::export_morph_animation(Object *ob)
-{ 
+{
 	FCurve *fcu;
 	char *transformName;
 	Key *key = BKE_key_from_object(ob);
@@ -388,12 +389,12 @@ void AnimationExporter::export_morph_animation(Object *ob)
 
 	if (key->adt && key->adt->action) {
 		fcu = (FCurve *)key->adt->action->curves.first;
-		
+
 		while (fcu) {
 			transformName = extract_transform_name(fcu->rna_path);
 
 			create_keyframed_animation(ob, fcu, transformName, true);
-			
+
 			fcu = fcu->next;
 		}
 	}
@@ -407,17 +408,17 @@ void AnimationExporter::make_anim_frames_from_targets(Object *ob, std::vector<fl
 	bConstraint *con;
 	for (con = (bConstraint *)conlist->first; con; con = con->next) {
 		ListBase targets = {NULL, NULL};
-		
+
 		const bConstraintTypeInfo *cti = BKE_constraint_typeinfo_get(con);
-		
+
 		if (!validateConstraints(con)) continue;
 
 		if (cti && cti->get_constraint_targets) {
 			bConstraintTarget *ct;
 			Object *obtar;
-			/* get targets 
+			/* get targets
 			 *  - constraints should use ct->matrix, not directly accessing values
-			 *	- ct->matrix members have not yet been calculated here! 
+			 *	- ct->matrix members have not yet been calculated here!
 			 */
 			cti->get_constraint_targets(con, &targets);
 
@@ -438,7 +439,7 @@ void AnimationExporter::make_anim_frames_from_targets(Object *ob, std::vector<fl
 float *AnimationExporter::get_eul_source_for_quat(Object *ob)
 {
 	FCurve *fcu = (FCurve *)ob->adt->action->curves.first;
-	const int keys = fcu->totvert;  
+	const int keys = fcu->totvert;
 	float *quat = (float *)MEM_callocN(sizeof(float) * fcu->totvert * 4, "quat output source values");
 	float *eul = (float *)MEM_callocN(sizeof(float) * fcu->totvert * 3, "quat output source values");
 	float temp_quat[4];
@@ -520,11 +521,11 @@ void AnimationExporter::create_keyframed_animation(Object *ob, FCurve *fcu, char
 
 	/*
 	 * Note: Handle transformation animations separately (to apply matrix inverse to fcurves)
-	 * We will use the object to evaluate the animation on all keyframes and calculate the 
+	 * We will use the object to evaluate the animation on all keyframes and calculate the
 	 * resulting object matrix. We need this to incorporate the
 	 * effects of the parent inverse matrix (when it contains a rotation component)
 	 *
-	 * TODO: try to combine exported fcurves into 3 channel animations like done 
+	 * TODO: try to combine exported fcurves into 3 channel animations like done
 	 * in export_sampled_animation(). For now each channel is exported as separate <Animation>.
 	 */
 
@@ -648,7 +649,7 @@ void AnimationExporter::create_keyframed_animation(Object *ob, FCurve *fcu, char
 			         "/common/" /*profile common is only supported */ + get_transform_sid(fcu->rna_path, -1, axis_name, true);
 		//if shape key animation, this is the main problem, how to define the channel targets.
 		/*target = get_morph_id(ob) +
-				 "/value" +*/ 
+				 "/value" +*/
 	}
 	addChannel(COLLADABU::URI(empty, sampler_id), target);
 
@@ -673,7 +674,7 @@ void AnimationExporter::write_bone_animation_matrix(Object *ob_arm, Bone *bone)
 }
 
 bool AnimationExporter::is_bone_deform_group(Bone *bone)
-{   
+{
 	bool is_def;
 	//Check if current bone is deform
 	if ((bone->flag & BONE_NO_DEFORM) == 0) return true;
@@ -707,7 +708,7 @@ void AnimationExporter::sample_and_write_bone_animation_matrix(Object *ob_arm, B
 		fcu = fcu->next;
 	}
 
-	if (!(fcu)) return;*/ 
+	if (!(fcu)) return;*/
 
 	bPoseChannel *pchan = BKE_pose_channel_find_name(ob_arm->pose, bone->name);
 	if (!pchan)
@@ -728,7 +729,7 @@ void AnimationExporter::sample_and_write_bone_animation_matrix(Object *ob_arm, B
 		dae_baked_animation(fra, ob_arm, bone);
 	}
 
-	if (flag & ARM_RESTPOS) 
+	if (flag & ARM_RESTPOS)
 		arm->flag = flag;
 	BKE_pose_where_is(scene, ob_arm);
 }
@@ -921,7 +922,7 @@ void AnimationExporter::add_source_parameters(COLLADASW::SourceBase::ParameterNa
 				if (axis) {
 					param.push_back(axis);
 				}
-				else 
+				else
 				if (transform) {
 					param.push_back("TRANSFORM");
 				}
@@ -1035,8 +1036,8 @@ void AnimationExporter::evaluate_anim_with_constraints(Object *ob, float ctime)
 /*
  * ob is needed to aply parent inverse information to fcurve.
  * TODO: Here we have to step over all keyframes for each object and for each fcurve.
- * Instead of processing each fcurve one by one, 
- * step over the animation from keyframe to keyframe, 
+ * Instead of processing each fcurve one by one,
+ * step over the animation from keyframe to keyframe,
  * then create adjusted fcurves (and entries) for all affected objects.
  * Then we would need to step through the scene only once.
  */
@@ -1307,7 +1308,7 @@ std::string AnimationExporter::create_4x4_source(std::vector<float> &frames, Obj
 
 		enable_fcurves(ob->adt->action, bone->name);
 	}
-	
+
 	std::vector<float>::iterator it;
 	int j = 0;
 	for (it = frames.begin(); it != frames.end(); it++) {
@@ -1315,7 +1316,7 @@ std::string AnimationExporter::create_4x4_source(std::vector<float> &frames, Obj
 		float frame = *it;
 
 		float ctime = BKE_scene_frame_get_from_ctime(scene, frame);
-		bc_update_scene(scene, ctime);
+		bc_update_scene(m_bmain, scene, ctime);
 		if (is_bone_animation) {
 			if (pchan->flag & POSE_CHAIN) {
 				enable_fcurves(ob->adt->action, NULL);
@@ -1325,7 +1326,7 @@ std::string AnimationExporter::create_4x4_source(std::vector<float> &frames, Obj
 			else {
 				BKE_pose_where_is_bone(scene, ob, pchan, ctime, 1);
 			}
-			
+
 			// compute bone local mat
 			if (bone->parent) {
 				invert_m4_m4(ipar, parchan->pose_mat);
@@ -1333,7 +1334,7 @@ std::string AnimationExporter::create_4x4_source(std::vector<float> &frames, Obj
 			}
 			else
 				copy_m4_m4(mat, pchan->pose_mat);
-			
+
 			/* OPEN_SIM_COMPATIBILITY
 			 * AFAIK animation to second life is via BVH, but no
 			 * reason to not have the collada-animation be correct
@@ -1358,7 +1359,7 @@ std::string AnimationExporter::create_4x4_source(std::vector<float> &frames, Obj
 		else {
 			copy_m4_m4(mat, ob->obmat);
 		}
-		
+
 		UnitConverter converter;
 
 		double outmat[4][4];
@@ -1514,7 +1515,7 @@ std::string AnimationExporter::get_light_param_sid(char *rna_path, int tm_type, 
 	if (tm_name.size()) {
 		if (axis_name[0])
 			return tm_name + "." + std::string(axis_name);
-		else 
+		else
 			return tm_name;
 	}
 
@@ -1563,7 +1564,7 @@ std::string AnimationExporter::get_camera_param_sid(char *rna_path, int tm_type,
 	if (tm_name.size()) {
 		if (axis_name[0])
 			return tm_name + "." + std::string(axis_name);
-		else 
+		else
 			return tm_name;
 	}
 
@@ -1571,7 +1572,7 @@ std::string AnimationExporter::get_camera_param_sid(char *rna_path, int tm_type,
 }
 
 /*
- * Assign sid of the animated parameter or transform for rotation, 
+ * Assign sid of the animated parameter or transform for rotation,
  * axis name is always appended and the value of append_axis is ignored
  */
 std::string AnimationExporter::get_transform_sid(char *rna_path, int tm_type, const char *axis_name, bool append_axis)
@@ -1750,7 +1751,7 @@ void AnimationExporter::find_sampleframes(Object *ob, std::vector<float> &fra)
 	} while (true);
 }
 
-/* 
+/*
  * find keyframes of all the objects animations
  */
 void AnimationExporter::find_keyframes(Object *ob, std::vector<float> &fra)
@@ -1843,7 +1844,7 @@ void AnimationExporter::sample_and_write_bone_animation(Object *ob_arm, Bone *bo
 		arm->flag &= ~ARM_RESTPOS;
 		BKE_pose_where_is(scene, ob_arm);
 	}
-	//v array will hold all values which will be exported. 
+	//v array will hold all values which will be exported.
 	if (fra.size()) {
 		float *values = (float *)MEM_callocN(sizeof(float) * 3 * fra.size(), "temp. anim frames");
 		sample_animation(values, fra, transform_type, bone, ob_arm, pchan);
@@ -1869,7 +1870,7 @@ void AnimationExporter::sample_and_write_bone_animation(Object *ob_arm, Bone *bo
 	}
 
 	// restore restpos
-	if (flag & ARM_RESTPOS) 
+	if (flag & ARM_RESTPOS)
 		arm->flag = flag;
 	BKE_pose_where_is(scene, ob_arm);
 }

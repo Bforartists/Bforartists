@@ -45,8 +45,9 @@
 #include "MOD_util.h"
 
 
-static void uv_warp_from_mat4_pair(float uv_dst[2], const float uv_src[2], float warp_mat[4][4],
-                                   int axis_u, int axis_v)
+static void uv_warp_from_mat4_pair(
+        float uv_dst[2], const float uv_src[2], float warp_mat[4][4],
+        int axis_u, int axis_v)
 {
 	float tuv[3] = {0.0f};
 
@@ -65,15 +66,6 @@ static void initData(ModifierData *md)
 	umd->axis_u = 0;
 	umd->axis_v = 1;
 	copy_v2_fl(umd->center, 0.5f);
-}
-
-static void copyData(ModifierData *md, ModifierData *target)
-{
-#if 0
-	UVWarpModifierData *umd  = (UVWarpModifierData *)md;
-	UVWarpModifierData *tumd = (UVWarpModifierData *)target;
-#endif
-	modifier_copyData_generic(md, target);
 }
 
 static CustomDataMask requiredDataMask(Object *UNUSED(ob), ModifierData *md)
@@ -148,9 +140,10 @@ static void uv_warp_compute(
 	}
 }
 
-static DerivedMesh *applyModifier(ModifierData *md, Object *ob,
-                                  DerivedMesh *dm,
-                                  ModifierApplyFlag UNUSED(flag))
+static DerivedMesh *applyModifier(
+        ModifierData *md, Object *ob,
+        DerivedMesh *dm,
+        ModifierApplyFlag UNUSED(flag))
 {
 	UVWarpModifierData *umd = (UVWarpModifierData *) md;
 	int numPolys, numLoops;
@@ -234,8 +227,9 @@ static void foreachObjectLink(ModifierData *md, Object *ob, ObjectWalkFunc walk,
 	walk(userData, ob, &umd->object_src, IDWALK_CB_NOP);
 }
 
-static void uv_warp_deps_object_bone(DagForest *forest, DagNode *obNode,
-                                     Object *obj, const char *bonename)
+static void uv_warp_deps_object_bone(
+        DagForest *forest, DagNode *obNode,
+        Object *obj, const char *bonename)
 {
 	if (obj) {
 		DagNode *curNode = dag_get_node(forest, obj);
@@ -255,9 +249,10 @@ static void updateDepgraph(ModifierData *md, const ModifierUpdateDepsgraphContex
 	uv_warp_deps_object_bone(ctx->forest, ctx->obNode, umd->object_dst, umd->bone_dst);
 }
 
-static void uv_warp_deps_object_bone_new(struct DepsNodeHandle *node,
-                                         Object *object,
-                                         const char *bonename)
+static void uv_warp_deps_object_bone_new(
+        struct DepsNodeHandle *node,
+        Object *object,
+        const char *bonename)
 {
 	if (object != NULL) {
 		if (bonename[0])
@@ -283,7 +278,7 @@ ModifierTypeInfo modifierType_UVWarp = {
 	/* flags */             eModifierTypeFlag_AcceptsMesh |
 	                        eModifierTypeFlag_SupportsEditmode |
 	                        eModifierTypeFlag_EnableInEditmode,
-	/* copyData */          copyData,
+	/* copyData */          modifier_copyData_generic,
 	/* deformVerts */       NULL,
 	/* deformMatrices */    NULL,
 	/* deformVertsEM */     NULL,

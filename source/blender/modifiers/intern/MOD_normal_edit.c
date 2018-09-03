@@ -195,6 +195,7 @@ static void normalEditModifier_do_radial(
         MVert *mvert, const int num_verts, MEdge *medge, const int num_edges,
         MLoop *mloop, const int num_loops, MPoly *mpoly, const int num_polys)
 {
+	const bool do_polynors_fix = (enmd->flag & MOD_NORMALEDIT_NO_POLYNORS_FIX) == 0;
 	int i;
 
 	float (*cos)[3] = MEM_malloc_arrayN((size_t)num_verts, sizeof(*cos), __func__);
@@ -272,7 +273,7 @@ static void normalEditModifier_do_radial(
 		            mix_limit, mix_mode, num_verts, mloop, loopnors, nos, num_loops);
 	}
 
-	if (polygons_check_flip(mloop, nos, dm->getLoopDataLayout(dm), mpoly, polynors, num_polys)) {
+	if (do_polynors_fix && polygons_check_flip(mloop, nos, dm->getLoopDataLayout(dm), mpoly, polynors, num_polys)) {
 		dm->dirty |= DM_DIRTY_TESS_CDLAYERS;
 		/* We need to recompute vertex normals! */
 		dm->calcNormals(dm);
@@ -294,6 +295,7 @@ static void normalEditModifier_do_directional(
         MVert *mvert, const int num_verts, MEdge *medge, const int num_edges,
         MLoop *mloop, const int num_loops, MPoly *mpoly, const int num_polys)
 {
+	const bool do_polynors_fix = (enmd->flag & MOD_NORMALEDIT_NO_POLYNORS_FIX) == 0;
 	const bool use_parallel_normals = (enmd->flag & MOD_NORMALEDIT_USE_DIRECTION_PARALLEL) != 0;
 
 	float (*cos)[3] = MEM_malloc_arrayN((size_t)num_verts, sizeof(*cos), __func__);
@@ -351,7 +353,7 @@ static void normalEditModifier_do_directional(
 		            mix_limit, mix_mode, num_verts, mloop, loopnors, nos, num_loops);
 	}
 
-	if (polygons_check_flip(mloop, nos, dm->getLoopDataLayout(dm), mpoly, polynors, num_polys)) {
+	if (do_polynors_fix && polygons_check_flip(mloop, nos, dm->getLoopDataLayout(dm), mpoly, polynors, num_polys)) {
 		dm->dirty |= DM_DIRTY_TESS_CDLAYERS;
 	}
 
@@ -474,11 +476,6 @@ static void initData(ModifierData *md)
 	enmd->mix_limit = M_PI;
 }
 
-static void copyData(ModifierData *md, ModifierData *target)
-{
-	modifier_copyData_generic(md, target);
-}
-
 static CustomDataMask requiredDataMask(Object *UNUSED(ob), ModifierData *md)
 {
 	NormalEditModifierData *enmd = (NormalEditModifierData *)md;
@@ -544,7 +541,7 @@ ModifierTypeInfo modifierType_NormalEdit = {
 	                        eModifierTypeFlag_SupportsMapping |
 	                        eModifierTypeFlag_SupportsEditmode |
 	                        eModifierTypeFlag_EnableInEditmode,
-	/* copyData */          copyData,
+	/* copyData */          modifier_copyData_generic,
 	/* deformVerts */       NULL,
 	/* deformMatrices */    NULL,
 	/* deformVertsEM */     NULL,

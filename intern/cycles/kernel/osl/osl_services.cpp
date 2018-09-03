@@ -41,6 +41,7 @@
 #include "kernel/kernel_compat_cpu.h"
 #include "kernel/split/kernel_split_data_types.h"
 #include "kernel/kernel_globals.h"
+#include "kernel/kernel_color.h"
 #include "kernel/kernel_random.h"
 #include "kernel/kernel_projection.h"
 #include "kernel/kernel_differential.h"
@@ -65,13 +66,13 @@ CCL_NAMESPACE_BEGIN
 static void copy_matrix(OSL::Matrix44& m, const Transform& tfm)
 {
 	ProjectionTransform t = projection_transpose(ProjectionTransform(tfm));
-	memcpy(&m, &t, sizeof(m));
+	memcpy((void *)&m, &t, sizeof(m));
 }
 
 static void copy_matrix(OSL::Matrix44& m, const ProjectionTransform& tfm)
 {
 	ProjectionTransform t = projection_transpose(tfm);
-	memcpy(&m, &t, sizeof(m));
+	memcpy((void *)&m, &t, sizeof(m));
 }
 
 /* static ustrings */
@@ -124,6 +125,7 @@ ustring OSLRenderServices::u_u("u");
 ustring OSLRenderServices::u_v("v");
 ustring OSLRenderServices::u_empty;
 ustring OSLRenderServices::u_at_bevel("@bevel");
+ustring OSLRenderServices::u_at_ao("@ao");
 
 OSLRenderServices::OSLRenderServices()
 {
@@ -362,7 +364,7 @@ bool OSLRenderServices::get_matrix(OSL::ShaderGlobals *sg, OSL::Matrix44 &result
 bool OSLRenderServices::get_inverse_matrix(OSL::ShaderGlobals *sg, OSL::Matrix44 &result, ustring to)
 {
 	KernelGlobals *kg = kernel_globals;
-	
+
 	if(to == u_ndc) {
 		copy_matrix(result, kernel_data.cam.worldtondc);
 		return true;
@@ -379,11 +381,11 @@ bool OSLRenderServices::get_inverse_matrix(OSL::ShaderGlobals *sg, OSL::Matrix44
 		copy_matrix(result, kernel_data.cam.worldtocamera);
 		return true;
 	}
-	
+
 	return false;
 }
 
-bool OSLRenderServices::get_array_attribute(OSL::ShaderGlobals *sg, bool derivatives, 
+bool OSLRenderServices::get_array_attribute(OSL::ShaderGlobals *sg, bool derivatives,
                                             ustring object, TypeDesc type, ustring name,
                                             int index, void *val)
 {
@@ -682,7 +684,7 @@ bool OSLRenderServices::get_object_standard_attribute(KernelGlobals *kg, ShaderD
 		float3 f = particle_angular_velocity(kg, particle_id);
 		return set_attribute_float3(f, type, derivatives, val);
 	}
-	
+
 	/* Geometry Attributes */
 	else if(name == u_geom_numpolyvertices) {
 		return set_attribute_int(3, type, derivatives, val);
@@ -871,7 +873,7 @@ bool OSLRenderServices::get_attribute(ShaderData *sd, bool derivatives, ustring 
 	return false;
 }
 
-bool OSLRenderServices::get_userdata(bool derivatives, ustring name, TypeDesc type, 
+bool OSLRenderServices::get_userdata(bool derivatives, ustring name, TypeDesc type,
                                      OSL::ShaderGlobals *sg, void *val)
 {
 	return false; /* disabled by lockgeom */
@@ -956,9 +958,34 @@ bool OSLRenderServices::texture(ustring filename,
 				status = true;
 			}
 		}
+		else if(filename == u_at_ao) {
+			/* AO shader hack. */
+			PathState *state = sd->osl_path_state;
+			int num_samples = (int)s;
+			float radius = t;
+			float3 N = make_float3(dsdx, dtdx, dsdy);
+			int flags = 0;
+			if((int)dtdy) {
+				flags |= NODE_AO_INSIDE;
+			}
+			if((int)options.sblur) {
+				flags |= NODE_AO_ONLY_LOCAL;
+			}
+			if((int)options.tblur) {
+				flags |= NODE_AO_GLOBAL_RADIUS;
+			}
+			result[0] = svm_ao(kg, sd, N, state, radius, num_samples, flags);
+			status = true;
+		}
+		else if(filename[1] == 'l') {
+			/* IES light. */
+			int slot = atoi(filename.c_str() + 2);
+			result[0] = kernel_ies_interp(kg, slot, s, t);
+			status = true;
+		}
 		else {
 			/* Packed texture. */
-			int slot = atoi(filename.c_str() + 1);
+			int slot = atoi(filename.c_str() + 2);
 			float4 rgba = kernel_tex_image_interp(kg, slot, s, 1.0f - t);
 
 			result[0] = rgba[0];

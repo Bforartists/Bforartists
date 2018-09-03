@@ -4,7 +4,7 @@
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version. 
+ * of the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -54,7 +54,7 @@
 
 /******************** common graph-editing utilities ********************/
 
-static int ED_space_clip_graph_poll(bContext *C)
+static bool ED_space_clip_graph_poll(bContext *C)
 {
 	if (ED_space_clip_tracking_poll(C)) {
 		SpaceClip *sc = CTX_wm_space_clip(C);
@@ -65,7 +65,7 @@ static int ED_space_clip_graph_poll(bContext *C)
 	return false;
 }
 
-static int clip_graph_knots_poll(bContext *C)
+static bool clip_graph_knots_poll(bContext *C)
 {
 	if (ED_space_clip_graph_poll(C)) {
 		SpaceClip *sc = CTX_wm_space_clip(C);

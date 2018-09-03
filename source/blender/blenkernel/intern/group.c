@@ -78,7 +78,7 @@ void BKE_group_free(Group *group)
 Group *BKE_group_add(Main *bmain, const char *name)
 {
 	Group *group;
-	
+
 	group = BKE_libblock_alloc(bmain, ID_GR, name, 0);
 	id_us_min(&group->id);
 	id_us_ensure_real(&group->id);
@@ -126,22 +126,22 @@ void BKE_group_make_local(Main *bmain, Group *group, const bool lib_local)
 static bool group_object_add_internal(Group *group, Object *ob)
 {
 	GroupObject *go;
-	
+
 	if (group == NULL || ob == NULL) {
 		return false;
 	}
-	
+
 	/* check if the object has been added already */
 	if (BLI_findptr(&group->gobject, ob, offsetof(GroupObject, ob))) {
 		return false;
 	}
-	
+
 	go = MEM_callocN(sizeof(GroupObject), "groupobject");
 	BLI_addtail(&group->gobject, go);
-	
+
 	go->ob = ob;
 	id_us_ensure_real(&go->ob->id);
-	
+
 	return true;
 }
 
@@ -171,7 +171,7 @@ static int group_object_unlink_internal(Group *group, Object *ob)
 	GroupObject *go, *gon;
 	int removed = 0;
 	if (group == NULL) return 0;
-	
+
 	go = group->gobject.first;
 	while (go) {
 		gon = go->next;
@@ -223,11 +223,11 @@ bool BKE_group_object_cyclic_check(Main *bmain, Object *object, Group *group)
 	return group_object_cyclic_check_internal(object, group);
 }
 
-bool BKE_group_object_unlink(Group *group, Object *object, Scene *scene, Base *base)
+bool BKE_group_object_unlink(Main *bmain, Group *group, Object *object, Scene *scene, Base *base)
 {
 	if (group_object_unlink_internal(group, object)) {
 		/* object can be NULL */
-		if (object && BKE_group_object_find(NULL, object) == NULL) {
+		if (object && BKE_group_object_find(bmain, NULL, object) == NULL) {
 			if (scene && base == NULL)
 				base = BKE_scene_base_find(scene, object);
 
@@ -253,13 +253,13 @@ bool BKE_group_object_exists(Group *group, Object *ob)
 	}
 }
 
-Group *BKE_group_object_find(Group *group, Object *ob)
+Group *BKE_group_object_find(Main *bmain, Group *group, Object *ob)
 {
 	if (group)
 		group = group->id.next;
 	else
-		group = G.main->group.first;
-	
+		group = bmain->group.first;
+
 	while (group) {
 		if (BKE_group_object_exists(group, ob))
 			return group;
@@ -293,9 +293,9 @@ static void group_replaces_nla(Object *parent, Object *target, char mode)
 	static bAction *action = NULL;
 	static bool done = false;
 	bActionStrip *strip, *nstrip;
-	
+
 	if (mode == 's') {
-		
+
 		for (strip = parent->nlastrips.first; strip; strip = strip->next) {
 			if (strip->object == target) {
 				if (done == 0) {
@@ -317,7 +317,7 @@ static void group_replaces_nla(Object *parent, Object *target, char mode)
 			BLI_freelistN(&target->nlastrips);
 			target->nlastrips = nlastrips;
 			target->action = action;
-			
+
 			BLI_listbase_clear(&nlastrips);  /* not needed, but yah... :) */
 			action = NULL;
 			done = false;
@@ -330,10 +330,11 @@ static void group_replaces_nla(Object *parent, Object *target, char mode)
  * you can draw everything, leaves tags in objects to signal it needs further updating */
 
 /* note: does not work for derivedmesh and render... it recreates all again in convertblender.c */
-void BKE_group_handle_recalc_and_update(EvaluationContext *eval_ctx, Scene *scene, Object *UNUSED(parent), Group *group)
+void BKE_group_handle_recalc_and_update(
+        Main *bmain, EvaluationContext *eval_ctx, Scene *scene, Object *UNUSED(parent), Group *group)
 {
 	GroupObject *go;
-	
+
 #if 0 /* warning, isn't clearing the recalc flag on the object which causes it to run all the time,
 	   * not just on frame change.
 	   * This isn't working because the animation data is only re-evaluated on frame change so commenting for now
@@ -342,24 +343,24 @@ void BKE_group_handle_recalc_and_update(EvaluationContext *eval_ctx, Scene *scen
 	/* if animated group... */
 	if (parent->nlastrips.first) {
 		int cfrao;
-		
+
 		/* switch to local time */
 		cfrao = scene->r.cfra;
-		
+
 		/* we need a DAG per group... */
 		for (go = group->gobject.first; go; go = go->next) {
 			if (go->ob && go->recalc) {
 				go->ob->recalc = go->recalc;
-				
+
 				group_replaces_nla(parent, go->ob, 's');
 				BKE_object_handle_update(eval_ctx, scene, go->ob);
 				group_replaces_nla(parent, go->ob, 'e');
-				
+
 				/* leave recalc tags in case group members are in normal scene */
 				go->ob->recalc = go->recalc;
 			}
 		}
-		
+
 		/* restore */
 		scene->r.cfra = cfrao;
 	}
@@ -370,7 +371,7 @@ void BKE_group_handle_recalc_and_update(EvaluationContext *eval_ctx, Scene *scen
 		for (go = group->gobject.first; go; go = go->next) {
 			if (go->ob) {
 				if (go->ob->recalc) {
-					BKE_object_handle_update(eval_ctx, scene, go->ob);
+					BKE_object_handle_update(bmain, eval_ctx, scene, go->ob);
 				}
 			}
 		}

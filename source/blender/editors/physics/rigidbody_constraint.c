@@ -59,7 +59,7 @@
 /* ********************************************** */
 /* Helper API's for RigidBody Constraint Editing */
 
-static int ED_operator_rigidbody_con_active_poll(bContext *C)
+static bool ED_operator_rigidbody_con_active_poll(bContext *C)
 {
 	if (ED_operator_object_active_editable(C)) {
 		Object *ob = CTX_data_active_object(C);
@@ -101,7 +101,7 @@ void ED_rigidbody_constraint_remove(Main *bmain, Scene *scene, Object *ob)
 
 	BKE_rigidbody_remove_constraint(scene, ob);
 	if (rbw)
-		BKE_group_object_unlink(rbw->constraints, ob, scene, NULL);
+		BKE_group_object_unlink(bmain, rbw->constraints, ob, scene, NULL);
 
 	DAG_relations_tag_update(bmain);
 	DAG_id_tag_update(&ob->id, OB_RECALC_OB);

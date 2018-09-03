@@ -165,7 +165,7 @@ public:
 
 	int id; /* index in graph node array */
 	ShaderBump bump; /* for bump mapping utility */
-	
+
 	ShaderNodeSpecialType special_type;	/* special node type */
 
 	/* ** Selective nodes compilation ** */
@@ -285,7 +285,7 @@ protected:
 
 	/* Graph simplification routines. */
 	void clean(Scene *scene);
-	void constant_fold();
+	void constant_fold(Scene *scene);
 	void simplify_settings(Scene *scene);
 	void deduplicate_nodes();
 	void verify_volume_output();
@@ -294,4 +294,3 @@ protected:
 CCL_NAMESPACE_END
 
 #endif /* __GRAPH_H__ */
-

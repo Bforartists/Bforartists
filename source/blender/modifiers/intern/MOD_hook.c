@@ -52,7 +52,7 @@
 
 #include "MOD_util.h"
 
-static void initData(ModifierData *md) 
+static void initData(ModifierData *md)
 {
 	HookModifierData *hmd = (HookModifierData *) md;
 
@@ -62,17 +62,10 @@ static void initData(ModifierData *md)
 	hmd->flag = 0;
 }
 
-static void copyData(ModifierData *md, ModifierData *target)
+static void copyData(const ModifierData *md, ModifierData *target)
 {
-	HookModifierData *hmd = (HookModifierData *) md;
+	const HookModifierData *hmd = (const HookModifierData *) md;
 	HookModifierData *thmd = (HookModifierData *) target;
-
-	if (thmd->curfalloff != NULL) {
-		curvemapping_free(thmd->curfalloff);
-	}
-	if (thmd->indexar != NULL) {
-		MEM_freeN(thmd->indexar);
-	}
 
 	modifier_copyData_generic(md, target);
 
@@ -99,7 +92,7 @@ static void freeData(ModifierData *md)
 
 	curvemapping_free(hmd->curfalloff);
 
-	if (hmd->indexar) MEM_freeN(hmd->indexar);
+	MEM_SAFE_FREE(hmd->indexar);
 }
 
 static bool isDisabled(ModifierData *md, int UNUSED(useRenderParams))
@@ -124,7 +117,7 @@ static void updateDepgraph(ModifierData *md, const ModifierUpdateDepsgraphContex
 
 	if (hmd->object) {
 		DagNode *curNode = dag_get_node(ctx->forest, hmd->object);
-		
+
 		if (hmd->subtarget[0])
 			dag_add_relation(ctx->forest, curNode, ctx->obNode, DAG_RL_OB_DATA | DAG_RL_DATA_DATA, "Hook Modifier");
 		else
@@ -271,14 +264,15 @@ static void hook_co_apply(struct HookData_cb *hd, const int j)
 	}
 }
 
-static void deformVerts_do(HookModifierData *hmd, Object *ob, DerivedMesh *dm,
-                           float (*vertexCos)[3], int numVerts)
+static void deformVerts_do(
+        HookModifierData *hmd, Object *ob, DerivedMesh *dm,
+        float (*vertexCos)[3], int numVerts)
 {
 	bPoseChannel *pchan = BKE_pose_channel_find_name(hmd->object->pose, hmd->subtarget);
 	float dmat[4][4];
 	int i, *index_pt;
 	struct HookData_cb hd;
-	
+
 	if (hmd->curfalloff == NULL) {
 		/* should never happen, but bad lib linking could cause it */
 		hmd->curfalloff = curvemapping_add(1, 0.0f, 0.0f, 1.0f, 1.0f);
@@ -327,7 +321,7 @@ static void deformVerts_do(HookModifierData *hmd, Object *ob, DerivedMesh *dm,
 
 	/* Regarding index range checking below.
 	 *
-	 * This should always be true and I don't generally like 
+	 * This should always be true and I don't generally like
 	 * "paranoid" style code like this, but old files can have
 	 * indices that are out of range because old blender did
 	 * not correct them on exit editmode. - zr
@@ -338,13 +332,13 @@ static void deformVerts_do(HookModifierData *hmd, Object *ob, DerivedMesh *dm,
 	}
 	else if (hmd->indexar) { /* vertex indices? */
 		const int *origindex_ar;
-		
+
 		/* if DerivedMesh is present and has original index data, use it */
 		if (dm && (origindex_ar = dm->getVertDataArray(dm, CD_ORIGINDEX))) {
 			for (i = 0, index_pt = hmd->indexar; i < hmd->totindex; i++, index_pt++) {
 				if (*index_pt < numVerts) {
 					int j;
-					
+
 					for (j = 0; j < numVerts; j++) {
 						if (origindex_ar[j] == *index_pt) {
 							hook_co_apply(&hd, j);
@@ -368,9 +362,10 @@ static void deformVerts_do(HookModifierData *hmd, Object *ob, DerivedMesh *dm,
 	}
 }
 
-static void deformVerts(ModifierData *md, Object *ob, DerivedMesh *derivedData,
-                        float (*vertexCos)[3], int numVerts,
-                        ModifierApplyFlag UNUSED(flag))
+static void deformVerts(
+        ModifierData *md, Object *ob, DerivedMesh *derivedData,
+        float (*vertexCos)[3], int numVerts,
+        ModifierApplyFlag UNUSED(flag))
 {
 	HookModifierData *hmd = (HookModifierData *) md;
 	DerivedMesh *dm = derivedData;
@@ -384,8 +379,9 @@ static void deformVerts(ModifierData *md, Object *ob, DerivedMesh *derivedData,
 		dm->release(dm);
 }
 
-static void deformVertsEM(ModifierData *md, Object *ob, struct BMEditMesh *editData,
-                          DerivedMesh *derivedData, float (*vertexCos)[3], int numVerts)
+static void deformVertsEM(
+        ModifierData *md, Object *ob, struct BMEditMesh *editData,
+        DerivedMesh *derivedData, float (*vertexCos)[3], int numVerts)
 {
 	HookModifierData *hmd = (HookModifierData *) md;
 	DerivedMesh *dm = derivedData;
