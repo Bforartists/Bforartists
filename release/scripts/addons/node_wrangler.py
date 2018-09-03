@@ -31,7 +31,15 @@ bl_info = {
 
 import bpy, blf, bgl
 from bpy.types import Operator, Panel, Menu
-from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, StringProperty, FloatVectorProperty, CollectionProperty
+from bpy.props import (
+    FloatProperty,
+    EnumProperty,
+    BoolProperty,
+    IntProperty,
+    StringProperty,
+    FloatVectorProperty,
+    CollectionProperty,
+)
 from bpy_extras.io_utils import ImportHelper, ExportHelper
 from mathutils import Vector
 from math import cos, sin, pi, hypot
@@ -1162,7 +1170,7 @@ class NWLazyMix(Operator, NWBase):
         if event.type == 'MOUSEMOVE':
             self.mouse_path.append((event.mouse_region_x, event.mouse_region_y))
 
-        elif event.type == 'RIGHTMOUSE':
+        elif event.type == 'RIGHTMOUSE' and event.value == 'RELEASE':
             end_pos = [event.mouse_region_x, event.mouse_region_y]
             bpy.types.SpaceNodeEditor.draw_handler_remove(self._handle, 'WINDOW')
 
@@ -1239,7 +1247,7 @@ class NWLazyConnect(Operator, NWBase):
         if event.type == 'MOUSEMOVE':
             self.mouse_path.append((event.mouse_region_x, event.mouse_region_y))
 
-        elif event.type == 'RIGHTMOUSE':
+        elif event.type == 'RIGHTMOUSE' and event.value == 'RELEASE':
             end_pos = [event.mouse_region_x, event.mouse_region_y]
             bpy.types.SpaceNodeEditor.draw_handler_remove(self._handle, 'WINDOW')
 
@@ -3161,7 +3169,7 @@ class NWSelectParentChildren(Operator, NWBase):
 
 
 class NWDetachOutputs(Operator, NWBase):
-    """Detach outputs of selected node leaving inluts liked"""
+    """Detach outputs of selected node leaving inputs linked"""
     bl_idname = "node.nw_detach_outputs"
     bl_label = "Detach Outputs"
     bl_options = {'REGISTER', 'UNDO'}
@@ -4643,7 +4651,97 @@ kmi_defs = (
 )
 
 
+classes = (
+    NWPrincipledPreferences,
+    NWNodeWrangler,
+    NWLazyMix,
+    NWLazyConnect,
+    NWDeleteUnused,
+    NWSwapLinks,
+    NWResetBG,
+    NWAddAttrNode,
+    NWEmissionViewer,
+    NWFrameSelected,
+    NWReloadImages,
+    NWSwitchNodeType,
+    NWMergeNodes,
+    NWBatchChangeNodes,
+    NWChangeMixFactor,
+    NWCopySettings,
+    NWCopyLabel,
+    NWClearLabel,
+    NWModifyLabels,
+    NWAddTextureSetup,
+    NWAddPrincipledSetup,
+    NWAddReroutes,
+    NWLinkActiveToSelected,
+    NWAlignNodes,
+    NWSelectParentChildren,
+    NWDetachOutputs,
+    NWLinkToOutputNode,
+    NWMakeLink,
+    NWCallInputsMenu,
+    NWAddSequence,
+    NWAddMultipleImages,
+    NWViewerFocus,
+    NWSaveViewer,
+    NWResetNodes,
+    NodeWranglerPanel,
+    NodeWranglerMenu,
+    NWMergeNodesMenu,
+    NWMergeShadersMenu,
+    NWMergeMixMenu,
+    NWConnectionListOutputs,
+    NWConnectionListInputs,
+    NWMergeMathMenu,
+    NWBatchChangeNodesMenu,
+    NWBatchChangeBlendTypeMenu,
+    NWBatchChangeOperationMenu,
+    NWCopyToSelectedMenu,
+    NWCopyLabelMenu,
+    NWAddReroutesMenu,
+    NWLinkActiveToSelectedMenu,
+    NWLinkStandardMenu,
+    NWLinkUseNodeNameMenu,
+    NWLinkUseOutputsNamesMenu,
+    NWVertColMenu,
+    NWSwitchNodeTypeMenu,
+    NWSwitchShadersInputSubmenu,
+    NWSwitchShadersOutputSubmenu,
+    NWSwitchShadersShaderSubmenu,
+    NWSwitchShadersTextureSubmenu,
+    NWSwitchShadersColorSubmenu,
+    NWSwitchShadersVectorSubmenu,
+    NWSwitchShadersConverterSubmenu,
+    NWSwitchShadersLayoutSubmenu,
+    NWSwitchCompoInputSubmenu,
+    NWSwitchCompoOutputSubmenu,
+    NWSwitchCompoColorSubmenu,
+    NWSwitchCompoConverterSubmenu,
+    NWSwitchCompoFilterSubmenu,
+    NWSwitchCompoVectorSubmenu,
+    NWSwitchCompoMatteSubmenu,
+    NWSwitchCompoDistortSubmenu,
+    NWSwitchCompoLayoutSubmenu,
+    NWSwitchMatInputSubmenu,
+    NWSwitchMatOutputSubmenu,
+    NWSwitchMatColorSubmenu,
+    NWSwitchMatVectorSubmenu,
+    NWSwitchMatConverterSubmenu,
+    NWSwitchMatLayoutSubmenu,
+    NWSwitchTexInputSubmenu,
+    NWSwitchTexOutputSubmenu,
+    NWSwitchTexColorSubmenu,
+    NWSwitchTexPatternSubmenu,
+    NWSwitchTexTexturesSubmenu,
+    NWSwitchTexConverterSubmenu,
+    NWSwitchTexDistortSubmenu,
+    NWSwitchTexLayoutSubmenu,
+)
+
 def register():
+    from bpy.utils import register_class
+
     # props
     bpy.types.Scene.NWBusyDrawing = StringProperty(
         name="Busy Drawing!",
@@ -4662,7 +4760,8 @@ def register():
         default=0,
         description="An internal property used to store the source socket in a Lazy Connect operation")
 
-    bpy.utils.register_module(__name__)
+    for cls in classes:
+        register_class(cls)
 
     # keymaps
     addon_keymaps.clear()
@@ -4691,6 +4790,8 @@ def register():
 
 
 def unregister():
+    from bpy.utils import unregister_class
+
     # props
     del bpy.types.Scene.NWBusyDrawing
     del bpy.types.Scene.NWLazySource
@@ -4715,7 +4816,8 @@ def unregister():
     bpy.types.NODE_PT_active_node_generic.remove(reset_nodes_button)
     bpy.types.NODE_MT_node.remove(reset_nodes_button)
 
-    bpy.utils.unregister_module(__name__)
+    for cls in classes:
+        unregister_class(cls)
 
 if __name__ == "__main__":
     register()

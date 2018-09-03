@@ -68,7 +68,7 @@ void sequencer_operatortypes(void)
 	WM_operatortype_append(SEQUENCER_OT_meta_toggle);
 	WM_operatortype_append(SEQUENCER_OT_meta_make);
 	WM_operatortype_append(SEQUENCER_OT_meta_separate);
-	
+
 	WM_operatortype_append(SEQUENCER_OT_gap_remove);
 	WM_operatortype_append(SEQUENCER_OT_gap_insert);
 	WM_operatortype_append(SEQUENCER_OT_snap);
@@ -135,9 +135,9 @@ void sequencer_keymap(wmKeyConfig *keyconf)
 {
 	wmKeyMap *keymap;
 	wmKeyMapItem *kmi;
-	
+
 	/* Common items ------------------------------------------------------------------ */
-	keymap = WM_keymap_find(keyconf, "SequencerCommon", SPACE_SEQ, 0);
+	keymap = WM_keymap_ensure(keyconf, "SequencerCommon", SPACE_SEQ, 0);
 
 	WM_keymap_add_item(keymap, "SEQUENCER_OT_properties", NKEY, KM_PRESS, 0, 0);
 
@@ -148,7 +148,7 @@ void sequencer_keymap(wmKeyConfig *keyconf)
 	WM_keymap_add_item(keymap, "SEQUENCER_OT_view_toggle", TABKEY, KM_PRESS, KM_CTRL, 0);
 
 	/* Strips Region --------------------------------------------------------------- */
-	keymap = WM_keymap_find(keyconf, "Sequencer", SPACE_SEQ, 0);
+	keymap = WM_keymap_ensure(keyconf, "Sequencer", SPACE_SEQ, 0);
 
 	kmi = WM_keymap_add_item(keymap, "SEQUENCER_OT_select_all", AKEY, KM_PRESS, 0, 0);
 	RNA_enum_set(kmi->ptr, "action", SEL_TOGGLE);
@@ -228,7 +228,7 @@ void sequencer_keymap(wmKeyConfig *keyconf)
 	RNA_boolean_set(WM_keymap_add_item(keymap, "SEQUENCER_OT_gap_remove", BACKSPACEKEY, KM_PRESS, 0, 0)->ptr, "all", false);
 	RNA_boolean_set(WM_keymap_add_item(keymap, "SEQUENCER_OT_gap_remove", BACKSPACEKEY, KM_PRESS, KM_SHIFT, 0)->ptr, "all", true);
 	WM_keymap_add_item(keymap, "SEQUENCER_OT_gap_insert", EQUALKEY, KM_PRESS, KM_SHIFT, 0);
-	
+
 	WM_keymap_add_item(keymap, "SEQUENCER_OT_snap", SKEY, KM_PRESS, KM_SHIFT, 0);
 	WM_keymap_add_item(keymap, "SEQUENCER_OT_swap_inputs", SKEY, KM_PRESS, KM_ALT, 0);
 
@@ -340,7 +340,7 @@ void sequencer_keymap(wmKeyConfig *keyconf)
 
 
 	/* Preview Region ----------------------------------------------------------- */
-	keymap = WM_keymap_find(keyconf, "SequencerPreview", SPACE_SEQ, 0);
+	keymap = WM_keymap_ensure(keyconf, "SequencerPreview", SPACE_SEQ, 0);
 	WM_keymap_add_item(keymap, "SEQUENCER_OT_view_all_preview", HOMEKEY, KM_PRESS, 0, 0);
 #ifdef WITH_INPUT_NDOF
 	WM_keymap_add_item(keymap, "SEQUENCER_OT_view_all_preview", NDOF_BUTTON_FIT, KM_PRESS, 0, 0);

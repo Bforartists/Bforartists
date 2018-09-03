@@ -42,13 +42,14 @@
 
 
 #include "BKE_cdderivedmesh.h"
+#include "BKE_global.h"
 #include "BKE_modifier.h"
 #include "BKE_particle.h"
 
 #include "MOD_util.h"
 
 
-static void initData(ModifierData *md) 
+static void initData(ModifierData *md)
 {
 	ParticleSystemModifierData *psmd = (ParticleSystemModifierData *) md;
 	psmd->psys = NULL;
@@ -70,16 +71,18 @@ static void freeData(ModifierData *md)
 			psmd->dm_deformed = NULL;
 		}
 	}
+	psmd->totdmvert = psmd->totdmedge = psmd->totdmface = 0;
 
 	/* ED_object_modifier_remove may have freed this first before calling
 	 * modifier_free (which calls this function) */
 	if (psmd->psys)
 		psmd->psys->flag |= PSYS_DELETE;
 }
-static void copyData(ModifierData *md, ModifierData *target)
+
+static void copyData(const ModifierData *md, ModifierData *target)
 {
 #if 0
-	ParticleSystemModifierData *psmd = (ParticleSystemModifierData *) md;
+	const ParticleSystemModifierData *psmd = (const ParticleSystemModifierData *) md;
 #endif
 	ParticleSystemModifierData *tpsmd = (ParticleSystemModifierData *) target;
 
@@ -97,11 +100,12 @@ static CustomDataMask requiredDataMask(Object *UNUSED(ob), ModifierData *md)
 }
 
 /* saves the current emitter state for a particle system and calculates particles */
-static void deformVerts(ModifierData *md, Object *ob,
-                        DerivedMesh *derivedData,
-                        float (*vertexCos)[3],
-                        int UNUSED(numVerts),
-                        ModifierApplyFlag flag)
+static void deformVerts(
+        ModifierData *md, Object *ob,
+        DerivedMesh *derivedData,
+        float (*vertexCos)[3],
+        int UNUSED(numVerts),
+        ModifierApplyFlag flag)
 {
 	DerivedMesh *dm = derivedData;
 	ParticleSystemModifierData *psmd = (ParticleSystemModifierData *) md;
@@ -113,7 +117,7 @@ static void deformVerts(ModifierData *md, Object *ob,
 		psys = psmd->psys;
 	else
 		return;
-	
+
 	if (!psys_check_enabled(ob, psys, (flag & MOD_APPLY_RENDER) != 0))
 		return;
 
@@ -186,7 +190,7 @@ static void deformVerts(ModifierData *md, Object *ob,
 
 	if (!(ob->transflag & OB_NO_PSYS_UPDATE)) {
 		psmd->flag &= ~eParticleSystemFlag_psys_updated;
-		particle_system_update(md->scene, ob, psys, (flag & MOD_APPLY_RENDER) != 0);
+		particle_system_update(G.main, md->scene, ob, psys, (flag & MOD_APPLY_RENDER) != 0);
 		psmd->flag |= eParticleSystemFlag_psys_updated;
 	}
 }

@@ -101,7 +101,7 @@ static void rna_Scene_frame_set(Scene *scene, Main *bmain, int frame, float subf
 		/* cant use NC_SCENE|ND_FRAME because this causes wm_event_do_notifiers to call
 		 * BKE_scene_update_for_newframe which will loose any un-keyed changes [#24690] */
 		/* WM_main_add_notifier(NC_SCENE|ND_FRAME, scene); */
-		
+
 		/* instead just redraw the views */
 		WM_main_add_notifier(NC_WINDOW, NULL);
 	}
@@ -134,7 +134,8 @@ static void rna_Scene_update_tagged(Scene *scene, Main *bmain)
 #endif
 }
 
-static void rna_SceneRender_get_frame_path(RenderData *rd, int frame, int preview, const char *view, char *name)
+static void rna_SceneRender_get_frame_path(
+        RenderData *rd, Main *bmain, int frame, bool preview, const char *view, char *name)
 {
 	const char *suffix = BKE_scene_multiview_view_suffix_get(rd, view);
 
@@ -147,20 +148,20 @@ static void rna_SceneRender_get_frame_path(RenderData *rd, int frame, int previe
 	}
 	else {
 		BKE_image_path_from_imformat(
-		        name, rd->pic, G.main->name, (frame == INT_MIN) ? rd->cfra : frame,
+		        name, rd->pic, BKE_main_blendfile_path(bmain), (frame == INT_MIN) ? rd->cfra : frame,
 		        &rd->im_format, (rd->scemode & R_EXTENSION) != 0, true, suffix);
 	}
 }
 
 static void rna_Scene_ray_cast(
-        Scene *scene, float origin[3], float direction[3], float ray_dist,
-        int *r_success, float r_location[3], float r_normal[3], int *r_index,
+        Scene *scene, Main *bmain,
+        float origin[3], float direction[3], float ray_dist,
+        bool *r_success, float r_location[3], float r_normal[3], int *r_index,
         Object **r_ob, float r_obmat[16])
 {
 	normalize_v3(direction);
 
-	SnapObjectContext *sctx = ED_transform_snap_object_context_create(
-	        G.main, scene, 0);
+	SnapObjectContext *sctx = ED_transform_snap_object_context_create(bmain, scene, 0);
 
 	bool ret = ED_transform_snap_object_project_ray_ex(
 	        sctx,
@@ -185,6 +186,11 @@ static void rna_Scene_ray_cast(
 	}
 }
 
+static void rna_Scene_sequencer_editing_free(Scene *scene)
+{
+	BKE_sequencer_editing_free(scene, true);
+}
+
 #ifdef WITH_ALEMBIC
 
 static void rna_Scene_alembic_export(
@@ -197,22 +203,22 @@ static void rna_Scene_alembic_export(
         int geom_samples,
         float shutter_open,
         float shutter_close,
-        int selected_only,
-        int uvs,
-        int normals,
-        int vcolors,
-        int apply_subdiv,
-        int flatten_hierarchy,
-        int visible_layers_only,
-        int renderable_only,
-        int face_sets,
-        int use_subdiv_schema,
-        int export_hair,
-        int export_particles,
+        bool selected_only,
+        bool uvs,
+        bool normals,
+        bool vcolors,
+        bool apply_subdiv,
+        bool flatten_hierarchy,
+        bool visible_layers_only,
+        bool renderable_only,
+        bool face_sets,
+        bool use_subdiv_schema,
+        bool export_hair,
+        bool export_particles,
         int compression_type,
-        int packuv,
+        bool packuv,
         float scale,
-        int triangulate,
+        bool triangulate,
         int quad_method,
         int ngon_method)
 {
@@ -288,9 +294,10 @@ void RNA_api_scene(StructRNA *srna)
 	parm = RNA_def_float_vector(func, "result", 2, NULL, 0.0f, FLT_MAX, "", "aspect", 0.0f, FLT_MAX);
 	RNA_def_parameter_flags(parm, PROP_THICK_WRAP, 0);
 	RNA_def_function_output(func, parm);
-	
+
 	/* Ray Cast */
 	func = RNA_def_function(srna, "ray_cast", "rna_Scene_ray_cast");
+	RNA_def_function_flag(func, FUNC_USE_MAIN);
 	RNA_def_function_ui_description(func, "Cast a ray onto in object space");
 	/* ray start and end */
 	parm = RNA_def_float_vector(func, "origin", 3, NULL, -FLT_MAX, FLT_MAX, "", "", -1e4, 1e4);
@@ -316,6 +323,16 @@ void RNA_api_scene(StructRNA *srna)
 	RNA_def_function_output(func, parm);
 	parm = RNA_def_float_matrix(func, "matrix", 4, 4, NULL, 0.0f, 0.0f, "", "Matrix", 0.0f, 0.0f);
 	RNA_def_function_output(func, parm);
+
+	/* Sequencer. */
+	func = RNA_def_function(srna, "sequence_editor_create", "BKE_sequencer_editing_ensure");
+	RNA_def_function_ui_description(func, "Ensure sequence editor is valid in this scene");
+	parm = RNA_def_pointer(func, "sequence_editor", "SequenceEditor", "", "New sequence editor data or NULL");
+	RNA_def_function_return(func, parm);
+
+	func = RNA_def_function(srna, "sequence_editor_clear", "rna_Scene_sequencer_editing_free");
+	RNA_def_function_ui_description(func, "Clear sequence editor in this scene");
+
 
 #ifdef WITH_ALEMBIC
 	/* XXX Deprecated, will be removed in 2.8 in favour of calling the export operator. */
@@ -362,6 +379,7 @@ void RNA_api_scene_render(StructRNA *srna)
 	PropertyRNA *parm;
 
 	func = RNA_def_function(srna, "frame_path", "rna_SceneRender_get_frame_path");
+	RNA_def_function_flag(func, FUNC_USE_MAIN);
 	RNA_def_function_ui_description(func, "Return the absolute path to the filename to be written for a given frame");
 	RNA_def_int(func, "frame", INT_MIN, INT_MIN, INT_MAX, "",
 	            "Frame number to use, if unset the current frame will be used", MINAFRAME, MAXFRAME);

@@ -26,6 +26,7 @@
 #include "render/shader.h"
 
 #ifdef WITH_OSL
+#include <OSL/llvm_util.h>
 #include <OSL/oslcomp.h>
 #include <OSL/oslexec.h>
 #include <OSL/oslquery.h>
@@ -120,7 +121,9 @@ protected:
 
 class OSLCompiler {
 public:
-	OSLCompiler(void *manager, void *shadingsys, ImageManager *image_manager);
+	OSLCompiler(void *manager, void *shadingsys,
+	            ImageManager *image_manager,
+	            LightManager *light_manager);
 	void compile(Scene *scene, OSLGlobals *og, Shader *shader);
 
 	void add(ShaderNode *node, const char *name, bool isfilepath = false);
@@ -146,6 +149,7 @@ public:
 
 	bool background;
 	ImageManager *image_manager;
+	LightManager *light_manager;
 
 private:
 #ifdef WITH_OSL
@@ -168,4 +172,3 @@ private:
 CCL_NAMESPACE_END
 
 #endif /* __OSL_H__  */
-

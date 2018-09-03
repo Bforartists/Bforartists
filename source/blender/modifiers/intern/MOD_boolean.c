@@ -72,15 +72,6 @@ static void initData(ModifierData *md)
 	bmd->double_threshold = 1e-6f;
 }
 
-static void copyData(ModifierData *md, ModifierData *target)
-{
-#if 0
-	BooleanModifierData *bmd = (BooleanModifierData *) md;
-	BooleanModifierData *tbmd = (BooleanModifierData *) target;
-#endif
-	modifier_copyData_generic(md, target);
-}
-
 static bool isDisabled(ModifierData *md, int UNUSED(useRenderParams))
 {
 	BooleanModifierData *bmd = (BooleanModifierData *) md;
@@ -319,6 +310,7 @@ static DerivedMesh *applyModifier(
 				        use_dissolve,
 				        use_island_connect,
 				        false,
+				        false,
 				        bmd->operation,
 				        bmd->double_threshold);
 
@@ -354,7 +346,7 @@ static CustomDataMask requiredDataMask(Object *UNUSED(ob), ModifierData *UNUSED(
 	CustomDataMask dataMask = CD_MASK_MTFACE | CD_MASK_MEDGE;
 
 	dataMask |= CD_MASK_MDEFORMVERT;
-	
+
 	return dataMask;
 }
 
@@ -366,7 +358,7 @@ ModifierTypeInfo modifierType_Boolean = {
 	/* flags */             eModifierTypeFlag_AcceptsMesh |
 	                        eModifierTypeFlag_UsesPointCache,
 
-	/* copyData */          copyData,
+	/* copyData */          modifier_copyData_generic,
 	/* deformVerts */       NULL,
 	/* deformMatrices */    NULL,
 	/* deformVertsEM */     NULL,

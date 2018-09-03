@@ -117,6 +117,7 @@ set(SRC
 	intern/icons.c
 	intern/idcode.c
 	intern/idprop.c
+	intern/idprop_utils.c
 	intern/image.c
 	intern/image_gen.c
 	intern/ipo.c
@@ -135,6 +136,7 @@ set(SRC
 	intern/mball.c
 	intern/mball_tessellate.c
 	intern/mesh.c
+	intern/mesh_convert.c
 	intern/mesh_evaluate.c
 	intern/mesh_mapping.c
 	intern/mesh_remap.c
@@ -407,7 +409,7 @@ if(WITH_CODEC_FFMPEG)
 	)
 	add_definitions(-DWITH_FFMPEG)
 
-	remove_strict_flags_file(
+	remove_strict_c_flags_file(
 		intern/writeffmpeg.c
 	)
 endif()

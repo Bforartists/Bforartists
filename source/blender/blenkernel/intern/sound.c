@@ -79,7 +79,7 @@ bSound *BKE_sound_new_file(struct Main *bmain, const char *filepath)
 
 	BLI_strncpy(str, filepath, sizeof(str));
 
-	path = /*bmain ? bmain->name :*/ G.main->name;
+	path = BKE_main_blendfile_path(bmain);
 
 	BLI_path_abs(str, path);
 
@@ -98,7 +98,7 @@ bSound *BKE_sound_new_file_exists_ex(struct Main *bmain, const char *filepath, b
 	char str[FILE_MAX], strtest[FILE_MAX];
 
 	BLI_strncpy(str, filepath, sizeof(str));
-	BLI_path_abs(str, bmain->name);
+	BLI_path_abs(str, BKE_main_blendfile_path(bmain));
 
 	/* first search an identical filepath */
 	for (sound = bmain->sound.first; sound; sound = sound->id.next) {
@@ -146,7 +146,7 @@ void BKE_sound_free(bSound *sound)
 	}
 
 	BKE_sound_free_waveform(sound);
-	
+
 #endif  /* WITH_AUDASPACE */
 	if (sound->spinlock) {
 		BLI_spin_end(sound->spinlock);
@@ -757,15 +757,19 @@ int BKE_sound_scene_playing(struct Scene *scene)
 
 void BKE_sound_free_waveform(bSound *sound)
 {
-	SoundWaveform *waveform = sound->waveform;
-	if (waveform) {
-		if (waveform->data) {
-			MEM_freeN(waveform->data);
+	if ((sound->tags & SOUND_TAGS_WAVEFORM_NO_RELOAD) == 0) {
+		SoundWaveform *waveform = sound->waveform;
+		if (waveform) {
+			if (waveform->data) {
+				MEM_freeN(waveform->data);
+			}
+			MEM_freeN(waveform);
 		}
-		MEM_freeN(waveform);
-	}
 
-	sound->waveform = NULL;
+		sound->waveform = NULL;
+	}
+	/* This tag is only valid once. */
+	sound->tags &= ~SOUND_TAGS_WAVEFORM_NO_RELOAD;
 }
 
 void BKE_sound_read_waveform(bSound *sound, short *stop)
@@ -775,7 +779,7 @@ void BKE_sound_read_waveform(bSound *sound, short *stop)
 
 	if (info.length > 0) {
 		int length = info.length * SOUND_WAVE_SAMPLES_PER_SECOND;
-		
+
 		waveform->data = MEM_mallocN(length * sizeof(float) * 3, "SoundWaveform.samples");
 		waveform->length = AUD_readSound(sound->playback_handle, waveform->data, length, SOUND_WAVE_SAMPLES_PER_SECOND, stop);
 	}
@@ -794,16 +798,16 @@ void BKE_sound_read_waveform(bSound *sound, short *stop)
 		}
 		MEM_freeN(waveform);
 		BLI_spin_lock(sound->spinlock);
-		sound->flags &= ~SOUND_FLAGS_WAVEFORM_LOADING;
+		sound->tags &= ~SOUND_TAGS_WAVEFORM_LOADING;
 		BLI_spin_unlock(sound->spinlock);
 		return;
 	}
-		
+
 	BKE_sound_free_waveform(sound);
-	
+
 	BLI_spin_lock(sound->spinlock);
 	sound->waveform = waveform;
-	sound->flags &= ~SOUND_FLAGS_WAVEFORM_LOADING;
+	sound->tags &= ~SOUND_TAGS_WAVEFORM_LOADING;
 	BLI_spin_unlock(sound->spinlock);
 }
 

@@ -45,18 +45,18 @@ class OSLRenderServices : public OSL::RendererServices
 public:
 	OSLRenderServices();
 	~OSLRenderServices();
-	
+
 	void thread_init(KernelGlobals *kernel_globals, OSL::TextureSystem *ts);
 
 	bool get_matrix(OSL::ShaderGlobals *sg, OSL::Matrix44 &result, OSL::TransformationPtr xform, float time);
 	bool get_inverse_matrix(OSL::ShaderGlobals *sg, OSL::Matrix44 &result, OSL::TransformationPtr xform, float time);
-	
+
 	bool get_matrix(OSL::ShaderGlobals *sg, OSL::Matrix44 &result, ustring from, float time);
 	bool get_inverse_matrix(OSL::ShaderGlobals *sg, OSL::Matrix44 &result, ustring to, float time);
-	
+
 	bool get_matrix(OSL::ShaderGlobals *sg, OSL::Matrix44 &result, OSL::TransformationPtr xform);
 	bool get_inverse_matrix(OSL::ShaderGlobals *sg, OSL::Matrix44 &result, OSL::TransformationPtr xform);
-	
+
 	bool get_matrix(OSL::ShaderGlobals *sg, OSL::Matrix44 &result, ustring from);
 	bool get_inverse_matrix(OSL::ShaderGlobals *sg, OSL::Matrix44 &result, ustring from);
 
@@ -182,6 +182,7 @@ public:
 	static ustring u_v;
 	static ustring u_empty;
 	static ustring u_at_bevel;
+	static ustring u_at_ao;
 
 private:
 	KernelGlobals *kernel_globals;
@@ -194,4 +195,3 @@ private:
 CCL_NAMESPACE_END
 
 #endif /* __OSL_SERVICES_H__  */
-

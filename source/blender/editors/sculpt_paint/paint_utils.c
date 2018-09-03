@@ -82,12 +82,13 @@
 /* Convert the object-space axis-aligned bounding box (expressed as
  * its minimum and maximum corners) into a screen-space rectangle,
  * returns zero if the result is empty */
-bool paint_convert_bb_to_rect(rcti *rect,
-                              const float bb_min[3],
-                              const float bb_max[3],
-                              const ARegion *ar,
-                              RegionView3D *rv3d,
-                              Object *ob)
+bool paint_convert_bb_to_rect(
+        rcti *rect,
+        const float bb_min[3],
+        const float bb_max[3],
+        const ARegion *ar,
+        RegionView3D *rv3d,
+        Object *ob)
 {
 	float projection_mat[4][4];
 	int i, j, k;
@@ -128,11 +129,12 @@ bool paint_convert_bb_to_rect(rcti *rect,
 /* Get four planes in object-space that describe the projection of
  * screen_rect from screen into object-space (essentially converting a
  * 2D screens-space bounding box into four 3D planes) */
-void paint_calc_redraw_planes(float planes[4][4],
-                              const ARegion *ar,
-                              RegionView3D *rv3d,
-                              Object *ob,
-                              const rcti *screen_rect)
+void paint_calc_redraw_planes(
+        float planes[4][4],
+        const ARegion *ar,
+        RegionView3D *rv3d,
+        Object *ob,
+        const rcti *screen_rect)
 {
 	BoundBox bb;
 	bglMats mats;
@@ -152,8 +154,9 @@ void paint_calc_redraw_planes(float planes[4][4],
 	negate_m4(planes);
 }
 
-float paint_calc_object_space_radius(ViewContext *vc, const float center[3],
-                                     float pixel_radius)
+float paint_calc_object_space_radius(
+        ViewContext *vc, const float center[3],
+        float pixel_radius)
 {
 	Object *ob = vc->obact;
 	float delta[3], scale, loc[3];
@@ -182,7 +185,9 @@ float paint_get_tex_pixel(const MTex *mtex, float u, float v, struct ImagePool *
 	return intensity;
 }
 
-void paint_get_tex_pixel_col(const MTex *mtex, float u, float v, float rgba[4], struct ImagePool *pool, int thread, bool convert_to_linear, struct ColorSpace *colorspace)
+void paint_get_tex_pixel_col(
+        const MTex *mtex, float u, float v, float rgba[4], struct ImagePool *pool,
+        int thread, bool convert_to_linear, struct ColorSpace *colorspace)
 {
 	float co[3] = {u, v, 0.0f};
 	int hasrgb;
@@ -222,10 +227,10 @@ void paint_stroke_operator_properties(wmOperatorType *ot)
 	prop = RNA_def_collection_runtime(ot->srna, "stroke", &RNA_OperatorStrokeElement, "Stroke", "");
 	RNA_def_property_flag(prop, PROP_HIDDEN | PROP_SKIP_SAVE);
 
-	RNA_def_enum(ot->srna, "mode", stroke_mode_items, BRUSH_STROKE_NORMAL, 
+	RNA_def_enum(ot->srna, "mode", stroke_mode_items, BRUSH_STROKE_NORMAL,
 	             "Stroke Mode",
 	             "Action taken when a paint stroke is made");
-	
+
 }
 
 /* 3D Paint */
@@ -238,9 +243,10 @@ static void imapaint_project(float matrix[4][4], const float co[3], float pco[4]
 	mul_m4_v4(matrix, pco);
 }
 
-static void imapaint_tri_weights(float matrix[4][4], GLint view[4],
-                                 const float v1[3], const float v2[3], const float v3[3],
-                                 const float co[2], float w[3])
+static void imapaint_tri_weights(
+        float matrix[4][4], GLint view[4],
+        const float v1[3], const float v2[3], const float v3[3],
+        const float co[2], float w[3])
 {
 	float pv1[4], pv2[4], pv3[4], h[3], divw;
 	float wmat[3][3], invwmat[3][3];
@@ -436,7 +442,7 @@ void paint_sample_color(bContext *C, ARegion *ar, int x, int y, bool texpaint_pr
 
 	CLAMP(x, 0, ar->winx);
 	CLAMP(y, 0, ar->winy);
-	
+
 	if (use_palette) {
 		if (!palette) {
 			palette = BKE_palette_add(CTX_data_main(C), "Palette");
@@ -471,12 +477,12 @@ void paint_sample_color(bContext *C, ARegion *ar, int x, int y, bool texpaint_pr
 
 				if (imapaint_pick_face(&vc, mval, &faceindex, totpoly)) {
 					Image *image;
-					
-					if (use_material) 
+
+					if (use_material)
 						image = imapaint_face_image(ob, me, faceindex);
 					else
 						image = imapaint->canvas;
-					
+
 					if (image) {
 						ImBuf *ibuf = BKE_image_acquire_ibuf(image, NULL, NULL);
 						if (ibuf && ibuf->rect) {
@@ -484,16 +490,16 @@ void paint_sample_color(bContext *C, ARegion *ar, int x, int y, bool texpaint_pr
 							float u, v;
 							imapaint_pick_uv(scene, ob, faceindex, mval, uv);
 							sample_success = true;
-							
+
 							u = fmodf(uv[0], 1.0f);
 							v = fmodf(uv[1], 1.0f);
-							
+
 							if (u < 0.0f) u += 1.0f;
 							if (v < 0.0f) v += 1.0f;
-							
+
 							u = u * ibuf->x;
 							v = v * ibuf->y;
-							
+
 							if (ibuf->rect_float) {
 								float rgba_f[4];
 								if (U.gameflags & USER_DISABLE_MIPMAP)
@@ -525,7 +531,7 @@ void paint_sample_color(bContext *C, ARegion *ar, int x, int y, bool texpaint_pr
 								}
 							}
 						}
-					
+
 						BKE_image_release_ibuf(image, ibuf, NULL);
 					}
 				}
@@ -547,7 +553,7 @@ void paint_sample_color(bContext *C, ARegion *ar, int x, int y, bool texpaint_pr
 		glReadBuffer(GL_BACK);
 	}
 	cp = (unsigned char *)&col;
-	
+
 	if (use_palette) {
 		rgb_uchar_to_float(color->rgb, cp);
 	}
@@ -571,7 +577,7 @@ static int brush_curve_preset_exec(bContext *C, wmOperator *op)
 	return OPERATOR_FINISHED;
 }
 
-static int brush_curve_preset_poll(bContext *C)
+static bool brush_curve_preset_poll(bContext *C)
 {
 	Brush *br = BKE_paint_brush(BKE_paint_get_active_from_context(C));
 

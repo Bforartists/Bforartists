@@ -15,8 +15,8 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Contributor: 
- *		Jeroen Bakker 
+ * Contributor:
+ *		Jeroen Bakker
  *		Monique Dewanchand
  */
 
@@ -61,7 +61,7 @@ void PreviewOperation::verifyPreview(bNodeInstanceHash *previews, bNodeInstanceK
 void PreviewOperation::initExecution()
 {
 	this->m_input = getInputSocketReader(0);
-	
+
 	if (this->getWidth() == (unsigned int)this->m_preview->xsize &&
 	    this->getHeight() == (unsigned int)this->m_preview->ysize)
 	{
@@ -98,14 +98,14 @@ void PreviewOperation::executeRegion(rcti *rect, unsigned int /*tileNumber*/)
 		for (int x = rect->xmin; x < rect->xmax; x++) {
 			float rx = floor(x / this->m_divider);
 			float ry = floor(y / this->m_divider);
-	
+
 			color[0] = 0.0f;
 			color[1] = 0.0f;
 			color[2] = 0.0f;
 			color[3] = 1.0f;
 			this->m_input->readSampled(color, rx, ry, COM_PS_NEAREST);
 			IMB_colormanagement_processor_apply_v4(cm_processor, color);
-			F4TOCHAR4(color, this->m_outputBuffer + offset);
+			rgba_float_to_uchar(this->m_outputBuffer + offset, color);
 			offset += 4;
 		}
 	}
@@ -137,7 +137,7 @@ void PreviewOperation::determineResolution(unsigned int resolution[2], unsigned 
 	}
 	width = width * this->m_divider;
 	height = height * this->m_divider;
-	
+
 	resolution[0] = width;
 	resolution[1] = height;
 }

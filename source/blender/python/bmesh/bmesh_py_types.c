@@ -37,6 +37,8 @@
 #include "BKE_depsgraph.h"
 #include "BKE_customdata.h"
 #include "BKE_DerivedMesh.h"
+#include "BKE_global.h"
+#include "BKE_library.h"
 
 #include "bmesh.h"
 
@@ -904,7 +906,9 @@ static PyObject *bpy_bmesh_to_mesh(BPy_BMesh *self, PyObject *args)
 	/* python won't ensure matching uv/mtex */
 	BM_mesh_cd_validate(bm);
 
+	BLI_assert(BKE_id_is_in_gobal_main(&me->id));
 	BM_mesh_bm_to_me(
+	        G_MAIN,  /* XXX UGLY! */
 	        bm, me,
 	        (&(struct BMeshToMeshParams){
 	            .calc_object_remap = true,
@@ -1397,7 +1401,7 @@ static PyObject *bpy_bmvert_copy_from_vert_interp(BPy_BMVert *self, PyObject *ar
 			return NULL;
 		}
 
-		BM_data_interp_from_verts(bm, vert_array[0], vert_array[1], self->v, CLAMPIS(fac, 0.0f, 1.0f));
+		BM_data_interp_from_verts(bm, vert_array[0], vert_array[1], self->v, clamp_f(fac, 0.0f, 1.0f));
 
 		PyMem_FREE(vert_array);
 		Py_RETURN_NONE;
@@ -2149,7 +2153,7 @@ static PyObject *bpy_bmedgeseq_new(BPy_BMElemSeq *self, PyObject *args)
 		if (vert_array == NULL) {
 			return NULL;
 		}
-		
+
 		if (BM_edge_exists(vert_array[0], vert_array[1])) {
 			PyErr_SetString(PyExc_ValueError,
 			                "edges.new(): this edge exists");

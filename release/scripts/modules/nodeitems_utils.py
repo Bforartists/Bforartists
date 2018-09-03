@@ -1,4 +1,4 @@
-﻿# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -122,7 +122,7 @@ def register_node_categories(identifier, cat_list):
             "category": cat,
             "poll": cat.poll,
             "draw": draw_node_item,
-            })
+        })
         panel_type = type("NODE_PT_category_" + cat.identifier, (bpy.types.Panel,), {
             "bl_space_type": 'NODE_EDITOR',
             "bl_region_type": 'HEADER', #BFA- changed from tools to header to get rid of the many tabs

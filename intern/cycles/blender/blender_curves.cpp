@@ -326,14 +326,14 @@ static bool ObtainCacheParticleVcol(Mesh *mesh,
 	return true;
 }
 
-static void set_resolution(BL::Object *b_ob, BL::Scene *scene, bool render)
+static void set_resolution(BL::BlendData *b_data, BL::Object *b_ob, BL::Scene *scene, bool render)
 {
 	BL::Object::modifiers_iterator b_mod;
 	for(b_ob->modifiers.begin(b_mod); b_mod != b_ob->modifiers.end(); ++b_mod) {
 		if((b_mod->type() == b_mod->type_PARTICLE_SYSTEM) && ((b_mod->show_viewport()) || (b_mod->show_render()))) {
 			BL::ParticleSystemModifier psmd((const PointerRNA)b_mod->ptr);
 			BL::ParticleSystem b_psys((const PointerRNA)psmd.particle_system().ptr);
-			b_psys.set_resolution(*scene, *b_ob, (render)? 2: 1);
+			b_psys.set_resolution(*b_data, *scene, *b_ob, (render)? 2: 1);
 		}
 	}
 }
@@ -784,17 +784,18 @@ static void ExportCurveTriangleVcol(ParticleCurveData *CData,
 
 			for(int curvekey = CData->curve_firstkey[curve]; curvekey < CData->curve_firstkey[curve] + CData->curve_keynum[curve] - 1; curvekey++) {
 				for(int section = 0; section < resol; section++) {
-					cdata[vertexindex] = color_float_to_byte(color_srgb_to_scene_linear_v3(CData->curve_vcol[curve]));
+					/* Encode vertex color using the sRGB curve. */
+					cdata[vertexindex] = color_float_to_byte(color_srgb_to_linear_v3(CData->curve_vcol[curve]));
 					vertexindex++;
-					cdata[vertexindex] = color_float_to_byte(color_srgb_to_scene_linear_v3(CData->curve_vcol[curve]));
+					cdata[vertexindex] = color_float_to_byte(color_srgb_to_linear_v3(CData->curve_vcol[curve]));
 					vertexindex++;
-					cdata[vertexindex] = color_float_to_byte(color_srgb_to_scene_linear_v3(CData->curve_vcol[curve]));
+					cdata[vertexindex] = color_float_to_byte(color_srgb_to_linear_v3(CData->curve_vcol[curve]));
 					vertexindex++;
-					cdata[vertexindex] = color_float_to_byte(color_srgb_to_scene_linear_v3(CData->curve_vcol[curve]));
+					cdata[vertexindex] = color_float_to_byte(color_srgb_to_linear_v3(CData->curve_vcol[curve]));
 					vertexindex++;
-					cdata[vertexindex] = color_float_to_byte(color_srgb_to_scene_linear_v3(CData->curve_vcol[curve]));
+					cdata[vertexindex] = color_float_to_byte(color_srgb_to_linear_v3(CData->curve_vcol[curve]));
 					vertexindex++;
-					cdata[vertexindex] = color_float_to_byte(color_srgb_to_scene_linear_v3(CData->curve_vcol[curve]));
+					cdata[vertexindex] = color_float_to_byte(color_srgb_to_linear_v3(CData->curve_vcol[curve]));
 					vertexindex++;
 				}
 			}
@@ -920,7 +921,7 @@ void BlenderSync::sync_curves(Mesh *mesh,
 	ParticleCurveData CData;
 
 	if(!preview)
-		set_resolution(&b_ob, &b_scene, true);
+		set_resolution(&b_data, &b_ob, &b_scene, true);
 
 	ObtainCacheParticleData(mesh, &b_mesh, &b_ob, &CData, !preview);
 
@@ -1010,9 +1011,10 @@ void BlenderSync::sync_curves(Mesh *mesh,
 				if(fdata) {
 					size_t i = 0;
 
+					/* Encode vertex color using the sRGB curve. */
 					for(size_t curve = 0; curve < CData.curve_vcol.size(); curve++)
 						if(!(CData.curve_keynum[curve] <= 1 || CData.curve_length[curve] == 0.0f))
-							fdata[i++] = color_srgb_to_scene_linear_v3(CData.curve_vcol[curve]);
+							fdata[i++] = color_srgb_to_linear_v3(CData.curve_vcol[curve]);
 				}
 			}
 		}
@@ -1065,7 +1067,7 @@ void BlenderSync::sync_curves(Mesh *mesh,
 	}
 
 	if(!preview)
-		set_resolution(&b_ob, &b_scene, false);
+		set_resolution(&b_data, &b_ob, &b_scene, false);
 
 	mesh->compute_bounds();
 }

@@ -23,7 +23,7 @@
  * Contributor(s): none yet.
  *
  * ***** END GPL LICENSE BLOCK *****
- * 
+ *
  */
 
 /** \file blender/blenlib/intern/string.c
@@ -63,7 +63,7 @@ char *BLI_strdupn(const char *str, const size_t len)
 	char *n = MEM_mallocN(len + 1, "strdup");
 	memcpy(n, str, len);
 	n[len] = '\0';
-	
+
 	return n;
 }
 
@@ -91,7 +91,7 @@ char *BLI_strdupcat(const char *__restrict str1, const char *__restrict str2)
 	const size_t str1_len = strlen(str1);
 	const size_t str2_len = strlen(str2) + 1;
 	char *str, *s;
-	
+
 	str = MEM_mallocN(str1_len + str2_len, "strdupcat");
 	s = str;
 
@@ -425,55 +425,55 @@ char *BLI_str_replaceN(const char *__restrict str, const char *__restrict substr
 
 	BLI_assert(substr_old[0] != '\0');
 
-	/* while we can still find a match for the old substring that we're searching for, 
+	/* while we can still find a match for the old substring that we're searching for,
 	 * keep dicing and replacing
 	 */
 	while ((match = strstr(str, substr_old))) {
 		/* the assembly buffer only gets created when we actually need to rebuild the string */
 		if (ds == NULL)
 			ds = BLI_dynstr_new();
-			
-		/* if the match position does not match the current position in the string, 
+
+		/* if the match position does not match the current position in the string,
 		 * copy the text up to this position and advance the current position in the string
 		 */
 		if (str != match) {
 			/* add the segment of the string from str to match to the buffer, then restore the value at match
 			 */
 			BLI_dynstr_nappend(ds, str, (match - str));
-			
+
 			/* now our current position should be set on the start of the match */
 			str = match;
 		}
-		
+
 		/* add the replacement text to the accumulation buffer */
 		BLI_dynstr_append(ds, substr_new);
-		
+
 		/* advance the current position of the string up to the end of the replaced segment */
 		str += len_old;
 	}
-	
+
 	/* finish off and return a new string that has had all occurrences of */
 	if (ds) {
 		char *str_new;
-		
-		/* add what's left of the string to the assembly buffer 
+
+		/* add what's left of the string to the assembly buffer
 		 * - we've been adjusting str to point at the end of the replaced segments
 		 */
 		BLI_dynstr_append(ds, str);
-		
+
 		/* convert to new c-string (MEM_malloc'd), and free the buffer */
 		str_new = BLI_dynstr_get_cstring(ds);
 		BLI_dynstr_free(ds);
-		
+
 		return str_new;
 	}
 	else {
-		/* just create a new copy of the entire string - we avoid going through the assembly buffer 
+		/* just create a new copy of the entire string - we avoid going through the assembly buffer
 		 * for what should be a bit more efficiency...
 		 */
 		return BLI_strdup(str);
 	}
-} 
+}
 
 /**
  * In-place replace every \a src to \a dst in \a str.
@@ -497,7 +497,7 @@ void BLI_str_replace_char(char *str, char src, char dst)
  *
  * \retval True if the strings are equal, false otherwise.
  */
-int BLI_strcaseeq(const char *a, const char *b) 
+int BLI_strcaseeq(const char *a, const char *b)
 {
 	return (BLI_strcasecmp(a, b) == 0);
 }
@@ -509,7 +509,7 @@ char *BLI_strcasestr(const char *s, const char *find)
 {
 	register char c, sc;
 	register size_t len;
-	
+
 	if ((c = *find++) != 0) {
 		c = tolower(c);
 		len = strlen(find);
@@ -654,16 +654,16 @@ int BLI_natstrcmp(const char *s1, const char *s2)
 	int tiebreaker = 0;
 
 	/* if both chars are numeric, to a left_number_strcmp().
-	 * then increase string deltas as long they are 
+	 * then increase string deltas as long they are
 	 * numeric, else do a tolower and char compare */
 
 	while (1) {
 		c1 = tolower(s1[d1]);
 		c2 = tolower(s2[d2]);
-		
+
 		if (isdigit(c1) && isdigit(c2)) {
 			int numcompare = left_number_strcmp(s1 + d1, s2 + d2, &tiebreaker);
-			
+
 			if (numcompare != 0)
 				return numcompare;
 
@@ -673,11 +673,11 @@ int BLI_natstrcmp(const char *s1, const char *s2)
 			d2++;
 			while (isdigit(s2[d2]))
 				d2++;
-			
+
 			c1 = tolower(s1[d1]);
 			c2 = tolower(s2[d2]);
 		}
-	
+
 		/* first check for '.' so "foo.bar" comes before "foo 1.bar" */
 		if (c1 == '.' && c2 != '.')
 			return -1;
@@ -698,7 +698,7 @@ int BLI_natstrcmp(const char *s1, const char *s2)
 
 	if (tiebreaker)
 		return tiebreaker;
-	
+
 	/* we might still have a different string because of lower/upper case, in
 	 * that case fall back to regular string comparison */
 	return strcmp(s1, s2);
@@ -799,6 +799,7 @@ int BLI_str_rstrip_float_zero(char *str, const char pad)
 			while (end_p != p && *end_p == '0') {
 				*end_p = pad;
 				end_p--;
+				totstrip++;
 			}
 		}
 	}
@@ -850,7 +851,7 @@ int BLI_str_index_in_array(const char *__restrict str, const char **__restrict s
 bool BLI_strn_endswith(const char *__restrict str, const char *__restrict end, size_t slength)
 {
 	size_t elength = strlen(end);
-	
+
 	if (elength < slength) {
 		const char *iter = &str[slength - elength];
 		while (*iter) {
@@ -992,6 +993,41 @@ size_t BLI_str_format_int_grouped(char dst[16], int num)
 	*--p_dst = '\0';
 
 	return (size_t)(p_dst - dst);
+}
+
+/**
+ * Format a size in bytes using binary units.
+ * 1000 -> 1 KB
+ * Number of decimal places grows with the used unit (e.g. 1.5 MB, 1.55 GB, 1.545 TB).
+ *
+ * \param dst The resulting string. Dimension of 14 to support largest possible value for \a bytes (LLONG_MAX).
+ * \param bytes Number to format
+ * \param base_10 Calculate using base 10 (GB, MB, ...) or 2 (GiB, MiB, ...)
+ */
+void BLI_str_format_byte_unit(char dst[15], long long int bytes, const bool base_10)
+{
+	double bytes_converted = bytes;
+	int order = 0;
+	int decimals;
+	const int base = base_10 ? 1000 : 1024;
+	const char *units_base_10[] = {"B", "KB", "MB", "GB", "TB", "PB"};
+	const char *units_base_2[] = {"B", "KiB", "MiB", "GiB", "TiB", "PiB"};
+	const int tot_units = ARRAY_SIZE(units_base_2);
+
+	BLI_STATIC_ASSERT(ARRAY_SIZE(units_base_2) == ARRAY_SIZE(units_base_10), "array size mismatch");
+
+	while ((ABS(bytes_converted) >= base) && ((order + 1) < tot_units)) {
+		bytes_converted /= base;
+		order++;
+	}
+	decimals = MAX2(order - 1, 0);
+
+	/* Format value first, stripping away floating zeroes. */
+	const size_t dst_len = 15;
+	size_t len = BLI_snprintf_rlen(dst, dst_len, "%.*f", decimals, bytes_converted);
+	len -= (size_t)BLI_str_rstrip_float_zero(dst, '\0');
+	dst[len++] = ' ';
+	BLI_strncpy(dst + len, base_10 ? units_base_10[order] : units_base_2[order], dst_len - len);
 }
 
 /**

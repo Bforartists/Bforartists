@@ -135,38 +135,38 @@ struct SeqEffectHandle {
 	/* constructors & destructor */
 	/* init is _only_ called on first creation */
 	void (*init)(struct Sequence *seq);
-	
-	/* number of input strips needed 
+
+	/* number of input strips needed
 	 * (called directly after construction) */
 	int (*num_inputs)(void);
-	
+
 	/* load is called first time after readblenfile in
 	 * get_sequence_effect automatically */
 	void (*load)(struct Sequence *seq);
-	
+
 	/* duplicate */
 	void (*copy)(struct Sequence *dst, struct Sequence *src);
-	
+
 	/* destruct */
 	void (*free)(struct Sequence *seq);
-	
+
 	/* returns: -1: no input needed,
 	 * 0: no early out,
 	 * 1: out = ibuf1,
 	 * 2: out = ibuf2 */
-	int (*early_out)(struct Sequence *seq, float facf0, float facf1); 
-	
+	int (*early_out)(struct Sequence *seq, float facf0, float facf1);
+
 	/* stores the y-range of the effect IPO */
 	void (*store_icu_yrange)(struct Sequence *seq, short adrcode, float *ymin, float *ymax);
-	
+
 	/* stores the default facf0 and facf1 if no IPO is present */
 	void (*get_default_fac)(struct Sequence *seq, float cfra, float *facf0, float *facf1);
-	
+
 	/* execute the effect
 	 * sequence effects are only required to either support
 	 * float-rects or byte-rects
 	 * (mixed cases are handled one layer up...) */
-	
+
 	struct ImBuf * (*execute)(const SeqRenderData *context, struct Sequence *seq, float cfra, float facf0, float facf1,
 	                          struct ImBuf *ibuf1, struct ImBuf *ibuf2, struct ImBuf *ibuf3);
 
@@ -207,7 +207,7 @@ void BKE_sequencer_pixel_from_sequencer_space_v4(struct Scene *scene, float pixe
  * ********************************************************************** */
 struct Editing  *BKE_sequencer_editing_get(struct Scene *scene, bool alloc);
 struct Editing  *BKE_sequencer_editing_ensure(struct Scene *scene);
-void             BKE_sequencer_editing_free(struct Scene *scene);
+void             BKE_sequencer_editing_free(struct Scene *scene, const bool do_id_user);
 
 void             BKE_sequencer_sort(struct Scene *scene);
 
@@ -273,7 +273,7 @@ void BKE_sequencer_cache_cleanup(void);
 /* returned ImBuf is properly refed and has to be freed */
 struct ImBuf *BKE_sequencer_cache_get(const SeqRenderData *context, struct Sequence *seq, float cfra, eSeqStripElemIBuf type);
 
-/* passed ImBuf is properly refed, so ownership is *not* 
+/* passed ImBuf is properly refed, so ownership is *not*
  * transferred to the cache.
  * you can pass the same ImBuf multiple times to the cache without problems.
  */
@@ -392,7 +392,7 @@ typedef struct SeqLoadInfo {
 
 
 /* seq_dupli' flags */
-#define SEQ_DUPE_UNIQUE_NAME    (1 << 0)
+#define SEQ_DUPE_UNIQUE_NAME    (1 << 0)  /* WARNING: does NOT work when duplicating Meta strips! */
 #define SEQ_DUPE_CONTEXT        (1 << 1)
 #define SEQ_DUPE_ANIM           (1 << 2)
 #define SEQ_DUPE_ALL            (1 << 3) /* otherwise only selected are copied */
@@ -434,7 +434,8 @@ enum {
 };
 
 typedef struct ImBuf *(*SequencerDrawView)(
-        struct Scene *scene, struct Object *camera, int width, int height,
+        struct Main *bmain, struct Scene *scene,
+        struct Object *camera, int width, int height,
         unsigned int flag, unsigned int draw_flags, int drawtype, int alpha_mode,
         int samples, const char *viewname,
         struct GPUFX *fx, struct GPUOffScreen *ofs, char err_out[256]);
@@ -490,6 +491,6 @@ struct ImBuf *BKE_sequencer_render_mask_input(
         int cfra, int fra_offset, bool make_float);
 void BKE_sequencer_color_balance_apply(struct StripColorBalance *cb, struct ImBuf *ibuf, float mul, bool make_float, struct ImBuf *mask_input);
 
-void BKE_sequencer_all_free_anim_ibufs(int cfra);
+void BKE_sequencer_all_free_anim_ibufs(struct Main *bmain, int cfra);
 
 #endif  /* __BKE_SEQUENCER_H__ */

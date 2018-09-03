@@ -15,13 +15,13 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Contributor: 
- *		Jeroen Bakker 
+ * Contributor:
+ *		Jeroen Bakker
  *		Monique Dewanchand
  */
 
-#ifndef _COM_AlphaOverPremultiplyOperation_h
-#define _COM_AlphaOverPremultiplyOperation_h
+#ifndef __COM_ALPHAOVERPREMULTIPLYOPERATION_H__
+#define __COM_ALPHAOVERPREMULTIPLYOPERATION_H__
 #include "COM_MixOperation.h"
 
 
@@ -35,7 +35,7 @@ public:
 	 * Default constructor
 	 */
 	AlphaOverPremultiplyOperation();
-	
+
 	/**
 	 * the inner loop of this program
 	 */

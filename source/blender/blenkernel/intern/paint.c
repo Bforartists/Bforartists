@@ -160,7 +160,7 @@ Paint *BKE_paint_get_active(Scene *sce)
 {
 	if (sce) {
 		ToolSettings *ts = sce->toolsettings;
-		
+
 		if (sce->basact && sce->basact->object) {
 			switch (sce->basact->object->mode) {
 				case OB_MODE_SCULPT:
@@ -208,27 +208,8 @@ Paint *BKE_paint_get_active_from_context(const bContext *C)
 				return &ts->imapaint.paint;
 			}
 		}
-		else if (obact) {
-			switch (obact->mode) {
-				case OB_MODE_SCULPT:
-					return &ts->sculpt->paint;
-				case OB_MODE_VERTEX_PAINT:
-					return &ts->vpaint->paint;
-				case OB_MODE_WEIGHT_PAINT:
-					return &ts->wpaint->paint;
-				case OB_MODE_TEXTURE_PAINT:
-					return &ts->imapaint.paint;
-				case OB_MODE_EDIT:
-					if (ts->use_uv_sculpt)
-						return &ts->uvsculpt->paint;
-					return &ts->imapaint.paint;
-				default:
-					return &ts->imapaint.paint;
-			}
-		}
 		else {
-			/* default to image paint */
-			return &ts->imapaint.paint;
+			return BKE_paint_get_active(sce);
 		}
 	}
 
@@ -517,7 +498,7 @@ eObjectMode BKE_paint_object_mode_from_paint_mode(ePaintMode mode)
 	}
 }
 
-void BKE_paint_init(Scene *sce, ePaintMode mode, const char col[3])
+void BKE_paint_init(Main *bmain, Scene *sce, ePaintMode mode, const char col[3])
 {
 	UnifiedPaintSettings *ups = &sce->toolsettings->unified_paint_settings;
 	Brush *brush;
@@ -527,10 +508,10 @@ void BKE_paint_init(Scene *sce, ePaintMode mode, const char col[3])
 	brush = BKE_paint_brush(paint);
 	if (brush == NULL) {
 		eObjectMode ob_mode = BKE_paint_object_mode_from_paint_mode(mode);
-		brush = BKE_brush_first_search(G.main, ob_mode);
+		brush = BKE_brush_first_search(bmain, ob_mode);
 
 		if (!brush) {
-			brush = BKE_brush_add(G.main, "Brush", ob_mode);
+			brush = BKE_brush_add(bmain, "Brush", ob_mode);
 			id_us_min(&brush->id);  /* fake user only */
 		}
 		BKE_paint_brush_set(paint, brush);
@@ -620,7 +601,7 @@ float paint_grid_paint_mask(const GridPaintMask *gpm, unsigned level,
 {
 	int factor = BKE_ccg_factor(level, gpm->level);
 	int gridsize = BKE_ccg_gridsize(gpm->level);
-	
+
 	return gpm->data[(y * factor) * gridsize + (x * factor)];
 }
 
@@ -722,7 +703,7 @@ static void sculptsession_bm_to_me_update_data_only(Object *ob, bool reorder)
 			}
 			if (reorder)
 				BM_log_mesh_elems_reorder(ss->bm, ss->bm_log);
-			BM_mesh_bm_to_me(ss->bm, ob->data, (&(struct BMeshToMeshParams){0}));
+			BM_mesh_bm_to_me(NULL, ss->bm, ob->data, (&(struct BMeshToMeshParams){.calc_object_remap = false}));
 		}
 	}
 }
@@ -967,12 +948,12 @@ void BKE_sculpt_update_mesh_elements(Scene *scene, Sculpt *sd, Object *ob,
 
 	/* if pbvh is deformed, key block is already applied to it */
 	if (ss->kb) {
-		bool pbvh_deformd = BKE_pbvh_isDeformed(ss->pbvh);
-		if (!pbvh_deformd || ss->deform_cos == NULL) {
+		bool pbvh_deformed = BKE_pbvh_isDeformed(ss->pbvh);
+		if (!pbvh_deformed || ss->deform_cos == NULL) {
 			float (*vertCos)[3] = BKE_keyblock_convert_to_vertcos(ob, ss->kb);
 
 			if (vertCos) {
-				if (!pbvh_deformd) {
+				if (!pbvh_deformed) {
 					/* apply shape keys coordinates to PBVH */
 					BKE_pbvh_apply_vertCos(ss->pbvh, vertCos);
 				}

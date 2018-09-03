@@ -15,8 +15,8 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Contributor: 
- *		Jeroen Bakker 
+ * Contributor:
+ *		Jeroen Bakker
  *		Monique Dewanchand
  */
 
@@ -35,7 +35,7 @@ void BrightnessNode::convertToOperations(NodeConverter &converter, const Composi
 	BrightnessOperation *operation = new BrightnessOperation();
 	operation->setUsePremultiply((bnode->custom1 & 1) != 0);
 	converter.addOperation(operation);
-	
+
 	converter.mapInputSocket(getInputSocket(0), operation->getInputSocket(0));
 	converter.mapInputSocket(getInputSocket(1), operation->getInputSocket(1));
 	converter.mapInputSocket(getInputSocket(2), operation->getInputSocket(2));

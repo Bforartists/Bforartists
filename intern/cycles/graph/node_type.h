@@ -73,12 +73,13 @@ struct SocketType
 		INTERNAL               = (1 << 2) | (1 << 3),
 
 		LINK_TEXTURE_GENERATED = (1 << 4),
-		LINK_TEXTURE_UV        = (1 << 5),
-		LINK_INCOMING          = (1 << 6),
-		LINK_NORMAL            = (1 << 7),
-		LINK_POSITION          = (1 << 8),
-		LINK_TANGENT           = (1 << 9),
-		DEFAULT_LINK_MASK      = (1 << 4) | (1 << 5) | (1 << 6) | (1 << 7) | (1 << 8) | (1 << 9)
+		LINK_TEXTURE_NORMAL    = (1 << 5),
+		LINK_TEXTURE_UV        = (1 << 6),
+		LINK_INCOMING          = (1 << 7),
+		LINK_NORMAL            = (1 << 8),
+		LINK_POSITION          = (1 << 9),
+		LINK_TANGENT           = (1 << 10),
+		DEFAULT_LINK_MASK      = (1 << 4) | (1 << 5) | (1 << 6) | (1 << 7) | (1 << 8) | (1 << 9) | (1 << 10)
 	};
 
 	ustring name;
@@ -113,9 +114,9 @@ struct NodeType
 
 	void register_input(ustring name, ustring ui_name, SocketType::Type type,
 	                    int struct_offset, const void *default_value,
-						const NodeEnum *enum_values = NULL,
-						const NodeType **node_type = NULL,
-						int flags = 0, int extra_flags = 0);
+	                    const NodeEnum *enum_values = NULL,
+	                    const NodeType **node_type = NULL,
+	                    int flags = 0, int extra_flags = 0);
 	void register_output(ustring name, ustring ui_name, SocketType::Type type);
 
 	const SocketType *find_input(ustring name) const;
@@ -262,4 +263,3 @@ const NodeType *structname::register_type()
 	{ type->register_output(ustring(#name), ustring(ui_name), SocketType::ENUM); }
 
 CCL_NAMESPACE_END
-

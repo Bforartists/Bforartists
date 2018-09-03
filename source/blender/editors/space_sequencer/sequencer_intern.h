@@ -4,7 +4,7 @@
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version. 
+ * of the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -18,7 +18,7 @@
  * The Original Code is Copyright (C) 2008 Blender Foundation.
  * All rights reserved.
  *
- * 
+ *
  * Contributor(s): Blender Foundation, Campbell Barton
  *
  * ***** END GPL LICENSE BLOCK *****
@@ -76,12 +76,12 @@ void recurs_sel_seq(struct Sequence *seqm);
 int seq_effect_find_selected(struct Scene *scene, struct Sequence *activeseq, int type, struct Sequence **selseq1, struct Sequence **selseq2, struct Sequence **selseq3, const char **error_str);
 
 /* operator helpers */
-int sequencer_edit_poll(struct bContext *C);
+bool sequencer_edit_poll(struct bContext *C);
 /* UNUSED */
-//int sequencer_strip_poll(struct bContext *C);
-int sequencer_strip_has_path_poll(struct bContext *C);
-int sequencer_view_preview_poll(struct bContext *C);
-int sequencer_view_strips_poll(struct bContext *C);
+//bool sequencer_strip_poll(struct bContext *C);
+bool sequencer_strip_has_path_poll(struct bContext *C);
+bool sequencer_view_preview_poll(struct bContext *C);
+bool sequencer_view_strips_poll(struct bContext *C);
 
 /* externs */
 extern EnumPropertyItem sequencer_prop_effect_types[];
@@ -175,7 +175,7 @@ enum {
 	SEQ_SELECT_LR_NONE = 0,
 	SEQ_SELECT_LR_MOUSE,
 	SEQ_SELECT_LR_LEFT,
-	SEQ_SELECT_LR_RIGHT	
+	SEQ_SELECT_LR_RIGHT
 };
 
 /* defines used internally */
@@ -213,4 +213,3 @@ int sequencer_image_seq_get_minmax_frame(struct wmOperator *op, int sfra, int *r
 void sequencer_image_seq_reserve_frames(struct wmOperator *op, struct StripElem *se, int len, int minframe, int numdigits);
 
 #endif /* __SEQUENCER_INTERN_H__ */
-

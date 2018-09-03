@@ -71,14 +71,6 @@ static void initData(ModifierData *md)
 	STRNCPY(pimd->index_layer_name, "");
 	STRNCPY(pimd->value_layer_name, "");
 }
-static void copyData(ModifierData *md, ModifierData *target)
-{
-#if 0
-	ParticleInstanceModifierData *pimd = (ParticleInstanceModifierData *) md;
-	ParticleInstanceModifierData *tpimd = (ParticleInstanceModifierData *) target;
-#endif
-	modifier_copyData_generic(md, target);
-}
 
 static CustomDataMask requiredDataMask(Object *UNUSED(ob), ModifierData *md)
 {
@@ -154,8 +146,9 @@ static void updateDepsgraph(ModifierData *md, const ModifierUpdateDepsgraphConte
 	}
 }
 
-static void foreachObjectLink(ModifierData *md, Object *ob,
-                              ObjectWalkFunc walk, void *userData)
+static void foreachObjectLink(
+        ModifierData *md, Object *ob,
+        ObjectWalkFunc walk, void *userData)
 {
 	ParticleInstanceModifierData *pimd = (ParticleInstanceModifierData *) md;
 
@@ -170,7 +163,7 @@ static bool particle_skip(ParticleInstanceModifierData *pimd, ParticleSystem *ps
 
 	if (p >= psys->totpart) {
 		ChildParticle *cpa = psys->child + (p - psys->totpart);
-		pa = psys->particles + (between? cpa->pa[0]: cpa->parent);
+		pa = psys->particles + (between ? cpa->pa[0] : cpa->parent);
 	}
 	else {
 		pa = psys->particles + p;
@@ -194,8 +187,8 @@ static bool particle_skip(ParticleInstanceModifierData *pimd, ParticleSystem *ps
 	/* TODO make randomization optional? */
 	randp = (int)(psys_frand(psys, 3578 + p) * totpart) % totpart;
 
-	minp = (int)(totpart * pimd->particle_offset) % (totpart+1);
-	maxp = (int)(totpart * (pimd->particle_offset + pimd->particle_amount)) % (totpart+1);
+	minp = (int)(totpart * pimd->particle_offset) % (totpart + 1);
+	maxp = (int)(totpart * (pimd->particle_offset + pimd->particle_amount)) % (totpart + 1);
 
 	if (maxp > minp) {
 		return randp < minp || randp >= maxp;
@@ -212,14 +205,15 @@ static bool particle_skip(ParticleInstanceModifierData *pimd, ParticleSystem *ps
 
 static void store_float_in_vcol(MLoopCol *vcol, float float_value)
 {
-	const uchar value = FTOCHAR(float_value);
+	const uchar value = unit_float_to_uchar_clamp(float_value);
 	vcol->r = vcol->g = vcol->b = value;
 	vcol->a = 1.0f;
 }
 
-static DerivedMesh *applyModifier(ModifierData *md, Object *ob,
-                                  DerivedMesh *derivedData,
-                                  ModifierApplyFlag UNUSED(flag))
+static DerivedMesh *applyModifier(
+        ModifierData *md, Object *ob,
+        DerivedMesh *derivedData,
+        ModifierApplyFlag UNUSED(flag))
 {
 	DerivedMesh *dm = derivedData, *result;
 	ParticleInstanceModifierData *pimd = (ParticleInstanceModifierData *) md;
@@ -229,8 +223,8 @@ static DerivedMesh *applyModifier(ModifierData *md, Object *ob,
 	MPoly *mpoly, *orig_mpoly;
 	MLoop *mloop, *orig_mloop;
 	MVert *mvert, *orig_mvert;
-	int totvert, totpoly, totloop /* , totedge */;
-	int maxvert, maxpoly, maxloop, part_end = 0, part_start;
+	int totvert, totpoly, totloop, totedge;
+	int maxvert, maxpoly, maxloop, maxedge, part_end = 0, part_start;
 	int k, p, p_skip;
 	short track = ob->trackflag % 3, trackneg, axis = pimd->axis;
 	float max_co = 0.0, min_co = 0.0, temp_co[3];
@@ -309,12 +303,13 @@ static DerivedMesh *applyModifier(ModifierData *md, Object *ob,
 	totvert = dm->getNumVerts(dm);
 	totpoly = dm->getNumPolys(dm);
 	totloop = dm->getNumLoops(dm);
-	/* totedge = dm->getNumEdges(dm); */ /* UNUSED */
+	totedge = dm->getNumEdges(dm);
 
 	/* count particles */
 	maxvert = 0;
 	maxpoly = 0;
 	maxloop = 0;
+	maxedge = 0;
 
 	for (p = part_start; p < part_end; p++) {
 		if (particle_skip(pimd, psys, p))
@@ -323,6 +318,7 @@ static DerivedMesh *applyModifier(ModifierData *md, Object *ob,
 		maxvert += totvert;
 		maxpoly += totpoly;
 		maxloop += totloop;
+		maxedge += totedge;
 	}
 
 	psys->lattice_deform_data = psys_create_lattice_deform_data(&sim);
@@ -335,11 +331,10 @@ static DerivedMesh *applyModifier(ModifierData *md, Object *ob,
 		max_co = max[track];
 	}
 
-	result = CDDM_from_template(dm, maxvert, 0, 0, maxloop, maxpoly);
+	result = CDDM_from_template(dm, maxvert, maxedge, 0, maxloop, maxpoly);
 
 	mvert = result->getVertArray(result);
 	orig_mvert = dm->getVertArray(dm);
-
 	mpoly = result->getPolyArray(result);
 	orig_mpoly = dm->getPolyArray(dm);
 	mloop = result->getLoopArray(result);
@@ -359,7 +354,7 @@ static DerivedMesh *applyModifier(ModifierData *md, Object *ob,
 	for (p = part_start, p_skip = 0; p < part_end; p++) {
 		float prev_dir[3];
 		float frame[4]; /* frame orientation quaternion */
-		float p_random = psys_frand(psys, 77091 + 283*p);
+		float p_random = psys_frand(psys, 77091 + 283 * p);
 
 		/* skip particle? */
 		if (particle_skip(pimd, psys, p))
@@ -423,7 +418,7 @@ static DerivedMesh *applyModifier(ModifierData *md, Object *ob,
 						pa = psys->particles + p;
 					else {
 						ChildParticle *cpa = psys->child + (p - psys->totpart);
-						pa = psys->particles + (between? cpa->pa[0]: cpa->parent);
+						pa = psys->particles + (between ? cpa->pa[0] : cpa->parent);
 					}
 					psys_mat_hair_to_global(sim.ob, sim.psmd->dm_final, sim.psys->part->from, pa, hairmat);
 					copy_m3_m4(mat, hairmat);
@@ -431,7 +426,7 @@ static DerivedMesh *applyModifier(ModifierData *md, Object *ob,
 					mat3_to_quat(frame, mat);
 
 					if (pimd->rotation > 0.0f || pimd->random_rotation > 0.0f) {
-						float angle = 2.0f*M_PI * (pimd->rotation + pimd->random_rotation * (psys_frand(psys, 19957323 + p) - 0.5f));
+						float angle = 2.0f * M_PI * (pimd->rotation + pimd->random_rotation * (psys_frand(psys, 19957323 + p) - 0.5f));
 						float eul[3] = { 0.0f, 0.0f, angle };
 						float rot[4];
 
@@ -486,8 +481,17 @@ static DerivedMesh *applyModifier(ModifierData *md, Object *ob,
 			mul_m4_v3(spacemat, mv->co);
 		}
 
+		/* create edges and adjust edge vertex indices*/
+		DM_copy_edge_data(dm, result, 0, p_skip * totedge, totedge);
+		MEdge *me = CDDM_get_edges(result) + p_skip * totedge;
+		for (k = 0; k < totedge; k++, me++) {
+			me->v1 += p_skip * totvert;
+			me->v2 += p_skip * totvert;
+		}
+
 		/* create polys and loops */
 		for (k = 0; k < totpoly; k++) {
+
 			MPoly *inMP = orig_mpoly + k;
 			MPoly *mp = mpoly + p_skip * totpoly + k;
 
@@ -503,6 +507,7 @@ static DerivedMesh *applyModifier(ModifierData *md, Object *ob,
 				DM_copy_loop_data(dm, result, inMP->loopstart, mp->loopstart, j);
 				for (; j; j--, ml++, inML++) {
 					ml->v = inML->v + (p_skip * totvert);
+					ml->e = inML->e + (p_skip * totedge);
 					const int ml_index = (ml - mloop);
 					if (mloopcols_index != NULL) {
 						const int part_index = vert_part_index[ml->v];
@@ -515,11 +520,8 @@ static DerivedMesh *applyModifier(ModifierData *md, Object *ob,
 				}
 			}
 		}
-
 		p_skip++;
 	}
-
-	CDDM_calc_edges(result);
 
 	if (psys->lattice_deform_data) {
 		end_latt_deform(psys->lattice_deform_data);
@@ -546,7 +548,7 @@ ModifierTypeInfo modifierType_ParticleInstance = {
 	                        eModifierTypeFlag_SupportsEditmode |
 	                        eModifierTypeFlag_EnableInEditmode,
 
-	/* copyData */          copyData,
+	/* copyData */          modifier_copyData_generic,
 	/* deformVerts */       NULL,
 	/* deformMatrices */    NULL,
 	/* deformVertsEM */     NULL,

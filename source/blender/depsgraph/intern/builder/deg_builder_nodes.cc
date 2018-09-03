@@ -264,7 +264,8 @@ OperationDepsNode *DepsgraphNodeBuilder::find_operation_node(
 void DepsgraphNodeBuilder::begin_build() {
 }
 
-void DepsgraphNodeBuilder::build_id(ID* id) {
+void DepsgraphNodeBuilder::build_id(ID *id)
+{
 	if (id == NULL) {
 		return;
 	}
@@ -769,6 +770,7 @@ void DepsgraphNodeBuilder::build_obdata_geom(Object *object)
 	op_node = add_operation_node(&object->id,
 	                             DEG_NODE_TYPE_GEOMETRY,
 	                             function_bind(BKE_object_eval_uber_data,
+	                                           bmain_,
 	                                           _1,
 	                                           scene_,
 	                                           object),
@@ -838,7 +840,7 @@ void DepsgraphNodeBuilder::build_obdata_geom(Object *object)
 
 		case OB_MBALL:
 		{
-			Object *mom = BKE_mball_basis_find(scene_, object);
+			Object *mom = BKE_mball_basis_find(bmain_, bmain_->eval_ctx, scene_, object);
 			/* NOTE: Only the motherball gets evaluated, it's children are
 			 * having empty placeholders for the correct relations being built.
 			 */

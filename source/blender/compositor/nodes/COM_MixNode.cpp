@@ -15,8 +15,8 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Contributor: 
- *		Jeroen Bakker 
+ * Contributor:
+ *		Jeroen Bakker
  *		Monique Dewanchand
  */
 
@@ -43,7 +43,7 @@ void MixNode::convertToOperations(NodeConverter &converter, const CompositorCont
 	bNode *editorNode = this->getbNode();
 	bool useAlphaPremultiply = (this->getbNode()->custom2 & 1) != 0;
 	bool useClamp = (this->getbNode()->custom2 & 2) != 0;
-	
+
 	MixBaseOperation *convertProg;
 	switch (editorNode->custom1) {
 		case MA_RAMP_ADD:
@@ -106,11 +106,11 @@ void MixNode::convertToOperations(NodeConverter &converter, const CompositorCont
 	convertProg->setUseValueAlphaMultiply(useAlphaPremultiply);
 	convertProg->setUseClamp(useClamp);
 	converter.addOperation(convertProg);
-	
+
 	converter.mapInputSocket(valueSocket, convertProg->getInputSocket(0));
 	converter.mapInputSocket(color1Socket, convertProg->getInputSocket(1));
 	converter.mapInputSocket(color2Socket, convertProg->getInputSocket(2));
 	converter.mapOutputSocket(outputSocket, convertProg->getOutputSocket(0));
-	
+
 	converter.addPreview(convertProg->getOutputSocket(0));
 }

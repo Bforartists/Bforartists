@@ -15,8 +15,8 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Contributor: 
- *		Jeroen Bakker 
+ * Contributor:
+ *		Jeroen Bakker
  *		Monique Dewanchand
  */
 
@@ -40,11 +40,11 @@ void TextureNode::convertToOperations(NodeConverter &converter, const Compositor
 	operation->setRenderData(context.getRenderData());
 	operation->setSceneColorManage(sceneColorManage);
 	converter.addOperation(operation);
-	
+
 	converter.mapInputSocket(getInputSocket(0), operation->getInputSocket(0));
 	converter.mapInputSocket(getInputSocket(1), operation->getInputSocket(1));
 	converter.mapOutputSocket(getOutputSocket(1), operation->getOutputSocket());
-	
+
 	converter.addPreview(operation->getOutputSocket());
 
 	TextureAlphaOperation *alphaOperation = new TextureAlphaOperation();
@@ -52,7 +52,7 @@ void TextureNode::convertToOperations(NodeConverter &converter, const Compositor
 	alphaOperation->setRenderData(context.getRenderData());
 	alphaOperation->setSceneColorManage(sceneColorManage);
 	converter.addOperation(alphaOperation);
-	
+
 	converter.mapInputSocket(getInputSocket(0), alphaOperation->getInputSocket(0));
 	converter.mapInputSocket(getInputSocket(1), alphaOperation->getInputSocket(1));
 	converter.mapOutputSocket(getOutputSocket(0), alphaOperation->getOutputSocket());
