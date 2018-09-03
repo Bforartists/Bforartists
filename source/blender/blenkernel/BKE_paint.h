@@ -23,7 +23,7 @@
  * Contributor(s): none yet.
  *
  * ***** END GPL LICENSE BLOCK *****
- */ 
+ */
 
 #ifndef __BKE_PAINT_H__
 #define __BKE_PAINT_H__
@@ -118,7 +118,7 @@ void BKE_paint_curve_copy_data(
 struct PaintCurve *BKE_paint_curve_copy(struct Main *bmain, const struct PaintCurve *pc);
 void               BKE_paint_curve_make_local(struct Main *bmain, struct PaintCurve *pc, const bool lib_local);
 
-void BKE_paint_init(struct Scene *sce, ePaintMode mode, const char col[3]);
+void BKE_paint_init(struct Main *bmain, struct Scene *sce, ePaintMode mode, const char col[3]);
 void BKE_paint_free(struct Paint *p);
 void BKE_paint_copy(struct Paint *src, struct Paint *tar, const int flag);
 
@@ -181,7 +181,7 @@ typedef struct SculptSession {
 	int totvert, totpoly;
 	struct KeyBlock *kb;
 	float *vmask;
-	
+
 	/* Mesh connectivity */
 	const struct MeshElemMap *pmap;
 
@@ -206,7 +206,7 @@ typedef struct SculptSession {
 
 	/* Partial redraw */
 	bool partial_redraw;
-	
+
 	/* Used to cache the render of the active texture */
 	unsigned int texcache_side, *texcache, texcache_actual;
 	struct ImagePool *tex_pool;

@@ -65,10 +65,11 @@ void modifier_init_texture(const Scene *scene, Tex *tex)
 	}
 }
 
-void get_texture_coords(MappingInfoModifierData *dmd, Object *ob,
-                        DerivedMesh *dm,
-                        float (*co)[3], float (*texco)[3],
-                        int numVerts)
+void get_texture_coords(
+        MappingInfoModifierData *dmd, Object *ob,
+        DerivedMesh *dm,
+        float (*co)[3], float (*texco)[3],
+        int numVerts)
 {
 	int i;
 	int texmapping = dmd->texmapping;
@@ -170,8 +171,9 @@ DerivedMesh *get_cddm(Object *ob, struct BMEditMesh *em, DerivedMesh *dm, float 
 }
 
 /* returns a derived mesh if dm == NULL, for deforming modifiers that need it */
-DerivedMesh *get_dm(Object *ob, struct BMEditMesh *em, DerivedMesh *dm,
-                    float (*vertexCos)[3], bool use_normals, bool use_orco)
+DerivedMesh *get_dm(
+        Object *ob, struct BMEditMesh *em, DerivedMesh *dm,
+        float (*vertexCos)[3], bool use_normals, bool use_orco)
 {
 	if (dm) {
 		/* pass */
@@ -184,7 +186,7 @@ DerivedMesh *get_dm(Object *ob, struct BMEditMesh *em, DerivedMesh *dm,
 			CDDM_apply_vert_coords(dm, vertexCos);
 			dm->dirty |= DM_DIRTY_NORMALS;
 		}
-		
+
 		if (use_orco) {
 			DM_add_vert_layer(dm, CD_ORCO, CD_ASSIGN, BKE_mesh_orco_verts_get(ob));
 		}

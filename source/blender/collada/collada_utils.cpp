@@ -74,7 +74,7 @@ float bc_get_float_value(const COLLADAFW::FloatOrDoubleArray& array, unsigned in
 
 	if (array.getType() == COLLADAFW::MeshVertexData::DATA_TYPE_FLOAT)
 		return array.getFloatValues()->getData()[index];
-	else 
+	else
 		return array.getDoubleValues()->getData()[index];
 }
 
@@ -82,10 +82,10 @@ float bc_get_float_value(const COLLADAFW::FloatOrDoubleArray& array, unsigned in
 int bc_test_parent_loop(Object *par, Object *ob)
 {
 	/* test if 'ob' is a parent somewhere in par's parents */
-	
+
 	if (par == NULL) return 0;
 	if (ob == par) return 1;
-	
+
 	return bc_test_parent_loop(par->parent, ob);
 }
 
@@ -95,7 +95,7 @@ int bc_set_parent(Object *ob, Object *par, bContext *C, bool is_parent_space)
 {
 	Object workob;
 	Scene *sce = CTX_data_scene(C);
-	
+
 	if (!par || bc_test_parent_loop(par, ob))
 		return false;
 
@@ -113,7 +113,7 @@ int bc_set_parent(Object *ob, Object *par, bContext *C, bool is_parent_space)
 		mul_m4_m4m4(mat, par->obmat, ob->obmat);
 		copy_m4_m4(ob->obmat, mat);
 	}
-	
+
 	// apply child obmat (i.e. decompose it into rot/loc/size)
 	BKE_object_apply_mat4(ob, ob->obmat, 0, 0);
 
@@ -133,30 +133,23 @@ int bc_set_parent(Object *ob, Object *par, bContext *C, bool is_parent_space)
 	return true;
 }
 
-Main *bc_get_main()
+EvaluationContext *bc_get_evaluation_context(Main *bmain)
 {
-	return G.main;
-}
-
-EvaluationContext *bc_get_evaluation_context()
-{
-	Main *bmain = G.main;
 	return bmain->eval_ctx;
 }
 
-void bc_update_scene(Scene *scene, float ctime)
+void bc_update_scene(Main *bmain, Scene *scene, float ctime)
 {
 	BKE_scene_frame_set(scene, ctime);
-	Main *bmain = bc_get_main();
-	EvaluationContext *ev_context = bc_get_evaluation_context();
+	EvaluationContext *ev_context = bc_get_evaluation_context(bmain);
 	BKE_scene_update_for_newframe(ev_context, bmain, scene, scene->lay);
 }
 
-Object *bc_add_object(Scene *scene, int type, const char *name)
+Object *bc_add_object(Main *bmain, Scene *scene, int type, const char *name)
 {
-	Object *ob = BKE_object_add_only_object(G.main, type, name);
+	Object *ob = BKE_object_add_only_object(bmain, type, name);
 
-	ob->data = BKE_object_obdata_add_from_type(G.main, type, name);
+	ob->data = BKE_object_obdata_add_from_type(bmain, type, name);
 	ob->lay = scene->lay;
 	DAG_id_tag_update(&ob->id, OB_RECALC_OB | OB_RECALC_DATA | OB_RECALC_TIME);
 
@@ -165,7 +158,8 @@ Object *bc_add_object(Scene *scene, int type, const char *name)
 	return ob;
 }
 
-Mesh *bc_get_mesh_copy(Scene *scene, Object *ob, BC_export_mesh_type export_mesh_type, bool apply_modifiers, bool triangulate)
+Mesh *bc_get_mesh_copy(
+        Main *bmain, Scene *scene, Object *ob, BC_export_mesh_type export_mesh_type, bool apply_modifiers, bool triangulate)
 {
 	Mesh *tmpmesh;
 	CustomDataMask mask = CD_MASK_MESH;
@@ -189,7 +183,7 @@ Mesh *bc_get_mesh_copy(Scene *scene, Object *ob, BC_export_mesh_type export_mesh
 		dm = mesh_create_derived((Mesh *)ob->data, NULL);
 	}
 
-	tmpmesh = BKE_mesh_add(G.main, "ColladaMesh"); // name is not important here
+	tmpmesh = BKE_mesh_add(bmain, "ColladaMesh"); // name is not important here
 	DM_to_mesh(dm, tmpmesh, ob, CD_MASK_MESH, true);
 	tmpmesh->flag = mesh->flag;
 
@@ -224,7 +218,7 @@ Object *bc_get_assigned_armature(Object *ob)
 // IMPORTANT: This function expects that
 // all exported objects have set:
 // ob->id.tag & LIB_TAG_DOIT
-Object *bc_get_highest_selected_ancestor_or_self(LinkNode *export_set, Object *ob) 
+Object *bc_get_highest_selected_ancestor_or_self(LinkNode *export_set, Object *ob)
 {
 	Object *ancestor = ob;
 	while (ob->parent && bc_is_marked(ob->parent)) {
@@ -249,7 +243,7 @@ bool bc_is_in_Export_set(LinkNode *export_set, Object *ob)
 bool bc_has_object_type(LinkNode *export_set, short obtype)
 {
 	LinkNode *node;
-	
+
 	for (node = export_set; node; node = node->next) {
 		Object *ob = (Object *)node->link;
 		/* XXX - why is this checking for ob->data? - we could be looking for empties */
@@ -283,7 +277,7 @@ void bc_bubble_sort_by_Object_name(LinkNode *export_set)
 	for (node = export_set; node->next && !sorted; node = node->next) {
 
 		sorted = true;
-		
+
 		LinkNode *current;
 		for (current = export_set; current->next; current = current->next) {
 			Object *a = (Object *)current->link;
@@ -294,13 +288,13 @@ void bc_bubble_sort_by_Object_name(LinkNode *export_set)
 				current->next->link = a;
 				sorted = false;
 			}
-			
+
 		}
 	}
 }
 
-/* Check if a bone is the top most exportable bone in the bone hierarchy. 
- * When deform_bones_only == false, then only bones with NO parent 
+/* Check if a bone is the top most exportable bone in the bone hierarchy.
+ * When deform_bones_only == false, then only bones with NO parent
  * can be root bones. Otherwise the top most deform bones in the hierarchy
  * are root bones.
  */
@@ -360,13 +354,13 @@ void bc_match_scale(Object *ob, UnitConverter &bc_unit, bool scale_to_scene)
 	BKE_object_apply_mat4(ob, ob->obmat, 0, 0);
 }
 
-void bc_match_scale(std::vector<Object *> *objects_done, 
+void bc_match_scale(std::vector<Object *> *objects_done,
 	                UnitConverter &bc_unit,
 	                bool scale_to_scene)
 {
 	for (std::vector<Object *>::iterator it = objects_done->begin();
 			it != objects_done->end();
-			++it) 
+			++it)
 	{
 		Object *ob = *it;
 		if (ob -> parent == NULL) {
@@ -442,7 +436,8 @@ void bc_triangulate_mesh(Mesh *me)
 	BM_mesh_triangulate(bm, quad_method, use_beauty, tag_only, NULL, NULL, NULL);
 
 	BMeshToMeshParams bm_to_me_params = {0};
-	BM_mesh_bm_to_me(bm, me, &bm_to_me_params);
+	bm_to_me_params.calc_object_remap = false;
+	BM_mesh_bm_to_me(NULL, bm, me, &bm_to_me_params);
 	BM_mesh_free(bm);
 }
 
@@ -774,7 +769,7 @@ float bc_get_property(Bone *bone, std::string key, float def)
 /**
 * Read a custom bone property and convert to matrix
 * Return true if conversion was succesfull
-* 
+*
 * Return false if:
 * - the property does not exist
 * - is not an array of size 16

@@ -1,4 +1,4 @@
-﻿# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -21,6 +21,7 @@
 bl_info = {
     "name": "Stanford PLY format",
     "author": "Bruce Merry, Campbell Barton",
+    "version": (1, 0, 0),
     "blender": (2, 74, 0),
     "location": "File > Import-Export",
     "description": "Import-Export PLY mesh data withs UV's and vertex colors",

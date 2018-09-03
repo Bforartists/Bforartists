@@ -4,7 +4,7 @@
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version. 
+ * of the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -18,7 +18,7 @@
  * The Original Code is Copyright (C) 2007 Blender Foundation.
  * All rights reserved.
  *
- * 
+ *
  * Contributor(s): Blender Foundation
  *
  * ***** END GPL LICENSE BLOCK *****
@@ -48,6 +48,7 @@
 
 #include "BKE_context.h"
 #include "BKE_image.h"
+#include "BKE_main.h"
 
 #include "GHOST_C-api.h"
 
@@ -85,7 +86,7 @@
 static void wm_paintcursor_draw(bContext *C, ARegion *ar)
 {
 	wmWindowManager *wm = CTX_wm_manager(C);
-	
+
 	if (wm->paintcursors.first) {
 		wmWindow *win = CTX_wm_window(C);
 		bScreen *screen = win->screen;
@@ -216,7 +217,7 @@ static void wm_method_draw_full(bContext *C, wmWindow *win)
 				CTX_wm_region_set(C, NULL);
 			}
 		}
-		
+
 		wm_area_mark_invalid_backbuf(sa);
 		CTX_wm_area_set(C, NULL);
 	}
@@ -266,7 +267,7 @@ static void wm_flush_regions_down(bScreen *screen, rcti *dirty)
 static void wm_flush_regions_up(bScreen *screen, rcti *dirty)
 {
 	ARegion *ar;
-	
+
 	for (ar = screen->regionbase.first; ar; ar = ar->next) {
 		if (BLI_rcti_isect(dirty, &ar->winrct, NULL)) {
 			ar->do_draw = RGN_DRAW;
@@ -297,12 +298,12 @@ static void wm_method_draw_overlap_all(bContext *C, wmWindow *win, int exchange)
 			for (ar = sa->regionbase.first; ar; ar = ar->next)
 				if (ar->swinid && ar->do_draw)
 					wm_flush_regions_up(screen, &ar->winrct);
-		
+
 		/* flush between overlapping regions */
 		for (ar = screen->regionbase.last; ar; ar = ar->prev)
 			if (ar->swinid && ar->do_draw)
 				wm_flush_regions_up(screen, &ar->winrct);
-		
+
 		/* flush redraws of overlapping regions down to area regions */
 		for (ar = screen->regionbase.last; ar; ar = ar->prev)
 			if (ar->swinid && ar->do_draw)
@@ -318,7 +319,7 @@ static void wm_method_draw_overlap_all(bContext *C, wmWindow *win, int exchange)
 		/* doesnt draw, fills rect with boundbox */
 		wm_drags_draw(C, win, &rect);
 	}
-	
+
 	/* draw marked area regions */
 	for (sa = screen->areabase.first; sa; sa = sa->next) {
 		CTX_wm_area_set(C, sa);
@@ -391,7 +392,7 @@ static void wm_method_draw_overlap_all(bContext *C, wmWindow *win, int exchange)
 
 	if (screen->do_draw_gesture)
 		wm_gesture_draw(win);
-	
+
 	/* needs pixel coords in screen */
 	if (wm->drags.first) {
 		wm_drags_draw(C, win, NULL);
@@ -543,7 +544,7 @@ static void wm_triple_copy_textures(wmWindow *win, wmDrawTriple *triple)
 static void wm_draw_region_blend(wmWindow *win, ARegion *ar, wmDrawTriple *triple)
 {
 	float fac = ED_region_blend_factor(ar);
-	
+
 	/* region blend always is 1, except when blend timer is running */
 	if (fac < 1.0f) {
 		wmSubWindowScissorSet(win, win->screen->mainwin, &ar->winrct, true);
@@ -689,6 +690,7 @@ static void wm_method_draw_triple(bContext *C, wmWindow *win)
 
 static void wm_method_draw_triple_multiview(bContext *C, wmWindow *win, eStereoViews sview)
 {
+	Main *bmain = CTX_data_main(C);
 	wmWindowManager *wm = CTX_wm_manager(C);
 	wmDrawData *drawdata;
 	wmDrawTriple *triple_data, *triple_all;
@@ -754,7 +756,7 @@ static void wm_method_draw_triple_multiview(bContext *C, wmWindow *win, eStereoV
 			{
 				SpaceNode *snode = sa->spacedata.first;
 				if ((snode->flag & SNODE_BACKDRAW) && ED_node_is_compositor(snode)) {
-					Image *ima = BKE_image_verify_viewer(IMA_TYPE_COMPOSITE, "Viewer Node");
+					Image *ima = BKE_image_verify_viewer(bmain, IMA_TYPE_COMPOSITE, "Viewer Node");
 					ima->eye = sview;
 				}
 				break;
@@ -894,7 +896,7 @@ static bool wm_draw_update_test_window(wmWindow *win)
 
 	if (do_draw)
 		return true;
-	
+
 	if (screen->do_refresh)
 		return true;
 	if (screen->do_draw)
@@ -905,7 +907,7 @@ static bool wm_draw_update_test_window(wmWindow *win)
 		return true;
 	if (screen->do_draw_drag)
 		return true;
-	
+
 	return false;
 }
 
@@ -946,6 +948,7 @@ void WM_paint_cursor_tag_redraw(wmWindow *win, ARegion *ar)
 
 void wm_draw_update(bContext *C)
 {
+	Main *bmain = CTX_data_main(C);
 	wmWindowManager *wm = CTX_wm_manager(C);
 	wmWindow *win;
 
@@ -953,8 +956,8 @@ void wm_draw_update(bContext *C)
 	BKE_subsurf_free_unused_buffers();
 #endif
 
-	GPU_free_unused_buffers();
-	
+	GPU_free_unused_buffers(bmain);
+
 	for (win = wm->windows.first; win; win = win->next) {
 #ifdef WIN32
 		GHOST_TWindowState state = GHOST_GetWindowState(win->ghostwin);
@@ -976,7 +979,7 @@ void wm_draw_update(bContext *C)
 			bScreen *screen = win->screen;
 
 			CTX_wm_window_set(C, win);
-			
+
 			/* sets context window+screen */
 			wm_window_make_drawable(wm, win);
 
@@ -1008,7 +1011,7 @@ void wm_draw_update(bContext *C)
 			screen->do_draw_gesture = false;
 			screen->do_draw_paintcursor = false;
 			screen->do_draw_drag = false;
-		
+
 			wm_window_swap_buffers(win);
 
 			CTX_wm_window_set(C, NULL);
@@ -1039,7 +1042,7 @@ void wm_draw_window_clear(wmWindow *win)
 		for (sa = screen->areabase.first; sa; sa = sa->next)
 			for (ar = sa->regionbase.first; ar; ar = ar->next)
 				ar->swap = WIN_NONE_OK;
-		
+
 		screen->swap = WIN_NONE_OK;
 	}
 }
@@ -1066,4 +1069,3 @@ void WM_redraw_windows(bContext *C)
 	CTX_wm_area_set(C, area_prev);
 	CTX_wm_region_set(C, ar_prev);
 }
-

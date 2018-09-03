@@ -40,7 +40,7 @@ if USE_COLOR:
     COLOR_WORD = "\033[92m"
     COLOR_ENDC = "\033[0m"
 else:
-    COLOR_FAIL = ""
+    COLOR_WORD = ""
     COLOR_ENDC = ""
 
 
@@ -331,10 +331,8 @@ def spell_check_comments_recursive(dirpath):
 
     def source_list(path, filename_check=None):
         for dirpath, dirnames, filenames in os.walk(path):
-
             # skip '.git'
-            if dirpath.startswith("."):
-                continue
+            dirnames[:] = [d for d in dirnames if not d.startswith(".")]
 
             for filename in filenames:
                 filepath = join(dirpath, filename)

@@ -15,14 +15,14 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Contributor: 
- *		Jeroen Bakker 
+ * Contributor:
+ *		Jeroen Bakker
  *		Monique Dewanchand
  */
 
 
-#ifndef _COM_TextureOperation_h
-#define _COM_TextureOperation_h
+#ifndef __COM_TEXTUREOPERATION_H__
+#define __COM_TEXTUREOPERATION_H__
 
 #include "COM_NodeOperation.h"
 #include "DNA_texture_types.h"
@@ -54,7 +54,7 @@ protected:
 	 * Determine the output resolution. The resolution is retrieved from the Renderer
 	 */
 	void determineResolution(unsigned int resolution[2], unsigned int preferredResolution[2]);
-	
+
 	/**
 	 * Constructor
 	 */

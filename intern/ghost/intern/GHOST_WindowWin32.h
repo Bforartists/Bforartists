@@ -56,6 +56,7 @@ typedef UINT (API * GHOST_WIN32_WTInfo)(UINT, UINT, LPVOID);
 typedef HCTX (API * GHOST_WIN32_WTOpen)(HWND, LPLOGCONTEXTA, BOOL);
 typedef BOOL (API * GHOST_WIN32_WTClose)(HCTX);
 typedef BOOL (API * GHOST_WIN32_WTPacket)(HCTX, UINT, LPVOID);
+typedef BOOL (API * GHOST_WIN32_WTEnable)(HCTX, BOOL);
 typedef BOOL (API * GHOST_WIN32_WTOverlap)(HCTX, BOOL);
 
 // typedefs for user32 functions to allow dynamic loading of Windows 10 DPI scaling functions
@@ -132,11 +133,11 @@ public:
 
 	/**
 	 * Returns the window rectangle dimensions.
-	 * The dimensions are given in screen coordinates that are relative to the upper-left corner of the screen. 
+	 * The dimensions are given in screen coordinates that are relative to the upper-left corner of the screen.
 	 * \param bounds The bounding rectangle of the window.
 	 */
 	void getWindowBounds(GHOST_Rect& bounds) const;
-	
+
 	/**
 	 * Returns the client rectangle dimensions.
 	 * The left and top members of the rectangle are always zero.
@@ -211,19 +212,19 @@ public:
 	 * \param progress The progress %
 	 */
 	GHOST_TSuccess setProgressBar(float progress);
-	
+
 	/**
 	 * Hides the progress bar in the icon
 	 */
 	GHOST_TSuccess endProgressBar();
-	
+
 
 	/**
-	 * Register a mouse click event (should be called 
+	 * Register a mouse click event (should be called
 	 * for any real button press, controls mouse
 	 * capturing).
 	 *
-	 * \param press	
+	 * \param press
 	 *		0 - mouse pressed
 	 *		1 - mouse released
 	 *		2 - operator grab
@@ -249,6 +250,7 @@ public:
 		return m_tabletData;
 	}
 
+	void processWin32TabletActivateEvent(WORD state);
 	void processWin32TabletInitEvent();
 	void processWin32TabletEvent(WPARAM wParam, LPARAM lParam);
 	void bringTabletContextToFront();
@@ -286,14 +288,14 @@ private:
 	 * native window system calls.
 	 */
 	GHOST_TSuccess setWindowCursorVisibility(bool visible);
-	
+
 	/**
 	 * Sets the cursor grab on the window using native window system calls.
 	 * Using registerMouseClickEvent.
 	 * \param mode	GHOST_TGrabCursorMode.
 	 */
 	GHOST_TSuccess setWindowCursorGrab(GHOST_TGrabCursorMode mode);
-	
+
 	/**
 	 * Sets the cursor shape on the window using
 	 * native window system calls.
@@ -318,7 +320,7 @@ private:
 	    int fg_color,
 	    int bg_color
 	    );
-	
+
 	/** Pointer to system */
 	GHOST_SystemWin32 *m_system;
 	/** Pointer to COM IDropTarget implementor */
@@ -330,7 +332,7 @@ private:
 
 	/** Flag for if window has captured the mouse */
 	bool m_hasMouseCaptured;
-	/** Flag if an operator grabs the mouse with WM_cursor_grab_enable/ungrab() 
+	/** Flag if an operator grabs the mouse with WM_cursor_grab_enable/ungrab()
 	 * Multiple grabs must be released with a single ungrab */
 	bool m_hasGrabMouse;
 	/** Count of number of pressed buttons */

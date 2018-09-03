@@ -15,8 +15,8 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Contributor: 
- *		Jeroen Bakker 
+ * Contributor:
+ *		Jeroen Bakker
  *		Monique Dewanchand
  */
 
@@ -33,7 +33,7 @@ void GammaNode::convertToOperations(NodeConverter &converter, const CompositorCo
 {
 	GammaOperation *operation = new GammaOperation();
 	converter.addOperation(operation);
-	
+
 	converter.mapInputSocket(getInputSocket(0), operation->getInputSocket(0));
 	converter.mapInputSocket(getInputSocket(1), operation->getInputSocket(1));
 	converter.mapOutputSocket(getOutputSocket(0), operation->getOutputSocket(0));

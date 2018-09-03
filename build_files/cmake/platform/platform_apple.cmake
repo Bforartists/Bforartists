@@ -43,7 +43,6 @@ if(WITH_OPENAL)
 	find_package(OpenAL)
 	if(OPENAL_FOUND)
 		set(WITH_OPENAL ON)
-		set(OPENAL_INCLUDE_DIR "${LIBDIR}/openal/include")
 	else()
 		set(WITH_OPENAL OFF)
 	endif()
@@ -159,7 +158,10 @@ if(WITH_CODEC_FFMPEG)
 	set(FFMPEG_LIBRARIES
 		avcodec avdevice avformat avutil
 		mp3lame swscale x264 xvidcore theora theoradec theoraenc vorbis vorbisenc vorbisfile ogg
-	)
+		)
+	      # commenting out until libs are updated on svn. schroedinger and orc
+	      # will be removed then
+	      #	set(FFMPEG_LIBRARIES ${FFMPEG_LIBRARIES} vpx webp swresample)
 	set(FFMPEG_LIBRARIES ${FFMPEG_LIBRARIES} schroedinger orc vpx webp swresample)
 	set(FFMPEG_LIBPATH ${FFMPEG}/lib)
 endif()
@@ -169,6 +171,8 @@ if(WITH_IMAGE_OPENJPEG OR WITH_CODEC_FFMPEG)
 	set(OPENJPEG ${LIBDIR}/openjpeg)
 	set(WITH_SYSTEM_OPENJPEG ON)
 	set(OPENJPEG_INCLUDE_DIRS ${OPENJPEG}/include)
+	# same as with ffmpeg libs, update when svn are updated
+	#set(OPENJPEG_LIBRARIES ${OPENJPEG}/lib/libopenjp2.a)
 	set(OPENJPEG_LIBRARIES ${OPENJPEG}/lib/libopenjpeg.a)
 endif()
 
@@ -356,7 +360,7 @@ if(WITH_LLVM)
 			execute_process(COMMAND ${LLVM_CONFIG} --libfiles
 					OUTPUT_VARIABLE LLVM_LIBRARY
 					OUTPUT_STRIP_TRAILING_WHITESPACE)
-			string(REPLACE " " ";" LLVM_LIBRARY ${LLVM_LIBRARY})
+			string(REPLACE ".a /" ".a;/" LLVM_LIBRARY ${LLVM_LIBRARY})
 		else()
 			set(PLATFORM_LINKFLAGS "${PLATFORM_LINKFLAGS} -lLLVM-3.4")
 		endif()
@@ -416,7 +420,7 @@ if(${XCODE_VERSION} VERSION_EQUAL 5 OR ${XCODE_VERSION} VERSION_GREATER 5)
 endif()
 # Get rid of eventually clashes, we export some symbols explicite as local
 set(PLATFORM_LINKFLAGS
-	"${PLATFORM_LINKFLAGS} -Xlinker -unexported_symbols_list -Xlinker ${CMAKE_SOURCE_DIR}/source/creator/osx_locals.map"
+	"${PLATFORM_LINKFLAGS} -Xlinker -unexported_symbols_list -Xlinker '${CMAKE_SOURCE_DIR}/source/creator/osx_locals.map'"
 )
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")

@@ -58,7 +58,7 @@ void SVMShaderManager::device_update_shader(Scene *scene,
 	svm_nodes.push_back_slow(make_int4(NODE_SHADER_JUMP, 0, 0, 0));
 
 	SVMCompiler::Summary summary;
-	SVMCompiler compiler(scene->shader_manager, scene->image_manager);
+	SVMCompiler compiler(scene->shader_manager, scene->image_manager, scene->light_manager);
 	compiler.background = (shader == scene->default_background);
 	compiler.compile(scene, shader, svm_nodes, 0, &summary);
 
@@ -71,12 +71,12 @@ void SVMShaderManager::device_update_shader(Scene *scene,
 		scene->light_manager->need_update = true;
 	}
 
-	/* The copy needs to be done inside the lock, if another thread resizes the array 
-	 * while memcpy is running, it'll be copying into possibly invalid/freed ram. 
+	/* The copy needs to be done inside the lock, if another thread resizes the array
+	 * while memcpy is running, it'll be copying into possibly invalid/freed ram.
 	 */
 	size_t global_nodes_size = global_svm_nodes->size();
 	global_svm_nodes->resize(global_nodes_size + svm_nodes.size());
-	
+
 	/* Offset local SVM nodes to a global address space. */
 	int4& jump_node = (*global_svm_nodes)[shader->id];
 	jump_node.y = svm_nodes[0].y + global_nodes_size - 1;
@@ -154,10 +154,13 @@ void SVMShaderManager::device_free(Device *device, DeviceScene *dscene, Scene *s
 
 /* Graph Compiler */
 
-SVMCompiler::SVMCompiler(ShaderManager *shader_manager_, ImageManager *image_manager_)
+SVMCompiler::SVMCompiler(ShaderManager *shader_manager_,
+                         ImageManager *image_manager_,
+                         LightManager *light_manager_)
 {
 	shader_manager = shader_manager_;
 	image_manager = image_manager_;
+	light_manager = light_manager_;
 	max_stack_use = 0;
 	current_type = SHADER_TYPE_SURFACE;
 	current_shader = NULL;
@@ -170,7 +173,7 @@ SVMCompiler::SVMCompiler(ShaderManager *shader_manager_, ImageManager *image_man
 int SVMCompiler::stack_size(SocketType::Type type)
 {
 	int size = 0;
-	
+
 	switch(type) {
 		case SocketType::FLOAT:
 		case SocketType::INT:
@@ -189,14 +192,14 @@ int SVMCompiler::stack_size(SocketType::Type type)
 			assert(0);
 			break;
 	}
-	
+
 	return size;
 }
 
 int SVMCompiler::stack_find_offset(int size)
 {
 	int offset = -1;
-	
+
 	/* find free space in stack & mark as used */
 	for(int i = 0, num_unused = 0; i < SVM_STACK_SIZE; i++) {
 		if(active_stack.users[i]) num_unused = 0;
@@ -410,7 +413,7 @@ bool SVMCompiler::node_skip_input(ShaderNode * /*node*/, ShaderInput *input)
 	/* nasty exception .. */
 	if(current_type == SHADER_TYPE_DISPLACEMENT && input->link && input->link->parent->special_type == SHADER_SPECIAL_TYPE_BUMP)
 		return true;
-	
+
 	return false;
 }
 
@@ -712,7 +715,7 @@ void SVMCompiler::compile_type(Shader *shader, ShaderGraph *graph, ShaderType ty
 	/* get input in output node */
 	ShaderNode *node = graph->output();
 	ShaderInput *clin = NULL;
-	
+
 	switch(type) {
 		case SHADER_TYPE_SURFACE:
 			clin = node->input("Surface");
@@ -732,7 +735,7 @@ void SVMCompiler::compile_type(Shader *shader, ShaderGraph *graph, ShaderType ty
 	}
 
 	/* clear all compiler state */
-	memset(&active_stack, 0, sizeof(active_stack));
+	memset((void *)&active_stack, 0, sizeof(active_stack));
 	current_svm_nodes.clear();
 
 	foreach(ShaderNode *node_iter, graph->nodes) {
@@ -753,9 +756,9 @@ void SVMCompiler::compile_type(Shader *shader, ShaderGraph *graph, ShaderType ty
 	if(shader->used) {
 		if(clin->link) {
 			bool generate = false;
-			
+
 			switch(type) {
-				case SHADER_TYPE_SURFACE: /* generate surface shader */		
+				case SHADER_TYPE_SURFACE: /* generate surface shader */
 					generate = true;
 					shader->has_surface = true;
 					break;
@@ -933,4 +936,3 @@ SVMCompiler::CompilerState::CompilerState(ShaderGraph *graph)
 }
 
 CCL_NAMESPACE_END
-

@@ -1667,7 +1667,7 @@ static int pyrna_py_to_prop(
 					return -1;
 				}
 				else {
-					if (data) *((int *)data) = param;
+					if (data) *((bool *)data) = param;
 					else RNA_property_boolean_set(ptr, prop, param);
 				}
 				break;
@@ -2477,9 +2477,9 @@ static PyObject *pyrna_prop_array_subscript_slice(
 			}
 			case PROP_BOOLEAN:
 			{
-				int values_stack[PYRNA_STACK_ARRAY];
-				int *values;
-				if (length > PYRNA_STACK_ARRAY) { values = PyMem_MALLOC(sizeof(int) * length); }
+				bool values_stack[PYRNA_STACK_ARRAY];
+				bool *values;
+				if (length > PYRNA_STACK_ARRAY) { values = PyMem_MALLOC(sizeof(bool) * length); }
 				else                            { values = values_stack; }
 
 				RNA_property_boolean_get_array(ptr, prop, values);
@@ -2860,7 +2860,7 @@ static int prop_subscript_ass_array_slice__int_recursive(
 }
 
 static int prop_subscript_ass_array_slice__bool_recursive(
-        PyObject **value_items, int *value,
+        PyObject **value_items, bool *value,
         int totdim, const int dimsize[])
 {
 	const int length = dimsize[0];
@@ -2983,9 +2983,9 @@ static int prop_subscript_ass_array_slice(
 		}
 		case PROP_BOOLEAN:
 		{
-			int values_stack[PYRNA_STACK_ARRAY];
-			int *values = (length_flat > PYRNA_STACK_ARRAY) ?
-			              (values_alloc = PyMem_MALLOC(sizeof(*values) * length_flat)) : values_stack;
+			bool values_stack[PYRNA_STACK_ARRAY];
+			bool *values = (length_flat > PYRNA_STACK_ARRAY) ?
+			               (values_alloc = PyMem_MALLOC(sizeof(bool) * length_flat)) : values_stack;
 
 			if (start != 0 || stop != length) {
 				/* partial assignment? - need to get the array */
@@ -4643,6 +4643,56 @@ static PyObject *pyrna_struct_get(BPy_StructRNA *self, PyObject *args)
 	return Py_INCREF_RET(def);
 }
 
+PyDoc_STRVAR(pyrna_struct_pop_doc,
+".. method:: pop(key, default=None)\n"
+"\n"
+"   Remove and return the value of the custom property assigned to key or default\n"
+"   when not found (matches pythons dictionary function of the same name).\n"
+"\n"
+"   :arg key: The key associated with the custom property.\n"
+"   :type key: string\n"
+"   :arg default: Optional argument for the value to return if\n"
+"      *key* is not found.\n"
+"   :type default: Undefined\n"
+"\n"
+BPY_DOC_ID_PROP_TYPE_NOTE
+);
+static PyObject *pyrna_struct_pop(BPy_StructRNA *self, PyObject *args)
+{
+	IDProperty *group, *idprop;
+
+	const char *key;
+	PyObject *def = NULL;
+
+	PYRNA_STRUCT_CHECK_OBJ(self);
+
+	if (!PyArg_ParseTuple(args, "s|O:get", &key, &def))
+		return NULL;
+
+	/* mostly copied from BPy_IDGroup_Map_GetItem */
+	if (RNA_struct_idprops_check(self->ptr.type) == 0) {
+		PyErr_SetString(PyExc_TypeError, "this type doesn't support IDProperties");
+		return NULL;
+	}
+
+	group = RNA_struct_idprops(&self->ptr, 0);
+	if (group) {
+		idprop = IDP_GetPropertyFromGroup(group, key);
+
+		if (idprop) {
+			PyObject *ret = BPy_IDGroup_WrapData(self->ptr.id.data, idprop, group);
+			IDP_RemoveFromGroup(group, idprop);
+			return ret;
+		}
+	}
+
+	if (def == NULL) {
+		PyErr_SetString(PyExc_KeyError, "key not found");
+		return NULL;
+	}
+	return Py_INCREF_RET(def);
+}
+
 PyDoc_STRVAR(pyrna_struct_as_pointer_doc,
 ".. method:: as_pointer()\n"
 "\n"
@@ -4865,6 +4915,8 @@ static bool foreach_compat_buffer(RawPropertyType raw_type, int attr_signed, con
 		case PROP_RAW_INT:
 			if (attr_signed) return (f == 'i') ? 1 : 0;
 			else             return (f == 'I') ? 1 : 0;
+		case PROP_RAW_BOOLEAN:
+			return (f == '?') ? 1 : 0;
 		case PROP_RAW_FLOAT:
 			return (f == 'f') ? 1 : 0;
 		case PROP_RAW_DOUBLE:
@@ -4931,6 +4983,9 @@ static PyObject *foreach_getset(BPy_PropertyRNA *self, PyObject *args, int set)
 					case PROP_RAW_INT:
 						((int *)array)[i] = (int)PyLong_AsLong(item);
 						break;
+					case PROP_RAW_BOOLEAN:
+						((bool *)array)[i] = (int)PyLong_AsLong(item) != 0;
+						break;
 					case PROP_RAW_FLOAT:
 						((float *)array)[i] = (float)PyFloat_AsDouble(item);
 						break;
@@ -4991,6 +5046,9 @@ static PyObject *foreach_getset(BPy_PropertyRNA *self, PyObject *args, int set)
 						break;
 					case PROP_RAW_DOUBLE:
 						item = PyFloat_FromDouble((double) ((double *)array)[i]);
+						break;
+					case PROP_RAW_BOOLEAN:
+						item = PyBool_FromLong((long) ((bool *)array)[i]);
 						break;
 					default: /* PROP_RAW_UNSET */
 						/* should never happen */
@@ -5100,6 +5158,7 @@ static struct PyMethodDef pyrna_struct_methods[] = {
 	{"items", (PyCFunction)pyrna_struct_items, METH_NOARGS, pyrna_struct_items_doc},
 
 	{"get", (PyCFunction)pyrna_struct_get, METH_VARARGS, pyrna_struct_get_doc},
+	{"pop", (PyCFunction)pyrna_struct_pop, METH_VARARGS, pyrna_struct_pop_doc},
 
 	{"as_pointer", (PyCFunction)pyrna_struct_as_pointer, METH_NOARGS, pyrna_struct_as_pointer_doc},
 
@@ -5262,7 +5321,7 @@ static PyObject *pyrna_param_to_py(PointerRNA *ptr, PropertyRNA *prop, void *dat
 			case PROP_BOOLEAN:
 				ret = PyTuple_New(len);
 				for (a = 0; a < len; a++)
-					PyTuple_SET_ITEM(ret, a, PyBool_FromLong(((int *)data)[a]));
+					PyTuple_SET_ITEM(ret, a, PyBool_FromLong(((bool *)data)[a]));
 				break;
 			case PROP_INT:
 				ret = PyTuple_New(len);
@@ -5305,7 +5364,7 @@ static PyObject *pyrna_param_to_py(PointerRNA *ptr, PropertyRNA *prop, void *dat
 		/* see if we can coerce into a python type - PropertyType */
 		switch (type) {
 			case PROP_BOOLEAN:
-				ret = PyBool_FromLong(*(int *)data);
+				ret = PyBool_FromLong(*(bool *)data);
 				break;
 			case PROP_INT:
 				ret = PyLong_FromLong(*(int *)data);
@@ -6966,7 +7025,7 @@ PyObject *BPY_rna_module(void)
 	PointerRNA ptr;
 
 	/* for now, return the base RNA type rather than a real module */
-	RNA_main_pointer_create(G.main, &ptr);
+	RNA_main_pointer_create(G_MAIN, &ptr);
 	pyrna = (BPy_StructRNA *)pyrna_struct_CreatePyObject(&ptr);
 
 	rna_module_ptr = &pyrna->ptr;
@@ -6977,9 +7036,9 @@ void BPY_update_rna_module(void)
 {
 	if (rna_module_ptr) {
 #if 0
-		RNA_main_pointer_create(G.main, rna_module_ptr);
+		RNA_main_pointer_create(G_MAIN, rna_module_ptr);
 #else
-		rna_module_ptr->data = G.main; /* just set data is enough */
+		rna_module_ptr->data = G_MAIN; /* just set data is enough */
 #endif
 	}
 }
@@ -7521,10 +7580,12 @@ static int bpy_class_validate_recursive(PointerRNA *dummyptr, StructRNA *srna, v
 		if (!(flag & PROP_REGISTER))
 			continue;
 
+		/* TODO(campbell): Use Python3.7x _PyObject_LookupAttr(), also in the macro below. */
 		identifier = RNA_property_identifier(prop);
 		item = PyObject_GetAttrString(py_class, identifier);
 
 		if (item == NULL) {
+			PyErr_Clear();
 			/* Sneaky workaround to use the class name as the bl_idname */
 
 #define     BPY_REPLACEMENT_STRING(rna_attr, py_attr)                         \
@@ -7539,6 +7600,9 @@ static int bpy_class_validate_recursive(PointerRNA *dummyptr, StructRNA *srna, v
 						}                                                     \
 					}                                                         \
 					Py_DECREF(item);                                          \
+				}                                                             \
+				else {                                                        \
+					PyErr_Clear();                                            \
 				}                                                             \
 			}  /* intentionally allow else here */
 

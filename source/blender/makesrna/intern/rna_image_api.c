@@ -64,9 +64,9 @@
 
 #include "MEM_guardedalloc.h"
 
-static void rna_ImagePackedFile_save(ImagePackedFile *imapf, ReportList *reports)
+static void rna_ImagePackedFile_save(ImagePackedFile *imapf, Main *bmain, ReportList *reports)
 {
-	if (writePackedFile(reports, imapf->filepath, imapf->packedfile, 0) != RET_OK) {
+	if (writePackedFile(reports, BKE_main_blendfile_path(bmain), imapf->filepath, imapf->packedfile, 0) != RET_OK) {
 		BKE_reportf(reports, RPT_ERROR, "Could not save packed file to disk as '%s'",
 		            imapf->filepath);
 	}
@@ -118,7 +118,9 @@ static void rna_Image_save_render(Image *image, bContext *C, ReportList *reports
 
 static void rna_Image_save(Image *image, Main *bmain, bContext *C, ReportList *reports)
 {
-	ImBuf *ibuf = BKE_image_acquire_ibuf(image, NULL, NULL);
+	void *lock;
+
+	ImBuf *ibuf = BKE_image_acquire_ibuf(image, NULL, &lock);
 	if (ibuf) {
 		char filename[FILE_MAX];
 		BLI_strncpy(filename, image->name, sizeof(filename));
@@ -145,13 +147,13 @@ static void rna_Image_save(Image *image, Main *bmain, bContext *C, ReportList *r
 		BKE_reportf(reports, RPT_ERROR, "Image '%s' does not have any image data", image->id.name + 2);
 	}
 
-	BKE_image_release_ibuf(image, ibuf, NULL);
+	BKE_image_release_ibuf(image, ibuf, lock);
 	WM_event_add_notifier(C, NC_IMAGE | NA_EDITED, image);
 }
 
 static void rna_Image_pack(
         Image *image, Main *bmain, bContext *C, ReportList *reports,
-        int as_png, const char *data, int data_len)
+        bool as_png, const char *data, int data_len)
 {
 	ImBuf *ibuf = BKE_image_acquire_ibuf(image, NULL, NULL);
 
@@ -177,7 +179,7 @@ static void rna_Image_pack(
 	WM_event_add_notifier(C, NC_IMAGE | NA_EDITED, image);
 }
 
-static void rna_Image_unpack(Image *image, ReportList *reports, int method)
+static void rna_Image_unpack(Image *image, Main *bmain, ReportList *reports, int method)
 {
 	if (!BKE_image_has_packedfile(image)) {
 		BKE_report(reports, RPT_ERROR, "Image not packed");
@@ -188,13 +190,13 @@ static void rna_Image_unpack(Image *image, ReportList *reports, int method)
 	}
 	else {
 		/* reports its own error on failure */
-		unpackImage(reports, image, method);
+		unpackImage(bmain, reports, image, method);
 	}
 }
 
-static void rna_Image_reload(Image *image)
+static void rna_Image_reload(Image *image, Main *bmain)
 {
-	BKE_image_signal(image, NULL, IMA_SIGNAL_RELOAD);
+	BKE_image_signal(bmain, image, NULL, IMA_SIGNAL_RELOAD);
 }
 
 static void rna_Image_update(Image *image, ReportList *reports)
@@ -241,7 +243,7 @@ static int rna_Image_gl_load(Image *image, ReportList *reports, int frame, int f
 
 	if (ibuf == NULL || ibuf->rect == NULL) {
 		BKE_reportf(reports, RPT_ERROR, "Image '%s' does not have any image data", image->id.name + 2);
-		BKE_image_release_ibuf(image, ibuf, NULL);
+		BKE_image_release_ibuf(image, ibuf, lock);
 		return (int)GL_INVALID_OPERATION;
 	}
 
@@ -258,7 +260,7 @@ static int rna_Image_gl_load(Image *image, ReportList *reports, int frame, int f
 		image->bindcode[TEXTARGET_TEXTURE_2D] = 0;
 	}
 
-	BKE_image_release_ibuf(image, ibuf, NULL);
+	BKE_image_release_ibuf(image, ibuf, lock);
 
 	return error;
 }
@@ -302,7 +304,7 @@ void RNA_api_image_packed_file(StructRNA *srna)
 
 	func = RNA_def_function(srna, "save", "rna_ImagePackedFile_save");
 	RNA_def_function_ui_description(func, "Save the packed file to its filepath");
-	RNA_def_function_flag(func, FUNC_USE_REPORTS);
+	RNA_def_function_flag(func, FUNC_USE_MAIN | FUNC_USE_REPORTS);
 }
 
 void RNA_api_image(StructRNA *srna)
@@ -332,10 +334,11 @@ void RNA_api_image(StructRNA *srna)
 
 	func = RNA_def_function(srna, "unpack", "rna_Image_unpack");
 	RNA_def_function_ui_description(func, "Save an image packed in the .blend file to disk");
-	RNA_def_function_flag(func, FUNC_USE_REPORTS);
+	RNA_def_function_flag(func, FUNC_USE_MAIN | FUNC_USE_REPORTS);
 	RNA_def_enum(func, "method", rna_enum_unpack_method_items, PF_USE_LOCAL, "method", "How to unpack");
 
 	func = RNA_def_function(srna, "reload", "rna_Image_reload");
+	RNA_def_function_flag(func, FUNC_USE_MAIN);
 	RNA_def_function_ui_description(func, "Reload the image from its source path");
 
 	func = RNA_def_function(srna, "update", "rna_Image_update");
@@ -395,4 +398,3 @@ void RNA_api_image(StructRNA *srna)
 }
 
 #endif
-

@@ -31,7 +31,7 @@
 
 
 #ifndef __INITRENDER_H__
-#define __INITRENDER_H__ 
+#define __INITRENDER_H__
 
 
 /* Functions */
@@ -45,4 +45,3 @@ void RE_parts_clamp(Render *re);
 
 
 #endif /* __INITRENDER_H__ */
-

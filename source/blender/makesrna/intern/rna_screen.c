@@ -108,14 +108,14 @@ static void rna_Screen_redraw_update(Main *UNUSED(bmain), Scene *UNUSED(scene), 
 }
 
 
-static int rna_Screen_is_animation_playing_get(PointerRNA *UNUSED(ptr))
+static bool rna_Screen_is_animation_playing_get(PointerRNA *UNUSED(ptr))
 {
 	/* can be NULL on file load, T42619 */
-	wmWindowManager *wm = G.main->wm.first;
+	wmWindowManager *wm = G_MAIN->wm.first;
 	return wm ? (ED_screen_animation_playing(wm) != NULL) : 0;
 }
 
-static int rna_Screen_fullscreen_get(PointerRNA *ptr)
+static bool rna_Screen_fullscreen_get(PointerRNA *ptr)
 {
 	bScreen *sc = (bScreen *)ptr->data;
 	return (sc->state == SCREENMAXIMIZED);
@@ -182,7 +182,7 @@ static void rna_View2D_region_to_view(struct View2D *v2d, int x, int y, float re
 	UI_view2d_region_to_view(v2d, x, y, &result[0], &result[1]);
 }
 
-static void rna_View2D_view_to_region(struct View2D *v2d, float x, float y, int clip, int result[2])
+static void rna_View2D_view_to_region(struct View2D *v2d, float x, float y, bool clip, int result[2])
 {
 	if (clip)
 		UI_view2d_view_to_region_clip(v2d, x, y, &result[0], &result[1]);
@@ -323,10 +323,10 @@ static void rna_def_view2d_api(StructRNA *srna)
 {
 	FunctionRNA *func;
 	PropertyRNA *parm;
-	
+
 	static const float view_default[2] = {0.0f, 0.0f};
 	static const int region_default[2] = {0.0f, 0.0f};
-	
+
 	func = RNA_def_function(srna, "region_to_view", "rna_View2D_region_to_view");
 	RNA_def_function_ui_description(func, "Transform region coordinates to 2D view");
 	parm = RNA_def_int(func, "x", 0, INT_MIN, INT_MAX, "x", "Region x coordinate", -10000, 10000);
@@ -357,9 +357,9 @@ static void rna_def_view2d(BlenderRNA *brna)
 	srna = RNA_def_struct(brna, "View2D", NULL);
 	RNA_def_struct_ui_text(srna, "View2D", "Scroll and zoom for a 2D region");
 	RNA_def_struct_sdna(srna, "View2D");
-	
+
 	/* TODO more View2D properties could be exposed here (read-only) */
-	
+
 	rna_def_view2d_api(srna);
 }
 
@@ -503,4 +503,3 @@ void RNA_def_screen(BlenderRNA *brna)
 }
 
 #endif
-

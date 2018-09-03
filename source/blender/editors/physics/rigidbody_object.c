@@ -65,7 +65,7 @@
 /* ********************************************** */
 /* Helper API's for RigidBody Objects Editing */
 
-static int ED_operator_rigidbody_active_poll(bContext *C)
+static bool ED_operator_rigidbody_active_poll(bContext *C)
 {
 	if (ED_operator_object_active_editable(C)) {
 		Object *ob = ED_object_active_context(C);
@@ -75,7 +75,7 @@ static int ED_operator_rigidbody_active_poll(bContext *C)
 		return 0;
 }
 
-static int ED_operator_rigidbody_add_poll(bContext *C)
+static bool ED_operator_rigidbody_add_poll(bContext *C)
 {
 	if (ED_operator_object_active_editable(C)) {
 		Object *ob = ED_object_active_context(C);
@@ -132,7 +132,7 @@ void ED_rigidbody_object_remove(Main *bmain, Scene *scene, Object *ob)
 
 	BKE_rigidbody_remove_object(scene, ob);
 	if (rbw)
-		BKE_group_object_unlink(rbw->group, ob, scene, NULL);
+		BKE_group_object_unlink(bmain, rbw->group, ob, scene, NULL);
 
 	DAG_relations_tag_update(bmain);
 	DAG_id_tag_update(&ob->id, OB_RECALC_OB);

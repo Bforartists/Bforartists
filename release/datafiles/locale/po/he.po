@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.78 (sub 4) (b'd5c7d22bc2')\n"
+"Project-Id-Version: Blender 2.79 (sub 2) (b'6618852b7f1')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-23 21:33:49\n"
+"POT-Creation-Date: 2018-02-23 10:49:02\n"
 "PO-Revision-Date: 2012-10-07 13:56+0300\n"
 "Last-Translator: Barak Itkin <lightningismyname@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -147,18 +147,6 @@ msgid "View"
 msgstr "הגוצת"
 
 
-msgid "Lamp"
-msgstr "הרונמ"
-
-
-msgid "Mask"
-msgstr "הכסמ"
-
-
-msgid "World"
-msgstr "םלוע"
-
-
 msgid "Generated Coordinates"
 msgstr "רצוימ"
 
@@ -231,6 +219,10 @@ msgid "Blue"
 msgstr "לוחכ"
 
 
+msgid "Mask"
+msgstr "הכסמ"
+
+
 msgid "Space"
 msgstr "חוור"
 
@@ -293,6 +285,14 @@ msgstr "םידוקדוק תעיבצ"
 
 msgid "Weight Paint"
 msgstr "לקשמ תעיבצ"
+
+
+msgid "Lamp"
+msgstr "הרונמ"
+
+
+msgid "World"
+msgstr "םלוע"
 
 
 msgid "Mist"
@@ -826,16 +826,6 @@ msgstr "הבכש רחב"
 
 
 msgctxt "Operator"
-msgid "Location"
-msgstr "םוקימ"
-
-
-msgctxt "Operator"
-msgid "Rotation"
-msgstr "בוביס"
-
-
-msgctxt "Operator"
 msgid "Copy Properties..."
 msgstr "םינייפאמ אלל"
 
@@ -843,6 +833,16 @@ msgstr "םינייפאמ אלל"
 msgctxt "Operator"
 msgid "Invert"
 msgstr "רמה"
+
+
+msgctxt "Operator"
+msgid "Location"
+msgstr "םוקימ"
+
+
+msgctxt "Operator"
+msgid "Rotation"
+msgstr "בוביס"
 
 
 msgctxt "Operator"
@@ -955,10 +955,6 @@ msgid "Add Shortcut"
 msgstr "ךרד־רוציק ףסוה"
 
 
-msgid "No Properties"
-msgstr "םינייפאמ אלל"
-
-
 msgid "(Gamma Corrected)"
 msgstr "(אמג ןקותמ)"
 
@@ -989,6 +985,10 @@ msgstr "‬%s‪ :תבשומ"
 
 msgid "Python: %s.%s"
 msgstr "Python: ‪%s‬.‪%s‬"
+
+
+msgid "No Properties"
+msgstr "םינייפאמ אלל"
 
 
 msgid "Convert virtual modifier to a real modifier"

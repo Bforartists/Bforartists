@@ -251,7 +251,7 @@ static inline Transform get_transform(const BL::Array<float, 16>& array)
 
 	/* We assume both types to be just 16 floats, and transpose because blender
 	 * use column major matrix order while we use row major. */
-	memcpy(&projection, &array, sizeof(float)*16);
+	memcpy((void *)&projection, &array, sizeof(float)*16);
 	projection = projection_transpose(projection);
 
 	/* Drop last row, matrix is assumed to be affine transform. */
@@ -293,7 +293,7 @@ static inline int4 get_int4(const BL::Array<int, 4>& array)
 	return make_int4(array[0], array[1], array[2], array[3]);
 }
 
-static inline uint get_layer(const BL::Array<int, 20>& array)
+static inline uint get_layer(const BL::Array<bool, 20>& array)
 {
 	uint layer = 0;
 
@@ -304,8 +304,8 @@ static inline uint get_layer(const BL::Array<int, 20>& array)
 	return layer;
 }
 
-static inline uint get_layer(const BL::Array<int, 20>& array,
-                             const BL::Array<int, 8>& local_array,
+static inline uint get_layer(const BL::Array<bool, 20>& array,
+                             const BL::Array<bool, 8>& local_array,
                              bool is_light = false,
                              uint scene_layers = (1 << 20) - 1)
 {
@@ -466,6 +466,21 @@ static inline string blender_absolute_path(BL::BlendData& b_data,
 	}
 
 	return path;
+}
+
+static inline string get_text_datablock_content(const PointerRNA& ptr)
+{
+	if(ptr.data == NULL) {
+		return "";
+	}
+
+	string content;
+	BL::Text::lines_iterator iter;
+	for(iter.begin(ptr); iter; ++iter) {
+		content += iter->body() + "\n";
+	}
+
+	return content;
 }
 
 /* Texture Space */

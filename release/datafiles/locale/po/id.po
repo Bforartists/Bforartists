@@ -1,9 +1,9 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: Blender 2.78 (sub 4) (b'd5c7d22bc2')\n"
+"Project-Id-Version: Blender 2.79 (sub 2) (b'6618852b7f1')\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-23 21:33:49\n"
+"POT-Creation-Date: 2018-02-23 10:49:02\n"
 "PO-Revision-Date: 2013-09-26 14:51+0700\n"
 "Last-Translator: Daffi A. Prabowo <daffi.ap@gmail.com>\n"
 "Language-Team: Indonesian <>\n"
@@ -1083,18 +1083,6 @@ msgid "Show Errors"
 msgstr "Warna"
 
 
-msgid "Group"
-msgstr "Grup"
-
-
-msgid "Lamp"
-msgstr "Lampu"
-
-
-msgid "Texture"
-msgstr "Tekstur"
-
-
 msgid "Generated Coordinates"
 msgstr "Partikel"
 
@@ -1105,6 +1093,10 @@ msgstr "Induk"
 
 msgid "Dupli Type"
 msgstr "Tipe"
+
+
+msgid "Group"
+msgstr "Grup"
 
 
 msgid "Paint Color"
@@ -1157,6 +1149,10 @@ msgstr "Data Animasi"
 
 msgid "Vertex Color"
 msgstr "Warna Standar"
+
+
+msgid "Texture"
+msgstr "Tekstur"
 
 
 msgid "Use Color Preview"
@@ -1341,10 +1337,6 @@ msgstr "Orientasi Transformasi"
 
 msgid "Frame Range"
 msgstr "Dalam Jarak"
-
-
-msgid "ID Root Type"
-msgstr "Tipe"
 
 
 msgid "Bones"
@@ -1916,6 +1908,10 @@ msgstr "Tekstur"
 
 msgid "Type of Object"
 msgstr "Sunting Objek"
+
+
+msgid "Lamp"
+msgstr "Lampu"
 
 
 msgid "Shape Key Edit Mode"
@@ -2495,6 +2491,10 @@ msgstr "Warna"
 
 msgid "Enabled Modes"
 msgstr "Modus Sunting"
+
+
+msgid "Select Linked"
+msgstr "Seleksi"
 
 
 msgid "Hide/Mask"
@@ -6280,10 +6280,6 @@ msgid "Set Active Group"
 msgstr "Warna Standar"
 
 
-msgid "Select Linked"
-msgstr "Seleksi"
-
-
 msgid "Unlink Group"
 msgstr "Grup"
 
@@ -7532,16 +7528,8 @@ msgid "Include Children"
 msgstr "Tambah Gambar"
 
 
-msgid "Include Material Textures"
-msgstr "Tambah Gambar"
-
-
 msgid "Include Shape Keys"
 msgstr "Orientasi Transformasi"
-
-
-msgid "Include UV Textures"
-msgstr "Tekstur"
 
 
 msgid "Sort by Object name"
@@ -7829,6 +7817,14 @@ msgid "Strand shape parameter"
 msgstr "Partikel"
 
 
+msgid "Transmission Direct"
+msgstr "Orientasi Transformasi"
+
+
+msgid "Transmission Indirect"
+msgstr "Orientasi Transformasi"
+
+
 msgid "Cancel timeout"
 msgstr "Batal"
 
@@ -7946,14 +7942,6 @@ msgstr "Warna"
 
 
 msgid "Deliver transmission color pass"
-msgstr "Orientasi Transformasi"
-
-
-msgid "Transmission Direct"
-msgstr "Orientasi Transformasi"
-
-
-msgid "Transmission Indirect"
 msgstr "Orientasi Transformasi"
 
 
@@ -8211,10 +8199,6 @@ msgid "Blur Width"
 msgstr "Lebar"
 
 
-msgid "Transition Type"
-msgstr "Orientasi Transformasi"
-
-
 msgid "Mask Sequence"
 msgstr "Orientasi Transformasi"
 
@@ -8337,10 +8321,6 @@ msgstr "Penyunting Grafik"
 
 msgid "Edit Tree"
 msgstr "Gambar Latar"
-
-
-msgid "Highlight"
-msgstr "Penyunting Logika"
 
 
 msgid "Blender File"
@@ -8639,10 +8619,6 @@ msgid "Tiles:"
 msgstr "Ukurang"
 
 
-msgid "Viewport:"
-msgstr "Warna Standar"
-
-
 msgid "Final Render:"
 msgstr "Situs Blender"
 
@@ -8665,6 +8641,10 @@ msgstr "Warna"
 
 msgid "Transmission:"
 msgstr "Orientasi Transformasi"
+
+
+msgid "Viewport:"
+msgstr "Warna Standar"
 
 
 msgid "Aperture:"
@@ -8896,10 +8876,6 @@ msgid "Filename:"
 msgstr "Nama file"
 
 
-msgid "Particle effect:"
-msgstr "Partikel"
-
-
 msgid "Use Particle's Radius"
 msgstr "Partikel"
 
@@ -9000,11 +8976,6 @@ msgstr "Adegan"
 
 msgctxt "Operator"
 msgid "Enable Markers"
-msgstr "Matikan"
-
-
-msgctxt "Operator"
-msgid "Disable markers"
 msgstr "Matikan"
 
 
@@ -9300,10 +9271,6 @@ msgid "Author:"
 msgstr "Pembuat:"
 
 
-msgid "Zoom options"
-msgstr "Perbesar"
-
-
 msgid "Mouse:"
 msgstr "Tetikus:"
 
@@ -9427,13 +9394,13 @@ msgstr "Semua Tampilan"
 
 
 msgctxt "Operator"
-msgid "Speaker"
-msgstr "Tambah Gambar"
+msgid "Camera"
+msgstr "Kamera"
 
 
 msgctxt "Operator"
-msgid "Camera"
-msgstr "Kamera"
+msgid "Speaker"
+msgstr "Tambah Gambar"
 
 
 msgctxt "Operator"
@@ -9459,16 +9426,6 @@ msgstr "Tekstur"
 msgctxt "Operator"
 msgid "Bake Action..."
 msgstr "lokasi"
-
-
-msgctxt "Operator"
-msgid "Location"
-msgstr "Lokasi"
-
-
-msgctxt "Operator"
-msgid "Rotation"
-msgstr "Rotasi"
 
 
 msgctxt "Operator"
@@ -9537,6 +9494,16 @@ msgstr "Hapus"
 
 
 msgctxt "Operator"
+msgid "Location"
+msgstr "Lokasi"
+
+
+msgctxt "Operator"
+msgid "Rotation"
+msgstr "Rotasi"
+
+
+msgctxt "Operator"
 msgid "Merge..."
 msgstr "Gabungkan..."
 
@@ -9577,13 +9544,13 @@ msgstr "Orientasi Transformasi"
 
 
 msgctxt "Operator"
-msgid "Render Border..."
-msgstr "Modus Pahat"
+msgid "Active Camera"
+msgstr "Bahan"
 
 
 msgctxt "Operator"
-msgid "Active Camera"
-msgstr "Bahan"
+msgid "Render Border..."
+msgstr "Modus Pahat"
 
 
 msgctxt "Operator"
@@ -9840,10 +9807,6 @@ msgid "Could not create merged face"
 msgstr "Tidak dapat membuka dokumen"
 
 
-msgid "Could not rotate edge"
-msgstr "Tidak dapat membuka dokumen"
-
-
 msgid "Cannot re-link markers into the same scene"
 msgstr "Adegan"
 
@@ -10044,6 +10007,10 @@ msgid "(Gamma Corrected)"
 msgstr "lokasi"
 
 
+msgid "Value in Display Color Space"
+msgstr "Warna Standar"
+
+
 msgid "Value: %s"
 msgstr "Nilai: %s"
 
@@ -10054,10 +10021,6 @@ msgstr "Python: %s"
 
 msgid "Python: %s.%s"
 msgstr "Python: %s.%s"
-
-
-msgid "Value in Display Color Space"
-msgstr "Warna Standar"
 
 
 msgid "Anim Player"
@@ -10864,10 +10827,6 @@ msgstr "Gambar"
 
 msgid "ID value"
 msgstr "Nilai"
-
-
-msgid "Reflect"
-msgstr "Seleksi"
 
 
 msgid "Dispersion"

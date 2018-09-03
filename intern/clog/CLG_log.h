@@ -146,9 +146,12 @@ void CLG_exit(void);
 void CLG_output_set(void *file_handle);
 void CLG_output_use_basename_set(int value);
 void CLG_fatal_fn_set(void (*fatal_fn)(void *file_handle));
+void CLG_backtrace_fn_set(void (*fatal_fn)(void *file_handle));
 
 void CLG_type_filter_include(const char *type_filter, int type_filter_len);
 void CLG_type_filter_exclude(const char *type_filter, int type_filter_len);
+
+void CLG_level_set(int level);
 
 void CLG_logref_init(CLG_LogRef *clg_ref);
 

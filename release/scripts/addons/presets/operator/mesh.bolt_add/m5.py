@@ -24,5 +24,6 @@ op.bf_Pitch = 0.5
 op.bf_Minor_Dia = 4.458734035491943
 op.bf_Crest_Percent = 10
 op.bf_Root_Percent = 10
+op.bf_Div_Count = 36
 op.bf_Hex_Nut_Height = 4.0
 op.bf_Hex_Nut_Flat_Distance = 8.0

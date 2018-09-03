@@ -4,7 +4,7 @@
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version. 
+ * of the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -144,7 +144,7 @@ void IMB_thumb_overlay_blend(unsigned int *thumb, int width, int height, float a
 	{
 		int x, y;
 		int stride_x = (margin_r - margin_l) - 2;
-		
+
 		for (y = 0; y < height; y++) {
 			for (x = 0; x < width; x++, px += 4) {
 				int hline = 0, vline = 0;

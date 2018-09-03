@@ -15,8 +15,8 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Contributor: 
- *		Jeroen Bakker 
+ * Contributor:
+ *		Jeroen Bakker
  *		Monique Dewanchand
  */
 
@@ -50,7 +50,7 @@ ViewerOperation::ViewerOperation() : NodeOperation()
 	this->m_viewSettings = NULL;
 	this->m_displaySettings = NULL;
 	this->m_useAlphaInput = false;
-	
+
 	this->addInputSocket(COM_DT_COLOR);
 	this->addInputSocket(COM_DT_VALUE);
 	this->addInputSocket(COM_DT_VALUE);
@@ -69,7 +69,7 @@ void ViewerOperation::initExecution()
 	this->m_alphaInput = getInputSocketReader(1);
 	this->m_depthInput = getInputSocketReader(2);
 	this->m_doDepthBuffer = (this->m_depthInput != NULL);
-	
+
 	if (isActiveViewerOutput()) {
 		initImage();
 	}

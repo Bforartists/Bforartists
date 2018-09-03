@@ -15,13 +15,13 @@
  * along with this program; if not, write to the Free Software Foundation,
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Contributor: 
- *		Jeroen Bakker 
+ * Contributor:
+ *		Jeroen Bakker
  *		Monique Dewanchand
  */
 
-#ifndef _COM_ViewerOperation_h
-#define _COM_ViewerOperation_h
+#ifndef __COM_VIEWEROPERATION_H__
+#define __COM_VIEWEROPERATION_H__
 #include "COM_NodeOperation.h"
 #include "DNA_image_types.h"
 #include "BLI_rect.h"
@@ -45,7 +45,7 @@ private:
 
 	const ColorManagedViewSettings *m_viewSettings;
 	const ColorManagedDisplaySettings *m_displaySettings;
-	
+
 	SocketReader *m_imageInput;
 	SocketReader *m_alphaInput;
 	SocketReader *m_depthInput;

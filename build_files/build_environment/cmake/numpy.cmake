@@ -33,10 +33,9 @@ set(NUMPY_POSTFIX)
 if(WIN32)
 	set(NUMPY_INSTALL
 		${CMAKE_COMMAND} -E copy_directory "${BUILD_DIR}/python/src/external_python/run/lib/site-packages/numpy/core/include/numpy" "${LIBDIR}/python/include/python${PYTHON_SHORT_VERSION}/numpy" &&
-		${CMAKE_COMMAND} -E chdir "${BUILD_DIR}/numpy/src/external_numpy/build/lib.${PYTHON_ARCH2}-${PYTHON_SHORT_VERSION}${NUMPY_DIR_POSTFIX}" 
-		${CMAKE_COMMAND} -E tar "cfvz" "${LIBDIR}/python${PYTHON_SHORT_VERSION_NO_DOTS}_numpy_${NUMPY_SHORT_VERSION}${NUMPY_ARCHIVE_POSTFIX}.tar.gz" "." 
+		${CMAKE_COMMAND} -E chdir "${BUILD_DIR}/numpy/src/external_numpy/build/lib.${PYTHON_ARCH2}-${PYTHON_SHORT_VERSION}${NUMPY_DIR_POSTFIX}"
+		${CMAKE_COMMAND} -E tar "cfvz" "${LIBDIR}/python${PYTHON_SHORT_VERSION_NO_DOTS}_numpy_${NUMPY_SHORT_VERSION}${NUMPY_ARCHIVE_POSTFIX}.tar.gz" "."
 	)
-	set(NUMPY_PATCH ${PATCH_CMD} --verbose -p 1 -N -d ${BUILD_DIR}/numpy/src/external_numpy < ${PATCH_DIR}/numpy.diff )
 else()
 	set(NUMPY_INSTALL echo .)
 	set(NUMPY_PATCH echo .)
@@ -53,6 +52,13 @@ ExternalProject_Add(external_numpy
 	BUILD_COMMAND ${PYTHON_BINARY} ${BUILD_DIR}/numpy/src/external_numpy/setup.py build ${NUMPY_BUILD_OPTION} install --old-and-unmanageable
 	INSTALL_COMMAND ${NUMPY_INSTALL}
 )
+
+if(WIN32)
+	ExternalProject_Add_Step(external_numpy after_install
+			COMMAND	${CMAKE_COMMAND} -E copy ${LIBDIR}/python${PYTHON_SHORT_VERSION_NO_DOTS}_numpy_${NUMPY_SHORT_VERSION}${NUMPY_ARCHIVE_POSTFIX}.tar.gz ${HARVEST_TARGET}/Release/python${PYTHON_SHORT_VERSION_NO_DOTS}_numpy_${NUMPY_SHORT_VERSION}${NUMPY_ARCHIVE_POSTFIX}.tar.gz
+			DEPENDEES install
+		)
+endif()
 
 add_dependencies(
 	external_numpy

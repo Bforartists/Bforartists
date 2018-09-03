@@ -4,7 +4,7 @@
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version. 
+ * of the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -17,7 +17,7 @@
  *
  * The Original Code is Copyright (C) 2009 Blender Foundation.
  * All rights reserved.
- * 
+ *
  * Contributor(s): Blender Foundation
  *
  * ***** END GPL LICENSE BLOCK *****
@@ -71,7 +71,7 @@ uiBut *uiDefAutoButR(uiBlock *block, PointerRNA *ptr, PropertyRNA *prop, int ind
 
 			if (arraylen && index == -1)
 				return NULL;
-			
+
 			if (icon && name && name[0] == '\0')
 				but = uiDefIconButR_prop(block, UI_BTYPE_ICON_TOGGLE, 0, icon, x1, y1, x2, y2, ptr, prop, index, 0, 0, -1, -1, NULL);
 			else if (icon)
@@ -159,7 +159,7 @@ uiBut *uiDefAutoButR(uiBlock *block, PointerRNA *ptr, PropertyRNA *prop, int ind
  */
 int uiDefAutoButsRNA(
         uiLayout *layout, PointerRNA *ptr,
-        bool (*check_prop)(PointerRNA *, PropertyRNA *),
+        bool (*check_prop)(PointerRNA *ptr, PropertyRNA *prop, void *user_data), void *user_data,
         const char label_align)
 {
 	uiLayout *split, *col;
@@ -172,8 +172,9 @@ int uiDefAutoButsRNA(
 	RNA_STRUCT_BEGIN (ptr, prop)
 	{
 		flag = RNA_property_flag(prop);
-		if (flag & PROP_HIDDEN || (check_prop && check_prop(ptr, prop) == 0))
+		if (flag & PROP_HIDDEN || (check_prop && check_prop(ptr, prop, user_data) == 0)) {
 			continue;
+		}
 
 		if (label_align != '\0') {
 			PropertyType type = RNA_property_type(prop);
@@ -225,7 +226,7 @@ int UI_icon_from_id(ID *id)
 
 	if (id == NULL)
 		return ICON_NONE;
-	
+
 	idcode = GS(id->name);
 
 	/* exception for objects */
@@ -316,8 +317,9 @@ int UI_calc_float_precision(int prec, double value)
 bool UI_but_online_manual_id(const uiBut *but, char *r_str, size_t maxlength)
 {
 	if (but->rnapoin.id.data && but->rnapoin.data && but->rnaprop) {
-		BLI_snprintf(r_str, maxlength, "%s.%s", RNA_struct_identifier(but->rnapoin.type),
-		             RNA_property_identifier(but->rnaprop));
+		BLI_snprintf(
+		        r_str, maxlength, "%s.%s", RNA_struct_identifier(but->rnapoin.type),
+		        RNA_property_identifier(but->rnaprop));
 		return true;
 	}
 	else if (but->optype) {
