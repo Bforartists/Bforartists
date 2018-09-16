@@ -3339,7 +3339,6 @@ class VIEW3D_PT_tools_vertexpaint(Panel, View3DPaintPanel):
         layout = self.layout
 
         toolsettings = context.tool_settings
-        vpaint = toolsettings.vertex_paint
 
         col = layout.column()
 
