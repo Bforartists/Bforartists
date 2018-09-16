@@ -680,7 +680,9 @@ static void widgetbase_outline(uiWidgetBase *wtb)
 	glDisableClientState(GL_VERTEX_ARRAY);
 }
 
-static void widgetbase_draw(uiWidgetBase *wtb, uiWidgetColors *wcol)
+static void widgetbase_draw_ex(
+        uiWidgetBase *wtb, uiWidgetColors *wcol,
+        const bool show_alpha_checkers)
 {
 	int j, a;
 
@@ -690,7 +692,7 @@ static void widgetbase_draw(uiWidgetBase *wtb, uiWidgetColors *wcol)
 	if (wtb->draw_inner) {
 		BLI_assert(wtb->totvert != 0);
 		if (wcol->shaded == 0) {
-			if (wcol->alpha_check) {
+			if (show_alpha_checkers) {
 				float inner_v_half[WIDGET_SIZE_MAX][2];
 				float x_mid = 0.0f; /* used for dumb clamping of values */
 
@@ -839,6 +841,11 @@ static void widgetbase_draw(uiWidgetBase *wtb, uiWidgetColors *wcol)
 	}
 
 	glDisable(GL_BLEND);
+}
+
+static void widgetbase_draw(uiWidgetBase *wtb, uiWidgetColors *wcol)
+{
+	widgetbase_draw_ex(wtb, wcol, false);
 }
 
 /* *********************** text/icon ************************************** */
@@ -1473,7 +1480,7 @@ static void widget_draw_text(uiFontStyle *fstyle, uiWidgetColors *wcol, uiBut *b
 #endif
 
 	/* cut string in 2 parts - only for menu entries */
-	if ((but->block->flag & UI_BLOCK_LOOP) &&
+	if ((but->block->theme_style == UI_BLOCK_THEME_STYLE_POPUP) &&
 	    (but->editstr == NULL))
 	{
 		if (but->flag & UI_BUT_HAS_SEP_CHAR) {
@@ -3100,9 +3107,9 @@ static void widget_swatch(uiBut *but, uiWidgetColors *wcol, rcti *rect, int stat
 		ui_block_cm_to_display_space_v3(but->block, col);
 
 	rgba_float_to_uchar((unsigned char *)wcol->inner, col);
+	const bool show_alpha_checkers = (wcol->inner[3] < 255);
 
 	wcol->shaded = 0;
-	wcol->alpha_check = (wcol->inner[3] < 255);
 
 	if (state & (UI_BUT_DISABLED | UI_BUT_INACTIVE)) {
 		/* Now we reduce alpha of the inner color (i.e. the color shown)
@@ -3113,7 +3120,7 @@ static void widget_swatch(uiBut *but, uiWidgetColors *wcol, rcti *rect, int stat
 		wcol->inner[3] /= 2;
 	}
 
-	widgetbase_draw(&wtb, wcol);
+	widgetbase_draw_ex(&wtb, wcol, show_alpha_checkers);
 
 	if (but->a1 == UI_PALETTE_COLOR && ((Palette *)but->rnapoin.id.data)->active_color == (int)but->a2) {
 		float width = rect->xmax - rect->xmin;
@@ -3749,7 +3756,7 @@ void ui_draw_but(const bContext *C, ARegion *ar, uiStyle *style, uiBut *but, rct
 					wt->wcol_theme = &tui->wcol_box;
 					wt->state = widget_state;
 				}
-				else if (but->block->flag & UI_BLOCK_LOOP) {
+				else if (but->block->theme_style == UI_BLOCK_THEME_STYLE_POPUP) {
 					wt->wcol_theme = &tui->wcol_menu_back;
 					wt->state = widget_state;
 				}
@@ -3785,8 +3792,9 @@ void ui_draw_but(const bContext *C, ARegion *ar, uiStyle *style, uiBut *but, rct
 
 			case UI_BTYPE_SEARCH_MENU:
 				wt = widget_type(UI_WTYPE_NAME);
-				if (but->block->flag & UI_BLOCK_LOOP)
+				if (but->block->theme_style == UI_BLOCK_THEME_STYLE_POPUP) {
 					wt->wcol_theme = &btheme->tui.wcol_menu_back;
+				}
 				break;
 
 			case UI_BTYPE_BUT_TOGGLE:
@@ -3805,9 +3813,9 @@ void ui_draw_but(const bContext *C, ARegion *ar, uiStyle *style, uiBut *but, rct
 					wt = widget_type(UI_WTYPE_TOGGLE);
 
 				/* option buttons have strings outside, on menus use different colors */
-				if (but->block->flag & UI_BLOCK_LOOP)
+				if (but->block->theme_style == UI_BLOCK_THEME_STYLE_POPUP) {
 					wt->state = widget_state_option_menu;
-
+				}
 				break;
 
 			case UI_BTYPE_MENU:
