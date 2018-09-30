@@ -641,7 +641,7 @@ bool WM_file_read(bContext *C, const char *filepath, ReportList *reports)
 struct {
 	char app_template[64];
 	bool override;
-} wm_init_state_app_template = {0};
+} wm_init_state_app_template = {{0}};
 
 /**
  * Used for setting app-template from the command line:
@@ -964,7 +964,7 @@ static RecentFile *wm_file_history_find(const char *filepath)
 
 /**
  * Write #BLENDER_HISTORY_FILE as-is, without checking the environment
- * (thats handled by #wm_history_file_update).
+ * (that's handled by #wm_history_file_update).
  */
 static void wm_history_file_write(void)
 {
