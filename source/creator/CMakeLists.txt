@@ -1045,7 +1045,7 @@ if(WIN32 AND NOT WITH_PYTHON_MODULE)
 		DESTINATION "."
 	)
 	set_target_properties(
-		blender
+		bforartists
 		PROPERTIES
 			VS_USER_PROPS "blender.Cpp.user.props"
 	)
