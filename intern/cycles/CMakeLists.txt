@@ -9,7 +9,7 @@ else()
 	if(NOT WINDOWS_PYTHON_DEBUG)
 		set(CYCLES_INSTALL_PATH "scripts/addons/cycles")
 	else()
-		set(CYCLES_INSTALL_PATH "$ENV{appdata}/blender foundation/blender/${BLENDER_VERSION}/scripts/addons/cycles")
+		set(CYCLES_INSTALL_PATH "$ENV{appdata}/bforartists/${BLENDER_VERSION}/scripts/addons/cycles")
 	endif()
 endif()
 
