@@ -41,6 +41,7 @@
 #include "kernel/osl/osl_globals.h"
 
 #include "render/buffers.h"
+#include "render/coverage.h"
 
 #include "util/util_debug.h"
 #include "util/util_foreach.h"
@@ -275,6 +276,17 @@ public:
 	virtual bool show_samples() const
 	{
 		return (info.cpu_threads == 1);
+	}
+
+	virtual BVHLayoutMask get_bvh_layout_mask() const {
+		BVHLayoutMask bvh_layout_mask = BVH_LAYOUT_BVH2;
+		if(DebugFlags().cpu.has_sse2() && system_cpu_support_sse2()) {
+			bvh_layout_mask |= BVH_LAYOUT_BVH4;
+		}
+		if(DebugFlags().cpu.has_avx2() && system_cpu_support_avx2()) {
+			bvh_layout_mask |= BVH_LAYOUT_BVH8;
+		}
+		return bvh_layout_mask;
 	}
 
 	void load_texture_info()
@@ -677,7 +689,14 @@ public:
 
 	void path_trace(DeviceTask &task, RenderTile &tile, KernelGlobals *kg)
 	{
+		const bool use_coverage = kernel_data.film.cryptomatte_passes & CRYPT_ACCURATE;
+
 		scoped_timer timer(&tile.buffers->render_time);
+
+		Coverage coverage(kg, tile);
+		if(use_coverage) {
+			coverage.init_path_trace();
+		}
 
 		float *render_buffer = (float*)tile.buffer;
 		int start_sample = tile.start_sample;
@@ -691,6 +710,9 @@ public:
 
 			for(int y = tile.y; y < tile.y + tile.h; y++) {
 				for(int x = tile.x; x < tile.x + tile.w; x++) {
+					if(use_coverage) {
+						coverage.init_pixel(x, y);
+					}
 					path_trace_kernel()(kg, render_buffer,
 					                    sample, x, y, tile.offset, tile.stride);
 				}
@@ -699,6 +721,9 @@ public:
 			tile.sample = sample + 1;
 
 			task.update_progress(&tile, tile.w*tile.h);
+		}
+		if(use_coverage) {
+			coverage.finalize();
 		}
 	}
 
@@ -760,7 +785,6 @@ public:
 			}
 			else if(tile.task == RenderTile::DENOISE) {
 				denoise(denoising, tile);
-
 				task.update_progress(&tile, tile.w*tile.h);
 			}
 
@@ -1028,13 +1052,6 @@ void device_cpu_info(vector<DeviceInfo>& devices)
 	info.id = "CPU";
 	info.num = 0;
 	info.advanced_shading = true;
-	info.bvh_layout_mask = BVH_LAYOUT_BVH2;
-	if(system_cpu_support_sse2()) {
-		info.bvh_layout_mask |= BVH_LAYOUT_BVH4;
-	}
-	if(system_cpu_support_avx2()) {
-		info.bvh_layout_mask |= BVH_LAYOUT_BVH8;
-	}
 	info.has_volume_decoupled = true;
 	info.has_osl = true;
 	info.has_half_images = true;
