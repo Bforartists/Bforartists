@@ -20,11 +20,13 @@
 #include "graph/node.h"
 #include "render/scene.h"
 
+#include "util/util_array.h"
 #include "util/util_boundbox.h"
 #include "util/util_param.h"
 #include "util/util_transform.h"
 #include "util/util_thread.h"
 #include "util/util_types.h"
+#include "util/util_vector.h"
 
 CCL_NAMESPACE_BEGIN
 
@@ -116,6 +118,9 @@ public:
 
 	void apply_static_transforms(DeviceScene *dscene, Scene *scene, Progress& progress);
 
+	string get_cryptomatte_objects(Scene *scene);
+	string get_cryptomatte_assets(Scene *scene);
+
 protected:
 	void device_update_object_transform(UpdateObjectTransformState *state,
 	                                    Object *ob,
@@ -129,4 +134,4 @@ protected:
 
 CCL_NAMESPACE_END
 
-#endif /* __OBJECT_H__ */
+#endif  /* __OBJECT_H__ */

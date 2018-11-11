@@ -19,12 +19,13 @@
 #define __BVH_H__
 
 #include "bvh/bvh_params.h"
-
+#include "util/util_array.h"
 #include "util/util_types.h"
 #include "util/util_vector.h"
 
 CCL_NAMESPACE_BEGIN
 
+class Stats;
 class BVHNode;
 struct BVHStackEntry;
 class BVHParams;
@@ -35,7 +36,6 @@ class Progress;
 
 #define BVH_ALIGN     4096
 #define TRI_NODE_SIZE 3
-
 /* Packed BVH
  *
  * BVH stored as it will be used for traversal on the rendering device. */
@@ -91,7 +91,7 @@ public:
 	static BVH *create(const BVHParams& params, const vector<Object*>& objects);
 	virtual ~BVH() {}
 
-	void build(Progress& progress);
+	virtual void build(Progress& progress, Stats *stats=NULL);
 	void refit(Progress& progress);
 
 protected:
@@ -126,4 +126,4 @@ struct BVHStackEntry
 
 CCL_NAMESPACE_END
 
-#endif /* __BVH_H__ */
+#endif  /* __BVH_H__ */
