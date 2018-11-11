@@ -17,6 +17,12 @@
 #ifndef __KERNEL_TYPES_H__
 #define __KERNEL_TYPES_H__
 
+#if !defined(__KERNEL_GPU__) && defined(WITH_EMBREE)
+#  include <embree3/rtcore.h>
+#  include <embree3/rtcore_scene.h>
+#  define __EMBREE__
+#endif
+
 #include "kernel/kernel_math.h"
 #include "kernel/svm/svm_types.h"
 #include "util/util_static_assert.h"
@@ -609,7 +615,7 @@ typedef ccl_addr_space struct PathRadiance {
 
 #ifdef __KERNEL_DEBUG__
 	DebugData debug_data;
-#endif /* __KERNEL_DEBUG__ */
+#endif  /* __KERNEL_DEBUG__ */
 } PathRadiance;
 
 typedef struct BsdfEval {
@@ -722,6 +728,9 @@ typedef struct Ray {
 /* Intersection */
 
 typedef struct Intersection {
+#ifdef __EMBREE__
+	float3 Ng;
+#endif
 	float t, u, v;
 	int prim;
 	int object;
@@ -1396,20 +1405,29 @@ typedef enum KernelBVHLayout {
 	BVH_LAYOUT_BVH2 = (1 << 0),
 	BVH_LAYOUT_BVH4 = (1 << 1),
 	BVH_LAYOUT_BVH8 = (1 << 2),
-
+	BVH_LAYOUT_EMBREE = (1 << 3),
 	BVH_LAYOUT_DEFAULT = BVH_LAYOUT_BVH8,
 	BVH_LAYOUT_ALL = (unsigned int)(-1),
 } KernelBVHLayout;
 
 typedef struct KernelBVH {
-	/* root node */
+	/* Own BVH */
 	int root;
 	int have_motion;
 	int have_curves;
 	int have_instancing;
 	int bvh_layout;
 	int use_bvh_steps;
+
+	/* Embree */
+#ifdef __EMBREE__
+	RTCScene scene;
+#  ifndef __KERNEL_64_BIT__
+	int pad1;
+#  endif
+#else
 	int pad1, pad2;
+#endif
 } KernelBVH;
 static_assert_align(KernelBVH, 16);
 
@@ -1687,4 +1705,4 @@ typedef struct WorkTile {
 
 CCL_NAMESPACE_END
 
-#endif /*  __KERNEL_TYPES_H__ */
+#endif  /*  __KERNEL_TYPES_H__ */
