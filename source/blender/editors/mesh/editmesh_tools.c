@@ -895,7 +895,7 @@ void MESH_OT_mark_seam(wmOperatorType *ot)
 	ot->name = "Mark Seam";
 	ot->idname = "MESH_OT_mark_seam";
 	ot->description = "Mark Seam\nMark selected edges as a UV seam";
-	
+
 	/* api callbacks */
 	ot->exec = edbm_mark_seam_exec;
 	ot->poll = ED_operator_editmesh;
@@ -955,7 +955,7 @@ void MESH_OT_mark_sharp(wmOperatorType *ot)
 	ot->name = "Mark Sharp";
 	ot->idname = "MESH_OT_mark_sharp";
 	ot->description = "Mark Sharp\n(Un)mark selected edges as sharp";
-	
+
 	/* api callbacks */
 	ot->exec = edbm_mark_sharp_exec;
 	ot->poll = ED_operator_editmesh;
@@ -1055,7 +1055,7 @@ void MESH_OT_vert_connect(wmOperatorType *ot)
 	ot->name = "Vertex Connect";
 	ot->idname = "MESH_OT_vert_connect";
 	ot->description = "Vertex Connect\nConnect selected vertices of faces, splitting the face";
-	
+
 	/* api callbacks */
 	ot->exec = edbm_vert_connect_exec;
 	ot->poll = ED_operator_editmesh;
@@ -1500,7 +1500,7 @@ void MESH_OT_edge_split(wmOperatorType *ot)
 	ot->name = "Edge Split";
 	ot->idname = "MESH_OT_edge_split";
 	ot->description = "Edge Split\nSplit selected edges so that each neighbor face gets its own copy";
-	
+
 	/* api callbacks */
 	ot->exec = edbm_edge_split_exec;
 	ot->poll = ED_operator_editmesh;
@@ -1733,7 +1733,7 @@ void MESH_OT_hide(wmOperatorType *ot)
 	ot->name = "Hide Selection";
 	ot->idname = "MESH_OT_hide";
 	ot->description = "Hide Selection\nHide (un)selected vertices, edges or faces";
-	
+
 	/* api callbacks */
 	ot->exec = edbm_hide_exec;
 	ot->poll = ED_operator_editmesh;
@@ -1770,7 +1770,7 @@ void MESH_OT_reveal(wmOperatorType *ot)
 	ot->name = "Reveal Hidden";
 	ot->idname = "MESH_OT_reveal";
 	ot->description = "Reveal Hidden\nReveal all hidden vertices, edges and faces";
-	
+
 	/* api callbacks */
 	ot->exec = edbm_reveal_exec;
 	ot->poll = ED_operator_editmesh;
@@ -2850,9 +2850,9 @@ void MESH_OT_solidify(wmOperatorType *ot)
  * Contributed by Robert Wenzlaff (Det. Thorn).
  *
  * 2.5 Revamp:
- *  - non modal (no menu before cutting)
- *  - exit on mouse release
- *  - polygon/segment drawing can become handled by WM cb later
+ * - non modal (no menu before cutting)
+ * - exit on mouse release
+ * - polygon/segment drawing can become handled by WM cb later
  *
  * bmesh port version
  */
