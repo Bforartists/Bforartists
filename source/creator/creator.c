@@ -364,6 +364,7 @@ int main(
 	BKE_appdir_program_path_init(argv[0]);
 
 	BLI_threadapi_init();
+	BLI_thread_put_process_on_fast_node();
 
 	DNA_sdna_current_init();
 
