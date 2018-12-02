@@ -18,6 +18,7 @@
 #define __UTIL_STATS_H__
 
 #include "util/util_atomic.h"
+#include "util/util_profiling.h"
 
 CCL_NAMESPACE_BEGIN
 
