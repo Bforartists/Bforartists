@@ -60,6 +60,7 @@ public:
 	bool has_volume_decoupled;      /* Decoupled volume shading. */
 	bool has_osl;                   /* Support Open Shading Language. */
 	bool use_split_kernel;          /* Use split or mega kernel. */
+	bool has_profiling;             /* Supports runtime collection of profiling info. */
 	int cpu_threads;
 	vector<DeviceInfo> multi_devices;
 
@@ -75,6 +76,7 @@ public:
 		has_volume_decoupled = false;
 		has_osl = false;
 		use_split_kernel = false;
+		has_profiling = false;
 	}
 
 	bool operator==(const DeviceInfo &info) {
@@ -247,7 +249,7 @@ struct DeviceDrawParams {
 class Device {
 	friend class device_sub_ptr;
 protected:
-	Device(DeviceInfo& info_, Stats &stats_, bool background) : background(background), vertex_buffer(0), info(info_), stats(stats_) {}
+	Device(DeviceInfo& info_, Stats &stats_, Profiler &profiler_, bool background) : background(background), vertex_buffer(0), info(info_), stats(stats_), profiler(profiler_) {}
 
 	bool background;
 	string error_msg;
@@ -283,6 +285,7 @@ public:
 
 	/* statistics */
 	Stats &stats;
+	Profiler &profiler;
 
 	/* memory alignment */
 	virtual int mem_sub_ptr_alignment() { return MIN_ALIGNMENT_CPU_DATA_TYPES; }
@@ -321,7 +324,7 @@ public:
 	virtual void unmap_neighbor_tiles(Device * /*sub_device*/, RenderTile * /*tiles*/) {}
 
 	/* static */
-	static Device *create(DeviceInfo& info, Stats &stats, bool background = true);
+	static Device *create(DeviceInfo& info, Stats &stats, Profiler& profiler, bool background = true);
 
 	static DeviceType type_from_string(const char *name);
 	static string string_from_type(DeviceType type);
