@@ -2552,11 +2552,6 @@ static void rna_def_space_view3d(BlenderRNA *brna)
 	RNA_def_property_ui_text(prop, "Display Grid Floor", "Show the ground plane grid in perspective view");
 	RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 
-	prop = RNA_def_property(srna, "hide_groundgrid", PROP_BOOLEAN, PROP_NONE); // bfa - show hide the whole ground grid inlcuding axis
-	RNA_def_property_boolean_negative_sdna(prop, NULL, "flag3", V3D_HIDE_GROUNDGRID);
-	RNA_def_property_ui_text(prop, "Display Groundgrid", "Show or hide the whole groundgrid including axis");
-	RNA_def_property_update(prop, NC_SPACE | ND_SPACE_VIEW3D, NULL);
-
 	prop = RNA_def_property(srna, "show_iconbuttons", PROP_BOOLEAN, PROP_NONE); // bfa - show or hide the icon buttons
 	RNA_def_property_boolean_negative_sdna(prop, NULL, "flag3", V3D_SHOW_ICONBUTTONS);
 	RNA_def_property_ui_text(prop, "Icon or Text Buttons", "Show Icon or Text Buttons in the Tool Shelf");
