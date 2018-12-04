@@ -3565,26 +3565,24 @@ class VIEW3D_PT_view3d_display(Panel):
         col = layout.column()
         display_all = not view.show_only_render
         col.active = display_all
-        col.prop(view, "hide_groundgrid", text="Groundgrid") # bfa - show hide groundgrid checkbox
 
-        if view.hide_groundgrid:
-            col = layout.column()
-            col.active = display_all
-            split = col.split(percentage=0.55)
-            split.prop(view, "show_floor", text="Grid Floor")
+        col = layout.column()
+        col.active = display_all
+        split = col.split(percentage=0.55)
+        split.prop(view, "show_floor", text="Grid Floor")
 
-            row = split.row(align=True)
-            row.prop(view, "show_axis_x", text="X", toggle=True)
-            row.prop(view, "show_axis_y", text="Y", toggle=True)
-            row.prop(view, "show_axis_z", text="Z", toggle=True)
+        row = split.row(align=True)
+        row.prop(view, "show_axis_x", text="X", toggle=True)
+        row.prop(view, "show_axis_y", text="Y", toggle=True)
+        row.prop(view, "show_axis_z", text="Z", toggle=True)
 
-            sub = col.column(align=True)
-            sub.active = (display_all and view.show_floor)
-            sub.prop(view, "grid_lines", text="Lines")
-            sub.prop(view, "grid_scale", text="Scale")
-            subsub = sub.column(align=True)
-            subsub.active = scene.unit_settings.system == 'NONE'
-            subsub.prop(view, "grid_subdivisions", text="Subdivisions")
+        sub = col.column(align=True)
+        sub.active = (display_all and view.show_floor)
+        sub.prop(view, "grid_lines", text="Lines")
+        sub.prop(view, "grid_scale", text="Scale")
+        subsub = sub.column(align=True)
+        subsub.active = scene.unit_settings.system == 'NONE'
+        subsub.prop(view, "grid_subdivisions", text="Subdivisions")
 
         if view.region_quadviews:
             layout.label(text="Quadview Options:")
