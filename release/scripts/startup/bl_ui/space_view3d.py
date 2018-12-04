@@ -3514,7 +3514,6 @@ class VIEW3D_PT_view3d_cursor(Panel):
         view = context.space_data
         layout.column().prop(view, "cursor_location", text="Location")
         layout.prop(view, "lock_3d_cursor", text="Lock 3D Cursor") # bfa - show hide lock 3d cursor checkbox
-        layout.prop(view, "show_cursor", text="Show 3D Cursor") # bfa - show hide cursor checkbox  
 
 class VIEW3D_PT_view3d_name(Panel):
     bl_space_type = 'VIEW_3D'
