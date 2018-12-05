@@ -279,7 +279,6 @@ static void drawgrid_draw(ARegion *ar, double wx, double wy, double x, double y,
 
 static void drawgrid(UnitSettings *unit, ARegion *ar, View3D *v3d, const char **grid_unit)
 {
-
 	/* extern short bgpicmode; */
 	RegionView3D *rv3d = ar->regiondata;
 	double wx, wy, x, y, fw, fx, fy, dx;
@@ -293,8 +292,8 @@ static void drawgrid(UnitSettings *unit, ARegion *ar, View3D *v3d, const char **
 	wx = (ar->winx / 2.0); /* because of rounding errors, grid at wrong location */
 	wy = (ar->winy / 2.0);
 
-	x = (wx)* fx / fw;
-	y = (wy)* fy / fw;
+	x = (wx) * fx / fw;
+	y = (wy) * fy / fw;
 
 	vec4[0] = vec4[1] = v3d->grid;
 
@@ -305,8 +304,8 @@ static void drawgrid(UnitSettings *unit, ARegion *ar, View3D *v3d, const char **
 	fy = vec4[1];
 	fw = vec4[3];
 
-	dx = fabs(x - (wx)* fx / fw);
-	if (dx == 0) dx = fabs(y - (wy)* fy / fw);
+	dx = fabs(x - (wx) * fx / fw);
+	if (dx == 0) dx = fabs(y - (wy) * fy / fw);
 
 	glLineWidth(1.0f);
 
@@ -317,7 +316,7 @@ static void drawgrid(UnitSettings *unit, ARegion *ar, View3D *v3d, const char **
 
 	if (unit->system) {
 		/* Use GRID_MIN_PX * 2 for units because very very small grid
-		* items are less useful when dealing with units */
+		 * items are less useful when dealing with units */
 		const void *usys;
 		int len, i;
 		double dx_scalar;
@@ -353,7 +352,7 @@ static void drawgrid(UnitSettings *unit, ARegion *ar, View3D *v3d, const char **
 		}
 	}
 	else {
-		const double sublines = v3d->gridsubdiv;
+		const double sublines    = v3d->gridsubdiv;
 		const float  sublines_fl = v3d->gridsubdiv;
 
 		if (dx < GRID_MIN_PX_D) {
@@ -439,7 +438,7 @@ static void drawgrid(UnitSettings *unit, ARegion *ar, View3D *v3d, const char **
 	else UI_make_axis_color(col, col2, 'X');
 	glColor3ubv(col2);
 
-	fdrawline(0.0, y, (float)ar->winx, y);
+	fdrawline(0.0,  y,  (float)ar->winx,  y);
 
 	/* vertical line */
 	if (ELEM(rv3d->view, RV3D_VIEW_TOP, RV3D_VIEW_BOTTOM))
@@ -450,7 +449,6 @@ static void drawgrid(UnitSettings *unit, ARegion *ar, View3D *v3d, const char **
 	fdrawline(x, 0.0, x, (float)ar->winy);
 
 	glDepthMask(GL_TRUE);  /* enable write in zbuffer */
-
 }
 #undef GRID_MIN_PX
 
@@ -502,7 +500,7 @@ static void drawfloor(Scene *scene, View3D *v3d, const char **grid_unit, bool wr
 	/* draw the Y axis and/or grid lines */
 	if (v3d->gridflag & V3D_SHOW_FLOOR) {
 		const int sublines = v3d->gridsubdiv;
-		float vert[4][3] = { { 0.0f } };
+		float vert[4][3] = {{0.0f}};
 		unsigned char col_bg[3];
 		unsigned char col_grid_emphasise[3], col_grid_light[3];
 		int a;
@@ -513,8 +511,8 @@ static void drawfloor(Scene *scene, View3D *v3d, const char **grid_unit, bool wr
 		/* emphasise division lines lighter instead of darker, if background is darker than grid */
 		UI_GetColorPtrShade3ubv(col_grid, col_grid_light, 10);
 		UI_GetColorPtrShade3ubv(col_grid, col_grid_emphasise,
-			(((col_grid[0] + col_grid[1] + col_grid[2]) + 30) >
-			(col_bg[0] + col_bg[1] + col_bg[2])) ? 20 : -10);
+		                        (((col_grid[0] + col_grid[1] + col_grid[2]) + 30) >
+		                         (col_bg[0] + col_bg[1] + col_bg[2])) ? 20 : -10);
 
 		/* set fixed axis */
 		vert[0][0] = vert[2][1] = grid;
@@ -565,7 +563,6 @@ static void drawfloor(Scene *scene, View3D *v3d, const char **grid_unit, bool wr
 	}
 
 	glDepthMask(GL_TRUE);
-
 }
 
 
@@ -2251,25 +2248,13 @@ static void draw_dupli_objects_color(
 
 static void draw_dupli_objects(Main *bmain, Scene *scene, ARegion *ar, View3D *v3d, Base *base)
 {
-	/* define the color here so draw_dupli_objects_color can be called // bfa - custom wireframe colors
-	* from the set loop */
+	/* define the color here so draw_dupli_objects_color can be called
+	 * from the set loop */
 
-	short dflag;
-	int color;
-
-	unsigned char dupli_wire_col[4];  /* dont initialize this */
-
-	if (V3D_IS_WIRECOLOR(scene, v3d) && set_wire_colorset(scene, base, dupli_wire_col)) {
-		glColor3ubv(dupli_wire_col);
-		color = TH_UNDEFINED;
-		dflag = DRAW_CONSTCOLOR;
-	}
-	else {
-		int color = (base->flag & SELECT) ? TH_SELECT : TH_WIRE;
-		/* debug */
-		if (base->object->dup_group && base->object->dup_group->id.us < 1)
-			color = TH_REDALERT;
-	}
+	int color = (base->flag & SELECT) ? TH_SELECT : TH_WIRE;
+	/* debug */
+	if (base->object->dup_group && base->object->dup_group->id.us < 1)
+		color = TH_REDALERT;
 
 	draw_dupli_objects_color(bmain, scene, ar, v3d, base, 0, color);
 }
@@ -3106,7 +3091,7 @@ void ED_view3d_draw_offscreen_init(Main *bmain, Scene *scene, View3D *v3d)
  */
 static void view3d_main_region_clear(Scene *scene, View3D *v3d, ARegion *ar)
 {
-	if (scene->world && (v3d->flag3 & V3D_SHOW_WORLD)) {
+	if (scene->world && (v3d->flag2 & V3D_SHOW_WORLD)) {
 		RegionView3D *rv3d = ar->regiondata;
 		GPUMaterial *gpumat = GPU_material_world(scene, scene->world);
 
@@ -3512,7 +3497,7 @@ ImBuf *ED_view3d_draw_offscreen_imbuf_simple(
 		v3d.flag2 |= V3D_SOLID_TEX;
 	}
 	if (draw_flags & V3D_OFSDRAW_USE_BACKGROUND) {
-		v3d.flag3 |= V3D_SHOW_WORLD;
+		v3d.flag2 |= V3D_SHOW_WORLD;
 	}
 	if (draw_flags & V3D_OFSDRAW_USE_CAMERA_DOF) {
 		if (camera->type == OB_CAMERA) {
@@ -4035,7 +4020,7 @@ static void view3d_main_region_draw_info(const bContext *C, Scene *scene,
 
 		/* 3d cursor */
 		if (is_cursor_visible(scene)) {
-			drawcursor(scene, ar, v3d);				
+			drawcursor(scene, ar, v3d);
 		}
 
 		if (U.uiflag & USER_SHOW_ROTVIEWICON)
