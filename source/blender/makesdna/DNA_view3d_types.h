@@ -319,7 +319,6 @@ typedef struct View3D {
 
 /* View3d->flag3 (short) */
 #define V3D_SHOW_WORLD			(1 << 0)
-#define V3D_SHOW_ICONBUTTONS    (1 << 3) // bfa - show hide the icon buttons
 
 /* View3D->around */
 enum {
