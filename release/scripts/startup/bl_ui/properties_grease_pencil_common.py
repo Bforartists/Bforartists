@@ -192,100 +192,46 @@ class GreasePencilStrokeEditPanel:
         # bfa - temporary workaround - The flag for icon buttons just exists in 3D view. This whole menu stuff needs a fix.
         if is_3d_view:
         
-            view = context.space_data # Our data for the icon_or_text flag is in space_data. A c prop
+
+            layout.label(text="Edit:")
+
+            col = layout.column(align=True)
+
+            col.operator("gpencil.stroke_cyclical_set", text="Toggle Cyclic", icon = "TOGGLE_CYCLIC").type = 'TOGGLE'
+
+            layout.separator()
+
+            col = layout.column(align=True)
         
-            if not view.show_iconbuttons: 
+            col.operator("transform.mirror", text="Mirror",icon = "TRANSFORM_MIRROR")
+            col.operator("transform.transform", text="Shrink Fatten", icon = "SHRINK_FATTEN" ).mode = 'GPENCIL_SHRINKFATTEN'
+        
+            col = layout.column(align=True)
+            col.operator("transform.bend", text="Bend", icon = "BEND")
+            col.operator("transform.shear", text="Shear", icon = "SHEAR")
+            col.operator("transform.tosphere", text="To Sphere", icon = "TOSPHERE")
+            col.operator("gpencil.stroke_change_color", text="Move to Color", icon = "COLOR")        
 
-                layout.label(text="Edit:")
+            layout.separator()
+            col = layout.column(align=True)
+            col.operator_menu_enum("gpencil.stroke_arrange", text="Arrange Strokes...", property="direction")          
 
-                col = layout.column(align=True)
-
-                col.operator("gpencil.stroke_cyclical_set", text="Toggle Cyclic", icon = "TOGGLE_CYCLIC").type = 'TOGGLE'
-
-                layout.separator()
-
-                col = layout.column(align=True)
+            layout.separator()
             
-                col.operator("transform.mirror", text="Mirror",icon = "TRANSFORM_MIRROR")
-                col.operator("transform.transform", text="Shrink Fatten", icon = "SHRINK_FATTEN" ).mode = 'GPENCIL_SHRINKFATTEN'
-            
-                col = layout.column(align=True)
-                col.operator("transform.bend", text="Bend", icon = "BEND")
-                col.operator("transform.shear", text="Shear", icon = "SHEAR")
-                col.operator("transform.tosphere", text="To Sphere", icon = "TOSPHERE")
-                col.operator("gpencil.stroke_change_color", text="Move to Color", icon = "COLOR")        
+            layout.separator()
+            col = layout.column(align=True)
+            col.operator("gpencil.stroke_subdivide", text="Subdivide", icon = "SUBDIVIDE_EDGES")
+            col.operator("gpencil.stroke_join", text="Join", icon = "JOIN").type = 'JOIN'
+            col.operator("gpencil.stroke_join", text="Join & Copy", icon = "JOINCOPY").type = 'JOINCOPY'
+            col.operator("gpencil.stroke_flip", text="Flip Direction", icon = "SWITCH_DIRECTION")
 
-                layout.separator()
-                col = layout.column(align=True)
-                col.operator_menu_enum("gpencil.stroke_arrange", text="Arrange Strokes...", property="direction")          
+            gpd = context.gpencil_data
+            if gpd:
+                col.prop(gpd, "show_stroke_direction", text="Show Directions")
 
-                layout.separator()
+            layout.separator()
+            layout.operator_menu_enum("gpencil.reproject", text="Reproject Strokes...", property="type")
                 
-                layout.separator()
-                col = layout.column(align=True)
-                col.operator("gpencil.stroke_subdivide", text="Subdivide", icon = "SUBDIVIDE_EDGES")
-                col.operator("gpencil.stroke_join", text="Join", icon = "JOIN").type = 'JOIN'
-                col.operator("gpencil.stroke_join", text="Join & Copy", icon = "JOINCOPY").type = 'JOINCOPY'
-                col.operator("gpencil.stroke_flip", text="Flip Direction", icon = "SWITCH_DIRECTION")
-
-                gpd = context.gpencil_data
-                if gpd:
-                    col.prop(gpd, "show_stroke_direction", text="Show Directions")
-
-                layout.separator()
-                layout.operator_menu_enum("gpencil.reproject", text="Reproject Strokes...", property="type")
-                
-            else:
-
-                layout.label(text="Edit:")
-
-                col = layout.column(align=True)            
-                
-                subrow = col.row(align=False)
-                subrow.alignment = 'LEFT'
-                subrow.operator("gpencil.stroke_cyclical_set", text="", icon = "TOGGLE_CYCLIC").type = 'TOGGLE'
-
-                col.separator()
-
-                col = layout.column(align=True)
-   
-                subrow = col.row(align=False)
-                subrow.alignment = 'LEFT'
-            
-                subrow.operator("transform.mirror", text="",icon = "TRANSFORM_MIRROR")
-                subrow.operator("transform.transform", text="", icon = "SHRINK_FATTEN" ).mode = 'GPENCIL_SHRINKFATTEN'
-            
-                col.separator()
-            
-                subrow = col.row(align=False)
-                subrow.alignment = 'LEFT'
-                subrow.operator("transform.bend", text="", icon = "BEND")
-                subrow.operator("transform.shear", text="", icon = "SHEAR")
-                subrow.operator("transform.tosphere", text="", icon = "TOSPHERE")
-                subrow.operator("gpencil.stroke_change_color", text="", icon = "COLOR")
-
-                layout.separator()
-                col = layout.column(align=True)
-                col.operator_menu_enum("gpencil.stroke_arrange", text="Arrange Strokes...", property="direction")
-            
-                if is_3d_view:
-                    layout.separator()          
-
-                col = layout.column(align=True)
-            
-                subrow = col.row(align=False)
-                subrow.alignment = 'LEFT'
-                subrow.operator("gpencil.stroke_subdivide", text="", icon = "SUBDIVIDE_EDGES")
-                subrow.operator("gpencil.stroke_join", text="", icon = "JOIN").type = 'JOIN'
-                subrow.operator("gpencil.stroke_join", text="", icon = "JOINCOPY").type = 'JOINCOPY'
-                subrow.operator("gpencil.stroke_flip", text="", icon = "SWITCH_DIRECTION")
-
-                gpd = context.gpencil_data
-                if gpd:
-                    col.prop(gpd, "show_stroke_direction", text="Show Directions")
-
-                layout.separator()
-                layout.operator_menu_enum("gpencil.reproject", text="Reproject Strokes...", property="type")
        
         # bfa - temporary workaround - The flag for icon buttons just exists in 3D view. This menu is for the other editors where the grease pencil also exists. This whole menu stuff needs a fix.
         else:

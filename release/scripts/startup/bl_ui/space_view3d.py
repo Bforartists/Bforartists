@@ -3557,8 +3557,7 @@ class VIEW3D_PT_view3d_display(Panel):
         view = context.space_data
         scene = context.scene
 
-        col = layout.column()
-        col.prop(view, "show_iconbuttons", text="Icon or Text Buttons") # bfa - show hide icon or text checkbox      
+        col = layout.column()  
         col.prop(view, "show_only_render")
         col.prop(view, "show_world")
   
