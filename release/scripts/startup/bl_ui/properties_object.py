@@ -291,19 +291,6 @@ class OBJECT_PT_display(ObjectButtonsPanel, Panel):
             col.label(text="Object Color:")
             col.prop(obj, "color", text="")
 
-        # --------------------------- Wireframe colors
-
-        col = layout.column()
-        col.label(text="Wireframe Colors:")
-        col.prop(obj, "wire_color_set", text = "Color Set")
-        if obj.wire_color_set:
-            col = layout.column()
-            sub = col.row(align=True)
-            sub.enabled = obj.is_custom_wire_color_set  # only custom colors are editable
-            sub.prop(obj.wire_colors, "normal", text="")
-            sub.prop(obj.wire_colors, "select", text="")
-            sub.prop(obj.wire_colors, "active", text="")
-
 class OBJECT_PT_duplication(ObjectButtonsPanel, Panel):
     bl_label = "Duplication"
     bl_options = {'DEFAULT_CLOSED'}

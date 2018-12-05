@@ -39,7 +39,6 @@
 #include "DNA_listBase.h"
 #include "DNA_ID.h"
 #include "DNA_action_types.h" /* bAnimVizSettings */
-#include "DNA_userdef_types.h" /* ThemeWireColor */
 
 #ifdef __cplusplus
 extern "C" {
@@ -303,10 +302,6 @@ typedef struct Object {
 	LodLevel *currentlod;
 
 	struct PreviewImage *preview;
-
-	int pad9; // bfa -custom wireframe colors
-	int custom_wire_color;	/* index of custom color set to use for wire color (0=default - used for all old files, -1=custom set) */
-	ThemeWireColor wcs;		/* color set to use when custom_wire_color == -1 */
 
 } Object;
 
