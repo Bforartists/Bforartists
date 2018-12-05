@@ -3705,33 +3705,6 @@ class VIEW3D_PT_view3d_shading(Panel):
                 subcol.prop(ssao_settings, "samples")
                 subcol.prop(ssao_settings, "color")
                 
-                
-        # --------------------------- Wireframe colors subtab
-        
-        obj = context.object
-        
-        user_preferences = context.user_preferences
-        addon_prefs = user_preferences.addons["bforartists_UI_flags"].preferences
-
-        if not addon_prefs.SP_object_display_wireframecols:
-            layout.prop(addon_prefs,"SP_object_display_wireframecols", emboss=False, icon="TRIA_RIGHT", text="- Wireframe Colors -")
-
-        else:
-            layout.prop(addon_prefs,"SP_object_display_wireframecols", emboss=False, icon="TRIA_DOWN", text="+ Wireframe Colors +")
-
-            if obj is not None:
-                # Custom wire color sets
-                col = layout.column()
-                col.prop(obj, "wire_color_set", text = "Color Set:")
-                if obj.wire_color_set:
-                    col = layout.column()
-                    sub = col.row(align=True)
-                    sub.enabled = obj.is_custom_wire_color_set  # only custom colors are editable
-                    sub.prop(obj.wire_colors, "normal", text="")
-                    sub.prop(obj.wire_colors, "select", text="")
-                    sub.prop(obj.wire_colors, "active", text="")
-            else:
-                layout.label(text =  "Select an object!")
 
 
 class VIEW3D_PT_view3d_motion_tracking(Panel):
