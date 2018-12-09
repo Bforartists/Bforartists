@@ -38,7 +38,6 @@
 #include "BLT_translation.h"
 
 #include "BKE_context.h"
-#include "BKE_library.h"
 #include "BKE_editmesh.h"
 
 #include "RNA_define.h"
@@ -60,31 +59,36 @@
 
 /* ********* add primitive operators ************* */
 
+typedef struct MakePrimitiveData {
+	float mat[4][4];
+	bool was_editmode;
+} MakePrimitiveData;
+
 static Object *make_prim_init(
         bContext *C, const char *idname,
-        float *dia, float mat[4][4],
-        bool *was_editmode, const float loc[3], const float rot[3], const unsigned int layer)
+        const float loc[3], const float rot[3],
+        MakePrimitiveData *r_creation_data)
 {
 	Object *obedit = CTX_data_edit_object(C);
 
-	*was_editmode = false;
+	r_creation_data->was_editmode = false;
 	if (obedit == NULL || obedit->type != OB_MESH) {
-		obedit = ED_object_add_type(C, OB_MESH, idname, loc, rot, false, layer);
+		obedit = ED_object_add_type(C, OB_MESH, idname, loc, rot, false);
 
 		/* create editmode */
 		ED_object_editmode_enter(C, EM_IGNORE_LAYER); /* rare cases the active layer is messed up */
-		*was_editmode = true;
+		r_creation_data->was_editmode = true;
 	}
 
-	*dia = ED_object_new_primitive_matrix(C, obedit, loc, rot, mat);
+	ED_object_new_primitive_matrix(C, obedit, loc, rot, r_creation_data->mat);
 
 	return obedit;
 }
 
-static void make_prim_finish(bContext *C, Object *obedit, bool was_editmode, int enter_editmode)
+static void make_prim_finish(bContext *C, Object *obedit, const MakePrimitiveData *creation_data, int enter_editmode)
 {
 	BMEditMesh *em = BKE_editmesh_from_object(obedit);
-	const bool exit_editmode = ((was_editmode == true) && (enter_editmode == false));
+	const bool exit_editmode = ((creation_data->was_editmode == true) && (enter_editmode == false));
 
 	/* Primitive has all verts selected, use vert select flush
 	 * to push this up to edges & faces. */
@@ -102,17 +106,16 @@ static void make_prim_finish(bContext *C, Object *obedit, bool was_editmode, int
 
 static int add_primitive_plane_exec(bContext *C, wmOperator *op)
 {
+	MakePrimitiveData creation_data;
 	Object *obedit;
 	BMEditMesh *em;
-	float loc[3], rot[3], mat[4][4], dia;
+	float loc[3], rot[3];
 	bool enter_editmode;
-	bool was_editmode;
-	unsigned int layer;
 	const bool calc_uvs = RNA_boolean_get(op->ptr, "calc_uvs");
 
 	WM_operator_view3d_unit_defaults(C, op);
-	ED_object_add_generic_get_opts(C, op, 'Z', loc, rot, &enter_editmode, &layer, NULL);
-	obedit = make_prim_init(C, CTX_DATA_(BLT_I18NCONTEXT_ID_MESH, "Plane"), &dia, mat, &was_editmode, loc, rot, layer);
+	ED_object_add_generic_get_opts(C, op, 'Z', loc, rot, &enter_editmode, NULL);
+	obedit = make_prim_init(C, CTX_DATA_(BLT_I18NCONTEXT_ID_MESH, "Plane"), loc, rot, &creation_data);
 	em = BKE_editmesh_from_object(obedit);
 
 	if (calc_uvs) {
@@ -122,12 +125,12 @@ static int add_primitive_plane_exec(bContext *C, wmOperator *op)
 	if (!EDBM_op_call_and_selectf(
 	        em, op, "verts.out", false,
 	        "create_grid x_segments=%i y_segments=%i size=%f matrix=%m4 calc_uvs=%b",
-	        1, 1, RNA_float_get(op->ptr, "radius"), mat, calc_uvs))
+	        1, 1, RNA_float_get(op->ptr, "size") / 2.0f, creation_data.mat, calc_uvs))
 	{
 		return OPERATOR_CANCELLED;
 	}
 
-	make_prim_finish(C, obedit, was_editmode, enter_editmode);
+	make_prim_finish(C, obedit, &creation_data, enter_editmode);
 
 	return OPERATOR_FINISHED;
 }
@@ -136,7 +139,7 @@ void MESH_OT_primitive_plane_add(wmOperatorType *ot)
 {
 	/* identifiers */
 	ot->name = "Add Plane";
-	ot->description = "Add Plane\nConstruct a filled planar mesh with 4 vertices";
+	ot->description = "Construct a filled planar mesh with 4 vertices";
 	ot->idname = "MESH_OT_primitive_plane_add";
 
 	/* api callbacks */
@@ -146,24 +149,23 @@ void MESH_OT_primitive_plane_add(wmOperatorType *ot)
 	/* flags */
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
-	ED_object_add_unit_props_cube(ot);/*bfa - Cube has no radius. But size*/
+	ED_object_add_unit_props_size(ot);
 	ED_object_add_mesh_props(ot);
 	ED_object_add_generic_props(ot, true);
 }
 
 static int add_primitive_cube_exec(bContext *C, wmOperator *op)
 {
+	MakePrimitiveData creation_data;
 	Object *obedit;
 	BMEditMesh *em;
-	float loc[3], rot[3], mat[4][4], dia;
+	float loc[3], rot[3];
 	bool enter_editmode;
-	bool was_editmode;
-	unsigned int layer;
 	const bool calc_uvs = RNA_boolean_get(op->ptr, "calc_uvs");
 
 	WM_operator_view3d_unit_defaults(C, op);
-	ED_object_add_generic_get_opts(C, op, 'Z', loc, rot, &enter_editmode, &layer, NULL);
-	obedit = make_prim_init(C, CTX_DATA_(BLT_I18NCONTEXT_ID_MESH, "Cube"), &dia, mat, &was_editmode, loc, rot, layer);
+	ED_object_add_generic_get_opts(C, op, 'Z', loc, rot, &enter_editmode, NULL);
+	obedit = make_prim_init(C, CTX_DATA_(BLT_I18NCONTEXT_ID_MESH, "Cube"), loc, rot, &creation_data);
 	em = BKE_editmesh_from_object(obedit);
 
 	if (calc_uvs) {
@@ -173,13 +175,13 @@ static int add_primitive_cube_exec(bContext *C, wmOperator *op)
 	if (!EDBM_op_call_and_selectf(
 	        em, op, "verts.out", false,
 	        "create_cube matrix=%m4 size=%f calc_uvs=%b",
-	        mat, RNA_float_get(op->ptr, "radius") * 2.0f, calc_uvs))
+	        creation_data.mat, RNA_float_get(op->ptr, "size"), calc_uvs))
 	{
 		return OPERATOR_CANCELLED;
 	}
 
 	/* BMESH_TODO make plane side this: M_SQRT2 - plane (diameter of 1.41 makes it unit size) */
-	make_prim_finish(C, obedit, was_editmode, enter_editmode);
+	make_prim_finish(C, obedit, &creation_data, enter_editmode);
 
 	return OPERATOR_FINISHED;
 }
@@ -198,7 +200,7 @@ void MESH_OT_primitive_cube_add(wmOperatorType *ot)
 	/* flags */
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
-	ED_object_add_unit_props_cube(ot);/*bfa - Cube has no radius. But size*/
+	ED_object_add_unit_props_size(ot);
 	ED_object_add_mesh_props(ot);
 	ED_object_add_generic_props(ot, true);
 }
@@ -211,21 +213,20 @@ static const EnumPropertyItem fill_type_items[] = {
 
 static int add_primitive_circle_exec(bContext *C, wmOperator *op)
 {
+	MakePrimitiveData creation_data;
 	Object *obedit;
 	BMEditMesh *em;
-	float loc[3], rot[3], mat[4][4], dia;
+	float loc[3], rot[3];
 	bool enter_editmode;
 	int cap_end, cap_tri;
-	unsigned int layer;
-	bool was_editmode;
 	const bool calc_uvs = RNA_boolean_get(op->ptr, "calc_uvs");
 
 	cap_end = RNA_enum_get(op->ptr, "fill_type");
 	cap_tri = (cap_end == 2);
 
 	WM_operator_view3d_unit_defaults(C, op);
-	ED_object_add_generic_get_opts(C, op, 'Z', loc, rot, &enter_editmode, &layer, NULL);
-	obedit = make_prim_init(C, CTX_DATA_(BLT_I18NCONTEXT_ID_MESH, "Circle"), &dia, mat, &was_editmode, loc, rot, layer);
+	ED_object_add_generic_get_opts(C, op, 'Z', loc, rot, &enter_editmode, NULL);
+	obedit = make_prim_init(C, CTX_DATA_(BLT_I18NCONTEXT_ID_MESH, "Circle"), loc, rot, &creation_data);
 	em = BKE_editmesh_from_object(obedit);
 
 	if (calc_uvs) {
@@ -236,12 +237,12 @@ static int add_primitive_circle_exec(bContext *C, wmOperator *op)
 	        em, op, "verts.out", false,
 	        "create_circle segments=%i radius=%f cap_ends=%b cap_tris=%b matrix=%m4 calc_uvs=%b",
 	        RNA_int_get(op->ptr, "vertices"), RNA_float_get(op->ptr, "radius"),
-	        cap_end, cap_tri, mat, calc_uvs))
+	        cap_end, cap_tri, creation_data.mat, calc_uvs))
 	{
 		return OPERATOR_CANCELLED;
 	}
 
-	make_prim_finish(C, obedit, was_editmode, enter_editmode);
+	make_prim_finish(C, obedit, &creation_data, enter_editmode);
 
 	return OPERATOR_FINISHED;
 }
@@ -262,7 +263,7 @@ void MESH_OT_primitive_circle_add(wmOperatorType *ot)
 
 	/* props */
 	RNA_def_int(ot->srna, "vertices", 32, 3, MESH_ADD_VERTS_MAXI, "Vertices", "", 3, 500);
-	ED_object_add_unit_props(ot);
+	ED_object_add_unit_props_radius(ot);
 	RNA_def_enum(ot->srna, "fill_type", fill_type_items, 0, "Fill Type", "");
 
 	ED_object_add_mesh_props(ot);
@@ -271,20 +272,19 @@ void MESH_OT_primitive_circle_add(wmOperatorType *ot)
 
 static int add_primitive_cylinder_exec(bContext *C, wmOperator *op)
 {
+	MakePrimitiveData creation_data;
 	Object *obedit;
 	BMEditMesh *em;
-	float loc[3], rot[3], mat[4][4], dia;
+	float loc[3], rot[3];
 	bool enter_editmode;
-	unsigned int layer;
-	bool was_editmode;
 	const int end_fill_type = RNA_enum_get(op->ptr, "end_fill_type");
 	const bool cap_end = (end_fill_type != 0);
 	const bool cap_tri = (end_fill_type == 2);
 	const bool calc_uvs = RNA_boolean_get(op->ptr, "calc_uvs");
 
 	WM_operator_view3d_unit_defaults(C, op);
-	ED_object_add_generic_get_opts(C, op, 'Z', loc, rot, &enter_editmode, &layer, NULL);
-	obedit = make_prim_init(C, CTX_DATA_(BLT_I18NCONTEXT_ID_MESH, "Cylinder"), &dia, mat, &was_editmode, loc, rot, layer);
+	ED_object_add_generic_get_opts(C, op, 'Z', loc, rot, &enter_editmode, NULL);
+	obedit = make_prim_init(C, CTX_DATA_(BLT_I18NCONTEXT_ID_MESH, "Cylinder"), loc, rot, &creation_data);
 	em = BKE_editmesh_from_object(obedit);
 
 	if (calc_uvs) {
@@ -298,12 +298,12 @@ static int add_primitive_cylinder_exec(bContext *C, wmOperator *op)
 	        RNA_float_get(op->ptr, "radius"),
 	        RNA_float_get(op->ptr, "radius"),
 	        cap_end, cap_tri,
-	        RNA_float_get(op->ptr, "depth"), mat, calc_uvs))
+	        RNA_float_get(op->ptr, "depth"), creation_data.mat, calc_uvs))
 	{
 		return OPERATOR_CANCELLED;
 	}
 
-	make_prim_finish(C, obedit, was_editmode, enter_editmode);
+	make_prim_finish(C, obedit, &creation_data, enter_editmode);
 
 	return OPERATOR_FINISHED;
 }
@@ -324,7 +324,7 @@ void MESH_OT_primitive_cylinder_add(wmOperatorType *ot)
 
 	/* props */
 	RNA_def_int(ot->srna, "vertices", 32, 3, MESH_ADD_VERTS_MAXI, "Vertices", "", 3, 500);
-	ED_object_add_unit_props(ot);
+	ED_object_add_unit_props_radius(ot);
 	RNA_def_float_distance(ot->srna, "depth", 2.0f, 0.0, OBJECT_ADD_SIZE_MAXF, "Depth", "", 0.001, 100.00);
 	RNA_def_enum(ot->srna, "end_fill_type", fill_type_items, 1, "Cap Fill Type", "");
 
@@ -334,20 +334,19 @@ void MESH_OT_primitive_cylinder_add(wmOperatorType *ot)
 
 static int add_primitive_cone_exec(bContext *C, wmOperator *op)
 {
+	MakePrimitiveData creation_data;
 	Object *obedit;
 	BMEditMesh *em;
-	float loc[3], rot[3], mat[4][4], dia;
+	float loc[3], rot[3];
 	bool enter_editmode;
-	unsigned int layer;
-	bool was_editmode;
 	const int end_fill_type = RNA_enum_get(op->ptr, "end_fill_type");
 	const bool cap_end = (end_fill_type != 0);
 	const bool cap_tri = (end_fill_type == 2);
 	const bool calc_uvs = RNA_boolean_get(op->ptr, "calc_uvs");
 
 	WM_operator_view3d_unit_defaults(C, op);
-	ED_object_add_generic_get_opts(C, op, 'Z', loc, rot, &enter_editmode, &layer, NULL);
-	obedit = make_prim_init(C, CTX_DATA_(BLT_I18NCONTEXT_ID_MESH, "Cone"), &dia, mat, &was_editmode, loc, rot, layer);
+	ED_object_add_generic_get_opts(C, op, 'Z', loc, rot, &enter_editmode, NULL);
+	obedit = make_prim_init(C, CTX_DATA_(BLT_I18NCONTEXT_ID_MESH, "Cone"), loc, rot, &creation_data);
 	em = BKE_editmesh_from_object(obedit);
 
 	if (calc_uvs) {
@@ -358,12 +357,13 @@ static int add_primitive_cone_exec(bContext *C, wmOperator *op)
 	        em, op, "verts.out", false,
 	        "create_cone segments=%i diameter1=%f diameter2=%f cap_ends=%b cap_tris=%b depth=%f matrix=%m4 calc_uvs=%b",
 	        RNA_int_get(op->ptr, "vertices"), RNA_float_get(op->ptr, "radius1"),
-	        RNA_float_get(op->ptr, "radius2"), cap_end, cap_tri, RNA_float_get(op->ptr, "depth"), mat, calc_uvs))
+	        RNA_float_get(op->ptr, "radius2"), cap_end, cap_tri, RNA_float_get(op->ptr, "depth"),
+	        creation_data.mat, calc_uvs))
 	{
 		return OPERATOR_CANCELLED;
 	}
 
-	make_prim_finish(C, obedit, was_editmode, enter_editmode);
+	make_prim_finish(C, obedit, &creation_data, enter_editmode);
 
 	return OPERATOR_FINISHED;
 }
@@ -395,17 +395,16 @@ void MESH_OT_primitive_cone_add(wmOperatorType *ot)
 
 static int add_primitive_grid_exec(bContext *C, wmOperator *op)
 {
+	MakePrimitiveData creation_data;
 	Object *obedit;
 	BMEditMesh *em;
-	float loc[3], rot[3], mat[4][4], dia;
+	float loc[3], rot[3];
 	bool enter_editmode;
-	bool was_editmode;
-	unsigned int layer;
 	const bool calc_uvs = RNA_boolean_get(op->ptr, "calc_uvs");
 
 	WM_operator_view3d_unit_defaults(C, op);
-	ED_object_add_generic_get_opts(C, op, 'Z', loc, rot, &enter_editmode, &layer, NULL);
-	obedit = make_prim_init(C, CTX_DATA_(BLT_I18NCONTEXT_ID_MESH, "Grid"), &dia, mat, &was_editmode, loc, rot, layer);
+	ED_object_add_generic_get_opts(C, op, 'Z', loc, rot, &enter_editmode, NULL);
+	obedit = make_prim_init(C, CTX_DATA_(BLT_I18NCONTEXT_ID_MESH, "Grid"), loc, rot, &creation_data);
 	em = BKE_editmesh_from_object(obedit);
 
 	if (calc_uvs) {
@@ -417,12 +416,12 @@ static int add_primitive_grid_exec(bContext *C, wmOperator *op)
 	        "create_grid x_segments=%i y_segments=%i size=%f matrix=%m4 calc_uvs=%b",
 	        RNA_int_get(op->ptr, "x_subdivisions"),
 	        RNA_int_get(op->ptr, "y_subdivisions"),
-	        RNA_float_get(op->ptr, "radius"), mat, calc_uvs))
+	        RNA_float_get(op->ptr, "size") / 2.0f, creation_data.mat, calc_uvs))
 	{
 		return OPERATOR_CANCELLED;
 	}
 
-	make_prim_finish(C, obedit, was_editmode, enter_editmode);
+	make_prim_finish(C, obedit, &creation_data, enter_editmode);
 
 	return OPERATOR_FINISHED;
 }
@@ -446,30 +445,28 @@ void MESH_OT_primitive_grid_add(wmOperatorType *ot)
 	 * impossible values (10^12 vertices or so...). */
 	RNA_def_int(ot->srna, "x_subdivisions", 10, 2, MESH_ADD_VERTS_MAXI, "X Subdivisions", "", 2, 1000);
 	RNA_def_int(ot->srna, "y_subdivisions", 10, 2, MESH_ADD_VERTS_MAXI, "Y Subdivisions", "", 2, 1000);
-	ED_object_add_unit_props_cube(ot);/*bfa - Cube has no radius. But size*/
 
+	ED_object_add_unit_props_size(ot);
 	ED_object_add_mesh_props(ot);
 	ED_object_add_generic_props(ot, true);
 }
 
 static int add_primitive_monkey_exec(bContext *C, wmOperator *op)
 {
+	MakePrimitiveData creation_data;
 	Object *obedit;
 	BMEditMesh *em;
-	float mat[4][4];
 	float loc[3], rot[3];
 	float dia;
 	bool enter_editmode;
-	unsigned int layer;
-	bool was_editmode;
 	const bool calc_uvs = RNA_boolean_get(op->ptr, "calc_uvs");
 
 	WM_operator_view3d_unit_defaults(C, op);
-	ED_object_add_generic_get_opts(C, op, 'Y', loc, rot, &enter_editmode, &layer, NULL);
+	ED_object_add_generic_get_opts(C, op, 'Y', loc, rot, &enter_editmode, NULL);
 
-	obedit = make_prim_init(C, CTX_DATA_(BLT_I18NCONTEXT_ID_MESH, "Suzanne"), &dia, mat, &was_editmode, loc, rot, layer);
-	dia = RNA_float_get(op->ptr, "radius");
-	mul_mat3_m4_fl(mat, dia);
+	obedit = make_prim_init(C, CTX_DATA_(BLT_I18NCONTEXT_ID_MESH, "Suzanne"), loc, rot, &creation_data);
+	dia = RNA_float_get(op->ptr, "size") / 2.0f;
+	mul_mat3_m4_fl(creation_data.mat, dia);
 
 	em = BKE_editmesh_from_object(obedit);
 
@@ -479,12 +476,12 @@ static int add_primitive_monkey_exec(bContext *C, wmOperator *op)
 
 	if (!EDBM_op_call_and_selectf(
 	        em, op, "verts.out",  false,
-	        "create_monkey matrix=%m4 calc_uvs=%b", mat, calc_uvs))
+	        "create_monkey matrix=%m4 calc_uvs=%b", creation_data.mat, calc_uvs))
 	{
 		return OPERATOR_CANCELLED;
 	}
 
-	make_prim_finish(C, obedit, was_editmode, enter_editmode);
+	make_prim_finish(C, obedit, &creation_data, enter_editmode);
 
 	return OPERATOR_FINISHED;
 }
@@ -501,27 +498,26 @@ void MESH_OT_primitive_monkey_add(wmOperatorType *ot)
 	ot->poll = ED_operator_scene_editable;
 
 	/* flags */
-	ED_object_add_unit_props(ot);
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
 
 	/* props */
+	ED_object_add_unit_props_size(ot);
 	ED_object_add_mesh_props(ot);
 	ED_object_add_generic_props(ot, true);
 }
 
 static int add_primitive_uvsphere_exec(bContext *C, wmOperator *op)
 {
+	MakePrimitiveData creation_data;
 	Object *obedit;
 	BMEditMesh *em;
-	float loc[3], rot[3], mat[4][4], dia;
+	float loc[3], rot[3];
 	bool enter_editmode;
-	bool was_editmode;
-	unsigned int layer;
 	const bool calc_uvs = RNA_boolean_get(op->ptr, "calc_uvs");
 
 	WM_operator_view3d_unit_defaults(C, op);
-	ED_object_add_generic_get_opts(C, op, 'Z', loc, rot, &enter_editmode, &layer, NULL);
-	obedit = make_prim_init(C, CTX_DATA_(BLT_I18NCONTEXT_ID_MESH, "Sphere"), &dia, mat, &was_editmode, loc, rot, layer);
+	ED_object_add_generic_get_opts(C, op, 'Z', loc, rot, &enter_editmode, NULL);
+	obedit = make_prim_init(C, CTX_DATA_(BLT_I18NCONTEXT_ID_MESH, "Sphere"), loc, rot, &creation_data);
 	em = BKE_editmesh_from_object(obedit);
 
 	if (calc_uvs) {
@@ -532,12 +528,12 @@ static int add_primitive_uvsphere_exec(bContext *C, wmOperator *op)
 	        em, op, "verts.out", false,
 	        "create_uvsphere u_segments=%i v_segments=%i diameter=%f matrix=%m4 calc_uvs=%b",
 	        RNA_int_get(op->ptr, "segments"), RNA_int_get(op->ptr, "ring_count"),
-	        RNA_float_get(op->ptr, "size"), mat, calc_uvs))
+	        RNA_float_get(op->ptr, "radius"), creation_data.mat, calc_uvs))
 	{
 		return OPERATOR_CANCELLED;
 	}
 
-	make_prim_finish(C, obedit, was_editmode, enter_editmode);
+	make_prim_finish(C, obedit, &creation_data, enter_editmode);
 
 	return OPERATOR_FINISHED;
 }
@@ -559,25 +555,24 @@ void MESH_OT_primitive_uv_sphere_add(wmOperatorType *ot)
 	/* props */
 	RNA_def_int(ot->srna, "segments", 32, 3, MESH_ADD_VERTS_MAXI / 100, "Segments", "", 3, 500);
 	RNA_def_int(ot->srna, "ring_count", 16, 3, MESH_ADD_VERTS_MAXI / 100, "Rings", "", 3, 500);
-	RNA_def_float_distance(ot->srna, "size", 1.0f, 0.0, OBJECT_ADD_SIZE_MAXF, "Radius", "", 0.001, 100.00);
 
+	ED_object_add_unit_props_radius(ot);
 	ED_object_add_mesh_props(ot);
 	ED_object_add_generic_props(ot, true);
 }
 
 static int add_primitive_icosphere_exec(bContext *C, wmOperator *op)
 {
+	MakePrimitiveData creation_data;
 	Object *obedit;
 	BMEditMesh *em;
-	float loc[3], rot[3], mat[4][4], dia;
+	float loc[3], rot[3];
 	bool enter_editmode;
-	bool was_editmode;
-	unsigned int layer;
 	const bool calc_uvs = RNA_boolean_get(op->ptr, "calc_uvs");
 
 	WM_operator_view3d_unit_defaults(C, op);
-	ED_object_add_generic_get_opts(C, op, 'Z', loc, rot, &enter_editmode, &layer, NULL);
-	obedit = make_prim_init(C, CTX_DATA_(BLT_I18NCONTEXT_ID_MESH, "Icosphere"), &dia, mat, &was_editmode, loc, rot, layer);
+	ED_object_add_generic_get_opts(C, op, 'Z', loc, rot, &enter_editmode, NULL);
+	obedit = make_prim_init(C, CTX_DATA_(BLT_I18NCONTEXT_ID_MESH, "Icosphere"), loc, rot, &creation_data);
 	em = BKE_editmesh_from_object(obedit);
 
 	if (calc_uvs) {
@@ -588,12 +583,12 @@ static int add_primitive_icosphere_exec(bContext *C, wmOperator *op)
 	        em, op, "verts.out", false,
 	        "create_icosphere subdivisions=%i diameter=%f matrix=%m4 calc_uvs=%b",
 	        RNA_int_get(op->ptr, "subdivisions"),
-	        RNA_float_get(op->ptr, "size"), mat, calc_uvs))
+	        RNA_float_get(op->ptr, "radius"), creation_data.mat, calc_uvs))
 	{
 		return OPERATOR_CANCELLED;
 	}
 
-	make_prim_finish(C, obedit, was_editmode, enter_editmode);
+	make_prim_finish(C, obedit, &creation_data, enter_editmode);
 
 	return OPERATOR_FINISHED;
 }
@@ -614,8 +609,8 @@ void MESH_OT_primitive_ico_sphere_add(wmOperatorType *ot)
 
 	/* props */
 	RNA_def_int(ot->srna, "subdivisions", 2, 1, 10, "Subdivisions", "", 1, 8);
-	RNA_def_float_distance(ot->srna, "size", 1.0f, 0.0f, OBJECT_ADD_SIZE_MAXF, "Radius", "", 0.001f, 100.00);
 
+	ED_object_add_unit_props_radius(ot);
 	ED_object_add_mesh_props(ot);
 	ED_object_add_generic_props(ot, true);
 }

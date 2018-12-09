@@ -56,12 +56,6 @@ enum {
 	SUBDIV_SELECT_LOOPCUT
 };
 
-enum {
-	SIM_CMP_EQ = 0,
-	SIM_CMP_GT,
-	SIM_CMP_LT
-};
-
 /* subdivide_edgering */
 enum {
 	/* just subdiv */
@@ -77,16 +71,14 @@ enum {
 /* similar face selection slot values */
 enum {
 	SIMFACE_MATERIAL = 201,
-	SIMFACE_IMAGE,
 	SIMFACE_AREA,
 	SIMFACE_SIDES,
 	SIMFACE_PERIMETER,
 	SIMFACE_NORMAL,
 	SIMFACE_COPLANAR,
 	SIMFACE_SMOOTH,
-#ifdef WITH_FREESTYLE
+	SIMFACE_FACEMAP,
 	SIMFACE_FREESTYLE
-#endif
 };
 
 /* similar edge selection slot values */
@@ -99,9 +91,7 @@ enum {
 	SIMEDGE_BEVEL,
 	SIMEDGE_SEAM,
 	SIMEDGE_SHARP,
-#ifdef WITH_FREESTYLE
 	SIMEDGE_FREESTYLE
-#endif
 };
 
 /* similar vertex selection slot values */
@@ -125,6 +115,13 @@ enum {
 	BEVEL_AMT_WIDTH,
 	BEVEL_AMT_DEPTH,
 	BEVEL_AMT_PERCENT
+};
+
+enum {
+	BEVEL_HN_NONE,			/* Disable harden normals */
+	BEVEL_HN_FACE,			/* harden normals according to face area */
+	BEVEL_HN_ADJ,			/* harden normals according to adjacent 'beveled' faces */
+	BEVEL_HN_FIX_SHA,		/* Special mode to fix normal shading continuity */
 };
 
 extern const BMOpDefine *bmo_opdefines[];

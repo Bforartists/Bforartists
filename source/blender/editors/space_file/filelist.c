@@ -65,7 +65,6 @@
 
 #include "BKE_context.h"
 #include "BKE_global.h"
-#include "BKE_library.h"
 #include "BKE_icons.h"
 #include "BKE_idcode.h"
 #include "BKE_main.h"
@@ -2357,7 +2356,7 @@ static void filelist_readjob_main_rec(Main *bmain, FileList *filelist)
 		filelist->filelist.entries[9].entry->relpath = BLI_strdup("Ika");
 		filelist->filelist.entries[10].entry->relpath = BLI_strdup("Wave");
 		filelist->filelist.entries[11].entry->relpath = BLI_strdup("Lattice");
-		filelist->filelist.entries[12].entry->relpath = BLI_strdup("Lamp");
+		filelist->filelist.entries[12].entry->relpath = BLI_strdup("Light");
 		filelist->filelist.entries[13].entry->relpath = BLI_strdup("Camera");
 		filelist->filelist.entries[14].entry->relpath = BLI_strdup("Ipo");
 		filelist->filelist.entries[15].entry->relpath = BLI_strdup("World");

@@ -45,15 +45,14 @@
 
 #include "BKE_context.h"
 
-
 #include "WM_api.h"
 #include "WM_types.h"
 
 #include "wm.h"
-#include "wm_subwindow.h"
 #include "wm_draw.h"
-#include "GPU_basic_shader.h"
 
+#include "GPU_immediate.h"
+#include "GPU_immediate_util.h"
 
 #include "BIF_glutil.h"
 
@@ -64,17 +63,14 @@ wmGesture *WM_gesture_new(bContext *C, const wmEvent *event, int type)
 	wmGesture *gesture = MEM_callocN(sizeof(wmGesture), "new gesture");
 	wmWindow *window = CTX_wm_window(C);
 	ARegion *ar = CTX_wm_region(C);
-	int sx, sy;
 
 	BLI_addtail(&window->gesture, gesture);
 
 	gesture->type = type;
 	gesture->event_type = event->type;
-	gesture->swinid = ar->swinid;    /* means only in area-region context! */
+	gesture->winrct = ar->winrct;
 	gesture->userdata_free = true;   /* Free if userdata is set. */
 	gesture->modal_state = GESTURE_MODAL_NOP;
-
-	wm_subwindow_origin_get(window, gesture->swinid, &sx, &sy);
 
 	if (ELEM(type, WM_GESTURE_RECT, WM_GESTURE_CROSS_RECT, WM_GESTURE_TWEAK,
 	          WM_GESTURE_CIRCLE, WM_GESTURE_STRAIGHTLINE))
@@ -82,22 +78,22 @@ wmGesture *WM_gesture_new(bContext *C, const wmEvent *event, int type)
 		rcti *rect = MEM_callocN(sizeof(rcti), "gesture rect new");
 
 		gesture->customdata = rect;
-		rect->xmin = event->x - sx;
-		rect->ymin = event->y - sy;
+		rect->xmin = event->x - gesture->winrct.xmin;
+		rect->ymin = event->y - gesture->winrct.ymin;
 		if (type == WM_GESTURE_CIRCLE) {
 			/* caller is responsible for initializing 'xmax' to radius. */
 		}
 		else {
-			rect->xmax = event->x - sx;
-			rect->ymax = event->y - sy;
+			rect->xmax = event->x - gesture->winrct.xmin;
+			rect->ymax = event->y - gesture->winrct.ymin;
 		}
 	}
 	else if (ELEM(type, WM_GESTURE_LINES, WM_GESTURE_LASSO)) {
 		short *lasso;
 		gesture->points_alloc = 1024;
 		gesture->customdata = lasso = MEM_mallocN(sizeof(short[2]) * gesture->points_alloc, "lasso points");
-		lasso[0] = event->x - sx;
-		lasso[1] = event->y - sy;
+		lasso[0] = event->x - gesture->winrct.xmin;
+		lasso[1] = event->y - gesture->winrct.ymin;
 		gesture->points = 1;
 	}
 
@@ -134,7 +130,8 @@ int wm_gesture_evaluate(wmGesture *gesture)
 		rcti *rect = gesture->customdata;
 		int dx = BLI_rcti_size_x(rect);
 		int dy = BLI_rcti_size_y(rect);
-		if (abs(dx) + abs(dy) > U.tweak_threshold) {
+		float tweak_threshold = U.tweak_threshold * U.dpi_fac;
+		if (abs(dx) + abs(dy) > tweak_threshold) {
 			int theta = round_fl_to_int(4.0f * atan2f((float)dy, (float)dx) / (float)M_PI);
 			int val = EVT_GESTURE_W;
 
@@ -166,69 +163,99 @@ int wm_gesture_evaluate(wmGesture *gesture)
 
 /* ******************* gesture draw ******************* */
 
-static void wm_gesture_draw_rect(wmGesture *gt)
-{
-	rcti *rect = (rcti *)gt->customdata;
-
-	glEnable(GL_BLEND);
-	glColor4f(1.0, 1.0, 1.0, 0.05);
-	glBegin(GL_QUADS);
-	glVertex2s(rect->xmax, rect->ymin);
-	glVertex2s(rect->xmax, rect->ymax);
-	glVertex2s(rect->xmin, rect->ymax);
-	glVertex2s(rect->xmin, rect->ymin);
-	glEnd();
-	glDisable(GL_BLEND);
-
-	GPU_basic_shader_bind(GPU_SHADER_LINE | GPU_SHADER_STIPPLE | GPU_SHADER_USE_COLOR);
-	glColor3ub(96, 96, 96);
-	GPU_basic_shader_line_stipple(1, 0xCCCC);
-	sdrawbox(rect->xmin, rect->ymin, rect->xmax, rect->ymax);
-	glColor3ub(255, 255, 255);
-	GPU_basic_shader_line_stipple(1, 0x3333);
-	sdrawbox(rect->xmin, rect->ymin, rect->xmax, rect->ymax);
-	GPU_basic_shader_bind(GPU_SHADER_USE_COLOR);
-}
-
 static void wm_gesture_draw_line(wmGesture *gt)
 {
 	rcti *rect = (rcti *)gt->customdata;
 
-	GPU_basic_shader_bind(GPU_SHADER_LINE | GPU_SHADER_STIPPLE);
-	glColor3ub(96, 96, 96);
-	GPU_basic_shader_line_stipple(1, 0xAAAA);
-	sdrawline(rect->xmin, rect->ymin, rect->xmax, rect->ymax);
-	glColor3ub(255, 255, 255);
-	GPU_basic_shader_line_stipple(1, 0x5555);
-	sdrawline(rect->xmin, rect->ymin, rect->xmax, rect->ymax);
+	uint shdr_pos = GPU_vertformat_attr_add(immVertexFormat(), "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
 
-	GPU_basic_shader_bind(GPU_SHADER_USE_COLOR);
+	immBindBuiltinProgram(GPU_SHADER_2D_LINE_DASHED_UNIFORM_COLOR);
 
+	float viewport_size[4];
+	glGetFloatv(GL_VIEWPORT, viewport_size);
+	immUniform2f("viewport_size", viewport_size[2], viewport_size[3]);
+
+	immUniform1i("colors_len", 2);  /* "advanced" mode */
+	immUniformArray4fv("colors", (float *)(float[][4]){{0.4f, 0.4f, 0.4f, 1.0f}, {1.0f, 1.0f, 1.0f, 1.0f}}, 2);
+	immUniform1f("dash_width", 8.0f);
+
+	float xmin = (float)rect->xmin;
+	float ymin = (float)rect->ymin;
+
+	immBegin(GPU_PRIM_LINES, 2);
+	immVertex2f(shdr_pos, xmin, ymin);
+	immVertex2f(shdr_pos, (float)rect->xmax, (float)rect->ymax);
+	immEnd();
+
+	immUnbindProgram();
+}
+
+static void wm_gesture_draw_rect(wmGesture *gt)
+{
+	rcti *rect = (rcti *)gt->customdata;
+
+	uint shdr_pos = GPU_vertformat_attr_add(immVertexFormat(), "pos", GPU_COMP_I32, 2, GPU_FETCH_INT_TO_FLOAT);
+
+	glEnable(GL_BLEND);
+
+	immBindBuiltinProgram(GPU_SHADER_2D_UNIFORM_COLOR);
+	immUniformColor4f(1.0f, 1.0f, 1.0f, 0.05f);
+
+	immRecti(shdr_pos, rect->xmin, rect->ymin, rect->xmax, rect->ymax);
+
+	immUnbindProgram();
+
+	glDisable(GL_BLEND);
+
+	shdr_pos = GPU_vertformat_attr_add(immVertexFormat(), "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+
+	immBindBuiltinProgram(GPU_SHADER_2D_LINE_DASHED_UNIFORM_COLOR);
+
+	float viewport_size[4];
+	glGetFloatv(GL_VIEWPORT, viewport_size);
+	immUniform2f("viewport_size", viewport_size[2], viewport_size[3]);
+
+	immUniform1i("colors_len", 2);  /* "advanced" mode */
+	immUniformArray4fv("colors", (float *)(float[][4]){{0.4f, 0.4f, 0.4f, 1.0f}, {1.0f, 1.0f, 1.0f, 1.0f}}, 2);
+	immUniform1f("dash_width", 8.0f);
+
+	imm_draw_box_wire_2d(shdr_pos, (float)rect->xmin, (float)rect->ymin, (float)rect->xmax, (float)rect->ymax);
+
+	immUnbindProgram();
+
+	// wm_gesture_draw_line(gt); // draws a diagonal line in the lined box to test wm_gesture_draw_line
 }
 
 static void wm_gesture_draw_circle(wmGesture *gt)
 {
 	rcti *rect = (rcti *)gt->customdata;
 
-	glTranslatef((float)rect->xmin, (float)rect->ymin, 0.0f);
-
 	glEnable(GL_BLEND);
-	glColor4f(1.0, 1.0, 1.0, 0.05);
-	glutil_draw_filled_arc(0.0, M_PI * 2.0, rect->xmax, 40);
+
+	const uint shdr_pos = GPU_vertformat_attr_add(immVertexFormat(), "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+
+	immBindBuiltinProgram(GPU_SHADER_2D_UNIFORM_COLOR);
+
+	immUniformColor4f(1.0f, 1.0f, 1.0f, 0.05f);
+	imm_draw_circle_fill_2d(shdr_pos, (float)rect->xmin, (float)rect->ymin, (float)rect->xmax, 40);
+
+	immUnbindProgram();
+
 	glDisable(GL_BLEND);
 
-	// for USE_GLSL works bad because of no relation between lines
-	GPU_basic_shader_bind(GPU_SHADER_LINE | GPU_SHADER_STIPPLE | GPU_SHADER_USE_COLOR);
-	glColor3ub(96, 96, 96);
-	GPU_basic_shader_line_stipple(1, 0xAAAA);
-	glutil_draw_lined_arc(0.0, M_PI * 2.0, rect->xmax, 40);
-	glColor3ub(255, 255, 255);
-	GPU_basic_shader_line_stipple(1, 0x5555);
-	glutil_draw_lined_arc(0.0, M_PI * 2.0, rect->xmax, 40);
+	immBindBuiltinProgram(GPU_SHADER_2D_LINE_DASHED_UNIFORM_COLOR);
 
-	GPU_basic_shader_bind(GPU_SHADER_USE_COLOR);
-	glTranslatef(-rect->xmin, -rect->ymin, 0.0f);
+	float viewport_size[4];
+	glGetFloatv(GL_VIEWPORT, viewport_size);
+	immUniform2f("viewport_size", viewport_size[2], viewport_size[3]);
 
+	immUniform1i("colors_len", 2);  /* "advanced" mode */
+	immUniformArray4fv("colors", (float *)(float[][4]){{0.4f, 0.4f, 0.4f, 1.0f}, {1.0f, 1.0f, 1.0f, 1.0f}}, 2);
+	immUniform1f("dash_width", 4.0f);
+
+	imm_draw_circle_wire_2d(shdr_pos, (float)rect->xmin, (float)rect->ymin, (float)rect->xmax, 40);
+
+	immUnbindProgram();
 }
 
 struct LassoFillData {
@@ -243,14 +270,14 @@ static void draw_filled_lasso_px_cb(int x, int x_end, int y, void *user_data)
 	memset(col, 0x10, x_end - x);
 }
 
-static void draw_filled_lasso(wmWindow *win, wmGesture *gt)
+static void draw_filled_lasso(wmGesture *gt)
 {
 	const short *lasso = (short *)gt->customdata;
 	const int tot = gt->points;
 	int (*moves)[2] = MEM_mallocN(sizeof(*moves) * (tot + 1), __func__);
 	int i;
 	rcti rect;
-	rcti rect_win;
+	float red[4] = {1.0f, 0.0f, 0.0f, 0.0f};
 
 	for (i = 0; i < tot; i++, lasso += 2) {
 		moves[i][0] = lasso[0];
@@ -259,10 +286,9 @@ static void draw_filled_lasso(wmWindow *win, wmGesture *gt)
 
 	BLI_lasso_boundbox(&rect, (const int (*)[2])moves, tot);
 
-	wm_subwindow_rect_get(win, gt->swinid, &rect_win);
-	BLI_rcti_translate(&rect, rect_win.xmin, rect_win.ymin);
-	BLI_rcti_isect(&rect_win, &rect, &rect);
-	BLI_rcti_translate(&rect, -rect_win.xmin, -rect_win.ymin);
+	BLI_rcti_translate(&rect, gt->winrct.xmin, gt->winrct.ymin);
+	BLI_rcti_isect(&gt->winrct, &rect, &rect);
+	BLI_rcti_translate(&rect, -gt->winrct.xmin, -gt->winrct.ymin);
 
 	/* highly unlikely this will fail, but could crash if (tot == 0) */
 	if (BLI_rcti_is_empty(&rect) == false) {
@@ -276,66 +302,72 @@ static void draw_filled_lasso(wmWindow *win, wmGesture *gt)
 		       (const int (*)[2])moves, tot,
 		       draw_filled_lasso_px_cb, &lasso_fill_data);
 
+		/* Additive Blending */
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_ONE, GL_ONE);
+
+		GLint unpack_alignment;
+		glGetIntegerv(GL_UNPACK_ALIGNMENT, &unpack_alignment);
+
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-		glColor4f(1, 1, 1, 1);
-		glPixelTransferf(GL_RED_BIAS, 1);
-		glPixelTransferf(GL_GREEN_BIAS, 1);
-		glPixelTransferf(GL_BLUE_BIAS, 1);
+		IMMDrawPixelsTexState state = immDrawPixelsTexSetup(GPU_SHADER_2D_IMAGE_SHUFFLE_COLOR);
+		GPU_shader_bind(state.shader);
+		GPU_shader_uniform_vector(state.shader, GPU_shader_get_uniform(state.shader, "shuffle"), 4, 1, red);
 
-		GPU_basic_shader_bind(GPU_SHADER_TEXTURE_2D | GPU_SHADER_USE_COLOR);
+		immDrawPixelsTex(&state, rect.xmin, rect.ymin, w, h, GL_RED, GL_UNSIGNED_BYTE, GL_NEAREST, pixel_buf, 1.0f, 1.0f, NULL);
 
-		glEnable(GL_BLEND);
-		glaDrawPixelsTex(rect.xmin, rect.ymin, w, h, GL_ALPHA, GL_UNSIGNED_BYTE, GL_NEAREST, pixel_buf);
-		glDisable(GL_BLEND);
+		GPU_shader_unbind();
 
-		GPU_basic_shader_bind(GPU_SHADER_USE_COLOR);
-
-		glPixelTransferf(GL_RED_BIAS, 0);
-		glPixelTransferf(GL_GREEN_BIAS, 0);
-		glPixelTransferf(GL_BLUE_BIAS, 0);
-
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+		glPixelStorei(GL_UNPACK_ALIGNMENT, unpack_alignment);
 
 		MEM_freeN(pixel_buf);
+
+		glDisable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
 	MEM_freeN(moves);
 }
 
 
-static void wm_gesture_draw_lasso(wmWindow *win, wmGesture *gt, bool filled)
+static void wm_gesture_draw_lasso(wmGesture *gt, bool filled)
 {
 	const short *lasso = (short *)gt->customdata;
 	int i;
 
 	if (filled) {
-		draw_filled_lasso(win, gt);
+		draw_filled_lasso(gt);
 	}
 
-	// for USE_GLSL can't check this yet
-	GPU_basic_shader_bind(GPU_SHADER_LINE | GPU_SHADER_STIPPLE | GPU_SHADER_USE_COLOR);
-	glColor3ub(96, 96, 96);
-	GPU_basic_shader_line_stipple(1, 0xAAAA);
-	glBegin(GL_LINE_STRIP);
-	for (i = 0; i < gt->points; i++, lasso += 2)
-		glVertex2sv(lasso);
-	if (gt->type == WM_GESTURE_LASSO)
-		glVertex2sv((short *)gt->customdata);
-	glEnd();
+	const int numverts = gt->points;
 
-	glColor3ub(255, 255, 255);
-	GPU_basic_shader_line_stipple(1, 0x5555);
-	glBegin(GL_LINE_STRIP);
-	lasso = (short *)gt->customdata;
-	for (i = 0; i < gt->points; i++, lasso += 2)
-		glVertex2sv(lasso);
-	if (gt->type == WM_GESTURE_LASSO)
-		glVertex2sv((short *)gt->customdata);
-	glEnd();
+	/* Nothing to draw, do early output. */
+	if (numverts < 2) {
+		return;
+	}
 
-	GPU_basic_shader_bind(GPU_SHADER_USE_COLOR);
+	const uint shdr_pos = GPU_vertformat_attr_add(immVertexFormat(), "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
 
+	immBindBuiltinProgram(GPU_SHADER_2D_LINE_DASHED_UNIFORM_COLOR);
+
+	float viewport_size[4];
+	glGetFloatv(GL_VIEWPORT, viewport_size);
+	immUniform2f("viewport_size", viewport_size[2], viewport_size[3]);
+
+	immUniform1i("colors_len", 2);  /* "advanced" mode */
+	immUniformArray4fv("colors", (float *)(float[][4]){{0.4f, 0.4f, 0.4f, 1.0f}, {1.0f, 1.0f, 1.0f, 1.0f}}, 2);
+	immUniform1f("dash_width", 2.0f);
+
+	immBegin((gt->type == WM_GESTURE_LASSO) ? GPU_PRIM_LINE_LOOP : GPU_PRIM_LINE_STRIP, numverts);
+
+	for (i = 0; i < gt->points; i++, lasso += 2) {
+		immVertex2f(shdr_pos, (float)lasso[0], (float)lasso[1]);
+	}
+
+	immEnd();
+
+	immUnbindProgram();
 }
 
 static void wm_gesture_draw_cross(wmWindow *win, wmGesture *gt)
@@ -344,17 +376,41 @@ static void wm_gesture_draw_cross(wmWindow *win, wmGesture *gt)
 	const int winsize_x = WM_window_pixels_x(win);
 	const int winsize_y = WM_window_pixels_y(win);
 
-	GPU_basic_shader_bind(GPU_SHADER_LINE | GPU_SHADER_STIPPLE | GPU_SHADER_USE_COLOR);
-	glColor3ub(96, 96, 96);
-	GPU_basic_shader_line_stipple(1, 0xCCCC);
-	sdrawline(rect->xmin - winsize_x, rect->ymin, rect->xmin + winsize_x, rect->ymin);
-	sdrawline(rect->xmin, rect->ymin - winsize_y, rect->xmin, rect->ymin + winsize_y);
+	float x1, x2, y1, y2;
 
-	glColor3ub(255, 255, 255);
-	GPU_basic_shader_line_stipple(1, 0x3333);
-	sdrawline(rect->xmin - winsize_x, rect->ymin, rect->xmin + winsize_x, rect->ymin);
-	sdrawline(rect->xmin, rect->ymin - winsize_y, rect->xmin, rect->ymin + winsize_y);
-	GPU_basic_shader_bind(GPU_SHADER_USE_COLOR);
+	const uint shdr_pos = GPU_vertformat_attr_add(immVertexFormat(), "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+
+	immBindBuiltinProgram(GPU_SHADER_2D_LINE_DASHED_UNIFORM_COLOR);
+
+	float viewport_size[4];
+	glGetFloatv(GL_VIEWPORT, viewport_size);
+	immUniform2f("viewport_size", viewport_size[2], viewport_size[3]);
+
+	immUniform1i("colors_len", 2);  /* "advanced" mode */
+	immUniformArray4fv("colors", (float *)(float[][4]){{0.4f, 0.4f, 0.4f, 1.0f}, {1.0f, 1.0f, 1.0f, 1.0f}}, 2);
+	immUniform1f("dash_width", 8.0f);
+
+	immBegin(GPU_PRIM_LINES, 4);
+
+	x1 = (float)(rect->xmin - winsize_x);
+	y1 = (float)rect->ymin;
+	x2 = (float)(rect->xmin + winsize_x);
+	y2 = y1;
+
+	immVertex2f(shdr_pos, x1, y1);
+	immVertex2f(shdr_pos, x2, y2);
+
+	x1 = (float)rect->xmin;
+	y1 = (float)(rect->ymin - winsize_y);
+	x2 = x1;
+	y2 = (float)(rect->ymin + winsize_y);
+
+	immVertex2f(shdr_pos, x1, y1);
+	immVertex2f(shdr_pos, x2, y2);
+
+	immEnd();
+
+	immUnbindProgram();
 }
 
 /* called in wm_draw.c */
@@ -362,10 +418,10 @@ void wm_gesture_draw(wmWindow *win)
 {
 	wmGesture *gt = (wmGesture *)win->gesture.first;
 
-	GPU_basic_shader_line_width(1);
+	glLineWidth(1.0f);
 	for (; gt; gt = gt->next) {
 		/* all in subwindow space */
-		wmSubWindowSet(win, gt->swinid);
+		wmViewport(&gt->winrct);
 
 		if (gt->type == WM_GESTURE_RECT)
 			wm_gesture_draw_rect(gt);
@@ -382,9 +438,9 @@ void wm_gesture_draw(wmWindow *win)
 			}
 		}
 		else if (gt->type == WM_GESTURE_LINES)
-			wm_gesture_draw_lasso(win, gt, false);
+			wm_gesture_draw_lasso(gt, false);
 		else if (gt->type == WM_GESTURE_LASSO)
-			wm_gesture_draw_lasso(win, gt, true);
+			wm_gesture_draw_lasso(gt, true);
 		else if (gt->type == WM_GESTURE_STRAIGHTLINE)
 			wm_gesture_draw_line(gt);
 	}
@@ -392,12 +448,8 @@ void wm_gesture_draw(wmWindow *win)
 
 void wm_gesture_tag_redraw(bContext *C)
 {
-	wmWindow *win = CTX_wm_window(C);
 	bScreen *screen = CTX_wm_screen(C);
-	ARegion *ar = CTX_wm_region(C);
 
 	if (screen)
 		screen->do_draw_gesture = true;
-
-	wm_tag_redraw_overlay(win, ar);
 }

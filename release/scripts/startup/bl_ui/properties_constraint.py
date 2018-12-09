@@ -42,7 +42,7 @@ class ConstraintButtonsPanel:
     def space_template(layout, con, target=True, owner=True):
         if target or owner:
 
-            split = layout.split(percentage=0.2)
+            split = layout.split(factor=0.2)
 
             split.label(text="Space:")
             row = split.row()
@@ -85,7 +85,7 @@ class ConstraintButtonsPanel:
             row.label()
             row.prop(con, "pole_angle")
 
-        split = layout.split(percentage=0.33)
+        split = layout.split(factor=0.33)
         col = split.column()
         col.prop(con, "use_tail")
         col.prop(con, "use_stretch")
@@ -183,12 +183,12 @@ class ConstraintButtonsPanel:
         row = layout.row()
         row.label(text="Axis Ref:")
         row.prop(con, "reference_axis", expand=True)
-        split = layout.split(percentage=0.33)
+        split = layout.split(factor=0.33)
         split.row().prop(con, "use_location")
         row = split.row()
         row.prop(con, "weight", text="Weight", slider=True)
         row.active = con.use_location
-        split = layout.split(percentage=0.33)
+        split = layout.split(factor=0.33)
         row = split.row()
         row.label(text="Lock:")
         row = split.row()
@@ -197,12 +197,12 @@ class ConstraintButtonsPanel:
         row.prop(con, "lock_location_z", text="Z")
         split.active = con.use_location
 
-        split = layout.split(percentage=0.33)
+        split = layout.split(factor=0.33)
         split.row().prop(con, "use_rotation")
         row = split.row()
         row.prop(con, "orient_weight", text="Weight", slider=True)
         row.active = con.use_rotation
-        split = layout.split(percentage=0.33)
+        split = layout.split(factor=0.33)
         row = split.row()
         row.label(text="Lock:")
         row = split.row()
@@ -420,7 +420,11 @@ class ConstraintButtonsPanel:
         row.prop(con, "use_y", text="Y")
         row.prop(con, "use_z", text="Z")
 
-        layout.prop(con, "use_offset")
+        row = layout.row()
+        row.prop(con, "use_offset")
+        row = row.row()
+        row.active = con.use_offset
+        row.prop(con, "use_add")
 
         self.space_template(layout, con)
 
@@ -744,14 +748,33 @@ class ConstraintButtonsPanel:
         layout.prop(con, "distance")
         layout.prop(con, "shrinkwrap_type")
 
+        if con.shrinkwrap_type in {'PROJECT', 'NEAREST_SURFACE', 'TARGET_PROJECT'}:
+            layout.prop(con, 'wrap_mode', text="Snap Mode")
+
         if con.shrinkwrap_type == 'PROJECT':
             row = layout.row(align=True)
             row.prop(con, "project_axis", expand=True)
-            split = layout.split(percentage=0.4)
+            split = layout.split(factor=0.4)
             split.label(text="Axis Space:")
             rowsub = split.row()
             rowsub.prop(con, "project_axis_space", text="")
+            split = layout.split(factor=0.4)
+            split.label(text="Face Culling:")
+            rowsub = split.row()
+            rowsub.prop(con, "cull_face", expand=True)
+            row = layout.row()
+            row.prop(con, "use_project_opposite")
+            rowsub = row.row()
+            rowsub.active = con.use_project_opposite and con.cull_face != 'OFF'
+            rowsub.prop(con, "use_invert_cull")
             layout.prop(con, "project_limit")
+
+        if con.shrinkwrap_type in {'PROJECT', 'NEAREST_SURFACE', 'TARGET_PROJECT'}:
+            layout.prop(con, "use_track_normal")
+
+            row = layout.row(align=True)
+            row.active = con.use_track_normal
+            row.prop(con, "track_axis", expand=True)
 
     def DAMPED_TRACK(self, context, layout, con):
         self.target_template(layout, con)
@@ -894,7 +917,47 @@ class ConstraintButtonsPanel:
             box.prop_search(con, "object_path", cache_file, "object_paths")
 
     def SCRIPT(self, context, layout, con):
-        layout.label("Blender 2.6 doesn't support python constraints yet")
+        layout.label(text="Blender 2.6 doesn't support python constraints yet")
+
+    def ARMATURE(self, context, layout, con):
+        topcol = layout.column()
+        topcol.use_property_split = True
+        topcol.operator("constraint.add_target", text="Add Target Bone")
+
+        if not con.targets:
+            box = topcol.box()
+            box.label(text="No target bones were added", icon='ERROR')
+
+        for i, tgt in enumerate(con.targets):
+            box = topcol.box()
+
+            has_target = tgt.target is not None
+
+            header = box.row()
+            header.use_property_split = False
+
+            split = header.split(factor=0.45, align=True)
+            split.prop(tgt, "target", text="")
+
+            row = split.row(align=True)
+            row.active = has_target
+            if has_target:
+                row.prop_search(tgt, "subtarget", tgt.target.data, "bones", text="")
+            else:
+                row.prop(tgt, "subtarget", text="", icon='BONE_DATA')
+
+            header.operator("constraint.remove_target", text="", icon='REMOVE').index = i
+
+            col = box.column()
+            col.active = has_target and tgt.subtarget != ""
+            col.prop(tgt, "weight", slider=True)
+
+        topcol.operator("constraint.normalize_target_weights")
+        topcol.prop(con, "use_deform_preserve_volume")
+        topcol.prop(con, "use_bone_envelopes")
+
+        if context.pose_bone:
+            topcol.prop(con, "use_current_location")
 
 
 class OBJECT_PT_constraints(ConstraintButtonsPanel, Panel):

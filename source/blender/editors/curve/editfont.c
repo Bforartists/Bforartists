@@ -49,12 +49,14 @@
 
 #include "BKE_context.h"
 #include "BKE_curve.h"
-#include "BKE_depsgraph.h"
 #include "BKE_font.h"
 #include "BKE_library.h"
 #include "BKE_main.h"
 #include "BKE_object.h"
 #include "BKE_report.h"
+
+#include "DEG_depsgraph.h"
+#include "DEG_depsgraph_query.h"
 
 #include "RNA_access.h"
 #include "RNA_define.h"
@@ -245,6 +247,7 @@ static int insert_into_textbuf(Object *obedit, uintptr_t c)
 
 static void text_update_edited(bContext *C, Object *obedit, int mode)
 {
+	Depsgraph *depsgraph = CTX_data_depsgraph(C);
 	Curve *cu = obedit->data;
 	EditFont *ef = cu->editfont;
 
@@ -253,11 +256,12 @@ static void text_update_edited(bContext *C, Object *obedit, int mode)
 	/* run update first since it can move the cursor */
 	if (mode == FO_EDIT) {
 		/* re-tesselllate */
-		DAG_id_tag_update(obedit->data, 0);
+		DEG_id_tag_update(obedit->data, 0);
 	}
 	else {
 		/* depsgraph runs above, but since we're not tagging for update, call direct */
-		BKE_vfont_to_curve(obedit, mode);
+		/* We need evaluated data here. */
+		BKE_vfont_to_curve(DEG_get_evaluated_object(depsgraph, obedit), mode);
 	}
 
 	cu->curinfo = ef->textbufinfo[ef->pos ? ef->pos - 1 : 0];
@@ -272,6 +276,7 @@ static void text_update_edited(bContext *C, Object *obedit, int mode)
 		}
 	}
 
+	DEG_id_tag_update(obedit->data, DEG_TAG_SELECT_UPDATE);
 	WM_event_add_notifier(C, NC_GEOM | ND_DATA, obedit->data);
 }
 
@@ -418,7 +423,9 @@ void FONT_OT_text_paste_from_file(wmOperatorType *ot)
 static void txt_add_object(bContext *C, TextLine *firstline, int totline, const float offset[3])
 {
 	Main *bmain = CTX_data_main(C);
+	Depsgraph *depsgraph = CTX_data_depsgraph(C);
 	Scene *scene = CTX_data_scene(C);
+	ViewLayer *view_layer = CTX_data_view_layer(C);
 	Curve *cu;
 	Object *obedit;
 	Base *base;
@@ -428,13 +435,13 @@ static void txt_add_object(bContext *C, TextLine *firstline, int totline, const 
 	int a;
 	float rot[3] = {0.f, 0.f, 0.f};
 
-	obedit = BKE_object_add(bmain, scene, OB_FONT, NULL);
-	base = scene->basact;
+	obedit = BKE_object_add(bmain, scene, view_layer, OB_FONT, NULL);
+	base = view_layer->basact;
 
 	/* seems to assume view align ? TODO - look into this, could be an operator option */
 	ED_object_base_init_transform(C, base, NULL, rot);
 
-	BKE_object_where_is_calc(scene, obedit);
+	BKE_object_where_is_calc(depsgraph, scene, obedit);
 
 	add_v3_v3(obedit->loc, offset);
 
@@ -581,7 +588,7 @@ static int set_style(bContext *C, const int style, const bool clear)
 			ef->textbufinfo[i].flag |= style;
 	}
 
-	DAG_id_tag_update(obedit->data, 0);
+	DEG_id_tag_update(obedit->data, 0);
 	WM_event_add_notifier(C, NC_GEOM | ND_DATA, obedit->data);
 
 	return OPERATOR_FINISHED;
@@ -891,6 +898,7 @@ static const EnumPropertyItem move_type_items[] = {
 
 static int move_cursor(bContext *C, int type, const bool select)
 {
+	Depsgraph *depsgraph = CTX_data_depsgraph(C);
 	Object *obedit = CTX_data_edit_object(C);
 	Curve *cu = obedit->data;
 	EditFont *ef = cu->editfont;
@@ -973,17 +981,17 @@ static int move_cursor(bContext *C, int type, const bool select)
 	else if (ef->pos >= MAXTEXT) ef->pos = MAXTEXT;
 	else if (ef->pos < 0)        ef->pos = 0;
 
-	/* apply virtical cursor motion to position immediately
+	/* apply vertical cursor motion to position immediately
 	 * otherwise the selection will lag behind */
 	if (FO_CURS_IS_MOTION(cursmove)) {
-		BKE_vfont_to_curve(obedit, cursmove);
+		BKE_vfont_to_curve(DEG_get_evaluated_object(depsgraph, obedit), cursmove);
 		cursmove = FO_CURS;
 	}
 
 	if (select == 0) {
 		if (ef->selstart) {
 			ef->selstart = ef->selend = 0;
-			BKE_vfont_to_curve(obedit, FO_SELCHANGE);
+			BKE_vfont_to_curve(DEG_get_evaluated_object(depsgraph, obedit), FO_SELCHANGE);
 		}
 	}
 
@@ -1427,7 +1435,7 @@ void FONT_OT_text_insert(wmOperatorType *ot)
 	ot->poll = ED_operator_editfont;
 
 	/* flags */
-	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
+	ot->flag = OPTYPE_UNDO;
 
 	/* properties */
 	RNA_def_string(ot->srna, "text", NULL, 0, "Text", "Text to insert at the cursor position");
@@ -1449,6 +1457,7 @@ static int textbox_add_exec(bContext *C, wmOperator *UNUSED(op))
 		cu->totbox++;
 	}
 
+	DEG_id_tag_update(obedit->data, 0);
 	WM_event_add_notifier(C, NC_GEOM | ND_DATA, obedit->data);
 	return OPERATOR_FINISHED;
 }
@@ -1491,6 +1500,7 @@ static int textbox_remove_exec(bContext *C, wmOperator *op)
 			cu->actbox--;
 	}
 
+	DEG_id_tag_update(obedit->data, 0);
 	WM_event_add_notifier(C, NC_GEOM | ND_DATA, obedit->data);
 
 	return OPERATOR_FINISHED;

@@ -36,11 +36,13 @@
 #include "BLI_path_util.h"
 #include "BLI_math.h"
 
-#include "BKE_DerivedMesh.h"
-#include "BKE_scene.h"
 #include "BKE_global.h"
-#include "BKE_mesh.h"
+#include "BKE_library.h"
 #include "BKE_main.h"
+#include "BKE_mesh.h"
+#include "BKE_scene.h"
+
+#include "DEG_depsgraph_query.h"
 
 #include "MEM_guardedalloc.h"
 
@@ -70,7 +72,7 @@ static bool dependsOnTime(ModifierData *md)
 	return (mcmd->play_mode == MOD_MESHCACHE_PLAY_CFEA);
 }
 
-static bool isDisabled(ModifierData *md, int UNUSED(useRenderParams))
+static bool isDisabled(const struct Scene *UNUSED(scene), ModifierData *md, bool UNUSED(useRenderParams))
 {
 	MeshCacheModifierData *mcmd = (MeshCacheModifierData *) md;
 
@@ -80,7 +82,7 @@ static bool isDisabled(ModifierData *md, int UNUSED(useRenderParams))
 
 
 static void meshcache_do(
-        MeshCacheModifierData *mcmd, Object *ob, DerivedMesh *UNUSED(dm),
+        MeshCacheModifierData *mcmd, Scene *scene, Object *ob,
         float (*vertexCos_Real)[3], int numVerts)
 {
 	const bool use_factor = mcmd->factor < 1.0f;
@@ -88,7 +90,6 @@ static void meshcache_do(
 	                              MEM_malloc_arrayN(numVerts, sizeof(*vertexCos_Store), __func__) : NULL;
 	float (*vertexCos)[3] = vertexCos_Store ? vertexCos_Store : vertexCos_Real;
 
-	Scene *scene = mcmd->modifier.scene;
 	const float fps = FPS;
 
 	char filepath[FILE_MAX];
@@ -264,24 +265,28 @@ static void meshcache_do(
 }
 
 static void deformVerts(
-        ModifierData *md, Object *ob,
-        DerivedMesh *derivedData,
+        ModifierData *md, const ModifierEvalContext *ctx,
+        Mesh *UNUSED(mesh),
         float (*vertexCos)[3],
-        int numVerts,
-        ModifierApplyFlag UNUSED(flag))
+        int numVerts)
 {
 	MeshCacheModifierData *mcmd = (MeshCacheModifierData *)md;
+	Scene *scene = DEG_get_evaluated_scene(ctx->depsgraph);
 
-	meshcache_do(mcmd, ob, derivedData, vertexCos, numVerts);
+	meshcache_do(mcmd, scene, ctx->object, vertexCos, numVerts);
 }
 
 static void deformVertsEM(
-        ModifierData *md, Object *ob, struct BMEditMesh *UNUSED(editData),
-        DerivedMesh *derivedData, float (*vertexCos)[3], int numVerts)
+        ModifierData *md, const ModifierEvalContext *ctx,
+        struct BMEditMesh *UNUSED(editData),
+        Mesh *UNUSED(mesh),
+        float (*vertexCos)[3],
+        int numVerts)
 {
 	MeshCacheModifierData *mcmd = (MeshCacheModifierData *)md;
+	Scene *scene = DEG_get_evaluated_scene(ctx->depsgraph);
 
-	meshcache_do(mcmd, ob, derivedData, vertexCos, numVerts);
+	meshcache_do(mcmd, scene, ctx->object, vertexCos, numVerts);
 }
 
 
@@ -295,17 +300,23 @@ ModifierTypeInfo modifierType_MeshCache = {
 	                        eModifierTypeFlag_SupportsEditmode,
 
 	/* copyData */          modifier_copyData_generic,
+
+	/* deformVerts_DM */    NULL,
+	/* deformMatrices_DM */ NULL,
+	/* deformVertsEM_DM */  NULL,
+	/* deformMatricesEM_DM*/NULL,
+	/* applyModifier_DM */  NULL,
+
 	/* deformVerts */       deformVerts,
 	/* deformMatrices */    NULL,
 	/* deformVertsEM */     deformVertsEM,
 	/* deformMatricesEM */  NULL,
 	/* applyModifier */     NULL,
-	/* applyModifierEM */   NULL,
+
 	/* initData */          initData,
 	/* requiredDataMask */  NULL,
 	/* freeData */          NULL,
 	/* isDisabled */        isDisabled,
-	/* updateDepgraph */    NULL,
 	/* updateDepsgraph */   NULL,
 	/* dependsOnTime */     dependsOnTime,
 	/* dependsOnNormals */  NULL,

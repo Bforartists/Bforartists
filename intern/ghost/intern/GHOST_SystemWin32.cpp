@@ -56,6 +56,12 @@
 #include "GHOST_WindowManager.h"
 #include "GHOST_WindowWin32.h"
 
+#if defined(WITH_GL_EGL)
+#  include "GHOST_ContextEGL.h"
+#else
+#  include "GHOST_ContextWGL.h"
+#endif
+
 #ifdef WITH_INPUT_NDOF
   #include "GHOST_NDOFManagerWin32.h"
 #endif
@@ -299,15 +305,115 @@ GHOST_IWindow *GHOST_SystemWin32::createWindow(
 }
 
 
+/**
+ * Create a new offscreen context.
+ * Never explicitly delete the window, use disposeContext() instead.
+ * \return  The new context (or 0 if creation failed).
+ */
+GHOST_IContext *GHOST_SystemWin32::createOffscreenContext()
+{
+	bool debug_context = false; /* TODO: inform as a parameter */
+
+	GHOST_Context *context;
+
+	HWND wnd = CreateWindowA("STATIC",
+		"BlenderGLEW",
+		WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
+		0, 0, 64, 64,
+		NULL, NULL,
+		GetModuleHandle(NULL), NULL
+	);
+
+	HDC  mHDC = GetDC(wnd);
+	HDC  prev_hdc = wglGetCurrentDC();
+	HGLRC prev_context = wglGetCurrentContext();
+#if defined(WITH_GL_PROFILE_CORE)
+	for (int minor = 5; minor >= 0; --minor) {
+			context = new GHOST_ContextWGL(
+			    false, true, 0,
+			    wnd, mHDC,
+			    WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
+			    4, minor,
+			    (debug_context ? WGL_CONTEXT_DEBUG_BIT_ARB : 0),
+			    GHOST_OPENGL_WGL_RESET_NOTIFICATION_STRATEGY);
+
+			if (context->initializeDrawingContext()) {
+				goto finished;
+			}
+			else {
+				delete context;
+			}
+		}
+
+		context = new GHOST_ContextWGL(
+		    false, true, 0,
+		    wnd, mHDC,
+		    WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
+		    3, 3,
+		    (debug_context ? WGL_CONTEXT_DEBUG_BIT_ARB : 0),
+		    GHOST_OPENGL_WGL_RESET_NOTIFICATION_STRATEGY);
+
+		if (context->initializeDrawingContext()) {
+			goto finished;
+		}
+		else {
+			MessageBox(
+			        NULL,
+			        "Blender requires a graphics driver with at least OpenGL 3.3 support.\n\n"
+			        "The program will now close.",
+			        "Blender - Unsupported Graphics Driver!",
+			        MB_OK | MB_ICONERROR);
+			delete context;
+			exit();
+		}
+
+#elif defined(WITH_GL_PROFILE_COMPAT)
+		// ask for 2.1 context, driver gives any GL version >= 2.1 (hopefully the latest compatibility profile)
+		// 2.1 ignores the profile bit & is incompatible with core profile
+		context = new GHOST_ContextWGL(
+		        false, true, 0,
+		        NULL, NULL,
+		        0, // no profile bit
+		        2, 1,
+		        (debug_context ? WGL_CONTEXT_DEBUG_BIT_ARB : 0),
+		        GHOST_OPENGL_WGL_RESET_NOTIFICATION_STRATEGY);
+
+		if (context->initializeDrawingContext()) {
+			return context;
+		}
+		else {
+			delete context;
+		}
+#else
+#  error // must specify either core or compat at build time
+#endif
+finished:
+	wglMakeCurrent(prev_hdc, prev_context);
+	return context;
+}
+
+/**
+ * Dispose of a context.
+ * \param   context Pointer to the context to be disposed.
+ * \return  Indication of success.
+ */
+GHOST_TSuccess GHOST_SystemWin32::disposeContext(GHOST_IContext *context)
+{
+	delete context;
+
+	return GHOST_kSuccess;
+}
+
+
 bool GHOST_SystemWin32::processEvents(bool waitForEvent)
 {
 	MSG msg;
-	bool anyProcessed = false;
+	bool hasEventHandled = false;
 
 	do {
 		GHOST_TimerManager *timerMgr = getTimerManager();
 
-		if (waitForEvent && !::PeekMessage(&msg, 0, 0, 0, PM_NOREMOVE)) {
+		if (waitForEvent && !::PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE)) {
 #if 1
 			::Sleep(1);
 #else
@@ -326,20 +432,26 @@ bool GHOST_SystemWin32::processEvents(bool waitForEvent)
 		}
 
 		if (timerMgr->fireTimers(getMilliSeconds())) {
-			anyProcessed = true;
+			hasEventHandled = true;
 		}
 
 		// Process all the events waiting for us
-		while (::PeekMessageW(&msg, 0, 0, 0, PM_REMOVE) != 0) {
+		while (::PeekMessageW(&msg, NULL, 0, 0, PM_REMOVE) != 0) {
 			// TranslateMessage doesn't alter the message, and doesn't change our raw keyboard data.
 			// Needed for MapVirtualKey or if we ever need to get chars from wm_ime_char or similar.
 			::TranslateMessage(&msg);
 			::DispatchMessageW(&msg);
-			anyProcessed = true;
 		}
-	} while (waitForEvent && !anyProcessed);
 
-	return anyProcessed;
+		if (hasEventHandled == false) {
+			// Check if we have events handled by the system
+			// (for example the `GHOST_kEventWindowClose`).
+			hasEventHandled = m_eventManager->getNumEvents() != 0;
+		}
+
+	} while (waitForEvent && !hasEventHandled);
+
+	return hasEventHandled;
 }
 
 
@@ -998,8 +1110,10 @@ LRESULT WINAPI GHOST_SystemWin32::s_wndProc(HWND hwnd, UINT msg, WPARAM wParam, 
 							break;
 #ifdef WITH_INPUT_NDOF
 						case RIM_TYPEHID:
-							if (system->processNDOF(raw))
+							if (system->processNDOF(raw)) {
+								system->m_ndofManager->sendMotionEvent();
 								eventHandled = true;
+							}
 							break;
 #endif
 					}

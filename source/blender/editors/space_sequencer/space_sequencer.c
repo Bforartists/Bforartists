@@ -42,10 +42,10 @@
 #include "BLI_utildefines.h"
 
 #include "BKE_context.h"
+#include "BKE_global.h"
 #include "BKE_library.h"
 #include "BKE_screen.h"
 #include "BKE_sequencer.h"
-#include "BKE_global.h"
 
 #include "ED_space_api.h"
 #include "ED_screen.h"
@@ -53,14 +53,15 @@
 
 #include "WM_api.h"
 #include "WM_types.h"
+#include "WM_message.h"
+
+#include "RNA_access.h"
 
 #include "UI_interface.h"
 #include "UI_resources.h"
 #include "UI_view2d.h"
 
 #include "IMB_imbuf.h"
-
-#include "GPU_compositing.h"
 
 #include "sequencer_intern.h"   // own include
 
@@ -112,9 +113,8 @@ static ARegion *sequencer_find_region(ScrArea *sa, short type)
 
 /* ******************** default callbacks for sequencer space ***************** */
 
-static SpaceLink *sequencer_new(const bContext *C)
+static SpaceLink *sequencer_new(const ScrArea *UNUSED(sa), const Scene *scene)
 {
-	Scene *scene = CTX_data_scene(C);
 	ARegion *ar;
 	SpaceSeq *sseq;
 
@@ -130,7 +130,7 @@ static SpaceLink *sequencer_new(const bContext *C)
 
 	BLI_addtail(&sseq->regionbase, ar);
 	ar->regiontype = RGN_TYPE_HEADER;
-	ar->alignment = RGN_ALIGN_BOTTOM;
+	ar->alignment = RGN_ALIGN_TOP;
 
 	/* buttons/list view */
 	ar = MEM_callocN(sizeof(ARegion), "buttons for sequencer");
@@ -220,11 +220,6 @@ static void sequencer_free(SpaceLink *sl)
 
 	if (scopes->histogram_ibuf)
 		IMB_freeImBuf(scopes->histogram_ibuf);
-
-	if (sseq->compositor != NULL) {
-		GPU_fx_compositor_destroy(sseq->compositor);
-		sseq->compositor = NULL;
-	}
 }
 
 
@@ -344,7 +339,8 @@ static SpaceLink *sequencer_duplicate(SpaceLink *sl)
 	return (SpaceLink *)sseqn;
 }
 
-static void sequencer_listener(bScreen *UNUSED(sc), ScrArea *sa, wmNotifier *wmn)
+static void sequencer_listener(
+        wmWindow *UNUSED(win), ScrArea *sa, wmNotifier *wmn, Scene *UNUSED(scene))
 {
 	/* context changes */
 	switch (wmn->category) {
@@ -370,7 +366,7 @@ static void sequencer_listener(bScreen *UNUSED(sc), ScrArea *sa, wmNotifier *wmn
 
 /* ************* dropboxes ************* */
 
-static bool image_drop_poll(bContext *C, wmDrag *drag, const wmEvent *event)
+static bool image_drop_poll(bContext *C, wmDrag *drag, const wmEvent *event, const char **UNUSED(tooltip))
 {
 	ARegion *ar = CTX_wm_region(C);
 	Scene *scene = CTX_data_scene(C);
@@ -384,7 +380,7 @@ static bool image_drop_poll(bContext *C, wmDrag *drag, const wmEvent *event)
 	return 0;
 }
 
-static bool movie_drop_poll(bContext *C, wmDrag *drag, const wmEvent *event)
+static bool movie_drop_poll(bContext *C, wmDrag *drag, const wmEvent *event, const char **UNUSED(tooltip))
 {
 	ARegion *ar = CTX_wm_region(C);
 	Scene *scene = CTX_data_scene(C);
@@ -397,7 +393,7 @@ static bool movie_drop_poll(bContext *C, wmDrag *drag, const wmEvent *event)
 	return 0;
 }
 
-static bool sound_drop_poll(bContext *C, wmDrag *drag, const wmEvent *event)
+static bool sound_drop_poll(bContext *C, wmDrag *drag, const wmEvent *event, const char **UNUSED(tooltip))
 {
 	ARegion *ar = CTX_wm_region(C);
 	Scene *scene = CTX_data_scene(C);
@@ -498,7 +494,9 @@ static void sequencer_main_region_draw(const bContext *C, ARegion *ar)
 	draw_timeline_seq(C, ar);
 }
 
-static void sequencer_main_region_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa), ARegion *ar, wmNotifier *wmn)
+static void sequencer_main_region_listener(
+        wmWindow *UNUSED(win), ScrArea *UNUSED(sa), ARegion *ar,
+        wmNotifier *wmn, const Scene *UNUSED(scene))
 {
 	/* context changes */
 	switch (wmn->category) {
@@ -533,6 +531,61 @@ static void sequencer_main_region_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(
 			if (ELEM(wmn->data, ND_ANIMPLAY))
 				ED_region_tag_redraw(ar);
 			break;
+	}
+}
+
+static void sequencer_main_region_message_subscribe(
+        const struct bContext *UNUSED(C),
+        struct WorkSpace *UNUSED(workspace), struct Scene *scene,
+        struct bScreen *UNUSED(screen), struct ScrArea *UNUSED(sa), struct ARegion *ar,
+        struct wmMsgBus *mbus)
+{
+	wmMsgSubscribeValue msg_sub_value_region_tag_redraw = {
+		.owner = ar,
+		.user_data = ar,
+		.notify = ED_region_do_msg_notify_tag_redraw,
+	};
+
+	/* Timeline depends on scene properties. */
+	{
+		bool use_preview = (scene->r.flag & SCER_PRV_RANGE);
+		extern PropertyRNA rna_Scene_frame_start;
+		extern PropertyRNA rna_Scene_frame_end;
+		extern PropertyRNA rna_Scene_frame_preview_start;
+		extern PropertyRNA rna_Scene_frame_preview_end;
+		extern PropertyRNA rna_Scene_use_preview_range;
+		extern PropertyRNA rna_Scene_frame_current;
+		const PropertyRNA *props[] = {
+			use_preview ? &rna_Scene_frame_preview_start : &rna_Scene_frame_start,
+			use_preview ? &rna_Scene_frame_preview_end   : &rna_Scene_frame_end,
+			&rna_Scene_use_preview_range,
+			&rna_Scene_frame_current,
+		};
+
+		PointerRNA idptr;
+		RNA_id_pointer_create(&scene->id, &idptr);
+
+		for (int i = 0; i < ARRAY_SIZE(props); i++) {
+			WM_msg_subscribe_rna(mbus, &idptr, props[i], &msg_sub_value_region_tag_redraw, __func__);
+		}
+	}
+
+	{
+		StructRNA *type_array[] = {
+			&RNA_SequenceEditor,
+
+			&RNA_Sequence,
+			/* Members of 'Sequence'. */
+			&RNA_SequenceCrop,
+			&RNA_SequenceTransform,
+			&RNA_SequenceModifier,
+			&RNA_SequenceColorBalanceData,
+		};
+		wmMsgParams_RNA msg_key_params = {{{0}}};
+		for (int i = 0; i < ARRAY_SIZE(type_array); i++) {
+			msg_key_params.ptr.type = type_array[i];
+			WM_msg_subscribe_rna_params(mbus, &msg_key_params, &msg_sub_value_region_tag_redraw, __func__);
+		}
 	}
 }
 
@@ -600,11 +653,15 @@ static void sequencer_preview_region_draw(const bContext *C, ARegion *ar)
 	if ((U.uiflag & USER_SHOW_FPS) && ED_screen_animation_no_scrub(wm)) {
 		rcti rect;
 		ED_region_visible_rect(ar, &rect);
-		ED_scene_draw_fps(scene, &rect);
+		int xoffset = rect.xmin + U.widget_unit;
+		int yoffset = rect.xmax;
+		ED_scene_draw_fps(scene, xoffset, &yoffset);
 	}
 }
 
-static void sequencer_preview_region_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa), ARegion *ar, wmNotifier *wmn)
+static void sequencer_preview_region_listener(
+        wmWindow *UNUSED(win), ScrArea *UNUSED(sa), ARegion *ar,
+        wmNotifier *wmn, const Scene *UNUSED(scene))
 {
 	/* context changes */
 	switch (wmn->category) {
@@ -667,10 +724,12 @@ static void sequencer_buttons_region_init(wmWindowManager *wm, ARegion *ar)
 
 static void sequencer_buttons_region_draw(const bContext *C, ARegion *ar)
 {
-	ED_region_panels(C, ar, NULL, -1, true);
+	ED_region_panels(C, ar);
 }
 
-static void sequencer_buttons_region_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa), ARegion *ar, wmNotifier *wmn)
+static void sequencer_buttons_region_listener(
+        wmWindow *UNUSED(win), ScrArea *UNUSED(sa), ARegion *ar,
+        wmNotifier *wmn, const Scene *UNUSED(scene))
 {
 	/* context changes */
 	switch (wmn->category) {
@@ -742,6 +801,7 @@ void ED_spacetype_sequencer(void)
 	art->init = sequencer_main_region_init;
 	art->draw = sequencer_main_region_draw;
 	art->listener = sequencer_main_region_listener;
+	art->message_subscribe = sequencer_main_region_message_subscribe;
 	art->keymapflag = ED_KEYMAP_VIEW2D | ED_KEYMAP_MARKERS | ED_KEYMAP_FRAMES | ED_KEYMAP_ANIMATION;
 
 	BLI_addhead(&st->regiontypes, art);

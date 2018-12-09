@@ -33,6 +33,7 @@
  */
 
 
+#include "DNA_mesh_types.h"
 #include "DNA_meshdata_types.h"
 #include "DNA_object_types.h"
 
@@ -41,12 +42,11 @@
 
 
 #include "BKE_deform.h"
-#include "BKE_DerivedMesh.h"
+#include "BKE_editmesh.h"
+#include "BKE_library.h"
 #include "BKE_library_query.h"
+#include "BKE_mesh.h"
 #include "BKE_modifier.h"
-
-
-#include "depsgraph_private.h"
 
 #include "MOD_util.h"
 
@@ -63,7 +63,7 @@ static void initData(ModifierData *md)
 	cmd->object = NULL;
 }
 
-static bool isDisabled(ModifierData *md, int UNUSED(useRenderParams))
+static bool isDisabled(const struct Scene *UNUSED(scene), ModifierData *md, bool UNUSED(useRenderParams))
 {
 	CastModifierData *cmd = (CastModifierData *) md;
 	short flag;
@@ -95,18 +95,6 @@ static void foreachObjectLink(
 	walk(userData, ob, &cmd->object, IDWALK_CB_NOP);
 }
 
-static void updateDepgraph(ModifierData *md, const ModifierUpdateDepsgraphContext *ctx)
-{
-	CastModifierData *cmd = (CastModifierData *) md;
-
-	if (cmd->object) {
-		DagNode *curNode = dag_get_node(ctx->forest, cmd->object);
-
-		dag_add_relation(ctx->forest, curNode, ctx->obNode, DAG_RL_OB_DATA,
-		                 "Cast Modifier");
-	}
-}
-
 static void updateDepsgraph(ModifierData *md, const ModifierUpdateDepsgraphContext *ctx)
 {
 	CastModifierData *cmd = (CastModifierData *)md;
@@ -117,7 +105,7 @@ static void updateDepsgraph(ModifierData *md, const ModifierUpdateDepsgraphConte
 }
 
 static void sphere_do(
-        CastModifierData *cmd, Object *ob, DerivedMesh *dm,
+        CastModifierData *cmd, Object *ob, Mesh *mesh,
         float (*vertexCos)[3], int numVerts)
 {
 	MDeformVert *dvert = NULL;
@@ -165,7 +153,7 @@ static void sphere_do(
 
 	/* 3) if we were given a vertex group name,
 	 * only those vertices should be affected */
-	modifier_get_vgroup(ob, dm, cmd->defgrp_name, &dvert, &defgrp_index);
+	MOD_get_vgroup(ob, mesh, cmd->defgrp_name, &dvert, &defgrp_index);
 
 	if (flag & MOD_CAST_SIZE_FROM_RADIUS) {
 		len = cmd->radius;
@@ -238,7 +226,7 @@ static void sphere_do(
 }
 
 static void cuboid_do(
-        CastModifierData *cmd, Object *ob, DerivedMesh *dm,
+        CastModifierData *cmd, Object *ob, Mesh *mesh,
         float (*vertexCos)[3], int numVerts)
 {
 	MDeformVert *dvert = NULL;
@@ -267,7 +255,7 @@ static void cuboid_do(
 
 	/* 3) if we were given a vertex group name,
 	 * only those vertices should be affected */
-	modifier_get_vgroup(ob, dm, cmd->defgrp_name, &dvert, &defgrp_index);
+	MOD_get_vgroup(ob, mesh, cmd->defgrp_name, &dvert, &defgrp_index);
 
 	if (ctrl_ob) {
 		if (flag & MOD_CAST_USE_OB_TRANSFORM) {
@@ -435,44 +423,51 @@ static void cuboid_do(
 }
 
 static void deformVerts(
-        ModifierData *md, Object *ob,
-        DerivedMesh *derivedData,
+        ModifierData *md, const ModifierEvalContext *ctx,
+        Mesh *mesh,
         float (*vertexCos)[3],
-        int numVerts,
-        ModifierApplyFlag UNUSED(flag))
+        int numVerts)
 {
-	DerivedMesh *dm = NULL;
 	CastModifierData *cmd = (CastModifierData *)md;
+	Mesh *mesh_src = NULL;
 
-	dm = get_dm(ob, NULL, derivedData, NULL, false, false);
+	if (ctx->object->type == OB_MESH && cmd->defgrp_name[0] != '\0') {
+		/* mesh_src is only needed for vgroups. */
+		mesh_src = MOD_deform_mesh_eval_get(ctx->object, NULL, mesh, NULL, numVerts, false, false);
+	}
 
 	if (cmd->type == MOD_CAST_TYPE_CUBOID) {
-		cuboid_do(cmd, ob, dm, vertexCos, numVerts);
+		cuboid_do(cmd, ctx->object, mesh_src, vertexCos, numVerts);
 	}
 	else { /* MOD_CAST_TYPE_SPHERE or MOD_CAST_TYPE_CYLINDER */
-		sphere_do(cmd, ob, dm, vertexCos, numVerts);
+		sphere_do(cmd, ctx->object, mesh_src, vertexCos, numVerts);
 	}
 
-	if (dm != derivedData)
-		dm->release(dm);
+	if (!ELEM(mesh_src, NULL, mesh)) {
+		BKE_id_free(NULL, mesh_src);
+	}
 }
 
 static void deformVertsEM(
-        ModifierData *md, Object *ob, struct BMEditMesh *editData,
-        DerivedMesh *derivedData, float (*vertexCos)[3], int numVerts)
+        ModifierData *md, const ModifierEvalContext *ctx,
+        struct BMEditMesh *editData,
+        Mesh *mesh, float (*vertexCos)[3], int numVerts)
 {
-	DerivedMesh *dm = get_dm(ob, editData, derivedData, NULL, false, false);
 	CastModifierData *cmd = (CastModifierData *)md;
+	Mesh *mesh_src = MOD_deform_mesh_eval_get(ctx->object, editData, mesh, NULL, numVerts, false, false);
+
+	BLI_assert(mesh_src->totvert == numVerts);
 
 	if (cmd->type == MOD_CAST_TYPE_CUBOID) {
-		cuboid_do(cmd, ob, dm, vertexCos, numVerts);
+		cuboid_do(cmd, ctx->object, mesh_src, vertexCos, numVerts);
 	}
 	else { /* MOD_CAST_TYPE_SPHERE or MOD_CAST_TYPE_CYLINDER */
-		sphere_do(cmd, ob, dm, vertexCos, numVerts);
+		sphere_do(cmd, ctx->object, mesh_src, vertexCos, numVerts);
 	}
 
-	if (dm != derivedData)
-		dm->release(dm);
+	if (mesh_src != mesh) {
+		BKE_id_free(NULL, mesh_src);
+	}
 }
 
 
@@ -486,17 +481,23 @@ ModifierTypeInfo modifierType_Cast = {
 	                        eModifierTypeFlag_SupportsEditmode,
 
 	/* copyData */          modifier_copyData_generic,
+
+	/* deformVerts_DM */    NULL,
+	/* deformMatrices_DM */ NULL,
+	/* deformVertsEM_DM */  NULL,
+	/* deformMatricesEM_DM*/NULL,
+	/* applyModifier_DM */  NULL,
+
 	/* deformVerts */       deformVerts,
 	/* deformMatrices */    NULL,
 	/* deformVertsEM */     deformVertsEM,
 	/* deformMatricesEM */  NULL,
 	/* applyModifier */     NULL,
-	/* applyModifierEM */   NULL,
+
 	/* initData */          initData,
 	/* requiredDataMask */  requiredDataMask,
 	/* freeData */          NULL,
 	/* isDisabled */        isDisabled,
-	/* updateDepgraph */    updateDepgraph,
 	/* updateDepsgraph */   updateDepsgraph,
 	/* dependsOnTime */     NULL,
 	/* dependsOnNormals */	NULL,

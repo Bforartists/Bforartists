@@ -43,9 +43,9 @@
 #include "BLI_string.h"
 #include "BLI_utildefines.h"
 
+#include "BKE_main.h"
 /* UNUSED */
 #include "BKE_text.h"  /* txt_to_buf */
-#include "BKE_main.h"
 
 #include "py_capi_utils.h"
 
@@ -114,16 +114,6 @@ struct Main *bpy_import_main_get(void)
 void bpy_import_main_set(struct Main *maggie)
 {
 	bpy_import_main = maggie;
-}
-
-void bpy_import_main_extra_add(struct Main *maggie)
-{
-	BLI_addhead(&bpy_import_main_list, maggie);
-}
-
-void bpy_import_main_extra_remove(struct Main *maggie)
-{
-	BLI_remlink_safe(&bpy_import_main_list, maggie);
 }
 
 /* returns a dummy filename for a textblock so we can tell what file a text block comes from */

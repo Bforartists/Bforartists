@@ -78,6 +78,9 @@ MINLINE void zero_v3_int(int r[3]);
 MINLINE void copy_v2_v2_int(int r[2], const int a[2]);
 MINLINE void copy_v3_v3_int(int r[3], const int a[3]);
 MINLINE void copy_v4_v4_int(int r[4], const int a[4]);
+/* int <-> float */
+MINLINE void copy_v2fl_v2i(float r[2], const int a[2]);
+MINLINE void round_v2i_v2fl(int r[2], const float a[2]);
 /* double -> float */
 MINLINE void copy_v2fl_v2db(float r[2], const double a[2]);
 MINLINE void copy_v3fl_v3db(float r[3], const double a[3]);
@@ -117,19 +120,21 @@ MINLINE void mul_v2_v2fl(float r[2], const float a[2], float f);
 MINLINE void mul_v3_fl(float r[3], float f);
 MINLINE void mul_v3_v3fl(float r[3], const float a[3], float f);
 MINLINE void mul_v2_v2(float r[2], const float a[2]);
+MINLINE void mul_v2_v2v2(float r[2], const float a[2], const float b[2]);
 MINLINE void mul_v3_v3(float r[3], const float a[3]);
 MINLINE void mul_v3_v3v3(float r[3], const float a[3], const float b[3]);
 MINLINE void mul_v4_fl(float r[4], float f);
+MINLINE void mul_v4_v4(float r[4], const float a[4]);
 MINLINE void mul_v4_v4fl(float r[3], const float a[3], float f);
 MINLINE void mul_v2_v2_cw(float r[2], const float mat[2], const float vec[2]);
 MINLINE void mul_v2_v2_ccw(float r[2], const float mat[2], const float vec[2]);
-MINLINE float mul_project_m4_v3_zfac(float mat[4][4], const float co[3]) ATTR_WARN_UNUSED_RESULT;
-MINLINE float dot_m3_v3_row_x(float M[3][3], const float a[3]) ATTR_WARN_UNUSED_RESULT;
-MINLINE float dot_m3_v3_row_y(float M[3][3], const float a[3]) ATTR_WARN_UNUSED_RESULT;
-MINLINE float dot_m3_v3_row_z(float M[3][3], const float a[3]) ATTR_WARN_UNUSED_RESULT;
-MINLINE float dot_m4_v3_row_x(float M[4][4], const float a[3]) ATTR_WARN_UNUSED_RESULT;
-MINLINE float dot_m4_v3_row_y(float M[4][4], const float a[3]) ATTR_WARN_UNUSED_RESULT;
-MINLINE float dot_m4_v3_row_z(float M[4][4], const float a[3]) ATTR_WARN_UNUSED_RESULT;
+MINLINE float mul_project_m4_v3_zfac(const float mat[4][4], const float co[3]) ATTR_WARN_UNUSED_RESULT;
+MINLINE float dot_m3_v3_row_x(const float M[3][3], const float a[3]) ATTR_WARN_UNUSED_RESULT;
+MINLINE float dot_m3_v3_row_y(const float M[3][3], const float a[3]) ATTR_WARN_UNUSED_RESULT;
+MINLINE float dot_m3_v3_row_z(const float M[3][3], const float a[3]) ATTR_WARN_UNUSED_RESULT;
+MINLINE float dot_m4_v3_row_x(const float M[4][4], const float a[3]) ATTR_WARN_UNUSED_RESULT;
+MINLINE float dot_m4_v3_row_y(const float M[4][4], const float a[3]) ATTR_WARN_UNUSED_RESULT;
+MINLINE float dot_m4_v3_row_z(const float M[4][4], const float a[3]) ATTR_WARN_UNUSED_RESULT;
 
 MINLINE void madd_v2_v2fl(float r[2], const float a[2], float f);
 MINLINE void madd_v3_v3fl(float r[3], const float a[3], float f);
@@ -333,6 +338,7 @@ void print_vn(const char *str, const float v[], const int n);
 MINLINE void normal_float_to_short_v2(short r[2], const float n[2]);
 MINLINE void normal_short_to_float_v3(float r[3], const short n[3]);
 MINLINE void normal_float_to_short_v3(short r[3], const float n[3]);
+MINLINE void normal_float_to_short_v4(short r[4], const float n[4]);
 
 void minmax_v3v3_v3(float min[3], float max[3], const float vec[3]);
 void minmax_v2v2_v2(float min[2], float max[2], const float vec[2]);

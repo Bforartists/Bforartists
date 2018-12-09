@@ -54,7 +54,9 @@
 #include "BKE_customdata.h"
 #include "BKE_data_transfer.h"
 #include "BKE_deform.h"  /* own include */
+#include "BKE_mesh.h"
 #include "BKE_mesh_mapping.h"
+#include "BKE_object.h"
 #include "BKE_object_deform.h"
 
 #include "data_transfer_intern.h"
@@ -72,6 +74,8 @@ bDeformGroup *BKE_defgroup_new(Object *ob, const char *name)
 
 	BLI_addtail(&ob->defbase, defgroup);
 	defgroup_unique_name(defgroup, ob);
+
+	BKE_object_batch_cache_dirty_tag(ob);
 
 	return defgroup;
 }
@@ -475,12 +479,12 @@ void defvert_flip_merged(MDeformVert *dvert, const int *flip_map, const int flip
 
 bDeformGroup *defgroup_find_name(Object *ob, const char *name)
 {
-	return BLI_findstring(&ob->defbase, name, offsetof(bDeformGroup, name));
+	return (name && name[0] != '\0') ? BLI_findstring(&ob->defbase, name, offsetof(bDeformGroup, name)) : NULL;
 }
 
 int defgroup_name_index(Object *ob, const char *name)
 {
-	return (name) ? BLI_findstringindex(&ob->defbase, name, offsetof(bDeformGroup, name)) : -1;
+	return (name && name[0] != '\0') ? BLI_findstringindex(&ob->defbase, name, offsetof(bDeformGroup, name)) : -1;
 }
 
 /**
@@ -1287,6 +1291,46 @@ bool data_transfer_layersmapping_vgroups(
 	}
 
 	return true;
+}
+
+/** \} */
+
+/* -------------------------------------------------------------------- */
+
+/** \name Various utils & helpers.
+ * \{ */
+
+void BKE_defvert_weight_to_rgb(float r_rgb[3], const float weight)
+{
+	const float blend = ((weight / 2.0f) + 0.5f);
+
+	if (weight <= 0.25f) {    /* blue->cyan */
+		r_rgb[0] = 0.0f;
+		r_rgb[1] = blend * weight * 4.0f;
+		r_rgb[2] = blend;
+	}
+	else if (weight <= 0.50f) {  /* cyan->green */
+		r_rgb[0] = 0.0f;
+		r_rgb[1] = blend;
+		r_rgb[2] = blend * (1.0f - ((weight - 0.25f) * 4.0f));
+	}
+	else if (weight <= 0.75f) {  /* green->yellow */
+		r_rgb[0] = blend * ((weight - 0.50f) * 4.0f);
+		r_rgb[1] = blend;
+		r_rgb[2] = 0.0f;
+	}
+	else if (weight <= 1.0f) {  /* yellow->red */
+		r_rgb[0] = blend;
+		r_rgb[1] = blend * (1.0f - ((weight - 0.75f) * 4.0f));
+		r_rgb[2] = 0.0f;
+	}
+	else {
+		/* exceptional value, unclamped or nan,
+		 * avoid uninitialized memory use */
+		r_rgb[0] = 1.0f;
+		r_rgb[1] = 0.0f;
+		r_rgb[2] = 1.0f;
+	}
 }
 
 /** \} */

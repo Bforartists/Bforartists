@@ -164,7 +164,6 @@ option_defaults_init(
 	_init_OPENCOLORIO
 	_init_SDL
 	_init_FFTW3
-	_init_GAMEENGINE
 	_init_OPENSUBDIV
 )
 
@@ -185,7 +184,6 @@ elseif(WIN32)
 	set(_init_JACK                           OFF)
 elseif(APPLE)
 	set(_init_JACK                           OFF)
-	set(_init_OPENSUBDIV                     OFF)
 endif()
 
 
@@ -216,7 +214,6 @@ if(APPLE)
 endif()
 
 option(WITH_BUILDINFO     "Include extra build details (only disable for development & faster builds)" ${_init_BUILDINFO})
-option(WITH_BUILDINFO     "Include extra build details (only disable for development & faster builds)" OFF)
 if(${CMAKE_VERSION} VERSION_LESS 2.8.8)
 	# add_library OBJECT arg unsupported
 	set(WITH_BUILDINFO OFF)
@@ -234,13 +231,6 @@ option(WITH_FFTW3         "Enable FFTW3 support (Used for smoke, ocean sim, and 
 option(WITH_BULLET        "Enable Bullet (Physics Engine)" ON)
 option(WITH_SYSTEM_BULLET "Use the systems bullet library (currently unsupported due to missing features in upstream!)" )
 mark_as_advanced(WITH_SYSTEM_BULLET)
-option(WITH_GAMEENGINE    "Enable Game Engine" ${_init_GAMEENGINE})
-if(APPLE)
-	set(WITH_GAMEENGINE_DECKLINK OFF)
-else()
-	option(WITH_GAMEENGINE_DECKLINK "Support BlackMagicDesign DeckLink cards in the Game Engine" ON)
-endif()
-option(WITH_PLAYER        "Build Player" OFF)
 option(WITH_OPENCOLORIO   "Enable OpenColorIO color management" ${_init_OPENCOLORIO})
 
 # Compositor
@@ -321,7 +311,6 @@ option(WITH_IMAGE_TIFF          "Enable LibTIFF Support" ON)
 option(WITH_IMAGE_DDS           "Enable DDS Image Support" ON)
 option(WITH_IMAGE_CINEON        "Enable CINEON and DPX Image Support" ON)
 option(WITH_IMAGE_HDR           "Enable HDR Image Support" ON)
-option(WITH_IMAGE_FRAMESERVER   "Enable image FrameServer Support for rendering" ON)
 
 # Audio/Video format support
 option(WITH_CODEC_AVI           "Enable Bforartists own AVI file support (raw/jpeg)" ON)
@@ -378,18 +367,22 @@ if(UNIX AND NOT APPLE)
 	option(WITH_INSTALL_PORTABLE "Install redistributeable runtime, otherwise install into CMAKE_INSTALL_PREFIX" ON)
 	option(WITH_STATIC_LIBS "Try to link with static libraries, as much as possible, to make bforartists more portable across distributions" OFF)
 	if(WITH_STATIC_LIBS)
-		option(Boost_USE_STATIC_LIBS "Boost use static libraries." ON)
 		option(WITH_BOOST_ICU "Boost uses ICU library (required for linking with static Boost built with libicu)." OFF)
-		mark_as_advanced(Boost_USE_STATIC_LIBS)
 		mark_as_advanced(WITH_BOOST_ICU)
 	endif()
 endif()
 
 option(WITH_PYTHON_INSTALL       "Copy system python into the bforartists install folder" ON)
-if(WITH_PYTHON_INSTALL)
-	option(WITH_PYTHON_INSTALL_NUMPY "Copy system numpy into the bforartists install folder"  ON)
+if(WIN32 OR APPLE)
+	# Windows and macOS have this bundled with Python libraries.
+elseif(WITH_PYTHON_INSTALL OR (WITH_AUDASPACE AND NOT WITH_SYSTEM_AUDASPACE))
 	set(PYTHON_NUMPY_PATH            "" CACHE PATH "Path to python site-packages or dist-packages containing 'numpy' module")
 	mark_as_advanced(PYTHON_NUMPY_PATH)
+	set(PYTHON_NUMPY_INCLUDE_DIRS ${PYTHON_NUMPY_PATH}/numpy/core/include CACHE PATH "Path to the include directory of the numpy module")
+	mark_as_advanced(PYTHON_NUMPY_INCLUDE_DIRS)
+endif()
+if(WITH_PYTHON_INSTALL)
+	option(WITH_PYTHON_INSTALL_NUMPY "Copy system numpy into the bforartists install folder"  ON)
 
 	if(UNIX AND NOT APPLE)
 		option(WITH_PYTHON_INSTALL_REQUESTS "Copy system requests into the bforartists install folder" ON)
@@ -411,7 +404,7 @@ option(WITH_CYCLES_CUDA_BINARIES	"Build Cycles CUDA binaries" OFF)
 option(WITH_CYCLES_CUBIN_COMPILER	"Build cubins with nvrtc based compiler instead of nvcc" OFF)
 option(WITH_CYCLES_CUDA_BUILD_SERIAL "Build cubins one after another (useful on machines with limited RAM)" OFF)
 mark_as_advanced(WITH_CYCLES_CUDA_BUILD_SERIAL)
-set(CYCLES_CUDA_BINARIES_ARCH sm_30 sm_35 sm_37 sm_50 sm_52 sm_60 sm_61 CACHE STRING "CUDA architectures to build binaries for")
+set(CYCLES_CUDA_BINARIES_ARCH sm_30 sm_35 sm_37 sm_50 sm_52 sm_60 sm_61 sm_70 sm_72 sm_75 CACHE STRING "CUDA architectures to build binaries for")
 mark_as_advanced(CYCLES_CUDA_BINARIES_ARCH)
 unset(PLATFORM_DEFAULT)
 option(WITH_CYCLES_LOGGING	"Build Cycles with logging support" ON)
@@ -472,27 +465,17 @@ endif()
 
 # OpenGL
 
-option(WITH_GLEW_MX             "Support multiple GLEW contexts (experimental)"                                                                     OFF )
+option(WITH_OPENGL              "When off limits visibility of the opengl headers to just bf_gpu and gawain (temporary option for development purposes)" ON)
 option(WITH_GLEW_ES             "Switches to experimental copy of GLEW that has support for OpenGL ES. (temporary option for development purposes)" OFF)
 option(WITH_GL_EGL              "Use the EGL OpenGL system library instead of the platform specific OpenGL system library (CGL, glX, or WGL)"       OFF)
-option(WITH_GL_PROFILE_COMPAT   "Support using the OpenGL 'compatibility' profile. (deprecated)"                                                    ON )
-option(WITH_GL_PROFILE_CORE     "Support using the OpenGL 3.2+ 'core' profile."                                                                     OFF)
 option(WITH_GL_PROFILE_ES20     "Support using OpenGL ES 2.0. (thru either EGL or the AGL/WGL/XGL 'es20' profile)"                                  OFF)
 
 mark_as_advanced(
-	WITH_GLEW_MX
+	WITH_OPENGL
 	WITH_GLEW_ES
 	WITH_GL_EGL
-	WITH_GL_PROFILE_COMPAT
-	WITH_GL_PROFILE_CORE
 	WITH_GL_PROFILE_ES20
 )
-
-if(WITH_GL_PROFILE_COMPAT)
-	set(WITH_GLU ON)
-else()
-	set(WITH_GLU OFF)
-endif()
 
 if(WIN32)
 	option(WITH_GL_ANGLE "Link with the ANGLE library, an OpenGL ES 2.0 implementation based on Direct3D, instead of the system OpenGL library." OFF)
@@ -616,15 +599,11 @@ endif()
 #-----------------------------------------------------------------------------
 # Check for conflicting/unsupported configurations
 
-if(NOT WITH_BLENDER AND NOT WITH_PLAYER AND NOT WITH_CYCLES_STANDALONE)
+if(NOT WITH_BLENDER AND NOT WITH_CYCLES_STANDALONE)
 	message(FATAL_ERROR
-		"At least one of WITH_BLENDER or WITH_PLAYER or "
-		"WITH_CYCLES_STANDALONE must be enabled, nothing to do!"
+		"At least one of WITH_BLENDER or WITH_CYCLES_STANDALONE "
+		"must be enabled, nothing to do!"
 	)
-endif()
-
-if(NOT WITH_GAMEENGINE AND WITH_PLAYER)
-	message(FATAL_ERROR "WITH_PLAYER requires WITH_GAMEENGINE")
 endif()
 
 if(NOT WITH_AUDASPACE)
@@ -636,9 +615,6 @@ if(NOT WITH_AUDASPACE)
 		message(WARNING "WITH_JACK requires WITH_AUDASPACE which is disabled")
 		set(WITH_JACK OFF)
 	endif()
-	if(WITH_GAMEENGINE)
-		message(FATAL_ERROR "WITH_GAMEENGINE requires WITH_AUDASPACE")
-	endif()
 endif()
 
 if(NOT WITH_SDL AND WITH_GHOST_SDL)
@@ -646,10 +622,6 @@ if(NOT WITH_SDL AND WITH_GHOST_SDL)
 endif()
 
 # python module, needs some different options
-if(WITH_PYTHON_MODULE AND WITH_PLAYER)
-	message(FATAL_ERROR "WITH_PYTHON_MODULE requires WITH_PLAYER to be OFF")
-endif()
-
 if(WITH_PYTHON_MODULE AND WITH_PYTHON_INSTALL)
 	message(FATAL_ERROR "WITH_PYTHON_MODULE requires WITH_PYTHON_INSTALL to be OFF")
 endif()
@@ -677,15 +649,10 @@ if(NOT WITH_BOOST)
 	endmacro()
 
 	set_and_warn(WITH_CYCLES         OFF)
-	set_and_warn(WITH_AUDASPACE      OFF)
 	set_and_warn(WITH_INTERNATIONAL  OFF)
 	set_and_warn(WITH_OPENVDB        OFF)
 	set_and_warn(WITH_OPENCOLORIO    OFF)
-
-	set_and_warn(WITH_OPENAL         OFF)  # depends on AUDASPACE
-	set_and_warn(WITH_GAMEENGINE     OFF)  # depends on AUDASPACE
-	set_and_warn(WITH_PLAYER         OFF)  # depends on GAMEENGINE
-elseif(WITH_CYCLES OR WITH_OPENIMAGEIO OR WITH_AUDASPACE OR WITH_INTERNATIONAL OR
+elseif(WITH_CYCLES OR WITH_OPENIMAGEIO OR WITH_INTERNATIONAL OR
        WITH_OPENVDB OR WITH_OPENCOLORIO)
 	# Keep enabled
 else()
@@ -748,30 +715,9 @@ if(WITH_BUILDINFO)
 endif()
 
 if(WITH_AUDASPACE)
-	if(WITH_SYSTEM_AUDASPACE)
-		set(AUDASPACE_DEFINITIONS
-			-DWITH_AUDASPACE
-			-DWITH_SYSTEM_AUDASPACE
-			"-DAUD_DEVICE_H=<AUD_Device.h>"
-			"-DAUD_SPECIAL_H=<AUD_Special.h>"
-			"-DAUD_SOUND_H=<AUD_Sound.h>"
-			"-DAUD_HANDLE_H=<AUD_Handle.h>"
-			"-DAUD_SEQUENCE_H=<AUD_Sequence.h>"
-			"-DAUD_TYPES_H=<AUD_Types.h>"
-			"-DAUD_PYTHON_H=<python/PyAPI.h>"
-		)
-	else()
-		set(AUDASPACE_C_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/intern/audaspace/intern")
-		set(AUDASPACE_PY_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/intern/audaspace/intern")
-		set(AUDASPACE_DEFINITIONS
-			-DWITH_AUDASPACE
-			"-DAUD_DEVICE_H=<AUD_C-API.h>"
-			"-DAUD_SPECIAL_H=<AUD_C-API.h>"
-			"-DAUD_SOUND_H=<AUD_C-API.h>"
-			"-DAUD_HANDLE_H=<AUD_C-API.h>"
-			"-DAUD_SEQUENCE_H=<AUD_C-API.h>"
-			"-DAUD_TYPES_H=<AUD_Space.h>"
-		)
+	if(NOT WITH_SYSTEM_AUDASPACE)
+		set(AUDASPACE_C_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/extern/audaspace/bindings/C" "${CMAKE_BINARY_DIR}/extern/audaspace")
+		set(AUDASPACE_PY_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/extern/audaspace/bindings")
 	endif()
 endif()
 
@@ -1035,19 +981,15 @@ endif()
 find_package(OpenGL)
 blender_include_dirs_sys("${OPENGL_INCLUDE_DIR}")
 
-if(WITH_GLU)
-	list(APPEND BLENDER_GL_LIBRARIES "${OPENGL_glu_LIBRARY}")
-	list(APPEND GL_DEFINITIONS -DWITH_GLU)
+if(WITH_OPENGL)
+	add_definitions(-DWITH_OPENGL)
 endif()
 
 if(WITH_SYSTEM_GLES)
 	find_package_wrapper(OpenGLES)
 endif()
 
-if(WITH_GL_PROFILE_COMPAT OR WITH_GL_PROFILE_CORE)
-	list(APPEND BLENDER_GL_LIBRARIES "${OPENGL_gl_LIBRARY}")
-
-elseif(WITH_GL_PROFILE_ES20)
+if(WITH_GL_PROFILE_ES20)
 	if(WITH_SYSTEM_GLES)
 		if(NOT OPENGLES_LIBRARY)
 			message(FATAL_ERROR
@@ -1107,6 +1049,9 @@ elseif(WITH_GL_PROFILE_ES20)
 
 	endif()
 
+else()
+	list(APPEND BLENDER_GL_LIBRARIES "${OPENGL_gl_LIBRARY}")
+
 endif()
 
 if(WITH_GL_EGL)
@@ -1154,16 +1099,10 @@ if(WITH_GL_EGL)
 
 endif()
 
-if(WITH_GL_PROFILE_COMPAT)
-	list(APPEND GL_DEFINITIONS -DWITH_GL_PROFILE_COMPAT)
-endif()
-
-if(WITH_GL_PROFILE_CORE)
-	list(APPEND GL_DEFINITIONS -DWITH_GL_PROFILE_CORE)
-endif()
-
 if(WITH_GL_PROFILE_ES20)
 	list(APPEND GL_DEFINITIONS -DWITH_GL_PROFILE_ES20)
+else()
+	list(APPEND GL_DEFINITIONS -DWITH_GL_PROFILE_CORE)
 endif()
 
 if(WITH_GL_EGL)
@@ -1200,10 +1139,6 @@ endif()
 #-----------------------------------------------------------------------------
 # Configure GLEW
 
-if(WITH_GLEW_MX)
-	list(APPEND GL_DEFINITIONS -DWITH_GLEW_MX)
-endif()
-
 if(WITH_SYSTEM_GLEW)
 	find_package(GLEW)
 
@@ -1213,11 +1148,7 @@ if(WITH_SYSTEM_GLEW)
 		message(FATAL_ERROR "GLEW is required to build bforartists. Install it or disable WITH_SYSTEM_GLEW.")
 	endif()
 
-	if(WITH_GLEW_MX)
-		set(BLENDER_GLEW_LIBRARIES ${GLEW_MX_LIBRARY})
-	else()
-		set(BLENDER_GLEW_LIBRARIES ${GLEW_LIBRARY})
-	endif()
+	set(BLENDER_GLEW_LIBRARIES ${GLEW_LIBRARY})
 else()
 	if(WITH_GLEW_ES)
 		set(GLEW_INCLUDE_PATH "${CMAKE_SOURCE_DIR}/extern/glew-es/include")
@@ -1225,12 +1156,11 @@ else()
 		list(APPEND GL_DEFINITIONS -DGLEW_STATIC -DWITH_GLEW_ES)
 
 		# These definitions remove APIs from glew.h, making GLEW smaller, and catching unguarded API usage
-		if(NOT WITH_GL_PROFILE_ES20)
+		if(WITH_GL_PROFILE_ES20)
+			list(APPEND GL_DEFINITIONS -DGLEW_ES_ONLY)
+		else()
 			# No ES functions are needed
 			list(APPEND GL_DEFINITIONS -DGLEW_NO_ES)
-		elseif(NOT (WITH_GL_PROFILE_CORE OR WITH_GL_PROFILE_COMPAT))
-			# ES is enabled, but the other functions are all disabled
-			list(APPEND GL_DEFINITIONS -DGLEW_ES_ONLY)
 		endif()
 
 		if(WITH_GL_PROFILE_ES20)
@@ -1267,9 +1197,7 @@ else()
 
 endif()
 
-if(NOT WITH_GLU)
-	list(APPEND GL_DEFINITIONS -DGLEW_NO_GLU)
-endif()
+list(APPEND GL_DEFINITIONS -DGLEW_NO_GLU)
 
 #-----------------------------------------------------------------------------
 # Configure Bullet
@@ -1510,6 +1438,7 @@ elseif(CMAKE_C_COMPILER_ID MATCHES "MSVC")
 		# warning level:
 		"/W3"
 		"/w34062"  # switch statement contains 'default' but no 'case' labels
+		"/w34189"  # local variable is initialized but not referenced
 		# disable:
 		"/wd4018"  # signed/unsigned mismatch
 		"/wd4146"  # unary minus operator applied to unsigned type, result still unsigned
@@ -1554,9 +1483,14 @@ if(WITH_PYTHON)
 	endif()
 
 	if(WIN32 OR APPLE)
-		# pass, we have this in an archive to extract
-	elseif(WITH_PYTHON_INSTALL AND WITH_PYTHON_INSTALL_NUMPY)
-		find_python_package(numpy)
+		# Windows and macOS have this bundled with Python libraries.
+	elseif((WITH_PYTHON_INSTALL AND WITH_PYTHON_INSTALL_NUMPY) OR (WITH_AUDASPACE AND NOT WITH_SYSTEM_AUDASPACE))
+		if(("${PYTHON_NUMPY_PATH}" STREQUAL "") OR (${PYTHON_NUMPY_PATH} MATCHES NOTFOUND))
+			find_python_package(numpy)
+			unset(PYTHON_NUMPY_INCLUDE_DIRS CACHE)
+			set(PYTHON_NUMPY_INCLUDE_DIRS ${PYTHON_NUMPY_PATH}/numpy/core/include CACHE PATH "Path to the include directory of the numpy module")
+			mark_as_advanced(PYTHON_NUMPY_INCLUDE_DIRS)
+		endif()
 	endif()
 
 	if(WIN32 OR APPLE)
@@ -1586,12 +1520,8 @@ if(
 	(CMAKE_C_COMPILER_ID MATCHES "Clang" AND (NOT MSVC)) OR
 	(CMAKE_C_COMPILER_ID MATCHES "Intel")
 )
-	# Use C99 + GNU extensions, works with GCC, Clang, ICC
-	if(WITH_C11)
-		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu11")
-	else()
-		set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99")
-	endif()
+	# Use C11 + GNU extensions, works with GCC, Clang, ICC
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu11")
 endif()
 
 # Include warnings first, so its possible to disable them with user defined flags
@@ -1639,7 +1569,7 @@ if(WITH_GTESTS)
 	include(GTestTesting)
 endif()
 
-if(WITH_BLENDER OR WITH_PLAYER)
+if(WITH_BLENDER)
 	add_subdirectory(intern)
 	add_subdirectory(extern)
 
@@ -1665,13 +1595,6 @@ endif()
 
 
 #-----------------------------------------------------------------------------
-# Blender Player
-if(WITH_PLAYER)
-	add_subdirectory(source/blenderplayer)
-endif()
-
-
-#-----------------------------------------------------------------------------
 # Testing
 add_subdirectory(tests)
 
@@ -1684,9 +1607,6 @@ include(build_files/cmake/packaging.cmake)
 # Use dynamic loading for OpenMP
 if(WITH_BLENDER)
 	openmp_delayload(bforartists)
-endif()
-if(WITH_PLAYER)
-	openmp_delayload(blenderplayer)
 endif()
 
 #-----------------------------------------------------------------------------
@@ -1721,8 +1641,6 @@ if(FIRST_RUN)
 	message(STATUS "C++ Compiler: \"${CMAKE_CXX_COMPILER_ID}\"")
 
 	info_cfg_text("Build Options:")
-	info_cfg_option(WITH_GAMEENGINE)
-	info_cfg_option(WITH_PLAYER)
 	info_cfg_option(WITH_BULLET)
 	info_cfg_option(WITH_IK_SOLVER)
 	info_cfg_option(WITH_IK_ITASC)
@@ -1790,10 +1708,7 @@ if(FIRST_RUN)
 
 	info_cfg_text("OpenGL:")
 	info_cfg_option(WITH_GLEW_ES)
-	info_cfg_option(WITH_GLU)
 	info_cfg_option(WITH_GL_EGL)
-	info_cfg_option(WITH_GL_PROFILE_COMPAT)
-	info_cfg_option(WITH_GL_PROFILE_CORE)
 	info_cfg_option(WITH_GL_PROFILE_ES20)
 	if(WIN32)
 		info_cfg_option(WITH_GL_ANGLE)

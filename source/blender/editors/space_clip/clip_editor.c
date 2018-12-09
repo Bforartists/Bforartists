@@ -50,13 +50,13 @@
 #include "BLI_rect.h"
 #include "BLI_task.h"
 
+#include "BKE_context.h"
 #include "BKE_global.h"
+#include "BKE_library.h"
 #include "BKE_main.h"
 #include "BKE_mask.h"
 #include "BKE_movieclip.h"
-#include "BKE_context.h"
 #include "BKE_tracking.h"
-#include "BKE_library.h"
 
 
 #include "IMB_colormanagement.h"
@@ -305,15 +305,12 @@ bool ED_space_clip_color_sample(SpaceClip *sc, ARegion *ar, int mval[2], float r
 
 void ED_clip_update_frame(const Main *mainp, int cfra)
 {
-	wmWindowManager *wm;
-	wmWindow *win;
-
 	/* image window, compo node users */
-	for (wm = mainp->wm.first; wm; wm = wm->id.next) { /* only 1 wm */
-		for (win = wm->windows.first; win; win = win->next) {
-			ScrArea *sa;
+	for (wmWindowManager *wm = mainp->wm.first; wm; wm = wm->id.next) { /* only 1 wm */
+		for (wmWindow *win = wm->windows.first; win; win = win->next) {
+			bScreen *screen = WM_window_get_active_screen(win);
 
-			for (sa = win->screen->areabase.first; sa; sa = sa->next) {
+			for (ScrArea *sa = screen->areabase.first; sa; sa = sa->next) {
 				if (sa->spacetype == SPACE_CLIP) {
 					SpaceClip *sc = sa->spacedata.first;
 

@@ -33,6 +33,8 @@
 #include "BLI_utildefines.h"
 #include "BLI_path_util.h"
 
+#include "DEG_depsgraph.h"
+
 #include "BKE_scene.h"
 #include "BKE_image.h"
 
@@ -54,7 +56,7 @@ const EnumPropertyItem rna_enum_render_pass_type_items[] = {
 	{SCE_PASS_DIFFUSE, "DIFFUSE", 0, "Diffuse", ""},
 	{SCE_PASS_SPEC, "SPECULAR", 0, "Specular", ""},
 	{SCE_PASS_SHADOW, "SHADOW", 0, "Shadow", ""},
-	{SCE_PASS_AO, "AO", 0, "AO", ""},
+	{SCE_PASS_AO, "AO", 0, "Ambient Occlusion", ""},
 	{SCE_PASS_REFLECT, "REFLECTION", 0, "Reflection", ""},
 	{SCE_PASS_NORMAL, "NORMAL", 0, "Normal", ""},
 	{SCE_PASS_VECTOR, "VECTOR", 0, "Vector", ""},
@@ -85,7 +87,7 @@ const EnumPropertyItem rna_enum_render_pass_type_items[] = {
 
 const EnumPropertyItem rna_enum_bake_pass_type_items[] = {
 	{SCE_PASS_COMBINED, "COMBINED", 0, "Combined", ""},
-	{SCE_PASS_AO, "AO", 0, "AO", ""},
+	{SCE_PASS_AO, "AO", 0, "Ambient Occlusion", ""},
 	{SCE_PASS_SHADOW, "SHADOW", 0, "Shadow", ""},
 	{SCE_PASS_NORMAL, "NORMAL", 0, "Normal", ""},
 	{SCE_PASS_UV, "UV", 0, "UV", ""},
@@ -110,6 +112,8 @@ const EnumPropertyItem rna_enum_bake_pass_type_items[] = {
 
 #include "IMB_colormanagement.h"
 #include "GPU_extensions.h"
+
+#include "DEG_depsgraph_query.h"
 
 /* RenderEngine Callbacks */
 
@@ -146,7 +150,7 @@ static void engine_unbind_display_space_shader(RenderEngine *UNUSED(engine))
 	IMB_colormanagement_finish_glsl_draw();
 }
 
-static void engine_update(RenderEngine *engine, Main *bmain, Scene *scene)
+static void engine_update(RenderEngine *engine, Main *bmain, Depsgraph *depsgraph)
 {
 	extern FunctionRNA rna_RenderEngine_update_func;
 	PointerRNA ptr;
@@ -158,13 +162,13 @@ static void engine_update(RenderEngine *engine, Main *bmain, Scene *scene)
 
 	RNA_parameter_list_create(&list, &ptr, func);
 	RNA_parameter_set_lookup(&list, "data", &bmain);
-	RNA_parameter_set_lookup(&list, "scene", &scene);
+	RNA_parameter_set_lookup(&list, "depsgraph", &depsgraph);
 	engine->type->ext.call(NULL, &ptr, func, &list);
 
 	RNA_parameter_list_free(&list);
 }
 
-static void engine_render(RenderEngine *engine, struct Scene *scene)
+static void engine_render(RenderEngine *engine, Depsgraph *depsgraph)
 {
 	extern FunctionRNA rna_RenderEngine_render_func;
 	PointerRNA ptr;
@@ -175,13 +179,13 @@ static void engine_render(RenderEngine *engine, struct Scene *scene)
 	func = &rna_RenderEngine_render_func;
 
 	RNA_parameter_list_create(&list, &ptr, func);
-	RNA_parameter_set_lookup(&list, "scene", &scene);
+	RNA_parameter_set_lookup(&list, "depsgraph", &depsgraph);
 	engine->type->ext.call(NULL, &ptr, func, &list);
 
 	RNA_parameter_list_free(&list);
 }
 
-static void engine_bake(RenderEngine *engine, struct Scene *scene,
+static void engine_bake(RenderEngine *engine, struct Depsgraph *depsgraph,
                         struct Object *object, const int pass_type, const int pass_filter,
                         const int object_id, const struct BakePixel *pixel_array,
                         const int num_pixels, const int depth, void *result)
@@ -195,7 +199,7 @@ static void engine_bake(RenderEngine *engine, struct Scene *scene,
 	func = &rna_RenderEngine_bake_func;
 
 	RNA_parameter_list_create(&list, &ptr, func);
-	RNA_parameter_set_lookup(&list, "scene", &scene);
+	RNA_parameter_set_lookup(&list, "depsgraph", &depsgraph);
 	RNA_parameter_set_lookup(&list, "object", &object);
 	RNA_parameter_set_lookup(&list, "pass_type", &pass_type);
 	RNA_parameter_set_lookup(&list, "pass_filter", &pass_filter);
@@ -261,7 +265,7 @@ static void engine_update_script_node(RenderEngine *engine, struct bNodeTree *nt
 	RNA_parameter_list_free(&list);
 }
 
-static void engine_update_render_passes(RenderEngine *engine, struct Scene *scene, struct SceneRenderLayer *srl)
+static void engine_update_render_passes(RenderEngine *engine, struct Scene *scene, struct ViewLayer *view_layer)
 {
 	extern FunctionRNA rna_RenderEngine_update_render_passes_func;
 	PointerRNA ptr;
@@ -273,7 +277,7 @@ static void engine_update_render_passes(RenderEngine *engine, struct Scene *scen
 
 	RNA_parameter_list_create(&list, &ptr, func);
 	RNA_parameter_set_lookup(&list, "scene", &scene);
-	RNA_parameter_set_lookup(&list, "renderlayer", &srl);
+	RNA_parameter_set_lookup(&list, "renderlayer", &view_layer);
 	engine->type->ext.call(NULL, &ptr, func, &list);
 
 	RNA_parameter_list_free(&list);
@@ -303,7 +307,7 @@ static StructRNA *rna_RenderEngine_register(
 	RenderEngineType *et, dummyet = {NULL};
 	RenderEngine dummyengine = {NULL};
 	PointerRNA dummyptr;
-	int have_function[7];
+	int have_function[8];
 
 	/* setup dummy engine & engine type to store static properties in */
 	dummyengine.type = &dummyet;
@@ -347,7 +351,7 @@ static StructRNA *rna_RenderEngine_register(
 	et->update_script_node = (have_function[5]) ? engine_update_script_node : NULL;
 	et->update_render_passes = (have_function[6]) ? engine_update_render_passes : NULL;
 
-	BLI_addtail(&R_engines, et);
+	RE_engines_register(et);
 
 	return et->ext.srna;
 }
@@ -381,10 +385,11 @@ static PointerRNA rna_RenderEngine_render_get(PointerRNA *ptr)
 static PointerRNA rna_RenderEngine_camera_override_get(PointerRNA *ptr)
 {
 	RenderEngine *engine = (RenderEngine *)ptr->data;
-
+	/* TODO(sergey): Shouldn't engine point to an evaluated datablocks already? */
 	if (engine->re) {
 		Object *cam = RE_GetCamera(engine->re);
-		return rna_pointer_inherit_refine(ptr, &RNA_Object, cam);
+		Object *cam_eval = DEG_get_evaluated_object(engine->depsgraph, cam);
+		return rna_pointer_inherit_refine(ptr, &RNA_Object, cam_eval);
 	}
 	else {
 		return rna_pointer_inherit_refine(ptr, &RNA_Object, engine->camera_override);
@@ -482,17 +487,18 @@ static void rna_def_render_engine(BlenderRNA *brna)
 	RNA_def_function_ui_description(func, "Export scene data for render");
 	RNA_def_function_flag(func, FUNC_REGISTER_OPTIONAL | FUNC_ALLOW_WRITE);
 	RNA_def_pointer(func, "data", "BlendData", "", "");
-	RNA_def_pointer(func, "scene", "Scene", "", "");
+	RNA_def_pointer(func, "depsgraph", "Depsgraph", "", "");
 
 	func = RNA_def_function(srna, "render", NULL);
 	RNA_def_function_ui_description(func, "Render scene into an image");
 	RNA_def_function_flag(func, FUNC_REGISTER_OPTIONAL | FUNC_ALLOW_WRITE);
-	RNA_def_pointer(func, "scene", "Scene", "", "");
+	parm = RNA_def_pointer(func, "depsgraph", "Depsgraph", "", "");
+	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
 
 	func = RNA_def_function(srna, "bake", NULL);
 	RNA_def_function_ui_description(func, "Bake passes");
 	RNA_def_function_flag(func, FUNC_REGISTER_OPTIONAL | FUNC_ALLOW_WRITE);
-	parm = RNA_def_pointer(func, "scene", "Scene", "", "");
+	parm = RNA_def_pointer(func, "depsgraph", "Depsgraph", "", "");
 	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
 	parm = RNA_def_pointer(func, "object", "Object", "", "");
 	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
@@ -530,6 +536,12 @@ static void rna_def_render_engine(BlenderRNA *brna)
 	parm = RNA_def_pointer(func, "node", "Node", "", "");
 	RNA_def_parameter_flags(parm, 0, PARM_RNAPTR);
 
+	func = RNA_def_function(srna, "update_render_passes", NULL);
+	RNA_def_function_ui_description(func, "Update the render passes that will be generated");
+	RNA_def_function_flag(func, FUNC_REGISTER_OPTIONAL | FUNC_ALLOW_WRITE);
+	parm = RNA_def_pointer(func, "scene", "Scene", "", "");
+	parm = RNA_def_pointer(func, "renderlayer", "ViewLayer", "", "");
+
 	/* tag for redraw */
 	func = RNA_def_function(srna, "tag_redraw", "engine_tag_redraw");
 	RNA_def_function_ui_description(func, "Request redraw for viewport rendering");
@@ -537,12 +549,6 @@ static void rna_def_render_engine(BlenderRNA *brna)
 	/* tag for update */
 	func = RNA_def_function(srna, "tag_update", "engine_tag_update");
 	RNA_def_function_ui_description(func, "Request update call for viewport rendering");
-
-	func = RNA_def_function(srna, "update_render_passes", NULL);
-	RNA_def_function_ui_description(func, "Update the render passes that will be generated");
-	RNA_def_function_flag(func, FUNC_REGISTER_OPTIONAL | FUNC_ALLOW_WRITE);
-	parm = RNA_def_pointer(func, "scene", "Scene", "", "");
-	parm = RNA_def_pointer(func, "renderlayer", "SceneRenderLayer", "", "");
 
 	func = RNA_def_function(srna, "begin_result", "RE_engine_begin_result");
 	RNA_def_function_ui_description(func, "Create render result to write linear floating point render layers and passes");
@@ -679,6 +685,9 @@ static void rna_def_render_engine(BlenderRNA *brna)
 	parm = RNA_def_int(func, "pixel_size", 0, 1, 8, "Pixel Size", "", 1, 8);
 	RNA_def_function_return(func, parm);
 
+	RNA_def_function(srna, "free_blender_memory", "RE_engine_free_blender_memory");
+	RNA_def_function_ui_description(func, "Free Blender side memory of render engine");
+
 	RNA_define_verify_sdna(0);
 
 	prop = RNA_def_property(srna, "is_animation", PROP_BOOLEAN, PROP_NONE);
@@ -719,17 +728,17 @@ static void rna_def_render_engine(BlenderRNA *brna)
 
 	func = RNA_def_function(srna, "register_pass", "RE_engine_register_pass");
 	RNA_def_function_ui_description(func, "Register a render pass that will be part of the render with the current settings");
-	prop = RNA_def_pointer(func, "scene", "Scene", "", "");
+	parm = RNA_def_pointer(func, "scene", "Scene", "", "");
 	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
-	prop = RNA_def_pointer(func, "srl", "SceneRenderLayer", "", "");
+	parm = RNA_def_pointer(func, "view_layer", "ViewLayer", "", "");
 	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
-	prop = RNA_def_string(func, "name", NULL, MAX_NAME, "Name", "");
+	parm = RNA_def_string(func, "name", NULL, MAX_NAME, "Name", "");
 	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
-	prop = RNA_def_int(func, "channels", 1, 1, 8, "Channels", "", 1, 4);
+	parm = RNA_def_int(func, "channels", 1, 1, 8, "Channels", "", 1, 4);
 	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
-	prop = RNA_def_string(func, "chanid", NULL, 8, "Channel IDs", "");
+	parm = RNA_def_string(func, "chanid", NULL, 8, "Channel IDs", "");
 	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
-	prop = RNA_def_enum(func, "type", render_pass_type_items, SOCK_FLOAT, "Type", "");
+	parm = RNA_def_enum(func, "type", render_pass_type_items, SOCK_FLOAT, "Type", "");
 	RNA_def_parameter_flags(parm, 0, PARM_REQUIRED);
 
 	/* registration */
@@ -902,7 +911,7 @@ static void rna_def_render_layer(BlenderRNA *brna)
 
 	RNA_define_verify_sdna(0);
 
-	rna_def_render_layer_common(srna, 0);
+	rna_def_view_layer_common(srna, 0);
 
 	prop = RNA_def_property(srna, "passes", PROP_COLLECTION, PROP_NONE);
 	RNA_def_property_struct_type(prop, "RenderPass");

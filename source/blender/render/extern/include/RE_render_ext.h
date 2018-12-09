@@ -37,10 +37,12 @@
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 /* called by meshtools */
-struct DerivedMesh;
+struct Depsgraph;
 struct ImagePool;
 struct MTex;
 struct Scene;
+struct ViewLayer;
+struct Render;
 
 /* render_texture.c */
 /* used by particle.c, effect.c, editmesh_modes.c and brush.c, returns 1 if rgb, 0 otherwise */
@@ -53,12 +55,6 @@ float texture_value_blend(float tex, float out, float fact, float facg, int blen
 void RE_texture_rng_init(void);
 void RE_texture_rng_exit(void);
 
-struct Material *RE_sample_material_init(struct Material *orig_mat, struct Scene *scene);
-void RE_sample_material_free(struct Material *mat);
-void RE_sample_material_color(
-        struct Material *mat, float color[3], float *alpha, const float volume_co[3], const float surface_co[3],
-        int tri_index, struct DerivedMesh *orcoDm, struct Object *ob);
-
 /* imagetexture.c */
 void ibuf_sample(struct ImBuf *ibuf, float fx, float fy, float dx, float dy, float result[4]);
 
@@ -66,23 +62,22 @@ void ibuf_sample(struct ImBuf *ibuf, float fx, float fy, float dx, float dy, flo
 struct PointDensity;
 
 void RE_point_density_cache(
-        struct Scene *scene,
-        struct PointDensity *pd,
-        const bool use_render_params);
+        struct Depsgraph *depsgraph,
+        struct PointDensity *pd);
 
 void RE_point_density_minmax(
-        struct Scene *scene,
+        struct Depsgraph *depsgraph,
         struct PointDensity *pd,
-        const bool use_render_params,
         float r_min[3], float r_max[3]);
 
 void RE_point_density_sample(
-        struct Scene *scene,
+        struct Depsgraph *depsgraph,
         struct PointDensity *pd,
         const int resolution,
-        const bool use_render_params,
         float *values);
 
 void RE_point_density_free(struct PointDensity *pd);
+
+void RE_point_density_fix_linking(void);
 
 #endif /* __RE_RENDER_EXT_H__ */

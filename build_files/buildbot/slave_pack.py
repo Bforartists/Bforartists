@@ -126,14 +126,14 @@ if builder.find('cmake') != -1:
 
     elif builder.startswith('linux_'):
         bforartists = os.path.join(install_dir, 'bforartists')
-        blenderplayer = os.path.join(install_dir, 'blenderplayer')
 
         buildinfo_h = os.path.join(build_dir, "source", "creator", "buildinfo.h")
         blender_h = os.path.join(blender_dir, "source", "blender", "blenkernel", "BKE_blender_version.h")
 
-        # Get version information
+        # Get version information Bforartists
         bforartists_version = int(parse_header_file(blender_h, 'BFORARTISTS_VERSION'))
         bforartists_version = "%d.%d" % (bforartists_version // 100, bforartists_version % 100)
+	# Get version information Blender
         blender_version = int(parse_header_file(blender_h, 'BLENDER_VERSION'))
         blender_version = "%d.%d" % (blender_version // 100, blender_version % 100)
         blender_hash = parse_header_file(buildinfo_h, 'BUILD_HASH')[1:-1]
@@ -151,7 +151,7 @@ if builder.find('cmake') != -1:
         # Strip all unused symbols from the binaries
         print("Stripping binaries...")
         chroot_prefix = ['schroot', '-c', chroot_name, '--']
-        subprocess.call(chroot_prefix + ['strip', '--strip-all', bforartists, blenderplayer])
+        subprocess.call(chroot_prefix + ['strip', '--strip-all', bforartists])
 
         print("Stripping python...")
         py_target = os.path.join(install_dir, blender_version)
@@ -167,12 +167,16 @@ if builder.find('cmake') != -1:
         icons = os.path.join(blender_dir, 'release', 'freedesktop', 'icons')
 
         os.system('tar -xpf %s -C %s' % (mesalibs, install_dir))
-        os.system('cp %s %s' % (software_gl, os.path.join(install_dir, 'bforartists-softwaregl')))
+        os.system('cp %s %s' % (software_gl, install_dir))
         os.system('cp -r %s %s' % (icons, install_dir))
         os.system('chmod 755 %s' % (os.path.join(install_dir, 'bforartists-softwaregl')))
 
         # Construct archive name
-        package_name = 'bforartists-linux-%s-%s' % (blender_arch, bforartists_version)
+        package_name = 'blender-%s-%s-linux-%s-%s' % (blender_version,
+                                                      blender_hash,
+                                                      blender_glibc,
+                                                      blender_arch,
+						      bforartists_version)
         # NOTE: Blender 2.8 is already respected by blender_full_version.
         if branch != '' and branch != 'blender2.8':
             package_name = branch + "-" + package_name
@@ -180,7 +184,7 @@ if builder.find('cmake') != -1:
         upload_filename = package_name + ".tar.bz2"
 
         print("Creating .tar.bz2 archive")
-        upload_filepath = os.path.join('..', 'install', package_name) + '.tar.bz2'
+        upload_filepath = install_dir + '.tar.bz2'
         create_tar_bz2(install_dir, upload_filepath, package_name)
 else:
     print("Unknown building system")

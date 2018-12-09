@@ -41,9 +41,9 @@ static bNodeSocketTemplate sh_node_volume_scatter_out[] = {
 	{	-1, 0, ""	}
 };
 
-static int node_shader_gpu_volume_scatter(GPUMaterial *UNUSED(mat), bNode *UNUSED(node), bNodeExecData *UNUSED(execdata), GPUNodeStack *UNUSED(in), GPUNodeStack *UNUSED(out))
+static int node_shader_gpu_volume_scatter(GPUMaterial *mat, bNode *node, bNodeExecData *UNUSED(execdata), GPUNodeStack *in, GPUNodeStack *out)
 {
-	return false;
+	return GPU_stack_link(mat, node, "node_volume_scatter", in, out);
 }
 
 /* node type definition */
@@ -52,7 +52,6 @@ void register_node_type_sh_volume_scatter(void)
 	static bNodeType ntype;
 
 	sh_node_type_base(&ntype, SH_NODE_VOLUME_SCATTER, "Volume Scatter", NODE_CLASS_SHADER, 0);
-	node_type_compatibility(&ntype, NODE_NEW_SHADING);
 	node_type_socket_templates(&ntype, sh_node_volume_scatter_in, sh_node_volume_scatter_out);
 	node_type_init(&ntype, NULL);
 	node_type_storage(&ntype, "", NULL, NULL);
