@@ -1,0 +1,60 @@
+OpenShadingLanguage 1.00
+# Compiled by oslc 1.9.9
+# options: -q -O2 -IC:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders -o C:/b/win64_cmake_vs2017/win64_cmake_vs2017/build/win64_cmake_vs2017/intern/cycles/kernel/shaders/node_ies_light.oso
+shader node_ies_light
+param	int	use_mapping	0		%read{2,2} %write{2147483647,-1}
+param	matrix	mapping	0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0		%read{3,3} %write{2147483647,-1} %derivs
+param	int	slot	0		%read{12,12} %write{2147483647,-1}
+param	float	Strength	1		%read{14,14} %write{2147483647,-1}
+param	point	Vector	0 0 0		%read{1,1} %write{0,0} %derivs %initexpr
+oparam	float	Fac	0		%read{2147483647,-1} %write{14,14}
+global	vector	I	%read{0,0} %write{2147483647,-1} %derivs
+local	point	p	%read{3,9} %write{1,4} %derivs
+local	float	v_angle	%read{13,13} %write{7,7} %derivs
+local	float	h_angle	%read{13,13} %write{11,11} %derivs
+const	int	$const1	2		%read{5,5} %write{2147483647,-1}
+temp	float	$tmp1	%read{6,6} %write{5,5} %derivs
+temp	float	$tmp2	%read{7,7} %write{6,6} %derivs
+temp	float	$tmp3	%read{11,11} %write{10,10} %derivs
+const	int	$const2	0		%read{8,8} %write{2147483647,-1}
+temp	float	$tmp4	%read{10,10} %write{8,8} %derivs
+const	int	$const3	1		%read{9,9} %write{2147483647,-1}
+temp	float	$tmp5	%read{10,10} %write{9,9} %derivs
+const	float	$const4	3.1415927		%read{11,11} %write{2147483647,-1}
+temp	float	$tmp6	%read{14,14} %write{13,13}
+temp	string	$tmp7	%read{13,13} %write{12,12}
+const	string	$const5	"@l%d"		%read{12,12} %write{2147483647,-1}
+code Vector
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_ies_light.osl:27
+# 	point Vector = I,
+	assign		Vector I 	%filename{"C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_ies_light.osl"} %line{27} %argrw{"wr"}
+code ___main___
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_ies_light.osl:30
+# 	point p = Vector;
+	assign		p Vector 	%filename{"C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_ies_light.osl"} %line{30} %argrw{"wr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_ies_light.osl:32
+# 	if (use_mapping) {
+	if		use_mapping 4 4 	%line{32} %argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_ies_light.osl:33
+# 		p = transform(mapping, p);
+	transform	p mapping p 	%line{33} %argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_ies_light.osl:36
+# 	p = normalize(p);
+	normalize	p p 	%line{36} %argrw{"wr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_ies_light.osl:38
+# 	float v_angle = acos(-p[2]);
+	compref		$tmp1 p $const1 	%line{38} %argrw{"wrr"}
+	neg		$tmp2 $tmp1 	%argrw{"wr"}
+	acos		v_angle $tmp2 	%argrw{"wr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_ies_light.osl:39
+# 	float h_angle = atan2(p[0], p[1]) + M_PI;
+	compref		$tmp4 p $const2 	%line{39} %argrw{"wrr"}
+	compref		$tmp5 p $const3 	%argrw{"wrr"}
+	atan2		$tmp3 $tmp4 $tmp5 	%argrw{"wrr"}
+	add		h_angle $tmp3 $const4 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_ies_light.osl:41
+# 	Fac = Strength * texture(format("@l%d", slot), h_angle, v_angle);
+	format		$tmp7 $const5 slot 	%line{41} %argrw{"wrr"}
+	texture		$tmp6 $tmp7 h_angle v_angle 	%argrw{"wrrr"} %argderivs{2,3}
+	mul		Fac Strength $tmp6 	%argrw{"wrr"}
+	end
