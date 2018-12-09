@@ -28,9 +28,11 @@
 #include <stdio.h>
 
 #include "BLI_utildefines.h"
-#include "BLI_string.h"
 #include "BLI_fileops.h"
+#include "BLI_fileops_types.h"
+#include "BLI_listbase.h"
 #include "BLI_path_util.h"
+#include "BLI_string.h"
 
 #include "BKE_blender_version.h"
 #include "BKE_appdir.h"  /* own include */
@@ -227,7 +229,7 @@ static bool get_path_local(
  * Is this an install with user files kept together with the Blender executable and its
  * installation files.
  */
-static bool is_portable_install(void)
+bool BKE_appdir_app_is_portable_install(void)
 {
 	/* detect portable install by the existence of config folder */
 	const int ver = BLENDER_VERSION;
@@ -287,7 +289,7 @@ static bool get_path_user(
 	const char *user_base_path;
 
 	/* for portable install, user path is always local */
-	if (is_portable_install()) {
+	if (BKE_appdir_app_is_portable_install()) {
 		return get_path_local(targetpath, targetpath_len, folder_name, subfolder_name, ver);
 	}
 	user_path[0] = '\0';
@@ -738,6 +740,32 @@ bool BKE_appdir_app_template_id_search(const char *app_template, char *path, siz
 	return false;
 }
 
+void BKE_appdir_app_templates(ListBase *templates)
+{
+	BLI_listbase_clear(templates);
+
+	for (int i = 0; i < 2; i++) {
+		char subdir[FILE_MAX];
+		if (!BKE_appdir_folder_id_ex(
+		        app_template_directory_id[i], app_template_directory_search[i],
+		        subdir, sizeof(subdir)))
+		{
+			continue;
+		}
+
+		struct direntry *dir;
+		uint totfile = BLI_filelist_dir_contents(subdir, &dir);
+		for (int f = 0; f < totfile; f++) {
+			if (!FILENAME_IS_CURRPAR(dir[f].relname) && S_ISDIR(dir[f].type)) {
+				char *template = BLI_strdup(dir[f].relname);
+				BLI_addtail(templates, BLI_genericNodeN(template));
+			}
+		}
+
+		BLI_filelist_free(dir, totfile);
+	}
+}
+
 /**
  * Gets the temp directory when blender first runs.
  * If the default path is not found, use try $TEMP
@@ -813,7 +841,9 @@ static void where_is_temp(char *fullname, char *basename, const size_t maxlen, c
 				BLI_dir_create_recursive(tmp_name);
 			}
 #else
-			mkdtemp(tmp_name);
+			if (mkdtemp(tmp_name) == NULL) {
+				BLI_dir_create_recursive(tmp_name);
+			}
 #endif
 		}
 		if (BLI_is_dir(tmp_name)) {

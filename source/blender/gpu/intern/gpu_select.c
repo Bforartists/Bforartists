@@ -187,12 +187,7 @@ uint GPU_select_end(void)
  */
 bool GPU_select_query_check_active(void)
 {
-	return ((U.gpu_select_method == USER_SELECT_USE_OCCLUSION_QUERY) ||
-	        ((U.gpu_select_method == USER_SELECT_AUTO) &&
-	         (GPU_type_matches(GPU_DEVICE_ATI, GPU_OS_ANY, GPU_DRIVER_ANY) ||
-	          /* unsupported by nouveau, gallium 0.4, see: T47940 */
-	          GPU_type_matches(GPU_DEVICE_NVIDIA, GPU_OS_UNIX, GPU_DRIVER_OPENSOURCE))));
-
+	return ELEM(U.gpu_select_method, USER_SELECT_USE_OCCLUSION_QUERY, USER_SELECT_AUTO);
 }
 
 /* ----------------------------------------------------------------------------
@@ -231,4 +226,30 @@ void GPU_select_cache_end(void)
 bool GPU_select_is_cached(void)
 {
 	return g_select_state.use_cache && gpu_select_pick_is_cached();
+}
+
+
+/* ----------------------------------------------------------------------------
+ * Utilities
+ */
+
+/**
+ * Helper function, nothing special but avoids doing inline since hit's aren't sorted by depth
+ * and purpose of 4x buffer indices isn't so clear.
+ *
+ * Note that comparing depth as uint is fine.
+ */
+const uint *GPU_select_buffer_near(const uint *buffer, int hits)
+{
+	const uint *buffer_near = NULL;
+	uint depth_min = (uint) - 1;
+	for (int i = 0; i < hits; i++) {
+		if (buffer[1] < depth_min) {
+			BLI_assert(buffer[3] != -1);
+			depth_min = buffer[1];
+			buffer_near = buffer;
+		}
+		buffer += 4;
+	}
+	return buffer_near;
 }

@@ -36,15 +36,14 @@
 extern "C" {
 #endif
 
-#include "BKE_depsgraph.h"
 #include "BLI_linklist.h"
 #include "BLI_path_util.h"
 #include "RNA_types.h"
 
-
-struct EvaluationContext;
 struct bContext;
+struct Depsgraph;
 struct Scene;
+struct ViewLayer;
 
 /*
  * both return 1 on success, 0 on error
@@ -53,8 +52,6 @@ int collada_import(struct bContext *C,
 				   ImportSettings *import_settings);
 
 int collada_export(struct bContext *C,
-                   struct EvaluationContext *eval_ctx,
-                   struct Scene *sce,
                    ExportSettings *export_settings);
 
 #ifdef __cplusplus

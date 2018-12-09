@@ -54,14 +54,12 @@
 #include "RNA_enum_types.h"
 
 #include "BKE_action.h"
+#include "BKE_context.h"
 #include "BKE_fcurve.h"
 #include "BKE_gpencil.h"
 #include "BKE_global.h"
 #include "BKE_key.h"
-#include "BKE_library.h"
-#include "BKE_main.h"
 #include "BKE_nla.h"
-#include "BKE_context.h"
 #include "BKE_report.h"
 
 #include "UI_view2d.h"
@@ -385,12 +383,22 @@ static int actkeys_viewall(bContext *C, const bool only_sel)
 	if (only_sel && (found == false))
 		return OPERATOR_CANCELLED;
 
-	v2d->cur.xmin = min;
-	v2d->cur.xmax = max;
+	if (fabsf(max - min) < 1.0f) {
+		/* Exception - center the single keyfrme */
+		float xwidth = BLI_rctf_size_x(&v2d->cur);
 
-	extra = 0.1f * BLI_rctf_size_x(&v2d->cur);
-	v2d->cur.xmin -= extra;
-	v2d->cur.xmax += extra;
+		v2d->cur.xmin = min - xwidth / 2.0f;
+		v2d->cur.xmax = max + xwidth / 2.0f;
+	}
+	else {
+		/* Normal case - stretch the two keyframes out to fill the space, with extra spacing */
+		v2d->cur.xmin = min;
+		v2d->cur.xmax = max;
+
+		extra = 0.125f * BLI_rctf_size_x(&v2d->cur);
+		v2d->cur.xmin -= extra;
+		v2d->cur.xmax += extra;
+	}
 
 	/* set vertical range */
 	if (only_sel == false) {
@@ -674,6 +682,7 @@ static void insert_action_keys(bAnimContext *ac, short mode)
 	bAnimListElem *ale;
 	int filter;
 
+	struct Depsgraph *depsgraph = ac->depsgraph;
 	ReportList *reports = ac->reports;
 	Scene *scene = ac->scene;
 	ToolSettings *ts = scene->toolsettings;
@@ -691,15 +700,8 @@ static void insert_action_keys(bAnimContext *ac, short mode)
 
 	/* insert keyframes */
 	for (ale = anim_data.first; ale; ale = ale->next) {
-		AnimData *adt = ANIM_nla_mapping_get(ac, ale);
 		FCurve *fcu = (FCurve *)ale->key_data;
-		float cfra;
-
-		/* adjust current frame for NLA-scaling */
-		if (adt)
-			cfra = BKE_nla_tweakedit_remap(adt, (float)CFRA, NLATIME_CONVERT_UNMAP);
-		else
-			cfra = (float)CFRA;
+		float cfra = (float)CFRA;
 
 		/* read value from property the F-Curve represents, or from the curve only?
 		 * - ale->id != NULL:    Typically, this means that we have enough info to try resolving the path
@@ -708,10 +710,16 @@ static void insert_action_keys(bAnimContext *ac, short mode)
 		 *                       (TODO: add the full-blown PointerRNA relative parsing case here...)
 		 */
 		if (ale->id && !ale->owner) {
-			insert_keyframe(ac->bmain, reports, ale->id, NULL, ((fcu->grp) ? (fcu->grp->name) : (NULL)),
+			insert_keyframe(ac->bmain, depsgraph, reports, ale->id, NULL, ((fcu->grp) ? (fcu->grp->name) : (NULL)),
 			                fcu->rna_path, fcu->array_index, cfra, ts->keyframe_type, flag);
 		}
 		else {
+			AnimData *adt = ANIM_nla_mapping_get(ac, ale);
+
+			/* adjust current frame for NLA-scaling */
+			if (adt)
+				cfra = BKE_nla_tweakedit_remap(adt, (float)CFRA, NLATIME_CONVERT_UNMAP);
+
 			const float curval = evaluate_fcurve(fcu, cfra);
 			insert_vert_fcurve(fcu, cfra, curval, ts->keyframe_type, 0);
 		}

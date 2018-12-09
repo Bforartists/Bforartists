@@ -34,6 +34,8 @@
 #define __READFILE_H__
 
 #include "zlib.h"
+#include "DNA_sdna_types.h"
+#include "DNA_space_types.h"
 #include "DNA_windowmanager_types.h"  /* for ReportType */
 
 struct OldNewMap;
@@ -88,6 +90,7 @@ typedef struct FileData {
 	struct OldNewMap *libmap;
 	struct OldNewMap *imamap;
 	struct OldNewMap *movieclipmap;
+	struct OldNewMap *scenemap;
 	struct OldNewMap *soundmap;
 	struct OldNewMap *packedmap;
 
@@ -138,6 +141,8 @@ FileData *blo_openblendermemfile(struct MemFile *memfile, struct ReportList *rep
 void blo_clear_proxy_pointers_from_lib(Main *oldmain);
 void blo_make_image_pointer_map(FileData *fd, Main *oldmain);
 void blo_end_image_pointer_map(FileData *fd, Main *oldmain);
+void blo_make_scene_pointer_map(FileData *fd, Main *oldmain);
+void blo_end_scene_pointer_map(FileData *fd, Main *oldmain);
 void blo_make_movieclip_pointer_map(FileData *fd, Main *oldmain);
 void blo_end_movieclip_pointer_map(FileData *fd, Main *oldmain);
 void blo_make_sound_pointer_map(FileData *fd, Main *oldmain);
@@ -171,7 +176,9 @@ void blo_do_versions_pre250(struct FileData *fd, struct Library *lib, struct Mai
 void blo_do_versions_250(struct FileData *fd, struct Library *lib, struct Main *bmain);
 void blo_do_versions_260(struct FileData *fd, struct Library *lib, struct Main *bmain);
 void blo_do_versions_270(struct FileData *fd, struct Library *lib, struct Main *bmain);
+void blo_do_versions_280(struct FileData *fd, struct Library *lib, struct Main *bmain);
 
 void do_versions_after_linking_270(struct Main *bmain);
+void do_versions_after_linking_280(struct Main *bmain);
 
 #endif

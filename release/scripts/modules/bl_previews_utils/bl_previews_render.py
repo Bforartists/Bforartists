@@ -31,7 +31,7 @@ from mathutils import (
 )
 
 
-INTERN_PREVIEW_TYPES = {'MATERIAL', 'LAMP', 'WORLD', 'TEXTURE', 'IMAGE'}
+INTERN_PREVIEW_TYPES = {'MATERIAL', 'LIGHT', 'WORLD', 'TEXTURE', 'IMAGE'}
 OBJECT_TYPES_RENDER = {'MESH', 'CURVE', 'SURFACE', 'META', 'FONT'}
 
 
@@ -68,20 +68,20 @@ def rna_backup_restore(data, backup):
         setattr(dt, path[-1], val)
 
 
-def do_previews(do_objects, do_groups, do_scenes, do_data_intern):
+def do_previews(do_objects, do_collections, do_scenes, do_data_intern):
     import collections
 
     # Helpers.
     RenderContext = collections.namedtuple("RenderContext", (
-        "scene", "world", "camera", "lamp", "camera_data", "lamp_data", "image",  # All those are names!
-        "backup_scene", "backup_world", "backup_camera", "backup_lamp", "backup_camera_data", "backup_lamp_data",
+        "scene", "world", "camera", "light", "camera_data", "light_data", "image",  # All those are names!
+        "backup_scene", "backup_world", "backup_camera", "backup_light", "backup_camera_data", "backup_light_data",
     ))
 
     RENDER_PREVIEW_SIZE = bpy.app.render_preview_size
 
     def render_context_create(engine, objects_ignored):
         if engine == '__SCENE':
-            backup_scene, backup_world, backup_camera, backup_lamp, backup_camera_data, backup_lamp_data = [()] * 6
+            backup_scene, backup_world, backup_camera, backup_light, backup_camera_data, backup_light_data = [()] * 6
             scene = bpy.context.screen.scene
             exclude_props = {('world',), ('camera',), ('tool_settings',), ('preview',)}
             backup_scene = tuple(rna_backup_gen(scene, exclude_props=exclude_props))
@@ -96,20 +96,20 @@ def do_previews(do_objects, do_groups, do_scenes, do_data_intern):
                 camera.rotation_euler = Euler((1.1635528802871704, 0.0, 0.7853981852531433), 'XYZ')  # (66.67, 0.0, 45.0)
                 scene.camera = camera
                 scene.objects.link(camera)
-            # TODO: add lamp if none found in scene?
-            lamp = None
-            lamp_data = None
+            # TODO: add light if none found in scene?
+            light = None
+            light_data = None
         else:
-            backup_scene, backup_world, backup_camera, backup_lamp, backup_camera_data, backup_lamp_data = [None] * 6
+            backup_scene, backup_world, backup_camera, backup_light, backup_camera_data, backup_light_data = [None] * 6
 
             scene = bpy.data.scenes.new("TEMP_preview_render_scene")
             world = bpy.data.worlds.new("TEMP_preview_render_world")
             camera_data = bpy.data.cameras.new("TEMP_preview_render_camera")
             camera = bpy.data.objects.new("TEMP_preview_render_camera", camera_data)
-            lamp_data = bpy.data.lamps.new("TEMP_preview_render_lamp", 'SPOT')
-            lamp = bpy.data.objects.new("TEMP_preview_render_lamp", lamp_data)
+            light_data = bpy.data.lights.new("TEMP_preview_render_light", 'SPOT')
+            light = bpy.data.objects.new("TEMP_preview_render_light", light_data)
 
-            objects_ignored.add((camera.name, lamp.name))
+            objects_ignored.add((camera.name, light.name))
 
             scene.world = world
 
@@ -117,26 +117,14 @@ def do_previews(do_objects, do_groups, do_scenes, do_data_intern):
             scene.camera = camera
             scene.objects.link(camera)
 
-            lamp.rotation_euler = Euler((0.7853981852531433, 0.0, 1.7453292608261108), 'XYZ')  # (45.0, 0.0, 100.0)
-            lamp_data.falloff_type = 'CONSTANT'
-            lamp_data.spot_size = 1.0471975803375244  # 60
-            scene.objects.link(lamp)
+            light.rotation_euler = Euler((0.7853981852531433, 0.0, 1.7453292608261108), 'XYZ')  # (45.0, 0.0, 100.0)
+            light_data.falloff_type = 'CONSTANT'
+            light_data.spot_size = 1.0471975803375244  # 60
+            scene.objects.link(light)
 
-            if engine == 'BLENDER_RENDER':
-                scene.render.engine = 'BLENDER_RENDER'
-                scene.render.alpha_mode = 'TRANSPARENT'
-
-                world.use_sky_blend = True
-                world.horizon_color = 0.9, 0.9, 0.9
-                world.zenith_color = 0.5, 0.5, 0.5
-                world.ambient_color = 0.1, 0.1, 0.1
-                world.light_settings.use_environment_light = True
-                world.light_settings.environment_energy = 1.0
-                world.light_settings.environment_color = 'SKY_COLOR'
-            elif engine == 'CYCLES':
-                scene.render.engine = 'CYCLES'
-                scene.cycles.film_transparent = True
-                # TODO: define Cycles world?
+            scene.render.engine = 'CYCLES'
+            scene.cycles.film_transparent = True
+            # TODO: define Cycles world?
 
         scene.render.image_settings.file_format = 'PNG'
         scene.render.image_settings.color_depth = '8'
@@ -154,9 +142,9 @@ def do_previews(do_objects, do_groups, do_scenes, do_data_intern):
         image.filepath = scene.render.filepath
 
         return RenderContext(
-            scene.name, world.name if world else None, camera.name, lamp.name if lamp else None,
-            camera_data.name, lamp_data.name if lamp_data else None, image.name,
-            backup_scene, backup_world, backup_camera, backup_lamp, backup_camera_data, backup_lamp_data,
+            scene.name, world.name if world else None, camera.name, light.name if light else None,
+            camera_data.name, light_data.name if light_data else None, image.name,
+            backup_scene, backup_world, backup_camera, backup_light, backup_camera_data, backup_light_data,
         )
 
     def render_context_delete(render_context):
@@ -171,8 +159,8 @@ def do_previews(do_objects, do_groups, do_scenes, do_data_intern):
                 scene.camera = None
                 if render_context.camera:
                     scene.objects.unlink(bpy.data.objects[render_context.camera, None])
-                if render_context.lamp:
-                    scene.objects.unlink(bpy.data.objects[render_context.lamp, None])
+                if render_context.light:
+                    scene.objects.unlink(bpy.data.objects[render_context.light, None])
                 bpy.data.scenes.remove(scene, do_unlink=True)
                 scene = None
             else:
@@ -213,18 +201,18 @@ def do_previews(do_objects, do_groups, do_scenes, do_data_intern):
                 print("ERROR:", e)
                 success = False
 
-        if render_context.lamp:
+        if render_context.light:
             try:
-                lamp = bpy.data.objects[render_context.lamp, None]
-                if render_context.backup_lamp is None:
+                light = bpy.data.objects[render_context.light, None]
+                if render_context.backup_light is None:
                     if scene is not None:
-                        scene.objects.unlink(lamp)
-                    lamp.user_clear()
-                    bpy.data.objects.remove(lamp)
-                    bpy.data.lamps.remove(bpy.data.lamps[render_context.lamp_data, None])
+                        scene.objects.unlink(light)
+                    light.user_clear()
+                    bpy.data.objects.remove(light)
+                    bpy.data.lights.remove(bpy.data.lights[render_context.light_data, None])
                 else:
-                    rna_backup_restore(lamp, render_context.backup_lamp)
-                    rna_backup_restore(bpy.data.lamps[render_context.lamp_data, None], render_context.backup_lamp_data)
+                    rna_backup_restore(light, render_context.backup_light)
+                    rna_backup_restore(bpy.data.lights[render_context.light_data, None], render_context.backup_light_data)
             except Exception as e:
                 print("ERROR:", e)
                 success = False
@@ -239,26 +227,15 @@ def do_previews(do_objects, do_groups, do_scenes, do_data_intern):
 
         return success
 
-    def objects_render_engine_guess(obs):
-        for obname, libpath in obs:
-            ob = bpy.data.objects[obname, libpath]
-            for matslot in ob.material_slots:
-                mat = matslot.material
-                if mat and mat.use_nodes and mat.node_tree:
-                    for nd in mat.node_tree.nodes:
-                        if nd.shading_compatibility == {'NEW_SHADING'}:
-                            return 'CYCLES'
-        return 'BLENDER_RENDER'
-
     def object_bbox_merge(bbox, ob, ob_space, offset_matrix):
-        # Take group instances into account (including linked one in this case).
-        if ob.type == 'EMPTY' and ob.dupli_type == 'GROUP':
-            grp_objects = tuple((ob.name, ob.library.filepath if ob.library else None) for ob in ob.dupli_group.objects)
+        # Take collections instances into account (including linked one in this case).
+        if ob.type == 'EMPTY' and ob.instance_type == 'COLLECTION':
+            grp_objects = tuple((ob.name, ob.library.filepath if ob.library else None) for ob in ob.instance_collection.all_objects)
             if (len(grp_objects) == 0):
                 ob_bbox = ob.bound_box
             else:
                 coords = objects_bbox_calc(ob_space, grp_objects,
-                                           Matrix.Translation(ob.dupli_group.dupli_offset).inverted())
+                                           Matrix.Translation(ob.instance_collection.instance_offset).inverted())
                 ob_bbox = ((coords[0], coords[1], coords[2]), (coords[21], coords[22], coords[23]))
         elif ob.bound_box:
             ob_bbox = ob.bound_box
@@ -305,7 +282,7 @@ def do_previews(do_objects, do_groups, do_scenes, do_data_intern):
         scene = bpy.data.scenes[render_context.scene, None]
         if objects is not None:
             camera = bpy.data.objects[render_context.camera, None]
-            lamp = bpy.data.objects[render_context.lamp, None] if render_context.lamp is not None else None
+            light = bpy.data.objects[render_context.light, None] if render_context.light is not None else None
             cos = objects_bbox_calc(camera, objects, offset_matrix)
             loc, ortho_scale = camera.camera_fit_coords(scene, cos)
             camera.location = loc
@@ -320,9 +297,9 @@ def do_previews(do_objects, do_groups, do_scenes, do_data_intern):
                     max_dist = dist
             camera.data.clip_start = min_dist / 2
             camera.data.clip_end = max_dist * 2
-            if lamp:
-                loc, ortho_scale = lamp.camera_fit_coords(scene, cos)
-                lamp.location = loc
+            if light:
+                loc, ortho_scale = light.camera_fit_coords(scene, cos)
+                light.location = loc
         scene.update()
 
         bpy.ops.render.render(write_still=True)
@@ -343,7 +320,7 @@ def do_previews(do_objects, do_groups, do_scenes, do_data_intern):
     render_contexts = {}
 
     objects_ignored = set()
-    groups_ignored = set()
+    collections_ignored = set()
 
     prev_scenename = bpy.context.screen.scene.name
 
@@ -360,11 +337,10 @@ def do_previews(do_objects, do_groups, do_scenes, do_data_intern):
                 continue
             objects = ((root.name, None),)
 
-            render_engine = objects_render_engine_guess(objects)
-            render_context = render_contexts.get(render_engine, None)
+            render_context = render_contexts.get('CYCLES', None)
             if render_context is None:
-                render_context = render_context_create(render_engine, objects_ignored)
-                render_contexts[render_engine] = render_context
+                render_context = render_context_create('CYCLES', objects_ignored)
+                render_contexts['CYCLES'] = render_context
 
             scene = bpy.data.scenes[render_context.scene, None]
             bpy.context.screen.scene = scene
@@ -398,30 +374,29 @@ def do_previews(do_objects, do_groups, do_scenes, do_data_intern):
             if is_rendered is not ...:
                 ob.hide_render = is_rendered
 
-    if do_groups:
-        for grp in ids_nolib(bpy.data.groups):
-            if grp.name in groups_ignored:
+    if do_collections:
+        for grp in ids_nolib(bpy.data.collections):
+            if grp.name in collections_ignored:
                 continue
-            # Here too, we do want to keep linked objects members of local group...
+            # Here too, we do want to keep linked objects members of local collection...
             objects = tuple((ob.name, ob.library.filepath if ob.library else None) for ob in grp.objects)
 
-            render_engine = objects_render_engine_guess(objects)
-            render_context = render_contexts.get(render_engine, None)
+            render_context = render_contexts.get('CYCLES', None)
             if render_context is None:
-                render_context = render_context_create(render_engine, objects_ignored)
-                render_contexts[render_engine] = render_context
+                render_context = render_context_create('CYCLES', objects_ignored)
+                render_contexts['CYCLES'] = render_context
 
             scene = bpy.data.scenes[render_context.scene, None]
             bpy.context.screen.scene = scene
 
-            bpy.ops.object.group_instance_add(group=grp.name)
-            grp_ob = next((ob for ob in scene.objects if ob.dupli_group and ob.dupli_group.name == grp.name))
+            bpy.ops.object.collection_instance_add(collection=grp.name)
+            grp_ob = next((ob for ob in scene.objects if ob.instance_collection and ob.instance_collection.name == grp.name))
             grp_obname = grp_ob.name
             scene.update()
 
-            offset_matrix = Matrix.Translation(grp.dupli_offset).inverted()
+            offset_matrix = Matrix.Translation(grp.instance_offset).inverted()
 
-            preview_render_do(render_context, 'groups', grp.name, objects, offset_matrix)
+            preview_render_do(render_context, 'collections', grp.name, objects, offset_matrix)
 
             scene = bpy.data.scenes[render_context.scene, None]
             scene.objects.unlink(bpy.data.objects[grp_obname, None])
@@ -462,7 +437,7 @@ def do_previews(do_objects, do_groups, do_scenes, do_data_intern):
         print("*NOT* Saving %s, because some error(s) happened while deleting temp render data..." % bpy.data.filepath)
 
 
-def do_clear_previews(do_objects, do_groups, do_scenes, do_data_intern):
+def do_clear_previews(do_objects, do_collections, do_scenes, do_data_intern):
     if do_data_intern:
         bpy.ops.wm.previews_clear(id_type=INTERN_PREVIEW_TYPES)
 
@@ -470,8 +445,8 @@ def do_clear_previews(do_objects, do_groups, do_scenes, do_data_intern):
         for ob in ids_nolib(bpy.data.objects):
             ob.preview.image_size = (0, 0)
 
-    if do_groups:
-        for grp in ids_nolib(bpy.data.groups):
+    if do_collections:
+        for grp in ids_nolib(bpy.data.collections):
             grp.preview.image_size = (0, 0)
 
     if do_scenes:
@@ -502,8 +477,8 @@ def main():
                         help="Do not generate a backup .blend1 file when saving processed ones.")
     parser.add_argument('--no_scenes', default=True, action="store_false",
                         help="Do not generate/clear previews for scene IDs.")
-    parser.add_argument('--no_groups', default=True, action="store_false",
-                        help="Do not generate/clear previews for group IDs.")
+    parser.add_argument('--no_collections', default=True, action="store_false",
+                        help="Do not generate/clear previews for collection IDs.")
     parser.add_argument('--no_objects', default=True, action="store_false",
                         help="Do not generate/clear previews for object IDs.")
     parser.add_argument('--no_data_intern', default=True, action="store_false",
@@ -518,11 +493,11 @@ def main():
 
     if args.clear:
         print("clear!")
-        do_clear_previews(do_objects=args.no_objects, do_groups=args.no_groups, do_scenes=args.no_scenes,
+        do_clear_previews(do_objects=args.no_objects, do_collections=args.no_collections, do_scenes=args.no_scenes,
                           do_data_intern=args.no_data_intern)
     else:
         print("render!")
-        do_previews(do_objects=args.no_objects, do_groups=args.no_groups, do_scenes=args.no_scenes,
+        do_previews(do_objects=args.no_objects, do_collections=args.no_collections, do_scenes=args.no_scenes,
                     do_data_intern=args.no_data_intern)
 
     # Not really necessary, but better be consistent.

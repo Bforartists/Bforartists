@@ -33,6 +33,7 @@
  */
 
 
+#include "DNA_mesh_types.h"
 #include "DNA_meshdata_types.h"
 
 #include "MEM_guardedalloc.h"
@@ -43,17 +44,17 @@
 #include "BLI_string.h"
 #include "BLI_utildefines.h"
 
-#include "BKE_cdderivedmesh.h"
 #include "BKE_effect.h"
 #include "BKE_global.h"
 #include "BKE_lattice.h"
 #include "BKE_library_query.h"
+#include "BKE_mesh.h"
 #include "BKE_modifier.h"
 #include "BKE_particle.h"
 #include "BKE_pointcache.h"
 
-#include "depsgraph_private.h"
 #include "DEG_depsgraph_build.h"
+#include "DEG_depsgraph_query.h"
 
 static void initData(ModifierData *md)
 {
@@ -87,7 +88,7 @@ static CustomDataMask requiredDataMask(Object *UNUSED(ob), ModifierData *md)
 
 }
 
-static bool isDisabled(ModifierData *md, int useRenderParams)
+static bool isDisabled(const struct Scene *scene, ModifierData *md, bool useRenderParams)
 {
 	ParticleInstanceModifierData *pimd = (ParticleInstanceModifierData *)md;
 	ParticleSystem *psys;
@@ -112,7 +113,7 @@ static bool isDisabled(ModifierData *md, int useRenderParams)
 				if (useRenderParams) required_mode = eModifierMode_Render;
 				else required_mode = eModifierMode_Realtime;
 
-				if (!modifier_isEnabled(md->scene, ob_md, required_mode))
+				if (!modifier_isEnabled(scene, ob_md, required_mode))
 					return true;
 
 				break;
@@ -121,20 +122,6 @@ static bool isDisabled(ModifierData *md, int useRenderParams)
 	}
 
 	return false;
-}
-
-
-static void updateDepgraph(ModifierData *md, const ModifierUpdateDepsgraphContext *ctx)
-{
-	ParticleInstanceModifierData *pimd = (ParticleInstanceModifierData *) md;
-
-	if (pimd->ob) {
-		DagNode *curNode = dag_get_node(ctx->forest, pimd->ob);
-
-		dag_add_relation(ctx->forest, curNode, ctx->obNode,
-		                 DAG_RL_DATA_DATA | DAG_RL_OB_DATA,
-		                 "Particle Instance Modifier");
-	}
 }
 
 static void updateDepsgraph(ModifierData *md, const ModifierUpdateDepsgraphContext *ctx)
@@ -210,13 +197,13 @@ static void store_float_in_vcol(MLoopCol *vcol, float float_value)
 	vcol->a = 1.0f;
 }
 
-static DerivedMesh *applyModifier(
-        ModifierData *md, Object *ob,
-        DerivedMesh *derivedData,
-        ModifierApplyFlag UNUSED(flag))
+static Mesh *applyModifier(
+        ModifierData *md, const ModifierEvalContext *ctx,
+        Mesh *mesh)
 {
-	DerivedMesh *dm = derivedData, *result;
+	Mesh *result;
 	ParticleInstanceModifierData *pimd = (ParticleInstanceModifierData *) md;
+	struct Scene *scene = DEG_get_evaluated_scene(ctx->depsgraph);
 	ParticleSimulationData sim;
 	ParticleSystem *psys = NULL;
 	ParticleData *pa = NULL;
@@ -226,7 +213,7 @@ static DerivedMesh *applyModifier(
 	int totvert, totpoly, totloop, totedge;
 	int maxvert, maxpoly, maxloop, maxedge, part_end = 0, part_start;
 	int k, p, p_skip;
-	short track = ob->trackflag % 3, trackneg, axis = pimd->axis;
+	short track = ctx->object->trackflag % 3, trackneg, axis = pimd->axis;
 	float max_co = 0.0, min_co = 0.0, temp_co[3];
 	float *size = NULL;
 	float spacemat[4][4];
@@ -234,20 +221,20 @@ static DerivedMesh *applyModifier(
 	const bool use_children = pimd->flag & eParticleInstanceFlag_Children;
 	bool between;
 
-	trackneg = ((ob->trackflag > 2) ? 1 : 0);
+	trackneg = ((ctx->object->trackflag > 2) ? 1 : 0);
 
-	if (pimd->ob == ob) {
+	if (pimd->ob == ctx->object) {
 		pimd->ob = NULL;
-		return derivedData;
+		return mesh;
 	}
 
 	if (pimd->ob) {
 		psys = BLI_findlink(&pimd->ob->particlesystem, pimd->psys - 1);
 		if (psys == NULL || psys->totpart == 0)
-			return derivedData;
+			return mesh;
 	}
 	else {
-		return derivedData;
+		return mesh;
 	}
 
 	part_start = use_parents ? 0 : psys->totpart;
@@ -259,9 +246,10 @@ static DerivedMesh *applyModifier(
 		part_end += psys->totchild;
 
 	if (part_end == 0)
-		return derivedData;
+		return mesh;
 
-	sim.scene = md->scene;
+	sim.depsgraph = ctx->depsgraph;
+	sim.scene = scene;
 	sim.ob = pimd->ob;
 	sim.psys = psys;
 	sim.psmd = psys_get_modifier(pimd->ob, psys);
@@ -300,10 +288,10 @@ static DerivedMesh *applyModifier(
 			break;
 	}
 
-	totvert = dm->getNumVerts(dm);
-	totpoly = dm->getNumPolys(dm);
-	totloop = dm->getNumLoops(dm);
-	totedge = dm->getNumEdges(dm);
+	totvert = mesh->totvert;
+	totpoly = mesh->totpoly;
+	totloop = mesh->totloop;
+	totedge = mesh->totedge;
 
 	/* count particles */
 	maxvert = 0;
@@ -326,22 +314,22 @@ static DerivedMesh *applyModifier(
 	if (psys->flag & (PSYS_HAIR_DONE | PSYS_KEYED) || psys->pointcache->flag & PTCACHE_BAKED) {
 		float min[3], max[3];
 		INIT_MINMAX(min, max);
-		dm->getMinMax(dm, min, max);
+		BKE_mesh_minmax(mesh, min, max);
 		min_co = min[track];
 		max_co = max[track];
 	}
 
-	result = CDDM_from_template(dm, maxvert, maxedge, 0, maxloop, maxpoly);
+	result = BKE_mesh_new_nomain_from_template(mesh, maxvert, maxedge, 0, maxloop, maxpoly);
 
-	mvert = result->getVertArray(result);
-	orig_mvert = dm->getVertArray(dm);
-	mpoly = result->getPolyArray(result);
-	orig_mpoly = dm->getPolyArray(dm);
-	mloop = result->getLoopArray(result);
-	orig_mloop = dm->getLoopArray(dm);
+	mvert = result->mvert;
+	orig_mvert = mesh->mvert;
+	mpoly = result->mpoly;
+	orig_mpoly = mesh->mpoly;
+	mloop = result->mloop;
+	orig_mloop = mesh->mloop;
 
-	MLoopCol *mloopcols_index = CustomData_get_layer_named(&result->loopData, CD_MLOOPCOL, pimd->index_layer_name);
-	MLoopCol *mloopcols_value = CustomData_get_layer_named(&result->loopData, CD_MLOOPCOL, pimd->value_layer_name);
+	MLoopCol *mloopcols_index = CustomData_get_layer_named(&result->ldata, CD_MLOOPCOL, pimd->index_layer_name);
+	MLoopCol *mloopcols_value = CustomData_get_layer_named(&result->ldata, CD_MLOOPCOL, pimd->value_layer_name);
 	int *vert_part_index = NULL;
 	float *vert_part_value = NULL;
 	if (mloopcols_index != NULL) {
@@ -368,7 +356,7 @@ static DerivedMesh *applyModifier(
 			MVert *mv = mvert + vindex;
 
 			inMV = orig_mvert + k;
-			DM_copy_vert_data(dm, result, k, p_skip * totvert + k, 1);
+			CustomData_copy_data(&mesh->vdata, &result->vdata, k, p_skip * totvert + k, 1);
 			*mv = *inMV;
 
 			if (vert_part_index != NULL) {
@@ -420,7 +408,7 @@ static DerivedMesh *applyModifier(
 						ChildParticle *cpa = psys->child + (p - psys->totpart);
 						pa = psys->particles + (between ? cpa->pa[0] : cpa->parent);
 					}
-					psys_mat_hair_to_global(sim.ob, sim.psmd->dm_final, sim.psys->part->from, pa, hairmat);
+					psys_mat_hair_to_global(sim.ob, sim.psmd->mesh_final, sim.psys->part->from, pa, hairmat);
 					copy_m3_m4(mat, hairmat);
 					/* to quaternion */
 					mat3_to_quat(frame, mat);
@@ -482,8 +470,8 @@ static DerivedMesh *applyModifier(
 		}
 
 		/* create edges and adjust edge vertex indices*/
-		DM_copy_edge_data(dm, result, 0, p_skip * totedge, totedge);
-		MEdge *me = CDDM_get_edges(result) + p_skip * totedge;
+		CustomData_copy_data(&mesh->edata, &result->edata, 0, p_skip * totedge, totedge);
+		MEdge *me = &result->medge[p_skip * totedge];
 		for (k = 0; k < totedge; k++, me++) {
 			me->v1 += p_skip * totvert;
 			me->v2 += p_skip * totvert;
@@ -495,7 +483,7 @@ static DerivedMesh *applyModifier(
 			MPoly *inMP = orig_mpoly + k;
 			MPoly *mp = mpoly + p_skip * totpoly + k;
 
-			DM_copy_poly_data(dm, result, k, p_skip * totpoly + k, 1);
+			CustomData_copy_data(&mesh->pdata, &result->pdata, k, p_skip * totpoly + k, 1);
 			*mp = *inMP;
 			mp->loopstart += p_skip * totloop;
 
@@ -504,7 +492,7 @@ static DerivedMesh *applyModifier(
 				MLoop *ml = mloop + mp->loopstart;
 				int j = mp->totloop;
 
-				DM_copy_loop_data(dm, result, inMP->loopstart, mp->loopstart, j);
+				CustomData_copy_data(&mesh->ldata, &result->ldata, inMP->loopstart, mp->loopstart, j);
 				for (; j; j--, ml++, inML++) {
 					ml->v = inML->v + (p_skip * totvert);
 					ml->e = inML->e + (p_skip * totedge);
@@ -534,7 +522,7 @@ static DerivedMesh *applyModifier(
 	MEM_SAFE_FREE(vert_part_index);
 	MEM_SAFE_FREE(vert_part_value);
 
-	result->dirty |= DM_DIRTY_NORMALS;
+	result->runtime.cd_dirty_vert |= CD_MASK_NORMAL;
 
 	return result;
 }
@@ -549,17 +537,23 @@ ModifierTypeInfo modifierType_ParticleInstance = {
 	                        eModifierTypeFlag_EnableInEditmode,
 
 	/* copyData */          modifier_copyData_generic,
+
+	/* deformVerts_DM */    NULL,
+	/* deformMatrices_DM */ NULL,
+	/* deformVertsEM_DM */  NULL,
+	/* deformMatricesEM_DM*/NULL,
+	/* applyModifier_DM */  NULL,
+
 	/* deformVerts */       NULL,
 	/* deformMatrices */    NULL,
 	/* deformVertsEM */     NULL,
 	/* deformMatricesEM */  NULL,
 	/* applyModifier */     applyModifier,
-	/* applyModifierEM */   NULL,
+
 	/* initData */          initData,
 	/* requiredDataMask */  requiredDataMask,
 	/* freeData */          NULL,
 	/* isDisabled */        isDisabled,
-	/* updateDepgraph */    updateDepgraph,
 	/* updateDepsgraph */   updateDepsgraph,
 	/* dependsOnTime */     NULL,
 	/* dependsOnNormals */  NULL,

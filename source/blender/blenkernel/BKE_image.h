@@ -114,8 +114,6 @@ void    BKE_imbuf_to_image_format(struct ImageFormatData *im_format, const struc
 struct anim *openanim(const char *name, int flags, int streamindex, char colorspace[IMA_MAX_SPACE]);
 struct anim *openanim_noload(const char *name, int flags, int streamindex, char colorspace[IMA_MAX_SPACE]);
 
-void    BKE_image_de_interlace(struct Image *ima, int odd);
-
 void    BKE_image_make_local(struct Main *bmain, struct Image *ima, const bool lib_local);
 
 void    BKE_image_tag_time(struct Image *ima);
@@ -213,9 +211,9 @@ struct Image *BKE_image_verify_viewer(struct Main *bmain, int type, const char *
 void BKE_image_verify_viewer_views(const struct RenderData *rd, struct Image *ima, struct ImageUser *iuser);
 
 /* called on frame change or before render */
-void BKE_image_user_frame_calc(struct ImageUser *iuser, int cfra, int fieldnr);
-void BKE_image_user_check_frame_calc(struct ImageUser *iuser, int cfra, int fieldnr);
-int  BKE_image_user_frame_get(const struct ImageUser *iuser, int cfra, int fieldnr, bool *r_is_in_range);
+void BKE_image_user_frame_calc(struct ImageUser *iuser, int cfra);
+void BKE_image_user_check_frame_calc(struct ImageUser *iuser, int cfra);
+int  BKE_image_user_frame_get(const struct ImageUser *iuser, int cfra, bool *r_is_in_range);
 void BKE_image_user_file_path(struct ImageUser *iuser, struct Image *ima, char *path);
 void BKE_image_update_frame(const struct Main *bmain, int cfra);
 
@@ -271,7 +269,7 @@ bool BKE_image_scale(struct Image *image, int width, int height);
 bool BKE_image_has_alpha(struct Image *image);
 
 /* check if texture has gpu texture code */
-bool BKE_image_has_bindcode(struct Image *ima);
+bool BKE_image_has_opengl_texture(struct Image *ima);
 
 void BKE_image_get_size(struct Image *image, struct ImageUser *iuser, int *width, int *height);
 void BKE_image_get_size_fl(struct Image *image, struct ImageUser *iuser, float size[2]);
@@ -296,6 +294,12 @@ void BKE_image_file_format_set(struct Image *image, int ftype, const struct ImbF
 bool BKE_image_has_loaded_ibuf(struct Image *image);
 struct ImBuf *BKE_image_get_ibuf_with_name(struct Image *image, const char *name);
 struct ImBuf *BKE_image_get_first_ibuf(struct Image *image);
+
+struct RenderSlot *BKE_image_add_renderslot(struct Image *ima, const char *name);
+bool BKE_image_remove_renderslot(struct Image *ima, struct ImageUser *iuser, int slot);
+struct RenderSlot *BKE_image_get_renderslot(struct Image *ima, int slot);
+bool BKE_image_clear_renderslot(struct Image *ima, struct ImageUser *iuser, int slot);
+
 #ifdef __cplusplus
 }
 #endif

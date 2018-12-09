@@ -30,83 +30,76 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "MEM_guardedalloc.h"
+
 #include "DNA_object_types.h"
 #include "DNA_armature_types.h"
+#include "DNA_brush_types.h"
 #include "DNA_gpencil_types.h"
 #include "DNA_sequence_types.h"
 #include "DNA_scene_types.h"
 #include "DNA_screen_types.h"
 #include "DNA_space_types.h"
 #include "DNA_windowmanager_types.h"
+#include "DNA_workspace_types.h"
 
 #include "BLI_utildefines.h"
 
-
+#include "BKE_brush.h"
 #include "BKE_context.h"
 #include "BKE_object.h"
 #include "BKE_action.h"
 #include "BKE_armature.h"
+#include "BKE_paint.h"
+#include "BKE_main.h"
 #include "BKE_gpencil.h"
+#include "BKE_layer.h"
 #include "BKE_screen.h"
 #include "BKE_sequencer.h"
+#include "BKE_workspace.h"
+
+#include "DEG_depsgraph.h"
 
 #include "RNA_access.h"
 
 #include "ED_armature.h"
 #include "ED_gpencil.h"
 #include "ED_anim_api.h"
+#include "ED_uvedit.h"
 
 #include "WM_api.h"
 #include "UI_interface.h"
 
 #include "screen_intern.h"
 
-static unsigned int context_layers(bScreen *sc, Scene *scene, ScrArea *sa_ctx)
-{
-	/* needed for 'USE_ALLSELECT' define, otherwise we end up editing off-screen layers. */
-	if (sc && sa_ctx && (sa_ctx->spacetype == SPACE_BUTS)) {
-		const unsigned int lay = BKE_screen_view3d_layer_all(sc);
-		if (lay) {
-			return lay;
-		}
-	}
-	return scene->lay;
-}
-
 const char *screen_context_dir[] = {
-	"scene", "visible_objects", "visible_bases", "selectable_objects", "selectable_bases",
+	"scene", "view_layer", "visible_objects", "visible_bases", "selectable_objects", "selectable_bases",
 	"selected_objects", "selected_bases",
 	"editable_objects", "editable_bases",
 	"selected_editable_objects", "selected_editable_bases",
 	"visible_bones", "editable_bones", "selected_bones", "selected_editable_bones",
-	"visible_pose_bones", "selected_pose_bones", "active_bone", "active_pose_bone",
+	"visible_pose_bones", "selected_pose_bones", "selected_pose_bones_from_active_object",
+	"active_bone", "active_pose_bone",
 	"active_base", "active_object", "object", "edit_object",
 	"sculpt_object", "vertex_paint_object", "weight_paint_object",
-	"image_paint_object", "particle_edit_object",
+	"image_paint_object", "particle_edit_object", "uv_sculpt_object",
 	"sequences", "selected_sequences", "selected_editable_sequences", /* sequencer */
 	"gpencil_data", "gpencil_data_owner", /* grease pencil data */
 	"visible_gpencil_layers", "editable_gpencil_layers", "editable_gpencil_strokes",
-	"active_gpencil_layer", "active_gpencil_frame", "active_gpencil_palette",
-	"active_gpencil_palettecolor", "active_gpencil_brush",
+	"active_gpencil_layer", "active_gpencil_frame", "active_gpencil_brush",
 	"active_operator", "selected_editable_fcurves",
 	NULL};
 
 int ed_screen_context(const bContext *C, const char *member, bContextDataResult *result)
 {
+	wmWindow *win = CTX_wm_window(C);
+	View3D *v3d = CTX_wm_view3d(C); /* This may be NULL in a lot of cases. */
 	bScreen *sc = CTX_wm_screen(C);
 	ScrArea *sa = CTX_wm_area(C);
-	Scene *scene = sc->scene;
-	Base *base;
-
-#if 0  /* Using the context breaks adding objects in the UI. Need to find out why - campbell */
-	Object *obact = CTX_data_active_object(C);
-	Object *obedit = CTX_data_edit_object(C);
-	base = CTX_data_active_base(C);
-#else
-	Object *obedit = scene->obedit;
-	Object *obact = OBACT;
-	base = BASACT;
-#endif
+	Scene *scene = WM_window_get_active_scene(win);
+	ViewLayer *view_layer = WM_window_get_active_view_layer(win);
+	Object *obact = (view_layer && view_layer->basact) ? view_layer->basact->object : NULL;
+	Object *obedit = view_layer ? OBEDIT_FROM_VIEW_LAYER(view_layer) : NULL;
 
 	if (CTX_data_dir(member)) {
 		CTX_data_dir_set(result, screen_context_dir);
@@ -116,84 +109,136 @@ int ed_screen_context(const bContext *C, const char *member, bContextDataResult 
 		CTX_data_id_pointer_set(result, &scene->id);
 		return 1;
 	}
-	else if (CTX_data_equals(member, "visible_objects") || CTX_data_equals(member, "visible_bases")) {
-		const unsigned int lay = context_layers(sc, scene, sa);
-		const bool visible_objects = CTX_data_equals(member, "visible_objects");
-
-		for (base = scene->base.first; base; base = base->next) {
-			if (((base->object->restrictflag & OB_RESTRICT_VIEW) == 0) && (base->lay & lay)) {
-				if (visible_objects)
-					CTX_data_id_list_add(result, &base->object->id);
-				else
-					CTX_data_list_add(result, &scene->id, &RNA_ObjectBase, base);
+	else if (CTX_data_equals(member, "visible_objects")) {
+		FOREACH_VISIBLE_OBJECT_BEGIN(view_layer, v3d, ob)
+		{
+			CTX_data_id_list_add(result, &ob->id);
+		}
+		FOREACH_VISIBLE_BASE_END;
+		CTX_data_type_set(result, CTX_DATA_TYPE_COLLECTION);
+		return 1;
+	}
+	else if (CTX_data_equals(member, "selectable_objects")) {
+		for (Base *base = view_layer->object_bases.first; base; base = base->next) {
+			if (v3d && v3d->localvd && ((base->local_view_bits & v3d->local_view_uuid) == 0)) {
+				continue;
+			}
+			if (v3d && ((v3d->object_type_exclude_viewport & (1 << base->object->type)) != 0)) {
+				continue;
+			}
+			if (v3d && ((v3d->object_type_exclude_select & (1 << base->object->type)) != 0)) {
+				continue;
+			}
+			if (((base->flag & BASE_VISIBLE) != 0) && ((base->flag & BASE_SELECTABLE) != 0)) {
+				CTX_data_id_list_add(result, &base->object->id);
 			}
 		}
 		CTX_data_type_set(result, CTX_DATA_TYPE_COLLECTION);
 		return 1;
 	}
-	else if (CTX_data_equals(member, "selectable_objects") || CTX_data_equals(member, "selectable_bases")) {
-		const unsigned int lay = context_layers(sc, scene, sa);
-		const bool selectable_objects = CTX_data_equals(member, "selectable_objects");
-
-		for (base = scene->base.first; base; base = base->next) {
-			if (base->lay & lay) {
-				if ((base->object->restrictflag & OB_RESTRICT_VIEW) == 0 && (base->object->restrictflag & OB_RESTRICT_SELECT) == 0) {
-					if (selectable_objects)
-						CTX_data_id_list_add(result, &base->object->id);
-					else
-						CTX_data_list_add(result, &scene->id, &RNA_ObjectBase, base);
-				}
-			}
+	else if (CTX_data_equals(member, "selected_objects")) {
+		FOREACH_SELECTED_OBJECT_BEGIN(view_layer, v3d, ob)
+		{
+			CTX_data_id_list_add(result, &ob->id);
 		}
+		FOREACH_SELECTED_OBJECT_END;
 		CTX_data_type_set(result, CTX_DATA_TYPE_COLLECTION);
 		return 1;
 	}
-	else if (CTX_data_equals(member, "selected_objects") || CTX_data_equals(member, "selected_bases")) {
-		const unsigned int lay = context_layers(sc, scene, sa);
-		const bool selected_objects = CTX_data_equals(member, "selected_objects");
-
-		for (base = scene->base.first; base; base = base->next) {
-			if ((base->flag & SELECT) && (base->lay & lay)) {
-				if (selected_objects)
-					CTX_data_id_list_add(result, &base->object->id);
-				else
-					CTX_data_list_add(result, &scene->id, &RNA_ObjectBase, base);
+	else if (CTX_data_equals(member, "selected_editable_objects")) {
+		FOREACH_SELECTED_OBJECT_BEGIN(view_layer, v3d, ob)
+		{
+			if (0 == BKE_object_is_libdata(ob)) {
+				CTX_data_id_list_add(result, &ob->id);
 			}
 		}
+		FOREACH_SELECTED_OBJECT_END;
 		CTX_data_type_set(result, CTX_DATA_TYPE_COLLECTION);
 		return 1;
 	}
-	else if (CTX_data_equals(member, "selected_editable_objects") || CTX_data_equals(member, "selected_editable_bases")) {
-		const unsigned int lay = context_layers(sc, scene, sa);
-		const bool selected_editable_objects = CTX_data_equals(member, "selected_editable_objects");
-
-		for (base = scene->base.first; base; base = base->next) {
-			if ((base->flag & SELECT) && (base->lay & lay)) {
-				if ((base->object->restrictflag & OB_RESTRICT_VIEW) == 0) {
-					if (0 == BKE_object_is_libdata(base->object)) {
-						if (selected_editable_objects)
-							CTX_data_id_list_add(result, &base->object->id);
-						else
-							CTX_data_list_add(result, &scene->id, &RNA_ObjectBase, base);
-					}
-				}
-			}
-		}
-		CTX_data_type_set(result, CTX_DATA_TYPE_COLLECTION);
-		return 1;
-	}
-	else if (CTX_data_equals(member, "editable_objects") || CTX_data_equals(member, "editable_bases")) {
-		const unsigned int lay = context_layers(sc, scene, sa);
-		const bool editable_objects = CTX_data_equals(member, "editable_objects");
-
+	else if (CTX_data_equals(member, "editable_objects")) {
 		/* Visible + Editable, but not necessarily selected */
-		for (base = scene->base.first; base; base = base->next) {
-			if (((base->object->restrictflag & OB_RESTRICT_VIEW) == 0) && (base->lay & lay)) {
+		FOREACH_VISIBLE_OBJECT_BEGIN(view_layer, v3d, ob)
+		{
+			if (0 == BKE_object_is_libdata(ob)) {
+				CTX_data_id_list_add(result, &ob->id);
+			}
+		}
+		FOREACH_VISIBLE_OBJECT_END;
+		CTX_data_type_set(result, CTX_DATA_TYPE_COLLECTION);
+		return 1;
+	}
+	else if ( CTX_data_equals(member, "visible_bases")) {
+		FOREACH_VISIBLE_BASE_BEGIN(view_layer, v3d, base)
+		{
+			CTX_data_list_add(result, &scene->id, &RNA_ObjectBase, base);
+		}
+		FOREACH_VISIBLE_BASE_END;
+		CTX_data_type_set(result, CTX_DATA_TYPE_COLLECTION);
+		return 1;
+	}
+	else if (CTX_data_equals(member, "selectable_bases")) {
+		for (Base *base = view_layer->object_bases.first; base; base = base->next) {
+			if (v3d && v3d->localvd && ((base->local_view_bits & v3d->local_view_uuid) == 0)) {
+				continue;
+			}
+			if (v3d && ((v3d->object_type_exclude_viewport & (1 << base->object->type)) != 0)) {
+				continue;
+			}
+			if (v3d && ((v3d->object_type_exclude_select & (1 << base->object->type)) != 0)) {
+				continue;
+			}
+			if ((base->flag & BASE_VISIBLE) && (base->flag & BASE_SELECTABLE) != 0) {
+				CTX_data_list_add(result, &scene->id, &RNA_ObjectBase, base);
+			}
+		}
+		CTX_data_type_set(result, CTX_DATA_TYPE_COLLECTION);
+		return 1;
+	}
+	else if (CTX_data_equals(member, "selected_bases")) {
+		for (Base *base = view_layer->object_bases.first; base; base = base->next) {
+			if (v3d && v3d->localvd && ((base->local_view_bits & v3d->local_view_uuid) == 0)) {
+				continue;
+			}
+			if (v3d && ((v3d->object_type_exclude_viewport & (1 << base->object->type)) != 0)) {
+				continue;
+			}
+			if ((base->flag & BASE_SELECTED) != 0) {
+				CTX_data_list_add(result, &scene->id, &RNA_ObjectBase, base);
+			}
+		}
+		CTX_data_type_set(result, CTX_DATA_TYPE_COLLECTION);
+		return 1;
+	}
+	else if (CTX_data_equals(member, "selected_editable_bases")) {
+		for (Base *base = view_layer->object_bases.first; base; base = base->next) {
+			if (v3d && v3d->localvd && ((base->local_view_bits & v3d->local_view_uuid) == 0)) {
+				continue;
+			}
+			if (v3d && ((v3d->object_type_exclude_viewport & (1 << base->object->type)) != 0)) {
+				continue;
+			}
+			if ((base->flag & BASE_SELECTED) != 0) {
 				if (0 == BKE_object_is_libdata(base->object)) {
-					if (editable_objects)
-						CTX_data_id_list_add(result, &base->object->id);
-					else
-						CTX_data_list_add(result, &scene->id, &RNA_ObjectBase, base);
+					CTX_data_list_add(result, &scene->id, &RNA_ObjectBase, base);
+				}
+			}
+		}
+		CTX_data_type_set(result, CTX_DATA_TYPE_COLLECTION);
+		return 1;
+	}
+	else if (CTX_data_equals(member, "editable_bases")) {
+		/* Visible + Editable, but not necessarily selected */
+		for (Base *base = view_layer->object_bases.first; base; base = base->next) {
+			if (v3d && v3d->localvd && ((base->local_view_bits & v3d->local_view_uuid) == 0)) {
+				continue;
+			}
+			if (v3d && ((v3d->object_type_exclude_viewport & (1 << base->object->type)) != 0)) {
+				continue;
+			}
+			if ((base->flag & BASE_VISIBLE) != 0) {
+				if (0 == BKE_object_is_libdata(base->object)) {
+					CTX_data_list_add(result, &scene->id, &RNA_ObjectBase, base);
 				}
 			}
 		}
@@ -206,38 +251,47 @@ int ed_screen_context(const bContext *C, const char *member, bContextDataResult 
 		const bool editable_bones = CTX_data_equals(member, "editable_bones");
 
 		if (arm && arm->edbo) {
-			/* Attention: X-Axis Mirroring is also handled here... */
-			for (ebone = arm->edbo->first; ebone; ebone = ebone->next) {
-				/* first and foremost, bone must be visible and selected */
-				if (EBONE_VISIBLE(arm, ebone)) {
-					/* Get 'x-axis mirror equivalent' bone if the X-Axis Mirroring option is enabled
-					 * so that most users of this data don't need to explicitly check for it themselves.
-					 *
-					 * We need to make sure that these mirrored copies are not selected, otherwise some
-					 * bones will be operated on twice.
-					 */
-					if (arm->flag & ARM_MIRROR_EDIT)
-						flipbone = ED_armature_ebone_get_mirrored(arm->edbo, ebone);
+			uint objects_len;
+			Object **objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(view_layer, CTX_wm_view3d(C), &objects_len);
+			for (uint i = 0; i < objects_len; i++) {
+				Object *ob = objects[i];
+				arm = ob->data;
 
-					/* if we're filtering for editable too, use the check for that instead, as it has selection check too */
-					if (editable_bones) {
-						/* only selected + editable */
-						if (EBONE_EDITABLE(ebone)) {
+				/* Attention: X-Axis Mirroring is also handled here... */
+				for (ebone = arm->edbo->first; ebone; ebone = ebone->next) {
+					/* first and foremost, bone must be visible and selected */
+					if (EBONE_VISIBLE(arm, ebone)) {
+						/* Get 'x-axis mirror equivalent' bone if the X-Axis Mirroring option is enabled
+						 * so that most users of this data don't need to explicitly check for it themselves.
+						 *
+						 * We need to make sure that these mirrored copies are not selected, otherwise some
+						 * bones will be operated on twice.
+						 */
+						if (arm->flag & ARM_MIRROR_EDIT)
+							flipbone = ED_armature_ebone_get_mirrored(arm->edbo, ebone);
+
+						/* if we're filtering for editable too, use the check for that instead, as it has selection check too */
+						if (editable_bones) {
+							/* only selected + editable */
+							if (EBONE_EDITABLE(ebone)) {
+								CTX_data_list_add(result, &arm->id, &RNA_EditBone, ebone);
+
+								if ((flipbone) && !(flipbone->flag & BONE_SELECTED))
+									CTX_data_list_add(result, &arm->id, &RNA_EditBone, flipbone);
+							}
+						}
+						else {
+							/* only include bones if visible */
 							CTX_data_list_add(result, &arm->id, &RNA_EditBone, ebone);
 
-							if ((flipbone) && !(flipbone->flag & BONE_SELECTED))
+							if ((flipbone) && EBONE_VISIBLE(arm, flipbone) == 0)
 								CTX_data_list_add(result, &arm->id, &RNA_EditBone, flipbone);
 						}
 					}
-					else {
-						/* only include bones if visible */
-						CTX_data_list_add(result, &arm->id, &RNA_EditBone, ebone);
-
-						if ((flipbone) && EBONE_VISIBLE(arm, flipbone) == 0)
-							CTX_data_list_add(result, &arm->id, &RNA_EditBone, flipbone);
-					}
 				}
 			}
+			MEM_freeN(objects);
+
 			CTX_data_type_set(result, CTX_DATA_TYPE_COLLECTION);
 			return 1;
 		}
@@ -248,53 +302,65 @@ int ed_screen_context(const bContext *C, const char *member, bContextDataResult 
 		const bool selected_editable_bones = CTX_data_equals(member, "selected_editable_bones");
 
 		if (arm && arm->edbo) {
-			/* Attention: X-Axis Mirroring is also handled here... */
-			for (ebone = arm->edbo->first; ebone; ebone = ebone->next) {
-				/* first and foremost, bone must be visible and selected */
-				if (EBONE_VISIBLE(arm, ebone) && (ebone->flag & BONE_SELECTED)) {
-					/* Get 'x-axis mirror equivalent' bone if the X-Axis Mirroring option is enabled
-					 * so that most users of this data don't need to explicitly check for it themselves.
-					 *
-					 * We need to make sure that these mirrored copies are not selected, otherwise some
-					 * bones will be operated on twice.
-					 */
-					if (arm->flag & ARM_MIRROR_EDIT)
-						flipbone = ED_armature_ebone_get_mirrored(arm->edbo, ebone);
+			uint objects_len;
+			Object **objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(view_layer, CTX_wm_view3d(C), &objects_len);
+			for (uint i = 0; i < objects_len; i++) {
+				Object *ob = objects[i];
+				arm = ob->data;
 
-					/* if we're filtering for editable too, use the check for that instead, as it has selection check too */
-					if (selected_editable_bones) {
-						/* only selected + editable */
-						if (EBONE_EDITABLE(ebone)) {
+				/* Attention: X-Axis Mirroring is also handled here... */
+				for (ebone = arm->edbo->first; ebone; ebone = ebone->next) {
+					/* first and foremost, bone must be visible and selected */
+					if (EBONE_VISIBLE(arm, ebone) && (ebone->flag & BONE_SELECTED)) {
+						/* Get 'x-axis mirror equivalent' bone if the X-Axis Mirroring option is enabled
+						 * so that most users of this data don't need to explicitly check for it themselves.
+						 *
+						 * We need to make sure that these mirrored copies are not selected, otherwise some
+						 * bones will be operated on twice.
+						 */
+						if (arm->flag & ARM_MIRROR_EDIT)
+							flipbone = ED_armature_ebone_get_mirrored(arm->edbo, ebone);
+
+						/* if we're filtering for editable too, use the check for that instead, as it has selection check too */
+						if (selected_editable_bones) {
+							/* only selected + editable */
+							if (EBONE_EDITABLE(ebone)) {
+								CTX_data_list_add(result, &arm->id, &RNA_EditBone, ebone);
+
+								if ((flipbone) && !(flipbone->flag & BONE_SELECTED))
+									CTX_data_list_add(result, &arm->id, &RNA_EditBone, flipbone);
+							}
+						}
+						else {
+							/* only include bones if selected */
 							CTX_data_list_add(result, &arm->id, &RNA_EditBone, ebone);
 
 							if ((flipbone) && !(flipbone->flag & BONE_SELECTED))
 								CTX_data_list_add(result, &arm->id, &RNA_EditBone, flipbone);
 						}
 					}
-					else {
-						/* only include bones if selected */
-						CTX_data_list_add(result, &arm->id, &RNA_EditBone, ebone);
-
-						if ((flipbone) && !(flipbone->flag & BONE_SELECTED))
-							CTX_data_list_add(result, &arm->id, &RNA_EditBone, flipbone);
-					}
 				}
 			}
+			MEM_freeN(objects);
+
 			CTX_data_type_set(result, CTX_DATA_TYPE_COLLECTION);
 			return 1;
 		}
 	}
 	else if (CTX_data_equals(member, "visible_pose_bones")) {
 		Object *obpose = BKE_object_pose_armature_get(obact);
-		bArmature *arm = (obpose) ? obpose->data : NULL;
-		bPoseChannel *pchan;
-
-		if (obpose && obpose->pose && arm) {
-			for (pchan = obpose->pose->chanbase.first; pchan; pchan = pchan->next) {
-				/* ensure that PoseChannel is on visible layer and is not hidden in PoseMode */
-				if (PBONE_VISIBLE(arm, pchan->bone)) {
+		if (obpose && obpose->pose && obpose->data) {
+			if (obpose != obact) {
+				FOREACH_PCHAN_VISIBLE_IN_OBJECT_BEGIN (obpose, pchan) {
 					CTX_data_list_add(result, &obpose->id, &RNA_PoseBone, pchan);
-				}
+				} FOREACH_PCHAN_SELECTED_IN_OBJECT_END;
+			}
+			else if (obact->mode & OB_MODE_POSE) {
+				FOREACH_OBJECT_IN_MODE_BEGIN (view_layer, v3d, OB_ARMATURE, OB_MODE_POSE, ob_iter) {
+					FOREACH_PCHAN_VISIBLE_IN_OBJECT_BEGIN (ob_iter, pchan) {
+						CTX_data_list_add(result, &ob_iter->id, &RNA_PoseBone, pchan);
+					} FOREACH_PCHAN_VISIBLE_IN_OBJECT_END;
+				} FOREACH_OBJECT_IN_MODE_END;
 			}
 			CTX_data_type_set(result, CTX_DATA_TYPE_COLLECTION);
 			return 1;
@@ -302,16 +368,35 @@ int ed_screen_context(const bContext *C, const char *member, bContextDataResult 
 	}
 	else if (CTX_data_equals(member, "selected_pose_bones")) {
 		Object *obpose = BKE_object_pose_armature_get(obact);
-		bArmature *arm = (obpose) ? obpose->data : NULL;
-		bPoseChannel *pchan;
-
-		if (obpose && obpose->pose && arm) {
-			for (pchan = obpose->pose->chanbase.first; pchan; pchan = pchan->next) {
-				/* ensure that PoseChannel is on visible layer and is not hidden in PoseMode */
-				if (PBONE_VISIBLE(arm, pchan->bone)) {
-					if (pchan->bone->flag & BONE_SELECTED)
-						CTX_data_list_add(result, &obpose->id, &RNA_PoseBone, pchan);
-				}
+		if (obpose && obpose->pose && obpose->data) {
+			if (obpose != obact) {
+				FOREACH_PCHAN_SELECTED_IN_OBJECT_BEGIN (obpose, pchan) {
+					CTX_data_list_add(result, &obpose->id, &RNA_PoseBone, pchan);
+				} FOREACH_PCHAN_SELECTED_IN_OBJECT_END;
+			}
+			else if (obact->mode & OB_MODE_POSE) {
+				FOREACH_OBJECT_IN_MODE_BEGIN (view_layer, v3d, OB_ARMATURE, OB_MODE_POSE, ob_iter) {
+					FOREACH_PCHAN_SELECTED_IN_OBJECT_BEGIN (ob_iter, pchan) {
+						CTX_data_list_add(result, &ob_iter->id, &RNA_PoseBone, pchan);
+					} FOREACH_PCHAN_SELECTED_IN_OBJECT_END;
+				} FOREACH_OBJECT_IN_MODE_END;
+			}
+			CTX_data_type_set(result, CTX_DATA_TYPE_COLLECTION);
+			return 1;
+		}
+	}
+	else if (CTX_data_equals(member, "selected_pose_bones_from_active_object")) {
+		Object *obpose = BKE_object_pose_armature_get(obact);
+		if (obpose && obpose->pose && obpose->data) {
+			if (obpose != obact) {
+				FOREACH_PCHAN_SELECTED_IN_OBJECT_BEGIN (obpose, pchan) {
+					CTX_data_list_add(result, &obpose->id, &RNA_PoseBone, pchan);
+				} FOREACH_PCHAN_SELECTED_IN_OBJECT_END;
+			}
+			else if (obact->mode & OB_MODE_POSE) {
+				FOREACH_PCHAN_SELECTED_IN_OBJECT_BEGIN (obact, pchan) {
+					CTX_data_list_add(result, &obact->id, &RNA_PoseBone, pchan);
+				} FOREACH_PCHAN_SELECTED_IN_OBJECT_END;
 			}
 			CTX_data_type_set(result, CTX_DATA_TYPE_COLLECTION);
 			return 1;
@@ -345,8 +430,8 @@ int ed_screen_context(const bContext *C, const char *member, bContextDataResult 
 		}
 	}
 	else if (CTX_data_equals(member, "active_base")) {
-		if (base)
-			CTX_data_pointer_set(result, &scene->id, &RNA_ObjectBase, base);
+		if (view_layer->basact)
+			CTX_data_pointer_set(result, &scene->id, &RNA_ObjectBase, view_layer->basact);
 
 		return 1;
 	}
@@ -399,6 +484,23 @@ int ed_screen_context(const bContext *C, const char *member, bContextDataResult 
 
 		return 1;
 	}
+	else if (CTX_data_equals(member, "uv_sculpt_object")) {
+		/* TODO(campbell): most likely we change rules for uv_sculpt. */
+		if (obact && (obact->mode & OB_MODE_EDIT)) {
+			const ToolSettings *ts = scene->toolsettings;
+			if (ts->use_uv_sculpt) {
+				if (ED_uvedit_test(obedit)) {
+					WorkSpace *workspace = CTX_wm_workspace(C);
+					if ((workspace->tools_space_type == SPACE_IMAGE) &&
+					    (workspace->tools_mode == SI_MODE_UV))
+					{
+						CTX_data_id_pointer_set(result, &obact->id);
+					}
+				}
+			}
+		}
+		return 1;
+	}
 	else if (CTX_data_equals(member, "sequences")) {
 		Editing *ed = BKE_sequencer_editing_get(scene, false);
 		if (ed) {
@@ -441,7 +543,7 @@ int ed_screen_context(const bContext *C, const char *member, bContextDataResult 
 		 * (as outlined above - see Campbell's #ifdefs). That causes the get_active function to fail when
 		 * called from context. For that reason, we end up using an alternative where we pass everything in!
 		 */
-		bGPdata *gpd = ED_gpencil_data_get_active_direct((ID *)sc, scene, sa, obact);
+		bGPdata *gpd = ED_gpencil_data_get_active_direct((ID *)sc, sa, scene, obact);
 
 		if (gpd) {
 			CTX_data_id_pointer_set(result, &gpd->id);
@@ -456,7 +558,7 @@ int ed_screen_context(const bContext *C, const char *member, bContextDataResult 
 		PointerRNA ptr;
 
 		/* get pointer to Grease Pencil Data */
-		gpd_ptr = ED_gpencil_data_get_pointers_direct((ID *)sc, scene, sa, obact, &ptr);
+		gpd_ptr = ED_gpencil_data_get_pointers_direct((ID *)sc, sa, scene, obact, &ptr);
 
 		if (gpd_ptr) {
 			CTX_data_pointer_set(result, ptr.id.data, ptr.type, ptr.data);
@@ -465,7 +567,7 @@ int ed_screen_context(const bContext *C, const char *member, bContextDataResult 
 	}
 	else if (CTX_data_equals(member, "active_gpencil_layer")) {
 		/* XXX: see comment for gpencil_data case... */
-		bGPdata *gpd = ED_gpencil_data_get_active_direct((ID *)sc, scene, sa, obact);
+		bGPdata *gpd = ED_gpencil_data_get_active_direct((ID *)sc, sa, scene, obact);
 
 		if (gpd) {
 			bGPDlayer *gpl = BKE_gpencil_layer_getactive(gpd);
@@ -476,47 +578,17 @@ int ed_screen_context(const bContext *C, const char *member, bContextDataResult 
 			}
 		}
 	}
-	else if (CTX_data_equals(member, "active_gpencil_palette")) {
-		/* XXX: see comment for gpencil_data case... */
-		bGPdata *gpd = ED_gpencil_data_get_active_direct((ID *)sc, scene, sa, obact);
-
-		if (gpd) {
-			bGPDpalette *palette = BKE_gpencil_palette_getactive(gpd);
-
-			if (palette) {
-				CTX_data_pointer_set(result, &gpd->id, &RNA_GPencilPalette, palette);
-				return 1;
-			}
-		}
-	}
-	else if (CTX_data_equals(member, "active_gpencil_palettecolor")) {
-		/* XXX: see comment for gpencil_data case... */
-		bGPdata *gpd = ED_gpencil_data_get_active_direct((ID *)sc, scene, sa, obact);
-
-		if (gpd) {
-			bGPDpalette *palette = BKE_gpencil_palette_getactive(gpd);
-
-			if (palette) {
-				bGPDpalettecolor *palcolor = BKE_gpencil_palettecolor_getactive(palette);
-				if (palcolor) {
-					CTX_data_pointer_set(result, &gpd->id, &RNA_GPencilPaletteColor, palcolor);
-					return 1;
-				}
-			}
-		}
-	}
 	else if (CTX_data_equals(member, "active_gpencil_brush")) {
-		/* XXX: see comment for gpencil_data case... */
-		bGPDbrush *brush = BKE_gpencil_brush_getactive(scene->toolsettings);
+		Brush *brush = BKE_paint_brush(&scene->toolsettings->gp_paint->paint);
 
 		if (brush) {
-			CTX_data_pointer_set(result, &scene->id, &RNA_GPencilBrush, brush);
+			CTX_data_pointer_set(result, &scene->id, &RNA_Brush, brush);
 			return 1;
 		}
 	}
 	else if (CTX_data_equals(member, "active_gpencil_frame")) {
 		/* XXX: see comment for gpencil_data case... */
-		bGPdata *gpd = ED_gpencil_data_get_active_direct((ID *)sc, scene, sa, obact);
+		bGPdata *gpd = ED_gpencil_data_get_active_direct((ID *)sc, sa, scene, obact);
 
 		if (gpd) {
 			bGPDlayer *gpl = BKE_gpencil_layer_getactive(gpd);
@@ -529,7 +601,7 @@ int ed_screen_context(const bContext *C, const char *member, bContextDataResult 
 	}
 	else if (CTX_data_equals(member, "visible_gpencil_layers")) {
 		/* XXX: see comment for gpencil_data case... */
-		bGPdata *gpd = ED_gpencil_data_get_active_direct((ID *)sc, scene, sa, obact);
+		bGPdata *gpd = ED_gpencil_data_get_active_direct((ID *)sc, sa, scene, obact);
 
 		if (gpd) {
 			bGPDlayer *gpl;
@@ -545,7 +617,7 @@ int ed_screen_context(const bContext *C, const char *member, bContextDataResult 
 	}
 	else if (CTX_data_equals(member, "editable_gpencil_layers")) {
 		/* XXX: see comment for gpencil_data case... */
-		bGPdata *gpd = ED_gpencil_data_get_active_direct((ID *)sc, scene, sa, obact);
+		bGPdata *gpd = ED_gpencil_data_get_active_direct((ID *)sc, sa, scene, obact);
 
 		if (gpd) {
 			bGPDlayer *gpl;
@@ -561,24 +633,37 @@ int ed_screen_context(const bContext *C, const char *member, bContextDataResult 
 	}
 	else if (CTX_data_equals(member, "editable_gpencil_strokes")) {
 		/* XXX: see comment for gpencil_data case... */
-		bGPdata *gpd = ED_gpencil_data_get_active_direct((ID *)sc, scene, sa, obact);
+		bGPdata *gpd = ED_gpencil_data_get_active_direct((ID *)sc, sa, scene, obact);
+		const bool is_multiedit = (bool)GPENCIL_MULTIEDIT_SESSIONS_ON(gpd);
 
 		if (gpd) {
 			bGPDlayer *gpl;
 
 			for (gpl = gpd->layers.first; gpl; gpl = gpl->next) {
 				if (gpencil_layer_is_editable(gpl) && (gpl->actframe)) {
-					bGPDframe *gpf = gpl->actframe;
+					bGPDframe *gpf;
 					bGPDstroke *gps;
+					bGPDframe *init_gpf = gpl->actframe;
+					if (is_multiedit) {
+						init_gpf = gpl->frames.first;
+					}
 
-					for (gps = gpf->strokes.first; gps; gps = gps->next) {
-						if (ED_gpencil_stroke_can_use_direct(sa, gps)) {
-							/* check if the color is editable */
-							if (ED_gpencil_stroke_color_use(gpl, gps) == false) {
-								continue;
+					for (gpf = init_gpf; gpf; gpf = gpf->next) {
+						if ((gpf == gpl->actframe) || ((gpf->flag & GP_FRAME_SELECT) && (is_multiedit))) {
+							for (gps = gpf->strokes.first; gps; gps = gps->next) {
+								if (ED_gpencil_stroke_can_use_direct(sa, gps)) {
+									/* check if the color is editable */
+									if (ED_gpencil_stroke_color_use(obact, gpl, gps) == false) {
+										continue;
+									}
+
+									CTX_data_list_add(result, &gpd->id, &RNA_GPencilStroke, gps);
+								}
 							}
-
-							CTX_data_list_add(result, &gpd->id, &RNA_GPencilStroke, gps);
+						}
+						/* if not multiedit out of loop */
+						if (!is_multiedit) {
+							break;
 						}
 					}
 				}

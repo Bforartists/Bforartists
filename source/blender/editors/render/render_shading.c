@@ -33,6 +33,7 @@
 
 #include "DNA_curve_types.h"
 #include "DNA_lamp_types.h"
+#include "DNA_lightprobe_types.h"
 #include "DNA_material_types.h"
 #include "DNA_node_types.h"
 #include "DNA_object_types.h"
@@ -50,10 +51,11 @@
 #include "BKE_animsys.h"
 #include "BKE_context.h"
 #include "BKE_curve.h"
-#include "BKE_depsgraph.h"
+#include "BKE_editmesh.h"
 #include "BKE_font.h"
 #include "BKE_global.h"
 #include "BKE_image.h"
+#include "BKE_layer.h"
 #include "BKE_library.h"
 #include "BKE_linestyle.h"
 #include "BKE_main.h"
@@ -62,10 +64,11 @@
 #include "BKE_report.h"
 #include "BKE_scene.h"
 #include "BKE_texture.h"
+#include "BKE_workspace.h"
 #include "BKE_world.h"
-#include "BKE_editmesh.h"
 
-
+#include "DEG_depsgraph.h"
+#include "DEG_depsgraph_build.h"
 
 #ifdef WITH_FREESTYLE
 #  include "BKE_freestyle.h"
@@ -83,6 +86,7 @@
 #include "ED_mesh.h"
 #include "ED_node.h"
 #include "ED_render.h"
+#include "ED_scene.h"
 #include "ED_screen.h"
 
 #include "RNA_define.h"
@@ -91,7 +95,38 @@
 
 #include "RE_pipeline.h"
 
+#include "engines/eevee/eevee_lightcache.h"
+
 #include "render_intern.h"  // own include
+
+/**
+ * Object list for material operations.
+ * has exception for pinned object.
+ */
+static Object **object_array_for_shading(bContext *C, uint *r_objects_len)
+{
+	ScrArea *sa = CTX_wm_area(C);
+	SpaceButs *sbuts = NULL;
+	View3D *v3d = NULL;
+	if (sa->spacetype == SPACE_BUTS) {
+		sbuts = sa->spacedata.first;
+	}
+	else if (sa->spacetype == SPACE_VIEW3D) {
+		v3d = sa->spacedata.first;
+	}
+
+	Object **objects;
+	if (sbuts && sbuts->pinid && GS(sbuts->pinid->name) == ID_OB) {
+		objects = MEM_mallocN(sizeof(*objects), __func__);
+		objects[0] = (Object *)sbuts->pinid;
+		*r_objects_len = 1;
+	}
+	else {
+		ViewLayer *view_layer = CTX_data_view_layer(C);
+		objects = BKE_view_layer_array_from_objects_in_edit_mode_unique_data(view_layer, v3d, r_objects_len);
+	}
+	return objects;
+}
 
 /********************** material slot operators *********************/
 
@@ -154,7 +189,7 @@ static int material_slot_remove_exec(bContext *C, wmOperator *op)
 		WM_event_add_notifier(C, NC_SCENE | ND_TOOLSETTINGS, NULL);
 	}
 
-	DAG_id_tag_update(&ob->id, OB_RECALC_DATA);
+	DEG_id_tag_update(&ob->id, OB_RECALC_DATA);
 	WM_event_add_notifier(C, NC_OBJECT | ND_DRAW, ob);
 	WM_event_add_notifier(C, NC_OBJECT | ND_OB_SHADING, ob);
 	WM_event_add_notifier(C, NC_MATERIAL | ND_SHADING_PREVIEW, ob);
@@ -179,12 +214,17 @@ void OBJECT_OT_material_slot_remove(wmOperatorType *ot)
 
 static int material_slot_assign_exec(bContext *C, wmOperator *UNUSED(op))
 {
-	Object *ob = ED_object_context(C);
+	View3D *v3d = CTX_wm_view3d(C);
+	bool changed_multi = false;
 
-	if (!ob)
-		return OPERATOR_CANCELLED;
-
-	if (ob && ob->actcol > 0) {
+	uint objects_len = 0;
+	Object **objects = object_array_for_shading(C, &objects_len);
+	for (uint ob_index = 0; ob_index < objects_len; ob_index++) {
+		Object *ob = objects[ob_index];
+		if (ob->actcol <= 0) {
+			continue;
+		}
+		bool changed = false;
 		if (ob->type == OB_MESH) {
 			BMEditMesh *em = BKE_editmesh_from_object(ob);
 			BMFace *efa;
@@ -192,8 +232,10 @@ static int material_slot_assign_exec(bContext *C, wmOperator *UNUSED(op))
 
 			if (em) {
 				BM_ITER_MESH (efa, &iter, em->bm, BM_FACES_OF_MESH) {
-					if (BM_elem_flag_test(efa, BM_ELEM_SELECT))
+					if (BM_elem_flag_test(efa, BM_ELEM_SELECT)) {
+						changed = true;
 						efa->mat_nr = ob->actcol - 1;
+					}
 				}
 			}
 		}
@@ -203,7 +245,8 @@ static int material_slot_assign_exec(bContext *C, wmOperator *UNUSED(op))
 
 			if (nurbs) {
 				for (nu = nurbs->first; nu; nu = nu->next) {
-					if (ED_curve_nurb_select_check(ob->data, nu)) {
+					if (ED_curve_nurb_select_check(v3d, nu)) {
+						changed = true;
 						nu->mat_nr = ob->actcol - 1;
 					}
 				}
@@ -214,16 +257,22 @@ static int material_slot_assign_exec(bContext *C, wmOperator *UNUSED(op))
 			int i, selstart, selend;
 
 			if (ef && BKE_vfont_select_get(ob, &selstart, &selend)) {
-				for (i = selstart; i <= selend; i++)
+				for (i = selstart; i <= selend; i++) {
+					changed = true;
 					ef->textbufinfo[i].mat_nr = ob->actcol;
+				}
 			}
 		}
+
+		if (changed) {
+			changed_multi = true;
+			DEG_id_tag_update(&ob->id, OB_RECALC_DATA);
+			WM_event_add_notifier(C, NC_GEOM | ND_DATA, ob->data);
+		}
 	}
+	MEM_freeN(objects);
 
-	DAG_id_tag_update(&ob->id, OB_RECALC_DATA);
-	WM_event_add_notifier(C, NC_GEOM | ND_DATA, ob->data);
-
-	return OPERATOR_FINISHED;
+	return (changed_multi) ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
 }
 
 void OBJECT_OT_material_slot_assign(wmOperatorType *ot)
@@ -243,66 +292,78 @@ void OBJECT_OT_material_slot_assign(wmOperatorType *ot)
 
 static int material_slot_de_select(bContext *C, bool select)
 {
-	Object *ob = ED_object_context(C);
+	bool changed_multi = false;
 
-	if (!ob)
-		return OPERATOR_CANCELLED;
+	uint objects_len = 0;
+	Object **objects = object_array_for_shading(C, &objects_len);
+	for (uint ob_index = 0; ob_index < objects_len; ob_index++) {
+		Object *ob = objects[ob_index];
+		bool changed = false;
 
-	if (ob->type == OB_MESH) {
-		BMEditMesh *em = BKE_editmesh_from_object(ob);
+		if (ob->type == OB_MESH) {
+			BMEditMesh *em = BKE_editmesh_from_object(ob);
 
-		if (em) {
-			EDBM_deselect_by_material(em, ob->actcol - 1, select);
+			if (em) {
+				changed = EDBM_deselect_by_material(em, ob->actcol - 1, select);
+			}
 		}
-	}
-	else if (ELEM(ob->type, OB_CURVE, OB_SURF)) {
-		ListBase *nurbs = BKE_curve_editNurbs_get((Curve *)ob->data);
-		Nurb *nu;
-		BPoint *bp;
-		BezTriple *bezt;
-		int a;
+		else if (ELEM(ob->type, OB_CURVE, OB_SURF)) {
+			ListBase *nurbs = BKE_curve_editNurbs_get((Curve *)ob->data);
+			Nurb *nu;
+			BPoint *bp;
+			BezTriple *bezt;
+			int a;
 
-		if (nurbs) {
-			for (nu = nurbs->first; nu; nu = nu->next) {
-				if (nu->mat_nr == ob->actcol - 1) {
-					if (nu->bezt) {
-						a = nu->pntsu;
-						bezt = nu->bezt;
-						while (a--) {
-							if (bezt->hide == 0) {
-								if (select) {
-									bezt->f1 |= SELECT;
-									bezt->f2 |= SELECT;
-									bezt->f3 |= SELECT;
+			if (nurbs) {
+				for (nu = nurbs->first; nu; nu = nu->next) {
+					if (nu->mat_nr == ob->actcol - 1) {
+						if (nu->bezt) {
+							a = nu->pntsu;
+							bezt = nu->bezt;
+							while (a--) {
+								if (bezt->hide == 0) {
+									changed = true;
+									if (select) {
+										bezt->f1 |= SELECT;
+										bezt->f2 |= SELECT;
+										bezt->f3 |= SELECT;
+									}
+									else {
+										bezt->f1 &= ~SELECT;
+										bezt->f2 &= ~SELECT;
+										bezt->f3 &= ~SELECT;
+									}
 								}
-								else {
-									bezt->f1 &= ~SELECT;
-									bezt->f2 &= ~SELECT;
-									bezt->f3 &= ~SELECT;
-								}
+								bezt++;
 							}
-							bezt++;
 						}
-					}
-					else if (nu->bp) {
-						a = nu->pntsu * nu->pntsv;
-						bp = nu->bp;
-						while (a--) {
-							if (bp->hide == 0) {
-								if (select) bp->f1 |= SELECT;
-								else bp->f1 &= ~SELECT;
+						else if (nu->bp) {
+							a = nu->pntsu * nu->pntsv;
+							bp = nu->bp;
+							while (a--) {
+								if (bp->hide == 0) {
+									changed = true;
+									if (select) bp->f1 |= SELECT;
+									else bp->f1 &= ~SELECT;
+								}
+								bp++;
 							}
-							bp++;
 						}
 					}
 				}
 			}
 		}
+
+		if (changed) {
+			changed_multi = true;
+			DEG_id_tag_update(ob->data, DEG_TAG_SELECT_UPDATE);
+			WM_event_add_notifier(C, NC_GEOM | ND_SELECT, ob->data);
+		}
 	}
 
-	WM_event_add_notifier(C, NC_GEOM | ND_SELECT, ob->data);
+	MEM_freeN(objects);
 
-	return OPERATOR_FINISHED;
+	return (changed_multi) ? OPERATOR_FINISHED : OPERATOR_CANCELLED;
 }
 
 static int material_slot_select_exec(bContext *C, wmOperator *UNUSED(op))
@@ -361,7 +422,7 @@ static int material_slot_copy_exec(bContext *C, wmOperator *UNUSED(op))
 
 			if (ob_iter->totcol == ob->totcol) {
 				ob_iter->actcol = ob->actcol;
-				DAG_id_tag_update(&ob_iter->id, OB_RECALC_DATA);
+				DEG_id_tag_update(&ob_iter->id, OB_RECALC_DATA);
 				WM_event_add_notifier(C, NC_OBJECT | ND_DRAW, ob_iter);
 			}
 		}
@@ -375,9 +436,9 @@ static int material_slot_copy_exec(bContext *C, wmOperator *UNUSED(op))
 void OBJECT_OT_material_slot_copy(wmOperatorType *ot)
 {
 	/* identifiers */
-	ot->name = "Copy Material to Others";
+	ot->name = "Copy Material to Selected";
 	ot->idname = "OBJECT_OT_material_slot_copy";
-	ot->description = "Copy Material to Others\nCopies materials to other selected objects";
+	ot->description = "Copy Material to Selected\NCopy material to selected objects";
 
 	/* api callbacks */
 	ot->exec = material_slot_copy_exec;
@@ -426,7 +487,7 @@ static int material_slot_move_exec(bContext *C, wmOperator *op)
 
 	MEM_freeN(slot_remap);
 
-	DAG_id_tag_update(&ob->id, OB_RECALC_DATA);
+	DEG_id_tag_update(&ob->id, OB_RECALC_DATA);
 	WM_event_add_notifier(C, NC_OBJECT | ND_DRAW, ob);
 	WM_event_add_notifier(C, NC_OBJECT | ND_DATA, ob);
 
@@ -460,9 +521,9 @@ void OBJECT_OT_material_slot_move(wmOperatorType *ot)
 
 static int new_material_exec(bContext *C, wmOperator *UNUSED(op))
 {
-	Scene *scene = CTX_data_scene(C);
 	Material *ma = CTX_data_pointer_get_type(C, "material", &RNA_Material).data;
 	Main *bmain = CTX_data_main(C);
+	Object *ob = CTX_data_active_object(C);
 	PointerRNA ptr, idptr;
 	PropertyRNA *prop;
 
@@ -471,12 +532,14 @@ static int new_material_exec(bContext *C, wmOperator *UNUSED(op))
 		ma = BKE_material_copy(bmain, ma);
 	}
 	else {
-		ma = BKE_material_add(bmain, DATA_("Material"));
-
-		if (BKE_scene_use_new_shading_nodes(scene)) {
-			ED_node_shader_default(C, &ma->id);
-			ma->use_nodes = true;
+		if ((!ob) || (ob->type != OB_GPENCIL)) {
+			ma = BKE_material_add(bmain, DATA_("Material"));
 		}
+		else {
+			ma = BKE_material_add_gpencil(bmain, DATA_("Material"));
+		}
+		ED_node_shader_default(C, &ma->id);
+		ma->use_nodes = true;
 	}
 
 	/* hook into UI */
@@ -536,14 +599,6 @@ static int new_texture_exec(bContext *C, wmOperator *UNUSED(op))
 		 * pointer use also increases user, so this compensates it */
 		id_us_min(&tex->id);
 
-		if (ptr.id.data && GS(((ID *)ptr.id.data)->name) == ID_MA &&
-		    RNA_property_pointer_get(&ptr, prop).id.data == NULL)
-		{
-			/* In case we are assigning new texture to a material, and active slot was empty, reset 'use' flag. */
-			Material *ma = (Material *)ptr.id.data;
-			ma->septex &= ~(1 << ma->texact);
-		}
-
 		RNA_id_pointer_create(&tex->id, &idptr);
 		RNA_property_pointer_set(&ptr, prop, idptr);
 		RNA_property_update(C, &ptr, prop);
@@ -572,7 +627,6 @@ void TEXTURE_OT_new(wmOperatorType *ot)
 
 static int new_world_exec(bContext *C, wmOperator *UNUSED(op))
 {
-	Scene *scene = CTX_data_scene(C);
 	World *wo = CTX_data_pointer_get_type(C, "world", &RNA_World).data;
 	Main *bmain = CTX_data_main(C);
 	PointerRNA ptr, idptr;
@@ -584,11 +638,8 @@ static int new_world_exec(bContext *C, wmOperator *UNUSED(op))
 	}
 	else {
 		wo = BKE_world_add(bmain, DATA_("World"));
-
-		if (BKE_scene_use_new_shading_nodes(scene)) {
-			ED_node_shader_default(C, &wo->id);
-			wo->use_nodes = true;
-		}
+		ED_node_shader_default(C, &wo->id);
+		wo->use_nodes = true;
 	}
 
 	/* hook into UI */
@@ -625,59 +676,246 @@ void WORLD_OT_new(wmOperatorType *ot)
 
 /********************** render layer operators *********************/
 
-static int render_layer_add_exec(bContext *C, wmOperator *UNUSED(op))
+static int view_layer_add_exec(bContext *C, wmOperator *UNUSED(op))
 {
+	wmWindow *win = CTX_wm_window(C);
 	Scene *scene = CTX_data_scene(C);
+	ViewLayer *view_layer = BKE_view_layer_add(scene, NULL);
 
-	BKE_scene_add_render_layer(scene, NULL);
-	scene->r.actlay = BLI_listbase_count(&scene->r.layers) - 1;
+	if (win) {
+		WM_window_set_active_view_layer(win, view_layer);
+	}
 
-	DAG_id_tag_update(&scene->id, 0);
-	WM_event_add_notifier(C, NC_SCENE | ND_RENDER_OPTIONS, scene);
+	DEG_id_tag_update(&scene->id, 0);
+	DEG_relations_tag_update(CTX_data_main(C));
+	WM_event_add_notifier(C, NC_SCENE | ND_LAYER, scene);
 
 	return OPERATOR_FINISHED;
 }
 
-void SCENE_OT_render_layer_add(wmOperatorType *ot)
+void SCENE_OT_view_layer_add(wmOperatorType *ot)
 {
 	/* identifiers */
-	ot->name = "Add Render Layer";
-	ot->idname = "SCENE_OT_render_layer_add";
-	ot->description = "Add Render Layer\nAdd a render layer";
+	ot->name = "Add View Layer";
+	ot->idname = "SCENE_OT_view_layer_add";
+	ot->description = "Add a view layer";
 
 	/* api callbacks */
-	ot->exec = render_layer_add_exec;
+	ot->exec = view_layer_add_exec;
 
 	/* flags */
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_INTERNAL;
 }
 
-static int render_layer_remove_exec(bContext *C, wmOperator *UNUSED(op))
+static int view_layer_remove_exec(bContext *C, wmOperator *UNUSED(op))
 {
+	Main *bmain = CTX_data_main(C);
 	Scene *scene = CTX_data_scene(C);
-	SceneRenderLayer *rl = BLI_findlink(&scene->r.layers, scene->r.actlay);
+	ViewLayer *view_layer = CTX_data_view_layer(C);
 
-	if (!BKE_scene_remove_render_layer(CTX_data_main(C), scene, rl))
+	if (!ED_scene_view_layer_delete(bmain, scene, view_layer, NULL)) {
 		return OPERATOR_CANCELLED;
+	}
 
-	DAG_id_tag_update(&scene->id, 0);
 	WM_event_add_notifier(C, NC_SCENE | ND_RENDER_OPTIONS, scene);
 
 	return OPERATOR_FINISHED;
 }
 
-void SCENE_OT_render_layer_remove(wmOperatorType *ot)
+void SCENE_OT_view_layer_remove(wmOperatorType *ot)
 {
 	/* identifiers */
-	ot->name = "Remove Render Layer";
-	ot->idname = "SCENE_OT_render_layer_remove";
-	ot->description = "Remove Render Layer\nRemove the selected render layer";
+	ot->name = "Remove View Layer";
+	ot->idname = "SCENE_OT_view_layer_remove";
+	ot->description = "Remove View Layer\NRemove the selected view layer";
 
 	/* api callbacks */
-	ot->exec = render_layer_remove_exec;
+	ot->exec = view_layer_remove_exec;
 
 	/* flags */
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_INTERNAL;
+}
+
+/********************** light cache operators *********************/
+enum {
+	LIGHTCACHE_SUBSET_ALL = 0,
+	LIGHTCACHE_SUBSET_DIRTY,
+	LIGHTCACHE_SUBSET_CUBE,
+};
+
+static void light_cache_bake_tag_cache(Scene *scene, wmOperator *op)
+{
+	if (scene->eevee.light_cache != NULL) {
+		int subset = RNA_enum_get(op->ptr, "subset");
+		switch (subset) {
+			case LIGHTCACHE_SUBSET_ALL:
+				scene->eevee.light_cache->flag |= LIGHTCACHE_UPDATE_GRID | LIGHTCACHE_UPDATE_CUBE;
+				break;
+			case LIGHTCACHE_SUBSET_CUBE:
+				scene->eevee.light_cache->flag |= LIGHTCACHE_UPDATE_CUBE;
+				break;
+			case LIGHTCACHE_SUBSET_DIRTY:
+				/* Leave tag untouched. */
+				break;
+		}
+	}
+}
+
+/* catch esc */
+static int light_cache_bake_modal(bContext *C, wmOperator *op, const wmEvent *event)
+{
+	Scene *scene = (Scene *) op->customdata;
+
+	/* no running blender, remove handler and pass through */
+	if (0 == WM_jobs_test(CTX_wm_manager(C), scene, WM_JOB_TYPE_RENDER)) {
+		return OPERATOR_FINISHED | OPERATOR_PASS_THROUGH;
+	}
+
+	/* running render */
+	switch (event->type) {
+		case ESCKEY:
+			return OPERATOR_RUNNING_MODAL;
+	}
+	return OPERATOR_PASS_THROUGH;
+}
+
+static void light_cache_bake_cancel(bContext *C, wmOperator *op)
+{
+	wmWindowManager *wm = CTX_wm_manager(C);
+	Scene *scene = (Scene *) op->customdata;
+
+	/* kill on cancel, because job is using op->reports */
+	WM_jobs_kill_type(wm, scene, WM_JOB_TYPE_RENDER);
+}
+
+/* executes blocking render */
+static int light_cache_bake_exec(bContext *C, wmOperator *op)
+{
+	ViewLayer *view_layer = CTX_data_view_layer(C);
+	Main *bmain = CTX_data_main(C);
+	Scene *scene = CTX_data_scene(C);
+
+	G.is_break = false;
+
+	/* TODO abort if selected engine is not eevee. */
+	void *rj = EEVEE_lightbake_job_data_alloc(bmain, view_layer, scene, false);
+
+	light_cache_bake_tag_cache(scene, op);
+
+	short stop = 0, do_update; float progress; /* Not actually used. */
+	EEVEE_lightbake_job(rj, &stop, &do_update, &progress);
+	EEVEE_lightbake_job_data_free(rj);
+
+	// no redraw needed, we leave state as we entered it
+	ED_update_for_newframe(bmain, CTX_data_depsgraph(C));
+
+	WM_event_add_notifier(C, NC_SCENE | NA_EDITED, scene);
+
+	return OPERATOR_FINISHED;
+}
+
+static int light_cache_bake_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event))
+{
+	wmWindowManager *wm = CTX_wm_manager(C);
+	wmWindow *win = CTX_wm_window(C);
+	ViewLayer *view_layer = CTX_data_view_layer(C);
+	Main *bmain = CTX_data_main(C);
+	Scene *scene = CTX_data_scene(C);
+	int delay = RNA_int_get(op->ptr, "delay");
+
+	wmJob *wm_job = EEVEE_lightbake_job_create(wm, win, bmain, view_layer, scene, delay);
+
+	if (!wm_job) {
+		return OPERATOR_CANCELLED;
+	}
+
+	/* add modal handler for ESC */
+	WM_event_add_modal_handler(C, op);
+
+	light_cache_bake_tag_cache(scene, op);
+
+	/* store actual owner of job, so modal operator could check for it,
+	 * the reason of this is that active scene could change when rendering
+	 * several layers from compositor [#31800]
+	 */
+	op->customdata = scene;
+
+	WM_jobs_start(wm, wm_job);
+
+	WM_cursor_wait(0);
+
+	return OPERATOR_RUNNING_MODAL;
+}
+
+void SCENE_OT_light_cache_bake(wmOperatorType *ot)
+{
+	static const EnumPropertyItem light_cache_subset_items[] = {
+		{LIGHTCACHE_SUBSET_ALL, "ALL", 0, "All LightProbes", "Bake both irradiance grids and reflection cubemaps"},
+		{LIGHTCACHE_SUBSET_DIRTY, "DIRTY", 0, "Dirty Only", "Only bake lightprobes that are marked as dirty"},
+		{LIGHTCACHE_SUBSET_CUBE, "CUBEMAPS", 0, "Cubemaps Only", "Try to only bake reflection cubemaps if irradiance "
+	                                                             "grids are up to date"},
+		{0, NULL, 0, NULL, NULL}
+	};
+
+	/* identifiers */
+	ot->name = "Bake Light Cache";
+	ot->idname = "SCENE_OT_light_cache_bake";
+	ot->description = "Bake the active view layer lighting";
+
+	/* api callbacks */
+	ot->invoke = light_cache_bake_invoke;
+	ot->modal = light_cache_bake_modal;
+	ot->cancel = light_cache_bake_cancel;
+	ot->exec = light_cache_bake_exec;
+
+	ot->prop = RNA_def_int(ot->srna, "delay", 0, 0, 2000, "Delay", "Delay in millisecond before baking starts", 0, 2000);
+	RNA_def_property_flag(ot->prop, PROP_SKIP_SAVE);
+
+	ot->prop = RNA_def_enum(ot->srna, "subset", light_cache_subset_items, 0, "Subset", "Subset of probes to update");
+	RNA_def_property_flag(ot->prop, PROP_SKIP_SAVE);
+}
+
+static bool light_cache_free_poll(bContext *C)
+{
+	Scene *scene = CTX_data_scene(C);
+
+	return scene->eevee.light_cache;
+}
+
+static int light_cache_free_exec(bContext *C, wmOperator *UNUSED(op))
+{
+	Scene *scene = CTX_data_scene(C);
+
+	/* kill potential bake job first (see T57011) */
+	wmWindowManager *wm = CTX_wm_manager(C);
+	WM_jobs_kill_type(wm, scene, WM_JOB_TYPE_LIGHT_BAKE);
+
+	if (!scene->eevee.light_cache) {
+		return OPERATOR_CANCELLED;
+	}
+
+	EEVEE_lightcache_free(scene->eevee.light_cache);
+	scene->eevee.light_cache = NULL;
+
+	EEVEE_lightcache_info_update(&scene->eevee);
+
+	DEG_id_tag_update(&scene->id, DEG_TAG_COPY_ON_WRITE);
+
+	WM_event_add_notifier(C, NC_SCENE | ND_RENDER_OPTIONS, scene);
+
+	return OPERATOR_FINISHED;
+}
+
+void SCENE_OT_light_cache_free(wmOperatorType *ot)
+{
+	/* identifiers */
+	ot->name = "Free Light Cache";
+	ot->idname = "SCENE_OT_light_cache_free";
+	ot->description = "Free cached indirect lighting";
+
+	/* api callbacks */
+	ot->exec = light_cache_free_exec;
+	ot->poll = light_cache_free_poll;
 }
 
 /********************** render view operators *********************/
@@ -771,9 +1009,9 @@ static bool freestyle_active_module_poll(bContext *C)
 static int freestyle_module_add_exec(bContext *C, wmOperator *UNUSED(op))
 {
 	Scene *scene = CTX_data_scene(C);
-	SceneRenderLayer *srl = BLI_findlink(&scene->r.layers, scene->r.actlay);
+	ViewLayer *view_layer = CTX_data_view_layer(C);
 
-	BKE_freestyle_module_add(&srl->freestyleConfig);
+	BKE_freestyle_module_add(&view_layer->freestyle_config);
 
 	WM_event_add_notifier(C, NC_SCENE | ND_RENDER_OPTIONS, scene);
 
@@ -797,13 +1035,13 @@ void SCENE_OT_freestyle_module_add(wmOperatorType *ot)
 static int freestyle_module_remove_exec(bContext *C, wmOperator *UNUSED(op))
 {
 	Scene *scene = CTX_data_scene(C);
-	SceneRenderLayer *srl = BLI_findlink(&scene->r.layers, scene->r.actlay);
+	ViewLayer *view_layer = CTX_data_view_layer(C);
 	PointerRNA ptr = CTX_data_pointer_get_type(C, "freestyle_module", &RNA_FreestyleModuleSettings);
 	FreestyleModuleConfig *module = ptr.data;
 
-	BKE_freestyle_module_delete(&srl->freestyleConfig, module);
+	BKE_freestyle_module_delete(&view_layer->freestyle_config, module);
 
-	DAG_id_tag_update(&scene->id, 0);
+	DEG_id_tag_update(&scene->id, 0);
 	WM_event_add_notifier(C, NC_SCENE | ND_RENDER_OPTIONS, scene);
 
 	return OPERATOR_FINISHED;
@@ -827,13 +1065,13 @@ void SCENE_OT_freestyle_module_remove(wmOperatorType *ot)
 static int freestyle_module_move_exec(bContext *C, wmOperator *op)
 {
 	Scene *scene = CTX_data_scene(C);
-	SceneRenderLayer *srl = BLI_findlink(&scene->r.layers, scene->r.actlay);
+	ViewLayer *view_layer = CTX_data_view_layer(C);
 	PointerRNA ptr = CTX_data_pointer_get_type(C, "freestyle_module", &RNA_FreestyleModuleSettings);
 	FreestyleModuleConfig *module = ptr.data;
 	int dir = RNA_enum_get(op->ptr, "direction");
 
-	if (BKE_freestyle_module_move(&srl->freestyleConfig, module, dir)) {
-		DAG_id_tag_update(&scene->id, 0);
+	if (BKE_freestyle_module_move(&view_layer->freestyle_config, module, dir)) {
+		DEG_id_tag_update(&scene->id, 0);
 		WM_event_add_notifier(C, NC_SCENE | ND_RENDER_OPTIONS, scene);
 	}
 
@@ -869,11 +1107,11 @@ static int freestyle_lineset_add_exec(bContext *C, wmOperator *UNUSED(op))
 {
 	Main *bmain = CTX_data_main(C);
 	Scene *scene = CTX_data_scene(C);
-	SceneRenderLayer *srl = BLI_findlink(&scene->r.layers, scene->r.actlay);
+	ViewLayer *view_layer = CTX_data_view_layer(C);
 
-	BKE_freestyle_lineset_add(bmain, &srl->freestyleConfig, NULL);
+	BKE_freestyle_lineset_add(bmain, &view_layer->freestyle_config, NULL);
 
-	DAG_id_tag_update(&scene->id, 0);
+	DEG_id_tag_update(&scene->id, 0);
 	WM_event_add_notifier(C, NC_SCENE | ND_RENDER_OPTIONS, scene);
 
 	return OPERATOR_FINISHED;
@@ -895,22 +1133,20 @@ void SCENE_OT_freestyle_lineset_add(wmOperatorType *ot)
 
 static bool freestyle_active_lineset_poll(bContext *C)
 {
-	Scene *scene = CTX_data_scene(C);
-	SceneRenderLayer *srl = BLI_findlink(&scene->r.layers, scene->r.actlay);
+	ViewLayer *view_layer = CTX_data_view_layer(C);
 
-	if (!srl) {
+	if (!view_layer) {
 		return false;
 	}
 
-	return BKE_freestyle_lineset_get_active(&srl->freestyleConfig) != NULL;
+	return BKE_freestyle_lineset_get_active(&view_layer->freestyle_config) != NULL;
 }
 
 static int freestyle_lineset_copy_exec(bContext *C, wmOperator *UNUSED(op))
 {
-	Scene *scene = CTX_data_scene(C);
-	SceneRenderLayer *srl = BLI_findlink(&scene->r.layers, scene->r.actlay);
+	ViewLayer *view_layer = CTX_data_view_layer(C);
 
-	FRS_copy_active_lineset(&srl->freestyleConfig);
+	FRS_copy_active_lineset(&view_layer->freestyle_config);
 
 	return OPERATOR_FINISHED;
 }
@@ -933,11 +1169,11 @@ void SCENE_OT_freestyle_lineset_copy(wmOperatorType *ot)
 static int freestyle_lineset_paste_exec(bContext *C, wmOperator *UNUSED(op))
 {
 	Scene *scene = CTX_data_scene(C);
-	SceneRenderLayer *srl = BLI_findlink(&scene->r.layers, scene->r.actlay);
+	ViewLayer *view_layer = CTX_data_view_layer(C);
 
-	FRS_paste_active_lineset(&srl->freestyleConfig);
+	FRS_paste_active_lineset(&view_layer->freestyle_config);
 
-	DAG_id_tag_update(&scene->id, 0);
+	DEG_id_tag_update(&scene->id, 0);
 	WM_event_add_notifier(C, NC_SCENE | ND_RENDER_OPTIONS, scene);
 
 	return OPERATOR_FINISHED;
@@ -961,11 +1197,11 @@ void SCENE_OT_freestyle_lineset_paste(wmOperatorType *ot)
 static int freestyle_lineset_remove_exec(bContext *C, wmOperator *UNUSED(op))
 {
 	Scene *scene = CTX_data_scene(C);
-	SceneRenderLayer *srl = BLI_findlink(&scene->r.layers, scene->r.actlay);
+	ViewLayer *view_layer = CTX_data_view_layer(C);
 
-	FRS_delete_active_lineset(&srl->freestyleConfig);
+	FRS_delete_active_lineset(&view_layer->freestyle_config);
 
-	DAG_id_tag_update(&scene->id, 0);
+	DEG_id_tag_update(&scene->id, 0);
 	WM_event_add_notifier(C, NC_SCENE | ND_RENDER_OPTIONS, scene);
 
 	return OPERATOR_FINISHED;
@@ -989,11 +1225,11 @@ void SCENE_OT_freestyle_lineset_remove(wmOperatorType *ot)
 static int freestyle_lineset_move_exec(bContext *C, wmOperator *op)
 {
 	Scene *scene = CTX_data_scene(C);
-	SceneRenderLayer *srl = BLI_findlink(&scene->r.layers, scene->r.actlay);
+	ViewLayer *view_layer = CTX_data_view_layer(C);
 	int dir = RNA_enum_get(op->ptr, "direction");
 
-	if (FRS_move_active_lineset(&srl->freestyleConfig, dir)) {
-		DAG_id_tag_update(&scene->id, 0);
+	if (FRS_move_active_lineset(&view_layer->freestyle_config, dir)) {
+		DEG_id_tag_update(&scene->id, 0);
 		WM_event_add_notifier(C, NC_SCENE | ND_RENDER_OPTIONS, scene);
 	}
 
@@ -1028,9 +1264,8 @@ void SCENE_OT_freestyle_lineset_move(wmOperatorType *ot)
 static int freestyle_linestyle_new_exec(bContext *C, wmOperator *op)
 {
 	Main *bmain = CTX_data_main(C);
-	Scene *scene = CTX_data_scene(C);
-	SceneRenderLayer *srl = BLI_findlink(&scene->r.layers, scene->r.actlay);
-	FreestyleLineSet *lineset = BKE_freestyle_lineset_get_active(&srl->freestyleConfig);
+	ViewLayer *view_layer = CTX_data_view_layer(C);
+	FreestyleLineSet *lineset = BKE_freestyle_lineset_get_active(&view_layer->freestyle_config);
 
 	if (!lineset) {
 		BKE_report(op->reports, RPT_ERROR, "No active lineset to add a new line style to");
@@ -1043,7 +1278,7 @@ static int freestyle_linestyle_new_exec(bContext *C, wmOperator *op)
 	else {
 		lineset->linestyle = BKE_linestyle_new(bmain, "LineStyle");
 	}
-	DAG_id_tag_update(&lineset->linestyle->id, 0);
+	DEG_id_tag_update(&lineset->linestyle->id, 0);
 	WM_event_add_notifier(C, NC_LINESTYLE, lineset->linestyle);
 
 	return OPERATOR_FINISHED;
@@ -1066,9 +1301,8 @@ void SCENE_OT_freestyle_linestyle_new(wmOperatorType *ot)
 
 static int freestyle_color_modifier_add_exec(bContext *C, wmOperator *op)
 {
-	Scene *scene = CTX_data_scene(C);
-	SceneRenderLayer *srl = BLI_findlink(&scene->r.layers, scene->r.actlay);
-	FreestyleLineSet *lineset = BKE_freestyle_lineset_get_active(&srl->freestyleConfig);
+	ViewLayer *view_layer = CTX_data_view_layer(C);
+	FreestyleLineSet *lineset = BKE_freestyle_lineset_get_active(&view_layer->freestyle_config);
 	int type = RNA_enum_get(op->ptr, "type");
 
 	if (!freestyle_linestyle_check_report(lineset, op->reports)) {
@@ -1079,7 +1313,7 @@ static int freestyle_color_modifier_add_exec(bContext *C, wmOperator *op)
 		BKE_report(op->reports, RPT_ERROR, "Unknown line color modifier type");
 		return OPERATOR_CANCELLED;
 	}
-	DAG_id_tag_update(&lineset->linestyle->id, 0);
+	DEG_id_tag_update(&lineset->linestyle->id, 0);
 	WM_event_add_notifier(C, NC_LINESTYLE, lineset->linestyle);
 
 	return OPERATOR_FINISHED;
@@ -1106,9 +1340,8 @@ void SCENE_OT_freestyle_color_modifier_add(wmOperatorType *ot)
 
 static int freestyle_alpha_modifier_add_exec(bContext *C, wmOperator *op)
 {
-	Scene *scene = CTX_data_scene(C);
-	SceneRenderLayer *srl = BLI_findlink(&scene->r.layers, scene->r.actlay);
-	FreestyleLineSet *lineset = BKE_freestyle_lineset_get_active(&srl->freestyleConfig);
+	ViewLayer *view_layer = CTX_data_view_layer(C);
+	FreestyleLineSet *lineset = BKE_freestyle_lineset_get_active(&view_layer->freestyle_config);
 	int type = RNA_enum_get(op->ptr, "type");
 
 	if (!freestyle_linestyle_check_report(lineset, op->reports)) {
@@ -1119,7 +1352,7 @@ static int freestyle_alpha_modifier_add_exec(bContext *C, wmOperator *op)
 		BKE_report(op->reports, RPT_ERROR, "Unknown alpha transparency modifier type");
 		return OPERATOR_CANCELLED;
 	}
-	DAG_id_tag_update(&lineset->linestyle->id, 0);
+	DEG_id_tag_update(&lineset->linestyle->id, 0);
 	WM_event_add_notifier(C, NC_LINESTYLE, lineset->linestyle);
 
 	return OPERATOR_FINISHED;
@@ -1146,9 +1379,8 @@ void SCENE_OT_freestyle_alpha_modifier_add(wmOperatorType *ot)
 
 static int freestyle_thickness_modifier_add_exec(bContext *C, wmOperator *op)
 {
-	Scene *scene = CTX_data_scene(C);
-	SceneRenderLayer *srl = BLI_findlink(&scene->r.layers, scene->r.actlay);
-	FreestyleLineSet *lineset = BKE_freestyle_lineset_get_active(&srl->freestyleConfig);
+	ViewLayer *view_layer = CTX_data_view_layer(C);
+	FreestyleLineSet *lineset = BKE_freestyle_lineset_get_active(&view_layer->freestyle_config);
 	int type = RNA_enum_get(op->ptr, "type");
 
 	if (!freestyle_linestyle_check_report(lineset, op->reports)) {
@@ -1159,7 +1391,7 @@ static int freestyle_thickness_modifier_add_exec(bContext *C, wmOperator *op)
 		BKE_report(op->reports, RPT_ERROR, "Unknown line thickness modifier type");
 		return OPERATOR_CANCELLED;
 	}
-	DAG_id_tag_update(&lineset->linestyle->id, 0);
+	DEG_id_tag_update(&lineset->linestyle->id, 0);
 	WM_event_add_notifier(C, NC_LINESTYLE, lineset->linestyle);
 
 	return OPERATOR_FINISHED;
@@ -1186,9 +1418,8 @@ void SCENE_OT_freestyle_thickness_modifier_add(wmOperatorType *ot)
 
 static int freestyle_geometry_modifier_add_exec(bContext *C, wmOperator *op)
 {
-	Scene *scene = CTX_data_scene(C);
-	SceneRenderLayer *srl = BLI_findlink(&scene->r.layers, scene->r.actlay);
-	FreestyleLineSet *lineset = BKE_freestyle_lineset_get_active(&srl->freestyleConfig);
+	ViewLayer *view_layer = CTX_data_view_layer(C);
+	FreestyleLineSet *lineset = BKE_freestyle_lineset_get_active(&view_layer->freestyle_config);
 	int type = RNA_enum_get(op->ptr, "type");
 
 	if (!freestyle_linestyle_check_report(lineset, op->reports)) {
@@ -1199,7 +1430,7 @@ static int freestyle_geometry_modifier_add_exec(bContext *C, wmOperator *op)
 		BKE_report(op->reports, RPT_ERROR, "Unknown stroke geometry modifier type");
 		return OPERATOR_CANCELLED;
 	}
-	DAG_id_tag_update(&lineset->linestyle->id, 0);
+	DEG_id_tag_update(&lineset->linestyle->id, 0);
 	WM_event_add_notifier(C, NC_LINESTYLE, lineset->linestyle);
 
 	return OPERATOR_FINISHED;
@@ -1239,9 +1470,8 @@ static int freestyle_get_modifier_type(PointerRNA *ptr)
 
 static int freestyle_modifier_remove_exec(bContext *C, wmOperator *op)
 {
-	Scene *scene = CTX_data_scene(C);
-	SceneRenderLayer *srl = BLI_findlink(&scene->r.layers, scene->r.actlay);
-	FreestyleLineSet *lineset = BKE_freestyle_lineset_get_active(&srl->freestyleConfig);
+	ViewLayer *view_layer = CTX_data_view_layer(C);
+	FreestyleLineSet *lineset = BKE_freestyle_lineset_get_active(&view_layer->freestyle_config);
 	PointerRNA ptr = CTX_data_pointer_get_type(C, "modifier", &RNA_LineStyleModifier);
 	LineStyleModifier *modifier = ptr.data;
 
@@ -1266,7 +1496,7 @@ static int freestyle_modifier_remove_exec(bContext *C, wmOperator *op)
 			BKE_report(op->reports, RPT_ERROR, "The object the data pointer refers to is not a valid modifier");
 			return OPERATOR_CANCELLED;
 	}
-	DAG_id_tag_update(&lineset->linestyle->id, 0);
+	DEG_id_tag_update(&lineset->linestyle->id, 0);
 	WM_event_add_notifier(C, NC_LINESTYLE, lineset->linestyle);
 
 	return OPERATOR_FINISHED;
@@ -1289,9 +1519,8 @@ void SCENE_OT_freestyle_modifier_remove(wmOperatorType *ot)
 
 static int freestyle_modifier_copy_exec(bContext *C, wmOperator *op)
 {
-	Scene *scene = CTX_data_scene(C);
-	SceneRenderLayer *srl = BLI_findlink(&scene->r.layers, scene->r.actlay);
-	FreestyleLineSet *lineset = BKE_freestyle_lineset_get_active(&srl->freestyleConfig);
+	ViewLayer *view_layer = CTX_data_view_layer(C);
+	FreestyleLineSet *lineset = BKE_freestyle_lineset_get_active(&view_layer->freestyle_config);
 	PointerRNA ptr = CTX_data_pointer_get_type(C, "modifier", &RNA_LineStyleModifier);
 	LineStyleModifier *modifier = ptr.data;
 
@@ -1316,7 +1545,7 @@ static int freestyle_modifier_copy_exec(bContext *C, wmOperator *op)
 			BKE_report(op->reports, RPT_ERROR, "The object the data pointer refers to is not a valid modifier");
 			return OPERATOR_CANCELLED;
 	}
-	DAG_id_tag_update(&lineset->linestyle->id, 0);
+	DEG_id_tag_update(&lineset->linestyle->id, 0);
 	WM_event_add_notifier(C, NC_LINESTYLE, lineset->linestyle);
 
 	return OPERATOR_FINISHED;
@@ -1339,9 +1568,8 @@ void SCENE_OT_freestyle_modifier_copy(wmOperatorType *ot)
 
 static int freestyle_modifier_move_exec(bContext *C, wmOperator *op)
 {
-	Scene *scene = CTX_data_scene(C);
-	SceneRenderLayer *srl = BLI_findlink(&scene->r.layers, scene->r.actlay);
-	FreestyleLineSet *lineset = BKE_freestyle_lineset_get_active(&srl->freestyleConfig);
+	ViewLayer *view_layer = CTX_data_view_layer(C);
+	FreestyleLineSet *lineset = BKE_freestyle_lineset_get_active(&view_layer->freestyle_config);
 	PointerRNA ptr = CTX_data_pointer_get_type(C, "modifier", &RNA_LineStyleModifier);
 	LineStyleModifier *modifier = ptr.data;
 	int dir = RNA_enum_get(op->ptr, "direction");
@@ -1370,7 +1598,7 @@ static int freestyle_modifier_move_exec(bContext *C, wmOperator *op)
 	}
 
 	if (changed) {
-		DAG_id_tag_update(&lineset->linestyle->id, 0);
+		DEG_id_tag_update(&lineset->linestyle->id, 0);
 		WM_event_add_notifier(C, NC_LINESTYLE, lineset->linestyle);
 	}
 
@@ -1405,8 +1633,8 @@ void SCENE_OT_freestyle_modifier_move(wmOperatorType *ot)
 static int freestyle_stroke_material_create_exec(bContext *C, wmOperator *op)
 {
 	Main *bmain = CTX_data_main(C);
-	Scene *scene = CTX_data_scene(C);
-	FreestyleLineStyle *linestyle = BKE_linestyle_active_from_scene(scene);
+	ViewLayer *view_layer = CTX_data_view_layer(C);
+	FreestyleLineStyle *linestyle = BKE_linestyle_active_from_view_layer(view_layer);
 
 	if (!linestyle) {
 		BKE_report(op->reports, RPT_ERROR, "No active line style in the current scene");
@@ -1456,15 +1684,6 @@ static int texture_slot_move_exec(bContext *C, wmOperator *op)
 				BKE_animdata_fix_paths_rename(id, adt, NULL, "texture_slots", NULL, NULL, act, act - 1, 0);
 				BKE_animdata_fix_paths_rename(id, adt, NULL, "texture_slots", NULL, NULL, -1, act, 0);
 
-				if (GS(id->name) == ID_MA) {
-					Material *ma = (Material *)id;
-					int mtexuse = ma->septex & (1 << act);
-					ma->septex &= ~(1 << act);
-					ma->septex |= (ma->septex & (1 << (act - 1))) << 1;
-					ma->septex &= ~(1 << (act - 1));
-					ma->septex |= mtexuse >> 1;
-				}
-
 				set_active_mtex(id, act - 1);
 			}
 		}
@@ -1478,20 +1697,11 @@ static int texture_slot_move_exec(bContext *C, wmOperator *op)
 				BKE_animdata_fix_paths_rename(id, adt, NULL, "texture_slots", NULL, NULL, act, act + 1, 0);
 				BKE_animdata_fix_paths_rename(id, adt, NULL, "texture_slots", NULL, NULL, -1, act, 0);
 
-				if (GS(id->name) == ID_MA) {
-					Material *ma = (Material *)id;
-					int mtexuse = ma->septex & (1 << act);
-					ma->septex &= ~(1 << act);
-					ma->septex |= (ma->septex & (1 << (act + 1))) >> 1;
-					ma->septex &= ~(1 << (act + 1));
-					ma->septex |= mtexuse << 1;
-				}
-
 				set_active_mtex(id, act + 1);
 			}
 		}
 
-		DAG_id_tag_update(id, 0);
+		DEG_id_tag_update(id, 0);
 		WM_event_add_notifier(C, NC_TEXTURE, CTX_data_scene(C));
 	}
 
@@ -1521,181 +1731,6 @@ void TEXTURE_OT_slot_move(wmOperatorType *ot)
 }
 
 
-
-/********************** environment map operators *********************/
-
-static int save_envmap(wmOperator *op, Scene *scene, EnvMap *env, char *path, const char imtype)
-{
-	PropertyRNA *prop;
-	float layout[12];
-
-	if ((prop = RNA_struct_find_property(op->ptr, "layout"))) {
-		RNA_property_float_get_array(op->ptr, prop, layout);
-	}
-	else {
-		memcpy(layout, default_envmap_layout, sizeof(layout));
-	}
-
-	if (RE_WriteEnvmapResult(op->reports, scene, env, path, imtype, layout)) {
-		return OPERATOR_FINISHED;
-	}
-	else {
-		return OPERATOR_CANCELLED;
-	}
-
-}
-
-static int envmap_save_exec(bContext *C, wmOperator *op)
-{
-	Tex *tex = CTX_data_pointer_get_type(C, "texture", &RNA_Texture).data;
-	Scene *scene = CTX_data_scene(C);
-	//int imtype = RNA_enum_get(op->ptr, "file_type");
-	char imtype = scene->r.im_format.imtype;
-	char path[FILE_MAX];
-
-	RNA_string_get(op->ptr, "filepath", path);
-
-	if (scene->r.scemode & R_EXTENSION) {
-		BKE_image_path_ensure_ext_from_imformat(path, &scene->r.im_format);
-	}
-
-	WM_cursor_wait(1);
-
-	save_envmap(op, scene, tex->env, path, imtype);
-
-	WM_cursor_wait(0);
-
-	WM_event_add_notifier(C, NC_TEXTURE, tex);
-
-	return OPERATOR_FINISHED;
-}
-
-static int envmap_save_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event))
-{
-	Main *bmain = CTX_data_main(C);
-	//Scene *scene= CTX_data_scene(C);
-
-	if (RNA_struct_property_is_set(op->ptr, "filepath"))
-		return envmap_save_exec(C, op);
-
-	//RNA_enum_set(op->ptr, "file_type", scene->r.im_format.imtype);
-	RNA_string_set(op->ptr, "filepath", BKE_main_blendfile_path(bmain));
-	WM_event_add_fileselect(C, op);
-
-	return OPERATOR_RUNNING_MODAL;
-}
-
-static bool envmap_save_poll(bContext *C)
-{
-	Tex *tex = CTX_data_pointer_get_type(C, "texture", &RNA_Texture).data;
-
-	if (!tex)
-		return 0;
-	if (!tex->env || !tex->env->ok)
-		return 0;
-	if (tex->env->cube[1] == NULL)
-		return 0;
-
-	return 1;
-}
-
-void TEXTURE_OT_envmap_save(wmOperatorType *ot)
-{
-	PropertyRNA *prop;
-	/* identifiers */
-	ot->name = "Save Environment Map";
-	ot->idname = "TEXTURE_OT_envmap_save";
-	ot->description = "Save Environment Map\nSave the current generated Environment map to an image file";
-
-	/* api callbacks */
-	ot->exec = envmap_save_exec;
-	ot->invoke = envmap_save_invoke;
-	ot->poll = envmap_save_poll;
-
-	/* flags */
-	ot->flag = OPTYPE_REGISTER | OPTYPE_INTERNAL; /* no undo since this doesnt modify the env-map */
-
-	/* properties */
-	prop = RNA_def_float_array(ot->srna, "layout", 12, default_envmap_layout, 0.0f, 0.0f,
-	                           "File layout",
-	                           "Flat array describing the X,Y position of each cube face in the output image, "
-	                           "where 1 is the size of a face - order is [+Z -Z +Y -X -Y +X] "
-	                           "(use -1 to skip a face)", 0.0f, 0.0f);
-	RNA_def_property_flag(prop, PROP_HIDDEN);
-
-	WM_operator_properties_filesel(
-	        ot, FILE_TYPE_FOLDER | FILE_TYPE_IMAGE | FILE_TYPE_MOVIE, FILE_SPECIAL, FILE_SAVE,
-	        WM_FILESEL_FILEPATH, FILE_DEFAULTDISPLAY, FILE_SORT_ALPHA);
-}
-
-static int envmap_clear_exec(bContext *C, wmOperator *UNUSED(op))
-{
-	Tex *tex = CTX_data_pointer_get_type(C, "texture", &RNA_Texture).data;
-
-	BKE_texture_envmap_free_data(tex->env);
-
-	WM_event_add_notifier(C, NC_TEXTURE | NA_EDITED, tex);
-
-	return OPERATOR_FINISHED;
-}
-
-static bool envmap_clear_poll(bContext *C)
-{
-	Tex *tex = CTX_data_pointer_get_type(C, "texture", &RNA_Texture).data;
-
-	if (!tex)
-		return 0;
-	if (!tex->env || !tex->env->ok)
-		return 0;
-	if (tex->env->cube[1] == NULL)
-		return 0;
-
-	return 1;
-}
-
-void TEXTURE_OT_envmap_clear(wmOperatorType *ot)
-{
-	/* identifiers */
-	ot->name = "Clear Environment Map";
-	ot->idname = "TEXTURE_OT_envmap_clear";
-	ot->description = "Clear Environment Map\nDiscard the environment map and free it from memory";
-
-	/* api callbacks */
-	ot->exec = envmap_clear_exec;
-	ot->poll = envmap_clear_poll;
-
-	/* flags */
-	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO | OPTYPE_INTERNAL;
-}
-
-static int envmap_clear_all_exec(bContext *C, wmOperator *UNUSED(op))
-{
-	Main *bmain = CTX_data_main(C);
-	Tex *tex;
-
-	for (tex = bmain->tex.first; tex; tex = tex->id.next)
-		if (tex->env)
-			BKE_texture_envmap_free_data(tex->env);
-
-	WM_event_add_notifier(C, NC_TEXTURE | NA_EDITED, tex);
-
-	return OPERATOR_FINISHED;
-}
-
-void TEXTURE_OT_envmap_clear_all(wmOperatorType *ot)
-{
-	/* identifiers */
-	ot->name = "Clear All Environment Maps";
-	ot->idname = "TEXTURE_OT_envmap_clear_all";
-	ot->description = "Clear All Environment Maps\nDiscard all environment maps in the .blend file and free them from memory";
-
-	/* api callbacks */
-	ot->exec = envmap_clear_all_exec;
-	ot->poll = envmap_clear_poll;
-
-	/* flags */
-	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
-}
 
 /********************** material operators *********************/
 
@@ -1768,17 +1803,6 @@ static void copy_mtex_copybuf(ID *id)
 	MTex **mtex = NULL;
 
 	switch (GS(id->name)) {
-		case ID_MA:
-			mtex = &(((Material *)id)->mtex[(int)((Material *)id)->texact]);
-			break;
-		case ID_LA:
-			mtex = &(((Lamp *)id)->mtex[(int)((Lamp *)id)->texact]);
-			// la->mtex[(int)la->texact] // TODO
-			break;
-		case ID_WO:
-			mtex = &(((World *)id)->mtex[(int)((World *)id)->texact]);
-			// mtex= wrld->mtex[(int)wrld->texact]; // TODO
-			break;
 		case ID_PA:
 			mtex = &(((ParticleSettings *)id)->mtex[(int)((ParticleSettings *)id)->texact]);
 			break;
@@ -1806,17 +1830,6 @@ static void paste_mtex_copybuf(ID *id)
 		return;
 
 	switch (GS(id->name)) {
-		case ID_MA:
-			mtex = &(((Material *)id)->mtex[(int)((Material *)id)->texact]);
-			break;
-		case ID_LA:
-			mtex = &(((Lamp *)id)->mtex[(int)((Lamp *)id)->texact]);
-			// la->mtex[(int)la->texact] // TODO
-			break;
-		case ID_WO:
-			mtex = &(((World *)id)->mtex[(int)((World *)id)->texact]);
-			// mtex= wrld->mtex[(int)wrld->texact]; // TODO
-			break;
 		case ID_PA:
 			mtex = &(((ParticleSettings *)id)->mtex[(int)((ParticleSettings *)id)->texact]);
 			break;
@@ -1886,7 +1899,7 @@ static int paste_mtex_exec(bContext *C, wmOperator *UNUSED(op))
 
 	if (id == NULL) {
 		Material *ma = CTX_data_pointer_get_type(C, "material", &RNA_Material).data;
-		Lamp *la = CTX_data_pointer_get_type(C, "lamp", &RNA_Lamp).data;
+		Lamp *la = CTX_data_pointer_get_type(C, "light", &RNA_Light).data;
 		World *wo = CTX_data_pointer_get_type(C, "world", &RNA_World).data;
 		ParticleSystem *psys = CTX_data_pointer_get_type(C, "particle_system", &RNA_ParticleSystem).data;
 		FreestyleLineStyle *linestyle = CTX_data_pointer_get_type(C, "line_style", &RNA_FreestyleLineStyle).data;

@@ -39,11 +39,14 @@
 
 #include "BKE_action.h"
 #include "BKE_armature.h"
-#include "BKE_depsgraph.h"
 #include "BKE_idprop.h"
+#include "BKE_layer.h"
 #include "BKE_main.h"
+#include "BKE_object.h"
 
 #include "BKE_context.h"
+
+#include "DEG_depsgraph.h"
 
 #include "RNA_access.h"
 
@@ -80,6 +83,7 @@ static void fcurves_to_pchan_links_get(ListBase *pfLinks, Object *ob, bAction *a
 		tPChanFCurveLink *pfl = MEM_callocN(sizeof(tPChanFCurveLink), "tPChanFCurveLink");
 		PointerRNA ptr;
 
+		pfl->ob = ob;
 		pfl->fcurves = curves;
 		pfl->pchan = pchan;
 
@@ -126,16 +130,48 @@ static void fcurves_to_pchan_links_get(ListBase *pfLinks, Object *ob, bAction *a
 	}
 }
 
+/**
+ *  Returns a valid pose armature for this object, else returns NULL.
+ **/
+Object *poseAnim_object_get(Object *ob_)
+{
+	Object *ob = BKE_object_pose_armature_get(ob_);
+	if (!ELEM(NULL,
+	          ob,
+	          ob->data,
+	          ob->adt,
+	          ob->adt->action))
+	{
+		return ob;
+	}
+	return NULL;
+}
 
 /* get sets of F-Curves providing transforms for the bones in the Pose  */
-void poseAnim_mapping_get(bContext *C, ListBase *pfLinks, Object *ob, bAction *act)
+void poseAnim_mapping_get(bContext *C, ListBase *pfLinks)
 {
 	/* for each Pose-Channel which gets affected, get the F-Curves for that channel
 	 * and set the relevant transform flags...
 	 */
-	CTX_DATA_BEGIN (C, bPoseChannel *, pchan, selected_pose_bones)
+	Object *prev_ob, *ob_pose_armature;
+
+	prev_ob = NULL;
+	ob_pose_armature = NULL;
+	CTX_DATA_BEGIN_WITH_ID (C, bPoseChannel *, pchan, selected_pose_bones, Object *, ob)
 	{
-		fcurves_to_pchan_links_get(pfLinks, ob, act, pchan);
+		if (ob != prev_ob) {
+			prev_ob = ob;
+			ob_pose_armature = poseAnim_object_get(ob);
+		}
+
+		if (ob_pose_armature == NULL) {
+			continue;
+		}
+
+		fcurves_to_pchan_links_get(pfLinks,
+		                           ob_pose_armature,
+		                           ob_pose_armature->adt->action,
+		                           pchan);
 	}
 	CTX_DATA_END;
 
@@ -143,12 +179,25 @@ void poseAnim_mapping_get(bContext *C, ListBase *pfLinks, Object *ob, bAction *a
 	 * i.e. if nothing selected, do whole pose
 	 */
 	if (BLI_listbase_is_empty(pfLinks)) {
-		CTX_DATA_BEGIN (C, bPoseChannel *, pchan, visible_pose_bones)
+		prev_ob = NULL;
+		ob_pose_armature = NULL;
+		CTX_DATA_BEGIN_WITH_ID(C, bPoseChannel *, pchan, visible_pose_bones, Object *, ob)
 		{
-			fcurves_to_pchan_links_get(pfLinks, ob, act, pchan);
+			if (ob != prev_ob) {
+				prev_ob = ob;
+				ob_pose_armature = poseAnim_object_get(ob);
+			}
+
+			if (ob_pose_armature == NULL) {
+				continue;
+			}
+
+			fcurves_to_pchan_links_get(pfLinks,
+			                           ob_pose_armature,
+			                           ob_pose_armature->adt->action,
+			                           pchan);
 		}
 		CTX_DATA_END;
-
 	}
 }
 
@@ -183,6 +232,7 @@ void poseAnim_mapping_free(ListBase *pfLinks)
 /* helper for apply() / reset() - refresh the data */
 void poseAnim_mapping_refresh(bContext *C, Scene *scene, Object *ob)
 {
+	Depsgraph *depsgraph = CTX_data_depsgraph(C);
 	bArmature *arm = (bArmature *)ob->data;
 
 	/* old optimize trick... this enforces to bypass the depgraph
@@ -190,11 +240,11 @@ void poseAnim_mapping_refresh(bContext *C, Scene *scene, Object *ob)
 	 */
 	/* FIXME: shouldn't this use the builtin stuff? */
 	if ((arm->flag & ARM_DELAYDEFORM) == 0)
-		DAG_id_tag_update(&ob->id, OB_RECALC_DATA);  /* sets recalc flags */
+		DEG_id_tag_update(&ob->id, OB_RECALC_DATA);  /* sets recalc flags */
 	else
-		BKE_pose_where_is(scene, ob);
+		BKE_pose_where_is(depsgraph, scene, ob);
 
-	/* note, notifier might evolve */
+	DEG_id_tag_update(&ob->id, DEG_TAG_COPY_ON_WRITE); /* otherwise animation doesn't get updated */
 	WM_event_add_notifier(C, NC_OBJECT | ND_POSE, ob);
 }
 
@@ -234,44 +284,72 @@ void poseAnim_mapping_reset(ListBase *pfLinks)
 }
 
 /* perform autokeyframing after changes were made + confirmed */
-void poseAnim_mapping_autoKeyframe(bContext *C, Scene *scene, Object *ob, ListBase *pfLinks, float cframe)
+void poseAnim_mapping_autoKeyframe(bContext *C, Scene *scene, ListBase *pfLinks, float cframe)
 {
-	Main *bmain = CTX_data_main(C);
+	ViewLayer *view_layer = CTX_data_view_layer(C);
+	View3D *v3d = CTX_wm_view3d(C);
+	bool skip = true;
+
+	FOREACH_OBJECT_IN_MODE_BEGIN(view_layer, v3d, OB_ARMATURE, OB_MODE_POSE, ob) {
+		ob->id.tag &= ~LIB_TAG_DOIT;
+		ob = poseAnim_object_get(ob);
+
+		/* Ensure validity of the settings from the context. */
+		if (ob == NULL) {
+			continue;
+		}
+
+		if (autokeyframe_cfra_can_key(scene, &ob->id)) {
+			ob->id.tag |= LIB_TAG_DOIT;
+			skip = false;
+		}
+	} FOREACH_OBJECT_IN_MODE_END;
+
+	if (skip) {
+		return;
+	}
 
 	/* insert keyframes as necessary if autokeyframing */
-	if (autokeyframe_cfra_can_key(scene, &ob->id)) {
-		KeyingSet *ks = ANIM_get_keyingset_for_autokeying(scene, ANIM_KS_WHOLE_CHARACTER_ID);
-		ListBase dsources = {NULL, NULL};
-		tPChanFCurveLink *pfl;
+	KeyingSet *ks = ANIM_get_keyingset_for_autokeying(scene, ANIM_KS_WHOLE_CHARACTER_ID);
+	ListBase dsources = {NULL, NULL};
+	tPChanFCurveLink *pfl;
 
-		/* iterate over each pose-channel affected, tagging bones to be keyed */
-		/* XXX: here we already have the information about what transforms exist, though
-		 * it might be easier to just overwrite all using normal mechanisms
-		 */
-		for (pfl = pfLinks->first; pfl; pfl = pfl->next) {
-			bPoseChannel *pchan = pfl->pchan;
+	/* iterate over each pose-channel affected, tagging bones to be keyed */
+	/* XXX: here we already have the information about what transforms exist, though
+	 * it might be easier to just overwrite all using normal mechanisms
+	 */
+	for (pfl = pfLinks->first; pfl; pfl = pfl->next) {
+		bPoseChannel *pchan = pfl->pchan;
 
-			/* add datasource override for the PoseChannel, to be used later */
-			ANIM_relative_keyingset_add_source(&dsources, &ob->id, &RNA_PoseBone, pchan);
-
-			/* clear any unkeyed tags */
-			if (pchan->bone)
-				pchan->bone->flag &= ~BONE_UNKEYED;
+		if ((pfl->ob->id.tag & LIB_TAG_DOIT) == 0) {
+			continue;
 		}
 
-		/* insert keyframes for all relevant bones in one go */
-		ANIM_apply_keyingset(C, &dsources, NULL, ks, MODIFYKEY_MODE_INSERT, cframe);
-		BLI_freelistN(&dsources);
+		/* add datasource override for the PoseChannel, to be used later */
+		ANIM_relative_keyingset_add_source(&dsources, &pfl->ob->id, &RNA_PoseBone, pchan);
 
-		/* do the bone paths
-		 * - only do this if keyframes should have been added
-		 * - do not calculate unless there are paths already to update...
-		 */
-		if (ob->pose->avs.path_bakeflag & MOTIONPATH_BAKE_HAS_PATHS) {
-			//ED_pose_clear_paths(C, ob); // XXX for now, don't need to clear
-			ED_pose_recalculate_paths(bmain, scene, ob);
+		/* clear any unkeyed tags */
+		if (pchan->bone) {
+			pchan->bone->flag &= ~BONE_UNKEYED;
 		}
 	}
+
+	/* insert keyframes for all relevant bones in one go */
+	ANIM_apply_keyingset(C, &dsources, NULL, ks, MODIFYKEY_MODE_INSERT, cframe);
+	BLI_freelistN(&dsources);
+
+	/* do the bone paths
+	 * - only do this if keyframes should have been added
+	 * - do not calculate unless there are paths already to update...
+	 */
+	FOREACH_OBJECT_IN_MODE_BEGIN(view_layer, v3d, OB_ARMATURE, OB_MODE_POSE, ob) {
+		if (ob->id.tag & LIB_TAG_DOIT) {
+			if (ob->pose->avs.path_bakeflag & MOTIONPATH_BAKE_HAS_PATHS) {
+				//ED_pose_clear_paths(C, ob); // XXX for now, don't need to clear
+				ED_pose_recalculate_paths(C, scene, ob, false);
+			}
+		}
+	} FOREACH_OBJECT_IN_MODE_END;
 }
 
 /* ------------------------- */

@@ -56,9 +56,9 @@ static void node_shader_exec_squeeze(void *UNUSED(data), int UNUSED(thread), bNo
 	out[0]->vec[0] = 1.0f / (1.0f + powf(M_E, -((vec[0] - vec[2]) * vec[1])));
 }
 
-static int gpu_shader_squeeze(GPUMaterial *mat, bNode *UNUSED(node), bNodeExecData *UNUSED(execdata), GPUNodeStack *in, GPUNodeStack *out)
+static int gpu_shader_squeeze(GPUMaterial *mat, bNode *node, bNodeExecData *UNUSED(execdata), GPUNodeStack *in, GPUNodeStack *out)
 {
-	return GPU_stack_link(mat, "squeeze", in, out);
+	return GPU_stack_link(mat, node, "squeeze", in, out);
 }
 
 void register_node_type_sh_squeeze(void)
@@ -66,7 +66,6 @@ void register_node_type_sh_squeeze(void)
 	static bNodeType ntype;
 
 	sh_node_type_base(&ntype, SH_NODE_SQUEEZE, "Squeeze Value", NODE_CLASS_CONVERTOR, 0);
-	node_type_compatibility(&ntype, NODE_OLD_SHADING);
 	node_type_socket_templates(&ntype, sh_node_squeeze_in, sh_node_squeeze_out);
 	node_type_storage(&ntype, "", NULL, NULL);
 	node_type_exec(&ntype, NULL, NULL, node_shader_exec_squeeze);

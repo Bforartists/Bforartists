@@ -34,10 +34,12 @@
 
 struct bContext;
 struct Object;
+struct ParticleSystem;
 struct ParticleEditSettings;
 struct rcti;
 struct PTCacheEdit;
 struct Scene;
+struct ViewLayer;
 struct UndoType;
 
 /* particle edit mode */
@@ -45,21 +47,24 @@ void PE_free_ptcache_edit(struct PTCacheEdit *edit);
 int PE_start_edit(struct PTCacheEdit *edit);
 
 /* access */
-struct PTCacheEdit *PE_get_current(struct Main *bmain, struct Scene *scene, struct Object *ob);
-struct PTCacheEdit *PE_create_current(struct Main *bmain, struct Scene *scene, struct Object *ob);
-void PE_current_changed(struct Main *bmain, struct Scene *scene, struct Object *ob);
-int PE_minmax(struct Main *bmain, struct Scene *scene, float min[3], float max[3]);
+struct PTCacheEdit *PE_get_current_from_psys(struct ParticleSystem *psys);
+struct PTCacheEdit *PE_get_current(struct Scene *scene, struct Object *ob);
+struct PTCacheEdit *PE_create_current(struct Depsgraph *depsgraph, struct Scene *scene, struct Object *ob);
+void PE_current_changed(struct Depsgraph *depsgraph, struct Scene *scene, struct Object *ob);
+int PE_minmax(struct Scene *scene, struct ViewLayer *view_layer, float min[3], float max[3]);
 struct ParticleEditSettings *PE_settings(struct Scene *scene);
 
 /* update calls */
 void PE_hide_keys_time(struct Scene *scene, struct PTCacheEdit *edit, float cfra);
-void PE_update_object(struct Main *bmain, struct Scene *scene, struct Object *ob, int useflag);
+void PE_update_object(
+        struct Depsgraph *depsgraph, struct Scene *scene,
+        struct Object *ob, int useflag);
 
 /* selection tools */
 int PE_mouse_particles(struct bContext *C, const int mval[2], bool extend, bool deselect, bool toggle);
-int PE_border_select(struct bContext *C, const struct rcti *rect, bool select, bool extend);
+int PE_box_select(struct bContext *C, const struct rcti *rect, const int sel_op);
 int PE_circle_select(struct bContext *C, int selecting, const int mval[2], float rad);
-int PE_lasso_select(struct bContext *C, const int mcords[][2], const short moves, bool extend, bool select);
+int PE_lasso_select(struct bContext *C, const int mcords[][2], const short moves, const int sel_op);
 void PE_deselect_all_visible(struct PTCacheEdit *edit);
 
 /* particle_edit_undo.c */

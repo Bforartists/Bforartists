@@ -37,14 +37,15 @@
 struct RigidBodyWorld;
 struct RigidBodyOb;
 
+struct Depsgraph;
 struct Scene;
 struct Object;
 
 /* -------------- */
 /* Memory Management */
 
-void BKE_rigidbody_free_world(struct RigidBodyWorld *rbw);
-void BKE_rigidbody_free_object(struct Object *ob);
+void BKE_rigidbody_free_world(struct Scene *scene);
+void BKE_rigidbody_free_object(struct Object *ob, struct RigidBodyWorld *rbw);
 void BKE_rigidbody_free_constraint(struct Object *ob);
 
 /* ...... */
@@ -79,7 +80,7 @@ void BKE_rigidbody_calc_center_of_mass(struct Object *ob, float r_center[3]);
 /* Utilities */
 
 struct RigidBodyWorld *BKE_rigidbody_get_world(struct Scene *scene);
-void BKE_rigidbody_remove_object(struct Scene *scene, struct Object *ob);
+void BKE_rigidbody_remove_object(struct Main *bmain, struct Scene *scene, struct Object *ob);
 void BKE_rigidbody_remove_constraint(struct Scene *scene, struct Object *ob);
 
 /* -------------- */
@@ -99,21 +100,19 @@ void BKE_rigidbody_aftertrans_update(struct Object *ob, float loc[3], float rot[
 void BKE_rigidbody_sync_transforms(struct RigidBodyWorld *rbw, struct Object *ob, float ctime);
 bool BKE_rigidbody_check_sim_running(struct RigidBodyWorld *rbw, float ctime);
 void BKE_rigidbody_cache_reset(struct RigidBodyWorld *rbw);
-void BKE_rigidbody_rebuild_world(struct Scene *scene, float ctime);
-void BKE_rigidbody_do_simulation(struct Scene *scene, float ctime);
+void BKE_rigidbody_rebuild_world(struct Depsgraph *depsgraph, struct Scene *scene, float ctime);
+void BKE_rigidbody_do_simulation(struct Depsgraph *depsgraph, struct Scene *scene, float ctime);
 
 /* -------------------- */
 /* Depsgraph evaluation */
 
-struct EvaluationContext;
-
-void BKE_rigidbody_rebuild_sim(struct EvaluationContext *eval_ctx,
+void BKE_rigidbody_rebuild_sim(struct Depsgraph *depsgraph,
                                struct Scene *scene);
 
-void BKE_rigidbody_eval_simulation(struct EvaluationContext *eval_ctx,
+void BKE_rigidbody_eval_simulation(struct Depsgraph *depsgraph,
                                    struct Scene *scene);
 
-void BKE_rigidbody_object_sync_transforms(struct EvaluationContext *eval_ctx,
+void BKE_rigidbody_object_sync_transforms(struct Depsgraph *depsgraph,
                                           struct Scene *scene,
                                           struct Object *ob);
 
