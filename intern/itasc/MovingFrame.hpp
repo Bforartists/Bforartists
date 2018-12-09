@@ -14,7 +14,11 @@
 
 namespace iTaSC{
 
-typedef bool (*MovingFrameCallback)(const Timestamp& timestamp, const Frame& _current, Frame& _next, void *param);
+typedef bool (*MovingFrameCallback)(
+        const Timestamp& timestamp,
+        const Frame& _current,
+        Frame& _next,
+        void *param);
 
 class MovingFrame: public UncontrolledObject {
 public:

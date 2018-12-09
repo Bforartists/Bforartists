@@ -1,4 +1,4 @@
-﻿# ##### BEGIN GPL LICENSE BLOCK #####
+# ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -20,6 +20,7 @@
 import bpy
 from bpy.types import Panel
 from rna_prop_ui import PropertyPanel
+from bpy_extras.node_utils import find_node_input
 
 
 class WorldButtonsPanel:
@@ -30,18 +31,17 @@ class WorldButtonsPanel:
 
     @classmethod
     def poll(cls, context):
-        return (context.world and context.scene.render.engine in cls.COMPAT_ENGINES)
+        return (context.world and context.engine in cls.COMPAT_ENGINES)
 
 
 class WORLD_PT_context_world(WorldButtonsPanel, Panel):
     bl_label = ""
     bl_options = {'HIDE_HEADER'}
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
 
     @classmethod
     def poll(cls, context):
-        rd = context.scene.render
-        return rd.engine in cls.COMPAT_ENGINES
+        return (context.engine in cls.COMPAT_ENGINES)
 
     def draw(self, context):
         layout = self.layout
@@ -50,219 +50,97 @@ class WORLD_PT_context_world(WorldButtonsPanel, Panel):
         world = context.world
         space = context.space_data
 
-        texture_count = world and len(world.texture_slots.keys())
-
-        split = layout.split(percentage=0.85)
         if scene:
-            split.template_ID(scene, "world", new="world.new")
+            layout.template_ID(scene, "world", new="world.new")
         elif world:
-            split.template_ID(space, "pin_id")
-
-        if texture_count:
-            split.label(text=str(texture_count), icon='TEXTURE')
+            layout.template_ID(space, "pin_id")
 
 
-class WORLD_PT_preview(WorldButtonsPanel, Panel):
-    bl_label = "Preview"
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+class EEVEE_WORLD_PT_mist(WorldButtonsPanel, Panel):
+    bl_label = "Mist Pass"
+    bl_options = {'DEFAULT_CLOSED'}
+    COMPAT_ENGINES = {'BLENDER_EEVEE'}
 
     @classmethod
     def poll(cls, context):
-        rd = context.scene.render
-        return (context.world) and (rd.engine in cls.COMPAT_ENGINES)
+        engine = context.engine
+        if context.world and (engine in cls.COMPAT_ENGINES):
+            for view_layer in context.scene.view_layers:
+                if view_layer.use_pass_mist:
+                    return True
 
-    def draw(self, context):
-        self.layout.template_preview(context.world)
-
-
-class WORLD_PT_world(WorldButtonsPanel, Panel):
-    bl_label = "World"
-    bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
+        return False
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
 
         world = context.world
 
-        row = layout.row()
-        row.prop(world, "use_sky_paper")
-        row.prop(world, "use_sky_blend")
-        row.prop(world, "use_sky_real")
-
-        row = layout.row()
-        row.column().prop(world, "horizon_color")
-        col = row.column()
-        col.prop(world, "zenith_color")
-        col.active = world.use_sky_blend
-        row.column().prop(world, "ambient_color")
-
-        row = layout.row()
-        row.prop(world, "exposure")
-        row.prop(world, "color_range")
-
-
-class WORLD_PT_ambient_occlusion(WorldButtonsPanel, Panel):
-    bl_label = "Ambient Occlusion"
-    bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
-
-    def draw_header(self, context):
-        light = context.world.light_settings
-        self.layout.prop(light, "use_ambient_occlusion", text="")
-
-    def draw(self, context):
-        layout = self.layout
-
-        light = context.world.light_settings
-
-        layout.active = light.use_ambient_occlusion
-
-        split = layout.split()
-        split.prop(light, "ao_factor", text="Factor")
-        split.prop(light, "ao_blend_type", text="")
-
-
-class WORLD_PT_environment_lighting(WorldButtonsPanel, Panel):
-    bl_label = "Environment Lighting"
-    bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
-
-    def draw_header(self, context):
-        light = context.world.light_settings
-        self.layout.prop(light, "use_environment_light", text="")
-
-    def draw(self, context):
-        layout = self.layout
-
-        light = context.world.light_settings
-
-        layout.active = light.use_environment_light
-
-        split = layout.split()
-        split.prop(light, "environment_energy", text="Energy")
-        split.prop(light, "environment_color", text="")
-
-
-class WORLD_PT_indirect_lighting(WorldButtonsPanel, Panel):
-    bl_label = "Indirect Lighting"
-    bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
-
-    def draw_header(self, context):
-        light = context.world.light_settings
-        self.layout.prop(light, "use_indirect_light", text="")
-
-    def draw(self, context):
-        layout = self.layout
-
-        light = context.world.light_settings
-
-        layout.active = light.use_indirect_light and light.gather_method == 'APPROXIMATE'
-
-        split = layout.split()
-        split.prop(light, "indirect_factor", text="Factor")
-        split.prop(light, "indirect_bounces", text="Bounces")
-
-        if light.gather_method == 'RAYTRACE':
-            layout.label(text="Only works with Approximate gather method")
-
-
-class WORLD_PT_gather(WorldButtonsPanel, Panel):
-    bl_label = "Gather"
-    bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
-
-    def draw(self, context):
-        layout = self.layout
-
-        light = context.world.light_settings
-
-        layout.active = light.use_ambient_occlusion or light.use_environment_light or light.use_indirect_light
-
-        layout.row().prop(light, "gather_method", expand=True)
-
-        split = layout.split()
-
-        col = split.column()
-        col.label(text="Attenuation:")
-        if light.gather_method == 'RAYTRACE':
-            col.prop(light, "distance")
-        col.prop(light, "use_falloff")
-        sub = col.row()
-        sub.active = light.use_falloff
-        sub.prop(light, "falloff_strength", text="Strength")
-
-        if light.gather_method == 'RAYTRACE':
-            col = split.column()
-
-            col.label(text="Sampling:")
-            col.prop(light, "sample_method", text="")
-
-            sub = col.column()
-            sub.prop(light, "samples")
-
-            if light.sample_method == 'ADAPTIVE_QMC':
-                sub.prop(light, "threshold")
-                sub.prop(light, "adapt_to_speed", slider=True)
-            elif light.sample_method == 'CONSTANT_JITTERED':
-                sub.prop(light, "bias")
-
-        if light.gather_method == 'APPROXIMATE':
-            col = split.column()
-
-            col.label(text="Sampling:")
-            col.prop(light, "passes")
-            col.prop(light, "error_threshold", text="Error")
-            col.prop(light, "use_cache")
-            col.prop(light, "correction")
-
-
-class WORLD_PT_mist(WorldButtonsPanel, Panel):
-    bl_label = "Mist"
-    bl_options = {'DEFAULT_CLOSED'}
-    COMPAT_ENGINES = {'BLENDER_RENDER'}
-
-    def draw_header(self, context):
-        world = context.world
-
-        self.layout.prop(world.mist_settings, "use_mist", text="")
-
-    def draw(self, context):
-        layout = self.layout
-
-        world = context.world
-
-        layout.active = world.mist_settings.use_mist
-
-        split = layout.split()
-
-        col = split.column()
-        col.prop(world.mist_settings, "intensity")
-        col.prop(world.mist_settings, "start")
-
-        col = split.column()
-        col.prop(world.mist_settings, "depth")
-        col.prop(world.mist_settings, "height")
-
+        layout.prop(world.mist_settings, "start")
+        layout.prop(world.mist_settings, "depth")
         layout.prop(world.mist_settings, "falloff")
 
 
 class WORLD_PT_custom_props(WorldButtonsPanel, PropertyPanel, Panel):
-    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_GAME'}
+    COMPAT_ENGINES = {'BLENDER_RENDER', 'BLENDER_EEVEE', 'BLENDER_WORKBENCH'}
     _context_path = "world"
     _property_type = bpy.types.World
 
 
+class EEVEE_WORLD_PT_surface(WorldButtonsPanel, Panel):
+    bl_label = "Surface"
+    COMPAT_ENGINES = {'BLENDER_EEVEE'}
+
+    @classmethod
+    def poll(cls, context):
+        engine = context.engine
+        return context.world and (engine in cls.COMPAT_ENGINES)
+
+    def draw(self, context):
+        layout = self.layout
+
+        world = context.world
+
+        layout.prop(world, "use_nodes", icon='NODETREE')
+        layout.separator()
+
+        if world.use_nodes:
+            ntree = world.node_tree
+            node = ntree.get_output_node('EEVEE')
+
+            if node:
+                input = find_node_input(node, 'Surface')
+                if input:
+                    layout.template_node_view(ntree, node, input)
+                else:
+                    layout.label(text="Incompatible output node")
+            else:
+                layout.label(text="No output node")
+        else:
+            layout.prop(world, "color")
+
+
+class WORLD_PT_viewport_display(WorldButtonsPanel, Panel):
+    bl_label = "Viewport Display"
+    bl_options = {'DEFAULT_CLOSED'}
+
+    @classmethod
+    def poll(cls, context):
+        return context.world
+
+    def draw(self, context):
+        layout = self.layout
+        layout.use_property_split = True
+        world = context.world
+        layout.prop(world, "color")
+
+
 classes = (
     WORLD_PT_context_world,
-    WORLD_PT_preview,
-    WORLD_PT_world,
-    WORLD_PT_ambient_occlusion,
-    WORLD_PT_environment_lighting,
-    WORLD_PT_indirect_lighting,
-    WORLD_PT_gather,
-    WORLD_PT_mist,
+    EEVEE_WORLD_PT_surface,
+    EEVEE_WORLD_PT_mist,
+    WORLD_PT_viewport_display,
     WORLD_PT_custom_props,
 )
 

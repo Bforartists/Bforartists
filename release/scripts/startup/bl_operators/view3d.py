@@ -141,88 +141,95 @@ class VIEW3D_OT_select_or_deselect_all(Operator):
     """Select element under the mouse, deselect everything is there's nothing under the mouse"""
     bl_label = "Select or Deselect All"
     bl_idname = "view3d.select_or_deselect_all"
-    bl_options = {'UNDO'}
 
-    extend = BoolProperty(
+    extend: BoolProperty(
         name="Extend",
         description="Extend selection instead of deselecting everything first",
         default=False,
+        options={'SKIP_SAVE'},
     )
 
-    toggle = BoolProperty(
+    toggle: BoolProperty(
         name="Toggle",
         description="Toggle the selection",
         default=False,
+        options={'SKIP_SAVE'},
     )
 
-    deselect = BoolProperty(
+    deselect: BoolProperty(
         name="Deselect",
         description="Remove from selection",
         default=False,
+        options={'SKIP_SAVE'},
     )
 
-    center = BoolProperty(
+    center: BoolProperty(
         name="Center",
         description="Use the object center when selecting, in editmode used to extend object selection",
         default=False,
+        options={'SKIP_SAVE'},
     )
 
-    enumerate = BoolProperty(
+    enumerate: BoolProperty(
         name="Enumerate",
         description="List objects under the mouse (object mode only)",
         default=False,
+        options={'SKIP_SAVE'},
     )
 
-    object = BoolProperty(
+    object: BoolProperty(
         name="Object",
         description="Use object selection (editmode only)",
         default=False,
+        options={'SKIP_SAVE'},
     )
 
-    @classmethod
-    def poll(cls, context):
+    def invoke(self, context, event):
+        retval = bpy.ops.view3d.select(
+            'INVOKE_DEFAULT',
+            True, # undo push
+            extend=self.extend,
+            deselect=self.deselect,
+            toggle=self.toggle,
+            center=self.center,
+            enumerate=self.enumerate,
+            object=self.object,
+        )
+
+        # Finished means something was selected.
+        if 'FINISHED' in retval:
+            return retval
+        if self.extend or self.toggle or self.deselect:
+            return retval
+
         active_object = context.active_object
         if active_object:
-            return active_object.mode in {'EDIT', 'OBJECT', 'POSE'}
-        return True
-
-    def invoke(self, context, event):
-        x = event.mouse_region_x
-        y = event.mouse_region_y
-
-        if self.extend is False and self.toggle is False and self.deselect is False:
-            active_object = context.active_object
-
-            if active_object:
-                if active_object.mode == 'EDIT':
-                    if active_object.type == 'MESH':
-                        bpy.ops.mesh.select_all(action='DESELECT')
-                    elif active_object.type == 'CURVE':
-                        bpy.ops.curve.select_all(action='DESELECT')
-                    elif active_object.type == 'SURFACE':
-                        bpy.ops.curve.select_all(action='DESELECT')
-                    elif active_object.type == 'LATTICE':
-                        bpy.ops.lattice.select_all(action='DESELECT')
-                    elif active_object.type == 'META':
-                        bpy.ops.mball.select_all(action='DESELECT')
-                    elif active_object.type == 'ARMATURE':
-                        bpy.ops.armature.select_all(action='DESELECT')
-                elif active_object.mode == 'POSE':
-                    bpy.ops.pose.select_all(action='DESELECT')
-                elif active_object.mode == 'PARTICLE_EDIT':
-                    bpy.ops.particle.select_all(action='DESELECT')
-                else:
-                    bpy.ops.object.select_all(action='DESELECT')
+            if active_object.mode == 'OBJECT':
+                select_all = bpy.ops.object.select_all
+            elif active_object.mode == 'EDIT':
+                if active_object.type == 'MESH':
+                    select_all = bpy.ops.mesh.select_all
+                elif active_object.type == 'CURVE':
+                    select_all = bpy.ops.curve.select_all
+                elif active_object.type == 'SURFACE':
+                    select_all = bpy.ops.curve.select_all
+                elif active_object.type == 'LATTICE':
+                    select_all = bpy.ops.lattice.select_all
+                elif active_object.type == 'META':
+                    select_all = bpy.ops.mball.select_all
+                elif active_object.type == 'ARMATURE':
+                    select_all = bpy.ops.armature.select_all
+            elif active_object.mode == 'POSE':
+                select_all = bpy.ops.pose.select_all
+            elif active_object.mode == 'PARTICLE_EDIT':
+                select_all = bpy.ops.particle.select_all
             else:
-                bpy.ops.object.select_all(action='DESELECT')
+                # Don nothing in paint and sculpt modes.
+                return retval
+        else:
+            select_all = bpy.ops.object.select_all
 
-        return bpy.ops.view3d.select(extend=self.extend,
-                                     deselect=self.deselect,
-                                     toggle=self.toggle,
-                                     center=self.center,
-                                     enumerate=self.enumerate,
-                                     object=self.object,
-                                     location=(x, y))
+        return select_all('INVOKE_DEFAULT', True, action='DESELECT')
 
 
 classes = (

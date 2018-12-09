@@ -47,8 +47,10 @@
 #include "DNA_object_types.h"
 
 #include "BKE_mball.h"
-#include "BKE_depsgraph.h"
 #include "BKE_main.h"
+#include "BKE_scene.h"
+
+#include "DEG_depsgraph.h"
 
 #include "WM_types.h"
 #include "WM_api.h"
@@ -101,9 +103,9 @@ static void rna_MetaBall_update_data(Main *bmain, Scene *scene, PointerRNA *ptr)
 	if (mb->id.us > 0) {
 		for (ob = bmain->object.first; ob; ob = ob->id.next)
 			if (ob->data == mb)
-				BKE_mball_properties_copy(bmain, bmain->eval_ctx, scene, ob);
+				BKE_mball_properties_copy(scene, ob);
 
-		DAG_id_tag_update(&mb->id, 0);
+		DEG_id_tag_update(&mb->id, 0);
 		WM_main_add_notifier(NC_GEOM | ND_DATA, mb);
 	}
 }
@@ -121,7 +123,7 @@ static MetaElem *rna_MetaBall_elements_new(MetaBall *mb, int type)
 
 	/* cheating way for importers to avoid slow updates */
 	if (mb->id.us > 0) {
-		DAG_id_tag_update(&mb->id, 0);
+		DEG_id_tag_update(&mb->id, 0);
 		WM_main_add_notifier(NC_GEOM | ND_DATA, &mb->id);
 	}
 
@@ -142,7 +144,7 @@ static void rna_MetaBall_elements_remove(MetaBall *mb, ReportList *reports, Poin
 
 	/* cheating way for importers to avoid slow updates */
 	if (mb->id.us > 0) {
-		DAG_id_tag_update(&mb->id, 0);
+		DEG_id_tag_update(&mb->id, 0);
 		WM_main_add_notifier(NC_GEOM | ND_DATA, &mb->id);
 	}
 }
@@ -153,7 +155,7 @@ static void rna_MetaBall_elements_clear(MetaBall *mb)
 
 	/* cheating way for importers to avoid slow updates */
 	if (mb->id.us > 0) {
-		DAG_id_tag_update(&mb->id, 0);
+		DEG_id_tag_update(&mb->id, 0);
 		WM_main_add_notifier(NC_GEOM | ND_DATA, &mb->id);
 	}
 }

@@ -41,17 +41,19 @@
 #include "BKE_context.h"
 #include "BKE_movieclip.h"
 #include "BKE_tracking.h"
-#include "BKE_depsgraph.h"
 
-#include "BIF_gl.h"
-#include "BIF_glutil.h"
+#include "DEG_depsgraph.h"
+#include "DEG_depsgraph_build.h"
+
+#include "GPU_immediate.h"
+#include "GPU_matrix.h"
+#include "GPU_state.h"
 
 #include "WM_api.h"
 #include "WM_types.h"
 
 #include "ED_screen.h"
 #include "ED_clip.h"
-
 
 #include "UI_interface.h"
 #include "UI_resources.h"
@@ -63,7 +65,7 @@ void clip_graph_tracking_values_iterate_track(
         SpaceClip *sc, MovieTrackingTrack *track, void *userdata,
         void (*func)(void *userdata, MovieTrackingTrack *track, MovieTrackingMarker *marker, int coord,
                      int scene_framenr, float val),
-        void (*segment_start)(void *userdata, MovieTrackingTrack *track, int coord),
+        void (*segment_start)(void *userdata, MovieTrackingTrack *track, int coord, bool is_point),
         void (*segment_end)(void *userdata, int coord))
 {
 	MovieClip *clip = ED_space_clip_get_clip(sc);
@@ -92,8 +94,14 @@ void clip_graph_tracking_values_iterate_track(
 			}
 
 			if (!open) {
-				if (segment_start)
-					segment_start(userdata, track, coord);
+				if (segment_start) {
+					if ((i + 1) == track->markersnr) {
+						segment_start(userdata, track, coord, true);
+					}
+					else {
+						segment_start(userdata, track, coord, (track->markers[i + 1].flag & MARKER_DISABLED));
+					}
+				}
 
 				open = true;
 				prevval = marker->pos[coord];
@@ -124,7 +132,7 @@ void clip_graph_tracking_values_iterate(
         SpaceClip *sc, bool selected_only, bool include_hidden, void *userdata,
         void (*func)(void *userdata, MovieTrackingTrack *track, MovieTrackingMarker *marker,
                      int coord, int scene_framenr, float val),
-        void (*segment_start)(void *userdata, MovieTrackingTrack *track, int coord),
+        void (*segment_start)(void *userdata, MovieTrackingTrack *track, int coord, bool is_point),
         void (*segment_end)(void *userdata, int coord))
 {
 	MovieClip *clip = ED_space_clip_get_clip(sc);
@@ -195,7 +203,9 @@ void clip_delete_track(bContext *C, MovieClip *clip, MovieTrackingTrack *track)
 	BKE_tracking_get_rna_path_for_track(tracking,
 	                                    track,
 	                                    rna_path, sizeof(rna_path));
-	BKE_animdata_fix_paths_remove(&clip->id, rna_path);
+	if (BKE_animdata_fix_paths_remove(&clip->id, rna_path)) {
+		DEG_relations_tag_update(CTX_data_main(C));
+	}
 	/* Delete track itself. */
 	BKE_tracking_track_free(track);
 	BLI_freelinkN(tracksbase, track);
@@ -204,11 +214,11 @@ void clip_delete_track(bContext *C, MovieClip *clip, MovieTrackingTrack *track)
 	if (used_for_stabilization) {
 		WM_event_add_notifier(C, NC_MOVIECLIP | ND_DISPLAY, clip);
 	}
+	/* Inform dependency graph. */
+	DEG_id_tag_update(&clip->id, 0);
 	if (has_bundle) {
 		WM_event_add_notifier(C, NC_SPACE | ND_SPACE_VIEW3D, NULL);
 	}
-	/* Inform dependency graph. */
-	DAG_id_tag_update(&clip->id, 0);
 }
 
 void clip_delete_marker(bContext *C, MovieClip *clip, MovieTrackingTrack *track,
@@ -236,14 +246,16 @@ void clip_delete_plane_track(bContext *C,
 	BKE_tracking_get_rna_path_for_plane_track(tracking,
 	                                          plane_track,
 	                                          rna_path, sizeof(rna_path));
-	BKE_animdata_fix_paths_remove(&clip->id, rna_path);
+	if (BKE_animdata_fix_paths_remove(&clip->id, rna_path)) {
+		DEG_relations_tag_update(CTX_data_main(C));
+	}
 	/* Delete the plane track itself. */
 	BKE_tracking_plane_track_free(plane_track);
 	BLI_freelinkN(plane_tracks_base, plane_track);
 	/* TODO(sergey): Any notifiers to be sent here? */
 	(void) C;
 	/* Inform dependency graph. */
-	DAG_id_tag_update(&clip->id, 0);
+	DEG_id_tag_update(&clip->id, 0);
 }
 
 void clip_view_center_to_point(SpaceClip *sc, float x, float y)
@@ -258,51 +270,34 @@ void clip_view_center_to_point(SpaceClip *sc, float x, float y)
 	sc->yof = (y - 0.5f) * height * aspy;
 }
 
-void clip_draw_cfra(SpaceClip *sc, ARegion *ar, Scene *scene)
-{
-	View2D *v2d = &ar->v2d;
-	float xscale, yscale;
-
-	/* Draw a light green line to indicate current frame */
-	UI_ThemeColor(TH_CFRAME);
-
-	float x = (float)(sc->user.framenr * scene->r.framelen);
-
-	glLineWidth(2.0);
-
-	glBegin(GL_LINES);
-	glVertex2f(x, v2d->cur.ymin);
-	glVertex2f(x, v2d->cur.ymax);
-	glEnd();
-
-	UI_view2d_view_orthoSpecial(ar, v2d, 1);
-
-	/* because the frame number text is subject to the same scaling as the contents of the view */
-	UI_view2d_scale_get(v2d, &xscale, &yscale);
-	glScalef(1.0f / xscale, 1.0f, 1.0f);
-
-	ED_region_cache_draw_curfra_label(sc->user.framenr, (float)sc->user.framenr * xscale, 18);
-
-	/* restore view transform */
-	glScalef(xscale, 1.0, 1.0);
-}
-
 void clip_draw_sfra_efra(View2D *v2d, Scene *scene)
 {
 	UI_view2d_view_ortho(v2d);
 
 	/* currently clip editor supposes that editing clip length is equal to scene frame range */
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_BLEND);
-	glColor4f(0.0f, 0.0f, 0.0f, 0.4f);
+	GPU_blend_set_func_separate(GPU_SRC_ALPHA, GPU_ONE_MINUS_SRC_ALPHA, GPU_ONE, GPU_ONE_MINUS_SRC_ALPHA);
+	GPU_blend(true);
 
-	glRectf(v2d->cur.xmin, v2d->cur.ymin, (float)SFRA, v2d->cur.ymax);
-	glRectf((float)EFRA, v2d->cur.ymin, v2d->cur.xmax, v2d->cur.ymax);
-	glDisable(GL_BLEND);
+	uint pos = GPU_vertformat_attr_add(immVertexFormat(), "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+	immBindBuiltinProgram(GPU_SHADER_2D_UNIFORM_COLOR);
 
-	UI_ThemeColorShade(TH_BACK, -60);
+	immUniformColor4f(0.0f, 0.0f, 0.0f, 0.4f);
+	immRectf(pos, v2d->cur.xmin, v2d->cur.ymin, (float)SFRA, v2d->cur.ymax);
+	immRectf(pos, (float)EFRA, v2d->cur.ymin, v2d->cur.xmax, v2d->cur.ymax);
+
+	GPU_blend(false);
+
+	immUniformThemeColorShade(TH_BACK, -60);
 
 	/* thin lines where the actual frames are */
-	fdrawline((float)SFRA, v2d->cur.ymin, (float)SFRA, v2d->cur.ymax);
-	fdrawline((float)EFRA, v2d->cur.ymin, (float)EFRA, v2d->cur.ymax);
+	GPU_line_width(1.0f);
+
+	immBegin(GPU_PRIM_LINES, 4);
+	immVertex2f(pos, (float)SFRA, v2d->cur.ymin);
+	immVertex2f(pos, (float)SFRA, v2d->cur.ymax);
+	immVertex2f(pos, (float)EFRA, v2d->cur.ymin);
+	immVertex2f(pos, (float)EFRA, v2d->cur.ymax);
+	immEnd();
+
+	immUnbindProgram();
 }

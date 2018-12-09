@@ -33,6 +33,7 @@
  */
 
 
+#include "DNA_mesh_types.h"
 #include "DNA_meshdata_types.h"
 #include "DNA_object_types.h"
 
@@ -40,14 +41,14 @@
 #include "BLI_utildefines.h"
 
 #include "BKE_action.h"
-#include "BKE_cdderivedmesh.h"
+#include "BKE_editmesh.h"
+#include "BKE_library.h"
 #include "BKE_library_query.h"
+#include "BKE_mesh.h"
 #include "BKE_modifier.h"
 #include "BKE_deform.h"
 #include "BKE_colortools.h"
 
-
-#include "depsgraph_private.h"
 #include "MEM_guardedalloc.h"
 
 #include "MOD_util.h"
@@ -62,12 +63,12 @@ static void initData(ModifierData *md)
 	hmd->flag = 0;
 }
 
-static void copyData(const ModifierData *md, ModifierData *target)
+static void copyData(const ModifierData *md, ModifierData *target, const int flag)
 {
 	const HookModifierData *hmd = (const HookModifierData *) md;
 	HookModifierData *thmd = (HookModifierData *) target;
 
-	modifier_copyData_generic(md, target);
+	modifier_copyData_generic(md, target, flag);
 
 	thmd->curfalloff = curvemapping_copy(hmd->curfalloff);
 
@@ -95,7 +96,7 @@ static void freeData(ModifierData *md)
 	MEM_SAFE_FREE(hmd->indexar);
 }
 
-static bool isDisabled(ModifierData *md, int UNUSED(useRenderParams))
+static bool isDisabled(const struct Scene *UNUSED(scene), ModifierData *md, bool UNUSED(useRenderParams))
 {
 	HookModifierData *hmd = (HookModifierData *) md;
 
@@ -109,20 +110,6 @@ static void foreachObjectLink(
 	HookModifierData *hmd = (HookModifierData *) md;
 
 	walk(userData, ob, &hmd->object, IDWALK_CB_NOP);
-}
-
-static void updateDepgraph(ModifierData *md, const ModifierUpdateDepsgraphContext *ctx)
-{
-	HookModifierData *hmd = (HookModifierData *) md;
-
-	if (hmd->object) {
-		DagNode *curNode = dag_get_node(ctx->forest, hmd->object);
-
-		if (hmd->subtarget[0])
-			dag_add_relation(ctx->forest, curNode, ctx->obNode, DAG_RL_OB_DATA | DAG_RL_DATA_DATA, "Hook Modifier");
-		else
-			dag_add_relation(ctx->forest, curNode, ctx->obNode, DAG_RL_OB_DATA, "Hook Modifier");
-	}
 }
 
 static void updateDepsgraph(ModifierData *md, const ModifierUpdateDepsgraphContext *ctx)
@@ -265,7 +252,7 @@ static void hook_co_apply(struct HookData_cb *hd, const int j)
 }
 
 static void deformVerts_do(
-        HookModifierData *hmd, Object *ob, DerivedMesh *dm,
+        HookModifierData *hmd, Object *ob, Mesh *mesh,
         float (*vertexCos)[3], int numVerts)
 {
 	bPoseChannel *pchan = BKE_pose_channel_find_name(hmd->object->pose, hmd->subtarget);
@@ -284,7 +271,7 @@ static void deformVerts_do(
 
 	/* Generic data needed for applying per-vertex calculations (initialize all members) */
 	hd.vertexCos = vertexCos;
-	modifier_get_vgroup(ob, dm, hmd->name, &hd.dvert, &hd.defgrp_index);
+	MOD_get_vgroup(ob, mesh, hmd->name, &hd.dvert, &hd.defgrp_index);
 
 	hd.curfalloff = hmd->curfalloff;
 
@@ -333,8 +320,8 @@ static void deformVerts_do(
 	else if (hmd->indexar) { /* vertex indices? */
 		const int *origindex_ar;
 
-		/* if DerivedMesh is present and has original index data, use it */
-		if (dm && (origindex_ar = dm->getVertDataArray(dm, CD_ORIGINDEX))) {
+		/* if mesh is present and has original index data, use it */
+		if (mesh && (origindex_ar = CustomData_get_layer(&mesh->vdata, CD_ORIGINDEX))) {
 			for (i = 0, index_pt = hmd->indexar; i < hmd->totindex; i++, index_pt++) {
 				if (*index_pt < numVerts) {
 					int j;
@@ -347,7 +334,7 @@ static void deformVerts_do(
 				}
 			}
 		}
-		else { /* missing dm or ORIGINDEX */
+		else { /* missing mesh or ORIGINDEX */
 			for (i = 0, index_pt = hmd->indexar; i < hmd->totindex; i++, index_pt++) {
 				if (*index_pt < numVerts) {
 					hook_co_apply(&hd, *index_pt);
@@ -363,38 +350,33 @@ static void deformVerts_do(
 }
 
 static void deformVerts(
-        ModifierData *md, Object *ob, DerivedMesh *derivedData,
-        float (*vertexCos)[3], int numVerts,
-        ModifierApplyFlag UNUSED(flag))
+        struct ModifierData *md, const struct ModifierEvalContext *ctx, struct Mesh *mesh,
+        float (*vertexCos)[3], int numVerts)
 {
-	HookModifierData *hmd = (HookModifierData *) md;
-	DerivedMesh *dm = derivedData;
-	/* We need a valid dm for meshes when a vgroup is set... */
-	if (!dm && ob->type == OB_MESH && hmd->name[0] != '\0')
-		dm = get_dm(ob, NULL, dm, NULL, false, false);
+	HookModifierData *hmd = (HookModifierData *)md;
+	Mesh *mesh_src = MOD_deform_mesh_eval_get(ctx->object, NULL, mesh, NULL, numVerts, false, false);
 
-	deformVerts_do(hmd, ob, dm, vertexCos, numVerts);
+	deformVerts_do(hmd, ctx->object, mesh_src, vertexCos, numVerts);
 
-	if (derivedData != dm)
-		dm->release(dm);
+	if (!ELEM(mesh_src, NULL, mesh)) {
+		BKE_id_free(NULL, mesh_src);
+	}
 }
 
 static void deformVertsEM(
-        ModifierData *md, Object *ob, struct BMEditMesh *editData,
-        DerivedMesh *derivedData, float (*vertexCos)[3], int numVerts)
+        struct ModifierData *md, const struct ModifierEvalContext *ctx,
+        struct BMEditMesh *editData,
+        struct Mesh *mesh, float (*vertexCos)[3], int numVerts)
 {
-	HookModifierData *hmd = (HookModifierData *) md;
-	DerivedMesh *dm = derivedData;
-	/* We need a valid dm for meshes when a vgroup is set... */
-	if (!dm && ob->type == OB_MESH && hmd->name[0] != '\0')
-		dm = get_dm(ob, editData, dm, NULL, false, false);
+	HookModifierData *hmd = (HookModifierData *)md;
+	Mesh *mesh_src = MOD_deform_mesh_eval_get(ctx->object, editData, mesh, NULL, numVerts, false, false);
 
-	deformVerts_do(hmd, ob, dm, vertexCos, numVerts);
+	deformVerts_do(hmd, ctx->object, mesh_src, vertexCos, numVerts);
 
-	if (derivedData != dm)
-		dm->release(dm);
+	if (!ELEM(mesh_src, NULL, mesh)) {
+		BKE_id_free(NULL, mesh_src);
+	}
 }
-
 
 ModifierTypeInfo modifierType_Hook = {
 	/* name */              "Hook",
@@ -405,17 +387,23 @@ ModifierTypeInfo modifierType_Hook = {
 	                        eModifierTypeFlag_AcceptsLattice |
 	                        eModifierTypeFlag_SupportsEditmode,
 	/* copyData */          copyData,
+
+	/* deformVerts_DM */    NULL,
+	/* deformMatrices_DM */ NULL,
+	/* deformVertsEM_DM */  NULL,
+	/* deformMatricesEM_DM*/NULL,
+	/* applyModifier_DM */  NULL,
+
 	/* deformVerts */       deformVerts,
 	/* deformMatrices */    NULL,
 	/* deformVertsEM */     deformVertsEM,
 	/* deformMatricesEM */  NULL,
 	/* applyModifier */     NULL,
-	/* applyModifierEM */   NULL,
+
 	/* initData */          initData,
 	/* requiredDataMask */  requiredDataMask,
 	/* freeData */          freeData,
 	/* isDisabled */        isDisabled,
-	/* updateDepgraph */    updateDepgraph,
 	/* updateDepsgraph */   updateDepsgraph,
 	/* dependsOnTime */     NULL,
 	/* dependsOnNormals */	NULL,

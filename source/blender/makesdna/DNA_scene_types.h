@@ -47,7 +47,11 @@ extern "C" {
 #include "DNA_ID.h"
 #include "DNA_freestyle_types.h"
 #include "DNA_gpu_types.h"
+#include "DNA_collection_types.h"
+#include "DNA_layer_types.h"
+#include "DNA_material_types.h"
 #include "DNA_userdef_types.h"
+#include "DNA_view3d_types.h"
 
 struct CurveMapping;
 struct Object;
@@ -55,28 +59,19 @@ struct Brush;
 struct World;
 struct Scene;
 struct Image;
-struct Group;
+struct Collection;
 struct Text;
 struct bNodeTree;
 struct AnimData;
 struct Editing;
 struct SceneStats;
 struct bGPdata;
-struct bGPDbrush;
 struct MovieClip;
 struct ColorSpace;
+struct SceneCollection;
 
 /* ************************************************************* */
 /* Scene Data */
-
-/* Base - Wrapper for referencing Objects in a Scene */
-typedef struct Base {
-	struct Base *next, *prev;
-	unsigned int lay, selcol;
-	int flag;
-	short sx, sy;
-	struct Object *object;
-} Base;
 
 /* ************************************************************* */
 /* Output Format Data */
@@ -197,27 +192,25 @@ typedef struct AudioData {
 typedef struct SceneRenderLayer {
 	struct SceneRenderLayer *next, *prev;
 
-	char name[64];	/* MAX_NAME */
+	char name[64] DNA_DEPRECATED;	/* MAX_NAME */
 
-	struct Material *mat_override;
-	struct Group *light_override;
+	struct Material *mat_override DNA_DEPRECATED; /* Converted to ViewLayer override. */
 
-	unsigned int lay;		  /* Scene.lay itself has priority over this */
-	unsigned int lay_zmask;	  /* has to be after lay, this is for Z-masking */
-	unsigned int lay_exclude; /* not used by internal, exclude */
-	int layflag;
+	unsigned int lay DNA_DEPRECATED; /* Converted to LayerCollection cycles camera visibility override. */
+	unsigned int lay_zmask DNA_DEPRECATED; /* Converted to LayerCollection cycles holdout override. */
+	unsigned int lay_exclude DNA_DEPRECATED;
+	int layflag DNA_DEPRECATED; /* Converted to ViewLayer layflag and flag. */
 
 	/* pass_xor has to be after passflag */
-	/* note, this is treestore element 'nr' in outliner, short still... */
-	int passflag;
-	int pass_xor;
+	int passflag DNA_DEPRECATED; /* pass_xor has to be after passflag */
+	int pass_xor DNA_DEPRECATED; /* Converted to ViewLayer passflag and flag. */
 
-	int samples;
-	float pass_alpha_threshold;
+	int samples DNA_DEPRECATED; /* Converted to ViewLayer override. */
+	float pass_alpha_threshold DNA_DEPRECATED; /* Converted to ViewLayer pass_alpha_threshold. */
 
-	IDProperty *prop;
+	IDProperty *prop DNA_DEPRECATED; /* Converted to ViewLayer id_properties. */
 
-	struct FreestyleConfig freestyleConfig;
+	struct FreestyleConfig freestyleConfig DNA_DEPRECATED; /* Converted to ViewLayer freestyleConfig. */
 } SceneRenderLayer;
 
 /* SceneRenderLayer.layflag */
@@ -270,7 +263,7 @@ typedef enum eScenePassType {
 	SCE_PASS_SUBSURFACE_DIRECT        = (1 << 28),
 	SCE_PASS_SUBSURFACE_INDIRECT      = (1 << 29),
 	SCE_PASS_SUBSURFACE_COLOR         = (1 << 30),
-	SCE_PASS_ROUGHNESS                = (1 << 31),
+	SCE_PASS_ROUGHNESS                = (1u << 31u),
 } eScenePassType;
 
 #define RE_PASSNAME_COMBINED "Combined"
@@ -447,7 +440,7 @@ typedef struct ImageFormatData {
 #define R_IMF_IMTYPE_TIFF           22
 #define R_IMF_IMTYPE_OPENEXR        23
 #define R_IMF_IMTYPE_FFMPEG         24
-#define R_IMF_IMTYPE_FRAMESERVER    25
+/* #define R_IMF_IMTYPE_FRAMESERVER    25 */ /* frame server is nomore */
 #define R_IMF_IMTYPE_CINEON         26
 #define R_IMF_IMTYPE_DPX            27
 #define R_IMF_IMTYPE_MULTILAYER     28
@@ -563,6 +556,12 @@ typedef enum eBakePassFilter {
 
 #define R_BAKE_PASS_FILTER_ALL (~0)
 
+/* RenderEngineSettingsClay.options */
+typedef enum ClayFlagSettings {
+	CLAY_USE_AO     = (1 << 0),
+	CLAY_USE_HSV    = (1 << 1),
+} ClayFlagSettings;
+
 /* *************************************************************** */
 /* Render Data */
 
@@ -581,28 +580,13 @@ typedef struct RenderData {
 
 	float framelen, blurfac;
 
-	/** For UR edge rendering: give the edges this color */
-	float edgeR, edgeG, edgeB;
-
-
-	/* standalone player */  //  XXX deprecated since 2.5
-	short fullscreen  DNA_DEPRECATED, xplay  DNA_DEPRECATED, yplay  DNA_DEPRECATED;
-	short freqplay  DNA_DEPRECATED;
-	/* standalone player */  //  XXX deprecated since 2.5
-	short depth  DNA_DEPRECATED, attrib  DNA_DEPRECATED;
-
-
 	int frame_step;		/* frames to jump during render/playback */
 
 	short stereomode  DNA_DEPRECATED;	/* standalone player stereo settings */  //  XXX deprecated since 2.5
 
 	short dimensionspreset;		/* for the dimensions presets menu */
 
-	short filtertype;	/* filter is box, tent, gauss, mitch, etc */
-
 	short size; /* size in % */
-
-	short maximsize DNA_DEPRECATED; /* max in Kb */
 
 	short pad6;
 
@@ -615,15 +599,6 @@ typedef struct RenderData {
 	 * The desired number of pixels in the y direction
 	 */
 	int ysch;
-
-	/**
-	 * The number of part to use in the x direction
-	 */
-	short xparts DNA_DEPRECATED;
-	/**
-	 * The number of part to use in the y direction
-	 */
-	short yparts DNA_DEPRECATED;
 
 	/**
 	 * render tile dimensions
@@ -650,22 +625,6 @@ typedef struct RenderData {
 	int mode;
 
 	/**
-	 * Flags for raytrace settings. Use bit-masking to access the settings.
-	 */
-	int raytrace_options;
-
-	/**
-	 * Raytrace acceleration structure
-	 */
-	short raytrace_structure;
-
-	short pad1;
-
-	/* octree resolution */
-	short ocres;
-	short pad4;
-
-	/**
 	 * What to do with the sky/background. Picks sky/premul/key
 	 * blending for the background
 	 */
@@ -676,7 +635,7 @@ typedef struct RenderData {
 	 */
 	short osa;
 
-	short frs_sec, edgeint;
+	short frs_sec, pad[7];
 
 
 	/* safety, border and display rect */
@@ -684,11 +643,9 @@ typedef struct RenderData {
 	rcti disprect;
 
 	/* information on different layers to be rendered */
-	ListBase layers;
-	short actlay;
-
-	/* number of mblur samples */
-	short mblur_samples;
+	ListBase layers DNA_DEPRECATED; /* Converted to Scene->view_layers. */
+	short actlay DNA_DEPRECATED; /* Converted to Scene->active_layer. */
+	short pad1;
 
 	/**
 	 * Adjustment factors for the aspect ratio in the x direction, was a short in 2.45
@@ -705,18 +662,13 @@ typedef struct RenderData {
 	/* color management settings - color profiles, gamma correction, etc */
 	int color_mgt_flag;
 
-	/** post-production settings. deprecated, but here for upwards compat (initialized to 1) */
-	float postgamma, posthue, postsat;
-
 	 /* Dither noise intensity */
 	float dither_intensity;
 
 	/* Bake Render options */
-	short bake_osa, bake_filter, bake_mode, bake_flag;
-	short bake_normal_space, bake_quad_split;
-	float bake_maxdist, bake_biasdist;
-	short bake_samples, bake_pad;
-	float bake_user_scale, bake_pad1;
+	short bake_mode, bake_flag;
+	short bake_filter, bake_samples;
+	float bake_biasdist, bake_user_scale;
 
 	/* path to render output */
 	char pic[1024]; /* 1024 = FILE_MAX */
@@ -739,28 +691,12 @@ typedef struct RenderData {
 	char pad5[5];
 
 	/* render simplify */
-	int simplify_flag;
 	short simplify_subsurf;
 	short simplify_subsurf_render;
-	short simplify_shadowsamples, pad9;
+	short simplify_gpencil;
+	short pad10;
 	float simplify_particles;
 	float simplify_particles_render;
-	float simplify_aosss;
-
-	/* cineon */
-	short cineonwhite  DNA_DEPRECATED, cineonblack  DNA_DEPRECATED;  /*deprecated*/
-	float cineongamma  DNA_DEPRECATED;  /*deprecated*/
-
-	/* jpeg2000 */
-	short jp2_preset  DNA_DEPRECATED, jp2_depth  DNA_DEPRECATED;  /*deprecated*/
-	int rpad3;
-
-	/* Dome variables */ //  XXX deprecated since 2.5
-	short domeres  DNA_DEPRECATED, domemode  DNA_DEPRECATED;	//  XXX deprecated since 2.5
-	short domeangle  DNA_DEPRECATED, dometilt  DNA_DEPRECATED;	//  XXX deprecated since 2.5
-	float domeresbuf  DNA_DEPRECATED;	//  XXX deprecated since 2.5
-	float pad2;
-	struct Text *dometext  DNA_DEPRECATED;	//  XXX deprecated since 2.5
 
 	/* Freestyle line thickness options */
 	int line_thickness_mode;
@@ -768,6 +704,7 @@ typedef struct RenderData {
 
 	/* render engine */
 	char engine[32];
+	int pad2;
 
 	/* Cycles baking */
 	struct BakeData bake;
@@ -784,11 +721,20 @@ typedef struct RenderData {
 	ListBase views;  /* SceneRenderView */
 	short actview;
 	short views_format;
-	short pad8[2];
+
+	/* Hair Display */
+	short hair_type, hair_subdiv;
 
 	/* Motion blur shutter */
 	struct CurveMapping mblur_shutter_curve;
 } RenderData;
+
+/* RenderData.hair_type */
+typedef enum eHairType {
+	SCE_HAIR_SHAPE_STRAND      = 0,
+	SCE_HAIR_SHAPE_STRIP       = 1,
+} eHairType;
+
 
 /* *************************************************************** */
 /* Render Conversion/Simplfication Settings */
@@ -806,180 +752,6 @@ typedef struct RenderProfile {
 	float ao_error, pad2;
 
 } RenderProfile;
-
-/* *************************************************************** */
-/* Game Engine - Dome */
-
-typedef struct GameDome {
-	short res, mode;
-	short angle, tilt;
-	float resbuf, pad2;
-	struct Text *warptext;
-} GameDome;
-
-/* GameDome.mode */
-#define DOME_FISHEYE			1
-#define DOME_TRUNCATED_FRONT	2
-#define DOME_TRUNCATED_REAR		3
-#define DOME_ENVMAP				4
-#define DOME_PANORAM_SPH		5
-#define DOME_NUM_MODES			6
-
-/* *************************************************************** */
-/* Game Engine */
-
-typedef struct GameFraming {
-	float col[3];
-	char type, pad1, pad2, pad3;
-} GameFraming;
-
-/* GameFraming.type */
-#define SCE_GAMEFRAMING_BARS   0
-#define SCE_GAMEFRAMING_EXTEND 1
-#define SCE_GAMEFRAMING_SCALE  2
-
-typedef struct RecastData {
-	float cellsize;
-	float cellheight;
-	float agentmaxslope;
-	float agentmaxclimb;
-	float agentheight;
-	float agentradius;
-	float edgemaxlen;
-	float edgemaxerror;
-	float regionminsize;
-	float regionmergesize;
-	int vertsperpoly;
-	float detailsampledist;
-	float detailsamplemaxerror;
-	char partitioning;
-	char pad1;
-	short pad2;
-} RecastData;
-
-/* RecastData.partitioning */
-#define RC_PARTITION_WATERSHED 0
-#define RC_PARTITION_MONOTONE 1
-#define RC_PARTITION_LAYERS 2
-
-typedef struct GameData {
-
-	/* standalone player */
-	struct GameFraming framing;
-	short playerflag, xplay, yplay, freqplay;
-	short depth, attrib, rt1, rt2;
-	short aasamples, pad4[3];
-
-	/* stereo/dome mode */
-	struct GameDome dome;
-	short stereoflag, stereomode;
-	float eyeseparation;
-	RecastData recastData;
-
-
-	/* physics (it was in world)*/
-	float gravity; /*Gravitation constant for the game world*/
-
-	/*
-	 * Radius of the activity bubble, in Manhattan length. Objects
-	 * outside the box are activity-culled. */
-	float activityBoxRadius;
-
-	/*
-	 * bit 3: (gameengine): Activity culling is enabled.
-	 * bit 5: (gameengine) : enable Bullet DBVT tree for view frustum culling
-	 */
-	int flag;
-	short mode, matmode;
-	short occlusionRes;		/* resolution of occlusion Z buffer in pixel */
-	short physicsEngine;
-	short exitkey;
-	short vsync; /* Controls vsync: off, on, or adaptive (if supported) */
-	short ticrate, maxlogicstep, physubstep, maxphystep;
-	short obstacleSimulation;
-	short raster_storage;
-	float levelHeight;
-	float deactivationtime, lineardeactthreshold, angulardeactthreshold;
-
-	/* Scene LoD */
-	short lodflag, pad2;
-	int scehysteresis, pad5;
-
-} GameData;
-
-/* GameData.stereoflag */
-#define STEREO_NOSTEREO		1
-#define STEREO_ENABLED		2
-#define STEREO_DOME			3
-
-/* GameData.stereomode */
-//#define STEREO_NOSTEREO		 1
-#define STEREO_QUADBUFFERED 2
-#define STEREO_ABOVEBELOW	 3
-#define STEREO_INTERLACED	 4
-#define STEREO_ANAGLYPH		5
-#define STEREO_SIDEBYSIDE	6
-#define STEREO_VINTERLACE	7
-//#define STEREO_DOME		8
-#define STEREO_3DTVTOPBOTTOM 9
-
-/* GameData.physicsEngine */
-#define WOPHY_NONE		0
-#define WOPHY_BULLET	5
-
-/* obstacleSimulation */
-#define OBSTSIMULATION_NONE		0
-#define OBSTSIMULATION_TOI_rays		1
-#define OBSTSIMULATION_TOI_cells	2
-
-/* GameData.raster_storage */
-#define RAS_STORE_AUTO		0
-/* #define RAS_STORE_IMMEDIATE	1 */  /* DEPRECATED */
-#define RAS_STORE_VA		2
-#define RAS_STORE_VBO		3
-
-/* GameData.vsync */
-#define VSYNC_ON	0
-#define VSYNC_OFF	1
-#define VSYNC_ADAPTIVE	2
-
-/* GameData.flag */
-#define GAME_RESTRICT_ANIM_UPDATES			(1 << 0)
-#define GAME_ENABLE_ALL_FRAMES				(1 << 1)
-#define GAME_SHOW_DEBUG_PROPS				(1 << 2)
-#define GAME_SHOW_FRAMERATE					(1 << 3)
-#define GAME_SHOW_PHYSICS					(1 << 4)
-#define GAME_DISPLAY_LISTS					(1 << 5)
-#define GAME_GLSL_NO_LIGHTS					(1 << 6)
-#define GAME_GLSL_NO_SHADERS				(1 << 7)
-#define GAME_GLSL_NO_SHADOWS				(1 << 8)
-#define GAME_GLSL_NO_RAMPS					(1 << 9)
-#define GAME_GLSL_NO_NODES					(1 << 10)
-#define GAME_GLSL_NO_EXTRA_TEX				(1 << 11)
-#define GAME_IGNORE_DEPRECATION_WARNINGS	(1 << 12)
-#define GAME_ENABLE_ANIMATION_RECORD		(1 << 13)
-#define GAME_SHOW_MOUSE						(1 << 14)
-#define GAME_GLSL_NO_COLOR_MANAGEMENT		(1 << 15)
-#define GAME_SHOW_OBSTACLE_SIMULATION		(1 << 16)
-#define GAME_NO_MATERIAL_CACHING			(1 << 17)
-#define GAME_GLSL_NO_ENV_LIGHTING			(1 << 18)
-/* Note: GameData.flag is now an int (max 32 flags). A short could only take 16 flags */
-
-/* GameData.playerflag */
-#define GAME_PLAYER_FULLSCREEN				(1 << 0)
-#define GAME_PLAYER_DESKTOP_RESOLUTION		(1 << 1)
-
-/* GameData.matmode */
-enum {
-#ifdef DNA_DEPRECATED
-	GAME_MAT_TEXFACE    = 0, /* deprecated */
-#endif
-	GAME_MAT_MULTITEX   = 1,
-	GAME_MAT_GLSL       = 2,
-};
-
-/* GameData.lodflag */
-#define SCE_LOD_USE_HYST		(1 << 0)
 
 /* UV Paint */
 /* ToolSettings.uv_sculpt_settings */
@@ -1025,9 +797,28 @@ typedef struct TimeMarker {
 
 #define PAINT_MAX_INPUT_SAMPLES 64
 
+typedef struct Paint_Runtime {
+	/* Avoid having to compare with scene pointer everywhere. */
+	unsigned int tool_offset;
+	unsigned short ob_mode;
+	char _pad[2];
+} Paint_Runtime;
+
+/* We might want to store other things here. */
+typedef struct PaintToolSlot {
+	struct Brush *brush;
+} PaintToolSlot;
+
 /* Paint Tool Base */
 typedef struct Paint {
 	struct Brush *brush;
+
+	/* Each tool has it's own active brush,
+	 * The currently active tool is defined by the current 'brush'. */
+	struct PaintToolSlot *tool_slots;
+	int                   tool_slots_len;
+	char _pad1[4];
+
 	struct Palette *palette;
 	struct CurveMapping *cavity_curve; /* cavity curve */
 
@@ -1047,6 +838,8 @@ typedef struct Paint {
 
 	float tile_offset[3];
 	int pad2;
+
+	struct Paint_Runtime runtime;
 } Paint;
 
 /* ------------------------------------------- */
@@ -1141,6 +934,11 @@ typedef struct UvSculpt {
 	Paint paint;
 } UvSculpt;
 
+/* grease pencil drawing brushes */
+typedef struct GpPaint {
+	Paint paint;
+} GpPaint;
+
 /* ------------------------------------------- */
 /* Vertex Paint */
 
@@ -1161,78 +959,101 @@ enum {
 /* ------------------------------------------- */
 /* GPencil Stroke Sculpting */
 
-/* GP_BrushEdit_Settings.brushtype */
-typedef enum eGP_EditBrush_Types {
-	GP_EDITBRUSH_TYPE_SMOOTH    = 0,
-	GP_EDITBRUSH_TYPE_THICKNESS = 1,
-	GP_EDITBRUSH_TYPE_GRAB      = 2,
-	GP_EDITBRUSH_TYPE_PUSH      = 3,
-	GP_EDITBRUSH_TYPE_TWIST     = 4,
-	GP_EDITBRUSH_TYPE_PINCH     = 5,
-	GP_EDITBRUSH_TYPE_RANDOMIZE = 6,
-	GP_EDITBRUSH_TYPE_SUBDIVIDE = 7,
-	GP_EDITBRUSH_TYPE_SIMPLIFY  = 8,
-	GP_EDITBRUSH_TYPE_CLONE     = 9,
-	GP_EDITBRUSH_TYPE_STRENGTH  = 10,
+/* GP_Sculpt_Settings.brushtype */
+typedef enum eGP_Sculpt_Types {
+	GP_SCULPT_TYPE_SMOOTH    = 0,
+	GP_SCULPT_TYPE_THICKNESS = 1,
+	GP_SCULPT_TYPE_STRENGTH  = 2,
+	GP_SCULPT_TYPE_GRAB      = 3,
+	GP_SCULPT_TYPE_PUSH      = 4,
+	GP_SCULPT_TYPE_TWIST     = 5,
+	GP_SCULPT_TYPE_PINCH     = 6,
+	GP_SCULPT_TYPE_RANDOMIZE = 7,
+	GP_SCULPT_TYPE_CLONE     = 8,
+	GP_SCULPT_TYPE_SUBDIVIDE = 9,
+	GP_SCULPT_TYPE_SIMPLIFY  = 10,
+	/* add any sculpt brush above this value */
+	GP_SCULPT_TYPE_WEIGHT    = 11,
+	/* add any weight paint brush below this value. Do no mix brushes */
 
-	/* !!! Update GP_EditBrush_Data brush[###]; below !!! */
-	TOT_GP_EDITBRUSH_TYPES
-} eGP_EditBrush_Types;
+	/* !!! Update GP_Sculpt_Data brush[###]; below !!! */
+	GP_SCULPT_TYPE_MAX,
+} eGP_Sculpt_Types;
 
-/* GP_BrushEdit_Settings.lock_axis */
+/* GP_Sculpt_Settings.lock_axis */
 typedef enum eGP_Lockaxis_Types {
-	GP_LOCKAXIS_NONE = 0,
+	GP_LOCKAXIS_VIEW = 0,
 	GP_LOCKAXIS_X = 1,
 	GP_LOCKAXIS_Y = 2,
 	GP_LOCKAXIS_Z = 3
 } eGP_Lockaxis_Types;
 
 /* Settings for a GPencil Stroke Sculpting Brush */
-typedef struct GP_EditBrush_Data {
+typedef struct GP_Sculpt_Data {
 	short size;             /* radius of brush */
-	short flag;             /* eGP_EditBrush_Flag */
+	short flag;             /* eGP_Sculpt_Flag */
 	float strength;         /* strength of effect */
-} GP_EditBrush_Data;
+	float curcolor_add[3];  /* cursor color for add */
+	float curcolor_sub[3];  /* cursor color for sub */
+	float target_weight;    /* target weight */
+	char pad_[4];
+} GP_Sculpt_Data;
 
-/* GP_EditBrush_Data.flag */
-typedef enum eGP_EditBrush_Flag {
+/* GP_Sculpt_Data.flag */
+typedef enum eGP_Sculpt_Flag {
 	/* invert the effect of the brush */
-	GP_EDITBRUSH_FLAG_INVERT       = (1 << 0),
+	GP_SCULPT_FLAG_INVERT       = (1 << 0),
 	/* adjust strength using pen pressure */
-	GP_EDITBRUSH_FLAG_USE_PRESSURE = (1 << 1),
+	GP_SCULPT_FLAG_USE_PRESSURE = (1 << 1),
 
 	/* strength of brush falls off with distance from cursor */
-	GP_EDITBRUSH_FLAG_USE_FALLOFF  = (1 << 2),
+	GP_SCULPT_FLAG_USE_FALLOFF  = (1 << 2),
 
 	/* smooth brush affects pressure values as well */
-	GP_EDITBRUSH_FLAG_SMOOTH_PRESSURE  = (1 << 3)
-} eGP_EditBrush_Flag;
-
-
+	GP_SCULPT_FLAG_SMOOTH_PRESSURE  = (1 << 3),
+	/* enable screen cursor */
+	GP_SCULPT_FLAG_ENABLE_CURSOR = (1 << 4),
+	/* temporary invert action */
+	GP_SCULPT_FLAG_TMP_INVERT = (1 << 5),
+	/* adjust radius using pen pressure */
+	GP_SCULPT_FLAG_PRESSURE_RADIUS = (1 << 6),
+} eGP_Sculpt_Flag;
 
 /* GPencil Stroke Sculpting Settings */
-typedef struct GP_BrushEdit_Settings {
-	GP_EditBrush_Data brush[11];  /* TOT_GP_EDITBRUSH_TYPES */
+typedef struct GP_Sculpt_Settings {
+	GP_Sculpt_Data brush[12];  /* GP_SCULPT_TYPE_MAX */
 	void *paintcursor;            /* runtime */
 
-	int brushtype;                /* eGP_EditBrush_Types */
-	int flag;                     /* eGP_BrushEdit_SettingsFlag */
+	int brushtype;                /* eGP_Sculpt_Types (sculpt) */
+	int flag;                     /* eGP_Sculpt_SettingsFlag */
 	int lock_axis;                /* eGP_Lockaxis_Types lock drawing to one axis */
-	float alpha;                  /* alpha factor for selection color */
-} GP_BrushEdit_Settings;
+	char pad1[4];
 
-/* GP_BrushEdit_Settings.flag */
-typedef enum eGP_BrushEdit_SettingsFlag {
+	/* weight paint is a submode of sculpt but use its own index. All weight paint
+	 * brushes must be defined at the end of the brush array.
+	 */
+	int weighttype;               /* eGP_Sculpt_Types (weight paint) */
+	char pad[4];
+	struct CurveMapping *cur_falloff; /* multiframe edit falloff effect by frame */
+} GP_Sculpt_Settings;
+
+/* GP_Sculpt_Settings.flag */
+typedef enum eGP_Sculpt_SettingsFlag {
 	/* only affect selected points */
-	GP_BRUSHEDIT_FLAG_SELECT_MASK = (1 << 0),
+	GP_SCULPT_SETT_FLAG_SELECT_MASK = (1 << 0),
 	/* apply brush to position */
-	GP_BRUSHEDIT_FLAG_APPLY_POSITION = (1 << 1),
+	GP_SCULPT_SETT_FLAG_APPLY_POSITION = (1 << 1),
 	/* apply brush to strength */
-	GP_BRUSHEDIT_FLAG_APPLY_STRENGTH = (1 << 2),
+	GP_SCULPT_SETT_FLAG_APPLY_STRENGTH = (1 << 2),
 	/* apply brush to thickness */
-	GP_BRUSHEDIT_FLAG_APPLY_THICKNESS = (1 << 3),
-} eGP_BrushEdit_SettingsFlag;
-
+	GP_SCULPT_SETT_FLAG_APPLY_THICKNESS = (1 << 3),
+	/* apply brush to thickness */
+	GP_SCULPT_SETT_FLAG_WEIGHT_MODE = (1 << 4),
+	/* enable falloff for multiframe editing */
+	GP_SCULPT_SETT_FLAG_FRAME_FALLOFF = (1 << 5),
+	/* apply brush to uv data */
+	GP_SCULPT_SETT_FLAG_APPLY_UV = (1 << 6),
+} eGP_Sculpt_SettingsFlag;
 
 /* Settings for GP Interpolation Operators */
 typedef struct GP_Interpolate_Settings {
@@ -1275,17 +1096,6 @@ typedef enum eGP_Interpolate_Type {
 	GP_IPO_QUINT = 11,
 	GP_IPO_SINE = 12,
 } eGP_Interpolate_Type;
-
-
-/* *************************************************************** */
-/* Transform Orientations */
-
-typedef struct TransformOrientation {
-	struct TransformOrientation *next, *prev;
-	char name[64];	/* MAX_NAME */
-	float mat[3][3];
-	int pad;
-} TransformOrientation;
 
 /* *************************************************************** */
 /* Unified Paint Settings
@@ -1460,14 +1270,15 @@ typedef struct ToolSettings {
 	VPaint *wpaint;		/* weight paint */
 	Sculpt *sculpt;
 	UvSculpt *uvsculpt;	/* uv smooth */
+	GpPaint *gp_paint;  /* gpencil paint */
 
 	/* Vertex group weight - used only for editmode, not weight
 	 * paint */
 	float vgroup_weight;
 
 	float doublimit;	/* remove doubles limit */
-	float normalsize;	/* size of normals */
-	short automerge;
+	char automerge;
+	char object_flag;
 
 	/* Selection Mode for Mesh */
 	short selectmode;
@@ -1485,23 +1296,25 @@ typedef struct ToolSettings {
 
 	/* Grease Pencil */
 	char gpencil_flags;		/* flags/options for how the tool works */
-	char gpencil_src;		/* for main 3D view Grease Pencil, where data comes from */
 
 	char gpencil_v3d_align; /* stroke placement settings: 3D View */
 	char gpencil_v2d_align; /*                          : General 2D Editor */
 	char gpencil_seq_align; /*                          : Sequencer Preview */
 	char gpencil_ima_align; /*                          : Image Editor */
 
+	/* Annotations */
+	char annotate_v3d_align;  /* stroke placement settings - 3D View */
+
+	short annotate_thickness; /* default stroke thickness for annotation strokes */
+	short gpencil_selectmode; /* stroke selection mode */
+
 	/* Grease Pencil Sculpt */
-	struct GP_BrushEdit_Settings gp_sculpt;
+	struct GP_Sculpt_Settings gp_sculpt;
 
 	/* Grease Pencil Interpolation Tool(s) */
 	struct GP_Interpolate_Settings gp_interpolate;
 
-	/* Grease Pencil Drawing Brushes (bGPDbrush) */
-	ListBase gp_brushes;
-
-	/* Image Paint (8 byttse aligned please!) */
+	/* Image Paint (8 bytes aligned please!) */
 	struct ImagePaintSettings imapaint;
 
 	/* Particle Editing */
@@ -1520,42 +1333,20 @@ typedef struct ToolSettings {
 	/* Multires */
 	char multires_subdiv_type;
 
-	/* Skeleton generation */
-	short skgen_resolution;
-	float skgen_threshold_internal;
-	float skgen_threshold_external;
-	float skgen_length_ratio;
-	float skgen_length_limit;
-	float skgen_angle_limit;
-	float skgen_correlation_limit;
-	float skgen_symmetry_limit;
-	float skgen_retarget_angle_weight;
-	float skgen_retarget_length_weight;
-	float skgen_retarget_distance_weight;
-	short skgen_options;
-	char  skgen_postpro;
-	char  skgen_postpro_passes;
-	char  skgen_subdivisions[3];
-	char  skgen_multi_level;
-
-	/* Skeleton Sketching */
-	struct Object *skgen_template;
-	char bone_sketching;
-	char bone_sketching_convert;
-	char skgen_subdivision_number;
-	char skgen_retarget_options;
-	char skgen_retarget_roll;
-	char skgen_side_string[8];
-	char skgen_num_string[8];
-
 	/* Alt+RMB option */
 	char edge_mode;
 	char edge_mode_live_unwrap;
 
+	/* SCE_MPR_LOC/SCAL */
+	char gizmo_flag;
+
 	/* Transform */
+	char transform_pivot_point;
+	char transform_flag;
 	char snap_mode, snap_node_mode;
 	char snap_uv_mode;
-	short snap_flag, snap_target;
+	char snap_flag;
+	char snap_target;
 	short proportional, prop_mode;
 	char proportional_objects; /* proportional edit, object mode */
 	char proportional_mask; /* proportional edit, mask editing */
@@ -1570,10 +1361,11 @@ typedef struct ToolSettings {
 	char vgroupsubset; /* subset selection filter in wpaint */
 
 	/* UV painting */
-	int use_uv_sculpt;
-	int uv_sculpt_settings;
-	int uv_sculpt_tool;
-	int uv_relax_method;
+	char _pad2[2];
+	char use_uv_sculpt;
+	char uv_sculpt_settings;
+	char uv_sculpt_tool;
+	char uv_relax_method;
 	/* XXX: these sculpt_paint_* fields are deprecated, use the
 	 * unified_paint_settings field instead! */
 	short sculpt_paint_settings DNA_DEPRECATED;	short pad5;
@@ -1587,6 +1379,10 @@ typedef struct ToolSettings {
 	struct CurvePaintSettings curve_paint_settings;
 
 	struct MeshStatVis statvis;
+
+	/* Normal Editing */
+	float normal_vector[3];
+	int face_strength;
 } ToolSettings;
 
 /* *************************************************************** */
@@ -1610,6 +1406,12 @@ typedef struct UnitSettings {
 	char system; /* imperial, metric etc */
 	char system_rotation; /* not implemented as a proper unit system yet */
 	short flag;
+
+	char length_unit;
+	char mass_unit;
+	char time_unit;
+
+	char pad[5];
 } UnitSettings;
 
 /* ------------------------------------------- */
@@ -1635,6 +1437,81 @@ typedef struct DisplaySafeAreas {
 	float action_center[2];
 } DisplaySafeAreas;
 
+/* ------------------------------------------- */
+/* Scene Display - used for store scene specific display settings for the 3d view */
+typedef struct SceneDisplay {
+	float light_direction[3];      /* light direction for shadows/highlight */
+	float shadow_shift, shadow_focus;
+
+	/* Settings for Cavity Shader */
+	float matcap_ssao_distance;
+	float matcap_ssao_attenuation;
+	int matcap_ssao_samples;
+
+	/* OpenGL render engine settings. */
+	View3DShading shading;
+} SceneDisplay;
+
+typedef struct SceneEEVEE {
+	int flag;
+	int gi_diffuse_bounces;
+	int gi_cubemap_resolution;
+	int gi_visibility_resolution;
+	float gi_irradiance_smoothing;
+	float gi_glossy_clamp;
+	float gi_filter_quality;
+	float pad;
+
+	float gi_cubemap_draw_size;
+	float gi_irradiance_draw_size;
+
+	int taa_samples;
+	int taa_render_samples;
+	int sss_samples;
+	float sss_jitter_threshold;
+
+	float ssr_quality;
+	float ssr_max_roughness;
+	float ssr_thickness;
+	float ssr_border_fade;
+	float ssr_firefly_fac;
+
+	float volumetric_start;
+	float volumetric_end;
+	int volumetric_tile_size;
+	int volumetric_samples;
+	float volumetric_sample_distribution;
+	float volumetric_light_clamp;
+	int volumetric_shadow_samples;
+
+	float gtao_distance;
+	float gtao_factor;
+	float gtao_quality;
+
+	float bokeh_max_size;
+	float bokeh_threshold;
+
+	float bloom_color[3];
+	float bloom_threshold;
+	float bloom_knee;
+	float bloom_intensity;
+	float bloom_radius;
+	float bloom_clamp;
+
+	int motion_blur_samples;
+	float motion_blur_shutter;
+
+	int shadow_method;
+	int shadow_cube_size;
+	int shadow_cascade_size;
+
+	struct LightCache *light_cache;
+	char light_cache_info[64];
+
+	float overscan;
+	float light_threshold;
+} SceneEEVEE;
+
 /* *************************************************************** */
 /* Scene ID-Block */
 
@@ -1647,16 +1524,15 @@ typedef struct Scene {
 
 	struct Scene *set;
 
-	ListBase base;
-	struct Base *basact;		/* active base */
-	struct Object *obedit;		/* name replaces old G.obedit */
+	ListBase base DNA_DEPRECATED;
+	struct Base  *basact DNA_DEPRECATED; /* active base */
+	void *_pad1;
 
-	float cursor[3];			/* 3d cursor location */
-	char _pad[4];
+	View3DCursor cursor;			/* 3d cursor location */
 
-	unsigned int lay;			/* bitflags for layer visibility */
-	int layact;		/* active layer */
-	unsigned int lay_updated;       /* runtime flag, has layer ever been updated since load? */
+	unsigned int lay DNA_DEPRECATED;	/* bitflags for layer visibility */
+	int layact DNA_DEPRECATED;			/* active layer */
+	unsigned int pad1;
 
 	short flag;								/* various settings */
 
@@ -1668,7 +1544,7 @@ typedef struct Scene {
 	struct Editing *ed;								/* sequence editor data is allocated here */
 
 	struct ToolSettings *toolsettings;		/* default allocated now */
-	struct SceneStats *stats;				/* default allocated now */
+	void *pad2;
 	struct DisplaySafeAreas safe_areas;
 
 	/* migrate or replace? depends on some internal things... */
@@ -1679,6 +1555,9 @@ typedef struct Scene {
 	ListBase markers;
 	ListBase transform_spaces;
 
+	int orientation_index_custom;
+	int orientation_type;
+
 	void *sound_scene;
 	void *playback_handle;
 	void *sound_scrub_handle;
@@ -1687,24 +1566,17 @@ typedef struct Scene {
 	void *fps_info;					/* (runtime) info/cache used for presenting playback framerate info to the user */
 
 	/* none of the dependency graph  vars is mean to be saved */
-	struct Depsgraph *depsgraph;
-	void *pad1;
-	struct  DagForest *theDag;
-	short dagflags;
-	short pad3;
+	struct GHash *depsgraph_hash;
+	int pad7;
 
 	/* User-Defined KeyingSets */
 	int active_keyingset;			/* index of the active KeyingSet. first KeyingSet has index 1, 'none' active is 0, 'add new' is -1 */
 	ListBase keyingsets;			/* KeyingSets for this scene */
 
-	/* Game Settings */
-	struct GameFraming framing  DNA_DEPRECATED; // XXX  deprecated since 2.5
-	struct GameData gm;
-
 	/* Units */
 	struct UnitSettings unit;
 
-	/* Grease Pencil */
+	/* Grease Pencil - Annotations */
 	struct bGPdata *gpd;
 
 	/* Movie Tracking */
@@ -1716,6 +1588,7 @@ typedef struct Scene {
 	uint64_t customdata_mask;	/* XXX. runtime flag for drawing, actually belongs in the window, only used by BKE_object_handle_update() */
 	uint64_t customdata_mask_modal; /* XXX. same as above but for temp operator use (gl renders) */
 
+
 	/* Color Management */
 	ColorManagedViewSettings view_settings;
 	ColorManagedDisplaySettings display_settings;
@@ -1725,6 +1598,16 @@ typedef struct Scene {
 	struct RigidBodyWorld *rigidbody_world;
 
 	struct PreviewImage *preview;
+
+	ListBase view_layers;
+	/* Not an actual datablock, but memory owned by scene. */
+	Collection *master_collection;
+	struct SceneCollection *collection DNA_DEPRECATED;
+
+	IDProperty *layer_properties;  /* settings to be override by workspaces */
+
+	struct SceneDisplay display;
+	struct SceneEEVEE eevee;
 } Scene;
 
 /* **************** RENDERDATA ********************* */
@@ -1738,25 +1621,25 @@ typedef struct Scene {
 
 /* RenderData.mode */
 #define R_OSA			0x0001
-#define R_SHADOW		0x0002
-#define R_GAMMA			0x0004
-#define R_ORTHO			0x0008
-#define R_ENVMAP		0x0010
-#define R_EDGE			0x0020
-#define R_FIELDS		0x0040
-#define R_FIELDSTILL	0x0080
-/*#define R_RADIO			0x0100 */ /* deprecated */
+/* #define R_SHADOW		0x0002 */
+/* #define R_GAMMA		0x0004 */
+/* #define R_ORTHO		0x0008 */
+/* #define R_ENVMAP		0x0010 */
+/* #define R_EDGE		0x0020 */
+/* #define R_FIELDS		0x0040 */
+/*#define R_FIELDSTILL	0x0080 */
+/*#define R_RADIO		0x0100 */ /* deprecated */
 #define R_BORDER		0x0200
-#define R_PANORAMA		0x0400	/* deprecated as scene option, still used in renderer */
+#define R_PANORAMA		0x0400 /* deprecated */
 #define R_CROP			0x0800
 		/* Disable camera switching: runtime (DURIAN_CAMERA_SWITCH) */
 #define R_NO_CAMERA_SWITCH	0x1000
-#define R_ODDFIELD		0x2000
+/* #define R_ODDFIELD		0x2000 */
 #define R_MBLUR			0x4000
 		/* unified was here */
-#define R_RAYTRACE      0x10000
+/* #define R_RAYTRACE      0x10000 */
 		/* R_GAUSS is obsolete, but used to retrieve setting from old files */
-#define R_GAUSS      	0x20000
+/* #define R_GAUSS      	0x20000 */
 		/* fbuf obsolete... */
 /*#define R_FBUF			0x40000*/
 		/* threads obsolete... is there for old files, now use for autodetect threads */
@@ -1764,14 +1647,14 @@ typedef struct Scene {
 		/* Use the same flag for autothreads */
 #define R_FIXED_THREADS		0x80000
 
-#define R_SPEED				0x100000
-#define R_SSS				0x200000
+/* #define R_SPEED				0x100000 */
+/* #define R_SSS				0x200000 */
 #define R_NO_OVERWRITE		0x400000  /* skip existing files */
 #define R_TOUCH				0x800000  /* touch files before rendering */
 #define R_SIMPLIFY			0x1000000
 #define R_EDGE_FRS			0x2000000 /* R_EDGE reserved for Freestyle */
 #define R_PERSISTENT_DATA	0x4000000 /* keep data around for re-render */
-#define R_USE_WS_SHADING	0x8000000 /* use world space interpretation of lighting data */
+/* #define R_USE_WS_SHADING	0x8000000 */ /* use world space interpretation of lighting data */
 
 /* RenderData.seq_flag */
 enum {
@@ -1788,7 +1671,7 @@ enum {
 #define R_OUTPUT_NONE	3
 /*#define R_OUTPUT_FORKED	4*/
 
-/* RenderData.filtertype */
+/* RenderData.filtertype (used for nodes) */
 #define R_FILTER_BOX	0
 #define R_FILTER_TENT	1
 #define R_FILTER_QUAD	2
@@ -1796,19 +1679,7 @@ enum {
 #define R_FILTER_CATROM	4
 #define R_FILTER_GAUSS	5
 #define R_FILTER_MITCH	6
-#define R_FILTER_FAST_GAUSS	7 /* note, this is only used for nodes at the moment */
-
-/* RenderData.raytrace_structure */
-#define R_RAYSTRUCTURE_AUTO				0
-#define R_RAYSTRUCTURE_OCTREE			1
-#define R_RAYSTRUCTURE_BLIBVH			2	/* removed */
-#define R_RAYSTRUCTURE_VBVH				3
-#define R_RAYSTRUCTURE_SIMD_SVBVH		4	/* needs SIMD */
-#define R_RAYSTRUCTURE_SIMD_QBVH		5	/* needs SIMD */
-
-/* RenderData.raytrace_options */
-#define R_RAYTRACE_USE_LOCAL_COORDS		0x0001
-#define R_RAYTRACE_USE_INSTANCES		0x0002
+#define R_FILTER_FAST_GAUSS	7
 
 /* RenderData.scemode (int now) */
 #define R_DOSEQ				0x0001
@@ -1820,18 +1691,18 @@ enum {
 #define R_MATNODE_PREVIEW	0x0020
 #define R_DOCOMP			0x0040
 #define R_COMP_CROP			0x0080
-#define R_FREE_IMAGE		0x0100
+/* #define R_FREE_IMAGE		0x0100 */
 #define R_SINGLE_LAYER		0x0200
 #define R_EXR_TILE_FILE		0x0400
 /* #define R_COMP_FREE			0x0800 */
 #define R_NO_IMAGE_LOAD		0x1000
-#define R_NO_TEX			0x2000
+/* #define R_NO_TEX			0x2000 */
 #define R_NO_FRAME_UPDATE	0x4000
 #define R_FULL_SAMPLE		0x8000
 /* #define R_DEPRECATED		0x10000 */
 /* #define R_RECURS_PROTECTION	0x20000 */
 #define R_TEXNODE_PREVIEW	0x40000
-#define R_VIEWPORT_PREVIEW	0x80000
+/* #define R_VIEWPORT_PREVIEW	0x80000 */
 #define R_EXR_CACHE_FILE	0x100000
 #define R_MULTIVIEW			0x200000
 
@@ -1888,12 +1759,12 @@ enum {
 /* bake_mode: same as RE_BAKE_xxx defines */
 /* RenderData.bake_flag */
 #define R_BAKE_CLEAR		1
-#define R_BAKE_OSA			2
+/* #define R_BAKE_OSA		2 */ /* deprecated */
 #define R_BAKE_TO_ACTIVE	4
-#define R_BAKE_NORMALIZE	8
+/* #define R_BAKE_NORMALIZE	8 */ /* deprecated */
 #define R_BAKE_MULTIRES		16
 #define R_BAKE_LORES_MESH	32
-#define R_BAKE_VCOL			64
+/* #define R_BAKE_VCOL		64 */ /* deprecated */
 #define R_BAKE_USERSCALE	128
 #define R_BAKE_CAGE			256
 #define R_BAKE_SPLIT_MAT	512
@@ -1905,9 +1776,6 @@ enum {
 #define R_BAKE_SPACE_OBJECT	 2
 #define R_BAKE_SPACE_TANGENT 3
 
-/* RenderData.simplify_flag */
-#define R_SIMPLE_NO_TRIANGULATE		1
-
 /* RenderData.line_thickness_mode */
 #define R_LINE_THICKNESS_ABSOLUTE 1
 #define R_LINE_THICKNESS_RELATIVE 2
@@ -1915,8 +1783,8 @@ enum {
 /* sequencer seq_prev_type seq_rend_type */
 
 /* RenderData.engine (scene.c) */
-extern const char *RE_engine_id_BLENDER_RENDER;
-extern const char *RE_engine_id_BLENDER_GAME;
+extern const char *RE_engine_id_BLENDER_EEVEE;
+extern const char *RE_engine_id_BLENDER_WORKBENCH;
 extern const char *RE_engine_id_CYCLES;
 
 /* **************** SCENE ********************* */
@@ -1935,39 +1803,56 @@ extern const char *RE_engine_id_CYCLES;
 #define MINAFRAME	-1048574
 #define MINAFRAMEF	-1048574.0f
 
-/* depricate this! */
+/* deprecate this! */
 #define TESTBASE(v3d, base)  (                                                \
-	((base)->flag & SELECT) &&                                                \
-	((base)->lay & v3d->lay) &&                                               \
-	(((base)->object->restrictflag & OB_RESTRICT_VIEW) == 0))
+	(((v3d)->localvd == NULL) || ((v3d)->local_view_uuid & (base)->local_view_bits)) && \
+	(((1 << (base)->object->type) & (v3d)->object_type_exclude_viewport) == 0) && \
+	(((base)->flag & BASE_SELECTED) != 0) &&                                  \
+	(((base)->flag & BASE_VISIBLE) != 0))
 #define TESTBASELIB(v3d, base)  (                                             \
-	((base)->flag & SELECT) &&                                                \
-	((base)->lay & v3d->lay) &&                                               \
+	(((v3d)->localvd == NULL) || ((v3d)->local_view_uuid & (base)->local_view_bits)) && \
+	(((1 << (base)->object->type) & (v3d)->object_type_exclude_viewport) == 0) && \
+	(((base)->flag & BASE_SELECTED) != 0) &&                                  \
 	((base)->object->id.lib == NULL) &&                                       \
-	(((base)->object->restrictflag & OB_RESTRICT_VIEW) == 0))
-#define TESTBASELIB_BGMODE(v3d, scene, base)  (                               \
-	((base)->flag & SELECT) &&                                                \
-	((base)->lay & (v3d ? v3d->lay : scene->lay)) &&                          \
+	(((base)->flag & BASE_VISIBLE) != 0))
+#define TESTBASELIB_BGMODE(v3d, base)  (                                      \
+	((v3d == NULL) || ((v3d)->localvd == NULL) || ((v3d)->local_view_uuid & (base)->local_view_bits)) && \
+	((v3d == NULL) || (((1 << (base)->object->type) & (v3d)->object_type_exclude_viewport) == 0)) && \
+	(((base)->flag & BASE_SELECTED) != 0) &&                                  \
 	((base)->object->id.lib == NULL) &&                                       \
-	(((base)->object->restrictflag & OB_RESTRICT_VIEW) == 0))
-#define BASE_EDITABLE_BGMODE(v3d, scene, base)  (                             \
-	((base)->lay & (v3d ? v3d->lay : scene->lay)) &&                          \
+	(((base)->flag & BASE_VISIBLE) != 0))
+#define BASE_EDITABLE_BGMODE(v3d, base)  (                                    \
+	((v3d == NULL) || ((v3d)->localvd == NULL) || ((v3d)->local_view_uuid & (base)->local_view_bits)) && \
+	((v3d == NULL) || (((1 << (base)->object->type) & (v3d)->object_type_exclude_viewport) == 0)) && \
 	((base)->object->id.lib == NULL) &&                                       \
-	(((base)->object->restrictflag & OB_RESTRICT_VIEW) == 0))
+	(((base)->flag & BASE_VISIBLE) != 0))
 #define BASE_SELECTABLE(v3d, base)  (                                         \
-	(base->lay & v3d->lay) &&                                                 \
-	(base->object->restrictflag & (OB_RESTRICT_SELECT | OB_RESTRICT_VIEW)) == 0)
+	(((v3d)->localvd == NULL) || ((v3d)->local_view_uuid & (base)->local_view_bits)) && \
+	(((1 << (base)->object->type) & (v3d)->object_type_exclude_viewport) == 0) && \
+	(((1 << (base)->object->type) & (v3d)->object_type_exclude_select) == 0) && \
+	(((base)->flag & BASE_SELECTABLE) != 0))
 #define BASE_VISIBLE(v3d, base)  (                                            \
-	(base->lay & v3d->lay) &&                                                 \
-	(base->object->restrictflag & OB_RESTRICT_VIEW) == 0)
-#define BASE_VISIBLE_BGMODE(v3d, scene, base)  (                              \
-	(base->lay & (v3d ? v3d->lay : scene->lay)) &&                            \
-	(base->object->restrictflag & OB_RESTRICT_VIEW) == 0)
+	(((v3d)->localvd == NULL) || ((v3d)->local_view_uuid & (base)->local_view_bits)) && \
+	(((1 << (base)->object->type) & (v3d)->object_type_exclude_viewport) == 0) && \
+	(((base)->flag & BASE_VISIBLE) != 0))
+#define BASE_VISIBLE_BGMODE(v3d, base) ( \
+	((v3d == NULL) || ((v3d)->localvd == NULL) || ((v3d)->local_view_uuid & (base)->local_view_bits)) && \
+	((v3d == NULL) || (((1 << (base)->object->type) & (v3d)->object_type_exclude_viewport) == 0)) && \
+	(((base)->flag & BASE_VISIBLE) != 0))
 
-#define FIRSTBASE		scene->base.first
-#define LASTBASE		scene->base.last
-#define BASACT			(scene->basact)
-#define OBACT			(BASACT ? BASACT->object: NULL)
+#define FIRSTBASE(_view_layer)  ((_view_layer)->object_bases.first)
+#define LASTBASE(_view_layer)   ((_view_layer)->object_bases.last)
+#define BASACT(_view_layer)     ((_view_layer)->basact)
+#define OBACT(_view_layer)      (BASACT(_view_layer) ? BASACT(_view_layer)->object: NULL)
+
+#define OBEDIT_FROM_WORKSPACE(workspace, _view_layer) \
+	(((workspace)->object_mode & OD_MODE_EDIT) ? OBACT(_view_layer) : NULL)
+#define OBEDIT_FROM_OBACT(ob) \
+	((ob) ? (((ob)->mode & OB_MODE_EDIT) ? ob : NULL) : NULL)
+#define OBPOSE_FROM_OBACT(ob) \
+	((ob) ? (((ob)->mode & OB_MODE_POSE) ? ob : NULL) : NULL)
+#define OBEDIT_FROM_VIEW_LAYER(view_layer) \
+	OBEDIT_FROM_OBACT(OBACT(view_layer))
 
 #define V3D_CAMERA_LOCAL(v3d) ((!(v3d)->scenelock && (v3d)->camera) ? (v3d)->camera : NULL)
 #define V3D_CAMERA_SCENE(scene, v3d) ((!(v3d)->scenelock && (v3d)->camera) ? (v3d)->camera : (scene)->camera)
@@ -1985,6 +1870,16 @@ extern const char *RE_engine_id_CYCLES;
 
 /* Base.flag is in DNA_object_types.h */
 
+/* ToolSettings.transform_flag */
+enum {
+	SCE_XFORM_AXIS_ALIGN = (1 << 0),
+};
+
+/* ToolSettings.object_flag */
+enum {
+	SCE_OBJECT_MODE_LOCK = (1 << 0),
+};
+
 /* ToolSettings.snap_flag */
 #define SCE_SNAP				1
 #define SCE_SNAP_ROTATE			2
@@ -1998,16 +1893,18 @@ extern const char *RE_engine_id_CYCLES;
 #define SCE_SNAP_TARGET_CENTER	1
 #define SCE_SNAP_TARGET_MEDIAN	2
 #define SCE_SNAP_TARGET_ACTIVE	3
+
 /* ToolSettings.snap_mode */
-#define SCE_SNAP_MODE_INCREMENT	0
-#define SCE_SNAP_MODE_VERTEX	1
-#define SCE_SNAP_MODE_EDGE		2
-#define SCE_SNAP_MODE_FACE		3
-#define SCE_SNAP_MODE_VOLUME	4
-#define SCE_SNAP_MODE_NODE_X	5
-#define SCE_SNAP_MODE_NODE_Y	6
-#define SCE_SNAP_MODE_NODE_XY	7
-#define SCE_SNAP_MODE_GRID		8
+#define SCE_SNAP_MODE_VERTEX    (1 << 0)
+#define SCE_SNAP_MODE_EDGE      (1 << 1)
+#define SCE_SNAP_MODE_FACE      (1 << 2)
+#define SCE_SNAP_MODE_VOLUME    (1 << 3)
+#define SCE_SNAP_MODE_INCREMENT (1 << 4)
+
+/* ToolSettings.snap_node_mode */
+#define SCE_SNAP_MODE_GRID      (1 << 5)
+#define SCE_SNAP_MODE_NODE_X    (1 << 6)
+#define SCE_SNAP_MODE_NODE_Y    (1 << 7)
 
 /* ToolSettings.selectmode */
 #define SCE_SELECT_VERTEX	1 /* for mesh */
@@ -2048,6 +1945,13 @@ enum {
 	OB_DRAW_GROUPUSER_NONE      = 0,
 	OB_DRAW_GROUPUSER_ACTIVE    = 1,
 	OB_DRAW_GROUPUSER_ALL       = 2
+};
+
+/* toolsettings->face_strength */
+enum {
+	FACE_STRENGTH_WEAK = -16384,
+	FACE_STRENGTH_MEDIUM = 0,
+	FACE_STRENGTH_STRONG = 16384,
 };
 
 /* object_vgroup.c */
@@ -2151,6 +2055,7 @@ typedef enum eSculptFlags {
 	/* If set, dynamic-topology detail size will be constant in object space */
 	SCULPT_DYNTOPO_DETAIL_CONSTANT = (1 << 13),
 	SCULPT_DYNTOPO_DETAIL_BRUSH = (1 << 14),
+	SCULPT_DYNTOPO_DETAIL_MANUAL = (1 << 16),
 
 	/* Don't display mask in viewport, but still use it for strokes. */
 	SCULPT_HIDE_MASK = (1 << 15),
@@ -2206,21 +2111,42 @@ typedef enum eImagePaintMode {
 #define EDGE_MODE_TAG_BEVEL				4
 #define EDGE_MODE_TAG_FREESTYLE			5
 
+/* ToolSettings.gizmo_flag */
+enum {
+	SCE_GIZMO_SHOW_TRANSLATE = (1 << 0),
+	SCE_GIZMO_SHOW_ROTATE    = (1 << 1),
+	SCE_GIZMO_SHOW_SCALE     = (1 << 2),
+};
+
 /* ToolSettings.gpencil_flags */
 typedef enum eGPencil_Flags {
-	/* "Continuous Drawing" - The drawing operator enters a mode where multiple strokes can be drawn */
-	GP_TOOL_FLAG_PAINTSESSIONS_ON       = (1 << 0),
 	/* When creating new frames, the last frame gets used as the basis for the new one */
 	GP_TOOL_FLAG_RETAIN_LAST            = (1 << 1),
 	/* Add the strokes below all strokes in the layer */
-	GP_TOOL_FLAG_PAINT_ONBACK = (1 << 2)
+	GP_TOOL_FLAG_PAINT_ONBACK           = (1 << 2),
+	/* Show compact list of colors */
+	GP_TOOL_FLAG_THUMBNAIL_LIST         = (1 << 3),
+	/* Generate wheight data for new strokes */
+	GP_TOOL_FLAG_CREATE_WEIGHTS         = (1 << 4),
 } eGPencil_Flags;
 
-/* ToolSettings.gpencil_src */
-typedef enum eGPencil_Source_3D {
-	GP_TOOL_SOURCE_SCENE    = 0,
-	GP_TOOL_SOURCE_OBJECT   = 1
-} eGPencil_Source_3d;
+/* scene->r.simplify_gpencil */
+typedef enum eGPencil_SimplifyFlags {
+	/* Simplify */
+	SIMPLIFY_GPENCIL_ENABLE           = (1 << 0),
+	/* Simplify on play */
+	SIMPLIFY_GPENCIL_ON_PLAY          = (1 << 1),
+	/* Simplify fill on viewport */
+	SIMPLIFY_GPENCIL_FILL             = (1 << 2),
+	/* Simplify modifier on viewport */
+	SIMPLIFY_GPENCIL_MODIFIER         = (1 << 3),
+	/* Remove fill external line */
+	SIMPLIFY_GPENCIL_REMOVE_FILL_LINE = (1 << 4),
+	/* Simplify Shader FX */
+	SIMPLIFY_GPENCIL_FX               = (1 << 5),
+	/* Simplify layer blending */
+	SIMPLIFY_GPENCIL_BLEND            = (1 << 6),
+} eGPencil_SimplifyFlags;
 
 /* ToolSettings.gpencil_*_align - Stroke Placement mode flags */
 typedef enum eGPencil_Placement_Flags {
@@ -2236,7 +2162,15 @@ typedef enum eGPencil_Placement_Flags {
 
 	/* "Use Endpoints" */
 	GP_PROJECT_DEPTH_STROKE_ENDPOINTS = (1 << 4),
+	GP_PROJECT_CURSOR = (1 << 5),
+	GP_PROJECT_DEPTH_STROKE_FIRST = (1 << 6),
 } eGPencil_Placement_Flags;
+
+/* ToolSettings.gpencil_selectmode */
+typedef enum eGPencil_Selectmode_types {
+	GP_SELECTMODE_POINT  = 0,
+	GP_SELECTMODE_STROKE = 1
+} eGPencil_Selectmode_types;
 
 /* ToolSettings.particle flag */
 #define PE_KEEP_LENGTHS			1
@@ -2266,57 +2200,12 @@ typedef enum eGPencil_Placement_Flags {
 #define PE_TYPE_SOFTBODY	1
 #define PE_TYPE_CLOTH		2
 
-/* ToolSettings.skgen_options */
-#define SKGEN_FILTER_INTERNAL	(1 << 0)
-#define SKGEN_FILTER_EXTERNAL	(1 << 1)
-#define	SKGEN_SYMMETRY			(1 << 2)
-#define	SKGEN_CUT_LENGTH		(1 << 3)
-#define	SKGEN_CUT_ANGLE			(1 << 4)
-#define	SKGEN_CUT_CORRELATION	(1 << 5)
-#define	SKGEN_HARMONIC			(1 << 6)
-#define	SKGEN_STICK_TO_EMBEDDING	(1 << 7)
-#define	SKGEN_ADAPTIVE_DISTANCE		(1 << 8)
-#define SKGEN_FILTER_SMART		(1 << 9)
-#define SKGEN_DISP_LENGTH		(1 << 10)
-#define SKGEN_DISP_WEIGHT		(1 << 11)
-#define SKGEN_DISP_ORIG			(1 << 12)
-#define SKGEN_DISP_EMBED		(1 << 13)
-#define SKGEN_DISP_INDEX		(1 << 14)
-
-#define	SKGEN_SUB_LENGTH		0
-#define	SKGEN_SUB_ANGLE			1
-#define	SKGEN_SUB_CORRELATION	2
-#define	SKGEN_SUB_TOTAL			3
-
-/* ToolSettings.skgen_postpro */
-#define SKGEN_SMOOTH			0
-#define SKGEN_AVERAGE			1
-#define SKGEN_SHARPEN			2
-
-/* ToolSettings.bone_sketching */
-#define BONE_SKETCHING			1
-#define BONE_SKETCHING_QUICK	2
-#define BONE_SKETCHING_ADJUST	4
-
-/* ToolSettings.bone_sketching_convert */
-#define	SK_CONVERT_CUT_FIXED			0
-#define	SK_CONVERT_CUT_LENGTH			1
-#define	SK_CONVERT_CUT_ADAPTATIVE		2
-#define	SK_CONVERT_RETARGET				3
-
-/* ToolSettings.skgen_retarget_options */
-#define	SK_RETARGET_AUTONAME			1
-
-/* ToolSettings.skgen_retarget_roll */
-#define	SK_RETARGET_ROLL_NONE			0
-#define	SK_RETARGET_ROLL_VIEW			1
-#define	SK_RETARGET_ROLL_JOINT			2
-
 /* PhysicsSettings.flag */
 #define PHYS_GLOBAL_GRAVITY		1
 
 /* UnitSettings */
 
+#define USER_UNIT_ADAPTIVE 0xFF
 /* UnitSettings.system */
 #define	USER_UNIT_NONE			0
 #define	USER_UNIT_METRIC		1
@@ -2324,6 +2213,39 @@ typedef enum eGPencil_Placement_Flags {
 /* UnitSettings.flag */
 #define	USER_UNIT_OPT_SPLIT		1
 #define USER_UNIT_ROT_RADIANS	2
+
+/* SceneEEVEE->flag */
+enum {
+	SCE_EEVEE_VOLUMETRIC_ENABLED	= (1 << 0),
+	SCE_EEVEE_VOLUMETRIC_LIGHTS		= (1 << 1),
+	SCE_EEVEE_VOLUMETRIC_SHADOWS	= (1 << 2),
+//	SCE_EEVEE_VOLUMETRIC_COLORED	= (1 << 3), /* Unused */
+	SCE_EEVEE_GTAO_ENABLED			= (1 << 4),
+	SCE_EEVEE_GTAO_BENT_NORMALS		= (1 << 5),
+	SCE_EEVEE_GTAO_BOUNCE			= (1 << 6),
+	SCE_EEVEE_DOF_ENABLED			= (1 << 7),
+	SCE_EEVEE_BLOOM_ENABLED			= (1 << 8),
+	SCE_EEVEE_MOTION_BLUR_ENABLED	= (1 << 9),
+	SCE_EEVEE_SHADOW_HIGH_BITDEPTH	= (1 << 10),
+	SCE_EEVEE_TAA_REPROJECTION		= (1 << 11),
+	SCE_EEVEE_SSS_ENABLED			= (1 << 12),
+	SCE_EEVEE_SSS_SEPARATE_ALBEDO	= (1 << 13),
+	SCE_EEVEE_SSR_ENABLED			= (1 << 14),
+	SCE_EEVEE_SSR_REFRACTION		= (1 << 15),
+	SCE_EEVEE_SSR_HALF_RESOLUTION	= (1 << 16),
+	SCE_EEVEE_SHOW_IRRADIANCE		= (1 << 17),
+	SCE_EEVEE_SHOW_CUBEMAPS			= (1 << 18),
+	SCE_EEVEE_GI_AUTOBAKE			= (1 << 19),
+	SCE_EEVEE_SHADOW_SOFT			= (1 << 20),
+	SCE_EEVEE_OVERSCAN				= (1 << 21),
+};
+
+/* SceneEEVEE->shadow_method */
+enum {
+	SHADOW_ESM = 1,
+	SHADOW_VSM = 2,
+	SHADOW_METHOD_MAX = 3,
+};
 
 #ifdef __cplusplus
 }

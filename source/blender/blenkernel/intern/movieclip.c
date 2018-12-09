@@ -1162,6 +1162,7 @@ void BKE_movieclip_get_size(MovieClip *clip, MovieClipUser *user, int *width, in
 	 * cache lookups and even unwanted non-proxied files loading when doing mask parenting,
 	 * so let's disable this for now and assume image sequence consists of images with
 	 * equal sizes (sergey)
+	 * TODO(sergey): Support reading sequences of different resolution.
 	 */
 	if (user->framenr == clip->lastframe) {
 #endif
@@ -1609,8 +1610,51 @@ bool BKE_movieclip_put_frame_if_possible(MovieClip *clip,
 	return result;
 }
 
-void BKE_movieclip_eval_update(struct EvaluationContext *UNUSED(eval_ctx), MovieClip *clip)
+static void movieclip_selection_synchronize(MovieClip *clip_dst, const MovieClip *clip_src)
 {
-	DEG_debug_print_eval(__func__, clip->id.name, clip);
+	BLI_assert(clip_dst != clip_src);
+	MovieTracking *tracking_dst = &clip_dst->tracking, tracking_src = clip_src->tracking;
+	/* Syncs the active object, track and plane track. */
+	tracking_dst->objectnr = tracking_src.objectnr;
+	const int active_track_index = BLI_findindex(&tracking_src.tracks, tracking_src.act_track);
+	const int active_plane_track_index = BLI_findindex(&tracking_src.plane_tracks, tracking_src.act_plane_track);
+	tracking_dst->act_track = BLI_findlink(&tracking_dst->tracks, active_track_index);
+	tracking_dst->act_plane_track = BLI_findlink(&tracking_dst->plane_tracks, active_plane_track_index);
+
+	/* Syncs the tracking selection flag. */
+	MovieTrackingObject *tracking_object_dst, *tracking_object_src;
+	tracking_object_src = tracking_src.objects.first;
+
+	for (tracking_object_dst = tracking_dst->objects.first;
+	     tracking_object_dst != NULL;
+	     tracking_object_dst = tracking_object_dst->next,
+	     tracking_object_src = tracking_object_src->next)
+	{
+		ListBase *tracksbase_dst, *tracksbase_src;
+		tracksbase_dst = BKE_tracking_object_get_tracks(tracking_dst, tracking_object_dst);
+		tracksbase_src = BKE_tracking_object_get_tracks(&tracking_src, tracking_object_src);
+
+		MovieTrackingTrack *track_dst, *track_src;
+		track_src = tracksbase_src->first;
+		for (track_dst = tracksbase_dst->first;
+		     track_dst != NULL;
+		     track_dst = track_dst->next, track_src = track_src->next)
+		{
+			track_dst->flag = track_src->flag;
+			track_dst->pat_flag = track_src->pat_flag;
+			track_dst->search_flag = track_src->search_flag;
+		}
+	}
+}
+
+void BKE_movieclip_eval_update(struct Depsgraph *depsgraph, MovieClip *clip)
+{
+	DEG_debug_print_eval(depsgraph, __func__, clip->id.name, clip);
 	BKE_tracking_dopesheet_tag_update(&clip->tracking);
+}
+
+void BKE_movieclip_eval_selection_update(struct Depsgraph *depsgraph, MovieClip *clip)
+{
+	DEG_debug_print_eval(depsgraph, __func__, clip->id.name, clip);
+	movieclip_selection_synchronize(clip, (MovieClip *)clip->id.orig_id);
 }

@@ -391,7 +391,7 @@ def dump_rna_messages(msgs, reports, settings, verbose=False):
             return
 
         def full_class_id(cls):
-            """Gives us 'ID.Lamp.AreaLamp' which is best for sorting."""
+            """Gives us 'ID.Light.AreaLight' which is best for sorting."""
             # Always the same issue, some classes listed in blacklist should actually no more exist (they have been
             # unregistered), but are still listed by __subclasses__() calls... :/
             if cls in blacklist_rna_class:
@@ -437,8 +437,8 @@ def dump_rna_messages(msgs, reports, settings, verbose=False):
                     reports, check_ctxt_rna, settings)
 
     # And parse keymaps!
-    from bpy_extras.keyconfig_utils import KM_HIERARCHY
-    walk_keymap_hierarchy(KM_HIERARCHY, "KM_HIERARCHY")
+    from bl_keymap_utils import keymap_hierarchy
+    walk_keymap_hierarchy(keymap_hierarchy.generate(), "KM_HIERARCHY")
 
 
 ##### Python source code #####

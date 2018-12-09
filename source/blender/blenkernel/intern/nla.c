@@ -60,7 +60,7 @@
 #include "BKE_nla.h"
 
 #ifdef WITH_AUDASPACE
-#  include AUD_SPECIAL_H
+#  include <AUD_Special.h>
 #endif
 
 #include "RNA_access.h"
@@ -76,7 +76,7 @@
 /* Remove the given NLA strip from the NLA track it occupies, free the strip's data,
  * and the strip itself.
  */
-void BKE_nlastrip_free(ListBase *strips, NlaStrip *strip)
+void BKE_nlastrip_free(ListBase *strips, NlaStrip *strip, bool do_id_user)
 {
 	NlaStrip *cs, *csn;
 
@@ -87,12 +87,13 @@ void BKE_nlastrip_free(ListBase *strips, NlaStrip *strip)
 	/* free child-strips */
 	for (cs = strip->strips.first; cs; cs = csn) {
 		csn = cs->next;
-		BKE_nlastrip_free(&strip->strips, cs);
+		BKE_nlastrip_free(&strip->strips, cs, do_id_user);
 	}
 
 	/* remove reference to action */
-	if (strip->act)
+	if (strip->act != NULL && do_id_user) {
 		id_us_min(&strip->act->id);
+	}
 
 	/* free remapping info */
 	//if (strip->remap)
@@ -114,7 +115,7 @@ void BKE_nlastrip_free(ListBase *strips, NlaStrip *strip)
 /* Remove the given NLA track from the set of NLA tracks, free the track's data,
  * and the track itself.
  */
-void BKE_nlatrack_free(ListBase *tracks, NlaTrack *nlt)
+void BKE_nlatrack_free(ListBase *tracks, NlaTrack *nlt, bool do_id_user)
 {
 	NlaStrip *strip, *stripn;
 
@@ -125,7 +126,7 @@ void BKE_nlatrack_free(ListBase *tracks, NlaTrack *nlt)
 	/* free strips */
 	for (strip = nlt->strips.first; strip; strip = stripn) {
 		stripn = strip->next;
-		BKE_nlastrip_free(&nlt->strips, strip);
+		BKE_nlastrip_free(&nlt->strips, strip, do_id_user);
 	}
 
 	/* free NLA track itself now */
@@ -138,7 +139,7 @@ void BKE_nlatrack_free(ListBase *tracks, NlaTrack *nlt)
 /* Free the elements of type NLA Tracks provided in the given list, but do not free
  * the list itself since that is not free-standing
  */
-void BKE_nla_tracks_free(ListBase *tracks)
+void BKE_nla_tracks_free(ListBase *tracks, bool do_id_user)
 {
 	NlaTrack *nlt, *nltn;
 
@@ -149,7 +150,7 @@ void BKE_nla_tracks_free(ListBase *tracks)
 	/* free tracks one by one */
 	for (nlt = tracks->first; nlt; nlt = nltn) {
 		nltn = nlt->next;
-		BKE_nlatrack_free(tracks, nlt);
+		BKE_nlatrack_free(tracks, nlt, do_id_user);
 	}
 
 	/* clear the list's pointers to be safe */
@@ -162,11 +163,14 @@ void BKE_nla_tracks_free(ListBase *tracks)
  * Copy NLA strip
  *
  * \param use_same_action When true, the existing action is used (instead of being duplicated)
+ * \param flag Control ID pointers management, see LIB_ID_CREATE_.../LIB_ID_COPY_... flags in BKE_library.h
  */
-NlaStrip *BKE_nlastrip_copy(Main *bmain, NlaStrip *strip, const bool use_same_action)
+NlaStrip *BKE_nlastrip_copy(Main *bmain, NlaStrip *strip, const bool use_same_action, const int flag)
 {
 	NlaStrip *strip_d;
 	NlaStrip *cs, *cs_d;
+
+	const bool do_id_user = (flag & LIB_ID_CREATE_NO_USER_REFCOUNT) == 0;
 
 	/* sanity check */
 	if (strip == NULL)
@@ -179,12 +183,14 @@ NlaStrip *BKE_nlastrip_copy(Main *bmain, NlaStrip *strip, const bool use_same_ac
 	/* handle action */
 	if (strip_d->act) {
 		if (use_same_action) {
-			/* increase user-count of action */
-			id_us_plus(&strip_d->act->id);
+			if (do_id_user) {
+				/* increase user-count of action */
+				id_us_plus(&strip_d->act->id);
+			}
 		}
 		else {
 			/* use a copy of the action instead (user count shouldn't have changed yet) */
-			strip_d->act = BKE_action_copy(bmain, strip_d->act);
+			BKE_id_copy_ex(bmain, &strip_d->act->id, (ID **)&strip_d->act, flag, false);
 		}
 	}
 
@@ -196,7 +202,7 @@ NlaStrip *BKE_nlastrip_copy(Main *bmain, NlaStrip *strip, const bool use_same_ac
 	BLI_listbase_clear(&strip_d->strips);
 
 	for (cs = strip->strips.first; cs; cs = cs->next) {
-		cs_d = BKE_nlastrip_copy(bmain, cs, use_same_action);
+		cs_d = BKE_nlastrip_copy(bmain, cs, use_same_action, flag);
 		BLI_addtail(&strip_d->strips, cs_d);
 	}
 
@@ -204,8 +210,11 @@ NlaStrip *BKE_nlastrip_copy(Main *bmain, NlaStrip *strip, const bool use_same_ac
 	return strip_d;
 }
 
-/* Copy NLA Track */
-NlaTrack *BKE_nlatrack_copy(Main *bmain, NlaTrack *nlt, const bool use_same_actions)
+/**
+ * Copy a single NLA Track.
+ * \param flag Control ID pointers management, see LIB_ID_CREATE_.../LIB_ID_COPY_... flags in BKE_library.h
+ */
+NlaTrack *BKE_nlatrack_copy(Main *bmain, NlaTrack *nlt, const bool use_same_actions, const int flag)
 {
 	NlaStrip *strip, *strip_d;
 	NlaTrack *nlt_d;
@@ -222,7 +231,7 @@ NlaTrack *BKE_nlatrack_copy(Main *bmain, NlaTrack *nlt, const bool use_same_acti
 	BLI_listbase_clear(&nlt_d->strips);
 
 	for (strip = nlt->strips.first; strip; strip = strip->next) {
-		strip_d = BKE_nlastrip_copy(bmain, strip, use_same_actions);
+		strip_d = BKE_nlastrip_copy(bmain, strip, use_same_actions, flag);
 		BLI_addtail(&nlt_d->strips, strip_d);
 	}
 
@@ -230,8 +239,11 @@ NlaTrack *BKE_nlatrack_copy(Main *bmain, NlaTrack *nlt, const bool use_same_acti
 	return nlt_d;
 }
 
-/* Copy all NLA data */
-void BKE_nla_tracks_copy(Main *bmain, ListBase *dst, ListBase *src)
+/**
+ * Copy all NLA data.
+ * \param flag Control ID pointers management, see LIB_ID_CREATE_.../LIB_ID_COPY_... flags in BKE_library.h
+ */
+void BKE_nla_tracks_copy(Main *bmain, ListBase *dst, ListBase *src, const int flag)
 {
 	NlaTrack *nlt, *nlt_d;
 
@@ -246,7 +258,7 @@ void BKE_nla_tracks_copy(Main *bmain, ListBase *dst, ListBase *src)
 	for (nlt = src->first; nlt; nlt = nlt->next) {
 		/* make a copy, and add the copy to the destination list */
 		// XXX: we need to fix this sometime
-		nlt_d = BKE_nlatrack_copy(bmain, nlt, true);
+		nlt_d = BKE_nlatrack_copy(bmain, nlt, true, flag);
 		BLI_addtail(dst, nlt_d);
 	}
 }
@@ -752,7 +764,7 @@ void BKE_nlastrips_clear_metastrip(ListBase *strips, NlaStrip *strip)
 	}
 
 	/* free the meta-strip now */
-	BKE_nlastrip_free(strips, strip);
+	BKE_nlastrip_free(strips, strip, true);
 }
 
 /* Remove meta-strips (i.e. flatten the list of strips) from the top-level of the list of strips
@@ -2013,30 +2025,3 @@ void BKE_nla_tweakmode_exit(AnimData *adt)
 	adt->actstrip = NULL;
 	adt->flag &= ~ADT_NLA_EDIT_ON;
 }
-
-/* Baking Tools ------------------------------------------- */
-
-static void UNUSED_FUNCTION(BKE_nla_bake) (Scene *scene, ID *UNUSED(id), AnimData *adt, int UNUSED(flag))
-{
-
-	/* verify that data is valid
-	 * 1) Scene and AnimData must be provided
-	 * 2) there must be tracks to merge...
-	 */
-	if (ELEM(NULL, scene, adt, adt->nla_tracks.first))
-		return;
-
-	/* if animdata currently has an action, 'push down' this onto the stack first */
-	if (adt->action)
-		BKE_nla_action_pushdown(adt);
-
-	/* get range of motion to bake, and the channels involved... */
-
-	/* temporarily mute the action, and start keying to it */
-
-	/* start keying... */
-
-	/* unmute the action */
-}
-
-/* *************************************************** */

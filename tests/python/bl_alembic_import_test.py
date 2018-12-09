@@ -61,9 +61,9 @@ class SimpleImportTest(AbstractAlembicTest):
             as_background_job=False)
         self.assertEqual({'FINISHED'}, res)
 
-        # The objects should be linked to scene_collection in Blender 2.8,
+        # The objects should be linked to scene.collection in Blender 2.8,
         # and to scene in Blender 2.7x.
-        objects = bpy.context.scene.objects
+        objects = bpy.context.scene.collection.objects
         self.assertEqual(13, len(objects))
 
         # Test the hierarchy.
@@ -81,9 +81,9 @@ class SimpleImportTest(AbstractAlembicTest):
             as_background_job=False)
         self.assertEqual({'FINISHED'}, res)
 
-        # The objects should be linked to scene_collection in Blender 2.8,
+        # The objects should be linked to scene.collection in Blender 2.8,
         # and to scene in Blender 2.7x.
-        objects = bpy.context.scene.objects
+        objects = bpy.context.scene.collection.objects
 
         # ABC parent is top-level object, which translates to nothing in Blender
         self.assertIsNone(objects['locator1'].parent)
@@ -93,6 +93,7 @@ class SimpleImportTest(AbstractAlembicTest):
         self.assertIsNone(objects['locator2'].parent)
 
         # Shouldn't have inherited the ABC parent's transform.
+        loc2 = bpy.context.depsgraph.id_eval_get(objects['locator2'])
         x, y, z = objects['locator2'].matrix_world.to_translation()
         self.assertAlmostEqual(0, x)
         self.assertAlmostEqual(0, y)
@@ -102,7 +103,8 @@ class SimpleImportTest(AbstractAlembicTest):
         self.assertEqual(objects['locator2'], objects['locatorShape2'].parent)
 
         # Should have inherited its ABC parent's transform.
-        x, y, z = objects['locatorShape2'].matrix_world.to_translation()
+        locshp2 = bpy.context.depsgraph.id_eval_get(objects['locatorShape2'])
+        x, y, z = locshp2.matrix_world.to_translation()
         self.assertAlmostEqual(0, x)
         self.assertAlmostEqual(0, y)
         self.assertAlmostEqual(2, z)
@@ -127,7 +129,7 @@ class SimpleImportTest(AbstractAlembicTest):
 
         # All cubes should be selected, but the sphere shouldn't be.
         for ob in bpy.data.objects:
-            self.assertEqual('Cube' in ob.name, ob.select)
+            self.assertEqual('Cube' in ob.name, ob.select_get())
 
     def test_change_path_constraint(self):
         import math
@@ -142,6 +144,7 @@ class SimpleImportTest(AbstractAlembicTest):
 
         # Check that the file loaded ok.
         bpy.context.scene.frame_set(10)
+        cube = bpy.context.depsgraph.id_eval_get(cube)
         x, y, z = cube.matrix_world.to_euler('XYZ')
         self.assertAlmostEqual(x, 0)
         self.assertAlmostEqual(y, 0)
@@ -152,6 +155,7 @@ class SimpleImportTest(AbstractAlembicTest):
         bpy.data.cache_files[fname].filepath = relpath
         bpy.context.scene.frame_set(10)
 
+        cube = bpy.context.depsgraph.id_eval_get(cube)
         x, y, z = cube.matrix_world.to_euler('XYZ')
         self.assertAlmostEqual(x, 0)
         self.assertAlmostEqual(y, 0)
@@ -164,14 +168,13 @@ class SimpleImportTest(AbstractAlembicTest):
         if args.with_legacy_depsgraph:
             bpy.context.scene.frame_set(10)
 
+        cube = bpy.context.depsgraph.id_eval_get(cube)
         x, y, z = cube.matrix_world.to_euler('XYZ')
         self.assertAlmostEqual(x, math.pi / 2, places=5)
         self.assertAlmostEqual(y, 0)
         self.assertAlmostEqual(z, 0)
 
     def test_change_path_modifier(self):
-        import math
-
         fname = 'animated-mesh.abc'
         abc = self.testdir / fname
         relpath = bpy.path.relpath(str(abc))
@@ -182,17 +185,18 @@ class SimpleImportTest(AbstractAlembicTest):
 
         # Check that the file loaded ok.
         bpy.context.scene.frame_set(6)
-        mesh = plane.to_mesh(bpy.context.scene, True, 'RENDER')
+        scene = bpy.context.scene
+        mesh = plane.to_mesh(bpy.context.depsgraph, True, True, False)
         self.assertAlmostEqual(-1, mesh.vertices[0].co.x)
         self.assertAlmostEqual(-1, mesh.vertices[0].co.y)
         self.assertAlmostEqual(0.5905638933181763, mesh.vertices[0].co.z)
 
         # Change path from absolute to relative. This should not break the animation.
-        bpy.context.scene.frame_set(1)
+        scene.frame_set(1)
         bpy.data.cache_files[fname].filepath = relpath
-        bpy.context.scene.frame_set(6)
+        scene.frame_set(6)
 
-        mesh = plane.to_mesh(bpy.context.scene, True, 'RENDER')
+        mesh = plane.to_mesh(bpy.context.depsgraph, True, True, False)
         self.assertAlmostEqual(1, mesh.vertices[3].co.x)
         self.assertAlmostEqual(1, mesh.vertices[3].co.y)
         self.assertAlmostEqual(0.5905638933181763, mesh.vertices[3].co.z)

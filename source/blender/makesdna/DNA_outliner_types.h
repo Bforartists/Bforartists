@@ -38,6 +38,9 @@ struct ID;
 
 typedef struct TreeStoreElem {
 	short type, nr, flag, used;
+
+	/* XXX We actually also store non-ID data in this pointer for identifying
+	 * the TreeStoreElem for a TreeElement when rebuilding the tree. Ugly! */
 	struct ID *id;
 } TreeStoreElem;
 
@@ -50,11 +53,18 @@ typedef struct TreeStore {
 } TreeStore;
 
 /* TreeStoreElem->flag */
-#define TSE_CLOSED		1
-#define TSE_SELECTED	2
-#define TSE_TEXTBUT		4
-#define TSE_CHILDSEARCH 8
-#define TSE_SEARCHMATCH 16
+enum {
+	TSE_CLOSED      = (1 << 0),
+	TSE_SELECTED    = (1 << 1),
+	TSE_TEXTBUT     = (1 << 2),
+	TSE_CHILDSEARCH = (1 << 3),
+	TSE_SEARCHMATCH = (1 << 4),
+	TSE_HIGHLIGHTED = (1 << 5),
+	TSE_DRAG_INTO   = (1 << 6),
+	TSE_DRAG_BEFORE = (1 << 7),
+	TSE_DRAG_AFTER  = (1 << 8),
+	TSE_DRAG_ANY    = (TSE_DRAG_INTO | TSE_DRAG_BEFORE | TSE_DRAG_AFTER),
+};
 
 /* TreeStoreElem->types */
 #define TSE_NLA             1  /* NO ID */
@@ -78,7 +88,7 @@ typedef struct TreeStore {
 #define TSE_PROXY           18
 #define TSE_R_LAYER_BASE    19
 #define TSE_R_LAYER         20
-#define TSE_R_PASS          21
+/* #define TSE_R_PASS          21 */  /* UNUSED */
 #define TSE_LINKED_MAT      22
 /* NOTE, is used for light group */
 #define TSE_LINKED_LAMP     23
@@ -96,6 +106,10 @@ typedef struct TreeStore {
 #define TSE_KEYMAP_ITEM     35  /* NO ID */
 #define TSE_ID_BASE         36  /* NO ID */
 #define TSE_GP_LAYER        37  /* NO ID */
+#define TSE_LAYER_COLLECTION      38
+#define TSE_SCENE_COLLECTION_BASE 39
+#define TSE_VIEW_COLLECTION_BASE  40
+#define TSE_SCENE_OBJECTS_BASE    41
 
 
 /* Check whether given TreeStoreElem should have a real ID in its ->id member. */

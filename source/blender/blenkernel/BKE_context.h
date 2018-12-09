@@ -40,15 +40,21 @@ extern "C" {
 struct ARegion;
 struct bScreen;
 struct CacheFile;
+struct Collection;
+struct Depsgraph;
+struct LayerCollection;
 struct ListBase;
 struct Main;
 struct Object;
+struct Base;
 struct PointerRNA;
 struct ReportList;
 struct Scene;
+struct ViewLayer;
 struct ScrArea;
 struct SpaceLink;
 struct View3D;
+struct ViewRender;
 struct RegionView3D;
 struct StructRNA;
 struct ToolSettings;
@@ -59,15 +65,16 @@ struct bPoseChannel;
 struct bGPdata;
 struct bGPDlayer;
 struct bGPDframe;
-struct bGPDpalette;
-struct bGPDpalettecolor;
-struct bGPDbrush;
+struct Brush;
 struct wmWindow;
 struct wmWindowManager;
+struct RenderEngineType;
 struct SpaceText;
 struct SpaceImage;
 struct SpaceClip;
 struct ID;
+
+#include "DNA_object_enums.h"
 
 /* Structs */
 
@@ -96,7 +103,7 @@ typedef struct bContextStore {
 
 /* for the context's rna mode enum
  * keep aligned with data_mode_strings in context.c */
-enum {
+enum eContextObjectMode {
 	CTX_MODE_EDIT_MESH = 0,
 	CTX_MODE_EDIT_CURVE,
 	CTX_MODE_EDIT_SURFACE,
@@ -110,8 +117,13 @@ enum {
 	CTX_MODE_PAINT_VERTEX,
 	CTX_MODE_PAINT_TEXTURE,
 	CTX_MODE_PARTICLE,
-	CTX_MODE_OBJECT
+	CTX_MODE_OBJECT,
+	CTX_MODE_GPENCIL_PAINT,
+	CTX_MODE_GPENCIL_EDIT,
+	CTX_MODE_GPENCIL_SCULPT,
+	CTX_MODE_GPENCIL_WEIGHT,
 };
+#define CTX_MODE_NUM (CTX_MODE_GPENCIL_WEIGHT + 1)
 
 /* Context */
 
@@ -140,12 +152,15 @@ void CTX_py_dict_set(bContext *C, void *value);
 
 struct wmWindowManager *CTX_wm_manager(const bContext *C);
 struct wmWindow *CTX_wm_window(const bContext *C);
+struct WorkSpace *CTX_wm_workspace(const bContext *C);
 struct bScreen *CTX_wm_screen(const bContext *C);
 struct ScrArea *CTX_wm_area(const bContext *C);
 struct SpaceLink *CTX_wm_space_data(const bContext *C);
 struct ARegion *CTX_wm_region(const bContext *C);
 void *CTX_wm_region_data(const bContext *C);
 struct ARegion *CTX_wm_menu(const bContext *C);
+struct wmGizmoGroup *CTX_wm_gizmo_group(const bContext *C);
+struct wmMsgBus *CTX_wm_message_bus(const bContext *C);
 struct ReportList *CTX_wm_reports(const bContext *C);
 
 struct View3D *CTX_wm_view3d(const bContext *C);
@@ -158,14 +173,13 @@ struct SpaceFile *CTX_wm_space_file(const bContext *C);
 struct SpaceSeq *CTX_wm_space_seq(const bContext *C);
 struct SpaceOops *CTX_wm_space_outliner(const bContext *C);
 struct SpaceNla *CTX_wm_space_nla(const bContext *C);
-struct SpaceTime *CTX_wm_space_time(const bContext *C);
 struct SpaceNode *CTX_wm_space_node(const bContext *C);
-struct SpaceLogic *CTX_wm_space_logic(const bContext *C);
 struct SpaceIpo *CTX_wm_space_graph(const bContext *C);
 struct SpaceAction *CTX_wm_space_action(const bContext *C);
 struct SpaceInfo *CTX_wm_space_info(const bContext *C);
 struct SpaceUserPref *CTX_wm_space_userpref(const bContext *C);
 struct SpaceClip *CTX_wm_space_clip(const bContext *C);
+struct SpaceTopBar *CTX_wm_space_topbar(const bContext *C);
 struct SpaceToolbar *CTX_wm_space_toolbar(const bContext *C); // bfa - toolbar editor
 
 void CTX_wm_manager_set(bContext *C, struct wmWindowManager *wm);
@@ -174,6 +188,7 @@ void CTX_wm_screen_set(bContext *C, struct bScreen *screen); /* to be removed */
 void CTX_wm_area_set(bContext *C, struct ScrArea *sa);
 void CTX_wm_region_set(bContext *C, struct ARegion *region);
 void CTX_wm_menu_set(bContext *C, struct ARegion *menu);
+void CTX_wm_gizmo_group_set(bContext *C, struct wmGizmoGroup *gzgroup);
 const char *CTX_wm_operator_poll_msg_get(struct bContext *C);
 void CTX_wm_operator_poll_msg_set(struct bContext *C, const char *msg);
 
@@ -210,11 +225,6 @@ short CTX_data_type_get(struct bContextDataResult *result);
 bool CTX_data_equals(const char *member, const char *str);
 bool CTX_data_dir(const char *member);
 
-#if 0
-void CTX_data_pointer_set(bContextDataResult *result, void *data);
-void CTX_data_list_add(bContextDataResult *result, void *data);
-#endif
-
 #define CTX_DATA_BEGIN(C, Type, instance, member)                             \
 	{                                                                         \
 		ListBase ctx_data_list;                                               \
@@ -244,9 +254,16 @@ int ctx_data_list_count(const bContext *C, int (*func)(const bContext *, ListBas
 
 struct Main *CTX_data_main(const bContext *C);
 struct Scene *CTX_data_scene(const bContext *C);
+struct LayerCollection *CTX_data_layer_collection(const bContext *C);
+struct Collection *CTX_data_collection(const bContext *C);
+struct ViewLayer *CTX_data_view_layer(const bContext *C);
+struct RenderEngineType *CTX_data_engine_type(const bContext *C);
 struct ToolSettings *CTX_data_tool_settings(const bContext *C);
 
 const char *CTX_data_mode_string(const bContext *C);
+int CTX_data_mode_enum_ex(
+        const struct Object *obedit, const struct Object *ob,
+        const eObjectMode object_mode);
 int CTX_data_mode_enum(const bContext *C);
 
 void CTX_data_main_set(bContext *C, struct Main *bmain);
@@ -289,18 +306,23 @@ int CTX_data_editable_bones(const bContext *C, ListBase *list);
 
 struct bPoseChannel *CTX_data_active_pose_bone(const bContext *C);
 int CTX_data_selected_pose_bones(const bContext *C, ListBase *list);
+int CTX_data_selected_pose_bones_from_active_object(const bContext *C, ListBase *list);
 int CTX_data_visible_pose_bones(const bContext *C, ListBase *list);
 
 struct bGPdata *CTX_data_gpencil_data(const bContext *C);
 struct bGPDlayer *CTX_data_active_gpencil_layer(const bContext *C);
 struct bGPDframe *CTX_data_active_gpencil_frame(const bContext *C);
-struct bGPDpalette *CTX_data_active_gpencil_palette(const bContext *C);
-struct bGPDpalettecolor *CTX_data_active_gpencil_palettecolor(const bContext *C);
-struct bGPDbrush *CTX_data_active_gpencil_brush(const bContext *C);
+struct Brush *CTX_data_active_gpencil_brush(const bContext *C);
 int CTX_data_visible_gpencil_layers(const bContext *C, ListBase *list);
 int CTX_data_editable_gpencil_layers(const bContext *C, ListBase *list);
 int CTX_data_editable_gpencil_strokes(const bContext *C, ListBase *list);
 
+struct Depsgraph *CTX_data_depsgraph(const bContext *C);
+
+/* Will Return NULL if depsgraph is not allocated yet.
+ * Only used by handful of operators which are run on file load.
+ */
+struct Depsgraph *CTX_data_depsgraph_on_load(const bContext *C);
 
 #ifdef __cplusplus
 }

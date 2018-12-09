@@ -749,12 +749,6 @@ void BKE_maskrasterize_handle_init(MaskRasterHandle *mr_handle, struct Mask *mas
 						for (j = 0; j < tot_diff_feather_points; j++) {
 							copy_v2_v2(co_feather, diff_feather_points[j]);
 							sf_vert = BLI_scanfill_vert_add(&sf_ctx, co_feather);
-
-							/* no need for these attrs */
-#if 0
-							sf_vert->tmp.u = sf_vert_tot;
-							sf_vert->keyindex = sf_vert_tot + tot_diff_point; /* absolute index of feather vert */
-#endif
 							sf_vert->keyindex = SF_KEYINDEX_TEMP_ID;
 							sf_vert_tot++;
 						}
@@ -1217,7 +1211,6 @@ static float maskrasterize_layer_z_depth_tri(const float pt[2],
 }
 #endif
 
-#if 1
 static float maskrasterize_layer_z_depth_quad(const float pt[2],
                                               const float v1[3], const float v2[3], const float v3[3], const float v4[3])
 {
@@ -1226,7 +1219,6 @@ static float maskrasterize_layer_z_depth_quad(const float pt[2],
 	//return (v1[2] * w[0]) + (v2[2] * w[1]) + (v3[2] * w[2]) + (v4[2] * w[3]);
 	return w[2] + w[3];  /* we can make this assumption for small speedup */
 }
-#endif
 
 static float maskrasterize_layer_isect(unsigned int *face, float (*cos)[3], const float dist_orig, const float xy[2])
 {
@@ -1247,10 +1239,8 @@ static float maskrasterize_layer_isect(unsigned int *face, float (*cos)[3], cons
 		}
 #else
 		/* we know all tris are close for now */
-		if (1) {
-			if (isect_point_tri_v2_cw(xy, cos[face[0]], cos[face[1]], cos[face[2]])) {
-				return 0.0f;
-			}
+		if (isect_point_tri_v2_cw(xy, cos[face[0]], cos[face[1]], cos[face[2]])) {
+			return 0.0f;
 		}
 #endif
 	}

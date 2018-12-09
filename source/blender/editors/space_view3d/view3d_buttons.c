@@ -55,12 +55,14 @@
 #include "BKE_context.h"
 #include "BKE_curve.h"
 #include "BKE_customdata.h"
-#include "BKE_depsgraph.h"
 #include "BKE_screen.h"
 #include "BKE_editmesh.h"
 #include "BKE_deform.h"
 #include "BKE_object.h"
 #include "BKE_object_deform.h"
+#include "BKE_report.h"
+
+#include "DEG_depsgraph.h"
 
 #include "WM_api.h"
 #include "WM_types.h"
@@ -68,6 +70,7 @@
 #include "RNA_access.h"
 
 #include "ED_armature.h"
+#include "ED_object.h"
 #include "ED_mesh.h"
 #include "ED_screen.h"
 
@@ -776,18 +779,18 @@ static void do_view3d_vgroup_buttons(bContext *C, void *UNUSED(arg), int event)
 		return;
 	}
 	else {
-		Scene *scene = CTX_data_scene(C);
-		Object *ob = scene->basact->object;
+		ViewLayer *view_layer = CTX_data_view_layer(C);
+		Object *ob = view_layer->basact->object;
 		ED_vgroup_vert_active_mirror(ob, event - B_VGRP_PNL_EDIT_SINGLE);
-		DAG_id_tag_update(&ob->id, OB_RECALC_DATA);
+		DEG_id_tag_update(&ob->id, OB_RECALC_DATA);
 		WM_event_add_notifier(C, NC_GEOM | ND_DATA, ob->data);
 	}
 }
 
 static bool view3d_panel_vgroup_poll(const bContext *C, PanelType *UNUSED(pt))
 {
-	Scene *scene = CTX_data_scene(C);
-	Object *ob = OBACT;
+	ViewLayer *view_layer = CTX_data_view_layer(C);
+	Object *ob = OBACT(view_layer);
 	if (ob && (BKE_object_is_in_editmode_vgroup(ob) ||
 	           BKE_object_is_in_wpaint_select_vert(ob)))
 	{
@@ -805,7 +808,8 @@ static void view3d_panel_vgroup(const bContext *C, Panel *pa)
 {
 	uiBlock *block = uiLayoutAbsoluteBlock(pa->layout);
 	Scene *scene = CTX_data_scene(C);
-	Object *ob = scene->basact->object;
+	ViewLayer *view_layer = CTX_data_view_layer(C);
+	Object *ob = view_layer->basact->object;
 
 	MDeformVert *dv;
 
@@ -934,8 +938,9 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
 	colsub = uiLayoutColumn(split, true);
 	uiItemR(colsub, ptr, "location", 0, NULL, ICON_NONE);
 	colsub = uiLayoutColumn(split, true);
+	uiLayoutSetEmboss(colsub, UI_EMBOSS_NONE);
 	uiItemL(colsub, "", ICON_NONE);
-	uiItemR(colsub, ptr, "lock_location", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", ICON_NONE);
+	uiItemR(colsub, ptr, "lock_location", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", ICON_DECORATE_UNLOCKED);
 
 	split = uiLayoutSplit(layout, 0.8f, false);
 
@@ -944,30 +949,33 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
 			colsub = uiLayoutColumn(split, true);
 			uiItemR(colsub, ptr, "rotation_quaternion", 0, IFACE_("Rotation"), ICON_NONE);
 			colsub = uiLayoutColumn(split, true);
+			uiLayoutSetEmboss(colsub, UI_EMBOSS_NONE);
 			uiItemR(colsub, ptr, "lock_rotations_4d", UI_ITEM_R_TOGGLE, IFACE_("4L"), ICON_NONE);
 			if (RNA_boolean_get(ptr, "lock_rotations_4d"))
-				uiItemR(colsub, ptr, "lock_rotation_w", UI_ITEM_R_TOGGLE + UI_ITEM_R_ICON_ONLY, "", ICON_NONE);
+				uiItemR(colsub, ptr, "lock_rotation_w", UI_ITEM_R_TOGGLE + UI_ITEM_R_ICON_ONLY, "", ICON_DECORATE_UNLOCKED);
 			else
 				uiItemL(colsub, "", ICON_NONE);
-			uiItemR(colsub, ptr, "lock_rotation", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", ICON_NONE);
+			uiItemR(colsub, ptr, "lock_rotation", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", ICON_DECORATE_UNLOCKED);
 			break;
 		case ROT_MODE_AXISANGLE: /* axis angle */
 			colsub = uiLayoutColumn(split, true);
 			uiItemR(colsub, ptr, "rotation_axis_angle", 0, IFACE_("Rotation"), ICON_NONE);
 			colsub = uiLayoutColumn(split, true);
+			uiLayoutSetEmboss(colsub, UI_EMBOSS_NONE);
 			uiItemR(colsub, ptr, "lock_rotations_4d", UI_ITEM_R_TOGGLE, IFACE_("4L"), ICON_NONE);
 			if (RNA_boolean_get(ptr, "lock_rotations_4d"))
-				uiItemR(colsub, ptr, "lock_rotation_w", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", ICON_NONE);
+				uiItemR(colsub, ptr, "lock_rotation_w", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", ICON_DECORATE_UNLOCKED);
 			else
 				uiItemL(colsub, "", ICON_NONE);
-			uiItemR(colsub, ptr, "lock_rotation", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", ICON_NONE);
+			uiItemR(colsub, ptr, "lock_rotation", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", ICON_DECORATE_UNLOCKED);
 			break;
 		default: /* euler rotations */
 			colsub = uiLayoutColumn(split, true);
 			uiItemR(colsub, ptr, "rotation_euler", 0, IFACE_("Rotation"), ICON_NONE);
 			colsub = uiLayoutColumn(split, true);
+			uiLayoutSetEmboss(colsub, UI_EMBOSS_NONE);
 			uiItemL(colsub, "", ICON_NONE);
-			uiItemR(colsub, ptr, "lock_rotation", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", ICON_NONE);
+			uiItemR(colsub, ptr, "lock_rotation", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", ICON_DECORATE_UNLOCKED);
 			break;
 	}
 	uiItemR(layout, ptr, "rotation_mode", 0, "", ICON_NONE);
@@ -976,8 +984,9 @@ static void v3d_transform_butsR(uiLayout *layout, PointerRNA *ptr)
 	colsub = uiLayoutColumn(split, true);
 	uiItemR(colsub, ptr, "scale", 0, NULL, ICON_NONE);
 	colsub = uiLayoutColumn(split, true);
+	uiLayoutSetEmboss(colsub, UI_EMBOSS_NONE);
 	uiItemL(colsub, "", ICON_NONE);
-	uiItemR(colsub, ptr, "lock_scale", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", ICON_NONE);
+	uiItemR(colsub, ptr, "lock_scale", UI_ITEM_R_TOGGLE | UI_ITEM_R_ICON_ONLY, "", ICON_DECORATE_UNLOCKED);
 
 	if (ptr->type == &RNA_Object) {
 		Object *ob = ptr->data;
@@ -1095,9 +1104,9 @@ static void v3d_editmetaball_buts(uiLayout *layout, Object *ob)
 
 static void do_view3d_region_buttons(bContext *C, void *UNUSED(index), int event)
 {
-	Scene *scene = CTX_data_scene(C);
+	ViewLayer *view_layer = CTX_data_view_layer(C);
 	View3D *v3d = CTX_wm_view3d(C);
-	Object *ob = OBACT;
+	Object *ob = OBACT(view_layer);
 
 	switch (event) {
 
@@ -1108,7 +1117,7 @@ static void do_view3d_region_buttons(bContext *C, void *UNUSED(index), int event
 		case B_OBJECTPANELMEDIAN:
 			if (ob) {
 				v3d_editvertex_buts(NULL, v3d, ob, 1.0);
-				DAG_id_tag_update(&ob->id, OB_RECALC_DATA);
+				DEG_id_tag_update(&ob->id, OB_RECALC_DATA);
 			}
 			break;
 	}
@@ -1119,16 +1128,17 @@ static void do_view3d_region_buttons(bContext *C, void *UNUSED(index), int event
 
 static bool view3d_panel_transform_poll(const bContext *C, PanelType *UNUSED(pt))
 {
-	Scene *scene = CTX_data_scene(C);
-	return (scene->basact != NULL);
+	ViewLayer *view_layer = CTX_data_view_layer(C);
+	return (view_layer->basact != NULL);
 }
 
 static void view3d_panel_transform(const bContext *C, Panel *pa)
 {
 	uiBlock *block;
 	Scene *scene = CTX_data_scene(C);
+	ViewLayer *view_layer = CTX_data_view_layer(C);
 	Object *obedit = CTX_data_edit_object(C);
-	Object *ob = scene->basact->object;
+	Object *ob = view_layer->basact->object;
 	uiLayout *col;
 
 	block = uiLayoutGetBlock(pa->layout);
@@ -1160,6 +1170,11 @@ static void view3d_panel_transform(const bContext *C, Panel *pa)
 	}
 }
 
+static void hide_collections_menu_draw(const bContext *C, Menu *menu)
+{
+	ED_hide_collections_menu_draw(C, menu->layout);
+}
+
 void view3d_buttons_register(ARegionType *art)
 {
 	PanelType *pt;
@@ -1167,6 +1182,7 @@ void view3d_buttons_register(ARegionType *art)
 	pt = MEM_callocN(sizeof(PanelType), "spacetype view3d panel object");
 	strcpy(pt->idname, "VIEW3D_PT_transform");
 	strcpy(pt->label, N_("Transform"));  /* XXX C panels not  available through RNA (bpy.types)! */
+	strcpy(pt->category, "View");
 	strcpy(pt->translation_context, BLT_I18NCONTEXT_DEFAULT_BPYRNA);
 	pt->draw = view3d_panel_transform;
 	pt->poll = view3d_panel_transform_poll;
@@ -1175,10 +1191,20 @@ void view3d_buttons_register(ARegionType *art)
 	pt = MEM_callocN(sizeof(PanelType), "spacetype view3d panel vgroup");
 	strcpy(pt->idname, "VIEW3D_PT_vgroup");
 	strcpy(pt->label, N_("Vertex Weights"));  /* XXX C panels are not available through RNA (bpy.types)! */
+	strcpy(pt->category, "View");
 	strcpy(pt->translation_context, BLT_I18NCONTEXT_DEFAULT_BPYRNA);
 	pt->draw = view3d_panel_vgroup;
 	pt->poll = view3d_panel_vgroup_poll;
 	BLI_addtail(&art->paneltypes, pt);
+
+	MenuType *mt;
+
+	mt = MEM_callocN(sizeof(MenuType), "spacetype view3d menu collections");
+	strcpy(mt->idname, "VIEW3D_MT_collection");
+	strcpy(mt->label, N_("Collection"));
+	strcpy(mt->translation_context, BLT_I18NCONTEXT_DEFAULT_BPYRNA);
+	mt->draw = hide_collections_menu_draw;
+	WM_menutype_add(mt);
 }
 
 static int view3d_properties_toggle_exec(bContext *C, wmOperator *UNUSED(op))
@@ -1194,11 +1220,40 @@ static int view3d_properties_toggle_exec(bContext *C, wmOperator *UNUSED(op))
 
 void VIEW3D_OT_properties(wmOperatorType *ot)
 {
-	ot->name = "Properties";
-	ot->description = "Properties\nToggles the properties panel display";
+	ot->name = "Toggle Sidebar";
+	ot->description = "Toggle Sidebar\nToggle the properties region visibility";
 	ot->idname = "VIEW3D_OT_properties";
 
 	ot->exec = view3d_properties_toggle_exec;
+	ot->poll = ED_operator_view3d_active;
+
+	/* flags */
+	ot->flag = 0;
+}
+
+static int view3d_object_mode_menu(bContext *C, wmOperator *op)
+{
+	Object *ob = CTX_data_active_object(C);
+	if (ob == NULL) {
+		BKE_report(op->reports, RPT_WARNING, "No active object found");
+		return OPERATOR_CANCELLED;
+	}
+	else if (((ob->mode & OB_MODE_EDIT) == 0) && (ELEM(ob->type, OB_ARMATURE))) {
+		ED_object_mode_toggle(C, OB_MODE_POSE);
+		return OPERATOR_CANCELLED;
+	}
+	else {
+		UI_pie_menu_invoke(C, "VIEW3D_MT_object_mode_pie", CTX_wm_window(C)->eventstate);
+		return OPERATOR_CANCELLED;
+	}
+}
+
+void VIEW3D_OT_object_mode_pie_or_toggle(wmOperatorType *ot)
+{
+	ot->name = "Object Mode Menu";
+	ot->idname = "VIEW3D_OT_object_mode_pie_or_toggle";
+
+	ot->exec = view3d_object_mode_menu;
 	ot->poll = ED_operator_view3d_active;
 
 	/* flags */

@@ -224,8 +224,11 @@ public:
 			sub.device->const_copy_to(name, host, size);
 	}
 
-	void draw_pixels(device_memory& rgba, int y, int w, int h, int dx, int dy, int width, int height, bool transparent,
-		const DeviceDrawParams &draw_params)
+	void draw_pixels(
+	    device_memory& rgba, int y,
+	    int w, int h, int width, int height,
+	    int dx, int dy, int dw, int dh,
+	    bool transparent, const DeviceDrawParams &draw_params)
 	{
 		device_ptr key = rgba.device_pointer;
 		int i = 0, sub_h = h/devices.size();
@@ -239,7 +242,7 @@ public:
 			/* adjust math for w/width */
 
 			rgba.device_pointer = sub.ptr_map[key];
-			sub.device->draw_pixels(rgba, sy, w, sh, dx, sdy, width, sheight, transparent, draw_params);
+			sub.device->draw_pixels(rgba, sy, w, sh, width, sheight, dx, sdy, dw, dh, transparent, draw_params);
 			i++;
 		}
 

@@ -48,6 +48,7 @@
 
 #include "BLT_translation.h"
 
+#include "DNA_camera_types.h"
 #include "DNA_object_types.h"
 #include "DNA_node_types.h"
 #include "DNA_packedFile_types.h"
@@ -56,8 +57,6 @@
 
 #include "BKE_colortools.h"
 #include "BKE_context.h"
-#include "BKE_depsgraph.h"
-#include "BKE_DerivedMesh.h"
 #include "BKE_icons.h"
 #include "BKE_image.h"
 #include "BKE_global.h"
@@ -70,8 +69,9 @@
 #include "BKE_sound.h"
 #include "BKE_scene.h"
 
+#include "DEG_depsgraph.h"
+
 #include "GPU_draw.h"
-#include "GPU_buffers.h"
 
 #include "IMB_colormanagement.h"
 #include "IMB_imbuf.h"
@@ -277,8 +277,9 @@ static bool space_image_main_area_not_uv_brush_poll(bContext *C)
 	Scene *scene = CTX_data_scene(C);
 	ToolSettings *toolsettings = scene->toolsettings;
 
-	if (sima && !toolsettings->uvsculpt && !scene->obedit)
+	if (sima && !toolsettings->uvsculpt && (CTX_data_edit_object(C) == NULL)) {
 		return 1;
+	}
 
 	return 0;
 }
@@ -287,13 +288,12 @@ static bool image_sample_poll(bContext *C)
 {
 	SpaceImage *sima = CTX_wm_space_image(C);
 	if (sima) {
-		Scene *scene = CTX_data_scene(C);
 		Object *obedit = CTX_data_edit_object(C);
-		ToolSettings *toolsettings = scene->toolsettings;
-
 		if (obedit) {
-			if (ED_space_image_show_uvedit(sima, obedit) && (toolsettings->use_uv_sculpt))
+			/* Disable when UV editing so it doesn't swallow all click events (use for setting cursor). */
+			if (ED_space_image_show_uvedit(sima, obedit)) {
 				return false;
+			}
 		}
 		else if (sima->mode != SI_MODE_VIEW) {
 			return false;
@@ -421,7 +421,7 @@ static void image_view_pan_cancel(bContext *C, wmOperator *op)
 void IMAGE_OT_view_pan(wmOperatorType *ot)
 {
 	/* identifiers */
-	ot->name = "View Pan";
+	ot->name = "Pan View";
 	ot->idname = "IMAGE_OT_view_pan";
 	ot->description = "Pan the view";
 
@@ -792,6 +792,7 @@ static int image_view_selected_exec(bContext *C, wmOperator *UNUSED(op))
 	SpaceImage *sima;
 	ARegion *ar;
 	Scene *scene;
+	ViewLayer *view_layer;
 	Object *obedit;
 	Image *ima;
 
@@ -799,6 +800,7 @@ static int image_view_selected_exec(bContext *C, wmOperator *UNUSED(op))
 	sima = CTX_wm_space_image(C);
 	ar = CTX_wm_region(C);
 	scene = CTX_data_scene(C);
+	view_layer = CTX_data_view_layer(C);
 	obedit = CTX_data_edit_object(C);
 
 	ima = ED_space_image(sima);
@@ -810,7 +812,7 @@ static int image_view_selected_exec(bContext *C, wmOperator *UNUSED(op))
 			return OPERATOR_CANCELLED;
 		}
 	}
-	else if (ED_space_image_check_show_maskedit(scene, sima)) {
+	else if (ED_space_image_check_show_maskedit(sima, view_layer)) {
 		if (!ED_mask_selected_minmax(C, min, max)) {
 			return OPERATOR_CANCELLED;
 		}
@@ -838,10 +840,10 @@ static bool image_view_selected_poll(bContext *C)
 void IMAGE_OT_view_selected(wmOperatorType *ot)
 {
 	/* identifiers */
-	ot->name = "View Selected";
+	ot->name = "View Center";
 	ot->idname = "IMAGE_OT_view_selected";
-	ot->description = "View Selected\nCenter view at all selected UVs";
-	
+	ot->description = "View Center\nView all selected UVs";
+
 	/* api callbacks */
 	ot->exec = image_view_selected_exec;
 	ot->poll = image_view_selected_poll;
@@ -1038,15 +1040,15 @@ void IMAGE_OT_view_zoom_border(wmOperatorType *ot)
 	ot->idname = "IMAGE_OT_view_zoom_border";
 
 	/* api callbacks */
-	ot->invoke = WM_gesture_border_invoke;
+	ot->invoke = WM_gesture_box_invoke;
 	ot->exec = image_view_zoom_border_exec;
-	ot->modal = WM_gesture_border_modal;
-	ot->cancel = WM_gesture_border_cancel;
+	ot->modal = WM_gesture_box_modal;
+	ot->cancel = WM_gesture_box_cancel;
 
 	ot->poll = space_image_main_region_poll;
 
 	/* rna */
-	WM_operator_properties_gesture_border_zoom(ot);
+	WM_operator_properties_gesture_box_zoom(ot);
 }
 
 /**************** load/replace/save callbacks ******************/
@@ -1228,7 +1230,6 @@ static int image_open_exec(bContext *C, wmOperator *op)
 	Object *obedit = CTX_data_edit_object(C);
 	ImageUser *iuser = NULL;
 	ImageOpenData *iod = op->customdata;
-	PointerRNA idptr;
 	Image *ima = NULL;
 	char filepath[FILE_MAX];
 	int frame_seq_len = 0;
@@ -1294,8 +1295,9 @@ static int image_open_exec(bContext *C, wmOperator *op)
 		 * pointer use also increases user, so this compensates it */
 		id_us_min(&ima->id);
 
-		RNA_id_pointer_create(&ima->id, &idptr);
-		RNA_property_pointer_set(&iod->pprop.ptr, iod->pprop.prop, idptr);
+		PointerRNA imaptr;
+		RNA_id_pointer_create(&ima->id, &imaptr);
+		RNA_property_pointer_set(&iod->pprop.ptr, iod->pprop.prop, imaptr);
 		RNA_property_update(C, &iod->pprop.ptr, iod->pprop.prop);
 	}
 
@@ -1307,20 +1309,22 @@ static int image_open_exec(bContext *C, wmOperator *op)
 		ED_space_image_set(bmain, sima, scene, obedit, ima);
 		iuser = &sima->iuser;
 	}
-	else if (sa && sa->spacetype == SPACE_VIEW3D) {
-		View3D *v3d = sa->spacedata.first;
-
-		for (BGpic *bgpic = v3d->bgpicbase.first; bgpic; bgpic = bgpic->next) {
-			if (bgpic->ima == ima) {
-				iuser = &bgpic->iuser;
-				break;
-			}
-		}
-	}
 	else {
 		Tex *tex = CTX_data_pointer_get_type(C, "texture", &RNA_Texture).data;
 		if (tex && tex->type == TEX_IMAGE) {
 			iuser = &tex->iuser;
+		}
+
+		if (iuser == NULL) {
+			Camera *cam = CTX_data_pointer_get_type(C, "camera", &RNA_Camera).data;
+			if (cam) {
+				for (CameraBGImage *bgpic = cam->bg_images.first; bgpic; bgpic = bgpic->next) {
+					if (bgpic->ima == ima) {
+						iuser = &bgpic->iuser;
+						break;
+					}
+				}
+			}
 		}
 	}
 
@@ -1335,7 +1339,6 @@ static int image_open_exec(bContext *C, wmOperator *op)
 		else {
 			iuser->offset = frame_ofs - 1;
 		}
-		iuser->fie_ima = 2;
 		iuser->scene = scene;
 		BKE_image_init_imageuser(ima, iuser);
 	}
@@ -1425,7 +1428,7 @@ static void image_open_draw(bContext *UNUSED(C), wmOperator *op)
 
 	/* main draw call */
 	RNA_pointer_create(NULL, op->type->srna, op->properties, &ptr);
-	uiDefAutoButsRNA(layout, &ptr, image_open_draw_check_prop, NULL, '\0');
+	uiDefAutoButsRNA(layout, &ptr, image_open_draw_check_prop, NULL, UI_BUT_LABEL_ALIGN_NONE, false);
 
 	/* image template */
 	RNA_pointer_create(NULL, &RNA_ImageFormatSettings, imf, &imf_ptr);
@@ -1491,7 +1494,7 @@ static int image_match_len_exec(bContext *C, wmOperator *UNUSED(op))
 	if (!anim)
 		return OPERATOR_CANCELLED;
 	iuser->frames = IMB_anim_get_duration(anim, IMB_TC_RECORD_RUN);
-	BKE_image_user_frame_calc(iuser, scene->r.cfra, 0);
+	BKE_image_user_frame_calc(iuser, scene->r.cfra);
 
 	return OPERATOR_FINISHED;
 }
@@ -1774,7 +1777,7 @@ static void save_image_post(
 
 			BKE_color_managed_colorspace_settings_copy(&old_colorspace_settings,
 			                                           &ima->colorspace_settings);
-			IMB_colormanagment_colorspace_from_ibuf_ftype(&ima->colorspace_settings, ibuf);
+			IMB_colormanagement_colorspace_from_ibuf_ftype(&ima->colorspace_settings, ibuf);
 			if (!BKE_color_managed_colorspace_settings_equals(&old_colorspace_settings,
 			                                                  &ima->colorspace_settings))
 			{
@@ -2147,7 +2150,7 @@ static void image_save_as_draw(bContext *UNUSED(C), wmOperator *op)
 
 	/* main draw call */
 	RNA_pointer_create(NULL, op->type->srna, op->properties, &ptr);
-	uiDefAutoButsRNA(layout, &ptr, image_save_as_draw_check_prop, NULL, '\0');
+	uiDefAutoButsRNA(layout, &ptr, image_save_as_draw_check_prop, NULL, UI_BUT_LABEL_ALIGN_NONE, false);
 
 	/* multiview template */
 	if (is_multiview)
@@ -2349,7 +2352,7 @@ static int image_reload_exec(bContext *C, wmOperator *UNUSED(op))
 
 	// XXX other users?
 	BKE_image_signal(bmain, ima, (sima) ? &sima->iuser : NULL, IMA_SIGNAL_RELOAD);
-	DAG_id_tag_update(&ima->id, 0);
+	DEG_id_tag_update(&ima->id, 0);
 
 	WM_event_add_notifier(C, NC_IMAGE | NA_EDITED, ima);
 
@@ -2379,6 +2382,30 @@ enum {
 	GEN_CONTEXT_PAINT_STENCIL = 2
 };
 
+typedef struct ImageNewData {
+	PropertyPointerRNA pprop;
+} ImageNewData;
+
+static ImageNewData *image_new_init(bContext *C, wmOperator *op)
+{
+	if (op->customdata) {
+		return op->customdata;
+	}
+
+	ImageNewData *data = MEM_callocN(sizeof(ImageNewData), __func__);
+	UI_context_active_but_prop_get_templateID(C, &data->pprop.ptr, &data->pprop.prop);
+	op->customdata = data;
+	return data;
+}
+
+static void image_new_free(wmOperator *op)
+{
+	if (op->customdata) {
+		MEM_freeN(op->customdata);
+		op->customdata = NULL;
+	}
+}
+
 static int image_new_exec(bContext *C, wmOperator *op)
 {
 	SpaceImage *sima;
@@ -2386,13 +2413,11 @@ static int image_new_exec(bContext *C, wmOperator *op)
 	Object *obedit;
 	Image *ima;
 	Main *bmain;
-	PointerRNA ptr, idptr;
 	PropertyRNA *prop;
 	char name_buffer[MAX_ID_NAME - 2];
 	const char *name;
 	float color[4];
 	int width, height, floatbuf, gen_type, alpha;
-	int gen_context;
 	int stereo3d;
 
 	/* retrieve state */
@@ -2416,7 +2441,6 @@ static int image_new_exec(bContext *C, wmOperator *op)
 	gen_type = RNA_enum_get(op->ptr, "generated_type");
 	RNA_float_get_array(op->ptr, "color", color);
 	alpha = RNA_boolean_get(op->ptr, "alpha");
-	gen_context = RNA_enum_get(op->ptr, "gen_context");
 	stereo3d = RNA_boolean_get(op->ptr, "use_stereo_3d");
 
 	if (!alpha)
@@ -2424,83 +2448,47 @@ static int image_new_exec(bContext *C, wmOperator *op)
 
 	ima = BKE_image_add_generated(bmain, width, height, name, alpha ? 32 : 24, floatbuf, gen_type, color, stereo3d);
 
-	if (!ima)
+	if (!ima) {
+		image_new_free(op);
 		return OPERATOR_CANCELLED;
+	}
 
 	/* hook into UI */
-	UI_context_active_but_prop_get_templateID(C, &ptr, &prop);
+	ImageNewData *data = image_new_init(C, op);
 
-	if (prop) {
+	if (data->pprop.prop) {
 		/* when creating new ID blocks, use is already 1, but RNA
 		 * pointer use also increases user, so this compensates it */
 		id_us_min(&ima->id);
 
-		RNA_id_pointer_create(&ima->id, &idptr);
-		RNA_property_pointer_set(&ptr, prop, idptr);
-		RNA_property_update(C, &ptr, prop);
+		PointerRNA imaptr;
+		RNA_id_pointer_create(&ima->id, &imaptr);
+		RNA_property_pointer_set(&data->pprop.ptr, data->pprop.prop, imaptr);
+		RNA_property_update(C, &data->pprop.ptr, data->pprop.prop);
 	}
 	else if (sima) {
 		ED_space_image_set(bmain, sima, scene, obedit, ima);
-	}
-	else if (gen_context == GEN_CONTEXT_PAINT_CANVAS) {
-		bScreen *sc;
-		Object *ob = CTX_data_active_object(C);
-
-		GPU_drawobject_free(ob->derivedFinal);
-		if (scene->toolsettings->imapaint.canvas)
-			id_us_min(&scene->toolsettings->imapaint.canvas->id);
-		scene->toolsettings->imapaint.canvas = ima;
-
-		for (sc = bmain->screen.first; sc; sc = sc->id.next) {
-			ScrArea *sa;
-			for (sa = sc->areabase.first; sa; sa = sa->next) {
-				SpaceLink *sl;
-				for (sl = sa->spacedata.first; sl; sl = sl->next) {
-					if (sl->spacetype == SPACE_IMAGE) {
-						SpaceImage *sima_other = (SpaceImage *)sl;
-
-						if (!sima_other->pin) {
-							ED_space_image_set(bmain, sima_other, scene, scene->obedit, ima);
-						}
-					}
-				}
-			}
-		}
-		BKE_paint_proj_mesh_data_check(scene, ob, NULL, NULL, NULL, NULL);
-		WM_event_add_notifier(C, NC_SCENE | ND_TOOLSETTINGS, NULL);
-	}
-	else if (gen_context == GEN_CONTEXT_PAINT_STENCIL) {
-		Object *ob = CTX_data_active_object(C);
-		if (scene->toolsettings->imapaint.stencil)
-			id_us_min(&scene->toolsettings->imapaint.stencil->id);
-		scene->toolsettings->imapaint.stencil = ima;
-		BKE_paint_proj_mesh_data_check(scene, ob, NULL, NULL, NULL, NULL);
-		WM_event_add_notifier(C, NC_SCENE | ND_TOOLSETTINGS, NULL);
-	}
-	else {
-		Tex *tex = CTX_data_pointer_get_type(C, "texture", &RNA_Texture).data;
-		if (tex && tex->type == TEX_IMAGE) {
-			if (tex->ima)
-				id_us_min(&tex->ima->id);
-			tex->ima = ima;
-			ED_area_tag_redraw(CTX_wm_area(C));
-		}
 	}
 
 	BKE_image_signal(bmain, ima, (sima) ? &sima->iuser : NULL, IMA_SIGNAL_USER_NEW_IMAGE);
 
 	WM_event_add_notifier(C, NC_IMAGE | NA_ADDED, ima);
 
+	image_new_free(op);
+
 	return OPERATOR_FINISHED;
 }
 
-/* XXX, Ton is not a fan of OK buttons but using this function to avoid undo/redo bug while in mesh-editmode, - campbell */
-/* XXX Note: the WM_operator_props_dialog_popup() doesn't work for UI_context_active_but_prop_get_templateID(), image is not being that way */
 static int image_new_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event))
 {
+	/* Get property in advance, it doesn't work after WM_operator_props_dialog_popup. */
+	ImageNewData *data;
+	op->customdata = data = MEM_callocN(sizeof(ImageNewData), __func__);
+	UI_context_active_but_prop_get_templateID(C, &data->pprop.ptr, &data->pprop.prop);
+
 	/* Better for user feedback. */
 	RNA_string_set(op->ptr, "name", DATA_(IMA_DEF_NAME));
-	return WM_operator_props_dialog_popup(C, op, 15 * UI_UNIT_X, 5 * UI_UNIT_Y);
+	return WM_operator_props_dialog_popup(C, op, 300, 100);
 }
 
 static void image_new_draw(bContext *UNUSED(C), wmOperator *op)
@@ -2550,17 +2538,15 @@ static void image_new_draw(bContext *UNUSED(C), wmOperator *op)
 #endif
 }
 
+static void image_new_cancel(bContext *UNUSED(C), wmOperator *op)
+{
+	image_new_free(op);
+}
+
 void IMAGE_OT_new(wmOperatorType *ot)
 {
 	PropertyRNA *prop;
 	static float default_color[4] = {0.0f, 0.0f, 0.0f, 1.0f};
-
-	static const EnumPropertyItem gen_context_items[] = {
-		{GEN_CONTEXT_NONE, "NONE", 0, "None", ""},
-		{GEN_CONTEXT_PAINT_CANVAS, "PAINT_CANVAS", 0, "Paint Canvas", ""},
-		{GEN_CONTEXT_PAINT_STENCIL, "PAINT_STENCIL", 0, "Paint Stencil", ""},
-		{0, NULL, 0, NULL, NULL}
-	};
 
 	/* identifiers */
 	ot->name = "New Image";
@@ -2571,6 +2557,7 @@ void IMAGE_OT_new(wmOperatorType *ot)
 	ot->exec = image_new_exec;
 	ot->invoke = image_new_invoke;
 	ot->ui = image_new_draw;
+	ot->cancel = image_new_cancel;
 
 	/* flags */
 	ot->flag = OPTYPE_UNDO;
@@ -2588,7 +2575,6 @@ void IMAGE_OT_new(wmOperatorType *ot)
 	RNA_def_enum(ot->srna, "generated_type", rna_enum_image_generated_type_items, IMA_GENTYPE_BLANK,
 	             "Generated Type", "Fill the image with a grid for UV map testing");
 	RNA_def_boolean(ot->srna, "float", 0, "32 bit Float", "Create image with 32 bit floating point bit depth");
-	prop = RNA_def_enum(ot->srna, "gen_context", gen_context_items, 0, "Gen Context", "Generation context");
 	RNA_def_property_flag(prop, PROP_HIDDEN);
 	prop = RNA_def_boolean(ot->srna, "use_stereo_3d", 0, "Stereo 3D", "Create an image with left and right views");
 	RNA_def_property_flag(prop, PROP_SKIP_SAVE | PROP_HIDDEN);
@@ -3461,7 +3447,8 @@ static int image_cycle_render_slot_exec(bContext *C, wmOperator *op)
 	WM_event_add_notifier(C, NC_IMAGE | ND_DRAW, NULL);
 
 	/* no undo push for browsing existing */
-	if (ima->renders[ima->render_slot] || ima->render_slot == ima->last_render_slot)
+	RenderSlot *slot = BKE_image_get_renderslot(ima, ima->render_slot);
+	if ((slot && slot->render) || ima->render_slot == ima->last_render_slot)
 		return OPERATOR_CANCELLED;
 
 	return OPERATOR_FINISHED;
@@ -3482,6 +3469,97 @@ void IMAGE_OT_cycle_render_slot(wmOperatorType *ot)
 	ot->flag = OPTYPE_REGISTER;
 
 	RNA_def_boolean(ot->srna, "reverse", 0, "Cycle in Reverse", "");
+}
+
+/********************* clear render slot operator *********************/
+
+static int image_clear_render_slot_exec(bContext *C, wmOperator *UNUSED(op))
+{
+	SpaceImage *sima = CTX_wm_space_image(C);
+	Image *ima = CTX_data_edit_image(C);
+
+	if (!BKE_image_clear_renderslot(ima, &sima->iuser, ima->render_slot)) {
+		return OPERATOR_CANCELLED;
+	}
+
+	WM_event_add_notifier(C, NC_IMAGE | ND_DRAW, NULL);
+
+	return OPERATOR_FINISHED;
+}
+
+void IMAGE_OT_clear_render_slot(wmOperatorType *ot)
+{
+	/* identifiers */
+	ot->name = "Clear Render Slot";
+	ot->idname = "IMAGE_OT_clear_render_slot";
+	ot->description = "Clear the currently selected render slot";
+
+	/* api callbacks */
+	ot->exec = image_clear_render_slot_exec;
+	ot->poll = image_cycle_render_slot_poll;
+
+	/* flags */
+	ot->flag = OPTYPE_REGISTER;
+}
+
+/********************* add render slot operator *********************/
+
+static int image_add_render_slot_exec(bContext *C, wmOperator *UNUSED(op))
+{
+	Image *ima = CTX_data_edit_image(C);
+
+	RenderSlot *slot = BKE_image_add_renderslot(ima, NULL);
+	ima->render_slot = BLI_findindex(&ima->renderslots, slot);
+
+	WM_event_add_notifier(C, NC_IMAGE | ND_DRAW, NULL);
+
+	return OPERATOR_FINISHED;
+}
+
+void IMAGE_OT_add_render_slot(wmOperatorType *ot)
+{
+	/* identifiers */
+	ot->name = "Add Render Slot";
+	ot->idname = "IMAGE_OT_add_render_slot";
+	ot->description = "Add a new render slot";
+
+	/* api callbacks */
+	ot->exec = image_add_render_slot_exec;
+	ot->poll = image_cycle_render_slot_poll;
+
+	/* flags */
+	ot->flag = OPTYPE_REGISTER;
+}
+
+/********************* remove render slot operator *********************/
+
+static int image_remove_render_slot_exec(bContext *C, wmOperator *UNUSED(op))
+{
+	SpaceImage *sima = CTX_wm_space_image(C);
+	Image *ima = CTX_data_edit_image(C);
+
+	if (!BKE_image_remove_renderslot(ima, &sima->iuser, ima->render_slot)) {
+		return OPERATOR_CANCELLED;
+	}
+
+	WM_event_add_notifier(C, NC_IMAGE | ND_DRAW, NULL);
+
+	return OPERATOR_FINISHED;
+}
+
+void IMAGE_OT_remove_render_slot(wmOperatorType *ot)
+{
+	/* identifiers */
+	ot->name = "Remove Render Slot";
+	ot->idname = "IMAGE_OT_remove_render_slot";
+	ot->description = "Remove the current render slot";
+
+	/* api callbacks */
+	ot->exec = image_remove_render_slot_exec;
+	ot->poll = image_cycle_render_slot_poll;
+
+	/* flags */
+	ot->flag = OPTYPE_REGISTER;
 }
 
 /********************** change frame operator *********************/
@@ -3602,7 +3680,7 @@ void IMAGE_OT_change_frame(wmOperatorType *ot)
 
 /* Reload cached render results... */
 /* goes over all scenes, reads render layers */
-static int image_read_renderlayers_exec(bContext *C, wmOperator *UNUSED(op))
+static int image_read_viewlayers_exec(bContext *C, wmOperator *UNUSED(op))
 {
 	Main *bmain = CTX_data_main(C);
 	Scene *scene = CTX_data_scene(C);
@@ -3620,14 +3698,14 @@ static int image_read_renderlayers_exec(bContext *C, wmOperator *UNUSED(op))
 	return OPERATOR_FINISHED;
 }
 
-void IMAGE_OT_read_renderlayers(wmOperatorType *ot)
+void IMAGE_OT_read_viewlayers(wmOperatorType *ot)
 {
-	ot->name = "Read Render Layers";
-	ot->idname = "IMAGE_OT_read_renderlayers";
-	ot->description = "Read Render Layers\nRead all the current scene's render layers from cache, as needed";
+	ot->name = "Open Cached Render";
+	ot->idname = "IMAGE_OT_read_viewlayers";
+	ot->description = "Open Cached Render\nRead all the current scene's view layers from cache, as needed";
 
 	ot->poll = space_image_main_region_poll;
-	ot->exec = image_read_renderlayers_exec;
+	ot->exec = image_read_viewlayers_exec;
 
 	/* flags */
 	ot->flag = 0;
@@ -3691,10 +3769,10 @@ void IMAGE_OT_render_border(wmOperatorType *ot)
 	ot->idname = "IMAGE_OT_render_border";
 
 	/* api callbacks */
-	ot->invoke = WM_gesture_border_invoke;
+	ot->invoke = WM_gesture_box_invoke;
 	ot->exec = render_border_exec;
-	ot->modal = WM_gesture_border_modal;
-	ot->cancel = WM_gesture_border_cancel;
+	ot->modal = WM_gesture_box_modal;
+	ot->cancel = WM_gesture_box_cancel;
 	ot->poll = image_cycle_render_slot_poll;
 
 	/* flags */

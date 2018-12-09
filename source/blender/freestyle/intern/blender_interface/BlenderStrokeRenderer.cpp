@@ -34,6 +34,7 @@ extern "C" {
 #include "RNA_types.h"
 
 #include "DNA_camera_types.h"
+#include "DNA_collection_types.h"
 #include "DNA_listBase.h"
 #include "DNA_linestyle_types.h"
 #include "DNA_material_types.h"
@@ -43,9 +44,11 @@ extern "C" {
 #include "DNA_screen_types.h"
 #include "DNA_scene_types.h"
 
+#include "BKE_collection.h"
 #include "BKE_customdata.h"
-#include "BKE_depsgraph.h"
+#include "BKE_idprop.h"
 #include "BKE_global.h"
+#include "BKE_layer.h"
 #include "BKE_library.h" /* free_libblock */
 #include "BKE_material.h"
 #include "BKE_mesh.h"
@@ -58,6 +61,9 @@ extern "C" {
 #include "BLI_math_color.h"
 #include "BLI_math_vector.h"
 #include "BLI_utildefines.h"
+
+#include "DEG_depsgraph.h"
+#include "DEG_depsgraph_build.h"
 
 #include "RE_pipeline.h"
 
@@ -85,7 +91,7 @@ BlenderStrokeRenderer::BlenderStrokeRenderer(Render *re, int render_count) : Str
 	freestyle_scene = BKE_scene_add(freestyle_bmain, name);
 	freestyle_scene->r.cfra = old_scene->r.cfra;
 	freestyle_scene->r.mode = old_scene->r.mode &
-	                          ~(R_EDGE_FRS | R_SHADOW | R_SSS | R_PANORAMA | R_ENVMAP | R_MBLUR | R_BORDER);
+	                          ~(R_EDGE_FRS | R_BORDER);
 	freestyle_scene->r.xsch = re->rectx; // old_scene->r.xsch
 	freestyle_scene->r.ysch = re->recty; // old_scene->r.ysch
 	freestyle_scene->r.xasp = 1.0f; // old_scene->r.xasp;
@@ -93,8 +99,6 @@ BlenderStrokeRenderer::BlenderStrokeRenderer(Render *re, int render_count) : Str
 	freestyle_scene->r.tilex = old_scene->r.tilex;
 	freestyle_scene->r.tiley = old_scene->r.tiley;
 	freestyle_scene->r.size = 100; // old_scene->r.size
-	//freestyle_scene->r.maximsize = old_scene->r.maximsize; /* DEPRECATED */
-	freestyle_scene->r.ocres = old_scene->r.ocres;
 	freestyle_scene->r.color_mgt_flag = 0; // old_scene->r.color_mgt_flag;
 	freestyle_scene->r.scemode = (old_scene->r.scemode & ~(R_SINGLE_LAYER | R_NO_FRAME_UPDATE | R_MULTIVIEW)) &
 	                             (re->r.scemode | ~R_FULL_SAMPLE);
@@ -109,27 +113,39 @@ BlenderStrokeRenderer::BlenderStrokeRenderer(Render *re, int render_count) : Str
 	freestyle_scene->r.safety.ymin = old_scene->r.safety.ymin;
 	freestyle_scene->r.safety.xmax = old_scene->r.safety.xmax;
 	freestyle_scene->r.safety.ymax = old_scene->r.safety.ymax;
-	freestyle_scene->r.osa = old_scene->r.osa;
-	freestyle_scene->r.filtertype = old_scene->r.filtertype;
-	freestyle_scene->r.gauss = old_scene->r.gauss;
 	freestyle_scene->r.dither_intensity = old_scene->r.dither_intensity;
-	BLI_strncpy(freestyle_scene->r.engine, old_scene->r.engine, sizeof(freestyle_scene->r.engine));
+	STRNCPY(freestyle_scene->r.engine, old_scene->r.engine);
+	if (G.debug & G_DEBUG_FREESTYLE) {
+		cout << "Stroke rendering engine : " << freestyle_scene->r.engine << endl;
+	}
 	freestyle_scene->r.im_format.planes = R_IMF_PLANES_RGBA;
 	freestyle_scene->r.im_format.imtype = R_IMF_IMTYPE_PNG;
+
+	// Copy ID properties, including Cycles render properties
+	if (old_scene->id.properties) {
+		freestyle_scene->id.properties = IDP_CopyProperty_ex(old_scene->id.properties, 0);
+	}
+
+	if (STREQ(freestyle_scene->r.engine, RE_engine_id_CYCLES)) {
+		/* Render with transparent background. */
+		PointerRNA freestyle_scene_ptr;
+		RNA_id_pointer_create(&freestyle_scene->id, &freestyle_scene_ptr);
+		PointerRNA freestyle_cycles_ptr = RNA_pointer_get(&freestyle_scene_ptr, "cycles");
+		RNA_boolean_set(&freestyle_cycles_ptr, "film_transparent", 1);
+	}
 
 	if (G.debug & G_DEBUG_FREESTYLE) {
 		printf("%s: %d thread(s)\n", __func__, BKE_render_num_threads(&freestyle_scene->r));
 	}
 
-	// Render layer
-	SceneRenderLayer *srl = (SceneRenderLayer *)freestyle_scene->r.layers.first;
-	srl->layflag = SCE_LAY_SOLID | SCE_LAY_ZTRA;
-
 	BKE_scene_set_background(freestyle_bmain, freestyle_scene);
 
+	// Scene layer.
+	ViewLayer *view_layer = (ViewLayer *)freestyle_scene->view_layers.first;
+	view_layer->layflag = SCE_LAY_SOLID | SCE_LAY_ZTRA;
+
 	// Camera
-	Object *object_camera = BKE_object_add(freestyle_bmain, freestyle_scene, OB_CAMERA, NULL);
-	DAG_relations_tag_update(freestyle_bmain);
+	Object *object_camera = BKE_object_add(freestyle_bmain, freestyle_scene, view_layer, OB_CAMERA, NULL);
 
 	Camera *camera = (Camera *)object_camera->data;
 	camera->type = CAM_ORTHO;
@@ -149,14 +165,14 @@ BlenderStrokeRenderer::BlenderStrokeRenderer(Render *re, int render_count) : Str
 	// Reset serial mesh ID (used for BlenderStrokeRenderer::NewMesh())
 	_mesh_id = 0xffffffff;
 
-	// Check if the rendering engine uses new shading nodes
-	_use_shading_nodes = BKE_scene_use_new_shading_nodes(freestyle_scene);
-
 	// Create a bNodeTree-to-Material hash table
-	if (_use_shading_nodes)
-		_nodetree_hash = BLI_ghash_ptr_new("BlenderStrokeRenderer::_nodetree_hash");
-	else
-		_nodetree_hash = NULL;
+	_nodetree_hash = BLI_ghash_ptr_new("BlenderStrokeRenderer::_nodetree_hash");
+
+	// Depsgraph
+	freestyle_depsgraph = DEG_graph_new(freestyle_scene, view_layer, DAG_EVAL_RENDER);
+	DEG_graph_id_tag_update(freestyle_bmain, freestyle_depsgraph, &freestyle_scene->id, 0);
+	DEG_graph_id_tag_update(freestyle_bmain, freestyle_depsgraph, &object_camera->id, 0);
+	DEG_graph_tag_relations_update(freestyle_depsgraph);
 }
 
 BlenderStrokeRenderer::~BlenderStrokeRenderer()
@@ -167,7 +183,8 @@ BlenderStrokeRenderer::~BlenderStrokeRenderer()
 	// compositor has finished.
 
 	// release objects and data blocks
-	for (Base *b = (Base *)freestyle_scene->base.first; b; b = b->next) {
+	ViewLayer *view_layer = (ViewLayer *)freestyle_scene->view_layers.first;
+	for (Base *b = (Base *)view_layer->object_bases.first; b; b = b->next) {
 		Object *ob = b->object;
 		void *data = ob->data;
 		char *name = ob->id.name;
@@ -190,7 +207,9 @@ BlenderStrokeRenderer::~BlenderStrokeRenderer()
 				cerr << "Warning: unexpected object in the scene: " << name[0] << name[1] << ":" << (name + 2) << endl;
 		}
 	}
-	BLI_freelistN(&freestyle_scene->base);
+
+	// Make sure we don't have any bases which might reference freed objects.
+	BKE_main_collection_sync(freestyle_bmain);
 
 	// release materials
 	Link *lnk = (Link *)freestyle_bmain->mat.first;
@@ -198,21 +217,13 @@ BlenderStrokeRenderer::~BlenderStrokeRenderer()
 	while (lnk)
 	{
 		Material *ma = (Material*)lnk;
-		// We want to retain the linestyle mtexs, so let's detach them first
-		for (int a = 0; a < MAX_MTEX; a++) {
-			if (ma->mtex[a]) {
-				ma->mtex[a] = NULL;
-			}
-			else {
-				break; // Textures are ordered, no empty slots between two textures
-			}
-		}
 		lnk = lnk->next;
 		BKE_libblock_free(freestyle_bmain, ma);
 	}
 
-	if (_use_shading_nodes)
-		BLI_ghash_free(_nodetree_hash, NULL, NULL);
+	BLI_ghash_free(_nodetree_hash, NULL, NULL);
+
+	DEG_graph_free(freestyle_depsgraph);
 
 	FreeStrokeGroups();
 }
@@ -454,89 +465,13 @@ void BlenderStrokeRenderer::RenderStrokeRep(StrokeRep *iStrokeRep) const
 
 void BlenderStrokeRenderer::RenderStrokeRepBasic(StrokeRep *iStrokeRep) const
 {
-	if (_use_shading_nodes) {
-		bNodeTree *nt = iStrokeRep->getNodeTree();
-		Material *ma = (Material *)BLI_ghash_lookup(_nodetree_hash, nt);
-		if (!ma) {
-			ma = BlenderStrokeRenderer::GetStrokeShader(freestyle_bmain, nt, false);
-			BLI_ghash_insert(_nodetree_hash, nt, ma);
-		}
-
-		if (STREQ(freestyle_scene->r.engine, RE_engine_id_CYCLES)) {
-			PointerRNA scene_ptr, freestyle_scene_ptr;
-			RNA_pointer_create(NULL, &RNA_Scene, old_scene, &scene_ptr);
-			RNA_pointer_create(NULL, &RNA_Scene, freestyle_scene, &freestyle_scene_ptr);
-
-			PointerRNA cycles_ptr = RNA_pointer_get(&scene_ptr, "cycles");
-			PointerRNA freestyle_cycles_ptr = RNA_pointer_get(&freestyle_scene_ptr, "cycles");
-
-			int flag;
-			RNA_STRUCT_BEGIN(&freestyle_cycles_ptr, prop)
-			{
-				flag = RNA_property_flag(prop);
-				if (flag & PROP_HIDDEN)
-					continue;
-				RNA_property_copy(&freestyle_cycles_ptr, &cycles_ptr, prop, -1);
-			}
-			RNA_STRUCT_END;
-
-			RNA_boolean_set(&freestyle_cycles_ptr, "film_transparent", 1);
-		}
-
-		iStrokeRep->setMaterial(ma);
+	bNodeTree *nt = iStrokeRep->getNodeTree();
+	Material *ma = (Material *)BLI_ghash_lookup(_nodetree_hash, nt);
+	if (!ma) {
+		ma = BlenderStrokeRenderer::GetStrokeShader(freestyle_bmain, nt, false);
+		BLI_ghash_insert(_nodetree_hash, nt, ma);
 	}
-	else {
-		bool has_mat = false;
-		int a = 0;
-
-		// Look for a good existing material
-		for (Link *lnk = (Link *)freestyle_bmain->mat.first; lnk; lnk = lnk->next) {
-			Material *ma = (Material*)lnk;
-			bool texs_are_good = true;
-			// as soon as textures differ it's not the right one
-			for (int a = 0; a < MAX_MTEX; a++) {
-				if (ma->mtex[a] != iStrokeRep->getMTex(a)) {
-					texs_are_good = false;
-					break;
-				}
-			}
-
-			if (texs_are_good) {
-				iStrokeRep->setMaterial(ma);
-				has_mat = true;
-				break; // if textures are good, no need to search anymore
-			}
-		}
-
-		// If still no material, create one
-		if (!has_mat) {
-			Material *ma = BKE_material_add(freestyle_bmain, "stroke_material");
-			DAG_relations_tag_update(freestyle_bmain);
-			ma->mode |= MA_VERTEXCOLP;
-			ma->mode |= MA_TRANSP;
-			ma->mode |= MA_SHLESS;
-			ma->vcol_alpha = 1;
-
-			id_us_min(&ma->id);
-
-			// Textures
-			while (iStrokeRep->getMTex(a)) {
-				ma->mtex[a] = (MTex *)iStrokeRep->getMTex(a);
-
-				// We'll generate both with tips and without tips
-				// coordinates, on two different UV layers.
-				if (ma->mtex[a]->texflag & MTEX_TIPS) {
-					BLI_strncpy(ma->mtex[a]->uvname, uvNames[1], sizeof(ma->mtex[a]->uvname));
-				}
-				else {
-					BLI_strncpy(ma->mtex[a]->uvname, uvNames[0], sizeof(ma->mtex[a]->uvname));
-				}
-				a++;
-			}
-
-			iStrokeRep->setMaterial(ma);
-		}
-	}
+	iStrokeRep->setMaterial(ma);
 
 	const vector<Strip*>& strips = iStrokeRep->getStrips();
 	const bool hasTex = iStrokeRep->hasTex();
@@ -675,8 +610,8 @@ int BlenderStrokeRenderer::get_stroke_count() const
 void BlenderStrokeRenderer::GenerateStrokeMesh(StrokeGroup *group, bool hasTex)
 {
 #if 0
-	Object *object_mesh = BKE_object_add(freestyle_bmain, freestyle_scene, OB_MESH);
-	DAG_relations_tag_update(freestyle_bmain);
+	Object *object_mesh = BKE_object_add(freestyle_bmain, freestyle_scene, (ViewLayer *)freestyle_scene->view_layers.first, OB_MESH);
+	DEG_relations_tag_update(freestyle_bmain);
 #else
 	Object *object_mesh = NewMesh();
 #endif
@@ -701,17 +636,13 @@ void BlenderStrokeRenderer::GenerateStrokeMesh(StrokeGroup *group, bool hasTex)
 
 	if (hasTex) {
 		// First UV layer
-		CustomData_add_layer_named(&mesh->pdata, CD_MTEXPOLY, CD_CALLOC, NULL, mesh->totpoly, uvNames[0]);
 		CustomData_add_layer_named(&mesh->ldata, CD_MLOOPUV, CD_CALLOC, NULL, mesh->totloop, uvNames[0]);
-		CustomData_set_layer_active(&mesh->pdata, CD_MTEXPOLY, 0);
 		CustomData_set_layer_active(&mesh->ldata, CD_MLOOPUV, 0);
 		BKE_mesh_update_customdata_pointers(mesh, true);
 		loopsuv[0] = mesh->mloopuv;
 
 		// Second UV layer
-		CustomData_add_layer_named(&mesh->pdata, CD_MTEXPOLY, CD_CALLOC, NULL, mesh->totpoly, uvNames[1]);
 		CustomData_add_layer_named(&mesh->ldata, CD_MLOOPUV, CD_CALLOC, NULL, mesh->totloop, uvNames[1]);
-		CustomData_set_layer_active(&mesh->pdata, CD_MTEXPOLY, 1);
 		CustomData_set_layer_active(&mesh->ldata, CD_MLOOPUV, 1);
 		BKE_mesh_update_customdata_pointers(mesh, true);
 		loopsuv[1] = mesh->mloopuv;
@@ -923,7 +854,6 @@ void BlenderStrokeRenderer::GenerateStrokeMesh(StrokeGroup *group, bool hasTex)
 Object *BlenderStrokeRenderer::NewMesh() const
 {
 	Object *ob;
-	Base *base;
 	char name[MAX_ID_NAME];
 	unsigned int mesh_id = get_stroke_mesh_id();
 
@@ -931,18 +861,15 @@ Object *BlenderStrokeRenderer::NewMesh() const
 	ob = BKE_object_add_only_object(freestyle_bmain, OB_MESH, name);
 	BLI_snprintf(name, MAX_ID_NAME, "0%08xME", mesh_id);
 	ob->data = BKE_mesh_add(freestyle_bmain, name);
-	ob->lay = 1;
 
-	base = BKE_scene_base_add(freestyle_scene, ob);
-	DAG_relations_tag_update(freestyle_bmain);
-#if 0
-	BKE_scene_base_deselect_all(scene);
-	BKE_scene_base_select(scene, base);
-#else
-	(void)base;
-#endif
+	Collection *collection_master = BKE_collection_master(freestyle_scene);
+	BKE_collection_object_add(freestyle_bmain, collection_master, ob);
+	DEG_graph_tag_relations_update(freestyle_depsgraph);
 
-	DAG_id_tag_update_ex(freestyle_bmain, &ob->id, OB_RECALC_OB | OB_RECALC_DATA | OB_RECALC_TIME);
+	DEG_graph_id_tag_update(freestyle_bmain,
+	                        freestyle_depsgraph,
+	                        &ob->id,
+	                        OB_RECALC_OB | OB_RECALC_DATA | OB_RECALC_TIME);
 
 	return ob;
 }
@@ -959,6 +886,8 @@ Render *BlenderStrokeRenderer::RenderScene(Render * /*re*/, bool render)
 #endif
 
 	Render *freestyle_render = RE_NewSceneRender(freestyle_scene);
+	ViewLayer *view_layer = (ViewLayer *)freestyle_scene->view_layers.first;
+	DEG_graph_relations_update(freestyle_depsgraph, freestyle_bmain, freestyle_scene, view_layer);
 
 	RE_RenderFreestyleStrokes(freestyle_render, freestyle_bmain, freestyle_scene,
 	                          render && get_stroke_count() > 0);

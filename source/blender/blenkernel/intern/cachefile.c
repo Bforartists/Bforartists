@@ -89,13 +89,22 @@ void BKE_cachefile_free(CacheFile *cache_file)
 {
 	BKE_animdata_free((ID *)cache_file, false);
 
-#ifdef WITH_ALEMBIC
-	ABC_free_handle(cache_file->handle);
-#endif
+	if (cache_file->id.tag & LIB_TAG_NO_MAIN) {
+		/* CoW/no-main copies reuse the existing ArchiveReader and mutex */
+		return;
+	}
 
+	if (cache_file->handle) {
+#ifdef WITH_ALEMBIC
+		ABC_free_handle(cache_file->handle);
+#endif
+		cache_file->handle = NULL;
+	}
 	if (cache_file->handle_mutex) {
 		BLI_mutex_free(cache_file->handle_mutex);
+		cache_file->handle_mutex = NULL;
 	}
+
 	BLI_freelistN(&cache_file->object_paths);
 }
 
@@ -110,8 +119,14 @@ void BKE_cachefile_free(CacheFile *cache_file)
 void BKE_cachefile_copy_data(
         Main *UNUSED(bmain), CacheFile *cache_file_dst, const CacheFile *UNUSED(cache_file_src), const int UNUSED(flag))
 {
+	if (cache_file_dst->id.tag & LIB_TAG_NO_MAIN) {
+		/* CoW/no-main copies reuse the existing ArchiveReader and mutex */
+		return;
+	}
+
 	cache_file_dst->handle = NULL;
-	BLI_listbase_clear(&cache_file_dst->object_paths);
+	cache_file_dst->handle_mutex = NULL;
+	BLI_duplicatelist(&cache_file_dst->object_paths, &cache_file_dst->object_paths);
 }
 
 CacheFile *BKE_cachefile_copy(Main *bmain, const CacheFile *cache_file)
@@ -153,20 +168,24 @@ void BKE_cachefile_ensure_handle(const Main *bmain, CacheFile *cache_file)
 	BLI_mutex_lock(cache_file->handle_mutex);
 
 	if (cache_file->handle == NULL) {
+		/* Assigning to a CoW copy is a bad idea; assign to the original instead. */
+		BLI_assert((cache_file->id.tag & LIB_TAG_COPIED_ON_WRITE) == 0);
 		BKE_cachefile_reload(bmain, cache_file);
 	}
 
 	BLI_mutex_unlock(cache_file->handle_mutex);
 }
 
-void BKE_cachefile_update_frame(Main *bmain, Scene *scene, const float ctime, const float fps)
+void BKE_cachefile_update_frame(
+        Main *bmain, struct Depsgraph *depsgraph, Scene *scene,
+        const float ctime, const float fps)
 {
 	CacheFile *cache_file;
 	char filename[FILE_MAX];
 
 	for (cache_file = bmain->cachefiles.first; cache_file; cache_file = cache_file->id.next) {
 		/* Execute drivers only, as animation has already been done. */
-		BKE_animsys_evaluate_animdata(scene, &cache_file->id, cache_file->adt, ctime, ADT_RECALC_DRIVERS);
+		BKE_animsys_evaluate_animdata(depsgraph, scene, &cache_file->id, cache_file->adt, ctime, ADT_RECALC_DRIVERS);
 
 		if (!cache_file->is_sequence) {
 			continue;
@@ -175,7 +194,7 @@ void BKE_cachefile_update_frame(Main *bmain, Scene *scene, const float ctime, co
 		const float time = BKE_cachefile_time_offset(cache_file, ctime, fps);
 
 		if (BKE_cachefile_filepath_get(bmain, cache_file, time, filename)) {
-			BKE_cachefile_clean(scene, cache_file);
+			BKE_cachefile_clean(bmain, cache_file);
 #ifdef WITH_ALEMBIC
 			ABC_free_handle(cache_file->handle);
 			cache_file->handle = ABC_create_handle(filename, NULL);
@@ -215,11 +234,9 @@ float BKE_cachefile_time_offset(CacheFile *cache_file, const float time, const f
 }
 
 /* TODO(kevin): replace this with some depsgraph mechanism, or something similar. */
-void BKE_cachefile_clean(Scene *scene, CacheFile *cache_file)
+void BKE_cachefile_clean(struct Main *bmain, CacheFile *cache_file)
 {
-	for (Base *base = scene->base.first; base; base = base->next) {
-		Object *ob = base->object;
-
+	for (Object *ob = bmain->object.first; ob; ob = ob->id.next) {
 		ModifierData *md = modifiers_findByType(ob, eModifierType_MeshSequenceCache);
 
 		if (md) {

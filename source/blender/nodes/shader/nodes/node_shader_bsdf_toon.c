@@ -42,14 +42,14 @@ static bNodeSocketTemplate sh_node_bsdf_toon_out[] = {
 	{	-1, 0, ""	}
 };
 
-static int node_shader_gpu_bsdf_toon(GPUMaterial *mat, bNode *UNUSED(node), bNodeExecData *UNUSED(execdata), GPUNodeStack *in, GPUNodeStack *out)
+static int node_shader_gpu_bsdf_toon(GPUMaterial *mat, bNode *node, bNodeExecData *UNUSED(execdata), GPUNodeStack *in, GPUNodeStack *out)
 {
 	if (!in[3].link)
 		in[3].link = GPU_builtin(GPU_VIEW_NORMAL);
 	else
 		GPU_link(mat, "direction_transform_m4v3", in[3].link, GPU_builtin(GPU_VIEW_MATRIX), &in[3].link);
 
-	return GPU_stack_link(mat, "node_bsdf_toon", in, out);
+	return GPU_stack_link(mat, node, "node_bsdf_toon", in, out);
 }
 
 /* node type definition */
@@ -58,7 +58,6 @@ void register_node_type_sh_bsdf_toon(void)
 	static bNodeType ntype;
 
 	sh_node_type_base(&ntype, SH_NODE_BSDF_TOON, "Toon BSDF", NODE_CLASS_SHADER, 0);
-	node_type_compatibility(&ntype, NODE_NEW_SHADING);
 	node_type_socket_templates(&ntype, sh_node_bsdf_toon_in, sh_node_bsdf_toon_out);
 	node_type_size_preset(&ntype, NODE_SIZE_MIDDLE);
 	node_type_init(&ntype, NULL);

@@ -38,15 +38,15 @@
 #include "BLI_linklist.h"
 #include "BLI_path_util.h"
 
-#include "BLO_readfile.h"
-
-#include "BKE_main.h"
-#include "BKE_library.h"
-#include "BKE_idcode.h"
-#include "BKE_report.h"
 #include "BKE_context.h"
+#include "BKE_idcode.h"
+#include "BKE_library.h"
+#include "BKE_main.h"
+#include "BKE_report.h"
 
 #include "DNA_space_types.h" /* FILE_LINK, FILE_RELPATH */
+
+#include "BLO_readfile.h"
 
 #include "bpy_capi_utils.h"
 #include "bpy_library.h"
@@ -332,6 +332,7 @@ static PyObject *bpy_lib_exit(BPy_Library *self, PyObject *UNUSED(args))
 	Main *bmain = CTX_data_main(BPy_GetContext());
 	Main *mainl = NULL;
 	int err = 0;
+	const bool do_append = ((self->flag & FILE_LINK) == 0);
 
 	BKE_main_id_tag_all(bmain, LIB_TAG_PRE_EXISTING, true);
 
@@ -341,7 +342,7 @@ static PyObject *bpy_lib_exit(BPy_Library *self, PyObject *UNUSED(args))
 	{
 		int idcode_step = 0, idcode;
 		while ((idcode = BKE_idcode_iter_step(&idcode_step))) {
-			if (BKE_idcode_is_linkable(idcode)) {
+			if (BKE_idcode_is_linkable(idcode) && (idcode != ID_WS || do_append)) {
 				const char *name_plural = BKE_idcode_to_name_plural(idcode);
 				PyObject *ls = PyDict_GetItemString(self->dict, name_plural);
 				// printf("lib: %s\n", name_plural);
@@ -402,7 +403,7 @@ static PyObject *bpy_lib_exit(BPy_Library *self, PyObject *UNUSED(args))
 	}
 	else {
 		Library *lib = mainl->curlib; /* newly added lib, assign before append end */
-		BLO_library_link_end(mainl, &(self->blo_handle), self->flag, NULL, NULL);
+		BLO_library_link_end(mainl, &(self->blo_handle), self->flag, NULL, NULL, NULL);
 		BLO_blendhandle_close(self->blo_handle);
 		self->blo_handle = NULL;
 
@@ -414,7 +415,7 @@ static PyObject *bpy_lib_exit(BPy_Library *self, PyObject *UNUSED(args))
 			BKE_main_lib_objects_recalc_all(bmain);
 
 			/* append, rather than linking */
-			if ((self->flag & FILE_LINK) == 0) {
+			if (do_append) {
 				BKE_library_make_local(bmain, lib, old_to_new_ids, true, false);
 			}
 		}
@@ -427,7 +428,7 @@ static PyObject *bpy_lib_exit(BPy_Library *self, PyObject *UNUSED(args))
 		{
 			int idcode_step = 0, idcode;
 			while ((idcode = BKE_idcode_iter_step(&idcode_step))) {
-				if (BKE_idcode_is_linkable(idcode)) {
+				if (BKE_idcode_is_linkable(idcode) && (idcode != ID_WS || do_append)) {
 					const char *name_plural = BKE_idcode_to_name_plural(idcode);
 					PyObject *ls = PyDict_GetItemString(self->dict, name_plural);
 					if (ls && PyList_Check(ls)) {

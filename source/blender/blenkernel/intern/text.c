@@ -47,8 +47,6 @@
 #include "BLI_fileops.h"
 
 #include "DNA_constraint_types.h"
-#include "DNA_controller_types.h"
-#include "DNA_actuator_types.h"
 #include "DNA_scene_types.h"
 #include "DNA_screen_types.h"
 #include "DNA_space_types.h"
@@ -58,7 +56,6 @@
 #include "DNA_node_types.h"
 #include "DNA_material_types.h"
 
-#include "BKE_depsgraph.h"
 #include "BKE_global.h"
 #include "BKE_library.h"
 #include "BKE_main.h"

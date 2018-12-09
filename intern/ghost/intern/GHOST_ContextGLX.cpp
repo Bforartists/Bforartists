@@ -48,10 +48,6 @@ static GLuint _glewStrLen(const GLubyte *s);
 static GLboolean _glewSearchExtension(const char *name, const GLubyte *start, const GLubyte *end);
 #endif
 
-#ifdef WITH_GLEW_MX
-GLXEWContext *glxewContext = NULL;
-#endif
-
 GLXContext GHOST_ContextGLX::s_sharedContext = None;
 int        GHOST_ContextGLX::s_sharedCount   = 0;
 
@@ -61,7 +57,6 @@ GHOST_ContextGLX::GHOST_ContextGLX(
         GHOST_TUns16 numOfAASamples,
         Window window,
         Display *display,
-        XVisualInfo *visualInfo,
         GLXFBConfig fbconfig,
         int contextProfileMask,
         int contextMajorVersion,
@@ -70,7 +65,6 @@ GHOST_ContextGLX::GHOST_ContextGLX(
         int contextResetNotificationStrategy)
     : GHOST_Context(stereoVisual, numOfAASamples),
       m_display(display),
-      m_visualInfo(visualInfo),
       m_fbconfig(fbconfig),
       m_window(window),
       m_contextProfileMask(contextProfileMask),
@@ -79,12 +73,7 @@ GHOST_ContextGLX::GHOST_ContextGLX(
       m_contextFlags(contextFlags),
       m_contextResetNotificationStrategy(contextResetNotificationStrategy),
       m_context(None)
-#ifdef WITH_GLEW_MX
-      ,
-      m_glxewContext(NULL)
-#endif
 {
-	assert(m_window  != 0);
 	assert(m_display != NULL);
 }
 
@@ -92,8 +81,6 @@ GHOST_ContextGLX::GHOST_ContextGLX(
 GHOST_ContextGLX::~GHOST_ContextGLX()
 {
 	if (m_display != NULL) {
-		activateGLXEW();
-
 		if (m_context != None) {
 			if (m_window != 0 && m_context == ::glXGetCurrentContext())
 				::glXMakeCurrent(m_display, None, NULL);
@@ -109,11 +96,6 @@ GHOST_ContextGLX::~GHOST_ContextGLX()
 				::glXDestroyContext(m_display, m_context);
 			}
 		}
-
-#ifdef WITH_GLEW_MX
-		if (m_glxewContext)
-			delete m_glxewContext;
-#endif
 	}
 }
 
@@ -129,10 +111,17 @@ GHOST_TSuccess GHOST_ContextGLX::swapBuffers()
 GHOST_TSuccess GHOST_ContextGLX::activateDrawingContext()
 {
 	if (m_display) {
-		activateGLXEW();
-		activateGLEW();
-
 		return ::glXMakeCurrent(m_display, m_window, m_context) ? GHOST_kSuccess : GHOST_kFailure;
+	}
+	else {
+		return GHOST_kFailure;
+	}
+}
+
+GHOST_TSuccess GHOST_ContextGLX::releaseDrawingContext()
+{
+	if (m_display) {
+		return ::glXMakeCurrent(m_display, None, NULL) ? GHOST_kSuccess : GHOST_kFailure;
 	}
 	else {
 		return GHOST_kFailure;
@@ -141,15 +130,6 @@ GHOST_TSuccess GHOST_ContextGLX::activateDrawingContext()
 
 void GHOST_ContextGLX::initContextGLXEW()
 {
-#ifdef WITH_GLEW_MX
-	glxewContext = new GLXEWContext;
-	memset(glxewContext, 0, sizeof(GLXEWContext));
-
-	if (m_glxewContext)
-		delete m_glxewContext;
-	m_glxewContext = glxewContext;
-#endif
-
 	initContextGLEW();
 }
 
@@ -169,7 +149,9 @@ GHOST_TSuccess GHOST_ContextGLX::initializeDrawingContext()
 		    (glXChooseFBConfig = (PFNGLXCHOOSEFBCONFIGPROC)glXGetProcAddressARB(
 		             (const GLubyte *)"glXChooseFBConfig")) == NULL ||
 		    (glXCreateContextAttribsARB = (PFNGLXCREATECONTEXTATTRIBSARBPROC)glXGetProcAddressARB(
-		             (const GLubyte *)"glXCreateContextAttribsARB")) == NULL)
+		             (const GLubyte *)"glXCreateContextAttribsARB")) == NULL ||
+		    (glXCreatePbuffer = (PFNGLXCREATEPBUFFERPROC)glXGetProcAddressARB(
+		             (const GLubyte *)"glXCreatePbuffer")) == NULL)
 		{
 			extStart = (GLubyte *)"";
 		}
@@ -255,9 +237,6 @@ const bool GLXEW_ARB_create_context_robustness =
 		if (m_contextMajorVersion != 0) {
 			attribs[i++] = GLX_CONTEXT_MAJOR_VERSION_ARB;
 			attribs[i++] = m_contextMajorVersion;
-		}
-
-		if (m_contextMinorVersion != 0) {
 			attribs[i++] = GLX_CONTEXT_MINOR_VERSION_ARB;
 			attribs[i++] = m_contextMinorVersion;
 		}
@@ -278,9 +257,22 @@ const bool GLXEW_ARB_create_context_robustness =
 		}
 		attribs[i++] = 0;
 
+		/* Some drivers don't like having a true offscreen context.
+		 * Create a pixel buffer instead of a window to render to.
+		 * even if it will never be used for drawing. */
+		int pbuffer_attribs[] = {
+			GLX_PBUFFER_WIDTH, 1,
+			GLX_PBUFFER_HEIGHT, 1,
+			None
+		};
+
 		/* Create a GL 3.x context */
 		if (m_fbconfig) {
 			m_context = glXCreateContextAttribsARB(m_display, m_fbconfig, s_sharedContext, true, attribs);
+
+			if (!m_window) {
+				m_window = (Window)glXCreatePbuffer(m_display, m_fbconfig, pbuffer_attribs);
+			}
 		}
 		else {
 			GLXFBConfig *framebuffer_config = NULL;
@@ -295,13 +287,18 @@ const bool GLXEW_ARB_create_context_robustness =
 
 			if (framebuffer_config) {
 				m_context = glXCreateContextAttribsARB(m_display, framebuffer_config[0], s_sharedContext, True, attribs);
+
+				if (!m_window) {
+					m_window = (Window)glXCreatePbuffer(m_display, framebuffer_config[0], pbuffer_attribs);
+				}
+
 				XFree(framebuffer_config);
 			}
 		}
 	}
 	else {
-		/* Create legacy context */
-		m_context = glXCreateContext(m_display, m_visualInfo, s_sharedContext, True);
+		/* Don't create legacy context */
+		fprintf(stderr, "Warning! GLX_ARB_create_context not available.\n");
 	}
 
 	GHOST_TSuccess success;
@@ -320,16 +317,18 @@ const bool GLXEW_ARB_create_context_robustness =
 		// which means we cannot use glX extensions until after we create a context
 		initContextGLXEW();
 
-		initClearGL();
-		::glXSwapBuffers(m_display, m_window);
+		if (m_window) {
+			initClearGL();
+			::glXSwapBuffers(m_display, m_window);
+		}
 
 		/* re initialize to get the extensions properly */
 		initContextGLXEW();
 
 		version = glGetString(GL_VERSION);
 
-		if (!version || version[0] < '2' || ((version[0] == '2') &&  (version[2] < '1'))) {
-			fprintf(stderr, "Error! Bforartists requires OpenGL 2.1 to run. Try updating your drivers.\n");
+		if (!version || version[0] < '3' || ((version[0] == '3') && (version[2] < '3'))) {
+			fprintf(stderr, "Error! Bforartists requires OpenGL 3.3 to run. Try updating your drivers.\n");
 			fflush(stderr);
 			/* ugly, but we get crashes unless a whole bunch of systems are patched. */
 			exit(0);

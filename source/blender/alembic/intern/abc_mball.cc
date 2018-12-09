@@ -30,9 +30,8 @@ extern "C" {
 #include "DNA_object_types.h"
 
 #include "BKE_curve.h"
-#include "BKE_depsgraph.h"
 #include "BKE_displist.h"
-#include "BKE_main.h"
+#include "BKE_library.h"
 #include "BKE_mball.h"
 #include "BKE_mesh.h"
 #include "BKE_object.h"
@@ -43,23 +42,21 @@ extern "C" {
 
 AbcMBallWriter::AbcMBallWriter(
         Main *bmain,
-        Scene *scene,
         Object *ob,
         AbcTransformWriter *parent,
         uint32_t time_sampling,
         ExportSettings &settings)
-    : AbcObjectWriter(scene, ob, time_sampling, settings, parent)
+    : AbcObjectWriter(ob, time_sampling, settings, parent)
     , m_bmain(bmain)
 {
 	m_is_animated = isAnimated();
 
 	m_mesh_ob = BKE_object_copy(bmain, ob);
-	m_mesh_ob->curve_cache = (CurveCache *)MEM_callocN(
+	m_mesh_ob->runtime.curve_cache = (CurveCache *)MEM_callocN(
 	                             sizeof(CurveCache),
 	                             "CurveCache for AbcMBallWriter");
 
-	m_mesh_writer = new AbcMeshWriter(scene, m_mesh_ob, parent,
-	                                  time_sampling, settings);
+	m_mesh_writer = new AbcMeshWriter(m_mesh_ob, parent, time_sampling, settings);
 	m_mesh_writer->setIsAnimated(m_is_animated);
 }
 
@@ -97,13 +94,11 @@ void AbcMBallWriter::do_write()
 	id_us_min(&tmpmesh->id);
 
 	ListBase disp = {NULL, NULL};
-	/* TODO(sergey): This is gonna to work for until EvaluationContext
+	/* TODO(sergey): This is gonna to work for until Depsgraph
 	 *               only contains for_render flag. As soon as CoW is
 	 *               implemented, this is to be rethinked.
 	 */
-	EvaluationContext eval_ctx;
-	DEG_evaluation_context_init(&eval_ctx, DAG_EVAL_RENDER);
-	BKE_displist_make_mball_forRender(m_bmain, &eval_ctx, m_scene, m_object, &disp);
+	BKE_displist_make_mball_forRender(m_settings.depsgraph, m_settings.scene, m_object, &disp);
 	BKE_mesh_from_metaball(&disp, tmpmesh);
 	BKE_displist_free(&disp);
 
@@ -115,8 +110,8 @@ void AbcMBallWriter::do_write()
 	m_mesh_ob->data = NULL;
 }
 
-bool AbcMBallWriter::isBasisBall(Main *bmain, EvaluationContext *eval_ctx, Scene *scene, Object *ob)
+bool AbcMBallWriter::isBasisBall(Scene *scene, Object *ob)
 {
-	Object *basis_ob = BKE_mball_basis_find(bmain, eval_ctx, scene, ob);
+	Object *basis_ob = BKE_mball_basis_find(scene, ob);
 	return ob == basis_ob;
 }

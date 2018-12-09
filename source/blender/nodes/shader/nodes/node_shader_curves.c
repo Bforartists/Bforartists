@@ -62,11 +62,13 @@ static void node_shader_init_curve_vec(bNodeTree *UNUSED(ntree), bNode *node)
 
 static int gpu_shader_curve_vec(GPUMaterial *mat, bNode *node, bNodeExecData *UNUSED(execdata), GPUNodeStack *in, GPUNodeStack *out)
 {
-	float *array;
+	float *array, layer;
 	int size;
 
 	curvemapping_table_RGBA(node->storage, &array, &size);
-	return GPU_stack_link(mat, "curves_vec", in, out, GPU_texture(size, array));
+	GPUNodeLink *tex = GPU_color_band(mat, size, array, &layer);
+
+	return GPU_stack_link(mat, node, "curves_vec", in, out, tex, GPU_constant(&layer));
 }
 
 void register_node_type_sh_curve_vec(void)
@@ -74,7 +76,6 @@ void register_node_type_sh_curve_vec(void)
 	static bNodeType ntype;
 
 	sh_node_type_base(&ntype, SH_NODE_CURVE_VEC, "Vector Curves", NODE_CLASS_OP_VECTOR, 0);
-	node_type_compatibility(&ntype, NODE_OLD_SHADING | NODE_NEW_SHADING);
 	node_type_socket_templates(&ntype, sh_node_curve_vec_in, sh_node_curve_vec_out);
 	node_type_init(&ntype, node_shader_init_curve_vec);
 	node_type_size_preset(&ntype, NODE_SIZE_LARGE);
@@ -120,12 +121,14 @@ static void node_shader_init_curve_rgb(bNodeTree *UNUSED(ntree), bNode *node)
 
 static int gpu_shader_curve_rgb(GPUMaterial *mat, bNode *node, bNodeExecData *UNUSED(execdata), GPUNodeStack *in, GPUNodeStack *out)
 {
-	float *array;
+	float *array, layer;
 	int size;
 
 	curvemapping_initialize(node->storage);
 	curvemapping_table_RGBA(node->storage, &array, &size);
-	return GPU_stack_link(mat, "curves_rgb", in, out, GPU_texture(size, array));
+	GPUNodeLink *tex = GPU_color_band(mat, size, array, &layer);
+
+	return GPU_stack_link(mat, node, "curves_rgb", in, out, tex, GPU_constant(&layer));
 }
 
 void register_node_type_sh_curve_rgb(void)
@@ -133,7 +136,6 @@ void register_node_type_sh_curve_rgb(void)
 	static bNodeType ntype;
 
 	sh_node_type_base(&ntype, SH_NODE_CURVE_RGB, "RGB Curves", NODE_CLASS_OP_COLOR, 0);
-	node_type_compatibility(&ntype, NODE_OLD_SHADING | NODE_NEW_SHADING);
 	node_type_socket_templates(&ntype, sh_node_curve_rgb_in, sh_node_curve_rgb_out);
 	node_type_init(&ntype, node_shader_init_curve_rgb);
 	node_type_size_preset(&ntype, NODE_SIZE_LARGE);
