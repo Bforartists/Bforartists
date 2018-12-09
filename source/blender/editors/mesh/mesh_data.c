@@ -42,13 +42,12 @@
 #include "BLI_math.h"
 
 #include "BKE_context.h"
-#include "BKE_depsgraph.h"
-#include "BKE_library.h"
-#include "BKE_main.h"
+#include "BKE_editmesh.h"
 #include "BKE_mesh.h"
 #include "BKE_paint.h"
 #include "BKE_report.h"
-#include "BKE_editmesh.h"
+
+#include "DEG_depsgraph.h"
 
 #include "RNA_define.h"
 
@@ -245,14 +244,14 @@ void ED_mesh_uv_loop_reset_ex(struct Mesh *me, const int layernum)
 		}
 	}
 
-	DAG_id_tag_update(&me->id, 0);
+	DEG_id_tag_update(&me->id, 0);
 }
 
 void ED_mesh_uv_loop_reset(struct bContext *C, struct Mesh *me)
 {
 	/* could be ldata or pdata */
-	CustomData *pdata = GET_CD_DATA(me, pdata);
-	const int layernum = CustomData_get_active_layer(pdata, CD_MTEXPOLY);
+	CustomData *ldata = GET_CD_DATA(me, ldata);
+	const int layernum = CustomData_get_active_layer(ldata, CD_MLOOPUV);
 	ED_mesh_uv_loop_reset_ex(me, layernum);
 
 	WM_event_add_notifier(C, NC_GEOM | ND_DATA, me);
@@ -269,20 +268,9 @@ int ED_mesh_uv_texture_add(Mesh *me, const char *name, const bool active_set)
 	if (me->edit_btmesh) {
 		em = me->edit_btmesh;
 
-		layernum_dst = CustomData_number_of_layers(&em->bm->pdata, CD_MTEXPOLY);
+		layernum_dst = CustomData_number_of_layers(&em->bm->ldata, CD_MLOOPUV);
 		if (layernum_dst >= MAX_MTFACE)
 			return -1;
-
-		/* CD_MTEXPOLY */
-		BM_data_layer_add_named(em->bm, &em->bm->pdata, CD_MTEXPOLY, name);
-		/* copy data from active UV */
-		if (layernum_dst) {
-			const int layernum_src = CustomData_get_active_layer(&em->bm->pdata, CD_MTEXPOLY);
-			BM_data_layer_copy(em->bm, &em->bm->pdata, CD_MTEXPOLY, layernum_src, layernum_dst);
-		}
-		if (active_set || layernum_dst == 0) {
-			CustomData_set_layer_active(&em->bm->pdata, CD_MTEXPOLY, layernum_dst);
-		}
 
 		/* CD_MLOOPUV */
 		BM_data_layer_add_named(em->bm, &em->bm->ldata, CD_MLOOPUV, name);
@@ -298,26 +286,22 @@ int ED_mesh_uv_texture_add(Mesh *me, const char *name, const bool active_set)
 		}
 	}
 	else {
-		layernum_dst = CustomData_number_of_layers(&me->pdata, CD_MTEXPOLY);
+		layernum_dst = CustomData_number_of_layers(&me->ldata, CD_MLOOPUV);
 		if (layernum_dst >= MAX_MTFACE)
 			return -1;
 
-		if (me->mtpoly) {
-			CustomData_add_layer_named(&me->pdata, CD_MTEXPOLY, CD_DUPLICATE, me->mtpoly, me->totpoly, name);
+		if (me->mloopuv) {
 			CustomData_add_layer_named(&me->ldata, CD_MLOOPUV, CD_DUPLICATE, me->mloopuv, me->totloop, name);
 			CustomData_add_layer_named(&me->fdata, CD_MTFACE, CD_DUPLICATE, me->mtface, me->totface, name);
 			is_init = true;
 		}
 		else {
-			CustomData_add_layer_named(&me->pdata, CD_MTEXPOLY, CD_DEFAULT, NULL, me->totpoly, name);
 			CustomData_add_layer_named(&me->ldata, CD_MLOOPUV, CD_DEFAULT, NULL, me->totloop, name);
 			CustomData_add_layer_named(&me->fdata, CD_MTFACE, CD_DEFAULT, NULL, me->totface, name);
 		}
 
 		if (active_set || layernum_dst == 0) {
-			CustomData_set_layer_active(&me->pdata, CD_MTEXPOLY, layernum_dst);
 			CustomData_set_layer_active(&me->ldata, CD_MLOOPUV, layernum_dst);
-
 			CustomData_set_layer_active(&me->fdata, CD_MTFACE, layernum_dst);
 		}
 
@@ -329,7 +313,7 @@ int ED_mesh_uv_texture_add(Mesh *me, const char *name, const bool active_set)
 		ED_mesh_uv_loop_reset_ex(me, layernum_dst);
 	}
 
-	DAG_id_tag_update(&me->id, 0);
+	DEG_id_tag_update(&me->id, 0);
 	WM_main_add_notifier(NC_GEOM | ND_DATA, me);
 
 	return layernum_dst;
@@ -343,12 +327,12 @@ void ED_mesh_uv_texture_ensure(struct Mesh *me, const char *name)
 	if (me->edit_btmesh) {
 		em = me->edit_btmesh;
 
-		layernum_dst = CustomData_number_of_layers(&em->bm->pdata, CD_MTEXPOLY);
+		layernum_dst = CustomData_number_of_layers(&em->bm->ldata, CD_MLOOPUV);
 		if (layernum_dst == 0)
 			ED_mesh_uv_texture_add(me, name, true);
 	}
 	else {
-		layernum_dst = CustomData_number_of_layers(&me->pdata, CD_MTEXPOLY);
+		layernum_dst = CustomData_number_of_layers(&me->ldata, CD_MLOOPUV);
 		if (layernum_dst == 0)
 			ED_mesh_uv_texture_add(me, name, true);
 	}
@@ -357,23 +341,19 @@ void ED_mesh_uv_texture_ensure(struct Mesh *me, const char *name)
 
 bool ED_mesh_uv_texture_remove_index(Mesh *me, const int n)
 {
-	CustomData *pdata = GET_CD_DATA(me, pdata), *ldata = GET_CD_DATA(me, ldata);
-	CustomDataLayer *cdlp, *cdlu;
+	CustomData *ldata = GET_CD_DATA(me, ldata);
+	CustomDataLayer *cdlu;
 	int index;
-
-	index = CustomData_get_layer_index_n(pdata, CD_MTEXPOLY, n);
-	cdlp = (index == -1) ? NULL : &pdata->layers[index];
 
 	index = CustomData_get_layer_index_n(ldata, CD_MLOOPUV, n);
 	cdlu = (index == -1) ? NULL : &ldata->layers[index];
 
-	if (!cdlp || !cdlu)
+	if (!cdlu)
 		return false;
 
-	delete_customdata_layer(me, cdlp);
 	delete_customdata_layer(me, cdlu);
 
-	DAG_id_tag_update(&me->id, 0);
+	DEG_id_tag_update(&me->id, 0);
 	WM_main_add_notifier(NC_GEOM | ND_DATA, me);
 
 	return true;
@@ -381,14 +361,8 @@ bool ED_mesh_uv_texture_remove_index(Mesh *me, const int n)
 bool ED_mesh_uv_texture_remove_active(Mesh *me)
 {
 	/* texpoly/uv are assumed to be in sync */
-	CustomData *pdata = GET_CD_DATA(me, pdata);
-	const int n = CustomData_get_active_layer(pdata, CD_MTEXPOLY);
-
-	/* double check active layers align! */
-#ifdef DEBUG
 	CustomData *ldata = GET_CD_DATA(me, ldata);
-	BLI_assert(CustomData_get_active_layer(ldata, CD_MLOOPUV) == n);
-#endif
+	const int n = CustomData_get_active_layer(ldata, CD_MLOOPUV);
 
 	if (n != -1) {
 		return ED_mesh_uv_texture_remove_index(me, n);
@@ -400,8 +374,8 @@ bool ED_mesh_uv_texture_remove_active(Mesh *me)
 bool ED_mesh_uv_texture_remove_named(Mesh *me, const char *name)
 {
 	/* texpoly/uv are assumed to be in sync */
-	CustomData *pdata = GET_CD_DATA(me, pdata);
-	const int n = CustomData_get_named_layer(pdata, CD_MTEXPOLY, name);
+	CustomData *ldata = GET_CD_DATA(me, ldata);
+	const int n = CustomData_get_named_layer(ldata, CD_MLOOPUV, name);
 	if (n != -1) {
 		return ED_mesh_uv_texture_remove_index(me, n);
 	}
@@ -458,7 +432,7 @@ int ED_mesh_color_add(Mesh *me, const char *name, const bool active_set)
 		BKE_mesh_update_customdata_pointers(me, true);
 	}
 
-	DAG_id_tag_update(&me->id, 0);
+	DEG_id_tag_update(&me->id, 0);
 	WM_main_add_notifier(NC_GEOM | ND_DATA, me);
 
 	return layernum;
@@ -473,7 +447,7 @@ bool ED_mesh_color_ensure(struct Mesh *me, const char *name)
 		BKE_mesh_update_customdata_pointers(me, true);
 	}
 
-	DAG_id_tag_update(&me->id, 0);
+	DEG_id_tag_update(&me->id, 0);
 
 	return (me->mloopcol != NULL);
 }
@@ -491,7 +465,7 @@ bool ED_mesh_color_remove_index(Mesh *me, const int n)
 		return false;
 
 	delete_customdata_layer(me, cdl);
-	DAG_id_tag_update(&me->id, 0);
+	DEG_id_tag_update(&me->id, 0);
 	WM_main_add_notifier(NC_GEOM | ND_DATA, me);
 
 	return true;
@@ -558,90 +532,6 @@ void MESH_OT_uv_texture_add(wmOperatorType *ot)
 
 	/* flags */
 	ot->flag = OPTYPE_REGISTER | OPTYPE_UNDO;
-}
-
-static int drop_named_image_invoke(bContext *C, wmOperator *op, const wmEvent *event)
-{
-	Main *bmain = CTX_data_main(C);
-	Scene *scene = CTX_data_scene(C);
-	View3D *v3d = CTX_wm_view3d(C);
-	Base *base;
-	Image *ima = NULL;
-	Mesh *me;
-	Object *obedit;
-	int exitmode = 0;
-
-	if (v3d == NULL) {
-		BKE_report(op->reports, RPT_ERROR, "No 3D View Available");
-		return OPERATOR_CANCELLED;
-	}
-
-	base = ED_view3d_give_base_under_cursor(C, event->mval);
-
-	/* Check context */
-	if (base == NULL || base->object->type != OB_MESH) {
-		BKE_report(op->reports, RPT_ERROR, "Not an object or mesh");
-		return OPERATOR_CANCELLED;
-	}
-
-	ima = (Image *)WM_operator_drop_load_path(C, op, ID_IM);
-	if (!ima) {
-		return OPERATOR_CANCELLED;
-	}
-	/* handled below */
-	id_us_min((ID *)ima);
-
-	/* put mesh in editmode */
-
-	obedit = base->object;
-	me = obedit->data;
-	if (me->edit_btmesh == NULL) {
-		EDBM_mesh_make(obedit, scene->toolsettings->selectmode, false);
-		exitmode = 1;
-	}
-	if (me->edit_btmesh == NULL)
-		return OPERATOR_CANCELLED;
-
-	ED_uvedit_assign_image(bmain, scene, obedit, ima, NULL);
-
-	if (exitmode) {
-		EDBM_mesh_load(bmain, obedit);
-		EDBM_mesh_free(me->edit_btmesh);
-		MEM_freeN(me->edit_btmesh);
-		me->edit_btmesh = NULL;
-
-		/* load_editMesh free's pointers used by CustomData layers which might be used by DerivedMesh too,
-		 * so signal to re-create DerivedMesh here (sergey) */
-		DAG_id_tag_update(&me->id, 0);
-	}
-
-	/* dummie drop support; ensure view shows a result :) */
-	if (v3d)
-		v3d->flag2 |= V3D_SOLID_TEX;
-
-	WM_event_add_notifier(C, NC_GEOM | ND_DATA, obedit->data);
-
-	return OPERATOR_FINISHED;
-}
-
-void MESH_OT_drop_named_image(wmOperatorType *ot)
-{
-	/* identifiers */
-	ot->name = "Drop Image to Mesh UV Map";
-	ot->description = "Drop Image to Mesh UV Map\nAssign Image to active UV Map, or create an UV Map";
-	ot->idname = "MESH_OT_drop_named_image";
-
-	/* api callbacks */
-	ot->poll = layers_poll;
-	ot->invoke = drop_named_image_invoke;
-
-	/* flags */
-	ot->flag = OPTYPE_UNDO | OPTYPE_INTERNAL;
-
-	/* properties */
-	RNA_def_string(ot->srna, "name", "Image", MAX_ID_NAME - 2, "Name", "Image name to assign");
-	RNA_def_string(ot->srna, "filepath", "Path", FILE_MAX, "Filepath", "Path to image file");
-	RNA_def_boolean(ot->srna, "relative_path", true, "Relative Path", "Select the file relative to the blend file");
 }
 
 static int mesh_uv_texture_remove_exec(bContext *C, wmOperator *UNUSED(op))
@@ -751,7 +641,7 @@ static int mesh_customdata_clear_exec__internal(bContext *C,
 			CustomData_free_layers(data, type, tot);
 		}
 
-		DAG_id_tag_update(&me->id, 0);
+		DEG_id_tag_update(&me->id, 0);
 		WM_event_add_notifier(C, NC_GEOM | ND_DATA, me);
 
 		return OPERATOR_FINISHED;
@@ -847,7 +737,7 @@ static int mesh_customdata_skin_add_exec(bContext *C, wmOperator *UNUSED(op))
 
 	BKE_mesh_ensure_skin_customdata(me);
 
-	DAG_id_tag_update(&me->id, 0);
+	DEG_id_tag_update(&me->id, 0);
 	WM_event_add_notifier(C, NC_GEOM | ND_DATA, me);
 
 	return OPERATOR_FINISHED;
@@ -906,8 +796,6 @@ static int mesh_customdata_custom_splitnormals_add_exec(bContext *C, wmOperator 
 			/* Tag edges as sharp according to smooth threshold if needed, to preserve autosmooth shading. */
 			if (me->flag & ME_AUTOSMOOTH) {
 				BM_edges_sharp_from_angle_set(me->edit_btmesh->bm, me->smoothresh);
-
-				me->drawflag |= ME_DRAWSHARP;
 			}
 
 			BM_data_layer_add(me->edit_btmesh->bm, data, CD_CUSTOMLOOPNORMAL);
@@ -931,14 +819,12 @@ static int mesh_customdata_custom_splitnormals_add_exec(bContext *C, wmOperator 
 				            me->smoothresh);
 
 				MEM_freeN(polynors);
-
-				me->drawflag |= ME_DRAWSHARP;
 			}
 
 			CustomData_add_layer(data, CD_CUSTOMLOOPNORMAL, CD_DEFAULT, NULL, me->totloop);
 		}
 
-		DAG_id_tag_update(&me->id, 0);
+		DEG_id_tag_update(&me->id, 0);
 		WM_event_add_notifier(C, NC_GEOM | ND_DATA, me);
 
 		return OPERATOR_FINISHED;
@@ -989,7 +875,7 @@ void MESH_OT_customdata_custom_splitnormals_clear(wmOperatorType *ot)
 
 /************************** Add Geometry Layers *************************/
 
-void ED_mesh_update(Mesh *mesh, bContext *C, bool calc_edges, bool calc_tessface)
+void ED_mesh_update(Mesh *mesh, bContext *C, bool calc_edges, bool calc_edges_loose, bool calc_tessface)
 {
 	bool tessface_input = false;
 
@@ -998,6 +884,10 @@ void ED_mesh_update(Mesh *mesh, bContext *C, bool calc_edges, bool calc_tessface
 
 		/* would only be converting back again, don't bother */
 		tessface_input = true;
+	}
+
+	if (calc_edges_loose && mesh->totedge) {
+		BKE_mesh_calc_edges_loose(mesh);
 	}
 
 	if (calc_edges || ((mesh->totpoly || mesh->totface) && mesh->totedge == 0))
@@ -1015,7 +905,7 @@ void ED_mesh_update(Mesh *mesh, bContext *C, bool calc_edges, bool calc_tessface
 
 	BKE_mesh_calc_normals(mesh);
 
-	DAG_id_tag_update(&mesh->id, 0);
+	DEG_id_tag_update(&mesh->id, 0);
 	WM_event_add_notifier(C, NC_GEOM | ND_DATA, mesh);
 }
 
@@ -1335,7 +1225,6 @@ void ED_mesh_calc_tessface(Mesh *mesh, bool free_mpoly)
 		mesh->mloopcol = NULL;
 		mesh->mloopuv = NULL;
 		mesh->mpoly = NULL;
-		mesh->mtpoly = NULL;
 	}
 }
 

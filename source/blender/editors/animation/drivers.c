@@ -41,13 +41,16 @@
 
 #include "DNA_anim_types.h"
 #include "DNA_object_types.h"
+#include "DNA_space_types.h"
 #include "DNA_texture_types.h"
 
 #include "BKE_animsys.h"
-#include "BKE_depsgraph.h"
 #include "BKE_fcurve.h"
 #include "BKE_context.h"
 #include "BKE_report.h"
+
+#include "DEG_depsgraph.h"
+#include "DEG_depsgraph_build.h"
 
 #include "ED_keyframing.h"
 
@@ -115,7 +118,6 @@ FCurve *verify_driver_fcurve(ID *id, const char rna_path[], const int array_inde
 
 			/* add some new driver data */
 			fcu->driver = MEM_callocN(sizeof(ChannelDriver), "ChannelDriver");
-			fcu->driver->flag |= DRIVER_FLAG_SHOWDEBUG;
 
 			/* F-Modifier or Keyframes? */
 			// FIXME: replace these magic numbers with defines
@@ -412,13 +414,20 @@ int ANIM_add_driver(ReportList *reports, ID *id, const char rna_path[], int arra
 			/* set the type of the driver */
 			driver->type = type;
 
-			/* creating drivers for buttons will create the driver(s) with type
+			/* Creating drivers for buttons will create the driver(s) with type
 			 * "scripted expression" so that their values won't be lost immediately,
 			 * so here we copy those values over to the driver's expression
+			 *
+			 * If the "default dvar" option (for easier UI setup of drivers) is provided,
+			 * include "var" in the expressions too, so that the user doesn't have to edit
+			 * it to get something to happen. It should be fine to just add it to the default
+			 * value, so that we get both in the expression, even if it's a bit more confusing
+			 * that way...
 			 */
 			if (type == DRIVER_TYPE_PYTHON) {
 				PropertyType proptype = RNA_property_type(prop);
 				int array = RNA_property_array_length(&ptr, prop);
+				const char *dvar_prefix = (flag & CREATEDRIVER_WITH_DEFAULT_DVAR) ? "var + " : "";
 				char *expression = driver->expression;
 				int val, maxlen = sizeof(driver->expression);
 				float fval;
@@ -427,19 +436,23 @@ int ANIM_add_driver(ReportList *reports, ID *id, const char rna_path[], int arra
 					if (!array) val = RNA_property_boolean_get(&ptr, prop);
 					else val = RNA_property_boolean_get_index(&ptr, prop, array_index);
 
-					BLI_strncpy(expression, (val) ? "True" : "False", maxlen);
+					BLI_snprintf(expression, maxlen, "%s%s", dvar_prefix, (val) ? "True" : "False");
 				}
 				else if (proptype == PROP_INT) {
 					if (!array) val = RNA_property_int_get(&ptr, prop);
 					else val = RNA_property_int_get_index(&ptr, prop, array_index);
 
-					BLI_snprintf(expression, maxlen, "%d", val);
+					BLI_snprintf(expression, maxlen, "%s%d", dvar_prefix, val);
 				}
 				else if (proptype == PROP_FLOAT) {
 					if (!array) fval = RNA_property_float_get(&ptr, prop);
 					else fval = RNA_property_float_get_index(&ptr, prop, array_index);
 
-					BLI_snprintf(expression, maxlen, "%.3f", fval);
+					BLI_snprintf(expression, maxlen, "%s%.3f", dvar_prefix, fval);
+					BLI_str_rstrip_float_zero(expression, '\0');
+				}
+				else if (flag & CREATEDRIVER_WITH_DEFAULT_DVAR) {
+					BLI_strncpy(expression, "var", maxlen);
 				}
 			}
 
@@ -732,11 +745,8 @@ bool ANIM_driver_vars_paste(ReportList *reports, FCurve *fcu, bool replace)
 		driver->variables.last = tmp_list.last;
 	}
 
-#ifdef WITH_PYTHON
 	/* since driver variables are cached, the expression needs re-compiling too */
-	if (driver->type == DRIVER_TYPE_PYTHON)
-		driver->flag |= DRIVER_FLAG_RENAMEVAR;
-#endif
+	BKE_driver_invalidate_expression(driver, false, true);
 
 	return true;
 }
@@ -804,7 +814,7 @@ static const EnumPropertyItem *driver_mapping_type_itemsf(bContext *C, PointerRN
 }
 
 
-/* Add Driver Button Operator ------------------------ */
+/* Add Driver (With Menu) Button Operator ------------------------ */
 
 static bool add_driver_button_poll(bContext *C)
 {
@@ -843,7 +853,7 @@ static int add_driver_button_none(bContext *C, wmOperator *op, short mapping_typ
 	if (success) {
 		/* send updates */
 		UI_context_update_anim_flag(C);
-		DAG_relations_tag_update(CTX_data_main(C));
+		DEG_relations_tag_update(CTX_data_main(C));
 		WM_event_add_notifier(C, NC_ANIMATION | ND_FCURVES_ORDER, NULL);  // XXX
 
 		return OPERATOR_FINISHED;
@@ -853,7 +863,7 @@ static int add_driver_button_none(bContext *C, wmOperator *op, short mapping_typ
 	}
 }
 
-static int add_driver_button_exec(bContext *C, wmOperator *op)
+static int add_driver_button_menu_exec(bContext *C, wmOperator *op)
 {
 	short mapping_type = RNA_enum_get(op->ptr, "mapping_type");
 	if (ELEM(mapping_type, CREATEDRIVER_MAPPING_NONE, CREATEDRIVER_MAPPING_NONE_ALL)) {
@@ -872,13 +882,13 @@ static int add_driver_button_exec(bContext *C, wmOperator *op)
 }
 
 /* Show menu or create drivers */
-static int add_driver_button_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event))
+static int add_driver_button_menu_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event))
 {
 	PropertyRNA *prop;
 
 	if ((prop = RNA_struct_find_property(op->ptr, "mapping_type")) && RNA_property_is_set(op->ptr, prop)) {
 		/* Mapping Type is Set - Directly go into creating drivers */
-		return add_driver_button_exec(C, op);
+		return add_driver_button_menu_exec(C, op);
 	}
 	else {
 		/* Show menu */
@@ -888,19 +898,16 @@ static int add_driver_button_invoke(bContext *C, wmOperator *op, const wmEvent *
 	}
 }
 
-void ANIM_OT_driver_button_add(wmOperatorType *ot)
+static void UNUSED_FUNCTION(ANIM_OT_driver_button_add_menu)(wmOperatorType *ot)
 {
 	/* identifiers */
-	ot->name = "Add Driver";
-	ot->idname = "ANIM_OT_driver_button_add";
-	ot->description = "Add Driver\nAdd driver(s) for the property(s) connected represented by the highlighted button";
+	ot->name = "Add Driver Menu";
+	ot->idname = "ANIM_OT_driver_button_add_menu";
+	ot->description = "Add Driver\nAdd driver(s) for the property(s) represented by the highlighted button";
 
 	/* callbacks */
-	/* NOTE: No exec, as we need all these to use the current context info
-	 * (especially the eyedropper, which is interactive)
-	 */
-	ot->invoke = add_driver_button_invoke;
-	ot->exec = add_driver_button_exec;
+	ot->invoke = add_driver_button_menu_invoke;
+	ot->exec = add_driver_button_menu_exec;
 	ot->poll = add_driver_button_poll;
 
 	/* flags */
@@ -910,6 +917,60 @@ void ANIM_OT_driver_button_add(wmOperatorType *ot)
 	ot->prop = RNA_def_enum(ot->srna, "mapping_type", prop_driver_create_mapping_types, 0,
 	                        "Mapping Type", "Method used to match target and driven properties");
 	RNA_def_enum_funcs(ot->prop, driver_mapping_type_itemsf);
+}
+
+/* Add Driver Button Operator ------------------------ */
+
+static int add_driver_button_invoke(bContext *C, wmOperator *op, const wmEvent *UNUSED(event))
+{
+	PointerRNA ptr = {{NULL}};
+	PropertyRNA *prop = NULL;
+	int index;
+
+	/* try to find driver using property retrieved from UI */
+	UI_context_active_but_prop_get(C, &ptr, &prop, &index);
+
+	if (ptr.id.data && ptr.data && prop && RNA_property_animateable(&ptr, prop)) {
+		/* 1) Create a new "empty" driver for this property */
+		char *path = BKE_animdata_driver_path_hack(C, &ptr, prop, NULL);
+		short flags = CREATEDRIVER_WITH_DEFAULT_DVAR;
+		short success = 0;
+
+		if (path) {
+			success += ANIM_add_driver(op->reports, ptr.id.data, path, index, flags, DRIVER_TYPE_PYTHON);
+			MEM_freeN(path);
+		}
+
+		if (success) {
+			/* send updates */
+			UI_context_update_anim_flag(C);
+			DEG_id_tag_update(ptr.id.data, DEG_TAG_COPY_ON_WRITE);
+			DEG_relations_tag_update(CTX_data_main(C));
+			WM_event_add_notifier(C, NC_ANIMATION | ND_FCURVES_ORDER, NULL);
+		}
+
+		/* 2) Show editing panel for setting up this driver */
+		/* TODO: Use a different one from the editing popever, so we can have the single/all toggle? */
+		UI_popover_panel_invoke(C, "GRAPH_PT_drivers_popover", true, op->reports);
+	}
+
+	return OPERATOR_INTERFACE;
+}
+
+void ANIM_OT_driver_button_add(wmOperatorType *ot)
+{
+	/* identifiers */
+	ot->name = "Add Driver";
+	ot->idname = "ANIM_OT_driver_button_add";
+	ot->description = "Add driver for the property under the cursor";
+
+	/* callbacks */
+	/* NOTE: No exec, as we need all these to use the current context info */
+	ot->invoke = add_driver_button_invoke;
+	ot->poll = add_driver_button_poll;
+
+	/* flags */
+	ot->flag = OPTYPE_UNDO | OPTYPE_INTERNAL;
 }
 
 /* Remove Driver Button Operator ------------------------ */
@@ -941,7 +1002,7 @@ static int remove_driver_button_exec(bContext *C, wmOperator *op)
 	if (success) {
 		/* send updates */
 		UI_context_update_anim_flag(C);
-		DAG_relations_tag_update(CTX_data_main(C));
+		DEG_relations_tag_update(CTX_data_main(C));
 		WM_event_add_notifier(C, NC_ANIMATION | ND_FCURVES_ORDER, NULL);  // XXX
 	}
 
@@ -964,6 +1025,39 @@ void ANIM_OT_driver_button_remove(wmOperatorType *ot)
 
 	/* properties */
 	RNA_def_boolean(ot->srna, "all", 1, "All", "Delete drivers for all elements of the array");
+}
+
+/* Edit Driver Button Operator ------------------------ */
+
+static int edit_driver_button_exec(bContext *C, wmOperator *op)
+{
+	PointerRNA ptr = {{NULL}};
+	PropertyRNA *prop = NULL;
+	int index;
+
+	/* try to find driver using property retrieved from UI */
+	UI_context_active_but_prop_get(C, &ptr, &prop, &index);
+
+	if (ptr.id.data && ptr.data && prop) {
+		UI_popover_panel_invoke(C, "GRAPH_PT_drivers_popover", true, op->reports);
+	}
+
+	return OPERATOR_INTERFACE;
+}
+
+void ANIM_OT_driver_button_edit(wmOperatorType *ot)
+{
+	/* identifiers */
+	ot->name = "Edit Driver";
+	ot->idname = "ANIM_OT_driver_button_edit";
+	ot->description = "Edit the drivers for the property connected represented by the highlighted button";
+
+	/* callbacks */
+	ot->exec = edit_driver_button_exec;
+	//op->poll = ??? // TODO: need to have some driver to be able to do this...
+
+	/* flags */
+	ot->flag = OPTYPE_UNDO | OPTYPE_INTERNAL;
 }
 
 /* Copy Driver Button Operator ------------------------ */
@@ -1031,8 +1125,8 @@ static int paste_driver_button_exec(bContext *C, wmOperator *op)
 
 			UI_context_update_anim_flag(C);
 
-			DAG_relations_tag_update(CTX_data_main(C));
-			DAG_id_tag_update(ptr.id.data, OB_RECALC_OB | OB_RECALC_DATA);
+			DEG_relations_tag_update(CTX_data_main(C));
+			DEG_id_tag_update(ptr.id.data, OB_RECALC_OB | OB_RECALC_DATA);
 
 			WM_event_add_notifier(C, NC_ANIMATION | ND_KEYFRAME_PROP, NULL);  // XXX
 

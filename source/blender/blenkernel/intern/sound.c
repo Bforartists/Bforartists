@@ -48,13 +48,11 @@
 #include "DNA_speaker_types.h"
 
 #ifdef WITH_AUDASPACE
-#  include AUD_SOUND_H
-#  include AUD_SEQUENCE_H
-#  include AUD_HANDLE_H
-#  include AUD_SPECIAL_H
-#  ifdef WITH_SYSTEM_AUDASPACE
-#    include "../../../intern/audaspace/intern/AUD_Set.h"
-#  endif
+#  include <AUD_Sound.h>
+#  include <AUD_Sequence.h>
+#  include <AUD_Handle.h>
+#  include <AUD_Special.h>
+#  include "../../../intern/audaspace/intern/AUD_Set.h"
 #endif
 
 #include "BKE_global.h"
@@ -228,7 +226,7 @@ void BKE_sound_init_once(void)
 	atexit(BKE_sound_exit_once);
 }
 
-static AUD_Device *sound_device;
+static AUD_Device *sound_device = NULL;
 
 void *BKE_sound_get_device(void)
 {
@@ -237,6 +235,9 @@ void *BKE_sound_get_device(void)
 
 void BKE_sound_init(struct Main *bmain)
 {
+	/* Make sure no instance of the sound system is running, otherwise we get leaks. */
+	BKE_sound_exit();
+
 	AUD_DeviceSpecs specs;
 	int device, buffersize;
 	const char *device_name;
@@ -302,7 +303,6 @@ void BKE_sound_exit_once(void)
 	sound_device = NULL;
 	AUD_exitOnce();
 
-#ifdef WITH_SYSTEM_AUDASPACE
 	if (audio_device_names != NULL) {
 		int i;
 		for (i = 0; audio_device_names[i]; i++) {
@@ -311,7 +311,6 @@ void BKE_sound_exit_once(void)
 		free(audio_device_names);
 		audio_device_names = NULL;
 	}
-#endif
 }
 
 /* XXX unused currently */
@@ -811,13 +810,76 @@ void BKE_sound_read_waveform(bSound *sound, short *stop)
 	BLI_spin_unlock(sound->spinlock);
 }
 
-void BKE_sound_update_scene(Main *bmain, struct Scene *scene)
+static void sound_update_base(Scene *scene, Base *base, void *new_set)
 {
-	Object *ob;
-	Base *base;
+	Object *ob = base->object;
 	NlaTrack *track;
 	NlaStrip *strip;
 	Speaker *speaker;
+	float quat[4];
+
+	if ((ob->id.tag & LIB_TAG_DOIT) == 0) {
+		return;
+	}
+
+	ob->id.tag &= ~LIB_TAG_DOIT;
+
+	if ((ob->type != OB_SPEAKER) || !ob->adt) {
+		return;
+	}
+
+	for (track = ob->adt->nla_tracks.first; track; track = track->next) {
+		for (strip = track->strips.first; strip; strip = strip->next) {
+			if (strip->type != NLASTRIP_TYPE_SOUND) {
+				continue;
+			}
+			speaker = (Speaker *)ob->data;
+
+			if (AUD_removeSet(scene->speaker_handles, strip->speaker_handle)) {
+				if (speaker->sound) {
+					AUD_SequenceEntry_move(strip->speaker_handle, (double)strip->start / FPS, FLT_MAX, 0);
+				}
+				else {
+					AUD_Sequence_remove(scene->sound_scene, strip->speaker_handle);
+					strip->speaker_handle = NULL;
+				}
+			}
+			else {
+				if (speaker->sound) {
+					strip->speaker_handle = AUD_Sequence_add(scene->sound_scene,
+					                                        speaker->sound->playback_handle,
+					                                        (double)strip->start / FPS, FLT_MAX, 0);
+					AUD_SequenceEntry_setRelative(strip->speaker_handle, 0);
+				}
+			}
+
+			if (strip->speaker_handle) {
+				const bool mute = ((strip->flag & NLASTRIP_FLAG_MUTED) || (speaker->flag & SPK_MUTED));
+				AUD_addSet(new_set, strip->speaker_handle);
+				AUD_SequenceEntry_setVolumeMaximum(strip->speaker_handle, speaker->volume_max);
+				AUD_SequenceEntry_setVolumeMinimum(strip->speaker_handle, speaker->volume_min);
+				AUD_SequenceEntry_setDistanceMaximum(strip->speaker_handle, speaker->distance_max);
+				AUD_SequenceEntry_setDistanceReference(strip->speaker_handle, speaker->distance_reference);
+				AUD_SequenceEntry_setAttenuation(strip->speaker_handle, speaker->attenuation);
+				AUD_SequenceEntry_setConeAngleOuter(strip->speaker_handle, speaker->cone_angle_outer);
+				AUD_SequenceEntry_setConeAngleInner(strip->speaker_handle, speaker->cone_angle_inner);
+				AUD_SequenceEntry_setConeVolumeOuter(strip->speaker_handle, speaker->cone_volume_outer);
+
+				mat4_to_quat(quat, ob->obmat);
+				AUD_SequenceEntry_setAnimationData(strip->speaker_handle, AUD_AP_LOCATION, CFRA, ob->obmat[3], 1);
+				AUD_SequenceEntry_setAnimationData(strip->speaker_handle, AUD_AP_ORIENTATION, CFRA, quat, 1);
+				AUD_SequenceEntry_setAnimationData(strip->speaker_handle, AUD_AP_VOLUME, CFRA, &speaker->volume, 1);
+				AUD_SequenceEntry_setAnimationData(strip->speaker_handle, AUD_AP_PITCH, CFRA, &speaker->pitch, 1);
+				AUD_SequenceEntry_setSound(strip->speaker_handle, speaker->sound->playback_handle);
+				AUD_SequenceEntry_setMuted(strip->speaker_handle, mute);
+			}
+		}
+	}
+}
+
+void BKE_sound_update_scene(Main *bmain, Scene *scene)
+{
+	Base *base;
 	Scene *sce_it;
 
 	void *new_set = AUD_createSet();
@@ -826,59 +888,18 @@ void BKE_sound_update_scene(Main *bmain, struct Scene *scene)
 
 	/* cheap test to skip looping over all objects (no speakers is a common case) */
 	if (!BLI_listbase_is_empty(&bmain->speaker)) {
-		for (SETLOOPER(scene, sce_it, base)) {
-			ob = base->object;
-			if ((ob->type != OB_SPEAKER) || !ob->adt) {
-				continue;
-			}
-			for (track = ob->adt->nla_tracks.first; track; track = track->next) {
-				for (strip = track->strips.first; strip; strip = strip->next) {
-					if (strip->type != NLASTRIP_TYPE_SOUND) {
-						continue;
-					}
-					speaker = (Speaker *)ob->data;
+		BKE_main_id_tag_listbase(&bmain->object, LIB_TAG_DOIT, true);
 
-					if (AUD_removeSet(scene->speaker_handles, strip->speaker_handle)) {
-						if (speaker->sound) {
-							AUD_SequenceEntry_move(strip->speaker_handle, (double)strip->start / FPS, FLT_MAX, 0);
-						}
-						else {
-							AUD_Sequence_remove(scene->sound_scene, strip->speaker_handle);
-							strip->speaker_handle = NULL;
-						}
-					}
-					else {
-						if (speaker->sound) {
-							strip->speaker_handle = AUD_Sequence_add(scene->sound_scene,
-							                                        speaker->sound->playback_handle,
-							                                        (double)strip->start / FPS, FLT_MAX, 0);
-							AUD_SequenceEntry_setRelative(strip->speaker_handle, 0);
-						}
-					}
-
-					if (strip->speaker_handle) {
-						const bool mute = ((strip->flag & NLASTRIP_FLAG_MUTED) || (speaker->flag & SPK_MUTED));
-						AUD_addSet(new_set, strip->speaker_handle);
-						AUD_SequenceEntry_setVolumeMaximum(strip->speaker_handle, speaker->volume_max);
-						AUD_SequenceEntry_setVolumeMinimum(strip->speaker_handle, speaker->volume_min);
-						AUD_SequenceEntry_setDistanceMaximum(strip->speaker_handle, speaker->distance_max);
-						AUD_SequenceEntry_setDistanceReference(strip->speaker_handle, speaker->distance_reference);
-						AUD_SequenceEntry_setAttenuation(strip->speaker_handle, speaker->attenuation);
-						AUD_SequenceEntry_setConeAngleOuter(strip->speaker_handle, speaker->cone_angle_outer);
-						AUD_SequenceEntry_setConeAngleInner(strip->speaker_handle, speaker->cone_angle_inner);
-						AUD_SequenceEntry_setConeVolumeOuter(strip->speaker_handle, speaker->cone_volume_outer);
-
-						mat4_to_quat(quat, ob->obmat);
-						AUD_SequenceEntry_setAnimationData(strip->speaker_handle, AUD_AP_LOCATION, CFRA, ob->obmat[3], 1);
-						AUD_SequenceEntry_setAnimationData(strip->speaker_handle, AUD_AP_ORIENTATION, CFRA, quat, 1);
-						AUD_SequenceEntry_setAnimationData(strip->speaker_handle, AUD_AP_VOLUME, CFRA, &speaker->volume, 1);
-						AUD_SequenceEntry_setAnimationData(strip->speaker_handle, AUD_AP_PITCH, CFRA, &speaker->pitch, 1);
-						AUD_SequenceEntry_setSound(strip->speaker_handle, speaker->sound->playback_handle);
-						AUD_SequenceEntry_setMuted(strip->speaker_handle, mute);
-					}
-				}
+		for (ViewLayer *view_layer = scene->view_layers.first; view_layer; view_layer = view_layer->next) {
+			for (base = view_layer->object_bases.first; base; base = base->next) {
+				sound_update_base(scene, base, new_set);
 			}
 		}
+
+		for (SETLOOPER_SET_ONLY(scene, sce_it, base)) {
+			sound_update_base(scene, base, new_set);
+		}
+
 	}
 
 	while ((handle = AUD_getSet(scene->speaker_handles))) {
@@ -911,26 +932,10 @@ float BKE_sound_get_length(bSound *sound)
 char **BKE_sound_get_device_names(void)
 {
 	if (audio_device_names == NULL) {
-#ifdef WITH_SYSTEM_AUDASPACE
 		audio_device_names = AUD_getDeviceNames();
-#else
-		static const char *names[] = {
-			"Null", "SDL", "OpenAL", "JACK", NULL
-		};
-		audio_device_names = (char **)names;
-#endif
 	}
 
 	return audio_device_names;
-}
-
-bool BKE_sound_is_jack_supported(void)
-{
-#ifdef WITH_SYSTEM_AUDASPACE
-	return 1;
-#else
-	return (bool)AUD_isJackSupported();
-#endif
 }
 
 #else  /* WITH_AUDASPACE */
@@ -979,5 +984,6 @@ void BKE_sound_set_scene_sound_pan(void *UNUSED(handle), float UNUSED(pan), char
 void BKE_sound_set_scene_volume(struct Scene *UNUSED(scene), float UNUSED(volume)) {}
 void BKE_sound_set_scene_sound_pitch(void *UNUSED(handle), float UNUSED(pitch), char UNUSED(animated)) {}
 float BKE_sound_get_length(struct bSound *UNUSED(sound)) { return 0; }
-bool BKE_sound_is_jack_supported(void) { return false; }
+char **BKE_sound_get_device_names(void) { static char *names[1] = {NULL}; return names; }
+
 #endif  /* WITH_AUDASPACE */

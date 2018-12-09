@@ -46,6 +46,7 @@
 #include "bpy_rna.h"
 #include "bpy_app.h"
 #include "bpy_rna_id_collection.h"
+#include "bpy_rna_gizmo.h"
 #include "bpy_props.h"
 #include "bpy_library.h"
 #include "bpy_operator.h"
@@ -57,6 +58,7 @@
 
 /* external util modules */
 #include "../generic/idprop_py_api.h"
+#include "bpy_msgbus.h"
 
 #ifdef WITH_FREESTYLE
 #  include "BPy_Freestyle.h"
@@ -338,6 +340,8 @@ void BPy_init_modules(void)
 
 	BPY_rna_id_collection_module(mod);
 
+	BPY_rna_gizmo_module(mod);
+
 	bpy_import_test("bpy_types");
 	PyModule_AddObject(mod, "data", BPY_rna_module()); /* imports bpy_types by running this */
 	bpy_import_test("bpy_types");
@@ -347,6 +351,7 @@ void BPy_init_modules(void)
 	PyModule_AddObject(mod, "app", BPY_app_struct());
 	PyModule_AddObject(mod, "_utils_units", BPY_utils_units());
 	PyModule_AddObject(mod, "_utils_previews", BPY_utils_previews_module());
+	PyModule_AddObject(mod, "msgbus", BPY_msgbus_module());
 
 	/* bpy context */
 	RNA_pointer_create(NULL, &RNA_Context, (void *)BPy_GetContext(), &ctx_ptr);
@@ -370,6 +375,9 @@ void BPy_init_modules(void)
 	/* register funcs (bpy_rna.c) */
 	PyModule_AddObject(mod, meth_bpy_register_class.ml_name, (PyObject *)PyCFunction_New(&meth_bpy_register_class, NULL));
 	PyModule_AddObject(mod, meth_bpy_unregister_class.ml_name, (PyObject *)PyCFunction_New(&meth_bpy_unregister_class, NULL));
+
+	PyModule_AddObject(mod, meth_bpy_owner_id_get.ml_name, (PyObject *)PyCFunction_New(&meth_bpy_owner_id_get, NULL));
+	PyModule_AddObject(mod, meth_bpy_owner_id_set.ml_name, (PyObject *)PyCFunction_New(&meth_bpy_owner_id_set, NULL));
 
 	/* add our own modules dir, this is a python package */
 	bpy_package_py = bpy_import_test("bpy");

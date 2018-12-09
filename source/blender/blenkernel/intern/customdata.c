@@ -53,6 +53,7 @@
 #include "BKE_customdata.h"
 #include "BKE_customdata_file.h"
 #include "BKE_global.h"
+#include "BKE_library.h"
 #include "BKE_main.h"
 #include "BKE_mesh_mapping.h"
 #include "BKE_mesh_remap.h"
@@ -124,6 +125,9 @@ typedef struct LayerTypeInfo {
 	 * a function to set a layer's data to default values. if NULL, the
 	 * default is assumed to be all zeros */
 	void (*set_default)(void *data, int count);
+
+	/** A function used by mesh validating code, must ensures passed item has valid data. */
+	cd_validate validate;
 
 	/** functions necessary for geometry collapse */
 	bool (*equal)(const void *data1, const void *data2);
@@ -312,6 +316,30 @@ static void layerInterp_normal(
 	normalize_v3_v3((float *)dest, no);
 }
 
+static bool layerValidate_normal(void *data, const uint totitems, const bool do_fixes)
+{
+	static const float no_default[3] = {0.0f, 0.0f, 1.0f};  /* Z-up default normal... */
+	float (*no)[3] = data;
+	bool has_errors = false;
+
+	for (int i = 0; i < totitems; i++, no++) {
+		if (!is_finite_v3((float *)no)) {
+			has_errors = true;
+			if (do_fixes) {
+				copy_v3_v3((float *)no, no_default);
+			}
+		}
+		else if (!compare_ff(len_squared_v3((float *)no), 1.0f, 1e-6f)) {
+			has_errors = true;
+			if (do_fixes) {
+				normalize_v3((float *)no);
+			}
+		}
+	}
+
+	return has_errors;
+}
+
 static void layerCopyValue_normal(const void *source, void *dest, const int mixmode, const float mixfactor)
 {
 	const float *no_src = source;
@@ -390,37 +418,19 @@ static void layerSwap_tface(void *data, const int *corner_indices)
 {
 	MTFace *tf = data;
 	float uv[4][2];
-	static const short pin_flags[4] = { TF_PIN1, TF_PIN2, TF_PIN3, TF_PIN4 };
-	static const char sel_flags[4] = { TF_SEL1, TF_SEL2, TF_SEL3, TF_SEL4 };
-	short unwrap = tf->unwrap & ~(TF_PIN1 | TF_PIN2 | TF_PIN3 | TF_PIN4);
-	char flag = tf->flag & ~(TF_SEL1 | TF_SEL2 | TF_SEL3 | TF_SEL4);
 	int j;
 
 	for (j = 0; j < 4; ++j) {
 		const int source_index = corner_indices[j];
-
 		copy_v2_v2(uv[j], tf->uv[source_index]);
-
-		/* swap pinning flags around */
-		if (tf->unwrap & pin_flags[source_index]) {
-			unwrap |= pin_flags[j];
-		}
-
-		/* swap selection flags around */
-		if (tf->flag & sel_flags[source_index]) {
-			flag |= sel_flags[j];
-		}
 	}
 
 	memcpy(tf->uv, uv, sizeof(tf->uv));
-	tf->unwrap = unwrap;
-	tf->flag = flag;
 }
 
 static void layerDefault_tface(void *data, int count)
 {
-	static MTFace default_tf = {{{0, 0}, {1, 0}, {1, 1}, {0, 1}}, NULL,
-		                        0, 0, TF_DYNAMIC | TF_CONVERTED, 0, 0};
+	static MTFace default_tf = {{{0, 0}, {1, 0}, {1, 1}, {0, 1}}};
 	MTFace *tf = (MTFace *)data;
 	int i;
 
@@ -437,6 +447,23 @@ static void layerCopy_propFloat(const void *source, void *dest,
                                 int count)
 {
 	memcpy(dest, source, sizeof(MFloatProperty) * count);
+}
+
+static bool layerValidate_propFloat(void *data, const uint totitems, const bool do_fixes)
+{
+	MFloatProperty *fp = data;
+	bool has_errors = false;
+
+	for (int i = 0; i < totitems; i++, fp++) {
+		if (!isfinite(fp->f)) {
+			if (do_fixes) {
+				fp->f = 0.0f;
+			}
+			has_errors = true;
+		}
+	}
+
+	return has_errors;
 }
 
 static void layerCopy_propInt(const void *source, void *dest,
@@ -489,11 +516,7 @@ static void layerInterp_origspace_face(
 		}
 	}
 
-	/* delay writing to the destination incase dest is in sources */
-
-#if 0 /* no need, this ONLY contains UV's */
-	*osf = *(OrigSpaceFace *)(*sources);
-#endif
+	/* delay writing to the destination in case dest is in sources */
 	memcpy(osf->uv, uv, sizeof(osf->uv));
 }
 
@@ -929,6 +952,23 @@ static void layerInterp_mloopuv(
 	((MLoopUV *)dest)->flag = flag;
 }
 
+static bool layerValidate_mloopuv(void *data, const uint totitems, const bool do_fixes)
+{
+	MLoopUV *uv = data;
+	bool has_errors = false;
+
+	for (int i = 0; i < totitems; i++, uv++) {
+		if (!is_finite_v2(uv->uv)) {
+			if (do_fixes) {
+				zero_v2(uv->uv);
+			}
+			has_errors = true;
+		}
+	}
+
+	return has_errors;
+}
+
 /* origspace is almost exact copy of mloopuv's, keep in sync */
 static void layerCopyValue_mloop_origspace(const void *source, void *dest,
                                            const int UNUSED(mixmode), const float UNUSED(mixfactor))
@@ -1190,6 +1230,15 @@ static void layerSwap_flnor(void *data, const int *corner_indices)
 	memcpy(flnors, nors, sizeof(nors));
 }
 
+static void layerDefault_fmap(void *data, int count)
+{
+	int *fmap_num = (int *)data;
+	int i;
+	for (i = 0; i < count; i++) {
+		*fmap_num = -1;
+	}
+}
+
 static const LayerTypeInfo LAYERTYPEINFO[CD_NUMTYPES] = {
 	/* 0: CD_MVERT */
 	{sizeof(MVert), "MVert", 1, NULL, NULL, NULL, NULL, NULL, NULL},
@@ -1204,21 +1253,22 @@ static const LayerTypeInfo LAYERTYPEINFO[CD_NUMTYPES] = {
 	{sizeof(MFace), "MFace", 1, NULL, NULL, NULL, NULL, NULL, NULL},
 	/* 5: CD_MTFACE */
 	{sizeof(MTFace), "MTFace", 1, N_("UVMap"), layerCopy_tface, NULL, layerInterp_tface, layerSwap_tface,
-	 layerDefault_tface, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, layerMaxNum_tface},
+	 layerDefault_tface, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, layerMaxNum_tface},
 	/* 6: CD_MCOL */
 	/* 4 MCol structs per face */
-	{sizeof(MCol) * 4, "MCol", 4, N_("Col"), NULL, NULL, layerInterp_mcol,
-	 layerSwap_mcol, layerDefault_mcol, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, layerMaxNum_mloopcol},
+	{sizeof(MCol) * 4, "MCol", 4, N_("Col"), NULL, NULL, layerInterp_mcol, layerSwap_mcol,
+	 layerDefault_mcol, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, layerMaxNum_mloopcol},
 	/* 7: CD_ORIGINDEX */
 	{sizeof(int), "", 0, NULL, NULL, NULL, NULL, NULL, layerDefault_origindex},
 	/* 8: CD_NORMAL */
 	/* 3 floats per normal vector */
 	{sizeof(float) * 3, "vec3f", 1, NULL, NULL, NULL, layerInterp_normal, NULL, NULL,
-	 NULL, NULL, NULL, NULL, NULL, layerCopyValue_normal},
-	/* 9: CD_POLYINDEX */  /* DEPRECATED */
-	{sizeof(int), "", 0, NULL, NULL, NULL, NULL, NULL, NULL},
+	 layerValidate_normal, NULL, NULL, NULL, NULL, NULL, layerCopyValue_normal},
+	/* 9: CD_FACEMAP */
+	{sizeof(int), "", 0, NULL, NULL, NULL, NULL, NULL, layerDefault_fmap, NULL},
 	/* 10: CD_PROP_FLT */
-	{sizeof(MFloatProperty), "MFloatProperty", 1, N_("Float"), layerCopy_propFloat, NULL, NULL, NULL},
+	{sizeof(MFloatProperty), "MFloatProperty", 1, N_("Float"), layerCopy_propFloat, NULL, NULL, NULL, NULL,
+	 layerValidate_propFloat},
 	/* 11: CD_PROP_INT */
 	{sizeof(MIntProperty), "MIntProperty", 1, N_("Int"), layerCopy_propInt, NULL, NULL, NULL},
 	/* 12: CD_PROP_STR */
@@ -1228,24 +1278,23 @@ static const LayerTypeInfo LAYERTYPEINFO[CD_NUMTYPES] = {
 	 layerInterp_origspace_face, layerSwap_origspace_face, layerDefault_origspace_face},
 	/* 14: CD_ORCO */
 	{sizeof(float) * 3, "", 0, NULL, NULL, NULL, NULL, NULL, NULL},
-	/* 15: CD_MTEXPOLY */
+	/* 15: CD_MTEXPOLY */  /* DEPRECATED */
 	/* note, when we expose the UV Map / TexFace split to the user, change this back to face Texture */
-	{sizeof(MTexPoly), "MTexPoly", 1, N_("UVMap") /* "Face Texture" */, NULL, NULL, NULL, NULL, NULL,
-	 NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, layerMaxNum_tface},
+	{sizeof(int), "", 0, NULL, NULL, NULL, NULL, NULL, NULL},
 	/* 16: CD_MLOOPUV */
 	{sizeof(MLoopUV), "MLoopUV", 1, N_("UVMap"), NULL, NULL, layerInterp_mloopuv, NULL, NULL,
-	 layerEqual_mloopuv, layerMultiply_mloopuv, layerInitMinMax_mloopuv,
+	 layerValidate_mloopuv, layerEqual_mloopuv, layerMultiply_mloopuv, layerInitMinMax_mloopuv,
 	 layerAdd_mloopuv, layerDoMinMax_mloopuv, layerCopyValue_mloopuv, NULL, NULL, NULL, layerMaxNum_tface},
 	/* 17: CD_MLOOPCOL */
 	{sizeof(MLoopCol), "MLoopCol", 1, N_("Col"), NULL, NULL, layerInterp_mloopcol, NULL,
-	 layerDefault_mloopcol, layerEqual_mloopcol, layerMultiply_mloopcol, layerInitMinMax_mloopcol,
+	 layerDefault_mloopcol, NULL, layerEqual_mloopcol, layerMultiply_mloopcol, layerInitMinMax_mloopcol,
 	 layerAdd_mloopcol, layerDoMinMax_mloopcol, layerCopyValue_mloopcol, NULL, NULL, NULL, layerMaxNum_mloopcol},
 	/* 18: CD_TANGENT */
 	{sizeof(float) * 4 * 4, "", 0, N_("Tangent"), NULL, NULL, NULL, NULL, NULL},
 	/* 19: CD_MDISPS */
 	{sizeof(MDisps), "MDisps", 1, NULL, layerCopy_mdisps,
 	 layerFree_mdisps, NULL, layerSwap_mdisps, NULL,
-	 NULL, NULL, NULL, NULL, NULL, NULL,
+	 NULL, NULL, NULL, NULL, NULL, NULL, NULL,
 	 layerRead_mdisps, layerWrite_mdisps, layerFilesize_mdisps},
 	/* 20: CD_PREVIEW_MCOL */
 	{sizeof(MCol) * 4, "MCol", 4, N_("PreviewCol"), NULL, NULL, layerInterp_mcol,
@@ -1274,12 +1323,12 @@ static const LayerTypeInfo LAYERTYPEINFO[CD_NUMTYPES] = {
 	/* 30: CD_CREASE */
 	{sizeof(float), "", 0, N_("SubSurfCrease"), NULL, NULL, layerInterp_bweight},
 	/* 31: CD_ORIGSPACE_MLOOP */
-	{sizeof(OrigSpaceLoop), "OrigSpaceLoop", 1, N_("OS Loop"), NULL, NULL, layerInterp_mloop_origspace, NULL, NULL,
+	{sizeof(OrigSpaceLoop), "OrigSpaceLoop", 1, N_("OS Loop"), NULL, NULL, layerInterp_mloop_origspace, NULL, NULL, NULL,
 	 layerEqual_mloop_origspace, layerMultiply_mloop_origspace, layerInitMinMax_mloop_origspace,
 	 layerAdd_mloop_origspace, layerDoMinMax_mloop_origspace, layerCopyValue_mloop_origspace},
 	/* 32: CD_PREVIEW_MLOOPCOL */
 	{sizeof(MLoopCol), "MLoopCol", 1, N_("PreviewLoopCol"), NULL, NULL, layerInterp_mloopcol, NULL,
-	 layerDefault_mloopcol, layerEqual_mloopcol, layerMultiply_mloopcol, layerInitMinMax_mloopcol,
+	 layerDefault_mloopcol, NULL, layerEqual_mloopcol, layerMultiply_mloopcol, layerInitMinMax_mloopcol,
 	 layerAdd_mloopcol, layerDoMinMax_mloopcol, layerCopyValue_mloopcol},
 	/* 33: CD_BM_ELEM_PYPTR */
 	{sizeof(void *), "", 1, NULL, layerCopy_bmesh_elem_py_ptr,
@@ -1310,7 +1359,7 @@ static const LayerTypeInfo LAYERTYPEINFO[CD_NUMTYPES] = {
 
 static const char *LAYERTYPENAMES[CD_NUMTYPES] = {
 	/*   0-4 */ "CDMVert", "CDMSticky", "CDMDeformVert", "CDMEdge", "CDMFace",
-	/*   5-9 */ "CDMTFace", "CDMCol", "CDOrigIndex", "CDNormal", "CDFlags",
+	/*   5-9 */ "CDMTFace", "CDMCol", "CDOrigIndex", "CDNormal", "CDFaceMap",
 	/* 10-14 */ "CDMFloatProperty", "CDMIntProperty", "CDMStringProperty", "CDOrigSpace", "CDOrco",
 	/* 15-19 */ "CDMTexPoly", "CDMLoopUV", "CDMloopCol", "CDTangent", "CDMDisps",
 	/* 20-24 */ "CDPreviewMCol", "CDIDMCol", "CDTextureMCol", "CDClothOrco", "CDMRecast",
@@ -1325,41 +1374,41 @@ static const char *LAYERTYPENAMES[CD_NUMTYPES] = {
 
 
 const CustomDataMask CD_MASK_BAREMESH =
-    CD_MASK_MVERT | CD_MASK_MEDGE | CD_MASK_MLOOP | CD_MASK_MPOLY | CD_MASK_BWEIGHT;
+    CD_MASK_MVERT | CD_MASK_MEDGE | CD_MASK_MLOOP | CD_MASK_MPOLY | CD_MASK_BWEIGHT | CD_MASK_FACEMAP;
 const CustomDataMask CD_MASK_MESH =
     CD_MASK_MVERT | CD_MASK_MEDGE |
     CD_MASK_MDEFORMVERT |
     CD_MASK_PROP_FLT | CD_MASK_PROP_INT | CD_MASK_PROP_STR | CD_MASK_MDISPS |
     CD_MASK_MLOOPUV | CD_MASK_MLOOPCOL | CD_MASK_MPOLY | CD_MASK_MLOOP |
-    CD_MASK_MTEXPOLY | CD_MASK_RECAST | CD_MASK_PAINT_MASK |
+    CD_MASK_RECAST | CD_MASK_PAINT_MASK |
     CD_MASK_GRID_PAINT_MASK | CD_MASK_MVERT_SKIN | CD_MASK_FREESTYLE_EDGE | CD_MASK_FREESTYLE_FACE |
-    CD_MASK_CUSTOMLOOPNORMAL;
+    CD_MASK_CUSTOMLOOPNORMAL | CD_MASK_FACEMAP;
 const CustomDataMask CD_MASK_EDITMESH =
     CD_MASK_MDEFORMVERT | CD_MASK_MLOOPUV |
-    CD_MASK_MLOOPCOL | CD_MASK_MTEXPOLY | CD_MASK_SHAPE_KEYINDEX |
+    CD_MASK_MLOOPCOL | CD_MASK_SHAPE_KEYINDEX |
     CD_MASK_PROP_FLT | CD_MASK_PROP_INT | CD_MASK_PROP_STR |
     CD_MASK_MDISPS | CD_MASK_SHAPEKEY | CD_MASK_RECAST | CD_MASK_PAINT_MASK |
-    CD_MASK_GRID_PAINT_MASK | CD_MASK_MVERT_SKIN | CD_MASK_CUSTOMLOOPNORMAL;
+    CD_MASK_GRID_PAINT_MASK | CD_MASK_MVERT_SKIN | CD_MASK_CUSTOMLOOPNORMAL | CD_MASK_FACEMAP;
 const CustomDataMask CD_MASK_DERIVEDMESH =
     CD_MASK_MDEFORMVERT |
     CD_MASK_PROP_FLT | CD_MASK_PROP_INT | CD_MASK_CLOTH_ORCO |
-    CD_MASK_MLOOPUV | CD_MASK_MLOOPCOL | CD_MASK_MTEXPOLY | CD_MASK_PREVIEW_MLOOPCOL |
+    CD_MASK_MLOOPUV | CD_MASK_MLOOPCOL | CD_MASK_PREVIEW_MLOOPCOL |
     CD_MASK_PROP_STR | CD_MASK_ORIGSPACE | CD_MASK_ORIGSPACE_MLOOP | CD_MASK_ORCO | CD_MASK_TANGENT |
     CD_MASK_PREVIEW_MCOL | CD_MASK_SHAPEKEY | CD_MASK_RECAST |
     CD_MASK_ORIGINDEX | CD_MASK_MVERT_SKIN | CD_MASK_FREESTYLE_EDGE | CD_MASK_FREESTYLE_FACE |
-    CD_MASK_CUSTOMLOOPNORMAL;
+    CD_MASK_CUSTOMLOOPNORMAL | CD_MASK_FACEMAP;
 const CustomDataMask CD_MASK_BMESH =
-    CD_MASK_MLOOPUV | CD_MASK_MLOOPCOL | CD_MASK_MTEXPOLY |
+    CD_MASK_MLOOPUV | CD_MASK_MLOOPCOL |
     CD_MASK_MDEFORMVERT | CD_MASK_PROP_FLT | CD_MASK_PROP_INT |
     CD_MASK_PROP_STR | CD_MASK_SHAPEKEY | CD_MASK_SHAPE_KEYINDEX | CD_MASK_MDISPS |
     CD_MASK_CREASE | CD_MASK_BWEIGHT | CD_MASK_RECAST | CD_MASK_PAINT_MASK |
     CD_MASK_GRID_PAINT_MASK | CD_MASK_MVERT_SKIN | CD_MASK_FREESTYLE_EDGE | CD_MASK_FREESTYLE_FACE |
-    CD_MASK_CUSTOMLOOPNORMAL;
+    CD_MASK_CUSTOMLOOPNORMAL | CD_MASK_FACEMAP;
 /**
  * cover values copied by #BKE_mesh_loops_to_tessdata
  */
 const CustomDataMask CD_MASK_FACECORNERS =
-    CD_MASK_MTFACE | CD_MASK_MTEXPOLY | CD_MASK_MLOOPUV |
+    CD_MASK_MTFACE | CD_MASK_MLOOPUV |
     CD_MASK_MCOL | CD_MASK_MLOOPCOL |
     CD_MASK_PREVIEW_MCOL | CD_MASK_PREVIEW_MLOOPCOL |
     CD_MASK_ORIGSPACE | CD_MASK_ORIGSPACE_MLOOP |
@@ -1368,7 +1417,7 @@ const CustomDataMask CD_MASK_FACECORNERS =
 const CustomDataMask CD_MASK_EVERYTHING =
     CD_MASK_MVERT | CD_MASK_MDEFORMVERT | CD_MASK_MEDGE | CD_MASK_MFACE |
     CD_MASK_MTFACE | CD_MASK_MCOL | CD_MASK_ORIGINDEX | CD_MASK_NORMAL /* | CD_MASK_POLYINDEX */ | CD_MASK_PROP_FLT |
-    CD_MASK_PROP_INT | CD_MASK_PROP_STR | CD_MASK_ORIGSPACE | CD_MASK_ORCO | CD_MASK_MTEXPOLY | CD_MASK_MLOOPUV |
+    CD_MASK_PROP_INT | CD_MASK_PROP_STR | CD_MASK_ORIGSPACE | CD_MASK_ORCO | CD_MASK_MLOOPUV |
     CD_MASK_MLOOPCOL | CD_MASK_TANGENT | CD_MASK_MDISPS | CD_MASK_PREVIEW_MCOL | CD_MASK_CLOTH_ORCO | CD_MASK_RECAST |
     /* BMESH ONLY START */
     CD_MASK_MPOLY | CD_MASK_MLOOP | CD_MASK_SHAPE_KEYINDEX | CD_MASK_SHAPEKEY | CD_MASK_BWEIGHT | CD_MASK_CREASE |
@@ -1376,7 +1425,7 @@ const CustomDataMask CD_MASK_EVERYTHING =
     /* BMESH ONLY END */
     CD_MASK_PAINT_MASK | CD_MASK_GRID_PAINT_MASK | CD_MASK_MVERT_SKIN |
     CD_MASK_FREESTYLE_EDGE | CD_MASK_FREESTYLE_FACE |
-    CD_MASK_MLOOPTANGENT | CD_MASK_TESSLOOPNORMAL | CD_MASK_CUSTOMLOOPNORMAL;
+    CD_MASK_MLOOPTANGENT | CD_MASK_TESSLOOPNORMAL | CD_MASK_CUSTOMLOOPNORMAL | CD_MASK_FACEMAP;
 
 static const LayerTypeInfo *layerType_getInfo(int type)
 {
@@ -1407,8 +1456,9 @@ void customData_mask_layers__print(CustomDataMask mask)
 /********************* CustomData functions *********************/
 static void customData_update_offsets(CustomData *data);
 
-static CustomDataLayer *customData_add_layer__internal(CustomData *data, int type, int alloctype, void *layerdata,
-                                                       int totelem, const char *name);
+static CustomDataLayer *customData_add_layer__internal(
+        CustomData *data, int type, eCDAllocType alloctype, void *layerdata,
+        int totelem, const char *name);
 
 void CustomData_update_typemap(CustomData *data)
 {
@@ -1437,8 +1487,9 @@ static bool customdata_typemap_is_valid(const CustomData *data)
 }
 #endif
 
-bool CustomData_merge(const struct CustomData *source, struct CustomData *dest,
-                      CustomDataMask mask, int alloctype, int totelem)
+bool CustomData_merge(
+        const struct CustomData *source, struct CustomData *dest,
+        CustomDataMask mask, eCDAllocType alloctype, int totelem)
 {
 	/*const LayerTypeInfo *typeInfo;*/
 	CustomDataLayer *layer, *newlayer;
@@ -1520,8 +1571,9 @@ void CustomData_realloc(CustomData *data, int totelem)
 	}
 }
 
-void CustomData_copy(const struct CustomData *source, struct CustomData *dest,
-                     CustomDataMask mask, int alloctype, int totelem)
+void CustomData_copy(
+        const struct CustomData *source, struct CustomData *dest,
+        CustomDataMask mask, eCDAllocType alloctype, int totelem)
 {
 	CustomData_reset(dest);
 
@@ -1820,8 +1872,9 @@ static int customData_resize(CustomData *data, int amount)
 	return 1;
 }
 
-static CustomDataLayer *customData_add_layer__internal(CustomData *data, int type, int alloctype, void *layerdata,
-                                                       int totelem, const char *name)
+static CustomDataLayer *customData_add_layer__internal(
+        CustomData *data, int type, eCDAllocType alloctype, void *layerdata,
+        int totelem, const char *name)
 {
 	const LayerTypeInfo *typeInfo = layerType_getInfo(type);
 	int flag = 0, index = data->totlayer;
@@ -1883,7 +1936,14 @@ static CustomDataLayer *customData_add_layer__internal(CustomData *data, int typ
 	data->layers[index].flag = flag;
 	data->layers[index].data = newlayerdata;
 
-	if (name || (name = DATA_(typeInfo->defaultname))) {
+	/* Set default name if none exists. Note we only call DATA_()  once
+	 * we know there is a default name, to avoid overhead of locale lookups
+	 * in the depsgraph. */
+	if (!name && typeInfo->defaultname) {
+		name = DATA_(typeInfo->defaultname);
+	}
+
+	if (name) {
 		BLI_strncpy(data->layers[index].name, name, sizeof(data->layers[index].name));
 		CustomData_set_layer_unique_name(data, index);
 	}
@@ -1908,8 +1968,9 @@ static CustomDataLayer *customData_add_layer__internal(CustomData *data, int typ
 	return &data->layers[index];
 }
 
-void *CustomData_add_layer(CustomData *data, int type, int alloctype,
-                           void *layerdata, int totelem)
+void *CustomData_add_layer(
+        CustomData *data, int type, eCDAllocType alloctype,
+        void *layerdata, int totelem)
 {
 	CustomDataLayer *layer;
 	const LayerTypeInfo *typeInfo = layerType_getInfo(type);
@@ -1925,8 +1986,9 @@ void *CustomData_add_layer(CustomData *data, int type, int alloctype,
 }
 
 /*same as above but accepts a name*/
-void *CustomData_add_layer_named(CustomData *data, int type, int alloctype,
-                                 void *layerdata, int totelem, const char *name)
+void *CustomData_add_layer_named(
+        CustomData *data, int type, eCDAllocType alloctype,
+        void *layerdata, int totelem, const char *name)
 {
 	CustomDataLayer *layer;
 
@@ -2243,6 +2305,27 @@ void CustomData_copy_data(const CustomData *source, CustomData *dest,
 	}
 }
 
+void CustomData_copy_layer_type_data(const CustomData *source,
+                                     CustomData *destination,
+                                     int type,
+                                     int source_index, int destination_index,
+                                     int count)
+{
+	const int source_layer_index = CustomData_get_layer_index(source, type);
+	if (source_layer_index == -1) {
+		return;
+	}
+	const int destinaiton_layer_index =
+	        CustomData_get_layer_index(destination, type);
+	if (destinaiton_layer_index == -1) {
+		return;
+	}
+	CustomData_copy_data_layer(source, destination,
+	                           source_layer_index, destinaiton_layer_index,
+	                           source_index, destination_index,
+	                           count);
+}
+
 void CustomData_free_elem(CustomData *data, int index, int count)
 {
 	int i;
@@ -2501,13 +2584,10 @@ void CustomData_set(const CustomData *data, int index, int type, const void *sou
 
 /* BMesh functions */
 /* needed to convert to/from different face reps */
-void CustomData_to_bmeshpoly(CustomData *fdata, CustomData *pdata, CustomData *ldata,
-                             int totloop, int totpoly)
+void CustomData_to_bmeshpoly(CustomData *fdata, CustomData *ldata, int totloop)
 {
-	int i;
-	for (i = 0; i < fdata->totlayer; i++) {
+	for (int i = 0; i < fdata->totlayer; i++) {
 		if (fdata->layers[i].type == CD_MTFACE) {
-			CustomData_add_layer_named(pdata, CD_MTEXPOLY, CD_CALLOC, NULL, totpoly, fdata->layers[i].name);
 			CustomData_add_layer_named(ldata, CD_MLOOPUV, CD_CALLOC, NULL, totloop, fdata->layers[i].name);
 		}
 		else if (fdata->layers[i].type == CD_MCOL) {
@@ -2522,19 +2602,18 @@ void CustomData_to_bmeshpoly(CustomData *fdata, CustomData *pdata, CustomData *l
 	}
 }
 
-void CustomData_from_bmeshpoly(CustomData *fdata, CustomData *pdata, CustomData *ldata, int total)
+void CustomData_from_bmeshpoly(
+        CustomData *fdata, CustomData *ldata, int total)
 {
 	int i;
 
 	/* avoid accumulating extra layers */
-	BLI_assert(!CustomData_from_bmeshpoly_test(fdata, pdata, ldata, false));
+	BLI_assert(!CustomData_from_bmeshpoly_test(fdata, ldata, false));
 
-	for (i = 0; i < pdata->totlayer; i++) {
-		if (pdata->layers[i].type == CD_MTEXPOLY) {
-			CustomData_add_layer_named(fdata, CD_MTFACE, CD_CALLOC, NULL, total, pdata->layers[i].name);
-		}
-	}
 	for (i = 0; i < ldata->totlayer; i++) {
+		if (ldata->layers[i].type == CD_MLOOPUV) {
+			CustomData_add_layer_named(fdata, CD_MTFACE, CD_CALLOC, NULL, total, ldata->layers[i].name);
+		}
 		if (ldata->layers[i].type == CD_MLOOPCOL) {
 			CustomData_add_layer_named(fdata, CD_MCOL, CD_CALLOC, NULL, total, ldata->layers[i].name);
 		}
@@ -2552,7 +2631,7 @@ void CustomData_from_bmeshpoly(CustomData *fdata, CustomData *pdata, CustomData 
 		}
 	}
 
-	CustomData_bmesh_update_active_layers(fdata, pdata, ldata);
+	CustomData_bmesh_update_active_layers(fdata, ldata);
 }
 
 #ifndef NDEBUG
@@ -2562,13 +2641,13 @@ void CustomData_from_bmeshpoly(CustomData *fdata, CustomData *pdata, CustomData 
  * \param fallback: Use when there are no layers to handle,
  * since callers may expect success or failure.
  */
-bool CustomData_from_bmeshpoly_test(CustomData *fdata, CustomData *pdata, CustomData *ldata, bool fallback)
+bool CustomData_from_bmeshpoly_test(CustomData *fdata, CustomData *ldata, bool fallback)
 {
 	int a_num = 0, b_num = 0;
 #define LAYER_CMP(l_a, t_a, l_b, t_b) \
 	((a_num += CustomData_number_of_layers(l_a, t_a)) == (b_num += CustomData_number_of_layers(l_b, t_b)))
 
-	if (!LAYER_CMP(pdata, CD_MTEXPOLY, fdata, CD_MTFACE))
+	if (!LAYER_CMP(ldata, CD_MLOOPUV, fdata, CD_MTFACE))
 		return false;
 	if (!LAYER_CMP(ldata, CD_MLOOPCOL, fdata, CD_MCOL))
 		return false;
@@ -2590,25 +2669,21 @@ bool CustomData_from_bmeshpoly_test(CustomData *fdata, CustomData *pdata, Custom
 #endif
 
 
-void CustomData_bmesh_update_active_layers(CustomData *fdata, CustomData *pdata, CustomData *ldata)
+void CustomData_bmesh_update_active_layers(CustomData *fdata, CustomData *ldata)
 {
 	int act;
 
-	if (CustomData_has_layer(pdata, CD_MTEXPOLY)) {
-		act = CustomData_get_active_layer(pdata, CD_MTEXPOLY);
-		CustomData_set_layer_active(ldata, CD_MLOOPUV, act);
+	if (CustomData_has_layer(ldata, CD_MLOOPUV)) {
+		act = CustomData_get_active_layer(ldata, CD_MLOOPUV);
 		CustomData_set_layer_active(fdata, CD_MTFACE, act);
 
-		act = CustomData_get_render_layer(pdata, CD_MTEXPOLY);
-		CustomData_set_layer_render(ldata, CD_MLOOPUV, act);
+		act = CustomData_get_render_layer(ldata, CD_MLOOPUV);
 		CustomData_set_layer_render(fdata, CD_MTFACE, act);
 
-		act = CustomData_get_clone_layer(pdata, CD_MTEXPOLY);
-		CustomData_set_layer_clone(ldata, CD_MLOOPUV, act);
+		act = CustomData_get_clone_layer(ldata, CD_MLOOPUV);
 		CustomData_set_layer_clone(fdata, CD_MTFACE, act);
 
-		act = CustomData_get_stencil_layer(pdata, CD_MTEXPOLY);
-		CustomData_set_layer_stencil(ldata, CD_MLOOPUV, act);
+		act = CustomData_get_stencil_layer(ldata, CD_MLOOPUV);
 		CustomData_set_layer_stencil(fdata, CD_MTFACE, act);
 	}
 
@@ -2632,25 +2707,21 @@ void CustomData_bmesh_update_active_layers(CustomData *fdata, CustomData *pdata,
  * used by do_versions in readfile.c when creating pdata and ldata for pre-bmesh
  * meshes and needed to preserve active/render/clone/stencil flags set in pre-bmesh files
  */
-void CustomData_bmesh_do_versions_update_active_layers(CustomData *fdata, CustomData *pdata, CustomData *ldata)
+void CustomData_bmesh_do_versions_update_active_layers(CustomData *fdata, CustomData *ldata)
 {
 	int act;
 
 	if (CustomData_has_layer(fdata, CD_MTFACE)) {
 		act = CustomData_get_active_layer(fdata, CD_MTFACE);
-		CustomData_set_layer_active(pdata, CD_MTEXPOLY, act);
 		CustomData_set_layer_active(ldata, CD_MLOOPUV, act);
 
 		act = CustomData_get_render_layer(fdata, CD_MTFACE);
-		CustomData_set_layer_render(pdata, CD_MTEXPOLY, act);
 		CustomData_set_layer_render(ldata, CD_MLOOPUV, act);
 
 		act = CustomData_get_clone_layer(fdata, CD_MTFACE);
-		CustomData_set_layer_clone(pdata, CD_MTEXPOLY, act);
 		CustomData_set_layer_clone(ldata, CD_MLOOPUV, act);
 
 		act = CustomData_get_stencil_layer(fdata, CD_MTFACE);
-		CustomData_set_layer_stencil(pdata, CD_MTEXPOLY, act);
 		CustomData_set_layer_stencil(ldata, CD_MLOOPUV, act);
 	}
 
@@ -2695,7 +2766,7 @@ void CustomData_bmesh_init_pool(CustomData *data, int totelem, const char htype)
 
 bool CustomData_bmesh_merge(
         const CustomData *source, CustomData *dest,
-        CustomDataMask mask, int alloctype, BMesh *bm, const char htype)
+        CustomDataMask mask, eCDAllocType alloctype, BMesh *bm, const char htype)
 {
 	BMHeader *h;
 	BMIter iter;
@@ -3438,11 +3509,17 @@ void CustomData_set_layer_unique_name(CustomData *data, int index)
 	data_arg.type = nlayer->type;
 	data_arg.index = index;
 
-	if (!typeInfo->defaultname)
+	if (!typeInfo->defaultname) {
 		return;
+	}
 
-	BLI_uniquename_cb(customdata_unique_check, &data_arg, DATA_(typeInfo->defaultname), '.', nlayer->name,
-	                  sizeof(nlayer->name));
+	/* Set default name if none specified. Note we only call DATA_() when
+	 * needed to avoid overhead of locale lookups in the depsgraph. */
+	if (nlayer->name[0] == '\0') {
+		STRNCPY(nlayer->name, DATA_(typeInfo->defaultname));
+	}
+
+	BLI_uniquename_cb(customdata_unique_check, &data_arg, NULL, '.', nlayer->name, sizeof(nlayer->name));
 }
 
 void CustomData_validate_layer_name(const CustomData *data, int type, const char *name, char *outname)
@@ -3492,6 +3569,22 @@ bool CustomData_verify_versions(struct CustomData *data, int index)
 	}
 
 	return keeplayer;
+}
+
+/**
+ * Validate and fix data of \a layer, if possible (needs relevant callback in layer's type to be defined).
+ *
+ * \return True if some errors were found.
+ */
+bool CustomData_layer_validate(CustomDataLayer *layer, const uint totitems, const bool do_fixes)
+{
+	const LayerTypeInfo *typeInfo = layerType_getInfo(layer->type);
+
+	if (typeInfo->validate != NULL) {
+		return typeInfo->validate(layer->data, totitems, do_fixes);
+	}
+
+	return false;
 }
 
 /****************************** External Files *******************************/
@@ -3741,19 +3834,6 @@ void CustomData_external_remove(CustomData *data, ID *id, int type, int totelem)
 			CustomData_external_read(data, id, CD_TYPE_AS_MASK(layer->type), totelem);
 
 		layer->flag &= ~CD_FLAG_EXTERNAL;
-
-#if 0
-		remove_file = 1;
-		for (i = 0; i < data->totlayer; i++)
-			if (data->layers[i].flag & CD_FLAG_EXTERNAL)
-				remove_file = 0;
-
-		if (remove_file) {
-			customdata_external_filename(filename, id, external);
-			cdf_remove(filename);
-			CustomData_external_free(data);
-		}
-#endif
 	}
 }
 
@@ -3768,21 +3848,6 @@ bool CustomData_external_test(CustomData *data, int type)
 	layer = &data->layers[layer_index];
 	return (layer->flag & CD_FLAG_EXTERNAL) != 0;
 }
-
-#if 0
-void CustomData_external_remove_object(CustomData *data, ID *id)
-{
-	CustomDataExternal *external = data->external;
-	char filename[FILE_MAX];
-
-	if (!external)
-		return;
-
-	customdata_external_filename(filename, id, external);
-	cdf_remove(filename);
-	CustomData_external_free(data);
-}
-#endif
 
 /* ********** Mesh-to-mesh data transfer ********** */
 static void copy_bit_flag(void *dst, const void *src, const size_t data_size, const uint64_t flag)

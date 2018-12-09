@@ -33,9 +33,10 @@
 #include "BLI_math_color.h"
 
 #include "BKE_context.h"
-#include "BKE_depsgraph.h"
 #include "BKE_mesh.h"
 #include "BKE_deform.h"
+
+#include "DEG_depsgraph.h"
 
 #include "RNA_access.h"
 #include "RNA_define.h"
@@ -97,7 +98,7 @@ static bool vertex_color_set(Object *ob, uint paintcol)
 	/* remove stale me->mcol, will be added later */
 	BKE_mesh_tessface_clear(me);
 
-	DAG_id_tag_update(&me->id, 0);
+	DEG_id_tag_update(&me->id, 0);
 
 	return true;
 }
@@ -106,7 +107,7 @@ static int vertex_color_set_exec(bContext *C, wmOperator *UNUSED(op))
 {
 	Scene *scene = CTX_data_scene(C);
 	Object *obact = CTX_data_active_object(C);
-	unsigned int paintcol = vpaint_get_current_col(scene, scene->toolsettings->vpaint);
+	unsigned int paintcol = vpaint_get_current_col(scene, scene->toolsettings->vpaint, false);
 
 	if (vertex_color_set(obact, paintcol)) {
 		WM_event_add_notifier(C, NC_OBJECT | ND_DRAW, obact);
@@ -151,6 +152,7 @@ static bool vertex_paint_from_weight(Object *ob)
 	}
 
 	/* TODO: respect selection. */
+	/* TODO: Do we want to take weights from evaluated mesh instead? 2.7x was not doing it anyway... */
 	mp = me->mpoly;
 	vgroup_active = ob->actdef - 1;
 	for (int i = 0; i < me->totpoly; i++, mp++) {
@@ -168,7 +170,7 @@ static bool vertex_paint_from_weight(Object *ob)
 		} while (j < mp->totloop);
 	}
 
-	DAG_id_tag_update(&ob->id, OB_RECALC_DATA);
+	DEG_id_tag_update(&ob->id, OB_RECALC_DATA);
 
 	return true;
 }
@@ -304,7 +306,7 @@ static bool vertex_color_smooth(Object *ob)
 
 	MEM_freeN(mlooptag);
 
-	DAG_id_tag_update(&me->id, 0);
+	DEG_id_tag_update(&me->id, 0);
 
 	return true;
 }

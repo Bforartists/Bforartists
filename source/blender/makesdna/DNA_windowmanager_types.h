@@ -32,6 +32,7 @@
 #define __DNA_WINDOWMANAGER_TYPES_H__
 
 #include "DNA_listBase.h"
+#include "DNA_screen_types.h"
 #include "DNA_vec_types.h"
 #include "DNA_userdef_types.h"
 
@@ -41,6 +42,7 @@
 struct wmWindowManager;
 struct wmWindow;
 
+struct wmMsgBus;
 struct wmEvent;
 struct wmGesture;
 struct wmOperatorType;
@@ -116,8 +118,7 @@ typedef struct ReportList {
 #
 #
 typedef struct ReportTimerInfo {
-	float col[3];
-	float grayscale;
+	float col[4];
 	float widthfac;
 } ReportTimerInfo;
 
@@ -159,13 +160,18 @@ typedef struct wmWindowManager {
 
 	char is_interface_locked;		/* indicates whether interface is locked for user interaction */
 	char par[7];
+
+	struct wmMsgBus *message_bus;
+
 } wmWindowManager;
 
 /* wmWindowManager.initialized */
 enum {
-	WM_INIT_WINDOW = (1<<0),
-	WM_INIT_KEYMAP = (1<<1),
+	WM_WINDOW_IS_INITIALIZED = (1<<0),
+	WM_KEYCONFIG_IS_INITIALIZED = (1<<1),
 };
+
+#define WM_KEYCONFIG_STR_DEFAULT "blender"
 
 /* IME is win32 only! */
 #ifndef WIN32
@@ -179,10 +185,21 @@ typedef struct wmWindow {
 	struct wmWindow *next, *prev;
 
 	void *ghostwin;             /* don't want to include ghost.h stuff */
+	void *gpuctx;               /* don't want to include gpu stuff */
 
-	struct bScreen *screen;     /* active screen */
-	struct bScreen *newscreen;  /* temporary when switching */
-	char screenname[64];        /* MAX_ID_NAME for matching window with active screen after file read */
+	struct wmWindow *parent;    /* Parent window */
+
+	struct Scene *scene;        /* Active scene displayed in this window. */
+	struct Scene *new_scene;    /* temporary when switching */
+	char view_layer_name[64];   /* Active view layer displayed in this window. */
+
+	struct WorkSpaceInstanceHook *workspace_hook;
+
+	/** Global areas aren't part of the screen, but part of the window directly.
+	 * \note Code assumes global areas with fixed height, fixed width not supported yet */
+	ScrAreaMap global_areas;
+
+	struct bScreen *screen DNA_DEPRECATED;
 
 	short posx, posy, sizex, sizey;  /* window coords */
 	short windowstate;  /* borderless, full */
@@ -193,8 +210,7 @@ typedef struct wmWindow {
 	short modalcursor;  /* the current modal cursor */
 	short grabcursor;           /* cursor grab mode */
 	short addmousemove; /* internal: tag this for extra mousemove event, makes cursors/buttons active on UI switching */
-	short multisamples; /* amount of samples for OpenGL FSA the ghost window was created with, if zero no FSA */
-	short pad[3];
+	short pad[4];
 
 	int winid;                  /* winid also in screens, is for retrieving this window after read */
 
@@ -204,28 +220,25 @@ typedef struct wmWindow {
 
 	struct wmEvent *eventstate;   /* storage for event system */
 
-	struct wmSubWindow *curswin;  /* internal for wm_subwindow.c only */
-
 	struct wmGesture *tweak;      /* internal for wm_operators.c */
 
 	/* Input Method Editor data - complex character input (esp. for asian character input)
 	 * Currently WIN32, runtime-only data */
 	struct wmIMEData *ime_data;
 
-	int drawmethod, drawfail;     /* internal for wm_draw.c only */
-	ListBase drawdata;            /* internal for wm_draw.c only */
-
 	ListBase queue;               /* all events (ghost level events were handled) */
 	ListBase handlers;            /* window+screen handlers, handled last */
 	ListBase modalhandlers;       /* priority handlers, handled first */
 
-	ListBase subwindows;          /* opengl stuff for sub windows, see notes in wm_subwindow.c */
 	ListBase gesture;             /* gesture stuff */
 
 	struct Stereo3dFormat *stereo3d_format; /* properties for stereoscopic displays */
 
 	/* custom drawing callbacks */
 	ListBase drawcalls;
+
+	/* Private runtime info to show text in the status bar. */
+	void *cursor_keymap_status;
 } wmWindow;
 
 #ifdef ime_data
@@ -311,6 +324,7 @@ typedef struct wmKeyMap {
 	char idname[64];  /* global editor keymaps, or for more per space/region */
 	short spaceid;    /* same IDs as in DNA_space_types.h */
 	short regionid;   /* see above */
+	char owner_id[64];  /* optional, see: #wmOwnerID */
 
 	short flag;       /* general flags */
 	short kmi_id;     /* last kmi id */
@@ -318,6 +332,8 @@ typedef struct wmKeyMap {
 	/* runtime */
 	/** Verify if enabled in the current context, use #WM_keymap_poll instead of direct calls. */
 	bool (*poll)(struct bContext *);
+	bool (*poll_modal_item)(const struct wmOperator *op, int value);
+
 	/** For modal, #EnumPropertyItem for now. */
 	const void *modal_items;
 } wmKeyMap;
@@ -331,7 +347,21 @@ enum {
 	KEYMAP_DIFF               = (1 << 4),  /* diff keymap for user preferences */
 	KEYMAP_USER_MODIFIED      = (1 << 5),  /* keymap has user modifications */
 	KEYMAP_UPDATE             = (1 << 6),
+	KEYMAP_TOOL               = (1 << 7),  /* keymap for active tool system */
 };
+
+/**
+ * This is similar to addon-preferences,
+ * however unlike add-ons key-config's aren't saved to disk.
+ *
+ * #wmKeyConfigPref is written to DNA,
+ * #wmKeyConfigPrefType_Runtime has the RNA type.
+ */
+typedef struct wmKeyConfigPref {
+	struct wmKeyConfigPref *next, *prev;
+	char idname[64];    /* unique name */
+	IDProperty *prop;
+} wmKeyConfigPref;
 
 typedef struct wmKeyConfig {
 	struct wmKeyConfig *next, *prev;
@@ -340,13 +370,15 @@ typedef struct wmKeyConfig {
 	char basename[64];  /* idname of configuration this is derives from, "" if none */
 
 	ListBase keymaps;
-	int actkeymap, flag;
+	int actkeymap;
+	short flag;
+	char _pad0[2];
 } wmKeyConfig;
 
 /* wmKeyConfig.flag */
 enum {
 	KEYCONF_USER          = (1 << 1),  /* And what about (1 << 0)? */
-	KEYCONF_INIT_DEFAULT  = (1 << 2),
+	KEYCONF_INIT_DEFAULT  = (1 << 2),  /* Has default keymap been initialized? */
 };
 
 /* this one is the operator itself, stored in files for macros etc */
@@ -370,7 +402,6 @@ typedef struct wmOperator {
 	struct wmOperator *opm;       /* current running macro, not saved */
 	struct uiLayout *layout;      /* runtime for drawing */
 	short flag, pad[3];
-
 } wmOperator;
 
 /* operator type return flags: exec(), invoke() modal(), return values */

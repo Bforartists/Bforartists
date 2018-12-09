@@ -35,6 +35,7 @@
 struct ImBuf;
 struct Render;
 struct Mesh;
+struct Depsgraph;
 
 typedef struct BakeImage {
 	struct Image *image;
@@ -71,14 +72,11 @@ typedef struct BakeHighPolyData {
 bool RE_bake_has_engine(struct Render *re);
 
 bool RE_bake_engine(
-        struct Render *re, struct Object *object, const int object_id, const BakePixel pixel_array[],
+        struct Render *re, struct Depsgraph *depsgraph, struct Object *object, const int object_id, const BakePixel pixel_array[],
         const size_t num_pixels, const int depth, const eScenePassType pass_type, const int pass_filter, float result[]);
 
 /* bake.c */
 int RE_pass_depth(const eScenePassType pass_type);
-bool RE_bake_internal(
-        struct Render *re, struct Object *object, const BakePixel pixel_array[],
-        const size_t num_pixels, const int depth, const eScenePassType pass_type, float result[]);
 
 bool RE_bake_pixels_populate_from_objects(
         struct Mesh *me_low, BakePixel pixel_array_from[], BakePixel pixel_array_to[],

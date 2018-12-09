@@ -52,20 +52,25 @@ struct PreviewImage;
  */
 
 typedef enum GPUDataSource {
-	GPU_SOURCE_VEC_UNIFORM,
+	GPU_SOURCE_OUTPUT,
+	GPU_SOURCE_CONSTANT,
+	GPU_SOURCE_UNIFORM,
+	GPU_SOURCE_ATTRIB,
 	GPU_SOURCE_BUILTIN,
-	GPU_SOURCE_OPENGL_BUILTIN,
-	GPU_SOURCE_TEX_PIXEL,
+	GPU_SOURCE_STRUCT,
 	GPU_SOURCE_TEX,
-	GPU_SOURCE_ATTRIB
 } GPUDataSource;
 
 typedef enum {
-	GPU_NODE_LINK_IMAGE_NONE = 0,
-	GPU_NODE_LINK_IMAGE_BLENDER = 1,
-	GPU_NODE_LINK_IMAGE_PREVIEW = 2,
-	GPU_NODE_LINK_IMAGE_CUBE_MAP = 3
-} GPUNodeLinkImage;
+	GPU_NODE_LINK_NONE = 0,
+	GPU_NODE_LINK_ATTRIB,
+	GPU_NODE_LINK_BUILTIN,
+	GPU_NODE_LINK_COLORBAND,
+	GPU_NODE_LINK_CONSTANT,
+	GPU_NODE_LINK_IMAGE_BLENDER,
+	GPU_NODE_LINK_OUTPUT,
+	GPU_NODE_LINK_UNIFORM,
+} GPUNodeLinkType;
 
 struct GPUNode {
 	struct GPUNode *next, *prev;
@@ -82,31 +87,30 @@ struct GPUNode {
 struct GPUNodeLink {
 	GPUNodeStack *socket;
 
-	CustomDataType attribtype;
-	const char *attribname;
+	GPUNodeLinkType link_type;
+	int users; /* Refcount */
 
-	GPUNodeLinkImage image;
-	bool image_isdata;
-
-	bool texture;
-	int texturesize;
-
-	void *ptr1, *ptr2;
-
-	bool dynamic;
-	GPUDynamicType dynamictype;
-
-	GPUType type;
-
-	/* Refcount */
-	int users;
-
-	struct GPUTexture *dynamictex;
-
-	GPUBuiltin builtin;
-	GPUOpenGLBuiltin oglbuiltin;
-
-	struct GPUOutput *output;
+	union {
+		/* GPU_NODE_LINK_CONSTANT | GPU_NODE_LINK_UNIFORM */
+		float *data;
+		/* GPU_NODE_LINK_BUILTIN */
+		GPUBuiltin builtin;
+		/* GPU_NODE_LINK_COLORBAND */
+		struct GPUTexture **coba;
+		/* GPU_NODE_LINK_OUTPUT */
+		struct GPUOutput *output;
+		/* GPU_NODE_LINK_ATTRIB */
+		struct {
+			const char *attribname;
+			CustomDataType attribtype;
+		};
+		/* GPU_NODE_LINK_IMAGE_BLENDER */
+		struct {
+			struct Image *ima;
+			struct ImageUser *iuser;
+			bool image_isdata;
+		};
+	};
 };
 
 typedef struct GPUOutput {
@@ -122,68 +126,74 @@ typedef struct GPUInput {
 	struct GPUInput *next, *prev;
 
 	GPUNode *node;
-
 	GPUType type;                /* datatype */
+	GPUNodeLink *link;
+	int id;                      /* unique id as created by code generator */
+
 	GPUDataSource source;        /* data source */
 
-	int id;                      /* unique id as created by code generator */
-	int texid;                   /* number for multitexture, starting from zero */
-	int attribid;                /* id for vertex attributes */
-	bool bindtex;                /* input is responsible for binding the texture? */
-	bool definetex;              /* input is responsible for defining the pixel? */
-	int textarget;               /* GL texture target, e.g. GL_TEXTURE_2D */
-	GPUType textype;             /* datatype */
-
-	struct Image *ima;           /* image */
-	struct ImageUser *iuser;     /* image user */
-	struct PreviewImage *prv;    /* preview images & icons */
-	bool image_isdata;           /* image does not contain color data */
-	float *dynamicvec;           /* vector data in case it is dynamic */
-	GPUDynamicType dynamictype;  /* origin of the dynamic uniform */
-	void *dynamicdata;           /* data source of the dynamic uniform */
-	struct GPUTexture *tex;      /* input texture, only set at runtime */
 	int shaderloc;               /* id from opengl */
 	char shadername[32];         /* name in shader */
 
-	float vec[16];               /* vector data */
-	GPUNodeLink *link;
-	bool dynamictex;             /* dynamic? */
-	CustomDataType attribtype;   /* attribute type */
-	char attribname[MAX_CUSTOMDATA_LAYER_NAME]; /* attribute name */
-	int attribfirst;             /* this is the first one that is bound */
-	GPUBuiltin builtin;          /* builtin uniform */
-	GPUOpenGLBuiltin oglbuiltin; /* opengl built in varying */
+	/* Content based on GPUDataSource */
+	union {
+		/* GPU_SOURCE_CONSTANT | GPU_SOURCE_UNIFORM */
+		float vec[16];                   /* vector data */
+		/* GPU_SOURCE_BUILTIN */
+		GPUBuiltin builtin;              /* builtin uniform */
+		/* GPU_SOURCE_TEX */
+		struct {
+			struct GPUTexture **coba;    /* input texture, only set at runtime */
+			struct Image *ima;           /* image */
+			struct ImageUser *iuser;     /* image user */
+			bool image_isdata;           /* image does not contain color data */
+			bool bindtex;                /* input is responsible for binding the texture? */
+			int texid;                   /* number for multitexture, starting from zero */
+			GPUType textype;             /* texture type (2D, 1D Array ...) */
+		};
+		/* GPU_SOURCE_ATTRIB */
+		struct {
+			char attribname[MAX_CUSTOMDATA_LAYER_NAME]; /* attribute name */
+			int attribid;                /* id for vertex attributes */
+			bool attribfirst;            /* this is the first one that is bound */
+			CustomDataType attribtype;   /* attribute type */
+		};
+	};
 } GPUInput;
 
 struct GPUPass {
-	struct GPUPass *next, *prev;
+	struct GPUPass *next;
 
-	ListBase inputs;
-	struct GPUOutput *output;
 	struct GPUShader *shader;
 	char *fragmentcode;
 	char *geometrycode;
 	char *vertexcode;
-	const char *libcode;
+	char *defines;
+	uint refcount;               /* Orphaned GPUPasses gets freed by the garbage collector. */
+	uint32_t hash;               /* Identity hash generated from all GLSL code. */
+	bool compiled;               /* Did we already tried to compile the attached GPUShader. */
 };
-
 
 typedef struct GPUPass GPUPass;
 
-GPUPass *GPU_generate_pass(ListBase *nodes, struct GPUNodeLink *outlink,
-                           struct GPUVertexAttribs *attribs, int *builtin,
-                           const GPUMatType type, const char *name,
-                           const bool use_opensubdiv,
-                           const bool use_new_shading);
+GPUPass *GPU_generate_pass(
+        GPUMaterial *material,
+        GPUNodeLink *frag_outlink, struct GPUVertexAttribs *attribs,
+        ListBase *nodes, int *builtins,
+        const char *vert_code, const char *geom_code,
+        const char *frag_lib, const char *defines);
 
-struct GPUShader *GPU_pass_shader(GPUPass *pass);
+struct GPUShader *GPU_pass_shader_get(GPUPass *pass);
 
-void GPU_pass_bind(GPUPass *pass, double time, int mipmap);
-void GPU_pass_update_uniforms(GPUPass *pass);
-void GPU_pass_unbind(GPUPass *pass);
+void GPU_nodes_extract_dynamic_inputs(struct GPUShader *shader, ListBase *inputs, ListBase *nodes);
+void GPU_nodes_get_vertex_attributes(ListBase *nodes, struct GPUVertexAttribs *attribs);
+void GPU_nodes_prune(ListBase *nodes, struct GPUNodeLink *outlink);
 
-void GPU_pass_free(GPUPass *pass);
+void GPU_pass_compile(GPUPass *pass, const char *shname);
+void GPU_pass_release(GPUPass *pass);
 void GPU_pass_free_nodes(ListBase *nodes);
+
+void GPU_inputs_free(ListBase *inputs);
 
 void gpu_codegen_init(void);
 void gpu_codegen_exit(void);
@@ -192,6 +202,6 @@ void gpu_codegen_exit(void);
 
 const char *GPU_builtin_name(GPUBuiltin builtin);
 void gpu_material_add_node(struct GPUMaterial *material, struct GPUNode *node);
-int GPU_link_changed(struct GPUNodeLink *link);
+struct GPUTexture **gpu_material_ramp_texture_row_set(GPUMaterial *mat, int size, float *pixels, float *row);
 
 #endif

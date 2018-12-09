@@ -84,7 +84,26 @@ BLI_INLINE double get_node_time(const DebugContext& /*ctx*/,
 
 bool stat_entry_comparator(const StatsEntry& a, const StatsEntry& b)
 {
-	return a.time < b.time;
+	return a.time > b.time;
+}
+
+string gnuplotify_id_code(const string& name)
+{
+	return string("") + name[0] + name[1];
+}
+
+string gnuplotify_name(const string& name)
+{
+	string result = "";
+	const int length = name.length();
+	for (int i = 0; i < length; ++i) {
+		const char ch = name[i];
+		if (ch == '_') {
+			result += "\\\\\\";
+		}
+		result += ch;
+	}
+	return result;
 }
 
 void write_stats_data(const DebugContext& ctx)
@@ -106,12 +125,15 @@ void write_stats_data(const DebugContext& ctx)
 	std::sort(stats.begin(), stats.end(), stat_entry_comparator);
 	// We limit number of entries, otherwise things become unreadable.
 	stats.resize(min_ii(stats.size(), 32));
+	std::reverse(stats.begin(), stats.end());
 	// Print data to the file stream.
 	deg_debug_fprintf(ctx, "$data << EOD" NL);
 	foreach (const StatsEntry& entry, stats) {
-		deg_debug_fprintf(ctx, "\"%s\",%f" NL,
-		                  entry.id_node->id->name + 2,
-		                  entry.time);
+		deg_debug_fprintf(
+		        ctx, "\"[%s] %s\",%f" NL,
+		        gnuplotify_id_code(entry.id_node->id_orig->name).c_str(),
+		        gnuplotify_name(entry.id_node->id_orig->name + 2).c_str(),
+		        entry.time);
 	}
 	deg_debug_fprintf(ctx, "EOD" NL);
 }

@@ -81,7 +81,7 @@ def _parse_command_line():
         return
 
     parser = _configure_argument_parser()
-    args, unknown = parser.parse_known_args(argv[argv.index("--") + 1:])
+    args, _ = parser.parse_known_args(argv[argv.index("--") + 1:])
 
     if args.cycles_resumable_num_chunks is not None:
         if args.cycles_resumable_current_chunk is not None:
@@ -133,13 +133,12 @@ def exit():
     _cycles.exit()
 
 
-def create(engine, data, scene, region=None, v3d=None, rv3d=None, preview_osl=False):
-    import bpy
+def create(engine, data, region=None, v3d=None, rv3d=None, preview_osl=False):
     import _cycles
+    import bpy
 
     data = data.as_pointer()
     userpref = bpy.context.user_preferences.as_pointer()
-    scene = scene.as_pointer()
     if region:
         region = region.as_pointer()
     if v3d:
@@ -147,12 +146,8 @@ def create(engine, data, scene, region=None, v3d=None, rv3d=None, preview_osl=Fa
     if rv3d:
         rv3d = rv3d.as_pointer()
 
-    if bpy.app.debug_value == 256:
-        _cycles.debug_flags_update(scene)
-    else:
-        _cycles.debug_flags_reset()
-
-    engine.session = _cycles.create(engine.as_pointer(), userpref, data, scene, region, v3d, rv3d, preview_osl)
+    engine.session = _cycles.create(
+            engine.as_pointer(), userpref, data, region, v3d, rv3d, preview_osl)
 
 
 def free(engine):
@@ -163,38 +158,46 @@ def free(engine):
         del engine.session
 
 
-def render(engine):
+def render(engine, depsgraph):
     import _cycles
     if hasattr(engine, "session"):
-        _cycles.render(engine.session)
+        _cycles.render(engine.session, depsgraph.as_pointer())
 
 
-def bake(engine, obj, pass_type, pass_filter, object_id, pixel_array, num_pixels, depth, result):
+def bake(engine, depsgraph, obj, pass_type, pass_filter, object_id, pixel_array, num_pixels, depth, result):
     import _cycles
     session = getattr(engine, "session", None)
     if session is not None:
-        _cycles.bake(engine.session, obj.as_pointer(), pass_type, pass_filter, object_id, pixel_array.as_pointer(), num_pixels, depth, result.as_pointer())
+        _cycles.bake(engine.session, depsgraph.as_pointer(), obj.as_pointer(), pass_type, pass_filter, object_id, pixel_array.as_pointer(), num_pixels, depth, result.as_pointer())
 
 
-def reset(engine, data, scene):
+def reset(engine, data, depsgraph):
     import _cycles
+    import bpy
+
+    if bpy.app.debug_value == 256:
+        _cycles.debug_flags_update(depsgraph.scene.as_pointer())
+    else:
+        _cycles.debug_flags_reset()
+
     data = data.as_pointer()
-    scene = scene.as_pointer()
-    _cycles.reset(engine.session, data, scene)
+    depsgraph = depsgraph.as_pointer()
+    _cycles.reset(engine.session, data, depsgraph)
 
 
-def update(engine, data, scene):
+def sync(engine, depsgraph, data):
     import _cycles
-    _cycles.sync(engine.session)
+    _cycles.sync(engine.session, depsgraph.as_pointer())
 
 
-def draw(engine, region, v3d, rv3d):
+def draw(engine, depsgraph, region, v3d, rv3d):
     import _cycles
+    depsgraph = depsgraph.as_pointer()
     v3d = v3d.as_pointer()
     rv3d = rv3d.as_pointer()
 
     # draw render image
-    _cycles.draw(engine.session, v3d, rv3d)
+    _cycles.draw(engine.session, depsgraph, v3d, rv3d)
 
 
 def available_devices():
@@ -252,8 +255,6 @@ def register_passes(engine, scene, srl):
     if crl.pass_debug_ray_bounces:             engine.register_pass(scene, srl, "Debug Ray Bounces",             1, "X",   'VALUE')
     if crl.use_pass_volume_direct:             engine.register_pass(scene, srl, "VolumeDir",                     3, "RGB", 'COLOR')
     if crl.use_pass_volume_indirect:           engine.register_pass(scene, srl, "VolumeInd",                     3, "RGB", 'COLOR')
-
-    cscene = scene.cycles
 
     if crl.use_pass_crypto_object:
         for i in range(0, crl.pass_crypto_depth, 2):

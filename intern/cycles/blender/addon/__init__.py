@@ -19,7 +19,7 @@
 bl_info = {
     "name": "Cycles Render Engine",
     "author": "",
-    "blender": (2, 76, 0),
+    "blender": (2, 80, 0),
     "location": "Info header, render engine menu",
     "description": "Cycles Render Engine integration",
     "warning": "",
@@ -52,7 +52,7 @@ from . import (
 
 class CyclesRender(bpy.types.RenderEngine):
     bl_idname = 'CYCLES'
-    bl_label = "Cycles Render"
+    bl_label = "Cycles"
     bl_use_shading_nodes = True
     bl_use_preview = True
     bl_use_exclude_layers = True
@@ -66,34 +66,35 @@ class CyclesRender(bpy.types.RenderEngine):
         engine.free(self)
 
     # final render
-    def update(self, data, scene):
+    def update(self, data, depsgraph):
         if not self.session:
             if self.is_preview:
                 cscene = bpy.context.scene.cycles
                 use_osl = cscene.shading_system and cscene.device == 'CPU'
 
-                engine.create(self, data, scene,
-                              None, None, None, use_osl)
+                engine.create(self, data, preview_osl=use_osl)
             else:
-                engine.create(self, data, scene)
-        else:
-            engine.reset(self, data, scene)
+                engine.create(self, data)
 
-    def render(self, scene):
-        engine.render(self)
+        engine.reset(self, data, depsgraph)
 
-    def bake(self, scene, obj, pass_type, pass_filter, object_id, pixel_array, num_pixels, depth, result):
-        engine.bake(self, obj, pass_type, pass_filter, object_id, pixel_array, num_pixels, depth, result)
+    def render(self, depsgraph):
+        engine.render(self, depsgraph)
+
+    def bake(self, depsgraph, obj, pass_type, pass_filter, object_id, pixel_array, num_pixels, depth, result):
+        engine.bake(self, depsgraph, obj, pass_type, pass_filter, object_id, pixel_array, num_pixels, depth, result)
 
     # viewport render
     def view_update(self, context):
         if not self.session:
-            engine.create(self, context.blend_data, context.scene,
+            engine.create(self, context.blend_data,
                           context.region, context.space_data, context.region_data)
-        engine.update(self, context.blend_data, context.scene)
+
+        engine.reset(self, context.blend_data, context.depsgraph)
+        engine.sync(self, context.depsgraph, context.blend_data)
 
     def view_draw(self, context):
-        engine.draw(self, context.region, context.space_data, context.region_data)
+        engine.draw(self, context.depsgraph, context.region, context.space_data, context.region_data)
 
     def update_script_node(self, node):
         if engine.with_osl():

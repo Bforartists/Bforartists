@@ -34,11 +34,11 @@
 #include "DNA_object_types.h"
 #include "DNA_material_types.h"
 
-#include "BKE_depsgraph.h"
 #include "BKE_customdata.h"
-#include "BKE_DerivedMesh.h"
 #include "BKE_global.h"
 #include "BKE_library.h"
+
+#include "DEG_depsgraph.h"
 
 #include "bmesh.h"
 
@@ -903,10 +903,7 @@ static PyObject *bpy_bmesh_to_mesh(BPy_BMesh *self, PyObject *args)
 
 	bm = self->bm;
 
-	/* python won't ensure matching uv/mtex */
-	BM_mesh_cd_validate(bm);
-
-	BLI_assert(BKE_id_is_in_gobal_main(&me->id));
+	BLI_assert(BKE_id_is_in_global_main(&me->id));
 	BM_mesh_bm_to_me(
 	        G_MAIN,  /* XXX UGLY! */
 	        bm, me,
@@ -916,7 +913,7 @@ static PyObject *bpy_bmesh_to_mesh(BPy_BMesh *self, PyObject *args)
 
 	/* we could have the user do this but if they forget blender can easy crash
 	 * since the references arrays for the objects derived meshes are now invalid */
-	DAG_id_tag_update(&me->id, OB_RECALC_DATA);
+	DEG_id_tag_update(&me->id, OB_RECALC_DATA);
 
 	Py_RETURN_NONE;
 }
@@ -939,6 +936,8 @@ PyDoc_STRVAR(bpy_bmesh_from_object_doc,
 );
 static PyObject *bpy_bmesh_from_object(BPy_BMesh *self, PyObject *args, PyObject *kw)
 {
+	/* TODO: This doesn't work currently because of missing depsgraph. */
+#if 0
 	static const char *kwlist[] = {"object", "scene", "deform", "render", "cage", "face_normals", NULL};
 	PyObject *py_object;
 	PyObject *py_scene;
@@ -1031,6 +1030,10 @@ static PyObject *bpy_bmesh_from_object(BPy_BMesh *self, PyObject *args, PyObject
 	dm->release(dm);
 
 	Py_RETURN_NONE;
+#else
+	UNUSED_VARS(self, args, kw);
+#endif
+	return NULL;
 }
 
 
@@ -1243,15 +1246,15 @@ static PyObject *bpy_bmesh_calc_volume(BPy_BMElem *self, PyObject *args, PyObjec
 	}
 }
 
-PyDoc_STRVAR(bpy_bmesh_calc_tessface_doc,
-".. method:: calc_tessface()\n"
+PyDoc_STRVAR(bpy_bmesh_calc_loop_triangles_doc,
+".. method:: calc_loop_triangles()\n"
 "\n"
 "   Calculate triangle tessellation from quads/ngons.\n"
 "\n"
 "   :return: The triangulated faces.\n"
 "   :rtype: list of :class:`BMLoop` tuples\n"
 );
-static PyObject *bpy_bmesh_calc_tessface(BPy_BMElem *self)
+static PyObject *bpy_bmesh_calc_loop_triangles(BPy_BMElem *self)
 {
 	BMesh *bm;
 
@@ -2730,7 +2733,7 @@ static struct PyMethodDef bpy_bmesh_methods[] = {
 
 	/* calculations */
 	{"calc_volume", (PyCFunction)bpy_bmesh_calc_volume, METH_VARARGS | METH_KEYWORDS, bpy_bmesh_calc_volume_doc},
-	{"calc_tessface", (PyCFunction)bpy_bmesh_calc_tessface, METH_NOARGS, bpy_bmesh_calc_tessface_doc},
+	{"calc_loop_triangles", (PyCFunction)bpy_bmesh_calc_loop_triangles, METH_NOARGS, bpy_bmesh_calc_loop_triangles_doc},
 	{NULL, NULL, 0, NULL}
 };
 

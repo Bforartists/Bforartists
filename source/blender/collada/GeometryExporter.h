@@ -43,8 +43,10 @@
 
 #include "ExportSettings.h"
 #include "collada_utils.h"
-
+#include "BlenderContext.h"
 #include "BKE_key.h"
+
+struct Depsgraph;
 
 extern Object *bc_get_highest_selected_ancestor_or_self(Object *ob);
 
@@ -72,13 +74,16 @@ class GeometryExporter : COLLADASW::LibraryGeometries
 
 	Normal n;
 
-	Main *m_bmain;
-	Scene *mScene;
-
 public:
-	GeometryExporter(COLLADASW::StreamWriter *sw, const ExportSettings *export_settings);
 
-	void exportGeom(Main *bmain, Scene *sce);
+	// TODO: optimize UV sets by making indexed list with duplicates removed
+	GeometryExporter(BlenderContext &blender_context, COLLADASW::StreamWriter *sw, const ExportSettings *export_settings) :
+		COLLADASW::LibraryGeometries(sw),
+		blender_context(blender_context),
+		export_settings(export_settings)
+	{}
+
+	void exportGeom();
 
 	void operator()(Object *ob);
 
@@ -86,32 +91,14 @@ public:
 						     Mesh   *me,
 						     std::string& geom_id);
 
-	// Create polylists for meshes with Materials
+	// powerful because it handles both cases when there is material and when there's not
 	void createPolylist(short material_index,
-		bool has_uvs,
-		bool has_color,
-		Object *ob,
-		Mesh   *me,
-		std::string& geom_id,
-		std::vector<BCPolygonNormalsIndices>& norind);
-
-	// Create polylists for meshes with UV Textures
-	void createPolylists(std::set<Image *> uv_images,
-		bool has_uvs,
-		bool has_color,
-		Object *ob,
-		Mesh   *me,
-		std::string& geom_id,
-		std::vector<BCPolygonNormalsIndices>& norind);
-
-	// Create polylists for meshes with UV Textures
-	void createPolylist(std::string imageid,
-		bool has_uvs,
-		bool has_color,
-		Object *ob,
-		Mesh   *me,
-		std::string& geom_id,
-		std::vector<BCPolygonNormalsIndices>& norind);
+						bool has_uvs,
+						bool has_color,
+						Object *ob,
+						Mesh   *me,
+						std::string& geom_id,
+						std::vector<BCPolygonNormalsIndices>& norind);
 
 	// creates <source> for positions
 	void createVertsSource(std::string geom_id, Mesh *me);
@@ -140,7 +127,7 @@ public:
 
 private:
 	std::set<std::string> exportedGeometry;
-
+	BlenderContext &blender_context;
 	const ExportSettings *export_settings;
 
 	Mesh *get_mesh(Scene *sce, Object *ob, int apply_modifiers);
