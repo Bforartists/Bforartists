@@ -48,6 +48,15 @@
 
 #ifdef _WIN32
 
+bool win32_silent_chk(bool result)
+{
+	if (!result) {
+		SetLastError(NO_ERROR);
+	}
+
+	return result;
+}
+
 bool win32_chk(bool result, const char *file, int line, const char *text)
 {
 	if (!result) {
@@ -59,7 +68,10 @@ bool win32_chk(bool result, const char *file, int line, const char *text)
 
 		DWORD count = 0;
 
-		switch (error) {
+		/* Some drivers returns a HRESULT instead of a standard error message.
+		 * i.e: 0xC0072095 instead of 0x2095 for ERROR_INVALID_VERSION_ARB
+		 * So strip down the error to the valid error code range. */
+		switch (error & 0x0000FFFF) {
 			case ERROR_INVALID_VERSION_ARB:
 				msg = "The specified OpenGL version and feature set are either invalid or not supported.\n";
 				break;
@@ -143,11 +155,7 @@ bool win32_chk(bool result, const char *file, int line, const char *text)
 
 void GHOST_Context::initContextGLEW()
 {
-	mxDestroyContext(m_mxContext); // no-op if m_mxContext is NULL
-
-	mxMakeCurrentContext(mxCreateContext());
-
-	m_mxContext = mxGetCurrentContext();
+	GLEW_CHK(glewInit());
 }
 
 

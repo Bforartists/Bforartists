@@ -33,6 +33,10 @@
 #ifndef __NLA_PRIVATE_H__
 #define __NLA_PRIVATE_H__
 
+struct Depsgraph;
+
+#include "RNA_types.h"
+
 /* --------------- NLA Evaluation DataTypes ----------------------- */
 
 /* used for list of strips to accumulate at current time */
@@ -66,9 +70,11 @@ enum eNlaEvalStrip_StripMode {
 typedef struct NlaEvalChannel {
 	struct NlaEvalChannel *next, *prev;
 
-	PointerRNA ptr;         /* pointer to struct containing property to use */
-	PropertyRNA *prop;      /* RNA-property type to use (should be in the struct given) */
-	int index;              /* array index (where applicable) */
+	/* RNA reference to use with pointer and index */
+	PathResolvedRNA rna;
+
+	/* Original parameters used to look up the reference for write_orig_anim_rna */
+	const char *rna_path;
 
 	float value;            /* value of this channel */
 } NlaEvalChannel;
@@ -81,8 +87,8 @@ float nlastrip_get_frame(NlaStrip *strip, float cframe, short mode);
 /* --------------- NLA Evaluation (very-private stuff) ----------------------- */
 /* these functions are only defined here to avoid problems with the order in which they get defined... */
 
-NlaEvalStrip *nlastrips_ctime_get_strip(ListBase *list, ListBase *strips, short index, float ctime);
-void nlastrip_evaluate(PointerRNA *ptr, ListBase *channels, ListBase *modifiers, NlaEvalStrip *nes);
-void nladata_flush_channels(ListBase *channels);
+NlaEvalStrip *nlastrips_ctime_get_strip(struct Depsgraph *depsgraph, ListBase *list, ListBase *strips, short index, float ctime);
+void nlastrip_evaluate(struct Depsgraph *depsgraph, PointerRNA *ptr, ListBase *channels, ListBase *modifiers, NlaEvalStrip *nes);
+void nladata_flush_channels(struct Depsgraph *depsgraph, PointerRNA *ptr, ListBase *channels);
 
 #endif  /* __NLA_PRIVATE_H__ */

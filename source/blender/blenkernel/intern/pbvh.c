@@ -41,6 +41,7 @@
 #include "BKE_paint.h"
 
 #include "GPU_buffers.h"
+#include "GPU_immediate.h"
 
 #include "bmesh.h"
 
@@ -636,7 +637,6 @@ void BKE_pbvh_free(PBVH *bvh)
 				BLI_gset_free(node->bm_other_verts, NULL);
 		}
 	}
-	GPU_pbvh_multires_buffers_free(&bvh->grid_common_gpu_buffer);
 
 	if (bvh->deformed) {
 		if (bvh->verts) {
@@ -1101,7 +1101,6 @@ void pbvh_update_BB_redraw(PBVH *bvh, PBVHNode **nodes, int totnode, int flag)
 static int pbvh_get_buffers_update_flags(PBVH *bvh)
 {
 	int update_flags = 0;
-	update_flags |= bvh->show_diffuse_color ? GPU_PBVH_BUFFERS_SHOW_DIFFUSE_COLOR : 0;
 	update_flags |= bvh->show_mask ? GPU_PBVH_BUFFERS_SHOW_MASK : 0;
 	return update_flags;
 }
@@ -1117,19 +1116,21 @@ static void pbvh_update_draw_buffers(PBVH *bvh, PBVHNode **nodes, int totnode)
 			switch (bvh->type) {
 				case PBVH_GRIDS:
 					node->draw_buffers =
-						GPU_pbvh_grid_buffers_build(node->prim_indices,
-					                           node->totprim,
-					                           bvh->grid_hidden,
-					                           bvh->gridkey.grid_size,
-					                           &bvh->gridkey, &bvh->grid_common_gpu_buffer);
+						GPU_pbvh_grid_buffers_build(
+						        node->prim_indices,
+						        node->totprim,
+						        bvh->grid_hidden,
+						        bvh->gridkey.grid_size,
+						        &bvh->gridkey);
 					break;
 				case PBVH_FACES:
 					node->draw_buffers =
-						GPU_pbvh_mesh_buffers_build(node->face_vert_indices,
-					                           bvh->mpoly, bvh->mloop, bvh->looptri,
-					                           bvh->verts,
-					                           node->prim_indices,
-					                           node->totprim);
+						GPU_pbvh_mesh_buffers_build(
+						        node->face_vert_indices,
+						        bvh->mpoly, bvh->mloop, bvh->looptri,
+						        bvh->verts,
+						        node->prim_indices,
+						        node->totprim);
 					break;
 				case PBVH_BMESH:
 					node->draw_buffers =
@@ -1178,19 +1179,6 @@ static void pbvh_update_draw_buffers(PBVH *bvh, PBVHNode **nodes, int totnode)
 			node->flag &= ~PBVH_UpdateDrawBuffers;
 		}
 	}
-}
-
-void BKE_pbvh_draw_BB(PBVH *bvh)
-{
-	GPU_pbvh_BB_draw_init();
-
-	for (int a = 0; a < bvh->totnode; a++) {
-		PBVHNode *node = &bvh->nodes[a];
-
-		GPU_pbvh_BB_draw(node->vb.bmin, node->vb.bmax, ((node->flag & PBVH_Leaf) != 0));
-	}
-
-	GPU_pbvh_BB_draw_end();
 }
 
 static int pbvh_flush_bb(PBVH *bvh, PBVHNode *node, int flag)
@@ -1353,6 +1341,12 @@ void BKE_pbvh_get_grid_key(const PBVH *bvh, CCGKey *key)
 	*key = bvh->gridkey;
 }
 
+struct CCGElem **BKE_pbvh_get_grids(const PBVH *bvh, int *num_grids)
+{
+	BLI_assert(bvh->type == PBVH_GRIDS);
+	*num_grids = bvh->totgrid;
+	return bvh->grids;
+}
 
 BMesh *BKE_pbvh_get_bmesh(PBVH *bvh)
 {
@@ -1996,42 +1990,6 @@ bool BKE_pbvh_node_find_nearest_to_ray(
 	return hit;
 }
 
-typedef struct {
-	DMSetMaterial setMaterial;
-	bool wireframe;
-	bool fast;
-} PBVHNodeDrawData;
-
-void BKE_pbvh_node_draw(PBVHNode *node, void *data_v)
-{
-	PBVHNodeDrawData *data = data_v;
-
-#if 0
-	/* XXX: Just some quick code to show leaf nodes in different colors */
-	float col[3];
-	float spec[3] = {0.0f, 0.0f, 0.0f};
-
-	if (0) { //is_partial) {
-		col[0] = (rand() / (float)RAND_MAX); col[1] = col[2] = 0.6;
-	}
-	else {
-		srand((long long)node);
-		for (int i = 0; i < 3; ++i)
-			col[i] = (rand() / (float)RAND_MAX) * 0.3 + 0.7;
-	}
-
-	GPU_basic_shader_colors(col, spec, 0, 1.0f);
-	glColor3f(1, 0, 0);
-#endif
-
-	if (!(node->flag & PBVH_FullyHidden)) {
-		GPU_pbvh_buffers_draw(node->draw_buffers,
-		                 data->setMaterial,
-		                 data->wireframe,
-		                 data->fast);
-	}
-}
-
 typedef enum {
 	ISECT_INSIDE,
 	ISECT_OUTSIDE,
@@ -2091,36 +2049,43 @@ bool BKE_pbvh_node_planes_exclude_AABB(PBVHNode *node, void *data)
 	return test_planes_aabb(bb_min, bb_max, data) != ISECT_INSIDE;
 }
 
-static void pbvh_node_check_diffuse_changed(PBVH *bvh, PBVHNode *node)
-{
-	if (!node->draw_buffers)
-		return;
+struct PBVHNodeDrawCallbackData {
+	void (*draw_fn)(void *user_data, GPUBatch *batch);
+	void *user_data;
+	bool fast;
+	bool only_mask; /* Only draw nodes that have mask data. */
+};
 
-	if (GPU_pbvh_buffers_diffuse_changed(node->draw_buffers, node->bm_faces, bvh->show_diffuse_color))
-		node->flag |= PBVH_UpdateDrawBuffers;
+static void pbvh_node_draw_cb(PBVHNode *node, void *data_v)
+{
+	struct PBVHNodeDrawCallbackData *data = data_v;
+
+	if (!(node->flag & PBVH_FullyHidden)) {
+		GPUBatch *triangles = GPU_pbvh_buffers_batch_get(node->draw_buffers, data->fast);
+		bool show_mask = GPU_pbvh_buffers_has_mask(node->draw_buffers);
+		if (!data->only_mask || show_mask) {
+			if (triangles != NULL) {
+				data->draw_fn(data->user_data, triangles);
+			}
+		}
+	}
 }
 
-static void pbvh_node_check_mask_changed(PBVH *bvh, PBVHNode *node)
+/**
+ * Version of #BKE_pbvh_draw that runs a callback.
+ */
+void BKE_pbvh_draw_cb(
+        PBVH *bvh, float (*planes)[4], float (*fnors)[3], bool fast, bool only_mask,
+        void (*draw_fn)(void *user_data, GPUBatch *batch), void *user_data)
 {
-	if (!node->draw_buffers) {
-		return;
-	}
-	if (GPU_pbvh_buffers_mask_changed(node->draw_buffers, bvh->show_mask)) {
-		node->flag |= PBVH_UpdateDrawBuffers;
-	}
-}
-
-void BKE_pbvh_draw(PBVH *bvh, float (*planes)[4], float (*fnors)[3],
-                   DMSetMaterial setMaterial, bool wireframe, bool fast)
-{
-	PBVHNodeDrawData draw_data = {setMaterial, wireframe, fast};
+	struct PBVHNodeDrawCallbackData draw_data = {
+		.only_mask = only_mask,
+		.fast = fast,
+		.draw_fn = draw_fn,
+		.user_data = user_data,
+	};
 	PBVHNode **nodes;
 	int totnode;
-
-	for (int a = 0; a < bvh->totnode; a++) {
-		pbvh_node_check_diffuse_changed(bvh, &bvh->nodes[a]);
-		pbvh_node_check_mask_changed(bvh, &bvh->nodes[a]);
-	}
 
 	BKE_pbvh_search_gather(bvh, update_search_cb, POINTER_FROM_INT(PBVH_UpdateNormals | PBVH_UpdateDrawBuffers),
 	                       &nodes, &totnode);
@@ -2131,15 +2096,19 @@ void BKE_pbvh_draw(PBVH *bvh, float (*planes)[4], float (*fnors)[3],
 	if (nodes) MEM_freeN(nodes);
 
 	if (planes) {
-		BKE_pbvh_search_callback(bvh, BKE_pbvh_node_planes_contain_AABB,
-		                         planes, BKE_pbvh_node_draw, &draw_data);
+		BKE_pbvh_search_callback(
+		        bvh, BKE_pbvh_node_planes_contain_AABB,
+		        planes, pbvh_node_draw_cb, &draw_data);
 	}
 	else {
-		BKE_pbvh_search_callback(bvh, NULL, NULL, BKE_pbvh_node_draw, &draw_data);
+		BKE_pbvh_search_callback(
+		        bvh, NULL,
+		        NULL, pbvh_node_draw_cb, &draw_data);
 	}
-
+#if 0
 	if (G.debug_value == 14)
-		BKE_pbvh_draw_BB(bvh);
+		pbvh_draw_BB(bvh);
+#endif
 }
 
 void BKE_pbvh_grids_update(PBVH *bvh, CCGElem **grids, void **gridfaces,
@@ -2195,8 +2164,13 @@ float (*BKE_pbvh_get_vertCos(PBVH *pbvh))[3]
 	return vertCos;
 }
 
-void BKE_pbvh_apply_vertCos(PBVH *pbvh, float (*vertCos)[3])
+void BKE_pbvh_apply_vertCos(PBVH *pbvh, float (*vertCos)[3], const int totvert)
 {
+	if (totvert != pbvh->totvert) {
+		BLI_assert(!"PBVH: Given deforming vcos number does not natch PBVH vertex number!");
+		return;
+	}
+
 	if (!pbvh->deformed) {
 		if (pbvh->verts) {
 			/* if pbvh is not already deformed, verts/faces points to the */
@@ -2351,24 +2325,24 @@ void pbvh_vertex_iter_init(PBVH *bvh, PBVHNode *node,
 		vi->vmask = CustomData_get_layer(bvh->vdata, CD_PAINT_MASK);
 }
 
-void pbvh_show_diffuse_color_set(PBVH *bvh, bool show_diffuse_color)
+bool pbvh_has_mask(PBVH *bvh)
 {
-	bool has_mask = false;
-
 	switch (bvh->type) {
 		case PBVH_GRIDS:
-			has_mask = (bvh->gridkey.has_mask != 0);
-			break;
+			return (bvh->gridkey.has_mask != 0);
 		case PBVH_FACES:
-			has_mask = (bvh->vdata && CustomData_get_layer(bvh->vdata,
-			                                CD_PAINT_MASK));
-			break;
+			return (bvh->vdata && CustomData_get_layer(bvh->vdata,
+			                      CD_PAINT_MASK));
 		case PBVH_BMESH:
-			has_mask = (bvh->bm && (CustomData_get_offset(&bvh->bm->vdata, CD_PAINT_MASK) != -1));
-			break;
+			return (bvh->bm && (CustomData_get_offset(&bvh->bm->vdata, CD_PAINT_MASK) != -1));
 	}
 
-	bvh->show_diffuse_color = !has_mask || show_diffuse_color;
+	return false;
+}
+
+void pbvh_show_diffuse_color_set(PBVH *bvh, bool show_diffuse_color)
+{
+	bvh->show_diffuse_color = !pbvh_has_mask(bvh) || show_diffuse_color;
 }
 
 void pbvh_show_mask_set(PBVH *bvh, bool show_mask)

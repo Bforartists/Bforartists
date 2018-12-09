@@ -108,6 +108,8 @@ typedef enum PropertyUnit {
 
 #define RNA_TRANSLATION_PREC_DEFAULT 5
 
+#define RNA_STACK_ARRAY 32
+
 /* also update enums in bpy_props.c when adding items here
  * watch it: these values are written to files as part of
  * node socket button subtypes!
@@ -156,7 +158,7 @@ typedef enum PropertySubType {
 
 /* Make sure enums are updated with these */
 /* HIGHEST FLAG IN USE: 1 << 31
- * FREE FLAGS: 2, 3, 7, 9, 11, 13, 14, 15, 30 */
+ * FREE FLAGS: 2, 9, 11, 13, 14, 15, 30 */
 typedef enum PropertyFlag {
 	/* editable means the property is editable in the user
 	 * interface, properties are editable by default except
@@ -182,6 +184,7 @@ typedef enum PropertyFlag {
 
 	/* icon */
 	PROP_ICONS_CONSECUTIVE       = (1 << 12),
+	PROP_ICONS_REVERSE           = (1 << 8),
 
 	/* hidden in  the user interface */
 	PROP_HIDDEN                  = (1 << 19),
@@ -208,6 +211,13 @@ typedef enum PropertyFlag {
 	 * but setting NULL on a mesh object is not possible. So, if its not NULL, setting NULL cant be done! */
 	PROP_NEVER_UNLINK            = (1 << 25),
 
+	/* Pointers to data that is not owned by the struct.
+	 * Typical example: Bone.parent, Bone.child, etc., and nearly all ID pointers.
+	 * This is crucial information for processes that walk the whole data of an ID e.g. (like static override).
+	 * Note that all ID pointers are enforced to this by default, this probably will need to be rechecked
+	 * (see ugly infamous NodeTrees of mat/tex/scene/etc.). */
+	PROP_PTR_NO_OWNERSHIP        = (1 << 7),
+
 	/* flag contains multiple enums.
 	 * note: not to be confused with prop->enumbitflags
 	 * this exposes the flag as multiple options in python and the UI.
@@ -228,12 +238,32 @@ typedef enum PropertyFlag {
 	 * most common case is functions that return arrays where the array */
 	PROP_THICK_WRAP              = (1 << 23),
 
-	PROP_EXPORT                  = (1 << 8),  /* XXX Is this still used? makesrna.c seems to ignore it currently... */
 	PROP_IDPROPERTY              = (1 << 10), /* This is an IDProperty, not a DNA one. */
 	PROP_DYNAMIC                 = (1 << 17), /* for dynamic arrays, and retvals of type string */
 	PROP_ENUM_NO_CONTEXT         = (1 << 24), /* for enum that shouldn't be contextual */
-	PROP_ENUM_NO_TRANSLATE       = (1 << 29), /* for enums not to be translated (e.g. renderlayers' names in nodes) */
+	PROP_ENUM_NO_TRANSLATE       = (1 << 29), /* for enums not to be translated (e.g. viewlayers' names in nodes) */
 } PropertyFlag;
+
+/* Flags related to comparing and overriding RNA properties. Make sure enums are updated with these */
+/* FREE FLAGS: 2, 3, 4, 5, 6, 7, 8, 9, 12 and above. */
+typedef enum PropertyOverrideFlag {
+	/* Means the property can be overridden by a local 'proxy' of some linked datablock. */
+	PROPOVERRIDE_OVERRIDABLE_STATIC = (1 << 0),
+
+	/* Forbid usage of this property in comparison (& hence override) code.
+	 * Useful e.g. for collections of data like mesh's geometry, particles, etc. */
+	PROPOVERRIDE_NO_COMPARISON = (1 << 1),
+
+	/*** Collections-related ***/
+
+	/* The property supports insertion (collections only). */
+	PROPOVERRIDE_STATIC_INSERTION = (1 << 10),
+
+	/* Only use indices to compare items in the property, never names (collections only). */
+	/* Useful when nameprop of the items is generated from other data
+	 * (e.g. name of material slots is actually name of assigned material). */
+	PROPOVERRIDE_NO_PROP_NAME = (1 << 11),
+} PropertyOverrideFlag;
 
 /* Function parameters flags.
  * WARNING: 16bits only. */
@@ -282,6 +312,7 @@ typedef struct CollectionPropertyIterator {
 	union {
 		ArrayIterator array;
 		ListBaseIterator listbase;
+		void *custom;
 	} internal;
 	int idprop;
 	int level;
@@ -493,7 +524,6 @@ typedef struct ExtensionRNA {
 	StructRNA *srna;
 	StructCallbackFunc call;
 	StructFreeFunc free;
-
 } ExtensionRNA;
 
 #ifdef __cplusplus

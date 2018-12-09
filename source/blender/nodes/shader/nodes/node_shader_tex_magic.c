@@ -59,12 +59,12 @@ static int node_shader_gpu_tex_magic(GPUMaterial *mat, bNode *node, bNodeExecDat
 
 	if (!in[0].link) {
 		in[0].link = GPU_attribute(CD_ORCO, "");
-		GPU_link(mat, "generated_from_orco", in[0].link, &in[0].link);
+		GPU_link(mat, "generated_texco", GPU_builtin(GPU_VIEW_POSITION), in[0].link, &in[0].link);
 	}
 
 	node_shader_gpu_tex_mapping(mat, node, in, out);
 
-	return GPU_stack_link(mat, "node_tex_magic", in, out, GPU_uniform(&depth));
+	return GPU_stack_link(mat, node, "node_tex_magic", in, out, GPU_constant(&depth));
 }
 
 /* node type definition */
@@ -73,7 +73,6 @@ void register_node_type_sh_tex_magic(void)
 	static bNodeType ntype;
 
 	sh_node_type_base(&ntype, SH_NODE_TEX_MAGIC, "Magic Texture", NODE_CLASS_TEXTURE, 0);
-	node_type_compatibility(&ntype, NODE_NEW_SHADING);
 	node_type_socket_templates(&ntype, sh_node_tex_magic_in, sh_node_tex_magic_out);
 	node_type_init(&ntype, node_shader_init_tex_magic);
 	node_type_storage(&ntype, "NodeTexMagic", node_free_standard_storage, node_copy_standard_storage);

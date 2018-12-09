@@ -125,7 +125,6 @@ fi
 
 if $DO_UPLOAD ; then
 
-	cp $SPHINX_WORKDIR/sphinx-out/contents.html $SPHINX_WORKDIR/sphinx-out/index.html
 	ssh $SSH_USER@blender.org 'rm -rf '$SSH_UPLOAD_FULL'/*'
 	rsync --progress -ave "ssh -p 22" $SPHINX_WORKDIR/sphinx-out/* $SSH_HOST:$SSH_UPLOAD_FULL/
 
@@ -164,5 +163,5 @@ fi
 
 echo ""
 echo "Finished! view the docs from: "
-if $DO_OUT_HTML ; then echo "  html:" $SPHINX_WORKDIR/sphinx-out/contents.html ; fi
+if $DO_OUT_HTML ; then echo "  html:" $SPHINX_WORKDIR/sphinx-out/index.html ; fi
 if $DO_OUT_PDF ; then  echo "   pdf:" $SPHINX_WORKDIR/sphinx-out/blender_python_reference_$BLENDER_VERSION.pdf ; fi

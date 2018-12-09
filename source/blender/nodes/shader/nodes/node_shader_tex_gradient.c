@@ -54,14 +54,14 @@ static int node_shader_gpu_tex_gradient(GPUMaterial *mat, bNode *node, bNodeExec
 {
 	if (!in[0].link) {
 		in[0].link = GPU_attribute(CD_ORCO, "");
-		GPU_link(mat, "generated_from_orco", in[0].link, &in[0].link);
+		GPU_link(mat, "generated_texco", GPU_builtin(GPU_VIEW_POSITION), in[0].link, &in[0].link);
 	}
 
 	node_shader_gpu_tex_mapping(mat, node, in, out);
 
 	NodeTexGradient *tex = (NodeTexGradient *)node->storage;
 	float gradient_type = tex->gradient_type;
-	return GPU_stack_link(mat, "node_tex_gradient", in, out, GPU_uniform(&gradient_type));
+	return GPU_stack_link(mat, node, "node_tex_gradient", in, out, GPU_constant(&gradient_type));
 }
 
 /* node type definition */
@@ -70,7 +70,6 @@ void register_node_type_sh_tex_gradient(void)
 	static bNodeType ntype;
 
 	sh_node_type_base(&ntype, SH_NODE_TEX_GRADIENT, "Gradient Texture", NODE_CLASS_TEXTURE, 0);
-	node_type_compatibility(&ntype, NODE_NEW_SHADING);
 	node_type_socket_templates(&ntype, sh_node_tex_gradient_in, sh_node_tex_gradient_out);
 	node_type_init(&ntype, node_shader_init_tex_gradient);
 	node_type_storage(&ntype, "NodeTexGradient", node_free_standard_storage, node_copy_standard_storage);

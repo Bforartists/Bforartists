@@ -39,11 +39,13 @@
 #include "BLI_utildefines.h"
 
 #include "BKE_context.h"
-#include "BKE_depsgraph.h"
 #include "BKE_fcurve.h"
 #include "BKE_global.h"
 #include "BKE_main.h"
 #include "BKE_nla.h"
+
+#include "DEG_depsgraph.h"
+#include "DEG_depsgraph_build.h"
 
 #include "ED_keyframing.h"
 
@@ -101,6 +103,30 @@ void ui_but_anim_flag(uiBut *but, float cfra)
 	}
 }
 
+void ui_but_anim_decorate_update_from_flag(uiBut *but)
+{
+	BLI_assert(UI_but_is_decorator(but) && but->prev);
+	int flag = but->prev->flag;
+	if (flag & UI_BUT_DRIVEN) {
+		but->icon = ICON_DECORATE_DRIVER;
+	}
+	else if (flag & UI_BUT_ANIMATED_KEY) {
+		but->icon = ICON_DECORATE_KEYFRAME;
+	}
+	else if (flag & UI_BUT_ANIMATED) {
+		but->icon = ICON_DECORATE_ANIMATE;
+	}
+	else if (flag & UI_BUT_OVERRIDEN) {
+		but->icon = ICON_DECORATE_OVERRIDE;
+	}
+	else {
+		but->icon = ICON_DECORATE;
+	}
+
+	const int flag_copy = (UI_BUT_DISABLED | UI_BUT_INACTIVE);
+	but->flag = (but->flag & ~flag_copy) | (flag & flag_copy);
+}
+
 /**
  * \a str can be NULL to only perform check if \a but has an expression at all.
  * \return if button has an expression.
@@ -142,7 +168,7 @@ bool ui_but_anim_expression_set(uiBut *but, const char *str)
 			BLI_strncpy_utf8(driver->expression, str, sizeof(driver->expression));
 
 			/* tag driver as needing to be recompiled */
-			driver->flag |= DRIVER_FLAG_RECOMPILE;
+			BKE_driver_invalidate_expression(driver, true, false);
 
 			/* clear invalid flags which may prevent this from working */
 			driver->flag &= ~DRIVER_FLAG_INVALID;
@@ -211,8 +237,8 @@ bool ui_but_anim_expression_create(uiBut *but, const char *str)
 			BLI_strncpy_utf8(driver->expression, str, sizeof(driver->expression));
 
 			/* updates */
-			driver->flag |= DRIVER_FLAG_RECOMPILE;
-			DAG_relations_tag_update(CTX_data_main(C));
+			BKE_driver_invalidate_expression(driver, true, false);
+			DEG_relations_tag_update(CTX_data_main(C));
 			WM_event_add_notifier(C, NC_ANIMATION | ND_KEYFRAME, NULL);
 			ok = true;
 		}
@@ -240,10 +266,11 @@ void ui_but_anim_autokey(bContext *C, uiBut *but, Scene *scene, float cfra)
 	if (special) {
 		/* NLA Strip property */
 		if (IS_AUTOKEY_ON(scene)) {
+			Depsgraph *depsgraph = CTX_data_depsgraph(C);
 			ReportList *reports = CTX_wm_reports(C);
 			ToolSettings *ts = scene->toolsettings;
 
-			insert_keyframe_direct(reports, but->rnapoin, but->rnaprop, fcu, cfra, ts->keyframe_type, 0);
+			insert_keyframe_direct(depsgraph, reports, but->rnapoin, but->rnaprop, fcu, cfra, ts->keyframe_type, 0);
 			WM_event_add_notifier(C, NC_ANIMATION | ND_KEYFRAME | NA_EDITED, NULL);
 		}
 	}
@@ -252,10 +279,11 @@ void ui_but_anim_autokey(bContext *C, uiBut *but, Scene *scene, float cfra)
 		 * making it easier to set up corrective drivers
 		 */
 		if (IS_AUTOKEY_ON(scene)) {
+			Depsgraph *depsgraph = CTX_data_depsgraph(C);
 			ReportList *reports = CTX_wm_reports(C);
 			ToolSettings *ts = scene->toolsettings;
 
-			insert_keyframe_direct(reports, but->rnapoin, but->rnaprop, fcu, cfra, ts->keyframe_type, INSERTKEY_DRIVER);
+			insert_keyframe_direct(depsgraph, reports, but->rnapoin, but->rnaprop, fcu, cfra, ts->keyframe_type, INSERTKEY_DRIVER);
 			WM_event_add_notifier(C, NC_ANIMATION | ND_KEYFRAME | NA_EDITED, NULL);
 		}
 	}
@@ -264,6 +292,7 @@ void ui_but_anim_autokey(bContext *C, uiBut *but, Scene *scene, float cfra)
 
 		/* TODO: this should probably respect the keyingset only option for anim */
 		if (autokeyframe_cfra_can_key(scene, id)) {
+			Depsgraph *depsgraph = CTX_data_depsgraph(C);
 			ReportList *reports = CTX_wm_reports(C);
 			ToolSettings *ts = scene->toolsettings;
 			short flag = ANIM_get_keyframing_flags(scene, 1);
@@ -274,7 +303,8 @@ void ui_but_anim_autokey(bContext *C, uiBut *but, Scene *scene, float cfra)
 			 *       because a button may control all items of an array at once.
 			 *       E.g., color wheels (see T42567). */
 			BLI_assert((fcu->array_index == but->rnaindex) || (but->rnaindex == -1));
-			insert_keyframe(bmain, reports, id, action, ((fcu->grp) ? (fcu->grp->name) : (NULL)),
+			insert_keyframe(bmain, depsgraph, reports, id, action,
+			                ((fcu->grp) ? (fcu->grp->name) : (NULL)),
 			                fcu->rna_path, but->rnaindex, cfra, ts->keyframe_type, flag);
 
 			WM_event_add_notifier(C, NC_ANIMATION | ND_KEYFRAME | NA_EDITED, NULL);
@@ -292,4 +322,39 @@ void ui_but_anim_paste_driver(bContext *C)
 {
 	/* this operator calls UI_context_active_but_prop_get */
 	WM_operator_name_call(C, "ANIM_OT_paste_driver_button", WM_OP_INVOKE_DEFAULT, NULL);
+}
+
+void ui_but_anim_decorate_cb(bContext *C, void *arg_but, void *UNUSED(arg_dummy))
+{
+	wmWindowManager *wm = CTX_wm_manager(C);
+	uiBut *but = arg_but;
+	but = but->prev;
+
+	/* FIXME(campbell), swapping active pointer is weak. */
+	SWAP(struct uiHandleButtonData *, but->active, but->next->active);
+	wm->op_undo_depth++;
+
+	if (but->flag & UI_BUT_DRIVEN) {
+		/* pass */
+		/* TODO: report? */
+	}
+	else if (but->flag & UI_BUT_ANIMATED_KEY) {
+		PointerRNA props_ptr;
+		wmOperatorType *ot = WM_operatortype_find("ANIM_OT_keyframe_delete_button", false);
+		WM_operator_properties_create_ptr(&props_ptr, ot);
+		RNA_boolean_set(&props_ptr, "all", but->rnaindex == -1);
+		WM_operator_name_call_ptr(C, ot, WM_OP_INVOKE_DEFAULT, &props_ptr);
+		WM_operator_properties_free(&props_ptr);
+	}
+	else {
+		PointerRNA props_ptr;
+		wmOperatorType *ot = WM_operatortype_find("ANIM_OT_keyframe_insert_button", false);
+		WM_operator_properties_create_ptr(&props_ptr, ot);
+		RNA_boolean_set(&props_ptr, "all", but->rnaindex == -1);
+		WM_operator_name_call_ptr(C, ot, WM_OP_INVOKE_DEFAULT, &props_ptr);
+		WM_operator_properties_free(&props_ptr);
+	}
+
+	SWAP(struct uiHandleButtonData *, but->active, but->next->active);
+	wm->op_undo_depth--;
 }

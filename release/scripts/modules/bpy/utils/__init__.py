@@ -26,6 +26,7 @@ not associated with blenders internal data.
 __all__ = (
     "blend_paths",
     "escape_identifier",
+    "keyconfig_init",
     "keyconfig_set",
     "load_scripts",
     "modules_from_path",
@@ -34,7 +35,6 @@ __all__ = (
     "refresh_script_paths",
     "app_template_paths",
     "register_class",
-    "register_module",
     "register_manual_map",
     "unregister_manual_map",
     "register_classes_factory",
@@ -50,8 +50,8 @@ __all__ = (
     "smpte_from_seconds",
     "units",
     "unregister_class",
-    "unregister_module",
     "user_resource",
+    "execfile",
 )
 
 from _bpy import (
@@ -74,6 +74,18 @@ import addon_utils as _addon_utils
 _user_preferences = _bpy.context.user_preferences
 _script_module_dirs = "startup", "modules"
 _is_factory_startup = _bpy.app.factory_startup
+
+
+def execfile(filepath, mod=None):
+    # module name isn't used or added to 'sys.modules'.
+    # passing in 'mod' allows re-execution without having to reload.
+
+    import importlib.util
+    mod_spec = importlib.util.spec_from_file_location("__main__", filepath)
+    if mod is None:
+        mod = importlib.util.module_from_spec(mod_spec)
+    mod_spec.loader.exec_module(mod)
+    return mod
 
 
 def _test_import(module_name, loaded_modules):
@@ -148,6 +160,7 @@ def load_scripts(reload_scripts=False, refresh_scripts=False):
     """
     use_time = use_class_register_check = _bpy.app.debug_python
     use_user = not _is_factory_startup
+    is_background = _bpy.app.background
 
     if use_time:
         import time
@@ -165,10 +178,6 @@ def load_scripts(reload_scripts=False, refresh_scripts=False):
         # its not perfect.
         for module_name in [ext.module for ext in _user_preferences.addons]:
             _addon_utils.disable(module_name)
-
-        # *AFTER* unregistering all add-ons, otherwise all calls to
-        # unregister_module() will silently fail (do nothing).
-        _bpy_types.TypeMap.clear()
 
     def register_module_call(mod):
         register = getattr(mod, "register", None)
@@ -266,13 +275,6 @@ def load_scripts(reload_scripts=False, refresh_scripts=False):
     else:
         _addon_utils.reset_all(reload_scripts=reload_scripts)
     del _initialize
-
-    # run the active integration preset
-    filepath = preset_find(_user_preferences.inputs.active_keyconfig,
-                           "keyconfig")
-
-    if filepath:
-        keyconfig_set(filepath)
 
     if reload_scripts:
         import gc
@@ -567,6 +569,22 @@ def preset_find(name, preset_path, display_name=False, ext=".py"):
                 return filepath
 
 
+def keyconfig_init():
+    # Key configuration initialization and refresh, called from the Blender
+    # window manager on startup and refresh.
+    active_config = _user_preferences.inputs.active_keyconfig
+
+    # Load the default key configuration.
+    default_filepath = preset_find("blender", "keyconfig")
+    keyconfig_set(default_filepath)
+
+    # Set the active key configuration if different
+    filepath = preset_find(active_config, "keyconfig")
+
+    if filepath and filepath != default_filepath:
+        keyconfig_set(filepath)
+
+
 def keyconfig_set(filepath, report=None):
     from os.path import basename, splitext
     from itertools import chain
@@ -580,9 +598,7 @@ def keyconfig_set(filepath, report=None):
 
     try:
         error_msg = ""
-        with open(filepath, 'r', encoding='utf-8') as keyfile:
-            exec(compile(keyfile.read(), filepath, "exec"),
-                 {"__file__": filepath})
+        execfile(filepath)
     except:
         import traceback
         error_msg = traceback.format_exc()
@@ -594,23 +610,15 @@ def keyconfig_set(filepath, report=None):
 
     kc_new = next(chain(iter(kc for kc in keyconfigs
                              if kc not in keyconfigs_old), (None,)))
+
+    # Get name, exception for default keymap to keep backwards compatibility.
+    name = splitext(basename(filepath))[0]
+    kc_new = keyconfigs.get(name)
     if kc_new is None:
         if report is not None:
             report({'ERROR'}, "Failed to load keymap %r" % filepath)
         return False
     else:
-        kc_new.name = ""
-
-        # remove duplicates
-        name = splitext(basename(filepath))[0]
-        while True:
-            kc_dupe = keyconfigs.get(name)
-            if kc_dupe:
-                keyconfigs.remove(kc_dupe)
-            else:
-                break
-
-        kc_new.name = name
         keyconfigs.active = kc_new
         return True
 
@@ -648,58 +656,6 @@ def user_resource(resource_type, path="", create=False):
                 target_path = ""
 
     return target_path
-
-
-def _bpy_module_classes(module, is_registered=False):
-    typemap_list = _bpy_types.TypeMap.get(module, ())
-    i = 0
-    while i < len(typemap_list):
-        cls_weakref = typemap_list[i]
-        cls = cls_weakref()
-
-        if cls is None:
-            del typemap_list[i]
-        else:
-            if is_registered == cls.is_registered:
-                yield cls
-            i += 1
-
-
-def register_module(module, verbose=False):
-    if verbose:
-        print("bpy.utils.register_module(%r): ..." % module)
-    cls = None
-    for cls in _bpy_module_classes(module, is_registered=False):
-        if verbose:
-            print("    %r" % cls)
-        try:
-            register_class(cls)
-        except:
-            print("bpy.utils.register_module(): "
-                  "failed to registering class %r" % cls)
-            import traceback
-            traceback.print_exc()
-    if verbose:
-        print("done.\n")
-    if cls is None:
-        raise Exception("register_module(%r): defines no classes" % module)
-
-
-def unregister_module(module, verbose=False):
-    if verbose:
-        print("bpy.utils.unregister_module(%r): ..." % module)
-    for cls in _bpy_module_classes(module, is_registered=True):
-        if verbose:
-            print("    %r" % cls)
-        try:
-            unregister_class(cls)
-        except:
-            print("bpy.utils.unregister_module(): "
-                  "failed to unregistering class %r" % cls)
-            import traceback
-            traceback.print_exc()
-    if verbose:
-        print("done.\n")
 
 
 def register_classes_factory(classes):

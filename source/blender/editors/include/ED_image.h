@@ -39,11 +39,11 @@ struct ToolSettings;
 struct wmWindowManager;
 struct ARegion;
 struct Scene;
+struct ViewLayer;
 
 /* image_edit.c, exported for transform */
 struct Image *ED_space_image(struct SpaceImage *sima);
-void          ED_space_image_set(
-        struct Main *bmain, struct SpaceImage *sima, struct Scene *scene, struct Object *obedit, struct Image *ima);
+void          ED_space_image_set(struct Main *bmain, struct SpaceImage *sima, struct Scene *scene, struct Object *obedit, struct Image *ima);
 struct Mask  *ED_space_image_get_mask(struct SpaceImage *sima);
 void          ED_space_image_set_mask(struct bContext *C, struct SpaceImage *sima, struct Mask *mask);
 
@@ -75,7 +75,7 @@ bool ED_space_image_show_uvedit(struct SpaceImage *sima, struct Object *obedit);
 
 bool ED_space_image_paint_curve(const struct bContext *C);
 
-bool ED_space_image_check_show_maskedit(struct Scene *scene, struct SpaceImage *sima);
+bool ED_space_image_check_show_maskedit(struct SpaceImage *sima, struct ViewLayer *view_layer);
 bool ED_space_image_maskedit_poll(struct bContext *C);
 bool ED_space_image_maskedit_mask_poll(struct bContext *C);
 

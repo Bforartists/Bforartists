@@ -109,16 +109,23 @@ extern "C" {
 struct bContext;
 struct wmEvent;
 struct wmWindowManager;
+struct wmMsgBus;
 struct wmOperator;
+struct ID;
 struct ImBuf;
 
 #include "RNA_types.h"
 #include "DNA_listBase.h"
+#include "DNA_vec_types.h"
 #include "BLI_compiler_attrs.h"
 
 /* exported types for WM */
 #include "wm_cursors.h"
 #include "wm_event_types.h"
+#include "gizmo/WM_gizmo_types.h"
+
+/* Include external gizmo API's */
+#include "gizmo/WM_gizmo_api.h"
 
 /* ************** wmOperatorType ************************ */
 
@@ -139,6 +146,7 @@ enum {
 
 	OPTYPE_LOCK_BYPASS  = (1 << 7),  /* Allow operator to run when interface is locked */
 	OPTYPE_UNDO_GROUPED = (1 << 8),  /* Special type of undo which doesn't store itself multiple times */
+	OPTYPE_USE_EVAL_DATA = (1 << 9),  /* Need evaluated data (i.e. a valid, up-to-date depsgraph for current context) */
 };
 
 /* context to call operator in for WM_operator_name_call */
@@ -159,6 +167,12 @@ enum {
 	WM_OP_EXEC_AREA,
 	WM_OP_EXEC_SCREEN
 };
+
+/* property tags for RNA_OperatorProperties */
+typedef enum eOperatorPropTags {
+	OP_PROP_TAG_ADVANCED = (1 << 0),
+} eOperatorPropTags;
+#define OP_PROP_TAG_ADVANCED ((eOperatorPropTags)OP_PROP_TAG_ADVANCED)
 
 /* ************** wmKeyMap ************************ */
 
@@ -204,7 +218,6 @@ typedef struct wmNotifier {
 	struct wmWindowManager *wm;
 	struct wmWindow *window;
 
-	int swinid;			/* can't rely on this, notifiers can be added without context, swinid of 0 */
 	unsigned int category, data, subtype, action;
 
 	void *reference;
@@ -224,7 +237,7 @@ typedef struct wmNotifier {
 #define NOTE_CATEGORY		0xFF000000
 #define	NC_WM				(1<<24)
 #define	NC_WINDOW			(2<<24)
-#define	NC_SCREEN			(3<<24)
+#define NC_SCREEN			(3<<24)
 #define	NC_SCENE			(4<<24)
 #define	NC_OBJECT			(5<<24)
 #define	NC_MATERIAL			(6<<24)
@@ -246,6 +259,7 @@ typedef struct wmNotifier {
 #define NC_GPENCIL			(22<<24)
 #define NC_LINESTYLE			(23<<24)
 #define NC_CAMERA			(24<<24)
+#define NC_LIGHTPROBE		(25<<24)
 
 /* data type, 256 entries is enough, it can overlap */
 #define NOTE_DATA			0x00FF0000
@@ -258,14 +272,16 @@ typedef struct wmNotifier {
 #define ND_JOB				(5<<16)
 #define ND_UNDO				(6<<16)
 
-	/* NC_SCREEN screen */
-#define ND_SCREENBROWSE		(1<<16)
-#define ND_SCREENDELETE		(2<<16)
+	/* NC_SCREEN */
+#define ND_LAYOUTBROWSE		(1<<16)
+#define ND_LAYOUTDELETE		(2<<16)
 #define ND_ANIMPLAY			(4<<16)
 #define ND_GPENCIL			(5<<16)
 #define ND_EDITOR_CHANGED	(6<<16) /*sent to new editors after switching to them*/
-#define ND_SCREENSET		(7<<16)
+#define ND_LAYOUTSET		(7<<16)
 #define ND_SKETCH			(8<<16)
+#define ND_WORKSPACE_SET	(9<<16)
+#define ND_WORKSPACE_DELETE (10<<16)
 
 	/* NC_SCENE Scene */
 #define ND_SCENEBROWSE		(1<<16)
@@ -411,7 +427,7 @@ typedef struct wmGesture {
 	struct wmGesture *next, *prev;
 	int event_type;	/* event->type */
 	int type;		/* gesture type define */
-	int swinid;		/* initial subwindow id where it started */
+	rcti winrct;    /* bounds of region to draw gesture within */
 	int points;		/* optional, amount of points stored */
 	int points_alloc;	/* optional, maximum amount of points stored */
 	int modal_state;
@@ -646,6 +662,12 @@ typedef enum wmDragFlags {
 
 /* note: structs need not exported? */
 
+typedef struct wmDragID {
+	struct wmDragID  *next, *prev;
+	struct ID *id;
+	struct ID *from_parent;
+} wmDragID;
+
 typedef struct wmDrag {
 	struct wmDrag *next, *prev;
 
@@ -660,6 +682,8 @@ typedef struct wmDrag {
 
 	char opname[200]; /* if set, draws operator name*/
 	unsigned int flags;
+
+	ListBase ids; /* List of wmDragIDs, all are guaranteed to have the same ID type. */
 } wmDrag;
 
 /* dropboxes are like keymaps, part of the screen/area/region definition */
@@ -668,7 +692,7 @@ typedef struct wmDropBox {
 	struct wmDropBox *next, *prev;
 
 	/* test if the dropbox is active, then can print optype name */
-	bool (*poll)(struct bContext *, struct wmDrag *, const wmEvent *);
+	bool (*poll)(struct bContext *, struct wmDrag *, const wmEvent *, const char **);
 
 	/* before exec, this copies drag info to wmDrop properties */
 	void (*copy)(struct wmDrag *, struct wmDropBox *);
@@ -695,9 +719,13 @@ typedef struct wmTooltipState {
 	/** The tooltip region. */
 	struct ARegion *region;
 	/** Create the tooltip region (assign to 'region'). */
-	struct ARegion *(*init)(struct bContext *, struct ARegion *, bool *r_exit_on_event);
+	struct ARegion *(*init)(
+	        struct bContext *C, struct ARegion *ar,
+	        int *pass, double *pass_delay, bool *r_exit_on_event);
 	/** Exit on any event, not needed for buttons since their highlight state is used. */
 	bool exit_on_event;
+	/** Pass, use when we want multiple tips, count down to zero. */
+	int pass;
 } wmTooltipState;
 
 /* *************** migrated stuff, clean later? ************** */
@@ -714,6 +742,9 @@ extern struct CLG_LogRef *WM_LOG_OPERATORS;
 extern struct CLG_LogRef *WM_LOG_HANDLERS;
 extern struct CLG_LogRef *WM_LOG_EVENTS;
 extern struct CLG_LogRef *WM_LOG_KEYMAPS;
+extern struct CLG_LogRef *WM_LOG_TOOLS;
+extern struct CLG_LogRef *WM_LOG_MSGBUS_PUB;
+extern struct CLG_LogRef *WM_LOG_MSGBUS_SUB;
 
 
 #ifdef __cplusplus

@@ -44,10 +44,20 @@
 
 #include "BKE_colortools.h"
 #include "BKE_context.h"
+#include "BKE_editmesh.h"
 #include "BKE_image.h"
+#include "BKE_layer.h"
 #include "BKE_library.h"
+#include "BKE_material.h"
 #include "BKE_scene.h"
 #include "BKE_screen.h"
+#include "BKE_workspace.h"
+
+#include "RNA_access.h"
+#include "RNA_define.h"
+#include "RNA_enum_types.h"
+
+#include "DEG_depsgraph.h"
 
 #include "IMB_imbuf_types.h"
 
@@ -59,19 +69,20 @@
 #include "ED_space_api.h"
 #include "ED_screen.h"
 #include "ED_uvedit.h"
+#include "ED_transform.h"
 
 #include "BIF_gl.h"
 
-#include "RNA_access.h"
-
 #include "WM_api.h"
 #include "WM_types.h"
+#include "WM_message.h"
 
 #include "UI_resources.h"
 #include "UI_interface.h"
 #include "UI_view2d.h"
 
 #include "image_intern.h"
+#include "GPU_framebuffer.h"
 
 /**************************** common state *****************************/
 
@@ -156,7 +167,7 @@ ARegion *image_has_tools_region(ScrArea *sa)
 
 /* ******************** default callbacks for image space ***************** */
 
-static SpaceLink *image_new(const bContext *UNUSED(C))
+static SpaceLink *image_new(const ScrArea *UNUSED(area), const Scene *UNUSED(scene))
 {
 	ARegion *ar;
 	SpaceImage *simage;
@@ -165,12 +176,11 @@ static SpaceLink *image_new(const bContext *UNUSED(C))
 	simage->spacetype = SPACE_IMAGE;
 	simage->zoom = 1.0f;
 	simage->lock = true;
-	simage->flag = SI_SHOW_GPENCIL | SI_USE_ALPHA;
+	simage->flag = SI_SHOW_GPENCIL | SI_USE_ALPHA | SI_COORDFLOATS;
 
 	simage->iuser.ok = true;
-	simage->iuser.fie_ima = 2;
 	simage->iuser.frames = 100;
-	simage->iuser.flag = IMA_SHOW_STEREO;
+	simage->iuser.flag = IMA_SHOW_STEREO | IMA_ANIM_ALWAYS;
 
 	scopes_new(&simage->scopes);
 	simage->sample_line_hist.height = 100;
@@ -180,7 +190,7 @@ static SpaceLink *image_new(const bContext *UNUSED(C))
 
 	BLI_addtail(&simage->regionbase, ar);
 	ar->regiontype = RGN_TYPE_HEADER;
-	ar->alignment = RGN_ALIGN_BOTTOM;
+	ar->alignment = RGN_ALIGN_TOP;
 
 	/* buttons/list view */
 	ar = MEM_callocN(sizeof(ARegion), "buttons for image");
@@ -265,6 +275,9 @@ static void image_operatortypes(void)
 	WM_operatortype_append(IMAGE_OT_invert);
 
 	WM_operatortype_append(IMAGE_OT_cycle_render_slot);
+	WM_operatortype_append(IMAGE_OT_clear_render_slot);
+	WM_operatortype_append(IMAGE_OT_add_render_slot);
+	WM_operatortype_append(IMAGE_OT_remove_render_slot);
 
 	WM_operatortype_append(IMAGE_OT_sample);
 	WM_operatortype_append(IMAGE_OT_sample_line);
@@ -275,106 +288,19 @@ static void image_operatortypes(void)
 
 	WM_operatortype_append(IMAGE_OT_change_frame);
 
-	WM_operatortype_append(IMAGE_OT_read_renderlayers);
+	WM_operatortype_append(IMAGE_OT_read_viewlayers);
 	WM_operatortype_append(IMAGE_OT_render_border);
 	WM_operatortype_append(IMAGE_OT_clear_render_border);
 }
 
 static void image_keymap(struct wmKeyConfig *keyconf)
 {
-	wmKeyMap *keymap = WM_keymap_ensure(keyconf, "Image Generic", SPACE_IMAGE, 0);
-	wmKeyMapItem *kmi;
-	int i;
-
-	WM_keymap_add_item(keymap, "IMAGE_OT_new", NKEY, KM_PRESS, KM_ALT, 0);
-	WM_keymap_add_item(keymap, "IMAGE_OT_open", OKEY, KM_PRESS, KM_ALT, 0);
-	WM_keymap_add_item(keymap, "IMAGE_OT_reload", RKEY, KM_PRESS, KM_ALT, 0);
-	WM_keymap_add_item(keymap, "IMAGE_OT_read_renderlayers", RKEY, KM_PRESS, KM_CTRL, 0);
-	WM_keymap_add_item(keymap, "IMAGE_OT_save", SKEY, KM_PRESS, KM_ALT, 0);
-	WM_keymap_add_item(keymap, "IMAGE_OT_save_as", F3KEY, KM_PRESS, 0, 0);
-	WM_keymap_add_item(keymap, "IMAGE_OT_properties", NKEY, KM_PRESS, 0, 0);
-	WM_keymap_add_item(keymap, "IMAGE_OT_toolshelf", TKEY, KM_PRESS, 0, 0);
-
-	WM_keymap_add_item(keymap, "IMAGE_OT_cycle_render_slot", JKEY, KM_PRESS, 0, 0);
-	RNA_boolean_set(WM_keymap_add_item(keymap, "IMAGE_OT_cycle_render_slot", JKEY, KM_PRESS, KM_ALT, 0)->ptr, "reverse", true);
-
-	keymap = WM_keymap_ensure(keyconf, "Image", SPACE_IMAGE, 0);
-
-	WM_keymap_add_item(keymap, "IMAGE_OT_view_all", HOMEKEY, KM_PRESS, 0, 0);
-
-	kmi = WM_keymap_add_item(keymap, "IMAGE_OT_view_all", HOMEKEY, KM_PRESS, KM_SHIFT, 0);
-	RNA_boolean_set(kmi->ptr, "fit_view", true);
-
-	WM_keymap_add_item(keymap, "IMAGE_OT_view_selected", PADPERIOD, KM_PRESS, 0, 0);
-	WM_keymap_add_item(keymap, "IMAGE_OT_view_pan", MIDDLEMOUSE, KM_PRESS, 0, 0);
-	WM_keymap_add_item(keymap, "IMAGE_OT_view_pan", MIDDLEMOUSE, KM_PRESS, KM_SHIFT, 0);
-	WM_keymap_add_item(keymap, "IMAGE_OT_view_pan", MOUSEPAN, 0, 0, 0);
-
-#ifdef WITH_INPUT_NDOF
-	WM_keymap_add_item(keymap, "IMAGE_OT_view_all", NDOF_BUTTON_FIT, KM_PRESS, 0, 0); // or view selected?
-	WM_keymap_add_item(keymap, "IMAGE_OT_view_ndof", NDOF_MOTION, 0, 0, 0);
-#endif
-
-	WM_keymap_add_item(keymap, "IMAGE_OT_view_zoom_in", WHEELINMOUSE, KM_PRESS, 0, 0);
-	WM_keymap_add_item(keymap, "IMAGE_OT_view_zoom_out", WHEELOUTMOUSE, KM_PRESS, 0, 0);
-	WM_keymap_add_item(keymap, "IMAGE_OT_view_zoom_in", PADPLUSKEY, KM_PRESS, 0, 0);
-	WM_keymap_add_item(keymap, "IMAGE_OT_view_zoom_out", PADMINUS, KM_PRESS, 0, 0);
-	WM_keymap_add_item(keymap, "IMAGE_OT_view_zoom", MIDDLEMOUSE, KM_PRESS, KM_CTRL, 0);
-	WM_keymap_add_item(keymap, "IMAGE_OT_view_zoom", MOUSEZOOM, 0, 0, 0);
-	WM_keymap_add_item(keymap, "IMAGE_OT_view_zoom", MOUSEPAN, 0, KM_CTRL, 0);
-	WM_keymap_add_item(keymap, "IMAGE_OT_view_zoom_border", BKEY, KM_PRESS, KM_SHIFT, 0);
-
-	/* ctrl now works as well, shift + numpad works as arrow keys on Windows */
-	RNA_float_set(WM_keymap_add_item(keymap, "IMAGE_OT_view_zoom_ratio", PAD8, KM_PRESS, KM_CTRL, 0)->ptr, "ratio", 8.0f);
-	RNA_float_set(WM_keymap_add_item(keymap, "IMAGE_OT_view_zoom_ratio", PAD4, KM_PRESS, KM_CTRL, 0)->ptr, "ratio", 4.0f);
-	RNA_float_set(WM_keymap_add_item(keymap, "IMAGE_OT_view_zoom_ratio", PAD2, KM_PRESS, KM_CTRL, 0)->ptr, "ratio", 2.0f);
-	RNA_float_set(WM_keymap_add_item(keymap, "IMAGE_OT_view_zoom_ratio", PAD8, KM_PRESS, KM_SHIFT, 0)->ptr, "ratio", 8.0f);
-	RNA_float_set(WM_keymap_add_item(keymap, "IMAGE_OT_view_zoom_ratio", PAD4, KM_PRESS, KM_SHIFT, 0)->ptr, "ratio", 4.0f);
-	RNA_float_set(WM_keymap_add_item(keymap, "IMAGE_OT_view_zoom_ratio", PAD2, KM_PRESS, KM_SHIFT, 0)->ptr, "ratio", 2.0f);
-
-	RNA_float_set(WM_keymap_add_item(keymap, "IMAGE_OT_view_zoom_ratio", PAD1, KM_PRESS, 0, 0)->ptr, "ratio", 1.0f);
-	RNA_float_set(WM_keymap_add_item(keymap, "IMAGE_OT_view_zoom_ratio", PAD2, KM_PRESS, 0, 0)->ptr, "ratio", 0.5f);
-	RNA_float_set(WM_keymap_add_item(keymap, "IMAGE_OT_view_zoom_ratio", PAD4, KM_PRESS, 0, 0)->ptr, "ratio", 0.25f);
-	RNA_float_set(WM_keymap_add_item(keymap, "IMAGE_OT_view_zoom_ratio", PAD8, KM_PRESS, 0, 0)->ptr, "ratio", 0.125f);
-
-	WM_keymap_add_item(keymap, "IMAGE_OT_change_frame", LEFTMOUSE, KM_PRESS, 0, 0);
-
-	WM_keymap_add_item(keymap, "IMAGE_OT_sample", ACTIONMOUSE, KM_PRESS, 0, 0);
-	RNA_enum_set(WM_keymap_add_item(keymap, "IMAGE_OT_curves_point_set", ACTIONMOUSE, KM_PRESS, KM_CTRL, 0)->ptr, "point", 0);
-	RNA_enum_set(WM_keymap_add_item(keymap, "IMAGE_OT_curves_point_set", ACTIONMOUSE, KM_PRESS, KM_SHIFT, 0)->ptr, "point", 1);
-
-	/* toggle editmode is handy to have while UV unwrapping */
-	kmi = WM_keymap_add_item(keymap, "OBJECT_OT_mode_set", TABKEY, KM_PRESS, 0, 0);
-	RNA_enum_set(kmi->ptr, "mode", OB_MODE_EDIT);
-	RNA_boolean_set(kmi->ptr, "toggle", true);
-
-	/* fast switch to render slots */
-	for (i = 0; i < MIN2(IMA_MAX_RENDER_SLOT, 9); i++) {
-		kmi = WM_keymap_add_item(keymap, "WM_OT_context_set_int", ONEKEY + i, KM_PRESS, 0, 0);
-		RNA_string_set(kmi->ptr, "data_path", "space_data.image.render_slots.active_index");
-		RNA_int_set(kmi->ptr, "value", i);
-	}
-
-	/* pivot */
-	kmi = WM_keymap_add_item(keymap, "WM_OT_context_set_enum", COMMAKEY, KM_PRESS, 0, 0);
-	RNA_string_set(kmi->ptr, "data_path", "space_data.pivot_point");
-	RNA_string_set(kmi->ptr, "value", "CENTER");
-
-	kmi = WM_keymap_add_item(keymap, "WM_OT_context_set_enum", COMMAKEY, KM_PRESS, KM_CTRL, 0);
-	RNA_string_set(kmi->ptr, "data_path", "space_data.pivot_point");
-	RNA_string_set(kmi->ptr, "value", "MEDIAN");
-
-	kmi = WM_keymap_add_item(keymap, "WM_OT_context_set_enum", PERIODKEY, KM_PRESS, 0, 0);
-	RNA_string_set(kmi->ptr, "data_path", "space_data.pivot_point");
-	RNA_string_set(kmi->ptr, "value", "CURSOR");
-
-	/* render border */
-	WM_keymap_add_item(keymap, "IMAGE_OT_render_border", BKEY, KM_PRESS, KM_CTRL, 0);
-	WM_keymap_add_item(keymap, "IMAGE_OT_clear_render_border", BKEY, KM_PRESS, KM_CTRL | KM_ALT, 0);
+	WM_keymap_ensure(keyconf, "Image Generic", SPACE_IMAGE, 0);
+	WM_keymap_ensure(keyconf, "Image", SPACE_IMAGE, 0);
 }
 
 /* dropboxes */
-static bool image_drop_poll(bContext *UNUSED(C), wmDrag *drag, const wmEvent *UNUSED(event))
+static bool image_drop_poll(bContext *UNUSED(C), wmDrag *drag, const wmEvent *UNUSED(event), const char **UNUSED(tooltip))
 {
 	if (drag->type == WM_DRAG_PATH)
 		if (ELEM(drag->icon, 0, ICON_FILE_IMAGE, ICON_FILE_MOVIE, ICON_FILE_BLANK)) /* rule might not work? */
@@ -404,12 +330,11 @@ static void image_refresh(const bContext *C, ScrArea *sa)
 {
 	Scene *scene = CTX_data_scene(C);
 	SpaceImage *sima = sa->spacedata.first;
-	Object *obedit = CTX_data_edit_object(C);
 	Image *ima;
 
 	ima = ED_space_image(sima);
 
-	BKE_image_user_check_frame_calc(&sima->iuser, scene->r.cfra, 0);
+	BKE_image_user_check_frame_calc(&sima->iuser, scene->r.cfra);
 
 	/* check if we have to set the image from the editmesh */
 	if (ima && (ima->source == IMA_SRC_VIEWER && sima->mode == SI_MODE_MASK)) {
@@ -420,38 +345,10 @@ static void image_refresh(const bContext *C, ScrArea *sa)
 			}
 		}
 	}
-	else if (ima && (ima->source == IMA_SRC_VIEWER || sima->pin)) {
-		/* pass */
-	}
-	else if (obedit && obedit->type == OB_MESH) {
-		Mesh *me = (Mesh *)obedit->data;
-		struct BMEditMesh *em = me->edit_btmesh;
-		bool sloppy = true; /* partially selected face is ok */
-		bool selected = !(scene->toolsettings->uv_flag & UV_SYNC_SELECTION); /* only selected active face? */
-
-		if (BKE_scene_use_new_shading_nodes(scene)) {
-			/* new shading system does not alter image */
-		}
-		else {
-			/* old shading system, we set texface */
-			if (em && EDBM_uv_check(em)) {
-				MTexPoly *tf;
-				if (EDBM_uv_active_face_get(em, sloppy, selected, &tf)) {
-					/* don't need to check for pin here, see above */
-					sima->image = tf->tpage;
-
-					if ((sima->flag & SI_EDITTILE) == 0) {
-						sima->curtile = tf->tile;
-					}
-				}
-			}
-		}
-	}
 }
 
-static void image_listener(bScreen *sc, ScrArea *sa, wmNotifier *wmn)
+static void image_listener(wmWindow *win, ScrArea *sa, wmNotifier *wmn, Scene *UNUSED(scene))
 {
-	Scene *scene = sc->scene;
 	SpaceImage *sima = (SpaceImage *)sa->spacedata.first;
 
 	/* context changes */
@@ -544,7 +441,8 @@ static void image_listener(bScreen *sc, ScrArea *sa, wmNotifier *wmn)
 				case ND_TRANSFORM:
 				case ND_MODIFIER:
 				{
-					Object *ob = OBACT;
+					ViewLayer *view_layer = WM_window_get_active_view_layer(win);
+					Object *ob = OBACT(view_layer);
 					if (ob && (ob == wmn->reference) && (ob->mode & OB_MODE_EDIT)) {
 						if (sima->lock && (sima->flag & SI_DRAWSHADOW)) {
 							ED_area_tag_refresh(sa);
@@ -596,29 +494,50 @@ static int image_context(const bContext *C, const char *member, bContextDataResu
 	return 0;
 }
 
+static void IMAGE_GGT_gizmo2d(wmGizmoGroupType *gzgt)
+{
+	gzgt->name = "UV Transform Gizmo";
+	gzgt->idname = "IMAGE_GGT_gizmo2d";
+
+	gzgt->gzmap_params.spaceid = SPACE_IMAGE;
+	gzgt->gzmap_params.regionid = RGN_TYPE_WINDOW;
+
+	gzgt->poll = ED_widgetgroup_gizmo2d_poll;
+	gzgt->setup = ED_widgetgroup_gizmo2d_setup;
+	gzgt->refresh = ED_widgetgroup_gizmo2d_refresh;
+	gzgt->draw_prepare = ED_widgetgroup_gizmo2d_draw_prepare;
+}
+
+static void image_widgets(void)
+{
+	WM_gizmogrouptype_append(IMAGE_GGT_gizmo2d);
+}
+
 /************************** main region ***************************/
 
 /* sets up the fields of the View2D from zoom and offset */
 static void image_main_region_set_view2d(SpaceImage *sima, ARegion *ar)
 {
 	Image *ima = ED_space_image(sima);
-	float x1, y1, w, h;
-	int width, height, winx, winy;
 
-#if 0
-	if (image_preview_active(curarea, &width, &height)) {}
-	else
-#endif
+	int width, height;
 	ED_space_image_get_size(sima, &width, &height);
 
-	w = width;
-	h = height;
+	float w = width;
+	float h = height;
 
 	if (ima)
 		h *= ima->aspy / ima->aspx;
 
-	winx = BLI_rcti_size_x(&ar->winrct) + 1;
-	winy = BLI_rcti_size_y(&ar->winrct) + 1;
+	int winx = BLI_rcti_size_x(&ar->winrct) + 1;
+	int winy = BLI_rcti_size_y(&ar->winrct) + 1;
+
+	/* For region overlap, move center so image doesn't overlap header. */
+	rcti visible_rect;
+	ED_region_visible_rect(ar, &visible_rect);
+	const int visible_winy = BLI_rcti_size_y(&visible_rect) + 1;
+	int visible_centerx = 0;
+	int visible_centery = visible_rect.ymin + (visible_winy - winy) / 2;
 
 	ar->v2d.tot.xmin = 0;
 	ar->v2d.tot.ymin = 0;
@@ -630,8 +549,8 @@ static void image_main_region_set_view2d(SpaceImage *sima, ARegion *ar)
 	ar->v2d.mask.ymax = winy;
 
 	/* which part of the image space do we see? */
-	x1 = ar->winrct.xmin + (winx - sima->zoom * w) / 2.0f;
-	y1 = ar->winrct.ymin + (winy - sima->zoom * h) / 2.0f;
+	float x1 = ar->winrct.xmin + visible_centerx + (winx - sima->zoom * w) / 2.0f;
+	float y1 = ar->winrct.ymin + visible_centery + (winy - sima->zoom * h) / 2.0f;
 
 	x1 -= sima->zoom * sima->xof;
 	y1 -= sima->zoom * sima->yof;
@@ -684,7 +603,6 @@ static void image_main_region_init(wmWindowManager *wm, ARegion *ar)
 	WM_event_add_keymap_handler(&ar->handlers, keymap);
 	keymap = WM_keymap_ensure(wm->defaultconf, "Image", SPACE_IMAGE, 0);
 	WM_event_add_keymap_handler_bb(&ar->handlers, keymap, &ar->v2d.mask, &ar->winrct);
-
 }
 
 static void image_main_region_draw(const bContext *C, ARegion *ar)
@@ -693,9 +611,11 @@ static void image_main_region_draw(const bContext *C, ARegion *ar)
 	SpaceImage *sima = CTX_wm_space_image(C);
 	Object *obact = CTX_data_active_object(C);
 	Object *obedit = CTX_data_edit_object(C);
+	Depsgraph *depsgraph = CTX_data_depsgraph(C);
 	Mask *mask = NULL;
 	bool curve = false;
 	Scene *scene = CTX_data_scene(C);
+	ViewLayer *view_layer = CTX_data_view_layer(C);
 	View2D *v2d = &ar->v2d;
 	//View2DScrollers *scrollers;
 	float col[3];
@@ -705,8 +625,8 @@ static void image_main_region_draw(const bContext *C, ARegion *ar)
 
 	/* clear and setup matrix */
 	UI_GetThemeColor3fv(TH_BACK, col);
-	glClearColor(col[0], col[1], col[2], 0.0);
-	glClear(GL_COLOR_BUFFER_BIT);
+	GPU_clear_color(col[0], col[1], col[2], 0.0);
+	GPU_clear(GPU_COLOR_BIT);
 
 	image_user_refresh_scene(C, sima);
 
@@ -721,7 +641,7 @@ static void image_main_region_draw(const bContext *C, ARegion *ar)
 
 	ED_region_draw_cb_draw(C, ar, REGION_DRAW_PRE_VIEW);
 
-	ED_uvedit_draw_main(sima, ar, scene, obedit, obact);
+	ED_uvedit_draw_main(sima, ar, scene, view_layer, obedit, obact, depsgraph);
 
 	/* check for mask (delay draw) */
 	if (ED_space_image_show_uvedit(sima, obedit)) {
@@ -790,6 +710,8 @@ static void image_main_region_draw(const bContext *C, ARegion *ar)
 		UI_view2d_view_restore(C);
 	}
 
+	WM_gizmomap_draw(ar->gizmo_map, C, WM_GIZMOMAP_DRAWSTEP_2D);
+
 	draw_image_cache(C, ar);
 
 	/* scrollers? */
@@ -800,10 +722,16 @@ static void image_main_region_draw(const bContext *C, ARegion *ar)
 #endif
 }
 
-static void image_main_region_listener(bScreen *UNUSED(sc), ScrArea *sa, ARegion *ar, wmNotifier *wmn)
+static void image_main_region_listener(
+        wmWindow *UNUSED(win), ScrArea *sa, ARegion *ar,
+        wmNotifier *wmn, const Scene *UNUSED(scene))
 {
 	/* context changes */
 	switch (wmn->category) {
+		case NC_GEOM:
+			if (ELEM(wmn->data, ND_DATA, ND_SELECT))
+				WM_gizmomap_tag_refresh(ar->gizmo_map);
+			break;
 		case NC_GPENCIL:
 			if (ELEM(wmn->action, NA_EDITED, NA_SELECTED))
 				ED_region_tag_redraw(ar);
@@ -813,6 +741,7 @@ static void image_main_region_listener(bScreen *UNUSED(sc), ScrArea *sa, ARegion
 		case NC_IMAGE:
 			if (wmn->action == NA_PAINTING)
 				ED_region_tag_redraw(ar);
+			WM_gizmomap_tag_refresh(ar->gizmo_map);
 			break;
 		case NC_MATERIAL:
 			if (wmn->data == ND_SHADING_LINKS) {
@@ -820,6 +749,11 @@ static void image_main_region_listener(bScreen *UNUSED(sc), ScrArea *sa, ARegion
 
 				if (sima->iuser.scene && (sima->iuser.scene->toolsettings->uv_flag & UV_SHOW_SAME_IMAGE))
 					ED_region_tag_redraw(ar);
+			}
+			break;
+		case NC_SCREEN:
+			if (ELEM(wmn->data, ND_LAYER)) {
+				ED_region_tag_redraw(ar);
 			}
 			break;
 	}
@@ -841,10 +775,12 @@ static void image_buttons_region_init(wmWindowManager *wm, ARegion *ar)
 
 static void image_buttons_region_draw(const bContext *C, ARegion *ar)
 {
-	ED_region_panels(C, ar, NULL, -1, true);
+	ED_region_panels(C, ar);
 }
 
-static void image_buttons_region_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa), ARegion *ar, wmNotifier *wmn)
+static void image_buttons_region_listener(
+        wmWindow *UNUSED(win), ScrArea *UNUSED(sa), ARegion *ar,
+        wmNotifier *wmn, const Scene *UNUSED(scene))
 {
 	/* context changes */
 	switch (wmn->category) {
@@ -914,10 +850,12 @@ static void image_tools_region_draw(const bContext *C, ARegion *ar)
 	}
 	ED_space_image_release_buffer(sima, ibuf, lock);
 
-	ED_region_panels(C, ar, NULL, -1, true);
+	ED_region_panels(C, ar);
 }
 
-static void image_tools_region_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa), ARegion *ar, wmNotifier *wmn)
+static void image_tools_region_listener(
+        wmWindow *UNUSED(win), ScrArea *UNUSED(sa), ARegion *ar,
+        wmNotifier *wmn, const Scene *UNUSED(scene))
 {
 	/* context changes */
 	switch (wmn->category) {
@@ -968,7 +906,9 @@ static void image_header_region_draw(const bContext *C, ARegion *ar)
 	ED_region_header(C, ar);
 }
 
-static void image_header_region_listener(bScreen *UNUSED(sc), ScrArea *UNUSED(sa), ARegion *ar, wmNotifier *wmn)
+static void image_header_region_listener(
+        wmWindow *UNUSED(win), ScrArea *UNUSED(sa), ARegion *ar,
+        wmNotifier *wmn, const Scene *UNUSED(scene))
 {
 	/* context changes */
 	switch (wmn->category) {
@@ -1016,6 +956,37 @@ static void image_id_remap(ScrArea *UNUSED(sa), SpaceLink *slink, ID *old_id, ID
 	}
 }
 
+/**
+ * \note Used for splitting out a subset of modes is more involved,
+ * The previous non-uv-edit mode is stored so switching back to the
+ * image doesn't always reset the sub-mode.
+ */
+static int image_space_subtype_get(ScrArea *sa)
+{
+	SpaceImage *sima = sa->spacedata.first;
+	return sima->mode == SI_MODE_UV ? SI_MODE_UV : SI_MODE_VIEW;
+}
+
+static void image_space_subtype_set(ScrArea *sa, int value)
+{
+	SpaceImage *sima = sa->spacedata.first;
+	if (value == SI_MODE_UV) {
+		if (sima->mode != SI_MODE_UV) {
+			sima->mode_prev = sima->mode;
+		}
+		sima->mode = value;
+	}
+	else {
+		sima->mode = sima->mode_prev;
+	}
+}
+
+static void image_space_subtype_item_extend(
+        bContext *UNUSED(C), EnumPropertyItem **item, int *totitem)
+{
+	RNA_enum_items_add(item, totitem, rna_enum_space_image_mode_items);
+}
+
 /**************************** spacetype *****************************/
 
 /* only called once, from space/spacetypes.c */
@@ -1037,16 +1008,19 @@ void ED_spacetype_image(void)
 	st->refresh = image_refresh;
 	st->listener = image_listener;
 	st->context = image_context;
+	st->gizmos = image_widgets;
 	st->id_remap = image_id_remap;
+	st->space_subtype_item_extend = image_space_subtype_item_extend;
+	st->space_subtype_get = image_space_subtype_get;
+	st->space_subtype_set = image_space_subtype_set;
 
 	/* regions: main window */
 	art = MEM_callocN(sizeof(ARegionType), "spacetype image region");
 	art->regionid = RGN_TYPE_WINDOW;
-	art->keymapflag = ED_KEYMAP_FRAMES | ED_KEYMAP_GPENCIL;
+	art->keymapflag = ED_KEYMAP_GIZMO | ED_KEYMAP_FRAMES | ED_KEYMAP_GPENCIL;
 	art->init = image_main_region_init;
 	art->draw = image_main_region_draw;
 	art->listener = image_main_region_listener;
-
 	BLI_addhead(&st->regiontypes, art);
 
 	/* regions: listview/buttons */
@@ -1065,9 +1039,12 @@ void ED_spacetype_image(void)
 	/* regions: statistics/scope buttons */
 	art = MEM_callocN(sizeof(ARegionType), "spacetype image region");
 	art->regionid = RGN_TYPE_TOOLS;
-	art->prefsizex = 220; // XXX
+	art->prefsizex = 58; /* XXX */
+	art->prefsizey = 50; /* XXX */
 	art->keymapflag = ED_KEYMAP_UI | ED_KEYMAP_FRAMES;
 	art->listener = image_tools_region_listener;
+	art->message_subscribe = ED_region_generic_tools_region_message_subscribe;
+	art->snap_size = ED_region_generic_tools_region_snap_size;
 	art->init = image_tools_region_init;
 	art->draw = image_tools_region_draw;
 	BLI_addhead(&st->regiontypes, art);
@@ -1081,6 +1058,10 @@ void ED_spacetype_image(void)
 	art->init = image_header_region_init;
 	art->draw = image_header_region_draw;
 
+	BLI_addhead(&st->regiontypes, art);
+
+	/* regions: hud */
+	art = ED_area_type_hud(st->spaceid);
 	BLI_addhead(&st->regiontypes, art);
 
 	BKE_spacetype_register(st);

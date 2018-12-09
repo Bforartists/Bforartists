@@ -45,8 +45,8 @@ namespace DEG {
 /* Inner Nodes */
 
 OperationDepsNode::OperationDepsNode() :
-    flag(0),
-    customdata_mask(0)
+    name_tag(-1),
+    flag(0)
 {
 }
 
@@ -56,7 +56,7 @@ OperationDepsNode::~OperationDepsNode()
 
 string OperationDepsNode::identifier() const
 {
-	return string(DEG_OPNAMES[opcode]) + "(" + name + ")";
+	return string(operationCodeAsString(opcode)) + "(" + name + ")";
 }
 
 /* Full node identifier, including owner name.
@@ -74,14 +74,23 @@ string OperationDepsNode::full_identifier() const
 	return owner_str + "." + identifier();
 }
 
-void OperationDepsNode::tag_update(Depsgraph *graph)
+void OperationDepsNode::tag_update(Depsgraph *graph, eDepsTag_Source source)
 {
-	if (flag & DEPSOP_FLAG_NEEDS_UPDATE) {
-		return;
+	if ((flag & DEPSOP_FLAG_NEEDS_UPDATE) == 0) {
+		graph->add_entry_tag(this);
 	}
 	/* Tag for update, but also note that this was the source of an update. */
 	flag |= (DEPSOP_FLAG_NEEDS_UPDATE | DEPSOP_FLAG_DIRECTLY_MODIFIED);
-	graph->add_entry_tag(this);
+	switch (source) {
+		case DEG_UPDATE_SOURCE_TIME:
+		case DEG_UPDATE_SOURCE_RELATIONS:
+		case DEG_UPDATE_SOURCE_VISIBILITY:
+			/* Currently nothing. */
+			break;
+		case DEG_UPDATE_SOURCE_USER_EDIT:
+			flag |= DEPSOP_FLAG_USER_MODIFIED;
+			break;
+	}
 }
 
 void OperationDepsNode::set_as_entry()

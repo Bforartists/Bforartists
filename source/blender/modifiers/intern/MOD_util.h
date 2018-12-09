@@ -33,27 +33,31 @@
 
 #include "DEG_depsgraph_build.h"
 
-struct DerivedMesh;
+struct Depsgraph;
 struct MDeformVert;
+struct Mesh;
 struct ModifierData;
 struct Object;
 struct Scene;
 struct Tex;
 
-void modifier_init_texture(const struct Scene *scene, struct Tex *texture);
-void get_texture_coords(
-        struct MappingInfoModifierData *dmd, struct Object *ob, struct DerivedMesh *dm,
-        float (*co)[3], float (*texco)[3], int numVerts);
-void modifier_vgroup_cache(struct ModifierData *md, float (*vertexCos)[3]);
-struct DerivedMesh *get_cddm(
-        struct Object *ob, struct BMEditMesh *em, struct DerivedMesh *dm,
-        float (*vertexCos)[3], bool use_normals);
-struct DerivedMesh *get_dm(
-        struct Object *ob, struct BMEditMesh *em, struct DerivedMesh *dm,
-        float (*vertexCos)[3], bool use_normals, bool use_orco);
-struct DerivedMesh *get_dm_for_modifier(struct Object *ob, ModifierApplyFlag flag);
-void modifier_get_vgroup(
-        struct Object *ob, struct DerivedMesh *dm,
+void MOD_init_texture(const struct Depsgraph *depsgraph, struct Tex *texture);
+void MOD_get_texture_coords(
+        struct MappingInfoModifierData *dmd,
+        struct Object *ob,
+        struct Mesh *mesh,
+        float (*cos)[3],
+        float (*r_texco)[3]);
+
+void MOD_previous_vcos_store(struct ModifierData *md, float (*vertexCos)[3]);
+
+struct Mesh *MOD_deform_mesh_eval_get(
+        struct Object *ob, struct BMEditMesh *em, struct Mesh *mesh,
+        float (*vertexCos)[3], const int num_verts,
+        const bool use_normals, const bool use_orco);
+
+void MOD_get_vgroup(
+        struct Object *ob, struct Mesh *mesh,
         const char *name, struct MDeformVert **dvert, int *defgrp_index);
 
 #endif /* __MOD_UTIL_H__ */

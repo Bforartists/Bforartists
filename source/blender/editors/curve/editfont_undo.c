@@ -38,8 +38,9 @@
 
 #include "BKE_context.h"
 #include "BKE_font.h"
-#include "BKE_depsgraph.h"
 #include "BKE_undo_system.h"
+
+#include "DEG_depsgraph.h"
 
 #include "ED_object.h"
 #include "ED_curve.h"
@@ -358,7 +359,7 @@ static void font_undosys_step_decode(struct bContext *C, UndoStep *us_p, int UNU
 	Object *obedit = us->obedit_ref.ptr;
 	Curve *cu = obedit->data;
 	undofont_to_editfont(&us->data, cu);
-	DAG_id_tag_update(&obedit->id, OB_RECALC_DATA);
+	DEG_id_tag_update(&obedit->id, OB_RECALC_DATA);
 	WM_event_add_notifier(C, NC_GEOM | ND_DATA, NULL);
 }
 

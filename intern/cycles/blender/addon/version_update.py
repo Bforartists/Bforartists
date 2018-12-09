@@ -22,45 +22,6 @@ import math
 from bpy.app.handlers import persistent
 
 
-def check_is_new_shading_ntree(node_tree):
-    for node in node_tree.nodes:
-        # If material has any node with ONLY new shading system
-        # compatibility then it's considered a Cycles material
-        # and versioning code would need to perform on it.
-        #
-        # We can not check for whether NEW_SHADING in compatibility
-        # because some nodes could have compatibility with both old
-        # and new shading system and they can't be used for any
-        # decision here.
-        if node.shading_compatibility == {'NEW_SHADING'}:
-            return True
-
-        # If node is only compatible with old shading system
-        # then material can not be Cycles material and we
-        # can stopiterating nodes now.
-        if node.shading_compatibility == {'OLD_SHADING'}:
-            return False
-    return False
-
-
-def check_is_new_shading_material(material):
-    if not material.node_tree:
-        return False
-    return check_is_new_shading_ntree(material.node_tree)
-
-
-def check_is_new_shading_world(world):
-    if not world.node_tree:
-        return False
-    return check_is_new_shading_ntree(world.node_tree)
-
-
-def check_is_new_shading_lamp(lamp):
-    if not lamp.node_tree:
-        return False
-    return check_is_new_shading_ntree(lamp.node_tree)
-
-
 def foreach_notree_node(nodetree, callback, traversed):
     if nodetree in traversed:
         return
@@ -74,23 +35,23 @@ def foreach_notree_node(nodetree, callback, traversed):
 def foreach_cycles_node(callback):
     traversed = set()
     for material in bpy.data.materials:
-        if check_is_new_shading_material(material):
+        if material.node_tree:
             foreach_notree_node(
                 material.node_tree,
                 callback,
                 traversed,
             )
     for world in bpy.data.worlds:
-        if check_is_new_shading_world(world):
+        if world.node_tree:
             foreach_notree_node(
                 world.node_tree,
                 callback,
                 traversed,
             )
-    for lamp in bpy.data.lamps:
-        if check_is_new_shading_world(lamp):
+    for light in bpy.data.lights:
+        if light.node_tree:
             foreach_notree_node(
-                lamp.node_tree,
+                light.node_tree,
                 callback,
                 traversed,
             )
@@ -109,10 +70,10 @@ def displacement_node_insert(material, nodetree, traversed):
     displacement_links = []
     for link in nodetree.links:
         if (
-           link.to_node.bl_idname == 'ShaderNodeOutputMaterial' and
-           link.from_node.bl_idname != 'ShaderNodeDisplacement' and
-           link.to_socket.identifier == 'Displacement'
-           ):
+                link.to_node.bl_idname == 'ShaderNodeOutputMaterial' and
+                link.from_node.bl_idname != 'ShaderNodeDisplacement' and
+                link.to_socket.identifier == 'Displacement'
+        ):
             displacement_links.append(link)
 
     # Replace links with displacement node
@@ -137,7 +98,7 @@ def displacement_node_insert(material, nodetree, traversed):
 def displacement_nodes_insert():
     traversed = set()
     for material in bpy.data.materials:
-        if check_is_new_shading_material(material):
+        if material.node_tree:
             displacement_node_insert(material, material.node_tree, traversed)
 
 
@@ -198,7 +159,7 @@ def square_roughness_node_insert(material, nodetree, traversed):
 def square_roughness_nodes_insert():
     traversed = set()
     for material in bpy.data.materials:
-        if check_is_new_shading_material(material):
+        if material.node_tree:
             square_roughness_node_insert(material, material.node_tree, traversed)
 
 
@@ -314,7 +275,7 @@ def ambient_occlusion_node_relink(material, nodetree, traversed):
 def ambient_occlusion_nodes_relink():
     traversed = set()
     for material in bpy.data.materials:
-        if check_is_new_shading_material(material):
+        if material.node_tree:
             ambient_occlusion_node_relink(material, material.node_tree, traversed)
 
 
@@ -348,11 +309,9 @@ def do_versions(self):
         for scene in bpy.data.scenes:
             cscene = scene.cycles
             sample_clamp = cscene.get("sample_clamp", False)
-            if (
-                sample_clamp and
+            if (sample_clamp and
                 not cscene.is_property_set("sample_clamp_direct") and
-                    not cscene.is_property_set("sample_clamp_indirect")
-            ):
+                    not cscene.is_property_set("sample_clamp_indirect")):
 
                 cscene.sample_clamp_direct = sample_clamp
                 cscene.sample_clamp_indirect = sample_clamp
@@ -368,11 +327,10 @@ def do_versions(self):
     if bpy.data.version <= (2, 72, 0):
         for scene in bpy.data.scenes:
             cscene = scene.cycles
-            if (
-                cscene.get("no_caustics", False) and
+            if (cscene.get("no_caustics", False) and
                 not cscene.is_property_set("caustics_reflective") and
-                not cscene.is_property_set("caustics_refractive")
-            ):
+                    not cscene.is_property_set("caustics_refractive")):
+
                 cscene.caustics_reflective = False
                 cscene.caustics_refractive = False
 
@@ -409,12 +367,12 @@ def do_versions(self):
             if not cscene.is_property_set("tile_order"):
                 cscene.tile_order = 'CENTER'
 
-        for lamp in bpy.data.lamps:
-            clamp = lamp.cycles
+        for light in bpy.data.lights:
+            clight = light.cycles
 
             # MIS
-            if not clamp.is_property_set("use_multiple_importance_sampling"):
-                clamp.use_multiple_importance_sampling = False
+            if not clight.is_property_set("use_multiple_importance_sampling"):
+                clight.use_multiple_importance_sampling = False
 
         for mat in bpy.data.materials:
             cmat = mat.cycles
@@ -463,7 +421,8 @@ def do_versions(self):
             if not cscene.is_property_set("sample_clamp_indirect"):
                 cscene.sample_clamp_indirect = 0.0
 
-    if bpy.data.version <= (2, 79, 1):
+    if bpy.data.version <= (2, 79, 1) or \
+       (bpy.data.version >= (2, 80, 0) and bpy.data.version <= (2, 80, 3)):
         displacement_nodes_insert()
 
     if bpy.data.version <= (2, 79, 2):
@@ -474,11 +433,24 @@ def do_versions(self):
 
         foreach_cycles_node(displacement_principled_nodes)
 
-    if bpy.data.version <= (2, 79, 3):
+    if bpy.data.version <= (2, 79, 3) or \
+       (bpy.data.version >= (2, 80, 0) and bpy.data.version <= (2, 80, 4)):
         # Switch to squared roughness convention
         square_roughness_nodes_insert()
 
-    if bpy.data.version <= (2, 79, 4):
+    if bpy.data.version <= (2, 80, 15):
+        # Copy cycles hair settings to internal settings
+        for part in bpy.data.particles:
+            cpart = part.get("cycles", None)
+            if cpart:
+                part.shape = cpart.get("shape", 0.0)
+                part.root_radius = cpart.get("root_width", 1.0)
+                part.tip_radius = cpart.get("tip_width", 0.0)
+                part.radius_scale = cpart.get("radius_scale", 0.01)
+                part.use_close_tip = cpart.get("use_closetip", True)
+
+    if bpy.data.version <= (2, 79, 4) or \
+       (bpy.data.version >= (2, 80, 0) and bpy.data.version <= (2, 80, 18)):
         for world in bpy.data.worlds:
             cworld = world.cycles
             # World MIS

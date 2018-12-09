@@ -32,6 +32,9 @@
  * (ONLY ADD NEW ITEMS AT THE END)
  */
 
+struct Mesh;
+struct Scene;
+
 typedef enum ModifierType {
 	eModifierType_None              = 0,
 	eModifierType_Subsurf           = 1,
@@ -87,6 +90,7 @@ typedef enum ModifierType {
 	eModifierType_CorrectiveSmooth  = 51,
 	eModifierType_MeshSequenceCache = 52,
 	eModifierType_SurfaceDeform     = 53,
+	eModifierType_WeightedNormal	= 54,
 	NUM_MODIFIER_TYPES
 } ModifierType;
 
@@ -105,21 +109,20 @@ typedef struct ModifierData {
 	struct ModifierData *next, *prev;
 
 	int type, mode;
-	int stackindex, pad;
+	int stackindex;
+	short flag;
+	short pad;
 	char name[64];  /* MAX_NAME */
-
-	/* XXX for timing info set by caller... solve later? (ton) */
-	struct Scene *scene;
 
 	char *error;
 } ModifierData;
 
 typedef enum {
-	eSubsurfModifierFlag_Incremental  = (1 << 0),
-	eSubsurfModifierFlag_DebugIncr    = (1 << 1),
-	eSubsurfModifierFlag_ControlEdges = (1 << 2),
-	eSubsurfModifierFlag_SubsurfUv    = (1 << 3),
-} SubsurfModifierFlag;
+	/* This modifier has been inserted in local override, and hence can be fully edited. */
+	eModifierFlag_StaticOverride_Local  = (1 << 0),
+	/* This modifier does not own its caches, but instead shares them with another modifier. */
+	eModifierFlag_SharedCaches          = (1 << 1),
+} ModifierFlag;
 
 /* not a real modifier */
 typedef struct MappingInfoModifierData {
@@ -132,11 +135,35 @@ typedef struct MappingInfoModifierData {
 	int texmapping;
 } MappingInfoModifierData;
 
+typedef enum {
+	eSubsurfModifierFlag_Incremental  = (1 << 0),
+	eSubsurfModifierFlag_DebugIncr    = (1 << 1),
+	eSubsurfModifierFlag_ControlEdges = (1 << 2),
+	/* DEPRECATED, ONLY USED FOR DO-VERSIONS */
+	eSubsurfModifierFlag_SubsurfUv_DEPRECATED    = (1 << 3),
+} SubsurfModifierFlag;
+
+typedef enum {
+	SUBSURF_TYPE_CATMULL_CLARK = 0,
+	SUBSURF_TYPE_SIMPLE = 1,
+} eSubsurfModifierType;
+
+typedef enum {
+	SUBSURF_UV_SMOOTH_NONE = 0,
+	SUBSURF_UV_SMOOTH_PRESERVE_CORNERS = 1,
+	SUBSURF_UV_SMOOTH_PRESERVE_CORNERS_AND_JUNCTIONS = 2,
+	SUBSURF_UV_SMOOTH_PRESERVE_CORNERS_JUNCTIONS_AND_CONCAVE = 3,
+	SUBSURF_UV_SMOOTH_PRESERVE_BOUNDARIES = 4,
+	SUBSURF_UV_SMOOTH_ALL = 5,
+} eSubsurfUVSmooth;
+
 typedef struct SubsurfModifierData {
 	ModifierData modifier;
 
 	short subdivType, levels, renderLevels, flags;
-	short use_opensubdiv, pad[3];
+	short uv_smooth;
+	short quality;
+	short pad[2];
 
 	void *emCache, *mCache;
 } SubsurfModifierData;
@@ -286,14 +313,20 @@ typedef struct MirrorModifierData {
 
 /* MirrorModifierData->flag */
 enum {
-	MOD_MIR_CLIPPING  = (1 << 0),
-	MOD_MIR_MIRROR_U  = (1 << 1),
-	MOD_MIR_MIRROR_V  = (1 << 2),
-	MOD_MIR_AXIS_X    = (1 << 3),
-	MOD_MIR_AXIS_Y    = (1 << 4),
-	MOD_MIR_AXIS_Z    = (1 << 5),
-	MOD_MIR_VGROUP    = (1 << 6),
-	MOD_MIR_NO_MERGE  = (1 << 7),
+	MOD_MIR_CLIPPING      = (1 << 0),
+	MOD_MIR_MIRROR_U      = (1 << 1),
+	MOD_MIR_MIRROR_V      = (1 << 2),
+	MOD_MIR_AXIS_X        = (1 << 3),
+	MOD_MIR_AXIS_Y        = (1 << 4),
+	MOD_MIR_AXIS_Z        = (1 << 5),
+	MOD_MIR_VGROUP        = (1 << 6),
+	MOD_MIR_NO_MERGE      = (1 << 7),
+	MOD_MIR_BISECT_AXIS_X = (1 << 8),
+	MOD_MIR_BISECT_AXIS_Y = (1 << 9),
+	MOD_MIR_BISECT_AXIS_Z = (1 << 10),
+	MOD_MIR_BISECT_FLIP_AXIS_X = (1 << 11),
+	MOD_MIR_BISECT_FLIP_AXIS_Y = (1 << 12),
+	MOD_MIR_BISECT_FLIP_AXIS_Z = (1 << 13),
 };
 
 typedef struct EdgeSplitModifierData {
@@ -309,6 +342,10 @@ enum {
 	MOD_EDGESPLIT_FROMFLAG   = (1 << 2),
 };
 
+typedef struct BevelModNorEditData {
+	struct GHash *faceHash;
+} BevelModNorEditData;
+
 typedef struct BevelModifierData {
 	ModifierData modifier;
 
@@ -319,13 +356,16 @@ typedef struct BevelModifierData {
 	short lim_flags;      /* flags to tell the tool how to limit the bevel */
 	short e_flags;        /* flags to direct how edge weights are applied to verts */
 	short mat;            /* material index if >= 0, else material inherited from surrounding faces */
-	short pad;
+	short edge_flags;
 	int pad2;
 	float profile;        /* controls profile shape (0->1, .5 is round) */
 	/* if the MOD_BEVEL_ANGLE is set, this will be how "sharp" an edge must be before it gets beveled */
 	float bevel_angle;
 	/* if the MOD_BEVEL_VWEIGHT option is set, this will be the name of the vert group, MAX_VGROUP_NAME */
+	int hnmode;
+	float hn_strength;
 	char defgrp_name[64];
+	struct BevelModNorEditData clnordata;
 } BevelModifierData;
 
 /* BevelModifierData->flags and BevelModifierData->lim_flags */
@@ -346,6 +386,7 @@ enum {
 /*	MOD_BEVEL_DIST          = (1 << 12), */  /* same as above */
 	MOD_BEVEL_OVERLAP_OK    = (1 << 13),
 	MOD_BEVEL_EVEN_WIDTHS   = (1 << 14),
+	MOD_BEVEL_SET_WN_STR	= (1 << 15),
 };
 
 /* BevelModifierData->val_flags (not used as flags any more) */
@@ -354,6 +395,20 @@ enum {
 	MOD_BEVEL_AMT_WIDTH = 1,
 	MOD_BEVEL_AMT_DEPTH = 2,
 	MOD_BEVEL_AMT_PERCENT = 3,
+};
+
+/* BevelModifierData->edge_flags */
+enum {
+	MOD_BEVEL_MARK_SEAM	 = (1 << 0),
+	MOD_BEVEL_MARK_SHARP = (1 << 1),
+};
+
+/* BevelModifierData->hnmode */
+enum {
+	MOD_BEVEL_HN_NONE,
+	MOD_BEVEL_HN_FACE,
+	MOD_BEVEL_HN_ADJ,
+	MOD_BEVEL_FIX_SHA,
 };
 
 typedef struct SmokeModifierData {
@@ -420,8 +475,7 @@ typedef struct UVProjectModifierData {
 
 	/* the objects which do the projecting */
 	struct Object *projectors[10]; /* MOD_UVPROJECT_MAXPROJECTORS */
-	struct Image *image;           /* the image to project */
-	int flags;
+	int pad2;
 	int num_projectors;
 	float aspectx, aspecty;
 	float scalex, scaley;
@@ -600,12 +654,15 @@ typedef struct SoftbodyModifierData {
 typedef struct ClothModifierData {
 	ModifierData modifier;
 
-	struct Scene *scene;                  /* the context, time etc is here */
 	struct Cloth *clothObject;            /* The internal data structure for cloth. */
 	struct ClothSimSettings *sim_parms;   /* definition is in DNA_cloth_types.h */
 	struct ClothCollSettings *coll_parms; /* definition is in DNA_cloth_types.h */
+
+	/* PointCache can be shared with other instances of ClothModifierData.
+	 * Inspect (modifier.flag & eModifierFlag_SharedCaches) to find out. */
 	struct PointCache *point_cache;       /* definition is in DNA_object_force_types.h */
 	struct ListBase ptcaches;
+
 	/* XXX nasty hack, remove once hair can be separated from cloth modifier data */
 	struct ClothHairData *hairdata;
 	/* grid geometry values of hair continuum */
@@ -644,7 +701,7 @@ typedef struct SurfaceModifierData {
 	struct MVert *x; /* old position */
 	struct MVert *v; /* velocity */
 
-	struct DerivedMesh *dm;
+	struct Mesh *mesh;
 
 	struct BVHTreeFromMesh *bvhtree; /* bounding volume hierarchy of the mesh faces */
 
@@ -713,7 +770,7 @@ typedef struct MeshDeformModifierData {
 	float *bindcos;                 /* deprecated storage of cage coords */
 
 	/* runtime */
-	void (*bindfunc)(struct Scene *scene, struct MeshDeformModifierData *mmd, struct DerivedMesh *cagedm,
+	void (*bindfunc)(struct Scene *scene, struct MeshDeformModifierData *mmd, struct Mesh *cagemesh,
 	                 float *vertexcos, int totvert, float cagemat[4][4]);
 } MeshDeformModifierData;
 
@@ -731,8 +788,8 @@ typedef struct ParticleSystemModifierData {
 	ModifierData modifier;
 
 	struct ParticleSystem *psys;
-	struct DerivedMesh *dm_final;  /* Final DM - its topology may differ from orig mesh. */
-	struct DerivedMesh *dm_deformed;  /* Deformed-onle DM - its topology is same as orig mesh one. */
+	struct Mesh *mesh_final;  /* Final Mesh - its topology may differ from orig mesh. */
+	struct Mesh *mesh_original;  /* Original mesh that particles are attached to. */
 	int totdmvert, totdmedge, totdmface;
 	short flag, pad;
 } ParticleSystemModifierData;
@@ -794,18 +851,21 @@ typedef struct MultiresModifierData {
 
 	char lvl, sculptlvl, renderlvl, totlvl;
 	char simple, flags, pad[2];
+	short quality;
+	short uv_smooth;
+	short pad2[2];
 } MultiresModifierData;
 
 typedef enum {
 	eMultiresModifierFlag_ControlEdges = (1 << 0),
-	eMultiresModifierFlag_PlainUv      = (1 << 1),
+	/* DEPRECATED, only used for versioning. */
+	eMultiresModifierFlag_PlainUv_DEPRECATED      = (1 << 1),
 } MultiresModifierFlag;
 
 typedef struct FluidsimModifierData {
 	ModifierData modifier;
 
 	struct FluidsimSettings *fss;   /* definition is in DNA_object_fluidsim_types.h */
-	struct PointCache *point_cache; /* definition is in DNA_object_force_types.h */
 } FluidsimModifierData;
 
 typedef struct ShrinkwrapModifierData {
@@ -817,7 +877,7 @@ typedef struct ShrinkwrapModifierData {
 	float keepDist;           /* distance offset to keep from mesh/projection point */
 	short shrinkType;         /* shrink type projection */
 	char  shrinkOpts;         /* shrink options */
-	char  pad1;
+	char  shrinkMode;         /* shrink to surface mode */
 	float projLimit;          /* limit the projection ray cast */
 	char  projAxis;           /* axis to project over */
 
@@ -834,6 +894,21 @@ enum {
 	MOD_SHRINKWRAP_NEAREST_SURFACE = 0,
 	MOD_SHRINKWRAP_PROJECT         = 1,
 	MOD_SHRINKWRAP_NEAREST_VERTEX  = 2,
+	MOD_SHRINKWRAP_TARGET_PROJECT  = 3,
+};
+
+/* Shrinkwrap->shrinkMode */
+enum {
+	/* Move vertex to the surface of the target object (keepDist towards original position) */
+	MOD_SHRINKWRAP_ON_SURFACE      = 0,
+	/* Move the vertex inside the target object; don't change if already inside */
+	MOD_SHRINKWRAP_INSIDE          = 1,
+	/* Move the vertex outside the target object; don't change if already outside */
+	MOD_SHRINKWRAP_OUTSIDE         = 2,
+	/* Move vertex to the surface of the target object, with keepDist towards the outside */
+	MOD_SHRINKWRAP_OUTSIDE_SURFACE = 3,
+	/* Move vertex to the surface of the target object, with keepDist along the normal */
+	MOD_SHRINKWRAP_ABOVE_SURFACE   = 4,
 };
 
 /* Shrinkwrap->shrinkOpts */
@@ -848,10 +923,15 @@ enum {
 	/* ignore vertex moves if a vertex ends projected on a back face of the target */
 	MOD_SHRINKWRAP_CULL_TARGET_BACKFACE  = (1 << 4),
 
+#ifdef DNA_DEPRECATED_ALLOW
 	MOD_SHRINKWRAP_KEEP_ABOVE_SURFACE    = (1 << 5),  /* distance is measure to the front face of the target */
+#endif
 
 	MOD_SHRINKWRAP_INVERT_VGROUP         = (1 << 6),
+	MOD_SHRINKWRAP_INVERT_CULL_TARGET    = (1 << 7),
 };
+
+#define MOD_SHRINKWRAP_CULL_TARGET_MASK (MOD_SHRINKWRAP_CULL_TARGET_FRONTFACE | MOD_SHRINKWRAP_CULL_TARGET_BACKFACE)
 
 /* Shrinkwrap->projAxis */
 enum {
@@ -988,7 +1068,7 @@ typedef struct OceanModifierData {
 	char geometry_mode;
 
 	char flag;
-	char refresh;
+	char pad2;
 
 	short repeat_x;
 	short repeat_y;
@@ -1008,13 +1088,6 @@ enum {
 	MOD_OCEAN_GEOM_SIM_ONLY = 2,
 };
 
-enum {
-	MOD_OCEAN_REFRESH_RESET        = (1 << 0),
-	/* MOD_OCEAN_REFRESH_SIM          = (1 << 1), */
-	/* MOD_OCEAN_REFRESH_ADD          = (1 << 2), */
-	MOD_OCEAN_REFRESH_CLEAR_CACHE  = (1 << 3),
-	/* MOD_OCEAN_REFRESH_TOPOLOGY     = (1 << 4), */
-};
 
 enum {
 	MOD_OCEAN_GENERATE_FOAM     = (1 << 0),
@@ -1466,9 +1539,9 @@ typedef struct LaplacianDeformModifierData {
 
 } LaplacianDeformModifierData;
 
-/* Smooth modifier flags */
+/* Laplacian Deform modifier flags */
 enum {
-	MOD_LAPLACIANDEFORM_BIND = 1,
+	MOD_LAPLACIANDEFORM_BIND = 1 << 0,
 };
 
 /* many of these options match 'solidify' */
@@ -1608,6 +1681,7 @@ typedef struct SDefVert {
 typedef struct SurfaceDeformModifierData {
 	ModifierData modifier;
 
+	struct Depsgraph *depsgraph;
 	struct Object *target;	/* bind target object */
 	SDefVert *verts;		/* vertex bind data */
 	float falloff;
@@ -1618,7 +1692,9 @@ typedef struct SurfaceDeformModifierData {
 
 /* Surface Deform modifier flags */
 enum {
+	/* This indicates "do bind on next modifier evaluation" as well as "is bound". */
 	MOD_SDEF_BIND = (1 << 0),
+
 	MOD_SDEF_USES_LOOPTRI = (1 << 1),
 	MOD_SDEF_HAS_CONCAVE = (1 << 2),
 };
@@ -1628,6 +1704,32 @@ enum {
 	MOD_SDEF_MODE_LOOPTRI = 0,
 	MOD_SDEF_MODE_NGON = 1,
 	MOD_SDEF_MODE_CENTROID = 2,
+};
+
+typedef struct WeightedNormalModifierData {
+	ModifierData modifier;
+
+	char defgrp_name[64];  /* MAX_VGROUP_NAME */
+	char mode, flag;
+	short weight;
+	float thresh;
+} WeightedNormalModifierData;
+
+/* Name/id of the generic PROP_INT cdlayer storing face weights. */
+#define MOD_WEIGHTEDNORMALS_FACEWEIGHT_CDLAYER_ID "__mod_weightednormals_faceweight"
+
+/* WeightedNormalModifierData.mode */
+enum {
+	MOD_WEIGHTEDNORMAL_MODE_FACE = 0,
+	MOD_WEIGHTEDNORMAL_MODE_ANGLE = 1,
+	MOD_WEIGHTEDNORMAL_MODE_FACE_ANGLE = 2,
+};
+
+/* WeightedNormalModifierData.flag */
+enum {
+	MOD_WEIGHTEDNORMAL_KEEP_SHARP = (1 << 0),
+	MOD_WEIGHTEDNORMAL_INVERT_VGROUP = (1 << 1),
+	MOD_WEIGHTEDNORMAL_FACE_INFLUENCE = (1 << 2),
 };
 
 #define MOD_MESHSEQ_READ_ALL \
