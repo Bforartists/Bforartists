@@ -28,13 +28,13 @@
  *  \ingroup edutil
  */
 
-
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
 
 #include "MEM_guardedalloc.h"
 
+#include "DNA_armature_types.h"
 #include "DNA_mesh_types.h"
 #include "DNA_object_types.h"
 #include "DNA_screen_types.h"
@@ -53,12 +53,15 @@
 
 #include "BKE_context.h"
 #include "BKE_global.h"
+#include "BKE_layer.h"
 #include "BKE_main.h"
 #include "BKE_multires.h"
+#include "BKE_object.h"
 #include "BKE_packedFile.h"
 #include "BKE_paint.h"
 #include "BKE_screen.h"
 #include "BKE_undo_system.h"
+#include "BKE_workspace.h"
 
 #include "ED_armature.h"
 #include "ED_buttons.h"
@@ -70,6 +73,9 @@
 #include "ED_paint.h"
 #include "ED_space_api.h"
 #include "ED_util.h"
+
+#include "GPU_immediate.h"
+#include "GPU_state.h"
 
 #include "UI_interface.h"
 #include "UI_resources.h"
@@ -84,11 +90,9 @@
 
 void ED_editors_init(bContext *C)
 {
-	wmWindowManager *wm = CTX_wm_manager(C);
 	Main *bmain = CTX_data_main(C);
-	Scene *sce = CTX_data_scene(C);
-	Object *ob, *obact = (sce && sce->basact) ? sce->basact->object : NULL;
-	ID *data;
+	Scene *scene = CTX_data_scene(C);
+	wmWindowManager *wm = CTX_wm_manager(C);
 
 	if (wm->undo_stack == NULL) {
 		wm->undo_stack = BKE_undosys_stack_create();
@@ -103,21 +107,40 @@ void ED_editors_init(bContext *C)
 	/* toggle on modes for objects that were saved with these enabled. for
 	 * e.g. linked objects we have to ensure that they are actually the
 	 * active object in this scene. */
-	for (ob = bmain->object.first; ob; ob = ob->id.next) {
-		int mode = ob->mode;
+	Object *obact = CTX_data_active_object(C);
+	if (obact != NULL) {
+		for (Object *ob = bmain->object.first; ob; ob = ob->id.next) {
+			int mode = ob->mode;
 
-		if (!ELEM(mode, OB_MODE_OBJECT, OB_MODE_POSE)) {
-			ob->mode = OB_MODE_OBJECT;
-			data = ob->data;
-
-			if (ob == obact && !ID_IS_LINKED(ob) && !(data && ID_IS_LINKED(data)))
-				ED_object_mode_toggle(C, mode);
+			if (mode == OB_MODE_OBJECT) {
+				/* pass */
+			}
+			else if (!BKE_object_has_mode_data(ob, mode)) {
+				/* For multi-edit mode we may already have mode data.
+				 * (grease pencil does not need it)
+				 */
+				if (ob->type != OB_GPENCIL) {
+					ID *data = ob->data;
+					ob->mode = OB_MODE_OBJECT;
+					if ((ob == obact) && !ID_IS_LINKED(ob) && !(data && ID_IS_LINKED(data))) {
+						if (mode == OB_MODE_EDIT) {
+							ED_object_editmode_enter_ex(bmain, scene, ob, 0);
+						}
+						else if (mode == OB_MODE_POSE) {
+							ED_object_posemode_enter_ex(bmain, ob);
+						}
+						else {
+							ED_object_mode_toggle(C, mode);
+						}
+					}
+				}
+			}
 		}
 	}
 
 	/* image editor paint mode */
-	if (sce) {
-		ED_space_image_paint_update(bmain, wm, sce);
+	if (scene) {
+		ED_space_image_paint_update(bmain, wm, scene);
 	}
 
 	SWAP(int, reports->flag, reports_flag_prev);
@@ -127,7 +150,6 @@ void ED_editors_init(bContext *C)
 void ED_editors_exit(bContext *C)
 {
 	Main *bmain = CTX_data_main(C);
-	Scene *sce;
 
 	if (!bmain)
 		return;
@@ -142,22 +164,19 @@ void ED_editors_exit(bContext *C)
 		}
 	}
 
-	for (sce = bmain->scene.first; sce; sce = sce->id.next) {
-		if (sce->obedit) {
-			Object *ob = sce->obedit;
-
-			if (ob) {
-				if (ob->type == OB_MESH) {
-					Mesh *me = ob->data;
-					if (me->edit_btmesh) {
-						EDBM_mesh_free(me->edit_btmesh);
-						MEM_freeN(me->edit_btmesh);
-						me->edit_btmesh = NULL;
-					}
-				}
-				else if (ob->type == OB_ARMATURE) {
-					ED_armature_edit_free(ob->data);
-				}
+	for (Object *ob = bmain->object.first; ob; ob = ob->id.next) {
+		if (ob->type == OB_MESH) {
+			Mesh *me = ob->data;
+			if (me->edit_btmesh) {
+				EDBM_mesh_free(me->edit_btmesh);
+				MEM_freeN(me->edit_btmesh);
+				me->edit_btmesh = NULL;
+			}
+		}
+		else if (ob->type == OB_ARMATURE) {
+			bArmature *arm = ob->data;
+			if (arm->edbo) {
+				ED_armature_edit_free(ob->data);
 			}
 		}
 	}
@@ -329,16 +348,30 @@ void ED_region_draw_mouse_line_cb(const bContext *C, ARegion *ar, void *arg_info
 {
 	wmWindow *win = CTX_wm_window(C);
 	const float *mval_src = (float *)arg_info;
-	const int mval_dst[2] = {win->eventstate->x - ar->winrct.xmin,
-	                         win->eventstate->y - ar->winrct.ymin};
+	const float mval_dst[2] = {win->eventstate->x - ar->winrct.xmin,
+	                           win->eventstate->y - ar->winrct.ymin};
 
-	UI_ThemeColor(TH_VIEW_OVERLAY);
-	setlinestyle(3);
-	glBegin(GL_LINES);
-	glVertex2iv(mval_dst);
-	glVertex2fv(mval_src);
-	glEnd();
-	setlinestyle(0);
+	const uint shdr_pos = GPU_vertformat_attr_add(immVertexFormat(), "pos", GPU_COMP_F32, 2, GPU_FETCH_FLOAT);
+
+	GPU_line_width(1.0f);
+
+	immBindBuiltinProgram(GPU_SHADER_2D_LINE_DASHED_UNIFORM_COLOR);
+
+	float viewport_size[4];
+	GPU_viewport_size_get_f(viewport_size);
+	immUniform2f("viewport_size", viewport_size[2] / UI_DPI_FAC, viewport_size[3] / UI_DPI_FAC);
+
+	immUniform1i("colors_len", 0);  /* "simple" mode */
+	immUniformThemeColor(TH_VIEW_OVERLAY);
+	immUniform1f("dash_width", 6.0f);
+	immUniform1f("dash_factor", 0.5f);
+
+	immBegin(GPU_PRIM_LINES, 2);
+	immVertex2fv(shdr_pos, mval_src);
+	immVertex2fv(shdr_pos, mval_dst);
+	immEnd();
+
+	immUnbindProgram();
 }
 
 /**

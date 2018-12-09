@@ -242,7 +242,7 @@ float BM_face_calc_area(const BMFace *f)
 /**
  * Get the area of the face in world space.
  */
-float BM_face_calc_area_with_mat3(const BMFace *f, float mat3[3][3])
+float BM_face_calc_area_with_mat3(const BMFace *f, const float mat3[3][3])
 {
 	/* inline 'area_poly_v3' logic, avoid creating a temp array */
 	const BMLoop *l_iter, *l_first;
@@ -280,7 +280,7 @@ float BM_face_calc_perimeter(const BMFace *f)
 /**
  * Calculate the perimeter of a ngon in world space.
  */
-float BM_face_calc_perimeter_with_mat3(const BMFace *f, float mat3[3][3])
+float BM_face_calc_perimeter_with_mat3(const BMFace *f, const float mat3[3][3])
 {
 	const BMLoop *l_iter, *l_first;
 	float co[3];

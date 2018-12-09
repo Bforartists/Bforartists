@@ -38,23 +38,23 @@ extern "C" {
 
 /* GPU extensions support */
 
-void GPU_extensions_disable(void);
-
-bool GPU_legacy_support(void);
-bool GPU_full_non_power_of_two_support(void);
-bool GPU_display_list_support(void);
-bool GPU_bicubic_bump_support(void);
-bool GPU_geometry_shader_support(void);
-bool GPU_geometry_shader_support_via_extension(void);
-bool GPU_instanced_drawing_support(void);
-
 int GPU_max_texture_size(void);
+int GPU_max_texture_layers(void);
 int GPU_max_textures(void);
+int GPU_max_textures_vert(void);
+int GPU_max_textures_geom(void);
+int GPU_max_textures_frag(void);
 float GPU_max_texture_anisotropy(void);
 int GPU_max_color_texture_samples(void);
 int GPU_max_cube_map_size(void);
+int GPU_max_ubo_binds(void);
+int GPU_max_ubo_size(void);
+float GPU_max_line_width(void);
 int GPU_color_depth(void);
 void GPU_get_dfdy_factors(float fac[2]);
+bool GPU_mip_render_workaround(void);
+bool GPU_depth_blitting_workaround(void);
+bool GPU_unused_fb_slot_workaround(void);
 
 bool GPU_mem_stats_supported(void);
 void GPU_mem_stats_get(int *totalmem, int *freemem);
@@ -67,8 +67,9 @@ typedef enum GPUDeviceType {
 	GPU_DEVICE_NVIDIA =     (1 << 0),
 	GPU_DEVICE_ATI =        (1 << 1),
 	GPU_DEVICE_INTEL =      (1 << 2),
-	GPU_DEVICE_SOFTWARE =   (1 << 3),
-	GPU_DEVICE_UNKNOWN =    (1 << 4),
+	GPU_DEVICE_INTEL_UHD =  (1 << 3),
+	GPU_DEVICE_SOFTWARE =   (1 << 4),
+	GPU_DEVICE_UNKNOWN =    (1 << 5),
 	GPU_DEVICE_ANY =        (0xff)
 } GPUDeviceType;
 

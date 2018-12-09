@@ -415,6 +415,8 @@ typedef struct ChannelDriver {
 	char expression[256];	/* expression to compile for evaluation */
 	void *expr_comp; 		/* PyObject - compiled expression, don't save this */
 
+	struct ExprPyLike_Parsed *expr_simple; /* compiled simple arithmetic expression */
+
 	float curval;		/* result of previous evaluation */
 	float influence;	/* influence of driver on result */ // XXX to be implemented... this is like the constraint influence setting
 
@@ -438,6 +440,7 @@ typedef enum eDriver_Types {
 } eDriver_Types;
 
 /* driver flags */
+/* note: (1<<5) is deprecated; was "DRIVER_FLAG_SHOWDEBUG" */
 typedef enum eDriver_Flags {
 		/* driver has invalid settings (internal flag)  */
 	DRIVER_FLAG_INVALID		= (1<<0),
@@ -450,8 +453,6 @@ typedef enum eDriver_Flags {
 	DRIVER_FLAG_RECOMPILE	= (1<<3),
 		/* the names are cached so they don't need have python unicode versions created each time */
 	DRIVER_FLAG_RENAMEVAR	= (1<<4),
-		/* intermediate values of driver should be shown in the UI for debugging purposes */
-	DRIVER_FLAG_SHOWDEBUG	= (1<<5),
 		/* include 'self' in the drivers namespace. */
 	DRIVER_FLAG_USE_SELF	= (1<<6),
 } eDriver_Flags;
@@ -488,11 +489,13 @@ typedef struct FCurve {
 
 		/* value cache + settings */
 	float curval;			/* value stored from last time curve was evaluated (not threadsafe, debug display only!) */
+	/* Value which comes from original DNA ddatablock at a time f-curve was evaluated. */
+	float orig_dna_val;
 	short flag;				/* user-editable settings for this curve */
 	short extend;			/* value-extending mode for this curve (does not cover  */
 	char auto_smoothing;	/* auto-handle smoothing mode */
 
-	char pad[7];
+	char pad[3];
 
 		/* RNA - data link */
 	int array_index;		/* if applicable, the index of the RNA-array item to get */
@@ -563,42 +566,6 @@ typedef enum eFCurve_Smoothing {
 
 
 /* ************************************************ */
-/* Animation Reuse - i.e. users of Actions */
-
-/* Retargetting ----------------------------------- */
-
-/* Retargetting Pair
- *
- * Defines what parts of the paths should be remapped from 'abc' to 'xyz'.
- * TODO:
- * - Regrex (possibly provided through PY, though having our own module might be faster)
- *   would be important to have at some point. Current replacements are just simple
- *   string matches...
- */
-typedef struct AnimMapPair {
-	char from[128];		/* part of path to bed replaced */
-	char to[128];		/* part of path to replace with */
-} AnimMapPair;
-
-/* Retargetting Information for Actions
- *
- * This should only be used if it is strictly necessary (i.e. user will need to explicitly
- * add this when they find that some channels do not match, or motion is not going to right
- * places). When executing an action, this will be checked to see if it provides any useful
- * remaps for the given paths.
- *
- * NOTE: we currently don't store this in the Action itself, as that causes too many problems.
- */
-// FIXME: will this be too clumsy or slow? If we're using RNA paths anyway, we'll have to accept
-// such consequences...
-typedef struct AnimMapper {
-	struct AnimMapper *next, *prev;
-
-	bAction *target;		/* target action */
-	ListBase mappings;		/* remapping table (bAnimMapPair) */
-} AnimMapper;
-
-/* ************************************************ */
 /* NLA - Non-Linear Animation */
 
 /* NLA Strips ------------------------------------- */
@@ -613,7 +580,6 @@ typedef struct NlaStrip {
 
 	ListBase strips;            /* 'Child' strips (used for 'meta' strips) */
 	bAction *act;               /* Action that is referenced by this strip (strip is 'user' of the action) */
-	AnimMapper *remap;          /* Remapping info this strip (for tweaking correspondence of action with context) */
 
 	ListBase fcurves;           /* F-Curves for controlling this strip's influence and timing */    // TODO: move out?
 	ListBase modifiers;         /* F-Curve modifiers to be applied to the entire strip's referenced F-Curves */
@@ -852,6 +818,7 @@ typedef enum eInsertKeyFlags {
 	 * Used by copy/paste code. */
 	INSERTKEY_OVERWRITE_FULL = (1<<7),
 	INSERTKEY_DRIVER         = (1<<8),	/* for driver FCurves, use driver's "input" value - for easier corrective driver setup */
+	INSERTKEY_CYCLE_AWARE    = (1<<9),	/* for cyclic FCurves, adjust key timing to preserve the cycle period and flow */
 } eInsertKeyFlags;
 
 /* ************************************************ */
@@ -898,10 +865,6 @@ typedef struct AnimData {
 		 * took over to be edited in the Animation Editors)
 		 */
 	bAction     *tmpact;
-		/* remapping-info for active action - should only be used if needed
-		 * (for 'foreign' actions that aren't working correctly)
-		 */
-	AnimMapper  *remap;
 
 		/* nla-tracks */
 	ListBase    nla_tracks;
@@ -915,6 +878,8 @@ typedef struct AnimData {
 	 */
 	ListBase    drivers;    /* standard user-created Drivers/Expressions (used as part of a rig) */
 	ListBase    overrides;  /* temp storage (AnimOverride) of values for settings that are animated (but the value hasn't been keyframed) */
+
+	FCurve **driver_array;  /* runtime data, for depsgraph evaluation */
 
 		/* settings for animation evaluation */
 	int flag;               /* user-defined settings */

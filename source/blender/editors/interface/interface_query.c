@@ -32,6 +32,9 @@
 
 #include "interface_intern.h"
 
+#include "WM_api.h"
+#include "WM_types.h"
+
 /* -------------------------------------------------------------------- */
 /** \name Button (uiBut)
  * \{ */
@@ -68,6 +71,39 @@ bool ui_but_is_toggle(const uiBut *but)
 	);
 }
 
+#ifdef USE_UI_POPOVER_ONCE
+bool ui_but_is_popover_once_compat(const uiBut *but)
+{
+	return (
+	        (but->type == UI_BTYPE_BUT) ||
+	        ui_but_is_toggle(but)
+	);
+}
+#endif
+
+bool UI_but_is_tool(const uiBut *but)
+{
+	/* very evil! */
+	if (but->optype != NULL) {
+		static wmOperatorType *ot = NULL;
+		if (ot == NULL) {
+			ot = WM_operatortype_find("WM_OT_tool_set_by_name", false);
+		}
+		if (but->optype == ot) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool UI_but_has_tooltip_label(const uiBut *but)
+{
+	if ((but->drawstr[0] == '\0') && !ui_block_is_popover(but->block)) {
+		return UI_but_is_tool(but);
+	}
+	return false;
+}
+
 /** \} */
 
 /* -------------------------------------------------------------------- */
@@ -81,6 +117,11 @@ bool ui_block_is_menu(const uiBlock *block)
 	        ((block->flag & UI_BLOCK_KEEP_OPEN) == 0));
 }
 
+bool ui_block_is_popover(const uiBlock *block)
+{
+	return (block->flag & UI_BLOCK_POPOVER) != 0;
+}
+
 bool ui_block_is_pie_menu(const uiBlock *block)
 {
 	return ((block->flag & UI_BLOCK_RADIAL) != 0);
@@ -90,6 +131,7 @@ bool ui_block_is_popup_any(const uiBlock *block)
 {
 	return (
 	        ui_block_is_menu(block) ||
+	        ui_block_is_popover(block) ||
 	        ui_block_is_pie_menu(block)
 	);
 }

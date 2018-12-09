@@ -35,6 +35,7 @@
 
 /* UV Project modifier: Generates UVs projected from an object */
 
+#include "DNA_mesh_types.h"
 #include "DNA_meshdata_types.h"
 #include "DNA_camera_types.h"
 #include "DNA_object_types.h"
@@ -47,21 +48,22 @@
 #include "BKE_camera.h"
 #include "BKE_library.h"
 #include "BKE_library_query.h"
+#include "BKE_material.h"
 #include "BKE_mesh.h"
-#include "BKE_DerivedMesh.h"
 
 #include "MOD_modifiertypes.h"
 
 #include "MEM_guardedalloc.h"
 
-#include "depsgraph_private.h"
+#include "DEG_depsgraph.h"
 #include "DEG_depsgraph_build.h"
+#include "DEG_depsgraph_query.h"
 
 static void initData(ModifierData *md)
 {
 	UVProjectModifierData *umd = (UVProjectModifierData *) md;
 
-	umd->flags = 0;
+
 	umd->num_projectors = 1;
 	umd->aspectx = umd->aspecty = 1.0f;
 	umd->scalex = umd->scaley = 1.0f;
@@ -72,7 +74,7 @@ static CustomDataMask requiredDataMask(Object *UNUSED(ob), ModifierData *UNUSED(
 	CustomDataMask dataMask = 0;
 
 	/* ask for UV coordinates */
-	dataMask |= CD_MLOOPUV | CD_MTEXPOLY;
+	dataMask |= CD_MLOOPUV;
 
 	return dataMask;
 }
@@ -92,36 +94,25 @@ static void foreachIDLink(
         ModifierData *md, Object *ob,
         IDWalkFunc walk, void *userData)
 {
+#if 0
 	UVProjectModifierData *umd = (UVProjectModifierData *) md;
-
-	walk(userData, ob, (ID **)&umd->image, IDWALK_CB_USER);
+#endif
 
 	foreachObjectLink(md, ob, (ObjectWalkFunc)walk, userData);
-}
-
-static void updateDepgraph(ModifierData *md, const ModifierUpdateDepsgraphContext *ctx)
-{
-	UVProjectModifierData *umd = (UVProjectModifierData *) md;
-	int i;
-
-	for (i = 0; i < umd->num_projectors; ++i) {
-		if (umd->projectors[i]) {
-			DagNode *curNode = dag_get_node(ctx->forest, umd->projectors[i]);
-
-			dag_add_relation(ctx->forest, curNode, ctx->obNode,
-			                 DAG_RL_DATA_DATA | DAG_RL_OB_DATA, "UV Project Modifier");
-		}
-	}
 }
 
 static void updateDepsgraph(ModifierData *md, const ModifierUpdateDepsgraphContext *ctx)
 {
 	UVProjectModifierData *umd = (UVProjectModifierData *)md;
-	int i;
-	for (i = 0; i < umd->num_projectors; ++i) {
+	bool do_add_own_transform = false;
+	for (int i = 0; i < umd->num_projectors; ++i) {
 		if (umd->projectors[i] != NULL) {
 			DEG_add_object_relation(ctx->node, umd->projectors[i], DEG_OB_COMP_TRANSFORM, "UV Project Modifier");
+			do_add_own_transform = true;
 		}
+	}
+	if (do_add_own_transform) {
+		DEG_add_object_relation(ctx->node, ctx->object, DEG_OB_COMP_TRANSFORM, "UV Project Modifier");
 	}
 }
 
@@ -132,18 +123,15 @@ typedef struct Projector {
 	void *uci;              /* optional uv-project info (panorama projection) */
 } Projector;
 
-static DerivedMesh *uvprojectModifier_do(
+static Mesh *uvprojectModifier_do(
         UVProjectModifierData *umd,
-        Object *ob, DerivedMesh *dm)
+        Object *ob, Mesh *mesh)
 {
 	float (*coords)[3], (*co)[3];
 	MLoopUV *mloop_uv;
-	MTexPoly *mtexpoly, *mt = NULL;
 	int i, numVerts, numPolys, numLoops;
-	Image *image = umd->image;
 	MPoly *mpoly, *mp;
 	MLoop *mloop;
-	const bool override_image = (umd->flags & MOD_UVPROJECT_OVERRIDEIMAGE) != 0;
 	Projector projectors[MOD_UVPROJECT_MAXPROJECTORS];
 	int num_projectors = 0;
 	char uvname[MAX_CUSTOMDATA_LAYER_NAME];
@@ -157,14 +145,14 @@ static DerivedMesh *uvprojectModifier_do(
 		if (umd->projectors[i])
 			projectors[num_projectors++].ob = umd->projectors[i];
 
-	if (num_projectors == 0) return dm;
+	if (num_projectors == 0) return mesh;
 
 	/* make sure there are UV Maps available */
 
-	if (!CustomData_has_layer(&dm->loopData, CD_MLOOPUV)) return dm;
+	if (!CustomData_has_layer(&mesh->ldata, CD_MLOOPUV)) return mesh;
 
 	/* make sure we're using an existing layer */
-	CustomData_validate_layer_name(&dm->loopData, CD_MLOOPUV, umd->uvlayer_name, uvname);
+	CustomData_validate_layer_name(&mesh->ldata, CD_MLOOPUV, umd->uvlayer_name, uvname);
 
 	/* calculate a projection matrix and normal for each projector */
 	for (i = 0; i < num_projectors; ++i) {
@@ -177,7 +165,6 @@ static DerivedMesh *uvprojectModifier_do(
 		projectors[i].uci = NULL;
 
 		if (projectors[i].ob->type == OB_CAMERA) {
-
 			cam = (Camera *)projectors[i].ob->data;
 			if (cam->type == CAM_PANO) {
 				projectors[i].uci = BLI_uvproject_camera_info(projectors[i].ob, NULL, aspx, aspy);
@@ -221,22 +208,14 @@ static DerivedMesh *uvprojectModifier_do(
 		mul_mat3_m4_v3(projectors[i].ob->obmat, projectors[i].normal);
 	}
 
-	numPolys = dm->getNumPolys(dm);
-	numLoops = dm->getNumLoops(dm);
+	numPolys = mesh->totpoly;
+	numLoops = mesh->totloop;
 
 	/* make sure we are not modifying the original UV map */
-	mloop_uv = CustomData_duplicate_referenced_layer_named(&dm->loopData,
+	mloop_uv = CustomData_duplicate_referenced_layer_named(&mesh->ldata,
 	                                                       CD_MLOOPUV, uvname, numLoops);
 
-	/* can be NULL */
-	mt = mtexpoly = CustomData_duplicate_referenced_layer_named(&dm->polyData,
-	                                                            CD_MTEXPOLY, uvname, numPolys);
-
-	numVerts = dm->getNumVerts(dm);
-
-	coords = MEM_malloc_arrayN(numVerts, sizeof(*coords),
-	                     "uvprojectModifier_do coords");
-	dm->getVertCos(dm, coords);
+	coords = BKE_mesh_vertexCos_get(mesh, &numVerts);
 
 	/* convert coords to world space */
 	for (i = 0, co = coords; i < numVerts; ++i, ++co)
@@ -247,77 +226,70 @@ static DerivedMesh *uvprojectModifier_do(
 		for (i = 0, co = coords; i < numVerts; ++i, ++co)
 			mul_project_m4_v3(projectors[0].projmat, *co);
 
-	mpoly = dm->getPolyArray(dm);
-	mloop = dm->getLoopArray(dm);
+	mpoly = mesh->mpoly;
+	mloop = mesh->mloop;
 
-	/* apply coords as UVs, and apply image if tfaces are new */
-	for (i = 0, mp = mpoly; i < numPolys; ++i, ++mp, ++mt) {
-		if (override_image || !image || (mtexpoly == NULL || mt->tpage == image)) {
-			if (num_projectors == 1) {
-				if (projectors[0].uci) {
-					unsigned int fidx = mp->totloop - 1;
-					do {
-						unsigned int lidx = mp->loopstart + fidx;
-						unsigned int vidx = mloop[lidx].v;
-						BLI_uvproject_from_camera(mloop_uv[lidx].uv, coords[vidx], projectors[0].uci);
-					} while (fidx--);
-				}
-				else {
-					/* apply transformed coords as UVs */
-					unsigned int fidx = mp->totloop - 1;
-					do {
-						unsigned int lidx = mp->loopstart + fidx;
-						unsigned int vidx = mloop[lidx].v;
-						copy_v2_v2(mloop_uv[lidx].uv, coords[vidx]);
-					} while (fidx--);
-				}
+	/* apply coords as UVs */
+	for (i = 0, mp = mpoly; i < numPolys; ++i, ++mp) {
+		if (num_projectors == 1) {
+			if (projectors[0].uci) {
+				unsigned int fidx = mp->totloop - 1;
+				do {
+					unsigned int lidx = mp->loopstart + fidx;
+					unsigned int vidx = mloop[lidx].v;
+					BLI_uvproject_from_camera(mloop_uv[lidx].uv, coords[vidx], projectors[0].uci);
+				} while (fidx--);
 			}
 			else {
-				/* multiple projectors, select the closest to face normal direction */
-				float face_no[3];
-				int j;
-				Projector *best_projector;
-				float best_dot;
-
-				/* get the untransformed face normal */
-				BKE_mesh_calc_poly_normal_coords(mp, mloop + mp->loopstart, (const float (*)[3])coords, face_no);
-
-				/* find the projector which the face points at most directly
-				 * (projector normal with largest dot product is best)
-				 */
-				best_dot = dot_v3v3(projectors[0].normal, face_no);
-				best_projector = &projectors[0];
-
-				for (j = 1; j < num_projectors; ++j) {
-					float tmp_dot = dot_v3v3(projectors[j].normal,
-					                         face_no);
-					if (tmp_dot > best_dot) {
-						best_dot = tmp_dot;
-						best_projector = &projectors[j];
-					}
-				}
-
-				if (best_projector->uci) {
-					unsigned int fidx = mp->totloop - 1;
-					do {
-						unsigned int lidx = mp->loopstart + fidx;
-						unsigned int vidx = mloop[lidx].v;
-						BLI_uvproject_from_camera(mloop_uv[lidx].uv, coords[vidx], best_projector->uci);
-					} while (fidx--);
-				}
-				else {
-					unsigned int fidx = mp->totloop - 1;
-					do {
-						unsigned int lidx = mp->loopstart + fidx;
-						unsigned int vidx = mloop[lidx].v;
-						mul_v2_project_m4_v3(mloop_uv[lidx].uv, best_projector->projmat, coords[vidx]);
-					} while (fidx--);
-				}
+				/* apply transformed coords as UVs */
+				unsigned int fidx = mp->totloop - 1;
+				do {
+					unsigned int lidx = mp->loopstart + fidx;
+					unsigned int vidx = mloop[lidx].v;
+					copy_v2_v2(mloop_uv[lidx].uv, coords[vidx]);
+				} while (fidx--);
 			}
 		}
+		else {
+			/* multiple projectors, select the closest to face normal direction */
+			float face_no[3];
+			int j;
+			Projector *best_projector;
+			float best_dot;
 
-		if (override_image && mtexpoly) {
-			mt->tpage = image;
+			/* get the untransformed face normal */
+			BKE_mesh_calc_poly_normal_coords(mp, mloop + mp->loopstart, (const float (*)[3])coords, face_no);
+
+			/* find the projector which the face points at most directly
+			 * (projector normal with largest dot product is best)
+			 */
+			best_dot = dot_v3v3(projectors[0].normal, face_no);
+			best_projector = &projectors[0];
+
+			for (j = 1; j < num_projectors; ++j) {
+				float tmp_dot = dot_v3v3(projectors[j].normal, face_no);
+				if (tmp_dot > best_dot) {
+					best_dot = tmp_dot;
+					best_projector = &projectors[j];
+				}
+			}
+
+			if (best_projector->uci) {
+				unsigned int fidx = mp->totloop - 1;
+				do {
+					unsigned int lidx = mp->loopstart + fidx;
+					unsigned int vidx = mloop[lidx].v;
+					BLI_uvproject_from_camera(mloop_uv[lidx].uv, coords[vidx], best_projector->uci);
+				} while (fidx--);
+			}
+			else {
+				unsigned int fidx = mp->totloop - 1;
+				do {
+					unsigned int lidx = mp->loopstart + fidx;
+					unsigned int vidx = mloop[lidx].v;
+					mul_v2_project_m4_v3(mloop_uv[lidx].uv, best_projector->projmat, coords[vidx]);
+				} while (fidx--);
+			}
 		}
 	}
 
@@ -333,20 +305,19 @@ static DerivedMesh *uvprojectModifier_do(
 	}
 
 	/* Mark tessellated CD layers as dirty. */
-	dm->dirty |= DM_DIRTY_TESS_CDLAYERS;
+	mesh->runtime.cd_dirty_vert |= CD_MASK_TESSLOOPNORMAL;
 
-	return dm;
+	return mesh;
 }
 
-static DerivedMesh *applyModifier(
-        ModifierData *md, Object *ob,
-        DerivedMesh *derivedData,
-        ModifierApplyFlag UNUSED(flag))
+static Mesh *applyModifier(
+        ModifierData *md, const ModifierEvalContext *ctx,
+        Mesh *mesh)
 {
-	DerivedMesh *result;
+	Mesh *result;
 	UVProjectModifierData *umd = (UVProjectModifierData *) md;
 
-	result = uvprojectModifier_do(umd, ob, derivedData);
+	result = uvprojectModifier_do(umd, ctx->object, mesh);
 
 	return result;
 }
@@ -363,17 +334,23 @@ ModifierTypeInfo modifierType_UVProject = {
 	                        eModifierTypeFlag_EnableInEditmode,
 
 	/* copyData */          modifier_copyData_generic,
+
+	/* deformVerts_DM */    NULL,
+	/* deformMatrices_DM */ NULL,
+	/* deformVertsEM_DM */  NULL,
+	/* deformMatricesEM_DM*/NULL,
+	/* applyModifier_DM */  NULL,
+
 	/* deformVerts */       NULL,
 	/* deformMatrices */    NULL,
 	/* deformVertsEM */     NULL,
 	/* deformMatricesEM */  NULL,
 	/* applyModifier */     applyModifier,
-	/* applyModifierEM */   NULL,
+
 	/* initData */          initData,
 	/* requiredDataMask */  requiredDataMask,
 	/* freeData */          NULL,
 	/* isDisabled */        NULL,
-	/* updateDepgraph */    updateDepgraph,
 	/* updateDepsgraph */   updateDepsgraph,
 	/* dependsOnTime */     NULL,
 	/* dependsOnNormals */	NULL,

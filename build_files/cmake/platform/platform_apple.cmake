@@ -23,6 +23,8 @@
 
 # Libraries configuration for Apple.
 
+set(MACOSX_DEPLOYMENT_TARGET "10.9")
+
 macro(find_package_wrapper)
 # do nothing, just satisfy the macro
 endmacro()
@@ -78,10 +80,10 @@ if(WITH_JACK)
 endif()
 
 if(WITH_CODEC_SNDFILE)
-	set(SNDFILE ${LIBDIR}/sndfile)
-	set(SNDFILE_INCLUDE_DIRS ${SNDFILE}/include)
-	set(SNDFILE_LIBRARIES sndfile FLAC ogg vorbis vorbisenc)
-	set(SNDFILE_LIBPATH ${SNDFILE}/lib ${LIBDIR}/ffmpeg/lib)  # TODO, deprecate
+	set(LIBSNDFILE ${LIBDIR}/sndfile)
+	set(LIBSNDFILE_INCLUDE_DIRS ${LIBSNDFILE}/include)
+	set(LIBSNDFILE_LIBRARIES sndfile FLAC ogg vorbis vorbisenc)
+	set(LIBSNDFILE_LIBPATH ${LIBSNDFILE}/lib ${LIBDIR}/ffmpeg/lib)  # TODO, deprecate
 endif()
 
 if(WITH_PYTHON)
@@ -112,7 +114,7 @@ if(WITH_PYTHON)
 	set(PYTHON_LIBRARIES  "${PYTHON_LIBRARY}")
 
 	# needed for Audaspace, numpy is installed into python site-packages
-	set(NUMPY_INCLUDE_DIRS "${PYTHON_LIBPATH}/site-packages/numpy/core/include")
+	set(PYTHON_NUMPY_INCLUDE_DIRS "${PYTHON_LIBPATH}/site-packages/numpy/core/include")
 
 	if(NOT EXISTS "${PYTHON_EXECUTABLE}")
 		message(FATAL_ERROR "Python executable missing: ${PYTHON_EXECUTABLE}")

@@ -42,13 +42,15 @@
 #include "BKE_context.h"
 #include "BKE_deform.h"
 #include "BKE_object_deform.h"
-#include "BKE_depsgraph.h"
 #include "BKE_dynamicpaint.h"
 #include "BKE_global.h"
 #include "BKE_main.h"
 #include "BKE_modifier.h"
 #include "BKE_report.h"
 #include "BKE_screen.h"
+
+#include "DEG_depsgraph.h"
+#include "DEG_depsgraph_build.h"
 
 #include "ED_mesh.h"
 #include "ED_screen.h"
@@ -128,14 +130,14 @@ static int surface_slot_remove_exec(bContext *C, wmOperator *UNUSED(op))
 	for (; surface; surface = surface->next) {
 		if (id == canvas->active_sur) {
 				canvas->active_sur -= 1;
-				dynamicPaint_freeSurface(surface);
+				dynamicPaint_freeSurface(pmd, surface);
 				break;
 			}
 		id++;
 	}
 
 	dynamicPaint_resetPreview(canvas);
-	DAG_id_tag_update(&obj_ctx->id, OB_RECALC_DATA);
+	DEG_id_tag_update(&obj_ctx->id, OB_RECALC_DATA);
 	WM_event_add_notifier(C, NC_OBJECT | ND_MODIFIER, obj_ctx);
 
 	return OPERATOR_FINISHED;
@@ -181,8 +183,8 @@ static int type_toggle_exec(bContext *C, wmOperator *op)
 	}
 
 	/* update dependency */
-	DAG_id_tag_update(&cObject->id, OB_RECALC_DATA);
-	DAG_relations_tag_update(CTX_data_main(C));
+	DEG_id_tag_update(&cObject->id, OB_RECALC_DATA);
+	DEG_relations_tag_update(CTX_data_main(C));
 	WM_event_add_notifier(C, NC_OBJECT | ND_MODIFIER, cObject);
 
 	return OPERATOR_FINISHED;
@@ -286,6 +288,7 @@ typedef struct DynamicPaintBakeJob {
 
 	struct Main *bmain;
 	Scene *scene;
+	Depsgraph *depsgraph;
 	Object *ob;
 
 	DynamicPaintSurface *surface;
@@ -357,7 +360,7 @@ static void dynamicPaint_bakeImageSequence(DynamicPaintBakeJob *job)
 	frame = surface->start_frame;
 	orig_frame = scene->r.cfra;
 	scene->r.cfra = (int)frame;
-	ED_update_for_newframe(job->bmain, scene, 1);
+	ED_update_for_newframe(job->bmain, job->depsgraph);
 
 	/* Init surface */
 	if (!dynamicPaint_createUVSurface(scene, surface, job->progress, job->do_update)) {
@@ -383,8 +386,8 @@ static void dynamicPaint_bakeImageSequence(DynamicPaintBakeJob *job)
 
 		/* calculate a frame */
 		scene->r.cfra = (int)frame;
-		ED_update_for_newframe(job->bmain, scene, 1);
-		if (!dynamicPaint_calculateFrame(job->bmain, job->bmain->eval_ctx, surface, scene, cObject, frame)) {
+		ED_update_for_newframe(job->bmain, job->depsgraph);
+		if (!dynamicPaint_calculateFrame(surface, job->depsgraph, scene, cObject, frame)) {
 			job->success = 0;
 			return;
 		}
@@ -479,6 +482,7 @@ static int dynamicpaint_bake_exec(struct bContext *C, struct wmOperator *op)
 	DynamicPaintBakeJob *job = MEM_mallocN(sizeof(DynamicPaintBakeJob), "DynamicPaintBakeJob");
 	job->bmain = CTX_data_main(C);
 	job->scene = scene;
+	job->depsgraph = CTX_data_depsgraph(C);
 	job->ob = ob;
 	job->canvas = canvas;
 	job->surface = surface;

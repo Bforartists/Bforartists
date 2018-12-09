@@ -23,10 +23,12 @@ set(INC
 	../../blenkernel
 	../../blenlib
 	../../blentranslation
+	../../depsgraph
 	../../gpu
 	../../makesdna
 	../../makesrna
 	../../windowmanager
+	../../../../intern/clog
 	../../../../intern/guardedalloc
 	../../../../intern/eigen
 	../../../../intern/glew-mx
@@ -45,9 +47,6 @@ set(SRC
 	armature_select.c
 	armature_skinning.c
 	armature_utils.c
-	editarmature_generate.c
-	editarmature_retarget.c
-	editarmature_sketch.c
 	editarmature_undo.c
 	meshlaplacian.c
 	pose_edit.c
@@ -57,13 +56,9 @@ set(SRC
 	pose_slide.c
 	pose_transform.c
 	pose_utils.c
-	reeb.c
 
-	BIF_generate.h
-	BIF_retarget.h
 	armature_intern.h
 	meshlaplacian.h
-	reeb.h
 )
 
 if(WITH_INTERNATIONAL)

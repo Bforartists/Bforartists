@@ -1685,7 +1685,7 @@ float BM_edge_calc_face_angle(const BMEdge *e)
 *
 * \return angle in radians
 */
-float BM_edge_calc_face_angle_with_imat3_ex(const BMEdge *e, float imat3[3][3], const float fallback)
+float BM_edge_calc_face_angle_with_imat3_ex(const BMEdge *e, const float imat3[3][3], const float fallback)
 {
 	if (BM_edge_is_manifold(e)) {
 		const BMLoop *l1 = e->l;
@@ -1706,7 +1706,7 @@ float BM_edge_calc_face_angle_with_imat3_ex(const BMEdge *e, float imat3[3][3], 
 		return fallback;
 	}
 }
-float BM_edge_calc_face_angle_with_imat3(const BMEdge *e, float imat3[3][3])
+float BM_edge_calc_face_angle_with_imat3(const BMEdge *e, const float imat3[3][3])
 {
 	return BM_edge_calc_face_angle_with_imat3_ex(e, imat3, DEG2RADF(90.0f));
 }
@@ -2063,6 +2063,40 @@ BMFace *BM_face_exists(BMVert **varr, int len)
 	return NULL;
 }
 
+/**
+ * Check if the face has an exact duplicate (both winding directions).
+ */
+BMFace *BM_face_find_double(BMFace *f)
+{
+	BMLoop *l_first = BM_FACE_FIRST_LOOP(f);
+	for (BMLoop *l_iter = l_first->radial_next; l_first != l_iter; l_iter = l_iter->radial_next) {
+		if (l_iter->f->len == l_first->f->len) {
+			if (l_iter->v == l_first->v) {
+				BMLoop *l_a = l_first, *l_b = l_iter, *l_b_init = l_iter;
+				do {
+					if (l_a->e != l_b->e) {
+						break;
+					}
+				} while (((void)(l_a = l_a->next), (l_b = l_b->next)) != l_b_init);
+				if (l_b == l_b_init) {
+					return l_iter->f;
+				}
+			}
+			else {
+				BMLoop *l_a = l_first, *l_b = l_iter, *l_b_init = l_iter;
+				do {
+					if (l_a->e != l_b->e) {
+						break;
+					}
+				} while (((void)(l_a = l_a->prev), (l_b = l_b->next)) != l_b_init);
+				if (l_b == l_b_init) {
+					return l_iter->f;
+				}
+			}
+		}
+	}
+	return NULL;
+}
 
 /**
  * Given a set of vertices and edges (\a varr, \a earr), find out if

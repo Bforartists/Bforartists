@@ -221,8 +221,11 @@ typedef struct bNode {
 	 * and replacing all uses with per-instance data.
 	 */
 	short preview_xsize, preview_ysize;	/* reserved size of the preview rect */
-	int pad2;
+	short tmp_flag, pad2;   /* Used at runtime when going through the tree. Initialize before use. */
 	struct uiBlock *block;	/* runtime during drawing */
+
+	float ssr_id; /* XXX: eevee only, id of screen space reflection layer, needs to be a float to feed GPU_uniform. */
+	float sss_id; /* XXX: eevee only, id of screen subsurface scatter layer, needs to be a float to feed GPU_uniform. */
 } bNode;
 
 /* node->flag */
@@ -416,7 +419,8 @@ typedef struct bNodeTree {
 #define NTREE_TWO_PASS				4	/* two pass */
 #define NTREE_COM_GROUPNODE_BUFFER	8	/* use groupnode buffers */
 #define NTREE_VIEWER_BORDER			16	/* use a border for viewer nodes */
-#define NTREE_IS_LOCALIZED			32	/* tree is localized copy, free when deleting node groups */
+/* NOTE: DEPRECATED, use (id->tag & LIB_TAG_LOCALIZED) instead. */
+/*#define NTREE_IS_LOCALIZED			32*/	/* tree is localized copy, free when deleting node groups */
 
 /* XXX not nice, but needed as a temporary flags
  * for group updates after library linking.
@@ -649,11 +653,6 @@ typedef struct NodeTwoXYs {
 typedef struct NodeTwoFloats {
 	float x, y;
 } NodeTwoFloats;
-
-typedef struct NodeGeometry {
-	char uvname[64];	/* MAX_CUSTOMDATA_LAYER_NAME */
-	char colname[64];
-} NodeGeometry;
 
 typedef struct NodeVertexCol {
 	char name[64];
@@ -1125,39 +1124,6 @@ enum {
 
 #define CMP_NODE_MASK_MBLUR_SAMPLES_MAX 64
 
-/* geometry output socket defines */
-#define GEOM_OUT_GLOB	0
-#define GEOM_OUT_LOCAL	1
-#define GEOM_OUT_VIEW	2
-#define GEOM_OUT_ORCO	3
-#define GEOM_OUT_UV		4
-#define GEOM_OUT_NORMAL	5
-#define GEOM_OUT_VCOL	6
-#define GEOM_OUT_VCOL_ALPHA	7
-#define GEOM_OUT_FRONTBACK	8
-
-/* material input socket defines */
-#define MAT_IN_COLOR	0
-#define MAT_IN_SPEC		1
-#define MAT_IN_REFL		2
-#define MAT_IN_NORMAL	3
-#define MAT_IN_MIR		4
-#define MAT_IN_AMB		5
-#define MAT_IN_EMIT	6
-#define MAT_IN_SPECTRA	7
-#define MAT_IN_RAY_MIRROR	8
-#define MAT_IN_ALPHA	9
-#define MAT_IN_TRANSLUCENCY	10
-#define NUM_MAT_IN		11	/* for array size */
-
-/* material output socket defines */
-#define MAT_OUT_COLOR		0
-#define MAT_OUT_ALPHA		1
-#define MAT_OUT_NORMAL	2
-#define MAT_OUT_DIFFUSE	3
-#define MAT_OUT_SPEC		4
-#define MAT_OUT_AO		5
-
 /* image */
 #define CMP_NODE_IMAGE_USE_STRAIGHT_OUTPUT	1
 
@@ -1199,5 +1165,13 @@ enum {
 	SHD_POINTDENSITY_COLOR_VERTWEIGHT   = 1,
 	SHD_POINTDENSITY_COLOR_VERTNOR      = 2,
 };
+
+/* Output shader node */
+
+typedef enum NodeShaderOutputTarget {
+	SHD_OUTPUT_ALL     = 0,
+	SHD_OUTPUT_EEVEE   = 1,
+	SHD_OUTPUT_CYCLES  = 2,
+} NodeShaderOutputTarget;
 
 #endif

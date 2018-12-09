@@ -28,22 +28,22 @@
  */
 
 #include "DNA_anim_types.h"
+#include "DNA_collection_types.h"
 #include "DNA_constraint_types.h"
-#include "DNA_group_types.h"
 #include "DNA_key_types.h"
 #include "DNA_material_types.h"
+#include "DNA_mesh_types.h"
 #include "DNA_scene_types.h"
 
 #include "BLI_blenlib.h"
 #include "BLI_utildefines.h"
 #include "BLI_math.h"
-#include "BLI_threads.h"
 
 #include "BKE_animsys.h"
 #include "BKE_armature.h"
 #include "BKE_action.h"
 #include "BKE_constraint.h"
-#include "BKE_depsgraph.h"
+#include "BKE_curve.h"
 #include "BKE_DerivedMesh.h"
 #include "BKE_displist.h"
 #include "BKE_editmesh.h"
@@ -53,21 +53,26 @@
 #include "BKE_key.h"
 #include "BKE_lamp.h"
 #include "BKE_lattice.h"
+#include "BKE_library.h"
 #include "BKE_main.h"
 #include "BKE_material.h"
+#include "BKE_mball.h"
+#include "BKE_mesh.h"
 #include "BKE_object.h"
 #include "BKE_particle.h"
 #include "BKE_pointcache.h"
 #include "BKE_scene.h"
+#include "BKE_gpencil.h"
+
+#include "MEM_guardedalloc.h"
 
 #include "DEG_depsgraph.h"
+#include "DEG_depsgraph_query.h"
 
-static ThreadMutex material_lock = BLI_MUTEX_INITIALIZER;
 
-void BKE_object_eval_local_transform(EvaluationContext *UNUSED(eval_ctx),
-                                     Object *ob)
+void BKE_object_eval_local_transform(Depsgraph *depsgraph, Object *ob)
 {
-	DEG_debug_print_eval(__func__, ob->id.name, ob);
+	DEG_debug_print_eval(depsgraph, __func__, ob->id.name, ob);
 
 	/* calculate local matrix */
 	BKE_object_to_mat4(ob, ob->obmat);
@@ -75,7 +80,7 @@ void BKE_object_eval_local_transform(EvaluationContext *UNUSED(eval_ctx),
 
 /* Evaluate parent */
 /* NOTE: based on solve_parenting(), but with the cruft stripped out */
-void BKE_object_eval_parent(EvaluationContext *UNUSED(eval_ctx),
+void BKE_object_eval_parent(Depsgraph *depsgraph,
                             Scene *scene,
                             Object *ob)
 {
@@ -85,14 +90,14 @@ void BKE_object_eval_parent(EvaluationContext *UNUSED(eval_ctx),
 	float tmat[4][4];
 	float locmat[4][4];
 
-	DEG_debug_print_eval(__func__, ob->id.name, ob);
+	DEG_debug_print_eval(depsgraph, __func__, ob->id.name, ob);
 
 	/* get local matrix (but don't calculate it, as that was done already!) */
 	// XXX: redundant?
 	copy_m4_m4(locmat, ob->obmat);
 
 	/* get parent effect matrix */
-	BKE_object_get_parent_matrix(scene, ob, par, totmat);
+	BKE_object_get_parent_matrix(depsgraph, scene, ob, par, totmat);
 
 	/* total */
 	mul_m4_m4m4(tmat, totmat, ob->parentinv);
@@ -107,14 +112,14 @@ void BKE_object_eval_parent(EvaluationContext *UNUSED(eval_ctx),
 	}
 }
 
-void BKE_object_eval_constraints(EvaluationContext *UNUSED(eval_ctx),
+void BKE_object_eval_constraints(Depsgraph *depsgraph,
                                  Scene *scene,
                                  Object *ob)
 {
 	bConstraintOb *cob;
 	float ctime = BKE_scene_frame_get(scene);
 
-	DEG_debug_print_eval(__func__, ob->id.name, ob);
+	DEG_debug_print_eval(depsgraph, __func__, ob->id.name, ob);
 
 	/* evaluate constraints stack */
 	/* TODO: split this into:
@@ -125,14 +130,14 @@ void BKE_object_eval_constraints(EvaluationContext *UNUSED(eval_ctx),
 	 * Not sure why, this is from Joshua - sergey
 	 *
 	 */
-	cob = BKE_constraints_make_evalob(scene, ob, NULL, CONSTRAINT_OBTYPE_OBJECT);
-	BKE_constraints_solve(&ob->constraints, cob, ctime);
+	cob = BKE_constraints_make_evalob(depsgraph, scene, ob, NULL, CONSTRAINT_OBTYPE_OBJECT);
+	BKE_constraints_solve(depsgraph, &ob->constraints, cob, ctime);
 	BKE_constraints_clear_evalob(cob);
 }
 
-void BKE_object_eval_done(EvaluationContext *UNUSED(eval_ctx), Object *ob)
+void BKE_object_eval_transform_final(Depsgraph *depsgraph, Object *ob)
 {
-	DEG_debug_print_eval(__func__, ob->id.name, ob);
+	DEG_debug_print_eval(depsgraph, __func__, ob->id.name, ob);
 
 	/* Set negative scale flag in object. */
 	if (is_negative_m4(ob->obmat)) ob->transflag |= OB_NEG_SCALE;
@@ -140,8 +145,7 @@ void BKE_object_eval_done(EvaluationContext *UNUSED(eval_ctx), Object *ob)
 }
 
 void BKE_object_handle_data_update(
-        Main *bmain,
-        EvaluationContext *eval_ctx,
+        Depsgraph *depsgraph,
         Scene *scene,
         Object *ob)
 {
@@ -150,40 +154,47 @@ void BKE_object_handle_data_update(
 	Key *key;
 	float ctime = BKE_scene_frame_get(scene);
 
-	if (G.debug & G_DEBUG_DEPSGRAPH_EVAL)
-		printf("recalcdata %s\n", ob->id.name + 2);
+	DEG_debug_print_eval(depsgraph, __func__, ob->id.name, ob);
 
 	/* TODO(sergey): Only used by legacy depsgraph. */
 	if (adt) {
 		/* evaluate drivers - datalevel */
-		/* XXX: for mesh types, should we push this to derivedmesh instead? */
-		BKE_animsys_evaluate_animdata(scene, data_id, adt, ctime, ADT_RECALC_DRIVERS);
+		/* XXX: for mesh types, should we push this to evaluated mesh instead? */
+		BKE_animsys_evaluate_animdata(depsgraph, scene, data_id, adt, ctime, ADT_RECALC_DRIVERS);
 	}
 
 	/* TODO(sergey): Only used by legacy depsgraph. */
 	key = BKE_key_from_object(ob);
 	if (key && key->block.first) {
 		if (!(ob->shapeflag & OB_SHAPE_LOCK))
-			BKE_animsys_evaluate_animdata(scene, &key->id, key->adt, ctime, ADT_RECALC_DRIVERS);
+			BKE_animsys_evaluate_animdata(depsgraph, scene, &key->id, key->adt, ctime, ADT_RECALC_DRIVERS);
 	}
 
 	/* includes all keys and modifiers */
 	switch (ob->type) {
 		case OB_MESH:
 		{
-			BMEditMesh *em = (ob == scene->obedit) ? BKE_editmesh_from_object(ob) : NULL;
+#if 0
+			BMEditMesh *em = (ob->mode & OB_MODE_EDIT) ? BKE_editmesh_from_object(ob) : NULL;
+#else
+			BMEditMesh *em = (ob->mode & OB_MODE_EDIT) ? ((Mesh *)ob->data)->edit_btmesh : NULL;
+			if (em && em->ob != ob) {
+				em = NULL;
+			}
+#endif
+
 			uint64_t data_mask = scene->customdata_mask | CD_MASK_BAREMESH;
 #ifdef WITH_FREESTYLE
 			/* make sure Freestyle edge/face marks appear in DM for render (see T40315) */
-			if (eval_ctx->mode != DAG_EVAL_VIEWPORT) {
+			if (DEG_get_mode(depsgraph) != DAG_EVAL_VIEWPORT) {
 				data_mask |= CD_MASK_FREESTYLE_EDGE | CD_MASK_FREESTYLE_FACE;
 			}
 #endif
 			if (em) {
-				makeDerivedMesh(scene, ob, em,  data_mask, false); /* was CD_MASK_BAREMESH */
+				makeDerivedMesh(depsgraph, scene, ob, em,  data_mask, false); /* was CD_MASK_BAREMESH */
 			}
 			else {
-				makeDerivedMesh(scene, ob, NULL, data_mask, false);
+				makeDerivedMesh(depsgraph, scene, ob, NULL, data_mask, false);
 			}
 			break;
 		}
@@ -195,75 +206,48 @@ void BKE_object_handle_data_update(
 				}
 			}
 			else {
-				BKE_pose_where_is(scene, ob);
+				BKE_pose_where_is(depsgraph, scene, ob);
 			}
 			break;
 
 		case OB_MBALL:
-			BKE_displist_make_mball(bmain, eval_ctx, scene, ob);
+			BKE_displist_make_mball(depsgraph, scene, ob);
 			break;
 
 		case OB_CURVE:
 		case OB_SURF:
 		case OB_FONT:
-			BKE_displist_make_curveTypes(scene, ob, 0);
+			BKE_displist_make_curveTypes(depsgraph, scene, ob, false, false);
 			break;
 
 		case OB_LATTICE:
-			BKE_lattice_modifiers_calc(scene, ob);
+			BKE_lattice_modifiers_calc(depsgraph, scene, ob);
 			break;
 
 		case OB_EMPTY:
 			if (ob->empty_drawtype == OB_EMPTY_IMAGE && ob->data)
 				if (BKE_image_is_animated(ob->data))
-					BKE_image_user_check_frame_calc(ob->iuser, (int)ctime, 0);
+					BKE_image_user_check_frame_calc(ob->iuser, (int)ctime);
 			break;
 	}
 
-	/* related materials */
-	/* XXX: without depsgraph tagging, this will always need to be run, which will be slow!
-	 * However, not doing anything (or trying to hack around this lack) is not an option
-	 * anymore, especially due to Cycles [#31834]
-	 */
-	if (ob->totcol) {
-		int a;
-		if (ob->totcol != 0) {
-			BLI_mutex_lock(&material_lock);
-			for (a = 1; a <= ob->totcol; a++) {
-				Material *ma = give_current_material(ob, a);
-				if (ma) {
-					/* recursively update drivers for this material */
-					material_drivers_update(scene, ma, ctime);
-				}
-			}
-			BLI_mutex_unlock(&material_lock);
-		}
-	}
-	else if (ob->type == OB_LAMP)
-		lamp_drivers_update(scene, ob->data, ctime);
-
 	/* particles */
-	if (ob != scene->obedit && ob->particlesystem.first) {
+	if (!(ob->mode & OB_MODE_EDIT) && ob->particlesystem.first) {
+		const bool use_render_params = (DEG_get_mode(depsgraph) == DAG_EVAL_RENDER);
 		ParticleSystem *tpsys, *psys;
-		DerivedMesh *dm;
 		ob->transflag &= ~OB_DUPLIPARTS;
 		psys = ob->particlesystem.first;
 		while (psys) {
-			/* ensure this update always happens even if psys is disabled */
-			if (psys->recalc & PSYS_RECALC_TYPE) {
-				psys_changed_type(ob, psys);
-			}
-
-			if (psys_check_enabled(ob, psys, eval_ctx->mode == DAG_EVAL_RENDER)) {
+			if (psys_check_enabled(ob, psys, use_render_params)) {
 				/* check use of dupli objects here */
-				if (psys->part && (psys->part->draw_as == PART_DRAW_REND || eval_ctx->mode == DAG_EVAL_RENDER) &&
+				if (psys->part && (psys->part->draw_as == PART_DRAW_REND || use_render_params) &&
 				    ((psys->part->ren_as == PART_DRAW_OB && psys->part->dup_ob) ||
 				     (psys->part->ren_as == PART_DRAW_GR && psys->part->dup_group)))
 				{
 					ob->transflag |= OB_DUPLIPARTS;
 				}
 
-				particle_system_update(bmain, scene, ob, psys, (eval_ctx->mode == DAG_EVAL_RENDER));
+				particle_system_update(depsgraph, scene, ob, psys, use_render_params);
 				psys = psys->next;
 			}
 			else if (psys->flag & PSYS_DELETE) {
@@ -275,28 +259,60 @@ void BKE_object_handle_data_update(
 			else
 				psys = psys->next;
 		}
-
-		if (eval_ctx->mode == DAG_EVAL_RENDER && ob->transflag & OB_DUPLIPARTS) {
-			/* this is to make sure we get render level duplis in groups:
-			 * the derivedmesh must be created before init_render_mesh,
-			 * since object_duplilist does dupliparticles before that */
-			CustomDataMask data_mask = CD_MASK_BAREMESH | CD_MASK_MFACE | CD_MASK_MTFACE | CD_MASK_MCOL;
-			dm = mesh_create_derived_render(scene, ob, data_mask);
-			dm->release(dm);
-
-			for (psys = ob->particlesystem.first; psys; psys = psys->next)
-				psys_get_modifier(ob, psys)->flag &= ~eParticleSystemFlag_psys_updated;
-		}
 	}
-
-	/* quick cache removed */
+	BKE_object_eval_boundbox(depsgraph, ob);
 }
 
-bool BKE_object_eval_proxy_copy(EvaluationContext *UNUSED(eval_ctx),
+/* TODO(sergey): Ensure that bounding box is already calculated, and move this
+ * into BKE_object_synchronize_to_original(). */
+void BKE_object_eval_boundbox(Depsgraph *depsgraph, Object *object)
+{
+	if (!DEG_is_active(depsgraph)) {
+		return;
+	}
+	Object *ob_orig = DEG_get_original_object(object);
+	BoundBox *bb = BKE_object_boundbox_get(object);
+	if (bb != NULL) {
+		if (ob_orig->bb == NULL) {
+			ob_orig->bb = MEM_mallocN(sizeof(*ob_orig->bb), __func__);
+		}
+		*ob_orig->bb = *bb;
+	}
+}
+
+void BKE_object_synchronize_to_original(Depsgraph *depsgraph, Object *object)
+{
+	if (!DEG_is_active(depsgraph)) {
+		return;
+	}
+	Object *object_orig = DEG_get_original_object(object);
+	/* Base flags. */
+	object_orig->base_flag = object->base_flag;
+	/* Transformation flags. */
+	copy_m4_m4(object_orig->obmat, object->obmat);
+	copy_m4_m4(object_orig->constinv, object->constinv);
+	object_orig->transflag = object->transflag;
+	object_orig->flag = object->flag;
+
+	/* Copy back error messages from modifiers. */
+	for (ModifierData *md = object->modifiers.first, *md_orig = object_orig->modifiers.first;
+	     md != NULL && md_orig != NULL;
+	     md = md->next, md_orig = md_orig->next)
+	{
+		BLI_assert(md->type == md_orig->type && STREQ(md->name, md_orig->name));
+		MEM_SAFE_FREE(md_orig->error);
+		if (md->error != NULL) {
+			md_orig->error = BLI_strdup(md->error);
+		}
+	}
+}
+
+bool BKE_object_eval_proxy_copy(Depsgraph *depsgraph,
                                 Object *object)
 {
 	/* Handle proxy copy for target, */
 	if (ID_IS_LINKED(object) && object->proxy_from) {
+		DEG_debug_print_eval(depsgraph, __func__, object->id.name, object);
 		if (object->proxy_from->proxy_group) {
 			/* Transform proxy into group space. */
 			Object *obg = object->proxy_from->proxy_group;
@@ -316,46 +332,131 @@ bool BKE_object_eval_proxy_copy(EvaluationContext *UNUSED(eval_ctx),
 	return false;
 }
 
-void BKE_object_eval_uber_transform(EvaluationContext *eval_ctx, Object *object)
+void BKE_object_eval_uber_transform(Depsgraph *depsgraph, Object *object)
 {
-	BKE_object_eval_proxy_copy(eval_ctx, object);
-	object->recalc &= ~(OB_RECALC_OB | OB_RECALC_TIME);
-	if (object->data == NULL) {
-		object->recalc &= ~OB_RECALC_DATA;
+	BKE_object_eval_proxy_copy(depsgraph, object);
+}
+
+void BKE_object_batch_cache_dirty_tag(Object *ob)
+{
+	switch (ob->type) {
+		case OB_MESH:
+			BKE_mesh_batch_cache_dirty_tag(ob->data, BKE_MESH_BATCH_DIRTY_ALL);
+			break;
+		case OB_LATTICE:
+			BKE_lattice_batch_cache_dirty_tag(ob->data, BKE_LATTICE_BATCH_DIRTY_ALL);
+			break;
+		case OB_CURVE:
+		case OB_FONT:
+		case OB_SURF:
+			BKE_curve_batch_cache_dirty_tag(ob->data, BKE_CURVE_BATCH_DIRTY_ALL);
+			break;
+		case OB_MBALL:
+			BKE_mball_batch_cache_dirty_tag(ob->data, BKE_MBALL_BATCH_DIRTY_ALL);
+			break;
+		case OB_GPENCIL:
+			BKE_gpencil_batch_cache_dirty_tag(ob->data);
+			break;
 	}
 }
 
-void BKE_object_eval_uber_data(Main *bmain, EvaluationContext *eval_ctx,
+void BKE_object_eval_uber_data(Depsgraph *depsgraph,
                                Scene *scene,
                                Object *ob)
 {
-	DEG_debug_print_eval(__func__, ob->id.name, ob);
+	DEG_debug_print_eval(depsgraph, __func__, ob->id.name, ob);
 	BLI_assert(ob->type != OB_ARMATURE);
-	BKE_object_handle_data_update(bmain, eval_ctx, scene, ob);
-
-	ob->recalc &= ~(OB_RECALC_DATA | OB_RECALC_TIME);
+	BKE_object_handle_data_update(depsgraph, scene, ob);
+	BKE_object_batch_cache_dirty_tag(ob);
 }
 
-void BKE_object_eval_cloth(EvaluationContext *UNUSED(eval_ctx),
-                           Scene *scene,
-                           Object *object)
+void BKE_object_eval_ptcache_reset(Depsgraph *depsgraph,
+                                   Scene *scene,
+                                   Object *object)
 {
-	DEG_debug_print_eval(__func__, object->id.name, object);
+	DEG_debug_print_eval(depsgraph, __func__, object->id.name, object);
 	BKE_ptcache_object_reset(scene, object, PTCACHE_RESET_DEPSGRAPH);
 }
 
-void BKE_object_eval_transform_all(EvaluationContext *eval_ctx,
+void BKE_object_eval_transform_all(Depsgraph *depsgraph,
                                    Scene *scene,
                                    Object *object)
 {
 	/* This mimics full transform update chain from new depsgraph. */
-	BKE_object_eval_local_transform(eval_ctx, object);
+	BKE_object_eval_local_transform(depsgraph, object);
 	if (object->parent != NULL) {
-		BKE_object_eval_parent(eval_ctx, scene, object);
+		BKE_object_eval_parent(depsgraph, scene, object);
 	}
 	if (!BLI_listbase_is_empty(&object->constraints)) {
-		BKE_object_eval_constraints(eval_ctx, scene, object);
+		BKE_object_eval_constraints(depsgraph, scene, object);
 	}
-	BKE_object_eval_uber_transform(eval_ctx, object);
-	BKE_object_eval_done(eval_ctx, object);
+	BKE_object_eval_uber_transform(depsgraph, object);
+	BKE_object_eval_transform_final(depsgraph, object);
+}
+
+void BKE_object_eval_update_shading(Depsgraph *depsgraph, Object *object)
+{
+	DEG_debug_print_eval(depsgraph, __func__, object->id.name, object);
+	if (object->type == OB_MESH) {
+		BKE_mesh_batch_cache_dirty_tag(object->data, BKE_MESH_BATCH_DIRTY_SHADING);
+	}
+}
+
+void BKE_object_data_select_update(Depsgraph *depsgraph, ID *object_data)
+{
+	DEG_debug_print_eval(depsgraph, __func__, object_data->name, object_data);
+	switch (GS(object_data->name)) {
+		case ID_ME:
+			BKE_mesh_batch_cache_dirty_tag(
+			        (Mesh *)object_data,
+			        BKE_MESH_BATCH_DIRTY_SELECT);
+			break;
+		case ID_CU:
+			BKE_curve_batch_cache_dirty_tag(
+			        (Curve *)object_data,
+			        BKE_CURVE_BATCH_DIRTY_SELECT);
+			break;
+		case ID_LT:
+			BKE_lattice_batch_cache_dirty_tag(
+			        (struct Lattice *)object_data,
+			        BKE_LATTICE_BATCH_DIRTY_SELECT);
+			break;
+		default:
+			break;
+	}
+}
+
+void BKE_object_eval_flush_base_flags(Depsgraph *depsgraph,
+                                      Scene *scene, const int view_layer_index,
+                                      Object *object, int base_index,
+                                      const bool is_from_set)
+{
+	/* TODO(sergey): Avoid list lookup. */
+	BLI_assert(view_layer_index >= 0);
+	ViewLayer *view_layer = BLI_findlink(&scene->view_layers, view_layer_index);
+	BLI_assert(view_layer != NULL);
+	BLI_assert(view_layer->object_bases_array != NULL);
+	BLI_assert(base_index >= 0);
+	BLI_assert(base_index < MEM_allocN_len(view_layer->object_bases_array) / sizeof(Base *));
+	Base *base = view_layer->object_bases_array[base_index];
+	BLI_assert(base->object == object);
+
+	DEG_debug_print_eval(depsgraph, __func__, object->id.name, object);
+
+	/* Copy flags and settings from base. */
+	object->base_flag = base->flag;
+	if (is_from_set) {
+		object->base_flag |= BASE_FROM_SET;
+		object->base_flag &= ~(BASE_SELECTED | BASE_SELECTABLE);
+	}
+	object->base_local_view_bits = base->local_view_bits;
+
+	if (object->mode == OB_MODE_PARTICLE_EDIT) {
+		for (ParticleSystem *psys = object->particlesystem.first;
+		     psys != NULL;
+		     psys = psys->next)
+		{
+			BKE_particle_batch_cache_dirty_tag(psys, BKE_PARTICLE_BATCH_DIRTY_ALL);
+		}
+	}
 }
