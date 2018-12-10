@@ -43,17 +43,14 @@ def get_socket_or_texture_slot(blender_material: bpy.types.Material, name: str):
     :return: either a blender NodeSocket, if the material is a node tree or a blender Texture otherwise
     """
     if blender_material.node_tree and blender_material.use_nodes:
-        if name == "Emissive":
-            # Emissive is a special case as  the input node in the 'Emission' shader node is named 'Color' and only the
-            # output is named 'Emission'
-            links = [link for link in blender_material.node_tree.links if link.from_socket.name == 'Emission']
-            if not links:
-                return None
-            return links[0].to_socket
         i = [input for input in blender_material.node_tree.inputs]
         o = [output for output in blender_material.node_tree.outputs]
         nodes = [node for node in blender_material.node_tree.nodes]
-        nodes = filter(lambda n: isinstance(n, bpy.types.ShaderNodeBsdfPrincipled), nodes)
+        if name == "Emissive":
+            nodes = filter(lambda n: isinstance(n, bpy.types.ShaderNodeEmission), nodes)
+            name = "Color"
+        else:
+            nodes = filter(lambda n: isinstance(n, bpy.types.ShaderNodeBsdfPrincipled), nodes)
         inputs = sum([[input for input in node.inputs if input.name == name] for node in nodes], [])
         if not inputs:
             return None
@@ -323,6 +320,38 @@ def get_texcoord_index_from_shader_node(glTF, name, shader_node):
             return texCoordIndex
 
     return 0
+
+
+def get_texture_transform_from_texture_node(texture_node):
+    if not isinstance(texture_node, bpy.types.ShaderNodeTexImage):
+        return None
+
+    mapping_socket = texture_node.inputs["Vector"]
+    if len(mapping_socket.links) == 0:
+        return None
+
+    mapping_node = mapping_socket.links[0].from_node
+    if not isinstance(mapping_node, bpy.types.ShaderNodeMapping):
+        return None
+
+    texture_transform = {}
+    if mapping_node.vector_type == 'TEXTURE':
+        texture_transform["offset"] = [-mapping_node.translation[0], -mapping_node.translation[1]]
+        texture_transform["rotation"] = -mapping_node.rotation[2]
+        texture_transform["scale"] = [1.0 / mapping_node.scale[0], 1.0 / mapping_node.scale[1]]
+    elif mapping_node.vector_type == 'POINT':
+        texture_transform["offset"] = [mapping_node.translation[0], mapping_node.translation[1]]
+        texture_transform["rotation"] = mapping_node.rotation[2]
+        texture_transform["scale"] = [mapping_node.scale[0], mapping_node.scale[1]]
+
+    if all([component == 0 for component in texture_transform["offset"]]):
+        del(texture_transform["offset"])
+    if all([component == 1 for component in texture_transform["scale"]]):
+        del(texture_transform["scale"])
+    if texture_transform["rotation"] == 0:
+        del(texture_transform["rotation"])
+
+    return texture_transform
 
 
 def get_image_uri(export_settings, blender_image):

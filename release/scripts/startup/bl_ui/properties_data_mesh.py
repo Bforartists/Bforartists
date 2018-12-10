@@ -36,7 +36,7 @@ class MESH_MT_vertex_group_specials(Menu):
         layout.operator("object.vertex_group_copy_to_selected", icon='LINK_AREA')
         layout.separator()
         layout.operator("object.vertex_group_mirror", icon='ARROW_LEFTRIGHT').use_topology = False
-        layout.operator("object.vertex_group_mirror", text="Mirror Vertex Group (Topology), icon='ARROW_LEFTRIGHT').use_topology = True
+        layout.operator("object.vertex_group_mirror", text="Mirror Vertex Group (Topology)", icon='ARROW_LEFTRIGHT').use_topology = True
         layout.separator()
         layout.operator("object.vertex_group_remove_from", icon='X', text="Remove from All Groups").use_all_groups = True
         layout.operator("object.vertex_group_remove_from", text="Clear Active Group", icon='X').use_all_verts = True

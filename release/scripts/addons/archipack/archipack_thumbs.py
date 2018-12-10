@@ -42,7 +42,7 @@ def create_lamp(context, loc):
     lamp = context.active_object
     lamp.data.use_nodes = True
     tree = lamp.data.node_tree
-    return tree, tree.nodes
+    return tree, tree.nodes, lamp.data
 
 
 def create_camera(context, loc, rot):
@@ -119,7 +119,10 @@ def generateThumb(context, cls, preset, engine):
 
     elif engine == 'BLENDER_EEVEE':
         eevee = context.scene.eevee
-
+        eevee.use_gtao = True
+        eevee.use_ssr = True
+        eevee.use_soft_shadows = True
+        eevee.taa_render_samples = 64
     else:
         raise RuntimeError("Unsupported render engine %s" % engine)
 
@@ -150,11 +153,12 @@ def generateThumb(context, cls, preset, engine):
     o.select_set(state=True)
 
     bpy.ops.view3d.camera_to_view_selected()
+    cam.data.lens = 45
 
     log("Prepare scene")
     # add plane
     bpy.ops.mesh.primitive_plane_add(
-        radius=1000,
+        size=1000,
         view_align=False,
         enter_editmode=False,
         location=(0, 0, 0)
@@ -164,17 +168,18 @@ def generateThumb(context, cls, preset, engine):
     apply_simple_material(p, "Plane", (1, 1, 1, 1))
 
     # add 3 lights
-    tree, nodes = create_lamp(context, (3.69736, -7, 6.0))
+    tree, nodes, lamp = create_lamp(context, (3.69736, -7, 6.0))
+    lamp.energy = 50
     emit = nodes["Emission"]
     emit.inputs[1].default_value = 2000.0
 
-    tree, nodes = create_lamp(context, (9.414563179016113, 5.446230888366699, 5.903861999511719))
+    tree, nodes, lamp = create_lamp(context, (9.414563179016113, 5.446230888366699, 5.903861999511719))
     emit = nodes["Emission"]
     falloff = nodes.new(type="ShaderNodeLightFalloff")
     falloff.inputs[0].default_value = 5
     tree.links.new(falloff.outputs[2], emit.inputs[1])
 
-    tree, nodes = create_lamp(context, (-7.847615718841553, 1.03135085105896, 5.903861999511719))
+    tree, nodes, lamp = create_lamp(context, (-7.847615718841553, 1.03135085105896, 5.903861999511719))
     emit = nodes["Emission"]
     falloff = nodes.new(type="ShaderNodeLightFalloff")
     falloff.inputs[0].default_value = 5
