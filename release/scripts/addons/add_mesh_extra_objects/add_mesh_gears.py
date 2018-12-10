@@ -666,10 +666,10 @@ class AddGear(Operator):
         # XXX, supporting adding in editmode is move involved
         if obj.mode != 'EDIT':
             # Create vertex groups from stored vertices.
-            tipGroup = obj.vertex_groups.new('Tips')
+            tipGroup = obj.vertex_groups.new(name='Tips')
             tipGroup.add(verts_tip, 1.0, 'ADD')
 
-            valleyGroup = obj.vertex_groups.new('Valleys')
+            valleyGroup = obj.vertex_groups.new(name='Valleys')
             valleyGroup.add(verts_valley, 1.0, 'ADD')
 
         return {'FINISHED'}
@@ -790,7 +790,7 @@ class AddWormGear(Operator):
         # XXX, supporting adding in editmode is move involved
         if obj.mode != 'EDIT':
             # Create vertex groups from stored vertices.
-            tipGroup = obj.vertex_groups.new('Tips')
+            tipGroup = obj.vertex_groups.new(name='Tips')
             tipGroup.add(verts_tip, 1.0, 'ADD')
 
             valleyGroup = obj.vertex_groups.new('Valleys')

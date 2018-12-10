@@ -102,7 +102,7 @@ def createVertexGroup(obj):
     if obj.mode == "EDIT":
         bpy.ops.object.editmode_toggle()
 
-    group = obj.vertex_groups.new("easy_lattice_group")
+    group = obj.vertex_groups.new(name="easy_lattice_group")
 
     for vert in vertices:
         if vert.select is True:

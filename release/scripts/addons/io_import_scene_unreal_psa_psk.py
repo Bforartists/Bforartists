@@ -673,7 +673,7 @@ def pskimport(infile,importmesh,importbone,bDebugLogPSK,importmultiuvtextures):
     for bone in ob_new.data.bones:
         #print("names:", bone.name, ":", dir(bone))
         #print("names:", bone.name)
-        group = obmesh.vertex_groups.new(bone.name)
+        group = obmesh.vertex_groups.new(name=bone.name)
 
     for vgroup in obmesh.vertex_groups:
         #print(vgroup.name, ":", vgroup.index)

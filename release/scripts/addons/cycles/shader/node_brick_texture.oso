@@ -22,6 +22,7 @@ oparam	float	Fac	0		%read{80,86} %write{70,78}
 oparam	color	Color	0.2 0.2 0.2		%read{2147483647,-1} %write{86,86}
 global	point	P	%read{0,0} %write{2147483647,-1}
 local	int	___688_nn	%read{56,56} %write{55,55}
+local	int	___688_n	%read{48,53} %write{47,49}
 local	int	___689_bricknum	%read{35,43} %write{32,32}
 local	int	___689_rownum	%read{19,42} %write{13,13}
 local	float	___689_offset	%read{29,34} %write{8,27}
@@ -63,7 +64,7 @@ const	int	$const6	16		%read{42,42} %write{2147483647,-1}
 temp	int	$tmp22	%read{44,44} %write{42,42}
 const	int	$const7	65535		%read{43,43} %write{2147483647,-1}
 temp	int	$tmp23	%read{44,44} %write{43,43}
-temp	int	$tmp24	%read{46,53} %write{44,49}
+temp	int	$tmp24	%read{46,46} %write{44,44}
 const	string	$const8	"brick_noise"		%read{45,45} %write{2147483647,-1}
 const	int	$const9	1013		%read{46,46} %write{2147483647,-1}
 temp	int	$tmp25	%read{47,47} %write{46,46}
@@ -180,19 +181,19 @@ code ___main___
 	add		$tmp24 $tmp22 $tmp23 	%argrw{"wrr"}
 	functioncall	$const8 59 	%argrw{"r"}
 # C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_brick_texture.osl:25
-# 	n = (n + 1013) & 2147483647;
+# 	int n = (ns + 1013) & 2147483647;
 	add		$tmp25 $tmp24 $const9 	%line{25} %argrw{"wrr"}
-	bitand		$tmp24 $tmp25 $const10 	%argrw{"wrr"}
+	bitand		___688_n $tmp25 $const10 	%argrw{"wrr"}
 # C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_brick_texture.osl:26
 # 	n = (n >> 13) ^ n;
-	shr		$tmp26 $tmp24 $const11 	%line{26} %argrw{"wrr"}
-	xor		$tmp24 $tmp26 $tmp24 	%argrw{"wrr"}
+	shr		$tmp26 ___688_n $const11 	%line{26} %argrw{"wrr"}
+	xor		___688_n $tmp26 ___688_n 	%argrw{"wrr"}
 # C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_brick_texture.osl:27
 # 	nn = (n * (n * n * 60493 + 19990303) + 1376312589) & 2147483647;
-	mul		$tmp27 $tmp24 $tmp24 	%line{27} %argrw{"wrr"}
+	mul		$tmp27 ___688_n ___688_n 	%line{27} %argrw{"wrr"}
 	mul		$tmp28 $tmp27 $const12 	%argrw{"wrr"}
 	add		$tmp29 $tmp28 $const13 	%argrw{"wrr"}
-	mul		$tmp30 $tmp24 $tmp29 	%argrw{"wrr"}
+	mul		$tmp30 ___688_n $tmp29 	%argrw{"wrr"}
 	add		$tmp31 $tmp30 $const14 	%argrw{"wrr"}
 	bitand		___688_nn $tmp31 $const10 	%argrw{"wrr"}
 # C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_brick_texture.osl:28

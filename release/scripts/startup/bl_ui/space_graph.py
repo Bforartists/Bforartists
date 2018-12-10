@@ -200,7 +200,7 @@ class GRAPH_MT_select(Menu):
         props.mode = 'RIGHT'
 
         layout.separator()
-	layout.operator("graph.select_more",text = "More", icon = "SELECTMORE")
+        layout.operator("graph.select_more",text = "More", icon = "SELECTMORE")
         layout.operator("graph.select_less",text = "Less", icon = "SELECTLESS")
 
         layout.separator()
@@ -242,7 +242,7 @@ class GRAPH_MT_channel(Menu):
         layout.operator_menu_enum("anim.channels_setting_disable", "type")
 
         layout.separator()
-	layout.operator("anim.channels_editable_toggle", icon = "LOCKED")
+        layout.operator("anim.channels_editable_toggle", icon = "LOCKED")
         layout.operator_menu_enum("graph.extrapolation_type", "type", text="Extrapolation Mode")
 
         layout.separator()

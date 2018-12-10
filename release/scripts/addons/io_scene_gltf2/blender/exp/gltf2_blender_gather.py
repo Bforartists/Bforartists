@@ -18,6 +18,8 @@ from io_scene_gltf2.io.com import gltf2_io
 from io_scene_gltf2.blender.exp import gltf2_blender_gather_nodes
 from io_scene_gltf2.blender.exp import gltf2_blender_gather_animations
 from io_scene_gltf2.blender.exp.gltf2_blender_gather_cache import cached
+from io_scene_gltf2.blender.exp import gltf2_blender_generate_extras
+from io_scene_gltf2.blender.exp import gltf2_blender_export_keys
 
 
 def gather_gltf2(export_settings):
@@ -39,7 +41,7 @@ def gather_gltf2(export_settings):
 def __gather_scene(blender_scene, export_settings):
     scene = gltf2_io.Scene(
         extensions=None,
-        extras=None,
+        extras=__gather_extras(blender_scene, export_settings),
         name=blender_scene.name,
         nodes=[]
     )
@@ -50,8 +52,6 @@ def __gather_scene(blender_scene, export_settings):
             if node is not None:
                 scene.nodes.append(node)
 
-    # TODO: lights
-
     return scene
 
 
@@ -60,4 +60,10 @@ def __gather_animations(blender_scene, export_settings):
     for blender_object in blender_scene.objects:
         animations += gltf2_blender_gather_animations.gather_animations(blender_object, export_settings)
     return animations
+
+
+def __gather_extras(blender_object, export_settings):
+    if export_settings[gltf2_blender_export_keys.EXTRAS]:
+        return gltf2_blender_generate_extras.generate_extras(blender_object)
+    return None
 
