@@ -36,14 +36,14 @@ class BlenderScene():
             # TODO: There is a bug in 2.8 alpha that break CLEAR_KEEP_TRANSFORM
             # if we are creating a new scene
             scene = bpy.context.scene
-            if bpy.app.version < (2, 80, 0):
-                scene.render.engine = "CYCLES"
-            else:
-                scene.render.engine = "BLENDER_EEVEE"
+            scene.render.engine = "BLENDER_EEVEE"
 
             gltf.blender_scene = scene.name
         else:
             gltf.blender_scene = pyscene.name
+
+        # Switch to newly created main scene
+        bpy.context.window.scene = bpy.data.scenes[gltf.blender_scene]
 
         # Create Yup2Zup empty
         obj_rotation = bpy.data.objects.new("Yup2Zup", None)
@@ -72,8 +72,9 @@ class BlenderScene():
 
         if gltf.data.animations:
             for anim_idx, anim in enumerate(gltf.data.animations):
-                for node_idx in pyscene.nodes:
-                    BlenderAnimation.anim(gltf, anim_idx, node_idx)
+                if pyscene.nodes is not None:
+                    for node_idx in pyscene.nodes:
+                        BlenderAnimation.anim(gltf, anim_idx, node_idx)
 
         # Parent root node to rotation object
         if pyscene.nodes is not None:

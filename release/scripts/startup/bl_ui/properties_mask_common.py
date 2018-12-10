@@ -275,7 +275,7 @@ class MASK_MT_mask(Menu):
         layout = self.layout
 
         layout.operator("mask.delete", icon = "DELETE")
-	layout.operator("mask.duplicate_move", text = "Duplicate", icon = "DUPLICATE")
+        layout.operator("mask.duplicate_move", text = "Duplicate", icon = "DUPLICATE")
 
         layout.separator()
         layout.operator("mask.cyclic_toggle")

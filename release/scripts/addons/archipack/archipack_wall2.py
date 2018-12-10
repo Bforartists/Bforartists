@@ -2100,7 +2100,7 @@ class ARCHIPACK_OT_wall2_draw(ArchipackDrawTool, Operator):
     def modal(self, context, event):
 
         context.area.tag_redraw()
-        if event.type in {'NONE', 'TIMER', 'EVT_TWEAK_L', 'WINDOW_DEACTIVATE'}:
+        if event.type in {'NONE', 'TIMER', 'TIMER_REPORT', 'EVT_TWEAK_L', 'WINDOW_DEACTIVATE'}:
             return {'PASS_THROUGH'}
 
         if self.keymap.check(event, self.keymap.delete):

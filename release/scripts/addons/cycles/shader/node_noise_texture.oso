@@ -4,240 +4,245 @@ OpenShadingLanguage 1.00
 shader node_noise_texture
 param	int	use_mapping	0		%read{2,2} %write{2147483647,-1}
 param	matrix	mapping	0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0		%read{3,3} %write{2147483647,-1}
-param	float	Distortion	0		%read{7,51} %write{2147483647,-1}
+param	float	Distortion	0		%read{8,52} %write{2147483647,-1}
 param	float	Scale	5		%read{4,4} %write{2147483647,-1}
-param	float	Detail	2		%read{59,245} %write{2147483647,-1}
+param	float	Detail	2		%read{60,246} %write{2147483647,-1}
 param	point	Vector	0 0 0		%read{1,1} %write{0,0} %initexpr
-oparam	float	Fac	0		%read{329,330} %write{131,330}
-oparam	color	Color	0 0 0		%read{2147483647,-1} %write{329,329}
+oparam	float	Fac	0		%read{2147483647,-1} %write{331,331}
+oparam	color	Color	0 0 0		%read{2147483647,-1} %write{330,330}
 global	point	P	%read{0,0} %write{2147483647,-1}
-local	float	___681_f	%read{16,290} %write{11,284}
-local	float	___682_fscale	%read{64,278} %write{55,273}
-local	float	___682_amp	%read{64,295} %write{56,273}
-local	float	___682_sum	%read{64,327} %write{57,326}
-local	int	___682_i	%read{64,273} %write{63,273}
-local	int	___682_n	%read{64,321} %write{61,247}
-local	float	___682_octaves	%read{61,275} %write{60,246}
-local	float	___684_t	%read{64,273} %write{64,273}
-local	float	___682_rmd	%read{90,316} %write{89,275}
-local	float	___685_t	%read{106,295} %write{102,294}
-local	float	___685_sum2	%read{127,316} %write{110,313}
-local	point	___688_r	%read{53,53} %write{23,52}
-local	int	___688_hard	%read{64,291} %write{6,6}
+local	float	___681_f	%read{17,291} %write{12,285}
+local	float	___682_fscale	%read{65,279} %write{56,274}
+local	float	___682_amp	%read{65,296} %write{57,274}
+local	float	___682_sum	%read{65,328} %write{58,327}
+local	int	___682_i	%read{65,274} %write{64,274}
+local	int	___682_n	%read{65,322} %write{62,248}
+local	float	___682_octaves	%read{62,276} %write{61,247}
+local	float	___684_t	%read{65,274} %write{65,274}
+local	float	___682_rmd	%read{91,317} %write{90,276}
+local	float	___685_t	%read{107,296} %write{103,295}
+local	float	___685_sum2	%read{128,317} %write{111,314}
+local	point	___688_r	%read{54,54} %write{24,53}
+local	point	___688_p	%read{10,239} %write{6,54}
+local	int	___688_hard	%read{65,292} %write{7,7}
+local	float	___688_fac	%read{330,331} %write{132,142}
 local	point	p	%read{3,4} %write{1,3}
-temp	point	$tmp1	%read{9,238} %write{4,53}
+temp	point	$tmp1	%read{6,6} %write{4,4}
 const	string	$const1	"noise"		%read{5,5} %write{2147483647,-1}
-const	int	$const2	0		%read{6,286} %write{2147483647,-1}
-const	float	$const3	0		%read{7,280} %write{2147483647,-1}
-temp	int	$tmp2	%read{8,8} %write{7,7}
-temp	float	$tmp3	%read{22,22} %write{19,21}
-const	point	$const4	13.5 13.5 13.5		%read{9,38} %write{2147483647,-1}
-temp	point	$tmp5	%read{14,15} %write{9,9}
-const	string	$const5	"unsigned"		%read{12,281} %write{2147483647,-1}
-const	string	$const6	"safe_noise"		%read{10,279} %write{2147483647,-1}
-const	string	$const7	"signed"		%read{12,281} %write{2147483647,-1}
-temp	int	$tmp6	%read{13,13} %write{12,12}
-const	string	$const8	"perlin"		%read{14,283} %write{2147483647,-1}
-temp	int	$tmp7	%read{17,17} %write{16,16}
-temp	int	$tmp8	%read{18,18} %write{17,17}
-const	float	$const9	0.5		%read{19,288} %write{2147483647,-1}
-temp	float	$tmp9	%read{23,23} %write{22,22}
-temp	float	$tmp10	%read{36,36} %write{33,35}
-temp	int	$tmp11	%read{27,27} %write{26,26}
-temp	int	$tmp12	%read{31,31} %write{30,30}
-temp	int	$tmp13	%read{32,32} %write{31,31}
-temp	float	$tmp14	%read{37,37} %write{36,36}
-const	int	$const10	1		%read{37,323} %write{2147483647,-1}
-temp	float	$tmp15	%read{51,51} %write{48,50}
-temp	vector	$tmp17	%read{43,44} %write{38,38}
-temp	int	$tmp18	%read{42,42} %write{41,41}
-temp	int	$tmp19	%read{46,46} %write{45,45}
-temp	int	$tmp20	%read{47,47} %write{46,46}
-temp	float	$tmp21	%read{52,52} %write{51,51}
-const	int	$const11	2		%read{52,308} %write{2147483647,-1}
-const	string	$const12	"noise_turbulence"		%read{54,240} %write{2147483647,-1}
-const	float	$const13	1		%read{55,314} %write{2147483647,-1}
-const	float	$const14	16		%read{59,245} %write{2147483647,-1}
-const	string	$const15	"clamp"		%read{58,244} %write{2147483647,-1}
-temp	float	$tmp22	%read{60,60} %write{59,59}
-temp	int	$tmp23	%read{62,87} %write{63,87}
-temp	point	$tmp24	%read{64,87} %write{64,87}
-temp	int	$tmp25	%read{64,87} %write{64,87}
-temp	int	$tmp26	%read{64,87} %write{64,87}
-temp	int	$tmp27	%read{64,87} %write{64,87}
-const	float	$const16	2		%read{79,292} %write{2147483647,-1}
-temp	float	$tmp28	%read{64,87} %write{64,87}
-temp	float	$tmp29	%read{64,87} %write{64,87}
-temp	float	$tmp30	%read{64,87} %write{64,87}
-temp	int	$tmp31	%read{2147483647,-1} %write{64,87}
-temp	float	$tmp32	%read{89,89} %write{88,88}
-temp	int	$tmp33	%read{91,91} %write{90,90}
-temp	point	$tmp34	%read{97,98} %write{92,92}
-temp	int	$tmp35	%read{96,96} %write{95,95}
-temp	int	$tmp36	%read{100,100} %write{99,99}
-temp	int	$tmp37	%read{101,101} %write{100,100}
-temp	float	$tmp38	%read{107,107} %write{106,106}
-temp	float	$tmp39	%read{108,108} %write{107,107}
-temp	float	$tmp40	%read{110,110} %write{109,109}
-temp	int	$tmp41	%read{112,112} %write{111,111}
-temp	float	$tmp42	%read{117,117} %write{112,112}
-temp	int	$tmp43	%read{114,114} %write{113,113}
-temp	int	$tmp44	%read{115,115} %write{114,114}
-temp	int	$tmp45	%read{116,116} %write{115,115}
-temp	float	$tmp46	%read{117,117} %write{116,116}
-temp	float	$tmp47	%read{118,118} %write{117,117}
-temp	int	$tmp48	%read{120,120} %write{119,119}
-temp	int	$tmp49	%read{121,121} %write{120,120}
-temp	float	$tmp50	%read{126,126} %write{121,121}
-temp	int	$tmp51	%read{123,123} %write{122,122}
-temp	int	$tmp52	%read{124,124} %write{123,123}
-temp	int	$tmp53	%read{125,125} %write{124,124}
-temp	float	$tmp54	%read{126,126} %write{125,125}
-temp	float	$tmp55	%read{127,127} %write{126,126}
-temp	float	$tmp56	%read{129,129} %write{128,128}
-temp	float	$tmp57	%read{131,131} %write{129,129}
-temp	float	$tmp58	%read{131,131} %write{130,130}
-temp	int	$tmp59	%read{134,134} %write{133,133}
-temp	float	$tmp60	%read{139,139} %write{134,134}
-temp	int	$tmp61	%read{136,136} %write{135,135}
-temp	int	$tmp62	%read{137,137} %write{136,136}
-temp	int	$tmp63	%read{138,138} %write{137,137}
-temp	float	$tmp64	%read{139,139} %write{138,138}
-temp	float	$tmp65	%read{140,140} %write{139,139}
-temp	float	$tmp66	%read{329,329} %write{224,234}
-temp	point	$tmp67	%read{157,185} %write{146,146}
-temp	float	$tmp68	%read{146,146} %write{143,143}
-temp	float	$tmp69	%read{146,146} %write{144,144}
-temp	float	$tmp70	%read{146,146} %write{145,145}
-temp	float	$tmp71	%read{153,153} %write{152,152}
-temp	int	$tmp72	%read{155,180} %write{156,180}
-temp	point	$tmp73	%read{157,180} %write{157,180}
-temp	int	$tmp74	%read{157,180} %write{157,180}
-temp	int	$tmp75	%read{157,180} %write{157,180}
-temp	int	$tmp76	%read{157,180} %write{157,180}
-temp	float	$tmp77	%read{157,180} %write{157,180}
-temp	float	$tmp78	%read{157,180} %write{157,180}
-temp	float	$tmp79	%read{157,180} %write{157,180}
-temp	int	$tmp80	%read{2147483647,-1} %write{157,180}
-temp	float	$tmp81	%read{182,182} %write{181,181}
-temp	int	$tmp82	%read{184,184} %write{183,183}
-temp	point	$tmp83	%read{190,191} %write{185,185}
-temp	int	$tmp84	%read{189,189} %write{188,188}
-temp	int	$tmp85	%read{193,193} %write{192,192}
-temp	int	$tmp86	%read{194,194} %write{193,193}
-temp	float	$tmp87	%read{200,200} %write{199,199}
-temp	float	$tmp88	%read{201,201} %write{200,200}
-temp	float	$tmp89	%read{203,203} %write{202,202}
-temp	int	$tmp90	%read{205,205} %write{204,204}
-temp	float	$tmp91	%read{210,210} %write{205,205}
-temp	int	$tmp92	%read{207,207} %write{206,206}
-temp	int	$tmp93	%read{208,208} %write{207,207}
-temp	int	$tmp94	%read{209,209} %write{208,208}
-temp	float	$tmp95	%read{210,210} %write{209,209}
-temp	float	$tmp96	%read{211,211} %write{210,210}
-temp	int	$tmp97	%read{213,213} %write{212,212}
-temp	int	$tmp98	%read{214,214} %write{213,213}
-temp	float	$tmp99	%read{219,219} %write{214,214}
-temp	int	$tmp100	%read{216,216} %write{215,215}
-temp	int	$tmp101	%read{217,217} %write{216,216}
-temp	int	$tmp102	%read{218,218} %write{217,217}
-temp	float	$tmp103	%read{219,219} %write{218,218}
-temp	float	$tmp104	%read{220,220} %write{219,219}
-temp	float	$tmp105	%read{222,222} %write{221,221}
-temp	float	$tmp106	%read{224,224} %write{222,222}
-temp	float	$tmp107	%read{224,224} %write{223,223}
-temp	int	$tmp108	%read{227,227} %write{226,226}
-temp	float	$tmp109	%read{232,232} %write{227,227}
-temp	int	$tmp110	%read{229,229} %write{228,228}
-temp	int	$tmp111	%read{230,230} %write{229,229}
-temp	int	$tmp112	%read{231,231} %write{230,230}
-temp	float	$tmp113	%read{232,232} %write{231,231}
-temp	float	$tmp114	%read{233,233} %write{232,232}
-temp	float	$tmp115	%read{329,329} %write{317,327}
-temp	point	$tmp116	%read{250,278} %write{239,239}
-temp	float	$tmp117	%read{239,239} %write{236,236}
-temp	float	$tmp118	%read{239,239} %write{237,237}
-temp	float	$tmp119	%read{239,239} %write{238,238}
-temp	float	$tmp120	%read{246,246} %write{245,245}
-temp	int	$tmp121	%read{248,273} %write{249,273}
-temp	point	$tmp122	%read{250,273} %write{250,273}
-temp	int	$tmp123	%read{250,273} %write{250,273}
-temp	int	$tmp124	%read{250,273} %write{250,273}
-temp	int	$tmp125	%read{250,273} %write{250,273}
-temp	float	$tmp126	%read{250,273} %write{250,273}
-temp	float	$tmp127	%read{250,273} %write{250,273}
-temp	float	$tmp128	%read{250,273} %write{250,273}
-temp	int	$tmp129	%read{2147483647,-1} %write{250,273}
-temp	float	$tmp130	%read{275,275} %write{274,274}
-temp	int	$tmp131	%read{277,277} %write{276,276}
-temp	point	$tmp132	%read{283,284} %write{278,278}
-temp	int	$tmp133	%read{282,282} %write{281,281}
-temp	int	$tmp134	%read{286,286} %write{285,285}
-temp	int	$tmp135	%read{287,287} %write{286,286}
-temp	float	$tmp136	%read{293,293} %write{292,292}
-temp	float	$tmp137	%read{294,294} %write{293,293}
-temp	float	$tmp138	%read{296,296} %write{295,295}
-temp	int	$tmp139	%read{298,298} %write{297,297}
-temp	float	$tmp140	%read{303,303} %write{298,298}
-temp	int	$tmp141	%read{300,300} %write{299,299}
-temp	int	$tmp142	%read{301,301} %write{300,300}
-temp	int	$tmp143	%read{302,302} %write{301,301}
-temp	float	$tmp144	%read{303,303} %write{302,302}
-temp	float	$tmp145	%read{304,304} %write{303,303}
-temp	int	$tmp146	%read{306,306} %write{305,305}
-temp	int	$tmp147	%read{307,307} %write{306,306}
-temp	float	$tmp148	%read{312,312} %write{307,307}
-temp	int	$tmp149	%read{309,309} %write{308,308}
-temp	int	$tmp150	%read{310,310} %write{309,309}
-temp	int	$tmp151	%read{311,311} %write{310,310}
-temp	float	$tmp152	%read{312,312} %write{311,311}
-temp	float	$tmp153	%read{313,313} %write{312,312}
-temp	float	$tmp154	%read{315,315} %write{314,314}
-temp	float	$tmp155	%read{317,317} %write{315,315}
-temp	float	$tmp156	%read{317,317} %write{316,316}
-temp	int	$tmp157	%read{320,320} %write{319,319}
-temp	float	$tmp158	%read{325,325} %write{320,320}
-temp	int	$tmp159	%read{322,322} %write{321,321}
-temp	int	$tmp160	%read{323,323} %write{322,322}
-temp	int	$tmp161	%read{324,324} %write{323,323}
-temp	float	$tmp162	%read{325,325} %write{324,324}
-temp	float	$tmp163	%read{326,326} %write{325,325}
+const	int	$const2	0		%read{7,287} %write{2147483647,-1}
+const	float	$const3	0		%read{8,281} %write{2147483647,-1}
+temp	int	$tmp2	%read{9,9} %write{8,8}
+temp	float	$tmp3	%read{23,23} %write{20,22}
+const	point	$const4	13.5 13.5 13.5		%read{10,39} %write{2147483647,-1}
+temp	point	$tmp5	%read{15,16} %write{10,10}
+const	string	$const5	"unsigned"		%read{13,282} %write{2147483647,-1}
+const	string	$const6	"safe_noise"		%read{11,280} %write{2147483647,-1}
+const	string	$const7	"signed"		%read{13,282} %write{2147483647,-1}
+temp	int	$tmp6	%read{14,14} %write{13,13}
+const	string	$const8	"perlin"		%read{15,284} %write{2147483647,-1}
+temp	int	$tmp7	%read{18,18} %write{17,17}
+temp	int	$tmp8	%read{19,19} %write{18,18}
+const	float	$const9	0.5		%read{20,289} %write{2147483647,-1}
+temp	float	$tmp9	%read{24,24} %write{23,23}
+temp	float	$tmp10	%read{37,37} %write{34,36}
+temp	int	$tmp11	%read{28,28} %write{27,27}
+temp	int	$tmp12	%read{32,32} %write{31,31}
+temp	int	$tmp13	%read{33,33} %write{32,32}
+temp	float	$tmp14	%read{38,38} %write{37,37}
+const	int	$const10	1		%read{38,324} %write{2147483647,-1}
+temp	float	$tmp15	%read{52,52} %write{49,51}
+temp	vector	$tmp17	%read{44,45} %write{39,39}
+temp	int	$tmp18	%read{43,43} %write{42,42}
+temp	int	$tmp19	%read{47,47} %write{46,46}
+temp	int	$tmp20	%read{48,48} %write{47,47}
+temp	float	$tmp21	%read{53,53} %write{52,52}
+const	int	$const11	2		%read{53,309} %write{2147483647,-1}
+const	string	$const12	"noise_turbulence"		%read{55,241} %write{2147483647,-1}
+const	float	$const13	1		%read{56,315} %write{2147483647,-1}
+const	float	$const14	16		%read{60,246} %write{2147483647,-1}
+const	string	$const15	"clamp"		%read{59,245} %write{2147483647,-1}
+temp	float	$tmp22	%read{61,61} %write{60,60}
+temp	int	$tmp23	%read{63,88} %write{64,88}
+temp	point	$tmp24	%read{65,88} %write{65,88}
+temp	int	$tmp25	%read{65,88} %write{65,88}
+temp	int	$tmp26	%read{65,88} %write{65,88}
+temp	int	$tmp27	%read{65,88} %write{65,88}
+const	float	$const16	2		%read{80,293} %write{2147483647,-1}
+temp	float	$tmp28	%read{65,88} %write{65,88}
+temp	float	$tmp29	%read{65,88} %write{65,88}
+temp	float	$tmp30	%read{65,88} %write{65,88}
+temp	int	$tmp31	%read{2147483647,-1} %write{65,88}
+temp	float	$tmp32	%read{90,90} %write{89,89}
+temp	int	$tmp33	%read{92,92} %write{91,91}
+temp	point	$tmp34	%read{98,99} %write{93,93}
+temp	int	$tmp35	%read{97,97} %write{96,96}
+temp	int	$tmp36	%read{101,101} %write{100,100}
+temp	int	$tmp37	%read{102,102} %write{101,101}
+temp	float	$tmp38	%read{108,108} %write{107,107}
+temp	float	$tmp39	%read{109,109} %write{108,108}
+temp	float	$tmp40	%read{111,111} %write{110,110}
+temp	int	$tmp41	%read{113,113} %write{112,112}
+temp	float	$tmp42	%read{118,118} %write{113,113}
+temp	int	$tmp43	%read{115,115} %write{114,114}
+temp	int	$tmp44	%read{116,116} %write{115,115}
+temp	int	$tmp45	%read{117,117} %write{116,116}
+temp	float	$tmp46	%read{118,118} %write{117,117}
+temp	float	$tmp47	%read{119,119} %write{118,118}
+temp	int	$tmp48	%read{121,121} %write{120,120}
+temp	int	$tmp49	%read{122,122} %write{121,121}
+temp	float	$tmp50	%read{127,127} %write{122,122}
+temp	int	$tmp51	%read{124,124} %write{123,123}
+temp	int	$tmp52	%read{125,125} %write{124,124}
+temp	int	$tmp53	%read{126,126} %write{125,125}
+temp	float	$tmp54	%read{127,127} %write{126,126}
+temp	float	$tmp55	%read{128,128} %write{127,127}
+temp	float	$tmp56	%read{130,130} %write{129,129}
+temp	float	$tmp57	%read{132,132} %write{130,130}
+temp	float	$tmp58	%read{132,132} %write{131,131}
+temp	int	$tmp59	%read{135,135} %write{134,134}
+temp	float	$tmp60	%read{140,140} %write{135,135}
+temp	int	$tmp61	%read{137,137} %write{136,136}
+temp	int	$tmp62	%read{138,138} %write{137,137}
+temp	int	$tmp63	%read{139,139} %write{138,138}
+temp	float	$tmp64	%read{140,140} %write{139,139}
+temp	float	$tmp65	%read{141,141} %write{140,140}
+temp	float	$tmp66	%read{330,330} %write{225,235}
+temp	point	$tmp67	%read{158,186} %write{147,147}
+temp	float	$tmp68	%read{147,147} %write{144,144}
+temp	float	$tmp69	%read{147,147} %write{145,145}
+temp	float	$tmp70	%read{147,147} %write{146,146}
+temp	float	$tmp71	%read{154,154} %write{153,153}
+temp	int	$tmp72	%read{156,181} %write{157,181}
+temp	point	$tmp73	%read{158,181} %write{158,181}
+temp	int	$tmp74	%read{158,181} %write{158,181}
+temp	int	$tmp75	%read{158,181} %write{158,181}
+temp	int	$tmp76	%read{158,181} %write{158,181}
+temp	float	$tmp77	%read{158,181} %write{158,181}
+temp	float	$tmp78	%read{158,181} %write{158,181}
+temp	float	$tmp79	%read{158,181} %write{158,181}
+temp	int	$tmp80	%read{2147483647,-1} %write{158,181}
+temp	float	$tmp81	%read{183,183} %write{182,182}
+temp	int	$tmp82	%read{185,185} %write{184,184}
+temp	point	$tmp83	%read{191,192} %write{186,186}
+temp	int	$tmp84	%read{190,190} %write{189,189}
+temp	int	$tmp85	%read{194,194} %write{193,193}
+temp	int	$tmp86	%read{195,195} %write{194,194}
+temp	float	$tmp87	%read{201,201} %write{200,200}
+temp	float	$tmp88	%read{202,202} %write{201,201}
+temp	float	$tmp89	%read{204,204} %write{203,203}
+temp	int	$tmp90	%read{206,206} %write{205,205}
+temp	float	$tmp91	%read{211,211} %write{206,206}
+temp	int	$tmp92	%read{208,208} %write{207,207}
+temp	int	$tmp93	%read{209,209} %write{208,208}
+temp	int	$tmp94	%read{210,210} %write{209,209}
+temp	float	$tmp95	%read{211,211} %write{210,210}
+temp	float	$tmp96	%read{212,212} %write{211,211}
+temp	int	$tmp97	%read{214,214} %write{213,213}
+temp	int	$tmp98	%read{215,215} %write{214,214}
+temp	float	$tmp99	%read{220,220} %write{215,215}
+temp	int	$tmp100	%read{217,217} %write{216,216}
+temp	int	$tmp101	%read{218,218} %write{217,217}
+temp	int	$tmp102	%read{219,219} %write{218,218}
+temp	float	$tmp103	%read{220,220} %write{219,219}
+temp	float	$tmp104	%read{221,221} %write{220,220}
+temp	float	$tmp105	%read{223,223} %write{222,222}
+temp	float	$tmp106	%read{225,225} %write{223,223}
+temp	float	$tmp107	%read{225,225} %write{224,224}
+temp	int	$tmp108	%read{228,228} %write{227,227}
+temp	float	$tmp109	%read{233,233} %write{228,228}
+temp	int	$tmp110	%read{230,230} %write{229,229}
+temp	int	$tmp111	%read{231,231} %write{230,230}
+temp	int	$tmp112	%read{232,232} %write{231,231}
+temp	float	$tmp113	%read{233,233} %write{232,232}
+temp	float	$tmp114	%read{234,234} %write{233,233}
+temp	float	$tmp115	%read{330,330} %write{318,328}
+temp	point	$tmp116	%read{251,279} %write{240,240}
+temp	float	$tmp117	%read{240,240} %write{237,237}
+temp	float	$tmp118	%read{240,240} %write{238,238}
+temp	float	$tmp119	%read{240,240} %write{239,239}
+temp	float	$tmp120	%read{247,247} %write{246,246}
+temp	int	$tmp121	%read{249,274} %write{250,274}
+temp	point	$tmp122	%read{251,274} %write{251,274}
+temp	int	$tmp123	%read{251,274} %write{251,274}
+temp	int	$tmp124	%read{251,274} %write{251,274}
+temp	int	$tmp125	%read{251,274} %write{251,274}
+temp	float	$tmp126	%read{251,274} %write{251,274}
+temp	float	$tmp127	%read{251,274} %write{251,274}
+temp	float	$tmp128	%read{251,274} %write{251,274}
+temp	int	$tmp129	%read{2147483647,-1} %write{251,274}
+temp	float	$tmp130	%read{276,276} %write{275,275}
+temp	int	$tmp131	%read{278,278} %write{277,277}
+temp	point	$tmp132	%read{284,285} %write{279,279}
+temp	int	$tmp133	%read{283,283} %write{282,282}
+temp	int	$tmp134	%read{287,287} %write{286,286}
+temp	int	$tmp135	%read{288,288} %write{287,287}
+temp	float	$tmp136	%read{294,294} %write{293,293}
+temp	float	$tmp137	%read{295,295} %write{294,294}
+temp	float	$tmp138	%read{297,297} %write{296,296}
+temp	int	$tmp139	%read{299,299} %write{298,298}
+temp	float	$tmp140	%read{304,304} %write{299,299}
+temp	int	$tmp141	%read{301,301} %write{300,300}
+temp	int	$tmp142	%read{302,302} %write{301,301}
+temp	int	$tmp143	%read{303,303} %write{302,302}
+temp	float	$tmp144	%read{304,304} %write{303,303}
+temp	float	$tmp145	%read{305,305} %write{304,304}
+temp	int	$tmp146	%read{307,307} %write{306,306}
+temp	int	$tmp147	%read{308,308} %write{307,307}
+temp	float	$tmp148	%read{313,313} %write{308,308}
+temp	int	$tmp149	%read{310,310} %write{309,309}
+temp	int	$tmp150	%read{311,311} %write{310,310}
+temp	int	$tmp151	%read{312,312} %write{311,311}
+temp	float	$tmp152	%read{313,313} %write{312,312}
+temp	float	$tmp153	%read{314,314} %write{313,313}
+temp	float	$tmp154	%read{316,316} %write{315,315}
+temp	float	$tmp155	%read{318,318} %write{316,316}
+temp	float	$tmp156	%read{318,318} %write{317,317}
+temp	int	$tmp157	%read{321,321} %write{320,320}
+temp	float	$tmp158	%read{326,326} %write{321,321}
+temp	int	$tmp159	%read{323,323} %write{322,322}
+temp	int	$tmp160	%read{324,324} %write{323,323}
+temp	int	$tmp161	%read{325,325} %write{324,324}
+temp	float	$tmp162	%read{326,326} %write{325,325}
+temp	float	$tmp163	%read{327,327} %write{326,326}
 code Vector
-# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl:49
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl:50
 # 	point Vector = P,
-	assign		Vector P 	%filename{"C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl"} %line{49} %argrw{"wr"}
+	assign		Vector P 	%filename{"C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl"} %line{50} %argrw{"wr"}
 code ___main___
-# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl:53
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl:54
 # 	point p = Vector;
-	assign		p Vector 	%filename{"C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl"} %line{53} %argrw{"wr"}
-# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl:55
-# 	if (use_mapping)
-	if		use_mapping 4 4 	%line{55} %argrw{"r"}
+	assign		p Vector 	%filename{"C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl"} %line{54} %argrw{"wr"}
 # C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl:56
+# 	if (use_mapping)
+	if		use_mapping 4 4 	%line{56} %argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl:57
 # 		p = transform(mapping, p);
-	transform	p mapping p 	%line{56} %argrw{"wrr"}
-# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl:58
-# 	Fac = noise(p * Scale, Distortion, Detail, Fac, Color);
-	mul		$tmp1 p Scale 	%line{58} %argrw{"wrr"}
-	functioncall	$const1 331 	%argrw{"r"}
+	transform	p mapping p 	%line{57} %argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl:59
+# 	Fac = noise(p * Scale, Distortion, Detail, Color);
+	mul		$tmp1 p Scale 	%line{59} %argrw{"wrr"}
+	functioncall	$const1 332 	%argrw{"r"}
 # C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl:25
+# 	point p = ip;
+	assign		___688_p $tmp1 	%line{25} %argrw{"wr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl:26
 # 	int hard = 0;
-	assign		___688_hard $const2 	%line{25} %argrw{"wr"}
-# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl:27
-# 	if (distortion != 0.0) {
-	neq		$tmp2 Distortion $const3 	%line{27} %argrw{"wrr"}
-	if		$tmp2 54 54 	%argrw{"r"}
+	assign		___688_hard $const2 	%line{26} %argrw{"wr"}
 # C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl:28
+# 	if (distortion != 0.0) {
+	neq		$tmp2 Distortion $const3 	%line{28} %argrw{"wrr"}
+	if		$tmp2 55 55 	%argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl:29
 # 		r[0] = safe_noise(p + point(13.5), "unsigned") * distortion;
-	add		$tmp5 $tmp1 $const4 	%line{28} %argrw{"wrr"}
-	functioncall	$const6 22 	%argrw{"r"}
+	add		$tmp5 ___688_p $const4 	%line{29} %argrw{"wrr"}
+	functioncall	$const6 23 	%argrw{"r"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:92
 # 	float f = 0.0;
 	assign		___681_f $const3 	%filename{"C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h"} %line{92} %argrw{"wr"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:95
 # 	if (type == "signed")
 	eq		$tmp6 $const5 $const7 	%line{95} %argrw{"wrr"}
-	if		$tmp6 15 16 	%argrw{"r"}
+	if		$tmp6 16 17 	%argrw{"r"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:96
 # 		f = noise("perlin", p);
 	noise		___681_f $const8 $tmp5 	%line{96} %argrw{"wrr"}
@@ -248,7 +253,7 @@ code ___main___
 # 	if (!isfinite(f))
 	isfinite	$tmp7 ___681_f 	%line{103} %argrw{"wr"}
 	eq		$tmp8 $tmp7 $const2 	%argrw{"wrr"}
-	if		$tmp8 21 21 	%argrw{"r"}
+	if		$tmp8 22 22 	%argrw{"r"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:104
 # 		return 0.5;
 	assign		$tmp3 $const9 	%line{104} %argrw{"wr"}
@@ -256,31 +261,31 @@ code ___main___
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:106
 # 	return f;
 	assign		$tmp3 ___681_f 	%line{106} %argrw{"wr"}
-# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl:28
-# 		r[0] = safe_noise(p + point(13.5), "unsigned") * distortion;
-	mul		$tmp9 $tmp3 Distortion 	%filename{"C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl"} %line{28} %argrw{"wrr"}
-	compassign	___688_r $const2 $tmp9 	%argrw{"wrr"}
 # C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl:29
+# 		r[0] = safe_noise(p + point(13.5), "unsigned") * distortion;
+	mul		$tmp9 $tmp3 Distortion 	%filename{"C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl"} %line{29} %argrw{"wrr"}
+	compassign	___688_r $const2 $tmp9 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl:30
 # 		r[1] = safe_noise(p, "unsigned") * distortion;
-	functioncall	$const6 36 	%line{29} %argrw{"r"}
+	functioncall	$const6 37 	%line{30} %argrw{"r"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:92
 # 	float f = 0.0;
 	assign		___681_f $const3 	%filename{"C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h"} %line{92} %argrw{"wr"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:95
 # 	if (type == "signed")
 	eq		$tmp11 $const5 $const7 	%line{95} %argrw{"wrr"}
-	if		$tmp11 29 30 	%argrw{"r"}
+	if		$tmp11 30 31 	%argrw{"r"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:96
 # 		f = noise("perlin", p);
-	noise		___681_f $const8 $tmp1 	%line{96} %argrw{"wrr"}
+	noise		___681_f $const8 ___688_p 	%line{96} %argrw{"wrr"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:100
 # 		f = noise(p);
-	noise		___681_f $tmp1 	%line{100} %argrw{"wr"}
+	noise		___681_f ___688_p 	%line{100} %argrw{"wr"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:103
 # 	if (!isfinite(f))
 	isfinite	$tmp12 ___681_f 	%line{103} %argrw{"wr"}
 	eq		$tmp13 $tmp12 $const2 	%argrw{"wrr"}
-	if		$tmp13 35 35 	%argrw{"r"}
+	if		$tmp13 36 36 	%argrw{"r"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:104
 # 		return 0.5;
 	assign		$tmp10 $const9 	%line{104} %argrw{"wr"}
@@ -288,21 +293,21 @@ code ___main___
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:106
 # 	return f;
 	assign		$tmp10 ___681_f 	%line{106} %argrw{"wr"}
-# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl:29
-# 		r[1] = safe_noise(p, "unsigned") * distortion;
-	mul		$tmp14 $tmp10 Distortion 	%filename{"C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl"} %line{29} %argrw{"wrr"}
-	compassign	___688_r $const10 $tmp14 	%argrw{"wrr"}
 # C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl:30
+# 		r[1] = safe_noise(p, "unsigned") * distortion;
+	mul		$tmp14 $tmp10 Distortion 	%filename{"C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl"} %line{30} %argrw{"wrr"}
+	compassign	___688_r $const10 $tmp14 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl:31
 # 		r[2] = safe_noise(p - point(13.5), "unsigned") * distortion;
-	sub		$tmp17 $tmp1 $const4 	%line{30} %argrw{"wrr"}
-	functioncall	$const6 51 	%argrw{"r"}
+	sub		$tmp17 ___688_p $const4 	%line{31} %argrw{"wrr"}
+	functioncall	$const6 52 	%argrw{"r"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:92
 # 	float f = 0.0;
 	assign		___681_f $const3 	%filename{"C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h"} %line{92} %argrw{"wr"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:95
 # 	if (type == "signed")
 	eq		$tmp18 $const5 $const7 	%line{95} %argrw{"wrr"}
-	if		$tmp18 44 45 	%argrw{"r"}
+	if		$tmp18 45 46 	%argrw{"r"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:96
 # 		f = noise("perlin", p);
 	noise		___681_f $const8 $tmp17 	%line{96} %argrw{"wrr"}
@@ -313,7 +318,7 @@ code ___main___
 # 	if (!isfinite(f))
 	isfinite	$tmp19 ___681_f 	%line{103} %argrw{"wr"}
 	eq		$tmp20 $tmp19 $const2 	%argrw{"wrr"}
-	if		$tmp20 50 50 	%argrw{"r"}
+	if		$tmp20 51 51 	%argrw{"r"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:104
 # 		return 0.5;
 	assign		$tmp15 $const9 	%line{104} %argrw{"wr"}
@@ -321,16 +326,16 @@ code ___main___
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:106
 # 	return f;
 	assign		$tmp15 ___681_f 	%line{106} %argrw{"wr"}
-# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl:30
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl:31
 # 		r[2] = safe_noise(p - point(13.5), "unsigned") * distortion;
-	mul		$tmp21 $tmp15 Distortion 	%filename{"C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl"} %line{30} %argrw{"wrr"}
+	mul		$tmp21 $tmp15 Distortion 	%filename{"C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl"} %line{31} %argrw{"wrr"}
 	compassign	___688_r $const11 $tmp21 	%argrw{"wrr"}
-# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl:32
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl:33
 # 		p += r;
-	add		$tmp1 $tmp1 ___688_r 	%line{32} %argrw{"wrr"}
-# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl:35
-# 	fac = noise_turbulence(p, detail, hard);
-	functioncall	$const12 143 	%line{35} %argrw{"r"}
+	add		___688_p ___688_p ___688_r 	%line{33} %argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl:36
+# 	float fac = noise_turbulence(p, detail, hard);
+	functioncall	$const12 144 	%line{36} %argrw{"r"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:113
 # 	float fscale = 1.0;
 	assign		___682_fscale $const13 	%filename{"C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h"} %line{113} %argrw{"wr"}
@@ -342,7 +347,7 @@ code ___main___
 	assign		___682_sum $const3 	%line{115} %argrw{"wr"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:118
 # 	float octaves = clamp(details, 0.0, 16.0);
-	functioncall	$const15 61 	%line{118} %argrw{"r"}
+	functioncall	$const15 62 	%line{118} %argrw{"r"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\stdosl.h:144
 # float  clamp (float x, float minval, float maxval) { return max(min(x,maxval),minval); }
 	min		$tmp22 Detail $const14 	%filename{"C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\stdosl.h"} %line{144} %argrw{"wrr"}
@@ -352,20 +357,20 @@ code ___main___
 	assign		___682_n ___682_octaves 	%filename{"C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h"} %line{119} %argrw{"wr"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:121
 # 	for (i = 0; i <= n; i++) {
-	for		$tmp23 64 65 86 88 	%line{121} %argrw{"r"}
+	for		$tmp23 65 66 87 89 	%line{121} %argrw{"r"}
 	assign		___682_i $const2 	%argrw{"wr"}
 	le		$tmp23 ___682_i ___682_n 	%argrw{"wrr"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:122
 # 		float t = safe_noise(fscale * p, "unsigned");
-	mul		$tmp24 ___682_fscale $tmp1 	%line{122} %argrw{"wrr"}
-	functioncall	$const6 78 	%argrw{"r"}
+	mul		$tmp24 ___682_fscale ___688_p 	%line{122} %argrw{"wrr"}
+	functioncall	$const6 79 	%argrw{"r"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:92
 # 	float f = 0.0;
 	assign		___681_f $const3 	%line{92} %argrw{"wr"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:95
 # 	if (type == "signed")
 	eq		$tmp25 $const5 $const7 	%line{95} %argrw{"wrr"}
-	if		$tmp25 71 72 	%argrw{"r"}
+	if		$tmp25 72 73 	%argrw{"r"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:96
 # 		f = noise("perlin", p);
 	noise		___681_f $const8 $tmp24 	%line{96} %argrw{"wrr"}
@@ -376,7 +381,7 @@ code ___main___
 # 	if (!isfinite(f))
 	isfinite	$tmp26 ___681_f 	%line{103} %argrw{"wr"}
 	eq		$tmp27 $tmp26 $const2 	%argrw{"wrr"}
-	if		$tmp27 77 77 	%argrw{"r"}
+	if		$tmp27 78 78 	%argrw{"r"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:104
 # 		return 0.5;
 	assign		___684_t $const9 	%line{104} %argrw{"wr"}
@@ -386,7 +391,7 @@ code ___main___
 	assign		___684_t ___681_f 	%line{106} %argrw{"wr"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:124
 # 		if (hard)
-	if		___688_hard 82 82 	%line{124} %argrw{"r"}
+	if		___688_hard 83 83 	%line{124} %argrw{"r"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:125
 # 			t = fabs(2.0 * t - 1.0);
 	mul		$tmp28 $const16 ___684_t 	%line{125} %argrw{"wrr"}
@@ -413,18 +418,18 @@ code ___main___
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:134
 # 	if (rmd != 0.0) {
 	neq		$tmp33 ___682_rmd $const3 	%line{134} %argrw{"wrr"}
-	if		$tmp33 133 143 	%argrw{"r"}
+	if		$tmp33 134 144 	%argrw{"r"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:135
 # 		float t = safe_noise(fscale * p, "unsigned");
-	mul		$tmp34 ___682_fscale $tmp1 	%line{135} %argrw{"wrr"}
-	functioncall	$const6 105 	%argrw{"r"}
+	mul		$tmp34 ___682_fscale ___688_p 	%line{135} %argrw{"wrr"}
+	functioncall	$const6 106 	%argrw{"r"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:92
 # 	float f = 0.0;
 	assign		___681_f $const3 	%line{92} %argrw{"wr"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:95
 # 	if (type == "signed")
 	eq		$tmp35 $const5 $const7 	%line{95} %argrw{"wrr"}
-	if		$tmp35 98 99 	%argrw{"r"}
+	if		$tmp35 99 100 	%argrw{"r"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:96
 # 		f = noise("perlin", p);
 	noise		___681_f $const8 $tmp34 	%line{96} %argrw{"wrr"}
@@ -435,7 +440,7 @@ code ___main___
 # 	if (!isfinite(f))
 	isfinite	$tmp36 ___681_f 	%line{103} %argrw{"wr"}
 	eq		$tmp37 $tmp36 $const2 	%argrw{"wrr"}
-	if		$tmp37 104 104 	%argrw{"r"}
+	if		$tmp37 105 105 	%argrw{"r"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:104
 # 		return 0.5;
 	assign		___685_t $const9 	%line{104} %argrw{"wr"}
@@ -445,7 +450,7 @@ code ___main___
 	assign		___685_t ___681_f 	%line{106} %argrw{"wr"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:137
 # 		if (hard)
-	if		___688_hard 109 109 	%line{137} %argrw{"r"}
+	if		___688_hard 110 110 	%line{137} %argrw{"r"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:138
 # 			t = fabs(2.0 * t - 1.0);
 	mul		$tmp38 $const16 ___685_t 	%line{138} %argrw{"wrr"}
@@ -481,7 +486,7 @@ code ___main___
 	sub		$tmp56 $const13 ___682_rmd 	%line{145} %argrw{"wrr"}
 	mul		$tmp57 $tmp56 ___682_sum 	%argrw{"wrr"}
 	mul		$tmp58 ___682_rmd ___685_sum2 	%argrw{"wrr"}
-	add		Fac $tmp57 $tmp58 	%argrw{"wrr"}
+	add		___688_fac $tmp57 $tmp58 	%argrw{"wrr"}
 	return
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:148
 # 		sum *= ((float)(1 << n) / (float)((1 << (n + 1)) - 1));
@@ -495,15 +500,15 @@ code ___main___
 	mul		___682_sum ___682_sum $tmp65 	%argrw{"wrr"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:149
 # 		return sum;
-	assign		Fac ___682_sum 	%line{149} %argrw{"wr"}
+	assign		___688_fac ___682_sum 	%line{149} %argrw{"wr"}
 	return
-# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl:37
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl:38
 # 	Color = color(fac, noise_turbulence(point(p[1], p[0], p[2]), detail, hard),
-	compref		$tmp68 $tmp1 $const10 	%filename{"C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl"} %line{37} %argrw{"wrr"}
-	compref		$tmp69 $tmp1 $const2 	%argrw{"wrr"}
-	compref		$tmp70 $tmp1 $const11 	%argrw{"wrr"}
+	compref		$tmp68 ___688_p $const10 	%filename{"C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl"} %line{38} %argrw{"wrr"}
+	compref		$tmp69 ___688_p $const2 	%argrw{"wrr"}
+	compref		$tmp70 ___688_p $const11 	%argrw{"wrr"}
 	point		$tmp67 $tmp68 $tmp69 $tmp70 	%argrw{"wrrr"}
-	functioncall	$const12 236 	%argrw{"r"}
+	functioncall	$const12 237 	%argrw{"r"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:113
 # 	float fscale = 1.0;
 	assign		___682_fscale $const13 	%filename{"C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h"} %line{113} %argrw{"wr"}
@@ -515,7 +520,7 @@ code ___main___
 	assign		___682_sum $const3 	%line{115} %argrw{"wr"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:118
 # 	float octaves = clamp(details, 0.0, 16.0);
-	functioncall	$const15 154 	%line{118} %argrw{"r"}
+	functioncall	$const15 155 	%line{118} %argrw{"r"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\stdosl.h:144
 # float  clamp (float x, float minval, float maxval) { return max(min(x,maxval),minval); }
 	min		$tmp71 Detail $const14 	%filename{"C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\stdosl.h"} %line{144} %argrw{"wrr"}
@@ -525,20 +530,20 @@ code ___main___
 	assign		___682_n ___682_octaves 	%filename{"C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h"} %line{119} %argrw{"wr"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:121
 # 	for (i = 0; i <= n; i++) {
-	for		$tmp72 157 158 179 181 	%line{121} %argrw{"r"}
+	for		$tmp72 158 159 180 182 	%line{121} %argrw{"r"}
 	assign		___682_i $const2 	%argrw{"wr"}
 	le		$tmp72 ___682_i ___682_n 	%argrw{"wrr"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:122
 # 		float t = safe_noise(fscale * p, "unsigned");
 	mul		$tmp73 ___682_fscale $tmp67 	%line{122} %argrw{"wrr"}
-	functioncall	$const6 171 	%argrw{"r"}
+	functioncall	$const6 172 	%argrw{"r"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:92
 # 	float f = 0.0;
 	assign		___681_f $const3 	%line{92} %argrw{"wr"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:95
 # 	if (type == "signed")
 	eq		$tmp74 $const5 $const7 	%line{95} %argrw{"wrr"}
-	if		$tmp74 164 165 	%argrw{"r"}
+	if		$tmp74 165 166 	%argrw{"r"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:96
 # 		f = noise("perlin", p);
 	noise		___681_f $const8 $tmp73 	%line{96} %argrw{"wrr"}
@@ -549,7 +554,7 @@ code ___main___
 # 	if (!isfinite(f))
 	isfinite	$tmp75 ___681_f 	%line{103} %argrw{"wr"}
 	eq		$tmp76 $tmp75 $const2 	%argrw{"wrr"}
-	if		$tmp76 170 170 	%argrw{"r"}
+	if		$tmp76 171 171 	%argrw{"r"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:104
 # 		return 0.5;
 	assign		___684_t $const9 	%line{104} %argrw{"wr"}
@@ -559,7 +564,7 @@ code ___main___
 	assign		___684_t ___681_f 	%line{106} %argrw{"wr"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:124
 # 		if (hard)
-	if		___688_hard 175 175 	%line{124} %argrw{"r"}
+	if		___688_hard 176 176 	%line{124} %argrw{"r"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:125
 # 			t = fabs(2.0 * t - 1.0);
 	mul		$tmp77 $const16 ___684_t 	%line{125} %argrw{"wrr"}
@@ -586,18 +591,18 @@ code ___main___
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:134
 # 	if (rmd != 0.0) {
 	neq		$tmp82 ___682_rmd $const3 	%line{134} %argrw{"wrr"}
-	if		$tmp82 226 236 	%argrw{"r"}
+	if		$tmp82 227 237 	%argrw{"r"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:135
 # 		float t = safe_noise(fscale * p, "unsigned");
 	mul		$tmp83 ___682_fscale $tmp67 	%line{135} %argrw{"wrr"}
-	functioncall	$const6 198 	%argrw{"r"}
+	functioncall	$const6 199 	%argrw{"r"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:92
 # 	float f = 0.0;
 	assign		___681_f $const3 	%line{92} %argrw{"wr"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:95
 # 	if (type == "signed")
 	eq		$tmp84 $const5 $const7 	%line{95} %argrw{"wrr"}
-	if		$tmp84 191 192 	%argrw{"r"}
+	if		$tmp84 192 193 	%argrw{"r"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:96
 # 		f = noise("perlin", p);
 	noise		___681_f $const8 $tmp83 	%line{96} %argrw{"wrr"}
@@ -608,7 +613,7 @@ code ___main___
 # 	if (!isfinite(f))
 	isfinite	$tmp85 ___681_f 	%line{103} %argrw{"wr"}
 	eq		$tmp86 $tmp85 $const2 	%argrw{"wrr"}
-	if		$tmp86 197 197 	%argrw{"r"}
+	if		$tmp86 198 198 	%argrw{"r"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:104
 # 		return 0.5;
 	assign		___685_t $const9 	%line{104} %argrw{"wr"}
@@ -618,7 +623,7 @@ code ___main___
 	assign		___685_t ___681_f 	%line{106} %argrw{"wr"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:137
 # 		if (hard)
-	if		___688_hard 202 202 	%line{137} %argrw{"r"}
+	if		___688_hard 203 203 	%line{137} %argrw{"r"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:138
 # 			t = fabs(2.0 * t - 1.0);
 	mul		$tmp87 $const16 ___685_t 	%line{138} %argrw{"wrr"}
@@ -670,13 +675,13 @@ code ___main___
 # 		return sum;
 	assign		$tmp66 ___682_sum 	%line{149} %argrw{"wr"}
 	return
-# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl:38
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl:39
 # 		noise_turbulence(point(p[1], p[2], p[0]), detail, hard));
-	compref		$tmp117 $tmp1 $const10 	%filename{"C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl"} %line{38} %argrw{"wrr"}
-	compref		$tmp118 $tmp1 $const11 	%argrw{"wrr"}
-	compref		$tmp119 $tmp1 $const2 	%argrw{"wrr"}
+	compref		$tmp117 ___688_p $const10 	%filename{"C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl"} %line{39} %argrw{"wrr"}
+	compref		$tmp118 ___688_p $const11 	%argrw{"wrr"}
+	compref		$tmp119 ___688_p $const2 	%argrw{"wrr"}
 	point		$tmp116 $tmp117 $tmp118 $tmp119 	%argrw{"wrrr"}
-	functioncall	$const12 329 	%argrw{"r"}
+	functioncall	$const12 330 	%argrw{"r"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:113
 # 	float fscale = 1.0;
 	assign		___682_fscale $const13 	%filename{"C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h"} %line{113} %argrw{"wr"}
@@ -688,7 +693,7 @@ code ___main___
 	assign		___682_sum $const3 	%line{115} %argrw{"wr"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:118
 # 	float octaves = clamp(details, 0.0, 16.0);
-	functioncall	$const15 247 	%line{118} %argrw{"r"}
+	functioncall	$const15 248 	%line{118} %argrw{"r"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\stdosl.h:144
 # float  clamp (float x, float minval, float maxval) { return max(min(x,maxval),minval); }
 	min		$tmp120 Detail $const14 	%filename{"C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\stdosl.h"} %line{144} %argrw{"wrr"}
@@ -698,20 +703,20 @@ code ___main___
 	assign		___682_n ___682_octaves 	%filename{"C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h"} %line{119} %argrw{"wr"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:121
 # 	for (i = 0; i <= n; i++) {
-	for		$tmp121 250 251 272 274 	%line{121} %argrw{"r"}
+	for		$tmp121 251 252 273 275 	%line{121} %argrw{"r"}
 	assign		___682_i $const2 	%argrw{"wr"}
 	le		$tmp121 ___682_i ___682_n 	%argrw{"wrr"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:122
 # 		float t = safe_noise(fscale * p, "unsigned");
 	mul		$tmp122 ___682_fscale $tmp116 	%line{122} %argrw{"wrr"}
-	functioncall	$const6 264 	%argrw{"r"}
+	functioncall	$const6 265 	%argrw{"r"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:92
 # 	float f = 0.0;
 	assign		___681_f $const3 	%line{92} %argrw{"wr"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:95
 # 	if (type == "signed")
 	eq		$tmp123 $const5 $const7 	%line{95} %argrw{"wrr"}
-	if		$tmp123 257 258 	%argrw{"r"}
+	if		$tmp123 258 259 	%argrw{"r"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:96
 # 		f = noise("perlin", p);
 	noise		___681_f $const8 $tmp122 	%line{96} %argrw{"wrr"}
@@ -722,7 +727,7 @@ code ___main___
 # 	if (!isfinite(f))
 	isfinite	$tmp124 ___681_f 	%line{103} %argrw{"wr"}
 	eq		$tmp125 $tmp124 $const2 	%argrw{"wrr"}
-	if		$tmp125 263 263 	%argrw{"r"}
+	if		$tmp125 264 264 	%argrw{"r"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:104
 # 		return 0.5;
 	assign		___684_t $const9 	%line{104} %argrw{"wr"}
@@ -732,7 +737,7 @@ code ___main___
 	assign		___684_t ___681_f 	%line{106} %argrw{"wr"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:124
 # 		if (hard)
-	if		___688_hard 268 268 	%line{124} %argrw{"r"}
+	if		___688_hard 269 269 	%line{124} %argrw{"r"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:125
 # 			t = fabs(2.0 * t - 1.0);
 	mul		$tmp126 $const16 ___684_t 	%line{125} %argrw{"wrr"}
@@ -759,18 +764,18 @@ code ___main___
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:134
 # 	if (rmd != 0.0) {
 	neq		$tmp131 ___682_rmd $const3 	%line{134} %argrw{"wrr"}
-	if		$tmp131 319 329 	%argrw{"r"}
+	if		$tmp131 320 330 	%argrw{"r"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:135
 # 		float t = safe_noise(fscale * p, "unsigned");
 	mul		$tmp132 ___682_fscale $tmp116 	%line{135} %argrw{"wrr"}
-	functioncall	$const6 291 	%argrw{"r"}
+	functioncall	$const6 292 	%argrw{"r"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:92
 # 	float f = 0.0;
 	assign		___681_f $const3 	%line{92} %argrw{"wr"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:95
 # 	if (type == "signed")
 	eq		$tmp133 $const5 $const7 	%line{95} %argrw{"wrr"}
-	if		$tmp133 284 285 	%argrw{"r"}
+	if		$tmp133 285 286 	%argrw{"r"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:96
 # 		f = noise("perlin", p);
 	noise		___681_f $const8 $tmp132 	%line{96} %argrw{"wrr"}
@@ -781,7 +786,7 @@ code ___main___
 # 	if (!isfinite(f))
 	isfinite	$tmp134 ___681_f 	%line{103} %argrw{"wr"}
 	eq		$tmp135 $tmp134 $const2 	%argrw{"wrr"}
-	if		$tmp135 290 290 	%argrw{"r"}
+	if		$tmp135 291 291 	%argrw{"r"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:104
 # 		return 0.5;
 	assign		___685_t $const9 	%line{104} %argrw{"wr"}
@@ -791,7 +796,7 @@ code ___main___
 	assign		___685_t ___681_f 	%line{106} %argrw{"wr"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:137
 # 		if (hard)
-	if		___688_hard 295 295 	%line{137} %argrw{"r"}
+	if		___688_hard 296 296 	%line{137} %argrw{"r"}
 # C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_texture.h:138
 # 			t = fabs(2.0 * t - 1.0);
 	mul		$tmp136 $const16 ___685_t 	%line{138} %argrw{"wrr"}
@@ -843,10 +848,10 @@ code ___main___
 # 		return sum;
 	assign		$tmp115 ___682_sum 	%line{149} %argrw{"wr"}
 	return
-# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl:38
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl:39
 # 		noise_turbulence(point(p[1], p[2], p[0]), detail, hard));
-	color		Color Fac $tmp66 $tmp115 	%filename{"C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl"} %line{38} %argrw{"wrrr"}
-# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl:40
+	color		Color ___688_fac $tmp66 $tmp115 	%filename{"C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl"} %line{39} %argrw{"wrrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_noise_texture.osl:41
 # 	return fac;
-	assign		Fac Fac 	%line{40} %argrw{"wr"}
+	assign		Fac ___688_fac 	%line{41} %argrw{"wr"}
 	end

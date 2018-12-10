@@ -32,7 +32,7 @@ def bmesh_copy_from_object(obj, transform=True, triangulate=True, apply_modifier
 
     if apply_modifiers and obj.modifiers:
         import bpy
-        me = obj.to_mesh(bpy.context.scene, True, 'PREVIEW')
+        me = obj.to_mesh(depsgraph=bpy.context.depsgraph, apply_modifiers=True)
         bm = bmesh.new()
         bm.from_mesh(me)
         bpy.data.meshes.remove(me)

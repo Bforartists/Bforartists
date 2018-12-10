@@ -29,8 +29,8 @@ bl_info = {
     "name": "MeasureIt",
     "author": "Antonio Vazquez (antonioya)",
     "location": "View3D > Tools Panel /Properties panel",
-    "version": (1, 7, 1),
-    "blender": (2, 79, 0),
+    "version": (1, 8, 0),
+    "blender": (2, 80, 0),
     "description": "Tools for measuring objects.",
     "wiki_url": "https://wiki.blender.org/index.php/Extensions:2.6/"
                 "Py/Scripts/3D_interaction/Measureit",
@@ -74,10 +74,10 @@ from bpy.props import (
 
 # Define Panel classes for updating
 panels = (
-        measureit_main.MeasureitEditPanel,
-        measureit_main.MeasureitMainPanel,
-        measureit_main.MeasureitConfPanel,
-        measureit_main.MeasureitRenderPanel,
+        measureit_main.MEASUREIT_PT_Edit,
+        measureit_main.MEASUREIT_PT_Main,
+        measureit_main.MEASUREIT_PT_Conf,
+        measureit_main.MEASUREIT_PT_Render,
         )
 
 
@@ -120,29 +120,35 @@ class Measure_Pref(AddonPreferences):
 
 # Define menu
 # noinspection PyUnusedLocal
+classes = (
+    measureit_main.MEASUREIT_OT_RunHintDisplay,
+    measureit_main.MEASUREIT_OT_AddSegment,
+    measureit_main.MEASUREIT_OT_AddArea,
+    measureit_main.MEASUREIT_OT_AddSegmentOrto,
+    measureit_main.MEASUREIT_OT_AddAngle,
+    measureit_main.MEASUREIT_OT_AddArc,
+    measureit_main.MEASUREIT_OT_AddLabel,
+    measureit_main.MEASUREIT_OT_AddNote,
+    measureit_main.MEASUREIT_OT_AddLink,
+    measureit_main.MEASUREIT_OT_AddOrigin,
+    measureit_main.MEASUREIT_OT_DeleteSegment,
+    measureit_main.MEASUREIT_OT_DeleteAllSegment,
+    measureit_main.MEASUREIT_OT_DeleteAllSum,
+    measureit_main.MEASUREIT_OT_RenderSegment,
+    measureit_main.MEASUREIT_OT_ExpandAllSegment,
+    measureit_main.MEASUREIT_OT_CollapseAllSegment,
+    measureit_main.MEASUREIT_PT_Main,
+    measureit_main.MEASUREIT_PT_Edit,
+    measureit_main.MEASUREIT_PT_Conf,
+    measureit_main.MEASUREIT_PT_Render,
+#    Measure_Pref,
+)
+
 def register():
-    bpy.utils.register_class(measureit_main.RunHintDisplayButton)
-    bpy.utils.register_class(measureit_main.AddSegmentButton)
-    bpy.utils.register_class(measureit_main.AddAreaButton)
-    bpy.utils.register_class(measureit_main.AddSegmentOrtoButton)
-    bpy.utils.register_class(measureit_main.AddAngleButton)
-    bpy.utils.register_class(measureit_main.AddArcButton)
-    bpy.utils.register_class(measureit_main.AddLabelButton)
-    bpy.utils.register_class(measureit_main.AddNoteButton)
-    bpy.utils.register_class(measureit_main.AddLinkButton)
-    bpy.utils.register_class(measureit_main.AddOriginButton)
-    bpy.utils.register_class(measureit_main.DeleteSegmentButton)
-    bpy.utils.register_class(measureit_main.DeleteAllSegmentButton)
-    bpy.utils.register_class(measureit_main.DeleteAllSumButton)
-    bpy.utils.register_class(measureit_main.MeasureitEditPanel)
-    bpy.utils.register_class(measureit_main.MeasureitMainPanel)
-    bpy.utils.register_class(measureit_main.MeasureitConfPanel)
-    bpy.utils.register_class(measureit_main.MeasureitRenderPanel)
-    bpy.utils.register_class(measureit_main.RenderSegmentButton)
-    bpy.utils.register_class(measureit_main.ExpandAllSegmentButton)
-    bpy.utils.register_class(measureit_main.CollapseAllSegmentButton)
-    bpy.utils.register_class(Measure_Pref)
-    update_panel(None, bpy.context)
+    from bpy.utils import register_class
+    for cls in classes:
+        register_class(cls)
+
     # Define properties
     Scene.measureit_default_color = FloatVectorProperty(
         name="Default color",
@@ -244,11 +250,8 @@ def register():
                                           description="Save an image with measures over"
                                                       " render image",
                                           default=False)
-    Scene.measureit_render_type = EnumProperty(items=(('1', "*Current", "Use current render"),
-                                                      ('2', "OpenGL", ""),
-                                                      ('3', "Animation OpenGL", ""),
-                                                      ('4', "Image", ""),
-                                                      ('5', "Animation", "")),
+    Scene.measureit_render_type = EnumProperty(items=(('1', "Frame", "Render current frame"),
+                                                      ('2', "Animation", "")),
                                                name="Render type",
                                                description="Type of render image")
     Scene.measureit_sum = EnumProperty(items=(('99', "-", "Select a group for sum"),
@@ -420,27 +423,9 @@ def register():
 
 
 def unregister():
-    bpy.utils.unregister_class(measureit_main.RunHintDisplayButton)
-    bpy.utils.unregister_class(measureit_main.AddSegmentButton)
-    bpy.utils.unregister_class(measureit_main.AddAreaButton)
-    bpy.utils.unregister_class(measureit_main.AddSegmentOrtoButton)
-    bpy.utils.unregister_class(measureit_main.AddAngleButton)
-    bpy.utils.unregister_class(measureit_main.AddArcButton)
-    bpy.utils.unregister_class(measureit_main.AddLabelButton)
-    bpy.utils.unregister_class(measureit_main.AddNoteButton)
-    bpy.utils.unregister_class(measureit_main.AddLinkButton)
-    bpy.utils.unregister_class(measureit_main.AddOriginButton)
-    bpy.utils.unregister_class(measureit_main.DeleteSegmentButton)
-    bpy.utils.unregister_class(measureit_main.DeleteAllSegmentButton)
-    bpy.utils.unregister_class(measureit_main.DeleteAllSumButton)
-    bpy.utils.unregister_class(measureit_main.MeasureitEditPanel)
-    bpy.utils.unregister_class(measureit_main.MeasureitMainPanel)
-    bpy.utils.unregister_class(measureit_main.MeasureitConfPanel)
-    bpy.utils.unregister_class(measureit_main.MeasureitRenderPanel)
-    bpy.utils.unregister_class(measureit_main.RenderSegmentButton)
-    bpy.utils.unregister_class(measureit_main.ExpandAllSegmentButton)
-    bpy.utils.unregister_class(measureit_main.CollapseAllSegmentButton)
-    bpy.utils.unregister_class(Measure_Pref)
+    from bpy.utils import unregister_class
+    for cls in reversed(classes):
+        unregister_class(cls)
 
     # Remove properties
     del Scene.measureit_default_color
@@ -501,7 +486,7 @@ def unregister():
     del Scene.measureit_font_align
 
     # remove OpenGL data
-    measureit_main.RunHintDisplayButton.handle_remove(measureit_main.RunHintDisplayButton, bpy.context)
+    measureit_main.MEASUREIT_OT_RunHintDisplay.handle_remove(measureit_main.MEASUREIT_OT_RunHintDisplay, bpy.context)
     wm = bpy.context.window_manager
     p = 'measureit_run_opengl'
     if p in wm:
