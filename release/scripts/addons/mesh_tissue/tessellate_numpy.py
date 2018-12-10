@@ -401,7 +401,7 @@ def tassellate(ob0, ob1, offset, zscale, gen_modifiers, com_modifiers, mode,
 
     # vertex group
     if bool_vertex_group:
-        new_ob.vertex_groups.new("generator_group")
+        new_ob.vertex_groups.new(name="generator_group")
         for i in range(len(new_vertex_group_np)):
             new_ob.vertex_groups["generator_group"].add([i],
                                                         new_vertex_group_np[i],

@@ -89,10 +89,9 @@ class SnapVolume(Operator):
         ts = context.tool_settings
         if ts.use_snap is False:
             ts.use_snap = True
-            ts.snap_element = 'VOLUME'
-
-        if ts.snap_element != 'VOLUME':
-            ts.snap_element = 'VOLUME'
+            ts.snap_elements = {'VOLUME'}
+        if ts.snap_elements != {'VOLUME'}:
+            ts.snap_elements = {'VOLUME'}
         return {'FINISHED'}
 
 
@@ -106,10 +105,10 @@ class SnapFace(Operator):
 
         if ts.use_snap is False:
             ts.use_snap = True
-            ts.snap_element = 'FACE'
+            ts.snap_elements = {'FACE'}
 
-        if ts.snap_element != 'FACE':
-            ts.snap_element = 'FACE'
+        if ts.snap_elements != {'FACE'}:
+            ts.snap_elements = {'FACE'}
         return {'FINISHED'}
 
 
@@ -123,10 +122,10 @@ class SnapEdge(Operator):
 
         if ts.use_snap is False:
             ts.use_snap = True
-            ts.snap_element = 'EDGE'
+            ts.snap_elements = {'EDGE'}
 
-        if ts.snap_element != 'EDGE':
-            ts.snap_element = 'EDGE'
+        if ts.snap_elements != {'EDGE'}:
+            ts.snap_elements = {'EDGE'}
         return {'FINISHED'}
 
 
@@ -140,10 +139,10 @@ class SnapVertex(Operator):
 
         if ts.use_snap is False:
             ts.use_snap = True
-            ts.snap_element = 'VERTEX'
+            ts.snap_elements = {'VERTEX'}
 
-        if ts.snap_element != 'VERTEX':
-            ts.snap_element = 'VERTEX'
+        if ts.snap_elements != {'VERTEX'}:
+            ts.snap_elements = {'VERTEX'}
         return {'FINISHED'}
 
 
@@ -157,10 +156,10 @@ class SnapIncrement(Operator):
 
         if ts.use_snap is False:
             ts.use_snap = True
-            ts.snap_element = 'INCREMENT'
+            ts.snap_elements = {'INCREMENT'}
 
-        if ts.snap_element != 'INCREMENT':
-            ts.snap_element = 'INCREMENT'
+        if ts.snap_elements != {'INCREMENT'}:
+            ts.snap_elements = {'INCREMENT'}
         return {'FINISHED'}
 
 

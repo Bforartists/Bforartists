@@ -154,7 +154,7 @@ class Set_Up_Fold(Operator):
             b.select = False
             b.layers = vis
             b.parent = root
-            vg = obj.vertex_groups.new(b.name)
+            vg = obj.vertex_groups.new(name=b.name)
             vg.add(f.vertices, 1, "ADD")
 
         bpy.ops.object.mode_set()

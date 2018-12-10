@@ -710,7 +710,7 @@ def create_mesh(new_objects,
     # content of the vertex_groups. If the user selects to NOT have vertex groups saved then
     # the following test will never run
     for group_name, group_indices in vertex_groups.items():
-        group = ob.vertex_groups.new(group_name.decode('utf-8', "replace"))
+        group = ob.vertex_groups.new(name=group_name.decode('utf-8', "replace"))
         group.add(group_indices, 1.0, 'REPLACE')
 
 
