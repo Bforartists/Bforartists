@@ -771,7 +771,7 @@ class Ms3dImporter():
                 in ms3d_to_blender_vertex_groups.items():
             ms3d_name = ms3d_model.joints[ms3d_bone_id].name
             blender_vertex_group = blender_mesh_object.vertex_groups.new(
-                    ms3d_name)
+                    name=ms3d_name)
             for blender_vertex_id_weight in blender_vertex_index_weight_list:
                 blender_vertex_index = blender_vertex_id_weight[0]
                 blender_vertex_weight = blender_vertex_id_weight[1]

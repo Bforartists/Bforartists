@@ -59,6 +59,14 @@ bpy.coat3D = dict()
 bpy.coat3D['active_coat'] = ''
 bpy.coat3D['status'] = 0
 
+def update_exe_path():
+    if (bpy.context.scene.coat3D.coat3D_exe != ''):
+        importfile = bpy.context.scene.coat3D.exchangedir
+        importfile += ('%scoat3D_exe.txt' % (os.sep))
+        file = open(importfile, "w")
+        file.write("%s" % (bpy.context.scene.coat3D.coat3D_exe))
+        file.close()
+
 def folder_size(path):
 
     tosi = True
@@ -79,9 +87,12 @@ def set_exchange_folder():
     Blender_export = ""
 
     if(platform == 'win32'):
-        exchange = os.path.expanduser("~") + os.sep + 'Documents' + os.sep + '3D-CoatV4' + os.sep +'Exchange'
+        exchange = os.path.expanduser("~") + os.sep + 'Documents' + os.sep + '3D-CoatV48' + os.sep +'Exchange'
         if not(os.path.isdir(exchange)):
-            exchange = os.path.expanduser("~") + os.sep + 'Documents' + os.sep + '3D-CoatV3' + os.sep +'Exchange'
+            exchange = os.path.expanduser("~") + os.sep + 'Documents' + os.sep + '3D-CoatV4' + os.sep +'Exchange'
+        if not (os.path.isdir(exchange)):
+            exchange = os.path.expanduser("~") + os.sep + 'Documents' + os.sep + '3D-CoatV3' + os.sep + 'Exchange'
+
     else:
         exchange = os.path.expanduser("~") + os.sep + '3D-CoatV4' + os.sep + 'Exchange'
         if not(os.path.isdir(exchange)):
@@ -209,7 +220,7 @@ def updatemesh(objekti, proxy):
         index = 0
         for uv_layer in objekti.data.uv_layers:
             if (uv_layer != objekti.data.uv_layers[0]):
-                proxy.data.uv_layers.new(uv_layer.name)
+                proxy.data.uv_layers.new(name=uv_layer.name)
                 proxy.data.uv_layers.active_index = index
                 objekti.data.uv_layers.active_index = index
                 bpy.ops.object.join_uvs()
@@ -263,26 +274,30 @@ class SCENE_OT_opencoat(bpy.types.Operator):
     bl_options = {'UNDO'}
 
     def invoke(self, context, event):
+
+        update_exe_path()
+
+        exefile = bpy.context.scene.coat3D.exchangedir
+        exefile += ('%scoat3D_exe.txt' % (os.sep))
+        exe_path = ''
+        if (os.path.isfile(exefile)):
+
+            ex_pathh = open(exefile)
+            for line in ex_pathh:
+                exe_path = line
+                break
+            ex_pathh.close()
+
         coat3D = bpy.context.selected_objects[0].coat3D.applink_3b_path
         platform = os.sys.platform
         prog_path = os.environ['PROGRAMFILES']
         if (platform == 'win32'):
-            index = 0
-            for file in os.listdir(prog_path):
-                if index == 0:
-                    if file.startswith('3D-Coat-V4'):
-                        modi = os.path.getmtime(prog_path + os.sep + file)
-                        active_3dcoat = prog_path + os.sep + file
-                        index += 1
-                else:
-                    if file.startswith('3D-Coat-V4'):
-                        if(os.path.getmtime(prog_path + os.sep + file) > modi):
-                            modi = os.path.getmtime(prog_path + os.sep + file)
-                            active_3dcoat = prog_path + os.sep + file
+
+            active_3dcoat = exe_path
 
             if running() == False:
-
-                os.popen('"' + active_3dcoat + os.sep + '3D-CoatDX64C.exe' '" ' + coat3D)
+                print('tulele tanne')
+                os.popen('"' + active_3dcoat + '" ' + coat3D)
             else:
                 importfile = bpy.context.scene.coat3D.exchangedir
                 importfile += ('%simport.txt' % (os.sep))
@@ -316,6 +331,8 @@ class SCENE_OT_export(bpy.types.Operator):
     bl_options = {'UNDO'}
 
     def invoke(self, context, event):
+
+        update_exe_path()
 
         for mesh in bpy.data.meshes:
             if (mesh.users == 0 and mesh.coat3D.name == '3DC'):
@@ -388,7 +405,6 @@ class SCENE_OT_export(bpy.types.Operator):
                     for all_ob in bpy.data.meshes:
                         numero = ("%.3d"%(nimiNum))
                         nimi2 = name_boxs[0] + numero
-                        print('nimi2',nimi2)
                         if(all_ob.name == nimi2):
                             lyytyi = True
                             break
@@ -413,14 +429,11 @@ class SCENE_OT_export(bpy.types.Operator):
             objekti.coat3D.applink_scale = objekti.scale
 
         bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY')
-        #bpy.ops.object.transforms_to_deltas(mode='SCALE')
+        if(len(bpy.context.selected_objects) > 1 and coat3D.type != 'vox'):
+            bpy.ops.object.transforms_to_deltas(mode='ROT')
 
-        if(coat3D.type == 'ppp' or coat3D.type == 'mv' or coat3D.type == 'ptex'):
-            bpy.ops.export_scene.fbx(filepath=coa.applink_address, use_selection=True, use_mesh_modifiers=False, axis_forward='X', axis_up='Y')
-        else:
-            bpy.ops.export_scene.fbx(filepath=coa.applink_address, use_selection=True, use_mesh_modifiers=False, axis_up='Y', axis_forward='-Z')
-            objekti.coat3D.type = 'Voxel'
 
+        bpy.ops.export_scene.fbx(filepath=coa.applink_address, use_selection=True, use_mesh_modifiers=coat3D.exportmod, axis_forward='X', axis_up='Y')
 
         file = open(importfile, "w")
         file.write("%s"%(checkname))
@@ -429,10 +442,10 @@ class SCENE_OT_export(bpy.types.Operator):
         file.close()
         group_index = -1.0
         for idx, objekti in enumerate(bpy.context.selected_objects):
-            nimi = ''
-            for koko in bpy.context.selected_objects:
-                nimi += koko.data.name + ':::'
-            objekti.coat3D.applink_group = nimi
+
+            if(len(bpy.context.selected_objects) == 1):
+                objekti.coat3D.applink_onlyone = True
+            objekti.coat3D.type = coat3D.type
             objekti.coat3D.applink_mesh = True
             objekti.coat3D.applink_address = coa.applink_address
             objekti.coat3D.obj_mat = ''
@@ -440,12 +453,13 @@ class SCENE_OT_export(bpy.types.Operator):
             objekti.coat3D.objecttime = str(os.path.getmtime(objekti.coat3D.applink_address))
             objekti.data.coat3D.name = '3DC'
 
-            if(objekti.material_slots.keys() != []):
-                for material in objekti.material_slots:
-                    if material.material.use_nodes == True:
-                        for node in material.material.node_tree.nodes:
-                            if(node.name.startswith('3DC_') == True):
-                                material.material.node_tree.nodes.remove(node)
+            if(coat3D.type != 'vox'):
+                if(objekti.material_slots.keys() != []):
+                    for material in objekti.material_slots:
+                        if material.material.use_nodes == True:
+                            for node in material.material.node_tree.nodes:
+                                if(node.name.startswith('3DC_') == True):
+                                    material.material.node_tree.nodes.remove(node)
 
         return {'FINISHED'}
 
@@ -456,6 +470,13 @@ class SCENE_OT_import(bpy.types.Operator):
     bl_options = {'UNDO'}
 
     def invoke(self, context, event):
+
+        update_exe_path()
+
+        for node_group in bpy.data.node_groups:
+            if(node_group.users == 0):
+                bpy.data.node_groups.remove(node_group)
+
         for mesh in bpy.data.meshes:
             if(mesh.users == 0 and mesh.coat3D.name == '3DC'):
                 bpy.data.meshes.remove(mesh)
@@ -484,13 +505,16 @@ class SCENE_OT_import(bpy.types.Operator):
                 if(image.filepath == texturepath[3] and image.users == 0):
                     bpy.data.images.remove(image)
 
-        Blender_folder = ("%s%sBlender"%(coat3D.exchangedir,os.sep))
+
+        kokeilu = coat3D.exchangedir[:-10]
+        Blender_folder = ("%s%sExchange%sBlender"%(kokeilu,os.sep,os.sep))
         Blender_export = Blender_folder
         path3b_now = coat3D.exchangedir
         path3b_now += ('last_saved_3b_file.txt')
         Blender_export += ('%sexport.txt'%(os.sep))
         new_applink_address = 'False'
         new_object = False
+
         if(os.path.isfile(Blender_export)):
             obj_pathh = open(Blender_export)
             new_object = True
@@ -499,7 +523,7 @@ class SCENE_OT_import(bpy.types.Operator):
                 break
             obj_pathh.close()
 
-            for scene_objects in bpy.context.collection.objects:
+            for scene_objects in bpy.context.collection.all_objects:
                 if(scene_objects.type == 'MESH'):
                     if(scene_objects.coat3D.applink_address == new_applink_address):
                         new_object = False
@@ -509,7 +533,6 @@ class SCENE_OT_import(bpy.types.Operator):
         exportfile += ('%sexport.txt' % (os.sep))
         if (os.path.isfile(exportfile)):
             os.remove(exportfile)
-
         if(new_object == False):
 
             '''
@@ -519,11 +542,11 @@ class SCENE_OT_import(bpy.types.Operator):
 
             old_materials = bpy.data.materials.keys()
             old_objects = bpy.data.objects.keys()
-            old_images = bpy.data.images.keys()
-            image_list = []
+            cache_base = bpy.data.objects.keys()
+
             object_list = []
             import_list = []
-            mesh_del_list = []
+            import_type = []
 
             for objekti in bpy.data.objects:
                 if objekti.type == 'MESH':
@@ -531,16 +554,26 @@ class SCENE_OT_import(bpy.types.Operator):
                     if(obj_coat.applink_mesh == True):
                         object_list.append(objekti.name)
 
-                        if (obj_coat.objecttime != str(os.path.getmtime(obj_coat.applink_address))):
-                            obj_coat.dime = objekti.dimensions
-                            obj_coat.import_mesh = True
-                            obj_coat.objecttime = str(os.path.getmtime(obj_coat.applink_address))
-                            if(obj_coat.applink_address not in import_list):
-                                import_list.append(obj_coat.applink_address)
+                        if(os.path.isfile(obj_coat.applink_address)):
+                            if (obj_coat.objecttime != str(os.path.getmtime(obj_coat.applink_address))):
+                                obj_coat.dime = objekti.dimensions
+                                obj_coat.import_mesh = True
+                                obj_coat.objecttime = str(os.path.getmtime(obj_coat.applink_address))
+                                if(obj_coat.applink_address not in import_list):
+                                    import_list.append(obj_coat.applink_address)
+                                    import_type.append(coat3D.type)
 
             if(import_list or coat3D.importmesh):
-                for list in import_list:
+                print('import_list:', import_list)
+                for idx, list in enumerate(import_list):
                     bpy.ops.import_scene.fbx(filepath=list, global_scale = 1,axis_forward='X',use_custom_normals=False)
+                    cache_objects = bpy.data.objects.keys()
+                    cache_objects = [i for i in cache_objects if i not in cache_base]
+                    for cache_object in cache_objects:
+                        bpy.data.objects[cache_object].coat3D.type = import_type[idx]
+                        bpy.data.objects[cache_object].coat3D.applink_address = list
+                        cache_base.append(cache_object)
+
 
                 bpy.ops.object.select_all(action='DESELECT')
 
@@ -557,50 +590,38 @@ class SCENE_OT_import(bpy.types.Operator):
                 for c_index in diff_mat:
                     bpy.data.materials.remove(bpy.data.materials[c_index])
             '''The main Applink Object Loop'''
-            print('objekti lista', object_list)
+
             remove_path = True
             for oname in object_list:
                 objekti = bpy.data.objects[oname]
-                print('BASE_OBJECT:', objekti,objekti.coat3D.applink_address)
                 if(objekti.coat3D.applink_mesh == True):
-                    print('totta vai tarua:',objekti.coat3D.applink_mesh)
+                    exportfile = coat3D.exchangedir
+                    path3b_n = coat3D.exchangedir
+                    path3b_n += ('%slast_saved_3b_file.txt' % (os.sep))
                     if(objekti.coat3D.import_mesh and coat3D.importmesh == True):
-                        print('ONAME:', oname)
                         objekti.coat3D.import_mesh = False
                         objekti.select_set(True)
 
                         use_smooth = objekti.data.polygons[0].use_smooth
-                        print('use smooth:', use_smooth)
 
                         new_name = objekti.data.name
                         name_boxs = new_name.split('.')
-                        print('DIFF_OBJECS:', diff_objects)
-                        print('find name:', name_boxs[0])
                         found_obj = False
 
                         '''Changes objects mesh into proxy mesh'''
-
-                        if(objekti.coat3D.type == ''):
+                        print('ONAME:',oname)
+                        if(objekti.coat3D.type):
                             for proxy_objects in diff_objects:
-                                print('applink obj:', objekti.coat3D.applink_name)
+                                print('tryis to found: ',proxy_objects)
                                 if (proxy_objects.startswith(objekti.coat3D.applink_name + '.')):
-                                    print('Proxy NAME: ', name_boxs[0])
-                                    print('applink obj:', objekti.coat3D.applink_name)
                                     obj_proxy = bpy.data.objects[proxy_objects]
+                                    obj_proxy.coat3D.delete_proxy_mesh = True
                                     found_obj = True
-                        elif(objekti.coat3D.type == 'Voxel' and len(object_list) == 1):
-                            obj_proxy = bpy.data.objects[diff_objects[0]]
-                            found_obj = True
-                            if objekti.coat3D.applink_firsttime == True:
-                                objekti.rotation_euler[0] = 1.5708
-                                bpy.ops.object.transforms_to_deltas(mode='ROT')
-                                objekti.coat3D.applink_firsttime = False
 
                         if(found_obj == True):
                             exportfile = coat3D.exchangedir
                             path3b_n = coat3D.exchangedir
                             path3b_n += ('%slast_saved_3b_file.txt' % (os.sep))
-                            print('osoite:', path3b_n)
                             exportfile += ('%sBlender' % (os.sep))
                             exportfile += ('%sexport.txt'%(os.sep))
                             if(os.path.isfile(exportfile)):
@@ -617,12 +638,6 @@ class SCENE_OT_import(bpy.types.Operator):
                                 export_file.close()
                                 coat3D.remove_path = True
 
-
-
-                            obj_names = objekti.coat3D.applink_group
-
-
-
                             mat_list = []
                             if(objekti.material_slots):
                                 act_mat = objekti.active_material
@@ -633,10 +648,22 @@ class SCENE_OT_import(bpy.types.Operator):
 
                             bpy.ops.object.select_all(action='TOGGLE')
 
-                            if objekti.coat3D.applink_firsttime == True:
+                            if objekti.coat3D.applink_firsttime == True and objekti.coat3D.type == 'vox':
+                                #objekti.scale = (objekti.scale[0] / objekti.coat3D.applink_scale[0], objekti.scale[1] / objekti.coat3D.applink_scale[1], objekti.scale[2] / objekti.coat3D.applink_scale[2])
+                                #bpy.ops.object.transforms_to_deltas(mode='SCALE')
+                                objekti.rotation_euler[0] = 1.5708
+                                objekti.rotation_euler[2] = 1.5708
+                                bpy.ops.object.transforms_to_deltas(mode='ROT')
+                                #objekti.rotation_euler = (0, 0, 0)
+                                objekti.scale = (0.02, 0.02, 0.02)
+                                bpy.ops.object.transforms_to_deltas(mode='SCALE')
+                                objekti.coat3D.applink_firsttime = False
+
+                            elif objekti.coat3D.applink_firsttime == True:
                                 objekti.scale = (objekti.scale[0]/objekti.coat3D.applink_scale[0],objekti.scale[1]/objekti.coat3D.applink_scale[1],objekti.scale[2]/objekti.coat3D.applink_scale[2])
                                 bpy.ops.object.transforms_to_deltas(mode='SCALE')
-                                objekti.rotation_euler = (0,0,0)
+                                if(objekti.coat3D.applink_onlyone == False):
+                                    objekti.rotation_euler = (0,0,0)
                                 objekti.scale = (0.01,0.01,0.01)
                                 objekti.coat3D.applink_firsttime = False
 
@@ -674,7 +701,6 @@ class SCENE_OT_import(bpy.types.Operator):
                             objekti.select_set(True)
                             if(coat3D.importtextures):
                                 is_new = False
-                                print('aMAT:', mat_list)
                                 tex.matlab(objekti,mat_list,texturelist,is_new)
                             objekti.select_set(False)
                     else:
@@ -686,8 +712,6 @@ class SCENE_OT_import(bpy.types.Operator):
 
                         if (coat3D.importtextures):
                             is_new = False
-                            print('aMAT:', mat_list)
-                            print('aObject', objekti)
                             tex.matlab(objekti,mat_list,texturelist, is_new)
                         objekti.select_set(False)
 
@@ -698,8 +722,30 @@ class SCENE_OT_import(bpy.types.Operator):
             bpy.ops.object.select_all(action='DESELECT')
             if(import_list):
                 for del_obj in diff_objects:
-                    bpy.context.collection.all_objects[del_obj].select_set(True)
-                    bpy.ops.object.delete()
+                    print('diff_objects', diff_objects)
+
+                    if(bpy.context.collection.all_objects[del_obj].coat3D.type == 'vox' and bpy.context.collection.all_objects[del_obj].coat3D.delete_proxy_mesh == False):
+                        bpy.context.collection.all_objects[del_obj].select_set(True)
+                        objekti = bpy.context.collection.all_objects[del_obj]
+                        objekti.rotation_euler[2] = 1.5708
+                        bpy.ops.object.transforms_to_deltas(mode='ROT')
+                        # objekti.rotation_euler = (0, 0, 0)
+                        objekti.scale = (0.02, 0.02, 0.02)
+                        bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY')
+
+                        objekti.data.coat3D.name = '3DC'
+
+                        objekti.coat3D.objecttime = str(os.path.getmtime(objekti.coat3D.applink_address))
+                        objekti.coat3D.applink_name = objekti.name
+                        objekti.coat3D.applink_mesh = True
+                        objekti.coat3D.import_mesh = False
+                        bpy.ops.object.transforms_to_deltas(mode='SCALE')
+                        objekti.coat3D.applink_firsttime = False
+                        bpy.context.collection.all_objects[del_obj].select_set(False)
+
+                    else:
+                        bpy.context.collection.all_objects[del_obj].select_set(True)
+                        bpy.ops.object.delete()
 
 
 
@@ -720,7 +766,6 @@ class SCENE_OT_import(bpy.types.Operator):
             path3b_now += ('last_saved_3b_file.txt')
             Blender_export += ('%sexport.txt'%(os.sep))
             mat_list = []
-            nimi = ''
             osoite_3b = ''
             if (os.path.isfile(path3b_now)):
                 path3b_fil = open(path3b_now)
@@ -734,7 +779,7 @@ class SCENE_OT_import(bpy.types.Operator):
             old_materials = bpy.data.materials.keys()
             old_objects = bpy.data.objects.keys()
 
-            bpy.ops.import_scene.fbx(filepath=new_applink_address, global_scale = 0.0001,axis_forward='X', axis_up='Z')
+            bpy.ops.import_scene.fbx(filepath=new_applink_address, global_scale = 0.001, use_manual_orientation=True, axis_forward='X', axis_up='Y')
 
             new_materials = bpy.data.materials.keys()
             new_objects = bpy.data.objects.keys()
@@ -756,11 +801,10 @@ class SCENE_OT_import(bpy.types.Operator):
             for new_obj in bpy.context.collection.objects:
 
                 if(new_obj.coat3D.applink_old == False):
-                    nimi += new_obj.data.name + ':::'
                     new_obj.select_set(True)
                     #bpy.ops.object.origin_set(type='GEOMETRY_ORIGIN')
-                    new_obj.rotation_euler = (0, 0, 0)
-                    new_obj.scale = (1, 1, 1)
+                    #new_obj.rotation_euler = (0, 0, 0)
+                    new_obj.scale = (0.03, 0.03, 0.03)
                     new_obj.coat3D.applink_firsttime = False
                     new_obj.select_set(False)
                     new_obj.coat3D.applink_address = new_applink_address
@@ -768,7 +812,6 @@ class SCENE_OT_import(bpy.types.Operator):
                     new_obj.coat3D.objecttime = str(os.path.getmtime(new_obj.coat3D.applink_address))
 
                     new_obj.coat3D.applink_name = new_obj.material_slots[0].material.name
-                    print('namee:', new_obj.coat3D.applink_name)
                     index = index + 1
 
                     new_obj.coat3D.applink_export = True
@@ -778,21 +821,25 @@ class SCENE_OT_import(bpy.types.Operator):
 
                     mat_list.append(new_obj.material_slots[0].material)
                     is_new = True
-                    print('new_obj', new_obj)
-                    print('mat_list', mat_list)
                     tex.matlab(new_obj, mat_list, texturelist, is_new)
                     mat_list.pop()
 
             for new_obj in bpy.context.collection.objects:
                 if(new_obj.coat3D.applink_old == False):
-                    new_obj.coat3D.applink_group = nimi
                     new_obj.coat3D.applink_old = True
 
             bpy.ops.object.select_all(action='SELECT')
             bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY')
             bpy.ops.object.select_all(action='DESELECT')
+
+            kokeilu = coat3D.exchangedir[:-10]
+            Blender_folder2 = ("%s%sExchange%sBlender" % (kokeilu, os.sep, os.sep))
+            Blender_folder2 += ('%sexport.txt' % (os.sep))
+
             if (os.path.isfile(Blender_export)):
                 os.remove(Blender_export)
+            if (os.path.isfile(Blender_folder2)):
+                os.remove(Blender_folder2)
             for material in bpy.data.materials:
                 if material.use_nodes == True:
                     for node in material.node_tree.nodes:
@@ -805,11 +852,17 @@ from bpy import *
 from mathutils import Vector, Matrix
 
 class SCENE_PT_Main(bpy.types.Panel):
-    bl_label = "3D-Coat"
+    bl_label = "3D-Coat Applink"
     bl_space_type = "VIEW_3D"
-    bl_region_type = "TOOLS"
-    bl_context = "objectmode"
-    bl_options = {'DEFAULT_CLOSED'}
+    bl_region_type = "UI"
+    bl_category = 'View'
+
+    @classmethod
+    def poll(cls, context):
+        if bpy.context.mode == 'OBJECT':
+            return True
+        else:
+            return False
 
     def draw(self, context):
         layout = self.layout
@@ -828,6 +881,7 @@ class SCENE_PT_Main(bpy.types.Panel):
             row.operator("update_exchange_folder.pilgway_3d_coat", text="Apply folder")
 
         else:
+
             #Here you add your GUI
             row = layout.row()
             row.prop(coat3D,"type",text = "")
@@ -838,6 +892,9 @@ class SCENE_PT_Main(bpy.types.Panel):
             col.operator("export_applink.pilgway_3d_coat", text="Transfer")
             col = flow.column()
             col.operator("import_applink.pilgway_3d_coat", text="Update")
+
+
+
 
 class ObjectButtonsPanel():
     bl_space_type = 'PROPERTIES'
@@ -877,6 +934,8 @@ class SCENE_PT_Settings_Update(ObjectButtonsPanel, bpy.types.Panel):
         col.prop(coat3D, "importtextures", text="Update Textures")
         col = flow.column()
         col.prop(coat3D, "creategroup", text="Group Nodes")
+        col = flow.column()
+        col.prop(coat3D, "exportmod", text="Export with modifiers")
 
 class SCENE_PT_Settings_Folders(ObjectButtonsPanel, bpy.types.Panel):
     bl_label = "Folders"
@@ -885,7 +944,7 @@ class SCENE_PT_Settings_Folders(ObjectButtonsPanel, bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
-        layout.use_property_split = True
+        layout.use_property_split = False
         coat3D = bpy.context.scene.coat3D
 
         rd = context.scene.render
@@ -900,70 +959,6 @@ class SCENE_PT_Settings_Folders(ObjectButtonsPanel, bpy.types.Panel):
         col = flow.column()
         col.prop(coat3D, "coat3D_exe", text="3D-Coat.exe")
 
-# 3D-Coat Dynamic Menu
-class VIEW3D_MT_Coat_Dynamic_Menu(bpy.types.Menu):
-    bl_label = "3D-Coat Applink Menu"
-
-    def draw(self, context):
-        layout = self.layout
-
-        layout.operator_context = 'INVOKE_REGION_WIN'
-
-        ob = context
-        if ob.mode == 'OBJECT':
-            if(len(context.selected_objects) > 0):
-                layout.operator("import_applink.pilgway_3d_coat", text="Update Scene")
-                layout.separator()
-
-                layout.operator("export_applink.pilgway_3d_coat", text="Copy selected object(s) into 3D-Coat")
-                layout.separator()
-                if(context.selected_objects[0].coat3D.applink_3b_path != ''):
-                    layout.operator("open_3dcoat.pilgway_3d_coat", text="Open .3b file" +context.selected_objects[0].coat3D.applink_3b_just_name)
-                    layout.separator()
-
-            else:
-                layout.operator("import_applink.pilgway_3d_coat", text="Update Scene")
-                layout.separator()
-
-class VIEW3D_MT_ImportMenu(bpy.types.Menu):
-    bl_label = "Import Settings"
-
-    def draw(self, context):
-        layout = self.layout
-        coat3D = bpy.context.scene.coat3D
-        settings = context.tool_settings
-        layout.operator_context = 'INVOKE_REGION_WIN'
-        layout.prop(coat3D,"importmesh")
-        layout.prop(coat3D,"importmod")
-        layout.prop(coat3D,"smooth_on")
-        layout.prop(coat3D,"importtextures")
-
-class VIEW3D_MT_ExportMenu(bpy.types.Menu):
-    bl_label = "Export Settings"
-
-    def draw(self, context):
-        layout = self.layout
-        coat3D = bpy.context.scene.coat3D
-        settings = context.tool_settings
-
-        layout.operator_context = 'INVOKE_REGION_WIN'
-        layout.operator("view3d.copybuffer", icon="COPY_ID")
-
-        layout.prop(coat3D,"exportover")
-        if(coat3D.exportover):
-           layout.prop(coat3D,"exportmod")
-
-class VIEW3D_MT_ExtraMenu(bpy.types.Menu):
-    bl_label = "Extra"
-
-    def draw(self, context):
-        layout = self.layout
-        coat3D = bpy.context.scene.coat3D
-        settings = context.tool_settings
-        layout.operator_context = 'INVOKE_REGION_WIN'
-
-        layout.operator("import_applink.pilgway_3d_deltex",text="Delete all Textures")
-        layout.separator()
 
 class ObjectCoat3D(PropertyGroup):
 
@@ -983,13 +978,20 @@ class ObjectCoat3D(PropertyGroup):
     applink_3b_just_name: StringProperty(
         name="Applink object name"
     )
-    applink_group: StringProperty(
-        name="Applink group"
-    )
     applink_firsttime: BoolProperty(
         name="FirstTime",
         description="FirstTime",
         default=True
+    )
+    delete_proxy_mesh: BoolProperty(
+        name="FirstTime",
+        description="FirstTime",
+        default=False
+    )
+    applink_onlyone: BoolProperty(
+        name="FirstTime",
+        description="FirstTime",
+        default=False
     )
     type: StringProperty(
         name="type",
@@ -1044,7 +1046,7 @@ class SceneCoat3D(PropertyGroup):
     )
     coat3D_exe: StringProperty(
         name="FilePath",
-        subtype="DIR_PATH",
+        subtype="FILE_PATH",
     )
     cursor_loc: FloatVectorProperty(
         name="Cursor_loc",
@@ -1164,7 +1166,7 @@ class SceneCoat3D(PropertyGroup):
     importmesh: BoolProperty(
         name="Mesh",
         description="Import Mesh",
-        default=True
+        default=False
     )
 
     # copy location
@@ -1231,10 +1233,6 @@ classes = (
     SCENE_OT_opencoat,
     SCENE_OT_export,
     SCENE_OT_import,
-    VIEW3D_MT_Coat_Dynamic_Menu,
-    #VIEW3D_MT_ImportMenu,
-    #VIEW3D_MT_ExportMenu,
-    #VIEW3D_MT_ExtraMenu,
     ObjectCoat3D,
     SceneCoat3D,
     MeshCoat3D,
@@ -1260,7 +1258,7 @@ def register():
 
     if kc:
         km = kc.keymaps.new(name="Object Mode")
-        kmi = km.keymap_items.new('wm.call_menu', 'Q', 'PRESS')
+        kmi = km.keymap_items.new('wm.call_menu', 'Q', 'PRESS', shift=True)
         kmi.properties.name = "VIEW3D_MT_Coat_Dynamic_Menu"
 
 def unregister():

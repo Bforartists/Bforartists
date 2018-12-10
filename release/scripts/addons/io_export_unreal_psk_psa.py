@@ -2170,7 +2170,7 @@ def rebuildmesh(obj):
 
     # vertices weight groups
     for vgroup in vertGroups:
-        group = obmesh.vertex_groups.new(vgroup)
+        group = obmesh.vertex_groups.new(name=vgroup)
         for v in vertGroups[vgroup]:
             group.add([v[0]], v[1], 'ADD')  # group.add(array[vertex id],weight,add)
     bpy.context.scene.objects.link(obmesh)

@@ -1026,7 +1026,7 @@ def fbx_data_mesh_elements(root, me_obj, scene_data, done_meshes):
                 # t_lnw = array.array(data_types.ARRAY_FLOAT64, (0.0,)) * len(me.loops)
                 uv_names = [uvlayer.name for uvlayer in me.uv_layers]
                 for name in uv_names:
-                    me.calc_tangents(name)
+                    me.calc_tangents(uvmap=name)
                 for idx, uvlayer in enumerate(me.uv_layers):
                     name = uvlayer.name
                     # Loop bitangents (aka binormals).
